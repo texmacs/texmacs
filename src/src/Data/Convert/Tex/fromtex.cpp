@@ -614,7 +614,7 @@ latex_command_to_tree (tree t) {
 tree
 l2e (tree t) {
   if (is_atomic (t)) return latex_symbol_to_tree (t->label);
-  if (is_func (t, CONCAT)) {
+  if (L(t) == CONCAT) {
     bool new_flag= false;
     return latex_concat_to_tree (t, new_flag);
   }
