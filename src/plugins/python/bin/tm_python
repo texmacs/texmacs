@@ -9,6 +9,10 @@ import os
 import traceback
 import keyword
 import re
+import string
+
+__version__='0.8.1'
+__author__='Ero Carrera'
 
 DATA_ESCAPE = chr(27)
 DATA_COMMAND = chr(16)
@@ -100,6 +104,15 @@ def compose_output(data):
 	if isinstance(data, float):
 		return 'verbatim: %f' % data
 	
+	if isinstance(data, unicode):
+		data2=r''
+		for c in data:
+			if c not in string.printable:
+				data2+='\\x%x' % ord(c)
+			else:
+				data2+=c
+		data=data2
+
 	return 'verbatim: %s' % str(data)
 
 def do_module_hierarchy(mod, attr):
@@ -203,7 +216,7 @@ def complete(cmd, my_globals):
 	return 'scheme:(tuple "'+cmpl_str+'" '+res+')'
 		
 texmacs_out("""verbatim:Welcome to Python
-TeXmacs Python interface v0.8.1 . Ero Carrera (c) 2004
+TeXmacs Python interface version """+__version__+""". """+__author__+""" (c) 2004
 http://dkbza.org/tmPython.html""")
 
 my_globals = {}
@@ -213,7 +226,7 @@ my_globals['ps_out'] = ps_out
 # As well as some documentation.
 my_globals['__doc__'] = """TeXmacs Python plugin.
 
-	TeXmacs Python interface v0.8 . Ero Carrera (c) 2004
+	TeXmacs Python interface v0.8.1. Ero Carrera (c) 2004
 	
 	The plugin homepage:
 		http://dkbza.org/tmPython.html
