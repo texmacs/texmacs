@@ -51,6 +51,39 @@
 
   <\active*>
     <\src-comment>
+      Size tags (very-small: script-size, smaller: footnotesize, larger:
+      Large, very-large: LARGE, really-huge: HUGE)
+    </src-comment>
+  </active*>
+
+  <assign|really-tiny|<macro|x|<with|font-size|0.5|<arg|x>>>>
+
+  <assign|tiny|<macro|x|<with|font-size|0.59|<arg|x>>>>
+
+  <assign|really-small|<macro|x|<with|font-size|0.65|<arg|x>>>>
+
+  <assign|very-small|<macro|x|<with|font-size|0.71|<arg|x>>>>
+
+  <assign|smaller|<macro|x|<with|font-size|0.77|<arg|x>>>>
+
+  <assign|small|<macro|x|<with|font-size|0.84|<arg|x>>>>
+
+  <assign|normal-size|<macro|x|<with|font-size|1|<arg|x>>>>
+
+  <assign|large|<macro|x|<with|font-size|1.19|<arg|x>>>>
+
+  <assign|larger|<macro|x|<with|font-size|1.30|<arg|x>>>>
+
+  <assign|very-large|<macro|x|<with|font-size|1.41|<arg|x>>>>
+
+  <assign|really-large|<macro|x|<with|font-size|1.54|<arg|x>>>>
+
+  <assign|huge|<macro|x|<with|font-size|1.68|<arg|x>>>>
+
+  <assign|really-huge|<macro|x|<with|font-size|2|<arg|x>>>>
+
+  <\active*>
+    <\src-comment>
       Below follow some frequently used content tags.
     </src-comment>
   </active*>

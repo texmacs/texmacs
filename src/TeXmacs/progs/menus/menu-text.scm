@@ -142,6 +142,17 @@
   ("Subscript" (make-script #f #t))
   ("Superscript" (make-script #t #t)))
 
+(menu-bind size-tag-menu
+  ("Really tiny" (make 'really-tiny))
+  ("Tiny" (make 'tiny))
+  ("Very small" (make 'very-small))
+  ("Small" (make 'small))
+  ("Normal" (make 'normal-size))
+  ("Large" (make 'large))
+  ("Very large" (make 'very-large))
+  ("Huge" (make 'huge))
+  ("Really huge" (make 'really-huge)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,7 +217,8 @@
       (-> "Section" (link section-menu)))
   (if (style-has? "std-markup-dtd")
       (-> "Environment" (link environment-menu))
-      (-> "Content tag" (link content-tag-menu)))
+      (-> "Content tag" (link content-tag-menu))
+      (-> "Size tag" (link size-tag-menu)))
   (-> "Presentation tag" (link presentation-tag-menu))
   (if (style-has? "std-dtd")
       ---)

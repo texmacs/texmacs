@@ -83,6 +83,9 @@
 
       \ \ <verbatim|x*>: for unnumbered sections.
 
+      \ \ <verbatim|x-text>: section text like Chapter, Section, etc. By the
+      default, the first character of <verbatim|x> is upcased.
+
       \ \ <verbatim|x-numbered>: flag for knowing whether the last section is
       numbered or not.
 
