@@ -144,6 +144,7 @@
   ("accent:acute" "'")
   ("accent:grave" "`")
   ("symbol \\" "\\")
+  ("symbol \"" "\"")
   ("symbol $" "$")
   ("symbol &" "&")
   ("symbol #" "#")
