@@ -69,7 +69,7 @@
   \;
 
   <assign|nbsp|<macro|<style-with|src-compact|none|
-  <no-break><specific|screen|<resize|<move|<with|color|#8080FF|->|-0.3em|>|0em||0em||>>>>>
+  <no-break><specific|screen|<resize|<move|<with|color|#A0A0FF|->|-0.3em|>|0em||0em||>>>>>
 
   \;
 </body>
