@@ -91,8 +91,7 @@
   (let ((p (search-upwards "switch")))
     (if (not (null? p))
 	(let ((t (tm-subtree (rcons* p 1 i))))
-	  (tm-assign (rcons* p 1 i)
-		     (stree->tree '(tmarker)))
+	  (tm-assign (rcons* p 1 i) '(tmarker))
 	  (tm-assign (rcons p 0) t)))))
 
 (define (switch-pos where pos last)
@@ -113,8 +112,7 @@
     (cond ((= pos -1) (noop))
 	  ((string? where) (switch-insert (switch-pos where pos last)))
 	  (else (switch-unselect)
-		(tm-insert (rcons* p 1 where)
-			   (stree->tree '(tuple (document ""))))
+		(tm-insert (rcons* p 1 where) '(tuple (document "")))
 		(switch-select where)))))
 
 (define (switch-remove where)

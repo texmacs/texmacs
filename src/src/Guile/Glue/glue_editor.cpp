@@ -2056,6 +2056,15 @@ tmg_the_selection () {
 }
 
 SCM
+tmg_the_root () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->the_root ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_the_buffer () {
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->the_buffer ();
@@ -2956,6 +2965,7 @@ initialize_glue_editor () {
   gh_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
   gh_new_procedure ("the-line", (FN) tmg_the_line, 0, 0, 0);
   gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);
+  gh_new_procedure ("the-root", (FN) tmg_the_root, 0, 0, 0);
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
   gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);

@@ -70,6 +70,7 @@ public:
 
   void footer_eval (string s);
   tree the_line ();
+  tree the_root ();
   tree the_buffer ();
   tree the_subtree (path p);
   path the_buffer_path ();

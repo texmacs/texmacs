@@ -456,6 +456,7 @@ public:
 			  string first="1", string last="1000000") = 0;
   virtual void footer_eval (string s) = 0;
   virtual tree the_line () = 0;
+  virtual tree the_root () = 0;
   virtual tree the_buffer () = 0;
   virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;

@@ -40,7 +40,7 @@
 
 (define (close-quotes?)
   (let* ((p (tm-where))
-	 (t (tree->stree (subtree (the-buffer) (cDr p)))))
+	 (t (tree->stree (tm-subtree (cDr p)))))
     (if (string? t)
 	(not (or (== t "") (string-ends? t " ")))
 	(> (cAr p) 0))))
