@@ -210,7 +210,8 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
       a << copy (a[0]);
       cip << copy (cip[0]);
     }
-    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a, cip));
+    curve c= env->fr (
+      N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }

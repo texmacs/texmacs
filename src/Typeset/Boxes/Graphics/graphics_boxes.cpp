@@ -167,9 +167,12 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
         res << gs;
       }
     }
-    for (i=0; i<np-1; i++) {
+    int ne= np-1;
+    if (np>1 && (abs[0]!=0.0 || abs[np-1]!=1.0))
+      ne++;
+    for (i=0; i<ne; i++) {
       bool b;
-      double t= c->find_closest_point (abs[i], abs[i+1], p, PIXEL, b);
+      double t= c->find_closest_point (abs[i], abs[(i+1)%np], p, PIXEL, b);
       if (b) {
         point p2= c->evaluate (t);
         SI n= (SI)norm (p - p2);
@@ -177,7 +180,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
           gr_selection gs;
           gs->dist= n;
           gs->cp << reverse (paths[i]);
-          gs->cp << reverse (paths[i+1]);
+          gs->cp << reverse (paths[(i+1)%np]);
           res << gs;
         }
       }

@@ -183,4 +183,5 @@
 	      (plugin-supports-completions? (get-env "prog-language")))
 	 (if (session-complete-try?) (noop)))
 	((complete-try?) (noop))
+	((in-graphics?) (graphics-choose-point))
 	(else (set-message "Use M-tab in order to insert a tab" "tab"))))

@@ -141,7 +141,6 @@ public:
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;
-  virtual path path_xy (double x, double y) = 0;
   virtual void go_to (SI x, SI y) = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;

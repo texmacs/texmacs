@@ -22,9 +22,12 @@
     graphics-set-origin graphics-set-origin-ia
     graphics-set-extents-ia
     graphics-set-mode graphics-set-color graphics-set-line-width
+    ;; selecting
+    graphics-select
     ;; call-backs
     graphics-move-point graphics-insert-point
     graphics-remove-point graphics-last-point
+    graphics-choose-point
     graphics-reset-context))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,7 +49,7 @@
   (if (or (null? path) (null? (cdr path)))
       #f
       (with p (cDr path)
-         (with o (stree-at p)
+	 (with o (stree-at p)
             (if (and (pair? o)
 		     (in? (car o)
 			  '(point line cline spline cspline arc text-at)))
@@ -296,6 +299,7 @@
                       1
                )))
         (tm-remove (cDr path) (cAr path))))
+        ;; FIXME : the 2nd parameter of (tm-remove) is a number of nodes
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for calculating with the graphical object
@@ -398,7 +402,7 @@
 						 (cadr p1) (caddr p2)))))
 		   res)))
 
-(define (create-graphical-object o mode pts)
+(define (create-graphical-object o mode pts no)
   (if o (with op
 	      (cond ((== (car o) 'point) ;; FIXME : doesnt work for arcs
 		     (cons o '())
@@ -407,7 +411,23 @@
 		     (with a (cdddr o)
 			(create-graphical-contour o (car a) (cadr a) 0.1))
 		    )
-		    (else (cdr o)))
+		    (else (if no
+			      (let* ((l (list-tail (cdr o) no))
+				     (ll (length l)))
+				    (append
+				      (with h (list-head (cdr o) no)
+					(if (and (in? (car o) '(cline cspline))
+					      (== (+ no 1) (length (cdr o))))
+					  (cons `(with "point-style" "disk"
+					    ,(car h)) (cdr h))
+					  h))
+				      (cons
+					(list 'with "point-style" "disk"
+					  (cons 'concat
+					    (if (< ll 2) (list-head l 1)
+							 (list-head l 2)))) '())
+				      (if (> ll 2) (list-tail l 2) '())))
+			      (cdr o))))
 	  (let ((color #f)
 		(lw #f))
                  (if (== mode 'active)
@@ -470,12 +490,24 @@
 ;; State variables
 (define sticky-point #f)
 (define current-point-no #f)
+(define current-edge-sel? #f)
+(define current-selection #f)
+(define previous-selection #f)
+(define subsel-no #f)
+(define current-x #f)
+(define current-y #f)
 
 (define state-slots
   ''(graphics-action
      graphical-object
      sticky-point
-     current-point-no))
+     current-point-no
+     current-edge-sel?
+     current-selection
+     previous-selection
+     subsel-no
+     current-x
+     current-y))
 
 (define-macro (state-len)
   `(length ,state-slots))
@@ -498,15 +530,27 @@
     (state-set! st 'graphical-object (get-graphical-object))
     (state-set! st 'sticky-point sticky-point)
     (state-set! st 'current-point-no current-point-no)
+    (state-set! st 'current-edge-sel? current-edge-sel?)
+    (state-set! st 'current-selection current-selection)
+    (state-set! st 'previous-selection previous-selection)
+    (state-set! st 'subsel-no subsel-no)
+    (state-set! st 'current-x current-x)
+    (state-set! st 'current-y current-y)
     st))
 
 (define (graphics-state-set st)
   (with o (state-ref st 'graphical-object)
     (if (pair? (tree->stree o))
 	(set-graphical-object o)
-	(create-graphical-object #f #f #f)))
+	(create-graphical-object #f #f #f #f)))
   (set! sticky-point (state-ref st 'sticky-point))
-  (set! current-point-no (state-ref st 'current-point-no)))
+  (set! current-point-no (state-ref st 'current-point-no))
+  (set! current-edge-sel? (state-ref st 'current-edge-sel?))
+  (set! current-selection (state-ref st 'current-selection))
+  (set! previous-selection (state-ref st 'previous-selection))
+  (set! subsel-no (state-ref st 'subsel-no))
+  (set! current-x (state-ref st 'current-x))
+  (set! current-y (state-ref st 'current-y)))
 
 ;; State stack
 (define graphics-states '())
@@ -551,9 +595,15 @@
             (graphics-push-state st)))))
 
 (define (graphics-reset-state)
-  (create-graphical-object #f #f #f)
+  (create-graphical-object #f #f #f #f)
   (set! sticky-point #f)
-  (set! current-point-no #f))
+  (set! current-point-no #f)
+  (set! current-edge-sel? #f)
+  (set! current-selection #f)
+  (set! previous-selection #f)
+  (set! subsel-no #f)
+  (set! current-x #f)
+  (set! current-y #f))
 
 (define (graphics-forget-states)
   (set! graphics-first-state #f)
@@ -564,24 +614,79 @@
 ;; Subroutines for using and maintaining the current graphics context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (with-graphics-context msg x y path obj no . body)
-  `(if sticky-point
-       (with o (graphical-object #t)
-	 (if (and (pair? o) (not (null? (cdr o))))
-	     (let* ((,obj (cadr o))
-		    (,no current-point-no)
-		    (,path (cDr (tm-where))))
-	       ,(cons 'begin body))
-	     (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
-		 (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))
-       (let* ((pxy (path-xy (s2i ,x) (s2i ,y)))
-              (,path (graphics-path pxy))
-              (,obj (graphics-object pxy)))
-	 (if ,obj
-	     (let* ((,no (object-closest-point-pos ,obj ,x ,y)))
-	       ,(cons 'begin body))
-	     (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
-		 (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))))
+;; Graphical select
+(define (graphics-select x y d)
+  (define (filter-path p)
+     (with p2 (map string->number (cdr p))
+       (if (graphics-path p2) p2 #f))
+  )
+  (define (filter-sel e)
+    (with e2 (map filter-path (cdr e))
+      (if (== (car e2) #f) #f e2))
+  )
+  (define (remove-filtered-elts l)
+    (if (pair? l)
+      (if (pair? (cdr l))
+        (if (eq? (cadr l) #f)
+            (begin
+              (set-cdr! l (cddr l))
+              (remove-filtered-elts l))
+            (remove-filtered-elts (cdr l)))
+        l)
+      #f)
+  )
+  (define (filter l)
+    (with l2 (cons 'tuple (map filter-sel (cdr l)))
+      (remove-filtered-elts l2)
+      (cdr l2))
+  )
+  (with res (tree->stree (graphical-select x y))
+    (filter res)))
+
+(define (select-first x y)
+  (with sel (graphics-select x y 15)
+    (if (pair? sel) (car sel) #f)))
+
+(define (select-choose x y)
+  (with sel (graphics-select x y 15)
+    (set! previous-selection current-selection)
+    (set! current-selection sel)
+    (if (or (null? sel) (not (== current-selection previous-selection)))
+        (set! subsel-no 0))
+    (if (pair? sel) (car (list-tail sel subsel-no)) #f)))
+
+(define (select-next)
+  (if (and current-selection subsel-no)
+      (begin
+	(set! subsel-no (+ subsel-no 1))
+	(if (>= subsel-no (length current-selection))
+	    (set! subsel-no 0)))))
+
+;; Graphics context
+(define-macro (with-graphics-context msg x y path obj no edge . body)
+  `(begin
+     (set! current-x x)
+     (set! current-y y)
+     (if sticky-point
+         (with o (graphical-object #t)
+      	   (if (and (pair? o) (not (null? (cdr o))))
+	       (let* ((,obj (cadr o))
+		      (,no current-point-no)
+		      (,edge current-edge-sel?)
+		      (,path (cDr (tm-where))))
+	            ,(cons 'begin body))
+	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
+		   (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))
+         (let* (( sel (select-choose (s2i ,x) (s2i ,y)))
+                ( pxy (if sel (car sel) '()))
+                (,path (graphics-path pxy))
+                (,obj (graphics-object pxy))
+                (,edge (and sel (== (length sel) 2)))
+	        (,no (if sel (cAr (car sel)) #f)))
+	   (if ,obj
+	       ,(cons 'begin body)
+	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
+		   (display* "Uncaptured " ,msg " " ,x ", " ,y "\n")))))))
 
 (define (graphics-reset-context cmd)
   ;; cmd in { begin, exit, undo }
@@ -591,7 +696,7 @@
     (graphics-reset-state)
     (graphics-forget-states)
     (with p (graphics-active-path)
-       (if p (create-graphical-object (graphics-active-object) p  'points))))
+       (if p (create-graphical-object (graphics-active-object) p 'points #f))))
    ((and (== cmd 'exit) sticky-point)
     (if graphics-first-state
 	(begin
@@ -604,8 +709,8 @@
     (if (not sticky-point)
 	(with p (graphics-active-path)
 	  (if p
-	      (create-graphical-object (graphics-active-object) p  'points)
-	      (create-graphical-object #f #f #f))))
+	      (create-graphical-object (graphics-active-object) p 'points #f)
+	      (create-graphical-object #f #f #f #f))))
     (set! sticky-point #f)
     (set! current-point-no #f)
     (if graphics-first-state
@@ -647,45 +752,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Left button
-(define (point_left-button x y p obj no)
+(define (point_left-button x y p obj no edge)
   (if sticky-point
       (with l (list-tail (cdr obj) no)
 	(graphics-store-state #f)
 	(set-cdr! l (cons `(point ,x ,y) (cdr l)))
-	(create-graphical-object obj 'active 'object-and-points)
+	(create-graphical-object obj 'active 'object-and-points (+ no 1))
 	(set! current-point-no (+ no 1))
+	(set! current-edge-sel? #t)
 	(set! sticky-point #t))
       (begin
 	(graphics-store-state 'start-move)
-	(create-graphical-object obj p 'object-and-points)
+	(create-graphical-object obj p 'object-and-points #f)
 	(graphics-remove p)
 	(set! sticky-point #t)
 	(set! current-point-no no)
-	(graphics-store-state #f))))
+	(set! current-edge-sel? #t)
+	(graphics-store-state #f)
+	(if edge
+	  (point_left-button x y p (cadr (graphical-object #t)) no edge)))))
 
-(define (text-at_left-button x y p obj no)
+(define (text-at_left-button x y p obj no edge)
   (if sticky-point
       (display "Text-at left-button not implemented\n")
       (begin
 	 (if (event-exists? 'text-at 'left-button 1)
-	     (tm-go-to (path-xy (s2i x) (s2i y)))))))
+	     (tm-go-to (car (select-first (s2i x) (s2i y))))))))
 
 ;; Move
-(define (point_move x y p obj no)
+(define (point_move x y p obj no edge)
   (if sticky-point
       (begin
 	(if (== (car obj) 'point)
 	    (set! obj `(point ,x ,y))
 	    (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
-	(create-graphical-object obj 'active 'object-and-points))
+	(create-graphical-object obj 'active 'object-and-points
+	  (if edge no #f)))
       (begin
-	(create-graphical-object obj p 'points)
+	(create-graphical-object obj p 'points (if edge no #f))
 	(tm-go-to (rcons p 1)))))
 
-(define (text-at_move x y p obj no)
+(define (text-at_move x y p obj no edge)
   (if (and (not sticky-point) (event-exists? 'text-at 'left-button 1))
-      (point_left-button x y p obj 1)
-      (point_move x y p obj 1)))
+      (point_left-button x y p obj 1 edge)
+      (point_move x y p obj 1 edge)))
 
 ;; Middle button
 (define (point_middle-button x y p obj no)
@@ -699,20 +809,21 @@
 	(if (or (in? (car obj) '(point text-at)) (null? (cddr obj)))
 	    (begin
 	      (graphics-remove p)
-	      (create-graphical-object #f #f #f)
+	      (create-graphical-object #f #f #f #f)
 	      (graphics-group-start))
 	    (with l (if (<= no 0) obj (list-tail (cdr obj) (- no 1)))
 	      (set-cdr! l (cddr l))
-	      (create-graphical-object obj p 'points)
+	      (create-graphical-object obj p 'points #f)
 	      (graphics-active-assign obj)))
 	(set! sticky-point #f))))
 
 ;; Right button (last)
 (define (point_sticky-right-button x y p obj no)
-  (create-graphical-object obj 'active 'points)
+  (create-graphical-object obj 'active 'points #f)
   (graphics-group-enrich-insert-bis
    obj graphical-color graphical-lwidth #f)
   (set! sticky-point #f)
+  (set! current-edge-sel? #f)
   (graphics-forget-states))
 
 ;; Right button (create)
@@ -722,7 +833,7 @@
 (define (line_nonsticky-right-button x y mode)
   (with o `(,mode (point ,x ,y) (point ,x ,y))
     (graphics-store-state 'start-create)
-    (create-graphical-object o 'new 'object-and-points)
+    (create-graphical-object o 'new 'object-and-points #f)
     (set! current-point-no 1)
     (set! sticky-point #t)
     (graphics-store-state #f)))
@@ -736,28 +847,28 @@
 ;; Dispatch
 (define (edit_left-button x y)
   (with-graphics-context
-   "insert" x y p obj no
+   "insert" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline)
 			(text-at))
-	     left-button (x y p obj no) do-tick)))
+	     left-button (x y p obj no edge) do-tick)))
 
 (define (edit_move x y)
   (with-graphics-context
-   ";move" x y p obj no
+   ";move" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline)
 			(text-at))
-	     move (x y p obj no) do-tick)))
+	     move (x y p obj no edge) do-tick)))
 
 (define (edit_middle-button x y)
   (with-graphics-context
-   "remove" x y p obj no
+   "remove" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline text-at))
 	     middle-button (x y p obj no) do-tick)))
 
 (define (edit_right-button x y)
   (if sticky-point
       (with-graphics-context
-       "last" x y p obj no
+       "last" x y p obj no edge
        (dispatch (car obj) ((point line cline spline cspline text-at))
 		 sticky-right-button (x y p obj no) do-tick))
       (with mode (cadr (graphics-mode))
@@ -765,6 +876,15 @@
 			(line cline spline cspline)
 			(text-at))
 		  nonsticky-right-button (x y mode) do-tick))))
+
+(define (edit_tab-key)
+ ;(display* "Graphics] Edit(Tab)\n")
+  (if (and current-x current-y)
+      (begin
+	(select-next)
+	(invalidate-graphical-object)
+	(edit_move current-x current-y)
+	(invalidate-graphical-object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit properties mode
@@ -775,7 +895,7 @@
   (graphics-remove p)
   (graphics-group-enrich-insert-bis
      obj (get-env "gr-color") (get-env "gr-line-width") #f)
-  (create-graphical-object obj 'new 'points))
+  (create-graphical-object obj 'new 'points #f))
 
 (define (text-at_change-halign p obj)
   (graphics-remove p)
@@ -785,7 +905,7 @@
 				 ((== halign "right") "left")
 				 (else "left")))
      (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points)))
+     (create-graphical-object obj '() 'points #f)))
 
 (define (text-at_assign-props p obj)
   (text-at_change-halign p obj))
@@ -799,22 +919,25 @@
 				  ((== valign "top") "bottom")
 				  (else "bottom")))
      (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points)))
+     (create-graphical-object obj '() 'points #f)))
 
 ;; Dispatch
 (define (edit-prop_move x y)
   (edit_move x y))
 
 (define (edit-prop_left-button x y)
-  (with-graphics-context "assign-props" x y p obj no
+  (with-graphics-context "assign-props" x y p obj no edge
      (dispatch (car obj) ((point line cline spline cspline)
 			  (text-at))
 	       assign-props (p obj) do-tick)))
 
 (define (edit-prop_right-button x y)
-  (with-graphics-context "change-valign" x y p obj no
+  (with-graphics-context "change-valign" x y p obj no edge
      (dispatch (car obj) ((text-at))
                change-valign (p obj) do-tick)))
+
+(define (edit-prop_tab-key)
+  (display* "Graphics] Edit-prop(Tab)\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
@@ -846,6 +969,13 @@
 	    ((edit)
 	     (edit-prop))
 	    right-button (x y)))
+
+(define (graphics-choose-point)
+  ;(display* "Graphics] Choose\n")
+  (dispatch (car (graphics-mode))
+	    ((edit)
+	     (edit-prop))
+	    tab-key ()))
 
 (define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
