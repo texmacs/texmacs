@@ -1,13 +1,30 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.4>
+  <section|Changes from version 1.0.3 to 1.0.3.5>
 
   <\itemize>
+    <item>Added documentation on how to write style files and packages
+    (1.0.3.5).
+
+    <item>Experimental support for recursive sections and structured
+    sections/lists (1.0.3.5).
+
+    <item>Thorough reorganization of style files: counters, lists,
+    environments, sections (1.0.3.5).
+
+    <item>Support for local layout changes when formatting source code
+    (1.0.3.5).
+
+    <item>Added a plug-in for <name|Python> by <person|Ero Carrera>
+    (1.0.3.5).
+
+    <item>New <TeXmacs> icon by <person|Johann Dréo> (1.0.3.5).
+
     <item>The editing of style files has been completely reorganized and
     improved (1.0.3.4).
 

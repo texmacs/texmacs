@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -56,6 +56,8 @@
 
     <item>Jonas Lööf for a precise installation procedure on Cygwin.
 
+    <item>Johann Dréo for the new <TeXmacs> icon.
+
     <item>Rob Clark made a patch which improves the system time support.
   </itemize>
 
@@ -71,27 +73,18 @@
 
 <\initial>
   <\collection>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
