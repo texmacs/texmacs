@@ -26,7 +26,7 @@ public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
   tree get_locals ();
-  void set_locals (tree t);
+  bool set_locals (tree t);
   bool contains (string l);
 
   /* Properties of the tag itself */

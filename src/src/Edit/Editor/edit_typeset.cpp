@@ -132,9 +132,9 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   SERVER (style_get_cache (style, H, t, ok));
   if (ok) {
     env->patch_env (H);
-    drd->set_locals (t);
+    ok = drd->set_locals (t);
   }
-  else {
+  if (!ok) {
     tree style2= style;
     if (is_tuple (style2))
       style2= ::join (::join (tuple ("std--before"), style2),
