@@ -14,9 +14,10 @@
 #include "file.hpp"
 #include "server.hpp"
 
-extern bool char_clip;
-extern url  tm_init_file;
-extern url  tm_init_buffer_file;
+extern bool   char_clip;
+extern url    tm_init_file;
+extern url    tm_init_buffer_file;
+extern string my_init_cmds;
 
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
@@ -100,6 +101,12 @@ TeXmacs_main (int argc, char** argv) {
 	system ("echo $TEXMACS_BIN_PATH");
 	exit (0);
       }
+      else if ((s == "-q") || (s == "-quit"))
+	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+      else if ((s == "-x") || (s == "-execute")) {
+	i++;
+	if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
+      }
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
       else {
@@ -112,9 +119,11 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -h         Display this help message\n";
 	cout << "  -i [file]  Specify scheme initialization file\n";
 	cout << "  -p         Get the TeXmacs path\n";
+	cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
+	cout << "  -x [cmd]   Execute scheme command\n";
 	cout << "  -Oc        TeX characters bitmap clipping off\n";
 	cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
 	cout << "\nPlease report bugs to <bugs@texmacs.org>\n";
@@ -143,7 +152,8 @@ TeXmacs_main (int argc, char** argv) {
     if ((s == "-b") || (s == "-initialize-buffer") ||
 	(s == "-fn") || (s == "-font") ||
 	(s == "-i") || (s == "-initialize") ||
-	(s == "-g") || (s == "-geometry")) i++;
+	(s == "-g") || (s == "-geometry") ||
+	(s == "-x") || (s == "-execute")) i++;
   }
   if (install_status == 1) {
     if (DEBUG_STD) cout << "TeXmacs] Loading welcome message...\n";
