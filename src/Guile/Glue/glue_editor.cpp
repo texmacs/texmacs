@@ -1675,15 +1675,6 @@ tmg_menu_after_action () {
 }
 
 SCM
-tmg_in_preambleP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->in_preamble_mode ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
 tmg_is_deactivatedP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->is_deactivated ();
@@ -2935,7 +2926,6 @@ initialize_glue_editor () {
   gh_new_procedure ("init-has?", (FN) tmg_init_hasP, 1, 0, 0);
   gh_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
-  gh_new_procedure ("in-preamble?", (FN) tmg_in_preambleP, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
   gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);

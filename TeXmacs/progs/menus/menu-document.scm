@@ -163,7 +163,7 @@
 	  ("Default" (init-default "src-close"))
 	  ---
 	  ("Repeat" (init-env "src-close" "repeat"))
-	  ("Long" (init-env "src-close" "long"))
+	  ("Stretched" (init-env "src-close" "long"))
 	  ("Compact" (init-env "src-close" "compact"))
 	  ("Minimal" (init-env "src-close" "minimal"))))
   ---

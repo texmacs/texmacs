@@ -170,7 +170,6 @@
   (init-has? defined_in_init (bool string))
   (menu-before-action before_menu_action (void))
   (menu-after-action after_menu_action (void))
-  (in-preamble? in_preamble_mode (bool))
   (is-deactivated? is_deactivated (bool))
   (make make_compound (void tree_label))
   (make-arity make_compound (void tree_label int))

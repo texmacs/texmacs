@@ -94,24 +94,24 @@
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<right-flush><action|<with|color|blue|<with|mode|math|\<cdots\>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|\<cdots\>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<right-flush><action|<with|color|blue|<with|mode|math|<op|\<Leftarrow\>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
+    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>
     <render-exercise|<localize|Solution>|<arg|x>>
   </macro>>
 
-  <assign|annote|<macro|i|<with|font-family|ss|<with|color|brown|[><with|color|dark
-  blue|<arg|i>><with|color|brown|]>>>>
+  <assign|annote|<macro|i|<with|font-family|ss|<active*|<with|color|brown|[>><with|color|dark
+  blue|<arg|i>><active*|<with|color|brown|]>>>>>
 
-  <assign|correct|<macro|old|new|<with|color|brown|[><with|color|dark
-  blue|<arg|old>><with|color|brown|<with|mode|math|\<rightarrow\>>><with|color|dark
-  blue|<arg|new>><with|color|brown|]>>>
+  <assign|correct|<macro|old|new|<active*|<with|color|brown|[>><with|color|dark
+  blue|<arg|old>><active*|<with|color|brown|<with|mode|math|\<rightarrow\>>>><with|color|dark
+  blue|<arg|new>><active*|<with|color|brown|]>>>>
 
   \;
 </body>

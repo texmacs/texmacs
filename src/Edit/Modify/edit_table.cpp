@@ -632,8 +632,7 @@ edit_table_rep::back_table (path p, bool forward) {
 void
 edit_table_rep::back_in_table (tree t, path p, bool forward) {
   if (is_func (t, TFORMAT) &&
-      (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
-       in_preamble_mode ()))
+      (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_source ()))
     {
       remove_argument (p, forward);
       return;
