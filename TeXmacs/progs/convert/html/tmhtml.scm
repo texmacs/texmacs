@@ -94,11 +94,16 @@
 	 (title (tmhtml-find-title doc))
 	 (css '(h:style (@ (type "text/css")) "body { text-align: justify }"))
 	 (body (tmhtml doc)))
-    (set! title (if title `(concat ,title " (FSF GNU project)") "No title"))
-    (if (or (in? "tmdoc" styles) (in? "tmweb" styles))
-	(begin
-	  (set! css '(h:link (@ (rel "stylesheet")
-				(href "http://www.texmacs.org/css/tmdoc.css")
+    (set! title (cond ((not title) "No title")
+		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
+		       `(concat ,title " (FSF GNU project)"))
+		      (else title)))
+    (if (or (in? "tmdoc" styles) (in? "tmweb" styles) (in? "mmxdoc" styles))
+	(with ss (if (in? "mmxdoc" styles)
+		     "http://www.texmacs.org/css/mmxdoc.css"
+		     "http://www.texmacs.org/css/tmdoc.css")
+	  (set! css `(h:link (@ (rel "stylesheet")
+				(href ,ss)
 				(type "text/css"))))
 	  (set! body (tmhtml-tmdoc-post body))))
     `(h:html
