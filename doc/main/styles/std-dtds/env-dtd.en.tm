@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Standard environments inside text>
+  <tmdoc-title|Standard environments>
 
   The <tmdtd|env> <abbr|d.t.d.> contains the standard environments which are
   available in most styles. It is subdivided into the following parts:

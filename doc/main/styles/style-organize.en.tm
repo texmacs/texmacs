@@ -3,25 +3,12 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The common base for most styles>
-
-  The <tmdtd|std> <abbr|d.t.d.> contains the markup which is common to
-  virtually all styles. It is subdivided into the following parts:
+  <tmdoc-title|General organization>
 
   <\traverse>
-    <branch|std-markup|std-markup-dtd.en.tm>
+    <branch|Standard <TeXmacs> styles|std-styles.en.tm>
 
-    <branch|std-symbol|std-symbol-dtd.en.tm>
-
-    <branch|std-math|std-math-dtd.en.tm>
-
-    <branch|std-list|std-list-dtd.en.tm>
-
-    <branch|std-automatic|std-automatic-dtd.en.tm>
-
-    <branch|program|program-dtd.en.tm>
-
-    <branch|session|session-dtd.en.tm>
+    <branch|Standard <TeXmacs> packages|std-packages.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -36,7 +23,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>
@@ -46,8 +32,6 @@
     <associate|page-reduce-top|15mm>
     <associate|page-right|30mm>
     <associate|page-top|30mm>
-    <associate|page-type|a4>
     <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

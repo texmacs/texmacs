@@ -25,7 +25,7 @@
 
     <branch|Customizing list environments|customize-lists.en.tm>
 
-    <branch|Customizing theorem environments|customize-theorems.en.tm>
+    <branch|Customizing numbered textual environments|customize-theorems.en.tm>
 
     <branch|Customizing sectional tags|customize-sections.en.tm>
   </traverse>

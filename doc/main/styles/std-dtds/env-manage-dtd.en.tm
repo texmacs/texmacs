@@ -6,7 +6,7 @@
   <tmdoc-title|Defining new environments>
 
   The <tmdtd|env-base> <abbr|d.t.d.> contains high-level markup which can be
-  used by the user to define new environments for theorems, remarks,
+  used by the user to define new numbered environments for theorems, remarks,
   exercises and figures:
 
   <\explain|<explain-macro|new-theorem|env-name|display-name>>
@@ -51,14 +51,26 @@
     <TeXmacs> environments.
   </big-figure>
 
-  New unary environments may be added to arbitrary counter-groups using the
-  <markup|new-env> macro. In addition to the arguments of
-  <markup|new-theorem>, this macro takes a counter-group and the name of a
-  binary macro for rendering the environment on input. The arguments of the
-  rendering macro are a name (like ``Theorem 3.14'') and its body. For
-  instance, <markup|new-theorem> is based on <markup|new-env>, by taking
-  <verbatim|theorem-env> for the counter-group and <markup|render-theorem>
-  for the rendering macro.
+  In addition to the standard theorem-like, remark-like, exercise-like and
+  figure-like environments, other numbered textual environments may be
+  defined using the <markup|new-env> macro. These environments may be based
+  on arbitrary counter-groups:
+
+  <\explain|<explain-macro|new-env|group|env|env-name|display-name>>
+    The first argument is the name of the counter <src-arg|group> to which
+    the new environment belongs. The second argument <src-arg|env> is the
+    name of a binary macro for rendering the environment. The arguments of
+    the rendering macro are a name (like ``Theorem 3.14'') and its body. The
+    remaining arguments are similar as for <markup|new-theorem>. For
+    instance, in the standard style-sheets, <markup|new-theorem> is defined
+    by
+
+    <\tm-fragment>
+      <\inactive*>
+        <assign|new-theorem|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem>>>
+      </inactive*>
+    </tm-fragment>
+  </explain>
 
   We recall trat you may add new counters or counter-groups to the
   <verbatim|theorem-env> counter-group using the <markup|new-counter-group>

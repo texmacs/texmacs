@@ -50,10 +50,6 @@
 
     <branch|The style-sheet language|design/style-language.en.tm>
 
-    <branch|The standard <TeXmacs> styles|standard/standard.en.tm>
-
-    <branch|Writing your own style files|design/design.en.tm>
-
     <branch|Customizing the standard <TeXmacs>
     styles|customize/customize.en.tm>
   </traverse>
