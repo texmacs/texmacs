@@ -74,6 +74,7 @@ public:
   virtual int    remove_all_delayed_messages (widget wid, string s) = 0;
 
   /* miscellaneous */
+  virtual void   beep () = 0;
   virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
   virtual void   postscript_gc (string name= "*") = 0;
   virtual void   set_pointer (string pixmap_name= "") = 0;

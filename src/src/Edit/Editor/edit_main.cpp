@@ -208,7 +208,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   delete dev;
 
   if (pdf) {
-    system ("ps2pdf", name, orig);
+    ps2pdf (name, orig);
     ::remove (name);
   }
 }
