@@ -1,0 +1,128 @@
+
+/******************************************************************************
+* MODULE     : hashmap_extra.cpp
+* DESCRIPTION: extra routines for hashmap<string,tree>
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#ifndef HASHMAP_EXTRA_CC
+#define HASHMAP_EXTRA_CC
+#include "hashmap.hpp"
+#define TMPL template<class T, class U>
+#define H hashentry<T,U>
+
+TMPL void
+hashmap_rep<T,U>::write_back (T x, hashmap<T,U> base) {
+  register int hv= hash(x);
+  list<hashentry<T,U> > l (a[hv&(n-1)]);
+  while (!nil (l)) {
+    if (l->item.key==x) return;
+    l= l->next;
+  }
+  if (size>=n*max) resize (n<<1);
+  list<hashentry<T,U> >& rl= a[hv&(n-1)];
+  rl= list<hashentry<T,U> > (H (x, init), rl);
+  size ++;
+
+  list<hashentry<T,U> > bl (base->a[hv&(base->n-1)]);
+  while (!nil (bl)) {
+    if (bl->item.key==x) {
+      rl->item.im= bl->item.im;
+      return;
+    }
+    bl= bl->next;
+  }
+  rl->item.im= base->init;
+}
+
+TMPL void
+hashmap_rep<T,U>::pre_patch (hashmap<T,U> patch, hashmap<T,U> base) {
+  int i=0, n=patch->n;
+  for (; i<n; i++) {
+    list<hashentry<T,U> > l=patch->a[i];
+    for (; !nil(l); l=l->next) {
+      T x= l->item.key;
+      U y= contains (x)? bracket_ro (x): l->item.im;
+      if (base[x] == y) reset (x);
+      else bracket_rw (x)= y;
+    }
+  }
+}
+
+TMPL void
+hashmap_rep<T,U>::post_patch (hashmap<T,U> patch, hashmap<T,U> base) {
+  int i=0, n=patch->n;
+  for (; i<n; i++) {
+    list<hashentry<T,U> > l=patch->a[i];
+    for (; !nil(l); l=l->next) {
+      T x= l->item.key;
+      U y= l->item.im;
+      if (base[x] == y) reset (x);
+      else bracket_rw (x)= y;
+    }
+  }
+}
+
+TMPL list<hashentry<T,U> >
+copy_list (list<hashentry<T,U> > l) {
+  if (nil (l)) return l;
+  else return list<hashentry<T,U> > (hashentry<T,U> (l->item.key, l->item.im),
+				    copy_list (l->next));
+}
+
+TMPL hashmap<T,U>
+copy (hashmap<T,U> h) {
+  int i, n= h->n;
+  hashmap<T,U> h2 (h->init, n, h->max);
+  h2->size= h->size;
+  for (i=0; i<n; i++)
+    h2->a[i]= copy_list (h->a[i]);
+  return h2;
+}
+
+TMPL hashmap<T,U>
+changes (hashmap<T,U> patch, hashmap<T,U> base) {
+  int i;
+  hashmap<T,U> h (base->init);
+  for (i=0; i<patch->n; i++) {
+    list<hashentry<T,U> > l (patch->a[i]);
+    while (!nil (l)) {
+      if (l->item.im != base [l->item.key]) h (l->item.key)= l->item.im;
+      l=l->next;
+    }
+  }
+  return h;
+}
+
+TMPL hashmap<T,U>
+invert (hashmap<T,U> patch, hashmap<T,U> base) {
+  int i;
+  hashmap<T,U> h (base->init);
+  for (i=0; i<patch->n; i++) {
+    list<hashentry<T,U> > l (patch->a[i]);
+    while (!nil (l)) {
+      if (l->item.im != base [l->item.key])
+	h (l->item.key)= base [l->item.key];
+      l=l->next;
+    }
+  }
+  return h;
+}
+
+TMPL hashmap<T,U>::hashmap (U init, tree t):
+  rep (new hashmap_rep<T,U>(init, 1, 1))
+{
+  int i, n= arity (t);
+  for (i=0; i<n; i++)
+    if (is_func (t[i], ASSOCIATE, 2))
+      rep->bracket_rw (get_label (t[i][0]))= copy (t[i][1]);
+}
+
+#undef H
+#undef TMPL
+#endif // defined HASHMAP_EXTRA_CC

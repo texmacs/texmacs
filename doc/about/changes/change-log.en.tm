@@ -1,13 +1,126 @@
-<TeXmacs|1.0.2.11>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.2 to 1.0.2.11>
+  <section|Changes from version 1.0.3 to 1.0.4>
 
   <\itemize>
+    <item>Finished documentation of built-in environment variables (1.0.4).
+
+    <item>Bug fixes in the HTML converters and in the accelerator for long
+    documents (1.0.4).
+
+    <item>Better quasi-quoting and added unquote-splicing primitive (1.0.4).
+
+    <item>Finished documentation of <TeXmacs> primitives (1.0.3.11).
+
+    <item>Started documentation built-in environment variables (1.0.3.11).
+
+    <item>Editing of text-at boxes in graphics mode (1.0.3.11).
+
+    <item>Higher reactivity for editing large documents (1.0.3.10).
+
+    <item>Speed-up for starting <TeXmacs> (1.0.3.10).
+
+    <item>Tab-completion and hyperlinks for intra-project labels and
+    references (1.0.3.10).
+
+    <item>Patches by Henri Lesourd for better editing of graphics (1.0.3.10).
+
+    <item>Several bug corrections (1.0.3.10).
+
+    <item>Tree call-backs at modifications in documents (1.0.3.9).
+
+    <item>Path-aware trees (1.0.3.9).
+
+    <item>Bug fixes w.r.t. previous version (1.0.3.9).
+
+    <item>Better handling of parameters for page size and margins (1.0.3.8).
+
+    <item>Implementation of ``mutators'', tags which may modify themselves
+    (1.0.3.8).
+
+    <item>Let computer algebra sessions make use of mutators (1.0.3.8).
+
+    <item>All <TeXmacs> documents become part of one global super-document
+    (1.0.3.8).
+
+    <item>Alpha release of the Windows version of <TeXmacs> (1.0.3.7).
+
+    <item>Application of some patches (1.0.3.7).
+
+    <item>Danish language support (1.0.3.7).
+
+    <item>Part of the documentation has been translated into Polish
+    (1.0.3.7).
+
+    <item>Added a lot of documentation on how to write style files (1.0.3.6).
+
+    <item>Modernization of the documentation on the <TeXmacs> primitives and
+    style files (1.0.3.6).
+
+    <item>Correction of several bugs from the last version (1.0.3.6).
+
+    <item>Added documentation on how to write style files and packages
+    (1.0.3.5).
+
+    <item>Experimental support for recursive sections and structured
+    sections/lists (1.0.3.5).
+
+    <item>Thorough reorganization of style files: counters, lists,
+    environments, sections (1.0.3.5).
+
+    <item>Support for local layout changes when formatting source code
+    (1.0.3.5).
+
+    <item>Added a plug-in for <name|Python> by <person|Ero Carrera>
+    (1.0.3.5).
+
+    <item>New <TeXmacs> icon by <person|Johann Dréo> (1.0.3.5).
+
+    <item>The editing of style files has been completely reorganized and
+    improved (1.0.3.4).
+
+    <item>Application of many minor bug fixing patches (1.0.3.3).
+
+    <item>Some <TeXmacs> primitives have been documented in greater detail
+    (1.0.3.3).
+
+    <item>Further fixes for using <name|True Type> fonts (1.0.3.3).
+
+    <item>Reorganization of font-system so that it can work with <name|True
+    Type> fonts instead of the usual pk fonts. This makes it possible to make
+    <TeXmacs> distributions which do not longer rely on <name|Metafont> for
+    the font-handling (1.0.3.2).
+
+    <item>Implementation of compound fonts. This is used in order to similate
+    EC fonts by combining several other CM-like fonts. It also provides a
+    first step towards native <name|Unicode> support <no-break>(1.0.3.2).
+
+    <item>Improved <name|Octave> plug-in and added plug-ins for <name|Clisp>,
+    <name|Cmucl> and <name|Matlab> (1.0.3.2).
+
+    <item>Further fixes for experimental Windows version (1.0.3.2).
+
+    <item>Synchronized with Windows version (1.0.3.1).
+
+    <item>Further preparation of graphics: grids (1.0.3.1).
+
+    <item>Preparations for changes in font-handling (1.0.3.1).
+
+    <item>A few updates in the documentation (1.0.3.1).
+  </itemize>
+
+  <section|Changes from version 1.0.2 to 1.0.3>
+
+  <\itemize>
+    <item>Several minor bug corrections (1.0.3).
+
+    <item>Applied some convenience patches (1.0.3).
+
     <item>Added support for Slovene (1.0.2.11).
 
     <item>Improvements in LaTeX importation (1.0.2.11).
@@ -1119,83 +1232,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-10|<tuple|10|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-11|<tuple|11|?>>
-    <associate|toc-12|<tuple|12|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-13|<tuple|13|?>>
-    <associate|toc-4|<tuple|4|?>>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|toc-6|<tuple|6|?>>
-    <associate|toc-7|<tuple|7|?>>
-    <associate|toc-8|<tuple|8|?>>
-    <associate|toc-9|<tuple|9|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Changes
-      from version 1.0.2 to 1.0.2.10><value|toc-dots><pageref|toc-1><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Changes
-      from version 1.0.1 to 1.0.2><value|toc-dots><pageref|toc-2><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Changes
-      between TeXmacs 1.0 and TeXmacs 1.0.1><value|toc-dots><pageref|toc-3><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Changes
-      between TeXmacs 0.3.5 and TeXmacs 1.0><value|toc-dots><pageref|toc-4><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Changes
-      between TeXmacs 0.3.4 and TeXmacs 0.3.5><value|toc-dots><pageref|toc-5><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Changes
-      between TeXmacs 0.3.3 and TeXmacs 0.3.4><value|toc-dots><pageref|toc-6><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Changes
-      between TeXmacs 0.3.2 and TeXmacs 0.3.3><value|toc-dots><pageref|toc-7><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>Changes
-      between TeXmacs 0.3.1 and TeXmacs 0.3.2><value|toc-dots><pageref|toc-8><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|9<space|2spc>Changes
-      between TeXmacs 0.3.0 and TeXmacs 0.3.1><value|toc-dots><pageref|toc-9><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>Changes
-      between TeXmacs 0.2.5 and TeXmacs 0.3.0><value|toc-dots><pageref|toc-10><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|11<space|2spc>Changes
-      between TeXmacs 0.2.4 and TeXmacs 0.2.5><value|toc-dots><pageref|toc-11><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|12<space|2spc>Changes
-      between TeXmacs 0.2.3 and TeXmacs 0.2.4><value|toc-dots><pageref|toc-12><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|13<space|2spc>Changes
-      between TeXmacs 0.2.2 and TeXmacs 0.2.3><value|toc-dots><pageref|toc-13><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>

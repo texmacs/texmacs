@@ -1,13 +1,13 @@
-<TeXmacs|1.0.2.9>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Basic input/output using pipes>
 
-  The configuration and the compilation of the <verbatim|minimal> plugin is
+  The configuration and the compilation of the <verbatim|minimal> plug-in is
   <hyper-link|described|../plugin/plugin-binary.en.tm> in the chapter about
-  plugins. We will now study the source file
+  plug-ins. We will now study the source file
   <example-plugin-link|minimal/src/minimal.cpp>. Essentially, the
   <verbatim|main> routine is given by
 
@@ -111,12 +111,12 @@
 
   <\remark>
     In our example, the <value|cpp> code for the application is included in
-    the plugin. In the case when you are writing a <TeXmacs> interface for an
-    existing application <verbatim|<em|myapp>>, the convention is to create a
-    <verbatim|--texmacs> option for this program. Then it is no longer
-    necessary to have <verbatim|<em|myapp>/src> and <verbatim|<em|myapp>/bin>
-    directories for your plugin and it suffices to configure the plugin by
-    putting something like the following in
+    the plug-in. In the case when you are writing a <TeXmacs> interface for
+    an existing application <verbatim|<em|myapp>>, the convention is to
+    create a <verbatim|--texmacs> option for this program. Then it is no
+    longer necessary to have <verbatim|<em|myapp>/src> and
+    <verbatim|<em|myapp>/bin> directories for your plug-in and it suffices to
+    configure the plug-in by putting something like the following in
     <verbatim|<em|myapp>/progs/init-<em|myapp>.scm>:
 
     <\scheme-fragment>
@@ -132,7 +132,7 @@
     In the case when you do not have the possibility to modify the source
     code of <verbatim|<em|myapp>>, you typically have to write an
     input/output filter <verbatim|tm_<em|myapp>> for performing the
-    appropriate rewritings. By looking at the standard plugins distributed
+    appropriate rewritings. By looking at the standard plug-ins distributed
     with <TeXmacs> in
 
     <\verbatim>
@@ -154,27 +154,18 @@
 
 <\initial>
   <\collection>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>

@@ -1,0 +1,14 @@
+
+1. Conversion program<->scheme_tree not completely correct:
+   Problem with the list () of length zero.
+
+2. Other conversions to trees should be normalized.
+   Get rid of () [] {} (,) [,] {,}
+
+3. Indices, color changes, etc.
+   -> change environment while typesetting.
+   -> but not when executing without typesetting.
+
+4. Possible to distinguish between static and shared compilation
+   on sun systems by -dy and -dn flags. However, only a shared
+   version of ldl is available...

@@ -1,0 +1,23 @@
+/* XPM */
+static char * tm_edit_props_xpm[] = {
+"16 16 4 1",
+" 	s None	c None",
+".	c #FFFF80000000",
+"X	c yellow",
+"o	c black",
+"      .X X.X  .X",
+"ooo    .XX.Xo.X ",
+"   o    .X.X.X  ",
+"    o XXX...XXX ",
+"o   o ......... ",
+" oo o XXX...XXX ",
+"   oo  X.X.X. o ",
+"  ooo X.oX.XX.  ",
+"  o  X. oX.X X. ",
+" o     oo o   X ",
+" o     ooo   o  ",
+" o     o  o o   ",
+" o         o    ",
+"  o       o oo  ",
+"   ooooooo    o ",
+"               o"};

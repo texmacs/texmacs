@@ -1,9 +1,9 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|About GNU <TeXmacs>-<extern|texmacs-version>>
+  <tmdoc-title|About GNU <TeXmacs>-<TeXmacs-version>>
 
   <\traverse>
     <branch|Summary|about-summary.en.tm>
@@ -27,27 +27,6 @@
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>

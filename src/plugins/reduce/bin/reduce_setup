@@ -1,0 +1,36 @@
+#!/bin/sh
+
+which reduce > /dev/null 2>&1
+if [ $? -ne 0 ] ; then
+  echo "reduce is not in the path"
+  exit 1
+fi
+
+if [ -z $TEXMACS_PATH ] ; then
+  TEXMACS_PATH=`texmacs --path`
+fi
+export TEXMACS_PATH
+
+if [ -z $reduce ] ; then
+  reduce=`grep 'setenv reduce ' \`which reduce\` | sed 's/setenv reduce //'`
+fi
+export reduce
+
+if [ -z $MACHINE ] ; then
+  MACHINE=`grep 'setenv MACHINE ' \`which reduce\` | sed 's/setenv MACHINE //'`
+fi
+export MACHINE
+
+if [ -z $lisp ] ; then
+  lisp=psl
+fi
+export lisp
+
+cd $reduce/packages/rprint
+cp fmprint.red tmprint.red
+cd $reduce/xr/bin
+cp xr.red texmacs.red
+cd $reduce
+patch -p1 -f < $TEXMACS_PATH/plugins/reduce/install/patch
+util/mkpckge tmprint
+echo "The TeXmacs-Reduce interface has been installed successfully"

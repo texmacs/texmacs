@@ -1,0 +1,582 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% MODULE      : TeXmacs.sty
+%% DESCRIPTION : This is the TeXmacs style file which should be loaded
+%%               when compiling converted TeXmacs texts with LaTeX2e
+%% COPYRIGHT   : (C) 2000  Joris van der Hoeven
+%%
+%% This software falls under the GNU general public license and comes WITHOUT
+%% ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.%$
+%% If you don't have this file, write to the Free Software Foundation, Inc.,
+%% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{TeXmacs}[2000/14/03 Standard TeXmacs class]
+\usepackage{amsmath,amssymb,pstricks,wasysym,stmaryrd,enumerate,epsfig}
+
+\typeout{-----------------------------------------------------------}
+\typeout{Loaded TeXmacs.sty for typesetting converted TeXmacs files}
+\typeout{-----------------------------------------------------------}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Accented characters for foreign languages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\catcode`\¤=\active\def¤{\verb¤}
+\catcode`\=\active \def{<<}
+\catcode`\=\active \def{>>}
+
+\catcode`\à=\active \defà{\`a}
+\catcode`\á=\active \defá{\'a}
+\catcode`\ä=\active \defä{\"a}
+\catcode`\â=\active \defâ{\^a}
+\catcode`\å=\active \defå{{\aa}}
+\catcode`\ç=\active \defç{\c{c}}
+\catcode`\è=\active \defè{\`e}
+\catcode`\é=\active \defé{\'e}
+\catcode`\ë=\active \defë{\"e}
+\catcode`\ê=\active \defê{\^e}
+\catcode`\ì=\active \defì{\`{\i}}
+\catcode`\í=\active \defí{\'{\i}}
+\catcode`\ï=\active \defï{\"{\i}}
+\catcode`\î=\active \defî{\^{\i}}
+\catcode`\ò=\active \defò{\`o}
+\catcode`\ó=\active \defó{\'o}
+\catcode`\ö=\active \defö{\"o}
+\catcode`\ô=\active \defô{\^o}
+\catcode`\ù=\active \defù{\`u}
+\catcode`\ú=\active \defú{\'u}
+\catcode`\ü=\active \defü{\"u}
+\catcode`\û=\active \defû{\^u}
+\catcode`\ý=\active \defý{\'y}
+\catcode`\ÿ=\active \defÿ{\"y}
+\catcode`\½=\active \def½{!`}
+\catcode`\¾=\active \def¾{?`}
+\catcode`\ß=\active \defß{{\ss}}
+
+\catcode`\À=\active \defÀ{\`A}
+\catcode`\Á=\active \defÁ{\'A}
+\catcode`\Ä=\active \defÄ{\"A}
+\catcode`\Â=\active \defÂ{\^A}
+\catcode`\Å=\active \defÅ{{\AA}}
+\catcode`\Ç=\active \defÇ{\c{C}}
+\catcode`\È=\active \defÈ{\`E}
+\catcode`\É=\active \defÉ{\'E}
+\catcode`\Ë=\active \defË{\"E}
+\catcode`\Ê=\active \defÊ{\^E}
+\catcode`\Ì=\active \defÌ{\`{\I}}
+\catcode`\Í=\active \defÍ{\'{\I}}
+\catcode`\Ï=\active \defÏ{\"{\I}}
+\catcode`\Î=\active \defÎ{\^{\I}}
+\catcode`\Ò=\active \defÒ{\`O}
+\catcode`\Ó=\active \defÓ{\'O}
+\catcode`\Ö=\active \defÖ{\"O}
+\catcode`\Ô=\active \defÔ{\^O}
+\catcode`\Ù=\active \defÙ{\`U}
+\catcode`\Ú=\active \defÚ{\'U}
+\catcode`\Ü=\active \defÜ{\"U}
+\catcode`\Û=\active \defÛ{\^U}
+\catcode`\Ý=\active \defÝ{\'Y}
+\catcode`\˜=\active \def˜{\"Y}
+
+\catcode`\œ=\active
+\catcode`\¼=\active
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Text with translations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\TheoremText}{Theorem}
+\newcommand{\PropositionText}{Proposition}
+\newcommand{\LemmaText}{Lemma}
+\newcommand{\CorollaryText}{Corollary}
+\newcommand{\ProofText}{Proof}
+\newcommand{\AxiomText}{Axiom}
+\newcommand{\DefinitionText}{Definition}
+\newcommand{\NotationText}{Notation}
+\newcommand{\RemarkText}{Remark}
+\newcommand{\NoteText}{Note}
+\newcommand{\ExampleText}{Example}
+\newcommand{\ConventionText}{Convention}
+\newcommand{\ExerciseText}{Exercise}
+\newcommand{\ProblemText}{Problem}
+\newcommand{\WarningText}{Warning}
+
+\newcommand{\SelectBritish}{%
+  \renewcommand{\TheoremText}{Theorem}
+  \renewcommand{\PropositionText}{Proposition}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Corollary}
+  \renewcommand{\ProofText}{Proof}
+  \renewcommand{\AxiomText}{Axiom}
+  \renewcommand{\DefinitionText}{Definition}
+  \renewcommand{\NotationText}{Notation}
+  \renewcommand{\RemarkText}{Remark}
+  \renewcommand{\NoteText}{Note}
+  \renewcommand{\ExampleText}{Example}
+  \renewcommand{\ConventionText}{Convention}
+  \renewcommand{\ExerciseText}{Exercise}
+  \renewcommand{\ProblemText}{Problem}
+  \renewcommand{\WarningText}{Warning}}
+
+\newcommand{\SelectCzech}{%
+  \renewcommand{\TheoremText}{Teorém}
+  \renewcommand{\PropositionText}{Tvrzení}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Korolár}
+  \renewcommand{\ProofText}{D·kaz}
+  \renewcommand{\AxiomText}{Axióm}
+  \renewcommand{\DefinitionText}{Definice}
+  \renewcommand{\NotationText}{Notace}
+  \renewcommand{\RemarkText}{Anotace}
+  \renewcommand{\NoteText}{Poznámka}
+  \renewcommand{\ExampleText}{P°íklad}
+  \renewcommand{\ConventionText}{Konvence}
+  \renewcommand{\ExerciseText}{Cvi£ení}
+  \renewcommand{\ProblemText}{P°íklad}
+  \renewcommand{\WarningText}{Varování}}
+
+\newcommand{\SelectDutch}{%
+  \renewcommand{\TheoremText}{Stelling}
+  \renewcommand{\PropositionText}{Propositie}
+  \renewcommand{\LemmaText}{Hulpstelling}
+  \renewcommand{\CorollaryText}{Gevolg}
+  \renewcommand{\ProofText}{Bewijs}
+  \renewcommand{\AxiomText}{Axioma}
+  \renewcommand{\DefinitionText}{Definitie}
+  \renewcommand{\NotationText}{Notatie}
+  \renewcommand{\RemarkText}{Opmerking}
+  \renewcommand{\NoteText}{Aantekening}
+  \renewcommand{\ExampleText}{Voorbeeld}
+  \renewcommand{\ConventionText}{Afspraak}
+  \renewcommand{\ExerciseText}{Oefening}
+  \renewcommand{\ProblemText}{Probleem}
+  \renewcommand{\WarningText}{Waarschuwing}}
+
+\newcommand{\SelectEnglish}{%
+  \renewcommand{\TheoremText}{Theorem}
+  \renewcommand{\PropositionText}{Proposition}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Corollary}
+  \renewcommand{\ProofText}{Proof}
+  \renewcommand{\AxiomText}{Axiom}
+  \renewcommand{\DefinitionText}{Definition}
+  \renewcommand{\NotationText}{Notation}
+  \renewcommand{\RemarkText}{Remark}
+  \renewcommand{\NoteText}{Note}
+  \renewcommand{\ExampleText}{Example}
+  \renewcommand{\ConventionText}{Convention}
+  \renewcommand{\ExerciseText}{Exercise}
+  \renewcommand{\ProblemText}{Problem}
+  \renewcommand{\WarningText}{Warning}}
+
+\newcommand{\SelectFrench}{%
+  \renewcommand{\TheoremText}{Théorème}
+  \renewcommand{\PropositionText}{Proposition}
+  \renewcommand{\LemmaText}{Lemme}
+  \renewcommand{\CorollaryText}{Corollaire}
+  \renewcommand{\ProofText}{Démonstration}
+  \renewcommand{\AxiomText}{Axiome}
+  \renewcommand{\DefinitionText}{Définition}
+  \renewcommand{\RemarkText}{Remarque}
+  \renewcommand{\NoteText}{Note}
+  \renewcommand{\ExampleText}{Exemple}
+  \renewcommand{\ConventionText}{Convention}
+  \renewcommand{\ExerciseText}{Exercice}
+  \renewcommand{\WarningText}{Avertissement}}
+
+\newcommand{\SelectGerman}{%
+  \renewcommand{\TheoremText}{Satz}
+  \renewcommand{\PropositionText}{Proposition}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Folgerung}
+  \renewcommand{\ProofText}{Beweis}
+  \renewcommand{\AxiomText}{Axiom}
+  \renewcommand{\DefinitionText}{Definition}
+  \renewcommand{\NotationText}{Notierung}
+  \renewcommand{\RemarkText}{Bemerkung}
+  \renewcommand{\NoteText}{Anmerkung}
+  \renewcommand{\ExampleText}{Beispiel}
+  \renewcommand{\ConventionText}{Konvention}
+  \renewcommand{\ExerciseText}{Aufgabe}
+  \renewcommand{\ProblemText}{Problem}
+  \renewcommand{\WarningText}{Warnung}}
+
+\newcommand{\SelectHungarian}{%
+  \renewcommand{\TheoremText}{Teoréma}
+  \renewcommand{\PropositionText}{Propozíció}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\ProofText}{Bizonyítás}
+  \renewcommand{\AxiomText}{Axióma}
+  \renewcommand{\DefinitionText}{Definíció}
+  \renewcommand{\ExampleText}{Példa}
+  \renewcommand{\ExerciseText}{Gyakorlat}
+  \renewcommand{\WarningText}{Figyelmeztetés}}
+
+\newcommand{\SelectItalian}{%
+  \renewcommand{\TheoremText}{Teorema}
+  \renewcommand{\PropositionText}{Proposizione}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Corollario}
+  \renewcommand{\ProofText}{Prova}
+  \renewcommand{\AxiomText}{Assioma}
+  \renewcommand{\DefinitionText}{Definizione}
+  \renewcommand{\NotationText}{Notazione}
+  \renewcommand{\RemarkText}{Importante}
+  \renewcommand{\NoteText}{Nota}
+  \renewcommand{\ExampleText}{Esempio}
+  \renewcommand{\ConventionText}{Convenzione}
+  \renewcommand{\ExerciseText}{Esercizio}
+  \renewcommand{\WarningText}{Avviso}}
+
+\newcommand{\SelectPolish}{%
+  \renewcommand{\TheoremText}{Twierdzenie}
+  \renewcommand{\PropositionText}{Zaªo»enie}
+  \renewcommand{\LemmaText}{Lemat}
+  \renewcommand{\CorollaryText}{Wniosek}
+  \renewcommand{\ProofText}{Dowód}
+  \renewcommand{\AxiomText}{Aksjomat}
+  \renewcommand{\DefinitionText}{Definicja}
+  \renewcommand{\RemarkText}{Uwaga}
+  \renewcommand{\NoteText}{Notka}
+  \renewcommand{\ExampleText}{Przykªad}
+  \renewcommand{\ConventionText}{Konwencja}
+  \renewcommand{\ExerciseText}{‚wiczenie}
+  \renewcommand{\WarningText}{Ostrze»enie}}
+
+\newcommand{\SelectPortugese}{%
+  \renewcommand{\TheoremText}{Teorema}
+  \renewcommand{\PropositionText}{Proposição}
+  \renewcommand{\LemmaText}{Lema}
+  \renewcommand{\CorollaryText}{Corolário}
+  \renewcommand{\ProofText}{Demostração}
+  \renewcommand{\AxiomText}{Axioma}
+  \renewcommand{\DefinitionText}{Definição}
+  \renewcommand{\RemarkText}{Comentário}
+  \renewcommand{\NoteText}{Nota}
+  \renewcommand{\ExampleText}{Exemplo}
+  \renewcommand{\ConventionText}{Convenção}
+  \renewcommand{\ExerciseText}{Exercício}
+  \renewcommand{\WarningText}{Aviso}}
+
+\newcommand{\SelectRomanian}{%
+  \renewcommand{\TheoremText}{Teorema}
+  \renewcommand{\PropositionText}{Propozitie}
+  \renewcommand{\LemmaText}{Lema}
+  \renewcommand{\CorollaryText}{Corolar}
+  \renewcommand{\ProofText}{Demonstratie}
+  \renewcommand{\AxiomText}{Axioma}
+  \renewcommand{\DefinitionText}{Definitie}
+  \renewcommand{\RemarkText}{Observatie}
+  \renewcommand{\NoteText}{Nota}
+  \renewcommand{\ExampleText}{Exemplu}
+  \renewcommand{\ExerciseText}{Exercitiu}
+  \renewcommand{\WarningText}{Avertisment}}
+
+\newcommand{\SelectRussian}{%
+  \defÀ{\CYRA}\defà{\cyra}%
+  \defÁ{\CYRB}\defá{\cyrb}%
+  \defÂ{\CYRV}\defâ{\cyrv}%
+  \defÃ{\CYRG}\defã{\cyrg}%
+  \defÄ{\CYRD}\defä{\cyrd}%
+  \defÅ{\CYRE}\defå{\cyre}%
+  \defÆ{\CYRZH}\defæ{\cyrzh}%
+  \defÇ{\CYRZ}\defç{\cyrz}%
+  \defÈ{\CYRI}\defè{\cyri}%
+  \defÉ{\CYRISHRT}\defé{\cyrishrt}%
+  \defÊ{\CYRK}\defê{\cyrk}%
+  \defË{\CYRL}\defë{\cyrl}%
+  \defÌ{\CYRM}\defì{\cyrm}%
+  \defÍ{\CYRN}\defí{\cyrn}%
+  \defÎ{\CYRO}\defî{\cyro}%
+  \defÏ{\CYRP}\defï{\cyrp}%
+  \defÐ{\CYRR}\defð{\cyrr}%
+  \defÑ{\CYRS}\defñ{\cyrs}%
+  \defÒ{\CYRT}\defò{\cyrt}%
+  \defÓ{\CYRU}\defó{\cyru}%
+  \defÔ{\CYRF}\defô{\cyrf}%
+  \defÕ{\CYRH}\defõ{\cyrh}%
+  \defÖ{\CYRC}\defö{\cyrc}%
+  \def×{\CYRCH}\def÷{\cyrch}%
+  \defØ{\CYRSH}\defø{\cyrsh}%
+  \defÙ{\CYRSHCH}\defù{\cyrshch}%
+  \defÚ{\CYRHRDSN}\defú{\cyrhrdsn}%
+  \defÛ{\CYRERY}\defû{\cyrery}%
+  \defÜ{\CYRSFTSN}\defü{\cyrsftsn}%
+  \defÝ{\CYREREV}\defý{\cyrerev}%
+  \defÞ{\CYRYU}\defþ{\cyryu}%
+  \defß{\CYRYA}\defÿ{\cyrya}%
+  \defœ{\CYRYO}\def¼{\cyryo}%
+  \renewcommand{\TheoremText}{Òåîðåìà}%
+  \renewcommand{\PropositionText}{Ïðåäëîæåíèå}%
+  \renewcommand{\LemmaText}{Ëåììà}%
+  \renewcommand{\CorollaryText}{Ñëåäñòâèå}%
+  \renewcommand{\ProofText}{Äîêàçàòåëüñòâî}%
+  \renewcommand{\AxiomText}{Àêñèîìà}%
+  \renewcommand{\DefinitionText}{Îïðåäåëåíèå}%
+  \renewcommand{\RemarkText}{Çàìå÷àíèå}%
+  \renewcommand{\NoteText}{Çàìåòêà}%
+  \renewcommand{\ExampleText}{Ïðèìåð}%
+  \renewcommand{\ConventionText}{Ñîãëàøåíèå}%
+  \renewcommand{\ExerciseText}{Óïðàæíåíèå}%
+  \renewcommand{\WarningText}{Ïðåäóïðåæäåíèå}}
+
+\newcommand{\SelectSpanish}{%
+  \renewcommand{\TheoremText}{Teorema}
+  \renewcommand{\PropositionText}{Proposición}
+  \renewcommand{\LemmaText}{Lema}
+  \renewcommand{\CorollaryText}{Corolario}
+  \renewcommand{\ProofText}{Demostración}
+  \renewcommand{\AxiomText}{Axioma}
+  \renewcommand{\DefinitionText}{Definición}
+  \renewcommand{\RemarkText}{Comentario}
+  \renewcommand{\NoteText}{Nota}
+  \renewcommand{\ExampleText}{Ejemplo}
+  \renewcommand{\ConventionText}{Convenio}
+  \renewcommand{\ExerciseText}{Ejercicio}
+  \renewcommand{\WarningText}{Aviso}}
+
+\newcommand{\SelectSwedish}{%
+  \renewcommand{\TheoremText}{Teorem}
+  \renewcommand{\PropositionText}{Proposition}
+  \renewcommand{\LemmaText}{Lemma}
+  \renewcommand{\CorollaryText}{Corollar}
+  \renewcommand{\ProofText}{Bevis}
+  \renewcommand{\AxiomText}{Axiom}
+  \renewcommand{\DefinitionText}{Definition}
+  \renewcommand{\RemarkText}{Kommentar}
+  \renewcommand{\NoteText}{Notis}
+  \renewcommand{\ExampleText}{Exempel}
+  \renewcommand{\ConventionText}{Konvention}
+  \renewcommand{\ExerciseText}{Övningsuppgift}
+  \renewcommand{\WarningText}{Varning}}
+ 
+\newcommand{\SelectUkrainian}{%
+  \defÀ{\CYRA}\defà{\cyra}%
+  \defÁ{\CYRB}\defá{\cyrb}%
+  \defÂ{\CYRV}\defâ{\cyrv}%
+  \defÃ{\CYRG}\defã{\cyrg}%
+  \defÄ{\CYRD}\defä{\cyrd}%
+  \defÅ{\CYRE}\defå{\cyre}%
+  \defÆ{\CYRZH}\defæ{\cyrzh}%
+  \defÇ{\CYRZ}\defç{\cyrz}%
+  \defÈ{\CYRI}\defè{\cyri}%
+  \defÉ{\CYRISHRT}\defé{\cyrishrt}%
+  \defÊ{\CYRK}\defê{\cyrk}%
+  \defË{\CYRL}\defë{\cyrl}%
+  \defÌ{\CYRM}\defì{\cyrm}%
+  \defÍ{\CYRN}\defí{\cyrn}%
+  \defÎ{\CYRO}\defî{\cyro}%
+  \defÏ{\CYRP}\defï{\cyrp}%
+  \defÐ{\CYRR}\defð{\cyrr}%
+  \defÑ{\CYRS}\defñ{\cyrs}%
+  \defÒ{\CYRT}\defò{\cyrt}%
+  \defÓ{\CYRU}\defó{\cyru}%
+  \defÔ{\CYRF}\defô{\cyrf}%
+  \defÕ{\CYRH}\defõ{\cyrh}%
+  \defÖ{\CYRC}\defö{\cyrc}%
+  \def×{\CYRCH}\def÷{\cyrch}%
+  \defØ{\CYRSH}\defø{\cyrsh}%
+  \defÙ{\CYRSHCH}\defù{\cyrshch}%
+  \defÜ{\CYRSFTSN}\defü{\cyrsftsn}%
+  \defÞ{\CYRYU}\defþ{\cyryu}%
+  \defß{\CYRYA}\defÿ{\cyrya}%
+  \def¥{\CYRGUP}\def´{\cyrgup}%  
+  \def²{\CYRII}\def³{\cyrii}%
+  \def¯{\CYRYI}\def¿{\cyryi}%
+  \defª{\CYRIE}\defº{\cyrie}% 
+  \renewcommand{\TheoremText}{Òåîðåìà}%
+  \renewcommand{\PropositionText}{Ïðîïîçèö³ÿ}%
+  \renewcommand{\LemmaText}{Ëåìà}%
+  \renewcommand{\CorollaryText}{Íàñë³äîê}%
+  \renewcommand{\ProofText}{Äîêàç}%
+  \renewcommand{\AxiomText}{Àêñ³îìà}%
+  \renewcommand{\DefinitionText}{Âèçíà÷åííÿ}%
+  \renewcommand{\RemarkText}{Çàóâàæåííÿ}%
+  \renewcommand{\NoteText}{Çàì³òêà}%
+  \renewcommand{\ExampleText}{Ïðèêëàä}%
+  \renewcommand{\ConventionText}{Óãîäà}%
+  \renewcommand{\ExerciseText}{Âïðàâà}%
+  \renewcommand{\WarningText}{Ïîïåðåäæåííÿ}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sectional commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\tmsection}[1]{\medskip\bigskip
+
+\noindent\textbf{#1}\vspace{-3ex}
+
+\noindent}
+
+\newcommand{\tmparagraph}[1]{\smallskip
+
+\noindent\textbf{#1} }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Theorem like environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{\TheoremText}
+\newtheorem{proposition}{\PropositionText}
+\newtheorem{lemma}{\LemmaText}
+\newtheorem{corollary}{\CorollaryText}
+\newtheorem{axiom}{\AxiomText}
+\newtheorem{definition}{\DefinitionText}
+
+\newtheorem{varremark}{\RemarkText}
+\newtheorem{varnote}{\NoteText}
+\newtheorem{varexample}{\ExampleText}
+\newtheorem{varconvention}{\ConventionText}
+\newtheorem{varwarning}{\WarningText}
+\newenvironment{remark}{\begin{varremark}\em}{\em\end{varremark}}
+\newenvironment{note}{\begin{varnote}\em}{\em\end{varnote}}
+\newenvironment{example}{\begin{varexample}\em}{\em\end{varexample}}
+\newenvironment{convention}{\begin{varconvention}\em}{\em\end{varconvention}}
+\newenvironment{warning}{\begin{varwarning}\em}{\em\end{varwarning}}
+
+\newenvironment{proof}{
+  \noindent\textbf{\ProofText}\ }{\hspace*{\fill}
+  \begin{math}\Box\end{math}\medskip}
+
+\newenvironment{proof*}[1]{
+  \noindent\textbf{#1\ }}{\hspace*{\fill}
+  \begin{math}\Box\end{math}\medskip}
+
+\newcounter{exercisenr}
+\setcounter{exercisenr}{0}
+\newenvironment{exercise}{\medskip
+
+  \refstepcounter{exercisenr}\small
+  {\bf\noindent\ExerciseText~\arabic{exercisenr}\ }}{\normalsize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Itemize and enumerate
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\setlabelitem}[1]{%
+  \renewcommand{\labelitemi}{#1}
+  \renewcommand{\labelitemii}{#1}
+  \renewcommand{\labelitemiii}{#1}
+  \renewcommand{\labelitemiv}{#1}}
+
+\newenvironment{itemizeminus}
+  {\begin{itemize}\setlabelitem{$-$}}{\end{itemize}}
+\newenvironment{itemizedot}
+  {\begin{itemize}\setlabelitem{$\bullet$}}{\end{itemize}}
+\newenvironment{itemizearrow}
+  {\begin{itemize}\setlabelitem{$\rightarrow$}}{\end{itemize}}
+\newenvironment{enumeratenumeric}
+  {\begin{enumerate}[1.]}{\end{enumerate}}
+\newenvironment{enumerateroman}
+  {\begin{enumerate}[i.]}{\end{enumerate}}
+\newenvironment{enumerateromancap}
+  {\begin{enumerate}[I.]}{\end{enumerate}}
+\newenvironment{enumeratealpha}
+  {\begin{enumerate}[a{\textup{)}}]}{\end{enumerate}}
+\newenvironment{enumeratealphacap}
+  {\begin{enumerate}[A.]}{\end{enumerate}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Extra symbols
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\bigintwl}{\int}
+\newcommand{\bigointwl}{\oint}
+\newcommand{\bignone}{}
+\newcommand{\asterisk}{*}
+\newcommand{\nin}{\not\in}
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\dotamalg}{\mathaccent95{\amalg}}
+\newcommand{\dottimes}{\mathaccent95{\times}}
+\newcommand{\dotoplus}{\mathaccent95{\oplus}}
+\newcommand{\dototimes}{\mathaccent95{\otimes}}
+\newcommand{\longequal}{{=\!\!=}}
+
+\newcommand{\leftarrowlim}{\mathop{\leftarrow}\limits}
+\newcommand{\rightarrowlim}{\mathop{\rightarrow}\limits}
+\newcommand{\leftrightarrowlim}{\mathop{\leftrightarrow}\limits}
+\newcommand{\mapstolim}{\mathop{\mapsto}\limits}
+\newcommand{\longleftarrowlim}{\mathop{\longleftarrow}\limits}
+\newcommand{\longrightarrowlim}{\mathop{\longrightarrow}\limits}
+\newcommand{\longleftrightarrowlim}{\mathop{\longleftrightarrow}\limits}
+\newcommand{\longmapstolim}{\mathop{\longmapsto}\limits}
+\newcommand{\equallim}{\mathop{=}\limits}
+\newcommand{\longequallim}{\mathop{\longequal}\limits}
+\newcommand{\Leftarrowlim}{\mathop{\leftarrow}\limits}
+\newcommand{\Rightarrowlim}{\mathop{\rightarrow}\limits}
+\newcommand{\Leftrightarrowlim}{\mathop{\leftrightarrow}\limits}
+\newcommand{\Longleftarrowlim}{\mathop{\longleftarrow}\limits}
+\newcommand{\Longrightarrowlim}{\mathop{\longrightarrow}\limits}
+\newcommand{\Longleftrightarrowlim}{\mathop{\longleftrightarrow}\limits}
+
+\newcommand{\nasymp}{\not\asymp}
+\newcommand{\asympasymp}{\asymp\!\!\!-}
+\newcommand{\nasympasymp}{\not\asymp\!\!\!-}
+\newcommand{\simsim}{\approx\!\!\!-}
+\newcommand{\nsimsim}{\not\approx\!\!\!-}
+\newcommand{\npreccurlyeq}{\not\preccurlyeq}
+\newcommand{\precprec}{\prec\!\!\!\prec}
+\newcommand{\precpreceq}{\preceq\!\!\!\preceq}
+\newcommand{\succsucc}{\succ\!\!\!\succ}
+\newcommand{\succsucceq}{\succeq\!\!\!\succeq}
+
+\newcommand{\triangleup}{\triangle}
+\newcommand{\precdot}{{\prec\hspace{-0.6em}\cdot}\;\,}
+\newcommand{\preceqdot}{{\preccurlyeq\hspace{-0.6em}\cdot}\;\,}
+\newcommand{\Iota}{\mathrm{I}}
+\newcommand{\Tau}{\mathrm{T}}
+\newcommand{\um}{-}
+\newcommand{\assign}{:=}
+\newcommand{\udots}{{\mbox{\rotateleft{$\ddots$}}}}
+\newcommand{\Backepsilon}{{\mbox{\rotateleft{\rotateleft{E}}}}}
+\renewcommand{\mho}{{\mbox{\rotateleft{\rotateleft{$\omega$}}}}}
+\newcommand{\Mho}{{\mbox{\rotateleft{\rotateleft{$\Omega$}}}}}
+\newcommand{\mathd}{\mathrm{d}}
+\newcommand{\mathe}{\mathrm{e}}
+\newcommand{\mathi}{\mathrm{i}}
+\newcommand{\mathpi}{\pi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Extra commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\myrefstep}[1]{\addtocounter{#1}{-1}\refstepcounter{#1}\addtocounter{#1}{1}}
+\newcommand{\leqnumber}{(\theequation\myrefstep{equation})\hfill}
+\newcommand{\reqnumber}{\hfill(\theequation\myrefstep{equation})}
+\newcommand{\eqnumber}{\reqnumber}
+
+\newcommand{\tmhlink}[2]{{\blue #1}}
+\newcommand{\tmaction}[2]{{\blue #1}}
+\newcommand{\tmmathbf}[1]{\boldsymbol{#1}}
+\newcommand{\tmop}[1]{\operatorname{#1}}
+\newcommand{\tmbsl}{$\backslash$}
+\newcommand{\tmstrong}[1]{\textbf{#1}}
+\newcommand{\tmem}[1]{{\em #1\/}}
+\newcommand{\tmtt}[1]{\texttt{#1}}
+\newcommand{\tmname}[1]{\textsc{#1}}
+\newcommand{\tmsamp}[1]{\textss{#1}}
+\newcommand{\tmabbr}[1]{#1}
+\newcommand{\tmdfn}[1]{\textbf{#1}}
+\newcommand{\tmkbd}[1]{\texttt{#1}}
+\newcommand{\tmvar}[1]{\texttt{#1}}
+\newcommand{\tmacronym}[1]{\textsc{#1}}
+\newcommand{\tmperson}[1]{\textsc{#1}}
+\newcommand{\tmdummy}{$\mbox{}$}
+\newcommand{\tmscript}[1]{\text{\scriptsize $#1$}}
+
+\newcommand{\TeXmacs}{$\textrm{\TeX}_{\textsc{{\scriptsize macs}}^{\mbox{}}}$}
+\newcommand{\scheme}{{\sc Scheme}}
+\newcommand{\tmdef}[1]{#1}
+\newcommand{\tmref}[3]{#1}
+\newcommand{\tmat}{\symbol{"40}}
+\newcommand{\tmunsc}{\_}
+\newcommand{\key}[1]{\fbox{\rule[-2pt]{0pt}{9pt}#1}}
+\newcommand{\menu}[1]{\textsf{#1}}
+\newcommand{\submenu}[2]{\textsf{#1}$\rightarrow$\textsf{#2}}
+\newcommand{\subsubmenu}[3]{\textsf{#1}$\rightarrow$\textsf{#2}$\rightarrow$\textsf{#3}}
+\newcommand{\pari}{{\sc Pari}}
+\newcommand{\op}[1]{#1}
