@@ -90,7 +90,9 @@
 	 (with r (tmtm-eat-after? (cdr l) first?)
 	   (if r (cons (car l) r) #f)))
 	((and (string? (car l)) (string-starts? (car l) " ") first?)
-	 (if (== (car l) " ") '() (list (string-drop (car l) 1))))
+	 (if (== (car l) " ")
+	     (cdr l)
+	     (cons (string-drop (car l) 1) (cdr l))))
 	(else #f)))
 
 (define (tmtm-eat-around l first?)
