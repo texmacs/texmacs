@@ -119,6 +119,9 @@
   <assign|bi-index*|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|x><index|<arg|x> <arg|y>><subindex|<arg|y>|<arg|x>>>>>
 
+  <assign|sub-bi-index|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subsubindex|<arg|x>|<arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
