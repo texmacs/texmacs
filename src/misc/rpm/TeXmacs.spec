@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Thu Jan 22 2004   Joris van der Hoeven <vdhoeven@texmacs.org>
+- 1.0.3.2 change VERSION -> DEVEL_VERSION, RELEASE -> DEVEL_RELEASE
+
 * Mon Sep 22 2003   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.1.24 Release tag set by the configure script
 

@@ -15,7 +15,7 @@
 #
 # The including makefile *must* define the variable:
 #
-#    $(main_src) -- relative path of the TeXmacs-$VERSION/src directory.
+#    $(main_src) -- relative path of the TeXmacs-$DEVEL_VERSION/src directory.
 #
 # The including makefile's directory must contain:
 #
