@@ -614,15 +614,15 @@
     `(h:table (@ (width "100%") (cellspacing "0") (cellpadding "3")) ,row)))
 
 (define (tmhtml-tmdoc-title l)
-  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))))
+  (list `(h:div (@ (class "tmdoc-title-1")) ,(tmhtml-make-block (car l)))))
 
 (define (tmhtml-tmdoc-title* l)
-  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))
+  (list `(h:div (@ (class "tmdoc-title-2")) ,(tmhtml-make-block (car l)))
 	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (cadr l)))))
 
 (define (tmhtml-tmdoc-title** l)
   (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (car l)))
-	`(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (cadr l)))
+	`(h:div (@ (class "tmdoc-title-3")) ,(tmhtml-make-block (cadr l)))
 	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (caddr l)))))
 
 (define (tmhtml-tmdoc-flag l)

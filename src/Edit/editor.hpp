@@ -91,7 +91,6 @@ protected:
   virtual void back_in_with (tree t, path p) = 0;
   virtual void back_in_expand (tree t, path p) = 0;
   virtual void back_in_compound (tree t, path p) = 0;
-  virtual void back_in_extension (tree t, path p) = 0;
 
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
