@@ -177,17 +177,6 @@
   ("List of tables" (make-aux* "the-glossary*" "table" "List of tables")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting mathematical markup into the text
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind insert-mathematics-menu
-  ("Formula" "$" (make-with "mode" "math"))
-  (if (style-has? "env-math-dtd")
-      ---
-      ("Equation" (begin (make 'equation*) (temp-proof-fix)))
-      ("Equations" (begin (make 'eqnarray*) (temp-proof-fix)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -217,13 +206,6 @@
 	(when (or (inside-list?) (inside-description?))
 	      ("New item" (make-item)))
 	---)
-  (-> "Mathematics" (link insert-mathematics-menu))
-  (if (style-has? "program-dtd")
-      (-> "Session"
-	  (link session-menu)
-	  ---
-	  ("Other" ... (interactive
-			'("Session type:" "Session name:") 'make-session))))
   (if (style-has? "section-base-dtd")
       (-> "Automatic" (link automatic-menu))))
 
@@ -292,20 +274,7 @@
 	  (link description-menu))
       (if (or (inside-list?) (inside-description?))
 	  ((balloon (icon "tm_item.xpm") "Insert a new item#(A-;)")
-	   (make-item))))
-  |
-  (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
-      (link insert-mathematics-menu))
-  ;((balloon (icon "tm_insert_graphics.xpm") "Insert graphics")
-  ;(make-graphics))
-  (if (style-has? "program-dtd")
-      (=> (balloon (icon "tm_shell.xpm")
-		   "Start an interactive session")
-	  (link session-menu)
-	  ---
-	  ("Other" ...
-	   (interactive
-	    '("Session type:" "Session name:") 'make-session)))))
+	   (make-item)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties

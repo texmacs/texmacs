@@ -18,24 +18,36 @@
      (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Insert menu
+;; Insert presentation tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind insert-presentation-tag-menu
+  ("Underline" (make 'underline))
+  ("Overline" (make 'overline))
+  ("Subscript" (make-script #f #t))
+  ("Superscript" (make-script #t #t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Insert objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-table-menu
-  (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (make 'small-table))
-      ("Big table" (make 'big-table))
-      ---)
+  (if (style-has? "std-dtd")
+      (when (and (in-text?) (style-has? "env-float-dtd"))
+	    ("Small table" (make 'small-table))
+	    ("Big table" (make 'big-table))
+	    ---))
   ("Plain tabular" (make 'tabular))
   ("Centered tabular" (make 'tabular*))
   ("Plain block" (make 'block))
   ("Centered block" (make 'block*))
-  (if (in-math?)
-      ---
-      ("Matrix" (make 'matrix))
-      ("Determinant" (make 'det))
-      ("Choice" (make 'choice))
-      ("Stack" (make 'stack))))
+  (if (style-has? "std-dtd")
+      (when (in-math?)
+	    ---
+	    ("Matrix" (make 'matrix))
+	    ("Determinant" (make 'det))
+	    ("Choice" (make 'choice))
+	    ("Stack" (make 'stack)))))
 
 (menu-bind insert-link-menu
   ("Label" (make 'label))
@@ -45,66 +57,85 @@
   ("Include" ... (choose-file "Include file" "" 'make-include))
   ("Hyperlink" (make 'hlink))
   ("Action" (make 'action))
-  ---
-  (-> "Citation"
-      ("Visible" (make 'cite))
-      ("Invisible" (make 'nocite))
-      ("Detailed" (make 'cite-detail)))
-  (-> "Index entry"
-      ("Main" (make 'index))
-      ("Sub" (make 'subindex))
-      ("Subsub" (make 'subsubindex))
-      ("Complex" (make 'index-complex))
+  (if (style-has? "std-dtd")
       ---
-      ("Interjection" (make 'index-line)))
-  (-> "Glossary entry"
-      ("Regular" (make 'glossary))
-      ("Explained" (make 'glossary-explain))
-      ("Duplicate" (make 'glossary-dup))
-      ---
-      ("Interjection" (make 'glossary-line))))
-
-(menu-bind insert-presentation-tag-menu
-  ("Underline" (make 'underline))
-  ("Overline" (make 'overline))
-  ("Subscript" (make-script #f #t))
-  ("Superscript" (make-script #t #t)))
+      (-> "Citation"
+	  ("Visible" (make 'cite))
+	  ("Invisible" (make 'nocite))
+	  ("Detailed" (make 'cite-detail)))
+      (-> "Index entry"
+	  ("Main" (make 'index))
+	  ("Sub" (make 'subindex))
+	  ("Subsub" (make 'subsubindex))
+	  ("Complex" (make 'index-complex))
+	  ---
+	  ("Interjection" (make 'index-line)))
+      (-> "Glossary entry"
+	  ("Regular" (make 'glossary))
+	  ("Explained" (make 'glossary-explain))
+	  ("Duplicate" (make 'glossary-dup))
+	  ---
+	  ("Interjection" (make 'glossary-line)))))
 
 (menu-bind insert-switch-menu
   ("Superpose" (make 'superpose))
-  ---
-  ("Folded" (make-fold))
-  (if (or (inside? "unfold")
-	  (and (not (inside? "unfold")) (not (inside? "fold"))))
-      (when (inside? "unfold")
-	    ("Fold" (fold))))
-  (if (inside? "fold")
-      ("Unfold" (unfold)))
-  ---
-  ("Switch" (make-switch))
-  (when (inside? "switch")
-	("Add switch before" (switch-insert "before"))
-	("Add switch after" (switch-insert "after"))
-	("Remove this switch" (switch-remove "here"))
-	---
-	(when (< 0 (switch-get-position))
-	      ("Switch to previous" (switch-to "previous")))
-	(when (< (switch-get-position) (switch-get-last))
-	      ("Switch to next" (switch-to "next")))
-	(when (< 0 (switch-get-position))
-	      ("Switch to first" (switch-to "first")))
-	(when (< (switch-get-position) (switch-get-last))
-	      ("Switch to last" (switch-to "last")))))
+  (if (style-has? "std-dtd")
+      ---
+      ("Folded" (make-fold))
+      (if (or (inside? "unfold")
+	      (and (not (inside? "unfold")) (not (inside? "fold"))))
+	  (when (inside? "unfold")
+		("Fold" (fold))))
+      (if (inside? "fold")
+	  ("Unfold" (unfold)))
+      ---
+      ("Switch" (make-switch))
+      (when (inside? "switch")
+	    ("Add switch before" (switch-insert "before"))
+	    ("Add switch after" (switch-insert "after"))
+	    ("Remove this switch" (switch-remove "here"))
+	    ---
+	    (when (< 0 (switch-get-position))
+		  ("Switch to previous" (switch-to "previous")))
+	    (when (< (switch-get-position) (switch-get-last))
+		  ("Switch to next" (switch-to "next")))
+	    (when (< 0 (switch-get-position))
+		  ("Switch to first" (switch-to "first")))
+	    (when (< (switch-get-position) (switch-get-last))
+		  ("Switch to last" (switch-to "last"))))))
 
 (menu-bind insert-image-menu
-  (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small figure" (make 'small-figure))
-      ("Big figure" (make 'big-figure))
-      ---)
+  (if (style-has? "env-float-dtd")
+      (when (in-text?)
+	    ("Small figure" (make 'small-figure))
+	    ("Big figure" (make 'big-figure))
+	    ---))
   ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
+
+(menu-bind insert-mathematics-menu
+  (when (not (in-math?))
+	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
+  (when (in-math?)
+	("Text" "A-$" (begin (noop) (make-with "mode" "text"))))
+  (if (style-has? "env-math-dtd")
+      (when (in-text?)
+	    ---
+	    ("Equation" (begin (make 'equation*) (temp-proof-fix)))
+	    ("Equations" (begin (make 'eqnarray*) (temp-proof-fix))))))
+
+(menu-bind insert-session-menu
+  (when (and (style-has? "std-dtd") (in-text?))
+	(link session-menu)
+	---
+	("Other" ...
+	 (interactive '("Session type:" "Session name:") 'make-session))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Insert floating content
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-page-insertion-menu
   ("Footnote" (make 'footnote))
@@ -118,6 +149,10 @@
   ("Here" (toggle-insertion-position "h"))
   ("Bottom" (toggle-insertion-position "b"))
   ("Other pages" (toggle-insertion-position-not "f")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Insert transformational and executable markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-transformational-menu
   ("Assign" (make 'assign))
@@ -177,12 +212,20 @@
       ;; ("authorize" (make 'authorize))
       ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The main Insert menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind insert-menu
+  (-> "Presentation" (link insert-presentation-tag-menu))
+  ---
   (-> "Link" (link insert-link-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
   (-> "Switch" (link insert-switch-menu))
-  (-> "Presentation" (link insert-presentation-tag-menu))
+  (-> "Mathematics" (link insert-mathematics-menu))
+  (if (style-has? "program-dtd")
+      (-> "Session" (link insert-session-menu)))
   ---
   (-> "Space"
       ("Rigid" ...

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
@@ -25,8 +25,6 @@
     </src-title>
   </active*>
 
-  <use-package|std-markup>
-
   <\active*>
     <\src-comment>
       Environment variables
@@ -38,6 +36,20 @@
   <assign|par-first|0fn>
 
   <assign|par-par-sep|0.5fn>
+
+  <\active*>
+    <\src-comment>
+      Copy a few environments from std-markup.
+    </src-comment>
+  </active*>
+
+  <assign|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>>>>
+
+  <assign|right-flush|<macro|<htab|0fn|first>>>
+
+  <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
+
+  <assign|block|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<arg|x>>>>
 
   <\active*>
     <\src-comment>

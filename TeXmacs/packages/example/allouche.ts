@@ -1,8 +1,26 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
 <\body>
+  <active*|<\src-title>
+    <src-package|allouche|1.0>
+
+    <\src-purpose>
+      An example style package used by David Allouche.
+    </src-purpose>
+
+    <src-copyright|1998--2004|David Allouche>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
   <with|font-series|bold|Standard macros for help files>
 
   <assign|TeXmacs|<macro|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>>>
@@ -222,10 +240,10 @@
   <assign|!param|<macro|x|<assign|theparams|<value|theparams><value|paramsep><arg|x>><assign|paramsep|,
   >>>
 
-  <assign|param|<macro|thetype|thename|<!param|<with|font-family|tt|color|green|<arg|thetype>>
+  <assign|param|<macro|thetype|thename|<param|<with|font-family|tt|color|green|<arg|thetype>>
   <with|font-family|tt|color|brown|<arg|thename>>>>>
 
-  <assign|optparam|<macro|thetype|thename|thedefault|<!param|<with|font-family|tt|color|green|<arg|thetype>>
+  <assign|optparam|<macro|thetype|thename|thedefault|<param|<with|font-family|tt|color|green|<arg|thetype>>
   <with|font-family|tt|color|brown|<arg|thename>=<arg|thedefault>>>>>
 
   <assign|return|<macro|thetype|<assign|thereturn|<with|font-family|tt|color|green|<arg|thetype>>

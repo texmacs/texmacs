@@ -49,6 +49,7 @@
 (lazy-menu (menus menu-edit) edit-menu)
 (lazy-menu (menus menu-insert)
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
+	   insert-mathematics-menu insert-session-menu
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
 (lazy-menu (menus menu-text)
 	   text-menu texmacs-text-icons text-modifier-icons)
