@@ -66,12 +66,13 @@ void  mem_info ();
 #define STACK_DELETE_ARRAY(name) delete[] name
 #endif
 
-enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_EVENTS, DEBUG_FLAG_STD,
-       DEBUG_FLAG_IO, DEBUG_FLAG_BENCH };
+enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,
+       DEBUG_FLAG_STD, DEBUG_FLAG_IO, DEBUG_FLAG_BENCH };
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
 #define DEBUG_AUTO (debug (DEBUG_FLAG_AUTO))
+#define DEBUG_VERBOSE (debug (DEBUG_FLAG_VERBOSE))
 #define DEBUG_EVENTS (debug (DEBUG_FLAG_EVENTS))
 #define DEBUG_STD (debug (DEBUG_FLAG_STD))
 #define DEBUG_IO (debug (DEBUG_FLAG_IO))

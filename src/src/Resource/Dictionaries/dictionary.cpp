@@ -27,7 +27,7 @@ void
 dictionary_rep::load (string fname) {
   string s;
   fname= fname * ".scm";
-  if (DEBUG_AUTO) cout << "TeXmacs] Loading " << fname << "\n";
+  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
   if (load_string (url ("$TEXMACS_PATH/langs/natural/dic", fname), s)) return;
   tree t= block_to_scheme_tree (s);
   if (!is_tuple (t)) return;

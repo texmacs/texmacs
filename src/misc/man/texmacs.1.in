@@ -87,6 +87,9 @@ the plugins which are installed on your system.
 \fB\-v\fR, \fB\-\-version\fR
 Display the current TeXmacs version.
 .TP
+\fB\-V\fR, \fB\-\-verbose\fR
+Display some informative messages.
+.TP
 \fB\-x\fR, \fB\-\-execute [cmd]\fR
 Execute the scheme command [cmd] just after startup.
 If you specify several -x options, then the corresponding

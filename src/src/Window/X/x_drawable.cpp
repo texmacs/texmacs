@@ -380,7 +380,8 @@ x_drawable_rep::postscript (
 	 << as_string (x2) << as_string (y2);
   if (ps_figs->contains (lookup)) pm= (Pixmap) ps_figs [lookup];
   else {
-    if (DEBUG_AUTO) cout << "TeXmacs] Running ghostscript " << image << "\n";
+    if (DEBUG_VERBOSE)
+      cout << "TeXmacs] Running ghostscript " << image << "\n";
     Window gs_win= dis->gswindow->win;
     pm= XCreatePixmap (dis->dpy, gs_win, w, h, dis->depth);
     ghostscript_run (dpy, gs_win, pm, image, w, h, x1, y1, x2, y2);
