@@ -630,6 +630,7 @@ complete (url base, url sub, url u, string filter, bool flag) {
 url
 complete (url base, url u, string filter, bool flag) {
   if (is_none (base)) return base;
+  if (is_none (u)) return u;
   if ((!is_root (base)) && (!is_rooted_name (base))) {
     cerr << "base= " << base << LF;
     fatal_error ("invalid base url", "complete", "url.cpp");
