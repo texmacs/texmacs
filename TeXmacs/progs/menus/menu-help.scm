@@ -57,14 +57,18 @@
 	     (load-help-article "main/interface/man-itf"))
 	    ("Writing your own style files"
 	     (load-help-article "devel/style/style"))
-	    ("Reference guide for the TeXmacs primitives"
-	     (load-help-article "devel/format/primitives/primitives"))
-	    ("Reference guide for the standard TeXmacs styles"
-	     (load-help-article "main/styles/styles"))
 	    ("Customizing TeXmacs"
 	     (load-help-article "main/scheme/man-scheme"))
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
+  (when (url-exists-in-help? "main/man-manual.en.tm")
+	(-> "Reference guide"
+	    ("TeXmacs primitives"
+	     (load-help-article "devel/format/regular/regular"))
+	    ("Stylesheet language"
+	     (load-help-article "devel/format/stylesheet/stylesheet"))
+	    ("Standard TeXmacs styles"
+	     (load-help-article "main/styles/styles"))))
   (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
 	(-> "Tutorial"
 	    ("Browse" (load-help-buffer "tutorial/tut-tutorial"))

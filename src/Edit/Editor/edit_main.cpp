@@ -197,7 +197,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     string col_name= env->get_string (BG_COLOR);
     dev->set_background (dis->get_color (col_name));
     if (col_name != "white")
-      dev->clear (0, -h, w, 0);
+      dev->clear (0, (SI) -h, (SI) w, 0);
 
     rectangles rs;
     the_box[0]->sx(i)= 0;

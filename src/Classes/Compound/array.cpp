@@ -66,15 +66,6 @@ array<T>::array (T x1, T x2) {
   rep->a[1]= x2;
 }
 
-template<class T>
-array<T>::operator tree () {
-  int i, n=rep->n;
-  tree t (TUPLE, n);
-  for (i=0; i<n; i++)
-    t[i]= as_tree(rep->a[i]);
-  return t;
-}
-
 /******************************************************************************
 * Other routines on arrays
 ******************************************************************************/

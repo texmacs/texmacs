@@ -21,6 +21,14 @@ template<class T,class U> class rel_hashmap;
 template<class T,class U> class rel_hashmap_rep;
 template<class T,class U> class hashmap_iterator_rep;
 
+template<class T,class U> int N (hashmap<T,U> a);
+template<class T,class U> ostream& operator << (ostream& out, hashmap<T,U> h);
+template<class T,class U> hashmap<T,U> copy (hashmap<T,U> h);
+template<class T,class U> hashmap<T,U> changes (hashmap<T,U> p,hashmap<T,U> b);
+template<class T,class U> hashmap<T,U> invert (hashmap<T,U> p, hashmap<T,U> b);
+template<class T,class U> bool operator == (hashmap<T,U> h1, hashmap<T,U> h2);
+template<class T,class U> bool operator != (hashmap<T,U> h1, hashmap<T,U> h2);
+
 template<class T, class U> struct hashentry {
   T key;
   U im;

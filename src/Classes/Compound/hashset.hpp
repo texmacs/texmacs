@@ -16,6 +16,9 @@
 
 template<class T> class hashset;
 template<class T> class hashset_iterator_rep;
+template<class T> int N (hashset<T> h);
+template<class T> ostream& operator << (ostream& out, hashset<T> h);
+template<class T> bool operator <= (hashset<T> h1, hashset<T> h2);
 
 template<class T> class hashset_rep: concrete_struct {
   int size;    // size of hashset (nr of entries)

@@ -78,7 +78,7 @@
 	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
 
 (define (tmdoc-expand file-name level . opts)
-  ;(display* "tmdoc-expand " file-name "\n")
+  ;;(display* "tmdoc-expand " file-name "\n")
   (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
 	 (done? (ahash-ref done file-name)))
     (ahash-set! done file-name #t)
@@ -106,8 +106,8 @@
 
 (define (tmdoc-language file-name)
   (let* ((t (texmacs-load-tree file-name "texmacs"))
-	 (init (cadr (assoc 'initial (cdr (tree->stree t)))))
-	 (lan (tmdoc-search-env-var init "language")))
+	 (init (assoc 'initial (cdr (tree->stree t))))
+	 (lan (and init (tmdoc-search-env-var (cadr init) "language"))))
     (if lan lan "english")))
 
 (define (tmdoc-get-aux-title doc)
@@ -140,14 +140,14 @@
 		    (body ,(tmdoc-add-aux body))
 		    (initial (collection (associate "language" ,lan)
 					 (associate "page-medium" "paper"))))))
-	(set-help-buffer file-name doc))
+	(set-help-buffer file-name (stree->tree doc)))
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))
 	     (doc `(document
 		    (style "tmdoc")
 		    (body ,body)
 		    (initial (collection (associate "language" ,lan))))))
-	(set-help-buffer file-name doc))))
+	(set-help-buffer file-name (stree->tree doc)))))
 
 (define (tmdoc-expand-help-manual file-name . cont)
   (with s-cont (if (null? cont) "(noop)" (car cont))
