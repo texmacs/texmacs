@@ -141,8 +141,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-document env l)
-  (tmhtml-post-paragraphs (map (lambda (x) (cons 'h:p (tmhtml env x)))
-			       l)))
+  (if (not (environment-ref env preformatted?))
+      (tmhtml-post-paragraphs (map (lambda (x) (cons 'h:p (tmhtml env x)))
+				   l))
+      (tmhtml-post-simplify-nodes
+       (list-concatenate
+	((cut list-intersperse <> '("\n"))
+	 (map (cut tmhtml env <>) l))))))
 
 (define (tmhtml-paragraph env l)
   (let rec ((l l))
@@ -164,6 +169,10 @@
   ;; editor ensures that an <item-list> or <desc-list> is the only element
   ;; contained in its enclosing <doc-item>.
   ;;
+  ;; If a h:p contains a h:pre element, remove the enclosing h:p. The VERBATIM
+  ;; handler ensures that block VERBATIM and CODE environment are alone in the
+  ;; paragraph.
+  ;;
   ;; NOTE: assumes the heading is at the start of a paragraph. That is
   ;; consistent with the fact that (as of 2003-02-04) the only converted
   ;; invisible markup is <label> and correct usage requires it to be after the
@@ -184,7 +193,10 @@
 	     ;; tmhtml-post-heading should be called by concat handler
 	     (next (cons first (flush)) (give)))
 	    ((sxhtml-list? first)
-	     ;; texmacs editor ensures there is not trail after a list
+	     ;; texmacs editor ensures there is no trail after a list
+	     (next (append cont (flush)) #f))
+	    ((== 'h:pre (sxml-name first))
+	     ;; handlers and editor ensure there is no trail after a h:pre
 	     (next (append cont (flush)) #f))
 	    ((and (sxhtml-table? first) (null? (cdr cont)))
 	     ;; if table is not alone, we cannot help but produce bad html
@@ -590,7 +602,7 @@
 			 (tmhtml env (car item))
 			 (tmhtml env `(document ,@item)))))
       (append
-       (if mark `((h:dt ,@(tmhtml env (cadr mark)))) '())
+       (if mark (tmhtml env mark) '())
        (cond ((and (null? html-item) mark) '())
 	     ((null? html-item) '((h:dd)))
 	     (else `((h:dd ,@html-item)))))))
@@ -606,37 +618,37 @@
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME: 'verb' should really become an environment property
+(define (tmhtml-verbatim env args)
+  ;; Block-level verbatim environments should only contain inline elements.
+  ;;
+  ;; @args should be a single element list, we will call this element @body.
+  ;;
+  ;; If @body is a block structure, it will be either:
+  ;; -- a simple DOCUMENT (normal case), and @(tmhtml body) will produce a list
+  ;;    of h:p elements;
+  ;; -- a block structure producing a single element (degenerate case).
+  ;;
+  ;; Verbatim structures which do not contain a DOCUMENT but are direct
+  ;; children of a DOCUMENT (i.e. they occupy a whole paragraph) are degenerate
+  ;; cases of block-level verbatim and must be exported as PRE.
+  ;;
+  ;; Inline verbatim has little special significance for display in TeXmacs. In
+  ;; LaTeX it is used to escape special characters (and protect multiple inline
+  ;; spaces, yuck!), but in TeXmacs there is no such problem.
+  (let ((body (first args)))
+    (cond ((or (stm-block-structure? body)
+	       (stm-document? (xpath-parent env)))
+	   (verbatim-pre
+	    (with-environment env ((preformatted? #t))
+	      (tmhtml env body))))
+	  (else (verbatim-tt (tmhtml env body))))))
 
-(define (tmhtml-verb env x)
-  (cond ((string? x) (tmhtml-string x))
-	;; WARNING: makes the xpath environment inconsistent
-	;; can be easily fixed, but this code is going away soon anyway
-	((func? x 'document 1) (tmhtml-verb env (cadr x)))
-	((func? x 'document)
-	 (append (tmhtml-verb env (cadr x))
-		 (list "\n")
-		 (tmhtml-verb env `(document ,@(cddr x)))))
-	((func? x 'concat)
-	 (apply append (map (cut tmhtml-verb env <>) (cdr x))))
-	((== x '(next-line)) (list "\n"))
-	((func? x 'with) (tmhtml-verb env (cAr x)))
-	((func? x 'surround 3)
-	 (append (tmhtml-verb env (cadr x))
-		 (tmhtml-verb env (cadddr x))
-		 (tmhtml-verb env (caddr x))))
-	((func? x 'verbatim) (tmhtml-verb env (cadr x)))
-	((func? x 'em) `((h:em ,@(tmhtml-verb env (cadr x)))))
-	((func? x 'hlink) (tmhtml-hyperlink env (cdr x)))
-	((func? x 'key) (tmhtml-key env (cdr x)))
-	(else
-	 ;(display* "Rejected " x "\n")
-	 '())))
+(define (verbatim-tt content)
+  `((h:tt (@ (class "verbatim")) ,@content)))
 
-(define (tmhtml-verbatim env l)
-  (if (func? (car l) 'document)
-      `((h:pre ,@(tmhtml-verb env (car l))))
-      `((h:tt ,@(tmhtml env (car l))))))
+(define (verbatim-pre content)
+  `((h:pre (@ (class "verbatim") (xml:space "preserve")) ,@content)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
@@ -735,7 +747,10 @@
 (define (tmhtml-root x)
   ;; tmhtml ently point
   ;; Initialize the environment and start tmhtml
-  (initialize-xpath (environment) x (cut tmhtml* <> x)))
+  (initialize-xpath
+   (environment) x
+   (cut with-environment* <> '((preformatted? #f))
+	(cut tmhtml* <> x))))
 
 (define (tmhtml env x)
   (descend env tmhtml* x))
@@ -868,6 +883,7 @@
   ((:or description description-compact description-dash
 	description-align description-long)
    ,tmhtml-description)
+  (item* (h:dt)) ; update xpath environment in description terms
   ;; Phrase elements
   (strong (h:strong))
   (em (h:em))
