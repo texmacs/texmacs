@@ -22,18 +22,25 @@ subvar (tree var, int i) {
 * Test whether a tree (argument) should be rendered in compact format or not.
 ******************************************************************************/
 
+static bool is_long (tree t);
+
 static bool
-is_long (tree t) {
+is_long_arg (tree t, int i) {
   // FIXME: should go into the DRD
+  int n= N(t);
   switch (L(t)) {
   case DOCUMENT:
-  case SURROUND:
   case INCLUDE:
   case TFORMAT:
   case TABLE:
     return true;
   case CONCAT:
     return false;
+  case SURROUND:
+    if (i == 2) return true;
+    break;
+  case ROW:
+    return is_long (t[i]);
   case ASSIGN:
   case DATOMS:
   case DLINES:
@@ -48,55 +55,24 @@ is_long (tree t) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
-    return is_long (t[N(t)-1]);
-  case ROW:
-    {
-      int i, n= N(t);
-      for (i=0; i<n; i++)
-	if (is_long (t[i]))
-	  return true;
-      return false;
-    }
+    if (i == n-1) return is_long (t[i]);
+    break;
   case STYLE_WITH:
   case VAR_STYLE_WITH:
-    {
-      int i, n= N(t);
+    if (i == n-1) {
       for (i=0; i<n-1; i+=2)
 	if (t[i] == SRC_COMPACT) {
 	  if (t[i+1] == "none") return true;
 	  if (t[i+1] == "all")  return false;
 	}
-      return is_long (t[N(t)-1]);
+      return is_long (t[i]);
     }
+    break;
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
   case VAR_ACTIVE:
-    return is_multi_paragraph (t[0]);
-  default:
-    if (L(t) < START_EXTENSIONS) return false;
-    else {
-      int i, n= N(t);
-      for (i=0; i<n; i++)
-	if (is_long (t[i]))
-	  return true;
-      return false;
-    }
-  }
-}
-
-static bool
-is_long_arg (tree t, int i) {
-  // FIXME: should go into the DRD
-  switch (L(t)) {
-  case DOCUMENT:
-  case INCLUDE:
-  case TFORMAT:
-  case TABLE:
-    return true;
-  case SURROUND:
-    if (i == 2) return true;
-    break;
+    return is_multi_paragraph (t[i]);
   default:
     break;
   }
@@ -108,8 +84,20 @@ is_long_arg (tree t, int i) {
   case ROW:
     return true;
   default:
+    if (L(t) < START_EXTENSIONS) return false;
     return is_long (u);
   }
+}
+
+static bool
+is_long (tree t) {
+  if (is_compound (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (is_long_arg (t, i))
+	return true;
+  }
+  return false;
 }
 
 /******************************************************************************
