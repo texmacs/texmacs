@@ -69,6 +69,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind chapter-menu
+  ("Part" (make-section 'part))
   ("Chapter" (make-section 'chapter))
   ("Appendix" (make-section 'appendix))
   ("Prologue" (make-unnamed-section 'prologue))

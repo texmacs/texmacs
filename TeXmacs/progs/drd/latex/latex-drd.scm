@@ -38,7 +38,7 @@
   notin vert Vert addots)
 
 (drd-group latex-command-1%
-  usepackage chapter chapter*
+  usepackage part part* chapter chapter*
   section section* subsection subsection* subsubsection subsubsection*
   paragraph paragraph* subparagraph subparagraph*
   footnote overline underline <sub> <sup> not left right

@@ -45,7 +45,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (inside-section?)
-  (or (inside? "chapter")
+  (or (inside? "part")
+      (inside? "part*")
+      (inside? "chapter")
       (inside? "chapter*")
       (inside? "appendix")
       (inside? "section")

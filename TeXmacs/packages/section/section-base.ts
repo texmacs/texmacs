@@ -102,6 +102,8 @@
     </src-comment>
   </active*>
 
+  <new-section|part>
+
   <new-section|chapter>
 
   <new-section|section>
@@ -115,6 +117,8 @@
   <new-section|subparagraph>
 
   \;
+
+  <assign|display-part|<macro|nr|<number|<arg|nr>|Roman>>>
 
   <assign|display-section|<macro|nr|<if|<sectional-short-style>|<arg|nr>|<chapter-prefix><arg|nr>>>>
 

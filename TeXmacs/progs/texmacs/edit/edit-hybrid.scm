@@ -54,7 +54,7 @@
 	 (if (inside? "make-title")
 	     (make-header 'address)
 	     (return-sectional)))
-	((in? x '("chapter" "chapter*" "appendix"
+	((in? x '("part" "part*" "chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"
 		  "section*" "subsection*" "subsubsection*"
 		  "paragraph" "subparagraph" "paragraph*" "subparagraph*"))
@@ -76,7 +76,7 @@
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
 		   "title" "author"
-		   "chapter" "chapter*" "appendix"
+		   "part" "part*" "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
 		   "section*" "subsection*" "subsubsection*"
 		   "paragraph" "subparagraph" "paragraph*" "subparagraph*"
