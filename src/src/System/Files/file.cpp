@@ -154,7 +154,7 @@ bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
 #ifdef OS_WIN32
-  if ((filter == "x") && (suffix(name) != "exe"))
+  if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
   int i, n= N(filter);
@@ -182,6 +182,9 @@ is_of_type (url name, string filter) {
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
       break;
     case 'x':
+#ifdef OS_WIN32
+      if (suffix(name) == "bat") break;
+#endif
       if ((buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0) return false;
       break;
     }
