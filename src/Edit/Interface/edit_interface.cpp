@@ -54,7 +54,7 @@ edit_interface_rep::edit_interface_rep ():
 edit_interface_rep::~edit_interface_rep () {}
 
 edit_interface_rep::operator tree () {
-  return tuple ("edit", as_string (get_name ()));
+  return tuple ("editor", as_string (get_name ()));
 }
 
 void

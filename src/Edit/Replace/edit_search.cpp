@@ -193,20 +193,71 @@ edit_replace_rep::search_next_compound (path init, string which) {
 * Test whether we found a match
 ******************************************************************************/
 
+static bool
+test_match (tree t, tree pat) {
+  // FIXME: we use empty strings for wildcards now
+  // we should support real wildcards and regular expressions later
+  if (pat == "") return true;
+  else if (is_atomic (t) || is_atomic (pat)) return t == pat;
+  else if ((L(t) != L(pat)) || (N(t) != N(pat))) return false;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (!test_match (t[i], pat[i]))
+	return false;
+    return true;
+  }
+}
+
+path
+edit_replace_rep::test_sub (path p, tree t) {
+  //cout << "Test " << subtree (et, path_up (p))
+  //     << " :: " << t << " at " << p << "\n";
+  if (is_concat (t) && (N(t) > 1)) {
+    if (N(p) <= 1) return p;
+    tree st= subtree (et, path_up (p, 2));
+    if (!is_concat (st)) return p;
+    int i, l= last_item (path_up (p)), n= N(t);
+    if (N(st) < (n + l)) return p;
+    if ((t[0] != "") && (p == end (et, path_up (p)))) return p;
+    if (test_sub (p, t[0]) != end (et, path_up (p))) return p;
+    for (i=1; i<n-1; i++)
+      if (!test_match (st[l+i], t[i]))
+	return p;
+    path r= path_up (p, 2) * path (l+n-1, start (st[l+n-1], path ()));
+    path q= test_sub (r, t[n-1]);
+    if (q == r) return p;
+    return q;
+  }
+  else {
+    tree st= subtree (et, path_up (p));
+    if (is_compound (t)) {
+      if (!is_compound (st)) return p;
+      // cout << "Test with " << st << "\n";
+      if (last_item (p) != 0) return p;
+      if (!test_match (st, t)) return p;
+      return path_inc (p);
+    }
+    else {
+      if (is_compound (st)) return p;
+      int l= last_item (p);
+      // cout << "Test with " << st->label << " at " << l << "\n";
+      if (N(st->label) < (N(t->label) + l)) return p;
+      if (st->label (l, l + N(t->label)) != t->label) return p;
+      return path_add (p, N (t->label));
+    }
+  }
+}
+
 path
 edit_replace_rep::test (path p, tree t) {
-  if (is_compound (t)) return p;
-  tree st= subtree (et, path_up (p));
-  if (is_compound (st)) return p;
-  int l= last_item (p);
-  // cout << "Test with " << st->label << " at " << l << "\n";
-  if (N(st->label) < (N(t->label) + l)) return p;
-  if (st->label (l, l + N(t->label)) != t->label) return p;
+  path q= test_sub (p, t);
+  if (q == p) return p;
   string mode= as_string (get_env_value (MODE, p));
   string lan = as_string (get_env_value (MODE_LANGUAGE (mode), p));
   if (search_mode != mode) return p;
   if (search_lan != lan) return p;
-  return path_add (p, N (t->label));
+  return q;
 }
 
 /******************************************************************************
@@ -344,7 +395,6 @@ edit_replace_rep::search_start (bool flag) {
   string r ("forward search");
   if (!flag) r= "backward search";
 
-  search_old  = copy (search_what);
   forward     = flag;
   search_mode = copy (get_env_string (MODE));
   search_lan  = copy (get_env_string (MODE_LANGUAGE (search_mode)));
@@ -360,13 +410,15 @@ void
 edit_replace_rep::search_next (bool forward) {
   string r ("forward search");
   if (!forward) r= "backward search";
+  string w= as_string (search_what);
+  if (is_compound (search_what)) w= "compound expression";
 
   next_match (forward);
   if (nil (search_at)) {
-    set_message ("No more matches for#" * as_string (search_what), r);
+    set_message ("No more matches for#" * w, r);
     cerr << '\a';
   }
-  else set_message ("Searching#" * as_string (search_what), r);
+  else set_message ("Searching#" * w, r);
 }
 
 void
@@ -376,6 +428,14 @@ edit_replace_rep::search_next (tree what, bool forward, bool step) {
   search_what= copy (what);
   if (step) step_horizontal (forward);
   search_next (forward);
+}
+
+void
+edit_replace_rep::search_stop () {
+  tree t= tuple ("texmacs", search_what, search_mode, search_lan);
+  set_input_normal ();
+  if (search_what != "")
+    selection_raw_set ("search", t);
 }
 
 void
@@ -396,24 +456,28 @@ edit_replace_rep::search_keypress (string s) {
 	(s == "pageup") || (s == "pagedown") ||
 	(s == "begin") || (s == "end"))
       {
-	set_input_normal ();
+	search_stop ();
 	return false;
       }
     else if ((s == "C-c") || (s == "C-g"))
-      set_input_normal ();
+      search_stop ();
     else if ((s == "C-r") || (s == "C-s") || (s == "find") || (s == "again")) {
       if (search_what == "") {
-	if (search_old == "") return true;
-	search_next (search_old, s != "C-r", true);
+	tree t= selection_raw_get ("search");
+	if (is_tuple (t, "texmacs", 3) &&
+	    (t[1] != "") &&
+	    (t[2] == search_mode) &&
+	    (t[3] == search_lan))
+	  search_next (t[1], s != "C-r", true);
       }
       else search_next (search_what, s != "C-r", true);
     }
     else if ((s == "delete") || (s == "backspace")) {
       if (nil (where_stack))
-	set_input_normal ();
+	search_stop ();
       else if (atom (where_stack)) {
 	go_to (where_stack->item);
-	set_input_normal ();
+	search_stop ();
       }
       else {
 	search_at  = where_stack->item;
@@ -462,6 +526,20 @@ edit_replace_rep::replace_start (tree what, tree by, bool flag) {
   replace_by  = copy (by);
   nr_replaced = 0;
   set_input_mode (INPUT_REPLACE);
+  if (search_what == "") {
+    tree t= selection_raw_get ("search");
+    if (is_tuple (t, "texmacs", 3) &&
+	(t[1] != "") &&
+	(t[2] == search_mode) &&
+	(t[3] == search_lan))
+      search_what= t[1];
+    t= selection_raw_get ("replace");
+    if (is_tuple (t, "texmacs", 3) &&
+	(t[1] != "") &&
+	(t[2] == search_mode) &&
+	(t[3] == search_lan))
+      replace_by= t[1];
+  }
   replace_next ();
 }
 

@@ -487,6 +487,16 @@ edit_select_rep::selection_get () {
 ******************************************************************************/
 
 void
+edit_select_rep::selection_raw_set (string key, tree t) {
+  (void) dis->set_selection (widget (this), key, t, "");
+}
+
+tree
+edit_select_rep::selection_raw_get (string key) {
+  return copy (dis->get_selection (widget (this), key));
+}
+
+void
 edit_select_rep::selection_set_start () {
   bool flag= selection_active_any ();
   start_p= tp;
@@ -506,15 +516,16 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
-  tree sel= tuple ("edit", t, mode, lan);
+  tree sel= tuple ("texmacs", t, mode, lan);
   string s;
   if (key == "primary") {
     if (selection_export == "html") t= exec_html (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= tree (WITH, "mode", "math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
+    s= selection_encode (lan, s);
   }
-  if (dis->set_selection (widget (this), key, sel, selection_encode(lan, s)) &&
+  if (dis->set_selection (widget (this), key, sel, s) &&
       (!persistant)) selection_cancel ();
 }
 
@@ -550,7 +561,7 @@ edit_select_rep::selection_paste (string key) {
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
     insert_tree (doc);
   }
-  if (is_tuple (t, "edit", 3)) {
+  if (is_tuple (t, "texmacs", 3)) {
     string mode= get_env_string (MODE);
     string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {
