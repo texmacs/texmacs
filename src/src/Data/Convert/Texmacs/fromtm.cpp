@@ -326,6 +326,11 @@ is_apply (tree t, string s, int n) {
   return (L(t) == APPLY) && (N(t) == n+1) && (t[0] == s);
 }
 
+static bool
+is_expand (tree t, string s, int n) {
+  return (L(t) == EXPAND) && (N(t) == n+1) && (t[0] == s);
+}
+
 tree
 texmacs_document_to_tree (string s) {
   tree error (ERROR, "bad format or data");

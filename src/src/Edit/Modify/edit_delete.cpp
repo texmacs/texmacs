@@ -185,13 +185,6 @@ edit_text_rep::remove_backwards () {
     case WITH:
       go_to (end (et, p * (N(t)-1)));
       return;
-    case EXPAND:
-    case VAR_EXPAND:
-      back_expand (p);
-      return;
-    case HIDE_EXPAND:
-      back_hide_expand (p);
-      return;
     case COMPOUND:
       back_compound (p);
       return;

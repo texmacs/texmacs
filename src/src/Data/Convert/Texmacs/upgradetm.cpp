@@ -210,6 +210,20 @@ get_codes (string version) {
 }
 
 /******************************************************************************
+* Old style is_expand predicates
+******************************************************************************/
+
+static bool
+is_expand (tree t) {
+  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND));
+}
+
+static bool
+is_expand (tree t, string s, int n) {
+  return is_expand (t) && (N(t) == n+1) && (t[0] == s);
+}
+
+/******************************************************************************
 * Old style conversion from TeXmacs strings to TeXmacs trees
 ******************************************************************************/
 
@@ -1559,7 +1573,7 @@ upgrade_xexpand (tree t) {
   else {
     int i, n= N(t);
     tree r (t, n);
-    if (is_expand (t) && (!is_func (t, COMPOUND)))
+    if (is_expand (t))
       r= tree (COMPOUND, n);
     for (i=0; i<n; i++)
       r[i]= upgrade_xexpand (t[i]);

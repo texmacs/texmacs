@@ -214,10 +214,6 @@ bool is_multi_paragraph (tree t);
 bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);
-bool is_expand (tree t);
-bool is_expand (tree t, int n);
-bool is_expand (tree t, string s);
-bool is_expand (tree t, string s, int n);
 bool is_inactive (tree t);
 
 inline bool

@@ -17,7 +17,6 @@ bridge bridge_document (typesetter, tree, path);
 bridge bridge_surround (typesetter, tree, path);
 bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
-bridge bridge_expand (typesetter, tree, path);
 bridge bridge_rewrite (typesetter, tree, path);
 bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
@@ -50,10 +49,6 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_formatting (ttt, st, ip, CELL_FORMAT);
   case WITH:
     return bridge_with (ttt, st, ip);
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return bridge_expand (ttt, st, ip);
   case COMPOUND:
     return bridge_compound (ttt, st, ip);
   case INCLUDE:

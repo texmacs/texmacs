@@ -206,11 +206,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case SUB_TABLE: r= "subtable"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
-  case EXPAND: r= "expand#" * as_string (st[0]); break;
-  case VAR_EXPAND: r= "expand*#" * as_string (st[0]); break;
-  case HIDE_EXPAND: r= "expand**#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
-  case APPLY: r= "apply#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case MACRO: r= "macro"; break;
   case XMACRO: r= "xmacro"; break;
@@ -393,15 +389,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up;
   case SUB_TABLE:
     return up * "subtable#";
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
   case COMPOUND:
     return up * as_string (st[0]) * "#";
   case WITH:
     return up * get_with_text (st) * "#";
-  case APPLY:
-    return up * as_string (st[0]) * "#";
   case INCLUDE:
     return up * "include#";
   case DRD_PROPS:

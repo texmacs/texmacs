@@ -35,8 +35,8 @@ public:
   bool make_return_after ();
   void make_assign (tree var, tree by);
   void make_with (string var, string val);
-  bool make_big_expand (string s);
-  void make_expand (string s, int n=0);
+  bool make_big_compound (string s);
+  void make_compound (string s, int n=0);
   void temp_proof_fix ();
   void make_apply (string s);
   void go_to_argument (path p, bool start_flag);
@@ -45,13 +45,10 @@ public:
   void remove_argument (path p, bool forward);
 
   void back_dynamic (path p);
-  void back_expand (path p);
-  void back_hide_expand (path p);
   void back_compound (path p);
   void back_extension (path p);
   void back_in_dynamic (tree t, path p, int min_args=1, int with=1);
   void back_in_with (tree t, path p);
-  void back_in_expand (tree t, path p);
   void back_in_compound (tree t, path p);
 };
 
