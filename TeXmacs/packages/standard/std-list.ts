@@ -1,4 +1,4 @@
-<TeXmacs|1.0.1.10>
+<TeXmacs|1.0.2.7>
 
 <\body>
   <assign|std-list-package|1.0>
@@ -10,12 +10,11 @@
   <assign|itemname|<macro|name|<with|font series|bold|<arg|name>>>>
 
   <assign|item|<macro|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><resize|<with|mode|math|\<ast\>> |||r]1.5fn|>>>
+  indentation|-1.5fn|<enable_first_indentation>><resize|<with|mode|math|\<ast\>>
+  |||r]1.5fn|>>>
 
   <assign|item*|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
+  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
 
   \;
 
@@ -23,80 +22,83 @@
 
   <assign|itemize-level|0>
 
-  <assign|itemize-base|<macro|body|<surround|<format|no page break
-  before>|<apply|rightflush><vspace|0.5fn><format|no indentation
-  after>|<with|left margin|<plus|<value|left
-  margin>|3fn>|item|<macro|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first indentation>><resize|<value|thetag>
+  <assign|itemize-base|<macro|body|<surround|<no_page_break_before>|<rightflush><vspace|0.5fn><no_indentation_after>|<with|left
+  margin|<plus|<value|left margin>|3fn>|item|<macro|<vspace*|0.5fn><with|first
+  indentation|-1.5fn|<enable_first_indentation>><resize|<value|thetag>
   |||r]1.5fn|>>|<arg|body>>>>>
 
-  <assign|itemize|<macro|body|<with|itemize-level|<plus|<value|itemize-level>|1>|<with|thetag|<case|<equal|<mod|<value|itemize-level>|3>|1>|<with|mode|math|\<bullet\>>|<equal|<mod|<value|itemize-level>|3>|2>|<with|mode|math|\<circ\>>|<equal|<mod|<value|itemize-level>|3>|0>|<with|mode|math|->>|<expand|itemize-base|<arg|body>>>>>>
+  <assign|itemize|<\macro|body>
+    <with|itemize-level|<plus|<value|itemize-level>|1>|<with|thetag|<case|<equal|<mod|<value|itemize-level>|3>|1>|<with|mode|math|\<bullet\>>|<equal|<mod|<value|itemize-level>|3>|2>|<with|mode|math|\<circ\>>|<equal|<mod|<value|itemize-level>|3>|0>|<with|mode|math|->>|<itemize-base|<arg|body>>>>
+  </macro>>
 
   \;
 
-  <assign|newitemize|<func|name|tag|<assign|<apply|name>|<hold|<macro|body|<with|thetag|<release|<value|tag>>|<expand|itemize-base|<arg|body>>>>>>>>
+  <assign|newitemize|<macro|name|tag|<assign|<arg|name>|<hold|<\macro|body>
+    <with|thetag|<release|<arg|tag>>|<itemize-base|<arg|body>>>
+  </macro>>>>>
 
-  <apply|newitemize|itemize-minus|<with|mode|math|->>
+  <newitemize|itemize-minus|<with|mode|math|->>
 
-  <apply|newitemize|itemize-dot|<with|mode|math|\<bullet\>>>
+  <newitemize|itemize-dot|<with|mode|math|\<bullet\>>>
 
-  <apply|newitemize|itemize-arrow|<with|mode|math|\<rightarrow\>>>
+  <newitemize|itemize-arrow|<with|mode|math|\<rightarrow\>>>
 
   \;
 
-  <assign|theitem|<func|<apply|itemnr>.>>
+  <assign|theitem|<macro|<itemnr>.>>
 
   <assign|enumerate-level|0>
 
-  <assign|enumerate-base|<macro|body|<surround|<format|no page break
-  before>|<apply|rightflush><vspace|0.5fn><format|no indentation
-  after>|<with|itemnr|0|left margin|<plus|<value|left
-  margin>|3fn>|item|<macro|<vspace*|0.5fn><assign|itemnr|<plus|<value|itemnr>|1>><assign|thelabel|<apply|theitem>><with|first
-  indentation|-3fn|<format|enable first indentation>><resize|<apply|theitem>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
+  <assign|enumerate-base|<macro|body|<surround|<no_page_break_before>|<rightflush><vspace|0.5fn><no_indentation_after>|<with|itemnr|0|left
+  margin|<plus|<value|left margin>|3fn>|item|<macro|<vspace*|0.5fn><assign|itemnr|<plus|<value|itemnr>|1>><assign|thelabel|<theitem>><with|first
+  indentation|-3fn|<enable_first_indentation>><resize|<theitem>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
 
-  <assign|enumerate|<macro|body|<with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|theitem|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<hold|<apply|itemnr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<func|<number|<apply|itemnr>|alpha><with|font
-  shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<func|<number|<apply|itemnr>|roman>.>>|<expand|enumerate-base|<arg|body>>>>>>
-
-  \;
-
-  <assign|newenumerate|<func|name|num|<assign|<apply|name>|<hold|<macro|body|<with|theitem|<release|<value|num>>|<expand|enumerate-base|<arg|body>>>>>>>>
-
-  <apply|newenumerate|enumerate-numeric|<func|<apply|itemnr>.>>
-
-  <apply|newenumerate|enumerate-roman|<func|<number|<apply|itemnr>|roman>.>>
-
-  <apply|newenumerate|enumerate-Roman|<func|<number|<apply|itemnr>|Roman>.>>
-
-  <apply|newenumerate|enumerate-alpha|<func|<number|<apply|itemnr>|alpha><with|font
-  shape|right|)>>>
-
-  <apply|newenumerate|enumerate-Alpha|<func|<number|<apply|itemnr>|Alpha><with|font
-  shape|right|)>>>
+  <assign|enumerate|<\macro|body>
+    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|theitem|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<hold|<itemnr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<itemnr>|alpha><with|font
+    shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<itemnr>|roman>.>>|<enumerate-base|<arg|body>>>>
+  </macro>>
 
   \;
 
-  <assign|newdescription|<func|name|item-macro|<assign|<apply|name>|<hold|<macro|body|<with|item*|<release|<value|item-macro>>|<expand|itemize-base|<arg|body>>>>>>>>
+  <assign|newenumerate|<macro|name|num|<assign|<arg|name>|<hold|<\macro|body>
+    <with|theitem|<release|<arg|num>>|<enumerate-base|<arg|body>>>
+  </macro>>>>>
 
-  <apply|newdescription|description-compact|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><resize|<itemname|<arg|theitem>> \ |||r]1.5fn|>>>
+  <newenumerate|enumerate-numeric|<macro|<itemnr>.>>
 
-  <apply|newdescription|description-aligned|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><expand|tabular*|<tformat|<cwith|1|1|1|1|cell
+  <newenumerate|enumerate-roman|<macro|<number|<itemnr>|roman>.>>
+
+  <newenumerate|enumerate-Roman|<macro|<number|<itemnr>|Roman>.>>
+
+  <newenumerate|enumerate-alpha|<macro|<number|<itemnr>|alpha><with|font
+  shape|right|)>>>
+
+  <newenumerate|enumerate-Alpha|<macro|<number|<itemnr>|Alpha><with|font
+  shape|right|)>>>
+
+  \;
+
+  <assign|newdescription|<macro|name|item-macro|<assign|<arg|name>|<hold|<\macro|body>
+    <with|item*|<release|<arg|item-macro>>|<itemize-base|<arg|body>>>
+  </macro>>>>>
+
+  <newdescription|description-compact|<macro|theitem|<vspace*|0.5fn><with|first
+  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>
+  \ |||r]1.5fn|>>>
+
+  <newdescription|description-aligned|<macro|theitem|<vspace*|0.5fn><with|first
+  indentation|-1.5fn|<enable_first_indentation>><tabular*|<tformat|<cwith|1|1|1|1|cell
   lsep|0fn>|<cwith|1|1|1|1|cell rsep|0fn>|<cwith|1|1|1|1|cell
   bsep|0fn>|<cwith|1|1|1|1|cell tsep|0fn>|<cwith|1|1|1|1|cell
   width|3fn>|<cwith|1|1|1|1|cell halign|r>|<table|<row|<cell|<itemname|<arg|theitem>>>>>>>
   \ >>
 
-  <apply|newdescription|description-dash|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><resize|<itemname|<arg|theitem>>  |||r]1.5fn|>>>
+  <newdescription|description-dash|<macro|theitem|<vspace*|0.5fn><with|first
+  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>
+   |||r]1.5fn|>>>
 
-  <apply|newdescription|description-long|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<format|enable first
-  indentation>><resize|<itemname|<arg|theitem>>|||r]1.5fn|><format|next
-  line>>>
+  <newdescription|description-long|<macro|theitem|<vspace*|0.5fn><with|first
+  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>|||r]1.5fn|><next_line>>>
 
   <assign|description|<value|description-compact>>
 

@@ -1617,15 +1617,6 @@ tmg_init_hasP (SCM arg1) {
 }
 
 SCM
-tmg_in_preamble_modeP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->in_preamble_mode ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
 tmg_menu_before_action () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->before_menu_action ();
@@ -1644,12 +1635,49 @@ tmg_menu_after_action () {
 }
 
 SCM
+tmg_in_preamble_modeP () {
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->in_preamble_mode ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_is_deactivatedP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->is_deactivated ();
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_make (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_compound (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_make_arity (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make-arity");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-arity");
+
+  tree_label in1= scm_to_tree_label (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_compound (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -1662,9 +1690,28 @@ tmg_activate () {
 }
 
 SCM
-tmg_activate_compound () {
+tmg_insert_argument (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->activate_compound ();
+  get_server()->get_editor()->insert_argument (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_make_with (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_with (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1707,41 +1754,9 @@ tmg_activate_symbol () {
 }
 
 SCM
-tmg_make (SCM arg1) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make");
-
-  tree_label in1= scm_to_tree_label (arg1);
-
+tmg_activate_compound () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_compound (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_arity (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make-arity");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-arity");
-
-  tree_label in1= scm_to_tree_label (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_compound (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_insert_argument (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
-
-  bool in1= scm_to_bool (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_argument (in1);
+  get_server()->get_editor()->activate_compound ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1763,49 +1778,6 @@ tmg_make_return_after () {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
-}
-
-SCM
-tmg_make_assign (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-assign");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-assign");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_assign (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_with (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_with (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_big_compound (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-compound");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_big_compound (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2857,24 +2829,22 @@ initialize_glue_editor () {
   gh_new_procedure ("context-has?", (FN) tmg_context_hasP, 1, 0, 0);
   gh_new_procedure ("style-has?", (FN) tmg_style_hasP, 1, 0, 0);
   gh_new_procedure ("init-has?", (FN) tmg_init_hasP, 1, 0, 0);
-  gh_new_procedure ("in-preamble-mode?", (FN) tmg_in_preamble_modeP, 0, 0, 0);
   gh_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
+  gh_new_procedure ("in-preamble-mode?", (FN) tmg_in_preamble_modeP, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
+  gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
+  gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
-  gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
+  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
+  gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
   gh_new_procedure ("make-hybrid", (FN) tmg_make_hybrid, 0, 0, 0);
   gh_new_procedure ("activate-latex", (FN) tmg_activate_latex, 0, 0, 0);
   gh_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 0, 0, 0);
   gh_new_procedure ("activate-symbol", (FN) tmg_activate_symbol, 0, 0, 0);
-  gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
-  gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
-  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
+  gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
-  gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);
-  gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
-  gh_new_procedure ("make-big-compound", (FN) tmg_make_big_compound, 1, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);
   gh_new_procedure ("view-get-property", (FN) tmg_view_get_property, 1, 0, 0);

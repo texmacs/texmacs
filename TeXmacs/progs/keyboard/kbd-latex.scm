@@ -31,9 +31,9 @@
   ("\\" "Go to the next line" (make-format "next_line"))
 
   ("[" "Insert equation"
-   (begin (make-big-compound "equation*") (temp-proof-fix)))
+   (begin (make 'equation*) (temp-proof-fix)))
   ("equation" "Insert numbered equation"
-   (begin (make-big-compound "equation") (temp-proof-fix)))
+   (begin (make 'equation) (temp-proof-fix)))
   ("eqnarray*" "Insert equation array"
    (begin (make 'eqnarray*) (temp-proof-fix)))
 
@@ -99,7 +99,7 @@
   ("tanh" "Insert tanh" (insert-string "tanh"))
 
   ("maketitle" "Insert title"
-   (begin (make-big-compound "make-title") (make 'title)))
+   (begin (make 'make-title) (make 'title)))
   ("tableofcontents" "Insert table of contents"
    (make-aux "table-of-contents" "toc"))
   ("appendix" "Insert appendix" (make-section 'appendix))
@@ -268,7 +268,7 @@
   ("label" "Make label" (make 'label))
   ("ref" "Make reference" (make 'reference))
   ("pageref" "Make page reference" (make 'pageref))
-  ("footnote" "Insert a footnote" (make-big-compound "footnote"))
+  ("footnote" "Insert a footnote" (make 'footnote))
   ("input" "Include a document" (make 'include)))
 
 (kbd-symbols

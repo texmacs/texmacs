@@ -396,7 +396,6 @@ edit_dynamic_rep::activate_hybrid () {
 
 void
 edit_dynamic_rep::activate_symbol () {
-  if (activate_latex ()) return;
   path p= find_deactivated (tp);
   if (nil (p)) return;
   tree st= subtree (et, p * 0);
@@ -454,30 +453,6 @@ edit_dynamic_rep::make_return_after () {
   return insert_return ();
 }
 
-bool
-edit_dynamic_rep::make_big_compound (string name) {
-  tree body;
-  bool active= selection_active_normal ();
-  if (active) {
-    body= selection_get ();
-    selection_cut ();
-    if (!is_document (body)) body= tree (DOCUMENT, body);
-  }
-  else body= tree (DOCUMENT, "");
-
-  /*** These lines will become obsolete ***/
-  if (name != "footnote") {
-    if (make_return_after ()) return true;
-    if (make_return_before ()) return true;
-  }
-  /* ----------------------------------*/
-
-  int  i= N(body)-1;
-  path p (0, path (i, end (body[i])));
-  insert_tree (compound (name, body), p);
-  return false;
-}
-
 void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
@@ -487,13 +462,4 @@ edit_dynamic_rep::temp_proof_fix () {
   tree st= subtree (et, path_up (q));
   if ((!is_document (st)) || (last_item (q) != (N(st)-1))) return;
   insert (path_inc (q), tree (DOCUMENT, ""));
-}
-
-/******************************************************************************
-* Miscellaneous
-******************************************************************************/
-
-void
-edit_dynamic_rep::make_assign (tree var, tree by) {
-  insert_tree (tree (CONCAT, tree (ASSIGN, var, by)));
 }

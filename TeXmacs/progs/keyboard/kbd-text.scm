@@ -20,14 +20,14 @@
   ("text:symbol" "" "Insert a TeXmacs symbol")
 
   ("$" (if (inside? "hybrid") (insert-string "$") (make-with "mode" "math")))
-  ("text $" (make-big-compound "equation*") (temp-proof-fix))
+  ("text $" (make 'equation*) (temp-proof-fix))
   ("text &" (make 'eqnarray*) (temp-proof-fix))
   ("text *" (toggle-section-number))
 
   ("text a" (make 'abbr))
-  ("text d" (make-tmlist "description"))
-  ("text e" (make-tmlist "enumerate"))
-  ("text i" (make-tmlist "itemize"))
+  ("text d" (make-tmlist 'description))
+  ("text e" (make-tmlist 'enumerate))
+  ("text i" (make-tmlist 'itemize))
   ("text m" (make 'em))
   ("text n" (make 'name))
   ("text p" (make 'samp))
@@ -264,9 +264,9 @@
   ("euro" (make 'euro)))
 
 (kbd-map like-old-text?
-  ("cmd I" (make-tmlist "itemize"))
-  ("cmd E" (make-tmlist "enumerate"))
-  ("cmd D" (make-tmlist "description"))
+  ("cmd I" (make-tmlist 'itemize))
+  ("cmd E" (make-tmlist 'enumerate))
+  ("cmd D" (make-tmlist 'description))
   ("cmd N" (make-item))
   ("cmd S" (make-session "scheme")))
 
