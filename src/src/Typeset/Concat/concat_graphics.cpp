@@ -161,14 +161,14 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     cip[i]= descend (ip, i);
   if (close) {
     a << copy (a[0]);
-    cip << copy (cip[0]);
+    cip << cip[0];
   }
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
     if (N(a) == 1) {
       a << copy (a[0]);
-      cip << copy (cip[0]);
+      cip << cip[0];
     }
     curve c= env->fr (poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
@@ -211,7 +211,7 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
   else {
     if (N(a) == 1) {
       a << copy (a[0]);
-      cip << copy (cip[0]);
+      cip << cip[0];
     }
     curve c= env->fr (
       N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
