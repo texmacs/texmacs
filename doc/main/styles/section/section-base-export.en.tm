@@ -73,16 +73,23 @@
     <verbatim|idx>.
   </explain>
 
-  <\explain|<explain-macro|the-glossary|aux|body>>
-    Similar to <markup|table-of-contents> but for glossaries and default
-    channel <verbatim|gly>.
+  <\explain>
+    <explain-macro|the-glossary|aux|body>
+
+    <explain-macro|list-of-figures|aux|body>
+
+    <explain-macro|list-of-tables|aux|body>
+  <|explain>
+    Similar to <markup|table-of-contents> but for glossaries (default channel
+    <verbatim|gly>), lists of figures (default channel <verbatim|figure>) and
+    lists of tables (default channel <verbatim|table>).
   </explain>
 
   The above tags also admit the variants <markup|bibliography*>,
   <markup|table-of-contents*>, <markup|the-index*> and <markup|the-glossary*>
   with an additional argument <src-arg|name> before <src-arg|body>, which
   specifies the name of the section. For instance, the <markup|the-glossary*>
-  tag is used for lists of figures and lists of tables.
+  was formerly used for lists of figures and lists of tables.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
