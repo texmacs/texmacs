@@ -29,7 +29,7 @@ void
 edit_text_rep::correct_concat (path p, int done) {
   tree t (subtree (et, p));
   if (L(t) != CONCAT) {
-    cerr << "\nThe tree was " << t << "\n";
+    cerr << "\nThe tree was <" << t << ">\n";
     fatal_error ("concat expected", "edit_text_rep::correct_concat");
   }
 
