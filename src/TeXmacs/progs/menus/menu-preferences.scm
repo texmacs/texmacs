@@ -39,7 +39,7 @@
 (define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Emacs" "emacs")
-;	  ("Windows" "windows")
+	  ("Windows" "windows")
 	  ("Old style" "old style"))
 ;   (enum ("Profile" "profile")
 ;	  ("Beginner" "beginner")
