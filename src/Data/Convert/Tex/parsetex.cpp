@@ -48,6 +48,8 @@ struct latex_parser {
   tree parse_command   (string s, int& i, string which);
   tree parse_unknown   (string s, int& i, string which);
   tree parse_verbatim  (string s, int& i, string end);
+
+  tree parse           (string s);
 };
 
 /******************************************************************************
@@ -68,6 +70,7 @@ latex_parser::latex_error (string s, int i, string message) {
 
 tree
 latex_parser::parse (string s, int& i, char stop, bool change) {
+  bool no_error= true;
   int n= N(s);
   tree t (CONCAT);
 
@@ -75,8 +78,8 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
   command_arity->extend ();
   command_def  ->extend ();
 
-  while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n'))) i++;
-  while ((i<n) && (s[i]!=stop)) {
+  while ((i<n) && is_space (s[i])) i++;
+  while ((i<n) && (s[i]!=stop) && no_error) {
     switch (s[i]) {
     case ' ':
     case '~':
@@ -86,7 +89,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       break;
     case '\n': {
       int ln=0;
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+      while ((i<n) && is_space (s[i]))
 	if (s[i++]=='\n') ln++;
       if (i<n) {
 	if (ln == 1) t << " ";
@@ -201,7 +204,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
     case '{': {
       i++;
       t << parse (s, i, '}');
-      if (i<n) i++;
+      if ((i<n) && (s[i]=='}')) i++;
 
       int ln=0;
       if ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) break;
@@ -231,8 +234,38 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       break;
     }
     default:
-      t << s (i, i+1);
-      i++;
+      if (is_iso_alpha (s[i])) {
+	// If we encounter too much text in math mode, then return
+	int start= i;
+	while ((i<n) && is_iso_alpha (s[i])) i++;
+	int end= i;
+	if ((i >= start+3) && (command_type ["!mode"] == "math")) {
+	  while ((i<n) && (is_iso_alpha (s[i]) ||
+			   is_ponctuation (s[i]) ||
+			   is_space (s[i])))
+	    i++;
+	  if (i >= start+20) {
+	    int last= i, words= 0, letters= 0;
+	    for (i=start; i<last; i++) {
+	      if (is_iso_alpha (s[i])) {
+		letters++;
+		if ((i==start) || (!is_iso_alpha (s[i-1]))) words++;
+	      }
+	    }
+	    if ((words > 3) && (letters/words >= 3) && (letters >= 15)) {
+	      i= start;
+	      no_error= false;
+	    }
+	  }
+	}
+	if (no_error)
+	  for (i=start; i<end; i++)
+	    t << s(i, i+1);
+      }
+      else {
+	t << s (i, i+1);
+	i++;
+      }
       break;
     }
   }
@@ -378,7 +411,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       i=j;
       t << parse (s, i, ']');
       u << s (j, i);
-      if (i<n) i++;
+      if ((i<n) && (s[i]==']')) i++;
       t[0]->label= t[0]->label * "*";
       option= false;
     }
@@ -391,7 +424,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       }
       else t << parse (s, i, '}');
       u << s (j, i);
-      if (i<n) i++;
+      if ((i<n) && (s[i]=='}')) i++;
       arity--;
     }
     else if (option && (s[j]=='#') && (cmd == "\\def")) {
@@ -477,7 +510,7 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
       j++;
       i=j;
       t << parse (s, i, ']');
-      if (i<n) i++;
+      if ((i<n) && (s[i]==']')) i++;
       t[0]->label= t[0]->label * "*";
       option= false;
     }
@@ -485,7 +518,7 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
       j++;
       i=j;
       t << parse (s, i, '}');
-      if (i<n) i++;
+      if ((i<n) && (s[i]=='}')) i++;
     }
     else break;
   }
@@ -595,17 +628,62 @@ accented_to_Cork (tree t) {
 ******************************************************************************/
 
 tree
-parse_latex (string s) {
-  tree t;
-  s= dos_to_better (s);
-  int i=0;
-  latex_parser ltx;
-  command_type ("!mode") = "text";
-  command_type ("!em") = "false";
-  t= accented_to_Cork (ltx.parse (s, i));
-  command_type ("!mode") = "text";
-  command_type ("!em") = "false";
+latex_parser::parse (string s) {
+  command_type ->extend ();
+  command_arity->extend ();
+  command_def  ->extend ();
+
+  // We first cut the string into pieces at strategic places
+  // This reduces the risk that the parser gets confused
+  array<string> a;
+  int i, start=0, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i]=='\n') {
+      while ((i<n) && ((s[i]=='\12') || (s[i]=='\15') || (s[i]==' '))) i++;
+      if (test (s, i, "\\begin{document}") ||
+	  test (s, i, "\\begin{abstract}") ||
+	  test (s, i, "\\chapter") ||
+	  test (s, i, "\\section") ||
+	  test (s, i, "\\subsection") ||
+	  test (s, i, "\\subsubsection") ||
+	  test (s, i, "\\paragraph") ||
+	  test (s, i, "\\subparagraph") ||
+	  test (s, i, "\\newcommand") ||
+	  test (s, i, "\\def"))
+	{
+	  a << s (start, i);
+	  start= i;
+	}
+    }
+  a << s (start, i);
+
+  // We now parse each of the pieces
+  tree t (CONCAT);
+  for (i=0; i<N(a); i++) {
+    int j=0;
+    while (j<N(a[i])) {
+      int start= j;
+      command_type ("!mode") = "text";
+      command_type ("!em") = "false";
+      tree u= parse (a[i], j, '\0', true);
+      if ((N(t)>0) && (t[N(t)-1]!='\n') && (start==0)) t << "\n";
+      if (is_concat (u)) t << A(u);
+      else t << u;
+      if (j == start) j++;
+    }
+  }
+
+  command_type ->shorten ();
+  command_arity->shorten ();
+  command_def  ->shorten ();
   return t;
+}
+
+tree
+parse_latex (string s) {
+  s= dos_to_better (s);
+  latex_parser ltx;
+  return accented_to_Cork (ltx.parse (s));
 }
 
 tree
