@@ -23,7 +23,8 @@
 
   <\active*>
     <\src-comment>
-      Layout macros for simple title or block environments.
+      Helper macros for wide block environments (work also for inline
+      content, like section titles).
     </src-comment>
   </active*>
 
@@ -40,6 +41,48 @@
   <assign|padded-normal|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
 
   <assign|padded-centered|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Helper macros for underlined/overlined block environments (work also
+      for inline content, like page headers).
+    </src-comment>
+  </active*>
+
+  <assign|wide-bothlined|<macro|top-border|bot-border|top-sep|bot-sep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-lsep|0pt>|<cwith|1|1|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-tborder|<arg|top-border>>|<cwith|1|1|1|1|cell-bborder|<arg|bot-border>>|<cwith|1|1|1|1|cell-tsep|<arg|top-sep>>|<cwith|1|1|1|1|cell-bsep|<arg|bot-sep>>|<table|<row|<cell|<arg|body>>>>>>>>>
+
+  <assign|wide-std-bothlined|<macro|body|<wide-bothlined|1ln|1ln|1sep|1sep|<arg|body>>>>
+
+  <assign|padded-bothlined|<macro|a|b|top-border|bot-border|top-sep|bot-sep|body|<surround|<vspace*|<arg|a>>|<vspace|<arg|b>>|<wide-bothlined|<arg|top-border>|<arg|bot-border>|<arg|top-sep>|<arg|bot-sep>|<arg|body>>>>>
+
+  <assign|padded-std-bothlined|<macro|a|b|body|<padded-bothlined|<arg|a>|<arg|b>|1ln|1ln|1sep|1sep|<arg|body>>>>
+
+  <assign|wide-underlined|<macro|bborder|bsep|body|<wide-bothlined|0pt|<arg|bborder>|0pt|<arg|bsep>|<arg|body>>>>
+
+  <assign|wide-std-underlined|<macro|body|<wide-underlined|1ln|1sep|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Helper macros for framed block environments (work also for inline
+      content).
+    </src-comment>
+  </active*>
+
+  <assign|wide-framed-color|>
+
+  <assign|wide-framed|<macro|border-width|hsep|vsep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|border-width>>|<cwith|1|1|1|1|cell-rborder|<arg|border-width>>|<cwith|1|1|1|1|cell-tborder|<arg|border-width>>|<cwith|1|1|1|1|cell-bborder|<arg|border-width>>|<cwith|1|1|1|1|cell-lsep|<arg|hsep>>|<cwith|1|1|1|1|cell-rsep|<arg|hsep>>|<cwith|1|1|1|1|cell-tsep|<arg|vsep>>|<cwith|1|1|1|1|cell-bsep|<arg|vsep>>|<cwith|1|1|1|1|cell-background|<value|wide-framed-color>>|<table|<row|<cell|<arg|body>>>>>>>>>
+
+  <assign|wide-std-framed|<macro|body|<wide-framed|1ln|1spc|1sep|<arg|body>>>>
+
+  <assign|wide-framed-colored|<macro|border-color|body-color|border-width|hsep|vsep|body|<with|old-color|<value|color>|color|<arg|border-color>|wide-framed-color|<arg|body-color>|<wide-framed|<arg|border-width>|<arg|hsep>|<arg|vsep>|<with|color|<value|old-color>|<style-with|src-compact|none|<arg|body>>>>>>>
+
+  <assign|wide-std-framed-colored|<macro|border-color|body-color|body|<wide-framed-colored|<arg|border-color>|<arg|body-color>|1ln|1spc|1sep|<style-with|src-compact|none|<arg|body>>>>>
+
+  <\active*>
+    <\src-comment>
+      Indentation.
+    </src-comment>
+  </active*>
 
   <assign|indent-left|<\macro|l|body>
     <\with|par-left|<plus|<value|par-left>|<arg|l>>>
@@ -61,13 +104,7 @@
 
   <\active*>
     <\src-comment>
-      Underlining and overlining.
-    </src-comment>
-  </active*>
-
-  <\active*>
-    <\src-comment>
-      Other macros
+      Other macros.
     </src-comment>
   </active*>
 

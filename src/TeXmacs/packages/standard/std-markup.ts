@@ -52,27 +52,35 @@
 
   <assign|really-tiny|<macro|x|<with|font-size|0.5|<arg|x>>>>
 
-  <assign|tiny|<macro|x|<with|font-size|0.59|<arg|x>>>>
+  <assign|very-tiny|<macro|x|<with|font-size|0.545|<arg|x>>>>
 
-  <assign|really-small|<macro|x|<with|font-size|0.65|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size|0.595|<arg|x>>>>
 
-  <assign|very-small|<macro|x|<with|font-size|0.71|<arg|x>>>>
+  <assign|really-small|<macro|x|<with|font-size|0.648|<arg|x>>>>
 
-  <assign|smaller|<macro|x|<with|font-size|0.77|<arg|x>>>>
+  <assign|very-small|<macro|x|<with|font-size|0.707|<arg|x>>>>
 
-  <assign|small|<macro|x|<with|font-size|0.84|<arg|x>>>>
+  <assign|smaller|<macro|x|<with|font-size|0.771|<arg|x>>>>
+
+  <assign|small|<macro|x|<with|font-size|0.841|<arg|x>>>>
+
+  <assign|flat-size|<macro|x|<with|font-size|0.917|<arg|x>>>>
 
   <assign|normal-size|<macro|x|<with|font-size|1|<arg|x>>>>
 
-  <assign|large|<macro|x|<with|font-size|1.19|<arg|x>>>>
+  <assign|sharp-size|<macro|x|<with|font-size|1.091|<arg|x>>>>
 
-  <assign|larger|<macro|x|<with|font-size|1.30|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size|1.189|<arg|x>>>>
 
-  <assign|very-large|<macro|x|<with|font-size|1.41|<arg|x>>>>
+  <assign|larger|<macro|x|<with|font-size|1.297|<arg|x>>>>
 
-  <assign|really-large|<macro|x|<with|font-size|1.54|<arg|x>>>>
+  <assign|very-large|<macro|x|<with|font-size|1.414|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-size|1.68|<arg|x>>>>
+  <assign|really-large|<macro|x|<with|font-size|1.542|<arg|x>>>>
+
+  <assign|huge|<macro|x|<with|font-size|1.682|<arg|x>>>>
+
+  <assign|very-huge|<macro|x|<with|font-size|1.834|<arg|x>>>>
 
   <assign|really-huge|<macro|x|<with|font-size|2|<arg|x>>>>
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -25,9 +25,9 @@
 
   \;
 
-  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><tabular|<tformat|<cwith|1|1|1|1|cell-bborder|1ln>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-halign|r>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<table|<row|<cell|<arg|s><space|4spc><quote|<page-the-page>>>>>>>>>>>>
+  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<style-with|src-compact|none|<quasiquote|<small|<wide-std-underlined|<htab|0mm><unquote|<arg|s>><space|4spc><page-the-page>>>>>>>>
 
-  <assign|even-page-text|<macro|s|<assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><tabular|<tformat|<cwith|1|1|1|1|cell-bborder|1ln>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-halign|l>|<table|<row|<cell|<quote|<page-the-page>><space|4spc><arg|s>>>>>>>>>>>
+  <assign|even-page-text|<macro|s|<assign|page-even-header|<style-with|src-compact|none|<quasiquote|<small|<wide-std-underlined|<page-the-page><space|4spc><unquote|<arg|s>>>>>>>>>
 
   \;
 
@@ -46,34 +46,18 @@
   \;
 
   <assign|abstract|<\macro|body>
-    <\with|par-left|15mm|par-right|15mm|font-size|0.84>
-      <value|hrule>
-
-      <arg|body>
-
-      <value|hrule>
-
-      \;
+    <\with|par-left|15mm|par-right|15mm>
+      <\small>
+        <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>
+          <surround|<yes-indent>||<arg|body>>
+        </padded-bothlined>
+      </small>
     </with>
   </macro>>
-
-  \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
