@@ -28,7 +28,7 @@
   ("|" "Insert norm" (insert-string "<||>"))
   ("quad" "Insert a quad space" (make-space "1fn"))
   ("qquad" "Insert a qquad space" (make-space "2fn"))
-  ("\\" "Go to the next line" (make-format "next_line"))
+  ("\\" "Go to the next line" (make-format "next-line"))
 
   ("[" "Insert equation"
    (begin (make 'equation*) (temp-proof-fix)))

@@ -61,20 +61,33 @@ get_codes (string version) {
   rename_feature (H, "var_expand", "expand*");
   rename_feature (H, "hide_expand", "hide-expand");
 
-  if (version_inf ("1.0.2.7", version)) return H;
+  rename_feature (H, "with_limits", "with-limits");
+  rename_feature (H, "line_break", "line-break");
+  rename_feature (H, "new_line", "new-line");
+  rename_feature (H, "line_separator", "line-sep");
+  rename_feature (H, "next_line", "next-line");
+  rename_feature (H, "no_line_break", "no-break");
+  rename_feature (H, "no_first_indentation", "no-indent");
+  rename_feature (H, "enable_first_indentation", "yes-indent");
+  rename_feature (H, "no_indentation_after", "no-indent*");
+  rename_feature (H, "enable_indentation_after", "yes-indent*");
+  rename_feature (H, "page_break_before", "page-break*");
+  rename_feature (H, "page_break", "page-break");
+  rename_feature (H, "no_page_break_before", "no-page-break*");
+  rename_feature (H, "no_page_break_after", "no-page-break");
+  rename_feature (H, "new_page_before", "new-page*");
+  rename_feature (H, "new_page", "new-page");
+  rename_feature (H, "new_double_page_before", "new-dpage*");
+  rename_feature (H, "new_double_page", "new-dpage");
 
-  // new_feature (H, "eval_args");
-
-  if (version_inf ("1.0.2.6", version)) return H;
+  if (version_inf ("1.0.2.5", version)) return H;
 
   new_feature (H, "compound");
   new_feature (H, "xmacro");
   new_feature (H, "get_label");
   new_feature (H, "get_arity");
   new_feature (H, "map_args");
-
-  if (version_inf ("1.0.2.5", version)) return H;
-
+  new_feature (H, "eval_args");
   new_feature (H, "drd_props");
 
   if (version_inf ("1.0.2.0", version)) return H;
@@ -1547,7 +1560,19 @@ static tree
 upgrade_formatting (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, FORMAT, 1)) {
-    string name= replace (t[0]->label, " ", "_");
+    string name= replace (t[0]->label, " ", "-");
+    if (name == "line-separator") name= "line-sep";
+    else if (name == "no-line-break") name= "no-break";
+    else if (name == "no-first-indentation") name= "no-indent";
+    else if (name == "enable-first-indentation") name= "yes-indent";
+    else if (name == "no-indentation-after") name= "no-indent*";
+    else if (name == "enable-indentation-after") name= "yes-indent*";
+    else if (name == "page-break-before") name= "page-break*";
+    else if (name == "no-page-break-before") name= "no-page-break*";
+    else if (name == "no-page-break-after") name= "no-page-break";
+    else if (name == "new-page-before") name= "new-page*";
+    else if (name == "new-double-page-before") name= "new-dpage*";
+    else if (name == "new-double-page") name= "new-dpage";
     return tree (as_tree_label (name));
   }
   else {
