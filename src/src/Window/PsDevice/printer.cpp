@@ -308,12 +308,6 @@ printer_rep::select_tex_font (string name) {
 
 static char* hex_string= "0123456789ABCDEF";
 
-static string
-as_hexadecimal (int i, int len=2) {
-  if (len==1) return hex_string [i & 15];
-  else return as_hexadecimal (i >> 4, len-1) * hex_string [i & 15];
-}
-
 void
 printer_rep::make_tex_char (string name, unsigned char c, bitmap_char bmc) {
   string char_name (name * "-" * as_string ((int) c));
@@ -345,9 +339,9 @@ printer_rep::make_tex_char (string name, unsigned char c, bitmap_char bmc) {
   int d4= 126+ bmc->yoff;
   int d5= bmc->lwidth;
   if ((d1<256) && (d2<256) && (d3<256) && (d4<256) && (d5<256)) {
-    hex_code << as_hexadecimal (d1) << as_hexadecimal (d2)
-	     << as_hexadecimal (d3) << as_hexadecimal (d4)
-	     << as_hexadecimal (d5);
+    hex_code << as_hexadecimal (d1, 2) << as_hexadecimal (d2, 2)
+	     << as_hexadecimal (d3, 2) << as_hexadecimal (d4, 2)
+	     << as_hexadecimal (d5, 2);
     hex_code= "<" * hex_code * ">";
   }
   else {

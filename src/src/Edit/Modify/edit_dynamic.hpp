@@ -26,6 +26,7 @@ public:
   bool is_multi_paragraph_macro (tree t);
   void activate_macro (path p, string name, tree f);
   void activate ();
+  void activate_compound ();
 
   void make_active (string op, int n);
   void make_deactivated (tree t, path p);
@@ -38,16 +39,20 @@ public:
   void make_expand (string s, int n=0);
   void temp_proof_fix ();
   void make_apply (string s);
-  void insert_argument ();
+  void go_to_argument (path p, bool start_flag);
+  void insert_argument (bool forward);
+  void insert_argument (path p, bool forward);
+  void remove_argument (path p, bool forward);
 
   void back_dynamic (path p);
   void back_expand (path p);
   void back_hide_expand (path p);
+  void back_compound (path p);
   void back_extension (path p);
   void back_in_dynamic (tree t, path p, int min_args=1, int with=1);
   void back_in_with (tree t, path p);
   void back_in_expand (tree t, path p);
-  void back_in_extension (tree t, path p);
+  void back_in_compound (tree t, path p);
 };
 
 #endif // defined EDIT_DYNAMIC_H

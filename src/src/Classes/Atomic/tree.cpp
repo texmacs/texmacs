@@ -126,7 +126,7 @@ operator << (ostream& out, tree t) {
   else {
     int i, n= N(t);
     out << as_string (L(t));
-    if (n==0) return out;
+    if (n==0) return out << "()";
     out << " (";
     for (i=0; i< n-1; i++)
       out << t[i] << ", ";
@@ -259,29 +259,23 @@ is_prime (tree t) {
 
 bool
 is_expand (tree t) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND));
+  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) ||
+	  (L(t) == HIDE_EXPAND) || (L(t) == COMPOUND));
 }
 
 bool
 is_expand (tree t, int n) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND))
-    && (N(t) == n+1);
+  return is_expand (t) && (N(t) == n+1);
 }
 
 bool
 is_expand (tree t, string s) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) > 0) &&
-    (t[0] == s);
+  return is_expand (t) && (N(t) > 0) && (t[0] == s);
 }
 
 bool
 is_expand (tree t, string s, int n) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) == n+1) &&
-    (t[0] == s);
+  return is_expand (t) && (N(t) == n+1) && (t[0] == s);
 }
 
 bool
@@ -294,8 +288,6 @@ is_inactive (tree t) {
 /******************************************************************************
 * Compound trees
 ******************************************************************************/
-
-#ifdef WITH_EXTENSIONS
 
 tree
 compound (string s) {
@@ -341,55 +333,6 @@ bool
 is_compound (tree t, string s, int n) {
   return (as_string (L(t)) == s) && (N(t) == n);
 }
-
-#else
-
-tree
-compound (string s) {
-  return tree (EXPAND, s);
-}
-
-tree
-compound (string s, tree t1) {
-  return tree (EXPAND, s, t1);
-}
-
-tree
-compound (string s, tree t1, tree t2) {
-  return tree (EXPAND, s, t1, t2);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3) {
-  return tree (EXPAND, s, t1, t2, t3);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3, tree t4) {
-  return tree (EXPAND, s, t1, t2, t3, t4);
-}
-
-bool
-is_extension (tree t) {
-  return is_expand (t);
-}
-
-bool
-is_extension (tree t, int n) {
-  return is_expand (t, n);
-}
-
-bool
-is_compound (tree t, string s) {
-  return is_expand (t, s);
-}
-
-bool
-is_compound (tree t, string s, int n) {
-  return is_expand (t, s, n);
-}
-
-#endif
 
 /******************************************************************************
 * Routines for simplification and correction

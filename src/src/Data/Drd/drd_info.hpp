@@ -18,21 +18,54 @@
 
 class drd_info;
 class drd_info_rep: concrete_struct {
+public:
   string name;
-  rel_hashmap<tree_label,tag_info> ti;
+  rel_hashmap<tree_label,tag_info> info;
 
 public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
+  tree get_locals ();
+  void set_locals (tree t);
+  bool contains (string l);
 
-  void set_arity (tree_label l, int arity);
-  void set_props (tree_label l, int props);
-  int  get_arity (tree_label l);
-  int  get_props (tree_label l);
-
+  /* Properties of the tag itself */
+  void set_arity (tree_label tag, int arity, int extra, int am, int cm);
+  int  get_arity_mode (tree_label tag);
+  int  get_arity_base (tree_label tag);
+  int  get_arity_extra (tree_label tag);
+  int  get_child_mode (tree_label tag);
+  int  get_nr_indices (tree_label tag);
+  void freeze_arity (tree_label tag);
+  int  get_old_arity (tree_label l);
+  bool correct_arity (tree_label l, int i);
+  bool insert_point (tree_label l, int i, int n);
   bool is_dynamic (tree t);
-  bool is_accessible_child (tree t, int child);
+
+  void set_no_border (tree_label tag, bool has_no_border);
+  bool get_no_border (tree_label tag);
+  void freeze_no_border (tree_label tag);
   bool is_child_enforcing (tree t);
+
+  void set_block (tree_label tag, int is_block);
+  int  get_block (tree_label tag);
+  void freeze_block (tree_label tag);
+
+  /* Properties of the children of the tag */
+  void set_accessible (tree_label tag, int nr, bool is_accessible);
+  bool get_accessible (tree_label tag, int nr);
+  bool all_accessible (tree_label tag);
+  void freeze_accessible (tree_label tag, int nr);
+  bool is_accessible_child (tree t, int child);
+  
+  void set_block (tree_label tag, int nr, int require_block);
+  int  get_block (tree_label tag, int nr);
+  void freeze_block (tree_label tag, int nr);
+
+  /* Heuristic initialization */
+  bool heuristic_init_macro (string var, tree macro);
+  bool heuristic_init_xmacro (string var, tree xmacro);
+  void heuristic_init (hashmap<string,tree> env);
 
   friend class drd_info;
   friend ostream& operator << (ostream& out, drd_info drd);

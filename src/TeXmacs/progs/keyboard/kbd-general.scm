@@ -155,14 +155,14 @@
 (kbd-map ;; inserting tables
   ("table" "" "Table command")
   ("table N" "" "New table (t: tabular, b: block)")
-  ("table N t" (make-expand-arg "tabular"))
-  ("table N T" (make-expand-arg "tabular*"))
-  ("table N b" (make-expand-arg "block"))
-  ("table N B" (make-expand-arg "block*")))
+  ("table N t" (make-compound-arg "tabular"))
+  ("table N T" (make-compound-arg "tabular*"))
+  ("table N b" (make-compound-arg "block"))
+  ("table N B" (make-compound-arg "block*")))
 
 (kbd-map like-old?
   ("tab" (if (or (is-deactivated?) (in-preamble-mode?) (inside? "tuple"))
-	     (insert-argument)
+	     (insert-argument #t)
 	     (make-htab "5mm")))
   ("A-backspace" (make-space "-0.2spc"))
   ("A-delete" (cell-del-format ""))

@@ -19,11 +19,10 @@ bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
 bridge bridge_expand (typesetter, tree, path);
 bridge bridge_apply (typesetter, tree, path);
-bridge bridge_include (typesetter, tree, path);
+bridge bridge_rewrite (typesetter, tree, path);
 bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
-bridge bridge_extension (typesetter, tree, path);
-bridge bridge_executable (typesetter, tree, path);
+bridge bridge_compound (typesetter, tree, path);
 
 bridge nil_bridge;
 
@@ -56,17 +55,19 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case VAR_EXPAND:
   case HIDE_EXPAND:
     return bridge_expand (ttt, st, ip);
+  case COMPOUND:
+    return bridge_compound (ttt, st, ip);
   case APPLY:
     return bridge_apply (ttt, st, ip);
   case INCLUDE:
-    return bridge_include (ttt, st, ip);
+    return bridge_rewrite (ttt, st, ip);
   case ARGUMENT:
     return bridge_argument (ttt, st, ip);
   case EXTERN:
-    return bridge_executable (ttt, st, ip);
+    return bridge_rewrite (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
-    else return bridge_extension (ttt, st, ip);
+    else return bridge_compound (ttt, st, ip);
   }
 }
 

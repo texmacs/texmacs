@@ -12,6 +12,7 @@
 
 #include "file.hpp"
 #include "Languages/hyphenate.hpp"
+#include "analyze.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,21 +42,13 @@ unpattern (string s) {
   return r;
 }
 
-static int
-unhex (char c) {
-  if ((c>='0') && (c<='9')) return ((int) c)- ((int) '0');
-  if ((c>='a') && (c<='f')) return 10+ ((int) c)- ((int) 'a');
-  if ((c>='A') && (c<='F')) return 10+ ((int) c)- ((int) 'A');
-  return 0;
-}
-
 static string
 hyphen_normalize (string s) {
   int i;
   string r (0);
   for (i=0; i<N(s); i++)
     if ((i+3<N(s)) && (s[i]=='^') && (s[i+1]=='^')) {
-      r << ((char) (unhex (s[i+2])*16 + unhex (s[i+3])));
+      r << from_hexadecimal (s (i+2, i+4));
       i+=3;
     }
     else r << s[i];

@@ -23,19 +23,19 @@
 
 (menu-bind insert-table-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (make-expand-arity "small-table" 2))
-      ("Big table" (make-expand-arity "big-table" 2))
+      ("Small table" (make-compound-arity "small-table" 2))
+      ("Big table" (make-compound-arity "big-table" 2))
       ---)
-  ("Plain tabular" (make-expand-arg "tabular"))
-  ("Centered tabular" (make-expand-arg "tabular*"))
-  ("Plain block" (make-expand-arg "block"))
-  ("Centered block" (make-expand-arg "block*"))
+  ("Plain tabular" (make-compound-arg "tabular"))
+  ("Centered tabular" (make-compound-arg "tabular*"))
+  ("Plain block" (make-compound-arg "block"))
+  ("Centered block" (make-compound-arg "block*"))
   (if (in-math?)
       ---
-      ("Matrix" (make-expand-arg "matrix"))
-      ("Determinant" (make-expand-arg "det"))
-      ("Choice" (make-expand-arg "choice"))
-      ("Stack" (make-expand-arg "stack"))))
+      ("Matrix" (make-compound-arg "matrix"))
+      ("Determinant" (make-compound-arg "det"))
+      ("Choice" (make-compound-arg "choice"))
+      ("Stack" (make-compound-arg "stack"))))
 
 (menu-bind insert-link-menu
   ("Label" (make-inactive-label))
@@ -47,25 +47,25 @@
   ("Action" (make-inactive-action))
   ---
   (-> "Citation"
-      ("Visible" (make-inactive-apply-arg "cite"))
-      ("Invisible" (make-inactive-apply-arg "nocite")))
+      ("Visible" (make-inactive-compound-arg "cite"))
+      ("Invisible" (make-inactive-compound-arg "nocite")))
   (-> "Index entry"
-      ("Main" (make-inactive-apply-arg "index"))
-      ("Sub" (make-inactive-apply-args "subindex" 2))
-      ("Subsub" (make-inactive-apply-args "subsubindex" 3))
-      ("Complex" (make-inactive-apply-args "index-complex" 4))
+      ("Main" (make-inactive-compound-arg "index"))
+      ("Sub" (make-inactive-compound-args "subindex" 2))
+      ("Subsub" (make-inactive-compound-args "subsubindex" 3))
+      ("Complex" (make-inactive-compound-args "index-complex" 4))
       ---
-      ("Interjection" (make-inactive-apply-args "index-line" 2)))
+      ("Interjection" (make-inactive-compound-args "index-line" 2)))
   (-> "Glossary entry"
-      ("Regular" (make-inactive-apply-arg "glossary"))
-      ("Explained" (make-inactive-apply-args "glossary-explain" 2))
-      ("Duplicate" (make-inactive-apply-arg "glossary-dup"))
+      ("Regular" (make-inactive-compound-arg "glossary"))
+      ("Explained" (make-inactive-compound-args "glossary-explain" 2))
+      ("Duplicate" (make-inactive-compound-arg "glossary-dup"))
       ---
-      ("Interjection" (make-inactive-apply-arg "glossary-line"))))
+      ("Interjection" (make-inactive-compound-arg "glossary-line"))))
 
 (menu-bind insert-presentation-tag-menu
-  ("Underline" (make-expand-arg "underline"))
-  ("Overline" (make-expand-arg "overline"))
+  ("Underline" (make-compound-arg "underline"))
+  ("Overline" (make-compound-arg "overline"))
   ("Subscript" (make-script #t #f))
   ("Superscript" (make-script #t #t)))
 
@@ -97,21 +97,21 @@
 
 (menu-bind insert-image-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small figure" (make-expand-arity "small-figure" 2))
-      ("Big figure" (make-expand-arity "big-figure" 2))
+      ("Small figure" (make-compound-arity "small-figure" 2))
+      ("Big figure" (make-compound-arity "big-figure" 2))
       ---)
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
 
 (menu-bind insert-page-insertion-menu
-  ("Footnote" (make-big-expand "footnote"))
+  ("Footnote" (make-big-compound "footnote"))
   ---
   ("Floating object" (make-insertion "float"))
   ("Floating figure" (begin (make-insertion "float")
-			    (make-expand-arity "big-figure" 2)))
+			    (make-compound-arity "big-figure" 2)))
   ("Floating table" (begin (make-insertion "float")
-			   (make-expand-arity "big-table" 2))))
+			   (make-compound-arity "big-table" 2))))
 
 (menu-bind position-float-menu
   ("Top" (toggle-insertion-position "t"))
@@ -126,10 +126,16 @@
   ---
   ("Macro" (make-inactive-macro))
   ("Argument" (make-inactive-argument))
-  ("Expand" (make-inactive-expand))
+  ("Compound" (make-inactive-compound))
   ---
-  ("Function" (make-inactive-function))
-  ("Apply" (make-inactive-apply)))
+  ("Long macro" (make-inactive-xmacro))
+  ("Get label" (make-inactive-get-label))
+  ("Get arity" (make-inactive-get-arity))
+  ("Map arguments" (make-inactive-map-args))
+  (if (tmp-use-apply?)
+      ---
+      ("Function" (make-inactive-function))
+      ("Apply" (make-inactive-apply))))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
@@ -236,8 +242,8 @@
       ("Footer" (make-inactive-assign-arg "this page footer"))
       ---
       (group "Permanent")
-      ("Header" (make-inactive-apply-arg "set-header"))
-      ("Footer" (make-inactive-apply-arg "set-footer"))
+      ("Header" (make-inactive-compound-arg "set-header"))
+      ("Footer" (make-inactive-compound-arg "set-footer"))
       ("Odd page header" (make-inactive-assign-arg "odd page header"))
       ("Odd page footer" (make-inactive-assign-arg "odd page footer"))
       ("Even page header" (make-inactive-assign-arg "even page header"))

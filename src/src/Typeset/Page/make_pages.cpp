@@ -154,7 +154,11 @@ pager_rep::pages_make_page (pagelet pg) {
   SI  left= (N(pages)&1)==0? odd: even;
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
+#ifdef UPGRADE_APPLY
+  tree page_t= env->exec (compound (PAGE_THE_PAGE));
+#else
   tree page_t= env->exec (tree (APPLY, PAGE_THE_PAGE));
+#endif
   return page_box (path (), lb, page_t,
 		   width, height, left, top, top+ text_height,
 		   make_header(), make_footer(), head_sep, foot_sep);

@@ -1668,6 +1668,15 @@ tmg_activate () {
 }
 
 SCM
+tmg_activate_compound () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->activate_compound ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_active (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-active");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "make-active");
@@ -1719,9 +1728,13 @@ tmg_make_deactivated_arg (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
 }
 
 SCM
-tmg_insert_argument () {
+tmg_insert_argument (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_argument ();
+  get_server()->get_editor()->insert_argument (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1776,8 +1789,8 @@ tmg_make_with (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_make_big_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-expand");
+tmg_make_big_compound (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-compound");
 
   string in1= scm_to_string (arg1);
 
@@ -1789,8 +1802,8 @@ tmg_make_big_expand (SCM arg1) {
 }
 
 SCM
-tmg_make_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand");
+tmg_make_compound (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound");
 
   string in1= scm_to_string (arg1);
 
@@ -1802,9 +1815,9 @@ tmg_make_expand (SCM arg1) {
 }
 
 SCM
-tmg_make_expand_arity (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand-arity");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-expand-arity");
+tmg_make_compound_arity (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound-arity");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-compound-arity");
 
   string in1= scm_to_string (arg1);
   int in2= scm_to_int (arg2);
@@ -2895,17 +2908,18 @@ initialize_glue_editor () {
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
+  gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make-active", (FN) tmg_make_active, 2, 0, 0);
   gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
   gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
-  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 0, 0, 0);
+  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
   gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);
   gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
-  gh_new_procedure ("make-big-expand", (FN) tmg_make_big_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand", (FN) tmg_make_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand-arity", (FN) tmg_make_expand_arity, 2, 0, 0);
+  gh_new_procedure ("make-big-compound", (FN) tmg_make_big_compound, 1, 0, 0);
+  gh_new_procedure ("make-compound", (FN) tmg_make_compound, 1, 0, 0);
+  gh_new_procedure ("make-compound-arity", (FN) tmg_make_compound_arity, 2, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
   gh_new_procedure ("make-apply", (FN) tmg_make_apply, 1, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);

@@ -146,7 +146,7 @@
    (test-fails "para (primitive)" '(para "aaa") '((h:h5 "aaa")))
    (test "subparagraph" '(subparagraph "aaa")
 	 '((h:strong (@ (class "subparagraph")) "aaa")))
-   (test "paragraph, empty" '(expand "paragraph" "")
+   (test "paragraph, empty" '(paragraph "")
 	 '((h:strong (@ (class "paragraph")))))))
 
 (define (regtest-tmhtml-section-post)
