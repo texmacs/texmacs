@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -10,7 +10,7 @@
   organization may be represented by a labeled tree. For instance, the tree
   which corresponds to the <tmstyle|article> style is represented below:
 
-  <\big-figure|<tree|<tmstyle|article>|<tree|<tmpackage|std>|<stack|<tformat|<table|<row|<cell|<tmpackage|std-counter>>>|<row|<cell|<tmpackage|std-markup>>>|<row|<cell|<tmpackage|std-symbol>>>|<row|<cell|<tmpackage|std-math>>>|<row|<cell|<tmpackage|std-list>>>|<row|<cell|<tmpackage|std-automatic>>>|<row|<cell|<tmpackage|list>>>|<row|<cell|<tmpackage|session>>>>>>>|<tree|<tmpackage|env>|<stack|<tformat|<table|<row|<cell|<tmpackage|env-base>>>|<row|<cell|<tmpackage|env-math>>>|<row|<cell|<tmpackage|env-theorem>>>|<row|<cell|<tmpackage|env-float>>>>>>>|<tree|<tmpackage|header-article>|<tmpackage|title-generic>>|<tree|<tmpackage|section-article>|<tmpackage|section-base>>>>
+  <\big-figure|<tree|<tmstyle|article>|<tree|<tmpackage|std>|<stack|<tformat|<table|<row|<cell|<tmpackage|std-markup>>>|<row|<cell|<tmpackage|std-symbol>>>|<row|<cell|<tmpackage|std-math>>>|<row|<cell|<tmpackage|std-list>>>|<row|<cell|<tmpackage|std-utils>>>|<row|<cell|<tmpackage|std-counter>>>|<row|<cell|<tmpackage|std-automatic>>>|<row|<cell|<tmpackage|list>>>|<row|<cell|<tmpackage|session>>>>>>>|<tree|<tmpackage|env>|<stack|<tformat|<table|<row|<cell|<tmpackage|env-base>>>|<row|<cell|<tmpackage|env-math>>>|<row|<cell|<tmpackage|env-theorem>>>|<row|<cell|<tmpackage|env-float>>>>>>>|<tree|<tmpackage|header-article>|<tmpackage|title-generic>>|<tree|<tmpackage|section-article>|<tmpackage|section-base>>>>
     The tree with the packages from which the <tmstyle|article> style has
     been built up. In order to save space, we have regrouped the numerous
     children of <tmpackage|std> and <tmpackage|env> in vertical lists.
@@ -75,18 +75,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
