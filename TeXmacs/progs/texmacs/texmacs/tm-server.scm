@@ -39,11 +39,16 @@
 	((== val "prompt on scripts") (set-script-status 1))
 	((== val "accept all scripts") (set-script-status 2))))
 
+(define (notify-autosave var val)
+  (if (has-view?) ; delayed-autosave would crash at initialization time
+      (delayed-autosave)))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "emacs" notify-look-and-feel)
   ("language" (get-locale-language) notify-language)
-  ("security" "prompt on scripts" notify-security))
+  ("security" "prompt on scripts" notify-security)
+  ("autosave" "120" notify-autosave))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Killing buffers, windows and TeXmacs

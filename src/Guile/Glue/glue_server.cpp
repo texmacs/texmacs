@@ -659,6 +659,15 @@ tmg_texmacs_save_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_delayed_autosave () {
+  // SCM_DEFER_INTS;
+  get_server()->delayed_autosave ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_color (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "color");
 
@@ -893,6 +902,7 @@ initialize_glue_server () {
   gh_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
   gh_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
   gh_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
+  gh_new_procedure ("delayed-autosave", (FN) tmg_delayed_autosave, 0, 0, 0);
   gh_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
   gh_new_procedure ("style-clear-cache", (FN) tmg_style_clear_cache, 0, 0, 0);
   gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);

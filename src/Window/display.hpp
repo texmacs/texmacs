@@ -71,6 +71,7 @@ public:
   virtual bool   set_selection (widget wid, string k, tree t, string s="") = 0;
   virtual void   clear_selection (string key) = 0;
   virtual void   delayed_message (widget wid, string mess, time_t delay) = 0;
+  virtual int    remove_all_delayed_messages (widget wid, string s) = 0;
 
   /* miscellaneous */
   virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
