@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.4.6>
 
 <style|source>
 
@@ -100,19 +100,19 @@
   <assign|toc-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >>
 
-  <assign|toc-strong-1|<macro|left|right|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|left>><toc-dots><arg|right><vspace|1fn>>>
+  <assign|toc-strong-1|<macro|left|right|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|left>><toc-dots><no-break><arg|right><vspace|1fn>>>
 
-  <assign|toc-strong-2|<macro|left|right|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|left>><toc-dots><arg|right><vspace|0.5fn>>>
+  <assign|toc-strong-2|<macro|left|right|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|left>><toc-dots><no-break><arg|right><vspace|0.5fn>>>
 
-  <assign|toc-1|<macro|left|right|<arg|left><toc-dots><arg|right>>>
+  <assign|toc-1|<macro|left|right|<arg|left><toc-dots><no-break><arg|right>>>
 
-  <assign|toc-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><toc-dots><arg|right>>>>
+  <assign|toc-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-3|<macro|left|right|<with|par-left|3fn|<arg|left><toc-dots><arg|right>>>>
+  <assign|toc-3|<macro|left|right|<with|par-left|3fn|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-4|<macro|left|right|<with|par-left|6fn|<with|font-size|0.84|<arg|left><toc-dots><arg|right><vspace|0.15fn>>>>>
+  <assign|toc-4|<macro|left|right|<with|par-left|6fn|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>>
 
-  <assign|toc-5|<macro|left|right|<with|par-left|7.5fn|font-size|0.84|<arg|left><toc-dots><arg|right><vspace|0.15fn>>>>
+  <assign|toc-5|<macro|left|right|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>
 
   <\active*>
     <\src-comment>

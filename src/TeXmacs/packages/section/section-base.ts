@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.6>
 
 <style|source>
 
@@ -205,6 +205,8 @@
   </active*>
 
   <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<compound|<unquote|<merge|the-|<arg|env>>>><compound|<unquote|<merge|<arg|env>|-sep>>><arg|title>|<arg|title>>>>>
+
+  <assign|part-toc|<macro|name|<toc-main-1|<toc-title|part|<arg|name>>>>>
 
   <assign|chapter-toc|<macro|name|<style-with|src-compact|none|<if|<sectional-short-style>|<toc-main-1|<toc-title|chapter|<arg|name>>>|<toc-main-2|<toc-title|chapter|<arg|name>>>>>>>
 
