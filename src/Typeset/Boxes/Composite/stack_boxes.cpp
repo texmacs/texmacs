@@ -98,7 +98,7 @@ stack_box_rep::clear_incomplete (
       right= max (right, sx4 (i));
     }
     if ((which >= 0) && (which < n)) {
-      rectangle& r= last_item (rs);
+      rectangle& r= access_last (rs);
       if (r->x2 >= sx4 (which)) r->x2= right;
     }
 
