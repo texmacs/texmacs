@@ -5,9 +5,15 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.10>
+  <section|Changes from version 1.0.3 to 1.0.3.11>
 
   <\itemize>
+    <item>Finished documentation of <TeXmacs> primitives (1.0.3.11).
+
+    <item>Started documentation built-in environment variables (1.0.3.11).
+
+    <item>Editing of text-at boxes in graphics mode (1.0.3.11).
+
     <item>Higher reactivity for editing large documents (1.0.3.10).
 
     <item>Speed-up for starting <TeXmacs> (1.0.3.10).
