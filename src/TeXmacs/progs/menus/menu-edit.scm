@@ -26,7 +26,7 @@
 (define-macro (extern-clipboard-menu-promise action)
   (define (item fm name) (extern-clipboard-item fm name action))
   (with routine (if (== action "paste-import")
-		    converter-from-menu converter-to-menu)
+		    converter-to-menu converter-from-menu)
     `(menu-dynamic ,@(routine "texmacs-snippet" "-snippet" #t item))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
