@@ -203,6 +203,32 @@ edit_text_rep::remove_forwards () {
   } 
   if (is_document (t)) {
     if (last >= rix) {
+      if (!nil(p)) {
+	tree u= subtree (et, path_up (p));
+	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
+	  if (is_extension (u) && (N(u) > 1)) {
+	    int i, n= N(u);
+	    bool empty= true;
+	    for (i=0; i<n; i++)
+	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
+	    if (!empty) {
+	      if (last_item (p) == n-1) go_to (end (et, path_up (p)));
+	      else go_to (start (et, path_inc (p)));
+	      return;
+	    }
+	  }
+	  if (t == tree (DOCUMENT, "")) {
+	    if (is_func (u, _FLOAT) || is_compound (u, "footnote", 1)) {
+	      assign (path_up (p), "");
+	      correct (path_up (p, 2));
+	    }
+	    else if (is_document (subtree (et, path_up (p, 2))))
+	      assign (path_up (p), "");
+	    else assign (path_up (p), tree (DOCUMENT, ""));
+	  }
+	  else go_to (end (et, path_up (p)));
+	}
+      }
       /* Not yet implemented */
       return;
     }
