@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -9,26 +9,30 @@
   used by the user to define new environments for theorems, remarks,
   exercises and figures:
 
-  <\description>
-    <item*|<markup|new-theorem>>Defines a theorem-like environment. You
-    should specify a name for the environment (like ``experiment'') and the
-    corresponding text (like ``Experiment''). When defining a new
-    theorem-like environment like <markup|experiment>, an unnumbered variant
-    <markup|experiment*> is automatically defined as well.
+  <\explain|<explain-macro|new-theorem|env-name|display-name>>
+    This meta-macro is used for defining new theorem-like environments. The
+    first argument <src-arg|env-name> specifies the name for the environment
+    (like ``experiment'') and <src-arg|display-name> the corresponding text
+    (like ``Experiment''). When defining a new theorem-like environment like
+    <markup|experiment>, an unnumbered variant <markup|experiment*> is
+    automatically defined as well.
+  </explain>
 
-    <item*|<markup|new-remark>>Similar as <markup|new-theorem>, but for
-    remarks.
+  <\explain|<explain-macro|new-remark|env-name|display-name>>
+    Similar as <markup|new-theorem>, but for remarks.
+  </explain>
 
-    <item*|<markup|new-exercise>>Similar as <markup|new-theorem>, but for
-    exercises.
+  <\explain|<explain-macro|new-exercise|env-name|display-name>>
+    Similar as <markup|new-theorem>, but for exercises.
+  </explain>
 
-    <item*|<markup|new-figure>>Similar as <markup|new-theorem>, but for
-    figures. When defining a new type of figure, like ``picture'', the
-    <markup|new-figure> macro defines both the inline environment
-    <markup|small-picture> and the block-environment <markup|big-picture>, as
-    well as the unnumbered variants <markup|small-picture*> and
-    <markup|big-picture*>.
-  </description>
+  <\explain|<explain-macro|new-exercise|env-name|display-name>>
+    Similar as <markup|new-theorem>, but for figures. When defining a new
+    type of figure, like ``picture'', the <markup|new-figure> macro defines
+    both the inline environment <markup|small-picture> and the
+    block-environment <markup|big-picture>, as well as the unnumbered
+    variants <markup|small-picture*> and <markup|big-picture*>.
+  </explain>
 
   The theorem-like and remark-like environments belong to a common
   counter-group <verbatim|theorem-env>. By default, we use American-style

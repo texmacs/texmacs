@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -19,15 +19,14 @@
   but first>|<cell|Macro>|<cell|Style>>|<row|<cell|<markup|drd-props>>|<cell|<with|mode|math|1+*2*(n+1)>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Style>>|<row|<cell|<markup|get-label>>|<cell|<with|mode|math|1>>|<cell|Yes>|<cell|None>|<cell|Functional>|<cell|Style>>|<row|<cell|<markup|get-arity>>|<cell|<with|mode|math|1>>|<cell|Yes>|<cell|None>|<cell|Functional>|<cell|Style>>|<row|<cell|<markup|action>>|<cell|<with|mode|math|2,3>>|<cell|Yes>|<cell|First>|<cell|Typesetting>|<cell|Style>>|<row|<cell|<markup|flag>>|<cell|2>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Style>>>>>|Macro
   primitives>
 
-  <\description>
-    <item*|<markup|macro>>Macro of fixed arity
-
-    <verbatim|(macro <var|body>)> creates a macro without argument,
-    <var|body> may be any document fragment.
-
-    <verbatim|(macro <var|name1> ... <var|nameN> <var|body>)> creates a macro
-    taking <with|mode|math|N> arguments, named after the literal strings
-    <var|name1> to <var|nameN>.
+  <\explain>
+    <explain-macro|macro|var-1|<with|mode|math|\<cdots\>>|var-n|body><explain-synopsis|macro
+    of fixed arity>
+  <|explain>
+    This primitives returns a macro (the <TeXmacs> analogue of a
+    <with|mode|math|\<lambda\>>-expression) with <with|mode|math|n>
+    arguments, named after the literal strings <src-arg|var-1> until
+    <src-arg|var-n>.
 
     New tags are defined by storing macros in the environment. Most of the
     time, macros are stored without scope with <markup|assign>, but it is
@@ -38,217 +37,207 @@
     <\example>
       Definition of the <markup|abbr> tag
 
-      <\scheme-fragment>
-        (assign "abbr" (macro "x" (group (arg "x"))))
-      </scheme-fragment>
+      <\tm-fragment>
+        <inactive*|<assign|abbr|<macro|x|<group|<arg|x>>>>>
+      </tm-fragment>
     </example>
 
     Storing a <markup|macro> in the environment defines a tag whose arity is
     fixed to the number of arguments taken by the macro.
+  </explain>
 
-    <item*|<markup|arg>>Access arguments of a macro
-
-    <verbatim|(arg <var|name>)> expands to the content of the argument
-    <var|name> (literal string). This argument name must be defined by a
-    <markup|macro> containing the <markup|arg> tag.
+  <\explain>
+    <explain-macro|arg|var|index-1|<with|mode|math|\<cdots\>>|index-n><explain-synopsis|retrieve
+    macro arguments>
+  <|explain>
+    This primitive is used to retrieve the arguments of a macro within its
+    body. For instance, <explain-macro|arg|var> expands the content of the
+    macro argument with name <src-arg|arg> (literal string). Of course, this
+    argument must be defined by a <markup|macro> containing the <markup|arg>
+    tag.
 
     This tag is similar to <markup|value>, but differs in important ways:
 
     <\itemize>
       <item>The argument namespace is distinct from the environment,
-      <verbatim|(arg <var|x>)> and <verbatim|(value <var|x>)> will generally
-      evaluate to different values.
+      <explain-macro|arg|var> and <explain-macro|value|var> will generally
+      evaluate to different values (although you should not rely on this).
 
       <item>The value of <markup|arg> retains the position of the macro
       argument in the document tree, that makes it possible to edit the
       arguments of a macro-defined tag while it is active.
     </itemize>
 
-    <verbatim|(arg <var|name> <var|i1> ... <var|iN>)> expands to a subtree of
-    the argument <var|name>. The value of the named argument must be a
-    compound tree (not a string). The operands
-    <var|i1><with|mode|math|\<ldots\>><var|iN> must all evaluate to positive
-    integers and give the path to the subtree or
+    When more than one arguments are specified,
+    <explain-macro|arg|var|index-1|<with|mode|math|\<cdots\>>|index-n>
+    expands to a subtree of the argument <src-arg|var>. The value of the
+    named argument must be a compound tree (not a string). The operands
+    <src-arg|var> until <src-arg|index-n> must all evaluate to positive
+    integers and give the path to the subtree of the macro argument.
+  </explain>
 
-    <item*|<markup|xmacro>>Macro of variable arity
+  <\explain>
+    <explain-macro|xmacro|var|body><explain-synopsis|macro with a variable
+    arity>
+  <|explain>
+    This primitive returns a macro (the <TeXmacs> analogue of a
+    <with|mode|math|\<lambda\>>-expression) capable of taking any number of
+    arguments. The arguments are stored in the macro variable with name
+    <src-arg|var> (a literal string) during the evaluation of the
+    <src-arg|body>. The <with|mode|math|i>-th individual argument can then be
+    accessed using <explain-macro|arg|var|i>.
+  </explain>
 
-    <verbatim|(xmacro <var|name> <var|body>)> creates a macro of any arity,
-    <var|name> (literal string) is bound the whole tag which is defined by
-    the macro.
+  <\explain>
+    <explain-macro|map-args|foo|root|var>
 
-    Individual operands can be accessed using the form <verbatim|(arg
-    <var|name> <var|i>)>.
+    <explain-macro|map-args|foo|root|var|first>
 
-    <item*|<markup|map-args><markup|>>Map a tag on subtrees of an argument
+    <explain-macro|map-args|foo|root|var|first|last><explain-synopsis|map a
+    tag on subtrees of an argument>
+  <|explain>
+    This primitive evaluates to a tree whose root is labeled by
+    <src-arg|root> and whose children are the result of applying the macro
+    <src-arg|foo> to the children of the macro argument with name
+    <src-arg|var>.
 
-    <verbatim|(map-args <var|tag> <var|root> <var|name>)> evaluates to a tree
-    whose label is <var|root> and whose operands are trees whose labels are
-    <var|tag> and whose operands are subtrees of the value of <var|name> and
-    their position in the values of <var|name>. All operands must be literal
-    strings.
+    By default, the macro <src-arg|foo> is applied to all children. If
+    <src-arg|first> has been specified, then we rather start at the
+    <with|mode|math|i>-th child of <src-arg|var>, where <with|mode|math|i> is
+    the result of evaluating <src-arg|first>. If <src-arg|last> has been
+    specified to, then we stop at the <with|mode|math|j>-th child of
+    <src-arg|var> (the <with|mode|math|j>-th child not being included), where
+    <with|mode|math|j> is the result of evaluating <src-arg|last>. In this
+    last case, the arity of the returned tree is therefore
+    <with|mode|math|j-i>.
 
-    <verbatim|(map-args <var|tag> <var|root> <var|name> <var|i>)> starts
-    mapping with the subtree of the value of <var|name> whose index is
-    <var|i> (evaluates to an integer). If the value of <var|name> has arity
-    <with|mode|math|n>, then <with|mode|math|0\<leqslant\>i\<leqslant\>n> and
-    the result tree has arity <with|mode|math|n-i>.
+    Stated otherwise, <markup|map-args> applies <src-arg|foo> to all subtrees
+    of the macro argument <src-arg|var> (or a range of subtrees if
+    <src-arg|first> and <src-arg|last> are specified) and collect the result
+    in a tree with label <src-arg|root>. In addition, the second argument to
+    <src-arg|foo> gives its position of the first argument in the expansion
+    of <src-arg|var>.
 
-    <verbatim|(map-args <var|tag> <var|root> <var|name> <var|i> <var|j>)>
-    ends mapping with the subtree of the value of <var|name> whose index is
-    <var|j> (evaluates to an integer). With the same <with|mode|math|i> and
-    <with|mode|math|n> as previously, <with|mode|math|j> must satisfy
-    <with|mode|math|0\<leqslant\>i\<leqslant\>j\<leqslant\>n> and the result
-    tree has arity <with|mode|math|n-i-j>.
-
-    Put more simply, <markup|map-args> applies <var|tag> to all subtrees of
-    argument <var|name> (or a range of subtrees if <var|i> or <var|j> are
-    specified) and collect the result in a tree with label <var|root>. In
-    addition, the second argument to <var|tag> gives its position of the
-    first argument in the expansion of <var|name>.
-
-    It is actually an alter-ego of the <value|scheme> function
+    The <markup|map-args> is analogue to the <value|scheme> function
     <verbatim|map>. Since <TeXmacs> use labelled trees, the label of the
     mapping list must also be specified.
 
     <\example>
-      Comma-separated
+      Comma-separated lists.
 
       The <markup|comma-separated> tag has any arity (though it does not make
       much sense with arity zero) and typeset its operands interspersed with
       commas.
 
-      <\scheme-fragment>
-        (assign "comma-extra" (macro "x"
+      <\tm-fragment>
+        <inactive*|<assign|comma-extra|<macro|x|, <arg|x>>>>
 
-        \ \ \ \ (concat ", " (arg "x"))))
-
-        (assign "comma-separated" (xmacro "args"
-
-        \ \ \ \ (concat (arg "args" "0")
-
-        \ \ \ \ \ \ \ \ \ \ \ \ (map-args "comma-extra" "concat" "args"
-        "1"))))
-      </scheme-fragment>
+        <inactive*|<assign|comma-separated|<xmacro|args|<style-with|src-compact|none|<arg|args|0><map-args|comma-extra|concat|args|1>>>>>
+      </tm-fragment>
     </example>
+  </explain>
 
-    <item*|<markup|eval-args>>Force evaluation of subtrees of an argument
-
-    <verbatim|(eval-args <var|name>)> evaluates to the tree with the same
-    label as the expansion of the argument <var|name> and whose subtrees are
-    the result of the evaluation of the subtrees of the expansion of
-    <var|name>.
+  <\explain>
+    <explain-macro|eval-args|var><explain-synopsis|macro with a variable
+    arity>
+  <|explain>
+    This primitive evaluates to the tree with the same label as the expansion
+    of the argument <src-arg|var> and whose subtrees are the result of the
+    evaluation of the subtrees of the expansion of <src-arg|var>.
 
     <todo|How is that practically useful?>
+  </explain>
 
-    <item*|<markup|compound>>Expand an unnamed macro
-
-    <verbatim|(compound <var|macro> <var|arg1> ... <var|argN>)> applies
-    <var|macro> to the arguments <var|arg1><with|mode|math|\<ldots\>><var|argN>.
-
-    If <var|macro> is the literal string <verbatim|"<var|tag>">, it is
-    equivalent to <verbatim|(<var|tag> <var|arg1> ... <var|argN>)>.
-
-    The <var|macro> operand may be a literal string (trivial case) or
-    expression which evaluates to a string <emdash>which is the name of a
-    macro<emdash> or to a <markup|macro> expression. The operands
-    <var|arg1><with|mode|math|\<ldots\>><var|argN> may be anything that
-    <var|macro> can handle.
-
-    The <markup|compound> primitive is useful when the name or the expression
-    of the macro is computed. This is useful in call-back and lambda
+  <\explain>
+    <explain-macro|compound|foo|arg-1|<with|mode|math|\<cdots\>>|arg-n><explain-synopsis|expand
+    an unnamed macro>
+  <|explain>
+    This primitive is useful to expand macros which are the result of a
+    computation: it applies the macro which is the result of the evaluation
+    of <src-arg|foo> to the arguments <src-arg|arg-1> until <src-arg|arg-n>.
+    The <markup|compound> primitive is useful in call-back and lambda
     programming idioms, where a <def-index|higher-level macro> is given a
     macro as an operand, which it may later apply under certain conditions or
     with operands which are not known the client code.
 
+    Actually, in the current implementation, <src-arg|foo> may either
+    evaluate to a macro or to a literal string which gives the name of a
+    macro. However, we discourage users to rely on the second case.
+
     <\example>
-      Lambda programming with macros
+      Lambda programming with macros.
 
-      <verbatim|(filter <var|pred> <var|t>)> expects a macro (name or
-      expression) as <var|pred> and a tuple as <var|t>, it returns a tuple
-      containing the elements of <var|t> for which <var|pred> evaluates to
-      <verbatim|true>.
+      In the code below, <explain-macro|filter|pred|t> expects a macro
+      <src-arg|pred> and a tuple <src-arg|t> on input and returns a tuple
+      containing the elements of <src-arg|t> for which <src-arg|pred>
+      evaluates to <verbatim|true>.
 
-      <\scheme-fragment>
-        (assign "filter" (macro "pred" "t"
+      <\tm-fragment>
+        <inactive*|<assign|filter|<macro|pred|t|<style-with|src-compact|none|<if|<equal|<length|<arg|t>>|0>|<tuple>|<style-with|src-compact|none|<merge|<style-with|src-compact|none|<if|<compound|<arg|pred>|<look-up|<arg|t>|0>>|<tuple|<look-up|<arg|t>|0>>|<tuple>>>|<filter|<arg|pred>|<range|<arg|t>|1|<length|<arg|t>>>>>>>>>>>
+      </tm-fragment>
 
-        \ \ \ \ \ (if (equal "0" (length (arg "t")))
+      As an application, we may define a macro <explain-macro|evens|t>, which
+      expects <src-arg|t> to be a tuple containing integers, and which
+      returns the tuple of integers in <src-arg|t> which are divisible by 2.
 
-        \ \ \ \ \ \ \ \ \ (tuple)
-
-        \ \ \ \ \ \ \ (merge (if (compound (arg "pred")
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (look-up (arg
-        "t") "0"))
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (tuple (look-up (arg "t") "0"))
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (tuple))
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ (filter (arg "pred")
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (range (arg "t") "1"
-
-        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (length
-        (arg "t"))))))))
-      </scheme-fragment>
-
-      <verbatim|(evens <var|t>)> expects <var|t> to be a tuple containing
-      integers, it returns the tuple of integers in <var|t> which are
-      divisible by 2.
-
-      <\scheme-fragment>
-        (assign "evens" (macro "t"
-
-        \ \ \ \ (filter (macro "x" (equal "0" (mod (arg "x") "2")))
-
-        \ \ \ \ \ \ \ \ \ \ \ \ (arg "t"))))
-      </scheme-fragment>
+      <\tm-fragment>
+        <inactive*|<assign|evens|<macro|t|<filter|<macro|x|<equal|<mod|<arg|x>|2>|0>>|<arg|t>>>>>
+      </tm-fragment>
     </example>
+  </explain>
 
-    <\remark>
-      <markup|compound> for dispatching
-
-      In <TeXmacs> 1.0.3, <markup|compound> is also needed to correctly
-      implement dispatching when the expansion may be typeset as a block.
-      This is required to work around an internal limitation in the
-      typesetter.
-    </remark>
-
-    <item*|<markup|><markup|drd-props>>Set <abbr|D.R.D.> properties of a tag
-
+  <\explain>
+    <explain-macro|drd-props|var|prop-1|val-1|<with|mode|math|\<cdots\>>|prop-n|val-n><explain-synopsis|set
+    <abbr|D.R.D.> properties of a tag>
+  <|explain>
     The arity and children accessibility of tags defined by macros are
     determined heuristically by default. The <markup|drd-props> primitive
-    overrides this default.
-
-    <verbatim|(drd-props <var|tag> <var|prop1> <var|val1> ... <var|propN>
-    <var|valN>)> sets the <abbr|D.R.D.> properties of <var|tag> (literal
-    string), which must be defined by a macro.
-
-    The supported property-value pairs are:
+    overrides this default for the environment variable (usually a macro)
+    with name <src-arg|var>. The currently supported property-value pairs
+    are:
 
     <\description-dash>
-      <item*|<verbatim|"arity" <var|n>>>Sets the arity to the given fixed
-      value <var|n> (literal integer).
+      <item*|(arity,<with|mode|math|n>)<verbatim|>>Sets the arity to the
+      given fixed value <with|mode|math|n> (literal integer).
 
-      <item*|<verbatim|"accessible" "all">>Make it impossible to deactivate
-      the tag with normal editor actions. Inaccessible children become
-      effectively uneditable.
+      <item*|(accessible,all)>Make it impossible to deactivate the tag with
+      normal editor actions. Inaccessible children become effectively
+      uneditable.
 
-      <item*|<verbatim|"accessible" "none">>Make it impossible to position
-      the caret within the tag when it is active, so children can only be
-      edited when the tag is inactive.
+      <item*|(accessible,none)>Make it impossible to position the caret
+      within the tag when it is active, so children can only be edited when
+      the tag is inactive.
     </description-dash>
+  </explain>
 
-    <item*|<markup|get-label>>Label of a tree
+  <\explain>
+    <explain-macro|get-label|content>
+  <|explain>
+    Gets the label of a tree.
+  </explain>
 
-    <item*|<markup|get-arity>>Arity of a tree
+  <\explain>
+    <explain-macro|get-arity|content>
+  <|explain>
+    Gets the label of a tree.
+  </explain>
 
-    <item*|<markup|action>>Bind a <value|scheme> script to mouse click
+  <\explain>
+    <explain-macro|action|content|script>
+  <|explain>
+    Bind a <value|scheme> <src-arg|script> to a double mouse click on
+    <src-arg|content>.
+  </explain>
 
-    <item*|<markup|flag>>Display an informative flag
-  </description>
+  <\explain>
+    <explain-macro|flag|content|color>
 
-  <tmdoc-copyright|2004|David Allouche>
+    <explain-macro|flag|content|color|var>
+  <|explain>
+    Display an informative flag.
+  </explain>
+
+  <tmdoc-copyright|2004|David Allouche|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

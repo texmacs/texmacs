@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -6,60 +6,75 @@
   <tmdoc-title|Standard lists>
 
   The standard <TeXmacs> lists are defined in <tmdtd|std-list>. The
-  unnumbered lists are:
+  unnumbered lists environments are:
 
-  <\description>
-    <item*|<markup|itemize>>The tag before each item depends on the nesting
-    depth.
+  <\explain|<explain-macro|itemize|body>>
+    The tag before each item depends on the nesting depth.
+  </explain>
 
-    <item*|<markup|itemize-minus>>Uses <with|mode|math|-> for the tag.
+  <\explain|<explain-macro|itemize-minus|body>>
+    Uses <with|mode|math|-> for the tag.
+  </explain>
 
-    <item*|<markup|itemize-dot>>Uses <with|mode|math|\<bullet\>> for the tag.
+  <\explain|<explain-macro|itemize-dot|body>>
+    Uses <with|mode|math|\<bullet\>> for the tag.
+  </explain>
 
-    <item*|<markup|itemize-arrow>>Uses <with|mode|math|\<rightarrow\>> for
-    the tag.
-  </description>
+  <\explain|<explain-macro|itemize-arrow|body>>
+    Uses <with|mode|math|\<rightarrow\>> for the tag.
+  </explain>
 
-  Numbered lists correspond to the following environments:
+  The following environments can be used for producing numbered lists:
 
-  <\description>
-    <item*|<markup|enumerate>>The kind of number before each item depends on
-    the nesting depth.
+  <\explain|<explain-macro|enumerate|body>>
+    The kind of number before each item depends on the nesting depth.
+  </explain>
 
-    <item*|<markup|enumerate-numeric>>Number the items by 1, 2, 3,
-    <abbr|etc.>
+  <\explain|<explain-macro|enumerate-numeric|body>>
+    Number the items by 1, 2, 3, <abbr|etc.>
+  </explain>
 
-    <item*|<markup|enumerate-roman>>Number the items by i, ii, iii,
-    <abbr|etc.>
+  <\explain|<explain-macro|enumerate-roman|body>>
+    Number the items by i, ii, iii, <abbr|etc.>
+  </explain>
 
-    <item*|<markup|enumerate-Roman>>Number the items by I, II, III,
-    <abbr|etc.>
+  <\explain|<explain-macro|enumerate-Roman|body>>
+    Number the items by I, II, III, <abbr|etc.>
+  </explain>
 
-    <item*|<markup|enumerate-alpha>>Number the items by a), b), c),
-    <abbr|etc.>
+  <\explain|<explain-macro|enumerate-alpha|body>>
+    Number the items by a), b), c), <abbr|etc.>
+  </explain>
 
-    <item*|<markup|enumerate-Alpha>>Number the items by A), B), C),
-    <abbr|etc.>
-  </description>
+  <\explain|<explain-macro|enumerate-Alpha|body>>
+    Number the items by A), B), C), <abbr|etc.>
+  </explain>
 
-  The following environments can be used for descriptive lists.
+  The following environments can be used for descriptive lists:
 
-  <\description>
-    <item*|<markup|description>>The environment for default descriptive lists
-    (usually <markup|description-compact>).
+  <\explain|<explain-macro|description|body>>
+    The environment for default descriptive lists (usually
+    <markup|description-compact>).
+  </explain>
 
-    <item*|<markup|description-compact>>Align the left hand sides of the
-    items in the list and put their descriptions shortly behind it.
+  <\explain|<explain-macro|description-compact|body>>
+    Align the left hand sides of the items in the list and put their
+    descriptions shortly behind it.
+  </explain>
 
-    <item*|<markup|description-dash>>Similar to <markup|description-compact>,
-    but use a  to seperate each item from its description.
+  <\explain|<explain-macro|description-dash|body>>
+    Similar to <markup|description-compact>, but use a  to seperate each
+    item from its description.
+  </explain>
 
-    <item*|<markup|description-align>>Align the left hand sides of the
-    descriptions, while aligning the items to the right.
+  <\explain|<explain-macro|description-align|body>>
+    Align the left hand sides of the descriptions, while aligning the items
+    to the right.
+  </explain>
 
-    <item*|<markup|description-long>>Put the items and their descriptions on
-    distinct lines.
-  </description>
+  <\explain|<explain-macro|description-long|body>>
+    Put the items and their descriptions on distinct lines.
+  </explain>
 
   New items in a list are indicated through the <markup|item> tag or the
   <markup|item*> tag in the case of descriptions. The <markup|item> tag takes

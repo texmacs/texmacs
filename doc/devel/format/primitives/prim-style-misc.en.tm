@@ -1,23 +1,29 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Miscellaneous stylesheet operators>
 
-  <\itemize>
-    <item>Miscellaneous stylesheet operators
+  <\explain>
+    <explain-macro|surround|left|right|body>
+  <|explain>
+    Please document.
+  </explain>
 
-    <\itemize>
-      <item>surround
+  <\explain>
+    <explain-macro|extern|scheme-foo|arg-1|<with|mode|math|\<cdots\>>|arg-n>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>extern
+  <\explain>
+    <explain-macro|write|aux|content>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>write
-    </itemize>
-  </itemize>
-
-  <tmdoc-copyright|2004|David Allouche>
+  <tmdoc-copyright|2004|Joris van der Hoeven|David Allouche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

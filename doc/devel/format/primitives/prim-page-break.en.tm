@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -16,36 +16,47 @@
   rest of their paragraph by a page break, but these can be produced when
   there is no better solution.
 
-  <\description-dash>
-    <item*|<markup|no-page-break>>Prevent automatic page breaking after this
-    paragraph.
-
+  <\explain>
+    <explain-macro|no-page-break><explain-synopsis|prevent automatic page
+    breaking after this paragraph>
+  <|explain>
     Prevent the occurrence of an automatic page break after the current
     paragraph. Set an infinite page breaking penalty for the current
     paragraph, similarly to <markup|no-break>.
 
     Forbidden page breaking points are overridden by ``new page'' and ``page
     break'' primitives.
+  </explain>
 
-    <item*|<markup|no-page-break*>>Prevent automatic page breaking before
-    this paragraph.
-
+  <\explain>
+    <explain-macro|no-page-break*><explain-synopsis|prevent automatic page
+    breaking before this paragraph>
+  <|explain>
     Similar to <markup|no-page-break>, but set the page breaking penalty of
     the previous paragraph.
+  </explain>
 
-    <item*|<markup|new-page>>Start a new page after this paragraph.
-
+  <\explain>
+    <explain-macro|new-page><explain-synopsis|start a new page after this
+    paragraph>
+  <|explain>
     Cause the next paragraph to appear on a new page, without filling the
     current page. The page breaker will not try to position the current
     paragraph at the bottom of the page.
+  </explain>
 
-    <item*|<markup|new-page*>>Start a new page before this paragraph.
-
+  <\explain>
+    <explain-macro|new-page*><explain-synopsis|start a new page before this
+    paragraph>
+  <|explain>
     Similar to <markup|new-page>, but start the new page before the current
     paragraph. This directive is appropriate to use in chapter headings.
+  </explain>
 
-    <item*|<markup|page-break>>Force a page break after this paragraph.
-
+  <\explain>
+    <explain-macro|page-break><explain-synopsis|force a page break after this
+    paragraph>
+  <|explain>
     Force a page break after the current paragraph. A forced page break is
     different from a new page, the page breaker will try to position the
     current paragraph at the bottom of the page.
@@ -53,12 +64,15 @@
     Use only to fine-tune the automatic page breaking. Ideally, this should
     be a hint similar to <markup|line-break>, but this is implemented as a
     directive, use only with extreme caution.
+  </explain>
 
-    <item*|<markup|page-break*>>Force a page break before this paragraph.
-
+  <\explain>
+    <explain-macro|page-break*><explain-synopsis|force a page break before
+    this paragraph>
+  <|explain>
     Similar to <markup|page-break>, but force a page break before the current
     paragraph.
-  </description-dash>
+  </explain>
 
   When several ``new page'' and ``page break'' directives apply to the same
   point in the document, only the first one is effective. Any

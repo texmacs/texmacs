@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -8,15 +8,21 @@
   <big-table|<tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|no-indent>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|yes-indent>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|no-indent*>>|<cell|0>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|yes-indent*>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>>>>|Indentation
   primitives>
 
-  <\description-dash>
-    <item*|<markup|no-indent>>Disable indentation for the current paragraph.
+  <\explain>
+    <explain-macro|no-indent>
 
-    <item*|<markup|yes-indent>>Enable indentation for the current paragraph.
+    <explain-macro|yes-indent>
+  <|explain>
+    Disable or enable indentation for the current paragraph.
+  </explain>
 
-    <item*|<markup|no-indent*>>Disable indentation for the next paragraph.
+  <\explain>
+    <explain-macro|no-indent*>
 
-    <item*|<markup|yes-indent*>>Enable indentation for the next paragraph.
-  </description-dash>
+    <explain-macro|yes-indent*>
+  <|explain>
+    Disable or enable indentation for the next paragraph.
+  </explain>
 
   The indentation of a paragraph is the horizontal white space inserted
   before the first line of the paragraph. Indentation directives can be used

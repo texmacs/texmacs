@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -13,75 +13,90 @@
   <markup|tformat> operand. All fundamental table structures have
   inaccessible borders. The basic top-level table tag is <markup|tabular>.
 
-  <\description-dash>
-    <item*|<markup|tformat>>Table formatting container.
-
+  <\explain>
+    <explain-macro|tformat|with-1|<with|mode|math|\<cdots\>>|with-n|table><explain-synopsis|table
+    formatting container>
+  <|explain>
     Every tabular structure in a document contains a <markup|tformat> tag.
 
-    <verbatim|(tformat <var|table>)> means the table and cell variables
-    defined in the top-level table tag are not modified. The <var|table>
-    argument may be a <markup|table> or a nested <markup|tformat> tag, the
-    latter does not appear in documents but is produced by the evaluation of
-    the top-level tag.
+    <explain-macro|tformat|table> means the table and cell variables defined
+    in the top-level table tag are not modified. The <src-arg|table> argument
+    may be a <markup|table> or a nested <markup|tformat> tag, the latter does
+    not appear in documents but is produced by the evaluation of the
+    top-level tag.
 
-    <verbatim|(tformat <var|w1> ... <var|wn> <var|table>)> is used when the
-    table contains specific formatting information. The <var|w1> to <var|wn>
-    operands must all be <markup|twith> or <markup|cwith> tags.
+    <explain-macro|tformat|with-1|<with|mode|math|\<cdots\>>|with-n|table> is
+    used when the table contains specific formatting information. The
+    <src-arg|with-1> to <src-arg|with-n> arguments must all be <markup|twith>
+    or <markup|cwith> tags.
+  </explain>
 
-    <item*|<markup|twith>>Set a table variable.
-
+  <\explain>
+    <explain-macro|twith|var|val><explain-synopsis|set a table variable>
+  <|explain>
     The formatting of the table as a whole is specified by a number of
     <em|table variables>, which are used internally and do not appear in the
     environment like regular typesetter variables.
 
-    <verbatim|(twith <var|var> <var|val>)> sets the table variable <var|var>
-    (literal string) to the value <var|val> (evaluated).
+    The <markup|twith> primitive<verbatim|> sets the table variable
+    <src-arg|var> (literal string) to the value <src-arg|val> (evaluated).
+  </explain>
 
-    <item*|<markup|cwith>>Set a cell variable for a range.
-
+  <\explain>
+    <explain-macro|cwith|top-row|bot-row|left-col|right-col|var|val><explain-synopsis|set
+    a cell variable for a range>
+  <|explain>
     The formatting of cells is specified by a number of <em|cell variables>,
     which are used internally and do not appear in the environment like
     regular typesetter variables. Rows, columns, and generally any
     rectangular range of cells can associated to a cell variable setting by a
     single <markup|cwith> tag.
 
-    <verbatim|(cwith <var|i1> <var|i2> <var|j1> <var|j2> <var|var>
-    <var|val>)> sets the cell variable <var|var> (literal string) to the
-    value <var|val> (evaluated) for the range of cells spanning rows <var|i1>
-    to <var|i2> and columns <var|j1> to <var|j2> (literal non-zero integers).
+    The <markup|cwith> primitive sets the cell variable <src-arg|var>
+    (literal string) to the value <src-arg|val> (evaluated) for the range of
+    cells spanning rows <src-arg|top-row> to <src-arg|bot-row> and columns
+    <src-arg|left-col> to <src-arg|right-col> (literal non-zero integers).
 
     Range coordinates must be non-zero literal integers, positive values are
     counted left to right and top to bottom, negative values are counted
     right to left and bottom to top. For example, 2 means the second row or
     column and -1 means the last row or column.
 
-    Typical values for <with|mode|math|(i<rsub|1>, i<rsub|2>, j<rsub|1>,
-    j<rsub|2>)> are <with|mode|math|(r,r,<op|->1,1)> for ``row
-    <with|mode|math|r>'', <with|mode|math|(<op|->1,1,c,c)> for ``column
-    <with|mode|math|c>'', and <with|mode|math|(r,r,c,c)> for ``the cell at
-    row <with|mode|math|r>, column <with|mode|math|c>''. Note that, with
-    <with|mode|math|m> is the number of rows and <with|mode|math|n> the
-    number of columns, <with|mode|math|r> is the same row as
-    <with|mode|math|r-m-1> and <with|mode|math|c> is the same column as
-    <with|mode|math|c-n-1>, but the former are relative to the top and left
-    borders while the latter are relative the bottom and right borders, this
-    makes a difference when new cells are inserted.
+    Typical values for <with|mode|math|(<with|mode|text|<src-arg|top-row>>,<with|mode|text|<src-arg|bot-row>>,<with|mode|text|<src-arg|left-col>>,<with|mode|text|<src-arg|right-col>>)>
+    are <with|mode|math|(r,r,<op|->1,1)> for ``row <with|mode|math|r>'',
+    <with|mode|math|(<op|->1,1,c,c)> for ``column <with|mode|math|c>'', and
+    <with|mode|math|(r,r,c,c)> for ``the cell at row <with|mode|math|r>,
+    column <with|mode|math|c>''. Note that, with <with|mode|math|m> is the
+    number of rows and <with|mode|math|n> the number of columns,
+    <with|mode|math|r> is the same row as <with|mode|math|r-m-1> and
+    <with|mode|math|c> is the same column as <with|mode|math|c-n-1>, but the
+    former are relative to the top and left borders while the latter are
+    relative the bottom and right borders, this makes a difference when new
+    cells are inserted.
+  </explain>
 
-    <item*|<markup|table>>Row container.
-
+  <\explain>
+    <explain-macro|table|row-1|<with|mode|math|\<cdots\>>|row-n><explain-synopsis|row
+    container>
+  <|explain>
     The only purpose of the <markup|table> tag is to contain <markup|row>
     tags. The number of rows in a table is the number of subtrees in its
     <markup|table> tag.
+  </explain>
 
-    <item*|<markup|row>>Cell container.
-
+  <\explain>
+    <explain-macro|row|cell-1|<with|mode|math|\<cdots\>>|cell-k><explain-synopsis|cell
+    container>
+  <|explain>
     The only purpose of the <markup|row> tag is to contain <markup|cell>
     tags. All <markup|row> tags in a given <markup|table> must have exactly
     as many subtrees, all <markup|cell> tags, as there are columns in the
     table.
+  </explain>
 
-    <item*|<markup|cell>>Cell data container.
-
+  <\explain>
+    <explain-macro|cell|content><explain-synopsis|cell data container>
+  <|explain>
     Table cells can contain any document fragment. A <markup|cell> may
     directly contain an <re-index|inline content> tag or a <markup|concat>,
     if it has <re-index|block content> it must always contain a
@@ -93,10 +108,12 @@
     indirectly, the nesting of a <re-index|block context> within a
     <re-index|line context>. Note that most block content can only be typeset
     correctly within an hyphenated cell, this is controlled by the
-    <verbatim|cell-hyphen> table variable.
+    <src-var|cell-hyphen> table variable.
+  </explain>
 
-    <item*|<markup|subtable>>Subtable cell data.
-
+  <\explain>
+    <explain-macro|subtable|table><explain-synopsis|subtable cell data>
+  <|explain>
     In addition to regular markup, cells can accept
     <markup|><markup|subtable> as an operand. The operand of
     <markup|subtable> is a <markup|tformat> tree containing regular table
@@ -105,15 +122,17 @@
     A similar effect can be obtained with normal table by setting the cell's
     padding to zero in all directions, the extra twist of a <markup|subtable>
     is its inaccessible border positions.
+  </explain>
 
-    <item*|<markup|tmarker>>Decoration origin marker.
-
+  <\explain>
+    <explain-macro|tmarker|table><explain-synopsis|decoration origin marker>
+  <|explain>
     This tag is used in the definition of cell decorations, see the
-    documentation of the <verbatim|cell-decoration> environment variable.
+    documentation of the <src-var|cell-decoration> environment variable.
 
     It is also used outside tables, in the <markup|switch> tag to mark the
-    currently displayed position.<verbatim|<htab|5mm>>
-  </description-dash>
+    currently displayed position.
+  </explain>
 
   <tmdoc-copyright|2004|David Allouche>
 

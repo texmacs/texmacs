@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -20,10 +20,9 @@
   reading the document content, that is one import reason why this concrete
   syntax is inappropriate for hand-editing.
 
-  <\description-dash>
-    <item*|<markup|document>>Sequence of logical paragraphs.
-
-    A simple, plain text, document is made of a simple sequence of paragraphs
+  <\explain|<explain-macro|document|par-1|<with|mode|math|\<cdots\>>|par-n>>
+    This primitive is used for sequences of logical paragraphs. A simple,
+    plain text, document is made of a simple sequence of paragraphs
     (<em|i.e.> logical lines).
 
     <\tm-fragment>
@@ -35,9 +34,13 @@
     Such a document is represented a simple <markup|document> tree whose
     subtrees are all strings.
 
-    <\scheme-fragment>
-      (document "A simple document." "Made of several paragraphs.")
-    </scheme-fragment>
+    <\tm-fragment>
+      <with|src-special|raw|<\inactive*>
+        A simple document.
+
+        Made of several paragraphs.
+      </inactive*>>
+    </tm-fragment>
 
     Actually, the root of the <em|edit tree> is always a <markup|document>
     node. Document fragments use a root <markup|document> node only when they
@@ -64,12 +67,13 @@
 
       <item>the last operand of a <markup|surround> in block context.
     </itemize>
+  </explain>
 
-    <item*|<markup|concat>>Sequence of line items.
-
-    Since the interpretation of an operator is done according to the count
-    and position its operands, we need an operator to glue compound operands
-    into individual trees without introducing additional logical structure.
+  <\explain|<explain-macro|concat|item-1|<with|mode|math|\<cdots\>>|item-n>>
+    This primitive is used for sequences of line items. Since the
+    interpretation of an operator is done according to the count and position
+    its operands, we need an operator to glue compound operands into
+    individual trees without introducing additional logical structure.
 
     <\tm-fragment>
       Some <em|emphasized> text.
@@ -78,9 +82,9 @@
     This fragment is made of several line items. The <markup|concat> node is
     used to assemble them into a single logical line.
 
-    <\scheme-fragment>
-      (concat "Some " (em "emphasized") " text.")
-    </scheme-fragment>
+    <\tm-fragment>
+      <with|src-special|raw|<inactive*|Some <em|emphasized> text.>>
+    </tm-fragment>
 
     The <markup|concat> operator is essential to put compound structures in
     trees taking multiple parameters. For example, let us place the previous
@@ -95,11 +99,13 @@
     We absolutely need <markup|concat> as a glue operator so the multiple
     components of the second paragraph are no considered multiple paragraphs.
 
-    <\scheme-fragment>
-      (document "Multiple paragraphs."
+    <\tm-fragment>
+      <with|src-special|raw|<\inactive*>
+        A simple document.
 
-      \ \ \ \ \ \ \ \ \ \ (concat "Some " (em "emphasized") " text."))
-    </scheme-fragment>
+        Some <em|emphasized> text.
+      </inactive*>>
+    </tm-fragment>
 
     Structures which are typeset inside a <markup|concat> or some operators
     which expect <def-index|inline content>, is said to be in <def-index|line
@@ -107,26 +113,24 @@
     block content within an inline context and, except for
     <re-index|multiparagraph cells>, it is not possible to nest a block
     context within a line context.
-  </description-dash>
+  </explain>
 
   The <markup|error> and <markup|raw-data> operators are much more rarely
   used. However, they are versatile, may be useful in numerous context, and
   do not fall neatly in any category, so we chose to describe them early.
 
-  <\description-dash>
-    <item*|<markup|error>>Error reporting.
-
+  <\explain|<explain-macro|error|message>>
     This primitive should never appear in documents. It is provided as aid in
     tracking down invalid constructs. It is produced at evaluation time by
     any kind of primitive which is given improper operands.
+  </explain>
 
-    <item*|<markup|raw-data>>Opaque data.
-
+  <\explain|<explain-macro|raw-data|data>>
     In some contexts you need to embed uneditable data inside a document,
     most of the time this is uneditable binary data. The <markup|raw-data>
     primitive makes it impossible to view or modify its subtree from within
     the editor.
-  </description-dash>
+  </explain>
 
   <tmdoc-copyright|2004|David Allouche>
 

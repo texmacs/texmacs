@@ -30,38 +30,43 @@
   <key|A-*> in order to switch between the unnumbered and numbered version.
   The following tags are also provided:
 
-  <\description>
-    <item*|<markup|proof>>For proofs of theorems.
+  <\explain|<explain-macro|proof|body>>
+    For proofs of theorems.
+  </explain>
 
-    <item*|<markup|dueto>>An environment which can be used to specify the
-    inventors of a theorem. It should be used at the start inside the body of
-    a theorem, like in
+  <\explain|<explain-macro|dueto|who>>
+    An environment which can be used to specify the inventors of a theorem.
+    It should be used at the start inside the body of a theorem, like in
 
     <\theorem*>
       <dueto|Pythagoras><with|mode|math|a<rsup|2>+b<rsup|2>=c<rsup|2>>.
     </theorem*>
-  </description>
+  </explain>
 
   The following customizable macros are used for the rendering of textual
   environments:
 
-  <\description>
-    <item*|<markup|render-theorem>>A macro for displaying a theorem-like
-    environments. The first argument specifies the name of the theorem, like
-    ``Theorem 1.2'' and the second argument contains the body of the theorem.
-    This environment is used for environments defined by
+  <\explain|<explain-macro|render-theorem|name|body>>
+    This macro is used for displaying a theorem-like environments. The first
+    argument <src-arg|name> specifies the name of the theorem, like ``Theorem
+    1.2'' and the second argument <src-arg|body> contains the body of the
+    theorem. This environment is used for environments defined by
     <markup|new-theorem>.
+  </explain>
 
-    <item*|<markup|render-remark>>Similar to <markup|render-theorem>, but for
-    remark-like environments.
+  <\explain|<explain-macro|render-remark|name|body>>
+    Similar to <markup|render-theorem>, but for remark-like environments.
+  </explain>
 
-    <item*|<markup|render-exercise>>Similar to <markup|render-theorem>, but
-    for exercise-like environments.
+  <\explain|<explain-macro|render-exercise|name|body>>
+    Similar to <markup|render-theorem>, but for exercise-like environments.
+  </explain>
 
-    <item*|<markup|render-proof>>Similar to <markup|render-theorem>, but for
-    proofs. This environment is mainly used for customizing the name of a
-    proof, like in ``End of the proof of theorem 1.2''.\ 
-  </description>
+  <\explain|<explain-macro|render-proof|name|body>>
+    Similar to <markup|render-theorem>, but for proofs. This environment is
+    mainly used for customizing the name of a proof, like in ``End of the
+    proof of theorem 1.2''.
+  </explain>
 
   Notice that you may also use these macros if you want an environment which
   is rendered in a similar way as a theorem, but with another name (like
@@ -69,21 +74,24 @@
 
   The following tags can be used for further customization of the rendering:
 
-  <\description>
-    <item*|<markup|theorem-name>>A macro which controls the appearance of the
-    names of theorem-like <em|and> remark-like environments. Most styles use
-    bold face or small capitals.
+  <\explain|<explain-macro|theorem-name|name>>
+    This macro controls the appearance of the names of theorem-like <em|and>
+    remark-like environments. Most styles use bold face or small capitals.
+  </explain>
 
-    <item*|<markup|exercise-name>>Similar to <markup|theorem-name>, but for
-    exercises.
+  <\explain|<explain-macro|exercise-name|name>>
+    Similar to <markup|theorem-name>, but for exercises.
+  </explain>
 
-    <item*|<markup|theorem-sep>>The separator between the name of a
-    theorem-like or remark-like environment and its main body. By default,
-    this is a period followed by a space.
+  <\explain|<explain-macro|theorem-sep>>
+    The separator between the name of a theorem-like or remark-like
+    environment and its main body. By default, this is a period followed by a
+    space.
+  </explain>
 
-    <item*|<markup|exercise-sep>>Similar to <markup|theorem-sep>, but for
-    exercises.
-  </description>
+  <\explain|<explain-macro|exercise-sep>>
+    Similar to <markup|theorem-sep>, but for exercises.
+  </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

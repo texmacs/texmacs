@@ -8,21 +8,30 @@
   The <tmdtd|env-float> <abbr|d.t.d.> provides the following environments for
   floating objects:
 
-  <\description>
-    <item*|<markup|small-figure>>An inline figure. This tag can for instance
-    be used to typeset several small figures side by side inside a floating
+  <\explain|<explain-macro|small-figure|body|caption>>
+    This macro produces an inline figure with <src-arg|body> as its main body
+    and <src-arg|caption> as a caption. Inline figures may for instance be
+    used to typeset several small figures side by side inside a floating
     object.
+  </explain>
 
-    <item*|<markup|big-figure>>A big figure, which spans over the whole
-    paragraph width.
+  <\explain|<explain-macro|big-figure|body|caption>>
+    This macro produces a big figure with <src-arg|body> as its main body and
+    <src-arg|caption> as a caption. Big figures span over the whole paragraph
+    width.
+  </explain>
 
-    <item*|<markup|small-table>>Similar to <markup|small-figure>, but for
-    tables.
+  <\explain|<explain-macro|small-table|body|caption>>
+    Similar to <markup|small-figure>, but for tables.
+  </explain>
 
-    <item*|<markup|big-table>>Similar to <markup|big-figure>, but for tables.
+  <\explain|<explain-macro|big-table|body|caption>>
+    Similar to <markup|big-figure>, but for tables.
+  </explain>
 
-    <item*|<markup|footnote>>Produces a footnote.
-  </description>
+  <\explain|<explain-macro|footnote|body>>
+    Produces a footnote.
+  </explain>
 
   The figure-like environments also admit \ unnumbered versions
   <markup|small-figure*>, <markup|big-figure*>, <abbr|etc.>, which are
@@ -31,29 +40,38 @@
   The following macros can be used for customizing the rendering of
   figure-like environments:
 
-  <\description>
-    <item*|<markup|render-small-figure>>A macro for displaying a small
-    figure. The arguments are a short name (like ``figure'' or ``table'') for
-    the list of figures, its real name (like ``Figure 2.3'' or ``Table
-    <no-break>5''), the figure itself and a caption.
+  <\explain|<explain-macro|render-small-figure|aux|name|body|caption>>
+    This macro is used for rendering small figure-like environments. The
+    first argument <src-arg|aux> specifies an auxiliary channel (like
+    ``figure'' or ``table'') which is used for inserting the caption inside
+    the list of figures. The second argument <src-arg|name> specifies the
+    name of the figure (like ``Figure 2.3'' or ``Table <no-break>5''). The
+    last arguments <src-arg|body> and <src-arg|caption> correspond to the
+    figure itself and a caption.
+  </explain>
 
-    <item*|<markup|render-big-figure>>A variant of
-    <markup|render-small-figure> for displaying a big figure.
-  </description>
+  <\explain|<explain-macro|render-big-figure|aux|name|body|caption>>
+    Similar to <markup|render-small-figure>, but for displaying a big
+    figure-like environments.
+  </explain>
 
   The following tags can be used for customizing the appearance the text
   around figures, tables and footnotes:
 
-  <\description>
-    <item*|<markup|figure-name>>A macro which controls the appearance of the
-    text ``Figure''. By default, we use bold face.
+  <\explain|<explain-macro|figure-name|name>>
+    This macro controls the appearance of the text ``Figure''. By default, we
+    use bold face.
+  </explain>
 
-    <item*|<markup|figure-sep>>The separator between the figure and its
-    number and the caption. By default, this is a period followed by a space.
+  <\explain|<explain-macro|figure-sep>>
+    This macro produces the separator between the figure and its number and
+    the caption. By default, it produces a period followed by a space.
+  </explain>
 
-    <item*|<markup|footnote-sep>>The separator between the number of the
-    footnote and the text. By default, this is a period followed by a space.
-  </description>
+  <\explain|<explain-macro|footnote-sep>>
+    This macro produces the separator between the number of the footnote and
+    the text. By default, it produces a period followed by a space.
+  </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

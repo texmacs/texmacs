@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -9,9 +9,9 @@
     <tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|label>>|<cell|<with|mode|math|1>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|reference>>|<cell|<with|mode|math|1>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|pageref>>|<cell|<with|mode|math|1>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|hlink>>|<cell|<with|mode|math|2>>|<cell|Yes>|<cell|First>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|include>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Logical>>>>>
   </big-table|Linking primitives>
 
-  <\description-dash>
-    <item*|<markup|label>>Reference target.
-
+  <\explain>
+    <explain-macro|label|name><explain-synopsis|reference target>
+  <|explain>
     The operand must evaluate to a literal string, it is used as a target
     name which can be referred to by <markup|reference>, <markup|pageref> and
     <markup|hlink> tags.
@@ -21,36 +21,40 @@
     Examples in this section will make references to an example
     <markup|label> named ``there''.
 
-    <\scheme-fragment>
-      (label "there")
-    </scheme-fragment>
+    <\tm-fragment>
+      <inactive*|<label|there>>
+    </tm-fragment>
+  </explain>
 
-    <item*|<markup|reference>>Reference to a name.
-
+  <\explain>
+    <explain-macro|reference|name><explain-synopsis|reference to a name>
+  <|explain>
     The operand must evaluate to a literal string, which is the name of a
     <markup|label> defined in the current document or in another document of
     the current project.
 
-    <\scheme-fragment>
-      (reference "there")
-    </scheme-fragment>
+    <\tm-fragment>
+      <inactive*|<reference|there>>
+    </tm-fragment>
 
     The <markup|reference> is typeset as the value of the variable
-    <verbatim|thelabel> at the point of the target <markup|label>. The
-    <verbatim|thelabel> variable is set by many numbered structures:
-    sections, figures, numbered equations, etc.
+    <src-var|the-label> at the point of the target <markup|label>. The
+    <src-var|the-label> variable is set by many numbered structures:
+    sections, figures, numbered equations, <no-break>etc.
 
     A <markup|reference> reacts to mouse clicks as an hyperlink.
+  </explain>
 
-    <item*|<markup|pageref>>Reference to a page number.
-
+  <\explain>
+    <explain-macro|pageref|name><explain-synopsis|page reference to a name>
+  <|explain>
     The operand must evaluate to a literal string, which is the name of a
     <markup|label> defined in the current document or in another document of
     the current project.
 
-    <\scheme-fragment>
-      (pageref "there")
-    </scheme-fragment>
+    <\tm-fragment>
+      <inactive*|<pageref|there>>
+    </tm-fragment>
 
     The <markup|><markup|pageref> is typeset as the number of the page
     containing the target <markup|label>. Note that page numbers are only
@@ -58,36 +62,40 @@
     ``automatic'' or ``papyrus'' page type.
 
     A <markup|pageref> reacts to mouse clicks as an hyperlink.
+  </explain>
 
-    <item*|<markup|hlink>>Hyperlink.
-
-    <verbatim|(hlink <var|body> <var|url>)> produces an hyperlink with the
-    visible text <var|body> pointing to <var|url>. The <var|body> is typeset
-    as inline text. The <var|url> must evaluate to a literal string in
-    <abbr|URL> syntax and can point to local or remote documents, positions
-    inside documents can be be specified with labels.
+  <\explain>
+    <explain-macro|hlink|content|url><explain-synopsis|inline hyperlink>
+  <|explain>
+    This primitive produces an hyperlink with the visible text
+    <src-arg|content> pointing to <src-arg|url>. The <src-arg|content> is
+    typeset as inline <src-arg|url>. The <src-arg|url> must evaluate to a
+    literal string in <abbr|URL> syntax and can point to local or remote
+    documents, positions inside documents can be be specified with labels.
 
     The following examples are typeset as hyperlinks pointing to the label
     ``there'', respectively in the same document, in a document in the same
     directory, and on the web.
 
-    <\scheme-fragment>
-      (hlink "same document" "#there")
+    <\tm-fragment>
+      <inactive*|<hlink|same document|#there>>
 
-      (hlink "same directory" "file.tm#there")
+      <inactive*|<hlink|same directory|file.tm#there>>
 
-      (hlink "on the web" "http://example.org/#there")
-    </scheme-fragment>
+      <inactive*|<hlink|on the web|http://example.org/#there>>
+    </tm-fragment>
 
     If the document is not editable, the hyperlink is traversed by a simple
     click, if the document is editable, a double-click is required.
+  </explain>
 
-    <item*|<markup|include>>Include another document.
-
+  <\explain>
+    <explain-macro|include|url><explain-synopsis|include another document>
+  <|explain>
     The operand must be a literal string and is interpreted as a file name.
     The content of this file is typeset in place of the <markup|include> tag,
     which must be placed in <re-index|block context>.
-  </description-dash>
+  </explain>
 
   <tmdoc-copyright|2004|David Allouche>
 

@@ -1,33 +1,75 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Flow control primitives>
 
-  <\itemize>
-    <item>Flow control
+  <\explain>
+    <explain-macro|if|condition|if-body>
 
-    <\itemize>
-      <item>if
+    <explain-macro|if|condition|if-body|else-body>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>case
+  <\explain>
+    <explain-macro|case|cond-1|body-1|<with|mode|math|\<cdots\>>|cond-n|body-n>
 
-      <item>while
+    <explain-macro|case|cond-1|body-1|<with|mode|math|\<cdots\>>|cond-n|body-n|else-body>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>eval
+  <\explain>
+    <explain-macro|while|condition|body>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>quote
+  <\explain>
+    <explain-macro|eval|expr>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>delay
+  <\explain>
+    <explain-macro|quote|expr>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>hold
+  <\explain>
+    <explain-macro|quasi|expr>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>release
-    </itemize>
-  </itemize>
+  <\explain>
+    <explain-macro|quasiquote|expr>
+  <|explain>
+    Please document.
+  </explain>
 
-  <tmdoc-copyright|2004|David Allouche>
+  <\explain>
+    <explain-macro|unquote|expt>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <explain-macro|quote-value|var>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <explain-macro|quote-arg|var|index-1|<with|mode|math|\<cdots\>>|index-n>
+  <|explain>
+    Please document.
+  </explain>
+
+  <tmdoc-copyright|2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

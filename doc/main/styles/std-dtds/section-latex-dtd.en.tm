@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -10,30 +10,29 @@
   argument: the name of the section. The intention of the following tags is
   to produce numbered sections:
 
-  <\description>
-    <item*|<markup|chapter>>Macro for producing a numbered chapter title.
+  <\explain>
+    <explain-macro|chapter|title>
 
-    <item*|<markup|section>>Macro for producing a numbered section title.
+    <explain-macro|section|title>
 
-    <item*|<markup|subsection>>Macro for producing a numbered subsection
-    title.
+    <explain-macro|subsection|title>
 
-    <item*|<markup|subsubsection>>Macro for producing a numbered
-    subsubsection title.
+    <explain-macro|subsubsection|title>
 
-    <item*|<markup|paragraph>>Macro for producing a numbered paragraph title.
+    <explain-macro|paragraph|title>
 
-    <item*|<markup|subparagraph>>Macro for producing a numbered subparagraph
-    title.
+    <explain-macro|subparagraph|title>
 
-    <item*|<markup|appendix>>A variant of <markup|chapter> or
-    <markup|section> for producing appendices.
-  </description>
+    <explain-macro|appendix|title>
+  <|explain>
+    The intention of this macro is to produce a numbered title for a chapter
+    (<abbr|resp.> section, subsection, <abbr|etc.>). The numbering is not
+    required, but merely an intention: the <markup|paragraph> and
+    <markup|subparagraph> tags are usually not numbered and some styles (like
+    the generic style) do not produce numbers at all.
+  </explain>
 
-  Notice that the numbering is not required, but merely an intention: the
-  <markup|paragraph> and <markup|subparagraph> tags are unsually not numbered
-  and some styles (like the generic style) do not produce numbers at all. The
-  tags <markup|chapter*>, <markup|section*>, <markup|subsection*>,
+  The tags <markup|chapter*>, <markup|section*>, <markup|subsection*>,
   <markup|subsubsection*>, <markup|paragraph*>, <markup|subparagraph*> and
   <markup|appendix*> can be used for producing the unnumbered variants of the
   above tags.
@@ -50,80 +49,92 @@
   The <tmdtd|section-base> <abbr|d.t.d.> also provides the following
   sectional environments with automatically generated content
 
-  <\description>
-    <item*|<markup|bibliography>>A macro with four arguments <verbatim|aux>,
-    <verbatim|style>, <verbatim|file-name>, <verbatim|body>. The first
-    argument <verbatim|aux> specifies the auxiliary channel with the data for
+  <\explain|<explain-macro|bibliography|aux|style|file-name|body>>
+    This macro is used for producing bibliographies. The first argument
+    <src-arg|aux> specifies the auxiliary channel with the data for
     generating the bibliography (<verbatim|bib>, by default). The arguments
-    <verbatim|style> and <verbatim|file-name> contain the bibliography style
-    and the file with the bibliographic database. The last argument
+    <src-arg|style> and <src-arg|file-name> contain the bibliography style
+    and the file with the bibliographic database. The <src-arg|body> argument
     corresponds to the automatically generated content.
+  </explain>
 
-    <item*|<markup|table-of-contents>>A macro with two arguments: the
-    auxiliary channel with the data for generating the table of contents
-    (<verbatim|toc>, by default), and the automatically generated content.
+  <\explain|<explain-macro|table-of-contents|aux|body>>
+    This macro is used for producing tables of contents. The first argument
+    <src-arg|aux> specifies the auxiliary channel with the data for
+    generating the bibliography (<verbatim|toc>, by default). The
+    <src-arg|body> argument corresponds to the automatically generated
+    content.
+  </explain>
 
-    <item*|<markup|the-index>>A macro with two arguments: the auxiliary
-    channel with the data for generating the index (<verbatim|idx>, by
-    default), and the automatically generated content.
+  <\explain|<explain-macro|the-index|aux|body>>
+    Similar to <markup|table-of-contents> but for indices and default channel
+    <verbatim|idx>.
+  </explain>
 
-    <item*|<markup|the-glossary>>A macro with two arguments: the auxiliary
-    channel with the data for generating the glossary (<verbatim|gly>, by
-    default), and the automatically generated content.
-  </description>
+  <\explain|<explain-macro|the-glossary|aux|body>>
+    Similar to <markup|table-of-contents> but for glossaries and default
+    channel <verbatim|gly>.
+  </explain>
 
   The above tags also admit the variants <markup|bibliography*>,
   <markup|table-of-contents*>, <markup|the-index*> and <markup|the-glossary*>
-  with an additional argument before <verbatim|body>, which specifies the
-  name of the section. For instance, the <markup|the-glossary*> tag is used
-  for lists of figures and lists of tables.
+  with an additional argument <src-arg|name> before <src-arg|body>, which
+  specifies the name of the section. For instance, the <markup|the-glossary*>
+  tag is used for lists of figures and lists of tables.
 
   The <tmdtd|section-base> <abbr|d.t.d.> also contains many tags for
   customizing the rendering of sections and other section-related behaviour.
   The following two tags affect all sections:
 
-  <\description>
-    <item*|<markup|sectional-sep>>A macro for customizing the separator
-    between the number of a section and its title. By default, we use two
-    spaces.
+  <\explain|<explain-macro|sectional-sep>>
+    A macro for customizing the separator between the number of a section and
+    its title. By default, we use two spaces.
+  </explain>
 
-    <item*|<markup|sectional-short-style>>A predicate which tells whether
-    documents for this style are intended to be short or long. When
-    <markup|sectional-short-style> evaluates to <verbatim|true>, then
-    appendices, bibliographies, <abbr|etc.> are supposed to be special types
-    of sections. Otherwise, they will be special types of chapters.
-  </description>
+  <\explain|<explain-macro|sectional-short-style>>
+    A predicate which tells whether documents for this style are intended to
+    be short or long. When <markup|sectional-short-style> evaluates to
+    <verbatim|true>, then appendices, bibliographies, <abbr|etc.> are
+    supposed to be special types of sections. Otherwise, they will be special
+    types of chapters.
+  </explain>
 
   For each sectional tag <markup|<em|x>>, the following tags are provided for
   customization:
 
-  <\description>
-    <item*|<markup|<em|x>-title>>A macro for displaying the unnumbered
-    section title.
+  <\explain|<explain-macro|<em|x>-title|title>>
+    A macro for displaying the unnumbered section title.
+  </explain>
 
-    <item*|<markup|<em|x>-numbered-title>>A macro for displaying the numbered
-    section title.
+  <\explain|<explain-macro|<em|x>-numbered-title|title>>
+    A macro for displaying the numbered section title.
+  </explain>
 
-    <item*|<markup|<em|x>-display-numbers>>A predicate which specifies
-    whether numbers will really be displayed. For instance, in the case of
-    <markup|paragraph>, this macro evaluates to false. Consequently, even
-    though <markup|<em|x>-numbered-title> <em|does> display the paragraph
-    number, the main macro <markup|<em|x>> will call <markup|<em|x>-title>
-    and not <markup|<em|x>-numbered-title>, so that paragraph titles are not
-    numbered.
+  <\explain|<explain-macro|<em|x>-display-numbers>>
+    A predicate which specifies whether numbers will really be displayed. For
+    instance, in the case of <markup|paragraph>, this macro evaluates to
+    false. Consequently, even though <markup|<em|x>-numbered-title> <em|does>
+    display the paragraph number, the main macro <markup|<em|x>> will call
+    <markup|<em|x>-title> and not <markup|<em|x>-numbered-title>, so that
+    paragraph titles are not numbered.
+  </explain>
 
-    <item*|<markup|<em|x>-sep>>A macro for customizing the separator between
-    the number of a section and its title. By default, we call
-    <markup|sectional-sep>.
+  <\explain|<explain-macro|<em|x>-sep>>
+    A macro for customizing the separator between the number of a section and
+    its title. By default, we call <markup|sectional-sep>.
+  </explain>
 
-    <item*|<markup|<em|x>-clean>>A hook for resetting all subcounters of the
-    section.
+  <\explain|<explain-macro|<em|x>-clean>>
+    A hook for resetting all subcounters of the section.
+  </explain>
 
-    <item*|<markup|<em|x>-header>>A hook for changing the page headers.
+  <\explain|<explain-macro|<em|x>-header|name>>
+    A hook for changing the page headers.
+  </explain>
 
-    <item*|<markup|<em|x>-toc>>A hook for putting the section title into the
-    table of contents.
-  </description>
+  <\explain|<explain-macro|<em|x>-toc|name>>
+    A hook for putting the section title into the table of contents.
+  </explain>
 
   Finally, the <tmdtd|section-base> <abbr|d.t.d.> provides rendering macros
   <markup|render-table-of-contents>, <markup|render-bibliography>,

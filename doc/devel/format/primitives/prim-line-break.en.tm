@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -14,9 +14,9 @@
   hyphenation algorithm. Hyphenated lines are <em|filled>, horizontal spaces
   can be shrunk or extended in order to produce a good-looking layout.
 
-  <\description-dash>
-    <item*|<markup|new-line>>Start a new paragraph.
-
+  <\explain>
+    <explain-macro|new-line><explain-synopsis|start a new paragraph>
+  <|explain>
     Split a logical paragraph in <def-index|physical paragraphs>. Physical
     paragraphs are typeset in the same way as logical paragraphs, but are not
     distinct subtrees of a <markup|document> node.
@@ -25,16 +25,21 @@
     primitives and environment variables (vertical spacing, paragraph style,
     indentation, page breaking, etc.) operate on whole paragraphs or at the
     boundaries of the enclosing paragraph.
+  </explain>
 
-    <item*|<markup|next-line>>Start a new line.
-
+  <\explain>
+    <explain-macro|next-line><explain-synopsis|start a new line>
+  <|explain>
     Split a paragraph in <def-index|hard lines>. Hard lines are typeset in a
     way similar to hyphenated lines, but their boundaries are specified by
     <markup|next-line> tags. The last soft line in a hard line is never
     filled.
+  </explain>
 
-    <item*|<markup|line-break>>Line breaking hint, with filling.
-
+  <\explain>
+    <explain-macro|line-break><explain-synopsis|line breaking hint, with
+    filling>
+  <|explain>
     Print an invisible space with zero hyphenation penalty. The line breaking
     algorithm searches for the set of hyphenation points minimizing the total
     penalty, so line breaking is much more likely to occur at a
@@ -43,13 +48,16 @@
     Unlike <markup|next-line>, this is a hint which may or may not be obeyed
     by the typesetter, and it does not prevent the previous line from being
     filled.
+  </explain>
 
-    <item*|<markup|no-break>>Forbid line breaking at this point.
-
+  <\explain>
+    <explain-macro|no-break><explain-synopsis|forbid line breaking at this
+    point>
+  <|explain>
     Set an hyphenation point with an infinite penalty. That is useful when
     the hyphenation patterns for a language fall short of preventing some
     forbidden patterns like ``arse-nal'' or ``con-genital''.
-  </description-dash>
+  </explain>
 
   <tmdoc-copyright|2004|David Allouche>
 

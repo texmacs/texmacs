@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -9,20 +9,30 @@
   The following high-level tags can only be used when encapsulated inside a
   <markup|make-title> tag:
 
-  <\description>
-    <item*|<markup|title>>Specify a title for the document.
+  <\explain|<explain-macro|title|title>>
+    Specify the <src-arg|title> of the document.
+  </explain>
 
-    <item*|<markup|author>>Specify one or several authors for the document.
+  <\explain|<explain-macro|author|author>>
+    Specify one or several authors for the document.
+  </explain>
 
-    <item*|<markup|address>>Specify the address of the author.
+  <\explain|<explain-macro|author|address>>
+    Specify the address of the author.
+  </explain>
 
-    <item*|<markup|address-block>>Specify an address of an author (in case of
-    multiple addresses).
+  <\explain|<explain-macro|author-block|address>>
+    Specify an address of one of the authors (in case of multiple addresses).
+  </explain>
 
-    <item*|<markup|title-email>>Specify the email address of the author.
+  <\explain|<explain-macro|title-email|email>>
+    Specify the email address of the author.
+  </explain>
 
-    <item*|<markup|title-date>>Specify the creation date of the article.
-  </description>
+  <\explain|<explain-macro|title-date|email>>
+    Specify the creation date of the article (which is often today,
+    <abbr|i.e.> <inactive*|<date>>).
+  </explain>
 
   The <markup|title> and <markup|author> use the <markup|header-title> and
   <markup|header-author> tags for specifying the running title and header.
@@ -37,22 +47,27 @@
   The title tags rely on the following low-level tags for their physical
   layout:
 
-  <\description>
-    <item*|<markup|title*>>Macro with one argument which specifies the
-    physical layout of titles.
+  <\explain|<explain-macro|title*|title>>
+    This macro is used for rendering the <src-arg|title> of the document.
+  </explain>
 
-    <item*|<markup|author*>>Macro with one argument which specifies the
-    physical layout of authors.
+  <\explain|<explain-macro|author*|author>>
+    This macro is used for rendering the <src-arg|author>(s) of the document.
+  </explain>
 
-    <item*|<markup|address*>>Macro with one argument which specifies the
-    physical layout of addresses.
+  <\explain|<explain-macro|address*|address>>
+    This macro is used for rendering the <src-arg|address> of an author.
+  </explain>
 
-    <item*|<markup|title-email*>>Macro with one argument which specifies the
-    physical layout of email addresses.
+  <\explain|<explain-macro|title-email*|email>>
+    This macro is used for rendering the <src-arg|email> address of an
+    author.
+  </explain>
 
-    <item*|<markup|title-date*>>Macro with one argument which specifies the
-    physical layout of creation dates.
-  </description>
+  <\explain|<explain-macro|title-date*|email>>
+    This macro is used for rendering the creation <src-arg|date> of the
+    document.
+  </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

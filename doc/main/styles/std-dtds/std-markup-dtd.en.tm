@@ -1,201 +1,244 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Standard markup>
+  <tmdoc-title|Standard markup>
 
   Various standard markup is defined in <tmdtd|std-markup>. The following
   textual content tags all take one argument. Most can be found in the
-  <apply|menu|Text|Content tag> menu.
+  <menu|Text|Content tag> menu.
 
-  <\description>
-    <expand|item*|<markup|strong>>Indicates an <strong|important> region of
-    text. You can enter this tag via <apply|menu|Text|Content tag|Strong>.
+  <\explain|<explain-macro|strong|content>>
+    Indicates an <strong|important> region of text. You can enter this tag
+    via <menu|Text|Content tag|Strong>.
+  </explain>
 
-    <expand|item*|<markup|em>>Emphasizes a region of text like in ``the
-    <em|real> thing''. This tag corresponds to the menu entry
-    \ <apply|menu|Text|Content tag|Emphasize>.
+  <\explain|<explain-macro|em|content>>
+    Emphasizes a region of text like in ``the <em|real> thing''. This tag
+    corresponds to the menu entry \ <menu|Text|Content tag|Emphasize>.
+  </explain>
 
-    <expand|item*|<markup|dfn>>For definitions like ``a <dfn|gnu> is a horny
-    beast''. This tag corresponds to <apply|menu|Text|Content
-    tag|Definition>.
+  <\explain|<explain-macro|dfn|content>>
+    For definitions like ``a <dfn|gnu> is a horny beast''. This tag
+    corresponds to <menu|Text|Content tag|Definition>.
+  </explain>
 
-    <expand|item*|<markup|samp>>A sequence of literal characters like the
-    <samp|ae> ligature æ. You can get this tag via <apply|menu|Text|Content
-    tag|Sample>.
+  <\explain|<explain-macro|samp|content>>
+    A sequence of literal characters like the <samp|ae> ligature æ. You can
+    get this tag via <menu|Text|Content tag|Sample>.
+  </explain>
 
-    <expand|item*|<markup|name>>The name of a particular thing or concept
-    like the <name|Linux> system. This tag is obtained using
-    <apply|menu|Text|Content tag|Name>.
+  <\explain|<explain-macro|name|content>>
+    The name of a particular thing or concept like the <name|Linux> system.
+    This tag is obtained using <menu|Text|Content tag|Name>.
+  </explain>
 
-    <expand|item*|<markup|person>>The name of a person like <name|Joris>.
-    This tag corresponds to <apply|menu|Text|Content tag|Person>.
+  <\explain|<explain-macro|person|content>>
+    The name of a person like <name|Joris>. This tag corresponds to
+    <menu|Text|Content tag|Person>.
+  </explain>
 
-    <expand|item*|<markup|cite*>>A bibliographic citation like a book or
-    magazine. Example: Melville's <expand|cite*|Moby Dick>. This tag, which
-    is obtained using <apply|menu|Text|Content tag|Cite>, should not be
-    confused with <markup|cite>. The latter tag is also used for citations,
-    but where the argument refers to an entry in a database with
-    bibliographic references.
+  <\explain|<explain-macro|cite*|content>>
+    A bibliographic citation like a book or magazine. Example: Melville's
+    <cite*|Moby Dick>. This tag, which is obtained using <menu|Text|Content
+    tag|Cite>, should not be confused with <markup|cite>. The latter tag is
+    also used for citations, but where the argument refers to an entry in a
+    database with bibliographic references.
+  </explain>
 
-    <expand|item*|<markup|abbr>>An abbreviation. Example: I work at the
-    <abbr|C.N.R.S.> An abbreviation is created using <apply|menu|Text|Content
-    tag|Abbreviation> or the <expand|kbd-text|a> keyboard shortcut.
+  <\explain|<explain-macro|abbr|content>>
+    An abbreviation. Example: I work at the <abbr|C.N.R.S.> An abbreviation
+    is created using <menu|Text|Content tag|Abbreviation> or the <kbd-text|a>
+    keyboard shortcut.
+  </explain>
 
-    <expand|item*|<markup|acronym>>An acronym is an abbreviation formed from
-    the first letter of each word in a name or a phrase, such as
-    <acronym|HTML> or <acronym|IBM>. In particular, the letters are not
-    separated by dots. You may enter an acronym using
-    <apply|menu|Text|Content tag|Acronym>.
+  <\explain|<explain-macro|acronym|content>>
+    An acronym is an abbreviation formed from the first letter of each word
+    in a name or a phrase, such as <acronym|HTML> or <acronym|IBM>. In
+    particular, the letters are not separated by dots. You may enter an
+    acronym using <menu|Text|Content tag|Acronym>.
+  </explain>
 
-    <expand|item*|<markup|verbatim>>Verbatim text like output from a computer
-    program. Example: the program said <verbatim|hello>. You may enter
-    verbatim text via <apply|menu|Text|Content tag|Verbatim>. The tag may
-    also be used as an environment for multi-paragraph text.
+  <\explain|<explain-macro|verbatim|content>>
+    Verbatim text like output from a computer program. Example: the program
+    said <verbatim|hello>. You may enter verbatim text via <menu|Text|Content
+    tag|Verbatim>. The tag may also be used as an environment for
+    multi-paragraph text.
+  </explain>
 
-    <expand|item*|<markup|kbd>>Text which should be entered on a keyboard.
-    Example: please type <kbd|return>. This tag corresponds to the menu entry
-    <apply|menu|Text|Content tag|Keyboard>.
+  <\explain|<explain-macro|kbd|content>>
+    Text which should be entered on a keyboard. Example: please type
+    <kbd|return>. This tag corresponds to the menu entry <menu|Text|Content
+    tag|Keyboard>.
+  </explain>
 
-    <expand|item*|<markup|code*>>Code of a computer program like in
-    ``<expand|code*|cout \<less\>\<less\> 1+1;> yields <verbatim|2>''. This
-    is entered using <apply|menu|Text|Content tag|Code>. For longer pieces of
-    code, you should use the <markup|code> environment.
+  <\explain|<explain-macro|code*|content>>
+    Code of a computer program like in ``<code*|cout \<less\>\<less\> 1+1;>
+    yields <verbatim|2>''. This is entered using <menu|Text|Content
+    tag|Code>. For longer pieces of code, you should use the <markup|code>
+    environment.
+  </explain>
 
-    <expand|item*|<markup|var>>Variables in a computer program like in
-    <verbatim|cp <var|src-file> <var|dest-file>>. This tag corresponds to the
-    menu entry <apply|menu|Text|Content tag|Variable>.
+  <\explain|<explain-macro|var|content>>
+    Variables in a computer program like in <verbatim|cp <var|src-file>
+    <var|dest-file>>. This tag corresponds to the menu entry
+    <menu|Text|Content tag|Variable>.
+  </explain>
 
-    <expand|item*|<markup|math>>This is a tag which will be used in the
-    future for mathematics inside regular text. Example: the formula
-    <math|sin<rsup|2> x+cos<rsup|2> x=1> is well-known.
+  <\explain|<explain-macro|math|content>>
+    This is a tag which will be used in the future for mathematics inside
+    regular text. Example: the formula <math|sin<rsup|2> x+cos<rsup|2> x=1>
+    is well-known.
+  </explain>
 
-    <expand|item*|<markup|op>>This is a tag which can be used inside
-    mathematics for specifying that an operator should be considered on
-    itself, without any arguments. Example: the operation <math|<op|+>> is a
-    function from <with|mode|math|\<bbb-R\><rsup|2>> to
-    <with|mode|math|\<bbb-R\>>. This tag may become depreciated.
+  <\explain|<explain-macro|op|content>>
+    This is a tag which can be used inside mathematics for specifying that an
+    operator should be considered on itself, without any arguments. Example:
+    the operation <math|<op|+>> is a function from
+    <with|mode|math|\<bbb-R\><rsup|2>> to <with|mode|math|\<bbb-R\>>. This
+    tag may become depreciated.
+  </explain>
 
-    <expand|item*|<markup|tt>>This is a physical tag for typewriter phase. It
-    is used for compatability with <name|HTML>, but we do not recommend its
-    use.
-  </description>
+  <\explain|<explain-macro|tt|content>>
+    This is a physical tag for typewriter phase. It is used for compatability
+    with <name|HTML>, but we do not recommend its use.
+  </explain>
 
   The following are standard environments:
 
-  <\description>
-    <expand|item*|<markup|verbatim>>Described above.
+  <\explain|<explain-macro|verbatim|body>>
+    Described above.
+  </explain>
 
-    <expand|item*|<markup|code>>Similar to <markup|code*>, but for pieces of
-    code of several lines.
+  <\explain|<explain-macro|code|body>>
+    Similar to <markup|code*>, but for pieces of code of several lines.
+  </explain>
 
-    <expand|item*|<markup|quote>>Environment for short (one paragraph)
-    quotations.
+  <\explain|<explain-macro|quote-env|body>>
+    Environment for short (one paragraph) quotations.
+  </explain>
 
-    <expand|item*|<markup|quotation>>Environment for long (multi-paragraph)
-    quotations.
+  <\explain|<explain-macro|quotation|body>>
+    Environment for long (multi-paragraph) quotations.
+  </explain>
 
-    <expand|item*|<markup|verse>>Environment for poetry.
+  <\explain|<explain-macro|verse|body>>
+    Environment for poetry.
+  </explain>
 
-    <expand|item*|<markup|center>>This is a physical tag for centering one or
-    several lines of text. It is used for compatability with <name|HTML>, but
-    we do not recommend its use.
-  </description>
+  <\explain|<explain-macro|center|body>>
+    This is a physical tag for centering one or several lines of text. It is
+    used for compatability with <name|HTML>, but we do not recommend its use.
+  </explain>
 
   Some standard tabular environments are
 
-  <\description>
-    <expand|item*|<markup|tabular*>>Centered tables.
+  <\explain|<explain-macro|tabular*|table>>
+    Centered tables.
+  </explain>
 
-    <expand|item*|<markup|block>>Left aligned tables with a border of
-    standard <verbatim|1ln> width.
+  <\explain|<explain-macro|block|table>>
+    Left aligned tables with a border of standard <verbatim|1ln> width.
+  </explain>
 
-    <expand|item*|<markup|block*>>Centered tables with a border of standard
-    <verbatim|1ln> width.
-  </description>
+  <\explain|<explain-macro|block*|table>>
+    Centered tables with a border of standard <verbatim|1ln> width.
+  </explain>
 
   The following miscellaneous tags don't take arguments:
 
-  <\description>
-    <expand|item*|<markup|TeXmacs>>The <TeXmacs> logo.
+  <explain|<explain-macro|TeXmacs>|The <TeXmacs> logo.>
 
-    <expand|item*|<markup|TeX>>The <TeX> logo.
+  <explain|<explain-macro|TeX>|The <TeX> logo.>
 
-    <expand|item*|<markup|LaTeX>>The <LaTeX> logo.
+  <explain|<explain-macro|LaTeX>|The <LaTeX> logo.>
 
-    <expand|item*|<markup|hflush>>Used by developers for flushing to the
-    right in the definition of environments.
+  <\explain|<explain-macro|hflush>, <explain-macro|left-flush>,
+  <explain-macro|right-flush>>
+    Used by developers for flushing to the right in the definition of
+    environments.
+  </explain>
 
-    <expand|item*|<markup|hrule>>A horizontal rule like the one you see
-    below:
+  <\explain|<explain-macro|hrule>>
+    A horizontal rule like the one you see below:
 
     <value|hrule>
-  </description>
+  </explain>
 
   The following miscellaneous tags all take one or more arguments:
 
-  <\description>
-    <expand|item*|<markup|overline>>For <overline|overlined text>, which can
-    be wrapped across several lines.
+  <\explain|<explain-macro|overline|content>>
+    For <overline|overlined text>, which can be wrapped across several lines.
+  </explain>
 
-    <expand|item*|<markup|underline>>For <underline|underlined text>, which
-    can be wrapped across several lines.
+  <\explain|<explain-macro|underline|content>>
+    For <underline|underlined text>, which can be wrapped across several
+    lines.
+  </explain>
 
-    <expand|item*|<markup|fold>>Macro with two arguments. The first argument
-    is displayed and the second one ignored: the macro corresponds to the
-    folded presentation of a piece of content associated to a short title or
-    abstract. The second argument can be made visible using
-    <apply|menu|Insert|Switch|Unfold>.
+  <\explain|<explain-macro|fold|summary|body>>
+    The <src-arg|summary> is displayed and the <src-arg|body> ignored: the
+    macro corresponds to the folded presentation of a piece of content
+    associated to a short title or abstract. The second argument can be made
+    visible using <menu|Insert|Switch|Unfold>.
+  </explain>
 
-    <expand|item*|<markup|unfold>>Macro with two arguments <var|x> and
-    <var|y>, which yields the unfolded presentation of a piece of content
-    <var|y> associated to a short title or abstract <var|x>. The second
-    argument can be made invisible using <apply|menu|Insert|Switch|Fold>.
+  <\explain|<explain-macro|unfold|summary|body>>
+    Unfolded presentation of a piece of content <src-arg|body> associated to
+    a short title or abstract <src-arg|summary>. The second argument can be
+    made invisible using <menu|Insert|Switch|Fold>.
+  </explain>
 
-    <expand|item*|<markup|switch>>Macro with two arguments <var|x> and
-    <var|y>, where <var|y> is a set of possible representations of the switch
-    and <var|x> the current representation. The function keys <key|F9>,
-    <key|F10>, <key|F11> and <key|F12> can be used to switch between
-    different representations.
+  <\explain|<explain-macro|switch|current|alternatives>>
+    Content which admits a finite number of alternative representation among
+    which the user can switch using the function keys <key|F9>, <key|F10>,
+    <key|F11> and <key|F12>. This may for instance be used in interactive
+    presentations. The argument <src-arg|current> correspond to the currently
+    visible presentation and <src-arg|alternative> to the set of
+    alternatives.
+  </explain>
 
-    <expand|item*|<markup|phantom>>Function with one argument <var|x>. This
-    tag takes as much space as the typesetted argument <var|x> would take,
-    but <var|x> is not displayed. For instance, the text ``phantom'' as an
-    argument of <markup|phantom> yields ``<apply|phantom|phantom>''.
+  <\explain|<explain-macro|phantom|content>>
+    This tag takes as much space as the typesetted argument <src-arg|content>
+    would take, but <src-arg|content> is not displayed. For instance,
+    <inactive*|<phantom|phantom>> yields ``<phantom|phantom>''.
+  </explain>
 
-    <expand|item*|<markup|set-header>>Function with one argument for
-    permanently changing the header. Notice that certain tags in the style
-    file, like sectional tags, may override such manual changes.
+  <\explain|<explain-macro|set-header|header-text>>
+    A macro for permanently changing the header. Notice that certain tags in
+    the style file, like sectional tags, may override such manual changes.
+  </explain>
 
-    <expand|item*|<markup|set-footer>>Function with one argument for
-    permanently changing the footer.
-  </description>
+  <\explain|<explain-macro|set-footer|footer-text>>
+    A macro for permanently changing the footer. Again, certain tags in the
+    style file may override such manual changes.
+  </explain>
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

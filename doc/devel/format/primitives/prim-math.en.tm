@@ -1,49 +1,89 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Mathematics primitives>
 
-  <\itemize>
-    <item>left
+  <\explain>
+    <explain-macro|left|large-delimiter>
 
-    <item>mid
+    <explain-macro|mid|large-delimiter>
 
-    <item>right
+    <explain-macro|right|large-delimiter>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>big
+  <\explain>
+    <explain-macro|big|big-symbol>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>lprime
+  <\explain>
+    <explain-macro|lprime|prime-symbol>
 
-    <item>rprime
+    <explain-macro|rprime|prime-symbol>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>below
+  <\explain>
+    <explain-macro|below|content|script>
 
-    <item>above
+    <explain-macro|above|content|script>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>lsub
+  <\explain>
+    <explain-macro|lsub|script>
 
-    <item>lsup
+    <explain-macro|lsup|script>
 
-    <item>rsub
+    <explain-macro|rsub|script>
 
-    <item>rsup
+    <explain-macro|rsup|script>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>frac
+  <\explain>
+    <explain-macro|frac|num|den>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>sqrt
+  <\explain>
+    <explain-macro|sqrt|content>
 
-    <item>wide
+    <explain-macro|sqrt|content|n>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>wide*
+  <\explain>
+    <explain-macro|wide|content|wide-symbol>
 
-    <item>neg
+    <explain-macro|wide*|content|wide-symbol>
+  <|explain>
+    Please document.
+  </explain>
 
-    <item>tree
-  </itemize>
+  <\explain>
+    <explain-macro|neg|content>
+  <|explain>
+    Please document.
+  </explain>
 
-  <tmdoc-copyright|2004|David Allouche>
+  <\explain>
+    <explain-macro|tree|root|child-1|<with|mode|math|\<cdots\>>|child-n>
+  <|explain>
+    Please document.
+  </explain>
+
+  <tmdoc-copyright|2004|Joris van der Hoeven|David Allouche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -55,15 +95,15 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
   </collection>
 </initial>

@@ -1,33 +1,51 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Box operation primitives>
 
-  <\itemize>
-    <item>Box operators
+  <\explain>
+    <explain-macro|move|content|delta-x|delta-y>
+  <|explain>
+    Please document.
+  </explain>
 
-    <\itemize>
-      <item>move
+  <\explain>
+    <explain-macro|resize|content|left-lim|bot-lim|right-lim|top-lim>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>resize
+  <\explain>
+    <explain-macro|if*|condition|content>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>if*
+  <\explain>
+    <explain-macro|repeat|condition|content>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>repeat
+  <\explain>
+    <explain-macro|datoms|foo|content>
 
-      <item>datoms
+    <explain-macro|dlines|foo|content>
 
-      <item>dlines
+    <explain-macro|dpages|foo|content>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>dpages
+  <\explain>
+    <explain-macro|dbox>
+  <|explain>
+    Please document.
+  </explain>
 
-      <item>dbox
-    </itemize>
-  </itemize>
-
-  <tmdoc-copyright|2004|David Allouche>
+  <tmdoc-copyright|2004|Joris van der Hoeven|David Allouche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
