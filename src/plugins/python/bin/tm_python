@@ -1,224 +1,268 @@
 #!/usr/bin/python
 #
 # Ero Carrera (c) 2004
+# ero@dkbza.org
 #
 # Distributed under GPL.
 
-import os, re, traceback, keyword
+import os
+import traceback
+import keyword
+import re
 
+DATA_ESCAPE = chr(27)
+DATA_COMMAND = chr(16)
 
-DATA_ESCAPE=chr(27)
-DATA_COMMAND=chr(16)
-
-# Class in charge of recording the output
-# of the commands entered in the TeXmacs
-# session.
-class capture:
+class Capture:
+	"""Capture python output.
+	
+	Class in charge of recording the output of the
+	statements/expressions entered in the TeXmacs
+	session and executed in Python.
+	"""
 	def __init__(self):
-		self.text=''
+		self.text = ''
 	def write(self, str):
-		self.text+=str
+		self.text += str
 	def getOutput(self):
 		return self.text
 	def flush(self):
-		self.text=''
+		self.text = ''
 
-def dataBegin():
+def data_begin():
+	"""Signal the beginning of data to TeXmacs."""
 	os.sys.stdout.write(chr(2))
 
-def dataEnd():
+def data_end():
+	"""Signal the end of data to TeXmacs."""
 	os.sys.stdout.write(chr(5))
 	os.sys.stdout.flush()
 
-# For debugging purposes.
-def log(outStr):
-	fd=file(os.environ['HOME']+'/tmp/texmacs.log', 'a+')
-	fd.write(outStr)
-	fd.flush()
-	fd.close()
-
-# Feed data back to TeXmacs
-def texmacsOut(outStr):
-	dataBegin()
-	os.sys.stdout.write(outStr)
-	dataEnd()
-
-# By request from Alvaro Tejero Cantero, this function
-# provides PS output to TeXmacs.
-# Implementation partially based on information provided
-# by Mark Arrasmith.
-def psOut(psFile):
-	"""psOut(psFile)
+def texmacs_out(out_str):
+	"""Feed data back to TeXmacs.
 	
-	Outputs Postscript within TeXmacs.
-	If psFile is a file  or other object which provides a
+	Output results back to TeXmacs, with the DATA_BEGIN,
+	DATA_END control characters."""
+	data_begin()
+	os.sys.stdout.write(out_str)
+	data_end()
+
+def ps_out(ps_file):
+	"""Outputs Postscript within TeXmacs.
+
+	According the the type of the argument the following
+	scenarios can take place:	
+
+	If the argument is a string and has more than one line, it
+	will be processed as raw Postscript data.
+	
+	If the argument is a string, it's supposed to contain the
+	filename of a Postscript file which will be  read ( if the
+	file  has no extension, the defaults .ps and .eps will be
+	tried.)
+	
+	If the argument is a file  or other object which provides a
 	'read'  method, data will be obtained by calling such
 	method.
-	Otherwise  psFile should be a string and the filename
-	contained on  it will be  read ( if the  file  has no
-	extension, the defaults .ps and .eps will be tried. )
+	
+	
+	Implemented from suggestion by Alvaro Tejero Cantero.
+	Implementation partially based on information provided
+	by Mark Arrasmith.
 	"""
-	extList=['', '.eps', '.ps']
-	if type(psFile)==str:
-		for ext in extList:
-			if os.path.exists(psFile+ext):
-				psFd=file(psFile+ext, 'r')
-				data=psFd.read()
-				psFd.close()
+	
+	if 'read' in dir(ps_file):
+		data = ps_file.read()
+		return chr(2)+'ps:'+data+chr(5)
+		
+	if ps_file.find('\n')>0:
+		return chr(2)+'ps:'+ps_file+chr(5)
+	
+	ext_list = ['', '.eps', '.ps']
+	if isinstance(ps_file, str):
+		for ext in ext_list:
+			if os.path.exists(ps_file+ext):
+				ps_fd = file(ps_file+ext, 'r')
+				data = ps_fd.read()
+				ps_fd.close()
 				break
 		else:
-			raise IOError('File \''+psFile+'+'+str(extList)+'\' not found.')
-	else:
-		data=psFile.read()
-	
+			raise IOError('File \''+ps_file+'+'+str(ext_list)+'\' not found.')
+
 	return chr(2)+'ps:'+data+chr(5)
 
-# Do some parsing on the output according to its type.	
-def composeOutput(data):
-	if type(data)==str:
+def compose_output(data):
+	"""Do some parsing on the output according to its type."""
+	if isinstance(data, str):
 		return 'verbatim:'+data.strip()
-	if type(data)==int:
+	if isinstance(data, int):
 		return 'verbatim: %d' % data
-	if type(data)==float:
+	if isinstance(data, float):
 		return 'verbatim: %f' % data
 	
 	return 'verbatim: %s' % str(data)
 
-# Go through module/class hierarchy looking for
-# attributes/methods to provide as autocompletion
-# options.
-def doModHierarchy(mod, attr):
-	dot=attr.find('.')
+def do_module_hierarchy(mod, attr):
+	"""Explore an object's hierarchy.
+	
+	Go through the objects hierarchy looking for
+	attributes/methods to provide as autocompletion
+	options.
+	"""
+	dot = attr.find('.')
  	if dot>0:
 		if hasattr(mod, attr[:dot]):
-			next=getattr(mod, attr[:dot])
-			return doModHierarchy(next, attr[dot+1:])
-	if type(mod)==dict:
+			next = getattr(mod, attr[:dot])
+			return do_module_hierarchy(next, attr[dot+1:])
+	if isinstance(mod, dict):
 		return dir(mod)
 	else:
 		return dir(mod)
 
-# Harvest candidates to provide as autocompletion options.
-def findCompletionCandidates(cmplStr, myGlobals):
-	haystack=myGlobals.keys()+dir(myGlobals['__builtins__'])+keyword.kwlist
-	dot=cmplStr.rfind('.')
-	offset=None
+def find_completion_candidates(cmpl_str, my_globals):
+	"""Harvest candidates to provide as autocompletion options."""
+	
+	haystack = my_globals.keys()+dir(my_globals['__builtins__'])+keyword.kwlist
+	dot = cmpl_str.rfind('.')
+	offset = None
 	if dot>0:
-		offset=len(cmplStr[dot+1:])
-		frstDot=cmplStr[:dot].find('.')
-		if frstDot<0:
-			modName=cmplStr[:dot]
-			rStr=cmplStr[dot+1:]
+		offset = len(cmpl_str[dot+1:])
+		first_dot = cmpl_str[:dot].find('.')
+		if first_dot<0:
+			mod_name = cmpl_str[:dot]
+			r_str = cmpl_str[dot+1:]
 		else:
-			modName=cmplStr[:frstDot]
-			rStr=cmplStr[frstDot+1:]
-		if modName in keyword.kwlist:
+			mod_name = cmpl_str[:first_dot]
+			r_str = cmpl_str[first_dot+1:]
+		if mod_name in keyword.kwlist:
 			return None, []
-		if os.sys.modules.has_key(modName):
-			haystack=doModHierarchy(os.sys.modules[modName], rStr)
-		elif modName in myGlobals.keys():
-			haystack=doModHierarchy(myGlobals[modName], rStr)
+		if os.sys.modules.has_key(mod_name):
+			haystack = do_module_hierarchy(os.sys.modules[mod_name], r_str)
+		elif mod_name in my_globals.keys():
+			haystack = do_module_hierarchy(my_globals[mod_name], r_str)
 		else:
-			# mmm, modName will always be a 'str', won't it?
-			# should something be done about it?
-			haystack=doModHierarchy(type(modName), rStr)
+			haystack = do_module_hierarchy(type(mod_name), r_str)
 			
-	return offset, filter(lambda x:x.find(cmplStr[dot+1:])==0, haystack)
+	return offset, filter(lambda x:x.find(cmpl_str[dot+1:])  ==  0, haystack)
 
-# Check whether a character is a valid symbol.
-def nameChar(c):
-	if c in '+-*/%<>&|^~=!,:()[]{}':
+def name_char(c):
+	"""Check whether a character is a valid symbol."""
+	if c in '+-*/%<>&|^~ = !,:()[]{}':
 		return ' '
 	else:
 		return c
 
-# Parse autocomplete command and return suitable answer to
-# give back to TeXmacs.
-def complete(cmd, myGlobals):
+def complete(cmd, my_globals):
+	"""Parse autocomplete command.
+	 
+	Parse the command and return a suitable answer to
+	give back to TeXmacs.
+	"""
+
 	# Parse Texmacs command and extract string to
 	# complete and offset to complete from.
-	cmd=cmd.strip()[:-1]
-	cmdPr=re.compile(r'"(.*)"\s+(\d+)')
-	res=cmdPr.match(cmd)
+	cmd = cmd.strip()[:-1]
+	cmd_re = re.compile(r'"(.*)"\s+(\d+)')
+	res = cmd_re.match(cmd)
 	
 	# if we don't match anything we return
 	# no completion possibilities.
 	if res is None:
 		return 'scheme:(tuple "" "")'
 		
-	cmplStr=res.group(1)
-	posStr=int(res.group(2))
+	cmpl_str = res.group(1)
+	pos_str = int(res.group(2))
 	
-	cmplStr=cmplStr[:posStr]
-	if len(cmplStr)==0:
+	cmpl_str = cmpl_str[:pos_str]
+	if len(cmpl_str)  ==  0:
 		return 'scheme:(tuple "" "")'
+	
 	# We get the string after the last space character.
 	# no completion is done for strings with spaces
 	# within
-	cmplStr=str().join(map(nameChar, cmplStr))
-	cmplStr=cmplStr.split()[-1]
-	pos=len(cmplStr)
+	cmpl_str = str().join(map(name_char, cmpl_str))
+	cmpl_str = cmpl_str.split()[-1]
+	pos = len(cmpl_str)
 	
 	# no string after last space? return empty
 	# completion
-	if len(cmplStr)==0:
+	if len(cmpl_str)  ==  0:
 		return 'scheme:(tuple "" "")'
 		
 	# Find completion candidates and form a suitable
 	# answer to Texmacs
-	offset, cand=findCompletionCandidates(cmplStr, myGlobals)
-	if len(cand)==0:
-		res='""'
+	offset, cand = find_completion_candidates(cmpl_str, my_globals)
+	if len(cand) == 0:
+		res = '""'
 	else:
-		res=''
+		res = ''
 	for c in cand:
 		if offset is not None:
-			pos=offset
-		res+='"%s" ' % c[pos:]
-	return 'scheme:(tuple "'+cmplStr+'" '+res+')'
-	
-	
-texmacsOut('verbatim:Welcome to tmPython\nTeXmacs Python interface v0.8 . Ero Carrera (c) 2004')
+			pos = offset
+		res += '"%s" ' % c[pos:]
+	return 'scheme:(tuple "'+cmpl_str+'" '+res+')'
+		
+texmacs_out("""verbatim:Welcome to Python
+TeXmacs Python interface v0.8.1 . Ero Carrera (c) 2004
+http://dkbza.org/tmPython.html""")
 
-myGlobals={}
-# We insert into the session's namespace the 'psOut' method.
-myGlobals['psOut']=psOut
+my_globals = {}
+# We insert into the session's namespace the 'ps_out' method.
+my_globals['ps_out'] = ps_out
 
-capt=capture()
-stdoutSaved, os.sys.stdout = os.sys.stdout, capt
-co=compile('import __builtin__ as __builtins__', 'tPython', 'exec')
-eval(co, myGlobals)
-os.sys.stdout=stdoutSaved
+# As well as some documentation.
+my_globals['__doc__'] = """TeXmacs Python plugin.
+
+	TeXmacs Python interface v0.8 . Ero Carrera (c) 2004
+	
+	The plugin homepage:
+		http://dkbza.org/tmPython.html
+
+	The version distributed with TeXmacs is always the latest.
+	
+	This plugin has been programed and tested under Python 2.3.3,
+	the degree of compatibility with older version is unknown.
+	
+	For bugs/suggestions/requests I can be reached at ero@dkbza.org.
+	
+	Enjoy it!
+	"""
+
+capt = Capture()
+stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
+co = compile('import __builtin__ as __builtins__', 'tm_python', 'exec')
+eval(co, my_globals)
+os.sys.stdout = stdout_saved
 
 # Main session loop.
 while 1:
-	line=os.sys.stdin.readline()
+	line = os.sys.stdin.readline()
 	if not line:
-		texmacsOut('')
+		texmacs_out('')
 	else:
-		if line[0]==DATA_COMMAND:
-			if line[1:].find('(complete ')==0:
-				texmacsOut(complete(line[11:], myGlobals))
+		if line[0]  ==  DATA_COMMAND:
+			if line[1:].find('(complete ')  ==  0:
+				texmacs_out(complete(line[11:], my_globals))
 			continue
-		capt=capture()
-		result=None
+		capt = Capture()
+		result = None
 		# We guess where the lines will break.
-		line=re.sub(r' {2}(\s*)', r'\n \1', line)
+		line = re.sub(r' {2}(\s*)', r'\n \1', line)
 		try:
-			out=eval(line, myGlobals)
-			result=out
+			out = eval(line, my_globals)
+			result = out
 		except:
 			try:
-				stdoutSaved, os.sys.stdout = os.sys.stdout, capt
-				co=compile(line, 'tPython', 'exec')
-				eval(co, myGlobals)
-				os.sys.stdout=stdoutSaved
-				result=capt.getOutput()
+				stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
+				co = compile(line, 'tm_python', 'exec')
+				eval(co, my_globals)
+				os.sys.stdout = stdout_saved
+				result = capt.getOutput()
 			except Exception:
-				traceback.print_exc(file=os.sys.stdout, limit=0)
-				os.sys.stdout=stdoutSaved
-				result=capt.getOutput()
+				traceback.print_exc(file = os.sys.stdout, limit = 0)
+				os.sys.stdout = stdout_saved
+				result = capt.getOutput()
 		del capt
 		
-		out=composeOutput(result)
-		texmacsOut(out.strip())
+		out = compose_output(result)
+		texmacs_out(out.strip())
