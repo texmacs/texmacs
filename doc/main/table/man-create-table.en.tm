@@ -29,7 +29,7 @@
     <item*|<kbd-table|N c>>Create a choice list.
   </description>
 
-  The <verbatim|\\eqnarray*> environment is also a special kind of table-like
+  The <markup|eqnarray*> environment is also a special kind of table-like
   structure, which extends over the entire line. You may start a list of
   equations using <menu|Text|Mathematics|Equations>.
 

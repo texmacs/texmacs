@@ -5,13 +5,38 @@
 <\body>
   <tmdoc-title|Mathematical formulas>
 
-  In order to type mathematical formulas, you should first enter ``math
-  mode'' by pressing the <key|$>-key or by inserting an equation (using
-  <menu|Text|Mathematics|Equation>). In math mode, you have specific commands
-  and key-combinations to type mathematical symbols and formulas. For
-  instance, the <key|H-> prefix can be used in order to enter Greek symbols
-  (recall that <key|H-> is equivalent to <key|F5>, <key|<key-escape>
-  <key-escape> <key-escape>> or <key|A-C->).
+  To type mathematical formulas, you need first to enter ``math mode''. This
+  is a special text property enabled in structures created by the
+  <menu|Text|Mathematics> menu.
+
+  <\description>
+    <item*|Formula <key|$>>is used for small mathematical fragments inside a
+    textual paragraph.\ 
+
+    Note that formulas are typeset specially so they do not take too much
+    vertical space. For example, limits are always displayed on the left.
+    Limits can be displayed below in formulas with <menu|Format|Formula
+    style|on>. In formulas, formula style is off by default.
+
+    <item*|Equation <key|A-$>>is the structure for bigger mathematical
+    expressions which are typeset in a paragraph of their own.
+
+    <item*|Equations <key|A-&>>create an <markup|eqnarray*>, a three columns
+    wide table-like environment (see <hyper-link|creating
+    tables|../table/man-create-table.en.tm>).
+
+    This environment should be used for multiple relations where each line
+    repeats the relation symbol. The first column should contain the left
+    hand side, the middle column the relational symbol, and the left column
+    the right hand side. The typical use for <markup|eqnarray*> is a step by
+    step computation where each line describes a simple operation on the
+    right hand side of an equation.
+  </description>
+
+  In math mode, you have specific commands and key-combinations to type
+  mathematical symbols and formulas. For instance, the <key|H-> prefix can be
+  used in order to enter Greek symbols (recall that <key|H-> is equivalent to
+  <key|F5>, <key|<key-escape> <key-escape> <key-escape>> or <key|A-C->).
 
   The editor favors typing mathematics with a certain meaning. This feature,
   which will be developed more in future releases, is useful when
