@@ -1,10 +1,32 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.4.3>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
+
+  <section*|A beta-version of the Windows port has been released>
+
+  A beta-version of the Windows port is <hlink|available
+  now|../download/windows.en.tm>. The new version comes with
+
+  <\itemize>
+    <item>An improved installer.
+
+    <item>Support for Windows 98 and all versions after that.
+
+    <item>Full image support.
+
+    <item>Direct integration with <name|Ghostscript> for printing.
+
+    <item>Faster and more correct display of anti-aliased characters.
+
+    <item>Support of <name|Aspell> and experimental communication by pipes.
+  </itemize>
+
+  Please try the beta-version and <hlink|let us
+  know|../contact/contact.en.tm> about possible problems!
 
   <section*|Help save the French Imprimerie Nationale heritage>
 
