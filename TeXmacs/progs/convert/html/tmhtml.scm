@@ -659,12 +659,12 @@
   (list `(h:div (@ (class "tmdoc-title-1"))
 		,(descend env tmhtml-make-block (car l)))))
 
-(define (tmhtml-tmdoc-title* l)
+(define (tmhtml-tmdoc-title* env l)
   (list `(h:div (@ (class "tmdoc-title-2"))
 		,(descend env tmhtml-make-block (car l)))
 	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml env (cadr l)))))
 
-(define (tmhtml-tmdoc-title** l)
+(define (tmhtml-tmdoc-title** env l)
   (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml env (car l)))
 	`(h:div (@ (class "tmdoc-title-3"))
 		,(descend env tmhtml-make-block (cadr l)))
