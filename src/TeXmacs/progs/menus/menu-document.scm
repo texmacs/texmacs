@@ -201,7 +201,9 @@
 	  ("Orange" (init-env "color" "orange"))
 	  ("Magenta" (init-env "color" "magenta"))
 	  ("Brown" (init-env "color" "brown"))
-	  ("Pink" (init-env "color" "pink")))
+	  ("Pink" (init-env "color" "pink"))
+	  ---
+	  ("Other" ... (interactive '("Foreground color:") 'init-color)))
       (-> "Background"
 	  ("Default" (init-default "background color"))
 	  ---
@@ -218,7 +220,9 @@
 	  ("Pink" (init-env "background color" "pink"))
 	  ("Light grey" (init-env "background color" "light grey"))
 	  ("Dark grey" (init-env "background color" "dark grey"))
-	  ("Broken white" (init-env "background color" "broken white"))))
+	  ("Broken white" (init-env "background color" "broken white"))
+	  ---
+	  ("Other" ... (interactive '("Background color:") 'init-bg-color))))
   (-> "Language"
       ("Default" (init-default "language"))
       ---

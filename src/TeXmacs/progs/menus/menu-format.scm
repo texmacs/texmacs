@@ -348,7 +348,9 @@
   ("Orange" (make-with "color" "orange"))
   ("Magenta" (make-with "color" "magenta"))
   ("Brown" (make-with "color" "brown"))
-  ("Pink" (make-with "color" "pink")))
+  ("Pink" (make-with "color" "pink"))
+  ---
+  ("Other" ... (interactive '("Color:") 'make-with-color)))
 
 (menu-bind language-menu
   ("British" (make-with "language" "british"))

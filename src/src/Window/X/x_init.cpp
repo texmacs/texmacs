@@ -13,6 +13,7 @@
 #include "X/x_window.hpp"
 #include "language.hpp"
 #include "font.hpp"
+#include "analyze.hpp"
 
 #ifndef XK_ISO_Left_Tab
 #define	XK_ISO_Left_Tab 0xFE20
@@ -89,6 +90,12 @@ x_display_rep::get_rgb (color col, int& r, int& g, int& b) {
 
 color
 x_display_rep::get_color (string s) {
+  if ((N(s) == 7) && (s[0]=='#')) {
+    int r= from_hexadecimal (s (1, 3));
+    int g= from_hexadecimal (s (3, 5));
+    int b= from_hexadecimal (s (5, 7));
+    return rgb (r, g, b);
+  }
   int pastel= (depth>=16? 223: 191);
   if (s == "black")          return black;
   if (s == "white")          return white;

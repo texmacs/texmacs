@@ -20,7 +20,7 @@
     ;; text and paragraph properties
     init-text-width init-font-size init-dpi init-first-indent
     init-interline init-interline-spc init-interpar-spc
-    init-magn init-language
+    init-magn init-language init-color init-bg-color
     ;; page layout
     toggle-visible-header-and-footer
     init-page-margins init-screen-reduction init-page-size init-as-on-paper
@@ -60,6 +60,8 @@
     (if (and before (not after)) (init-default "font"))
     (init-env "language" lan)
     (if (and after (not before)) (init-env "font" "cyrillic"))))
+(define (init-color s) (init-env "color" s))
+(define (init-bg-color s) (init-env "background color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page layout
