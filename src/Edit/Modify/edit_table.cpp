@@ -587,7 +587,7 @@ edit_table_rep::table_bound (
 }
 
 void
-edit_table_rep::table_go_to (path fp, int row, int col) {
+edit_table_rep::table_go_to (path fp, int row, int col, bool at_start) {
   int nr_rows, nr_cols;
   fp= search_format (fp);
   table_get_extents (fp, nr_rows, nr_cols);
@@ -600,16 +600,16 @@ edit_table_rep::table_go_to (path fp, int row, int col) {
     table_bound (fp, row, col, row2, col2);
   }
   path q= search_cell (fp, row, col);
-  go_to (end (et, q));
+  go_to (at_start? start (et, q): end (et, q));
 }
 
 void
-edit_table_rep::back_table (path p) {
+edit_table_rep::back_table (path p, bool forward) {
   while (true) {
     tree st= subtree (et, p);
     if (!is_func (st, TABLE_FORMAT)) break;
     if (!is_func (st [N(st)-1], TABLE)) {
-      back_general (p, false);
+      back_general (p, forward);
       return;
     }
     p= p * (N(st)-1);
@@ -621,18 +621,21 @@ edit_table_rep::back_table (path p) {
   }
   if (nil (p)) return;
 
-  int nr_rows, nr_cols;
-  table_get_extents (p, nr_rows, nr_cols);
-  table_go_to (p, nr_rows-1, nr_cols-1);
+  if (forward) table_go_to (p, 0, 0, true);
+  else {
+    int nr_rows, nr_cols;
+    table_get_extents (p, nr_rows, nr_cols);
+    table_go_to (p, nr_rows-1, nr_cols-1, false);
+  }
 }
 
 void
-edit_table_rep::back_in_table (tree t, path p) {
+edit_table_rep::back_in_table (tree t, path p, bool forward) {
   if (is_func (t, TABLE_FORMAT) &&
       (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
        in_preamble_mode ()))
     {
-      remove_argument (p, false);
+      remove_argument (p, forward);
       return;
     }
 
@@ -651,7 +654,7 @@ edit_table_rep::back_in_table (tree t, path p) {
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_rows-1 >= i1) {
-      table_delete (fp, row, col, 1, 0);
+      table_delete_row (forward);
       return;
     }
   }
@@ -666,7 +669,7 @@ edit_table_rep::back_in_table (tree t, path p) {
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_cols-1 >= j1) {
-      table_delete (fp, row, col, 0, 1);
+      table_delete_column (forward);
       return;
     }
   }
@@ -682,8 +685,14 @@ edit_table_rep::back_in_table (tree t, path p) {
     return;
   }
 
-  if (col>0) { table_go_to (p, row, col-1); return; }
-  if (row>0) { table_go_to (p, row-1, nr_cols-1); return; }
+  if (forward) {
+    if (col<(nr_cols-1)) { table_go_to (p, row, col+1, true); return; }
+    if (row<(nr_rows-1)) { table_go_to (p, row+1, 0, true); return; }
+  }
+  else {
+    if (col>0) { table_go_to (p, row, col-1, false); return; }
+    if (row>0) { table_go_to (p, row-1, nr_cols-1, false); return; }
+  }
   while ((!nil (p)) && (is_func (subtree (et, path_up (p)), TABLE_FORMAT)))
     p= path_up (p);
   if ((!nil (p)) &&
@@ -695,7 +704,7 @@ edit_table_rep::back_in_table (tree t, path p) {
     p= path_up (p);
   if ((!nil (p)) && is_func (subtree (et, path_up (p)), SUB_TABLE, 1))
     p= path_up (p);
-  go_to (start (et, p));
+  go_to (forward? end (et, p): start (et, p));
 }
 
 /******************************************************************************
@@ -1101,7 +1110,7 @@ edit_table_rep::table_insert_column (bool forward) {
 }
 
 void
-edit_table_rep::table_delete_row (bool backward) {
+edit_table_rep::table_delete_row (bool forward) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
@@ -1113,11 +1122,14 @@ edit_table_rep::table_delete_row (bool backward) {
     return;
   }
   table_delete (fp, row, col, 1, 0);
-  table_go_to (fp, max (0, row + (backward? -1: 0)), col);
+  int ncol= col;
+  if ((!forward) && (col == 0)) ncol= nr_cols-1;
+  if (forward && (col == nr_cols-1)) ncol= 0;
+  table_go_to (fp, max (0, row + (forward? 0: -1)), ncol, forward);
 }
 
 void
-edit_table_rep::table_delete_column (bool backward) {
+edit_table_rep::table_delete_column (bool forward) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
@@ -1129,7 +1141,10 @@ edit_table_rep::table_delete_column (bool backward) {
     return;
   }
   table_delete (fp, row, col, 0, 1);
-  table_go_to (fp, row, max (0, col + (backward? -1: 0)));
+  int ncol= max (0, col + (forward? 0: -1));
+  if ((!forward) && (col == 0)) ncol= nr_cols-1;
+  if (forward && (col == nr_cols-1)) ncol= 0;
+  table_go_to (fp, row, ncol, forward);
 }
 
 int

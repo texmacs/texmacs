@@ -32,15 +32,13 @@ public:
   void make_wide_under (string wide);
   void make_neg ();
   void make_tree ();
-  void back_prime (tree t, path p);
-  void back_in_math (tree t, path p);
-  void back_in_math_accent (tree t, path p);
+  void back_prime (tree t, path p, bool forward);
 
   bool inside_tree ();
   path get_tree (int& i);
   void branch_insert (bool at_right);
-  void branch_delete ();
-  void back_in_tree (tree t, path p);
+  void branch_delete (bool forward);
+  void back_in_tree (tree t, path p, bool forward);
 };
 
 #endif // defined EDIT_MATH_H

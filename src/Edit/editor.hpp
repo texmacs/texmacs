@@ -76,10 +76,10 @@ protected:
   virtual void   typeset (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
 
   /* protected subroutines for deletion of content */
-  virtual void back_prime (tree t, path p) = 0;
-  virtual void back_in_tree (tree t, path p) = 0;
-  virtual void back_table (path p) = 0;
-  virtual void back_in_table (tree t, path p) = 0;
+  virtual void back_prime (tree t, path p, bool forward) = 0;
+  virtual void back_in_tree (tree t, path p, bool forward) = 0;
+  virtual void back_table (path p, bool forward) = 0;
+  virtual void back_in_table (tree t, path p, bool forward) = 0;
   virtual void back_monolithic (path p) = 0;
   virtual void back_general (path p, bool forward) = 0;
   virtual void back_in_with (tree t, path p, bool forward) = 0;
@@ -269,7 +269,7 @@ public:
 
   virtual bool inside_tree () = 0;
   virtual void branch_insert (bool at_right) = 0;
-  virtual void branch_delete () = 0;
+  virtual void branch_delete (bool forward) = 0;
 
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;
@@ -278,8 +278,8 @@ public:
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;
   virtual void   table_insert_column (bool forward) = 0;
-  virtual void   table_delete_row (bool backward) = 0;
-  virtual void   table_delete_column (bool backward) = 0;
+  virtual void   table_delete_row (bool forward) = 0;
+  virtual void   table_delete_column (bool forward) = 0;
   virtual int    table_nr_rows () = 0;
   virtual int    table_nr_columns () = 0;
   virtual int    table_which_row () = 0;

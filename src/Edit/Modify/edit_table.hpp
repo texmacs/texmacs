@@ -75,9 +75,9 @@ protected:
 
   // Positioning the cursor inside tables
   void table_bound (path fp, int& row1, int& col1, int& row2, int& col2);
-  void table_go_to (path fp, int row, int col);
-  void back_table (path p);
-  void back_in_table (tree t, path p);
+  void table_go_to (path fp, int row, int col, bool at_start= false);
+  void back_table (path p, bool forward);
+  void back_in_table (tree t, path p, bool forward);
 
 public:
   edit_table_rep ();
@@ -90,8 +90,8 @@ public:
   void   table_extract_format ();
   void   table_insert_row (bool forward);
   void   table_insert_column (bool forward);
-  void   table_delete_row (bool backward);
-  void   table_delete_column (bool backward);
+  void   table_delete_row (bool forward);
+  void   table_delete_column (bool forward);
   int    table_nr_rows ();
   int    table_nr_columns ();
   int    table_which_row ();

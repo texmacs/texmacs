@@ -132,7 +132,8 @@ initialize_std_drd () {
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
   init (DRD_PROPS, "drd_props", repeat (3, 2));
   init (ARGUMENT, "arg", repeat (1, 1));
-  init (COMPOUND, "compound", repeat (1, 1, BIFORM));
+  init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
+  // FIXME: should be refined. The current setting is f.i. needed for "theorem"
   init (XMACRO, "xmacro", fixed (2) -> accessible (0));
   init (GET_LABEL, "get_label", fixed (1));
   init (GET_ARITY, "get_arity", fixed (1));

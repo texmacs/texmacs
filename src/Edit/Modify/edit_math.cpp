@@ -90,7 +90,7 @@ edit_math_rep::make_script (bool sup, bool right) {
     if (is_format (p))
       fatal_error ("bad cursor position", "edit_math_rep::make_script");
     if (is_script (t, flag) && (flag==right) && (L(t)==s)) {
-      go_to (end (et, p * 0));
+      go_to_end (p * 0);
       return;
     }
     insert_tree (tree (s, ""), path (0, 0));
@@ -171,18 +171,31 @@ edit_math_rep::make_neg () {
 ******************************************************************************/
 
 void
-edit_math_rep::back_prime (tree t, path p) {
+edit_math_rep::back_prime (tree t, path p, bool forward) {
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= t[0]->label;
-    int i= N(s)-1;
-    if ((i>=0) && (s[i] == '>'))
-      for (; i>=0; i--)
-	if (s[i] == '<') break;
-    if (i<=0) {
-      assign (p, "");
-      correct (path_up (p));
+    if (forward) {
+      int i= 0, n= N(s);
+      if ((i<n) && (s[i] == '<'))
+	for (; i<n; i++)
+	  if (s[i] == '>') break;
+      if (i>=n-1) {
+	assign (p, "");
+	correct (path_up (p));
+      }
+      else remove (p * path (0, 0), i+1);
     }
-    else remove (p * path (0, i), N(s)-i);
+    else {
+      int i= N(s)-1;
+      if ((i>=0) && (s[i] == '>'))
+	for (; i>=0; i--)
+	  if (s[i] == '<') break;
+      if (i<=0) {
+	assign (p, "");
+	correct (path_up (p));
+      }
+      else remove (p * path (0, i), N(s)-i);
+    }
   }
 }
 
@@ -237,7 +250,7 @@ edit_math_rep::branch_insert (bool at_right) {
 }
 
 void
-edit_math_rep::branch_delete () {
+edit_math_rep::branch_delete (bool forward) {
   int i;
   path p= get_tree (i);
   if (nil (p) || (i==0)) return;
@@ -245,15 +258,23 @@ edit_math_rep::branch_delete () {
     assign (p, subtree (et, p * 0));
     correct (path_up (p));
   }
-  else remove (p * i, 1);
+  else {
+    remove (p * i, 1);
+    if (forward) {
+      if (i == N (subtree (et, p))) go_to_end (p);
+      else go_to_start (p * i);
+    }
+  }
 }
 
 void
-edit_math_rep::back_in_tree (tree t, path p) {
+edit_math_rep::back_in_tree (tree t, path p, bool forward) {
   int i= last_item (p);
   if (i>0) {
-    if (t[i] == "") branch_delete ();
-    else go_to (end (et, path_up (p) * (i-1)));
+    if ((i>0) && (t[i] == "")) branch_delete (forward);
+    else if (!forward) go_to_end (path_up (p) * (i-1));
+    else if (i == N(t)-1) go_to_end (path_up (p));
+    else go_to_start (path_up (p) * (i+1));
   }
   else {
     if (t == tree (TREE, "", "")) {
@@ -261,6 +282,7 @@ edit_math_rep::back_in_tree (tree t, path p) {
       assign (p, "");
       correct (path_up (p));
     }
-    else go_to (start (et, path_up (p)));
+    else if (forward) go_to_start (path_inc (p));
+    else go_to_start (path_up (p));
   }
 }
