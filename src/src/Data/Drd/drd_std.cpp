@@ -167,6 +167,7 @@ init_std_drd () {
   init (QUASI, "quasi", fixed (1));
   init (QUASIQUOTE, "quasiquote", fixed (1));
   init (UNQUOTE, "unquote", fixed (1));
+  init (VAR_UNQUOTE, "unquote*", fixed (1));
   init (IF, "if", options (2, 1));
   init (VAR_IF, "if*", fixed (2));
   init (CASE, "case", repeat (2, 1));

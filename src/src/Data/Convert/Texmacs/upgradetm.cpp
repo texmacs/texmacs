@@ -37,6 +37,10 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.3.12", version)) return H;
+
+  new_feature (H, "unquote*");
+
   if (version_inf ("1.0.3.4", version)) return H;
 
   new_feature (H, "for-each");
