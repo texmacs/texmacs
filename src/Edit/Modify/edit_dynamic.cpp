@@ -231,7 +231,8 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
   if (flag) {
     assign (path_up (p), "");
     tree st= subtree (et, path_up (p, 2));
-    if (is_mod_active_once (st) && (st[0] == "")) {
+    if ((is_mod_active_once (st) || is_compound (st, "doc-inactive")) &&
+	(st[0] == "")) {
       assign (path_up (p, 2), "");
       correct (path_up (p, 3));
     }
