@@ -75,7 +75,7 @@
           (new-buffer-clear the-nw-buff)
 	  (init-style "proclus-links")
           (set-source-buffer! src-buff)
-	  (insert-tree the-tree)
+	  (insert the-tree)
           (pretend-save-buffer)))))
 
 (define (loci-tree)
@@ -126,7 +126,7 @@
     (init-style "proclus-links")
     (init-env "magnification" "1")
     (set-source-buffer! src-buff)
-    (insert-stree the-stree)
+    (insert the-stree)
     (pretend-save-buffer)))
 
 (define (absname-error . args)

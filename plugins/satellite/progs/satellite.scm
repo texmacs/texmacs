@@ -119,7 +119,7 @@
 	    (init-style "sat")
 	    (init-env "srce" src-buff)
 	    (init-env "def-satellite" (object->string lenv))
-	    (insert-tree  the-tree)))))
+	    (insert  the-tree)))))
 
 
 (define list-env-satellite '())

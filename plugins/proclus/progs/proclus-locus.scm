@@ -193,8 +193,7 @@
   ;; FIXME: do not use clipboard, instead work with primitive buffer ops
   (let ((sel? (selection-active-any?)))
     (if sel? (clipboard-cut "ah"))
-    (insert-stree-go-to `(locus "" (tuple ,absname ,n))
-                         '(0 0))
+    (insert-go-to `(locus "" (tuple ,absname ,n)) '(0 0))
     (if sel? (clipboard-paste "ah"))))
 
 

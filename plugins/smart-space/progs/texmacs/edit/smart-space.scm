@@ -32,7 +32,7 @@
 ;           (else #f))))
 
 ; (define (smart-space)
-;     (if (not (near-space?)) (insert-string " ")))
+;     (if (not (near-space?)) (insert " ")))
 
 ;(set-trace-level! near-space? near-space?/leaf near-space?/after)
 
@@ -40,7 +40,7 @@
   (cond ((at-start?) (noop))
 	((after-space?) (noop))
 	((before-space?) (move-next))
-	(else (insert-string " "))))
+	(else (insert " "))))
 
 (define (at-start?)
   (let ((p (but-last (the-path)))
