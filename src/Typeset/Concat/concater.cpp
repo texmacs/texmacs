@@ -466,6 +466,12 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case MARK:
     typeset_mark (t, ip);
     break;
+  case INLINE_TAG:
+  case OPEN_TAG:
+  case MIDDLE_TAG:
+  case CLOSE_TAG:
+    typeset_src_tag (t, ip);
+    break;
   case SYMBOL:
   case LATEX:
   case HYBRID:

@@ -186,7 +186,7 @@ initialize_default_env () {
   env (GR_GRID_ASPECT)   = gr_grid_aspect; // grid aspect
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
-  env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags
+  env (SRC_SPECIAL)      = "format";    // special treatment of certain tags
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
 }

@@ -82,6 +82,11 @@ class concater_rep {
   void typeset_inactive (tree t, path ip);
   void typeset_error (tree t, path ip);
   void typeset_mark (tree t, path ip);
+  void typeset_src_open (tree t, path ip, string extra);
+  void typeset_src_middle (tree t, path ip, int i);
+  void typeset_src_close (tree t, path ip);
+  void typeset_src_args (tree t, path ip);
+  void typeset_src_tag (tree t, path ip);
 
   // active macro mechanisms
   void typeset_assign (tree t, path ip);
