@@ -193,7 +193,8 @@ public:
   virtual double   get_init_double (string var_name) = 0;
   virtual language get_env_language () = 0;
   virtual tree     exec_texmacs (tree t, path p= 0) = 0;
-  virtual tree     exec_html (tree t, path p= 0) = 0;
+  virtual tree     exec_html (tree t, path p) = 0;
+  virtual tree     exec_html (tree t) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
   virtual void     init_extra_style (string package, bool check= false) = 0;
