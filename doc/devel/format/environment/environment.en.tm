@@ -3,74 +3,88 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Primitive <TeXmacs> environment variables>
+  <tmdoc-title|Built-in environment variables>
 
-  The <em|evaluation> and <em|typesetting> processes are controlled by
-  variables. The <def-index|environment> is the collection all variables and
-  values at a given point in the document, we also sometime call it the
-  <def-index|context>.
+  The way <TeXmacs> <hyper-link|typesets|../basics/typesetting.en.tm>
+  documents is influenced by so called <em|environment variables>. The
+  <hyper-link|style-sheet language|../stylesheet/stylesheet.en.tm> uses a so
+  called <em|environment> (or context) to store both environment variables
+  and <hyper-link|macros|../stylesheet/prim-macro.en.tm>. The environment
+  variables are subdivided into two catagories: built-in variables and
+  additional variables provided by style files. Built-in variables usually
+  affect the layout, while additional variables mostly serve computational
+  purposes. In the next sections of this chapter, we will describe all
+  built-in environment variables.
 
-  Production of boxes is controlled by a number of <def-index|typesetter
-  variables>. For example the text color is set by the <verbatim|color>
-  variable:
+  A typical built-in environment variable is <src-var|color>. The value of an
+  environment variable may be <hyper-link|changed|../stylesheet/prim-env.en.tm>
+  permanently using <markup|assign> and temporarily using the <markup|with>
+  primitive:
 
   <\tm-fragment>
     Some <with|color|dark red|colored> text.
   </tm-fragment>
 
-  <\scheme-fragment>
-    (concat "Some " (with "color" "dark red" "colored") " text.")
-  </scheme-fragment>
+  <\tm-fragment>
+    <inactive*|Some <with|color|dark red|colored> text.>
+  </tm-fragment>
 
-  Variables are also used for computational purposes during the
-  <em|evaluation> step.
+  Counters are typical environment variables defined in style-sheets.
 
   <\tm-fragment>
     <\enumerate>
-      <item>Weirdly
+      <item>A weirdly
 
-      <assign|item-nr|3><item>numbered list
+      <assign|item-nr|3><item>numbered list...
     </enumerate>
   </tm-fragment>
 
-  <\scheme-fragment>
-    (enumerate (document
+  <\tm-fragment>
+    <inactive*|<\enumerate>
+      <item>A weirdly
 
-    \ \ (concat (item) "Weirdly")
-
-    \ \ (concat (assign "itemnr" "3") (item) "numbered list")))
-  </scheme-fragment>
+      <assign|item-nr|3><item>numbered list...
+    </enumerate>>
+  </tm-fragment>
 
   The typesetting language uses <def-index|dynamic scoping> of variables.
-  That means that macros <emdash>the procedures defining non-primitive
-  markup<emdash> can access and modify variables in their calling context. In
-  the previous example, the <verbatim|enumerate> macro initializes
-  <verbatim|itemnr> to 0 and the <verbatim|item> macro increments it by one
-  and show its value.
+  That means that macros can access and modify variables in their calling
+  context. In the previous example, the <markup|enumerate> macro locally
+  initializes <src-var|item-nr> to <with|mode|math|0> (uses <markup|with>)
+  and the <markup|item> macro increments it by one and shows its value. Since
+  <markup|enumerate> locally redefines <src-var|item-nr>, the original value
+  of <src-var|item-nr> is restored on exit.
 
-  In additions to variables set by primitives and markup inside a document,
-  some variables are defined in the <def-index|initial environment>. This is
-  the environment at the point <verbatim|(0 0)> of the document, the start of
-  the first paragraph.
-
-  <\description>
-    <item*|<def-index|Default initial values>>are set by the document style
-    and packages. The <def-index|default initial environment> is the
-    collection of all default initial values defined by the typesetter, the
-    document style and the document packages.
-
-    <item*|<def-index|Document initial values>>are stored out-of-band
-    <emdash>like the document style, they do not show in the editor
-    window<emdash> using <value|scheme> functions like <verbatim|init-env>.
-    The <def-index|document initial environment> is the default initial
-    environment modified by the document initial values.
-  </description>
+  Each document comes with an <hyper-link|initial
+  environment|../basics/tm-docs.en.tm#init-env> with the initial values of
+  environment values, <abbr|i.e.> their values just before we typeset the
+  document. If an environment variable does not occur in the initial
+  environment, then its initial value defaults to its value after typesetting
+  the document style and possible additional packages. The initial
+  environment before typesetting the style files and packages is built-in
+  into the editor.
 
   Some variables, like header and footer variables, must be set inside the
   document, their initial environment value is ignored. Generally, they
   should be set by header and sectioning markup.
 
-  <tmdoc-copyright|1998--2002|David Allouche>
+  <\traverse>
+    <branch|General environment variables|env-general.en.tm>
+
+    <branch|Specifying the current font|env-font.en.tm>
+
+    <branch|Typesetting mathematics|env-math.en.tm>
+
+    <branch|Paragraph layout|env-par.en.tm>
+
+    <branch|Page layout|env-page.en.tm>
+
+    <branch|Table layout|env-table.en.tm>
+
+    <branch|Editing source trees|env-src.en.tm>
+  </traverse>
+
+  <tmdoc-copyright|2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
