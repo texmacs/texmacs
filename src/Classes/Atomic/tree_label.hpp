@@ -60,6 +60,13 @@ enum tree_label {
   IS_TUPLE, LOOK_UP,
   EQUAL, UNEQUAL, LESS, LESSEQ, GREATER, GREATEREQ,
 
+  // built-in length units
+  CM, MM, IN, PT, BP, DD, PC, CC,  // standard absolute units
+  _FN, FNS, SPC, XSPC,              // font specific & stretchy
+  LN, SEP, YFRAC, EX,              // font specific
+  PAR, PAG,                        // other
+  PX,                              // miscellaneous
+
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
   ACTIVE, VAR_ACTIVE, INACTIVE, VAR_INACTIVE,
@@ -67,7 +74,7 @@ enum tree_label {
   SYMBOL, LATEX, HYBRID,
 
   // other tags
-  TUPLE, ATTR, COLLECTION, ASSOCIATE, BACKUP,
+  TUPLE, ATTR, TMLEN, COLLECTION, ASSOCIATE, BACKUP,
   LABEL, REFERENCE, PAGEREF, WRITE,
   SPECIFIC, HLINK, ACTION,
   TAG, MEANING, FLAG,

@@ -120,6 +120,7 @@ public:
   bool                         read_only;   // write-protected ?
 
   int       dpi;
+  double    inch;
   double    magn;
   double    flexibility;
   int       mode;
@@ -219,6 +220,26 @@ private:
   tree exec_lesseq (tree t);
   tree exec_greater (tree t);
   tree exec_greatereq (tree t);
+
+  tree exec_cm ();
+  tree exec_mm ();
+  tree exec_in ();
+  tree exec_pt ();
+  tree exec_bp ();
+  tree exec_dd ();
+  tree exec_pc ();
+  tree exec_cc ();
+  tree exec_fn ();
+  tree exec_fns ();
+  tree exec_spc ();
+  tree exec_xspc ();
+  tree exec_ln ();
+  tree exec_sep ();
+  tree exec_yfrac ();
+  tree exec_ex ();
+  tree exec_par ();
+  tree exec_pag ();
+  tree exec_px ();
 
   tree exec_point (tree t);
   tree exec_box_info (tree t);
