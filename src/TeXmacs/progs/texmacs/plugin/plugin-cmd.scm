@@ -100,8 +100,8 @@
   (with source (ahash-ref plugin-source handle)
     (if (== (ahash-ref plugin-current source) handle)
 	(with (name session channel) (ahash-ref plugin-source handle)
-	  (plugin-async-append handle #f))
-	(if (== channel "output") (plugin-async-append handle #t))))
+	  (plugin-async-append handle #f)
+	  (if (== channel "output") (plugin-async-append handle #t)))))
   (ahash-ref plugin-results handle))
 
 (tm-define (mutate-plugin-result handle)
