@@ -1,10 +1,17 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.1>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
+
+  <section*|Help save the French Imprimerie Nationale heritage>
+
+  Sign <hlink|petition|http://www.garamonpatrimoine.org/petition.html> to
+  help save the heritage of the French \S Imprimerie Nationale \T.
+
+  Click on the English flag for an English translation of the text.
 
   <section*|Version 1.0.4 has been released>
 
