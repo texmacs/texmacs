@@ -20,6 +20,7 @@
 typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip2):
   env (env2), et (et2), ip (ip2), old_patch (UNINIT)
 {
+  paper= (env->get_string (PAGE_MEDIUM) == "paper");
   br= make_bridge (this, et, ip);
   x1= y1= x2= y2=0;
 }
