@@ -42,6 +42,8 @@ public:
   void remove_with (path p, string var);
   void back_in_with (tree t, path p, bool forward);
 
+  void make_mod_active (tree_label l);
+
   void make_hybrid ();
   bool activate_latex ();
   void activate_hybrid ();

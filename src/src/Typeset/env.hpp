@@ -204,6 +204,7 @@ private:
   tree rewrite_inactive_value (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_active (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_var_active (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_hybrid (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_default (tree t, tree var, bool block, bool flush);

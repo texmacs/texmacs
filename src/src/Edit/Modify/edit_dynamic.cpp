@@ -208,7 +208,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 	  flag= flag && is_empty (t[i+j]);
 	if (flag) {
 	  remove (p, d);
-	  if ((d == n) && is_func (subtree (et, path_up (p, 2)), INACTIVE)) {
+	  if ((d == n) && is_mod_active_once (subtree (et, path_up (p, 2)))) {
 	    rem_unary (path_up (p, 2));
 	    go_to_border (path_up (p, 2), forward);
 	  }
@@ -224,7 +224,8 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
     flag= flag && is_empty (t[j]);
   if (flag) {
     assign (path_up (p), "");
-    if (subtree (et, path_up (p, 2)) == tree (INACTIVE, "")) {
+    tree st= subtree (et, path_up (p, 2));
+    if (is_mod_active_once (st) && (st[0] == "")) {
       assign (path_up (p, 2), "");
       correct (path_up (p, 3));
     }
@@ -358,6 +359,26 @@ edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
     correct (path_up (p, 2));
   }
   else go_to_border (path_up (p), !forward);
+}
+
+/******************************************************************************
+* Style file editing
+******************************************************************************/
+
+void
+edit_dynamic_rep::make_mod_active (tree_label l) {
+  if (selection_active_normal ()) {
+    tree t= selection_get ();
+    selection_cut ();
+    insert_tree (tree (l, t), path (0, end (t)));
+  }
+  else if ((l == VAR_STYLE_ONLY) || (l == VAR_ACTIVE) || (l == VAR_INACTIVE))
+    insert_tree (tree (l, ""), path (0, 0));
+  else {
+    path p= path_up (tp);
+    if (is_atomic (subtree (et, p))) p= path_up (p);
+    ins_unary (p, l);
+  }
 }
 
 /******************************************************************************

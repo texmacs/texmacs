@@ -252,10 +252,14 @@ is_prime (tree t) {
 }
 
 bool
-is_inactive (tree t) {
-  return
-    (N(t) == 1) &&
-    ((L(t) == INACTIVE) || (L(t) == VAR_INACTIVE));
+is_mod_active (tree t) {
+  return (N(t) == 1) && (L(t) >= STYLE_ONLY) && (L(t) <= VAR_INACTIVE);
+}
+
+bool
+is_mod_active_once (tree t) {
+  return (N(t) == 1) &&
+    ((L(t) == STYLE_ONLY) || (L(t) == ACTIVE) || (L(t) == INACTIVE));
 }
 
 bool

@@ -317,7 +317,7 @@ edit_text_rep::remove_structure_upwards () {
     last= last_item (p);
     p= path_up (p);
     st= subtree (et, p);
-  } while (is_func (st, INACTIVE, 1));
+  } while (is_mod_active_once (st));
 
   if (is_document (st) && is_document (st[last])) {
     int very_last= 0;

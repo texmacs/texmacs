@@ -214,7 +214,8 @@ bool is_multi_paragraph (tree t);
 bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);
-bool is_inactive (tree t);
+bool is_mod_active (tree t);
+bool is_mod_active_once (tree t);
 bool is_empty (tree t);
 
 inline bool

@@ -20,8 +20,12 @@
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
 
-  ("M--" (make 'inactive*))
-  ("M-+" (make 'active*))
+  ("M-@" (make-mod-active 'style-only*))
+  ("M--" (make-mod-active 'inactive*))
+  ("M-+" (make-mod-active 'active*))
+  ("M-A-@" (make-mod-active 'style-only))
+  ("M-A--" (make-mod-active 'inactive))
+  ("M-A-+" (make-mod-active 'active))
 
   ("inactive a" (make 'arg))
   ("inactive A" (make 'map-args))

@@ -323,6 +323,7 @@ public:
   virtual void make_with (string var, string val) = 0;
   virtual void insert_with (path p, string var, tree val) = 0;
   virtual void remove_with (path p, string var) = 0;
+  virtual void make_mod_active (tree_label l) = 0;
   virtual void make_hybrid () = 0;
   virtual bool activate_latex () = 0;
   virtual void activate_hybrid () = 0;
