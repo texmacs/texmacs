@@ -50,6 +50,7 @@
 	((== lan "french") (insert-object " "))
 	((== lan "german") (insert-object ""))
 	((== lan "dutch") (insert-object ""))
+	((== lan "spanish") (insert-object ""))
 	((== lan "swiss") (insert-object ""))
 	(else (insert-object "``"))))
 
@@ -58,6 +59,7 @@
 	((== lan "french") (insert-object " "))
 	((== lan "german") (insert-object "``"))
 	((== lan "dutch") (insert-object "''"))
+	((== lan "spanish") (insert-object ""))
 	((== lan "swiss") (insert-object ""))
 	(else (insert-object "''"))))
 
@@ -66,6 +68,7 @@
 	((== lan "french") (insert-object-go-to "  " '(2)))
 	((== lan "german") (insert-object-go-to "``" '(1)))
 	((== lan "dutch") (insert-object-go-to "''" '(1)))
+	((== lan "spanish") (insert-object-go-to "" '(1)))
 	((== lan "swiss") (insert-object-go-to "" '(1)))
 	(else (insert-object-go-to "``''" '(2)))))
 
