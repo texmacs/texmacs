@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|<tuple|source|std>>
 
@@ -76,8 +76,6 @@
   magenta|mode|math|!>>>>
 
   \;
-
-  <assign|map|<macro|f|args|<extern|ext-map|<arg|f>|<arg|args>>>>
 
   <assign|select|<xmacro|x|<extern|ext-select|<arg|x|0>|<quote-arg|x>>>>
 

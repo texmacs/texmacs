@@ -41,12 +41,6 @@
 
   <assign|LaTeX|<macro|<active*|L<rsup|<space|-0.8spc><move|A|0fn|-0.1fn>><space|-0.2spc>T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>>
 
-  <assign|hflush|<macro|<htab|0fn|0>>>
-
-  <assign|right-flush|<macro|<htab|0fn|first>>>
-
-  <assign|left-flush|<macro|<htab|0fn|last>>>
-
   <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
   <\active*>
@@ -151,12 +145,11 @@
 
   <\active*>
     <\src-comment>
-      Below follow some other frequently less frequently used macros and
-      environments.
+      Other presentation tags.
     </src-comment>
   </active*>
 
-  <assign|localize|<macro|x|<translate|<arg|x>|english|<value|language>>>>
+  <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
 
   <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
@@ -165,6 +158,12 @@
   <assign|underline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
   <drd-props|underline|arity|1|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Tags for dynamic presentations.
+    </src-comment>
+  </active*>
 
   <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>>
 
@@ -177,12 +176,6 @@
   </macro>>
 
   <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
-
-  <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
-
-  <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
-
-  <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
 
   \;
 </body>
