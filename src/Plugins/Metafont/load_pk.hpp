@@ -34,6 +34,11 @@ struct pk_loader {
   int  bc;
   int  ec;
   
+  /* for lazy unpacking */
+  int*  char_pos;
+  HN*   char_flag;
+  bool* unpacked;
+  
   pk_loader (url pk_file_name, tex_font_metric tfm, int dpi);
   HI pkbyte ();
   SI pkquad ();
