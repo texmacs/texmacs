@@ -1169,6 +1169,7 @@ latex_to_tree (tree t1) {
   bool is_document= is_compound (t1, "!file", 1);
   if (is_document) t1= t1[0];
   textm_appendices= false;
+  command_type ("!em") = "false";
   // cout << "\n\nt1= " << t1 << "\n\n";
   tree t2= is_document? filter_preamble (t1): t1;
   // cout << "\n\nt2= " << t2 << "\n\n";
