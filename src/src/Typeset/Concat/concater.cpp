@@ -413,6 +413,7 @@ concater_rep::typeset (tree t, path ip) {
   case QUASIQUOTE:
   case UNQUOTE:
   case VAR_UNQUOTE:
+  case COPY:
     typeset_executable (t, ip);
     break;
   case IF:

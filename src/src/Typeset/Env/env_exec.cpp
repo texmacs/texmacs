@@ -214,6 +214,8 @@ edit_env_rep::exec (tree t) {
   case UNQUOTE:
   case VAR_UNQUOTE:
     return exec (t[0]);
+  case COPY:
+    return copy (exec (t[0]));
   case IF:
   case VAR_IF:
     return exec_if (t);
