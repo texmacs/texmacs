@@ -357,6 +357,10 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
     return var;
   }
   switch (L(t)) {
+  case UNINIT:
+    if (src_special >= SPECIAL_NORMAL)
+      return tree (MARK, var, highlight ("?", "error"));
+    else return rewrite_inactive_default (t, var, block, flush);
   case RAW_DATA:
     return rewrite_inactive_raw_data (t, var, block, flush);
   case DOCUMENT:
