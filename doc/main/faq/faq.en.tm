@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.1>
+<TeXmacs|1.0.3.2>
 
 <style|tmweb>
 
@@ -50,6 +50,8 @@
 
       <item><hlink|Spell checking always starts at the beginning of the
       document|#usage-2>?
+
+      <item><hlink|How can I insert an OpenOffice.org table|#usage-3>?
     </itemize-minus>
 
     <item>Microtypography
@@ -268,6 +270,27 @@
   <answer|Mark a region, and spell checking will be restricted to this
   selection.>
 
+  <\question>
+    <label|usage-3>How can I insert an OpenOffice.org table?
+  </question>
+
+  <\answer>
+    \;
+
+    <\enumerate>
+      <item>Create a PostScript image of your table using OpenOffice
+      (<samp|File<with|mode|math|\<rightarrow\>>Print<with|mode|math|\<rightarrow\>>Print
+      to file)>. Name the file, for example, ``<kbd|table1.ps>''.
+
+      <item>Convert the PostScript file to an Encapsulated PostScript file
+      (<verbatim|.eps>) using <verbatim|ps2epsi> in a shell. Just type:
+      ``<kbd|ps2epsi table1.ps table1.eps>''.
+
+      <item>Insert or link the image <verbatim|table.eps> in the <TeXmacs>
+      document.
+    </enumerate>
+  </answer>
+
   <section*|Microtypography>
 
   <\question>
@@ -332,10 +355,12 @@
 
 <\references>
   <\collection>
-    <associate|typo-1|<tuple|14|?>>
+    <associate|idx-1|<tuple|1.|?>>
+    <associate|typo-1|<tuple|15|?>>
     <associate|usage-1|<tuple|12|?>>
-    <associate|typo-2|<tuple|15|?>>
     <associate|usage-2|<tuple|13|?>>
+    <associate|typo-2|<tuple|16|?>>
+    <associate|usage-3|<tuple|14|?>>
     <associate|general-1|<tuple|1|?>>
     <associate|general-2|<tuple|2|?>>
     <associate|general-3|<tuple|3|?>>
@@ -344,9 +369,9 @@
     <associate|general-6|<tuple|6|?>>
     <associate|general-7|<tuple|7|?>>
     <associate|toc-10|<tuple|2.1|?>>
-    <associate|toc-11|<tuple|2.2|?>>
-    <associate|gly-1|<tuple|1|?>>
     <associate|sys-1|<tuple|8|?>>
+    <associate|gly-1|<tuple|1|?>>
+    <associate|toc-11|<tuple|2.2|?>>
     <associate|toc-12|<tuple|2.3|?>>
     <associate|sys-2|<tuple|9|?>>
     <associate|toc-13|<tuple|2.4|?>>
@@ -364,8 +389,8 @@
     <associate|toc-4|<tuple|1.3|?>>
     <associate|toc-5|<tuple|1.4|?>>
     <associate|toc-6|<tuple|1.5|?>>
-    <associate|legacy-1|<tuple|16|?>>
     <associate|toc-7|<tuple|1.6|?>>
+    <associate|legacy-1|<tuple|17|?>>
     <associate|toc-8|<tuple|1.7|?>>
     <associate|toc-9|<tuple|2|?>>
   </collection>
