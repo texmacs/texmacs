@@ -40,6 +40,7 @@
 	     (texmacs edit edit-table) (texmacs edit edit-graphics)
 	     (texmacs edit edit-fold) (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))
+(use-modules (texmacs plugin plugin-cmd))
 (re-export safely-kill-window)
 
 ;(display "Booting menus\n")
@@ -106,11 +107,6 @@
 (secure-symbols tmdoc-include)
 
 ;(display "Booting plugins\n")
-(lazy-define (texmacs plugin plugin-cmd) verbatim-serialize)
-(lazy-define (texmacs plugin plugin-cmd) plugin-serialize)
-(lazy-define (texmacs plugin plugin-cmd) format-command)
-(lazy-define (texmacs plugin plugin-cmd) plugin-async-feed)
-(lazy-define (texmacs plugin plugin-cmd) plugin-async-retrieve)
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))

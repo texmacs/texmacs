@@ -12,6 +12,7 @@
 
 #include "edit_interface.hpp"
 #include "convert.hpp"
+#include "connect.hpp"
 
 /******************************************************************************
 * Set left footer with information about environment variables
@@ -70,6 +71,19 @@ edit_interface_rep::set_left_footer () {
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
   if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
+  if (inside ("session"))
+    switch (status_connection ()) {
+    case CONNECTION_DEAD:
+      s= s * "#[dead]";
+      break;
+    case CONNECTION_DYING:
+    case WAITING_FOR_OUTPUT:
+      s= s * "#[busy]";
+      break;
+    case WAITING_FOR_INPUT:
+      s= s * "#[idle]";
+      break;
+    }
   set_left_footer (s);
 }
 

@@ -16,6 +16,10 @@
 
 class edit_process_rep: virtual public editor_rep {
 protected:
+  bool   new_mutators;
+  bool   mutators_updated;
+  int    nr_mutators;
+  time_t next_mutate;
   bool   math_input;
   string message_l;
   string message_r;
@@ -25,12 +29,23 @@ public:
   edit_process_rep ();
   ~edit_process_rep ();
 
+  void process_mutators ();
+  path get_mutator_path ();
+  void invalidate_mutators ();
+  void insert_mutator (tree body, string cmd);
+
   void make_session (string lan, string session);
-  void start_input ();
+  void start_input (string lan, string session, path p);
+  void process_input ();
   void start_output ();
   void session_message (string l, string r);
   void session_use_math_input (bool flag);
   bool session_is_using_math_input ();
+  int  status_connection ();
+  bool busy_connection ();
+  void interrupt_connection ();
+  void stop_connection ();
+
   void session_var_go_up ();
   void session_var_go_down ();
   void session_go_left ();

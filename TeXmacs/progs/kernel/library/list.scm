@@ -19,7 +19,7 @@
     rcons rcons* set-cons! set-rcons! list-concatenate list-intersperse
     ;; selectors
     first second third fourth fifth sixth seventh eighth ninth tenth
-    cAr cDr cADr cDDr cDdr cDddr last but-last car+cdr
+    cAr cDr cADr cDDr cDDDr cDdr cDddr last but-last car+cdr
     ;; extraction of sublists
     list-take list-drop list-take-right list-drop-right sublist
     ;; circulating lists
@@ -147,6 +147,11 @@
   (:type (forall T ((list T) -> (list T))))
   (:synopsis "Remove two last elements from @l")
   (reverse (cddr (reverse l))))
+
+(tm-define (cDDDr l)
+  (:type (forall T ((list T) -> (list T))))
+  (:synopsis "Remove two last elements from @l")
+  (reverse (cdddr (reverse l))))
 
 (tm-define (cDdr l)
   (:type (forall T ((list T) -> (list T))))

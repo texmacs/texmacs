@@ -13,7 +13,6 @@
 #include "Interface/edit_interface.hpp"
 #include "file.hpp"
 #include "convert.hpp"
-#include "connect.hpp"
 #include "server.hpp"
 #include "tm_buffer.hpp"
 
@@ -39,7 +38,6 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
-  con_status (CONNECTION_DEAD),
   full_screen (false), got_focus (false),
   sh_s (""), sh_len (0),
   popup_win (NULL),
@@ -47,7 +45,7 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0), nr_mutators (-1), next_mutate (texmacs_time())
+  oc (0, 0)
 {
   input_mode= INPUT_NORMAL;
 }
@@ -82,145 +80,6 @@ edit_interface_rep::get_display () {
 widget
 edit_interface_rep::get_widget () {
   return widget (this);
-}
-
-/******************************************************************************
-* Active sessions
-******************************************************************************/
-
-void
-edit_interface_rep::update_connection () {
-  // cout << "et= " << et << "\n";
-  // cout << "tp= " << tp << "\n";
-  con_name   = get_env_string (PROG_LANGUAGE);
-  con_session= get_env_string (PROG_SESSION);
-  con_status = connection_status (con_name, con_session);
-  // cout << "Name   : " << con_name << "\n";
-  // cout << "Session: " << con_session << "\n";
-  // cout << "Status : " << con_status << "\n";
-}
-
-void
-edit_interface_rep::connect () {
-  update_connection ();
-  string s= connection_start (con_name, con_session);
-  if (s != "ok") set_message (s, "connect#" * con_name);
-  else set_message (con_name*"#is running...", "session#`"*con_session*"'");
-  con_status = connection_status (con_name, con_session);
-  if (con_status == WAITING_FOR_INPUT) start_input ();
-  else if (con_status == WAITING_FOR_OUTPUT) start_output ();
-}
-
-void
-edit_interface_rep::process_extern_input () {
-  if (con_status == WAITING_FOR_OUTPUT) {
-    update_connection ();
-    if ((con_status != WAITING_FOR_OUTPUT) &&
-	(con_status != CONNECTION_DEAD)) return;
-    tree doc= connection_read (con_name, con_session, "output");
-    if (doc != "") {
-      insert_tree (doc);
-      set_message (con_name * "#is running...",
-		   "session#`" * con_session * "'");
-    }
-    doc= connection_read (con_name, con_session, "error");
-    if (doc != "") {
-      insert_tree (compound ("errput", doc));
-      set_message (con_name * "#is running...",
-		   "session#`" * con_session * "'");
-    }
-    con_status= connection_status (con_name, con_session);
-    if (con_status == CONNECTION_DEAD) {
-      start_input ();
-      set_message (con_name * "#has completed its task",
-		   "session#`" * con_session * "'");
-    }
-    else if (con_status == WAITING_FOR_INPUT)
-      start_input ();
-  }
-}
-
-static path mutator_path;
-static string MUTATOR ("mutator");
-
-static int
-mutate (tree t, path ip) {
-  if (is_atomic (t)) return 0;
-  else if (is_compound (t, MUTATOR, 2)) {
-    mutator_path= reverse (path (0, ip));
-    string s= as_string (t[1]); // eval_secure (s);
-    if (s != "")
-      if (as_bool (eval ("(secure? '" * s * ")")))
-	(void) eval (s);
-    return 1;
-  }
-  else {
-    int i, n= N(t), sum=0;
-    for (i=0; i<n; i++)
-      sum += mutate (t[i], path (i, ip));
-    return sum;
-  }
-}
-
-void
-edit_interface_rep::process_mutators () {
-  if (nr_mutators == 0) return;
-  if (texmacs_time() < next_mutate) return;
-  time_t before= texmacs_time ();
-  nr_mutators= mutate (subtree (et, rp), reverse (rp));
-  time_t after = texmacs_time ();
-  next_mutate= after + 10*(after-before) + 250;
-}
-
-path
-edit_interface_rep::get_mutator_path () {
-  return mutator_path;
-}
-
-void
-edit_interface_rep::feed_input (tree t) {
-  update_connection ();
-  if (con_status == WAITING_FOR_INPUT) {
-    connection_write (con_name, con_session, t);
-    con_status= WAITING_FOR_OUTPUT;
-  }
-  else if (con_status == CONNECTION_DEAD) {
-    string s= connection_start (con_name, con_session, true);
-    if (s != "ok") {
-      set_message (s, "connect#" * con_name);
-      start_input ();
-    }
-    else {
-      connection_write (con_name, con_session, t);
-      con_status= WAITING_FOR_OUTPUT;
-      session_message ("Warning: " * con_name * "#has been restarted",
-		       "session#`" * con_session * "'");
-    }
-  }
-}
-
-bool
-edit_interface_rep::busy_connection () {
-  update_connection ();
-  return (con_status == WAITING_FOR_OUTPUT);
-}
-
-void
-edit_interface_rep::interrupt_connection () {
-  update_connection ();
-  if (con_status == WAITING_FOR_OUTPUT) {
-    connection_interrupt (con_name, con_session);
-    update_connection ();
-  }
-}
-
-void
-edit_interface_rep::stop_connection () {
-  update_connection ();
-  if (con_status != CONNECTION_DEAD) {
-    connection_stop (con_name, con_session);
-    update_connection ();
-  }
 }
 
 /******************************************************************************
@@ -548,7 +407,6 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
-	update_connection ();
 	if (!win->check_event (EVENT_STATUS)) drd_update ();
 	last_update= last_change;
       }
@@ -593,7 +451,6 @@ edit_interface_rep::apply_changes () {
     invalidate (x1- 2*pixel, y1- 2*pixel, x2+ 2*pixel, y2+ 2*pixel);
     // check_data_integrety ();
     the_ghost_cursor()= eb->find_check_cursor (tp);
-    nr_mutators= -1;
   }
 
   // cout << "Handling extents\n";

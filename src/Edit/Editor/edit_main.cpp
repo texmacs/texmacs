@@ -307,33 +307,14 @@ edit_main_rep::the_buffer () {
   return copy (et);
 }
 
+tree
+edit_main_rep::the_subtree (path p) {
+  return subtree (et, p);
+}
+
 path
 edit_main_rep::the_path () {
   return copy (tp);
-}
-
-void
-edit_main_rep::process_input () {
-  path p= search_upwards ("input");
-  if (nil (p) || (N (subtree (et, p)) != 2)) return;
-  tree t= subtree (et, p) [1];
-  string lan= get_env_string (PROG_LANGUAGE);
-
-  if (lan == "scheme") {
-    start_output ();
-    tree u= sv->evaluate ("scheme", "default", t);
-    if (!is_document (u)) u= tree (DOCUMENT, u);
-    insert_tree (u);
-    start_input ();
-  }
-  else if (connection_declared (lan)) {
-    start_output ();
-    feed_input (t);
-  }
-  else {
-    set_message ("Package#'" * lan * "'#not declared",
-		 "Evaluate#'" * lan * "'#expression");
-  }
 }
 
 /******************************************************************************

@@ -106,15 +106,6 @@ public:
   /* public routines from edit_interface */
   virtual void suspend () = 0;
   virtual void resume () = 0;
-  virtual void update_connection () = 0;
-  virtual void connect () = 0;
-  virtual void process_extern_input () = 0;
-  virtual void process_mutators () = 0;
-  virtual path get_mutator_path () = 0;
-  virtual void feed_input (tree t) = 0;
-  virtual bool busy_connection () = 0;
-  virtual void interrupt_connection () = 0;
-  virtual void stop_connection () = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
   virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
@@ -337,12 +328,23 @@ public:
   virtual void temp_proof_fix () = 0;
 
   /* public routines from edit_process */
+  virtual void process_mutators () = 0;
+  virtual path get_mutator_path () = 0;
+  virtual void invalidate_mutators () = 0;
+  virtual void insert_mutator (tree body, string cmd) = 0;
+
   virtual void make_session (string lan, string session) = 0;
-  virtual void start_input () = 0;
+  virtual void start_input (string lan, string session, path p) = 0;
+  virtual void process_input () = 0;
   virtual void start_output () = 0;
   virtual void session_message (string l, string r) = 0;
   virtual void session_use_math_input (bool flag) = 0;
   virtual bool session_is_using_math_input () = 0;
+  virtual int  status_connection () = 0;
+  virtual bool busy_connection () = 0;
+  virtual void interrupt_connection () = 0;
+  virtual void stop_connection () = 0;
+
   virtual void session_go_up () = 0;
   virtual void session_go_down () = 0;
   virtual void session_go_left () = 0;
@@ -456,8 +458,8 @@ public:
   virtual void footer_eval (string s) = 0;
   virtual tree the_line () = 0;
   virtual tree the_buffer () = 0;
+  virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;
-  virtual void process_input () = 0;
   virtual void show_tree () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;

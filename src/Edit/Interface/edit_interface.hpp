@@ -30,9 +30,6 @@ protected:
   int           env_change;    // which things have been changed ?
   time_t        last_change;   // time of last processed change
   time_t        last_update;   // time of last update of menu, icons and footer
-  int           con_status;    // 0: inexistent, 1: waiting, 2: active
-  string        con_name;      // name of connected application
-  string        con_session;   // name of computer algebra session
   bool          full_screen;   // full screen mode ?
   bool          got_focus;     // do we have keyboard focus ?
   string        sh_s;          // current string for shorthands
@@ -60,8 +57,6 @@ protected:
   array<string> completions;
   string        completion_prefix;
   int           completion_pos;
-  int           nr_mutators;
-  time_t        next_mutate;
 
 public:
   edit_interface_rep ();
@@ -71,17 +66,6 @@ public:
   void resume ();
   display get_display ();
   widget  get_widget ();
-
-  /* extern connections */
-  void update_connection ();
-  void connect ();
-  void process_extern_input ();
-  void process_mutators ();
-  path get_mutator_path ();
-  void feed_input (tree t);
-  bool busy_connection ();
-  void interrupt_connection ();
-  void stop_connection ();
 
   /* routines for dealing with shrinked coordinates */
   void set_shrinking_factor (int sf);

@@ -17,14 +17,6 @@
 #include "Bibtex/bibtex.hpp"
 
 /******************************************************************************
-* Constructors and destructors
-******************************************************************************/
-
-edit_process_rep::edit_process_rep ():
-  math_input (false), message_l (""), message_r ("") {}
-edit_process_rep::~edit_process_rep () {}
-
-/******************************************************************************
 * Automatically generate a bibliography
 ******************************************************************************/
 
