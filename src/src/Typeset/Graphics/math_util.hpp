@@ -17,9 +17,10 @@
 
 const  double infinity=3.40282347e+38F;
 
-inline double sq2 (double x) { return x*x; }
-inline double sq3 (double x) { return x*x*x; }
+inline double square (double x) { return x*x; }
 inline double norm (double x) { return x>0?x:-x; }
+inline double nearest (double x) { // round missing in some math.h
+  return floor (x+0.5); }
 inline int    sign (double x) { return x>0?1:x<0?-1:0; } 
 inline int    fnull (double x, double approx) { return norm(x) <= approx; }
 inline double pow (double x, int n) {

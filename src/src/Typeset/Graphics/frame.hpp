@@ -31,6 +31,12 @@ public:
   virtual double inverse_bound (point p, double err) = 0;
   // direct_bound (p, epsilon) yields a delta such that for all p'
   // we have |p' - p| < delta => |f(p') - f(p)| < epsilon.
+
+  inline double direct_scalar (double x) {
+    return norm (direct_transform (point (x, 0))); }
+  inline double inverse_scalar (double x) {
+    return norm (inverse_transform (point (x, 0))); }
+  // FIXME: used for grids, but error-prone. What is the idea?
 };
 
 class curve;

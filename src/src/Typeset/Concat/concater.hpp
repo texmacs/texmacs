@@ -155,6 +155,8 @@ public:
   friend array<line_item> typeset_concat_range (edit_env env, tree t, path ip,
 						int i1, int i2);
   friend array<line_item> typeset_marker (edit_env env, path ip);
+  friend box              typeset_as_grid (edit_env env, tree t, path ip,
+					   tree aspect);
 };
 
 typedef concater_rep* concater;

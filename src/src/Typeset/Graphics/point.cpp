@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "point.hpp"
+#include <math.h>
 #include "math_util.hpp"
 
 point
@@ -82,4 +83,12 @@ operator * (point p1, point p2) {
 double
 norm (point p) {
   return sqrt (p*p);
+}
+
+double
+arg (point p) {
+  double n= norm(p);
+  p=p/n;
+  if (p[1]<0) return 2*PI-acos(p[0]);
+  else return acos(p[0]);
 }

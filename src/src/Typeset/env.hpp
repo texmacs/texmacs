@@ -46,6 +46,8 @@
 #define Env_Frame             15
 #define Env_Clipping          16
 #define Env_Line_Width        17
+#define Env_Grid              18
+#define Env_Grid_Aspect       19
 
 /******************************************************************************
 * The edit environment
