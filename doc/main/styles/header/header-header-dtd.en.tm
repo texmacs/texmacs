@@ -18,16 +18,18 @@
     document.
   </explain>
 
-  <\explain|<explain-macro|header-primary|section-title>>
+  <\explain|<explain-macro|header-primary|section-title|section-nr|section-type>>
     This macro is called at the start of each new primary section
     (<abbr|e.g.> <markup|chapter> for book style, or <markup|section> for
-    article style).
+    article style). The <src-arg|section-type> is a literal text like
+    ``Chapter'' or ``Section''.
   </explain>
 
-  <\explain|<explain-macro|header-secondary|section-title>>
+  <\explain|<explain-macro|header-secondary|section-title|section-nr|section-type>>
     This macro is called at the start of each new secondary section
     (<abbr|e.g.> <markup|section> for book style, or <markup|subsection> for
-    article style).
+    article style). The <src-arg|section-type> is a literal text like
+    ``Section'' or ``Paragraph''.
   </explain>
 
   In style files, page headers and footers are usually set by the above

@@ -42,7 +42,9 @@
   possible references to footnotes. For this reason, you should rather
   customize the <markup|doc-render-title> and <markup|author-render-name>
   macros in order to customize the rendering of the title and the name
-  themselves. Notice also that the <markup|doc-running-title> and
+  themselves.
+
+  Notice also that the <markup|doc-running-title> and
   <markup|author-running-author> macros do not render anything, but rather
   call the <markup|header-title> and <markup|header-author> call-backs for
   setting the appropriate global page headers and footers. By default, the
@@ -65,7 +67,7 @@
   macros which are involved in this process. It is also good to study the
   definitions of these macros in the <hyper-link|package
   itself|$TEXMACS_PATH/packages/header/title-base.ts>. In order to indicate
-  the way things work, we finish with an example how the email address and
+  the way things work, we finish with an example on how the email address and
   homepage of an author can be rendered in a footnote instead of the main
   title:
 
