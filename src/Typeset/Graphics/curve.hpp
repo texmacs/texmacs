@@ -35,8 +35,22 @@ public:
   // add rectification of the curve  (except for the staring point)
   // to an existing polysegment
 
-  /* NOTE: more routines should be added later so that one
-     can reliably compute the intersections between curves */
+  /*
+  NOTE: more routines should be added later so that one
+  can reliably compute the intersections between curves
+  One might for instance take the following:
+
+  virtual double bound (double t, double err) = 0;
+  // return delta such that |t' - t| < delta => |c(t') - c(t)| < err.
+
+  virtual point grad (double t, bool& error) = 0;
+  // compute the first derivative at t.
+  // set error= true if this derivative does not exist.
+
+  virtual double curvature (double t1, double t2) = 0;
+  // compute a bound for the second derivative between t1 and t2.
+  // return a very large number if such a bound does not exist.
+  */
 };
 
 class curve {

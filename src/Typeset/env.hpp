@@ -20,6 +20,7 @@
 #include "hashmap.hpp"
 #include "boxes.hpp"
 #include "url.hpp"
+#include "Graphics/frame.hpp"
 
 #define DECORATION (-1)
 
@@ -42,12 +43,8 @@
 #define Env_Paragraph         12
 #define Env_Page              13
 #define Env_Preamble          14
-#define Env_Unit              15
-#define Env_Clip_Left         16
-#define Env_Clip_Bottom       17
-#define Env_Clip_Top          18
-#define Env_Clip_Right        19
-#define Env_Line_Width        20
+#define Env_Frame             15
+#define Env_Line_Width        16
 
 /******************************************************************************
 * The edit environment
@@ -89,11 +86,7 @@ public:
   color     col;
   SI        lw;
   bool      preamble;
-  double    gr_unit;
-  double    gr_clip_left;
-  double    gr_clip_bottom;
-  double    gr_clip_right;
-  double    gr_clip_top;
+  frame     fr;
 
 public:
   tree exec_extra_list (tree t, int pos);
@@ -212,6 +205,7 @@ public:
   void   update_color ();
   void   update_mode ();
   void   update_language ();
+  void   update_frame ();
   void   update ();
   void   update (string env_var);
 

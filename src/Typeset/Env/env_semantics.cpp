@@ -92,11 +92,7 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_SEP)   = Env_Page;
   var_type (PAGE_MNOTE_WIDTH) = Env_Page;
 
-  var_type (GR_UNIT)          = Env_Unit;
-  var_type (GR_CLIP_LEFT)     = Env_Clip_Left;
-  var_type (GR_CLIP_BOTTOM)   = Env_Clip_Bottom;
-  var_type (GR_CLIP_RIGHT)    = Env_Clip_Right;
-  var_type (GR_CLIP_TOP)      = Env_Clip_Top;
+  var_type (GR_FRAME)         = Env_Frame;
   var_type (GR_LINE_WIDTH)    = Env_Line_Width;
 }
 
@@ -110,8 +106,9 @@ edit_env_rep::get_point (tree t, SI& x, SI& y, bool& error) {
   if ((!is_tuple (t)) || (N(t)!=2)) return;
   double xx= as_double (t[0]);
   double yy= as_double (t[1]);
-  x= (SI) (xx * gr_unit);
-  y= (SI) (yy * gr_unit);
+  point  p = fr (point (xx, yy));
+  x= (SI) p[0];
+  y= (SI) p[1];
   error= false;
 }
 
@@ -233,6 +230,18 @@ edit_env_rep::update_language () {
 }
 
 void
+edit_env_rep::update_frame () {
+  tree t= env [GR_FRAME];
+  if (is_tuple (t, "scale", 2) && is_func (t[2], TUPLE, 2)) {
+    SI magn= decode_length (as_string (t[1]));
+    SI x   = decode_length (as_string (t[2][0]));
+    SI y   = decode_length (as_string (t[2][1]));
+    fr= scaling (magn, point (x, y));
+  }
+  else fr= scaling (decode_length (string ("1cm")), point (0.0, 0.0));
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (INDEX_LEVEL);
@@ -246,12 +255,8 @@ edit_env_rep::update () {
   update_language ();
   update_font ();
 
-  gr_unit        = (double) get_length (GR_UNIT);
-  gr_clip_left   = (double) get_length (GR_CLIP_LEFT);
-  gr_clip_bottom = (double) get_length (GR_CLIP_BOTTOM);
-  gr_clip_right  = (double) get_length (GR_CLIP_RIGHT);
-  gr_clip_top    = (double) get_length (GR_CLIP_TOP);
-  lw             = get_length (GR_LINE_WIDTH);
+  update_frame ();
+  lw= get_length (GR_LINE_WIDTH);
 }
 
 /******************************************************************************
@@ -306,20 +311,8 @@ edit_env_rep::update (string s) {
   case Env_Preamble:
     preamble= get_bool (PREAMBLE);
     break;
-  case Env_Unit:
-    gr_unit= (double) get_length (GR_UNIT);
-    break;
-  case Env_Clip_Left:
-    gr_clip_left= (double) get_length (GR_CLIP_LEFT);
-    break;
-  case Env_Clip_Bottom:
-    gr_clip_bottom= (double) get_length (GR_CLIP_BOTTOM);
-    break;
-  case Env_Clip_Top:
-    gr_clip_right= (double) get_length (GR_CLIP_RIGHT);
-    break;
-  case Env_Clip_Right:
-    gr_clip_top= (double) get_length (GR_CLIP_TOP);
+  case Env_Frame:
+    update_frame ();
     break;
   case Env_Line_Width:
     lw= get_length (GR_LINE_WIDTH);

@@ -32,16 +32,19 @@ public:
   // we have |p' - p| < delta => |f(p') - f(p)| < epsilon.
 };
 
+class curve;
 class frame {
   ABSTRACT_NULL(frame);
-  frame (double magnify, array<double> shift);
   inline point operator () (point p) { return rep->direct_transform (p); }
   inline point operator [] (point p) { return rep->inverse_transform (p); }
   inline bool operator == (frame f) { return rep == f.rep; }
   inline bool operator != (frame f) { return rep != f.rep; }
+  curve operator () (curve c);
+  curve operator [] (curve c);
 };
 ABSTRACT_NULL_CODE(frame);
 
+frame scaling (double magnify, array<double> shift);
 frame operator * (frame f1, frame f2);
 frame invert (frame f);
 

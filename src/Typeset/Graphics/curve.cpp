@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "curve.hpp"
+#include "frame.hpp"
 
 /******************************************************************************
 * General routines
@@ -84,4 +85,41 @@ struct inverted_curve_rep: public curve_rep {
 curve
 invert (curve c) {
   return new inverted_curve_rep (c);
+}
+
+/******************************************************************************
+* Transformed curves
+******************************************************************************/
+
+struct transformed_curve_rep: public curve_rep {
+  frame f;
+  curve c;
+  int n;
+  transformed_curve_rep (frame f2, curve c2):
+    f (f2), c (c2), n (c->nr_components()) {}
+  int nr_components () { return n; }
+  point evaluate (double t) { return f (c (t)); }
+  void rectify_cumul (array<point>& a, double err);
+};
+
+void
+transformed_curve_rep::rectify_cumul (array<point>& a, double err) {
+  if (f->linear) {
+    double delta= f->direct_bound (c(0.0), err);
+    array<point> b= c->rectify (delta);
+    int i, k= N(b);
+    for (i=0; i<k; i++) a << f(b[i]);
+  }
+  else fatal_error ("Not yet implemented",
+		    "transformed_curve_rep::rectify_cumul");
+}
+
+curve
+frame::operator () (curve c) {
+  return new transformed_curve_rep (*this, c);
+}
+
+curve
+frame::operator [] (curve c) {
+  return new transformed_curve_rep (invert (*this), c);
 }

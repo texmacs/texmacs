@@ -175,16 +175,13 @@ box_rep::relocate (path new_ip, bool force) {
 
 point
 box_rep::lift (SI x, SI y) {
-  point p (2);
-  p[X]= x;
-  p[Y]= y;
-  return p;
+  return point (x, y);
 }
 
 void
 box_rep::project (point p, SI& x, SI& y) {
-  x= (int) p[X];
-  y= (int) p[Y];
+  x= (int) p[0];
+  y= (int) p[1];
 }
 
 double

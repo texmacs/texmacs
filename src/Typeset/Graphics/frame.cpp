@@ -27,8 +27,10 @@ struct scaling_rep: public frame_rep {
   double inverse_bound (point p, double err) { return err * magnify; }
 };
 
-frame::frame (double magnify, array<double> shift):
-  rep (new scaling_rep (magnify, shift)) {}
+frame
+scaling (double magnify, array<double> shift) {
+  return new scaling_rep (magnify, shift);
+}
 
 /******************************************************************************
 * Compound frames

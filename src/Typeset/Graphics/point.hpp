@@ -16,10 +16,6 @@
 
 typedef array<double> point;
 
-#define X 0
-#define Y 1
-#define Z 2
-
 point operator + (point p1, point p2);
 point operator - (point p1, point p2);
 point operator * (double x, point p);

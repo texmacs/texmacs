@@ -60,6 +60,13 @@ array<T>::array (T* a, int n) {
 }
 
 template<class T>
+array<T>::array (T x1, T x2) {
+  rep= new array_rep<T>(2);
+  rep->a[0]= x1;
+  rep->a[1]= x2;
+}
+
+template<class T>
 array<T>::operator tree () {
   int i, n=rep->n;
   tree t (TUPLE, n);
