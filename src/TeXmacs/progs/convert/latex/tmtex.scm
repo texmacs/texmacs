@@ -733,6 +733,8 @@
 
 (define (tmtex-var-name var)
   (cond ((not (string? var)) "")
+	((drd-in? (string->symbol var) tmtex-protected%)
+	 (string-append "tm" var))
 	((<= (string-length var) 1) var)
 	(else (list->string (tmtex-var-name-sub (string->list var))))))
 
@@ -860,7 +862,7 @@
 	 (keywords (tmtex-select-data tag 'doc-keywords))
 	 (AMS-class (tmtex-select-data tag 'doc-AMS-class))
 	 (keywords* (tmtex-data-apply 'keywords keywords))
-	 (AMS-class* (tmtex-data-apply 'AMS-class AMS-class))
+	 (AMS-class* (tmtex-data-apply 'AMSclass AMS-class))
 	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
 	 (title* (append title (tmtex-data-apply 'thanks note*)))
 	 (author* (tmtex-data-assemble '(and) (map list authors))))
@@ -1179,6 +1181,12 @@
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1)))
+
+(drd-group tmtex-protected%
+  a b c d i j k l o r t u v H L O P S
+  aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
+  ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
+  AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
