@@ -21,7 +21,7 @@ initialize_default_env () {
 
   tree identity_m (MACRO, "x", tree (ARG, "x"));
   tree tabular_m (MACRO, "x", tree (TFORMAT, tree (ARG, "x")));
-  tree the_page (MACRO, compound ("page number"));
+  tree the_page (MACRO, compound ("page-nr"));
   tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
   tree gr_clip (TUPLE, "clip",
 		tuple ("0par", "-0.3par"),
