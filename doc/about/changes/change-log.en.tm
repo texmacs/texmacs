@@ -5,9 +5,19 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.7>
+  <section|Changes from version 1.0.3 to 1.0.3.8>
 
   <\itemize>
+    <item>Better handling of parameters for page size and margins (1.0.3.8).
+
+    <item>Implementation of ``mutators'', tags which may modify themselves
+    (1.0.3.8).
+
+    <item>Let computer algebra sessions make use of mutators (1.0.3.8).
+
+    <item>All <TeXmacs> documents become part of one global super-document
+    (1.0.3.8).
+
     <item>Alpha release of the Windows version of <TeXmacs> (1.0.3.7).
 
     <item>Application of some patches (1.0.3.7).
@@ -1193,17 +1203,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
