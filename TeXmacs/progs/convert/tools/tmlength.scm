@@ -22,10 +22,8 @@
 ;; Length components.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmlength-unit? x)
-  (string-alpha? x))
-
 (define tmlength-value? number?)
+(define tmlength-unit? string-locase-alpha?)
 
 (define (tmlength-check-value x)
   (if (not (tmlength-value? x))

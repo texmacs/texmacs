@@ -331,6 +331,11 @@ public:
   void   update (string env_var);
 
   /* miscellaneous and utilities */
+  SI        decode_length_old (string s);
+  tree      as_tmlen (tree t);
+  SI        as_length (tree t);
+  space     as_space (tree t);
+
   SI        decode_length (string l);
   point     decode_point (tree t);
   space     decode_space (string l);
