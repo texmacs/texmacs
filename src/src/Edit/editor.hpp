@@ -77,16 +77,13 @@ protected:
 
   /* protected subroutines for deletion of content */
   virtual void back_prime (tree t, path p) = 0;
-  virtual void back_in_math (tree t, path p) = 0;
-  virtual void back_in_math_accent (tree t, path p) = 0;
   virtual void back_in_tree (tree t, path p) = 0;
   virtual void back_table (path p) = 0;
   virtual void back_in_table (tree t, path p) = 0;
-  virtual void back_dynamic (path p) = 0;
-  virtual void back_extension (path p) = 0;
   virtual void back_monolithic (path p) = 0;
   virtual void back_general (path p, bool forward) = 0;
-  virtual void back_in_with (tree t, path p) = 0;
+  virtual void back_in_with (tree t, path p, bool forward) = 0;
+  virtual void back_in_general (tree t, path p, bool forward) = 0;
 
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;

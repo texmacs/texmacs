@@ -609,7 +609,7 @@ edit_table_rep::back_table (path p) {
     tree st= subtree (et, p);
     if (!is_func (st, TABLE_FORMAT)) break;
     if (!is_func (st [N(st)-1], TABLE)) {
-      back_dynamic (p);
+      back_general (p, false);
       return;
     }
     p= p * (N(st)-1);

@@ -111,6 +111,10 @@ edit_text_rep::remove_backwards () {
     case RIGHT_PRIME:
       back_prime (t, p);
       return;
+    case WIDE:
+    case WIDE_UNDER:
+      go_to (end (et, p * 0));
+      return;
     case TABLE_FORMAT:
     case TABLE:
     case ROW:
@@ -135,32 +139,6 @@ edit_text_rep::remove_backwards () {
 
   if (last==0) {
     switch (L (u)) {
-    case GROUP:
-      back_in_math (u, p);
-      return;
-    case LEFT:
-    case MIDDLE:
-    case RIGHT:
-    case BIG:
-      fatal_error ("cursor should not be inside big symbol",
-		   "edit_text_rep::backspace");
-      return;
-    case BELOW:
-    case ABOVE:
-    case LEFT_SUB:
-    case LEFT_SUP:
-    case RIGHT_SUB:
-    case RIGHT_SUP:
-    case FRAC:
-      back_in_math (u, p);
-      return;
-    case WIDE:
-    case WIDE_UNDER:
-      back_in_math_accent (u, p);
-      return;
-    case NEG:
-      back_in_math (u, p);
-      return;
     case TREE:
       back_in_tree (u, p);
       return;
@@ -172,7 +150,7 @@ edit_text_rep::remove_backwards () {
       back_in_table (u, p);
       return;
     default:
-      remove_argument (p, false);
+      back_in_general (u, p, false);
       break;
     }
   }
@@ -238,8 +216,6 @@ edit_text_rep::remove_forwards () {
     correct (path_up (p));
     return;
   }
-
-  /* not yet implemented */
 }
 
 /******************************************************************************

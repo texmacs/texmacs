@@ -186,36 +186,6 @@ edit_math_rep::back_prime (tree t, path p) {
   }
 }
 
-void
-edit_math_rep::back_in_math (tree t, path p) {
-  int node= last_item (p);
-  if (node>0) {
-    go_to (end (et, path_up (p) * (node-1)));
-    return;
-  }
-
-  int i;
-  bool flag=true;
-  for (i=0; i<N(t); i++)
-    flag= flag && (t[i] == "");
-  if (flag) {
-    assign (path_up (p), "");
-    correct (path_up (p, 2));
-    return;
-  }
-
-  go_to (start (et, path_up (p)));
-}
-
-void
-edit_math_rep::back_in_math_accent (tree t, path p) {
-  if (t[0] == "") {
-    assign (path_up (p), "");
-    correct (path_up (p, 2));
-  }
-  else go_to (start (et, path_up (p)));
-}
-
 /******************************************************************************
 * Trees
 ******************************************************************************/
