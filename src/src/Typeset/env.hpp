@@ -142,10 +142,6 @@ public:
   int       inactive_mode;
   tree      recover_env;
 
-public:
-  tree exec_extra_list (tree t, int pos);
-  tree exec_extra_tuple (tree t, int pos);
-
 private:
   tree exec_formatting (tree t, string v);
   void exec_until_formatting (tree t, path p, string v);

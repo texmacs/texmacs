@@ -43,11 +43,9 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
-  ><no-page-break>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name><paragraph-sep>><no-page-break>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
-  ><no-page-break>>>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name><subparagraph-sep>><no-page-break>>>>
 
   \;
 </body>
