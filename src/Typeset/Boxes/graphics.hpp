@@ -18,7 +18,7 @@
 #include "Graphics/grid.hpp"
 
 box graphics_box (path ip, array<box> bs, frame f, point lim1, point lim2);
-box point_box (path ip, point p, SI r, color col);
+box point_box (path ip, point p, SI r, color col, string style);
 box curve_box (path ip, curve c, SI width, color col);
 box grid_box (path ip, grid g, frame f, point lim1, point lim2);
 

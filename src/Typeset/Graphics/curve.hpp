@@ -65,6 +65,8 @@ ABSTRACT_NULL_CODE(curve);
 curve segment (point p1, point p2);
 curve poly_segment (array<point> a);
 curve spline (array<point> a, bool close=false, bool interpol=true);
+curve arc (
+  point center, double r1, double r2, double alpha, double e1, double e2);
 curve operator * (curve c1, curve c2);
 curve invert (curve c);
 

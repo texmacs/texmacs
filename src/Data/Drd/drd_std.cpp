@@ -245,6 +245,7 @@ init_std_drd () {
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
+  init (ARC, "arc", repeat (3, 1));
   init (SPLINE, "spline", repeat (2, 1));
   init (VAR_SPLINE, "spline*", repeat (2, 1));
   init (CSPLINE, "cspline", repeat (2, 1));

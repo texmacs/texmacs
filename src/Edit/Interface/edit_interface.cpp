@@ -222,6 +222,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       dev->set_color (dis->red);
       dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
       dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
+      draw_graphical_object ();
     }
     else {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
@@ -484,6 +485,7 @@ edit_interface_rep::apply_changes () {
       invalidate (env_rects);
     }
     else if (env_change & THE_FOCUS) invalidate (env_rects);
+    invalidate_graphical_object ();
   }
 
   // cout << "Handling selection\n";
@@ -531,6 +533,7 @@ is_graphical (tree t) {
   return
     is_func (t, _POINT) ||
     is_func (t, LINE) || is_func (t, CLINE) ||
+    is_func (t, ARC) ||
     is_func (t, SPLINE) || is_func (t, CSPLINE);
 }
 

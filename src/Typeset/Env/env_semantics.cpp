@@ -95,6 +95,7 @@ initialize_default_var_type () {
   var_type (PAGE_THIS_HEADER)  = Env_Page;
   var_type (PAGE_THIS_FOOTER)  = Env_Page;
   var_type (PAGE_FNOTE_SEP)    = Env_Page;
+  var_type (POINT_STYLE)      = Env_Point_Style;
   var_type (PAGE_FNOTE_BARLEN) = Env_Page;
   var_type (PAGE_FLOAT_SEP)    = Env_Page;
   var_type (PAGE_MNOTE_SEP)    = Env_Page;
@@ -354,6 +355,7 @@ edit_env_rep::update () {
 
   update_frame ();
   update_clipping ();
+  point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
 
   update_src_style ();
@@ -419,6 +421,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Clipping:
     update_clipping ();
+    break;
+  case Env_Point_Style:
+    point_style= get_string (POINT_STYLE);
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);

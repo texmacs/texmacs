@@ -74,7 +74,7 @@ enum tree_label {
 
   // graphical tags
   GRAPHICS, SUPERPOSE, TEXT_AT, _POINT,
-  LINE, CLINE, SPLINE, VAR_SPLINE, CSPLINE,
+  LINE, CLINE, ARC, SPLINE, VAR_SPLINE, CSPLINE,
   FILL, POSTSCRIPT,
 
   // obsolete tags

@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : build-glue-basic.scm
+;; MODULE      : build-glue-editor.scm
 ;; DESCRIPTION : Building basic glue for the editor
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -275,4 +275,8 @@
   (tm-position-get position_get (path int))
 
   (tm-insert-with insert_with (void path string content))
-  (tm-remove-with remove_with (void path string)))
+  (tm-remove-with remove_with (void path string))
+
+  (get-graphical-object get_graphical_object (tree))
+  (set-graphical-object set_graphical_object (void tree))
+  (path-xy path_xy (path double double)))
