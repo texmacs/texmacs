@@ -104,6 +104,16 @@
 
   <\active*>
     <\src-comment>
+      Special page types.
+    </src-comment>
+  </active*>
+
+  <assign|blanc-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|>>>>
+
+  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<htab|5mm><quote|<page-the-page>><htab|5mm>>>>>
+
+  <\active*>
+    <\src-comment>
       Other macros.
     </src-comment>
   </active*>

@@ -55,15 +55,9 @@
     </src-comment>
   </active*>
 
-  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<with|font-shape|small-caps|<unquote|<arg|s>>><htab|5mm><page-the-page>>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<style-with|src-compact|none|<page-the-page><htab|5mm><with|font-shape|small-caps|<unquote|<arg|name>>>>>>>>>>>>
 
-  <assign|even-page-text|<macro|s|<assign|page-even-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<page-the-page><htab|5mm><with|font-shape|small-caps|<unquote|<arg|s>>>>>>>>>>
-
-  \;
-
-  <assign|header-title|<macro|name|<even-page-text|<arg|name>>>>
-
-  <assign|header-author|<macro|name|<odd-page-text|<arg|name>>>>
+  <assign|header-author|<macro|name|<assign|page-odd-header|<quasiquote|<small|<style-with|src-compact|none|<wide-std-underlined|<with|font-shape|small-caps|<unquote|<arg|name>>><htab|5mm><page-the-page>>>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 
