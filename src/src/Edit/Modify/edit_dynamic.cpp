@@ -429,13 +429,6 @@ edit_dynamic_rep::back_dynamic (path p) {
 }
 
 void
-edit_dynamic_rep::back_compound (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
-    back_dynamic (p);
-  else ins_unary (p, INACTIVE);
-}
-
-void
 edit_dynamic_rep::back_extension (path p) {
   tree st= subtree (et, p);
   int n= N(st);
@@ -447,10 +440,26 @@ edit_dynamic_rep::back_extension (path p) {
     back_dynamic (p);
   else if (is_func (subtree (et, path_up (p)), INACTIVE))
     back_dynamic (p);
-  else if ((n==1) &&
-	   ((is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE))))
+  else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
     back_table (p * 0);
   else go_to (end (et, p * (n-1)));
+}
+
+void
+edit_dynamic_rep::back_monolithic (path p) {
+  if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
+  else remove (p, 1);
+  correct (path_up (p));
+}
+
+void
+edit_dynamic_rep::back_general (path p, bool forward) {
+  tree st= subtree (et, p);
+  int n= N(st);
+  if (n==0) back_monolithic (p);
+  else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
+    back_table (p * 0);
+  else go_to_argument (p * (forward? 0: n-1), forward);
 }
 
 void
@@ -462,13 +471,6 @@ edit_dynamic_rep::back_in_with (tree t, path p) {
     correct (path_up (p, 2));
   }
   else go_to (start (et, path_up (p)));
-}
-
-void
-edit_dynamic_rep::back_in_compound (tree t, path p) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    remove_argument (p, false);
-  else ins_unary (path_up (p), INACTIVE);
 }
 
 /******************************************************************************

@@ -96,83 +96,21 @@ edit_text_rep::remove_backwards () {
 
   if (last==1)
     switch (L(t)) {
-    case SURROUND:
-      go_to (end (et, p * 2));
-      return;
-    case GROUP:
-      go_to (end (et, p * 0));
-      return;
     case HSPACE:
     case VSPACE_BEFORE:
     case VSPACE_AFTER:
     case SPACE:
     case HTAB:
-      if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-    case _FLOAT:
-      go_to (end (et, p * 2));
-      return;
-
-    case WITH_LIMITS:
-    case LINE_BREAK:
-    case NEW_LINE:
-    case LINE_SEP:
-    case NEXT_LINE:
-    case NO_BREAK:
-    case NO_FIRST_INDENT:
-    case YES_FIRST_INDENT:
-    case NO_FIRST_INDENT_AFTER:
-    case YES_FIRST_INDENT_AFTER:
-    case PAGE_BREAK_BEFORE:
-    case PAGE_BREAK:
-    case NO_PAGE_BREAK_BEFORE:
-    case NO_PAGE_BREAK_AFTER:
-    case NEW_PAGE_BEFORE:
-    case NEW_PAGE:
-    case NEW_DOUBLE_PAGE_BEFORE:
-    case NEW_DOUBLE_PAGE:
-      if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-
     case LEFT:
     case MIDDLE:
     case RIGHT:
     case BIG:
-      if (!is_concat (u)) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
+      back_monolithic (p);
       return;
     case LEFT_PRIME:
     case RIGHT_PRIME:
       back_prime (t, p);
       return;
-    case BELOW:
-    case ABOVE:
-      go_to (end (et, p * 1));
-      return;
-    case LEFT_SUB:
-    case LEFT_SUP:
-    case RIGHT_SUB:
-    case RIGHT_SUP:
-      go_to (end (et, p * 0));
-      return;
-    case FRAC:
-      go_to (end (et, p * 1));
-      return;
-    case SQRT:
-    case WIDE:
-    case WIDE_UNDER:
-    case NEG:
-      go_to (end (et, p * 0));
-      return;
-    case TREE:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-
     case TABLE_FORMAT:
     case TABLE:
     case ROW:
@@ -180,36 +118,16 @@ edit_text_rep::remove_backwards () {
     case SUB_TABLE:
       back_table (p);
       return;
-
     case WITH:
       go_to (end (et, p * (N(t)-1)));
       return;
     case VALUE:
     case ARGUMENT:
-      if (N(t) == 1) {
-	if (!is_concat (u)) assign (p, "");
-	else remove (p, 1);
-	correct (path_up (p));
-      }
-      else back_dynamic (p);
+      if (N(t) == 1) back_monolithic (p);
+      else back_general (p, false);
       return;
-    case COMPOUND:
-      back_compound (p);
-      return;
-    case INACTIVE:
-    case ACTIVE:
-    case VAR_INACTIVE:
-    case VAR_ACTIVE:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case TUPLE:
-    case ATTR:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-
     default:
-      if (L(t) >= START_EXTENSIONS) back_extension (p);
-      else back_dynamic (p);
+      back_general (p, false);
       break;
     }
 
@@ -252,9 +170,6 @@ edit_text_rep::remove_backwards () {
     case CELL:
     case SUB_TABLE:
       back_in_table (u, p);
-      return;
-    case COMPOUND:
-      back_in_compound (u, p);
       return;
     default:
       remove_argument (p, false);
