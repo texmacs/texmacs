@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : tex.hpp
-* DESCRIPTION: tex font metrics
+* MODULE     : load_tex.hpp
+* DESCRIPTION: Loading TeX font metrics and glyphs
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT

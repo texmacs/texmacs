@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : load-tfm.h
-* DESCRIPTION: load TeX-font-metric file
+* MODULE     : load_tfm.h
+* DESCRIPTION: load TeX font metric file
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -13,7 +13,7 @@
 #ifndef LOAD_TFM_H
 #define LOAD_TFM_H
 #include "file.hpp"
-#include "tex.hpp"
+#include "load_tex.hpp"
 
 tex_font_metric load_tfm (url file_name, string family, int size);
 

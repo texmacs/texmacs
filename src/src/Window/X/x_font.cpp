@@ -12,7 +12,6 @@
 
 #include "X/x_window.hpp"
 #include "X/x_font.hpp"
-#include "font.hpp"
 
 /******************************************************************************
 * Displaying characters
@@ -124,6 +123,56 @@ x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
 #undef conv
 
 /******************************************************************************
+* Server fonts
+******************************************************************************/
+
+static string the_default_display_font ("");
+font the_default_wait_font;
+
+void
+x_display_rep::set_default_font (string name) {
+  the_default_display_font= name;
+}
+
+font
+x_display_rep::default_font_sub (bool tt) {
+  string s= the_default_display_font;
+  if (s == "") s= "ecrm11@300";
+  int i, j, n= N(s);
+  for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
+  string fam= s (0, j);
+  for (i=j; j<n; j++) if (s[j] == '@') break;
+  int sz= (j<n? as_int (s (i, j)): 10);
+  if (j<n) j++;
+  int dpi= (j<n? as_int (s (j, n)): 300);
+  if (N(fam) >= 2) {
+    string ff= fam (0, 2);
+    if (((out_lan == "russian") || (out_lan == "ukrainian")) &&
+	((ff == "cm") || (ff == "ec"))) {
+      fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
+    if (ff == "ec")
+      return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
+    if (ff == "la")
+      return tex_la_font (this, tt? ff * "tt": fam, sz, dpi, 1000);
+    if (ff == "pu") tt= false;
+    if ((ff == "cm") || (ff == "pn") || (ff == "pu"))
+      return tex_cm_font (this, tt? ff * "tt": fam, sz, dpi);
+  }
+  return tex_font (this, fam, sz, dpi);
+  // if (out_lan == "german") return tex_font (this, "ygoth", 14, 300, 0);
+  // return tex_font (this, "rpagk", 10, 300, 0);
+  // return tex_font (this, "rphvr", 10, 300, 0);
+  // return ps_font (this, "b&h-lucidabright-medium-r-normal", 11, 300);
+}
+
+font
+x_display_rep::default_font (bool tt) {
+  font fn= default_font_sub (tt);
+  the_default_wait_font= fn;
+  return fn;
+}
+
+/******************************************************************************
 * Loading postscript fonts
 ******************************************************************************/
 
@@ -172,8 +221,8 @@ x_display_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
 }
 
 void
-x_display_rep::load_ps_font (string family, int size, int dpi,
-			     font_metric& fnm, font_glyphs& fng)
+x_display_rep::load_system_font (string family, int size, int dpi,
+				 font_metric& fnm, font_glyphs& fng)
 {
   string fn_name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
   if (font_metric::instances -> contains (fn_name)) {
@@ -209,51 +258,132 @@ x_display_rep::load_ps_font (string family, int size, int dpi,
 }
 
 /******************************************************************************
-* Server fonts
+* The implementation
 ******************************************************************************/
 
-static string the_default_display_font ("");
-font the_default_wait_font;
+x_font_rep::x_font_rep (
+  display dis, string name, string family2, int size2, int dpi2):
+    font_rep (dis, name)
+{
+  metric ex;
+  dis->load_system_font (family2, size2, dpi2, fnm, fng);
+
+  family       = family2;
+  size         = size2;
+  dpi          = dpi2;
+
+  // get main font parameters
+  get_extents ("f", ex);
+  y1= ex->y1;
+  y2= ex->y2;
+  display_size = y2-y1;
+  design_size  = size << 8;
+
+  // get character heights
+  get_extents ("x", ex);
+  yx           = ex->y4;
+
+  // compute other heights
+  yfrac        = yx >> 1;
+  ysub_lo_base = -yx/3;
+  ysub_hi_lim  = (5*yx)/6;
+  ysup_lo_lim  = yx/2;
+  ysup_lo_base = (5*yx)/6;
+  ysup_hi_lim  = yx;
+  yshift       = yx/6;
+
+  // compute widths
+  wpt          = (dpi*PIXEL)/72;
+  wquad        = (wpt*design_size) >> 8;
+  wline        = wquad/20;
+
+  // get fraction bar parameters
+  get_extents ("-", ex);
+  yfrac= (ex->y3 + ex->y4) >> 1;
+
+  // get space length
+  get_extents (" ", ex);
+  spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
+  extra= spc;
+  sep  = wquad/10;
+
+  // get_italic space
+  get_extents ("f", ex);
+  SI italic_spc= (ex->x4-ex->x3)-(ex->x2-ex->x1);
+  slope= ((double) italic_spc) / ((double) display_size);
+  if (slope<0.15) slope= 0.0;
+}
 
 void
-x_display_rep::set_default_font (string name) {
-  the_default_display_font= name;
-}
-
-font
-x_display_rep::default_font_sub (bool tt) {
-  string s= the_default_display_font;
-  if (s == "") s= "ecrm11@300";
-  int i, j, n= N(s);
-  for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
-  string fam= s (0, j);
-  for (i=j; j<n; j++) if (s[j] == '@') break;
-  int sz= (j<n? as_int (s (i, j)): 10);
-  if (j<n) j++;
-  int dpi= (j<n? as_int (s (j, n)): 300);
-  if (N(fam) >= 2) {
-    string ff= fam (0, 2);
-    if (((out_lan == "russian") || (out_lan == "ukrainian")) &&
-	((ff == "cm") || (ff == "ec"))) {
-      fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
-    if (ff == "ec")
-      return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
-    if (ff == "la")
-      return tex_la_font (this, tt? ff * "tt": fam, sz, dpi, 1000);
-    if (ff == "pu") tt= false;
-    if ((ff == "cm") || (ff == "pn") || (ff == "pu"))
-      return tex_cm_font (this, tt? ff * "tt": fam, sz, dpi);
+x_font_rep::get_extents (string s, metric& ex) {
+  if (N(s)==0) {
+    ex->x1= ex->x3= ex->x2= ex->x4=0;
+    ex->y3= ex->y1= 0; ex->y4= ex->y2= yx;
   }
-  return tex_font (this, fam, sz, dpi);
-  // if (out_lan == "german") return tex_font (this, "ygoth", 14, 300, 0);
-  // return tex_font (this, "rpagk", 10, 300, 0);
-  // return tex_font (this, "rphvr", 10, 300, 0);
-  // return ps_font (this, "b&h-lucidabright-medium-r-normal", 11, 300);
+  else {
+    QN c= s[0];
+    metric_struct* first= fnm->get (c);
+    ex->x1= first->x1; ex->y1= first->y1;
+    ex->x2= first->x2; ex->y2= first->y2;
+    ex->x3= first->x3; ex->y3= first->y3;
+    ex->x4= first->x4; ex->y4= first->y4;
+    SI x= first->x2;
+
+    int i;
+    for (i=1; i<N(s); i++) {
+      QN c= s[i];
+      metric_struct* next= fnm->get (c);
+      ex->x1= min (ex->x1, x+ next->x1); ex->y1= min (ex->y1, next->y1);
+      ex->x2= max (ex->x2, x+ next->x2); ex->y2= max (ex->y2, next->y2);
+      ex->x3= min (ex->x3, x+ next->x3); ex->y3= min (ex->y3, next->y3);
+      ex->x4= max (ex->x4, x+ next->x4); ex->y4= max (ex->y4, next->y4);
+      x += next->x2;
+    }
+  }
 }
 
+void
+x_font_rep::get_xpositions (string s, SI* xpos) {
+  register int i, n= N(s);
+  if (n == 0) return;
+  
+  register SI x= 0;
+  for (i=0; i<N(s); i++) {
+    metric_struct* next= fnm->get ((QN) s[i]);
+    x += next->x2;
+    xpos[i+1]= x;
+  }
+}
+
+void
+x_font_rep::draw (ps_device dev, string s, SI x, SI y) {
+  if (N(s)!=0) {
+    int i;
+    for (i=0; i<N(s); i++) {
+      QN c= s[i];
+      dev->draw (c, fng, x, y);
+      metric_struct* ex= fnm->get (c);
+      x += ex->x2;
+    }
+  }
+}
+
+glyph
+x_font_rep::get_glyph (string s) {
+  if (N(s)!=1) return font_rep::get_glyph (s);
+  int c= ((QN) s[0]);
+  glyph gl= fng->get (c);
+  if (nil (gl)) return font_rep::get_glyph (s);
+  return gl;
+}
+
+/******************************************************************************
+* Interface
+******************************************************************************/
+
 font
-x_display_rep::default_font (bool tt) {
-  font fn= default_font_sub (tt);
-  the_default_wait_font= fn;
-  return fn;
+x_font (display dis, string family, int size, int dpi) {
+  string name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
+  if (font::instances -> contains (name)) return font (name);
+  else return new x_font_rep (dis, name, family, size, dpi);
 }

@@ -149,8 +149,8 @@ public:
   font default_font_sub (bool tt);
   font default_font (bool tt= false);
   void get_ps_char (Font fn, int c, metric& ex, glyph& gl);
-  void load_ps_font (string family, int size, int dpi,
-		     font_metric& fnm, font_glyphs& fng);
+  void load_system_font (string family, int size, int dpi,
+			 font_metric& fnm, font_glyphs& fng);
 
   /************************** Server languages *******************************/
   void   load_dictionary (string name, string from, string to);

@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : load-tex.cpp
+* MODULE     : load_tex.cpp
 * DESCRIPTION: simultaneously load pk and tfm file and
 *              generate them if they can't be found.
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
@@ -12,11 +12,11 @@
 ******************************************************************************/
 
 #include "path.hpp"
-#include "tex.hpp"
 #include "file.hpp"
 #include "tex_files.hpp"
-#include "Tex/load-pk.hpp"
-#include "Tex/load-tfm.hpp"
+#include "Metafont/load_tex.hpp"
+#include "Metafont/load_pk.hpp"
+#include "Metafont/load_tfm.hpp"
 
 RESOURCE_CODE(tex_font_metric);
 static int

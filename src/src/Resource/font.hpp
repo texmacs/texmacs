@@ -76,7 +76,7 @@ font error_font (font fn);
 
 font virtual_font (font base, string family, int size, int dpi);
 font tt_font (display dis, string family, int size, int dpi);
-font ps_font (display dis, string family, int size, int dpi);
+font x_font (display dis, string family, int size, int dpi);
 font tex_font (display dis, string fam, int size, int dpi, int dsize=10);
 font tex_cm_font (display dis, string fam, int size, int dpi, int dsize=10);
 font tex_ec_font (display dis, string fam, int size, int dpi, int dsize=10);

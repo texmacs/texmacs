@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : load-tfm.cpp
-* DESCRIPTION: load TeX-font-metric file
+* MODULE     : load_tfm.cpp
+* DESCRIPTION: load TeX font metric file
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -11,8 +11,8 @@
 ******************************************************************************/
 
 #include "file.hpp"
-#include "tex.hpp"
-#include "Tex/load-tfm.hpp"
+#include "Metafont/load_tex.hpp"
+#include "Metafont/load_tfm.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
