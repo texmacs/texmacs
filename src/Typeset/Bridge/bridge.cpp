@@ -220,8 +220,9 @@ bridge_rep::my_typeset (int desired_status) {
 
 void
 bridge_rep::exec_until (path p) {
+  // redefined in bridge_auto
   if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
-  else if (p == path (1)) env->patch_env (changes);
+  else if (p == right_index (st)) env->patch_env (changes);
   else if (p != path (0)) my_exec_until (p);
 }
 
