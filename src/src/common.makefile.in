@@ -225,6 +225,8 @@ uses_glue     := $(guile_obj)
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
   $(CPPFLAGS) $(CXXFLAGS)) 
+cxx_incl_bis = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+  $(CPPFLAGS) $(2) $(CXXFLAGS))
 cxx_incl_sys = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
   $(CPPFLAGS) $(DASH_I_DASH) $(2) $(CXXFLAGS))
 
@@ -243,7 +245,7 @@ $(guile_obj): Objects/%.o: %.cpp
 $(resource_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(resource_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl),$(CXXXWINDOW))
+	$(call cxx_incl_bis,$(plugins_incl),$(CXXXWINDOW))
 $(texmacs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
