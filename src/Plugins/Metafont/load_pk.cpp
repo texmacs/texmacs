@@ -13,10 +13,7 @@
 * It also uses parts of 'dvips' by Tomas Rokicki
 ******************************************************************************/
 
-#include "string.hpp"
-#include "file.hpp"
-#include "Metafont/load_tex.hpp"
-#include "Metafont/load_pk.hpp"
+#include "load_tex.hpp"
 
 typedef short HI;
 #define PIXEL 256
