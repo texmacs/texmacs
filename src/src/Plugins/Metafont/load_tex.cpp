@@ -100,6 +100,50 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
 }
 
 /******************************************************************************
+* PK font glyphs with lazy parsing
+******************************************************************************/
+
+static glyph error_glyph;
+
+struct pk_font_glyphs_rep: public font_glyphs_rep {
+  pk_loader* pkl;
+  int bc, ec;
+  glyph* fng; // definitions of the characters
+
+  pk_font_glyphs_rep (string name, pk_loader*);
+  glyph& get (int char_code);
+};
+
+pk_font_glyphs_rep::pk_font_glyphs_rep(string name, pk_loader* pkl2)
+  :font_glyphs_rep (name), pkl (pkl2)
+{
+  if (pkl) {
+    fng = pkl->load_pk ();
+    bc = pkl->tfm->bc;
+    ec = pkl->tfm->ec;
+  }
+  else {
+    fng = 0;
+    bc = 0;
+    ec = -1;
+  }
+}
+
+glyph&
+pk_font_glyphs_rep::get(int c)
+{
+  if ((c<bc) || (c>ec)) return error_glyph;
+  if (pkl && !pkl->unpacked[c-bc]) {
+    pkl->input_pos = pkl->char_pos[c-bc];
+    pkl->flagbyte  = pkl->char_flag[c-bc];
+    pkl->unpack(fng[c-bc]);
+
+    pkl->unpacked[c-bc] = true;
+  }
+  return fng [c-bc];
+}
+
+/******************************************************************************
 * Loading pk files
 ******************************************************************************/
 
@@ -157,8 +201,7 @@ try_pk (string family, int size, int dpi, int dsize,
       return false;
     }
   }
-  pk_loader pkl (u, tfm, dpi);
-  pk= std_font_glyphs (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
+  pk = font_glyphs(new pk_font_glyphs_rep(name_pk, new pk_loader(u, tfm, dpi)));
   return true;
 }
 
