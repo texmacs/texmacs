@@ -25,6 +25,8 @@
     </src-title>
   </active*>
 
+  <assign|source-dtd|1.0>
+
   <\active*>
     <\src-comment>
       Environment variables

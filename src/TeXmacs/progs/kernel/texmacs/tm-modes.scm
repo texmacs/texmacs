@@ -25,7 +25,7 @@
     ;; general texmacs modes
     always? in-text? in-math? in-prog? in-math-not-hybrid?
     in-table? in-io? in-session? not-in-session? in-math-in-session?
-    in-math-not-in-session? in-plugin-with-converters?
+    in-math-not-in-session? in-plugin-with-converters? in-source?
     ;; language related modes
     in-cyrillic?
     in-czech? in-dutch? in-english? in-finnish? in-french?
@@ -134,7 +134,8 @@
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
   (in-plugin-with-converters%
-   (plugin-supports-math-input-ref (get-env "prog-language"))))
+   (plugin-supports-math-input-ref (get-env "prog-language")))
+  (in-source% (style-has? "source-dtd")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

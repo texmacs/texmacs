@@ -33,7 +33,8 @@
   (=> "File" (link file-menu))
   (=> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (=> "Insert" (link insert-menu)))
-  (if (in-text?) (=> "Text" (link text-menu)))
+  (if (in-source?) (=> "Source" (link source-menu)))
+  (if (and (style-has? "std-dtd") (in-text?)) (=> "Text" (link text-menu)))
   (if (in-math?) (=> "Mathematics" (link mathematics-menu)))
   (if (in-io?) (=> "Session" (link session-main-menu)))
   (if (in-graphics?) (=> "Graphics" (link graphics-menu)))
@@ -55,7 +56,8 @@
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (-> "Insert" (link insert-menu)))
-  (if (in-text?) (-> "Text" (link text-menu)))
+  (if (in-source?) (-> "Source" (link source-menu)))
+  (if (and (style-has? "std-dtd") (in-text?)) (-> "Text" (link text-menu)))
   (if (in-math?) (-> "Mathematics" (link mathematics-menu)))
   (if (in-graphics?) (-> "Graphics" (link graphics-menu)))
   (if (in-io?) (-> "Session" (link session-main-menu)))
@@ -127,6 +129,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-context-icons
+  (if (in-source?) (link texmacs-source-icons))
   (if (in-text?) (link texmacs-text-icons))
   (if (in-io?) (link texmacs-session-icons))
   (if (in-math?) (link texmacs-math-icons))

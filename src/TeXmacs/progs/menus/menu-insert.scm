@@ -151,74 +151,13 @@
   ("Other pages" (toggle-insertion-position-not "f")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert transformational and executable markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind insert-transformational-menu
-  ("Assign" (make 'assign))
-  ("With" (make-arity 'with 3))
-  ("Value" (make 'value))
-  ---
-  ("Macro" (make 'macro))
-  ("Argument" (make 'arg))
-  ("Compound" (make 'compound))
-  ---
-  ("Long macro" (make 'xmacro))
-  ("Get label" (make 'get-label))
-  ("Get arity" (make 'get-arity))
-  ("Map arguments" (make 'map-args)))
-
-(menu-bind insert-executable-menu
-  (-> "Arithmetic"
-      ("Plus" (make 'plus))
-      ("Minus" (make 'minus))
-      ("Times" (make 'times))
-      ("Over" (make 'over))
-      ("Div" (make 'div))
-      ("Mod" (make 'mod)))
-  (-> "Text"
-      ("Merge" (make 'merge))
-      ("Length" (make 'length))
-      ("Range" (make 'range))
-      ("Number" (make 'number))
-      ("Today" (make-arity 'date 0))
-      ("Formatted date" (make 'date))
-      ("Translate" (make 'translate))
-      ("Find file" (make 'find-file)))
-  (-> "Tuple"
-      ("Tuple?" (make 'is-tuple))
-      ("Merge" (make 'merge))
-      ("Length" (make 'length))
-      ("Range" (make 'range))
-      ("Look up" (make 'look-up)))
-  (-> "Condition"
-      ("Not" (make 'not))
-      ("And" (make 'and))
-      ("Or" (make 'or))
-      ("Exclusive or" (make 'xor))
-      ---
-      ("Equal" (make 'equal))
-      ("Not equal" (make 'unequal))
-      ("Less" (make 'less))
-      ("Less or equal" (make 'lesseq))
-      ("Greater" (make 'greater))
-      ("Greater or equal" (make 'greatereq)))
-  (-> "Programming"
-      ("If" (make 'if))
-      ("Case" (make 'case))
-      ;; ("for" (make 'for))
-      ("While" (make 'while))
-      ;; ("extern" (make 'extern))
-      ;; ("authorize" (make 'authorize))
-      ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Insert menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-menu
-  (-> "Presentation" (link insert-presentation-tag-menu))
-  ---
+  (if (style-has? "std-dtd")
+      (-> "Presentation" (link insert-presentation-tag-menu))
+      ---)
   (-> "Link" (link insert-link-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
@@ -301,8 +240,9 @@
       ("HTML" (make-specific "html"))
       ("Screen" (make-specific "screen"))
       ("Printer" (make-specific "printer")))
-  (-> "Macro" (link insert-transformational-menu))
-  (-> "Executable" (link insert-executable-menu))
+  (if (not (in-source?))
+      (-> "Macro" (link source-transformational-menu))
+      (-> "Executable" (link source-executable-menu)))
   (-> "Special"
       ("Group" (make-group))
       ("Move object" (interactive '("Horizontal:" "Vertical:") 'make-move))
