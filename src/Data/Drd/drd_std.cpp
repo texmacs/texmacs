@@ -193,6 +193,7 @@ init_std_drd () {
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
   init (TRANSLATE, "translate", fixed (3));
+  init (CHANGE_CASE, "change-case", fixed (1, 1, BIFORM) -> accessible (0));
   init (FIND_FILE, "find-file", var_repeat (1, 1)); // dirs and file
   init (IS_TUPLE, "is-tuple", fixed (1) -> name ("tuple?"));
   init (LOOK_UP, "look-up", fixed (2));

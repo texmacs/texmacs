@@ -27,6 +27,8 @@ bool is_locase_alpha (string s);
 bool is_iso_alpha (string s);
 bool is_numeric (string s);
 
+char   upcase (char s);
+char   locase (char s);
 string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);
