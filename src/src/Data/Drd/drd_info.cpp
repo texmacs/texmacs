@@ -210,15 +210,15 @@ drd_info_rep::is_accessible_child (tree t, int i) {
 ******************************************************************************/
 
 static bool
-accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
+accessible_arg (drd_info_rep* drd, tree t, tree arg) {
   if (is_atomic (t)) return false;
-  else if (is_func (t, ARGUMENT)) return t == tree (ARGUMENT, var);
+  else if (t == arg) return true;
   else if (is_func (t, MACRO)) return false;
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (drd->is_accessible_child (t, i))
-	if (accessible_macro_arg (drd, t[i], var))
+	if (accessible_arg (drd, t[i], arg))
 	  return true;
     return false;
   }
@@ -230,8 +230,40 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   tag_info old_ti= copy (info[l]);
   int i, n= N(macro)-1;
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
-  for (i=0; i<n; i++)
-    set_accessible (l, i, accessible_macro_arg (this, macro[n], macro[i]));
+  for (i=0; i<n; i++) {
+    tree arg (ARGUMENT, macro[i]);
+    set_accessible (l, i, accessible_arg (this, macro[n], arg));
+  }
+  // if (old_ti != info[l])
+  //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
+  return (old_ti != info[l]);
+}
+
+static int
+minimal_arity (tree t, tree var) {
+  if (is_atomic (t)) return 0;
+  else if (is_func (t, ARGUMENT, 2) && (t[0] == var))
+    return as_int (t[1]) + 1;
+  else if (is_func (t, MAP_ARGS) && (N(t)>=4) && (t[2] == var))
+    return as_int (t[3]);
+  else {
+    int i, n= N(t), m= 0;
+    for (i=0; i<n; i++)
+      m= max (m, minimal_arity (t[i], var));
+    return m;
+  }
+}
+
+bool
+drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
+  tree_label l = make_tree_label (var);
+  tag_info old_ti= copy (info[l]);
+  int i, m= minimal_arity (xmacro[1], xmacro[0]);
+  set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
+  for (i=0; i<m; i++) {
+    tree arg (ARGUMENT, xmacro[0], as_string (i));
+    set_accessible (l, i, accessible_arg (this, xmacro[1], arg));
+  }
   // if (old_ti != info[l])
   //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
   return (old_ti != info[l]);
@@ -251,6 +283,8 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
       tree   val= env[var];
       if (is_func (val, MACRO))
 	flag= heuristic_init_macro (var, val) | flag;
+      if (is_func (val, XMACRO))
+	flag= heuristic_init_xmacro (var, val) | flag;
     }
     if ((round++) == 10) {
       cout << "TeXmacs] Warning: bad heuristic drd convergence\n";
