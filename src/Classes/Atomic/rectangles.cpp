@@ -199,9 +199,14 @@ simplify (rectangles l) {
 rectangle
 least_upper_bound (rectangles l) {
   if (nil (l)) fatal_error ("no rectangles in list", "least_upper_bound");
-  if (atom (l)) return l->item;
   rectangle r1= l->item;
-  rectangle r2= least_upper_bound (l->next);
-  return rectangle (min (r1->x1, r2->x1), min (r1->y1, r2->y1),
-		    max (r1->x2, r2->x2), max (r1->y2, r2->y2));
+  while (!nil (l->next)) {
+    l= l->next;
+    rectangle r2= l->item;
+    r1->x1= min (r1->x1, r2->x1);
+    r1->y1= min (r1->y1, r2->y1);
+    r1->x2= max (r1->x2, r2->x2);
+    r1->y2= max (r1->y2, r2->y2);
+  }
+  return r1;
 }

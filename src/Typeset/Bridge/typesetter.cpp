@@ -107,17 +107,17 @@ typesetter_rep::local_end (array<page_item>& prev_l, stack_border& prev_sb) {
 ******************************************************************************/
 
 static rectangles
-requires_update (rectangles change_log) {
-  if (nil (change_log)) return change_log;
-  else {
-    rectangle  r1  = change_log->item;
-    rectangle  r2  = change_log->next->item;
-    rectangles next= requires_update (change_log->next->next);
-    if (r1 == rectangle (0, 0, 0, 0)) return rectangles (r2, next);
-    else if (r2 == rectangle (0, 0, 0, 0)) return rectangles (r1, next);
-    else if (r1 != r2) return rectangles (r1, rectangles (r2, next));
-    else return next;
+requires_update (rectangles log) {
+  rectangles rs;
+  while (!nil (log)) {
+    rectangle r1= log->item;
+    rectangle r2= log->next->item;
+    if (r1 == rectangle (0, 0, 0, 0)) rs= rectangles (r2, rs);
+    else if (r2 == rectangle (0, 0, 0, 0)) rs= rectangles (r1, rs);
+    else if (r1 != r2) rs= rectangles (r1, rectangles (r2, rs));
+    log= log->next->next;
   }
+  return reverse (rs);
 }
 
 void
