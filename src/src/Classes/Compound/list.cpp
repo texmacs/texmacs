@@ -167,7 +167,7 @@ tail (list<T> l, int n) {
 }
 
 template<class T> list<T>
-revert (list<T> l) {
+reverse (list<T> l) {
   list<T> r;
   while (!nil(l)) {
     r= list<T> (l->item, r);

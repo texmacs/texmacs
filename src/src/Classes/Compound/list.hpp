@@ -61,7 +61,7 @@ TMPL list<T>  head (list<T> l, int n=1);
 TMPL list<T>  tail (list<T> l, int n=1);
 TMPL T&       last_item (list<T> l);
 TMPL list<T>& suppress_last (list<T>& l);
-TMPL list<T>  revert (list<T> l);
+TMPL list<T>  reverse (list<T> l);
 
 TMPL ostream& operator << (ostream& out, list<T> l);
 TMPL list<T>& operator << (list<T>& l, T item);

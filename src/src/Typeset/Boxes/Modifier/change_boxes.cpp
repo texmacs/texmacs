@@ -248,7 +248,7 @@ action_box_rep::action_box_rep (
 tree
 action_box_rep::action (tree t, SI x, SI y, SI delta) {
   if (t == filter) {
-    call ("set-action-path", revert (vip));
+    call ("set-action-path", reverse (vip));
     cmd ();
     return "done";
   }
@@ -286,7 +286,7 @@ tag_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
 path
 tag_box_rep::find_tag (string search) {
   if (name == search)
-    return revert (descend_decode (ip, 1));
+    return reverse (descend_decode (ip, 1));
   return path ();
 }
 
