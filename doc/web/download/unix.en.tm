@@ -8,8 +8,8 @@
 
   <section|Download the package>
 
-  Download the <hlink|most recent (3.6 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-static-gnu-linux.tar.gz>>>
-  or <hlink|last stable (3.6 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-static-gnu-linux.tar.gz>>>
+  Download the <hlink|most recent (4.1 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-static-gnu-linux.tar.gz>>>
+  or <hlink|last stable (4.1 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-static-gnu-linux.tar.gz>>>
   static binary distribution of GNU <TeXmacs> for PC's under
   GNU/<name|Linux>. If you have another operating system, then you should
   <hlink|download|ftp://ftp.texmacs.org/pub/TeXmacs/targz/> the most recent

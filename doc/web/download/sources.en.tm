@@ -28,7 +28,7 @@
 
   Download the <hlink|latest version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
-  of the source code, or the <hlink|latest stable version (2.4
+  of the source code, or the <hlink|latest stable version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>,
   cd into the directory where you wish to compile <TeXmacs> and type
 

@@ -23,7 +23,7 @@
 
   <section|Download, install and run>
 
-  After <hlink|downloading (3.6 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<merge|<TeXmacs-version-release|rpm>|.i386.rpm>>>
+  After <hlink|downloading (3.8 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<merge|<TeXmacs-version-release|rpm>|.i386.rpm>>>
   the GNU <TeXmacs> distribution for PC's under GNU/<name|Linux>, you may
   install the software by typing (as root)
 
@@ -37,12 +37,12 @@
     \ \ \ \ texmacs &
   </code>
 
-  In a similar way, you may <hlink|download (2.2
+  In a similar way, you may <hlink|download (2.4
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<merge|<TeXmacs-version-release|rpm>|.src.rpm>>>
   the source code as an rpm package. You might also prefer to download the
-  <hlink|last stable version (3.6 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<merge|<TeXmacs-version-release|srpm>|.i386.rpm>>>
-  of <TeXmacs>, or the corresponding <hlink|source code (2.2
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<TeXmacs-version-release|srpm>>>.
+  <hlink|last stable version (3.8 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<merge|<TeXmacs-version-release|srpm>|.i386.rpm>>>
+  of <TeXmacs>, or the corresponding <hlink|source code (2.4
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/|<TeXmacs-version-release|srpm>|.src.rpm>>.
   We also provide <hlink|rpm's for other operating
   systems|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/>. If you do not have ftp
   access, then you might wish to <hlink|download|http://www.texmacs.org/Download/ftp/rpm>
