@@ -162,10 +162,10 @@
         (cond ((drd-ref block-structure% key)
 	       => (lambda (d) (if (procedure? d) (d body) d)))
 	       ((stm-primitive? key) #f)
-	       (else (block-structure?/expand
+	       (else (block-structure?/compound
 		      (cons (symbol->string key) body)))))))
 
-(define (block-structure?/expand x)  
+(define (block-structure?/compound x)  
   (and (not (== (first x) "footnote"))
        (list-any stm-block-structure? (cdr x))))
 
@@ -176,8 +176,7 @@
   ((:or datoms dlines dpages with)
    (lambda (l) (stm-block-structure? (last l))))
   (include #t)
-  ((:or expand var_expand hide_expand)
-   block-structure?/expand))
+  (compound block-structure?/compound))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physical Predicates
@@ -197,22 +196,20 @@
 
 ;; Expansion predicates
 
-(define (stm-expand-unary? x)
-  (and (pair? x)
-       (in? (first x) '(expand var_expand hide_expand))
-       (= 3 (length x))))
+(define (stm-compound-unary? x)
+  (and (pair? x) (== (first x) 'compound) (= 3 (length x))))
 
-(define (stm-expand-document? x)
-  (and (stm-expand-unary? x) (stm-document? (third x))))
+(define (stm-compound-document? x)
+  (and (stm-compound-unary? x) (stm-document? (third x))))
 
-(define (stm-implicit-expand? x)
+(define (stm-implicit-compound? x)
   (and (pair? x) (not (stm-primitive? (first x)))))
 
-(define (stm-implicit-expand-unary? x)
-  (and (stm-implicit-expand? x) (= 2 (length x))))
+(define (stm-implicit-compound-unary? x)
+  (and (stm-implicit-compound? x) (= 2 (length x))))
 
-(define (stm-implicit-expand-document? x)
-  (and (stm-implicit-expand-unary? x) (stm-document? (second x))))
+(define (stm-implicit-compound-document? x)
+  (and (stm-implicit-compound-unary? x) (stm-document? (second x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Logical Predicates
@@ -277,7 +274,7 @@
 	   `(para ,(rec (second ser)) ,@(cddr ser)))
 	  ((stm-document? ser)
 	   `(document ,(rec (second ser)) ,@(cddr ser)))
-	  ((stm-expand-document? ser)
+	  ((stm-compound-document? ser)
 	   `(,(first ser) ,(second ser) ,(rec (third ser))))
 	  ((stm-with-document? ser)
 	   (rcons (but-last ser) (rec (last ser))))
@@ -289,7 +286,7 @@
 	       `(,(first ser) ,(rec (second ser)))
 	       ;; if section contains a document, produce invalid structure
 	       (stm-concat (list ser x))))
-	  ((stm-implicit-expand-document? ser)
+	  ((stm-implicit-compound-document? ser)
 	   `(,(first ser) ,(rec (second ser))))
 	  (else (stm-serial (list x ser))))))
 

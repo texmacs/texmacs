@@ -1024,7 +1024,7 @@
   (assign tmtex-assign)
   (with tmtex-with)
   ((:or set reset) tmtex-noop)
-  ((:or var_expand expand hide_expand compound) tmtex-compound)
+  (compound tmtex-compound)
   ((:or begin end) tmtex-noop)
   (include tmtex-noop)
   ((:or macro func env eval) tmtex-noop)

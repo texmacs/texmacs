@@ -66,10 +66,10 @@
 	((func? x 'document) (tmtmml-document (cdr x)))
 	((func? x 'concat) (tmtmml-concat (cdr x)))
 	((func? x 'with) (tmtmml-with (cdr x)))
-	((and (or (func? x 'compound) (func? x 'expand)) (string? (cadr x)))
+	((and (func? x 'compound) (string? (cadr x)))
 	 (tmtmml-apply (symbol->string (car x))
-		      (string->symbol (cadr x))
-		      (cddr x)))
+		       (string->symbol (cadr x))
+		       (cddr x)))
 	(else (tmtmml-regular (car x) (cdr x)))))
 
 (define (tmtmml-simplify x)
