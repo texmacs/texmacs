@@ -253,6 +253,9 @@ edit_env_rep::exec (tree t) {
   case GREATEREQ:
     return exec_greatereq (t);
 
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
+    return exec (t[N(t)-1]);
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
@@ -1086,6 +1089,10 @@ edit_env_rep::exec_until (tree t, path p) {
   case MARK:
     if (p->item == 1) exec_until (t[1], p->next);
     return;
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
+    if (p->item == (N(t)-1)) exec_until (t[N(t)-1], p->next);
+    return;
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
@@ -1303,6 +1310,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case GREATEREQ:
     (void) exec (t);
     return false;
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
+    return exec_until (t[N(t)-1], p, var, level);
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
