@@ -1699,42 +1699,6 @@ tmg_make_arity (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_make_deactivated (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-deactivated");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-deactivated");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-deactivated");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_deactivated (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_deactivated_arg (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-deactivated-arg");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-deactivated-arg");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-deactivated-arg");
-  SCM_ASSERT_STRING (arg4, SCM_ARG4, "make-deactivated-arg");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-  string in4= scm_to_string (arg4);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_deactivated (in1, in2, in3, in4);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_insert_argument (SCM arg1) {
   SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
 
@@ -2865,8 +2829,6 @@ initialize_glue_editor () {
   gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
   gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
-  gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
-  gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
   gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);

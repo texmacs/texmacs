@@ -38,30 +38,30 @@
       ("Stack" (make 'stack))))
 
 (menu-bind insert-link-menu
-  ("Label" (make-inactive-label))
-  ("Reference" (make-inactive-reference))
-  ("Page reference" (make-inactive-pageref))
+  ("Label" (make 'label))
+  ("Reference" (make 'reference))
+  ("Page reference" (make 'pageref))
   ---
   ("Include" ... (choose-file "Include file" "" 'make-include))
-  ("Hyperlink" (make-inactive-hyperlink))
-  ("Action" (make-inactive-action))
+  ("Hyperlink" (make 'hlink))
+  ("Action" (make 'action))
   ---
   (-> "Citation"
-      ("Visible" (make-inactive-compound-arg "cite"))
-      ("Invisible" (make-inactive-compound-arg "nocite")))
+      ("Visible" (make 'cite))
+      ("Invisible" (make 'nocite)))
   (-> "Index entry"
-      ("Main" (make-inactive-compound-arg "index"))
-      ("Sub" (make-inactive-compound-args "subindex" 2))
-      ("Subsub" (make-inactive-compound-args "subsubindex" 3))
-      ("Complex" (make-inactive-compound-args "index-complex" 4))
+      ("Main" (make 'index))
+      ("Sub" (make 'subindex))
+      ("Subsub" (make 'subsubindex))
+      ("Complex" (make 'index-complex))
       ---
-      ("Interjection" (make-inactive-compound-args "index-line" 2)))
+      ("Interjection" (make 'index-line)))
   (-> "Glossary entry"
-      ("Regular" (make-inactive-compound-arg "glossary"))
-      ("Explained" (make-inactive-compound-args "glossary-explain" 2))
-      ("Duplicate" (make-inactive-compound-arg "glossary-dup"))
+      ("Regular" (make 'glossary))
+      ("Explained" (make 'glossary-explain))
+      ("Duplicate" (make 'glossary-dup))
       ---
-      ("Interjection" (make-inactive-compound-arg "glossary-line"))))
+      ("Interjection" (make 'glossary-line))))
 
 (menu-bind insert-presentation-tag-menu
   ("Underline" (make 'underline))
@@ -70,7 +70,7 @@
   ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
-  ("Superpose" (make-inactive-superpose))
+  ("Superpose" (make 'superpose))
   ---
   ("Folded" (make-fold))
   (if (or (inside? "unfold")
@@ -118,61 +118,61 @@
   ("Other pages" (toggle-insertion-position-not "f")))
 
 (menu-bind insert-transformational-menu
-  ("Assign" (make-inactive-assign))
-  ("With" (make-inactive-with))
-  ("Value" (make-inactive-value))
+  ("Assign" (make 'assign))
+  ("With" (make 'with 3))
+  ("Value" (make 'value))
   ---
-  ("Macro" (make-inactive-macro))
-  ("Argument" (make-inactive-argument))
-  ("Compound" (make-inactive-compound))
+  ("Macro" (make 'macro))
+  ("Argument" (make 'arg))
+  ("Compound" (make 'compound))
   ---
-  ("Long macro" (make-inactive-xmacro))
-  ("Get label" (make-inactive-get-label))
-  ("Get arity" (make-inactive-get-arity))
-  ("Map arguments" (make-inactive-map-args)))
+  ("Long macro" (make 'xmacro))
+  ("Get label" (make 'get_label))
+  ("Get arity" (make 'get_arity))
+  ("Map arguments" (make 'map_args)))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
-      ("Plus" (make-inactive-plus))
-      ("Minus" (make-inactive-minus))
-      ("Times" (make-inactive-times))
-      ("Over" (make-inactive-over))
-      ("Div" (make-inactive-div))
-      ("Mod" (make-inactive-mod)))
+      ("Plus" (make 'plus))
+      ("Minus" (make 'minus))
+      ("Times" (make 'times))
+      ("Over" (make 'over))
+      ("Div" (make 'div))
+      ("Mod" (make 'mod)))
   (-> "Text"
-      ("Merge" (make-inactive-merge))
-      ("Length" (make-inactive-length))
-      ("Range" (make-inactive-range))
-      ("Number" (make-inactive-number))
-      ("Date" (make-inactive-date))
-      ("Formatted date" (make-inactive-date))
-      ("Translate" (make-inactive-translate))
-      ("Find file" (make-inactive-find-file)))
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Number" (make 'number))
+      ("Date" (make 'date))
+      ("Formatted date" (make 'date))
+      ("Translate" (make 'translate))
+      ("Find file" (make 'find_file)))
   (-> "Tuple"
-      ("Tuple?" (make-inactive-is-tuple))
-      ("Merge" (make-inactive-merge))
-      ("Length" (make-inactive-length))
-      ("Range" (make-inactive-range))
-      ("Look up" (make-inactive-look-up)))
+      ("Tuple?" (make 'is_tuple))
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Look up" (make 'look_up)))
   (-> "Condition"
-      ("Not" (make-inactive-not))
-      ("And" (make-inactive-and))
-      ("Or" (make-inactive-or))
-      ("Exclusive or" (make-inactive-xor))
+      ("Not" (make 'not))
+      ("And" (make 'and))
+      ("Or" (make 'or))
+      ("Exclusive or" (make 'xor))
       ---
-      ("Equal" (make-inactive-equal))
-      ("Not equal" (make-inactive-unequal))
-      ("Less" (make-inactive-less))
-      ("Less or equal" (make-inactive-lesseq))
-      ("Greater" (make-inactive-greater))
-      ("Greater or equal" (make-inactive-greatereq)))
+      ("Equal" (make 'equal))
+      ("Not equal" (make 'unequal))
+      ("Less" (make 'less))
+      ("Less or equal" (make 'lesseq))
+      ("Greater" (make 'greater))
+      ("Greater or equal" (make 'greatereq)))
   (-> "Programming"
-      ("If" (make-inactive-if))
-      ("Case" (make-inactive-case))
-      ;; ("for" (make-inactive-for))
-      ("While" (make-inactive-while))
-      ;; ("extern" (make-inactive-extern))
-      ;; ("authorize" (make-inactive-authorize))
+      ("If" (make 'if))
+      ("Case" (make 'case))
+      ;; ("for" (make 'for))
+      ("While" (make 'while))
+      ;; ("extern" (make 'extern))
+      ;; ("authorize" (make 'authorize))
       ))
 
 (menu-bind insert-menu
@@ -236,8 +236,8 @@
       ("Footer" (make-inactive-assign-arg "this page footer"))
       ---
       (group "Permanent")
-      ("Header" (make-inactive-compound-arg "set-header"))
-      ("Footer" (make-inactive-compound-arg "set-footer"))
+      ("Header" (make 'set-header))
+      ("Footer" (make 'set-footer))
       ("Odd page header" (make-inactive-assign-arg "odd page header"))
       ("Odd page footer" (make-inactive-assign-arg "odd page footer"))
       ("Even page header" (make-inactive-assign-arg "even page header"))
@@ -253,11 +253,11 @@
       ("Page number text" (make-inactive-assign-function "thepage")))
   ---
   (-> "Specific"
-      ("TeXmacs" (make-inactive-specific "texmacs"))
-      ("LaTeX" (make-inactive-specific "latex"))
-      ("HTML" (make-inactive-specific "html"))
-      ("Screen" (make-inactive-specific "screen"))
-      ("Printer" (make-inactive-specific "printer")))
+      ("TeXmacs" (make-specific "texmacs"))
+      ("LaTeX" (make-specific "latex"))
+      ("HTML" (make-specific "html"))
+      ("Screen" (make-specific "screen"))
+      ("Printer" (make-specific "printer")))
   (-> "Macro" (link insert-transformational-menu))
   (-> "Executable" (link insert-executable-menu))
   (-> "Special"
@@ -265,11 +265,11 @@
       ("Move object" (interactive '("Horizontal:" "Vertical:") 'make-move))
       ("Resize object" (interactive
 			'("Left:" "Bottom:" "Right:" "Top:") 'make-resize))
-      ("Repeat object" (make-inactive-repeat))
+      ("Repeat object" (make 'repeat))
 ;;    ---
-      ("Decorate atoms" (make-inactive-decorate-atoms))
-;;    ("decorate lines" (make-inactive-decorate-lines))
-;;    ("decorate pages" (make-inactive-decorate-pages))
+      ("Decorate atoms" (make 'datoms 2))
+;;    ("decorate lines" (make 'dlines 2))
+;;    ("decorate pages" (make 'dpages 2))
 ;;    ---
-;;    ("page insertion" (make-inactive-float))
+;;    ("page insertion" (make 'float))
       ))
