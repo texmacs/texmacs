@@ -212,6 +212,23 @@ initialize_default_env () {
   env ("rightflush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
 
+  /* syntactic highlighting */
+  env ("src-macro")=
+    tree (MACRO, "x", tree (WITH, COLOR, "blue", tree (ARG, "x")));
+  env ("src-id")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark green", tree (ARG, "x")));
+  env ("src-arg")=
+    tree (MACRO, "x", tree (WITH, COLOR, "brown", tree (ARG, "x")));
+  env ("src-tt")=
+    tree (MACRO, "x",
+	  tree (WITH, COLOR, "dark green", FONT_FAMILY, "tt",
+		tree (ARG, "x")));
+  env ("src-integer")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
+  env ("src-error")=
+    tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
+
+  /* for correct importation of style files and packages */
   env ("src-title")= identity_m;
   env ("src-style-file")=
     tree (MACRO, "x", "y",

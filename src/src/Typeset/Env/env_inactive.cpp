@@ -165,18 +165,13 @@ arg_type (tree t, int i) {
 
 static tree
 highlight (tree t, string kind) {
-  // FIXME: should be customizable
   if (kind == "") return t;
-  else if (kind == "id")
-    return tree (WITH, COLOR, "dark green", t);
-  else if (kind == "arg")
-    return tree (WITH, COLOR, "brown", t);
-  else if (kind == "tt")
-    return tree (WITH, MODE, "text", FONT_FAMILY, "tt", t);
-  else if (kind == "integer")
-    return tree (WITH, COLOR, "dark grey", t);
-  else if (kind == "error")
-    return tree (WITH, COLOR, "red", t);
+  else if (kind == "macro")   return compound ("src-macro", t);
+  else if (kind == "id")      return compound ("src-id", t);
+  else if (kind == "arg")     return compound ("src-arg", t);
+  else if (kind == "tt")      return compound ("src-tt", t);
+  else if (kind == "integer") return compound ("src-integer", t);
+  else if (kind == "error")   return compound ("src-error", t);
   return t;
 }
 
