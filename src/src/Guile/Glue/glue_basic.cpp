@@ -132,61 +132,61 @@ tmg_tree0 (SCM arg1) {
   tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= tree (in1);
+  tree out= tree (in1);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_tree1 (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree1");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree1");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree1");
 
   tree_label in1= scm_to_tree_label (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  tree in2= scm_to_tree (arg2);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= tree (in1, in2);
+  tree out= tree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_tree2 (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree2");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree2");
-  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree2");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree2");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree2");
 
   tree_label in1= scm_to_tree_label (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
-  texmacs_tree in3= scm_to_texmacs_tree (arg3);
+  tree in2= scm_to_tree (arg2);
+  tree in3= scm_to_tree (arg3);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= tree (in1, in2, in3);
+  tree out= tree (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_tree3 (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree3");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree3");
-  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree3");
-  SCM_ASSERT_TEXMACS_TREE (arg4, SCM_ARG4, "tree3");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree3");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree3");
+  SCM_ASSERT_TREE (arg4, SCM_ARG4, "tree3");
 
   tree_label in1= scm_to_tree_label (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
-  texmacs_tree in3= scm_to_texmacs_tree (arg3);
-  texmacs_tree in4= scm_to_texmacs_tree (arg4);
+  tree in2= scm_to_tree (arg2);
+  tree in3= scm_to_tree (arg3);
+  tree in4= scm_to_tree (arg4);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= tree (in1, in2, in3, in4);
+  tree out= tree (in1, in2, in3, in4);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -204,9 +204,9 @@ tmg_tree_ip (SCM arg1) {
 
 SCM
 tmg_tree_atomicP (SCM arg1) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-atomic?");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-atomic?");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
 
   // SCM_DEFER_INTS;
   bool out= is_atomic (in1);
@@ -217,9 +217,9 @@ tmg_tree_atomicP (SCM arg1) {
 
 SCM
 tmg_tree_compoundP (SCM arg1) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-compound?");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-compound?");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
 
   // SCM_DEFER_INTS;
   bool out= is_compound (in1);
@@ -230,9 +230,9 @@ tmg_tree_compoundP (SCM arg1) {
 
 SCM
 tmg_tree_arity (SCM arg1) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-arity");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-arity");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
 
   // SCM_DEFER_INTS;
   int out= N (in1);
@@ -243,28 +243,28 @@ tmg_tree_arity (SCM arg1) {
 
 SCM
 tmg_tree_ref (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-ref");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ref");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-ref");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= tree_ref (in1, in2);
+  tree out= tree_ref (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_tree_setS (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-set!");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set!");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-set!");
-  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree-set!");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-set!");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
   int in2= scm_to_int (arg2);
-  texmacs_tree in3= scm_to_texmacs_tree (arg3);
+  tree in3= scm_to_tree (arg3);
 
   // SCM_DEFER_INTS;
   tree_set (in1, in2, in3);
@@ -292,17 +292,17 @@ tmg_tree_range (SCM arg1, SCM arg2, SCM arg3) {
 
 SCM
 tmg_subtree (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "subtree");
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "subtree");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "subtree");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  tree in1= scm_to_tree (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= subtree (in1, in2);
+  tree out= subtree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -613,10 +613,10 @@ tmg_scheme_dialect () {
 
 SCM
 tmg_cursor_start (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "cursor-start");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -628,10 +628,10 @@ tmg_cursor_start (SCM arg1, SCM arg2) {
 
 SCM
 tmg_cursor_end (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "cursor-end");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -1686,17 +1686,17 @@ SCM
 tmg_connection_eval (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-eval");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-eval");
-  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "connection-eval");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-eval");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  texmacs_tree in3= scm_to_texmacs_tree (arg3);
+  content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= connection_eval (in1, in2, in3);
+  tree out= connection_eval (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -1710,21 +1710,21 @@ tmg_connection_cmd (SCM arg1, SCM arg2, SCM arg3) {
   string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= connection_cmd (in1, in2, in3);
+  tree out= connection_cmd (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "connection-write");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-write");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  tree in3= scm_to_tree (arg3);
+  content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
   connection_write (in1, in2, in3);
