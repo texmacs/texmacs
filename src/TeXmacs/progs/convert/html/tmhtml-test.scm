@@ -247,6 +247,36 @@
 	 '((h:dl (h:dd "a") (h:dt "b") (h:dd "c"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Verbatim
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (regtest-tmhtml-verbatim)
+  (define (h:tt . content) `(h:tt (@ (class "verbatim")) ,@content))
+  (define (h:pre . content)
+    `(h:pre (@ (class "verbatim") (xml:space "preserve")) ,@content))
+  (regression-test-group
+   "tmhtml, verbatim" "verbatim"
+   tmhtml-root :none
+   (test "inline verbatim"
+	 '(concat (verbatim "a") "b c") `(,(h:tt "a") "b c"))
+   (test "one-line block verbatim"
+	 '(verbatim (document "  a  b  ")) `(,(h:pre "  a  b  ")))
+   (test "multiline block verbatim"
+	 '(verbatim (document "  a" "   b")) `(,(h:pre "  a\n   b")))
+   (test "verbatim line"
+	 '(document "a" (verbatim "  b ") "c d")
+	 `((h:p "a") ,(h:pre "  b ") (h:p "c d")))
+   (test "verbatim in item*"
+	 '(description (document (concat (item* (verbatim "a")) "b")
+				 (item* (verbatim "c"))
+				 "d e"))
+	 `((h:dl (h:dt ,(h:tt "a")) (h:dd "b")
+		 (h:dt ,(h:tt "c")) (h:dd (h:p) (h:p "d e")))))
+   (test "vicious nesting"
+	 '(strong (verbatim (em (document "a" "b"))))
+	 `((h:strong ,(h:pre '(h:em "a\nb")))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -397,10 +427,10 @@
 	      (regtest-tmhtml-list-document)
 	      (regtest-tmhtml-description-head)
 	      (regtest-tmhtml-description-content)
+	      (regtest-tmhtml-verbatim)
 	      (regtest-tmhtml-table)
 	      (regtest-tmhtml-table-post)
 	      (regtest-tmhtml-picture)
 	      (regtest-tmhtml-document-post))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of tmhtml: ok\n")))
-
