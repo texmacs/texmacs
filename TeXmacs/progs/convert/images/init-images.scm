@@ -39,7 +39,15 @@
 (converter xfig-file postscript-file
   (:shell "fig2ps" from to))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-format xmgrace
+  (:name "Xmgrace")
+  (:suffix "agr" "xmgr"))
+
+(converter xmgrace-file postscript-file
+  (:require (url-exists-in-path? "xmgrace"))
+  (:shell "xmgrace" "-noask -hardcopy -hdevice EPS -printfile" to from))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
