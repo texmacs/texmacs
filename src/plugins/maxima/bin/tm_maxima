@@ -1,15 +1,16 @@
 #!/bin/sh
 TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
 export TEXMACS_MAXIMA_PATH
-# Test using old (before 5.9.0) maxima command line options
-echo "quit();" | \
- maxima -load "$TEXMACS_MAXIMA_PATH/texmacs.lisp" > /dev/null 2>&1
-test_result="$?"
-if [ "$test_result" = "0" ]; then
-  # Maxima version < 5.9.0
-  exec maxima -load "$TEXMACS_MAXIMA_PATH/texmacs.lisp" | maxima_filter
-else
-  # Maxima version >= 5.9.0
-  exec maxima --preload-lisp="$TEXMACS_MAXIMA_PATH/texmacs.lisp" | \
-   maxima_filter
-fi
+case $1 in
+  5.6)
+    case $2 in
+      gcl) exec maxima -load "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.6.lisp" \
+          | maxima_filter;;
+      clisp) exec maxima -i "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.6.lisp" \
+          | maxima_filter;;
+      *) echo -e "\2latex:\\red Unsupported lisp for old maxima: $2\5"
+    esac;;
+  5.9.0) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.0.lisp" \
+      | maxima_filter;;
+  *) echo -e "\2latex:\\red Unsupported version of maxima: $1\5"
+esac
