@@ -13,8 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert doc tmdoc)
-  (:export tmdoc-expand-help tmdoc-expand-this
-	   tmdoc-include tmdoc-ps-manual))
+  (:export tmdoc-expand-help tmdoc-expand-help-manual tmdoc-expand-this
+	   tmdoc-include))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
@@ -78,15 +78,20 @@
 	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
 
 (define (tmdoc-expand file-name level . opts)
-  (display* "tmdoc-expand " file-name "\n")
+  ;(display* "tmdoc-expand " file-name "\n")
   (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
-	 (done? (ahash-ref done file-name))
-	 (t (texmacs-load-tree file-name "texmacs"))
-	 (u (cadr (assoc 'body (cdr (tree->object t))))))
+	 (done? (ahash-ref done file-name)))
     (ahash-set! done file-name #t)
     (if done?
 	'(document "")
-	(cons 'document (tmdoc-rewrite (cdr u) file-name level done)))))
+	(with t (tree->object (texmacs-load-tree file-name "texmacs"))
+	  (if (string? t)
+	      (begin
+		(display* "TeXmacs] bad link or file " file-name "\n")
+		'(document ""))
+	      (with u (cadr (assoc 'body (cdr t)))
+		(cons 'document
+		      (tmdoc-rewrite (cdr u) file-name level done))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further subroutines
@@ -144,6 +149,12 @@
 		    (initial (collection (associate "language" ,lan))))))
 	(set-help-buffer file-name (object->tree doc)))))
 
+(define (tmdoc-expand-help-manual file-name . cont)
+  (with s-cont (if (null? cont) "(noop)" (car cont))
+    (system-wait "Generating manual" "(can be long)")
+    (tmdoc-expand-help file-name 'title)
+    (delayed-update 3 s-cont)))
+
 (define (tmdoc-expand-this level)
   (tmdoc-expand-help (get-name-buffer) level))
 
@@ -157,7 +168,3 @@
   (let* ((body (tmdoc-expand file-name 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
     (tmdoc-remove-hyper-links filt)))
-
-(define (tmdoc-ps-manual src-manual)
-  (tmdoc-expand-help src-manual 'title)
-  (delayed-update 3))

@@ -119,12 +119,17 @@
 (define-macro with-active-buffer
   (lambda l (with-active-buffer-sub (car l) (cons 'begin (cdr l)))))
 
-(define (delayed-update nr)
+(define (delayed-update nr s-cont)
   (cond ((> nr 0)
+	 (system-wait "Generating automatic content" (number->string nr))
 	 (generate-all-aux)
 	 (update-buffer)
-	 (with s (number->string (- nr 1))
-	   (exec-delayed (string-append "(delayed-update " s ")"))))))
+	 (let* ((s (number->string (- nr 1)))
+		(c (escape-quotes s-cont)))
+	   (exec-delayed (string-append "(delayed-update " s " \"" c "\")"))))
+	(else
+	 (pretend-save-buffer)
+	 (exec-delayed s-cont))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To be moved
