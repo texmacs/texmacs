@@ -267,6 +267,32 @@ tmg_tree_copy (SCM arg1) {
 }
 
 SCM
+tmg_tree_label_extensionP (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree-label-extension?");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_extension (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_multi_paragraphP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-multi-paragraph?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_multi_paragraph (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_tree_simplify (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-simplify");
 
@@ -2077,6 +2103,8 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
+  gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
+  gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
   gh_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   gh_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);

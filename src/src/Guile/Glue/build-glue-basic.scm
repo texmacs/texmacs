@@ -37,6 +37,8 @@
   (tree-set! tree_set (void texmacs_tree int texmacs_tree))
   (subtree subtree (texmacs_tree texmacs_tree path))
   (tree-copy copy (tree tree))
+  (tree-label-extension? is_extension (bool tree_label))
+  (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
 
   (parse-texmacs texmacs_document_to_tree (tree string))

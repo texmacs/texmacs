@@ -150,33 +150,15 @@
 ;; Texmacs objects predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stm-primitive? sym)
-  (check-arg-type symbol? sym "stm-primitive?")
-  (== 0 (tree-arity (object->tree (list sym)))))
+(tm-define (stm-primitive? label)
+  (:synopsis "Is it the label of a primitive texmacs construct?")
+  (:type ((:or symbol tree-label) -> bool))
+  (not (tree-label-extension? label)))
 
 (tm-define (stm-block-structure? x)
   (:synopsis "Is the texmacs document fragment @x a block-level structure?")
   (:type (scheme-tree -> bool))
-  (if (string? x) #f
-      (receive (key body) (car+cdr x)
-        (cond ((drd-ref block-structure% key)
-	       => (lambda (d) (if (procedure? d) (d body) d)))
-	       ((stm-primitive? key) #f)
-	       (else (block-structure?/compound
-		      (cons (symbol->string key) body)))))))
-
-(define (block-structure?/compound x)  
-  (and (not (== (first x) "footnote"))
-       (list-any stm-block-structure? (cdr x))))
-
-(drd-dispatcher block-structure%
-  (document #t)
-  (surround
-   (lambda (l) (stm-block-structure? (third l))))
-  ((:or datoms dlines dpages with)
-   (lambda (l) (stm-block-structure? (last l))))
-  (include #t)
-  (compound block-structure?/compound))
+  (tree-multi-paragraph? (object->tree x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physical Predicates
