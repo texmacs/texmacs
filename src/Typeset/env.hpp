@@ -318,6 +318,8 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
+  SI        get_length (string var);
+  space     get_space (string var);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {
@@ -336,14 +338,6 @@ public:
     tree t= env [var];
     if (is_compound (t)) return "";
     return t->label; }
-  inline SI get_length (string var) {
-    tree t= env [var];
-    if (is_compound (t)) return 0;
-    return decode_length (t->label); }
-  inline space get_space (string var) {
-    tree t= env [var];
-    if (is_compound (t)) return 0;
-    return decode_space (t->label); }
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);

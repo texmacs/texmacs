@@ -82,6 +82,7 @@ initialize_default_var_type () {
   var_type (PAGE_RIGHT)        = Env_Page;
   var_type (PAGE_TOP)          = Env_Page;
   var_type (PAGE_BOT)          = Env_Page;
+  var_type (PAGE_USER_HEIGHT)  = Env_Page;
   var_type (PAGE_ODD_SHIFT)    = Env_Page;
   var_type (PAGE_EVEN_SHIFT)   = Env_Page;
   var_type (PAGE_SHRINK)       = Env_Page;
@@ -124,11 +125,12 @@ initialize_default_var_type () {
 
 void
 edit_env_rep::update_page_pars () {
-  page_type       = get_string (PAGE_TYPE);
-  page_landscape  = (get_string (PAGE_ORIENTATION) == "landscape");
-  page_automatic  = (get_string (PAGE_MEDIUM) == "automatic");
-  bool width_flag = get_bool (PAGE_WIDTH_MARGIN);
-  bool screen_flag= get_bool (PAGE_SCREEN_MARGIN);
+  page_type         = get_string (PAGE_TYPE);
+  page_landscape    = (get_string (PAGE_ORIENTATION) == "landscape");
+  page_automatic    = (get_string (PAGE_MEDIUM) == "automatic");
+  string width_flag = get_string (PAGE_WIDTH_MARGIN);
+  string height_flag= get_string (PAGE_HEIGHT_MARGIN);
+  bool   screen_flag= get_bool   (PAGE_SCREEN_MARGIN);
 
   if (page_automatic) {
     page_width        = get_length (PAGE_SCREEN_WIDTH);
@@ -145,13 +147,13 @@ edit_env_rep::update_page_pars () {
     page_width        = get_page_par (PAGE_WIDTH);
     page_height       = get_page_par (PAGE_HEIGHT);
 
-    if (!width_flag) {
+    if (width_flag == "false") {
       page_odd_margin   = get_page_par (PAGE_ODD);
       page_even_margin  = get_page_par (PAGE_EVEN);
       page_right_margin = get_page_par (PAGE_RIGHT);
       page_user_width   = page_width - page_odd_margin - page_right_margin;
     }
-    else {
+    else if (width_flag == "true") {
       page_user_width   = get_page_par (PAR_WIDTH);
       SI odd_sh         = get_length (PAGE_ODD_SHIFT);
       SI even_sh        = get_length (PAGE_EVEN_SHIFT);
@@ -159,10 +161,23 @@ edit_env_rep::update_page_pars () {
       page_even_margin  = ((page_width - page_user_width) >> 1) + even_sh;
       page_right_margin = page_width - page_odd_margin - page_user_width;
     }
+    else {
+      page_odd_margin   = get_page_par (PAGE_ODD);
+      page_even_margin  = get_page_par (PAGE_EVEN);
+      page_user_width   = get_page_par (PAR_WIDTH);
+      page_right_margin = page_width - page_odd_margin - page_user_width;
+    }
 
-    page_top_margin   = get_page_par (PAGE_TOP);
-    page_bottom_margin= get_page_par (PAGE_BOT);
-    page_user_height  = page_height - page_top_margin - page_bottom_margin;
+    if (height_flag == "false") {
+      page_top_margin   = get_page_par (PAGE_TOP);
+      page_bottom_margin= get_page_par (PAGE_BOT);
+      page_user_height  = page_height - page_top_margin - page_bottom_margin;
+    }
+    else {
+      page_user_height  = get_length (PAGE_USER_HEIGHT);
+      page_top_margin   = get_page_par (PAGE_TOP);
+      page_bottom_margin= page_height - page_top_margin - page_user_height;
+    }
 
     if (screen_flag) {
       page_odd_margin   = get_length (PAGE_SCREEN_LEFT);
