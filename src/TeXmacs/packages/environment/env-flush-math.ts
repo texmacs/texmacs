@@ -39,7 +39,7 @@
   </active*>
 
   <assign|equation*|<macro|body|<\with|mode|math|math-display|true|par-ver-sep|<eqn-ver-sep>>
-    <indent-left|<eqn-left-indent>|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-short-above>><no-indent>|<vspace|<eqn-short-below>><no-indent*>|<arg|body>>>>
+    <indent-left|<eqn-left-indent>|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-short-above>><no-indent>|<htab|0fn><vspace|<eqn-short-below>><no-indent*>|<arg|body>>>>
   </with>>>
 
   <assign|equation-lab|<\macro|body|lab>

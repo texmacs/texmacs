@@ -24,6 +24,12 @@
   <assign|par-hyphen|professional>
 
   <active*|<\src-comment>
+    TeX-like lengths.
+  </src-comment>>
+
+  <assign|tex-len|<macro|default|decrease|increase|<style-with|src-compact|none|<tmlen|<minus|<arg|default>|<arg|decrease>>|<arg|default>|<plus|<arg|default>|<arg|increase>>>>>>
+
+  <active*|<\src-comment>
     Default values of TeX page layout parameters.
   </src-comment>>
 
