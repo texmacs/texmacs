@@ -581,6 +581,10 @@
 	 (append (tmhtml-verb (cadr x))
 		 (tmhtml-verb (cadddr x))
 		 (tmhtml-verb (caddr x))))
+	((func? x 'verbatim) (tmhtml-verb (cadr x)))
+	((func? x 'em) `((h:em ,@(tmhtml-verb (cadr x)))))
+	((func? x 'hlink) (tmhtml-hyperlink (cdr x)))
+	((func? x 'key) (tmhtml-key (cdr x)))
 	(else
 	 ;(display* "Rejected " x "\n")
 	 '())))
