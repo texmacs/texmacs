@@ -148,7 +148,7 @@
   (in-finnish% (== (get-env "language") "finnish") in-text%)
   (in-french% (== (get-env "language") "french") in-text%)
   (in-german% (== (get-env "language") "german") in-text%)
-  (in-hungarian% (== (get-env "language") "german") in-text%)
+  (in-hungarian% (== (get-env "language") "hungarian") in-text%)
   (in-italian% (== (get-env "language") "italian") in-text%)
   (in-polish% (== (get-env "language") "polish") in-text%)
   (in-portugese% (== (get-env "language") "portugese") in-text%)
