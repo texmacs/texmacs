@@ -643,6 +643,15 @@ edit_select_rep::cut (path p) {
 
 void
 edit_select_rep::cut (path p1, path p2) {
+  path p = common (p1, p2);
+  raw_cut (p1, p2);
+  if (!is_document (subtree (et, p)))
+    if (is_concat (subtree (et, path_up (p))))
+      correct_concat (path_up (p));
+}
+
+void
+edit_select_rep::raw_cut (path p1, path p2) {
   if (p2 == p1) return;
   path p = common (p1, p2);
   tree t = subtree (et, p);
@@ -653,12 +662,11 @@ edit_select_rep::cut (path p1, path p2) {
   if (is_document (t) || is_concat (t)) {
     path q1= copy (p); q1 << path (i1, end (t[i1]));
     path q2= copy (p); q2 << path (i2, start (t[i2]));
-    cut (q2, p2);
+    raw_cut (q2, p2);
     if (i2>i1+1) remove (p * (i1+1), i2-i1-1);
-    cut (p1, q1);
-    t= subtree (et, p);
+    raw_cut (p1, q1);
     if (is_concat (t)) correct_concat (p);
-    else if (is_document (t)) remove_return (p * i1);
+    else remove_return (p * i1);
     return;
   }
 
@@ -674,9 +682,9 @@ edit_select_rep::cut (path p1, path p2) {
     int i, j;
     for (i=row1; i<=row2; i++)
       for (j=col1; j<=col2; j++) {
-	path cp= fp * ::table_search_cell (st, i, j);
-	if (is_func (subtree (et, cp), CELL, 1)) cp= cp * 0;
-	assign (cp, "");
+        path cp= fp * ::table_search_cell (st, i, j);
+        if (is_func (subtree (et, cp), CELL, 1)) cp= cp * 0;
+        assign (cp, "");
       }
     path cp= fp * ::table_search_cell (st, row1, col1);
     go_to (cp * path (0, 0));
@@ -688,8 +696,6 @@ edit_select_rep::cut (path p1, path p2) {
 
   if (is_compound (t) && (!is_format (t))) {
     assign (p, "");
-    if (is_concat (subtree (et, path_up (p))))
-      correct_concat (path_up (p));
     return;
   }
 
@@ -698,7 +704,7 @@ edit_select_rep::cut (path p1, path p2) {
     cerr << "p = " << p << "\n";
     cerr << "p1= " << p1 << "\n";
     cerr << "p2= " << p2 << "\n";
-    fatal_error ("invalid cut", "edit_select_rep::cut");
+    fatal_error ("invalid cut", "edit_select_rep::raw_cut");
   }
 
   if (is_atomic (t)) {
@@ -712,12 +718,10 @@ edit_select_rep::cut (path p1, path p2) {
       cerr << "p = " << p << "\n";
       cerr << "p1= " << p1 << "\n";
       cerr << "p2= " << p2 << "\n";
-      fatal_error ("invalid object cut", "edit_select_rep::cut");
+      fatal_error ("invalid object cut", "edit_select_rep::raw_cut");
     }
     assign (p, "");
   }
-  if ((!nil (p)) && is_concat (subtree (et, path_up (p))))
-    correct_concat (path_up (p));
 }
 
 void
