@@ -57,8 +57,9 @@
     (string-append "\\newenvironment{" s "}{\n"
 		   "  \\noindent\\textbf{"
 		   (translate text "english" lan) "}\\ }{\\hspace*{\\fill}\n"
-		   "  \\begin{math}\\Box\\end{math}\\medskip}\n"
-		   "\\newenvironment{" s "*}[1]{\n"
+		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
+  (define (newproof* s)
+    (string-append "\\newenvironment{" s "}[1]{\n"
 		   "  \\noindent\\textbf{#1\\ }}{\\hspace*{\\fill}\n"
 		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
   (define (newtmfloat)
@@ -122,6 +123,7 @@
     (exercise ,(newexercise "exercise" "Exercise"))
     (problem ,(newexercise "problem" "Problem"))
     (proof ,(newproof "proof" "Proof"))
+    (proof* ,(newproof* "proof*"))
     (tmfloat ,(newtmfloat))
     (dueto 1 "\\textup{\\textbf{(#1) }}")
 
