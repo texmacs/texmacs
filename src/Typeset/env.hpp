@@ -171,7 +171,9 @@ private:
   tree exec_if (tree t);
   bool exec_until_if (tree t, path p, string var, int level);
   tree exec_case (tree t);
+  bool exec_until_case (tree t, path p, string var, int level);
   tree exec_while (tree t);
+  bool exec_until_while (tree t, path p, string var, int level);
   tree exec_for_each (tree t);
   tree exec_use_package (tree t);
 

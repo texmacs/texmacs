@@ -124,6 +124,7 @@ arg_type (tree t, int i) {
   case ASSIGN:
   case DRD_PROPS:
   case VALUE:
+  case QUOTE_VALUE:
     if (i == 0) return "id";
     else return "";
   case WITH:
@@ -143,6 +144,7 @@ arg_type (tree t, int i) {
     if (i==0) return "arg";
     else return "";
   case ARG:
+  case QUOTE_ARG:
     if (i==0) return "arg";
     else return "integer";
     break;
