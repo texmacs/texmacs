@@ -7,12 +7,12 @@
 
   Po sko«czeniu dziaªa« przygotowawczych opisanych powy»ej, <TeXmacs> jest
   gotowy do pracy. Wi¦kszo±¢ znaków jest wprowadzana w naturalny sposób.
-  Polskie litery powinny dziaªa¢ z lewym <key|<key-alternate>>. Litery z
+  Polskie litery powinny dziaªa¢ z prawym <key|<key-alternate>>. Litery z
   akcentami mog¡ by¢ uzyskane poprzez u»ycie klawisza <key|<key-escape>> lub
   <key|<key-alternate>>. Dla przykªadu, é'' jest uzyskane poprzez <key|A-'
-  e>. Analogicznie otrzymujemy à'' przez <key|A-` a> i tak dalej. Dªugie
-  sªowa na ko«cu lini s¡ automatycznie ªamane. Oczywi±cie pod warunkiem
-  ustawienia wªa±ciwego j¦zyka dla dokumentu, poprzez menu
+  e> lub <key|M-' e>. Analogicznie otrzymujemy à'' przez <key|A-` a> i tak
+  dalej. Dªugie sªowa na ko«cu lini s¡ automatycznie ªamane. Oczywi±cie pod
+  warunkiem ustawienia wªa±ciwego j¦zyka dla dokumentu, poprzez menu
   <menu|Document|Language>.
 
   Po lewej stronie stopki wy±wietlany jest styl dokumentu, wªa±ciwo±ci tekstu

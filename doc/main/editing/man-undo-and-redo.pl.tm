@@ -3,18 +3,22 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Cofanie i przywracanie>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Jest mo»liwe stopniowe cofanie zmian zrobionych w dokumencie od chwili
+  uruchomienia <TeXmacs>. To mo»na zrobi¢ poprzez menu <menu|Edit|Undo> lub
+  skrótami <key|M-[> albo <key|C-/>. Cofni¦te zmiany mog¡ by¢ przywrócone
+  poprzez <menu|Edit|Redo> lub <kbd-gen|]>.
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  Aby oszcz¦dzi¢ pami¦¢ liczba operacji które mo»na cofn¡¢ limitowana jest
+  domy±lnie do 100. Jest mo»liwe zwi¦kszenie za pomoc¡ polecenia
+
+  <\verbatim>
+    \ \ \ \ (set-maximal-undo-depth 1000)
+  </verbatim>
+
+  w osobistym pliku inicjuj¡cym (zobacz <menu|Help|Scheme>). Wpisanie tam
+  liczby ujemnej spowoduje i» dowoln¡ liczb¦ operacji b¦dzie mo»na cofn¡¢.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

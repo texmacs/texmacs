@@ -3,18 +3,26 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Tryb formatowania>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  <TeXmacs> mo»e formatowa¢ w zadany sposób grup¦ komórek. Dla przykªadu
+  mo»na nada¢ pojedy«czym komórkom kolor tªa, mo»na te» okre±li¢ i» caªa
+  kolumna b¦dzie wy±rodkowana poziomo. domy±lnie formatowanie dziaªa na
+  pojedynczej komórce, ale mo»e by¢ zmienione poprzez <menu|Table|Cell
+  operation mode>. Nast¦puj¡ce tryby operowania s¡ dost¦pne:
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  <\description>
+    <item*|<kbd-table|m c>>Dziaªanie na pojedynczej komórce.
+
+    <item*|<kbd-table|m h>>Dziaªanie na wierszu.
+
+    <item*|<kbd-table|m v>>Dziaªanie na kolumnie.
+
+    <item*|<kbd-table|m t>>Dziaªanie na caªej tablicy.
+  </description>
+
+  Jest równie» mo»liwe zaznaczenie grupy komórek przy pomocy myszy i
+  przeprowadzenie pojedynczej operacji na zadanym prostok¡cie.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

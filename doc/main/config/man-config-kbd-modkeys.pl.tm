@@ -7,7 +7,7 @@
 
   <TeXmacs> korzysta z pi¦ciu klawiszy modyfikuj¡cych: <key|<key-shift>>,
   <key|<key-control>>, <key|<key-alternate>>, <key|<key-meta>> i
-  <key|<key-hyper>>, skracanych jako <key|S->, <key|C->, <key|A->, <key|M-> i
+  <key|<key-hyper>>, skracanych do <key|S->, <key|C->, <key|A->, <key|M-> i
   <key|H->. Klawisze <key|shift> i <key|control> s¡ obecne na praktycznie
   ka»dej klawiaturze, a <key|alternate> jest na prawie wszystkich. Wi¦kszo±¢
   wspóªczesnych klawiatur posiada klawisz <key|windows>, który jest zwykle
@@ -26,22 +26,22 @@
   to jego nowe zachowanie b¦dzie równie» w innych aplikacjach. Czyli powinno
   si¦ przestawia¢ tylko klawisze dla które nie s¡ u»ywane przez inne
   programy. Dla przykªadu klawisz <key|<key-windows>> jest u»ywany przez
-  niewiele apliakcji, zatem jego przedefiniowanie nie powinna wyrz¡dzi¢
+  niewiele apliakcji, zatem jego przedefiniowanie nie powinno wyrz¡dzi¢
   szkody. Wygodniej mo»e by¢ okre±li¢ odpowiednio konfiguracj¦ caªego
-  systemu. To mo»na wykona¢ przy u»yciu polecenia <verbatim|xmodmap>;
+  systemu. To mo»na zrobi¢ przy u»yciu polecenia <verbatim|xmodmap>;
   dokªadniejsze informacje w jego dokumentacji.
 
-  W niektórych wypadkach, na klawiaturze s¡ okre±lone klawisze odpowiadaj¡ce
-  <key|<key-alternate>>, <key|<key-meta>> i <key|<key-hyper>>, jednak inaczej
-  ni» pasuj¡cy u»ytkownikowi. Mo»na to zmieni¢ przypisanie prefiksów
-  <key|A->, <key|M->, i <key|H-> do modyfikatorów poprzez menu
+  W niektórych wypadkach, na klawiaturze s¡ klawisze odpowiadaj¡ce
+  <key|<key-alternate>>, <key|<key-meta>> i <key|<key-hyper>>, jednak
+  ustawione inaczej ni» pasuje u»ytkownikowi. Mo»na zmieni¢ przypisanie
+  prefiksów <key|A->, <key|M->, i <key|H-> do modyfikatorów poprzez menu
   <menu|Edit|Preferences|Keyboard>.
 
   Na przykªad, aby zachowa¢ kompatybilno±¢ z Emacsem mo»na spermutowa¢
   klawisz <key|<key-meta>> lub <key|<key-windows>> z <key|<key-alternate>>
-  bez zmian dla innych cz¦±ci systemu. To mo»na zrobi¢ znajduj¡c które
-  modyfikatory s¡ powi¡zane z tymi klawiszami; zwykle b¦dzie to <key|Mod1>
-  dla <key|<key-alternate>> i <key|Mod4> dla <key|<key-meta>> lub
+  bez zmian dla innych cz¦±ci systemu. Nale»y znale¹¢ które modyfikatory s¡
+  powi¡zane z tymi klawiszami; zwykle b¦dzie to <key|Mod1> dla
+  <key|<key-alternate>> i <key|Mod4> dla <key|<key-meta>> lub
   <key|<key-windows>>. Nast¦pnie zadan¡ permutacj¦ ustawia si¦ wybieraj¡c
   <menu|A modifier|Równowa»ny Modulo4> i <menu|M modifier|Równowa»ny Modulo1>
   w menu <menu|Edit|Preferences|Keyboard>.

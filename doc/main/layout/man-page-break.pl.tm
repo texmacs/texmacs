@@ -3,18 +3,22 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Šamanie stron>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Šamanie stron mo»e by¢ kontrolowane bardzo precyzyjnie przez u»ytkownika
+  poprzez <menu|Document|Page|Breaking>. W podmenu <menu|Algorithm>,
+  wybierany jest u»ywany algorytm. Profesjonalne ªamanie jest najlepsze przy
+  drukowaniu, ale mo»e spowolni¢ edycj¦ gdy zostanie u»yte interaktywnie przy
+  typie strony papier''. Byle jaki'' jest najszybszy za± ±redni'' dziaªa
+  jak profesjonalny za wyj¡tkiem materiaªu wielokolumnowego, dla którego
+  profesjonalny'' jest zauwa»alnie wolniejszy.
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  Mo»na zezwoli¢ algorytmowi ªamania na zwi¦kszanie lub redukowanie dªugo±ci
+  strony w sytuacjach wyj¡tkowych za pomoc¡ podmenu <menu|Limits>.
+  Rozci¡gliwo±¢ poziomego odst¦pu pomi¦dzy akapitami i podobnymi jest
+  okre±lana poprzez <menu|Flexibility>. Wspóªczynnik 1 jest domy±lny;
+  mniejszy wymusza bardziej sztywne odst¦py, ale jako±¢ ªamania mo»e si¦
+  zmniejszy¢.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

@@ -3,18 +3,18 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Strumienie>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Zªo»one dokumenty cz¦sto zawieraj¡ przypisy lub pªywaj¡ce obiekty, które
+  ukªadaj¡ si¦ na stronach ró»nie od gªównego tekstu. W rzeczywisto±ci tre±¢
+  takiego dokumentu skªada si¦ z kilku <em|strumieni>, jeden dla gªównego
+  tekstu, jeden dla przypisów, jeden dla obiektów pªywaj¡cych, i kolejny dla
+  tekstu dwukolumnowego. Ró»ne strumienie s¡ ªamane na stronach w niezale»ny
+  sposób.
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  Aby wstawi¢ przypis mo»na u»y¢ <menu|Insert|Page insertion|Footnote>.
+  Liczba kolumn w tek±cie jest zmieniana poprzez <menu|Paragraph|Number of
+  columns>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

@@ -3,18 +3,27 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Tworzenie bibliografii>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Obecnie <TeXmacs> u»ywa <verbatim|bibtex> do tworzenia bibliografii.
+  Mechanizm powstawania wygl¡da nast¦puj¡co:
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  <\itemize-dot>
+    <item>Stworzenie pliku <verbatim|.bib> z wszystkimi odno±nikami. Taki
+    plik powinien mie¢ format standardowego pliku bibliograficznego dla
+    <LaTeX>.
+
+    <item>Poprzez <menu|Insert|Link|Citation> i <menu|Insert|Link|Invisible
+    citation>, nale»y wstawi¢ cytowania odpowiadaj¡ce wpisom z pliku
+    <verbatim|.bib>.
+
+    <item>W miejscu stworzenia bibliografii nale»y wstawi¢
+    <menu|Text|Automatic|Bibliography> oraz poda¢ styl pliku (jak
+    <verbatim|plain>, <verbatim|alpha>, <verbatim|abbrv> itp.)
+
+    <item>Po zmianach w dokumencie (dodanie/usuni¦cie) cytatów bibliografi¦
+    aktualizuj¦ si¦ poprzez <menu|Document|Update|Bibliography>
+  </itemize-dot>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

@@ -3,18 +3,23 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Linki i tre±¢ generowane automatycznie>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  <\traverse>
+    <branch|Tworzenie etykiet, linków i odno±ników|man-create-links.pl.tm>
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+    <branch|Wstawianie obrazków|man-images.pl.tm>
+
+    <branch|Tworzenie spisu tre±ci|man-toc.pl.tm>
+
+    <branch|Tworzenie bibliografii|man-bibliography.pl.tm>
+
+    <branch|Tworzenie indeksu|man-index.pl.tm>
+
+    <branch|Tworzenie sªowniczka|man-glossary.pl.tm>
+
+    <branch|Ksi¡»ki i dokumenty wieloplikowe|man-multifile.pl.tm>
+  </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

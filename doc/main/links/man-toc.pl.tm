@@ -3,18 +3,19 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Tworzenie spisu tre±ci>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Tworzenie spisu tre±ci dla dokumentu jest bardzo proste. Wystarczy w
+  miejscu gdzie ma si¦ znajdowa¢ u»y¢ <menu|Text|Automatic|Table of
+  contents>.
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+  Aby stworzy¢ spis tre±ci powinno si¦ by¢ w trybie, gdzie widoczne s¡
+  ªamania strony (wybór papieru w <menu|Document|Page|Type>), tak aby
+  odpowiednie odno±niki do numerów stron mogªy zosta¢ policzone. Nast¦pnie
+  nale»y zaktualizowa¢ poprzez <menu|Document|Update|Table of contents> lub
+  <menu|Document|Update|All>. Czynno±¢ warto powtórzy¢ kilkarazy, do czasu a»
+  spis nie b¦dzie si¦ zmieniaª. Bowiem na przykªad, zmiany w spisie mog¡
+  spowodowa¢ zmian¦ numeracji stron w dokumencie.\ 
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

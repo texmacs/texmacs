@@ -3,18 +3,17 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Narz¦dzia redaktorskie>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  <\traverse>
+    <branch|Wytnij i wklej|man-cut-and-paste.pl.tm>
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+    <branch|Znajd¹ i zast¡p|man-search-and-replace.pl.tm>
+
+    <branch|Sprawdzanie pisowni|man-spell-checking.pl.tm>
+
+    <branch|Cofanie i przywracanie zmian|man-undo-and-redo.pl.tm>
+  </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

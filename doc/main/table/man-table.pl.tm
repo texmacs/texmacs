@@ -3,18 +3,21 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Wprowadzenie>
+  <tmdoc-title|Tablice>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  <\traverse>
+    <branch|Tworzenie tablicy|man-create-table.pl.tm>
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
-  wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
-  u»ytkownik mo»e chcie¢ je przedefiniowa¢.
+    <branch|Tryb edycji tablic|man-table-mode.pl.tm>
+
+    <branch|Wyrównanie|man-alignment.pl.tm>
+
+    <branch|Rozmiar|man-size.pl.tm>
+
+    <branch|Brzeg, podszycie i kolor tªa|man-decorations.pl.tm>
+
+    <branch|Zaawansowane mo»liwo±ci|man-advanced-features.pl.tm>
+  </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
