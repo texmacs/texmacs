@@ -95,21 +95,24 @@ struct compound_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw (ps_device dev, string s, SI x, SI y);
   glyph get_glyph (string s);
+  double get_left_slope  (string s);
+  double get_right_slope (string s);
+  SI     get_left_correction  (string s);
+  SI     get_right_correction (string s);
 };
 
 compound_font_rep::compound_font_rep (
   string name, scheme_tree def2, array<font> fn2):
     font_rep (fn2[0]->dis, name, fn2[0]),
     def (def2), fn (fn2), enc (load_compound_encoding (map_car (def)))
-{
-}
+{}
 
 void
 compound_font_rep::advance (string s, int& i, string& r, int& nr) {
   // advance as much as possible while remaining in same subfont
   // return the corresponding transcoded substring in r and
   // the index of the subfont in nr. The string r is assumed to
-  // be initialized with s for speeding things up when r==s at exit.
+  // be initialized with s if i=0 for speeding things up when r==s at exit.
   // The fast_map tells which 1-byte characters are mapped to themselves.
 
   int n= N(s);
@@ -117,7 +120,7 @@ compound_font_rep::advance (string s, int& i, string& r, int& nr) {
   if (nr >= 0) {
     int start= i++;
     while ((i<n) && (enc->fast_map[(unsigned char) s[i]] == nr)) i++;
-    if ((start>0) || (i<n)) r= r (start, i);
+    if ((start>0) || (i<n)) r= s (start, i);
   }
   else {
     int start= i;
@@ -188,15 +191,58 @@ compound_font_rep::draw (ps_device dev, string s, SI x, SI y) {
   }
 }
 
+/******************************************************************************
+* Other routines for fonts
+******************************************************************************/
+
 glyph
 compound_font_rep::get_glyph (string s) {
-  int i=0, n= N(s);
+  int i=0, n= N(s), nr;
   if (n == 0) return fn[0]->get_glyph (s);
-  int nr;
   string r= s;
   advance (s, i, r, nr);
   if (nr<0) return glyph ();
   return fn[nr]->get_glyph (r);
+}
+
+double
+compound_font_rep::get_left_slope  (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_left_slope (s);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_left_slope (r);
+}
+
+double
+compound_font_rep::get_right_slope (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_right_slope (s);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_right_slope (r);
+}
+
+SI
+compound_font_rep::get_left_correction  (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_left_correction (s);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_left_correction (r);
+}
+
+SI
+compound_font_rep::get_right_correction (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_right_correction (s);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_right_correction (r);
 }
 
 /******************************************************************************
