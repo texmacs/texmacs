@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -27,15 +27,7 @@
     <branch|Writing your own style files and
     packages|../devel/style/style.en.tm>
 
-    <branch|Reference guide for the <TeXmacs>
-    primitives|../devel/format/primitives/primitives.en.tm>
-
-    <branch|Reference guide for the standard <TeXmacs>
-    styles|styles/styles.en.tm>
-
     <branch|Customizing <TeXmacs>|scheme/man-scheme.en.tm>
-
-    <branch|Compatibility with other formats|convert/man-convert.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -51,17 +43,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
