@@ -233,7 +233,7 @@ concater_rep::typeset_eval_args (tree t, path ip) {
 
 void
 concater_rep::typeset_mark (tree t, path ip) {
-  // cout << "Argument " << t << ", " << ip << "\n";
+  // cout << "Mark: " << t << ", " << ip << "\n\n";
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
       (!nil (env->macro_arg)) &&
