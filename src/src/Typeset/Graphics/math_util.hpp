@@ -22,7 +22,7 @@ inline double sq3 (double x) { return x*x*x; }
 inline double norm (double x) { return x>0?x:-x; }
 inline int    sign (double x) { return x>0?1:x<0?-1:0; } 
 inline int    fnull (double x, double approx) { return norm(x) <= approx; }
-static double pow (double x, int n) {
+inline double pow (double x, int n) {
   if (n<=0) return 1; n--; while (n--) x*=x; return x; }
 
 #endif // defined MATH_UTIL_H
