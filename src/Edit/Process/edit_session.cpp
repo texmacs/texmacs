@@ -45,13 +45,14 @@ mutate (tree t, path ip) {
     mutator_path= reverse (path (0, ip));
     string s= as_string (t[1]); // eval_secure (s);
     if (s != "")
-      if (as_bool (eval ("(secure? '" * s * ")")))
+      if (as_bool (eval ("(secure? '" * s * ")"))) {
 	(void) eval (s);
+      }
     return 1;
   }
   else {
-    int i, n= N(t), sum=0;
-    for (i=0; i<n; i++)
+    int i, sum=0;
+    for (i=0; i<N(t); i++)
       sum += mutate (t[i], path (i, ip));
     return sum;
   }
