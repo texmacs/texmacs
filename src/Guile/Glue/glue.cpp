@@ -53,7 +53,7 @@ scheme_dialect () {
 }
 
 int get_d_exp () { return d_exp; }
-int get_d_hide_exp () { return 1; }
+int get_d_hide_exp () { return 0; }
 
 string
 texmacs_version (string which) {

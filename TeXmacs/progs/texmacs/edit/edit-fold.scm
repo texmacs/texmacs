@@ -31,9 +31,13 @@
   (let ((p (search-upwards "unfold")))
     (if (not (null? p))
 	(let ((t (tm-subtree p)))
-	  (tm-assign p (tree3 'hide_expand (string->tree "fold")
-			      (tree-ref t (tmp-d-exp))
-			      (tree-ref t (+ (tmp-d-exp) 1))))
+	  (if (= (tmp-d-hide-exp) 1)
+	      (tm-assign p (tree3 'hide_expand (string->tree "fold")
+				  (tree-ref t (tmp-d-exp))
+				  (tree-ref t (+ (tmp-d-exp) 1))))
+	      (tm-assign p (tree2 'fold
+				  (tree-ref t (tmp-d-exp))
+				  (tree-ref t (+ (tmp-d-exp) 1)))))	      
 	  (tm-go-to (tm-start (rcons p (tmp-d-hide-exp))))))))
 
 (define (unfold)

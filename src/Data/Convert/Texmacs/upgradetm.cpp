@@ -37,6 +37,10 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.5", version)) return H;
+
+  new_feature (H, "drd_props");
+
   if (version_inf ("1.0.2.0", version)) return H;
 
   new_feature (H, "with_limits");
@@ -1540,6 +1544,31 @@ upgrade_expand (tree t) {
 #endif
 }
 
+static tree
+upgrade_hide_expand (tree t) {
+#ifdef WITH_EXTENSIONS
+  if (is_atomic (t)) return t;
+  else if (is_func (t, HIDE_EXPAND) && is_atomic (t[0])) {
+    int i, n= N(t)-1;
+    string s= t[0]->label;
+    tree_label l= make_tree_label (s);
+    tree r (l, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_hide_expand (t[i+1]);
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_hide_expand (t[i]);
+    return r;
+  }
+#else
+  return t;
+#endif
+}
+
 /******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
@@ -1557,6 +1586,7 @@ upgrade_tex (tree t) {
   t= upgrade_capitalize_menus (t);
   t= upgrade_formatting (t);
   t= upgrade_expand (t);
+  t= upgrade_hide_expand (t);
   return t;
 }
 
@@ -1598,5 +1628,7 @@ upgrade (tree t, string version) {
     t= upgrade_formatting (t);
   if (version_inf_eq (version, "1.0.2.3"))
     t= upgrade_expand (t);
+  if (version_inf_eq (version, "1.0.2.4"))
+    t= upgrade_hide_expand (t);
   return t;
 }
