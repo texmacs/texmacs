@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -148,19 +148,16 @@
 
   <\active*>
     <\src-comment>
-      Tabular environments
+      Tabular environments.
     </src-comment>
   </active*>
 
   <assign|descriptive-table|<macro|x|<tformat|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|-1|cell-tborder|0.5ln>|<cwith|1|1|1|-1|cell-background|pastel
   blue>|<twith|table-min-rows|2>|<twith|table-lborder|1ln>|<twith|table-rborder|1ln>|<twith|table-bborder|1ln>|<twith|table-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<twith|table-min-cols|2>|<arg|x>>>>
 
-  <assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|4|4|cell-lborder|0.5ln>|<cwith|2|2|3|4|cell-bborder|1ln>|<cwith|1|1|3|4|cell-bborder|0.5ln>|<cwith|2|2|1|-1|cell-background|pastel
-  blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>>
-
   <\active*>
     <\src-comment>
-      Other tags
+      Other tags.
     </src-comment>
   </active*>
 
