@@ -59,14 +59,8 @@ void
 edit_env_rep::style_init_env () {
   dpi= get_int (DPI);
   flexibility= get_double (PAGE_FLEXIBILITY);
-  string medium= get_string (PAGE_MEDIUM);
-  string type  = get_string (PAGE_TYPE);
-  bool   landsc= (get_string (PAGE_ORIENTATION) == "landscape");
-  if ((medium != "automatic") && (type != "user")) {
-    assign (PAGE_WIDTH , copy (page_get_feature (type, PAGE_WIDTH , landsc)));
-    assign (PAGE_HEIGHT, copy (page_get_feature (type, PAGE_HEIGHT, landsc)));
-  }
   back= hashmap<string,tree> (UNINIT);
+  update_page_pars ();
 }
 
 /******************************************************************************

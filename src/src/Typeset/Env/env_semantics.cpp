@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "env.hpp"
+#include "PsDevice/page_type.hpp"
 
 /******************************************************************************
 * Retrieving the page size
@@ -111,40 +112,77 @@ initialize_default_var_type () {
 * Retrieving the page size
 ******************************************************************************/
 
+#define get_page_par(which) \
+  (get_string (which) == "auto"? \
+   decode_length (page_get_feature (page_type, which, page_landscape)): \
+   get_length (which))
+
+void
+edit_env_rep::update_page_pars () {
+  page_type       = get_string (PAGE_TYPE);
+  page_landscape  = (get_string (PAGE_ORIENTATION) == "landscape");
+  page_automatic  = (get_string (PAGE_MEDIUM) == "automatic");
+  bool width_flag = get_bool (PAGE_WIDTH_MARGIN);
+  bool screen_flag= get_bool (PAGE_SCREEN_MARGIN);
+
+  if (page_automatic) {
+    page_width        = get_length (PAGE_SCREEN_WIDTH);
+    page_height       = get_length (PAGE_SCREEN_HEIGHT);
+    page_odd_margin   = get_length (PAGE_SCREEN_LEFT);
+    page_right_margin = get_length (PAGE_SCREEN_RIGHT);
+    page_even_margin  = page_odd_margin;
+    page_top_margin   = get_length (PAGE_SCREEN_TOP);
+    page_bottom_margin= get_length (PAGE_SCREEN_BOT);
+    page_user_width   = page_width - page_odd_margin - page_right_margin;
+    page_user_height  = page_height - page_top_margin - page_bottom_margin;
+  }
+  else {
+    page_width        = get_page_par (PAGE_WIDTH);
+    page_height       = get_page_par (PAGE_HEIGHT);
+
+    if (!width_flag) {
+      page_odd_margin   = get_page_par (PAGE_ODD);
+      page_even_margin  = get_page_par (PAGE_EVEN);
+      page_right_margin = get_page_par (PAGE_RIGHT);
+      page_user_width   = page_width - page_odd_margin - page_right_margin;
+    }
+    else {
+      page_user_width   = get_page_par (PAR_WIDTH);
+      SI odd_sh         = get_length (PAGE_ODD_SHIFT);
+      SI even_sh        = get_length (PAGE_EVEN_SHIFT);
+      page_odd_margin   = ((page_width - page_user_width) >> 1) + odd_sh;
+      page_even_margin  = ((page_width - page_user_width) >> 1) + even_sh;
+      page_right_margin = page_width - page_odd_margin - page_user_width;
+    }
+
+    page_top_margin   = get_page_par (PAGE_TOP);
+    page_bottom_margin= get_page_par (PAGE_BOT);
+    page_user_height  = page_height - page_top_margin - page_bottom_margin;
+
+    if (screen_flag) {
+      page_odd_margin   = get_length (PAGE_SCREEN_LEFT);
+      page_right_margin = get_length (PAGE_SCREEN_RIGHT);
+      page_top_margin   = get_length (PAGE_SCREEN_TOP);
+      page_bottom_margin= get_length (PAGE_SCREEN_BOT);
+      page_even_margin  = page_odd_margin;
+      page_width = page_user_width + page_odd_margin + page_right_margin;
+      page_height= page_user_height + page_top_margin + page_bottom_margin;
+    }
+  }
+}
+
 void
 edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
 			     SI& odd, SI& even, SI& top, SI& bot)
 {
-  SI right;
-  SI rl= get_length (PAGE_REDUCE_LEFT);
-  SI rr= get_length (PAGE_REDUCE_RIGHT);
-  SI rt= get_length (PAGE_REDUCE_TOP);
-  SI rb= get_length (PAGE_REDUCE_BOT);
-
-  width = get_length (PAGE_WIDTH);
-  height= get_length (PAGE_HEIGHT);
-  odd   = get_length (PAGE_ODD);
-  even  = get_length (PAGE_EVEN);
-  right = get_length (PAGE_RIGHT);
-  top   = get_length (PAGE_TOP);
-  bot   = get_length (PAGE_BOT);
-
-  string medium= get_string (PAGE_MEDIUM);
-  if (medium != "automatic") {
-    width  -= rl+rr;
-    height -= rt+rb;
-    odd    -= rl;
-    even   -= rl;
-    top    -= rt;
-    bot    -= rb;
-
-    w= get_length (PAR_WIDTH);
-    h= height- top- bot;
-  }
-  else {
-    w= width- odd- right;
-    h= height- top- bot;
-  }
+  w     = page_user_width;
+  h     = page_user_height;
+  width = page_width;
+  height= page_height;
+  odd   = page_odd_margin;
+  even  = page_even_margin;
+  top   = page_top_margin;
+  bot   = page_bottom_margin;
 
   int nr_cols= get_int (PAR_COLUMNS);
   if (nr_cols > 1) {
