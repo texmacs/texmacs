@@ -502,6 +502,11 @@ edit_env_rep::exec_drd_props (tree t) {
 			  ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
       }
+      if (prop == "border") {
+	if (val == "yes") drd->set_no_border (l, false);
+	if (val == "no") drd->set_no_border (l, true);
+	drd->freeze_no_border (l);
+      }
       if (prop == "accessible") {
 	if (val == "none") {
 	  int i, n= drd->get_nr_indices (l);

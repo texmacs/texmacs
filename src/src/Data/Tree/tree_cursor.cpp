@@ -27,7 +27,7 @@ valid_cursor (tree t, path p, bool start_flag=false) {
   if (nil (p)) return false;
   if (atom (p)) {
     if (start_flag && (is_concat (t) || is_prime (t))) return (p->item!=0);
-    if (std_drd->is_child_enforcing (t)) return false;
+    if (the_drd->is_child_enforcing (t)) return false;
     return true;
   }
   if (is_concat (t))
@@ -52,8 +52,8 @@ pre_correct (tree t, path p) {
 
   if (nil (p)) return pre_correct (t, path(0));
   if (atom (p)) {
-    if (std_drd->is_child_enforcing (t)) {
-      if ((p->item == 0) && std_drd->is_accessible_child (t, 0))
+    if (the_drd->is_child_enforcing (t)) {
+      if ((p->item == 0) && the_drd->is_accessible_child (t, 0))
 	return path (0, pre_correct (t[0], path (0)));
       else {
 	int l= N(t)-1;
@@ -180,7 +180,7 @@ path
 up_correct (tree t, path p, bool active= true) {
   if (nil (p)) return p;
   if ((p->item<0) || (p->item>=N(t))) return path ();
-  if (active && (!std_drd->is_accessible_child (t, p->item))) return path ();
+  if (active && (!the_drd->is_accessible_child (t, p->item))) return path ();
   return path (p->item,
 	       up_correct (t[p->item], p->next, !is_mod_active_once (t)));
 }

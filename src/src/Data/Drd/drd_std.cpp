@@ -13,6 +13,7 @@
 #include "drd_std.hpp"
 
 drd_info std_drd ("tm");
+drd_info the_drd= std_drd;
 hashmap<string,int> STD_CODE (UNKNOWN);
 
 #define BIFORM   CHILD_BIFORM

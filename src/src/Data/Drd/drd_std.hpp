@@ -15,6 +15,7 @@
 #include "drd_info.hpp"
 
 extern drd_info std_drd;
+extern drd_info the_drd;
 extern hashmap<string,int> STD_CODE;
 
 inline int std_contains (string s) { return STD_CODE->contains (s); }
