@@ -44,6 +44,8 @@ bridge_surround_rep::bridge_surround_rep (typesetter ttt, tree st, path ip):
 
 void
 bridge_surround_rep::initialize () {
+  while (N(st)<3) // hack for temporarily incorrect situations (A-backspace)
+    st= tree (SURROUND, "") * st;
   if (nil (body)) body= make_bridge (ttt, st[2], descend (ip, 2));
   else replace_bridge (body, st[2], descend (ip, 2));
   changes_before= hashmap<string,tree> (UNINIT);

@@ -9,11 +9,6 @@ Class group-ponctuation
 	Spacing=	None, Default
 	Penalty=	0
 
-Class group-separator
-	Type=		Separator
-	Precedence=	0
-	Penalty=	0
-
 Class group-suspension
 	Type=		Symbol
 	Precedence=	0
@@ -199,6 +194,10 @@ Class operator-prefix
 
 Class group-open
 	Type=		Opening Bracket
+	Precedence=	160
+
+Class group-bar
+	Type=		Symbol
 	Precedence=	160
 
 Class group-close
@@ -402,7 +401,7 @@ Members group-open
 Members group-ponctuation
 	, ; :
 
-Members group-separator
+Members group-bar
 	|
 	mid-| mid-||
 
