@@ -1,0 +1,8 @@
+Plugin: buffer-replace
+Summary: walking and changing the buffer
+Release: 1.0
+TeXmacs: 1.0.3
+Author: David Allouche
+License: GNU Public License v2 or later
+
+Provides library functions for performing live transformation on buffers.

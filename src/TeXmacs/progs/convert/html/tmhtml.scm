@@ -382,13 +382,13 @@
 (define (tmhtml-frac env l)
   (let* ((num (tmhtml env (car l)))
 	 (den (tmhtml env (cadr l))))
-    `("frac (" ,@num ", " ,@den ")")))
+;    `("frac (" ,@num ", " ,@den ")")))
 
-;;    `((h:table (@ (style "display: inline; position: relative; top: 2.5ex")
-;;		  (valign "center"))
-;;	       (h:tr (h:td (@ (align "center")
-;;			      (style "border-bottom: solid 1px")) ,@num))
-;;	       (h:tr (h:td (@ (align "center")) ,@den))))))
+    `((h:table (@ (style "display: inline; position: relative; top: 2.5ex")
+		  (valign "center"))
+	       (h:tr (h:td (@ (align "center")
+			      (style "border-bottom: solid 1px")) ,@num))
+	       (h:tr (h:td (@ (align "center")) ,@den))))))
 
 (define (tmhtml-sqrt env l)
   (if (= (length l) 1)
@@ -441,54 +441,13 @@
 	   (tmhtml-with-one env var val `(with ,@next))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other macro-related primitives
+;; Other primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-compound env l)
   ;; Explicit expansions are converted and handled as implicit expansions.
   (tmhtml-implicit-compound env (cons (string->symbol (car l))
 				      (cdr l))))
-
-(define (tmhtml-mark env l)
-  ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml env (cadr l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Source code
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (blue sym)
-  `(h:font (@ (color "blue")) ,sym))
-
-(define (tmhtml-src-args env l)
-  (if (null? l) l
-      `(,(blue "|")
-	,@(tmhtml env (car l))
-	,@(tmhtml-src-args env (cdr l)))))
-
-(define (tmhtml-inline-tag env l)
-  `(,(blue "&lt;")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-(define (tmhtml-open-tag env l)
-  `(,(blue "&lt;\\")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-middle-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-close-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other primitives
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-label env l)
   ;; WARNING: bad conversion if ID is not a string.
@@ -550,9 +509,8 @@
 
 (define (tmhtml-table-make env p)
   `((h:table
-     (@ ,@(if (p 'global 'border)
-	      '((border "1")) 
-	      '((style "display: inline"))))
+     (@ (style "display: inline")
+	,@(if (p 'global 'border) '((border "1")) '()))
      ,@(tmhtml-table-cols p)
      (h:tbody ,@(tmhtml-table-contents env p)))))
 
@@ -883,31 +841,18 @@
 
   (assign tmhtml-noop)
   (with tmhtml-with)
-  (provides tmhtml-noop)
-  ((:or value quote-value) tmhtml-compound)
-  ((:or macro drd-props arg quote-arg) tmhtml-noop)
+  ((:or set reset) tmhtml-noop)
   (compound tmhtml-compound)
-  ((:or xmacro get-label get-arity map-args eval-args) tmhtml-noop)
-  (mark tmhtml-mark)
-  (eval tmhtml-noop)
-  ((:or if if* case while for-each extern include use-package) tmhtml-noop)
+  ((:or begin end include macro func env eval) tmhtml-noop)
+  (value tmhtml-compound)
+  (arg tmhtml-noop)
+  ((:or backup quote delay hold release) tmhtml-noop)
   
   ((:or or xor and not plus minus times over div mod merge length range
 	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
    tmhtml-noop)
-
-  ((:or style-with style-with* style-only style-only*
-	active active* inactive inactive* rewrite-inactive) tmhtml-noop)
-  (inline-tag tmhtml-inline-tag)
-  (open-tag tmhtml-open-tag)
-  (middle-tag tmhtml-middle-tag)
-  (close-tag tmhtml-close-tag)
-  (symbol tmhtml-noop)
-  (latex tmhtml-noop)
-  (hybrid tmhtml-noop)
-
-  ((:or tuple collection associate) tmhtml-noop)
+  ((:or inactive symbol latex hybrid tuple collection associate) tmhtml-noop)
   (label tmhtml-label)
   (reference tmhtml-noop)
   (pageref tmhtml-noop)

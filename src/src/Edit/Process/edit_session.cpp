@@ -616,7 +616,7 @@ edit_process_rep::session_complete_try () {
 
   string lan= get_env_string (PROG_LANGUAGE);
   string ses= get_env_string (PROG_SESSION);
-  string s  = as_string (call ("verbatim-serialize", lan, tree_to_stree (t)));
+  string s  = as_string (call ("verbatim-serialize", lan, tree_to_object (t)));
   s= s (0, N(s)-1);
 
   int pos= search_forwards (cursor_symbol, s);

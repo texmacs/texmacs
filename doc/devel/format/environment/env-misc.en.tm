@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.3.10>
 
 <style|tmdoc>
 
@@ -11,28 +11,26 @@
   <\explain>
     <var-val|save-aux|true><explain-synopsis|save auxiliary content>
   <|explain>
-    This flag specifies whether auxiliary content has to be saved along with
-    the document.
+    Please document.
   </explain>
 
   <\explain>
     <var-val|sfactor|5><explain-synopsis|shrinking factor>
   <|explain>
-    The shrinking factor which is used for rendering.
+    Please document.
   </explain>
 
   <\explain>
-    <var-val|par-no-first|false><explain-synopsis|disable first indentation
+    <var-val|par-no-first|false><explain-synopsis|disable first indenation
     for next paragraph?>
   <|explain>
-    This flag disables first indentation for the next paragraph.
+    Please document.
   </explain>
 
   <\explain>
     <src-var|cell-format><explain-synopsis|current cell format>
   <|explain>
-    This variable us used during the typsetting of tables in order to store
-    the with-settings which apply to the current cell.
+    Please document.
   </explain>
 
   <\explain>
@@ -40,15 +38,25 @@
 
     <src-var|line-decorations>
 
-    <src-var|page-decorations>
+    <src-var|page-decorations><explain-synopsis|placeholder for decorations>
+  <|explain>
+    Please document.
+  </explain>
 
+  <\explain>
     <src-var|xoff-decorations>
 
-    <src-var|yoff-decorations><explain-synopsis|auxiliary variables for
-    decorations>
+    <src-var|yoff-decorations><explain-synopsis|positioning of decorations>
   <|explain>
-    These environment variables store auxiliary information during the
-    typsetting of decorations.
+    Please document.
+  </explain>
+
+  Describe further macros apart.
+
+  <\explain>
+    <src-var|id><explain-synopsis|identity macro>
+  <|explain>
+    Please document.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

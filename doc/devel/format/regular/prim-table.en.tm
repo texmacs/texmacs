@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.3.10>
 
 <style|tmdoc>
 
@@ -28,8 +28,7 @@
   </explain>
 
   <\explain>
-    <label|table-twith><explain-macro|twith|var|val><explain-synopsis|set a
-    table variable>
+    <explain-macro|twith|var|val><explain-synopsis|set a table variable>
   <|explain>
     The formatting of the table as a whole is specified by a number of
     <em|table variables>, which are used internally and do not appear in the
@@ -40,7 +39,7 @@
   </explain>
 
   <\explain>
-    <label|table-cwith><explain-macro|cwith|top-row|bot-row|left-col|right-col|var|val><explain-synopsis|set
+    <explain-macro|cwith|top-row|bot-row|left-col|right-col|var|val><explain-synopsis|set
     a cell variable for a range>
   <|explain>
     The formatting of cells is specified by a number of <em|cell variables>,
@@ -132,16 +131,7 @@
     currently displayed position.
   </explain>
 
-  <\explain>
-    <explain-macro|tabular|table><explain-synopsis|built-in tabular macro>
-  <|explain>
-    This macro implements standard left aligned tables without borders.
-    Although the <markup|tabular> macro is built-in into <TeXmacs>, it should
-    not really be considered as a primitive. However, it is not part of any
-    style file either.
-  </explain>
-
-  <tmdoc-copyright|2004|David Allouche|Joris van der Hoeven>
+  <tmdoc-copyright|2004|David Allouche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
