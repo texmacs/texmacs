@@ -54,7 +54,9 @@
       <item*|Macro:>Substituted at evaluation, yields a tree which may have
       accessible parts.
 
-      <item*|Display:>Self-evaluating and explicitly displayed.
+      <item*|Display:>Self-evaluating and explicitly displayed. Such
+      primitives have no inherent semantics and are not normally visible in
+      documents. They are used to report problems or in internal structures.
     </description>
 
     <item*|Usage>Documents where this primitive is allowed.
@@ -85,29 +87,15 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|gly-1|<tuple|1|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|table>
-      <tuple|normal|Example tag description|<pageref|gly-1>>
-    </associate>
-  </collection>
-</auxiliary>
