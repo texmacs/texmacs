@@ -47,6 +47,11 @@ public:
   void post_notify      (path p);
 
   void notify_undo (string op, path p, tree t);
+  void remove_undo_mark ();
+  void add_undo_mark ();
+  void undo (bool redoable);
+  void unredoable_undo ();
+  void forget_undo ();
   void undo ();
   void redo ();
   void perform_undo_redo (tree x);

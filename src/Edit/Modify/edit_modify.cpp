@@ -391,7 +391,31 @@ edit_modify_rep::notify_undo (string op, path p, tree t) {
 }
 
 void
-edit_modify_rep::undo () {
+edit_modify_rep::remove_undo_mark () {
+  if (buf->undo != "nil") {
+    tree s= buf->undo, t= buf->undo[1];
+    while ((t != "nil") && (t[0] != "")) {
+      s= t;
+      t= t[1];
+    }
+    if (t != "nil") {
+      s[1]= t[1];
+      buf->undo_depth--;
+    }
+  }
+}
+
+void
+edit_modify_rep::add_undo_mark () {
+  buf->mark_undo_block ();
+}
+
+void
+edit_modify_rep::undo (bool redoable) {
+  if (inside_graphics () && !as_bool (eval ("graphics-undo-enabled"))) {
+    eval ("(graphics-reset-context 'undo)");
+    return;
+  }
   buf->unmark_undo_block ();
   if (buf->undo == "nil") {
     set_message ("No more undo information available", "undo");
@@ -406,6 +430,12 @@ edit_modify_rep::undo () {
     perform_undo_redo (x);
     undo_flag= false;
   }
+  if (!redoable) {
+    buf->unmark_redo_block ();
+    while ((buf->redo != "nil") && (buf->redo[0] != ""))
+      buf->redo= buf->redo[1];
+    buf->unmark_redo_block ();
+  }         
   buf->unmark_undo_block ();
   if (buf->undo_depth == buf->last_save) {
     beep ();
@@ -413,6 +443,24 @@ edit_modify_rep::undo () {
   }
   if (inside_graphics ())
     eval ("(graphics-reset-context 'undo)");
+}
+
+void
+edit_modify_rep::forget_undo () {
+  buf->unmark_undo_block ();
+  while ((buf->undo != "nil") && (buf->undo[0] != ""))
+    buf->undo= buf->undo[1];
+  buf->unmark_undo_block ();
+}
+
+void
+edit_modify_rep::unredoable_undo () {
+  undo (false);
+}
+
+void
+edit_modify_rep::undo () {
+  undo (true);
 }
 
 void

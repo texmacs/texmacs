@@ -229,6 +229,10 @@ public:
   virtual void notify_ins_unary (path p, tree_label op) = 0;
   virtual void notify_rem_unary (path p) = 0;
   virtual void post_notify (path p) = 0;
+  virtual void remove_undo_mark () = 0;
+  virtual void add_undo_mark () = 0;
+  virtual void unredoable_undo () = 0;
+  virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
   virtual void assign_diff (path p, tree u) = 0;
