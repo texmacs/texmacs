@@ -2139,7 +2139,7 @@ upgrade_item_punct (tree t) {
     for (i=0; i<n; i++)
       r[i]= upgrade_item_punct (t[i]);
     if (is_compound (r, "item*", 1)) {
-      tree& item (r[0]);
+      tree& item= r[0];
       if (is_atomic (item)) {
 	string s= item->label;
 	if (ends (s, ".") || ends (s, ":") || ends (s, " "))
