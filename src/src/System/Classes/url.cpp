@@ -543,7 +543,7 @@ relative (url base, url u) {
 url
 delta_sub (url base, url u) {
 #ifdef OS_WIN32
-  if (is_atomic (base) || heuristic_is_default (as_string(base), URL_SYSTEM))
+  if (is_atomic (base) || heuristic_is_default (as_string (base), URL_SYSTEM))
     return u;
 #else
   if (is_atomic (base))
@@ -812,7 +812,7 @@ concretize (url u) {
   // FIXME: this fix seems strange;
   // to start with, the if condition is not respected
   string s = as_string (u);
-  if (starts (s, "file:///")) s = s(8, N(s));
+  if (starts (s, "file:///")) s= s (8, N(s));
   if (heuristic_is_default (s, 0)) return s;
 #else
   if (is_rooted (u, "default") || is_rooted (u, "file"))

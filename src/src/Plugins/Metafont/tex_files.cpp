@@ -171,11 +171,18 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
-  if (get_setting ("MAKEPK") == "makepk"){
+  if (get_setting ("MAKEPK") == "makepk") {
+#ifdef OS_WIN32
+    s = "makepk --dest-dir \""
+      * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
+      * name * " " * as_string(dpi) * " " * as_string(design_dpi)
+      * " " * as_string(dpi) * "%//" * as_string(design_dpi);
+#else
     s = "makepk --dest-dir \""
       * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
       * name * " " * as_string(dpi) * " " * as_string(design_dpi)
       * " " * as_string(dpi) * "/" * as_string(design_dpi);
+#endif
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }

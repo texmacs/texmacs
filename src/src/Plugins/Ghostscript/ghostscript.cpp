@@ -25,6 +25,9 @@ static int gs_type= -1;
 
 bool
 ghostscript_bugged () {
+#ifdef OS_WIN32
+	return 0;
+#else
   if (gs_type == -1) {
     string gs_version= var_eval_system ("gs --version");
     gs_type= 0;
@@ -34,6 +37,7 @@ ghostscript_bugged () {
       gs_type= 1;
   }
   return (gs_type == 1);
+#endif
 }
 
 /******************************************************************************
@@ -58,6 +62,7 @@ void
 ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
 		 url image, SI w, SI h, int x1, int y1, int x2, int y2)
 {
+#ifndef OS_WIN32
   int win_id= (int) gs_win;
   int pix_id= (int) pm;
   if (ghostscript_bugged ()) set_env ("GHOSTVIEW", as_string (win_id));
@@ -77,6 +82,7 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   XChangeProperty (dpy, gs_win, gh, st, 8, PropModeReplace, _data, _n);
   delete[] _data;
   XSync(dpy, false);
+#endif
   string raw_ps, nice_ps;
   raw_ps= ps_load (image);
   nice_ps= encapsulate_postscript (raw_ps);

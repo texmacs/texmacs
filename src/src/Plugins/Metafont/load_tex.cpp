@@ -18,6 +18,10 @@
 #include "Freetype/tt_face.hpp"
 #include "timer.hpp"
 
+#ifdef OS_WIN32
+#include <x11/xlib.h>
+#endif
+
 static int
 mag (int dpi, int size, int dsize) {
   if ((size>=100) && (dsize<100)) dsize *= 100;
@@ -253,6 +257,20 @@ load_tex (string family, int size, int dpi, int dsize,
       bench_cumul ("load tex font");
       return;
     }
+#ifdef OS_WIN32
+  else {
+    string name= family * as_string (size) * "@" * as_string (dpi);
+    cerr << "\n\nCould not open font " << name << "\nLoading default" << LF;
+    cout << "Could not load font...\nLoading default" << LF;
+    XNoTexWarn();
+    if (load_tex_tfm ("cmr", 10, 10, tfm) &&
+	load_tex_pk ("cmr", 10, 600, 10, tfm, pk))
+      {
+	bench_cumul ("load tex font");
+	return;
+      }
+  }
+#endif
   string name= family * as_string (size) * "@" * as_string (dpi);
   cerr << "\n\nI could not open " << name << "\n";
   fatal_error ("Tex seems not to be installed properly",
