@@ -10,7 +10,7 @@
   organization may be represented by a labeled tree. For instance, the tree
   which corresponds to the <tmstyle|article> style is represented below:
 
-  <\big-figure|<tree|<tmstyle|article>|<tree|<tmpackage|std>|<stack|<tformat|<table|<row|<cell|<tmpackage|std-markup>>>|<row|<cell|<tmpackage|std-symbol>>>|<row|<cell|<tmpackage|std-math>>>|<row|<cell|<tmpackage|std-list>>>|<row|<cell|<tmpackage|std-utils>>>|<row|<cell|<tmpackage|std-counter>>>|<row|<cell|<tmpackage|std-automatic>>>|<row|<cell|<tmpackage|list>>>|<row|<cell|<tmpackage|session>>>>>>>|<tree|<tmpackage|env>|<stack|<tformat|<table|<row|<cell|<tmpackage|env-base>>>|<row|<cell|<tmpackage|env-math>>>|<row|<cell|<tmpackage|env-theorem>>>|<row|<cell|<tmpackage|env-float>>>>>>>|<tree|<tmpackage|header-article>|<tmpackage|title-generic>>|<tree|<tmpackage|section-article>|<tmpackage|section-base>>>>
+  <\big-figure|<tree|<tmstyle|article>|<tree|<tmpackage|std>|<stack|<tformat|<table|<row|<cell|<tmpackage|std-markup>>>|<row|<cell|<tmpackage|std-symbol>>>|<row|<cell|<tmpackage|std-math>>>|<row|<cell|<tmpackage|std-list>>>|<row|<cell|<tmpackage|std-utils>>>|<row|<cell|<tmpackage|std-counter>>>|<row|<cell|<tmpackage|std-automatic>>>|<row|<cell|<tmpackage|list>>>|<row|<cell|<tmpackage|session>>>>>>>|<tree|<tmpackage|env>|<stack|<tformat|<table|<row|<cell|<tmpackage|env-base>>>|<row|<cell|<tmpackage|env-math>>>|<row|<cell|<tmpackage|env-theorem>>>|<row|<cell|<tmpackage|env-float>>>>>>>|<tree|<tmpackage|title-base>|<tmpackage|title-generic>>|<tmpackage|header-article>|<tree|<tmpackage|section-article>|<tmpackage|section-base>>>>
     The tree with the packages from which the <tmstyle|article> style has
     been built up. In order to save space, we have regrouped the numerous
     children of <tmpackage|std> and <tmpackage|env> in vertical lists.
@@ -30,7 +30,7 @@
   instance, the <tmstyle|article> style essentially consists of the line
 
   <\tm-fragment>
-    <inactive*|<use-package|std|env|header-article|section-article>>
+    <inactive*|<use-package|std|env|title-generic|header-article|section-article>>
   </tm-fragment>
 
   More precisely, the <markup|use-package> package sequentially includes the

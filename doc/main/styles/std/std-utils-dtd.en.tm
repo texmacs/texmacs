@@ -57,6 +57,57 @@
   </explain>
 
   <\explain>
+    <explain-macro|wide-bothlined|top-border|bot-border|top-sep|bot-sep|body>
+
+    <explain-macro|wide-std-bothlined|body>
+
+    <explain-macro|padded-bothlined|space-above|space-below|top-border|bot-border|top-sep|bot-sep|body>
+
+    <explain-macro|padded-std-bothlined|space-above|space-below|body>
+
+    <explain-macro|wide-underlined|bborder|bsep|body>
+
+    <explain-macro|wide-std-underlined|body>
+  <|explain>
+    These tags are used to make the <src-arg|body> span over the entire
+    paragraph width and to put a horizontal rule above and/or below it. The
+    widths of the rules are given by <src-arg|top-border> and
+    <src-arg|bot-border> and the separation between the rules by
+    <src-arg|top-sep> and <src-arg|bot-sep>. The standard width and
+    separation (used by <markup|wide-std-bothlined>,
+    <markup|padded-std-bothlined> and <markup|wide-std-underlined>) are
+    <verbatim|1ln> and <verbatim|1sep>. The padded variants specify
+    additional spaces <src-arg|space-above> and <src-arg|space-below> above
+    and below the rules. As an example, <inactive*|<wide-std-underlined|left<htab|5mm>right>>
+    yields:
+
+    <wide-std-underlined|left<htab|5mm>right>
+
+    Wide underlined environments are typically used for page headers. Wide
+    environments which are both overlined and underlined are typically used
+    for abstracts or floating figures and tables.
+  </explain>
+
+  <\explain>
+    <explain-macro|wide-framed|border-width|hsep|vsep|body>
+
+    <explain-macro|wide-std-framed|body>
+
+    <explain-macro|wide-framed-colored|border-color|body-color|border-width|hsep|vsep|body>
+
+    <explain-macro|wide-std-framed-colored|border-color|body-color|body>
+  <|explain>
+    These tags put the <src-arg|body> inside a frame box which spans over the
+    whole paragraph. The user may specify a <src-arg|border-width>,
+    horizontal and vertical separations <src-arg|hsep> and <src-arg|vsep>
+    between the border and the text, and colors <src-arg|border-color> and
+    <src-arg|body-color> for the border and the background. For instance,
+    <inactive*|<wide-std-framed-colored|brown|pastel green|Hi there!>> yields
+
+    <wide-std-framed-colored|brown|pastel green|Hi there!>
+  </explain>
+
+  <\explain>
     <explain-macro|indent-left|left-amount|body>
 
     <explain-macro|indent-right|right-amount|body>
@@ -66,6 +117,29 @@
     These environments may be used in order to increase the current left
     and/or right indentation by the amounts <src-arg|left-amount> and/or
     <src-arg|right-amount>.
+  </explain>
+
+  <label|header-footer-helper>The following macros may be used in order to
+  set headers and footers:
+
+  <\explain|<explain-macro|set-header|header-text>>
+    A macro for permanently changing the header. Notice that certain tags in
+    the style file, like sectional tags, may override such manual changes.
+  </explain>
+
+  <\explain|<explain-macro|set-footer|footer-text>>
+    A macro for permanently changing the footer. Again, certain tags in the
+    style file may override such manual changes.
+  </explain>
+
+  <\explain|<explain-macro|blanc-page>>
+    Remove all headers and footers from this page.
+  </explain>
+
+  <\explain|<explain-macro|simple-page>>
+    Remove the header of this page and set the footer to the current page
+    number (centered). This macro is often called for title pages or at the
+    start of new chapters.
   </explain>
 
   Other macros provided by <tmdtd|std-utils> are:
@@ -83,16 +157,6 @@
     <inactive*|<map|<macro|x|<em|<arg|x>>>|<tuple|1|2|3>>> yields
     <map|<macro|x|<em|<arg|x>>>|<tuple|1|2|3>> (the quote only appears when
     rendering the result, not when performing further computations with it).
-  </explain>
-
-  <\explain|<explain-macro|set-header|header-text>>
-    A macro for permanently changing the header. Notice that certain tags in
-    the style file, like sectional tags, may override such manual changes.
-  </explain>
-
-  <\explain|<explain-macro|set-footer|footer-text>>
-    A macro for permanently changing the footer. Again, certain tags in the
-    style file may override such manual changes.
   </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>

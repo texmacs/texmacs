@@ -286,7 +286,7 @@
   <paragraph|Page decorations>
 
   <\explain>
-    <var-val|page-odd-header|>
+    <label|header-footer-env><var-val|page-odd-header|>
 
     <var-val|page-odd-footer|>
 

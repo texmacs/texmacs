@@ -3,18 +3,15 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|<LaTeX> style sections>
+  <tmdoc-title|Further notes and tips>
 
   <\traverse>
-    <branch|Using sectional tags|section-base-export.en.tm>
+    <branch|Customizing arbitrary tags|note-customize.en.tm>
 
-    <branch|Customization of sectional tags|section-base-customize.en.tm>
-
-    <branch|Helper macros for rendering section
-    titles|section-base-helper.en.tm>
+    <branch|Standard utilities|note-utilities.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
