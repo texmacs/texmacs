@@ -3,7 +3,7 @@
 export TEXMACS_LISP_PATH=$TEXMACS_PATH/plugins/lisp
 cd $TEXMACS_LISP_PATH
 
-if [ "$1" = "CLisp" ]; then
+if [ "$1" = "Clisp" ]; then
 	echo -ne "\002verbatim:"
 	echo -ne "\002scheme:"
 	cat << EOF
@@ -14,7 +14,7 @@ EOF
 	exec clisp -q -i $TEXMACS_LISP_PATH/clisp/clisp-init.lisp 
 fi
 
-if [ "$1" = "CMUCL" ]; then
+if [ "$1" = "Cmucl" ]; then
 	echo -ne "\002verbatim:"
 	exec lisp -init $TEXMACS_LISP_PATH/cmucl/cmucl-init.lisp
 fi

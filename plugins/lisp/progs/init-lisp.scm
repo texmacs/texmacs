@@ -18,8 +18,8 @@
 
 (define (lisp-versions)
   (let ((version-list
-	 (append (if (url-exists-in-path? "clisp") '("CLisp") '())
-		 (if (url-exists-in-path? "lisp") '("CMUCL") '()))))
+	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
+		 (if (url-exists-in-path? "lisp") '("Cmucl") '()))))
     (if (not (null? version-list))
       (let* ((default (car version-list))
 	     (rest (cdr version-list))
