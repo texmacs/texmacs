@@ -32,5 +32,7 @@ function tmp=obj2scm(n,c)
 			tmp=str2scm(n);
 		case ("list")
 			tmp=list2scm(n,c);
+		otherwise
+			tmp="";
 	endswitch
 endfunction
