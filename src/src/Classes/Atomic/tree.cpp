@@ -316,6 +316,11 @@ compound (string s, tree t1, tree t2, tree t3, tree t4) {
   return tree (make_tree_label (s), t1, t2, t3, t4);
 }
 
+tree
+compound (string s, array<tree> a) {
+  return tree (make_tree_label (s), a);
+}
+
 bool
 is_extension(tree_label l) {
   return l >= START_EXTENSIONS;

@@ -399,6 +399,22 @@ latex_cite_to_tree (string cite_type, string s) {
 }
 
 tree
+latex_index_to_tree (string s) {
+  int i, start, n= N(s);
+  array<tree> a (0);
+  for (start= i= 0; i<n; i++)
+    if (s[i] == '!' && N(a) < 3) {
+      a << tree (s (start, i));
+      start= i+1;
+    }
+  a << tree (s (start, i));
+  if (N(a) == 1) return compound ("index", a);
+  if (N(a) == 2) return compound ("subindex", a);
+  if (N(a) == 3) return compound ("subsubindex", a);
+  return compound ("subsubsubindex", a);
+}
+
+tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= as_string (t[1]);
@@ -539,12 +555,15 @@ latex_command_to_tree (tree t) {
     string s= as_string (t2e(t[1]));
     return latex_cite_to_tree (cite_type, s);
   }
-
   if (is_tuple (t, "\\cite*", 2)) {
     tree   ot= t2e(t[1])->label;
     string s = as_string (t2e(t[2]));
     tree   ct= latex_cite_to_tree ("cite", s);
     return tree (CONCAT, ct, " (", ot, ")");
+  }
+  if (is_tuple (t, "\\index", 1)) {
+    string s= as_string (t2e (t[1]));
+    return latex_index_to_tree (s);
   }
   if (is_tuple (t, "\\displaylines", 1)) {
     tree u= l2e (t[1]);

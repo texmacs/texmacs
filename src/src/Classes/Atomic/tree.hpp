@@ -247,6 +247,7 @@ tree compound (string s, tree t1);
 tree compound (string s, tree t1, tree t2);
 tree compound (string s, tree t1, tree t2, tree t3);
 tree compound (string s, tree t1, tree t2, tree t3, tree t4);
+tree compound (string s, array<tree> a);
 bool is_extension (tree t);
 bool is_extension (tree t, int n);
 bool is_compound (tree t, string s);
