@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : bitmap_char.cpp
-* DESCRIPTION: bitmaps of characters
+* MODULE     : glyph.cpp
+* DESCRIPTION: glyphs of characters
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT

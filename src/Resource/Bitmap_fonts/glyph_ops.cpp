@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : bitmap_ops.cpp
-* DESCRIPTION: operation on character bitmaps
+* MODULE     : glyph_ops.cpp
+* DESCRIPTION: operation on glyphs
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
