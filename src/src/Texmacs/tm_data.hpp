@@ -59,6 +59,8 @@ public:
   ~tm_data_rep ();
 
   /* Buffer management */
+  int  nr_bufs ();
+  tm_buffer get_buf (int i);
   void new_buffer ();
   void switch_to_buffer (int nr);
   void switch_to_buffer (url name);

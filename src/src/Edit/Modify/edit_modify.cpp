@@ -28,15 +28,31 @@ edit_modify_rep::~edit_modify_rep () {}
 * modification routines
 ******************************************************************************/
 
+// FIXME: the following notification loop is slow when we have many
+// open buffers. In the future, we might obtain the relevant editors
+// from all possible prefixes of p using a hashtable
+
+#define FOR_ALL_EDITORS_BEGIN(p) \
+  int i, j; \
+  for (i=0; i<sv->nr_bufs(); i++) { \
+    tm_buffer b= sv->get_buf (i); \
+    if (b->rp <= p) \
+      for (j=0; j<N(b->vws); j++) { \
+	editor& ed= ((tm_view) (b->vws[j]))->ed;
+
+#define FOR_ALL_EDITORS_END \
+      } \
+  }
+
 void
 edit_modify_rep::assign (path pp, tree u) {
   path p= copy (pp);
   // cout << "Assign " << u << " at " << p << "\n";
   notify_undo ("assign", p, subtree (et, p));
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_assign (p, u);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_assign (p, u);
+  FOR_ALL_EDITORS_END
 
   subtree (et, p)= u;
   finished (pp);
@@ -48,9 +64,9 @@ edit_modify_rep::insert (path pp, tree u) {
   // cout << "Insert " << u << " at " << p << "\n";
   notify_undo ("remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_insert (p, u);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_insert (p, u);
+  FOR_ALL_EDITORS_END
 
   insert_at (et, p, u);
   finished (pp);
@@ -66,9 +82,9 @@ edit_modify_rep::remove (path pp, int nr) {
   if (is_atomic (st)) notify_undo ("insert", p, st->label (l, l+ nr));
   else notify_undo ("insert", p, st (l, l+ nr));
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_remove (p, nr);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_remove (p, nr);
+  FOR_ALL_EDITORS_END
 
   remove_at (et, p, nr);
   finished (pp);
@@ -84,9 +100,9 @@ edit_modify_rep::split (path pp) {
   int  l2 = last_item (p);
   notify_undo ("join", path_up (p), "");
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_split (p);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_split (p);
+  FOR_ALL_EDITORS_END
 
   if (is_atomic (st[l1])) {
     string s1, s2;
@@ -116,9 +132,9 @@ edit_modify_rep::join (path pp) {
   int len= string_mode? N (st[l1]->label): arity (st[l1]);
   notify_undo ("split", p * len, "");
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_join (p);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_join (p);
+  FOR_ALL_EDITORS_END
 
   if (string_mode) st[l1]->label << st[l1+1]->label;
   else {
@@ -136,9 +152,9 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
   // cout << "Insert unary " << get_label (tree (op)) << " at " << p << "\n";
   notify_undo ("rem_unary", p, "");
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_ins_unary (p, op);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_ins_unary (p, op);
+  FOR_ALL_EDITORS_END
 
   tree& st= subtree (et, p);
   st= tree (op, st);
@@ -153,9 +169,9 @@ edit_modify_rep::rem_unary (path pp) {
   if (arity (st) != 1) fatal_error ("not a unary tree", "editor::rem_unary");
   notify_undo ("ins_unary", p, get_label (st));
 
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_rem_unary (p);
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_rem_unary (p);
+  FOR_ALL_EDITORS_END
 
   st= st[0];
   finished (pp);
@@ -163,9 +179,9 @@ edit_modify_rep::rem_unary (path pp) {
 
 void
 edit_modify_rep::finished (path pp) {
-  int i;
-  for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->post_notify (pp);
+  FOR_ALL_EDITORS_BEGIN (pp)
+    ed->post_notify (pp);
+  FOR_ALL_EDITORS_END
 }
 
 /******************************************************************************

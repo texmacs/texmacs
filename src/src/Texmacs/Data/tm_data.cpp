@@ -348,6 +348,16 @@ tm_data_rep::new_buffer_in_new_window (url name, tree doc) {
 * Exported routines
 ******************************************************************************/
 
+int
+tm_data_rep::nr_bufs () {
+  return N(bufs);
+}
+
+tm_buffer
+tm_data_rep::get_buf (int i) {
+  return (tm_buffer) bufs[i];
+}
+
 void
 tm_data_rep::new_buffer () {
   int i;
