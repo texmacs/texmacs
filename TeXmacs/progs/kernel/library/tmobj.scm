@@ -37,11 +37,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmobj-car t)
-  (:type (tmobj -> symbol))
+  (:type (-> tmobj symbol))
   (:synopsis "Get the label of @t.")
   (if (tree? t) (tree-get-label t) (car t)))
 
 (tm-define (tmobj-cdr t)
-  (:type (tmobj -> (list tmobj)))
+  (:type (-> tmobj (list tmobj)))
   (:synopsis "Get the arguments of @t.")
   (if (tree? t) (tree-get-children t) (cdr t)))

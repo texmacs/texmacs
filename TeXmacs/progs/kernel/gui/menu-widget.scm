@@ -403,7 +403,7 @@
 	  (else (make-menu-bad-format p e?)))))
 
 (tm-define (make-menu-widget p e?)
-  (:type (object -> widget))
+  (:type (-> object widget))
   (:synopsis "Transform a menu into a widget.")
   (:args (p "a scheme object which represents the menu")
 	 (e? "greyed menu if @e? is @#f"))

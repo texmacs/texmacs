@@ -538,7 +538,7 @@
   `(!file ,(htmltm-parse s)))
 
 (tm-define (html->texmacs html)
-  (:type (stree -> stree))
+  (:type (-> stree stree))
   (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
   (let* ((snippet? (not (func? html '!file 1)))
 	 (body (if snippet? html (cadr html)))

@@ -152,12 +152,12 @@
 
 (tm-define (stm-primitive? label)
   (:synopsis "Is it the label of a primitive texmacs construct?")
-  (:type ((:or symbol tree-label) -> bool))
+  (:type (-> symbol bool))
   (not (tree-label-extension? label)))
 
 (tm-define (stm-block-structure? x)
   (:synopsis "Is the texmacs document fragment @x a block-level structure?")
-  (:type (scheme-tree -> bool))
+  (:type (-> stree bool))
   (tree-multi-paragraph? (stree->tree x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

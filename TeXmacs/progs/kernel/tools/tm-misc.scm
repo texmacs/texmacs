@@ -32,12 +32,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tm-start p)
-  (:type (path -> path))
+  (:type (-> path path))
   (:synopsis "Round cursor position @p to below.")
   (cursor-start (the-buffer) p))
 
 (tm-define (tm-end p)
-  (:type (path -> path))
+  (:type (-> path path))
   (:synopsis "Round cursor position @p to above.")
   (cursor-end (the-buffer) p))
 
@@ -82,7 +82,7 @@
   (set-message "Error: not yet implemented" s))
 
 (tm-define (tm-debug)
-  (:type (->))
+  (:type (-> void))
   (:synopsis "For debugging purposes.")
   (display* (tree->stree (the-buffer)) "\n"))
 

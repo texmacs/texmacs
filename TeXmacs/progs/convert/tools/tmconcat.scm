@@ -48,7 +48,7 @@
 			  (tmconcat-math-sub s (+ pos 1))))))))
 
 (tm-define (tmconcat-tokenize-math s)
-  (:type (string -> (list string)))
+  (:type (-> string (list string)))
   (:synopsis "Decompose mathematical string @s into list of tokens.")
   (tmconcat-math-sub s 0))
 
@@ -80,7 +80,7 @@
 	(else (tmconcat-tabs-make head tail where '!right))))
 
 (tm-define (tmconcat-structure-tabs l)
-  (:type (forall T ((list T) -> (list T))))
+  (:type (forall T (-> (list T) (list T))))
   (:synopsis "Structure tabs in concatenation @l.")
   (with r (list-scatter l (lambda (x) (func? x 'htab)) #t)
     (if (null? (cdr r)) l

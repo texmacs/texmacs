@@ -26,17 +26,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (insert-stree t)
-  (:type (stree ->))
+  (:type (-> stree void))
   (:synopsis "Insert @t at the current cursor position.")
   (insert-tree (stree->tree t)))
 
 (tm-define (insert-stree-go-to t p)
-  (:type (stree path ->))
+  (:type (-> stree path void))
   (:synopsis "Insert @t and move cursor to @p inside @t.")
   (insert-tree-go-to (stree->tree t) p))
 
 (tm-define (insert-tree-at t p)
-  (:type (tree path ->))
+  (:type (-> tree path void))
   (:synopsis "Insert @t at @p.")
   (let* ((pos (tm-position-new))
 	 (old (tm-position-get pos)))
@@ -46,7 +46,7 @@
     (tm-position-delete pos)))
 
 (tm-define (insert-stree-at t p)
-  (:type (stree path ->))
+  (:type (-> stree path void))
   (:synopsis "Insert @t at @p.")
   (insert-tree-at (stree->tree t) p))
 
@@ -55,20 +55,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (insert-inactive-stree-go-to t p)
-  (:type (stree path ->))
+  (:type (-> stree path void))
   (:synopsis "Insert an inactive stree @t and go to @p inside @t.")
   (if (in-source?)
       (insert-stree-go-to t p)
       (insert-stree-go-to (list 'inactive t) (cons 0 p))))
 
 (tm-define (make-assign-arg s)
-  (:type (string ->))
+  (:type (-> string void))
   (:synopsis "Make an inactive assignment for the variable @s.")
   (insert-inactive-stree-go-to `(assign ,s "") '(1 0))
   (if (not (in-source?)) (set-message "return: activate" "assign")))
 
 (tm-define (make-assign-macro s)
-  (:type (string ->))
+  (:type (-> string void))
   (:synopsis "Make an inactive macro assignment for the variable @s.")
   (make-assign-arg s)
   (insert-inactive-stree-go-to '(macro "") '(0 0))
@@ -76,7 +76,7 @@
       (set-message "return (2x): activate" "assign#macro")))
 
 (tm-define (make-assign-macro-arg s)
-  (:type (string ->))
+  (:type (-> string void))
   (:synopsis "Make an inactive unary macro assignment for the variable @s.")
   (make-assign-arg s)
   (insert-inactive-stree-go-to '(macro "s" "") '(1 0))

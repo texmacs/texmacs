@@ -42,7 +42,7 @@
 	  (tm-go-to (tm-start (rcons p 1)))))))
 
 (tm-define (mouse-fold)
-  (:type (void -> void))
+  (:type (-> void))
   (:synopsis "fold using the mouse")
   (:secure #t)
   (if (has-action-path?)
@@ -51,7 +51,7 @@
 	(fold))))
 
 (tm-define (mouse-unfold)
-  (:type (void -> void))
+  (:type (-> void))
   (:synopsis "unfold using the mouse")
   (:secure #t)
   (if (has-action-path?)
