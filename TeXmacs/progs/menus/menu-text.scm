@@ -296,6 +296,8 @@
   |
   (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
       (link insert-mathematics-menu))
+  ;((balloon (icon "tm_insert_graphics.xpm") "Insert graphics")
+  ;(make-graphics))
   (if (style-has? "program-dtd")
       (=> (balloon (icon "tm_shell.xpm")
 		   "Start an interactive session")

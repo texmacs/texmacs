@@ -699,7 +699,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive ("cline", t, ip);
     break;
   case SPLINE:
-    if (ACTIVATED) typeset_spline (t, ip);
+    if (ACTIVATED) typeset_spline (t, ip, false);
     else typeset_inactive ("spline", t, ip);
     break;
   case VAR_SPLINE:

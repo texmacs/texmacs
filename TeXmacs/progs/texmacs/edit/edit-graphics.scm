@@ -43,7 +43,7 @@
 (define (graphics-active-path)
   ;; path to active tag
   (with p (cDr (tm-where))
-    (if (in? (car (object-at p)) '(point line cline)) p #f)))
+    (if (in? (car (object-at p)) '(point line cline spline cspline)) p #f)))
 
 (define (graphics-group-path)
   ;; path to innermost group
@@ -135,7 +135,7 @@
 	 (lw (get-env "gr-line-width")))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
-	  ((in? mode '(line cline))
+	  ((in? mode '(line cline spline cspline))
 	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,6 +202,10 @@
 	   (if (== (graphics-active-type) 'line)
 	       (graphics-active-insert `(point ,x ,y))
 	       (graphics-group-enrich-insert `(line (point ,x ,y)))))
+	  ((in? mode '(spline cspline))
+	   (if (in? (graphics-active-type) '(spline cspline))
+	       (graphics-active-insert `(point ,x ,y))
+	       (graphics-group-enrich-insert `(,mode (point ,x ,y)))))
 	  (else (display* "Uncaptured insert " x ", " y "\n")))))
 
 (define (graphics-remove-point x y)
@@ -218,11 +222,14 @@
 	   (graphics-active-insert `(point ,x ,y))
 	   (if (== mode 'cline) (graphics-active-set-tag 'cline))
 	   (graphics-group-start))
+	  ((in? mode '(spline cspline))
+	   (graphics-active-insert `(point ,x ,y))
+	   (graphics-group-start))
 	  (else (display* "Uncaptured last " x ", " y "\n")))))
 
 (define (graphics-finish)
   ;(display* "Graphics] Finish\n")
   (with mode (graphics-mode)
     (cond ((== mode 'point) (noop))
-	  ((in? mode '(line cline)) (noop))
+	  ((in? mode '(line cline spline cspline)) (noop))
 	  (else (display* "Uncaptured finish\n")))))
