@@ -49,6 +49,31 @@
 
   <\active*>
     <\src-comment>
+      Some useful macros on which the rendering of section titles can be
+      based.
+    </src-comment>
+  </active*>
+
+  <assign|sectional-short|<macro|name|<no-indent><arg|name>>>
+
+  <assign|sectional-normal|<macro|name|<no-indent><arg|name><no-page-break><no-indent*>>>
+
+  <assign|sectional-centered|<macro|name|<sectional-normal|<left-flush><arg|name><right-flush>>>>
+
+  <assign|sectional-short-italic|<macro|name|<sectional-short|<with|font-shape|italic|<arg|name>>>>>
+
+  <assign|sectional-normal-italic|<macro|name|<sectional-normal|<with|font-shape|italic|<arg|name>>>>>
+
+  <assign|sectional-centered-italic|<macro|name|<sectional-centered|<with|font-shape|italic|<arg|name>>>>>
+
+  <assign|sectional-short-bold|<macro|name|<style-with|src-compact|none|<sectional-short|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+
+  <assign|sectional-normal-bold|<macro|name|<style-with|src-compact|none|<sectional-normal|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+
+  <assign|sectional-centered-bold|<macro|name|<style-with|src-compact|none|<sectional-centered|<with|math-font-series|bold|font-series|bold|<arg|name>>>>>>
+
+  <\active*>
+    <\src-comment>
       The <verbatim|new-section> primitive is used for the definition of a
       new sectional tag. Each new sectional tag <verbatim|x> gives rise to a
       corresponding sectional counter and several additional environment
