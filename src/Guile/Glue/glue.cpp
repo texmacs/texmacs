@@ -20,6 +20,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "tm_layout.hpp"
+#include "concater.hpp"
 #include "converter.hpp"
 #include "timer.hpp"
 #include "Metafont/tex_files.hpp"

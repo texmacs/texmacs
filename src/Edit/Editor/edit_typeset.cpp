@@ -16,8 +16,9 @@
 #include "file.hpp"
 #include "analyze.hpp"
 #include "timer.hpp"
+#include "Bridge/impl_typesetter.hpp"
 
-box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
+//box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 
 /******************************************************************************
 * Contructors, destructors and notification of modifications
@@ -313,6 +314,13 @@ edit_typeset_rep::exec_html (tree t, path p) {
 tree
 edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
+}
+
+tree
+edit_typeset_rep::box_info (tree t, string what) {
+  bool b;
+  edit_env env= get_current_rewrite_env (b);
+  return ::box_info (b ? env : get_typesetter ()->env, t, what);
 }
 
 /******************************************************************************

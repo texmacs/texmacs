@@ -39,5 +39,6 @@ box        typeset_as_table (edit_env env, tree t, path ip);
 array<box> typeset_as_var_table (edit_env env, tree t, path ip);
 box        typeset_as_paragraph (edit_env e, tree t, path ip);
 box        typeset_as_document (edit_env e, tree t, path ip);
+tree       box_info (edit_env env, tree t, string what);
 
 #endif // defined TYPESETTER_H

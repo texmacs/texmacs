@@ -603,3 +603,22 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   delete ccc;
   return b;
 }
+
+tree
+box_info (edit_env env, tree t, string what) {
+  box b= typeset_as_concat (env, t, path (0));
+  tree r= tuple();
+  for (int i=0; i<N(what); i++) {
+    switch (what[i]) {
+      case 'l': r << as_string (b->x1); break;
+      case 'b': r << as_string (b->y1); break;
+      case 'r': r << as_string (b->x2); break;
+      case 't': r << as_string (b->y2); break;
+      case 'L': r << as_string (b->x3); break;
+      case 'B': r << as_string (b->y3); break;
+      case 'R': r << as_string (b->x4); break;
+      case 'T': r << as_string (b->y4); break;
+    }
+  }
+  return r;
+}

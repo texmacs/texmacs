@@ -33,6 +33,18 @@ edit_env_rep::exec_string (tree t) {
 * Rewriting (scheme-like macro expansion)
 ******************************************************************************/
 
+// Hack to transmit the current environment back to C++
+// across the Scheme level, and to maintain reentrancy.
+static bool current_rewrite_env_unspecified= true;
+static concrete_struct never_used= concrete_struct ();
+static edit_env current_rewrite_env= edit_env ((edit_env_rep*)&never_used);
+
+edit_env
+get_current_rewrite_env (bool &b) {
+  b= !current_rewrite_env_unspecified;
+  return current_rewrite_env;
+}
+
 tree
 edit_env_rep::rewrite (tree t) {
   switch (L(t)) {
@@ -47,7 +59,14 @@ edit_env_rep::rewrite (tree t) {
 	if (!as_bool (eval ("(secure? '" * s * ")")))
 	  return tree (ERROR, "insecure script");
       }
-      return object_to_tree (eval (s));
+      edit_env old_env= current_rewrite_env;
+      bool old_env_unspecified= current_rewrite_env_unspecified;
+      current_rewrite_env= edit_env (this);
+      current_rewrite_env_unspecified= false;
+      object o= eval (s);
+      current_rewrite_env= old_env;
+      current_rewrite_env_unspecified= old_env_unspecified;
+      return object_to_tree (o);
     }
   case MAP_ARGS:
     {
