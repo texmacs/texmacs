@@ -284,4 +284,13 @@ inline bool is_tuple (tree t, char* s, int n) {
 tree   correct (tree t);
 int    hash (tree t);
 
+template<class T>
+array<T>::operator tree () {
+  int i, n=rep->n;
+  tree t (TUPLE, n);
+  for (i=0; i<n; i++)
+    t[i]= as_tree(rep->a[i]);
+  return t;
+}
+
 #endif // defined TREE_H

@@ -17,6 +17,8 @@
 
 class tree;
 template<class T> class array;
+template<class T> int N (array<T> a);
+template<class T> array<T> copy (array<T> x);
 
 template<class T> class array_rep: concrete_struct {
   int n;
@@ -38,7 +40,7 @@ template<class T> class array {
   array (T *a, int n);
   array (T x1, T x2);
   inline T& operator [] (int i) { return rep->a[i]; }
-  operator tree ();
+  operator tree (); // defined in tree.hpp
 };
 CONCRETE_TEMPLATE_CODE(array,class,T);
 

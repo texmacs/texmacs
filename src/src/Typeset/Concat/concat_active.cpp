@@ -254,7 +254,7 @@ concater_rep::typeset_flag (tree t, path ip) {
     string var= env->exec_string (t[2]);
     sip= env->macro_src->item [var];
   }
-  if (is_accessible (sip) && (!env->read_only)) {
+  if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
     marker (descend (ip, 0));
     flag_ok (name, ip, env->dis->get_color (col));
     marker (descend (ip, 1));  
