@@ -30,13 +30,13 @@ private:
   array<page_item>  unit_ctrl;      // control items
 
 public:
-  void set_env_vars (SI height, SI sep, SI hsep, SI vsep, SI bot, SI top);
+  void set_env_vars (SI h, SI s, SI hs, SI vs, SI bot, SI top);
   void print (box b, array<lazy> fl= 0, int nr_cols= 1);
   void print (tree t, int nr_cols= 1, bool before= false);
   void print (space spc);
   void flush ();
   void penalty (int pen);
-  void new_paragraph ();
+  void new_paragraph (space par_sep);
   void vspace_before (space spc);
   void vspace_after (space spc);
   void no_page_break_before ();

@@ -57,12 +57,8 @@ get_pos (array<SI> a, SI which) {
 }
 
 static SI
-shove_in (box b1, box b2, stack_border sb) {
-  SI  hor_sep= sb->hor_sep;
-  SI  top    = sb->top;
-  SI  bot    = sb->bot;
-
-  // quick test whether there are boxes in b1 above boxes in b2
+shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
+  // quick test whether there are collisions
   int i, j;
   SI min1= PLUS_INFINITY, max1= MINUS_INFINITY;
   SI min2= PLUS_INFINITY, max2= MINUS_INFINITY;
@@ -117,36 +113,62 @@ shove_in (box b1, box b2, stack_border sb) {
   return m;
 }
 
+// FIXME: from TeXmacs-1.0.4.1 on, the separation parameters between
+// successive lines are the maximum of the parameters for each line.
+// This may be further refined by allowing a "par-sep before and after",
+// and similarly for par-hor-sep, par-ver-sep, etc. Ideally speaking,
+// the parameters would be determined for individual boxes on each line
+// and the maxima of the individual values are taken on each line.
+
 static void
-shove (page_item& item1, page_item& item2, stack_border sb) {
+shove (page_item& item1, page_item& item2, stack_border sb, stack_border sb2) {
+  SI  height = max (sb->height , sb2->height );
+  SI  sep    = max (sb->sep    , sb2->sep    );
+  SI  hor_sep= max (sb->hor_sep, sb2->hor_sep);
+  SI  ver_sep= max (sb->ver_sep, sb2->ver_sep);
+  SI  top    = sb->top;
+  SI  bot    = sb->bot;
+
+  SI dy1= 0, dy2= 0;
   box b1= item1->b, b2= item2->b;
+  //cout << "Shove: " << sb->height << ", " << sb2->height
+  //<< "; " << b1->y1 << ", " << b2->y2
+  //<< "; " << top << ", " << bot << "\n";
   while (true) {
     int type= b1->get_type ();
     if ((type == MOVE_BOX) && (b1->sx(0) == 0)) b1= b1[0];
-    else if ((type == STACK_BOX) && (N(b1)>0)) b1= b1[N(b1)-1];
+    else if ((type == STACK_BOX) && (N(b1)>0)) {
+      dy1 += b1->sy (N(b1)-1) - b1->sy (0);
+      b1   = b1[N(b1)-1];
+    }
     else break;
   }
   while (true) {
     int type= b2->get_type ();
     if ((type == MOVE_BOX) && (b2->sx(0) == 0)) b2= b2[0];
-    else if ((type == STACK_BOX) && (N(b2)>0)) b2= b2[0];
+    else if ((type == STACK_BOX) && (N(b2)>0)) {
+      dy2 += b2->sy (N(b2)-1) - b2->sy (0);
+      b2   = b2[0];
+    }
     else break;
   }
 
-  if ((b2->y2- b1->y1) < (sb->height- max (sb->sep, sb->ver_sep)))
+  if ((b2->y2- b1->y1) < (height- max (sep, ver_sep))) {
     // enough place
-    item1->spc= item1->spc + space (sb->height- (b2->y2- b1->y1));
+    // cout << "  Normal\n";
+    item1->spc= item1->spc + space (height- (b2->y2- b1->y1));
+  }
   else {
-    SI sh= shove_in (b1, b2, sb);
-    // cout << "Shove: " << sh/256 << "\n";
+    SI sh= shove_in (b1, b2, hor_sep, top, bot);
+    // cout << "  Shove: " << sh << "\n";
     if (sh == 0) {
       // no collisions
-      SI h= max (sb->height, max (b2->y2, b2->y2 - b1->y1 - (sb->height>>1)));
+      SI h= max (height, max (b2->y2, b2->y2 - b1->y1 - (top - bot)));
       item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
     }
     else {
       // collisions
-      SI h= max (sb->height, sh + sb->ver_sep);
+      SI h= max (height, sh + ver_sep);
       item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
     }
   }
@@ -163,7 +185,7 @@ stacker_rep::print (box b, array<lazy> fl, int nr_cols) {
   l << page_item (b, fl, nr_cols);
   if ((!unit_flag) && (i>=0)) {
     l[i]= copy (l[i]);
-    shove (l[i], l[N(l)-1], sb);
+    shove (l[i], l[N(l)-1], sb, sb);
   }
   unit_flag= false;
 }
@@ -194,7 +216,7 @@ merge_stack (array<page_item>& l, stack_border& sb,
   while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
   if (i>=0) {
     l[i]= copy (l[i]);
-    if (N(l2)>0) shove (l[i], l2[0], max (sb, sb2));
+    if (N(l2)>0) shove (l[i], l2[0], sb, sb2);
     l[i]->spc += max (sb->vspc_after, sb2->vspc_before);
     if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
   }
@@ -220,10 +242,10 @@ merge_stack (array<page_item>& l, stack_border& sb,
 ******************************************************************************/
 
 void
-stacker_rep::new_paragraph () {
+stacker_rep::new_paragraph (space par_sep) {
   if (unit_start == 0) {
-    sb->vspc_before= unit_sb->vspc_before;
-    sb->vspc_after = unit_sb->vspc_after;
+    sb->vspc_before= unit_sb->vspc_before + par_sep;
+    sb->vspc_after = unit_sb->vspc_after + par_sep;
     sb->nobr_before= unit_sb->nobr_before;
     sb->nobr_after = unit_sb->nobr_after;
   }
