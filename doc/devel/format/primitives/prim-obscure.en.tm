@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -38,6 +38,8 @@
     <item>Unknown
 
     <\itemize>
+      <item>line-sep
+
       <item>inactive*
 
       <item>active
