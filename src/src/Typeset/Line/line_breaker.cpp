@@ -399,6 +399,8 @@ array<path>
 line_breaks (array<line_item> a, int start, int end,
 	     SI line_width, SI first_spc, SI last_spc, bool ragged)
 {
+  line_width += 18; // gives a bit of extra room for environments
+                    // which span precisely over a width of 1par
   line_breaker_rep* H=
     new line_breaker_rep (a, start, end, line_width, first_spc, last_spc);
   array<path> ap= ragged? H->compute_ragged_breaks (): H->compute_breaks ();
