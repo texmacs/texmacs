@@ -1,13 +1,20 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.6>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.5>
+  <section|Changes from version 1.0.3 to 1.0.3.6>
 
   <\itemize>
+    <item>Added a lot of documentation on how to write style files (1.0.3.6).
+
+    <item>Modernization of the documentation on the <TeXmacs> primitives and
+    style files (1.0.3.6).
+
+    <item>Correction of several bugs from the last version (1.0.3.6).
+
     <item>Added documentation on how to write style files and packages
     (1.0.3.5).
 
