@@ -405,6 +405,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_with (t, ip);
     else typeset_inactive ("with", t, ip, N(t)-1);
     break;
+  case PROVIDES:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("provides", t, ip);
+    break;
   case VALUE:
     if (ACTIVATED) typeset_value (t, ip);
     else typeset_inactive ("value", t, ip);

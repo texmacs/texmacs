@@ -335,14 +335,12 @@ public:
   virtual void session_go_right () = 0;
   virtual void session_go_page_up () = 0;
   virtual void session_go_page_down () = 0;
-  virtual void session_remove_backwards () = 0;
-  virtual void session_remove_forwards () = 0;
+  virtual void session_remove (bool forward) = 0;
   virtual void session_insert_text_field () = 0;
   virtual void session_insert_input_below () = 0;
   virtual void session_insert_input_above () = 0;
   virtual void session_fold_input () = 0;
-  virtual void session_remove_input_backwards () = 0;
-  virtual void session_remove_input_forwards () = 0;
+  virtual void session_remove_input (bool forward) = 0;
   virtual void session_remove_all_outputs () = 0;
   virtual void session_remove_previous_output () = 0;
   virtual void session_split () = 0;

@@ -117,6 +117,8 @@ edit_env_rep::exec (tree t) {
     return exec_assign (t);
   case WITH:
     return exec_with (t);
+  case PROVIDES:
+    return exec_provides (t);
   case VALUE:
     return exec_value (t);
   case MACRO:
@@ -896,9 +898,11 @@ edit_env_rep::exec_if (tree t) {
   // This case must be kept consistent with
   // concater_rep::typeset_if(tree, path)
   // in ../Concat/concat_active.cpp
+  cout << "t = " << t << "\n";
   if ((N(t)!=2) && (N(t)!=3)) return tree (ERROR, "bad if");
   tree tt= exec (t[0]);
-  if (is_compound (tt) || ! is_bool (tt->label))
+  cout << "tt= " << tt << "\n";
+  if (is_compound (tt) || !is_bool (tt->label))
     return tree (ERROR, "bad if");
   if (as_bool (tt->label)) return exec (t[1]);
   if (N(t)==3) return exec (t[2]);
@@ -1152,6 +1156,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return false;
   case WITH:
     return exec_until_with (t, p, var, level);
+  case PROVIDES:
+    (void) exec (t);
+    return false;
   case VALUE:
     /*
     {

@@ -128,6 +128,7 @@ initialize_std_drd () {
 
   init (ASSIGN, "assign", fixed (2));
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
+  init (PROVIDES, "provides", fixed (1));
   init (VALUE, "value", fixed (1));
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
   init (DRD_PROPS, "drd_props", repeat (3, 2));
@@ -229,6 +230,5 @@ initialize_std_drd () {
   init (END, "end", fixed (1));
   init (FUNCTION, "func", var_repeat (1, 1));
   init (ENVIRONMENT, "env", var_repeat (1, 2));
-  init (PROVIDES, "provides", fixed (1));
   init (AUTHORIZE, "authorize", fixed (2));
 }

@@ -600,7 +600,7 @@ edit_table_rep::table_go_to (path fp, int row, int col, bool at_start) {
     table_bound (fp, row, col, row2, col2);
   }
   path q= search_cell (fp, row, col);
-  go_to (at_start? start (et, q): end (et, q));
+  go_to_border (q, at_start);
 }
 
 void
@@ -704,7 +704,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     p= path_up (p);
   if ((!nil (p)) && is_func (subtree (et, path_up (p)), SUB_TABLE, 1))
     p= path_up (p);
-  go_to (forward? end (et, p): start (et, p));
+  go_to_border (p, !forward);
 }
 
 /******************************************************************************

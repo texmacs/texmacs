@@ -20,10 +20,10 @@
     make-return make-shift-return
     structured-insert-left structured-insert-right
     structured-insert-up structured-insert-down
-    structured-remove-backwards structured-remove-forwards
+    structured-remove
     position-default position-left position-right position-up position-down
     position-start position-end position-top position-bottom
-    general-remove-backwards general-remove-forwards general-tab))
+    general-remove general-remove general-tab))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The multi-purpose return key
@@ -143,16 +143,9 @@
 ;; Multi-purpose deletions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (structured-remove-backwards)
+(define (structured-remove forward?)
   (let ((x (inside-which '("input"))))
-    (cond ((== x "input")
-	   (session-remove-input-backwards))
-	  (else (remove-structure-upwards)))))
-
-(define (structured-remove-forwards)
-  (let ((x (inside-which '("input"))))
-    (cond ((== x "input")
-	   (session-remove-input-forwards))
+    (cond ((== x "input") (session-remove-input forward?))
 	  (else (remove-structure-upwards)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,15 +166,10 @@
 ;; Some multi-purpose actions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (general-remove-backwards)
+(define (general-remove forward?)
   (cond ((selection-active-normal?) (clipboard-cut "primary"))
-	((and (in-session?) (inside? "input")) (session-remove-backwards))
-	(else (remove-text #f))))
-
-(define (general-remove-forwards)
-  (cond ((selection-active-normal?) (clipboard-cut "primary"))
-	((and (in-session?) (inside? "input")) (session-remove-forwards))
-	(else (remove-text #t))))
+	((and (in-session?) (inside? "input")) (session-remove forward?))
+	(else (remove-text forward?))))
 
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
