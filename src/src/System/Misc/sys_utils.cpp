@@ -14,7 +14,7 @@
 #include "file.hpp"
 #include "tree.hpp"
 #ifdef OS_WIN32
-#include <sys/misc.h>
+#include "sysmisc.hpp"
 #endif
 
 int script_status = 1;
@@ -42,13 +42,8 @@ eval_system (string s) {
   system (s * " > " * temp_s);
   string result;
   bool flag= load_string (temp, result, false);
-  system ("rm \"" * temp_s * "\"");
-  if (flag) {
-#ifdef OS_WIN32
-    cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";
-#endif
-    return "";
-  }
+  system ("rm " * temp_s);
+  if (flag) return "";
   return result;
 }
 

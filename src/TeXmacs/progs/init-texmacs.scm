@@ -16,16 +16,14 @@
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm"))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
 		 (kernel boot debug) (kernel boot srfi)
-		 (kernel boot ahash-table) (kernel boot prologue)
-		 (kernel boot content))
-(inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
+		 (kernel boot ahash-table) (kernel boot prologue))
+(inherit-modules (kernel regexp regexp-match))
 (inherit-modules (kernel drd drd-rules) (kernel drd drd-query)
 		 (kernel drd drd-data))
 (inherit-modules (kernel texmacs tm-define) (kernel texmacs tm-preferences)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-secure))
-(inherit-modules (kernel library base) (kernel library list)
-		 (kernel library tree))
+(inherit-modules (kernel library base) (kernel library list))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 (inherit-modules (kernel tools tm-edit) (kernel tools tm-misc)
@@ -42,7 +40,6 @@
 	     (texmacs edit edit-table) (texmacs edit edit-graphics)
 	     (texmacs edit edit-fold) (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))
-(use-modules (texmacs plugin plugin-cmd))
 (re-export safely-kill-window)
 
 ;(display "Booting menus\n")
@@ -52,10 +49,7 @@
 (lazy-menu (menus menu-edit) edit-menu)
 (lazy-menu (menus menu-insert)
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
-	   insert-mathematics-menu insert-session-menu
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
-(lazy-menu (menus menu-source) source-menu texmacs-source-icons
-	   source-transformational-menu source-executable-menu)
 (lazy-menu (menus menu-text)
 	   text-menu texmacs-text-icons text-modifier-icons)
 (lazy-menu (menus menu-mathematics)
@@ -86,6 +80,14 @@
 (lazy-in-mode (keyboard kbd-math) in-math?)
 (lazy-in-mode (keyboard kbd-table) in-table?)
 
+;(display "Booting fonts\n")
+(if (use-ec-fonts?)
+    (use-modules (fonts fonts-ec))
+    (use-modules (fonts fonts-cm)))
+(use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
+	     (fonts fonts-foreign) (fonts fonts-misc))
+(if (use-tt-fonts?) (use-modules (fonts fonts-truetype)))
+
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
 (use-modules (convert tmml init-tmml))
@@ -109,6 +111,9 @@
 (secure-symbols tmdoc-include)
 
 ;(display "Booting plugins\n")
+(lazy-define (texmacs plugin plugin-cmd) verbatim-serialize)
+(lazy-define (texmacs plugin plugin-cmd) plugin-serialize)
+(lazy-define (texmacs plugin plugin-cmd) format-command)
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
@@ -120,12 +125,4 @@
 (apply-preferences)
 (menu-extend page-setup-menu ,@(compute-preferences-menu page-setup-tree))
 (menu-extend preferences-menu ,@(compute-preferences-menu preferences-tree))
-
-;(display "Booting fonts\n")
-(if (use-ec-fonts?)
-    (use-modules (fonts fonts-ec))
-    (use-modules (fonts fonts-cm)))
-(use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
-	     (fonts fonts-foreign) (fonts fonts-misc))
-(if (support-tt-fonts?) (use-modules (fonts fonts-truetype)))
 ;(display "Initialization done\n")

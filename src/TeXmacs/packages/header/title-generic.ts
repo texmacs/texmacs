@@ -1,83 +1,71 @@
-<TeXmacs|1.0.3.4>
-
-<style|source>
+<TeXmacs|1.0.1.10>
 
 <\body>
-  <active*|<\src-title>
-    <src-package-dtd|title-generic|1.0|header-title|1.0>
+  <assign|title-generic-package|1.0>
 
-    <\src-purpose>
-      Titles for the generic style.
-    </src-purpose>
+  <assign|header-title-dtd|1.0>
 
-    <src-copyright|1998--2004|Joris van der Hoeven>
+  \;
 
-    <\src-license>
-      This <TeXmacs> style package falls under the <hlink|GNU general public
-      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you do not have a copy of the license, then write to the
-      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-      02111-1307, USA.
-    </src-license>
-  </src-title>>
+  <assign|make-title|<macro|body|<surround|<apply|start-page|>|<vspace|2fn>|<with|paragraph
+  mode|center|<arg|body>>>>>
 
-  <assign|make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<with|par-mode|center|<arg|body>>>>>
-
-  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<right-flush><vspace|1fn>|<\with|par-left|15mm|par-right|15mm|font-size|0.84>
-    <no-indent><left-flush><with|font-series|bold|<translate|Abstract|english|<language>>><right-flush><vspace|0.5fn><no-page-break>
+  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<apply|rightflush><vspace|1fn>|<\with|left
+  margin|15mm|right margin|15mm|font size|0.84>
+    <format|no first indentation><apply|leftflush><with|font
+    series|bold|<translate|Abstract|english|<apply|language>>><apply|rightflush><vspace|0.5fn><format|no
+    page break after>
 
     <arg|body>
   </with>>>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
-  ><arg|x>>>
-
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
-  subject classification:|english|<language>> ><arg|x>>>
-
   \;
 
-  <assign|title*|<macro|body|<with|math-font-series|bold|font-series|bold|font-size|1.68|<arg|body>>>>
+  <assign|title*|<macro|body|<with|math font series|bold|font
+  series|bold|font size|1.68|<arg|body>>>>
 
-  <assign|title|<macro|body|<title*|<arg|body>><header-title|<arg|body>>>>
+  <assign|title|<macro|body|<expand|title*|<arg|body>><apply|header-title|<arg|body>>>>
 
-  <assign|author*|<macro|body|<with|font-shape|small-caps|<translate|by|english|<language>>
+  <assign|author*|<macro|body|<with|font shape|small-caps|<translate|by|english|<apply|language>>
   <arg|body>>>>
 
-  <assign|author|<macro|body|<vspace*|1fn><author*|<arg|body>><header-author|<arg|body>>>>
+  <assign|author|<macro|body|<vspace*|1fn><expand|author*|<arg|body>><apply|header-author|<arg|body>>>>
 
-  <assign|address*|<macro|body|<with|par-par-sep|0fn|<arg|body>>>>
+  <assign|address*|<macro|body|<with|interparagraph space|0fn|<arg|body>>>>
 
-  <assign|address|<macro|body|<surround|<vspace*|1fn>||<address*|<arg|body>>>>>
+  <assign|address|<macro|body|<surround|<vspace*|1fn>||<expand|address*|<arg|body>>>>>
 
-  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
+  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell
+  lsep|1.5fn>|<cwith|1|-1|-1|-1|cell rsep|1.5fn>|<twith|table
+  valign|T>|<arg|x>>>>
 
-  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<translate|Email:|english|<language>>
+  <assign|title-email*|<macro|body|<with|font
+  shape|small-caps|<translate|Email:|english|<apply|language>>
   ><verbatim|<arg|body>>>>
 
-  <assign|title-email|<macro|body|<vspace*|1fn><title-email*|<arg|body>>>>
+  <assign|title-email|<macro|body|<vspace*|1fn><expand|title-email*|<arg|body>>>>
 
-  <assign|title-date*|<macro|body|<with|font-shape|italic|<arg|body>>>>
+  <assign|title-date*|<macro|body|<with|font shape|italic|<arg|body>>>>
 
-  <assign|title-date|<macro|body|<vspace*|1.5fn><left-flush><title-date*|<arg|body>><right-flush>>>
+  <assign|title-date|<macro|body|<vspace*|1.5fn><apply|leftflush><expand|title-date*|<arg|body>><apply|rightflush>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
+    <associate|odd page margin|30mm>
+    <associate|paragraph width|150mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|reduction page bottom margin|15mm>
+    <associate|page type|a4>
+    <associate|reduction page left margin|25mm>
+    <associate|even page margin|30mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
   </collection>
 </initial>

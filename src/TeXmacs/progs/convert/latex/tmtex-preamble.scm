@@ -57,9 +57,8 @@
     (string-append "\\newenvironment{" s "}{\n"
 		   "  \\noindent\\textbf{"
 		   (translate text "english" lan) "}\\ }{\\hspace*{\\fill}\n"
-		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
-  (define (newproof* s)
-    (string-append "\\newenvironment{" s "}[1]{\n"
+		   "  \\begin{math}\\Box\\end{math}\\medskip}\n"
+		   "\\newenvironment{" s "*}[1]{\n"
 		   "  \\noindent\\textbf{#1\\ }}{\\hspace*{\\fill}\n"
 		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
   (define (newtmfloat)
@@ -79,19 +78,6 @@
       "      \\captionof{#3}{#5}\n"
       "    \\end{center}\n"
       "  \\end{minipage}}"))
-  (define (par-mods)
-    (string-append
-      "\\newenvironment{tmparmod}[3]{%\n"
-      " \\begin{list}{}{%\n"
-      " \\setlength{\\topsep}{0pt}%\n"
-      " \\setlength{\\leftmargin}{#1}%\n"
-      " \\setlength{\\rightmargin}{#2}%\n"
-      " \\setlength{\\parindent}{#3}%\n"
-      " \\setlength{\\listparindent}{\\parindent}%\n"
-      " \\setlength{\\itemindent}{\\parindent}%\n"
-      " \\setlength{\\parsep}{\\parskip}%\n"
-      " }%\n"
-      "\\item[]}{\\end{list}}\n"))
   (define (color)
     (string-append
       "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
@@ -123,17 +109,16 @@
     (exercise ,(newexercise "exercise" "Exercise"))
     (problem ,(newexercise "problem" "Problem"))
     (proof ,(newproof "proof" "Proof"))
-    (proof* ,(newproof* "proof*"))
     (tmfloat ,(newtmfloat))
     (dueto 1 "\\textup{\\textbf{(#1) }}")
 
     ;; TeXmacs structural markup
-    (TeXmacs 0 "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
+    (TeXmacs 0 "T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}}")
     (madebyTeXmacs 0
      ,(string-append
        "\\footnote{"
        (translate "This text has been produced using" "english" lan)
-       " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
+       " GNU T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}} ("
        (translate "see" "english" lan)
        "{\\tt http://www.texmacs.org}).}"))
     (tmhlink 2 "{\\color{blue} #1}")
@@ -154,7 +139,6 @@
     (tmperson 1 "\\textsc{#1}")
     (tmdummy 0 "$\\mbox{}$")
     (tmscript 1 "\\text{\\scriptsize $#1$}")
-    (tmparmod ,(par-mods))
     (color ,(color))
 
     ;; other extra markup
@@ -330,7 +314,6 @@
 
 (drd-table tmtex-preamble-language-def%
   ("czech" "\\usepackage[czech]{babel}")
-  ("danish" "\\usepackage[danish]{babel}")
   ("dutch" "\\usepackage[dutch]{babel}")
   ("finnish" "\\usepackage[finnish]{babel}")
   ("french" "\\usepackage[french]{babel}")

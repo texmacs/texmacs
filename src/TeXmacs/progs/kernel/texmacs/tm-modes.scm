@@ -23,12 +23,12 @@
     lazy-in-mode-do ;; for lazy-in-mode macro
     lazy-in-mode lazy-in-mode-force
     ;; general texmacs modes
-    always? in-source? in-text? in-math? in-prog? in-math-not-hybrid?
+    always? in-text? in-math? in-prog? in-math-not-hybrid?
     in-table? in-io? in-session? not-in-session? in-math-in-session?
     in-math-not-in-session? in-plugin-with-converters?
     ;; language related modes
     in-cyrillic?
-    in-czech? in-danish? in-dutch? in-english? in-finnish? in-french?
+    in-czech? in-dutch? in-english? in-finnish? in-french?
     in-german? in-hungarian? in-italian? in-polish?
     in-portugese? in-romanian? in-russian? in-slovene?
     in-spanish? in-swedish? in-ukrainian?
@@ -123,7 +123,6 @@
 
 (texmacs-modes
   (always% #t)
-  (in-source% (== (get-env "mode") "src"))
   (in-text% (and (== (get-env "mode") "text") (not (in-graphics?))))
   (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
   (in-prog% (and (== (get-env "mode") "prog") (not (in-graphics?))))
@@ -144,13 +143,12 @@
 (texmacs-modes
   (in-cyrillic% (in? (get-env "language") '("russian" "ukrainian")) in-text%)
   (in-czech% (== (get-env "language") "czech") in-text%)
-  (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
   (in-english% (== (get-env "language") "english") in-text%)
   (in-finnish% (== (get-env "language") "finnish") in-text%)
   (in-french% (== (get-env "language") "french") in-text%)
   (in-german% (== (get-env "language") "german") in-text%)
-  (in-hungarian% (== (get-env "language") "hungarian") in-text%)
+  (in-hungarian% (== (get-env "language") "german") in-text%)
   (in-italian% (== (get-env "language") "italian") in-text%)
   (in-polish% (== (get-env "language") "polish") in-text%)
   (in-portugese% (== (get-env "language") "portugese") in-text%)

@@ -1,42 +1,18 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.1.11>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Mathematical formulas>
+  <expand|tmdoc-title|Mathematical formulas>
 
-  To type mathematical formulas, you need first to enter ``math mode''. This
-  is a special text property enabled in structures created by the
-  <menu|Text|Mathematics> menu.
-
-  <\description>
-    <item*|Formula <key|$>>is used for small mathematical fragments inside a
-    textual paragraph.\ 
-
-    Note that formulas are typeset specially so they do not take too much
-    vertical space. For example, limits are always displayed on the left.
-    Limits can be displayed below in formulas with <menu|Format|Formula
-    style|on>. In formulas, formula style is off by default.
-
-    <item*|Equation <key|A-$>>is the structure for bigger mathematical
-    expressions which are typeset in a paragraph of their own.
-
-    <item*|Equations <key|A-&>>create an <markup|eqnarray*>, a three columns
-    wide table-like environment (see <hyper-link|creating
-    tables|../table/man-create-table.en.tm>).
-
-    This environment should be used for multiple relations where each line
-    repeats the relation symbol. The first column should contain the left
-    hand side, the middle column the relational symbol, and the left column
-    the right hand side. The typical use for <markup|eqnarray*> is a step by
-    step computation where each line describes a simple operation on the
-    right hand side of an equation.
-  </description>
-
-  In math mode, you have specific commands and key-combinations to type
-  mathematical symbols and formulas. For instance, the <key|H-> prefix can be
-  used in order to enter Greek symbols (recall that <key|H-> is equivalent to
-  <key|F5>, <key|<key-escape> <key-escape> <key-escape>> or <key|A-C->).
+  In order to type mathematical formulas, you should first enter ``math
+  mode'' by pressing the <key|$>-key or by inserting an equation (using
+  <apply|menu|Insert|Mathematics|Equation>). In math mode, you have specific
+  commands and key-combinations to type mathematical symbols and formulas.
+  For instance, the <key|H-> prefix can be used in order to enter Greek
+  symbols (recall that <key|H-> is equivalent to <key|F5>,
+  <key|<key-escape> <key-escape>
+  <key-escape>> or <key|A-C->).
 
   The editor favors typing mathematics with a certain meaning. This feature,
   which will be developed more in future releases, is useful when
@@ -46,42 +22,42 @@
   will yield <with|mode|math|mode|text|ab> and not <with|mode|math|a*b>.
 
   <\traverse>
-    <branch|Main mathematical constructs|keyboard/man-main.en.tm>
+    <apply|branch|Main mathematical constructs|keyboard/man-main.en.tm>
 
-    <branch|Mathematical symbols|keyboard/man-symbols.en.tm>
+    <apply|branch|Mathematical symbols|keyboard/man-symbols.en.tm>
 
-    <branch|Big operators|keyboard/man-big.en.tm>
+    <apply|branch|Big operators|keyboard/man-big.en.tm>
 
-    <branch|Large delimiters|keyboard/man-large.en.tm>
+    <apply|branch|Large delimiters|keyboard/man-large.en.tm>
 
-    <branch|Wide accents|keyboard/man-wide.en.tm>
+    <apply|branch|Wide accents|keyboard/man-wide.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
-  document under the terms of the GNU Free Documentation License, Version 1.1
-  or any later version published by the Free Software Foundation; with no
-  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-  Texts. A copy of the license is included in the section entitled "GNU Free
-  Documentation License".>
+  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
+  modify this document under the terms of the GNU Free Documentation License,
+  Version 1.1 or any later version published by the Free Software Foundation;
+  with no Invariant Sections, with no Front-Cover Texts, and with no
+  Back-Cover Texts. A copy of the license is included in the section entitled
+  "GNU Free Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
 
@@ -96,7 +72,9 @@
 <\auxiliary>
   <\collection>
     <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Mathematics>|<with|font-family|<quote|ss>|Equation>>|<pageref|idx-1>>
+      <tuple|<tuple|<with|font family|<quote|ss>|Insert>|<with|font
+      family|<quote|ss>|Mathematics>|<with|font
+      family|<quote|ss>|Equation>>|<pageref|idx-1>>
     </associate>
   </collection>
 </auxiliary>

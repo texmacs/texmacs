@@ -11,10 +11,9 @@
 ******************************************************************************/
 
 #include "PsDevice/printer.hpp"
-#include "Metafont/tex_files.hpp"
-#include "Freetype/tt_file.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
+#include "tex_files.hpp"
 #include "analyze.hpp"
 #include "iterator.hpp"
 #include "merge_sort.hpp"
@@ -45,7 +44,8 @@ printer_rep::printer_rep (
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
 {
-  true_type = use_tt_fonts ();
+  true_type =
+    as_string (call ("get-preference", string ("font type"))) == "True type";
 
   black     = dis->black;
   white     = dis->white;
@@ -162,7 +162,7 @@ printer_rep::next_page () {
   cfn = "";
   xpos= 0;
   ypos= 0;
-}
+ }
 
 void
 printer_rep::define (string s, string defn) {
@@ -309,7 +309,7 @@ printer_rep::select_tex_font (string name) {
 static char* hex_string= "0123456789ABCDEF";
 
 void
-printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
+printer_rep::make_tex_char (string name, unsigned char c, bitmap_char bmc) {
   string char_name (name * "-" * as_string ((int) c));
   if (tex_chars->contains (char_name)) return;
   if (!tex_fonts->contains (name)) {
@@ -321,10 +321,10 @@ printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
 
   string hex_code;
   int i, j, count=0, cur= 0;
-  for (j=0; j < gl->height; j++)
-    for (i=0; i < ((gl->width+7) & (-8)); i++) {
+  for (j=0; j < bmc->height; j++)
+    for (i=0; i < ((bmc->width+7) & (-8)); i++) {
       cur= cur << 1;
-      if ((i<gl->width) && (gl->get_x(i,j)>0)) cur++;
+      if ((i<bmc->width) && (bmc->get_x(i,j)>0)) cur++;
       count++;
       if (count==4) {
 	hex_code << hex_string[cur];
@@ -333,11 +333,11 @@ printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
       }
     }
 
-  int d1= gl->width;
-  int d2= gl->height;
-  int d3= 130+ gl->xoff;
-  int d4= 126+ gl->yoff;
-  int d5= gl->lwidth;
+  int d1= bmc->width;
+  int d2= bmc->height;
+  int d3= 130+ bmc->xoff;
+  int d4= 126+ bmc->yoff;
+  int d5= bmc->lwidth;
   if ((d1<256) && (d2<256) && (d3<256) && (d4<256) && (d5<256)) {
     hex_code << as_hexadecimal (d1, 2) << as_hexadecimal (d2, 2)
 	     << as_hexadecimal (d3, 2) << as_hexadecimal (d4, 2)
@@ -368,17 +368,8 @@ printer_rep::generate_tex_fonts () {
     string name = tex_fonts [fn_name], ttf;
     int    pos  = search_forwards (".", fn_name);
     string root = (pos==-1? fn_name: fn_name (0, pos));
-#ifndef OS_WIN32 // we need pfbtops
-    if ((pos!=-1) && ends (fn_name, "tt")) {
-      int pos2= search_backwards (":", fn_name);
-      root= fn_name (0, pos2);
-      url u= tt_font_find (root);
-      if (suffix (u) == "pfb")
-	ttf= eval_system ("pfbtops", u);
-    }
-    else if (true_type && (pos!=-1) && ends (fn_name, "pk"))
+    if (true_type && (pos!=-1) && ends (fn_name, "pk"))
       ttf= pk_to_true_type (root);
-#endif
 
     if (ttf != "") {
       root= upcase_all (root);
@@ -480,18 +471,18 @@ printer_rep::set_background (color c) {
 }
 
 void
-printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
-  glyph gl= fn->get(ch);
-  if (nil (gl)) return;
+printer_rep::draw (int ch, bitmap_font fn, SI x, SI y) {
+  bitmap_char bmc= fn->get(ch);
+  if (nil (bmc)) return;
   string name= fn->res_name;
   unsigned char c= ch;
   if (true_type) ec_to_cm (name, c);
-  make_tex_char (name, c, gl);
+  make_tex_char (name, c, bmc);
   select_tex_font (name);
   move_to (x, y);
   print ("(" * prepare_text (string ((char) c)) * ")p");
   tex_flag= true;
-  xpos += gl->lwidth;
+  xpos += bmc->lwidth;
 }
 
 void

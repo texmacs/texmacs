@@ -82,7 +82,7 @@ ostream& operator << (ostream& out, selection sel);
 ******************************************************************************/
 
 class box_rep;
-struct lazy;
+class lazy;
 typedef array<double> point;
 
 class box {

@@ -30,6 +30,9 @@ protected:
   int           env_change;    // which things have been changed ?
   time_t        last_change;   // time of last processed change
   time_t        last_update;   // time of last update of menu, icons and footer
+  int           con_status;    // 0: inexistent, 1: waiting, 2: active
+  string        con_name;      // name of connected application
+  string        con_session;   // name of computer algebra session
   bool          full_screen;   // full screen mode ?
   bool          got_focus;     // do we have keyboard focus ?
   string        sh_s;          // current string for shorthands
@@ -66,6 +69,15 @@ public:
   void resume ();
   display get_display ();
   widget  get_widget ();
+
+  /* extern connections */
+  void update_connection ();
+  void connect ();
+  void process_extern_input ();
+  void feed_input (tree t);
+  bool busy_connection ();
+  void interrupt_connection ();
+  void stop_connection ();
 
   /* routines for dealing with shrinked coordinates */
   void set_shrinking_factor (int sf);
@@ -131,7 +143,6 @@ public:
   string compute_operation_footer (tree st);
   string compute_compound_footer (tree t, path p);
   bool   set_latex_footer (tree st);
-  bool   set_hybrid_footer (tree st);
   void   set_left_footer (string l);
   void   append_left_footer (string& s, string env_var);
   void   set_left_footer ();
@@ -139,7 +150,7 @@ public:
   void   set_right_footer ();
   void   set_footer ();
   void   set_message (string l, string r= "");
-  void   interactive (scheme_tree args, object cmd);
+  void   interactive (scheme_tree args, scheme_tree cmd);
 
   /* event handlers */
   void handle_get_size (get_size_event ev);

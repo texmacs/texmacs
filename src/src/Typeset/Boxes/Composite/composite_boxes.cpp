@@ -139,10 +139,8 @@ composite_box_rep::finalize () {
     cout << "  r  = " << r << "\n";
     */
     if (is_accessible (l) && is_accessible (r)) {
-      if (is_decoration (lip) || path_less (reverse (l), reverse (lip)))
-	lip= l;
-      if (is_decoration (rip) || path_less (reverse (rip), reverse (r)))
-	rip= r;
+      if (is_decoration (lip) || path_less (revert (l), revert (lip))) lip= l;
+      if (is_decoration (rip) || path_less (revert (rip), revert (r))) rip= r;
     }
   }
   /*
@@ -191,7 +189,7 @@ composite_box_rep::find_box_path (path p, bool& found) {
   int n= subnr();
   /*
   cout << "Search cursor " << p << " among " << n
-       << " at " << box (this) << " " << reverse (ip) << "\n";
+       << " at " << box (this) << " " << revert (ip) << "\n";
   */
   if (n == 0) return box_rep::find_box_path (p, found);
 
@@ -207,7 +205,7 @@ composite_box_rep::find_box_path (path p, bool& found) {
       start= 0;
       break;
     }
-    if (path_less (reverse (sr), p)) {
+    if (path_less (revert (sr), p)) {
       int old_start= start, old_acc= acc;
       start= min (n-1, start+ step);
       acc  = start;
@@ -230,9 +228,9 @@ composite_box_rep::find_box_path (path p, bool& found) {
   while (true) {
     path sl= bs[i]->find_lip ();
     path sr= bs[i]->find_rip ();
-    // cout << "  " << i << ":\t" << reverse(sl) <<", "<< reverse(sr) << "\n";
+    // cout << "  " << i << ":\t" << revert(sl) << ", " << revert(sr) << "\n";
     if (is_accessible (sl) && is_accessible (sr) &&
-	path_less_eq (reverse (sl), p) && path_less_eq (p, reverse (sr)))
+	path_less_eq (revert (sl), p) && path_less_eq (p, revert (sr)))
       {
 	flag= true;
 	bp= path (i, bs[i]->find_box_path (p, found));
@@ -243,7 +241,7 @@ composite_box_rep::find_box_path (path p, bool& found) {
     if (i==start) break;
   }
 
-  if (is_accessible (ip) && (path_up (p) == reverse (ip)) && access_allowed ())
+  if (is_accessible (ip) && (path_up (p) == revert (ip)) && access_allowed ())
     return box_rep::find_box_path (p, found);
   if (flag) return bp;
   return box_rep::find_box_path (p, flag);

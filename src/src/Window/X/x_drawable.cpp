@@ -82,11 +82,6 @@ x_drawable_rep::decode (SI& x, SI& y) {
 ******************************************************************************/
 
 void
-x_drawable_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
-  ps_device_rep::get_clipping (x1, y1, x2, y2);
-}
-
-void
 x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
@@ -316,7 +311,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
   delete[] data;
 }
 
-extern bool char_clip;
+extern int char_clip;
 
 void
 x_drawable_rep::xpm (url file_name, SI x, SI y) {
@@ -380,8 +375,7 @@ x_drawable_rep::postscript (
 	 << as_string (x2) << as_string (y2);
   if (ps_figs->contains (lookup)) pm= (Pixmap) ps_figs [lookup];
   else {
-    if (DEBUG_VERBOSE)
-      cout << "TeXmacs] Running ghostscript " << image << "\n";
+    if (DEBUG_AUTO) cout << "TeXmacs] Running ghostscript " << image << "\n";
     Window gs_win= dis->gswindow->win;
     pm= XCreatePixmap (dis->dpy, gs_win, w, h, dis->depth);
     ghostscript_run (dpy, gs_win, pm, image, w, h, x1, y1, x2, y2);

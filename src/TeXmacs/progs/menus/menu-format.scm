@@ -47,7 +47,7 @@
 	      ("Palatino" (make-with "font" "palatino")))
 	  (if (url-exists-in-tex? "rptmr.tfm")
 	      ("Times" (make-with "font" "times"))))
-      (if (support-tt-fonts?)
+      (if (use-tt-fonts?)
 	  (if (font-exists-in-tt? "luxirr")
 	      (-> "True type"
 		  (if (font-exists-in-tt? "luxirr")
@@ -355,7 +355,6 @@
 (menu-bind language-menu
   ("British" (make-with "language" "british"))
   ("Czech" (make-with "language" "czech"))
-  ("Danish" (make-with "language" "danish"))
   ("Dutch" (make-with "language" "dutch"))
   ("English" (make-with "language" "english"))
   ("Finnish" (make-with "language" "finnish"))
@@ -383,11 +382,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-format-menu
-  (-> "Index level"
+  (-> "math-level"
       ("Normal" (make-with "math-level" "0"))
       ("Script size" (make-with "math-level" "1"))
       ("Script script size" (make-with "math-level" "2")))
-  (-> "Display style"
+  (-> "math-display"
       ("On" (make-with "math-display" "true"))
       ("Off" (make-with "math-display" "false")))
   (-> "Condensed"
@@ -431,14 +430,14 @@
 
 (menu-bind format-menu
   (group "Font")
-  (if (or (in-text?) (in-source?)) (link text-font-menu))
-  (if (in-math?) (link math-font-menu))
-  (if (in-prog?) (link prog-font-menu))
+  (if (test-env? "mode" "text") (link text-font-menu))
+  (if (test-env? "mode" "math") (link math-font-menu))
+  (if (test-env? "mode" "prog") (link prog-font-menu))
   ---
   (group "Content")
   (-> "Color" (link color-menu))
   (-> "Language" (link language-menu))
-  (if (in-math?)
+  (if (test-env? "mode" "math")
       ---
       (link math-format-menu))
   ---

@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "Widget/attribute_widget.hpp"
-#include "analyze.hpp"
 #include "font.hpp"
 #include "Widget/layout.hpp"
 
@@ -66,7 +65,7 @@ input_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  metric ex;
+  text_extents ex;
   font fn= dis->default_font ();
   fn->var_get_extents (s, ex);
   SI left= ex->x1, bottom= fn->y1, right= ex->x2;
@@ -111,7 +110,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
   if (key == "space") key= " ";
 
-  if (key == "return") { s= quote (s); call_back (); }
+  if (key == "return") { s= "\"" * s * "\""; call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) { s= "cancel"; call_back (); }
   else if ((key == "left") || (key == "C-b")) { if (pos>0) pos--; }
@@ -146,7 +145,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
   font   fn  = dis->default_font ();
 
   if (type == "press-left") {
-    metric ex;
+    text_extents ex;
     SI old= 0;
     for (pos=1; pos<=N(s); pos++) {
       fn->var_get_extents (s (0, pos), ex);

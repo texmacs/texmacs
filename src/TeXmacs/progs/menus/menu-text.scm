@@ -91,7 +91,7 @@
       ("Exercise" (make 'exercise))
       ("Problem" (make 'problem)))
   (if (not (style-has? "header-exam-dtd"))
-      (if (style-has? "env-theorem-dtd")
+      (if (style-has? "env-default-dtd")
 	  ("Theorem" (make 'theorem))
 	  ("Proposition" (make 'proposition))
 	  ("Lemma" (make 'lemma))
@@ -133,13 +133,6 @@
   ("Keyboard" (make 'kbd))
   ("Code" (make 'code*))
   ("Variable" (make 'var)))
-
-(menu-bind presentation-tag-menu
-  (if (style-has? "std-markup-dtd")
-      ("Underline" (make 'underline))
-      ("Overline" (make 'overline)))
-  ("Subscript" (make-script #f #t))
-  ("Superscript" (make-script #t #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
@@ -184,6 +177,17 @@
   ("List of tables" (make-aux* "the-glossary*" "table" "List of tables")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting mathematical markup into the text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind insert-mathematics-menu
+  ("Formula" "$" (make-with "mode" "math"))
+  (if (style-has? "env-math-dtd")
+      ---
+      ("Equation" (begin (make 'equation*) (temp-proof-fix)))
+      ("Equations" (begin (make 'eqnarray*) (temp-proof-fix)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -198,14 +202,13 @@
       (-> "Header" (link exam-header-menu)))
   (if (style-has? "book-style")
       (-> "Chapter" (link chapter-menu)))
-  (if (and (style-has? "section-base-dtd")
+  (if (and (style-has? "section-latex-dtd")
 	   (not (style-has? "header-exam-dtd")))
       (-> "Section" (link section-menu)))
   (if (style-has? "std-markup-dtd")
       (-> "Environment" (link environment-menu))
       (-> "Content tag" (link content-tag-menu)))
-  (-> "Presentation tag" (link presentation-tag-menu))
-  (if (style-has? "std-dtd")
+  (if (style-has? "common-base-dtd")
       ---)
   (if (style-has? "std-list-dtd")
       (-> "Itemize" (link itemize-menu))
@@ -214,7 +217,14 @@
 	(when (or (inside-list?) (inside-description?))
 	      ("New item" (make-item)))
 	---)
-  (if (style-has? "section-base-dtd")
+  (-> "Mathematics" (link insert-mathematics-menu))
+  (if (style-has? "program-dtd")
+      (-> "Session"
+	  (link session-menu)
+	  ---
+	  ("Other" ... (interactive
+			'("Session type:" "Session name:") 'make-session))))
+  (if (style-has? "section-automatic-dtd")
       (-> "Automatic" (link automatic-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -236,7 +246,7 @@
   (if (style-has? "book-style")
       (=> (balloon (icon "tm_chapter.xpm") "Start a new chapter")
 	  (link chapter-menu)))
-  (if (and (style-has? "section-base-dtd")
+  (if (and (style-has? "section-latex-dtd")
 	   (not (style-has? "header-exam-dtd")))
       (=> (balloon (icon "tm_section.xpm") "Start a new section")
 	  (link section-menu)))
@@ -268,7 +278,7 @@
 ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
 ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
 ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
-  (if (style-has? "section-base-dtd")
+  (if (style-has? "section-automatic-dtd")
       (=> (balloon (icon "tm_index.xpm")
 		   "Insert automatically generated content")
 	  (link automatic-menu)))
@@ -282,14 +292,25 @@
 	  (link description-menu))
       (if (or (inside-list?) (inside-description?))
 	  ((balloon (icon "tm_item.xpm") "Insert a new item#(A-;)")
-	   (make-item)))))
+	   (make-item))))
+  |
+  (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
+      (link insert-mathematics-menu))
+  (if (style-has? "program-dtd")
+      (=> (balloon (icon "tm_shell.xpm")
+		   "Start an interactive session")
+	  (link session-menu)
+	  ---
+	  ("Other" ...
+	   (interactive
+	    '("Session type:" "Session name:") 'make-session)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind text-modifier-icons
-  (if (and (style-has? "std-markup-dtd") (not (in-source?)))
+  (if (style-has? "std-markup-dtd")
       ;;((balloon
       ;;(text (roman rm bold right 12 600) "S")
       ;;"Write bold text#(A-C-b)")
@@ -304,7 +325,7 @@
        (make 'samp))
       ((balloon (icon "tm_name.xpm") "Write a name#(S-F6)")
        (make 'name)))
-  (if (or (not (style-has? "std-markup-dtd")) (in-source?))
+  (if (not (style-has? "std-markup-dtd"))
       ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
        (make-with "font-shape" "italic"))
       ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")

@@ -43,7 +43,7 @@
   (tabular* ("" "c" "" #f))
   (matrix ((#{left\(}#) "c" (#{right\)}#) #f))
   (det ((left|) "c" (right|) #f))
-  (choice ((left\{) "l" (right.) #f)))
+  (choice ((left\{) "c" (right.) #f)))
 
 (drd-group tex-mathops%
   arccos arcsin arctan cos cosh cot coth csc deg det dim exp gcd
@@ -348,7 +348,7 @@
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
 
-(define (tmtex-para l)
+(define (tmtex-paragraph l)
   (cons '!paragraph (tmtex-list l)))
 
 (define (tmtex-surround-sub l z)
@@ -479,7 +479,7 @@
 
 (define (tmtex-big-decode s)
   (cond ((not (string? s)) "bignone")
-        ((in? s '("sum" "prod" "int" "oint" "coprod")) s)
+        ((in? s '("sum" "prod" "int" "oint")) s)
 	((== s "amalg") "coprod")
 	((== s "pluscup") "uplus")
 	((== s ".") "bignone")
@@ -676,12 +676,6 @@
 	    (a (tmtex-get-assign-cmd var val)))
 	(cond (w (list w arg))
 	      (a (list '!group (tex-concat (list (list a) " " arg))))
-	      ((== "par-left" var)
-               (list (list '!begin "tmparmod" val "0pt" "0pt") arg))
-	      ((== "par-right" var)
-               (list (list '!begin "tmparmod" "0pt" val "0pt") arg))
-	      ((== "par-first" var)
-               (list (list '!begin "tmparmod" "0pt" "0pt" val) arg))
 	      ((== var "color")
 	      	(list '!group (tex-concat (list (list 'color val) " " arg))))
 	      (else arg)))))
@@ -827,7 +821,7 @@
   (cond ((string? x) (tmtex-verb-string x))
 	((== x '(next-line)) "\n")
 	((func? x 'document) (tmtex-tt-document (cdr x)))
-	((func? x 'para) (tmtex-tt-document (cdr x)))
+	((func? x 'paragraph) (tmtex-tt-document (cdr x)))
 	((func? x 'concat)
 	 (apply string-append (map-in-order tmtex-tt (cdr x))))
 	(else "")))
@@ -876,9 +870,6 @@
 
 (define (tmtex-item-arg s l)
   (tex-concat (list (list 'item (list '!option (tmtex (car l)))) " ")))
-
-(define (tmtex-render-proof s l)
-  (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
 
 (define (tmtex-session s l)
   (tmtex (caddr l)))
@@ -966,7 +957,7 @@
 
 (drd-dispatcher tmtex-methods%
   (document tmtex-document)
-  (para tmtex-para)
+  (paragraph tmtex-paragraph)
   (surround tmtex-surround)
   (concat tmtex-concat)
   (format tmtex-noop)
@@ -1073,7 +1064,6 @@
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
-  (render-proof (,tmtex-render-proof 2))
   (session (,tmtex-session 3))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))

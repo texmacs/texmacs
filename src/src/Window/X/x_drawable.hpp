@@ -43,12 +43,11 @@ public:
   /**************** subroutines for drawing text and xpms ********************/
 
   void draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y);
-  void draw (int char_code, font_glyphs fn, SI x, SI y);
+  void draw (int char_code, bitmap_font fn, SI x, SI y);
   void xpm_initialize (url file_name);
 
   /******************** routines from ps_device.hpp ************************/
 
-  void  get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
   void  set_clipping (SI x1, SI y1, SI x2, SI y2);
   color rgb (int r, int g, int b);
   void  get_rgb (color col, int& r, int& g, int& b);

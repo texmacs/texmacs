@@ -40,10 +40,10 @@ struct math_font_rep: font_rep {
   math_font_rep (string name, scheme_tree t, font base, font error);
   void init_font (int fn_nr, font& fn);
   void search_font (string& s, font& fn);
-  void get_extents (string s, metric& ex);
+  void get_extents (string s, text_extents& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
-  glyph get_glyph (string s);
+  bitmap_char get_bitmap (string s);
 
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -145,7 +145,7 @@ math_font_rep::search_font (string& s, font& fn) {
 ******************************************************************************/
 
 void
-math_font_rep::get_extents (string s, metric& ex) {
+math_font_rep::get_extents (string s, text_extents& ex) {
   font fn;
   search_font (s, fn);
   fn->get_extents (s, ex);
@@ -173,11 +173,11 @@ math_font_rep::draw (ps_device dev, string s, SI x, SI y) {
   fn->draw (dev, s, x, y);
 }
 
-glyph
-math_font_rep::get_glyph (string s) {
+bitmap_char
+math_font_rep::get_bitmap (string s) {
   font fn;
   search_font (s, fn);
-  return fn->get_glyph (s);
+  return fn->get_bitmap (s);
 }
 
 /******************************************************************************

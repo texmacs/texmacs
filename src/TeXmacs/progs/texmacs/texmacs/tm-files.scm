@@ -13,10 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-files)
-  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print))
+  (:use (texmacs texmacs tm-server))
   (:export
     ;; general purpose loading and saving
-    save-buffer export-buffer load-buffer
+    save-buffer load-buffer
     conditional-save-buffer conditional-load-buffer ;; due to interactive
     conditional-recover-autosave ;; due to interactive
     ;; shortcuts for special formats or extra actions
@@ -27,9 +27,8 @@
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-save-buffer file* fm confirm)
-  (with file (url-system file*)
-    (if (yes? confirm) (texmacs-save-buffer file fm))))
+(define (conditional-save-buffer file fm confirm)
+  (if (yes? confirm) (texmacs-save-buffer file fm)))
 
 (define (secure-save-buffer file fm)
   (with file* (url-concretize file)
@@ -49,21 +48,14 @@
 	((= (length l) 1) (secure-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
-(define (export-buffer to)
-  ;; Temporary fix for saving to postscript or pdf
-  (if (in? (url-suffix to) '("ps" "pdf"))
-      (print-to-file to)
-      (texmacs-save-buffer to "generic")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-load-buffer file* fm where confirm)
-  (with file (url-system file*)
-    (if (yes? confirm)
-        (texmacs-load-buffer (url-glue file "~") fm where #t)
-        (texmacs-load-buffer file fm where #f))))
+(define (conditional-load-buffer file fm where confirm)
+  (if (yes? confirm)
+      (texmacs-load-buffer (url-glue file "~") fm where #t)
+      (texmacs-load-buffer file fm where #f)))
 
 (define (load-buffer-sub file fm where)
   (with file* (url-concretize file)
@@ -81,7 +73,7 @@
 	(texmacs-load-buffer file fm where #f))))
 
 (define (load-buffer . l)
-  (with file (url-append "$TEXMACS_FILE_PATH" (car l))
+  (with file (url "$TEXMACS_FILE_PATH" (car l))
     (cond ((= (length l) 1)
 	   (load-buffer-sub file "generic" 0))
 	  ((and (= (length l) 2) (string? (cadr l)))

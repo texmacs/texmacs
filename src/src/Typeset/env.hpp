@@ -46,51 +46,6 @@
 #define Env_Frame             15
 #define Env_Clipping          16
 #define Env_Line_Width        17
-#define Env_Grid              18
-#define Env_Grid_Aspect       19
-#define Env_Src_Style         20
-#define Env_Src_Special       21
-#define Env_Src_Compact       22
-#define Env_Src_Close         23
-#define Env_Point_Style       24
-
-/******************************************************************************
-* For style file editing
-******************************************************************************/
-
-#define STYLE_ANGULAR         0
-#define STYLE_SCHEME          1
-#define STYLE_LATEX           2
-#define STYLE_FUNCTIONAL      3
-
-#define SPECIAL_RAW           0
-#define SPECIAL_FORMAT        1
-#define SPECIAL_NORMAL        2
-#define SPECIAL_MAXIMAL       3
-
-#define COMPACT_ALL           0
-#define COMPACT_INLINE_ARGS   1
-#define COMPACT_INLINE_START  2
-#define COMPACT_INLINE        3
-#define COMPACT_NONE          4
-
-#define CLOSE_MINIMAL         0
-#define CLOSE_COMPACT         1
-#define CLOSE_LONG            2
-#define CLOSE_REPEAT          3
-
-#define INACTIVE_INLINE_RECURSE  0
-#define INACTIVE_INLINE_ONCE     1
-#define INACTIVE_INLINE_ERROR    2
-#define INACTIVE_BLOCK_RECURSE   3
-#define INACTIVE_BLOCK_ONCE      4
-#define INACTIVE_BLOCK_ERROR     5
-
-#define MODIFY_NONE              0
-#define MODIFY_COMPACT           1
-#define MODIFY_LONG              2
-#define MODIFY_PERMANENT_COMPACT 3
-#define MODIFY_PERMANENT_LONG    4
 
 /******************************************************************************
 * The edit environment
@@ -111,7 +66,6 @@ public:
 
   hashmap<string,int>&         var_type;
   url                          base_file_name;
-  url                          cur_file_name;
   hashmap<string,tree>&        local_ref;
   hashmap<string,tree>&        global_ref;
   hashmap<string,tree>&        local_aux;
@@ -132,32 +86,14 @@ public:
   int       vert_pos;
   color     col;
   SI        lw;
-  string    point_style;
   bool      preamble;
   frame     fr;
   point     clip_lim1;
   point     clip_lim2;
-  int       src_style;
-  int       src_special;
-  int       src_compact;
-  int       src_close;
 
-  int       inactive_mode;
-  tree      recover_env;
-
-  string    page_type;
-  bool      page_landscape;
-  bool      page_automatic;
-  int       page_margin_mode;
-  SI        page_width;
-  SI        page_height;
-  SI        page_user_width;
-  SI        page_user_height;
-  SI        page_odd_margin;
-  SI        page_even_margin;
-  SI        page_right_margin;
-  SI        page_top_margin;
-  SI        page_bottom_margin;
+public:
+  tree exec_extra_list (tree t, int pos);
+  tree exec_extra_tuple (tree t, int pos);
 
 private:
   tree exec_formatting (tree t, string v);
@@ -171,28 +107,18 @@ private:
   void exec_until_with (tree t, path p);
   bool exec_until_with (tree t, path p, string var, int level);
   tree exec_drd_props (tree t);
-  tree exec_compound (tree t);
-  void exec_until_compound (tree t, path p);
-  bool exec_until_compound (tree t, path p, string var, int level);
   tree exec_provides (tree t);
   tree exec_value (tree t);
-  tree exec_quote_value (tree t);
-  tree exec_arg (tree t);
-  bool exec_until_arg (tree t, path p, string var, int level);
-  tree exec_quote_arg (tree t);
+  tree exec_argument (tree t);
+  bool exec_until_argument (tree t, path p, string var, int level);
   tree exec_get_label (tree t);
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
-  bool exec_until_mark (tree t, path p, string var, int level);
+  tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);
-  tree exec_if (tree t);
-  bool exec_until_if (tree t, path p, string var, int level);
-  tree exec_case (tree t);
-  bool exec_until_case (tree t, path p, string var, int level);
-  tree exec_while (tree t);
-  bool exec_until_while (tree t, path p, string var, int level);
-  tree exec_for_each (tree t);
-  tree exec_use_package (tree t);
+  tree exec_compound (tree t);
+  void exec_until_compound (tree t, path p);
+  bool exec_until_compound (tree t, path p, string var, int level);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);
@@ -219,25 +145,16 @@ private:
   tree exec_lesseq (tree t);
   tree exec_greater (tree t);
   tree exec_greatereq (tree t);
+  tree exec_if (tree t);
+  tree exec_case (tree t);
+  tree exec_while (tree t);
+  tree exec_rewrite (tree t);
+
+  tree exec_mod_active (tree t, tree_label which);
+  void exec_until_mod_active (tree t, path p);
+  bool exec_until_mod_active (tree t, path p, string var, int level);
 
   tree exec_point (tree t);
-
-  tree exec_rewrite (tree t);
-  bool exec_until_rewrite (tree t, path p, string var, int level);
-  tree rewrite_inactive_arg (tree t, tree var, int i, bool bl, bool fl);
-  tree rewrite_inactive_raw_data (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_document (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_concat (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_value (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_style_with (tree t, tree var, bool b, bool f, bool o);
-  tree rewrite_inactive_active (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_var_active (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_hybrid (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive_default (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive (tree t, tree var, bool block, bool flush);
-  tree rewrite_inactive (tree t, tree var);
 
 public:
   edit_env_rep (display dis,
@@ -289,19 +206,12 @@ public:
   void local_end (hashmap<string,tree>& prev_back);
 
   /* updating environment variables */
-  void   update_page_pars ();
-  void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
-			SI& odd, SI& even, SI& top, SI& bottom);
   void   update_font ();
   void   update_color ();
   void   update_mode ();
   void   update_language ();
   void   update_frame ();
   void   update_clipping ();
-  void   update_src_style ();
-  void   update_src_special ();
-  void   update_src_compact ();
-  void   update_src_close ();
   void   update ();
   void   update (string env_var);
 
@@ -315,6 +225,8 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
+  void      get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
+			   SI& odd, SI& even, SI& top, SI& bottom);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {
@@ -348,8 +260,6 @@ public:
 
 class edit_env {
   CONCRETE(edit_env);
-  inline edit_env (edit_env_rep* rep2):
-    rep(rep2) { INC_COUNT (this->rep); }
   edit_env (display dis,
 	    drd_info& drd,
 	    url base_file_name,
@@ -361,8 +271,6 @@ class edit_env {
 CONCRETE_CODE(edit_env);
 
 void extract_format (tree fm, tree* r, int n);
-tree load_inclusion (url u); // implemented in tm_file.cpp
-
-edit_env get_current_rewrite_env (bool &b);
+tree load_inclusion (url u); // implented in tm_file.cpp
 
 #endif // defined ENV_H

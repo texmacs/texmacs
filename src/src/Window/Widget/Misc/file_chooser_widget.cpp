@@ -21,10 +21,6 @@
 #include "analyze.hpp"
 #include "scheme.hpp"
 
-#ifdef OS_WIN32
-#include <X11/Xlib.h>
-#endif
-
 /******************************************************************************
 * File chooser commands
 ******************************************************************************/
@@ -80,7 +76,7 @@ file_chooser_command_rep::apply () {
     fch_wid << set_string ("directory", "~");
     break;
   case BUTTON_TEXTS:
-    fch_wid << set_string ("directory", as_string (url ("$TEXMACS_HOME_PATH", "texts")));
+    fch_wid << set_string ("directory", "$TEXMACS_HOME_PATH/texts");
     break;
   case BUTTON_FILE_OK:
     {
@@ -197,7 +193,7 @@ list_in_directory (string dir, string name,
 void
 file_list_widget_rep::handle_get_size (get_size_event ev) {
   int i;
-  metric ex;
+  text_extents ex;
   font fn= dis->default_font ();
   ev->w= ev->h= 0;
   for (i=0; i<N(names); i++)
@@ -212,7 +208,7 @@ file_list_widget_rep::handle_get_size (get_size_event ev) {
 void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   int i; 
-  metric ex;
+  text_extents ex;
   win->set_background (dis->white);
   win->clear (0, -h, w, 0);
   font fn= dis->default_font ();
@@ -236,7 +232,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
   if ((type == "release-left") || (type == "release-right")) {
     int i;
     SI y= 0, search= ev->y*3;
-    metric ex;
+    text_extents ex;
     font fn= dis->default_font ();
     for (i=0; i<N(names); i++)
       if (list_in_directory (dir, names[i], suffix, dir_flag)) {
@@ -370,24 +366,6 @@ public:
 };
 
 /******************************************************************************
-* Drives under Windows
-******************************************************************************/
-
-#ifdef OS_WIN32
-class drive_menu_command_rep: public command_rep {
-  string driveLetter;
-  file_chooser_widget_rep *fileChooser;
-
-public:
-  drive_menu_command_rep (file_chooser_widget_rep *fileChooser2, string driveLetter2):
-    fileChooser (fileChooser2), driveLetter(driveLetter2) {}
-  void apply () {
-    fileChooser << set_string("directory", driveLetter);
-  }
-};
-#endif
-
-/******************************************************************************
 * Implementation of file_chooser widgets
 ******************************************************************************/
 
@@ -413,7 +391,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
 {
   ref_count++;
 
-  tree t= stree_to_tree (call ("format-get-suffixes*", type));
+  tree t= object_to_tree (call ("format-get-suffixes*", type));
   int i, n= N(t);
   for (i=0; i<n; i++)
     suffix << ("." * as_string (t[i]));
@@ -434,40 +412,8 @@ file_chooser_widget_rep::file_chooser_widget_rep (
     cw2[4]= glue_widget (false, true, sep-PIXEL);
   }
 
-#ifdef OS_WIN32
-  widget drive_menu = vertical_menu (array<widget> ());
-  unsigned int driveMask = XGetDrivesMask();
-  char driveString[4] = "A:\\";
-  for (char x = 'A'; x <= 'Z'; x++)
-    if(driveMask & (1 << (x - 'A'))) {
-      driveString[0] = x;
-      drive_menu << emit_insert (driveString,
-	command_button (text_widget (driveString),
-			new drive_menu_command_rep (this, driveString)));
-    }
-  array<widget> drw (2);
-  drw[0] = pullright_button (text_widget("Drive"), drive_menu);
-  drw[1] = text_widget("");
-  // drw[1]= glue_widget (false, true, sep);
-#endif
-
   int BUTTON_OK= BUTTON_FILE_OK;
   if (type == "directory") BUTTON_OK= BUTTON_DIR_OK;
-
-#ifdef OS_WIN32
-  array<widget> cw3 (11);
-  cw3[0]= glue_widget (false, false, sep);
-  cw3[1]= pulldown_button (text_widget ("Drive"), drive_menu, true);
-  cw3[2]= glue_widget (false, false, sep);
-  cw3[3]= button_widget ("Home", BUTTON_HOME);
-  cw3[4]= glue_widget (false, false, sep);
-  cw3[5]= button_widget ("Texts", BUTTON_TEXTS);
-  cw3[6]= glue_widget (true, false);
-  cw3[7]= button_widget ("Ok", BUTTON_OK);
-  cw3[8]= glue_widget (false, false, sep);
-  cw3[9]= button_widget ("Cancel", BUTTON_CANCEL);
-  cw3[10]= glue_widget (false, false, sep);
-#else
   array<widget> cw3 (9);
   cw3[0]= glue_widget (false, false, sep);
   cw3[1]= button_widget ("Home", BUTTON_HOME);
@@ -478,7 +424,6 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   cw3[6]= glue_widget (false, false, sep);
   cw3[7]= button_widget ("Cancel", BUTTON_CANCEL);
   cw3[8]= glue_widget (false, false, sep);
-#endif
 
   int cwn= 11;
   if (type == "image") cwn= 17;
@@ -662,13 +607,13 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       a[0]["directory"]["input"] << get_string ("input", name);
       if (name == "cancel") { ev->s= "cancel"; return; }
       url u= url_system (unquote (dir));
-      ev->s= "(url-system " * quote (as_string (u)) * ")";
+      ev->s= "\"" * as_string (u) * "\"";
     }
     else {
       a[0]["file"]["input"] << get_string ("input", name);
       if (name == "cancel") { ev->s= "cancel"; return; }
       url u= url_system (unquote (dir)) * url_system (unquote (name));
-      ev->s= "(url-system " * quote (as_string (u)) * ")";
+      ev->s= "\"" * as_string (u) * "\"";
     }
     if (type == "image") {
       string hsize, vsize, cx1, cy1, cx2, cy2;
@@ -680,7 +625,7 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       par["clip-x2"]["input"] << get_string ("input", cx2);
       par["clip-y2"]["input"] << get_string ("input", cy2);
       ev->s=
-	"(list " * ev->s * " \"" * hsize * "\" \"" * vsize *
+	"(" * ev->s * " \"" * hsize * "\" \"" * vsize *
 	"\" \"" * cx1 * "\" \"" * cy1 *
 	"\" \"" * cx2 * "\" \"" * cy2 * "\")";
     }

@@ -19,7 +19,9 @@ public:
   edit_dynamic_rep ();
   ~edit_dynamic_rep ();
 
-  bool in_source ();
+  bool in_preamble_mode ();
+  bool is_deactivated ();
+  path find_deactivated (path p);
   path find_dynamic (path p);
 
   bool is_multi_paragraph_macro (tree t);
@@ -40,13 +42,9 @@ public:
   void remove_with (path p, string var);
   void back_in_with (tree t, path p, bool forward);
 
-  void make_mod_active (tree_label l);
-  void insert_style_with (path p, string var, string val);
-  void make_style_with (string var, string val);
-
   void make_hybrid ();
   bool activate_latex ();
-  void activate_hybrid (bool with_args_hint);
+  void activate_hybrid ();
   void activate_symbol ();
   void activate_compound ();
 

@@ -10,20 +10,17 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include <tm_configure.hpp>
 #include "Glue/glue.hpp"
 #include "server.hpp"
-#include "boot.hpp"
 #include "connect.hpp"
 #include "convert.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
+#include "tex_files.hpp"
 #include "analyze.hpp"
 #include "tm_layout.hpp"
-#include "Concat/concater.hpp"
 #include "converter.hpp"
 #include "timer.hpp"
-#include "Metafont/tex_files.hpp"
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include <string.h>
@@ -62,21 +59,6 @@ texmacs_version (string which) {
   if (which == "stgz") return TEXMACS_STGZ;
   if (which == "srpm") return TEXMACS_SRPM;
   return TEXMACS_VERSION;
-}
-
-bool
-os_win32 () {
-#ifdef OS_WIN32
-  return true;
-#else
-  return false;
-#endif
-}
-
-void
-win32_display (string s) {
-  cout << s;
-  cout.flush ();
 }
 
 /******************************************************************************
@@ -168,11 +150,7 @@ scm_to_string (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2str (s, &len_r);
   string r (_r, len_r);
-#ifdef OS_WIN32
-  scm_must_free(_r);
-#else
   free (_r);
-#endif
   return r;
 }
 
@@ -196,11 +174,7 @@ scm_to_symbol (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2symbol (s, &len_r);
   string r (_r, len_r);
-#ifdef OS_WIN32
-  scm_must_free(_r);
-#else
   free (_r);
-#endif
   return r;
 }
 
@@ -279,12 +253,6 @@ cmp_tree (SCM t1, SCM t2) {
   return scm_bool2scm (scm_to_tree (t1) == scm_to_tree (t2));
 }
 
-static SCM
-treeP (SCM t) {
-  bool b= scm_is_tree (t);
-  return bool_to_scm (b);
-}
-
 tree
 coerce_string_tree (string s) {
   return s;
@@ -303,16 +271,6 @@ tree_ref (tree t, int i) {
 void
 tree_set (tree t, int i, tree u) {
   t[i]= u;
-}
-
-tree
-tree_range (tree t, int i, int j) {
-  return t(i,j);
-}
-
-tree
-tree_append (tree t1, tree t2) {
-  return t1 * t2;
 }
 
 /******************************************************************************
@@ -360,32 +318,13 @@ scm_to_scheme_tree (SCM p) {
 }
 
 /******************************************************************************
-* Content
+* TeXmacs trees
 ******************************************************************************/
 
-#define content tree
-#define SCM_ASSERT_CONTENT(p,arg,rout)
-#define content_to_scm tree_to_scm
-
-tree
-scm_to_content (SCM p) {
-  if (scm_is_tree (p)) return scm_to_tree (p);
-  if (scm_is_list (p)) {
-    if (scm_is_null (p) || (!gh_symbol_p (SCM_CAR (p)))) return "?";
-    tree t (make_tree_label (scm_to_symbol (SCM_CAR (p))));
-    p= SCM_CDR (p);
-    while (!scm_is_null (p)) {
-      t << scm_to_content (SCM_CAR (p));
-      p= SCM_CDR (p);
-    }
-    return t;
-  }
-  if (gh_symbol_p (p)) return scm_to_symbol (p);
-  if (scm_is_string (p)) return scm_to_string (p);
-  if (SCM_INUMP (p)) return as_string (scm_to_int (p));
-  if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
-  return "?";
-}
+#define texmacs_tree tree
+#define SCM_ASSERT_TEXMACS_TREE SCM_ASSERT_TREE
+#define texmacs_tree_to_scm tree_to_scm
+#define scm_to_texmacs_tree scm_to_tree
 
 /******************************************************************************
 * Paths
@@ -815,7 +754,6 @@ initialize_glue () {
   scm_set_smob_free (url_tag, free_url);
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();
@@ -855,7 +793,6 @@ initialize_glue () {
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();

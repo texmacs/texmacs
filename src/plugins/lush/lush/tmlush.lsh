@@ -1,6 +1,0 @@
-(progn
-	(unlock-symbol toplevel)
-	(de toplevel()
-		(print)
-		(load "$stdin" "$stdout" "\002channel:prompt\005Lush> \005"))
-	(toplevel))

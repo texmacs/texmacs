@@ -68,9 +68,7 @@ concater_rep::ghost (string s, path ip, color col) {
   int sz= script (env->fn_size, env->index_level);
   font gfn (tex_font (env->dis, fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (decorate (ip), 0, s, gfn, col);
-  array<box> bs (1);
-  bs[0]= b;
-  a << line_item (STD_ITEM, composite_box (decorate (ip), bs), HYPH_INVALID);
+  a << line_item (STD_ITEM, b, HYPH_INVALID);
 }
 
 void
@@ -137,9 +135,11 @@ concater_rep::with_limits (int status) {
 * Typesetting generic objects
 ******************************************************************************/
 
+#define ACTIVATED (active_flag && (!env->preamble))
+
 void
-concater_rep::typeset (tree t, path ip) {
-  // cout << "Typeset " << t << ", " << ip << "\n";
+concater_rep::typeset (tree t, path ip, bool active_flag) {
+  // cout << "Typeset " << t << "\n";
   if (is_atomic (t)) {
     typeset_string (t->label, ip);
     return;
@@ -147,20 +147,25 @@ concater_rep::typeset (tree t, path ip) {
 
   switch (L (t)) {
   case UNINIT:
+    typeset_uninit (t, ip);
+    break;
   case ERROR:
     typeset_error (t, ip);
     break;
   case RAW_DATA:
-    typeset_inactive (t, ip);
+    typeset_inactive_string ("<raw-data>", ip);
     break;
   case DOCUMENT:
-    typeset_document (t, ip);
+    if (ACTIVATED) typeset_document (t, ip);
+    else typeset_inactive ("document", t, ip);
     break;
   case PARA:
-    typeset_paragraph (t, ip);
+    if (ACTIVATED) typeset_paragraph (t, ip);
+    else typeset_inactive ("paragraph", t, ip);
     break;
   case SURROUND:
-    typeset_surround (t, ip);
+    if (ACTIVATED) typeset_surround (t, ip);
+    else typeset_inactive ("surround", t, ip);
     break;
   case CONCAT:
     typeset_concat (t, ip);
@@ -169,94 +174,141 @@ concater_rep::typeset (tree t, path ip) {
     typeset_group (t, ip);
     break;
   case HSPACE:
-    t= env->exec (t);
-    typeset_hspace (t, ip);
+    if (ACTIVATED) {
+      t= env->exec (t);
+      typeset_hspace (t, ip);
+    }
+    else typeset_inactive ("hspace", t, ip);
     break;
   case VAR_VSPACE:
-    flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
-    control (t, ip);
+    if (ACTIVATED) {
+      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
+      t= env->exec (t);
+      control (t, ip);
+    }
+    else typeset_inactive ("vspace*", t, ip);
     break;
   case VSPACE:
-    flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
-    control (t, ip);
+    if (ACTIVATED) {
+      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
+      t= env->exec (t);
+      control (t, ip);
+    }
+    else typeset_inactive ("vspace", t, ip);
     break;
   case SPACE:
-    t= env->exec (t);
-    typeset_space (t, ip);
+    if (ACTIVATED) {
+      t= env->exec (t);
+      typeset_space (t, ip);
+    }
+    else typeset_inactive ("space", t, ip);
     break;
   case HTAB:
-    print (space (env->decode_length (t[0])));
-    control (t, ip);
+    if (ACTIVATED) {
+      print (space (env->decode_length (t[0])));
+      control (t, ip);
+    }
+    else typeset_inactive ("tab", t, ip);
     break;
   case MOVE:
-    typeset_move (t, ip);
+    if (ACTIVATED) typeset_move (t, ip);
+    else typeset_inactive ("move", t, ip);
     break;
   case RESIZE:
-    typeset_resize (t, ip);
+    if (ACTIVATED) typeset_resize (t, ip);
+    else typeset_inactive ("resize", t, ip);
     break;
   case REPEAT:
-    typeset_repeat (t, ip);
+    if (ACTIVATED) typeset_repeat (t, ip);
+    else typeset_inactive ("repeat", t, ip);
     break;
   case _FLOAT:
-    typeset_float (t, ip);
+    if (ACTIVATED) typeset_float (t, ip);
+    else typeset_inactive ("float", t, ip);
     break;
   case DATOMS:
-    typeset_formatting (t, ip, ATOM_DECORATIONS);
+    if (ACTIVATED) typeset_formatting (t, ip, ATOM_DECORATIONS);
+    else typeset_inactive ("decorate atoms", t, ip);
     break;
   case DLINES:
-    typeset_formatting (t, ip, LINE_DECORATIONS);
+    if (ACTIVATED) typeset_formatting (t, ip, LINE_DECORATIONS);
+    else typeset_inactive ("decorate lines", t, ip);
     break;
   case DPAGES:
-    typeset_formatting (t, ip, PAGE_DECORATIONS);
+    if (ACTIVATED) typeset_formatting (t, ip, PAGE_DECORATIONS);
+    else typeset_inactive ("decorate pages", t, ip);
     break;
   case DBOX:
     typeset_decorated_box (t, ip);
     break;
 
   case WITH_LIMITS:
-    with_limits (LIMITS_DISPLAY);
-    flag ("with-limits", ip, env->dis->brown);
-    control (t, ip);
+    if (ACTIVATED) {
+      with_limits (LIMITS_DISPLAY);
+      flag ("with-limits", ip, env->dis->brown);
+      control (t, ip);
+    }
+    else typeset_inactive_string ("<with limits>", ip);
     break;
   case LINE_BREAK:
-    if (N(a)>0) a[N(a)-1]->penalty = 0;	
-    flag ("line-break", ip, env->dis->brown);
-    control (t, ip);
+    if (ACTIVATED) {
+      if (N(a)>0) a[N(a)-1]->penalty = 0;	
+      flag ("line-break", ip, env->dis->brown);
+      control (t, ip);
+    }
+    else typeset_inactive_string ("<line break>", ip);
     break;
   case NEW_LINE:
+  case LINE_SEP:
   case NEXT_LINE:
     {
       string name= env->drd->get_name (L(t));
-      flag (name, ip, env->dis->brown);
-      control (t, ip);
+      if (ACTIVATED) {
+	flag (name, ip, env->dis->brown);
+	control (t, ip);
+      }
+      else typeset_inactive_string ("<" * name * ">", ip);
       break;
     }
   case NO_BREAK:
-    if (N(a)>0) a[N(a)-1]->penalty = HYPH_INVALID;
-    if ((N(a)>1) &&
-	(a[N(a)-1]->type == STRING_ITEM) &&
-	(a[N(a)-1]->b->get_leaf_string () == ""))
-      a[N(a)-2]->penalty = HYPH_INVALID;	
-    flag ("no line break", ip, env->dis->brown);
-    control (t, ip);
+    if (ACTIVATED) {
+      if (N(a)>0) a[N(a)-1]->penalty = HYPH_INVALID;
+      if ((N(a)>1) &&
+	  (a[N(a)-1]->type == STRING_ITEM) &&
+	  (a[N(a)-1]->b->get_leaf_string () == ""))
+	a[N(a)-2]->penalty = HYPH_INVALID;	
+      flag ("no line break", ip, env->dis->brown);
+      control (t, ip);
+    }
+    else typeset_inactive_string ("<no-break>", ip);
     break;
   case YES_INDENT:
-    flag ("yes-first-indent", ip, env->dis->brown);
-    control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
+    if (ACTIVATED) {
+      flag ("yes-first-indent", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
+    }
+    else typeset_inactive_string ("<do indent>", ip);
     break;
   case NO_INDENT:
-    flag ("no-first-indent", ip, env->dis->brown);
-    control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
+    if (ACTIVATED) {
+      flag ("no-first-indent", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
+    }
+    else typeset_inactive_string ("<don't indent>", ip);
     break;
   case VAR_YES_INDENT:
-    flag ("yes-first-indent-after", ip, env->dis->brown);
-    control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
+    if (ACTIVATED) {
+      flag ("yes-first-indent-after", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
+    }
+    else typeset_inactive_string ("<do indent after>", ip);
     break;
   case VAR_NO_INDENT:
-    flag ("no-first-indent-after", ip, env->dis->brown);
-    control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
+    if (ACTIVATED) {
+      flag ("no-first-indent-after", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
+    }
+    else typeset_inactive_string ("<don't indent after>", ip);
     break;
   case VAR_PAGE_BREAK:
   case PAGE_BREAK:
@@ -268,19 +320,22 @@ concater_rep::typeset (tree t, path ip) {
   case NEW_DPAGE:
     {
       string name= env->drd->get_name (L(t));
-      flag (name, ip, env->dis->brown);
-      control (t, ip);
+      if (ACTIVATED) {
+	flag (name, ip, env->dis->brown);
+	control (t, ip);
+      }
+      else typeset_inactive_string ("<" * name * ">", ip);
       break;
     }
 
   case LEFT:
-    typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
+    typeset_left (t, ip);
     break;
   case MID:
-    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, "<mid-");
+    typeset_middle (t, ip);
     break;
   case RIGHT:
-    typeset_large (t, ip, RIGHT_BRACKET_ITEM, "<right-");
+    typeset_right (t, ip);
     break;
   case BIG:
     typeset_bigop (t, ip);
@@ -325,13 +380,20 @@ concater_rep::typeset (tree t, path ip) {
     break;
 
   case TFORMAT:
-    if ((N(t)>0) && is_table (t[N(t)-1])) typeset_table (t, ip);
-    else typeset_formatting (t, ip, CELL_FORMAT);
+    if (ACTIVATED) {
+      if ((N(t)>0) && is_table (t[N(t)-1])) typeset_table (t, ip);
+      else typeset_formatting (t, ip, CELL_FORMAT);
+    }
+    else typeset_inactive ("table-format", t, ip);
     break;
   case TWITH:
+    typeset_inactive ("table-with", t, ip);
+    break;
   case CWITH:
+    typeset_inactive ("cell-with", t, ip);
+    break;
   case TMARKER:
-    typeset_inactive (t, ip);
+    typeset_inactive ("table-marker", t, ip);
     break;
   case TABLE:
     typeset_table (t, ip);
@@ -342,218 +404,331 @@ concater_rep::typeset (tree t, path ip) {
     break;
 
   case ASSIGN:
-    typeset_assign (t, ip);
+    if (ACTIVATED) typeset_assign (t, ip);
+    else typeset_inactive ("assign", t, ip, 1);
     break;
   case WITH:
-    typeset_with (t, ip);
+    if (ACTIVATED) typeset_with (t, ip);
+    else typeset_inactive ("with", t, ip, N(t)-1);
     break;
   case PROVIDES:
-    typeset_executable (t, ip);
-    break;
-  case QUOTE_VALUE:
-    typeset_inactive (t, ip);
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("provides", t, ip);
     break;
   case VALUE:
-    typeset_value (t, ip);
+    if (ACTIVATED) typeset_value (t, ip);
+    else typeset_inactive ("value", t, ip);
     break;
   case MACRO:
-    typeset_inactive (t, ip);
+    typeset_inactive ("macro", t, ip, N(t)-1);
     break;
   case DRD_PROPS:
-    typeset_drd_props (t, ip);
+    if (ACTIVATED) typeset_drd_props (t, ip);
+    else typeset_inactive ("drd-properties", t, ip, 1);
     break;
   case ARG:
-    typeset_argument (t, ip);
-    break;
-  case QUOTE_ARG:
-    typeset_inactive (t, ip);
+    if (ACTIVATED) typeset_argument (t, ip);
+    else typeset_inactive ("argument", t, ip);
     break;
   case COMPOUND:
-    typeset_compound (t, ip);
+    if (ACTIVATED) typeset_compound (t, ip);
+    else typeset_inactive_compound (t, ip);
     break;
   case XMACRO:
-    typeset_inactive (t, ip);
+    typeset_inactive ("xmacro", t, ip, 1);
     break;
   case GET_LABEL:
-    typeset_executable (t, ip);
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("tree-label", t, ip);
     break;
   case GET_ARITY:
-    typeset_executable (t, ip);
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("arity", t, ip);
     break;
   case MAP_ARGS:
-    typeset_rewrite (t, ip);
+    if (ACTIVATED) typeset_rewrite (t, ip);
+    else typeset_inactive ("map-args", t, ip);
     break;
   case EVAL_ARGS:
-    typeset_eval_args (t, ip);
-    break;
-  case MARK:
-    typeset_mark (t, ip);
+    if (ACTIVATED) typeset_eval_args (t, ip);
+    else typeset_inactive ("eval-args", t, ip);
     break;
   case EVAL:
-    typeset_eval (t, ip);
+    if (ACTIVATED) typeset_eval (t, ip);
+    else typeset_inactive ("eval", t, ip);
     break;
   case QUOTE:
-    typeset_inactive (t, ip);
+    typeset_inactive ("quote", t, ip);
     break;
-  case QUASI:
-    typeset_eval (tree (EVAL, tree (QUASIQUOTE, t[0])), ip);
+  case DELAY:
+    typeset_inactive ("delay", t, ip);
     break;
-  case QUASIQUOTE:
-  case UNQUOTE:
-  case VAR_UNQUOTE:
-    typeset_executable (t, ip);
+  case HOLD:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("hold", t, ip);
     break;
-  case IF:
-    typeset_if (t, ip);
-    break;
-  case VAR_IF:
-    typeset_var_if (t, ip);
-    break;
-  case CASE:
-    typeset_case (t, ip);
-    break;
-  case WHILE:
-  case FOR_EACH:
-    typeset_executable (t, ip);
+  case RELEASE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("release", t, ip);
     break;
   case EXTERN:
-    typeset_rewrite (t, ip);
+    if (ACTIVATED) typeset_rewrite (t, ip);
+    else typeset_inactive ("extern", t, ip);
     break;
   case INCLUDE:
-    typeset_include (t, ip);
-    break;
-  case USE_PACKAGE:
-    typeset_executable (t, ip);
+    if (ACTIVATED) typeset_include (t, ip);
+    else typeset_inactive ("include", t, ip);
     break;
 
   case OR:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("or", t, ip);
+    break;
   case XOR:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("xor", t, ip);
+    break;
   case AND:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("and", t, ip);
+    break;
   case NOT:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("not", t, ip);
+    break;
   case PLUS:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("+", t, ip);
+    break;
   case MINUS:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("-", t, ip);
+    break;
   case TIMES:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("*", t, ip);
+    break;
   case OVER:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("/", t, ip);
+    break;
   case DIV:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("div", t, ip);
+    break;
   case MOD:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("mod", t, ip);
+    break;
   case MERGE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("merge", t, ip);
+    break;
   case LENGTH:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("length", t, ip);
+    break;
   case RANGE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("range", t, ip);
+    break;
   case NUMBER:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("number", t, ip);
+    break;
   case _DATE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("date", t, ip);
+    break;
   case TRANSLATE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("translate", t, ip);
+    break;
   case FIND_FILE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("find file", t, ip);
+    break;
   case IS_TUPLE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("is tuple", t, ip);
+    break;
   case LOOK_UP:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("look up", t, ip);
+    break;
   case EQUAL:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("equal", t, ip);
+    break;
   case UNEQUAL:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("unequal", t, ip);
+    break;
   case LESS:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("less", t, ip);
+    break;
   case LESSEQ:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("less or equal", t, ip);
+    break;
   case GREATER:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("greater", t, ip);
+    break;
   case GREATEREQ:
-    typeset_executable (t, ip);
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("greater or equal", t, ip);
+    break;
+  case IF:
+    if (ACTIVATED) typeset_if (t, ip);
+    else typeset_inactive ("if", t, ip);
+    break;
+  case VAR_IF:
+    if (ACTIVATED) typeset_var_if (t, ip);
+    else typeset_inactive ("if*", t, ip);
+    break;
+  case CASE:
+    if (ACTIVATED) typeset_case (t, ip);
+    else typeset_inactive ("case", t, ip);
+    break;
+  case WHILE:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("while", t, ip);
     break;
 
-  case STYLE_ONLY:
-  case VAR_STYLE_ONLY:
-  case ACTIVE:
-  case VAR_ACTIVE:
   case INACTIVE:
-  case VAR_INACTIVE:
-    typeset_compound (t, ip);
-    break;
-  case REWRITE_INACTIVE:
-    typeset_rewrite (t, ip);
-    break;
-  case INLINE_TAG:
-  case OPEN_TAG:
-  case MIDDLE_TAG:
-  case CLOSE_TAG:
-    typeset_src_tag (t, ip);
-    break;
-  case SYMBOL:
-  case LATEX:
-  case HYBRID:
-  case TUPLE:
-  case ATTR:
-  case COLLECTION:
-  case ASSOCIATE:
-  case BACKUP:
     typeset_inactive (t, ip);
     break;
+  case ACTIVE:
+    typeset (t[0], descend (ip, 0));
+    break;
+  case VAR_INACTIVE:
+    typeset_inactive (t, ip);
+    break;
+  case VAR_ACTIVE:
+    typeset (t[0], descend (ip, 0));
+    break;
+  case SYMBOL:
+    typeset_inactive_symbol (t, ip);
+    break;
+  case LATEX:
+    typeset_inactive_latex (t, ip);
+    break;
+  case HYBRID:
+    typeset_inactive_hybrid (t, ip);
+    break;
+  case TUPLE:
+    typeset_inactive ("tuple", t, ip);
+    break;
+  case ATTR:
+    typeset_inactive ("attr", t, ip);
+    break;
+  case COLLECTION:
+    typeset_inactive ("collection", t, ip);
+    break;
+  case ASSOCIATE:
+    typeset_inactive ("associate", t, ip);
+    break;
+  case BACKUP:
+    typeset_inactive ("backup", t, ip);
+    break;
   case LABEL:
-    typeset_label (t, ip);
+    if (ACTIVATED) typeset_label (t, ip);
+    else typeset_inactive ("label", t, ip);
     break;
   case REFERENCE:
-    typeset_reference (t, ip, 0);
+    if (ACTIVATED) typeset_reference (t, ip, 0);
+    else typeset_inactive ("reference", t, ip);
     break;
   case PAGEREF:
-    typeset_reference (t, ip, 1);
+    if (ACTIVATED) typeset_reference (t, ip, 1);
+    else typeset_inactive ("page reference", t, ip);
     break;
   case WRITE:
-    typeset_write (t, ip);
+    if (ACTIVATED) typeset_write (t, ip);
+    else typeset_inactive ("write", t, ip);
     break;
   case SPECIFIC:
-    typeset_specific (t, ip);
+    if (ACTIVATED) typeset_specific (t, ip);
+    else typeset_inactive_specific (t, ip);
     break;
   case HLINK:
-    typeset_hyperlink (t, ip);
+    if (ACTIVATED) typeset_hyperlink (t, ip);
+    else typeset_inactive_action ("hyperlink", t, ip);
     break;
   case ACTION:
-    typeset_action (t, ip);
+    if (ACTIVATED) typeset_action (t, ip);
+    else typeset_inactive_action ("action", t, ip);
     break;
   case TAG:
-    typeset_tag (t, ip);
+    if (ACTIVATED) typeset_tag (t, ip);
+    else typeset_inactive ("tag", t, ip);
     break;
   case MEANING:
-    typeset_meaning (t, ip);
+    if (ACTIVATED) typeset_meaning (t, ip);
+    else typeset_inactive ("meaning", t, ip);
     break;
   case FLAG:
-    typeset_flag (t, ip);
+    if (ACTIVATED) typeset_flag (t, ip);
+    else typeset_inactive ("flag", t, ip);
     break;
 
   case GRAPHICS:
-    typeset_graphics (t, ip);
+    if (ACTIVATED) typeset_graphics (t, ip);
+    else typeset_inactive ("graphics", t, ip);
     break;
   case SUPERPOSE:
-    typeset_superpose (t, ip);
+    if (ACTIVATED) typeset_superpose (t, ip);
+    else typeset_inactive ("superpose", t, ip);
     break;
   case TEXT_AT:
-    typeset_text_at (t, ip);
+    if (ACTIVATED) typeset_text_at (t, ip);
+    else typeset_inactive ("text at", t, ip);
     break;
   case _POINT:
-    typeset_point (t, ip);
+    if (ACTIVATED) typeset_point (t, ip);
+    else typeset_inactive ("point", t, ip);
     break;
   case LINE:
-    typeset_line (t, ip, false);
+    if (ACTIVATED) typeset_line (t, ip, false);
+    else typeset_inactive ("line", t, ip);
     break;
   case CLINE:
-    typeset_line (t, ip, true);
-    break;
-  case ARC:
-    typeset_arc (t, ip);
+    if (ACTIVATED) typeset_line (t, ip, true);
+    else typeset_inactive ("cline", t, ip);
     break;
   case SPLINE:
-    typeset_spline (t, ip, false);
+    if (ACTIVATED) typeset_spline (t, ip);
+    else typeset_inactive ("spline", t, ip);
     break;
   case VAR_SPLINE:
-    typeset_var_spline (t, ip);
+    if (ACTIVATED) typeset_var_spline (t, ip);
+    else typeset_inactive ("var_spline", t, ip);
     break;
   case CSPLINE:
-    typeset_cspline (t, ip);
+    if (ACTIVATED) typeset_cspline (t, ip);
+    else typeset_inactive ("cspline", t, ip);
     break;
   case FILL:
-    typeset_fill (t, ip);
+    if (ACTIVATED) typeset_fill (t, ip);
+    else typeset_inactive ("fill", t, ip);
     break;
   case POSTSCRIPT:
-    typeset_postscript (t, ip);
+    if (ACTIVATED) typeset_postscript (t, ip);
+    else typeset_inactive ("postscript", t, ip);
     break;
   default:
     if (L(t) < START_EXTENSIONS) print (STD_ITEM, test_box (ip));
-    else typeset_compound (t, ip);
+    else {
+      if (ACTIVATED) typeset_compound (t, ip);
+      else typeset_inactive (as_string (L(t)), t, ip);
+    }
     break;
   }
 }
+
+#undef ACTIVATED
 
 /******************************************************************************
 * User interface
@@ -603,23 +778,4 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 
   delete ccc;
   return b;
-}
-
-tree
-box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, t, path (0));
-  tree r= tuple();
-  for (int i=0; i<N(what); i++) {
-    switch (what[i]) {
-      case 'l': r << as_string (b->x1); break;
-      case 'b': r << as_string (b->y1); break;
-      case 'r': r << as_string (b->x2); break;
-      case 't': r << as_string (b->y2); break;
-      case 'L': r << as_string (b->x3); break;
-      case 'B': r << as_string (b->y3); break;
-      case 'R': r << as_string (b->x4); break;
-      case 'T': r << as_string (b->y4); break;
-    }
-  }
-  return r;
 }

@@ -20,11 +20,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #ifdef OS_WIN32
-#include <sys/misc.h>
-#include <sys/_stat.h>
+#include "dirent.hpp"
+#include "sysstat.hpp"
+#include "sysmisc.hpp"
 #else
+#include <dirent.h>
 #include <sys/stat.h>
 #endif
 #include <sys/types.h>
@@ -40,14 +41,9 @@ load_string (url u, string& s, bool fatal) {
   if (!is_rooted_name (r)) r= resolve (r);
   bool err= !is_rooted_name (r);
   if (!err) {
-    bench_start ("load file");
     string name= concretize (r);
     char* _name= as_charp (name);
-#ifdef OS_WIN32
-    FILE* fin= fopen (_name, "rb");
-#else
     FILE* fin= fopen (_name, "r");
-#endif
     if (fin == NULL) err= true;
     if (!err) {
       while (true) {
@@ -58,7 +54,6 @@ load_string (url u, string& s, bool fatal) {
       fclose (fin);
     }
     delete[] _name;
-    bench_cumul ("load file");
   }
   if (err && fatal)
     fatal_error (as_string (u) * " not readable", "load_string");
@@ -100,11 +95,7 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     char* _name= as_charp (name);
-#ifdef OS_WIN32
-    FILE* fout= fopen (_name, "wb");
-#else
     FILE* fout= fopen (_name, "w");
-#endif
     if (fout == NULL) err= true;
     if (!err) {
       int i, n= N(s);
@@ -125,25 +116,18 @@ save_string (url u, string s, bool fatal) {
 
 static bool
 get_attributes (url name, struct stat* buf, bool link_flag=false) {
-  // cout << "Stat " << name << LF;
-  bench_start ("stat");
   bool flag;
   char* temp= as_charp (concretize (name));
   flag= stat (temp, buf); (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;
-  bench_cumul ("stat");
   return flag;
 }
 
 bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
-#ifdef OS_WIN32
-  if ((filter == "x") && (suffix(name) != "exe"))
-    name = glue(name, ".exe");
-#endif
   int i, n= N(filter);
   bool preserve_links= false;
   for (i=0; i<n; i++)
@@ -199,7 +183,7 @@ url_temp (string suffix) {
   int rnd= random ();
   string name= "tmp_" * as_string (rnd) * suffix;
   url u ("$TEXMACS_HOME_PATH/system/tmp", name);
-  if (exists (u)) return url_temp (suffix);
+  if (exists (u)) return url_temp ();
   return u;
 }
 
@@ -209,11 +193,9 @@ url_temp (string suffix) {
 
 array<string>
 read_directory (url u, bool& error_flag) {
-  // cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
-  bench_start ("read directory");
 
   DIR* dp;
   char* temp= as_charp (name);
@@ -231,7 +213,5 @@ read_directory (url u, bool& error_flag) {
   }
   (void) closedir (dp);
   merge_sort (dir);
-
-  bench_cumul ("read directory");
   return dir;
 }

@@ -19,7 +19,6 @@
 string DPI ("dpi");
 string SFACTOR ("sfactor");
 string PREAMBLE ("preamble");
-string SAVE_AUX ("save-aux");
 string MODE ("mode");
 string INFO_FLAG ("info-flag");
 string IDENTITY ("identity");
@@ -88,8 +87,6 @@ string PAR_COLUMNS_SEP ("par-columns-sep");
 string PAGE_MEDIUM ("page-medium");
 string PAGE_TYPE ("page-type");
 string PAGE_ORIENTATION ("page-orientation");
-string PAGE_WIDTH_MARGIN ("page-width-margin");
-string PAGE_SCREEN_MARGIN ("page-screen-margin");
 string PAGE_BREAKING ("page-breaking");
 string PAGE_FLEXIBILITY ("page-flexibility");
 string PAGE_NR ("page-nr");
@@ -99,8 +96,6 @@ string PAGE_HEIGHT ("page-height");
 string PAGE_ODD ("page-odd");
 string PAGE_EVEN ("page-even");
 string PAGE_RIGHT ("page-right");
-string PAGE_ODD_SHIFT ("page-odd-shift");
-string PAGE_EVEN_SHIFT ("page-even-shift");
 string PAGE_TOP ("page-top");
 string PAGE_BOT ("page-bot");
 string PAGE_EXTEND ("page-extend");
@@ -113,12 +108,10 @@ string PAGE_EVEN_HEADER ("page-even-header");
 string PAGE_EVEN_FOOTER ("page-even-footer");
 string PAGE_THIS_HEADER ("page-this-header");
 string PAGE_THIS_FOOTER ("page-this-footer");
-string PAGE_SCREEN_WIDTH ("page-screen-width");
-string PAGE_SCREEN_HEIGHT ("page-screen-height");
-string PAGE_SCREEN_LEFT ("page-screen-left");
-string PAGE_SCREEN_RIGHT ("page-screen-right");
-string PAGE_SCREEN_TOP ("page-screen-top");
-string PAGE_SCREEN_BOT ("page-screen-bot");
+string PAGE_REDUCE_LEFT ("page-reduce-left");
+string PAGE_REDUCE_RIGHT ("page-reduce-right");
+string PAGE_REDUCE_TOP ("page-reduce-top");
+string PAGE_REDUCE_BOT ("page-reduce-bot");
 string PAGE_SHOW_HF ("page-show-hf");
 string PAGE_FNOTE_SEP ("page-fnote-sep");
 string PAGE_FNOTE_BARLEN ("page-fnote-barlen");
@@ -187,8 +180,6 @@ string CELL_COL_NR ("cell-col-nr");
 * Environment variables for graphics
 ******************************************************************************/
 
-string POINT_STYLE ("point-style");
-
 string LINE_WIDTH ("line-width");
 string LINE_STYLE ("line-style");
 string LINE_ARROWS ("line-arrows");
@@ -202,14 +193,3 @@ string GR_CLIP ("gr-clip");
 string GR_MODE ("gr-mode");
 string GR_COLOR ("gr-color");
 string GR_LINE_WIDTH ("gr-line-width");
-string GR_GRID ("gr-grid");
-string GR_GRID_ASPECT ("gr-grid-aspect");
-
-/******************************************************************************
-* Environment variables for preamble mode
-******************************************************************************/
-
-string SRC_STYLE ("src-style");
-string SRC_SPECIAL ("src-special");
-string SRC_COMPACT ("src-compact");
-string SRC_CLOSE ("src-close");

@@ -36,10 +36,11 @@ typedef unsigned short HN;
 typedef char QI;
 typedef unsigned char QN;
 #ifdef OS_WIN32
-typedef __int64 DI;
+typedef unsigned long int DI;
 #else
 typedef long long int DI;
 #endif
+typedef long long int DI;
 typedef void* pointer;
 
 #ifndef NO_FAST_ALLOC
@@ -66,17 +67,15 @@ void  mem_info ();
 #define STACK_DELETE_ARRAY(name) delete[] name
 #endif
 
-enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_VERBOSE, DEBUG_FLAG_EVENTS,
-       DEBUG_FLAG_STD, DEBUG_FLAG_IO, DEBUG_FLAG_BENCH };
+enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_EVENTS, DEBUG_FLAG_STD,
+       DEBUG_FLAG_IO };
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
 #define DEBUG_AUTO (debug (DEBUG_FLAG_AUTO))
-#define DEBUG_VERBOSE (debug (DEBUG_FLAG_VERBOSE))
 #define DEBUG_EVENTS (debug (DEBUG_FLAG_EVENTS))
 #define DEBUG_STD (debug (DEBUG_FLAG_STD))
 #define DEBUG_IO (debug (DEBUG_FLAG_IO))
-#define DEBUG_BENCH (debug (DEBUG_FLAG_BENCH))
 
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
@@ -188,11 +187,14 @@ public:                                    \
 * null indirect structures
 ******************************************************************************/
 
+template<class T>
+inline bool nil (T x) { return x.rep==NULL; }
+
 // concrete_null
 #define CONCRETE_NULL(PTR) \
   CONCRETE(PTR);           \
   inline PTR();            \
-  friend bool nil /*LESSGTR*/ (PTR x)
+  friend bool nil LESSGTR (PTR x)
 #define CONCRETE_NULL_CODE(PTR)                         \
   inline PTR::PTR (): rep(NULL) {}                      \
   inline PTR::PTR (const PTR& x):                       \
@@ -202,8 +204,7 @@ public:                                    \
     return this->rep; }                                 \
   inline PTR& PTR::operator = (PTR x) {                 \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep); \
-    this->rep=x.rep; return *this; }                    \
-  inline bool nil (PTR x) { return x.rep==NULL; }
+    this->rep=x.rep; return *this; }
 #define CONCRETE_NULL_TEMPLATE(PTR,T) \
   CONCRETE_TEMPLATE(PTR,T);           \
   inline PTR();                       \
@@ -217,8 +218,7 @@ public:                                    \
     return this->rep; }                                                 \
   template<TT T> inline PTR<T>& PTR<T>::operator = (PTR<T> x) {         \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                 \
-    this->rep=x.rep; return *this; }                                    \
-  template<TT T> inline bool nil (PTR<T> x) { return x.rep==NULL; }
+    this->rep=x.rep; return *this; }
 
 #define CONCRETE_NULL_TEMPLATE_2(PTR,T1,T2) \
   CONCRETE_TEMPLATE_2(PTR,T1,T2);           \
@@ -235,9 +235,7 @@ public:                                    \
   template<TT1 T1, TT2 T2>                                                \
   inline PTR<T1,T2>& PTR<T1,T2>::operator = (PTR<T1,T2> x) {              \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                   \
-    this->rep=x.rep; return *this; }                                      \
-  template<TT1 T1, TT2 T2> inline bool nil (PTR<T1,T2> x) {               \
-    return x.rep==NULL; }
+    this->rep=x.rep; return *this; }
 // end concrete_null
 
 // abstract_null
