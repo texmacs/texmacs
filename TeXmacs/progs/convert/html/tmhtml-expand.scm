@@ -32,8 +32,8 @@
   `(collection
     ,@(map tmhtml-env-macro
 	   '(TeXmacs TeX LaTeX hrule item
-	     chapter* section* subsection* subsubsection*
-	     paragraph* subparagraph*
+	     chapter-title section-title subsection-title subsubsection-title
+	     paragraph-title subparagraph-title
 	     itemize itemize-minus itemize-dot itemize-arrow
 	     enumerate enumerate-numeric enumerate-roman
 	     enumerate-Roman enumerate-alpha enumerate-Alpha
@@ -42,6 +42,7 @@
 	     strong em dfn code* samp kbd var abbr acronym
 	     verbatim code tt
 	     block block* tabular tabular*
+	     doc-title-block equation-lab
 	     tmdoc-title tmdoc-flag tmdoc-license key
 	     tmdoc-title*
 	     tmdoc-title**

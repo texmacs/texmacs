@@ -89,13 +89,13 @@
   <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>
 
   <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
-    <with|math-font-series|bold|font-series|bold|<font-magnify|1.682|<doc-title-block|<arg|x>>>>
+    <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
   <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
 
   <assign|doc-subtitle|<macro|x|<\surround|<vspace*|0.25fn>|<vspace|0.5fn>>
-    <with|math-font-series|bold|font-series|bold|<font-magnify|1.297|<doc-title-block|<arg|x>>>>
+    <doc-title-block|<font-magnify|1.297|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
   </surround>>>
 
   <assign|doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>

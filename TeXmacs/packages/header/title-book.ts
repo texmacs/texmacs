@@ -32,7 +32,7 @@
   <assign|doc-make-title|<\macro|body>
     <no-indent><assign|page-this-header|><assign|page-this-footer|><vspace|0.25pag>
 
-    <font-magnify|1.414|<doc-title-block|<arg|body>>>
+    <doc-title-block|<font-magnify|1.414|<arg|body>>>
 
     <new-page>
 

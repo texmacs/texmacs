@@ -43,7 +43,7 @@
     </with>
   </macro>>
 
-  <assign|doc-render-title|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<style-with|src-compact|none|<really-large|<doc-title-block|<arg|x>>>>>>>>
+  <assign|doc-render-title|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<style-with|src-compact|none|<really-large|<arg|x>>>>>>>>
 
   <assign|author-by|<macro|body|<arg|body>>>
 
