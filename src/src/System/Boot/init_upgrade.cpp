@@ -88,8 +88,10 @@ init_upgrade_doc (string install_version) {
     append (from_dir * "changes-5.en.ptm", to);
   if (version_inf_eq (install_version, "1.0.2.0"))
     append (from_dir * "changes-6.en.ptm", to);
-  if (version_inf_eq (install_version, "1.0.2.6")) {
+  if (version_inf_eq (install_version, "1.0.2.6"))
     append (from_dir * "changes-7.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.2.8")) {
+    append (from_dir * "changes-8.en.ptm", to);
     append (from_dir * "changes-post.en.ptm", to);
   }
   else remove (to);
