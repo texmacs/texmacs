@@ -45,7 +45,7 @@
     <item>Dokumentation des Source Codes von <TeXmacs>.
 
     <item>Spezifikation des <hyper-link|<TeXmacs>
-    Dokumenten-Formates|devel/format/format.de.tm>.
+    Dokumenten-Formates|devel/format/basics/basics.de.tm>.
 
     <item>Wie man zum Dokumentations-Projekt
     <hyper-link|beitragen|about/contribute/documentation/documentation.de.tm>
