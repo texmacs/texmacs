@@ -23,6 +23,112 @@ constructor (tree_label l, string name, int arity, int properties= 0) {
   std_drd->set_props (l, properties);
 }
 
+#define BIFORM   CHILD_BIFORM
+#define DETAILED CHILD_DETAILED
+
+static tag_info
+fixed (int arity, int extra=0, int child_mode= CHILD_UNIFORM) {
+  return tag_info (arity, extra, ARITY_NORMAL, child_mode, true);
+}
+
+static tag_info
+options (int arity, int extra, int child_mode= CHILD_UNIFORM) {
+  return tag_info (arity, extra, ARITY_OPTIONS, child_mode, true);
+}
+
+static tag_info
+repeat (int arity, int extra, int child_mode= CHILD_UNIFORM) {
+  return tag_info (arity, extra, ARITY_REPEAT, child_mode, true);
+}
+
+static tag_info
+var_repeat (int arity, int extra, int child_mode= CHILD_UNIFORM) {
+  return tag_info (extra, arity, ARITY_VAR_REPEAT, child_mode, true);
+}
+
+static void
+init (tree_label l, string name, tag_info ti) {
+  //cout << "l= " << l << ", " << name << ", " << ti << "\n";
+  //cout << "Check name...\n";
+  if (as_string (l) != name)
+    cout << name << ": Bad name (" << as_string (l) << ")\n";
+  tag_info std= std_drd->ti[l];
+
+  //cout << "Check arity...\n";
+  bool arity_ok;
+  if (ti->pi.arity_mode != ARITY_NORMAL) arity_ok= (std->arity == -1);
+  else arity_ok= (std->arity ==
+		  (((int) ti->pi.arity_min) + ((int) ti->pi.arity_extra)));
+  if (!arity_ok)
+    cout << name << ": Bad arity (" << std->arity << ")\n";
+
+  //cout << "Check no_border...\n";
+  if (ti->pi.no_border != ((std->props & BORDER_ACCESSIBLE_MASK)>0))
+    cout << name << ": Bad no_border ("
+	 << ((std->props & BORDER_ACCESSIBLE_MASK)>0) << ")\n";
+
+  //cout << "Check dynamic...\n";
+  bool dyn1= (std->props & DYNAMIC_MASK) > 0;
+  bool dyn2= ti->pi.arity_mode != ARITY_NORMAL;
+  if (dyn2 != dyn1)
+    cout << name << ": Bad dynamic ("
+	 << ((std->props & DYNAMIC_MASK)>0) << ")\n";
+
+  //cout << "Check accessible...\n";
+  array<child_info>& ci= ti->ci;
+  int i, n= N(ci);
+  bool access_ok= true;
+  switch (std->props & ACCESSIBLE_MASK) {
+  case NOT_ACCESSIBLE:
+    for (i=0; i<n; i++)
+      access_ok= access_ok && (ci[i].accessible == false);
+    break;
+  case ACCESSIBLE:
+    for (i=0; i<n; i++)
+      access_ok= access_ok && (ci[i].accessible == true);
+    break;
+  case FIRST_ACCESSIBLE:
+    if (ti->pi.child_mode != CHILD_DETAILED) {
+      access_ok= access_ok && (ti->pi.child_mode != CHILD_UNIFORM);
+      access_ok= access_ok && (ti->pi.arity_mode != ARITY_VAR_REPEAT);
+      access_ok= access_ok && (ti->pi.arity_min == 1);
+    }
+    access_ok= access_ok && (ci[0].accessible == true);
+    for (i=1; i<n; i++)
+      access_ok= access_ok && (ci[i].accessible == false);
+    break;
+  case LAST_ACCESSIBLE:
+    if (ti->pi.child_mode != CHILD_DETAILED) {
+      access_ok= access_ok && (ti->pi.child_mode != CHILD_UNIFORM);
+      if (ti->pi.arity_mode == ARITY_NORMAL)
+	access_ok= access_ok && (ti->pi.arity_extra == 1);
+      else if (ti->pi.arity_mode == ARITY_VAR_REPEAT)
+	access_ok= access_ok && (ti->pi.arity_min == 1);
+      else access_ok= false;
+    }
+    access_ok= access_ok && (ci[n-1].accessible == true);
+    for (i=0; i<n-1; i++)
+      access_ok= access_ok && (ci[i].accessible == false);
+    break;
+  case TAIL_ACCESSIBLE:
+    if (ti->pi.child_mode != CHILD_DETAILED) {
+      access_ok= access_ok && (ti->pi.child_mode != CHILD_UNIFORM);
+      access_ok= access_ok && (ti->pi.arity_mode != ARITY_VAR_REPEAT);
+      access_ok= access_ok && (ti->pi.arity_min == 1);
+    }
+    access_ok= access_ok && (ci[0].accessible == false);
+    for (i=1; i<n; i++)
+      access_ok= access_ok && (ci[i].accessible == true);
+    break;
+  }
+  if (!access_ok)
+    cout << name << ": Bad accessability ("
+	 << (std->props & ACCESSIBLE_MASK) << ")\n";
+
+  std->pi= ti->pi;
+  std->ci= ti->ci;
+}
+
 static bool std_drd_initialized= false;
 
 void
@@ -30,6 +136,7 @@ initialize_std_drd () {
   if (std_drd_initialized) return;
   std_drd_initialized=true;
 
+  constructor (STRING, "string", 0);
   constructor (UNKNOWN, "unknown", 0);
   constructor (UNINIT, "uninit", 0);
   constructor (ERROR, "error", 1);
@@ -104,11 +211,11 @@ initialize_std_drd () {
   constructor (ASSIGN, "assign", 2, DYNAMIC);
   constructor (WITH, "with", -1, LAST_ACCESSIBLE + DYNAMIC);
   constructor (VALUE, "value", 1, DYNAMIC);
-  constructor (MACRO, "macro", -1, DYNAMIC);
+  constructor (MACRO, "macro", -1, ACCESSIBLE + DYNAMIC);
   constructor (DRD_PROPS, "drd_props", -1, DYNAMIC);
   constructor (ARGUMENT, "arg", -1, DYNAMIC);
   constructor (COMPOUND, "compound", -1, TAIL_ACCESSIBLE + DYNAMIC);
-  constructor (XMACRO, "xmacro", 2, DYNAMIC);
+  constructor (XMACRO, "xmacro", 2, ACCESSIBLE + DYNAMIC);
   constructor (GET_LABEL, "get_label", 1, DYNAMIC);
   constructor (GET_ARITY, "get_arity", 1, DYNAMIC);
   constructor (MAP_ARGS, "map_args", -1, DYNAMIC);
@@ -156,17 +263,17 @@ initialize_std_drd () {
   constructor (VAR_INACTIVE, "var_inactive", 1, ACCESSIBLE);
   constructor (VAR_ACTIVE, "var_active", 1, ACCESSIBLE);
   constructor (SYMBOL, "symbol", 1);
-  constructor (LATEX, "latex", 1, DYNAMIC);
-  constructor (HYBRID, "hybrid", -1, DYNAMIC);
+  constructor (LATEX, "latex", 1, ACCESSIBLE + DYNAMIC);
+  constructor (HYBRID, "hybrid", -1, ACCESSIBLE + DYNAMIC);
   constructor (TUPLE, "tuple", -1, DYNAMIC);
-  constructor (ATTR, "attr", -1, DYNAMIC);
+  constructor (ATTR, "attr", -1, ACCESSIBLE + DYNAMIC);
   constructor (COLLECTION, "collection", -1);
   constructor (ASSOCIATE, "associate", 2);
-  constructor (BACKUP, "backup", 1);
-  constructor (LABEL, "label", -1, DYNAMIC);
-  constructor (REFERENCE, "reference", -1, DYNAMIC);
-  constructor (PAGEREF, "pageref", -1, DYNAMIC);
-  constructor (WRITE, "write", -1, DYNAMIC);
+  constructor (BACKUP, "backup", 2);
+  constructor (LABEL, "label", 1, DYNAMIC);
+  constructor (REFERENCE, "reference", 1, DYNAMIC);
+  constructor (PAGEREF, "pageref", 1, DYNAMIC);
+  constructor (WRITE, "write", 2, DYNAMIC);
   constructor (SPECIFIC, "specific", 2, DYNAMIC + NOT_ACCESSIBLE);
   constructor (HYPERLINK, "hlink", 2, FIRST_ACCESSIBLE + DYNAMIC);
   constructor (ACTION, "action", -1, FIRST_ACCESSIBLE + DYNAMIC);
@@ -183,7 +290,7 @@ initialize_std_drd () {
   constructor (VAR_SPLINE, "var_spline", -1, DYNAMIC + NOT_ACCESSIBLE);
   constructor (CSPLINE, "cspline", -1, DYNAMIC + NOT_ACCESSIBLE);
   constructor (FILL, "fill", -1, DYNAMIC);
-  constructor (POSTSCRIPT, "postscript", -1, DYNAMIC);
+  constructor (POSTSCRIPT, "postscript", 7, DYNAMIC);
 
   constructor (FORMAT, "format", -1);
   constructor (SPLIT, "split", -1, DYNAMIC);
@@ -206,7 +313,7 @@ initialize_std_drd () {
   constructor (PROVIDES, "provides", 1, DYNAMIC);
   constructor (AUTHORIZE, "authorize", 2);
 
-  /*
+  init (STRING, "string", fixed (0));
   init (UNKNOWN, "unknown", fixed (0));
   init (UNINIT, "uninit", fixed (0));
   init (ERROR, "error", fixed (1));
@@ -215,17 +322,17 @@ initialize_std_drd () {
   init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
   init (PARAGRAPH, "para", repeat (1, 1) -> no_border () -> accessible (0));
   init (SURROUND, "surround", fixed (3) -> accessible (0));
-  init (CONCAT, "concat", repeat (1, 1) -> no_border ());
+  init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
   init (HSPACE, "hspace", options (1, 2)); // arity 1 or 3
   init (VSPACE_BEFORE, "vspace*", options (1, 2)); // arity 1 or 3
   init (VSPACE_AFTER, "vspace", options (1, 2)); // arity 1 or 3
   init (SPACE, "space", options (1, 2)); // arity 1 or 3
   init (HTAB, "htab", options (1, 1));
-  init (MOVE, "move", first (3) -> accessible (0));
-  init (RESIZE, "resize", first (5) -> accessible (0));
-  init (REPEAT, "repeat", first (2) -> accessible (0));
-  init (_FLOAT, "float", last (3) -> accessible (1));
+  init (MOVE, "move", fixed (1, 2, BIFORM) -> accessible (0));
+  init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
+  init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
+  init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DECORATE_ATOMS, "datoms", var_repeat (1, 1, BIFORM) -> accessible (1));
   // arbitrary number of macros and decorated content
   init (DECORATE_LINES, "dlines", var_repeat (1, 1, BIFORM) -> accessible (1));
@@ -258,7 +365,7 @@ initialize_std_drd () {
   init (TABLE_MARKER, "tmarker", fixed (0));
   init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
   init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
-  init (CELL, "cell", repeat (1, 1) -> no_border () -> accessible (0));
+  init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
   init (SUB_TABLE, "sub_table", fixed (1) -> no_border () -> accessible (0));
 
   init (LEFT, "left", fixed (1));
@@ -337,7 +444,7 @@ initialize_std_drd () {
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1) -> accessible (0));
   init (HYBRID, "hybrid", options (1, 1) -> accessible (0));
-  init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
+  init (TUPLE, "tuple", repeat (0, 1));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
@@ -383,5 +490,4 @@ initialize_std_drd () {
   init (ENVIRONMENT, "env", var_repeat (1, 2));
   init (PROVIDES, "provides", fixed (1));
   init (AUTHORIZE, "authorize", fixed (2));
-  */
 }

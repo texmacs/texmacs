@@ -18,6 +18,7 @@
 
 class drd_info;
 class drd_info_rep: concrete_struct {
+public:
   string name;
   rel_hashmap<tree_label,tag_info> ti;
 
@@ -26,10 +27,6 @@ public:
   drd_info_rep (string name, drd_info base);
 
   /* Properties of the tag itself */
-  void set_child_mode (tree_label tag, int mode);
-  int  get_child_mode (tree_label tag);
-  void freeze_child_mode (tree_label tag);
-
   void set_arity_mode (tree_label tag, int mode);
   int  get_arity_mode (tree_label tag);
   void set_min_arity (tree_label tag, int arity);
@@ -37,6 +34,10 @@ public:
   void set_extra_arity (tree_label tag, int arity);
   int  get_extra_arity (tree_label tag);
   void freeze_arity (tree_label tag);
+
+  void set_child_mode (tree_label tag, int mode);
+  int  get_child_mode (tree_label tag);
+  void freeze_child_mode (tree_label tag);
 
   void set_no_border (tree_label tag, bool has_no_border);
   int  get_no_border (tree_label tag);
