@@ -3,21 +3,20 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Typesetter primitives>
+  <tmdoc-title|Fundamental structures>
 
-  <\traverse>
-    <branch|Fundamental structures|prim-fundamental.en.tm>
+  Fundamental document structures (document, concat) and primitive with
+  unique properties (error, raw-data).
 
-    <branch|Physical markup|prim-physical.en.tm>
+  <\itemize>
+    <item>document
 
-    <branch|Stylesheet language|prim-style.en.tm>
+    <item>concat
 
-    <branch|Functional operators|prim-functional.en.tm>
+    <item>error
 
-    <branch|Transient markup|prim-transient.en.tm>
-
-    <branch|Obscure primitives|prim-obscure.en.tm>
-  </traverse>
+    <item>raw-data (opaque)
+  </itemize>
 
   <tmdoc-copyright|2004|David Allouche>
 
@@ -35,27 +34,11 @@
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
     <associate|page-top|30mm>
-    <associate|page-type|a4>
     <associate|page-right|30mm>
     <associate|par-width|150mm>
     <associate|page-odd|30mm>
     <associate|page-bot|30mm>
-    <associate|language|english>
     <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|toc-6|<tuple|6|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
-  </collection>
-</references>

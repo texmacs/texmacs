@@ -16,7 +16,7 @@
   <\traverse>
     <branch|Typesetting language|language/language.en.tm>
 
-    <branch|The primitive <TeXmacs> constructs|primitives/primitives.en.tm>
+    <branch|Typesetter primitives|primitives/primitives.en.tm>
 
     <branch|System environment variables|environment/environment.en.tm>
   </traverse>
@@ -53,8 +53,8 @@
 
 <\references>
   <\collection>
-    <associate|toc-1|<tuple|<uninit>|?>>
     <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|<uninit>|?>>
     <associate|toc-2|<tuple|<uninit>|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
     <associate|idx-3|<tuple|<uninit>|?>>
