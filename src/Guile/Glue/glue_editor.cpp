@@ -728,9 +728,9 @@ tmg_insert_string (SCM arg1) {
 
 SCM
 tmg_insert_tree (SCM arg1) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "insert-tree");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-tree");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_tree (in1);
@@ -741,10 +741,10 @@ tmg_insert_tree (SCM arg1) {
 
 SCM
 tmg_insert_tree_go_to (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "insert-tree-go-to");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-tree-go-to");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-tree-go-to");
 
-  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+  content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -1540,10 +1540,10 @@ tmg_init_env (SCM arg1, SCM arg2) {
 SCM
 tmg_init_env_tree (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-env-tree");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "init-env-tree");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "init-env-tree");
 
   string in1= scm_to_string (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->init_env (in1, in2);
@@ -1598,10 +1598,10 @@ tmg_get_env_tree (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= get_server()->get_editor()->get_env_value (in1);
+  tree out= get_server()->get_editor()->get_env_value (in1);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -1611,10 +1611,10 @@ tmg_get_init_tree (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  texmacs_tree out= get_server()->get_editor()->get_init_value (in1);
+  tree out= get_server()->get_editor()->get_init_value (in1);
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -2053,28 +2053,28 @@ tmg_footer_eval (SCM arg1) {
 SCM
 tmg_the_line () {
   // SCM_DEFER_INTS;
-  texmacs_tree out= get_server()->get_editor()->the_line ();
+  tree out= get_server()->get_editor()->the_line ();
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_the_selection () {
   // SCM_DEFER_INTS;
-  texmacs_tree out= get_server()->get_editor()->selection_get ();
+  tree out= get_server()->get_editor()->selection_get ();
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
 tmg_the_buffer () {
   // SCM_DEFER_INTS;
-  texmacs_tree out= get_server()->get_editor()->the_buffer ();
+  tree out= get_server()->get_editor()->the_buffer ();
   // SCM_ALLOW_INTS;
 
-  return texmacs_tree_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -2538,10 +2538,10 @@ tmg_tm_subtree (SCM arg1) {
 SCM
 tmg_tm_assign (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-assign");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-assign");
 
   path in1= scm_to_path (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->assign (in1, in2);
@@ -2553,10 +2553,10 @@ tmg_tm_assign (SCM arg1, SCM arg2) {
 SCM
 tmg_tm_insert (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-insert");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-insert");
 
   path in1= scm_to_path (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert (in1, in2);
@@ -2637,10 +2637,10 @@ tmg_tm_rem_unary (SCM arg1) {
 SCM
 tmg_tm_assign_diff (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign-diff");
-  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-assign-diff");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-assign-diff");
 
   path in1= scm_to_path (arg1);
-  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->assign_diff (in1, in2);
@@ -2764,11 +2764,11 @@ SCM
 tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tm-insert-with");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tm-insert-with");
 
   path in1= scm_to_path (arg1);
   string in2= scm_to_string (arg2);
-  tree in3= scm_to_tree (arg3);
+  content in3= scm_to_content (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_with (in1, in2, in3);

@@ -353,13 +353,32 @@ scm_to_scheme_tree (SCM p) {
 }
 
 /******************************************************************************
-* TeXmacs trees
+* Content
 ******************************************************************************/
 
-#define texmacs_tree tree
-#define SCM_ASSERT_TEXMACS_TREE SCM_ASSERT_TREE
-#define texmacs_tree_to_scm tree_to_scm
-#define scm_to_texmacs_tree scm_to_tree
+#define content tree
+#define SCM_ASSERT_CONTENT(p,arg,rout)
+#define content_to_scm tree_to_scm
+
+tree
+scm_to_content (SCM p) {
+  if (scm_is_tree (p)) return scm_to_tree (p);
+  if (scm_is_list (p)) {
+    if (scm_is_null (p) || (!gh_symbol_p (SCM_CAR (p)))) return "?";
+    tree t (make_tree_label (scm_to_symbol (SCM_CAR (p))));
+    p= SCM_CDR (p);
+    while (!scm_is_null (p)) {
+      t << scm_to_content (SCM_CAR (p));
+      p= SCM_CDR (p);
+    }
+    return t;
+  }
+  if (gh_symbol_p (p)) return scm_to_symbol (p);
+  if (scm_is_string (p)) return scm_to_string (p);
+  if (SCM_INUMP (p)) return as_string (scm_to_int (p));
+  if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
+  return "?";
+}
 
 /******************************************************************************
 * Paths
