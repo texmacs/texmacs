@@ -358,12 +358,14 @@ edit_typeset_rep::init_add_package (string name) {
 void
 edit_typeset_rep::init_remove_package (string name) {
   int i, n= N(the_style);
+  tree new_style= tree (TUPLE);
   for (i=0; i<n; i++)
     if (the_style[i] == name) {
-      the_style= the_style (0, i) * the_style (i+1, N(the_style));
       buf->need_save= buf->need_autosave= true;
       notify_change (THE_ENVIRONMENT);
     }
+    else new_style << the_style;
+  the_style= new_style;
 }
 
 void
