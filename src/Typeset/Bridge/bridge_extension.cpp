@@ -71,7 +71,9 @@ bridge_extension_rep::notify_assign (path p, tree u) {
   }
   else {
     // bool mp_flag= is_multi_paragraph (st);
-    if (is_applicable (fun) && (p->item < N(fun)))
+    if (is_func (fun, XMACRO, 2))
+      notify_macro (MACRO_ASSIGN, fun[0]->label, -1, p, u);
+    else if (is_applicable (fun) && (p->item < N(fun)))
       notify_macro (MACRO_ASSIGN, fun[p->item]->label, -1, p->next, u);
     st= substitute (st, p, u);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
@@ -86,7 +88,9 @@ bridge_extension_rep::notify_insert (path p, tree u) {
   if (atom (p) || nil (body)) bridge_rep::notify_insert (p, u);
   else {
     // bool mp_flag= is_multi_paragraph (st);
-    if (is_applicable (fun) && (p->item < N(fun)))
+    if (is_func (fun, XMACRO, 2))
+      notify_macro (MACRO_INSERT, fun[0]->label, -1, p, u);
+    else if (is_applicable (fun) && (p->item < N(fun)))
       notify_macro (MACRO_INSERT, fun[p->item]->label, -1, p->next, u);
     st= insert (st, p, u);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
@@ -101,7 +105,9 @@ bridge_extension_rep::notify_remove (path p, int nr) {
   if (atom (p) || nil (body)) bridge_rep::notify_remove (p, nr);
   else {
     // bool mp_flag= is_multi_paragraph (st);
-    if (is_applicable (fun) && (p->item < N(fun)))
+    if (is_func (fun, XMACRO, 2))
+      notify_macro (MACRO_REMOVE, fun[0]->label, -1, p, tree (as_string (nr)));
+    else if (is_applicable (fun) && (p->item < N(fun)))
       notify_macro (MACRO_REMOVE, fun[p->item]->label, -1, p->next,
 		    tree (as_string (nr)));
     st= remove (st, p, nr);
@@ -126,7 +132,14 @@ bridge_extension_rep::notify_macro (
       hashmap<string,tree> (UNINIT), env->macro_arg);
     env->macro_src= list<hashmap<string,path> > (
       hashmap<string,path> (path (DECORATION)), env->macro_src);
-    for (i=0; i<n; i++)
+    if (L(fun) == XMACRO) {
+      if (is_atomic (fun[0])) {
+	string var= fun[0]->label;
+	env->macro_arg->item (var)= st;
+	env->macro_src->item (var)= ip;
+      }
+    }
+    else for (i=0; i<n; i++)
       if (is_atomic (fun[i])) {
 	string var= fun[i]->label;
 	env->macro_arg->item (var)= i<m? st[i]: tree("");
@@ -169,7 +182,14 @@ bridge_extension_rep::my_typeset (int desired_status) {
       hashmap<string,tree> (UNINIT), env->macro_arg);
     env->macro_src= list<hashmap<string,path> > (
       hashmap<string,path> (path (DECORATION)), env->macro_src);
-    for (i=0; i<n; i++)
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0])) {
+	string var= f[0]->label;
+	env->macro_arg->item (var)= st;
+	env->macro_src->item (var)= ip;
+      }
+    }
+    else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
 	env->macro_arg->item (var)= i<m? st[i]: tree("");

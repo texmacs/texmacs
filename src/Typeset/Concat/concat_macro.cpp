@@ -126,7 +126,14 @@ concater_rep::typeset_extension (tree t, path ip) {
       hashmap<string,tree> (UNINIT), env->macro_arg);
     env->macro_src= list<hashmap<string,path> > (
       hashmap<string,path> (path (DECORATION)), env->macro_src);
-    for (i=0; i<n; i++)
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0])) {
+	string var= f[0]->label;
+	env->macro_arg->item (var)= t;
+	env->macro_src->item (var)= ip;
+      }
+    }
+    else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
 	env->macro_arg->item (var)= i<m? t[i]: tree("");
@@ -245,10 +252,7 @@ concater_rep::typeset_argument (tree t, path ip) {
   path   valip= decorate_right (ip);
   if (!is_func (value, BACKUP)) {
     path new_valip= env->macro_src->item [name];
-    if (is_accessible (new_valip)) {
-      valip= new_valip;
-      env->macro_src->item (name)= decorate_right (valip);
-    }
+    if (is_accessible (new_valip)) valip= new_valip;
   }
   // cout << "Src   " << name << "=\t " << valip << "\n";
 
@@ -257,7 +261,20 @@ concater_rep::typeset_argument (tree t, path ip) {
   list<hashmap<string,path> > old_src= env->macro_src;
   if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
   if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+
+  if (N(t) > 1) {
+    int i, n= N(t);
+    for (i=1; i<n; i++) {
+      tree r= env->exec (t[i]);
+      if (!is_int (r)) break;
+      int nr= as_int (r);
+      if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+      value= value[nr];
+      valip= descend (valip, nr);
+    }
+  }
   typeset (value, valip);
+
   env->macro_arg= old_var;
   env->macro_src= old_src;
   marker (descend (ip, 1));

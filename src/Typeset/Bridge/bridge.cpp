@@ -55,6 +55,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     return bridge_expand (ttt, st, ip);
   case APPLY:
     return bridge_apply (ttt, st, ip);

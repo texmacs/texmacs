@@ -119,6 +119,8 @@ private:
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_argument (tree t);
+  tree exec_get_label (tree t);
+  tree exec_get_arity (tree t);
   bool exec_until_argument (tree t, path p, string var, int level);
   tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);

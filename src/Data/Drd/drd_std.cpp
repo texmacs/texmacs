@@ -116,18 +116,22 @@ initialize_std_drd () {
 	       TAIL_ACCESSIBLE + DYNAMIC + BORDER_NOT_ACCESSIBLE);
   constructor (HIDE_EXPAND, "hide_expand", -1,
 	       HIDE_EXPAND_ACCESSIBLE + DYNAMIC);
+  constructor (COMPOUND, "compound", -1, TAIL_ACCESSIBLE + DYNAMIC);
   constructor (APPLY, "apply", -1, DYNAMIC);
   constructor (BEGIN, "begin", -1, DYNAMIC);
   constructor (END, "end", 1, DYNAMIC);
   constructor (INCLUDE, "include", 1, DYNAMIC);
   constructor (MACRO, "macro", -1, DYNAMIC);
+  constructor (XMACRO, "xmacro", 2, DYNAMIC);
   constructor (FUNCTION, "func", -1, DYNAMIC);
   constructor (ENVIRONMENT, "env", -1, DYNAMIC);
   constructor (DRD_PROPS, "drd_props", -1, DYNAMIC);
   constructor (EVAL, "eval", 1, DYNAMIC);
   constructor (PROVIDES, "provides", 1, DYNAMIC);
   constructor (VALUE, "value", 1, DYNAMIC);
-  constructor (ARGUMENT, "arg", 1, DYNAMIC);
+  constructor (ARGUMENT, "arg", -1, DYNAMIC);
+  constructor (GET_LABEL, "get_label", 1, DYNAMIC);
+  constructor (GET_ARITY, "get_arity", 1, DYNAMIC);
   constructor (BACKUP, "backup", 1);
   constructor (QUOTE, "quote", 1, DYNAMIC);
   constructor (DELAY, "delay", 1, DYNAMIC);

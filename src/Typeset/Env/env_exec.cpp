@@ -57,7 +57,7 @@ bool see= false;
 
 tree
 edit_env_rep::exec (tree t) {
-  //cout << "Execute: " << t << "\n";
+  // cout << "Execute: " << t << "\n";
   if (is_atomic (t)) return t;
   if (preamble && ((!is_func (t, ASSIGN)) || (t[0] != MODE))) {
     int i, n= N(t);
@@ -84,12 +84,14 @@ edit_env_rep::exec (tree t) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     return exec_expand (t);
   case APPLY:
     return exec_apply (t);
   case INCLUDE:
     return exec_include (t);
   case MACRO:
+  case XMACRO:
   case FUNCTION:
     return copy (t);
   case DRD_PROPS:
@@ -102,6 +104,10 @@ edit_env_rep::exec (tree t) {
     return exec_value (t);
   case ARGUMENT:
     return exec_argument (t);
+  case GET_LABEL:
+    return exec_get_label (t);
+  case GET_ARITY:
+    return exec_get_arity (t);
   case QUOTE:
     return copy (t[0]);
   case DELAY:
@@ -334,7 +340,11 @@ edit_env_rep::exec_extension (tree t) {
       hashmap<string,tree> (UNINIT), macro_arg);
     macro_src= list<hashmap<string,path> > (
       hashmap<string,path> (path (DECORATION)), macro_src);
-    for (i=0; i<n; i++)
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0]))
+	macro_arg->item (f[0]->label)= t;
+    }
+    else for (i=0; i<n; i++)
       if (is_atomic (f[i]))
 	macro_arg->item (f[i]->label)= i<m? t[i]: tree("");
     tree r= exec (f[n]);
@@ -499,10 +509,32 @@ edit_env_rep::exec_argument (tree t) {
   list<hashmap<string,path> > old_src= macro_src;
   if (!nil (macro_arg)) macro_arg= macro_arg->next;
   if (!nil (macro_src)) macro_src= macro_src->next;
+  if (N(t) > 1) {
+    int i, n= N(t);
+    for (i=1; i<n; i++) {
+      tree u= exec (t[i]);
+      if (!is_int (u)) break;
+      int nr= as_int (u);
+      if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
+      r= r[nr];
+    }
+  }
   r= exec (r);
   macro_arg= old_var;
   macro_src= old_src;
   return r;
+}
+
+tree
+edit_env_rep::exec_get_label (tree t) {
+  tree r= exec (t[0]);
+  return copy (as_string (L(r)));
+}
+
+tree
+edit_env_rep::exec_get_arity (tree t) {
+  tree r= exec (t[0]);
+  return as_string (arity (r));
 }
 
 tree
@@ -1012,6 +1044,7 @@ edit_env_rep::exec_until (tree t, path p) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     exec_until_expand (t, p);
     return;
   case INACTIVE:
@@ -1120,7 +1153,11 @@ edit_env_rep::exec_until_extension (tree t, path p) {
       (hashmap<string,tree> (UNINIT), macro_arg);
     macro_src= list<hashmap<string,path> >
       (hashmap<string,path> (path (DECORATION)), macro_src);
-    for (i=0; i<n; i++)
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0]))
+	macro_arg->item (f[0]->label)= t;
+    }
+    else for (i=0; i<n; i++)
       if (is_atomic (f[i]))
 	macro_arg->item (f[i]->label)= i<m? t[i]: tree("");
     (void) exec_until (f[n], p->next, var, 0);
@@ -1195,10 +1232,12 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     return exec_until_expand (t, p, var, level);
   case APPLY:
   case INCLUDE:
   case MACRO:
+  case XMACRO:
   case FUNCTION:
   case EVAL:
   case PROVIDES:
@@ -1390,6 +1429,10 @@ edit_env_rep::exec_until_extension (tree t, path p, string var, int level) {
       (hashmap<string,tree> (UNINIT), macro_arg);
     macro_src= list<hashmap<string,path> >
       (hashmap<string,path> (path (DECORATION)), macro_src);
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0]))
+	macro_arg->item (f[0]->label)= t;
+    }
     for (i=0; i<n; i++)
       if (is_atomic (f[i]))
 	macro_arg->item (f[i]->label)= i<m? t[i]: tree("");
@@ -1416,6 +1459,18 @@ edit_env_rep::exec_until_argument (tree t, path p, string var, int level) {
       if (!nil (macro_src)) macro_src= macro_src->next;
       if (level == 0) {
 	found= (r->label == var);
+	if ((N(t) > 1) && found) {
+	  int i, n= N(t);
+	  for (i=1; i<n; i++) {
+	    tree u= exec (t[i]);
+	    if (!is_int (u)) { found= false; break; }
+	    int nr= as_int (u);
+	    if ((!is_compound (arg)) || (nr<0) || (nr>=N(arg)) ||
+		nil (p) || (p->item != nr)) { found= false; break; }
+	    arg= arg[nr];
+	    p  = p->next;
+	  }
+	}
 	if (found) exec_until (arg, p);
 	else exec (arg);
       }
@@ -1469,7 +1524,7 @@ edit_env_rep::exec_until_mod_active (
 tree
 edit_env_rep::expand (tree t) {
   if (is_atomic (t) || nil (macro_arg)) return t;
-  else if (is_func (t, ARGUMENT, 1)) {
+  else if (is_func (t, ARGUMENT)) {
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
@@ -1479,6 +1534,16 @@ edit_env_rep::expand (tree t) {
     list<hashmap<string,path> > old_src= macro_src;
     if (!nil (macro_arg)) macro_arg= macro_arg->next;
     if (!nil (macro_src)) macro_src= macro_src->next;
+    if (N(t) > 1) {
+      int i, n= N(t);
+      for (i=1; i<n; i++) {
+	tree u= exec (t[i]);
+	if (!is_int (u)) break;
+	int nr= as_int (u);
+	if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
+	r= r[nr];
+      }
+    }
     r= expand (r);
     macro_arg= old_var;
     macro_src= old_src;
@@ -1501,7 +1566,7 @@ edit_env_rep::depends (tree t, string s, int level) {
   */
 
   if (is_atomic (t) || nil (macro_arg)) return false;
-  else if (is_func (t, ARGUMENT, 1)) {
+  else if (is_func (t, ARGUMENT)) {
     if (is_compound (t[0])) return false;
     if (!macro_arg->item->contains (t[0]->label)) return false;
     if (level == 0) return t[0]->label == s;

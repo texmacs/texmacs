@@ -37,6 +37,13 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.6", version)) return H;
+
+  new_feature (H, "compound");
+  new_feature (H, "xmacro");
+  new_feature (H, "get_label");
+  new_feature (H, "get_arity");
+
   if (version_inf ("1.0.2.5", version)) return H;
 
   new_feature (H, "drd_props");
@@ -1545,6 +1552,26 @@ upgrade_expand (tree t, tree_label WHICH_EXPAND) {
 #endif
 }
 
+static tree
+upgrade_xexpand (tree t) {
+#ifdef WITH_EXTENSIONS
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    if (is_expand (t) && (!is_func (t, COMPOUND))) {
+      // cout << "Upgrade " << t << "\n";
+      r= tree (COMPOUND, n);
+    }
+    for (i=0; i<n; i++)
+      r[i]= upgrade_xexpand (t[i]);
+    return r;
+  }
+#else
+  return t;
+#endif
+}
+
 /******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
@@ -1564,6 +1591,7 @@ upgrade_tex (tree t) {
   t= upgrade_expand (t, EXPAND);
   t= upgrade_expand (t, HIDE_EXPAND);
   t= upgrade_expand (t, VAR_EXPAND);
+  t= upgrade_xexpand (t);
   return t;
 }
 
@@ -1607,7 +1635,9 @@ upgrade (tree t, string version) {
     t= upgrade_expand (t, EXPAND);
   if (version_inf_eq (version, "1.0.2.4"))
     t= upgrade_expand (t, HIDE_EXPAND);
-  if (version_inf_eq (version, "1.0.2.5"))
+  if (version_inf_eq (version, "1.0.2.5")) {
     t= upgrade_expand (t, VAR_EXPAND);
+    t= upgrade_xexpand (t);
+  }
   return t;
 }

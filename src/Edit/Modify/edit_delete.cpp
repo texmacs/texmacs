@@ -220,11 +220,15 @@ edit_text_rep::remove_backwards () {
     case HIDE_EXPAND:
       back_hide_expand (p);
       return;
+    case COMPOUND:
+      back_expand (p);
+      return;
     case APPLY:
     case INCLUDE:
       back_dynamic (p);
       return;
     case MACRO:
+    case XMACRO:
     case FUNCTION:
     case DRD_PROPS:
     case EVAL:
@@ -233,10 +237,15 @@ edit_text_rep::remove_backwards () {
     case PROVIDES:
     case VALUE:
     case ARGUMENT:
-      if (!is_concat (u)) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
+      if (N(t) == 1) {
+	if (!is_concat (u)) assign (p, "");
+	else remove (p, 1);
+	correct (path_up (p));
+      }
+      else back_dynamic (p);
       return;
+    case GET_LABEL:
+    case GET_ARITY:
     case QUOTE:
     case DELAY:
     case HOLD:
@@ -420,6 +429,7 @@ edit_text_rep::remove_backwards () {
     case EXPAND:
     case VAR_EXPAND:
     case HIDE_EXPAND:
+    case COMPOUND:
       back_in_expand (u, p);
       return;
     case APPLY:
@@ -427,6 +437,7 @@ edit_text_rep::remove_backwards () {
       back_in_dynamic (u, p);
       return;
     case MACRO:
+    case XMACRO:
     case FUNCTION:
       back_in_dynamic (u, p);
       return;
@@ -436,7 +447,13 @@ edit_text_rep::remove_backwards () {
     case EVAL:
     case PROVIDES:
     case VALUE:
+      back_in_dynamic (u, p);
+      return;
     case ARGUMENT:
+      back_in_dynamic (u, p, 1);
+      break;
+    case GET_LABEL:
+    case GET_ARITY:
     case QUOTE:
     case DELAY:
     case HOLD:
