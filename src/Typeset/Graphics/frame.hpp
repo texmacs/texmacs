@@ -20,6 +20,7 @@ public:
 public:
   inline frame_rep () { linear= false; }
   inline virtual ~frame_rep () {}
+  virtual operator tree () = 0;
 
   virtual point direct_transform (point p) = 0;
   virtual point inverse_transform (point p) = 0;
@@ -35,6 +36,7 @@ public:
 class curve;
 class frame {
   ABSTRACT_NULL(frame);
+  operator tree () { return (tree) *rep; }
   inline point operator () (point p) { return rep->direct_transform (p); }
   inline point operator [] (point p) { return rep->inverse_transform (p); }
   inline bool operator == (frame f) { return rep == f.rep; }

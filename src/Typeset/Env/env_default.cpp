@@ -22,7 +22,8 @@ initialize_default_env () {
   tree the_page (MACRO, compound ("page number"));
   tree identity_m (MACRO, "x", tree (ARGUMENT, "x"));
   tree tabular_m (MACRO, "x", tree (TABLE_FORMAT, tree (ARGUMENT, "x")));
-  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0cm", "0cm"));
+  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "3cm", "1yfrac"));
+  tree gr_clip (TUPLE, "clip", tuple ("-3", "-2"), tuple ("3", "2"));
 
   env (DPI)              = "600";       // resolution in dots per inch
   env (SFACTOR)          = "5";         // shrinking factor on screen
@@ -158,7 +159,7 @@ initialize_default_env () {
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
-  env (GR_CLIP)          = "none";      // clipping of graphics
+  env (GR_CLIP)          = gr_clip;     // clipping of graphics
   env (GR_LINE_WIDTH)    = "1ln";       // line width in graphics
   env (GR_LINE_STYLE)    = "solid";     // line style (dashes, etc.)
   env (GR_LINE_ARROWS)   = "none";      // arrows at end of lines

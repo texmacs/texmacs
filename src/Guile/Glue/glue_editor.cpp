@@ -497,6 +497,15 @@ tmg_redo () {
 }
 
 SCM
+tmg_in_graphicsP () {
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->inside_graphics ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_in_normal_modeP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->in_normal_mode ();
@@ -1635,7 +1644,7 @@ tmg_menu_after_action () {
 }
 
 SCM
-tmg_in_preamble_modeP () {
+tmg_in_preambleP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->in_preamble_mode ();
   // SCM_ALLOW_INTS;
@@ -2739,6 +2748,7 @@ initialize_glue_editor () {
   gh_new_procedure ("clipboard-get-export", (FN) tmg_clipboard_get_export, 0, 0, 0);
   gh_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   gh_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
+  gh_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
   gh_new_procedure ("in-normal-mode?", (FN) tmg_in_normal_modeP, 0, 0, 0);
   gh_new_procedure ("in-search-mode?", (FN) tmg_in_search_modeP, 0, 0, 0);
   gh_new_procedure ("in-replace-mode?", (FN) tmg_in_replace_modeP, 0, 0, 0);
@@ -2831,7 +2841,7 @@ initialize_glue_editor () {
   gh_new_procedure ("init-has?", (FN) tmg_init_hasP, 1, 0, 0);
   gh_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
-  gh_new_procedure ("in-preamble-mode?", (FN) tmg_in_preamble_modeP, 0, 0, 0);
+  gh_new_procedure ("in-preamble?", (FN) tmg_in_preambleP, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
   gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);

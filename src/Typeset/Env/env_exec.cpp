@@ -1540,6 +1540,7 @@ edit_env_rep::decode_length (string s) {
   if (s2 == "ln") { return (SI) (x*((double) fn->wline)); }
   if (s2 == "sep") { return (SI) (x*((double) fn->sep)); }
   if (s3 == "px") { return (SI) (x*(get_int(SFACTOR)*PIXEL)); }
+  if (s3 == "yfrac") { return (SI) (x*fn->yfrac); }
   if (s3 == "par") {
     SI width, d1, d2, d3, d4, d5, d6, d7;
     get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);

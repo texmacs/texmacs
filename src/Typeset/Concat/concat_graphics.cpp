@@ -20,12 +20,11 @@
 void
 concater_rep::typeset_graphics (tree t, path ip) {
   int i, n= N(t);
-  array<box> bs (n-1);
-  for (i=1; i<n; i++)
-    bs[i-1]= typeset_as_concat (env, t[i], descend (ip, i));
-  point lim1 (0.0, 0.0);
-  point lim2 (5.0, 3.0);
-  print (STD_ITEM, graphics_box (ip, bs, env->fr, lim1, lim2));
+  array<box> bs (n);
+  for (i=0; i<n; i++)
+    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+  box b= graphics_box (ip, bs, env->fr, env->clip_lim1, env->clip_lim2);
+  print (STD_ITEM, b);
 }
 
 void
