@@ -465,6 +465,16 @@ edit_select_rep::selection_get (path& start, path& end) {
   end  = sel->end;
 }
 
+path
+edit_select_rep::selection_get_start () {
+  return start_p;
+}
+
+path
+edit_select_rep::selection_get_end () {
+  return end_p;
+}
+
 tree
 edit_select_rep::selection_get () {
   if (!selection_active_any ()) return "";
@@ -499,16 +509,18 @@ edit_select_rep::selection_raw_get (string key) {
 }
 
 void
-edit_select_rep::selection_set_start () {
+edit_select_rep::selection_set_start (path p) {
   bool flag= selection_active_any ();
-  start_p= tp;
+  if (nil(p)) start_p= tp;
+  else start_p= p;
   if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
   notify_change (THE_SELECTION);
 }
 
 void
-edit_select_rep::selection_set_end () {
-  end_p= tp;
+edit_select_rep::selection_set_end (path p) {
+  if (nil(p)) end_p= tp;
+  else end_p= p;
   if (path_less_eq (end_p, start_p)) start_p= end_p;
   notify_change (THE_SELECTION);
 }

@@ -385,10 +385,12 @@ public:
   virtual path selection_get_subtable (int& i1, int& j1, int& i2, int& j2) = 0;
   virtual void selection_get (selection& sel) = 0;
   virtual void selection_get (path& start, path& end) = 0;
+  virtual path selection_get_start () = 0;
+  virtual path selection_get_end () = 0;
   virtual void selection_set (string key, tree t, bool persistant= false) = 0;
   virtual void selection_set (tree t) = 0;
-  virtual void selection_set_start () = 0;
-  virtual void selection_set_end () = 0;
+  virtual void selection_set_start (path p= path()) = 0;
+  virtual void selection_set_end (path p= path()) = 0;
   virtual void selection_copy (string key= "primary") = 0;
   virtual void selection_paste (string key= "primary") = 0;
   virtual void selection_clear (string key= "primary") = 0;
