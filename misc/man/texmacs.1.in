@@ -32,6 +32,13 @@ a technical drawing editor and a presentation mode.
 \fB\-b [file]\fR, \fB\-\-initialize\-buffer [file]\fR
     Uses [file] as a guile/scheme initialization file for TeXmacs buffers.
 .TP
+\fB\-c [in] [out]\fR, \fB\-\-convert [in] [out]\fR
+    Convert input file [in] into output file [out].
+    The file formats are determined automatically
+    from the suffixes and as a function of the contents of [in].
+    The argument list may contain several conversion instructions and
+    you will usually want to use this option in combination with --quit.
+.TP
 \fB\-d\fR, \fB\-\-debug\fR
     Display most important debugging information.
 .TP
