@@ -1717,7 +1717,7 @@ upgrade_function (tree t) {
 }
 
 /******************************************************************************
-* Environment variables for paragraphs
+* Renaming environment variables
 ******************************************************************************/
 
 static charp var_rename []= {
@@ -1742,7 +1742,7 @@ static charp var_rename []= {
   "math font series", "math-font-series",
   "math font shape", "math-font-shape",
   "index level", "math-level",
-  "display style", "math-display",
+  "formula style", "math-display",
   "math condensed", "math-condensed",
   "vertical position", "math-vpos",
 
@@ -1869,6 +1869,55 @@ static charp var_rename []= {
   ""
 };
 
+static hashmap<string,string> var_rename_table ("?");
+
+static hashmap<string,string>
+get_var_rename () {
+  if (N (var_rename_table) == 0) {
+    int i;
+    for (i=0; var_rename[i][0] != '\0'; i+=2)
+      var_rename_table (var_rename[i])= var_rename[i+1];
+  }
+  return var_rename_table;
+}
+
+static tree
+rename_vars (tree t, hashmap<string,string> H) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      tree u= rename_vars (t[i], H);
+      if (is_atomic (u) && H->contains (u->label))
+	if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
+	    ((L(t) == ASSIGN) && (i == 0)) ||
+	    ((L(t) == VALUE) && (i == 0)) ||
+	    ((L(t) == CWITH) && (i == 4)) ||
+	    ((L(t) == TWITH) && (i == 0)) ||
+	    ((L(t) == ASSOCIATE) && (i == 0)))
+	  {
+	    u= copy (H[u->label]);
+	    //cout << "]]] " << as_string (L(t)) << ", " << i
+	    //<< " -> " << u << "\n";
+	  }
+      r[i]= u;
+    }
+    if ((n == 0) && H->contains (as_string (L(t)))) {
+      string v= H[as_string (L(t))];
+      r= tree (VALUE, copy (v));
+      if (v == PAGE_THE_PAGE) r= tree (make_tree_label (PAGE_THE_PAGE));
+      // cout << "]]] " << t << " -> " << r << "\n";
+    }
+    return t;
+  }
+}
+
+tree
+upgrade_env_vars (tree t) {
+  return rename_vars (t, get_var_rename ());
+}
+
 /******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
@@ -1891,6 +1940,7 @@ upgrade_tex (tree t) {
   t= upgrade_xexpand (t);
   t= upgrade_function (t);
   t= upgrade_apply (t);
+  t= upgrade_env_vars (t);
   return t;
 }
 
@@ -1942,5 +1992,7 @@ upgrade (tree t, string version) {
     t= upgrade_function (t);
     t= upgrade_apply (t);
   }
+  if (version_inf_eq (version, "1.0.2.8"))
+    t= upgrade_env_vars (t);
   return t;
 }
