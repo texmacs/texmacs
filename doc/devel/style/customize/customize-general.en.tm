@@ -5,17 +5,34 @@
 <\body>
   <tmdoc-title|General principles for customization>
 
-  The exports of style files and packages can generally be subdivided into
-  the following categories:
+  Style files and packages basically enrich the current typesetting
+  environment with a combination of
 
   <\itemize>
-    <item>Environment variables, such as section numbers.
+    <item>Environment variables.
+
+    <item>Tags for the end-user.
+
+    <item>Customizable macros.
   </itemize>
 
-  For this reason, the <TeXmacs> style files have been subdivided in smaller
-  packages in order to facilitate the reuse of certain parts. The design
-  policy also allows you to redefine many macros <em|a posteriori>, which
-  allows you to customize the existing style files in an easy way.
+  Furthermore, they may define some tags for intern implementation purposes,
+  which will not be documented in this manual. They may also specify some
+  logical properties of tags using the <markup|drd-props> primitive.
+
+  Environment variables are almost always attributes for controlling the
+  rendering of content or counters for sections, equations, <abbr|etc.>.
+  Although you may redefine several simple tags for the end-user like
+  <markup|strong> in your own style files, this practice is not recommended
+  for more complex tags like <markup|section>. Indeed, a tag like
+  <markup|section> involves many things like resetting subcounters, entering
+  the title into the table of contents and so on. Therefore, special
+  additional macros are provided the customization of such tags, like
+  <markup|section-title>, <markup|section-clean> and <markup|section-toc>.
+
+  When customizing the right macros, you should therefore be able to use your
+  style package in combination with a wide variety of style files and other
+  packages.
 
   <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
