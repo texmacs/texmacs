@@ -29,6 +29,13 @@
 #endif
 #include <sys/types.h>
 
+int    file_count= 0;
+time_t file_time = 0;
+int    stat_count= 0;
+time_t stat_time = 0;
+int    dirs_count= 0;
+time_t dirs_time = 0;
+
 /******************************************************************************
 * New style loading and saving
 ******************************************************************************/
@@ -40,6 +47,7 @@ load_string (url u, string& s, bool fatal) {
   if (!is_rooted_name (r)) r= resolve (r);
   bool err= !is_rooted_name (r);
   if (!err) {
+    time_t file_start= texmacs_time ();
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
@@ -57,6 +65,8 @@ load_string (url u, string& s, bool fatal) {
       fclose (fin);
     }
     delete[] _name;
+    file_count ++;
+    file_time  += texmacs_time ()- file_start;
   }
   if (err && fatal)
     fatal_error (as_string (u) * " not readable", "load_string");
@@ -123,12 +133,15 @@ save_string (url u, string s, bool fatal) {
 
 static bool
 get_attributes (url name, struct stat* buf, bool link_flag=false) {
+  time_t stat_start= texmacs_time ();
   bool flag;
   char* temp= as_charp (concretize (name));
   flag= stat (temp, buf); (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;
+  stat_count ++;
+  stat_time  += texmacs_time ()- stat_start;
   return flag;
 }
 
@@ -207,6 +220,7 @@ read_directory (url u, bool& error_flag) {
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
+  time_t dirs_start= texmacs_time ();
 
   DIR* dp;
   char* temp= as_charp (name);
@@ -224,5 +238,8 @@ read_directory (url u, bool& error_flag) {
   }
   (void) closedir (dp);
   merge_sort (dir);
+
+  dirs_count ++;
+  dirs_time  += texmacs_time ()- dirs_start;
   return dir;
 }
