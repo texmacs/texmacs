@@ -22,6 +22,7 @@
     real-math-font? real-math-family?
     kill-line replace-start-forward
     with-active-buffer-sub with-active-buffer
+    delayed-update
     session-test-math-input?
     set-action-path has-action-path? get-action-path
     tmp-compound-object))
@@ -117,6 +118,13 @@
 
 (define-macro with-active-buffer
   (lambda l (with-active-buffer-sub (car l) (cons 'begin (cdr l)))))
+
+(define (delayed-update nr)
+  (cond ((> nr 0)
+	 (generate-all-aux)
+	 (update-buffer)
+	 (with s (number->string (- nr 1))
+	   (exec-delayed (string-append "(delayed-update " s ")"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; To be moved

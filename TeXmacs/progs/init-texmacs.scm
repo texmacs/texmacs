@@ -100,6 +100,7 @@
 (lazy-define (convert doc tmdoc) tmdoc-expand-help)
 (lazy-define (convert doc tmdoc) tmdoc-expand-this)
 (lazy-define (convert doc tmdoc) tmdoc-include)
+(lazy-define (convert doc tmdoc) tmdoc-ps-manual)
 (lazy-define (convert doc docgrep) docgrep-in-doc)
 (lazy-define (convert doc docgrep) docgrep-in-src)
 (lazy-define (convert doc docgrep) docgrep-in-texts)

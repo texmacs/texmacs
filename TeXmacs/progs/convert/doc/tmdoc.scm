@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert doc tmdoc)
-  (:export tmdoc-expand-help tmdoc-expand-this tmdoc-include))
+  (:export tmdoc-expand-help tmdoc-expand-this
+	   tmdoc-include tmdoc-ps-manual))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
@@ -65,7 +66,7 @@
 	  ((match? x '(apply "continue" :2))
 	   (tmdoc-branch x base-name (list level) done))
 	  ((match? x '(apply "extra-branch" :2))
-	   (tmdoc-branch x base-name 'appendix) done)
+	   (tmdoc-branch x base-name 'appendix done))
 	  ((match? x '(apply "tmdoc-copyright" :*))
 	   '(document))
 	  (else (tmdoc-substitute x base-name)))))
@@ -77,6 +78,7 @@
 	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
 
 (define (tmdoc-expand file-name level . opts)
+  (display* "tmdoc-expand " file-name "\n")
   (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
 	 (done? (ahash-ref done file-name))
 	 (t (texmacs-load-tree file-name "texmacs"))
@@ -155,3 +157,7 @@
   (let* ((body (tmdoc-expand file-name 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
     (tmdoc-remove-hyper-links filt)))
+
+(define (tmdoc-ps-manual src-manual)
+  (tmdoc-expand-help src-manual 'title)
+  (delayed-update 3))
