@@ -142,8 +142,8 @@ search_sub_dirs (url root) {
 
 static void
 init_heuristic_tex_paths () {
-  cout << "kpsepath = " << get_setting ("KPSEPATH") << "\n";
-  cout << "kpsewhich= " << get_setting ("KPSEWHICH") << "\n";
+  // cout << "kpsepath = " << get_setting ("KPSEPATH") << "\n";
+  // cout << "kpsewhich= " << get_setting ("KPSEWHICH") << "\n";
 #ifndef OS_WIN32
   // Not necessary if we can use kpsepath
   if (get_setting ("KPSEPATH") == "true") {
