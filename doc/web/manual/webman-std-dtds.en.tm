@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|tmweb>
 
@@ -6,7 +6,7 @@
   <tmweb-current|Help|Manual><tmweb-title|Summary of the principal <TeXmacs>
   tags|<tmweb-manual-links|webman-styling|webman-convert>>
 
-  <tmdoc-include|main/styles/std-dtds/dtds.en.tm>
+  <tmdoc-include|main/styles/std/std-dtd.en.tm>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 

@@ -737,7 +737,7 @@
 
 (define (tmhtml-tmdoc-copyright env l)
   (with content
-      `(,(cadr (parse-html "&copy;")) " " ,@(tmhtml env (car l))
+      `("&copy;" " " ,@(tmhtml env (car l))
 	" " ,@(tmhtml env (cadr l))
 	,@(tmhtml-tmdoc-copyright* env (cddr l)))
     (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
