@@ -76,13 +76,13 @@
   Please also tell us what kind of changes you plan to make, so that we can
   give you write-permissions to the appropriate parts of the CVS-tree. Notice
   that for contributions to the <TeXmacs> source code we usually prefer
-  contributions in the form of <hyper-link|patches|../contact/patches.en.tm>.
-  On the other hand, we recommend the use of CVS for the contribution of
-  documentation and plug-ins.
+  <hyper-link|patches|../contact/patches.en.tm>. On the other hand, we
+  recommend the use of CVS for the contribution of documentation and
+  plug-ins.
 
-  For users with a CVS account, it is highly recommended to use crypted
-  access using <hlink|<name|ccvssh>|http://ccvssh.sourceforge.net/>. After
-  having installed <name|ccvssh>, this requires you to set
+  For users with a CVS account, we highly prefer you to use crypted access
+  using <hlink|<name|ccvssh>|http://ccvssh.sourceforge.net/>. Besides
+  installing <name|ccvssh>, if necessary, this requires you to set
 
   <\verbatim>
     \ \ \ \ CVSROOT=:ext:the_username@cvs.texmacs.org:/texmacs
