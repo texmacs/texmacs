@@ -33,16 +33,16 @@
       Made of several paragraphs.
     </tm-fragment>
 
-    Such a document is represented a simple <verbatim|document> tree whose
+    Such a document is represented a simple <markup|document> tree whose
     subtrees are all strings.
 
     <\scheme-fragment>
       (document "A simple document." "Made of several paragraphs.")
     </scheme-fragment>
 
-    Actually, the root of the <em|edit tree> is always a <verbatim|document>
-    node. Document fragments use a root <verbatim|document> node only when
-    they contain several top-level paragraphs.
+    Actually, the root of the <em|edit tree> is always a <markup|document>
+    node. Document fragments use a root <markup|document> node only when they
+    contain several top-level paragraphs.
 
     The <verbatim|document> operators are also found in inner subtrees
     wherever a multi-paragraph structure is needed, for example in list
@@ -58,14 +58,14 @@
       Some <em|emphasized> text.
     </tm-fragment>
 
-    This fragment is made of several line items. The <verbatim|concat> node
-    is used to assemble them into a single logical line.
+    This fragment is made of several line items. The <markup|concat> node is
+    used to assemble them into a single logical line.
 
     <\scheme-fragment>
       (concat "Some " (em "emphasized") " text.")
     </scheme-fragment>
 
-    The <verbatim|concat> operator is essential to put compound structures in
+    The <markup|concat> operator is essential to put compound structures in
     trees taking multiple parameters. For example, let us place the previous
     fragment in a multi-paragraph context:
 
@@ -75,7 +75,7 @@
       Some <em|emphasized> text.
     </tm-fragment>
 
-    We absolutely need <verbatim|concat> as a glue operator so the multiple
+    We absolutely need <markup|concat> as a glue operator so the multiple
     components of the second paragraph are no considered multiple paragraphs.
 
     <\scheme-fragment>
@@ -99,7 +99,7 @@
     <item*|<markup|raw-data>>Opaque data.
 
     In some contexts you need to embed uneditable data inside a document,
-    most of the time this is uneditable binary data. The <verbatim|raw-data>
+    most of the time this is uneditable binary data. The <markup|raw-data>
     primitive makes it impossible to view or modify its subtree from within
     the editor.
   </description-dash>
@@ -132,13 +132,10 @@
 
 <\references>
   <\collection>
-    <associate|idx-10|<tuple|1|?>>
-    <associate|idx-11|<tuple|1|?>>
     <associate|idx-1|<tuple|1|?>>
     <associate|gly-1|<tuple|1|?>>
-    <associate|idx-12|<tuple|1|?>>
-    <associate|idx-2|<tuple|1|?>>
     <associate|gly-2|<tuple|2|?>>
+    <associate|idx-2|<tuple|1|?>>
     <associate|idx-3|<tuple|1|?>>
     <associate|idx-4|<tuple|1|?>>
     <associate|idx-5|<tuple|1|?>>
@@ -146,6 +143,16 @@
     <associate|idx-7|<tuple|1|?>>
     <associate|idx-8|<tuple|1|?>>
     <associate|idx-9|<tuple|1|?>>
+    <associate|idx-10|<tuple|1|?>>
+    <associate|idx-11|<tuple|1|?>>
+    <associate|idx-12|<tuple|1|?>>
+    <associate|idx-13|<tuple|1|?>>
+    <associate|idx-14|<tuple|1|?>>
+    <associate|idx-15|<tuple|1|?>>
+    <associate|idx-16|<tuple|1|?>>
+    <associate|idx-17|<tuple|1|?>>
+    <associate|idx-18|<tuple|1|?>>
+    <associate|idx-19|<tuple|1|?>>
   </collection>
 </references>
 

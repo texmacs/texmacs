@@ -26,13 +26,12 @@
     <item*|<markup|vspace*>>Vertical space before.
 
     <verbatim|(vspace* <var|len>)> and <verbatim|(space <var|len> <var|min>
-    <var|max>)> are similar to their <verbatim|vspace> counterparts but the
+    <var|max>)> are similar to their <markup|vspace> counterparts but the
     vertical space is inserted <em|before> the current paragraph.
 
     The actual vertical space between two consecutive paragraphs is the
     <em|maximum>, not the sum, of the vertical spaces specified by the the
-    <verbatim|vspace> and <verbatim|vspace*> tags in the surrounding
-    paragraphs.
+    <markup|vspace> and <markup|vspace*> tags in the surrounding paragraphs.
 
     <item*|<markup|space>>Rigid horizontal space.
 
@@ -125,10 +124,14 @@
 <\references>
   <\collection>
     <associate|idx-10|<tuple|1|?>>
-    <associate|idx-1|<tuple|1|?>>
+    <associate|idx-11|<tuple|1|?>>
     <associate|gly-1|<tuple|1|?>>
+    <associate|idx-1|<tuple|1|?>>
+    <associate|idx-12|<tuple|1|?>>
     <associate|idx-2|<tuple|1|?>>
+    <associate|idx-13|<tuple|1|?>>
     <associate|idx-3|<tuple|1|?>>
+    <associate|idx-14|<tuple|1|?>>
     <associate|idx-4|<tuple|1|?>>
     <associate|idx-5|<tuple|1|?>>
     <associate|idx-6|<tuple|1|?>>
