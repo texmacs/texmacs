@@ -61,6 +61,7 @@ protected:
   string        completion_prefix;
   int           completion_pos;
   int           nr_mutators;
+  time_t        next_mutate;
 
 public:
   edit_interface_rep ();

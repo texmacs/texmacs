@@ -47,7 +47,7 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0), nr_mutators (-1)
+  oc (0, 0), nr_mutators (-1), next_mutate (texmacs_time())
 {
   input_mode= INPUT_NORMAL;
 }
@@ -165,8 +165,11 @@ mutate (tree t, path ip) {
 void
 edit_interface_rep::process_mutators () {
   if (nr_mutators == 0) return;
-  if (editor (this) != sv->get_editor ()) return;
+  if (texmacs_time() < next_mutate) return;
+  time_t before= texmacs_time ();
   nr_mutators= mutate (subtree (et, rp), reverse (rp));
+  time_t after = texmacs_time ();
+  next_mutate= after + 10*(after-before) + 250;
 }
 
 path

@@ -1,6 +1,6 @@
-  <expand|section|Improved style sheeds and source editing mode (1.0.3.5)>
+  <expand|section|Improved style sheets and source editing mode (1.0.3.5)>
 
-  We are making it easier for users to edit style sheeds. This improvement
+  We are making it easier for users to edit style sheets. This improvement
   made it necessary to simplify many of the standard <TeXmacs> styles and packages,
   so that it will be easier to customize them. However, if you already designed
   some style files, then this may break some of their features. We mainly
