@@ -1277,7 +1277,8 @@ page_breaker_rep::fast_assemble_skeleton (skeleton& sk, int end) {
   insertion ins= make_insertion (0, -1, start, end, end == n);
   pagelet pg (0);
   pg << ins;
-  format_pagelet (pg, height, end == n);
+  bool last_page= last_page_flag && (end == n);
+  format_pagelet (pg, height, last_page);
   sk << pg;
 }
 
