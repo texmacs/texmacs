@@ -17,9 +17,8 @@
 
 static hashmap<string,string> tt_fonts ("no");
 
-url
-tt_font_find (string name) {
-  string suffix= "/" * name * ".ttf";
+static url
+tt_locate (string suffix) {
   string s= eval_system ("locate", suffix);
   int start, i, n= N(s);
   for (start=0, i=0; i<n; i++)
@@ -29,6 +28,13 @@ tt_font_find (string name) {
       start= i+1;
     }
   return url_none ();
+}
+
+url
+tt_font_find (string name) {
+  url u= tt_locate ("/" * name * ".ttf");
+  if (!is_none (u)) return u;
+  return tt_locate ("/" * name * ".pfb");
 }
 
 bool
