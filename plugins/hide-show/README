@@ -1,0 +1,11 @@
+Plugin: hide-show
+Summary: hiding and showing line structures
+Release: 1.0
+TeXmacs: 1.0.3
+Author: David Allouche
+License: GNU Public License v2 or later
+Depends: interactive-proc buffer-replace
+
+Wrap or unwrap all tags with a name in a given set in "hide" tags.
+
+Also provide a command to remove all "hide" wrappers.

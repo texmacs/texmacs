@@ -90,10 +90,8 @@ bridge_docrange_rep::rebalance () {
 	int start= i;
 	while ((i < n-1) && ((mid[i+2] == mid[start+1]) ||
 			     (mid[i+2] - mid[start] <= ACC_THRESHOLD))) i++;
-	// cout << "  Compactify " << i-start << " at " << start << ", ";
-	// if (mid[i+1] == mid[start+1]) cout << "suppress\n";
-	// else cout << "compress\n";
-	if (mid[i+1] == mid[start+1]) acc2 << acc[start];
+	// cout << "  Compactify " << i-start << " at " << start << "\n";
+	if (mid[i+1] == mid[start+1]) acc2 << acc[i];
 	else acc2 << bridge_docrange (ttt, st, ip, brs, mid[start], mid[i+1]);
 	mid2 << mid[start];
       }
@@ -118,7 +116,6 @@ bridge_docrange_rep::rebalance () {
   }
 
   mid2 << end;
-  // if (mid2 != mid) cout << mid << " -> " << mid2 << "\n";
   acc= acc2;
   mid= mid2;
 }

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -107,13 +107,13 @@
   <\scheme-fragment>
     (tm-define (latexer s)
 
-    \ \ (:type (tree -\<gtr\> object))
+    \ \ (:type (string -\<gtr\> object))
 
     \ \ (:synopsis "convert LaTeX string to TeXmacs tree using plugin")
 
     \ \ (:secure #t)
 
-    \ \ (plugin-eval "secure" "default" (tree-\<gtr\>string s)))
+    \ \ (plugin-eval "secure" "default" s))
   </scheme-fragment>
 
   It is important to define <verbatim|latexer> as being secure, so that it
@@ -146,5 +146,17 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

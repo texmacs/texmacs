@@ -479,7 +479,7 @@
 
 (define (tmtex-big-decode s)
   (cond ((not (string? s)) "bignone")
-        ((in? s '("sum" "prod" "int" "oint" "coprod")) s)
+        ((in? s '("sum" "prod" "int" "oint")) s)
 	((== s "amalg") "coprod")
 	((== s "pluscup") "uplus")
 	((== s ".") "bignone")

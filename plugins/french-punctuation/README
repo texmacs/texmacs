@@ -1,0 +1,12 @@
+Plugin: french-punctuation
+Summary: input helper for more correct spacing in french text
+Release: 0.5
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU GPL v2.0 or later
+
+TeXmacs has some built-in support for french typographical rules
+regarding spacing before punctuation. Generally, line breaking is
+disabled before or after some punctuations.
+
+However, the exact rules from the "Imprimerie Nationale" are more elaborate than this. Several punctuation must be preceded by a "rigid thin space", 
