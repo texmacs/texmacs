@@ -16,7 +16,7 @@
   (:use (convert tools output))
   (:export serialize-html))
 
-(define htmlout-verbatim-mode? #f)
+(define preformatted? #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -32,14 +32,24 @@
 (define (htmlout-big? op)
   (drd-in? op htmlout-lang-big%))
 
-(define (htmlout-indent s plus)
-  (if (htmlout-big? s)
-      (begin
-	(output-indent plus)
-	(output-lf))))
+(define (htmlout-indent s plus) (htmlout-indent* s plus #f))
+(define (htmlout-indent-close s plus) (htmlout-indent* s plus #t))
+
+(define (htmlout-indent* s plus close?)
+  (if (not preformatted?)
+      (cond ((htmlout-big? s)
+	     (output-indent plus)
+	     (output-lf))
+	    ((== s 'pre)
+	     (if (not close?) (output-lf-verbatim))))))
+
+(define (htmlout-text . ss)
+  (if preformatted?
+      (apply output-verbatim ss)
+      (apply output-text ss)))
 
 (define (htmlout-open s)
-  (output-text "<" (symbol->string s) ">")
+  (htmlout-text "<" (symbol->string s) ">")
   (htmlout-indent s 2))
 
 (define (htmlout-tag x)
@@ -47,14 +57,14 @@
   (output-verbatim "\"" (utf8->html (cadr x)) "\""))
 
 (define (htmlout-open-tags s l)
-  (output-text "<" (symbol->string s))
+  (htmlout-text "<" (symbol->string s))
   (for-each htmlout-tag l)
-  (output-text ">")
+  (htmlout-text ">")
   (htmlout-indent s 2))
 
 (define (htmlout-close s)
-  (htmlout-indent s -2)
-  (output-text "</" (symbol->string s) ">"))
+  (htmlout-indent-close s -2)
+  (htmlout-text "</" (symbol->string s) ">"))
 
 (define (htmlout-args l big?)
   (if (not (null? l))
@@ -68,18 +78,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (htmlout x)
-  (cond ((string? x)
-	 (if htmlout-verbatim-mode?
-	     (output-verbatim (utf8->html x))
-	     (output-text (utf8->html x))))
+  (cond ((string? x) (htmlout-text (utf8->html x)))
 	((null? x) (noop))
 	((or (func? x '!concat) (func? x '*TOP*))
 	 (for-each htmlout (cdr x)))
-	((and (func? x 'pre) (not htmlout-verbatim-mode?))
-	 (set! htmlout-verbatim-mode? #t)
-	 (with r (htmlout x)
-	   (set! htmlout-verbatim-mode? #f)
-	   r))
 	((and (func? x 'p) (> (length x) 2) (not (func? (cadr x) '@)))
 	 (htmlout `(p (!concat ,@(cdr x)))))
 	((and (func? x 'p) (> (length x) 3) (func? (cadr x) '@))
@@ -96,10 +98,27 @@
 	 (htmlout-close (car x)))
 	(else
 	 (htmlout-open-tags (car x) (cdadr x))
-	 (htmlout-args (cddr x) (htmlout-big? (car x)))
+	 (update-preformatted
+	  (cdadr x)
+	  (cut htmlout-args (cddr x) (htmlout-big? (car x))))
 	 (htmlout-close (car x)))))
 
+(define (update-preformatted atts thunk)
+  (let ((saved-preformatted preformatted?)
+	(new-preformatted
+	 (cond ((assoc 'xml:space atts) =>
+		(lambda (att)
+		  (cond ((== (second att) "preserve") #t)
+			((== (second att) "default") #f)
+			(else preformatted?))))
+	       (else preformatted?))))
+    (if (== new-preformatted saved-preformatted)
+	(thunk)
+	(dynamic-wind
+	    (lambda () (set! preformatted? new-preformatted))
+	    thunk
+	    (lambda () (set! preformatted? saved-preformatted))))))
+
 (define (serialize-html x)
-  (set! htmlout-verbatim-mode? #f)
   (htmlout x)
   (output-produce))

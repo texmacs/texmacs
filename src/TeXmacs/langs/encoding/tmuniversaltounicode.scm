@@ -70,9 +70,6 @@
 ;("<jmath>"	"") -> &jmath;
 ;("<j*>"	"")
 
-;; Unclear translation, preferring imath
-;("<i*>"	"") ; see <imath>
-
 ; <vartimes>
 ; maybe glyph variant of times
 ; or saltyre (U+2613)
@@ -107,10 +104,6 @@
 
 ;; is it a variant of <leftsquigarrow> or the actual "leftwards wave arrow"?
 ;("<wasyleadsto>"	"#219C")
-
-;; typo in the name of the symbol... should be <nshortmid>
-("<nshormid>"		"#2224") ; variant of <nmid>
-
 
 ;;; Negated symbols with no aggregated character
 ("<nsqsubset>"		"#228F#0338")
@@ -194,7 +187,6 @@
 ;;; Latin Extended-A				0100--017F
 
 ; h with stroke "#0127"  ; not <hbar> (plank constant)
-("<imath>"	"#0131")
 ;("<OE>"	"#0152") ; see symbol-unicode-math.scm
 ;("<oe>"	"#0153") ; see symbol-unicode-math.scm
 
@@ -1052,7 +1044,7 @@
 ; left white parenthesis		"#2985"
 ; right white parenthesis		"#2986"
 ("<llparenthesis>"			"#2987")
-("<rrparenthesis>"			"#2987")
+("<rrparenthesis>"			"#2988")
 ; z notation left binding bracket	"#2989"
 ; z notation right binding bracket	"#298A"
 ; left square bracket with underbar	"#298B"
