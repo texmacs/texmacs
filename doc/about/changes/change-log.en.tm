@@ -5,9 +5,15 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.8>
+  <section|Changes from version 1.0.3 to 1.0.3.9>
 
   <\itemize>
+    <item>Tree call-backs at modifications in documents (1.0.3.9).
+
+    <item>Path-aware trees (1.0.3.9).
+
+    <item>Bug fixes w.r.t. previous version (1.0.3.9).
+
     <item>Better handling of parameters for page size and margins (1.0.3.8).
 
     <item>Implementation of ``mutators'', tags which may modify themselves
