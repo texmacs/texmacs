@@ -731,7 +731,7 @@
 
 (define (tmtex-args x args)
   (cond ((not (list? x)) x)
-	((or (func? x 'arg) (func? x 'apply) (func? x 'value))
+	((or (func? x 'arg) (func? x 'value))
 	 (let ((n (tmtex-args-search (cadr x) args)))
 	   (if n (list '!arg (number->string n)) (tmtex-args-sub x args))))
 	(else (tmtex-args-sub x args))))
@@ -1024,7 +1024,7 @@
   (assign tmtex-assign)
   (with tmtex-with)
   ((:or set reset) tmtex-noop)
-  ((:or var_expand expand hide_expand compound apply) tmtex-compound)
+  ((:or var_expand expand hide_expand compound) tmtex-compound)
   ((:or begin end) tmtex-noop)
   (include tmtex-noop)
   ((:or macro func env eval) tmtex-noop)
