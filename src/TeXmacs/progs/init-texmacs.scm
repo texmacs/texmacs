@@ -103,6 +103,7 @@
 (lazy-define (convert doc docgrep) docgrep-in-doc)
 (lazy-define (convert doc docgrep) docgrep-in-src)
 (lazy-define (convert doc docgrep) docgrep-in-texts)
+(lazy-define (convert doc tmweb) tmweb-convert-dir)
 (lazy-define (convert doc tmweb) tmweb-build-from)
 (lazy-define (convert doc tmweb) tmweb-build)
 (secure-symbols tmdoc-include)
