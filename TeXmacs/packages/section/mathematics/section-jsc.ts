@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -23,7 +23,11 @@
 
   <use-package|section-article>
 
+  \;
+
   <assign|sectional-sep|<macro|.<space|2spc>>>
+
+  <assign|sectional-normal|<macro|name|<no-indent><arg|name><no-page-break>>>
 
   <\active*>
     <\src-comment>
@@ -31,11 +35,11 @@
     </src-comment>
   </active*>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-series|bold|math-font-series|bold|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|1fn><arg|name><vspace|1fn>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-shape|small-caps|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|1fn>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|1fn><no-page-break>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal|<vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|1fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -43,27 +47,15 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name><paragraph-sep>><no-page-break>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name><paragraph-sep>>>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name><subparagraph-sep>><no-page-break>>>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name><subparagraph-sep>>>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

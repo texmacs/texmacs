@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -55,11 +55,11 @@
 
   <assign|abstract|<\macro|body>
     <\with|par-left|15mm|par-right|15mm|font-size|0.84>
-      <value|hrule>
+      <hrule>
 
       <surround|<no-indent>||<arg|body>>
 
-      <value|hrule>
+      <hrule>
 
       \;
     </with>
@@ -73,16 +73,16 @@
 
   <assign|sectional-sep|<macro|.<space|2spc>>>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-line><no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-shape|small-caps|font-size|1.54|<htab|0fn><arg|name><htab|0fn>><vspace|2fn><no-page-break><no-indent*>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|3fn><with|font-shape|small-caps|font-size|1.54|<arg|name>><vspace|2fn>>>>>
 
-  <assign|chapter-numbered-title|<macro|name|<style-with|src-compact|none|<chapter*|<style-with|src-compact|none|<with|font-size|1.83|<localize|Chapter>
-  <the-chapter>><htab|0fn><vspace|1.5fn><new-line><htab|0fn><arg|name>>>>>>
+  <assign|chapter-numbered-title|<macro|name|<style-with|src-compact|none|<chapter*|<style-with|src-compact|none|<with|font-size|1.83|<chapter-text>
+  <the-chapter>><right-flush><vspace|1.5fn><new-line><left-flush><arg|name>>>>>>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.30|font-shape|small-caps|<style-with|src-compact|none|<htab|0fn><arg|name><htab|0fn>>><vspace|1fn><no-page-break><no-indent*>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|2fn><with|font-shape|small-caps|font-size|1.30|<arg|name>><vspace|1fn>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1.5fn><with|font-size|1.19|<arg|name>><vspace|0.5fn>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><arg|name><vspace|0.5fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -101,17 +101,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
