@@ -41,6 +41,12 @@
     <surround||<hflush>|<arg|body>>
   </macro>>
 
+  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
+  ><arg|x>>>
+
+  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
+  subject classification:|english|<language>> ><arg|x>>>
+
   \;
 
   <assign|title*|<macro|name|<with|math-font-series|bold|font-series|bold|font-size|2.82|<arg|name>>>>
