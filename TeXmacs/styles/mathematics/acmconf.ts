@@ -45,7 +45,7 @@
 
   \;
 
-  <assign|item*|<macro|theitem|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<with|math-font-series|bold|font-series|bold|<arg|theitem>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<with|math-font-series|bold|font-series|bold|<arg|x>>
   |r-3fn||r|>>>>
 
   \;
