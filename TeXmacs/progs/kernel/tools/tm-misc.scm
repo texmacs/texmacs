@@ -34,12 +34,12 @@
 (tm-define (tm-start p)
   (:type (-> path path))
   (:synopsis "Round cursor position @p to below.")
-  (cursor-start (the-buffer) p))
+  (cursor-start (the-root) p))
 
 (tm-define (tm-end p)
   (:type (-> path path))
   (:synopsis "Round cursor position @p to above.")
-  (cursor-end (the-buffer) p))
+  (cursor-end (the-root) p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment related
@@ -84,7 +84,7 @@
 (tm-define (tm-debug)
   (:type (-> void))
   (:synopsis "For debugging purposes.")
-  (display* (tree->stree (the-buffer)) "\n"))
+  (display* (tree->stree (the-root)) "\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous commands

@@ -249,6 +249,11 @@ edit_main_rep::the_line () {
 }
 
 tree
+edit_main_rep::the_root () {
+  return et;
+}
+
+tree
 edit_main_rep::the_buffer () {
   return subtree (et, rp);
 }

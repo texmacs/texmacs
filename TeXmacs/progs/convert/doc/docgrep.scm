@@ -243,18 +243,17 @@
 			  the-result))
 	  (set! body `((description-aligned (document ,@body))))))
     (set-help-buffer "Results of search"
-		     (stree->tree
-		      `(document
-			(style "tmdoc")
-			(body (document
-			       (tmdoc-title
-				(concat
-				 ,(make-translate
-				   "Results of the search for#\`\`"
-				   keyword
-				   "''")))
-			       ,@body))
-			(initial (collection (associate "language" ,lan))))))))
+		     `(document
+		       (style "tmdoc")
+		       (body (document
+			      (tmdoc-title
+			       (concat
+				,(make-translate
+				  "Results of the search for#\`\`"
+				  keyword
+				  "''")))
+			      ,@body))
+		       (initial (collection (associate "language" ,lan)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find documentation in given path and matching a given pattern

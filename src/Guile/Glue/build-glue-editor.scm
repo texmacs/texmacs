@@ -205,6 +205,7 @@
   (footer-eval footer_eval (void string))
   (the-line the_line (tree))
   (the-selection selection_get (tree))
+  (the-root the_root (tree))
   (the-buffer the_buffer (tree))
   (the-path the_path (path))
   (the-buffer-path the_buffer_path (path))

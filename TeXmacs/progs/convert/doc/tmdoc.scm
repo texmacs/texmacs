@@ -140,14 +140,14 @@
 		    (body ,(tmdoc-add-aux body))
 		    (initial (collection (associate "language" ,lan)
 					 (associate "page-medium" "paper"))))))
-	(set-help-buffer file-name (stree->tree doc)))
+	(set-help-buffer file-name doc))
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))
 	     (doc `(document
 		    (style "tmdoc")
 		    (body ,body)
 		    (initial (collection (associate "language" ,lan))))))
-	(set-help-buffer file-name (stree->tree doc)))))
+	(set-help-buffer file-name doc))))
 
 (define (tmdoc-expand-help-manual file-name . cont)
   (with s-cont (if (null? cont) "(noop)" (car cont))

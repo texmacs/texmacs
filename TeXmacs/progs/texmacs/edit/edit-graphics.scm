@@ -30,7 +30,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (stree-at p)
-  (tree->stree (subtree (the-buffer) p)))
+  (tree->stree (tm-subtree p)))
 
 (define (graphics-graphics-path)
   ;; path to innermost graphics tag
@@ -65,7 +65,7 @@
 
 (define (graphics-set-property var val)
   (with p (graphics-graphics-path)
-    (if p (tm-insert-with p var (stree->tree val)))))
+    (if p (tm-insert-with p var val))))
 
 (define (graphics-remove-property var)
   (with p (graphics-graphics-path)
@@ -145,7 +145,7 @@
 (define (graphics-group-insert t)
   (with p (graphics-group-path)
     (if p (with n (- (length (stree-at p)) 1)
-	    (tm-insert (rcons p n) (stree->tree (list 'tuple t)))
+	    (tm-insert (rcons p n) (list 'tuple t))
 	    (if (func? t 'with)
 		(tm-go-to (append p (list n (- (length t) 2) 1)))
 		(tm-go-to (append p (list n 1))))))))
@@ -164,7 +164,7 @@
 
 (define (graphics-active-stree)
   (with p (graphics-active-path)
-    (if p (tree->stree (subtree (the-buffer) p)) #f)))
+    (if p (tree->stree (tm-subtree p)) #f)))
 
 (define (graphics-active-type)
   (with t (graphics-active-stree)
@@ -173,7 +173,7 @@
 (define (graphics-active-assign t)
   (with p (graphics-active-path)
     (if p (begin
-	    (tm-assign p (stree->tree t))
+	    (tm-assign p t)
 	    (tm-go-to (rcons p 1))))))
 
 (define (graphics-active-set-tag l)
@@ -183,7 +183,7 @@
 (define (graphics-active-insert t)
   (with p (graphics-active-path)
     (if p (with n (- (length (stree-at p)) 1)
-	    (tm-insert (rcons p n) (stree->tree (list 'tuple t)))
+	    (tm-insert (rcons p n) (list 'tuple t))
 	    (tm-go-to (rcons p 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
