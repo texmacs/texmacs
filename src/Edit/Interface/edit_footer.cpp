@@ -279,6 +279,38 @@ edit_interface_rep::set_latex_footer (tree st) {
   return false;
 }
 
+bool
+edit_interface_rep::set_hybrid_footer (tree st) {
+  // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
+  if (is_atomic (st))
+    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
+      string msg;
+      // macro argument
+      string name= st->label;
+      path mp= search_upwards (MACRO);
+      if (!nil (mp)) {
+	tree mt= subtree (et, mp);
+	int i, n= N(mt)-1;
+	for (i=0; i<n; i++)
+	  if (mt[i] == name) {
+	    set_message ("return:#insert argument#" * name, "hybrid command");
+	    return true;
+	  }
+      }
+      // macro application
+      tree f= get_env_value (name);
+      if (is_func (f, MACRO) || is_func (f, XMACRO)) {
+	set_message("return:#insert macro#" * name, "hybrid command");
+	return true;
+      }
+      else if (f != UNINIT) {
+	set_message("return:#insert value#" * name, "hybrid command");
+	return true;
+      }
+    }
+  return false;
+}
+
 /******************************************************************************
 * Update footer
 ******************************************************************************/
@@ -319,6 +351,7 @@ edit_interface_rep::set_footer () {
   if ((N(message_l) == 0) && (N(message_r) == 0)) {
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
+    if (set_hybrid_footer (st)) return;
     set_left_footer();
     set_right_footer();
   }
