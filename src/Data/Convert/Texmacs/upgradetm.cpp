@@ -2200,6 +2200,23 @@ upgrade_page_pars (tree t) {
 }
 
 /******************************************************************************
+* Substitutions
+******************************************************************************/
+
+tree
+substitute (tree t, tree which, tree by) {
+  if (t == which) return by;
+  else if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= substitute (t[i], which, by);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2224,6 +2241,7 @@ upgrade_tex (tree t) {
   t= upgrade_env_vars (t);
   t= upgrade_style_rename (t);
   t= upgrade_item_punct (t);
+  t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
   return t;
 }
 
@@ -2285,5 +2303,7 @@ upgrade (tree t, string version) {
     t= upgrade_item_punct (t);
   if (version_inf_eq (version, "1.0.3.7"))
     t= upgrade_page_pars (t);
+  if (version_inf_eq (version, "1.0.4"))
+    t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
   return t;
 }

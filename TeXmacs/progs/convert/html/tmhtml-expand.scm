@@ -31,7 +31,7 @@
   ;; FIXME: we should use the DRD here
   `(collection
     ,@(map tmhtml-env-macro
-	   '(TeXmacs TeX LaTeX item
+	   '(TeXmacs TeX LaTeX hrule item
 	     chapter* section* subsection* subsubsection*
 	     paragraph* subparagraph*
 	     itemize itemize-minus itemize-dot itemize-arrow
