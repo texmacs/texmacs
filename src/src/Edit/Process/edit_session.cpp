@@ -41,21 +41,21 @@ static string MUTATOR ("mutator");
 static int
 mutate (tree t, path ip) {
   if (is_atomic (t)) return 0;
-  else if (is_compound (t, MUTATOR, 2)) {
-    mutator_path= reverse (path (0, ip));
-    string s= as_string (t[1]); // eval_secure (s);
-    if (s != "")
-      if (as_bool (eval ("(secure? '" * s * ")"))) {
-	(void) eval (s);
-      }
-    return 1;
-  }
-  else {
-    int i, sum=0;
-    for (i=0; i<N(t); i++)
-      sum += mutate (t[i], path (i, ip));
-    return sum;
-  }
+  int i, sum=0;
+  if (is_compound (t, MUTATOR, 2) &&
+      (ip == obtain_ip (t)))
+    {
+      mutator_path= reverse (path (0, ip));
+      string s= as_string (t[1]); // eval_secure (s);
+      if (s != "")
+	if (as_bool (eval ("(secure? '" * s * ")"))) {
+	  (void) eval (s);
+	}
+      sum= 1;
+    }
+  for (i=0; i<N(t); i++)
+    sum += mutate (t[i], path (i, ip));
+  return sum;
 }
 
 void
