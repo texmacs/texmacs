@@ -233,10 +233,12 @@ private:
   tree exec_fns ();
   tree exec_spc ();
   tree exec_xspc ();
+  tree exec_bls ();
   tree exec_ln ();
   tree exec_sep ();
   tree exec_yfrac ();
   tree exec_ex ();
+  tree exec_emw ();
   tree exec_par ();
   tree exec_pag ();
   tree exec_tmpt ();

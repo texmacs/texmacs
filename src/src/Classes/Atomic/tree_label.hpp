@@ -62,10 +62,10 @@ enum tree_label {
 
   // built-in length units
   CM, MM, IN, PT, BP, DD, PC, CC,  // standard absolute units
-  _FN, FNS, SPC, XSPC,              // font specific & stretchy
-  LN, SEP, YFRAC, EX,              // font specific
+  _FN, FNS, SPC, XSPC,             // font specific & stretchy
+  BLS, LN, SEP, YFRAC, EX, EMW,    // font specific
   PAR, PAG,                        // other
-  TMPT, PX,                              // miscellaneous
+  TMPT, PX,                        // miscellaneous
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,

@@ -63,9 +63,11 @@ tt_font_rep::tt_font_rep (display dis, string name,
   display_size = y2-y1;
   design_size  = size << 8;
 
-  // get character heights
+  // get character dimensions
   get_extents ("x", ex);
-  yx           = ex->y4;
+  yx           = ex->y2;
+  get_extents ("M", ex);
+  wM           = ex->x2;
 
   // compute other heights
   yfrac        = yx >> 1;
@@ -76,7 +78,7 @@ tt_font_rep::tt_font_rep (display dis, string name,
   ysup_hi_lim  = yx;
   yshift       = yx/6;
 
-  // compute widths
+  // compute other widths
   wpt          = (dpi*PIXEL)/72;
   wquad        = (wpt*design_size) >> 8;
   wline        = wquad/20;

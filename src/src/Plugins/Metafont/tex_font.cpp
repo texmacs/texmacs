@@ -95,6 +95,10 @@ tex_font_rep::tex_font_rep (display dis, string name, int status2,
   wquad        = (wpt*design_size) >> 8;
   wline        = wquad/20;
 
+  metric ex;
+  get_extents ("M", ex);
+  wM           = ex->x2;
+
   if ((family == "cmr") || (family == "ecrm") || (family == "cmmi")) {
     if (size < 8)
       wline= wquad / (size==7? 16: (size==6? 14: 12));
