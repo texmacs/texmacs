@@ -99,7 +99,9 @@ edit_text_rep::remove_backwards () {
     case SURROUND:
       go_to (end (et, p * 2));
       return;
-    case FORMAT:
+    case GROUP:
+      go_to (end (et, p * 0));
+      return;
     case HSPACE:
     case VSPACE_BEFORE:
     case VSPACE_AFTER:
@@ -136,9 +138,6 @@ edit_text_rep::remove_backwards () {
       correct (path_up (p));
       return;
 
-    case GROUP:
-      go_to (end (et, p * 0));
-      return;
     case LEFT:
     case MIDDLE:
     case RIGHT:
@@ -185,10 +184,6 @@ edit_text_rep::remove_backwards () {
     case WITH:
       go_to (end (et, p * (N(t)-1)));
       return;
-    case COMPOUND:
-      back_compound (p);
-      return;
-    case PROVIDES:
     case VALUE:
     case ARGUMENT:
       if (N(t) == 1) {
@@ -197,6 +192,9 @@ edit_text_rep::remove_backwards () {
 	correct (path_up (p));
       }
       else back_dynamic (p);
+      return;
+    case COMPOUND:
+      back_compound (p);
       return;
     case INACTIVE:
     case ACTIVE:

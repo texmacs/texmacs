@@ -117,24 +117,18 @@ edit_env_rep::exec (tree t) {
     return exec_assign (t);
   case WITH:
     return exec_with (t);
-  case COMPOUND:
-    return exec_compound (t);
-  case INCLUDE:
-    return exec_rewrite (t);
+  case VALUE:
+    return exec_value (t);
   case MACRO:
-  case XMACRO:
-  case FUNCTION:
     return copy (t);
   case DRD_PROPS:
     return exec_drd_props (t);
-  case EVAL:
-    return exec (exec (t[0]));
-  case PROVIDES:
-    return exec_provides (t);
-  case VALUE:
-    return exec_value (t);
   case ARGUMENT:
     return exec_argument (t);
+  case COMPOUND:
+    return exec_compound (t);
+  case XMACRO:
+    return copy (t);
   case GET_LABEL:
     return exec_get_label (t);
   case GET_ARITY:
@@ -143,6 +137,8 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case EVAL_ARGS:
     return exec_eval_args (t);
+  case EVAL:
+    return exec (exec (t[0]));
   case QUOTE:
     return copy (t[0]);
   case DELAY:
@@ -151,6 +147,10 @@ edit_env_rep::exec (tree t) {
     return exec_quasiquoted (t[0]);
   case RELEASE:
     return exec (t[0]);
+  case EXTERN:
+    return exec_rewrite (t);
+  case INCLUDE:
+    return exec_rewrite (t);
 
   case OR:
     return exec_or (t);
@@ -203,13 +203,12 @@ edit_env_rep::exec (tree t) {
   case GREATEREQ:
     return exec_greatereq (t);
   case IF:
+  case VAR_IF:
     return exec_if (t);
   case CASE:
     return exec_case (t);
   case WHILE:
     return exec_while (t);
-  case EXTERN:
-    return exec_rewrite (t);
 
   case INACTIVE:
     return exec_mod_active (t, INACTIVE);
@@ -1153,16 +1152,6 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return false;
   case WITH:
     return exec_until_with (t, p, var, level);
-  case COMPOUND:
-    return exec_until_compound (t, p, var, level);
-  case INCLUDE:
-  case MACRO:
-  case XMACRO:
-  case FUNCTION:
-  case EVAL:
-  case PROVIDES:
-    (void) exec (t);
-    return false;
   case VALUE:
     /*
     {
@@ -1176,14 +1165,24 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     */
     (void) exec (t);
     return false;
+  case MACRO:
+  case DRD_PROPS:
+    (void) exec (t);
+    return false;
   case ARGUMENT:
     return exec_until_argument (t, p, var, level);
+  case COMPOUND:
+    return exec_until_compound (t, p, var, level);
+  case XMACRO:
   case GET_LABEL:
   case GET_ARITY:
-  case MAP_ARGS:
-  case EVAL_ARGS:
+  case MAP_ARGS: // FIXME: is this OK?
+  case EVAL_ARGS: // FIXME: is this OK?
+  case EVAL:
   case QUOTE:
   case DELAY:
+  case EXTERN: // FIXME: is this OK?
+  case INCLUDE: // FIXME: is this OK?
   case OR:
   case XOR:
   case AND:
@@ -1210,9 +1209,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case GREATER:
   case GREATEREQ:
   case IF:
+  case VAR_IF:
   case CASE:
   case WHILE:
-  case EXTERN:
     (void) exec (t);
     return false;
   case INACTIVE:
