@@ -634,6 +634,8 @@
   ("> var var + =" "<supsetpluseq>")
   ("< var var = +" "<subsetpluseq>")
   ("> var var = +" "<supsetpluseq>")
+  ("< var var ~" "<subsetsim>")
+  ("> var var ~" "<supsetsim>")
   ("< var var var" "<in>")
   ("> var var var" "<ni>")
   ("< var var var /" "<nin>")

@@ -249,7 +249,7 @@ Members logic-relation
 	ll subset subseteq sqsubset sqsubseteq in
 	ge geq succ succeq gg supset supseteq
 	sqsupset sqsupseteq ni equiv nequiv
-	sim simeq asymp approx cong
+	sim simeq asymp approx cong subsetsim supsetsim
 	doteq propto perp
 	bowtie Join smile frown signchange
 	mid parallel shortmid shortparallel

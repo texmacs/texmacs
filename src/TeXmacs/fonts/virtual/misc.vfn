@@ -66,6 +66,8 @@
   (join (join ltimes rtimes))
 
   (cong (enlarge (join (0 -0.15 =) (0 0.25 sim)) 0 0 -0.15 -0.25))
+  (subsetsim (join (0 -0.4 sim) (0 0.15 subset)))
+  (supsetsim (join (0 -0.4 sim) (0 0.15 supset)))
   (simsim (enlarge (join (0 0 -) (0 0.25 sim) (0 -0.25 sim)) 0 0 -0.25 -0.25))
   (asympasymp
     (enlarge
