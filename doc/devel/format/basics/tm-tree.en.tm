@@ -1,0 +1,71 @@
+<TeXmacs|1.0.3.10>
+
+<style|tmdoc>
+
+<\body>
+  <tmdoc-title|Document trees>
+
+  All <TeXmacs> documents or document fragments can be thought of as
+  <em|trees>. For instance, the tree
+
+  <\equation*>
+    <tree|<with|mode|text|<markup|with>>|mode|math|<tree|<with|mode|text|<markup|concat>>|x+y+|<tree|<with|mode|text|<markup|frac>>|1|2>|+|<tree|<with|mode|text|<markup|sqrt>>|y+z>>>
+  </equation*>
+
+  typically represents the formula
+
+  <\equation>
+    <label|tm-tree-ex>x+y+<frac|1|2>+<sqrt|y+z>
+  </equation>
+
+  Each of the internal nodes of a <TeXmacs> tree is a string symbol and each
+  of the leafs is an ordinary string. A string symbol is different from a
+  usual string only from the efficiency point of view: <TeXmacs> represents
+  each symbol by a unique number, so that it is extremely fast to test
+  weather two symbols are equal.
+
+  Currently, all strings are represented using the <em|universal <TeXmacs>
+  encoding>. This encoding coincides with the Cork font encoding for all
+  characters except ``<verbatim|\<less\>>'' and ``<verbatim|\<gtr\>>''.
+  Character sequences starting with ``<verbatim|\<less\>>'' and ending with
+  ``<verbatim|\<gtr\>>'' are interpreted as special extension characters. For
+  example, <verbatim|\<less\>alpha\<gtr\>> stands for the letter
+  <with|mode|math|\<alpha\>>. The semantics of characters in the universal
+  <TeXmacs> encoding does not depend on the context (currently, cyrillic
+  characters are an exception, but this should change soon). From this point
+  of view, the universal <TeXmacs> encoding may be seen as an analogue of
+  Unicode. In the future, we might actually switch to Unicode.
+
+  When storing a document as a file on your harddisk or when copying a
+  document fragment to the clipboard, document trees have to represented as
+  strings. The conversion without loss of information of abstract <TeXmacs>
+  trees into strings is called <em|serialization> and the inverse process
+  <em|parsing>. <TeXmacs> provides three standard ways to serialize trees:
+  the standard <hyper-link|<TeXmacs> format|tm-tm.en.tm>, the <hyper-link|XML
+  format|tm-tmml.en.tm> and <hyper-link|<value|scheme> format|tm-scm.en.tm>.
+
+  However, it should be emphasized that the preferred syntax for modifying
+  <TeXmacs> documents is the screen display inside the editor. If that seems
+  surprising to you, consider that a syntax is a way to represent information
+  in a form suitable to understanding and modification. The on-screen typeset
+  representation of a document, together with its interactive behavior, is a
+  particular concrete syntax. Moreover, in the <menu|Document|View> menu, you
+  may find different ways to customize the way documents are viewed, such as
+  different levels of informative flags and a ``source tree'' mode for
+  editing style files.
+
+  <tmdoc-copyright|2004|Joris van der Hoeven>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
+</body>
+
+<\initial>
+  <\collection>
+    <associate|language|english>
+  </collection>
+</initial>
