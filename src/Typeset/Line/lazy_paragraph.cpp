@@ -328,7 +328,7 @@ lazy_paragraph_rep::line_unit (path start, path end, bool break_flag,
   tabs = array<tab> ();
   cur_w= space (0);
   int n= N(items_sp);
-  SI  m= max (the_left- cur_r, 0);
+  SI  m= the_left- cur_r;
   items_sp << m;
 
   SI the_width= the_right- the_left;
