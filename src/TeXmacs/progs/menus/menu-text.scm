@@ -21,7 +21,7 @@
 
 (menu-bind letter-header-menu
   (when (not (inside? "letter-header"))
-	("Header" (make-big-compound "letter-header")))
+	("Header" (make 'letter-header)))
   (when (inside? "letter-header")
 	("Address" (make-header 'address))
 	("Date" (make-header 'letter-date))
@@ -29,12 +29,12 @@
 	("Destination" (make-header 'destination)))
   ---
   (when (not (inside? "letter-header"))
-	("Opening" (make-big-compound "opening"))
-	("Closing" (make-big-compound "closing"))
-	("Signature" (make-big-compound "signature")))
+	("Opening" (make 'opening))
+	("Closing" (make 'closing))
+	("Signature" (make 'signature)))
   ---
-  ("C.C." (make-big-compound "cc"))
-  ("Encl." (make-big-compound "encl")))
+  ("C.C." (make 'cc))
+  ("Encl." (make 'encl)))
 
 (menu-bind exam-header-menu
   ("Class" (make-header 'class))
@@ -43,7 +43,7 @@
 
 (menu-bind title-menu
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Make title" (begin (make-big-compound "make-title") (make 'title))))
+	("Make title" (begin (make 'make-title) (make 'title))))
   (when (inside? "make-title")
 	("Title" (make-header 'title))
 	("Author" (make-header 'author))
@@ -59,7 +59,7 @@
 			(make-date))))
   ---
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Abstract" (make-big-compound "abstract")))
+	("Abstract" (make 'abstract)))
   (when (and (not (inside? "make-title")) (inside? "abstract"))
 	("Keywords" (make-section 'keywords))
 	("A.M.S. subject classification" (make-section 'AMS-class))))
@@ -88,30 +88,30 @@
 
 (menu-bind environment-menu
   (if (style-has? "header-exam-dtd")
-      ("Exercise" (make-big-compound "exercise"))
-      ("Problem" (make-big-compound "problem")))
+      ("Exercise" (make 'exercise))
+      ("Problem" (make 'problem)))
   (if (not (style-has? "header-exam-dtd"))
       (if (style-has? "env-default-dtd")
-	  ("Theorem" (make-big-compound "theorem"))
-	  ("Proposition" (make-big-compound "proposition"))
-	  ("Lemma" (make-big-compound "lemma"))
-	  ("Corollary" (make-big-compound "corollary"))
-	  ("Proof" (make-big-compound "proof"))
-	  ("Axiom" (make-big-compound "axiom"))
-	  ("Definition" (make-big-compound "definition"))
+	  ("Theorem" (make 'theorem))
+	  ("Proposition" (make 'proposition))
+	  ("Lemma" (make 'lemma))
+	  ("Corollary" (make 'corollary))
+	  ("Proof" (make 'proof))
+	  ("Axiom" (make 'axiom))
+	  ("Definition" (make 'definition))
 	  ---
-	  ("Remark" (make-big-compound "remark"))
-	  ("Note" (make-big-compound "note"))
-	  ("Example" (make-big-compound "example"))
-	  ("Warning" (make-big-compound "warning"))
-	  ("Exercise" (make-big-compound "exercise"))
-	  ("Problem" (make-big-compound "problem"))
+	  ("Remark" (make 'remark))
+	  ("Note" (make 'note))
+	  ("Example" (make 'example))
+	  ("Warning" (make 'warning))
+	  ("Exercise" (make 'exercise))
+	  ("Problem" (make 'problem))
 	  ---)
-      ("Verbatim" (make-big-compound "verbatim"))
-      ("Code" (make-big-compound "code"))
-      ("Quote" (make-big-compound "quote-env"))
-      ("Quotation" (make-big-compound "quotation"))
-      ("Verse" (make-big-compound "verse"))))
+      ("Verbatim" (make 'verbatim))
+      ("Code" (make 'code))
+      ("Quote" (make 'quote-env))
+      ("Quotation" (make 'quotation))
+      ("Verse" (make 'verse))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
@@ -139,28 +139,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind itemize-menu
-  ("Default" (make-tmlist "itemize"))
+  ("Default" (make-tmlist 'itemize))
   ---
-  ("Bullets" (make-tmlist "itemize-dot"))
-  ("Dashes" (make-tmlist "itemize-minus"))
-  ("Arrows" (make-tmlist "itemize-arrow")))
+  ("Bullets" (make-tmlist 'itemize-dot))
+  ("Dashes" (make-tmlist 'itemize-minus))
+  ("Arrows" (make-tmlist 'itemize-arrow)))
 
 (menu-bind enumerate-menu
-  ("Default" (make-tmlist "enumerate"))
+  ("Default" (make-tmlist 'enumerate))
   ---
-  ("1, 2, 3, ..." (make-tmlist "enumerate-numeric"))
-  ("i, ii, iii, ..." (make-tmlist "enumerate-roman"))
-  ("I, II, III, ..." (make-tmlist "enumerate-Roman"))
-  ("a, b, c, ..." (make-tmlist "enumerate-alpha"))
-  ("A, B, C, ..." (make-tmlist "enumerate-Alpha")))
+  ("1, 2, 3, ..." (make-tmlist 'enumerate-numeric))
+  ("i, ii, iii, ..." (make-tmlist 'enumerate-roman))
+  ("I, II, III, ..." (make-tmlist 'enumerate-Roman))
+  ("a, b, c, ..." (make-tmlist 'enumerate-alpha))
+  ("A, B, C, ..." (make-tmlist 'enumerate-Alpha)))
 
 (menu-bind description-menu
-  ("Default" (make-tmlist "description"))
+  ("Default" (make-tmlist 'description))
   ---
-  ("Compact" (make-tmlist "description-compact"))
-  ("Aligned" (make-tmlist "description-aligned"))
-  ("Dashes" (make-tmlist "description-dash"))
-  ("Long" (make-tmlist "description-long")))
+  ("Compact" (make-tmlist 'description-compact))
+  ("Aligned" (make-tmlist 'description-aligned))
+  ("Dashes" (make-tmlist 'description-dash))
+  ("Long" (make-tmlist 'description-long)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatically generated content
@@ -184,7 +184,7 @@
   ("Formula" "$" (make-with "mode" "math"))
   (if (style-has? "env-math-dtd")
       ---
-      ("Equation" (begin (make-big-compound "equation*") (temp-proof-fix)))
+      ("Equation" (begin (make 'equation*) (temp-proof-fix)))
       ("Equations" (begin (make 'eqnarray*) (temp-proof-fix)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

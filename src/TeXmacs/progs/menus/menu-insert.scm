@@ -105,7 +105,7 @@
    (choose-file "Load image" "image" 'make-inline-image)))
 
 (menu-bind insert-page-insertion-menu
-  ("Footnote" (make-big-compound "footnote"))
+  ("Footnote" (make 'footnote))
   ---
   ("Floating object" (make-insertion "float"))
   ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))

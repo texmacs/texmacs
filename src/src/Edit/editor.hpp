@@ -319,9 +319,7 @@ public:
   virtual void activate_compound () = 0;
   virtual bool make_return_before () = 0;
   virtual bool make_return_after () = 0;
-  virtual bool make_big_compound (string s) = 0;
   virtual void temp_proof_fix () = 0;
-  virtual void make_assign (tree var, tree by) = 0;
 
   /* public routines from edit_process */
   virtual void make_session (string lan, string session) = 0;

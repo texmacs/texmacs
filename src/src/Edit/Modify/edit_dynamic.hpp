@@ -47,9 +47,7 @@ public:
 
   bool make_return_before ();
   bool make_return_after ();
-  bool make_big_compound (string s);
   void temp_proof_fix ();
-  void make_assign (tree var, tree by);
 };
 
 #endif // defined EDIT_DYNAMIC_H

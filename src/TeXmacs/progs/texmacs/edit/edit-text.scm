@@ -90,33 +90,30 @@
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define list-itemize-enumerate
+  '("itemize" "itemize-minus" "itemize-dot" "itemize-arrow"
+    "enumerate" "enumerate-numeric" "enumerate-roman"
+    "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"))
+
+(define list-description
+  '("description" "description-compact" "description-aligned"
+    "description-dash" "description-long"))
+
 (define (inside-list?)
-  (or (inside? "itemize")
-      (inside? "itemize-minus")
-      (inside? "itemize-dot")
-      (inside? "itemize-arrow")
-      (inside? "enumerate")
-      (inside? "enumerate-numeric")
-      (inside? "enumerate-roman")
-      (inside? "enumerate-Roman")
-      (inside? "enumerate-alpha")
-      (inside? "enumerate-Alpha")))
+  (not (== (inside-which list-itemize-enumerate) "")))
 
 (define (inside-description?)
-  (or (inside? "description")
-      (inside? "description-compact")
-      (inside? "description-aligned")
-      (inside? "description-dash")
-      (inside? "description-long")))
+  (not (== (inside-which list-description) "")))
 
-(define (make-tmlist s)
-  (make-big-compound s)
+(define (make-tmlist l)
+  (make l)
   (make-item))
 
 (define (make-item)
   (if (not (make-return-after))
-      (cond ((inside-list?) (make 'item))
-	    ((inside-description?) (make 'item*)))))
+      (with l (inside-which (append list-itemize-enumerate list-description))
+	(cond ((in? l list-itemize-enumerate) (make 'item))
+	      ((in? l list-description) (make 'item*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content
