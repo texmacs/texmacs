@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.4>
+<TeXmacs|1.0.4.6>
 
 <style|source>
 
@@ -12,7 +12,7 @@
       become interactive.
     </src-purpose>
 
-    <src-copyright|1998--2004|David Allouche>
+    <src-copyright|1998--2005|Joris van der Hoeven>
 
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public

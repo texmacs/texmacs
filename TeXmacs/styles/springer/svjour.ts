@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.4.6>
 
 <style|source>
 
@@ -11,8 +11,8 @@
         The SVJour style.
       </src-purpose>
 
-      <\src-copyright|2002--2004>
-        Adrien Bourdet
+      <\src-copyright|2004--2005>
+        Joris van der Hoeven and Adrien Bourdet
       </src-copyright>
 
       <\src-license>
@@ -25,7 +25,9 @@
     </src-title>
   </active*>
 
-  <inactive*|<use-package|std|env-base|env-math|env-float|header-article|title-base|section-article|std-latex>>
+  <use-package|std|env-base|env-math|env-float|header-article|title-base|section-article|std-latex>
+
+  <assign|env-theorem-dtd|1.0>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -75,7 +77,7 @@
 
   <assign|font-base-size|10>
 
-  <assign|par-first|0fn>
+  <assign|par-first|15pt>
 
   \;
 
@@ -121,13 +123,13 @@
     Sectional macros.
   </src-comment>>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<plus|21dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><vspace|<plus|10.5dd|<tmlen|-4pt|0pt|4pt>>>>>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|21dd|4pt|4pt>><normal-size|<arg|name>><vspace|<tex-len|10.5dd|4pt|4pt>>>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<style-with|src-compact|none|<vspace*|<plus|21dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><vspace|<plus|10.5dd|<tmlen|-4pt|0pt|4pt>>>>>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<style-with|src-compact|none|<vspace*|<tex-len|21dd|4pt|4pt>><normal-size|<arg|name>><vspace|<tex-len|10.5dd|4pt|4pt>>>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<plus|13dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><space|5.5pt>>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tex-len|13dd|4pt|4pt>><normal-size|<arg|name>><space|5.5pt>>>>>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<plus|13dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><space|5.5pt>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tex-len|13dd|4pt|4pt>><normal-size|<arg|name>><space|5.5pt>>>>>
 
   <active*|<\src-comment>
     Section and environment numbering.
@@ -151,34 +153,34 @@
 
   \;
 
-  <assign|new-theorem-bold|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold>>>
+  <assign|new-theorem-bold-italic|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-italic>>>>
 
-  <assign|new-theorem-italic|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-italic>>>
+  <assign|new-theorem-bold-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-upright>>>>
 
-  <assign|new-theorem-bold-italic|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-italic>>>
+  <assign|new-theorem-italic-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-italic-upright>>>>
 
   \;
 
-  <assign|render-theorem-generic|<macro|which|body|<padded-normal|1fn|1fn|<\surround|<arg|><arg|which><arg|><theorem-sep>|>
-    <\with|font-shape|italic>
-      <arg|body>
-    </with>
+  <assign|render-theorem-generic|<macro|which|body|<padded-normal|1fn|1fn|<\surround|<arg|><arg|which><arg|>|>
+    <arg|body>
   </surround>>>>
 
-  <assign|render-theorem-bold|<\macro|which|body>
-    <\render-theorem-generic|<with|font-series|bold|<arg|which>>>
-      <arg|body>
-    </render-theorem-generic>
-  </macro>>
-
-  <assign|render-theorem-italic|<\macro|which|body>
-    <\render-theorem-generic|<with|font-shape|italic|<arg|which>>>
-      <arg|body>
-    </render-theorem-generic>
-  </macro>>
-
   <assign|render-theorem-bold-italic|<\macro|which|body>
-    <\render-theorem-generic|<with|font-shape|italic|<with|font-series|bold|<arg|which>>>>
+    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
+      <\with|font-shape|italic>
+        <arg|body>
+      </with>
+    </render-theorem-generic>
+  </macro>>
+
+  <assign|render-theorem-bold-upright|<\macro|which|body>
+    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
+      <arg|body>
+    </render-theorem-generic>
+  </macro>>
+
+  <assign|render-theorem-italic-upright|<\macro|which|body>
+    <\render-theorem-generic|<with|font-shape|italic|<arg|which><theorem-sep>>>
       <arg|body>
     </render-theorem-generic>
   </macro>>
@@ -187,39 +189,49 @@
     Theorem-like environments.
   </src-comment>>
 
-  <new-theorem-bold|theorem|Theorem>
-
-  \;
-
-  <new-theorem-italic|math-case|Case>
-
-  <new-theorem-italic|conjecture|Conjecture>
-
-  <new-theorem-italic|example|Example>
-
-  <new-theorem-italic|note|Note>
-
-  <new-theorem-italic|property|Property>
-
-  <new-theorem-italic|question|Question>
-
-  <new-theorem-italic|remark|Remark>
-
-  \;
+  <new-theorem-bold-italic|theorem|Theorem>
 
   <new-theorem-bold-italic|corollary|Corollary>
 
   <new-theorem-bold-italic|definition|Definition>
 
-  <new-theorem-bold-italic|exercise|Exercise>
-
   <new-theorem-bold-italic|lemma|Lemma>
-
-  <new-theorem-bold-italic|problem|Problem>
 
   <new-theorem-bold-italic|proposition|Proposition>
 
-  <new-theorem-bold-italic|solution|Solution>
+  \;
+
+  <new-theorem-bold-upright|exercise|Exercise>
+
+  <new-theorem-bold-upright|problem|Problem>
+
+  <new-theorem-bold-upright|solution|Solution>
+
+  \;
+
+  <new-theorem-italic-upright|math-case|Case>
+
+  <new-theorem-italic-upright|conjecture|Conjecture>
+
+  <new-theorem-italic-upright|example|Example>
+
+  <new-theorem-italic-upright|note|Note>
+
+  <new-theorem-italic-upright|property|Property>
+
+  <new-theorem-italic-upright|question|Question>
+
+  <new-theorem-italic-upright|remark|Remark>
+
+  \;
+
+  <active*|<src-short-comment|<TeXmacs> environments>>
+
+  <new-theorem-bold-italic|axiom|Axiom>
+
+  <new-theorem-bold-italic|notation|Notation>
+
+  <new-theorem-bold-upright|warning|Warning>
 
   <\active*>
     <\src-comment>
@@ -289,15 +301,70 @@
 
   <\active*>
     <\src-comment>
-      The standard itemize environment with three levels.
+      List environments.
     </src-comment>
   </active*>
 
-  <new-list|itemize-1|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>
+  |r-15pt||r+0pt|>>>>
 
-  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||r]15pt|>>>>
 
-  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<bullet\>>>>>>
+  \;
+
+  <assign|list-level|0>
+
+  <assign|render-list|<\macro|body>
+    <\padded-normal|<if|<equal|<value|list-level>|0>|0.5fn|0fn>|<if|<equal|<value|list-level>|0>|0.5fn|0fn>>
+      <\indent-left|15pt>
+        <\surround|<no-page-break*>|<no-indent*>>
+          <\with|list-level|<plus|<mod|<value|list-level>|3>|1>>
+            <arg|body>
+          </with>
+        </surround>
+      </indent-left>
+    </padded-normal>
+  </macro>>
+
+  \;
+
+  <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+
+  <new-list|itemize-2|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+
+  <new-list|itemize-3|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
+
+  <new-list|itemize-minus|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+
+  <new-list|itemize-dot|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
+
+  <new-list|itemize-arrow|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
+
+  \;
+
+  <assign|aligned-accolade-item|<macro|x|<aligned-item|<with|font-shape|right|{<arg|x>}>>>>
+
+  <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
+
+  <new-list|enumerate-2|<value|aligned-accolade-item>|<macro|x|<number|<arg|x>|alpha>>>
+
+  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|roman>>>
+
+  \;
+
+  <assign|compact-dash-item|<macro|x|<compact-item|<arg|x> <emdash> >>>
+
+  <assign|long-compact-space-item|<macro|x|<item-long|<compact-space-item|<arg|x>>>>>
+
+  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
   \;
 </body>
