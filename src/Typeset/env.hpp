@@ -142,6 +142,20 @@ public:
   int       inactive_mode;
   tree      recover_env;
 
+  string    page_type;
+  bool      page_landscape;
+  bool      page_automatic;
+  int       page_margin_mode;
+  SI        page_width;
+  SI        page_height;
+  SI        page_user_width;
+  SI        page_user_height;
+  SI        page_odd_margin;
+  SI        page_even_margin;
+  SI        page_right_margin;
+  SI        page_top_margin;
+  SI        page_bottom_margin;
+
 private:
   tree exec_formatting (tree t, string v);
   void exec_until_formatting (tree t, path p, string v);
@@ -272,6 +286,9 @@ public:
   void local_end (hashmap<string,tree>& prev_back);
 
   /* updating environment variables */
+  void   update_page_pars ();
+  void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
+			SI& odd, SI& even, SI& top, SI& bottom);
   void   update_font ();
   void   update_color ();
   void   update_mode ();
@@ -295,8 +312,6 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
-  void      get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
-			   SI& odd, SI& even, SI& top, SI& bottom);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {

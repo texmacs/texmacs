@@ -420,17 +420,63 @@
 	  ---
 	  ("Portrait" (set-page-orientation "portrait"))
 	  ("Landscape" (set-page-orientation "landscape")))
-      (-> "Layout"
-	  ("Default" (init-default "page-odd" "page-even"
-				   "page-right" "page-top"
-				   "page-bot" "par-width"))
+      (-> "Margins"
+	  ("Default" (init-default "page-width-margin"
+				   "page-odd" "page-even" "page-right"
+				   "par-width" "page-odd-shift"
+				   "page-even-shift"))
+	  ("Set paragraph width" (toggle-page-width-margin))
 	  ---
-	  ("Set margins" ...
-	   (interactive
-	    '("Left margin:" "Right margin:"
-	      "Top margin:" "Bottom margin:") 'init-page-margins))
-	  ("Set text width" ...
-	   (interactive '("Text width:") 'init-text-width)))
+	  (when (test-env? "page-width-margin" "false")
+		(group "Set left and right margins")
+		("Odd page left margin" ...
+		 (interactive '("Odd page left margin:")
+			      '(lambda (s) (init-env "page-odd" s))))
+		("Odd page right margin" ...
+		 (interactive '("Odd page right margin:")
+			      '(lambda (s) (init-env "page-right" s))))
+		("Even page left margin" ...
+		 (interactive '("Even page left margin:")
+			      '(lambda (s) (init-env "page-even" s)))))
+	  ---
+	  (when (test-env? "page-width-margin" "true")
+		(group "Set paragraph width")
+		("Paragraph width" ...
+		 (interactive '("Paragraph width:")
+			      '(lambda (s) (init-env "par-width" s))))
+		("Odd page shift" ...
+		 (interactive '("Odd page shift:")
+			      '(lambda (s) (init-env "page-odd-shift" s))))
+		("Even page shift" ...
+		 (interactive '("Even page shift:")
+			      '(lambda (s) (init-env "page-even-shift" s)))))
+	  ---
+	  ("Top margin" ...
+	   (interactive '("Top margin:")
+			'(lambda (s) (init-env "page-top" s))))
+	  ("Bottom margin" ...
+	   (interactive '("Bottom margin:")
+			'(lambda (s) (init-env "page-bot" s)))))
+      (-> "Screen Margins"
+	  ("Default" (init-default "page-screen-margin"
+				   "page-screen-left" "page-screen-right"
+				   "page-screen-top" "page-screen-bot"))
+	  ("Margins as on paper" (toggle-page-screen-margin))
+	  ---
+	  (when (test-env? "page-screen-margin" "true")
+		("Left margin" ...
+		 (interactive '("Left margin:")
+			      '(lambda (s) (init-env "page-screen-left" s))))
+		("Right margin" ...
+		 (interactive '("Right margin:")
+			      '(lambda (s) (init-env "page-screen-right" s))))
+		("Top margin" ...
+		 (interactive '("Top margin:")
+			      '(lambda (s) (init-env "page-screen-top" s))))
+		("Bottom margin" ...
+		 (interactive '("Bottom margin:")
+			      '(lambda (s) (init-env "page-screen-bot" s))))))
+	  
       ---
       (group "Breaking")
       (-> "Algorithm"

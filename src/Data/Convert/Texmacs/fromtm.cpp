@@ -436,18 +436,24 @@ extract_document (tree doc) {
 	if ((l == PAGE_MEDIUM) ||
 	    (l == PAGE_TYPE) ||
 	    (l == PAGE_ORIENTATION) ||
+	    (l == PAGE_WIDTH_MARGIN) ||
+	    (l == PAGE_SCREEN_MARGIN) ||
 	    (l == PAGE_NR) ||
 	    (l == PAGE_WIDTH) ||
 	    (l == PAGE_HEIGHT) ||
 	    (l == PAGE_ODD) ||
 	    (l == PAGE_EVEN) ||
 	    (l == PAGE_RIGHT) ||
+	    (l == PAGE_ODD_SHIFT) ||
+	    (l == PAGE_EVEN_SHIFT) ||
 	    (l == PAGE_TOP) ||
 	    (l == PAGE_BOT) ||
-	    (l == PAGE_REDUCE_LEFT) ||
-	    (l == PAGE_REDUCE_RIGHT) ||
-	    (l == PAGE_REDUCE_TOP) ||
-	    (l == PAGE_REDUCE_BOT) ||
+	    (l == PAGE_SCREEN_WIDTH) ||
+	    (l == PAGE_SCREEN_HEIGHT) ||
+	    (l == PAGE_SCREEN_LEFT) ||
+	    (l == PAGE_SCREEN_RIGHT) ||
+	    (l == PAGE_SCREEN_TOP) ||
+	    (l == PAGE_SCREEN_BOT) ||
 	    (l == PAGE_SHOW_HF)) continue;
 	w << l << r;
       }

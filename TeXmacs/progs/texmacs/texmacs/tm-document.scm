@@ -23,7 +23,7 @@
     init-magn init-language init-color init-bg-color
     ;; page layout
     toggle-visible-header-and-footer
-    init-page-margins init-screen-reduction init-page-size init-as-on-paper
+    toggle-page-width-margin toggle-page-screen-margin init-page-size
     init-page-shrink init-page-extend init-page-flexibility))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,7 +75,7 @@
 (set-check-mark! set-page-orientation "*" test-page-orientation?)
 
 (define (visible-header-and-footer?)
-  (== "true" (get-env "page-show-hf")))
+  (== (get-env "page-show-hf") "true"))
 
 (tm-define (toggle-visible-header-and-footer)
   (:synopsis "Toggle visibility of headers and footers in 'page' paper mode.")
@@ -83,39 +83,27 @@
   (init-env "page-show-hf"
 	    (if (== (get-env "page-show-hf") "true") "false" "true")))
 
-(define (init-page-margins l r t b)
-  (init-env "page-odd" l)
-  (init-env "page-even" l)
-  (init-env "page-right" r)
-  (init-env "page-top" t)
-  (init-env "page-bot" b)
-  (init-text-width (length- (get-env "page-width") l r)))
+(define (page-width-margin?)
+  (== (get-env "page-width-margin") "true"))
 
-(define (init-screen-reduction l r t b)
-  (init-env "page-reduce-left" l)
-  (init-env "page-reduce-right" r)
-  (init-env "page-reduce-top" t)
-  (init-env "page-reduce-bot" b))
+(tm-define (toggle-page-width-margin)
+  (:synopsis "Toggle mode for determining margins from paragraph width.")
+  (:check-mark "v" page-width-margin?)
+  (init-env "page-width-margin" (if (page-width-margin?) "false" "true")))
+
+(define (not-page-screen-margin?)
+  (== (get-env "page-screen-margin") "false"))
+
+(tm-define (toggle-page-screen-margin)
+  (:synopsis "Toggle mode for using special margins for screen editing.")
+  (:check-mark "v" not-page-screen-margin?)
+  (init-env "page-screen-margin"
+	    (if (not-page-screen-margin?) "true" "false")))
 
 (define (init-page-size w h)
   (init-env "page-type" "user")
   (init-env "page-width" w)
-  (init-env "page-height" h)
-  (init-page-margins "5mm" "5mm" "5mm" "5mm")
-  (init-screen-reduction "0cm" "0cm" "0cm" "0cm"))
-
-(define (as-on-paper?)
-  (and (visible-header-and-footer?)
-       (length-zero? (get-env "page-reduce-left"))
-       (length-zero? (get-env "page-reduce-right"))
-       (length-zero? (get-env "page-reduce-top"))
-       (length-zero? (get-env "page-reduce-bot"))))
-
-(tm-define (init-as-on-paper)
-  (:synopsis "Let the screen margins be as on the real paper output.")
-  (:check-mark "o" as-on-paper?)
-  (init-screen-reduction "0mm" "0mm" "0mm" "0mm")
-  (init-env "page-show-hf" "true"))
+  (init-env "page-height" h))
 
 (define (init-page-shrink s) (init-env "page-shrink" s))
 (define (init-page-extend s) (init-env "page-extend" s))
