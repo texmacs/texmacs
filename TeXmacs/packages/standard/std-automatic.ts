@@ -25,6 +25,18 @@
 
   <\active*>
     <\src-comment>
+      Automatically generated labels.
+    </src-comment>
+  </active*>
+
+  <new-counter|auto>
+
+  <assign|the-auto|<macro|<merge|auto-|<value|auto-nr>>>>
+
+  <assign|auto-label|<macro|<inc-auto><label|<the-auto>>>>
+
+  <\active*>
+    <\src-comment>
       Citations.
     </src-comment>
   </active*>
@@ -58,33 +70,29 @@
     </src-comment>
   </active*>
 
-  <new-counter|toc>
-
-  <assign|the-toc|<macro|<merge|toc-|<value|toc-nr>>>>
-
   <assign|toc-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
   <assign|toc-main-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|1fn>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<the-auto>><vspace|1fn>>>>>
 
   <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|0.5fn>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.5fn>>>>>
 
   <assign|toc-normal-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>
 
   <assign|toc-normal-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
 
   <assign|toc-normal-3|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
 
   <assign|toc-small-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
 
   <assign|toc-small-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><inc-toc><label|<the-toc>><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -92,17 +100,13 @@
     </src-comment>
   </active*>
 
-  <new-counter|idx>
-
-  <assign|the-idx|<macro|<merge|idx-|<value|idx-nr>>>>
-
   <assign|index-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
   <assign|index-line|<macro|key|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><write|idx|<tuple|<arg|key>||<arg|entry>>>>>>
 
-  <assign|index-write|<macro|entry|<style-with|src-compact|none|<inc-idx><label|<the-idx>><write|idx|<tuple|<arg|entry>|<pageref|<the-idx>>>>>>>
+  <assign|index-write|<macro|entry|<style-with|src-compact|none|<auto-label><write|idx|<tuple|<arg|entry>|<pageref|<the-auto>>>>>>>
 
   <assign|index|<macro|x|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|x><index-write|<tuple|<arg|x>>>>>>
@@ -114,7 +118,7 @@
   green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>>>>>>
 
   <assign|index-complex|<macro|key|how|range|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|key><inc-idx><label|<the-idx>><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-idx>>>>>>>
+  green|key><auto-label><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-auto>>>>>>>
 
   <assign|index-1|<macro|left|right|<arg|left><value|index-dots><arg|right>>>
 
@@ -142,10 +146,6 @@
     </src-comment>
   </active*>
 
-  <new-counter|gly>
-
-  <assign|the-gly|<macro|<merge|gly-|<value|gly-nr>>>>
-
   <assign|glossary-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
@@ -153,13 +153,13 @@
   green|entry><write|gly|<tuple|<arg|entry>>>>>>
 
   <assign|glossary|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><inc-gly><label|<the-gly>><write|gly|<tuple|normal|<arg|entry>|<pageref|<the-gly>>>>>>>
+  green|entry><auto-label><write|gly|<tuple|normal|<arg|entry>|<pageref|<the-auto>>>>>>>
 
   <assign|glossary-explain|<macro|entry|explain|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><inc-gly><label|<the-gly>><write|gly|<tuple|normal|<arg|entry>|<arg|explain>|<pageref|<the-gly>>>>>>>
+  green|entry><auto-label><write|gly|<tuple|normal|<arg|entry>|<arg|explain>|<pageref|<the-auto>>>>>>>
 
   <assign|glossary-dup|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><inc-gly><label|<the-gly>><write|gly|<tuple|dup|<arg|entry>|<pageref|<the-gly>>>>>>>
+  green|entry><auto-label><write|gly|<tuple|dup|<arg|entry>|<pageref|<the-auto>>>>>>>
 
   <assign|glossary-1|<macro|left|right|<arg|left><value|glossary-dots><arg|right>>>
 

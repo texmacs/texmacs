@@ -29,7 +29,7 @@
 
   \;
 
-  <assign|list-caption|<macro|type|cap|<style-with|src-compact|none|<assign|gly-nr|<plus|<value|gly-nr>|1>><label|<the-gly>><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-gly>>>>>>>
+  <assign|list-caption|<macro|type|cap|<style-with|src-compact|none|<auto-label><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>
 
   <assign|small-figure*|<macro|type|name|fig|cap|<tabular*|<tformat|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<twith|table-valign|B>|<table|<row|<cell|<resize|<arg|fig>|l-2fn||r+2fn||>>>|<row|<cell|>>|<row|<\cell>
     <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
