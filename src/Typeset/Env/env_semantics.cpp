@@ -224,9 +224,10 @@ edit_env_rep::update_frame () {
     fr= scaling (magn, point (x, y));
   }
   else {
-    SI cm= decode_length (string ("1cm"));
-    SI yf= decode_length (string ("1yfrac"));
-    fr= scaling (cm, point (3*cm, yf));
+    SI cm   = decode_length (string ("1cm"));
+    SI par  = decode_length (string ("1par"));
+    SI yfrac= decode_length (string ("1yfrac"));
+    fr= scaling (cm, point (par >> 1, yfrac));
   }
 }
 
@@ -236,12 +237,12 @@ edit_env_rep::update_clipping () {
   if (is_tuple (t, "clip", 2) &&
       is_func (t[1], TUPLE, 2) &&
       is_func (t[2], TUPLE, 2)) {
-    clip_lim1= as_point (t[1]);
-    clip_lim2= as_point (t[2]);
+    clip_lim1= decode_point (t[1]);
+    clip_lim2= decode_point (t[2]);
   }
   else {
-    clip_lim1= point (-3.0, -2.0);
-    clip_lim2= point (3.0, 2.0);
+    clip_lim1= decode_point (tuple ("0par", "-0.3par"));
+    clip_lim2= decode_point (tuple ("1par", "0.3par"));
   }
 }
 

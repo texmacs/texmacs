@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-preamble)
-  (:use (texmacs edit edit-format) (texmacs edit edit-misc)))
+  (:use (texmacs edit edit-format) (texmacs edit edit-misc)
+	(texmacs edit edit-graphics)))
 
 (kbd-map
   ("executable" "" "Insert executable markup")
@@ -50,7 +51,7 @@
   ("inactive >" (make 'hlink))
   ("inactive #" (make 'argument))
   ("inactive $" (make 'symbol))
-  ("inactive G" (make 'graphics))
+  ("inactive G" (make-graphics))
   ("inactive S" (make 'superpose))
   ("inactive P" (make-arity 'point 2))
   ("inactive L" (make 'line))
