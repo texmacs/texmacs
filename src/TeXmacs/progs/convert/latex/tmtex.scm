@@ -43,7 +43,7 @@
   (tabular* ("" "c" "" #f))
   (matrix ((#{left\(}#) "c" (#{right\)}#) #f))
   (det ((left|) "c" (right|) #f))
-  (choice ((left\{) "c" (right.) #f)))
+  (choice ((left\{) "l" (right.) #f)))
 
 (drd-group tex-mathops%
   arccos arcsin arctan cos cosh cot coth csc deg det dim exp gcd
