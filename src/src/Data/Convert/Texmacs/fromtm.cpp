@@ -76,6 +76,7 @@ tm_reader::decode (string s) {
       else if (s[i] == 't') r << '\t';
       else if (s[i] == 'r') r << '\r';
       else if (s[i] == 'n') r << '\n';
+      else if (s[i] == '\\') r << '\\';
       else if ((s[i] >= '@') && (s[i] < '`')) r << (s[i] - '@');
       else r << s[i];
     }
