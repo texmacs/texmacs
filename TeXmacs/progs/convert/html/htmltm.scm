@@ -386,12 +386,16 @@
   (sxml-dispatch (lambda (env t) (list (xmltm-text t)))
 		 htmltm-pass env t))
 
+(define (cleanup-root env root)
+  (sxml-set-content root (htmltm-space-mixed env (sxml-content root))))
+
 (define (htmltm-as-serial root)
   ;; As htmltm, but returns a serial node.
   ;; Actually also initializes the dynamic enviroment.
   ;; FIXME: move the htmlinitialization elsewhere for symmetry with htmltm.
   (define (sub env)
-    (htmltm-serial (htmltm-preserve-space? env) (htmltm env root)))
+    (htmltm-serial (htmltm-preserve-space? env)
+		   (htmltm env (cleanup-root env root))))
   (initialize-xpath
    (environment) root
    (cut initialize-htmltm <> sub)))
@@ -401,7 +405,7 @@
 (drd-dispatcher htmltm-methods%
   ;;; Document structure
   ((:or head title meta) htmltm-drop)
-  ((:or html body) htmltm-pass)
+  ((:or html body) (handler :mixed :inline htmltm-pass))
 
   ;; Grouping
   (div  (handler :mixed :block  htmltm-pass))
@@ -462,7 +466,8 @@
 
   ;;; Tables
   (table (handler :element :block htmltm-table))
-  ((:or col colgroup tbody thead tfoot tr td th) htmltm-pass)
+  ((:or col colgroup tbody thead tfoot tr td th)
+   (handler :mixed :inline htmltm-pass))
 
   ;;; Links
   (a (handler :mixed :inline htmltm-anchor))
@@ -503,7 +508,7 @@
   ;;; Frames
   (frameset htmltm-drop)
   (frame htmltm-drop) ; allowed only in FRAMESET
-  (noframes htmltm-pass)
+  (noframes (handler :mixed :inline htmltm-pass))
   (iframe (handler :mixed :block htmltm-pass))
 
   ;;; Forms
