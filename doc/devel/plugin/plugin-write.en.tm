@@ -1,11 +1,11 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Writing your own plugins>
+  <tmdoc-title|Writing your own plug-ins>
 
-  In order to write a plugin <verbatim|<em|myplugin>>, you should start by
+  In order to write a plug-in <verbatim|<em|myplugin>>, you should start by
   creating a directory
 
   <\verbatim>
@@ -44,13 +44,13 @@
   </verbatim>
 
   will be automatically added to the <verbatim|PATH> environment variable at
-  startup. Notice that the subdirectory structure of a plugin is very similar
-  to the subdirectory structure of <verbatim|$TEXMACS_PATH>.
+  startup. Notice that the subdirectory structure of a plug-in is very
+  similar to the subdirectory structure of <verbatim|$TEXMACS_PATH>.
 
   <\example>
-    The easiest type of plugin only consists of data files, such as a
-    collection of style files and packages. In order to create such a plugin,
-    it suffices to create directories
+    The easiest type of plug-in only consists of data files, such as a
+    collection of style files and packages. In order to create such a
+    plug-in, it suffices to create directories
 
     <\verbatim>
       \ \ \ \ $TEXMACS_HOME_PATH/plugins/<em|myplugin>
@@ -66,9 +66,9 @@
     package> menus.
   </example>
 
-  For more complex plugins, such as plugins with additional <value|scheme> or
-  <value|cpp> code, one usually has to provide a <value|scheme> configuration
-  file
+  For more complex plug-ins, such as plug-ins with additional <value|scheme>
+  or <value|cpp> code, one usually has to provide a <value|scheme>
+  configuration file
 
   <\verbatim>
     \ \ \ \ $TEXMACS_HOME_PATH/plugins/<em|myplugin>/progs/init-<em|myplugin>.scm
@@ -84,8 +84,8 @@
 
   Here the <verbatim|<em|configuration-options>> describe the principal
   actions which have to be undertaken at startup, including sanity checks for
-  the plugin. In the next sections, we will describe some simple examples of
-  plugins and their configuration. Many other examples can be found in the
+  the plug-in. In the next sections, we will describe some simple examples of
+  plug-ins and their configuration. Many other examples can be found in the
   directories
 
   <\verbatim>
@@ -109,39 +109,18 @@
 
 <\initial>
   <\collection>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|1|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|1|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|1|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Style>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Use
-      package>>|<pageref|idx-2>>
-    </associate>
-  </collection>
-</auxiliary>

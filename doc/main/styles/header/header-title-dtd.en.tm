@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -8,8 +8,7 @@
   <\traverse>
     <branch|Entering titles and abstracts|header-title-export.en.tm>
 
-    <branch|Customizating the rendering of
-    titles|header-title-customize.en.tm>
+    <branch|Customizing the rendering of titles|header-title-customize.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -24,7 +23,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|portuguese>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>

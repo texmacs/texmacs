@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -103,7 +103,7 @@
     <markup|document> tree.
 
     A <markup|cell> whose operand is a <markup|document> is a
-    <def-index|multiparagraph cell>. Since tables are allowed in
+    <def-index|multi-paragraph cell>. Since tables are allowed in
     <re-index|line context>, this is the only construct which allows,
     indirectly, the nesting of a <re-index|block context> within a
     <re-index|line context>. Note that most block content can only be typeset

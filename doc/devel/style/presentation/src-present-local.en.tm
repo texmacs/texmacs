@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -31,11 +31,10 @@
 
   A piece of code can be activated by selecting it and using
   <menu|Source|Activation|Activate> or <key|M-+>. Similarly, a piece of
-  content may be disactivated using <key|<group|M->-> (we used this in the
+  content may be deactivated using <key|<group|M->-> (we used this in the
   second example above for the rendering of the arguments <src-arg|var> and
-  <src-arg|dim>). Activation and disactivation either apply to the whole
-  tree, or to the root only (<abbr|e.g.> <menu|Source|Activation|Activate
-  once>).
+  <src-arg|dim>). Activation and deactivation either apply to the whole tree,
+  or to the root only (<abbr|e.g.> <menu|Source|Activation|Activate once>).
 
   Another way to customize the rendering is to override some of the global
   rendering options. This is mainly interesting for controlling more
@@ -52,7 +51,7 @@
   we have stretched the <markup|concat> tag along several lines using
   <menu|Source|Presentation|Stretched> (notice that this implies the
   <markup|concat> tag to appear explicitly, so as to avoid confusion with the
-  <markup|document> tag). Similarlt, if a part of the concatenation were to
+  <markup|document> tag). Similarly, if a part of the concatenation were to
   be displayed as usual, then one may use <menu|Source|Presentation|Compact>:
 
   <\tm-fragment>

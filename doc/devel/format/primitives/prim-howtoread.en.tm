@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -29,31 +29,31 @@
     script.
 
     <\description>
-      <item*|All:>All subtrees are accessible.
+      <item*|All>All subtrees are accessible.
 
-      <item*|None:>No subtree is accessible.
+      <item*|None>No subtree is accessible.
 
-      <item*|First <with|mode|math|n>:>Only a fixed number of subtrees at the
+      <item*|First <with|mode|math|n>>Only a fixed number of subtrees at the
       start of the tag are accessible.
 
-      <item*|Last <with|mode|math|n>:>Only a fixed number of subtrees at the
+      <item*|Last <with|mode|math|n>>Only a fixed number of subtrees at the
       end of the tag are accessible.
     </description>
 
     <item*|Process>Steps of the typesetting process which are affected.
 
     <\description>
-      <item*|Typesetting:>Normally self-evaluating, affects the typesetting
-      of operands. Some typesetting primitives may evaluate to error trees
-      when given inappropriate operands.
+      <item*|Typesetting>Normally self-evaluating, affects the typesetting of
+      operands. Some typesetting primitives may evaluate to error trees when
+      given inappropriate operands.
 
-      <item*|Functional:>Substituted at evaluation, yields a synthetic tree,
+      <item*|Functional>Substituted at evaluation, yields a synthetic tree,
       possibly empty.
 
-      <item*|Macro:>Substituted at evaluation, yields a tree which may have
+      <item*|Macro>Substituted at evaluation, yields a tree which may have
       accessible parts.
 
-      <item*|Display:>Self-evaluating and explicitly displayed. Such
+      <item*|Display>Self-evaluating and explicitly displayed. Such
       primitives have no inherent semantics and are not normally visible in
       documents. They are used to report problems or in internal structures.
     </description>
@@ -61,14 +61,14 @@
     <item*|Usage>Documents where this primitive is allowed.
 
     <\description>
-      <item*|Logical:>Logically structured regular documents.
+      <item*|Logical>Logically structured regular documents.
 
-      <item*|Physical:>Regular documents, but this primitive is not
-      considered part of the logical subset of the typesetting language.
+      <item*|Physical>Regular documents, but this primitive is not considered
+      part of the logical subset of the typesetting language.
 
-      <item*|Style:>Stylesheet documents only.
+      <item*|Style>Style-sheet documents only.
 
-      <item*|Never:>This primitive should never appear in production
+      <item*|Never>This primitive should never appear in production
       documents. It may appear during the evaluation of incorrect document,
       occur temporarily during edition, or be useful for scripting.
     </description>

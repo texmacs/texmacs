@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -111,7 +111,7 @@
 
   Another thing which may be controlled by the user is whether the
   presentation of tags should be compact or stretched out across several
-  lines. Several levels of compatification may be specified in the
+  lines. Several levels of compactification may be specified in the
   <menu|Document|View|Compactification> menu:
 
   <\description>
@@ -167,7 +167,7 @@
       </tm-fragment>
     </with>
   </cell>>>>>>>
-    Different levels of compatification.
+    Different levels of compactification.
   </big-figure>
 
   Finally, the user may specify the way closing tags should be rendered when

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -66,7 +66,7 @@
   example in an automatic way, but a few tools are already provided. For
   instance, the user is given a great amount of control on how to indent
   source code and reasonable defaults are provided as a function of the
-  structure. We also provide high level environements for comments and
+  structure. We also provide high level environments for comments and
   structured highlighting. Further tools will be developed later and we are
   open for any suggestions from our users.
 

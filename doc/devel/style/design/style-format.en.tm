@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -15,8 +15,8 @@
   tags, like <markup|strong> are inline if their argument is and block in the
   contrary case. When writing macros, it is important to be aware of the
   inline or block nature of tags, because block tags inside a horizontal
-  concatenats are not rendered in an adequate way. If you need to surround a
-  block tag with some inline text, then you need the surround primitive:
+  concatenation are not rendered in an adequate way. If you need to surround
+  a block tag with some inline text, then you need the surround primitive:
 
   <\tm-fragment>
     <inactive*|<assign|my-theorem|<macro|body|<surround|<no-indent><with|font-series|bold|Theorem.

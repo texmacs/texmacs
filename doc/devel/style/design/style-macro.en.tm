@@ -1,11 +1,11 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Macro expansion>
 
-  The main interest of the <TeXmacs>' stylesheet language is the possibility
+  The main interest of the <TeXmacs>' style-sheet language is the possibility
   to define macros. These come in three flavours: ordinary macros, macros
   which take an arbitrary number of arguments and external macros, whose
   expansion is computed by <name|Scheme> or a plug-in. The macro-related

@@ -1,21 +1,21 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Stylesheet language>
+  <tmdoc-title|Style-sheet language>
 
-  The stylesheet language refers to the set of document constructs used for
+  The style-sheet language refers to the set of document constructs used for
   writing style files. This includes logical and physical document markup and
-  a number <def-index|stylesheet markup> primitives which should never be
-  used in documents. The stylesheet markup primitives can be separated in two
-  main categories: the stylesheet fundamentals, described in this section,
-  and the functional operator primitives which are used to perform
-  computations in stylesheets.
+  a number <def-index|style-sheet markup> primitives which should never be
+  used in documents. The style-sheet markup primitives can be separated in
+  two main categories: the style-sheet fundamentals, described in this
+  section, and the functional operator primitives which are used to perform
+  computations in style-sheets.
 
-  This section documents the fundamental building blocks of the stylesheet
+  This section documents the fundamental building blocks of the style-sheet
   language, operators which bear a special relation to typeset boxes, and a
-  few assorted operators which should normally only be used in stylesheets.
+  few assorted operators which should normally only be used in style-sheets.
 
   <\traverse>
     <branch|Environment|prim-env.en.tm>
@@ -26,7 +26,7 @@
 
     <branch|Box operators|prim-box.en.tm>
 
-    <branch|Miscellaneous stylesheet operators|prim-style-misc.en.tm>
+    <branch|Miscellaneous style-sheet operators|prim-style-misc.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|David Allouche>

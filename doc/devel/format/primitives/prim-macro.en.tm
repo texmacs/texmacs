@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -119,7 +119,7 @@
     of <src-arg|var>.
 
     The <markup|map-args> is analogue to the <value|scheme> function
-    <verbatim|map>. Since <TeXmacs> use labelled trees, the label of the
+    <verbatim|map>. Since <TeXmacs> use labeled trees, the label of the
     mapping list must also be specified.
 
     <\example>

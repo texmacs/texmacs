@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -63,7 +63,7 @@
   </explain>
 
   <\explain|<explain-macro|description-dash|body>>
-    Similar to <markup|description-compact>, but use a  to seperate each
+    Similar to <markup|description-compact>, but use a  to separate each
     item from its description.
   </explain>
 

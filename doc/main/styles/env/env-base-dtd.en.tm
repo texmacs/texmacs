@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -72,7 +72,7 @@
     </tm-fragment>
   </explain>
 
-  We recall trat you may add new counters or counter-groups to the
+  We recall that you may add new counters or counter-groups to the
   <verbatim|theorem-env> counter-group using the <markup|new-counter-group>
   and <markup|add-to-counter-group> macros, as described in the section about
   counters.

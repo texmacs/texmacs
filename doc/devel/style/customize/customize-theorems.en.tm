@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -30,7 +30,7 @@
     <inactive*|<new-theorem|experiment|Experiment>>
   </tm-fragment>
 
-  When available in the <TeXmacs> dictionnaries, the text ``Experiment'' will
+  When available in the <TeXmacs> dictionaries, the text ``Experiment'' will
   be automatically translated when your document is written in a foreign
   language. In the section about <hyper-link|how to define new
   environments|../../../main/styles/std-dtds/env-manage-dtd.en.tm>, it is

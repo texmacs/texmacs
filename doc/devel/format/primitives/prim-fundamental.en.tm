@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -58,7 +58,7 @@
     <\itemize>
       <item>a <markup|document> tree,
 
-      <item>a <re-index|multiparagraph cell>, that is a <markup|cell> whose
+      <item>a <re-index|multi-paragraph cell>, that is a <markup|cell> whose
       operand is a <markup|document>,
 
       <item>a <markup|float> whose <var|body> is a <markup|document>,
@@ -111,7 +111,7 @@
     which expect <def-index|inline content>, is said to be in <def-index|line
     context>. A correct document may not evaluate to a tree which contains
     block content within an inline context and, except for
-    <re-index|multiparagraph cells>, it is not possible to nest a block
+    <re-index|multi-paragraph cells>, it is not possible to nest a block
     context within a line context.
   </explain>
 

@@ -1,9 +1,9 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Miscellaneous stylesheet operators>
+  <tmdoc-title|Miscellaneous style-sheet operators>
 
   <\explain>
     <explain-macro|surround|left|right|body>

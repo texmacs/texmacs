@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -56,7 +56,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|portuguese>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>

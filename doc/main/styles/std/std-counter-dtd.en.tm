@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -86,14 +86,14 @@
     <markup|display-in-<em|g>> and <markup|counter-<no-break>in-<no-break><em|g>>
     for their groups. Nevertheless, two new macros
     <markup|ind-display-<em|x>> and <markup|ind-counter-<em|x>> are defined
-    which may take over the rôles of <markup|display-<em|x>> and
+    which may take over the roles of <markup|display-<em|x>> and
     <markup|counter-<em|x>> in the case when the group consists of individual
     counters.
   </explain>
 
   At any moment, you may decide whether the counters of a group share a
   common group counter, or whether they all use their individual counters.
-  This feature is used for instance in order to switch between Americal style
+  This feature is used for instance in order to switch between American style
   numbering and European style numbering:
 
   <\explain|<explain-macro|group-common-counter|g>>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -28,7 +28,7 @@
     file enforces European style numbering.
 
     <item*|<tmpackage|structured-list>>This is an experimental package. By
-    default, items in unnumbered lists or enumarations take no arguments and
+    default, items in unnumbered lists or enumerations take no arguments and
     items in descriptions one argument. When using the
     <tmpackage|structured-list> package, they take an optional additional
     argument with the body of the item.

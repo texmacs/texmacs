@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -6,7 +6,7 @@
   <tmdoc-title|Theorem-like environments>
 
   <\traverse>
-    <branch|Using the theorem-like environements|env-theorem-export.en.tm>
+    <branch|Using the theorem-like environments|env-theorem-export.en.tm>
 
     <branch|Customization of the theorem-like
     environments|env-theorem-customize.en.tm>

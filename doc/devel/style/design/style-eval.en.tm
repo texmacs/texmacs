@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -64,7 +64,7 @@
     \ \ \ \ \ (blah (x) (x)))
   </scheme-fragment>
 
-  Conversily, the <name|Scheme> macro and function
+  Conversely, the <name|Scheme> macro and function
 
   <\scheme-fragment>
     (define-macro (foo x) (blah x x))

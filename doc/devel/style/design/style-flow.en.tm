@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -12,7 +12,7 @@
   <markup|for-each>. These primitives are available from the
   <menu|Source|Flow control> menu. However, we have to warn the user that the
   conditional constructs are quite fragile: they only apply to inline content
-  and the accessability of macro arguments should not to much depend on the
+  and the accessibility of macro arguments should not to much depend on the
   conditions.
 
   The most important primitive <markup|if>, which can be entered using

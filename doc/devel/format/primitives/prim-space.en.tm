@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -47,7 +47,7 @@
     whose bottom and top sides are at distances <src-arg|top> and
     <src-arg|bot> from the baseline.
 
-    If <src-arg|top> and <src-arg|bot> are not specified, then ian empty box
+    If <src-arg|top> and <src-arg|bot> are not specified, then an empty box
     is inserted whose bottom is on the baseline and whose height is the same
     as the lowercase letter <samp|x> in the current font.
 
@@ -106,7 +106,7 @@
 
     Operands are not evaluated and must be literal strings.
 
-    Weak springs are useful in stylesheets. For example, tail weak springs
+    Weak springs are useful in style-sheets. For example, tail weak springs
     are used to make the list environment extend to across the full
     paragraph, so vertical motion commands in nested lists behave as
     expected. In regular documents, springs are often used to place some text

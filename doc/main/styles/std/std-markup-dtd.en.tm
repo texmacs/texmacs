@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -101,7 +101,7 @@
   </explain>
 
   <\explain|<explain-macro|tt|content>>
-    This is a physical tag for typewriter phase. It is used for compatability
+    This is a physical tag for typewriter phase. It is used for compatibility
     with <name|HTML>, but we do not recommend its use.
   </explain>
 
@@ -129,7 +129,7 @@
 
   <\explain|<explain-macro|center|body>>
     This is a physical tag for centering one or several lines of text. It is
-    used for compatability with <name|HTML>, but we do not recommend its use.
+    used for compatibility with <name|HTML>, but we do not recommend its use.
   </explain>
 
   Some standard tabular environments are
@@ -200,7 +200,7 @@
   </explain>
 
   <\explain|<explain-macro|phantom|content>>
-    This tag takes as much space as the typesetted argument <src-arg|content>
+    This tag takes as much space as the typeset argument <src-arg|content>
     would take, but <src-arg|content> is not displayed. For instance,
     <inactive*|<phantom|phantom>> yields ``<phantom|phantom>''.
   </explain>
