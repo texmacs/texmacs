@@ -156,7 +156,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_error (t, ip);
     break;
   case RAW_DATA:
-    typeset_inactive_string ("<raw-data>", ip);
+    typeset_inactive (t, ip);
     break;
   case DOCUMENT:
     typeset_document (t, ip);
@@ -447,23 +447,23 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
 
   case INACTIVE:
-    typeset_inactive_tag (t, ip);
+    marker (descend (ip, 0));
+    typeset (t[0], descend (ip, 0), false);
+    marker (descend (ip, 1));
     break;
   case ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
   case VAR_INACTIVE:
-    typeset_inactive_tag (t, ip);
+    marker (descend (ip, 0));
+    typeset (t[0], descend (ip, 0), false);
+    marker (descend (ip, 1));
     break;
   case VAR_ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
   case SYMBOL:
-    typeset_inactive_symbol (t, ip);
-    break;
   case LATEX:
-    typeset_inactive_latex (t, ip);
-    break;
   case HYBRID:
   case TUPLE:
   case ATTR:
