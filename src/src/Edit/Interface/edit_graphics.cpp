@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : edit_graphics.cpp
 * DESCRIPTION: graphics between the editor and the window manager
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 2003  Joris van der Hoeven and Henri Lesourd
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -84,6 +84,22 @@ edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
 
+tree
+edit_graphics_rep::frame_direct_transform (tree t) {
+  bool b;
+  edit_env env= get_current_rewrite_env (b);
+  frame f= (b ? env : get_typesetter ()->env)->fr;
+  return as_tree (!nil (f) ? f (as_point (t)) : point ());
+}
+
+tree
+edit_graphics_rep::frame_inverse_transform (tree t) {
+  bool b;
+  edit_env env= get_current_rewrite_env (b);
+  frame f= (b ? env : get_typesetter ()->env)->fr;
+  return as_tree (!nil (f) ? f [as_point (t)] : point ());
+}
+
 tree edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }
@@ -117,7 +133,15 @@ void edit_graphics_rep::draw_graphical_object () {
   if (nil (go_box)) set_graphical_object(graphical_object);
   if (nil (go_box)) return;
   int i;
-  for (i=0; i<go_box->subnr(); i++) go_box->subbox (i)->display (win);
+  for (i=0; i<go_box->subnr(); i++) {
+    box b= go_box->subbox (i);
+    if ((tree)b=="point" || (tree)b=="curve")
+      b->display (win);
+    else {
+      rectangles rs;
+      b->redraw (win, path (), rs);
+    }
+  }
 }
 
 bool
