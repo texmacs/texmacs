@@ -16,7 +16,7 @@
   (:use
     (texmacs edit edit-text) (texmacs edit edit-table)
     (texmacs edit edit-session) (texmacs edit edit-fold)
-    (texmacs edit edit-title))
+    (texmacs edit edit-title) (texmacs edit edit-graphics))
   (:export
     make-return make-shift-return
     structured-insert-left structured-insert-right
