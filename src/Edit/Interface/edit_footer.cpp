@@ -44,7 +44,7 @@ edit_interface_rep::set_left_footer () {
   else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s= s * "#" * lan;
   else s= s * "#" * mode;
-  if (mode == "text") {
+  if ((mode == "text") || (mode == "src")) {
     s= s * "#" * get_env_string (FONT);
     append_left_footer (s, FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
@@ -58,7 +58,7 @@ edit_interface_rep::set_left_footer () {
     append_left_footer (s, MATH_FONT_SERIES);
     append_left_footer (s, MATH_FONT_SHAPE);
   }
-  else {
+  else if (mode == "prog") {
     string session_name= get_env_string (PROG_SESSION);
     if (session_name != "default") s= s * "-" * session_name;
     s= s * "#" * get_env_string (PROG_FONT);

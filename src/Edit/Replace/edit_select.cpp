@@ -214,7 +214,7 @@ edit_select_rep::select_enlarge () {
 
 static bool
 stop_enlarge_environmental (tree t) {
-  if (is_func (t, WITH, 3) && (t[0]==MODE) && (t[1]=="math")) return true;
+  if (is_func (t, WITH, 3) && (t[0] == MODE) && (t[1] == "math")) return true;
   if (!is_extension (t)) return false;
   if (is_multi_paragraph (t)) return true;
   string s= as_string (L(t));
@@ -584,7 +584,8 @@ edit_select_rep::selection_paste (string key) {
       insert_tree (r);
     }
     else {
-      if ((t[2] != mode) && ((t[2]=="math") || (mode=="math")))
+      if ((t[2] != mode) && (t[2] != "src") && (mode != "src") &&
+	  ((t[2] == "math") || (mode == "math")))
 	insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;

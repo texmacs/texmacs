@@ -175,18 +175,19 @@ edit_env_rep::update_font () {
 		  get_double (FONT_SIZE));
   switch (mode) {
   case 0:
+  case 1:
     fn= find_font (dis,
 		   get_string (FONT), get_string (FONT_FAMILY),
 		   get_string (FONT_SERIES), get_string (FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
-  case 1:
+  case 2:
     fn= find_font (dis,
 		   get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
 		   get_string (MATH_FONT_SERIES), get_string (MATH_FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
-  case 2:
+  case 3:
     fn= find_font (dis,
 		   get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
 		   get_string (PROG_FONT_SERIES), get_string (PROG_FONT_SHAPE),
@@ -204,21 +205,23 @@ edit_env_rep::update_color () {
 void
 edit_env_rep::update_mode () {
   string s= get_string (MODE);
-  if (s == "text") mode=0;
-  if (s == "math") mode=1;
-  if (s == "prog") mode=2;
+  if (s == "text") mode=1;
+  else if (s == "math") mode=2;
+  else if (s == "prog") mode=3;
+  else mode=0;
 }
 
 void
 edit_env_rep::update_language () {
   switch (mode) {
   case 0:
+  case 1:
     lan= text_language (get_string (LANGUAGE));
     break;
-  case 1:
+  case 2:
     lan= math_language (get_string (MATH_LANGUAGE));
     break;
-  case 2:
+  case 3:
     lan= prog_language (get_string (PROG_LANGUAGE));
     break;
   }

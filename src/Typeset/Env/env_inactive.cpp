@@ -327,7 +327,7 @@ tree
 edit_env_rep::rewrite_inactive_var_active (
   tree t, tree var, bool block, bool flush)
 {
-  tree r= subvar (var, 0);
+  tree r= tree (WITH, MODE, copy (env [MODE]), subvar (var, 0));
   if (flush &&
       (src_compact != COMPACT_ALL) &&
       (is_multi_paragraph (t[0])) || (src_compact == COMPACT_NONE))
@@ -473,6 +473,9 @@ edit_env_rep::rewrite_inactive (tree t, tree var) {
     r= tree (WITH, PAR_PAR_SEP, "0fn", r);
     r= tree (SURROUND, "", tree (VSPACE, "0.5fn"), r);
   }
+  if ((inactive_mode == INACTIVE_INLINE_RECURSE) ||
+      (inactive_mode == INACTIVE_BLOCK_RECURSE))
+    r= tree (WITH, MODE, "src", r);
   //cout << "---> " << r << "\n\n";
   return r;
 }
