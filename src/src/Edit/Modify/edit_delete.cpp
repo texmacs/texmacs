@@ -13,175 +13,29 @@
 #include "edit_text.hpp"
 
 /******************************************************************************
-* Delete backwards
+* Normal deletions
 ******************************************************************************/
 
 void
-edit_text_rep::remove_backwards () {
-  path p= tp;
-  int  last;
-  tree t, u;
-
-  /********************* get the position where to delete ********************/
-
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-  } while ((last==0) && (!nil (p)) && is_format (subtree (et, path_up (p))));
-  if (is_document (t)) {
-    if (last==0) {
-      if (!nil(p)) {
-	tree u= subtree (et, path_up (p));
-	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
-	  if (is_extension (u) && (N(u) > 1)) {
-	    int i, n= N(u);
-	    bool empty= true;
-	    for (i=0; i<n; i++)
-	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
-	    if (!empty) {
-	      if (last_item (p) == 0) go_to (start (et, path_up (p)));
-	      else go_to (end (et, path_dec (p)));
-	      return;
-	    }
-	  }
-	  if (t == tree (DOCUMENT, "")) {
-	    if (is_func (u, _FLOAT) || is_compound (u, "footnote", 1)) {
-	      assign (path_up (p), "");
-	      correct (path_up (p, 2));
-	    }
-	    else if (is_document (subtree (et, path_up (p, 2))))
-	      assign (path_up (p), "");
-	    else assign (path_up (p), tree (DOCUMENT, ""));
-	  }
-	  else go_to (start (et, path_up (p)));
-	}
-      }
-    }
-    else {
-      if (is_multi_paragraph (subtree (et, p * (last-1))) ||
-	  is_multi_paragraph (subtree (et, p * last)))
-	{
-	  if (subtree (et, p * (last-1)) == "") remove (p * (last-1), 1);
-	  else {
-	    if (subtree (et, p * last) == "") remove (p * last, 1);
-	    go_to (end (et, p * (last-1)));
-	  }
-	}
-      else remove_return (p * (last-1));
-    }
-    return;
-  }
-  u= subtree (et, path_up (p));
-
-  // cout << "Backspace\n-----------------------";
-  // cout << "t= " << t << "\n";
-  // cout << "u= " << u << "\n";
-  // cout << "p= " << p << "\n";
-
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last != 0)) {
-    language lan= get_env_language ();
-    int start= last;
-    if (lan->enc->token_backward (t->label, start))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::backspace");
-    remove (p * start, last-start);
-    correct (path_up (p));
-    return;
-  }
-
-  /************************ deletion governed by t ***************************/
-
-  if (last == 1)
-    switch (L(t)) {
-    case HSPACE:
-    case VSPACE_BEFORE:
-    case VSPACE_AFTER:
-    case SPACE:
-    case HTAB:
-    case LEFT:
-    case MIDDLE:
-    case RIGHT:
-    case BIG:
-      back_monolithic (p);
-      return;
-    case LEFT_PRIME:
-    case RIGHT_PRIME:
-      back_prime (t, p, false);
-      return;
-    case WIDE:
-    case WIDE_UNDER:
-      go_to (end (et, p * 0));
-      return;
-    case TABLE_FORMAT:
-    case TABLE:
-    case ROW:
-    case CELL:
-    case SUB_TABLE:
-      back_table (p, false);
-      return;
-    case WITH:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case VALUE:
-    case ARGUMENT:
-      if (N(t) == 1) back_monolithic (p);
-      else back_general (p, false);
-      return;
-    default:
-      back_general (p, false);
-      break;
-    }
-
-  /************************* deletion depends on u ***************************/
-
-  if (last == 0) {
-    switch (L (u)) {
-    case TREE:
-      back_in_tree (u, p, false);
-      return;
-    case TABLE_FORMAT:
-    case TABLE:
-    case ROW:
-    case CELL:
-    case SUB_TABLE:
-      back_in_table (u, p, false);
-      return;
-    case WITH:
-      if (u[N(u)-1] == "") back_monolithic (path_up (p));
-      else go_to (start (et, path_up (p)));
-      return;
-    default:
-      back_in_general (u, p, false);
-      break;
-    }
-  }
-}
-
-/******************************************************************************
-* Delete forwards
-******************************************************************************/
-
-void
-edit_text_rep::remove_forwards () {
+edit_text_rep::remove_text (bool forward) {
   path p= tp, q;
   int  last, rix;
   tree t, u;
 
   /******************* make right-glued positions left-glued *****************/
 
-  //cout << HRULE;
-  if ((N(p) >= 2) &&
-      is_concat (subtree (et, path_up (p, 2))) &&
-      (last_item (p) == right_index (subtree (et, path_up (p)))) &&
-      (last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
-    {
-      p= path_up (p);
-      p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
-    }
-  //cout << "p= " << p << "\n";
+  if (forward) {
+    //cout << HRULE;
+    if ((N(p) >= 2) &&
+	is_concat (subtree (et, path_up (p, 2))) &&
+	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
+	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
+      {
+	p= path_up (p);
+	p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
+      }
+    //cout << "p= " << p << "\n";
+  }
 
   /********************* get the position where to delete ********************/
 
@@ -192,17 +46,23 @@ edit_text_rep::remove_forwards () {
   //cout << "  t   = " << t << "\n";
   //cout << "  last= " << last << "\n";
   //cout << "  rix = " << rix << "\n";
-  while ((last>=rix) && (!nil (p)) && is_format (subtree (et, path_up (p)))) {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-    rix = N(t) - 1;
-    //cout << "  t   = " << t << "\n";
-    //cout << "  last= " << last << "\n";
-    //cout << "  rix = " << rix << "\n";
-  } 
+  while (((forward && (last >= rix)) || ((!forward) && (last == 0))) &&
+	 (!nil (p)) && is_format (subtree (et, path_up (p))))
+    {
+      last= last_item (p);
+      p   = path_up (p);
+      t   = subtree (et, p);
+      rix = N(t) - 1;
+      //cout << "  t   = " << t << "\n";
+      //cout << "  last= " << last << "\n";
+      //cout << "  rix = " << rix << "\n";
+    }
+  if (!nil (p)) u= subtree (et, path_up (p));
+
+  /************************** multiparagraph delete **************************/
+
   if (is_document (t)) {
-    if (last >= rix) {
+    if ((forward && (last >= rix)) || ((!forward) && (last == 0))) {
       if (!nil(p)) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
@@ -212,8 +72,14 @@ edit_text_rep::remove_forwards () {
 	    for (i=0; i<n; i++)
 	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	    if (!empty) {
-	      if (last_item (p) == n-1) go_to (end (et, path_up (p)));
-	      else go_to (start (et, path_inc (p)));
+	      if (forward) {
+		if (last_item (p) == n-1) go_to (end (et, path_up (p)));
+		else go_to (start (et, path_inc (p)));
+	      }
+	      else {
+		if (last_item (p) == 0) go_to (start (et, path_up (p)));
+		else go_to (end (et, path_dec (p)));
+	      }
 	      return;
 	    }
 	  }
@@ -226,50 +92,56 @@ edit_text_rep::remove_forwards () {
 	      assign (path_up (p), "");
 	    else assign (path_up (p), tree (DOCUMENT, ""));
 	  }
-	  else go_to (end (et, path_up (p)));
+	  else go_to_border (path_up (p), !forward);
 	}
       }
-      /* Not yet implemented */
       return;
     }
     else {
-      if (is_multi_paragraph (subtree (et, p * last)) ||
-	  is_multi_paragraph (subtree (et, p * (last+1))))
+      int l1= forward? last: last-1;
+      int l2= forward? last+1: last;
+      if (is_multi_paragraph (subtree (et, p * l1)) ||
+	  is_multi_paragraph (subtree (et, p * l2)))
 	{
-	  if (subtree (et, p * last) == "") remove (p * last, 1);
+	  if (subtree (et, p * l1) == "") remove (p * l1, 1);
 	  else {
-	    if (subtree (et, p * (last+1)) == "") remove (p * (last+1), 1);
-	    if (last < N(subtree (et, p))-1) go_to (start (et, p * (last+1)));
+	    if (subtree (et, p * l2) == "") remove (p * l2, 1);
+	    if (!forward) go_to_end (p * l1);
+	    else if (last < N (subtree (et, p)) - 1) go_to_start (p * l2);
 	  }
 	}
-      else remove_return (p * last);
+      else remove_return (p * l1);
     }
     return;
   }
-  u= subtree (et, path_up (p));
-
-  //cout << "l= " << last << "\n";
-  //cout << "r= " << rix << "\n";
-  //cout << "t= " << t << "\n";
-  //cout << "u= " << u << "\n";
-  //cout << "p= " << p << "\n";
 
   /**************************** deleting text ********************************/
 
-  if (is_atomic (t) && (last != rix)) {
+  if (forward && is_atomic (t) && (last != rix)) {
     language lan= get_env_language ();
     int end= last;
     if (lan->enc->token_forward (t->label, end))
       fatal_error ("bad cursor position in string",
-		   "edit_text_rep::backspace");
+		   "edit_text_rep::remove_text");
     remove (p * last, end-last);
+    correct (path_up (p));
+    return;
+  }
+
+  if ((!forward) && is_atomic (t) && (last != 0)) {
+    language lan= get_env_language ();
+    int start= last;
+    if (lan->enc->token_backward (t->label, start))
+      fatal_error ("bad cursor position in string",
+		   "edit_text_rep::remove_text");
+    remove (p * start, last-start);
     correct (path_up (p));
     return;
   }
 
   /************************ deletion governed by t ***************************/
 
-  if (last == 0)
+  if (last == (forward? 0: 1))
     switch (L(t)) {
     case HSPACE:
     case VSPACE_BEFORE:
@@ -284,122 +156,67 @@ edit_text_rep::remove_forwards () {
       return;
     case LEFT_PRIME:
     case RIGHT_PRIME:
-      back_prime (t, p, true);
+      back_prime (t, p, forward);
       return;
     case WIDE:
     case WIDE_UNDER:
-      go_to (start (et, p * 0));
+      go_to_border (p * 0, forward);
       return;
     case TABLE_FORMAT:
     case TABLE:
     case ROW:
     case CELL:
     case SUB_TABLE:
-      back_table (p, true);
+      back_table (p, forward);
       return;
     case WITH:
-      go_to (start (et, p * (N(t)-1)));
+      go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
     case ARGUMENT:
       if (N(t) == 1) back_monolithic (p);
-      else back_general (p, true);
+      else back_general (p, forward);
       return;
     default:
-      back_general (p, true);
+      back_general (p, forward);
       break;
     }
 
   /************************* deletion depends on u ***************************/
 
-  if (last == rix) {
+  if (last == (forward? rix: 0)) {
     switch (L (u)) {
     case TREE:
-      back_in_tree (u, p, true);
+      back_in_tree (u, p, forward);
       return;
     case TABLE_FORMAT:
     case TABLE:
     case ROW:
     case CELL:
     case SUB_TABLE:
-      back_in_table (u, p, true);
+      back_in_table (u, p, forward);
       return;
     case WITH:
       if (u[N(u)-1] == "") back_monolithic (path_up (p));
-      else go_to (end (et, path_up (p)));
+      else go_to_border (path_up (p), !forward);
       return;
     default:
-      back_in_general (u, p, true);
+      back_in_general (u, p, forward);
       break;
     }
   }
 }
 
 /******************************************************************************
-* Backward deletion of an object
+* Structured deletions
 ******************************************************************************/
 
 path left_match (tree t, path p, tree which, int level= 0);
 path right_match (tree t, path p, tree which, int level= 0);
 
 void
-edit_text_rep::remove_structure_backwards () {
-  path p= tp;
-  int  last;
-  tree t, u;
-
-  /********************* get the position where to delete ********************/
-  
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-  } while ((last==0) && (!nil (p)) && is_format (subtree (et, path_up (p))));
-  if (nil (p)) {
-    if (last==0) return;
-    remove_return (path (last-1));
-    return;
-  }
-  u= subtree (et, path_up (p));
-
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last!=0)) {
-    language lan= get_env_language ();
-    int start= last, end= last;
-    string s= t->label;
-    while (true) {
-      int pos= max (start-1, 0);
-      (void) lan->advance (s, pos);
-      if (pos < last) break;
-      end= pos;
-      if (start == 0) break;
-      start--;
-    }
-    while ((start>0) && (s[start-1] == ' ')) start--;
-    if (end>start) {
-      remove (p * start, end-start);
-      correct (path_up (p));
-    }
-    return;
-  }
-
-  /************************** deleting structure *****************************/
-
-  if (last==1) {
-    if (!is_concat (u)) assign (p, "");
-    else remove (p, 1);
-    correct (path_up (p));
-  }
-  else remove_structure_upwards ();
-}
-
-/******************************************************************************
-* Forward deletion of an object
-******************************************************************************/
-
-void
-edit_text_rep::remove_structure_forwards () {
+edit_text_rep::remove_structure (bool forward) {
+  if (forward) {
   path p= tp;
   int  last, rix;
   tree t, u;
@@ -458,6 +275,60 @@ edit_text_rep::remove_structure_forwards () {
     correct (path_up (p));
   }
   else remove_structure_upwards ();
+  }
+
+
+
+  else {
+  path p= tp;
+  int  last;
+  tree t, u;
+
+  /********************* get the position where to delete ********************/
+  
+  do {
+    last= last_item (p);
+    p   = path_up (p);
+    t   = subtree (et, p);
+  } while ((last==0) && (!nil (p)) && is_format (subtree (et, path_up (p))));
+  if (nil (p)) {
+    if (last==0) return;
+    remove_return (path (last-1));
+    return;
+  }
+  u= subtree (et, path_up (p));
+
+  /**************************** deleting text ********************************/
+
+  if (is_atomic (t) && (last!=0)) {
+    language lan= get_env_language ();
+    int start= last, end= last;
+    string s= t->label;
+    while (true) {
+      int pos= max (start-1, 0);
+      (void) lan->advance (s, pos);
+      if (pos < last) break;
+      end= pos;
+      if (start == 0) break;
+      start--;
+    }
+    while ((start>0) && (s[start-1] == ' ')) start--;
+    if (end>start) {
+      remove (p * start, end-start);
+      correct (path_up (p));
+    }
+    return;
+  }
+
+  /************************** deleting structure *****************************/
+
+  if (last==1) {
+    if (!is_concat (u)) assign (p, "");
+    else remove (p, 1);
+    correct (path_up (p));
+  }
+  else remove_structure_upwards ();
+  }
 }
 
 /******************************************************************************

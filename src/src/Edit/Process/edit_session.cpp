@@ -22,13 +22,13 @@
 ******************************************************************************/
 
 static bool
-is_empty (tree t) {
+is_var_empty (tree t) {
   if (is_atomic (t)) return (t == "");
-  if (is_compound (t, "math", 1)) return is_empty (t[0]);
+  if (is_compound (t, "math", 1)) return is_var_empty (t[0]);
   if (is_document (t) || is_concat (t)) {
     int i;
     for (i=0; i<N(t); i++)
-      if (!is_empty (t[i])) return false;
+      if (!is_var_empty (t[i])) return false;
     return true;
   }
   return false;
@@ -72,9 +72,9 @@ edit_process_rep::start_input () {
   else if (!nil (p= search_upwards_compound ("output"))) {
     needs_return= true;
     tree st= subtree (et, p);
-    if ((N(st) == 1) && is_empty (st [0])) {
+    if ((N(st) == 1) && is_var_empty (st [0])) {
       cut (p);
-      remove_backwards ();
+      remove_text (false);
       if (is_compound (subtree (et, path_up (tp, 2)), "session", 1)) {
 	// fixes bug for empty startup banners
 	needs_return= false;
@@ -109,7 +109,7 @@ edit_process_rep::start_input () {
   if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "textput", 1))
     i++;
   if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "input", 2)) {
-    if (is_empty (input)) {
+    if (is_var_empty (input)) {
       input= copy (st[i+1][1]);
       math_input= is_compound (input, "math", 1);
     }
@@ -291,7 +291,7 @@ edit_process_rep::session_remove_backwards () {
     if (nil (p) || (tp == start (et, p * 1))) return;
   }
   else if (tp == start (et, p * 0)) return;
-  remove_backwards ();
+  remove_text (false);
 }
 
 void
@@ -302,7 +302,7 @@ edit_process_rep::session_remove_forwards () {
     if (nil (p) || (tp == end (et, p * 1))) return;
   }
   else if (tp == end (et, p * 0)) return;
-  remove_forwards ();
+  remove_text (true);
 }
 
 /******************************************************************************

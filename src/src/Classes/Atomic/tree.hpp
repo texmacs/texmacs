@@ -26,9 +26,9 @@ class tree {
   tree_rep* rep; // can be atomic or compound
 public:
 #ifdef OS_WIN32
-	static const tree_label init; // used by hashmap<tree>() constructor
+  static const tree_label init; // used by hashmap<tree>() constructor
 #else
-	static const tree_label init = UNINIT; // used by hashmap<tree>() constructor
+  static const tree_label init = UNINIT; // used by hashmap<tree>() constructor
 #endif
 
   inline tree (const tree& x);
@@ -215,6 +215,7 @@ bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);
 bool is_inactive (tree t);
+bool is_empty (tree t);
 
 inline bool
 is_applicable (tree t) {

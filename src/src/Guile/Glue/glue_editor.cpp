@@ -711,36 +711,26 @@ tmg_insert_return () {
 }
 
 SCM
-tmg_remove_backwards () {
+tmg_remove_text (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "remove-text");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_backwards ();
+  get_server()->get_editor()->remove_text (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_remove_forwards () {
+tmg_remove_structure (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "remove-structure");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_forwards ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_remove_structure_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_structure_backwards ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_remove_structure_forwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_structure_forwards ();
+  get_server()->get_editor()->remove_structure (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2820,10 +2810,8 @@ initialize_glue_editor () {
   gh_new_procedure ("insert-tree", (FN) tmg_insert_tree, 1, 0, 0);
   gh_new_procedure ("insert-tree-go-to", (FN) tmg_insert_tree_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
-  gh_new_procedure ("remove-backwards", (FN) tmg_remove_backwards, 0, 0, 0);
-  gh_new_procedure ("remove-forwards", (FN) tmg_remove_forwards, 0, 0, 0);
-  gh_new_procedure ("remove-structure-backwards", (FN) tmg_remove_structure_backwards, 0, 0, 0);
-  gh_new_procedure ("remove-structure-forwards", (FN) tmg_remove_structure_forwards, 0, 0, 0);
+  gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
+  gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
   gh_new_procedure ("remove-structure-upwards", (FN) tmg_remove_structure_upwards, 0, 0, 0);
   gh_new_procedure ("make-format", (FN) tmg_make_format, 1, 0, 0);
   gh_new_procedure ("make-htab", (FN) tmg_make_htab, 1, 0, 0);

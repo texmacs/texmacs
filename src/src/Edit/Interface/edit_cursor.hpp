@@ -54,6 +54,7 @@ public:
   void go_to_correct (path p);
   void go_to_start (path p);
   void go_to_end (path p);
+  void go_to_border (path p, bool at_start);
   void go_to_here ();
   void go_start ();
   void go_end ();

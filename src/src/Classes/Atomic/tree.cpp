@@ -253,6 +253,18 @@ is_inactive (tree t) {
     ((L(t) == INACTIVE) || (L(t) == VAR_INACTIVE));
 }
 
+bool
+is_empty (tree t) {
+  if (is_atomic (t)) return (t == "");
+  if (is_document (t) || is_concat (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (!is_empty (t[i])) return false;
+    return is_concat (t) || (n<=1);
+  }
+  return false;
+}
+
 /******************************************************************************
 * Compound trees
 ******************************************************************************/

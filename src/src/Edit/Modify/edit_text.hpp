@@ -31,10 +31,8 @@ public:
   void remove_return (path p);
   void insert_tree (tree t, path p_in_t);
   void insert_tree (tree t);
-  void remove_backwards ();
-  void remove_forwards ();
-  void remove_structure_backwards ();
-  void remove_structure_forwards ();
+  void remove_text (bool forward);
+  void remove_structure (bool forward);
   void remove_structure_upwards ();
 
   /******************************** format ***********************************/

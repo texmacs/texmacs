@@ -176,12 +176,12 @@
 (define (general-remove-backwards)
   (cond ((selection-active-normal?) (clipboard-cut "primary"))
 	((and (in-session?) (inside? "input")) (session-remove-backwards))
-	(else (remove-backwards))))
+	(else (remove-text #f))))
 
 (define (general-remove-forwards)
   (cond ((selection-active-normal?) (clipboard-cut "primary"))
 	((and (in-session?) (inside? "input")) (session-remove-forwards))
-	(else (remove-forwards))))
+	(else (remove-text #t))))
 
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
