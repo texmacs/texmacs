@@ -19,6 +19,13 @@
 #include <sys/misc.h>
 #endif
 
+static string bibtex_command= "bibtex";
+
+void
+set_bibtex_command (string cmd) {
+  bibtex_command= cmd;
+}
+
 tree
 remove_start_space (tree t) {
   if (is_atomic (t)) {
@@ -50,7 +57,7 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "
 	<< "BSTINPUTS=" << dir << ":$BSTINPUTS "
-	<< "bibtex temp";
+	<< bibtex_command << " temp";
   if (DEBUG_AUTO) cout << "TeXmacs] BibTeX command: " << cmdln << "\n";
   system (cmdln);
 #endif

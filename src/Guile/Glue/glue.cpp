@@ -26,6 +26,7 @@
 #include "Metafont/tex_files.hpp"
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
+#include "Bibtex/bibtex.hpp"
 #include <string.h>
 #include <libguile.h>
 

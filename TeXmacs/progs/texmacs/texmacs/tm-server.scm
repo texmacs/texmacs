@@ -43,12 +43,16 @@
   (if (has-view?) ; delayed-autosave would crash at initialization time
       (delayed-autosave)))
 
+(define (notify-bibtex-command var val)
+  (set-bibtex-command val))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "emacs" notify-look-and-feel)
   ("language" (get-locale-language) notify-language)
   ("security" "prompt on scripts" notify-security)
-  ("autosave" "120" notify-autosave))
+  ("autosave" "120" notify-autosave)
+  ("bibtex command" "bibtex" notify-bibtex-command))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Killing buffers, windows and TeXmacs

@@ -87,6 +87,7 @@
   (system-wait system_wait (void string string))
   (math-symbol-type math_symbol_type (string string))
   (string-number? is_double (bool string))
+  (set-bibtex-command set_bibtex_command (void string))
 
   (string->url url (url string))
   (url url (url string string))
