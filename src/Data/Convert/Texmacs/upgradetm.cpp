@@ -37,6 +37,10 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.7", version)) return H;
+
+  // new_feature (H, "eval_args");
+
   if (version_inf ("1.0.2.6", version)) return H;
 
   new_feature (H, "compound");
@@ -1555,10 +1559,8 @@ upgrade_xexpand (tree t) {
   else {
     int i, n= N(t);
     tree r (t, n);
-    if (is_expand (t) && (!is_func (t, COMPOUND))) {
-      // cout << "Upgrade " << t << "\n";
+    if (is_expand (t) && (!is_func (t, COMPOUND)))
       r= tree (COMPOUND, n);
-    }
     for (i=0; i<n; i++)
       r[i]= upgrade_xexpand (t[i]);
     return r;
@@ -1572,9 +1574,20 @@ upgrade_xexpand (tree t) {
 static tree
 upgrade_apply (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, APPLY) && /*is_atomic (t[0])*/
-	   ((t[0] == "cite") || (t[0] == "nocite") || (t[0] == "menu") ||
-	    (t[0] == "tmdoc-copyright") || (t[0] == "tmweb-list")))
+#ifdef UPGRADE_APPLY
+  /*
+  if (is_func (t, APPLY))
+    cout << t[0] << "\n";
+  */
+#endif
+  if (is_func (t, APPLY) &&
+#ifdef UPGRADE_APPLY
+      is_atomic (t[0])
+#else
+      ((t[0] == "cite") || (t[0] == "nocite") || (t[0] == "menu") ||
+       (t[0] == "tmdoc-copyright") || (t[0] == "tmweb-list"))
+#endif
+      )
     {
       int i, n= N(t)-1;
       string s= t[0]->label;
@@ -1584,11 +1597,28 @@ upgrade_apply (tree t) {
 	r[i]= upgrade_apply (t[i+1]);
       return r;
     }
+
+  int i, n= N(t);
+  tree r (t, n);
+#ifdef UPGRADE_APPLY
+  if (is_func (t, APPLY))
+    r= tree (COMPOUND, n);
+#endif
+  for (i=0; i<n; i++)
+    r[i]= upgrade_apply (t[i]);
+  return r;
+}
+
+static tree
+upgrade_function_arg (tree t, tree var) {
+  if (is_atomic (t)) return t;
+  else if ((t == tree (APPLY, var)) || (t == tree (VALUE, var)))
+    return tree (ARGUMENT, var);
   else {
     int i, n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
-      r[i]= upgrade_apply (t[i]);
+      r[i]= upgrade_function_arg (t[i], var);
     return r;
   }
 }
@@ -1596,7 +1626,7 @@ upgrade_apply (tree t) {
 static tree
 upgrade_function (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION)) {
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION)) {
     int i, n= N(t[1])-1;
     for (i=0; i<n; i++)
       if (ends (as_string (t[1][i]), "*"))
@@ -1604,11 +1634,41 @@ upgrade_function (tree t) {
 	     << "' in function '" << t[0] << "'\n"
 	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
   }
-  int i, n= N(t);
-  tree r (t, n);
-  for (i=0; i<n; i++)
-    r[i]= upgrade_function (t[i]);
-  return r;
+#ifdef UPGRADE_APPLY
+  /*
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION) && (N(t[1])>1)) {
+    cout << "Function: " << t[0] << "\n";
+  }
+  */
+#endif
+  if (is_func (t, FUNCTION)) {
+    int i, n= N(t)-1;
+    tree u= t[n], r (MACRO, n+1);
+    for (i=0; i<n; i++) {
+      u= upgrade_function_arg (u, t[i]);
+      r[i]= copy (t[i]);
+    }
+    r[n]= upgrade_function (u);
+#ifdef UPGRADE_APPLY
+    /*
+    if (n > 0) {
+      cout << "t= " << t << "\n";
+      cout << "r= " << r << "\n";
+      cout << HRULE;
+    }
+    */
+    return r;
+#else
+    return t;
+#endif
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_function (t[i]);
+    return r;
+  }
 }
 
 /******************************************************************************

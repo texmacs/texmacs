@@ -133,6 +133,7 @@ initialize_std_drd () {
   constructor (GET_LABEL, "get_label", 1, DYNAMIC);
   constructor (GET_ARITY, "get_arity", 1, DYNAMIC);
   constructor (MAP_ARGS, "map_args", -1, DYNAMIC);
+  constructor (EVAL_ARGS, "eval_args", 1, DYNAMIC);
   constructor (BACKUP, "backup", 1);
   constructor (QUOTE, "quote", 1, DYNAMIC);
   constructor (DELAY, "delay", 1, DYNAMIC);

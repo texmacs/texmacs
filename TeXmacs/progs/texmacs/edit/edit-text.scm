@@ -16,7 +16,7 @@
   (:use (texmacs tools tm-circulate))
   (:export
     ;; titles
-    go-end-of-header-element make-header-compound make-header-apply
+    go-end-of-header-element make-header-compound make-header-compound
     ;; sections
     inside-section? make-section make-section-arg toggle-section-number
     ;; lists
@@ -40,9 +40,9 @@
   (if (not (== (tree->object (the-line)) "")) (insert-return))
   (make-compound-arg s))
 
-(define (make-header-apply s)
+(define (make-header-compound s)
   (go-end-of-header-element)
-  (make-inactive-apply-arg s))
+  (make-inactive-compound-arg s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sectional commands

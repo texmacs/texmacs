@@ -56,8 +56,8 @@
 	("Date" (make-header-compound "title-date"))
 	---
 	("TeXmacs notice" (make-compound "made-by-TeXmacs"))
-	("Running title" (make-header-apply "header-title"))
-	("Running author" (make-header-apply "header-author"))
+	("Running title" (make-header-compound "header-title"))
+	("Running author" (make-header-compound "header-author"))
 	("Address block" (make-compound-arg "address-block"))
 	("Today" (begin (make-header-compound "title-date")
 			(make-date))))

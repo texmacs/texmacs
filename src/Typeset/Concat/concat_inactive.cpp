@@ -24,6 +24,13 @@ concater_rep::typeset_inactive (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_eval_args (tree t, path ip) { 
+  marker (descend (ip, 0));
+  typeset (env->exec (t), decorate_right (ip), false);
+  marker (descend (ip, 1));
+}
+
+void
 concater_rep::typeset_inactive (
   string type, tree t, path ip, int pos1, int pos2)
 {

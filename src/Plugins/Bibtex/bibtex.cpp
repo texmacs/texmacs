@@ -61,6 +61,24 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   t= t[N(t)-1];
   tree u (DOCUMENT);
   for (i=0; i<arity(t); i++) {
+#ifdef UPGRADE_APPLY
+    if (is_concat (t[i]) &&
+	(is_compound (t[i][0], "bibitem") ||
+	 is_compound (t[i][0], "bibitem*")))
+      {
+	tree item= t[i][0];
+	if (is_compound (item, "bibitem"))
+	  item= compound ("bibitem*", as_string (count++), item[0]);
+	t[i][0]= item;
+	tree v (CONCAT, compound ("bibitem*", item[0]));
+	if (is_atomic (item[1])) v << tree (LABEL, "bib-" * item[1]->label);
+	if (N(t[i])>1) {
+	  v << remove_start_space (t[i][1]);
+	  v << A (t[i] (2, N(t[i])));
+	}
+	u << v;
+      }
+#else
     if (is_concat (t[i]) &&
 	is_func (t[i][0], APPLY) &&
 	((t[i][0][0] == "bibitem") || (t[i][0][0] == "bibitem*")))
@@ -77,6 +95,7 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	}
 	u << v;
       }
+#endif
   }
   return u;
 }
