@@ -1839,19 +1839,6 @@ tmg_temp_proof_fix () {
 }
 
 SCM
-tmg_make_apply (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-apply");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_apply (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_view_set_property (SCM arg1, SCM arg2) {
   SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "view-set-property");
   SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "view-set-property");
@@ -2921,7 +2908,6 @@ initialize_glue_editor () {
   gh_new_procedure ("make-compound", (FN) tmg_make_compound, 1, 0, 0);
   gh_new_procedure ("make-compound-arity", (FN) tmg_make_compound_arity, 2, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
-  gh_new_procedure ("make-apply", (FN) tmg_make_apply, 1, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);
   gh_new_procedure ("view-get-property", (FN) tmg_view_get_property, 1, 0, 0);
   gh_new_procedure ("clear-buffer", (FN) tmg_clear_buffer, 0, 0, 0);

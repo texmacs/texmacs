@@ -413,12 +413,6 @@ edit_dynamic_rep::temp_proof_fix () {
   insert (path_inc (q), tree (DOCUMENT, ""));
 }
 
-void
-edit_dynamic_rep::make_apply (string s) {
-  tree t (COMPOUND, s);
-  insert_tree (t);
-}
-
 /******************************************************************************
 * Deleting dynamic objects
 ******************************************************************************/
