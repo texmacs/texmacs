@@ -230,7 +230,7 @@ private:
   tree exec_bp ();
   tree exec_dd ();
   tree exec_pc ();
-  tree exec_cc ();
+  tree exec_ccunit ();
   tree exec_fn ();
   tree exec_fns ();
   tree exec_spc ();
@@ -240,7 +240,7 @@ private:
   tree exec_sep ();
   tree exec_yfrac ();
   tree exec_ex ();
-  tree exec_emw ();
+  tree exec_emunit ();
   tree exec_par ();
   tree exec_pag ();
   tree exec_tmpt ();

@@ -238,6 +238,7 @@ void
 drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   if (ci.freeze_accessible) return;
   ci.accessible= is_accessible;

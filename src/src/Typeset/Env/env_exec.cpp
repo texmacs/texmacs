@@ -297,8 +297,8 @@ edit_env_rep::exec (tree t) {
     return exec_dd ();
   case PC:
     return exec_pc ();
-  case CC:
-    return exec_cc ();
+  case CCUNIT:
+    return exec_ccunit ();
   case _FN:
     return exec_fn ();
   case FNS:
@@ -317,8 +317,8 @@ edit_env_rep::exec (tree t) {
     return exec_yfrac ();
   case EX:
     return exec_ex ();
-  case EMW:
-    return exec_emw ();
+  case EMUNIT:
+    return exec_emunit ();
   case PAR:
     return exec_par ();
   case PAG:

@@ -43,6 +43,10 @@ init (tree_label l, string name, tag_info ti) {
   STD_CODE(name)= (int) l;
   make_tree_label (l, name);
   std_drd->info (l)= ti;
+  std_drd->freeze_arity (l);
+  std_drd->freeze_no_border (l);
+  // std_drd->freeze_block (l);
+  // FIXME: freeze children properties
 }
 
 static bool std_drd_initialized= false;
@@ -211,7 +215,7 @@ init_std_drd () {
   init (BP, "bp", fixed (0));
   init (DD, "dd", fixed (0));
   init (PC, "pc", fixed (0));
-  init (CC, "cc", fixed (0));
+  init (CCUNIT, "ccunit", fixed (0));
   init (_FN, "fn", fixed (0));
   init (FNS, "fns", fixed (0));
   init (SPC, "spc", fixed (0));
@@ -221,7 +225,7 @@ init_std_drd () {
   init (SEP, "sep", fixed (0));
   init (YFRAC, "yfrac", fixed (0));
   init (EX, "ex", fixed (0));
-  init (EMW, "emw", fixed (0));
+  init (EMUNIT, "emunit", fixed (0));
   init (PAR, "par", fixed (0));
   init (PAG, "pag", fixed (0));
   init (TMPT, "tmpt", fixed (0));
