@@ -173,6 +173,11 @@ edit_env_rep::update_page_pars () {
       page_bottom_margin= get_page_par (PAGE_BOT);
       page_user_height  = page_height - page_top_margin - page_bottom_margin;
     }
+    else if (height_flag == "true") {
+      page_user_height  = get_length (PAGE_USER_HEIGHT);
+      page_top_margin   = (page_height - page_user_width) >> 1;
+      page_bottom_margin= page_top_margin;
+    }
     else {
       page_user_height  = get_length (PAGE_USER_HEIGHT);
       page_top_margin   = get_page_par (PAGE_TOP);
