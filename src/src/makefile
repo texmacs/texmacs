@@ -74,7 +74,6 @@ DISTR:
 	$(RM) Deps/*
 
 CLEAN: DISTR
-	$(RM) $(tmsrc)/bin/texmacs.bin
 	$(RM) Objects/*.o
 
 maintainer-clean: CLEAN
