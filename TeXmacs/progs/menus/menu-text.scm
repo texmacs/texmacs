@@ -57,10 +57,7 @@
 	     (make-doc-data-element 'doc-AMS-class))))
   ---
   (when (and (not (inside? "doc-data")) (not (inside? "abstract")))
-	("Abstract" (make 'abstract)))
-  (when (and (not (inside? "doc-data")) (inside? "abstract"))
-	("Keywords" (make-section 'keywords))
-	("A.M.S. subject classification" (make-section 'AMS-class))))
+	("Abstract" (make 'abstract))))
 
 (menu-bind letter-header-menu
   (when (not (inside? "letter-header"))

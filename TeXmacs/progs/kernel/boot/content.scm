@@ -16,7 +16,7 @@
   (:export
     atomic-tree? compound-tree? tree->list tree-explode
     tm? tm-atomic? tm-compound? tm-equal?
-    tm-arity tm-car tm-cdr tm->list))
+    tm-arity tm-car tm-cdr tm->list tm-func?))
 
 (define (atomic-tree? t)
   (and (tree? t) (tree-atomic? t)))
@@ -67,3 +67,8 @@
 
 (define (tm->list x)
   (if (list? x) x (tree->list x)))
+
+(define (tm-func? x . args)
+  (cond ((list? x) (apply func? (cons x args)))
+	((compound-tree? x) (apply func? (cons (tree->list x) args)))
+	(else #f)))
