@@ -440,7 +440,7 @@ upgrade_apply_expand_value (tree t, hashset<string> H) {
 
 typedef char* charp;
 static charp apply_expand_value_strings[]= {
-  "chapter", "chapter*", "appendix",
+  "part", "part*", "chapter", "chapter*", "appendix",
   "section", "section*", "subsection", "subsection*",
   "subsubsection", "subsubsection*",
   "paragraph", "paragraph*", "subparagraph", "subparagraph*",

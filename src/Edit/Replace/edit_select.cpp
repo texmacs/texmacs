@@ -220,6 +220,7 @@ stop_enlarge_environmental (tree t) {
   if (is_multi_paragraph (t)) return true;
   string s= as_string (L(t));
   return
+    (s == "part") ||
     (s == "chapter") ||
     (s == "section") ||
     (s == "subsection") ||
