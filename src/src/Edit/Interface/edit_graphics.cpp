@@ -168,6 +168,7 @@ void edit_graphics_rep::draw_graphical_object (ps_device dev) {
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   (void) t;
+  apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!nil (f)) {
     point lim1, lim2;
