@@ -350,7 +350,7 @@ reindex (int i, int item, int n) {
 
 void
 box_rep::redraw (ps_device dev, path p, rectangles& l) {
-  if ((nr_painted>=10) && dev->check_event (INPUT_EVENT)) return;
+  if (((nr_painted&15) == 15) && dev->check_event (INPUT_EVENT)) return;
   dev->move_origin (x0, y0);
   SI delta= dev->pixel; // adjust visibility to compensate truncation
   if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
@@ -377,7 +377,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       }
     }
 
-    if ((nr_painted>=10) && dev->check_event (EVENT_STATUS)) {
+    if (((nr_painted&15) == 15) && dev->check_event (EVENT_STATUS)) {
       l= translate (l, -dev->ox, -dev->oy);
       clear_incomplete (l, dev->pixel, item, i1, i2);
       l= translate (l, dev->ox, dev->oy);
@@ -385,7 +385,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
     else {
       l= rectangle (x3+ dev->ox, y3+ dev->oy, x4+ dev->ox, y4+ dev->oy);
       display (dev);
-      if (nr_painted < 10) dev->apply_shadow (x1, y1, x2, y2);
+      if (nr_painted < 15) dev->apply_shadow (x1, y1, x2, y2);
       nr_painted++;
     }
 
