@@ -334,6 +334,24 @@
     </fold>
   </fold>
 
+  <\fold>
+    Current bridges
+  <|fold>
+    <\fold>
+      Temporarily inccorect markup
+    <|fold>
+      When pressing <verbatim|A-backspace> inside a surround tag, we first
+      remove two children of the surround tag (so that it obtains arity 1)
+      and next remove the tag itself. The temporarily inccorect surround tag
+      of arity 1 may cause <verbatim|bridge_surround> to crash.
+
+      Temporary fix: add extra nodes in the bridge. Better fix: implement an
+      elementary modification <verbatim|assign_label> which allows to change
+      the surround tag into another tag like tuple before performing
+      incorrect operations.
+    </fold>
+  </fold>
+
   <section|Editor>
 
   <\fold>
