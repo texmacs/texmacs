@@ -20,6 +20,18 @@
 
   <assign|mmx-fragment|<value|scheme-fragment>>
 
+  <assign|type|<macro|x|<with|mode|text|font-family|ss|<arg|x>>>>
+
+  <assign|andt|<with|mode|math|<space|0.6spc><wide*|\<wedge\><rsub|>|\<wide-bar\>><space|0.6spc>>>
+
+  <assign|ort|<with|mode|math|<space|0.6spc><wide*|\<vee\><rsub|>|\<wide-bar\>><space|0.6spc>>>
+
+  <assign|implt|<with|mode|math|<space|0.6spc><wide*|\<Rightarrow\><rsub|>|\<wide-bar\>><space|0.6spc>>>
+
+  <assign|forallt|<with|mode|math|<wide*|\<forall\><rsub|>|\<wide-bar\>><space|0.2spc>>>
+
+  <assign|existst|<with|mode|math|<wide*|\<exists\><rsub|>|\<wide-bar\>><space|0.2spc>>>
+
   \;
 </body>
 
