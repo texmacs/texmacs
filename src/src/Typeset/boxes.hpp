@@ -181,7 +181,9 @@ public:
 
   /*************************** for graphical boxes ***************************/
 
-  virtual frame     get_frame (path bp);
+  virtual frame     get_frame ();
+
+  frame     find_frame (path bp);
 
   /************************** retrieving information *************************/
 

@@ -174,8 +174,25 @@ box_rep::relocate (path new_ip, bool force) {
 ******************************************************************************/
 
 frame
-box_rep::get_frame (path bp) {
+box_rep::get_frame () {
   return frame ();
+}
+
+frame
+box_rep::find_frame (path bp) {
+  SI    x= 0;
+  SI    y= 0;
+  box   b= this;
+  frame f= get_frame ();
+  while (!nil (bp)) {
+    x += b->sx (bp->item);
+    y += b->sy (bp->item);
+    b  = b->subbox (bp->item);
+    bp = bp->next;
+    frame g= b->get_frame ();
+    if (!nil (g)) f= scaling (1.0, point (x, y)) * g;
+  }
+  return f;
 }
 
 /******************************************************************************

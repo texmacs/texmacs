@@ -14,6 +14,7 @@
 #define EDIT_MAIN_H
 #include "Interface/edit_interface.hpp"
 #include "Interface/edit_cursor.hpp"
+#include "Interface/edit_graphics.hpp"
 #include "Editor/edit_typeset.hpp"
 #include "Modify/edit_modify.hpp"
 #include "Modify/edit_text.hpp"
@@ -27,6 +28,7 @@
 class edit_main_rep:
   public edit_interface_rep,
   public edit_cursor_rep,
+  public edit_graphics_rep,
   public edit_typeset_rep,
   public edit_modify_rep,
   public edit_text_rep,

@@ -20,6 +20,7 @@
 struct graphics_box_rep: public composite_box_rep {
   frame f;
   graphics_box_rep (path ip, array<box> bs, frame f);
+  frame get_frame ();
   operator tree () { return "graphics"; }
 };
 
@@ -28,6 +29,11 @@ graphics_box_rep::graphics_box_rep (path ip2, array<box> bs2, frame f2):
 {
   // x1= X1; y1= Y1; x2= X2; y2= Y2;
   finalize ();
+}
+
+frame
+graphics_box_rep::get_frame () {
+  return f;
 }
 
 /******************************************************************************
