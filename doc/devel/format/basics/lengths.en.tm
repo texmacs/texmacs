@@ -23,10 +23,10 @@
 
   In this section, we describe in more detail the available length units.
 
-  There are mainly two types of length units: relative units and
+  There are mainly two types of length units: absolute units and
   context-dependent units. Absolute length units are the usual: their length
   on screen or on print is fixed. Context-dependent length units depend on
-  the environment such as the current font.
+  the current font or other environment variables.
 
   Furthermore, some length units are <em|stretchable>. A stretchable length
   is represented by a triple of rigid lengths: a minimal length, a default

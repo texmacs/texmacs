@@ -37,18 +37,18 @@
     or not. Formulas which occur on separate lines like
 
     <\equation*>
-      <frac|1|H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)>=<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>
+      <frac|n|H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)>=<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>
     </equation*>
 
     are usually typeset in display style, contrary to inline formulas like
-    <with|mode|math|<frac|1|H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)>=<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>>.
+    <with|mode|math|<frac|n|H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)>=<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>>.
     As you notice, formulas in display style are rendered using a wider
     spacing. The display style is disabled in several mathematical constructs
     such as scripts, fractions, binomial coefficients, and so on. As a
     result, the double numerators in the formula
 
     <\equation*>
-      H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)=<frac|1|<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>>
+      H(\<alpha\><rsub|1>,\<ldots\>,\<alpha\><rsub|n>)=<frac|n|<frac|1|\<alpha\><rsub|1>>+\<cdots\>+<frac|1|\<alpha\><rsub|n>>>
     </equation*>
 
     are typeset in a smaller font. You may override the default settings
@@ -77,11 +77,20 @@
     additional environment variable <src-var|math-vpos> which takes the value
     <with|mode|math|1> inside numerators, <with|mode|math|\<um\>1> inside
     denominators and <with|mode|math|0> otherwise. In order to see the effect
-    of other settings, consider the following formulas:
+    the different settings, consider the following formula:
 
-    <\eqnarray*>
-      <tformat|<table|<row|<cell|<with|math-vpos|-1|a<rsub|1><rsup|2>>+<with|math-vpos|0|a<rsub|2><rsup|2>>+<with|math-vpos|1|a<rsub|3><rsup|2>>>|<cell|\<longleftrightarrow\>>|<cell|<inactive*|<with|math-vpos|-1|<active*|a<rsub|1><rsup|2>>>+<with|math-vpos|0|<active*|a<rsub|2><rsup|2>>>+<with|math-vpos|1|<active*|a<rsub|3><rsup|2>>>>>>|<row|<cell|<frac|<with|math-vpos|1|a<rsub|1><rsup|2>+\<cdots\>+\<alpha\><rsub|n><rsup|2>>|<with|math-vpos|-1|b<rsub|tot><rsup|2>>>>|<cell|\<longleftrightarrow\>>|<cell|<inactive*|<frac|<with|math-vpos|1|<active*|a<rsub|1>+\<cdots\>+\<alpha\><rsub|n>>>|<with|math-vpos|-1|<active*|b<rsup|2>>>>>>>|<row|<cell|<frac|<with|math-vpos|0|a<rsub|1><rsup|2>+\<cdots\>+\<alpha\><rsub|n><rsup|2>>|<with|math-vpos|0|b<rsub|tot><rsup|2>>>>|<cell|\<longleftrightarrow\>>|<cell|<inactive*|<frac|<with|math-vpos|0|<active*|a<rsub|1>+\<cdots\>+\<alpha\><rsub|n>>>|<with|math-vpos|0|<active*|b<rsup|2>>>>>>>|<row|<cell|<frac|<with|math-vpos|-1|a<rsub|1><rsup|2>+\<cdots\>+\<alpha\><rsub|n><rsup|2>>|<with|math-vpos|1|b<rsub|tot><rsup|2>>>>|<cell|\<longleftrightarrow\>>|<cell|<inactive*|<frac|<with|math-vpos|-1|<active*|a<rsub|1>+\<cdots\>+\<alpha\><rsub|n>>>|<with|math-vpos|1|<active*|b<rsup|2>>>>>>>>>
-    </eqnarray*>
+    <\equation*>
+      <with|math-vpos|-1|<group|a<rsub|\<um\>1><rsup|2>>>+<with|math-vpos|0|<group|a<rsub|0><rsup|2>>>+<with|math-vpos|1|<group|a<rsub|1><rsup|2>>>
+    </equation*>
+
+    <\tm-fragment>
+      <with|mode|math|<inactive*|<with|math-vpos|-1|<group|<active*|a<rsub|\<um\>1><rsup|2>>>>+<with|math-vpos|0|<group|<active*|a<rsub|0><rsup|2>>>>+<with|math-vpos|1|<group|<active*|a<rsub|1><rsup|2>>>>>>
+    </tm-fragment>
+
+    In this example, the grouping is necessary in order to let the different
+    vertical positions take effect on each
+    <with|mode|math|a<rsub|i><rsup|2>>. Indeed, the vertical position is
+    uniform for each horizontal concatenation.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
