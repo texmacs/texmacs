@@ -192,8 +192,8 @@ test_match (tree t, tree pat) {
 
 path
 edit_replace_rep::test_sub (path p, tree t) {
-  //cout << "Test " << subtree (et, path_up (p))
-  //     << " :: " << t << " at " << p << "\n";
+  // cout << "Test " << subtree (et, path_up (p))
+  //      << " :: " << t << " at " << p << "\n";
   if (is_concat (t) && (N(t) > 1)) {
     if (N(p) <= 1) return p;
     tree st= subtree (et, path_up (p, 2));
