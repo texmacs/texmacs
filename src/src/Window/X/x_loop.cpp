@@ -153,7 +153,8 @@ char* event_name[]= {
 
 void
 x_display_rep::process_event (x_window win, XEvent* ev) {
-  // cout << "Event: " << event_name[ev->type] << "\n";
+  //if (ev->type != NoExpose)
+  //cout << "Event: " << event_name[ev->type] << "\n";
   switch (ev->type) {
   case Expose:
     {
