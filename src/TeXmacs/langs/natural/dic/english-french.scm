@@ -811,6 +811,7 @@
 ("move to the right when finished" "aller à droite pour terminer")
 ("move up" "aller en haut")
 ("multiline input" "entrées multi-lignes")
+("mutator tags" "balises mutantes")
 ("my documents" "mes documents")
 ("n-th" "n-ième")
 ("n-th root" "racine n-ième")

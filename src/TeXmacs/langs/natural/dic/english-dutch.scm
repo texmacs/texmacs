@@ -807,6 +807,7 @@
 ("move to the right when finished" "ga naar rechts zodra klaar")
 ("move up" "ga naar boven")
 ("multiline input" "meerdere regel invoer")
+("mutator tags" "constant veranderende tags")
 ("my documents" "mijn dokumenten")
 ("n-th" "n-de machts")
 ("n-th root" "n-de machts wortel")
