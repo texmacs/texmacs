@@ -27,7 +27,11 @@
 
   <assign|footnote-sep|<macro|. >>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Figure-like environments.
+    </src-comment>
+  </active*>
 
   <assign|list-caption|<macro|type|cap|<style-with|src-compact|none|<auto-label><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>
 
@@ -39,7 +43,15 @@
     <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep><list-caption|<arg|type>|<arg|cap>>>||<arg|cap>>>
   </cell>>>>>>>>
 
-  \;
+  <new-figure|figure|Figure>
+
+  <new-figure|table|Table>
+
+  <\active*>
+    <\src-comment>
+      Footnotes.
+    </src-comment>
+  </active*>
 
   <assign|footnote|<macro|x|<style-with|src-compact|none|<next-footnote><style-with|src-compact|none|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<the-footnote><footnote-sep><label|<merge|footnote-|<the-footnote>>>|<right-flush>|<style-with|src-compact|none|<arg|x>>>>>>><space|0spc><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 

@@ -23,9 +23,9 @@
 
   <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
-
   <assign|theorem-sep|<macro|. >>
+
+  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
   <assign|exercise-sep|<macro|. >>
 
@@ -42,6 +42,46 @@
   </macro>>
 
   <assign|render-exercise|<macro|which|body|<surround|<vspace*|0.5fn><no-indent>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|1.5fn>|font-size|0.84|<surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Standard theorems, remarks and exercises.
+    </src-comment>
+  </active*>
+
+  <new-theorem|theorem|Theorem>
+
+  <new-theorem|proposition|Proposition>
+
+  <new-theorem|lemma|Lemma>
+
+  <new-theorem|corollary|Corollary>
+
+  <new-theorem|axiom|Axiom>
+
+  <new-theorem|definition|Definition>
+
+  <new-theorem|notation|Notation>
+
+  <new-theorem|conjecture|Conjecture>
+
+  \;
+
+  <new-remark|remark|Remark>
+
+  <new-remark|example|Example>
+
+  <new-remark|note|Note>
+
+  <new-remark|warning|Warning>
+
+  <new-remark|convention|Convention>
+
+  \;
+
+  <new-exercise|exercise|Exercise>
+
+  <new-exercise|problem|Problem>
 
   <\active*>
     <\src-comment>
