@@ -22,22 +22,30 @@
 ;; Folding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define fold-unfold-types
+  '((fold . unfold)
+    (fold-text . unfold-text)
+    (fold-proof . unfold-proof)
+    (fold-algorithm . unfold-algorithm)
+    (fold-exercise . unfold-exercise)))
+
+(define unfold-fold-types
+  (map (lambda (x) (cons (cdr x) (car x))) fold-unfold-types))
+
 (define (make-fold)
   (insert-go-to '(fold (document "") (document "")) (list 0 0)))
 
-(define (fold)
-  (let ((p (search-upwards "unfold")))
+(define (fold-unfold l to)
+  (with p (search-upwards-in-set (map car l))
     (if (not (null? p))
-	(let ((t (tm-subtree p)))
-	  (tm-assign p (tree2 'fold (tree-ref t 0) (tree-ref t 1)))
-	  (tm-go-to (tm-start (rcons p 0)))))))
+	(let* ((t (tm-subtree p))
+	       (old (tm-car t))
+	       (new (assoc-ref l old)))
+	  (tm-assign p (tree2 new (tree-ref t 0) (tree-ref t 1)))
+	  (tm-go-to (tm-start (rcons p to)))))))
 
-(define (unfold)
-  (let ((p (search-upwards "fold")))
-    (if (not (null? p))
-	(let ((t (tm-subtree p)))
-	  (tm-assign p (tree2 'unfold (tree-ref t 0) (tree-ref t 1)))
-	  (tm-go-to (tm-start (rcons p 1)))))))
+(define (fold) (fold-unfold unfold-fold-types 0))
+(define (unfold) (fold-unfold fold-unfold-types 1))
 
 (tm-define (mouse-fold)
   (:type (-> void))

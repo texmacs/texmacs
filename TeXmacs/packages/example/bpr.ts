@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4.4>
 
 <style|source>
 
@@ -322,22 +322,35 @@
   <the-algorithm>|<arg|body>>>>>
 
   \;
+
+  <assign|fold-bpr|<macro|x|y|<style-with|src-compact|none|<surround|<no-indent><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<right-flush>|<arg|x>>>>>
+
+  <assign|unfold-bpr|<\macro|x|y>
+    <style-with|src-compact|none|<surround|<no-indent><action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<right-flush>|<arg|y>>>
+  </macro>>
+
+  <assign|fold-text|<value|fold-bpr>>
+
+  <assign|unfold-text|<value|unfold-bpr>>
+
+  <assign|fold-proof|<value|fold-bpr>>
+
+  <assign|unfold-proof|<value|unfold-bpr>>
+
+  <assign|fold-algorithm|<value|fold-bpr>>
+
+  <assign|unfold-algorithm|<value|unfold-bpr>>
+
+  <assign|fold-exercise|<value|fold-bpr>>
+
+  <assign|unfold-exercise|<value|unfold-bpr>>
+
+  \;
 </body>
 
 <\initial>
   <\collection>
     <associate|language|french>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
   </collection>
 </initial>
