@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.2>
 
 <style|source>
 
@@ -74,7 +74,7 @@
   </with>>>
 
   <assign|equation-lab|<\macro|body|lab>
-    <\surround|<assign|the-label|<arg|lab>>|<space|5mm><with|mode|text|(<arg|lab>)>>
+    <\surround|<assign|the-label|<arg|lab>>|<space|5mm><with|mode|text|font-shape|right|(<arg|lab>)>>
       <\equation*>
         <arg|body>
       </equation*>
