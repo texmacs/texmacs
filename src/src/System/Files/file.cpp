@@ -24,6 +24,7 @@
 #ifdef OS_WIN32
 #include <sys/misc.h>
 #include <sys/_stat.h>
+#include <X11/Xlib.h>
 #else
 #include <sys/stat.h>
 #endif
