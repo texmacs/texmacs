@@ -58,7 +58,11 @@
 
   <assign|equations-base|<\macro|body>
     <\with|mode|math|math-display|true|par-mode|left|par-sep|<eqn-row-sep>>
-      <indent-left|<eqn-left-indent>|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-long-above>>|<vspace|<eqn-long-below>><no-indent*>|<arg|body>>>>
+      <\indent-left|<eqn-left-indent>>
+        <style-with|src-compact|none|<\surround|<no-page-break*><vspace*|<eqn-long-above>><no-indent>|<vspace|<eqn-long-below>><no-indent*>>
+          <arg|body>
+        </surround>>
+      </indent-left>
     </with>
   </macro>>
 

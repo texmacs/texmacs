@@ -68,7 +68,7 @@
 
   <new-counter|doc-note>
 
-  <assign|the-doc-note|<macro|nr|<extern|ext-the-doc-note|<value|doc-note-nr>>>>
+  <assign|the-doc-note|<macro|<extern|ext-the-doc-note|<value|doc-note-nr>>>>
 
   <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
 
@@ -163,8 +163,6 @@
       </quasi>
     </style-with>
   </macro>>
-
-  <assign|doc-author-data-name|<xmacro|data|<quasi|<style-with|src-compact|none|<space|0fn><unquote*|<select|<quote-arg|data>|author-name>>>>>>
 
   <assign|doc-author-data-name|<xmacro|data|<quasiquote|<style-with|src-compact|none|<space|0fn><unquote*|<select|<quote-arg|data>|author-name>>>>>>
 
