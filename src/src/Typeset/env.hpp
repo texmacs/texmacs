@@ -370,11 +370,9 @@ public:
     return t->label; }
   inline SI get_length (string var) {
     tree t= env [var];
-    if (is_compound (t)) return 0;
     return as_length (t); }
   inline space get_vspace (string var) {
     tree t= env [var];
-    if (is_compound (t)) return 0;
     return as_vspace (t); }
 
   friend class edit_env;
