@@ -328,6 +328,7 @@
 
 (drd-table tmtex-preamble-language-def%
   ("czech" "\\usepackage[czech]{babel}")
+  ("danish" "\\usepackage[danish]{babel}")
   ("dutch" "\\usepackage[dutch]{babel}")
   ("finnish" "\\usepackage[finnish]{babel}")
   ("french" "\\usepackage[french]{babel}")

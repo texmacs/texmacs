@@ -38,6 +38,10 @@
    (begin
      (init-language "czech")
      (set-output-language "czech")))
+  ("Danish"
+   (begin
+     (init-language "danish")
+     (set-output-language "danish")))
   ("Dutch"
    (begin
      (init-language "dutch")
@@ -278,6 +282,7 @@
       ---
       ("British" (init-language "british"))
       ("Czech" (init-language "czech"))
+      ("Danish" (init-language "danish"))
       ("Dutch" (init-language "dutch"))
       ("English" (init-language "english"))
       ("Finnish" (init-language "finnish"))

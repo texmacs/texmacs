@@ -102,6 +102,7 @@ locale_to_language (string s) {
   if (s == "en_GB") return "british";
   if (N(s) > 2) s= s (0, 2);
   if (s == "cs") return "czech";
+  if (s == "da") return "danish";
   if (s == "nl") return "dutch";
   if (s == "en") return "english";
   if (s == "fi") return "finnish";
@@ -125,6 +126,7 @@ language_to_locale (string s) {
   if (s == "american") return "en_US";
   if (s == "british") return "en_GB";
   if (s == "czech") return "cs_CZ";
+  if (s == "danish") return "da_DK";
   if (s == "dutch") return "nl_NL";
   if (s == "english") return "en_US";
   if (s == "finnish") return "fi_FI";
@@ -200,6 +202,7 @@ text_language (string s) {
   if (s == "american") return new text_language_rep (s, "us");
   if (s == "british") return new text_language_rep (s, "ukenglish");
   if (s == "czech") return new text_language_rep (s, "czech");
+  if (s == "danish") return new text_language_rep (s, "danish");
   if (s == "dutch") return new text_language_rep (s, "dutch");
   if (s == "english") return new text_language_rep (s, "us");
   if (s == "finnish") return new text_language_rep (s, "finnish");

@@ -33,6 +33,7 @@
       s
       (let* ((lan (get-output-language))
 	     (suf (cond ((== lan "czech") ".cs.tm")
+			((== lan "danish") ".da.tm")
 			((== lan "dutch") ".nl.tm")
 			((== lan "finnish") ".fi.tm")
 			((== lan "french") ".fr.tm")
