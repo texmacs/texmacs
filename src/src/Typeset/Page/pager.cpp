@@ -17,8 +17,8 @@
 * Routines for the pager class
 ******************************************************************************/
 
-pager_rep::pager_rep (edit_env env2, array<page_item> l2):
-  env (env2), style (UNINIT), l (l2)
+pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
+  ip (ip2), env (env2), style (UNINIT), l (l2)
 {
   style (PAGE_THE_PAGE)   = tree (MACRO, compound ("page-nr"));
   style (PAGE_ODD_HEADER) = env->read (PAGE_ODD_HEADER);
@@ -56,15 +56,17 @@ pager_rep::pager_rep (edit_env env2, array<page_item> l2):
 ******************************************************************************/
 
 box
-format_stack (array<box> bx, array<space> ht) {
+format_stack (path ip, array<box> bx, array<space> ht) {
   int i, n= N(bx);
   array<SI> spc (n);
   for (i=0; i<n-1; i++) spc[i]= ht[i]->def;
-  return stack_box (path (), bx, spc);  
+  return stack_box (ip, bx, spc);  
 }
 
 box
-format_stack (array<box> bx, array<space> ht, SI height, bool may_stretch) {
+format_stack (path ip, array<box> bx, array<space> ht, SI height,
+	      bool may_stretch)
+{
   int i, n= N(bx);
   array<SI> spc (n);
   space total (0);
@@ -95,11 +97,11 @@ format_stack (array<box> bx, array<space> ht, SI height, bool may_stretch) {
   // normal case
   else for (i=0; i<n-1; i++) spc[i]= ht[i]->def;
 
-  return stack_box (path (), bx, spc);
+  return stack_box (ip, bx, spc);
 }
 
 box
-format_stack (array<page_item> l) {
+format_stack (path ip, array<page_item> l) {
   int i, n= N(l);
   array<box> bs  (n);
   array<SI>  spc (n);
@@ -108,11 +110,11 @@ format_stack (array<page_item> l) {
     spc[i]= l[i]->spc->def;
   }
   if (i<n) bs [i]= l[i]->b;
-  return stack_box (path (), bs, spc);  
+  return stack_box (ip, bs, spc);  
 }
 
 box
-format_stack (array<page_item> l, SI height, bool may_stretch) {
+format_stack (path ip, array<page_item> l, SI height, bool may_stretch) {
   int i, n= N(l);
   array<box>   bs  (n);
   array<space> spc (n);
@@ -121,7 +123,7 @@ format_stack (array<page_item> l, SI height, bool may_stretch) {
     spc[i]= l[i]->spc;
   }
   if (i<n) bs [i]= l[i]->b;
-  return format_stack (bs, spc, height, may_stretch);
+  return format_stack (ip, bs, spc, height, may_stretch);
 }
 
 box
@@ -174,10 +176,10 @@ pager_rep::print (page_item item) {
 
 void
 pager_rep::end_page (bool flag) {
-  box sb  = format_stack (lines_bx, lines_ht, text_height, !flag);
-  box lb  = move_box (path (), sb, 0, 0);
+  box sb  = format_stack (ip, lines_bx, lines_ht, text_height, !flag);
+  box lb  = move_box (ip, sb, 0, 0);
   SI  left= (N(pages)&1)==0? odd: even;
-  box pb  = page_box (path (), lb, as_string (N(pages)+1+page_offset),
+  box pb  = page_box (ip, lb, as_string (N(pages)+1+page_offset),
 		      width, height, left, top, top+ text_height,
 		      make_header(), make_footer(), head_sep, foot_sep);
 
@@ -229,5 +231,5 @@ pager_rep::make_pages () {
     x[i]= 0;
     y[i]= (i==0? 0: y[i-1]- pages[i-1]->h());
   }
-  return move_box (path (), scatter_box (path (), pages, x, y), 0, 0);
+  return move_box (ip, scatter_box (ip, pages, x, y), 0, 0);
 }

@@ -146,7 +146,7 @@ typesetter_rep::typeset () {
   env->complete= br->my_typeset_will_be_complete ();
   if (env->complete) env->local_aux= hashmap<string,tree> (UNINIT);
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
-  pager ppp= new pager_rep (env, l);
+  pager ppp= new pager_rep (ip, env, l);
   box b= ppp->make_pages ();
   if (env->complete && paper) determine_page_references (b);
   delete ppp;
