@@ -45,11 +45,11 @@
   (cond ((== x "inactive") (activate))
 	((== x "title")
 	 (if (inside? "make-title")
-	     (make-header-compound "author")
+	     (make-header 'author)
 	     (return-sectional)))
 	((== x "author")
 	 (if (inside? "make-title")
-	     (make-header-compound "address")
+	     (make-header 'address)
 	     (return-sectional)))
 	((in? x '("chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"

@@ -25,10 +25,10 @@
   (when (not (inside? "letter-header"))
 	("Header" (make-big-compound "letter-header")))
   (when (inside? "letter-header")
-	("Address" (make-header-compound "address"))
-	("Date" (make-header-compound "letter-date"))
-	("Today" (begin (make-header-compound "letter-date") (make-date)))
-	("Destination" (make-header-compound "destination")))
+	("Address" (make-header 'address))
+	("Date" (make-header 'letter-date))
+	("Today" (begin (make-header 'letter-date) (make-date)))
+	("Destination" (make-header 'destination)))
   ---
   (when (not (inside? "letter-header"))
 	("Opening" (make-big-compound "opening"))
@@ -39,52 +39,50 @@
   ("Encl." (make-big-compound "encl")))
 
 (menu-bind exam-header-menu
-  ("Class" (make-header-compound "class"))
-  ("Date" (begin (go-end-of-header-element)
-		 (make-compound-arg "title-date")))
-  ("Title" (make-header-compound "title")))
+  ("Class" (make-header 'class))
+  ("Date" (begin (go-end-of-header-element) (make 'title-date)))
+  ("Title" (make-header 'title)))
 
 (menu-bind title-menu
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Make title" (begin (make-big-compound "make-title")
-			     (make-compound-arg "title"))))
+	("Make title" (begin (make-big-compound "make-title") (make 'title))))
   (when (inside? "make-title")
-	("Title" (make-header-compound "title"))
-	("Author" (make-header-compound "author"))
-	("Address" (make-header-compound "address"))
-	("Email" (make-header-compound "title-email"))
-	("Date" (make-header-compound "title-date"))
+	("Title" (make-header 'title))
+	("Author" (make-header 'author))
+	("Address" (make-header 'address))
+	("Email" (make-header 'title-email))
+	("Date" (make-header 'title-date))
 	---
-	("TeXmacs notice" (make-compound "made-by-TeXmacs"))
-	("Running title" (make-header-compound "header-title"))
-	("Running author" (make-header-compound "header-author"))
-	("Address block" (make-compound-arg "address-block"))
-	("Today" (begin (make-header-compound "title-date")
+	("TeXmacs notice" (make 'made-by-TeXmacs))
+	("Running title" (make-header 'header-title))
+	("Running author" (make-header 'header-author))
+	("Address block" (make 'address-block))
+	("Today" (begin (make-header 'title-date)
 			(make-date))))
   ---
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
 	("Abstract" (make-big-compound "abstract")))
   (when (and (not (inside? "make-title")) (inside? "abstract"))
-	("Keywords" (make-section-arg "keywords"))
-	("A.M.S. subject classification" (make-section-arg "AMS-class"))))
+	("Keywords" (make-section 'keywords))
+	("A.M.S. subject classification" (make-section 'AMS-class))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind chapter-menu
-  ("Chapter" (make-section-arg "chapter"))
-  ("Appendix" (make-section-arg "appendix"))
-  ("Prologue" (make-section "prologue"))
-  ("Epilogue" (make-section "epilogue")))
+  ("Chapter" (make-section 'chapter))
+  ("Appendix" (make-section 'appendix))
+  ("Prologue" (make-unnamed-section 'prologue))
+  ("Epilogue" (make-unnamed-section 'epilogue)))
 
 (menu-bind section-menu
-  ("Section" (make-section-arg "section"))
-  ("Subsection" (make-section-arg "subsection"))
-  ("Subsubsection" (make-section-arg "subsubsection"))
+  ("Section" (make-section 'section))
+  ("Subsection" (make-section 'subsection))
+  ("Subsubsection" (make-section 'subsubsection))
   ---
-  ("Paragraph" (make-section-arg "paragraph"))
-  ("Subparagraph" (make-section-arg "subparagraph")))
+  ("Paragraph" (make-section 'paragraph))
+  ("Subparagraph" (make-section 'subparagraph)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Theorem like environments
@@ -122,21 +120,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind content-tag-menu
-  ("Strong" (make-compound-arg "strong"))
-  ("Emphasize" (make-compound-arg "em"))
-  ("Definition" (make-compound-arg "dfn"))
-  ("Sample" (make-compound-arg "samp"))
+  ("Strong" (make 'strong))
+  ("Emphasize" (make 'em))
+  ("Definition" (make 'dfn))
+  ("Sample" (make 'samp))
   ---
-  ("Name" (make-compound-arg "name"))
-  ("Person" (make-compound-arg "person"))
-  ("Cite" (make-compound-arg "cite*"))
-  ("Abbreviation" (make-compound-arg "abbr"))
-  ("Acronym" (make-compound-arg "acronym"))
+  ("Name" (make 'name))
+  ("Person" (make 'person))
+  ("Cite" (make 'cite*))
+  ("Abbreviation" (make 'abbr))
+  ("Acronym" (make 'acronym))
   ---
-  ("Verbatim" (make-compound-arg "verbatim"))
-  ("Keyboard" (make-compound-arg "kbd"))
-  ("Code" (make-compound-arg "code*"))
-  ("Variable" (make-compound-arg "var")))
+  ("Verbatim" (make 'verbatim))
+  ("Keyboard" (make 'kbd))
+  ("Code" (make 'code*))
+  ("Variable" (make 'var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
@@ -189,7 +187,7 @@
   (if (style-has? "env-math-dtd")
       ---
       ("Equation" (begin (make-big-compound "equation*") (temp-proof-fix)))
-      ("Equations" (begin (make-compound-arg "eqnarray*") (temp-proof-fix)))))
+      ("Equations" (begin (make 'eqnarray*) (temp-proof-fix)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus
@@ -320,15 +318,15 @@
       ;;"Write bold text#(A-C-b)")
       ;;(make-with "font series" "bold"))
       ((balloon (icon "tm_emphasize.xpm") "Emphasize text#(F5)")
-       (make-compound-arg "em"))
+       (make 'em))
       ((balloon (icon "tm_strong.xpm") "Write strong text#(F6)")
-       (make-compound-arg "strong"))
+       (make 'strong))
       ((balloon (icon "tm_verbatim.xpm") "Write verbatim text#(F7)")
-       (make-compound-arg "verbatim"))
+       (make 'verbatim))
       ((balloon (icon "tm_sansserif.xpm") "Write sample text#(F8)")
-       (make-compound-arg "samp"))
+       (make 'samp))
       ((balloon (icon "tm_name.xpm") "Write a name#(S-F6)")
-       (make-compound-arg "name")))
+       (make 'name)))
   (if (not (style-has? "std-markup-dtd"))
       ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
        (make-with "font shape" "italic"))

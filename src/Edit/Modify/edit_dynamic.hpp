@@ -28,7 +28,7 @@ public:
   void activate ();
   void activate_compound ();
 
-  void make_active (string op, int n);
+  void make_compound (tree_label l);
   void make_deactivated (tree t, path p);
   void make_deactivated (string op, int n, string rfooter, string arg);
   bool make_return_before ();
@@ -36,7 +36,6 @@ public:
   void make_assign (tree var, tree by);
   void make_with (string var, string val);
   bool make_big_compound (string s);
-  void make_compound (string s, int n=0);
   void temp_proof_fix ();
   void go_to_argument (path p, bool start_flag);
   void insert_argument (bool forward);

@@ -1671,15 +1671,13 @@ tmg_activate_compound () {
 }
 
 SCM
-tmg_make_active (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-active");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-active");
+tmg_make (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make");
 
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
+  tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_active (in1, in2);
+  get_server()->get_editor()->make_compound (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1790,34 +1788,6 @@ tmg_make_big_compound (SCM arg1) {
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->make_big_compound (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_compound (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_compound (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_compound_arity (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound-arity");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-compound-arity");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_compound (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2878,7 +2848,7 @@ initialize_glue_editor () {
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
   gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
-  gh_new_procedure ("make-active", (FN) tmg_make_active, 2, 0, 0);
+  gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
   gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
   gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
   gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
@@ -2887,8 +2857,6 @@ initialize_glue_editor () {
   gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);
   gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
   gh_new_procedure ("make-big-compound", (FN) tmg_make_big_compound, 1, 0, 0);
-  gh_new_procedure ("make-compound", (FN) tmg_make_compound, 1, 0, 0);
-  gh_new_procedure ("make-compound-arity", (FN) tmg_make_compound_arity, 2, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);
   gh_new_procedure ("view-get-property", (FN) tmg_view_get_property, 1, 0, 0);

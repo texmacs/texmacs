@@ -108,8 +108,8 @@
 ;; Inserting active objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-tuple) (make-active "tuple" 1))
-(define (make-attr) (make-active "attr" 2))
+(define (make-tuple) (make 'tuple))
+(define (make-attr) (make 'attr))
 (define (make-date)
   (if (== (get-env "language") "english")
       (insert-tree (object->tree '(date "%B %d, %Y")))

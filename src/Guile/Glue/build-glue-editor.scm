@@ -169,7 +169,7 @@
   (is-deactivated? is_deactivated (bool))
   (activate activate (void))
   (activate-compound activate_compound (void))
-  (make-active make_active (void string int))
+  (make make_compound (void tree_label))
   (make-deactivated make_deactivated (void string int string))
   (make-deactivated-arg make_deactivated (void string int string string))
   (insert-argument insert_argument (void bool))
@@ -178,8 +178,6 @@
   (make-assign make_assign (void string string))
   (make-with make_with (void string string))
   (make-big-compound make_big_compound (void string))
-  (make-compound make_compound (void string))
-  (make-compound-arity make_compound (void string int))
   (temp-proof-fix temp_proof_fix (void))
 
   (view-set-property set_property (void scheme_tree scheme_tree))

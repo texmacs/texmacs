@@ -195,23 +195,62 @@ edit_dynamic_rep::activate_compound () {
 * Making dynamic objects
 ******************************************************************************/
 
+/*
 void
-edit_dynamic_rep::make_active (string op, int n) {
-  int i;
-  tree_label l= as_tree_label (op);
-  tree t (l, n);
-  for (i=0; i<n; i++) t[i]= "";
-
-  if (n == 0) insert_tree (t);
-  else if (selection_active_small ()) {
-    t[0]= selection_get_cut ();
-    if (n == 1) insert_tree (t, path (0, end (t[0])));
-    else insert_tree (t, path (1, 0));
+edit_dynamic_rep::make_compound (string s, int n) {
+  int n2;
+  tree_label l= make_tree_label (s);
+  for (n2=0; true; n2++) {
+    if (drd->correct_arity (l, n2) &&
+	((n2>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
+    if (n2 == 100) return;
   }
-  else insert_tree (t, path (0, 0));
+  if (n != n2) cout << s << ": arity " << n << " -> " << n2 << "\n";
+  make_compound (make_tree_label (s));
+}
+*/
 
-  if (drd->get_old_arity (l) < 0)
-    set_message ("tab: insert argument", op);
+void
+edit_dynamic_rep::make_compound (tree_label l) {
+  // cout << "Make compound " << as_string (l) << "\n";
+
+  int n;
+  for (n=0; true; n++) {
+    if (drd->correct_arity (l, n) &&
+	((n>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
+    if (n == 100) return;
+  }
+
+  tree t (l, n);
+  if (n == 0) insert_tree (t, 1);
+  else {
+    tree sel= "";
+    if (selection_active_normal ())
+      sel= selection_get_cut ();
+    // FIXME: disable large selections for non-block macros
+
+    path p (0, 0);
+    if ((!drd->all_accessible (l)) && (!in_preamble_mode ())) {
+      t= tree (INACTIVE, t);
+      p= path (0, p);
+    }
+    if (is_func (t, HYBRID, 1) &&
+	(!(is_atomic (sel) && drd->contains (sel->label))))
+      {
+	t= tree (HYBRID, "", sel);
+	insert_tree (t, path (0, 0));
+	return;
+      }
+    insert_tree (t, p);
+
+    tree f= get_env_value (as_string (l));
+    if ((N(f) == 2) && contains_table_format (f[1], f[0]))
+      make_table (1, 1);
+
+    if (sel != "") insert_tree (sel, end (sel));
+
+    // FIXME: display comprehensive message
+  }
 }
 
 void
@@ -222,10 +261,9 @@ edit_dynamic_rep::make_deactivated (tree t, path p) {
 
 void
 edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
-  int i, k= (arg==""? 0: 1);
+  int k= (arg==""? 0: 1);
   tree_label l= as_tree_label (op);
   tree t (l, n);
-  for (i=0; i<n; i++) t[i]= "";
   if (n>0) t[0]= arg;
 
   if (selection_active_small () && (n>k)) {
@@ -272,22 +310,6 @@ edit_dynamic_rep::insert_argument (bool forward) {
   }
 
   insert_argument (p, forward);
-
-  /*
-  if (drd->get_old_arity (L(t)) >= 1) return;
-  if (is_func (t, WITH) || is_func (t, DRD_PROPS) || is_func (t, ATTR)) {
-    int at= ((last_item (p) >> 1) << 1) + 2;
-    if (is_func (t, DRD_PROPS))
-      at= (((last_item (p)+1) >> 1) << 1) + 1;
-    if (at > N(t)) at= N(t);
-    insert (path_up (p) * at, tree (L (t), "", ""));
-    go_to (path_up (p) * path (at, 0));
-  }
-  else {
-    insert (path_inc (p), tree (L (t), ""));
-    go_to (path_inc (p) * 0);
-  }
-  */
 }
 
 /******************************************************************************
@@ -381,28 +403,6 @@ edit_dynamic_rep::make_big_compound (string name) {
 }
 
 void
-edit_dynamic_rep::make_compound (string s, int n) {
-  tree ins (make_tree_label (s), n);
-  if (n==0) insert_tree (ins, 1);
-  else if (n==1) {
-    tree f= get_env_value (s);
-    if ((N(f) == 2) && contains_table_format (f[1], f[0])) {
-      tree sel= "";
-      if (selection_active_small ()) sel= selection_get_cut ();
-      insert_tree (ins, path (0, 0));
-      make_table (1, 1);
-      if (sel != "") insert_tree (sel, end (sel));
-    }
-    else if (selection_active_normal ()) {
-      ins[0]= selection_get_cut ();
-      insert_tree (ins, path (0, end (ins[0])));
-    }
-    else insert_tree (ins, path (0, 0));
-  }
-  else insert_tree (ins, path (0, 0));
-}
-
-void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
   path p = search_upwards_compound ("proof");
@@ -487,7 +487,6 @@ edit_dynamic_rep::insert_argument (path p, bool forward) {
   path q= path_up (p) * i;
   while (!drd->correct_arity (L(t), n+d)) d++;
   tree ins (L(t), d);
-  for (i=0; i<d; i++) ins[i]= "";
   insert (q, ins);
   go_to_argument (q, forward);
 }
