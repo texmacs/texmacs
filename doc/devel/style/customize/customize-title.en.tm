@@ -42,24 +42,28 @@
   possible references to footnotes. For this reason, you should rather
   customize the <markup|doc-render-title> and <markup|author-render-name>
   macros in order to customize the rendering of the title and the name
-  themselves.
+  themselves. Notice also that the <markup|doc-running-title> and
+  <markup|author-running-author> macros do not render anything, but rather
+  call the <markup|header-title> and <markup|header-author> call-backs for
+  setting the appropriate global page headers and footers. By default, the
+  running title and author are extracted from the usual title and author
+  names.
 
-  In addition, the main title (including author information, the date,
-  <abbr|etc.>) is rendered using the <markup|doc-make-title> macro. The
-  author information, as part of the main title, is rendered using
-  <markup|doc-author> or <markup|doc-authors>, depending on whether the
-  document has one or more authors. Footnotes to the title or to one of the
-  authors are rendered using <markup|doc-title-note> <abbr|resp.>
-  <markup|doc-author-note>. These footnote macros always expect a
-  <markup|document> tag on input, because they may compress it into a
-  horizontal concatenation.
+  In addition to the rendering macros which are present in the document, the
+  main title (including author information, the date, <abbr|etc.>) is
+  rendered using the <markup|doc-make-title> macro. The author information,
+  as part of the main title, is rendered using <markup|doc-author> or
+  <markup|doc-authors>, depending on whether the document has one or more
+  authors. Footnotes to the title or to one of the authors are rendered using
+  <markup|doc-title-note> <abbr|resp.> <markup|doc-author-note>. These
+  footnote macros always expect a <markup|document> tag on input, because
+  they may compress it into a horizontal concatenation.
 
   The first stage of processing the document data is more complex and the
   reader is invited to take a look at the <hyper-link|short
   descriptions|../../../main/styles/header/header-title-global.en.tm> of the
-  macros which are involved in the documentation about the
-  <tmpackage|title-base> package. It is also good to study the definitions of
-  these macros in the <hyper-link|package
+  macros which are involved in this process. It is also good to study the
+  definitions of these macros in the <hyper-link|package
   itself|$TEXMACS_PATH/packages/header/title-base.ts>. In order to indicate
   the way things work, we finish with an example how the email address and
   homepage of an author can be rendered in a footnote instead of the main

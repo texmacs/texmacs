@@ -69,8 +69,6 @@
 
   <assign|sectional-sep|<macro|.<space|2spc>>>
 
-  <assign|sectional-normal|<macro|name|<no-indent><arg|name><no-page-break>>>
-
   \;
 
   <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|1fn><arg|name><vspace|1fn>>>>>
