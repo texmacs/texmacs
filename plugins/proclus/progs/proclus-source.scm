@@ -43,7 +43,8 @@
    (go-to-locus last-locus)))
 
 (define (has-source-link?)
-  (not (== '(uninit) (tree->stree (get-init-tree "source-link")))))
+  (and (init-has? "source-link")
+       (== 'tuple (tree-get-label (get-init-tree "source-link")))))
 
 (define (set-source-link! link)
   (init-env-tree "source-link" (list->tuple link)))
@@ -54,7 +55,10 @@
 
 (define (go-to-source-link)
   (if (has-source-link?)
-      (go-to-locus (get-source-link))))
+      (let ((lnk (get-source-link)))
+        (if (link-root? lnk)
+            (go-to-locus-buffer lnk)
+            (go-to-locus lnk)))))
 
 (define-macro (source-buffer-excursion . body)
   `(source-buffer-excursion/sub (lambda () ,@body)))
@@ -62,6 +66,6 @@
 (define (source-buffer-excursion/sub thunk)
   (if (has-source-link?)
       (save-excursion
-       (go-to-source-link)
+       (go-to-locus-buffer (get-source-link))
        (thunk))
       (thunk)))

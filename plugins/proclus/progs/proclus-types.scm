@@ -25,29 +25,19 @@
 	(ice-9 common-list)) ;; uniq et set-difference.
   (:export type-menu-promise
            toggle-active-type ;; FIXME: for ugly menu workaround
-           
-           list-types 
+
+           list-types
            active-types
 
-	   
-	   import-types 
-	   import-types/sub 
+	   import-types
+	   import-types/sub
 	   list-types-tmp
 	   new-types/sub
 	   new-types-rec
 	   delete-types/sub
 	   delete-types-rec
 
-           
-           ask-types
-           
-           ;; FIXME: for interactive
-           ask-reverse-types ask-types/sub
-           unproper-type unproper-reverse-type
-           
-           ;; FIXME: for interactive and proclus.scm
-           list-direct-types-tmp list-reverse-types-tmp
-           ))
+           ask-types))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -83,14 +73,12 @@
        (>= (length x) 3)
        (eq? (car x) 'locus)))
 
-   
-
 ;;adds the list of  types ltypes to the  type list of the current doc.
 (define (merge-types types)
   (set-types (uniq (append (list-types) types))))
 
 ;;adds the list of  types ltypes to the active  types list of the current doc.
-(define (merge-active-types types) 
+(define (merge-active-types types)
   (set-active-types (uniq (append (active-types) types))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,7 +140,6 @@
          ("Activer tous" (activate-all-types))
          ("Désactiver tous" (deactivate-all-types))
          ("Inverser" (activate-negative-types))
-	
          ---
          ,@(let ((types (list-types)))
              (if (null? types)
@@ -220,44 +207,42 @@
 ;; Creating links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define list-direct-types-tmp '())
-(define list-reverse-types-tmp '())
+(define ask-types
+  (case-lambda
+    ((proc)
+     (ask-types proc '() #f))
+    ((proc types)
+     (ask-types proc types #f))
+    ((proc types error?)
+     (interactive (if (not error?)
+                      '("Type du lien:")
+                      '("Type incorrect. Type de lien:"))
+                  (cut ask-types/callback proc types <>)))))
 
-(define (ask-types)
-  (set! list-direct-types-tmp '())
-  (set! list-reverse-types-tmp '())
-  (ask-types/sub))
+(define (ask-types/callback proc types s)
+  (cond ((and (string-null? s)
+              (pair? types))
+         (ask-reverse-types (cut proc types <...>)))
+        ((in? s (list-types))
+         (ask-types proc (cons s types)))
+        (else (ask-types proc types #t))))
 
-(define (ask-types/sub)
-  (ask-types/sub2 "Type du lien:"))
+(define ask-reverse-types
+  (case-lambda
+    ((proc)
+     (ask-reverse-types proc '() #f))
+    ((proc types)
+     (ask-reverse-types proc types #f))
+    ((proc types error?)
+     (interactive (if (not error?)
+                      '("Type du lien inverse:")
+                      '("Type inverse incorrect. Type inverse du lien :"))
+                  (cut ask-reverse-types/callback proc types <>)))))
 
-(define (unproper-type s)
-  (ask-types/sub2 "Type incorrect. Type de lien:"))
-
-(define (ask-types/sub2 msg)
-  (interactive (list msg)
-	       '(lambda(s)
-		  (cond ((and (string-null? s)
-			      (pair? list-direct-types-tmp))
-			 (ask-reverse-types))
-			((in? s (list-types))
-			 (begin (set-cons! list-direct-types-tmp s)
-				(ask-types/sub)))
-			(else (unproper-type s))))))
-
-(define (ask-reverse-types)
-  (ask-reverse-types/sub "Type du lien inverse:"))
-
-(define (unproper-reverse-type s)
-  (ask-reverse-types/sub "Type inverse incorrect. Type inverse du lien :"))
-
-(define (ask-reverse-types/sub msg)
-  (interactive (list msg)
-	       '(lambda(s)
-		  (cond ((and (string-null? s)
-			      (pair? list-reverse-types-tmp))
-			 (add-link))
-			((in? s (list-types))
-			 (begin (set-cons! list-reverse-types-tmp s)
-				(ask-reverse-types)))
-			(else  (unproper-reverse-type s))))))
+(define (ask-reverse-types/callback proc types s)
+  (cond ((and (string-null? s)
+              (pair? types))
+         (proc types))
+        ((in? s (list-types))
+         (ask-reverse-types proc (cons s types)))
+        (else (ask-reverse-types proc types #t))))

@@ -37,10 +37,10 @@
     make-locus locus-set-text locus-set-text-go-to
 
     make-link make-root-link
-    link-absname link-id link-types link-comment
+    link-absname link-id link-root? link-types link-comment
     add-link-end remove-link-end
 
-    locus-path go-to-locus))
+    locus-path go-to-locus go-to-locus-buffer))
 
 ;; Structure of a LOCUS tag:
 ;; (locus <body>
@@ -197,6 +197,7 @@
 (define (make-root-link absname) (make-link absname "0"))
 (define (link-absname link) (first link))
 (define (link-id link) (second link))
+(define (link-root? link) (== "0" (link-id link)))
 (define (link-types link) (third link))
 (define (link-comment link) (fourth link))
 
@@ -256,7 +257,7 @@
   (let ((absname (link-absname link-to-rm))
 	(id (link-id link-to-rm)))
     (locus-set-links
-     path (list-filter (locus-links (tm-subobject path))
+     path (list-filter (locus-links (tm-substree path))
 		       (lambda (lnk)
 			 (not (and (== (link-absname lnk) absname)
 				   (== (link-id lnk) id))))))))
@@ -267,15 +268,18 @@
 
 (define (locus-path id)
   ;; path of the first locus in the buffer whose id is @id
-  (if (== "0" id) '()
-      (let sub ((p '()))
-        (search-in-tree-from (the-buffer) p 'locus
-                             (lambda (p t)
-                               (if (== id (locus-id (tree->stree t)))
-                                   (reverse (tree-ip t))
-                                   (sub (rcons p 0))))))))
+  ;; #f if no locus with the given id is found in the buffer
+  (let sub ((p '()))
+    (search-in-tree-from (the-buffer) p 'locus
+                         (lambda (p t)
+                           (if (== id (locus-id (tree->stree t)))
+                               (reverse (tree-ip t))
+                               (sub (rcons p 0)))))))
 
 (define (go-to-locus lk)
-  (switch-to-active-buffer (absolute-name->url (link-absname lk)))
-  (if (not (== "0" (link-id lk)))
-      (tm-go-to (append (locus-path (link-id lk)) '(0 0)))))
+  ;; FIXME: raise distinctive exception for root links and id not found
+  (go-to-locus-buffer lk)
+  (tm-go-to (append (locus-path (link-id lk)) '(0 0))))
+
+(define (go-to-locus-buffer lk)
+  (switch-to-active-buffer (absolute-name->url (link-absname lk))))

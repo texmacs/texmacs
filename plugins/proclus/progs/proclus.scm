@@ -27,7 +27,6 @@
   (:export locus
            inactivate
            active-source active-but
-           add-link ;; FIXME: for proclus-types.scm (for interactive)
 	   has-active-source?
            ))
 
@@ -100,13 +99,13 @@
   ;; Initiate footer interaction, control ends up in add-link, below.
   (set! active-buffer (get-strg-name-buffer))
   (set! active-pos-temp (the-path))
-  (ask-types))
+  (ask-types add-link))
 
 ;; Creation of bidirectional links
-(define (add-link)
+(define (add-link direct-types reverse-types)
   ;; This is called by interactive procs in proclus-types.scm
   (if (or (null? link-but) (null? link-source))
-      #f (begin (add-link-end link-source link-but list-direct-types-tmp)
-		(add-link-end link-but link-source list-reverse-types-tmp)
+      #f (begin (add-link-end link-source link-but direct-types)
+		(add-link-end link-but link-source reverse-types)
 		(switch-to-active-buffer active-buffer)
 		(tm-go-to active-pos-temp))))

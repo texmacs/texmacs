@@ -79,11 +79,11 @@
 
 (define (edit-loci)
   (let* ((src-absname (get-absolute-name))
-	 (the-nw-buff (string-append src-buff "-loci"))
+	 (src-buff (get-strg-name-buffer))
 	 (the-loci (extract locus? (tree->stree (the-buffer)))))
     (if (not (null? the-loci))
 	(begin
-          (new-buffer-clear the-nw-buff)
+          (new-buffer-clear (string-append src-buff "-loci"))
 	  (init-style "proclus-links")
           (set-source-link! (make-root-link src-absname))
 	  (tm-assign (the-buffer-path) `(document ,@the-loci))

@@ -21,11 +21,8 @@
   (:export
     absolute-name-exists?
     absolute-name-valid?
-    
-    register-absolute-name ;; FIXME: for interactive
-    get-strg-name-buffer ;; FIXME: for interactive
-    absname-choose-file/sub ;; FIXME: for interactive
-    forget-absolute-name ;; FIXME: for interactive
+
+    absname-choose-file/sub ;; FIXME: for choose-file
 
     absolute-name->url
     absolute-name-fold
@@ -34,7 +31,7 @@
     has-conflicting-absolute-name?
     get-absolute-name
     register-buffer-absolute-name-maybe
-    
+
     absolute-name-message
     absolute-name-reregister-buffer
     interactive-absolute-name
@@ -87,7 +84,7 @@
   (let ((buf (get-strg-name-buffer)))
     (dynamic-wind
         noop
-        (lambda ()      
+        (lambda ()
           (and-let* (((absolute-name-exists? s))
                      (filename (absolute-name->url s))
                      ((url-exists? filename))
@@ -111,29 +108,6 @@
 ;; Absolute name of the current buffer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Since INTERACTIVE return immediately, we cannot return a value from
-;; interactive methods.
-;;
-;; Document edition (link creation, distillation) cannot be suspended with
-;; continuations since the TeXmacs event loop seems not to be reentrant.
-;;
-;; 1. Disable such commands when the absname is undefined.
-;;    Not adequate for distillation because we would need to register the
-;;    absname of all linked document, we would need a registration helper.
-;;
-;; 2. Raise an explanatory exception "Absolute name ``foo'' not defined" so the
-;;    user can register the missing absnames.
-;;
-;; 3. Implement command suspension using CPS. Since ``Interactive'' and
-;;    ``choose-file'' expects sexps, we can use a callback variable function
-;;    (storing a closure) or a live-built pseudo-closure sexp.
-;;
-;;    Requires explicit support in the whole call chain of functions which
-;;    might use get-absname.
-;;
-;;    Fragile because of the incompletely modal style of
-;;    ``interactive'' and ``choose-file''.
-
 (define (has-absolute-name?)
   ;; Has the current buffer been assigned an absolute name?
   (and (init-has? "absolute-name")
@@ -143,7 +117,7 @@
   (if (not (has-absolute-name?))
       (let ((msg "Buffer has no absolute name")
             (buf (get-strg-name-buffer)))
-        (set-message msg buf)               
+        (set-message msg buf)
         (texmacs-error where msg (list buf)))))
 
 (define (check-has-file-name where)
@@ -204,14 +178,13 @@
 
 (define (interactive-absolute-name)
   (check-has-file-name 'interactive-absolute-name)
-  (let ((filename (get-strg-name-buffer)))
-    (interactive '("Nom absolu:")
-                 `(lambda (s)
-                    (if (or (string-null? s) (absolute-name-exists? s))
-                        (interactive-absolute-name)
-                        (begin
-                          (register-absolute-name s ,filename)
-                          (init-env "absolute-name" s)))))))
+  (interactive '("Nom absolu:") interactive-absolute-name/callback))
+
+(define (interactive-absolute-name/callback s)
+  (if (or (string-null? s) (absolute-name-exists? s))
+      (interactive-absolute-name)
+      (begin (register-absolute-name s (get-strg-name-buffer))
+             (init-env "absolute-name" s))))
 
 (define (absname-choose-file)
   (let ((from (get-strg-name-buffer)))

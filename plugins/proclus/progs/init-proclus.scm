@@ -22,7 +22,7 @@
 (use-modules (menu menu-proclus))
 
 (use-modules (proclus-types)) ;; FIXME: for interactive
-(use-modules (proclus-absname)) ;; FIXME: for interactive
+(use-modules (proclus-absname)) ;; FIXME: for choose-file
 (use-modules (proclus)) ;; FIXME: for interactive
 (use-modules (proclus-distill)) ;; FIXME: for menu
 
