@@ -15,7 +15,7 @@
 (texmacs-module (kernel tools tm-misc)
   (:use (kernel texmacs tm-define) (kernel gui menu-widget))
   (:export
-    tm-subtree tm-start tm-end
+    tm-start tm-end
     init-default test-default? test-init? test-env?
     save-object load-object
     not-implemented tm-debug
@@ -30,11 +30,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tm-subtree p)
-  (:type (path -> tree))
-  (:synopsis "Return subtree of current buffer for the path @p.")
-  (subtree (the-buffer) p))
 
 (tm-define (tm-start p)
   (:type (path -> path))
