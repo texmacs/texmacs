@@ -103,6 +103,14 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+      else if ((s == "-c") || (s == "-convert")) {
+	i+=2;
+	if (i<argc)
+	  my_init_cmds= my_init_cmds * " " *
+	    "(texmacs-load-buffer " * quote (argv[i-1]) *
+	    " \"generic\" 0 #f) " *
+	    "(export-buffer " * quote (argv[i]) * ")";
+      }
       else if ((s == "-x") || (s == "-execute")) {
 	i++;
 	if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
@@ -113,6 +121,7 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "\n";
 	cout << "Options for TeXmacs:\n\n";
 	cout << "  -b [file]  Specify scheme buffers initialization file\n";
+	cout << "  -c [i] [o] Convert file 'i' into file 'o'\n";
 	cout << "  -d         For debugging purposes\n";
 	cout << "  -fn [font] Set the default TeX font\n";
 	cout << "  -g [geom]  Set geometry of window in pixels\n";
@@ -150,6 +159,7 @@ TeXmacs_main (int argc, char** argv) {
       sv->load_buffer (url_system (s), "generic", 1);
     }
     if ((s == "-b") || (s == "-initialize-buffer") ||
+	(s == "-c") || (s == "-convert") ||
 	(s == "-fn") || (s == "-font") ||
 	(s == "-i") || (s == "-initialize") ||
 	(s == "-g") || (s == "-geometry") ||
