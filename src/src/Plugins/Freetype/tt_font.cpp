@@ -46,8 +46,8 @@ tt_font_rep::tt_font_rep (display dis, string name,
   size= size2;
   bool err= compute_bitmaps (family, size, dpi);
   if (err) {
-    bmm= new bitmap_metric_rep (res_name, NULL, 0, -1);
-    bmf= new bitmap_font_rep   (res_name, NULL, 0, -1);
+    bmm= std_bitmap_metric (res_name, NULL, 0, -1);
+    bmf= std_bitmap_font (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
       cout << "TeXmacs] Font " << family << " " << size
 	   << "pt at " << dpi << " dpi could not be loaded\n";
@@ -168,8 +168,8 @@ tt_font_rep::compute_bitmaps (string family, int size, int dpi) {
     E->x4= dx + ww;
     E->y4= dy;
   }
-  bmm= new bitmap_metric_rep (res_name, T, 0, 255);
-  bmf= new bitmap_font_rep   (res_name, B, 0, 255);
+  bmm= std_bitmap_metric (res_name, T, 0, 255);
+  bmf= std_bitmap_font (res_name, B, 0, 255);
   return false;
 }
 

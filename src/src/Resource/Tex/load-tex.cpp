@@ -170,7 +170,7 @@ load_tex (string family, int size, int dpi,
   else {
     if (DEBUG_AUTO) cout << "TeXmacs] Loading " << name_pk << "\n";
     pk_loader pkl (pk_name, tfm, dpi);
-    pk= new bitmap_font_rep (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
+    pk= std_bitmap_font (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
   }
   return true;
 }
@@ -287,6 +287,6 @@ load_tex (string family, int size, int dpi, int dsize,
   else {
     // if (DEBUG_AUTO) cout << "TeXmacs] Loading " << name_pk << "\n";
     pk_loader pkl (pk_name, tfm, dpi);
-    pk= new bitmap_font_rep (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
+    pk= std_bitmap_font (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
   }
 }
