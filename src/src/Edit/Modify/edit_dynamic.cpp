@@ -579,36 +579,6 @@ edit_dynamic_rep::back_in_compound (tree t, path p) {
   else ins_unary (path_up (p), INACTIVE);
 }
 
-void
-edit_dynamic_rep::back_in_extension (tree t, path p) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode()) {
-    if (last_item (p) == 0) {
-      tree u (COMPOUND, copy (as_string (L (t))));
-      u << copy (A (t));
-      assign (path_up (p), u);
-      go_to (end (et, path_up (p) * 0));
-    }
-    else back_in_dynamic (t, p, 1);
-  }
-  else {
-    int node= last_item (p) - 1;
-    while ((node >= 0) &&
-	   (!drd->is_accessible_child (subtree (et, path_up (p)), node)))
-      node--;
-    if (node >= 0) go_to (end (et, path_up (p) * node));
-    else {
-      int i;
-      for (i=0; i<N(t); i++)
-	if ((t[i] != "") && (t[i] != tree (DOCUMENT, ""))) {
-	  go_to (start (et, path_up (p)));
-	  return;
-	}
-      assign (path_up (p), "");
-      correct (path_up (p, 2));
-    }
-  }
-}
-
 /******************************************************************************
 * Inserting and removing arguments
 ******************************************************************************/

@@ -53,7 +53,6 @@ public:
   void back_in_with (tree t, path p);
   void back_in_expand (tree t, path p);
   void back_in_compound (tree t, path p);
-  void back_in_extension (tree t, path p);
 };
 
 #endif // defined EDIT_DYNAMIC_H
