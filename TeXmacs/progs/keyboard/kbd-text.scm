@@ -19,7 +19,7 @@
   ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
 
-  ("$" (if (inside? "hybrid") (insert-string "$") (make-with "mode" "math")))
+  ("$" (if (inside? "hybrid") (insert "$") (make-with "mode" "math")))
   ("text $" (make 'equation*) (temp-proof-fix))
   ("text &" (make 'eqnarray*) (temp-proof-fix))
   ("text *" (toggle-section-number))

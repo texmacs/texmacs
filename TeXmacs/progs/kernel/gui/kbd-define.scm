@@ -234,5 +234,5 @@
 (define-macro (kbd-symbols . l)
   (define (fun s)
     (list s (string-append "insert#<" s ">")
-	  (list 'insert-string (string-append "<" s ">"))))
+	  (list 'insert (string-append "<" s ">"))))
   `(kbd-commands ,@(map fun l)))

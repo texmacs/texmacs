@@ -54,13 +54,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-graphics)
-  (insert-stree-go-to
+  (insert-go-to
    '(with "gr-mode" "point"
           "gr-frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
 	  "gr-clip"  (tuple "clip"
 			    (tuple "0par" "-0.3par")
 			    (tuple "1par" "0.3par"))
-     (graphics))
+      (graphics))
    '(6 1)))
 
 (define (graphics-set-property var val)

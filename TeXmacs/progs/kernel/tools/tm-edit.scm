@@ -16,8 +16,7 @@
   (:use (kernel texmacs tm-define))
   (:export
     ;; inserting general content
-    insert-stree insert-stree-go-to
-    insert-tree-at insert-stree-at
+    insert-at
     ;; inserting inactive content
     make-assign-arg make-assign-macro make-assign-macro-arg))
 
@@ -25,30 +24,15 @@
 ;; Inserting general content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert-stree t)
-  (:type (-> stree void))
-  (:synopsis "Insert @t at the current cursor position.")
-  (insert-tree (stree->tree t)))
-
-(tm-define (insert-stree-go-to t p)
-  (:type (-> stree path void))
-  (:synopsis "Insert @t and move cursor to @p inside @t.")
-  (insert-tree-go-to (stree->tree t) p))
-
-(tm-define (insert-tree-at t p)
+(tm-define (insert-at t p)
   (:type (-> tree path void))
   (:synopsis "Insert @t at @p.")
   (let* ((pos (tm-position-new))
 	 (old (tm-position-get pos)))
     (tm-go-to p)
-    (insert-tree t)
+    (insert t)
     (tm-go-to old)
     (tm-position-delete pos)))
-
-(tm-define (insert-stree-at t p)
-  (:type (-> stree path void))
-  (:synopsis "Insert @t at @p.")
-  (insert-tree-at (stree->tree t) p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting inactive content
@@ -58,8 +42,8 @@
   (:type (-> stree path void))
   (:synopsis "Insert an inactive stree @t and go to @p inside @t.")
   (if (in-source?)
-      (insert-stree-go-to t p)
-      (insert-stree-go-to (list 'inactive t) (cons 0 p))))
+      (insert-go-to t p)
+      (insert-go-to (list 'inactive t) (cons 0 p))))
 
 (tm-define (make-assign-arg s)
   (:type (-> string void))

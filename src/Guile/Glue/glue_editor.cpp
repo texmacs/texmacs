@@ -714,21 +714,8 @@ tmg_spell_replace (SCM arg1) {
 }
 
 SCM
-tmg_insert_string (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "insert-string");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_tree (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_insert_tree (SCM arg1) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-tree");
+tmg_insert (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert");
 
   content in1= scm_to_content (arg1);
 
@@ -740,9 +727,9 @@ tmg_insert_tree (SCM arg1) {
 }
 
 SCM
-tmg_insert_tree_go_to (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-tree-go-to");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-tree-go-to");
+tmg_insert_go_to (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-go-to");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-go-to");
 
   content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
@@ -2859,9 +2846,8 @@ initialize_glue_editor () {
   gh_new_procedure ("replace-start", (FN) tmg_replace_start, 3, 0, 0);
   gh_new_procedure ("spell-start", (FN) tmg_spell_start, 0, 0, 0);
   gh_new_procedure ("spell-replace", (FN) tmg_spell_replace, 1, 0, 0);
-  gh_new_procedure ("insert-string", (FN) tmg_insert_string, 1, 0, 0);
-  gh_new_procedure ("insert-tree", (FN) tmg_insert_tree, 1, 0, 0);
-  gh_new_procedure ("insert-tree-go-to", (FN) tmg_insert_tree_go_to, 2, 0, 0);
+  gh_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
+  gh_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
   gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);

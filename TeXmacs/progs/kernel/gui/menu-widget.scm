@@ -189,8 +189,8 @@
 	       (color (if e? "black" "dark grey"))
 	       #t #f)
    (if opt-symobj
-       (make-menu-command (insert-stree opt-symobj))
-       (make-menu-command (insert-string symstring)))
+       (make-menu-command (insert opt-symobj))
+       (make-menu-command (insert symstring)))
    #f))
 
 (define (make-menu-symbol p e?)

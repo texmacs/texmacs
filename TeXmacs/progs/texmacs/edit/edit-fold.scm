@@ -23,9 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-fold)
-  (insert-tree-go-to
-   (stree->tree '(fold (document "") (document "")))
-   (list 0 0)))
+  (insert-go-to '(fold (document "") (document "")) (list 0 0)))
 
 (define (fold)
   (let ((p (search-upwards "unfold")))
@@ -64,9 +62,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-switch)
-  (insert-tree-go-to
-   (stree->tree '(switch (document "") (tuple (tmarker))))
-   (list 0 0)))
+  (insert-go-to '(switch (document "") (tuple (tmarker))) (list 0 0)))
 
 (define (switch-find-marker t i)
   (cond ((= i (tree-arity t)) -1)

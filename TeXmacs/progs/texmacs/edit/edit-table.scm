@@ -355,9 +355,9 @@
   (let* ((row (table-which-row))
 	 (p   (table-search-cell row -1))
 	 (end (tm-end p)))
-    ;(insert-stree-at '(eq-number) end)
+    ;(insert-at '(eq-number) end)
     (tm-go-to end)
-    (insert-stree '(eq-number))))
+    (insert '(eq-number))))
 
 (define (table-nonumber-equation)
   (let ((p (table-search-number-equation)))
