@@ -192,7 +192,7 @@
 
   \;
 
-  <assign|doc-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
+  <assign|doc-title-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
   <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
@@ -254,7 +254,7 @@
     </surround>>
   </xmacro>>
 
-  <assign|doc-data-bis|<xmacro|body|<quasi|<style-with|src-compact|none|<doc-note|<unquote|<quasi|<doc-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
+  <assign|doc-data-bis|<xmacro|body|<quasi|<style-with|src-compact|none|<doc-title-note|<unquote|<quasi|<doc-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
 
   <\active*>
     <\src-comment>

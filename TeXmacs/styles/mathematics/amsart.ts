@@ -70,9 +70,9 @@
 
   <assign|sectional-sep|<macro|.<space|2spc>>>
 
-  <assign|enrich-subsection-long|<macro|false>>
+  <assign|enrich-subsection-long|false>
 
-  <assign|enrich-subsubsection-long|<macro|false>>
+  <assign|enrich-subsubsection-long|false>
 
   \;
 
