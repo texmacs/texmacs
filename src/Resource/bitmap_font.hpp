@@ -79,7 +79,7 @@ glyph join       (glyph gl1, glyph gl2);
 glyph glue       (glyph gl1, glyph gl2);
 glyph add        (glyph gl1, glyph gl2);
 glyph move       (glyph gl, SI x, SI y);
-glyph enlarge    (glyph gl, SI x1, SI y1, SI x2, SI y3);
+glyph clip       (glyph gl, SI x1, SI y1, SI x2, SI y3);
 glyph hor_flip   (glyph gl);
 glyph ver_flip   (glyph gl);
 glyph pos_rotate (glyph gl);

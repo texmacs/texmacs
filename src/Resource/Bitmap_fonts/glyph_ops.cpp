@@ -52,6 +52,24 @@ move (glyph gl, SI x, SI y) {
 }
 
 glyph
+clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
+  abs_round (x1, y1);
+  abs_round (x2, y2);
+  x1= x1/PIXEL; y1= y1/PIXEL;
+  x2= x2/PIXEL; y2= y2/PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      bool x_ok= (i+gl->xoff >= x1) && (i+gl->xoff < x2);
+      bool y_ok= (gl->yoff-j >= y1) && (gl->yoff-j < y2);
+      bmr->set_x (i, j, x_ok && y_ok? gl->get_x (i, j): 0);
+    }
+  return bmr;
+}
+
+glyph
 hor_flip (glyph gl) {
   int i, j;
   int ww= gl->width, hh= gl->height;
