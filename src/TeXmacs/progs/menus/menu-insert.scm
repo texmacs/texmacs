@@ -67,7 +67,7 @@
 (menu-bind insert-presentation-tag-menu
   ("Underline" (make 'underline))
   ("Overline" (make 'overline))
-  ("Subscript" (make-script #t #f))
+  ("Subscript" (make-script #f #t))
   ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
