@@ -55,9 +55,11 @@
 	     (load-help-article "devel/plugin/plugins"))
 	    ("TeXmacs as an interface"
 	     (load-help-article "main/interface/man-itf"))
-	    ("TeXmacs style files"
+	    ("Writing your own style files"
 	     (load-help-article "devel/style/style"))
-	    ("Summary of the principal TeXmacs tags"
+	    ("Summary of the TeXmacs primitives"
+	     (load-help-article "devel/format/primitives/primitives"))
+	    ("Summary of the standard TeXmacs styles"
 	     (load-help-article "main/styles/std-dtds/dtds"))
 	    ("Customizing TeXmacs"
 	     (load-help-article "main/scheme/man-scheme"))
@@ -71,18 +73,18 @@
 	     (load-help-article "tutorial/start/tut-start"))
 	    ("Typing a simple text"
 	     (load-help-article "tutorial/start/tut-simple-text"))))
-  (when (url-exists-in-help? "devel/style/style.en.tm")
-	(-> "Styles"
-	    ("Browse" (load-help-buffer "devel/style/style"))
-	    ---
-	    ("Introduction"
-	     (load-help-article "devel/style/style-intro"))
-	    ("The standard TeXmacs styles"
-	     (load-help-article "devel/style/standard/standard"))
-	    ("Writing your own style files"
-	     (load-help-article "devel/style/design/design"))
-	    ("Customizing the TeXmacs styles"
-	     (load-help-article "devel/style/customize/customize"))))
+; (when (url-exists-in-help? "devel/style/style.en.tm")
+;	(-> "Styles"
+;	    ("Browse" (load-help-buffer "devel/style/style"))
+;	    ---
+;	    ("Introduction"
+;	     (load-help-article "devel/style/style-intro"))
+;	    ("The standard TeXmacs styles"
+;	     (load-help-article "devel/style/standard/standard"))
+;	    ("Writing your own style files"
+;	     (load-help-article "devel/style/design/design"))
+;	    ("Customizing the TeXmacs styles"
+;	     (load-help-article "devel/style/customize/customize"))))
   (when (url-exists-in-help? "about/about.en.tm")
 	(-> "About"
 	    ("Browse" (load-help-buffer "about/about"))
@@ -136,20 +138,20 @@
 	     (load-help-buffer "about/projects/improvements"))
 	    ("Plans for the future"
 	     (load-help-buffer "about/projects/future"))))
-  (when (url-exists-in-help? "devel/format/format.en.tm")
-	(-> "Document format"
-	    ("Browse" (load-help-buffer "devel/format/format"))
-	    ---
-	    ("Documents are trees"
-	     (load-help-article "devel/format/trees"))
-	    ("The leaves of TeXmacs trees"
-	     (load-help-article "devel/format/leaves"))
-	    ("The primitive TeXmacs constructs"
-	     (load-help-article "devel/format/primitives"))
-	    ("System environment variables"
-	     (load-help-article "devel/format/env-vars"))
-	    ("Planned changes"
-	     (load-help-article "devel/format/planned-changes"))))
+; (when (url-exists-in-help? "devel/format/format.en.tm")
+;	(-> "Document format"
+;	    ("Browse" (load-help-buffer "devel/format/format"))
+;	    ---
+;	    ("Documents are trees"
+;	     (load-help-article "devel/format/trees"))
+;	    ("The leaves of TeXmacs trees"
+;	     (load-help-article "devel/format/leaves"))
+;	    ("The primitive TeXmacs constructs"
+;	     (load-help-article "devel/format/primitives"))
+;	    ("System environment variables"
+;	     (load-help-article "devel/format/env-vars"))
+;	    ("Planned changes"
+;	     (load-help-article "devel/format/planned-changes"))))
   (when (url-exists-in-help? "devel/interface/interface.en.tm")
 	(-> "Interfacing"
 	    ("Browse" (load-help-buffer "devel/interface/interface"))
