@@ -20,6 +20,7 @@
 ("activate once" "activer une fois")
 ("activation" "activation")
 ("acute" "aigu")
+("add package" "ajouter packetage")
 ("add switch after" "ajouter commutateur après")
 ("add switch before" "ajouter commutateur avant")
 ("address" "adresse")
