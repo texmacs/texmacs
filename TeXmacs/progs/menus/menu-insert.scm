@@ -119,7 +119,7 @@
 
 (menu-bind insert-transformational-menu
   ("Assign" (make 'assign))
-  ("With" (make 'with 3))
+  ("With" (make-arity 'with 3))
   ("Value" (make 'value))
   ---
   ("Macro" (make 'macro))
@@ -265,9 +265,9 @@
 			'("Left:" "Bottom:" "Right:" "Top:") 'make-resize))
       ("Repeat object" (make 'repeat))
 ;;    ---
-      ("Decorate atoms" (make 'datoms 2))
-;;    ("decorate lines" (make 'dlines 2))
-;;    ("decorate pages" (make 'dpages 2))
+      ("Decorate atoms" (make-arity 'datoms 2))
+;;    ("decorate lines" (make-arity 'dlines 2))
+;;    ("decorate pages" (make-arity 'dpages 2))
 ;;    ---
 ;;    ("page insertion" (make 'float))
       ))
