@@ -54,6 +54,7 @@
   (pretend-save-buffer pretend_save_buffer (void))
   (get-name-buffer get_name_buffer (url))
   (set-name-buffer set_name_buffer (void url))
+  (set-abbr-buffer set_abbr_buffer (void string))
   (new-buffer new_buffer (void))
   (switch-to-buffer switch_to_buffer (void url))
   (switch-to-active-buffer switch_to_active_buffer (void url))

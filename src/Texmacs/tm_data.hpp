@@ -34,6 +34,7 @@ protected:
   tm_buffer new_buffer (url name, tree t);
   void      delete_buffer (tm_buffer buf);
   void      set_name_buffer (url name);
+  void      set_abbr_buffer (string abbr);
   url       get_name_buffer ();
 
   /* Low level view manipulation */

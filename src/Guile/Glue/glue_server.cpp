@@ -410,6 +410,19 @@ tmg_set_name_buffer (SCM arg1) {
 }
 
 SCM
+tmg_set_abbr_buffer (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-abbr-buffer");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_abbr_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_new_buffer () {
   // SCM_DEFER_INTS;
   get_server()->new_buffer ();
@@ -901,6 +914,7 @@ initialize_glue_server () {
   gh_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
   gh_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
   gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
+  gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
   gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
   gh_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
   gh_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);

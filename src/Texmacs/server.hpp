@@ -70,6 +70,7 @@ public:
   virtual tm_buffer get_buf (int i) = 0;
   virtual url  get_name_buffer () = 0;
   virtual void set_name_buffer (url name) = 0;
+  virtual void set_abbr_buffer (string abbr) = 0;
   virtual void new_buffer () = 0;
   virtual void switch_to_buffer (url name) = 0;
   virtual void switch_to_active_buffer (url name) = 0;
