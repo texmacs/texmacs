@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.4.3>
 
 <style|source>
 
@@ -53,6 +53,8 @@
     <assign|Set|<with|math-font|cal*|S>>
 
     <assign|rsB|<with|math-font|cal*|B>>
+
+    <assign|rsD|<with|math-font|cal*|D>>
 
     <assign|rsF|<with|math-font|cal*|F>>
 
