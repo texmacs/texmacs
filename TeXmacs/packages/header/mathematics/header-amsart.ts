@@ -25,7 +25,32 @@
 
   <assign|header-article-package|1.0>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Titles.
+    </src-comment>
+  </active*>
+
+  <assign|doc-abstract|<\macro|body>
+    <\padded-normal|2fn|1fn>
+      <\with|par-left|15mm|par-right|15mm>
+        <\small>
+          <surround|<with|font-shape|small-caps|<abstract-text>>.
+          ||<arg|body>>
+        </small>
+      </with>
+    </padded-normal>
+  </macro>>
+
+  <assign|doc-render-title|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<large|<arg|x>>>>>>>>
+
+  <assign|author-by|<macro|body|<arg|body>>>
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
 
   <assign|odd-page-text|<macro|s|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><htab|0mm><with|font-shape|small-caps|<arg|s>><htab|5mm><quote|<page-the-page>>>>>>>
 
@@ -40,25 +65,6 @@
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
-
-  \;
-
-  <assign|title*|<macro|body|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|font-size|1.19|<arg|body>>>>
-
-  <assign|author*|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
-
-  \;
-
-  <assign|abstract|<\macro|body>
-    <\padded-normal|2fn|1fn>
-      <\with|par-left|15mm|par-right|15mm>
-        <\small>
-          <surround|<with|font-shape|small-caps|<abstract-text>>.
-          ||<arg|body>>
-        </small>
-      </with>
-    </padded-normal>
-  </macro>>
 
   \;
 </body>

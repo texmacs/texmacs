@@ -42,7 +42,7 @@
   ("Date" (begin (go-end-of-header-element) (make 'title-date)))
   ("Title" (make-header 'title)))
 
-(menu-bind title-menu
+(menu-bind old-title-menu
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
 	("Make title" (begin (make 'make-title) (make 'title))))
   (when (inside? "make-title")
@@ -74,7 +74,7 @@
 	("Homepage" (make-author-data-element 'author-homepage))
 	("Note" (make-author-data-element 'author-note))))
 
-(menu-bind new-title-menu
+(menu-bind title-menu
   (when (not (inside? "doc-data"))
 	("Insert title" (make-doc-data)))
   ---
@@ -86,12 +86,18 @@
 	    ("Default" (make-doc-data-element 'doc-date))
 	    ("Today"
 	     (begin (make-doc-data-element 'doc-date) (make-arity 'date 0))))
+	(-> "Note"
+	    ("General note" (make-doc-data-element 'doc-note))
+	    ("Written with TeXmacs" (begin (make-doc-data-element 'doc-note)
+					   (make 'with-TeXmacs-text))))
 	(-> "Hidden"
-	    ("Show hidden" (doc-show-hidden))
+	    (if (doc-data-disactivated?)
+		("Activate hidden" (doc-data-activate-all)))
+	    (if (not (doc-data-disactivated?))
+		("Show hidden" (doc-data-disactivate-all)))
 	    ---
-	    ("Runnig title" (make-doc-data-element 'doc-running-title))
-	    ("Runnig author" (make-doc-data-element 'doc-running-author))
-	    ("TeXmacs notice" (make-doc-data-element 'doc-texmacs-notice))
+	    ("Running title" (make-doc-data-element 'doc-running-title))
+	    ("Running author" (make-doc-data-element 'doc-running-author))
 	    ("Keywords" (make-doc-data-element 'doc-keywords))
 	    ("A.M.S. subject classification"
 	     (make-doc-data-element 'doc-AMS-class))))

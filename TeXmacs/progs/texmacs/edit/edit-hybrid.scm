@@ -57,6 +57,7 @@
 	     (return-sectional)))
 	((== x "doc-title") (make-doc-data-element 'doc-author-data))
 	((== x "author-name") (make-author-data-element 'author-address))
+	((== x "doc-inactive") (doc-data-activate-here))
 	((in? x '("part" "part*" "chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"
 		  "section*" "subsection*" "subsubsection*"
@@ -78,7 +79,7 @@
 (define (make-return)
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
-		   "title" "author" "doc-title" "author-name"
+		   "title" "author" "doc-title" "author-name" "doc-inactive"
 		   "part" "part*" "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
 		   "section*" "subsection*" "subsubsection*"

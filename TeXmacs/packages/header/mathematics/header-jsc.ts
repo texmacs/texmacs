@@ -23,7 +23,31 @@
 
   <use-package|header-article>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Titles.
+    </src-comment>
+  </active*>
+
+  <assign|doc-abstract|<\macro|body>
+    <\with|par-left|15mm|par-right|15mm>
+      <\small>
+        <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>
+          <surround|<yes-indent>||<arg|body>>
+        </padded-bothlined>
+      </small>
+    </with>
+  </macro>>
+
+  <assign|author-by|<macro|body|<arg|body>>>
+
+  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
 
   <assign|odd-page-text|<macro|s|<assign|page-odd-header|<style-with|src-compact|none|<quasiquote|<small|<wide-std-underlined|<htab|0mm><unquote|<arg|s>><space|4spc><page-the-page>>>>>>>>
 
@@ -40,20 +64,6 @@
   <assign|header-secondary|<macro|name|nr|what|>>
 
   \;
-
-  <assign|author*|<macro|body|<arg|body>>>
-
-  \;
-
-  <assign|abstract|<\macro|body>
-    <\with|par-left|15mm|par-right|15mm>
-      <\small>
-        <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>
-          <surround|<yes-indent>||<arg|body>>
-        </padded-bothlined>
-      </small>
-    </with>
-  </macro>>
 </body>
 
 <\initial>

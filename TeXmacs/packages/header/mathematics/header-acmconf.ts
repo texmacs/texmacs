@@ -25,7 +25,27 @@
 
   <assign|header-article-2col-package|1.0>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Titles.
+    </src-comment>
+  </active*>
+
+  <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<with|par-columns|1|<doc-title-block|<arg|body>>>>>>
+
+  <assign|doc-abstract|<\macro|body>
+    <\padded-normal|1.5fn|1.5fn>
+      <with|font-series|bold|<abstract-text>><vspace|1.5fn><no-page-break>
+
+      <surround|<no-indent>||<arg|body>>
+    </padded-normal>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
 
   <assign|page-odd-header|>
 
@@ -44,20 +64,6 @@
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
-
-  \;
-
-  <assign|make-title|<macro|body|<surround||<vspace|2fn>|<with|par-columns|1|par-mode|center|<arg|body>>>>>
-
-  \;
-
-  <assign|abstract|<\macro|body>
-    <\padded-normal|1.5fn|1.5fn>
-      <with|font-series|bold|<abstract-text>><vspace|1.5fn><no-page-break>
-
-      <surround|<no-indent>||<arg|body>>
-    </padded-normal>
-  </macro>>
 
   \;
 </body>

@@ -39,9 +39,44 @@
 
   <assign|AMS-class-text|<macro|<localize|A.M.S. subject classification>>>
 
+  <assign|with-TeXmacs-text|<macro|This document has been written using the
+  GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>).>>
+
   <\active*>
     <\src-comment>
-      Frequently used block environments.
+      DRD properties of tags with title and author data.
+    </src-comment>
+  </active*>
+
+  <drd-props|doc-title|border|no>
+
+  <drd-props|doc-subtitle|border|no>
+
+  <drd-props|doc-author-data|border|no>
+
+  <drd-props|doc-date|border|no>
+
+  <drd-props|doc-note|border|no>
+
+  <drd-props|doc-inactive|border|no>
+
+  <drd-props|doc-keywords|accessible|all>
+
+  <drd-props|doc-AMS-class|accessible|all>
+
+  <drd-props|author-name|border|no>
+
+  <drd-props|author-address|border|no>
+
+  <drd-props|author-email|border|no>
+
+  <drd-props|author-homepage|border|no>
+
+  <drd-props|author-note|border|no>
+
+  <\active*>
+    <\src-comment>
+      Rendering the title.
     </src-comment>
   </active*>
 
@@ -51,38 +86,47 @@
     </with>
   </cell>>>>>>>
 
-  <assign|doc-author-block|<macro|body|<tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
-    <\with|par-mode|center>
-      <arg|body>
-    </with>
-  </cell>>>>>>>
+  <assign|doc-make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<doc-title-block|<arg|body>>>>>
 
-  <\active*>
-    <\src-comment>
-      Rendering the title.
-    </src-comment>
-  </active*>
+  <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+    <with|math-font-series|bold|font-series|bold|<font-magnify|1.682|<doc-title-block|<arg|x>>>>
+  </surround>>>
 
-  <assign|doc-title|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|<huge|<arg|body>>>>>>>
+  <assign|doc-title|<macro|body|<doc-render-title|<style-with|src-compact|none|<arg|body><doc-footnote-ref|<quasi|<doc-data-note|<unquote*|<quote-value|the-doc-data>>>>>>>>>
 
-  <assign|doc-subtitle|<macro|body|<surround|<vspace*|0.25fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|<larger|<arg|body>>>>>>>
+  <assign|doc-subtitle|<macro|x|<\surround|<vspace*|0.25fn>|<vspace|0.5fn>>
+    <with|math-font-series|bold|font-series|bold|<font-magnify|1.297|<doc-title-block|<arg|x>>>>
+  </surround>>>
 
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
 
-  <assign|doc-author-by|<macro|body|<with|font-shape|small-caps|<by-text>
-  <arg|body>>>>
+  <assign|doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
+    <\with|par-par-sep|0fn>
+      <doc-title-block|<arg|body>>
+    </with>
+  </surround>>>
 
-  <assign|doc-author-name|<macro|body|<vspace*|1fn><arg|body><vspace|1fn>>>
-
-  <assign|doc-author-info|<\macro|body>
-    <\surround|<vspace*|1fn>|<vspace|1fn>>
-      <arg|body>
-    </surround>
+  <assign|doc-authors|<\macro|body>
+    <\doc-author>
+      <font-magnify|0.917|<arg|body>>
+    </doc-author>
   </macro>>
 
   <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
+
+  <assign|doc-inactive|<\macro|body>
+    <\quasi>
+      <\surround|<vspace*|0.5fn>|>
+        <doc-title-block|<style-with|src-compact|none|<inline-tag|<unquote|<get-label|<quote-arg|body>>>|<unquote*|<quote-arg|body>>>>>
+      </surround>
+    </quasi>
+  </macro>>
+
+  <active*|<src-short-comment|For backward compatability>>
+
+  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
 
   <\active*>
     <\src-comment>
@@ -115,7 +159,7 @@
   </macro>>
 
   <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
-  ><concat-tuple|<quote-arg|args>|, >>>>
+  ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
 
   <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<quote-arg|args>|, >>>>
@@ -148,6 +192,8 @@
 
   \;
 
+  <assign|doc-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
+
   <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
   <\active*>
@@ -166,7 +212,7 @@
 
       <unquote*|<select|<quote-arg|data>|doc-date>>
 
-      <unquote*|<select|<quote-arg|data>|inactive>>
+      <unquote*|<select|<quote-arg|data>|doc-inactive>>
     </quasi>
   </xmacro>>
 
@@ -180,11 +226,11 @@
 
       <unquote*|<select|<quote-arg|data>|doc-date>>
 
-      <unquote*|<select|<quote-arg|data>|inactive>>
+      <unquote*|<select|<quote-arg|data>|doc-inactive>>
     </quasi>
   </xmacro>>
 
-  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
+  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<doc-data-bis|<unquote*|<quote-arg|data>>><doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
 
   <assign|doc-data-abstract|<\xmacro|data>
     <\quasi>
@@ -194,15 +240,21 @@
     </quasi>
   </xmacro>>
 
+  <assign|doc-data-note|<xmacro|data|<\quasi>
+    <unquote*|<select|<quote-arg|data>|doc-note|document|<pat-any>>>
+  </quasi>>>
+
   <assign|doc-data|<\xmacro|data>
     <style-with|src-compact|none|<\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
-      <\doc-title-block>
+      <\doc-make-title>
         <with|doc-note-nr|0|<\quasi>
           <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-one-author>|<value|doc-data-several-authors>>>>|<unquote*|<quote-arg|data>>>>
         </quasi>>
-      </doc-title-block>
+      </doc-make-title>
     </surround>>
   </xmacro>>
+
+  <assign|doc-data-bis|<xmacro|body|<quasi|<style-with|src-compact|none|<doc-note|<unquote|<quasi|<doc-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -210,21 +262,33 @@
     </src-comment>
   </active*>
 
-  <assign|author-name|<macro|x|<name|<arg|x>>>>
+  <assign|doc-author-block|<\macro|body>
+    <style-with|src-compact|none|<space|0pt><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
+      <\with|par-mode|center>
+        <arg|body>
+      </with>
+    </cell>>>>>>
+  </macro>>
+
+  <assign|author-by|<macro|body|<by-text> <arg|body>>>
 
   <assign|author-from-authors*|<macro|x|, <arg|x>>>
 
   <assign|author-from-authors|<xmacro|x|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|x>>|0>|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>>>
 
+  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|x>>>>>>
+
+  <assign|author-name|<macro|x|<author-render-name|<style-with|src-compact|none|<author-by|<arg|x>><style-with|src-compact|none|<doc-footnote-ref|<quasi|<doc-author-data-note|<unquote*|<quote-value|the-author-data>>>>>>>>>>
+
   <assign|author-address|<\macro|x>
-    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<arg|x>>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|x>>>
   </macro>>
 
-  <assign|author-email|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
-  ><with|font-family|tt|<arg|x>>>>>
+  <assign|author-email|<macro|x|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
+  ><with|font-family|tt|<arg|x>>>>>>
 
-  <assign|author-homepage|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
-  ><with|font-family|tt|<arg|x>>>>>
+  <assign|author-homepage|<macro|x|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
+  ><with|font-family|tt|<arg|x>>>>>>
 
   <assign|author-note|<\macro|x>
     <arg|x>
@@ -236,34 +300,30 @@
     </src-comment>
   </active*>
 
+  <assign|doc-author-produce|<\macro|data>
+    <\quasi>
+      <unquote*|<select|<quote-arg|data>|author-name>>
+
+      <unquote*|<select|<quote-arg|data>|author-address>>
+
+      <unquote*|<select|<quote-arg|data>|author-email>>
+
+      <unquote*|<select|<quote-arg|data>|author-homepage>>
+    </quasi>
+  </macro>>
+
   <assign|doc-author-data-note|<xmacro|data|<\quasi>
     <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
   </quasi>>>
 
-  <assign|doc-author-produce|<\macro|data>
-    <\style-with|src-compact|none>
-      <\quasi>
-        <doc-author-name|<style-with|src-compact|none|<doc-author-by|<unquote*|<select|<quote-arg|data>|author-name>>><style-with|src-compact|none|<doc-footnote-ref|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|data>>>>>>>>>
-
-        <unquote*|<select|<quote-arg|data>|author-address>>
-
-        <unquote*|<select|<quote-arg|data>|author-email>>
-
-        <unquote*|<select|<quote-arg|data>|author-homepage>>
-      </quasi>
-    </style-with>
-  </macro>>
-
   <assign|doc-author-data|<\xmacro|data>
-    <\style-with|src-compact|none>
-      <\quasi>
-        <\surround|<vspace*|1fn>|<vspace|1.5fn>>
-          <\with|par-par-sep|0fn>
-            <doc-author-produce|<unquote|<quote-arg|data>>>
-          </with>
-        </surround>
-      </quasi>
-    </style-with>
+    <\quasi>
+      <\with|the-author-data|<quote-arg|data>>
+        <\doc-author>
+          <doc-author-block|<doc-author-produce|<unquote|<quote-arg|data>>>>
+        </doc-author>
+      </with>
+    </quasi>
   </xmacro>>
 
   <assign|doc-author-data-bis|<macro|body|<quasi|<style-with|src-compact|none|<doc-author-note|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
@@ -274,11 +334,29 @@
     </src-comment>
   </active*>
 
-  <assign|doc-authors-data*|<macro|x|<style-with|src-compact|none|<line-break><tabular*|<tformat|<cwith|1|1|1|1|cell-width|0.8par>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-lsep|1fn>|<cwith|1|1|1|1|cell-rsep|1fn>|<cwith|1|1|1|1|cell-bsep|0.75fn>|<cwith|1|1|1|1|cell-tsep|0.75fn>|<table|<row|<\cell>
-    <with|par-mode|center|par-line-sep|0fn|font-size|0.92|<style-with|src-compact|none|<arg|x>>>
-  </cell>>>>>>>>
+  <assign|doc-authors-block|<\macro|body>
+    <style-with|src-compact|none|<space|0pt><tabular*|<tformat|<twith|table-valign|T>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0.75fn>|<cwith|1|1|1|1|cell-tsep|0.75fn>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
+      <\with|par-mode|center>
+        <arg|body>
+      </with>
+    </cell>>>>>>
+  </macro>>
 
-  <assign|doc-authors-data|<xmacro|x|<style-with|src-compact|none|<with|par-mode|center|doc-author-by|<macro|body|<with|font-shape|small-caps|<arg|body>>>|<map-args|doc-authors-data*|concat|x>>>>>
+  <assign|doc-authors-one|<macro|data|<quasi|<style-with|src-compact|none|
+  <with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-produce|<unquote|<quote-arg|data>>>>>>
+  >>>>
+
+  <assign|doc-authors-data|<\xmacro|data>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <\with|author-by|<macro|body|<arg|body>>>
+          <\doc-authors>
+            <space|0spc><unquote*|<map|doc-authors-one|<quote-arg|data>>>
+          </doc-authors>
+        </with>
+      </quasi>
+    </style-with>
+  </xmacro>>
 
   <assign|doc-authors-data-bis|<xmacro|x|<style-with|src-compact|none|<quasi|<space|0spc><unquote*|<map|doc-author-data-bis|<quote-arg|x>>>>>>>
 
