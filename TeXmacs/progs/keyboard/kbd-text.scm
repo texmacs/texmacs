@@ -89,6 +89,10 @@
   ("text:symbol ?" "¾")
   ("text:symbol p" "Ÿ")
   ("text:symbol P" "¿")
+  ("text:symbol m" (make 'masculine))
+  ("text:symbol M" (make 'varmasculine))
+  ("text:symbol f" (make 'ordfeminine))
+  ("text:symbol F" (make 'varordfeminine))
 
   ("accent:tilde" "~")
   ("accent:tilde space" "~")
@@ -267,10 +271,10 @@
   ("threequarters" (make 'threequarters))
   ("questiondown" "¾")
   ("euro" (make 'euro))
-  ("masculin" (make 'masculin))
-  ("feminin" (make 'feminin))
-  ("masculin var" (make 'varmasculin))
-  ("feminin var" (make 'varfeminin)))
+  ("masculine" (make 'masculine))
+  ("ordfeminine" (make 'ordfeminine))
+  ("masculine var" (make 'varmasculine))
+  ("ordfeminine var" (make 'varordfeminine)))
 
 (kbd-map like-old-text?
   ("cmd I" (make-tmlist 'itemize))
