@@ -35,6 +35,7 @@ initialize_default_env () {
   env (DPI)              = "600";       // resolution in dots per inch
   env (SFACTOR)          = "5";         // shrinking factor on screen
   env (PREAMBLE)         = "false";     // preamble mode ?
+  env (SAVE_AUX)         = "true";      // save auxiliary data on disk ?
   env (MODE)             = "text";      // typesetting mode
   env (INFO_FLAG)        = "short";     // information about labels, etc.
   env (IDENTITY)         = identity_m;  // identity macro

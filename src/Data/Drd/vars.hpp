@@ -21,6 +21,7 @@
 extern string DPI;
 extern string SFACTOR;
 extern string PREAMBLE;
+extern string SAVE_AUX;
 extern string MODE;
 extern string INFO_FLAG;
 extern string IDENTITY;

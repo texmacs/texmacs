@@ -361,6 +361,7 @@ public:
   virtual void generate_index (string idx) = 0;
   virtual void generate_glossary (string glo) = 0;
   virtual void generate_aux (string which= "") = 0;
+  virtual bool get_save_aux () = 0;
 
   /* public routines from edit_select */
   virtual void select (path p) = 0;
