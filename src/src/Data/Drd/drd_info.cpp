@@ -190,8 +190,13 @@ drd_info_rep::is_accessible_child (tree t, int i) {
 bool
 drd_info_rep::is_child_enforcing (tree t) {
   if (L(t) >= START_EXTENSIONS) return false; // FIXME: temporary fix
-  return
+  bool old_result=
     (N(t) != 0) &&
     ((get_props (L(t)) & BORDER_ACCESSIBLE_MASK) ==
      BORDER_NOT_ACCESSIBLE);
+  bool new_result=
+    ti[L(t)]->pi.no_border && (N(t) != 0);
+  if (new_result != old_result)
+    cout << "Warning: " << as_string (L(t)) << ": bad no_border\n";
+  return new_result;
 }
