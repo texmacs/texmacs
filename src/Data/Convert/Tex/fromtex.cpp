@@ -1131,7 +1131,7 @@ finalize_floats (tree t) {
 
 tree
 finalize_textm (tree t) {
-  tree u=object_to_tree (call ("tmtm-nonumber->eqnumber", tree_to_object (t)));
+  tree u=object_to_tree (call ("textm-finalize", tree_to_object (t)));
   return simplify_correct (u);
 }
 
