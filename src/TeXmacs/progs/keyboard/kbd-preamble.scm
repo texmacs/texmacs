@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-preamble)
-  (:use
-    (texmacs edit edit-preamble) (texmacs edit edit-format)
-    (texmacs edit edit-misc)))
+  (:use (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 (kbd-map
   ("executable" "" "Insert executable markup")

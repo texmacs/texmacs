@@ -14,24 +14,9 @@
 
 (texmacs-module (texmacs edit edit-misc)
   (:export
-    ;; linking related content
+    make-specific make-latex make-hybrid
     make-include make-inline-image make-link-image
-    ;; miscellaneous content
-    make-specific make-latex make-hybrid))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Routines for linking related content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (make-include s) (insert-object `(include ,s)))
-(define (make-inline-image l)
-  (apply make-postscript (cons* (car l) #f (cdr l))))
-(define (make-link-image l)
-  (apply make-postscript (cons* (car l) #t (cdr l))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Routines for inserting miscellaneous content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    make-date))
 
 (define (make-specific s)
   (if (or (== s "texmacs") (in-preamble?))
@@ -47,3 +32,17 @@
   (set-message
    "A-right: insert argument, return: activate or execute latex command"
    "hybrid"))
+
+(define (make-include s)
+  (insert-object `(include ,s)))
+
+(define (make-inline-image l)
+  (apply make-postscript (cons* (car l) #f (cdr l))))
+
+(define (make-link-image l)
+  (apply make-postscript (cons* (car l) #t (cdr l))))
+
+(define (make-date)
+  (if (== (get-env "language") "english")
+      (insert-tree (object->tree '(date "%B %d, %Y")))
+      (insert-tree (object->tree '(date "%d %B %Y")))))

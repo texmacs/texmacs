@@ -14,9 +14,8 @@
 
 (texmacs-module (texmacs edit edit-format)
   (:export
-    make-with-color
-    ;; modifying paragraph style parameters
-    make-line-with
+    ;; modifying style parameters
+    make-with-color make-line-with
     set-left-margin set-right-margin set-first-indent set-last-indent
     set-interline set-interline-spc set-interpar-spc
     ;; page breaking
@@ -26,11 +25,11 @@
     test-insertion-position?
     toggle-insertion-position toggle-insertion-position-not))
 
-(define (make-with-color s) (make-with "color" s))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modifying style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying paragraph style parameters
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (make-with-color s) (make-with "color" s))
 
 (tm-define (make-line-with var val)
   (:synopsis "Make 'with' with one or more paragraphs as its scope")
