@@ -15,6 +15,8 @@
     <branch|The style-sheet language|../devel/format/stylesheet/stylesheet.en.tm>
 
     <branch|Standard <TeXmacs> styles|styles/styles.en.tm>
+
+    <branch|Compatibility with other formats|convert/man-convert.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

@@ -29,8 +29,6 @@
 
     <branch|Customizing <TeXmacs>|scheme/man-scheme.en.tm>
 
-    <branch|Compatibility with other formats|convert/man-convert.en.tm>
-
     <branch|The <TeXmacs> format|../devel/format/basics/basics.en.tm>
 
     <branch|Standard environment variables|../devel/format/environment/environment.en.tm>
@@ -40,6 +38,8 @@
     <branch|The style-sheet language|../devel/format/stylesheet/stylesheet.en.tm>
 
     <branch|Standard <TeXmacs> styles|styles/styles.en.tm>
+
+    <branch|Compatibility with other formats|convert/man-convert.en.tm>
 
     <extra-branch|Configuring <TeXmacs>|config/man-configuration.en.tm>
 

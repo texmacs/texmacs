@@ -5,80 +5,74 @@
 <\body>
   <tmdoc-title|The typesetting process>
 
-  Interpretation of documents proceeds in several steps:
+  In order to unserstand the <TeXmacs> document format well, it is useful to
+  have a basic understanding about how documents are typeset by the editor.
+  The typesetter mainly rewrites logical <TeXmacs> trees into physical
+  <em|boxes>, which can be displayed on the screen or on paper (notice that
+  boxes actually contain more information than is necessary for their
+  rendering, such as information about how to position the cursor inside the
+  box or how to make selections).
 
-  <\enumerate>
-    <item><strong|Evaluation> expands the <def-index|document tree>,
-    containing markup tags, to the <def-index|object tree>, containing only
-    primitive constructs.
+  The global typesetting process can be subdivided into two major parts
+  (which are currently done at the same stage, but this may change in the
+  future): evaluation of the <TeXmacs> tree using the stylesheet language,
+  and the actual typesetting.
 
-    <item><strong|Typesetting> produce and position the boxes described by
-    primitive constructs.
+  The <hyper-link|typesetting primitives|../regular/regular.en.tm> are
+  designed to be very fast and they are built-in into the editor. For
+  instance, one has typesetting primitives for horizontal concatenations
+  (<markup|concat>), page breaks (<markup|page-break>), mathematical
+  fractions (<markup|frac>), hyperlinks (<markup|hlink>), and so on. The
+  precise rendering of many of the typesetting primitives may be customized
+  through the <hyper-link|built-in environment
+  variables|../environment/environment.en.tm>. For instance, the environment
+  variable <src-var|color> specifies the current color of objects,
+  <src-var|par-left> the current left margin of paragraphs, <abbr|etc.>
 
-    <item><strong|Display> draws the boxes to screen or to
-    PostScript<trademark>.
-  </enumerate>
+  The <hyper-link|stylesheet language|../stylesheet/stylesheet.en.tm> allows
+  the user to write new primitives (macros) on top of the built-in
+  primitives. It contains primitives for definining macros, conditional
+  statements, computations, delayed execution, <abbr|etc.> The stylesheet
+  language also provides a special <markup|extern> tag which offers you the
+  full power of the <value|scheme> extension language in order to write
+  macros.
 
-  We previously noted that a tree label can either be the name of a
-  typesetter primitive or the name of markup tag. <hyper-link|Typesetter
-  primitives|../primitives/primitives.en.tm> are the fundamental building
-  blocks of the typesetting languages. Markup tags can be though of as the
-  functions and procedures of the typesetting language. Tree leaves are
-  character strings.
+  It should be noticed that user-defined macros have two aspects. On the one
+  hand they usually perform simple rewritings. For instance, the macro
 
-  Primitives and markup tags are collectively referred to as
-  <def-index|typesetter operators>, or <def-index|operators> for short. Trees
-  are expressions, tree labels are operators names and subtrees are operands.
-  All expressions have a value and all values are trees. A trivial tree is
-  only made of a string. In this respect, the typesetting language is similar
-  to <value|scheme>: values and expressions are both represented as trees,
-  atomic values are strings.
+  <\tm-fragment>
+    <inactive*|<assign|seq|<macro|var|from|to|<active*|<with|mode|math|<inactive*|<arg|var>><rsub|<inactive*|<arg|from>>>,\<ldots\>,<inactive*|<arg|var>><rsub|<inactive*|<arg|to>>>>>>>>
+  </tm-fragment>
 
-  However, an important difference with <value|scheme> is that most trees
-  cannot be deconstructed <emdash>subtrees cannot be accessed,<emdash>
-  strings and tuples are the most notable exceptions.
+  is a shortcut in order to produce sequences like
+  <with|mode|math|a<rsub|1>,\<ldots\>,a<rsub|n>>. When macros perform simple
+  rewritings like in this example, the children <src-arg|var>, <src-arg|from>
+  and <src-arg|to> of the <markup|seq> tag remain <em|accessible> from within
+  the editor. In other words, you can position the cursor inside them and
+  modify them. User defined macros also have a synthetic or computational
+  aspect. For instance, the dots of a <markup|seq> tag as above cannot be
+  edited by the user. Similarly, the macro
 
-  Most operators are only meaningful either for evaluation or typesetting:
-  <def-index|computational operators> only have a meaning for evaluation and
-  are substituted before typesetting, <def-index|physical operators> only
-  have a meaning for typesetting and are self-evaluating. Operands are
-  evaluated in <em|applicative order>. The typesetting language does not use
-  <em|normal order> lazy evaluation, but it provides mechanisms for partial
-  and delayed evaluation.
+  <\tm-fragment>
+    <inactive*|<assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>>
+  </tm-fragment>
 
-  Operators may not display all their subtrees. Most computational operators
-  and many physical operators consume at least one of their operands. Trees
-  which are not associated to typeset boxes are invisible and inaccessible.
-  Conversely, boxes which are not associated to subtrees of the document tree
-  are uneditable. Trees which are produced during evaluation are called
-  <def-index|synthetic trees> and are uneditable. Understanding which
-  operators produce editable values and how they affect the accessibility of
-  their operands is essential to designing good typesetter macros.
+  serves an exclusively computational purpose. As a general rule, synthetic
+  macros are sometimes easier to write, but the more accessability is
+  preserved, the more natural it becomes for the user to edit the markup.
 
-  What you should remember:
+  It should be noticed that <TeXmacs> also produces some auxiliary data as a
+  byproduct of the typesetting product. For instance, the correct values of
+  references and page numbers, as well as tables of contents, indexes,
+  <abbr|etc.> are determined during the typesetting stage and memorized at a
+  special place. Even though auxiliary data may be determined automatically
+  from the document, it may be expensive to do so (one typically has to
+  retypeset the document). When the auxiliary data are computed by an
+  external plug-in, then it may even be impossible to perform the
+  recomputations on certain systems. For these reasons, auxiliary data are
+  carefully memorized and stored on disk when you save your work.
 
-  <\itemize-dot>
-    <item>Expressions and values are trees, labels are operators, subtrees
-    are operands, and atomic values are strings.
-
-    <item>Expressions and values both are trees, but most trees cannot be
-    deconstructed in the typesetting language.
-
-    <item>Expressions are evaluated in applicative order, when the operator
-    is applied. If are not sure you understand this, it just means that
-    evaluation is done in the usual way.
-
-    <item>Operators may consume trees, produce uneditable trees, and include
-    editable operands in their value.
-  </itemize-dot>
-
-  Now that you understand the basic rules of the language, we will describe
-  its atomic data types and data storage mechanisms. Compound values are
-  described in the chapter about <hyper-link|typesetter
-  primitives|../primitives/primitives.en.tm>, along with the primitives used
-  to create and operate on them.
-
-  <tmdoc-copyright|2004|David Allouche>
+  <tmdoc-copyright|2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

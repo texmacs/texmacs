@@ -1,9 +1,9 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.10>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Reference guide for the standard <TeXmacs> styles>
+  <tmdoc-title|The standard <TeXmacs> styles>
 
   The user may select a major style from the <menu|Document|Style> menu. The
   major style usually reflects the kind of document you want to produce (like
@@ -50,17 +50,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
