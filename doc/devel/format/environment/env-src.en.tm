@@ -5,7 +5,30 @@
 <\body>
   <tmdoc-title|Editing source trees>
 
-  \;
+  <\explain>
+    <var-val|src-style|angular><explain-synopsis|rendering style for source
+    tags>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|src-special|normal><explain-synopsis|how to render special tags>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|src-compact|normal><explain-synopsis|compactication level>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|src-close|compact><explain-synopsis|closing style for long tags>
+  <|explain>
+    Please document.
+  </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
 

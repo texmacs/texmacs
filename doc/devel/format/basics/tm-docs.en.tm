@@ -34,7 +34,7 @@
     This mandatory tag specifies the body of your document.
   </explain>
 
-  <\explain|<explain-macro|initial|table><explain-synopsis|initial
+  <\explain|<label|initial-env><explain-macro|initial|table><explain-synopsis|initial
   environment>>
     Optional specification of the initial environment for the document, with
     information about the page size, margins, <abbr|etc.>. The

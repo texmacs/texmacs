@@ -18,13 +18,13 @@
   </explain>
 
   <\explain>
-    <var-val|math-condensed|><explain-synopsis|condensed display style>
+    <var-val|math-condensed|false><explain-synopsis|condensed display style>
   <|explain>
     Please document.
   </explain>
 
   <\explain>
-    <var-val|math-vpos|><explain-synopsis|position in fractions>
+    <var-val|math-vpos|0><explain-synopsis|position in fractions>
   <|explain>
     Please document.
   </explain>

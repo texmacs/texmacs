@@ -18,13 +18,14 @@
 
     <var-val|math-language|texmath>
 
-    <var-val|prog-language|><explain-synopsis|language>
+    <var-val|prog-language|scheme><explain-synopsis|language>
   <|explain>
     Please document.
   </explain>
 
   <\explain>
-    <var-val|prog-session|><explain-synopsis|language>
+    <var-val|prog-session|default><explain-synopsis|name of programming
+    session>
   <|explain>
     Please document.
   </explain>
