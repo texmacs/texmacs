@@ -1,0 +1,29 @@
+This file contains points for which I did not have time yet during
+the reorganization of TeXmacs, as a function of the category.
+It is mainly meant as a reminder for myself, but any help is appreciated.
+
+Editing style files
+-------------------
+
+  * A facility "Edit as" to convert a selection into any other format and
+    put the result in an "edit-as" tag for manual editing. When pressing
+    return, reconvert back into TeXmacs.
+
+  * Make the presentation of source code more customizable by user macros.
+    Done for syntactic highlighting, but should also be done for special
+    rendering of certain primitives and the rendering of tags.
+
+  * A primitive for marking arguments as being blocks.
+
+  * The way page parameters are specified is a big mess. Write a method
+    "update_page_pars" in edit_env for computing the page parameters
+    from the environment. This routine should be called at the beginning
+    of the typesetting and after each new_page instruction.
+
+  * The markup for specifying titles, authors, addresses, etc.
+    is not very adequate for papers with several authors.
+    Redesign all this and maybe rely on scheme routines via "extern"
+    for the typesetting.
+
+  * Complete the documentation on how to write style files and
+    the TeXmacs primitives.
