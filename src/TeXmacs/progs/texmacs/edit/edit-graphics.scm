@@ -29,6 +29,7 @@
     graphics-remove-point graphics-last-point
     graphics-start-drag graphics-dragging graphics-end-drag
     graphics-choose-point
+    graphics-undo-enabled
     graphics-reset-context))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -291,16 +292,16 @@
 	    (tm-insert (rcons p n) (list 'tuple t))
 	    (tm-go-to (rcons p 1))))))
 
-(define (graphics-remove p)
+(define (graphics-object-root-path p)
   (let* ((q (search-upwards-from p 'with))
-         (path (rcons (if (and (not (null? q))
-                               (== (+ (length q) 1) (length p)))
-                          q p
-                      )
-                      1
+         (path (if (and (not (null? q))
+                        (== (+ (length q) 1) (length p)))
+                   q p
                )))
-        (tm-remove (cDr path) (cAr path))))
-        ;; FIXME : the 2nd parameter of (tm-remove) is a number of nodes
+        path))
+    
+(define (graphics-remove p)
+  (tm-remove (graphics-object-root-path p) 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for calculating with the graphical object
@@ -497,6 +498,7 @@
 (define subsel-no #f)
 (define current-x #f)
 (define current-y #f)
+(define graphics-undo-enabled #t)
 
 (define state-slots
   ''(graphics-action
@@ -508,7 +510,8 @@
      previous-selection
      subsel-no
      current-x
-     current-y))
+     current-y
+     graphics-undo-enabled))
 
 (define-macro (state-len)
   `(length ,state-slots))
@@ -537,6 +540,7 @@
     (state-set! st 'subsel-no subsel-no)
     (state-set! st 'current-x current-x)
     (state-set! st 'current-y current-y)
+    (state-set! st 'graphics-undo-enabled graphics-undo-enabled)
     st))
 
 (define (graphics-state-set st)
@@ -551,7 +555,8 @@
   (set! previous-selection (state-ref st 'previous-selection))
   (set! subsel-no (state-ref st 'subsel-no))
   (set! current-x (state-ref st 'current-x))
-  (set! current-y (state-ref st 'current-y)))
+  (set! current-y (state-ref st 'current-y))
+  (set! graphics-undo-enabled (state-ref st 'graphics-undo-enabled)))
 
 ;; State stack
 (define graphics-states '())
@@ -609,7 +614,8 @@
   (set! previous-selection #f)
   (set! subsel-no #f)
   (set! current-x #f)
-  (set! current-y #f))
+  (set! current-y #f)
+  (set! graphics-undo-enabled #t))
 
 (define (graphics-forget-states)
   (set! graphics-first-state #f)
@@ -704,28 +710,39 @@
     (with p (graphics-active-path)
        (if p (create-graphical-object (graphics-active-object) p 'points #f))))
    ((and (== cmd 'exit) sticky-point)
+    (set! graphics-undo-enabled #t)
     (if graphics-first-state
 	(begin
 	  (if (eq? (state-ref graphics-first-state 'graphics-action)
 		   'start-move)
-	      (undo))))
+	      (with p (tm-where)
+		(unredoable-undo)
+		(tm-go-to p)))))
     (graphics-reset-state)
     (graphics-forget-states))
    ((== cmd 'undo)
-    (if (not sticky-point)
-	(with p (graphics-active-path)
-	  (if p
-	      (create-graphical-object (graphics-active-object) p 'points #f)
-	      (create-graphical-object #f #f #f #f))))
-    (set! sticky-point #f)
-    (set! current-point-no #f)
-    (if graphics-first-state
+    (if (and sticky-point (not graphics-undo-enabled)
+	     (eq? (state-ref graphics-first-state 'graphics-action)
+		  'start-move))
 	(begin
-	  (if (eq? (state-ref graphics-first-state 'graphics-action)
-		   'start-create)
-	      (redo))
-	  (graphics-back-first)))
-    (graphics-forget-states))
+	  (set! graphics-undo-enabled #t)
+	  (unredoable-undo))
+	(begin
+	  (invalidate-graphical-object)
+	  (if (and graphics-undo-enabled (not sticky-point))
+	      (with p (graphics-active-path)
+	        (if p
+		    (create-graphical-object (graphics-active-object) p 'points #f)
+		    (create-graphical-object #f #f #f #f))))
+	  (if (and (not graphics-undo-enabled) sticky-point)
+	      (create-graphical-object #f #f #f #f))
+	  (set! sticky-point #f)
+	  (set! current-point-no #f)
+	  (set! graphics-undo-enabled #t)
+	  (if graphics-first-state
+	      (graphics-back-first))
+	  (graphics-forget-states)
+	  (invalidate-graphical-object))))
    (else (display* "Uncaptured reset-context " cmd "\n"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -765,8 +782,12 @@
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
 	 obj graphical-color graphical-lwidth #f)
+	(if (eq? (state-ref graphics-first-state 'graphics-action)
+		 'start-move)
+	    (remove-undo-mark))
 	(set! sticky-point #f)
 	(set! current-edge-sel? #f)
+        (set! graphics-undo-enabled #t)
 	(graphics-forget-states))
       ;;Start move
       (begin
@@ -776,6 +797,7 @@
 	(set! sticky-point #t)
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
+        (set! graphics-undo-enabled #f)
 	(if edge
 	  (point_sticky-right-button x y p
 	    (cadr (graphical-object #t)) no edge)
@@ -783,7 +805,7 @@
 
 (define (text-at_left-button x y p obj no edge)
   (if sticky-point
-      (display "Text-at left-button not implemented\n")
+      (point_left-button x y p obj 1 edge)
       (begin
 	 (if (event-exists? 'text-at 'left-button 1)
 	     (tm-go-to (car (select-first (s2i x) (s2i y))))))))
@@ -843,6 +865,7 @@
 (define (line_nonsticky-right-button x y mode)
   (with o `(,mode (point ,x ,y) (point ,x ,y))
     (graphics-store-state 'start-create)
+    (set! graphics-undo-enabled #f)
     (create-graphical-object o 'new 'object-and-points #f)
     (set! current-point-no 1)
     (set! sticky-point #t)
