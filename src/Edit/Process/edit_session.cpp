@@ -414,6 +414,7 @@ edit_process_rep::session_remove_previous_output () {
 
 void
 edit_process_rep::session_split () {
+  if (!inside ("input")) return;
   path p= search_upwards_compound ("input");
   skip_backwards (et, p, "textput", 1);
   path q= search_upwards_compound ("session");
