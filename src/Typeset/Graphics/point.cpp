@@ -98,20 +98,20 @@ double
 arg (point p) {
   double n= norm(p);
   p=p/n;
-  if (p[1]<0) return 2*PI-acos(p[0]);
+  if (p[1]<0) return 2*tm_PI-acos(p[0]);
   else return acos(p[0]);
 }
 
 point
 proj (axis ax, point p) {
-  int i, n= min (N(ax[0]), N(ax[1]));
+  int i, n= min (N(ax.p0), N(ax.p1));
   point a (n), b (n);
   for (i=0; i<n ; i++) {
-    a[i]= ax[1][i] - ax[0][i];
-    b[i]= ax[0][i];
+    a[i]= ax.p1[i] - ax.p0[i];
+    b[i]= ax.p0[i];
   }
   if (norm (a) < 1.0e-6)
-    return ax[0];
+    return ax.p0;
   else
     return b + ((a*p - a*b) / (a*a)) * a;
 }
@@ -123,12 +123,79 @@ dist (axis ax, point p) {
 
 double
 seg_dist (axis ax, point p) {
-  point ab= ax[1] - ax[0];
-  point ba= ax[0] - ax[1];
-  point ap= p - ax[0];
-  point bp= p - ax[1];
+  point ab= ax.p1 - ax.p0;
+  point ba= ax.p0 - ax.p1;
+  point ap= p - ax.p0;
+  point bp= p - ax.p1;
   if (ab * ap > 0 && ba * bp > 0)
     return dist (ax, p);
   else
     return min (norm (ap), norm (bp));
+}
+
+bool
+collinear (point p1, point p2) {
+  return fnull (fabs (p1*p2) - norm(p1)*norm(p2), 1.0e-6);
+}
+
+bool
+linearly_dependent (point p1, point p2, point p3) {
+  return fnull (norm (p1-p2), 1e-6) ||
+	 fnull (norm (p2-p3), 1e-6) ||
+	 fnull (norm (p3-p1), 1e-6) ||
+	 collinear (p2-p1, p3-p1);
+}
+
+bool orthogonalize (point &i, point &j, point p1, point p2, point p3) {
+  if (linearly_dependent (p1, p2, p3)) return false;
+  i= (p2-p1) / norm (p2-p1);
+  j= (p3-p1) - ((p3-p1) * i) * i;
+  j= j / norm (j);
+  return true;
+}
+
+axis
+midperp (point p1, point p2, point p3) {
+  axis a;
+  if (linearly_dependent (p1, p2, p3))
+    a.p0= a.p1= point (0);
+  point i, j;
+  orthogonalize (i, j, p1, p2, p3);
+  a.p0= (p1+p2) / 2;
+  a.p1= a.p0 + j;
+  return a;
+}
+
+point
+intersect (axis A, axis B) {
+  point i, j;
+  if (!orthogonalize (i, j, A.p0, A.p1, B.p0)) {
+    if (orthogonalize (i, j, A.p0, A.p1, B.p1))
+      return B.p0;
+    else
+      return point (0);
+  }
+  point a(2), b(2), b2 (2), u(2), v(2), p(2);
+  a[0]= a[1]= 0;
+  u[0]= (A.p1 - A.p0) * i;
+  u[1]= (A.p1 - A.p0) * j;
+  b[0]= (B.p0 - A.p0) * i;
+  b[1]= (B.p0 - A.p0) * j;
+  v[0]= (B.p1 - B.p0) * i;
+  v[1]= (B.p1 - B.p0) * j;
+  b2[0]= (B.p1 - A.p0) * i;
+  b2[1]= (B.p1 - A.p0) * j;
+  if (fnull (norm (B.p1 - (b2[0]*i + b2[1]*j)), 1e-6))
+    return point (0);
+  if (fnull (norm (u), 1e-6) ||
+      fnull (norm (v), 1e-6) ||
+      collinear (u, v))
+    return point (0);
+  else {
+    double t;
+    t= (v[0] * (b[1]-a[1]) + v[1] * (a[0]-b[0]))
+       /
+       (v[0]*u[1] - v[1]*u[0]);
+    return A.p0 + t * (u[0]*i + u[1]*j);
+  }
 }

@@ -126,8 +126,12 @@
       (graphics-set-mode "cline"))
   (   (balloon (icon "tm_spline_mode.xpm") "Add splines")
       (graphics-set-mode "spline"))
-  (   (balloon (icon "tm_cspline_mode.xpm") "Add connected splines")
+  (   (balloon (icon "tm_cspline_mode.xpm") "Add closed splines")
       (graphics-set-mode "cspline"))
+  (   (balloon (icon "tm_arc_mode.xpm") "Add arcs")
+      (graphics-set-mode "arc"))
+  (   (balloon (icon "tm_carc_mode.xpm") "Add closed arcs")
+      (graphics-set-mode "carc"))
   (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
       (graphics-set-mode "text-at"))
   |

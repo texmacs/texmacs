@@ -576,7 +576,10 @@ concater_rep::typeset (tree t, path ip) {
     typeset_line (t, ip, true);
     break;
   case ARC:
-    typeset_arc (t, ip);
+    typeset_arc (t, ip, false);
+    break;
+  case CARC:
+    typeset_arc (t, ip, true);
     break;
   case SPLINE:
     typeset_spline (t, ip, false);

@@ -279,6 +279,7 @@ init_std_drd () {
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
   init (ARC, "arc", repeat (3, 1));
+  init (CARC, "carc", repeat (3, 1));
   init (SPLINE, "spline", repeat (2, 1));
   init (VAR_SPLINE, "spline*", repeat (2, 1));
   init (CSPLINE, "cspline", repeat (2, 1));

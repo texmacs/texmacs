@@ -141,8 +141,8 @@ curve_box_rep::graphical_distance (SI x, SI y) {
   int i;
   for (i=0; i<N(a)-1; i++) {
     axis ax;
-    ax[0]= a[i];
-    ax[1]= a[i+1];
+    ax.p0= a[i];
+    ax.p1= a[i+1];
     gd= min (gd, (SI)seg_dist (ax, p));
   }
   return gd;
