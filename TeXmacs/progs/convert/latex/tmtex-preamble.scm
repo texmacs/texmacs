@@ -78,6 +78,19 @@
       "      \\captionof{#3}{#5}\n"
       "    \\end{center}\n"
       "  \\end{minipage}}"))
+  (define (par-mods)
+    (string-append
+      "\\newenvironment{tmparmod}[3]{%\n"
+      " \\begin{list}{}{%\n"
+      " \\setlength{\\topsep}{0pt}%\n"
+      " \\setlength{\\leftmargin}{#1}%\n"
+      " \\setlength{\\rightmargin}{#2}%\n"
+      " \\setlength{\\parindent}{#3}%\n"
+      " \\setlength{\\listparindent}{\\parindent}%\n"
+      " \\setlength{\\itemindent}{\\parindent}%\n"
+      " \\setlength{\\parsep}{\\parskip}%\n"
+      " }%\n"
+      "\\item[]}{\\end{list}}\n"))
   (define (color)
     (string-append
       "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
@@ -139,6 +152,7 @@
     (tmperson 1 "\\textsc{#1}")
     (tmdummy 0 "$\\mbox{}$")
     (tmscript 1 "\\text{\\scriptsize $#1$}")
+    (tmparmod ,(par-mods))
     (color ,(color))
 
     ;; other extra markup
