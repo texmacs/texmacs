@@ -546,21 +546,6 @@ xml_html_parser::finalize_space (tree t) {
   }
 }
 
-static unsigned int
-as_unsigned_int (string s) {
-  int i=0, n=N(s);
-  unsigned int val=0;
-  if (n==0) return 0;
-  while (i<n) {
-    if (s[i]<'0') break;
-    if (s[i]>'9') break;
-    val *= 10;
-    val += (int) (s[i]-'0');
-    i++;
-  }
-  return val;
-}
-
 string
 xml_html_parser::finalize_entities (string s) {
   string r;
@@ -568,50 +553,28 @@ xml_html_parser::finalize_entities (string s) {
 
   for (i=0; i<n; /* noop */) {
     if (s[i] == '&' && i+1<n) {
-      enum { name, decimal, hexa } kind;
-      string ss;
-      int start= ++i;
-      if (s[i] == '#') {
-	i++;
-	if (i<n && (s[i] == 'x' || s[i] == 'X')) {
-	  i++;
-	  while (i<n && is_hex_digit (s[i])) i++;
-	  kind= hexa; ss= s(start+2, i);
-	  // cout << "hex-ent: " << ss ;
-	}
-	else {
-	  while (i<n && is_digit (s[i])) i++;
-	  kind= decimal; ss= s(start+1, i);
-	  // cout << "dec-ent: " << ss ;
-	}
+      if (s[i+1] == '#') {
+	i += 2;
+	bool okay= false;
+	string rr= convert_char_entity (s, i, okay);
+	if (okay) r << rr;
+	else { r << "&#"; continue; }
       }
       else {
+	int start= ++i;
 	while (i<n && is_name_char (s[i])) i++;
-	kind= name; ss= s(start, i);
+	if (i == start) { r << '&'; continue; }
+	string ss= s(start, i);
 	// cout << "ent-ref:  " << ss << " -- ";
+	if (html_entity->contains (ss)) {
+	  // Use HTML entities even for XML.
+	  // HTML entity references expand to character references
+	  // so they need to be finalized a second time.
+	  r << finalize_entities (html_entity[ss]);
+	}
+	else { r << "&" << ss; continue; }
+	if (i<n && s[i]==';') i++;
       }
-      if (i<n && s[i]==';') i++;
-      if (N(ss) == 0) { r << '&' << s(start, i); continue; }
-      if (kind == hexa) {
-	unsigned int num = 0;
-	for (int j=0; is_hex_digit(ss[j]) && j < N(ss); j++)
-	  num = 0x10 * num + hex_digit_to_int(ss[j]);
-	r << encode_as_utf8 (num);
-	// cout << " --> (" << num << ") " << encode_as_utf8 (num) << '\n' ;
-
-      }
-      else if (kind == decimal) {
-	unsigned int num= as_unsigned_int (ss);
-	r << encode_as_utf8 (num);
-	// cout << " --> (" << num << ") " << encode_as_utf8 (num) << '\n' ;
-      }
-      else if (html_entity->contains (ss)) {
-	// Use HTML entities even for XML.
-	// HTML entity references expand to character references
-	// so they need to be finalized a second time.
-	r << finalize_entities (html_entity [ss]);
-      }
-      else r << "&" << s (start, i);
     }
     else r << s[i++];
   }
