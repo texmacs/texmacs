@@ -53,29 +53,29 @@
      (list n unit))))
 
 (tm-define (tmlength-null? x)
-  (:type (forall T (T -> bool)))
+  (:type (forall T (-> T bool)))
   (:synopsis "Is @x a null tmlength (zero value, unspecified unit)?")
   (null? x))
 
 (tm-define (tmlength? x)
-  (:type (forall T (T -> bool)))
+  (:type (forall T (-> T bool)))
   (:synopsis "Is @x a, possible null, tmlength?")
   (or (tmlength-null? x)
       (and (list? x) (= 2 (length x))
 	   (tmlength-value? (first x)) (tmlength-unit? (second x)))))
 
 (tm-define (tmlength-value tmlen)
-  (:type (tmlength -> number))
+  (:type (-> tmlength number))
   (:synopsis "Get the value part of @tmlen.")
   (if (tmlength-null? tmlen) 0 (first tmlen)))
 
 (tm-define (tmlength-unit tmlen)
-  (:type (tmlength -> symbol))
+  (:type (-> tmlength symbol))
   (:synopsis "Get the unit part of @tmlen.")
   (if (tmlength-null? tmlen) #f (second tmlen)))
 
 (tm-define (tmlength-value+unit tmlen)
-  (:type (tmlength -> tmlength-value tmlength-unit))
+  (:type (-> tmlength (cross tmlength-value tmlength-unit)))
   (:synopsis "Fundamental tmlength deconstructor.")
   (:returns (1 "value part of @tmlen")
 	    (2 "unit part of @tmlen"))
@@ -94,7 +94,7 @@
     (values (list->string head) (list->string tail))))
 
 (tm-define (string->tmlength s)
-  (:type (string -> tmlength))
+  (:type (-> string tmlength))
   (:synopsis "Create a tmlength object from its string representation.")
   (receive
       (value-str unit-str)
@@ -111,7 +111,7 @@
 	    (else (tmlength value unit))))))
 
 (tm-define (tmlength->string tmlen)
-  (:type (tmlength -> string))
+  (:type (-> tmlength string))
   (:synopsis "Produce the string representation of a tmlength object.")
   (if (tmlength-null? tmlen) ""
       (receive (value unit) (tmlength-value+unit tmlen)

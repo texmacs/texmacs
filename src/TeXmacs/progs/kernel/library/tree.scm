@@ -25,7 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-path t)
-  (:type (tree -> path))
+  (:type (-> tree path))
   (:synopsis "Get the path associated to @t or #f.")
   (with ip (tree-ip t)
     (if (== (cAr ip) -5) #f
@@ -36,7 +36,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-assign ref t)
-  (:type (tree tree -> void))
+  (:type (-> tree tree void))
   (:synopsis "Assign @ref with @t.")
   (with p (tree-path ref)
     (if p (tm-assign p t)
@@ -48,7 +48,7 @@
      (set! ,ref xxx-t)))
 
 (tm-define (tree-insert ref pos t)
-  (:type (tree int tree -> void))
+  (:type (-> tree int tree void))
   (:synopsis "Insert the children of @t into @ref at position @pos.")
   (with p (tree-path ref)
     (if p (tm-insert (rcons p pos) t)
@@ -57,7 +57,7 @@
 (define tree-insert! tree-insert)
 
 (tm-define (tree-remove ref pos nr)
-  (:type (tree int int -> void))
+  (:type (-> tree int int void))
   (:synopsis "Remove @nr children from @ref at position @pos.")
   (with p (tree-path ref)
     (if p (tm-remove (rcons p pos) nr)
@@ -66,7 +66,7 @@
 (define tree-remove! tree-remove)
 
 (tm-define (tree-split ref pos at)
-  (:type (tree int int -> void))
+  (:type (-> tree int int void))
   (:synopsis "Split the @pos-th child of @ref at position @at.")
   (with p (tree-path ref)
     (if p (tm-split (rcons* p pos at))
@@ -75,7 +75,7 @@
 (define tree-split! tree-split)
 
 (tm-define (tree-join ref pos)
-  (:type (tree int -> void))
+  (:type (-> tree int void))
   (:synopsis "Split the @pos-th child of @ref with the next child.")
   (with p (tree-path ref)
     (if p (tm-join (rcons p pos))
@@ -84,7 +84,7 @@
 (define tree-join! tree-join)
 
 (tm-define (tree-ins-unary ref lab)
-  (:type (tree symbol -> void))
+  (:type (-> tree symbol void))
   (:synopsis "Transform @ref into the tree @(lab ref).")
   (with p (tree-path ref)
     (if p (tm-ins-unary p lab)
@@ -96,7 +96,7 @@
      (set! ,ref (tm-subtree xxx-p))))
 
 (tm-define (tree-rem-unary ref)
-  (:type (tree symbol -> void))
+  (:type (-> tree symbol void))
   (:synopsis "Set a unary tree @ref to its unique child.")
   (with p (tree-path ref)
     (if p (tm-rem-unary p)

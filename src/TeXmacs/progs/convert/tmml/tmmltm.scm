@@ -153,14 +153,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (parse-tmml s)
-  (:type (string -> stree))
+  (:type (-> string stree))
   (:synopsis "Parse a TeXmacs XML document @s.")
   (with raw-xml (parse-xml s)
     ;(display* "raw= " raw-xml "\n")
     (xmlin raw-xml)))
 
 (tm-define (tmml->texmacs tmml)
-  (:type (stree -> stree))
+  (:type (-> stree stree))
   (:synopsis "Convert an TeXmacs XML stree @s into TeXmacs.")
   (with doc (tmmltm tmml)
     (if (func? doc '!file 1)
