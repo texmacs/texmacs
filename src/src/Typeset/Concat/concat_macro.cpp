@@ -166,7 +166,7 @@ concater_rep::typeset_eval (tree t, path ip) {
 void
 concater_rep::typeset_value (tree t, path ip) {
   // cout << "Value " << t << ", " << ip << "\n";
-  tree r= t[0];
+  tree r= env->exec (t[0]);
   if (is_compound (r)) {
     typeset_error (t, ip);
     return;

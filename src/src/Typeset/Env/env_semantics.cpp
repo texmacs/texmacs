@@ -100,6 +100,11 @@ initialize_default_var_type () {
   var_type (GR_CLIP)          = Env_Clipping;
   var_type (GR_GRID)          = Env_Grid;
   var_type (GR_GRID_ASPECT)   = Env_Grid_Aspect;
+
+  var_type (SRC_STYLE)        = Env_Src_Style;
+  var_type (SRC_SPECIAL)      = Env_Src_Special;
+  var_type (SRC_COMPACT)      = Env_Src_Compact;
+  var_type (SRC_CLOSE)        = Env_Src_Close;
 }
 
 /******************************************************************************

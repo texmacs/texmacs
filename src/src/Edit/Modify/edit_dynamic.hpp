@@ -43,6 +43,8 @@ public:
   void back_in_with (tree t, path p, bool forward);
 
   void make_mod_active (tree_label l);
+  void insert_style_with (path p, string var, string val);
+  void make_style_with (string var, string val);
 
   void make_hybrid ();
   bool activate_latex ();

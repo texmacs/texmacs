@@ -37,6 +37,12 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.3.5", version)) return H;
+
+  new_feature (H, "quasi");
+  rename_feature (H, "hold", "quasiquote");
+  rename_feature (H, "release", "unquote");
+
   if (version_inf ("1.0.3.3", version)) return H;
 
   new_feature (H, "quote-value");

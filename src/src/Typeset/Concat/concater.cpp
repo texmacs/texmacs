@@ -392,13 +392,13 @@ concater_rep::typeset (tree t, path ip) {
     typeset_eval (t, ip);
     break;
   case QUOTE:
-  case DELAY:
     typeset_inactive (t, ip);
     break;
-  case HOLD:
-    typeset_executable (t, ip);
+  case QUASI:
+    typeset_eval (tree (EVAL, tree (QUASIQUOTE, t[0])), ip);
     break;
-  case RELEASE:
+  case QUASIQUOTE:
+  case UNQUOTE:
     typeset_executable (t, ip);
     break;
   case EXTERN:

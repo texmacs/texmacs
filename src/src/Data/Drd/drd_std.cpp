@@ -165,9 +165,9 @@ init_std_drd () {
   init (MARK, "mark", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1));
-  init (DELAY, "delay", fixed (1));
-  init (HOLD, "hold", fixed (1));
-  init (RELEASE, "release", fixed (1));
+  init (QUASI, "quasi", fixed (1));
+  init (QUASIQUOTE, "quasiquote", fixed (1));
+  init (UNQUOTE, "unquote", fixed (1));
   init (EXTERN, "extern", repeat (1, 1)); // func and args
   init (INCLUDE, "include", fixed (1));
   init (USE_PACKAGE, "use-package", repeat (1, 1));
@@ -182,7 +182,7 @@ init_std_drd () {
   init (OVER, "over", fixed (2));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
-  init (MERGE, "merge", fixed (2));
+  init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (3));
   init (NUMBER, "number", fixed (2));
@@ -202,6 +202,10 @@ init_std_drd () {
   init (CASE, "case", repeat (2, 1));
   init (WHILE, "while", fixed (2));
 
+  init (STYLE_WITH, "style-with",
+	var_repeat (2, 1, BIFORM) -> accessible (1));
+  init (VAR_STYLE_WITH, "style-with*",
+	var_repeat (2, 1, BIFORM) -> accessible (1));
   init (STYLE_ONLY, "style-only", fixed (1) -> accessible (0));
   init (VAR_STYLE_ONLY, "style-only*", fixed (1) -> accessible (0));
   init (ACTIVE, "active", fixed (1) -> accessible (0));
@@ -216,6 +220,7 @@ init_std_drd () {
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
+
   init (TUPLE, "tuple", repeat (0, 1));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (COLLECTION, "collection", repeat (1, 1));
@@ -247,6 +252,9 @@ init_std_drd () {
 
   init (FORMAT, "format", repeat (1, 1));
   init (SPLIT, "split", repeat (1, 1));
+  init (DELAY, "delay", fixed (1));
+  init (HOLD, "hold", fixed (1));
+  init (RELEASE, "release", fixed (1));
   init (OLD_MATRIX, "old-matrix", var_repeat (1, 2, BIFORM) -> accessible (0));
   init (OLD_TABLE, "old-table", var_repeat (1, 2, BIFORM) -> accessible (0));
   init (OLD_MOSAIC, "old-mosaic", var_repeat (1, 2, BIFORM) -> accessible (0));

@@ -42,6 +42,7 @@ edit_env_rep::edit_env_rep (display dis2,
   style_init_env ();
   update ();
   complete= false;
+  recover_env= tuple ();
 }
 
 edit_env::edit_env (display dis,
