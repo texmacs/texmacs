@@ -186,12 +186,12 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case VAR_VSPACE:
     flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
+    t= tree (VAR_VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
   case VSPACE:
     flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
+    t= tree (VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
   case SPACE:

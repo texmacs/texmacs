@@ -76,22 +76,11 @@ lazy_paragraph_rep::line_print (line_item item) {
   if (item->type == CONTROL_ITEM) {
     if (is_func (item->t, HTAB))
       tabs << tab (N(items), item->t);
-    else if (is_func (item->t, VAR_VSPACE) ||
-	is_func (item->t, VSPACE))
-    {
-      SI vmin, vdef, vmax;
-      if (N(item->t)==1) {
-	space vspc= env->as_vspace (as_string (item->t[0]));
-	vmin= vspc->min; vdef= vspc->def; vmax= vspc->max;
-      }
-      else {
-	vmin= env->as_length (item->t[0]);
-	vdef= env->as_length (item->t[1]);
-	vmax= env->as_length (item->t[2]);
-      }
+    else if (is_func (item->t, VAR_VSPACE) || is_func (item->t, VSPACE)) {
+      space vspc= env->as_vspace (item->t[0]);
       if (is_func (item->t, VAR_VSPACE))
-	sss->vspace_before (space (vmin, vdef, vmax));
-      else sss->vspace_after (space (vmin, vdef, vmax));
+	sss->vspace_before (vspc);
+      else sss->vspace_after (vspc);
     }
     else if (L(item->t) == DATOMS)
       decs << tuple (as_string (N(items)), item->t);
