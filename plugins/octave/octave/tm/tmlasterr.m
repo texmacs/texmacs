@@ -1,3 +1,3 @@
 function tmlasterr ()
-     eval("disp(lasterr)","disp('error')");
+     eval("disp(stderr,lasterr)","disp('error')");
 endfunction
