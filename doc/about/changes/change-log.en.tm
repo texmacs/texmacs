@@ -5,9 +5,14 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.6>
+  <section|Changes from version 1.0.3 to 1.0.3.7>
 
   <\itemize>
+    <item>Danish language support (1.0.3.7).
+
+    <item>Part of the documentation has been translated into Polish
+    (1.0.3.7).
+
     <item>Added a lot of documentation on how to write style files (1.0.3.6).
 
     <item>Modernization of the documentation on the <TeXmacs> primitives and
