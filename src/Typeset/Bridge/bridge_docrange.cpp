@@ -5,7 +5,7 @@
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This file contains a VERY HACKY way to accelerate the editing of
-* document nodes with many (> 64) children. It should be noticed that
+* document nodes with many (> 32) children. It should be noticed that
 * the notification call-back methods do not behave as usual: the st tree
 * remains the st tree of the entire document tree and brs stands for
 * a reference to the corresponding bridges. The bridge_docrange structure
@@ -20,7 +20,7 @@
 
 #include "bridge.hpp"
 
-#define ACC_THRESHOLD 64
+#define ACC_THRESHOLD 32
 
 /******************************************************************************
 * The docrange bridge structure
