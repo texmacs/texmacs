@@ -235,6 +235,20 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
       assign (path_up (p, 2), "");
       correct (path_up (p, 3));
     }
+    // FIXME: temporary hack for doc-data and doc-author-data
+    else if (is_compound (st, "doc-data") ||
+	     is_compound (st, "doc-author-data")) {
+      if (N(st)==1) {
+	assign (path_up (p, 2), "");
+	correct (path_up (p, 3));
+      }
+      else {
+	int i= last_item (path_up (p)) + (forward? 0: -1);
+	remove (path_up (p), 1);
+	if (i<0) go_to_start (path_up (p, 2));
+	else go_to_border (path_up (p, 2) * i, forward);
+      }
+    }
     else correct (path_up (p, 2));
     return;
   }
