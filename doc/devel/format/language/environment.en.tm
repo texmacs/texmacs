@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
@@ -41,8 +41,8 @@
     \ \ (concat (assign "itemnr" "3") (item) "numbered list")))
   </scheme-fragment>
 
-  The typesetting language use <def-index|dynamic scoping> of variables. That
-  means that macros <emdash>the procedures defining non-primitive
+  The typesetting language uses <def-index|dynamic scoping> of variables.
+  That means that macros <emdash>the procedures defining non-primitive
   markup<emdash> can access and modify variables in their calling context. In
   the previous example, the <verbatim|enumerate> macro initializes
   <verbatim|itemnr> to 0 and the <verbatim|item> macro increments it by one
@@ -54,11 +54,16 @@
   the first paragraph.
 
   <\description>
-    <item*|Default initial values>are set by the document style and packages.
+    <item*|<def-index|Default initial values>>are set by the document style
+    and packages. The <def-index|default initial environment> is the
+    collection of all default initial values defined by the typesetter, the
+    document style and the document packages.
 
-    <item*|Document initial values>are stored out-of-band <emdash>like the
-    document style, they do not show in the editor window<emdash> using
-    <value|scheme> functions like <verbatim|init-env>.
+    <item*|<def-index|Document initial values>>are stored out-of-band
+    <emdash>like the document style, they do not show in the editor
+    window<emdash> using <value|scheme> functions like <verbatim|init-env>.
+    The <def-index|document initial environment> is the default initial
+    environment modified by the document initial values.
   </description>
 
   Some variables, like header and footer variables, must be set inside the
@@ -77,41 +82,15 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-5|<tuple|4.|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|4.|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|environment>|<pageref|idx-1>>
-
-      <tuple|<tuple|context>|<pageref|idx-2>>
-
-      <tuple|<tuple|typesetter variables>|<pageref|idx-3>>
-
-      <tuple|<tuple|dynamic scoping>|<pageref|idx-4>>
-
-      <tuple|<tuple|initial environment>|<pageref|idx-5>>
-    </associate>
-  </collection>
-</auxiliary>
