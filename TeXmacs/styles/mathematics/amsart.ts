@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-amsart|env-us|number-article|section-amsart>
+  <use-package|std|env|header-amsart|section-amsart>
 
   \;
 </body>

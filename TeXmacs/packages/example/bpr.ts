@@ -296,12 +296,10 @@
 
   \;
 
-  <assign|the-algorithm|<macro|<the-prefix><value|algorithm-nr>>>
+  <add-to-counter-group|algorithm|std-env>
 
-  <assign|algorithm|<macro|body|<surround|<assign|algorithm-nr|<plus|<value|algorithm-nr>|1>><assign|the-label|<the-algorithm>>||<remark*|<localize|Algorithm>
+  <assign|algorithm|<macro|body|<surround|<next-algorithm>||<remark*|<localize|Algorithm>
   <the-algorithm>|<arg|body>>>>>
-
-  <assign|resetstdenv|<merge|<value|resetstdenv>|<quasiquote|<macro|<assign|algorithm-nr|0>>>>>
 
   \;
 </body>

@@ -31,30 +31,30 @@
     </src-comment>
   </active*>
 
-  <assign|chapter*|<macro|name|<style-with|src-compact|none|<vspace*|3fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|1fn><no-page-break>>>>
-
-  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|1.5fn><no-page-break><no-indent*>>>>
-
-  <assign|section|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<section-nr>>><assign|section-nr|<plus|<value|section-nr>|1>><resetsection><assign|the-label|<the-section>><header-primary|<arg|name>|<the-section>|<localize|Section>><toc-main-2|<the-label><space|2spc><arg|name>><section*|<the-section><section-sep><arg|name>>>>>
-
-  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<number|<appendix-nr>|Alpha>>><assign|appendix-nr|<plus|<value|appendix-nr>|1>><resetsection><assign|the-label|<the-section>><header-primary|<arg|name>|<the-section>|<localize|Appendix>><toc-main-2|<localize|Appendix>
-  <the-section>.<space|2spc><arg|name>><section*|<localize|Appendix>
-  <the-section>.<space|2spc><arg|name>>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<vspace*|3fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|1fn><no-page-break>>>>
 
   <\active*>
     <\src-comment>
-      Subsections, subsubsections, paragraphs and subparagraphs.
+      Sections, subsections, subsubsections.
     </src-comment>
   </active*>
 
-  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.75fn><no-page-break><no-indent*>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|1.5fn><no-page-break><no-indent*>>>>
 
-  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.75fn><no-page-break><no-indent*>>>>
 
-  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+
+  <\active*>
+    <\src-comment>
+      Paragraphs and subparagraphs.
+    </src-comment>
+  </active*>
+
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
   >>>>
 
-  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
   >>>>
 
   \;

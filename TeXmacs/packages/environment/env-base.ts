@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|env-manage|1.0>
+    <src-package|env-base|1.0>
 
     <\src-purpose>
       Managing groups of environments.
@@ -48,8 +48,6 @@
   <add-to-counter-group|footnote|std-env>
 
   <assign|resetstdenv|<macro|<reset-std-env>>>
-
-  <assign|display-std-env|<macro|nr|<the-prefix><arg|nr>>>
 
   <\active*>
     <\src-comment>

@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-generic|env-us|number-trivial|section-generic>
+  <use-package|std|env|header-generic|section-generic>
 
   \;
 

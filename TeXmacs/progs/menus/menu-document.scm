@@ -120,6 +120,21 @@
 	  ("None" (init-env "info-flag" "none"))
 	  ("Short" (init-env "info-flag" "short"))
 	  ("Detailed" (init-env "info-flag" "detailed")))
+      (-> "Page layout"
+	  ("Default" (init-default "page-reduce-left"
+				   "page-reduce-right"
+				   "page-reduce-top"
+				   "page-reduce-bot"
+				   "page-show-hf"))
+	  ---
+	  ("Margins as on paper" (init-as-on-paper))
+	  ("Reduce margins" ...
+	   (interactive
+	    '("Reduce left margin by:"
+	      "Reduce right margin by:"
+	      "Reduce top margin by:"
+	      "Reduce bottom margin by:") 'init-screen-reduction))
+	  ("Show header and footer" (toggle-visible-header-and-footer)))
       ---
       (group "Source tags")
       (-> "Style"
@@ -411,21 +426,6 @@
 	      "Top margin:" "Bottom margin:") 'init-page-margins))
 	  ("Set text width" ...
 	   (interactive '("Text width:") 'init-text-width)))
-      (-> "Screen layout"
-	  ("Default" (init-default "page-reduce-left"
-				   "page-reduce-right"
-				   "page-reduce-top"
-				   "page-reduce-bot"
-				   "page-show-hf"))
-	  ---
-	  ("Margins as on paper" (init-as-on-paper))
-	  ("Reduce margins" ...
-	   (interactive
-	    '("Reduce left margin by:"
-	      "Reduce right margin by:"
-	      "Reduce top margin by:"
-	      "Reduce bottom margin by:") 'init-screen-reduction))
-	  ("Show header and footer" (toggle-visible-header-and-footer)))
       ---
       (group "Breaking")
       (-> "Algorithm"

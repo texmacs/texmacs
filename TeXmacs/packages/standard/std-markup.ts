@@ -1,6 +1,6 @@
 <TeXmacs|1.0.3.4>
 
-<style|<tuple|source|common-base>>
+<style|<tuple|source|std>>
 
 <\body>
   <active*|<\src-title>

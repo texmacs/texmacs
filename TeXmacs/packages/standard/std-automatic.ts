@@ -89,10 +89,10 @@
   of contents>|dark green|what><auto-label><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
 
   <assign|toc-small-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.15fn>>>>>>
 
   <assign|toc-small-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
+  of contents>|dark green|what><auto-label><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.15fn>>>>>>
 
   <\active*>
     <\src-comment>
