@@ -59,7 +59,7 @@
 
     <item>Encrypt your password by typing the following line in a shell:
 
-    <verbatim| \ \ \ perl -e 'print crypt ("<em|password>","SAlt"), "\n"'>
+    <verbatim| \ \ \ perl -e 'print crypt ("<em|password>","SAlt"), "\\n"'>
 
     <item>If <verbatim|<em|key>> is the encrypted password returned at step
     2, then <hyper-link|send us an email|../contact/contact.en.tm> with the
