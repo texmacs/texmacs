@@ -112,7 +112,14 @@
 	      ("Yawerty" "yawerty")
 	      ("Koi8-r" "koi8-r")
 	      ("Cp1251" "cp1251"))
-	---
+	(enum ("Automatic quotes" "automatic quotes")
+	      ("Default" "default")
+	      ("None" "none")
+	      ("Dutch" "dutch")
+	      ("English" "english")
+	      ("French" "french")
+	      ("German" "german")
+	      ("Swiss" "swiss"))
 	(toggle ("Automatically close brackets"
 		 "automatically close brackets")))
     (-> "Printer" . ,page-setup-tree)

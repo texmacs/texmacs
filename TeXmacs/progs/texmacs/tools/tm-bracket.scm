@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : tm-brackets.scm
-;; DESCRIPTION : auto-close brackets
+;; DESCRIPTION : quotes and auto-close brackets
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -14,19 +14,70 @@
 
 (texmacs-module (texmacs tools tm-bracket)
   (:export
+    insert-quote
     make-bracket-open make-separator make-bracket-close make-big-operator))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User preferences for bracket behaviour
+;; User preferences for quoting and bracket behaviour
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define quoting-style "default")
 (define auto-close-brackets? #f)
+
+(define (notify-quoting-style var val)
+  (set! quoting-style val))
 
 (define (notify-auto-close-brackets var val)
   (set! auto-close-brackets? (== val "on")))
 
 (define-preferences
+  ("automatic quotes" "default" notify-quoting-style)
   ("automatically close brackets" "off" notify-auto-close-brackets))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Quotes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (close-quotes?)
+  (let* ((p (tm-where))
+	 (t (tree->object (subtree (the-buffer) (cDr p)))))
+    (if (string? t)
+	(not (or (== t "") (string-ends? t " ")))
+	(> (cAr p) 0))))
+
+(define (open-quotes lan)
+  (cond ((== lan "none") (insert-object "\""))
+	((== lan "french") (insert-object " "))
+	((== lan "german") (insert-object ""))
+	((== lan "dutch") (insert-object ""))
+	((== lan "swiss") (insert-object ""))
+	(else (insert-object "``"))))
+
+(define (close-quotes lan)
+  (cond ((== lan "none") (insert-object "\""))
+	((== lan "french") (insert-object " "))
+	((== lan "german") (insert-object "``"))
+	((== lan "dutch") (insert-object "''"))
+	((== lan "swiss") (insert-object ""))
+	(else (insert-object "''"))))
+
+(define (insert-quote-both lan)
+  (cond ((== lan "none") (insert-object "\""))
+	((== lan "french") (insert-object-go-to "  " '(2)))
+	((== lan "german") (insert-object-go-to "``" '(1)))
+	((== lan "dutch") (insert-object-go-to "''" '(1)))
+	((== lan "swiss") (insert-object-go-to "" '(1)))
+	(else (insert-object-go-to "``''" '(2)))))
+
+(define (insert-quote-sub lan)
+  (cond (auto-close-brackets? (insert-quote-both lan))
+	((close-quotes?) (close-quotes lan))
+	(else (open-quotes lan))))
+
+(define (insert-quote)
+  (if (== quoting-style "default")
+      (insert-quote-sub (get-env "language"))
+      (insert-quote-sub quoting-style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket routines

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-text)
-  (:use (texmacs edit edit-text)))
+  (:use (texmacs edit edit-text) (texmacs tools tm-bracket)))
 
 (kbd-map in-text?
   ("text" "" "Insert structural markup")
@@ -61,8 +61,13 @@
   ("font p" (make-with "font shape" "small-caps"))
   ("font u" (make 'underline))
 
+  ("\"" (insert-quote))
   ("<" "<less>")
   (">" "<gtr>")
+  ("< var" "")
+  ("> var" "")
+  ("< <" "")
+  ("> >" "")
   (", ," "")
   ("sz" "ÿ")
   ("- - -" (make 'emdash))
@@ -270,33 +275,15 @@
   ("cmd N" (make-item))
   ("cmd S" (make-session "scheme")))
 
-(kbd-map in-french?
-  ("<" "<less>")
-  (">" "<gtr>")
-  ("< var" "")
-  ("> var" "")
-  ("< <" "")
-  ("> >" ""))
-
 (kbd-map in-german?
   ("ß" "ÿ")
-  ("ÿ" "¸")
-  ("<" "<less>")
-  (">" "<gtr>")
-  ("< var" "")
-  ("> var" "")
-  ("< <" "")
-  ("> >" ""))
+  ("ÿ" "¸"))
 
 (kbd-map in-hungarian?
   ("text:symbol O" "Ž")
   ("text:symbol U" "–")
   ("text:symbol o" "®")
-  ("text:symbol u" "¶")
-  ("<" "<less>")
-  (">" "<gtr>")
-  ("< <" "")
-  ("> >" ""))
+  ("text:symbol u" "¶"))
 
 (kbd-map in-spanish?
   ("¡" "½")
