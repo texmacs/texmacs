@@ -225,17 +225,17 @@ RDISTR:
 	$(RM) plugins/*/core
 	$(RM) plugins/*/*/core
 	$(RM) $(tmdir)/lib/*.a
-	$(RM) $(tmdir)/fonts/error/*
+	$(RM) $(tmdir)/fonts/error/* 2>/dev/null || :
 	$(RM) -r autom*.cache
 
 DISTR: RDISTR
 	cd src; $(MAKE) -f makefile DISTR
 
 RCLEAN: RDISTR
-	$(RM) $(tmdir)/examples/plugins/bin/*
+	$(RM) $(tmdir)/examples/plugins/bin/* 2>/dev/null || :
 	$(RM) $(tmdir)/plugins
-	$(RM) $(tmdir)/lib/*
-	$(RM) $(tmdir)/bin/*
+	$(RM) $(tmdir)/lib/* 2>/dev/null || :
+	$(RM) $(tmdir)/bin/* 2>/dev/null || :
 	$(RM) -r $(tmdir)/misc/images/.xvpics
 	$(RM) -r $(tmdir)/progs/ice-9
 	$(RM) -r X11
@@ -246,7 +246,7 @@ SCLEAN:
 CLEAN: SCLEAN RCLEAN CLEAN_PLUGINS
 
 DISTCLEAN: CLEAN
-	$(RM) src/Objects/*
+	$(RM) src/Objects/* 2>/dev/null || :
 	$(RM) misc/doxygen/Doxyfile
 	$(RM) misc/man/texmacs.1
 	$(RM) misc/scripts/fig2ps
