@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -24,6 +24,12 @@
 
   For each sectional tag <markup|<em|x>>, the following tags are provided for
   customization:
+
+  <\explain|<explain-macro|<em|x>-text>>
+    A macro which displays the (localized) name of the sectional environment.
+    For instance, <inactive*|<with|language|french|<appendix-text>>> produces
+    ``<with|language|french|<appendix-text>>''.
+  </explain>
 
   <\explain|<explain-macro|<em|x>-title|title>>
     A macro for displaying the unnumbered section title.
@@ -62,7 +68,12 @@
   Finally, the <tmdtd|section-base> <abbr|d.t.d.> provides rendering macros
   <markup|render-table-of-contents>, <markup|render-bibliography>,
   <markup|render-index> and <markup|render-glossary>, each of which takes two
-  arguments: the name of the section and its body.
+  arguments: the name of the section and its body. It also provides the
+  macros <markup|prologue-text>, <markup|epilogue-text>,
+  <markup|bibliography-text>, <markup|table-of-contents-text>,
+  <markup|index-text>, <markup|glossary-text>, <markup|list-of-figures-text>
+  and <markup|list-of-tables-text> for customizing the names of special
+  sections.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -73,21 +84,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>

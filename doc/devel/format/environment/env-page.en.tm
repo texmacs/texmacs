@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -192,14 +192,22 @@
   number is odd or even.
 
   <\explain>
-    <var-val|page-width-margin|false><explain-synopsis|compute margins from
-    paragraph width?>
+    <var-val|page-width-margin|false>
+
+    <var-val|page-height-margin|false><explain-synopsis|compute margins from
+    main text dimensions?>
   <|explain>
-    When set to <verbatim|false>, the paragraph width <src-var|par-width> is
-    determined automatically from the page size and the left and right
-    margins. When set to <verbatim|true>, the left and right margins are
-    determined as a function of the page size, the paragraph width,
-    <src-var|page-odd-shift> and <src-var|page-even-shift>.
+    When <src-var|page-width-margin> is set to <verbatim|false>, then the
+    paragraph width <src-var|par-width> is determined automatically from the
+    page size and the left and right margins. When set to <verbatim|true>,
+    the left and right margins are determined as a function of the page size,
+    the paragraph width, <src-var|page-odd-shift> and
+    <src-var|page-even-shift>. For compatability with <TeX>/<LaTeX>, it is
+    also possible to set <src-var|page-width-margin> to <verbatim|tex>, in
+    which case the horizontal margins are determined from <src-var|page-odd>,
+    <src-var|page-even> and <src-var|par-width>. The
+    <src-var|page-height-margin> variable plays a similar role for the
+    vertical margins.
   </explain>
 
   <\explain>
