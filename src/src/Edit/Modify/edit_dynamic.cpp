@@ -161,15 +161,6 @@ edit_dynamic_rep::activate () {
 	  correct (path_up (p));
 	  return;
 	}
-#ifndef UPGRADE_APPLY
-	else if (is_func (f, FUNCTION)) {
-	  int n= N(f);
-	  tree r (APPLY, n);
-	  r[0]= copy (name);
-	  if ((n>1) && (N(st)==2)) r[1]= copy (st[1]);
-	  st= r;
-	}
-#endif
 	else if (f == UNINIT) {
 	  set_message ("Error: unknown command", "activate hybrid command");
 	  return;
@@ -276,16 +267,6 @@ edit_dynamic_rep::insert_argument (bool forward) {
 	activate_macro (p, t[0]->label, f);
 	if (N(t) == 2) insert_tree (t[1]);
       }
-#ifndef UPGRADE_APPLY
-      else if (is_func (f, FUNCTION)) {
-	p= path_up (p);
-	tree r (APPLY, n);
-	r[0]= copy (t[0]);
-	if ((n>1) && (N(t)==2)) r[1]= copy (t[1]);
-	assign (p, r);
-	go_to (p * path (1, 0));
-      }
-#endif
     }
     return;
   }
@@ -434,11 +415,7 @@ edit_dynamic_rep::temp_proof_fix () {
 
 void
 edit_dynamic_rep::make_apply (string s) {
-#ifdef UPGRADE_APPLY
   tree t (COMPOUND, s);
-#else
-  tree t (APPLY, s);
-#endif
   insert_tree (t);
 }
 

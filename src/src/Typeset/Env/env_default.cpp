@@ -19,11 +19,7 @@ initialize_default_env () {
   if (N(default_env) != 0) return;
   hashmap<string,tree>& env= default_env;
 
-#ifdef UPGRADE_APPLY
   tree the_page (MACRO, compound ("page number"));
-#else
-  tree the_page (FUNCTION, tree (APPLY, "page number"));
-#endif
   tree identity_m (MACRO, "x", tree (ARGUMENT, "x"));
   tree tabular_m (MACRO, "x", tree (TABLE_FORMAT, tree (ARGUMENT, "x")));
 
