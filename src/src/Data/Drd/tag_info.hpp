@@ -40,6 +40,36 @@
 #define ACCESSIBLE_EXCEPT_BORDER (ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
 #define ONLY_LAST_ACCESSIBLE (LAST_ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
 
+#define CHILD_UNIFORM       0
+#define CHILD_LEFT_SPECIAL  1
+#define CHILD_RIGHT_SPECIAL 2
+#define CHILD_RIGHT_OPTIONS 3
+#define CHILD_LEFT_REPEAT   4
+#define CHILD_RIGHT_REPEAT  5
+
+struct parent_info {
+  unsigned child_mode       : 3; // child layout
+  unsigned arity_min        : 6; // minimal number of arguments
+  unsigned arity_extra      : 4; // extra arguments
+  unsigned no_border        : 1; // true => inaccessible border
+  unsigned block            : 1; // is a block structure
+  unsigned dynamic          : 1; // admits inactive variant
+
+  unsigned freeze_child     : 1; // true => disable heuristic determination
+  unsigned freeze_arity     : 1;
+  unsigned freeze_no_border : 1;
+  unsigned freeze_block     : 1;
+  unsigned freeze_dynamic   : 1;
+};
+
+struct child_info {
+  unsigned accessible  : 1;
+  unsigned block       : 1;
+
+  unsigned mask_access : 1;
+  unsigned mask_block  : 1;
+};
+
 class tag_info_rep: concrete_struct {
 public:
   int    arity; // arity of the tag (-1 if several arities are possible)
