@@ -121,6 +121,18 @@ arg_type (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);
   switch (L(t)) {
+  case HSPACE:
+  case VAR_VSPACE:
+  case VSPACE:
+  case SPACE:
+    return "length";
+  case HTAB:
+    if (i == 0) return "length";
+    else return "";
+  case MOVE:
+  case RESIZE:
+    if (i > 0) return "length";
+    else return "";
   case ASSIGN:
   case DRD_PROPS:
   case VALUE:
@@ -157,6 +169,7 @@ arg_type (tree t, int i) {
 	(t[0] != "screen") && (t[0] != "printer"))
       return "tt";
     else return "";
+  case HLINK:
   case ACTION:
     if (i==1) return "tt";
     else return "";
@@ -177,6 +190,7 @@ highlight (tree t, tree orig, string kind) {
   else if (kind == "arg")     return compound ("src-arg", t);
   else if (kind == "tt")      return compound ("src-tt", t);
   else if (kind == "integer") return compound ("src-integer", t);
+  else if (kind == "length")  return compound ("src-length", t);
   else if (kind == "error")   return compound ("src-error", t);
   return t;
 }

@@ -58,8 +58,8 @@
   </active*>
 
   <assign|explain|<\macro|what|body>
-    <\with|par-par-sep|0fn>
-      <vspace*|0.5fn><no-indent><arg|what>
+    <\with|par-first|0fn|par-par-sep|0fn>
+      <surround|<vspace*|0.5fn>|<no-page-break>|<arg|what>>
     </with>
 
     <surround||<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>
@@ -70,6 +70,11 @@
   <assign|explain-macro|<xmacro|args|<map-args|explain-macro-sub|inline-tag|args>>>
 
   <drd-props|explain-macro|accessible|all>
+
+  <assign|explain-synopsis|<macro|x|<htab|5mm><with|color|dark
+  grey|(<arg|x>)><vspace|0.25fn>>>
+
+  <assign|src-value|<macro|x|<with|font-shape|right|color|black|<arg|x>>>>
 
   <\active*>
     <\src-comment>

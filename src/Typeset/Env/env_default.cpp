@@ -227,6 +227,8 @@ initialize_default_env () {
 			    FONT_FAMILY, "tt", tree (ARG, "x")));
   env ("src-integer")=
     tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
+  env ("src-length")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
   env ("src-error")=
     tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));
 
