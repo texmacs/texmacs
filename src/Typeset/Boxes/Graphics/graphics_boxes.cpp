@@ -12,6 +12,7 @@
 
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
+#include <math.h>
 
 /******************************************************************************
 * Graphics boxes
