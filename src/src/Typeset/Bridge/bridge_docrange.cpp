@@ -155,8 +155,9 @@ bridge_docrange_rep::notify_insert (path p, tree u) {
   if (divide) {
     int i, n= N(acc);
     for (i=0; i<n; i++)
-      if (p->item <= mid[i+1])
+      if (p->item < mid[i+1])
 	break;
+    if (i==n) i--;
     for (; i<n; i++) {
       acc[i]->notify_insert (p, u);
       mid[i+1] += N(u);
