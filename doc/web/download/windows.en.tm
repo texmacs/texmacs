@@ -64,14 +64,12 @@
   <section|Helping us><label|help>
 
   The first part of the <name|Windows> port has been made by <name|Dan
-  Martens> as a part of a project for his studies (giving rise to an
-  <with|mode|math|\<alpha\>>-version). The second part has been financed by
-  <hlink|<name|Springer Verlag>|http://www.springer.de/> and the <hlink|Omega
-  group|http://www.ags.uni-sb.de/~omega/> at Saarbrücken. Dan is willing to
-  make further improvements to the Windows when necessary. By
+  Martens> as a part of a project for his studies. The second part has been
+  financed by <hlink|<name|Springer Verlag>|http://www.springer.de/> and the
+  <hlink|Omega group|http://www.ags.uni-sb.de/~omega/> at Saarbrücken. Dan is
+  willing to make further improvements to the Windows port modulo payment. By
   <hyper-link|donating|../contribute/donations.en.tm> to the <TeXmacs>
-  project, you may make it possible to finance Dan Martens for further
-  improvements and future developments. For more precise requests and
+  project, you may make this possible. For more precise requests and
   information, please <hyper-link|contact us|../contact/contact.en.tm>. If
   you are a developer, then you may also want to dive into the source code
   and improve it.
