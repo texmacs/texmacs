@@ -466,6 +466,10 @@ x_drawable_rep::check_event (int type) {
     event_status= XCheckMaskEvent (dpy, KeyPressMask|ButtonPressMask, &ev);
     if (event_status) XPutBackEvent (dpy, &ev);
     break;
+  case MOTION_EVENT:
+    event_status= XCheckMaskEvent (dpy, PointerMotionMask, &ev);
+    if (event_status) XPutBackEvent (dpy, &ev);
+    break;
   case DRAG_EVENT:
     event_status= XCheckMaskEvent (dpy, ButtonMotionMask, &ev);
     if (event_status) XPutBackEvent (dpy, &ev);

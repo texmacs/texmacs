@@ -317,8 +317,8 @@ edit_interface_rep::draw_env (ps_device dev) {
 
 void
 edit_interface_rep::draw_cursor (ps_device dev) {
-  if (got_focus || full_screen) {
-    draw_env (dev);
+  if (got_focus || full_screen) draw_env (dev);
+  if ((got_focus || full_screen) && (!inside_graphics ())) {
     cursor cu= copy (the_cursor());
     cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
     SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;

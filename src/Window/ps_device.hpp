@@ -25,8 +25,9 @@ typedef int color;
 #define ANY_EVENT      0
 #define INPUT_EVENT    1
 #define DRAG_EVENT     2
-#define MENU_EVENT     3
-#define EVENT_STATUS   4
+#define MOTION_EVENT   3
+#define MENU_EVENT     4
+#define EVENT_STATUS   5
 
 #define PS_DEVICE_SCREEN   0
 #define PS_DEVICE_PRINTER  1

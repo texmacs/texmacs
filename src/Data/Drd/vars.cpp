@@ -182,6 +182,7 @@ string GR_LINE_CAPS ("line caps");
 string GR_FILL_MODE ("fill mode");
 string GR_FILL_COLOR ("fill color");
 string GR_FILL_STYLE ("fill style");
+string GR_MODE ("graphical mode");
 
 string IDENTITY ("identity");
 string TABULAR ("tabular");
