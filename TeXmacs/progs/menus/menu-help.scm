@@ -178,6 +178,8 @@
 	     (load-help-article "devel/interface/interface-commands"))
 	    ("Background evaluations"
 	     (load-help-article "devel/interface/interface-background"))
+	    ("Mutator tags"
+	     (load-help-article "devel/interface/interface-mutator"))
 	    ("Mathematical and customized input"
 	     (load-help-article "devel/interface/interface-input"))
 	    ("Tab-completion"
