@@ -150,7 +150,11 @@ scm_to_string (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2str (s, &len_r);
   string r (_r, len_r);
+#ifdef OS_WIN32
+  scm_must_free(_r);
+#else
   free (_r);
+#endif
   return r;
 }
 
@@ -174,7 +178,11 @@ scm_to_symbol (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2symbol (s, &len_r);
   string r (_r, len_r);
+#ifdef OS_WIN32
+  scm_must_free(_r);
+#else
   free (_r);
+#endif
   return r;
 }
 

@@ -20,6 +20,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#ifdef OS_WIN32
+#include <sys/misc.h>
+#endif
 #ifndef __APPLE__
 #include <malloc.h>
 #endif
@@ -213,36 +216,22 @@ pipe_link_rep::stop () {
 void
 listen_to_pipes () {
   while (true) {
-#ifdef OS_WIN32
-    fd_set_ rfds;
-    FD_ZERO_ (&rfds);
-#else
     fd_set rfds;
     FD_ZERO (&rfds);
-#endif
     int max_fd= 0;
     iterator<pointer> it= iterate (pipe_link_set);
     while (it->busy()) {
       pipe_link_rep* con= (pipe_link_rep*) it->next();
       if (con->alive) {
-#ifdef OS_WIN32
-	FD_SET_ (con->out, &rfds);
-	FD_SET_ (con->err, &rfds);
-#else
 	FD_SET (con->out, &rfds);
 	FD_SET (con->err, &rfds);
-#endif
 	if (con->out >= max_fd) max_fd= con->out+1;
 	if (con->err >= max_fd) max_fd= con->err+1;
       }
     }
     if (max_fd == 0) break;
 
-#ifdef OS_WIN32
-    struct timeval_ tv;
-#else
     struct timeval tv;
-#endif
     tv.tv_sec  = 0;
     tv.tv_usec = 0;
     int nr= select (max_fd, &rfds, NULL, NULL, &tv);
@@ -251,13 +240,8 @@ listen_to_pipes () {
     it= iterate (pipe_link_set);
     while (it->busy()) {
       pipe_link_rep* con= (pipe_link_rep*) it->next();
-#ifdef OS_WIN32
-      if (con->alive && FD_ISSET_ (con->out, &rfds)) con->feed (LINK_OUT);
-      if (con->alive && FD_ISSET_ (con->err, &rfds)) con->feed (LINK_ERR);
-#else
       if (con->alive && FD_ISSET (con->out, &rfds)) con->feed (LINK_OUT);
       if (con->alive && FD_ISSET (con->err, &rfds)) con->feed (LINK_ERR);
-#endif
     }
   }
 }

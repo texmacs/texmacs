@@ -20,12 +20,11 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef OS_WIN32
-#include "dirent.hpp"
-#include "sysstat.hpp"
-#include "sysmisc.hpp"
-#else
 #include <dirent.h>
+#ifdef OS_WIN32
+#include <sys/misc.h>
+#include <sys/_stat.h>
+#else
 #include <sys/stat.h>
 #endif
 #include <sys/types.h>
@@ -43,7 +42,11 @@ load_string (url u, string& s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     char* _name= as_charp (name);
+#ifdef OS_WIN32
+    FILE* fin= fopen (_name, "rb");
+#else
     FILE* fin= fopen (_name, "r");
+#endif
     if (fin == NULL) err= true;
     if (!err) {
       while (true) {
@@ -95,7 +98,11 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     char* _name= as_charp (name);
+#ifdef OS_WIN32
+    FILE* fout= fopen (_name, "wb");
+#else
     FILE* fout= fopen (_name, "w");
+#endif
     if (fout == NULL) err= true;
     if (!err) {
       int i, n= N(s);
@@ -128,6 +135,10 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
 bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
+#ifdef OS_WIN32
+  if ((filter == "x") && (suffix(name) != "exe"))
+    name = glue(name, ".exe");
+#endif
   int i, n= N(filter);
   bool preserve_links= false;
   for (i=0; i<n; i++)

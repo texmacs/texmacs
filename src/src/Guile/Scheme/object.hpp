@@ -24,7 +24,7 @@ public:
   object_rep (SCM obj);
   ~object_rep ();
   SCM lookup ();
-  friend class object;
+  friend struct object;
 };
 
 struct object {

@@ -74,7 +74,8 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
-  if (N(a) == 0 || N(a[0]) == 0) typeset_dynamic (tree (ERROR, "bad line"), ip);
+  if (N(a) == 0 || N(a[0]) == 0)
+    typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
     if (N(a) == 1) a << copy (a[0]);
     curve c= env->fr (poly_segment (a));
@@ -88,7 +89,8 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
-  if (N(a) == 0 || N(a[0]) == 0) typeset_dynamic (tree (ERROR, "bad spline"), ip);
+  if (N(a) == 0 || N(a[0]) == 0)
+    typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
     if (N(a) == 1) a << copy (a[0]) << copy (a[0]);
     if (N(a) == 2) a << copy (a[0]);

@@ -19,7 +19,7 @@
 
 RESOURCE(font);
 
-class   bitmap_char;
+struct bitmap_char;
 
 /******************************************************************************
 * The font structure

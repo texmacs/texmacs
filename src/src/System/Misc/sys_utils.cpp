@@ -14,7 +14,7 @@
 #include "file.hpp"
 #include "tree.hpp"
 #ifdef OS_WIN32
-#include "sysmisc.hpp"
+#include <sys/misc.h>
 #endif
 
 int script_status = 1;
@@ -42,7 +42,7 @@ eval_system (string s) {
   system (s * " > " * temp_s);
   string result;
   bool flag= load_string (temp, result, false);
-  system ("rm " * temp_s);
+  system ("rm \"" * temp_s * "\"");
   if (flag) return "";
   return result;
 }

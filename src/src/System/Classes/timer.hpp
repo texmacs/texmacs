@@ -20,11 +20,7 @@
 #endif
 
 #ifdef USE_GET_TIME_OF_DAY
-#ifdef OS_WIN32
-#include "systime.hpp"
-#else
 #include <sys/time.h>
-#endif
 #else
 #include <sys/timeb.h>
 #ifdef OS_SUN

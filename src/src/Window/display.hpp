@@ -20,7 +20,7 @@
 typedef long time_t;
 #endif
 
-class font;
+struct font;
 class widget;
 class window_rep;
 typedef window_rep* window;

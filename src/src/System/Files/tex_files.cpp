@@ -72,6 +72,14 @@ make_tex_tfm (string name) {
     if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
+  if (get_setting ("MAKETFM") == "maketfm"){
+    if (name(N(name) - 4, N(name)) == ".tfm")
+      name = name (0, N(name) - 4);
+    s = "maketfm --dest-dir \"" * get_env("$TEXMACS_HOME_PATH")
+      * "\\fonts\\tfm\" " * name;
+    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    system (s);
+  }
 }
 
 void
@@ -91,6 +99,14 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
       string ("--mag ") * as_string (dpi)*"/"*as_string (design_dpi) * " " *
       (where == ""? string (""): string ("--destdir ") * where) * " " *
       name;
+    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    system (s);
+  }
+  if (get_setting ("MAKEPK") == "makepk"){
+    s = "makepk --dest-dir \""
+      * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
+      * name * " " * as_string(dpi) * " " * as_string(design_dpi)
+      * " " * as_string(dpi) * "/" * as_string(design_dpi);
     if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }

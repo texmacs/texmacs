@@ -97,4 +97,11 @@ string as_string (tree_label l);
 tree_label as_tree_label (string s);
 bool existing_tree_label (string s);
 
+#ifdef OS_WIN32
+inline bool operator == (tree_label first, tree_label second) {
+  return (int) first == (int) second; }
+inline bool operator != (tree_label first, tree_label second) {
+  return (int) first != (int) second; }
+#endif
+
 #endif // defined TREE_LABEL_H
