@@ -13,6 +13,7 @@
 #include "font.hpp"
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
+#include "Freetype/tt_face.hpp"
 
 #ifdef USE_FREETYPE
 
@@ -25,7 +26,6 @@ struct tt_font_rep: font_rep {
   font_glyphs fng;
 
   tt_font_rep (display dis, string name, string family, int size, int dpi);
-  bool compute_bitmaps (string family, int size, int dpi);
 
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
@@ -44,8 +44,9 @@ tt_font_rep::tt_font_rep (display dis, string name,
   font_rep (dis, name)
 {
   size= size2;
-  bool err= compute_bitmaps (family, size, dpi);
-  if (err) {
+  fnm = tt_font_metric (family, size, dpi);
+  fng = tt_font_glyphs (family, size, dpi);
+  if (fnm->bad_font_metric || fng->bad_font_glyphs) {
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
@@ -95,82 +96,6 @@ tt_font_rep::tt_font_rep (display dis, string name,
   SI italic_spc= (ex->x4-ex->x3)-(ex->x2-ex->x1);
   slope= ((double) italic_spc) / ((double) display_size);
   if (slope<0.15) slope= 0.0;
-}
-
-/******************************************************************************
-* Getting the bitmaps
-******************************************************************************/
-
-inline int tt_round (int l) { return ((l+0x400020) >> 6) - 0x10000; }
-inline SI tt_si (int l) { return l<<2; }
-
-bool
-tt_font_rep::compute_bitmaps (string family, int size, int dpi) {
-  if (font_metric::instances -> contains (res_name)) {
-    fnm= font_metric (res_name);
-    fng= font_glyphs (res_name);
-    return false;
-  }
-
-  if (ft_initialize ()) return true;
-  if (DEBUG_AUTO)
-    cout << "TeXmacs] Loading " << family << " " << size
-	 << "pt at " << dpi << " dpi\n";
-  url u= tt_font_find (family);
-  if (is_none (u)) return true;
-  char* _name= as_charp (concretize (u));
-  FT_Face ft_face;
-  if (ft_new_face (ft_library, _name, 0, &ft_face)) {
-    delete[] _name; return true; }
-  delete[] _name;
-  if (ft_set_char_size (ft_face, 0, size<<6, dpi, dpi)) return true;
-
-  int i;
-  FT_UInt glyph_index;
-  metric* T= new metric[256];
-  glyph * B= new glyph [256];
-  for (i=0; i<256; i++) {
-    glyph_index= ft_get_char_index (ft_face, i);
-    if (ft_load_glyph (ft_face, glyph_index, FT_LOAD_DEFAULT)) continue;
-    FT_GlyphSlot slot= ft_face->glyph;
-    if (ft_render_glyph (slot, ft_render_mode_mono)) continue;
-
-    int w= slot->bitmap.width;
-    int h= slot->bitmap.rows;
-    int ox= tt_round (slot->metrics.horiBearingX);
-    int oy= tt_round (slot->metrics.horiBearingY);
-    int pitch= slot->bitmap.pitch;
-    unsigned char *buf= slot->bitmap.buffer;
-    if (pitch<0) buf -= pitch*h;
-    int x, y;
-    glyph C (w, h, -ox, oy);
-    for (y=0; y<h; y++) {
-      for (x=0; x<w; x++) {
-	unsigned char c= buf[x>>3];
-	C->set_1 (x, y, (c >> (7-(x&7))) & 1);
-      }
-      buf += pitch;
-    }
-    B[i]= C;
-
-    metric& E= T[i];
-    SI ww= w * PIXEL;
-    SI hh= h * PIXEL;
-    SI dx= tt_si (slot->metrics.horiBearingX);
-    SI dy= tt_si (slot->metrics.horiBearingY);
-    SI ll= tt_si (slot->metrics.horiAdvance);
-    E->x1= 0;
-    E->y1= dy - hh;
-    E->x2= ll;
-    E->y2= dy;
-    E->x3= dx;
-    E->y3= dy - hh;
-    E->x4= dx + ww;
-    E->y4= dy;
-  }
-  fnm= std_font_metric (res_name, T, 0, 255);
-  fng= std_font_glyphs (res_name, B, 0, 255);
-  return false;
 }
 
 /******************************************************************************
