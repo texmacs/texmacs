@@ -401,6 +401,7 @@ void
 edit_dynamic_rep::activate_hybrid () {
   // WARNING: update edit_interface_rep::set_hybrid_footer when updating this
   if (activate_latex ()) return;
+  set_message ("", "");
   path p= find_deactivated (tp);
   if (nil (p)) return;
   tree st= subtree (et, p * 0);
