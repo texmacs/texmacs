@@ -352,6 +352,50 @@ tmg_selection_set_end () {
 }
 
 SCM
+tmg_selection_get_start () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->selection_get_start ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_selection_get_end () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->selection_get_end ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_selection_set_start_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-start-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->selection_set_start (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_selection_set_end_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-end-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->selection_set_end (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_clipboard_copy (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "clipboard-copy");
 
@@ -2754,6 +2798,10 @@ initialize_glue_editor () {
   gh_new_procedure ("selection-active-enlarging?", (FN) tmg_selection_active_enlargingP, 0, 0, 0);
   gh_new_procedure ("selection-set-start", (FN) tmg_selection_set_start, 0, 0, 0);
   gh_new_procedure ("selection-set-end", (FN) tmg_selection_set_end, 0, 0, 0);
+  gh_new_procedure ("selection-get-start", (FN) tmg_selection_get_start, 0, 0, 0);
+  gh_new_procedure ("selection-get-end", (FN) tmg_selection_get_end, 0, 0, 0);
+  gh_new_procedure ("selection-set-start-path", (FN) tmg_selection_set_start_path, 1, 0, 0);
+  gh_new_procedure ("selection-set-end-path", (FN) tmg_selection_set_end_path, 1, 0, 0);
   gh_new_procedure ("clipboard-copy", (FN) tmg_clipboard_copy, 1, 0, 0);
   gh_new_procedure ("clipboard-cut", (FN) tmg_clipboard_cut, 1, 0, 0);
   gh_new_procedure ("clipboard-cut-at", (FN) tmg_clipboard_cut_at, 1, 0, 0);
