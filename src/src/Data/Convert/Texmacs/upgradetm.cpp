@@ -43,6 +43,7 @@ get_codes (string version) {
   new_feature (H, "xmacro");
   new_feature (H, "get_label");
   new_feature (H, "get_arity");
+  new_feature (H, "map_args");
 
   if (version_inf ("1.0.2.5", version)) return H;
 

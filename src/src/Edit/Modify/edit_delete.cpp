@@ -246,6 +246,7 @@ edit_text_rep::remove_backwards () {
       return;
     case GET_LABEL:
     case GET_ARITY:
+    case MAP_ARGS:
     case QUOTE:
     case DELAY:
     case HOLD:
@@ -456,6 +457,11 @@ edit_text_rep::remove_backwards () {
       break;
     case GET_LABEL:
     case GET_ARITY:
+      back_in_dynamic (u, p);
+      return;
+    case MAP_ARGS:
+      back_in_dynamic (u, p, 3);
+      return;
     case QUOTE:
     case DELAY:
     case HOLD:

@@ -22,7 +22,7 @@
   ("inactive" "" "Insert inactive markup")
 
   ("inactive a" (make-inactive-apply))
-  ("inactive A" (make-inactive-get-arity))
+  ("inactive A" (make-inactive-map-args))
   ("inactive d" (make-inactive-delay))
   ("inactive D" (make-inactive-drd-props))
   ("inactive e" (make-inactive-expand))
@@ -34,6 +34,7 @@
   ("inactive l" (make-inactive-latex))
   ("inactive m" (make-inactive-macro))
   ("inactive M" (make-inactive-meaning))
+  ("inactive n" (make-inactive-get-arity))
   ("inactive N" (make-inactive-get-label))
   ("inactive p" (make-inactive-provides))
   ("inactive q" (make-inactive-quote))
