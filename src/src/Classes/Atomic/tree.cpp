@@ -183,7 +183,7 @@ is_format (tree t) {
 
 bool
 is_formatting (tree t) {
-  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DOUBLE_PAGE);
+  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DPAGE);
 }
 
 bool

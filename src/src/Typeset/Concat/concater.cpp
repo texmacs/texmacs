@@ -276,42 +276,42 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive_string ("<no-break>", ip);
     break;
-  case YES_FIRST_INDENT:
+  case YES_INDENT:
     if (ACTIVATED) {
       flag ("yes-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
     }
     else typeset_inactive_string ("<yes-first-indent>", ip);
     break;
-  case NO_FIRST_INDENT:
+  case NO_INDENT:
     if (ACTIVATED) {
       flag ("no-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
     }
     else typeset_inactive_string ("<no-first-indent>", ip);
     break;
-  case YES_FIRST_INDENT_AFTER:
+  case VAR_YES_INDENT:
     if (ACTIVATED) {
       flag ("yes-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
     }
     else typeset_inactive_string ("<yes-first-indent-after>", ip);
     break;
-  case NO_FIRST_INDENT_AFTER:
+  case VAR_NO_INDENT:
     if (ACTIVATED) {
       flag ("no-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
     }
     else typeset_inactive_string ("<no-first-indent-after>", ip);
     break;
-  case PAGE_BREAK_BEFORE:
+  case VAR_PAGE_BREAK:
   case PAGE_BREAK:
-  case NO_PAGE_BREAK_BEFORE:
-  case NO_PAGE_BREAK_AFTER:
-  case NEW_PAGE_BEFORE:
+  case VAR_NO_PAGE_BREAK:
+  case NO_PAGE_BREAK:
+  case VAR_NEW_PAGE:
   case NEW_PAGE:
-  case NEW_DOUBLE_PAGE_BEFORE:
-  case NEW_DOUBLE_PAGE:
+  case VAR_NEW_DPAGE:
+  case NEW_DPAGE:
     {
       string name= replace (as_string (L(t)), "_", "-");
       if (ACTIVATED) {
