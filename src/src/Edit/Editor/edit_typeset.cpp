@@ -315,7 +315,7 @@ edit_typeset_rep::exec_texmacs (tree t, path p) {
 
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
-  if (p == 0) typeset_preamble ();
+  if (p == path (0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
   tree patch= as_tree (eval ("(object->tree (tmhtml-env-patch))"));
