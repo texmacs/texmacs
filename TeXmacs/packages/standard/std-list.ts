@@ -3,96 +3,194 @@
 <style|source>
 
 <\body>
-  <assign|std-list-package|1.0>
+  <active*|<\src-title>
+    <src-package|std-list|1.0>
 
-  <assign|std-list-dtd|1.0>
+    <\src-purpose>
+      Standard list environments
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
 
-  <assign|item-name|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
-  <assign|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<active*|<with|mode|math|\<ast\>>>
-  |||r]1.5fn|>>>
+  <\active*>
+    <\src-comment>
+      Different ways to render items.
+    </src-comment>
+  </active*>
 
-  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<arg|x>|r-2.5fn||r+0.5fn|>>>>
 
-  \;
+  <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|||r]1.5fn|>>>>
 
-  <assign|thetag|<active*|<with|mode|math|\<ast\>>>>
+  <assign|long-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|||r]1.5fn|><next-line>>>>
+
+  <\active*>
+    <\src-comment>
+      Further variants for rendering items.
+    </src-comment>
+  </active*>
+
+  <assign|item-strong|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
+
+  <assign|aligned-space-item|<macro|x|<aligned-item|<arg|x> \ >>>
+
+  <assign|aligned-dot-item|<macro|x|<aligned-item|<arg|x>.>>>
+
+  <assign|aligned-bracket-item|<macro|x|<aligned-item|<arg|x><with|font-shape|right|)>>>>
+
+  <assign|aligned-strong-dot-item|<macro|x|<aligned-item|<item-strong|<arg|x>.>>>>
+
+  <assign|compact-strong-space-item|<macro|x|<compact-item|<item-strong|<arg|x>
+  \ >>>>
+
+  <assign|compact-strong-dot-item|<macro|x|<compact-item|<item-strong|<arg|x>.
+  >>>>
+
+  <assign|compact-strong-dash-item|<macro|x|<compact-item|<item-strong|<arg|x>>
+  <emdash> >>>
+
+  <assign|long-strong-dot-item|<macro|x|<long-item|<item-strong|<arg|x>.>>>>
+
+  <\active*>
+    <\src-comment>
+      The main item tags; <verbatim|current-item> and
+      <verbatim|transform-item> are locally changed inside lists.
+    </src-comment>
+  </active*>
+
+  <new-counter|item>
+
+  <assign|last-item|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<group|\<ast\>>>>>>
+
+  <assign|current-item|<value|aligned-space-item>>
+
+  <assign|transform-item|<macro|x|<active*|<with|mode|math|||\<cdot\>||<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <assign|the-item|<macro|<transform-item|<value|<counter-item>>>>>
+
+  <assign|item*|<macro|x|<assign|last-item|<arg|x>><current-item|<arg|x>>>>
+
+  <assign|item|<macro|<next-counter|item><item*|<the-item>>>>
+
+  <\active*>
+    <\src-comment>
+      Rendering of list environments.
+    </src-comment>
+  </active*>
+
+  <assign|list|<macro|item-render|item-transform|body|<with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|par-left|<plus|<value|par-left>|3fn>|item-nr|0|<\surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>>
+    <arg|body>
+  </surround>>>>
+
+  <assign|list*|<\macro|item-render|item-transform|body>
+    <style-with|src-compact|none|<list|<arg|item-render>|<quasiquote|<macro|x|<unquote|<value|last-item>>.<compound|<unquote|<arg|item-transform>>|<arg|x>>>>|<arg|body>>>
+  </macro>>
+
+  <assign|new-list|<macro|name|item-render|item-transform|<quasi|<style-with|src-compact|none|<assign|<arg|name>|<\macro|body>
+    <list|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+  </macro>><assign|<merge|<arg|name>|*>|<\macro|body>
+    <list*|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+  </macro>>>>>>
+
+  <\active*>
+    <\src-comment>
+      The standard itemize environment with three levels.
+    </src-comment>
+  </active*>
 
   <assign|itemize-level|0>
 
-  <assign|itemize-base|<macro|body|<surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<value|thetag>
-  |||r]1.5fn|>>|<arg|body>>>>>
+  <new-list|itemize-1|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
+
+  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<circ\>>>>>>
+
+  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
 
   <assign|itemize|<\macro|body>
-    <with|itemize-level|<plus|<value|itemize-level>|1>|<with|thetag|<case|<equal|<mod|<value|itemize-level>|3>|1>|<active*|<with|mode|math|\<bullet\>>>|<equal|<mod|<value|itemize-level>|3>|2>|<active*|<with|mode|math|\<circ\>>>|<equal|<mod|<value|itemize-level>|3>|0>|<active*|<with|mode|math|->>>|<itemize-base|<arg|body>>>>
+    <\with|itemize-level|<plus|<mod|<value|itemize-level>|3>|1>>
+      <compound|<merge|itemize-|<value|itemize-level>>|<arg|body>>
+    </with>
   </macro>>
 
-  \;
+  <assign|itemize*|<\macro|body>
+    <\with|itemize-level|<plus|<mod|<value|itemize-level>|3>|1>>
+      <compound|<merge|itemize-|<value|itemize-level>|*>|<arg|body>>
+    </with>
+  </macro>>
 
-  <assign|new-itemize|<macro|name|tag|<assign|<arg|name>|<quasiquote|<\macro|body>
-    <with|thetag|<unquote|<arg|tag>>|<itemize-base|<arg|body>>>
-  </macro>>>>>
-
-  <new-itemize|itemize-minus|<active*|<with|mode|math|->>>
-
-  <new-itemize|itemize-dot|<active*|<with|mode|math|\<bullet\>>>>
-
-  <new-itemize|itemize-arrow|<active*|<with|mode|math|\<rightarrow\>>>>
-
-  \;
-
-  <assign|the-item|<macro|<item-nr>.>>
+  <\active*>
+    <\src-comment>
+      The standard enumerate environment with three levels.
+    </src-comment>
+  </active*>
 
   <assign|enumerate-level|0>
 
-  <assign|enumerate-base|<macro|body|<surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>|<with|item-nr|0|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><assign|item-nr|<plus|<value|item-nr>|1>><assign|the-label|<the-item>><with|par-first|-3fn|<yes-indent>><resize|<the-item>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
+  <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
+
+  <new-list|enumerate-2|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|alpha>>>
+
+  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|roman>>>
 
   <assign|enumerate|<\macro|body>
-    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|the-item|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<quasiquote|<item-nr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<item-nr>|alpha><with|font-shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<item-nr>|roman>.>>|<enumerate-base|<arg|body>>>>
+    <\with|enumerate-level|<plus|<mod|<value|enumerate-level>|3>|1>>
+      <compound|<merge|enumerate-|<value|enumerate-level>>|<arg|body>>
+    </with>
   </macro>>
 
-  \;
+  <assign|enumerate*|<\macro|body>
+    <\with|enumerate-level|<plus|<mod|<value|enumerate-level>|3>|1>>
+      <compound|<merge|enumerate-|<value|enumerate-level>|*>|<arg|body>>
+    </with>
+  </macro>>
 
-  <assign|new-enumerate|<macro|name|num|<assign|<arg|name>|<quasiquote|<\macro|body>
-    <with|the-item|<unquote|<arg|num>>|<enumerate-base|<arg|body>>>
-  </macro>>>>>
+  <\active*>
+    <\src-comment>
+      Further standard list environments
+    </src-comment>
+  </active*>
 
-  <new-enumerate|enumerate-numeric|<macro|<item-nr>.>>
+  <new-list|itemize-minus|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
 
-  <new-enumerate|enumerate-roman|<macro|<number|<item-nr>|roman>.>>
+  <new-list|itemize-dot|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-enumerate|enumerate-Roman|<macro|<number|<item-nr>|Roman>.>>
+  <new-list|itemize-arrow|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
 
-  <new-enumerate|enumerate-alpha|<macro|<number|<item-nr>|alpha><with|font-shape|right|)>>>
+  <new-list|enumerate-numeric|<value|aligned-dot-item>|<value|identity>>
 
-  <new-enumerate|enumerate-Alpha|<macro|<number|<item-nr>|Alpha><with|font-shape|right|)>>>
+  <new-list|enumerate-roman|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|roman>>>
 
-  \;
+  <new-list|enumerate-Roman|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|Roman>>>
 
-  <assign|new-description|<macro|name|item-macro|<assign|<arg|name>|<quasiquote|<\macro|body>
-    <with|item*|<unquote|<arg|item-macro>>|<itemize-base|<arg|body>>>
-  </macro>>>>>
+  <new-list|enumerate-alpha|<value|aligned-bracket-item>|<macro|x|<number|<arg|x>|alpha>>>
 
-  <new-description|description-compact|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>
-  \ |||r]1.5fn|>>>
+  <new-list|enumerate-Alpha|<value|aligned-bracket-item>|<macro|x|<number|<arg|x>|Alpha>>>
 
-  <new-description|description-aligned|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-width|3fn>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<cell|<item-name|<arg|theitem>>>>>>>
-  \ >>
+  <new-list|description-compact|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
-  <new-description|description-dash|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>
-   |||r]1.5fn|>>>
+  <new-list|description-aligned|<value|aligned-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
-  <new-description|description-long|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>|||r]1.5fn|><next-line>>>
+  <new-list|description-dash|<value|compact-strong-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
-  <assign|description|<value|description-compact>>
+  <new-list|description-long|<value|long-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <new-list|description|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|language|english>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>
@@ -102,8 +200,7 @@
     <associate|page-reduce-top|15mm>
     <associate|page-right|30mm>
     <associate|page-top|30mm>
+    <associate|page-type|a4>
     <associate|par-width|150mm>
-    <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
