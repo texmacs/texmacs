@@ -225,7 +225,6 @@ stacker_rep::new_paragraph () {
   unit_sb->nobr_before= unit_sb->nobr_after;
   unit_sb->nobr_after = false;
   unit_start          = N(l);
-  unit_flag           = true;
 }
 
 void
