@@ -34,7 +34,15 @@ bridge_rep::bridge_rep (typesetter ttt2, tree st2, path ip2):
   ttt (ttt2), env (ttt->env), st (st2), ip (ip2),
   status (CORRUPTED), changes (UNINIT) {}
 
-static tree inactive_m (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x")));
+static tree inactive_auto
+  (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "recurse*"));
+static tree error_m
+  (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "error*"));
+static tree inactive_m
+  (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*"));
+static tree var_inactive_m
+  (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*"));
+		     
 
 bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
@@ -44,7 +52,7 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
     //case WITH:
     //return bridge_with (ttt, st, ip);
   default:
-    return bridge_auto (ttt, st, ip, inactive_m);
+    return bridge_auto (ttt, st, ip, inactive_auto);
     //return bridge_default (ttt, st, ip);
   }
 }
@@ -54,6 +62,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
+  case ERROR:
+    return bridge_auto (ttt, st, ip, error_m);
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
   case SURROUND:
@@ -76,6 +86,10 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
     return bridge_rewrite (ttt, st, ip);
+  case INACTIVE:
+    return bridge_auto (ttt, st, ip, inactive_m);
+  case VAR_INACTIVE:
+    return bridge_auto (ttt, st, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
   case MARK:

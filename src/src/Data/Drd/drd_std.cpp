@@ -202,7 +202,7 @@ init_std_drd () {
   init (ACTIVE, "active", fixed (1) -> accessible (0));
   init (VAR_INACTIVE, "inactive*", fixed (1) -> accessible (0));
   init (VAR_ACTIVE, "active*", fixed (1) -> accessible (0));
-  init (REWRITE_INACTIVE, "rewrite-inactive", fixed (1));
+  init (REWRITE_INACTIVE, "rewrite-inactive", fixed (2));
   init (MARK, "mark", fixed (2));
   init (INLINE_TAG, "inline-tag", repeat (1, 1) -> accessible (0));
   init (OPEN_TAG, "open-tag", repeat (1, 1) -> accessible (0));

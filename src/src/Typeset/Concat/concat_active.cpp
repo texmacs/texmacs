@@ -156,12 +156,9 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   marker (descend (ip, 1));  
 }
 
-extern bool see;
-
 void
 concater_rep::typeset_write (tree t, path ip) {
   if (N(t)==2) {
-    see= true;
     string s= env->exec_string (t[0]);
     tree   r= copy (env->exec (t[1]));
     if (env->complete) {
@@ -169,7 +166,6 @@ concater_rep::typeset_write (tree t, path ip) {
 	env->local_aux (s)= tree (DOCUMENT);
       env->local_aux (s) << r;
     }
-    see= false;
   }
   control ("write", ip);
 }

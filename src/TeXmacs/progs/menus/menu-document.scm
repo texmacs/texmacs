@@ -113,43 +113,44 @@
       ("Attach" (interactive '("Master file:") 'project-attach))
       ("Detach" (project-detach)))
   (-> "View"
-      ("Preamble mode" (toggle-preamble))
-      (when (in-preamble?)
-	    (-> "Preamble style"
-		("Default" (init-default "src-style"))
-		---
-		("Angular" (init-env "src-style" "angular"))
-		("Scheme" (init-env "src-style" "scheme"))
-		("Latex" (init-env "src-style" "latex"))
-		("Functional" (init-env "src-style" "functional")))
-	    (-> "Special tags"
-		("Default" (init-default "src-special"))
-		---
-		("None" (init-env "src-special" "raw"))
-		("Formatting" (init-env "src-special" "format"))
-		("Normal" (init-env "src-special" "normal"))
-		("Maximal" (init-env "src-special" "maximal")))
-	    (-> "Compactification"
-		("Default" (init-default "src-compact"))
-		---
-		("Maximal" (init-env "src-compact" "all"))
-		("Inline arguments" (init-env "src-compact" "inline args"))
-		("Normal" (init-env "src-compact" "normal"))
-		("Only inline tags" (init-env "src-compact" "inline"))
-		("Minimal" (init-env "src-compact" "none")))
-	    (-> "Closing tags"
-		("Default" (init-default "src-close"))
-		---
-		("Minimal" (init-env "src-close" "minimal"))
-		("Compact" (init-env "src-close" "compact"))
-		("Long" (init-env "src-close" "long"))
-		("Repeat" (init-env "src-close" "repeat"))))
+      ("Edit source tree" (toggle-preamble))
       (-> "Informative flags"
 	  ("Default" (init-default "info-flag"))
 	  ---
 	  ("None" (init-env "info-flag" "none"))
 	  ("Short" (init-env "info-flag" "short"))
-	  ("Detailed" (init-env "info-flag" "detailed"))))
+	  ("Detailed" (init-env "info-flag" "detailed")))
+      ---
+      (group "Source tags")
+      (-> "Style"
+	  ("Default" (init-default "src-style"))
+	  ---
+	  ("Angular" (init-env "src-style" "angular"))
+	  ("Scheme" (init-env "src-style" "scheme"))
+	  ("Functional" (init-env "src-style" "functional"))
+	  ("Latex" (init-env "src-style" "latex")))
+      (-> "Special"
+	  ("Default" (init-default "src-special"))
+	  ---
+	  ("None" (init-env "src-special" "raw"))
+	  ("Formatting" (init-env "src-special" "format"))
+	  ("Normal" (init-env "src-special" "normal"))
+	  ("Maximal" (init-env "src-special" "maximal")))
+      (-> "Compactication"
+	  ("Default" (init-default "src-compact"))
+	  ---
+	  ("Minimal" (init-env "src-compact" "none"))
+	  ("Only inline tags" (init-env "src-compact" "inline"))
+	  ("Normal" (init-env "src-compact" "normal"))
+	  ("Inline arguments" (init-env "src-compact" "inline args"))
+	  ("Maximal" (init-env "src-compact" "all")))
+      (-> "Closing style"
+	  ("Default" (init-default "src-close"))
+	  ---
+	  ("Repeat" (init-env "src-close" "repeat"))
+	  ("Long" (init-env "src-close" "long"))
+	  ("Compact" (init-env "src-close" "compact"))
+	  ("Minimal" (init-env "src-close" "minimal"))))
   ---
   (-> "Font"
       (-> "Text font"

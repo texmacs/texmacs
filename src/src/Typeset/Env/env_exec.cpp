@@ -83,12 +83,25 @@ edit_env_rep::rewrite (tree t) {
     }
   case REWRITE_INACTIVE:
     {
-      if (!is_func (t[0], ARG, 1) ||
+      if ((!is_func (t[0], ARG)) ||
 	  is_compound (t[0][0]) ||
 	  nil (macro_arg) ||
 	  (!macro_arg->item->contains (t[0][0]->label)))
 	return tree (ERROR, "invalid rewrite-inactive");
       tree val= macro_arg->item [t[0][0]->label];
+      int i, n= N(t[0]);
+      for (i=1; i<n; i++) {
+	int j= as_int (t[0][i]);
+	if ((j>=0) && (j<N(val))) val= val[j];
+	else return tree (ERROR, "invalid rewrite-inactive");
+      }
+      if (t[1] == "recurse") inactive_mode= INACTIVE_INLINE_RECURSE;
+      else if (t[1] == "recurse*") inactive_mode= INACTIVE_BLOCK_RECURSE;
+      else if (t[1] == "once") inactive_mode= INACTIVE_INLINE_ONCE;
+      else if (t[1] == "once*") inactive_mode= INACTIVE_BLOCK_ONCE;
+      else if (t[1] == "error") inactive_mode= INACTIVE_INLINE_ERROR;
+      else if (t[1] == "error*") inactive_mode= INACTIVE_BLOCK_ERROR;
+      else inactive_mode= INACTIVE_INLINE_RECURSE;
       return rewrite_inactive (val, t[0]);
     }
   default:
@@ -104,8 +117,6 @@ edit_env_rep::exec_rewrite (tree t) {
 /******************************************************************************
 * Evaluation of trees
 ******************************************************************************/
-
-bool see= false;
 
 tree
 edit_env_rep::exec (tree t) {
