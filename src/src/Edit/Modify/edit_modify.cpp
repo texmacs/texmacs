@@ -529,6 +529,8 @@ void
 edit_modify_rep::assign_diff (path p, tree t) {
   tree st= subtree (et, p);
   if (t == st) return;
+  assign (p, copy (t));
+  /*
   if (is_atomic (t) || (L(t) != L(st))) {
     assign (p, copy (t));
     return;
@@ -538,6 +540,7 @@ edit_modify_rep::assign_diff (path p, tree t) {
     assign_diff (p * i, t[i]);
   if (n < N(st)) remove (p * n, N(st)-n);
   else if (n < N(t)) insert (p * n, copy (t) (n, N(t)));
+  */
 }
 
 /******************************************************************************

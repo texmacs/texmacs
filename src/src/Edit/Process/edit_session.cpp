@@ -24,7 +24,7 @@
 
 edit_process_rep::edit_process_rep ():
   new_mutators (false), mutators_updated (false),
-  nr_mutators (0), next_mutate (texmacs_time()),
+  nr_mutators (0), next_mutate (texmacs_time()), mutator_time (next_mutate),
   math_input (false), message_l (""), message_r ("") {}
 edit_process_rep::~edit_process_rep () {}
 
@@ -63,6 +63,7 @@ edit_process_rep::process_mutators () {
   if (texmacs_time() < next_mutate) return;
   new_mutators= false;
   mutators_updated= true;
+  mutator_time= texmacs_time ();
   nr_mutators= mutate (subtree (et, rp), reverse (rp));
   if (!mutators_updated) {
     // cout << "Mutation occurred\n";
@@ -77,6 +78,11 @@ edit_process_rep::process_mutators () {
 path
 edit_process_rep::get_mutator_path () {
   return mutator_path;
+}
+
+time_t
+edit_process_rep::get_mutator_time () {
+  return mutator_time;
 }
 
 void

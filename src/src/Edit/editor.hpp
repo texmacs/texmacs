@@ -330,6 +330,7 @@ public:
   /* public routines from edit_process */
   virtual void process_mutators () = 0;
   virtual path get_mutator_path () = 0;
+  virtual time_t get_mutator_time () = 0;
   virtual void invalidate_mutators () = 0;
   virtual void insert_mutator (tree body, string cmd) = 0;
 

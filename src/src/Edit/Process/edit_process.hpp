@@ -20,6 +20,7 @@ protected:
   bool   mutators_updated;
   int    nr_mutators;
   time_t next_mutate;
+  time_t mutator_time;
   bool   math_input;
   string message_l;
   string message_r;
@@ -31,6 +32,7 @@ public:
 
   void process_mutators ();
   path get_mutator_path ();
+  time_t get_mutator_time ();
   void invalidate_mutators ();
   void insert_mutator (tree body, string cmd);
 
