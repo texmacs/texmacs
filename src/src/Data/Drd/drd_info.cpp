@@ -39,6 +39,11 @@ operator << (ostream& out, drd_info drd) {
 * Accessing the drd
 ******************************************************************************/
 
+bool
+drd_info_rep::contains (string l) {
+  return existing_tree_label (l) && ti->contains (as_tree_label (l));
+}
+
 void
 drd_info_rep::set_arity (tree_label l, int arity) {
   if (!ti->contains (l)) ti(l)= tag_info (arity, 0);

@@ -81,5 +81,6 @@ void make_tree_label (tree_label l, string s);
 tree_label make_tree_label (string s); // for extensions
 string as_string (tree_label l);
 tree_label as_tree_label (string s);
+bool existing_tree_label (string s);
 
 #endif // defined TREE_LABEL_H

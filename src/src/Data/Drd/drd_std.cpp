@@ -176,7 +176,7 @@ initialize_std_drd () {
   constructor (VAR_ACTIVE, "var_active", 1, ACCESSIBLE);
   constructor (SYMBOL, "symbol", 1);
   constructor (LATEX, "latex", 1, DYNAMIC);
-  constructor (HYBRID, "hybrid", 1, DYNAMIC);
+  constructor (HYBRID, "hybrid", -1, DYNAMIC);
   constructor (TUPLE, "tuple", -1, DYNAMIC);
   constructor (ATTR, "attr", -1, DYNAMIC);
   constructor (COLLECTION, "collection", -1);
