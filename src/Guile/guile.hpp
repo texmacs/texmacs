@@ -40,6 +40,7 @@
 
 #define scm_c_primitive_load gh_eval_file
 #define scm_c_eval_string gh_eval_str
+#define scm_apply_0 gh_apply
 #define scm_call_0 gh_call0
 #define scm_call_1 gh_call1
 #define scm_call_2 gh_call2

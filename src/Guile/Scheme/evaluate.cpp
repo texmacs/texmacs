@@ -144,7 +144,14 @@ TeXmacs_call (arg_list* args) {
   case 2: return scm_call_2 (args->a[0], args->a[1], args->a[2]); break;
   case 3:
     return scm_call_3 (args->a[0], args->a[1], args->a[2], args->a[3]); break;
-  default: fatal_error ("Too many arguments", "TeXmacs_call", "evaluate.cpp");
+  default:
+    {
+      int i;
+      SCM l= SCM_NULL;
+      for (i=args->n; i>=1; i--)
+	l= scm_cons (args->a[i], l);
+      return scm_apply_0 (args->a[0], l);
+    }
   }
 }
 
@@ -184,4 +191,17 @@ SCM
 call_scheme (SCM fun, SCM a1, SCM a2, SCM a3) {
   SCM a[]= { fun, a1, a2, a3 }; arg_list args= { 3, a };
   return TeXmacs_call_scm (&args);
+}
+
+SCM
+call_scheme (SCM fun, array<SCM> a) {
+  const int n= N(a);
+  STACK_NEW_ARRAY(scm, SCM, n+1);
+  int i;
+  scm[0]= fun;
+  for (i=0; i<n; i++) scm[i+1]= a[i];
+  arg_list args= { n, scm };
+  SCM ret= TeXmacs_call_scm (&args);
+  STACK_DELETE_ARRAY(scm);
+  return ret;
 }

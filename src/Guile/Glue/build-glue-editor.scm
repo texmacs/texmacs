@@ -233,7 +233,7 @@
   (session-remove-previous-output session_remove_previous_output (void))
   (session-split session_split (void))
   (session-complete-try? session_complete_try (bool))
-  (interactive interactive (void scheme_tree scheme_tree))
+  (tm-interactive interactive (void scheme_tree object))
   (connection-busy? busy_connection (bool))
   (connection-interrupt interrupt_connection (void))
   (connection-stop stop_connection (void))

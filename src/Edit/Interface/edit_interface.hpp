@@ -151,7 +151,7 @@ public:
   void   set_right_footer ();
   void   set_footer ();
   void   set_message (string l, string r= "");
-  void   interactive (scheme_tree args, scheme_tree cmd);
+  void   interactive (scheme_tree args, object cmd);
 
   /* event handlers */
   void handle_get_size (get_size_event ev);

@@ -141,7 +141,7 @@ public:
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
   virtual void set_message (string l, string r= "") = 0;
-  virtual void interactive (scheme_tree args, scheme_tree cmd) = 0;
+  virtual void interactive (scheme_tree args, object cmd) = 0;
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;
