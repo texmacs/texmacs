@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.9>
+<TeXmacs|1.0.2.10>
 
 <\body>
   <\with|mode|math>
@@ -33,6 +33,8 @@
     <assign|Set|<with|math-font|cal*|S>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
+
+    <assign|fcut|#>
 
     \;
 

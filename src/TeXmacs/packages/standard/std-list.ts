@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.7>
+<TeXmacs|1.0.2.10>
 
 <\body>
   <assign|std-list-package|1.0>
@@ -7,14 +7,12 @@
 
   \;
 
-  <assign|itemname|<macro|name|<with|font series|bold|<arg|name>>>>
+  <assign|itemname|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
 
-  <assign|item|<macro|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<with|mode|math|\<ast\>>
+  <assign|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<with|mode|math|\<ast\>>
   |||r]1.5fn|>>>
 
-  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
+  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
 
   \;
 
@@ -22,9 +20,7 @@
 
   <assign|itemize-level|0>
 
-  <assign|itemize-base|<macro|body|<surround|<no_page_break_before>|<rightflush><vspace|0.5fn><no_indentation_after>|<with|left
-  margin|<plus|<value|left margin>|3fn>|item|<macro|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<value|thetag>
+  <assign|itemize-base|<macro|body|<surround|<no-page-break*>|<rightflush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<value|thetag>
   |||r]1.5fn|>>|<arg|body>>>>>
 
   <assign|itemize|<\macro|body>
@@ -49,13 +45,10 @@
 
   <assign|enumerate-level|0>
 
-  <assign|enumerate-base|<macro|body|<surround|<no_page_break_before>|<rightflush><vspace|0.5fn><no_indentation_after>|<with|itemnr|0|left
-  margin|<plus|<value|left margin>|3fn>|item|<macro|<vspace*|0.5fn><assign|itemnr|<plus|<value|itemnr>|1>><assign|thelabel|<theitem>><with|first
-  indentation|-3fn|<enable_first_indentation>><resize|<theitem>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
+  <assign|enumerate-base|<macro|body|<surround|<no-page-break*>|<rightflush><vspace|0.5fn><no-indent*>|<with|itemnr|0|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><assign|itemnr|<plus|<value|itemnr>|1>><assign|thelabel|<theitem>><with|par-first|-3fn|<yes-indent>><resize|<theitem>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
 
   <assign|enumerate|<\macro|body>
-    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|theitem|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<hold|<itemnr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<itemnr>|alpha><with|font
-    shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<itemnr>|roman>.>>|<enumerate-base|<arg|body>>>>
+    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|theitem|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<hold|<itemnr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<itemnr>|alpha><with|font-shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<itemnr>|roman>.>>|<enumerate-base|<arg|body>>>>
   </macro>>
 
   \;
@@ -70,11 +63,9 @@
 
   <newenumerate|enumerate-Roman|<macro|<number|<itemnr>|Roman>.>>
 
-  <newenumerate|enumerate-alpha|<macro|<number|<itemnr>|alpha><with|font
-  shape|right|)>>>
+  <newenumerate|enumerate-alpha|<macro|<number|<itemnr>|alpha><with|font-shape|right|)>>>
 
-  <newenumerate|enumerate-Alpha|<macro|<number|<itemnr>|Alpha><with|font
-  shape|right|)>>>
+  <newenumerate|enumerate-Alpha|<macro|<number|<itemnr>|Alpha><with|font-shape|right|)>>>
 
   \;
 
@@ -82,23 +73,16 @@
     <with|item*|<release|<arg|item-macro>>|<itemize-base|<arg|body>>>
   </macro>>>>>
 
-  <newdescription|description-compact|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>
+  <newdescription|description-compact|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>
   \ |||r]1.5fn|>>>
 
-  <newdescription|description-aligned|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><tabular*|<tformat|<cwith|1|1|1|1|cell
-  lsep|0fn>|<cwith|1|1|1|1|cell rsep|0fn>|<cwith|1|1|1|1|cell
-  bsep|0fn>|<cwith|1|1|1|1|cell tsep|0fn>|<cwith|1|1|1|1|cell
-  width|3fn>|<cwith|1|1|1|1|cell halign|r>|<table|<row|<cell|<itemname|<arg|theitem>>>>>>>
+  <newdescription|description-aligned|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-width|3fn>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<cell|<itemname|<arg|theitem>>>>>>>
   \ >>
 
-  <newdescription|description-dash|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>
+  <newdescription|description-dash|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>
    |||r]1.5fn|>>>
 
-  <newdescription|description-long|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-1.5fn|<enable_first_indentation>><resize|<itemname|<arg|theitem>>|||r]1.5fn|><next_line>>>
+  <newdescription|description-long|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>|||r]1.5fn|><next-line>>>
 
   <assign|description|<value|description-compact>>
 
@@ -108,16 +92,16 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-top|30mm>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
