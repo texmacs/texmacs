@@ -7,19 +7,19 @@
 ###############################################################################
 
 prefix = /usr/local
-exec_prefix = $(prefix)
-includedir = $(prefix)/include
-libdir = $(exec_prefix)/lib
-bindir = $(exec_prefix)/bin
-datadir = $(prefix)/share
-mandir = $(prefix)/man
+exec_prefix = /usr/local
+includedir = /usr/local/include
+libdir = /usr/local/lib
+bindir = /usr/local/bin
+datadir = /usr/local/share
+mandir = /usr/local/man
 tmdir = TeXmacs
-tmtgz = TeXmacs-1.0.2.9
-tmrpm = TeXmacs-1.0.2.9-1
+tmtgz = TeXmacs-1.0.2.10
+tmrpm = TeXmacs-1.0.2.10-1
 tmorig = /home/vdhoeven/cvs/src
 tmsrc = /home/vdhoeven/cvs/src/TeXmacs
-tmbin = $(exec_prefix)/libexec/TeXmacs
-tmdata = $(prefix)/share/TeXmacs
+tmbin = /usr/local/libexec/TeXmacs
+tmdata = /usr/local/share/TeXmacs
 so = so
 os = gnu-linux
 
@@ -30,6 +30,6 @@ MV = mv -f
 LN = ln -f
 CHMOD = chmod -f
 GZIP = gzip -f
-STRIP = true
+STRIP = strip
 TOUCH = touch
 TAR = tar
