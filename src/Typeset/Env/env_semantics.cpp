@@ -23,40 +23,36 @@ initialize_default_var_type () {
   if (N(default_var_type) != 0) return;
   hashmap<string,int>& var_type= default_var_type;
 
-  var_type (PREAMBLE)         = Env_Preamble;
   var_type (DPI)              = Env_Fixed;
   var_type (SFACTOR)          = Env_Fixed;
-  var_type (MAGNIFICATION)    = Env_Magnification;
-  var_type (PAGE_TYPE)        = Env_Fixed;
-  var_type (PAGE_WIDTH)       = Env_Fixed;
-  var_type (PAGE_HEIGHT)      = Env_Fixed;
-  var_type (PAGE_BREAKING)    = Env_Fixed;
-  var_type (PAGE_FLEXIBILITY) = Env_Fixed;
-
+  var_type (PREAMBLE)         = Env_Preamble;
   var_type (MODE)             = Env_Mode;
-  var_type (TEXT_LANGUAGE)    = Env_Language;
-  var_type (TEXT_FONT)        = Env_Font;
-  var_type (TEXT_FAMILY)      = Env_Font;
-  var_type (TEXT_SERIES)      = Env_Font;
-  var_type (TEXT_SHAPE)       = Env_Font;
+
+  var_type (FONT)             = Env_Font;
+  var_type (FONT_FAMILY)      = Env_Font;
+  var_type (FONT_SERIES)      = Env_Font;
+  var_type (FONT_SHAPE)       = Env_Font;
+  var_type (FONT_SIZE)        = Env_Font_Size;
+  var_type (FONT_BASE_SIZE)   = Env_Font_Size;
+  var_type (MAGNIFICATION)    = Env_Magnification;
+  var_type (COLOR)            = Env_Color;
+  var_type (LANGUAGE)         = Env_Language;
+
   var_type (MATH_LANGUAGE)    = Env_Language;
   var_type (MATH_FONT)        = Env_Font;
-  var_type (MATH_FAMILY)      = Env_Font;
-  var_type (MATH_SERIES)      = Env_Font;
-  var_type (MATH_SHAPE)       = Env_Font;
+  var_type (MATH_FONT_FAMILY) = Env_Font;
+  var_type (MATH_FONT_SERIES) = Env_Font;
+  var_type (MATH_FONT_SHAPE)  = Env_Font;
+  var_type (MATH_LEVEL)       = Env_Index_Level;
+  var_type (MATH_DISPLAY)     = Env_Display_Style;
+  var_type (MATH_CONDENSED)   = Env_Math_Condensed;
+  var_type (MATH_VPOS)        = Env_Vertical_Pos;
+
   var_type (PROG_LANGUAGE)    = Env_Language;
   var_type (PROG_FONT)        = Env_Font;
-  var_type (PROG_FAMILY)      = Env_Font;
-  var_type (PROG_SERIES)      = Env_Font;
-  var_type (PROG_SHAPE)       = Env_Font;
-  var_type (FONT_BASE_SIZE)   = Env_Font_Size;
-  var_type (FONT_SIZE)        = Env_Font_Size;
-  var_type (INDEX_LEVEL)      = Env_Index_Level;
-  var_type (DISPLAY_STYLE)    = Env_Display_Style;
-  var_type (MATH_CONDENSED)   = Env_Math_Condensed;
-  var_type (VERTICAL_POS)     = Env_Vertical_Pos;
-  var_type (COLOR)            = Env_Color;
-  var_type (LINE_WIDTH)       = Env_Line_Width;
+  var_type (PROG_FONT_FAMILY) = Env_Font;
+  var_type (PROG_FONT_SERIES) = Env_Font;
+  var_type (PROG_FONT_SHAPE)  = Env_Font;
 
   var_type (PAR_MODE)         = Env_Paragraph;
   var_type (PAR_HYPHEN)       = Env_Paragraph;
@@ -70,6 +66,11 @@ initialize_default_var_type () {
   var_type (PAR_LINE_SEP)     = Env_Paragraph;
   var_type (PAR_PAR_SEP)      = Env_Paragraph;
 
+  var_type (PAGE_TYPE)        = Env_Fixed;
+  var_type (PAGE_BREAKING)    = Env_Fixed;
+  var_type (PAGE_FLEXIBILITY) = Env_Fixed;
+  var_type (PAGE_WIDTH)       = Env_Fixed;
+  var_type (PAGE_HEIGHT)      = Env_Fixed;
   var_type (PAGE_NR)          = Env_Page;
   var_type (PAGE_THE_PAGE)    = Env_Page;
   var_type (PAGE_ODD)         = Env_Page;
@@ -93,6 +94,7 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_SEP)   = Env_Page;
   var_type (PAGE_MNOTE_WIDTH) = Env_Page;
 
+  var_type (LINE_WIDTH)       = Env_Line_Width;
   var_type (GR_FRAME)         = Env_Frame;
   var_type (GR_CLIP)          = Env_Clipping;
 }
@@ -166,20 +168,20 @@ edit_env_rep::update_font () {
   switch (mode) {
   case 0:
     fn= find_font (dis,
-		   get_string (TEXT_FONT), get_string (TEXT_FAMILY),
-		   get_string (TEXT_SERIES), get_string (TEXT_SHAPE),
+		   get_string (FONT), get_string (FONT_FAMILY),
+		   get_string (FONT_SERIES), get_string (FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 1:
     fn= find_font (dis,
-		   get_string (MATH_FONT), get_string (MATH_FAMILY),
-		   get_string (MATH_SERIES), get_string (MATH_SHAPE),
+		   get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
+		   get_string (MATH_FONT_SERIES), get_string (MATH_FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
   case 2:
     fn= find_font (dis,
-		   get_string (PROG_FONT), get_string (PROG_FAMILY),
-		   get_string (PROG_SERIES), get_string (PROG_SHAPE),
+		   get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
+		   get_string (PROG_FONT_SERIES), get_string (PROG_FONT_SHAPE),
 		   script (fn_size, index_level), (int) (magn*dpi));
     break;
   }
@@ -203,7 +205,7 @@ void
 edit_env_rep::update_language () {
   switch (mode) {
   case 0:
-    lan= text_language (get_string (TEXT_LANGUAGE));
+    lan= text_language (get_string (LANGUAGE));
     break;
   case 1:
     lan= math_language (get_string (MATH_LANGUAGE));
@@ -249,10 +251,10 @@ edit_env_rep::update_clipping () {
 void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
-  index_level    = get_int (INDEX_LEVEL);
-  display_style  = get_bool (DISPLAY_STYLE);
+  index_level    = get_int (MATH_LEVEL);
+  display_style  = get_bool (MATH_DISPLAY);
   math_condensed = get_bool (MATH_CONDENSED);
-  vert_pos       = get_int (VERTICAL_POS);
+  vert_pos       = get_int (MATH_VPOS);
   preamble       = get_bool (PREAMBLE);
 
   update_color ();
@@ -295,17 +297,17 @@ edit_env_rep::update (string s) {
     update_font ();
     break;
   case Env_Index_Level:
-    index_level= get_int (INDEX_LEVEL);
+    index_level= get_int (MATH_LEVEL);
     update_font ();
     break;
   case Env_Display_Style:
-    display_style= get_bool (DISPLAY_STYLE);
+    display_style= get_bool (MATH_DISPLAY);
     break;
   case Env_Math_Condensed:
     math_condensed= get_bool (MATH_CONDENSED);
     break;
   case Env_Vertical_Pos:
-    vert_pos= get_int (VERTICAL_POS);
+    vert_pos= get_int (MATH_VPOS);
     break;
   case Env_Color:
     update_color ();

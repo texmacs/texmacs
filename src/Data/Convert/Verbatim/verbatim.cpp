@@ -103,8 +103,8 @@ tree
 verbatim_document_to_tree (string s) {
   tree t    = verbatim_to_tree (s);
   tree init = tree (COLLECTION,
-		    tree (ASSOCIATE, TEXT_LANGUAGE, "verbatim"),
-		    tree (ASSOCIATE, TEXT_FAMILY, "tt"),
+		    tree (ASSOCIATE, LANGUAGE, "verbatim"),
+		    tree (ASSOCIATE, FONT_FAMILY, "tt"),
 		    tree (ASSOCIATE, PAR_FIRST, "0cm"));
   return tree (DOCUMENT, compound ("body", t), compound ("initial", init));
 }

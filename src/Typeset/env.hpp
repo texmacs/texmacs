@@ -187,9 +187,9 @@ public:
   inline void local_end (string s, tree t) {
      env (s)= t; update (s); }
   inline tree local_begin_script () {
-    return local_begin (INDEX_LEVEL, as_string (index_level+1)); }
+    return local_begin (MATH_LEVEL, as_string (index_level+1)); }
   inline void local_end_script (tree t) {
-    local_end (INDEX_LEVEL, t); }
+    local_end (MATH_LEVEL, t); }
   inline void assign (string s, tree t) {
     tree& val= env (s); t= exec(t); if (val != t) {
       back->write_back (s, env); val= t; update (s); } }

@@ -742,7 +742,7 @@ edit_env_rep::exec_number (tree t) {
 tree
 edit_env_rep::exec_date (tree t) {
   if (N(t)>2) return tree (ERROR, "bad date");
-  string lan= get_string (TEXT_LANGUAGE);
+  string lan= get_string (LANGUAGE);
   if (N(t) == 2) {
     tree u= exec (t[1]);
     if (is_compound (u)) return tree (ERROR, "bad date");

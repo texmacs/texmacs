@@ -113,41 +113,41 @@ latex_symbol_to_tree (string s) {
 
     if ((latex_type[s] == "modifier") && (latex_arity[s] == 0)) {
       s= s(1,N(s));
-      if (s == "rmfamily") return tree (SET, TEXT_FAMILY, "rm");
-      if (s == "ttfamily") return tree (SET, TEXT_FAMILY, "tt");
-      if (s == "sffamily") return tree (SET, TEXT_FAMILY, "sf");
-      if (s == "mdseries") return tree (SET, TEXT_SERIES, "medium");
-      if (s == "bfseries") return tree (SET, TEXT_SERIES, "bold");
-      if (s == "upshape")  return tree (SET, TEXT_SHAPE , "right");
-      if (s == "itshape")  return tree (SET, TEXT_SHAPE , "italic");
-      if (s == "slshape")  return tree (SET, TEXT_SHAPE , "slanted");
-      if (s == "scshape")  return tree (SET, TEXT_SHAPE , "small-caps");
+      if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
+      if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
+      if (s == "sffamily") return tree (SET, FONT_FAMILY, "sf");
+      if (s == "mdseries") return tree (SET, FONT_SERIES, "medium");
+      if (s == "bfseries") return tree (SET, FONT_SERIES, "bold");
+      if (s == "upshape")  return tree (SET, FONT_SHAPE , "right");
+      if (s == "itshape")  return tree (SET, FONT_SHAPE , "italic");
+      if (s == "slshape")  return tree (SET, FONT_SHAPE , "slanted");
+      if (s == "scshape")  return tree (SET, FONT_SHAPE , "small-caps");
 
       if (s == "cal")      return tree (SET, MATH_FONT  , "cal");
       if (s == "frak")     return tree (SET, MATH_FONT  , "Euler");
       if (s == "Bbb")      return tree (SET, MATH_FONT  , "Bbb*");
-      if (s == "displaystyle") return tree (SET, DISPLAY_STYLE, "true");
-      if (s == "textstyle") return tree (SET, DISPLAY_STYLE, "false");
-      if (s == "scriptstyle") return tree (SET, INDEX_LEVEL, "1");
-      if (s == "scriptscriptstyle") return tree (SET, INDEX_LEVEL, "2");
+      if (s == "displaystyle") return tree (SET, MATH_DISPLAY, "true");
+      if (s == "textstyle") return tree (SET, MATH_DISPLAY, "false");
+      if (s == "scriptstyle") return tree (SET, MATH_LEVEL, "1");
+      if (s == "scriptscriptstyle") return tree (SET, MATH_LEVEL, "2");
       if (s == "operatorname") return tree (SET, "dummy", "dummy");
 
-      if (s == "rm") return tree (SET, TEXT_FAMILY, "rm");
-      if (s == "tt") return tree (SET, TEXT_FAMILY, "tt");
-      if (s == "sf") return tree (SET, TEXT_FAMILY, "ss");
-      if (s == "md") return tree (SET, TEXT_SERIES, "right");
-      if (s == "bf") return tree (SET, TEXT_SERIES, "bold");
-      if (s == "it") return tree (SET, TEXT_SHAPE, "italic");
-      if (s == "sl") return tree (SET, TEXT_SHAPE, "slanted");
-      if (s == "sc") return tree (SET, TEXT_SHAPE, "small-caps");
+      if (s == "rm") return tree (SET, FONT_FAMILY, "rm");
+      if (s == "tt") return tree (SET, FONT_FAMILY, "tt");
+      if (s == "sf") return tree (SET, FONT_FAMILY, "ss");
+      if (s == "md") return tree (SET, FONT_SERIES, "right");
+      if (s == "bf") return tree (SET, FONT_SERIES, "bold");
+      if (s == "it") return tree (SET, FONT_SHAPE, "italic");
+      if (s == "sl") return tree (SET, FONT_SHAPE, "slanted");
+      if (s == "sc") return tree (SET, FONT_SHAPE, "small-caps");
       if (s == "em") {
 	if (command_type ["!em"] == "false") {
 	  command_type ("!em")= "true";
-	  return tree (SET, TEXT_SHAPE, "italic");
+	  return tree (SET, FONT_SHAPE, "italic");
 	}
 	else {
 	  command_type ("!em")= "false";
-	  return tree (SET, TEXT_SHAPE, "right");
+	  return tree (SET, FONT_SHAPE, "right");
 	}
       }
 
@@ -441,25 +441,26 @@ latex_command_to_tree (tree t) {
   if (textm_appendices && is_tuple (t, "\\chapter", 1))
     return tree (APPLY, "appendix", l2e (t[1]));
 
-  if (is_tuple (t, "\\textrm", 1)) return m2e (t, TEXT_FAMILY, "rm");
-  if (is_tuple (t, "\\texttt", 1)) return m2e (t, TEXT_FAMILY, "tt");
-  if (is_tuple (t, "\\textsf", 1)) return m2e (t, TEXT_FAMILY, "ss");
-  if (is_tuple (t, "\\textmd", 1)) return m2e (t, TEXT_SERIES, "medium");
-  if (is_tuple (t, "\\textbf", 1)) return m2e (t, TEXT_SERIES, "bold");
-  if (is_tuple (t, "\\textup", 1)) return m2e (t, TEXT_SHAPE, "right");
-  if (is_tuple (t, "\\textit", 1)) return m2e (t, TEXT_SHAPE, "italic");
-  if (is_tuple (t, "\\textsl", 1)) return m2e (t, TEXT_SHAPE, "slanted");
-  if (is_tuple (t, "\\textsc", 1)) return m2e (t, TEXT_SHAPE, "small-caps");
-  if (is_tuple (t, "\\emph", 1))   return m2e (t, TEXT_SHAPE, "italic");
-  if (is_tuple (t, "\\operatorname", 1)) return var_m2e (t, MATH_FAMILY, "rm");
-  if (is_tuple (t, "\\mathnormal", 1)) return m2e (t, MATH_FAMILY, "mr");
-  if (is_tuple (t, "\\mathrm", 1)) return var_m2e (t, MATH_FAMILY, "rm");
-  if (is_tuple (t, "\\mathtt", 1)) return var_m2e (t, MATH_FAMILY, "tt");
-  if (is_tuple (t, "\\mathsf", 1)) return var_m2e (t, MATH_FAMILY, "ss");
-  if (is_tuple (t, "\\mathbf", 1)) return var_m2e (t, MATH_FAMILY, "bf");
-  if (is_tuple (t, "\\mathit", 1)) return var_m2e (t, MATH_FAMILY, "it");
-  if (is_tuple (t, "\\mathsl", 1)) return var_m2e (t, MATH_FAMILY, "sl");
-  if (is_tuple (t, "\\mathup", 1)) return var_m2e (t, MATH_FAMILY, "up");
+  if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
+  if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
+  if (is_tuple (t, "\\textsf", 1)) return m2e (t, FONT_FAMILY, "ss");
+  if (is_tuple (t, "\\textmd", 1)) return m2e (t, FONT_SERIES, "medium");
+  if (is_tuple (t, "\\textbf", 1)) return m2e (t, FONT_SERIES, "bold");
+  if (is_tuple (t, "\\textup", 1)) return m2e (t, FONT_SHAPE, "right");
+  if (is_tuple (t, "\\textit", 1)) return m2e (t, FONT_SHAPE, "italic");
+  if (is_tuple (t, "\\textsl", 1)) return m2e (t, FONT_SHAPE, "slanted");
+  if (is_tuple (t, "\\textsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
+  if (is_tuple (t, "\\emph", 1))   return m2e (t, FONT_SHAPE, "italic");
+  if (is_tuple (t, "\\operatorname", 1))
+    return var_m2e (t, MATH_FONT_FAMILY, "rm");
+  if (is_tuple (t, "\\mathnormal", 1)) return m2e (t, MATH_FONT_FAMILY, "mr");
+  if (is_tuple (t, "\\mathrm", 1)) return var_m2e (t, MATH_FONT_FAMILY, "rm");
+  if (is_tuple (t, "\\mathtt", 1)) return var_m2e (t, MATH_FONT_FAMILY, "tt");
+  if (is_tuple (t, "\\mathsf", 1)) return var_m2e (t, MATH_FONT_FAMILY, "ss");
+  if (is_tuple (t, "\\mathbf", 1)) return var_m2e (t, MATH_FONT_FAMILY, "bf");
+  if (is_tuple (t, "\\mathit", 1)) return var_m2e (t, MATH_FONT_FAMILY, "it");
+  if (is_tuple (t, "\\mathsl", 1)) return var_m2e (t, MATH_FONT_FAMILY, "sl");
+  if (is_tuple (t, "\\mathup", 1)) return var_m2e (t, MATH_FONT_FAMILY, "up");
   if (is_tuple (t, "\\mathcal", 1))  return m2e (t, MATH_FONT, "cal");
   if (is_tuple (t, "\\mathfrak", 1)) return m2e (t, MATH_FONT, "Euler");
   if (is_tuple (t, "\\mathbb", 1))   return m2e (t, MATH_FONT, "Bbb");
@@ -555,9 +556,9 @@ latex_command_to_tree (tree t) {
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
     return tree (CONCAT,
-		 tree (SET, MATH_SERIES, "bold"),
+		 tree (SET, MATH_FONT_SERIES, "bold"),
 		 l2e (t[1]),
-		 tree (RESET, MATH_SERIES));
+		 tree (RESET, MATH_FONT_SERIES));
   if (is_tuple (t, "\\tmop", 1)) return tree (APPLY, "op", l2e (t[1]));
   if (is_tuple (t, "\\tmstrong", 1)) return tree (APPLY, "strong", l2e (t[1]));
   if (is_tuple (t, "\\tmem", 1)) return tree (APPLY, "em", l2e (t[1]));

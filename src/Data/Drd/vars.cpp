@@ -13,53 +13,53 @@
 #include "vars.hpp"
 
 /******************************************************************************
-* Important environment variables and actions
+* Various important environment variables
 ******************************************************************************/
 
 string DPI ("dpi");
 string SFACTOR ("shrinking factor");
-string MAGNIFICATION ("magnification");
-
 string PREAMBLE ("preamble");
 string MODE ("mode");
-string TEXT_LANGUAGE ("language");
-string TEXT_FONT ("font");
-string TEXT_FAMILY ("font family");
-string TEXT_SHAPE ("font shape");
-string TEXT_SERIES ("font series");
-string MATH_LANGUAGE ("math language");
-string MATH_FONT ("math font");
-string MATH_FAMILY ("math font family");
-string MATH_SHAPE ("math font shape");
-string MATH_SERIES ("math font series");
-string PROG_LANGUAGE ("prog language");
-string PROG_FONT ("prog font");
-string PROG_FAMILY ("prog font family");
-string PROG_SHAPE ("prog font shape");
-string PROG_SERIES ("prog font series");
-string FONT_BASE_SIZE ("font base size");
-string FONT_SIZE ("font size");
-string INDEX_LEVEL ("index level");
-string DISPLAY_STYLE ("formula style");
-string MATH_CONDENSED ("math condensed");
-string VERTICAL_POS ("vertical position");
-string COLOR ("color");
-string BACKGROUND_COLOR ("background color");
-string LINE_WIDTH ("line width");
-string LINE_STYLE ("line style");
-string LINE_ARROWS ("line arrows");
-string LINE_CAPS ("line caps");
-string FILL_MODE ("fill mode");
-string FILL_COLOR ("fill color");
-string FILL_STYLE ("fill style");
-string THIS_SESSION ("this session");
 string INFO_FLAG ("info flag");
+string IDENTITY ("identity");
+string TABULAR ("tabular");
 
+/******************************************************************************
+* Text properties for tex, math and prog modes
+******************************************************************************/
+
+string FONT ("font");
+string FONT_FAMILY ("font family");
+string FONT_SERIES ("font series");
+string FONT_SHAPE ("font shape");
+string FONT_SIZE ("font size");
+string FONT_BASE_SIZE ("font base size");
+string MAGNIFICATION ("magnification");
+string COLOR ("color");
+string BG_COLOR ("background color");
+string LANGUAGE ("language");
 string ATOM_DECORATIONS ("atom decorations");
 string LINE_DECORATIONS ("line decorations");
 string PAGE_DECORATIONS ("page decorations");
 string XOFF_DECORATIONS ("xoff decorations");
 string YOFF_DECORATIONS ("yoff decorations");
+
+string MATH_LANGUAGE ("math language");
+string MATH_FONT ("math font");
+string MATH_FONT_FAMILY ("math font family");
+string MATH_FONT_SERIES ("math font series");
+string MATH_FONT_SHAPE ("math font shape");
+string MATH_LEVEL ("index level");
+string MATH_DISPLAY ("formula style");
+string MATH_CONDENSED ("math condensed");
+string MATH_VPOS ("vertical position");
+
+string PROG_LANGUAGE ("prog language");
+string PROG_FONT ("prog font");
+string PROG_FONT_FAMILY ("prog font family");
+string PROG_FONT_SERIES ("prog font series");
+string PROG_FONT_SHAPE ("prog font shape");
+string PROG_SESSION ("this session");
 
 /******************************************************************************
 * Environment variables for paragraphs
@@ -177,14 +177,19 @@ string CELL_ROW_NR ("cell row nr");
 string CELL_COL_NR ("cell col nr");
 
 /******************************************************************************
-* Other variables
+* Environment variables for graphics
 ******************************************************************************/
+
+string LINE_WIDTH ("line width");
+string LINE_STYLE ("line style");
+string LINE_ARROWS ("line arrows");
+string LINE_CAPS ("line caps");
+string FILL_MODE ("fill mode");
+string FILL_COLOR ("fill color");
+string FILL_STYLE ("fill style");
 
 string GR_FRAME ("graphical frame");
 string GR_CLIP ("graphical clip");
 string GR_MODE ("graphical mode");
 string GR_COLOR ("graphical color");
 string GR_LINE_WIDTH ("graphical line width");
-
-string IDENTITY ("identity");
-string TABULAR ("tabular");

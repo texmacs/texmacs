@@ -39,33 +39,33 @@ edit_interface_rep::set_left_footer () {
   for (i=0; i<arity (the_style); i++)
     s= s * "#" * as_string (the_style[i]);
   string mode= get_env_string (MODE);
-  string lan = get_env_string (LANGUAGE (mode));
+  string lan = get_env_string (MODE_LANGUAGE (mode));
   if (mode == "prog") s= s * "#program";
-  else if (as_string (get_init_value (LANGUAGE (mode))) != lan)
+  else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s= s * "#" * lan;
   else s= s * "#" * mode;
   if (mode == "text") {
-    s= s * "#" * get_env_string (TEXT_FONT);
-    append_left_footer (s, TEXT_FAMILY);
+    s= s * "#" * get_env_string (FONT);
+    append_left_footer (s, FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, TEXT_SERIES);
-    append_left_footer (s, TEXT_SHAPE);
+    append_left_footer (s, FONT_SERIES);
+    append_left_footer (s, FONT_SHAPE);
   }
   else if (mode == "math") {
     s= s * "#" * get_env_string (MATH_FONT);
-    append_left_footer (s, MATH_FAMILY);
+    append_left_footer (s, MATH_FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, MATH_SERIES);
-    append_left_footer (s, MATH_SHAPE);
+    append_left_footer (s, MATH_FONT_SERIES);
+    append_left_footer (s, MATH_FONT_SHAPE);
   }
   else {
-    string session_name= get_env_string (THIS_SESSION);
+    string session_name= get_env_string (PROG_SESSION);
     if (session_name != "default") s= s * "-" * session_name;
     s= s * "#" * get_env_string (PROG_FONT);
-    append_left_footer (s, PROG_FAMILY);
+    append_left_footer (s, PROG_FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, PROG_SERIES);
-    append_left_footer (s, PROG_SHAPE);
+    append_left_footer (s, PROG_FONT_SERIES);
+    append_left_footer (s, PROG_FONT_SHAPE);
   }
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
@@ -123,13 +123,15 @@ get_with_text (tree t) {
       if (i>0) s << "#";
       string var= t[2*i]->label;
       if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
-	  (var!=TEXT_LANGUAGE) && (var!=TEXT_FONT) &&
-	  (var!=TEXT_FAMILY) && (var!=TEXT_SHAPE) && (var!=TEXT_SERIES) &&
+	  (var!=LANGUAGE) && (var!=FONT) &&
+	  (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
 	  (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
-	  (var!=MATH_FAMILY) && (var!=MATH_SHAPE) && (var!=MATH_SERIES) &&
+	  (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
+	  (var!=MATH_FONT_SERIES) &&
 	  (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
-	  (var!=PROG_FAMILY) && (var!=PROG_SHAPE) && (var!=PROG_SERIES) &&
-	  (var!=THIS_SESSION))
+	  (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
+	  (var!=PROG_FONT_SERIES) &&
+	  (var!=PROG_SESSION))
 	s << var << "=";
       s << t[2*i+1]->label;
     }

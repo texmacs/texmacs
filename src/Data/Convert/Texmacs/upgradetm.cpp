@@ -1540,7 +1540,7 @@ upgrade_session (tree t) {
   else if (is_expand (t, "session", 3)) {
     tree u= tree (EXPAND, "session", t[3]);
     tree w= tree (WITH);
-    w << PROG_LANGUAGE << t[1] << THIS_SESSION << t[2] << u;
+    w << PROG_LANGUAGE << t[1] << PROG_SESSION << t[2] << u;
     return w;
   }
   else {
@@ -1715,6 +1715,159 @@ upgrade_function (tree t) {
     return r;
   }
 }
+
+/******************************************************************************
+* Environment variables for paragraphs
+******************************************************************************/
+
+static charp var_rename []= {
+  "shrinking factor", "sfactor",
+  "info flag", "info-flag",
+
+  "font family", "font-family",
+  "font series", "font-series",
+  "font shape", "font-shape",
+  "font size", "font-size",
+  "font base size", "font-base-size",
+  "background color", "bg-color",
+  "atom decorations", "atom-decorations",
+  "line decorations", "line-decorations",
+  "page decorations", "page-decorations",
+  "xoff decorations", "xoff-decorations",
+  "yoff decorations", "yoff-decorations",
+
+  "math language", "math-language",
+  "math font", "math-font",
+  "math font family", "math-font-family",
+  "math font series", "math-font-series",
+  "math font shape", "math-font-shape",
+  "index level", "math-level",
+  "display style", "math-display",
+  "math condensed", "math-condensed",
+  "vertical position", "math-vpos",
+
+  "prog language", "prog-language",
+  "prog font", "prog-font",
+  "prog font family", "prog-font-family",
+  "prog font series", "prog-font-series",
+  "prog font shape", "prog-font-shape",
+  "this session", "prog-session",
+
+  "paragraph mode", "par-mode",
+  "paragraph hyphenation", "par-hyphen",
+  "paragraph width", "par-width",
+  "left margin", "par-left",
+  "right margin", "par-right",
+  "first indentation", "par-first",
+  "no first indentation", "par-no-first",
+  "interline space", "par-sep",
+  "horizontal ink separation", "par-hor-sep",
+  "line stretch", "par-line-sep",
+  "interparagraph space", "par-par-sep",
+  "interfootnote space", "par-fnote-sep",
+  "nr columns", "par-columns",
+  "column separation", "par-columns-sep",
+
+  "page medium", "page-medium",
+  "page type", "page-type",
+  "page orientation", "page-orientation",
+  "page breaking", "page-breaking",
+  "page flexibility", "page-flexibility",
+  "page number", "page-nr",
+  "thepage", "page-the-page",
+  "page width", "page-width",
+  "page height", "page-height",
+  "odd page margin", "page-odd",
+  "even page margin", "page-even",
+  "page right margin", "page-right",
+  "page top margin", "page-top",
+  "page bottom margin", "page-bot",
+  "page extend", "page-extend",
+  "page shrink", "page-shrink",
+  "page header separation", "page-head-sep",
+  "page footer separation", "page-foot-sep",
+  "odd page header", "page-odd-header",
+  "odd page footer", "page-odd-footer",
+  "even page header", "page-even-header",
+  "even page footer", "page-even-footer",
+  "this page header", "page-this-header",
+  "this page footer", "page-this-footer",
+  "reduction page left margin", "page-reduce-left",
+  "reduction page right margin", "page-reduce-right",
+  "reduction page top margin", "page-reduce-top",
+  "reduction page bottom margin", "page-reduce-bot",
+  "show header and footer", "page-show-hf",
+  "footnote separation", "page-fnote-sep",
+  "footnote bar length", "page-fnote-barlen",
+  "float separation", "page-float-sep",
+  "marginal note separation", "page-mnote-sep",
+  "marginal note width", "page-mnote-width",
+
+  "table width", "table-width",
+  "table height", "table-height",
+  "table hmode", "table-hmode",
+  "table vmode", "table-vmode",
+  "table halign", "table-halign",
+  "table valign", "table-valign",
+  "table row origin", "table-row-origin",
+  "table col origin", "table-col-origin",
+  "table lsep", "table-lsep",
+  "table rsep", "table-rsep",
+  "table bsep", "table-bsep",
+  "table tsep", "table-tsep",
+  "table lborder", "table-lborder",
+  "table rborder", "table-rborder",
+  "table bborder", "table-bborder",
+  "table tborder", "table-tborder",
+  "table hyphen", "table-hyphen",
+  "table min rows", "table-min-rows",
+  "table min cols", "table-min-cols",
+  "table max rows", "table-max-rows",
+  "table max cols", "table-max-cols",
+
+  "cell format", "cell-format",
+  "cell decoration", "cell-decoration",
+  "cell background", "cell-background",
+  "cell orientation", "cell-orientation",
+  "cell width", "cell-width",
+  "cell height", "cell-height",
+  "cell hpart", "cell-hpart",
+  "cell vpart", "cell-vpart",
+  "cell hmode", "cell-hmode",
+  "cell vmode", "cell-vmode",
+  "cell halign", "cell-halign",
+  "cell valign", "cell-valign",
+  "cell lsep", "cell-lsep",
+  "cell rsep", "cell-rsep",
+  "cell bsep", "cell-bsep",
+  "cell tsep", "cell-tsep",
+  "cell lborder", "cell-lborder",
+  "cell rborder", "cell-rborder",
+  "cell bborder", "cell-bborder",
+  "cell tborder", "cell-tborder",
+  "cell vcorrect", "cell-vcorrect",
+  "cell hyphen", "cell-hyphen",
+  "cell row span", "cell-row-span",
+  "cell col span", "cell-col-span",
+  "cell row nr", "cell-row-nr",
+  "cell col nr", "cell-col-nr",
+
+  "line width", "line-width",
+  "line style", "line-style",
+  "line arrows", "line-arrows",
+  "line caps", "line-caps",
+  "fill mode", "fill-mode",
+  "fill color", "fill-color",
+  "fill style", "fill-style",
+
+  "graphical frame", "gr-frame",
+  "graphical clip", "gr-clip",
+  "graphical mode", "gr-mode",
+  "graphical color", "gr-color",
+  "graphical line width", "gr-line-width",
+  
+  ""
+};
 
 /******************************************************************************
 * Upgrade from previous versions

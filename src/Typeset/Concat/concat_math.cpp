@@ -113,26 +113,26 @@ concater_rep::typeset_rprime (tree t, path ip) {
 void
 concater_rep::typeset_below (tree t, path ip) {
   box b1= typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old_ds= env->local_begin (DISPLAY_STYLE, "false");
+  tree old_ds= env->local_begin (MATH_DISPLAY, "false");
   tree old_mc= env->local_begin (MATH_CONDENSED, "true");
   tree old_il= env->local_begin_script ();
   box b2= typeset_as_concat (env, t[1], descend (ip, 1));
   env->local_end_script (old_il);
   env->local_end (MATH_CONDENSED, old_mc);
-  env->local_end (DISPLAY_STYLE, old_ds);
+  env->local_end (MATH_DISPLAY, old_ds);
   print (STD_ITEM, limit_box (ip, b1, b2, box (), env->fn, false));
 }
 
 void
 concater_rep::typeset_above (tree t, path ip) {
   box b1= typeset_as_concat (env, t[0], descend (ip, 0));
-  tree old_ds= env->local_begin (DISPLAY_STYLE, "false");
+  tree old_ds= env->local_begin (MATH_DISPLAY, "false");
   tree old_mc= env->local_begin (MATH_CONDENSED, "true");
   tree old_il= env->local_begin_script ();
   box b2= typeset_as_concat (env, t[1], descend (ip, 1));
   env->local_end_script (old_il);
   env->local_end (MATH_CONDENSED, old_mc);
-  env->local_end (DISPLAY_STYLE, old_ds);
+  env->local_end (MATH_DISPLAY, old_ds);
   print (STD_ITEM, limit_box (ip, b1, box (), b2, env->fn, false));
 }
 
@@ -140,24 +140,24 @@ void
 concater_rep::typeset_script (tree t, path ip, bool right) {
   int type= RSUP_ITEM;
   box b1, b2;
-  tree old_ds= env->local_begin (DISPLAY_STYLE, "false");
+  tree old_ds= env->local_begin (MATH_DISPLAY, "false");
   tree old_mc= env->local_begin (MATH_CONDENSED, "true");
   tree old_il= env->local_begin_script ();
   if (is_func (t, SUB (right))) {
-    tree old_vp= env->local_begin (VERTICAL_POS, "-1");
+    tree old_vp= env->local_begin (MATH_VPOS, "-1");
     b1= typeset_as_concat (env, t[0], descend (ip, 0));
     type= right? RSUB_ITEM: LSUB_ITEM;
-    env->local_end (VERTICAL_POS, old_vp);
+    env->local_end (MATH_VPOS, old_vp);
   }
   if (is_func (t, SUP (right))) {
-    tree old_vp= env->local_begin (VERTICAL_POS, "1");
+    tree old_vp= env->local_begin (MATH_VPOS, "1");
     b2= typeset_as_concat (env, t[0], descend (ip, 0));
     type= right? RSUP_ITEM: LSUP_ITEM;
-    env->local_end (VERTICAL_POS, old_vp);
+    env->local_end (MATH_VPOS, old_vp);
   }
   env->local_end_script (old_il);
   env->local_end (MATH_CONDENSED, old_mc);
-  env->local_end (DISPLAY_STYLE, old_ds);
+  env->local_end (MATH_DISPLAY, old_ds);
   if (right) penalty_max (HYPH_INVALID);
   a << line_item (type, script_box (ip, b1, b2, env->fn), HYPH_INVALID);
   // do not use print, because of italic space
@@ -172,15 +172,15 @@ void
 concater_rep::typeset_frac (tree t, path ip) {
   bool disp= env->display_style;
   tree old;
-  if (disp) old= env->local_begin (DISPLAY_STYLE, "false");
+  if (disp) old= env->local_begin (MATH_DISPLAY, "false");
   else old= env->local_begin_script ();
-  tree old_vp= env->local_begin (VERTICAL_POS, "1");
+  tree old_vp= env->local_begin (MATH_VPOS, "1");
   box nom= typeset_as_concat (env, t[0], descend (ip, 0));
-  env->local_end (VERTICAL_POS, "-1");
+  env->local_end (MATH_VPOS, "-1");
   box den= typeset_as_concat (env, t[1], descend (ip, 1));
-  env->local_end (VERTICAL_POS, old_vp);
+  env->local_end (MATH_VPOS, old_vp);
   font sfn= env->fn;
-  if (disp) env->local_end (DISPLAY_STYLE, old);
+  if (disp) env->local_end (MATH_DISPLAY, old);
   else env->local_end_script (old);
   print (STD_ITEM, frac_box (ip, nom, den, env->fn, sfn, env->col));
 }
@@ -193,11 +193,11 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   if (N(t)==2) {
     bool disp= env->display_style;
     tree old;
-    if (disp) old= env->local_begin (DISPLAY_STYLE, "false");
+    if (disp) old= env->local_begin (MATH_DISPLAY, "false");
     tree old_il= env->local_begin_script ();
     ind= typeset_as_concat (env, t[1], descend (ip, 1));
     env->local_end_script (old_il);
-    if (disp) env->local_end (DISPLAY_STYLE, old);
+    if (disp) env->local_end (MATH_DISPLAY, old);
   }
   SI sep= env->fn->sep;
   box sqrtb= delimiter_box (decorate_left (ip), "<large-sqrt>",

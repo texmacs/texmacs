@@ -20,49 +20,44 @@
 
 extern string DPI;
 extern string SFACTOR;
-extern string MAGNIFICATION;
-
 extern string PREAMBLE;
 extern string MODE;
-extern string TEXT_LANGUAGE;
-extern string TEXT_FONT;
-extern string TEXT_FAMILY;
-extern string TEXT_SHAPE;
-extern string TEXT_SERIES;
-extern string MATH_LANGUAGE;
-extern string MATH_FONT;
-extern string MATH_FAMILY;
-extern string MATH_SHAPE;
-extern string MATH_SERIES;
-extern string PROG_LANGUAGE;
-extern string PROG_FONT;
-extern string PROG_FAMILY;
-extern string PROG_SHAPE;
-extern string PROG_SERIES;
-extern string FONT_BASE_SIZE;
-extern string FONT_SIZE;
-extern string INDEX_LEVEL;
-extern string DISPLAY_STYLE;
-extern string MATH_CONDENSED;
-extern string VERTICAL_POS;
-extern string MATH_SPACING;
-extern string COLOR;
-extern string BACKGROUND_COLOR;
-extern string LINE_WIDTH;
-extern string LINE_STYLE;
-extern string LINE_ARROWS;
-extern string LINE_CAPS;
-extern string FILL_MODE;
-extern string FILL_COLOR;
-extern string FILL_STYLE;
-extern string THIS_SESSION;
 extern string INFO_FLAG;
+extern string IDENTITY;
+extern string TABULAR;
 
+extern string FONT;
+extern string FONT_FAMILY;
+extern string FONT_SERIES;
+extern string FONT_SHAPE;
+extern string FONT_SIZE;
+extern string FONT_BASE_SIZE;
+extern string MAGNIFICATION;
+extern string COLOR;
+extern string BG_COLOR;
+extern string LANGUAGE;
 extern string ATOM_DECORATIONS;
 extern string LINE_DECORATIONS;
 extern string PAGE_DECORATIONS;
 extern string XOFF_DECORATIONS;
 extern string YOFF_DECORATIONS;
+
+extern string MATH_LANGUAGE;
+extern string MATH_FONT;
+extern string MATH_FONT_FAMILY;
+extern string MATH_FONT_SERIES;
+extern string MATH_FONT_SHAPE;
+extern string MATH_LEVEL;
+extern string MATH_DISPLAY;
+extern string MATH_CONDENSED;
+extern string MATH_VPOS;
+
+extern string PROG_LANGUAGE;
+extern string PROG_FONT;
+extern string PROG_FONT_FAMILY;
+extern string PROG_FONT_SERIES;
+extern string PROG_FONT_SHAPE;
+extern string PROG_SESSION;
 
 extern string PAR_MODE;
 extern string PAR_HYPHEN;
@@ -163,13 +158,18 @@ extern string CELL_HYPHEN;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
+extern string LINE_WIDTH;
+extern string LINE_STYLE;
+extern string LINE_ARROWS;
+extern string LINE_CAPS;
+extern string FILL_MODE;
+extern string FILL_COLOR;
+extern string FILL_STYLE;
+
 extern string GR_FRAME;
 extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
 extern string GR_LINE_WIDTH;
-
-extern string IDENTITY;
-extern string TABULAR;
 
 #endif // defined VARS_H

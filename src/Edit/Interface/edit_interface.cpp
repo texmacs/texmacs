@@ -22,13 +22,13 @@ extern void clear_rectangles (ps_device dev, rectangles l);
 extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 
 /*static*/ string
-LANGUAGE (string mode) {
-  if (mode == "text") return TEXT_LANGUAGE;
+MODE_LANGUAGE (string mode) {
+  if (mode == "text") return LANGUAGE;
   if (mode == "math") return MATH_LANGUAGE;
   if (mode == "prog") return PROG_LANGUAGE;
   cerr << "Mode = " << mode << "\n";
   fatal_error ("invalid mode", "the_language", "edit_interface.cpp");
-  return TEXT_LANGUAGE;
+  return LANGUAGE;
 }
 
 /******************************************************************************
@@ -92,7 +92,7 @@ edit_interface_rep::update_connection () {
   // cout << "et= " << et << "\n";
   // cout << "tp= " << tp << "\n";
   con_name   = get_env_string (PROG_LANGUAGE);
-  con_session= get_env_string (THIS_SESSION);
+  con_session= get_env_string (PROG_SESSION);
   con_status = connection_status (con_name, con_session);
   // cout << "Name   : " << con_name << "\n";
   // cout << "Session: " << con_session << "\n";
@@ -251,7 +251,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
     ev->x1/sfactor, ev->y1/sfactor,
     ev->x2/sfactor, ev->y2/sfactor);
   dev->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BACKGROUND_COLOR);
+  string bg= get_init_string (BG_COLOR);
   dev->set_background (dis->get_color (bg));
   rectangle r (
     ev->x1+ dev->ox, ev->y1+ dev->oy,
@@ -334,16 +334,16 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       string mode= get_env_string (MODE);
       string family, series;
       if (mode == "text") {
-	family= get_env_string (TEXT_FAMILY);
-	series= get_env_string (TEXT_SERIES);
+	family= get_env_string (FONT_FAMILY);
+	series= get_env_string (FONT_SERIES);
       }
       else if (mode == "math") {
-	family= get_env_string (MATH_FAMILY);
-	series= get_env_string (MATH_SERIES);
+	family= get_env_string (MATH_FONT_FAMILY);
+	series= get_env_string (MATH_FONT_SERIES);
       }
       else if (mode == "prog") {
-	family= get_env_string (PROG_FAMILY);
-	series= get_env_string (PROG_SERIES);
+	family= get_env_string (PROG_FONT_FAMILY);
+	series= get_env_string (PROG_FONT_SERIES);
       }
       if (cu->valid) {
 	if (mode == "math")
@@ -403,7 +403,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
   SI X1= ev->x1 * sfactor, Y1= ev->y1 * sfactor;
   SI X2= ev->x2 * sfactor, Y2= ev->y2 * sfactor;
   win->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BACKGROUND_COLOR);
+  string bg= get_init_string (BG_COLOR);
   win->set_background (dis->get_color (bg));
   win->clear (max (eb->x1, X1), max (eb->y1, Y1),
 	      min (eb->x2, X2), min (eb->y2, Y2));
