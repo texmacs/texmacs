@@ -59,7 +59,7 @@ bridge_formatting (typesetter ttt, tree st, path ip, string v) {
 void
 bridge_formatting_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, TABLE_FORMAT)))
+  if (nil (p) && (!is_func (u, TFORMAT)))
     fatal_error ("Nil path", "bridge_formatting_rep::notify_assign");
   if (nil (p)) {
     st=u;

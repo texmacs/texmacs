@@ -86,7 +86,7 @@ concater_rep::typeset_lprime (tree t, path ip) {
     b2= symbol_box (sip, b2, N(t[0]->label));
     b2= move_box (sip, b2, env->decode_length (string ("-0.05fn")), 0);
     env->local_end_script (old_il);
-    print (LEFT_SUP_ITEM, script_box (ip, b1, b2, env->fn));
+    print (LSUP_ITEM, script_box (ip, b1, b2, env->fn));
     penalty_max (HYPH_INVALID);
   }
 }
@@ -102,7 +102,7 @@ concater_rep::typeset_rprime (tree t, path ip) {
     env->local_end_script (old_il);
     penalty_max (HYPH_INVALID);
     if (N(a)>0) a[N(a)-1]->limits= false;
-    print (RIGHT_SUP_ITEM, script_box (ip, b1, b2, env->fn));
+    print (RSUP_ITEM, script_box (ip, b1, b2, env->fn));
   }
 }
 
@@ -138,7 +138,7 @@ concater_rep::typeset_above (tree t, path ip) {
 
 void
 concater_rep::typeset_script (tree t, path ip, bool right) {
-  int type= RIGHT_SUP_ITEM;
+  int type= RSUP_ITEM;
   box b1, b2;
   tree old_ds= env->local_begin (DISPLAY_STYLE, "false");
   tree old_mc= env->local_begin (MATH_CONDENSED, "true");
@@ -146,13 +146,13 @@ concater_rep::typeset_script (tree t, path ip, bool right) {
   if (is_func (t, SUB (right))) {
     tree old_vp= env->local_begin (VERTICAL_POS, "-1");
     b1= typeset_as_concat (env, t[0], descend (ip, 0));
-    type= right? RIGHT_SUB_ITEM: LEFT_SUB_ITEM;
+    type= right? RSUB_ITEM: LSUB_ITEM;
     env->local_end (VERTICAL_POS, old_vp);
   }
   if (is_func (t, SUP (right))) {
     tree old_vp= env->local_begin (VERTICAL_POS, "1");
     b2= typeset_as_concat (env, t[0], descend (ip, 0));
-    type= right? RIGHT_SUP_ITEM: LEFT_SUP_ITEM;
+    type= right? RSUP_ITEM: LSUP_ITEM;
     env->local_end (VERTICAL_POS, old_vp);
   }
   env->local_end_script (old_il);

@@ -294,9 +294,9 @@ expand_references (tree t, hashmap<string,tree> h) {
     string ref= as_string (simplify_execed (t[0]));
     if (h->contains (ref)) {
       int which= is_func (t, REFERENCE, 1)? 0: 1;
-      return tree (HYPERLINK, copy (h[ref][which]), "#" * ref);
+      return tree (HLINK, copy (h[ref][which]), "#" * ref);
     }
-    return tree (HYPERLINK, "?", "#" * ref);
+    return tree (HLINK, "?", "#" * ref);
   }
   int i, n= N(t);
   tree r (t, n);

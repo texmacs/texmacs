@@ -43,14 +43,14 @@ concater_rep::pre_glue () {
     line_item item2= a[i+1];
     int t1= item1->type;
     int t2= item2->type;
-    if (((t1 == RIGHT_SUB_ITEM) && (t2 == RIGHT_SUP_ITEM)) ||
-	((t1 == RIGHT_SUP_ITEM) && (t2 == RIGHT_SUB_ITEM)) ||
-	((t1 == LEFT_SUB_ITEM) && (t2 == LEFT_SUP_ITEM)) ||
-	((t1 == LEFT_SUP_ITEM) && (t2 == LEFT_SUB_ITEM)))
+    if (((t1 == RSUB_ITEM) && (t2 == RSUP_ITEM)) ||
+	((t1 == RSUP_ITEM) && (t2 == RSUB_ITEM)) ||
+	((t1 == LSUB_ITEM) && (t2 == LSUP_ITEM)) ||
+	((t1 == LSUP_ITEM) && (t2 == LSUB_ITEM)))
       {
-	bool  flag1 = (t1 == LEFT_SUB_ITEM) || (t1 == RIGHT_SUB_ITEM);
-	bool  flag2 = (t1 == LEFT_SUB_ITEM) || (t1 == LEFT_SUP_ITEM);
-	int   type  = flag2? GLUE_LEFT_SUBS_ITEM: GLUE_RIGHT_SUBS_ITEM;
+	bool  flag1 = (t1 == LSUB_ITEM) || (t1 == RSUB_ITEM);
+	bool  flag2 = (t1 == LSUB_ITEM) || (t1 == LSUP_ITEM);
+	int   type  = flag2? GLUE_LSUBS_ITEM: GLUE_RSUBS_ITEM;
 	box   b1    = flag1? item1->b[0]: item2->b[0];
 	box   b2    = flag1? item2->b[0]: item1->b[0];
 	box   b     = script_box (b1->ip, b1, b2, env->fn);
@@ -91,27 +91,27 @@ concater_rep::handle_scripts (int start, int end) {
   int i;
   for (i=start; i<=end; ) {
     if ((a[i]->type == OBSOLETE_ITEM) ||
-	(a[i]->type == LEFT_SUB_ITEM) ||
-	(a[i]->type == LEFT_SUP_ITEM) ||
-	(a[i]->type == GLUE_LEFT_SUBS_ITEM) ||
-	(a[i]->type == RIGHT_SUB_ITEM) ||
-	(a[i]->type == RIGHT_SUP_ITEM) ||
-	(a[i]->type == GLUE_RIGHT_SUBS_ITEM)) { i++; continue; }
+	(a[i]->type == LSUB_ITEM) ||
+	(a[i]->type == LSUP_ITEM) ||
+	(a[i]->type == GLUE_LSUBS_ITEM) ||
+	(a[i]->type == RSUB_ITEM) ||
+	(a[i]->type == RSUP_ITEM) ||
+	(a[i]->type == GLUE_RSUBS_ITEM)) { i++; continue; }
 
     path sip;
     int l= prec (i);
     box lb1, lb2;
     if (l < start) l= -1;
     else switch (a[l]->type) {
-    case LEFT_SUB_ITEM:
+    case LSUB_ITEM:
       lb1= a[l]->b[0];
       sip= lb1->ip;
       break;
-    case LEFT_SUP_ITEM:
+    case LSUP_ITEM:
       lb2= a[l]->b[0];
       sip= lb2->ip;
       break;
-    case GLUE_LEFT_SUBS_ITEM:
+    case GLUE_LSUBS_ITEM:
       lb1= a[l]->b[0];
       lb2= a[l]->b[1];
       sip= lb2->ip;
@@ -124,15 +124,15 @@ concater_rep::handle_scripts (int start, int end) {
     box rb1, rb2;
     if (r > end) r= N(a);
     else switch (a[r]->type) {
-    case RIGHT_SUB_ITEM:
+    case RSUB_ITEM:
       rb1= a[r]->b[0];
       sip= rb1->ip;
       break;
-    case RIGHT_SUP_ITEM:
+    case RSUP_ITEM:
       rb2= a[r]->b[0];
       sip= rb2->ip;
       break;
-    case GLUE_RIGHT_SUBS_ITEM:
+    case GLUE_RSUBS_ITEM:
       rb1= a[r]->b[0];
       rb2= a[r]->b[1];
       sip= rb2->ip;

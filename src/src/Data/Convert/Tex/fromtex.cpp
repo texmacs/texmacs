@@ -93,10 +93,10 @@ latex_symbol_to_tree (string s) {
       if (s == "\\|")  return "<||>";
       if (s == "\\quad")  return tree (SPACE, "1fn");
       if (s == "\\qquad")  return tree (SPACE, "2fn");
-      if (s == "\\par")  return tree (VSPACE_AFTER, "1fn");
-      if (s == "\\smallskip")  return tree (VSPACE_AFTER, "0.5fn");
-      if (s == "\\medskip")  return tree (VSPACE_AFTER, "1fn");
-      if (s == "\\bigskip")  return tree (VSPACE_AFTER, "2fn");
+      if (s == "\\par")  return tree (VSPACE, "1fn");
+      if (s == "\\smallskip")  return tree (VSPACE, "0.5fn");
+      if (s == "\\medskip")  return tree (VSPACE, "1fn");
+      if (s == "\\bigskip")  return tree (VSPACE, "2fn");
       if (s == "\\hfill")  return tree (HTAB, "1fn");
       if (s == "\\hline")  return tree (APPLY, "hline");
       if (s == "\\appendix") { textm_appendices= true; return ""; }
@@ -330,7 +330,7 @@ latex_verbarg_to_tree (tree t) {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (is_atomic (t[i])) s << t[i]->label;
-      else if (is_func (t[i], RIGHT_SUB, 1) && is_atomic (t[i][0]))
+      else if (is_func (t[i], RSUB, 1) && is_atomic (t[i][0]))
 	s << "_" << t[i][0]->label;
     return s;
   }
@@ -397,13 +397,13 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= as_string (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
-    return tree (ASSIGN, var, tree (FUNCTION, l2e (t[2])));
+    return tree (ASSIGN, var, tree (FUNC, l2e (t[2])));
   }
   if (is_tuple (t, "\\def*", 3)) {
     string var= as_string (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
     int i, arity= as_int (l2e(t[2]));
-    tree f (FUNCTION);
+    tree f (FUNC);
     for (i=1; i<=arity; i++) f << as_string (i);
     f << l2e (t[3]);
     return tree (ASSIGN, var, f);
@@ -411,12 +411,12 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\newenvironment", 3)) {
     string var= l2e(t[1])->label;
-    return tree (ASSIGN, var, tree (ENVIRONMENT, l2e (t[2]), l2e (t[3])));
+    return tree (ASSIGN, var, tree (ENV, l2e (t[2]), l2e (t[3])));
   }
   if (is_tuple (t, "\\newenvironment*", 4)) {
     string var= l2e(t[1])->label;
     int i, arity= as_int (l2e(t[2])->label);
-    tree e (ENVIRONMENT);
+    tree e (ENV);
     for (i=1; i<=arity; i++) e << as_string (i);
     e << l2e (t[3]);
     e << l2e (t[4]);
@@ -465,11 +465,11 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathbb", 1))   return m2e (t, MATH_FONT, "Bbb");
   if (is_tuple (t, "\\mathbbm", 1))   return m2e (t, MATH_FONT, "Bbb*");
 
-  if (is_tuple (t, "\\prime", 1))  return tree (RIGHT_PRIME, as_string (t[1]));
+  if (is_tuple (t, "\\prime", 1))  return tree (RPRIME, as_string (t[1]));
   if (is_tuple (t, "\\frac", 2))  return tree (FRAC, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\sqrt", 1))  return tree (SQRT, l2e (t[1]));
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
-  if (is_tuple (t, "\\<sub>", 1)) return tree (RIGHT_SUB, l2e (t[1]));
+  if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\not", 1))   return tree (NEG, l2e (t[1]));
   if (is_tuple (t, "\\bar", 1))  return tree (WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\hat", 1))  return tree (WIDE, l2e (t[1]), "^");
@@ -488,7 +488,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\abovering", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1)) return tree (SPACE, t2e (t[1]));
-  if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE_AFTER, t2e (t[1]));
+  if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1))   return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
@@ -496,7 +496,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\overbrace", 1))
     return tree (WIDE, l2e (t[1]), "<wide-overbrace>");
   if (is_tuple (t, "\\underbrace", 1))
-    return tree (WIDE_UNDER, l2e (t[1]), "<wide-underbrace>");
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-underbrace>");
 
   if (is_tuple (t, "\\text", 1) ||
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
@@ -504,8 +504,8 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\<sup>", 1)) {
     if (is_tuple (t[1], "\\prime", 0))
-      return tree (RIGHT_PRIME, "'");
-    else return tree (RIGHT_SUP, l2e (t[1]));
+      return tree (RPRIME, "'");
+    else return tree (RSUP, l2e (t[1]));
   }
   if (is_tuple (t, "\\stackrel", 2))
     return tree (ABOVE, l2e (t[2]), l2e (t[1]));
@@ -517,7 +517,7 @@ latex_command_to_tree (tree t) {
     if (s == "Vert") s= "|";
     if (dtype == -1) return tree (LEFT, s);
     else if (dtype == 1) return tree (RIGHT, s);
-    else return tree (MIDDLE, s);
+    else return tree (MID, s);
   }
   if (is_tuple (t, "\\cite", 1) || is_tuple (t, "\\nocite", 1)) {
     string cite_type= t[0]->label (1, N(t[0]->label));
@@ -573,7 +573,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmperson", 1)) return tree (APPLY, "person", l2e (t[1]));
   if (is_tuple (t, "\\tmscript", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\tmhlink", 1))
-    return tree (HYPERLINK, l2e (t[1]), l2e (t[2]));
+    return tree (HLINK, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\tmaction", 1))
     return tree (ACTION, l2e (t[1]), l2e (t[2]));
   // End TeXmacs specific markup
@@ -639,7 +639,7 @@ finalize_returns (tree t) {
 
 static tree
 parse_matrix_params (tree t) {
-  tree tformat (TABLE_FORMAT);
+  tree tformat (TFORMAT);
   if (N(t) <= 1) return tformat;
   string s= as_string (t[1]);
   int i, n= N(s), col=1;
@@ -652,7 +652,7 @@ parse_matrix_params (tree t) {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HALIGN);
 	string how   = s (i, i+1);
-	tformat << tree (CELL_WITH, "1", "-1", col_s, col_s, halign, how);
+	tformat << tree (CWITH, "1", "-1", col_s, col_s, halign, how);
 	col++;
 	break;
       }
@@ -661,7 +661,7 @@ parse_matrix_params (tree t) {
 	string col_s= col==1? as_string (col): as_string (col-1);
 	string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
 	string how  = "1ln";
-	tformat << tree (CELL_WITH, "1", "-1", col_s, col_s, hbor, how);
+	tformat << tree (CWITH, "1", "-1", col_s, col_s, hbor, how);
 	break;
       }
     case '@':
@@ -720,7 +720,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       string row_s= row==0? as_string (row+1): as_string (row);
       string vbor = row==0? copy (CELL_TBORDER): copy (CELL_BBORDER);
       string how  = "1ln";
-      tformat << tree (CELL_WITH, row_s, row_s, "1", "-1", vbor, how);
+      tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
     }
     else E << v;
   }
@@ -742,7 +742,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       if (x<N(V[y])) M << V[y][x];
       else M << "";
   M << as_string (cols) << as_string (rows);
-  if (tformat != tree (TABLE_FORMAT)) {
+  if (tformat != tree (TFORMAT)) {
     tformat << M;
     M= tformat;
   }

@@ -27,12 +27,12 @@
 #define CONTROL_ITEM           6
 #define FLOAT_ITEM             7
 
-#define LEFT_SUB_ITEM          8
-#define LEFT_SUP_ITEM          9
-#define RIGHT_SUB_ITEM        10
-#define RIGHT_SUP_ITEM        11
-#define GLUE_LEFT_SUBS_ITEM   12
-#define GLUE_RIGHT_SUBS_ITEM  13
+#define LSUB_ITEM              8
+#define LSUP_ITEM              9
+#define RSUB_ITEM             10
+#define RSUP_ITEM             11
+#define GLUE_LSUBS_ITEM       12
+#define GLUE_RSUBS_ITEM       13
 #define GLUE_LEFT_ITEM        14
 #define GLUE_RIGHT_ITEM       15
 #define GLUE_BOTH_ITEM        16

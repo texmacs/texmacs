@@ -65,10 +65,10 @@ table_rep::display (bool flag) {
 void
 table_rep::typeset (tree t, path iq) {
   ip= iq;
-  tree old_format= env->local_begin (CELL_FORMAT, tree (TABLE_FORMAT));
+  tree old_format= env->local_begin (CELL_FORMAT, tree (TFORMAT));
   tree new_format= old_format;
-  if (!is_func (new_format, TABLE_FORMAT)) new_format= tree (TABLE_FORMAT);
-  while (is_func (t, TABLE_FORMAT)) {
+  if (!is_func (new_format, TFORMAT)) new_format= tree (TFORMAT);
+  while (is_func (t, TFORMAT)) {
     new_format= join (new_format, t (0, N(t)-1));
     iq        = descend (iq, N(t)-1);
     t         = t[N(t)-1];
@@ -182,7 +182,7 @@ table_rep::format_table (tree fm) {
 
 void
 table_rep::format_item (tree with) {
-  if (is_func (with, TABLE_WITH, 2))
+  if (is_func (with, TWITH, 2))
     var (as_string (with[0]))= with[1];
 }
 

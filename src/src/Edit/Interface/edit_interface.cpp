@@ -636,8 +636,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   if (nil (p)) return;
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
-      is_func (st, TABLE) || is_func (st, SUB_TABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT) ||
+      is_func (st, TABLE) || is_func (st, SUBTABLE) ||
+      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
       is_graphical (st) ||
       (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
       (is_compound (st, "math", 1) &&

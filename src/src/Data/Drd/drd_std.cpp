@@ -59,15 +59,15 @@ initialize_std_drd () {
   init (RAW_DATA, "raw_data", fixed (1));
 
   init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
-  init (PARAGRAPH, "para",
+  init (PARA, "para",
 	repeat (1, 1) -> no_border () -> accessible (0) -> name ("paragraph"));
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
-  init (VSPACE_BEFORE, "vspace*",
+  init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
-  init (VSPACE_AFTER, "vspace", options (1, 2) -> name ("vertical space"));
+  init (VSPACE, "vspace", options (1, 2) -> name ("vertical space"));
   init (SPACE, "space", options (1, 2)); // arity 1 or 3
   // space markup has arity 1 or 3
   init (HTAB, "htab", options (1, 1) -> name ("tab"));
@@ -75,17 +75,17 @@ initialize_std_drd () {
   init (RESIZE, "resize", fixed (1, 4, BIFORM) -> accessible (0));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
-  init (DECORATE_ATOMS, "datoms",
+  init (DATOMS, "datoms",
 	var_repeat (1, 1, BIFORM) -> accessible (1) ->
 	name ("decorate atoms"));
   // arbitrary number of macros and decorated content
-  init (DECORATE_LINES, "dlines",
+  init (DLINES, "dlines",
 	var_repeat (1, 1, BIFORM) -> accessible (1) ->
 	name ("decorate lines"));
-  init (DECORATE_PAGES, "dpages",
+  init (DPAGES, "dpages",
 	var_repeat (1, 1, BIFORM) -> accessible (1) ->
 	name ("decorate pages"));
-  init (DECORATED_BOX, "dbox", fixed (0) -> name ("decorated box"));
+  init (DBOX, "dbox", fixed (0) -> name ("decorated box"));
 
   init (WITH_LIMITS, "with_limits", fixed (0));
   init (LINE_BREAK, "line_break", fixed (0));
@@ -107,41 +107,41 @@ initialize_std_drd () {
   init (NEW_DOUBLE_PAGE, "new_double_page", fixed (0));
 
   init (LEFT, "left", fixed (1));
-  init (MIDDLE, "mid", fixed (1));
+  init (MID, "mid", fixed (1));
   init (RIGHT, "right", fixed (1));
   init (BIG, "big", fixed (1));
-  init (LEFT_PRIME, "lprime", fixed (1) -> name ("left prime"));
-  init (RIGHT_PRIME, "rprime", fixed (1) -> name ("right prime"));
+  init (LPRIME, "lprime", fixed (1) -> name ("left prime"));
+  init (RPRIME, "rprime", fixed (1) -> name ("right prime"));
   init (BELOW, "below", fixed (2) -> accessible (0));
   init (ABOVE, "above", fixed (2) -> accessible (0));
-  init (LEFT_SUB, "lsub",
+  init (LSUB, "lsub",
 	fixed (1) -> accessible (0) -> name ("left subscript"));
-  init (LEFT_SUP, "lsup",
+  init (LSUP, "lsup",
 	fixed (1) -> accessible (0) -> name ("left superscript"));
-  init (RIGHT_SUB, "rsub",
+  init (RSUB, "rsub",
 	fixed (1) -> accessible (0) -> name ("subscript"));
-  init (RIGHT_SUP, "rsup",
+  init (RSUP, "rsup",
 	fixed (1) -> accessible (0) -> name ("superscript"));
   init (FRAC, "frac", fixed (2) -> accessible (0) -> name ("fraction"));
   init (SQRT, "sqrt", options (1, 1) -> accessible (0) -> name ("root"));
   init (WIDE, "wide", fixed (1, 1, BIFORM) -> accessible (0));
-  init (WIDE_UNDER, "wide*",
+  init (VAR_WIDE, "wide*",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("wide under"));
   init (NEG, "neg", fixed (1) -> accessible (0) -> name ("negation"));
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
 
-  init (TABLE_FORMAT, "tformat",
-	var_repeat (1, 1, BIFORM) -> no_border () -> accessible (1));
-  init (TABLE_WITH, "twith",
+  init (TFORMAT, "tformat",
+	var_repeat (1, 1, BIFORM) -> no_border () -> accessible (1) ->
+	name ("table format"));
+  init (TWITH, "twith",
 	fixed (2) -> accessible (0) -> name ("table property"));
-  init (CELL_WITH, "cwith",
+  init (CWITH, "cwith",
 	fixed (6) -> accessible (0) -> name ("cell property"));
-  init (TABLE_MARKER, "tmarker", fixed (0) -> name ("table marker"));
+  init (TMARKER, "tmarker", fixed (0) -> name ("table marker"));
   init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
   init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
   init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
-  init (SUB_TABLE, "sub_table",
-	fixed (1) -> no_border () -> accessible (0) -> name ("subtable"));
+  init (SUBTABLE, "sub_table", fixed (1) -> no_border () -> accessible (0));
 
   init (ASSIGN, "assign", fixed (2));
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
@@ -149,7 +149,7 @@ initialize_std_drd () {
   init (VALUE, "value", fixed (1));
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
   init (DRD_PROPS, "drd_props", repeat (3, 2) -> name ("drd properties"));
-  init (ARGUMENT, "arg", repeat (1, 1) -> name ("argument"));
+  init (ARG, "arg", repeat (1, 1) -> name ("argument"));
   init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"
   init (XMACRO, "xmacro", fixed (2) -> accessible (0));
@@ -173,8 +173,8 @@ initialize_std_drd () {
   init (MINUS, "minus", fixed (2));
   init (TIMES, "times", fixed (2));
   init (OVER, "over", fixed (2));
-  init (DIVIDE, "div", fixed (2));
-  init (MODULO, "mod", fixed (2));
+  init (DIV, "div", fixed (2) -> name ("divide"));
+  init (MOD, "mod", fixed (2) -> name ("modulo"));
   init (MERGE, "merge", fixed (2));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (3));
@@ -212,7 +212,7 @@ initialize_std_drd () {
   init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
   init (WRITE, "write", fixed (2));
   init (SPECIFIC, "specific", fixed (2));
-  init (HYPERLINK, "hlink",
+  init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
   init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
@@ -246,7 +246,7 @@ initialize_std_drd () {
   init (APPLY, "apply", repeat (1, 1));
   init (BEGIN, "begin", repeat (1, 1));
   init (END, "end", fixed (1));
-  init (FUNCTION, "func", var_repeat (1, 1));
-  init (ENVIRONMENT, "env", var_repeat (1, 2));
+  init (FUNC, "func", var_repeat (1, 1));
+  init (ENV, "env", var_repeat (1, 2));
   init (AUTHORIZE, "authorize", fixed (2));
 }

@@ -76,8 +76,8 @@ lazy_paragraph_rep::line_print (line_item item) {
   if (item->type == CONTROL_ITEM) {
     if (is_func (item->t, HTAB))
       tabs << tab (N(items), item->t);
-    else if (is_func (item->t, VSPACE_BEFORE) ||
-	is_func (item->t, VSPACE_AFTER))
+    else if (is_func (item->t, VAR_VSPACE) ||
+	is_func (item->t, VSPACE))
     {
       SI vmin, vdef, vmax;
       if (N(item->t)==1) {
@@ -90,11 +90,11 @@ lazy_paragraph_rep::line_print (line_item item) {
 	vdef= env->decode_length (item->t[1]);
 	vmax= env->decode_length (item->t[2]);
       }
-      if (is_func (item->t, VSPACE_BEFORE))
+      if (is_func (item->t, VAR_VSPACE))
 	sss->vspace_before (space (vmin, vdef, vmax));
       else sss->vspace_after (space (vmin, vdef, vmax));
     }
-    else if (L(item->t) == DECORATE_ATOMS)
+    else if (L(item->t) == DATOMS)
       decs << tuple (as_string (N(items)), item->t);
     else if (item->t == NO_PAGE_BREAK_BEFORE)
       sss->no_page_break_before ();
@@ -245,11 +245,11 @@ lazy_paragraph_rep::handle_decoration (
   b   = concat_box (ip, new_items, new_items_sp);
 
   int k, n=N(t);
-  tree e (DECORATED_BOX);
+  tree e (DBOX);
   for (k=n-1; k>=0; k--)
     if (is_func (t[k], MACRO, 2))
       e= tree (COMPOUND, t[k], e);
-  if (e != tree (DECORATED_BOX)) {
+  if (e != tree (DBOX)) {
     // cout << "Typesetting " << e << LF;
     env->decorated_boxes << b;
     tree old_xoff= env->local_begin (XOFF_DECORATIONS, xoff_str);
@@ -268,7 +268,7 @@ lazy_paragraph_rep::handle_decorations (
     // cout << "Handling " << items[i] << LF;
     if ((j < N (decs)) && (as_int (decs[j][0]) == i)) {
       tree t= decs[j][1];
-      if (t == tree (DECORATE_ATOMS)) {
+      if (t == tree (DATOMS)) {
 	xoff += items_sp[i] + items [i]->x2;
 	new_items    << items [i];
 	new_items_sp << items_sp [i];
@@ -309,7 +309,7 @@ lazy_paragraph_rep::handle_decorations () {
   array<tree> new_decs;
   for (i=0; i<N(decs); i++) {
     tree t= decs [i][1];
-    if (t == tree (DECORATE_ATOMS))
+    if (t == tree (DATOMS))
       new_decs->resize (max (0, N(new_decs)-1));
     else new_decs << tuple ("0", t);
   }

@@ -56,7 +56,7 @@ edit_dynamic_rep::find_dynamic (path p) {
 bool
 edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
   int n= arity (t);
-  if (is_document (t) || is_func (t, PARAGRAPH) || is_func (t, SURROUND))
+  if (is_document (t) || is_func (t, PARA) || is_func (t, SURROUND))
     return true;
   if (is_func (t, MACRO) || is_func (t, WITH))
     return is_multi_paragraph_macro (t [n-1]);
@@ -80,7 +80,7 @@ contains_table_format (tree t, tree var) {
     for (i=0; i<n; i++)
       if (contains_table_format (t[i], var))
 	return true;
-    return is_func (t, TABLE_FORMAT) && (t[N(t)-1] == tree (ARGUMENT, var));
+    return is_func (t, TFORMAT) && (t[N(t)-1] == tree (ARG, var));
   }
 }
 
@@ -249,9 +249,9 @@ edit_dynamic_rep::back_general (path p, bool forward) {
   int n= N(st);
   if (n==0) back_monolithic (p);
   else if ((n==1) && is_func (st[0], DOCUMENT, 1) &&
-	   (is_func (st[0][0], TABLE_FORMAT) || is_func (st[0][0], TABLE)))
+	   (is_func (st[0][0], TFORMAT) || is_func (st[0][0], TABLE)))
     back_table (p * path (0, 0), forward);
-  else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
+  else if ((n==1) && (is_func (st[0], TFORMAT) || is_func (st[0], TABLE)))
     back_table (p * 0, forward);
   else go_to_argument (p * (forward? 0: n-1), forward);
 }
@@ -409,7 +409,7 @@ edit_dynamic_rep::activate_hybrid () {
       int i, n= N(mt)-1;
       for (i=0; i<n; i++)
 	if (mt[i] == name) {
-	  assign (p, tree (ARGUMENT, copy (name)));
+	  assign (p, tree (ARG, copy (name)));
 	  go_to (end (et, p));
 	  correct (path_up (p));
 	  return;

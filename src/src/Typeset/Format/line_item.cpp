@@ -53,15 +53,15 @@ operator << (ostream& out, line_item item) {
     return out << "right" << item->b->get_leaf_string ();
   case FLOAT_ITEM:
     return out << "float (" << item->b->get_leaf_lazy () << ")";
-  case LEFT_SUB_ITEM: return out << "left-sub";
-  case LEFT_SUP_ITEM: return out << "left-sup";
-  case RIGHT_SUB_ITEM: return out << "right-sub";
-  case RIGHT_SUP_ITEM: return out << "right-sup";
+  case LSUB_ITEM: return out << "lsub";
+  case LSUP_ITEM: return out << "lsup";
+  case RSUB_ITEM: return out << "rsub";
+  case RSUP_ITEM: return out << "rsup";
   case GLUE_LEFT_ITEM: return out << "glue-left";
   case GLUE_RIGHT_ITEM: return out << "glue-right";
   case GLUE_BOTH_ITEM: return out << "glue-both";
-  case GLUE_LEFT_SUBS_ITEM: return out << "glue-lsubs";
-  case GLUE_RIGHT_SUBS_ITEM: return out << "glue-rsubs";
+  case GLUE_LSUBS_ITEM: return out << "glue-lsubs";
+  case GLUE_RSUBS_ITEM: return out << "glue-rsubs";
   }
   return out << "unknown";
 }
