@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.10>
+<TeXmacs|1.0.3.3>
 
 <style|tmweb>
 
@@ -10,8 +10,8 @@
   <name|Cygwin>:
 
   <\enumerate-numeric>
-    <item>Installation of the (unofficial) Cygwin package (recommended).
-    Follow these <hlink|Instructions|http://www.fmi.uni-passau.de/~seidl/texmacs/tmtour.html#2>.
+    <item>Installation of the official Cygwin package (recommended). Follow
+    these <hlink|Instructions|http://www.fmi.uni-passau.de/~seidl/texmacs/tmtour.html#2>.
 
     <item>Download, compile and install <TeXmacs> manually. Follow the
     Instructions below, but note that the information about dependent
