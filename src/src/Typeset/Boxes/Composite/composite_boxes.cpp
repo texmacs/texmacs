@@ -79,11 +79,13 @@ composite_box_rep::left_justify () {
 }
 
 /******************************************************************************
-* Routines for comosite boxes
+* Routines for composite boxes
 ******************************************************************************/
 
 void
-composite_box_rep::display (ps_device dev) { (void) dev; }
+composite_box_rep::display (ps_device dev) {
+  (void) dev;
+}
 
 int
 composite_box_rep::subnr () {

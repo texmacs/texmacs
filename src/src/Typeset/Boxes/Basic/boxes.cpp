@@ -353,7 +353,7 @@ clear_rectangles (ps_device dev, rectangles l) {
 }
 
 int
-reindex (int i, int item, int n) {
+box_rep::reindex (int i, int item, int n) {
   if (item<0) item=0;
   if (item>n) item=n;
   if (i==0) return item;
