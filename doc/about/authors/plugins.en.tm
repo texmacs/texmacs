@@ -1,73 +1,75 @@
-<TeXmacs|1.0.1.20>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Authors and maintainers of plugins for <TeXmacs>>
+  <tmdoc-title|Authors and maintainers of plugins for <TeXmacs>>
 
-  <\expand|description-dash>
-    <expand|item*|Axiom>Andrey Grozin and Tim Daly.
+  <\description-dash>
+    <item*|Axiom>Andrey Grozin, Bill Page, David Mentré and Tim Daly.
 
-    <expand|item*|Giac>Bernard Parisse.
+    <item*|Eikleides>Mark Arrasmith.
 
-    <expand|item*|GNUplot>Stephan Mucha.
+    <item*|Giac>Bernard Parisse.
 
-    <expand|item*|Graphviz>Jorik Blaas.
+    <item*|GNUplot>Stephan Mucha.
 
-    <expand|item*|GTybalt>Stefan Weinzierl.
+    <item*|Graphviz>Jorik Blaas.
 
-    <expand|item*|Macaulay 2>Dan Grayson.
+    <item*|GTybalt>Stefan Weinzierl.
 
-    <expand|item*|Maple>Christian Even.
+    <item*|Macaulay 2>Dan Grayson.
 
-    <expand|item*|Mathemagix>Joris van der Hoeven.
+    <item*|Maple>Christian Even.
 
-    <expand|item*|Maxima>Andrey Grozin and James Amundson.
+    <item*|Mathemagix>Joris van der Hoeven.
 
-    <expand|item*|Mupad>Christopher Creutzig and Andrey Grozin.
+    <item*|Maxima>Andrey Grozin and James Amundson.
 
-    <expand|item*|Octave>Michael Graffam.
+    <item*|Mupad>Christopher Creutzig and Andrey Grozin.
 
-    <expand|item*|Pari>Karim Belabas.
+    <item*|Octave>Michael Graffam.
 
-    <expand|item*|Qcl>Andrey Grozin.
+    <item*|Pari>Karim Belabas.
 
-    <expand|item*|R>Michael Lachmann.
+    <item*|Qcl>Andrey Grozin.
 
-    <expand|item*|Reduce>Andrey Grozin.
+    <item*|R>Michael Lachmann.
 
-    <expand|item*|Scilab>Serge Steer and Claude Gomez.
+    <item*|Reduce>Andrey Grozin.
 
-    <expand|item*|Shell>Joris van der Hoeven.
+    <item*|Scilab>Serge Steer and Claude Gomez.
 
-    <expand|item*|Yacas>Ayal Pinkus.
-  </expand>
+    <item*|Shell>Joris van der Hoeven.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+    <item*|Yacas>Ayal Pinkus.
+  </description-dash>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
 
@@ -75,7 +77,7 @@
   <\collection>
     <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|<uninit>|?>>
   </collection>
 </references>

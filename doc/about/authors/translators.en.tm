@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.11>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
@@ -19,7 +19,8 @@
 
     <item*|Hungarian:>András Kadinger.
 
-    <item*|Italian:>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin.
+    <item*|Italian:>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin,
+    Gian Luigi Gragnani.
 
     <item*|Polish:>Robert Janusz.
 
@@ -72,7 +73,7 @@
   <\collection>
     <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
     <associate|toc-2|<tuple|<uninit>|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
   </collection>
 </references>
