@@ -39,6 +39,7 @@ get_codes (string version) {
 
   if (version_inf ("1.0.3.5", version)) return H;
 
+  new_feature (H, "for-each");
   new_feature (H, "quasi");
   rename_feature (H, "hold", "quasiquote");
   rename_feature (H, "release", "unquote");

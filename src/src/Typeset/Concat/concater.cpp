@@ -448,6 +448,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_case (t, ip);
     break;
   case WHILE:
+  case FOR_EACH:
     typeset_executable (t, ip);
     break;
 

@@ -249,6 +249,8 @@ edit_env_rep::exec (tree t) {
     return exec_case (t);
   case WHILE:
     return exec_while (t);
+  case FOR_EACH:
+    return exec_for_each (t);
 
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
@@ -1042,6 +1044,18 @@ edit_env_rep::exec_while (tree t) {
 }
 
 tree
+edit_env_rep::exec_for_each (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad for each");
+  tree fun = exec (t[0]);
+  tree args= exec (t[1]);
+  if (!is_tuple (args)) return tree (ERROR, "bad for each");
+  int i, n= N(args);
+  for (i=0; i<n; i++)
+    exec (tree (COMPOUND, fun, args[i]));
+  return "";
+}
+
+tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1301,6 +1315,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case VAR_IF:
   case CASE:
   case WHILE:
+  case FOR_EACH:
     (void) exec (t);
     return false;
   case STYLE_ONLY:
