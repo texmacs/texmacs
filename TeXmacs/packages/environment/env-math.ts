@@ -27,7 +27,7 @@
     </src-comment>
   </active*>
 
-  <assign|next-number|<macro|<style-with|src-compact|none|<assign|equation-nr|<plus|<value|equation-nr>|1>><assign|the-label|<the-equation>><with|mode|text|font-shape|right|(<the-equation>)>>>>
+  <assign|next-number|<macro|<style-with|src-compact|none|<next-equation><with|mode|text|font-shape|right|(<the-equation>)>>>>
 
   <assign|leq-number|<macro|<next-number><htab|5mm>>>
 
@@ -43,7 +43,7 @@
 
   <assign|equation-lab|<macro|body|lab|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|the-label|<arg|lab>><htab|5mm>|<htab|5mm>(<with|mode|text|<arg|lab>>)<vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 
-  <assign|equation|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|equation-nr|<plus|<value|equation-nr>|1>><assign|the-label|<the-equation>><htab|5mm>|<htab|5mm><with|mode|text|(<the-equation>)><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
+  <assign|equation|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><next-equation><htab|5mm>|<htab|5mm><with|mode|text|(<the-equation>)><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 
   <assign|equation*|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><htab|0fn>|<htab|0fn><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 

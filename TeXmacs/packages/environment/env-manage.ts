@@ -4,8 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-title-line|Package|env-manage-1.0 <with|font-shape|italic|(package
-    and dtd assigned below)>>
+    <src-package|env-manage|1.0>
 
     <\src-purpose>
       Managing groups of environments.
@@ -22,50 +21,64 @@
     </src-license>
   </src-title>>
 
-  <assign|env-manage-package|1.0>
+  <\active*>
+    <\src-comment>
+      Groups and counters for all standard environments.
+    </src-comment>
+  </active*>
 
-  <if|<equal|<value|env-manage-dtd>|<uninit>>|<assign|init-document|<merge|<macro|<init-stdenv>>|<value|init-document>>>>
+  <new-counter-group|std-env>
 
-  <assign|env-manage-dtd|1.0>
+  <new-counter-group|theorem-env>
 
-  \;
+  <add-to-counter-group|theorem-env|std-env>
 
-  <assign|list-add|<macro|class|env|Name|render|<style-with|src-compact|none|<assign|<merge|list-|<arg|class>>|<tuple|<compound|<merge|list-|<arg|class>>>|<arg|class>|<arg|env>|<arg|Name>|<arg|render>>>>>>
+  <group-common-counter|theorem-env>
 
-  <assign|list-theorem|>
+  <new-counter-group|exercise-env>
 
-  <assign|list-exercise|>
+  <add-to-counter-group|exercise-env|std-env>
 
-  <assign|list-figure|>
+  <new-counter-group|figure-env>
 
-  <assign|new-theorem|<macro|env|Name|<list-add|theorem|<arg|env>|<arg|Name>|theorem*>>>
+  <add-to-counter-group|figure-env|std-env>
 
-  <assign|new-remark|<macro|env|Name|<list-add|theorem|<arg|env>|<arg|Name>|remark*>>>
+  <add-to-counter-group|equation|std-env>
 
-  <assign|new-exercise|<macro|env|Name|<list-add|exercise|<arg|env>|<arg|Name>|exercise*>>>
+  <add-to-counter-group|footnote|std-en>
 
-  <assign|new-figure|<macro|env|Name|<list-add|figure|<arg|env>|<arg|Name>|figure*>>>
+  <assign|resetstdenv|<macro|<reset-std-env>>>
 
-  \;
+  <assign|display-std-env|<macro|nr|<the-prefix><arg|nr>>>
 
-  <assign|init-stdenv|<macro|>>
+  <\active*>
+    <\src-comment>
+      Defining new block environments with one parameter.
+    </src-comment>
+  </active*>
 
-  <assign|resetstdenv|<macro|<assign|footnote-nr|0>>>
+  <assign|new-env|<macro|env|name|group|render|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|<unquote|<arg|group>>><assign|<unquote|<arg|env>>|<\macro|body>
+    <surround|<compound|<unquote|<merge|next-|<arg|env>>>>||<style-with|src-compact|none|<compound|<unquote|<arg|render>>|<localize|<unquote|<arg|name>>>
+    <compound|<unquote|<merge|the-|<arg|env>>>>|<arg|body>>>>
+  </macro>>>>>>
 
-  <assign|the-footnote|<macro|<footnote-nr>>>
+  <assign|new-theorem|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|theorem*>>>
 
-  <assign|newstdenv-counter|<macro|which|<style-with|src-compact|none|<assign|<merge|the-|<arg|which>>|<quasiquote|<macro|<style-with|src-compact|none|<the-prefix><compound|<unquote|<merge|<arg|which>|-nr>>>>>>><assign|resetstdenv|<style-with|src-compact|none|<merge|<value|resetstdenv>|<quasiquote|<macro|<assign|<unquote|<merge|<arg|which>|-nr>>|0>>>>>>>>>
+  <assign|new-remark|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|remark*>>>
 
-  <assign|newstdenv|<macro|class|env|Name|render|<assign|<arg|env>|<quasiquote|<macro|body|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|class>|-nr>>|<plus|<compound|<unquote|<merge|<arg|class>|-nr>>>|1>>><assign|the-label|<compound|<unquote|<merge|the-|<arg|class>>>>>>||<style-with|src-compact|none|<compound|<unquote|<arg|render>>|<translate|<unquote|<arg|Name>>|english|<language>>
-  <compound|<unquote|<merge|the-|<arg|class>>>>|<arg|body>>>>>>>>>>
+  <assign|new-exercise|<macro|env|name|<new-env|<arg|env>|<arg|name>|exercise-env|exercise*>>>
 
-  <assign|newsmallfigure|<macro|env|Name|<style-with|src-compact|none|<assign|<merge|small-|<arg|env>>|<quasiquote|<macro|body|caption|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|env>|-nr>>|<plus|<value|<unquote|<merge|<arg|env>|-nr>>>|1>>><assign|the-label|<compound|<unquote|<merge|the-|<arg|env>>>>><style-with|src-compact|none|<small-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|Name>>>
-  <compound|<unquote|<merge|the-|<arg|env>>>>|<arg|body>|<arg|caption>>>>>>>>>>
+  <\active*>
+    <\src-comment>
+      Defining new figure-like environments.
+    </src-comment>
+  </active*>
 
-  <assign|newbigfigure|<macro|env|Name|<assign|<merge|big-|<arg|env>>|<quasiquote|<macro|body|caption|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|env>|-nr>>|<plus|<value|<unquote|<merge|<arg|env>|-nr>>>|1>>><assign|the-label|<compound|<unquote|<merge|the-|<arg|env>>>>>>||<style-with|src-compact|none|<big-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|Name>>>
-  <compound|<unquote|<merge|the-|<arg|env>>>>|<arg|body>|<arg|caption>>>>>>>>>>
-
-  <assign|newstdfigure|<macro|env|Name|<newsmallfigure|<arg|env>|<arg|Name>><newbigfigure|<arg|env>|<arg|Name>>>>
+  <assign|new-figure|<macro|env|name|<quasi|<style-with|src-compact|none|<add-to-counter-group|<unquote|<arg|env>>|figure-env><assign|<unquote|<merge|small-|<arg|env>>>|<macro|body|caption|<style-with|src-compact|none|<compound|<unquote|<merge|next-|<arg|env>>>><style-with|src-compact|none|<small-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|name>>>
+  <compound|<unquote|<merge|the-|<arg|env>>>>|<arg|body>|<arg|caption>>>>>><assign|<unquote|<merge|big-|<arg|env>>>|<\macro|body|caption>
+    <surround|<compound|<unquote|<merge|next-|<arg|env>>>>||<style-with|src-compact|none|<big-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|name>>>
+    <compound|<unquote|<merge|the-|<arg|env>>>>|<arg|body>|<arg|caption>>>>
+  </macro>>>>>>
 
   \;
 </body>

@@ -4,8 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-title-line|Package|number-trivial-1.0
-    <with|font-shape|italic|(package and dtd assigned below)>>
+    <src-package-dtd|number-trivial|1.0|number-section|1.0>
 
     <\src-purpose>
       Trivial numbering.
@@ -21,18 +20,6 @@
       02111-1307, USA.
     </src-license>
   </src-title>>
-
-  <assign|number-trivial-package|1.0>
-
-  <if|<equal|<value|number-section-dtd>|<uninit>>|<assign|init-document|<merge|<value|init-document>|<macro|<resettop>>>>>
-
-  <assign|number-section-dtd|1.0>
-
-  \;
-
-  <assign|resettop|<macro|<resetstdenv>>>
-
-  \;
 
   <assign|the-prefix|<macro|>>
 

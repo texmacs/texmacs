@@ -21,13 +21,9 @@
     </src-license>
   </src-title>>
 
-  <assign|newliststdenv|<macro|l|<if|<is-tuple|<arg|l>>|<newliststdenv|<look-up|<arg|l>|0>><newstdenv|<look-up|<arg|l>|2>|<look-up|<arg|l>|2>|<look-up|<arg|l>|3>|<look-up|<arg|l>|4>>>>>
+  <group-individual-counters|theorem-env>
 
-  <assign|newlistfigure|<macro|l|<if|<is-tuple|<arg|l>>|<newlistfigure|<look-up|<arg|l>|0>><newstdfigure|<look-up|<arg|l>|2>|<look-up|<arg|l>|3>>>>>
-
-  <assign|newliststdenv-counter|<macro|l|<if|<is-tuple|<arg|l>>|<newliststdenv-counter|<look-up|<arg|l>|0>><newstdenv-counter|<look-up|<arg|l>|2>>>>>
-
-  <assign|init-stdenv|<macro|<style-with|src-compact|none|<newstdenv-counter|equation><newliststdenv-counter|<value|list-theorem>><newliststdenv-counter|<value|list-exercise>><newliststdenv-counter|<value|list-figure>><newliststdenv|<value|list-theorem>><newliststdenv|<value|list-exercise>><newlistfigure|<value|list-figure>>>>>
+  \;
 
   \;
 </body>
