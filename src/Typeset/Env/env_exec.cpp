@@ -778,12 +778,7 @@ edit_env_rep::exec_merge (tree t) {
   tree t2= exec (t[1]);
   if (is_compound (t1) || is_compound (t2)) {
     if (is_tuple (t1) && is_tuple (t2)) return join (t1, t2);
-    if (
-#ifdef UPGRADE_APPLY
-	is_func (t1, MACRO) && is_func (t2, MACRO) &&
-#else
-	is_func (t1, FUNCTION) && is_func (t2, FUNCTION) &&
-#endif
+    if (is_func (t1, MACRO) && is_func (t2, MACRO) &&
 	(N(t1) == N(t2)) && (t1 (0, N(t1)-1) == t2 (0, N(t2)-1)))
       {
 	tree r = copy (t1);

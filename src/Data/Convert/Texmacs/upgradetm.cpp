@@ -1574,36 +1574,24 @@ upgrade_xexpand (tree t) {
 static tree
 upgrade_apply (tree t) {
   if (is_atomic (t)) return t;
-#ifdef UPGRADE_APPLY
   /*
   if (is_func (t, APPLY))
     cout << t[0] << "\n";
   */
-#endif
-  if (is_func (t, APPLY) &&
-#ifdef UPGRADE_APPLY
-      is_atomic (t[0])
-#else
-      ((t[0] == "cite") || (t[0] == "nocite") || (t[0] == "menu") ||
-       (t[0] == "tmdoc-copyright") || (t[0] == "tmweb-list"))
-#endif
-      )
-    {
-      int i, n= N(t)-1;
-      string s= t[0]->label;
-      tree_label l= make_tree_label (s);
-      tree r (l, n);
-      for (i=0; i<n; i++)
-	r[i]= upgrade_apply (t[i+1]);
-      return r;
-    }
+  if (is_func (t, APPLY) && is_atomic (t[0])) {
+    int i, n= N(t)-1;
+    string s= t[0]->label;
+    tree_label l= make_tree_label (s);
+    tree r (l, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_apply (t[i+1]);
+    return r;
+  }
 
   int i, n= N(t);
   tree r (t, n);
-#ifdef UPGRADE_APPLY
   if (is_func (t, APPLY))
     r= tree (COMPOUND, n);
-#endif
   for (i=0; i<n; i++)
     r[i]= upgrade_apply (t[i]);
   return r;
@@ -1634,13 +1622,11 @@ upgrade_function (tree t) {
 	     << "' in function '" << t[0] << "'\n"
 	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
   }
-#ifdef UPGRADE_APPLY
   /*
   if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION) && (N(t[1])>1)) {
     cout << "Function: " << t[0] << "\n";
   }
   */
-#endif
   if (is_func (t, FUNCTION)) {
     int i, n= N(t)-1;
     tree u= t[n], r (MACRO, n+1);
@@ -1649,7 +1635,6 @@ upgrade_function (tree t) {
       r[i]= copy (t[i]);
     }
     r[n]= upgrade_function (u);
-#ifdef UPGRADE_APPLY
     /*
     if (n > 0) {
       cout << "t= " << t << "\n";
@@ -1658,9 +1643,6 @@ upgrade_function (tree t) {
     }
     */
     return r;
-#else
-    return t;
-#endif
   }
   else {
     int i, n= N(t);

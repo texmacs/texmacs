@@ -13,15 +13,6 @@
 ******************************************************************************/
 
 SCM
-tmg_tmp_use_applyP () {
-  // SCM_DEFER_INTS;
-  bool out= use_apply ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
 tmg_texmacs_version_release (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "texmacs-version-release");
 
@@ -2055,7 +2046,6 @@ tmg_object_2make_widget (SCM arg1) {
 
 void
 initialize_glue_basic () {
-  gh_new_procedure ("tmp-use-apply?", (FN) tmg_tmp_use_applyP, 0, 0, 0);
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
   gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);
