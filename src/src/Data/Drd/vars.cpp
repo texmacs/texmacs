@@ -187,6 +187,8 @@ string CELL_COL_NR ("cell-col-nr");
 * Environment variables for graphics
 ******************************************************************************/
 
+string POINT_STYLE ("point-style");
+
 string LINE_WIDTH ("line-width");
 string LINE_STYLE ("line-style");
 string LINE_ARROWS ("line-arrows");

@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : mathutil.hpp
+* MODULE     : math_util.hpp
 * DESCRIPTION: extra math functions
 * COPYRIGHT  : (C) 2003  Henri Lesourd
 *******************************************************************************
@@ -16,6 +16,7 @@
 #include <math.h>
 
 const  double tm_infinity=3.40282347e+38F;
+const  double tm_PI=3.14159265358979323846;
 
 inline double square (double x) { return x*x; }
 inline double norm (double x) { return x>0?x:-x; }

@@ -50,6 +50,7 @@ public:
 
   /* logical cursor movement */
   path current_position ();
+  path path_xy (double x, double y);
   void go_to (path p);
   void go_to_correct (path p);
   void go_to_start (path p);

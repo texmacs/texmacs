@@ -2801,6 +2801,43 @@ tmg_tm_remove_with (SCM arg1, SCM arg2) {
   return SCM_UNSPECIFIED;
 }
 
+SCM
+tmg_get_graphical_object () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->get_graphical_object ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_set_graphical_object (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "set-graphical-object");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_graphical_object (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_path_xy (SCM arg1, SCM arg2) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "path-xy");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "path-xy");
+
+  double in1= scm_to_double (arg1);
+  double in2= scm_to_double (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->path_xy (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
 void
 initialize_glue_editor () {
   gh_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
@@ -3044,4 +3081,7 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
   gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
+  gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
+  gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
+  gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
 }

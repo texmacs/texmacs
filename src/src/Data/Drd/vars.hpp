@@ -165,6 +165,8 @@ extern string CELL_HYPHEN;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
+extern string POINT_STYLE;
+
 extern string LINE_WIDTH;
 extern string LINE_STYLE;
 extern string LINE_ARROWS;

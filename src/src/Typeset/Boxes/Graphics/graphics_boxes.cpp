@@ -58,13 +58,14 @@ struct point_box_rep: public box_rep {
   point p;
   SI r;
   color col;
-  point_box_rep (path ip, point p, SI radius, color col);
+  string style;
+  point_box_rep (path ip, point p, SI radius, color col, string style);
   void display (ps_device dev);
   operator tree () { return "point"; }
 };
 
-point_box_rep::point_box_rep (path ip2, point p2, SI r2, color col2):
-  box_rep (ip2), p (p2), r (r2), col (col2)
+point_box_rep::point_box_rep (path ip2, point p2, SI r2, color col2, string style2):
+  box_rep (ip2), p (p2), r (r2), col (col2), style (style2)
 {
   x1= x3= ((SI) p[0]) - r;
   y1= y3= ((SI) p[1]) - r;
@@ -74,14 +75,24 @@ point_box_rep::point_box_rep (path ip2, point p2, SI r2, color col2):
 
 void
 point_box_rep::display (ps_device dev) {
-  int i, n= 4*(r/dev->pixel+1);
-  array<SI> x (n), y (n);
-  for (i=0; i<n; i++) {
-    x[i]= (SI) (p[0] + r * cos ((6.283185307*i)/n));
-    y[i]= (SI) (p[1] + r * sin ((6.283185307*i)/n));
+  if (style == "square") {
+    dev->set_color (col);
+    dev->set_line_style (PIXEL);
+    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r, ((SI) p[0]) - r, ((SI) p[1]) + r); 
+    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r, ((SI) p[0]) - r, ((SI) p[1]) + r); 
+    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r, ((SI) p[0]) + r, ((SI) p[1]) - r); 
+    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r, ((SI) p[0]) + r, ((SI) p[1]) - r); 
   }
-  dev->set_color (col);
-  dev->polygon (x, y);
+  else {
+    int i, n= 4*(r/dev->pixel+1);
+    array<SI> x (n), y (n);
+    for (i=0; i<n; i++) {
+      x[i]= (SI) (p[0] + r * cos ((6.283185307*i)/n));
+      y[i]= (SI) (p[1] + r * sin ((6.283185307*i)/n));
+    }
+    dev->set_color (col);
+    dev->polygon (x, y);
+  }
 }
 
 /******************************************************************************
@@ -133,8 +144,8 @@ graphics_box (path ip, array<box> bs, frame f, point lim1, point lim2) {
 }
 
 box
-point_box (path ip, point p, SI r, color col) {
-  return new point_box_rep (ip, p, r, col);
+point_box (path ip, point p, SI r, color col, string style) {
+  return new point_box_rep (ip, p, r, col, style);
 }
 
 box

@@ -120,6 +120,7 @@ class concater_rep {
   void typeset_text_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   void typeset_line (tree t, path ip, bool close);
+  void typeset_arc (tree t, path ip);
   void typeset_spline (tree t, path ip, bool close);
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);

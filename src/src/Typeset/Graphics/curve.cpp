@@ -340,6 +340,67 @@ spline (array<point> a, bool close, bool interpol) {
 }
 
 /******************************************************************************
+* Arcs
+******************************************************************************/
+
+struct arc_rep: public curve_rep {
+  point center;  // Center
+  double r1, r2; // The two radiuses of the ellipsis
+  double alpha;  // Angle to define how the ellipsis is rotated
+  double e1, e2; // Coordinates of the two extremal points of the arc
+  arc_rep (
+    point c, double r1b, double r2b, double a, double e1b, double e2b):
+    center (c), r1 (r1b), r2 (r2b), alpha (a), e1 (e1b), e2 (e2b-e1b) {}
+  point evaluate (double t);
+  void rectify_cumul (array<point>& cum, double err);
+  double bound (double t, double err);
+  point grad (double t, bool& error);
+  double curvature (double t1, double t2);
+};
+
+point
+arc_rep::evaluate (double t) {
+  return center + r1*cos(2*tm_PI*(e1+t))*point (cos(alpha), sin(alpha))
+                + r2*sin(2*tm_PI*(e1+t))*point (-sin(alpha), cos(alpha));
+}
+
+void
+arc_rep::rectify_cumul (array<point>& cum, double err) {
+  double t, step;
+  step= sqrt (2*err / max (r1, r2) ) / tm_PI;
+  for (t=step; t<=e2; t+=step)
+    cum << evaluate (t);
+  if (t-step != e2)
+    cum << evaluate (e2);
+}
+
+double
+arc_rep::bound (double t, double err) {
+  bool b;
+  return err/norm(grad(t,b));
+}
+
+point
+arc_rep::grad (double t, bool& error) {
+  error= false;
+  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*point (cos(alpha), sin(alpha))
+         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*point (-sin(alpha), cos(alpha));
+}
+
+double
+arc_rep::curvature (double t1, double t2) {
+  if (r1 >= r2)
+    return fnull (r1,1.0e-6) ? tm_infinity : square(r2)/r1;
+  else
+    return fnull (r2,1.0e-6) ? tm_infinity : square(r1)/r2;
+}
+
+curve
+arc (point center, double r1, double r2, double alpha, double e1, double e2) {
+  return new arc_rep (center, r1, r2, alpha, e1, e2);
+}
+
+/******************************************************************************
 * Compound curves
 ******************************************************************************/
 

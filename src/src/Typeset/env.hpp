@@ -52,6 +52,7 @@
 #define Env_Src_Special       21
 #define Env_Src_Compact       22
 #define Env_Src_Close         23
+#define Env_Point_Style       24
 
 /******************************************************************************
 * For style file editing
@@ -130,6 +131,7 @@ public:
   int       vert_pos;
   color     col;
   SI        lw;
+  string    point_style;
   bool      preamble;
   frame     fr;
   point     clip_lim1;

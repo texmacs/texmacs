@@ -189,6 +189,12 @@ edit_cursor_rep::current_position () {
   return tp;
 }
 
+path
+edit_cursor_rep::path_xy (double x, double y) {
+  point p= find_frame()(point (x, y));
+  return tree_path ((SI)p[0], (SI)p[1], 0);
+}
+
 void
 edit_cursor_rep::go_to (path p) {
   tp= p;

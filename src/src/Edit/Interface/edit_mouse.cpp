@@ -135,7 +135,16 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y) {
   if (eb->action ("select" , x, y, 0) != "") return;
+  tree g;
+  bool b= inside_graphics ();
+  if (b) g= get_graphics ();
   go_to (x, y);
+  if (!b && inside_graphics ())
+    call ("graphics-reset-context", call ("string->symbol", (string)"begin"));
+  if (b && (!inside_graphics () || g!=get_graphics ())) {
+    invalidate_graphical_object ();
+    call ("graphics-reset-context", call ("string->symbol", (string)"exit"));
+  }
   if (selection_active_any ())
     selection_set ("primary", selection_get (), true);
 }

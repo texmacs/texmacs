@@ -411,6 +411,8 @@ edit_modify_rep::undo () {
     cerr << '\a';
     set_message ("Your document is back in its original state", "undo");
   }
+  if (inside_graphics ())
+    call ("graphics-reset-context", call ("string->symbol", (string)"undo"));
 }
 
 void

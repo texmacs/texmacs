@@ -178,6 +178,8 @@ initialize_default_env () {
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
+  env (POINT_STYLE)      = "disk";      // point style (square, circle...)
+
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
   env (LINE_ARROWS)      = "none";      // arrows at end of lines
