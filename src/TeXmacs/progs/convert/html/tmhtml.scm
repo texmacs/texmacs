@@ -92,6 +92,11 @@
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
 
+(define tmhtml-css-header
+  (string-append "body { text-align: justify } "
+		 ".title-block { width: 100%; text-align: center } "
+		 ".title-block p { margin: 0px } "))
+
 (define (tmhtml-file env l)
   ;; This handler is special:
   ;; Since !file is a special node used only at the top of trees
@@ -101,7 +106,7 @@
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
 	 (title (tmhtml-find-title doc))
-	 (css '(h:style (@ (type "text/css")) "body { text-align: justify }"))
+	 (css `(h:style (@ (type "text/css")) ,tmhtml-css-header))
 	 (body (tmhtml env doc)))
     (set! title (cond ((not title) "No title")
 		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
@@ -384,11 +389,14 @@
 	 (den (tmhtml env (cadr l))))
     `("frac (" ,@num ", " ,@den ")")))
 
-;;    `((h:table (@ (style "display: inline; position: relative; top: 2.5ex")
-;;		  (valign "center"))
-;;	       (h:tr (h:td (@ (align "center")
-;;			      (style "border-bottom: solid 1px")) ,@num))
-;;	       (h:tr (h:td (@ (align "center")) ,@den))))))
+;;(define (tmhtml-frac env l)
+;;  (let* ((num (tmhtml env (car l)))
+;;	   (den (tmhtml env (cadr l)))
+;;	   (n `(h:tr (h:td (@ (align "center")
+;;			      (style "border-bottom: solid 1px")) ,@num)))
+;;	   (d `(h:tr (h:td (@ (align "center")) ,@den)))
+;;	   (in `(h:table (@ (style "position: relative; top: 3ex")) ,n ,d)))
+;;   `((h:table (@ (style "display: inline")) (h:tr (h:td ,in))))))
 
 (define (tmhtml-sqrt env l)
   (if (= (length l) 1)
@@ -408,10 +416,10 @@
 
 (define (tmhtml-with-font-size val)
   (let* ((x (* (string->number val) 100))
-	 (s (cond ((< x 1) #f) ((< x 55) "-4") ((< x 65) "-3")
+	 (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
 		  ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
 		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
-		  ((< x 225) "+4") ((< x 500) "+5") (else #f))))
+		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
     (and s `(h:font (@ (size ,s))))))
 
 (define (tmhtml-with-one env var val arg)
@@ -696,6 +704,21 @@
   `((h:pre (@ (class "verbatim") (xml:space "preserve")) ,@content)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Additional tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-doc-title-block env l)
+  `((h:table (@ (class "title-block"))
+	     (h:tr (h:td ,@(tmhtml env (car l)))))))
+
+(define (tmhtml-equation-lab env l)
+  `((h:table (@ (width "100%"))
+	     (h:tr (h:td (@ (align "center") (width "100%"))
+			 ,@(tmhtml env (car l)))
+		   (h:td (@ (align "right"))
+			 "(" ,@(tmhtml env (cadr l)) ")")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -928,14 +951,14 @@
   (!middle ,tmhtml-align-middle)
   (!right ,tmhtml-align-right)
   ;; Sectioning
-  (chapter* (h:h1))
-  (section* (h:h2))
-  (subsection* (h:h3))
-  (subsubsection* (h:h4))
+  (chapter-title (h:h1))
+  (section-title (h:h2))
+  (subsection-title (h:h3))
+  (subsubsection-title (h:h4))
   ;; paragraph and subparagraph are intented to be used at the start
   ;; of a paragraph. So they cannot be converted to 'h5' and 'h6
-  (paragraph* (h:strong (@(class "paragraph"))))
-  (subparagraph* (h:strong (@(class "subparagraph"))))
+  (paragraph-title (h:strong (@(class "paragraph"))))
+  (subparagraph-title (h:strong (@(class "subparagraph"))))
   ;; Lists
   ((:or itemize itemize-minus itemize-dot itemize-arrow)
    ,tmhtml-itemize)
@@ -965,6 +988,9 @@
   (TeXmacs ,(lambda x '("TeXmacs")))
   (TeX ,(lambda x '("TeX")))
   (LaTeX ,(lambda x '("LaTeX")))
+  ;; additional tags
+  (doc-title-block ,tmhtml-doc-title-block)
+  (equation-lab ,tmhtml-equation-lab)
   ;; tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
