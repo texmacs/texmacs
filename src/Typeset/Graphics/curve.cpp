@@ -149,13 +149,13 @@ spline_rep::spline_rep (array<point> a2,bool close): a(a2), n(N(a)-1) {
     p3[i]= polynomial(2);
     p1[i][2]= 1/di22/di11;
     p1[i][1]= -2*U[i]/di22/di11;
-    p1[i][0]= sq2(U[i])/di22/di11;
+    p1[i][0]= square(U[i])/di22/di11;
     p2[i][2]= -1/di22/di21-1/di32/di21;
     p2[i][1]= (U[i+2]+U[i])/di22/di21+(U[i+3]+U[i+1])/di32/di21;
     p2[i][0]= -U[i+2]*U[i]/di22/di21-U[i+3]*U[i+1]/di32/di21;
     p3[i][2]= 1/di32/di31;
     p3[i][1]= -2*U[i+3]/di32/di31;
-    p3[i][0]= sq2(U[i+3])/di32/di31;
+    p3[i][0]= square(U[i+3])/di32/di31;
   }
   for (i=2;i<=n;i++) {
     p[i]= a[i]*p1[i]+a[i-1]*p2[i-1]+a[i-2]*p3[i-2];
@@ -255,7 +255,7 @@ spline_rep::curvature (int i, double t1, double t2) {
   pp=spline(i,t,1);
   ps=spline(i,t,2);
   if (norm(ps)==0) return infinity;
-  R=sq2(norm(pp))/norm(ps);
+  R=square(norm(pp))/norm(ps);
   return R;
 }
 

@@ -97,6 +97,8 @@ initialize_default_var_type () {
   var_type (LINE_WIDTH)       = Env_Line_Width;
   var_type (GR_FRAME)         = Env_Frame;
   var_type (GR_CLIP)          = Env_Clipping;
+  var_type (GR_GRID)          = Env_Grid;
+  var_type (GR_GRID_ASPECT)   = Env_Grid_Aspect;
 }
 
 /******************************************************************************

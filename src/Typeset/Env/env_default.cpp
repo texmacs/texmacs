@@ -26,6 +26,11 @@ initialize_default_env () {
   tree gr_clip (TUPLE, "clip",
 		tuple ("0par", "-0.3par"),
 		tuple ("1par", "0.3par"));
+  tree gr_grid ("");
+  tree gr_grid_aspect (TUPLE,
+		       tuple ("axes", "black"),
+		       tuple ("1", "grey"),
+		       tuple ("10", "light grey"));
 
   env (DPI)              = "600";       // resolution in dots per inch
   env (SFACTOR)          = "5";         // shrinking factor on screen
@@ -176,4 +181,6 @@ initialize_default_env () {
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
+  env (GR_GRID)          = gr_grid;     // grid for graphics
+  env (GR_GRID_ASPECT)   = gr_grid_aspect; // grid aspect
 }

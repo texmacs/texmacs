@@ -44,6 +44,12 @@ ps_device_rep::set_shrinking_factor (int sf) {
 }
 
 void
+ps_device_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
+  x1= cx1- ox; y1= cy1- oy;
+  x2= cx2- ox; y2= cy2- oy;
+}
+
+void
 ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
   outer_round (x1, y1, x2, y2);
   cx1= x1+ ox; cy1= y1+ oy;

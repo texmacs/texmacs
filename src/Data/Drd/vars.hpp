@@ -171,5 +171,7 @@ extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
 extern string GR_LINE_WIDTH;
+extern string GR_GRID;
+extern string GR_GRID_ASPECT;
 
 #endif // defined VARS_H

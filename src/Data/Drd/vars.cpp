@@ -193,3 +193,5 @@ string GR_CLIP ("gr-clip");
 string GR_MODE ("gr-mode");
 string GR_COLOR ("gr-color");
 string GR_LINE_WIDTH ("gr-line-width");
+string GR_GRID ("gr-grid");
+string GR_GRID_ASPECT ("gr-grid-aspect");
