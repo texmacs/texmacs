@@ -589,6 +589,7 @@
   (". =" "<doteq>")
   (". ." "<ldots>")
   (". . var" "<cdots>")
+  (". . var !" "<cdotslim>")
   (". . var var" "<hdots>")
   (". . var var var" "<vdots>")
   (". . var var var var" "<ddots>")
