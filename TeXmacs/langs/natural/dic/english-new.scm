@@ -799,6 +799,7 @@
 ("move to the right when finished" "")
 ("move up" "")
 ("multiline input" "")
+("mutator tags" "")
 ("my documents" "")
 ("n-th" "")
 ("n-th root" "")
