@@ -192,21 +192,6 @@
 	     (next (append cont (flush)) #f))
 	    (else (next (cons (accept) out) #f))))))
 
-(define (tmhtml-post-heading l)
-  ;; Post-process the converted result of a concat containing a section title.
-  ;;
-  ;; The first label after the section is changed to an 'id' attribute in the
-  ;; heading element, if it has not already an 'id' attribute.
-  ;;
-  ;; NOTE: assumes the heading is the first node of the set.
-  (let ((heading (car l)))
-    (if (sxml-attr heading 'id) l
-	(receive (labels rest) (list-partition (cdr l) sxhtml-label?)
-	  (if (null? labels) l
-	      (cons (sxml-prepend (sxhtml-glue-label heading (car labels))
-				  (cdr labels))
-		    rest))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Surrounding block structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -252,13 +237,39 @@
 ;; Horizontal concatenations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmhtml-post-heading l)
+  ;; Post-process the converted result of a concat containing a section title.
+  ;;
+  ;; Any label preceding the section is moved after it.
+  ;;
+  ;; The first label after the section is changed to an 'id' attribute in the
+  ;; heading element, if it has not already an 'id' attribute.
+  ;;
+  ;; NOTE: assumes the heading is the first node (not counting labels)
+  (receive (labels-before rest) (list-span l sxhtml-label?)
+    (receive (heading rest) (car+cdr rest)
+      (if (sxml-attr heading 'id)
+	  `(,heading ,@labels-before ,@rest)
+	  (receive (labels-after rest) (list-partition rest sxhtml-label?)
+	    (let ((labels (append labels-before labels-after)))
+	      (if (null? labels) l
+		  (cons (sxml-prepend (sxhtml-glue-label heading (car labels))
+				      (cdr labels))
+			rest))))))))
+
+(define (heading? l)
+  (cond ((null? l) #f)
+	((sxhtml-label? (car l)) (heading? (cdr l)))
+	((sxhtml-heading? (car l)) #t)
+	(else #f)))
+
 (define (tmhtml-concat env l)
   (set! l (tmconcat-structure-tabs l))
   (tmhtml-post-simplify-nodes
    (let ((l (tmhtml-list env l)))
      (cond ((null? l) '())
 	   ((string? (car l)) l)
-	   ((sxhtml-heading? (car l)) (tmhtml-post-heading l))
+	   ((heading? l) (tmhtml-post-heading l))
 	   ((list-any sxhtml-table? l) (tmhtml-post-table l))
 	   (else l)))))
 
