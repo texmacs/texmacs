@@ -142,6 +142,8 @@ bridge_docrange_rep::notify_assign (path p, tree u) {
 
 void
 bridge_docrange_rep::notify_insert (path p, tree u) {
+  // cout << "Notify insert " << p << ", " << N(u)
+  //      << " [ " << begin << "--" << end << " ]\n";
   if (nil (p))
     fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
   if (p->item > end) {
@@ -155,20 +157,23 @@ bridge_docrange_rep::notify_insert (path p, tree u) {
   if (divide) {
     int i, n= N(acc);
     for (i=0; i<n; i++)
-      if (p->item <= mid[i+1])
+      if (p->item < mid[i+1])
 	break;
+    if (i==n) i--;
     for (; i<n; i++) {
       acc[i]->notify_insert (p, u);
       mid[i+1] += N(u);
     }
-    // cout << "mid= " << mid << "\n";
+    // cout << "mid[ins,0]= " << mid << "\n";
     rebalance ();
-    // cout << "mid= " << mid << "\n";
+    // cout << "mid[ins,1]= " << mid << "\n";
   }
 }
 
 void
 bridge_docrange_rep::notify_remove (path p, int nr) {
+  // cout << "Notify insert " << p << ", " << nr
+  //      << " [ " << begin << "--" << end << " ]\n";
   if (nil (p))
     fatal_error ("Erroneous nil path", "bridge_docrange_rep::notify_insert");
   if (p->item >= end)
@@ -192,9 +197,9 @@ bridge_docrange_rep::notify_remove (path p, int nr) {
       acc[i]->notify_remove (p, nr);
       mid[i+1]= max (mid[i+1]-nr, p->item);
     }
-    // cout << "mid= " << mid << "\n";
+    // cout << "mid[rem,0]= " << mid << "\n";
     rebalance ();
-    // cout << "mid= " << mid << "\n";
+    // cout << "mid[rem,1]= " << mid << "\n";
   }
 }
 
