@@ -150,8 +150,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
 
   switch (L (t)) {
   case UNINIT:
-    typeset_uninit (t, ip);
-    break;
   case ERROR:
     typeset_error (t, ip);
     break;

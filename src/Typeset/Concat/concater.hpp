@@ -43,8 +43,6 @@ class concater_rep {
   // textual markup
   void typeset_substring (string s, path ip, int pos);
   void typeset_string (string s, path ip);
-  void typeset_uninit (tree t, path ip);
-  void typeset_error (tree t, path ip);
   void typeset_document (tree t, path ip);
   void typeset_paragraph (tree t, path ip);
   void typeset_surround (tree t, path ip);
@@ -77,12 +75,12 @@ class concater_rep {
   void typeset_table (tree t, path ip);
 
   // disactivated markup
-  void typeset_unknown (string which, tree t, path ip, bool flag= false);
   void typeset_colored (tree t, path ip, tree val, bool test= true);
   void typeset_tt (tree t, path ip, bool test= true);
+  void typeset_inactive_arg (tree t, path ip, int i);
+  void typeset_inactive_angular (tree t, path ip, bool err);
   void typeset_inactive (tree t, path ip);
-  void typeset_inactive_angular (tree t, path ip);
-  void typeset_inactive_angular_arg (tree t, path ip, int i);
+  void typeset_error (tree t, path ip);
 
   // active macro mechanisms
   void typeset_assign (tree t, path ip);
