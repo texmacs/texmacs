@@ -97,12 +97,10 @@ tm_server_rep::tm_server_rep (display dis2):
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
   if (is_none (my_init_file))
     my_init_file= "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm";
-  time_t scheme_start= texmacs_time ();
+  bench_start ("initialize scheme");
   if (exists (tm_init_file)) exec_file (tm_init_file);
   if (exists (my_init_file)) exec_file (my_init_file);
-  time_t scheme_boot = texmacs_time () - scheme_start;
-  if (DEBUG_BENCH)
-    cout << "Bench  ] Initialized scheme in " << scheme_boot << " ms\n";
+  bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
     my_init_cmds= "(begin" * my_init_cmds * ")";
     exec_delayed (my_init_cmds);

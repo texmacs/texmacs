@@ -12,6 +12,7 @@
 
 #include "load_tex.hpp"
 #include "analyze.hpp"
+#include "timer.hpp"
 
 RESOURCE_CODE(tex_font_metric);
 
@@ -372,6 +373,7 @@ load_tfm (url file_name, string family, int size) {
   int i= 0;
   string s;
   (void) load_string (file_name, s);
+  bench_start ("decode tfm");
 
   parse (s, i, tfm->lf);
   parse (s, i, tfm->lh);
@@ -413,5 +415,6 @@ load_tfm (url file_name, string family, int size) {
 
   tfm->size= (tfm->header[1] + (1<<19)) >> 20;
 
+  bench_cumul ("decode tfm");
   return tfm;
 }

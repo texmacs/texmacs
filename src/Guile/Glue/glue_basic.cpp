@@ -713,6 +713,28 @@ tmg_texmacs_time () {
 }
 
 SCM
+tmg_bench_print (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "bench-print");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bench_print (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_bench_print_all () {
+  // SCM_DEFER_INTS;
+  bench_print ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_plugin_list () {
   // SCM_DEFER_INTS;
   scheme_tree out= plugin_list ();
@@ -2329,6 +2351,8 @@ initialize_glue_basic () {
   gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
   gh_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
+  gh_new_procedure ("bench-print", (FN) tmg_bench_print, 1, 0, 0);
+  gh_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
   gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
   gh_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);
   gh_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);

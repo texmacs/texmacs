@@ -75,6 +75,8 @@
   (set-font-type set_font_type (void int))
   (font-exists-in-tt? tt_font_exists (bool string))
   (texmacs-time texmacs_time (int))
+  (bench-print bench_print (void string))
+  (bench-print-all bench_print (void))
   (plugin-list plugin_list (scheme_tree))
   (eval-system eval_system (string string))
   (var-eval-system var_eval_system (string string))
