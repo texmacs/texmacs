@@ -9,12 +9,12 @@
 
   \;
 
-  <assign|itemname|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
+  <assign|item-name|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
 
   <assign|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<active*|<with|mode|math|\<ast\>>>
   |||r]1.5fn|>>>
 
-  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
+  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
 
   \;
 
@@ -22,7 +22,7 @@
 
   <assign|itemize-level|0>
 
-  <assign|itemize-base|<macro|body|<surround|<no-page-break*>|<rightflush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<value|thetag>
+  <assign|itemize-base|<macro|body|<surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<value|thetag>
   |||r]1.5fn|>>|<arg|body>>>>>
 
   <assign|itemize|<\macro|body>
@@ -31,60 +31,60 @@
 
   \;
 
-  <assign|newitemize|<macro|name|tag|<assign|<arg|name>|<hold|<\macro|body>
-    <with|thetag|<release|<arg|tag>>|<itemize-base|<arg|body>>>
+  <assign|new-itemize|<macro|name|tag|<assign|<arg|name>|<quasiquote|<\macro|body>
+    <with|thetag|<unquote|<arg|tag>>|<itemize-base|<arg|body>>>
   </macro>>>>>
 
-  <newitemize|itemize-minus|<active*|<with|mode|math|->>>
+  <new-itemize|itemize-minus|<active*|<with|mode|math|->>>
 
-  <newitemize|itemize-dot|<active*|<with|mode|math|\<bullet\>>>>
+  <new-itemize|itemize-dot|<active*|<with|mode|math|\<bullet\>>>>
 
-  <newitemize|itemize-arrow|<active*|<with|mode|math|\<rightarrow\>>>>
+  <new-itemize|itemize-arrow|<active*|<with|mode|math|\<rightarrow\>>>>
 
   \;
 
-  <assign|theitem|<macro|<itemnr>.>>
+  <assign|the-item|<macro|<item-nr>.>>
 
   <assign|enumerate-level|0>
 
-  <assign|enumerate-base|<macro|body|<surround|<no-page-break*>|<rightflush><vspace|0.5fn><no-indent*>|<with|itemnr|0|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><assign|itemnr|<plus|<value|itemnr>|1>><assign|thelabel|<theitem>><with|par-first|-3fn|<yes-indent>><resize|<theitem>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
+  <assign|enumerate-base|<macro|body|<surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>|<with|item-nr|0|par-left|<plus|<value|par-left>|3fn>|item|<macro|<vspace*|0.5fn><assign|item-nr|<plus|<value|item-nr>|1>><assign|the-label|<the-item>><with|par-first|-3fn|<yes-indent>><resize|<the-item>|r-2.5fn||r+0.5fn|>>|<arg|body>>>>>
 
   <assign|enumerate|<\macro|body>
-    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|theitem|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<hold|<itemnr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<itemnr>|alpha><with|font-shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<itemnr>|roman>.>>|<enumerate-base|<arg|body>>>>
+    <with|enumerate-level|<plus|<value|enumerate-level>|1>|<with|the-item|<case|<equal|<mod|<value|enumerate-level>|3>|1>|<quasiquote|<item-nr>.>|<equal|<mod|<value|enumerate-level>|3>|2>|<macro|<number|<item-nr>|alpha><with|font-shape|right|)>>|<equal|<mod|<value|enumerate-level>|3>|0>|<macro|<number|<item-nr>|roman>.>>|<enumerate-base|<arg|body>>>>
   </macro>>
 
   \;
 
-  <assign|newenumerate|<macro|name|num|<assign|<arg|name>|<hold|<\macro|body>
-    <with|theitem|<release|<arg|num>>|<enumerate-base|<arg|body>>>
+  <assign|new-enumerate|<macro|name|num|<assign|<arg|name>|<quasiquote|<\macro|body>
+    <with|the-item|<unquote|<arg|num>>|<enumerate-base|<arg|body>>>
   </macro>>>>>
 
-  <newenumerate|enumerate-numeric|<macro|<itemnr>.>>
+  <new-enumerate|enumerate-numeric|<macro|<item-nr>.>>
 
-  <newenumerate|enumerate-roman|<macro|<number|<itemnr>|roman>.>>
+  <new-enumerate|enumerate-roman|<macro|<number|<item-nr>|roman>.>>
 
-  <newenumerate|enumerate-Roman|<macro|<number|<itemnr>|Roman>.>>
+  <new-enumerate|enumerate-Roman|<macro|<number|<item-nr>|Roman>.>>
 
-  <newenumerate|enumerate-alpha|<macro|<number|<itemnr>|alpha><with|font-shape|right|)>>>
+  <new-enumerate|enumerate-alpha|<macro|<number|<item-nr>|alpha><with|font-shape|right|)>>>
 
-  <newenumerate|enumerate-Alpha|<macro|<number|<itemnr>|Alpha><with|font-shape|right|)>>>
+  <new-enumerate|enumerate-Alpha|<macro|<number|<item-nr>|Alpha><with|font-shape|right|)>>>
 
   \;
 
-  <assign|newdescription|<macro|name|item-macro|<assign|<arg|name>|<hold|<\macro|body>
-    <with|item*|<release|<arg|item-macro>>|<itemize-base|<arg|body>>>
+  <assign|new-description|<macro|name|item-macro|<assign|<arg|name>|<quasiquote|<\macro|body>
+    <with|item*|<unquote|<arg|item-macro>>|<itemize-base|<arg|body>>>
   </macro>>>>>
 
-  <newdescription|description-compact|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>
+  <new-description|description-compact|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>
   \ |||r]1.5fn|>>>
 
-  <newdescription|description-aligned|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-width|3fn>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<cell|<itemname|<arg|theitem>>>>>>>
+  <new-description|description-aligned|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-width|3fn>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<cell|<item-name|<arg|theitem>>>>>>>
   \ >>
 
-  <newdescription|description-dash|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>
+  <new-description|description-dash|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>
    |||r]1.5fn|>>>
 
-  <newdescription|description-long|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>>|||r]1.5fn|><next-line>>>
+  <new-description|description-long|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<item-name|<arg|theitem>>|||r]1.5fn|><next-line>>>
 
   <assign|description|<value|description-compact>>
 

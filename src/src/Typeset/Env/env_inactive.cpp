@@ -317,7 +317,7 @@ edit_env_rep::rewrite_inactive_var_active (
   if (flush &&
       (src_compact != COMPACT_ALL) &&
       (is_multi_paragraph (t[0])) || (src_compact == COMPACT_NONE))
-    r= tree (SURROUND, "", compound ("rightflush"), r);
+    r= tree (SURROUND, "", compound ("right-flush"), r);
   return tree (MARK, var, r);
 }
 
@@ -398,7 +398,7 @@ edit_env_rep::rewrite_inactive_default (
       }
     }
 
-    if (flush) doc= tree (SURROUND, "", compound ("rightflush"), doc);
+    if (flush) doc= tree (SURROUND, "", compound ("right-flush"), doc);
     return tree (MARK, var, doc);
   }
 }

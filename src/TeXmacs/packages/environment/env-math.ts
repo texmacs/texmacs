@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -27,13 +27,13 @@
     </src-comment>
   </active*>
 
-  <assign|nextnumber|<macro|<style-with|src-compact|none|<assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<theequation>><with|mode|text|font-shape|right|(<theequation>)>>>>
+  <assign|next-number|<macro|<style-with|src-compact|none|<assign|equation-nr|<plus|<value|equation-nr>|1>><assign|the-label|<the-equation>><with|mode|text|font-shape|right|(<the-equation>)>>>>
 
-  <assign|leqnumber|<macro|<nextnumber><htab|5mm>>>
+  <assign|leq-number|<macro|<next-number><htab|5mm>>>
 
-  <assign|reqnumber|<macro|<htab|5mm><nextnumber>>>
+  <assign|req-number|<macro|<htab|5mm><next-number>>>
 
-  <assign|eqnumber|<value|reqnumber>>
+  <assign|eq-number|<value|req-number>>
 
   <\active*>
     <\src-comment>
@@ -41,9 +41,9 @@
     </src-comment>
   </active*>
 
-  <assign|equation-lab|<macro|body|lab|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|thelabel|<arg|lab>><htab|5mm>|<htab|5mm>(<with|mode|text|<arg|lab>>)<vspace|0.5fn><no-indent*>|<arg|body>>>>>>
+  <assign|equation-lab|<macro|body|lab|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|the-label|<arg|lab>><htab|5mm>|<htab|5mm>(<with|mode|text|<arg|lab>>)<vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 
-  <assign|equation|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<theequation>><htab|5mm>|<htab|5mm><with|mode|text|(<theequation>)><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
+  <assign|equation|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><assign|equation-nr|<plus|<value|equation-nr>|1>><assign|the-label|<the-equation>><htab|5mm>|<htab|5mm><with|mode|text|(<the-equation>)><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 
   <assign|equation*|<macro|body|<with|mode|math|math-display|true|par-sep|0.45fn|<style-with|src-compact|none|<surround|<no-page-break*><vspace*|0.5fn><no-indent><htab|0fn>|<htab|0fn><vspace|0.5fn><no-indent*>|<arg|body>>>>>>
 

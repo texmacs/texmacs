@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -28,13 +28,13 @@
       <arg|body>
     </with>
 
-    <surround||<rightflush>|<new-page>>
+    <surround||<right-flush>|<new-page>>
   </macro>>
 
   <assign|abstract|<\macro|body>
     <surround|<no-indent>||<section*|<translate|Abstract|english|<language>>>>
 
-    <surround||<rightflush>|<arg|body>>
+    <surround||<right-flush>|<arg|body>>
   </macro>>
 
   \;
@@ -61,7 +61,7 @@
 
   <assign|title-date*|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
-  <assign|title-date|<macro|body|<vspace*|0.1pag><leftflush><title-date*|<arg|body>><rightflush>>>
+  <assign|title-date|<macro|body|<vspace*|0.1pag><left-flush><title-date*|<arg|body>><right-flush>>>
 
   \;
 </body>

@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -27,11 +27,11 @@
 
   <assign|class*|<macro|body|<arg|body>>>
 
-  <assign|class|<macro|body|<no-indent><class*|<arg|body>><leftflush>>>
+  <assign|class|<macro|body|<no-indent><class*|<arg|body>><left-flush>>>
 
   <assign|title-date*|<macro|body|<arg|body>>>
 
-  <assign|title-date|<macro|body|<rightflush><title-date*|<arg|body>>>>
+  <assign|title-date|<macro|body|<right-flush><title-date*|<arg|body>>>>
 
   <assign|title*|<macro|body|<with|math-font-series|bold|font-series|bold|font-size|1.30|font-shape|small-caps|<arg|body>>>>
 

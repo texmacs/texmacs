@@ -46,7 +46,7 @@
 (define (tmtm-add-eqnonumber t new)
   (cond ((func? t 'row)
 	 (let ((lab (tmtm-find-eqlabel t)))
-	   (if (and lab (== new '(eqnumber)))
+	   (if (and lab (== new '(eq-number)))
 	       (let ((u (object-replace t lab "")))
 		 (rcons (cDr u)
 			(tmtm-add-eqnonumber (cAr u) (list 'concat new lab))))
@@ -79,8 +79,8 @@
 
 ;; ATTENTION: output may not be concat-simplified
 (define (tmtm-eqnumber->nonumber t)
-  (tmtm-eqnumber<->nonumber t '(eqnumber) '(nonumber)))
+  (tmtm-eqnumber<->nonumber t '(eq-number) '(no-number)))
 
 ;; ATTENTION: output may not be concat-simplified
 (define (tmtm-nonumber->eqnumber t)
-  (tmtm-eqnumber<->nonumber t '(nonumber) '(eqnumber)))
+  (tmtm-eqnumber<->nonumber t '(no-number) '(eq-number)))

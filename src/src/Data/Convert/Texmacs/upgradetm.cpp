@@ -1893,37 +1893,48 @@ static charp var_rename []= {
 static hashmap<string,string> var_rename_table ("?");
 
 static hashmap<string,string>
-get_var_rename () {
-  if (N (var_rename_table) == 0) {
+cached_renamer (charp* T, hashmap<string,string>& H) {
+  if (N (H) == 0) {
     int i;
-    for (i=0; var_rename[i][0] != '\0'; i+=2)
-      var_rename_table (var_rename[i])= var_rename[i+1];
+    for (i=0; T[i][0] != '\0'; i+=2)
+      H (T[i])= T[i+1];
   }
-  return var_rename_table;
+  return H;
 }
 
+
 static tree
-rename_vars (tree t, hashmap<string,string> H) {
+rename_vars (tree t, hashmap<string,string> H, bool flag) {
   if (is_atomic (t)) return t;
   else {
     int i, n= N(t);
     tree r (t, n);
+    static tree_label MARKUP= make_tree_label ("markup");
     for (i=0; i<n; i++) {
-      tree u= rename_vars (t[i], H);
+      tree u= rename_vars (t[i], H, flag);
       if (is_atomic (u) && H->contains (u->label))
 	if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
 	    ((L(t) == ASSIGN) && (i == 0)) ||
 	    ((L(t) == VALUE) && (i == 0)) ||
 	    ((L(t) == CWITH) && (i == 4)) ||
 	    ((L(t) == TWITH) && (i == 0)) ||
-	    ((L(t) == ASSOCIATE) && (i == 0)))
+	    ((L(t) == ASSOCIATE) && (i == 0)) ||
+	    ((L(t) == MARKUP) && (i == 0)))
 	  u= copy (H[u->label]);
       r[i]= u;
     }
-    if ((n == 0) && H->contains (as_string (L(t)))) {
-      string v= H[as_string (L(t))];
-      r= tree (VALUE, copy (v));
-      if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
+    if (flag) {
+      if (H->contains (as_string (L(t)))) {
+	tree_label l= make_tree_label (H[as_string (L(t))]);
+	r= tree (l, A(r));
+      }
+    }
+    else {
+      if ((n == 0) && H->contains (as_string (L(t)))) {
+	string v= H[as_string (L(t))];
+	r= tree (VALUE, copy (v));
+	if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
+      }
     }
     return r;
   }
@@ -1931,7 +1942,7 @@ rename_vars (tree t, hashmap<string,string> H) {
 
 tree
 upgrade_env_vars (tree t) {
-  return rename_vars (t, get_var_rename ());
+  return rename_vars (t, cached_renamer (var_rename, var_rename_table), false);
 }
 
 /******************************************************************************
@@ -1973,6 +1984,142 @@ upgrade_use_package (tree t) {
 }
 
 /******************************************************************************
+* Normalize names of tags in the style files
+******************************************************************************/
+
+static charp style_rename []= {
+  "thelabel", "the-label",
+
+  "leftflush", "left-flush",
+  "rightflush", "right-flush",
+  "mathord", "math-ord",
+  "mathopen", "math-open",
+  "mathclose", "math-close",
+  "mathpunct", "math-punct",
+  "mathbin", "math-bin",
+  "mathrel", "math-rel",
+  "mathop", "math-op",
+  "thetoc", "the-toc",
+  "theidx", "the-idx",
+  "thegly", "the-gly",
+  "theitem", "the-item",
+  "tocnr", "toc-nr",
+  "idxnr", "idx-nr",
+  "glynr", "gly-nr",
+  "itemnr", "item-nr",
+  "itemname", "item-name",
+  "newitemize", "new-itemize",
+  "newenumerate", "new-enumerate",
+  "newdescription", "new-description",
+
+  "nextnumber", "next-number",
+  "eqnumber", "eq-number",
+  "leqnumber", "leq-number",
+  "reqnumber", "req-number",
+  "nonumber", "no-number",
+  "thefootnote", "the-footnote",
+  "theequation", "the-equation",
+  "thetheorem", "the-theorem",
+  "theproposition", "the-proposition",
+  "thelemma", "the-lemma",
+  "thecorollary", "the-corollary",
+  "theaxiom", "the-axiom",
+  "thedefinition", "the-definition",
+  "thenotation", "the-notation",
+  "theconjecture", "the-conjecture",
+  "theremark", "the-remark",
+  "theexample", "the-example",
+  "thenote", "the-note",
+  "thewarning", "the-warning",
+  "theconvention", "the-convention",
+  "theexercise", "the-exercise",
+  "theproblem", "the-problem",
+  "thefigure", "the-figure",
+  "thetable", "the-table",
+  "footnotenr", "footnote-nr",
+  "equationnr", "equation-nr",
+  "theoremnr", "theorem-nr",
+  "propositionnr", "proposition-nr",
+  "lemmanr", "lemma-nr",
+  "corollarynr", "corollary-nr",
+  "axiomnr", "axiom-nr",
+  "definitionnr", "definition-nr",
+  "notationnr", "notation-nr",
+  "conjecturenr", "conjecture-nr",
+  "remarknr", "remark-nr",
+  "examplenr", "example-nr",
+  "notenr", "note-nr",
+  "warningnr", "warning-nr",
+  "conventionnr", "convention-nr",
+  "exercisenr", "exercise-nr",
+  "problemnr", "problem-nr",
+  "figurenr", "figure-nr",
+  "tablenr", "table-nr",
+  "theoremname", "theorem-name",
+  "figurename", "figure-name",
+  "exercisename", "exercise-name",
+  "theoremsep", "theorem-sep",
+  "figuresep", "figure-sep",
+  "exercisesep", "exercise-sep",
+  "footnotesep", "footnote-sep",
+  "newtheorem", "new-theorem",
+  "newremark", "new-remark",
+  "newexercise", "new-exercise",
+  "newfigure", "new-figure",
+
+  "theprefix", "the-prefix",
+  "thechapter", "the-chapter",
+  "theappendix", "the-appendix",
+  "thesection", "the-section",
+  "thesubsection", "the-subsection",
+  "thesubsubsection", "the-subsubsection",
+  "theparagraph", "the-paragraph",
+  "thesubparagraph", "the-subparagraph",
+  "chapternr", "chapter-nr",
+  "appendixnr", "appendix-nr",
+  "sectionnr", "section-nr",
+  "subsectionnr", "subsection-nr",
+  "subsubsectionnr", "subsubsection-nr",
+  "paragraphnr", "paragraph-nr",
+  "subparagraphnr", "subparagraph-nr",
+  "sectionsep", "section-sep",
+  "subsectionsep", "subsection-sep",
+  "subsubsectionsep", "subsubsection-sep",
+
+  "theanswer", "the-answer",
+  "thealgorithm", "the-algorithm",
+  "answernr", "answer-nr",
+  "algorithmnr", "algorithm-nr",
+
+  ""
+};
+
+static hashmap<string,string> style_rename_table ("?");
+
+static tree
+upgrade_style_rename_sub (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, MERGE, 2) && (t[0] == "the"))
+    return tree (MERGE, "the-", t[1]);
+  else if (is_func (t, MERGE, 2) && (t[1] == "nr"))
+    return tree (MERGE, t[0], "-nr");
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_style_rename_sub (t[i]);
+    return r;
+  }
+}
+
+static tree
+upgrade_style_rename (tree t) {
+  t= upgrade_style_rename_sub (t);
+  return
+    rename_vars (t, cached_renamer (style_rename, style_rename_table), true);
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -1995,6 +2142,7 @@ upgrade_tex (tree t) {
   t= upgrade_function (t);
   t= upgrade_apply (t);
   t= upgrade_env_vars (t);
+  t= upgrade_style_rename (t);
   return t;
 }
 
@@ -2050,5 +2198,7 @@ upgrade (tree t, string version) {
     t= upgrade_env_vars (t);
   if (version_inf_eq (version, "1.0.3.3"))
     t= upgrade_use_package (t);
+  if (version_inf_eq (version, "1.0.3.5"))
+    t= upgrade_style_rename (t);
   return t;
 }

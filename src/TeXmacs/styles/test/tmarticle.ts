@@ -18,9 +18,9 @@
       <\src-license>
         This <TeXmacs> style file falls under the <hlink|GNU general public
         license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you don't have this file, then write to the Free
-        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-        02111-1307, USA.
+        WHATSOEVER. If you do not have a copy of the license, then write to
+        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+        Boston, MA 02111-1307, USA.
       </src-license>
     </src-title>
   </active*>
@@ -75,7 +75,7 @@
 
   <assign|chapter**|<macro|chapname|name|<style-with|src-compact|none|<chapter*|<style-with|src-compact|none|<with|font-size|1.83|<arg|chapname>><htab|0fn><vspace|1.5fn><new-line><htab|0fn><arg|name>>>>>>
 
-  <assign|sectionsep|<macro|.<space|2spc>>>
+  <assign|section-sep|<macro|.<space|2spc>>>
 
   <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.30|font-shape|small-caps|<style-with|src-compact|none|<htab|0fn><arg|name><htab|0fn>>><vspace|1fn><no-page-break><no-indent*>>>>
 
@@ -89,9 +89,9 @@
     </src-comment>
   </active*>
 
-  <assign|theoremname|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
+  <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
 
-  <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><style-with|src-compact|none|<write|toc|<style-with|src-compact|none|<vspace*|1fn><with|font-series|bold|math-font-series|bold|font-shape|small-caps|<arg|what>><quote|<value|toc-dots>><pageref|<thetoc>><vspace|0.5fn>>>>>>>
+  <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><style-with|src-compact|none|<write|toc|<style-with|src-compact|none|<vspace*|1fn><with|font-series|bold|math-font-series|bold|font-shape|small-caps|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|0.5fn>>>>>>>
 
   \;
 </body>

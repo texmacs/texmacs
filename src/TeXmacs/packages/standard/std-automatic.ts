@@ -17,8 +17,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -42,9 +42,9 @@
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
   green|x><map-args|nocite-arg|concat|x|1>>>>
 
-  <assign|bibitem|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|thelabel|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
+  <assign|bibitem|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|the-label|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|thelabel|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|the-label|<arg|text>>>>>
 
   <assign|protect|>
 
@@ -58,33 +58,33 @@
     </src-comment>
   </active*>
 
-  <assign|tocnr|0>
+  <assign|toc-nr|0>
 
-  <assign|thetoc|<macro|<merge|toc-|<value|tocnr>>>>
+  <assign|the-toc|<macro|<merge|toc-|<value|toc-nr>>>>
 
   <assign|toc-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
   <assign|toc-main-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<thetoc>><vspace|1fn>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|1fn>>>>>
 
   <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<thetoc>><vspace|0.5fn>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|0.5fn>>>>>
 
   <assign|toc-normal-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>
 
   <assign|toc-normal-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
 
   <assign|toc-normal-3|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
 
   <assign|toc-small-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
 
   <assign|toc-small-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>>
+  of contents>|dark green|what><assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-toc>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -92,9 +92,9 @@
     </src-comment>
   </active*>
 
-  <assign|idxnr|0>
+  <assign|idx-nr|0>
 
-  <assign|theidx|<macro|<merge|idx-|<value|idxnr>>>>
+  <assign|the-idx|<macro|<merge|idx-|<value|idx-nr>>>>
 
   <assign|index-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
@@ -102,7 +102,7 @@
   <assign|index-line|<macro|key|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><write|idx|<tuple|<arg|key>||<arg|entry>>>>>>
 
-  <assign|index-write|<macro|entry|<style-with|src-compact|none|<assign|idxnr|<plus|<value|idxnr>|1>><label|<theidx>><write|idx|<tuple|<arg|entry>|<pageref|<theidx>>>>>>>
+  <assign|index-write|<macro|entry|<style-with|src-compact|none|<assign|idx-nr|<plus|<value|idx-nr>|1>><label|<the-idx>><write|idx|<tuple|<arg|entry>|<pageref|<the-idx>>>>>>>
 
   <assign|index|<macro|x|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|x><index-write|<tuple|<arg|x>>>>>>
@@ -114,7 +114,7 @@
   green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>>>>>>
 
   <assign|index-complex|<macro|key|how|range|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
-  green|key><assign|idxnr|<plus|<value|idxnr>|1>><label|<theidx>><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<theidx>>>>>>>
+  green|key><assign|idx-nr|<plus|<value|idx-nr>|1>><label|<the-idx>><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-idx>>>>>>>
 
   <assign|index-1|<macro|left|right|<arg|left><value|index-dots><arg|right>>>
 
@@ -142,9 +142,9 @@
     </src-comment>
   </active*>
 
-  <assign|glynr|0>
+  <assign|gly-nr|0>
 
-  <assign|thegly|<macro|<merge|gly-|<value|glynr>>>>
+  <assign|the-gly|<macro|<merge|gly-|<value|gly-nr>>>>
 
   <assign|glossary-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
@@ -153,18 +153,20 @@
   green|entry><write|gly|<tuple|<arg|entry>>>>>>
 
   <assign|glossary|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|normal|<arg|entry>|<pageref|<thegly>>>>>>>
+  green|entry><assign|gly-nr|<plus|<value|gly-nr>|1>><label|<the-gly>><write|gly|<tuple|normal|<arg|entry>|<pageref|<the-gly>>>>>>>
 
   <assign|glossary-explain|<macro|entry|explain|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|normal|<arg|entry>|<arg|explain>|<pageref|<thegly>>>>>>>
+  green|entry><assign|gly-nr|<plus|<value|gly-nr>|1>><label|<the-gly>><write|gly|<tuple|normal|<arg|entry>|<arg|explain>|<pageref|<the-gly>>>>>>>
 
   <assign|glossary-dup|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
-  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|dup|<arg|entry>|<pageref|<thegly>>>>>>>
+  green|entry><assign|gly-nr|<plus|<value|gly-nr>|1>><label|<the-gly>><write|gly|<tuple|dup|<arg|entry>|<pageref|<the-gly>>>>>>>
 
   <assign|glossary-1|<macro|left|right|<arg|left><value|glossary-dots><arg|right>>>
 
   <assign|glossary-2|<macro|entry|explain|right|<resize|<arg|entry>
   |||r]10fn|><arg|explain><value|glossary-dots><arg|right>>>
+
+  \;
 </body>
 
 <\initial>

@@ -16,8 +16,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -30,27 +30,27 @@
 
   \;
 
-  <assign|resettop|<macro|<style-with|src-compact|none|<assign|chapternr|0><assign|appendixnr|0><assign|sectionnr|0><resetstdenv>>>>
+  <assign|resettop|<macro|<style-with|src-compact|none|<assign|chapter-nr|0><assign|appendix-nr|0><assign|section-nr|0><resetstdenv>>>>
 
-  <assign|resetchapter|<macro|<assign|sectionnr|0><resetstdenv>>>
+  <assign|resetchapter|<macro|<assign|section-nr|0><resetstdenv>>>
 
-  <assign|resetsection|<macro|<assign|subsectionnr|0>>>
+  <assign|resetsection|<macro|<assign|subsection-nr|0>>>
 
-  <assign|resetsubsection|<macro|<assign|subsubsectionnr|0>>>
+  <assign|resetsubsection|<macro|<assign|subsubsection-nr|0>>>
 
   <assign|resetsubsubsection|<macro|>>
 
   \;
 
-  <assign|thechapter|<macro|<value|chapternr>>>
+  <assign|the-chapter|<macro|<value|chapter-nr>>>
 
-  <assign|thesection|<macro|<thechapter>.<sectionnr>>>
+  <assign|the-section|<macro|<the-chapter>.<section-nr>>>
 
-  <assign|thesubsection|<macro|<thesection>.<subsectionnr>>>
+  <assign|the-subsection|<macro|<the-section>.<subsection-nr>>>
 
-  <assign|thesubsubsection|<macro|<thesubsection>.<subsubsectionnr>>>
+  <assign|the-subsubsection|<macro|<the-subsection>.<subsubsection-nr>>>
 
-  <assign|theprefix|<macro|<thechapter>.>>
+  <assign|the-prefix|<macro|<the-chapter>.>>
 
   \;
 </body>

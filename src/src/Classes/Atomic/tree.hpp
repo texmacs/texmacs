@@ -40,6 +40,7 @@ public:
   inline tree (string l);
   inline tree (char* l);
   inline tree (tree_label l, int n=0);
+  inline tree (tree_label l, array<tree> a);
   inline tree (tree t, int n);
   tree (tree_label l, tree t1);
   tree (tree_label l, tree t1, tree t2);
@@ -138,6 +139,8 @@ inline tree::tree (string s):
   rep (new atomic_rep (s)) {}
 inline tree::tree (tree_label l, int n):
   rep (new compound_rep (l, array<tree> (n))) {}
+inline tree::tree (tree_label l, array<tree> a):
+  rep (new compound_rep (l, a)) {}
 inline tree::tree (tree t, int n):
   rep (new compound_rep (t.rep->op, array<tree> (n))) {
     CHECK_COMPOUND (t, "tree::tree (tree, int)"); }

@@ -16,8 +16,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -28,7 +28,7 @@
     </src-comment>
   </active*>
 
-  <assign|automatic-chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|thechapter|<macro|*>><resetchapter><assign|thelabel|<thechapter>><header-primary|<arg|name>|*|<arg|name>>>||<chapter*|<arg|name>>>>>>
+  <assign|automatic-chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|the-chapter|<macro|*>><resetchapter><assign|the-label|<the-chapter>><header-primary|<arg|name>|*|<arg|name>>>||<chapter*|<arg|name>>>>>>
 
   <assign|bibliography*|<\macro|aux|style|file-name|name|body>
     <style-with|src-compact|none|<automatic-chapter|<localize|<arg|name>>><toc-main-2|<localize|<arg|name>>>>

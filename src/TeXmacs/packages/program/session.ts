@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -57,11 +57,11 @@
 
   <assign|generic-output*|<macro|body|<with|par-mode|left|math-display|true|<arg|body>>>>
 
-  <assign|generic-output|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<rightflush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|1.5fn>|<generic-output*|<arg|body>>>>>>>
+  <assign|generic-output|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|1.5fn>|<generic-output*|<arg|body>>>>>>>
 
   <assign|errput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-errput>>|<merge|<value|prog-language>|-textput>|generic-errput>>|<arg|body>>>>>
 
-  <assign|generic-errput|<macro|body|<surround||<rightflush>|<with|color|red|<arg|body>>>>>
+  <assign|generic-errput|<macro|body|<surround||<right-flush>|<with|color|red|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -71,7 +71,9 @@
 
   <assign|textput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-textput>>|<merge|<value|prog-language>|-textput>|generic-textput>>|<arg|body>>>>>
 
-  <assign|generic-textput|<macro|body|<surround||<rightflush>|<arg|body>>>>
+  <assign|generic-textput|<macro|body|<surround||<right-flush>|<arg|body>>>>
+
+  \;
 </body>
 
 <\initial>

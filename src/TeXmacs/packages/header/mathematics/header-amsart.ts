@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -50,7 +50,7 @@
   \;
 
   <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<vspace|1fn>|<with|par-left|15mm|par-right|15mm|font-size|0.84|<style-with|src-compact|none|<surround|<no-indent><with|font-shape|small-caps|<localize|Abstract>>.
-  |<rightflush>|<arg|body>>>>>>>
+  |<right-flush>|<arg|body>>>>>>>
 
   \;
 </body>
