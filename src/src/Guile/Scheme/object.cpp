@@ -75,8 +75,6 @@ operator != (object obj1, object obj2) {
 * Utilities
 ******************************************************************************/
 
-object null_object () {
-  return object (SCM_NULL); }
 object cons (object obj1, object obj2) {
   return object (scm_cons (obj1->lookup(), obj2->lookup())); }
 object car (object obj) {
@@ -177,19 +175,13 @@ as_widget (object obj) {
 }
 
 object
-tree_to_stree (scheme_tree t) {
-  return call ("tree->stree", t);
+tree_to_object (scheme_tree t) {
+  return call ("tree->object", t);
 }
 
 tree
-stree_to_tree (object obj) {
-  return as_tree (call ("stree->tree", obj));
-}
-
-tree
-content_to_tree (object obj) {
-  return scm_to_content (obj->lookup());
-  // return as_tree (call ("content->tree", obj));
+object_to_tree (object obj) {
+  return as_tree (call ("object->tree", obj));
 }
 
 object

@@ -1,16 +1,4 @@
 
-/******************************************************************************
-* MODULE     : maple_filter.cpp
-* DESCRIPTION: Filter for Maple sessions
-* COPYRIGHT  : (C) 2002  Christian Even
-*              Improvements by Christophe Raffalli and Joris van der Hoeven
-*******************************************************************************
-* This software falls under the GNU general public license and comes WITHOUT
-* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
-* If you don't have this file, write to the Free Software Foundation, Inc.,
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-******************************************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,15 +35,28 @@ remplacer(string in, string what, string by) {
 
 void
 passer (string &s, int indentation) {
-  s= remplacer(s, "\\textbf", "\\mathbf");
-  s= remplacer(s, "\\,", "\\*");
-  s= remplacer (s, "\\left(", " \\bigpl ");
+  s= remplacer (s, "\\textbf{proc}", "\\proc");  
+  s= remplacer (s, "\\textbf{end proc}", "\\endproc \n");
+  s= remplacer (s, "\\textbf{if}", "\\if");  
+  s= remplacer (s, "\\textbf{then}", "\\then"); 
+  s= remplacer (s, "\\textbf{else}", "\\else"); 	
+  s= remplacer (s, "\\textbf{end if}", "\\endif");
+  
+  s= remplacer(s, "\\,", "\\mult ");
+  // l'espace correspond souvent a une multiplication,
+  // pas toujours malheureusement!
+  s= remplacer(s, "\\ast ", "\\mult ");// 	* =\\mult
+  // s= remplacer(s,"\\mathrm","\\mathrom");
+  // Joris devrait arranger ce probleme de conversion LaTeX
+  // a moins que je ne trouve qqc
+  // Maple est un peu incoherent a ce sujet
+  s= remplacer (s, "{\\displaystyle ", "\\dsp{ ");
+  //on peut faire mieux?
+
   s= remplacer (s, "(", " \\bigpl ");
-  s= remplacer (s, " \\bigpl ", "\\left(");
-  s= remplacer (s, "\\right)", " \\bigpr ");
+  //les parentheses deviennent modulables cf session_maple.ts
   s= remplacer (s, ")", " \\bigpr ");
-  s= remplacer (s, " \\bigpr ", "\\right)");
-  s= remplacer (s, "[2ex]", "");
+  //modulables cf session_maple.ts
   
   if (indentation == 0) {
     s= remplacer (s, "\\maplemultiline{","\\hfill $");
@@ -64,7 +65,7 @@ passer (string &s, int indentation) {
     //idem: prob avec les procedures
   }
   else s= remplacer (s, "\\maplemultiline{","$");
-  cout << s;
+  cout <<s;
 }
 
 int

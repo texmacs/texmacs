@@ -5,13 +5,13 @@
 <\body>
   <tmdoc-title|Uwagi dla u»ytkowników rosyjskich i ukrai«skich.>
 
-  Pisanie tekstu po rosyjsku (ukrai«sku) mo»liwe jest na kilka sposobów:
+  Aby pisa¢ tekst po rosyjsku (podobnie po ukrai«sku) jest par¦ mo»liwo±ci:
 
   <\itemize>
-    <item>Wybór j¦zyka rosyjskiego jako domy±lnego j¦zyka programu poprzez
+    <item>Wybór rosyjskiego jako domy±lnego ustawienia poprzez
     <menu|Edit|Preferences|Language|Russian>. Je±li <TeXmacs> startuje z
     rosyjskimi menu, to znaczy »e zostaªo to ustawione automatycznie na
-    podstawie konfiguracji systemu.
+    podstawie ustawie« systemu.
 
     <item>Wybór j¦zyka rosyjskiego dla caªego dokumentu poprzez
     <menu|Document|Language|Russian>.

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -101,7 +101,7 @@
   </explain>
 
   <\explain|<explain-macro|tt|content>>
-    This is a physical tag for typewriter phase. It is used for compatibility
+    This is a physical tag for typewriter phase. It is used for compatability
     with <name|HTML>, but we do not recommend its use.
   </explain>
 
@@ -129,7 +129,7 @@
 
   <\explain|<explain-macro|center|body>>
     This is a physical tag for centering one or several lines of text. It is
-    used for compatibility with <name|HTML>, but we do not recommend its use.
+    used for compatability with <name|HTML>, but we do not recommend its use.
   </explain>
 
   Some standard tabular environments are
@@ -149,9 +149,6 @@
   The following miscellaneous tags don't take arguments:
 
   <explain|<explain-macro|TeXmacs>|The <TeXmacs> logo.>
-
-  <explain|<explain-macro|TeXmacs-version>|The current version of <TeXmacs>
-  (<TeXmacs-version>).>
 
   <explain|<explain-macro|TeX>|The <TeX> logo.>
 
@@ -203,7 +200,7 @@
   </explain>
 
   <\explain|<explain-macro|phantom|content>>
-    This tag takes as much space as the typeset argument <src-arg|content>
+    This tag takes as much space as the typesetted argument <src-arg|content>
     would take, but <src-arg|content> is not displayed. For instance,
     <inactive*|<phantom|phantom>> yields ``<phantom|phantom>''.
   </explain>
@@ -231,5 +228,17 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

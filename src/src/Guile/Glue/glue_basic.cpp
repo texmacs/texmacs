@@ -48,8 +48,8 @@ tmg_win32_display (SCM arg1) {
 }
 
 SCM
-tmg_tree_2stree (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
+tmg_tree_2object (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->object");
 
   tree in1= scm_to_tree (arg1);
 
@@ -61,8 +61,8 @@ tmg_tree_2stree (SCM arg1) {
 }
 
 SCM
-tmg_stree_2tree (SCM arg1) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "stree->tree");
+tmg_object_2tree (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "object->tree");
 
   scheme_tree in1= scm_to_scheme_tree (arg1);
 
@@ -132,81 +132,68 @@ tmg_tree0 (SCM arg1) {
   tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
-  tree out= tree (in1);
+  texmacs_tree out= tree (in1);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_tree1 (SCM arg1, SCM arg2) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree1");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree1");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree1");
 
   tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= tree (in1, in2);
+  texmacs_tree out= tree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_tree2 (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree2");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree2");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree2");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree2");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree2");
 
   tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
-  tree in3= scm_to_tree (arg3);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= tree (in1, in2, in3);
+  texmacs_tree out= tree (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_tree3 (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree3");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree3");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree3");
-  SCM_ASSERT_TREE (arg4, SCM_ARG4, "tree3");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tree3");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree3");
+  SCM_ASSERT_TEXMACS_TREE (arg4, SCM_ARG4, "tree3");
 
   tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
-  tree in3= scm_to_tree (arg3);
-  tree in4= scm_to_tree (arg4);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
+  texmacs_tree in4= scm_to_texmacs_tree (arg4);
 
   // SCM_DEFER_INTS;
-  tree out= tree (in1, in2, in3, in4);
+  texmacs_tree out= tree (in1, in2, in3, in4);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree_ip (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ip");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  path out= obtain_ip (in1);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_tree_atomicP (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-atomic?");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-atomic?");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
 
   // SCM_DEFER_INTS;
   bool out= is_atomic (in1);
@@ -217,9 +204,9 @@ tmg_tree_atomicP (SCM arg1) {
 
 SCM
 tmg_tree_compoundP (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-compound?");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-compound?");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
 
   // SCM_DEFER_INTS;
   bool out= is_compound (in1);
@@ -230,9 +217,9 @@ tmg_tree_compoundP (SCM arg1) {
 
 SCM
 tmg_tree_arity (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-arity");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-arity");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
 
   // SCM_DEFER_INTS;
   int out= N (in1);
@@ -243,28 +230,28 @@ tmg_tree_arity (SCM arg1) {
 
 SCM
 tmg_tree_ref (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ref");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-ref");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-ref");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= tree_ref (in1, in2);
+  texmacs_tree out= tree_ref (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_tree_setS (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set!");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "tree-set!");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-set!");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-set!");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "tree-set!");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   int in2= scm_to_int (arg2);
-  tree in3= scm_to_tree (arg3);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
 
   // SCM_DEFER_INTS;
   tree_set (in1, in2, in3);
@@ -274,35 +261,18 @@ tmg_tree_setS (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_tree_range (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-range");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-range");
-  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-range");
-
-  tree in1= scm_to_tree (arg1);
-  int in2= scm_to_int (arg2);
-  int in3= scm_to_int (arg3);
-
-  // SCM_DEFER_INTS;
-  tree out= tree_range (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
 tmg_subtree (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "subtree");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "subtree");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "subtree");
 
-  tree in1= scm_to_tree (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= subtree (in1, in2);
+  texmacs_tree out= subtree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -313,21 +283,6 @@ tmg_tree_copy (SCM arg1) {
 
   // SCM_DEFER_INTS;
   tree out= copy (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree_append (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-append");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree-append");
-
-  tree in1= scm_to_tree (arg1);
-  tree in2= scm_to_tree (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= tree_append (in1, in2);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -603,6 +558,32 @@ tmg_object_2command (SCM arg1) {
 }
 
 SCM
+tmg_object_2scheme_tree (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "object->scheme-tree");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= copy (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_scheme_tree_2object (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "scheme-tree->object");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  scheme_tree out= copy (in1);
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
 tmg_scheme_dialect () {
   // SCM_DEFER_INTS;
   string out= scheme_dialect ();
@@ -613,10 +594,10 @@ tmg_scheme_dialect () {
 
 SCM
 tmg_cursor_start (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "cursor-start");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
 
-  content in1= scm_to_content (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -628,10 +609,10 @@ tmg_cursor_start (SCM arg1, SCM arg2) {
 
 SCM
 tmg_cursor_end (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "cursor-end");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
 
-  content in1= scm_to_content (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -710,28 +691,6 @@ tmg_texmacs_time () {
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
-}
-
-SCM
-tmg_bench_print (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "bench-print");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bench_print (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_bench_print_all () {
-  // SCM_DEFER_INTS;
-  bench_print ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -830,32 +789,6 @@ tmg_system_wait (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_math_symbol_type (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-type");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= math_symbol_type (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_numberP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= is_double (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
 }
 
 SCM
@@ -1686,65 +1619,20 @@ tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_connection_declaredP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= connection_declared (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_connection_status (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-status");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-status");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  int out= connection_status (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_connection_start (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-start");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-start");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "connection-start");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  bool in3= scm_to_bool (arg3);
-
-  // SCM_DEFER_INTS;
-  string out= connection_start (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_connection_eval (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-eval");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-eval");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-eval");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "connection-eval");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= connection_eval (in1, in2, in3);
+  texmacs_tree out= connection_eval (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -1758,44 +1646,10 @@ tmg_connection_cmd (SCM arg1, SCM arg2, SCM arg3) {
   string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= connection_cmd (in1, in2, in3);
+  texmacs_tree out= connection_cmd (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "connection-write");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
-
-  // SCM_DEFER_INTS;
-  connection_write (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_connection_read (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-read");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-read");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "connection-read");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  tree out= connection_read (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -2326,8 +2180,8 @@ initialize_glue_basic () {
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
   gh_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
-  gh_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
-  gh_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
+  gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
+  gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);
   gh_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
   gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
   gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
@@ -2336,16 +2190,13 @@ initialize_glue_basic () {
   gh_new_procedure ("tree1", (FN) tmg_tree1, 2, 0, 0);
   gh_new_procedure ("tree2", (FN) tmg_tree2, 3, 0, 0);
   gh_new_procedure ("tree3", (FN) tmg_tree3, 4, 0, 0);
-  gh_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
   gh_new_procedure ("tree-atomic?", (FN) tmg_tree_atomicP, 1, 0, 0);
   gh_new_procedure ("tree-compound?", (FN) tmg_tree_compoundP, 1, 0, 0);
   gh_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
   gh_new_procedure ("tree-ref", (FN) tmg_tree_ref, 2, 0, 0);
   gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
-  gh_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
-  gh_new_procedure ("tree-append", (FN) tmg_tree_append, 2, 0, 0);
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
@@ -2367,6 +2218,8 @@ initialize_glue_basic () {
   gh_new_procedure ("upgrade-tmml", (FN) tmg_upgrade_tmml, 1, 0, 0);
   gh_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   gh_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
+  gh_new_procedure ("object->scheme-tree", (FN) tmg_object_2scheme_tree, 1, 0, 0);
+  gh_new_procedure ("scheme-tree->object", (FN) tmg_scheme_tree_2object, 1, 0, 0);
   gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
   gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
@@ -2377,8 +2230,6 @@ initialize_glue_basic () {
   gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
   gh_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
-  gh_new_procedure ("bench-print", (FN) tmg_bench_print, 1, 0, 0);
-  gh_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
   gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
   gh_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);
   gh_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);
@@ -2387,8 +2238,6 @@ initialize_glue_basic () {
   gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
-  gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
-  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);
@@ -2450,13 +2299,8 @@ initialize_glue_basic () {
   gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
   gh_new_procedure ("xml-cdata->tm", (FN) tmg_xml_cdata_2tm, 1, 0, 0);
   gh_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
-  gh_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
-  gh_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
-  gh_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);
   gh_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   gh_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
-  gh_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
-  gh_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
   gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);

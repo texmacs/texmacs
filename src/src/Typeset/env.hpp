@@ -52,7 +52,6 @@
 #define Env_Src_Special       21
 #define Env_Src_Compact       22
 #define Env_Src_Close         23
-#define Env_Point_Style       24
 
 /******************************************************************************
 * For style file editing
@@ -111,7 +110,6 @@ public:
 
   hashmap<string,int>&         var_type;
   url                          base_file_name;
-  url                          cur_file_name;
   hashmap<string,tree>&        local_ref;
   hashmap<string,tree>&        global_ref;
   hashmap<string,tree>&        local_aux;
@@ -132,7 +130,6 @@ public:
   int       vert_pos;
   color     col;
   SI        lw;
-  string    point_style;
   bool      preamble;
   frame     fr;
   point     clip_lim1;
@@ -144,20 +141,6 @@ public:
 
   int       inactive_mode;
   tree      recover_env;
-
-  string    page_type;
-  bool      page_landscape;
-  bool      page_automatic;
-  int       page_margin_mode;
-  SI        page_width;
-  SI        page_height;
-  SI        page_user_width;
-  SI        page_user_height;
-  SI        page_odd_margin;
-  SI        page_even_margin;
-  SI        page_right_margin;
-  SI        page_top_margin;
-  SI        page_bottom_margin;
 
 private:
   tree exec_formatting (tree t, string v);
@@ -289,9 +272,6 @@ public:
   void local_end (hashmap<string,tree>& prev_back);
 
   /* updating environment variables */
-  void   update_page_pars ();
-  void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
-			SI& odd, SI& even, SI& top, SI& bottom);
   void   update_font ();
   void   update_color ();
   void   update_mode ();
@@ -315,6 +295,8 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
+  void      get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
+			   SI& odd, SI& even, SI& top, SI& bottom);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {
@@ -348,8 +330,6 @@ public:
 
 class edit_env {
   CONCRETE(edit_env);
-  inline edit_env (edit_env_rep* rep2):
-    rep(rep2) { INC_COUNT (this->rep); }
   edit_env (display dis,
 	    drd_info& drd,
 	    url base_file_name,
@@ -361,8 +341,6 @@ class edit_env {
 CONCRETE_CODE(edit_env);
 
 void extract_format (tree fm, tree* r, int n);
-tree load_inclusion (url u); // implemented in tm_file.cpp
-
-edit_env get_current_rewrite_env (bool &b);
+tree load_inclusion (url u); // implented in tm_file.cpp
 
 #endif // defined ENV_H

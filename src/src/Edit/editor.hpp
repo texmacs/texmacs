@@ -39,9 +39,8 @@ public:
 protected:
   tm_buffer   buf;  // the underlying buffer
   drd_info    drd;  // the drd for the buffer
-  tree&       et;   // all TeXmacs trees
+  tree&       et;   // the tree being edited
   box         eb;   // box translation of tree
-  path        rp;   // path to the root of the document in et
   path        tp;   // path of cursor in tree
 
   /* exchanging information with the interface */
@@ -106,13 +105,19 @@ public:
   /* public routines from edit_interface */
   virtual void suspend () = 0;
   virtual void resume () = 0;
+  virtual void update_connection () = 0;
+  virtual void connect () = 0;
+  virtual void process_extern_input () = 0;
+  virtual void feed_input (tree t) = 0;
+  virtual bool busy_connection () = 0;
+  virtual void interrupt_connection () = 0;
+  virtual void stop_connection () = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
   virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
-  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual int  get_input_mode () = 0;
   virtual void set_input_mode (int mode) = 0;
   virtual void set_input_normal () = 0;
@@ -140,7 +145,6 @@ public:
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;
-  virtual path path_xy (double x, double y) = 0;
   virtual void go_to (SI x, SI y) = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;
@@ -167,17 +171,10 @@ public:
 
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
-  virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
-  virtual tree   frame_direct_transform (tree t) = 0;
-  virtual tree   frame_inverse_transform (tree t) = 0;
-  virtual tree   get_graphical_object () = 0;
-  virtual void   set_graphical_object (tree t) = 0;
-  virtual void   invalidate_graphical_object () = 0;
-  virtual void   draw_graphical_object () = 0;
   virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
@@ -202,13 +199,10 @@ public:
   virtual double   get_init_double (string var_name) = 0;
   virtual language get_env_language () = 0;
   virtual tree     exec_texmacs (tree t, path p= 0) = 0;
-  virtual tree     exec_html (tree t, path p) = 0;
-  virtual tree     exec_html (tree t) = 0;
-  virtual tree     box_info (tree t, string what) = 0;
+  virtual tree     exec_html (tree t, path p= 0) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
-  virtual void     init_add_package (string package) = 0;
-  virtual void     init_remove_package (string package) = 0;
+  virtual void     init_extra_style (string package, bool check= false) = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
   virtual void     typeset_invalidate_all () = 0;
@@ -221,18 +215,17 @@ public:
   virtual void join (path p) = 0;
   virtual void ins_unary (path p, tree_label op) = 0;
   virtual void rem_unary (path p) = 0;
-  virtual void finished (path p) = 0;
-  virtual void notify_assign (path p, tree u) = 0;
-  virtual void notify_insert (path p, tree u) = 0;
-  virtual void notify_remove (path p, int nr) = 0;
-  virtual void notify_split (path p) = 0;
-  virtual void notify_join (path p) = 0;
-  virtual void notify_ins_unary (path p, tree_label op) = 0;
-  virtual void notify_rem_unary (path p) = 0;
-  virtual void post_notify (path p) = 0;
+  virtual void finished () = 0;
+  virtual void notify_assign (tree& t, path p, tree u) = 0;
+  virtual void notify_insert (tree& t, path p, tree u) = 0;
+  virtual void notify_remove (tree& t, path p, int nr) = 0;
+  virtual void notify_split (tree& t, path p) = 0;
+  virtual void notify_join (tree& t, path p) = 0;
+  virtual void notify_ins_unary (tree& t, path p, tree_label op) = 0;
+  virtual void notify_rem_unary (tree& t, path p) = 0;
+  virtual void post_notify (tree& t) = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
-  virtual void assign_diff (path p, tree u) = 0;
   virtual int  position_new () = 0;
   virtual void position_delete (int i) = 0;
   virtual void position_set (int i, path p) = 0;
@@ -340,24 +333,12 @@ public:
   virtual void temp_proof_fix () = 0;
 
   /* public routines from edit_process */
-  virtual void process_mutators () = 0;
-  virtual path get_mutator_path () = 0;
-  virtual time_t get_mutator_time () = 0;
-  virtual void invalidate_mutators () = 0;
-  virtual void insert_mutator (tree body, string cmd) = 0;
-
   virtual void make_session (string lan, string session) = 0;
-  virtual void start_input (string lan, string session, path p) = 0;
-  virtual void process_input () = 0;
+  virtual void start_input () = 0;
   virtual void start_output () = 0;
   virtual void session_message (string l, string r) = 0;
   virtual void session_use_math_input (bool flag) = 0;
   virtual bool session_is_using_math_input () = 0;
-  virtual int  status_connection () = 0;
-  virtual bool busy_connection () = 0;
-  virtual void interrupt_connection () = 0;
-  virtual void stop_connection () = 0;
-
   virtual void session_go_up () = 0;
   virtual void session_go_down () = 0;
   virtual void session_go_left () = 0;
@@ -430,12 +411,14 @@ public:
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;
   virtual bool inside (tree_label l) = 0;
+  virtual bool inside_compound (string name) = 0;
   virtual bool inside_with (string var, string val) = 0;
   virtual string inside_which (tree t) = 0;
   virtual path search_upwards (string what) = 0;
   virtual path search_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l, int& last) = 0;
+  virtual path search_upwards_compound (string name) = 0;
   virtual path search_upwards_with (string var, string val) = 0;
   virtual path search_upwards_in_set (tree t) = 0;
   virtual path search_previous_compound (path init, string which) = 0;
@@ -458,7 +441,10 @@ public:
   virtual void tex_buffer () = 0;
   virtual url  get_name () = 0;
   virtual void focus_on_this_editor () = 0;
-  virtual void notify_page_change () = 0;
+  virtual void set_page_parameters () = 0;
+  virtual void set_page_medium (string medium) = 0;
+  virtual void set_page_type (string type) = 0;
+  virtual void set_page_orientation (string orientation) = 0;
   virtual void print (url ps_name, bool to_file, int first, int last) = 0;
   virtual void print_to_file (url ps_name,
 			      string first="1", string last="1000000") = 0;
@@ -467,11 +453,9 @@ public:
 			  string first="1", string last="1000000") = 0;
   virtual void footer_eval (string s) = 0;
   virtual tree the_line () = 0;
-  virtual tree the_root () = 0;
   virtual tree the_buffer () = 0;
-  virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;
-  virtual path the_buffer_path () = 0;
+  virtual void process_input () = 0;
   virtual void show_tree () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -17,35 +17,35 @@
 
   <\big-figure|<with|font-size|0.84|par-width|<times|0.55|<value|par-width>>|<tabular*|<tformat|<table|<row|<cell|<with|font-size|0.71|Angular>>|<cell|>|<cell|<with|font-size|0.71|Scheme>>>|<row|<\cell>
     <\with|src-style|angular>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-style|scheme>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|font-size|0.71|Functional>>|<cell|>|<cell|<with|font-size|0.71|<LaTeX>>>>|<row|<\cell>
     <\with|src-style|functional>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-style|latex>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>>>>>>
     Different styles for rendering the same source tree.
@@ -75,35 +75,35 @@
 
   <\big-figure|<with|font-size|0.84|par-width|<times|0.55|<value|par-width>>|<tabular*|<tformat|<cwith|2|2|3|3|cell-valign|t>|<table|<row|<cell|<with|font-size|0.71|None>>|<cell|>|<cell|<with|font-size|0.71|Formatting>>>|<row|<\cell>
     <\with|src-special|raw>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-special|format>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|font-size|0.71|Normal>>|<cell|>|<cell|<with|font-size|0.71|Maximal>>>|<row|<\cell>
     <\with|src-special|normal>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-special|maximal>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>>>>>>
     Different ways to render special tags.
@@ -111,7 +111,7 @@
 
   Another thing which may be controlled by the user is whether the
   presentation of tags should be compact or stretched out across several
-  lines. Several levels of compactification may be specified in the
+  lines. Several levels of compatification may be specified in the
   <menu|Document|View|Compactification> menu:
 
   <\description>
@@ -136,38 +136,38 @@
   <\big-figure|<with|font-size|0.84|par-width|<times|0.55|<value|par-width>>|<tabular*|<tformat|<cwith|2|2|3|3|cell-valign|t>|<cwith|5|5|3|3|cell-valign|t>|<table|<row|<cell|<with|font-size|0.71|Minimal>>|<cell|>|<cell|<with|font-size|0.71|Only
   inline tags>>>|<row|<\cell>
     <\with|src-compact|none>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-compact|inline>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|font-size|0.71|Normal>>|<cell|>|<cell|<with|font-size|0.71|Maximal>>>|<row|<\cell>
     <\with|src-compact|normal>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-compact|all>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>>>>>>
-    Different levels of compactification.
+    Different levels of compatification.
   </big-figure>
 
   Finally, the user may specify the way closing tags should be rendered when
@@ -177,35 +177,35 @@
 
   <\big-figure|<with|font-size|0.84|par-width|<times|0.55|<value|par-width>>|<tabular*|<tformat|<cwith|2|2|3|3|cell-valign|t>|<cwith|5|5|3|3|cell-valign|t>|<table|<row|<cell|<with|font-size|0.71|Minimal>>|<cell|>|<cell|<with|font-size|0.71|Compact>>>|<row|<\cell>
     <\with|src-close|minimal>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-close|compact>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|font-size|0.71|Stretched>>|<cell|>|<cell|<with|font-size|0.71|Repeat>>>|<row|<\cell>
     <\with|src-close|long>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>|<cell|>|<\cell>
     <\with|src-close|repeat>
-      <\framed-fragment*>
+      <\tm-fragment>
         <inactive*|<assign|quick-theorem|<\macro|body>
           <surround|<no-indent>Theorem. ||<arg|body>>
         </macro>>>
-      </framed-fragment*>
+      </tm-fragment>
     </with>
   </cell>>>>>>>
     Different ways to render closing tags.
@@ -220,3 +220,18 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<\initial>
+  <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
+  </collection>
+</initial>

@@ -71,7 +71,6 @@
 	       ((string-before? s pos "<tmstyle|") "mode-key")
 	       ((string-before? s pos "<tmdtd|") "mode-key")
 	       ((string-before? s pos "<explain-macro|") "mode-key")
-	       ((string-before? s pos "<var-val|") "mode-key")
 	       (else "mode-simple")))
 	((string-ends? filename ".scm")
 	 (cond ((string-before? s pos "define ") "mode-key")
@@ -244,17 +243,18 @@
 			  the-result))
 	  (set! body `((description-aligned (document ,@body))))))
     (set-help-buffer "Results of search"
-		     `(document
-		       (style "tmdoc")
-		       (body (document
-			      (tmdoc-title
-			       (concat
-				,(make-translate
-				  "Results of the search for#\`\`"
-				  keyword
-				  "''")))
-			      ,@body))
-		       (initial (collection (associate "language" ,lan)))))))
+		     (object->tree
+		      `(document
+			(style "tmdoc")
+			(body (document
+			       (tmdoc-title
+				(concat
+				 ,(make-translate
+				   "Results of the search for#\`\`"
+				   keyword
+				   "''")))
+			       ,@body))
+			(initial (collection (associate "language" ,lan))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find documentation in given path and matching a given pattern

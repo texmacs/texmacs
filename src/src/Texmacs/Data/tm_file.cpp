@@ -150,7 +150,7 @@ tree make_collection (hashmap<T,U> h) {
 
 tree
 tm_data_rep::make_document (tm_view vw, string fm) {
-  tree body= subtree (the_et, vw->buf->rp);
+  tree body= vw->buf->t;
   if (fm == "html")
     body= vw->ed->exec_html (body);
 
@@ -160,7 +160,7 @@ tm_data_rep::make_document (tm_view vw, string fm) {
     doc << compound ("project", vw->buf->project);
   if (vw->ed->get_style() != tree (TUPLE))
     doc << compound ("style", copy (vw->ed->get_style()));
-  if (body != tree (DOCUMENT, ""))
+  if (vw->buf->t != tree (DOCUMENT, ""))
     doc << compound ("body", body);
   if (N (vw->ed->get_init()) != 0)
     doc << compound ("initial", make_collection (vw->ed->get_init()));

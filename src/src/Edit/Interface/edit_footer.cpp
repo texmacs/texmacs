@@ -12,7 +12,6 @@
 
 #include "edit_interface.hpp"
 #include "convert.hpp"
-#include "connect.hpp"
 
 /******************************************************************************
 * Set left footer with information about environment variables
@@ -71,19 +70,6 @@ edit_interface_rep::set_left_footer () {
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
   if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
-  if (inside ("session") && (lan != "scheme"))
-    switch (status_connection ()) {
-    case CONNECTION_DEAD:
-      s= s * "#[dead]";
-      break;
-    case CONNECTION_DYING:
-    case WAITING_FOR_OUTPUT:
-      s= s * "#[busy]";
-      break;
-    case WAITING_FOR_INPUT:
-      s= s * "#[idle]";
-      break;
-    }
   set_left_footer (s);
 }
 
@@ -194,7 +180,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
 
 string
 edit_interface_rep::compute_compound_footer (tree t, path p) {
-  if (!(rp < p)) return "";
+  if (nil (p) || atom (p)) return "";
   string up= compute_compound_footer (t, path_up (p));
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
@@ -285,8 +271,8 @@ edit_interface_rep::set_right_footer () {
 bool
 edit_interface_rep::set_latex_footer (tree st) {
   if (is_atomic (st)) 
-    if (is_func (subtree (et, path_up (tp, 2)), LATEX, 1) ||
-	is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (path_up (tp))), LATEX, 1) ||
+	is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
       string s= st->label;
       string help;
       command cmd;
@@ -303,7 +289,7 @@ bool
 edit_interface_rep::set_hybrid_footer (tree st) {
   // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
   if (is_atomic (st))
-    if (is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
       string msg;
       // macro argument
       string name= st->label;
@@ -345,7 +331,6 @@ DEBUG
   int line_item_count= 0;
   int list_count     = 0;
   int command_count  = 0;
-  int observer_count = 0;
   int iterator_count = 0;
   int function_count = 0;
   int instance_count = 0;
@@ -364,7 +349,6 @@ edit_interface_rep::set_footer () {
     cout << "line item " << line_item_count << "\n";
     cout << "list      " << list_count << "\n";
     cout << "command   " << command_count << "\n";
-    cout << "observer  " << observer_count << "\n";
     cout << "iterator  " << iterator_count << "\n";
     cout << "function  " << function_count << "\n";
     cout << "instance  " << instance_count << "\n";

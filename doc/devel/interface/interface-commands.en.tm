@@ -1,16 +1,16 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.1.20>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Sending commands to <TeXmacs>>
+  <expand|tmdoc-title|Sending commands to <TeXmacs>>
 
   The application may use <verbatim|command> as a very particular output
   format in order to send <value|scheme> commands to <TeXmacs>. In other
   words, the block
 
   <\quotation>
-    <framed-fragment|<verbatim|<key|DATA_BEGIN>command:<em|cmd><key|DATA_END>>>
+    <expand|framed-fragment|<verbatim|<key|DATA_BEGIN>command:<em|cmd><key|DATA_END>>>
   </quotation>
 
   will send the command <verbatim|<em|cmd>> to <TeXmacs>. Such commands are
@@ -18,22 +18,22 @@
   such command blocks may be incorporated recursively in larger
   <key|DATA_BEGIN>-<key|DATA_END> blocks.
 
-  <paragraph|The <verbatim|menus> plug-in>
+  <paragraph|The <verbatim|menus> plugin>
 
-  The <verbatim|nested> plug-in shows how an application can modify the
-  <TeXmacs> menus in an interactive way. The plug-in consists of the files
+  The <verbatim|nested> plugin shows how an application can modify the
+  <TeXmacs> menus in an interactive way. The plugin consists of the files
 
   <\verbatim>
-    \ \ \ \ <example-plugin-link|menus/Makefile>
+    \ \ \ \ <expand|example-plugin-link|menus/Makefile>
 
-    \ \ \ \ <example-plugin-link|menus/progs/init-menus.scm>
+    \ \ \ \ <expand|example-plugin-link|menus/progs/init-menus.scm>
 
-    \ \ \ \ <example-plugin-link|menus/src/menus.cpp>
+    \ \ \ \ <expand|example-plugin-link|menus/src/menus.cpp>
   </verbatim>
 
   The body of the main loop of <verbatim|menus.cpp> simply contains
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -52,12 +52,12 @@
     cout \<less\>\<less\> DATA_END;
 
     fflush (stdout);
-  </cpp-fragment>
+  </expand>
 
-  The <value|scheme> macro <scheme-code|menus-add> is defined in
+  The <value|scheme> macro <expand|scheme-code|menus-add> is defined in
   <verbatim|init-menus.scm>:
 
-  <\scheme-fragment>
+  <\expand|scheme-fragment>
     (menu-bind menus-menu
 
     \ \ ("Hi" (insert-string "Hello world")))
@@ -77,11 +77,11 @@
     \ \ `(menu-extend menus-menu
 
     \ \ \ \ \ (,s (insert-string ,s))))
-  </scheme-fragment>
+  </expand>
 
   The configuration of <verbatim|menus> proceeds as usual:
 
-  <\scheme-fragment>
+  <\expand|scheme-fragment>
     (plugin-configure menus
 
     \ \ (:require (url-exists-in-path? "menus.bin"))
@@ -89,32 +89,51 @@
     \ \ (:launch "menus.bin")
 
     \ \ (:session "Menus"))
-  </scheme-fragment>
+  </expand>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
-  document under the terms of the GNU Free Documentation License, Version 1.1
-  or any later version published by the Free Software Foundation; with no
-  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-  Texts. A copy of the license is included in the section entitled "GNU Free
-  Documentation License".>
+  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
+  modify this document under the terms of the GNU Free Documentation License,
+  Version 1.1 or any later version published by the Free Software Foundation;
+  with no Invariant Sections, with no Front-Cover Texts, and with no
+  Back-Cover Texts. A copy of the license is included in the section entitled
+  "GNU Free Documentation License".>
 </body>
 
 <\initial>
   <\collection>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|<uninit>|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|<uninit>|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <with|left margin|<quote|6fn>|font size|<quote|0.84>|The <with|font
+      family|<quote|tt>|language|<quote|verbatim>|menus>
+      plugin<value|toc-dots><pageref|toc-1>>
+    </associate>
+  </collection>
+</auxiliary>

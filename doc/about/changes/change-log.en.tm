@@ -1,53 +1,13 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.4>
+  <section|Changes from version 1.0.3 to 1.0.3.7>
 
   <\itemize>
-    <item>Finished documentation of built-in environment variables (1.0.4).
-
-    <item>Bug fixes in the HTML converters and in the accelerator for long
-    documents (1.0.4).
-
-    <item>Better quasi-quoting and added unquote-splicing primitive (1.0.4).
-
-    <item>Finished documentation of <TeXmacs> primitives (1.0.3.11).
-
-    <item>Started documentation built-in environment variables (1.0.3.11).
-
-    <item>Editing of text-at boxes in graphics mode (1.0.3.11).
-
-    <item>Higher reactivity for editing large documents (1.0.3.10).
-
-    <item>Speed-up for starting <TeXmacs> (1.0.3.10).
-
-    <item>Tab-completion and hyperlinks for intra-project labels and
-    references (1.0.3.10).
-
-    <item>Patches by Henri Lesourd for better editing of graphics (1.0.3.10).
-
-    <item>Several bug corrections (1.0.3.10).
-
-    <item>Tree call-backs at modifications in documents (1.0.3.9).
-
-    <item>Path-aware trees (1.0.3.9).
-
-    <item>Bug fixes w.r.t. previous version (1.0.3.9).
-
-    <item>Better handling of parameters for page size and margins (1.0.3.8).
-
-    <item>Implementation of ``mutators'', tags which may modify themselves
-    (1.0.3.8).
-
-    <item>Let computer algebra sessions make use of mutators (1.0.3.8).
-
-    <item>All <TeXmacs> documents become part of one global super-document
-    (1.0.3.8).
-
     <item>Alpha release of the Windows version of <TeXmacs> (1.0.3.7).
 
     <item>Application of some patches (1.0.3.7).
@@ -1233,5 +1193,17 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

@@ -714,10 +714,10 @@ tmg_spell_replace (SCM arg1) {
 }
 
 SCM
-tmg_insert (SCM arg1) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert");
+tmg_insert_string (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "insert-string");
 
-  content in1= scm_to_content (arg1);
+  string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_tree (in1);
@@ -727,11 +727,24 @@ tmg_insert (SCM arg1) {
 }
 
 SCM
-tmg_insert_go_to (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-go-to");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-go-to");
+tmg_insert_tree (SCM arg1) {
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "insert-tree");
 
-  content in1= scm_to_content (arg1);
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->insert_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_insert_tree_go_to (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "insert-tree-go-to");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-tree-go-to");
+
+  texmacs_tree in1= scm_to_texmacs_tree (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -1527,10 +1540,10 @@ tmg_init_env (SCM arg1, SCM arg2) {
 SCM
 tmg_init_env_tree (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-env-tree");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "init-env-tree");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "init-env-tree");
 
   string in1= scm_to_string (arg1);
-  content in2= scm_to_content (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->init_env (in1, in2);
@@ -1553,26 +1566,13 @@ tmg_init_style (SCM arg1) {
 }
 
 SCM
-tmg_init_add_package (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-add-package");
+tmg_init_extra_style (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-extra-style");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->init_add_package (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_init_remove_package (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-remove-package");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->init_remove_package (in1);
+  get_server()->get_editor()->init_extra_style (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1598,10 +1598,10 @@ tmg_get_env_tree (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->get_env_value (in1);
+  texmacs_tree out= get_server()->get_editor()->get_env_value (in1);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -1611,10 +1611,10 @@ tmg_get_init_tree (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->get_init_value (in1);
+  texmacs_tree out= get_server()->get_editor()->get_init_value (in1);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -1930,9 +1930,48 @@ tmg_generate_aux (SCM arg1) {
 }
 
 SCM
-tmg_notify_page_change () {
+tmg_set_page_parameters () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->notify_page_change ();
+  get_server()->get_editor()->set_page_parameters ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_page_medium (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-medium");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_page_medium (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_page_type (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-type");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_page_type (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_page_orientation (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-orientation");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_page_orientation (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2053,37 +2092,28 @@ tmg_footer_eval (SCM arg1) {
 SCM
 tmg_the_line () {
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_line ();
+  texmacs_tree out= get_server()->get_editor()->the_line ();
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_the_selection () {
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->selection_get ();
+  texmacs_tree out= get_server()->get_editor()->selection_get ();
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_the_root () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_root ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
 tmg_the_buffer () {
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_buffer ();
+  texmacs_tree out= get_server()->get_editor()->the_buffer ();
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -2093,33 +2123,6 @@ tmg_the_path () {
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
-}
-
-SCM
-tmg_the_buffer_path () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->the_buffer_path ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_the_mutator_path () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->get_mutator_path ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_the_mutator_time () {
-  // SCM_DEFER_INTS;
-  int out= get_server()->get_editor()->get_mutator_time ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
 }
 
 SCM
@@ -2147,17 +2150,18 @@ tmg_make_session (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_start_input (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "start-input");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "start-input");
-  SCM_ASSERT_PATH (arg3, SCM_ARG3, "start-input");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  path in3= scm_to_path (arg3);
-
+tmg_start_input () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->start_input (in1, in2, in3);
+  get_server()->get_editor()->start_input ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_start_output () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->start_output ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2532,25 +2536,12 @@ tmg_length_divide (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_tm_subtree (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-subtree");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_subtree (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
 tmg_tm_assign (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-assign");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-assign");
 
   path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->assign (in1, in2);
@@ -2562,10 +2553,10 @@ tmg_tm_assign (SCM arg1, SCM arg2) {
 SCM
 tmg_tm_insert (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-insert");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-insert");
 
   path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert (in1, in2);
@@ -2638,21 +2629,6 @@ tmg_tm_rem_unary (SCM arg1) {
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->rem_unary (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tm_assign_diff (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign-diff");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-assign-diff");
-
-  path in1= scm_to_path (arg1);
-  content in2= scm_to_content (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->assign_diff (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2773,11 +2749,11 @@ SCM
 tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tm-insert-with");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tm-insert-with");
 
   path in1= scm_to_path (arg1);
   string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
+  tree in3= scm_to_tree (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_with (in1, in2, in3);
@@ -2799,84 +2775,6 @@ tmg_tm_remove_with (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_frame_direct (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-direct");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_direct_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_frame_inverse (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-inverse");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_inverse_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_get_graphical_object () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->get_graphical_object ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_set_graphical_object (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "set-graphical-object");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_graphical_object (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_path_xy (SCM arg1, SCM arg2) {
-  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "path-xy");
-  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "path-xy");
-
-  double in1= scm_to_double (arg1);
-  double in2= scm_to_double (arg2);
-
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->path_xy (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_box_info (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "box-info");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "box-info");
-
-  tree in1= scm_to_tree (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->box_info (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
 }
 
 void
@@ -2946,8 +2844,9 @@ initialize_glue_editor () {
   gh_new_procedure ("replace-start", (FN) tmg_replace_start, 3, 0, 0);
   gh_new_procedure ("spell-start", (FN) tmg_spell_start, 0, 0, 0);
   gh_new_procedure ("spell-replace", (FN) tmg_spell_replace, 1, 0, 0);
-  gh_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
-  gh_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
+  gh_new_procedure ("insert-string", (FN) tmg_insert_string, 1, 0, 0);
+  gh_new_procedure ("insert-tree", (FN) tmg_insert_tree, 1, 0, 0);
+  gh_new_procedure ("insert-tree-go-to", (FN) tmg_insert_tree_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
   gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
@@ -3013,8 +2912,7 @@ initialize_glue_editor () {
   gh_new_procedure ("init-env", (FN) tmg_init_env, 2, 0, 0);
   gh_new_procedure ("init-env-tree", (FN) tmg_init_env_tree, 2, 0, 0);
   gh_new_procedure ("init-style", (FN) tmg_init_style, 1, 0, 0);
-  gh_new_procedure ("init-add-package", (FN) tmg_init_add_package, 1, 0, 0);
-  gh_new_procedure ("init-remove-package", (FN) tmg_init_remove_package, 1, 0, 0);
+  gh_new_procedure ("init-extra-style", (FN) tmg_init_extra_style, 1, 0, 0);
   gh_new_procedure ("get-env", (FN) tmg_get_env, 1, 0, 0);
   gh_new_procedure ("get-env-tree", (FN) tmg_get_env_tree, 1, 0, 0);
   gh_new_procedure ("get-init-tree", (FN) tmg_get_init_tree, 1, 0, 0);
@@ -3046,7 +2944,10 @@ initialize_glue_editor () {
   gh_new_procedure ("update-buffer", (FN) tmg_update_buffer, 0, 0, 0);
   gh_new_procedure ("generate-all-aux", (FN) tmg_generate_all_aux, 0, 0, 0);
   gh_new_procedure ("generate-aux", (FN) tmg_generate_aux, 1, 0, 0);
-  gh_new_procedure ("notify-page-change", (FN) tmg_notify_page_change, 0, 0, 0);
+  gh_new_procedure ("set-page-parameters", (FN) tmg_set_page_parameters, 0, 0, 0);
+  gh_new_procedure ("set-page-medium", (FN) tmg_set_page_medium, 1, 0, 0);
+  gh_new_procedure ("set-page-type", (FN) tmg_set_page_type, 1, 0, 0);
+  gh_new_procedure ("set-page-orientation", (FN) tmg_set_page_orientation, 1, 0, 0);
   gh_new_procedure ("print-to-file", (FN) tmg_print_to_file, 1, 0, 0);
   gh_new_procedure ("print-pages-to-file", (FN) tmg_print_pages_to_file, 3, 0, 0);
   gh_new_procedure ("print", (FN) tmg_print, 0, 0, 0);
@@ -3057,15 +2958,12 @@ initialize_glue_editor () {
   gh_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
   gh_new_procedure ("the-line", (FN) tmg_the_line, 0, 0, 0);
   gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);
-  gh_new_procedure ("the-root", (FN) tmg_the_root, 0, 0, 0);
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
-  gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);
-  gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
-  gh_new_procedure ("the-mutator-time", (FN) tmg_the_mutator_time, 0, 0, 0);
   gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
   gh_new_procedure ("make-session", (FN) tmg_make_session, 2, 0, 0);
-  gh_new_procedure ("start-input", (FN) tmg_start_input, 3, 0, 0);
+  gh_new_procedure ("start-input", (FN) tmg_start_input, 0, 0, 0);
+  gh_new_procedure ("start-output", (FN) tmg_start_output, 0, 0, 0);
   gh_new_procedure ("session-use-math-input", (FN) tmg_session_use_math_input, 1, 0, 0);
   gh_new_procedure ("session-math-input?", (FN) tmg_session_math_inputP, 0, 0, 0);
   gh_new_procedure ("session-go-up", (FN) tmg_session_go_up, 0, 0, 0);
@@ -3102,7 +3000,6 @@ initialize_glue_editor () {
   gh_new_procedure ("length-mult", (FN) tmg_length_mult, 2, 0, 0);
   gh_new_procedure ("length?", (FN) tmg_lengthP, 1, 0, 0);
   gh_new_procedure ("length-divide", (FN) tmg_length_divide, 2, 0, 0);
-  gh_new_procedure ("tm-subtree", (FN) tmg_tm_subtree, 1, 0, 0);
   gh_new_procedure ("tm-assign", (FN) tmg_tm_assign, 2, 0, 0);
   gh_new_procedure ("tm-insert", (FN) tmg_tm_insert, 2, 0, 0);
   gh_new_procedure ("tm-remove", (FN) tmg_tm_remove, 2, 0, 0);
@@ -3110,7 +3007,6 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-join", (FN) tmg_tm_join, 1, 0, 0);
   gh_new_procedure ("tm-ins-unary", (FN) tmg_tm_ins_unary, 2, 0, 0);
   gh_new_procedure ("tm-rem-unary", (FN) tmg_tm_rem_unary, 1, 0, 0);
-  gh_new_procedure ("tm-assign-diff", (FN) tmg_tm_assign_diff, 2, 0, 0);
   gh_new_procedure ("tm-correct", (FN) tmg_tm_correct, 1, 0, 0);
   gh_new_procedure ("tm-where", (FN) tmg_tm_where, 0, 0, 0);
   gh_new_procedure ("tm-go-to", (FN) tmg_tm_go_to, 1, 0, 0);
@@ -3122,10 +3018,4 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
   gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
-  gh_new_procedure ("frame-direct", (FN) tmg_frame_direct, 1, 0, 0);
-  gh_new_procedure ("frame-inverse", (FN) tmg_frame_inverse, 1, 0, 0);
-  gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
-  gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
-  gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
-  gh_new_procedure ("box-info", (FN) tmg_box_info, 2, 0, 0);
 }

@@ -16,8 +16,6 @@
     (begin
       (use-modules (texmacs texmacs tm-document) (texmacs texmacs tm-print))
       (init-style "generic")
-      (with lan (get-preference "language")
-	(if (not (== lan "english")) (init-language lan)))
-      (with psz (get-printer-paper-type)
-	(if (not (== psz "a4")) (init-page-type psz)))
+      (init-language (get-preference "language"))
+      (set-page-type (get-default-paper-size))
       (pretend-save-buffer)))

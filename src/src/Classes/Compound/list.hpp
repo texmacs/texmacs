@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : list.hpp
+* MODULE     : list
 * DESCRIPTION: linked lists with reference counting
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -18,10 +18,6 @@ class tree;
 template<class T> class list_rep;
 template<class T> class list;
 
-template<class T> bool nil (list<T> l);
-template<class T> bool atom (list<T> l);
-template<class T> bool strong_equal (list<T> l1, list<T> l2);
-
 template<class T> class list {
   CONCRETE_NULL_TEMPLATE(list,T);
   inline list (T item);
@@ -32,7 +28,6 @@ template<class T> class list {
   operator tree ();
 
   friend bool atom LESSGTR (list<T> l);
-  friend bool strong_equal LESSGTR (list<T> l1, list<T> l2);
 };
 
 extern int list_count;

@@ -5,15 +5,15 @@
 <\body>
   <tmdoc-title|Wprowadzenie>
 
-  Na pocz¡tku pracy z <TeXmacs> warto skonfigurowa¢ program u»ywaj¡c
-  <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania u»ytkownika.
-  Nale»y okre±li¢ wygl¡d'' poprzez <menu|Edit|Preferences|Look and feel>. To
-  mi¦dzy innymi ustawi skróty klawiszowe u»ywane w <TeXmacs> na znane z
-  innych aplikacji.
+  Przed zacz¦ciem u»ytkowania <TeXmacs> warto najpierw skonfigurowa¢ program
+  u»ywaj¡c <menu|Edit|Preferences>, tak aby najlepiej speªniaª wymagania
+  u»ytkownika. Przede wszystkim nale»y okre±li¢ wygl¡d'' poprzez
+  <menu|Edit|Preferences|Look and feel>. To spowoduje na przykªad i» skróty
+  klawiszowe u»ywane w <TeXmacs> b¦d¡ podobne do tych z innych aplikacji.
 
-  <TeXmacs> posiada wªasny, pot¦»ny zestaw skrótów. Optymalizuje on
+  <TeXmacs> posiada wªasny pot¦»ny zestaw skrótów, optymalizuje on
   wykorzystanie klawiszy modyfikuj¡cych <key|shift> i <key|control>. Jednak w
-  niektórych systemach klawisze te s¡ nienajlepiej skonfigurowane, zatem
+  niektórych systemach te klawisze s¡ nienajlepiej skonfigurowane, zatem
   u»ytkownik mo»e chcie¢ je przedefiniowa¢.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>

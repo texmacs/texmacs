@@ -37,10 +37,6 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
-  if (version_inf ("1.0.3.12", version)) return H;
-
-  new_feature (H, "unquote*");
-
   if (version_inf ("1.0.3.4", version)) return H;
 
   new_feature (H, "for-each");
@@ -1182,7 +1178,7 @@ upgrade_split (tree t) {
   else if (is_func (t, SURROUND, 3) && is_func (t[0], SPLIT)) {
     tree u= t[2];
     if (!is_concat (u)) u= tree (CONCAT, t[0], u);
-    else u= tree (CONCAT, t[0]) * u;
+    else u= join (tree (CONCAT, t[0]), u);
     return tree (SURROUND, "", upgrade_split (t[1]), upgrade_split (u));
   }
   else if (is_func (t, SURROUND, 3) && is_concat (t[0])) {
@@ -1194,7 +1190,7 @@ upgrade_split (tree t) {
     tree u= t[2];
     if (split != "") {
       if (!is_concat (u)) u= tree (CONCAT, split, u);
-      else u= tree (CONCAT, split) * u;
+      else u= join (tree (CONCAT, split), u);
     }
     r= tree (SURROUND, upgrade_split (r),
 	     upgrade_split (t[1]), upgrade_split (u));
@@ -2162,44 +2158,6 @@ upgrade_item_punct (tree t) {
 }
 
 /******************************************************************************
-* Forget default page parameters
-******************************************************************************/
-
-tree
-upgrade_page_pars (tree t) {
-  if (is_atomic (t)) return t;
-  else if (L(t) == COLLECTION) {
-    int i, n= N(t);
-    tree r (COLLECTION);
-    for (i=0; i<n; i++) {
-      tree u= t[i];
-      if (!is_func (u, ASSOCIATE, 2));
-      else if (u == tree (ASSOCIATE, PAGE_TYPE, "a4"));
-      else if (u == tree (ASSOCIATE, PAGE_EVEN, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_ODD, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_RIGHT, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_TOP, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_BOT, "30mm"));
-      else if (u == tree (ASSOCIATE, PAR_WIDTH, "150mm"));
-      else if (u[0] == "page-reduce-left");
-      else if (u[0] == "page-reduce-right");
-      else if (u[0] == "page-reduce-top");
-      else if (u[0] == "page-reduce-bot");
-      else if (u[0] == "sfactor");
-      else r << u;
-    }
-    return r;
-  }
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_page_pars (t[i]);
-    return r;
-  }
-}
-
-/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2283,7 +2241,5 @@ upgrade (tree t, string version) {
     t= upgrade_style_rename (t);
   if (version_inf_eq (version, "1.0.3.4"))
     t= upgrade_item_punct (t);
-  if (version_inf_eq (version, "1.0.3.7"))
-    t= upgrade_page_pars (t);
   return t;
 }

@@ -57,7 +57,6 @@ tm_reader::skip_blank () {
   for (; pos < N(buf); pos++) {
     if (buf[pos]==' ') continue;
     if (buf[pos]=='\t') continue;
-    if (buf[pos]=='\r') continue;
     if (buf[pos]=='\n') { n++; continue; }
     break;
   }
@@ -74,10 +73,7 @@ tm_reader::decode (string s) {
       if (s[i] == ';');
       else if (s[i] == '0') r << '\0';
       else if (s[i] == 't') r << '\t';
-      else if (s[i] == 'r') r << '\r';
       else if (s[i] == 'n') r << '\n';
-      else if (s[i] == '\\') r << '\\';
-      else if ((s[i] >= '@') && (s[i] < '`')) r << (s[i] - '@');
       else r << s[i];
     }
     else r << s[i];
@@ -103,7 +99,6 @@ tm_reader::read_next () {
   switch (c[0]) {
   case '\t':
   case '\n':
-  case '\r':
   case ' ': 
     pos--;
     if (skip_blank () <= 1) return " ";
@@ -113,7 +108,6 @@ tm_reader::read_next () {
       old_pos= pos;
       c= read_char ();
       if (c == "") return "";
-      if (c == "#") return "<#";
       if ((c == "\\") || (c == "|") || (c == "/")) return "<" * c;
       if (is_iso_alpha (c[0]) || (c == ">")) {
 	pos= old_pos;
@@ -144,7 +138,6 @@ tm_reader::read_next () {
       else r << c << read_char ();
     }
     else if (c == "\t") break;
-    else if (c == "\r") break;
     else if (c == "\n") break;
     else if (c == " ") break;
     else if (c == "<") break;
@@ -263,18 +256,6 @@ tm_reader::read (bool skip_flag) {
 	(void) read_function_name ();
 	if (last == ">") last= "/>";
 	else last= "/|";
-	break;
-      }
-      else if (last[N(last)-1] == '#') {
-	string r;
-	while ((buf[pos] != '>') && (pos+2<N(buf))) {
-	  r << ((char) from_hexadecimal (buf (pos, pos+2)));
-	  pos += 2;
-	}
-	if (buf[pos] == '>') pos++;
-	flush (D, C, S, spc_flag, ret_flag);
-	C << tree (RAW_DATA, r);
-	last= read_next ();
 	break;
       }
       else {
@@ -451,24 +432,18 @@ extract_document (tree doc) {
 	if ((l == PAGE_MEDIUM) ||
 	    (l == PAGE_TYPE) ||
 	    (l == PAGE_ORIENTATION) ||
-	    (l == PAGE_WIDTH_MARGIN) ||
-	    (l == PAGE_SCREEN_MARGIN) ||
 	    (l == PAGE_NR) ||
 	    (l == PAGE_WIDTH) ||
 	    (l == PAGE_HEIGHT) ||
 	    (l == PAGE_ODD) ||
 	    (l == PAGE_EVEN) ||
 	    (l == PAGE_RIGHT) ||
-	    (l == PAGE_ODD_SHIFT) ||
-	    (l == PAGE_EVEN_SHIFT) ||
 	    (l == PAGE_TOP) ||
 	    (l == PAGE_BOT) ||
-	    (l == PAGE_SCREEN_WIDTH) ||
-	    (l == PAGE_SCREEN_HEIGHT) ||
-	    (l == PAGE_SCREEN_LEFT) ||
-	    (l == PAGE_SCREEN_RIGHT) ||
-	    (l == PAGE_SCREEN_TOP) ||
-	    (l == PAGE_SCREEN_BOT) ||
+	    (l == PAGE_REDUCE_LEFT) ||
+	    (l == PAGE_REDUCE_RIGHT) ||
+	    (l == PAGE_REDUCE_TOP) ||
+	    (l == PAGE_REDUCE_BOT) ||
 	    (l == PAGE_SHOW_HF)) continue;
 	w << l << r;
       }

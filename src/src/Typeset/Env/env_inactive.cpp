@@ -55,7 +55,6 @@ is_long_arg (tree t, int i) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
-  case VAR_UNQUOTE:
     if (i == n-1) return is_long (t[i]);
     break;
   case STYLE_WITH:
