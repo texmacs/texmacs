@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|std-latex>
+  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex>
 
   <active*|<\src-comment>
     TeX-like style parameters.
