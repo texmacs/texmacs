@@ -51,7 +51,7 @@
 
 (define (hide-ia)
   (if (not (func? (tree->stree (get-init-tree "hide")) 'macro))
-      (init-extra-style "hide"))
+      (init-add-package "hide"))
   (interactive-proc '("Hide:")
 		    (lambda (s) (hide (input->symbols s)))))
 
