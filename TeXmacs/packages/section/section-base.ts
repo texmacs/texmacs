@@ -246,7 +246,7 @@
   <assign|render-bibliography|<\macro|name|body>
     <principal-section*|<arg|name>>
 
-    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<description|<arg|body>>>
+    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<arg|body>>
   </macro>>
 
   <assign|render-table-of-contents|<\macro|name|body>
@@ -287,8 +287,8 @@
     <render-bibliography|<localize|<arg|name>>|<arg|body>>
   </macro>>
 
-  <assign|thebibliography|<\macro|dummy|body>
-    <render-bibliography|<bibliography-text>|<arg|body>>
+  <assign|thebibliography|<\macro|largest|body>
+    <render-bibliography|<bibliography-text>|<bib-list|<arg|largest>|<arg|body>>>
   </macro>>
 
   <assign|table-of-contents|<\macro|aux|body>
