@@ -243,7 +243,7 @@ make_char_font (string name, bitmap_metric& cbmm, bitmap_font& cbmf) {
 int
 virtual_font_rep::get_char (string s, bitmap_metric& cbmm, bitmap_font& cbmf) {
   int c= ((N(s)==0)? -1: ((QN) s[0]));
-  if ((c<0) || (c>=last)) return c;
+  if ((c<0) || (c>=last)) return -1;
   if (N(s)==1) {
     cbmm= bmm;
     cbmf= bmf;

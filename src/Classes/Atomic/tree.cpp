@@ -168,12 +168,12 @@ hash (tree t) {
 
 bool
 is_document (tree t) {
-  return is_func (t, DOCUMENT);
+  return L(t) == DOCUMENT;
 }
 
 bool
 is_concat (tree t) {
-  return is_func (t, CONCAT);
+  return L(t) == CONCAT;
 }
 
 bool

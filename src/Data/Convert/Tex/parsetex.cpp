@@ -393,6 +393,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       arity--;
     }
     else if (option && (s[j]=='#') && (cmd == "\\def")) {
+      while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
       if (j+2<=n) {
 	t << s (j+1, j+2);
 	u << s (j+1, j+2);
