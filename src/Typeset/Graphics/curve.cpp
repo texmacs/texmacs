@@ -528,7 +528,9 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   point o1= (n>0 ? a[0] : point (0,0));
   point o2= (n>1 ? a[1] : point (0,0));
   point o3= (n>2 ? a[2] : point (0,0));
-  if (n!=3 || linearly_dependent (o1, o2, o3)) {
+  if (n!=3 || linearly_dependent (o1, o2, o3) ||
+     (N (center= intersect (midperp (o1, o2, o3), midperp (o2, o3, o1))) == 0))
+  {
     center= i= j= 0*o1;
     r1= r2= 1;
     e1= 0;
@@ -544,7 +546,6 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
     u[0]= 0;
     return;
   }
-  center= intersect (midperp (o1, o2, o3), midperp (o2, o3, o1));
   r1= r2= norm (o1-center);
   if (orthogonalize (i, j, center, o1, o2)) ;
   else

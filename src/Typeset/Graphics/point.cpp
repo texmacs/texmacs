@@ -159,10 +159,12 @@ midperp (point p1, point p2, point p3) {
   axis a;
   if (linearly_dependent (p1, p2, p3))
     a.p0= a.p1= point (0);
-  point i, j;
-  orthogonalize (i, j, p1, p2, p3);
-  a.p0= (p1+p2) / 2;
-  a.p1= a.p0 + j;
+  else {
+    point i, j;
+    orthogonalize (i, j, p1, p2, p3);
+    a.p0= (p1+p2) / 2;
+    a.p1= a.p0 + j;
+  }
   return a;
 }
 
