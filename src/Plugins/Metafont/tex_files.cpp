@@ -98,20 +98,24 @@ resolve_tex (url name) {
     }
     tex_font_cache_loaded= true;
   }
+
   string s= as_string (name);
-  if (tex_font_cache -> contains (s))
-    return url_system (tex_font_cache [s]->label);
-  else {
-    url u= url_none ();
-    if (ends (s, "tfm")) u= resolve_tfm (name);
-    if (ends (s, "pk" )) u= resolve_pk  (name);
-    if (ends (s, "pfb")) u= resolve_pfb (name);
-    if (!is_none (u)) {
-      tex_font_cache (s)= as_string (u);
-      tex_needs_cache_save= true;
-    }
-    return u;
+  if (tex_font_cache -> contains (s)) {
+    url u= url_system (tex_font_cache [s]->label);
+    if (exists (u)) return u;
+    tex_font_cache->reset (s);
+    tex_needs_cache_save= true;
   }
+
+  url u= url_none ();
+  if (ends (s, "tfm")) u= resolve_tfm (name);
+  if (ends (s, "pk" )) u= resolve_pk  (name);
+  if (ends (s, "pfb")) u= resolve_pfb (name);
+  if (!is_none (u)) {
+    tex_font_cache (s)= as_string (u);
+    tex_needs_cache_save= true;
+  }
+  return u;
 }
 
 bool
