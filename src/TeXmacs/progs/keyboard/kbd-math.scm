@@ -574,9 +574,10 @@
   ("| > = var" "<trianglerighteqslant>")
   ("| > = var /" "<ntrianglerighteqslant>")
     
-  ("+ var" "<kreuz>")
-  ("+ var var" "<dag>")
-  ("+ var var var" "<ddag>")
+  ("+ var" "<upl>")
+  ("+ var var" "<kreuz>")
+  ("+ var var var" "<dag>")
+  ("+ var var var var" "<ddag>")
   ("- var" "<um>")
   ("+ -" "<pm>")
   ("+ - var" "<upm>")
