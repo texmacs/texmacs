@@ -661,6 +661,7 @@ latex_parser::parse (string s) {
 	  a << s (start, i);
 	  start= i;
 	}
+      if (i == n) break;
     }
   a << s (start, i);
 
