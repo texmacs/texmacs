@@ -1,103 +1,33 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Stylesheet language>
 
-  Fundamental building blocks of the stylesheet language, operators which
-  bear a special relation to typeset boxes, and a few assorted operators
-  which should normally only be used in stylesheets.
+  The stylesheet language refers to the set of document constructs used for
+  writing style files. This includes logical and physical document markup and
+  a number <def-index|stylesheet markup> primitives which should never be
+  used in documents. The stylesheet markup primitives can be separated in two
+  main categories: the stylesheet fundamentals, described in this section,
+  and the functional operator primitives which are used to perform
+  computations in stylesheets.
 
-  <\itemize>
-    <item>Environment
+  This section documents the fundamental building blocks of the stylesheet
+  language, operators which bear a special relation to typeset boxes, and a
+  few assorted operators which should normally only be used in stylesheets.
 
-    <\itemize>
-      <item>assign
+  <\traverse>
+    <branch|Environment|prim-env.en.tm>
 
-      <item>with
+    <branch|Macros|prim-macro.en.tm>
 
-      <item>value
+    <branch|Flow control|prim-control.en.tm>
 
-      <item>provides
-    </itemize>
+    <branch|Box operators|prim-box.en.tm>
 
-    <item>Macros
-
-    <\itemize>
-      <item>macro
-
-      <item>drd-props
-
-      <item>arg
-
-      <item>compound
-
-      <item>xmacro
-
-      <item>get-label
-
-      <item>get-arity
-
-      <item>map-args
-
-      <item>eval-args
-
-      <item>action
-
-      <item>flag
-    </itemize>
-
-    <item>Flow control
-
-    <\itemize>
-      <item>if
-
-      <item>case
-
-      <item>while
-
-      <item>eval
-
-      <item>quote
-
-      <item>delay
-
-      <item>hold
-
-      <item>release
-    </itemize>
-
-    <item>Box operators
-
-    <\itemize>
-      <item>move
-
-      <item>resize
-
-      <item>if*
-
-      <item>repeat
-
-      <item>datoms
-
-      <item>dlines
-
-      <item>dpages
-
-      <item>dbox
-    </itemize>
-
-    <item>Miscellaneous stylesheet operators
-
-    <\itemize>
-      <item>surround
-
-      <item>extern
-
-      <item>write
-    </itemize>
-  </itemize>
+    <branch|Miscellaneous stylesheet operators|prim-style-misc.en.tm>
+  </traverse>
 
   <tmdoc-copyright|2004|David Allouche>
 
@@ -111,15 +41,15 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
   </collection>
 </initial>
