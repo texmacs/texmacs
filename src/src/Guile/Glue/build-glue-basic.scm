@@ -22,8 +22,8 @@
   (os-win32? os_win32 (bool))
   (win32-display win32_display (void string))
 
-  (tree->object tree_to_scheme_tree (scheme_tree tree))
-  (object->tree scheme_tree_to_tree (tree scheme_tree))
+  (tree->stree tree_to_scheme_tree (scheme_tree tree))
+  (stree->tree scheme_tree_to_tree (tree scheme_tree))
   (tree->string coerce_tree_string (string tree))
   (tree-get-label L (tree_label tree))
   (tree-get-children A (array_tree tree))
@@ -64,8 +64,6 @@
   (upgrade-tmml tmml_upgrade (tree scheme_tree))
   (get-texmacs-path get_texmacs_path (string))
   (object->command as_command (command object))
-  (object->scheme-tree copy (tree scheme_tree))
-  (scheme-tree->object copy (scheme_tree tree))
 
   (scheme-dialect scheme_dialect (string))
   (cursor-start start (path texmacs_tree path))

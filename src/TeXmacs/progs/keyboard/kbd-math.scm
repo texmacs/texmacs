@@ -137,12 +137,12 @@
 
   ("notsign" "<neg>")
   ("plusminus" "<pm>")
-  ("twosuperior" (insert-object '(rsup "2")))
-  ("threesuperior" (insert-object '(rsup "3")))
+  ("twosuperior" (insert-stree '(rsup "2")))
+  ("threesuperior" (insert-stree '(rsup "3")))
   ("mu" "<mu>")
-  ("onequarter" (insert-object '(frac "1" "4")))
-  ("onehalf" (insert-object '(frac "1" "2")))
-  ("threequarters" (insert-object '(frac "3" "4")))
+  ("onequarter" (insert-stree '(frac "1" "4")))
+  ("onehalf" (insert-stree '(frac "1" "2")))
+  ("threequarters" (insert-stree '(frac "3" "4")))
 
   ("(" (make-bracket-open "(" ")"))
   (")" (make-bracket-close ")" "("))

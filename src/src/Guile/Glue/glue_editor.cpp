@@ -2087,6 +2087,15 @@ tmg_the_path () {
 }
 
 SCM
+tmg_the_buffer_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->the_buffer_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_the_mutator_path () {
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->get_mutator_path ();
@@ -2963,6 +2972,7 @@ initialize_glue_editor () {
   gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
+  gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);
   gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
   gh_new_procedure ("the-mutator-time", (FN) tmg_the_mutator_time, 0, 0, 0);
   gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);

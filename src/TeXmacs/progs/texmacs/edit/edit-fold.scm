@@ -24,7 +24,7 @@
 
 (define (make-fold)
   (insert-tree-go-to
-   (object->tree '(fold (document "") (document "")))
+   (stree->tree '(fold (document "") (document "")))
    (list 0 0)))
 
 (define (fold)
@@ -65,12 +65,12 @@
 
 (define (make-switch)
   (insert-tree-go-to
-   (object->tree '(switch (document "") (tuple (tmarker))))
+   (stree->tree '(switch (document "") (tuple (tmarker))))
    (list 0 0)))
 
 (define (switch-find-marker t i)
   (cond ((= i (tree-arity t)) -1)
-	((== (tree-ref t i) (object->tree '(tmarker))) i)
+	((== (tree-ref t i) (stree->tree '(tmarker))) i)
 	(else (switch-find-marker t (+ i 1)))))
 
 (define (switch-get-position)
@@ -96,7 +96,7 @@
     (if (not (null? p))
 	(let ((t (tm-subtree (rcons* p 1 i))))
 	  (tm-assign (rcons* p 1 i)
-		     (object->tree '(tmarker)))
+		     (stree->tree '(tmarker)))
 	  (tm-assign (rcons p 0) t)))))
 
 (define (switch-pos where pos last)
@@ -118,7 +118,7 @@
 	  ((string? where) (switch-insert (switch-pos where pos last)))
 	  (else (switch-unselect)
 		(tm-insert (rcons* p 1 where)
-			   (object->tree '(tuple (document ""))))
+			   (stree->tree '(tuple (document ""))))
 		(switch-select where)))))
 
 (define (switch-remove where)

@@ -51,7 +51,7 @@
 	(else (cons (car l) (map tmtm-match-brackets (cdr l))))))
 
 (define (tmtm-match-brackets l)
-  "Add missing brackets to TeXmacs object @l."
+  "Add missing brackets to TeXmacs stree @l."
   (cond ((not (pair? l)) l)
 	((func? l 'left 1) `(concat ,l (right ".")))
 	((func? l 'right 1) `(concat (left ".") ,l))

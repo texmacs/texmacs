@@ -29,7 +29,7 @@
 
 (define (notify-language var val)
   (set-output-language val)
-  (if (and (has-view?) (== (tree->object (the-buffer)) '(document "")))
+  (if (and (has-view?) (== (tree->stree (the-buffer)) '(document "")))
       (init-language val))
   (cond ((or (== val "russian") (== val "ukrainian"))
 	 (notify-preference "cyrillic input method"))))

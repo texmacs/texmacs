@@ -94,7 +94,7 @@
 (define (texmacs->tmml x)
   (if (tmfile? x)
       (texmacs->tmml (list '!file x))
-      (with simplified (tree->object (tree-simplify (object->tree x)))
+      (with simplified (tree->stree (tree-simplify (stree->tree x)))
 	(with xml-tree (tmtmml simplified)
           ;(tmtmml-consistency-check 1 simplified (tmmltm xml-tree))
           ;(tmtmml-consistency-check 2 simplified (tmmltm (parse-tmml (serialize-tmml xml-tree))))

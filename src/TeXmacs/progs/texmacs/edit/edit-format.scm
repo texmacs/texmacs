@@ -64,7 +64,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;(define (make-insertion s)
-;  (insert-object-go-to
+;  (insert-stree-go-to
 ;   (list 'float s
 ;	 (if (string=? s "float") "tbh" "")
 ;	 (list 'document ""))

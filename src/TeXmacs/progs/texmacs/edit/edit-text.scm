@@ -37,7 +37,7 @@
 
 (define (make-header l)
   (go-end-of-header-element)
-  (if (not (== (tree->object (the-line)) "")) (insert-return))
+  (if (not (== (tree->stree (the-line)) "")) (insert-return))
   (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,13 +120,13 @@
 
 (define (make-aux env aux)
   (if (not (make-return-after))
-      (insert-object (list (string->symbol env) aux '(document "")))))
+      (insert-stree (list (string->symbol env) aux '(document "")))))
 
 (define (make-aux* env aux name)
   (if (not (make-return-after))
-      (insert-object (list (string->symbol env) aux name '(document "")))))
+      (insert-stree (list (string->symbol env) aux name '(document "")))))
 
 (define (make-bib style file-name)
   (if (not (make-return-after))
-      (insert-object
+      (insert-stree
        (list 'bibliography "bib" style file-name '(document "")))))

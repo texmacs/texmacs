@@ -233,9 +233,9 @@
   (call-with-input-string s read))
 
 (tm-define (func? x f . opts)
-  (:type (object symbol -> bool)
-	 (object symbol int -> bool))
-  (:synopsis "Is @x a list with first object @f?"
+  (:type (stree symbol -> bool)
+	 (stree symbol int -> bool))
+  (:synopsis "Is @x a list with first stree @f?"
 	     "Optionally test the length of @x.")
   (let ((n (length opts)))
     (cond ((= n 0) (and (list? x) (not (null? x)) (== (car x) f)))
@@ -246,9 +246,9 @@
 	  (else (error "Too many arguments.")))))
 
 (tm-define (tuple? x . opts)
-  (:type (object -> bool)
-	 (object symbol -> bool)
-	 (object symbol int -> bool))
+  (:type (stree -> bool)
+	 (stree symbol -> bool)
+	 (stree symbol int -> bool))
   (:synopsis "Equivalent to @list? without options"
 	     "Equivalent to @func? otherwise")
   (if (null? opts)

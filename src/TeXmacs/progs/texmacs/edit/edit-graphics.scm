@@ -29,13 +29,13 @@
 ;; Frequently used subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (object-at p)
-  (tree->object (subtree (the-buffer) p)))
+(define (stree-at p)
+  (tree->stree (subtree (the-buffer) p)))
 
 (define (graphics-graphics-path)
   ;; path to innermost graphics tag
   (let* ((p (cDr (tm-where)))
-	 (t (object-at p)))
+	 (t (stree-at p)))
     (if (func? t 'graphics) p
 	(with q (search-upwards "graphics")
 	  (if (null? q) #f q)))))
@@ -43,7 +43,7 @@
 (define (graphics-active-path)
   ;; path to active tag
   (with p (cDr (tm-where))
-    (if (in? (car (object-at p)) '(point line cline spline cspline)) p #f)))
+    (if (in? (car (stree-at p)) '(point line cline spline cspline)) p #f)))
 
 (define (graphics-group-path)
   ;; path to innermost group
@@ -54,7 +54,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-graphics)
-  (insert-object-go-to
+  (insert-stree-go-to
    '(with "gr-mode" "point"
           "gr-frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
 	  "gr-clip"  (tuple "clip"
@@ -65,14 +65,14 @@
 
 (define (graphics-set-property var val)
   (with p (graphics-graphics-path)
-    (if p (tm-insert-with p var (object->tree val)))))
+    (if p (tm-insert-with p var (stree->tree val)))))
 
 (define (graphics-remove-property var)
   (with p (graphics-graphics-path)
     (if p (tm-remove-with p var))))
 
 (define (graphics-cartesian-frame)
-  (with frame (tree->object (get-env-tree "gr-frame"))
+  (with frame (tree->stree (get-env-tree "gr-frame"))
     (if (match? frame '(tuple "scale" :2))
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
@@ -144,8 +144,8 @@
 
 (define (graphics-group-insert t)
   (with p (graphics-group-path)
-    (if p (with n (- (length (object-at p)) 1)
-	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
+    (if p (with n (- (length (stree-at p)) 1)
+	    (tm-insert (rcons p n) (stree->tree (list 'tuple t)))
 	    (if (func? t 'with)
 		(tm-go-to (append p (list n (- (length t) 2) 1)))
 		(tm-go-to (append p (list n 1))))))))
@@ -162,28 +162,28 @@
 ;; Subroutines for modifying the active tag
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (graphics-active-object)
+(define (graphics-active-stree)
   (with p (graphics-active-path)
-    (if p (tree->object (subtree (the-buffer) p)) #f)))
+    (if p (tree->stree (subtree (the-buffer) p)) #f)))
 
 (define (graphics-active-type)
-  (with t (graphics-active-object)
+  (with t (graphics-active-stree)
     (if t (car t) #f)))
 
 (define (graphics-active-assign t)
   (with p (graphics-active-path)
     (if p (begin
-	    (tm-assign p (object->tree t))
+	    (tm-assign p (stree->tree t))
 	    (tm-go-to (rcons p 1))))))
 
 (define (graphics-active-set-tag l)
-  (with t (graphics-active-object)
+  (with t (graphics-active-stree)
     (if t (graphics-active-assign (cons l (cdr t))))))
 
 (define (graphics-active-insert t)
   (with p (graphics-active-path)
-    (if p (with n (- (length (object-at p)) 1)
-	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
+    (if p (with n (- (length (stree-at p)) 1)
+	    (tm-insert (rcons p n) (stree->tree (list 'tuple t)))
 	    (tm-go-to (rcons p 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

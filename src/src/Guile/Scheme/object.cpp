@@ -176,12 +176,12 @@ as_widget (object obj) {
 
 object
 tree_to_object (scheme_tree t) {
-  return call ("tree->object", t);
+  return call ("tree->stree", t);
 }
 
 tree
 object_to_tree (object obj) {
-  return as_tree (call ("object->tree", obj));
+  return as_tree (call ("stree->tree", obj));
 }
 
 object

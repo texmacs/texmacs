@@ -243,7 +243,7 @@
 			  the-result))
 	  (set! body `((description-aligned (document ,@body))))))
     (set-help-buffer "Results of search"
-		     (object->tree
+		     (stree->tree
 		      `(document
 			(style "tmdoc")
 			(body (document

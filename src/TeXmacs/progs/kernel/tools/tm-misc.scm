@@ -84,7 +84,7 @@
 (tm-define (tm-debug)
   (:type (->))
   (:synopsis "For debugging purposes.")
-  (display* (tree->object (the-buffer)) "\n"))
+  (display* (tree->stree (the-buffer)) "\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous commands
