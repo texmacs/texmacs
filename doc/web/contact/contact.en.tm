@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.4.5>
 
 <style|tmweb>
 
@@ -17,27 +17,22 @@
     <item><hlink|Joris van der Hoeven|http://www.math.u-psud.fr/~vdhoeven>
     <tmweb-email|vdhoeven|texmacs.org>: the main author.
 
-    <item><hlink|Dan Martens|http://people.debian.org/~treinen/>
-    <tmweb-email|martens|texmacs.org>: author and part-time maintainer of the
-    Windows port.
+    <item>Dan Martens <tmweb-email|martens|texmacs.org>: author and part-time
+    maintainer of the Windows port.
 
     <item><hlink|Ralf Treinen|http://people.debian.org/~treinen/>
-    <tmweb-email|treinen|texmacs.org>: maintainer of the debian package.
+    <tmweb-email|treinen|texmacs.org>: maintainer of the Debian package.
+
+    <item><hlink|Adreas Seidl|http://www.fmi.uni-passau.de/~seidl>
+    <tmweb-email|seidltm|texmacs.org>: maintainer of the Cygwin package.
 
     <item><hlink|Andrey Grozin|http://www.inp.nsk.su/~grozin>
     <tmweb-email|grozin|texmacs.org>: our expert on interfaces with computer
     algebra system and internationalization.
 
-    <item><hlink|Henri Lesourd|http://www.math.u-psud.fr/~vdhoeven>
+    <item><hlink|Henri Lesourd|http://www.ags.uni-sb.de/~henri>
     <tmweb-email|lesourd|texmacs.org>: author of a graphical picture editor
     inside <TeXmacs> and of interfaces with proof systems.
-
-    <item><hlink|David Allouche|http://ddaa10.free.fr>
-    <tmweb-email|allouche|texmacs.org>: author of the Html import filter and
-    many patches.
-
-    <item><hlink|Fabien Salvi|http://www.pingoo.org/French/Developpeurs/fabien.html>
-    <tmweb-email|salvi|texmacs.org>: the webmaster.
   </itemize>
 
   Please report any <hyper-link|new bugs|bugs.en.tm> and
