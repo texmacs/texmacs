@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.1>
+<TeXmacs|1.0.3.7>
 
 <style|tmweb>
 
@@ -6,34 +6,49 @@
   <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
   <name|Windows>|<tmweb-download-links>>
 
-  We recently released a <with|mode|math|\<beta\>>-version of the
+  We recently released an <with|mode|math|\<alpha\>>-version of the
   <name|Windows>-port of <TeXmacs>. This <name|Windows> version of <TeXmacs>
   is easy to install and should provide you with the basic functionality of
   the program. However, the port is still incomplete and a list with
   <hlink|known problems|#problems> is given below. For a fully operational
-  <TeXmacs>, you may either install <name|Cygwin> on your <name|Windows>
-  system, or migrate to <no-break><name|Unix>. You may also <hlink|help
-  us|#help> with improving the <name|Windows> port.
+  <TeXmacs>, you may either install <hlink|<name|Cygwin>|cygwin.en.tm> on
+  your <name|Windows> system, or migrate to <no-break><name|Unix>. You may
+  also <hlink|help us|#help> with improving the <name|Windows> port.
 
   <section|Installation of <TeXmacs>>
 
-  In order to install <TeXmacs> on windows, download ???, execute it, and
-  follow the instructions which are given on your screen. If you install the
-  <TeXmacs> icon, then you may launch the program by double clicking on it.
+  In order to install <TeXmacs> on Windows, you should:
+
+  <\enumerate>
+    <item>Download <hlink|wintexmacs.exe|ftp://ftp.texmacs.org/pub/TeXmacs/windows/wintexmacs.exe>
+    (18Mb).
+
+    <item>Unpack the <TeXmacs> archive by executing
+    <verbatim|wintexmacs.exe>. You have to specify a folder where you wish to
+    unpack the <TeXmacs> archive. You may delete this folder as well as
+    <verbatim|wintexmacs.exe> when the installation will be complete.
+
+    <item>In the folder where you unpacked <TeXmacs>, launch the installer
+    <verbatim|setup.exe> and follow the instructions on the screen.
+
+    <item>You should now be able to launch <TeXmacs> from the applications or
+    accessories submenu of your main Windows menu on the bottom left of the
+    screen.
+  </enumerate>
 
   <section|Optional helper programs>
 
   Currently, <TeXmacs> saves its files in <name|PostScript> before printing
   them. If you did not install any software on your system to print or
   previsualize <name|PostScript> files, then you might wish to install
-  <name|Ghostscript> <abbr|resp.> <name|Ghostview>. This can be done by ???.
+  <hlink|<name|Ghostscript> <abbr|resp.> <name|Ghostview>|http://www.cs.wisc.edu/~ghost/>.
 
   Although the <name|Windows> version of <TeXmacs> does not require
   <TeX>/<LaTeX> to be installed on your system, you might still want to
   install such a distribution in order to increase the number of available
   fonts, or in order to compile bibliographies using <name|Bib><TeX>.
   Therefore, if you have a fast internet connection, then you may want to
-  download and install <name|Mik><TeX>. This is done by ???.
+  download and install <hlink|<name|Mik><TeX>|http://www.miktex.org/>.
 
   <section|Known problems><label|problems>
 
@@ -95,8 +110,8 @@
 
   <verbatim| \ \ \ src/Winport/Tmwin>
 
-  After setting the paths ... and configuring <name|Visual Studio> ..., you
-  should now be able to build <TeXmacs>.
+  After setting the paths (Dan...?) and configuring <name|Visual Studio>
+  (Dan...?), you should now be able to build <TeXmacs>.
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
@@ -105,49 +120,17 @@
 
 <\initial>
   <\collection>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|help|<tuple|4|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|problems|<tuple|3|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Install
-      <with|font-shape|<quote|small-caps>|Cygwin> with
-      <with|font-family|<quote|tt>|setup.exe>><value|toc-dots><pageref|toc-1><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Download
-      the T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>
-      distribution><value|toc-dots><pageref|toc-2><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Compile
-      T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>><value|toc-dots><pageref|toc-3><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Finishing
-      touches><value|toc-dots><pageref|toc-4><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>
