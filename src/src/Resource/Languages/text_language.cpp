@@ -113,7 +113,6 @@ locale_to_language (string s) {
   if (s == "pt") return "portuguese";
   if (s == "ro") return "romanian";
   if (s == "ru") return "russian";
-  if (s == "sl") return "slovene";
   if (s == "es") return "spanish";
   if (s == "sv") return "swedish";
   if (s == "uk") return "ukrainian";
@@ -136,7 +135,6 @@ language_to_locale (string s) {
   if (s == "portuguese") return "pt_PT";
   if (s == "romanian") return "ro_RO";
   if (s == "russian") return "ru_RU";
-  if (s == "slovene") return "sl_SI";
   if (s == "spanish") return "es_ES";
   if (s == "swedish") return "sv_SV";
   if (s == "ukrainian") return "uk_UA";
@@ -145,11 +143,7 @@ language_to_locale (string s) {
 
 string
 get_locale_language () {
-  string env_lan= get_env ("LC_ALL");
-  if (env_lan != "") return locale_to_language (env_lan);
-  env_lan= get_env ("LC_MESSAGES");
-  if (env_lan != "") return locale_to_language (env_lan);
-  env_lan= get_env ("LANG");
+  string env_lan= get_env ("LANG");
   if (env_lan != "") return locale_to_language (env_lan);
   env_lan= get_env ("GDM_LANG");
   if (env_lan != "") return locale_to_language (env_lan);
@@ -168,12 +162,9 @@ simplify_date (string s) {
 string
 get_date (string lan, string fm) {
   if (fm == "") {
+    fm= "%d %B %Y";
     if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm= "%B %d, %Y";
-    else if (lan == "german")
-      fm= "%d. %B %Y";
-    else fm= "%d %B %Y";
-
   }
   lan= language_to_locale (lan);
   string old= get_env ("LANG");
@@ -207,7 +198,6 @@ text_language (string s) {
   if (s == "portuguese") return new text_language_rep (s, "portuguese");
   if (s == "romanian") return new text_language_rep (s, "romanian");
   if (s == "russian") return new text_language_rep (s, "russian");
-  if (s == "slovene") return new text_language_rep (s, "slovene");
   if (s == "spanish") return new text_language_rep (s, "spanish");
   if (s == "swedish") return new text_language_rep (s, "swedish");
   if (s == "ukrainian") return new text_language_rep (s, "ukrainian");

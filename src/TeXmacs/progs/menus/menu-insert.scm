@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-     (texmacs edit edit-graphics) (texmacs edit edit-fold)
-     (texmacs edit edit-format) (texmacs edit edit-misc)))
+    (texmacs edit edit-fold) (texmacs edit edit-format)
+    (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Insert menu
@@ -48,8 +48,7 @@
   ---
   (-> "Citation"
       ("Visible" (make 'cite))
-      ("Invisible" (make 'nocite))
-      ("Detailed" (make 'cite-detail)))
+      ("Invisible" (make 'nocite)))
   (-> "Index entry"
       ("Main" (make 'index))
       ("Sub" (make 'subindex))
@@ -67,7 +66,7 @@
 (menu-bind insert-presentation-tag-menu
   ("Underline" (make 'underline))
   ("Overline" (make 'overline))
-  ("Subscript" (make-script #f #t))
+  ("Subscript" (make-script #t #f))
   ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
@@ -101,7 +100,6 @@
       ("Small figure" (make 'small-figure))
       ("Big figure" (make 'big-figure))
       ---)
-  ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
@@ -121,7 +119,7 @@
 
 (menu-bind insert-transformational-menu
   ("Assign" (make 'assign))
-  ("With" (make-arity 'with 3))
+  ("With" (make 'with 3))
   ("Value" (make 'value))
   ---
   ("Macro" (make 'macro))
@@ -129,9 +127,9 @@
   ("Compound" (make 'compound))
   ---
   ("Long macro" (make 'xmacro))
-  ("Get label" (make 'get-label))
-  ("Get arity" (make 'get-arity))
-  ("Map arguments" (make 'map-args)))
+  ("Get label" (make 'get_label))
+  ("Get arity" (make 'get_arity))
+  ("Map arguments" (make 'map_args)))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
@@ -146,16 +144,16 @@
       ("Length" (make 'length))
       ("Range" (make 'range))
       ("Number" (make 'number))
-      ("Today" (make-arity 'date 0))
+      ("Date" (make 'date))
       ("Formatted date" (make 'date))
       ("Translate" (make 'translate))
-      ("Find file" (make 'find-file)))
+      ("Find file" (make 'find_file)))
   (-> "Tuple"
-      ("Tuple?" (make 'is-tuple))
+      ("Tuple?" (make 'is_tuple))
       ("Merge" (make 'merge))
       ("Length" (make 'length))
       ("Range" (make 'range))
-      ("Look up" (make 'look-up)))
+      ("Look up" (make 'look_up)))
   (-> "Condition"
       ("Not" (make 'not))
       ("And" (make 'and))
@@ -207,23 +205,23 @@
       ("Big skip" (make-vspace-after "2fn"))
       ("Other" ... (interactive '("Vertical space:") 'make-vspace-after)))
   (-> "Break"
-      ("New line" (make 'next-line))
-      ("Line break" (make 'line-break))
-      ("No line break" (make 'no-break))
-      ("New paragraph" (make 'new-line))
+      ("New line" (make-format "next_line"))
+      ("Line break" (make-format "line_break"))
+      ("No line break" (make-format "no_line_break"))
+      ("New paragraph" (make-format "new_line"))
       ---
       ("New page" (make-new-page))
-      ("New page before" (make 'new-page*))
+      ("New page before" (make-new-page-before))
       ("Page break" (make-page-break))
-      ("Page break before" (make 'page-break*))
-      ("No page break before" (make 'no-page-break*))
-      ("No page break after" (make 'no-page-break)))
+      ("Page break before" (make-page-break-before))
+      ("No page break before" (make-format "no_page_break_before"))
+      ("No page break after" (make-format "no_page_break_after")))
   (-> "Indentation flag"
-      ("Disable indentation before" (make 'no-indent))
-      ("Enable indentation before" (make 'yes-indent))
+      ("Disable indentation before" (make-format "no_first_indentation"))
+      ("Enable indentation before" (make-format "enable_first_indentation"))
       ---
-      ("Disable indentation after" (make 'no-indent*))
-      ("Enable indentation after" (make 'yes-indent*)))
+      ("Disable indentation after" (make-format "no_indentation_after"))
+      ("Enable indentation after" (make-format "enable_indentation_after")))
   (if (style-has? "env-float-dtd")
       (-> "Page insertion"
 	  (when (not (inside? "float"))
@@ -234,23 +232,23 @@
 		(link position-float-menu))))
   (-> "Header and footer"
       (group "This page")
-      ("Header" (make-assign-arg "page-this-header"))
-      ("Footer" (make-assign-arg "page-this-footer"))
+      ("Header" (make-assign-arg "this page header"))
+      ("Footer" (make-assign-arg "this page footer"))
       ---
       (group "Permanent")
       ("Header" (make 'set-header))
       ("Footer" (make 'set-footer))
-      ("Odd page header" (make-assign-arg "page-odd-header"))
-      ("Odd page footer" (make-assign-arg "page-odd-footer"))
-      ("Even page header" (make-assign-arg "page-even-header"))
-      ("Even page footer" (make-assign-arg "page-even-footer"))
+      ("Odd page header" (make-assign-arg "odd page header"))
+      ("Odd page footer" (make-assign-arg "odd page footer"))
+      ("Even page header" (make-assign-arg "even page header"))
+      ("Even page footer" (make-assign-arg "even page footer"))
       ---
       (group "Structural")
       ("Odd page text" (make-assign-macro-arg "odd-page-text"))
       ("Even page text" (make-assign-macro-arg "even-page-text")))
   (-> "Page numbering"
-      ("Renumber this page" (make-assign-arg "page-nr"))
-      ("Page number text" (make-assign-macro "page-the-page")))
+      ("Renumber this page" (make-assign-arg "page number"))
+      ("Page number text" (make-assign-macro "thepage")))
   ---
   (-> "Specific"
       ("TeXmacs" (make-specific "texmacs"))
@@ -267,9 +265,9 @@
 			'("Left:" "Bottom:" "Right:" "Top:") 'make-resize))
       ("Repeat object" (make 'repeat))
 ;;    ---
-      ("Decorate atoms" (make-arity 'datoms 2))
-;;    ("decorate lines" (make-arity 'dlines 2))
-;;    ("decorate pages" (make-arity 'dpages 2))
+      ("Decorate atoms" (make 'datoms 2))
+;;    ("decorate lines" (make 'dlines 2))
+;;    ("decorate pages" (make 'dpages 2))
 ;;    ---
 ;;    ("page insertion" (make 'float))
       ))

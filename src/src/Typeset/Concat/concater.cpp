@@ -72,35 +72,31 @@ concater_rep::ghost (string s, path ip, color col) {
 }
 
 void
-concater_rep::flag_ok (string s, path ip, color col) {
-  path dip = decorate_right (ip);
-  SI h= 4*env->fn->wquad/5;
-  int r, g, b;
-  env->dis->get_rgb (col, r, g, b);
-  r= 255- (255 - r)/6;
-  g= 255- (255 - g)/6;
-  b= 255- (255 - b)/6;
-  color light= env->dis->rgb (r, g, b);
-  string info_flag= env->get_string (INFO_FLAG);
-  if (info_flag == "short") {
-    box infob= info_box (dip, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
-    print (STD_ITEM, specb);
-  }
-  if (info_flag == "detailed") {
-    int sz= script (env->fn_size, env->index_level+2);
-    font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
-    box textb= text_box (decorate (ip), 0, s, gfn, col);
-    box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
-    print (STD_ITEM, specb);
-  }
-}
-
-void
 concater_rep::flag (string s, path ip, color col) {
-  if (is_accessible (ip) && (!env->read_only))
-    flag_ok (s, ip, col);
+  if (is_accessible (ip) && (!env->read_only)) {
+    path dip = decorate_right (ip);
+    SI h= 4*env->fn->wquad/5;
+    int r, g, b;
+    env->dis->get_rgb (col, r, g, b);
+    r= 255- (255 - r)/6;
+    g= 255- (255 - g)/6;
+    b= 255- (255 - b)/6;
+    color light= env->dis->rgb (r, g, b);
+    string info_flag= env->get_string (INFO_FLAG);
+    if (info_flag == "short") {
+      box infob= info_box (dip, h, env->fn->wline, col, light);
+      box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
+      print (STD_ITEM, specb);
+    }
+    if (info_flag == "detailed") {
+      int sz= script (env->fn_size, env->index_level+2);
+      font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
+      box textb= text_box (decorate (ip), 0, s, gfn, col);
+      box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
+      box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
+      print (STD_ITEM, specb);
+    }
+  }
 }
 
 /******************************************************************************
@@ -159,7 +155,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_document (t, ip);
     else typeset_inactive ("document", t, ip);
     break;
-  case PARA:
+  case PARAGRAPH:
     if (ACTIVATED) typeset_paragraph (t, ip);
     else typeset_inactive ("paragraph", t, ip);
     break;
@@ -180,17 +176,15 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive ("hspace", t, ip);
     break;
-  case VAR_VSPACE:
+  case VSPACE_BEFORE:
     if (ACTIVATED) {
-      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
       t= env->exec (t);
       control (t, ip);
     }
     else typeset_inactive ("vspace*", t, ip);
     break;
-  case VSPACE:
+  case VSPACE_AFTER:
     if (ACTIVATED) {
-      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
       t= env->exec (t);
       control (t, ip);
     }
@@ -226,19 +220,19 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_float (t, ip);
     else typeset_inactive ("float", t, ip);
     break;
-  case DATOMS:
+  case DECORATE_ATOMS:
     if (ACTIVATED) typeset_formatting (t, ip, ATOM_DECORATIONS);
     else typeset_inactive ("decorate atoms", t, ip);
     break;
-  case DLINES:
+  case DECORATE_LINES:
     if (ACTIVATED) typeset_formatting (t, ip, LINE_DECORATIONS);
     else typeset_inactive ("decorate lines", t, ip);
     break;
-  case DPAGES:
+  case DECORATE_PAGES:
     if (ACTIVATED) typeset_formatting (t, ip, PAGE_DECORATIONS);
     else typeset_inactive ("decorate pages", t, ip);
     break;
-  case DBOX:
+  case DECORATED_BOX:
     typeset_decorated_box (t, ip);
     break;
 
@@ -248,7 +242,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       flag ("with-limits", ip, env->dis->brown);
       control (t, ip);
     }
-    else typeset_inactive_string ("<with limits>", ip);
+    else typeset_inactive_string ("<with-limits>", ip);
     break;
   case LINE_BREAK:
     if (ACTIVATED) {
@@ -256,13 +250,13 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       flag ("line-break", ip, env->dis->brown);
       control (t, ip);
     }
-    else typeset_inactive_string ("<line break>", ip);
+    else typeset_inactive_string ("<line-break>", ip);
     break;
   case NEW_LINE:
   case LINE_SEP:
   case NEXT_LINE:
     {
-      string name= env->drd->get_name (L(t));
+      string name= replace (as_string (L(t)), "_", "-");
       if (ACTIVATED) {
 	flag (name, ip, env->dis->brown);
 	control (t, ip);
@@ -277,49 +271,49 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
 	  (a[N(a)-1]->type == STRING_ITEM) &&
 	  (a[N(a)-1]->b->get_leaf_string () == ""))
 	a[N(a)-2]->penalty = HYPH_INVALID;	
-      flag ("no line break", ip, env->dis->brown);
+      flag ("no-break", ip, env->dis->brown);
       control (t, ip);
     }
     else typeset_inactive_string ("<no-break>", ip);
     break;
-  case YES_INDENT:
+  case YES_FIRST_INDENT:
     if (ACTIVATED) {
       flag ("yes-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
     }
-    else typeset_inactive_string ("<do indent>", ip);
+    else typeset_inactive_string ("<yes-first-indent>", ip);
     break;
-  case NO_INDENT:
+  case NO_FIRST_INDENT:
     if (ACTIVATED) {
       flag ("no-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
     }
-    else typeset_inactive_string ("<don't indent>", ip);
+    else typeset_inactive_string ("<no-first-indent>", ip);
     break;
-  case VAR_YES_INDENT:
+  case YES_FIRST_INDENT_AFTER:
     if (ACTIVATED) {
       flag ("yes-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
     }
-    else typeset_inactive_string ("<do indent after>", ip);
+    else typeset_inactive_string ("<yes-first-indent-after>", ip);
     break;
-  case VAR_NO_INDENT:
+  case NO_FIRST_INDENT_AFTER:
     if (ACTIVATED) {
       flag ("no-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
     }
-    else typeset_inactive_string ("<don't indent after>", ip);
+    else typeset_inactive_string ("<no-first-indent-after>", ip);
     break;
-  case VAR_PAGE_BREAK:
+  case PAGE_BREAK_BEFORE:
   case PAGE_BREAK:
-  case VAR_NO_PAGE_BREAK:
-  case NO_PAGE_BREAK:
-  case VAR_NEW_PAGE:
+  case NO_PAGE_BREAK_BEFORE:
+  case NO_PAGE_BREAK_AFTER:
+  case NEW_PAGE_BEFORE:
   case NEW_PAGE:
-  case VAR_NEW_DPAGE:
-  case NEW_DPAGE:
+  case NEW_DOUBLE_PAGE_BEFORE:
+  case NEW_DOUBLE_PAGE:
     {
-      string name= env->drd->get_name (L(t));
+      string name= replace (as_string (L(t)), "_", "-");
       if (ACTIVATED) {
 	flag (name, ip, env->dis->brown);
 	control (t, ip);
@@ -331,7 +325,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case LEFT:
     typeset_left (t, ip);
     break;
-  case MID:
+  case MIDDLE:
     typeset_middle (t, ip);
     break;
   case RIGHT:
@@ -340,10 +334,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case BIG:
     typeset_bigop (t, ip);
     break;
-  case LPRIME:
+  case LEFT_PRIME:
     typeset_lprime (t, ip);
     break;
-  case RPRIME:
+  case RIGHT_PRIME:
     typeset_rprime (t, ip);
     break;
   case BELOW:
@@ -352,12 +346,12 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case ABOVE:
     typeset_above (t, ip);
     break;
-  case LSUB:
-  case LSUP:
+  case LEFT_SUB:
+  case LEFT_SUP:
     typeset_script (t, ip, false);
     break;
-  case RSUB:
-  case RSUP:
+  case RIGHT_SUB:
+  case RIGHT_SUP:
     typeset_script (t, ip, true);
     break;
   case FRAC:
@@ -369,7 +363,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case WIDE:
     typeset_wide (t, ip, true);
     break;
-  case VAR_WIDE:
+  case WIDE_UNDER:
     typeset_wide (t, ip, false);
     break;
   case NEG:
@@ -379,20 +373,20 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_tree (t, ip);
     break;
 
-  case TFORMAT:
+  case TABLE_FORMAT:
     if (ACTIVATED) {
       if ((N(t)>0) && is_table (t[N(t)-1])) typeset_table (t, ip);
       else typeset_formatting (t, ip, CELL_FORMAT);
     }
     else typeset_inactive ("table-format", t, ip);
     break;
-  case TWITH:
+  case TABLE_WITH:
     typeset_inactive ("table-with", t, ip);
     break;
-  case CWITH:
+  case CELL_WITH:
     typeset_inactive ("cell-with", t, ip);
     break;
-  case TMARKER:
+  case TABLE_MARKER:
     typeset_inactive ("table-marker", t, ip);
     break;
   case TABLE:
@@ -400,7 +394,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case ROW:
   case CELL:
-  case SUBTABLE:
+  case SUB_TABLE:
     break;
 
   case ASSIGN:
@@ -426,7 +420,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_drd_props (t, ip);
     else typeset_inactive ("drd-properties", t, ip, 1);
     break;
-  case ARG:
+  case ARGUMENT:
     if (ACTIVATED) typeset_argument (t, ip);
     else typeset_inactive ("argument", t, ip);
     break;
@@ -512,11 +506,11 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("/", t, ip);
     break;
-  case DIV:
+  case DIVIDE:
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("div", t, ip);
     break;
-  case MOD:
+  case MODULO:
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("mod", t, ip);
     break;
@@ -653,7 +647,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_specific (t, ip);
     else typeset_inactive_specific (t, ip);
     break;
-  case HLINK:
+  case HYPERLINK:
     if (ACTIVATED) typeset_hyperlink (t, ip);
     else typeset_inactive_action ("hyperlink", t, ip);
     break;
@@ -699,7 +693,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive ("cline", t, ip);
     break;
   case SPLINE:
-    if (ACTIVATED) typeset_spline (t, ip, false);
+    if (ACTIVATED) typeset_spline (t, ip);
     else typeset_inactive ("spline", t, ip);
     break;
   case VAR_SPLINE:
@@ -763,7 +757,6 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   array<line_item> a= ccc->a;
 
   int i, n=N(a);
-  if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
   array<box> items (n);
   array<SI>  spc (n);
   if (n>0) {

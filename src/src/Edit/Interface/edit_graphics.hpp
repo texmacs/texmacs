@@ -25,10 +25,9 @@ public:
 
   bool   inside_graphics ();
   frame  find_frame ();
-  void   find_limits (point& lim1, point& lim2);
   point  adjust (point p);
   tree   find_point (point p);
-  bool   mouse_graphics (string s, SI x, SI y, time_t t);
+  void   mouse_graphics (string s, SI x, SI y, time_t t);
 };
 
 #endif // defined EDIT_GRAPHICS_H

@@ -150,36 +150,36 @@ edit_text_rep::remove_text (bool forward) {
   if (last == (forward? 0: 1))
     switch (L(t)) {
     case HSPACE:
-    case VAR_VSPACE:
-    case VSPACE:
+    case VSPACE_BEFORE:
+    case VSPACE_AFTER:
     case SPACE:
     case HTAB:
     case LEFT:
-    case MID:
+    case MIDDLE:
     case RIGHT:
     case BIG:
       back_monolithic (p);
       return;
-    case LPRIME:
-    case RPRIME:
+    case LEFT_PRIME:
+    case RIGHT_PRIME:
       back_prime (t, p, forward);
       return;
     case WIDE:
-    case VAR_WIDE:
+    case WIDE_UNDER:
       go_to_border (p * 0, forward);
       return;
-    case TFORMAT:
+    case TABLE_FORMAT:
     case TABLE:
     case ROW:
     case CELL:
-    case SUBTABLE:
+    case SUB_TABLE:
       back_table (p, forward);
       return;
     case WITH:
       go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
-    case ARG:
+    case ARGUMENT:
       if (N(t) == 1) back_monolithic (p);
       else back_general (p, forward);
       return;
@@ -191,18 +191,14 @@ edit_text_rep::remove_text (bool forward) {
   // deletion depends on children u
   if (last == (forward? rix: 0)) {
     switch (L (u)) {
-    case WIDE:
-    case VAR_WIDE:
-      back_in_wide (u, p, forward);
-      return;
     case TREE:
       back_in_tree (u, p, forward);
       return;
-    case TFORMAT:
+    case TABLE_FORMAT:
     case TABLE:
     case ROW:
     case CELL:
-    case SUBTABLE:
+    case SUB_TABLE:
       back_in_table (u, p, forward);
       return;
     case WITH:
@@ -306,7 +302,7 @@ edit_text_rep::remove_structure_upwards () {
   p= path_up (p);
   tree st= subtree (et, p);
   bool recurse=
-    is_func (st, TFORMAT) || is_func (st, TABLE) ||
+    is_func (st, TABLE_FORMAT) || is_func (st, TABLE) ||
     is_func (st, ROW) || is_func (st, CELL);
   remove (p * (last+1), N(st)-(last+1));
   remove (p * 0, last);

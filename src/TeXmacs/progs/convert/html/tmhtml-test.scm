@@ -23,7 +23,7 @@
 (define (regtest-tmhtml-basic)
   (regression-test-group
    "tmhtml, basic features" "basic"
-   tmhtml-root :none
+   tmhtml :none
    (test "string" '"hello" '("hello"))
    (test "document, empty" '(document) '())
    (test "document, one string" '(document "aaa") '((h:p "aaa")))
@@ -46,21 +46,21 @@
 (define (regtest-tmhtml-format)
   (regression-test-group
    "tmhtml, format nodes" "format"
-   tmhtml-root :none
+   tmhtml :none
    (test "line break"
-	 '(document (concat "aaa" (line-break) "bbb"))
+	 '(document (concat "aaa" (line_break) "bbb"))
 	 '((h:p "aaabbb")))
    (test "new line"
-	 '(document (concat "aaa" (new-line) "bbb"))
+	 '(document (concat "aaa" (new_line) "bbb"))
 	 '((h:p "aaa" (h:br) "bbb")))
    (test "next line"
-	 '(document (concat "aaa" (next-line) "bbb"))
+	 '(document (concat "aaa" (next_line) "bbb"))
 	 '((h:p "aaa" (h:br) "bbb")))))
 
 (define (regtest-tmhtml-extra)
   (regression-test-group
    "tmhtml, misc features" "extra"
-   tmhtml-root :none
+   tmhtml :none
    (test "label" '(label "aaa") '((h:a (@ (id "aaa")))))
    (test "hlink" '(hlink "aaa" "bbb") '((h:a (@ (href "bbb")) "aaa")))
    (test "hlink, concat, em" '(hlink (concat (em "aa") "bb") "cc")
@@ -75,16 +75,16 @@
 (define (regtest-tmhtml-with)
   (regression-test-group
    "tmhtml, general 'with' handler" "with"
-   tmhtml-root list
+   tmhtml list
    ;; Use font variants as an exemple.
-   (test "typewriter" '(with "font-family" "tt" "a") '(h:tt "a"))
-   (test "bold" '(with "font-series" "bold" "a") '(h:b "a"))
-   (test "italic" '(with "font-shape" "italic" "a") '(h:i "a"))
-   (test "composite with" '(with "font-family" "tt" "font-series" "bold" "a")
+   (test "typewriter" '(with "font family" "tt" "a") '(h:tt "a"))
+   (test "bold" '(with "font series" "bold" "a") '(h:b "a"))
+   (test "italic" '(with "font shape" "italic" "a") '(h:i "a"))
+   (test "composite with" '(with "font family" "tt" "font series" "bold" "a")
 	 '(h:tt (h:b "a")))))
 
 (define (regtest-tmhtml-font-size)
-  (define (result x) (tmhtml-root `(with "font-size" ,x "aaa")))
+  (define (result x) (tmhtml `(with "font size" ,x "aaa")))
   (define (expected x) (if x `((h:font (@ (size ,x)) "aaa")) '("aaa")))
   (regression-test-group
    "tmhtml, font size" "font-size"
@@ -109,7 +109,7 @@
 (define (regtest-tmhtml-logical)
   (regression-test-group
    "tmhtml, logical markup, basic" "logical"
-   tmhtml-root list
+   tmhtml list
    ;; Phrase elements
    (test "strong" '(strong "aaa") '(h:strong "aaa"))
    (test "em" '(em "aaa") '(h:em "aaa"))
@@ -125,8 +125,8 @@
    ;; Composite
    (test "em, concat" '(em (concat "a" (strong "b")))
 	 '(h:em "a" (h:strong "b")))
-   (test "with, em" '(with "font-family" "tt" (em "a")) '(h:tt (h:em "a")))
-   (test "em, with" '(em (with "font-family" "tt" "a")) '(h:em (h:tt "a")))))
+   (test "with, em" '(with "font family" "tt" (em "a")) '(h:tt (h:em "a")))
+   (test "em, with" '(em (with "font family" "tt" "a")) '(h:em (h:tt "a")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections
@@ -135,41 +135,34 @@
 (define (regtest-tmhtml-section)
   (regression-test-group
    "tmhtml, sectioning markup, basic" "section"
-   tmhtml-root :none
-   (test "chapter*" '(chapter* "aaa") '((h:h1 "aaa")))
-   (test "section*" '(section* "aaa") '((h:h2 "aaa")))
-   (test "section*, empty" '(section* "") '((h:h2)))
-   (test "subsection*" '(subsection* "aaa") '((h:h3 "aaa")))
-   (test "subsubsection*" '(subsubsection* "aaa") '((h:h4 "aaa")))
-   (test "paragraph*" '(paragraph* "aaa")
+   tmhtml :none
+   (test "chapter" '(chapter "aaa") '((h:h1 "aaa")))
+   (test "section" '(section "aaa") '((h:h2 "aaa")))
+   (test "section, empty" '(section "") '((h:h2)))
+   (test "subsection" '(subsection "aaa") '((h:h3 "aaa")))
+   (test "subsubsection" '(subsubsection "aaa") '((h:h4 "aaa")))
+   (test "paragraph" '(paragraph "aaa")
 	 '((h:strong (@ (class "paragraph")) "aaa")))
    (test-fails "para (primitive)" '(para "aaa") '((h:h5 "aaa")))
-   (test "subparagraph*" '(subparagraph* "aaa")
+   (test "subparagraph" '(subparagraph "aaa")
 	 '((h:strong (@ (class "subparagraph")) "aaa")))
-   (test "paragraph*, empty" '(paragraph* "")
+   (test "paragraph, empty" '(paragraph "")
 	 '((h:strong (@ (class "paragraph")))))))
 
 (define (regtest-tmhtml-section-post)
-  ;; FIXME: check that numbered sectioning macros have their ids handled
-  ;; correctly. Now, this involves the typesetter evaluation.
   (regression-test-group
    "tmhtml, section post-processing" "section-post"
-   tmhtml-root :none
-   (test "alone" '(concat (section* "a")) '((h:h2 "a")))
-   (test "with label before" '(concat (label "l1") (section* "a"))
+   tmhtml :none
+   (test "alone" '(concat (section "a")) '((h:h2 "a")))
+   (test "with label" '(concat (section "a") (label "l1"))
 	 '((h:h2 (@ (id "l1")) "a")))
-   (test "with label after" '(concat (section* "a") (label "l1"))
-	 '((h:h2 (@ (id "l1")) "a")))
-   (test "with label before and after"
-	 '(concat (label "l1") (section* "a") (label "l2"))
+   (test "with 2 labels"
+	 '(concat (section "a") (label "l1") (label "l2"))
 	 '((h:h2 (@ (id "l1")) (h:a (@ (id "l2"))) "a")))
-   (test "with two labels after"
-	 '(concat (section* "a") (label "l1") (label "l2"))
-	 '((h:h2 (@ (id "l1")) (h:a (@ (id "l2"))) "a")))
-   (test "with string" '(concat (section* "a") "b")
+   (test "with string" '(concat (section "a") "b")
 	 '((h:h2 "a") "b"))
    (test "with label, string, label"
-	 '(concat (section* "a") (label "l1") "s" (label "l2"))
+	 '(concat (section "a") (label "l1") "s" (label "l2"))
 	 '((h:h2 (@ (id "l1")) (h:a (@ (id "l2"))) "a") "s"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,14 +172,14 @@
 (define (regtest-tmhtml-itemize-head)
   (regression-test-group
    "tmhtml, item list heads" "itemize-head"
-   tmhtml-root :none
+   tmhtml :none
    (test "itemize" '(itemize (document (item))) '((h:ul (h:li))))
    (test "enumerate" '(enumerate (document (item))) '((h:ol (h:li))))))
 
 (define (regtest-tmhtml-list-document)
   (regression-test-group
    "tmhtml, item lists content" "list-document"
-   tmhtml-root :none
+   tmhtml :none
    (test "empty list" '(itemize (document)) '((h:ul (h:li))))
    (test "empty item" '(itemize (document (item))) '((h:ul (h:li))))
    (test "item with text" '(itemize (document (concat (item) "a")))
@@ -220,7 +213,7 @@
 (define (regtest-tmhtml-description-head)
   (regression-test-group
    "tmhtml, description heads" "description-head"
-   tmhtml-root :none
+   tmhtml :none
    (test "description" '(description (document (item* "a")))
 	 '((h:dl (h:dt "a"))))))
 
@@ -230,7 +223,7 @@
    ;; description conversion uses the same iterator as item list
    ;; conversions, so the extensive tests for detection of the list
    ;; mark in different document structures need not be redone here.
-   tmhtml-root :none
+   tmhtml :none
    (test "empty" '(description (document)) '((h:dl (h:dd))))
    (test "string" '(description (document "a")) '((h:dl (h:dd "a"))))
    (test "empty item*" '(description (document (item* ""))) '((h:dl (h:dt))))
@@ -245,36 +238,6 @@
    (test "string, item*, string"
 	 '(description (document "a" (concat (item* "b") "c")))
 	 '((h:dl (h:dd "a") (h:dt "b") (h:dd "c"))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Verbatim
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (regtest-tmhtml-verbatim)
-  (define (h:tt . content) `(h:tt (@ (class "verbatim")) ,@content))
-  (define (h:pre . content)
-    `(h:pre (@ (class "verbatim") (xml:space "preserve")) ,@content))
-  (regression-test-group
-   "tmhtml, verbatim" "verbatim"
-   tmhtml-root :none
-   (test "inline verbatim"
-	 '(concat (verbatim "a") "b c") `(,(h:tt "a") "b c"))
-   (test "one-line block verbatim"
-	 '(verbatim (document "  a  b  ")) `(,(h:pre "  a  b  ")))
-   (test "multiline block verbatim"
-	 '(verbatim (document "  a" "   b")) `(,(h:pre "  a\n   b")))
-   (test "verbatim line"
-	 '(document "a" (verbatim "  b ") "c d")
-	 `((h:p "a") ,(h:pre "  b ") (h:p "c d")))
-   (test "verbatim in item*"
-	 '(description (document (concat (item* (verbatim "a")) "b")
-				 (item* (verbatim "c"))
-				 "d e"))
-	 `((h:dl (h:dt ,(h:tt "a")) (h:dd "b")
-		 (h:dt ,(h:tt "c")) (h:dd (h:p) (h:p "d e")))))
-   (test "vicious nesting"
-	 '(strong (verbatim (em (document "a" "b"))))
-	 `((h:strong ,(h:pre '(h:em "a\nb")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
@@ -304,7 +267,7 @@
   (define (expect-simple b c) (list (h:table b c '(("a")))))
   (regression-test-group
    "tmhtml, table conversion" "table"
-   tmhtml-root :none
+   tmhtml :none
    (test "naked table" (simple-table) (expect-simple #f '("l")))
    (test "naked tformat" (simple-tformat) (expect-simple #f '("l")))
    (test "simple tabular" `(tabular ,(simple-tformat))
@@ -321,19 +284,19 @@
 	 `(tabular* ,(tformat '() '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("c" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, first col aligned right"
-	 `(tabular* ,(tformat (list (colwith "1" "cell-halign" "r"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("r" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, whole table aligned right"
-	 `(tabular* ,(tformat (list (allwith "cell-halign" "r"))
+	 `(tabular* ,(tformat (list (allwith "cell halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("r" "r") '(("a" "b") ("c" "d")))))
    (test "tabular*, one row border"
-	 `(tabular* ,(tformat (list (rowwith "1" "cell-halign" "r"))
+	 `(tabular* ,(tformat (list (rowwith "1" "cell halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("c" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, one col border"
-	 `(tabular* ,(tformat (list (colwith "1" "cell-bborder" "1ln"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell bborder" "1ln"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #t '("c" "c") '(("a" "b") ("c" "d")))))))
 
@@ -345,7 +308,7 @@
   (define (simple-h:table-id id) (sxml-set-attr (simple-h:table) `(id ,id)))
   (regression-test-group
    "tmhtml, table post-processing" "table-post"
-   tmhtml-root :none
+   tmhtml :none
    (test "table, label"
 	 `(concat ,(simple-table) (label "l"))
 	 (list (simple-h:table-id "l")))
@@ -364,7 +327,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (regtest-tmhtml-picture)
-  (define (make-result l) (tmhtml-root `(postscript ,@l "" "" "" "")))
+  (define (make-result l) (tmhtml `(postscript ,@l "" "" "" "")))
   (define (make-expected l) (if (null? l) '() (apply make-expected-sub l)))
   (define (make-expected-sub f w h)
     `((h:img (@ (src ,f)
@@ -374,7 +337,7 @@
    "tmhtml, pictures" "postscript"
    make-result make-expected
    (test "simple link" '("foo.png" "" "") '("foo.png" #f #f))
-   (test "inclusion" '((tuple (raw-data "...") "png") "" "") '())
+   (test "inclusion" '((tuple (raw_data "...") "png") "" "") '())
    (test "width percent" '("foo.png" ".666par" "") '("foo.png" "67%" #f))
    (test "width absolute" '("foo.png" "128px" "") '("foo.png" "128" #f))
    (test "width bad unit" '("foo.png" "10spc" "") '("foo.png" #f #f))
@@ -395,18 +358,17 @@
   (define (simple-h:table) (h:table #f '("l") '(("a"))))
   (regression-test-group
    "tmhtml, document post processing" "document-post"
-   tmhtml-root :none
-   (test "text, section" '(document "a" (section* "b"))
-	 '((h:p "a") (h:h2 "b")))
-   (test "section with trail" '(document (concat (section* "a") "b"))
+   tmhtml :none
+   (test "text, section" '(document "a" (section "b")) '((h:p "a") (h:h2 "b")))
+   (test "section with trail" '(document (concat (section "a") "b"))
 	 '((h:h2 "a") (h:p "b")))
-   (test "section with trail, text" '(document (concat (section* "a") "b") "c")
+   (test "section with trail, text" '(document (concat (section "a") "b") "c")
 	 '((h:h2 "a") (h:p "b" "c")))
    (test "section with trail, subsection"
-	 '(document (concat (section* "a") "b") (subsection* "c"))
+	 '(document (concat (section "a") "b") (subsection "c"))
 	 '((h:h2 "a") (h:p "b") (h:h3 "c")))
    (test "section with trail, list"
-	 '(document (concat (section* "a") "b") (itemize (document)))
+	 '(document (concat (section "a") "b") (itemize (document)))
 	 '((h:h2 "a") (h:p "b") (h:ul (h:li))))
    (test "table" `(document ,(simple-table)) (list (simple-h:table)))))
 
@@ -427,10 +389,10 @@
 	      (regtest-tmhtml-list-document)
 	      (regtest-tmhtml-description-head)
 	      (regtest-tmhtml-description-content)
-	      (regtest-tmhtml-verbatim)
 	      (regtest-tmhtml-table)
 	      (regtest-tmhtml-table-post)
 	      (regtest-tmhtml-picture)
 	      (regtest-tmhtml-document-post))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of tmhtml: ok\n")))
+

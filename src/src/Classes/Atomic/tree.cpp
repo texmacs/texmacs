@@ -168,12 +168,12 @@ hash (tree t) {
 
 bool
 is_document (tree t) {
-  return L(t) == DOCUMENT;
+  return is_func (t, DOCUMENT);
 }
 
 bool
 is_concat (tree t) {
-  return L(t) == CONCAT;
+  return is_func (t, CONCAT);
 }
 
 bool
@@ -183,19 +183,19 @@ is_format (tree t) {
 
 bool
 is_formatting (tree t) {
-  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DPAGE);
+  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DOUBLE_PAGE);
 }
 
 bool
 is_table (tree t) {
   return
-    is_func (t, TABLE) || is_func (t, SUBTABLE) ||
+    is_func (t, TABLE) || is_func (t, SUB_TABLE) ||
     is_func (t, ROW) || is_func (t, CELL);
 }
 
 bool
 is_table_format (tree t) {
-  return is_func (t, TFORMAT);
+  return is_func (t, TABLE_FORMAT);
 }
 
 bool
@@ -205,9 +205,9 @@ is_multi_paragraph (tree t) {
     return true;
   case SURROUND:
     return is_multi_paragraph (t[2]);
-  case DATOMS:
-  case DLINES:
-  case DPAGES:
+  case DECORATE_ATOMS:
+  case DECORATE_LINES:
+  case DECORATE_PAGES:
   case WITH:
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
@@ -228,22 +228,22 @@ is_multi_paragraph (tree t) {
 bool
 is_script (tree t) {
   return
-    is_func (t, LSUB) || is_func (t, LSUP) ||
-    is_func (t, RSUB) || is_func (t, RSUP);
+    is_func (t, LEFT_SUB) || is_func (t, LEFT_SUP) ||
+    is_func (t, RIGHT_SUB) || is_func (t, RIGHT_SUP);
 }
 
 bool
 is_script (tree t, bool& right) {
-  if (is_func (t, LSUB) ||
-      is_func (t, LSUP)) { right=false; return true; }
-  if (is_func (t, RSUB) ||
-      is_func (t, RSUP)) { right=true; return true; }
+  if (is_func (t, LEFT_SUB) ||
+      is_func (t, LEFT_SUP)) { right=false; return true; }
+  if (is_func (t, RIGHT_SUB) ||
+      is_func (t, RIGHT_SUP)) { right=true; return true; }
   return false;
 }
 
 bool
 is_prime (tree t) {
-  return ((L(t) == LPRIME) || (L(t) == RPRIME)) && (N(t) == 1);
+  return ((L(t) == LEFT_PRIME) || (L(t) == RIGHT_PRIME)) && (N(t) == 1);
 }
 
 bool
@@ -292,11 +292,6 @@ compound (string s, tree t1, tree t2, tree t3) {
 tree
 compound (string s, tree t1, tree t2, tree t3, tree t4) {
   return tree (make_tree_label (s), t1, t2, t3, t4);
-}
-
-bool
-is_extension(tree_label l) {
-  return l >= START_EXTENSIONS;
 }
 
 bool

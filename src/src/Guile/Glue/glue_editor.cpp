@@ -352,50 +352,6 @@ tmg_selection_set_end () {
 }
 
 SCM
-tmg_selection_get_start () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->selection_get_start ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_selection_get_end () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->selection_get_end ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_selection_set_start_path (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-start-path");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->selection_set_start (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_selection_set_end_path (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-end-path");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->selection_set_end (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_clipboard_copy (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "clipboard-copy");
 
@@ -799,6 +755,19 @@ tmg_remove_structure_upwards () {
 }
 
 SCM
+tmg_make_format (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-format");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_format (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_htab (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-htab");
 
@@ -1195,9 +1164,9 @@ tmg_branch_delete (SCM arg1) {
 }
 
 SCM
-tmg_make_subtable () {
+tmg_make_sub_table () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_subtable ();
+  get_server()->get_editor()->make_sub_table ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2798,10 +2767,6 @@ initialize_glue_editor () {
   gh_new_procedure ("selection-active-enlarging?", (FN) tmg_selection_active_enlargingP, 0, 0, 0);
   gh_new_procedure ("selection-set-start", (FN) tmg_selection_set_start, 0, 0, 0);
   gh_new_procedure ("selection-set-end", (FN) tmg_selection_set_end, 0, 0, 0);
-  gh_new_procedure ("selection-get-start", (FN) tmg_selection_get_start, 0, 0, 0);
-  gh_new_procedure ("selection-get-end", (FN) tmg_selection_get_end, 0, 0, 0);
-  gh_new_procedure ("selection-set-start-path", (FN) tmg_selection_set_start_path, 1, 0, 0);
-  gh_new_procedure ("selection-set-end-path", (FN) tmg_selection_set_end_path, 1, 0, 0);
   gh_new_procedure ("clipboard-copy", (FN) tmg_clipboard_copy, 1, 0, 0);
   gh_new_procedure ("clipboard-cut", (FN) tmg_clipboard_cut, 1, 0, 0);
   gh_new_procedure ("clipboard-cut-at", (FN) tmg_clipboard_cut_at, 1, 0, 0);
@@ -2837,6 +2802,7 @@ initialize_glue_editor () {
   gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
   gh_new_procedure ("remove-structure-upwards", (FN) tmg_remove_structure_upwards, 0, 0, 0);
+  gh_new_procedure ("make-format", (FN) tmg_make_format, 1, 0, 0);
   gh_new_procedure ("make-htab", (FN) tmg_make_htab, 1, 0, 0);
   gh_new_procedure ("make-space", (FN) tmg_make_space, 1, 0, 0);
   gh_new_procedure ("make-var-space", (FN) tmg_make_var_space, 3, 0, 0);
@@ -2867,7 +2833,7 @@ initialize_glue_editor () {
   gh_new_procedure ("inside-tree?", (FN) tmg_inside_treeP, 0, 0, 0);
   gh_new_procedure ("branch-insert", (FN) tmg_branch_insert, 1, 0, 0);
   gh_new_procedure ("branch-delete", (FN) tmg_branch_delete, 1, 0, 0);
-  gh_new_procedure ("make-subtable", (FN) tmg_make_subtable, 0, 0, 0);
+  gh_new_procedure ("make-sub-table", (FN) tmg_make_sub_table, 0, 0, 0);
   gh_new_procedure ("table-disactivate", (FN) tmg_table_disactivate, 0, 0, 0);
   gh_new_procedure ("table-extract-format", (FN) tmg_table_extract_format, 0, 0, 0);
   gh_new_procedure ("table-insert-row", (FN) tmg_table_insert_row, 1, 0, 0);

@@ -104,7 +104,7 @@ edit_text_rep::accepts_return (path p) {
     is_document (st) ||
     (is_func (st, SURROUND, 3) && (last_item (p) == 2)) ||
     (is_func (st, _FLOAT) && (last_item (p) == (N(st)-1))) ||
-    (is_func (st, DATOMS) &&
+    (is_func (st, DECORATE_ATOMS) &&
      (last_item (p) == (N(st)-1)) && pure_line (p)) ||
     (is_func (st, MACRO) && (last_item (p) == (N(st)-1))) ||
     (is_func (st, XMACRO, 2) && (last_item (p) == 1)) ||
@@ -296,22 +296,22 @@ edit_text_rep::make_hspace (string smin, string sdef, string smax) {
 
 void
 edit_text_rep::make_vspace_before (string s) {
-  make_space (tree (VAR_VSPACE, s));
+  make_space (tree (VSPACE_BEFORE, s));
 }
 
 void
 edit_text_rep::make_vspace_before (string smin, string sdef, string smax) {
-  make_space (tree (VAR_VSPACE, smin, sdef, smax));
+  make_space (tree (VSPACE_BEFORE, smin, sdef, smax));
 }
 
 void
 edit_text_rep::make_vspace_after (string s) {
-  make_space (tree (VSPACE, s));
+  make_space (tree (VSPACE_AFTER, s));
 }
 
 void
 edit_text_rep::make_vspace_after (string smin, string sdef, string smax) {
-  make_space (tree (VSPACE, smin, sdef, smax));
+  make_space (tree (VSPACE_AFTER, smin, sdef, smax));
 }
 
 /******************************************************************************
@@ -321,6 +321,11 @@ edit_text_rep::make_vspace_after (string smin, string sdef, string smax) {
 void
 edit_text_rep::make_htab (string spc) {
   insert_tree (tree (HTAB, spc));
+}
+
+void
+edit_text_rep::make_format (string tag) {
+  insert_tree (tree (as_tree_label (tag)));
 }
 
 void

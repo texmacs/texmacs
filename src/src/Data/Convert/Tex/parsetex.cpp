@@ -103,13 +103,11 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       else {
 	while ((i<n) && (s[i]!='\n')) i++;
 	if (i<n) i++;
-	int ln=0;
-	while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
-	  if (s[i++]=='\n') ln++;
-	if (ln > 0) {
-	  if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
-	    t[N(t)-1]= "\n";
-	  else t << "\n";
+	if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n"))) {
+	  int ln=0;
+	  while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+	    if (s[i++]=='\n') ln++;
+	  if (ln>0) t[N(t)-1]= "\n";
 	}
       }
       break;
@@ -394,16 +392,6 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       if (i<n) i++;
       arity--;
     }
-    else if (option && (s[j]=='#') && (cmd == "\\def")) {
-      while ((j+3 <= n) && is_numeric (s[j+1]) && (s[j+2] == '#')) j+=2;
-      if (j+2<=n) {
-	t << s (j+1, j+2);
-	u << s (j+1, j+2);
-	i= j+2;
-      }
-      t[0]->label= t[0]->label * "*";
-      option= false;
-    }
     else {
       if (arity>0) {
 	i=j;
@@ -466,7 +454,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 tree
 latex_parser::parse_unknown (string s, int& i, string cmd) {
   int  n     = N(s);
-  bool option= false;
+  bool option= true;
 
   tree t (TUPLE, copy (cmd));
   while (i<n) {

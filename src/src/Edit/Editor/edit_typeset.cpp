@@ -265,7 +265,7 @@ language
 edit_typeset_rep::get_env_language () {
   string mode= get_env_string (MODE);
   if (mode == "text")
-    return text_language (get_env_string (LANGUAGE));
+    return text_language (get_env_string (TEXT_LANGUAGE));
   else if (mode == "math")
     return math_language (get_env_string (MATH_LANGUAGE));
   else return prog_language (get_env_string (PROG_LANGUAGE));
@@ -294,9 +294,9 @@ expand_references (tree t, hashmap<string,tree> h) {
     string ref= as_string (simplify_execed (t[0]));
     if (h->contains (ref)) {
       int which= is_func (t, REFERENCE, 1)? 0: 1;
-      return tree (HLINK, copy (h[ref][which]), "#" * ref);
+      return tree (HYPERLINK, copy (h[ref][which]), "#" * ref);
     }
-    return tree (HLINK, "?", "#" * ref);
+    return tree (HYPERLINK, "?", "#" * ref);
   }
   int i, n= N(t);
   tree r (t, n);

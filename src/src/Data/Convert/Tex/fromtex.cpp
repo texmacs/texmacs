@@ -60,7 +60,6 @@ filter_preamble (tree t) {
 #define m2e latex_modifier_to_tree
 #define var_m2e var_latex_modifier_to_tree
 tree l2e (tree);
-tree latex_command_to_tree (tree t);
 
 tree
 latex_symbol_to_tree (string s) {
@@ -81,10 +80,6 @@ latex_symbol_to_tree (string s) {
       if (s == "\\\\") return tree (FORMAT, "next line");
       if (s == "\\cr") return tree (FORMAT, "next line");
       if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
-      if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
-      if (s == "\\linebreak")  return tree (FORMAT, "line break");
-      if (s == "\\newline")  return tree (FORMAT, "new line");
-      if (s == "\\nolinebreak")  return tree (FORMAT, "no line break");
       if (s == "\\!")  return tree (SPACE, "-0.25spc");
       if (s == "\\,")  return tree (SPACE, "0.25spc");
       if (s == "\\:")  return tree (SPACE, "0.5spc");
@@ -93,18 +88,14 @@ latex_symbol_to_tree (string s) {
       if (s == "\\|")  return "<||>";
       if (s == "\\quad")  return tree (SPACE, "1fn");
       if (s == "\\qquad")  return tree (SPACE, "2fn");
-      if (s == "\\par")  return tree (VSPACE, "1fn");
-      if (s == "\\smallskip")  return tree (VSPACE, "0.5fn");
-      if (s == "\\medskip")  return tree (VSPACE, "1fn");
-      if (s == "\\bigskip")  return tree (VSPACE, "2fn");
+      if (s == "\\par")  return tree (VSPACE_AFTER, "1fn");
+      if (s == "\\smallskip")  return tree (VSPACE_AFTER, "0.5fn");
+      if (s == "\\medskip")  return tree (VSPACE_AFTER, "1fn");
+      if (s == "\\bigskip")  return tree (VSPACE_AFTER, "2fn");
       if (s == "\\hfill")  return tree (HTAB, "1fn");
       if (s == "\\hline")  return tree (APPLY, "hline");
       if (s == "\\appendix") { textm_appendices= true; return ""; }
       if (s == "\\nolimits") return ""; // temporarily
-      if (s == "\\vert") return "|";
-      if (s == "\\Vert") return "<||>";
-      if (s == "\\notin") return "<nin>";
-      if (s == "\\addots") return "<udots>";
     }
 
     if (latex_type[s] == "texmacs") {
@@ -113,41 +104,41 @@ latex_symbol_to_tree (string s) {
 
     if ((latex_type[s] == "modifier") && (latex_arity[s] == 0)) {
       s= s(1,N(s));
-      if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
-      if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
-      if (s == "sffamily") return tree (SET, FONT_FAMILY, "sf");
-      if (s == "mdseries") return tree (SET, FONT_SERIES, "medium");
-      if (s == "bfseries") return tree (SET, FONT_SERIES, "bold");
-      if (s == "upshape")  return tree (SET, FONT_SHAPE , "right");
-      if (s == "itshape")  return tree (SET, FONT_SHAPE , "italic");
-      if (s == "slshape")  return tree (SET, FONT_SHAPE , "slanted");
-      if (s == "scshape")  return tree (SET, FONT_SHAPE , "small-caps");
+      if (s == "rmfamily") return tree (SET, TEXT_FAMILY, "rm");
+      if (s == "ttfamily") return tree (SET, TEXT_FAMILY, "tt");
+      if (s == "sffamily") return tree (SET, TEXT_FAMILY, "sf");
+      if (s == "mdseries") return tree (SET, TEXT_SERIES, "medium");
+      if (s == "bfseries") return tree (SET, TEXT_SERIES, "bold");
+      if (s == "upshape")  return tree (SET, TEXT_SHAPE , "right");
+      if (s == "itshape")  return tree (SET, TEXT_SHAPE , "italic");
+      if (s == "slshape")  return tree (SET, TEXT_SHAPE , "slanted");
+      if (s == "scshape")  return tree (SET, TEXT_SHAPE , "small-caps");
 
       if (s == "cal")      return tree (SET, MATH_FONT  , "cal");
       if (s == "frak")     return tree (SET, MATH_FONT  , "Euler");
       if (s == "Bbb")      return tree (SET, MATH_FONT  , "Bbb*");
-      if (s == "displaystyle") return tree (SET, MATH_DISPLAY, "true");
-      if (s == "textstyle") return tree (SET, MATH_DISPLAY, "false");
-      if (s == "scriptstyle") return tree (SET, MATH_LEVEL, "1");
-      if (s == "scriptscriptstyle") return tree (SET, MATH_LEVEL, "2");
+      if (s == "displaystyle") return tree (SET, DISPLAY_STYLE, "true");
+      if (s == "textstyle") return tree (SET, DISPLAY_STYLE, "false");
+      if (s == "scriptstyle") return tree (SET, INDEX_LEVEL, "1");
+      if (s == "scriptscriptstyle") return tree (SET, INDEX_LEVEL, "2");
       if (s == "operatorname") return tree (SET, "dummy", "dummy");
 
-      if (s == "rm") return tree (SET, FONT_FAMILY, "rm");
-      if (s == "tt") return tree (SET, FONT_FAMILY, "tt");
-      if (s == "sf") return tree (SET, FONT_FAMILY, "ss");
-      if (s == "md") return tree (SET, FONT_SERIES, "right");
-      if (s == "bf") return tree (SET, FONT_SERIES, "bold");
-      if (s == "it") return tree (SET, FONT_SHAPE, "italic");
-      if (s == "sl") return tree (SET, FONT_SHAPE, "slanted");
-      if (s == "sc") return tree (SET, FONT_SHAPE, "small-caps");
+      if (s == "rm") return tree (SET, TEXT_FAMILY, "rm");
+      if (s == "tt") return tree (SET, TEXT_FAMILY, "tt");
+      if (s == "sf") return tree (SET, TEXT_FAMILY, "ss");
+      if (s == "md") return tree (SET, TEXT_SERIES, "right");
+      if (s == "bf") return tree (SET, TEXT_SERIES, "bold");
+      if (s == "it") return tree (SET, TEXT_SHAPE, "italic");
+      if (s == "sl") return tree (SET, TEXT_SHAPE, "slanted");
+      if (s == "sc") return tree (SET, TEXT_SHAPE, "small-caps");
       if (s == "em") {
 	if (command_type ["!em"] == "false") {
 	  command_type ("!em")= "true";
-	  return tree (SET, FONT_SHAPE, "italic");
+	  return tree (SET, TEXT_SHAPE, "italic");
 	}
 	else {
 	  command_type ("!em")= "false";
-	  return tree (SET, FONT_SHAPE, "right");
+	  return tree (SET, TEXT_SHAPE, "right");
 	}
       }
 
@@ -224,15 +215,6 @@ tree
 latex_concat_to_tree (tree t, bool& new_flag) {
   int i, n=N(t);
   tree r (CONCAT), env (CONCAT);
-
-  if ((n > 0) && (command_type ["!mode"] == "math") &&
-      (is_tuple (t[0], "\\rm", 0) || is_tuple (t[0], "\\tt", 0)))
-    {
-      command_type ("!mode") = "text";
-      tree u= latex_concat_to_tree (t, new_flag);
-      command_type ("!mode") = "math";
-      return tree (CONCAT, tree (SET, MODE, "text"), u, tree (RESET, MODE));
-    }
 
   command_type ->extend ();
   command_arity->extend ();
@@ -322,21 +304,6 @@ var_m2e (tree t, string var, string val) {
 	       tree (RESET, copy (var)));
 }
 
-tree
-latex_verbarg_to_tree (tree t) {
-  t= l2e (t);
-  if (is_concat (t)) {
-    string s;
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (is_atomic (t[i])) s << t[i]->label;
-      else if (is_func (t[i], RSUB, 1) && is_atomic (t[i][0]))
-	s << "_" << t[i][0]->label;
-    return s;
-  }
-  else return "";
-}
-
 static bool
 is_left_type (tree t) {
   if (is_compound (t)) return false;
@@ -397,13 +364,13 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= as_string (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
-    return tree (ASSIGN, var, tree (FUNC, l2e (t[2])));
+    return tree (ASSIGN, var, tree (FUNCTION, l2e (t[2])));
   }
   if (is_tuple (t, "\\def*", 3)) {
     string var= as_string (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
     int i, arity= as_int (l2e(t[2]));
-    tree f (FUNC);
+    tree f (FUNCTION);
     for (i=1; i<=arity; i++) f << as_string (i);
     f << l2e (t[3]);
     return tree (ASSIGN, var, f);
@@ -411,12 +378,12 @@ latex_command_to_tree (tree t) {
 
   if (is_tuple (t, "\\newenvironment", 3)) {
     string var= l2e(t[1])->label;
-    return tree (ASSIGN, var, tree (ENV, l2e (t[2]), l2e (t[3])));
+    return tree (ASSIGN, var, tree (ENVIRONMENT, l2e (t[2]), l2e (t[3])));
   }
   if (is_tuple (t, "\\newenvironment*", 4)) {
     string var= l2e(t[1])->label;
     int i, arity= as_int (l2e(t[2])->label);
-    tree e (ENV);
+    tree e (ENVIRONMENT);
     for (i=1; i<=arity; i++) e << as_string (i);
     e << l2e (t[3]);
     e << l2e (t[4]);
@@ -441,36 +408,35 @@ latex_command_to_tree (tree t) {
   if (textm_appendices && is_tuple (t, "\\chapter", 1))
     return tree (APPLY, "appendix", l2e (t[1]));
 
-  if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
-  if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
-  if (is_tuple (t, "\\textsf", 1)) return m2e (t, FONT_FAMILY, "ss");
-  if (is_tuple (t, "\\textmd", 1)) return m2e (t, FONT_SERIES, "medium");
-  if (is_tuple (t, "\\textbf", 1)) return m2e (t, FONT_SERIES, "bold");
-  if (is_tuple (t, "\\textup", 1)) return m2e (t, FONT_SHAPE, "right");
-  if (is_tuple (t, "\\textit", 1)) return m2e (t, FONT_SHAPE, "italic");
-  if (is_tuple (t, "\\textsl", 1)) return m2e (t, FONT_SHAPE, "slanted");
-  if (is_tuple (t, "\\textsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
-  if (is_tuple (t, "\\emph", 1))   return m2e (t, FONT_SHAPE, "italic");
-  if (is_tuple (t, "\\operatorname", 1))
-    return var_m2e (t, MATH_FONT_FAMILY, "rm");
-  if (is_tuple (t, "\\mathnormal", 1)) return m2e (t, MATH_FONT_FAMILY, "mr");
-  if (is_tuple (t, "\\mathrm", 1)) return var_m2e (t, MATH_FONT_FAMILY, "rm");
-  if (is_tuple (t, "\\mathtt", 1)) return var_m2e (t, MATH_FONT_FAMILY, "tt");
-  if (is_tuple (t, "\\mathsf", 1)) return var_m2e (t, MATH_FONT_FAMILY, "ss");
-  if (is_tuple (t, "\\mathbf", 1)) return var_m2e (t, MATH_FONT_FAMILY, "bf");
-  if (is_tuple (t, "\\mathit", 1)) return var_m2e (t, MATH_FONT_FAMILY, "it");
-  if (is_tuple (t, "\\mathsl", 1)) return var_m2e (t, MATH_FONT_FAMILY, "sl");
-  if (is_tuple (t, "\\mathup", 1)) return var_m2e (t, MATH_FONT_FAMILY, "up");
+  if (is_tuple (t, "\\textrm", 1)) return m2e (t, TEXT_FAMILY, "rm");
+  if (is_tuple (t, "\\texttt", 1)) return m2e (t, TEXT_FAMILY, "tt");
+  if (is_tuple (t, "\\textsf", 1)) return m2e (t, TEXT_FAMILY, "ss");
+  if (is_tuple (t, "\\textmd", 1)) return m2e (t, TEXT_SERIES, "medium");
+  if (is_tuple (t, "\\textbf", 1)) return m2e (t, TEXT_SERIES, "bold");
+  if (is_tuple (t, "\\textup", 1)) return m2e (t, TEXT_SHAPE, "right");
+  if (is_tuple (t, "\\textit", 1)) return m2e (t, TEXT_SHAPE, "italic");
+  if (is_tuple (t, "\\textsl", 1)) return m2e (t, TEXT_SHAPE, "slanted");
+  if (is_tuple (t, "\\textsc", 1)) return m2e (t, TEXT_SHAPE, "small-caps");
+  if (is_tuple (t, "\\emph", 1))   return m2e (t, TEXT_SHAPE, "italic");
+  if (is_tuple (t, "\\operatorname", 1)) return var_m2e (t, MATH_FAMILY, "rm");
+  if (is_tuple (t, "\\mathnormal", 1)) return m2e (t, MATH_FAMILY, "mr");
+  if (is_tuple (t, "\\mathrm", 1)) return var_m2e (t, MATH_FAMILY, "rm");
+  if (is_tuple (t, "\\mathtt", 1)) return var_m2e (t, MATH_FAMILY, "tt");
+  if (is_tuple (t, "\\mathsf", 1)) return var_m2e (t, MATH_FAMILY, "ss");
+  if (is_tuple (t, "\\mathbf", 1)) return var_m2e (t, MATH_FAMILY, "bf");
+  if (is_tuple (t, "\\mathit", 1)) return var_m2e (t, MATH_FAMILY, "it");
+  if (is_tuple (t, "\\mathsl", 1)) return var_m2e (t, MATH_FAMILY, "sl");
+  if (is_tuple (t, "\\mathup", 1)) return var_m2e (t, MATH_FAMILY, "up");
   if (is_tuple (t, "\\mathcal", 1))  return m2e (t, MATH_FONT, "cal");
   if (is_tuple (t, "\\mathfrak", 1)) return m2e (t, MATH_FONT, "Euler");
   if (is_tuple (t, "\\mathbb", 1))   return m2e (t, MATH_FONT, "Bbb");
   if (is_tuple (t, "\\mathbbm", 1))   return m2e (t, MATH_FONT, "Bbb*");
 
-  if (is_tuple (t, "\\prime", 1))  return tree (RPRIME, as_string (t[1]));
+  if (is_tuple (t, "\\prime", 1))  return tree (RIGHT_PRIME, as_string (t[1]));
   if (is_tuple (t, "\\frac", 2))  return tree (FRAC, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\sqrt", 1))  return tree (SQRT, l2e (t[1]));
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
-  if (is_tuple (t, "\\<sub>", 1)) return tree (RSUB, l2e (t[1]));
+  if (is_tuple (t, "\\<sub>", 1)) return tree (RIGHT_SUB, l2e (t[1]));
   if (is_tuple (t, "\\not", 1))   return tree (NEG, l2e (t[1]));
   if (is_tuple (t, "\\bar", 1))  return tree (WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\hat", 1))  return tree (WIDE, l2e (t[1]), "^");
@@ -486,27 +452,20 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\acute", 1))  return tree (WIDE, l2e (t[1]), "<acute>");
   if (is_tuple (t, "\\vec", 1))  return tree (WIDE, l2e (t[1]), "<vect>");
   if (is_tuple (t, "\\breve", 1))  return tree (WIDE, l2e (t[1]), "<breve>");
-  if (is_tuple (t, "\\abovering", 1))
-    return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1)) return tree (SPACE, t2e (t[1]));
-  if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE, t2e (t[1]));
+  if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE_AFTER, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1))   return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
-  if (is_tuple (t, "\\overbrace", 1))
-    return tree (WIDE, l2e (t[1]), "<wide-overbrace>");
-  if (is_tuple (t, "\\underbrace", 1))
-    return tree (VAR_WIDE, l2e (t[1]), "<wide-underbrace>");
 
-  if (is_tuple (t, "\\text", 1) ||
-      is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
+  if (is_tuple (t, "\\text", 1) || is_tuple (t, "\\mbox", 1))
     return var_m2e (t, MODE, "text");
 
   if (is_tuple (t, "\\<sup>", 1)) {
     if (is_tuple (t[1], "\\prime", 0))
-      return tree (RPRIME, "'");
-    else return tree (RSUP, l2e (t[1]));
+      return tree (RIGHT_PRIME, "'");
+    else return tree (RIGHT_SUP, l2e (t[1]));
   }
   if (is_tuple (t, "\\stackrel", 2))
     return tree (ABOVE, l2e (t[2]), l2e (t[1]));
@@ -518,7 +477,7 @@ latex_command_to_tree (tree t) {
     if (s == "Vert") s= "|";
     if (dtype == -1) return tree (LEFT, s);
     else if (dtype == 1) return tree (RIGHT, s);
-    else return tree (MID, s);
+    else return tree (MIDDLE, s);
   }
   if (is_tuple (t, "\\cite", 1) || is_tuple (t, "\\nocite", 1)) {
     string cite_type= t[0]->label (1, N(t[0]->label));
@@ -532,33 +491,13 @@ latex_command_to_tree (tree t) {
     tree   ct= latex_cite_to_tree ("cite", s);
     return tree (CONCAT, ct, " (", ot, ")");
   }
-  if (is_tuple (t, "\\displaylines", 1)) {
-    tree u= l2e (t[1]);
-    return tree (CONCAT, tree (BEGIN, "matrix"), u, tree (END, "matrix"));
-  }
-  if (is_tuple (t, "\\cases", 1)) {
-    tree u= l2e (t[1]);
-    tree r= tree (CONCAT);
-    r << tree (LEFT, "\{") << tree (BEGIN, "array", "lll") << u
-      << tree (END, "array") << tree (RIGHT, ".");
-    return r;
-  }
-  if (is_tuple (t, "\\includegraphics", 1)) {
-    tree name= latex_verbarg_to_tree (t[1]);
-    if (name == "") return "";
-    else {
-      tree g (POSTSCRIPT, 7);
-      g[0]= name;
-      return g;
-    }
-  }
 
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
     return tree (CONCAT,
-		 tree (SET, MATH_FONT_SERIES, "bold"),
+		 tree (SET, MATH_SERIES, "bold"),
 		 l2e (t[1]),
-		 tree (RESET, MATH_FONT_SERIES));
+		 tree (RESET, MATH_SERIES));
   if (is_tuple (t, "\\tmop", 1)) return tree (APPLY, "op", l2e (t[1]));
   if (is_tuple (t, "\\tmstrong", 1)) return tree (APPLY, "strong", l2e (t[1]));
   if (is_tuple (t, "\\tmem", 1)) return tree (APPLY, "em", l2e (t[1]));
@@ -574,7 +513,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\tmperson", 1)) return tree (APPLY, "person", l2e (t[1]));
   if (is_tuple (t, "\\tmscript", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\tmhlink", 1))
-    return tree (HLINK, l2e (t[1]), l2e (t[2]));
+    return tree (HYPERLINK, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\tmaction", 1))
     return tree (ACTION, l2e (t[1]), l2e (t[2]));
   // End TeXmacs specific markup
@@ -640,7 +579,7 @@ finalize_returns (tree t) {
 
 static tree
 parse_matrix_params (tree t) {
-  tree tformat (TFORMAT);
+  tree tformat (TABLE_FORMAT);
   if (N(t) <= 1) return tformat;
   string s= as_string (t[1]);
   int i, n= N(s), col=1;
@@ -653,7 +592,7 @@ parse_matrix_params (tree t) {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HALIGN);
 	string how   = s (i, i+1);
-	tformat << tree (CWITH, "1", "-1", col_s, col_s, halign, how);
+	tformat << tree (CELL_WITH, "1", "-1", col_s, col_s, halign, how);
 	col++;
 	break;
       }
@@ -662,7 +601,7 @@ parse_matrix_params (tree t) {
 	string col_s= col==1? as_string (col): as_string (col-1);
 	string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
 	string how  = "1ln";
-	tformat << tree (CWITH, "1", "-1", col_s, col_s, hbor, how);
+	tformat << tree (CELL_WITH, "1", "-1", col_s, col_s, hbor, how);
 	break;
       }
     case '@':
@@ -697,7 +636,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       E= tree (CONCAT);
       continue;
     }
-    else if (is_func (v, BEGIN) && ((v[0] == "array") ||(v[0] == "tabular"))) {
+    else if (is_func (v, BEGIN) && ((v[0] == "array")||(v[0] == "tabular"))) {
       parse_pmatrix (E, t, i, false);
       if (i<N(t)) continue;
       break;
@@ -721,7 +660,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       string row_s= row==0? as_string (row+1): as_string (row);
       string vbor = row==0? copy (CELL_TBORDER): copy (CELL_BBORDER);
       string how  = "1ln";
-      tformat << tree (CWITH, row_s, row_s, "1", "-1", vbor, how);
+      tformat << tree (CELL_WITH, row_s, row_s, "1", "-1", vbor, how);
     }
     else E << v;
   }
@@ -743,7 +682,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       if (x<N(V[y])) M << V[y][x];
       else M << "";
   M << as_string (cols) << as_string (rows);
-  if (tformat != tree (TFORMAT)) {
+  if (tformat != tree (TABLE_FORMAT)) {
     tformat << M;
     M= tformat;
   }
@@ -770,8 +709,6 @@ finalize_pmatrix (tree t) {
       else r << u[i];
     return r;
   }
-  else if (is_func (u, APPLY, 2) && (u[0] == "matrix"))
-    return tree (APPLY, "tabular*", u[1]);
   else return u;
 }
 
@@ -836,34 +773,6 @@ finalize_layout (tree t) {
 	r << v;
 	spc_flag = true;
 	item_flag= false;
-	continue;
-      }
-
-      if (is_func (v, BEGIN, 1) && (v[0] == "picture")) {
-	for (; i<n; i++)
-	  if (is_func (u[i], POSTSCRIPT)) r << u[i];
-	  else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
-	    break;
-	continue;
-      }
-
-      if (is_func (v, BEGIN) && ((v[0] == "figure") || (v[0] == "figure*"))) {
-	r << tree (BEGIN, "bigfigure");
-	continue;
-      }
-
-      if (is_func (v, END, 1) && (v[0] == "figure")) {
-	r << tree (END, "bigfigure");
-	continue;
-      }
-
-      if (is_func (v, BEGIN) && ((v[0] == "table") || (v[0] == "table*"))) {
-	r << tree (BEGIN, "bigtable");
-	continue;
-      }
-
-      if (is_func (v, END, 1) && (v[0] == "table")) {
-	r << tree (END, "bigtable");
 	continue;
       }
 
@@ -1060,69 +969,11 @@ handle_improper_matches (tree t) {
     for (i=0; i<n; i++)
       r[i]= handle_improper_matches (t[i]);
     if (is_concat (r)) {
-      int pos;
+      int pos= 0;
       tree u (r, 0);
-      for (pos=0; pos<N(r); pos++)
-	handle_improper_matches (u, r, pos);
-      if (N(u)==0) return "";
-      if (N(u)==1) return u[0];
+      handle_improper_matches (u, r, pos);
       return u;
     }
-    return r;
-  }
-}
-
-/******************************************************************************
-* Further finalization after upgrading
-******************************************************************************/
-
-tree
-float_body (tree t) {
-  if (is_atomic (t)) return t;
-  else if (is_compound (t, "caption", 1)) return "";
-  else if (is_compound (t, "center", 1)) return float_body (t[0]);
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= float_body (t[i]);
-    if (is_document (r) && (n>0) && (r[n-1] == "")) r= r (0, n-1);
-    return r;
-  }
-}
-
-tree
-find_caption (tree t) {
-  if (is_atomic (t)) return "";
-  else if (is_compound (t, "caption", 1)) return t[0];
-  else {
-    int i, n= N(t);
-    for (i=0; i<n; i++) {
-      tree r= find_caption (t[i]);
-      if (r != "") return r;
-    }
-    return "";
-  }
-}
-
-tree
-finalize_floats (tree t) {
-  if (is_atomic (t)) return t;
-  else if (is_compound (t, "bigfigure", 1)) {
-    tree body= float_body (t[N(t)-1]);
-    tree capt= find_caption (t[N(t)-1]);
-    return tree (make_tree_label ("big-figure"), body, capt);
-  }
-  else if (is_compound (t, "bigtable", 1)) {
-    tree body= float_body (t[N(t)-1]);
-    tree capt= find_caption (t[N(t)-1]);
-    return tree (make_tree_label ("big-table"), body, capt);
-  }
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= finalize_floats (t[i]);
     return r;
   }
 }
@@ -1133,7 +984,7 @@ finalize_floats (tree t) {
 
 tree
 finalize_textm (tree t) {
-  tree u=object_to_tree (call ("textm-finalize", tree_to_object (t)));
+  tree u=object_to_tree (call ("tmtm-nonumber->eqnumber", tree_to_object (t)));
   return simplify_correct (u);
 }
 
@@ -1161,13 +1012,11 @@ latex_to_tree (tree t1) {
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
   // cout << "\n\nt7= " << t7 << "\n\n";
-  tree t8= finalize_floats (t7);
+  tree t8= finalize_textm (t7);
   // cout << "\n\nt8= " << t8 << "\n\n";
-  tree t9= finalize_textm (t8);
+  tree t9= simplify_correct (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
-  tree t10= simplify_correct (t9);
-  // cout << "\n\nt10= " << t10 << "\n\n";
   if (is_document)
-    return tree (DOCUMENT, compound ("body", t10), compound ("style", style));
-  else return t10;
+    return tree (DOCUMENT, compound ("body", t9), compound ("style", style));
+  else return t9;
 }

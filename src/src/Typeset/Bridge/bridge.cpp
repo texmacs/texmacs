@@ -39,17 +39,17 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_document (ttt, st, ip);
   case SURROUND:
     return bridge_surround (ttt, st, ip);
-  case DATOMS:
+  case DECORATE_ATOMS:
     return bridge_formatting (ttt, st, ip, ATOM_DECORATIONS);
-  case DLINES:
+  case DECORATE_LINES:
     return bridge_formatting (ttt, st, ip, LINE_DECORATIONS);
-  case DPAGES:
+  case DECORATE_PAGES:
     return bridge_formatting (ttt, st, ip, PAGE_DECORATIONS);
-  case TFORMAT:
+  case TABLE_FORMAT:
     return bridge_formatting (ttt, st, ip, CELL_FORMAT);
   case WITH:
     return bridge_with (ttt, st, ip);
-  case ARG:
+  case ARGUMENT:
     return bridge_argument (ttt, st, ip);
   case COMPOUND:
     return bridge_compound (ttt, st, ip);

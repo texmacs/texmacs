@@ -20,7 +20,7 @@
     graphics-set-unit graphics-set-unit-ia
     graphics-set-origin graphics-set-origin-ia
     graphics-set-extents-ia
-    graphics-set-mode graphics-set-color graphics-set-line-width
+    graphics-set-mode
     ;; call-backs
     graphics-move-point graphics-insert-point
     graphics-remove-point graphics-last-point))
@@ -42,8 +42,7 @@
 
 (define (graphics-active-path)
   ;; path to active tag
-  (with p (cDr (tm-where))
-    (if (in? (car (object-at p)) '(point line cline spline cspline)) p #f)))
+  (cDr (tm-where)))
 
 (define (graphics-group-path)
   ;; path to innermost group
@@ -55,11 +54,11 @@
 
 (define (make-graphics)
   (insert-object-go-to
-   '(with "gr-mode" "point"
-          "gr-frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
-	  "gr-clip"  (tuple "clip"
-			    (tuple "0par" "-0.3par")
-			    (tuple "1par" "0.3par"))
+   '(with "graphical mode" "point"
+          "graphical frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
+	  "graphical clip"  (tuple "clip"
+				   (tuple "0par" "-0.3par")
+				   (tuple "1par" "0.3par"))
      (graphics))
    '(6 1)))
 
@@ -72,7 +71,7 @@
     (if p (tm-remove-with p var))))
 
 (define (graphics-cartesian-frame)
-  (with frame (tree->object (get-env-tree "gr-frame"))
+  (with frame (tree->object (get-env-tree "graphical frame"))
     (if (match? frame '(tuple "scale" :2))
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
@@ -80,7 +79,7 @@
 (define (graphics-set-unit u)
   (with frame (graphics-cartesian-frame)
     (with new-frame `(tuple "scale" ,u ,(cAr frame))
-      (graphics-set-property "gr-frame" new-frame))))
+      (graphics-set-property "graphical frame" new-frame))))
 
 (define (graphics-set-unit-ia)
   (interactive '("Graphical unit:") 'graphics-set-unit))
@@ -88,7 +87,7 @@
 (define (graphics-set-origin x y)
   (with frame (graphics-cartesian-frame)
     (with new-frame (append (cDr frame) `((tuple ,x ,y)))
-      (graphics-set-property "gr-frame" new-frame))))
+      (graphics-set-property "graphical frame" new-frame))))
 
 (define (graphics-set-origin-ia)
   (interactive
@@ -100,43 +99,11 @@
     '("Left corner:" "Bottom corner:" "Right corner:" "Top corner:")
     '(lambda (l b r t)
        (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
-	 (graphics-set-property "gr-clip" clip)))))
+	 (graphics-set-property "graphical clip" clip)))))
 
 (define (graphics-set-mode val)
   (graphics-group-start)
-  (graphics-set-property "gr-mode" val))
-
-(define (graphics-set-color val)
-  (graphics-set-property "gr-color" val))
-
-(define (graphics-set-line-width val)
-  (graphics-set-property "gr-line-width" val))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Enriching graphics with properties like color, line width, etc.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (graphics-enrich-filter l)
-  (if (null? l) l
-      (let* ((head (car l))
-	     (tail (graphics-enrich-filter (cdr l))))
-	(if (== (cadr head) "default") tail
-	    (cons* (car head) (cadr head) tail)))))
-
-(define (graphics-enrich-sub t l)
-  (with f (graphics-enrich-filter l)
-    (if (null? f)
-	t
-	`(with ,@f ,t))))
-
-(define (graphics-enrich t)
-  (let* ((mode (graphics-mode))
-	 (color (get-env "gr-color"))
-	 (lw (get-env "gr-line-width")))
-    (cond ((== mode 'point)
-	   (graphics-enrich-sub t `(("color" , color))))
-	  ((in? mode '(line cline spline cspline))
-	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw)))))))
+  (graphics-set-property "graphical mode" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -146,12 +113,7 @@
   (with p (graphics-group-path)
     (if p (with n (- (length (object-at p)) 1)
 	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
-	    (if (func? t 'with)
-		(tm-go-to (append p (list n (- (length t) 2) 1)))
-		(tm-go-to (append p (list n 1))))))))
-
-(define (graphics-group-enrich-insert t)
-  (graphics-group-insert (graphics-enrich t)))
+	    (tm-go-to (rcons (rcons p n) 1))))))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -191,45 +153,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (graphics-mode)
-  (string->symbol (get-env "gr-mode")))
+  (string->symbol (get-env "graphical mode")))
 
 (define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
-  (with mode (graphics-mode)
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
     (cond ((== mode 'point)
-	   (graphics-group-enrich-insert `(point ,x ,y)))
+	   (graphics-group-insert `(point ,x ,y)))
 	  ((in? mode '(line cline))
 	   (if (== (graphics-active-type) 'line)
 	       (graphics-active-insert `(point ,x ,y))
-	       (graphics-group-enrich-insert `(line (point ,x ,y)))))
-	  ((in? mode '(spline cspline))
-	   (if (in? (graphics-active-type) '(spline cspline))
-	       (graphics-active-insert `(point ,x ,y))
-	       (graphics-group-enrich-insert `(,mode (point ,x ,y)))))
+	       (graphics-group-insert `(line (point ,x ,y)))))
 	  (else (display* "Uncaptured insert " x ", " y "\n")))))
 
 (define (graphics-remove-point x y)
   ;(display* "Graphics] Remove " x ", " y "\n")
-  (with mode (graphics-mode)
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
     (cond (else (display* "Uncaptured remove " x ", " y "\n")))))
 
 (define (graphics-last-point x y)
   ;(display* "Graphics] Last " x ", " y "\n")
-  (with mode (graphics-mode)
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
     (cond ((== mode 'point)
-	   (graphics-group-enrich-insert `(point ,x ,y)))
+	   (graphics-group-insert `(point ,x ,y)))
 	  ((in? mode '(line cline))
 	   (graphics-active-insert `(point ,x ,y))
 	   (if (== mode 'cline) (graphics-active-set-tag 'cline))
-	   (graphics-group-start))
-	  ((in? mode '(spline cspline))
-	   (graphics-active-insert `(point ,x ,y))
 	   (graphics-group-start))
 	  (else (display* "Uncaptured last " x ", " y "\n")))))
 
 (define (graphics-finish)
   ;(display* "Graphics] Finish\n")
-  (with mode (graphics-mode)
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
     (cond ((== mode 'point) (noop))
-	  ((in? mode '(line cline spline cspline)) (noop))
+	  ((in? mode '(line cline)) (noop))
 	  (else (display* "Uncaptured finish\n")))))

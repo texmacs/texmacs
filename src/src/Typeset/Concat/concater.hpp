@@ -33,7 +33,6 @@ class concater_rep {
   void marker (path ip);
   void ghost (string s, path ip);
   void ghost (string s, path ip, color col);
-  void flag_ok (string s, path ip, color col);
   void flag (string s, path ip, color col);
   void print (space spc);
   void penalty_min (int p);
@@ -122,7 +121,7 @@ class concater_rep {
   void typeset_text_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   void typeset_line (tree t, path ip, bool close);
-  void typeset_spline (tree t, path ip, bool close);
+  void typeset_spline (tree t, path ip);
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);
   void typeset_fill (tree t, path ip);

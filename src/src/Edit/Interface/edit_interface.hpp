@@ -23,7 +23,7 @@
 #define INPUT_SPELL       3
 #define INPUT_COMPLETE    4
 
-string MODE_LANGUAGE (string mode);
+string LANGUAGE (string mode);
 
 class edit_interface_rep: virtual public editor_rep {
 protected:
@@ -143,7 +143,6 @@ public:
   string compute_operation_footer (tree st);
   string compute_compound_footer (tree t, path p);
   bool   set_latex_footer (tree st);
-  bool   set_hybrid_footer (tree st);
   void   set_left_footer (string l);
   void   append_left_footer (string& s, string env_var);
   void   set_left_footer ();

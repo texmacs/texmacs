@@ -337,19 +337,19 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
-  case DATOMS:
+  case DECORATE_ATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
-  case DLINES:
+  case DECORATE_LINES:
     return make_lazy_formatting (env, t, ip, LINE_DECORATIONS);
-  case DPAGES:
+  case DECORATE_PAGES:
     return make_lazy_formatting (env, t, ip, PAGE_DECORATIONS);
-  case TFORMAT:
+  case TABLE_FORMAT:
     return make_lazy_formatting (env, t, ip, CELL_FORMAT);
   case TABLE:
     return make_lazy_table (env, t, ip);
   case WITH:
     return make_lazy_with (env, t, ip);
-  case ARG:
+  case ARGUMENT:
     return make_lazy_argument (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);

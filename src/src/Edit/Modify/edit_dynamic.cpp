@@ -56,7 +56,7 @@ edit_dynamic_rep::find_dynamic (path p) {
 bool
 edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
   int n= arity (t);
-  if (is_document (t) || is_func (t, PARA) || is_func (t, SURROUND))
+  if (is_document (t) || is_func (t, PARAGRAPH) || is_func (t, SURROUND))
     return true;
   if (is_func (t, MACRO) || is_func (t, WITH))
     return is_multi_paragraph_macro (t [n-1]);
@@ -80,7 +80,7 @@ contains_table_format (tree t, tree var) {
     for (i=0; i<n; i++)
       if (contains_table_format (t[i], var))
 	return true;
-    return is_func (t, TFORMAT) && (t[N(t)-1] == tree (ARG, var));
+    return is_func (t, TABLE_FORMAT) && (t[N(t)-1] == tree (ARGUMENT, var));
   }
 }
 
@@ -208,11 +208,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 	  flag= flag && is_empty (t[i+j]);
 	if (flag) {
 	  remove (p, d);
-	  if ((d == n) && is_func (subtree (et, path_up (p, 2)), INACTIVE)) {
-	    rem_unary (path_up (p, 2));
-	    go_to_border (path_up (p, 2), forward);
-	  }
-	  else if (forward) go_to_argument (path_up (p) * i, true);
+	  if (forward) go_to_argument (path_up (p) * i, true);
 	  else go_to_argument (path_up (p) * (i-1), false);
 	  return;
 	}
@@ -253,23 +249,16 @@ edit_dynamic_rep::back_general (path p, bool forward) {
   int n= N(st);
   if (n==0) back_monolithic (p);
   else if ((n==1) && is_func (st[0], DOCUMENT, 1) &&
-	   (is_func (st[0][0], TFORMAT) || is_func (st[0][0], TABLE)))
+	   (is_func (st[0][0], TABLE_FORMAT) || is_func (st[0][0], TABLE)))
     back_table (p * path (0, 0), forward);
-  else if ((n==1) && (is_func (st[0], TFORMAT) || is_func (st[0], TABLE)))
+  else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
     back_table (p * 0, forward);
   else go_to_argument (p * (forward? 0: n-1), forward);
 }
 
 void
 edit_dynamic_rep::back_in_general (tree t, path p, bool forward) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    if ((L(t) >= START_EXTENSIONS) && (last_item (p) == 0)) {
-      tree u (COMPOUND, copy (as_string (L(t))));
-      u << A(copy(t));
-      assign (path_up (p), u);
-      go_to_end (p);
-      return;
-    }
+  (void) t;
   remove_argument (p, forward);
 }
 
@@ -399,7 +388,6 @@ edit_dynamic_rep::activate_latex () {
 
 void
 edit_dynamic_rep::activate_hybrid () {
-  // WARNING: update edit_interface_rep::set_hybrid_footer when updating this
   if (activate_latex ()) return;
   path p= find_deactivated (tp);
   if (nil (p)) return;
@@ -414,7 +402,7 @@ edit_dynamic_rep::activate_hybrid () {
       int i, n= N(mt)-1;
       for (i=0; i<n; i++)
 	if (mt[i] == name) {
-	  assign (p, tree (ARG, copy (name)));
+	  assign (p, tree (ARGUMENT, copy (name)));
 	  go_to (end (et, p));
 	  correct (path_up (p));
 	  return;

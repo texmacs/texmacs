@@ -27,15 +27,11 @@
 (drd-group latex-command-0%
   #{\ }# #{\;}# #{\,}# #{\:}#
   - / [ ] ! * | i j ss SS oe OE ae AE
-  quad qquad par smallskip medskip bigskip nopagebreak noindent
-  newline linebreak nolinebreak
+  quad qquad par smallskip medskip bigskip nopagebreak
   newblock bgroup egroup protect cr date hfill appendix nolimits
 
   ;; temporarily
-  hline
-
-  ;; rewritten
-  notin vert Vert addots)
+  hline)
 
 (drd-group latex-command-1%
   usepackage chapter chapter*
@@ -44,14 +40,12 @@
   footnote overline underline <sub> <sup> not left right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
-  bar hat tilde widehat widetilde vec grave acute check breve abovering
+  bar hat tilde widehat widetilde vec grave acute check breve
   dot ddot dddot ddddot
-  label ref pageref index hspace hspace* vspace vspace*
-  mbox hbox text not
+  label ref pageref index hspace hspace* vspace vspace* mbox text not
   #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
-  arabic displaylines cases underbrace overbrace
-  includegraphics)
+  arabic)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -108,14 +102,13 @@
   begin-proof begin-definition begin-axiom
   begin-remark begin-warning begin-note
   begin-example begin-exercise begin-verbatim
-  begin-matrix begin-pmatrix begin-center
-  begin-picture)
-
-(drd-group latex-environment-0*%
-  begin-figure begin-table)
+  begin-matrix begin-pmatrix begin-center)
 
 (drd-group latex-environment-1%
   begin-tabbing begin-thebibliography)
+
+(drd-group latex-environment-0*%
+  begin-figure)
 
 (drd-group latex-environment-1*%
   begin-array begin-tabular)
@@ -233,7 +226,7 @@
   simeq mid ll gg asymp
   parallel subset supset approx bowtie
   subseteq supseteq cong Join sqsubset
-  sqsupset ne neq smile sqsubseteq sqsupseteq
+  sqsupset neq smile sqsubseteq sqsupseteq
   doteq frown in ni propto
   vdash dashv
   
@@ -412,10 +405,6 @@
   (tmfloat "ifthen")
   (tmfloat "capt-of")
   (tmfloat "calc")
-  
-  (color "color")
-  (tmhlink "color")
-  (tmaction "color")
 
   (omicron "pslatex")
   (multicols "multicol"))

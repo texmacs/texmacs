@@ -36,21 +36,21 @@ edit_math_rep::make_group () {
 void
 edit_math_rep::make_lprime (string s) {
   tree& st= subtree (et, path_up (tp));
-  if (is_func (st, LPRIME, 1) && (last_item (tp) == 1)) {
+  if (is_func (st, LEFT_PRIME, 1) && (last_item (tp) == 1)) {
     if (is_atomic (st[0]))
       insert (path_up (tp) * path (0, N (st[0]->label)), s);
   }
-  else insert_tree (tree (LPRIME, s));
+  else insert_tree (tree (LEFT_PRIME, s));
 }
 
 void
 edit_math_rep::make_rprime (string s) {
   tree& st= subtree (et, path_up (tp));
-  if (is_func (st, RPRIME, 1) && (last_item (tp) == 1)) {
+  if (is_func (st, RIGHT_PRIME, 1) && (last_item (tp) == 1)) {
     if (is_atomic (st[0]))
       insert (path_up (tp) * path (0, N (st[0]->label)), s);
   }
-  else insert_tree (tree (RPRIME, s));
+  else insert_tree (tree (RIGHT_PRIME, s));
 }
 
 void
@@ -149,9 +149,9 @@ edit_math_rep::make_wide (string wide) {
 void
 edit_math_rep::make_wide_under (string wide) {
   if (selection_active_small ())
-    insert_tree (tree (VAR_WIDE, selection_get_cut (), wide));
+    insert_tree (tree (WIDE_UNDER, selection_get_cut (), wide));
   else {
-    insert_tree (tree (VAR_WIDE, "", wide), path (0, 0));
+    insert_tree (tree (WIDE_UNDER, "", wide), path (0, 0));
     set_message ("move to the right when finished", "wide under accent");
   }
 }
@@ -197,16 +197,6 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
       else remove (p * path (0, i), N(s)-i);
     }
   }
-}
-
-void
-edit_math_rep::back_in_wide (tree t, path p, bool forward) {
-  int i= last_item (p);
-  if ((i == 0) && is_empty (t[0])) {
-    assign (path_up (p), "");
-    correct (path_up (p, 2));
-  }
-  else go_to_border (path_up (p), !forward);
 }
 
 /******************************************************************************

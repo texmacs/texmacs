@@ -39,33 +39,33 @@ edit_interface_rep::set_left_footer () {
   for (i=0; i<arity (the_style); i++)
     s= s * "#" * as_string (the_style[i]);
   string mode= get_env_string (MODE);
-  string lan = get_env_string (MODE_LANGUAGE (mode));
+  string lan = get_env_string (LANGUAGE (mode));
   if (mode == "prog") s= s * "#program";
-  else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
+  else if (as_string (get_init_value (LANGUAGE (mode))) != lan)
     s= s * "#" * lan;
   else s= s * "#" * mode;
   if (mode == "text") {
-    s= s * "#" * get_env_string (FONT);
-    append_left_footer (s, FONT_FAMILY);
+    s= s * "#" * get_env_string (TEXT_FONT);
+    append_left_footer (s, TEXT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, FONT_SERIES);
-    append_left_footer (s, FONT_SHAPE);
+    append_left_footer (s, TEXT_SERIES);
+    append_left_footer (s, TEXT_SHAPE);
   }
   else if (mode == "math") {
     s= s * "#" * get_env_string (MATH_FONT);
-    append_left_footer (s, MATH_FONT_FAMILY);
+    append_left_footer (s, MATH_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, MATH_FONT_SERIES);
-    append_left_footer (s, MATH_FONT_SHAPE);
+    append_left_footer (s, MATH_SERIES);
+    append_left_footer (s, MATH_SHAPE);
   }
   else {
-    string session_name= get_env_string (PROG_SESSION);
+    string session_name= get_env_string (THIS_SESSION);
     if (session_name != "default") s= s * "-" * session_name;
     s= s * "#" * get_env_string (PROG_FONT);
-    append_left_footer (s, PROG_FONT_FAMILY);
+    append_left_footer (s, PROG_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, PROG_FONT_SERIES);
-    append_left_footer (s, PROG_FONT_SHAPE);
+    append_left_footer (s, PROG_SERIES);
+    append_left_footer (s, PROG_SHAPE);
   }
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
@@ -123,15 +123,13 @@ get_with_text (tree t) {
       if (i>0) s << "#";
       string var= t[2*i]->label;
       if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
-	  (var!=LANGUAGE) && (var!=FONT) &&
-	  (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
+	  (var!=TEXT_LANGUAGE) && (var!=TEXT_FONT) &&
+	  (var!=TEXT_FAMILY) && (var!=TEXT_SHAPE) && (var!=TEXT_SERIES) &&
 	  (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
-	  (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
-	  (var!=MATH_FONT_SERIES) &&
+	  (var!=MATH_FAMILY) && (var!=MATH_SHAPE) && (var!=MATH_SERIES) &&
 	  (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
-	  (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
-	  (var!=PROG_FONT_SERIES) &&
-	  (var!=PROG_SESSION))
+	  (var!=PROG_FAMILY) && (var!=PROG_SHAPE) && (var!=PROG_SERIES) &&
+	  (var!=THIS_SESSION))
 	s << var << "=";
       s << t[2*i+1]->label;
     }
@@ -143,20 +141,20 @@ edit_interface_rep::compute_operation_footer (tree st) {
   string r;
   switch (L (st)) {
   case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-  case MID: r= "separator#" * as_symbol (st[0]); break;
+  case MIDDLE: r= "separator#" * as_symbol (st[0]); break;
   case RIGHT: r= "close#" * as_symbol (st[0]); break;
   case BIG: r= "big#" * as_symbol (st[0]); break;
-  case LPRIME: r= "left prime#" * as_string (st[0]); break;
-  case RPRIME: r= "prime#" * as_string (st[0]); break;
+  case LEFT_PRIME: r= "left prime#" * as_string (st[0]); break;
+  case RIGHT_PRIME: r= "prime#" * as_string (st[0]); break;
   case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
   case WIDE: r=  get_accent_type (as_string (st[1])); break;
-  case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
-  case TFORMAT: r= "table"; break;
+  case WIDE_UNDER: r= "under#" * get_accent_type (as_string (st[1])); break;
+  case TABLE_FORMAT: r= "table"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
-  case ARG: r= "argument#" * as_string (st[0]); break;
+  case ARGUMENT: r= "argument#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
@@ -181,7 +179,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   int  l = last_item (p);
   switch (L (st)) {
   case DOCUMENT:
-  case PARA:
+  case PARAGRAPH:
     return up;
   case SURROUND:
     if (l == 0) return up * "left surrounding#";
@@ -213,12 +211,12 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "index#";
   case WIDE:
     return up * get_accent_type (as_string (st[1])) * "#";
-  case VAR_WIDE:
+  case WIDE_UNDER:
     return up * "under#" * get_accent_type (as_string (st[1])) * "#";
   case TREE:
     if (l==0) return up * "root#";
     else return up * "branch(" * as_string (l) * ")#";
-  case TFORMAT:
+  case TABLE_FORMAT:
     return up;
   case TABLE:
     return up * "(" * as_string (l+1) * ",";
@@ -241,7 +239,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "value(" * as_string (l/2+1) * ")#";
   case SPECIFIC:
     return up * "texmacs#";
-  case HLINK:
+  case HYPERLINK:
     return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
     return up * drd->get_name (L(st)) * "#";
@@ -273,38 +271,6 @@ edit_interface_rep::set_latex_footer (tree st) {
       if (sv->kbd_get_command (s, help, cmd)) {
 	set_left_footer ("return:#" * help);
 	set_right_footer ("latex command");
-	return true;
-      }
-    }
-  return false;
-}
-
-bool
-edit_interface_rep::set_hybrid_footer (tree st) {
-  // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
-  if (is_atomic (st))
-    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
-      string msg;
-      // macro argument
-      string name= st->label;
-      path mp= search_upwards (MACRO);
-      if (!nil (mp)) {
-	tree mt= subtree (et, mp);
-	int i, n= N(mt)-1;
-	for (i=0; i<n; i++)
-	  if (mt[i] == name) {
-	    set_message ("return:#insert argument#" * name, "hybrid command");
-	    return true;
-	  }
-      }
-      // macro application
-      tree f= get_env_value (name);
-      if (is_func (f, MACRO) || is_func (f, XMACRO)) {
-	set_message("return:#insert macro#" * name, "hybrid command");
-	return true;
-      }
-      else if (f != UNINIT) {
-	set_message("return:#insert value#" * name, "hybrid command");
 	return true;
       }
     }
@@ -351,7 +317,6 @@ edit_interface_rep::set_footer () {
   if ((N(message_l) == 0) && (N(message_r) == 0)) {
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
-    if (set_hybrid_footer (st)) return;
     set_left_footer();
     set_right_footer();
   }

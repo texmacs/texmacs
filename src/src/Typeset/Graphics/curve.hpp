@@ -13,7 +13,6 @@
 #ifndef CURVE_H
 #define CURVE_H
 #include "point.hpp"
-#include "polynomial.hpp"
 
 class curve_rep: public abstract_struct {
 public:
@@ -33,7 +32,7 @@ public:
   // has a uniform distance of at most 'err' to the original curve
 
   virtual void rectify_cumul (array<point>& a, double err) = 0;
-  // add rectification of the curve  (except for the starting point)
+  // add rectification of the curve  (except for the staring point)
   // to an existing polysegment
 
   /*
@@ -64,7 +63,6 @@ ABSTRACT_NULL_CODE(curve);
 
 curve segment (point p1, point p2);
 curve poly_segment (array<point> a);
-curve spline (array<point> a, bool close=false);
 curve operator * (curve c1, curve c2);
 curve invert (curve c);
 

@@ -213,7 +213,7 @@ concater_rep::typeset_action (tree t, path ip) {
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
   path valip= decorate ();
-  if ((N(t) >= 3) && (is_func (t[2], ARG))) {
+  if ((N(t) >= 3) && (is_func (t[2], ARGUMENT))) {
     string var= env->exec_string (t[2][0]);
     tree   val= env->macro_arg->item [var];
     if ((var != "") && (!is_func (val, BACKUP))) {
@@ -248,11 +248,9 @@ concater_rep::typeset_flag (tree t, path ip) {
     string var= env->exec_string (t[2]);
     sip= env->macro_src->item [var];
   }
-  if (is_accessible (sip) && (!env->read_only)) {
-    marker (descend (ip, 0));
-    flag_ok (name, ip, env->dis->get_color (col));
-    marker (descend (ip, 1));  
-  }
+  marker (descend (ip, 0));
+  flag (name, sip, env->dis->get_color (col));
+  marker (descend (ip, 1));  
 }
 
 /******************************************************************************

@@ -22,13 +22,13 @@ extern void clear_rectangles (ps_device dev, rectangles l);
 extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 
 /*static*/ string
-MODE_LANGUAGE (string mode) {
-  if (mode == "text") return LANGUAGE;
+LANGUAGE (string mode) {
+  if (mode == "text") return TEXT_LANGUAGE;
   if (mode == "math") return MATH_LANGUAGE;
   if (mode == "prog") return PROG_LANGUAGE;
   cerr << "Mode = " << mode << "\n";
   fatal_error ("invalid mode", "the_language", "edit_interface.cpp");
-  return LANGUAGE;
+  return TEXT_LANGUAGE;
 }
 
 /******************************************************************************
@@ -54,7 +54,7 @@ edit_interface_rep::edit_interface_rep ():
 edit_interface_rep::~edit_interface_rep () {}
 
 edit_interface_rep::operator tree () {
-  return tuple ("editor", as_string (get_name ()));
+  return tuple ("edit", as_string (get_name ()));
 }
 
 void
@@ -92,7 +92,7 @@ edit_interface_rep::update_connection () {
   // cout << "et= " << et << "\n";
   // cout << "tp= " << tp << "\n";
   con_name   = get_env_string (PROG_LANGUAGE);
-  con_session= get_env_string (PROG_SESSION);
+  con_session= get_env_string (THIS_SESSION);
   con_status = connection_status (con_name, con_session);
   // cout << "Name   : " << con_name << "\n";
   // cout << "Session: " << con_session << "\n";
@@ -251,7 +251,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
     ev->x1/sfactor, ev->y1/sfactor,
     ev->x2/sfactor, ev->y2/sfactor);
   dev->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BG_COLOR);
+  string bg= get_init_string (BACKGROUND_COLOR);
   dev->set_background (dis->get_color (bg));
   rectangle r (
     ev->x1+ dev->ox, ev->y1+ dev->oy,
@@ -334,16 +334,16 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       string mode= get_env_string (MODE);
       string family, series;
       if (mode == "text") {
-	family= get_env_string (FONT_FAMILY);
-	series= get_env_string (FONT_SERIES);
+	family= get_env_string (TEXT_FAMILY);
+	series= get_env_string (TEXT_SERIES);
       }
       else if (mode == "math") {
-	family= get_env_string (MATH_FONT_FAMILY);
-	series= get_env_string (MATH_FONT_SERIES);
+	family= get_env_string (MATH_FAMILY);
+	series= get_env_string (MATH_SERIES);
       }
       else if (mode == "prog") {
-	family= get_env_string (PROG_FONT_FAMILY);
-	series= get_env_string (PROG_FONT_SERIES);
+	family= get_env_string (PROG_FAMILY);
+	series= get_env_string (PROG_SERIES);
       }
       if (cu->valid) {
 	if (mode == "math")
@@ -403,7 +403,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
   SI X1= ev->x1 * sfactor, Y1= ev->y1 * sfactor;
   SI X2= ev->x2 * sfactor, Y2= ev->y2 * sfactor;
   win->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BG_COLOR);
+  string bg= get_init_string (BACKGROUND_COLOR);
   win->set_background (dis->get_color (bg));
   win->clear (max (eb->x1, X1), max (eb->y1, Y1),
 	      min (eb->x2, X2), min (eb->y2, Y2));
@@ -625,24 +625,14 @@ edit_interface_rep::full_screen_mode (bool flag) {
   full_screen= flag;
 }
 
-static bool
-is_graphical (tree t) {
-  return
-    is_func (t, _POINT) ||
-    is_func (t, LINE) || is_func (t, CLINE) ||
-    is_func (t, SPLINE) || is_func (t, CSPLINE);
-}
-
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
   if (nil (p)) return;
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
-      is_func (st, TABLE) || is_func (st, SUBTABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
-      is_graphical (st) ||
-      (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
+      is_func (st, TABLE) || is_func (st, SUB_TABLE) ||
+      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT) ||
       (is_compound (st, "math", 1) &&
        is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);

@@ -239,9 +239,9 @@ Members logic-prefix
 	neg
 
 Members logic-relation
-	= ne neq less gtr le leq prec preceq
+	= neq less gtr leq prec preceq
 	ll subset subseteq sqsubset sqsubseteq in
-	ge geq succ succeq gg supset supseteq
+	geq succ succeq gg supset supseteq
 	sqsupset sqsupseteq ni equiv nequiv
 	sim simeq asymp approx cong
 	doteq propto perp

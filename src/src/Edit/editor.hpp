@@ -77,7 +77,6 @@ protected:
 
   /* protected subroutines for deletion of content */
   virtual void back_prime (tree t, path p, bool forward) = 0;
-  virtual void back_in_wide (tree t, path p, bool forward) = 0;
   virtual void back_in_tree (tree t, path p, bool forward) = 0;
   virtual void back_table (path p, bool forward) = 0;
   virtual void back_in_table (tree t, path p, bool forward) = 0;
@@ -172,10 +171,9 @@ public:
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
   virtual frame  find_frame () = 0;
-  virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
-  virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
+  virtual void   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
@@ -250,6 +248,7 @@ public:
   virtual void make_vspace_before (string smin, string sdef, string smax) = 0;
   virtual void make_vspace_after (string s) = 0;
   virtual void make_vspace_after (string smin, string sdef, string smax) = 0;
+  virtual void make_format (string tag) = 0;
   virtual void make_htab (string spc) = 0;
   virtual void make_move (string x, string y) = 0;
   virtual void make_resize (string x1, string y1, string x2, string y2) = 0;
@@ -281,7 +280,7 @@ public:
 
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;
-  virtual void   make_subtable (int nr_rows=1, int nr_cols=1) = 0;
+  virtual void   make_sub_table (int nr_rows=1, int nr_cols=1) = 0;
   virtual void   table_disactivate () = 0;
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;
@@ -380,17 +379,13 @@ public:
   virtual bool selection_active_small () = 0;
   virtual bool selection_active_enlarging () = 0;
 
-  virtual void selection_raw_set (string key, tree t) = 0;
-  virtual tree selection_raw_get (string key) = 0;
   virtual path selection_get_subtable (int& i1, int& j1, int& i2, int& j2) = 0;
   virtual void selection_get (selection& sel) = 0;
   virtual void selection_get (path& start, path& end) = 0;
-  virtual path selection_get_start () = 0;
-  virtual path selection_get_end () = 0;
   virtual void selection_set (string key, tree t, bool persistant= false) = 0;
   virtual void selection_set (tree t) = 0;
-  virtual void selection_set_start (path p= path()) = 0;
-  virtual void selection_set_end (path p= path()) = 0;
+  virtual void selection_set_start () = 0;
+  virtual void selection_set_end () = 0;
   virtual void selection_copy (string key= "primary") = 0;
   virtual void selection_paste (string key= "primary") = 0;
   virtual void selection_clear (string key= "primary") = 0;
