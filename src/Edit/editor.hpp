@@ -301,23 +301,27 @@ public:
   virtual void   table_test () = 0;
 
   /* public routines from edit_dynamic */
-  virtual path find_dynamic (path p) = 0;
-  virtual path find_deactivated (path p) = 0;
   virtual bool in_preamble_mode () = 0;
   virtual bool is_deactivated () = 0;
-  virtual void activate () = 0;
-  virtual void activate_compound () = 0;
+  virtual path find_deactivated (path p) = 0;
+  virtual path find_dynamic (path p) = 0;
   virtual void make_compound (tree_label l, int n=-1) = 0;
+  virtual void activate () = 0;
+  virtual void go_to_argument (path p, bool start_flag) = 0;
+  virtual void insert_argument (path p, bool forward) = 0;
+  virtual void insert_argument (bool forward) = 0;
+  virtual void remove_argument (path p, bool forward) = 0;
+  virtual void make_with (string var, string val) = 0;
+  virtual void make_hybrid () = 0;
+  virtual bool activate_latex () = 0;
+  virtual void activate_hybrid () = 0;
+  virtual void activate_symbol () = 0;
+  virtual void activate_compound () = 0;
   virtual bool make_return_before () = 0;
   virtual bool make_return_after () = 0;
-  virtual void make_assign (tree var, tree by) = 0;
-  virtual void make_with (string var, string val) = 0;
   virtual bool make_big_compound (string s) = 0;
   virtual void temp_proof_fix () = 0;
-  virtual void go_to_argument (path p, bool start_flag) = 0;
-  virtual void insert_argument (bool forward) = 0;
-  virtual void insert_argument (path p, bool forward) = 0;
-  virtual void remove_argument (path p, bool forward) = 0;
+  virtual void make_assign (tree var, tree by) = 0;
 
   /* public routines from edit_process */
   virtual void make_session (string lan, string session) = 0;

@@ -1,23 +1,23 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.2.7>
 
 <\body>
   <assign|tmdoc-traversal-package|1.0>
 
   \;
 
-  <assign|tmdoc-lgnu|<func|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu1.ps|/4|/4||||>>>
+  <assign|tmdoc-lgnu|<macro|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu1.ps|/4|/4||||>>>
 
-  <assign|tmdoc-rgnu|<func|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu2.ps|/4|/4||||>>>
+  <assign|tmdoc-rgnu|<macro|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu2.ps|/4|/4||||>>>
 
   <assign|tmdoc-gnu-title|<macro|title|<tabular*|<tformat|<twith|table
   width|0.99par>|<cwith|1|1|2|2|cell hpart|1>|<cwith|1|1|1|-1|cell
   valign|c>|<cwith|1|1|1|1|cell vcorrect|n>|<cwith|1|1|3|3|cell
   vcorrect|n>|<cwith|1|1|2|2|cell hyphen|c>|<cwith|1|1|1|1|cell
-  lsep|0fn>|<cwith|1|1|3|3|cell rsep|0fn>|<table|<row|<cell|<apply|tmdoc-lgnu>>|<\cell>
+  lsep|0fn>|<cwith|1|1|3|3|cell rsep|0fn>|<table|<row|<cell|<tmdoc-lgnu>>|<\cell>
     <\with|paragraph mode|center>
       <arg|title>
     </with>
-  </cell>|<cell|<apply|tmdoc-rgnu>>>>>>>>
+  </cell>|<cell|<tmdoc-rgnu>>>>>>>>
 
   <assign|tmdoc-title|<macro|x|<with|font series|bold|font
   size|1.19|color|dark grey|<block*|<tformat|<twith|table
@@ -67,15 +67,15 @@
   bsep|0fn>|<cwith|1|1|1|1|cell tsep|0fn>|<cwith|1|1|1|1|cell
   vcorrect|n>|<table|<row|<cell|<arg|flag>>>>>>> >>
 
-  <assign|tmdoc-translation|<func|name|suffix|<if|<unequal|<find_file|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<postscript|<merge|http://www.texmacs.org/Images/flag|<merge|<apply|suffix>|.png>>|/2|/2||||>>|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>>>>
+  <assign|tmdoc-translation|<macro|name|suffix|<if|<unequal|<find_file|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<postscript|<merge|http://www.texmacs.org/Images/flag|<merge|<arg|suffix>|.png>>|/2|/2||||>>|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>>>>
 
-  <assign|tmdoc-translations|<\func|name>
+  <assign|tmdoc-translations|<\macro|name>
     <\surround||<vspace|0.5fn>>
       <\with|paragraph mode|center>
-        <apply|tmdoc-translation|<apply|name>|.de><apply|tmdoc-translation|<apply|name>|.en><apply|tmdoc-translation|<apply|name>|.es><apply|tmdoc-translation|<apply|name>|.fr><apply|tmdoc-translation|<apply|name>|.it><apply|tmdoc-translation|<apply|name>|.pt>
+        <tmdoc-translation|<arg|name>|.de><tmdoc-translation|<arg|name>|.en><tmdoc-translation|<arg|name>|.es><tmdoc-translation|<arg|name>|.fr><tmdoc-translation|<arg|name>|.it><tmdoc-translation|<arg|name>|.pt>
       </with>
     </surround>
-  </func>>
+  </macro>>
 
   \;
 
@@ -89,9 +89,7 @@
   <assign|tmdoc-copyright-extra|<macro|x|, <arg|x>>>
 
   <assign|tmdoc-copyright|<xmacro|x|<vspace*|1fn><tmdoc-bar|<copyright><with|font
-  size|0.84| <if|<less|<get_arity|<arg|x>>|2>|-- Missing copyright
-  information --| <arg|x|0> <apply|localize|by>
-  <arg|x|1><map_args|tmdoc-copyright-extra|concat|x|2>>>>>>
+  size|0.84| \ <arg|x|0> <localize|by> <arg|x|1><map_args|tmdoc-copyright-extra|concat|x|2>>>>>
 
   <assign|tmdoc-license|<macro|x|<with|color|grey|font
   size|0.59|<with|language|english|<arg|x>>>>>
@@ -100,15 +98,15 @@
 
   <assign|traverse|<macro|x|<itemize|<arg|x>>>>
 
-  <assign|branch|<func|x|y|<item><hlink|<apply|x>|<apply|y>>>>
+  <assign|branch|<macro|x|y|<item><hlink|<arg|x>|<arg|y>>>>
 
-  <assign|extra-branch|<func|x|y|<item><hlink|<with|color|brown|<apply|x>>|<apply|y>>>>
+  <assign|extra-branch|<macro|x|y|<item><hlink|<with|color|brown|<arg|x>>|<arg|y>>>>
 
-  <assign|continue|<func|x|y|<item><hlink|<with|color|brown|<apply|x>>|<apply|y>>>>
+  <assign|continue|<macro|x|y|<item><hlink|<with|color|brown|<arg|x>>|<arg|y>>>>
 
-  <assign|tmdoc-include|<\func|what>
-    <extern|tmdoc-include|<find_file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<apply|what>>>
-  </func>>
+  <assign|tmdoc-include|<\macro|what>
+    <extern|tmdoc-include|<find_file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<arg|what>>>
+  </macro>>
 
   \;
 </body>
