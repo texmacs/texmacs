@@ -111,6 +111,8 @@
 
   <assign|tex-jot|<macro|0.25fn>>
 
+  <assign|tex-math-indent|<macro|0.5fn>>
+
   <assign|tex-above-display-skip|<macro|0.75fn>>
 
   <assign|tex-below-display-skip|<macro|0.75fn>>
@@ -120,6 +122,8 @@
   <assign|tex-below-display-short-skip|<macro|0.15fn>>
 
   \;
+
+  <assign|eqn-left-indent|<macro|<tex-math-indent>>>
 
   <assign|eqn-short-above|<macro|<plus|<value|par-sep>|<tex-above-display-short-skip>>>>
 
