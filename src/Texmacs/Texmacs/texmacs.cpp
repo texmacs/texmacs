@@ -13,6 +13,7 @@
 #include "boot.hpp"
 #include "file.hpp"
 #include "server.hpp"
+#include "timer.hpp"
 
 extern bool   char_clip;
 extern url    tm_init_file;
@@ -41,10 +42,12 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
       else if (s == "-debug-io") debug (DEBUG_FLAG_IO, true);
+      else if (s == "-debug-bench") debug (DEBUG_FLAG_BENCH, true);
       else if (s == "-debug-all") {
 	debug (DEBUG_FLAG_EVENTS, true);
 	debug (DEBUG_FLAG_STD, true);
 	debug (DEBUG_FLAG_IO, true);
+	debug (DEBUG_FLAG_BENCH, true);
       }
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
@@ -145,8 +148,12 @@ TeXmacs_main (int argc, char** argv) {
   if (flag) debug (DEBUG_FLAG_AUTO, true);
 
   if (DEBUG_AUTO) cout << "\n";
-  if (DEBUG_STD) cout << "TeXmacs] Installing TeX...\n";
+  if (DEBUG_STD) cout << "TeXmacs] Installing internal plug-ins...\n";
+  timer_t plugin_start= texmacs_time ();
   init_plugins ();
+  timer_t plugin_boot = texmacs_time () - plugin_start;
+  if (DEBUG_BENCH)
+    cout << "Bench  ] Initializes plug-ins in " << plugin_boot << " ms\n";
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   display dis= open_display (argc, argv);
   dis->set_default_font (the_default_font);
@@ -203,9 +210,13 @@ TeXmacs_main (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  // cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
+  // timer_t texmacs_start= texmacs_time ();
   init_texmacs ();
+  // timer_t texmacs_boot = texmacs_time () - texmacs_start;
+  // cout << "Bench  ] Intialized TeXmacs in " << texmacs_boot << " ms\n";
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

@@ -67,7 +67,7 @@ void  mem_info ();
 #endif
 
 enum { DEBUG_FLAG_AUTO, DEBUG_FLAG_EVENTS, DEBUG_FLAG_STD,
-       DEBUG_FLAG_IO };
+       DEBUG_FLAG_IO, DEBUG_FLAG_BENCH };
 bool debug (int which, bool write_flag= false);
 int  debug_off ();
 void debug_on (int status);
@@ -75,6 +75,7 @@ void debug_on (int status);
 #define DEBUG_EVENTS (debug (DEBUG_FLAG_EVENTS))
 #define DEBUG_STD (debug (DEBUG_FLAG_STD))
 #define DEBUG_IO (debug (DEBUG_FLAG_IO))
+#define DEBUG_BENCH (debug (DEBUG_FLAG_BENCH))
 
 inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
 inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
