@@ -37,7 +37,7 @@
 
   <assign|header-author|<macro|name|>>
 
-  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<odd-page-text|<arg|name>><even-page-text|<localize|Section>
+  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<odd-page-text|<arg|name>><even-page-text|<arg|what>
   <arg|nr>>>>>
 
   <assign|header-secondary|<macro|name|nr|what|>>

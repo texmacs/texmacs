@@ -39,21 +39,33 @@
 
   <\active*>
     <\src-comment>
-      Sectional tags.
+      Chapters.
     </src-comment>
   </active*>
 
-  <assign|section-sep|<macro|.<space|2spc>>>
+  <assign|sectional-sep|<macro|.<space|2spc>>>
 
-  <assign|chapter*|<macro|name|<style-with|src-compact|none|<new-page*><new-line><no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-shape|small-caps|font-size|1.54|<htab|0fn><arg|name><htab|0fn>><vspace|3fn><no-page-break><no-indent*>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-page*><new-line><no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-shape|small-caps|font-size|1.54|<htab|0fn><arg|name><htab|0fn>><vspace|3fn><no-page-break><no-indent*>>>>
 
-  <assign|chapter**|<macro|chapname|name|<style-with|src-compact|none|<chapter*|<style-with|src-compact|none|<with|font-size|1.83|<arg|chapname>><htab|0fn><vspace|1.5fn><new-line><htab|0fn><arg|name>>>>>>
+  <assign|chapter-long-title|<macro|first-title|second-title|<style-with|src-compact|none|<chapter-title|<style-with|src-compact|none|<with|font-size|1.83|<arg|first-title>><htab|0fn><vspace|1.5fn><new-line><htab|0fn><arg|second-title>>>>>>
 
-  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.30|font-shape|small-caps|<style-with|src-compact|none|<htab|0fn><arg|name><htab|0fn>>><vspace|1fn><no-page-break><no-indent*>>>>
+  <assign|chapter-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-long-title|<localize|Chapter>
+  <the-chapter>|<arg|title>>>>>
 
-  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-long-title|<localize|Appendix>
+  <the-chapter>|<arg|title>>>>>
 
-  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <\active*>
+    <\src-comment>
+      Sections, subsections and subsubsections.
+    </src-comment>
+  </active*>
+
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.30|font-shape|small-caps|<style-with|src-compact|none|<htab|0fn><arg|name><htab|0fn>>><vspace|1fn><no-page-break><no-indent*>>>>
+
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
 
   <\active*>
     <\src-comment>

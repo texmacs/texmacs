@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-book|env-us|number-book|section-book>
+  <use-package|std|env|header-book|section-book>
 
   \;
 </body>

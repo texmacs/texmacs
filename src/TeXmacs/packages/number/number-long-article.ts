@@ -21,13 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|number-article>
+  <assign|section-clean|<macro|<reset-subsection><reset-std-env>>>
 
-  \;
-
-  <assign|the-prefix|<macro|<the-section>.>>
-
-  <assign|resetsection|<macro|<assign|subsection-nr|0><resetstdenv>>>
+  <assign|display-std-env|<macro|nr|<section-prefix><arg|nr>>>
 
   \;
 </body>

@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|env-europe|1.0|env|1.0>
+    <src-package|std|1.0>
 
     <\src-purpose>
-      European-style environments.
+      Common <TeXmacs> markup for most styles.
     </src-purpose>
 
     <src-copyright|1998--2004|Joris van der Hoeven>
@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|env-manage|env-math|env-theorem|env-float|env-default|number-europe>
+  <use-package|std-counter|std-markup|std-symbol|std-math|std-list|std-automatic|program|session>
 
   \;
 </body>
@@ -37,6 +37,7 @@
     <associate|page-reduce-top|15mm>
     <associate|page-right|30mm>
     <associate|page-top|30mm>
+    <associate|page-type|a4>
     <associate|par-width|150mm>
     <associate|preamble|true>
     <associate|sfactor|4>

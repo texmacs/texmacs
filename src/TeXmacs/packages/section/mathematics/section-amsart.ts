@@ -23,22 +23,23 @@
 
   <use-package|section-article>
 
+  <assign|sectional-sep|<macro|.<space|2spc>>>
+
   <\active*>
     <\src-comment>
       Sections.
     </src-comment>
   </active*>
 
-  <assign|section-sep|<macro|.<space|2spc>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-shape|small-caps|<arg|name>><htab|0fn><vspace|0.5fn><no-page-break><no-indent*>>>>
 
-  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-shape|small-caps|<arg|name>><htab|0fn><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|var-section-title|<macro|name|<style-with|src-compact|none|<new-page><new-line><no-indent><vspace*|3fn><with|math-font-series|bold|font-series|bold|font-size|1.41|<arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
 
-  <assign|section|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<section-nr>>><assign|section-nr|<plus|<value|section-nr>|1>><resetsection><assign|the-label|<the-section>><header-primary|<arg|name>|<the-section>|<localize|Section>><toc-main-2|<the-section>.
-  <arg|name>><section*|<the-section><section-sep><arg|name>>>>>
+  <assign|appendix-title|<macro|name|<style-with|src-compact|none|<var-section-title|<localize|Appendix>.
+  <arg|name>>>>>
 
-  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<number|<appendix-nr>|Alpha>>><assign|appendix-nr|<plus|<value|appendix-nr>|1>><resetsection><new-page><new-line><no-indent><vspace*|3fn><header-primary|<arg|name>|<the-section>|<localize|Appendix>><assign|the-label|<the-section>><toc-main-2|<localize|Appendix><the-section>.
-  <arg|name>><with|math-font-series|bold|font-series|bold|font-size|1.41|<localize|Appendix><space|2spc><the-section>.
-  <arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
+  <assign|appendix-numbered-title|<macro|name|<style-with|src-compact|none|<var-section-title|<localize|Appendix>
+  <the-appendix>. <arg|name>>>>>
 
   <\active*>
     <\src-comment>
@@ -46,17 +47,11 @@
     </src-comment>
   </active*>
 
-  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
   ><no-page-break><no-indent*>>>>
 
-  <assign|subsection|<macro|name|<style-with|src-compact|none|<assign|subsection-nr|<plus|<value|subsection-nr>|1>><resetsubsection><assign|the-label|<the-subsection>><header-secondary|<arg|name>|<the-subsection>|<localize|Section>><toc-normal-1|<the-subsection>.
-  <arg|name>><the-subsection><section-sep><subsection*|<arg|name>>>>>
-
-  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
   ><no-page-break><no-indent*>>>>
-
-  <assign|subsubsection|<macro|name|<style-with|src-compact|none|<assign|subsubsection-nr|<plus|<value|subsubsection-nr>|1>><resetsubsubsection><assign|the-label|<the-subsubsection>><toc-normal-2|<the-subsubsection>.
-  <arg|name>><the-subsubsection><section-sep><subsubsection*|<arg|name>>>>>
 
   <\active*>
     <\src-comment>
@@ -64,10 +59,10 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
   ><no-page-break><no-indent*>>>>
 
-  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name>.
   ><no-page-break><no-indent*>>>>
 
   \;

@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-acmconf|env-us|number-article|section-acmconf>
+  <use-package|std|env|header-acmconf|section-acmconf>
 
   \;
 

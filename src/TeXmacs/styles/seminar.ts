@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-seminar|env-us|number-trivial|section-seminar>
+  <use-package|src|env|header-seminar|section-seminar>
 
   \;
 

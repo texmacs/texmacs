@@ -202,13 +202,13 @@
       (-> "Header" (link exam-header-menu)))
   (if (style-has? "book-style")
       (-> "Chapter" (link chapter-menu)))
-  (if (and (style-has? "section-latex-dtd")
+  (if (and (style-has? "section-base-dtd")
 	   (not (style-has? "header-exam-dtd")))
       (-> "Section" (link section-menu)))
   (if (style-has? "std-markup-dtd")
       (-> "Environment" (link environment-menu))
       (-> "Content tag" (link content-tag-menu)))
-  (if (style-has? "common-base-dtd")
+  (if (style-has? "std-dtd")
       ---)
   (if (style-has? "std-list-dtd")
       (-> "Itemize" (link itemize-menu))
@@ -224,7 +224,7 @@
 	  ---
 	  ("Other" ... (interactive
 			'("Session type:" "Session name:") 'make-session))))
-  (if (style-has? "section-automatic-dtd")
+  (if (style-has? "section-base-dtd")
       (-> "Automatic" (link automatic-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -246,7 +246,7 @@
   (if (style-has? "book-style")
       (=> (balloon (icon "tm_chapter.xpm") "Start a new chapter")
 	  (link chapter-menu)))
-  (if (and (style-has? "section-latex-dtd")
+  (if (and (style-has? "section-base-dtd")
 	   (not (style-has? "header-exam-dtd")))
       (=> (balloon (icon "tm_section.xpm") "Start a new section")
 	  (link section-menu)))
@@ -278,7 +278,7 @@
 ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
 ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
 ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
-  (if (style-has? "section-automatic-dtd")
+  (if (style-has? "section-base-dtd")
       (=> (balloon (icon "tm_index.xpm")
 		   "Insert automatically generated content")
 	  (link automatic-menu)))

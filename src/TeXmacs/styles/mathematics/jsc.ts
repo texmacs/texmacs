@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|common-base|header-jsc|env-us|number-article|section-jsc>
+  <use-package|std|env|header-jsc|section-jsc>
 
   \;
 

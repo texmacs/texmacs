@@ -23,19 +23,19 @@
 
   <use-package|section-article>
 
+  <assign|sectional-sep|<macro|.<space|2spc>>>
+
   <\active*>
     <\src-comment>
       Sections, subsections and subsubsections.
     </src-comment>
   </active*>
 
-  <assign|section-sep|<macro|.<space|2spc>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-series|bold|math-font-series|bold|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
 
-  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-series|bold|math-font-series|bold|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-shape|small-caps|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
 
-  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><htab|0fn><with|font-shape|small-caps|<arg|name>><htab|0fn><vspace|1fn><no-page-break>>>>
-
-  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|1fn><no-page-break>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|1fn><no-page-break>>>>
 
   <\active*>
     <\src-comment>
@@ -43,10 +43,10 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
   ><no-page-break>>>>
 
-  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|font-shape|small-caps|<arg|name>.
   ><no-page-break>>>>
 
   \;
