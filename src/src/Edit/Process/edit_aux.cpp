@@ -286,7 +286,9 @@ is_aux (tree t) {
     is_compound (t, "the-index", 2) ||
     is_compound (t, "the-index*", 3) ||
     is_compound (t, "the-glossary", 2) ||
-    is_compound (t, "the-glossary*", 3);
+    is_compound (t, "the-glossary*", 3) ||
+    is_compound (t, "list-of-figures", 2) ||
+    is_compound (t, "list-of-tables", 2);
 }
 
 void
@@ -308,26 +310,31 @@ edit_process_rep::generate_aux_recursively (string which, tree st, path p) {
 	cout << "tp= " << tp << "\n";
 	cout << "------------------------------------------------------\n";
       */
-      if ((arity(t) >= 3) &&
-	  (is_compound (t, "bibliography") ||
-	   is_compound (t, "bibliography*")) &&
-	  ((which == "") || (which == "bibliography")))
-	generate_bibliography (as_string (t[0]), as_string (t[1]),
-			       as_string (t[2]));
-      if ((arity(t) >= 1) &&
-	  (is_compound (t, "table-of-contents") ||
-	   is_compound (t, "table-of-contents*")) &&
-	  ((which == "") || (which == "table-of-contents")))
-	generate_table_of_contents (as_string (t[0]));
-      if ((arity(t) >= 1) &&
-	  (is_compound (t, "the-index") || is_compound (t, "the-index*")) &&
-	  ((which == "") || (which == "the-index")))
-	generate_index (as_string (t[0]));
-      if ((arity(t) >= 1) &&
-	  (is_compound (t, "the-glossary") ||
-	   is_compound (t, "the-glossary*")) &&
-	  ((which == "") || (which == "the-glossary")))
-	generate_glossary (as_string (t[0]));
+      if (arity (t) >= 1) {
+	if ((arity(t) >= 3) &&
+	    (is_compound (t, "bibliography") ||
+	     is_compound (t, "bibliography*")) &&
+	    ((which == "") || (which == "bibliography")))
+	  generate_bibliography (as_string (t[0]), as_string (t[1]),
+				 as_string (t[2]));
+	if ((is_compound (t, "table-of-contents") ||
+	     is_compound (t, "table-of-contents*")) &&
+	    ((which == "") || (which == "table-of-contents")))
+	  generate_table_of_contents (as_string (t[0]));
+	if ((is_compound (t, "the-index") || is_compound (t, "the-index*")) &&
+	    ((which == "") || (which == "the-index")))
+	  generate_index (as_string (t[0]));
+	if ((is_compound (t, "the-glossary") ||
+	     is_compound (t, "the-glossary*")) &&
+	    ((which == "") || (which == "the-glossary")))
+	  generate_glossary (as_string (t[0]));
+	if (is_compound (t, "list-of-figures") &&
+	    ((which == "") || (which == "list-of-figures")))
+	  generate_glossary (as_string (t[0]));
+	if (is_compound (t, "list-of-tables") &&
+	    ((which == "") || (which == "list-of-tables")))
+	  generate_glossary (as_string (t[0]));
+      }
       /*
 	cout << "et= " << et << "\n";
 	cout << "tp= " << tp << "\n";
