@@ -38,6 +38,11 @@ TOUCH = touch
 ###############################################################################
 
 TEXMACS:
+	$(MKDIR) src/Deps
+	$(MKDIR) src/Objects
+	$(MKDIR) TeXmacs/bin
+	$(MKDIR) TeXmacs/lib
+	$(MKDIR) src/Objects
 	cd src; $(MAKE) -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
@@ -51,6 +56,10 @@ TEXMACS:
 	@echo dynamic TeXmacs has been successfully compiled
 
 STATIC_TEXMACS:
+	$(MKDIR) src/Deps
+	$(MKDIR) src/Objects
+	$(MKDIR) TeXmacs/bin
+	$(MKDIR) TeXmacs/lib
 	cd src; $(MAKE) -f makefile link=static
 	$(MAKE) -f Makefile PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
