@@ -339,15 +339,18 @@
 	  ((pred? (car l)) (next (cdr l)))
 	  (else l))))
 
-(tm-define (list-scatter l pred?)
-  (:type (forall T ((list T) (T -> bool) -> (list (list T)))))
+(tm-define (list-scatter l pred? keep?)
+  (:type (forall T ((list T) (T -> bool) bool -> (list (list T)))))
   (:synopsis "Break @l in list of sublists at points satisfying @pred?.")
   (:args (l "list to be broken")
-	 (pred? "predicate"))
+	 (pred? "predicate")
+	 (keep? "keep break points?"))
   (receive (head tail) (list-break l pred?)
     (if (null? tail) (list head)
-	(with r (list-scatter (cdr tail) pred?)
-	  (cons* head (cons (car tail) (car r)) (cdr r))))))
+	(with r (list-scatter (cdr tail) pred? keep?)
+	  (if keep?
+	      (cons* head (cons (car tail) (car r)) (cdr r))
+	      (cons head r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace

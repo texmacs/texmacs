@@ -1,79 +1,77 @@
-<TeXmacs|1.0.2.8>
+<TeXmacs|1.0.2.10>
 
 <\body>
-  <assign|R|<macro|<with|mode|text|font family|rm|R>>>
+  <assign|R|<macro|<with|mode|text|font-family|rm|R>>>
 
-  <assign|s|<macro|<with|mode|text|font family|rm|sign>>>
+  <assign|s|<macro|<with|mode|text|font-family|rm|sign>>>
 
-  <assign|D|<macro|<with|mode|text|font family|rm|D>>>
+  <assign|D|<macro|<with|mode|text|font-family|rm|D>>>
 
-  <assign|K|<macro|<with|mode|text|font family|rm|K>>>
+  <assign|K|<macro|<with|mode|text|font-family|rm|K>>>
 
-  <assign|A|<macro|<with|mode|text|font family|rm|A>>>
+  <assign|A|<macro|<with|mode|text|font-family|rm|A>>>
 
-  <assign|C|<macro|<with|mode|text|font family|rm|C>>>
+  <assign|C|<macro|<with|mode|text|font-family|rm|C>>>
 
-  <assign|cf|<macro|<with|mode|text|font family|rm|cof>>>
+  <assign|cf|<macro|<with|mode|text|font-family|rm|cof>>>
 
-  <assign|rem|<macro|<with|mode|text|font family|rm|Rem>>>
+  <assign|rem|<macro|<with|mode|text|font-family|rm|Rem>>>
 
-  <assign|quo|<macro|<with|mode|text|font family|rm|Quo>>>
+  <assign|quo|<macro|<with|mode|text|font-family|rm|Quo>>>
 
-  <assign|prem|<macro|<with|mode|text|font family|rm|Prem>>>
+  <assign|prem|<macro|<with|mode|text|font-family|rm|Prem>>>
 
-  <assign|pquo|<macro|<with|mode|text|font family|rm|Pquo>>>
+  <assign|pquo|<macro|<with|mode|text|font-family|rm|Pquo>>>
 
-  <assign|pagcd|<macro|<with|mode|text|font family|rm|Posgcd>>>
+  <assign|pagcd|<macro|<with|mode|text|font-family|rm|Posgcd>>>
 
-  <assign|paremseq|<macro|<with|font family|rm|TRems>>>
+  <assign|paremseq|<macro|<with|font-family|rm|TRems>>>
 
-  <assign|parem|<macro|<with|mode|text|font family|rm|Parem>>>
+  <assign|parem|<macro|<with|mode|text|font-family|rm|Parem>>>
 
-  <assign|posquo|<macro|<with|mode|text|font family|rm|Posquo>>>
+  <assign|posquo|<macro|<with|mode|text|font-family|rm|Posquo>>>
 
-  <assign|posgcd|<macro|<with|mode|text|font family|rm|Posgcd>>>
+  <assign|posgcd|<macro|<with|mode|text|font-family|rm|Posgcd>>>
 
-  <assign|lc|<macro|<with|mode|text|font family|rm|lcof>>>
+  <assign|lc|<macro|<with|mode|text|font-family|rm|lcof>>>
 
-  <assign|Real|<macro|1|<with|mode|text|mode|math|<with|math
-  font|Bbb|R><rsup|<arg|1>>>>>
+  <assign|Real|<macro|1|<with|mode|text|mode|math|<with|math-font|Bbb|R><rsup|<arg|1>>>>>
 
-  <assign|Complex|<macro|1|<with|mode|text|mode|math|<with|math
-  font|Bbb|C><rsup|<arg|1>>>>>
+  <assign|Complex|<macro|1|<with|mode|text|mode|math|<with|math-font|Bbb|C><rsup|<arg|1>>>>>
 
   <assign|re|<macro|<Real|>>>
 
   <assign|complex|<macro|<Complex|>>>
 
-  <assign|SI|<macro|<with|mode|text|font family|rm|SIGN><rsub|R>>>
+  <assign|SI|<macro|<with|mode|text|font-family|rm|SIGN><rsub|R>>>
 
-  <assign|Z|<macro|<with|math font|Bbb|Z>>>
+  <assign|Z|<macro|<with|math-font|Bbb|Z>>>
 
-  <assign|N|<macro|<with|math font|Bbb|N>>>
+  <assign|N|<macro|<with|math-font|Bbb|N>>>
 
-  <assign|Q|<macro|<with|math font|Bbb|Q>>>
+  <assign|Q|<macro|<with|math-font|Bbb|Q>>>
 
-  <assign|Qu|<macro|<with|font family|rm|Q>>>
+  <assign|Qu|<macro|<with|font-family|rm|Q>>>
 
-  <assign|F|<macro|<with|mode|text|font family|rm|F>>>
+  <assign|F|<macro|<with|mode|text|font-family|rm|F>>>
 
-  <assign|decide|<macro|<with|font family|rm|Decide>>>
+  <assign|decide|<macro|<with|font-family|rm|Decide>>>
 
-  <assign|SSQ|<macro|<with|mode|text|font family|rm|S>>>
+  <assign|SSQ|<macro|<with|mode|text|font-family|rm|S>>>
 
-  <assign|SS|<macro|<with|mode|text|font family|rm|S>>>
+  <assign|SS|<macro|<with|mode|text|font-family|rm|S>>>
 
-  <assign|pos|<macro|<with|font family|rm|pos>>>
+  <assign|pos|<macro|<with|font-family|rm|pos>>>
 
-  <assign|ZZ|<macro|<with|font family|rm|Z>>>
+  <assign|ZZ|<macro|<with|font-family|rm|Z>>>
 
   <assign|RR|<macro|\<cal-R\>>>
 
-  <assign|V|<macro|<with|font family|rm|V>>>
+  <assign|V|<macro|<with|font-family|rm|V>>>
 
-  <assign|Der|<macro|<with|font family|rm|Der>>>
+  <assign|Der|<macro|<with|font-family|rm|Der>>>
 
-  <assign|SQ|<macro|<with|font family|rm|SQ>>>
+  <assign|SQ|<macro|<with|font-family|rm|SQ>>>
 
   <assign|la|<macro|\<langle\>>>
 
@@ -81,106 +79,110 @@
 
   <assign|eps|<macro|\<varepsilon\>>>
 
-  <assign|E|<macro|<with|font family|rm|Ext>>>
+  <assign|E|<macro|<with|font-family|rm|Ext>>>
 
-  <assign|dist|<macro|<with|font family|rm|dist>>>
+  <assign|dist|<macro|<with|font-family|rm|dist>>>
 
-  <assign|Syl|<macro|<with|mode|text|font family|rm|Syl>>>
+  <assign|Syl|<macro|<with|mode|text|font-family|rm|Syl>>>
 
-  <assign|pdet|<macro|<with|mode|text|font family|rm|pdet>>>
+  <assign|pdet|<macro|<with|mode|text|font-family|rm|pdet>>>
 
-  <assign|I|<macro|<with|mode|text|font family|rm|I>>>
+  <assign|I|<macro|<with|mode|text|font-family|rm|I>>>
 
-  <assign|Id|<macro|<with|mode|text|font family|rm|Id>>>
+  <assign|Id|<macro|<with|mode|text|font-family|rm|Id>>>
 
-  <assign|SH|<macro|<with|mode|text|math font|cal|SH>>>
+  <assign|SH|<macro|<with|mode|text|math-font|cal|SH>>>
 
-  <assign|SR|<macro|<with|mode|text|font family|rm|SR>>>
+  <assign|SR|<macro|<with|mode|text|font-family|rm|SR>>>
 
-  <assign|sr|<macro|<with|mode|text|font family|rm|sr>>>
+  <assign|sr|<macro|<with|mode|text|font-family|rm|sr>>>
 
-  <assign|gau|<macro|<with|font family|rm|Gau>>>
+  <assign|gau|<macro|<with|font-family|rm|Gau>>>
 
-  <assign|sign|<macro|<with|font family|rm|sign>>>
+  <assign|sign|<macro|<with|font-family|rm|sign>>>
 
-  <assign|han|<macro|<with|font family|rm|Han>>>
+  <assign|han|<macro|<with|font-family|rm|Han>>>
 
-  <assign|lcm|<macro|<with|mode|text|font family|rm|lcm>>>
+  <assign|lcm|<macro|<with|mode|text|font-family|rm|lcm>>>
 
-  <assign|ldp|<macro|<with|mode|text|font family|rm|ldp>>>
+  <assign|ldp|<macro|<with|mode|text|font-family|rm|ldp>>>
 
-  <assign|GRem|<macro|<with|mode|text|font family|rm|GRem>>>
+  <assign|GRem|<macro|<with|mode|text|font-family|rm|GRem>>>
 
-  <assign|Res|<macro|<with|mode|text|font family|rm|Res>>>
+  <assign|Res|<macro|<with|mode|text|font-family|rm|Res>>>
 
-  <assign|Ker|<macro|<with|mode|text|font family|rm|Ker>>>
+  <assign|Ker|<macro|<with|mode|text|font-family|rm|Ker>>>
 
-  <assign|lmon|<macro|<with|mode|text|font family|rm|lmon>>>
+  <assign|lmon|<macro|<with|mode|text|font-family|rm|lmon>>>
 
-  <assign|Sy|<macro|<with|mode|text|font family|rm|S>>>
+  <assign|Sy|<macro|<with|mode|text|font-family|rm|S>>>
 
-  <assign|lt|<macro|<with|mode|text|font family|rm|lt>>>
+  <assign|lt|<macro|<with|mode|text|font-family|rm|lt>>>
 
-  <assign|PP|<macro|<with|math font|Bbb|P>>>
+  <assign|PP|<macro|<with|math-font|Bbb|P>>>
 
-  <assign|SU|<macro|<with|mode|text|font family|rm|SU>>>
+  <assign|SU|<macro|<with|mode|text|font-family|rm|SU>>>
 
-  <assign|SV|<macro|<with|mode|text|font family|rm|SV>>>
+  <assign|SV|<macro|<with|mode|text|font-family|rm|SV>>>
 
-  <assign|SB|<macro|<with|mode|text|font family|rm|SB>>>
+  <assign|SB|<macro|<with|mode|text|font-family|rm|SB>>>
 
-  <assign|W|<macro|<with|mode|text|font family|rm|W>>>
+  <assign|W|<macro|<with|mode|text|font-family|rm|W>>>
 
-  <assign|T|<macro|<with|mode|text|font family|rm|T>>>
+  <assign|T|<macro|<with|mode|text|font-family|rm|T>>>
 
-  <assign|Rec|<macro|<with|font family|rm|Rec>>>
+  <assign|Rec|<macro|<with|font-family|rm|Rec>>>
 
-  <assign|Ho|<macro|<with|mode|text|font family|rm|H>>>
+  <assign|Ho|<macro|<with|mode|text|font-family|rm|H>>>
 
-  <assign|Co|<macro|<with|mode|text|font family|rm|C>>>
+  <assign|Co|<macro|<with|mode|text|font-family|rm|C>>>
 
-  <assign|M|<macro|<with|mode|text|font family|rm|M>>>
+  <assign|M|<macro|<with|mode|text|font-family|rm|M>>>
 
-  <assign|Le|<macro|<with|mode|text|font family|rm|L>>>
+  <assign|Le|<macro|<with|mode|text|font-family|rm|L>>>
 
-  <assign|EQ|<macro|<with|mode|text|font family|rm|EQ>>>
+  <assign|EQ|<macro|<with|mode|text|font-family|rm|EQ>>>
 
-  <assign|epc|<macro|<with|mode|text|font family|rm|EPC>>>
+  <assign|epc|<macro|<with|mode|text|font-family|rm|EPC>>>
 
-  <assign|NF|<macro|<with|mode|text|font family|rm|NF>>>
+  <assign|NF|<macro|<with|mode|text|font-family|rm|NF>>>
 
-  <assign|MUS|<macro|<with|mode|text|font family|rm|U>>>
+  <assign|MUS|<macro|<with|mode|text|font-family|rm|U>>>
 
-  <assign|B|<macro|<with|mode|text|font family|rm|B>>>
+  <assign|B|<macro|<with|mode|text|font-family|rm|B>>>
 
-  <assign|Red|<macro|<with|mode|text|font family|rm|Red>>>
+  <assign|Red|<macro|<with|mode|text|font-family|rm|Red>>>
 
   <assign|addots|<macro|<mathinner|<mkern>1mu
   <raise>1pt<vbox|<kern>7pt<hbox|.>> <mkern>2mu<raise>4pt<hbox|.><mkern>2mu
   <raise>7pt<hbox|.><mkern>1mu>>>
 
-  <assign|Def|<macro|<with|mode|text|font family|rm|Def>>>
+  <assign|Def|<macro|<with|mode|text|font-family|rm|Def>>>
 
-  <assign|Cr|<macro|<with|mode|text|font family|rm|Cr>>>
+  <assign|Cr|<macro|<with|mode|text|font-family|rm|Cr>>>
 
-  <assign|Po|<macro|<with|mode|text|font family|rm|Pol>>>
+  <assign|Po|<macro|<with|mode|text|font-family|rm|Pol>>>
 
-  <assign|RM|<macro|<with|mode|text|font family|rm|RM>>>
+  <assign|RM|<macro|<with|mode|text|font-family|rm|RM>>>
 
-  <assign|URM|<macro|<with|mode|text|font family|rm|URM>>>
+  <assign|URM|<macro|<with|mode|text|font-family|rm|URM>>>
 
-  <assign|pr|<macro|<with|mode|text|font family|rm|Proj>>>
+  <assign|pr|<macro|<with|mode|text|font-family|rm|Proj>>>
 
   <assign|coucou|<macro|1|<ifvmode><else><marginpar*|<htab|1fn><with|mode|math|\<rhd\>>|<with|mode|math|\<lhd\>>><fi>
-  <with|mode|math|\<langle\>><with|font shape|small-caps|<arg|1>><with|mode|math|\<rangle\>>>>
+  <with|mode|math|\<langle\>><with|font-shape|small-caps|<arg|1>><with|mode|math|\<rangle\>>>>
 
   <assign|w|<macro|1|<coucou|<underline|WARNING>: <arg|1>>>>
 
   <assign|hide|<macro|x|<flag|hide|red|x>>>
 
-  <assign|hideproof|<macro|x|<arg|x>>>
+  <assign|hideproof|<\macro|x>
+    <arg|x>
+  </macro>>
 
-  <assign|hidepart|<macro|x|<arg|x>>>
+  <assign|hidepart|<\macro|x>
+    <arg|x>
+  </macro>>
 
   <assign|compressed|<macro|x|<flag|compressed|red|x>>>
 
@@ -199,17 +201,17 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|french>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
