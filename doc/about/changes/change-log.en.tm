@@ -1,13 +1,24 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.9>
+  <section|Changes from version 1.0.3 to 1.0.3.10>
 
   <\itemize>
+    <item>Higher reactivity for editing large documents (1.0.3.10).
+
+    <item>Speed-up for starting <TeXmacs> (1.0.3.10).
+
+    <item>Tab-completion and hyperlinks for intra-project labels and
+    references (1.0.3.10).
+
+    <item>Patches by Henri Lesourd for better editing of graphics (1.0.3.10).
+
+    <item>Several bug corrections (1.0.3.10).
+
     <item>Tree call-backs at modifications in documents (1.0.3.9).
 
     <item>Path-aware trees (1.0.3.9).
