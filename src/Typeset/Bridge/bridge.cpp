@@ -52,11 +52,8 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
 
 bridge
 make_bridge (typesetter ttt, tree st, path ip) {
-  /*
-  cout << "Make bridge " << st << ", " << ip
-       << " (" << ttt->env->get_string (PREAMBLE)
-       << ", " << ttt->env->preamble << ")\n";
-  */
+  // cout << "Make bridge " << st << ", " << ip << "\n";
+  // cout << "Preamble mode= " << ttt->env->preamble << "\n";
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {

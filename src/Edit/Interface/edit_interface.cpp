@@ -388,12 +388,10 @@ edit_interface_rep::selection_visible () {
 
 void
 edit_interface_rep::apply_changes () {
-  /*
-  cout << "Apply changes\n";
-  cout << "et= " << et << "\n";
-  cout << "tp= " << tp << "\n";
-  cout << HRULE << "\n";
-  */
+  //cout << "Apply changes\n";
+  //cout << "et= " << et << "\n";
+  //cout << "tp= " << tp << "\n";
+  //cout << HRULE << "\n";
   if (env_change == 0) {
     if ((last_update < last_change) &&
 	(texmacs_time() >= (last_change + (1000/6))) &&
