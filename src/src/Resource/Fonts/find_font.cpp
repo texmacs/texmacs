@@ -14,7 +14,6 @@
 #include "tree.hpp"
 #include "font.hpp"
 #include "hashmap.hpp"
-#include "timer.hpp"
 
 hashmap<string,tree> font_conversion ("rule");
 
@@ -62,19 +61,16 @@ substitute (tree by, hashmap<string,tree>& H) {
 }
 
 font
-find_font_bis (display dis, tree t) {
+find_font (display dis, tree t) {
   // cout << "Find " << t << "\n";
 
   if ((arity (t)==0) || is_compound (t[0])) return font ();
 
-  if (is_tuple (t, "compound"))
-    return compound_font (dis, t (1, N(t)));
-
   if (is_tuple (t, "truetype", 3))
     return tt_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
-  if (is_tuple (t, "x", 3))
-    return x_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+  if (is_tuple (t, "ps", 3))
+    return ps_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "tex", 3))
     return tex_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
@@ -183,14 +179,6 @@ find_font_bis (display dis, tree t) {
   }
 
   return font ();
-}
-
-font
-find_font (display dis, tree t) {
-  bench_start ("find font");
-  font fn= find_font_bis (dis, t);
-  bench_cumul ("find font");
-  return fn;
 }
 
 /******************************************************************************

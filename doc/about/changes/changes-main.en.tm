@@ -22,11 +22,9 @@
   your version of <TeXmacs> and the system you are using.
 
   <\traverse>
-    <apply|branch|Improved style sheeds and source editing mode (1.0.3.5)|changes-9.en.tm>
+    <apply|branch|Formatting tags (1.0.2.8 -- 1.0.2.9)|changes-8.en.tm>
 
-    <apply|branch|Renaming of tags and environment variables (1.0.2.8 -- 1.0.2.9)|changes-8.en.tm>
-
-    <apply|branch|Macro expansion (1.0.2.3 -- 1.0.2.7)|changes-7.en.tm>
+    <apply|branch|Formatting tags (1.0.2.3 -- 1.0.2.7)|changes-7.en.tm>
 
     <apply|branch|Formatting tags (1.0.2 -- 1.0.2.1)|changes-6.en.tm>
 

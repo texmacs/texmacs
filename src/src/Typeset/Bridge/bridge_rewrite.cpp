@@ -75,13 +75,12 @@ bridge_rewrite_rep::notify_change () {
 
 void
 bridge_rewrite_rep::my_typeset (int desired_status) {
+  if (env->preamble) {
+    bridge_rep::my_typeset (desired_status);
+    return;
+  }
+  
   initialize (env->rewrite (st));
   ttt->insert_marker (st, ip);
-  if (is_func (st, INCLUDE)) {
-    url save_name= env->cur_file_name;
-    env->cur_file_name= relative (env->base_file_name, as_string (st[0]));
-    body->typeset (desired_status);
-    env->cur_file_name= save_name;
-  }
-  else body->typeset (desired_status);
+  body->typeset (desired_status);
 }

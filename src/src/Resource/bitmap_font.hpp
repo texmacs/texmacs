@@ -79,7 +79,7 @@ glyph join       (glyph gl1, glyph gl2);
 glyph glue       (glyph gl1, glyph gl2);
 glyph add        (glyph gl1, glyph gl2);
 glyph move       (glyph gl, SI x, SI y);
-glyph clip       (glyph gl, SI x1, SI y1, SI x2, SI y3);
+glyph enlarge    (glyph gl, SI x1, SI y1, SI x2, SI y3);
 glyph hor_flip   (glyph gl);
 glyph ver_flip   (glyph gl);
 glyph pos_rotate (glyph gl);
@@ -91,14 +91,12 @@ glyph ver_extend (glyph gl, int pos, int by);
 ******************************************************************************/
 
 struct font_metric_rep: rep<font_metric> {
-  bool bad_font_metric; // when font metric could not be loaded
   font_metric_rep (string name);
   virtual ~font_metric_rep ();
   virtual metric& get (int char_code) = 0;
 };
 
 struct font_glyphs_rep: rep<font_glyphs> {
-  bool bad_font_glyphs; // when font glyphs could not be loaded
   font_glyphs_rep (string name);
   virtual ~font_glyphs_rep ();
   virtual glyph& get (int char_code) = 0;

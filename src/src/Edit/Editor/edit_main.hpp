@@ -61,7 +61,11 @@ public:
   void tex_buffer ();
   url  get_name ();
   void focus_on_this_editor ();
-  void notify_page_change ();
+
+  void set_page_parameters ();
+  void set_page_medium (string medium);
+  void set_page_type (string type);
+  void set_page_orientation (string orientation);
 
   void print (url ps_name, bool to_file, int first, int last);
   void print_to_file (url ps_name, string first="1", string last="1000000");
@@ -70,11 +74,9 @@ public:
 
   void footer_eval (string s);
   tree the_line ();
-  tree the_root ();
   tree the_buffer ();
-  tree the_subtree (path p);
-  path the_buffer_path ();
   path the_path ();
+  void process_input ();
 
   void show_tree ();
   void show_env ();

@@ -1215,9 +1215,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.4"
-DEVEL_RELEASE="1"
-STABLE_VERSION="1.0.4"
+VERSION="1.0.3.1"
+RELEASE="1"
+STABLE_VERSION="1.0.3"
 STABLE_RELEASE="1"
 
 
@@ -5398,8 +5398,8 @@ rm -f conftest.$ac_objext conftest.$ac_ext
 CXXFLAGS=""
 
 
-echo "$as_me:$LINENO: checking if statically linking with guile works" >&5
-echo $ECHO_N "checking if statically linking with guile works... $ECHO_C" >&6
+echo "$as_me:$LINENO: checking if statically linking with guile work" >&5
+echo $ECHO_N "checking if statically linking with guile work... $ECHO_C" >&6
 CONFIG_GUILE_LTDL=""
 CPPFLAGS="$GUILE_CFLAGS"
 LDFLAGS="-static"
@@ -6006,7 +6006,7 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa*-*-linux-gnu*)
+  hppa64-*-linux-gnu*)
     echo "$as_me:$LINENO: result: final setup for an HP PA_RISC/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_OS="HPPA64_GNU_LINUX"
@@ -6022,9 +6022,9 @@ echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
     CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   m68k-*-linux*)
@@ -6331,12 +6331,12 @@ tmdata=${datadir}/${tmdir}
 
 
 
-if test "$DEVEL_RELEASE" = "1"; then
-  tmtgz=${PACKAGE}-${DEVEL_VERSION}
+if test "$RELEASE" = "1"; then
+  tmtgz=${PACKAGE}-${VERSION}
 else
-  tmtgz=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
+  tmtgz=${PACKAGE}-${VERSION}-R${RELEASE}
 fi
-tmrpm=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
+tmrpm=${PACKAGE}-${VERSION}-${RELEASE}
 if test "$STABLE_RELEASE" = "1"; then
   tmstgz=${PACKAGE}-${STABLE_VERSION}
 else
@@ -6940,8 +6940,8 @@ s,@ECHO_N@,$ECHO_N,;t t
 s,@ECHO_T@,$ECHO_T,;t t
 s,@LIBS@,$LIBS,;t t
 s,@PACKAGE@,$PACKAGE,;t t
-s,@DEVEL_VERSION@,$DEVEL_VERSION,;t t
-s,@DEVEL_RELEASE@,$DEVEL_RELEASE,;t t
+s,@VERSION@,$VERSION,;t t
+s,@RELEASE@,$RELEASE,;t t
 s,@STABLE_VERSION@,$STABLE_VERSION,;t t
 s,@STABLE_RELEASE@,$STABLE_RELEASE,;t t
 s,@CC@,$CC,;t t

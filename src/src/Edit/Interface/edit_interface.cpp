@@ -13,9 +13,9 @@
 #include "Interface/edit_interface.hpp"
 #include "file.hpp"
 #include "convert.hpp"
+#include "connect.hpp"
 #include "server.hpp"
 #include "tm_buffer.hpp"
-#include "Metafont/tex_files.hpp"
 
 extern void (*env_next_prog)(void);
 extern void clear_rectangles (ps_device dev, rectangles l);
@@ -24,11 +24,10 @@ extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 /*static*/ string
 MODE_LANGUAGE (string mode) {
   if (mode == "text") return LANGUAGE;
-  else if (mode == "math") return MATH_LANGUAGE;
-  else if (mode == "prog") return PROG_LANGUAGE;
-  else if (mode == "src") return LANGUAGE;
+  if (mode == "math") return MATH_LANGUAGE;
+  if (mode == "prog") return PROG_LANGUAGE;
   cerr << "Mode = " << mode << "\n";
-  fatal_error ("invalid mode", "MODE_LANGUAGE", "edit_interface.cpp");
+  fatal_error ("invalid mode", "the_language", "edit_interface.cpp");
   return LANGUAGE;
 }
 
@@ -39,6 +38,7 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
+  con_status (CONNECTION_DEAD),
   full_screen (false), got_focus (false),
   sh_s (""), sh_len (0),
   popup_win (NULL),
@@ -81,6 +81,108 @@ edit_interface_rep::get_display () {
 widget
 edit_interface_rep::get_widget () {
   return widget (this);
+}
+
+/******************************************************************************
+* Active sessions
+******************************************************************************/
+
+void
+edit_interface_rep::update_connection () {
+  // cout << "et= " << et << "\n";
+  // cout << "tp= " << tp << "\n";
+  con_name   = get_env_string (PROG_LANGUAGE);
+  con_session= get_env_string (PROG_SESSION);
+  con_status = connection_status (con_name, con_session);
+  // cout << "Name   : " << con_name << "\n";
+  // cout << "Session: " << con_session << "\n";
+  // cout << "Status : " << con_status << "\n";
+}
+
+void
+edit_interface_rep::connect () {
+  update_connection ();
+  string s= connection_start (con_name, con_session);
+  if (s != "ok") set_message (s, "connect#" * con_name);
+  else set_message (con_name*"#is running...", "session#`"*con_session*"'");
+  con_status = connection_status (con_name, con_session);
+  if (con_status == WAITING_FOR_INPUT) start_input ();
+  else if (con_status == WAITING_FOR_OUTPUT) start_output ();
+}
+
+void
+edit_interface_rep::process_extern_input () {
+  if (con_status == WAITING_FOR_OUTPUT) {
+    update_connection ();
+    if ((con_status != WAITING_FOR_OUTPUT) &&
+	(con_status != CONNECTION_DEAD)) return;
+    tree doc= connection_read (con_name, con_session, "output");
+    if (doc != "") {
+      insert_tree (doc);
+      set_message (con_name * "#is running...",
+		   "session#`" * con_session * "'");
+    }
+    doc= connection_read (con_name, con_session, "error");
+    if (doc != "") {
+      insert_tree (compound ("errput", doc));
+      set_message (con_name * "#is running...",
+		   "session#`" * con_session * "'");
+    }
+    con_status= connection_status (con_name, con_session);
+    if (con_status == CONNECTION_DEAD) {
+      start_input ();
+      set_message (con_name * "#has completed its task",
+		   "session#`" * con_session * "'");
+    }
+    else if (con_status == WAITING_FOR_INPUT)
+      start_input ();
+  }
+}
+
+void
+edit_interface_rep::feed_input (tree t) {
+  update_connection ();
+  if (con_status == WAITING_FOR_INPUT) {
+    connection_write (con_name, con_session, t);
+    con_status= WAITING_FOR_OUTPUT;
+  }
+  else if (con_status == CONNECTION_DEAD) {
+    string s= connection_start (con_name, con_session, true);
+    if (s != "ok") {
+      set_message (s, "connect#" * con_name);
+      start_input ();
+    }
+    else {
+      connection_write (con_name, con_session, t);
+      con_status= WAITING_FOR_OUTPUT;
+      session_message ("Warning: " * con_name * "#has been restarted",
+		       "session#`" * con_session * "'");
+    }
+  }
+}
+
+bool
+edit_interface_rep::busy_connection () {
+  update_connection ();
+  return (con_status == WAITING_FOR_OUTPUT);
+}
+
+void
+edit_interface_rep::interrupt_connection () {
+  update_connection ();
+  if (con_status == WAITING_FOR_OUTPUT) {
+    connection_interrupt (con_name, con_session);
+    update_connection ();
+  }
+}
+
+void
+edit_interface_rep::stop_connection () {
+  update_connection ();
+  if (con_status != CONNECTION_DEAD) {
+    connection_stop (con_name, con_session);
+    update_connection ();
+  }
 }
 
 /******************************************************************************
@@ -223,7 +325,6 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       dev->set_color (dis->red);
       dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
       dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
-      draw_graphical_object ();
     }
     else {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
@@ -232,7 +333,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       dev->set_line_style (pixel);
       string mode= get_env_string (MODE);
       string family, series;
-      if ((mode == "text") || (mode == "src")) {
+      if (mode == "text") {
 	family= get_env_string (FONT_FAMILY);
 	series= get_env_string (FONT_SERIES);
       }
@@ -313,8 +414,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
 void
 edit_interface_rep::handle_repaint (repaint_event ev) {
   if (env_change != 0)
-    system_warning ("Invalid situation",
-		    "(edit_interface_rep::handle_repaint)");
+    fatal_error ("Invalid situation", "edit_interface_rep::handle_repaint");
 
   // cout << "Repainting\n";
   // Repaint slightly more in order to hide trace of moving cursor
@@ -391,10 +491,6 @@ edit_interface_rep::selection_visible () {
 
 void
 edit_interface_rep::apply_changes () {
-  //cout << "Apply changes\n";
-  //cout << "et= " << et << "\n";
-  //cout << "tp= " << tp << "\n";
-  //cout << HRULE << "\n";
   if (env_change == 0) {
     if ((last_update < last_change) &&
 	(texmacs_time() >= (last_change + (1000/6))) &&
@@ -408,8 +504,8 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
+	update_connection ();
 	if (!win->check_event (EVENT_STATUS)) drd_update ();
-	tex_autosave_cache ();
 	last_update= last_change;
       }
     return;
@@ -425,8 +521,8 @@ edit_interface_rep::apply_changes () {
 		     "edit_interface_rep::apply_changes");
       SI wx, wy;
       win->get_size (wx, wy);
-      init_env (PAGE_SCREEN_WIDTH, as_string ((wx-20*PIXEL)*sfactor) * "unit");
-      init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "unit");
+      init_env (PAGE_WIDTH, as_string ((wx-20*PIXEL)*sfactor) * "unit");
+      init_env (PAGE_HEIGHT, as_string (wy*sfactor) * "unit");
       notify_change (THE_ENVIRONMENT);
     }
   }
@@ -437,8 +533,7 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Handling environment\n";
-  if (env_change & THE_ENVIRONMENT)
-    typeset_invalidate_all ();
+  if (env_change & THE_ENVIRONMENT) typeset_preamble ();
 
   // cout << "Handling tree\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT)) {
@@ -488,7 +583,6 @@ edit_interface_rep::apply_changes () {
       invalidate (env_rects);
     }
     else if (env_change & THE_FOCUS) invalidate (env_rects);
-    invalidate_graphical_object ();
   }
 
   // cout << "Handling selection\n";
@@ -536,14 +630,13 @@ is_graphical (tree t) {
   return
     is_func (t, _POINT) ||
     is_func (t, LINE) || is_func (t, CLINE) ||
-    is_func (t, ARC) ||
     is_func (t, SPLINE) || is_func (t, CSPLINE);
 }
 
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
-  if (p == rp) return;
+  if (nil (p)) return;
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||

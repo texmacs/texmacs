@@ -109,8 +109,8 @@ box_rep::find_box_path (path p, bool& found) {
 
 path
 box_rep::find_tree_path (path bp) {
-  if (bp == path (0)) return reverse (descend_decode (ip, 0));
-  else return reverse (descend_decode (ip, 1));
+  if (bp == path (0)) return revert (descend_decode (ip, 0));
+  else return revert (descend_decode (ip, 1));
 }
 
 cursor
@@ -136,8 +136,8 @@ box_rep::find_selection (path lbp, path rbp) {
 path
 box_rep::find_tree_path (SI x, SI y, SI delta) {
   path bp= find_box_path (x, y, delta, false);
-  //cout << "Find " << x << ", " << y << "; " << delta;
-  //cout << " -> " << bp << "\n";
+  // cout << "Find " << x << ", " << y << "; " << delta;
+  // cout << " -> " << bp << "\n";
   return find_tree_path (bp);
 }
 

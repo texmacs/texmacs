@@ -146,7 +146,7 @@ concater_rep::typeset_point (tree t, path ip) {
   if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
     point p= env->fr (env->decode_point (u));
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col, env->point_style));
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col));
   }
 }
 
@@ -167,25 +167,6 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
 }
 
 void
-concater_rep::typeset_arc (tree t, path ip) {
-  if (N(t) != 6)
-    typeset_dynamic (tree (ERROR, "bad arc"), ip);
-  else {
-    point center;
-    double r1, r2;
-    double a1, a2, a;
-    center= env->decode_point (env->exec (t[0]));
-    r1= as_double (t[1]);
-    r2= as_double (t[2]);
-    a1= as_double (t[3]);
-    a2= as_double (t[4]);
-    a= as_double (t[5]);
-    curve c= env->fr (arc (center, r1, r2, a, a1, a2));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
-  }
-}
-
-void
 concater_rep::typeset_spline (tree t,path ip,bool close) {
   int i, n= N(t);
   array<point> a(n);
@@ -194,8 +175,9 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
-    if (N(a) == 1) a << copy (a[0]);
-    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a));
+    if (N(a) == 1) a << copy (a[0]) << copy (a[0]);
+    if (N(a) == 2) a << copy (a[0]);
+    curve c= env->fr (spline (a,close));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }

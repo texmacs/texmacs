@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : list.cpp
+* MODULE     : list
 * DESCRIPTION: linked lists with reference counting
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -99,11 +99,6 @@ last_item (list<T> l) {
 ******************************************************************************/
 
 template<class T> bool
-strong_equal (list<T> l1, list<T> l2) {
-  return l1.rep == l2.rep;
-}
-
-template<class T> bool
 operator == (list<T> l1, list<T> l2) {
   if (nil (l1) || nil (l2)) return (nil (l1) == nil (l2));
   return (l1->item==l2->item) && (l1->next==l2->next);
@@ -172,7 +167,7 @@ tail (list<T> l, int n) {
 }
 
 template<class T> list<T>
-reverse (list<T> l) {
+revert (list<T> l) {
   list<T> r;
   while (!nil(l)) {
     r= list<T> (l->item, r);

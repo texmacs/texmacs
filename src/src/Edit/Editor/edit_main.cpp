@@ -16,6 +16,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "PsDevice/printer.hpp"
+#include "PsDevice/page_type.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "typesetter.hpp"
@@ -29,18 +30,17 @@
 
 editor_rep::editor_rep ():
   attribute_widget_rep (dis),
-  drd (buf->abbr, std_drd), et (the_et), rp (buf->rp) {}
+  drd (buf->abbr, std_drd), et (buf->t) {}
 
 editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
   attribute_widget_rep (dis),
-  sv (sv2), buf (buf2), drd (buf->abbr, std_drd),
-  et (the_et), rp (buf2->rp) {}
+  sv (sv2), buf (buf2), drd (buf->abbr, std_drd), et (buf2->t) {}
 
 edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   editor_rep (sv, dis, buf), props (UNKNOWN)
 {
   notify_change (THE_TREE);
-  tp= correct_cursor (et, rp * 0);
+  tp= correct_cursor (et, path (0));
 }
 
 edit_main_rep::~edit_main_rep () {}
@@ -100,7 +100,7 @@ edit_main_rep::get_string_property (string what) {
 
 void
 edit_main_rep::clear_buffer () {
-  assign (rp, tree (DOCUMENT, tree ("")));
+  assign (path (), tree (DOCUMENT, tree ("")));
 }
 
 void
@@ -125,11 +125,61 @@ edit_main_rep::focus_on_this_editor () {
   sv->focus_on_editor (this);
 }
 
+/******************************************************************************
+* Printing
+******************************************************************************/
+
 void
-edit_main_rep::notify_page_change () {
+edit_main_rep::set_page_parameters () {
   if (attached ()) this << emit_invalidate_all ();
-  if (get_init_string (PAGE_MEDIUM) == "automatic")
+
+  string medium     = get_init_string (PAGE_MEDIUM);
+  string type       = get_init_string (PAGE_TYPE);
+  string orientation= get_init_string (PAGE_ORIENTATION);
+  bool   landscape  = (orientation == "landscape");
+
+  if (medium == "automatic") {
+    init_env (PAGE_ODD, "5mm");
+    init_env (PAGE_EVEN, "5mm");
+    init_env (PAGE_RIGHT, "5mm");
+    init_env (PAGE_TOP, "5mm");
+    init_env (PAGE_BOT, "5mm");
     notify_change (THE_AUTOMATIC_SIZE);
+    return;
+  }
+  if (type == "user") return;
+
+#define PAGE_INIT(feature) \
+  init_env (feature, page_get_feature (type, feature, landscape))
+  PAGE_INIT (PAR_WIDTH);
+  PAGE_INIT (PAGE_ODD);
+  PAGE_INIT (PAGE_EVEN);
+  PAGE_INIT (PAGE_RIGHT);
+  PAGE_INIT (PAGE_TOP);
+  PAGE_INIT (PAGE_BOT);
+  PAGE_INIT (PAGE_REDUCE_LEFT);
+  PAGE_INIT (PAGE_REDUCE_RIGHT);
+  PAGE_INIT (PAGE_REDUCE_TOP);
+  PAGE_INIT (PAGE_REDUCE_BOT);
+#undef PAGE_INIT
+}
+
+void
+edit_main_rep::set_page_medium (string medium) {
+  init_env (PAGE_MEDIUM, medium);
+  set_page_parameters ();
+}
+
+void
+edit_main_rep::set_page_type (string type) {
+  init_env (PAGE_TYPE, type);
+  set_page_parameters ();
+}
+
+void
+edit_main_rep::set_page_orientation (string orientation) {
+  init_env (PAGE_ORIENTATION, orientation);
+  set_page_parameters ();
 }
 
 /******************************************************************************
@@ -159,21 +209,24 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
   typeset_prepare ();
   env->write (DPI, printing_dpi);
+  env->write (PAGE_REDUCE_LEFT, "0cm");
+  env->write (PAGE_REDUCE_RIGHT, "0cm");
+  env->write (PAGE_REDUCE_TOP, "0cm");
+  env->write (PAGE_REDUCE_BOT, "0cm");
   env->write (PAGE_SHOW_HF, "true");
-  env->write (PAGE_SCREEN_MARGIN, "false");
   if (!conform) env->write (PAGE_MEDIUM, "paper");
 
   // Typeset pages for printing
 
-  box the_box= typeset_as_document (env, subtree (et, rp), reverse (rp));
+  box the_box= typeset_as_document (env, et, path ());
 
   // Determine parameters for printer device
 
-  string page_type = env->get_string (PAGE_TYPE);
-  double w         = env->page_width;
-  double h         = env->page_height;
+  string page_type = printing_on;
+  double w         = env->get_length (PAGE_WIDTH);
+  double h         = env->get_length (PAGE_HEIGHT);
   double cm        = env->decode_length (string ("1cm"));
-  bool   landsc    = env->page_landscape;
+  bool   landsc    = (env->get_string (PAGE_ORIENTATION) == "landscape");
   int    dpi       = as_int (printing_dpi);
   int    start     = max (0, first-1);
   int    end       = min (N(the_box[0]), last);
@@ -194,11 +247,6 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   ps_device dev=
     printer (dis, name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
-    string col_name= env->get_string (BG_COLOR);
-    dev->set_background (dis->get_color (col_name));
-    if (col_name != "white")
-      dev->clear (0, (SI) -h, (SI) w, 0);
-
     rectangles rs;
     the_box[0]->sx(i)= 0;
     the_box[0]->sy(i)= 0;
@@ -237,7 +285,6 @@ edit_main_rep::export_ps (url name, string first, string last) {
 
 void
 edit_main_rep::footer_eval (string s) {
-  s= unslash (s); // FIXME: dirty fix; should not be necessary
   string r= object_to_string (eval (s));
   set_message (r, "evaluate expression");
 }
@@ -249,28 +296,37 @@ edit_main_rep::the_line () {
 }
 
 tree
-edit_main_rep::the_root () {
-  return et;
-}
-
-tree
 edit_main_rep::the_buffer () {
-  return subtree (et, rp);
-}
-
-tree
-edit_main_rep::the_subtree (path p) {
-  return subtree (et, p);
-}
-
-path
-edit_main_rep::the_buffer_path () {
-  return copy (rp);
+  return copy (et);
 }
 
 path
 edit_main_rep::the_path () {
   return copy (tp);
+}
+
+void
+edit_main_rep::process_input () {
+  path p= search_upwards_compound ("input");
+  if (nil (p) || (N (subtree (et, p)) != 2)) return;
+  tree t= subtree (et, p) [1];
+  string lan= get_env_string (PROG_LANGUAGE);
+
+  if (lan == "scheme") {
+    start_output ();
+    tree u= sv->evaluate ("scheme", "default", t);
+    if (!is_document (u)) u= tree (DOCUMENT, u);
+    insert_tree (u);
+    start_input ();
+  }
+  else if (connection_declared (lan)) {
+    start_output ();
+    feed_input (t);
+  }
+  else {
+    set_message ("Package#'" * lan * "'#not declared",
+		 "Evaluate#'" * lan * "'#expression");
+  }
 }
 
 /******************************************************************************
@@ -279,8 +335,7 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::show_tree () {
-  stretched_print (et, true);
-  // cout << et << "\n";
+  cout << et << "\n";
 }
 
 void

@@ -154,8 +154,6 @@ tm_writer::write (string s, bool flag, bool encode_space) {
 	else if (c == '<') tmp << "\\<";
 	else if (c == '|') tmp << "\\|";
 	else if (c == '>') tmp << "\\>";
-	else if (c == '\34') tmp << c;
-	else if (((unsigned char) c) < ' ') tmp << '\\' << (c+'@');
 	else tmp << c;
 	spc_flag= false;
 	ret_flag= false;
@@ -261,15 +259,6 @@ tm_writer::write (tree t) {
 
   int i, n= N(t);
   switch (L(t)) {
-  case RAW_DATA:
-    {
-      write ("<#", false);
-      string s= as_string (t[0]);
-      for (i=0; i<N(s); i++)
-	write (as_hexadecimal ((unsigned char) s[i], 2), false);
-      write (">", false);
-      break;
-    }
   case DOCUMENT:
     spc_flag= true;
     ret_flag= true;

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html tmhtml)
-  (:use (convert tools tmconcat) (convert mathml tmmath)
+  (:use (convert tools tmconcat)
 	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
 	(convert tools sxml) (convert tools environment) (convert tools sxhtml)
 	(convert html htmlout))
@@ -27,9 +27,6 @@
 
 ;; FIXME: should go into environment
 (define tmhtml-math-mode? #f)
-
-(define (cork->html s)
-  (utf8->html (cork->utf8 s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
@@ -53,16 +50,16 @@
 	((string-starts? s "<frak-") `(h:u ,(tmhtml-sub-token s 6)))
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
-	   (utf8->html (if (== s encoded)
-			   (tm->xml-cdata s)
-			   encoded))))
+	   (if (== s encoded)
+	       (tm->xml-cdata s)
+	       encoded)))
 	(else s)))
 
 (define (tmhtml-string s)
   (if tmhtml-math-mode?
       (tmhtml-post-simplify-nodes
        (map tmhtml-math-token (tmconcat-tokenize-math s)))
-      (list (cork->html s))))
+      (list (cork->utf8 s))))
 
 (define (tmhtml-text s)
   (if tmhtml-math-mode?
@@ -132,7 +129,7 @@
       (xmlns:x "http://www.texmacs.org/2002/extensions")))
   `(*TOP* (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
 	  ,((cut sxml-set-attrs <> xmlns-attrs)
-	    (sxml-strip-ns-prefix "h" (sxml-strip-ns-prefix "m" top)))))
+	    (sxml-strip-ns-prefix "h" top))))
 
 (define (tmhtml-finalize-selection l)
   ;; @l is a nodeset produced by any handler _but_ tmhtml-file
@@ -242,7 +239,7 @@
 (define (tmhtml-surround env l)
   ;; WARNING: makes the xpath environment inconsistent
   (let* ((r1 (tmhtml-force-document `(surround ,@l)))
-	 (r2 (tree->stree (tree-simplify (stree->tree r1)))))
+	 (r2 (tree->object (tree-simplify (object->tree r1)))))
     ;(display* "r0= " `(surround ,@l) "\n")
     ;(display* "r1= " r1 "\n")
     ;(display* "r2= " r2 "\n")
@@ -384,11 +381,11 @@
 	 (den (tmhtml env (cadr l))))
     `("frac (" ,@num ", " ,@den ")")))
 
-;;    `((h:table (@ (style "display: inline; position: relative; top: 2.5ex")
-;;		  (valign "center"))
-;;	       (h:tr (h:td (@ (align "center")
-;;			      (style "border-bottom: solid 1px")) ,@num))
-;;	       (h:tr (h:td (@ (align "center")) ,@den))))))
+;    `((h:table (@ (style "display: inline; margin-top: -10px; padding-top: -10px")
+;		  (valign "center"))
+;	       (h:tr (h:td (@ (align "center")
+;			      (style "border-bottom: solid 1px")) ,@num))
+;	       (h:tr (h:td (@ (align "center")) ,@den))))))
 
 (define (tmhtml-sqrt env l)
   (if (= (length l) 1)
@@ -441,7 +438,7 @@
 	   (tmhtml-with-one env var val `(with ,@next))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other macro-related primitives
+;; Other primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-compound env l)
@@ -449,56 +446,15 @@
   (tmhtml-implicit-compound env (cons (string->symbol (car l))
 				      (cdr l))))
 
-(define (tmhtml-mark env l)
-  ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml env (cadr l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Source code
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (blue sym)
-  `(h:font (@ (color "blue")) ,sym))
-
-(define (tmhtml-src-args env l)
-  (if (null? l) l
-      `(,(blue "|")
-	,@(tmhtml env (car l))
-	,@(tmhtml-src-args env (cdr l)))))
-
-(define (tmhtml-inline-tag env l)
-  `(,(blue "&lt;")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-(define (tmhtml-open-tag env l)
-  `(,(blue "&lt;\\")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-middle-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-close-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other primitives
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (define (tmhtml-label env l)
   ;; WARNING: bad conversion if ID is not a string.
-  `((h:a (@ (id ,(cork->html (force-string (car l))))))))
+  `((h:a (@ (id ,(cork->utf8 (force-string (car l))))))))
 
 ;(define (tmhtml-reference l)
-;  (list 'ref (cork->html (force-string (car l)))))
+;  (list 'ref (cork->utf8 (force-string (car l)))))
 
 ;(define (tmhtml-pageref l)
-;  (list 'pageref (cork->html (force-string (car l)))))
+;  (list 'pageref (cork->utf8 (force-string (car l)))))
 
 (define (tmhtml-suffix s)
   ;; Change .html suffix to .tm suffix for local files for correct
@@ -519,7 +475,7 @@
   ;; TODO: change label at start of content into ID attribute, move other
   ;; labels out (A elements cannot be nested!).
   (let* ((body (tmhtml env (first l)))
-	 (to (cork->html (force-string (second l)))))
+	 (to (cork->utf8 (force-string (second l)))))
     (if (string-starts? to "$")
 	body ;; temporary fix for URLs like $TEXMACS_PATH/...
 	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
@@ -550,9 +506,7 @@
 
 (define (tmhtml-table-make env p)
   `((h:table
-     (@ ,@(if (p 'global 'border)
-	      '((border "1")) 
-	      '((style "display: inline"))))
+     ,@(if (p 'global 'border) '((@ (border "1"))) '())
      ,@(tmhtml-table-cols p)
      (h:tbody ,@(tmhtml-table-contents env p)))))
 
@@ -608,7 +562,7 @@
 (define (tmhtml-postscript env l)
   (let ((s (first l)) (w (second l)) (h (third l)))
     (if (not (string? s)) '()	; only convert linked images
-	`((h:img (@ (src ,(cork->html s))
+	`((h:img (@ (src ,(cork->utf8 s))
 		    ,@(tmhtml-dimension-attr
 		       w 'width `((par ,number->percent)
 				  (px ,exact-number->string)))
@@ -804,14 +758,10 @@
    ;; Main conversion function.
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
-  (cond
-; (tmhtml-math-mode?
-;  `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
-;	    ,(texmacs->mathml env x))))
-	((string? x)
-	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
-	(else (or (tmhtml-dispatch 'tmhtml-primitives% env x)
-		  (tmhtml-implicit-compound env x)))))
+  (if (string? x)
+      (if (string-null? x) '() (tmhtml-text x)) ; non-verbatim string nodes
+      (or (tmhtml-dispatch 'tmhtml-primitives% env x)
+	  (tmhtml-implicit-compound env x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -883,31 +833,18 @@
 
   (assign tmhtml-noop)
   (with tmhtml-with)
-  (provides tmhtml-noop)
-  ((:or value quote-value) tmhtml-compound)
-  ((:or macro drd-props arg quote-arg) tmhtml-noop)
+  ((:or set reset) tmhtml-noop)
   (compound tmhtml-compound)
-  ((:or xmacro get-label get-arity map-args eval-args) tmhtml-noop)
-  (mark tmhtml-mark)
-  (eval tmhtml-noop)
-  ((:or if if* case while for-each extern include use-package) tmhtml-noop)
+  ((:or begin end include macro func env eval) tmhtml-noop)
+  (value tmhtml-compound)
+  (arg tmhtml-noop)
+  ((:or backup quote delay hold release) tmhtml-noop)
   
   ((:or or xor and not plus minus times over div mod merge length range
 	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
    tmhtml-noop)
-
-  ((:or style-with style-with* style-only style-only*
-	active active* inactive inactive* rewrite-inactive) tmhtml-noop)
-  (inline-tag tmhtml-inline-tag)
-  (open-tag tmhtml-open-tag)
-  (middle-tag tmhtml-middle-tag)
-  (close-tag tmhtml-close-tag)
-  (symbol tmhtml-noop)
-  (latex tmhtml-noop)
-  (hybrid tmhtml-noop)
-
-  ((:or tuple collection associate) tmhtml-noop)
+  ((:or inactive symbol latex hybrid tuple collection associate) tmhtml-noop)
   (label tmhtml-label)
   (reference tmhtml-noop)
   (pageref tmhtml-noop)

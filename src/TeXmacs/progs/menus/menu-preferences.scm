@@ -28,13 +28,13 @@
 	  *)
     (enum ("Paper type" "paper type")
 	  "A3" "A4" "A5" "B4" "B5" "B6"
-	  "Letter" "Legal" "Executive"
+	  "Letter" "Legal" "Executive" "Lecture note"
 	  *)
     (enum ("Printer dpi" "printer dpi")
 	  "150" "200" "300" "400" "600" "800" "1200"
 	  *)
     (enum ("Font type" "font type")
-	  "EC fonts" "CM fonts" "True Type")))
+	  "Bitmap" "True type")))
 
 (define preferences-tree
   `((enum ("Look and feel" "look and feel")
@@ -49,7 +49,6 @@
 	  ("British" "british")
 	  ("Czech" "czech")
 	  ("Dutch" "dutch")
-	  ("Danish" "danish")
 	  ("English" "english")
 	  ("Finnish" "finnish")
 	  ("French" "french")

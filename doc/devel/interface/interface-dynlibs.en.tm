@@ -1,12 +1,12 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.1.20>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Dynamic libraries>
+  <expand|tmdoc-title|Dynamic libraries>
 
-  Instead of connecting your system to <TeXmacs> using a pipe, it is also
-  possible to connect it as a dynamically linked library. Although
+  Instead of connecting your system to <apply|TeXmacs> using a pipe, it is
+  also possible to connect it as a dynamically linked library. Although
   communication through pipes is usually easier to implement, more robust and
   compatible with gradual output, the second option is faster.
 
@@ -15,13 +15,13 @@
   following header file:
 
   <\verbatim>
-    \ \ \ \ <simple-link|$TEXMACS_PATH/include/TeXmacs.h>
+    \ \ \ \ <expand|simple-link|$TEXMACS_PATH/include/TeXmacs.h>
   </verbatim>
 
   In this file it is specified that your application should export a data
   structure
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     typedef struct package_exports_1 {
 
     \ \ char* version_protocol; /* "TeXmacs communication protocol 1" */
@@ -35,13 +35,13 @@
     \ \ char* (*evaluate) (char* what, char* session, char** errors);
 
     } package_exports_1;
-  </cpp-fragment>
+  </expand>
 
   which contains an installation routine for your application, as well as an
   evaluation routine for further input (for more information, see the header
   file). <TeXmacs> will on its turn export a structure
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     typedef struct TeXmacs_exports_1 {
 
     \ \ char* version_protocol; /* "TeXmacs communication protocol 1" */
@@ -49,7 +49,7 @@
     \ \ char* version_TeXmacs;
 
     } TeXmacs_exports_1;
-  </cpp-fragment>
+  </expand>
 
   It is assumed that each application takes care of its own memory
   management. Hence, strings created by <TeXmacs> will be destroyed by
@@ -59,11 +59,11 @@
   The string <verbatim|version_protocol> should contain <verbatim|"TeXmacs
   communication protocol 1"> and the string <verbatim|version_package> the
   version of your package. The routine <verbatim|install> will be called once
-  by <TeXmacs> in order to initialize your system with options
-  <verbatim|options>. It communicates the routines exported by <TeXmacs> to
-  your system in the form of a pointer to a structure of type
-  <cpp-code|TeXmacs_exports_1>. The routine should return a status message
-  like
+  by <apply|TeXmacs> in order to initialize your system with options
+  <verbatim|options>. It communicates the routines exported by
+  <apply|TeXmacs> to your system in the form of a pointer to a structure of
+  type <expand|cpp-code|TeXmacs_exports_1>. The routine should return a
+  status message like
 
   <\verbatim>
     \ \ \ \ "yourcas-version successfully linked to TeXmacs"
@@ -73,16 +73,17 @@
   <verbatim|*errors> should contain an error message.
 
   The routine <verbatim|evaluate> is used to evaluate the expression
-  <verbatim|what> inside a <TeXmacs>-session with name <verbatim|session>. It
-  should return the evaluation of <verbatim|what> or <verbatim|NULL> if an
-  error occurred. <verbatim|*errors> either contains one or more warning
-  messages or an error message, if the evaluation failed. The formats being
-  used obey the same rules as in the case of communication by pipes.
+  <verbatim|what> inside a <apply|TeXmacs>-session with name
+  <verbatim|session>. It should return the evaluation of <verbatim|what> or
+  <verbatim|NULL> if an error occurred. <verbatim|*errors> either contains
+  one or more warning messages or an error message, if the evaluation failed.
+  The formats being used obey the same rules as in the case of communication
+  by pipes.
 
-  Finally, the configuration file of your plug-in should contain something as
+  Finally, the configuration file of your plugin should contain something as
   follows:
 
-  <\scheme-fragment>
+  <\expand|scheme-fragment>
     (plugin-configure <em|myplugin>
 
     \ \ (:require (url-exists? (url "$LD_LIBRARY_PATH"
@@ -91,10 +92,10 @@
     \ \ (:link "lib<em|myplugin>.so" "<em|myplugin>_exports" "")
 
     \ \ <em|further-configuration>)
-  </scheme-fragment>
+  </expand>
 
   Here <verbatim|<em|myplugin>_exports> is a pointer to a structure of the
-  type <cpp-code|package_exports_1>.
+  type <expand|cpp-code|package_exports_1>.
 
   <\remark>
     It is possible that the communication protocol changes in the future. In
@@ -104,28 +105,28 @@
     <verbatim|n> is the version of the protocol. These structures will always
     have the abstract data structures <verbatim|TeXmacs_exports> and
     <verbatim|package_exports> in common, with information about the versions
-    of the protocol, <TeXmacs> and your package.
+    of the protocol, <apply|TeXmacs> and your package.
   </remark>
 
-  <paragraph|The <verbatim|dynlink> plug-in>
+  <paragraph|The <verbatim|dynlink> plugin>
 
-  The <verbatim|dynlink> plug-in gives an example of how to write dynamically
+  The <verbatim|dynlink> plugin gives an example of how to write dynamically
   linked libraries. It consists of the following files:
 
   <\verbatim>
-    \ \ \ \ <example-plugin-link|dynlink/Makefile>
+    \ \ \ \ <expand|example-plugin-link|dynlink/Makefile>
 
-    \ \ \ \ <example-plugin-link|dynlink/progs/init-dynlink.scm>
+    \ \ \ \ <expand|example-plugin-link|dynlink/progs/init-dynlink.scm>
 
-    \ \ \ \ <example-plugin-link|dynlink/src/dynlink.cpp>
+    \ \ \ \ <expand|example-plugin-link|dynlink/src/dynlink.cpp>
   </verbatim>
 
   The <verbatim|Makefile> contains
 
   <\quotation>
-    <\framed-fragment>
-      <\with|par-par-sep|0fn>
-        <\with|font-family|tt>
+    <\expand|framed-fragment>
+      <\with|interparagraph space|0fn>
+        <\with|font family|tt>
           tmsrc = /home/vdhoeven/texmacs/src/TeXmacs
 
           CXX = g++
@@ -142,7 +143,7 @@
           \ \ \ \ \ \ \ \ $(LD) -shared -o lib/libtmdynlink.so src/dynlink.o
         </with>
       </with>
-    </framed-fragment>
+    </expand>
   </quotation>
 
   so that running it will create a dynamic library
@@ -151,7 +152,7 @@
   find the include file <verbatim|TeXmacs.h>. The configuration file
   <verbatim|init-dynlink.scm> simply contains
 
-  <\scheme-fragment>
+  <\expand|scheme-fragment>
     (plugin-configure dynlink
 
     \ \ (:require (url-exists? (url "$LD_LIBRARY_PATH"
@@ -161,17 +162,17 @@
     \ \ (:link "libtmdynlink.so" "dynlink_exports" "")
 
     \ \ (:session "Dynlink"))
-  </scheme-fragment>
+  </expand>
 
   As to the <value|cpp> file <verbatim|dynlink.cpp>, it contains a string
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     static char* output= NULL;
-  </cpp-fragment>
+  </expand>
 
   with the last output, the initialization routine
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     char*
 
     dynlink_install (TeXmacs_exports_1* TM, char* opts, char** errs) {
@@ -183,11 +184,11 @@
     \ \ return output;
 
     }
-  </cpp-fragment>
+  </expand>
 
   the evaluation routine
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     char*
 
     dynlink_eval (char* what, char* session, char** errors) {
@@ -205,11 +206,11 @@
     \ \ return output;
 
     }
-  </cpp-fragment>
+  </expand>
 
   and the data structure with the public exports:
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     package_exports_1 dynlink_exports= {
 
     \ \ "TeXmacs communication protocol 1",
@@ -221,35 +222,55 @@
     \ \ dynlink_eval
 
     };
-  </cpp-fragment>
+  </expand>
 
   Notice that the application takes care of the memory allocation and
-  deallocation of <cpp-code|output>.
+  deallocation of <expand|cpp-code|output>.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
-  document under the terms of the GNU Free Documentation License, Version 1.1
-  or any later version published by the Free Software Foundation; with no
-  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-  Texts. A copy of the license is included in the section entitled "GNU Free
-  Documentation License".>
+  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
+  modify this document under the terms of the GNU Free Documentation License,
+  Version 1.1 or any later version published by the Free Software Foundation;
+  with no Invariant Sections, with no Front-Cover Texts, and with no
+  Back-Cover Texts. A copy of the license is included in the section entitled
+  "GNU Free Documentation License".>
 </body>
 
 <\initial>
   <\collection>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|1|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|1|?>>
+    <associate|toc-3|<tuple|3|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <with|left margin|<quote|6fn>|font size|<quote|0.84>|The <with|font
+      family|<quote|tt>|language|<quote|verbatim>|dynlink>
+      plugin<value|toc-dots><pageref|toc-1>>
+    </associate>
+  </collection>
+</auxiliary>

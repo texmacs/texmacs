@@ -12,4 +12,4 @@
 
 (setf debug:*debug-prompt* #'tm-debug-prompt)
 
-(load "lisp/tmlib.lisp")
+(load "$TEXMACS_LISP_PATH/lisp/tmlib.lisp")

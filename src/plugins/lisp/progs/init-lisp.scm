@@ -18,9 +18,9 @@
 
 (define (lisp-versions)
   (let ((version-list
-	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
-		 (if (url-exists-in-path? "lisp") '("Cmucl") '()))))
-    (if (not (null? version-list))
+	 (append (if (url-exists-in-path? "clisp") '("CLisp") '())
+		 (if (url-exists-in-path? "lisp") '("CMUCL") '()))))
+    (if (list? version-list)
       (let* ((default (car version-list))
 	     (rest (cdr version-list))
 	     (launch-default
@@ -31,7 +31,7 @@
 		 (list :launch version-name
 		       (string-append "tm_lisp " version-name)))
 	       rest)))
-	(cons launch-default launch-rest))
+       (cons launch-default launch-rest))
       '())))
 
 (plugin-configure lisp

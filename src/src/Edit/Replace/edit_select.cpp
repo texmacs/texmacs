@@ -92,7 +92,7 @@ edit_select_rep::select (path p1, path p2) {
 
 void
 edit_select_rep::select_all () {
-  select (rp);
+  select (path ());
 }
 
 void
@@ -128,7 +128,7 @@ edit_select_rep::select_from_keyboard (bool flag) {
   selecting= flag;
   shift_selecting= false;
   if (flag) mid_p= copy (tp);
-  else mid_p= rp;
+  else mid_p= path ();
 }
 
 void
@@ -153,8 +153,7 @@ edit_select_rep::select_enlarge () {
     tree st= subtree (et, p);
     if (is_atomic (st)) {
       string s= st->label;
-      string mode= get_env_string (MODE);
-      if (mode == "text" || mode == "src") {
+      if (get_env_string (MODE) == "text") {
 	int i1= last_item (start_p), i2= i1;
 	while (i1>0) {
 	  if (s[i1-1] == ' ') break;
@@ -183,7 +182,7 @@ edit_select_rep::select_enlarge () {
   }
   else {
     path p= common (start_p, end_p);
-    if (!(rp < p)) {
+    if (nil (p)) {
       selection_cancel ();
       set_message ("", "");
       return;
@@ -215,7 +214,7 @@ edit_select_rep::select_enlarge () {
 
 static bool
 stop_enlarge_environmental (tree t) {
-  if (is_func (t, WITH, 3) && (t[0] == MODE) && (t[1] == "math")) return true;
+  if (is_func (t, WITH, 3) && (t[0]==MODE) && (t[1]=="math")) return true;
   if (!is_extension (t)) return false;
   if (is_multi_paragraph (t)) return true;
   string s= as_string (L(t));
@@ -491,7 +490,7 @@ edit_select_rep::selection_get () {
     // cout << "Between paths: " << start << " and " << end << "\n";
     tree t= ::compute_selection (et, start, end);
     // cout << "Selection : " << t << "\n";
-    return simplify_correct (t);
+    return t;
   }
 }
 
@@ -512,16 +511,16 @@ edit_select_rep::selection_raw_get (string key) {
 void
 edit_select_rep::selection_set_start (path p) {
   bool flag= selection_active_any ();
-  if (rp < p) start_p= p;
-  else start_p= tp;
+  if (nil(p)) start_p= tp;
+  else start_p= p;
   if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
   notify_change (THE_SELECTION);
 }
 
 void
 edit_select_rep::selection_set_end (path p) {
-  if (rp < p) end_p= p;
-  else end_p= tp;
+  if (nil(p)) end_p= tp;
+  else end_p= p;
   if (path_less_eq (end_p, start_p)) start_p= end_p;
   notify_change (THE_SELECTION);
 }
@@ -581,12 +580,11 @@ edit_select_rep::selection_paste (string key) {
     string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {
       tree in= tuple (lan, t[1]);
-      tree r= stree_to_tree (call ("plugin-math-input", tree_to_stree (in)));
+      tree r= object_to_tree (call ("plugin-math-input", tree_to_object (in)));
       insert_tree (r);
     }
     else {
-      if ((t[2] != mode) && (t[2] != "src") && (mode != "src") &&
-	  ((t[2] == "math") || (mode == "math")))
+      if ((t[2] != mode) && ((t[2]=="math") || (mode=="math")))
 	insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
@@ -643,15 +641,6 @@ edit_select_rep::cut (path p) {
 
 void
 edit_select_rep::cut (path p1, path p2) {
-  path p = common (p1, p2);
-  raw_cut (p1, p2);
-  if (!is_document (subtree (et, p)))
-    if (is_concat (subtree (et, path_up (p))))
-      correct_concat (path_up (p));
-}
-
-void
-edit_select_rep::raw_cut (path p1, path p2) {
   if (p2 == p1) return;
   path p = common (p1, p2);
   tree t = subtree (et, p);
@@ -662,9 +651,9 @@ edit_select_rep::raw_cut (path p1, path p2) {
   if (is_document (t) || is_concat (t)) {
     path q1= copy (p); q1 << path (i1, end (t[i1]));
     path q2= copy (p); q2 << path (i2, start (t[i2]));
-    raw_cut (q2, p2);
+    cut (q2, p2);
     if (i2>i1+1) remove (p * (i1+1), i2-i1-1);
-    raw_cut (p1, q1);
+    cut (p1, q1);
     if (is_concat (t)) correct_concat (p);
     else remove_return (p * i1);
     return;
@@ -682,9 +671,9 @@ edit_select_rep::raw_cut (path p1, path p2) {
     int i, j;
     for (i=row1; i<=row2; i++)
       for (j=col1; j<=col2; j++) {
-        path cp= fp * ::table_search_cell (st, i, j);
-        if (is_func (subtree (et, cp), CELL, 1)) cp= cp * 0;
-        assign (cp, "");
+	path cp= fp * ::table_search_cell (st, i, j);
+	if (is_func (subtree (et, cp), CELL, 1)) cp= cp * 0;
+	assign (cp, "");
       }
     path cp= fp * ::table_search_cell (st, row1, col1);
     go_to (cp * path (0, 0));
@@ -704,7 +693,7 @@ edit_select_rep::raw_cut (path p1, path p2) {
     cerr << "p = " << p << "\n";
     cerr << "p1= " << p1 << "\n";
     cerr << "p2= " << p2 << "\n";
-    fatal_error ("invalid cut", "edit_select_rep::raw_cut");
+    fatal_error ("invalid cut", "edit_select_rep::cut");
   }
 
   if (is_atomic (t)) {
@@ -718,7 +707,7 @@ edit_select_rep::raw_cut (path p1, path p2) {
       cerr << "p = " << p << "\n";
       cerr << "p1= " << p1 << "\n";
       cerr << "p2= " << p2 << "\n";
-      fatal_error ("invalid object cut", "edit_select_rep::raw_cut");
+      fatal_error ("invalid object cut", "edit_select_rep::cut");
     }
     assign (p, "");
   }
@@ -741,8 +730,8 @@ edit_select_rep::selection_cut (string key) {
 
     tree sel= compute_selection (et, p1, p2);
     // cout << "Selection " << sel << "\n";
-    selection_set (key, simplify_correct (sel));
-    // cout << "Selected  " << sel << "\n";
+    selection_set (key, sel);
+    // cout << "Selected  " << well_matched (sel) << "\n";
     cut (p1, p2);
   }
 }

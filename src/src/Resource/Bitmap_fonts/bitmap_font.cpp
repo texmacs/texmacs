@@ -20,7 +20,7 @@ RESOURCE_CODE(font_glyphs);
 ******************************************************************************/
 
 font_metric_rep::font_metric_rep (string name):
-  rep<font_metric> (name), bad_font_metric (false) {}
+  rep<font_metric> (name) {}
 
 font_metric_rep::~font_metric_rep () {
   fatal_error ("not yet implemented",
@@ -32,7 +32,7 @@ font_metric_rep::~font_metric_rep () {
 * Standard bitmap metrics
 ******************************************************************************/
 
-static metric error_metric;
+static metric on_error;
 
 struct std_font_metric_rep: public font_metric_rep {
   int bc, ec;
@@ -46,15 +46,15 @@ std_font_metric_rep::std_font_metric_rep (
   string name, metric* fnm2, int bc2, int ec2):
     font_metric_rep (name), bc (bc2), ec (ec2), fnm (fnm2)
 {
-  error_metric->x1= error_metric->y1= 0;
-  error_metric->x2= error_metric->y2= 0;
-  error_metric->x3= error_metric->y3= 0;
-  error_metric->x4= error_metric->y4= 0;
+  on_error->x1= on_error->y1= 0;
+  on_error->x2= on_error->y2= 0;
+  on_error->x3= on_error->y3= 0;
+  on_error->x4= on_error->y4= 0;
 }
 
 metric&
 std_font_metric_rep::get (int c) {
-  if ((c<bc) || (c>ec)) return error_metric;
+  if ((c<bc) || (c>ec)) return on_error;
   return fnm [c-bc];
 }
 
@@ -65,11 +65,11 @@ std_font_metric (string name, metric* fnm, int bc, int ec) {
 }
 
 /******************************************************************************
-* font_glyphs
+* font_glyphss
 ******************************************************************************/
 
 font_glyphs_rep::font_glyphs_rep (string name):
-  rep<font_glyphs> (name), bad_font_glyphs (false) {}
+  rep<font_glyphs> (name) {}
 
 font_glyphs_rep::~font_glyphs_rep () {
   fatal_error ("not yet implemented",
@@ -80,8 +80,6 @@ font_glyphs_rep::~font_glyphs_rep () {
 /******************************************************************************
 * Standard bitmap fonts
 ******************************************************************************/
-
-static glyph error_glyph;
 
 struct std_font_glyphs_rep: public font_glyphs_rep {
   int bc, ec;
@@ -95,9 +93,11 @@ std_font_glyphs_rep::std_font_glyphs_rep (
   string name, glyph* fng2, int bc2, int ec2):
     font_glyphs_rep (name), bc (bc2), ec (ec2), fng (fng2) {}
 
+static glyph nil_glyph;
+
 glyph&
 std_font_glyphs_rep::get (int c) {
-  if ((c<bc) || (c>ec)) return error_glyph;
+  if ((c<bc) || (c>ec)) return nil_glyph;
   return fng [c-bc];
 }
 

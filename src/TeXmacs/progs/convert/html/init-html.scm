@@ -45,22 +45,22 @@
 (lazy-define (convert html htmlout) serialize-html)
 (lazy-define (convert html tmhtml) texmacs->html)
 
-(converter html-document html-stree
+(converter html-document html-object
   (:function parse-html-document))
 
-(converter html-stree html-document
+(converter html-object html-document
   (:function serialize-html))
 
-(converter html-snippet html-stree
+(converter html-snippet html-object
   (:function parse-html-snippet))
 
-(converter html-stree html-snippet
+(converter html-object html-snippet
   (:function serialize-html))
 
-(converter html-stree texmacs-stree
+(converter html-object texmacs-object
   (:function html->texmacs))
 
-(converter texmacs-stree html-stree
+(converter texmacs-object html-object
   (:function texmacs->html)
 ;  (:function-with-options texmacs->html)
 ;  (:option "texmacs->html:css" "on")

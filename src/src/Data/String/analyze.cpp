@@ -574,13 +574,13 @@ slash (string s) {
     switch (s[i]) {
     case '(':
     case ')':
-    case ' ': 
+    case ' ':
     case '\'':
       if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
       r << s[i];
       break;
     case '\\':
-      r << '\\' << s[i];
+      r << "\\" << s[i];
       break;
     case '\042':
       if (((i==0) && (s[n-1]=='\042')) ||
@@ -665,18 +665,6 @@ escape_verbatim (string s) {
     unsigned char c= (unsigned char) s[i];
     if ((c == '\n') || (c == '\t')) r << ' ';
     else if (((int) c) >= 32) r << s[i];
-  }
-  return r;
-}
-
-string
-escape_spaces (string s) {
-  int i, n= N(s);
-  string r;
-  for (i=0; i<n; i++) {
-    unsigned char c= (unsigned char) s[i];
-    if (c == ' ') r << '\\';
-    r << c;
   }
   return r;
 }

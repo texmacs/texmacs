@@ -15,10 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 
-/******************************************************************************
-* Low level routines and constructors
-******************************************************************************/
-
 static inline int
 round_length (int n) {
   n=(n+3)&(0xfffffffc);
@@ -66,10 +62,6 @@ string::string (char* a, int n) {
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
 }
-
-/******************************************************************************
-* Common routines for strings
-******************************************************************************/
 
 bool
 string::operator == (char* s) {
@@ -189,10 +181,6 @@ hash (string s) {
   }
   return h;
 }
-
-/******************************************************************************
-* Conversion routines
-******************************************************************************/
 
 bool
 as_bool (string s) {
@@ -345,7 +333,6 @@ void
 fatal_error (string message, string routine, string file) {
   cerr << "\nFatal error: " << message << " in '" << routine << "'\n";
   if (N(file)!=0) cerr << "See file   : " << file << "\n";
-  cout << 1/0 << "\n";
   exit (1);
 }
 
