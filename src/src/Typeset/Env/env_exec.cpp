@@ -1191,11 +1191,14 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     if (L(f) == XMACRO) {
       if (is_atomic (f[0]))
 	macro_arg->item (f[0]->label)= t;
+      (void) exec_until (f[n], p, var, 0);
     }
-    else for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
-    (void) exec_until (f[n], p->next, var, 0);
+    else {
+      for (i=0; i<n; i++)
+	if (is_atomic (f[i]))
+	  macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+      (void) exec_until (f[n], p->next, var, 0);
+    }
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
   }
