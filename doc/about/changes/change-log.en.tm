@@ -1,13 +1,17 @@
-<TeXmacs|1.0.2.11>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.2 to 1.0.2.11>
+  <section|Changes from version 1.0.2 to 1.0.3>
 
   <\itemize>
+    <item>Several minor bug corrections (1.0.3).
+
+    <item>Applied some convenience patches (1.0.3).
+
     <item>Added support for Slovene (1.0.2.11).
 
     <item>Improvements in LaTeX importation (1.0.2.11).
@@ -1138,14 +1142,14 @@
 <\references>
   <\collection>
     <associate|toc-10|<tuple|10|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-11|<tuple|11|?>>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|1|?>>
     <associate|toc-12|<tuple|12|?>>
     <associate|toc-2|<tuple|2|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|3|?>>
     <associate|toc-13|<tuple|13|?>>
+    <associate|toc-3|<tuple|3|?>>
     <associate|toc-4|<tuple|4|?>>
     <associate|toc-5|<tuple|5|?>>
     <associate|toc-6|<tuple|6|?>>
@@ -1159,7 +1163,7 @@
   <\collection>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Changes
-      from version 1.0.2 to 1.0.2.10><value|toc-dots><pageref|toc-1><vspace|0.5fn>
+      from version 1.0.2 to 1.0.2.11><value|toc-dots><pageref|toc-1><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Changes
       from version 1.0.1 to 1.0.2><value|toc-dots><pageref|toc-2><vspace|0.5fn>
