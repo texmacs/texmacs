@@ -114,7 +114,13 @@
       (=> (balloon (icon "tm_link.xpm") "Insert a link")
 	  (link insert-link-menu))
       (=> (balloon (icon "tm_switch.xpm") "Switching and folding")
-	  (link insert-switch-menu))))
+	  (link insert-switch-menu))
+      (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
+	  (link insert-mathematics-menu))
+      (if (style-has? "program-dtd")
+	  (=> (balloon (icon "tm_shell.xpm")
+		       "Start an interactive session")
+	      (link insert-session-menu)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The context dependent icon bar

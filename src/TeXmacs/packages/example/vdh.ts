@@ -1,8 +1,26 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
 <\body>
+  <active*|<\src-title>
+    <src-package|vdh|1.0>
+
+    <\src-purpose>
+      An example style package used by Joris van der Hoeven.
+    </src-purpose>
+
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
   <style-only|<\with|mode|math>
     <assign|A|\<cal-A\>>
 
@@ -85,7 +103,7 @@
   </macro>>
 
   <assign|solution|<\macro|x>
-    <exercise*|<localize|Solution>|<arg|x>>
+    <render-exercise|<localize|Solution>|<arg|x>>
   </macro>>
 
   <assign|annote|<macro|i|<with|font-family|ss|<with|color|brown|[><with|color|dark
