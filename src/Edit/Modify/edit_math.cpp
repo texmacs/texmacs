@@ -199,6 +199,16 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
   }
 }
 
+void
+edit_math_rep::back_in_wide (tree t, path p, bool forward) {
+  int i= last_item (p);
+  if ((i == 0) && is_empty (t[0])) {
+    assign (path_up (p), "");
+    correct (path_up (p, 2));
+  }
+  else go_to_border (path_up (p), !forward);
+}
+
 /******************************************************************************
 * Trees
 ******************************************************************************/
