@@ -18,6 +18,7 @@
     list->module ;; for module-load macro
     module-load
     set-symbol-procedure! symbol-procedure
+    set-symbol-prop! symbol-prop
     list-sort))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,12 +51,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define symbol-procedure-table (make-ahash-table))
+(define symbol-property-table (make-ahash-table))
 
 (define (set-symbol-procedure! symb proc)
   (ahash-set! symbol-procedure-table symb proc))
 
 (define (symbol-procedure symb)
   (ahash-ref symbol-procedure-table symb))
+
+(define (set-symbol-prop! symb prop val)
+  (ahash-set! symbol-property-table (list symb prop) val))
+
+(define (symbol-prop symb prop)
+  (ahash-ref symbol-property-table (list symb prop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sorting lists

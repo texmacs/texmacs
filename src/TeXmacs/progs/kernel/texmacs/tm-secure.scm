@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (secure-symbols . l)
-  (for-each (lambda (x) (set-symbol-property! x :secure #t)) l)
+  (for-each (lambda (x) (set-symbol-prop! x :secure #t)) l)
   '(noop))
 
 (secure-symbols
@@ -76,7 +76,7 @@
 		 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
 		 ((symbol? f)
 		  (with proc (symbol-procedure f)
-		    (and (or (symbol-property f :secure)
+		    (and (or (symbol-prop f :secure)
 			     (and proc (procedure-property proc :secure)))
 			 (secure-args? (cdr expr) env))))
 		 (else (secure-args? expr env)))))
