@@ -1028,7 +1028,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (texmacs->html x)
-  (display-err* "x= " x "\n")
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
