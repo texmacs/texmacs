@@ -1306,4 +1306,4 @@
 ("renumber this page" "diese Seite nummerieren")
 ("page number text" "Seitennummerntext")
 ("short" "kurz")
-("detailed" "ausf?hrlich")
+("detailed" "ausführlich")
