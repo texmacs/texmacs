@@ -275,13 +275,13 @@ concater_rep::typeset (tree t, path ip) {
     }
 
   case LEFT:
-    typeset_left (t, ip);
+    typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
     break;
   case MID:
-    typeset_middle (t, ip);
+    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, "<mid-");
     break;
   case RIGHT:
-    typeset_right (t, ip);
+    typeset_large (t, ip, RIGHT_BRACKET_ITEM, "<right-");
     break;
   case BIG:
     typeset_bigop (t, ip);
