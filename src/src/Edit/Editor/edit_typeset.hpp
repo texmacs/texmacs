@@ -68,6 +68,7 @@ public:
   tree     exec (tree t, hashmap<string,tree> env);
   tree     exec_texmacs (tree t, path p);
   tree     exec_html (tree t, path p);
+  tree     exec_html (tree t);
 
   void     init_env (string var, tree by);
   void     init_default (string var);

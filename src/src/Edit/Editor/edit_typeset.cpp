@@ -300,13 +300,18 @@ edit_typeset_rep::exec_texmacs (tree t, path p) {
 
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
-  if (p == path (0)) typeset_preamble ();
+  if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
   tree patch= as_tree (eval ("(object->tree (tmhtml-env-patch))"));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
   return exec (t, H);
+}
+
+tree
+edit_typeset_rep::exec_html (tree t) {
+  return exec_html (t, rp * 0);
 }
 
 /******************************************************************************
