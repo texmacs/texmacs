@@ -49,6 +49,8 @@
 
   <assign|aligned-strong-dot-item|<macro|x|<aligned-item|<item-strong|<arg|x>.>>>>
 
+  <assign|compact-space-item|<macro|x|<compact-item|<arg|x> \ >>>
+
   <assign|compact-strong-space-item|<macro|x|<compact-item|<item-strong|<arg|x>
   \ >>>>
 
@@ -79,7 +81,7 @@
 
   <assign|item*|<macro|x|<assign|last-item|<arg|x>><current-item|<arg|x>>>>
 
-  <assign|item|<macro|<next-counter|item><item*|<the-item>>>>
+  <assign|item|<macro|<next-item><item*|<the-item>>>>
 
   <\active*>
     <\src-comment>

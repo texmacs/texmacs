@@ -41,7 +41,7 @@
 
   \;
 
-  <assign|footnote|<macro|x|<style-with|src-compact|none|<assign|footnote-nr|<plus|<footnote-nr>|1>><assign|the-label|<the-footnote>><style-with|src-compact|none|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<the-footnote><footnote-sep><label|<merge|footnote-|<the-footnote>>>|<right-flush>|<style-with|src-compact|none|<arg|x>>>>>>><space|0spc><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
+  <assign|footnote|<macro|x|<style-with|src-compact|none|<next-footnote><style-with|src-compact|none|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<the-footnote><footnote-sep><label|<merge|footnote-|<the-footnote>>>|<right-flush>|<style-with|src-compact|none|<arg|x>>>>>>><space|0spc><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 
   \;
 </body>

@@ -112,8 +112,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     if (!is_tuple (style))
       fatal_error ("tuple expected as style",
 		   "edit_interface_rep::typeset_style_using_cache");
-    tree t (USE_PACKAGE, "std--before");
-    t << A (style) << "std--after";
+    tree t (USE_PACKAGE, A (style));
     env->exec (t);
     env->read_env (H);
     drd->heuristic_init (H);

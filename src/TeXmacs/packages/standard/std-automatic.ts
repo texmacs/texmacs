@@ -42,9 +42,9 @@
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
   green|x><map-args|nocite-arg|concat|x|1>>>>
 
-  <assign|bibitem|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|the-label|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
+  <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<item*|[<arg|text>]><assign|the-label|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<compact-strong-space-item|[<arg|text>]><assign|the-label|<arg|text>>>>>
 
   <assign|protect|>
 

@@ -25,28 +25,34 @@
     <\src-comment>
       The <verbatim|new-counter> primitive is used for the definition of a
       new counter. Each new counter <verbatim|x> gives rise to several new
-      environment variables: <verbatim|x-nr> contains the counter itself (an
-      integer), <verbatim|display-x> a macro which will be applied to the
-      counter for displaying it, <verbatim|counter-x> a macro which returns
-      the name of the counter (<verbatim|x-nr> by default),
-      <verbatim|the-counter> a macro which returns the counter for display,
-      <verbatim|reset-x> a macro which resets the counter, and
-      <verbatim|inc-x> a macro which increases the counter. The different
-      macros may be changed in order to customize the behaviour of the
-      counter; this feature is used in particular by the grouping primitives
-      defined further below.
+      environment variables:
+
+      \ \ <verbatim|x-nr>: the counter itself (an integer).
+
+      \ \ <verbatim|display-x>: a macro which will be applied to the counter
+      for displaying it.
+
+      \ \ <verbatim|counter-x>: a macro which returns the name of the counter
+      (<verbatim|x-nr> by default).
+
+      \ \ <verbatim|the-x>: a macro which returns the counter for display.
+
+      \ \ <verbatim|reset-x>: a macro which resets the counter.
+
+      \ \ <verbatim|inc-x>: a macro which increases the counter.
+
+      \ \ <verbatim|next-x>: a macro which increases the counter and sets the
+      current label to the counter.
+
+      The different macros may be changed in order to customize the behaviour
+      of the counter; this feature is used in particular by the grouping
+      primitives defined further below.
     </src-comment>
   </active*>
 
-  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>>>>>>
-
-  <assign|the-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|the-|<arg|x>>>>>>
+  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>><assign|<unquote|<merge|next-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|inc-|<arg|x>>>><assign|the-label|<compound|<unquote|<merge|the-|<arg|x>>>>>>>>>>>>
 
   <assign|reset-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|reset-|<arg|x>>>>>>
-
-  <assign|inc-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>>>>>
-
-  <assign|next-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>><assign|the-label|<compound|<merge|the-|<arg|x>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -63,7 +69,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-counter-group|<macro|g|<style-with|src-compact|none|<assign|<merge|<arg|g>|-group>|<tuple>><new-counter|<arg|g>><group-common-counter|<arg|g>>>>>
+  <assign|new-counter-group|<macro|g|<style-with|src-compact|none|<assign|<merge|<arg|g>|-group>|<tuple>><new-counter|<arg|g>><group-individual-counters|<arg|g>>>>>
 
   <assign|add-to-counter-group|<macro|x|g|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|g>|-group>>|<merge|<value|<merge|<arg|g>|-group>>|<tuple|<arg|x>>>><new-counter|<arg|x>><assign|<unquote|<merge|ind-display-|<arg|x>>>|<value|<unquote|<merge|display-|<arg|x>>>>><assign|<unquote|<merge|ind-counter-|<arg|x>>>|<value|<unquote|<merge|counter-|<arg|x>>>>><assign|<unquote|<merge|display-|<arg|x>>>|<macro|nr|<style-with|src-compact|none|<compound|<unquote|<merge|display-in-|<arg|g>>>|<unquote|<arg|x>>|<arg|nr>>>>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|counter-in-|<arg|g>>>|<unquote|<arg|x>>>>>>>>>>
 
