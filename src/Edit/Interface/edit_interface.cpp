@@ -114,7 +114,8 @@ void
 edit_interface_rep::process_extern_input () {
   if (con_status == WAITING_FOR_OUTPUT) {
     update_connection ();
-    if (con_status != WAITING_FOR_OUTPUT) return;
+    if ((con_status != WAITING_FOR_OUTPUT) &&
+	(con_status != CONNECTION_DEAD)) return;
     tree doc= connection_read (con_name, con_session, "output");
     if (doc != "") {
       insert_tree (doc);

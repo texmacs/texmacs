@@ -139,7 +139,7 @@ debug_io_string (string s) {
 void
 pipe_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
-  if (DEBUG_IO) cout << "---> " << debug_io_string (s) << "\n";
+  if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
   char* _s= as_charp (s);
   ::write (in, _s, N(s));
   delete[] _s;
