@@ -75,7 +75,7 @@ concater_rep::typeset_compound (tree t, path ip) {
     if (is_atomic (f)) {
       string var= f->label;
       if (!env->provides (var)) {
-	typeset_unknown (var, t, ip, true);
+	typeset_error (t, ip);
 	return;
       }
       f= env->read (var);
@@ -84,7 +84,7 @@ concater_rep::typeset_compound (tree t, path ip) {
   else {
     string var= as_string (L(t));
     if (!env->provides (var)) {
-      typeset_unknown (var, t, ip);
+      typeset_error (t, ip);
       return;
     }
     d= 0;
@@ -154,12 +154,12 @@ concater_rep::typeset_value (tree t, path ip) {
   // cout << "Value " << t << ", " << ip << "\n";
   tree r= t[0];
   if (is_compound (r)) {
-    typeset_unknown ("value", t, ip);
+    typeset_error (t, ip);
     return;
   }
   string name= r->label;
   if (!env->provides (name)) {
-    typeset_unknown (name, t, ip);
+    typeset_error (t, ip);
     return;
   }
   typeset_dynamic (env->read (name), ip);
@@ -170,11 +170,11 @@ concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
   tree r= t[0];
   if (is_compound (r)) {
-    typeset_unknown ("argument", t, ip);
+    typeset_error (t, ip);
     return;
   }
   if (nil (env->macro_arg) || (!env->macro_arg->item->contains (r->label))) {
-    typeset_unknown (r->label, t, ip, true);
+    typeset_error (t, ip);
     return;
   }
 
@@ -208,6 +208,13 @@ concater_rep::typeset_argument (tree t, path ip) {
 
   env->macro_arg= old_var;
   env->macro_src= old_src;
+  marker (descend (ip, 1));
+}
+
+void
+concater_rep::typeset_eval_args (tree t, path ip) { 
+  marker (descend (ip, 0));
+  typeset (env->exec (t), decorate_right (ip), false);
   marker (descend (ip, 1));
 }
 

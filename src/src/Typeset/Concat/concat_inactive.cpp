@@ -14,47 +14,7 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Typesetting special deactivated trees
-******************************************************************************/
-
-void
-concater_rep::typeset_eval_args (tree t, path ip) { 
-  marker (descend (ip, 0));
-  typeset (env->exec (t), decorate_right (ip), false);
-  marker (descend (ip, 1));
-}
-
-void
-concater_rep::typeset_unknown (string which, tree t, path ip, bool flag) {
-  int i;
-  tree old_col;
-  penalty_min (0);
-  marker (descend (ip, 0));
-  int start= N(a);
-  ghost ("<", descend (ip, 0));
-  ghost (which, descend (ip, 0), env->dis->red);
-  for (i= (flag? 1: 0); i<N(t); i++) {
-    print (space (0, 0, env->fn->spc->max));
-    ghost ("|", descend (descend (ip, i), 0));
-    print (space (0, 0, env->fn->spc->max));
-    if (i<N(t)-1) penalty_min (0);
-    if (i==0) old_col= env->local_begin (COLOR, "red");
-    typeset (t[i], descend (ip, i));
-    if (i==0) env->local_end (COLOR, old_col);
-    // ghost ("}", descend (descend (ip, i), right_index (t[i])));
-  }
-  if (N(t) == 0) ghost (">", descend (ip, 1));
-  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
-  int end= N(a);
-  for (i=start; i<end; i++)
-    a[i]->b->relocate (decorate_right (ip), true);
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-/******************************************************************************
-* Angular deactivated representation
+* Syntactic coloring of arguments of inactive markup
 ******************************************************************************/
 
 void
@@ -83,8 +43,8 @@ concater_rep::typeset_tt (tree t, path ip, bool test) {
 }
 
 void
-concater_rep::typeset_inactive_angular_arg (tree t, path ip, int i) {
-  // NOTE: the branching information might also be stored in the DRD.
+concater_rep::typeset_inactive_arg (tree t, path ip, int i) {
+  // NOTE: the branching might be done on base of the DRD rather than L(t).
   int n= N(t);
   switch (L(t)) {
   case ASSIGN:
@@ -125,21 +85,25 @@ concater_rep::typeset_inactive_angular_arg (tree t, path ip, int i) {
   }
 }
 
-void
-concater_rep::typeset_inactive_angular (tree t, path ip) {
-  int i, start= 1;
-  string name= as_string (L(t));
-  //string name= replace (env->drd->get_name (L(t)), " ", "-");
+/******************************************************************************
+* Display disactivated markup using angular brackets
+******************************************************************************/
 
+void
+concater_rep::typeset_inactive_angular (tree t, path ip, bool err) {
+  int i, first= 1;
+  string name= as_string (L(t));
   penalty_min (0);
   marker (descend (ip, 0));
+  int start= N(a);
   ghost ("<", descend (ip, 0));
   switch (L(t)) {
   case RAW_DATA:
     ghost (name, descend (ip, 1));
     break;
   case COMPOUND:
-    typeset_colored (t[0], descend (ip, 0), "dark green");
+    if (err) typeset_colored (t[0], descend (ip, 0), "red");
+    else typeset_colored (t[0], descend (ip, 0), "dark green");
     break;
   case SYMBOL:
     typeset_colored (t[0], descend (ip, 0), "blue");
@@ -149,22 +113,28 @@ concater_rep::typeset_inactive_angular (tree t, path ip) {
     typeset_colored (t[0], descend (ip, 0), "dark green");
     break;
   default:
-    ghost (name, descend (ip, 0));
-    start= 0;
+    if (err) ghost (name, descend (ip, 0), env->dis->red);
+    else ghost (name, descend (ip, 0));
+    first= 0;
     break;
   }
 
-  for (i= start; i<N(t); i++) {
+  for (i= first; i<N(t); i++) {
     print (space (0, 0, env->fn->spc->max));
     print (space (0, 0, env->fn->spc->max));
     ghost ("|", descend (descend (ip, i), 0));
     print (space (0, 0, env->fn->spc->max));
     if (i<N(t)-1) penalty_min (0);
-    typeset_inactive_angular_arg (t, ip, i);
+    typeset_inactive_arg (t, ip, i);
   }
 
-  if (i==start) ghost (">", descend (ip, 1));
+  if (i==first) ghost (">", descend (ip, 1));
   else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
+  if (err) {
+    int end= N(a);
+    for (i=start; i<end; i++)
+      a[i]->b->relocate (decorate_right (ip), true);
+  }
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);
@@ -176,38 +146,28 @@ concater_rep::typeset_inactive_angular (tree t, path ip) {
 
 void
 concater_rep::typeset_inactive (tree t, path ip) {
-  // cout << "Typeset " << t << "\n";
   if (is_atomic (t)) {
     typeset_string (t->label, ip);
     return;
   }
-
   switch (L (t)) {
-  case UNINIT:
-    typeset_uninit (t, ip);
-    break;
-  case ERROR:
-    typeset_error (t, ip);
-    break;
   case CONCAT:
     typeset_concat (t, ip);
     break;
-
-    /*
-  case TABLE:
-    typeset_table (t, ip);
-    break;
-    */
-
   case ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
   case VAR_ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
-
   default:
-    typeset_inactive_angular (t, ip);
+    typeset_inactive_angular (t, ip, false);
     break;
   }
+}
+
+void
+concater_rep::typeset_error (tree t, path ip) {
+  if (is_atomic (t)) typeset_string (t->label, ip);
+  else typeset_inactive_angular (t, ip, true);
 }

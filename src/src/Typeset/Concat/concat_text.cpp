@@ -103,21 +103,6 @@ concater_rep::typeset_string (string s, path ip) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_uninit (tree t, path ip) {
-  (void) t;
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("?", decorate_right (ip), env->dis->red);
-  marker (descend (ip, 1));
-  penalty_min (0);
-}
-
-void
-concater_rep::typeset_error (tree t, path ip) {
-  typeset_unknown ("error", t, ip);
-}
-
-void
 concater_rep::typeset_paragraph (tree t, path ip) {
   print (STD_ITEM, ::typeset_as_paragraph (env, t[0], descend (ip, 0)));
 }
