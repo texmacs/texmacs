@@ -85,7 +85,7 @@ bridge_document_rep::notify_insert (path p, tree u) {
       brs2[i+nr]->ip->item += nr;
     }
     brs= brs2;
-    st = insert (st, p->item, u);
+    st = (st (0, p->item) * u) * st (p->item, N(st));
   }
   else {
     brs[p->item]->notify_insert (p->next, u);
@@ -111,7 +111,7 @@ bridge_document_rep::notify_remove (path p, int nr) {
       change_flag |= !brs[i]->changes->empty();
     brs= brs2;
     n -= nr;
-    st = remove (st, pos, nr);
+    st = st (0, pos) * st (pos+nr, N(st));
     if (pos>0) brs[pos-1]->notify_change (); // touch in case of surroundings
     if (pos<n) brs[pos  ]->notify_change (); // touch in case of surroundings
     if (change_flag) // touch brs[pos..n] for correct ``changes handling''

@@ -286,12 +286,12 @@ tree
 edit_env_rep::exec_formatting (tree t, string v) {
   int n= N(t);
   tree oldv= read (v);
-  tree newv= join (oldv, t (0, n-1));
+  tree newv= oldv * t (0, n-1);
   // monitored_write_update (v, newv);
   write_update (v, newv);
   tree r= exec (t[n-1]);
   write_update (v, oldv);
-  return join (t (0, n-1), tree (TFORMAT, r));
+  return t (0, n-1) * tree (TFORMAT, r);
 }
 
 tree
@@ -816,7 +816,7 @@ edit_env_rep::exec_merge (tree t) {
     if (is_atomic (acc) && is_atomic (add))
       acc= acc->label * add->label;
     else if (is_tuple (acc) && is_tuple (add))
-      acc= join (acc, add);
+      acc= acc * add;
     else if (is_func (acc, MACRO) && is_func (add, MACRO) &&
 	     (N(acc) == N(add)) &&
 	     (acc (0, N(acc)-1) == add (0, N(add)-1)))
@@ -1122,7 +1122,7 @@ edit_env_rep::exec_until_formatting (tree t, path p, string v) {
   int n= N(t);
   if (p->item != n-1) return;
   tree oldv= read (v);
-  tree newv= join (oldv, t (0, n-1));
+  tree newv= oldv * t (0, n-1);
   monitored_write_update (v, newv);
   exec_until (t[n-1], p->next);
 }
@@ -1348,7 +1348,7 @@ edit_env_rep::exec_until_formatting (
 {
   int n= N(t);
   tree oldv= read (v);
-  tree newv= join (oldv, t (0, n-1));
+  tree newv= oldv * t (0, n-1);
   monitored_write_update (v, newv);
   if (exec_until (t[n-1], p, var, level)) return true;
   monitored_write_update (v, oldv);

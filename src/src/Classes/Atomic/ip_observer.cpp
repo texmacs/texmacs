@@ -27,16 +27,16 @@ class ip_observer_rep: public observer_rep {
 public:
   ip_observer_rep (path ip2): ip (ip2) {}
 
-  virtual void assign    (tree& ot, tree t);
-  virtual void insert    (tree& ot, int pos, int nr);
-  virtual void remove    (tree& ot, int pos, int nr);
-  virtual void split     (tree& ot, int pos);
-  virtual void join      (tree& ot, int pos);
-  virtual void ins_unary (tree& ot);
-  virtual void rem_unary (tree& ot);
+  virtual void notify_assign    (tree& ref, tree t);
+  virtual void notify_insert    (tree& ref, int pos, int nr);
+  virtual void notify_remove    (tree& ref, int pos, int nr);
+  virtual void notify_split     (tree& ref, int pos);
+  virtual void notify_join      (tree& ref, int pos);
+  virtual void notify_ins_unary (tree& ref);
+  virtual void notify_rem_unary (tree& ref);
 
-  virtual path get_ip    (tree& ot);
-  virtual bool set_ip    (tree& ot, path ip);
+  virtual path get_ip (tree& ref);
+  virtual bool set_ip (tree& ref, path ip);
 };
 
 /******************************************************************************
@@ -44,66 +44,66 @@ public:
 ******************************************************************************/
 
 void
-ip_observer_rep::assign (tree& ot, tree t) {
-  path temp_ip= _get_ip (ot);
+ip_observer_rep::notify_assign (tree& ref, tree t) {
+  path temp_ip= obtain_ip (ref);
   temp_ip= path (temp_ip->item, temp_ip->next); // prevents overriding temp_ip
-  _detach_ip (ot);
-  _set_ip (t, temp_ip);
+  detach_ip (ref);
+  attach_ip (t, temp_ip);
 }
 
 void
-ip_observer_rep::insert (tree& ot, int pos, int nr) {
+ip_observer_rep::notify_insert (tree& ref, int pos, int nr) {
   (void) nr;
-  if (is_compound (ot)) {
-    int i, n= N(ot);
+  if (is_compound (ref)) {
+    int i, n= N(ref);
     for (i=pos; i<n; i++)
-      _set_ip (ot[i], path (i, ip));
+      attach_ip (ref[i], path (i, ip));
   }
 }
 
 void
-ip_observer_rep::remove (tree& ot, int pos, int nr) {
+ip_observer_rep::notify_remove (tree& ref, int pos, int nr) {
   (void) nr;
-  if (is_compound (ot)) {
-    int i, n= N(ot);
+  if (is_compound (ref)) {
+    int i, n= N(ref);
     for (i=pos; i<(pos+nr); i++)
-      _detach_ip (ot[i]);
+      detach_ip (ref[i]);
     for (; i<n; i++)
-      _set_ip (ot[i], path (i-nr, ip));
+      attach_ip (ref[i], path (i-nr, ip));
   }
 }
 
 void
-ip_observer_rep::split (tree& ot, int pos) {
-  int i, n= N(ot);
+ip_observer_rep::notify_split (tree& ref, int pos) {
+  int i, n= N(ref);
   for (i=pos; i<n; i++)
-    _set_ip (ot[i], path (i, ip));
+    attach_ip (ref[i], path (i, ip));
 }
 
 void
-ip_observer_rep::join (tree& ot, int pos) {
-  int i, n= N(ot);
+ip_observer_rep::notify_join (tree& ref, int pos) {
+  int i, n= N(ref);
   for (i=pos+2; i<n; i++)
-    _set_ip (ot[i], path (i-1, ip));
-  if (is_compound (ot[pos]) && is_compound (ot[pos+1])) {
-    int n1= N(ot[pos]), n2= N(ot[pos+1]);
+    attach_ip (ref[i], path (i-1, ip));
+  if (is_compound (ref[pos]) && is_compound (ref[pos+1])) {
+    int n1= N(ref[pos]), n2= N(ref[pos+1]);
     for (i=0; i<n2; i++)
-      _set_ip (ot[pos+1][i], path (n1+i, _get_ip (ot[pos])));
+      attach_ip (ref[pos+1][i], path (n1+i, obtain_ip (ref[pos])));
   }
-  _detach_ip (ot[pos+1]);
+  detach_ip (ref[pos+1]);
 }
 
 void
-ip_observer_rep::ins_unary (tree& ot) {
+ip_observer_rep::notify_ins_unary (tree& ref) {
   ip= path (0, ip);
-  _set_ip (ot, ip->next);
+  attach_ip (ref, ip->next);
 }
 
 void
-ip_observer_rep::rem_unary (tree& ot) {
-  if ((!nil (ip)) && (ip->item>=0)) _set_ip (ot[0], ip);
-  else _detach_ip (ot[0]);
-  _detach_ip (ot);
+ip_observer_rep::notify_rem_unary (tree& ref) {
+  if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[0], ip);
+  else detach_ip (ref[0]);
+  detach_ip (ref);
 }
 
 /******************************************************************************
@@ -111,12 +111,12 @@ ip_observer_rep::rem_unary (tree& ot) {
 ******************************************************************************/
 
 path
-ip_observer_rep::get_ip (tree& ot) {
+ip_observer_rep::get_ip (tree& ref) {
   return ip;
 }
 
 bool
-ip_observer_rep::set_ip (tree& ot, path ip2) {
+ip_observer_rep::set_ip (tree& ref, path ip2) {
   if (nil (ip2))
     fatal_error ("cannot set ip to null", "ip_observer_rep::set_ip");
   ip->item= ip2->item;
@@ -125,29 +125,29 @@ ip_observer_rep::set_ip (tree& ot, path ip2) {
 }
 
 void
-_set_ip (tree& ot, path ip) {
-  // cout << "Set ip of " << ot << " to " << ip << "\n";
-  if (nil (ot->obs) || ot->obs->set_ip (ot, ip))
-    ot->obs= list_observer (ip_observer (ip), ot->obs);
-  if (is_compound (ot)) {
-    int i, n= N(ot);
+attach_ip (tree& ref, path ip) {
+  // cout << "Set ip of " << ref << " to " << ip << "\n";
+  if (nil (ref->obs) || ref->obs->set_ip (ref, ip))
+    ref->obs= list_observer (ip_observer (ip), ref->obs);
+  if (is_compound (ref)) {
+    int i, n= N(ref);
     for (i=0; i<n; i++)
-      if (_get_ip (ot[i]) != path (i, ip))
-	_set_ip (ot[i], path (i, ip));
+      if (obtain_ip (ref[i]) != path (i, ip))
+	attach_ip (ref[i], path (i, ip));
   }
 }
 
 void
-_detach_ip (tree& ot) {
-  // cout << "Detach ip of " << ot << "\n";
-  if (!nil (ot->obs))
-    (void) ot->obs->set_ip (ot, DETACHED);
+detach_ip (tree& ref) {
+  // cout << "Detach ip of " << ref << "\n";
+  if (!nil (ref->obs))
+    (void) ref->obs->set_ip (ref, DETACHED);
 }
 
 path
-_get_ip (tree& ot) {
-  if (nil (ot->obs)) return DETACHED;
-  return ot->obs->get_ip (ot);
+obtain_ip (tree& ref) {
+  if (nil (ref->obs)) return DETACHED;
+  return ref->obs->get_ip (ref);
 }
 
 /******************************************************************************

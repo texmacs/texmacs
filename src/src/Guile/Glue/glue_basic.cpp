@@ -314,7 +314,7 @@ tmg_tree_append (SCM arg1, SCM arg2) {
   tree in2= scm_to_tree (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= join (in1, in2);
+  tree out= tree_append (in1, in2);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -357,6 +357,128 @@ tmg_tree_simplify (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_assign (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-assign");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree-assign");
+
+  tree in1= scm_to_tree (arg1);
+  tree in2= scm_to_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  assign (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_insert (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-insert");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-insert");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-insert");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  tree in3= scm_to_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  insert (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_remove (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-remove");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-remove");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-remove");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  remove (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_split (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-split");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-split");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-split");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  split (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_join (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-join");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-join");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  join (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_ins_unary (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ins-unary");
+  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "tree-ins-unary");
+
+  tree in1= scm_to_tree (arg1);
+  tree_label in2= scm_to_tree_label (arg2);
+
+  // SCM_DEFER_INTS;
+  ins_unary (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_rem_unary (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-rem-unary");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  rem_unary (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_obtain_ip (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-obtain-ip");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  path out= obtain_ip (in1);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
 }
 
 SCM
@@ -2313,6 +2435,14 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
+  gh_new_procedure ("tree-assign", (FN) tmg_tree_assign, 2, 0, 0);
+  gh_new_procedure ("tree-insert", (FN) tmg_tree_insert, 3, 0, 0);
+  gh_new_procedure ("tree-remove", (FN) tmg_tree_remove, 3, 0, 0);
+  gh_new_procedure ("tree-split", (FN) tmg_tree_split, 3, 0, 0);
+  gh_new_procedure ("tree-join", (FN) tmg_tree_join, 2, 0, 0);
+  gh_new_procedure ("tree-ins-unary", (FN) tmg_tree_ins_unary, 2, 0, 0);
+  gh_new_procedure ("tree-rem-unary", (FN) tmg_tree_rem_unary, 1, 0, 0);
+  gh_new_procedure ("tree-obtain-ip", (FN) tmg_tree_obtain_ip, 1, 0, 0);
   gh_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   gh_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   gh_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);

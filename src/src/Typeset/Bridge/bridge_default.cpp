@@ -46,24 +46,24 @@ substitute (tree t, path p, tree u) {
 }
 
 tree
-insert (tree t, path p, tree u) {
+insert_at (tree t, path p, tree u) {
   if (atom (p)) {
     if (is_atomic (t)) {
       if (is_compound (u)) fatal_error ("two atoms expected", "insert");
-      return insert (t->label, p->item, u->label);
+      return insert_at (t->label, p->item, u->label);
     }
-    else return insert (t, p->item, u);
+    else return insert_at (t, p->item, u);
   }
-  else return substitute (t, p->item, insert (t[p->item], p->next, u));
+  else return substitute (t, p->item, insert_at (t[p->item], p->next, u));
 }
 
 tree
-remove (tree t, path p, int nr) {
+remove_at (tree t, path p, int nr) {
   if (atom (p)) {
-    if (is_atomic (t)) return remove (t->label, p->item, nr);
-    else return remove (t, p->item, nr);
+    if (is_atomic (t)) return remove_at (t->label, p->item, nr);
+    else return remove_at (t, p->item, nr);
   }
-  else return substitute (t, p->item, remove (t[p->item], p->next, nr));
+  else return substitute (t, p->item, remove_at (t[p->item], p->next, nr));
 }
 
 /******************************************************************************

@@ -73,6 +73,7 @@ public:
   friend tree& operator << (tree& t, tree t2);
   friend tree& operator << (tree& t, array<tree> a);
   friend ostream& operator << (ostream& out, tree t);
+  friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
 };
 
@@ -276,7 +277,7 @@ inline bool is_tuple (tree t, char* s, int n) {
 * Miscellaneous
 ******************************************************************************/
 
-tree math_correct (tree t);
-int  hash (tree t);
+tree   correct (tree t);
+int    hash (tree t);
 
 #endif // defined TREE_H

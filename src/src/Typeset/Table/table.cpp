@@ -69,7 +69,7 @@ table_rep::typeset (tree t, path iq) {
   tree new_format= old_format;
   if (!is_func (new_format, TFORMAT)) new_format= tree (TFORMAT);
   while (is_func (t, TFORMAT)) {
-    new_format= join (new_format, t (0, N(t)-1));
+    new_format= new_format * t (0, N(t)-1);
     iq        = descend (iq, N(t)-1);
     t         = t[N(t)-1];
   }

@@ -29,17 +29,17 @@ public:
   inline virtual ~observer_rep () { DEBUG(observer_count--); }
 
   // Call back routines for tree modifications
-  virtual void assign    (tree& ot, tree t) = 0;
-  virtual void insert    (tree& ot, int pos, int nr) = 0;
-  virtual void remove    (tree& ot, int pos, int nr) = 0;
-  virtual void split     (tree& ot, int pos) = 0;
-  virtual void join      (tree& ot, int pos) = 0;
-  virtual void ins_unary (tree& ot) = 0;
-  virtual void rem_unary (tree& ot) = 0;
+  virtual void notify_assign    (tree& ref, tree t) = 0;
+  virtual void notify_insert    (tree& ref, int pos, int nr) = 0;
+  virtual void notify_remove    (tree& ref, int pos, int nr) = 0;
+  virtual void notify_split     (tree& ref, int pos) = 0;
+  virtual void notify_join      (tree& ref, int pos) = 0;
+  virtual void notify_ins_unary (tree& ref) = 0;
+  virtual void notify_rem_unary (tree& ref) = 0;
 
   // Extra routines for particular types of observers
-  virtual path get_ip    (tree& ot);
-  virtual bool set_ip    (tree& ot, path ip);
+  virtual path get_ip (tree& ref);
+  virtual bool set_ip (tree& ref, path ip);
 };
 
 class observer {
@@ -55,17 +55,17 @@ observer list_observer (observer o1, observer o2);
 * Modification routines for trees and other observer-related facilities
 ******************************************************************************/
 
-void _assign    (tree& ot, tree t);
-void _insert    (tree& ot, int pos, tree t);
-void _remove    (tree& ot, int pos, int nr);
-void _split     (tree& ot, int pos, int at);
-void _join      (tree& ot, int pos);
-void _ins_unary (tree& ot, tree_label lab);
-void _rem_unary (tree& ot);
+void assign    (tree& ref, tree t);
+void insert    (tree& ref, int pos, tree t);
+void remove    (tree& ref, int pos, int nr);
+void split     (tree& ref, int pos, int at);
+void join      (tree& ref, int pos);
+void ins_unary (tree& ref, tree_label lab);
+void rem_unary (tree& ref);
 
-path _get_ip    (tree& ot);
-void _set_ip    (tree& ot, path ip);
-void _detach_ip (tree& ot);
+path obtain_ip (tree& ref);
+void attach_ip (tree& ref, path ip);
+void detach_ip (tree& ref);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 
