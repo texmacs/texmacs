@@ -47,8 +47,9 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   bot       = 0;
   top       = env->fn->yx;
   sep       = env->get_length (PAR_SEP);
-  height    = env->as_length (string ("1fn"))+ sep;
   hor_sep   = env->get_length (PAR_HOR_SEP);
+  ver_sep   = env->get_length (PAR_VER_SEP);
+  height    = env->as_length (string ("1fn"))+ sep;
   tab_sep   = hor_sep;
   line_sep  = env->get_vspace (PAR_LINE_SEP);
   par_sep   = env->get_vspace (PAR_PAR_SEP);
@@ -432,7 +433,7 @@ lazy_paragraph_rep::format_paragraph () {
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
     else first= env->as_length (style [PAR_FIRST]);
-    sss->set_env_vars (height, sep, hor_sep, bot, top);
+    sss->set_env_vars (height, sep, hor_sep, ver_sep, bot, top);
 
     // typeset paragraph unit
     format_paragraph_unit (start, i);

@@ -65,6 +65,7 @@ initialize_default_var_type () {
   var_type (PAR_NO_FIRST)      = Env_Paragraph;
   var_type (PAR_SEP)           = Env_Paragraph;
   var_type (PAR_HOR_SEP)       = Env_Paragraph;
+  var_type (PAR_VER_SEP)       = Env_Paragraph;
   var_type (PAR_LINE_SEP)      = Env_Paragraph;
   var_type (PAR_PAR_SEP)       = Env_Paragraph;
 
