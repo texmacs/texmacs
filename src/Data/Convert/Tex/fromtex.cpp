@@ -80,6 +80,10 @@ latex_symbol_to_tree (string s) {
       if (s == "\\\\") return tree (FORMAT, "next line");
       if (s == "\\cr") return tree (FORMAT, "next line");
       if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
+      if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
+      if (s == "\\linebreak")  return tree (FORMAT, "line break");
+      if (s == "\\newline")  return tree (FORMAT, "new line");
+      if (s == "\\nolinebreak")  return tree (FORMAT, "no line break");
       if (s == "\\!")  return tree (SPACE, "-0.25spc");
       if (s == "\\,")  return tree (SPACE, "0.25spc");
       if (s == "\\:")  return tree (SPACE, "0.5spc");
@@ -96,6 +100,10 @@ latex_symbol_to_tree (string s) {
       if (s == "\\hline")  return tree (APPLY, "hline");
       if (s == "\\appendix") { textm_appendices= true; return ""; }
       if (s == "\\nolimits") return ""; // temporarily
+      if (s == "\\vert") return "|";
+      if (s == "\\Vert") return "<||>";
+      if (s == "\\notin") return "<nin>";
+      if (s == "\\addots") return "<udots>";
     }
 
     if (latex_type[s] == "texmacs") {
@@ -215,6 +223,15 @@ tree
 latex_concat_to_tree (tree t, bool& new_flag) {
   int i, n=N(t);
   tree r (CONCAT), env (CONCAT);
+
+  if ((n > 0) && (command_type ["!mode"] == "math") &&
+      (is_tuple (t[0], "\\rm", 0) || is_tuple (t[0], "\\tt", 0)))
+    {
+      command_type ("!mode") = "text";
+      tree u= latex_concat_to_tree (t, new_flag);
+      command_type ("!mode") = "math";
+      return tree (CONCAT, tree (SET, MODE, "text"), u, tree (RESET, MODE));
+    }
 
   command_type ->extend ();
   command_arity->extend ();
@@ -458,8 +475,13 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\ref", 1))   return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
+  if (is_tuple (t, "\\overbrace", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-overbrace>");
+  if (is_tuple (t, "\\underbrace", 1))
+    return tree (WIDE_UNDER, l2e (t[1]), "<wide-underbrace>");
 
-  if (is_tuple (t, "\\text", 1) || is_tuple (t, "\\mbox", 1))
+  if (is_tuple (t, "\\text", 1) ||
+      is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
 
   if (is_tuple (t, "\\<sup>", 1)) {
@@ -490,6 +512,17 @@ latex_command_to_tree (tree t) {
     string s = as_string (t2e(t[2]));
     tree   ct= latex_cite_to_tree ("cite", s);
     return tree (CONCAT, ct, " (", ot, ")");
+  }
+  if (is_tuple (t, "\\displaylines", 1)) {
+    tree u= l2e (t[1]);
+    return tree (CONCAT, tree (BEGIN, "matrix"), u, tree (END, "matrix"));
+  }
+  if (is_tuple (t, "\\cases", 1)) {
+    tree u= l2e (t[1]);
+    tree r= tree (CONCAT);
+    r << tree (LEFT, "\{") << tree (BEGIN, "array", "lll") << u
+      << tree (END, "array") << tree (RIGHT, ".");
+    return r;
   }
 
   // Start TeXmacs specific markup

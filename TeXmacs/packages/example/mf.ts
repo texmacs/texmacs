@@ -182,6 +182,8 @@
 
   <assign|hidepart|<macro|x|<arg|x>>>
 
+  <assign|compressed|<macro|x|<flag|compressed|red|x>>>
+
   \;
 </body>
 
