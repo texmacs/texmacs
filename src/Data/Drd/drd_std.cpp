@@ -90,7 +90,6 @@ init_std_drd () {
   init (WITH_LIMITS, "with-limits", fixed (0) -> name ("with limits"));
   init (LINE_BREAK, "line-break", fixed (0) -> name ("line break"));
   init (NEW_LINE, "new-line", fixed (0) -> name ("new line"));
-  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (NEXT_LINE, "next-line", fixed (0) -> name ("next line"));
   init (NO_BREAK, "no-break", fixed (0) -> name ("no line break"));
   init (NO_INDENT, "no-indent", fixed (0) -> name ("don't indent"));
@@ -253,6 +252,7 @@ init_std_drd () {
   init (POSTSCRIPT, "postscript", fixed (7));
 
   init (FORMAT, "format", repeat (1, 1));
+  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (SPLIT, "split", repeat (1, 1));
   init (DELAY, "delay", fixed (1));
   init (HOLD, "hold", fixed (1));

@@ -226,7 +226,6 @@ concater_rep::typeset (tree t, path ip) {
     control (t, ip);
     break;
   case NEW_LINE:
-  case LINE_SEP:
   case NEXT_LINE:
     {
       string name= env->drd->get_name (L(t));
