@@ -210,35 +210,35 @@
 	  ("Utopia" (make-with "font" "x-utopia"))
 	  ("Lucida" (make-with "font" "x-lucida"))))
   (-> "Variant"
-      ("Roman" (make-with "font family" "rm"))
-      ("Typewriter" (make-with "font family" "tt"))
-      ("Sans serif" (make-with "font family" "ss")))
+      ("Roman" (make-with "font-family" "rm"))
+      ("Typewriter" (make-with "font-family" "tt"))
+      ("Sans serif" (make-with "font-family" "ss")))
   (-> "Series"
-      ("Light" (make-with "font series" "light"))
-      ("Medium" (make-with "font series" "medium"))
-      ("Bold" (make-with "font series" "bold")))
+      ("Light" (make-with "font-series" "light"))
+      ("Medium" (make-with "font-series" "medium"))
+      ("Bold" (make-with "font-series" "bold")))
   (-> "Shape"
-      ("Right" (make-with "font shape" "right"))
-      ("Slanted" (make-with "font shape" "slanted"))
-      ("Italic" (make-with "font shape" "italic"))
-      ("Left slanted" (make-with "font shape" "left-slanted"))
+      ("Right" (make-with "font-shape" "right"))
+      ("Slanted" (make-with "font-shape" "slanted"))
+      ("Italic" (make-with "font-shape" "italic"))
+      ("Left slanted" (make-with "font-shape" "left-slanted"))
       ---
-      ("Small caps" (make-with "font shape" "small-caps"))
-      ("Proportional" (make-with "font shape" "proportional"))
-      ("Condensed" (make-with "font shape" "condensed"))
-      ("Flat" (make-with "font shape" "flat"))
-      ("Long" (make-with "font shape" "long")))
+      ("Small caps" (make-with "font-shape" "small-caps"))
+      ("Proportional" (make-with "font-shape" "proportional"))
+      ("Condensed" (make-with "font-shape" "condensed"))
+      ("Flat" (make-with "font-shape" "flat"))
+      ("Long" (make-with "font-shape" "long")))
   (-> "Size" (link font-size-menu)))
 
 (menu-bind font-size-menu
-  ("Tiny" (make-with "font size" "0.59"))
-  ("Very small" (make-with "font size" "0.71"))
-  ("Small" (make-with "font size" "0.84"))
-  ("Normal" (make-with "font size" "1"))
-  ("Large" (make-with "font size" "1.19"))
-  ("Very large" (make-with "font size" "1.41"))
-  ("Huge" (make-with "font size" "1.68"))
-  ("Really huge" (make-with "font size" "2")))
+  ("Tiny" (make-with "font-size" "0.59"))
+  ("Very small" (make-with "font-size" "0.71"))
+  ("Small" (make-with "font-size" "0.84"))
+  ("Normal" (make-with "font-size" "1"))
+  ("Large" (make-with "font-size" "1.19"))
+  ("Very large" (make-with "font-size" "1.41"))
+  ("Huge" (make-with "font-size" "1.68"))
+  ("Really huge" (make-with "font-size" "2")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Font submenu in math mode
@@ -246,66 +246,66 @@
 
 (menu-bind math-font-menu
   (-> "Name"
-      ("Roman" (make-with "math font" "roman"))
+      ("Roman" (make-with "math-font" "roman"))
       (if (url-exists-in-tex? "ccr10.mf")
-	  ("Concrete" (make-with "math font" "concrete")))
+	  ("Concrete" (make-with "math-font" "concrete")))
       (if (url-exists-in-tex? "eurm10.mf")
-	  ("New Roman" "E-C-E" (make-with "math font" "ENR")))
+	  ("New Roman" "E-C-E" (make-with "math-font" "ENR")))
       ---
       (if (url-exists-in-tex? "rpsyr.tfm")
-	  ("Adobe" (make-with "math font" "adobe")))
+	  ("Adobe" (make-with "math-font" "adobe")))
       (if (url-exists-in-tex? "cdr10.mf")
-	  ("Duerer" (make-with "math font" "Duerer")))
+	  ("Duerer" (make-with "math-font" "Duerer")))
       (if (url-exists-in-tex? "eufm10.mf")
-	  ("Euler" (make-with "math font" "Euler")))
+	  ("Euler" (make-with "math-font" "Euler")))
       (-> "Calligraphic"
-	  ("Default" (make-with "math font" "cal"))
+	  ("Default" (make-with "math-font" "cal"))
 	  (if (url-exists-in-tex? "euxm10.mf")
-	      ("Euler" (make-with "math font" "cal**")))
+	      ("Euler" (make-with "math-font" "cal**")))
 	  (if (url-exists-in-tex? "rsfs10.mf")
-	      ("Ralph Smith's" (make-with "math font" "cal*"))))
+	      ("Ralph Smith's" (make-with "math-font" "cal*"))))
       (-> "Blackboard bold"
-	  ("Default" (make-with "math font" "Bbb*"))
+	  ("Default" (make-with "math-font" "Bbb*"))
 	  (if (url-exists-in-tex? "msbm10.mf")
-	      ("A.M.S." (make-with "math font" "Bbb")))
+	      ("A.M.S." (make-with "math-font" "Bbb")))
 	  (if (url-exists-in-tex? "bbold10.mf")
-	      ("Blackboard bold" (make-with "math font" "Bbb**")))
+	      ("Blackboard bold" (make-with "math-font" "Bbb**")))
 	  (if (url-exists-in-tex? "ocmr10.mf")
-	      ("Outlined roman" (make-with "math font" "Bbb***")))
+	      ("Outlined roman" (make-with "math-font" "Bbb***")))
 	  (if (url-exists-in-tex? "dsrom10.mf")
-	      ("Double stroke" (make-with "math font" "Bbb****")))))
-  (if (real-math-font? (get-env "math font"))
+	      ("Double stroke" (make-with "math-font" "Bbb****")))))
+  (if (real-math-font? (get-env "math-font"))
       (-> "Variant"
-	  ("Roman" (make-with "math font family" "mr"))
-	  ("Typewriter" (make-with "math font family" "mt"))
-	  ("Sans serif" (make-with "math font family" "ms"))
+	  ("Roman" (make-with "math-font-family" "mr"))
+	  ("Typewriter" (make-with "math-font-family" "mt"))
+	  ("Sans serif" (make-with "math-font-family" "ms"))
 	  ---
 	  (-> "Text font"
-	      ("Roman" (make-with "math font family" "rm"))
-	      ("Typewriter" (make-with "math font family" "tt"))
-	      ("Sans serif" (make-with "math font family" "ss"))
-	      ("Bold" (make-with "math font family" "bf"))
-	      ("Right" (make-with "math font family" "up"))
-	      ("Slanted" (make-with "math font family" "sl"))
-	      ("Italic" (make-with "math font family" "it"))))
-      (if (real-math-family? (get-env "math font family"))
+	      ("Roman" (make-with "math-font-family" "rm"))
+	      ("Typewriter" (make-with "math-font-family" "tt"))
+	      ("Sans serif" (make-with "math-font-family" "ss"))
+	      ("Bold" (make-with "math-font-family" "bf"))
+	      ("Right" (make-with "math-font-family" "up"))
+	      ("Slanted" (make-with "math-font-family" "sl"))
+	      ("Italic" (make-with "math-font-family" "it"))))
+      (if (real-math-family? (get-env "math-font-family"))
 	  (-> "Series"
-	      ("Light" (make-with "math font series" "light"))
-	      ("Medium" (make-with "math font series" "medium"))
-	      ("Bold" (make-with "math font series" "bold")))))
-  (if (not (real-math-font? (get-env "math font")))
+	      ("Light" (make-with "math-font-series" "light"))
+	      ("Medium" (make-with "math-font-series" "medium"))
+	      ("Bold" (make-with "math-font-series" "bold")))))
+  (if (not (real-math-font? (get-env "math-font")))
       (-> "Variant"
-	  ("Roman" (make-with "math font family" "mr"))
-	  ("Typewriter" (make-with "math font family" "mt"))
-	  ("Sans serif" (make-with "math font family" "ms")))
+	  ("Roman" (make-with "math-font-family" "mr"))
+	  ("Typewriter" (make-with "math-font-family" "mt"))
+	  ("Sans serif" (make-with "math-font-family" "ms")))
       (-> "Series"
-	  ("Medium" (make-with "math font series" "medium"))
-	  ("Bold" (make-with "math font series" "bold")))
+	  ("Medium" (make-with "math-font-series" "medium"))
+	  ("Bold" (make-with "math-font-series" "bold")))
       (-> "Shape"
-	  ("Default" (make-with "math font shape" "normal"))
-	  ("Right" (make-with "math font shape" "right"))
-	  ("Slanted" (make-with "math font shape" "slanted"))
-	  ("Italic" (make-with "math font shape" "italic"))))
+	  ("Default" (make-with "math-font-shape" "normal"))
+	  ("Right" (make-with "math-font-shape" "right"))
+	  ("Slanted" (make-with "math-font-shape" "slanted"))
+	  ("Italic" (make-with "math-font-shape" "italic"))))
   (-> "Size" (link font-size-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -314,23 +314,23 @@
 
 (menu-bind prog-font-menu
   (-> "Name"
-      ("roman" (make-with "prog font" "roman"))
+      ("roman" (make-with "prog-font" "roman"))
       (if (url-exists-in-tex? "ccr10.mf")
-	  ("concrete" (make-with "prog font" "concrete")))
+	  ("concrete" (make-with "prog-font" "concrete")))
       (if (url-exists-in-tex? "pnr10.mf")
-	  ("pandora" (make-with "prog font" "pandora"))))
+	  ("pandora" (make-with "prog-font" "pandora"))))
   (-> "Variant"
-      ("Roman" (make-with "prog font family" "rm"))
-      ("Typewriter" (make-with "prog font family" "tt"))
-      ("Sans serif" (make-with "prog font family" "ss")))
+      ("Roman" (make-with "prog-font-family" "rm"))
+      ("Typewriter" (make-with "prog-font-family" "tt"))
+      ("Sans serif" (make-with "prog-font-family" "ss")))
   (-> "Series"
-      ("Medium" (make-with "prog font series" "medium"))
-      ("Bold" (make-with "prog font series" "bold")))
+      ("Medium" (make-with "prog-font-series" "medium"))
+      ("Bold" (make-with "prog-font-series" "bold")))
   (-> "Shape"
-      ("Default" (make-with "prog font shape" "normal"))
-      ("Right" (make-with "prog font shape" "right"))
-      ("Slanted" (make-with "prog font shape" "slanted"))
-      ("Italic" (make-with "prog font shape" "italic")))
+      ("Default" (make-with "prog-font-shape" "normal"))
+      ("Right" (make-with "prog-font-shape" "right"))
+      ("Slanted" (make-with "prog-font-shape" "slanted"))
+      ("Italic" (make-with "prog-font-shape" "italic")))
   (-> "Size" (link font-size-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -381,16 +381,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-format-menu
-  (-> "Index level"
-      ("Normal" (make-with "index level" "0"))
-      ("Script size" (make-with "index level" "1"))
-      ("Script script size" (make-with "index level" "2")))
-  (-> "Formula style"
-      ("On" (make-with "formula style" "true"))
-      ("Off" (make-with "formula style" "false")))
+  (-> "math-level"
+      ("Normal" (make-with "math-level" "0"))
+      ("Script size" (make-with "math-level" "1"))
+      ("Script script size" (make-with "math-level" "2")))
+  (-> "math-display"
+      ("On" (make-with "math-display" "true"))
+      ("Off" (make-with "math-display" "false")))
   (-> "Condensed"
-      ("On" (make-with "math condensed" "true"))
-      ("Off" (make-with "math condensed" "false"))))
+      ("On" (make-with "math-condensed" "true"))
+      ("Off" (make-with "math-condensed" "false"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Formatting of paragraphs
@@ -398,10 +398,10 @@
 
 (menu-bind paragraph-menu
   (-> "Alignment"
-      ("Justified" (make-line-with "paragraph mode" "justify"))
-      ("Left ragged" (make-line-with "paragraph mode" "left"))
-      ("Centered" (make-line-with "paragraph mode" "center"))
-      ("Right ragged" (make-line-with "paragraph mode" "right")))
+      ("Justified" (make-line-with "par-mode" "justify"))
+      ("Left ragged" (make-line-with "par-mode" "left"))
+      ("Centered" (make-line-with "par-mode" "center"))
+      ("Right ragged" (make-line-with "par-mode" "right")))
   (-> "Margins"
       ("Left margin" ... (interactive '("Left margin:") 'set-left-margin))
       ("Right margin" ... (interactive '("Right margin:") 'set-right-margin))
@@ -415,13 +415,13 @@
       ("Interparagraph space" ...
        (interactive '("Space between paragraphs:") 'set-interpar-spc)))
   (-> "Hyphenation"
-      ("Normal" (make-line-with "paragraph hyphenation" "normal"))
+      ("Normal" (make-line-with "par-hyphen" "normal"))
       ("Professional"
-       (make-line-with "paragraph hyphenation" "professional")))
+       (make-line-with "par-hyphen" "professional")))
   (-> "Number of columns"
-      ("1" (make-line-with "nr columns" "1"))
-      ("2" (make-line-with "nr columns" "2"))
-      ("3" (make-line-with "nr columns" "3"))))
+      ("1" (make-line-with "par-columns" "1"))
+      ("2" (make-line-with "par-columns" "2"))
+      ("3" (make-line-with "par-columns" "3"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu

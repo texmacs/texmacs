@@ -134,7 +134,7 @@
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
   (in-plugin-with-converters%
-   (plugin-supports-math-input-ref (get-env "prog language"))))
+   (plugin-supports-math-input-ref (get-env "prog-language"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

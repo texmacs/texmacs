@@ -190,22 +190,22 @@
 
 (define (stm-table-length-name? name)
   (in? name
-       '("cell width" "cell height"
-	 "cell lsep" "cell rsep" "cell bsep" "cell tsep"
-	 "cell lborder" "cell rborder" "cell bborder" "cell tborder"
-	 "table width" "table height"
-	 "table lsep" "table rsep" "table bsep" "table tsep"
-	 "table lborder" "table rborder" "table bborder" "table tborder")))
+       '("cell-width" "cell-height"
+	 "cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep"
+	 "cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder"
+	 "table-width" "table-height"
+	 "table-lsep" "table-rsep" "table-bsep" "table-tsep"
+	 "table-lborder" "table-rborder" "table-bborder" "table-tborder")))
 
 (define (stm-table-number-name? name)
   (in? name
-       '("cell row span" "cell col span"
-	 "table row origin" "table col origin"
-	 "table min rows" "table min cols"
-	 "table max rows" "table max cols")))
+       '("cell-row-span" "cell-col-span"
+	 "table-row-origin" "table-col-origin"
+	 "table-min-rows" "table-min-cols"
+	 "table-max-rows" "table-max-cols")))
 
 (define (stm-table-color-name? name)
-  (string=? name "cell background"))
+  (string=? name "cell-background"))
 
 (define (stm-table-decode-format name value)
   ((cond ((stm-table-length-name? name)
@@ -238,7 +238,7 @@
 (define (tmtable->stm t)
   (receive (centered formats)
       (list-partition (tmtable-formats t)
-		      (cute == <> (tmformat-table "cell halign" "c")))
+		      (cute == <> (tmformat-table "cell-halign" "c")))
     `(,(if (null? centered) 'tabular 'tabular*)
       (tformat
        ,@(reverse!
@@ -275,17 +275,17 @@
       (cond ((eq? name 'border) (any-border?))
 	    ((eq? name 'nrcols) (tmtable-ncols this))))
     (define (cols name)
-      (cond ((eq? name 'halign) (format-by :column "cell halign" "l"))
-	    ((eq? name 'tborder) (length-non-zero-by :column "cell tborder"))
-	    ((eq? name 'bborder) (length-non-zero-by :column "cell bborder"))
-	    ((eq? name 'lborder) (length-non-zero-by :column "cell lborder"))
-	    ((eq? name 'rborder) (length-non-zero-by :column "cell rborder"))))
+      (cond ((eq? name 'halign) (format-by :column "cell-halign" "l"))
+	    ((eq? name 'tborder) (length-non-zero-by :column "cell-tborder"))
+	    ((eq? name 'bborder) (length-non-zero-by :column "cell-bborder"))
+	    ((eq? name 'lborder) (length-non-zero-by :column "cell-lborder"))
+	    ((eq? name 'rborder) (length-non-zero-by :column "cell-rborder"))))
     (define (rows name)
       (cond ((eq? name 'content) (tmtable-cells this))
-	    ((eq? name 'tborder) (length-non-zero-by :row "cell tborder"))
-	    ((eq? name 'bborder) (length-non-zero-by :row "cell bborder"))
-      	    ((eq? name 'lborder) (length-non-zero-by :row "cell lborder"))
-	    ((eq? name 'rborder) (length-non-zero-by :row "cell rborder"))))
+	    ((eq? name 'tborder) (length-non-zero-by :row "cell-tborder"))
+	    ((eq? name 'bborder) (length-non-zero-by :row "cell-bborder"))
+      	    ((eq? name 'lborder) (length-non-zero-by :row "cell-lborder"))
+	    ((eq? name 'rborder) (length-non-zero-by :row "cell-rborder"))))
 
     ;; Public dispatcher
     (define (table-parser/dispatch scope . args)
@@ -319,11 +319,11 @@
     table-parser/dispatch))
 
 (define (tmtable-block-borders x)
-  (if x '((cwith "1" "-1" "1" "1" "cell lborder" "1ln")
-	  (cwith "1" "1" "1" "-1" "cell tborder" "1ln")
-	  (cwith "1" "-1" "1" "-1" "cell bborder" "1ln")
-	  (cwith "1" "-1" "1" "-1" "cell rborder" "1ln"))
+  (if x '((cwith "1" "-1" "1" "1" "cell-lborder" "1ln")
+	  (cwith "1" "1" "1" "-1" "cell-tborder" "1ln")
+	  (cwith "1" "-1" "1" "-1" "cell-bborder" "1ln")
+	  (cwith "1" "-1" "1" "-1" "cell-rborder" "1ln"))
       '()))
 
 (define (tmtable-cell-halign x)
-  `((cwith "1" "-1" "1" "-1" "cell halign" ,x)))
+  `((cwith "1" "-1" "1" "-1" "cell-halign" ,x)))

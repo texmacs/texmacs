@@ -232,23 +232,23 @@
 		(link position-float-menu))))
   (-> "Header and footer"
       (group "This page")
-      ("Header" (make-assign-arg "this page header"))
-      ("Footer" (make-assign-arg "this page footer"))
+      ("Header" (make-assign-arg "page-this-header"))
+      ("Footer" (make-assign-arg "page-this-footer"))
       ---
       (group "Permanent")
       ("Header" (make 'set-header))
       ("Footer" (make 'set-footer))
-      ("Odd page header" (make-assign-arg "odd page header"))
-      ("Odd page footer" (make-assign-arg "odd page footer"))
-      ("Even page header" (make-assign-arg "even page header"))
-      ("Even page footer" (make-assign-arg "even page footer"))
+      ("Odd page header" (make-assign-arg "page-odd-header"))
+      ("Odd page footer" (make-assign-arg "page-odd-footer"))
+      ("Even page header" (make-assign-arg "page-even-header"))
+      ("Even page footer" (make-assign-arg "page-even-footer"))
       ---
       (group "Structural")
       ("Odd page text" (make-assign-macro-arg "odd-page-text"))
       ("Even page text" (make-assign-macro-arg "even-page-text")))
   (-> "Page numbering"
-      ("Renumber this page" (make-assign-arg "page number"))
-      ("Page number text" (make-assign-macro "thepage")))
+      ("Renumber this page" (make-assign-arg "page-nr"))
+      ("Page number text" (make-assign-macro "page-the-page")))
   ---
   (-> "Specific"
       ("TeXmacs" (make-specific "texmacs"))

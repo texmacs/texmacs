@@ -183,7 +183,7 @@
 	     (inside? "tuple") (inside? "attr"))
 	 (insert-argument #t))
 	((and (in-session?)
-	      (plugin-supports-completions? (get-env "prog language")))
+	      (plugin-supports-completions? (get-env "prog-language")))
 	 (if (session-complete-try?) (noop)))
 	((complete-try?) (noop))
 	(else (set-message "Use M-tab in order to insert a tab" "tab"))))

@@ -111,11 +111,11 @@
   (-> "View"
       ("Preamble mode" (toggle-preamble))
       (-> "Informative flags"
-	  ("Default" (init-default "info flag"))
+	  ("Default" (init-default "info-flag"))
 	  ---
-	  ("None" (init-env "info flag" "none"))
-	  ("Short" (init-env "info flag" "short"))
-	  ("Detailed" (init-env "info flag" "detailed"))))
+	  ("None" (init-env "info-flag" "none"))
+	  ("Short" (init-env "info-flag" "short"))
+	  ("Detailed" (init-env "info-flag" "detailed"))))
   ---
   (-> "Font"
       (-> "Text font"
@@ -137,30 +137,30 @@
 		  ("Luxi" (init-env "font" "luxi"))))
 	  ("Lucida" (init-env "font" "x-lucida"))
 	  ("Utopia" (init-env "font" "x-utopia")))
-      (-> "Math font"
-	  ("Default" (init-default "math font"))
+      (-> "math-font"
+	  ("Default" (init-default "math-font"))
 	  ---
-	  ("Roman" (init-env "math font" "roman"))
-	  ("Concrete" (init-env "math font" "concrete"))
-	  ("Euler new roman" (init-env "math font" "ENR"))
-	  ("Adobe" (init-env "math font" "adobe")))
-      (-> "Prog font"
-	  ("Default" (init-default "prog font"))
+	  ("Roman" (init-env "math-font" "roman"))
+	  ("Concrete" (init-env "math-font" "concrete"))
+	  ("Euler new roman" (init-env "math-font" "ENR"))
+	  ("Adobe" (init-env "math-font" "adobe")))
+      (-> "prog-font"
+	  ("Default" (init-default "prog-font"))
 	  ---
-	  ("Roman" (init-env "prog font" "roman"))
-	  ("Pandora" (init-env "prog font" "pandora"))
-	  ("Concrete" (init-env "prog font" "concrete"))
-	  ("Times" (init-env "prog font" "times")))
+	  ("Roman" (init-env "prog-font" "roman"))
+	  ("Pandora" (init-env "prog-font" "pandora"))
+	  ("Concrete" (init-env "prog-font" "concrete"))
+	  ("Times" (init-env "prog-font" "times")))
       ---
       (-> "Size"
-	  ("Default" (init-default "font base size"))
+	  ("Default" (init-default "font-base-size"))
 	  ---
-	  ("8" (init-env "font base size" "8"))
-	  ("9" (init-env "font base size" "9"))
-	  ("10" (init-env "font base size" "10"))
-	  ("11" (init-env "font base size" "11"))
-	  ("12" (init-env "font base size" "12"))
-	  ("14" (init-env "font base size" "14"))
+	  ("8" (init-env "font-base-size" "8"))
+	  ("9" (init-env "font-base-size" "9"))
+	  ("10" (init-env "font-base-size" "10"))
+	  ("11" (init-env "font-base-size" "11"))
+	  ("12" (init-env "font-base-size" "12"))
+	  ("14" (init-env "font-base-size" "14"))
 	  ---
 	  ("Other" ... (interactive '("Font size:") 'init-font-size)))
       (-> "Dpi"
@@ -205,22 +205,22 @@
 	  ---
 	  ("Other" ... (interactive '("Foreground color:") 'init-color)))
       (-> "Background"
-	  ("Default" (init-default "background color"))
+	  ("Default" (init-default "bg-color"))
 	  ---
-	  ("Black" (init-env "background color" "black"))
-	  ("White" (init-env "background color" "white"))
-	  ("Grey" (init-env "background color" "grey"))
-	  ("Red" (init-env "background color" "red"))
-	  ("Blue" (init-env "background color" "blue"))
-	  ("Yellow" (init-env "background color" "yellow"))
-	  ("Green" (init-env "background color" "green"))
-	  ("Orange" (init-env "background color" "orange"))
-	  ("Magenta" (init-env "background color" "magenta"))
-	  ("Brown" (init-env "background color" "brown"))
-	  ("Pink" (init-env "background color" "pink"))
-	  ("Light grey" (init-env "background color" "light grey"))
-	  ("Dark grey" (init-env "background color" "dark grey"))
-	  ("Broken white" (init-env "background color" "broken white"))
+	  ("Black" (init-env "bg-color" "black"))
+	  ("White" (init-env "bg-color" "white"))
+	  ("Grey" (init-env "bg-color" "grey"))
+	  ("Red" (init-env "bg-color" "red"))
+	  ("Blue" (init-env "bg-color" "blue"))
+	  ("Yellow" (init-env "bg-color" "yellow"))
+	  ("Green" (init-env "bg-color" "green"))
+	  ("Orange" (init-env "bg-color" "orange"))
+	  ("Magenta" (init-env "bg-color" "magenta"))
+	  ("Brown" (init-env "bg-color" "brown"))
+	  ("Pink" (init-env "bg-color" "pink"))
+	  ("Light grey" (init-env "bg-color" "light grey"))
+	  ("Dark grey" (init-env "bg-color" "dark grey"))
+	  ("Broken white" (init-env "bg-color" "broken white"))
 	  ---
 	  ("Other" ... (interactive '("Background color:") 'init-bg-color))))
   (-> "Language"
@@ -244,50 +244,50 @@
       ("Ukrainian" (init-language "ukrainian")))
   (-> "Paragraph"
       (-> "Style"
-	  ("Default" (init-default "paragraph mode"))
+	  ("Default" (init-default "par-mode"))
 	  ---
-	  ("Justified" (init-env "paragraph mode" "justify"))
-	  ("Left ragged" (init-env "paragraph mode" "left"))
-	  ("Centered" (init-env "paragraph mode" "center"))
-	  ("Right ragged" (init-env "paragraph mode" "right")))
+	  ("Justified" (init-env "par-mode" "justify"))
+	  ("Left ragged" (init-env "par-mode" "left"))
+	  ("Centered" (init-env "par-mode" "center"))
+	  ("Right ragged" (init-env "par-mode" "right")))
       (-> "Hyphenation"
-	  ("Default" (init-default "paragraph hyphenation"))
+	  ("Default" (init-default "par-hyphen"))
 	  ---
-	  ("Normal" (init-env "paragraph hyphenation" "normal"))
-	  ("Professional" (init-env "paragraph hyphenation" "professional")))
+	  ("Normal" (init-env "par-hyphen" "normal"))
+	  ("Professional" (init-env "par-hyphen" "professional")))
       (-> "Margins"
-	  ("Default" (init-default "first indentation"))
+	  ("Default" (init-default "par-first"))
 	  ---
-	  ("First indentation" ...
+	  ("par-first" ...
 	   (interactive '("First indentation:") 'init-first-indent)))
       (-> "Spacing"
-	  ("Default" (init-default "interline space" "line stretch"
+	  ("Default" (init-default "par-sep" "par-line-sep"
 				   "interpargraph space"))
 	  ---
 	  ("Interline separation" ...
 	   (interactive '("Separation between lines:") 'init-interline))
-	  ("Interline space" ...
+	  ("par-sep" ...
 	   (interactive '("Space between lines:") 'init-interline-spc))
-	  ("Interparagraph space" ...
+	  ("par-par-sep" ...
 	   (interactive '("Space between paragraphs:") 'init-interpar-spc)))
       (-> "Number of columns"
-	  ("Default" (init-default "nr columns"))
+	  ("Default" (init-default "par-columns"))
 	  ---
-	  ("1" (init-env "nr columns" "1"))
-	  ("2" (init-env "nr columns" "2"))
-	  ("3" (init-env "nr columns" "3"))))
+	  ("1" (init-env "par-columns" "1"))
+	  ("2" (init-env "par-columns" "2"))
+	  ("3" (init-env "par-columns" "3"))))
   (-> "Page"
       (-> "Type"
-	  ("Default" (check "*" (test-default? "page medium"))
-	   (init-default "page medium")
+	  ("Default" (check "*" (test-default? "page-medium"))
+	   (init-default "page-medium")
 	   (set-page-parameters))
 	  ---
 	  ("Paper" (set-page-medium "paper"))
 	  ("Papyrus" (set-page-medium "papyrus"))
 	  ("Automatic" (set-page-medium "automatic")))
       (-> "Size"
-	  ("Default" (check "*" (test-default? "page type"))
-	   (init-default "page type")
+	  ("Default" (check "*" (test-default? "page-type"))
+	   (init-default "page-type")
 	   (set-page-parameters))
 	  ---
 	  ("A3" (set-page-type "a3"))
@@ -304,16 +304,16 @@
 	  ("Other" ...
 	   (interactive '("Page width:" "Page height:") 'init-page-size)))
       (-> "Orientation"
-	  ("Default" (check "*" (test-default? "page orientation"))
-	   (init-default "page orientation")
+	  ("Default" (check "*" (test-default? "page-orientation"))
+	   (init-default "page-orientation")
 	   (set-page-parameters))
 	  ---
 	  ("Portrait" (set-page-orientation "portrait"))
 	  ("Landscape" (set-page-orientation "landscape")))
       (-> "Layout"
-	  ("Default" (init-default "odd page margin" "even page margin"
-				   "page right margin" "page top margin"
-				   "page bottom margin" "paragraph width"))
+	  ("Default" (init-default "page-odd" "page-even"
+				   "page-right" "page-top"
+				   "page-bot" "par-width"))
 	  ---
 	  ("Set margins" ...
 	   (interactive
@@ -322,11 +322,11 @@
 	  ("Set text width" ...
 	   (interactive '("Text width:") 'init-text-width)))
       (-> "Screen layout"
-	  ("Default" (init-default "reduction page left margin"
-				   "reduction page right margin"
-				   "reduction page top margin"
-				   "reduction page bottom margin"
-				   "show header and footer"))
+	  ("Default" (init-default "page-reduce-left"
+				   "page-reduce-right"
+				   "page-reduce-top"
+				   "page-reduce-bot"
+				   "page-show-hf"))
 	  ---
 	  ("Margins as on paper" (init-as-on-paper))
 	  ("Reduce margins" ...
@@ -335,15 +335,15 @@
 	      "Reduce right margin by:"
 	      "Reduce top margin by:"
 	      "Reduce bottom margin by:") 'init-screen-reduction))
-	  ("Show header and footer" (toggle-visible-header-and-footer)))
+	  ("page-show-hf" (toggle-visible-header-and-footer)))
       ---
       (group "Breaking")
       (-> "Algorithm"
-	  ("Default" (init-default "page breaking"))
+	  ("Default" (init-default "page-breaking"))
 	  ---
-	  ("Sloppy" (init-env "page breaking" "sloppy"))
-	  ("Medium" (init-env "page breaking" "medium"))
-	  ("Professional" (init-env "page breaking" "optimal")))
+	  ("Sloppy" (init-env "page-breaking" "sloppy"))
+	  ("Medium" (init-env "page-breaking" "medium"))
+	  ("Professional" (init-env "page-breaking" "optimal")))
       (-> "Limits"
 	  ("Allowed reduction" ...
 	   (interactive '("How much shorter may pages become?")
@@ -352,13 +352,13 @@
 	   (interactive '("How much longer may pages become?")
 			'init-page-extend)))
       (-> "Flexibility"
-	  ("Default" (init-default "page flexibility"))
+	  ("Default" (init-default "page-flexibility"))
 	  ---
-	  ("0" (init-env "page flexibility" "0.0"))
-	  ("1/4" (init-env "page flexibility" "0.25"))
-	  ("1/2" (init-env "page flexibility" "0.5"))
-	  ("3/4" (init-env "page flexibility" "0.75"))
-	  ("1" (init-env "page flexibility" "1.0"))
+	  ("0" (init-env "page-flexibility" "0.0"))
+	  ("1/4" (init-env "page-flexibility" "0.25"))
+	  ("1/2" (init-env "page-flexibility" "0.5"))
+	  ("3/4" (init-env "page-flexibility" "0.75"))
+	  ("1" (init-env "page-flexibility" "1.0"))
 	  ---
 	  ("Other" ...
 	   (interactive '("Flexibility factor for vertical spacing: ")

@@ -139,7 +139,7 @@
 		    (style "tmmanual")
 		    (body ,(tmdoc-add-aux body))
 		    (initial (collection (associate "language" ,lan)
-					 (associate "page medium" "paper"))))))
+					 (associate "page-medium" "paper"))))))
 	(set-help-buffer file-name (object->tree doc)))
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))

@@ -278,20 +278,20 @@
    (regtest-table-library)
    (define (table-shtml->stm x) (shtml->stm (cons 'table x)))
    (define (document-tabular x) `(document (tabular ,x)))
-   (define default-formats '((twith "table width" "1par")
-			     (cwith "1" "-1" "1" "-1" "cell hyphen" "t")))
+   (define default-formats '((twith "table-width" "1par")
+			     (cwith "1" "-1" "1" "-1" "cell-hyphen" "t")))
    (define (html-content) (tbody (tr A B) (tr C D)))
    (define tm-content '(("A" "B") ("C" "D")))
    (define (frame-box n)
      (let ((v (string-append (number->string n) "px")))
-       `((twith "table rborder" ,v) (twith "table lborder" ,v)
-	 (twith "table bborder" ,v) (twith "table tborder" ,v))))
+       `((twith "table-rborder" ,v) (twith "table-lborder" ,v)
+	 (twith "table-bborder" ,v) (twith "table-tborder" ,v))))
    (define (frame-hsides n)
      (let ((v (string-append (number->string n) "px")))
-       `((twith "table bborder" ,v) (twith "table tborder" ,v))))
+       `((twith "table-bborder" ,v) (twith "table-tborder" ,v))))
    (define rules-all
-     '((cwith "1" "-1" "1" "-2" "cell rborder" "1px")
-       (cwith "1" "-2" "1" "-1" "cell bborder" "1px")))
+     '((cwith "1" "-1" "1" "-2" "cell-rborder" "1px")
+       (cwith "1" "-2" "1" "-1" "cell-bborder" "1px")))
    (+ (regression-test-group
        "htmltm, table outer attributes" "table-atts-outer"
        table-shtml->stm :none
@@ -299,16 +299,16 @@
 	     `(document (concat (tabular ,(tformat default-formats tm-content))
 				(label "foo"))))
        (test "align=center" (list '(@ (align "center")) (html-content))
-	     `(document (with "paragraph mode" "center"
+	     `(document (with "par-mode" "center"
 			  (tabular ,(tformat default-formats tm-content)))))
        (test "align=CeNtEr" (list '(@ (align "CeNtEr")) (html-content))
-	     `(document (with "paragraph mode" "center"
+	     `(document (with "par-mode" "center"
 			  (tabular ,(tformat default-formats tm-content)))))
        (test "align=foo" (list '(@ (align "foo")) (html-content))
 	     `(document (tabular ,(tformat default-formats tm-content))))
        (test "label, align=right"
 	     (list '(@ (id "foo") (align "RIGHT")) (html-content))
-	     `(document (with "paragraph mode" "right"
+	     `(document (with "par-mode" "right"
 			  (concat
 			   (tabular ,(tformat default-formats tm-content))
 			   (label "foo")))))
@@ -324,15 +324,15 @@
 	     (list '(@ (width "75%")) (html-content))
 	     `(document (tabular
 			 ,(tformat
-			   '((twith "table width" "0.75par")
-			     (cwith "1" "-1" "1" "-1" "cell hyphen" "t"))
+			   '((twith "table-width" "0.75par")
+			     (cwith "1" "-1" "1" "-1" "cell-hyphen" "t"))
 			   tm-content))))
        (test "width=42"
 	     (list '(@ (width "42")) (html-content))
 	     `(document (tabular
 			 ,(tformat
-			   '((twith "table width" "42px")
-			     (cwith "1" "-1" "1" "-1" "cell hyphen" "t"))
+			   '((twith "table-width" "42px")
+			     (cwith "1" "-1" "1" "-1" "cell-hyphen" "t"))
 			   tm-content)))))
       (regression-test-group
        "htmltm, table inner attributes" "table-atts-inner"
@@ -358,14 +358,14 @@
 	     (tformat `(,@default-formats ,@rules-all) tm-content))
        (test "rules=rows" (list '(@ (rules "rows")) (html-content))
 	     (tformat `(,@default-formats
-			 (cwith "1" "-2" "1" "-1" "cell bborder" "1px"))
+			 (cwith "1" "-2" "1" "-1" "cell-bborder" "1px"))
 		      tm-content))
        (test "rules=foo" (list '(@ (rules "foo")) (html-content))
 	     (tformat `(,@default-formats ,@rules-all) tm-content))
        (test "frame=hsides rules=rows"
 	     (list '(@ (frame "hsides") (rules "rows")) (html-content))
 	     (tformat `(,@default-formats ,@(frame-hsides 1)
-			 (cwith "1" "-2" "1" "-1" "cell bborder" "1px"))
+			 (cwith "1" "-2" "1" "-1" "cell-bborder" "1px"))
 		      tm-content))
        (test "border=2 frame=hsides"
 	     (list '(@ (border "2") (frame "hsides")) (html-content))
@@ -377,12 +377,12 @@
        (test "border=2 rules=rows"
 	     (list '(@ (border "2") (rules "rows")) (html-content))
 	     (tformat `(,@default-formats ,@(frame-box 2)
-			 (cwith "1" "-2" "1" "-1" "cell bborder" "1px"))
+			 (cwith "1" "-2" "1" "-1" "cell-bborder" "1px"))
 		      tm-content))
        (test "border=0 rules=rows"
 	     (list '(@ (border "0") (rules "rows")) (html-content))
 	     (tformat `(,@default-formats
-			 (cwith "1" "-2" "1" "-1" "cell bborder" "1px"))
+			 (cwith "1" "-2" "1" "-1" "cell-bborder" "1px"))
 		      tm-content)))
    ;; TODO: rules=groups
    )))
@@ -392,8 +392,8 @@
    (regtest-table-library)
    (define (table-shtml->stm x) (shtml->stm (cons 'table x)))
    (define (document-tabular x) `(document (tabular ,x)))
-   (define default-formats '((twith "table width" "1par")
-			     (cwith "1" "-1" "1" "-1" "cell hyphen" "t")))
+   (define default-formats '((twith "table-width" "1par")
+			     (cwith "1" "-1" "1" "-1" "cell-hyphen" "t")))
    (+ (regression-test-group
        "htmltm, empty table content" "table-content-empty"
        table-shtml->stm :none
@@ -431,15 +431,15 @@
    (regtest-table-library)
    (define (table-shtml->stm x) (shtml->stm (cons 'table x)))
    (define (document-tabular x) `(document (tabular ,x)))
-   (define default-formats '((twith "table width" "1par")
-			     (cwith "1" "-1" "1" "-1" "cell hyphen" "t")))
+   (define default-formats '((twith "table-width" "1par")
+			     (cwith "1" "-1" "1" "-1" "cell-hyphen" "t")))
    (regression-test-group
     "htmltm, spanning cells" "table-span"
     table-shtml->stm document-tabular
     (test "span 1x2"
 	  (list (tbody (tr (td '(@ (colspan "2")) "A") C) (tr D E F)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "1" "1" "cell col span" "2"))
+		      (cwith "1" "1" "1" "1" "cell-col-span" "2"))
 		   '(("A" "" "C") ("D" "E" "F"))))
     (test "missing cells"
 	  (list (tbody (tr A B C) (tr D)))
@@ -447,27 +447,27 @@
     (test "span 2x1"
 	  (list (tbody (tr (td '(@ (rowspan "2")) "A") B) (tr D) (tr E F)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "1" "1" "cell row span" "2"))
+		      (cwith "1" "1" "1" "1" "cell-row-span" "2"))
 		   '(("A" "B") ("" "D") ("E" "F"))))
     (test "span 2x1, missing cells"
 	  (list (tbody (tr (td '(@ (rowspan "2")) "A") B) (tr) (tr E)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "1" "1" "cell row span" "2"))
+		      (cwith "1" "1" "1" "1" "cell-row-span" "2"))
 		   '(("A" "B") ("" "") ("E" ""))))
     (test "span 2x2"
 	  (list (tbody (tr (td '(@ (rowspan "2") (colspan "2")) "A") C)
 		       (tr F) (tr G H I)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "1" "1" "cell row span" "2")
-		      (cwith "1" "1" "1" "1" "cell col span" "2"))
+		      (cwith "1" "1" "1" "1" "cell-row-span" "2")
+		      (cwith "1" "1" "1" "1" "cell-col-span" "2"))
 		   '(("A" "" "C") ("" "" "F") ("G" "H" "I"))))
     (test "span 2x1, span 3x1"
 	  (list (tbody (tr A (td '(@ (rowspan "3")) "B") C)
 		       (tr (td '(@ (rowspan "2")) "D") F)
 		       (tr I) (tr J K L)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "2" "2" "cell row span" "3")
-		      (cwith "2" "2" "1" "1" "cell row span" "2"))
+		      (cwith "1" "1" "2" "2" "cell-row-span" "3")
+		      (cwith "2" "2" "1" "1" "cell-row-span" "2"))
 		   '(("A" "B" "C") ("D" "" "F")
 		     ("" "" "I") ("J" "K" "L"))))
     (test "overlapping 1"
@@ -475,25 +475,25 @@
 		       (tr (td '(@ (colspan "2")) "D") F)
 		       (tr G H I)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "2" "2" "cell row span" "2")
-		      (cwith "2" "2" "1" "1" "cell col span" "2"))
+		      (cwith "1" "1" "2" "2" "cell-row-span" "2")
+		      (cwith "2" "2" "1" "1" "cell-col-span" "2"))
 		   '(("A" "B" "C") ("D" "" "F") ("G" "H" "I"))))
     (test "overlapping 2"
 	  (list (tbody (tr A (td '(@ (rowspan "3")) "B") C)
 		       (tr (td '(@ (colspan "3")) "D"))
 		       (tr G I) (tr J K L)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "2" "2" "cell row span" "3")
-		      (cwith "2" "2" "1" "1" "cell col span" "3"))
+		      (cwith "1" "1" "2" "2" "cell-row-span" "3")
+		      (cwith "2" "2" "1" "1" "cell-col-span" "3"))
 		   '(("A" "B" "C") ("D" "" "") ("G" "" "I") ("J" "K" "L"))))
     (test "overlapping 3"
 	  (list (tbody (tr A (td '(@ (rowspan "2")) "B"))
 		       (tr (td '(@ (colspan "2") (rowspan "2")) "C"))
 		       (tr ) (tr G H)))
 	  (tformat `(,@default-formats
-		      (cwith "1" "1" "2" "2" "cell row span" "2")
-		      (cwith "2" "2" "1" "1" "cell row span" "2")
-		      (cwith "2" "2" "1" "1" "cell col span" "2"))
+		      (cwith "1" "1" "2" "2" "cell-row-span" "2")
+		      (cwith "2" "2" "1" "1" "cell-row-span" "2")
+		      (cwith "2" "2" "1" "1" "cell-col-span" "2"))
 		   '(("A" "B") ("C" "") ("" "") ("G" "H")))))))
 
 (define (regtest-htmltm-table)
@@ -682,7 +682,7 @@
    ;; TODO: test insertion in explicit expand documents
    (test "with document"
 	 '(center (@ (id "x")) "y")
-	 '(document (with "paragraph mode" "center"
+	 '(document (with "par-mode" "center"
 			  (document (concat (label "x") "y")))))
    (test "itemize 1"
 	 '(ul (@ (id "x")) (li "y"))
@@ -698,11 +698,11 @@
 		      (concat (item* (concat (label "x") "y")) "z")))))
    (test "section"
 	 '(center (@ (id "x")) (h1 "y"))
-	 '(document (with "paragraph mode" "center"
+	 '(document (with "par-mode" "center"
 			  (document (concat (chapter "y") (label "x"))))))
    (test "section 2"
 	 '(center (@ (id "x")) (h1 (@ (id "y")) "z"))
-	 '(document (with "paragraph mode" "center"
+	 '(document (with "par-mode" "center"
 			  (document (concat (chapter "z")
 					    (label "x") (label "y"))))))
    (test "implicit expand document"

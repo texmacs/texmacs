@@ -23,7 +23,7 @@
 
 (menu-bind graphics-geometry-menu
   (-> "Frame"
-      ("Default" (graphics-remove-property "graphical frame"))
+      ("Default" (graphics-remove-property "gr-frame"))
       ---
       (group "Cartesian")
       (-> "Unit"
@@ -37,7 +37,7 @@
 	  ---
 	  ("Other"... (graphics-set-origin-ia))))
   (-> "Extents"
-      ("Default" (graphics-remove-property "graphical clip"))
+      ("Default" (graphics-remove-property "gr-clip"))
       ---
       ;; FIXME: insert methods for setting width, height and centering
       ("Other" ... (graphics-set-extents-ia))))
