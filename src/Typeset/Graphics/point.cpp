@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "point.hpp"
+#include "math_util.hpp"
 
 point
 operator + (point p1, point p2) {

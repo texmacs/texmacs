@@ -311,7 +311,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
   delete[] data;
 }
 
-extern int char_clip;
+extern bool char_clip;
 
 void
 x_drawable_rep::xpm (url file_name, SI x, SI y) {

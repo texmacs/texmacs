@@ -382,11 +382,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-format-menu
-  (-> "math-level"
+  (-> "Index level"
       ("Normal" (make-with "math-level" "0"))
       ("Script size" (make-with "math-level" "1"))
       ("Script script size" (make-with "math-level" "2")))
-  (-> "math-display"
+  (-> "Display style"
       ("On" (make-with "math-display" "true"))
       ("Off" (make-with "math-display" "false")))
   (-> "Condensed"
