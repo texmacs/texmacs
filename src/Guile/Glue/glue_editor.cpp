@@ -640,6 +640,19 @@ tmg_search_upwards (SCM arg1) {
 }
 
 SCM
+tmg_search_parent_upwards (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "search-parent-upwards");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->search_parent_upwards (in1);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_search_upwards_in_set (SCM arg1) {
   SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "search-upwards-in-set");
 
@@ -2912,6 +2925,7 @@ initialize_glue_editor () {
   gh_new_procedure ("inside-with?", (FN) tmg_inside_withP, 2, 0, 0);
   gh_new_procedure ("inside-which", (FN) tmg_inside_which, 1, 0, 0);
   gh_new_procedure ("search-upwards", (FN) tmg_search_upwards, 1, 0, 0);
+  gh_new_procedure ("search-parent-upwards", (FN) tmg_search_parent_upwards, 1, 0, 0);
   gh_new_procedure ("search-upwards-in-set", (FN) tmg_search_upwards_in_set, 1, 0, 0);
   gh_new_procedure ("search-start", (FN) tmg_search_start, 1, 0, 0);
   gh_new_procedure ("search-button-next", (FN) tmg_search_button_next, 0, 0, 0);

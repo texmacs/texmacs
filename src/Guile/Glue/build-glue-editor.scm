@@ -81,6 +81,7 @@
   (inside-with? inside_with (bool string string))
   (inside-which inside_which (string scheme_tree))
   (search-upwards search_upwards (path string))
+  (search-parent-upwards search_parent_upwards (path tree_label))
   (search-upwards-in-set search_upwards_in_set (path scheme_tree))
   (search-start search_start (void bool))
   (search-button-next search_button_next (void))
