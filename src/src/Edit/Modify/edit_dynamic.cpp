@@ -195,30 +195,16 @@ edit_dynamic_rep::activate_compound () {
 * Making dynamic objects
 ******************************************************************************/
 
-/*
 void
-edit_dynamic_rep::make_compound (string s, int n) {
-  int n2;
-  tree_label l= make_tree_label (s);
-  for (n2=0; true; n2++) {
-    if (drd->correct_arity (l, n2) &&
-	((n2>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
-    if (n2 == 100) return;
-  }
-  if (n != n2) cout << s << ": arity " << n << " -> " << n2 << "\n";
-  make_compound (make_tree_label (s));
-}
-*/
-
-void
-edit_dynamic_rep::make_compound (tree_label l) {
+edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   // cout << "Make compound " << as_string (l) << "\n";
 
-  int n;
-  for (n=0; true; n++) {
-    if (drd->correct_arity (l, n) &&
-	((n>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
-    if (n == 100) return;
+  if (n == -1) {
+    for (n=0; true; n++) {
+      if (drd->correct_arity (l, n) &&
+	  ((n>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
+      if (n == 100) return;
+    }
   }
 
   tree t (l, n);
@@ -235,11 +221,11 @@ edit_dynamic_rep::make_compound (tree_label l) {
       p= path (0, p);
     }
     // FIXME: should not be here
-    if (is_func (t, HYBRID, 1) &&
+    if (is_func (t, HYBRID, 1) && (sel != "") &&
 	(!(is_atomic (sel) && drd->contains (sel->label))))
       {
-	t= tree (HYBRID, "", sel);
-	insert_tree (t, path (0, 0));
+	t= tree (INACTIVE, tree (HYBRID, "", sel));
+	insert_tree (t, path (0, 0, 0));
 	return;
       }
     // end FIXME.
@@ -251,7 +237,14 @@ edit_dynamic_rep::make_compound (tree_label l) {
 
     if (sel != "") insert_tree (sel, end (sel));
 
-    // FIXME: display comprehensive message
+    string mess;
+    if (drd->get_arity_mode (l) != ARITY_NORMAL)
+      mess= "A-right: insert argument";
+    if (!drd->all_accessible (l)) {
+      if (mess != "") mess << ", ";
+      mess << "return: activate";
+    }
+    if (mess != "") set_message (mess, drd->get_name (l));
   }
 }
 
@@ -263,18 +256,19 @@ edit_dynamic_rep::make_deactivated (tree t, path p) {
 
 void
 edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
-  /*
+  (void) arg;
+  // FIXME: what to do with additional argument?
   int n2;
-  tree_label l= make_tree_label (s);
+  tree_label l= make_tree_label (op);
   for (n2=0; true; n2++) {
     if (drd->correct_arity (l, n2) &&
 	((n2>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
     if (n2 == 100) return;
   }
-  if (n != n2) cout << s << ": arity " << n << " -> " << n2 << "\n";
-  make_compound (make_tree_label (s));
-  */
+  if (n != n2) cout << op << ": arity " << n << " -> " << n2 << "\n";
+  make_compound (make_tree_label (op));
 
+  /*
   int k= (arg==""? 0: 1);
   tree_label l= as_tree_label (op);
   tree t (l, n);
@@ -297,6 +291,7 @@ edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
   if (drd->get_old_arity (l) < 0)
     set_message ("tab: insert argument, return: activate", rf);
   else set_message ("return: activate", rf);
+  */
 }
 
 void
@@ -454,7 +449,7 @@ edit_dynamic_rep::back_general (path p, bool forward) {
 void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    remove_argument (p, forward);
+    back_in_general (t, p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
     correct (path_up (p, 2));

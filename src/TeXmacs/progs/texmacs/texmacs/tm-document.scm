@@ -30,12 +30,9 @@
 ;; Preamble mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (test-preamble?)
-  (string=? (get-env "preamble") "true"))
-
 (tm-define (toggle-preamble)
   (:synopsis "Toggle preamble mode.")
-  (:check-mark "v" test-preamble?)
+  (:check-mark "v" in-preamble?)
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
     (init-env "preamble" new)
     (if (== new "false")

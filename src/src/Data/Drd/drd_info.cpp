@@ -217,6 +217,16 @@ drd_info_rep::get_attribute (tree_label l, string which) {
   return val;
 }
 
+void
+drd_info_rep::set_name (tree_label l, string val) {
+  set_attribute (l, "name", val);
+}
+
+string
+drd_info_rep::get_name (tree_label l) {
+  return as_string (get_attribute (l, "name"));
+}
+
 /******************************************************************************
 * Children's accessability related methods
 ******************************************************************************/

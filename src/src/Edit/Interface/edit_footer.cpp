@@ -157,17 +157,15 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case ARGUMENT: r= "argument#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
-  case INACTIVE:
-  case VAR_INACTIVE:
-    r= "inactive#" * as_string (drd->get_attribute (L(st[0]), "name")); break;
+  case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
+  case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
   case LABEL: r= "label: " * as_string (st[0]); break;
   case REFERENCE: r= "reference: " * as_string (st[0]); break;
   case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
   case WRITE: r= "write to " * as_string (st[0]); break;
   case SPECIFIC: r= "specific " * as_string (st[0]); break;
   case POSTSCRIPT: r= "postscript image"; break;
-  default:
-    r= as_string (drd->get_attribute (L(st), "name"));
+  default: r= drd->get_name (L(st));
   }
   if (last_item (tp) == 0) r= "before#" * r;
   return r;
@@ -244,7 +242,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case HYPERLINK:
     return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
-    return up * as_string (drd->get_attribute (L(st), "name")) * "#";
+    return up * drd->get_name (L(st)) * "#";
   }
 }
 

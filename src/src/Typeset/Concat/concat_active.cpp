@@ -107,10 +107,10 @@ void
 concater_rep::typeset_specific (tree t, path ip) {
   string which= env->exec_string (t[0]);
   if (which == "texmacs") {
-    typeset_dynamic (t[1], descend (ip, 1));
-    //marker (descend (ip, 0));
-    //typeset (t[1], descend (ip, 1));
-    //marker (descend (ip, 1));
+    marker (descend (ip, 0));
+    typeset (t[1], descend (ip, 1));
+    marker (descend (ip, 1));
+    //typeset_dynamic (t[1], descend (ip, 1));
   }
   else if ((which == "screen") || (which == "printer")) {
     int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);

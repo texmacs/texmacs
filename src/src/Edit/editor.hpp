@@ -307,7 +307,7 @@ public:
   virtual bool is_deactivated () = 0;
   virtual void activate () = 0;
   virtual void activate_compound () = 0;
-  virtual void make_compound (tree_label l) = 0;
+  virtual void make_compound (tree_label l, int n=-1) = 0;
   virtual void make_deactivated (tree t, path p) = 0;
   virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
   virtual bool make_return_before () = 0;

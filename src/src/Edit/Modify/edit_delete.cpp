@@ -202,8 +202,7 @@ edit_text_rep::remove_text (bool forward) {
       back_in_table (u, p, forward);
       return;
     case WITH:
-      if (u[N(u)-1] == "") back_monolithic (path_up (p));
-      else go_to_border (path_up (p), !forward);
+      back_in_with (u, p, forward);
       return;
     default:
       back_in_general (u, p, forward);
