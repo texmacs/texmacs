@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4.3>
 
 <style|source>
 
@@ -134,6 +134,9 @@
   <assign|subsubindex|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>>>>>>
 
+  <assign|subsubsubindex|<macro|x|y|z|a|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>|<arg|a>>>>>>
+
   <assign|index-complex|<macro|key|how|range|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><auto-label><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-auto>>>>>>>
 
@@ -195,18 +198,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
