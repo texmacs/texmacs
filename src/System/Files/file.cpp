@@ -133,6 +133,7 @@ save_string (url u, string s, bool fatal) {
 
 static bool
 get_attributes (url name, struct stat* buf, bool link_flag=false) {
+  // cout << "Stat " << name << LF;
   time_t stat_start= texmacs_time ();
   bool flag;
   char* temp= as_charp (concretize (name));
@@ -217,6 +218,7 @@ url_temp (string suffix) {
 
 array<string>
 read_directory (url u, bool& error_flag) {
+  // cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
