@@ -165,7 +165,7 @@
 
 (define (string-split-lines/kons c cs+lines)
   (if (== c #\newline)
-      (cons () cs+lines)
+      (cons '() cs+lines)
       (cons (cons c (car cs+lines)) (cdr cs+lines))))
 		
 (tm-define (string-tokenize s c)
