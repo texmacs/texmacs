@@ -16,7 +16,7 @@
 #include "Graphics/frame.hpp"
 #include "Graphics/curve.hpp"
 
-box graphics_box (path ip, array<box> bs, frame f, point lo, point hi);
+box graphics_box (path ip, array<box> bs, frame f, point lim1, point lim2);
 box point_box (path ip, point p, SI r, color col);
 box curve_box (path ip, curve c, SI width, color col);
 
