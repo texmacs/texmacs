@@ -166,6 +166,8 @@
     (emdash 0 "---")
     (pari 0 "{\\sc Pari}")
     (op 1 "#1")
+    (email 1 "{{\\em Email}: {\\tt #1}}")
+    (homepage 1 "{{\\em Web}: {\\tt #1}}")
     (keywords 1
       ,(string-append
 	"{{\\bf "
