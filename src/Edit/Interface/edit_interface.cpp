@@ -15,6 +15,7 @@
 #include "convert.hpp"
 #include "server.hpp"
 #include "tm_buffer.hpp"
+#include "Metafont/tex_files.hpp"
 
 extern void (*env_next_prog)(void);
 extern void clear_rectangles (ps_device dev, rectangles l);
@@ -407,6 +408,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	if (!win->check_event (EVENT_STATUS)) drd_update ();
+	tex_autosave_cache ();
 	last_update= last_change;
       }
     return;

@@ -22,7 +22,7 @@ static hashmap<string,string> tt_fonts ("no");
 static url
 tt_locate (string name) {
   if (ends (name, ".pfb")) {
-    url u= resolve_pfb (name);
+    url u= resolve_tex (name);
     if (!is_none (u)) return u;
   }
   else if (use_locate) {

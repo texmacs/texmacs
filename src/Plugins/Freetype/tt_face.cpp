@@ -28,7 +28,7 @@ inline SI tt_si (int l) { return l<<2; }
 tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
   bad_face= true;
   if (ft_initialize ()) return;
-  if (DEBUG_AUTO)
+  if (DEBUG_VERBOSE)
     cout << "TeXmacs] Loading True Type font " << name << "\n";
   url u= tt_font_find (name);
   if (is_none (u)) return;

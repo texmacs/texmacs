@@ -236,13 +236,13 @@ x_display_rep::load_system_font (string family, int size, int dpi,
   name << "-*-" * sz1 * "-" * sz2 * "-*-*-*-*-*-*";
   if (size == 0) name= family;
 
-  if (DEBUG_AUTO) cout << "TeXmacs] Loading ps font " << name << "\n";
+  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading ps font " << name << "\n";
   char* temp= as_charp (name);
   Font fn = XLoadFont (dpy, temp);
   delete[] temp;
   if (XQueryFont (dpy, fn) == NULL) {
-    if (DEBUG_AUTO) cout << "TeXmacs] Font " << name << " not found\n";
-    if (DEBUG_AUTO) cout << "TeXmacs] Using default font instead\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Font " << name << " not found\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Using default font instead\n";
     fn = XLoadFont (dpy, "*");
     if (XQueryFont (dpy, fn) == NULL)
       fatal_error ("Could not load default X font", "x_ps_font_rep::prepare");

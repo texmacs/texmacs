@@ -322,7 +322,7 @@ language
 math_language (string name) {
   if (language::instances -> contains (name)) return language (name);
   string s, fname= name * ".syx";
-  if (DEBUG_AUTO) cout << "TeXmacs] Loading " << fname << "\n";
+  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
   load_string (url ("$TEXMACS_SYNTAX_PATH", fname), s, true);
   return new math_language_rep (name, s);
 }

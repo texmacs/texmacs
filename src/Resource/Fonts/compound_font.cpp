@@ -41,7 +41,7 @@ compound_encoding_rep::compound_encoding_rep (string name, tree def):
   int nr, tot= N (def);
   for (nr=tot-1; nr>=0; nr--) {
     string s, fname= as_string (def[nr]) * ".scm";
-    if (DEBUG_AUTO) cout << "TeXmacs] Loading " << fname << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
     if (load_string (url ("$TEXMACS_PATH/fonts/enc", fname), s)) return;
     tree t= block_to_scheme_tree (s);
     if (!is_tuple (t)) return;

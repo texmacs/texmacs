@@ -18,6 +18,7 @@
 #include "hashmap.hpp"
 #include "analyze.hpp"
 #include "timer.hpp"
+#include "convert.hpp"
 
 static url the_tfm_path= url_none ();
 static url the_pk_path = url_none ();
@@ -35,7 +36,7 @@ kpsewhich (string name) {
   return which;
 }
 
-url
+static url
 resolve_tfm (url name) {
   if (get_setting ("KPSEWHICH") == "true") {
     string which= kpsewhich (as_string (name));
@@ -45,7 +46,7 @@ resolve_tfm (url name) {
   return resolve (the_tfm_path * name);
 }
 
-url
+static url
 resolve_pk (url name) {
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pk fonts
   if (get_setting ("KPSEWHICH") == "true") {
@@ -57,7 +58,7 @@ resolve_pk (url name) {
   return resolve (the_pk_path * name);
 }
 
-url
+static url
 resolve_pfb (url name) {
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pfb fonts
   if (get_setting ("KPSEWHICH") == "true") {
@@ -69,15 +70,53 @@ resolve_pfb (url name) {
   return resolve (the_pfb_path * name);
 }
 
+/******************************************************************************
+* Caching results
+******************************************************************************/
+
+static string tex_cache_file ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
+static bool tex_font_cache_loaded= false;
+static bool tex_needs_cache_save= false;
+static hashmap<string,tree> tex_font_cache ("?");
+
+void
+tex_autosave_cache () {
+  if (tex_needs_cache_save) {
+    tree t (tex_font_cache);
+    (void) save_string (tex_cache_file, tree_to_scheme (t));
+    tex_needs_cache_save= false;
+  }
+}
+
+url
+resolve_tex (url name) {
+  if (!tex_font_cache_loaded) {
+    string cached;
+    if (!load_string (tex_cache_file, cached)) {
+      tree t= scheme_to_tree (cached);
+      tex_font_cache= hashmap<string,tree> ("?", t);
+    }
+    tex_font_cache_loaded= true;
+  }
+  string s= as_string (name);
+  if (tex_font_cache -> contains (s))
+    return url_system (tex_font_cache [s]->label);
+  else {
+    url u= url_none ();
+    if (ends (s, "tfm")) u= resolve_tfm (name);
+    if (ends (s, "pk" )) u= resolve_pk  (name);
+    if (ends (s, "pfb")) u= resolve_pfb (name);
+    if (!is_none (u)) {
+      tex_font_cache (s)= as_string (u);
+      tex_needs_cache_save= true;
+    }
+    return u;
+  }
+}
+
 bool
 exists_in_tex (url u) {
-  // Weak check for TeXmacs menus
-  static hashmap<string,int> tex_file_table (false);
-  string s= as_string (u);
-  if (get_setting ("KPSEWHICH") != "true") return true;
-  if (tex_file_table->contains (s)) return tex_file_table [s];
-  tex_file_table(s)= (kpsewhich (s) != "");
-  return tex_file_table [s];
+  return !is_none (resolve_tex (u));
 }
 
 /******************************************************************************
@@ -89,12 +128,12 @@ make_tex_tfm (string name) {
   string s;
   if (get_setting ("MAKETFM") == "MakeTeXTFM") {
     s= "MakeTeXTFM " * name;
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
   if (get_setting ("MAKETFM") == "mktextfm") {
     s= "mktextfm " * name;
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
   if (get_setting ("MAKETFM") == "maketfm"){
@@ -102,7 +141,7 @@ make_tex_tfm (string name) {
       name = name (0, N(name) - 4);
     s = "maketfm --dest-dir \"" * get_env("$TEXMACS_HOME_PATH")
       * "\\fonts\\tfm\" " * name;
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
 }
@@ -114,7 +153,7 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
     s="MakeTeXPK " * name * " " *
       as_string (dpi) * " " * as_string (design_dpi) * " " *
       as_string (dpi) * "/" * as_string (design_dpi) * " " * where;
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
   if (get_setting ("MAKEPK") == "mktexpk") {
@@ -124,7 +163,7 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
       string ("--mag ") * as_string (dpi)*"/"*as_string (design_dpi) * " " *
       (where == ""? string (""): string ("--destdir ") * where) * " " *
       name;
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
   if (get_setting ("MAKEPK") == "makepk"){
@@ -132,7 +171,7 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
       * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
       * name * " " * as_string(dpi) * " " * as_string(design_dpi)
       * " " * as_string(dpi) * "/" * as_string(design_dpi);
-    if (DEBUG_AUTO) cout << "TeXmacs] Executing " << s << "\n";
+    if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
 }

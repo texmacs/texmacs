@@ -191,7 +191,8 @@ connection_start (string name, string session, bool again) {
 
   connection con= connection (name * "-" * session);
   if (nil (con)) {
-    if (DEBUG_AUTO) cout << "TeXmacs] Starting session '" << session << "'\n";
+    if (DEBUG_VERBOSE)
+      cout << "TeXmacs] Starting session '" << session << "'\n";
     tree t= connection_info (name, session);
     if (is_tuple (t, "pipe", 1)) {
       tm_link ln= make_pipe_link (t[1]->label);

@@ -60,7 +60,7 @@ load_hyphen_table (string file_name) {
   string s;
   file_name= string ("hyphen.") * file_name;
   load_string (url ("$TEXMACS_PATH/langs/natural/hyphen", file_name), s, true);
-  if (DEBUG_AUTO) cout << "TeXmacs] Loading " << file_name << "\n";
+  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << file_name << "\n";
 
   hashmap<string,string> H ("?");
   bool flag=false;

@@ -39,6 +39,8 @@ TeXmacs_main (int argc, char** argv) {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
+      else if ((s == "-V") || (s == "-verbose"))
+	debug (DEBUG_FLAG_VERBOSE, true);
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
       else if (s == "-debug-io") debug (DEBUG_FLAG_IO, true);
@@ -137,6 +139,7 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
+	cout << "  -V         Show some informative messages\n";
 	cout << "  -x [cmd]   Execute scheme command\n";
 	cout << "  -Oc        TeX characters bitmap clipping off\n";
 	cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
@@ -147,7 +150,6 @@ TeXmacs_main (int argc, char** argv) {
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
 
-  if (DEBUG_AUTO) cout << "\n";
   if (DEBUG_STD) cout << "TeXmacs] Installing internal plug-ins...\n";
   bench_start ("initialize plugins");
   init_plugins ();
