@@ -22,12 +22,14 @@ void initialize_default_env ();
 * Initialization
 ******************************************************************************/
 
-edit_env_rep::edit_env_rep (display dis2, url base_file_name2,
+edit_env_rep::edit_env_rep (display dis2,
+			    drd_info& drd2,
+			    url base_file_name2,
 			    hashmap<string,tree>& local_ref2,
 			    hashmap<string,tree>& global_ref2,
 			    hashmap<string,tree>& local_aux2,
 			    hashmap<string,tree>& global_aux2):
-  dis (dis2),
+  dis (dis2), drd (drd2),
   env (UNINIT), back (UNINIT), src (path (DECORATION)),
   var_type (default_var_type),
   base_file_name (base_file_name2),
@@ -42,12 +44,14 @@ edit_env_rep::edit_env_rep (display dis2, url base_file_name2,
   complete= false;
 }
 
-edit_env::edit_env (display dis, url base_file_name,
+edit_env::edit_env (display dis,
+		    drd_info& drd,
+		    url base_file_name,
 		    hashmap<string,tree>& local_ref,
 		    hashmap<string,tree>& global_ref,
 		    hashmap<string,tree>& local_aux,
 		    hashmap<string,tree>& global_aux):
-  rep (new edit_env_rep (dis, base_file_name,
+  rep (new edit_env_rep (dis, drd, base_file_name,
 			 local_ref, global_ref, local_aux, global_aux)) {}
 
 void
