@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|env-base|env-math|env-theorem|env-float|env-default>
+  <use-package|env-base|env-math|env-theorem|env-float>
 
   \;
 </body>
