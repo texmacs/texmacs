@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4>
 
 <style|tmweb>
 
@@ -12,6 +12,8 @@
     <verbatim|\<less\>a href="http://texmacs.org"\<gtr\>\<less\>img
     src="texmacs-banner-white.png"\<gtr\>\<less\>/a\<gtr\>>
   </with>
+
+  An alternative download location is <hlink|here|http://www.fmi.uni-passau.de/~seidl/texmacs/artwork.html>.
 
   <paragraph|Banners>
 
@@ -39,43 +41,14 @@
     <postscript|texmacs-button-trans.png|*5/8|*5/8||||>
   </itemize-dot>
 
-  <tmdoc-copyright|1999--2003|Andreas Seidl>
+  <tmdoc-copyright|2004|Andreas Seidl>
 
   <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|false>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|preamble|false>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Banner><value|toc-dots><pageref|toc-1><vspace|0.5fn>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Buttons><value|toc-dots><pageref|toc-2><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>
