@@ -47,6 +47,14 @@
   (:require (url-exists-in-path? "xmgrace"))
   (:shell "xmgrace" "-noask -hardcopy -hdevice EPS -printfile" to from))
 
+(define-format svg
+   (:name "Svg")
+   (:suffix "svg"))
+
+(converter svg-file png-file
+   (:require (url-exists-in-path? "rsvg"))
+   (:shell "rsvg" "-f png" from to))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
