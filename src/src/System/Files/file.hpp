@@ -33,7 +33,7 @@ inline string sys_concretize (url u1) {
   return "\"" * concretize (u1) * "\""; }
 #else
 inline string sys_concretize (url u1) {
-  return quote (concretize (u1)); }
+  return escape_spaces (concretize (u1)); }
 #endif
 
 inline void system (string which, url u1) {

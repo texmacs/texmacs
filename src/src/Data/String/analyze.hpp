@@ -65,6 +65,7 @@ string unquote   (string s);
 string escape_quotes (string s);
 string escape_generic (string s);
 string escape_verbatim (string s);
+string escape_spaces (string s);
 string dos_to_better (string s);
 
 bool test (string s, int i, const char* test);
