@@ -38,20 +38,20 @@
 (lazy-define (convert tmml tmmltm) tmml->texmacs)
 (lazy-define (convert tmml tmtmml) texmacs->tmml)
 
-(converter tmml-document tmml-object
+(converter tmml-document tmml-stree
   (:function parse-tmml))
 
-(converter tmml-object tmml-document
+(converter tmml-stree tmml-document
   (:function serialize-tmml))
 
-(converter tmml-snippet tmml-object
+(converter tmml-snippet tmml-stree
   (:function parse-tmml))
 
-(converter tmml-object tmml-snippet
+(converter tmml-stree tmml-snippet
   (:function serialize-tmml))
 
-(converter tmml-object texmacs-object
+(converter tmml-stree texmacs-stree
   (:function tmml->texmacs))
 
-(converter texmacs-object tmml-object
+(converter texmacs-stree tmml-stree
   (:function texmacs->tmml))

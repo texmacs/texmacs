@@ -53,7 +53,7 @@
 (define (init-interpar-spc s) (init-env "par-par-sep" s))
 (define (init-magn s) (init-env "magnification" s))
 (define (init-language lan)
-  (let ((before (in? (tree->object (get-init-tree "language"))
+  (let ((before (in? (tree->stree (get-init-tree "language"))
 		     '("russian" "ukrainian")))
 	(after (in? lan '("russian" "ukrainian"))))
     (if (and before (not after)) (init-default "font"))

@@ -18,7 +18,7 @@
 ;; LaTeX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME: the intermediate latex-object data format is different
+;; FIXME: the intermediate latex-stree data format is different
 ;; for conversions to and from TeXmacs. After rewriting
 ;; the input filter, both formats should be identical.
 
@@ -48,17 +48,17 @@
 (converter latex-document latex-tree
   (:function parse-latex-document))
 
-(converter latex-object latex-document
+(converter latex-stree latex-document
   (:function serialize-latex))
 
 (converter latex-snippet latex-tree
   (:function parse-latex))
 
-(converter latex-object latex-snippet
+(converter latex-stree latex-snippet
   (:function serialize-latex))
 
 (converter latex-tree texmacs-tree
   (:function latex->texmacs))
 
-(converter texmacs-object latex-object
+(converter texmacs-stree latex-stree
   (:function texmacs->latex))

@@ -189,7 +189,7 @@
 	       (color (if e? "black" "dark grey"))
 	       #t #f)
    (if opt-symobj
-       (make-menu-command (insert-object opt-symobj))
+       (make-menu-command (insert-stree opt-symobj))
        (make-menu-command (insert-string symstring)))
    #f))
 

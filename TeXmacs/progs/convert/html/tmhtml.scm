@@ -239,7 +239,7 @@
 (define (tmhtml-surround env l)
   ;; WARNING: makes the xpath environment inconsistent
   (let* ((r1 (tmhtml-force-document `(surround ,@l)))
-	 (r2 (tree->object (tree-simplify (object->tree r1)))))
+	 (r2 (tree->stree (tree-simplify (stree->tree r1)))))
     ;(display* "r0= " `(surround ,@l) "\n")
     ;(display* "r1= " r1 "\n")
     ;(display* "r2= " r2 "\n")

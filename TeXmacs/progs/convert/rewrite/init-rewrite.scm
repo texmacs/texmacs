@@ -30,11 +30,11 @@
   (:suffix "tm" "ts" "tp")
   (:must-recognize texmacs-recognizes?))
 
-(converter texmacs-tree texmacs-object
-  (:function tree->object))
+(converter texmacs-tree texmacs-stree
+  (:function tree->stree))
 
-(converter texmacs-object texmacs-tree
-  (:function object->tree))
+(converter texmacs-stree texmacs-tree
+  (:function stree->tree))
 
 (converter texmacs-document texmacs-tree
   (:function parse-texmacs))

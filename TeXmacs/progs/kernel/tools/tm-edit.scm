@@ -16,8 +16,8 @@
   (:use (kernel texmacs tm-define))
   (:export
     ;; inserting general content
-    insert-object insert-object-go-to
-    insert-tree-at insert-object-at
+    insert-stree insert-stree-go-to
+    insert-tree-at insert-stree-at
     ;; inserting inactive content
     make-assign-arg make-assign-macro make-assign-macro-arg))
 
@@ -25,15 +25,15 @@
 ;; Inserting general content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert-object obj)
-  (:type (object ->))
-  (:synopsis "Insert @obj at the current cursor position.")
-  (insert-tree (object->tree obj)))
+(tm-define (insert-stree t)
+  (:type (stree ->))
+  (:synopsis "Insert @t at the current cursor position.")
+  (insert-tree (stree->tree t)))
 
-(tm-define (insert-object-go-to obj p)
-  (:type (object path ->))
-  (:synopsis "Insert @obj and move cursor to @p inside @obj.")
-  (insert-tree-go-to (object->tree obj) p))
+(tm-define (insert-stree-go-to t p)
+  (:type (stree path ->))
+  (:synopsis "Insert @t and move cursor to @p inside @t.")
+  (insert-tree-go-to (stree->tree t) p))
 
 (tm-define (insert-tree-at t p)
   (:type (tree path ->))
@@ -45,33 +45,33 @@
     (tm-go-to old)
     (tm-position-delete pos)))
 
-(tm-define (insert-object-at obj p)
-  (:type (object path ->))
-  (:synopsis "Insert @obj at @p.")
-  (insert-tree-at (object->tree obj) p))
+(tm-define (insert-stree-at t p)
+  (:type (stree path ->))
+  (:synopsis "Insert @t at @p.")
+  (insert-tree-at (stree->tree t) p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting inactive content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert-inactive-object-go-to t p)
-  (:type (object path ->))
-  (:synopsis "Insert an inactive object @t and go to @p inside @t.")
+(tm-define (insert-inactive-stree-go-to t p)
+  (:type (stree path ->))
+  (:synopsis "Insert an inactive stree @t and go to @p inside @t.")
   (if (in-source?)
-      (insert-object-go-to t p)
-      (insert-object-go-to (list 'inactive t) (cons 0 p))))
+      (insert-stree-go-to t p)
+      (insert-stree-go-to (list 'inactive t) (cons 0 p))))
 
 (tm-define (make-assign-arg s)
   (:type (string ->))
   (:synopsis "Make an inactive assignment for the variable @s.")
-  (insert-inactive-object-go-to `(assign ,s "") '(1 0))
+  (insert-inactive-stree-go-to `(assign ,s "") '(1 0))
   (if (not (in-source?)) (set-message "return: activate" "assign")))
 
 (tm-define (make-assign-macro s)
   (:type (string ->))
   (:synopsis "Make an inactive macro assignment for the variable @s.")
   (make-assign-arg s)
-  (insert-inactive-object-go-to '(macro "") '(0 0))
+  (insert-inactive-stree-go-to '(macro "") '(0 0))
   (if (not (in-source?))
       (set-message "return (2x): activate" "assign#macro")))
 
@@ -79,6 +79,6 @@
   (:type (string ->))
   (:synopsis "Make an inactive unary macro assignment for the variable @s.")
   (make-assign-arg s)
-  (insert-inactive-object-go-to '(macro "s" "") '(1 0))
+  (insert-inactive-stree-go-to '(macro "s" "") '(1 0))
   (if (not (in-source?))
       (set-message "return (2x): activate" "assign#macro")))

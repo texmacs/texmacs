@@ -19,15 +19,15 @@
 
 (define (make-specific s)
   (if (or (== s "texmacs") (in-source?))
-      (insert-object-go-to `(specific ,s "") '(1 0))
-      (insert-object-go-to `(inactive (specific ,s "")) '(0 1 0))))
+      (insert-stree-go-to `(specific ,s "") '(1 0))
+      (insert-stree-go-to `(inactive (specific ,s "")) '(0 1 0))))
 
 (define (make-latex)
   (make 'latex)
   (set-message "Type a latex command followed by return" "latex"))
 
 (define (make-include u)
-  (insert-object `(include ,(string-slash (url->string u)))))
+  (insert-stree `(include ,(string-slash (url->string u)))))
 
 (define (make-inline-image l)
   (apply make-postscript (cons* (url->string (car l)) #f (cdr l))))

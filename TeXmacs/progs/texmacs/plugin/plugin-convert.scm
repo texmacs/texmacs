@@ -20,20 +20,20 @@
 ;; Main conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define current-plugin-input-object "")
+(define current-plugin-input-stree "")
 
 (define (convert-test)
-  (set! current-plugin-input-object (tree->object (the-selection)))
+  (set! current-plugin-input-stree (tree->stree (the-selection)))
   (write (with-output-to-string plugin-input-caller))
   (display "\n"))
 
 (define (plugin-math-input l)
-  (set! current-plugin-input-object (caddr l))
+  (set! current-plugin-input-stree (caddr l))
   (set! plugin-input-current-plugin (cadr l))
   (with-output-to-string plugin-input-caller))
 
 (define (plugin-input-caller)
-  (plugin-input current-plugin-input-object))
+  (plugin-input current-plugin-input-stree))
 
 (define (plugin-input t)
   (if (string? t)

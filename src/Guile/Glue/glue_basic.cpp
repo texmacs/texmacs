@@ -48,8 +48,8 @@ tmg_win32_display (SCM arg1) {
 }
 
 SCM
-tmg_tree_2object (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->object");
+tmg_tree_2stree (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
   tree in1= scm_to_tree (arg1);
 
@@ -61,8 +61,8 @@ tmg_tree_2object (SCM arg1) {
 }
 
 SCM
-tmg_object_2tree (SCM arg1) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "object->tree");
+tmg_stree_2tree (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "stree->tree");
 
   scheme_tree in1= scm_to_scheme_tree (arg1);
 
@@ -600,32 +600,6 @@ tmg_object_2command (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return command_to_scm (out);
-}
-
-SCM
-tmg_object_2scheme_tree (SCM arg1) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "object->scheme-tree");
-
-  scheme_tree in1= scm_to_scheme_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= copy (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_scheme_tree_2object (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "scheme-tree->object");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  scheme_tree out= copy (in1);
-  // SCM_ALLOW_INTS;
-
-  return scheme_tree_to_scm (out);
 }
 
 SCM
@@ -2304,8 +2278,8 @@ initialize_glue_basic () {
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
   gh_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
-  gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
-  gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);
+  gh_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
+  gh_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   gh_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
   gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
   gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
@@ -2345,8 +2319,6 @@ initialize_glue_basic () {
   gh_new_procedure ("upgrade-tmml", (FN) tmg_upgrade_tmml, 1, 0, 0);
   gh_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   gh_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
-  gh_new_procedure ("object->scheme-tree", (FN) tmg_object_2scheme_tree, 1, 0, 0);
-  gh_new_procedure ("scheme-tree->object", (FN) tmg_scheme_tree_2object, 1, 0, 0);
   gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
   gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);

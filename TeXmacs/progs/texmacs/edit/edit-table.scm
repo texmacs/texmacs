@@ -345,7 +345,7 @@
   (let* ((row (table-which-row))
 	 (p   (table-search-cell row -1))
 	 (st  (tm-subtree p))
-	 (q   (tree-search-subtree st (object->tree '(eq-number)))))
+	 (q   (tree-search-subtree st (stree->tree '(eq-number)))))
     (if q (append p q) #f)))
 
 (define (table-equation-numbered?)
@@ -355,9 +355,9 @@
   (let* ((row (table-which-row))
 	 (p   (table-search-cell row -1))
 	 (end (tm-end p)))
-    ;(insert-object-at '(eq-number) end)
+    ;(insert-stree-at '(eq-number) end)
     (tm-go-to end)
-    (insert-object '(eq-number))))
+    (insert-stree '(eq-number))))
 
 (define (table-nonumber-equation)
   (let ((p (table-search-number-equation)))

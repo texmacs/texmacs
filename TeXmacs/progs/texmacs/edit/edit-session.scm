@@ -41,7 +41,7 @@
 
 (define (session-get-input-string)
   (let* ((p (search-upwards "input"))
-	 (input (tree->object (tm-subtree (rcons p 2))))
+	 (input (tree->stree (tm-subtree (rcons p 2))))
 	 (s (verbatim-serialize (get-env "prog-language") input)))
     (substring s 0 (- (string-length s) 1))))
 
@@ -51,7 +51,7 @@
     (if (plugin-supports-input-done? lan)
 	(let* ((s (escape-quotes (session-get-input-string)))
 	       (cmd (string-append "(input-done? \"" s "\")"))
-	       (r (tree->object (connection-cmd lan ses cmd))))
+	       (r (tree->stree (connection-cmd lan ses cmd))))
 	  (if (== r "#f")
 	      (insert-return)
 	      (process-input)))

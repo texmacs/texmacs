@@ -538,13 +538,13 @@
   `(!file ,(htmltm-parse s)))
 
 (tm-define (html->texmacs html)
-  (:type (object -> object))
-  (:synopsis "Convert a parsed HTML object @t into a TeXmacs object.")
+  (:type (stree -> stree))
+  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
   (let* ((snippet? (not (func? html '!file 1)))
 	 (body (if snippet? html (cadr html)))
 	 (tm (htmltm-as-serial (sxhtml-correct-table body))))
     (if snippet? tm
-	(let* ((doc (tree-simplify (object->tree (stm-unary-document tm))))
+	(let* ((doc (tree-simplify (stree->tree (stm-unary-document tm))))
 	       (body (tree1 'body doc))
 	       (style (tree1 'style (string->tree "browser"))))
 	  (tree2 'document body style)))))

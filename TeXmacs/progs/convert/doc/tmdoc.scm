@@ -84,7 +84,7 @@
     (ahash-set! done file-name #t)
     (if done?
 	'(document "")
-	(with t (tree->object (texmacs-load-tree file-name "texmacs"))
+	(with t (tree->stree (texmacs-load-tree file-name "texmacs"))
 	  (if (string? t)
 	      (begin
 		(display* "TeXmacs] bad link or file " file-name "\n")
@@ -106,7 +106,7 @@
 
 (define (tmdoc-language file-name)
   (let* ((t (texmacs-load-tree file-name "texmacs"))
-	 (init (cadr (assoc 'initial (cdr (tree->object t)))))
+	 (init (cadr (assoc 'initial (cdr (tree->stree t)))))
 	 (lan (tmdoc-search-env-var init "language")))
     (if lan lan "english")))
 
@@ -140,14 +140,14 @@
 		    (body ,(tmdoc-add-aux body))
 		    (initial (collection (associate "language" ,lan)
 					 (associate "page-medium" "paper"))))))
-	(set-help-buffer file-name (object->tree doc)))
+	(set-help-buffer file-name (stree->tree doc)))
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))
 	     (doc `(document
 		    (style "tmdoc")
 		    (body ,body)
 		    (initial (collection (associate "language" ,lan))))))
-	(set-help-buffer file-name (object->tree doc)))))
+	(set-help-buffer file-name (stree->tree doc)))))
 
 (define (tmdoc-expand-help-manual file-name . cont)
   (with s-cont (if (null? cont) "(noop)" (car cont))

@@ -40,7 +40,7 @@
   (set! plugin-serial-handle (+ plugin-serial-handle 1))
   (with handle (number->string plugin-serial-handle)
     (ahash-set! plugin-source handle (list name session channel))
-    (plugin-result-set! handle (object->tree '(document "")))
+    (plugin-result-set! handle (stree->tree '(document "")))
     (ahash-set! plugin-current (list name session channel) handle)
     handle))
 
@@ -91,7 +91,7 @@
 	       (> (tree-arity doc2) 0))
 	  (begin
 	    (if flag? (set! doc2 (tree1 'document (tree1 'errput doc2))))
-	    (if (== doc1 (object->tree '(document "")))
+	    (if (== doc1 (stree->tree '(document "")))
 		(plugin-result-set! handle doc2)
 		(plugin-result-set! handle (tree-append doc1 doc2))))))))
 
@@ -134,12 +134,12 @@
 (define (verbatim-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append
-     (escape-verbatim (texmacs->verbatim (object->tree u))) "\n")))
+     (escape-verbatim (texmacs->verbatim (stree->tree u))) "\n")))
 
 (define (generic-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append (char->string #\002) "verbatim:"
-		   (escape-generic (texmacs->verbatim (object->tree u)))
+		   (escape-generic (texmacs->verbatim (stree->tree u)))
 		   (char->string #\005))))
 
 (define (plugin-serialize lan t)
@@ -179,8 +179,8 @@
 	(else t)))
 
 (define (plugin-eval name session t)
-  (let* ((u (connection-eval name session (object->tree t)))
-	 (v (plugin-output-simplify (tree->object u))))
+  (let* ((u (connection-eval name session (stree->tree t)))
+	 (v (plugin-output-simplify (tree->stree u))))
     v))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

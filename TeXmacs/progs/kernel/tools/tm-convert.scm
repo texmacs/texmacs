@@ -231,7 +231,7 @@
 
 (define (generic->texmacs s fm)
   (with r (convert s fm "texmacs-tree")
-    (if r r (object->tree '(error "bad format or data")))))
+    (if r r (stree->tree '(error "bad format or data")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Setting up conversion menus

@@ -64,7 +64,7 @@
 		     "load help file")
 	(cond ((== type "normal")
 	       (let ((doc (texmacs-load-tree name "help")))
-		 (if (== (tree->object doc) "error")
+		 (if (== (tree->stree doc) "error")
 		     (set-message "Bad help file" "load help file")
 		     (set-help-buffer name doc))))
 	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))
