@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
@@ -57,7 +57,9 @@
       <item>a <markup|document> tree,
 
       <item>a <re-index|multiparagraph cell>, that is a <markup|cell> whose
-      operand is a <markup|document>
+      operand is a <markup|document>,
+
+      <item>a <markup|float> whose <var|body> is a <markup|document>,
 
       <item>the last operand of a <markup|with> in block context,
 
