@@ -175,9 +175,8 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
-    if (N(a) == 1) a << copy (a[0]) << copy (a[0]);
-    if (N(a) == 2) a << copy (a[0]);
-    curve c= env->fr (spline (a,close));
+    if (N(a) == 1) a << copy (a[0]);
+    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
