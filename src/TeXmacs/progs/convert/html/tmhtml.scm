@@ -636,7 +636,7 @@
 (define (tmhtml-tmdoc-copyright l)
   (with content
       `("&copy; " ,@(tmhtml (car l))
-	" by " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
+	" " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
     (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
 
 (define (tmhtml-tmdoc-license l)
