@@ -148,20 +148,24 @@
 
   <assign|doc-author-data-name|<xmacro|data|<quasi|<style-with|src-compact|none|<space|0fn><unquote*|<select|<quote-arg|data>|author-name>>>>>>
 
-  <assign|doc-author-data-info|<xmacro|data|<\quasi>
-    <unquote*|<select|<quote-arg|data>|author-address>>
+  <assign|doc-author-data-name|<xmacro|data|<quasiquote|<style-with|src-compact|none|<space|0fn><unquote*|<select|<quote-arg|data>|author-name>>>>>>
 
-    <unquote*|<select|<quote-arg|data>|author-email>>
+  <assign|doc-author-data-info|<\xmacro|data>
+    <\quasiquote>
+      <unquote*|<select|<quote-arg|data>|author-address>>
 
-    <unquote*|<select|<quote-arg|data>|author-homepage>>
-  </quasi>>>
+      <unquote*|<select|<quote-arg|data>|author-email>>
+
+      <unquote*|<select|<quote-arg|data>|author-homepage>>
+    </quasiquote>
+  </xmacro>>
 
   <assign|doc-author-data-note|<xmacro|data|<\quasi>
     <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
   </quasi>>>
 
   <assign|doc-author-data|<\xmacro|data>
-    <quasi|<style-with|src-compact|none|<doc-author-produce|<unquote|<quasi|<doc-author-data-name|<unquote*|<quote-arg|data>>>>>|<unquote|<quasi|<doc-author-data-info|<unquote*|<quote-arg|data>>>>>|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|data>>>>>>>>
+    <quasi|<style-with|src-compact|none|<doc-author-produce|<doc-author-data-name|<unquote*|<quote-arg|data>>>|<doc-author-data-info|<unquote*|<quote-arg|data>>>|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|data>>>>>>>>
   </xmacro>>
 
   <assign|doc-author-data-bis|<macro|body|<quasi|<style-with|src-compact|none|<doc-author-note|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
