@@ -167,6 +167,11 @@ public:
   virtual void go_to_label (string s) = 0;
   virtual tree get_labels () = 0;
 
+  /* public routines from edit_graphics */
+  virtual bool  inside_graphics () = 0;
+  virtual frame find_frame () = 0;
+  virtual void  mouse_graphics (string s, SI x, SI y, time_t t) = 0;
+
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
   virtual SI       decode_length (string l) = 0;

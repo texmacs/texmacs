@@ -21,6 +21,7 @@
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   buf->mark_undo_block ();
+
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
   if ((popup_win != NULL) && (type != "leave")) {
@@ -28,6 +29,11 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     delete popup_win;
     popup_win= NULL;
     this << emit_mouse_grab (false);
+  }
+
+  if (inside_graphics ()) {
+    mouse_graphics (type, x, y, t);
+    return;
   }
 
   if (type == "press-left") mouse_click (x, y);
