@@ -399,6 +399,7 @@ edit_dynamic_rep::activate_latex () {
 
 void
 edit_dynamic_rep::activate_hybrid () {
+  // WARNING: update edit_interface_rep::set_hybrid_footer when updating this
   if (activate_latex ()) return;
   path p= find_deactivated (tp);
   if (nil (p)) return;
