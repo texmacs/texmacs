@@ -190,9 +190,9 @@ initialize_std_drd () {
   init (LESSEQ, "lesseq", fixed (2) -> name ("less or equal"));
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
-  init (IF, "if", options (1, 1));
+  init (IF, "if", options (2, 1));
   init (VAR_IF, "var_if", fixed (2));
-  init (CASE, "case", repeat (1, 1));
+  init (CASE, "case", repeat (2, 1));
   init (WHILE, "while", fixed (2));
 
   init (INACTIVE, "inactive", fixed (1) -> accessible (0));
@@ -200,8 +200,8 @@ initialize_std_drd () {
   init (VAR_INACTIVE, "var_inactive", fixed (1) -> accessible (0));
   init (VAR_ACTIVE, "var_active", fixed (1) -> accessible (0));
   init (SYMBOL, "symbol", fixed (1));
-  init (LATEX, "latex", fixed (1) -> accessible (0));
-  init (HYBRID, "hybrid", options (1, 1) -> accessible (0));
+  init (LATEX, "latex", fixed (1));
+  init (HYBRID, "hybrid", options (1, 1));
   init (TUPLE, "tuple", repeat (0, 1));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (COLLECTION, "collection", repeat (1, 1));
@@ -219,15 +219,15 @@ initialize_std_drd () {
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));
 
-  init (GRAPHICS, "graphics", repeat (1, 1));
+  init (GRAPHICS, "graphics", repeat (4, 1));
   init (SUPERPOSE, "superpose", repeat (1, 1));
   init (TEXT_AT, "text_at", fixed (1, 3, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));
-  init (LINE, "line", repeat (1, 1));
-  init (CLINE, "cline", repeat (1, 1));
-  init (SPLINE, "spline", repeat (1, 1));
-  init (VAR_SPLINE, "var_spline", repeat (1, 1));
-  init (CSPLINE, "cspline", repeat (1, 1));
+  init (LINE, "line", repeat (2, 1));
+  init (CLINE, "cline", repeat (3, 1));
+  init (SPLINE, "spline", repeat (2, 1));
+  init (VAR_SPLINE, "var_spline", repeat (2, 1));
+  init (CSPLINE, "cspline", repeat (2, 1));
   init (FILL, "fill", repeat (1, 1));
   init (POSTSCRIPT, "postscript", fixed (7));
 

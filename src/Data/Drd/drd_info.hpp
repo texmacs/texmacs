@@ -53,6 +53,8 @@ public:
 
   void set_attribute (tree_label tag, string which, tree val);
   tree get_attribute (tree_label tag, string which);
+  void set_name (tree_label tag, string val);
+  string get_name (tree_label tag);
 
   /* Properties of the children of the tag */
   void set_accessible (tree_label tag, int nr, bool is_accessible);

@@ -1684,6 +1684,21 @@ tmg_make (SCM arg1) {
 }
 
 SCM
+tmg_make_arity (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make-arity");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-arity");
+
+  tree_label in1= scm_to_tree_label (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_compound (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_deactivated (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-deactivated");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "make-deactivated");
@@ -2849,6 +2864,7 @@ initialize_glue_editor () {
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
   gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
+  gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
   gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
   gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
   gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);

@@ -185,6 +185,7 @@
   ("emacs:meta /" (make-format "no_line_break"))
   ("emacs:meta !" (make-inactive-label))
   ("emacs:meta ?" (make-inactive-reference))
+  ("emacs:meta C-?" (make-inactive-pageref))
 
   ("emacs:copyto 1" (noop) (clipboard-copy "primary"))
   ("emacs:copyto 2" (clipboard-copy "secondary"))

@@ -19,7 +19,8 @@
     insert-object insert-object-go-to
     insert-tree-at insert-object-at
     ;; inserting inactive content
-    make-inactive make-inactive-arg make-inactive-message
+    in-preamble?
+    make-inactive make-inactive-message
     make-inactive-compound-arg make-inactive-compound-args
     make-inactive-assign-arg make-inactive-assign-function
     make-inactive-assign-function-arg))
@@ -57,16 +58,15 @@
 ;; Inserting inactive content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (in-preamble?)
+  (:type (-> bool))
+  (:synopsis "Are we in preamble mode?")
+  (string=? (get-env "preamble") "true"))
+
 (tm-define (make-inactive name nrargs)
   (:type (string int ->))
   (:synopsis "Insert the inactive primitive @name with @nrargs arguments.")
   (make-deactivated name nrargs name))
-
-(tm-define (make-inactive-arg name arg nrargs)
-  (:type (string string int ->))
-  (:synopsis "Insert the inactive primitve @name with @nrargs arguments and"
-	     "first argument @arg.")
-  (make-deactivated-arg name nrargs name arg))
 
 (tm-define (make-inactive-message name nrargs message)
   (:type (string int string ->))
