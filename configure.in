@@ -1,0 +1,964 @@
+
+#--------------------------------------------------------------------
+#
+# MODULE      : configure.in
+# DESCRIPTION : TeXmacs configuration file for autoconf
+# COPYRIGHT   : (C) 2000  Joris van der Hoeven
+#
+# This software falls under the GNU general public license and comes WITHOUT
+# ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+# If you don't have this file, write to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+#--------------------------------------------------------------------
+
+AC_INIT(Makefile.in)
+
+PACKAGE="TeXmacs"
+VERSION="1.0.2.5"
+RELEASE="1"
+STABLE_VERSION="1.0.2"
+STABLE_RELEASE="3"
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(RELEASE)
+AC_SUBST(STABLE_VERSION)
+AC_SUBST(STABLE_RELEASE)
+
+#--------------------------------------------------------------------
+# Checks for programs
+#--------------------------------------------------------------------
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_LANG_CPLUSPLUS
+AC_MSG_CHECKING(whether GNU C++ compiler is default)
+case "$GXX" in
+  yes )
+    GCC_VERSION=`$CC -dumpversion`
+    GXX_VERSION=`$CXX -dumpversion`
+    AC_MSG_RESULT(yes)
+    AC_MSG_CHECKING(version of gcc)
+    AC_MSG_RESULT($GCC_VERSION)
+    AC_MSG_CHECKING(version of g++)
+    AC_MSG_RESULT($GXX_VERSION)
+  ;;
+  *)
+    GCC_VERSION="none"
+    GXX_VERSION="none"
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN(cannot find GNU C++ compiler)
+  ;;
+esac
+CPP_X_HEADERS
+
+GUILE_FLAGS
+AC_MSG_CHECKING(version of guile)
+GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
+AC_MSG_RESULT($GUILE_VERSION)
+
+#--------------------------------------------------------------------
+# Checks for libraries
+#--------------------------------------------------------------------
+
+AC_PATH_X
+AC_PATH_XTRA
+
+AC_CHECK_FUNC(dlopen)
+if test "$ac_cv_func_dl" = "yes"; then
+  CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+else
+  AC_CHECK_LIB(dl,dlopen)
+  if test "$ac_cv_lib_dl_dlopen" = "yes"; then
+    AC_CHECK_FUNCS(dlopen)
+    CONFIG_LDL="-ldl"
+    CONFIG_BDL="-ldl"
+    CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+  else
+    AC_CHECK_LIB(dld,dld_link)
+    if test "$ac_cv_lib_dld_dld_link" = "yes"; then
+      CONFIG_LDL="-ldl"
+      CONFIG_BDL="-ldl"
+      CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+    else
+      AC_CHECK_FUNCS(shl_load)
+      if test "$ac_cv_func_shl_load" = "yes"; then
+        CONFIG_LDL="-ldl"
+        CONFIG_BDL="-ldl"
+        CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+      else
+        AC_CHECK_FUNCS(dlopen)
+        if test "$ac_cv_func_dlopen" = "yes"; then
+          CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+        fi
+      fi
+    fi
+  fi
+fi
+AC_SUBST(CONFIG_LDL)
+AC_SUBST(CONFIG_BDL)
+AC_SUBST(CONFIG_DYNAMIC_LINKING)
+
+#--------------------------------------------------------------------
+# Checks for iconv
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(iconv,
+changequote(<<, >>)dnl
+<<  --with-iconv[=DIR]        where to find iconv [system]>>dnl
+changequote([, ])dnl
+)
+
+# Check for iconv
+# Modified from GNOME's libxml2 configure.in
+AC_LANG_SAVE
+AC_LANG_C  # compile C to avoid the 'const char**' problem
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+CONFIG_USE_ICONV=""
+if test "$with_iconv" = "no" ; then
+    AC_MSG_RESULT([disabling iconv support])
+else
+    if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
+       CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
+       ICONV_CFLAGS="-I$with_iconv/include"
+       ICONV_LDFLAGS="-L$with_iconv/lib"
+    fi
+
+    AC_CHECK_HEADER(iconv.h,
+    AC_MSG_CHECKING(for iconv)
+    AC_TRY_LINK(
+[
+#include <stdlib.h>
+#include <iconv.h>
+],[
+    iconv_t cd = iconv_open ("","");
+    iconv (cd, NULL, NULL, NULL, NULL);
+],[
+    AC_MSG_RESULT(yes)
+    CONFIG_USE_ICONV="#define USE_ICONV"
+],[
+    AC_MSG_RESULT(no)
+    AC_MSG_CHECKING(for iconv in -liconv)
+    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
+    LIBS="-liconv"                # for AC_TRY_LINK
+    AC_TRY_LINK(
+[
+#include <stdlib.h>
+#include <iconv.h>
+],[
+      iconv_t cd = iconv_open ("","");
+      iconv (cd, NULL, NULL, NULL, NULL);
+],[
+      AC_MSG_RESULT(yes)
+      CONFIG_USE_ICONV="#define USE_ICONV"
+      ICONV_LDFLAGS="${ICONV_LDFLAGS} -liconv"
+],[
+      AC_MSG_RESULT(no)])]))
+fi
+
+if test "$CONFIG_USE_ICONV" = "" ; then
+   AC_MSG_WARN([iconv was not found, HTML import may crash])
+fi
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+AC_LANG_RESTORE  # restore C++ language
+
+AC_SUBST(CONFIG_USE_ICONV)
+AC_SUBST(ICONV_CFLAGS)
+AC_SUBST(ICONV_LDFLAGS)
+
+#--------------------------------------------------------------------
+# Checks for freetype
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(iconv,
+changequote(<<, >>)dnl
+<<  --with-freetype[=DIR]     with freetype support [yes]>>dnl
+changequote([, ])dnl
+)
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+CONFIG_USE_FREETYPE=""
+if test "$with_freetype" = "no" ; then
+    AC_MSG_RESULT([disabling freetype support])
+else
+    CPPFLAGS=`freetype-config --cflags`
+    LIBS=`freetype-config --libs`
+    AC_CHECK_HEADER(ft2build.h,
+    AC_MSG_CHECKING(for freetype)
+    AC_TRY_LINK(
+[
+#include <ft2build.h>
+#include FT_FREETYPE_H 
+],[
+    FT_Library ft_library;
+    (void) FT_Init_FreeType (&ft_library);
+],[
+    AC_MSG_RESULT(yes)
+    CONFIG_USE_FREETYPE="#define USE_FREETYPE"
+    FREETYPE_CFLAGS="$CPPFLAGS"
+    if test "$with_freetype" = "linked" ; then
+      FREETYPE_LDFLAGS="$LIBS"
+      CONFIG_LINKED_FREETYPE="#define LINKED_FREETYPE"
+    fi
+],[
+    AC_MSG_RESULT(no)]))
+fi
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
+AC_SUBST(CONFIG_USE_FREETYPE)
+AC_SUBST(CONFIG_LINKED_FREETYPE)
+AC_SUBST(FREETYPE_CFLAGS)
+AC_SUBST(FREETYPE_LDFLAGS)
+
+#--------------------------------------------------------------------
+# Checks for library functions
+#--------------------------------------------------------------------
+
+AC_CHECK_FUNCS(gettimeofday,[
+  CONFIG_GET_TIME_OF_DAY="#define USE_GET_TIME_OF_DAY 1"
+])
+AC_SUBST(CONFIG_GET_TIME_OF_DAY)
+
+#--------------------------------------------------------------------
+# Fixes for erroneous behaviour of gcc/g++ and guile on some systems
+#--------------------------------------------------------------------
+
+AC_MSG_CHECKING(whether ... arguments behave correctly)
+AC_TRY_COMPILE([
+  void gh_enter (void (*call_back) (int, char**));
+  void install_guile (void (*call_back) (int, char**)) {
+    gh_enter ((void (*)(...)) ((void*) call_back)); }
+],[
+],[
+  CONFIG_DOTS="#define DOTS_OK 1"
+  AC_MSG_RESULT(yes)
+],[
+  AC_MSG_RESULT(no)
+])
+AC_SUBST(CONFIG_DOTS)
+
+AC_MSG_CHECKING(the size_t of guile strings)
+CXXFLAGS="`guile-config compile`"
+AC_TRY_COMPILE([
+  #include <guile/gh.h>
+  #include <libguile.h>
+  void print_string (SCM s) {
+    int len_r;
+    char* r= gh_scm2newstr (s, &len_r); }
+],[
+],[
+  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t int"
+  AC_MSG_RESULT(int)
+],[
+  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t size_t"
+  AC_MSG_RESULT(size_t)
+])
+CXXFLAGS=""
+AC_SUBST(CONFIG_GUILE_STR_SIZE_T)
+
+AC_MSG_CHECKING(if compiler supports -fno-rtti -fno-exceptions)
+CXXFLAGS="-fno-rtti -fno-exceptions"
+AC_TRY_COMPILE([
+  int some_variable = 0;
+],[
+],[
+  CONFIG_CXXDIALECT="-fno-rtti -fno-exceptions"
+  AC_MSG_RESULT(yes)
+],[
+  CONFIG_CXXDIALECT=""
+  AC_MSG_RESULT(no)
+])
+CXXFLAGS=""
+AC_SUBST(CONFIG_CXXDIALECT)
+
+AC_MSG_CHECKING([if statically linking with guile work])
+CONFIG_GUILE_LTDL=""
+CPPFLAGS="$GUILE_CFLAGS"
+LDFLAGS="-static"
+LIBS="$GUILE_LDFLAGS"
+TEXMACS_LINK_GUILE([tm_link_guile_static="yes"],
+		   [tm_link_guile_static="no"])
+AC_MSG_RESULT(["$tm_link_guile_static"])
+if test "$tm_link_guile_static" = "no" ; then
+   AC_MSG_CHECKING([if it works with -lltdl])
+   LIBS="$GUILE_LDFLAGS -lltdl"
+   TEXMACS_LINK_GUILE([tm_link_guile_static_ltdl="yes"],
+		      [tm_link_guile_static_ltdl="no"])
+   AC_MSG_RESULT(["$tm_link_guile_static_ltdl"])
+   if test "$tm_link_guile_static_ltdl" = "yes" ; then
+      GUILE_LDFLAGS="$GUILE_LDFLAGS -lltdl"
+   else
+      AC_MSG_CHECKING([if it works with -lltdl -ldl])
+      LIBS="$GUILE_LDFLAGS -lltdl -ldl"
+      TEXMACS_LINK_GUILE([tm_link_guile_static_ltdl_ldl="yes"],
+			 [tm_link_guile_static_ltdl_ldl="no"])
+      AC_MSG_RESULT(["$tm_link_guile_static_ltdl_ldl"])
+      if test "$tm_link_guile_static_ltdl_ldl" = "yes" ; then
+	 GUILE_LDFLAGS="$GUILE_LDFLAGS -lltdl -ldl"
+      else
+         AC_MSG_WARN([unable to link statically with guile])
+      fi
+   fi
+fi
+CPPFLAGS=""
+LDFLAGS=""
+LIBS=""
+
+#--------------------------------------------------------------------
+# Disable customized allocator
+#--------------------------------------------------------------------
+
+AC_ARG_ENABLE(fastalloc,
+[  --disable-fastalloc     omit fast allocator for small objects],
+    [], [enable_fastalloc="yes"])
+case "$enable_fastalloc" in
+    yes)
+	CONFIG_NO_FAST_ALLOC="" ;;
+    no)
+	CONFIG_NO_FAST_ALLOC="#define NO_FAST_ALLOC"
+	AC_MSG_RESULT([disabling fast allocator for small objects]) ;;
+    *)
+	AC_MSG_ERROR([bad option --enable-fastalloc=$enable_fastalloc]) ;;
+esac
+AC_SUBST(CONFIG_NO_FAST_ALLOC)
+
+#--------------------------------------------------------------------
+# Handle different systems case by case
+#--------------------------------------------------------------------
+
+CONFIG_CXXFLAGS=""
+CONFIG_CXXWARNING="-Wall -Wno-return-type"
+CONFIG_CXXTEMPLATE=""
+CONFIG_STD_SETENV="#define STD_SETENV"
+CONFIG_SO="so"
+CONFIG_LIB_PATH="LD_LIBRARY_PATH"
+CONFIG_CHMOD="chmod -f"
+CONFIG_DASH_I_DASH="-I-"
+
+case "$GUILE_VERSION" in
+  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+    CONFIG_GUILE_SERIAL="A"
+  ;;
+  *)
+    CONFIG_GUILE_SERIAL="B"
+  ;;
+esac
+
+AC_CANONICAL_HOST
+case "${host}" in
+  i*86-*-linux-gnu* | i*86-*-freebsd*)
+    AC_MSG_RESULT(final setup for an Intel/GNU-linux host)
+    CONFIG_OS="GNU_LINUX"
+    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  mips-*-linux-gnu)
+    AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
+    CONFIG_OS="MIPS_GNU_LINUX"
+    CONFIG_OS_SUFFIX="mips-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  mipsel-*-linux-gnu)
+    AC_MSG_RESULT(final setup for a MipsEL/GNU-linux host)
+    CONFIG_OS="MIPSEL_GNU_LINUX"
+    CONFIG_OS_SUFFIX="mipsel-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  arm*-*-linux-gnu)
+    AC_MSG_RESULT(final setup for an Arm/GNU-linux host)
+    CONFIG_OS="ARM_GNU_LINUX"
+    CONFIG_OS_SUFFIX="arm-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  powerpc-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for a PowerPC/GNU-linux host)
+    CONFIG_OS="POWERPC_GNU_LINUX"
+    CONFIG_OS_SUFFIX="powerpc-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  *sun*)
+    AC_MSG_RESULT(final setup for a SUN/solaris host)
+    CONFIG_OS="SUN"
+    CONFIG_OS_SUFFIX="sun"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC=""
+    CONFIG_LSHARED="-G"
+    CONFIG_LPATH="-Wl,-R,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED=""
+    CONFIG_BPATH="-Wl,-R,"
+    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+    CONFIG_STD_SETENV=""
+  ;;
+  sparc*-*-linux-gnu)
+    AC_MSG_RESULT(final setup for a Sparc host running GNU/Linux)
+    CONFIG_OS="SPARC_GNU_LINUX"
+    CONFIG_OS_SUFFIX="sparc-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2" 
+    CONFIG_STD_SETENV=""
+  ;;
+  *dec*)
+    AC_MSG_RESULT(final setup for a DEC/alpha host)
+    CONFIG_OS="DEC"
+    CONFIG_OS_SUFFIX="dec"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC=""
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED="-shared"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+    CONFIG_STD_SETENV=""
+  ;;
+  *alpha*-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an Alpha/GNU-Linux host)
+    CONFIG_OS="ALPHA_GNU_LINUX"
+    CONFIG_OS_SUFFIX="alpha-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED="-shared"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  s390-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an IBM S/390 GNU-Linux host)
+    CONFIG_OS="S390"
+    CONFIG_OS_SUFFIX="s390"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+    CONFIG_STD_SETENV=""
+  ;;
+  *-*-cygwin)
+    AC_MSG_RESULT(final setup for cygwin)
+    CONFIG_OS="CYGWIN"
+    CONFIG_OS_SUFFIX="cygwin"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS="-Wl,-stack,8388608"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS="-Wl,-stack,8388608"
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+#    CXX="export CYGWIN=check_case:strict; $CXX"
+#    AC_SUBST(CXX)
+  ;;
+  powerpc-*-darwin*)
+    echo "$ac_t""final setup for a PowerPC/Darwin host" 1>&6
+    CONFIG_OS="POWERPC_APPLE_DARWIN"
+    CONFIG_OS_SUFFIX="powerpc-apple-darwin"
+    CONFIG_CX="$X_CFLAGS" 
+    CONFIG_CXXFLAGS="-I${prefix}/include"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-dynamiclib -undefined suppress -flat_namespace"
+    CONFIG_LPATH=
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_LDL="-L${prefix}/lib -ldl"
+    CONFIG_BSHARED=
+    CONFIG_BPATH=
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+    CONFIG_SO="dylib"
+    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
+  ;;
+  ia64-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an Itanium/GNU-Linux host)
+    CONFIG_OS="IA64_GNU_LINUX"
+    CONFIG_OS_SUFFIX="ia64-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED="-shared"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  hppa64-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
+    CONFIG_OS="HPPA64_GNU_LINUX"
+    CONFIG_OS_SUFFIX="hppa64-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED="-shared"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  m68k-*-linux*)
+    AC_MSG_RESULT(final setup for a Motorola 68xxx host)
+    CONFIG_OS="M68K"
+    CONFIG_OS_SUFFIX="m68k"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  *-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an unknown host running GNU/Linux)
+    CONFIG_OS="GNU_LINUX"
+    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  *sgi-irix*)
+    echo "$ac_t""final setup for a SGI/Irix host" 1>&6
+    CONFIG_OS="IRIX"
+    CONFIG_OS_SUFFIX="irix"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_CXXFLAGS=""
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH=""
+    X_LIBS=-L/usr/lib32
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC=""
+    CONFIG_BSHARED=""
+    CONFIG_BPATH=""
+    CONFIG_BX="$X_LIBS -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+    CONFIG_STD_SETENV=""
+    CONFIG_CHMOD="chmod"
+    CONFIG_DASH_I_DASH=""
+    CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
+  ;;
+  *)
+    AC_MSG_RESULT(final setup for an unsupported host)
+    CONFIG_OS="UNKNOWN"
+    CONFIG_OS_SUFFIX="unknown"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
+    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+esac
+
+#--------------------------------------------------------------------
+# Temporary fix for link problem
+#--------------------------------------------------------------------
+
+case "$GXX_VERSION" in
+     3.*)
+	 CONFIG_BSTATIC="-static"
+	 CONFIG_BSHARED="-dynamic"
+     ;;
+esac
+
+#--------------------------------------------------------------------
+# Enable debug and optimizations
+#--------------------------------------------------------------------
+
+optimize_default="yes"
+
+case "$GXX_VERSION" in
+    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
+	case "${host}" in
+	  i*86-*-linux-gnu* | i*86-*-freebsd*)
+	    AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
+	    optimize_default="no-inline"
+	  ;;
+	  *)
+	    AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
+	    optimize_default="no-inline"
+	  ;;
+	esac
+    ;;
+esac
+
+AC_ARG_ENABLE(debug,
+changequote(<<, >>)dnl
+<<  --enable-debug[=ARG]      install a debugging enable executable [-ggdb]>>,
+changequote([, ])dnl
+[], [enable_debug="no"])
+
+if test "$enable_debug" = "yes"; then
+    if test "$GXX" = "yes"; then
+        enable_debug="-ggdb"
+    else
+        enable_debug="-g3"
+    fi
+fi
+if test "$enable_debug" = "no"; then
+    AC_MSG_RESULT([disabling debugging])
+    CONFIG_STRIP="strip"
+    CONFIG_CXXDEBUG=""
+else
+    AC_MSG_RESULT([enabling debugging, $enable_debug])
+    CONFIG_STRIP="true"
+    CONFIG_CXXDEBUG="$enable_debug"
+    optimize_default="no"
+fi
+
+AC_ARG_ENABLE(optimize,
+changequote(<<, >>)dnl
+<<  --enable-optimize[=ARG]   compile with optimizations [guessed]>>,
+changequote([, ])dnl
+[], [enable_optimize="$optimize_default"])
+
+case "$enable_optimize" in
+    yes)
+	# keep optimization options
+  	AC_MSG_RESULT([enabling optimizations, $CONFIG_CXXOPTIMIZE]) ;;
+    no-inline)
+	optimize_no_inline="-fno-default-inline -fno-inline"
+	CONFIG_CXXOPTIMIZE="$CONFIG_CXXOPTIMIZE $optimize_no_inline"
+  	AC_MSG_RESULT([enabling optimizations, $CONFIG_CXXOPTIMIZE]) ;;
+    no)
+	CONFIG_CXXOPTIMIZE=""
+	AC_MSG_RESULT([disabling optimizations]) ;;
+    *)
+	CONFIG_CXXOPTIMIZE="$enable_optimize"
+	AC_MSG_RESULT([customizing optimizations, $enable_optimize]) ;;
+esac
+
+#--------------------------------------------------------------------
+# Substitute TeXmacs specific configuration parameters
+#--------------------------------------------------------------------
+
+AC_SUBST(CONFIG_OS)
+AC_SUBST(CONFIG_OS_SUFFIX)
+AC_SUBST(CONFIG_CX)
+AC_SUBST(CONFIG_CXXWARNING)
+AC_SUBST(CONFIG_CXXTEMPLATE)
+AC_SUBST(CONFIG_CXXOPTIMIZE)
+AC_SUBST(CONFIG_CXXDEBUG)
+AC_SUBST(CONFIG_LFLAGS)
+AC_SUBST(CONFIG_LSTATIC)
+AC_SUBST(CONFIG_LSHARED)
+AC_SUBST(CONFIG_LPATH)
+AC_SUBST(CONFIG_LX)
+AC_SUBST(CONFIG_BFLAGS)
+AC_SUBST(CONFIG_BSTATIC)
+AC_SUBST(CONFIG_BSHARED)
+AC_SUBST(CONFIG_BPATH)
+AC_SUBST(CONFIG_BX)
+AC_SUBST(CONFIG_WORD_LENGTH)
+AC_SUBST(CONFIG_WORD_LENGTH_INC)
+AC_SUBST(CONFIG_WORD_MASK)
+AC_SUBST(CONFIG_MAX_FAST)
+AC_SUBST(CONFIG_CXXFLAGS)
+AC_SUBST(CONFIG_STD_SETENV)
+AC_SUBST(CONFIG_SO)
+AC_SUBST(CONFIG_LIB_PATH)
+AC_SUBST(CONFIG_STRIP)
+AC_SUBST(CONFIG_CHMOD)
+AC_SUBST(CONFIG_DASH_I_DASH)
+AC_SUBST(CONFIG_GUILE_SERIAL)
+
+#--------------------------------------------------------------------
+# Default paths for installation
+#--------------------------------------------------------------------
+
+if test "$prefix" = ""; then
+  prefix=/usr/local
+fi
+if test "$prefix" = "NONE"; then
+  prefix=/usr/local
+fi
+if test "$exec_prefix" = ""; then
+  exec_prefix=${prefix}
+fi
+if test "$exec_prefix" = "NONE"; then
+  exec_prefix=${prefix}
+fi
+if test "$exec_prefix" = '${prefix}'; then
+  exec_prefix=${prefix}
+fi
+if test "$includedir" = ""; then
+  includedir=${prefix}/include
+fi
+if test "$includedir" = "NONE"; then
+  includedir=${prefix}/include
+fi
+if test "$includedir" = '${prefix}/include'; then
+  includedir=${prefix}/include
+fi
+if test "$libdir" = ""; then
+  libdir=${exec_prefix}/lib
+fi
+if test "$libdir" = "NONE"; then
+  libdir=${exec_prefix}/lib
+fi
+if test "$libdir" = '${exec_prefix}/lib'; then
+  libdir=${exec_prefix}/lib
+fi
+if test "$bindir" = ""; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$bindir" = "NONE"; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$bindir" = '${exec_prefix}/bin'; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$datadir" = ""; then
+  datadir=${prefix}/share
+fi
+if test "$datadir" = "NONE"; then
+  datadir=${prefix}/share
+fi
+if test "$datadir" = '${prefix}/share'; then
+  datadir=${prefix}/share
+fi
+if test "$mandir" = ""; then
+  mandir=${prefix}/man
+fi
+if test "$mandir" = "NONE"; then
+  mandir=${prefix}/man
+fi
+if test "$mandir" = '${prefix}/man'; then
+  mandir=${prefix}/man
+fi
+if test "$libexecdir" = ""; then
+  libexecdir=${exec_prefix}/libexec
+fi
+if test "$libexecdir" = "NONE"; then
+  libexecdir=${exec_prefix}/libexec
+fi
+if test "$libexecdir" = '${exec_prefix}/libexec'; then
+  libexecdir=${exec_prefix}/libexec
+fi
+
+curdir="`pwd`"
+tmorig=${curdir}
+tmdir=${PACKAGE}
+tmsrc=${curdir}/${tmdir}
+tmbin=${libexecdir}/${tmdir}
+tmdata=${datadir}/${tmdir}
+AC_SUBST(tmorig)
+AC_SUBST(tmdir)
+AC_SUBST(tmsrc)
+AC_SUBST(tmbin)
+AC_SUBST(tmdata)
+
+if test "$RELEASE" = "1"; then
+  tmtgz=${PACKAGE}-${VERSION}
+else
+  tmtgz=${PACKAGE}-${VERSION}-R${RELEASE}
+fi
+tmrpm=${PACKAGE}-${VERSION}-${RELEASE}
+if test "$STABLE_RELEASE" = "1"; then
+  tmstgz=${PACKAGE}-${STABLE_VERSION}
+else
+  tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
+fi
+tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+AC_SUBST(tmtgz)
+AC_SUBST(tmrpm)
+AC_SUBST(tmstgz)
+AC_SUBST(tmsrpm)
+
+#--------------------------------------------------------------------
+# Done
+#--------------------------------------------------------------------
+
+AC_OUTPUT(Makefile:Makefile.in src/common.makefile:src/common.makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in)

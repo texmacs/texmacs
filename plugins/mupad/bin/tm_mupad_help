@@ -1,0 +1,124 @@
+#!/bin/sh -f
+
+# Script for starting the MuPAD documentation from TeXmacs
+# Copyright (c) Andrey Grozin 2002
+# This software falls under the GNU general public license and comes WITHOUT
+# ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+# If you don't have this file, write to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+if [ -x /usr/local/MuPAD/share/bin/mupad ] ; then
+  SHARE_BIN=/usr/local/MuPAD/share/bin
+else
+  SHARE_BIN=`dirname \`which mupad\``
+fi
+
+if [ `basename $SHARE_BIN` = bin ] ; then
+  SHARE=`dirname $SHARE_BIN`
+  if [ `basename $SHARE` = share ] ; then
+    MuPAD_ROOT_PATH=`dirname $SHARE`/
+  else
+    MuPAD_ROOT_PATH=../
+  fi
+else
+  MuPAD_ROOT_PATH=../../
+fi
+export MuPAD_ROOT_PATH
+
+SYSINFO=`$MuPAD_ROOT_PATH/share/bin/sysinfo`
+export SYSINFO
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MuPAD_ROOT_PATH}/${SYSINFO}/lib:/usr/local/X11R6/motif-2.0/lib:/usr/local/X11R6/lib:$MuPAD_ROOT_PATH/$SYSINFO/bin
+export LD_LIBRARY_PATH
+
+XKEYSYMDB=$MuPAD_ROOT_PATH/share/unix/XKeysymDB
+export XKEYSYMDB
+
+SHORT_LANG=`echo ${LANG}|tr 'A-Z' 'a-z'|cut -b-2`
+[ -z "$SHORT_LANG" ] && SHORT_LANG=`echo ${LC_MESSAGES}|tr 'A-Z' 'a-z'|cut -b-2`
+[ -z "$SHORT_LANG" ] && SHORT_LANG=`echo ${LC_ALL}|tr 'A-Z' 'a-z'|cut -b-2`
+[ -z "$SHORT_LANG" ] && SHORT_LANG=`echo ${LANGUAGE}|tr 'A-Z' 'a-z'|cut -b-2`
+# at the moment only german is supported
+if [ ! -d $MuPAD_ROOT_PATH/share/unix/locale/$SHORT_LANG ]; then
+  LANGUAGE=
+  LANG=
+  LC_MESSAGES=
+  LC_ALL=
+  SHORT_LANG=
+  export LANGUAGE LANG LC_MESSAGES LC_ALL
+fi
+export SHORT_LANG
+
+MuPAD_BIN=$MuPAD_ROOT_PATH/$SYSINFO/bin
+MuPAD_MOD=$MuPAD_ROOT_PATH/$SYSINFO/modules
+MuPAD_LIB=$MuPAD_ROOT_PATH/share/lib
+
+MuPAD_HELP=$MuPAD_ROOT_PATH/share/doc/ascii
+if [ -d ${MuPAD_HELP}-${SHORT_LANG} ]; then
+  MuPAD_HELP=${MuPAD_HELP}-${SHORT_LANG}
+fi
+
+MuPAD_DOC_PATH=$MuPAD_ROOT_PATH/share/doc/dvi
+if [ -d ${MuPAD_DOC_PATH}-${SHORT_LANG} ]; then
+  MuPAD_DOC_PATH=${MuPAD_DOC_PATH}-${SHORT_LANG}
+fi
+export MuPAD_DOC_PATH
+
+FONT_PATH=${MuPAD_DOC_PATH}/fonts//:
+export FONT_PATH
+
+# There's different kpsewhich versions out there...
+# First, look if one is installed at all
+KPSEWHICH=0
+for dir in `echo $PATH | tr ':' ' '` ; do 
+  if [ -x $dir/kpsewhich ]; then
+    KPSEWHICH=1
+  fi
+done
+
+if [ $KPSEWHICH -gt 0 ]; then
+ [ -z "$PKFONTS" ] && PKFONTS=`kpsewhich --expand '$PKFONTS'  2>/dev/null`
+ [ -z "$PKFONTS" ] && PKFONTS=`kpsewhich --expand-var '$PKFONTS' 2>/dev/null`
+fi
+
+# otherwise, try some defaults
+if [ -z "$PKFONTS" ]; then
+ PKFONTS="."
+ for dir in /usr/lib/texmf/fonts/pk \
+	/usr/local/tex/lib/texmf/fonts \
+	/var/spool/texmf/pk \
+   ; do
+     [ -d $dir ] && PKFONTS=$PKFONTS:$dir//
+ done
+fi
+
+if [ $KPSEWHICH -gt 0 ]; then
+  [ -z "$KPSE_TARGETDIR" ] && KPSE_TARGETDIR=`kpsewhich --expand '$VARTEXFONTS' 2>/dev/null`
+  [ -z "$KPSE_TARGETDIR" ] && KPSE_TARGETDIR=`kpsewhich --expand-var '$VARTEXFONTS' 2>/dev/null`
+fi
+
+[ -z "$KPSE_TARGETDIR" ] && [ -d /var/tmp/texfonts ] \
+   && [ -w /var/tmp/texfonts ] && KPSE_TARGETDIR='/var/tmp/texfonts'
+[ -z "$KPSE_TARGETDIR" ] && [ -d /var/tmp ] && [ ! -e /var/tmp/texfonts ] \
+   && mkdir /var/tmp/texfonts && chmod 1777 /var/tmp/texfonts && KPSE_TARGETDIR='/var/tmp/texfonts'
+[ -z "$KPSE_TARGETDIR" ] && [ -d /tmp/texfonts ] && [ -w /tmp/texfonts ] \
+   && KPSE_TARGETDIR='/tmp/texfonts'
+[ -z "$KPSE_TARGETDIR" ] && [ -d /tmp ] && [ ! -e /tmp/texfonts ] \
+   && mkdir /tmp/texfonts && chmod 1777 /tmp/texfonts && KPSE_TARGETDIR='/tmp/texfonts'
+
+export KPSE_TARGETDIR
+
+PKFONTS=$PKFONTS:$FONT_PATH:$KPSE_TARGETDIR
+export PKFONTS
+
+KPATHSEA_DPI=300
+export KPATHSEA_DPI
+MAKETEX_BASE_DPI=300
+export MAKETEX_BASE_DPI
+MAKETEX_MODE=cx
+export MAKETEX_MODE
+MKTEXPK=1
+export MKTEXPK
+MAKETEXPK=1
+export MAKETEXPK
+
+exec $MuPAD_BIN/mxdvi $MuPAD_DOC_PATH/$1.mdvi

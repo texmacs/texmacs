@@ -1,0 +1,157 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : tmdoc.scm
+;; DESCRIPTION : generation of larger pieces of documentation
+;; COPYRIGHT   : (C) 2002  Joris van der Hoeven
+;;
+;; This software falls under the GNU general public license and comes WITHOUT
+;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+;; If you don't have this file, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (convert doc tmdoc)
+  (:export tmdoc-expand-help tmdoc-expand-this tmdoc-include))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmdoc-down level)
+  (cond ((== level 'title) 'chapter)
+	((== level 'tmdoc-title) 'section)
+	((== level 'tmdoc-title*) 'section)
+	((== level 'chapter) 'section)
+	((== level 'appendix) 'section)
+	((== level 'section) 'subsection)
+	((== level 'subsection) 'subsubsection)
+	((== level 'subsubsection) 'paragraph)
+	(else 'subparagraph)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main expansions routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmdoc-branch x base-name level done)
+  (let* ((name (cadddr x))
+	 (rel-name (url-relative base-name name)))
+    (tmdoc-expand rel-name level done)))
+
+(define (tmdoc-substitute-sub l base-name)
+  (if (null? l) l
+      (cons (tmdoc-substitute (car l) base-name)
+	    (tmdoc-substitute-sub (cdr l) base-name))))
+
+(define (tmdoc-substitute x base-name)
+  (cond ((match? x '(apply "hyper-link" :2))
+	 (list 'apply "hyper-link" (caddr x)
+	       (url->string (url-relative base-name (cadddr x)))))
+	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) base-name)))
+	(else x)))
+
+(define (tmdoc-rewrite-one x base-name the-level done)
+  (let* ((omit? (list? the-level))
+	 (level (if omit? (car the-level) the-level)))
+    (cond ((or (func? x 'tmdoc-title) (func? x 'tmdoc-title*))
+	   (if omit? '(document) (cons level (cdr x))))
+	  ((func? x 'tmdoc-license)
+	   '(document))
+	  ((func? x 'traverse)
+	   (cons 'document (tmdoc-rewrite (cdadr x) base-name level done)))
+	  ((match? x '(apply "branch" :2))
+	   (tmdoc-branch x base-name (tmdoc-down level) done))
+	  ((match? x '(apply "continue" :2))
+	   (tmdoc-branch x base-name (list level) done))
+	  ((match? x '(apply "extra-branch" :2))
+	   (tmdoc-branch x base-name 'appendix) done)
+	  ((match? x '(apply "tmdoc-copyright" :*))
+	   '(document))
+	  (else (tmdoc-substitute x base-name)))))
+
+(define (tmdoc-rewrite l base-name level done)
+  (if (null? l) l
+      (let ((d1 (tmdoc-rewrite-one (car l) base-name level done))
+	    (d2 (tmdoc-rewrite (cdr l) base-name level done)))
+	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
+
+(define (tmdoc-expand file-name level . opts)
+  (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
+	 (done? (ahash-ref done file-name))
+	 (t (texmacs-load-tree file-name "texmacs"))
+	 (u (cadr (assoc 'body (cdr (tree->object t))))))
+    (ahash-set! done file-name #t)
+    (if done?
+	'(document "")
+	(cons 'document (tmdoc-rewrite (cdr u) file-name level done)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmdoc-search-env-var t which)
+  (cond ((not (list? t)) #f)
+	((null? t) #f)
+	((match? t '(associate "language" :1)) (caddr t))
+	(else (let ((val (tmdoc-search-env-var (car t) which)))
+		(if val val (tmdoc-search-env-var (cdr t) which))))))
+
+(define (tmdoc-language file-name)
+  (let* ((t (texmacs-load-tree file-name "texmacs"))
+	 (init (cadr (assoc 'initial (cdr (tree->object t)))))
+	 (lan (tmdoc-search-env-var init "language")))
+    (if lan lan "english")))
+
+(define (tmdoc-get-aux-title doc)
+  (cond ((or (not (list? doc)) (null? doc)) doc)
+	((func? (car doc) 'title) (car doc))
+	(else (tmdoc-get-aux-title (cdr doc)))))
+
+(define (tmdoc-get-aux-body doc)
+  (cond ((or (not (list? doc)) (null? doc)) doc)
+	((func? (car doc) 'title) (cdr doc))
+	(else (tmdoc-get-aux-body (cdr doc)))))
+
+(define (tmdoc-add-aux doc)
+  (cons* 'document
+	 (tmdoc-get-aux-title doc)
+	 '(table-of-contents toc (document ""))
+	 (rcons (tmdoc-get-aux-body doc)
+		'(the-index idx (document "")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmdoc-expand-help file-name level)
+  (if (== level 'title)
+      (let* ((body (tmdoc-expand file-name level))
+	     (lan (tmdoc-language file-name))
+	     (doc `(document
+		    (style "tmmanual")
+		    (body ,(tmdoc-add-aux body))
+		    (initial (collection (associate "language" ,lan)
+					 (associate "page medium" "paper"))))))
+	(set-help-buffer file-name (object->tree doc)))
+      (let* ((body (tmdoc-expand file-name level))
+	     (lan (tmdoc-language file-name))
+	     (doc `(document
+		    (style "tmdoc")
+		    (body ,body)
+		    (initial (collection (associate "language" ,lan))))))
+	(set-help-buffer file-name (object->tree doc)))))
+
+(define (tmdoc-expand-this level)
+  (tmdoc-expand-help (get-name-buffer) level))
+
+(define (tmdoc-remove-hyper-links l)
+  (cond ((not (pair? l)) l)
+	((match? l '(apply "hyper-link" :2)) (caddr l))
+	(else (cons (tmdoc-remove-hyper-links (car l))
+		    (tmdoc-remove-hyper-links (cdr l))))))
+
+(define (tmdoc-include file-name)
+  (let* ((body (tmdoc-expand file-name 'chapter))
+	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
+    (tmdoc-remove-hyper-links filt)))

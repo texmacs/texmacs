@@ -1,0 +1,2 @@
+#!/bin/sh
+exec gs -q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS "$@"

@@ -1,0 +1,15 @@
+Installation of TeXmacs-REDUCE interface
+----------------------------------------
+
+1. Ensure that the script
+
+	reduce
+
+   is in the path.
+
+2. As root, go to ../bin (from this directory) and run
+
+	./reduce_setup
+
+3. As a normal user, copy reducerc to your ~/.reducerc
+   (or merge it with your ~/.reducerc , if it already exists)

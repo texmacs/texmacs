@@ -1,0 +1,389 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : kbd-latex.scm
+;; DESCRIPTION : setup key combinations for frequently used commands
+;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
+;;
+;; This software falls under the GNU general public license and comes WITHOUT
+;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+;; If you don't have this file, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (keyboard kbd-latex)
+  (:use (texmacs edit edit-text) (texmacs edit edit-misc)
+	(texmacs tools tm-bracket)))
+
+(kbd-commands
+  ("#" "Insert sharp" (insert-string "#"))
+  ("$" "Insert dollar" (insert-string "$"))
+  ("(" "Insert formula" (make-with "mode" "math"))
+  ("," "Insert small horizontal space" (make-space "0.2spc"))
+  (":" "Insert medium horizontal space" (make-space "0.4spc"))
+  (";" "Insert thick horizontal space" (make-space "0.6spc"))
+  (" " "Insert horizontal interword space" (make-space "1spc"))
+  ("!" "Insert negative horizontal space" (make-space "-0.2spc"))
+  ("|" "Insert norm" (insert-string "<||>"))
+  ("quad" "Insert a quad space" (make-space "1fn"))
+  ("qquad" "Insert a qquad space" (make-space "2fn"))
+  ("\\" "Go to the next line" (make-format "next_line"))
+
+  ("[" "Insert equation"
+   (begin (make-big-expand "equation*") (temp-proof-fix)))
+  ("equation" "Insert numbered equation"
+   (begin (make-big-expand "equation") (temp-proof-fix)))
+  ("eqnarray*" "Insert equation array"
+   (begin (make-expand-arg "eqnarray*") (temp-proof-fix)))
+
+  ("cC" "Make Ç" (emulate-keyboard "cedilla C"))
+  ("cc" "Make ç" (emulate-keyboard "cedilla c"))
+  ("\'E" "Insert É" (emulate-keyboard "acute E"))
+  ("\'e" "Insert é" (emulate-keyboard "acute e"))
+  ("`A" "Insert À" (emulate-keyboard "grave A"))
+  ("`E" "Insert È" (emulate-keyboard "grave E"))
+  ("`U" "Insert È" (emulate-keyboard "grave U"))
+  ("`a" "Insert à" (emulate-keyboard "grave a"))
+  ("`e" "Insert è" (emulate-keyboard "grave e"))
+  ("`u" "Insert ù" (emulate-keyboard "grave u"))
+  ("^A" "Insert Â" (emulate-keyboard "hat A"))
+  ("^E" "Insert Ê" (emulate-keyboard "hat E"))
+  ("^I" "Insert Î" (emulate-keyboard "hat I"))
+  ("^O" "Insert Ô" (emulate-keyboard "hat O"))
+  ("^U" "Insert Û" (emulate-keyboard "hat U"))
+  ("^a" "Insert â" (emulate-keyboard "hat a"))
+  ("^e" "Insert ê" (emulate-keyboard "hat e"))
+  ("^i" "Insert î" (emulate-keyboard "hat i"))
+  ("^o" "Insert ô" (emulate-keyboard "hat o"))
+  ("^u" "Insert û" (emulate-keyboard "hat u"))
+  ("S" "Make Ÿ" (emulate-keyboard "S-F5 p"))
+  ("oe" "Insert oe" (emulate-keyboard "S-F5 o e"))
+  ("ae" "Insert ae" (emulate-keyboard "S-F5 a"))
+  ("ss" "Insert ÿ" (emulate-keyboard "S-F5 s"))
+  ("OE" "Insert OE" (emulate-keyboard "S-F5 O E"))
+  ("AE" "Insert AE" (emulate-keyboard "S-F5 A"))
+  ("SS" "Insert SS" (emulate-keyboard "S-F5 S"))
+
+  ("arccos" "Insert arccos" (insert-string "arccos"))
+  ("arcsin" "Insert arcsin" (insert-string "arcsin"))
+  ("arctan" "Insert arctan" (insert-string "arctan"))
+  ("arg" "Insert arg" (insert-string "arg"))
+  ("cos" "Insert cos" (insert-string "cos"))
+  ("cosh" "Insert cosh" (insert-string "cosh"))
+  ("cot" "Insert cot" (insert-string "cot"))
+  ("coth" "Insert coth" (insert-string "coth"))
+  ("csc" "Insert csc" (insert-string "csc"))
+  ("deg" "Insert deg" (insert-string "deg"))
+  ("det" "Insert det" (insert-string "det"))
+  ("dim" "Insert dim" (insert-string "dim"))
+  ("exp" "Insert exp" (insert-string "exp"))
+  ("gcd" "Insert gcd" (insert-string "gcd"))
+  ("hom" "Insert hom" (insert-string "hom"))
+  ("inf" "Insert inf" (insert-string "inf"))
+  ("ker" "Insert ker" (insert-string "ker"))
+  ("lg" "Insert lg" (insert-string "lg"))
+  ("lim" "Insert lim" (insert-string "lim"))
+  ("liminf" "Insert liminf" (insert-string "liminf"))
+  ("limsup" "Insert limsup" (insert-string "limsup"))
+  ("ln" "Insert ln" (insert-string "ln"))
+  ("log" "Insert log" (insert-string "log"))
+  ("max" "Insert max" (insert-string "max"))
+  ("min" "Insert min" (insert-string "min"))
+  ("Pr" "Insert Pr" (insert-string "Pr"))
+  ("sec" "Insert sec" (insert-string "sec"))
+  ("sin" "Insert sin" (insert-string "sin"))
+  ("sinh" "Insert sinh" (insert-string "sinh"))
+  ("sup" "Insert sup" (insert-string "sup"))
+  ("tan" "Insert tan" (insert-string "tan"))
+  ("tanh" "Insert tanh" (insert-string "tanh"))
+
+  ("maketitle" "Insert title"
+   (begin (make-big-expand "make-title") (make-expand-arg "title")))
+  ("tableofcontents" "Insert table of contents"
+   (make-aux "table-of-contents" "toc"))
+  ("appendix" "Insert appendix" (make-section-arg "appendix"))
+  ("chapter" "Insert chapter" (make-section-arg "chapter"))
+  ("section" "Insert section" (make-section-arg "section"))
+  ("subsection" "Insert subsection" (make-section-arg "subsection"))
+  ("subsubsection" "Insert subsubsection" (make-section-arg "subsubsection"))
+  ("paragraph" "Insert paragraph" (make-section-arg "paragraph"))
+  ("subparagraph" "Insert subparagraph" (make-section-arg "subparagraph"))
+
+  ("frac" "Make fraction" (make-fraction))
+  ("sqrt" "Make square root" (make-sqrt))
+  ("not" "Make negation" (make-neg))
+  ("acute" "Make acute" (make-wide "<acute>"))
+  ("bar" "Make bar" (make-wide "<bar>"))
+  ("breve" "Make bar" (make-wide "<breve>"))
+  ("check" "Make check" (make-wide "<check>"))
+  ("grave" "Make grave" (make-wide "<grave>"))
+  ("hat" "Make hat" (make-wide "^"))
+  ("tilde" "Make tilde" (make-wide "~"))
+  ("vect" "Make vector" (make-wide "<vect>"))
+  ("dot" "Make dot" (make-wide "<dot>"))
+  ("ddot" "Make double dot" (make-wide "<ddot>"))
+  ("dddot" "Make triple dot" (make-wide "<dddot>"))
+  ("ddddot" "Make quadruple dot" (make-wide "<ddddot>"))
+  ("widecheck" "Make check" (make-wide "<check>"))
+  ("widehat" "Make hat" (make-wide "^"))
+  ("widetilde" "Make tilde" (make-wide "~"))
+
+  ("sum" "Insert big summation" (make-big-operator "sum"))
+  ("prod" "Insert big product" (make-big-operator "prod"))
+  ("coprod" "Insert big coproduct" (make-big-operator "amalg"))
+  ("int" "Insert big integral" (make-big-operator "int"))
+  ("oint" "Insert big contour integral" (make-big-operator "oint"))
+  ("bigcap" "Insert big intersection" (make-big-operator "cap"))
+  ("bigcup" "Insert big union" (make-big-operator "cup"))
+  ("bigsqcup" "Insert big square union" (make-big-operator "sqcup"))
+  ("bigvee" "Insert big logical or" (make-big-operator "vee"))
+  ("bigwedge" "Insert big logical and" (make-big-operator "wedge"))
+  ("bigodot" "Insert big dotted point" (make-big-operator "odot"))
+  ("bigotimes" "Insert big tensor product" (make-big-operator "otimes"))
+  ("bigoplus" "Insert big direct sum" (make-big-operator "oplus"))
+  ("biguplus" "Insert big union sum" (make-big-operator "uplus"))
+
+  ("left(" "Insert large (" (make-bracket-open "(" ")" #t))
+  ("left)" "Insert large left )" (make-bracket-open ")" "(" #t))
+  ("left[" "Insert large [" (make-bracket-open "[" "]" #t))
+  ("left]" "Insert large left ]" (make-bracket-open "]" "[" #t))
+  ("left{" "Insert large {" (make-bracket-open "{" "}" #t))
+  ("left}" "Insert large left }" (make-bracket-open "}" "{" #t))
+  ("leftlfloor" "Insert large <lfloor>"
+   (make-bracket-open "lfloor" "rfloor" #t))
+  ("leftrfloor" "Insert large left <rfloor>"
+   (make-bracket-open "rfloor" "lfloor" #t))
+  ("leftlceil" "Insert large <lceil>"
+   (make-bracket-open "lceil" "rceil" #t))
+  ("leftrceil" "Insert large left <rceil>"
+   (make-bracket-open "rceil" "lceil" #t))
+  ("leftlangle" "Insert large <langle>"
+   (make-bracket-open "langle" "rangle" #t))
+  ("leftrangle" "Insert large left <rangle>"
+   (make-bracket-open "rangle" "langle" #t))
+  ("left|" "Insert large left <mid>" (make-bracket-open "|" "|" #t))
+  ("left||" "Insert large left <parallel>" (make-bracket-open "||" "||" #t))
+  ("left/" "Insert large left /" (make-bracket-open "/" "\\" #t))
+  ("leftbackslash" "Insert large left \\" (make-bracket-open "\\" "/" #t))
+  ("left." "Insert large left ." (make-bracket-open "." "." #t))
+
+  ("right(" "Insert large right (" (make-bracket-close "(" ")" #t))
+  ("right)" "Insert large )" (make-bracket-close ")" "(" #t))
+  ("right[" "Insert large right [" (make-bracket-close "[" "]" #t))
+  ("right]" "Insert large ]" (make-bracket-close "]" "[" #t))
+  ("right{" "Insert large right {" (make-bracket-close "{" "}" #t))
+  ("right}" "Insert large }" (make-bracket-close "}" "{" #t))
+  ("rightlfloor" "Insert large right <lfloor>"
+   (make-bracket-close "lfloor" "rfloor" #t))
+  ("rightrfloor" "Insert large <rfloor>"
+   (make-bracket-close "rfloor" "lfloor" #t))
+  ("rightlceil" "Insert large right <lceil>"
+   (make-bracket-close "lceil" "rceil" #t))
+  ("rightrceil" "Insert large <rceil>"
+   (make-bracket-close "rceil" "lceil" #t))
+  ("rightlangle" "Insert large right <langle>"
+   (make-bracket-close "langle" "rangle" #t))
+  ("rightrangle" "Insert large <rangle>"
+   (make-bracket-close "rangle" "langle" #t))
+  ("right|" "Insert large right <mid>" (make-bracket-close "|" "|" #t))
+  ("right||" "Insert large right <parallel>" (make-bracket-close "||" "||" #t))
+  ("right/" "Insert large right /" (make-bracket-close "/" "\\" #t))
+  ("rightbackslash" "Insert large right \\" (make-bracket-close "\\" "/" #t))
+  ("right." "Insert large right ." (make-bracket-close "." "." #t))
+
+  ("rmfamily" "Use roman font family" (make-with "font family" "rm"))
+  ("ttfamily" "Use typewriter font family" (make-with "font family" "tt"))
+  ("sffamily" "Use sans serif font family" (make-with "font family" "sf"))
+  ("mdseries" "Use medium font series" (make-with "font series" "medium"))
+  ("bfseries" "Use bold font series" (make-with "font series" "bold"))
+  ("upshape" "Use right font shape" (make-with "font shape" "right"))
+  ("itshape" "Use italic font shape" (make-with "font shape" "italic"))
+  ("slshape" "Use slanted font shape" (make-with "font shape" "slanted"))
+  ("scshape" "Use small-caps font shape"
+   (make-with "font shape" "small-caps"))
+  ("rm" "Use roman font family" (make-with "font family" "rm"))
+  ("tt" "Use typewriter font family" (make-with "font family" "tt"))
+  ("sf" "Use sans serif font family" (make-with "font family" "sf"))
+  ("md" "Use medium font series" (make-with "font series" "medium"))
+  ("bf" "Use bold font series" (make-with "font series" "bold"))
+  ("up" "Use right font shape" (make-with "font shape" "right"))
+  ("it" "Use italic font shape" (make-with "font shape" "italic"))
+  ("em" "Emphasize text" (make-expand-arg "em"))
+  ("sl" "Use slanted font shape" (make-with "font shape" "slanted"))
+  ("sc" "Use small-caps font shape" (make-with "font shape" "small-caps"))
+  ("textrm" "Use roman font family" (make-with "font family" "rm"))
+  ("texttt" "Use typewriter font family" (make-with "font family" "tt"))
+  ("textsf" "Use sans serif font family" (make-with "font family" "sf"))
+  ("textmd" "Use medium font series" (make-with "font series" "medium"))
+  ("textbf" "Use bold font series" (make-with "font series" "bold"))
+  ("textup" "Use right font shape" (make-with "font shape" "right"))
+  ("textit" "Use italic font shape" (make-with "font shape" "italic"))
+  ("emph" "Use italic font shape" (make-with "font shape" "italic"))
+  ("textsl" "Use slanted font shape" (make-with "font shape" "slanted"))
+  ("textsc" "Use small-caps font shape"
+   (make-with "font shape" "small-caps"))
+  ("cal" "Use calligraphic font" (make-with "math font" "cal"))
+  ("frak" "Use fraktur font" (make-with "math font" "Euler"))
+  ("Bbb" "Use blackboard bold font" (make-with "math font" "Bbb*"))
+  ("mathcal" "Use calligraphic font" (make-with "math font" "cal"))
+  ("mathfrak" "Use fraktur font" (make-with "math font" "Euler"))
+  ("mathbb" "Use blackboard math font" (make-with "math font" "Bbb*"))
+  ("mathrm" "Use roman font family" (make-with "math font family" "rm"))
+  ("mathtt" "Use typewriter font family" (make-with "math font family" "tt"))
+  ("mathsf" "Use sans serif font family" (make-with "math font family" "sf"))
+  ("mathmd" "Use medium font series" (make-with "math font series" "medium"))
+  ("mathbf" "Use bold font series" (make-with "math font series" "bold"))
+  ("mathup" "Use right font shape" (make-with "math font shape" "right"))
+  ("mathit" "Use italic font shape" (make-with "math font shape" "italic"))
+  ("tiny" "Use tiny font font size" (make-with "font size" "0.59"))
+  ("scriptsize" "Use script font size" (make-with "font size" "0.71"))
+  ("footnotesize" "Use footnote font size" (make-with "font size" "0.71"))
+  ("small" "Use small font size" (make-with "font size" "0.84"))
+  ("normalsize" "Use normal font size" (make-with "font size" "1"))
+  ("large" "Use large font size" (make-with "font size" "1.19"))
+  ("Large" "Use very large font size" (make-with "font size" "1.41"))
+  ("LARGE" "Use very large font size" (make-with "font size" "1.41"))
+  ("huge" "Use huge font size" (make-with "font size" "1.68"))
+  ("Huge" "Use really huge font size" (make-with "font size" "2"))
+  ("displaystyle" "Switch to formula style"
+   (make-with "formula style" "true"))
+
+  ("black" "Use a black color" (make-with "color" "black"))
+  ("white" "Use a white color" (make-with "color" "white"))
+  ("grey" "Use a grey color" (make-with "color" "grey"))
+  ("red" "Use a red color" (make-with "color" "red"))
+  ("blue" "Use a blue color" (make-with "color" "blue"))
+  ("yellow" "Use a yellow color" (make-with "color" "yellow"))
+  ("green" "Use a green color" (make-with "color" "green"))
+  ("orange" "Use a orange color" (make-with "color" "orange"))
+  ("magenta" "Use a magenta color" (make-with "color" "magenta"))
+  ("brown" "Use a brown color" (make-with "color" "brown"))
+  ("pink" "Use a pink color" (make-with "color" "pink"))
+
+  ("smallskip" "Insert small vertical space" (make-vspace-after "0.5fn"))
+  ("medskip" "Insert medium vertical space" (make-vspace-after "1fn"))
+  ("bigskip" "Insert big vertical space" (make-vspace-after "2fn"))
+  ("item" "Insert new item or number" (make-item))
+  ("label" "Make label" (make-inactive-label))
+  ("ref" "Make reference" (make-inactive-reference))
+  ("pageref" "Make page reference" (make-inactive-pageref))
+  ("footnote" "Insert a footnote" (make-big-expand "footnote"))
+  ("input" "Include a document" (make-inactive-include)))
+
+(kbd-symbols
+  "alpha" "beta" "gamma" "delta" "epsilon"
+  "zeta" "eta" "theta" "iota" "kappa"
+  "lambda" "mu" "nu" "xi" "omicron" "pi" "rho"
+  "sigma" "tau" "upsilon" "phi" "chi"
+  "psi" "omega" "varepsilon" "vartheta"
+  "varpi" "varrho" "varsigma" "varphi"
+  "leftharpoonup" "leftharpoondown"
+  "rightharpoonup" "rightharpoondown" "lefthook" "righthook"
+  "triangleright" "triangleleft" "star" "partial"
+  "flat" "natural" "sharp" "smile" "frown" "ell"
+  "imath" "jmath" "wp" "vect"
+  
+  "Alpha" "Beta" "Gamma" "Delta" "Epsilon"
+  "Zeta" "Eta" "Theta" "Iota" "Kappa" "Lambda"
+  "Mu" "Nu" "Xi" "Omicron" "Pi" "Rho"
+  "Sigma" "Tau" "Upsilon" "Phi" "Chi" "Psi" "Omega"
+  "grave" "acute" "check" "breve" "bar"
+  "cedille" "sz" "ae" "oe" "AE" "OE"
+  "ast" "asterisk"
+  
+  "cdot" "times" "asterisk" "div" "diamond"
+  "pm" "mp" "oplus" "ominus" "otimes" "oslash"
+  "odot" "bigcirc" "circ" "bullet" "asymp" "equiv"
+  "subseteq" "supseteq" "leq" "geq" "preceq" "succeq"
+  "sim" "approx" "subset" "supset" "ll" "gg"
+  "prec" "succ" "leftarrow" "rightarrow" "uparrow"
+  "downarrow" "leftrightarrow" "nearrow" "searrow"
+  "simeq" "Leftarrow" "Rightarrow" "Uparrow"
+  "Downarrow" "Leftrightarrow" "nwarrow" "swarrow"
+  "propto" "infty" "in" "ni" "mid" "bigtriangleup"
+  "bigtriangledown" "negate" "varshortmid" "forall" "exists"
+  "neg" "emptyset" "Re" "Im" "top" "bot" "aleph" "perp"
+  "cup" "cap" "uplus" "wedge" "vee" "vdash" "dashv"
+  "lfloor" "rfloor" "lceil" "rceil" "langle" "rangle"
+  "updownarrow" "Updownarrow" "wr" "amalg" "nabla"
+  "sqcup" "sqcap" "sqsubseteq" "sqsupseteq" "dag" "ddag"
+  "endofline" "clubsuit" "diamondsuit" "heartsuit" "spadesuit"
+  "backslash" "setminus"
+
+  "boxdot" "boxplus" "boxtimes" "box" "blacksquare"
+  "centerdot" "lozenge" "blacklozenge" "circlearrowright"
+  "circlearrowleft" "rightleftharpoons" "leftrightharpoons"
+  "boxminus" "Vdash" "Vvdash" "dashV" "twoheadrightarrow"
+  "twoheadleftarrow" "leftleftarrows" "rightrightarrows"
+  "upuparrows" "downdownarrows" "upharpoonright"
+  "downharpoonright" "upharpoonleft" "downharpoonleft"
+  "rightarrowtail" "leftarrowtail" "leftrightarrows"
+  "rightleftarrows" "Lsh" "Rsh" "rightsquigarrow"
+  "leftrightsquigarrow" "looparrowleft" "looparrowright"
+  "circeq" "succsim" "gtrsim" "gtrapprox" "multimap"
+  "therefore" "because" "doteqdot" "triangleq"
+  "precsim" "lesssim" "lessapprox" "eqslantless"
+  "eqslantgtr" "curlyeqprec" "curlyeqsucc" "preccurlyeq"
+  "leqq" "leqslant" "lessgtr" "smalldash"
+  "risingdoteq" "fallingdoteq" "succcurlyeq" "geqq"
+  "geqslant" "gtrless" "sqsubset" "sqsupset"
+  "vartriangleright" "vartriangleleft" "trianglerighteq"
+  "trianglelefteq" "blackstar" "between"
+  "blacktriangledown" "blacktriangleright" "blacktriangleleft"
+  "shortrightarrow" "shortleftarrow" "triangle"
+  "blacktriangleup" "triangledown" "eqcirc"
+  "lesseqgtr" "gtreqless" "lesseqqgtr" "gtreqqless"
+  "yen" "Rrightarrow" "Lleftarrow" "checkmark"
+  "veebar" "barwedge" "doublebarwedge" "angle" "measuredangle"
+  "sphericalangle" "propto" "smile" "frown" "Subset"
+  "Supset" "Cup" "Cap" "curlyvee" "curlywedge"
+  "leftthreetimes" "rightthreetimes" "subseteqq" "supseteqq"
+  "bumpeq" "Bumpeq" "lll" "ggg" "ulcorner" "urcorner"
+  "circledR" "circledS" "pitchfork" "dotplus" "backsim"
+  "backsimeq" "llcorner" "lrcorner" "maltese"
+  "complement" "intercal" "circledcirc" "circledast" "circledminus"
+  
+  "lvertneqq" "gvertneqq" "nleq" "ngeq" "nless" "ngtr"
+  "nprec" "nsucc" "lneqq" "gneqq" "nleqslant" "ngeqslant"
+  "lneq" "gneq" "npreceq" "nsucceq" "precnsim"
+  "succnsim" "lnsim" "gnsim" "nleqq" "ngeqq"
+  "precneqq" "succneqq" "precnapprox" "succnapprox"
+  "lnapprox" "gnapprox" "nsim" "ncong" "dslash"
+  "dbackslash" "varsubsetneq" "varsupsetneq"
+  "nsubseteqq" "nsupseteqq" "subsetneqq" "supsetneqq"
+  "varsubsetneqq" "varsupsetneqq" "subsetneq" "supsetneq"
+  "nsubseteq" "nsupseteq" "parallel" "nparallel" "nmid" "nshortmid"
+  "nshortparallel" "nvdash" "nVdash" "nvDash" "nVDash" "models"
+  "ntriangleqright" "ntriangleqleft" "ntriangleleft"
+  "ntriangleright" "nleftarrow" "nrightarrow" "nLeftarrow"
+  "nRightarrow" "nLeftrightarrow" "nleftrightarrow"
+  "divideontimes" "varnothing" "nexists"
+  "Mho" "thorn" "eqsim" "beth" "gimel" "daleth"
+  "lessdot" "gtrdot" "ltimes" "rtimes" "shortmid"
+  "shortparallel" "smallsetminus" "thicksim" "thickapprox"
+  "approxeq" "succapprox" "precapprox" "curvearrowleft"
+  "curvearrowright" "digamma" "varkappa" "" "hslash"
+  "hbar" "backepsilon"
+  
+  "mapsto" "longmapsto" "longrightarrow" "longleftarrow"
+  "longleftrightarrow" "longRightarrow" "longLeftarrow"
+  "longLeftrightarrow" "ldots" "cdots" "vdots"
+  "ddots" "dotamalg" "dottimes" "dotoplus" "dototimes" "venus"
+  "mars" "earth" "aries" "fullmoon" "newmoon" "astrosun"
+  "leo" "LEFTcircle" "RIGHTcircle" "Square" "CheckedBox" "photon" "gluon"
+  "neq" "notin" "nin" "notni" "nni" "nll" "nlll" "ngg" "nggg"
+  "dagger" "ddagger" "boxbar" "checked" "obar" "kreuz")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extensions to LaTeX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-commands
+  ("big." "Insert big ." (make-big-operator "."))
+  ("underbrace" "Insert underbrace" (make-wide-under "<wide-underbrace>"))
+  ("overbrace" "Insert overbrace" (make-wide "<wide-overbrace>")))
+
+(kbd-symbols
+  "ddots" "mho" "Backepsilon" "homsim"
+  "mathd" "mathe" "mathi" "mathpi")

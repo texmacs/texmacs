@@ -1,0 +1,281 @@
+:
+#!/bin/sh -- # -*- perl -*-
+# $Id$
+#
+# MuPAD <-> TeXmacs communication link.
+# Copyright (c) MuPAD research group and SciFace Software GmbH 2003
+# This software falls under the GNU general public license and comes WITHOUT
+# ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+# If you don't have this file, write to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# For comments and questions, please mail Christopher Creutzig, ccr@mupad.de.
+#
+# Start perl wherever it is:
+eval 'exec perl -w -S $0 ${1+"$@"}'
+    if 0;
+# It's a NOP for perl, but shells parse line-oriented. Standard hack.
+
+use IO::File;
+use IPC::Open2;
+use Getopt::Long;
+
+my $textwidth=63;
+my $MuPAD_name = "mupad";
+my $MuPAD_library = undef;
+my $MuPAD_version = `mupad -V`;
+my $MuPAD_raw_arg = '-E';
+my @MuPAD_packpath = ();
+my $timeout = 600; # 10 Minuten
+my $init = "";
+my $texmacs = 0;
+my $verbose = 0;
+
+my $logfile = "/tmp/tm_mupad.log";
+
+GetOptions("textwidth=i" => \$textwidth,
+	   "MuPAD=s"     => \$MuPAD_name,
+	   "libpath=s"   => \$MuPAD_library,
+           "packpath=s"  => \@MuPAD_packpath,
+	   "timeout=i"   => \$timeout,
+	   "init=s"      => \$init,
+	   "texmacs!"    => \$texmacs,
+	   "verbose+"    => \$verbose
+	   );
+
+die "This program should be run from inside TeXmacs!\n"
+    unless $texmacs;
+
+if ($MuPAD_version =~ m/(\d)\.(\d)\.(\d)/) {
+    if($1 < 2) {
+	die "MuPAD 1.x is not supported.\n";
+    }
+    if ($1 < 3) {
+	if ($2 < 5 || ($2 == 5 && $3 < 3)) {
+	    warn "MuPAD 2.5.3 is highly recommended for this link.\nGraphics, greek letters and accents are not supported.\n";
+	}
+	if ($2 < 5 || ($2 == 5 && $3 < 1)) {
+	    $MuPAD_raw_arg = '-R';
+	}
+    }
+} else {
+    die "Could not figure out MuPAD version.  Is MuPAD installed?\n";
+}
+
+my $log = new IO::File ">> $logfile" if $verbose;
+
+# presets
+my $tmhome = $ENV{'TEXMACS_HOME_PATH'} || 
+    ($ENV{'HOME'}.'/.TeXmacs/');
+my $uinitdir = $tmhome.'/tmp/mupad/link.'.$$;
+mkdir $tmhome.'/tmp';
+mkdir $tmhome.'/tmp/mupad';
+mkdir $uinitdir;
+my $userinit = new IO::File($uinitdir.'/userinit.mu', O_WRONLY|O_CREAT)
+    or die "Can't write userinit.mu: $!\n";
+
+$userinit->print(<< "EOF");
+TEXTWIDTH:=$textwidth:
+Pref::output(() -> fprint(Unquoted, 0, "", generate::TeX(args()), "")):
+generate::TeX: // load it
+generate::ifTeXmacs(TRUE):
+pi := PI: // but do not protect it
+Gamma := proc() begin if args(0)=2 then igamma(args())
+                      elif args(0)=1 then gamma(args())
+                      else procname(args()) end_if end_proc:
+sysassign(stdlib::swapargs, () -> (args(2..args(0)), args(1))):
+if ((fd := fopen("$ENV{'HOME'}/.mupad/userinit.mu"))) <> FAIL then
+  fread(fd);
+  fclose(fd);
+end_if:
+delete fd:
+$init
+null():
+EOF
+$userinit->close();
+
+$SIG{__DIE__} = sub { unlink $uinitdir.'/userinit.mu';
+		      rmdir $uinitdir; };
+
+# communication constants of the MuPAD kernel in ``raw mode''
+my %constants = ( 'input'        => chr(1),
+		  'output'       => chr(2),
+		  'error'        => chr(9),
+                  'textwidth'    => chr(6),
+		  'prompt'       => chr(13),
+		  'syntaxerror'  => chr(25), # unused?
+		  'quit'         => chr(29),
+		  'start'        => chr(6),
+		  'end'          => chr(7),
+		  'mask'         => chr(8),
+		  'prettyprint'  => chr(7),
+		  'gfx'          => chr(17),
+		  'dbg_prompt'   => chr(62),
+		  'dbg_quit'     => chr(57),
+		  'help'         => chr(8),
+		  'gettextinput' => chr(4),
+		  'getinput'     => chr(5),
+		  );
+my $valid_char="[^$constants{'end'}$constants{'mask'}]";
+my $start="(?<!$constants{'mask'})$constants{'start'}";
+my $end="(?<!$constants{'mask'})$constants{'end'}";
+my $msg_content="(?:$valid_char)*".
+    "(?:$constants{'mask'}.(?:$valid_char)*)*";
+
+# We use the global handles $MuPAD_write and $MuPAD_read
+my ($MuPAD_write, $MuPAD_read);
+$MuPAD_write=new IO::File;
+$MuPAD_read=new IO::File;
+
+# $| = 1; # autoflush
+
+print "\2verbatim:";
+# First of all, open a fresh MuPAD session.
+&startsession();
+
+print "\5";
+STDOUT->flush;
+
+$cmd = '';
+while($l = sysread(STDIN, $line, 1024)) {
+    &log("read command '$line', length $l\n");
+    $cmd .= $line;
+    while($cmd =~ s/\002verbatim:(.*?)\005//) {
+	&send_command($1);
+	&get_and_forward_output();
+    }
+}
+
+&finish();
+
+###########################################################################
+
+sub startsession{
+    &close_session() if ($MuPAD_write->opened);
+    open2($MuPAD_read, $MuPAD_write, "$MuPAD_name -u $uinitdir " .
+	  $MuPAD_raw_arg . ' ' .
+	  ($MuPAD_library ? " -l $MuPAD_library " : ' ') .
+          ' '.(join(' ', map { ' -p '.$_} @MuPAD_packpath)));
+    &log("started MuPAD\n");
+# Forward the prompt
+    &get_and_forward_output();
+    autoflush $MuPAD_write 1;
+}
+
+sub send_command {
+    &startsession() unless $MuPAD_write->opened;
+    print $MuPAD_write
+	$constants{'start'}, $constants{'input'},
+	@_, $constants{'end'};
+    $MuPAD_write->flush;
+    &log("sent command '".join('', @_)."'\n");
+}
+
+sub close_session{
+    &log("closing session\n");
+    print $MuPAD_write "$constants{'start'}$constants{'quit'}$constants{'end'}";
+    close $MuPAD_write;
+    # collect return status of the mupad process
+    # otherwise we generate zombies
+    wait; 
+    while (<$MuPAD_read>) {};
+    close $MuPAD_read;
+}
+
+sub finish {
+    print "\2verbatim:MuPAD closed\5";
+
+    &close_session();
+
+    unlink $uinitdir.'/userinit.mu';
+    rmdir $uinitdir;
+}
+
+sub prompt {
+#    print "\002channel:prompt\005\002latex:\\red ".localtime()." \$\\bullet\$ \\black\005\005";
+    print "\002channel:prompt\005\002latex:\\red \$\\bullet\$ \\black\005\005\n";
+    STDOUT->flush;
+    print '';
+}
+
+sub get_and_forward_output {
+    my $prompt_seen=0;
+    my $saved_output='';
+    my ($l, $part);
+    $_ = '';
+    while(!$prompt_seen) {
+	while($l = sysread($MuPAD_read, $part, 1024)) {
+	    $_ .= $part;
+	    last if($l < 1024);
+	}
+	while(s/$start(.)($msg_content)$end//) {
+	    my $type=$1;
+	    my $content = $2;
+	    $content =~ s/$constants{'mask'}(.)/$1/g;
+	    &log("message type: ", ord($type),", content: $content\n")
+		if $verbose >= 3;
+	    if ($type eq $constants{'output'}) {
+		$content = $saved_output . $content;
+		$saved_output = '';
+		while($content) {
+		    if($content =~ s/^([^]+)//) {
+			if($1 ne "\n") {
+			    print "\2verbatim:$1\5";
+			    &log("verb out: $1\n");
+			}
+		    }
+		    if($content =~ s/([^]+)//) {
+			print "\2latex:\$\\displaystyle $1\$\5";
+			&log("TeX out: $1\n");
+		    } else {
+			if($content =~ m/^/) {
+			    $saved_output = $content;
+			    $content = '';
+			}
+		    }
+		}
+	    } 
+	    if ($type eq $constants{'error'}) {
+		print "\2verbatim:$content\5";
+	    }
+	    if ($type eq $constants{'gfx'}) {
+		system("vcam -width 320 -height 200 -file $content $content.ps");
+		print "\2ps:";
+		system("cat $content.ps");
+		print "\5";
+	    }
+	    if ($type eq $constants{'prompt'}) {
+		&prompt unless $prompt_seen;
+		$prompt_seen = 1;
+	    } 
+	    if ($type eq $constants{'help'}) {
+		print "\2verbatim:Help system not implemented yet.  Please use the '?' button above.\n\5";
+	    }
+	    if ($type eq $constants{'dbg_prompt'}) { # debugger output
+		print "\2verbatim:Error: Debugger not supported\n\5";
+		print $MuPAD_write $constants{'start'}.
+		    $constants{'dbg_quit'}.$constants{'end'};
+		$MuPAD_write->flush;
+	    }
+	    if ($type eq $constants{'getinput'} or
+		$type eq $constants{'gettextinput'}) {
+		print "\2channel:prompt\5\2verbatim:$content\5\5";
+		$prompt_seen = 1;
+		STDOUT->flush();
+		print '';
+	    }
+	}
+    }
+    warn "lost output $saved_output\n" if $saved_output && $verbose;
+}
+
+sub log {
+    return unless $verbose;
+    $log->print(''.localtime, ': ', @_);
+    $log->flush;
+}
+
+### Local variables:
+### mode: perl
+### End:
+

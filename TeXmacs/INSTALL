@@ -1,0 +1,50 @@
+
+-------------------------------------------------------------------------------
+Installation of GNU TeXmacs
+-------------------------------------------------------------------------------
+
+1. Set the environment variables.
+   Let [installation directory] be the current directory,
+   which contains this file. Depending on your shell, either type
+
+       setenv TEXMACS_PATH [installation directory]
+       setenv PATH $TEXMACS_PATH/bin:$PATH
+   or
+       export TEXMACS_PATH=[installation directory]
+       export PATH=$TEXMACS_PATH/bin:$PATH
+
+2. Run 'TeXmacs' using
+
+       texmacs &
+
+3. Be cool and let us know if you like or dislike the program; see
+
+	http://www.texmacs.org
+
+   It is very useful for us to have a rough idea about the number of
+   permanent users and for what applications you are interested in TeXmacs.
+   Furthermore, we are glad to receive your suggestions and problems,
+   no matter how silly they may seem to you. If you really like the program,
+   then please consider donating money or services to us; see
+
+	http://www.texmacs.org/Web/Donations.html
+
+   Of course, you may also contribute yourself.
+
+-------------------------------------------------------------------------------
+
+Appendix A: Possible problems
+
+    * TeXmacs runs fine, but certain fonts are not displayed correctly.
+      Solution: This problem may have several causes:
+      o You use a recent version (>= 7.3) of RedHat Linux or
+        one of its clones. On such systems, the installation of
+        TeTeX is bugged and you need to change some permissions
+        in order to allow font generation by Metafont.
+        As root, type
+	  chmod -R a+rw /var/lib/texmf/*
+      o You do not use a standard TeX/LaTeX distribution, such as TeTeX
+	(standard distributions come with scripts for generating fonts,
+	such as 'mktextfm' or 'MakeTeXTFM'). You may either install
+        a more standard TeX/LaTeX distribution, or download some
+        pregenerated fonts from texmacs.org.

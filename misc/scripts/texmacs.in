@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -z "$TEXMACS_PATH" ] ; then
+  TEXMACS_PATH=@tmdata@
+  export TEXMACS_PATH
+  if [ -z "$TEXMACS_BIN_PATH" ] ; then
+    TEXMACS_BIN_PATH=@tmbin@
+    export TEXMACS_BIN_PATH
+  fi
+else
+  TEXMACS_BIN_PATH="$TEXMACS_PATH"
+  export TEXMACS_BIN_PATH
+fi
+
+PATH="$TEXMACS_BIN_PATH/bin:$PATH"
+@CONFIG_LIB_PATH@="$TEXMACS_BIN_PATH/lib${@CONFIG_LIB_PATH@+":$@CONFIG_LIB_PATH@"}"
+export PATH @CONFIG_LIB_PATH@
+
+exec texmacs.bin "$@"

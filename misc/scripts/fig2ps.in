@@ -1,0 +1,29 @@
+#!/bin/sh
+# Program to make a postscript image from a fig picture with latex labels
+
+if test $# != 2; then
+  echo "Usage: fig2ps <input.fig> <output.ps>" >&2
+  exit 1
+fi
+
+if test -z "$TEXMACS_PATH"; then
+  TEXMACS_PATH=@tmdata@
+  export TEXMACS_PATH
+fi
+if test -z "$TEXMACS_HOME_PATH"; then
+  TEXMACS_HOME_PATH="$HOME/.TeXmacs"
+  export TEXMACS_HOME_PATH
+fi
+cp "$1" "$TEXMACS_HOME_PATH/system/pre.fig"
+OLDPWD="$PWD"   # for broken Solaris sh
+cd "$TEXMACS_HOME_PATH/system"
+cp "$TEXMACS_PATH/misc/latex/f2pspost.tex" .
+fig2dev -L pstex pre.fig > pre.ps
+fig2dev -L pstex_t -p pre.ps pre.fig > pre.tex
+latex f2pspost
+dvips -E -o f2pspost.ps f2pspost
+cd "$OLDPWD"
+mv "$TEXMACS_HOME_PATH/system/f2pspost.ps" "$2"
+rm -r -f "$TEXMACS_HOME_PATH"/system/pre*
+rm -r -f "$TEXMACS_HOME_PATH"/system/f2pspost*
+exit 0

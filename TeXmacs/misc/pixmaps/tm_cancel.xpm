@@ -1,0 +1,23 @@
+/* XPM */
+static char * tb_cancel_xpm[] = {
+"17 17 3 1",
+" 	c None",
+".	c black",
+"X	c darkred",
+"                 ",
+"     ..      .   ",
+"    .XX.    .X.  ",
+"    .XX.   .XX.  ",
+"     .XX. .XXX.  ",
+"     .XX..XXX.   ",
+"      .XXXXX.    ",
+"      .XXXX.     ",
+"     .XXXX.      ",
+"    .XXXXX.      ",
+"   .XXX..XX.     ",
+"  .XXX. .XX.     ",
+"  .XX.   .XX.    ",
+"   ..    .XX.    ",
+"          ..     ",
+"                 ",
+"                 "};

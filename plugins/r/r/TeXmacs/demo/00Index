@@ -1,0 +1,14 @@
+T.graphics	A show of some of R's graphics capabilities (TeXmacs version)
+T.Hershey	Tables of the characters in the Hershey vector fonts 
+		(TeXmacs version)
+T.image		The image-like graphics builtins of R (TeXmacs version)
+T.lm.glm	Some linear and generalized linear modelling
+		examples from `An Introduction to Statistical
+		Modelling' by Annette Dobson (TeXmacs version)
+T.Japanese	Tables of the Japanese characters in the Hershey 
+		vector fonts (TeXmacs version)
+T.nlm		Nonlinear least-squares using nlm() (TeXmacs version)
+T.persp		Extended persp() examples (TeXmacs version)
+T.recursion	Using recursion for adaptive integration (TeXmacs version)
+T.plotmath	Examples of the use of mathematics annotation (TeXmacs version)
+

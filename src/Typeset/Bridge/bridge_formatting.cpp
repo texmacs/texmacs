@@ -1,0 +1,152 @@
+
+/******************************************************************************
+* MODULE     : bridge_formatting.cpp
+* DESCRIPTION: Bridge between logical and physical local enviroment changes
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "bridge.hpp"
+
+class bridge_formatting_rep: public bridge_rep {
+protected:
+  string v;
+  int    last;
+  bridge body;
+
+public:
+  bridge_formatting_rep (typesetter ttt, tree st, path ip, string v);
+  void initialize ();
+
+  void notify_assign (path p, tree u);
+  void notify_insert (path p, tree u);
+  void notify_remove (path p, int nr);
+  bool notify_macro  (int type, string var, int level, path p, tree u);
+  void notify_change ();
+
+  void my_exec_until (path p);
+  bool my_typeset_will_be_complete ();
+  void my_typeset (int desired_status);
+};
+
+bridge_formatting_rep::bridge_formatting_rep (
+  typesetter ttt, tree st, path ip, string v2):
+    bridge_rep (ttt, st, ip), v (v2)
+{
+  initialize ();
+}
+
+void
+bridge_formatting_rep::initialize () {
+  last= N(st)-1;
+  if (nil(body)) body= make_bridge (ttt, st[last], descend (ip, last));
+  else replace_bridge (body, st[last], descend (ip, last));
+}
+
+bridge
+bridge_formatting (typesetter ttt, tree st, path ip, string v) {
+  return new bridge_formatting_rep (ttt, st, ip, v);
+}
+
+/******************************************************************************
+* Event notification
+******************************************************************************/
+
+void
+bridge_formatting_rep::notify_assign (path p, tree u) {
+  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  if (nil (p) && (!is_func (u, TABLE_FORMAT)))
+    fatal_error ("Nil path", "bridge_formatting_rep::notify_assign");
+  if (nil (p)) {
+    st=u;
+    initialize ();
+  }
+  else {
+    bool mp_flag= is_multi_paragraph (st);
+    if (p->item == last) {
+      if (atom (p)) body= make_bridge (ttt, u, descend (ip, last));
+      else body->notify_assign (p->next, u);
+      st= substitute (st, p->item, body->st);
+    }
+    else st= substitute (st, p, u);
+    if (mp_flag != is_multi_paragraph (st)) initialize ();
+  }
+  status= CORRUPTED;
+}
+
+void
+bridge_formatting_rep::notify_insert (path p, tree u) {
+  // cout << "Insert " << p << ", " << u << " in " << st << "\n";
+  if (nil (p))
+    fatal_error ("Nil path", "bridge_formatting_rep::notify_insert");
+  if (atom (p) || (p->item != last)) bridge_rep::notify_insert (p, u);
+  else {
+    bool mp_flag= is_multi_paragraph (st);
+    body->notify_insert (p->next, u);
+    st= substitute (st, last, body->st);
+    if (mp_flag != is_multi_paragraph (st)) initialize ();
+  }
+  status= CORRUPTED;
+}
+
+void
+bridge_formatting_rep::notify_remove (path p, int nr) {
+  // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
+  if (nil (p))
+    fatal_error ("Nil path", "bridge_formatting_rep::notify_remove");
+  if (atom (p) || (p->item != last)) bridge_rep::notify_remove (p, nr);
+  else {
+    bool mp_flag= is_multi_paragraph (st);
+    body->notify_remove (p->next, nr);
+    st= substitute (st, last, body->st);
+    if (mp_flag != is_multi_paragraph (st)) initialize ();
+  }
+  status= CORRUPTED;
+}
+
+bool
+bridge_formatting_rep::notify_macro (
+  int type, string var, int l, path p, tree u)
+{
+  bool flag= body->notify_macro (type, var, l, p, u);
+  if (flag) status= CORRUPTED;
+  return flag;
+}
+
+void
+bridge_formatting_rep::notify_change () {
+  status= CORRUPTED;
+  body->notify_change ();
+}
+
+/******************************************************************************
+* Typesetting
+******************************************************************************/
+
+void
+bridge_formatting_rep::my_exec_until (path p) {
+  if (p->item != last) return;
+  tree oldv= env->read (v);
+  tree newv= join (oldv, st (0, last));
+  env->monitored_write_update (v, newv);
+  body->exec_until (p->next);
+}
+
+bool
+bridge_formatting_rep::my_typeset_will_be_complete () {
+  if (status != CORRUPTED) return false;
+  return body->my_typeset_will_be_complete ();
+}
+
+void
+bridge_formatting_rep::my_typeset (int desired_status) {
+  tree new_format= join (env->read (v), st (0, last));
+  tree old_format= env->local_begin (v, new_format);
+  if (v != CELL_FORMAT) ttt->insert_marker (st, ip);
+  body->typeset (desired_status);
+  env->local_end (v, old_format);
+}

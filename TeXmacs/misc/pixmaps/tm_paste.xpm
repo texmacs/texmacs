@@ -1,0 +1,30 @@
+/* XPM */
+static char * tb_paste_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"17 17 6 1",
+/* colors */
+"  c None	s mask",
+". c blue",
+"X c black	s style",
+"o c darkgray	s dark",
+"O c white	s white",
+"+ c gray	s mid",
+/* pixels */
+"    .XXX         ",
+"    .XXX         ",
+" XXX....XXXo     ",
+"XO+XXXXXXooXo    ",
+"XO+o+o+o+ooXo    ",
+"XOo+oXXXXXXXXXX  ",
+"XO+o+XOOOOOOOOX  ",
+"XOo+oXOXXXXXXOXo ",
+"XO+o+XOOOOOOOOXo ",
+"XOo+oXOXXXXXXOXo ",
+"XO+o+XOOOOOOOOXo ",
+"XOo+oXOXXXXXXOXo ",
+"XOoooXOOOOOOOOXo ",
+" XXXXXOXXOOOOOXo ",
+"  oooXOOOOOOOOXo ",
+"     XXXXXXXXXXo ",
+"       ooooooooo "
+};

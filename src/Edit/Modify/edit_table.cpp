@@ -1,0 +1,1335 @@
+
+/******************************************************************************
+* MODULE     : edit_table.cpp
+* DESCRIPTION: modify tables
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "edit_table.hpp"
+
+/******************************************************************************
+* Constructors and destructors
+******************************************************************************/
+
+edit_table_rep::edit_table_rep (): cell_mode ("cell") {}
+edit_table_rep::~edit_table_rep () {}
+
+/******************************************************************************
+* Elementary subroutines for table manipulation
+******************************************************************************/
+
+static tree
+empty_cell () {
+  return "";
+}
+
+static tree
+empty_row (int nr_cols) {
+  int i;
+  tree R (ROW, nr_cols);
+  for (i=0; i<nr_cols; i++)
+    R[i]= tree (CELL, empty_cell ());
+  return R;
+}
+
+static tree
+empty_table (int nr_rows, int nr_cols) {
+  int i;
+  tree T (TABLE, nr_rows);
+  for (i=0; i<nr_rows; i++)
+    T[i]= empty_row (nr_cols);
+  return T;
+}
+
+static void
+table_get_extents (tree T, int& nr_rows, int& nr_cols) {
+  while (is_func (T, TABLE_FORMAT)) T= T[N(T)-1];
+  nr_rows= N(T);
+  T= T[0];
+  while (is_func (T, TABLE_FORMAT)) T= T[N(T)-1];
+  nr_cols= N(T);
+}
+
+static void
+table_set (tree& T, int row, int col, tree t) {
+  tree* ptr= &T;
+  while (is_func (*ptr, TABLE_FORMAT)) ptr= & ((*ptr) [N(*ptr)-1]);
+  ptr= & ((*ptr) [row]);
+  while (is_func (*ptr, TABLE_FORMAT)) ptr= & ((*ptr) [N(*ptr)-1]);
+  ptr= & ((*ptr) [col]);
+  while (is_func (*ptr, TABLE_FORMAT)) ptr= & ((*ptr) [N(*ptr)-1]);
+  if (is_func (*ptr, CELL, 1)) ptr= & ((*ptr) [0]);
+  *ptr= t;
+}
+
+static tree
+table_get (tree T, int row, int col) {
+  while (is_func (T, TABLE_FORMAT)) T= T [N(T)-1];
+  T= T [row];
+  while (is_func (T, TABLE_FORMAT)) T= T [N(T)-1];
+  T= T [col];
+  while (is_func (T, TABLE_FORMAT)) T= T [N(T)-1];
+  if (is_func (T, CELL, 1)) T= T [0];
+  return T;
+}
+
+/******************************************************************************
+* Searching the format, table, rows and cells
+******************************************************************************/
+
+path
+edit_table_rep::search_format () {
+  path p= search_table ();
+  return search_format (p);
+}
+
+path
+edit_table_rep::search_format (path p) {
+  if (nil (p)) return p;
+  if (is_func (subtree (et, p), TABLE_FORMAT)) return p;
+  if (is_func (subtree (et, path_up (p)), TABLE_FORMAT)) return path_up (p);
+  return p;
+}
+
+path
+edit_table_rep::search_format (int& row, int& col) {
+  path p= search_table (row, col);
+  if (nil (p)) return p;
+  if (is_func (subtree (et, p), TABLE_FORMAT)) return p;
+  if (is_func (subtree (et, path_up (p)), TABLE_FORMAT)) return path_up (p);
+  ins_unary (p, TABLE_FORMAT);
+  return p;
+}
+
+path
+edit_table_rep::search_table () {
+  return search_upwards (TABLE);
+}
+
+path
+edit_table_rep::search_table (path fp) {
+  tree st= subtree (et, fp);
+  if (is_func (st, TABLE)) return fp;
+  if (is_func (st, TABLE_FORMAT)) return search_table (fp * (N(st)-1));
+  return path ();
+}
+
+path
+edit_table_rep::search_table (int& row, int& col) {
+  row= col= 0;
+  path p= search_table ();
+  if (nil (p)) return p;
+  path q= p, r= tail (tp, N(p));
+
+  if (N(r) <= 1) return path ();
+  row= r->item;
+  while (true) {
+    if (nil (r)) return r;
+    q= q * r->item;
+    r= r->next;
+    if (is_func (subtree (et, q), ROW)) break;
+  }
+
+  if (N(r) <= 1) return path ();
+  col= r->item;
+  while (true) {
+    if (nil (r)) return r;
+    q= q * r->item;
+    r= r->next;
+    if (!is_func (subtree (et, q), TABLE_FORMAT)) break;
+  }
+
+  return p;
+}
+
+path
+edit_table_rep::search_row (path fp, int row) {
+  fp= search_table (fp) * row;
+  tree st= subtree (et, fp);
+  if (!is_func (st, ROW))
+    return search_row (fp, N(st)-1);
+  return fp;
+}
+
+path
+edit_table_rep::search_cell (path p, int col) {
+  p= p * col;
+  tree st= subtree (et, p);
+  if (is_func (st, TABLE_FORMAT))
+    return search_cell (p, N(st)-1);
+  if (is_func (st, CELL, 1)) return p * 0;
+  return p;
+}
+
+path
+edit_table_rep::search_cell (path fp, int row, int col) {
+  return search_cell (search_row (fp, row), col);
+}
+
+/******************************************************************************
+* Analyzing with statements in format
+******************************************************************************/
+
+void
+edit_table_rep::with_raw_read (tree with, int& i1, int& j1, int& i2, int& j2) {
+  i1= as_int (with[0]);
+  i2= as_int (with[1]);
+  j1= as_int (with[2]);
+  j2= as_int (with[3]);
+}
+
+void
+edit_table_rep::with_decode (int nr_rows, int nr_cols,
+			     int& i1, int& j1, int& i2, int& j2)
+{
+  i1= (i1>=0? i1-1: nr_rows+i1);
+  i2= (i2> 0? i2-1: nr_rows+i2);
+  j1= (j1>=0? j1-1: nr_cols+j1);
+  j2= (j2> 0? j2-1: nr_cols+j2);
+}
+
+void
+edit_table_rep::with_decode (int nr_rows, int nr_cols,
+			     int& I1, int& J1, int& I2, int& J2,
+			     int& i1, int& j1, int& i2, int& j2)
+{
+  i1= I1; j1= J1; i2= I2; j2=J2;
+  with_decode (nr_rows, nr_cols, i1, j1, i2, j2);
+}
+
+void
+edit_table_rep::with_read (tree with, int nr_rows, int nr_cols,
+			   int& i1, int& j1, int& i2, int& j2)
+{
+  with_raw_read (with, i1, j1, i2, j2);
+  with_decode (nr_rows, nr_cols, i1, j1, i2, j2);
+}
+
+void
+edit_table_rep::with_read (tree with, int nr_rows, int nr_cols,
+			   int& I1, int& J1, int& I2, int& J2,
+			   int& i1, int& j1, int& i2, int& j2)
+{
+  with_raw_read (with, I1, J1, I2, J2);
+  i1= I1; j1= J1; i2= I2; j2=J2;
+  with_decode (nr_rows, nr_cols, i1, j1, i2, j2);
+}
+
+/******************************************************************************
+* Formatting primitives
+******************************************************************************/
+
+tree
+edit_table_rep::table_get_format (path fp) {
+  tree fm= get_env_value (CELL_FORMAT, fp * 0);
+  tree st= subtree (et, fp);
+  return ::join (fm, st (0, N(st)-1));
+}
+
+void
+edit_table_rep::table_set_format (path fp, string var, tree val) {
+  table_del_format (fp, var);
+  tree with (TABLE_WITH, var, val);
+  tree st= subtree (et, fp);
+  insert (fp * (N(st)-1), tree (TABLE_FORMAT, with));
+}
+
+tree
+edit_table_rep::table_get_format (path fp, string var) {
+  tree st= table_get_format (fp);
+  int k, n= N(st);
+  tree val= get_env_value (var);
+  for (k=0; k<n; k++)
+    if (is_func (st[k], TABLE_WITH, 2) && (st[k][0] == var))
+      val= st[k][1];
+  return val;
+}
+
+void
+edit_table_rep::table_del_format (path fp, string var) {
+  tree st= subtree (et, fp);
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], TABLE_WITH, 2))
+      if ((var == "") || (var == st[k][0]))
+	remove (fp * k, 1);
+}
+
+void
+edit_table_rep::table_set_format (
+  path fp, int I1, int J1, int I2, int J2, string var, tree val)
+{
+  table_del_format (fp, I1, J1, I2, J2, var);
+  tree with (CELL_WITH);
+  with << as_string (I1) << as_string (I2)
+       << as_string (J1) << as_string (J2)
+       << var << val;
+  tree st= subtree (et, fp);
+  insert (fp * (N(st)-1), tree (TABLE_FORMAT, with));
+}
+
+tree
+edit_table_rep::table_get_format (
+  path fp, int I1, int J1, int I2, int J2, string var)
+{
+  int i1, j1, i2, j2;
+  int nr_rows, nr_cols;
+  tree st= table_get_format (fp);
+  table_get_extents (fp, nr_rows, nr_cols);
+  with_decode (nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+
+  int k, n= N(st);
+  tree val= get_env_value (var);
+  for (k=0; k<n; k++)
+    if (is_func (st[k], CELL_WITH, 6) && (st[k][4] == var)) {
+      int row1, col1, row2, col2;
+      with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+      if ((row1<=i1) && (col1<=j1) && (row2>=i2) && (col2>=j2))
+	val= st[k][5];
+    }
+  return val;
+}
+
+void
+edit_table_rep::table_del_format (
+  path fp, int I1, int J1, int I2, int J2, string var)
+{
+  int i1, j1, i2, j2;
+  int nr_rows, nr_cols;
+  tree st= subtree (et, fp);
+  table_get_extents (fp, nr_rows, nr_cols);
+  with_decode (nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], CELL_WITH, 6))
+      if ((var == "") || (var == st[k][4])) {
+	int row1, col1, row2, col2;
+	with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+	if ((row1>=i1) && (col1>=j1) && (row2<=i2) && (col2<=j2))
+	  remove (fp * k, 1);
+      }
+}
+
+void
+edit_table_rep::table_get_format (
+  path fp, string var, tree** val, int nr_rows, int nr_cols)
+{
+  int i, j;
+  tree def_val= get_env_value (var, fp);
+  for (i=0; i<nr_rows; i++)
+    for (j=0; j<nr_cols; j++)
+      val[i][j]= def_val;
+
+  tree st= table_get_format (fp);
+  int k, n= N(st);
+  for (k=0; k<n; k++)
+    if (is_func (st[k], CELL_WITH, 6) && (st[k][4] == var)) {
+      int row1, col1, row2, col2;
+      with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+      for (i=row1; i<=row2; i++)
+	for (j=col1; j<=col2; j++)
+	  val[i][j]= st[k][5];
+    }
+}
+
+void
+edit_table_rep::table_individualize (path fp, string var) {
+  int nr_rows, nr_cols;
+  tree st= subtree (et, fp);
+  table_get_extents (fp, nr_rows, nr_cols);
+
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], CELL_WITH, 6))
+      if ((var == "") || (var == st[k][4])) {
+	int i, j, row1, col1, row2, col2;
+	with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+	if ((row1==row2) && (col1==col2)) continue;
+	row1= max (row1, 0); row2= min (row2, nr_rows-1);
+	col1= max (col1, 0); col2= min (col2, nr_cols-1);
+	tree ins_format (TABLE_FORMAT);
+	for (i=row1; i<=row2; i++)
+	  for (j=col1; j<=col2; j++) {
+	    tree with (CELL_WITH);
+	    with << as_string (i+1) << as_string (i+1)
+		 << as_string (j+1) << as_string (j+1)
+		 << copy (st[k][4]) << copy (st[k][5]) << copy (st[k][6]);
+	    ins_format << with;
+	  }
+	remove (fp * k, 1);
+	insert (fp * k, ins_format);
+      }
+}
+
+void
+edit_table_rep::table_format_center (path fp, int row, int col) {
+  int nr_rows, nr_cols;
+  tree st= subtree (et, fp);
+  table_get_extents (fp, nr_rows, nr_cols);
+  int Row1= row+1;
+  int Col1= col+1;
+  int Row2= row-nr_rows;
+  int Col2= col-nr_cols;
+
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], CELL_WITH, 6)) {
+      int I1, I2, J1, J2, i1, i2, j1, j2;
+      with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+
+      if (i1 == row) I1= Row1;
+      else if (i1 < row) I1= i1+1;
+      else I1= i1-nr_rows;
+      if (i2 == row) I2= Row2;
+      else if (i2 < row) I2= i2+1;
+      else I2= i2-nr_rows;
+
+      if (j1 == col) J1= Col1;
+      else if (j1 < col) J1= j1+1;
+      else J1= j1-nr_cols;
+      if (j2 == col) J2= Col2;
+      else if (j2 < col) J2= j2+1;
+      else J2= j2-nr_cols;
+
+      assign (fp * path (k, 0), as_string (I1));
+      assign (fp * path (k, 1), as_string (I2));
+      assign (fp * path (k, 2), as_string (J1));
+      assign (fp * path (k, 3), as_string (J2));
+    }
+}
+
+/******************************************************************************
+* Inserting and deleteing new rows and columns
+******************************************************************************/
+
+void
+edit_table_rep::table_get_extents (path fp, int& nr_rows, int& nr_cols) {
+  ::table_get_extents (subtree (et, fp), nr_rows, nr_cols);
+}
+
+void
+edit_table_rep::table_get_limits (
+  path fp, int& i1, int& j1, int& i2, int& j2) 
+{
+  i1= max (1, as_int (table_get_format (fp, TABLE_MIN_ROWS)));
+  j1= max (1, as_int (table_get_format (fp, TABLE_MIN_COLS)));
+  i2= as_int (table_get_format (fp, TABLE_MAX_ROWS));
+  j2= as_int (table_get_format (fp, TABLE_MAX_COLS));
+  if (i2<i1) i2= 0x7fffffff;
+  if (j2<i1) j2= 0x7fffffff;
+}
+
+void
+edit_table_rep::table_delete (path fp, int row, int col, int delr, int delc) {
+  path p= search_table (fp);
+  int nr_rows, nr_cols;
+  table_get_extents (p, nr_rows, nr_cols);
+  tree T= subtree (et, p);
+  if (delr>0)
+    if (row+delr <= N(T)) {
+      if (delr == N(T)) {
+	destroy_table ();
+	return;
+      }
+      remove (p * row, delr);
+    }
+
+  T= subtree (et, p);
+  if (delc>0)
+    for (row=0; row<N(T); row++) {
+      path q= search_row (p, row);
+      tree R= subtree (et, q);
+      if (col+delc <= N(R)) {
+	if (delc == N(R)) {
+	  destroy_table ();
+	  return;
+	}
+	remove (q * col, delc);
+      }
+    }
+
+  tree st= subtree (et, fp);
+  if (!is_func (st, TABLE_FORMAT)) return;
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], CELL_WITH, 6)) {
+      int I1, I2, J1, J2, i1, i2, j1, j2;
+      with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+      if (delr>0) {
+	if ((row<=i1) && (i2<row+delr)) { remove (fp * k, 1); continue; }
+	if ((I1>0) && (i1>=row))
+	  assign (fp * path (k, 0), as_string (I1- min (delr, i1- row)));
+	if ((I1<0) && (i1<row+delr))
+	  assign (fp * path (k, 0), as_string (I1+ delr+ min (0, row- 1- i1)));
+	if ((I2>0) && (i2>=row))
+	  assign (fp * path (k, 1), as_string (I2- min (delr, i2- row)));
+	if ((I2<0) && (i2<row+delr))
+	  assign (fp * path (k, 1), as_string (I2+ delr+ min (0, row- 1- i2)));
+      }
+      if (delc>0) {
+	if ((col<=j1) && (j2<col+delc)) { remove (fp * k, 1); continue; }
+	if ((J1>0) && (j1>=col))
+	  assign (fp * path (k, 2), as_string (J1- min (delc, j1- col)));
+	if ((J1<0) && (j1<col+delc))
+	  assign (fp * path (k, 2), as_string (J1+ delc+ min (0, col- 1- j1)));
+	if ((J2>0) && (j2>=col))
+	  assign (fp * path (k, 3), as_string (J2- min (delc, j2- col)));
+	if ((J2<0) && (j2<col+delc))
+	  assign (fp * path (k, 3), as_string (J2+ delc+ min (0, col- 1- j2)));
+      }
+    }
+}
+
+void
+edit_table_rep::table_insert (path fp, int row, int col, int insr, int insc) {
+  path p= search_table (fp);
+  int nr_rows, nr_cols;
+  table_get_extents (p, nr_rows, nr_cols);
+  tree T= subtree (et, p);
+  if (insr>0)
+    if (row <= N(T))
+      insert (p * row, empty_table (insr, nr_cols));
+
+  T= subtree (et, p);
+  if (insc>0)
+    for (row=0; row<N(T); row++) {
+      path q= search_row (p, row);
+      tree R= subtree (et, q);
+      if (col <= N(R))
+	insert (q * col, empty_row (insc));
+    }
+
+  tree st= subtree (et, fp);
+  if (!is_func (st, TABLE_FORMAT)) return;
+  int k, n= N(st);
+  for (k=n-2; k>=0; k--)
+    if (is_func (st[k], CELL_WITH, 6)) {
+      int I1, I2, J1, J2, i1, i2, j1, j2;
+      with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+      if (insr>0) {
+	bool flag= (I1<=0) || (I2>=0);
+	if ((I1>0) && ((i1>row) || (flag && (i1==row))))
+	  assign (fp* path (k,0), as_string (I1+insr));
+	if ((I1<0) && (i1<row))
+	  assign (fp* path (k,0), as_string (I1-insr));
+	if ((I2>0) && (i2>=row))
+	  assign (fp* path (k,1), as_string (I2+insr));
+	if ((I2<0) && ((i2<row-1) || (flag && (i2==row-1))))
+	  assign (fp* path (k,1), as_string (I2-insr));
+      }
+      if (insc>0) {
+	bool flag= (J1<=0) || (J2>=0);
+	if ((J1>0) && ((j1>col) || (flag && (j1==col))))
+	  assign (fp * path (k,2), as_string (J1+insc));
+	if ((J1<0) && (j1<col))
+	  assign (fp * path (k,2), as_string (J1-insc));
+	if ((J2>0) && (j2>=col))
+	  assign (fp * path (k,3), as_string (J2+insc));
+	if ((J2<0) && ((j2<col-1) || (flag && (j2==col-1))))
+	  assign (fp * path (k,3), as_string (J2-insc));
+      }
+    }
+}
+
+/******************************************************************************
+* Cursor positioning
+******************************************************************************/
+
+void
+edit_table_rep::table_bound (
+  path fp, int& row1, int& col1, int& row2, int& col2)
+{
+  fp= search_format (fp);
+  if (!is_func (subtree (et, fp), TABLE_FORMAT)) return;
+
+  int i, j, ii, jj, nr_rows, nr_cols;
+  table_get_extents (fp, nr_rows, nr_cols);
+  tree** rs= new tree*[nr_rows];
+  tree** cs= new tree*[nr_rows];
+  for (i=0; i<nr_rows; i++) {
+    rs[i]= new tree[nr_cols];
+    cs[i]= new tree[nr_cols];
+  }
+  table_get_format (fp, CELL_ROW_SPAN, rs, nr_rows, nr_cols);
+  table_get_format (fp, CELL_COL_SPAN, cs, nr_rows, nr_cols);
+
+  for (i=0; i<nr_rows; i++)
+    for (j=0; j<nr_cols; j++) {
+      int m= min (as_int (rs[i][j]), nr_rows-i);
+      int n= min (as_int (rs[i][j]), nr_cols-j);
+      if ((m>1) || (n>1)) {
+	if ((row1 < i+m) && (col1 < j+n) && (row2 >= i) && (col2 >= j)) {
+	  row1= min (row1, i);
+	  col1= min (col1, j);
+	  row2= max (row2, i+m-1);
+	  col2= max (col2, j+n-1);
+	}
+	for (ii=0; ii<m; ii++)
+	  for (jj=0; jj<n; jj++) {
+	    rs[i+ii][j+jj]= "0";
+	    cs[i+ii][j+jj]= "0";
+	  }
+      }
+    }
+  
+  for (i=0; i<nr_rows; i++) {
+    delete[] rs[i];
+    delete[] cs[i];
+  }
+  delete[] rs;
+  delete[] cs;
+}
+
+void
+edit_table_rep::table_go_to (path fp, int row, int col) {
+  int nr_rows, nr_cols;
+  fp= search_format (fp);
+  table_get_extents (fp, nr_rows, nr_cols);
+  if (row<0) row= 0;
+  if (col<0) col= 0;
+  if (row>=nr_rows) row= nr_rows-1;
+  if (col>=nr_cols) col= nr_cols-1;
+  if (is_func (subtree (et, fp), TABLE_FORMAT)) {
+    int row2= row, col2= col;
+    table_bound (fp, row, col, row2, col2);
+  }
+  path q= search_cell (fp, row, col);
+  go_to (end (et, q));
+}
+
+void
+edit_table_rep::back_table (path p) {
+  while (true) {
+    tree st= subtree (et, p);
+    if (!is_func (st, TABLE_FORMAT)) break;
+    if (!is_func (st [N(st)-1], TABLE)) {
+      back_dynamic (p);
+      return;
+    }
+    p= p * (N(st)-1);
+  }
+  while (!nil (p)) {
+    tree st= subtree (et, p);
+    if (is_func (st, TABLE)) break;
+    p= path_up (p);
+  }
+  if (nil (p)) return;
+
+  int nr_rows, nr_cols;
+  table_get_extents (p, nr_rows, nr_cols);
+  table_go_to (p, nr_rows-1, nr_cols-1);
+}
+
+void
+edit_table_rep::back_in_table (tree t, path p) {
+  if (is_func (t, TABLE_FORMAT) &&
+      (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
+       in_preamble_mode ()))
+    {
+      back_in_dynamic (t, p);
+      return;
+    }
+
+  int i, j, row, col, nr_rows, nr_cols;
+  p= search_table (row, col);
+  if (nil (p)) return;
+  table_get_extents (p, nr_rows, nr_cols);
+
+  bool flag=true;
+  for (j=0; j<nr_cols; j++) {
+    path q= search_cell (p, row, j);
+    flag= flag && (subtree (et, q) == empty_cell ());
+  }
+  if (flag) {
+    int i1, j1, i2, j2;
+    path fp= search_format ();
+    table_get_limits (fp, i1, j1, i2, j2);
+    if (nr_rows-1 >= i1) {
+      table_delete (fp, row, col, 1, 0);
+      return;
+    }
+  }
+
+  flag= true;
+  for (i=0; i<nr_rows; i++) {
+    path q= search_cell (p, i, col);
+    flag= flag && (subtree (et, q) == empty_cell ());
+  }
+  if (flag) {
+    int i1, j1, i2, j2;
+    path fp= search_format ();
+    table_get_limits (fp, i1, j1, i2, j2);
+    if (nr_cols-1 >= j1) {
+      table_delete (fp, row, col, 0, 1);
+      return;
+    }
+  }
+
+  flag=true;
+  for (i=0; i<nr_rows; i++)
+    for (j=0; j<nr_cols; j++) {
+      path q= search_cell (p, i, j);
+      flag= flag && (subtree (et, q) == empty_cell ());
+    }
+  if (flag) {
+    destroy_table ();
+    return;
+  }
+
+  if (col>0) { table_go_to (p, row, col-1); return; }
+  if (row>0) { table_go_to (p, row-1, nr_cols-1); return; }
+  while ((!nil (p)) && (is_func (subtree (et, path_up (p)), TABLE_FORMAT)))
+    p= path_up (p);
+  if ((!nil (p)) &&
+      is_document (subtree (et, path_up (p))) &&
+      (!nil (path_up (p))) &&
+      is_extension (subtree (et, path_up (p, 2)), 1))
+    p= path_up (p);
+  if ((!nil (p)) && is_extension (subtree (et, path_up (p)), 1))
+    p= path_up (p);
+  if ((!nil (p)) && is_func (subtree (et, path_up (p)), SUB_TABLE, 1))
+    p= path_up (p);
+  go_to (start (et, p));
+}
+
+/******************************************************************************
+* Routines for subtables
+******************************************************************************/
+
+tree
+edit_table_rep::table_get_subtable (
+  path fp, int row1, int col1, int row2, int col2)
+{
+  return table_get_subtable (fp, row1, col1, row2, col2, false);
+}
+
+tree
+edit_table_rep::table_get_subtable (
+  path fp, int row1, int col1, int row2, int col2, bool recurse)
+{
+  path p= search_table (fp);
+  int i, j, nr_rows, nr_cols;
+  table_get_extents (p, nr_rows, nr_cols);
+  tree st= subtree (et, p);
+  tree sub_table (TABLE, row2+1-row1);
+  for (i=row1; i<=row2; i++) {
+    tree sr= st[i];
+    tree sub_row (ROW, col2+1-col1);
+    while (is_func (sr, TABLE_FORMAT)) sr= sr[N(sr)-1];
+    for (j=col1; j<=col2; j++)
+      sub_row[j-col1]= copy (sr[j]);
+    sub_table[i-row1]= sub_row;
+  }
+
+  st= subtree (et, fp);
+  if ((!recurse) && (!is_func (st, TABLE_FORMAT))) return sub_table;
+  if (recurse) st= table_get_format (fp);
+  else st= st (0, N(st)-1);
+  int k, n= N(st);
+  tree sub_format (TABLE_FORMAT);
+  for (k=0; k<n; k++)
+    if (is_func (st[k], CELL_WITH, 6)) {
+      int I1, I2, J1, J2, i1, i2, j1, j2;
+      with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
+      if ((i1<=row2) && (i2>=row1) && (j1<=col2) && (j2>=col1)) {
+	I1= min (max (0, i1- row1), row2- row1) + 1;
+	I2= min (max (0, i2- row1), row2- row1) + 1;
+	J1= min (max (0, j1- col1), col2- col1) + 1;
+	J2= min (max (0, j2- col1), col2- col1) + 1;
+	tree with (CELL_WITH);
+	with << as_string (I1) << as_string (I2)
+	     << as_string (J1) << as_string (J2)
+	     << copy (st[k][4]) << copy (st[k][5]);
+	sub_format << with;
+      }
+    }
+  sub_format << sub_table;
+  return sub_format;
+}
+
+static tree
+shift_subtable (tree st, int sh_row, int sh_col) {
+  st= copy (st);
+  int k, n= N(st);
+  for (k=0; k<n-1; k++)
+    if (is_func (st[k], CELL_WITH, 6)) {
+      st[k][0]= as_string (as_int (st[k][0]) + sh_row);
+      st[k][1]= as_string (as_int (st[k][1]) + sh_row);
+      st[k][2]= as_string (as_int (st[k][2]) + sh_col);
+      st[k][3]= as_string (as_int (st[k][3]) + sh_col);
+    }
+  return st;
+}
+
+void
+edit_table_rep::table_write_subtable (
+  path fp, int row, int col, tree subt)
+{
+  int nr_rows, nr_cols, sub_rows, sub_cols;
+  table_get_extents (fp, nr_rows, nr_cols);
+  ::table_get_extents (subt, sub_rows, sub_cols);
+  if ((nr_rows < row+sub_rows) || (nr_cols < col+sub_cols)) return;
+
+  if (is_func (subtree (et, fp), TABLE_FORMAT) &&
+      is_func (subt, TABLE_FORMAT))
+    {
+      tree sh_subt= shift_subtable (subt, row, col);
+      sh_subt= sh_subt (0, N(sh_subt)-1);
+      tree st= subtree (et, fp);
+      insert (fp * (N(st)-1), sh_subt);
+      subt= subt [N(subt)-1];
+    }
+
+  int i, j;
+  for (i=0; i<sub_rows; i++) {
+    path rp  = search_row (fp, i+row);
+    tree subr= subt[i];
+    while (is_func (subr, TABLE_FORMAT)) subr= subr [N(subr)-1];
+    for (j=0; j<sub_cols; j++) {
+      path cp  = search_cell (rp, j+col);
+      tree subc= subr[j];
+      while (is_func (subc, TABLE_FORMAT)) subc= subc [N(subr)-1];
+      if (is_func (subc, CELL, 1)) subc= subc[0];
+      assign (cp, copy (subc));
+    }
+  }
+}
+
+void
+edit_table_rep::table_hor_insert_subtable (path fp, int col, tree subt) {
+  int nr_rows, nr_cols, sub_rows, sub_cols;
+  table_get_extents (fp, nr_rows, nr_cols);
+  ::table_get_extents (subt, sub_rows, sub_cols);
+  if (sub_rows != nr_rows) return;
+  table_insert (fp, 0, col, 0, sub_cols);
+  table_write_subtable (fp, 0, col, subt);
+}
+
+void
+edit_table_rep::table_ver_insert_subtable (path fp, int row, tree subt) {
+  int nr_rows, nr_cols, sub_rows, sub_cols;
+  table_get_extents (fp, nr_rows, nr_cols);
+  ::table_get_extents (subt, sub_rows, sub_cols);
+  if (sub_cols != nr_cols) return;
+  table_insert (fp, row, 0, sub_rows, 0);
+  table_write_subtable (fp, row, 0, subt);
+}
+
+/******************************************************************************
+* Decorations
+******************************************************************************/
+
+void
+edit_table_rep::table_force_decoration (path fp, int row, int col) {
+  row++; col++;
+  tree old= table_get_format (fp, row, col, row, col, CELL_DECORATION);
+  if (old == "") {
+    tree f (TABLE_FORMAT, tree (TABLE, tree (ROW, tree (TABLE_MARKER))));
+    table_set_format (fp, row, col, row, col, CELL_DECORATION, f);
+  }
+}
+
+static void
+search_decoration (tree T, int& row, int& col) {
+  while (is_func (T, TABLE_FORMAT)) T= T [N(T)-1];
+  for (row=0; row<N(T); row++) {
+    tree R= T[row];
+    while (is_func (R, TABLE_FORMAT)) R= R [N(R)-1];
+    for (col=0; col<N(R); col++) {
+      tree C= R[col];
+      while (is_func (C, TABLE_FORMAT)) C= C [N(C)-1];
+      if (C == tree (TABLE_MARKER)) return;
+    }
+  }
+  fatal_error ("decoration not found", "table_undecorate");
+}
+
+static tree
+table_format_undecorate (tree st, int row, int col, int dec_row, int dec_col) {
+  tree fm (TABLE_FORMAT);
+  int k, n= N(st);
+  for (k=0; k<n-1; k++)
+    if ((as_int (st[k][0]) <= (row+1)) && (as_int (st[k][1]) >= (row+1)) &&
+	(as_int (st[k][2]) <= (col+1)) && (as_int (st[k][3]) >= (col+1)))
+      if (is_func (st[k], CELL_WITH, 6) && (st[k][4] != CELL_DECORATION)) {
+	tree with= copy (st[k]);
+	with[0]= as_string (dec_row+1);
+	with[1]= as_string (dec_row+1);
+	with[2]= as_string (dec_col+1);
+	with[3]= as_string (dec_col+1);
+	fm << with;
+      }
+  return fm;
+}
+
+static tree
+table_undecorate (tree st, int row, int col) {
+  int k, n= N(st);
+  for (k=0; k<n-1; k++)
+    if ((as_int (st[k][0]) == (row+1)) && (as_int (st[k][2]) == (col+1)))
+      if (is_func (st[k], CELL_WITH, 6) && (st[k][4] == CELL_DECORATION)) {
+	int dec_row, dec_col;
+	tree T= copy (st[k][5]);
+	search_decoration (T, dec_row, dec_col);
+	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
+	tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
+	return join (F, T);
+      }
+  fatal_error ("decoration not found", "table_undecorate");
+  return ""; // avoids error message when C++ compiler behaves badly
+}
+
+void
+edit_table_rep::table_hor_decorate (path fp, int col, int cbef, int caft) {
+  tree st= subtree (et, fp);
+  if (!is_func (st, TABLE_FORMAT)) return;
+  if (cbef+caft == 0) return;
+  int i, j, k, nr_rows, nr_cols;
+  path p= search_table (fp);
+  table_get_extents (p, nr_rows, nr_cols);
+  table_individualize (fp, CELL_DECORATION);
+
+  for (i=0; i<nr_rows; i++)
+    for (j=col-cbef; j<=col+caft; j++)
+      table_force_decoration (fp, i, j);
+
+  tree t1, t2;
+  if (caft>0)
+    t2= table_get_subtable (fp, 0, col+1   , nr_rows-1, col+caft, true);
+  if (cbef>0)
+    t1= table_get_subtable (fp, 0, col-cbef, nr_rows-1, col-1   , true);
+  if (caft>0) table_delete (fp, 0, col+1   , 0, caft);
+  if (cbef>0) table_delete (fp, 0, col-cbef, 0, cbef);
+  col -= cbef;
+
+  st= subtree (et, fp);
+  int n= N(st);
+  for (k=0; k<n-1; k++)
+    if (is_func (st[k], CELL_WITH, 6) && (st[k][4] == CELL_DECORATION)) {
+      int i1, j1, i2, j2;
+      with_read (st[k], nr_rows, nr_cols, i1, j1, i2, j2);
+      if (j1 != col) continue;
+      for (j=0; j<caft; j++) {
+	tree inst= table_undecorate (t2, i1, j);
+	int sub_rows, sub_cols;
+	::table_get_extents (st[k][5], sub_rows, sub_cols);
+	table_hor_insert_subtable (fp * path (k, 5), sub_cols, inst);
+      }
+      for (j=cbef-1; j>=0; j--) {
+	tree inst= table_undecorate (t1, i1, j);
+	table_hor_insert_subtable (fp * path (k, 5), 0, inst);
+      }
+    }
+}
+
+void
+edit_table_rep::table_ver_decorate (path fp, int row, int rbef, int raft) {
+  tree st= subtree (et, fp);
+  if (!is_func (st, TABLE_FORMAT)) return;
+  if (rbef+raft == 0) return;
+  int i, j, k, nr_rows, nr_cols;
+  path p= search_table (fp);
+  table_get_extents (p, nr_rows, nr_cols);
+  table_individualize (fp, CELL_DECORATION);
+
+  for (i=row-rbef; i<=row+raft; i++)
+    for (j=0; j<nr_cols; j++)
+      table_force_decoration (fp, i, j);
+
+  tree t1, t2;
+  if (raft>0)
+    t2= table_get_subtable (fp, row+1   , 0, row+raft, nr_cols-1, true);
+  if (rbef>0)
+    t1= table_get_subtable (fp, row-rbef, 0, row-1   , nr_cols-1, true);
+  if (raft>0) table_delete (fp, row+1   , 0, raft, 0);
+  if (rbef>0) table_delete (fp, row-rbef, 0, rbef, 0);
+  row -= rbef;
+
+  st= subtree (et, fp);
+  int n= N(st);
+  for (k=0; k<n-1; k++)
+    if (is_func (st[k], CELL_WITH, 6) && (st[k][4] == CELL_DECORATION)) {
+      int i1, j1, i2, j2;
+      with_read (st[k], nr_rows, nr_cols, i1, j1, i2, j2);
+      if (i1 != row) continue;
+      for (i=0; i<raft; i++) {
+	tree inst= table_undecorate (t2, i, j1);
+	int sub_rows, sub_cols;
+	::table_get_extents (st[k][5], sub_rows, sub_cols);
+	table_ver_insert_subtable (fp * path (k, 5), sub_rows, inst);
+      }
+      for (i=rbef-1; i>=0; i--) {
+	tree inst= table_undecorate (t1, i, j1);
+	table_ver_insert_subtable (fp * path (k, 5), 0, inst);
+      }
+    }
+}
+
+/******************************************************************************
+* User interface
+******************************************************************************/
+
+void
+edit_table_rep::make_table (int nr_rows, int nr_cols) {
+  tree T= empty_table (nr_rows, nr_cols);
+  path p (0, 0, 0, 0);
+  tree format_T (TABLE_FORMAT, T);
+  insert_tree (format_T, path (N(format_T)-1, p));
+
+  int i1, j1, i2, j2;
+  path fp= search_format ();
+  table_get_limits (fp, i1, j1, i2, j2);
+  if ((nr_rows<i1) || (nr_cols<j1)) {
+    T= empty_table (max (nr_rows, i1), max (nr_cols, j1));
+    format_T= tree (TABLE_FORMAT, T);
+    assign (fp, format_T);
+    go_to (fp * path (N(format_T)-1, p));
+  }
+
+  string hyphen= as_string (table_get_format (fp, TABLE_HYPHEN));
+  if (hyphen == "y") {
+    path q= fp;
+    if (is_extension (subtree (et, path_up (q)), 1)) q= path_up (q);
+    tree st= subtree (et, path_up (q));
+    if (is_document (st)) ins_unary (fp, DOCUMENT);
+    else if (is_concat (st) && is_document (subtree (et, path_up (q, 2)))) {
+      int n= N(st), l= last_item (q);
+      ins_unary (fp, DOCUMENT);
+      if (l != (n-1)) {
+	split (path_inc (q));
+	correct_concat (path_inc (path_up (q)));
+      }
+      if (l != 0) {
+	split (q);
+	correct_concat (path_inc (path_up (q)));
+      }
+      correct_concat (path_up (q));
+    }
+  }
+
+  set_message ("E-down: new row, E-right: new column", "table");
+}
+
+void
+edit_table_rep::make_sub_table (int nr_rows, int nr_cols) {
+  path cp= search_upwards (CELL);
+  if (nil (cp)) return;
+  tree T= empty_table (nr_rows, nr_cols);
+  path p (0, 0, 0, 0);
+  T= tree (TABLE_FORMAT, T);
+  p= path (N(T)-1, p);
+  T= tree (SUB_TABLE, T);
+  p= path (0, p);
+  assign (cp * 0, T);
+  go_to (cp * path (0, p));
+  set_message ("E-down: new row, E-right: new column", "table");
+}
+
+void
+edit_table_rep::destroy_table () {
+  path fp= search_format ();
+  if (nil (fp)) return;
+  while (!nil (fp)) {
+    tree st= subtree (et, path_up (fp));
+    if (!is_func (st, TABLE_FORMAT)) break;
+    fp= path_up (fp);
+  }
+  if ((!nil (fp)) &&
+      is_document (subtree (et, path_up (fp))) &&
+      (!nil (path_up (fp))) &&
+      is_extension (subtree (et, path_up (fp, 2)), 1))
+    fp= path_up (fp);
+  if ((!nil (fp)) && is_extension (subtree (et, path_up (fp)), 1))
+    fp= path_up (fp);
+  if ((!nil (fp)) && is_func (subtree (et, path_up (fp)), SUB_TABLE, 1))
+    fp= path_up (fp);
+  assign (fp, "");
+  correct (path_up (fp));
+}
+
+void
+edit_table_rep::table_disactivate () {
+  path fp= search_format ();
+  if (nil (fp)) return;
+  tree st= subtree (et, fp);
+  if (!is_func (st, TABLE_FORMAT)) return;
+  ins_unary (fp, INACTIVE);
+  set_message ("return: reactivate", "deactivate table");
+}
+
+void
+edit_table_rep::table_extract_format () {
+  path fp= search_format ();
+  if (nil (fp)) return;
+  tree fm= table_get_format (fp);
+  fm << "";
+  if (is_extension (subtree (et, path_up (fp)), 1)) fp= path_up (fp);
+  assign (fp, fm);
+  go_to (fp * path (N(fm)-1, 0));
+}
+
+void
+edit_table_rep::table_insert_row (bool forward) {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  int nr_rows, nr_cols, i1, j1, i2, j2;
+  table_get_extents (fp, nr_rows, nr_cols);
+  table_get_limits (fp, i1, j1, i2, j2);
+  if (nr_rows+1 > i2) return;
+  table_insert (fp, row + (forward? 1: 0), col, 1, 0);
+  table_go_to (fp, row + (forward? 1: 0), col);
+}
+
+void
+edit_table_rep::table_insert_column (bool forward) {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  int nr_rows, nr_cols, i1, j1, i2, j2;
+  table_get_extents (fp, nr_rows, nr_cols);
+  table_get_limits (fp, i1, j1, i2, j2);
+  if (nr_cols+1 > j2) return;
+  table_insert (fp, row, col + (forward? 1: 0), 0, 1);
+  table_go_to (fp, row, col + (forward? 1: 0));
+}
+
+void
+edit_table_rep::table_delete_row (bool backward) {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  int nr_rows, nr_cols, i1, j1, i2, j2;
+  table_get_extents (fp, nr_rows, nr_cols);
+  table_get_limits (fp, i1, j1, i2, j2);
+  if (nr_rows-1 < i1) {
+    destroy_table ();
+    return;
+  }
+  table_delete (fp, row, col, 1, 0);
+  table_go_to (fp, max (0, row + (backward? -1: 0)), col);
+}
+
+void
+edit_table_rep::table_delete_column (bool backward) {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  int nr_rows, nr_cols, i1, j1, i2, j2;
+  table_get_extents (fp, nr_rows, nr_cols);
+  table_get_limits (fp, i1, j1, i2, j2);
+  if (nr_cols-1 < j1) {
+    destroy_table ();
+    return;
+  }
+  table_delete (fp, row, col, 0, 1);
+  table_go_to (fp, row, max (0, col + (backward? -1: 0)));
+}
+
+int
+edit_table_rep::table_nr_rows () {
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return -1;
+  table_get_extents (fp, nr_rows, nr_cols);
+  return nr_rows;
+}
+
+int
+edit_table_rep::table_nr_columns () {
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return -1;
+  table_get_extents (fp, nr_rows, nr_cols);
+  return nr_cols;
+}
+
+int
+edit_table_rep::table_which_row () {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return 0;
+  return row+1;
+}
+
+int
+edit_table_rep::table_which_column () {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return 0;
+  return col+1;
+}
+
+path
+edit_table_rep::table_search_cell (int row, int col) {
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return path ();
+  table_get_extents (fp, nr_rows, nr_cols);
+  if (row>0) row--; else row+=nr_rows;
+  if (col>0) col--; else col+=nr_cols;
+  if ((row<0) || (row>=nr_rows) || (col<0) || (col>=nr_cols)) return path ();
+  return search_cell (fp, row, col);
+}
+
+void
+edit_table_rep::table_go_to (int row, int col) {
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return;
+  table_get_extents (fp, nr_rows, nr_cols);
+  if (row>0) row--; else row+=nr_rows;
+  if (col>0) col--; else col+=nr_cols;
+  if ((row<0) || (row>=nr_rows) || (col<0) || (col>=nr_cols)) return;
+  table_go_to (fp, row, col);
+}
+
+void
+edit_table_rep::table_set_format (string var, string val) {
+  if (val == "") table_del_format (var);
+  else {
+    path fp= search_format ();
+    table_set_format (fp, var, val);
+  }
+}
+
+string
+edit_table_rep::table_get_format (string var) {
+  path fp= search_format ();
+  return as_string (table_get_format (fp, var));
+}
+
+void
+edit_table_rep::table_del_format (string var) {
+  path fp= search_format ();
+  table_del_format (fp, var);
+}
+
+void
+edit_table_rep::table_format_center () {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  table_format_center (fp, row, col);
+}
+
+void
+edit_table_rep::table_row_decoration (bool forward) {
+  int row, col, nr_rows, nr_cols;
+  path fp= search_format (row, col);
+  table_get_extents (fp, nr_rows, nr_cols);
+  if ((!forward) && (row > 0)) table_ver_decorate (fp, row, 1, 0);
+  if (forward && (row < (nr_rows-1))) table_ver_decorate (fp, row, 0, 1);
+}
+
+void
+edit_table_rep::table_column_decoration (bool forward) {
+  int row, col, nr_rows, nr_cols;
+  path fp= search_format (row, col);
+  table_get_extents (fp, nr_rows, nr_cols);
+  if ((!forward) && (col > 0)) table_hor_decorate (fp, col, 1, 0);
+  if (forward && (col < (nr_cols-1))) table_hor_decorate (fp, col, 0, 1);
+}
+
+void
+edit_table_rep::set_cell_mode (string mode) {
+  cell_mode= mode;
+}
+
+string
+edit_table_rep::get_cell_mode () {
+  return cell_mode;
+}
+
+void
+edit_table_rep::cell_set_format (string var, string val) {
+  if (val == "") cell_del_format (var);
+  else {
+    if (selection_active_table ()) {
+      int row1, col1, row2, col2;
+      path fp= selection_get_subtable (row1, col1, row2, col2);
+      table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
+    }
+    else {
+      int row, col;
+      path fp= search_format (row, col); row++; col++;
+      if (nil (fp)) return;
+      if (cell_mode=="row")
+	table_set_format (fp, row, 1, row, -1, var, val);
+      else if (cell_mode=="column")
+	table_set_format (fp, 1, col, -1, col, var, val);
+      else if (cell_mode=="table")
+	table_set_format (fp, 1, 1, -1, -1, var, val);
+      else table_set_format (fp, row, col, row, col, var, val);
+    }
+  }
+}
+
+string
+edit_table_rep::cell_get_format (string var) {
+  int row, col;
+  path fp= search_format (row, col); row++; col++;
+  if (nil (fp)) return "";
+  if (cell_mode=="row")
+    return as_string (table_get_format (fp, row, 1, row, -1, var));
+  else if (cell_mode=="column")
+    return as_string (table_get_format (fp, 1, col, -1, col, var));
+  else if (cell_mode=="table")
+    return as_string (table_get_format (fp, 1, 1, -1, -1, var));
+  else return as_string (table_get_format (fp, row, col, row, col, var));
+}
+
+void
+edit_table_rep::cell_del_format (string var) {
+  if (selection_active_table ()) {
+    int row1, col1, row2, col2;
+    path fp= selection_get_subtable (row1, col1, row2, col2);
+    table_del_format (fp, row1+1, col1+1, row2+1, col2+1, var);
+  }
+  else {
+    int row, col;
+    path fp= search_format (row, col); row++; col++;
+    if (nil (fp)) return;
+    if (cell_mode=="row") table_del_format (fp, row, 1, row, -1, var);
+    else if (cell_mode=="column") table_del_format (fp, 1, col, -1, col, var);
+    else if (cell_mode=="table") table_del_format (fp, 1, 1, -1, -1, var);
+    else table_del_format (fp, row, col, row, col, var);
+  }
+}
+
+void
+edit_table_rep::cell_multi_paragraph (bool flag) {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return;
+  path cp= search_cell (fp, row, col);
+  tree st= subtree (et, cp);
+
+  if (flag && (!is_document (st)))
+    ins_unary (cp, DOCUMENT);
+  else if ((!flag) && is_document (st) && (N(st) == 1))
+    rem_unary (cp);
+}
+
+bool
+edit_table_rep::cell_is_multi_paragraph () {
+  int row, col;
+  path fp= search_format (row, col);
+  if (nil (fp)) return false;
+  path cp= search_cell (fp, row, col);
+  tree st= subtree (et, cp);
+  return is_document (st);
+}
+
+void
+edit_table_rep::table_test () {
+  path fp= search_format ();
+  if (nil (fp)) return;
+  cout << table_get_format (fp) << "\n";
+}

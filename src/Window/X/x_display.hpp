@@ -1,0 +1,207 @@
+
+/******************************************************************************
+* MODULE     : x_display.hpp
+* DESCRIPTION: Abstract display class
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#ifndef X_DISPLAY_H
+#define X_DISPLAY_H
+#include "timer.hpp"
+#include "display.hpp"
+#include "widget.hpp"
+#include "array.hpp"
+#include "hashmap.hpp"
+
+class x_display_rep;
+class x_drawable_rep;
+class x_window_rep;
+typedef x_display_rep* x_display;
+typedef x_window_rep* x_window;
+
+#define XK_CYRILLIC
+
+#ifdef OS_WIN32
+#include "X11/Xlib.hpp"
+#include "X11/Xutil.hpp"
+#include "X11/Xos.hpp"
+#include "X11/Xatom.hpp"
+#include "X11/keysym.hpp"
+#include "X11/Sunkeysym.hpp"
+#else
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
+#include <X11/Sunkeysym.h>
+#endif
+
+/******************************************************************************
+* For anti aliasing of TeX fonts
+******************************************************************************/
+
+struct x_character_rep: concrete_struct {
+  int          c;
+  bitmap_font  bmf;
+  int          sf;
+  color        fg;
+  color        bg;
+  x_character_rep (int c, bitmap_font bmf, int sf, color fg, color bg);
+  friend class x_character;
+};
+
+class x_character {
+  CONCRETE(x_character);
+  x_character (int c=0, bitmap_font bmf= bitmap_font (),
+	       int sf=1, color fg= 0, color bg= 1);
+  operator tree ();
+};
+CONCRETE_CODE(x_character);
+
+bool operator == (x_character xc1, x_character xc2);
+bool operator != (x_character xc1, x_character xc2);
+int hash (x_character xc);
+
+/******************************************************************************
+* Delayed messages
+******************************************************************************/
+
+struct message_rep: concrete_struct {
+  widget wid;
+  string s;
+  time_t t;
+  message_rep (widget wid, string s, time_t t);
+  friend class message;
+};
+
+class message {
+  CONCRETE(message);
+  message (widget wid, string s, time_t t);
+};
+CONCRETE_CODE(message);
+
+ostream& operator << (ostream& out, message m);
+
+/******************************************************************************
+* The x_display class
+******************************************************************************/
+
+class x_display_rep: public display_rep {
+  Display*        dpy;
+  GC              gc;
+  GC              pixmap_gc;
+  int             scr;
+  Window          root;
+  int             display_width;
+  int             display_height;
+  int             depth;
+  Colormap        cols;
+  color*          cmap;
+  list<widget>    grab_ptr;
+  list<widget>    grab_kbd;
+  unsigned int    state;
+  list<message>   messages;
+  x_drawable_rep* shadow;
+  x_window_rep*   shadow_src;
+  x_window_rep*   gswindow;
+  int             argc;
+  char**          argv;
+  widget          balloon_wid;
+  window          balloon_win;
+  SI              balloon_x;
+  SI              balloon_y;
+  time_t          balloon_time;
+
+  hashmap<x_character,pointer> color_scale;       // for anti-aliasing
+  hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
+  hashmap<x_character,pointer> character_pixmap;  // pixmaps of all characters
+  hashmap<string,int>          xpm_bitmap;        // bitmaps of all xpms
+  hashmap<string,int>          xpm_pixmap;        // pixmaps of all xpms
+  hashmap<int,string>          lower_key;
+  hashmap<int,string>          upper_key;
+
+  char*                        selection;
+  hashmap<string,tree>         selections;
+
+public:
+  x_display_rep (int argc, char** argv);
+  ~x_display_rep ();
+
+  /****************************** Color **************************************/
+  int   alloc_color (int r, int g, int b);
+  void  init_color_map ();
+  void  initialize_colors ();
+  void  prepare_color (int sfactor, color fg, color bg);
+  color get_color (string s);
+  color rgb (int r, int g, int b);
+  void  get_rgb (color col, int& r, int& g, int& b);
+
+  /****************************** Keyboard ***********************************/
+  void insert_keysym (array<int>& a, int i, int j);
+  void get_xmodmap ();
+  void map (int key, string s);
+  void Map (int key, string s);
+  void initialize_keyboard_pointer ();
+  string look_up_key (XKeyEvent* ev);
+  string look_up_mouse (XButtonEvent* ev);
+  unsigned int get_button_mask (XButtonEvent* ev);
+
+  /******************************** Fonts ************************************/
+  void set_shrinking_factor (int sfactor);
+  void set_default_font (string name);
+  font default_font_sub (bool tt);
+  font default_font (bool tt= false);
+  void get_ps_char (Font fn, int c, text_extents& ex, bitmap_char& bmc);
+  void load_ps_font (string family, int size, int dpi,
+		     bitmap_metric& bmm, bitmap_font& bmf);
+
+  /************************** Server languages *******************************/
+  void   load_dictionary (string name, string from, string to);
+  void   set_output_language (string lan);
+  string get_output_language ();
+  string translate (string s, string from, string to);
+
+  /********************* extents, grabbing, selections ***********************/
+  void   get_extents (SI& width, SI& height);
+  void   get_max_size (SI& width, SI& height);
+  void   set_button_state (unsigned int state);
+  void   emulate_leave_enter (widget old_widget, widget new_widget);
+  void   grab_pointer (widget wid);
+  void   ungrab_pointer ();
+  bool   has_grab_pointer (widget w);
+  void   grab_keyboard (widget wid);
+  void   ungrab_keyboard ();
+
+  /*********************** interclient communication *************************/
+  tree   get_selection (widget wid, string key);
+  bool   set_selection (widget wid, string key, tree t, string s);
+  void   clear_selection (string key);
+  void   delayed_message (widget wid, string s, time_t delay);
+
+  /**************************** miscellaneous ********************************/
+  void   set_help_balloon (widget wid, SI x, SI y);
+  void   map_balloon ();
+  void   unmap_balloon ();
+  void   postscript_auto_gc ();
+  void   postscript_gc (string name);
+  void   set_pointer (string pixmap_name);
+  void   set_wait_indicator (string message, string arg);
+
+  /************************** Event processing *******************************/
+  void process_event (x_window win, XEvent* ev);
+  void event_loop ();
+
+  /*************************** And our friends *******************************/
+  friend class x_drawable_rep;
+  friend class x_window_rep;
+  friend class x_ps_font_rep;
+  friend class x_tex_font_rep;
+};
+
+#endif // defined X_DISPLAY_H

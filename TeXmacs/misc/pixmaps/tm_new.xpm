@@ -1,0 +1,27 @@
+/* XPM */
+static char * tb_new_xpm[] = {
+"17 17 6 1",
+"  c None	s mask",
+". c lightgray	s light",
+"X c blue",
+"o c white	s white",
+"O c black	s style",
+"+ c darkgray	s dark",
+"        +  +o+   ",
+"        o+ +o+ o+",
+"         o+OoOo+ ",
+"OOOOOOOOOOooooO++",
+"OoooooooOoOoooooo",
+"OoooooooOooOooO++",
+"OoooooooOOOOoOo  ",
+"OooooooooooOo++o ",
+"OooooooooooOo+ +o",
+"OooooooooooO+   +",
+"OooooooooooO+    ",
+"OooooooooooO+    ",
+"OooooooooooO+    ",
+"OooooooooooO+    ",
+"OooooooooooO+    ",
+"OOOOOOOOOOOO+    ",
+"   ++++++++++    "
+};

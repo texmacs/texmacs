@@ -1,0 +1,4 @@
+#!/bin/sh -f
+TEXMACS_REDUCE_PATH="$TEXMACS_PATH/plugins/reduce"
+export TEXMACS_REDUCE_PATH
+exec reduce | reduce_filter
