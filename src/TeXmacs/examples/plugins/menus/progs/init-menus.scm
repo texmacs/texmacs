@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind menus-menu
-  ("Hi" (insert-string "Hello world")))
+  ("Hi" (insert "Hello world")))
 
 (menu-extend texmacs-extra-menu
   (if (equal? (get-env "prog language") "menus")
@@ -21,7 +21,7 @@
 
 (define-macro (menus-add s)
   `(menu-extend menus-menu
-     (,s (insert-string ,s))))
+     (,s (insert ,s))))
 
 (plugin-configure menus
   (:require (url-exists-in-path? "menus.bin"))
