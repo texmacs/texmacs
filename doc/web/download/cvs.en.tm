@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.11>
+<TeXmacs|1.0.4.2>
 
 <style|tmweb>
 
@@ -28,9 +28,12 @@
   <TeXmacs>><label|checkout>
 
   In order to download the current CVS version of <TeXmacs>, you should set
-  your <verbatim|CVSROOT> environment variable to
 
-  <verbatim| \ \ \ :pserver:the_username@cvs.texmacs.org:/texmacs>
+  <\verbatim>
+    \ \ \ \ export CVSROOT=:pserver:the_username@cvs.texmacs.org:/texmacs
+
+    \ \ \ \ export CVS_RSH=ssh
+  </verbatim>
 
   For read-only access, you should use <verbatim|anonymous> for
   <verbatim|the_username>. Now log in using
@@ -85,9 +88,9 @@
   installing <name|ccvssh>, if necessary, this requires you to set
 
   <\verbatim>
-    \ \ \ \ CVSROOT=:ext:the_username@cvs.texmacs.org:/texmacs
+    \ \ \ \ export CVSROOT=:ext:the_username@cvs.texmacs.org:/texmacs
 
-    \ \ \ \ CVS_RSH=ccvssh
+    \ \ \ \ export CVS_RSH=ccvssh
   </verbatim>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
@@ -97,38 +100,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|checkout|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|commit|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <with|par-left|<quote|6fn>|font-size|<quote|0.84>|Downloading the CVS
-      version of T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>><value|toc-dots><pageref|toc-1>>
-
-      <with|par-left|<quote|6fn>|font-size|<quote|0.84>|Committing changes by
-      CVS<value|toc-dots><pageref|toc-2>>
-    </associate>
-  </collection>
-</auxiliary>

@@ -1,13 +1,21 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.2>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.1>
+  <section|Changes from version 1.0.4 to 1.0.4.2>
 
   <\itemize>
+    <item>Added <verbatim|svjour> base style for Springer-Verlag articles
+    (1.0.4.2).
+
+    <item>Implementation of double page breaks (1.0.4.2).
+
+    <item>Correction of bug in presentation mode and several other minor bug
+    corrections (1.0.4.2).
+
     <item>New implementation of header and title tags (1.0.4.1).
 
     <item>Documentation on new headers and titles (1.0.4.1).
