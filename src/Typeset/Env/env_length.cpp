@@ -67,7 +67,7 @@ edit_env_rep::tmlen_over (tree t1, tree t2) {
 ******************************************************************************/
 
 void
-edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {
+edit_env_rep::get_length_unit (string s, SI& un, string& un_str) {
   int i;
   for (i=0; i<N(s); i++)
     if ((s[i]>='a') && (s[i]<='z')) break;
@@ -138,7 +138,7 @@ edit_env_rep::as_tmlen (tree t) {
 SI
 edit_env_rep::as_length (tree t) {
   tree r= as_tmlen (t);
-  string s= (N(r)==1? r[0]->label: r[1]->label);
+  string s= r[N(r)==1? 0: 1]->label;
   return (SI) (as_double (s));
 }
 
