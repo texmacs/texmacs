@@ -155,7 +155,7 @@ edit_interface_rep::complete_start (string prefix, array<string> compls) {
     completion_pos   = 0;
     insert_tree (completions[0]);
     complete_message ();
-    dis->beep ();
+    beep ();
     set_input_mode (INPUT_COMPLETE);
   }
 }

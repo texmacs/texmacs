@@ -74,7 +74,6 @@ public:
   virtual int    remove_all_delayed_messages (widget wid, string s) = 0;
 
   /* miscellaneous */
-  virtual void   beep () = 0;
   virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
   virtual void   postscript_gc (string name= "*") = 0;
   virtual void   set_pointer (string pixmap_name= "") = 0;
@@ -85,5 +84,6 @@ display open_display (int argc=0, char** argv=NULL);
 display current_display ();
 void    close_display (display dis);
 void    set_interpose_handler (void (*) (void));
+void    beep ();
 
 #endif // defined DISPLAY_H

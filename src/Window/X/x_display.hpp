@@ -177,7 +177,6 @@ public:
   int    remove_all_delayed_messages (widget wid, string s);
 
   /**************************** miscellaneous ********************************/
-  void   beep ();
   void   set_help_balloon (widget wid, SI x, SI y);
   void   map_balloon ();
   void   unmap_balloon ();

@@ -408,7 +408,7 @@ edit_modify_rep::undo () {
   }
   buf->unmark_undo_block ();
   if (buf->undo_depth == buf->last_save) {
-    dis->beep ();
+    beep ();
     set_message ("Your document is back in its original state", "undo");
   }
   if (inside_graphics ())
@@ -433,7 +433,7 @@ edit_modify_rep::redo () {
   }
   buf->unmark_redo_block ();
   if (buf->undo_depth == buf->last_save) {
-    dis->beep ();
+    beep ();
     set_message ("Your document is back in its original state", "redo");
   }
 }

@@ -190,11 +190,11 @@ static bool
 heuristic_is_default (string name, int type) {
 #ifdef OS_WIN32
   // FIXME: we probably should take into account 'type' too
-  if ((name[0] == '\\') && (name[1] == '\\'))
-    return true;
-  if (isalpha(name[0]) && (name[1] == ':') && ((name[2] == '\\') || (N(name)==2)))
-    return true;
-  return false;
+  if (N(name) < 2) return false;
+  if ((name[0] == '\\') && (name[1] == '\\')) return true;
+  return
+    isalpha (name[0]) && (name[1] == ':') &&
+    ((N(name)==2) || (name[2] == '\\') || (name[2] == '/'));
 #else
   char sep= (type==0)? URL_CONCATER: '/';
   return (name != "") && (name[0] == sep);
@@ -429,7 +429,10 @@ as_string (url u, int type) {
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
 #ifdef OS_WIN32
-    if (is_semi_root (u)) return s2 * "\\";
+    if (is_semi_root (u)) {
+      if (ends (s2, ":")) return s2 * "\\";
+      else return s2;
+    }
     if (is_root (u[1]) && stype == URL_SYSTEM) return s2;
 #endif
     return s1 * sep * s2;
@@ -439,7 +442,12 @@ as_string (url u, int type) {
     string s2= as_string (u[2], type);
     if (!is_name_in_path (u[1])) s1= "{" * s1 * "}";
     if ((!is_or (u[2])) && (!is_name_in_path (u[2]))) s2= "{" * s2 * "}";
+#ifdef OS_WIN32
+    if (type == URL_STANDARD) return s1 * ":" * s2;
+    else return s1 * string (URL_SEPARATOR) * s2;
+#else
     return s1 * string (URL_SEPARATOR) * s2;
+#endif
   }
 #ifdef OS_WIN32
   if (is_root (u, "default")) {
@@ -534,8 +542,13 @@ relative (url base, url u) {
 
 url
 delta_sub (url base, url u) {
+#ifdef OS_WIN32
+  if (is_atomic (base) || heuristic_is_default (as_string(base), URL_SYSTEM))
+    return u;
+#else
   if (is_atomic (base))
     return u;
+#endif
   if (is_concat (base) && is_concat (u) && (base[1] == u[1]))
     return delta_sub (base[2], u[2]);
   if (is_concat (base))
@@ -798,9 +811,9 @@ concretize (url u) {
 #ifdef OS_WIN32
   // FIXME: this fix seems strange;
   // to start with, the if condition is not respected
-  string s = as_string(u);
-  if (heuristic_is_default(s, 0))
-    return s;
+  string s = as_string (u);
+  if (starts (s, "file:///")) s = s(8, N(s));
+  if (heuristic_is_default (s, 0)) return s;
 #else
   if (is_rooted (u, "default") || is_rooted (u, "file"))
     return as_string (reroot (u, "default"));
