@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
@@ -9,8 +9,7 @@
   by the typesetter. Each subsection documents several primitives and starts
   by a table summarizing their properties and intended usage.
 
-  <big-table|<assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
-  blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<verbatim|example>>|<cell|<with|mode|math|2+3*n>>|<cell|Yes>|<cell|First
+  <big-table|<tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<verbatim|example>>|<cell|<with|mode|math|2+3*n>>|<cell|Yes>|<cell|First
   two>|<cell|Display>|<cell|Never>>>>>|Example tag description>
 
   <\description-dash>

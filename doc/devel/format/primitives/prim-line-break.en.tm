@@ -1,12 +1,11 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Line breaking primitives>
 
-  <big-table|<assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
-  blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<cwith|1|-1|4|4|cell-halign|c>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|3|3|4|4|cell-halign|c>|<cwith|3|3|2|2|cell-halign|c>|<cwith|5|5|4|4|cell-halign|c>|<cwith|5|5|2|2|cell-halign|c>|<cwith|4|4|4|4|cell-halign|c>|<cwith|4|4|2|2|cell-halign|c>|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|new-line>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|next-line>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|line-break>>|<cell|0>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|no-break>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>>>>|Line
+  <big-table|<tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|new-line>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|next-line>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|line-break>>|<cell|0>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|no-break>>|<cell|<with|mode|math|0>>|<cell|Yes>|<cell|->|<cell|Typesetting>|<cell|Physical>>>>>|Line
   breaking primitives>
 
   A simple document is a sequence of <def-index|logical paragraphs>, one for
@@ -64,95 +63,16 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|5>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
+    <associate|sfactor|5>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|1|?>>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|idx-2|<tuple|1|?>>
-    <associate|idx-3|<tuple|1|?>>
-    <associate|idx-4|<tuple|1|?>>
-    <associate|idx-5|<tuple|1|?>>
-    <associate|idx-6|<tuple|1|?>>
-    <associate|idx-7|<tuple|1|?>>
-    <associate|idx-8|<tuple|1|?>>
-    <associate|idx-9|<tuple|1|?>>
-    <associate|idx-10|<tuple|1|?>>
-    <associate|idx-11|<tuple|1|?>>
-    <associate|idx-12|<tuple|1|?>>
-    <associate|idx-13|<tuple|1|?>>
-    <associate|idx-14|<tuple|1|?>>
-    <associate|idx-15|<tuple|1|?>>
-    <associate|idx-16|<tuple|1|?>>
-    <associate|idx-17|<tuple|1|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|table>
-      <tuple|normal|Line breaking primitives|<pageref|gly-1>>
-    </associate>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|new-line>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|next-line>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|line-break>>|<pageref|idx-3>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|no-break>>|<pageref|idx-4>>
-
-      <tuple|<tuple|logical paragraphs>|<pageref|idx-5>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|document>>|<pageref|idx-6>>
-
-      <tuple|<tuple|soft lines>|<pageref|idx-7>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|new-line>>|<pageref|idx-8>>
-
-      <tuple|<tuple|physical paragraphs>|<pageref|idx-9>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|document>>|<pageref|idx-10>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|next-line>>|<pageref|idx-11>>
-
-      <tuple|<tuple|hard lines>|<pageref|idx-12>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|next-line>>|<pageref|idx-13>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|line-break>>|<pageref|idx-14>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|line-break>>|<pageref|idx-15>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|next-line>>|<pageref|idx-16>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|no-break>>|<pageref|idx-17>>
-    </associate>
-  </collection>
-</auxiliary>

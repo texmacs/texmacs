@@ -6,8 +6,7 @@
   <tmdoc-title|Fundamental structures>
 
   <\big-table>
-    <assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
-    blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|document>>|<cell|<with|mode|math|1+n>>|<cell|<with|mode|math|>No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|concat>>|<cell|<with|mode|math|1+n>>|<cell|No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|error>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Never>>|<row|<cell|<markup|raw-data>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Logical>>>>>
+    <tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|document>>|<cell|<with|mode|math|1+n>>|<cell|<with|mode|math|>No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|concat>>|<cell|<with|mode|math|1+n>>|<cell|No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|error>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Never>>|<row|<cell|<markup|raw-data>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Logical>>>>>
 
     \;
   </big-table|Fundamental structures>
