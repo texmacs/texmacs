@@ -125,6 +125,40 @@ drd_info_rep::get_old_arity (tree_label l) {
 }
 
 bool
+drd_info_rep::correct_arity (tree_label l, int i) {
+  parent_info pi= info[l]->pi;
+  switch (pi.arity_mode) {
+  case ARITY_NORMAL:
+    return i == pi.arity_base + pi.arity_extra;
+  case ARITY_OPTIONS:
+    return (i >= ((int) pi.arity_base)) &&
+           (i <= ((int) pi.arity_base) + ((int) pi.arity_extra));
+  case ARITY_REPEAT:
+  case ARITY_VAR_REPEAT:
+    return (i >= ((int) pi.arity_base)) &&
+           (((i-pi.arity_base) % pi.arity_extra) == 0);
+  }
+}
+
+bool
+drd_info_rep::insert_point (tree_label l, int i, int n) {
+  parent_info pi= info[l]->pi;
+  switch (pi.arity_mode) {
+  case ARITY_NORMAL:
+    return false;
+  case ARITY_OPTIONS:
+    return (i >= ((int) pi.arity_base)) && (i <= n) &&
+           (n < ((int) pi.arity_base) + ((int) pi.arity_extra));
+  case ARITY_REPEAT:
+    return (i >= ((int) pi.arity_base)) &&
+           ((i - pi.arity_base) % pi.arity_extra) == 0;
+  case ARITY_VAR_REPEAT:
+    return (i >= 0) && (i <= (n - ((int) pi.arity_base))) &&
+           (i % pi.arity_extra == 0);
+  }
+}
+
+bool
 drd_info_rep::is_dynamic (tree t) {
   if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   if (is_atomic (t)) return false;

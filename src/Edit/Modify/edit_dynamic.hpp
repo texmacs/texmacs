@@ -39,7 +39,7 @@ public:
   void make_expand (string s, int n=0);
   void temp_proof_fix ();
   void make_apply (string s);
-  void insert_argument ();
+  void insert_argument (bool forward);
 
   void back_dynamic (path p);
   void back_expand (path p);

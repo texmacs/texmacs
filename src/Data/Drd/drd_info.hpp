@@ -38,6 +38,8 @@ public:
   int  get_nr_indices (tree_label tag);
   void freeze_arity (tree_label tag);
   int  get_old_arity (tree_label l);
+  bool correct_arity (tree_label l, int i);
+  bool insert_point (tree_label l, int i, int n);
   bool is_dynamic (tree t);
 
   void set_no_border (tree_label tag, bool has_no_border);

@@ -257,7 +257,7 @@ edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
 }
 
 void
-edit_dynamic_rep::insert_argument () {
+edit_dynamic_rep::insert_argument (bool forward) {
   path p= find_dynamic (tp);
   if (nil (p)) return;
   if (p==tp) {
@@ -289,6 +289,19 @@ edit_dynamic_rep::insert_argument () {
     }
     return;
   }
+
+  int i= last_item (p), n= N(t), d= 1;
+  if (forward) do i++; while ((i<=n) && (!drd->insert_point (L(t), i, n)));
+  else while ((i>=0) && (!drd->insert_point (L(t), i, n))) i--;
+  if ((i<0) || (i>n)) return;
+  path q= path_up (p) * i;
+  while (!drd->correct_arity (L(t), n+d)) d++;
+  tree ins (L(t), d);
+  for (i=0; i<d; i++) ins[i]= "";
+  insert (q, ins);
+  go_to (q * 0);
+
+  /*
   if (drd->get_old_arity (L(t)) >= 1) return;
   if (is_func (t, WITH) || is_func (t, DRD_PROPS) || is_func (t, ATTR)) {
     int at= ((last_item (p) >> 1) << 1) + 2;
@@ -302,6 +315,7 @@ edit_dynamic_rep::insert_argument () {
     insert (path_inc (p), tree (L (t), ""));
     go_to (path_inc (p) * 0);
   }
+  */
 }
 
 /******************************************************************************

@@ -162,7 +162,7 @@
 
 (kbd-map like-old?
   ("tab" (if (or (is-deactivated?) (in-preamble-mode?) (inside? "tuple"))
-	     (insert-argument)
+	     (insert-argument #t)
 	     (make-htab "5mm")))
   ("A-backspace" (make-space "-0.2spc"))
   ("A-delete" (cell-del-format ""))
