@@ -1,13 +1,19 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.4.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.2>
+  <section|Changes from version 1.0.4 to 1.0.4.3>
 
   <\itemize>
+    <item><with|mode|math|\<beta\>>-version of the Windows port (1.0.4.3).
+
+    <item>Faster string and pk font loading (1.0.4.3).
+
+    <item>Better graphical selections (1.0.4.3).
+
     <item>Added <verbatim|svjour> base style for Springer-Verlag articles
     (1.0.4.2).
 
