@@ -233,8 +233,8 @@ bridge_docrange_rep::my_exec_until (path p) {
   else {
     int i;
     for (i=begin; i<p->item; i++)
-      brs[i]->exec_until (path (1));
-    brs[i]->exec_until (p->next);
+      brs[i]->exec_until (path (right_index (brs[i]->st)), true);
+    if (p->item < end) brs[i]->exec_until (p->next);
   }
 }
 

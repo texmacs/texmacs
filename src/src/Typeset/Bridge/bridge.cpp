@@ -218,11 +218,26 @@ bridge_rep::my_typeset (int desired_status) {
 }
 
 void
-bridge_rep::exec_until (path p) {
-  // redefined in bridge_auto
-  if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
-  else if (p == right_index (st)) env->patch_env (changes);
-  else if (p != path (0)) my_exec_until (p);
+bridge_rep::exec_until (path p, bool skip_flag) {
+  // This virtual routine is redefined in bridge_auto in order to
+  // treat cursor positions on the border in a special way depending
+  // on skip_flag
+
+  (void) skip_flag;
+  // cout << "Exec until " << p << " in " << st << "\n";
+  if ((status & VALID_MASK) != PROCESSED) {
+    // cout << "  Re-execute until\n";
+    env->exec_until (st, p);
+  }
+  else if (p == path (right_index (st))) {
+    // cout << "  Patch env\n";
+    env->patch_env (changes);
+  }
+  else if (p != path (0)) {
+    // cout << "  My execute until\n";
+    my_exec_until (p);
+  }
+  // cout << "  Done\n";
 }
 
 extern tree the_et;

@@ -175,8 +175,8 @@ bridge_document_rep::my_exec_until (path p) {
   if (nil (acc)) {
     int i;
     for (i=0; i<p->item; i++)
-      brs[i]->exec_until (path (1));
-    brs[i]->exec_until (p->next);
+      brs[i]->exec_until (path (right_index (brs[i]->st)), true);
+    if (i<N(st)) brs[i]->exec_until (p->next);
   }
   else acc->my_exec_until (p);
 }
