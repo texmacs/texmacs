@@ -42,13 +42,13 @@
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (init-text-width s) (init-env "paragraph width" s))
-(define (init-font-size s) (init-env "font base size" s))
+(define (init-text-width s) (init-env "par-width" s))
+(define (init-font-size s) (init-env "font-base-size" s))
 (define (init-dpi s) (init-env "dpi" s))
-(define (init-first-indent s) (init-env "first indentation" s))
-(define (init-interline s) (init-env "interline space" s))
-(define (init-interline-spc s) (init-env "line stretch" s))
-(define (init-interpar-spc s) (init-env "interparagraph space" s))
+(define (init-first-indent s) (init-env "par-first" s))
+(define (init-interline s) (init-env "par-sep" s))
+(define (init-interline-spc s) (init-env "par-line-sep" s))
+(define (init-interpar-spc s) (init-env "par-par-sep" s))
 (define (init-magn s) (init-env "magnification" s))
 (define (init-language lan)
   (let ((before (in? (tree->object (get-init-tree "language"))
@@ -58,65 +58,64 @@
     (init-env "language" lan)
     (if (and after (not before)) (init-env "font" "cyrillic"))))
 (define (init-color s) (init-env "color" s))
-(define (init-bg-color s) (init-env "background color" s))
+(define (init-bg-color s) (init-env "bg-color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page layout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (test-page-medium? s) (string=? (get-env "page medium") s))
+(define (test-page-medium? s) (string=? (get-env "page-medium") s))
 (set-check-mark! set-page-medium "*" test-page-medium?)
 
-(define (test-page-type? s) (string=? (get-env "page type") s))
+(define (test-page-type? s) (string=? (get-env "page-type") s))
 (set-check-mark! set-page-type "*" test-page-type?)
 
-(define (test-page-orientation? s) (string=? (get-env "page orientation") s))
+(define (test-page-orientation? s) (string=? (get-env "page-orientation") s))
 (set-check-mark! set-page-orientation "*" test-page-orientation?)
 
 (define (visible-header-and-footer?)
-  (== "true" (get-env "show header and footer")))
+  (== "true" (get-env "page-show-hf")))
 
 (tm-define (toggle-visible-header-and-footer)
   (:synopsis "Toggle visibility of headers and footers in 'page' paper mode.")
   (:check-mark "v" visible-header-and-footer?)
-  (init-env "show header and footer"
-	    (if (== (get-env "show header and footer") "true")
-		"false" "true")))
+  (init-env "page-show-hf"
+	    (if (== (get-env "page-show-hf") "true") "false" "true")))
 
 (define (init-page-margins l r t b)
-  (init-env "odd page margin" l)
-  (init-env "even page margin" l)
-  (init-env "page right margin" r)
-  (init-env "page top margin" t)
-  (init-env "page bottom margin" b)
-  (init-text-width (length- (get-env "page width") l r)))
+  (init-env "page-odd" l)
+  (init-env "page-even" l)
+  (init-env "page-right" r)
+  (init-env "page-top" t)
+  (init-env "page-bot" b)
+  (init-text-width (length- (get-env "page-width") l r)))
 
 (define (init-screen-reduction l r t b)
-  (init-env "reduction page left margin" l)
-  (init-env "reduction page right margin" r)
-  (init-env "reduction page top margin" t)
-  (init-env "reduction page bottom margin" b))
+  (init-env "page-reduce-left" l)
+  (init-env "page-reduce-right" r)
+  (init-env "page-reduce-top" t)
+  (init-env "page-reduce-bot" b))
 
 (define (init-page-size w h)
-  (init-env "page type" "user")
-  (init-env "page width" w)
-  (init-env "page height" h)
+  (init-env "page-type" "user")
+  (init-env "page-width" w)
+  (init-env "page-height" h)
   (init-page-margins "5mm" "5mm" "5mm" "5mm")
   (init-screen-reduction "0cm" "0cm" "0cm" "0cm"))
 
 (define (as-on-paper?)
   (and (visible-header-and-footer?)
-       (length-zero? (get-env "reduction page left margin"))
-       (length-zero? (get-env "reduction page right margin"))
-       (length-zero? (get-env "reduction page top margin"))
-       (length-zero? (get-env "reduction page bottom margin"))))
+       (length-zero? (get-env "page-reduce-left"))
+       (length-zero? (get-env "page-reduce-right"))
+       (length-zero? (get-env "page-reduce-top"))
+       (length-zero? (get-env "page-reduce-bot"))))
 
 (tm-define (init-as-on-paper)
   (:synopsis "Let the screen margins be as on the real paper output.")
   (:check-mark "o" as-on-paper?)
   (init-screen-reduction "0mm" "0mm" "0mm" "0mm")
-  (init-env "show header and footer" "true"))
+  (init-env "page-show-hf" "true"))
 
-(define (init-page-shrink s) (init-env "page shrink" s))
-(define (init-page-extend s) (init-env "page extend" s))
-(define (init-page-flexibility s) (init-env "page flexibility" s))
+(define (init-page-shrink s) (init-env "page-shrink" s))
+(define (init-page-extend s) (init-env "page-extend" s))
+(define (init-page-flexibility s) (init-env "page-flexibility" s))

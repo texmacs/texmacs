@@ -150,7 +150,7 @@
   (let* ((name (if (string? name2) name2 (symbol->string name2)))
 	 (in-name (string->symbol (string-append "in-" name "?"))))
     `(begin
-       (texmacs-modes (,in-name (== (get-env "prog language") ,name)))
+       (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (ahash-set! plugin-data-table ,name #t)
        (plugin-configure-cmds ,name
 	 ,(list 'quasiquote (map plugin-configure-sub options))))))

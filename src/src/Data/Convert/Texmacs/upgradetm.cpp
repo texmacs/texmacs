@@ -1906,10 +1906,10 @@ rename_vars (tree t, hashmap<string,string> H) {
     if ((n == 0) && H->contains (as_string (L(t)))) {
       string v= H[as_string (L(t))];
       r= tree (VALUE, copy (v));
-      if (v == PAGE_THE_PAGE) r= tree (make_tree_label (PAGE_THE_PAGE));
+      if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
       // cout << "]]] " << t << " -> " << r << "\n";
     }
-    return t;
+    return r;
   }
 }
 

@@ -855,23 +855,23 @@
 ;;    (person (h:person)))) ; not in HTML4
 
 (drd-table tmhtml-with-cmd%
-  (("font family" "tt") (h:tt))
-  (("font family" "ss") (h:class (@ (style "font-family: sans-serif"))))
-  (("font series" "bold") (h:b))
-  (("font shape" "italic") (h:i))
+  (("font-family" "tt") (h:tt))
+  (("font-family" "ss") (h:class (@ (style "font-family: sans-serif"))))
+  (("font-series" "bold") (h:b))
+  (("font-shape" "italic") (h:i))
   (("font" "roman") (h:class (@ (style "font-family: Times New Roman"))))
   (("font" "times") (h:class (@ (style "font-family: Times New Roman"))))
   (("font" "helvetica") (h:class (@ (style "font-family: Helvetica"))))
   (("font" "courier") (h:class (@ (style "font-family: Coutier"))))
-  (("math font" "cal") (h:class (@ (style "font-family: Flemish Script"))))
-  (("math font" "frak") (h:class (@ (style "font-family: Bernhard Modern"))))
-  (("font series" "medium") (h:class (@ (style "font-weight: normal"))))
-  (("font shape" "right") (h:class (@ (style "font-style: normal"))))
-  (("font shape" "small-caps")
+  (("math-font" "cal") (h:class (@ (style "font-family: Flemish Script"))))
+  (("math-font" "frak") (h:class (@ (style "font-family: Bernhard Modern"))))
+  (("font-series" "medium") (h:class (@ (style "font-weight: normal"))))
+  (("font-shape" "right") (h:class (@ (style "font-style: normal"))))
+  (("font-shape" "small-caps")
    (h:class (@ (style "font-variant: small-caps")))))
 
 (drd-table tmhtml-with-cmd% ; deprecated
-  ("font size" ,tmhtml-with-font-size)
+  ("font-size" ,tmhtml-with-font-size)
   (("color" "black") (h:font (@ (color "black"))))
   (("color" "grey") (h:font (@ (color "grey"))))
   (("color" "white") (h:font (@ (color "white"))))
@@ -884,16 +884,16 @@
   (("color" "brown") (h:font (@ (color "brown"))))
   (("color" "dark magenta") (h:font (@ (color "#800080"))))
   (("color" "dark green") (h:font (@ (color "#008000"))))
-  (("paragraph mode" "left") (h:div (@ (align "left"))))
-  (("paragraph mode" "justify") (h:div (@ (align "justify"))))
-  (("paragraph mode" "center") (h:center)))
+  (("par-mode" "left") (h:div (@ (align "left"))))
+  (("par-mode" "justify") (h:div (@ (align "justify"))))
+  (("par-mode" "center") (h:center)))
 
 (drd-table tmhtml-with-cmd% ; netscape4
-  (("nr columns" "1") (h:multicol (@ (cols "1"))))
-  (("nr columns" "2") (h:multicol (@ (cols "2"))))
-  (("nr columns" "3") (h:multicol (@ (cols "3"))))
-  (("nr columns" "4") (h:multicol (@ (cols "4"))))
-  (("nr columns" "5") (h:multicol (@ (cols "5")))))
+  (("par-columns" "1") (h:multicol (@ (cols "1"))))
+  (("par-columns" "2") (h:multicol (@ (cols "2"))))
+  (("par-columns" "3") (h:multicol (@ (cols "3"))))
+  (("par-columns" "4") (h:multicol (@ (cols "4"))))
+  (("par-columns" "5") (h:multicol (@ (cols "5")))))
 
 (drd-dispatcher tmhtml-tables%
   (block (lambda (l) (tmhtml-table "l" #t l)))

@@ -222,7 +222,7 @@
 
 (define (stm-block-environment? head)
   ;; A block environment must always contain a document node (not a concat).
-  (or (and (== (first head) 'with) (in? (second head) '("paragraph mode")))
+  (or (and (== (first head) 'with) (in? (second head) '("par-mode")))
       (in? (first head) '(quotation code))
       (stm-list-environment? head)))
 

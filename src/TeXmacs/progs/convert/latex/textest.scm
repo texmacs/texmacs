@@ -130,7 +130,7 @@
      (assign
        "test"
        (macro "x" "y"
-	 (with "font size" "1.4" "font series" "bold"
+	 (with "font-size" "1.4" "font-series" "bold"
 	       (concat (arg "y") " and " (arg "x")))))
      (theorem
        (document
@@ -150,15 +150,15 @@
 	   "<Delta>="
 	   (choice
 	    (tformat
-	     (cwith "1" "-1" "1" "2" "cell halign" "l")
-	     (cwith "1" "-1" "3" "4" "cell halign" "r")
+	     (cwith "1" "-1" "1" "2" "cell-halign" "l")
+	     (cwith "1" "-1" "3" "4" "cell-halign" "r")
 	     (table
 	      (row "a" "b" "c" "d")
 	      (row "e" "f" "g" "h"))))))
 	 "Bla bla bla"))
      (concat
        "Hopsakee, eens even kijken hoe {#~$dit$~#} er uit ziet. Hopsakee, eens even kijken hoe dit er uit ziet. Hopsakee, eens even kijken hoe dit er uit ziet. "
-       (with "font series" "bold" "Hopsakee")
+       (with "font-series" "bold" "Hopsakee")
        " "
        (cite "Joris" "Piet")
        (vspace "1.5fn"))

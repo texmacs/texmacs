@@ -39,13 +39,13 @@
   (insert-return)
   (remove-text #f))
 
-(define (set-left-margin s) (make-line-with "left margin" s))
-(define (set-right-margin s) (make-line-with "right margin" s))
-(define (set-first-indent s) (make-line-with "first indentation" s))
+(define (set-left-margin s) (make-line-with "par-left" s))
+(define (set-right-margin s) (make-line-with "par-right" s))
+(define (set-first-indent s) (make-line-with "par-first" s))
 (define (set-last-indent s) (make-line-with "last-indentation" s))
-(define (set-interline s) (make-line-with "interline space" s))
-(define (set-interline-spc s) (make-line-with "line stretch" s))
-(define (set-interpar-spc s) (make-line-with "interparagraph space" s))
+(define (set-interline s) (make-line-with "par-sep" s))
+(define (set-interline-spc s) (make-line-with "par-line-sep" s))
+(define (set-interpar-spc s) (make-line-with "par-par-sep" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking

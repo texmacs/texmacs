@@ -55,11 +55,11 @@
 
 (define (make-graphics)
   (insert-object-go-to
-   '(with "graphical mode" "point"
-          "graphical frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
-	  "graphical clip"  (tuple "clip"
-				   (tuple "0par" "-0.3par")
-				   (tuple "1par" "0.3par"))
+   '(with "gr-mode" "point"
+          "gr-frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
+	  "gr-clip"  (tuple "clip"
+			    (tuple "0par" "-0.3par")
+			    (tuple "1par" "0.3par"))
      (graphics))
    '(6 1)))
 
@@ -72,7 +72,7 @@
     (if p (tm-remove-with p var))))
 
 (define (graphics-cartesian-frame)
-  (with frame (tree->object (get-env-tree "graphical frame"))
+  (with frame (tree->object (get-env-tree "gr-frame"))
     (if (match? frame '(tuple "scale" :2))
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
@@ -80,7 +80,7 @@
 (define (graphics-set-unit u)
   (with frame (graphics-cartesian-frame)
     (with new-frame `(tuple "scale" ,u ,(cAr frame))
-      (graphics-set-property "graphical frame" new-frame))))
+      (graphics-set-property "gr-frame" new-frame))))
 
 (define (graphics-set-unit-ia)
   (interactive '("Graphical unit:") 'graphics-set-unit))
@@ -88,7 +88,7 @@
 (define (graphics-set-origin x y)
   (with frame (graphics-cartesian-frame)
     (with new-frame (append (cDr frame) `((tuple ,x ,y)))
-      (graphics-set-property "graphical frame" new-frame))))
+      (graphics-set-property "gr-frame" new-frame))))
 
 (define (graphics-set-origin-ia)
   (interactive
@@ -100,17 +100,17 @@
     '("Left corner:" "Bottom corner:" "Right corner:" "Top corner:")
     '(lambda (l b r t)
        (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
-	 (graphics-set-property "graphical clip" clip)))))
+	 (graphics-set-property "gr-clip" clip)))))
 
 (define (graphics-set-mode val)
   (graphics-group-start)
-  (graphics-set-property "graphical mode" val))
+  (graphics-set-property "gr-mode" val))
 
 (define (graphics-set-color val)
-  (graphics-set-property "graphical color" val))
+  (graphics-set-property "gr-color" val))
 
 (define (graphics-set-line-width val)
-  (graphics-set-property "graphical line width" val))
+  (graphics-set-property "gr-line-width" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
@@ -131,12 +131,12 @@
 
 (define (graphics-enrich t)
   (let* ((mode (graphics-mode))
-	 (color (get-env "graphical color"))
-	 (lw (get-env "graphical line width")))
+	 (color (get-env "gr-color"))
+	 (lw (get-env "gr-line-width")))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
 	  ((in? mode '(line cline))
-	   (graphics-enrich-sub t `(("color" , color) ("line width" ,lw)))))))
+	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -191,7 +191,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (graphics-mode)
-  (string->symbol (get-env "graphical mode")))
+  (string->symbol (get-env "gr-mode")))
 
 (define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")

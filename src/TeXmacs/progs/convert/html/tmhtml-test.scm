@@ -77,14 +77,14 @@
    "tmhtml, general 'with' handler" "with"
    tmhtml list
    ;; Use font variants as an exemple.
-   (test "typewriter" '(with "font family" "tt" "a") '(h:tt "a"))
-   (test "bold" '(with "font series" "bold" "a") '(h:b "a"))
-   (test "italic" '(with "font shape" "italic" "a") '(h:i "a"))
-   (test "composite with" '(with "font family" "tt" "font series" "bold" "a")
+   (test "typewriter" '(with "font-family" "tt" "a") '(h:tt "a"))
+   (test "bold" '(with "font-series" "bold" "a") '(h:b "a"))
+   (test "italic" '(with "font-shape" "italic" "a") '(h:i "a"))
+   (test "composite with" '(with "font-family" "tt" "font-series" "bold" "a")
 	 '(h:tt (h:b "a")))))
 
 (define (regtest-tmhtml-font-size)
-  (define (result x) (tmhtml `(with "font size" ,x "aaa")))
+  (define (result x) (tmhtml `(with "font-size" ,x "aaa")))
   (define (expected x) (if x `((h:font (@ (size ,x)) "aaa")) '("aaa")))
   (regression-test-group
    "tmhtml, font size" "font-size"
@@ -125,8 +125,8 @@
    ;; Composite
    (test "em, concat" '(em (concat "a" (strong "b")))
 	 '(h:em "a" (h:strong "b")))
-   (test "with, em" '(with "font family" "tt" (em "a")) '(h:tt (h:em "a")))
-   (test "em, with" '(em (with "font family" "tt" "a")) '(h:em (h:tt "a")))))
+   (test "with, em" '(with "font-family" "tt" (em "a")) '(h:tt (h:em "a")))
+   (test "em, with" '(em (with "font-family" "tt" "a")) '(h:em (h:tt "a")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections
@@ -284,19 +284,19 @@
 	 `(tabular* ,(tformat '() '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("c" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, first col aligned right"
-	 `(tabular* ,(tformat (list (colwith "1" "cell halign" "r"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell-halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("r" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, whole table aligned right"
-	 `(tabular* ,(tformat (list (allwith "cell halign" "r"))
+	 `(tabular* ,(tformat (list (allwith "cell-halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("r" "r") '(("a" "b") ("c" "d")))))
    (test "tabular*, one row border"
-	 `(tabular* ,(tformat (list (rowwith "1" "cell halign" "r"))
+	 `(tabular* ,(tformat (list (rowwith "1" "cell-halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #f '("c" "c") '(("a" "b") ("c" "d")))))
    (test "tabular*, one col border"
-	 `(tabular* ,(tformat (list (colwith "1" "cell bborder" "1ln"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell-bborder" "1ln"))
 			      '(("a" "b") ("c" "d"))))
 	 (list (h:table #t '("c" "c") '(("a" "b") ("c" "d")))))))
 

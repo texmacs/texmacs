@@ -93,7 +93,7 @@
 			(cut string-ci=? (second p) <>)))))
     (if (not m) stms
 	(list `(document
-		(with "paragraph mode" ,m
+		(with "par-mode" ,m
 		  ,(stm-remove-unary-document
 		    (htmltm-serial (htmltm-preserve-space? env) stms))))))))
 
@@ -105,13 +105,13 @@
 	  ;; TODO: table cellspacing and cellpadding
 	  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	  (table-background env a) (table-borders env a c)
-	  (list (tmformat-table "cell hyphen" "t"))
+	  (list (tmformat-table "cell-hyphen" "t"))
 	  (table-width env a)))
 
 (define (table-width env a)
   ;; TODO: extend the typesetter to support hyphenated cells balancing
   (let ((len (htmltm-dimension a 'width)))
-    (list (tmformat-frame "table width"
+    (list (tmformat-frame "table-width"
 			  (if (tmlength-null? len)
 			      (tmlength 1 'par)
 			      len)))))
@@ -119,7 +119,7 @@
 (define (table-background env a)
   (or (and-let* ((html-color (shtml-attr-non-null a 'background))
 		 (tmcolor (html-color->tmcolor html-color)))
-	(list (tmformat-table "cell background"
+	(list (tmformat-table "cell-background"
 				    (html-color->tmcolor color))))
       '()))
 
@@ -145,27 +145,27 @@
 
   (define frame-values-alist
     `(("void" ,(delay (format-frame)))
-      ("above" ,(delay (format-frame "table tborder")))
-      ("below" ,(delay (format-frame "table bborder")))
-      ("hsides" ,(delay (format-frame "table tborder" "table bborder")))
-      ("lhs" ,(delay (format-frame "table lborder")))
-      ("rhs" ,(delay (format-frame "table rborder")))
-      ("vsides" ,(delay (format-frame "table lborder" "table rborder")))
-      ("box" ,(delay (format-frame "table tborder" "table bborder"
-				   "table lborder" "table rborder")))
-      ("border" ,(delay (format-frame "table tborder" "table bborder"
-				      "table lborder" "table rborder")))))
+      ("above" ,(delay (format-frame "table-tborder")))
+      ("below" ,(delay (format-frame "table-bborder")))
+      ("hsides" ,(delay (format-frame "table-tborder" "table-bborder")))
+      ("lhs" ,(delay (format-frame "table-lborder")))
+      ("rhs" ,(delay (format-frame "table-rborder")))
+      ("vsides" ,(delay (format-frame "table-lborder" "table-rborder")))
+      ("box" ,(delay (format-frame "table-tborder" "table-bborder"
+				   "table-lborder" "table-rborder")))
+      ("border" ,(delay (format-frame "table-tborder" "table-bborder"
+				      "table-lborder" "table-rborder")))))
   (define rules-values-alist
     `(("none" ,(delay '()))
       ("groups" ,(delay (rules-groups)))
       ("rows" ,(delay (list (tmformat-table-but-bottom
-			     "cell bborder" (tmlength 1 'px)))))
+			     "cell-bborder" (tmlength 1 'px)))))
       ("cols" ,(delay (list (tmformat-table-but-right
-			     "cell rborder" (tmlength 1 'px)))))
+			     "cell-rborder" (tmlength 1 'px)))))
       ("all" ,(delay (list (tmformat-table-but-bottom
-			    "cell bborder" (tmlength 1 'px))
+			    "cell-bborder" (tmlength 1 'px))
 			   (tmformat-table-but-right
-			    "cell rborder" (tmlength 1 'px)))))))
+			    "cell-rborder" (tmlength 1 'px)))))))
 
   ;; Handle invalid values from FRAME and RULES here.
   (define (frame-value s)
@@ -220,8 +220,8 @@
 	     (let ((span (shtml-decode-span attrs html-name)))
 	       (if (= 1 span) '()
 		   (list (tmformat-cell (1+ i) (1+ j) tm-name span)))))
-	   (append (span->format 'colspan "cell col span")
-		   (span->format 'rowspan "cell row span")
+	   (append (span->format 'colspan "cell-col-span")
+		   (span->format 'rowspan "cell-row-span")
 		   kdr)))
 	(else kdr)))
 
@@ -345,7 +345,7 @@
 	 (mult
 	  (assoc sz '(("-4" "0.5") ("-3" "0.6") ("-2" "0.7") ("-1" "0.8")
 		      ("+1" "1.2") ("+2" "1.4") ("+3" "1.7") ("+4" "2")))))
-    (if mult `(with "font size" ,(second mult) ,x) x)))
+    (if mult `(with "font-size" ,(second mult) ,x) x)))
 
 (define (htmltm-with-color a x)
   ;; Helper for htmltm-font
@@ -486,15 +486,15 @@
   ;;; Alignement, font styles and horizontal rules
   ;; Alignement (deprecated)
   ;; NOTE: the center macro is now deprecated.
-  (center (handler :mixed :block '(with "paragraph mode" "center")))
+  (center (handler :mixed :block '(with "par-mode" "center")))
 
   ;; Font style
-  (tt  (handler :mixed :inline '(with "font family" "tt")))
+  (tt  (handler :mixed :inline '(with "font-family" "tt")))
   ; NOTE: the tt macro is now deprecated
-  (i   (handler :mixed :inline '(with "font shape" "italic")))
-  (b   (handler :mixed :inline '(with "font series" "bold")))
-  (big (handler :mixed :inline '(with "font size" "1.2")))
-  (small (handler :mixed :inline '(with "font size" "0.83")))
+  (i   (handler :mixed :inline '(with "font-shape" "italic")))
+  (b   (handler :mixed :inline '(with "font-series" "bold")))
+  (big (handler :mixed :inline '(with "font-size" "1.2")))
+  (small (handler :mixed :inline '(with "font-size" "0.83")))
   ((:or s strike) (handler :mixed :inline htmltm-pass))
   (u (handler :mixed :inline "underline"))
 
