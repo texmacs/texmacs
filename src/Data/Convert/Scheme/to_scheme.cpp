@@ -59,7 +59,7 @@ scheme_tree_to_block (scheme_tree p) {
 
 scheme_tree
 tree_to_scheme_tree (tree t) {
-  if (is_atomic (t)) return quote (t->label);
+  if (is_atomic (t)) return "\"" * escape_quotes (t->label) * "\"";
   else if (is_func (t, EXPAND) && is_atomic (t[0])) {
     int i, n= N(t);
     tree u (TUPLE, n);
