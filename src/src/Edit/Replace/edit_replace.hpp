@@ -22,7 +22,6 @@ protected:
   path        search_at;     // current search position
   path        search_end;    // position of the end of a match
   tree        search_what;   // search tree
-  tree        search_old;    // search tree from previous search
   list<path>  where_stack;   // last search positions
   tree        what_stack;    // last search trees
   tree        replace_by;    // replace tree
@@ -58,6 +57,7 @@ public:
   path search_next_compound (path init, string which);
 
   /* search and replace */
+  path test_sub (path p, tree t);
   path test (path p, tree t);
   void step_ascend (bool forward);
   void step_descend (bool forward);
@@ -66,6 +66,7 @@ public:
   void search_start (bool forward= true);
   void search_next (bool forward);
   void search_next (tree what, bool forward, bool step);
+  void search_stop ();
   void search_button_next ();
   bool search_keypress (string s);
   void replace_start (tree what, tree by, bool forward= true);

@@ -165,7 +165,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
       pos += N(ins);
       this << emit_invalidate_all ();
     }
-    else if (is_tuple (t, "edit", 3));
+    else if (is_tuple (t, "texmacs", 3));
   }
 }
 

@@ -380,6 +380,8 @@ public:
   virtual bool selection_active_small () = 0;
   virtual bool selection_active_enlarging () = 0;
 
+  virtual void selection_raw_set (string key, tree t) = 0;
+  virtual tree selection_raw_get (string key) = 0;
   virtual path selection_get_subtable (int& i1, int& j1, int& i2, int& j2) = 0;
   virtual void selection_get (selection& sel) = 0;
   virtual void selection_get (path& start, path& end) = 0;

@@ -52,6 +52,8 @@ public:
   bool selection_active_small ();
   bool selection_active_enlarging ();
 
+  void selection_raw_set (string key, tree t);
+  tree selection_raw_get (string key);
   path selection_get_subtable (int& row1, int& col1, int& row2, int& col2);
   void selection_get (selection& sel);
   void selection_get (path& start, path& end);
