@@ -437,8 +437,8 @@ lazy_paragraph_rep::format_paragraph () {
 
     // typeset paragraph unit
     format_paragraph_unit (start, i);
-    line_end (line_sep + par_sep, 0);
-    sss->new_paragraph ();
+    line_end (line_sep /*+ par_sep*/, 0);
+    sss->new_paragraph (par_sep);
 
     start= i;
   }
