@@ -49,12 +49,19 @@ load_string (url u, string& s, bool fatal) {
     FILE* fin= fopen (_name, "r");
 #endif
     if (fin == NULL) err= true;
+    int size= 0;
     if (!err) {
-      while (true) {
-	char c= getc (fin);
-	if ((c==((char) -1)) && (feof (fin))) break;
-	s << c;
+      if (fseek (fin, 0L, SEEK_END) < 0) err= true;
+      else {
+	size = ftell (fin);
+	if (size<0) err= true;
       }
+    }
+    if (!err) {
+      rewind(fin);
+      s->resize (size);
+      int read= fread (&(s[0]), 1, size, fin);
+      if (read < size) s->resize (read);
       fclose (fin);
     }
     delete[] _name;
