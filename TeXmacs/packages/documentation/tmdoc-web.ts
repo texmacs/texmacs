@@ -10,7 +10,7 @@
   <assign|tmweb-suffix|<func|<case|<equal|<apply|language>|german>|.de.tm|<equal|<apply|language>|french>|.fr.tm|<equal|<apply|language>|italian>|.it.tm|<equal|<apply|language>|portuguese>|.pt.tm|<equal|<apply|language>|spanish>|.es.tm|.en.tm>>>
 
   <assign|tmweb-link|<func|what|to|<hlink|<with|color|<if|<or|<equal|<apply|what>|<apply|tmweb-main>>|<equal|<apply|what>|<apply|tmweb-sub>>>|dark
-  green|brown>|<translate|<apply|what>|english|<apply|language>>>|<merge|<apply|to>|<apply|tmweb-suffix>>>>>
+  green|brown>|<translate|<apply|what>|english|<apply|language>>>|<if|<equal|<find_file|<merge|<apply|to>|<apply|tmweb-suffix>>>|false>|<merge|<apply|to>|.en.tm>|<merge|<apply|to>|<apply|tmweb-suffix>>>>>>
 
   <assign|tmweb-list-sub|<func|what|<look_up|<value|what>|0><if|<is_tuple|<look_up|<value|what>|1>>|
   \| <apply|tmweb-list-sub|<look_up|<value|what>|1>>>>>

@@ -621,6 +621,10 @@
 	`(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (cadr l)))
 	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (caddr l)))))
 
+(define (tmhtml-tmdoc-flag l)
+  ;(tmhtml (car l)))
+  (list `(h:div (@ (class "tmdoc-flag")) ,@(tmhtml (car l)))))
+
 (define (tmhtml-tmdoc-copyright* l)
   (if (null? l) l
       `(", " ,@(tmhtml (car l)) ,@(tmhtml-tmdoc-copyright* (cdr l)))))
@@ -834,6 +838,7 @@
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
   (tmdoc-title** ,tmhtml-tmdoc-title**)
+  (tmdoc-flag ,tmhtml-tmdoc-flag)
   (tmdoc-copyright ,tmhtml-tmdoc-copyright)
   (tmdoc-license ,tmhtml-tmdoc-license)
   (key ,tmhtml-key)
