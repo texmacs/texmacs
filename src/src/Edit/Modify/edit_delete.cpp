@@ -317,7 +317,8 @@ edit_text_rep::remove_structure_upwards () {
   tree st= subtree (et, p);
   bool recurse=
     is_func (st, TFORMAT) || is_func (st, TABLE) ||
-    is_func (st, ROW) || is_func (st, CELL);
+    is_func (st, ROW) || is_func (st, CELL) ||
+    drd->var_without_border (L(st));
   remove (p * (last+1), N(st)-(last+1));
   remove (p * 0, last);
 

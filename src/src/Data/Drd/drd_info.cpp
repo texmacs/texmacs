@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "drd_info.hpp"
+#include "drd_std.hpp"
 #include "iterator.hpp"
 #include "analyze.hpp"
 
@@ -198,6 +199,11 @@ drd_info_rep::freeze_no_border (tree_label l) {
 bool
 drd_info_rep::is_child_enforcing (tree t) {
   return info[L(t)]->pi.no_border && (N(t) != 0);
+}
+
+bool
+drd_info_rep::var_without_border (tree_label l) {
+  return info[l]->pi.no_border && (!std_contains (as_string (l)));
 }
 
 /******************************************************************************

@@ -46,6 +46,7 @@ public:
   bool get_no_border (tree_label tag);
   void freeze_no_border (tree_label tag);
   bool is_child_enforcing (tree t);
+  bool var_without_border (tree_label tag);
 
   void set_block (tree_label tag, int is_block);
   int  get_block (tree_label tag);
