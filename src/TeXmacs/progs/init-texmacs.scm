@@ -18,7 +18,7 @@
 		 (kernel boot debug) (kernel boot srfi)
 		 (kernel boot ahash-table) (kernel boot prologue)
 		 (kernel boot content))
-(inherit-modules (kernel regexp regexp-match))
+(inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel drd drd-rules) (kernel drd drd-query)
 		 (kernel drd drd-data))
 (inherit-modules (kernel texmacs tm-define) (kernel texmacs tm-preferences)
