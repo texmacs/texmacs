@@ -13,6 +13,7 @@
 #ifndef ENV_H
 #define ENV_H
 #include "vars.hpp"
+#include "drd_info.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "path.hpp"
@@ -55,6 +56,7 @@
 class edit_env_rep: public concrete_struct {
 public:
   display                      dis;
+  drd_info&                    drd;
 private:
   hashmap<string,tree>         env;
   hashmap<string,tree>         back;
@@ -158,7 +160,9 @@ private:
   bool exec_until_mod_active (tree t, path p, string var, int level);
 
 public:
-  edit_env_rep (display dis, url base_file_name,
+  edit_env_rep (display dis,
+		drd_info& drd,
+		url base_file_name,
 		hashmap<string,tree>& local_ref,
 		hashmap<string,tree>& global_ref,
 		hashmap<string,tree>& local_aux,
@@ -256,7 +260,9 @@ public:
 
 class edit_env {
   CONCRETE(edit_env);
-  edit_env (display dis, url base_file_name,
+  edit_env (display dis,
+	    drd_info& drd,
+	    url base_file_name,
 	    hashmap<string,tree>& local_ref,
 	    hashmap<string,tree>& global_ref,
 	    hashmap<string,tree>& local_aux,

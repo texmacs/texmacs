@@ -33,7 +33,7 @@ edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
-  env (dis, is_aux (buf->name)? buf->extra: buf->name,
+  env (dis, drd, is_aux (buf->name)? buf->extra: buf->name,
        buf->ref, (buf->prj==NULL? buf->ref: buf->prj->ref),
        buf->aux, (buf->prj==NULL? buf->aux: buf->prj->aux)),
   ttt (new_typesetter (env, et, path())) {}
