@@ -256,5 +256,6 @@ compound_font (display dis, scheme_tree def) {
     return font (name);
   array<font> fn (N(def));
   fn[0]= find_font (dis, def[0][1]);
+  if (nil (fn[0])) return font ();
   return make (font, name, new compound_font_rep (name, def, fn));
 }
