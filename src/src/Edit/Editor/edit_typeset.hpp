@@ -74,7 +74,8 @@ public:
   void     init_default (string var);
   void     init_style ();
   void     init_style (string style);
-  void     init_extra_style (string package, bool check= false);
+  void     init_add_package (string package);
+  void     init_remove_package (string package);
 
   void     typeset_style_use_cache (tree style);
   void     typeset_preamble ();

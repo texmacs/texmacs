@@ -15,6 +15,7 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
+#include "timer.hpp"
 
 box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 
@@ -330,23 +331,33 @@ edit_typeset_rep::init_style () {
 void
 edit_typeset_rep::init_style (string name) {
   if ((name == "none") || (name == "") || (name == "style")) the_style= TUPLE;
-  else the_style= tree (TUPLE, name);
+  else if (arity (the_style) == 0) the_style= tree (TUPLE, name);
+  else the_style= tree (TUPLE, name) * the_style (1, N(the_style));
   buf->need_save= buf->need_autosave= true;
   notify_change (THE_ENVIRONMENT);
 }
 
 void
-edit_typeset_rep::init_extra_style (string name, bool check) {
-  if (check) {
-    int i, n= N(the_style);
-    for (i=0; i<n; i++)
-      if (the_style[i] == name)
-	return;
-  }
+edit_typeset_rep::init_add_package (string name) {
+  int i, n= N(the_style);
+  for (i=0; i<n; i++)
+    if (the_style[i] == name)
+      return;
 
   the_style << tree (name);
   buf->need_save= buf->need_autosave= true;
   notify_change (THE_ENVIRONMENT);
+}
+
+void
+edit_typeset_rep::init_remove_package (string name) {
+  int i, n= N(the_style);
+  for (i=0; i<n; i++)
+    if (the_style[i] == name) {
+      the_style= the_style (0, i) * the_style (i+1, N(the_style));
+      buf->need_save= buf->need_autosave= true;
+      notify_change (THE_ENVIRONMENT);
+    }
 }
 
 void
@@ -372,7 +383,9 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   typeset_prepare ();
   eb= empty_box (reverse (rp));
   // saves memory, also necessary for change_log update
+  bench_start ("typeset");
   eb= ::typeset (ttt, x1, y1, x2, y2);
+  bench_end ("typeset");
 }
 
 void

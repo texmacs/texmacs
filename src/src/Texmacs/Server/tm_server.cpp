@@ -207,7 +207,7 @@ tm_server_rep::get_nr_windows () {
 ******************************************************************************/
 
 static string
-compute_style_menu (url u, bool package) {
+compute_style_menu (url u, int kind) {
   if (is_or (u)) {
     string sep= "\n";
     if (is_atomic (u[1]) &&
@@ -215,12 +215,12 @@ compute_style_menu (url u, bool package) {
 	 (is_or (u[2]) && is_concat (u[2][1]))))
       sep= "\n---\n";
     return
-      compute_style_menu (u[1], package) * sep *
-      compute_style_menu (u[2], package);
+      compute_style_menu (u[1], kind) * sep *
+      compute_style_menu (u[2], kind);
   }
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
-    string sub= compute_style_menu (u[2], package);
+    string sub= compute_style_menu (u[2], kind);
     if ((dir == "Test") || (dir == "Obsolete") || (dir == "CVS")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
@@ -228,7 +228,9 @@ compute_style_menu (url u, bool package) {
     string l  = as_string (u);
     if (!ends (l, ".ts")) return "";
     l= l(0, N(l)-3);
-    string cmd= package? string ("init-extra-style"): string ("init-style");
+    string cmd ("init-style");
+    if (kind == 1) cmd= "init-add-package";
+    if (kind == 2) cmd= "init-remove-package";
     return "(\"" * l * "\" (" * cmd * " \"" * l * "\"))";
   }
   return "";
@@ -236,10 +238,14 @@ compute_style_menu (url u, bool package) {
 
 void
 tm_server_rep::style_update_menu () {
-  string sty= compute_style_menu (descendance ("$TEXMACS_STYLE_ROOT"), false);
-  string pck= compute_style_menu (descendance ("$TEXMACS_PACKAGE_ROOT"), true);
+  url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string sty= compute_style_menu (sty_u, 0);
+  string pck= compute_style_menu (pck_u, 1);
+  string rem= compute_style_menu (pck_u, 2);
   (void) eval ("(menu-bind style-menu " * sty * ")");
-  (void) eval ("(menu-bind use-package-menu " * pck * ")");
+  (void) eval ("(menu-bind add-package-menu " * pck * ")");
+  (void) eval ("(menu-bind remove-package-menu " * rem * ")");
 }
 
 /******************************************************************************

@@ -17,6 +17,7 @@
 #include "iterator.hpp"
 #include "merge_sort.hpp"
 
+static hashmap<string,int> timing_level (0);
 static hashmap<string,int> timing_nr    (0);
 static hashmap<string,int> timing_cumul (0);
 static hashmap<string,int> timing_last  (0);
@@ -45,16 +46,21 @@ texmacs_time () {
 void
 bench_start (string task) {
   // start timer for a given type of task
-  timing_last (task)= (int) texmacs_time ();
+  if (timing_level [task] == 0)
+    timing_last (task)= (int) texmacs_time ();
+  timing_level (task) ++;
 }
 
 void
 bench_cumul (string task) {
   // end timer for a given type of task, but don't reset timer
-  int ms= ((int) texmacs_time ()) - timing_last (task);
-  timing_nr    (task) ++;
-  timing_cumul (task) += ms;
-  timing_last -> reset (task);
+  timing_level (task) --;
+  if (timing_level [task] == 0) {
+    int ms= ((int) texmacs_time ()) - timing_last (task);
+    timing_nr    (task) ++;
+    timing_cumul (task) += ms;
+    timing_last -> reset (task);
+  }
 }
 
 void
@@ -68,6 +74,7 @@ bench_end (string task) {
 void
 bench_reset (string task) {
   // reset timer for a given type of task
+  timing_level->reset (task);
   timing_nr   ->reset (task);
   timing_cumul->reset (task);
   timing_last ->reset (task);

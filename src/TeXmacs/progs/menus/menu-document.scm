@@ -109,10 +109,14 @@
 
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
-  (-> "Use package"
-      (link use-package-menu)
+  (-> "Add package"
+      (link add-package-menu)
       ---
-      ("Other" ... (interactive '("Use package:") 'init-extra-style)))
+      ("Other" ... (interactive '("Use package:") 'init-add-package)))
+  (-> "Remove package"
+      (link remove-package-menu)
+      ---
+      ("Other" ... (interactive '("Use package:") 'init-remove-package)))
   (-> "Master"
       ("Attach" (interactive '("Master file:") 'project-attach))
       ("Detach" (project-detach)))
