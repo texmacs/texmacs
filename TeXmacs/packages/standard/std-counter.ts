@@ -77,19 +77,6 @@
 
   <assign|group-individual-counters|<macro|g|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|display-in-|<arg|g>>>|<macro|x|nr|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|g>>>|<style-with|src-compact|none|<compound|<merge|ind-display-|<arg|x>>|<arg|nr>>>>>>><assign|<unquote|<merge|counter-in-|<arg|g>>>|<macro|x|<style-with|src-compact|none|<compound|<merge|ind-counter-|<arg|x>>>>>><assign|<unquote|<merge|reset-|<arg|g>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0><for-each|reset-counter|<value|<unquote|<merge|<arg|g>|-group>>>>>>>>>>>
 
-  <\active*>
-    <\src-comment>
-      A counter <verbatim|x> can be subordonated to another counter
-      <verbatim|y>, so that <verbatim|x> will be reset whenever <verbatim|y>
-      is increased. Similarly, the content of the counter <verbatim|y> may be
-      used as a prefix for <verbatim|x>.
-    </src-comment>
-  </active*>
-
-  <assign|subordonate-counter|<macro|x|y|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|inc-|<arg|y>>>|<merge|<macro|<compound|<unquote|<merge|reset-|<arg|x>>>>>|<value|<merge|inc-|<arg|y>>>>>>>>>
-
-  <assign|prefix-counter|<macro|x|y|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|display-|<arg|x>>>|<macro|nr|<style-with|src-compact|none|<compound|<unquote|<merge|the-|<arg|y>>>>.<compound|<unquote|<value|<merge|display-|<arg|x>>>>|<arg|nr>>>>>>>>>
-
   \;
 </body>
 
