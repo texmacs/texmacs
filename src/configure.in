@@ -631,7 +631,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa64-*-linux-gnu*)
+  hppa*-*-linux-gnu*)
     AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
     CONFIG_OS="HPPA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="hppa64-gnu-linux"
@@ -646,9 +646,9 @@ case "${host}" in
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
     CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   m68k-*-linux*)

@@ -6006,7 +6006,7 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa64-*-linux-gnu*)
+  hppa*-*-linux-gnu*)
     echo "$as_me:$LINENO: result: final setup for an HP PA_RISC/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_OS="HPPA64_GNU_LINUX"
@@ -6022,9 +6022,9 @@ echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
     CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_WORD_LENGTH="4"
+    CONFIG_WORD_LENGTH_INC="3"
+    CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   m68k-*-linux*)
