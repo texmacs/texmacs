@@ -12,7 +12,7 @@
 
 #include "font.hpp"
 #include "tt_face.hpp"
-#include "Freetype/tt_file.hpp"
+#include "tt_file.hpp"
 
 RESOURCE_CODE(tt_face);
 
@@ -33,6 +33,7 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
   cout << "Loading " << u << "\n";
   char* _name= as_charp (concretize (u));
   if (ft_new_face (ft_library, _name, 0, &ft_face)) { delete[] _name; return; }
+  ft_select_charmap (ft_face, ft_encoding_adobe_custom);
   delete[] _name;
   bad_face= false;
 }

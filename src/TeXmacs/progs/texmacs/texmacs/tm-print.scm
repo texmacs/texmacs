@@ -37,6 +37,9 @@
 	       size)))
 	 "a4"))))
 
+(define (get-default-font-setting)
+  (if (support-ec-fonts?) "EC fonts" "CM fonts"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,14 +59,21 @@
   (set-printer-dpi val))
 
 (define (notify-font-type var val)
-  (noop))
+  (with type
+      (cond ((== val "EC fonts") 0)
+	    ((== val "CM fonts") 1)
+	    ((== val "Bitmap") (if (support-ec-fonts?) 0 1))
+	    ((== val "True Type") 2)
+	    ((== val "True type") 2)
+	    (else 1))
+    (set-font-type type)))
 
 (define-preferences
   ("preview command" "default" notify-preview-command)
   ("printing command" "lpr" notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
   ("printer dpi" "600" notify-printer-dpi)
-  ("font type" "Bitmap" notify-font-type))
+  ("font type" (get-default-font-setting) notify-font-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands

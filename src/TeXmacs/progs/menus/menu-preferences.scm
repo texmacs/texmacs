@@ -34,7 +34,7 @@
 	  "150" "200" "300" "400" "600" "800" "1200"
 	  *)
     (enum ("Font type" "font type")
-	  "Bitmap" "True type")))
+	  "EC fonts" "CM fonts" "True Type")))
 
 (define preferences-tree
   `((enum ("Look and feel" "look and feel")

@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "Freetype/free_type.hpp"
+#include "free_type.hpp"
 #include "dyn_link.hpp"
 
 #ifdef USE_FREETYPE
@@ -25,6 +25,8 @@ FT_Error (*ft_new_face)       (FT_Library     library,
 			       const char*    filepathname,
 			       FT_Long        face_index,
 			       FT_Face*       aface);
+FT_Error (*ft_select_charmap) (FT_Face        face,
+			       FT_Encoding    encoding);
 FT_Error (*ft_set_char_size)  (FT_Face        face,
 			       FT_F26Dot6     char_width,
 			       FT_F26Dot6     char_height,
@@ -47,6 +49,7 @@ ft_initialize () {
 #ifdef LINKED_FREETYPE
   ft_init_freetype = FT_Init_FreeType;
   ft_new_face      = FT_New_Face;
+  ft_select_charmap= FT_Select_Charmap;
   ft_set_char_size = FT_Set_Char_Size;
   ft_get_char_index= FT_Get_Char_Index;
   ft_load_glyph    = FT_Load_Glyph;
@@ -61,6 +64,9 @@ ft_initialize () {
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_New_Face"      ,
 			 (pointer&) ft_new_face);
   if (ft_new_face == NULL) return true;
+  (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Select_Charmap",
+			 (pointer&) ft_select_charmap);
+  if (ft_select_charmap == NULL) return true;
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Set_Char_Size" ,
 			 (pointer&) ft_set_char_size);
   if (ft_set_char_size == NULL) return true;

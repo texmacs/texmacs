@@ -623,6 +623,24 @@ tmg_cursor_end (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_support_ec_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= support_ec_fonts ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_support_tt_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= ft_present ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_use_ec_fontsP () {
   // SCM_DEFER_INTS;
   bool out= use_ec_fonts ();
@@ -634,10 +652,23 @@ tmg_use_ec_fontsP () {
 SCM
 tmg_use_tt_fontsP () {
   // SCM_DEFER_INTS;
-  bool out= ft_present ();
+  bool out= use_tt_fonts ();
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_set_font_type (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "set-font-type");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  set_font_type (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2192,8 +2223,11 @@ initialize_glue_basic () {
   gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
   gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
+  gh_new_procedure ("support-ec-fonts?", (FN) tmg_support_ec_fontsP, 0, 0, 0);
+  gh_new_procedure ("support-tt-fonts?", (FN) tmg_support_tt_fontsP, 0, 0, 0);
   gh_new_procedure ("use-ec-fonts?", (FN) tmg_use_ec_fontsP, 0, 0, 0);
   gh_new_procedure ("use-tt-fonts?", (FN) tmg_use_tt_fontsP, 0, 0, 0);
+  gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
   gh_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
   gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);

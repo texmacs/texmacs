@@ -16,6 +16,7 @@
 #include "sys_utils.hpp"
 #include "convert.hpp"
 #include "tex_files.hpp"
+#include "Freetype/free_type.hpp"
 
 /******************************************************************************
 * Determine installed programs
@@ -237,9 +238,30 @@ init_default_tex_settings () {
 * Getting information about installation
 ******************************************************************************/
 
+static int font_type= 1; // 0: EC, 1: CM, 2: TrueType
+
+bool
+support_ec_fonts () {
+  return get_setting ("EC") == "true";
+}
+
 bool
 use_ec_fonts () {
-  return get_setting ("EC") == "true";
+  //cout << "use_ec_fonts?\n";
+  return font_type == 0;
+}
+
+bool
+use_tt_fonts () {
+  //cout << "use_tt_fonts?\n";
+  return font_type == 2;
+}
+
+void
+set_font_type (int type) {
+  //cout << "set_fonts_type " << type << "\n";
+  if ((type == 2) && (!ft_present ())) type= 1;
+  font_type= type;
 }
 
 /******************************************************************************
