@@ -125,35 +125,11 @@ edit_main_rep::focus_on_this_editor () {
   sv->focus_on_editor (this);
 }
 
-/******************************************************************************
-* Printing
-******************************************************************************/
-
 void
-edit_main_rep::set_page_parameters () {
+edit_main_rep::notify_page_change () {
   if (attached ()) this << emit_invalidate_all ();
   if (get_init_string (PAGE_MEDIUM) == "automatic")
     notify_change (THE_AUTOMATIC_SIZE);
-}
-
-void
-edit_main_rep::set_page_medium (string medium) {
-  init_env (PAGE_MEDIUM, medium);
-  set_page_parameters ();
-}
-
-void
-edit_main_rep::set_page_type (string type) {
-  init_env (PAGE_TYPE, type);
-  init_env (PAGE_WIDTH, "auto");
-  init_env (PAGE_HEIGHT, "auto");
-  set_page_parameters ();
-}
-
-void
-edit_main_rep::set_page_orientation (string orientation) {
-  init_env (PAGE_ORIENTATION, orientation);
-  set_page_parameters ();
 }
 
 /******************************************************************************

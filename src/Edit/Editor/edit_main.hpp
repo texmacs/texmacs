@@ -61,11 +61,7 @@ public:
   void tex_buffer ();
   url  get_name ();
   void focus_on_this_editor ();
-
-  void set_page_parameters ();
-  void set_page_medium (string medium);
-  void set_page_type (string type);
-  void set_page_orientation (string orientation);
+  void notify_page_change ();
 
   void print (url ps_name, bool to_file, int first, int last);
   void print_to_file (url ps_name, string first="1", string last="1000000");
