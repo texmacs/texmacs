@@ -33,6 +33,9 @@
     <item>Felix Breuer helped with the support of Unicode and other character
     encodings. He also made a donation to the project.
 
+    <item>Josef Weidendorfer made several patches for improving the
+    performance of <TeXmacs>.
+
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
     <item>Josef Weidendorfer for two patches to improve the speed of

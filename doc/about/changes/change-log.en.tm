@@ -5,9 +5,15 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.3>
+  <section|Changes from version 1.0.4 to 1.0.4.4>
 
   <\itemize>
+    <item>Several patches by Josef Weidendorfer for improving the performance
+    (1.0.4.4).
+
+    <item>Synchronization with <with|mode|math|\<beta\>>-version of the
+    Windows port (1.0.4.4).
+
     <item><with|mode|math|\<beta\>>-version of the Windows port (1.0.4.3).
 
     <item>Faster string and pk font loading (1.0.4.3).
