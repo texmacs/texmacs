@@ -755,19 +755,6 @@ tmg_remove_structure_upwards () {
 }
 
 SCM
-tmg_make_format (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-format");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_format (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_make_htab (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-htab");
 
@@ -2802,7 +2789,6 @@ initialize_glue_editor () {
   gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
   gh_new_procedure ("remove-structure-upwards", (FN) tmg_remove_structure_upwards, 0, 0, 0);
-  gh_new_procedure ("make-format", (FN) tmg_make_format, 1, 0, 0);
   gh_new_procedure ("make-htab", (FN) tmg_make_htab, 1, 0, 0);
   gh_new_procedure ("make-space", (FN) tmg_make_space, 1, 0, 0);
   gh_new_procedure ("make-var-space", (FN) tmg_make_var_space, 3, 0, 0);

@@ -46,7 +46,6 @@ public:
   void make_vspace_before (string smin, string sdef, string smax);
   void make_vspace_after (string s);
   void make_vspace_after (string smin, string sdef, string smax);
-  void make_format (string tag);
   void make_htab (string spc);
   void make_move (string x, string y);
   void make_resize (string x1, string y1, string x2, string y2);
