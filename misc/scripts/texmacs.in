@@ -16,4 +16,9 @@ PATH="$TEXMACS_BIN_PATH/bin:$PATH"
 @CONFIG_LIB_PATH@="$TEXMACS_BIN_PATH/lib${@CONFIG_LIB_PATH@+":$@CONFIG_LIB_PATH@"}"
 export PATH @CONFIG_LIB_PATH@
 
+if [ -e "/usr/bin/cygwin1.dll" ] ; then
+   # For auxiliary file creation by subprograms like ps2pdf under cygwin
+   export TEMP=/tmp
+fi
+
 exec texmacs.bin "$@" < /dev/null
