@@ -221,7 +221,7 @@ edit_text_rep::remove_backwards () {
       back_hide_expand (p);
       return;
     case COMPOUND:
-      back_expand (p);
+      back_compound (p);
       return;
     case APPLY:
     case INCLUDE:
@@ -429,8 +429,10 @@ edit_text_rep::remove_backwards () {
     case EXPAND:
     case VAR_EXPAND:
     case HIDE_EXPAND:
-    case COMPOUND:
       back_in_expand (u, p);
+      return;
+    case COMPOUND:
+      back_in_compound (u, p);
       return;
     case APPLY:
     case INCLUDE:

@@ -84,11 +84,13 @@ protected:
   virtual void back_in_table (tree t, path p) = 0;
   virtual void back_dynamic (path p) = 0;
   virtual void back_expand (path p) = 0;
+  virtual void back_compound (path p) = 0;
   virtual void back_extension (path p) = 0;
   virtual void back_hide_expand (path p) = 0;
   virtual void back_in_dynamic (tree t, path p, int min_args=1, int with=1)= 0;
   virtual void back_in_with (tree t, path p) = 0;
   virtual void back_in_expand (tree t, path p) = 0;
+  virtual void back_in_compound (tree t, path p) = 0;
   virtual void back_in_extension (tree t, path p) = 0;
 
   /* other protected subroutines */
@@ -312,6 +314,7 @@ public:
   virtual bool in_preamble_mode () = 0;
   virtual bool is_deactivated () = 0;
   virtual void activate () = 0;
+  virtual void activate_compound () = 0;
   virtual void make_active (string op, int n) = 0;
   virtual void make_deactivated (tree t, path p) = 0;
   virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
