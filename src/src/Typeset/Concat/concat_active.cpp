@@ -191,8 +191,8 @@ concater_rep::typeset_hyperlink (tree t, path ip) {
   string r, s;
   if (href_file == "") s= "(go-to-label \"" * href_label * "\")";
   else {
-    r= as_string (relative (env->base_file_name, href_file));
-    s= "(load-browse-buffer \"" * r * "\")";
+    r= as_string (relative (env->base_file_name, url_unix (href_file)));
+    s= "(load-browse-buffer (url-system " * quote (r) * "))";
     if (href_label != "")
       s= "(begin " * s * " (go-to-label \"" * href_label * "\"))";
   }

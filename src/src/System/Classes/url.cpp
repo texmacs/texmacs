@@ -94,7 +94,7 @@ static url
 url_get_name (string s, int type= URL_STANDARD, int i=0) {
   char sep= (type == URL_SYSTEM)? URL_CONCATER: '/';
   int start= i, n= N(s);
-  while ((i<n) && (s[i] != sep)) i++;
+  while ((i<n) && (s[i] != sep) && (s[i] != '/')) i++;
   url u= url_get_atom (s (start, i), type);
   // url u= tree (s (start, i));
   if (i == n) return u;

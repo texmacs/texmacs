@@ -15,9 +15,9 @@
 #include "iterator.hpp"
 
 #ifdef OS_WIN32
-#include "systime.hpp"
-#include "sysmisc.hpp"
-#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/misc.h>
+#include <sys/_types.h>
 #else
 #include <sys/time.h>
 #include <sys/types.h>
@@ -82,7 +82,7 @@ x_display_rep::look_up_key (XKeyEvent* ev) {
   if (ev->state&32) s= "Mod3-" * s;
   if (ev->state&64) s= "Mod4-" * s;
   if (ev->state&128) s= "Mod5-" * s;
-  //cout << "key press: " << s << LF;
+  // cout << "key press: " << s << LF;
   return s;
 }
 
@@ -326,11 +326,7 @@ x_display_rep::event_loop () {
 
     // Wait for events on all channels and interpose
     if (wait) {
-#ifdef OS_WIN32
-      struct timeval_ tv;
-#else
       struct timeval tv;
-#endif
       tv.tv_sec  = delay/1000;
       tv.tv_usec = 1000 * (delay%1000);
       select (0, NULL, NULL, NULL, &tv);

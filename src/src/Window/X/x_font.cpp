@@ -35,7 +35,7 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
   int Y2= min (y2- y, h); if (Y2<0) return;
 
   if (char_clip) {
-#ifdef OS_WIN32
+#ifdef OS_WIN32_LATER
     int X, Y, N;
     for (Y=Y1; Y<Y2; Y++) {
       for (X=X1, N=0; X<X2; X++) {
