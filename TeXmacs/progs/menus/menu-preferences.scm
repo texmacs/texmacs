@@ -119,6 +119,7 @@
 	      ("English" "english")
 	      ("French" "french")
 	      ("German" "german")
+	      ("Spanish" "spanish")
 	      ("Swiss" "swiss"))
 	(toggle ("Automatically close brackets"
 		 "automatically close brackets")))
