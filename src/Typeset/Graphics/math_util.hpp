@@ -13,6 +13,7 @@
 #ifndef MATH_UTIL_H
 #define MATH_UTIL_H
 #include "tree.hpp"
+#include <math.h>
 
 const  double infinity=3.40282347e+38F;
 
