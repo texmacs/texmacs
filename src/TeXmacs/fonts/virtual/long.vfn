@@ -111,4 +111,6 @@
   (rubber-updownarrow-# (ver-extend updownarrow 0.5 # 0.1))
   (rubber-Uparrow-# (ver-extend Uparrow 0.5 # 0.1))
   (rubber-Downarrow-# (ver-extend Downarrow 0.5 # 0.1))
-  (rubber-Updownarrow-# (ver-extend Updownarrow 0.5 # 0.1)))
+  (rubber-Updownarrow-# (ver-extend Updownarrow 0.5 # 0.1))
+  (rubber-leftharpoonup-# (ver-extend leftharpoonup 0.5 # 0.1))
+  (rubber-rightharpoonup-# (ver-extend rightharpoonup 0.5 # 0.1)))
