@@ -66,6 +66,9 @@ find_font (display dis, tree t) {
 
   if ((arity (t)==0) || is_compound (t[0])) return font ();
 
+  if (is_tuple (t, "compound"))
+    return compound_font (dis, t (1, N(t)));
+
   if (is_tuple (t, "truetype", 3))
     return tt_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
