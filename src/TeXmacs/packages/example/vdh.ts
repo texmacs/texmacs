@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.6>
 
 <style|source>
 
@@ -28,7 +28,7 @@
 
     <assign|D|\<cal-D\>>
 
-    <assign|I|<with|math-display|false|<big|int>>>
+    <assign|I|<with|math-display|false|<op|<big|int>>>>
 
     <assign|L|\<cal-L\>>
 
