@@ -49,7 +49,7 @@
 		       (string-append "tm_maxima " version-name)))
 	       rest)))
         (cons launch-default launch-rest))
-      ())))
+      '())))
 
 (plugin-configure maxima
   (:require (url-exists-in-path? "maxima"))

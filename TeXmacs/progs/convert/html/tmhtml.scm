@@ -315,7 +315,7 @@
 	((in? (car l) '("<cap>" "<cup>" "<vee>" "<wedge>"))
 	 (with s (substring (car l) 1 (- (string-length (car l)) 1))
 	   (tmhtml (string-append "<big" s ">"))))
-	((== (car l) ".") ,())
+	((== (car l) ".") '())
 	(else (tmhtml (car l)))))
 
 (define (tmhtml-below l)
