@@ -184,6 +184,10 @@
     <arg|x>
   </macro>>
 
+  <assign|hidealg|<\macro|x>
+    <arg|x>
+  </macro>>
+
   <assign|compressed|<macro|x|<flag|compressed|red|x>>>
 
   \;

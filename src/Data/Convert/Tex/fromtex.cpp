@@ -770,6 +770,8 @@ finalize_pmatrix (tree t) {
       else r << u[i];
     return r;
   }
+  else if (is_func (u, APPLY, 2) && (u[0] == "matrix"))
+    return tree (APPLY, "tabular*", u[1]);
   else return u;
 }
 

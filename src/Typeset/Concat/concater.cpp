@@ -178,6 +178,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case VAR_VSPACE:
     if (ACTIVATED) {
+      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
       t= env->exec (t);
       control (t, ip);
     }
@@ -185,6 +186,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case VSPACE:
     if (ACTIVATED) {
+      flag (env->drd->get_name (L(t)), ip, env->dis->brown);
       t= env->exec (t);
       control (t, ip);
     }
