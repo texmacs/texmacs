@@ -177,10 +177,11 @@ tree
 tm_reader::read_apply (string name, bool skip_flag) {
   // cout << "Read apply " << name << INDENT << LF;
   tree t (make_tree_label (name));
-  if (!with_extensions) {
+  if (!with_extensions)
     t= tree (EXPAND_APPLY, name);
-    if (codes->contains (name))
-      t= tree ((tree_label) codes [name]);
+  if (codes->contains (name)) {
+    // cout << "  " << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
+    t= tree ((tree_label) codes [name]);
   }
 
   bool closed= !skip_flag;
@@ -271,10 +272,11 @@ tm_reader::read (bool skip_flag) {
 	}
 	else {
 	  tree t (make_tree_label (name));
-	  if (!with_extensions) {
+	  if (!with_extensions)
 	    t= tree (EXPAND_APPLY, name);
-	    if (codes->contains (name))
-	      t= tree ((tree_label) codes [name]);
+	  if (codes->contains (name)) {
+	    // cout << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
+	    t= tree ((tree_label) codes [name]);
 	  }
 	  C << t;
 	}

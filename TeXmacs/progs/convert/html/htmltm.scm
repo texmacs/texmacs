@@ -357,7 +357,7 @@
 (define (htmltm-br env a c)
   (if (sxhtml-list? (xpath-parent env))
       '()
-      '((next_line))))
+      '((next-line))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation

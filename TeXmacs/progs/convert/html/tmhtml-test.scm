@@ -48,13 +48,13 @@
    "tmhtml, format nodes" "format"
    tmhtml :none
    (test "line break"
-	 '(document (concat "aaa" (line_break) "bbb"))
+	 '(document (concat "aaa" (line-break) "bbb"))
 	 '((h:p "aaabbb")))
    (test "new line"
-	 '(document (concat "aaa" (new_line) "bbb"))
+	 '(document (concat "aaa" (new-line) "bbb"))
 	 '((h:p "aaa" (h:br) "bbb")))
    (test "next line"
-	 '(document (concat "aaa" (next_line) "bbb"))
+	 '(document (concat "aaa" (next-line) "bbb"))
 	 '((h:p "aaa" (h:br) "bbb")))))
 
 (define (regtest-tmhtml-extra)

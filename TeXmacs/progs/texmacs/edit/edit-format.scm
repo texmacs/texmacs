@@ -53,17 +53,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-page-break-before)
-  (make-format "page_break_before"))
+  (make-format "page-break*"))
 
 (define (make-page-break)
-  (make-format "page_break")
+  (make-format "page-break")
   (insert-return))
 
 (define (make-new-page-before)
-  (make-format "new_page_before"))
+  (make-format "new-page*"))
 
 (define (make-new-page)
-  (make-format "new_page")
+  (make-format "new-page")
   (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -192,7 +192,7 @@
   (and (stm-with? x) (stm-document? (last x))))
 (define (stm-label? x) (func? x 'label))
 (define (stm-line-break? x)
-  (in? x '((new_line) (next_line))))
+  (in? x '((new-line) (next-line))))
 
 ;; Expansion predicates
 
@@ -366,7 +366,7 @@
 	(cons (cons kar line) tail))))
 
 (define (stm-unparse-lines l)
-  (list-concatenate (list-intersperse l '((next_line)))))
+  (list-concatenate (list-intersperse l '((next-line)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Line trimming

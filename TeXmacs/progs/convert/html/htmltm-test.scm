@@ -108,9 +108,9 @@
    (test "p, text" '(p "a") '(document "a"))
    (test "p text, p empty, p text"
 	 '(html (p "a") (p) (p "b")) '(document "a" "" "b"))
-   (test "br" '(br) '(next_line))
+   (test "br" '(br) '(next-line))
    (test "br in p"
-	 '(p "a" (br) "b") '(document (concat "a" (next_line) "b")))))
+	 '(p "a" (br) "b") '(document (concat "a" (next-line) "b")))))
 
 (define (regtest-htmltm-preformatted)
   (define (code l) `(document (code (document ,@l))))
@@ -193,7 +193,7 @@
 	 '(document (enumerate (document (concat (item) "a")))))))
 
 (define (regtest-htmltm-list-br)
-  (define nl '(next_line))
+  (define nl '(next-line))
   (define (make-itemize l)
     `(document (itemize (document ,@l))))
   (regression-test-group
@@ -592,7 +592,7 @@
 				       (concat (item) "world")))))))
 
 (define (regtest-htmltm-trimming)
-  (define nl '(next_line))
+  (define nl '(next-line))
   (define (id s) `(a (@ (id ,s))))
   (define (make-itemize l) `(document (itemize (document ,@l))))
   (regression-test-group

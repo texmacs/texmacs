@@ -205,23 +205,23 @@
       ("Big skip" (make-vspace-after "2fn"))
       ("Other" ... (interactive '("Vertical space:") 'make-vspace-after)))
   (-> "Break"
-      ("New line" (make-format "next_line"))
-      ("Line break" (make-format "line_break"))
-      ("No line break" (make-format "no_line_break"))
-      ("New paragraph" (make-format "new_line"))
+      ("New line" (make-format "next-line"))
+      ("Line break" (make-format "line-break"))
+      ("No line break" (make-format "no-break"))
+      ("New paragraph" (make-format "new-line"))
       ---
       ("New page" (make-new-page))
       ("New page before" (make-new-page-before))
       ("Page break" (make-page-break))
       ("Page break before" (make-page-break-before))
-      ("No page break before" (make-format "no_page_break_before"))
-      ("No page break after" (make-format "no_page_break_after")))
+      ("No page break before" (make-format "no-page-break*"))
+      ("No page break after" (make-format "no-page-break")))
   (-> "Indentation flag"
-      ("Disable indentation before" (make-format "no_first_indentation"))
-      ("Enable indentation before" (make-format "enable_first_indentation"))
+      ("Disable indentation before" (make-format "no-indent"))
+      ("Enable indentation before" (make-format "yes-indent"))
       ---
-      ("Disable indentation after" (make-format "no_indentation_after"))
-      ("Enable indentation after" (make-format "enable_indentation_after")))
+      ("Disable indentation after" (make-format "no-indent*"))
+      ("Enable indentation after" (make-format "yes-indent*")))
   (if (style-has? "env-float-dtd")
       (-> "Page insertion"
 	  (when (not (inside? "float"))
