@@ -114,6 +114,7 @@ tm_scheme_rep::dialogue_inquire (scheme_tree& arg) {
   string s;
   dialogue_wid << get_string ("input", s);
   arg= string_to_scheme_tree (s);
+  if (is_compound (arg)) arg= tree (TUPLE, "quote", arg);
 }
 
 void

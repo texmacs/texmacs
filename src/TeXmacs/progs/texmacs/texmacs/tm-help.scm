@@ -33,7 +33,6 @@
       s
       (let* ((lan (get-output-language))
 	     (suf (cond ((== lan "czech") ".cs.tm")
-			((== lan "danish") ".da.tm")
 			((== lan "dutch") ".nl.tm")
 			((== lan "finnish") ".fi.tm")
 			((== lan "french") ".fr.tm")
@@ -64,7 +63,7 @@
 		     "load help file")
 	(cond ((== type "normal")
 	       (let ((doc (texmacs-load-tree name "help")))
-		 (if (== (tree->stree doc) "error")
+		 (if (== (tree->object doc) "error")
 		     (set-message "Bad help file" "load help file")
 		     (set-help-buffer name doc))))
 	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))

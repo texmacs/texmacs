@@ -1,6 +1,6 @@
 Summary: A structured wysiwyg scientific text editor
 Name: TeXmacs
-Version: 1.0.4
+Version: 1.0.3
 Release: 1
 Url: http://www.texmacs.org
 Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-%{version}-src.tar.gz
@@ -73,9 +73,6 @@ cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/pixmaps/TeXmacs.xpm $RPM_BUILD_ROOT/u
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-
-* Thu Jan 22 2004   Joris van der Hoeven <vdhoeven@texmacs.org>
-- 1.0.3.2 change VERSION -> DEVEL_VERSION, RELEASE -> DEVEL_RELEASE
 
 * Mon Sep 22 2003   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.1.24 Release tag set by the configure script

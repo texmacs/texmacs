@@ -17,16 +17,16 @@
 extern tree texmacs_settings;
 extern int  install_status;
 extern bool use_which;
-extern bool use_locate;
 
 string get_setting (string var, string def= "");
 void   set_setting (string var, string val);
+void   init_first ();
 void   get_old_settings (string s);
 void   init_upgrade ();
-void   init_texmacs ();
-void   init_plugins ();
-void   setup_texmacs ();
+void   install_texmacs ();
+void   install_tex ();
 
+bool        use_ec_fonts ();
 scheme_tree plugin_list ();
 
 #endif // defined BOOT_H

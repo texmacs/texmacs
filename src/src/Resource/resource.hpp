@@ -41,7 +41,7 @@ struct PTR : public resource_ptr<PTR##_rep> {       \
 }
 #else
 #define RESOURCE(PTR)                               \
-struct PTR##_rep;                                    \
+class PTR##_rep;                                    \
 template<> hashmap<string,pointer> resource_ptr<PTR##_rep>::instances; \
 struct PTR : public resource_ptr<PTR##_rep> {       \
   inline PTR (PTR##_rep* rep2= NULL) { rep=rep2; }  \

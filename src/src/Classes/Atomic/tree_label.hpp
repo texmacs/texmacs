@@ -29,7 +29,7 @@ enum tree_label {
 
   // zero-ary formatting directives
   // modify is_formatting predicate when inserting new tags
-  WITH_LIMITS, LINE_BREAK, NEW_LINE, NEXT_LINE,
+  WITH_LIMITS, LINE_BREAK, NEW_LINE, LINE_SEP, NEXT_LINE,
   NO_BREAK, YES_INDENT, NO_INDENT, VAR_YES_INDENT,
   VAR_NO_INDENT, VAR_PAGE_BREAK, PAGE_BREAK,
   VAR_NO_PAGE_BREAK, NO_PAGE_BREAK, VAR_NEW_PAGE,
@@ -46,12 +46,11 @@ enum tree_label {
   TABLE, ROW, CELL, SUBTABLE,
 
   // macro language
-  ASSIGN, WITH, PROVIDES, VALUE, QUOTE_VALUE,
-  MACRO, DRD_PROPS, ARG, QUOTE_ARG, COMPOUND,
-  XMACRO, GET_LABEL, GET_ARITY, MAP_ARGS, EVAL_ARGS, MARK,
-  EVAL, QUOTE, QUASI, QUASIQUOTE, UNQUOTE, VAR_UNQUOTE,
-  IF, VAR_IF, CASE, WHILE, FOR_EACH,
-  EXTERN, INCLUDE, USE_PACKAGE,
+  ASSIGN, WITH, PROVIDES, VALUE,
+  MACRO, DRD_PROPS, ARG, COMPOUND,
+  XMACRO, GET_LABEL, GET_ARITY, MAP_ARGS, EVAL_ARGS,
+  EVAL, QUOTE, DELAY, HOLD, RELEASE,
+  EXTERN, INCLUDE,
   
   // computational markup
   OR, XOR, AND, NOT,
@@ -59,14 +58,11 @@ enum tree_label {
   MERGE, LENGTH, RANGE, NUMBER, _DATE, TRANSLATE, FIND_FILE,
   IS_TUPLE, LOOK_UP,
   EQUAL, UNEQUAL, LESS, LESSEQ, GREATER, GREATEREQ,
-
-  // tags for source tree editing
-  STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
-  ACTIVE, VAR_ACTIVE, INACTIVE, VAR_INACTIVE,
-  REWRITE_INACTIVE, INLINE_TAG, OPEN_TAG, MIDDLE_TAG, CLOSE_TAG,
-  SYMBOL, LATEX, HYBRID,
+  IF, VAR_IF, CASE, WHILE,
 
   // other tags
+  INACTIVE, ACTIVE, VAR_INACTIVE, VAR_ACTIVE,
+  SYMBOL, LATEX, HYBRID,
   TUPLE, ATTR, COLLECTION, ASSOCIATE, BACKUP,
   LABEL, REFERENCE, PAGEREF, WRITE,
   SPECIFIC, HLINK, ACTION,
@@ -74,11 +70,11 @@ enum tree_label {
 
   // graphical tags
   GRAPHICS, SUPERPOSE, TEXT_AT, _POINT,
-  LINE, CLINE, ARC, SPLINE, VAR_SPLINE, CSPLINE,
+  LINE, CLINE, SPLINE, VAR_SPLINE, CSPLINE,
   FILL, POSTSCRIPT,
 
   // obsolete tags
-  FORMAT, LINE_SEP, SPLIT, DELAY, HOLD, RELEASE,
+  FORMAT, SPLIT,
   OLD_MATRIX, OLD_TABLE, OLD_MOSAIC, OLD_MOSAIC_ITEM,
   SET, RESET, EXPAND, VAR_EXPAND, HIDE_EXPAND,
   APPLY, BEGIN, END, FUNC, ENV,
@@ -100,12 +96,5 @@ tree_label make_tree_label (string s); // for extensions
 string as_string (tree_label l);
 tree_label as_tree_label (string s);
 bool existing_tree_label (string s);
-
-#ifdef OS_WIN32
-inline bool operator == (tree_label first, tree_label second) {
-  return (int) first == (int) second; }
-inline bool operator != (tree_label first, tree_label second) {
-  return (int) first != (int) second; }
-#endif
 
 #endif // defined TREE_LABEL_H

@@ -21,7 +21,6 @@
 extern string DPI;
 extern string SFACTOR;
 extern string PREAMBLE;
-extern string SAVE_AUX;
 extern string MODE;
 extern string INFO_FLAG;
 extern string IDENTITY;
@@ -78,8 +77,6 @@ extern string PAR_COLUMNS_SEP;
 extern string PAGE_MEDIUM;
 extern string PAGE_TYPE;
 extern string PAGE_ORIENTATION;
-extern string PAGE_WIDTH_MARGIN;
-extern string PAGE_SCREEN_MARGIN;
 extern string PAGE_BREAKING;
 extern string PAGE_FLEXIBILITY;
 extern string PAGE_NR;
@@ -89,8 +86,6 @@ extern string PAGE_HEIGHT;
 extern string PAGE_ODD;
 extern string PAGE_EVEN;
 extern string PAGE_RIGHT;
-extern string PAGE_ODD_SHIFT;
-extern string PAGE_EVEN_SHIFT;
 extern string PAGE_TOP;
 extern string PAGE_BOT;
 extern string PAGE_SHRINK;
@@ -103,12 +98,10 @@ extern string PAGE_EVEN_HEADER;
 extern string PAGE_EVEN_FOOTER;
 extern string PAGE_THIS_HEADER;
 extern string PAGE_THIS_FOOTER;
-extern string PAGE_SCREEN_WIDTH;
-extern string PAGE_SCREEN_HEIGHT;
-extern string PAGE_SCREEN_LEFT;
-extern string PAGE_SCREEN_RIGHT;
-extern string PAGE_SCREEN_TOP;
-extern string PAGE_SCREEN_BOT;
+extern string PAGE_REDUCE_LEFT;
+extern string PAGE_REDUCE_RIGHT;
+extern string PAGE_REDUCE_TOP;
+extern string PAGE_REDUCE_BOT;
 extern string PAGE_SHOW_HF;
 extern string PAGE_FNOTE_SEP;
 extern string PAGE_FNOTE_BARLEN;
@@ -165,8 +158,6 @@ extern string CELL_HYPHEN;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
-extern string POINT_STYLE;
-
 extern string LINE_WIDTH;
 extern string LINE_STYLE;
 extern string LINE_ARROWS;
@@ -180,12 +171,5 @@ extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
 extern string GR_LINE_WIDTH;
-extern string GR_GRID;
-extern string GR_GRID_ASPECT;
-
-extern string SRC_STYLE;
-extern string SRC_SPECIAL;
-extern string SRC_COMPACT;
-extern string SRC_CLOSE;
 
 #endif // defined VARS_H

@@ -12,6 +12,7 @@
 
 #include "boot.hpp"
 #include "file.hpp"
+#include "tex_files.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "convert.hpp"
@@ -21,10 +22,6 @@
 tree texmacs_settings = tuple ();
 int  install_status   = 0;
 bool use_which        = false;
-bool use_locate       = false;
-
-extern void setup_tex (); // from Plugins/Metafont/tex_init.cpp
-extern void init_tex  (); // from Plugins/Metafont/tex_init.cpp
 
 /******************************************************************************
 * Subroutines for paths
@@ -86,8 +83,6 @@ init_main_paths () {
     cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
     cerr << "TeXmacs] You may try to set this environment variable manually\n";
     cerr << "TeXmacs]\n";
-    fatal_error ("Installation problem",
-	         "init_main_paths", "init_texmacs.cpp");
     exit (1);
   }
 }
@@ -113,7 +108,6 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/fonts/error");
   make_dir ("$TEXMACS_HOME_PATH/fonts/pk");
   make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
-  make_dir ("$TEXMACS_HOME_PATH/fonts/type1");
   make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
   make_dir ("$TEXMACS_HOME_PATH/langs");
   make_dir ("$TEXMACS_HOME_PATH/langs/mathematical");
@@ -156,8 +150,7 @@ init_guile () {
     cerr << "TeXmacs] be readable and in the directory $TEXMACS_PATH/progs\n";
     cerr << "TeXmacs] or in the directory $GUILE_LOAD_PATH\n";
     cerr << "TeXmacs]\n";
-    fatal_error ("Guile could not be found",
-	         "init_guile", "init_texmacs.cpp");
+    exit (1);
   }
 
   /*
@@ -248,12 +241,7 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
-#ifdef OS_WIN32
-  use_which = false;
-#else
   use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
-#endif
-  use_locate= exists_in_path ("locate");
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN
@@ -288,7 +276,7 @@ init_deprecated () {
       if ((dir == "") &&
 	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
 	dir= "/usr/share/maxima/5.9.0";
-      if ((dir == "") && use_locate) {
+      if (dir == "") {
 	string where= var_eval_system ("locate maxima_toc.html");
 	if (ends (where, "/doc/html/maxima_toc.html"))
 	  dir= where (0, N(where)- 25);
@@ -319,9 +307,8 @@ string
 get_setting (string var, string def) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
-    if (is_tuple (texmacs_settings[i], var, 1)) {
+    if (is_tuple (texmacs_settings[i], var, 1))
       return unquote (as_string (texmacs_settings[i][1]));
-    }
   return def;
 }
 
@@ -336,73 +323,24 @@ set_setting (string var, string val) {
   texmacs_settings << tuple (var, quote (val));
 }
 
-/******************************************************************************
-* First installation
-******************************************************************************/
-
-void
-setup_texmacs () {
-  url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
-  cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
-  cerr << HRULE;
-  cerr << "Since this seems to be the first time you run this\n";
-  cerr << "version of TeXmacs, I will first analyze your system\n";
-  cerr << "in order to set up some TeX paths in the correct way.\n";
-  cerr << "This may take some seconds; the result can be found in\n\n";
-  cerr << "\t" << settings_file << "\n\n";
-  cerr << HRULE;
-
-  set_setting ("VERSION", TEXMACS_VERSION);
-  setup_tex ();
-  
-  string s= scheme_tree_to_block (texmacs_settings);
-  //cout << "settings_t= " << texmacs_settings << "\n";
-  //cout << "settings_s= " << s << "\n";
-  if (save_string (settings_file, s) || load_string (settings_file, s)) {
-    cerr << HRULE;
-    cerr << "I could not save or reload the file\n\n";
-    cerr << "\t" << settings_file << "\n\n";
-    cerr << "Please give me full access control over this file and\n";
-    cerr << "rerun 'TeXmacs'.\n";
-    cerr << HRULE;
-    fatal_error ("Unable to write settings",
-		 "setup_texmacs", "init_texmacs.cpp");
-  }
-  
-  cerr << HRULE;
-  cerr << "Installation completed successfully !\n";
-  cerr << "I will now start up the editor\n";
-  cerr << HRULE;
+bool
+use_ec_fonts () {
+  return get_setting ("EC") == "true";
 }
 
 /******************************************************************************
-* Initialization of TeXmacs
+* Initialize settings
 ******************************************************************************/
 
 void
-init_texmacs () {
-  init_std_drd ();
-  init_main_paths ();
-  init_user_dirs ();
-  init_guile ();
-  init_env_vars ();
-  init_misc ();
-  init_deprecated ();
-}
-
-/******************************************************************************
-* Initialization of built-in plug-ins
-******************************************************************************/
-
-void
-init_plugins () {
+init_settings () {
   install_status= 0;
   url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
   string s;
   if (load_string (new_settings, s)) {
     if (load_string (old_settings, s)) {
-      setup_texmacs ();
+      init_first ();
       install_status= 1;
     }
     else get_old_settings (s);
@@ -413,5 +351,26 @@ init_plugins () {
     url ch ("$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm");
     install_status= exists (ch)? 2: 0;
   }
-  init_tex ();
+}
+
+/******************************************************************************
+* Installation of TeXmacs
+******************************************************************************/
+
+void
+install_texmacs () {
+  initialize_std_drd ();
+  init_main_paths ();
+  init_user_dirs ();
+  init_guile ();
+  init_env_vars ();
+  init_misc ();
+  init_deprecated ();
+}
+
+void
+install_tex () {
+  init_settings ();
+  reset_tfm_path (false);
+  reset_pk_path (false);
 }

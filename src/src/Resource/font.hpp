@@ -19,7 +19,7 @@
 
 RESOURCE(font);
 
-struct glyph;
+class   bitmap_char;
 
 /******************************************************************************
 * The font structure
@@ -55,7 +55,7 @@ struct font_rep: rep<font> {
   font_rep (display dis, string name, font fn);
   void copy_math_pars (font fn);
 
-  virtual void   get_extents (string s, metric& ex) = 0;
+  virtual void   get_extents (string s, text_extents& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   draw (ps_device dev, string s, SI x, SI y) = 0;
 
@@ -64,10 +64,10 @@ struct font_rep: rep<font> {
   virtual SI     get_left_correction  (string s);
   virtual SI     get_right_correction (string s);
 
-  void var_get_extents (string s, metric& ex);
+  void var_get_extents (string s, text_extents& ex);
   void var_get_xpositions (string s, SI* xpos);
   void var_draw (ps_device dev, string s, SI x, SI y);
-  virtual glyph get_glyph (string s);
+  virtual bitmap_char get_bitmap (string s);
 };
 
 font join (font fn1, font fn2);
@@ -76,7 +76,7 @@ font error_font (font fn);
 
 font virtual_font (font base, string family, int size, int dpi);
 font tt_font (display dis, string family, int size, int dpi);
-font x_font (display dis, string family, int size, int dpi);
+font ps_font (display dis, string family, int size, int dpi);
 font tex_font (display dis, string fam, int size, int dpi, int dsize=10);
 font tex_cm_font (display dis, string fam, int size, int dpi, int dsize=10);
 font tex_ec_font (display dis, string fam, int size, int dpi, int dsize=10);
@@ -87,13 +87,11 @@ font tex_rubber_font (display dis, string trl_name,
 font tex_dummy_rubber_font (font base_fn);
 
 void font_rule (tree which, tree by);
-font find_font (display dis, scheme_tree t);
 font find_font (display dis, string family, string fn_class,
 		string series, string shape, int sz, int dpi);
 
 int  script (int sz, int level);
 
 font math_font (scheme_tree t, font base_fn, font error_fn);
-font compound_font (display dis, scheme_tree def);
 
 #endif // defined FONT_H

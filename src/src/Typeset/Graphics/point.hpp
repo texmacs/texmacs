@@ -15,21 +15,16 @@
 #include "tree.hpp"
 
 typedef array<double> point;
-const  double E =2.718281828459045235;
-const  double PI=3.141592653589793238;
 
 point operator + (point p1, point p2);
 point operator - (point p1, point p2);
 point operator * (double x, point p);
 point operator / (point p, double x);
 
-inline point as_point(double x) {
-  point p(1); p[0]=x; return p; }
 point as_point (tree t);
 tree  as_tree (point p);
 
 double operator * (point p1, point p2);
 double norm (point p);
-double arg (point p);
 
 #endif // defined POINT_H

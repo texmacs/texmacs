@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : concat_graphics.cpp
 * DESCRIPTION: Typeset graphics
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven and Henri Lesourd
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -20,95 +20,12 @@
 void
 concater_rep::typeset_graphics (tree t, path ip) {
   int i, n= N(t);
-  array<box> bs (n+1);
-  bs[0]= typeset_as_grid (env, env->read (GR_GRID),
-			  ip, env->read (GR_GRID_ASPECT));
+  array<box> bs (n);
   for (i=0; i<n; i++)
-    bs[i+1]= typeset_as_concat (env, t[i], descend (ip, i));
-  // if (n == 0) bs << empty_box (decorate_right (ip));
+    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+  if (n == 0) bs << empty_box (decorate_right (ip));
   box b= graphics_box (ip, bs, env->fr, env->clip_lim1, env->clip_lim2);
   print (STD_ITEM, b);
-}
-
-box
-typeset_as_grid (edit_env env, tree t, path ip, tree aspect) {
-  array<SI> subd (0, 1);
-  array<color> col (env->dis->black, env->dis->black);
-  if (is_tuple (aspect)) {
-    int i;
-    bool b= false;
-    subd= array<SI> (N(aspect));
-    col= array<color> (N(aspect));
-    for (i=0; i<N(aspect); i++) {
-       if (is_tuple (aspect[i], "axes", 1)) {
-         subd[i]= 0;
-         b= true;
-       }
-       else {
-         subd[i]= as_int (aspect[i][0]);
-       }
-       col[i]= env->dis->get_color (as_string (aspect[i][1]));
-    }
-    if (!b) {
-      array<SI> subd0 (1);
-      array<color> col0 (1);
-      subd0[0]= 0;
-      col0[0]= env->dis->black;
-      subd= subd0 << subd;
-      col= col0 << col;
-    }
-    do {
-      b= true;
-      for (i=1; i<N(subd); i++)
-         if (subd[i-1]>subd[i]) {
-           SI j;
-           color c;
-           j= subd[i-1];subd[i-1]= subd[i];subd[i]= j;
-           c= col[i-1];col[i-1]= col[i];col[i]= c;
-           b= false;
-         }
-    }
-    while (!b);
-  }
-  grid gr= empty_grid ();
-  double step= 1;
-  point center= point (0.0, 0.0);
-  if (is_tuple (t, "cartesian", 1)) {
-    step= as_double (t[1]);
-    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
-    gr= cartesian (subd, col, env->fr (center), (SI)step);
-  }    
-  else   
-  if (is_tuple (t, "polar")) {
-    SI astep= 8;
-    if (is_tuple (t, "polar", 2)) {
-      step= as_double (t[1]);
-      astep= as_int (t[2]);
-    }
-    else
-    if (is_tuple (t, "polar", 3)) { 
-      center= env->decode_point (t[1]);
-      step= as_double (t[2]);
-      astep= as_int (t[3]);
-    }
-    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
-    gr=polar (subd, col, env->fr (center), (SI) step, astep);
-  }
-  else
-  if (is_tuple (t, "logarithmic")) {
-    SI base= 10;
-    if (is_tuple (t, "logarithmic", 1)) {
-      base= as_int (t[1]);
-    }
-    else
-    if (is_tuple (t, "logarithmic", 2)) {
-      step= as_double (t[1]);
-      base= as_int (t[2]);
-    }
-    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
-    gr= logarithmic (subd, col, env->fr (center), (SI)step, base);
-  }
-  return grid_box (decorate (ip), gr, env->fr, env->clip_lim1, env->clip_lim2);
 }
 
 void
@@ -146,7 +63,7 @@ concater_rep::typeset_point (tree t, path ip) {
   if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
     point p= env->fr (env->decode_point (u));
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col, env->point_style));
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col));
   }
 }
 
@@ -157,30 +74,10 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
-  if (N(a) == 0 || N(a[0]) == 0)
-    typeset_dynamic (tree (ERROR, "bad line"), ip);
+  if (N(a) == 0 || N(a[0]) == 0) typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
     if (N(a) == 1) a << copy (a[0]);
     curve c= env->fr (poly_segment (a));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
-  }
-}
-
-void
-concater_rep::typeset_arc (tree t, path ip) {
-  if (N(t) != 6)
-    typeset_dynamic (tree (ERROR, "bad arc"), ip);
-  else {
-    point center;
-    double r1, r2;
-    double a1, a2, a;
-    center= env->decode_point (env->exec (t[0]));
-    r1= as_double (t[1]);
-    r2= as_double (t[2]);
-    a1= as_double (t[3]);
-    a2= as_double (t[4]);
-    a= as_double (t[5]);
-    curve c= env->fr (arc (center, r1, r2, a, a1, a2));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
@@ -191,11 +88,11 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
-  if (N(a) == 0 || N(a[0]) == 0)
-    typeset_dynamic (tree (ERROR, "bad spline"), ip);
+  if (N(a) == 0 || N(a[0]) == 0) typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
-    if (N(a) == 1) a << copy (a[0]);
-    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a));
+    if (N(a) == 1) a << copy (a[0]) << copy (a[0]);
+    if (N(a) == 2) a << copy (a[0]);
+    curve c= env->fr (spline (a,close));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }

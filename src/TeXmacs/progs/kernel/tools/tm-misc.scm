@@ -15,7 +15,7 @@
 (texmacs-module (kernel tools tm-misc)
   (:use (kernel texmacs tm-define) (kernel gui menu-widget))
   (:export
-    tm-start tm-end
+    tm-subtree tm-start tm-end
     init-default test-default? test-init? test-env?
     save-object load-object
     not-implemented tm-debug
@@ -24,22 +24,26 @@
     with-active-buffer-sub with-active-buffer
     delayed-update
     session-test-math-input?
-    set-action-path has-action-path? get-action-path
-    interactive))
+    set-action-path has-action-path? get-action-path))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (tm-subtree p)
+  (:type (path -> tree))
+  (:synopsis "Return subtree of current buffer for the path @p.")
+  (subtree (the-buffer) p))
+
 (tm-define (tm-start p)
-  (:type (-> path path))
+  (:type (path -> path))
   (:synopsis "Round cursor position @p to below.")
-  (cursor-start (the-root) p))
+  (cursor-start (the-buffer) p))
 
 (tm-define (tm-end p)
-  (:type (-> path path))
+  (:type (path -> path))
   (:synopsis "Round cursor position @p to above.")
-  (cursor-end (the-root) p))
+  (cursor-end (the-buffer) p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment related
@@ -82,9 +86,9 @@
   (set-message "Error: not yet implemented" s))
 
 (tm-define (tm-debug)
-  (:type (-> void))
+  (:type (->))
   (:synopsis "For debugging purposes.")
-  (display* (tree->stree (the-root)) "\n"))
+  (display* (tree->object (the-buffer)) "\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous commands
@@ -142,13 +146,3 @@
 (define (set-action-path p) (set! the-action-path p))
 (define (has-action-path?) (not (== the-action-path '(-1))))
 (define (get-action-path) the-action-path)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; For compatibility with the old "interactive" texmacs built-in
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (interactive . args)
-  (let ((fun (last args)))
-    (if (not (procedure? fun))
-        (apply tm-interactive (rcons (but-last args) (eval fun)))
-        (apply tm-interactive args))))

@@ -74,7 +74,7 @@ public:
   /* main graphical routines */
   virtual void set_color (color c) = 0;
   virtual void set_background (color c) = 0;
-  virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
+  virtual void draw (int char_code, bitmap_font fn, SI x, SI y) = 0;
   virtual void set_line_style (SI w, int type=0) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void clear (SI x1, SI y1, SI x2, SI y2) = 0;
@@ -85,7 +85,6 @@ public:
   virtual void postscript (url image,
 			   SI w, SI h, SI x, SI y,
 			   int x1, int y1, int x2, int y2) = 0;
-  virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
   virtual void set_clipping (SI x1, SI y1, SI x2, SI y2);
 
   /* routines for specific devices */

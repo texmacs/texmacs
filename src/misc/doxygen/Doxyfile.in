@@ -4,7 +4,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = @PACKAGE@
-PROJECT_NUMBER         = @DEVEL_VERSION@
+PROJECT_NUMBER         = @VERSION@
 OUTPUT_DIRECTORY       = doxygen
 OUTPUT_LANGUAGE        = English
 EXTRACT_ALL            = YES

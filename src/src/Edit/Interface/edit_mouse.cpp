@@ -84,7 +84,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 
   // temporary hack for clickable footnotes
   path p= path_up (tp);
-  if (rp < p) {
+  if (!nil (p)) {
     if (is_compound (subtree (et, p), "footnote", 1)) {
       go_to (start (et, p * 0));
       return true;
@@ -96,7 +96,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 	  go_to (start (et, path_inc (p) * 0));
 	  return true;
 	}
-    path q= search_upwards ("footnote");
+    path q= search_upwards_compound ("footnote");
     if ((!nil (q)) && (tp == start (et, q * 0))) {
       go_to (end (et, q));
       return true;
@@ -135,16 +135,7 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y) {
   if (eb->action ("select" , x, y, 0) != "") return;
-  tree g;
-  bool b= inside_graphics ();
-  if (b) g= get_graphics ();
   go_to (x, y);
-  if (!b && inside_graphics ())
-    call ("graphics-reset-context", call ("string->symbol", string ("begin")));
-  if (b && (!inside_graphics () || g != get_graphics ())) {
-    invalidate_graphical_object ();
-    call ("graphics-reset-context", call ("string->symbol", string ("exit")));
-  }
   if (selection_active_any ())
     selection_set ("primary", selection_get (), true);
 }

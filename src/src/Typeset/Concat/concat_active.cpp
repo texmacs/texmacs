@@ -126,15 +126,11 @@ concater_rep::typeset_specific (tree t, path ip) {
 void
 concater_rep::typeset_label (tree t, path ip) {
   string key  = env->exec_string (t[0]);
-  tree   value= copy (env->read ("the-label"));
+  tree   value= copy (env->read ("thelabel"));
   tree   old_value= env->local_ref[key];
-  if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
+  if (is_func (old_value, TUPLE, 2))
     env->local_ref (key)= tuple (copy (value), old_value[1]);
   else env->local_ref (key)= tuple (copy (value), "?");
-  if (env->cur_file_name != env->base_file_name) {
-    url d= delta (env->base_file_name, env->cur_file_name);
-    env->local_ref (key) << as_string (d);
-  }
 
   flag (key, ip, env->dis->blue);
   // replacement for: control ("label", ip);
@@ -149,16 +145,10 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   tree value=
     env->local_ref->contains (key)?
     env->local_ref [key]: env->global_ref [key];
-
-  string s= "(go-to-label \"" * key * "\")";
-  if (is_func (value, TUPLE, 3)) {
-    url name= url_system (value[2]->label);
-    string r= quote (as_string (relative (env->base_file_name, name)));
-    s= "(begin (load-browse-buffer (url-system " * r * ")) " * s * ")";
-  }
-  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
+  if (is_func (value, TUPLE, 2)) value= value[type];
   else if (type == 1) value= "?";
 
+  string s= "(go-to-label \"" * key * "\")";
   command cmd (new guile_command_rep (s, 2));
   box b= typeset_as_concat (env, value, decorate_right (ip));
   string action= env->read_only? string ("select"): string ("double-click");
@@ -166,9 +156,12 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   marker (descend (ip, 1));  
 }
 
+extern bool see;
+
 void
 concater_rep::typeset_write (tree t, path ip) {
   if (N(t)==2) {
+    see= true;
     string s= env->exec_string (t[0]);
     tree   r= copy (env->exec (t[1]));
     if (env->complete) {
@@ -176,6 +169,7 @@ concater_rep::typeset_write (tree t, path ip) {
 	env->local_aux (s)= tree (DOCUMENT);
       env->local_aux (s) << r;
     }
+    see= false;
   }
   control ("write", ip);
 }
@@ -197,8 +191,8 @@ concater_rep::typeset_hyperlink (tree t, path ip) {
   string r, s;
   if (href_file == "") s= "(go-to-label \"" * href_label * "\")";
   else {
-    r= as_string (relative (env->base_file_name, url_unix (href_file)));
-    s= "(load-browse-buffer (url-system " * quote (r) * "))";
+    r= as_string (relative (env->base_file_name, href_file));
+    s= "(load-browse-buffer \"" * r * "\")";
     if (href_label != "")
       s= "(begin " * s * " (go-to-label \"" * href_label * "\"))";
   }
@@ -254,7 +248,7 @@ concater_rep::typeset_flag (tree t, path ip) {
     string var= env->exec_string (t[2]);
     sip= env->macro_src->item [var];
   }
-  if (((N(t) == 2) || is_accessible (sip)) && (!env->read_only)) {
+  if (is_accessible (sip) && (!env->read_only)) {
     marker (descend (ip, 0));
     flag_ok (name, ip, env->dis->get_color (col));
     marker (descend (ip, 1));  

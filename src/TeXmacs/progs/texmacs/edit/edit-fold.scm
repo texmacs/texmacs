@@ -23,7 +23,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-fold)
-  (insert-go-to '(fold (document "") (document "")) (list 0 0)))
+  (insert-tree-go-to
+   (object->tree '(fold (document "") (document "")))
+   (list 0 0)))
 
 (define (fold)
   (let ((p (search-upwards "unfold")))
@@ -40,7 +42,7 @@
 	  (tm-go-to (tm-start (rcons p 1)))))))
 
 (tm-define (mouse-fold)
-  (:type (-> void))
+  (:type (void -> void))
   (:synopsis "fold using the mouse")
   (:secure #t)
   (if (has-action-path?)
@@ -49,7 +51,7 @@
 	(fold))))
 
 (tm-define (mouse-unfold)
-  (:type (-> void))
+  (:type (void -> void))
   (:synopsis "unfold using the mouse")
   (:secure #t)
   (if (has-action-path?)
@@ -62,11 +64,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-switch)
-  (insert-go-to '(switch (document "") (tuple (tmarker))) (list 0 0)))
+  (insert-tree-go-to
+   (object->tree '(switch (document "") (tuple (tmarker))))
+   (list 0 0)))
 
 (define (switch-find-marker t i)
   (cond ((= i (tree-arity t)) -1)
-	((== (tree-ref t i) (stree->tree '(tmarker))) i)
+	((== (tree-ref t i) (object->tree '(tmarker))) i)
 	(else (switch-find-marker t (+ i 1)))))
 
 (define (switch-get-position)
@@ -91,7 +95,8 @@
   (let ((p (search-upwards "switch")))
     (if (not (null? p))
 	(let ((t (tm-subtree (rcons* p 1 i))))
-	  (tm-assign (rcons* p 1 i) '(tmarker))
+	  (tm-assign (rcons* p 1 i)
+		     (object->tree '(tmarker)))
 	  (tm-assign (rcons p 0) t)))))
 
 (define (switch-pos where pos last)
@@ -112,7 +117,8 @@
     (cond ((= pos -1) (noop))
 	  ((string? where) (switch-insert (switch-pos where pos last)))
 	  (else (switch-unselect)
-		(tm-insert (rcons* p 1 where) '(tuple (document "")))
+		(tm-insert (rcons* p 1 where)
+			   (object->tree '(tuple (document ""))))
 		(switch-select where)))))
 
 (define (switch-remove where)

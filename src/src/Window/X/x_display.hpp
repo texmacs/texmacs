@@ -26,12 +26,21 @@ typedef x_window_rep* x_window;
 
 #define XK_CYRILLIC
 
+#ifdef OS_WIN32
+#include "X11/Xlib.hpp"
+#include "X11/Xutil.hpp"
+#include "X11/Xos.hpp"
+#include "X11/Xatom.hpp"
+#include "X11/keysym.hpp"
+#include "X11/Sunkeysym.hpp"
+#else
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <X11/Sunkeysym.h>
+#endif
 
 /******************************************************************************
 * For anti aliasing of TeX fonts
@@ -39,17 +48,17 @@ typedef x_window_rep* x_window;
 
 struct x_character_rep: concrete_struct {
   int          c;
-  font_glyphs  fng;
+  bitmap_font  bmf;
   int          sf;
   color        fg;
   color        bg;
-  x_character_rep (int c, font_glyphs fng, int sf, color fg, color bg);
+  x_character_rep (int c, bitmap_font bmf, int sf, color fg, color bg);
   friend class x_character;
 };
 
 class x_character {
   CONCRETE(x_character);
-  x_character (int c=0, font_glyphs fng= font_glyphs (),
+  x_character (int c=0, bitmap_font bmf= bitmap_font (),
 	       int sf=1, color fg= 0, color bg= 1);
   operator tree ();
 };
@@ -148,9 +157,9 @@ public:
   void set_default_font (string name);
   font default_font_sub (bool tt);
   font default_font (bool tt= false);
-  void get_ps_char (Font fn, int c, metric& ex, glyph& gl);
-  void load_system_font (string family, int size, int dpi,
-			 font_metric& fnm, font_glyphs& fng);
+  void get_ps_char (Font fn, int c, text_extents& ex, bitmap_char& bmc);
+  void load_ps_font (string family, int size, int dpi,
+		     bitmap_metric& bmm, bitmap_font& bmf);
 
   /************************** Server languages *******************************/
   void   load_dictionary (string name, string from, string to);

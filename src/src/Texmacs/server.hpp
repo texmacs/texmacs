@@ -66,8 +66,6 @@ public:
   virtual int  get_shrinking_factor () = 0;
 
   /* Buffer management */
-  virtual int  nr_bufs () = 0;
-  virtual tm_buffer get_buf (int i) = 0;
   virtual url  get_name_buffer () = 0;
   virtual void set_name_buffer (url name) = 0;
   virtual void new_buffer () = 0;
@@ -155,7 +153,6 @@ public:
   virtual void   focus_on_editor (editor ed) = 0;
   virtual void   set_printing_command (string s) = 0;
   virtual void   set_printer_page_type (string s) = 0;
-  virtual string get_printer_page_type () = 0;
   virtual void   set_printer_dpi (string dpi) = 0;
   virtual void   set_default_shrinking_factor (int sf) = 0;
   virtual int    get_default_shrinking_factor () = 0;
