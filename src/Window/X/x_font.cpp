@@ -36,6 +36,7 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
 
   if (char_clip) {
 #ifdef OS_WIN32_LATER
+    /*
     int X, Y, N;
     for (Y=Y1; Y<Y2; Y++) {
       for (X=X1, N=0; X<X2; X++) {
@@ -49,6 +50,10 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
       if (N > 0)
 	XCopyArea (dpy, (Drawable)pm, win, gc, X, Y-N, N, 1, x+X1-N, y+Y1);
     }
+    */
+    XCopyClipped (dpy, (Drawable) pm, (Drawable) bm, win, gc,
+		  X, Y-N, N, 1, x+X1-N, y+Y1);
+    // FIXME: Dan should write a routine for this.
 #else
     XSetClipMask (dpy, gc, bm);
     XSetClipOrigin (dpy, gc, x, y);
