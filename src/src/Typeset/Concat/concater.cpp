@@ -478,16 +478,17 @@ concater_rep::typeset (tree t, path ip) {
   case DD:
   case PC:
   case CCUNIT:
-  case _FN:
-  case FNS:
-  case SPC:
-  case XSPC:
+  case QUAD:
   case BLS:
   case LN:
   case SEP:
   case YFRAC:
   case EX:
   case EMUNIT:
+  case _FN:
+  case FNS:
+  case SPC:
+  case XSPC:
   case PAR:
   case PAG:
   case TMPT:
