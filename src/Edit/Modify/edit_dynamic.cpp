@@ -418,34 +418,6 @@ edit_dynamic_rep::temp_proof_fix () {
 ******************************************************************************/
 
 void
-edit_dynamic_rep::back_dynamic (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
-    go_to (end (et, p * (N (subtree (et, p))- 1)));
-  else {
-    string s= get_label (subtree (et, p));
-    ins_unary (p, INACTIVE);
-    set_message ("return: reactivate", "delete#" * s);
-  }
-}
-
-void
-edit_dynamic_rep::back_extension (path p) {
-  tree st= subtree (et, p);
-  int n= N(st);
-  if (n==0) {
-    assign (p, "");
-    correct (path_up (p));
-  }
-  else if (!drd->all_accessible (L (st)))
-    back_dynamic (p);
-  else if (is_func (subtree (et, path_up (p)), INACTIVE))
-    back_dynamic (p);
-  else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
-    back_table (p * 0);
-  else go_to (end (et, p * (n-1)));
-}
-
-void
 edit_dynamic_rep::back_monolithic (path p) {
   if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
   else remove (p, 1);
@@ -463,14 +435,20 @@ edit_dynamic_rep::back_general (path p, bool forward) {
 }
 
 void
-edit_dynamic_rep::back_in_with (tree t, path p) {
+edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    remove_argument (p, false);
+    remove_argument (p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
     correct (path_up (p, 2));
   }
-  else go_to (start (et, path_up (p)));
+  else go_to (forward? end (et, path_up (p)): start (et, path_up (p)));
+}
+
+void
+edit_dynamic_rep::back_in_general (tree t, path p, bool forward) {
+  (void) t;
+  remove_argument (p, forward);
 }
 
 /******************************************************************************

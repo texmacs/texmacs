@@ -111,8 +111,8 @@ initialize_std_drd () {
   init (RIGHT_SUP, "rsup", fixed (1) -> accessible (0));
   init (FRAC, "frac", fixed (2) -> accessible (0));
   init (SQRT, "sqrt", options (1, 1) -> accessible (0));
-  init (WIDE, "wide", fixed (1) -> accessible (0));
-  init (WIDE_UNDER, "wide*", fixed (1) -> accessible (0));
+  init (WIDE, "wide", fixed (1, 1, BIFORM) -> accessible (0));
+  init (WIDE_UNDER, "wide*", fixed (1, 1, BIFORM) -> accessible (0));
   init (NEG, "neg", fixed (1) -> accessible (0));
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
 
