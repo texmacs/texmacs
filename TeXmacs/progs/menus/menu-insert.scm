@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-    (texmacs edit edit-fold) (texmacs edit edit-preamble)
-    (texmacs edit edit-format) (texmacs edit edit-misc)))
+    (texmacs edit edit-fold) (texmacs edit edit-format)
+    (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Insert menu
@@ -232,25 +232,23 @@
 		(link position-float-menu))))
   (-> "Header and footer"
       (group "This page")
-      ("Header" (make-inactive-assign-arg "this page header"))
-      ("Footer" (make-inactive-assign-arg "this page footer"))
+      ("Header" (make-assign-arg "this page header"))
+      ("Footer" (make-assign-arg "this page footer"))
       ---
       (group "Permanent")
       ("Header" (make 'set-header))
       ("Footer" (make 'set-footer))
-      ("Odd page header" (make-inactive-assign-arg "odd page header"))
-      ("Odd page footer" (make-inactive-assign-arg "odd page footer"))
-      ("Even page header" (make-inactive-assign-arg "even page header"))
-      ("Even page footer" (make-inactive-assign-arg "even page footer"))
+      ("Odd page header" (make-assign-arg "odd page header"))
+      ("Odd page footer" (make-assign-arg "odd page footer"))
+      ("Even page header" (make-assign-arg "even page header"))
+      ("Even page footer" (make-assign-arg "even page footer"))
       ---
       (group "Structural")
-      ("Odd page text" (make-inactive-assign-function-arg
-			"odd-page-text"))
-      ("Even page text" (make-inactive-assign-function-arg
-			 "even-page-text")))
+      ("Odd page text" (make-assign-macro-arg "odd-page-text"))
+      ("Even page text" (make-assign-macro-arg "even-page-text")))
   (-> "Page numbering"
-      ("Renumber this page" (make-inactive-assign-arg "page number"))
-      ("Page number text" (make-inactive-assign-function "thepage")))
+      ("Renumber this page" (make-assign-arg "page number"))
+      ("Page number text" (make-assign-macro "thepage")))
   ---
   (-> "Specific"
       ("TeXmacs" (make-specific "texmacs"))

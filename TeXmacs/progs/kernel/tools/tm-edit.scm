@@ -20,8 +20,7 @@
     insert-tree-at insert-object-at
     ;; inserting inactive content
     in-preamble?
-    make-inactive-assign-arg make-inactive-assign-function
-    make-inactive-assign-function-arg))
+    make-assign-arg make-assign-macro make-assign-macro-arg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting general content
@@ -61,24 +60,31 @@
   (:synopsis "Are we in preamble mode?")
   (string=? (get-env "preamble") "true"))
 
-(tm-define (make-inactive-assign-arg s)
+(tm-define (insert-inactive-object-go-to t p)
+  (:type (object path ->))
+  (:synopsis "Insert an inactive object @t and go to @p inside @t.")
+  (if (in-preamble?)
+      (insert-object-go-to t p)
+      (insert-object-go-to (list 'inactive t) (cons 0 p))))
+
+(tm-define (make-assign-arg s)
   (:type (string ->))
   (:synopsis "Make an inactive assignment for the variable @s.")
-  (insert-object-go-to `(inactive (assign ,s "")) '(0 1 0))
-  (set-message "return: activate" "assign"))
+  (insert-inactive-object-go-to `(assign ,s "") '(1 0))
+  (if (not (in-preamble?)) (set-message "return: activate" "assign")))
 
-(tm-define (make-inactive-assign-function s)
+(tm-define (make-assign-macro s)
   (:type (string ->))
-  (:synopsis "Make an inactive function assignment for the variable @s.")
-  (insert-object-go-to
-   `(inactive (assign ,s (inactive (func ""))))
-   '(0 1 0 0 0))
-  (set-message "return (2x): activate" "assign#function"))
+  (:synopsis "Make an inactive macro assignment for the variable @s.")
+  (make-assign-arg s)
+  (insert-inactive-object-go-to '(macro "") '(0 0))
+  (if (not (in-preamble?))
+      (set-message "return (2x): activate" "assign#macro")))
 
-(tm-define (make-inactive-assign-function-arg s)
+(tm-define (make-assign-macro-arg s)
   (:type (string ->))
-  (:synopsis "Make an inactive unary function assignment for the variable @s.")
-  (insert-object-go-to
-   `(inactive (assign ,s (inactive (func "s" ""))))
-   '(0 1 0 1 0))
-  (set-message "return (2x): activate" "assign#function"))
+  (:synopsis "Make an inactive unary macro assignment for the variable @s.")
+  (make-assign-arg s)
+  (insert-inactive-object-go-to '(macro "s" "") '(1 0))
+  (if (not (in-preamble?))
+      (set-message "return (2x): activate" "assign#macro")))

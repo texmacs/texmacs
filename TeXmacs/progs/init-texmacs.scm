@@ -36,7 +36,7 @@
 	     (texmacs texmacs tm-document) (texmacs texmacs tm-help))
 (use-modules (texmacs tools tm-cursor) (texmacs tools tm-select)
 	     (texmacs tools tm-circulate))
-(use-modules (texmacs edit edit-preamble) (texmacs edit edit-format)
+(use-modules (texmacs edit edit-format)
 	     (texmacs edit edit-text) (texmacs edit edit-table)
 	     (texmacs edit edit-fold) (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))

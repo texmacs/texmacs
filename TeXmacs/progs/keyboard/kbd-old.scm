@@ -15,8 +15,7 @@
 (texmacs-module (keyboard kbd-old)
   (:use
     (texmacs texmacs tm-server) (texmacs texmacs tm-files)
-    (texmacs edit edit-preamble) (texmacs edit edit-misc)
-    (texmacs tools tm-select)))
+    (texmacs edit edit-misc) (texmacs tools tm-select)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wildcards

@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menus menu-text)
-  (:use
-    (texmacs edit edit-text) (texmacs edit edit-format)
-    (texmacs edit edit-preamble)))
+  (:use (texmacs edit edit-text) (texmacs edit edit-format)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers
