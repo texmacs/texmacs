@@ -850,7 +850,6 @@
   (("font" "courier") (h:class (@ (style "font-family: Coutier"))))
   (("math font" "cal") (h:class (@ (style "font-family: Flemish Script"))))
   (("math font" "frak") (h:class (@ (style "font-family: Bernhard Modern"))))
-  (("font" "roman") (h:class (@ (style "font-family: times"))))
   (("font series" "medium") (h:class (@ (style "font-weight: normal"))))
   (("font shape" "right") (h:class (@ (style "font-style: normal"))))
   (("font shape" "small-caps")
