@@ -429,6 +429,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     if (ACTIVATED) typeset_expand (t, ip);
     else typeset_inactive_expand_apply (t, ip, false);
     break;
@@ -448,6 +449,9 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case MACRO:
     typeset_inactive ("macro", t, ip, N(t)-1);
+    break;
+  case XMACRO:
+    typeset_inactive ("xmacro", t, ip, 1);
     break;
   case FUNCTION:
     typeset_inactive ("function", t, ip, N(t)-1);
@@ -474,6 +478,14 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case ARGUMENT:
     if (ACTIVATED) typeset_argument (t, ip);
     else typeset_inactive ("argument", t, ip);
+    break;
+  case GET_LABEL:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("tree-label", t, ip);
+    break;
+  case GET_ARITY:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("arity", t, ip);
     break;
   case QUOTE:
     typeset_inactive ("quote", t, ip);

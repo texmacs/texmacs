@@ -209,9 +209,11 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case EXPAND: r= "expand#" * as_string (st[0]); break;
   case VAR_EXPAND: r= "expand*#" * as_string (st[0]); break;
   case HIDE_EXPAND: r= "expand**#" * as_string (st[0]); break;
+  case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case APPLY: r= "apply#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case MACRO: r= "macro"; break;
+  case XMACRO: r= "xmacro"; break;
   case FUNCTION: r= "function"; break;
   case ENVIRONMENT: r= "environment"; break;
   case DRD_PROPS: r= "drd properties"; break;
@@ -219,6 +221,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
   case ARGUMENT: r= "argument#" * as_string (st[0]); break;
+  case GET_LABEL: r= "tree label"; break;
+  case GET_ARITY: r= "arity"; break;
   case BACKUP: r= "backup"; break;
   case QUOTE: r= "quote"; break;
   case DELAY: r= "delay"; break;
@@ -389,6 +393,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
+  case COMPOUND:
     return up * as_string (st[0]) * "#";
   case WITH:
     return up * get_with_text (st) * "#";
@@ -408,6 +413,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * "value#";
   case ARGUMENT:
     return up * "argument#";
+  case GET_LABEL:
+    return up * "tree label#";
+  case GET_ARITY:
+    return up * "arity#";
   case QUOTE:
     return up * "quote#";
   case DELAY:
