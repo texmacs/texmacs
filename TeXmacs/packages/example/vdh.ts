@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.1>
 
 <style|source>
 
@@ -51,6 +51,24 @@
     <assign|Mlt|<with|math-font|cal*|T>>
 
     <assign|Set|<with|math-font|cal*|S>>
+
+    <assign|rsB|<with|math-font|cal*|B>>
+
+    <assign|rsF|<with|math-font|cal*|F>>
+
+    <assign|rsG|<with|math-font|cal*|G>>
+
+    <assign|rsI|<with|math-font|cal*|I>>
+
+    <assign|rsM|<with|math-font|cal*|M>>
+
+    <assign|rsP|<with|math-font|cal*|P>>
+
+    <assign|rsQ|<with|math-font|cal*|Q>>
+
+    <assign|rsS|<with|math-font|cal*|S>>
+
+    <assign|rsT|<with|math-font|cal*|T>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
