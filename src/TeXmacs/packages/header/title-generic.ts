@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -28,16 +28,16 @@
   <assign|make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<with|par-mode|center|<arg|body>>>>>
 
   <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<right-flush><vspace|1fn>|<\with|par-left|15mm|par-right|15mm|font-size|0.84>
-    <no-indent><left-flush><with|font-series|bold|<translate|Abstract|english|<language>>><right-flush><vspace|0.5fn><no-page-break>
+    <style-with|src-compact|none|<no-indent><left-flush><with|font-series|bold|<abstract-text>><right-flush><vspace|0.5fn><no-page-break>>
 
     <arg|body>
   </with>>>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
+  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text>
   ><arg|x>>>
 
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
-  subject classification:|english|<language>> ><arg|x>>>
+  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<AMS-class-text>
+  ><arg|x>>>
 
   \;
 
@@ -45,7 +45,7 @@
 
   <assign|title|<macro|body|<title*|<arg|body>><header-title|<arg|body>>>>
 
-  <assign|author*|<macro|body|<with|font-shape|small-caps|<translate|by|english|<language>>
+  <assign|author*|<macro|body|<with|font-shape|small-caps|<by-text>
   <arg|body>>>>
 
   <assign|author|<macro|body|<vspace*|1fn><author*|<arg|body>><header-author|<arg|body>>>>
@@ -56,7 +56,7 @@
 
   <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
 
-  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<translate|Email:|english|<language>>
+  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<email-text>
   ><verbatim|<arg|body>>>>
 
   <assign|title-email|<macro|body|<vspace*|1fn><title-email*|<arg|body>>>>
