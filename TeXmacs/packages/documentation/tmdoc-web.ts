@@ -1,31 +1,31 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.3.3>
 
 <\body>
   <assign|tmdoc-web-package|1.0>
 
   \;
 
-  <assign|tmweb-current|<func|main|sub|<assign|tmweb-main|<apply|main>><assign|tmweb-sub|<apply|sub>>>>
+  <assign|tmweb-current|<macro|main|sub|<assign|tmweb-main|<arg|main>><assign|tmweb-sub|<arg|sub>>>>
 
-  <assign|tmweb-suffix|<func|<case|<equal|<apply|language>|german>|.de.tm|<equal|<apply|language>|french>|.fr.tm|<equal|<apply|language>|italian>|.it.tm|<equal|<apply|language>|portuguese>|.pt.tm|<equal|<apply|language>|spanish>|.es.tm|.en.tm>>>
+  <assign|tmweb-suffix|<macro|<case|<equal|<language>|german>|.de.tm|<equal|<language>|french>|.fr.tm|<equal|<language>|italian>|.it.tm|<equal|<language>|portuguese>|.pt.tm|<equal|<language>|spanish>|.es.tm|.en.tm>>>
 
-  <assign|tmweb-link|<func|what|to|<hlink|<with|color|<if|<or|<equal|<apply|what>|<apply|tmweb-main>>|<equal|<apply|what>|<apply|tmweb-sub>>>|dark
-  green|brown>|<translate|<apply|what>|english|<apply|language>>>|<if|<equal|<find_file|<merge|<apply|to>|<apply|tmweb-suffix>>>|false>|<merge|<apply|to>|.en.tm>|<merge|<apply|to>|<apply|tmweb-suffix>>>>>>
+  <assign|tmweb-link|<macro|what|to|<hlink|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
+  green|brown>|<translate|<arg|what>|english|<language>>>|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>
 
   <assign|tmweb-list-extra|<macro|x| \| <arg|x>>>
 
-  <assign|tmweb-list|<xmacro|x| <arg|x|0><map_args|tmweb-list-extra|concat|x|1>
+  <assign|tmweb-list|<xmacro|x| <arg|x|0><map-args|tmweb-list-extra|concat|x|1>
   >>
 
   \;
 
-  <assign|tmweb-main-links|<func|<tmweb-list|<apply|tmweb-link|Home|../home/welcome>|<apply|tmweb-link|Download|../download/download>|<apply|tmweb-link|Help|../help/help>|<apply|tmweb-link|Contribute|../contribute/contribute>|<apply|tmweb-link|Plug-ins|../plugins/plugins>|<apply|tmweb-link|About|../about/authors>|<apply|tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<translate|Search|english|<apply|language>>>|http://www.texmacs.org/search>>>>
+  <assign|tmweb-main-links|<macro|<tmweb-list|<tmweb-link|Home|../home/welcome>|<tmweb-link|Download|../download/download>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<translate|Search|english|<language>>>|http://www.texmacs.org/search>>>>
 
-  <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<apply|tmweb-main-links>|<arg|title>|<arg|bar>>>>
+  <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<tmweb-main-links>|<arg|title>|<arg|bar>>>>
 
   <assign|tmweb-license|<\macro>
     <\tmdoc-license>
-      <\with|color|dark grey|font size|0.84>
+      <\with|color|dark grey|font-size|0.84>
         This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
         and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
         copying and distribution of it is permitted in any medium, provided
@@ -40,36 +40,36 @@
 
   \;
 
-  <assign|tmweb-home-links|<func|<tmweb-list|<apply|tmweb-link|Welcome|welcome>|<apply|tmweb-link|Screen
-  shots|screenshots>|<apply|tmweb-link|News|news>|<apply|tmweb-link|Mailing
-  lists|ml>>>>
+  <assign|tmweb-home-links|<macro|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Screen
+  shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing lists|ml>>>>
 
-  <assign|tmweb-download-links|<func|<tmweb-list|<apply|tmweb-link|General|download>|<apply|tmweb-link|Sources|sources>|<apply|tmweb-link|Binaries|unix>|<apply|tmweb-link|RPM|rpm>|<apply|tmweb-link|Knoppix|knoppix>|<apply|tmweb-link|CVS|cvs>|<apply|tmweb-link|Fonts|fonts>|<apply|tmweb-link|Requirements|requirements>>>>
+  <assign|tmweb-download-links|<macro|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|CVS|cvs>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>
 
-  <assign|tmweb-help-links|<func|<tmweb-list|<apply|tmweb-link|General|help>|<apply|tmweb-link|FAQ|faq>|<apply|tmweb-link|Tutorial|tutorial>|<apply|tmweb-link|Manual|manual>|<apply|tmweb-link|Articles|articles>>>>
+  <assign|tmweb-help-links|<macro|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorial|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>
 
-  <assign|tmweb-contribute-links|<func|<tmweb-list|<apply|tmweb-link|Helping|contribute>|<apply|tmweb-link|Documentation|documentation>|<apply|tmweb-link|Translations|translations>|<apply|tmweb-link|Extensions|plugins>|<apply|tmweb-link|Donations|donations>>>>
+  <assign|tmweb-contribute-links|<macro|<tmweb-list|<tmweb-link|Helping|contribute>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>
 
-  <assign|tmweb-plugin-links|<func|<tmweb-list|<apply|tmweb-link|All|plugins>|<apply|tmweb-link|Mathematics|cas>|<apply|tmweb-link|Numerics|numerics>|<apply|tmweb-link|Statistics|statistics>|<apply|tmweb-link|Physics|physics>|<apply|tmweb-link|Graphics|graphics>|<apply|tmweb-link|Education|education>|<apply|tmweb-link|Tools|tools>>>>
+  <assign|tmweb-plugin-links|<macro|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Education|education>|<tmweb-link|Tools|tools>>>>
 
-  <assign|tmweb-about-links|<func|<tmweb-list|<apply|tmweb-link|Authors|authors>|<apply|tmweb-link|Philosophy|philosophy>|<apply|tmweb-link|Changes|changes>|<apply|tmweb-link|Plans|plans>|<apply|tmweb-link|License|license>>>>
+  <assign|tmweb-about-links|<macro|<tmweb-list|<tmweb-link|Authors|authors>|<tmweb-link|Philosophy|philosophy>|<tmweb-link|Changes|changes>|<tmweb-link|Plans|plans>|<tmweb-link|Artwork|artwork>|<tmweb-link|License|license>>>>
 
-  <assign|tmweb-contact-links|<func|<tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>|<apply|tmweb-link|Patches|patches>>>>
-
-  \;
-
-  <assign|tmweb-manual-links|<func|previous|next|<tmweb-list|<apply|tmweb-link|Manual|../help/manual>|<apply|tmweb-link|Top|web-manual>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
-
-  <assign|tmweb-tutorial-links|<func|previous|next|<tmweb-list|<apply|tmweb-link|Tutorial|../help/tutorial>|<apply|tmweb-link|Top|web-tutorial>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
+  <assign|tmweb-contact-links|<macro|<tmweb-list|<tmweb-link|Feedback|contact>|<tmweb-link|Bugs|bugs>|<tmweb-link|Suggestions|wishes>|<tmweb-link|Patches|patches>>>>
 
   \;
 
-  <assign|tmweb-image|<func|name|<postscript|<merge|http://www.texmacs.org/Samples/|<apply|name>>|*2/3|||||>>>
+  <assign|tmweb-manual-links|<macro|previous|next|<tmweb-list|<tmweb-link|Manual|../help/manual>|<tmweb-link|Top|web-manual>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>
 
-  <assign|tmweb-email|<macro|name|domain|<with|font family|tt|color|dark
-  magenta|\<less\>><with|font family|tt|color|dark blue|<arg|name>><with|font
-  family|tt|color|dark magenta|@><with|font family|tt|color|dark
-  blue|<arg|domain>><with|font family|tt|color|dark magenta|\<gtr\>>>>
+  <assign|tmweb-tutorial-links|<macro|previous|next|<tmweb-list|<tmweb-link|Tutorial|../help/tutorial>|<tmweb-link|Top|web-tutorial>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>
+
+  \;
+
+  <assign|tmweb-image|<macro|name|<postscript|<merge|http://www.texmacs.org/Samples/|<arg|name>>|*2/3|||||>>>
+
+  <assign|tmweb-email|<macro|name|domain|<with|font-family|tt|color|dark
+  magenta|\<less\>><with|font-family|tt|color|dark
+  blue|<arg|name>><with|font-family|tt|color|dark
+  magenta|@><with|font-family|tt|color|dark
+  blue|<arg|domain>><with|font-family|tt|color|dark magenta|\<gtr\>>>>
 
   \;
 
@@ -85,18 +85,18 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
