@@ -380,7 +380,7 @@ edit_text_rep::make_postscript (
   }
   else {
     string s;
-    load_string (image, s);
+    load_string (relative (get_name (), image), s);
     if (s == "") {
       set_message ("File#'" * as_string (image) * "' not found", "make image");
       return;
