@@ -154,6 +154,13 @@ edit_dynamic_rep::activate () {
 	  if (N(st) == 2) insert_tree (st[1]);
 	  return;
 	}
+	else if (is_func (f, XMACRO)) {
+	  tree r (make_tree_label (name), 1);
+	  assign (p, r);
+	  go_to (p * path (0, 0));
+	  correct (path_up (p));
+	  return;
+	}
 #ifndef UPGRADE_APPLY
 	else if (is_func (f, FUNCTION)) {
 	  int n= N(f);

@@ -558,8 +558,11 @@ edit_env_rep::exec_argument (tree t) {
 tree
 edit_env_rep::exec_get_label (tree t) {
   tree r;
-  if (is_func (t[0], ARGUMENT, 1))
+  if (is_func (t[0], ARGUMENT, 1)) {
+    if (nil (macro_arg))
+      return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
     r= macro_arg->item [as_string (t[0][0])];
+  }
   else r= exec (t[0]);
   return copy (as_string (L(r)));
 }
@@ -567,8 +570,11 @@ edit_env_rep::exec_get_label (tree t) {
 tree
 edit_env_rep::exec_get_arity (tree t) {
   tree r;
-  if (is_func (t[0], ARGUMENT, 1))
+  if (is_func (t[0], ARGUMENT, 1)) {
+    if (nil (macro_arg))
+      return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
     r= macro_arg->item [as_string (t[0][0])];
+  }
   else r= exec (t[0]);
   return as_string (arity (r));
 }
@@ -576,7 +582,7 @@ edit_env_rep::exec_get_arity (tree t) {
 tree
 edit_env_rep::exec_eval_args (tree t) {
   tree v= macro_arg->item [as_string (t[0])];
-  if (is_atomic (v))
+  if (is_atomic (v) || nil (macro_arg))
     return tree (ERROR, "eval arguments " * t[0]->label);
   list<hashmap<string,tree> > old_var= macro_arg;
   list<hashmap<string,path> > old_src= macro_src;
