@@ -14,18 +14,22 @@
 #define TAG_INFO_H
 #include "tree.hpp"
 
-#define ACCESSIBLE_MASK           15
-#define NOT_ACCESSIBLE             0
-#define ACCESSIBLE                 1
-#define FIRST_ACCESSIBLE           2
-#define LAST_ACCESSIBLE            3
-#define TAIL_ACCESSIBLE            4
-#define TABLE_ACCESSIBLE           5
-#define HIDE_EXPAND_ACCESSIBLE     6
-#define BORDER_ACCESSIBLE_MASK    16
-#define BORDER_NOT_ACCESSIBLE     16
-#define DYNAMIC_MASK              32
-#define DYNAMIC                   32
+#define ACCESSIBLE_MASK              15
+#define NOT_ACCESSIBLE                0
+#define ACCESSIBLE                    1
+#define FIRST_ACCESSIBLE              2
+#define LAST_ACCESSIBLE               3
+#define TAIL_ACCESSIBLE               4
+#define TABLE_ACCESSIBLE              5
+#define HIDE_EXPAND_ACCESSIBLE        6
+#define CUSTOM_ACCESSIBLE             7
+#define BORDER_ACCESSIBLE_MASK       16
+#define BORDER_NOT_ACCESSIBLE        16
+#define DYNAMIC_MASK                 32
+#define DYNAMIC                      32
+#define CUSTOM_ACCESSIBLE_MASK    65280
+#define CUSTOM_ACCESSIBLE_SHIFT       8
+#define CUSTOM_ACCESSIBLE_MAX         8
 
 #define ACCESSIBLE_EXCEPT_BORDER (ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
 #define ONLY_LAST_ACCESSIBLE (LAST_ACCESSIBLE+BORDER_NOT_ACCESSIBLE)

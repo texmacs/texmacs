@@ -148,6 +148,7 @@ edit_typeset_rep::typeset_preamble () {
   typeset_style_use_cache (the_style);
   env->patch_env (init);
   env->read_env (pre);
+  drd->heuristic_init (pre);
 }
 
 void

@@ -519,6 +519,21 @@ tmg_help_bufferP () {
 }
 
 SCM
+tmg_set_buffer (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-buffer");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "set-buffer");
+
+  url in1= scm_to_url (arg1);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->revert_buffer (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_set_aux_buffer (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-aux-buffer");
   SCM_ASSERT_URL (arg2, SCM_ARG2, "set-aux-buffer");
@@ -868,6 +883,7 @@ initialize_glue_server () {
   gh_new_procedure ("get-maximal-undo-depth", (FN) tmg_get_maximal_undo_depth, 0, 0, 0);
   gh_new_procedure ("no-name?", (FN) tmg_no_nameP, 0, 0, 0);
   gh_new_procedure ("help-buffer?", (FN) tmg_help_bufferP, 0, 0, 0);
+  gh_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);
   gh_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   gh_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
   gh_new_procedure ("browse-help", (FN) tmg_browse_help, 1, 0, 0);

@@ -81,6 +81,7 @@ public:
   virtual bool no_bufs () = 0;
   virtual bool no_name () = 0;
   virtual bool help_buffer () = 0;
+  virtual void revert_buffer (url name, tree doc) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
   virtual void browse_help (int delta) = 0;

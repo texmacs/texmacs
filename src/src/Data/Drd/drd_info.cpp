@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "drd_info.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Constructors and basic operations
@@ -61,6 +62,21 @@ drd_info_rep::get_props (tree_label l) {
 }
 
 /******************************************************************************
+* Heuristic initialization of DRD
+******************************************************************************/
+
+void
+drd_info_rep::heuristic_init (hashmap<string,tree> env) {
+  iterator<string> it= iterate (env);
+  while (it->busy()) {
+    string var= it->next();
+    tree   val= env[var];
+    (void) val;
+    // if (is_func (val, MACRO)) cout << var << "\n";
+  }
+}
+
+/******************************************************************************
 * Drd-based predicates
 ******************************************************************************/
 
@@ -90,6 +106,9 @@ drd_info_rep::is_accessible_child (tree t, int i) {
     return i<(N(t)-2);
   case HIDE_EXPAND_ACCESSIBLE:
     return (i!=0) && (i!=(N(t)-1));
+  case CUSTOM_ACCESSIBLE:
+    if (i >= CUSTOM_ACCESSIBLE_MAX) return false;
+    return ((get_props (L(t)) >> (CUSTOM_ACCESSIBLE_SHIFT + i)) & 1) != 0;
   default:
     return false;
   }
