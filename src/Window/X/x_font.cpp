@@ -66,22 +66,22 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
 }
 
 void
-x_drawable_rep::draw (int c, font_gliefs bmf, SI x, SI y) {
+x_drawable_rep::draw (int c, font_glyphs fng, SI x, SI y) {
   // get the pixmap
-  x_character xc (c, bmf, sfactor, cur_fg, cur_bg);
+  x_character xc (c, fng, sfactor, cur_fg, cur_bg);
   Pixmap pm= (Pixmap) dis->character_pixmap [xc];
   if (pm == 0) {
     dis->prepare_color (sfactor, cur_fg, cur_bg);
-    x_character col_entry (0, font_gliefs (), sfactor, cur_fg, cur_bg);
+    x_character col_entry (0, font_glyphs (), sfactor, cur_fg, cur_bg);
     color* cols= (color*) dis->color_scale [col_entry];
     SI xo, yo;
-    glief pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
-    glief bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
-    int i, j, w= bmc->width, h= bmc->height;
+    glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
+    glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
+    int i, j, w= gl->width, h= gl->height;
     pm= XCreatePixmap (dis->dpy, dis->root, w, h, dis->depth);
     for (j=0; j<h; j++)
       for (i=0; i<w; i++) {
-	color col= cols [bmc->get_x(i,j)];
+	color col= cols [gl->get_x(i,j)];
 	XSetForeground (dis->dpy, dis->pixmap_gc, dis->cmap[col]);
 	XDrawPoint (dis->dpy, (Drawable) pm, dis->pixmap_gc, i, j);
       }
@@ -89,13 +89,13 @@ x_drawable_rep::draw (int c, font_gliefs bmf, SI x, SI y) {
   }
 
   // get the bitmap
-  xc= x_character (c, bmf, sfactor, 0, 0);
+  xc= x_character (c, fng, sfactor, 0, 0);
   Bitmap bm= (Bitmap) dis->character_bitmap [xc];
   if (bm == NULL) {
     SI xo, yo;
-    glief pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
-    glief bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
-    int i, j, b, on, w= bmc->width, h= bmc->height;
+    glyph pre_gl= fng->get (c); if (nil (pre_gl)) return;
+    glyph gl= shrink (pre_gl, sfactor, sfactor, xo, yo);
+    int i, j, b, on, w= gl->width, h= gl->height;
     int byte_width= ((w-1)>>3)+1;
     char* data= new char [byte_width * h];
     for (i=0; i<(byte_width * h); i++) data[i]=0;
@@ -103,13 +103,13 @@ x_drawable_rep::draw (int c, font_gliefs bmf, SI x, SI y) {
     for (j=0; j<h; j++)
       for (i=0; i<w; i++) {
 	b = j*byte_width + (i>>3);
-	on= (bmc->get_x(i,j)!=0 ? 1:0);
+	on= (gl->get_x(i,j)!=0 ? 1:0);
 	if (on) data[b]= data[b] | (1<<(i&7));
       }
     bm= new Bitmap_rep;
     bm->bm    = XCreateBitmapFromData (dis->dpy, dis->root, data, w, h);
-    bm->width = bmc->width;
-    bm->height= bmc->height;
+    bm->width = gl->width;
+    bm->height= gl->height;
     bm->xoff  = xo;
     bm->yoff  = yo;
     dis->character_bitmap (xc)= (pointer) bm;
@@ -128,7 +128,7 @@ x_drawable_rep::draw (int c, font_gliefs bmf, SI x, SI y) {
 ******************************************************************************/
 
 void
-x_display_rep::get_ps_char (Font fn, int c, metric& ex, glief& bmc) {
+x_display_rep::get_ps_char (Font fn, int c, metric& ex, glyph& gl) {
   XCharStruct xcs;
   int i1, i2, i3;
   char temp[1]; temp[0]= (char) c;
@@ -158,14 +158,14 @@ x_display_rep::get_ps_char (Font fn, int c, metric& ex, glief& bmc) {
   XImage* im= XGetImage (dpy, pm, 0, 0, w, h, 0xffffffff, ZPixmap);
 
   int i, j;
-  bmc= glief (w, h, xoff, yoff);
+  gl= glyph (w, h, xoff, yoff);
   for (j=0; j<h; j++)
     for (i=0; i<w; i++) {
       int c = im->f.get_pixel (im, i, j);
       int on= (c == black? 1: 0);
-      bmc->set_x (i, j, on);
+      gl->set_x (i, j, on);
     }
-  bmc->lwidth= xcs.width;
+  gl->lwidth= xcs.width;
 
   im->f.destroy_image (im);
   XFreePixmap (dpy, pm);
@@ -173,12 +173,12 @@ x_display_rep::get_ps_char (Font fn, int c, metric& ex, glief& bmc) {
 
 void
 x_display_rep::load_ps_font (string family, int size, int dpi,
-			     font_metric& bmm, font_gliefs& bmf)
+			     font_metric& fnm, font_glyphs& fng)
 {
   string fn_name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
   if (font_metric::instances -> contains (fn_name)) {
-    bmm= font_metric (fn_name);
-    bmf= font_gliefs (fn_name);
+    fnm= font_metric (fn_name);
+    fng= font_glyphs (fn_name);
   }
 
   string name= "-" * family;
@@ -201,11 +201,11 @@ x_display_rep::load_ps_font (string family, int size, int dpi,
 
   int i;
   metric* texs= new metric[256];
-  glief * bmcs= new glief [256];
+  glyph * gls = new glyph [256];
   for (i=0; i<=255; i++)
-    get_ps_char (fn, i, texs[i], bmcs[i]);
-  bmm= std_font_metric (fn_name, texs, 0, 255);
-  bmf= std_font_gliefs (fn_name, bmcs, 0, 255);
+    get_ps_char (fn, i, texs[i], gls[i]);
+  fnm= std_font_metric (fn_name, texs, 0, 255);
+  fng= std_font_glyphs (fn_name, gls , 0, 255);
 }
 
 /******************************************************************************

@@ -24,14 +24,14 @@ struct virtual_font_rep: font_rep {
   translator   virt;
   int          size, dpi;
   int          last;
-  font_metric  bmm;
-  font_gliefs  bmf;
+  font_metric  fnm;
+  font_glyphs  fng;
   double       unit;
 
   virtual_font_rep (string name, font base, string vname, int size, int dpi);
-  glief compile (scheme_tree t, metric& ex);
-  int   get_char (string s, font_metric& bmm, font_gliefs& bmf);
-  glief get_bitmap (string s);
+  glyph compile (scheme_tree t, metric& ex);
+  int   get_char (string s, font_metric& fnm, font_glyphs& fng);
+  glyph get_glyph (string s);
 
   void get_extents (string s, metric& ex);
   void draw (ps_device dev, string s, SI x, SI y);
@@ -42,8 +42,8 @@ virtual_font_rep::virtual_font_rep (
     font_rep (base->dis, name, base), base_fn (base),
     virt (load_translator (vname)), size (size2), dpi (dpi2),
     last (N(virt->virt_def)),
-    bmm (std_font_metric (name, new metric [last], 0, last-1)),
-    bmf (std_font_gliefs (name, new glief  [last], 0, last-1))
+    fnm (std_font_metric (name, new metric [last], 0, last-1)),
+    fng (std_font_glyphs (name, new glyph  [last], 0, last-1))
 {
   copy_math_pars (base_fn);
   unit= ((size*dpi)/72)*PIXEL;
@@ -65,7 +65,7 @@ outer_fit (metric& ex, metric& ey, SI x, SI y) {
   ex->y4= max (ex->y4, y+ ey->y4);
 }
 
-glief
+glyph
 virtual_font_rep::compile (scheme_tree t, metric& ex) {
   // cout << "Compile " << t << "\n";
 
@@ -73,7 +73,7 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
     string r= t->label;
     if (N(r)>1) r= "<" * r * ">";
     base_fn->get_extents (r, ex);
-    return base_fn->get_bitmap (r);
+    return base_fn->get_glyph (r);
   }
 
   if (is_func (t, TUPLE, 3) &&
@@ -81,60 +81,60 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
     {
       SI x= (SI) (as_double (t[0]) * unit);
       SI y= (SI) (as_double (t[1]) * unit);
-      glief bmc= compile (t[2], ex);
+      glyph gl= compile (t[2], ex);
       ex->x1 += x; ex->y1 += y;
       ex->x2 += x; ex->y2 += y;
       ex->x3 += x - PIXEL; ex->y3 += y + PIXEL;
       ex->x4 += x - PIXEL; ex->y4 += y + PIXEL;
-      return move (bmc, x, y);
+      return move (gl, x, y);
     }
 
   if (is_tuple (t, "join")) {
     int i, n= N(t);
-    glief bmc1= compile (t[1], ex);
+    glyph gl1= compile (t[1], ex);
     for (i=2; i<n; i++) {
       metric ey;
-      glief bmc2= compile (t[i], ey);
+      glyph gl2= compile (t[i], ey);
       outer_fit (ex, ey, 0, 0);
-      bmc1= join (bmc1, bmc2);
+      gl1= join (gl1, gl2);
     }
-    return bmc1;
+    return gl1;
   }
 
   if (is_tuple (t, "glue", 2)) {
     metric ey;
-    glief bmc1= compile (t[1], ex);
-    glief bmc2= compile (t[2], ey);
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
     SI dx= ex->x2- ((base_fn->wpt*28)>>4);
     outer_fit (ex, ey, dx, 0);
-    return join (bmc1, move (bmc2, dx, 0));
+    return join (gl1, move (gl2, dx, 0));
   }
 
   if (is_tuple (t, "glue*", 2)) {
     metric ey;
-    glief bmc1= compile (t[1], ex);
-    glief bmc2= compile (t[2], ey);
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
     SI dx= ex->x2;
     outer_fit (ex, ey, dx, 0);
-    return join (bmc1, move (bmc2, dx, 0));
+    return join (gl1, move (gl2, dx, 0));
   }
 
   if (is_tuple (t, "add", 2)) {
     metric ey;
-    glief bmc1= compile (t[1], ex);
-    glief bmc2= compile (t[2], ey);
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
     SI dx= ((ex->x1+ ex->x2- ey->x1- ey->x2) >> 1);
     outer_fit (ex, ey, dx, 0);
-    return join (bmc1, move (bmc2, dx, 0));
+    return join (gl1, move (gl2, dx, 0));
   }
 
   if (is_tuple (t, "enlarge")) {
-    glief bmc= compile (t[1], ex);
+    glyph gl= compile (t[1], ex);
     if (N(t)>2) ex->x1 -= (SI) (as_double (t[2]) * unit);
     if (N(t)>3) ex->x2 += (SI) (as_double (t[3]) * unit);
     if (N(t)>4) ex->y1 -= (SI) (as_double (t[4]) * unit);
     if (N(t)>5) ex->y2 += (SI) (as_double (t[5]) * unit);
-    return bmc;
+    return gl;
   }
 
   if (is_tuple (t, "hor-flip", 1))
@@ -145,7 +145,7 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "rot-left", 1)) {
     metric ey;
-    glief bmc= pos_rotate (compile (t[1], ey));
+    glyph gl= pos_rotate (compile (t[1], ey));
     ex->x1= 0;
     ex->y1= 0;
     ex->x2= ey->y2- ey->y1;
@@ -154,12 +154,12 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
     ex->y3= ey->x3- ey->x1;
     ex->x4= ey->y2- ey->y3;
     ex->y4= ey->x4- ey->x1;
-    return move (bmc, ey->y2, -ey->x1);
+    return move (gl, ey->y2, -ey->x1);
   }
 
   if (is_tuple (t, "rot-right", 1)) {
     metric ey;
-    glief bmc= pos_rotate (pos_rotate (pos_rotate (compile (t[1], ey))));
+    glyph gl= pos_rotate (pos_rotate (pos_rotate (compile (t[1], ey))));
     ex->x1= 0;
     ex->y1= 0;
     ex->x2= ey->y2- ey->y1;
@@ -168,40 +168,40 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
     ex->y3= ey->x2- ey->x4;
     ex->x4= ey->y4- ey->y1;
     ex->y4= ey->x2- ey->x3;
-    return move (bmc, -ey->y1, ey->x2);
+    return move (gl, -ey->y1, ey->x2);
   }
 
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
-    glief bmc= compile (t[1], ex);
-    int pos= (int) (as_double (t[2]) * bmc->width);
+    glyph gl= compile (t[1], ex);
+    int pos= (int) (as_double (t[2]) * gl->width);
     SI  add= (SI)  (as_double (t[3]) * unit);
     if (is_tuple (t, "hor-extend", 4))
       add= (SI)  (as_double (t[3]) * as_double (t[4]) * unit);
     int by = add / PIXEL;
     if (pos < 0) pos= 0;
-    if (pos >= bmc->width) pos= bmc->width-1;
+    if (pos >= gl->width) pos= gl->width-1;
     ex->x2 += add;
     ex->x4 += by * PIXEL;
-    return hor_extend (bmc, pos, by);
+    return hor_extend (gl, pos, by);
   }
 
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
-    glief bmc= compile (t[1], ex);
-    int pos= (int) (as_double (t[2]) * bmc->height);
+    glyph gl= compile (t[1], ex);
+    int pos= (int) (as_double (t[2]) * gl->height);
     SI  add= (SI)  (as_double (t[3]) * unit);
     if (is_tuple (t, "ver-extend", 4))
       add= (SI)  (as_double (t[3]) * as_double (t[4]) * unit);
     int by = add / PIXEL;
     if (pos < 0) pos= 0;
-    if (pos >= bmc->height) pos= bmc->height-1;
+    if (pos >= gl->height) pos= gl->height-1;
     ex->y1 -= add;
     ex->y3 -= by * PIXEL;
-    return ver_extend (bmc, pos, by);
+    return ver_extend (gl, pos, by);
   }
 
   cerr << "TeXmacs] The defining tree is " << t << "\n";
   fatal_error ("Invalid virtual character", "virtual_font_rep::compile");
-  return glief(); // avoids error message when C++ compiler behaves badly
+  return glyph(); // avoids error message when C++ compiler behaves badly
 }
 
 /******************************************************************************
@@ -227,9 +227,9 @@ subst_sharp (tree t, string by) {
 }
 
 static void
-make_char_font (string name, font_metric& cbmm, font_gliefs& cbmf) {
-  cbmm= std_font_metric (name, new metric [1], 0, 0);
-  cbmf= std_font_gliefs (name, new glief [1], 0, 0);
+make_char_font (string name, font_metric& cfnm, font_glyphs& cfng) {
+  cfnm= std_font_metric (name, new metric [1], 0, 0);
+  cfng= std_font_glyphs (name, new glyph [1], 0, 0);
 }
 
 /******************************************************************************
@@ -237,36 +237,36 @@ make_char_font (string name, font_metric& cbmm, font_gliefs& cbmf) {
 ******************************************************************************/
 
 int
-virtual_font_rep::get_char (string s, font_metric& cbmm, font_gliefs& cbmf) {
+virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   int c= ((N(s)==0)? -1: ((QN) s[0]));
   if ((c<0) || (c>=last)) return -1;
   if (N(s)==1) {
-    cbmm= bmm;
-    cbmf= bmf;
-    if (nil (bmf->get(c)))
-      bmf->get(c)= compile (virt->virt_def[c], bmm->get(c));
+    cfnm= fnm;
+    cfng= fng;
+    if (nil (fng->get(c)))
+      fng->get(c)= compile (virt->virt_def[c], fnm->get(c));
     return c;
   }
   else {
-    make_char_font (res_name * s, cbmm, cbmf);
+    make_char_font (res_name * s, cfnm, cfng);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
-    if (nil (cbmf->get(0)))
-      cbmf->get(0)= compile (t, cbmm->get(0));
+    if (nil (cfng->get(0)))
+      cfng->get(0)= compile (t, cfnm->get(0));
     return 0;
   }
 }
 
 void
 virtual_font_rep::get_extents (string s, metric& ex) {
-  font_metric cbmm;
-  font_gliefs cbmf;
-  int c= get_char (s, cbmm, cbmf);
+  font_metric cfnm;
+  font_glyphs cfng;
+  int c= get_char (s, cfnm, cfng);
   if (c == -1) {
     ex->y1= y1; ex->y2= y2;
     ex->x1= ex->x2= ex->x3= ex->x4= ex->y3= ex->y4= 0;
   }
   else {
-    metric_struct* ey= cbmm->get(c);
+    metric_struct* ey= cfnm->get(c);
     ex->x1= ey->x1; ex->y1= ey->y1;
     ex->x2= ey->x2; ex->y2= ey->y2;
     ex->x3= ey->x3; ex->y3= ey->y3;
@@ -276,19 +276,19 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 
 void
 virtual_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  font_metric cbmm;
-  font_gliefs cbmf;
-  int c= get_char (s, cbmm, cbmf);
-  if (c != -1) dev->draw (c, cbmf, x, y);
+  font_metric cfnm;
+  font_glyphs cfng;
+  int c= get_char (s, cfnm, cfng);
+  if (c != -1) dev->draw (c, cfng, x, y);
 }
 
-glief
-virtual_font_rep::get_bitmap (string s) {
-  font_metric cbmm;
-  font_gliefs cbmf;
-  int c= get_char (s, cbmm, cbmf);
-  if (c == -1) return font_rep::get_bitmap (s);
-  else return cbmf->get(c);
+glyph
+virtual_font_rep::get_glyph (string s) {
+  font_metric cfnm;
+  font_glyphs cfng;
+  int c= get_char (s, cfnm, cfng);
+  if (c == -1) return font_rep::get_glyph (s);
+  else return cfng->get(c);
 }
 
 /******************************************************************************

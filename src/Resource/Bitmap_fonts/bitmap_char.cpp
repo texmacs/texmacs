@@ -15,11 +15,11 @@
 #define PIXEL 256
 
 /******************************************************************************
-* Constructors and destructors for glief
+* Constructors and destructors for glyph
 ******************************************************************************/
 
-glief_rep::glief_rep (int w2, int h2, int xoff2, int yoff2,
-				  int depth2, int status2)
+glyph_rep::glyph_rep (int w2, int h2, int xoff2, int yoff2,
+		      int depth2, int status2)
 {
   depth   = depth2;
   width   = w2;
@@ -34,12 +34,12 @@ glief_rep::glief_rep (int w2, int h2, int xoff2, int yoff2,
   for (i=0; i<n; i++) raster[i]=0;
 }
 
-glief_rep::~glief_rep () {
+glyph_rep::~glyph_rep () {
   delete[] raster;
 }
 
-glief::glief (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
-  rep= new glief_rep (w2, h2, xoff2, yoff2, depth2, status2);
+glyph::glyph (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
+  rep= new glyph_rep (w2, h2, xoff2, yoff2, depth2, status2);
 }
 
 /******************************************************************************
@@ -47,7 +47,7 @@ glief::glief (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
 ******************************************************************************/
 
 int
-glief_rep::get_x (int i, int j) {
+glyph_rep::get_x (int i, int j) {
   if ((i<0) || (i>=width))  return 0;
   if ((j<0) || (j>=height)) return 0;
   if (depth==1) {
@@ -58,11 +58,11 @@ glief_rep::get_x (int i, int j) {
 }
 
 void
-glief_rep::set_x (int i, int j, int with) {
+glyph_rep::set_x (int i, int j, int with) {
   if ((i<0) || (i>=width))
-    fatal_error ("bad x-index", "glief_rep::set_x");
+    fatal_error ("bad x-index", "glyph_rep::set_x");
   if ((j<0) || (j>=height))
-    fatal_error ("bad y-index", "glief_rep::set_x");
+    fatal_error ("bad y-index", "glyph_rep::set_x");
   if (depth==1) {
     int bit= j*width+i;
     if (with==0) raster[bit>>3] &= ~(1 << (bit&7));
@@ -72,12 +72,12 @@ glief_rep::set_x (int i, int j, int with) {
 }
 
 int
-glief_rep::get (int i, int j) {
+glyph_rep::get (int i, int j) {
   return get_x (i+xoff, yoff-j);
 }
 
 void
-glief_rep::set (int i, int j, int with) {
+glyph_rep::set (int i, int j, int with) {
   set_x (i+xoff, yoff-j, with);
 }
 
@@ -86,14 +86,14 @@ glief_rep::set (int i, int j, int with) {
 ******************************************************************************/
 
 void
-glief_rep::adjust_bot () {
+glyph_rep::adjust_bot () {
   int i;
   if (height<=2) return;
   for (i=0; i<width; i++) set_x (i, height-1, get_x (i, height-2));
 }
 
 void
-glief_rep::adjust_top () {
+glyph_rep::adjust_top () {
   int i;
   if (height<=2) return;
   for (i=0; i<width; i++) set_x (i, 0, get_x (i, 1));
@@ -104,24 +104,24 @@ glief_rep::adjust_top () {
 ******************************************************************************/
 
 ostream&
-operator << (ostream& out, glief bmc) {
+operator << (ostream& out, glyph gl) {
   int i, j;
-  out << "Size  : (" << bmc->width << ", " << bmc->height << ")\n";
-  out << "Offset: (" << bmc->xoff << ", " << bmc->yoff << ")\n";
-  for (i=0; i<bmc->width+2; i++) out << "-";
+  out << "Size  : (" << gl->width << ", " << gl->height << ")\n";
+  out << "Offset: (" << gl->xoff << ", " << gl->yoff << ")\n";
+  for (i=0; i<gl->width+2; i++) out << "-";
   out << "\n";
-  for (j=0; j<bmc->height; j++) {
+  for (j=0; j<gl->height; j++) {
     out << "|";
-    for (i=0; i<bmc->width; i++) {
-      int k= bmc->get_x (i, j);
+    for (i=0; i<gl->width; i++) {
+      int k= gl->get_x (i, j);
       if (k==0) out << " ";
-      else if (bmc->depth==1) out << "*";
+      else if (gl->depth==1) out << "*";
       else if (k <= 9) out << k;
       else out << ((char) (55+k));
     }
     out << "|\n";
   }
-  for (i=0; i<bmc->width+2; i++) out << "-";
+  for (i=0; i<gl->width+2; i++) out << "-";
   out << "\n";
   return out;
 }

@@ -19,14 +19,14 @@
 struct ps_font_rep: font_rep {
   string      family;
   int         dpi;
-  font_metric bmm;
-  font_gliefs bmf;
+  font_metric fnm;
+  font_glyphs fng;
 
   ps_font_rep (display dis, string name, string family, int size, int dpi);
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
-  glief get_bitmap (string s);
+  glyph get_glyph (string s);
 };
 
 /******************************************************************************
@@ -38,7 +38,7 @@ ps_font_rep::ps_font_rep (
     font_rep (dis, name)
 {
   metric ex;
-  dis->load_ps_font (family2, size2, dpi2, bmm, bmf);
+  dis->load_ps_font (family2, size2, dpi2, fnm, fng);
 
   family       = family2;
   size         = size2;
@@ -94,7 +94,7 @@ ps_font_rep::get_extents (string s, metric& ex) {
   }
   else {
     QN c= s[0];
-    metric_struct* first= bmm->get (c);
+    metric_struct* first= fnm->get (c);
     ex->x1= first->x1; ex->y1= first->y1;
     ex->x2= first->x2; ex->y2= first->y2;
     ex->x3= first->x3; ex->y3= first->y3;
@@ -104,7 +104,7 @@ ps_font_rep::get_extents (string s, metric& ex) {
     int i;
     for (i=1; i<N(s); i++) {
       QN c= s[i];
-      metric_struct* next= bmm->get (c);
+      metric_struct* next= fnm->get (c);
       ex->x1= min (ex->x1, x+ next->x1); ex->y1= min (ex->y1, next->y1);
       ex->x2= max (ex->x2, x+ next->x2); ex->y2= max (ex->y2, next->y2);
       ex->x3= min (ex->x3, x+ next->x3); ex->y3= min (ex->y3, next->y3);
@@ -121,7 +121,7 @@ ps_font_rep::get_xpositions (string s, SI* xpos) {
   
   register SI x= 0;
   for (i=0; i<N(s); i++) {
-    metric_struct* next= bmm->get ((QN) s[i]);
+    metric_struct* next= fnm->get ((QN) s[i]);
     x += next->x2;
     xpos[i+1]= x;
   }
@@ -133,20 +133,20 @@ ps_font_rep::draw (ps_device dev, string s, SI x, SI y) {
     int i;
     for (i=0; i<N(s); i++) {
       QN c= s[i];
-      dev->draw (c, bmf, x, y);
-      metric_struct* ex= bmm->get (c);
+      dev->draw (c, fng, x, y);
+      metric_struct* ex= fnm->get (c);
       x += ex->x2;
     }
   }
 }
 
-glief
-ps_font_rep::get_bitmap (string s) {
-  if (N(s)!=1) return font_rep::get_bitmap (s);
+glyph
+ps_font_rep::get_glyph (string s) {
+  if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
-  glief bmc= bmf->get (c);
-  if (nil (bmc)) return font_rep::get_bitmap (s);
-  return bmc;
+  glyph gl= fng->get (c);
+  if (nil (gl)) return font_rep::get_glyph (s);
+  return gl;
 }
 
 /******************************************************************************

@@ -134,10 +134,10 @@ font_rep::var_draw (ps_device dev, string s, SI x, SI y) {
   }
 }
 
-glief
-font_rep::get_bitmap (string s) {
-  fatal_error ("No bitmap available for " * s, "font_rep::get_bitmap");
-  return glief(); // avoids error message when C++ compiler behaves badly
+glyph
+font_rep::get_glyph (string s) {
+  fatal_error ("No bitmap available for " * s, "font_rep::get_glyph");
+  return glyph(); // avoids error message when C++ compiler behaves badly
 }
 
 /******************************************************************************

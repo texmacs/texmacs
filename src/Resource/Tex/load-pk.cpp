@@ -177,13 +177,13 @@ pk_loader::realfunc () {
 ******************************************************************************/
 
 struct char_bitstream {
-  glief& bmc;
+  glyph& gl;
   int x, y;
   QN* pos;
   int bit;
 
-  char_bitstream (glief& bmc2):
-    bmc (bmc2), x(0), y(0), pos (bmc->raster), bit (0) {}
+  char_bitstream (glyph& gl2):
+    gl (gl2), x(0), y(0), pos (gl->raster), bit (0) {}
   void write (int num, int times=1, int repeat=0) {
     int i, j;
     for (i=0; i<times; i++) {
@@ -191,11 +191,11 @@ struct char_bitstream {
       bit= (bit+1)&7;
       if (bit==0) pos++;
       x++;
-      if (x==bmc->width) {
+      if (x==gl->width) {
 	x=0; y++;
 	while (repeat>0) {
-	  for (j=0; j<bmc->width; j++) {
-	    (*pos) += ((bmc->get_1 (j, y-1))<<bit);
+	  for (j=0; j<gl->width; j++) {
+	    (*pos) += ((gl->get_1 (j, y-1))<<bit);
 	    bit= (bit+1)&7;
 	    if (bit==0) pos++;
 	  }
@@ -212,14 +212,14 @@ struct char_bitstream {
 ******************************************************************************/
 
 void
-pk_loader::unpack (glief& bmc) { 
+pk_loader::unpack (glyph& gl) { 
   register SI i, j;
   register HN wordweight;
   HI rowsleft; 
   bool turnon;
   HI hbit;
   HN count; 
-  char_bitstream bit_out (bmc);
+  char_bitstream bit_out (gl);
 
   real_func_flag = true;
   dynf = flagbyte / 16; 
@@ -227,14 +227,14 @@ pk_loader::unpack (glief& bmc) {
 
   if (dynf == 14) {
     bitweight = 0 ; 
-    for (j=0; j<bmc->height; j++)
-      for (i=0; i<bmc->width; i++)
+    for (j=0; j<gl->height; j++)
+      for (i=0; i<gl->width; i++)
 	bit_out.write (getbit ()? 1: 0);
   }
 
   else {
-    rowsleft = bmc->height; 
-    hbit = bmc->width; 
+    rowsleft = gl->height; 
+    hbit = gl->width; 
     repeatcount = 0; 
     wordweight = 16;
     bitweight = 0;
@@ -252,7 +252,7 @@ pk_loader::unpack (glief& bmc) {
 	  rowsleft -= repeatcount + 1; 
 	  repeatcount = 0; 
 	  count -= hbit; 
-	  hbit = bmc->width; 
+	  hbit = gl->width; 
 	  wordweight = 16; 
 	} 
 	else {
@@ -263,7 +263,7 @@ pk_loader::unpack (glief& bmc) {
       }
       turnon = ! turnon; 
     }
-    if ((rowsleft != 0) || (hbit != bmc->width)) {
+    if ((rowsleft != 0) || (hbit != gl->width)) {
       cerr << "\npk file= " << file_name << "\n";
       fatal_error ("more bits than required while unpacking",
 		   "unpack", "load-pk.cpp");
@@ -275,7 +275,7 @@ pk_loader::unpack (glief& bmc) {
 * Reading the font
 ******************************************************************************/
 
-glief*
+glyph*
 pk_loader::load_pk () {
   register HI i;
   register SI k;
@@ -287,7 +287,7 @@ pk_loader::load_pk () {
   register SI xoff;
   register SI yoff;
   
-  glief* bmf= new glief [ec+1-bc];
+  glyph* fng= new glyph [ec+1-bc];
 
   // Preamble
   if (pkbyte ()!=247) {
@@ -371,11 +371,11 @@ pk_loader::load_pk () {
       if ((cwidth > 0) && (cheight > 0) &&
 	  (((QN) charcode) >= bc) && (((QN) charcode) <= ec)) {
 	// cout << "---> unpacking " << charcode << "!\n";
-	glief bmc (cwidth, cheight, xoff, yoff);
-	unpack (bmc);
-	bmf [((QN) charcode)- bc]= bmc;
+	glyph gl (cwidth, cheight, xoff, yoff);
+	unpack (gl);
+	fng [((QN) charcode)- bc]= gl;
 	// cout << "---> " << charcode << " done !\n";
-	// cout << bmf [((QN) charcode)- bc] << "\n";
+	// cout << fng [((QN) charcode)- bc] << "\n";
       }
     }
 
@@ -402,21 +402,21 @@ pk_loader::load_pk () {
   register int c;
   for (c=bc; c<=ec; c++) {
     if (tfm->tag (c)==3) {
-      if (tfm->bot(c)!=0) bmf[tfm->bot (c)]->status |= 1;
-      if (tfm->top(c)!=0) bmf[tfm->top (c)]->status |= 2;
-      if (tfm->mid(c)!=0) bmf[tfm->mid (c)]->status |= 3;
-      if (tfm->rep(c)!=0) bmf[tfm->rep (c)]->status |= 3;
+      if (tfm->bot(c)!=0) fng[tfm->bot (c)]->status |= 1;
+      if (tfm->top(c)!=0) fng[tfm->top (c)]->status |= 2;
+      if (tfm->mid(c)!=0) fng[tfm->mid (c)]->status |= 3;
+      if (tfm->rep(c)!=0) fng[tfm->rep (c)]->status |= 3;
     }
   }
   for (c=0; c<=ec-bc; c++)
-    if (!nil (bmf[c])) {
-      if (bmf[c]->status != 0) bmf[c]->yoff= 0;
+    if (!nil (fng[c])) {
+      if (fng[c]->status != 0) fng[c]->yoff= 0;
       SI design_size = tfm->design_size () >> 12;
       SI display_size= (((design_size*dpi)/72)*PIXEL) >> 8;
       double unit    = ((double) display_size) / ((double) (1<<20));
       SI lwidth= (SI) (((double) (tfm->w(c+bc))) * unit);
-      bmf[c]->lwidth= ((lwidth+(PIXEL>>1)) / PIXEL);
+      fng[c]->lwidth= ((lwidth+(PIXEL>>1)) / PIXEL);
     }
 
-  return bmf;
+  return fng;
 }

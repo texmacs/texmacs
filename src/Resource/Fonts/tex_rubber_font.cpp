@@ -24,7 +24,7 @@ struct tex_rubber_font_rep: font_rep {
   int              dsize;
   translator       ext;
   tex_font_metric  tfm;
-  font_gliefs      pk;
+  font_glyphs      pk;
   double           unit;
 
   tex_rubber_font_rep (display dis, string name, string trl_name,
@@ -104,16 +104,16 @@ tex_rubber_font (display dis, string trl_name,
 
 void
 tex_rubber_font_rep::get_extents (int c, metric& ex) {
-  glief bmc= pk->get (c);
+  glyph gl= pk->get (c);
 
   ex->x1=  0;
   ex->y1= -conv (tfm->d(c));
   ex->x2=  conv (tfm->w(c));
   ex->y2=  conv (tfm->h(c));
-  ex->x3= -((int) bmc->xoff) * PIXEL;
-  ex->x4=  ((int) (bmc->width- bmc->xoff)) * PIXEL;
-  ex->y3=  ((int) (bmc->yoff- bmc->height)) * PIXEL;
-  ex->y4=  ((int) bmc->yoff) * PIXEL;
+  ex->x3= -((int) gl->xoff) * PIXEL;
+  ex->x4=  ((int) (gl->width- gl->xoff)) * PIXEL;
+  ex->y3=  ((int) (gl->yoff- gl->height)) * PIXEL;
+  ex->y4=  ((int) gl->yoff) * PIXEL;
 
   ex->x3 -= 2*PIXEL; ex->x4 += 2*PIXEL;
   ex->y3 -= 2*PIXEL; ex->y4 += 3*PIXEL;
