@@ -1728,9 +1728,13 @@ tmg_make_deactivated_arg (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
 }
 
 SCM
-tmg_insert_argument () {
+tmg_insert_argument (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_argument ();
+  get_server()->get_editor()->insert_argument (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2908,7 +2912,7 @@ initialize_glue_editor () {
   gh_new_procedure ("make-active", (FN) tmg_make_active, 2, 0, 0);
   gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
   gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
-  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 0, 0, 0);
+  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
   gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);

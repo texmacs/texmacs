@@ -327,7 +327,7 @@ public:
   virtual void make_expand (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
   virtual void make_apply (string s) = 0;
-  virtual void insert_argument () = 0;
+  virtual void insert_argument (bool forward= true) = 0;
 
   /* public routines from edit_process */
   virtual void make_session (string lan, string session) = 0;

@@ -174,7 +174,7 @@
   (make-active make_active (void string int))
   (make-deactivated make_deactivated (void string int string))
   (make-deactivated-arg make_deactivated (void string int string string))
-  (insert-argument insert_argument (void))
+  (insert-argument insert_argument (void bool))
   (make-return-before make_return_before (void))
   (make-return-after make_return_after (bool))
   (make-assign make_assign (void string string))

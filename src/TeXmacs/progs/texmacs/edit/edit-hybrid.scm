@@ -112,15 +112,18 @@
 	   (session-fold-input)))))
 
 (define (structured-insert-left)
-  (hybrid-insert #f))
+  (let ((x (inside-which '("table" "tree" "switch"
+			   "inactive" "tuple" "attr" "input"))))
+    (if (in? x '("table" "tree" "switch" "input"))
+	(hybrid-insert #f)
+	(insert-argument #f))))
 
 (define (structured-insert-right)
   (let ((x (inside-which '("table" "tree" "switch"
 			   "inactive" "tuple" "attr" "input"))))
-    (cond ((in? x '("table" "tree" "switch" "input"))
-	   (hybrid-insert #t))
-	  ((or (in-preamble-mode?) (in? x '("inactive" "tuple" "attr")))
-	   (insert-argument)))))
+    (if (in? x '("table" "tree" "switch" "input"))
+	(hybrid-insert #t)
+	(insert-argument #t))))
 
 (define (structured-insert-up)
   (let ((x (inside-which '("table" "input"))))
@@ -184,7 +187,7 @@
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
         ((or (is-deactivated?) (in-preamble-mode?)
 	     (inside? "tuple") (inside? "attr"))
-	 (insert-argument))
+	 (insert-argument #t))
 	((and (in-session?)
 	      (plugin-supports-completions? (get-env "prog language")))
 	 (if (session-complete-try?) (noop)))

@@ -87,7 +87,7 @@
       (make-inactive "apply" 1)
       (make-inactive "compound" 1))
   (insert-string s)
-  (insert-argument)
+  (insert-argument #t)
   (set-message "Press <Return> to activate" s))
 
 (tm-define (make-inactive-compound-args s n)
@@ -97,7 +97,7 @@
       (make-inactive "apply" n)
       (make-inactive "compound" n))
   (insert-string s)
-  (insert-argument)
+  (insert-argument #t)
   (set-message "Press <Return> to activate" s))
 
 (tm-define (make-inactive-assign-arg s)
