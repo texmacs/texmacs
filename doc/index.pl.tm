@@ -1,13 +1,16 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.9>
 
 <style|tmdoc>
 
 <\body>
   <\tmdoc-title*|Witamy na stronie dokumentacji programu GNU <TeXmacs>>
-    \ Angielski \| Francuski \| Niemiecki<hlink|<with|color|brown|>|index.it.tm>
-    \| <hlink|<with|color|brown|Portugalski>|index.pt.tm> \| Hiszpa«ski \|
-    Wªoski<hlink|<with|color|brown|>|index.es.tm>\ 
-  </tmdoc-title*>
+    \ <hlink|<with|color|brown|Angielski>|index.en.tm> \|
+    <hlink|<with|color|brown|Francuski>|index.fr.tm> \|
+    <hlink|<with|color|brown|Niemiecki>|index.de.tm><hlink|<with|color|brown|>|index.it.tm>
+    \| <hlink|<hlink|<with|color|brown|Portugalski>|index.pt.tm>|index.pt.tm>
+    \| <hlink|<with|color|brown|Hiszpa«ski>|index.es.tm> \|
+    <hlink|<with|color|brown|Wªoski>|index.it.tm><hlink|<with|color|brown|>|index.es.tm>
+    </tmdoc-title*>
 
   Witamy w nowym projekcie dokumentacji programu <TeXmacs>, rozwijanego
   poprzez sie¢. Projekt \ ten umo»liwia u»ytkownikom pobieranie informacji z
@@ -73,40 +76,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|page-reduce-top|15mm>
-  </collection>
-</initial>
-
-<\references>
-  <\collection>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <with|par-left|<quote|6fn>|font-size|<quote|0.84>|Information for
-      general users<value|toc-dots><pageref|toc-1>>
-
-      <with|par-left|<quote|6fn>|font-size|<quote|0.84>|Information for
-      T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>
-      developers<value|toc-dots><pageref|toc-2>>
-    </associate>
-  </collection>
-</auxiliary>
