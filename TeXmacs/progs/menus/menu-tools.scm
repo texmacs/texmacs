@@ -38,7 +38,7 @@
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))
       ("Environment" (show-env))
-      ("Keymaps" (show-keymaps))
+      ;;("Keymaps" (show-keymaps))
       ---
       ("Error" (oops))
       ("Test" (edit-test))
