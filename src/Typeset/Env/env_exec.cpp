@@ -1736,7 +1736,7 @@ edit_env_rep::decode_length (string s) {
   if (s3 == "cm") { return (SI) (x*cm); }
   if (s3 == "mm") { return (SI) (x*cm/10.0); }
   if (s3 == "in") { return (SI) (x*in); }
-  if (s3 == "pt") { return (SI) (x*in/72.0); }
+  if (s3 == "pt") { return (SI) (x*in/72.27); }
   if (s2 == "spc") { return (SI) (x*fn->spc->def); }
   if (s2 == "spc-") { return (SI) (x*fn->spc->min); }
   if (s2 == "spc+") { return (SI) (x*fn->spc->max); }
@@ -1762,6 +1762,13 @@ edit_env_rep::decode_length (string s) {
     get_page_pars (d1, height, d2, d3, d4, d5, d6, d7);
     return (SI) (x*height);
   }
+  if (s3 == "bp") { return (SI) (x*in/72.0); }
+  if (s3 == "dd") { return (SI) (0.0376*x*cm); }
+  if (s3 == "pc") { return (SI) (12.0*x*in/72.27); }
+  if (s3 == "cc") { return (SI) (12.0*0.0376*x*cm); }
+  if (s2 == "xspc") { return (SI) (x*fn->extra->def); }
+  if (s2 == "xspc-") { return (SI) (x*fn->extra->min); }
+  if (s2 == "xspc+") { return (SI) (x*fn->extra->max); }
   return 0;
 }
 
