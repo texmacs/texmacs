@@ -61,7 +61,8 @@ public:
   void freeze_block (tree_label tag, int nr);
 
   /* Heuristic initialization */
-  bool heuristic_init (string var, tree macro);
+  bool heuristic_init_macro (string var, tree macro);
+  bool heuristic_init_xmacro (string var, tree xmacro);
   void heuristic_init (hashmap<string,tree> env);
 
   friend class drd_info;

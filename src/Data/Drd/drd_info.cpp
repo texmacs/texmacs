@@ -225,7 +225,7 @@ accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
 }
 
 bool
-drd_info_rep::heuristic_init (string var, tree macro) {
+drd_info_rep::heuristic_init_macro (string var, tree macro) {
   tree_label l = make_tree_label (var);
   tag_info old_ti= copy (info[l]);
   int i, n= N(macro)-1;
@@ -250,7 +250,7 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
       string var= it->next();
       tree   val= env[var];
       if (is_func (val, MACRO))
-	flag= heuristic_init (var, val) | flag;
+	flag= heuristic_init_macro (var, val) | flag;
     }
     if ((round++) == 10) {
       cout << "TeXmacs] Warning: bad heuristic drd convergence\n";
