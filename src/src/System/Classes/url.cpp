@@ -188,10 +188,10 @@ static bool
 heuristic_is_default (string name, int type) {
 #ifdef OS_WIN32
   // FIXME: we probably should take into account 'type' too
-  if((name[0] == '\\') && (name[1] == '\\'))
-		return true;
-  if(isalpha(name[0]) && (name[1] == ':') && (name[2] == '\\'))
-		return true;
+  if ((name[0] == '\\') && (name[1] == '\\'))
+    return true;
+  if (isalpha(name[0]) && (name[1] == ':') && (name[2] == '\\'))
+    return true;
   return false;
 #else
   char sep= (type==0)? URL_CONCATER: '/';
