@@ -24,4 +24,7 @@ point operator / (point p, double x);
 point as_point (tree t);
 tree  as_tree (point p);
 
+double operator * (point p1, point p2);
+double norm (point p);
+
 #endif // defined POINT_H
