@@ -19,7 +19,7 @@
 (texmacs-module (proclus-lib)
   (:export get-init-env
            get-strg-name-buffer
-           tm-subobject
+           tm-substree
            save-excursion))
 
 (define (get-init-env s)
@@ -28,8 +28,8 @@
 (define (get-strg-name-buffer)
   (url->string (get-name-buffer)))
 
-(define (tm-subobject p)
-  (tree->object (tm-subtree p)))
+(define (tm-substree p)
+  (tree->stree (tm-subtree p)))
 
 (define-macro (save-excursion . body)
   ;; TODO: save point and mark too, like emacs

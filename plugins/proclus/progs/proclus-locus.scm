@@ -132,7 +132,7 @@
 
 (define (locus-set-text p x)
   (tm-assign (rcons p 0)
-             (object->tree x)))
+             (stree->tree x)))
 
 (define (locus-set-text-go-to p x ppos)
   (locus-set-text p x)
@@ -141,7 +141,7 @@
 (define (locus-set-tuple p l)
   ;; Set the metadata of the locus at @p to the list @l converted to a tuple.
   (tm-assign (rcons p 1)
-             (object->tree (list->tuple l))))
+             (stree->tree (list->tuple l))))
 
 (define (list->tuple l)
   (let sub ((x l))
@@ -151,7 +151,7 @@
   (locus-set-links-flat p (list-concatenate links)))
 
 (define (locus-set-links-flat p links)
-  (let ((t (locus-tuple (tm-subobject p))))
+  (let ((t (locus-tuple (tm-substree p))))
     (locus-set-tuple p (cons* (first t) (second t) links))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,15 +175,15 @@
 
 (define (get-locus-or-not-locus)
   (and-let* ((p (get-locus-or-not-locus-path)))
-    (tm-subobject p)))
+    (tm-substree p)))
 
 (define (get-locus)
   (and-let* ((p (get-locus-path)))
-    (tm-subobject p)))
+    (tm-substree p)))
 
 (define (get-not-locus)
   (and-let* ((p (get-not-locus-path)))
-    (tm-subobject p)))
+    (tm-substree p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Locus creation
@@ -193,7 +193,7 @@
   ;; FIXME: do not use clipboard, instead work with primitive buffer ops
   (let ((sel? (selection-active-any?)))
     (if sel? (clipboard-cut "ah"))
-    (insert-object-go-to `(locus "" (tuple ,absname ,n))
+    (insert-stree-go-to `(locus "" (tuple ,absname ,n))
                          '(0 0))
     (if sel? (clipboard-paste "ah"))))
 
@@ -223,7 +223,7 @@
     (locus-add-link (locus-path source-id) but-absname but-id types)))
 
 (define (locus-add-link path absname id types)
-  (let ((links (locus-links (tm-subobject path))))
+  (let ((links (locus-links (tm-substree path))))
     (locus-set-links
      path (if (link-in? absname id links)
               (add-types absname id types links)
@@ -257,7 +257,7 @@
   (let sub ((p '()))
     (search-in-tree-from (the-buffer) p 'locus
                          (lambda (p t)
-                           (if (== id (locus-id (tm-subobject p)))
+                           (if (== id (locus-id (tm-substree p)))
                                p (sub (rcons p 0)))))))
 
 (define (go-to-locus lk)

@@ -2,11 +2,11 @@
 
 (define (french-punctuation-initialize)
   (define (make-french-right-punctuation str)
-    (insert-object `(concat (hspace "1spc") ,str)))
+    (insert-stree `(concat (hspace "1spc") ,str)))
   (define (make-french-left-punctuation str)
-    (insert-object `(concat ,str (hspace "1spc"))))
+    (insert-stree `(concat ,str (hspace "1spc"))))
   (define (make-french-near-punctuation str)
-    (insert-object `(concat (space "0.25fn") ,str)))
+    (insert-stree `(concat (space "0.25fn") ,str)))
 
   (kbd-map in-french?
     (";" (make-french-near-punctuation ";"))
@@ -17,7 +17,7 @@
     ("> *" (make-french-right-punctuation ""))
     ("< <" (make-french-left-punctuation ""))
     ("> >" (make-french-right-punctuation ""))
-    ("e t c ." (insert-object '(abbr "etc.")))))
+    ("e t c ." (insert-stree '(abbr "etc.")))))
 
 (plugin-configure french-punctuation-initialize
   (:require #t)

@@ -23,31 +23,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	Public commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-slides)
-  (apply-on-new-buffer-object
+  (apply-on-new-buffer-stree
    (lambda (x) (sections->switch x '(section subsection subsubsection)))))
 
 (define (make-slides-here)
-  (apply-on-buffer-object
+  (apply-on-buffer-stree
    (lambda (x) (sections->switch x '(section subsection subsubsection)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;	Buffer transformation utilities ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Apply a procedure on a buffer's content.
 
-(define (apply-on-buffer-object proc)
+(define (apply-on-buffer-stree proc)
   ;; Apply @proc to the buffer content as scheme, and replace the buffer
   ;; content by the result of @proc.
-  (let ((t (object->tree
+  (let ((t (stree->tree
 	    (htmltm-unary-document
-	     (proc (tree->object (the-buffer)))))))
+	     (proc (tree->stree (the-buffer)))))))
     (tm-assign '() t)))
 
-(define (apply-on-new-buffer-object proc)
-  ;; Do as apply-on-buffer-object but create a new buffer, do not overwrite the
+(define (apply-on-new-buffer-stree proc)
+  ;; Do as apply-on-buffer-stree but create a new buffer, do not overwrite the
   ;; current buffer.
-  (let ((t (object->tree
+  (let ((t (stree->tree
 	    (htmltm-unary-document
-	     (proc (tree->object (the-buffer)))))))
+	     (proc (tree->stree (the-buffer)))))))
     (new-buffer)
     (tm-assign '() t)))
 
@@ -112,7 +112,7 @@
 
 (define (flatten-switch)
   (switch-unselect-recursive)
-  (apply-on-buffer-object flatten-switch-sub))
+  (apply-on-buffer-stree flatten-switch-sub))
 
 (define (switch-unselect-recursive)
   (go-innermost-switch)

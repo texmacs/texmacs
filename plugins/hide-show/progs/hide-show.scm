@@ -50,7 +50,7 @@
 		    (lambda (s) (not (string-null? s))))))
 
 (define (hide-ia)
-  (if (not (func? (tree->object (get-init-tree "hide")) 'macro))
+  (if (not (func? (tree->stree (get-init-tree "hide")) 'macro))
       (init-extra-style "hide"))
   (interactive-proc '("Hide:")
 		    (lambda (s) (hide (input->symbols s)))))

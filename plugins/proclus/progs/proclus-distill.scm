@@ -69,7 +69,7 @@
 (define (edit-loci)
   (let* ((src-buff (get-strg-name-buffer))
 	 (the-nw-buff (string-append src-buff "-loci"))
-	 (the-tree (object->tree `(document  ,@(loci-tree)))))
+	 (the-tree (stree->tree `(document  ,@(loci-tree)))))
     (if (not (equal? (texmacs->verbatim the-tree) ""))
 	(begin
           (new-buffer-clear the-nw-buff)
@@ -79,7 +79,7 @@
           (pretend-save-buffer)))))
 
 (define (loci-tree)
-  (extract locus? (tree->object (the-buffer))))
+  (extract locus? (tree->stree (the-buffer))))
 
 (define (new-buffer-clear name)
   ;; Create a new buffer with the given name and switch to this buffer. If
@@ -120,13 +120,13 @@
   (register-buffer-absolute-name-maybe)
   (and-let* ((the-locus (get-locus-or-not-locus))
              (src-buff (get-strg-name-buffer))
-             (the-object (edit-links/cons the-locus)))
+             (the-stree (edit-links/cons the-locus)))
     (new-buffer-clear
      (string-append src-buff "-source-" (locus-id the-locus)))
     (init-style "proclus-links")
     (init-env "magnification" "1")
     (set-source-buffer! src-buff)
-    (insert-object the-object)
+    (insert-stree the-stree)
     (pretend-save-buffer)))
 
 (define (absname-error . args)
@@ -153,7 +153,7 @@
                        (switch-to-active-buffer (absolute-name->url (car y)))
                        (map (cut link->edit <> (cdr y))
                             (extract-loci (map link-id (cdr y))
-                                             (tree->object (the-buffer)))))))
+                                             (tree->stree (the-buffer)))))))
                    (sort-links-by-file
                     (select-links (locus-links the-locus)
                                   (active-types)))))))))

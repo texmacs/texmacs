@@ -23,7 +23,7 @@
 (define (absname-editor)
   (switch-to-active-buffer
    "$TEXMACS_HOME_PATH/system/tmp/Proclus - Noms absolus")
-  (tm-assign '() (object->tree (absname-editor/cons)))
+  (tm-assign '() (stree->tree (absname-editor/cons)))
   (pretend-save-buffer))
 
 (define (absname-editor/cons)

@@ -105,7 +105,7 @@
     (let* (
        (src-buff (get-strg-name-buffer))
        (the-nw-buff (cons-file-name (get-strg-name-buffer) lenv))
-       (the-tree (object->tree (cons 'document (sublist-listenv lenv (tree->object (the-buffer))))))) 
+       (the-tree (stree->tree (cons 'document (sublist-listenv lenv (tree->stree (the-buffer))))))) 
       (if (not (equal? (convert the-tree "texmacs-tree" "verbatim-snippet") ""))
 	  (begin     
 	    (switch-to-active-buffer the-nw-buff) ;"trick" to test if the buffer already exists... 

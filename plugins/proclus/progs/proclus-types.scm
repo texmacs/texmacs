@@ -56,14 +56,14 @@
 
 (define (list-types)
   (source-buffer-excursion
-   (let ((x (tree->object (get-init-tree "proclus-type-list"))))
+   (let ((x (tree->stree (get-init-tree "proclus-type-list"))))
      (if (func? x 'tuple)
          (cdr x)
          '()))))
 
 (define (active-types)
   (source-buffer-excursion
-   (let ((x (tree->object (get-init-tree "proclus-active-types"))))
+   (let ((x (tree->stree (get-init-tree "proclus-active-types"))))
      (if (not (func? x 'tuple))
          (begin (set-active-types (list-types))
                 (list-types))
@@ -72,10 +72,10 @@
 (define (set-active-types types)
   (source-buffer-excursion
    (init-env-tree "proclus-active-types"
-                  (object->tree (cons 'tuple types)))))
+                  (stree->tree (cons 'tuple types)))))
 
 (define (types-tree)
-  (transform locus? (tree->object (the-buffer))))
+  (transform locus? (tree->stree (the-buffer))))
 
 (define (type? x)
   (and (pair? x)
@@ -87,7 +87,7 @@
 ;;adds the list of  types ltypes to the  type list of the current doc.
 (define (merge-types ltypes) 
   (init-env-tree "proclus-type-list"
-		 (object->tree 
+		 (stree->tree 
 		  (cons 'tuple 
 			(uniq 
 			 (list-concatenate 
@@ -96,7 +96,7 @@
 ;;adds the list of  types ltypes to the active  types list of the current doc.
 (define (merge-active-types ltypes) 
   (init-env-tree "proclus-active-types"
-		 (object->tree 
+		 (stree->tree 
 		  (cons 'tuple 
 			(uniq 
 			 (list-concatenate 
@@ -222,7 +222,7 @@
 			     (delete-types/sub))))))
 (define (delete-types-rec)
   (init-env-tree "proclus-type-list" 
-		 (object->tree 
+		 (stree->tree 
 		  (cons 'tuple
 			(list-filter 
 			 (list-types) 

@@ -7,7 +7,7 @@
 (define (tree-func? t s) (== s (tree-get-label t)))
 
 ; (define (near-space?/leaf t1 i)
-;   (let ((s (tree->object t1)))
+;   (let ((s (tree->stree t1)))
 ;     (or (and (< 0 i)
 ;              (string-space-at? s (1- i)))
 ;         (and (< i (string-length s))
@@ -56,7 +56,7 @@
 	    (else #f)))))
 
 (define (before-space?/atomic t i)
-  (let ((s (tree->object t)))
+  (let ((s (tree->stree t)))
     (and (< i (string-length s))
 	 (string-space-at? s i))))
 
@@ -68,7 +68,7 @@
 	    (else #f)))))
 
 (define (after-space?/atomic t i)
-  (let ((s (tree->object t)))
+  (let ((s (tree->stree t)))
     (and (< 0 i) (string-space-at? s (1- i)))))
 
 (define (move-next)
@@ -76,6 +76,6 @@
 	(i (last (the-path))))
     (let ((t (tm-subtree p)))
       (if (tree-atomic? t)
-	  (let ((s (tree->object t)))
+	  (let ((s (tree->stree t)))
 	    (if (< i (string-length s))
 		(tm-go-to (rcons p (1+ i)))))))))

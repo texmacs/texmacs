@@ -101,7 +101,7 @@
 
 ; (define (display-found-em p+t)
 ;   (display* "Found em at: " (first p+t) "\n")
-;   (display* "Found em data: " (tree->object (second p+t)) "\n"))
+;   (display* "Found em data: " (tree->stree (second p+t)) "\n"))
 
 ; (define (find-next-em)
 ;   (let ((p+t (search-in-tree-from
