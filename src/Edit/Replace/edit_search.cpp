@@ -442,7 +442,9 @@ edit_replace_rep::search_keypress (string s) {
       }
     else if ((s == "C-c") || (s == "C-g"))
       search_stop ();
-    else if ((s == "C-r") || (s == "C-s") || (s == "find") || (s == "again")) {
+    else if ((s == "C-r") || (s == "C-s") ||
+	     (s == "C-f") || (s == "F3") ||
+	     (s == "find") || (s == "again")) {
       if (search_what == "") {
 	tree t= selection_raw_get ("search");
 	if (is_tuple (t, "texmacs", 3) &&

@@ -78,6 +78,7 @@
 (use-modules (keyboard kbd-config))
 (lazy-in-mode (keyboard kbd-wildcards) always?)
 (if (like-emacs?) (lazy-in-mode (keyboard kbd-emacs) always?))
+(if (like-windows?) (lazy-in-mode (keyboard kbd-windows) always?))
 (if (like-old?) (lazy-in-mode (keyboard kbd-old) always?))
 (lazy-in-mode (keyboard kbd-latex) always?)
 (lazy-in-mode (keyboard kbd-general) always?)
