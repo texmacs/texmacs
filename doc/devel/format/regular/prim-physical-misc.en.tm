@@ -85,13 +85,7 @@
     </description>
   </explain>
 
-  <\explain|<explain-macro|error|message>>
-    This primitive should never appear in documents. It is provided as aid in
-    tracking down invalid constructs. It is produced at evaluation time by
-    any kind of primitive which is given improper operands.
-  </explain>
-
-  <\explain|<explain-macro|raw-data|data>>
+  <\explain|<explain-macro|raw-data|data><explain-synopsis|binary content>>
     In some contexts you need to embed uneditable data inside a document,
     most of the time this is uneditable binary data. The <markup|raw-data>
     primitive makes it impossible to view or modify its subtree from within

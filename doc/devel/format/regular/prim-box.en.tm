@@ -118,13 +118,6 @@
     <src-arg|content> is typeset.
   </explain>
 
-  <\explain>
-    <explain-macro|dbox><explain-synopsis|marker for decorations>
-  <|explain>
-    This primitive is only intended for internal use by the <markup|datoms>,
-    <markup|dlines> and <markup|dpages> primitives.
-  </explain>
-
   <tmdoc-copyright|2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
