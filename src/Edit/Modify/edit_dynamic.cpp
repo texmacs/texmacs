@@ -434,9 +434,12 @@ edit_dynamic_rep::back_hide_expand (path p) {
 
 void
 edit_dynamic_rep::back_extension (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE)) back_dynamic (p);
+  tree st= subtree (et, p);
+  if ((drd->get_props (L (st)) & ACCESSIBLE_MASK) != ACCESSIBLE)
+    back_dynamic (p);
+  else if (is_func (subtree (et, path_up (p)), INACTIVE))
+    back_dynamic (p);
   else {
-    tree st= subtree (et, p);
     int n= N(st);
     if (n==0) {
       assign (p, "");
@@ -521,8 +524,11 @@ edit_dynamic_rep::back_in_extension (tree t, path p) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
     back_in_dynamic (t, p, 1);
   else {
-    int node= last_item (p);
-    if (node>0) go_to (end (et, path_up (p) * (node-1)));
+    int node= last_item (p) - 1;
+    while ((node >= 0) &&
+	   (!drd->is_accessible_child (subtree (et, path_up (p)), node)))
+      node--;
+    if (node >= 0) go_to (end (et, path_up (p) * node));
     else {
       int i;
       for (i=0; i<N(t); i++)

@@ -65,14 +65,67 @@ drd_info_rep::get_props (tree_label l) {
 * Heuristic initialization of DRD
 ******************************************************************************/
 
+static bool
+accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
+  if (is_atomic (t)) return false;
+  else if (is_func (t, ARGUMENT)) return t == tree (ARGUMENT, var);
+  else if (is_func (t, MACRO)) return false;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (drd->is_accessible_child (t, i))
+	if (accessible_macro_arg (drd, t[i], var))
+	  return true;
+    return false;
+  }
+}
+
+bool
+drd_info_rep::heuristic_init (string var, tree macro) {
+  tree_label l= make_tree_label (var);
+  int i, n= N(macro)-1, k= min (n, CUSTOM_ACCESSIBLE_MAX);
+  int old_props= get_props (l);
+  int new_props= old_props;
+
+  /* Getting accessibility flags */
+  int detailed = 0;
+  bool all_on= true, all_off= true;
+  int MASK= ACCESSIBLE_MASK + CUSTOM_ACCESSIBLE_MASK;
+  new_props= new_props & (~MASK);
+  for (i=0; i<k; i++) {
+    if (accessible_macro_arg (this, macro[n], macro[i])) {
+      detailed += (1 << (CUSTOM_ACCESSIBLE_SHIFT + i));
+      all_off= false;
+    }
+    else all_on= false;
+  }
+  if (all_on) new_props += ACCESSIBLE;
+  else if (all_off) new_props += NOT_ACCESSIBLE;
+  else new_props += CUSTOM_ACCESSIBLE + detailed;
+  
+  /* storing the computed information */
+  set_arity (l, n);
+  set_props (l, new_props);
+  //if (new_props != old_props)
+  //cout << var << ": "
+  //<< (new_props & ACCESSIBLE_MASK) << ", "
+  //<< (new_props >> CUSTOM_ACCESSIBLE_SHIFT) << "\n";
+  return new_props != old_props;
+}
+
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
-  iterator<string> it= iterate (env);
-  while (it->busy()) {
-    string var= it->next();
-    tree   val= env[var];
-    (void) val;
-    // if (is_func (val, MACRO)) cout << var << "\n";
+  bool flag= true;
+  while (flag) {
+    //cout << HRULE;
+    flag= false;
+    iterator<string> it= iterate (env);
+    while (it->busy()) {
+      string var= it->next();
+      tree   val= env[var];
+      if (is_func (val, MACRO))
+	flag= heuristic_init (var, val) | flag;
+    }
   }
 }
 
@@ -90,7 +143,7 @@ drd_info_rep::is_dynamic (tree t) {
 
 bool
 drd_info_rep::is_accessible_child (tree t, int i) {
-  if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
+  // if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   switch (get_props (L(t)) & ACCESSIBLE_MASK) {
   case NOT_ACCESSIBLE:
     return false;
