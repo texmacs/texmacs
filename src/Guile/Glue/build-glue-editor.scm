@@ -177,6 +177,7 @@
   (activate activate (void))
   (insert-argument insert_argument (void bool))
   (make-with make_with (void string string))
+  (make-mod-active make_mod_active (void tree_label))
   (make-hybrid make_hybrid (void))
   (activate-latex activate_latex (void))
   (activate-hybrid activate_hybrid (void))

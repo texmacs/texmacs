@@ -32,7 +32,7 @@ valid_cursor (tree t, path p, bool start_flag=false) {
   }
   if (is_concat (t))
     return valid_cursor (t[p->item], p->next, start_flag || (p->item!=0));
-  if (is_inactive (t))
+  if (is_mod_active_once (t))
     return is_atomic (t[0]) || (!atom (p->next));
   if (is_prime (t)) return false;
   // FIXME: hack for treating VAR_EXPAND "math"
@@ -62,7 +62,7 @@ pre_correct (tree t, path p) {
     }
     return p;
   }
-  if (is_inactive (t) && is_compound (t[0]) && atom (p->next)) {
+  if (is_mod_active_once (t) && is_compound (t[0]) && atom (p->next)) {
     if (N (t[0]) == 0) return path (0);
     t= t[0]; p= p->next;
     if (p->item==0) return path (0, path (0, pre_correct (t[0], path (0))));
@@ -182,7 +182,7 @@ up_correct (tree t, path p, bool active= true) {
   if ((p->item<0) || (p->item>=N(t))) return path ();
   if (active && (!std_drd->is_accessible_child (t, p->item))) return path ();
   return path (p->item,
-	       up_correct (t[p->item], p->next, !is_inactive (t)));
+	       up_correct (t[p->item], p->next, !is_mod_active_once (t)));
 }
 
 path

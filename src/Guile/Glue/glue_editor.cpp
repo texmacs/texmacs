@@ -1758,6 +1758,19 @@ tmg_make_with (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_make_mod_active (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make-mod-active");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_mod_active (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_hybrid () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->make_hybrid ();
@@ -2914,6 +2927,7 @@ initialize_glue_editor () {
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
   gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
   gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
+  gh_new_procedure ("make-mod-active", (FN) tmg_make_mod_active, 1, 0, 0);
   gh_new_procedure ("make-hybrid", (FN) tmg_make_hybrid, 0, 0, 0);
   gh_new_procedure ("activate-latex", (FN) tmg_activate_latex, 0, 0, 0);
   gh_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 0, 0, 0);

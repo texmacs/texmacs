@@ -45,6 +45,7 @@ is_long (tree t) {
   case CELL:
     return is_long (t[N(t)-1]);
   case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
   case ACTIVE:
   case VAR_ACTIVE:
     return is_multi_paragraph (t[0]);
@@ -252,6 +253,18 @@ edit_env_rep::rewrite_inactive_active (
 }
 
 tree
+edit_env_rep::rewrite_inactive_var_active (
+  tree t, tree var, bool block, bool flush)
+{
+  tree r= subvar (var, 0);
+  if (flush &&
+      (src_compact != COMPACT_ALL) &&
+      (is_multi_paragraph (t[0])) || (src_compact == COMPACT_NONE))
+    r= tree (SURROUND, "", compound ("rightflush"), r);
+  return tree (MARK, var, r);
+}
+
+tree
 edit_env_rep::rewrite_inactive_hybrid (
   tree t, tree var, bool block, bool flush)
 {
@@ -357,11 +370,11 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
   case STYLE_ONLY:
     return rewrite_inactive_active (t, var, block, flush);
   case VAR_STYLE_ONLY:
-    return tree (MARK, var, subvar (var, 0));
+    return rewrite_inactive_var_active (t, var, block, flush);
   case ACTIVE:
     return rewrite_inactive_active (t, var, block, flush);
   case VAR_ACTIVE:
-    return tree (MARK, var, subvar (var, 0));
+    return rewrite_inactive_var_active (t, var, block, flush);
   case SYMBOL:
     return rewrite_inactive_symbol (t, var, block, flush);
   case HYBRID:
