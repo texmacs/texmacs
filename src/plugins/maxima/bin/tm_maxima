@@ -1,6 +1,7 @@
 #!/bin/bash
 TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
 export TEXMACS_MAXIMA_PATH
+echo $1 $2 > /tmp/foo
 case $1 in
   5.6)
     case $2 in
@@ -13,5 +14,6 @@ case $1 in
   5.9.0) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.0.lisp" \
       | maxima_filter;;
   5.9.0.9* | 5.9.1) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.1.lisp";;
+  5.9.1.1* | 5.9.2) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.2.lisp";;
   *) echo -e "\2latex:\\red Unsupported version of maxima: $1\5"
 esac
