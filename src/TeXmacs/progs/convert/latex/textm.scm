@@ -22,5 +22,6 @@
   (let* ((l2 (tmtm-modernize-newlines l1))
 	 (l3 (tmtm-nonumber->eqnumber l2))
 	 (l4 (tmtm-eat-space-around-control l3))
-	 (l5 (tmtm-remove-superfluous-newlines l4)))
-    l5))
+	 (l5 (tmtm-remove-superfluous-newlines l4))
+	 (l6 (tmtm-concat-document-correct l5)))
+    l6))
