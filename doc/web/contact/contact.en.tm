@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.4.6>
 
 <style|tmweb>
 
@@ -24,7 +24,8 @@
     <tmweb-email|treinen|texmacs.org>: maintainer of the Debian package.
 
     <item><hlink|Adreas Seidl|http://www.fmi.uni-passau.de/~seidl>
-    <tmweb-email|seidltm|texmacs.org>: maintainer of the Cygwin package.
+    <tmweb-email|seidltm|texmacs.org>: maintainer of the Cygwin package and
+    the FAQ.
 
     <item><hlink|Andrey Grozin|http://www.inp.nsk.su/~grozin>
     <tmweb-email|grozin|texmacs.org>: our expert on interfaces with computer
