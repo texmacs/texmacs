@@ -29,12 +29,11 @@
   will automatically appear in the corresponding submenu of
   <menu|Document|Package>.
 
-  Let us now create a simple macro <markup|hi> which should display ``Hello
-  world''. By typing <key|A-=>, you first have to create an assignment. Next,
-  you should enter ``hi'' as the first argument and type <key|A-m> inside the
-  second argument in order to create a macro. Finally, you have to type the
-  text ``Hello world'' in the body of the macro. Your document should now
-  consist of the following line:
+  Let us now create a simple macro <markup|hi> which displays ``Hello
+  world''. First type <key|A-=>, so as to create an assignment. Now enter
+  ``hi'' as the first argument and type <key|A-m> inside the second argument
+  in order to create a macro. Finally, type the text ``Hello world'' in the
+  body of the macro. Your document should now consist of the following line:
 
   <\tm-fragment>
     <inactive*|<assign|hi|<macro|Hello world>>>
@@ -66,9 +65,11 @@
   </tm-fragment>
 
   The <key|A-#> shortcut is used to retrieve the macro argument
-  <src-arg|name>. After saving your style package, you may again use the
-  macro in any document which uses your package by typing <key|\\ h e l l o>
-  and hitting <key|return>.
+  <src-arg|name>. Instead of typing <key|A-#>, ``name'' and
+  <key|<key-right>>, you may also use the hybrid <key|\\>-key and type
+  <key|\\ n a m e> followed by <key|<key-return>>. After saving your style
+  package, you may again use the macro in any document which uses your
+  package by typing <key|\\ h e l l o> and hitting <key|return>.
 
   From the internal point of view, all macro definitions are stored in the
   environment of the <TeXmacs> typesetter. Besides macros, the environment
@@ -107,7 +108,8 @@
   ``person'', insert an argument <key|A-<key-right>>, and enter the argument
   <src-arg|name> as before. When you are done, you may press
   <key|<key-return>> in order to change the <markup|compound> tag into a
-  <markup|person> tag.
+  <markup|person> tag. Alternatively, you may type <key|\\>, ``person'',
+  <key|A-<key-right>> and ``name''.
 
   By combining the above constructs, an ordinary user should already be able
   to produce style packages for all frequently used notations. An interesting
