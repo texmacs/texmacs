@@ -1,13 +1,20 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.11>
+  <section|Changes from version 1.0.3 to 1.0.4>
 
   <\itemize>
+    <item>Finished documentation of built-in environment variables (1.0.4).
+
+    <item>Bug fixes in the HTML converters and in the accelerator for long
+    documents (1.0.4).
+
+    <item>Better quasi-quoting and added unquote-splicing primitive (1.0.4).
+
     <item>Finished documentation of <TeXmacs> primitives (1.0.3.11).
 
     <item>Started documentation built-in environment variables (1.0.3.11).
