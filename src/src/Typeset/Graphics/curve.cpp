@@ -504,27 +504,77 @@ spline (array<point> a, array<path> cip, bool close, bool interpol) {
 ******************************************************************************/
 
 struct arc_rep: public curve_rep {
+  array<point> a;
+  array<path> cip;
+  array<double> u;
   point center;  // Center
+  point i, j;    // The two base vectors of the ellipsis's 2D plane
   double r1, r2; // The two radiuses of the ellipsis
-  double alpha;  // Angle to define how the ellipsis is rotated
   double e1, e2; // Coordinates of the two extremal points of the arc
-  arc_rep (
-    point c, double r1b, double r2b, double a, double e1b, double e2b):
-    center (c), r1 (r1b), r2 (r2b), alpha (a), e1 (e1b), e2 (e2b-e1b) {}
+  arc_rep (array<point> a, array<path> cip, bool close);
   point evaluate (double t);
   void rectify_cumul (array<point>& cum, double eps);
   double bound (double t, double eps);
   point grad (double t, bool& error);
   double curvature (double t1, double t2);
-  /*int get_control_points (
+  int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
-  */
 };
+
+arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
+  a(a2), cip(cip2)
+{
+  int n= N(a);
+  point o1= (n>0 ? a[0] : point (0,0));
+  point o2= (n>1 ? a[1] : point (0,0));
+  point o3= (n>2 ? a[2] : point (0,0));
+  if (n!=3 || linearly_dependent (o1, o2, o3)) {
+    center= i= j= 0*o1;
+    r1= r2= 1;
+    e1= 0;
+    e2= 1;
+    a= array<point> (1);
+    a[0]= o1;
+    if (N(cip)) {
+      path p= cip[0];
+      cip= array<path> (1);
+      cip[0]= p;
+    }
+    u= array<double> (1);
+    u[0]= 0;
+    return;
+  }
+  center= intersect (midperp (o1, o2, o3), midperp (o2, o3, o1));
+  r1= r2= norm (o1-center);
+  if (orthogonalize (i, j, center, o1, o2)) ;
+  else
+    orthogonalize (i, j, center, o1, o3);
+  e1= 0;
+  point o2b (2), o3b (2);
+  o2b[0]= (o2-center) * i;
+  o2b[1]= (o2-center) * j;
+  o3b[0]= (o3-center) * i;
+  o3b[1]= (o3-center) * j;
+  e2= arg (o3b) / (2*tm_PI);
+  double e3= arg (o2b) / (2*tm_PI);
+  if (e2<e3) {
+    j= -j;
+    o3b[1]= -o3b[1];
+    e2= arg (o3b) / (2*tm_PI);
+    o2b[1]= -o2b[1];
+    e3= arg (o2b) / (2*tm_PI);
+  }
+  u= array<double> (3);
+  u[0]= 0;
+  u[1]= e3;
+  u[2]= e2;
+  if (close) e2= 1;
+}
 
 point
 arc_rep::evaluate (double t) {
-  return center + r1*cos(2*tm_PI*(e1+t))*point (cos(alpha), sin(alpha))
-                + r2*sin(2*tm_PI*(e1+t))*point (-sin(alpha), cos(alpha));
+  return center + r1*cos(2*tm_PI*(e1+t))*i
+                + r2*sin(2*tm_PI*(e1+t))*j;
 }
 
 void
@@ -545,8 +595,8 @@ arc_rep::bound (double t, double eps) {
 point
 arc_rep::grad (double t, bool& error) {
   error= false;
-  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*point (cos(alpha), sin(alpha))
-         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*point (-sin(alpha), cos(alpha));
+  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*i
+         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*j;
 }
 
 double
@@ -558,8 +608,18 @@ arc_rep::curvature (double t1, double t2) {
 }
 
 curve
-arc (point center, double r1, double r2, double alpha, double e1, double e2) {
-  return new arc_rep (center, r1, r2, alpha, e1, e2);
+arc (array<point> a, array<path> cip, bool close) {
+  return new arc_rep (a, cip, close);
+}
+
+int
+arc_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& rcip)
+{
+  abs = u;
+  pts = a;
+  rcip= cip;
+  return N(a);
 }
 
 /******************************************************************************

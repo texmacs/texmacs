@@ -54,7 +54,7 @@
 	 (with o (stree-at p)
             (if (and (pair? o)
 		     (in? (car o)
-			  '(point line cline spline cspline arc text-at)))
+			  '(point line cline spline cspline arc carc text-at)))
                 p
                 (graphics-path (cDr path)))))))
 
@@ -162,7 +162,7 @@
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
-	  ((in? mode '(line cline spline cspline))
+	  ((in? mode '(line cline spline cspline arc carc))
 	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw))))
 	  (else
 	   (graphics-enrich-sub t '())))))
@@ -337,7 +337,7 @@
       (with type (car obj)
          (if (== type 'point)
              0
-         (if (in? (car obj) '(line cline spline cspline))
+         (if (in? (car obj) '(line cline spline cspline arc carc))
              (graphics-closest-point-pos (list 'point x y) (cdr obj))
          0)))
       0))
@@ -406,7 +406,7 @@
 
 (define (create-graphical-object o mode pts no)
   (if o (with op
-	      (cond ((== (car o) 'point) ;; FIXME : doesnt work for arcs
+	      (cond ((== (car o) 'point)
 		     (cons o '())
 		    )
 		    ((== (car o) 'text-at)
@@ -778,6 +778,7 @@
 (define (point_left-button x y p obj no edge)
   (if sticky-point
       ;;Last
+      (if (not (and (in? (car obj) '(arc carc)) (<= (length obj) 3)))
       (begin
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
@@ -788,7 +789,7 @@
 	(set! sticky-point #f)
 	(set! current-edge-sel? #f)
         (set! graphics-undo-enabled #t)
-	(graphics-forget-states))
+	(graphics-forget-states)))
       ;;Start move
       (begin
 	(graphics-store-state 'start-move)
@@ -837,7 +838,7 @@
 	(graphics-move-point x y))
       ;;Remove
       (begin
-	(if (or (in? (car obj) '(point text-at)) (null? (cddr obj)))
+	(if (or (in? (car obj) '(point text-at arc carc)) (null? (cddr obj)))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f #f)
@@ -850,13 +851,14 @@
 
 ;; Right button (add point)
 (define (point_sticky-right-button x y p obj no edge)
-  (with l (list-tail (cdr obj) no)
-    (graphics-store-state #f)
-    (set-cdr! l (cons `(point ,x ,y) (cdr l)))
-    (create-graphical-object obj 'active 'object-and-points (+ no 1))
-    (set! current-point-no (+ no 1))
-    (set! current-edge-sel? #t)
-    (set! sticky-point #t)))
+  (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
+      (with l (list-tail (cdr obj) no)
+	(graphics-store-state #f)
+	(set-cdr! l (cons `(point ,x ,y) (cdr l)))
+	(create-graphical-object obj 'active 'object-and-points (+ no 1))
+	(set! current-point-no (+ no 1))
+	(set! current-edge-sel? #t)
+	(set! sticky-point #t))))
 
 ;; Right button (create)
 (define (point_nonsticky-right-button x y mode)
@@ -881,32 +883,32 @@
 (define (edit_left-button x y)
   (with-graphics-context
    "insert" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline)
+   (dispatch (car obj) ((point line cline spline cspline arc carc)
 			(text-at))
 	     left-button (x y p obj no edge) do-tick)))
 
 (define (edit_move x y)
   (with-graphics-context
    ";move" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline)
+   (dispatch (car obj) ((point line cline spline cspline arc carc)
 			(text-at))
 	     move (x y p obj no edge) do-tick)))
 
 (define (edit_middle-button x y)
   (with-graphics-context
    "remove" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline text-at))
+   (dispatch (car obj) ((point line cline spline cspline arc carc text-at))
 	     middle-button (x y p obj no) do-tick)))
 
 (define (edit_right-button x y)
   (if sticky-point
       (with-graphics-context
        "last" x y p obj no edge
-       (dispatch (car obj) ((point line cline spline cspline text-at))
+       (dispatch (car obj) ((point line cline spline cspline arc carc text-at))
 		 sticky-right-button (x y p obj no edge) do-tick))
       (with mode (cadr (graphics-mode))
 	(dispatch mode ((point)
-			(line cline spline cspline)
+			(line cline spline cspline arc carc)
 			(text-at))
 		  nonsticky-right-button (x y mode) do-tick))))
 
@@ -960,7 +962,7 @@
 
 (define (edit-prop_left-button x y)
   (with-graphics-context "assign-props" x y p obj no edge
-     (dispatch (car obj) ((point line cline spline cspline)
+     (dispatch (car obj) ((point line cline spline cspline arc carc)
 			  (text-at))
 	       assign-props (p obj) do-tick)))
 
@@ -1028,7 +1030,7 @@
     (cond ((== (car mode) 'edit)
 	  (with submode (cadr mode)
 	     (cond ((== submode 'point) (noop))
-		   ((in? submode '(line cline spline cspline)) (noop))
+		   ((in? submode '(line cline spline cspline arc carc)) (noop))
 		   ((== submode 'text-at) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
 	 ((== (car mode) 'edit-prop)

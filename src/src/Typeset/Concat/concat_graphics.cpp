@@ -176,26 +176,27 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
 }
 
 void
-concater_rep::typeset_arc (tree t, path ip) {
-  if (N(t) != 6)
+concater_rep::typeset_arc (tree t, path ip, bool close) {
+  int i, n= N(t);
+  array<point> a(n);
+  for (i=0; i<n; i++)
+    a[i]= env->as_point (env->exec (t[i]));
+  array<path> cip(n);
+  for (i=0; i<n; i++)
+    cip[i]= descend (ip, i);
+  if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad arc"), ip);
+  else
+  if (n != 3 || linearly_dependent (a[0], a[1], a[2]))
+    typeset_line (t, ip, close);
   else {
-    point center;
-    double r1, r2;
-    double a1, a2, a;
-    center= env->as_point (env->exec (t[0]));
-    r1= as_double (t[1]);
-    r2= as_double (t[2]);
-    a1= as_double (t[3]);
-    a2= as_double (t[4]);
-    a= as_double (t[5]);
-    curve c= env->fr (arc (center, r1, r2, a, a1, a2));
+    curve c= env->fr (arc (a, cip, close));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
 
 void
-concater_rep::typeset_spline (tree t,path ip,bool close) {
+concater_rep::typeset_spline (tree t, path ip, bool close) {
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)

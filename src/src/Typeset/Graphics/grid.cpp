@@ -122,8 +122,8 @@ polar_rep::display (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
        for (r=0; r<=R; r+=step/nsub)
          dev->arc (xo-r,yo-r,xo+r,yo+r,0,360<<6);
        for (j=0; j<astep*nsub; j++)
-         dev->line (xo,yo,(SI)(xo+R*cos((2*PI*j)/(astep*nsub))),
-                          (SI)(yo+R*sin((2*PI*j)/(astep*nsub))));
+         dev->line (xo,yo,(SI)(xo+R*cos((2*tm_PI*j)/(astep*nsub))),
+                          (SI)(yo+R*sin((2*tm_PI*j)/(astep*nsub))));
      }
   }
   dev->set_color (col[0]);
@@ -139,10 +139,10 @@ polar_rep::find_closest_point (point p) {
   if (ssubd==0) return p;
   p=p-o;
   n=nearest (norm(p)*(ssubd/step));
-  a=nearest ((arg(p)/(2*PI))*astep*ssubd);
+  a=nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
   n=n*(step/ssubd);
   a=a/(astep*ssubd);
-  return o + n * point (cos(2*PI*a), sin(2*PI*a));
+  return o + n * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
 }
 
 grid
