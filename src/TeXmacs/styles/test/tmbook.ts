@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
@@ -53,7 +53,7 @@
   <the-chapter>|<arg|title>>>>>
 
   <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-long-title|<localize|Appendix>
-  <the-chapter>|<arg|title>>>>>
+  <the-appendix>|<arg|title>>>>>
 
   <\active*>
     <\src-comment>
@@ -75,7 +75,7 @@
 
   <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
 
-  <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<assign|toc-nr|<plus|<value|toc-nr>|1>><label|<the-toc>><style-with|src-compact|none|<write|toc|<style-with|src-compact|none|<vspace*|1fn><with|font-series|bold|math-font-series|bold|font-shape|small-caps|<arg|what>><quote|<value|toc-dots>><pageref|<the-toc>><vspace|0.5fn>>>>>>>
+  <assign|toc-strong-2|<macro|left|right|<style-with|src-compact|none|<vspace*|1fn><with|font-series|bold|math-font-series|bold|font-shape|small-caps|<arg|left>><toc-dots><arg|right><vspace|0.5fn>>>>
 
   \;
 </body>
