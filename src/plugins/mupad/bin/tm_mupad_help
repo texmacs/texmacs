@@ -1,4 +1,4 @@
-#!/bin/sh -f
+#!/bin/bash -f
 
 # Script for starting the MuPAD documentation from TeXmacs
 # Copyright (c) Andrey Grozin 2002
