@@ -42,7 +42,7 @@
   (insert-return))
 
 (define (make-return-inside x)
-  (cond ((== x "hybrid") (activate-hybrid))
+  (cond ((== x "hybrid") (activate-hybrid #f))
 	((== x "latex") (activate-latex))
 	((== x "symbol") (activate-symbol))
 	((== x "inactive") (activate))
@@ -114,7 +114,7 @@
 	  ((== x "input")
 	   (session-fold-input))
 	  ((== x "hybrid")
-	   (activate-hybrid)))))
+	   (activate-hybrid #t)))))
 
 (define (structured-insert-left)
   (let ((x (inside-which '("table" "tree" "switch"
@@ -178,8 +178,9 @@
 
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
-        ((inside? "hybrid") (activate-hybrid))
-        ((or (is-deactivated?) (in-source?) (inside? "tuple") (inside? "attr"))
+        ((inside? "hybrid") (activate-hybrid #t))
+        ((or (inside? "inactive") (in-source?)
+	     (inside? "tuple") (inside? "attr"))
 	 (insert-argument #t))
 	((and (in-session?)
 	      (plugin-supports-completions? (get-env "prog-language")))

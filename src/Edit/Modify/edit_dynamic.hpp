@@ -20,8 +20,6 @@ public:
   ~edit_dynamic_rep ();
 
   bool in_source ();
-  bool is_deactivated ();
-  path find_deactivated (path p);
   path find_dynamic (path p);
 
   bool is_multi_paragraph_macro (tree t);
@@ -48,7 +46,7 @@ public:
 
   void make_hybrid ();
   bool activate_latex ();
-  void activate_hybrid ();
+  void activate_hybrid (bool with_args_hint);
   void activate_symbol ();
   void activate_compound ();
 

@@ -305,14 +305,14 @@ edit_interface_rep::set_hybrid_footer (tree st) {
       }
       // macro application
       tree f= get_env_value (name);
-      if (is_func (f, MACRO) || is_func (f, XMACRO)) {
+      if (drd->contains (name) && (f == UNINIT))
+	set_message("return:#insert primitive#" * name, "hybrid command");
+      else if (is_func (f, MACRO) || is_func (f, XMACRO))
 	set_message("return:#insert macro#" * name, "hybrid command");
-	return true;
-      }
-      else if (f != UNINIT) {
+      else if (f != UNINIT)
 	set_message("return:#insert value#" * name, "hybrid command");
-	return true;
-      }
+      else return false;
+      return true;
     }
   return false;
 }
