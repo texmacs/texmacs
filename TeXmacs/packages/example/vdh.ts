@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.4.4>
 
 <style|source>
 
@@ -55,6 +55,8 @@
     <assign|rsA|<with|math-font|cal*|A>>
 
     <assign|rsB|<with|math-font|cal*|B>>
+
+    <assign|rsC|<with|math-font|cal*|C>>
 
     <assign|rsD|<with|math-font|cal*|D>>
 
