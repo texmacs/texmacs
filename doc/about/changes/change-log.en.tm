@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.6>
+<TeXmacs|1.0.3.7>
 
 <style|tmdoc>
 
@@ -8,6 +8,10 @@
   <section|Changes from version 1.0.3 to 1.0.3.7>
 
   <\itemize>
+    <item>Alpha release of the Windows version of <TeXmacs> (1.0.3.7).
+
+    <item>Application of some patches (1.0.3.7).
+
     <item>Danish language support (1.0.3.7).
 
     <item>Part of the documentation has been translated into Polish

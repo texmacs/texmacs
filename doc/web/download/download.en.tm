@@ -1,61 +1,63 @@
-<TeXmacs|1.0.2.3>
+<TeXmacs|1.0.3.7>
 
 <style|tmweb>
 
 <\body>
-  <apply|tmweb-current|Download|General><expand|tmweb-title|Downloading and
-  installing <TeXmacs>|<apply|tmweb-download-links>>
+  <tmweb-current|Download|General><tmweb-title|Downloading and installing
+  <TeXmacs>|<tmweb-download-links>>
 
   GNU <TeXmacs> runs on most <name|Unix> architectures, as well as on Windows
   (using <name|Cygwin>) and MacOS-X (using <name|Fink>). In order to download
   and install <TeXmacs>, follow the link which corresponds to your system.
 
   <\description>
-    <expand|item*|<hlink|RPM|rpm.en.tm>.>For GNU/<name|Linux> distributions
-    based on RPM packages (RedHat, Mandrake, etc.).
+    <item*|<hlink|RPM|rpm.en.tm>>For GNU/<name|Linux> distributions based on
+    RPM packages (RedHat, Mandrake, etc.).
 
-    <expand|item*|<hlink|Debian|debian.en.tm>.>For users of <name|Debian>
+    <item*|<hlink|Debian|debian.en.tm>>For users of <name|Debian>
     GNU/<name|Linux>.
 
-    <expand|item*|<hlink|Cygwin|cygwin.en.tm>.>For users of Windows (requires
-    the installation of <name|Cygwin>).
+    <item*|<hlink|Cygwin|cygwin.en.tm>>For users of Windows (requires the
+    installation of <name|Cygwin>).
 
-    <expand|item*|<hlink|Fink|fink.en.tm>.>For users of MacOS-X (requires the
+    <item*|<hlink|Windows|windows.en.tm>>An experimental native Windows
+    version.
+
+    <item*|<hlink|Fink|fink.en.tm>>For users of MacOS-X (requires the
     installation of <name|Fink>).
 
-    <expand|item*|<hlink|Binaries|unix.en.tm>.>Binary tarballs are available
-    for some other <name|Unix> systems (i386, sun, ppc).
+    <item*|<hlink|Binaries|unix.en.tm>>Binary tarballs are available for some
+    other <name|Unix> systems (i386, sun, ppc).
 
-    <expand|item*|<hlink|Sources|sources.en.tm>.>For hackers and on more
-    exotic systems.
+    <item*|<hlink|Sources|sources.en.tm>>For hackers and on more exotic
+    systems.
   </description>
 
-  We recommend a <apply|hyper-link|reasonably fast|requirements.en.tm>
-  computer for running <TeXmacs>. We also require
-  <apply|hyper-link|<TeX>/<LaTeX>|requirements.en.tm#TeX> to be installed on
-  your system. For most modern <name|Unix> systems this is the case. From the
-  efficiency point of view it may sometimes be useful to install some
-  <apply|hyper-link|pregenerated fonts|fonts.en.tm>, even though <TeX> is
-  able to generate them automatically.
+  We recommend a <hyper-link|reasonably fast|requirements.en.tm> computer for
+  running <TeXmacs>. We also require <hyper-link|<TeX>/<LaTeX>|requirements.en.tm#TeX>
+  to be installed on your system. For most modern <name|Unix> systems this is
+  the case. From the efficiency point of view it may sometimes be useful to
+  install some <hyper-link|pregenerated fonts|fonts.en.tm>, even though <TeX>
+  is able to generate them automatically.
 
-  <apply|tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
-  <expand|tmweb-license>
+  <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
   </collection>
 </initial>
