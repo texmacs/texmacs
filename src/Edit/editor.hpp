@@ -85,7 +85,6 @@ protected:
   virtual void back_dynamic (path p) = 0;
   virtual void back_compound (path p) = 0;
   virtual void back_extension (path p) = 0;
-  virtual void back_in_dynamic (tree t, path p, int min_args=1, int with=1)= 0;
   virtual void back_in_with (tree t, path p) = 0;
   virtual void back_in_compound (tree t, path p) = 0;
 

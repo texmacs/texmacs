@@ -453,46 +453,10 @@ edit_dynamic_rep::back_extension (path p) {
   else go_to (end (et, p * (n-1)));
 }
 
-static bool
-is_empty (tree t, int at, int nr, int offset) {
-  int i;
-  if ((at+nr > N(t)) || (((at-offset) % nr) != 0)) return false;
-  for (i=at; i < at+nr; i++)
-    if (t[i] != "") return false;
-  return true;
-}
-
-void
-edit_dynamic_rep::back_in_dynamic (tree t, path p, int min_args, int step) {
-  int node= last_item (p);
-  if (node>0) {
-    go_to (end (et, path_up (p) * (node-1)));
-    if (N(t) > min_args) {
-      if (is_empty (t, node, step, is_func (t, DRD_PROPS)? 1: 0))
-	remove (path_up (p) * node, step);
-      else go_to (end (et, path_dec (p)));
-    }
-  }
-  else {
-    int i;
-    for (i=0; i<N(t); i++)
-      if (t[i] != tree ("")) {
-	go_to (start (et, path_up (p)));
-	return;
-      }
-    assign (path_up (p), "");
-    if (subtree (et, path_up (p, 2)) == tree (INACTIVE, "")) {
-      assign (path_up (p, 2), "");
-      correct (path_up (p, 3));
-    }
-    else correct (path_up (p, 2));
-  }
-}
-
 void
 edit_dynamic_rep::back_in_with (tree t, path p) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    back_in_dynamic (t, p, 1, 2);
+    remove_argument (p, false);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
     correct (path_up (p, 2));
@@ -503,7 +467,7 @@ edit_dynamic_rep::back_in_with (tree t, path p) {
 void
 edit_dynamic_rep::back_in_compound (tree t, path p) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    back_in_dynamic (t, p, 1);
+    remove_argument (p, false);
   else ins_unary (path_up (p), INACTIVE);
 }
 
@@ -571,6 +535,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 	  else go_to_argument (path_up (p) * (i-1), false);
 	  return;
 	}
+	else break;
       }
 
   bool flag= true;

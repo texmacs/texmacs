@@ -632,7 +632,7 @@ edit_table_rep::back_in_table (tree t, path p) {
       (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
        in_preamble_mode ()))
     {
-      back_in_dynamic (t, p);
+      remove_argument (p, false);
       return;
     }
 
