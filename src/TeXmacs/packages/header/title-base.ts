@@ -342,9 +342,7 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|doc-authors-one|<macro|data|<quasi|<style-with|src-compact|none|
-  <with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-produce|<unquote|<quote-arg|data>>>>>>
-  >>>>
+  <assign|doc-authors-one|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-produce|<unquote|<quote-arg|data>>>>>><space|1em><line-break>>>>>
 
   <assign|doc-authors-data|<\xmacro|data>
     <\style-with|src-compact|none>
