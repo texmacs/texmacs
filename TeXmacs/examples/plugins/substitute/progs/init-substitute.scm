@@ -15,10 +15,10 @@
 (define (substitute-substitute)
   (import-from (texmacs plugin plugin-cmd))
   (if (selection-active-any?)
-      (let* ((t (tree->object (the-selection)))
+      (let* ((t (tree->stree (the-selection)))
 	     (u (plugin-eval "substitute" "default" t)))
 	(clipboard-cut "primary")
-	(insert-tree (object->tree u)))))
+	(insert (stree->tree u)))))
 
 (kbd-map
   ("C-F12" (substitute-substitute)))
