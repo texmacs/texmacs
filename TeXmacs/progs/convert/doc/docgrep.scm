@@ -71,6 +71,7 @@
 	       ((string-before? s pos "<tmstyle|") "mode-key")
 	       ((string-before? s pos "<tmdtd|") "mode-key")
 	       ((string-before? s pos "<explain-macro|") "mode-key")
+	       ((string-before? s pos "<var-val|") "mode-key")
 	       (else "mode-simple")))
 	((string-ends? filename ".scm")
 	 (cond ((string-before? s pos "define ") "mode-key")
