@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -36,12 +36,14 @@
   <assign|list-caption|<macro|type|cap|<style-with|src-compact|none|<auto-label><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>
 
   <assign|render-small-figure|<macro|type|name|fig|cap|<tabular*|<tformat|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<twith|table-valign|B>|<table|<row|<cell|<resize|<arg|fig>|l-2fn||r+2fn||>>>|<row|<cell|>>|<row|<\cell>
-    <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
+    <small|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
   </cell>>>>>>>
 
-  <assign|render-big-figure|<macro|type|name|fig|cap|<surround|<vspace*|1fn><no-indent>|<vspace|1fn>|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
-    <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
-  </cell>>>>>>>>
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
+    <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
+      <small|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
+    </cell>>>>>>
+  </macro>>
 
   <new-figure|figure|Figure>
 
@@ -53,7 +55,9 @@
     </src-comment>
   </active*>
 
-  <assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<arg|nr><footnote-sep><label|<merge|footnote-|<arg|nr>>>|<right-flush>|<style-with|src-compact|none|<arg|body>>>>>>>>>
+  <assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<\float|footnote|>
+    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<arg|nr><footnote-sep><label|<merge|footnote-|<arg|nr>>>|<right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
+  </float>>>>
 
   <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 

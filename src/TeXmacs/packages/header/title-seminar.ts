@@ -32,13 +32,15 @@
       <arg|body>
     </with>
 
-    <surround||<right-flush>|<new-page>>
+    <new-page><right-flush>
   </macro>>
 
   <assign|abstract|<\macro|body>
-    <surround|<no-indent>||<section*|<abstract-text>>>
+    <section*|<abstract-text>>
 
-    <surround||<right-flush>|<arg|body>>
+    <\wide-normal>
+      <arg|body>
+    </wide-normal>
   </macro>>
 
   <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text><localize|:>
