@@ -128,6 +128,12 @@
   <assign|sub-bi-index|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|x><subsubindex|<arg|x>|<arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
 
+  <assign|sub-bi-index*|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subindex|<arg|x> <arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+
+  <assign|subsub-bi-index|<macro|x|y|z|a|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subsubsubindex|<arg|x>|<arg|y>|<arg|z>|<arg|a>><subsubsubindex|<arg|y>|<arg|x>|<arg|z>|<arg|a>>>>>
+
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
