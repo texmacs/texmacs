@@ -25,7 +25,7 @@
   (when (inside? "letter-header")
 	("Address" (make-header 'address))
 	("Date" (make-header 'letter-date))
-	("Today" (begin (make-header 'letter-date) (make-date)))
+	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
 	("Destination" (make-header 'destination)))
   ---
   (when (not (inside? "letter-header"))
@@ -56,7 +56,7 @@
 	("Running author" (make-header 'header-author))
 	("Address block" (make 'address-block))
 	("Today" (begin (make-header 'title-date)
-			(make-date))))
+			(make-arity 'date 0))))
   ---
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
 	("Abstract" (make 'abstract)))
