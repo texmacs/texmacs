@@ -193,111 +193,96 @@
 
   <group-common-counter|theorem-env>
 
+  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+
   <assign|theorem-sep|<macro|. >>
 
+  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
+
+  <assign|remark-sep|<macro|. >>
+
+  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+
+  <assign|exercise-sep|<macro|. >>
+
   \;
 
-  <assign|new-theorem-bold-italic|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-italic>>>>
+  <assign|render-remark|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
+  </macro>>
 
-  <assign|new-theorem-bold-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-upright>>>>
+  <assign|render-theorem|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|italic|<arg|body>>>>
+  </macro>>
 
-  <assign|new-theorem-italic-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-italic-upright>>>>
+  <assign|render-exercise|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><theorem-sep>>||<arg|body>>>
+  </macro>>
 
   \;
 
-  <assign|render-theorem-generic|<macro|which|body|<padded-normal|1fn|1fn|<\surround|<arg|><arg|which><arg|>|>
-    <arg|body>
-  </surround>>>>
+  <assign|proof-text|<macro|<localize|Proof>>>
 
-  <assign|render-theorem-bold-italic|<\macro|which|body>
-    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
-      <\with|font-shape|italic>
-        <arg|body>
-      </with>
-    </render-theorem-generic>
+  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
+  >>>>
+
+  <assign|render-proof|<\macro|which|body>
+    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
+      <render-remark|<arg|which>|<arg|body>>
+    </surround>
   </macro>>
 
-  <assign|render-theorem-bold-upright|<\macro|which|body>
-    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
-      <arg|body>
-    </render-theorem-generic>
-  </macro>>
-
-  <assign|render-theorem-italic-upright|<\macro|which|body>
-    <\render-theorem-generic|<with|font-shape|italic|<arg|which><theorem-sep>>>
-      <arg|body>
-    </render-theorem-generic>
+  <assign|proof|<\macro|body>
+    <render-proof|<proof-text>|<arg|body>>
   </macro>>
 
   <active*|<\src-comment>
     Theorem-like environments.
   </src-comment>>
 
-  <new-theorem-bold-italic|theorem|Theorem>
+  <new-theorem|theorem|Theorem>
 
-  <new-theorem-bold-italic|corollary|Corollary>
+  <new-theorem|corollary|Corollary>
 
-  <new-theorem-bold-italic|definition|Definition>
+  <new-theorem|definition|Definition>
 
-  <new-theorem-bold-italic|lemma|Lemma>
+  <new-theorem|lemma|Lemma>
 
-  <new-theorem-bold-italic|proposition|Proposition>
-
-  \;
-
-  <new-theorem-bold-upright|exercise|Exercise>
-
-  <new-theorem-bold-upright|problem|Problem>
-
-  <new-theorem-bold-upright|solution|Solution>
+  <new-theorem|proposition|Proposition>
 
   \;
 
-  <new-theorem-italic-upright|math-case|Case>
+  <new-exercise|exercise|Exercise>
 
-  <new-theorem-italic-upright|conjecture|Conjecture>
+  <new-exercise|problem|Problem>
 
-  <new-theorem-italic-upright|example|Example>
+  <new-exercise|solution|Solution>
 
-  <new-theorem-italic-upright|note|Note>
+  \;
 
-  <new-theorem-italic-upright|property|Property>
+  <new-remark|math-case|Case>
 
-  <new-theorem-italic-upright|question|Question>
+  <new-remark|conjecture|Conjecture>
 
-  <new-theorem-italic-upright|remark|Remark>
+  <new-remark|example|Example>
+
+  <new-remark|note|Note>
+
+  <new-remark|property|Property>
+
+  <new-remark|question|Question>
+
+  <new-remark|remark|Remark>
 
   \;
 
   <active*|<src-short-comment|<TeXmacs> environments>>
 
-  <new-theorem-bold-italic|axiom|Axiom>
+  <new-theorem|axiom|Axiom>
 
-  <new-theorem-bold-italic|notation|Notation>
+  <new-theorem|notation|Notation>
 
-  <new-theorem-bold-upright|warning|Warning>
-
-  <\active*>
-    <\src-comment>
-      Title and author information.
-    </src-comment>
-  </active*>
-
-  The title page and author information should be typeset manually.
-
-  <\active*>
-    <\src-comment>
-      Headers.
-    </src-comment>
-  </active*>
-
-  <assign|header-title|<macro|name|<blanc-page>>>
-
-  <assign|header-author|<macro|name|>>
-
-  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><space|2.5cc><arg|nr><space|<between-number-space>><arg|name>>>>>>>
-
-  <assign|header-secondary|<macro|name|nr|what|<assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><htab|0mm><arg|nr><space|<between-number-space>><arg|name><space|2.5cc><quote|<page-the-page>>>>>>>
+  <new-remark|warning|Warning>
 
   <\active*>
     <\src-comment>
@@ -366,6 +351,28 @@
 
   <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
+  <\active*>
+    <\src-comment>
+      Title and author information.
+    </src-comment>
+  </active*>
+
+  The title page and author information should be typeset manually.
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <assign|header-title|<macro|name|<blanc-page>>>
+
+  <assign|header-author|<macro|name|>>
+
+  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|nr><space|<between-number-space>><arg|name>>>>>>>
+
+  <assign|header-secondary|<macro|name|nr|what|<assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><htab|0mm><arg|nr><space|<between-number-space>><arg|name><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
+
   <active*|<\src-comment>
     Tables of contents.
   </src-comment>>
@@ -426,6 +433,92 @@
   <assign|toc-4|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subparagraph-toc-indent>|par-first|<minus|<value|paragraph-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
 
   <assign|toc-5|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subsubparagraph-toc-indent>|par-first|<minus|<value|subparagraph-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+
+  <\active*>
+    <\src-comment>
+      Bibliographies.
+    </src-comment>
+  </active*>
+
+  <assign|transform-bibitem|<macro|x|<arg|x> >>
+
+  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<transform-bibitem|<arg|text>>|||<merge|r]|<value|bibitem-width>>|>>>>
+
+  <assign|bib-list|<\macro|largest|body>
+    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|render-list|<value|render-bib-list>>
+      <\description>
+        <arg|body>
+      </description>
+    </with>
+  </macro>>
+
+  <assign|render-bibliography|<\macro|name|body>
+    <principal-section*|<arg|name>>
+
+    <\small>
+      <\with|par-first|0fn|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </small>
+  </macro>>
+
+  <assign|render-bib-list|<\macro|body>
+    <\indent-left|<value|bibitem-width>>
+      <surround|<no-page-break*>|<no-indent*>|<arg|body>>
+    </indent-left>
+  </macro>>
+
+  <active*|<\src-comment>
+    Indexes and glossaries.
+  </src-comment>>
+
+  <assign|index-sep|<macro|, >>
+
+  <assign|index-1|<macro|left|right|<margin-first-other|0em|2.3em|<arg|left><index-sep><arg|right>>>>
+
+  <assign|index-1*|<macro|left|<margin-first-other|0em|2.3em|<arg|left><no-page-break>>>>
+
+  <assign|index-2|<macro|left|right|<margin-first-other|1em|2.3em|<arg|left><index-sep><arg|right>>>>
+
+  <assign|index-2*|<macro|left|<margin-first-other|1em|2.3em|<arg|left><no-page-break>>>>
+
+  <assign|index-3|<macro|left|right|<margin-first-other|1.7em|2.3em|<arg|left><index-sep><arg|right>>>>
+
+  <assign|index-3*|<macro|left|<margin-first-other|1.7em|2.3em|<arg|left><no-page-break>>>>
+
+  <assign|index-4|<macro|left|right|<margin-first-other|2.3em|2.3em|<arg|left><index-sep><arg|right>>>>
+
+  <assign|index-4*|<macro|left|<margin-first-other|2.3em|2.3em|<arg|left><no-page-break>>>>
+
+  <assign|index-5|<macro|left|right|<margin-first-other|2.8em|2.8em|<arg|left><index-sep><arg|right>>>>
+
+  <assign|index-5*|<macro|left|<margin-first-other|2.8em|2.8em|<arg|left><no-page-break>>>>
+
+  \;
+
+  <assign|render-index|<\macro|name|body>
+    <\with|par-par-sep|-0.5fn>
+      <principal-section*|<arg|name>>
+
+      \;
+    </with>
+
+    <\small>
+      <\with|par-first|0fn|par-par-sep|0fn|par-columns|2|par-columns-sep|1cc>
+        <arg|body>
+      </with>
+    </small>
+  </macro>>
+
+  <assign|render-glossary|<\macro|name|body>
+    <principal-section*|<arg|name>>
+
+    <\small>
+      <\with|par-first|0fn|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </small>
+  </macro>>
 
   \;
 </body>

@@ -147,91 +147,98 @@
     Theorem-like environemments rendering.
   </src-comment>>
 
-  <group-individual-counters|theorem-env>
+  <group-common-counter|theorem-env>
 
-  <assign|theorem-sep|<macro| >>
+  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+
+  <assign|theorem-sep|<macro|. >>
+
+  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
+
+  <assign|remark-sep|<macro|. >>
+
+  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+
+  <assign|exercise-sep|<macro|. >>
 
   \;
 
-  <assign|new-theorem-bold-italic|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-italic>>>>
+  <assign|render-remark|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
+  </macro>>
 
-  <assign|new-theorem-bold-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-upright>>>>
+  <assign|render-theorem|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|italic|<arg|body>>>>
+  </macro>>
 
-  <assign|new-theorem-italic-upright|<style-with|src-compact|none|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-italic-upright>>>>
+  <assign|render-exercise|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><theorem-sep>>||<arg|body>>>
+  </macro>>
 
   \;
 
-  <assign|render-theorem-generic|<macro|which|body|<padded-normal|1fn|1fn|<\surround|<arg|><arg|which><arg|>|>
-    <arg|body>
-  </surround>>>>
+  <assign|proof-text|<macro|<localize|Proof>>>
 
-  <assign|render-theorem-bold-italic|<\macro|which|body>
-    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
-      <\with|font-shape|italic>
-        <arg|body>
-      </with>
-    </render-theorem-generic>
+  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
+  >>>>
+
+  <assign|render-proof|<\macro|which|body>
+    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
+      <render-remark|<arg|which>|<arg|body>>
+    </surround>
   </macro>>
 
-  <assign|render-theorem-bold-upright|<\macro|which|body>
-    <\render-theorem-generic|<with|font-series|bold|<arg|which><theorem-sep>>>
-      <arg|body>
-    </render-theorem-generic>
-  </macro>>
-
-  <assign|render-theorem-italic-upright|<\macro|which|body>
-    <\render-theorem-generic|<with|font-shape|italic|<arg|which><theorem-sep>>>
-      <arg|body>
-    </render-theorem-generic>
+  <assign|proof|<\macro|body>
+    <render-proof|<proof-text>|<arg|body>>
   </macro>>
 
   <active*|<\src-comment>
     Theorem-like environments.
   </src-comment>>
 
-  <new-theorem-bold-italic|theorem|Theorem>
+  <new-theorem|theorem|Theorem>
 
-  <new-theorem-bold-italic|corollary|Corollary>
+  <new-theorem|corollary|Corollary>
 
-  <new-theorem-bold-italic|definition|Definition>
+  <new-theorem|definition|Definition>
 
-  <new-theorem-bold-italic|lemma|Lemma>
+  <new-theorem|lemma|Lemma>
 
-  <new-theorem-bold-italic|proposition|Proposition>
-
-  \;
-
-  <new-theorem-bold-upright|exercise|Exercise>
-
-  <new-theorem-bold-upright|problem|Problem>
-
-  <new-theorem-bold-upright|solution|Solution>
+  <new-theorem|proposition|Proposition>
 
   \;
 
-  <new-theorem-italic-upright|math-case|Case>
+  <new-exercise|exercise|Exercise>
 
-  <new-theorem-italic-upright|conjecture|Conjecture>
+  <new-exercise|problem|Problem>
 
-  <new-theorem-italic-upright|example|Example>
+  <new-exercise|solution|Solution>
 
-  <new-theorem-italic-upright|note|Note>
+  \;
 
-  <new-theorem-italic-upright|property|Property>
+  <new-remark|math-case|Case>
 
-  <new-theorem-italic-upright|question|Question>
+  <new-remark|conjecture|Conjecture>
 
-  <new-theorem-italic-upright|remark|Remark>
+  <new-remark|example|Example>
+
+  <new-remark|note|Note>
+
+  <new-remark|property|Property>
+
+  <new-remark|question|Question>
+
+  <new-remark|remark|Remark>
 
   \;
 
   <active*|<src-short-comment|<TeXmacs> environments>>
 
-  <new-theorem-bold-italic|axiom|Axiom>
+  <new-theorem|axiom|Axiom>
 
-  <new-theorem-bold-italic|notation|Notation>
+  <new-theorem|notation|Notation>
 
-  <new-theorem-bold-upright|warning|Warning>
+  <new-remark|warning|Warning>
 
   <\active*>
     <\src-comment>
