@@ -2837,18 +2837,12 @@ tmg_set_graphical_object (SCM arg1) {
 }
 
 SCM
-tmg_path_xy (SCM arg1, SCM arg2) {
-  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "path-xy");
-  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "path-xy");
-
-  double in1= scm_to_double (arg1);
-  double in2= scm_to_double (arg2);
-
+tmg_invalidate_graphical_object () {
   // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->path_xy (in1, in2);
+  get_server()->get_editor()->invalidate_graphical_object ();
   // SCM_ALLOW_INTS;
 
-  return path_to_scm (out);
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -3125,7 +3119,7 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
   gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
-  gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
+  gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
   gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
   gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

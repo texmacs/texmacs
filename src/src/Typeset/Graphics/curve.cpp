@@ -50,6 +50,18 @@ double
 curve_rep::find_closest_point (
   double t1, double t2, point p, double eps, bool& found)
 {
+  if (t1>t2) {
+    double r1, r2;
+    r1= find_closest_point (0.0, t2, p, eps, found);
+    if (!found)
+      return find_closest_point (t1, 1.0, p, eps, found);
+    r2= find_closest_point (t1, 1.0, p, eps, found);
+    if (!found)
+      return r1;
+    double n1= norm (evaluate(r1) - p);
+    double n2= norm (evaluate(r2) - p);
+    return n1<n2 ? r1 : r2;
+  }
   found= false;
   double t;
   double res= -1;
@@ -125,7 +137,7 @@ struct poly_segment_rep: public curve_rep {
   int nr_components () { return n; }
   point evaluate (double t) {
     int i= min ((int) (n*t), n-1);
-    return (1.0-t)*a[i] + t*a[i+1];
+    return (i+1 - n*t)*a[i] + (n*t - i)*a[i+1];
   }
   void rectify_cumul (array<point>& cum, double eps) {
     int i;
@@ -154,7 +166,7 @@ poly_segment_rep::get_control_points (
   array<double> u(n+1);
   int i;
   for (i=0; i<n+1; i++)
-    u[i]= (double)i;
+    u[i]= ((double)i) / (n==0?1:n);
   abs = u;
   pts = a;
   rcip= cip;
@@ -178,8 +190,10 @@ struct spline_rep: public curve_rep {
   int n;
   array<double> U;
   array<polynomials> p;
+  bool close, interpol;
 
-  spline_rep (array<point> a2, bool close=false, bool interpol=true);
+  spline_rep (
+    array<point> a, array<path> cip, bool close=false, bool interpol=true);
 
   inline double d (int i,int k) { return U[i]-U[i-k]; }
   inline double m (int i) { return (U[i]+U[i+1])/2; }
@@ -204,14 +218,14 @@ struct spline_rep: public curve_rep {
   void rectify_cumul (array<point>& cum, int i,
 		      double u1, double u2, double eps);
   void rectify_cumul (array<point>& cum, double eps);
-  /*int get_control_points (
+  int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
-  */
 };
 
 // Creation
-spline_rep::spline_rep (array<point> a2, bool close,bool interpol):
-  a(a2), n(N(a)-1)
+spline_rep::spline_rep (
+  array<point> a2, array<path> cip2, bool close2,bool interpol2):
+  a(a2), cip(cip2), n(N(a)-1), close(close2), interpol(interpol2)
 {
   array<polynomial> p1,p2,p3;
   p1= array<polynomial> (n+3);
@@ -286,6 +300,14 @@ spline_rep::spline_rep (array<point> a2, bool close,bool interpol):
         xtridiag_solve (a, b, c, S(p1, p2, p3, n-1, m(n-1)),
                                  S(p1, p2, p3, 0, m(2)),
                                  x, y, n-1);
+     /* Rotate the result in order to have an appropriate
+        parametrization (to keep in sync the ordering of
+        the points & the paths in cip, in particular) */
+        point p=x[n-2];
+        for (i=n-2;i>=1;i--)
+          x[i]=x[i-1];
+        x[0]=p;
+     // Splice the spline
         x[n-1]= x[0];
         x[n]= x[1];
       }
@@ -438,19 +460,43 @@ spline_rep::curvature (double t1, double t2) {
   return res;
 }
 
-/* Control points
+// Control points
 int
 spline_rep::get_control_points (
   array<double>&abs, array<point>& pts, array<path>& rcip)
 {
-  pts = a;
+  array<double> u(n+1);
+  array<point> p(n+1);
+  int i;
+  if (interpol) {
+    if (close) {
+      u->resize (n-1);
+      p->resize (n-1);
+      for (i=0; i<n-1; i++)
+	u[i]= unconvert ((U[i+2]+U[i+3])/2);
+    }
+    else {
+      u[0]= unconvert (U[2]);
+      u[n]= unconvert (U[n+1]);
+      for (i=2; i<=n; i++)
+	u[i-1]= unconvert ((U[i]+U[i+1])/2);
+    }
+    for (i=0; i<=(close ? n-2 : n); i++)
+      p[i]= evaluate (u[i]);
+  }
+  else {
+    fatal_error ("Not yet implemented",
+		 "noninterpolated(spline_rep)::get_control_points");
+  }
+  abs = u;
+  pts = p;
   rcip= cip;
+  return close ? n-1 : n+1;
 }
-*/
 
 curve
-spline (array<point> a, bool close, bool interpol) {
-  return new spline_rep (a, close, interpol);
+spline (array<point> a, array<path> cip, bool close, bool interpol) {
+  return new spline_rep (a, cip, close, interpol);
 }
 
 /******************************************************************************
