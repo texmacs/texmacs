@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-    (texmacs edit edit-fold) (texmacs edit edit-format)
-    (texmacs edit edit-misc)))
+     (texmacs edit edit-graphics) (texmacs edit edit-fold)
+     (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Insert menu
@@ -101,6 +101,7 @@
       ("Small figure" (make 'small-figure))
       ("Big figure" (make 'big-figure))
       ---)
+  ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
