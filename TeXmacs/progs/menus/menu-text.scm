@@ -180,8 +180,10 @@
     '("Bibliography style:" "Bibliography file:") 'make-bib))
   ("Index" (make-aux "the-index" "idx"))
   ("Glossary" (make-aux "the-glossary" "gly"))
-  ("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
-  ("List of tables" (make-aux* "the-glossary*" "table" "List of tables")))
+  ;;("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
+  ;;("List of tables" (make-aux* "the-glossary*" "table" "List of tables"))
+  ("List of figures" (make-aux "list-of-figures" "figure"))
+  ("List of tables" (make-aux "list-of-tables" "table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus

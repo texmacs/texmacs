@@ -23,6 +23,24 @@
 
   <\active*>
     <\src-comment>
+      Special texts.
+    </src-comment>
+  </active*>
+
+  <assign|by-text|<macro|<localize|by>>>
+
+  <assign|email-text|<macro|<localize|Email:>>>
+
+  <assign|homepage-text|<macro|<localize|Web:>>>
+
+  <assign|abstract-text|<macro|<localize|Abstract>>>
+
+  <assign|keywords-text|<macro|<localize|Keywords:>>>
+
+  <assign|AMS-class-text|<macro|<localize|A.M.S. subject classification:>>>
+
+  <\active*>
+    <\src-comment>
       Rendering macros.
     </src-comment>
   </active*>
@@ -37,7 +55,7 @@
 
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
 
-  <assign|doc-author-by|<macro|body|<with|font-shape|small-caps|<localize|by>
+  <assign|doc-author-by|<macro|body|<with|font-shape|small-caps|<by-text>
   <arg|body>>>>
 
   <assign|doc-author-name|<macro|body|<vspace*|1fn><arg|body><vspace|1fn>>>
@@ -116,11 +134,11 @@
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<arg|x>>
   </macro>>
 
-  <assign|author-email|<macro|x|<with|font-shape|italic|<localize|Email:>
-  ><with|font-family|tt|<arg|x>>>>
+  <assign|author-email|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<email-text>
+  ><with|font-family|tt|<arg|x>>>>>
 
-  <assign|author-homepage|<macro|x|<with|font-shape|italic|<localize|Web:>
-  ><with|font-family|tt|<arg|x>>>>
+  <assign|author-homepage|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text>
+  ><with|font-family|tt|<arg|x>>>>>
 
   <assign|author-note|<\macro|x>
     <arg|x>
