@@ -96,6 +96,7 @@ shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
     SI  y    = b1->sy1(i);
     int start= get_pos (hpos, b1->sx1(i)- hor_sep);
     int end  = get_pos (hpos, b1->sx2(i)+ hor_sep);
+    if (end>n) end= n;
     for (j=start; j<end; j++)
       vpos1[j]= min (vpos1[j], y);
   }
@@ -103,6 +104,7 @@ shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
     SI  y    = b2->sy2(i);
     int start= get_pos (hpos, b2->sx1(i)- hor_sep);
     int end  = get_pos (hpos, b2->sx2(i)+ hor_sep);
+    if (end>n) end= n;
     for (j=start; j<end; j++)
       vpos2[j]= max (vpos2[j], y);
   }
