@@ -125,17 +125,17 @@ arg_type (tree t, int i) {
   case DRD_PROPS:
   case VALUE:
   case QUOTE_VALUE:
-    if (i == 0) return "id";
+    if (i == 0) return "var";
     else return "";
   case WITH:
   case STYLE_WITH:
   case VAR_STYLE_WITH:
-    if ((i<n-1) && ((i&1)==0)) return "id";
+    if ((i<n-1) && ((i&1)==0)) return "var";
     else return "";
   case TWITH:
   case CWITH:
     if (i<n-2) return "integer";
-    else if (i==n-2) return "id";
+    else if (i==n-2) return "var";
     else return "";
   case MACRO:
     if (i<n-1) return "arg";
@@ -149,7 +149,7 @@ arg_type (tree t, int i) {
     else return "integer";
     break;
   case MAP_ARGS:
-    if (i<2) return "id";
+    if (i<2) return "var";
     else if (i==2) return "arg";
     else return "";
   case SPECIFIC:
@@ -158,7 +158,7 @@ arg_type (tree t, int i) {
       return "tt";
     else return "";
   case ACTION:
-    if (i==n-1) return "tt";
+    if (i==1) return "tt";
     else return "";
   case FLAG:
     if (i==2) return "arg";
@@ -169,10 +169,11 @@ arg_type (tree t, int i) {
 }
 
 static tree
-highlight (tree t, string kind) {
-  if (kind == "") return t;
+highlight (tree t, tree orig, string kind) {
+  if (is_compound (orig)) return t;
+  else if (kind == "")        return t;
   else if (kind == "macro")   return compound ("src-macro", t);
-  else if (kind == "id")      return compound ("src-id", t);
+  else if (kind == "var")     return compound ("src-var", t);
   else if (kind == "arg")     return compound ("src-arg", t);
   else if (kind == "tt")      return compound ("src-tt", t);
   else if (kind == "integer") return compound ("src-integer", t);
@@ -208,7 +209,7 @@ edit_env_rep::rewrite_inactive_arg (
       }
       else r= rewrite_inactive (t[i], r, block, flush);
     }
-  return highlight (r, arg_type (t, i));
+  return highlight (r, t[i], arg_type (t, i));
 }
 
 tree
@@ -256,10 +257,10 @@ edit_env_rep::rewrite_inactive_value (
   if ((N(t) == 1) && is_atomic (t[0]) &&
       src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
     {
-      tree r= highlight (subvar (var, 0),
+      tree r= highlight (subvar (var, 0), t[0],
         inactive_mode == INACTIVE_INLINE_ERROR ||
 	inactive_mode == INACTIVE_BLOCK_ERROR ?
-	string ("error"): string ("id"));
+	string ("error"): string ("var"));
       return tree (MARK, var, r);
   }
   return rewrite_inactive_default (t, var, block, flush);
@@ -272,7 +273,7 @@ edit_env_rep::rewrite_inactive_arg (
   if ((N(t) == 1) && is_atomic (t[0]) &&
       src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
     {
-      tree r= highlight (subvar (var, 0),
+      tree r= highlight (subvar (var, 0), t[0],
         inactive_mode == INACTIVE_INLINE_ERROR ||
 	inactive_mode == INACTIVE_BLOCK_ERROR ?
 	string ("error"): string ("arg"));
@@ -347,7 +348,7 @@ edit_env_rep::rewrite_inactive_hybrid (
   if (is_atomic (t[0]) && (src_special >= SPECIAL_NORMAL)) {
     int i, n= N(t);
     tree r (INLINE_TAG, n);
-    r[0]= tree (CONCAT, "\\", highlight (subvar (var, 0), "id"));
+    r[0]= tree (CONCAT, "\\", highlight (subvar (var, 0), t[0], "var"));
     for (i=1; i<n; i++)
       r[i]= rewrite_inactive_arg (t, var, i, false, false);
     return tree (MARK, var, r);
@@ -366,11 +367,11 @@ edit_env_rep::rewrite_inactive_default (
       (src_special >= SPECIAL_NORMAL))
     {
       d = 1;
-      op= highlight (subvar (var, 0), "id");
+      op= highlight (subvar (var, 0), t[0], "var");
     }
   if (inactive_mode == INACTIVE_INLINE_ERROR ||
       inactive_mode == INACTIVE_BLOCK_ERROR)
-    op= highlight (op, "error");
+    op= highlight (op, "", "error");
 
   if ((src_compact == COMPACT_ALL) ||
       ((!block) && (src_compact != COMPACT_NONE)) ||
@@ -435,7 +436,7 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
   switch (L(t)) {
   case UNINIT:
     if (src_special >= SPECIAL_NORMAL)
-      return tree (MARK, var, highlight ("?", "error"));
+      return tree (MARK, var, highlight ("?", "", "error"));
     else return rewrite_inactive_default (t, var, block, flush);
   case RAW_DATA:
     return rewrite_inactive_raw_data (t, var, block, flush);

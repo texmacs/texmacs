@@ -57,9 +57,9 @@
 	     (load-help-article "main/interface/man-itf"))
 	    ("Writing your own style files"
 	     (load-help-article "devel/style/style"))
-	    ("Summary of the TeXmacs primitives"
+	    ("Reference guide for the TeXmacs primitives"
 	     (load-help-article "devel/format/primitives/primitives"))
-	    ("Summary of the standard TeXmacs styles"
+	    ("Reference guide for the standard TeXmacs styles"
 	     (load-help-article "main/styles/std-dtds/dtds"))
 	    ("Customizing TeXmacs"
 	     (load-help-article "main/scheme/man-scheme"))

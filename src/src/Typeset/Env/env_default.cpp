@@ -214,15 +214,17 @@ initialize_default_env () {
 
   /* syntactic highlighting */
   env ("src-macro")=
-    tree (MACRO, "x", tree (WITH, COLOR, "blue", tree (ARG, "x")));
-  env ("src-id")=
-    tree (MACRO, "x", tree (WITH, COLOR, "dark green", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "blue",
+			    FONT_FAMILY, "ss", tree (ARG, "x")));
+  env ("src-var")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark green",
+			    FONT_SHAPE, "italic", tree (ARG, "x")));
   env ("src-arg")=
-    tree (MACRO, "x", tree (WITH, COLOR, "brown", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "brown",
+			    FONT_SHAPE, "italic", tree (ARG, "x")));
   env ("src-tt")=
-    tree (MACRO, "x",
-	  tree (WITH, COLOR, "dark green", FONT_FAMILY, "tt",
-		tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "#224",
+			    FONT_FAMILY, "tt", tree (ARG, "x")));
   env ("src-integer")=
     tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
   env ("src-error")=
