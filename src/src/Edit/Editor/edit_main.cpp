@@ -313,8 +313,8 @@ edit_main_rep::the_path () {
 void
 edit_main_rep::process_input () {
   path p= search_upwards_expand ("input");
-  if (nil (p) || (N (subtree (et, p)) != (2+d_exp))) return;
-  tree t= subtree (et, p) [1+d_exp];
+  if (nil (p) || (N (subtree (et, p)) != 2)) return;
+  tree t= subtree (et, p) [1];
   string lan= get_env_string (PROG_LANGUAGE);
 
   if (lan == "scheme") {

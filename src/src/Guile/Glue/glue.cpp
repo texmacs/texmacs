@@ -52,9 +52,6 @@ scheme_dialect () {
 #endif
 }
 
-int get_d_exp () { return d_exp; }
-int get_d_hide_exp () { return 0; }
-
 string
 texmacs_version (string which) {
   if (which == "tgz") return TEXMACS_TGZ;

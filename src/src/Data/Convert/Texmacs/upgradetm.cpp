@@ -1523,7 +1523,6 @@ upgrade_formatting (tree t) {
 
 static tree
 upgrade_expand (tree t, tree_label WHICH_EXPAND) {
-#ifdef WITH_EXTENSIONS
   if (is_atomic (t)) return t;
   else if (is_func (t, WHICH_EXPAND) && is_atomic (t[0])) {
     int i, n= N(t)-1;
@@ -1548,14 +1547,10 @@ upgrade_expand (tree t, tree_label WHICH_EXPAND) {
       r[i]= upgrade_expand (t[i], WHICH_EXPAND);
     return r;
   }
-#else
-  return t;
-#endif
 }
 
 static tree
 upgrade_xexpand (tree t) {
-#ifdef WITH_EXTENSIONS
   if (is_atomic (t)) return t;
   else {
     int i, n= N(t);
@@ -1568,9 +1563,6 @@ upgrade_xexpand (tree t) {
       r[i]= upgrade_xexpand (t[i]);
     return r;
   }
-#else
-  return t;
-#endif
 }
 
 /******************************************************************************

@@ -82,19 +82,14 @@ contains_table_format (tree t, tree var) {
 void
 edit_dynamic_rep::activate_macro (path p, string name, tree f) {
   int n= N(f);
-#ifdef WITH_EXTENSIONS
   tree r (make_tree_label (name), n-1);
-#else
-  tree r (EXPAND, n);
-  r[0]= copy (name);
-#endif
   assign (p, r);
   if (n == 1) go_to (end (et, p));
-  else go_to (p * path (d_exp, 0));
+  else go_to (p * path (0, 0));
   if ((n == 2) && contains_table_format (f[1], f[0]))
     make_table (1, 1);
   else if ((n == 2) && is_multi_paragraph_macro (f))
-    ins_unary (p * d_exp, DOCUMENT);
+    ins_unary (p * 0, DOCUMENT);
   correct (path_up (p));
 }
 
@@ -383,36 +378,31 @@ edit_dynamic_rep::make_big_expand (string name) {
   /* ----------------------------------*/
 
   int  i= N(body)-1;
-  path p (d_exp, path (i, end (body[i])));
+  path p (0, path (i, end (body[i])));
   insert_tree (compound (name, body), p);
   return false;
 }
 
 void
 edit_dynamic_rep::make_expand (string s, int n) {
-#ifdef WITH_EXTENSIONS
   tree ins (make_tree_label (s), n);
-#else
-  tree ins (EXPAND, n+1);
-  ins[0]= s;
-#endif
   if (n==0) insert_tree (ins, 1);
   else if (n==1) {
     tree f= get_env_value (s);
     if ((N(f) == 2) && contains_table_format (f[1], f[0])) {
       tree sel= "";
       if (selection_active_small ()) sel= selection_get_cut ();
-      insert_tree (ins, path (d_exp, 0));
+      insert_tree (ins, path (0, 0));
       make_table (1, 1);
       if (sel != "") insert_tree (sel, end (sel));
     }
     else if (selection_active_normal ()) {
-      ins[d_exp]= selection_get_cut ();
-      insert_tree (ins, path (d_exp, end (ins[d_exp])));
+      ins[0]= selection_get_cut ();
+      insert_tree (ins, path (0, end (ins[0])));
     }
-    else insert_tree (ins, path (d_exp, 0));
+    else insert_tree (ins, path (0, 0));
   }
-  else insert_tree (ins, path (d_exp, 0));
+  else insert_tree (ins, path (0, 0));
 }
 
 void

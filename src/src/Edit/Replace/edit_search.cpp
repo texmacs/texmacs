@@ -431,11 +431,7 @@ edit_replace_rep::search_keypress (string s) {
 	p= path_up (p);
       if (nil (p)) return true;
       path r= path_up (p);
-#ifdef WITH_EXTENSIONS
       string w= as_string (L (subtree (et, r)));
-#else
-      string w= as_string (subtree (et, r * 0));
-#endif
       path q= (s == "C-right")?
 	search_next_expand (r, w):
 	search_previous_expand (r, w);

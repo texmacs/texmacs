@@ -18,8 +18,6 @@
   ""
   "initialize_glue_basic"
 
-  (tmp-d-exp get_d_exp (int))
-  (tmp-d-hide-exp get_d_hide_exp (int))
   (texmacs-version-release texmacs_version (string string))
 
   (tree->object tree_to_scheme_tree (scheme_tree tree))
