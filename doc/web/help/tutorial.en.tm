@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.10>
+<TeXmacs|1.0.4.3>
 
 <style|tmweb>
 
@@ -14,7 +14,7 @@
     <TeXmacs>, the tutorial is available from the <menu|Help|Tutorial> menu,
     after downloading the extended documentation from the web
     (<menu|Help|Online help|Update from web>). Alternatively, you may
-    <hlink|download|http://http.texmacs.org/Data/TeXmacs-tutorial.tar.gz> the
+    <hlink|download|http://www.texmacs.org/Data/TeXmacs-tutorial.tar.gz> the
     entire tutorial, unpack it using
 
     <\code>
@@ -36,35 +36,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|1.|?>>
-    <associate|idx-2|<tuple|1.|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Help>|<with|font-family|<quote|ss>|Tutorial>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Help>|<with|font-family|<quote|ss>|Online
-      help>|<with|font-family|<quote|ss>|Update from web>>|<pageref|idx-2>>
-    </associate>
-  </collection>
-</auxiliary>
