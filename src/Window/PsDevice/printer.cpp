@@ -11,9 +11,9 @@
 ******************************************************************************/
 
 #include "PsDevice/printer.hpp"
+#include "Metafont/tex_files.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
-#include "tex_files.hpp"
 #include "analyze.hpp"
 #include "iterator.hpp"
 #include "merge_sort.hpp"

@@ -12,9 +12,9 @@
 
 #ifndef TEX_FILES_H
 #define TEX_FILES_H
-#include "boot.hpp"
 #include "url.hpp"
 
+bool   use_ec_fonts ();
 void   make_tex_tfm (string fn_name);
 void   make_tex_pk (string fn_name, int dpi, int design_dpi, string where);
 void   reset_tfm_path (bool rehash= true);

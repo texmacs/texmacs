@@ -15,7 +15,7 @@
 
 // Inclusions from "Glue/glue.hpp" and "Scheme/evaluate.hpp"
 void initialize_glue ();
-void install_guile (int argc, char** argv, void (*call_back) (int, char**));
+void start_guile (int argc, char** argv, void (*call_back) (int, char**));
 void initialize_guile ();
 // End inclusions
 

@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : init_first.cpp
-* DESCRIPTION: initializations for the first launch of TeXmacs
+* MODULE     : tex_init.cpp
+* DESCRIPTION: initializations for using Metafont
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -14,8 +14,8 @@
 #include "file.hpp"
 #include "path.hpp"
 #include "sys_utils.hpp"
-#include "tex_files.hpp"
 #include "convert.hpp"
+#include "tex_files.hpp"
 
 /******************************************************************************
 * Determine installed programs
@@ -234,39 +234,27 @@ init_default_tex_settings () {
 }
 
 /******************************************************************************
-* First installation
+* Getting information about installation
+******************************************************************************/
+
+bool
+use_ec_fonts () {
+  return get_setting ("EC") == "true";
+}
+
+/******************************************************************************
+* Setting up and initializing TeX fonts
 ******************************************************************************/
 
 void
-init_first () {
-  url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
-  cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
-  cerr << HRULE;
-  cerr << "Since this seems to be the first time you run this\n";
-  cerr << "version of TeXmacs, I will first analyze your system\n";
-  cerr << "in order to set up some TeX paths in the correct way.\n";
-  cerr << "This may take some seconds; the result can be found in\n\n";
-  cerr << "\t" << settings_file << "\n\n";
-  cerr << HRULE;
-
-  set_setting ("VERSION", TEXMACS_VERSION);
+setup_tex () {
   init_helper_binaries ();
   init_heuristic_tex_paths ();
   init_default_tex_settings ();
-  
-  string s= scheme_tree_to_block (texmacs_settings);
-  if (save_string (settings_file, s) || load_string (settings_file, s)) {
-    cerr << HRULE;
-    cerr << "I could not save or reload the file\n\n";
-    cerr << "\t" << settings_file << "\n\n";
-    cerr << "Please give me full access control over this file and\n";
-    cerr << "rerun 'TeXmacs'.\n";
-    cerr << HRULE;
-    exit (1);
-  }
-  
-  cerr << HRULE;
-  cerr << "Installation completed successfully !\n";
-  cerr << "I will now start up the editor\n";
-  cerr << HRULE;
+}
+
+void
+init_tex () {
+  reset_tfm_path (false);
+  reset_pk_path (false);
 }

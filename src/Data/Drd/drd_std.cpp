@@ -48,7 +48,7 @@ init (tree_label l, string name, tag_info ti) {
 static bool std_drd_initialized= false;
 
 void
-initialize_std_drd () {
+init_std_drd () {
   if (std_drd_initialized) return;
   std_drd_initialized=true;
 

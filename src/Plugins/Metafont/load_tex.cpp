@@ -13,6 +13,7 @@
 
 #include "load_tex.hpp"
 #include "path.hpp"
+#include "boot.hpp"
 
 RESOURCE_CODE(tex_font_metric);
 static int

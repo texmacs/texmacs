@@ -12,7 +12,6 @@
 
 #include "boot.hpp"
 #include "file.hpp"
-#include "tex_files.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "convert.hpp"
@@ -22,6 +21,9 @@
 tree texmacs_settings = tuple ();
 int  install_status   = 0;
 bool use_which        = false;
+
+extern void setup_tex (); // from Plugins/Metafont/tex_init.cpp
+extern void init_tex  (); // from Plugins/Metafont/tex_init.cpp
 
 /******************************************************************************
 * Subroutines for paths
@@ -327,24 +329,70 @@ set_setting (string var, string val) {
   texmacs_settings << tuple (var, quote (val));
 }
 
-bool
-use_ec_fonts () {
-  return get_setting ("EC") == "true";
-}
-
 /******************************************************************************
-* Initialize settings
+* First installation
 ******************************************************************************/
 
 void
-init_settings () {
+setup_texmacs () {
+  url settings_file= "$TEXMACS_HOME_PATH/system/settings.scm";
+  cerr << "Welcome to TeXmacs " TEXMACS_VERSION "\n";
+  cerr << HRULE;
+  cerr << "Since this seems to be the first time you run this\n";
+  cerr << "version of TeXmacs, I will first analyze your system\n";
+  cerr << "in order to set up some TeX paths in the correct way.\n";
+  cerr << "This may take some seconds; the result can be found in\n\n";
+  cerr << "\t" << settings_file << "\n\n";
+  cerr << HRULE;
+
+  set_setting ("VERSION", TEXMACS_VERSION);
+  setup_tex ();
+  
+  string s= scheme_tree_to_block (texmacs_settings);
+  if (save_string (settings_file, s) || load_string (settings_file, s)) {
+    cerr << HRULE;
+    cerr << "I could not save or reload the file\n\n";
+    cerr << "\t" << settings_file << "\n\n";
+    cerr << "Please give me full access control over this file and\n";
+    cerr << "rerun 'TeXmacs'.\n";
+    cerr << HRULE;
+    exit (1);
+  }
+  
+  cerr << HRULE;
+  cerr << "Installation completed successfully !\n";
+  cerr << "I will now start up the editor\n";
+  cerr << HRULE;
+}
+
+/******************************************************************************
+* Initialization of TeXmacs
+******************************************************************************/
+
+void
+init_texmacs () {
+  init_std_drd ();
+  init_main_paths ();
+  init_user_dirs ();
+  init_guile ();
+  init_env_vars ();
+  init_misc ();
+  init_deprecated ();
+}
+
+/******************************************************************************
+* Initialization of built-in plug-ins
+******************************************************************************/
+
+void
+init_plugins () {
   install_status= 0;
   url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
   string s;
   if (load_string (new_settings, s)) {
     if (load_string (old_settings, s)) {
-      init_first ();
+      setup_texmacs ();
       install_status= 1;
     }
     else get_old_settings (s);
@@ -355,26 +403,5 @@ init_settings () {
     url ch ("$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm");
     install_status= exists (ch)? 2: 0;
   }
-}
-
-/******************************************************************************
-* Installation of TeXmacs
-******************************************************************************/
-
-void
-install_texmacs () {
-  initialize_std_drd ();
-  init_main_paths ();
-  init_user_dirs ();
-  init_guile ();
-  init_env_vars ();
-  init_misc ();
-  init_deprecated ();
-}
-
-void
-install_tex () {
-  init_settings ();
-  reset_tfm_path (false);
-  reset_pk_path (false);
+  init_tex ();
 }

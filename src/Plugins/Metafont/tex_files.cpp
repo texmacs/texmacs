@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "tex_files.hpp"
+#include "boot.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "path.hpp"
