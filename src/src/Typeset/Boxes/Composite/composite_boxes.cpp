@@ -49,20 +49,24 @@ composite_box_rep::insert (box b, SI x, SI y) {
 void
 composite_box_rep::position () {
   int i, n= subnr();
-  if (n == 0) fatal_error ("empty composite box", "composite_box::position");
+  if (n == 0) {
+    x1= y1= x3= y3= 0;
+    x2= y2= x4= y4= 0;
+    fatal_error ("empty composite box", "composite_box::position");
+  }
   else {
     x1= y1= x3= y3= MAX_SI;
     x2= y2= x4= y4= -MAX_SI;
-  }
-  for (i=0; i<n; i++) {
-    x1= min (x1, sx1(i));
-    y1= min (y1, sy1(i));
-    x2= max (x2, sx2(i));
-    y2= max (y2, sy2(i));
-    x3= min (x3, sx3(i));
-    y3= min (y3, sy3(i));
-    x4= max (x4, sx4(i));
-    y4= max (y4, sy4(i));
+    for (i=0; i<n; i++) {
+      x1= min (x1, sx1(i));
+      y1= min (y1, sy1(i));
+      x2= max (x2, sx2(i));
+      y2= max (y2, sy2(i));
+      x3= min (x3, sx3(i));
+      y3= min (y3, sy3(i));
+      x4= max (x4, sx4(i));
+      y4= max (y4, sy4(i));
+    }
   }
 }
 

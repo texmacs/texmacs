@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.1>
 
 <style|source>
 
@@ -45,7 +45,7 @@
 
   <assign|sectional-sep|<macro|.<space|2spc>>>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-page*><new-line><style-with|src-compact|none|<sectional-centered-bold|<vspace*|2fn><with|font-shape|small-caps|<really-large|<arg|name>>><vspace|3fn>>>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-dpage*><new-line><style-with|src-compact|none|<sectional-centered-bold|<vspace*|2fn><with|font-shape|small-caps|<really-large|<arg|name>>><vspace|3fn>>>>>>
 
   <assign|chapter-long-title|<macro|first-title|second-title|<style-with|src-compact|none|<chapter-title|<style-with|src-compact|none|<very-huge|<arg|first-title>><right-flush><vspace|1.5fn><new-line><left-flush><arg|second-title>>>>>>
 

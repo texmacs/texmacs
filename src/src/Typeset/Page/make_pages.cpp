@@ -83,7 +83,11 @@ pager_rep::pages_format (pagelet pg) {
   // cout << "Formatting pagelet " << (N(pages)+1)
   //      << " stretch " << pg->stretch
   //      << " height " << stretch_space (pg->ht, pg->stretch) << LF << INDENT;
-  if (N (pg->ins) == 1) {
+  if (N (pg->ins) == 0) {
+    if (N(pages) == 0) return empty_box (ip);
+    return empty_box (pages[N(pages)-1]->find_rip());
+  }
+  else if (N (pg->ins) == 1) {
     insertion ins= pg->ins[0];
     // cout << ins << " stretch " << ins->stretch
     //      << " height " << stretch_space (ins->ht, ins->stretch) << LF;

@@ -826,6 +826,8 @@
 ("new" "nouveau")
 ("new buffer" "nouveau tampon")
 ("new column" "nouvelle colonne")
+("new double page" "nouvelle page double")
+("new double page before" "nouvelle page double avant")
 ("new item" "nouvel élément")
 ("new line" "nouvelle ligne")
 ("new number" "nouveau nombre")

@@ -183,6 +183,8 @@
       ---
       ("New page" (make-new-page))
       ("New page before" (make 'new-page*))
+      ("New double page" (make-new-dpage))
+      ("New double page before" (make 'new-dpage*))
       ("Page break" (make-page-break))
       ("Page break before" (make 'page-break*))
       ("No page break before" (make 'no-page-break*))
