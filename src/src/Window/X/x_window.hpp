@@ -25,6 +25,7 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   widget       w;
   x_display    dis;
   char*        name;
+  string       the_name;
 
   Display*     dpy;
   Window       win;
@@ -40,6 +41,7 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   bool         has_focus;
 
   bool         full_screen_flag;
+  Window       save_win;
   int          save_x, save_y;
   int          save_w, save_h;
 
@@ -68,10 +70,10 @@ public:
 
   /********************* routines from window.hpp **************************/
 
+  string get_name ();
   void set_name (string s);
   void map ();
   void unmap ();
-  void full_screen_sub (bool flag);
   void full_screen (bool flag);
   void get_position (SI& x, SI& y);
   void get_size (SI& w, SI& h);
