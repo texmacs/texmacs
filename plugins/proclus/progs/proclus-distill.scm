@@ -54,13 +54,15 @@
 ;; Mode déplacement: Circuler dans les documents contenant les destinations des
 ;; liens.
 
-(define (locus-action)
+(tm-define (locus-action)
+  (:secure #t)
   (and-let* ((t (get-locus-or-not-locus)))
     (set-last-locus! (locus-self-link t))
     ;; TODO: extend action to account for nested loci.
     (edit-links)))
 
-(define (proclus-links-action)
+(tm-define (proclus-links-action)
+  (:secure #t)
   ;; WARNING: there must not be an "interactive" action before opening
   ;; the target document in go-to-locus.
   (and-let* ((t (get-locus-or-not-locus)))
