@@ -51,22 +51,26 @@ edit_env_rep::rewrite (tree t) {
   case EXTERN:
     {
       int i, n= N(t);
-      string s= "(" * as_string (exec (t[0]));
-      for (i=1; i<n; i++)
-	s << " '" << tree_to_scheme (exec (t[i]));
-      s << ")";
+      tree r (TUPLE, n);
+      for (i=0; i<n; i++)
+	r[i]= exec (t[i]);
+      object expr= null_object ();
+      for (i=n-1; i>0; i--)
+	expr= cons (object (r[i]), expr);
+      string fun= as_string (exec (t[0]));
+      expr= cons (string_to_object (fun), expr);
       if (script_status < 2) {
-	if (!as_bool (eval ("(secure? '" * s * ")")))
+	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
       }
       edit_env old_env= current_rewrite_env;
       bool old_env_unspecified= current_rewrite_env_unspecified;
       current_rewrite_env= edit_env (this);
       current_rewrite_env_unspecified= false;
-      object o= eval (s);
+      object o= eval (expr);
       current_rewrite_env= old_env;
       current_rewrite_env_unspecified= old_env_unspecified;
-      return stree_to_tree (o);
+      return content_to_tree (o);
     }
   case MAP_ARGS:
     {
@@ -131,6 +135,13 @@ edit_env_rep::rewrite (tree t) {
 
 tree
 edit_env_rep::exec_rewrite (tree t) {
+  /*
+  cout << "t= " << t << "\n";
+  tree r= rewrite (t);
+  r= exec (r);
+  cout << "r= " << r << "\n";
+  return r;
+  */
   return exec (rewrite (t));
 }
 
@@ -198,7 +209,7 @@ edit_env_rep::exec (tree t) {
   case EVAL:
     return exec (exec (t[0]));
   case QUOTE:
-    return copy (t[0]);
+    return t[0];
   case QUASI:
     return exec (exec_quasiquoted (t[0]));
   case QUASIQUOTE:
@@ -407,8 +418,11 @@ edit_env_rep::exec_compound (tree t) {
 	macro_arg->item (f[0]->label)= t;
     }
     else for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+      if (is_atomic (f[i])) {
+	tree st= i<m? t[i+d]: tree (UNINIT);
+	macro_arg->item (f[i]->label)= st;
+	macro_src->item (f[i]->label)= obtain_ip (st);
+      }
     tree r= exec (f[n]);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
@@ -1221,14 +1235,19 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     macro_src= list<hashmap<string,path> >
       (hashmap<string,path> (path (DECORATION)), macro_src);
     if (L(f) == XMACRO) {
-      if (is_atomic (f[0]))
+      if (is_atomic (f[0])) {
 	macro_arg->item (f[0]->label)= t;
+	macro_src->item (f[0]->label)= obtain_ip (t);
+      }
       (void) exec_until (f[n], p, var, 0);
     }
     else {
       for (i=0; i<n; i++)
-	if (is_atomic (f[i]))
-	  macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+	if (is_atomic (f[i])) {
+	  tree st= i<m? t[i+d]: tree (UNINIT);
+	  macro_arg->item (f[i]->label)= st;
+	  macro_src->item (f[i]->label)= obtain_ip (st);
+	}
       (void) exec_until (f[n], p->next, var, 0);
     }
     macro_arg= macro_arg->next;
@@ -1464,8 +1483,11 @@ edit_env_rep::exec_until_compound (tree t, path p, string var, int level) {
 	macro_arg->item (f[0]->label)= t;
     }
     for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+      if (is_atomic (f[i])) {
+	tree st= i<m? t[i+d]: tree (UNINIT);
+	macro_arg->item (f[i]->label)= st;
+	macro_src->item (f[i]->label)= obtain_ip (st);
+      }
     bool done= exec_until (f[n], p, var, level+1);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;

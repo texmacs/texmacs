@@ -162,7 +162,7 @@ bridge_argument_rep::my_typeset (int desired_status) {
       prefix= prefix * nr;
     }
   }
-  initialize (name, prefix, value, valip);
+  initialize (name, prefix, attach_here (value, valip));
 
   ttt->insert_marker (body->st, ip);
   list<hashmap<string,tree> > old_var= env->macro_arg;

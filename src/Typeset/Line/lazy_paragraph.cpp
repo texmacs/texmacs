@@ -253,7 +253,7 @@ lazy_paragraph_rep::handle_decoration (
     // cout << "Typesetting " << e << LF;
     env->decorated_boxes << b;
     tree old_xoff= env->local_begin (XOFF_DECORATIONS, xoff_str);
-    box bb= typeset_as_concat (env, e, decorate_middle (ip));
+    box bb= typeset_as_concat (env, attach_middle (e, ip));
     env->local_end (XOFF_DECORATIONS, old_xoff);
     env->decorated_boxes->resize (N (env->decorated_boxes) - 1);
     b= bb;

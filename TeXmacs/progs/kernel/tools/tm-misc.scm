@@ -19,7 +19,7 @@
     init-default test-default? test-init? test-env?
     save-object load-object
     not-implemented tm-debug
-    real-math-font? real-math-family?
+    texmacs-version-release* real-math-font? real-math-family?
     kill-line replace-start-forward
     with-active-buffer-sub with-active-buffer
     delayed-update
@@ -89,6 +89,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (texmacs-version-release* t)
+  (texmacs-version-release (tree->string t)))
 
 (define (real-math-font? fn)
   (or (== fn "roman") (== fn "concrete")))

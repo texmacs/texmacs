@@ -43,7 +43,7 @@ concater_rep::typeset_if (tree t, path ip) {
 void
 concater_rep::typeset_var_if (tree t, path ip) {
   tree flag= env->exec (t[0]);
-  box  b   = typeset_as_concat (env, t[1], decorate_right (ip));
+  box  b   = typeset_as_concat (env, attach_right (t[1], ip));
   marker (descend (ip, 0));
   if (flag == "true") print (STD_ITEM, b);
   else print (STD_ITEM, empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
@@ -114,7 +114,7 @@ concater_rep::typeset_specific (tree t, path ip) {
   }
   else if ((which == "screen") || (which == "printer")) {
     int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);
-    box  sb  = typeset_as_concat (env, t[1], decorate_right (descend (ip, 2)));
+    box  sb  = typeset_as_concat (env, attach_middle (t[1], ip));
     box  b   = specific_box (decorate_middle (ip), sb, type, env->fn);
     marker (descend (ip, 0));
     print (STD_ITEM, b);
@@ -160,7 +160,7 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   else if (type == 1) value= "?";
 
   command cmd (new guile_command_rep (s, 2));
-  box b= typeset_as_concat (env, value, decorate_right (ip));
+  box b= typeset_as_concat (env, attach_right (value, ip));
   string action= env->read_only? string ("select"): string ("double-click");
   print (STD_ITEM, action_box (ip, b, action, cmd, true));
   marker (descend (ip, 1));  
