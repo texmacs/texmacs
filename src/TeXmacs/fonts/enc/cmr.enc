@@ -15,6 +15,7 @@
     "p" "q" "r" "s" "t" "u" "v" "w"
     "x" "y" "z" "--" "---" "" "~" "ddot"
 42  "asterisk"
+44  "comma"
 65  "Alpha" "Beta" "" "" "Epsilon" "" ""
     "Eta" "Iota" "" "Kappa" "" "Mu" "Nu"
     "Omicron" "Rho" "" "" "" "Tau" ""
