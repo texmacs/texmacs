@@ -79,19 +79,26 @@ operator << (T& item, list<T>& l) {
   return l;
 }
 
-template<class T> list<T>&
-suppress_last (list<T>& l) {
-  if (nil (l)) fatal_error ("empty path", "last_item", "list.cpp");
-  if (nil (l->next)) l= list<T> ();
-  else suppress_last (l->next);
-  return l;
-}
-
-template<class T> T&
+template<class T> T
 last_item (list<T> l) {
   if (nil (l)) fatal_error ("empty path", "last_item", "list.cpp");
   if (nil (l->next)) return l->item;
   return last_item (l->next);
+}
+
+template<class T> T&
+access_last (list<T>& l) {
+  if (nil (l)) fatal_error ("empty path", "access_last", "list.cpp");
+  if (nil (l->next)) return l->item;
+  return access_last (l->next);
+}
+
+template<class T> list<T>&
+suppress_last (list<T>& l) {
+  if (nil (l)) fatal_error ("empty path", "suppress_last", "list.cpp");
+  if (nil (l->next)) l= list<T> ();
+  else suppress_last (l->next);
+  return l;
 }
 
 /******************************************************************************
