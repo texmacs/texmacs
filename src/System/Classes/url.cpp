@@ -671,7 +671,7 @@ complete (url base, url u, string filter, bool flag) {
   if (is_wildcard (u)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      cerr << "\nbase= " << base << "\n";
+      cerr << LF << "base= " << base << LF;
       fatal_error ("wildcards only implemented for files",
 		   "complete", "url.cpp");
     }
@@ -690,6 +690,7 @@ complete (url base, url u, string filter, bool flag) {
     }
     return ret;
   }
+  cout << LF << "url= " << u << LF;
   fatal_error ("bad url", "complete", "url.cpp");
 }
 
