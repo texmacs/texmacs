@@ -12,15 +12,14 @@
   <assign|tmweb-link|<func|what|to|<hlink|<with|color|<if|<or|<equal|<apply|what>|<apply|tmweb-main>>|<equal|<apply|what>|<apply|tmweb-sub>>>|dark
   green|brown>|<translate|<apply|what>|english|<apply|language>>>|<if|<equal|<find_file|<merge|<apply|to>|<apply|tmweb-suffix>>>|false>|<merge|<apply|to>|.en.tm>|<merge|<apply|to>|<apply|tmweb-suffix>>>>>>
 
-  <assign|tmweb-list-sub|<func|what|<look_up|<value|what>|0><if|<is_tuple|<look_up|<value|what>|1>>|
-  \| <apply|tmweb-list-sub|<look_up|<value|what>|1>>>>>
+  <assign|tmweb-list-extra|<macro|x| \| <arg|x>>>
 
-  <assign|tmweb-list|<func|what*|<if|<is_tuple|<value|what>>|
-  <apply|tmweb-list-sub|<value|what>> |-->>>
+  <assign|tmweb-list|<xmacro|x| <arg|x|0><map_args|tmweb-list-extra|concat|x|1>
+  >>
 
   \;
 
-  <assign|tmweb-main-links|<func|<apply|tmweb-list|<apply|tmweb-link|Home|../home/welcome>|<apply|tmweb-link|Download|../download/download>|<apply|tmweb-link|Help|../help/help>|<apply|tmweb-link|Contribute|../contribute/contribute>|<apply|tmweb-link|Plug-ins|../plugins/plugins>|<apply|tmweb-link|About|../about/authors>|<apply|tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<translate|Search|english|<apply|language>>>|http://www.texmacs.org/search>>>>
+  <assign|tmweb-main-links|<func|<tmweb-list|<apply|tmweb-link|Home|../home/welcome>|<apply|tmweb-link|Download|../download/download>|<apply|tmweb-link|Help|../help/help>|<apply|tmweb-link|Contribute|../contribute/contribute>|<apply|tmweb-link|Plug-ins|../plugins/plugins>|<apply|tmweb-link|About|../about/authors>|<apply|tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<translate|Search|english|<apply|language>>>|http://www.texmacs.org/search>>>>
 
   <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<apply|tmweb-main-links>|<arg|title>|<arg|bar>>>>
 
@@ -41,27 +40,27 @@
 
   \;
 
-  <assign|tmweb-home-links|<func|<apply|tmweb-list|<apply|tmweb-link|Welcome|welcome>|<apply|tmweb-link|Screen
+  <assign|tmweb-home-links|<func|<tmweb-list|<apply|tmweb-link|Welcome|welcome>|<apply|tmweb-link|Screen
   shots|screenshots>|<apply|tmweb-link|News|news>|<apply|tmweb-link|Mailing
   lists|ml>>>>
 
-  <assign|tmweb-download-links|<func|<apply|tmweb-list|<apply|tmweb-link|General|download>|<apply|tmweb-link|Sources|sources>|<apply|tmweb-link|Binaries|unix>|<apply|tmweb-link|RPM|rpm>|<apply|tmweb-link|Knoppix|knoppix>|<apply|tmweb-link|CVS|cvs>|<apply|tmweb-link|Fonts|fonts>|<apply|tmweb-link|Requirements|requirements>>>>
+  <assign|tmweb-download-links|<func|<tmweb-list|<apply|tmweb-link|General|download>|<apply|tmweb-link|Sources|sources>|<apply|tmweb-link|Binaries|unix>|<apply|tmweb-link|RPM|rpm>|<apply|tmweb-link|Knoppix|knoppix>|<apply|tmweb-link|CVS|cvs>|<apply|tmweb-link|Fonts|fonts>|<apply|tmweb-link|Requirements|requirements>>>>
 
-  <assign|tmweb-help-links|<func|<apply|tmweb-list|<apply|tmweb-link|General|help>|<apply|tmweb-link|FAQ|faq>|<apply|tmweb-link|Tutorial|tutorial>|<apply|tmweb-link|Manual|manual>|<apply|tmweb-link|Articles|articles>>>>
+  <assign|tmweb-help-links|<func|<tmweb-list|<apply|tmweb-link|General|help>|<apply|tmweb-link|FAQ|faq>|<apply|tmweb-link|Tutorial|tutorial>|<apply|tmweb-link|Manual|manual>|<apply|tmweb-link|Articles|articles>>>>
 
-  <assign|tmweb-contribute-links|<func|<apply|tmweb-list|<apply|tmweb-link|Helping|contribute>|<apply|tmweb-link|Documentation|documentation>|<apply|tmweb-link|Translations|translations>|<apply|tmweb-link|Extensions|plugins>|<apply|tmweb-link|Donations|donations>>>>
+  <assign|tmweb-contribute-links|<func|<tmweb-list|<apply|tmweb-link|Helping|contribute>|<apply|tmweb-link|Documentation|documentation>|<apply|tmweb-link|Translations|translations>|<apply|tmweb-link|Extensions|plugins>|<apply|tmweb-link|Donations|donations>>>>
 
-  <assign|tmweb-plugin-links|<func|<apply|tmweb-list|<apply|tmweb-link|All|plugins>|<apply|tmweb-link|Mathematics|cas>|<apply|tmweb-link|Numerics|numerics>|<apply|tmweb-link|Statistics|statistics>|<apply|tmweb-link|Physics|physics>|<apply|tmweb-link|Graphics|graphics>|<apply|tmweb-link|Education|education>|<apply|tmweb-link|Tools|tools>>>>
+  <assign|tmweb-plugin-links|<func|<tmweb-list|<apply|tmweb-link|All|plugins>|<apply|tmweb-link|Mathematics|cas>|<apply|tmweb-link|Numerics|numerics>|<apply|tmweb-link|Statistics|statistics>|<apply|tmweb-link|Physics|physics>|<apply|tmweb-link|Graphics|graphics>|<apply|tmweb-link|Education|education>|<apply|tmweb-link|Tools|tools>>>>
 
-  <assign|tmweb-about-links|<func|<apply|tmweb-list|<apply|tmweb-link|Authors|authors>|<apply|tmweb-link|Philosophy|philosophy>|<apply|tmweb-link|Changes|changes>|<apply|tmweb-link|Plans|plans>|<apply|tmweb-link|License|license>>>>
+  <assign|tmweb-about-links|<func|<tmweb-list|<apply|tmweb-link|Authors|authors>|<apply|tmweb-link|Philosophy|philosophy>|<apply|tmweb-link|Changes|changes>|<apply|tmweb-link|Plans|plans>|<apply|tmweb-link|License|license>>>>
 
-  <assign|tmweb-contact-links|<func|<apply|tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>|<apply|tmweb-link|Patches|patches>>>>
+  <assign|tmweb-contact-links|<func|<tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>|<apply|tmweb-link|Patches|patches>>>>
 
   \;
 
-  <assign|tmweb-manual-links|<func|previous|next|<apply|tmweb-list|<apply|tmweb-link|Manual|../help/manual>|<apply|tmweb-link|Top|web-manual>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
+  <assign|tmweb-manual-links|<func|previous|next|<tmweb-list|<apply|tmweb-link|Manual|../help/manual>|<apply|tmweb-link|Top|web-manual>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
 
-  <assign|tmweb-tutorial-links|<func|previous|next|<apply|tmweb-list|<apply|tmweb-link|Tutorial|../help/tutorial>|<apply|tmweb-link|Top|web-tutorial>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
+  <assign|tmweb-tutorial-links|<func|previous|next|<tmweb-list|<apply|tmweb-link|Tutorial|../help/tutorial>|<apply|tmweb-link|Top|web-tutorial>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
 
   \;
 

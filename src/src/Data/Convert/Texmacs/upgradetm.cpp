@@ -1566,6 +1566,52 @@ upgrade_xexpand (tree t) {
 }
 
 /******************************************************************************
+* Upgrade apply
+******************************************************************************/
+
+static tree
+upgrade_apply (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, APPLY) && /*is_atomic (t[0])*/
+	   ((t[0] == "cite") || (t[0] == "nocite") || (t[0] == "menu") ||
+	    (t[0] == "tmdoc-copyright") || (t[0] == "tmweb-list")))
+    {
+      int i, n= N(t)-1;
+      string s= t[0]->label;
+      tree_label l= make_tree_label (s);
+      tree r (l, n);
+      for (i=0; i<n; i++)
+	r[i]= upgrade_apply (t[i+1]);
+      return r;
+    }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_apply (t[i]);
+    return r;
+  }
+}
+
+static tree
+upgrade_function (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION)) {
+    int i, n= N(t[1])-1;
+    for (i=0; i<n; i++)
+      if (ends (as_string (t[1][i]), "*"))
+	cout << "TeXmacs] Deprecated argument list '" << t[1][i]
+	     << "' in function '" << t[0] << "'\n"
+	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
+  }
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_function (t[i]);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -1585,6 +1631,8 @@ upgrade_tex (tree t) {
   t= upgrade_expand (t, HIDE_EXPAND);
   t= upgrade_expand (t, VAR_EXPAND);
   t= upgrade_xexpand (t);
+  t= upgrade_function (t);
+  t= upgrade_apply (t);
   return t;
 }
 
@@ -1631,6 +1679,10 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.2.5")) {
     t= upgrade_expand (t, VAR_EXPAND);
     t= upgrade_xexpand (t);
+  }
+  if (version_inf_eq (version, "1.0.2.6")) {
+    t= upgrade_function (t);
+    t= upgrade_apply (t);
   }
   return t;
 }
