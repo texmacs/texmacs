@@ -25,6 +25,13 @@ extern int geometry_x, geometry_y;
 
 extern tree   the_et;
 
+extern int    file_count;
+extern time_t file_time;
+extern int    stat_count;
+extern time_t stat_time;
+extern int    dirs_count;
+extern time_t dirs_time;
+
 /******************************************************************************
 * Real main program for encaptulation of guile
 ******************************************************************************/
@@ -153,7 +160,7 @@ TeXmacs_main (int argc, char** argv) {
   init_plugins ();
   timer_t plugin_boot = texmacs_time () - plugin_start;
   if (DEBUG_BENCH)
-    cout << "Bench  ] Initializes plug-ins in " << plugin_boot << " ms\n";
+    cout << "Bench  ] Initialized plug-ins in " << plugin_boot << " ms\n";
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   display dis= open_display (argc, argv);
   dis->set_default_font (the_default_font);
@@ -192,6 +199,15 @@ TeXmacs_main (int argc, char** argv) {
 	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
       sv->exec_delayed ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)");
 #endif
+  }
+
+  if (DEBUG_BENCH) {
+    cout << "Bench  ] Loaded " << file_count
+	 << " files in " << file_time << " ms\n";
+    cout << "Bench  ] Loaded " << dirs_count
+	 << " directories in " << dirs_time << " ms\n";
+    cout << "Bench  ] Issued " << stat_count
+	 << " stat commands in " << stat_time << " ms\n";
   }
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
