@@ -45,10 +45,10 @@
     <surround||<hflush>|<arg|body>>
   </macro>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text>
+  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text><localize|:>
   ><arg|x>>>
 
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<AMS-class-text>
+  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><arg|x>>>
 
   \;
@@ -67,8 +67,8 @@
 
   <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
 
-  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<email-text>
-  ><verbatim|<arg|body>>>>
+  <assign|title-email*|<macro|body|<style-with|src-compact|none|<with|font-shape|small-caps|<email-text><localize|:>
+  ><verbatim|<arg|body>>>>>
 
   <assign|title-email|<macro|body|<vspace*|0.1pag><title-email*|<arg|body>>>>
 

@@ -29,15 +29,15 @@
 
   <assign|by-text|<macro|<localize|by>>>
 
-  <assign|email-text|<macro|<localize|Email:>>>
+  <assign|email-text|<macro|<localize|Email>>>
 
-  <assign|homepage-text|<macro|<localize|Web:>>>
+  <assign|homepage-text|<macro|<localize|Web>>>
 
   <assign|abstract-text|<macro|<localize|Abstract>>>
 
-  <assign|keywords-text|<macro|<localize|Keywords:>>>
+  <assign|keywords-text|<macro|<localize|Keywords>>>
 
-  <assign|AMS-class-text|<macro|<localize|A.M.S. subject classification:>>>
+  <assign|AMS-class-text|<macro|<localize|A.M.S. subject classification>>>
 
   <\active*>
     <\src-comment>
@@ -134,10 +134,10 @@
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<arg|x>>
   </macro>>
 
-  <assign|author-email|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<email-text>
+  <assign|author-email|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
   ><with|font-family|tt|<arg|x>>>>>
 
-  <assign|author-homepage|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text>
+  <assign|author-homepage|<macro|x|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
   ><with|font-family|tt|<arg|x>>>>>
 
   <assign|author-note|<\macro|x>
