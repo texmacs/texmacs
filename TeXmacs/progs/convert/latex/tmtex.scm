@@ -353,6 +353,7 @@
   (let* ((doc (car l))
 	 (styles (cdadr l))
 	 (lang (caddr l))
+	 (init (cadddr l))
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body (tmtex-filter-body doc)))
     (if (null? styles) (tmtex doc)
@@ -361,6 +362,7 @@
 		(tmtex doc-body)
 		(tmtex-filter-styles styles)
 		lang
+		init
 		(map-in-order tmtex doc-preamble))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1198,7 +1200,8 @@
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
-	     (doc (list '!file body style lan (get-texmacs-path))))
+	     (init (tmfile-extract x 'initial))
+	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
