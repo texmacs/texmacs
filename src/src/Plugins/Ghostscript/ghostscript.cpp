@@ -42,11 +42,14 @@ ghostscript_bugged () {
 
 static string
 encapsulate_postscript (string s) {
-  int i, n=N(s);
+  int i, n= N(s);
+  int last_begin= 0;
   string r;
-  for (i=0; i<n; ) {
-    if ((i<(n-8)) && (s(i,i+8)=="showpage")) {i+=8; continue;}
-    r << s[i++];
+  for (i=0; i<n; i++) {
+    if ((s[i] != 's') || (i>(n-8)) || (s(i,i+8) != "showpage")) continue;
+    if (i > last_begin) r << s (last_begin, i);
+    i += 8;
+    last_begin= i;
   }
   return r;
 }
