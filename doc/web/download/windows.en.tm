@@ -58,6 +58,10 @@
     work (<name|Pari> and <name|Yacas>), but others don't. Any help with
     getting these other ones working would be appreciated.
 
+    <item>Popup menus sometimes remain visible after clicking on one of the
+    items. In that case, clicking anywhere in the <TeXmacs> window should
+    make them disappear.
+
     <item>In order to compile bibliographies, you need <name|Bib><TeX> (which
     is provided as part of <name|Mik><TeX>).
   </itemize>
