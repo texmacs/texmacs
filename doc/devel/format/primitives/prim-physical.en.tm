@@ -8,7 +8,7 @@
   The physical markup refers to the set of primitives often found in regular
   documents.
 
-  Some of those primtives (spacing and breaking) can be avoided in pure
+  Some of those primitives (spacing and breaking) can be avoided in pure
   logical documents and be encapsulated in the document style, but some
   features (tables) cannot be fully used without using physical markup within
   the document.

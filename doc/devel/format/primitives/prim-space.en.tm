@@ -6,11 +6,11 @@
   <tmdoc-title|White space primitives>
 
   <big-table|<assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
-  blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<verbatim|vspace>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<verbatim|vspace*>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<verbatim|hspace>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<verbatim|space>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<verbatim|htab>>|<cell|<with|mode|math|1,2>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>>>>|White
+  blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|vspace>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|vspace*>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|hspace>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|space>>|<cell|<with|mode|math|1,3>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>|<row|<cell|<markup|htab>>|<cell|<with|mode|math|1,2>>|<cell|Yes>|<cell|None>|<cell|Typesetting>|<cell|Physical>>>>>|White
   space primitives>
 
   <\description-dash>
-    <item*|vspace>Vertical space after.
+    <item*|<markup|vspace>>Vertical space after.
 
     <verbatim|(vspace <var|len> <var|min> <var|max>)> inserts an elastic
     vertical space after the current paragraph. The <var|len> operand must be
@@ -23,7 +23,7 @@
 
     Operands are not evaluated and must be literal strings.
 
-    <item*|vspace*>Vertical space before.
+    <item*|<markup|vspace*>>Vertical space before.
 
     <verbatim|(vspace* <var|len>)> and <verbatim|(space <var|len> <var|min>
     <var|max>)> are similar to their <verbatim|vspace> conterparts but the
@@ -34,7 +34,7 @@
     <verbatim|vspace> and <verbatim|vspace*> tags in the surrounding
     paragraphs.
 
-    <item*|space>Rigid horizontal space.
+    <item*|<markup|space>>Rigid horizontal space.
 
     <verbatim|(space <var|len> <var|bot> <var|top>)> inserts an empty box
     whose width is <var|len>, and whose bottom and top sides are at distances
@@ -46,7 +46,7 @@
 
     Operands are not evaluated and must be literal strings.
 
-    <item*|hspace>Stretchable horizontal space.
+    <item*|<markup|hspace>>Stretchable horizontal space.
 
     <verbatim|(vspace <var|len> <var|min> <var|max>)> inserts a stretchable
     horizontal space of nominal width <var|len>, which must be a
@@ -59,7 +59,7 @@
 
     Operands are not evaluated and must be literal strings.
 
-    <item*|htab>Horizontal spring.
+    <item*|<markup|htab>>Horizontal spring.
 
     Springs are horizontal spaces which extend so the containing paragraph
     takes all the available horizontal space. When a paragraph is line
@@ -124,8 +124,43 @@
 
 <\references>
   <\collection>
+    <associate|idx-10|<tuple|1|?>>
     <associate|gly-1|<tuple|1|?>>
     <associate|idx-1|<tuple|1|?>>
     <associate|idx-2|<tuple|1|?>>
+    <associate|idx-3|<tuple|1|?>>
+    <associate|idx-4|<tuple|1|?>>
+    <associate|idx-5|<tuple|1|?>>
+    <associate|idx-6|<tuple|1|?>>
+    <associate|idx-7|<tuple|1|?>>
+    <associate|idx-8|<tuple|1|?>>
+    <associate|idx-9|<tuple|1|?>>
   </collection>
 </references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|table>
+      <tuple|normal|White space primitives|<pageref|gly-1>>
+    </associate>
+    <\associate|idx>
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|vspace>>|<pageref|idx-1>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|vspace*>>|<pageref|idx-2>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|hspace>>|<pageref|idx-3>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|space>>|<pageref|idx-4>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|htab>>|<pageref|idx-5>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|vspace>>|<pageref|idx-6>>
+    </associate>
+  </collection>
+</auxiliary>

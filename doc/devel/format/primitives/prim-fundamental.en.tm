@@ -7,12 +7,12 @@
 
   <\big-table>
     <assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
-    blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<verbatim|document>>|<cell|<with|mode|math|1+n>>|<cell|<with|mode|math|>No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<verbatim|concat>>|<cell|<with|mode|math|1+n>>|<cell|No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<verbatim|error>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Never>>|<row|<cell|<verbatim|raw-data>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Logical>>>>>
+    blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<markup|document>>|<cell|<with|mode|math|1+n>>|<cell|<with|mode|math|>No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|concat>>|<cell|<with|mode|math|1+n>>|<cell|No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<markup|error>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Never>>|<row|<cell|<markup|raw-data>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Logical>>>>>
 
     \;
   </big-table|Fundamental structures>
 
-  The <verbatim|document> and <verbatim|concat> operators are fundamental and
+  The <markup|document> and <markup|concat> operators are fundamental and
   pervasive structures of <TeXmacs> documents. They are used to assemble
   lines and paragraphs out of all other structures.
 
@@ -22,7 +22,7 @@
   syntax is inappropriate for hand-editing.
 
   <\description-dash>
-    <item*|document>Sequence of logical paragraphs.
+    <item*|<markup|document>>Sequence of logical paragraphs.
 
     A simple, plain text, document is made of a simple sequence of paragraphs
     (<em|i.e.> logical lines).
@@ -48,7 +48,7 @@
     wherever a multiparagraph structure is needed, for example in list
     structures and multiparagraph table cells.
 
-    <item*|concat>Sequence of line items.
+    <item*|<markup|concat>>Sequence of line items.
 
     Since the interpretation of an operator is done according to the count
     and position its operands, we need an operator to glue compound operands
@@ -85,18 +85,18 @@
     </scheme-fragment>
   </description-dash>
 
-  The <verbatim|error> and <verbatim|raw-data> operators are much more rarely
+  The <markup|error> and <markup|raw-data> operators are much more rarely
   used. However, they are versatile, may be useful in numerous context, and
   do not fall neatly in any category, so we chose to describe them early.
 
   <\description-dash>
-    <item*|error>Error reporting.
+    <item*|<markup|error>>Error reporting.
 
     This primitive should never appear in documents. It is provided as aid in
     tracking down invalid constructs. It is produced at evaluation time by
     any kind of primitive which is given improper operands.
 
-    <item*|raw-data>Opaque data.
+    <item*|<markup|raw-data>>Opaque data.
 
     In some contexts you need to embbed uneditable data inside a document,
     most of the time this is uneditable binary data. The <verbatim|raw-data>
@@ -132,8 +132,20 @@
 
 <\references>
   <\collection>
+    <associate|idx-10|<tuple|1|?>>
     <associate|gly-1|<tuple|1|?>>
+    <associate|idx-1|<tuple|1|?>>
+    <associate|idx-11|<tuple|1|?>>
+    <associate|idx-12|<tuple|1|?>>
+    <associate|idx-2|<tuple|1|?>>
     <associate|gly-2|<tuple|2|?>>
+    <associate|idx-3|<tuple|1|?>>
+    <associate|idx-4|<tuple|1|?>>
+    <associate|idx-5|<tuple|1|?>>
+    <associate|idx-6|<tuple|1|?>>
+    <associate|idx-7|<tuple|1|?>>
+    <associate|idx-8|<tuple|1|?>>
+    <associate|idx-9|<tuple|1|?>>
   </collection>
 </references>
 
@@ -141,6 +153,31 @@
   <\collection>
     <\associate|table>
       <tuple|normal|Fundamental structures|<pageref|gly-1>>
+    </associate>
+    <\associate|idx>
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|document>>|<pageref|idx-1>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|concat>>|<pageref|idx-2>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|error>>|<pageref|idx-3>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|raw-data>>|<pageref|idx-4>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|document>>|<pageref|idx-5>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|concat>>|<pageref|idx-6>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|error>>|<pageref|idx-7>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|raw-data>>|<pageref|idx-8>>
     </associate>
   </collection>
 </auxiliary>
