@@ -54,8 +54,8 @@ initialize_default_env () {
   env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
   env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.
   env (PAGE_DECORATIONS) = DPAGES;      // future headers, footers, etc.
-  env (XOFF_DECORATIONS) = "0unit";     // hor. placement of decorations
-  env (YOFF_DECORATIONS) = "0unit";     // vert. placement of decorations
+  env (XOFF_DECORATIONS) = "0tmpt";     // hor. placement of decorations
+  env (YOFF_DECORATIONS) = "0tmpt";     // vert. placement of decorations
 
   env (MATH_LANGUAGE)    = "texmath";   // the default mathematical language
   env (MATH_FONT)        = "roman";     // the font name in math mode
@@ -83,8 +83,8 @@ initialize_default_env () {
   env (PAR_NO_FIRST)     = "false";     // no extra first indent. on next line
   env (PAR_SEP)          = "0.2fn";     // min. vert. spc. between ink
   env (PAR_HOR_SEP)      = "0.5fn";     // min. hor. spc. between ink
-  env (PAR_LINE_SEP)     = "0.025fn*";  // extra (small) space between lines
-  env (PAR_PAR_SEP)      = "0.5fn*";    // extra space between paragraphs
+  env (PAR_LINE_SEP)     = "0.025fns";  // extra (small) space between lines
+  env (PAR_PAR_SEP)      = "0.5fns";    // extra space between paragraphs
   env (PAR_FNOTE_SEP)    = "0.2fn";     // min space between diff footnotes
   env (PAR_COLUMNS)      = "1";         // number of columns
   env (PAR_COLUMNS_SEP)  = "2fn";       // separation between columns

@@ -28,11 +28,9 @@
     (test "null length" "" '())
     (test "zero length" "0cm" '(0 cm))
     (test "implicit zero" "px" '(0 px))
-    (test "natural length" "123unit" '(123 unit))
     (test "decimal length" "123.456mm" '(123.456 mm))
     (test "negative length" "-1in" '(-1 in))
-    (test "negative^2 length" "--2fn*" '(2 fn*))
-    (test "negative^3 length" "---3fn*+" '(-3 fn*+))))
+    (test "negative^2 length" "--2fns" '(2 fns))))
 
 (define (regtest-tmlength)
   (let ((n (+ (regtest-string->tmlength))))

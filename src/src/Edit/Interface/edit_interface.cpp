@@ -425,8 +425,8 @@ edit_interface_rep::apply_changes () {
 		     "edit_interface_rep::apply_changes");
       SI wx, wy;
       win->get_size (wx, wy);
-      init_env (PAGE_SCREEN_WIDTH, as_string ((wx-20*PIXEL)*sfactor) * "unit");
-      init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "unit");
+      init_env (PAGE_SCREEN_WIDTH, as_string ((wx-20*PIXEL)*sfactor) * "tmpt");
+      init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "tmpt");
       notify_change (THE_ENVIRONMENT);
     }
   }

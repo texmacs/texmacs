@@ -25,7 +25,7 @@
 	res
 	(length-add* (cdr ops) (length-add res (car ops)))))
   (if (null? ops)
-      "0unit"
+      "0tmpt"
       (length-add* (cdr ops) (car ops))))
 
 (define (length- . ops)

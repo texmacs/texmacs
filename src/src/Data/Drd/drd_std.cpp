@@ -212,7 +212,7 @@ init_std_drd () {
   init (PC, "pc", fixed (0));
   init (CC, "cc", fixed (0));
   init (_FN, "fn", fixed (0));
-  init (FNS, "fn*", fixed (0));
+  init (FNS, "fns", fixed (0));
   init (SPC, "spc", fixed (0));
   init (XSPC, "xspc", fixed (0));
   init (LN, "ln", fixed (0));
