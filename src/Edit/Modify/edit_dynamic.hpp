@@ -44,10 +44,10 @@ public:
   void remove_argument (path p, bool forward);
 
   void back_dynamic (path p);
-  void back_compound (path p);
   void back_extension (path p);
+  void back_monolithic (path p);
+  void back_general (path p, bool forward);
   void back_in_with (tree t, path p);
-  void back_in_compound (tree t, path p);
 };
 
 #endif // defined EDIT_DYNAMIC_H

@@ -83,10 +83,10 @@ protected:
   virtual void back_table (path p) = 0;
   virtual void back_in_table (tree t, path p) = 0;
   virtual void back_dynamic (path p) = 0;
-  virtual void back_compound (path p) = 0;
   virtual void back_extension (path p) = 0;
+  virtual void back_monolithic (path p) = 0;
+  virtual void back_general (path p, bool forward) = 0;
   virtual void back_in_with (tree t, path p) = 0;
-  virtual void back_in_compound (tree t, path p) = 0;
 
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
