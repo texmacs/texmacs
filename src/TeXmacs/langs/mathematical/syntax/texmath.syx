@@ -20,6 +20,13 @@ Class group-suspension
 	Left-Penalty=	Invalid
 	Penalty=	Invalid
 
+Class group-suspension-lim
+	Type=		Symbol
+	Precedence=	0
+	Left-Penalty=	Invalid
+	Penalty=	Invalid
+	Limits=		Always
+
 Class arithmetic-assign
 	Type=		Infix
 	Precedence=	3
@@ -410,6 +417,9 @@ Members group-close
 Members group-suspension
 	ldots cdots udots
 	vdots ddots mdots
+
+Members group-suspension-lim
+	cdotslim
 
 Members symbol
 	alpha beta gamma delta varepsilon

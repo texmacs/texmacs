@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.1>
 
 <style|<tuple|source|std-pattern>>
 
@@ -162,7 +162,7 @@
   ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
 
   <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
-  ><concat-tuple|<quote-arg|args>|, >>>>
+  ><concat-tuple|<copy|<quote-arg|args>>|, >>>>
 
   \;
 

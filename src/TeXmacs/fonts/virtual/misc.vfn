@@ -20,6 +20,7 @@
   (dototimes (enlarge (join (0 0 otimes) (0.25 0.5 cdot)) 0 0 0 -0.5))
   (dddot (join (0 0 dot) (0.2 0 dot) (0.4 0 dot)))
   (ddddot (join (0 0 dot) (0.2 0 dot) (0.4 0 dot) (0.6 0 dot)))
+  (cdotslim (enlarge cdots 0 0 -0.1 -0.1))
 
   (lesseqdot (join (0 -0.05 leqslant) (0.4 0.02 cdot)))
   (gtreqdot (join (0 -0.05 geqslant) (0.4 0.02 cdot)))
