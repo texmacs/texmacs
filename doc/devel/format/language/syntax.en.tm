@@ -3,18 +3,31 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Concrete syntaxes>
+  <tmdoc-title|Document syntaxes>
 
-  <TeXmacs> represents documents as a tree data structure which can be
+  <TeXmacs> represents documents as tree data structures which can be
   translated in plain text using different <em|concrete syntaxes>. Different
   syntaxes have merits and demerits and are best suited to different uses. We
   generally use the <value|scheme> syntax to document <TeXmacs> constructs,
   but it is not the mythical <em|document source code>, just one particular
   representation.
 
+  You should always think of documents and fragments as trees. Documents can
+  also be considered programs written the <TeXmacs> <def-index|typesetting
+  language>, whose output is a particular typeset document. In that
+  perspective the document tree is an <em|abstract syntax tree>.
+
+  <\quote-env>
+    <with|mode|math|<tree|<with|mode|text|<verbatim|with>>|mode|math|<tree|<with|mode|text|<verbatim|concat>>|x+y+|<tree|<with|mode|text|<verbatim|frac>>|1|2>|+|<tree|<with|mode|text|<verbatim|sqrt>>|y+z>>>>
+  </quote-env>
+
+  Words in <verbatim|monospaced> font are <def-index|document tree labels>,
+  other words are <def-index|document tree leaves>. A tree label can either
+  be the name of a typesetter primitive or the name of markup tag.
+
   Documents are generally written to disk using the <def-index|TeXmacs
   syntax>. This syntax is designed to be unobstrusive and easy to read, so
-  the content of a document can be easily understood using a simple text
+  the content of a document can be easily understood from a plain text
   editor:
 
   <framed-fragment|<verbatim|\<less\>with\|mode\|math\|x+y+\<less\>frac\|1\|2\<gtr\>+\<less\>sqrt\|y+z\<gtr\>\<gtr\>>>
@@ -66,10 +79,10 @@
     \ \<less\>tm-arg\<gtr\>1\<less\>/tm-arg\<gtr\>\<less\>tm-arg\<gtr\>2\<less\>/tm-arg\<gtr\>\<less\>/frac\<gtr\>+\<less\>sqrt\<gtr\>y+z\<less\>/sqrt\<gtr\>\<less\>/with\<gtr\>
   </verbatim>>
 
-  You should only use the <acronym|XML> syntax for interoperability.
+  You should use the <acronym|XML> syntax only for interoperation.
 
-  The following section describes the <em|abstract syntax> of documents,
-  using the <value|scheme> <em|concrete syntax> for reference.
+  This section describes the <em|abstract syntax> of documents, using the
+  <value|scheme> <em|concrete syntax> for reference.
 
   <tmdoc-copyright|2004|David Allouche>
 
@@ -100,15 +113,24 @@
 
 <\references>
   <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
     <associate|gly-1|<tuple|1|?>>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|idx-3|<tuple|<uninit>|?>>
+    <associate|idx-4|<tuple|<uninit>|?>>
   </collection>
 </references>
 
 <\auxiliary>
   <\collection>
     <\associate|idx>
-      <tuple|<tuple|TeXmacs syntax>|<pageref|idx-1>>
+      <tuple|<tuple|typesetting language>|<pageref|idx-1>>
+
+      <tuple|<tuple|document tree labels>|<pageref|idx-2>>
+
+      <tuple|<tuple|document tree leaves>|<pageref|idx-3>>
+
+      <tuple|<tuple|TeXmacs syntax>|<pageref|idx-4>>
     </associate>
   </collection>
 </auxiliary>

@@ -8,90 +8,11 @@
   This section describes the fundamental concepts and data types of the
   typesetting language.
 
-  You should always think of documents and fragments as trees. Documents can
-  also be considered programs written the <TeXmacs> <def-index|typesetting
-  language>, whose output is a particular typeset document. In that
-  perspective the document tree is an <em|abstract syntax tree>.
-
-  <\quote-env>
-    <with|mode|math|<tree|<with|mode|text|<verbatim|with>>|mode|math|<tree|<with|mode|text|<verbatim|concat>>|x+y+|<tree|<with|mode|text|<verbatim|frac>>|1|2>|+|<tree|<with|mode|text|<verbatim|sqrt>>|y+z>>>>
-  </quote-env>
-
-  Words in <verbatim|monospaced> font are <def-index|document tree labels>,
-  other words are <def-index|document tree leaves>. A tree label can either
-  be the name of a typesetter primitive or the name of markup tag.
-  <hyper-link|Typesetter primitives|../primitives/primitives.ent.tm> are the
-  fundamental building blocks of the typesetting languages. Markup tags can
-  be though of as the functions and procedures of the typesetting language.
-  Tree leaves are character strings.
-
-  Intepretation of documents proceeds in several steps:
-
-  <\enumerate>
-    <item><strong|Evaluation> expands the <def-index|document tree>,
-    containing markup tags, to the <def-index|object tree>, containing only
-    primitive constructs.
-
-    <item><strong|Typesetting> produce and position the boxes described by
-    primitive constructs.
-
-    <item><strong|Display> draws the boxes to screen or to
-    PostScript<trademark>.
-  </enumerate>
-
-  Primitives and markup tags are collectively referred to as
-  <def-index|typesetter operators>, or <def-index|operators> for short. Trees
-  are expressions, tree labels are operators names and subtrees are operands.
-  All expressions have a value and all values are trees. A trivial tree is
-  only made of a string. In this respect, the typesetting language is similar
-  to <value|scheme>: values and expressions are both represented as trees,
-  atomic values are strings.
-
-  However, an important difference with <value|scheme> is that most trees
-  cannot be deconstructed <emdash>subtrees cannot be accessed,<emdash>
-  strings and tuples are the most notable exceptions.
-
-  Most operators are only meaningful either for evaluation or typesetting:
-  <def-index|computational operators> only have a meaning for evaluation and
-  are subsituted before typesetting, <def-index|physical operators> only have
-  a meaning for typesetting and are self-evaluating. Operands are evaluated
-  in <em|applicative order>. The typesetting language does not use <em|normal
-  order> lazy evaluation, but it provides mechanisms for partial and delayed
-  evaluation.
-
-  Operators may not display all their subtrees. Most computational operators
-  and many physical operators consume at least one of their operands. Trees
-  which are not associated to typeset boxes are invisible and inaccessible.
-  Conversely, boxes which are not associated to subtrees of the document tree
-  are uneditable. Trees which are produced during evaluation are called
-  <def-index|synthetic trees> and are uneditable. Understanding which
-  operators produce editable values and how they affect the accessibility of
-  their operands is essential to designing good typesetter macros.
-
-  What you should remember:
-
-  <\itemize-dot>
-    <item>Expressions and values are trees, labels are operators, subtrees
-    are operands, and atomic values are strings.
-
-    <item>Expressions and values both are trees, but most trees cannot be
-    deconstructed in the typesetting lanugage.
-
-    <item>Expressions are evaluated in applicative order, when the operator
-    is applied. If are not sure you understand this, it just means that
-    evaluation is done in the usual way.
-
-    <item>Operators may consume trees, produce uneditable trees, and include
-    editable operands in their value.
-  </itemize-dot>
-
-  Now that you understand the basic rules of the languae, we will describe
-  its atomic data types and data storage mechanisms. Compound values are
-  described in the chapter about <hyper-link|typesetter
-  primitives|../primitives/primitives.ent.tm>, along with the primitives used
-  to create and operate on them.
-
   <\traverse>
+    <branch|Document syntaxes|syntax.en.tm>
+
+    <branch|Interpretation process|process.en.tm>
+
     <branch|Environment and variables|environment.en.tm>
 
     <branch|Strings|strings.en.tm>
@@ -100,10 +21,6 @@
 
     <branch|Auxiliaries|auxiliaries.en.tm>
   </traverse>
-
-  You have been presented with the fundamental concepts of the <TeXmacs>
-  typesetting language. The following sections are a complete reference of
-  all primitives and variables understood by the typesetter.
 
   <tmdoc-copyright|2004|David Allouche>
 
@@ -135,11 +52,11 @@
 <\references>
   <\collection>
     <associate|idx-10|<tuple|3.|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|1.|?>>
-    <associate|idx-5|<tuple|1.|?>>
+    <associate|idx-1|<tuple|1.|?>>
+    <associate|idx-2|<tuple|1.|?>>
+    <associate|idx-3|<tuple|3.|?>>
+    <associate|idx-4|<tuple|3.|?>>
+    <associate|idx-5|<tuple|3.|?>>
     <associate|idx-6|<tuple|3.|?>>
     <associate|idx-7|<tuple|3.|?>>
     <associate|idx-8|<tuple|3.|?>>
@@ -150,11 +67,19 @@
 <\auxiliary>
   <\collection>
     <\associate|idx>
-      <tuple|<tuple|typesetting language>|<pageref|idx-1>>
+      <tuple|<tuple|document tree>|<pageref|idx-1>>
 
-      <tuple|<tuple|document tree labels>|<pageref|idx-2>>
+      <tuple|<tuple|object tree>|<pageref|idx-2>>
 
-      <tuple|<tuple|document tree leaves>|<pageref|idx-3>>
+      <tuple|<tuple|typesetter operators>|<pageref|idx-3>>
+
+      <tuple|<tuple|operators>|<pageref|idx-4>>
+
+      <tuple|<tuple|computational operators>|<pageref|idx-5>>
+
+      <tuple|<tuple|physical operators>|<pageref|idx-6>>
+
+      <tuple|<tuple|synthetic trees>|<pageref|idx-7>>
     </associate>
   </collection>
 </auxiliary>

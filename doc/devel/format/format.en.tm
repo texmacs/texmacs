@@ -6,21 +6,19 @@
   <tmdoc-title|<TeXmacs> document format>
 
   <TeXmacs> documents are labelled trees. They can be represented as pure
-  text using several different <hyper-link|syntaxes|syntaxes.en.tm>.
+  text using several different <hyper-link|syntaxes|language/syntax.en.tm>.
   Documents are also programs written in the <TeXmacs> typesetting
-  <hyper-link|language|language.en.tm>. The appearance and interactive
-  behaviour of documents is ultimately controlled by the typesetting
-  <hyper-link|primitives|primitives/primitive.en.tm> and
-  <hyper-link|variables|variables/variables.en.tm> used in markup.
+  <hyper-link|language|language/language.en.tm>. The appearance and
+  interactive behaviour of documents is ultimately controlled by the
+  typesetting <hyper-link|primitives|primitives/primitives.en.tm> and
+  <hyper-link|variables|environment/env-vars.en.tm> used in markup.
 
   <\traverse>
-    <branch|Concrete syntaxes|syntax.en.tm>
-
     <branch|Typesetting language|language/language.en.tm>
 
-    <branch|The primitive <TeXmacs> constructs|primitives.en.tm>
+    <branch|The primitive <TeXmacs> constructs|primitives/primitives.en.tm>
 
-    <branch|System environment variables|env-vars.en.tm>
+    <branch|System environment variables|environment/environment.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|David Allouche>
