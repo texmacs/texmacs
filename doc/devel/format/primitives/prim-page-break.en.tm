@@ -3,35 +3,25 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Physical markup>
+  <tmdoc-title|Page breaking primitives>
 
-  The physical markup refers to the set of primitives often found in regular
-  documents.
+  <\itemize>
+    <item>page-break*
 
-  Some of those primtives (spacing and breaking) can be avoided in pure
-  logical documents and be encapsulated in the document style, but some
-  features (tables) cannot be fully used without using physical markup within
-  the document.
+    <item>page-break
 
-  <\traverse>
-    <branch|White space|prim-space.en.tm>
+    <item>no-page-break*
 
-    <branch|Line breaking|prim-line-break.en.tm>
+    <item>no-page-break
 
-    <branch|Indentation|prim-indent.en.tm>
+    <item>new-page*
 
-    <branch|Page breaking|prim-page-break.en.tm>
+    <item>new-page
 
-    <branch|Mathematics|prim-math.en.tm>
+    <item>new-dpage*
 
-    <branch|Tables|prim-table.en.tm>
-
-    <branch|Linking|prim-link.en.tm>
-
-    <branch|Graphics|prim-graphic.en.tm>
-
-    <branch|Miscellaneous physical markup|prim-physical-misc.en.tm>
-  </traverse>
+    <item>new-dpage
+  </itemize>
 
   <tmdoc-copyright|2004|David Allouche>
 

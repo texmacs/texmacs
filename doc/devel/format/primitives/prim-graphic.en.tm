@@ -3,35 +3,31 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Physical markup>
+  <tmdoc-title|Graphics primitives>
 
-  The physical markup refers to the set of primitives often found in regular
-  documents.
+  <\itemize>
+    <item>postscript
 
-  Some of those primtives (spacing and breaking) can be avoided in pure
-  logical documents and be encapsulated in the document style, but some
-  features (tables) cannot be fully used without using physical markup within
-  the document.
+    <item>superpose
 
-  <\traverse>
-    <branch|White space|prim-space.en.tm>
+    <item>graphics
 
-    <branch|Line breaking|prim-line-break.en.tm>
+    <item>text-at
 
-    <branch|Indentation|prim-indent.en.tm>
+    <item>point
 
-    <branch|Page breaking|prim-page-break.en.tm>
+    <item>line
 
-    <branch|Mathematics|prim-math.en.tm>
+    <item>cline
 
-    <branch|Tables|prim-table.en.tm>
+    <item>spline
 
-    <branch|Linking|prim-link.en.tm>
+    <item>spline*
 
-    <branch|Graphics|prim-graphic.en.tm>
+    <item>cspline
 
-    <branch|Miscellaneous physical markup|prim-physical-misc.en.tm>
-  </traverse>
+    <item>fill
+  </itemize>
 
   <tmdoc-copyright|2004|David Allouche>
 
