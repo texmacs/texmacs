@@ -165,6 +165,7 @@ extern string GR_LINE_CAPS;
 extern string GR_FILL_MODE;
 extern string GR_FILL_COLOR;
 extern string GR_FILL_STYLE;
+extern string GR_MODE;
 
 extern string IDENTITY;
 extern string TABULAR;

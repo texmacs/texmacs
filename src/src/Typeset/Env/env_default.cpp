@@ -169,6 +169,7 @@ initialize_default_env () {
   env (GR_FILL_MODE)     = "both";      // show contour?
   env (GR_FILL_COLOR)    = "white";     // fill color
   env (GR_FILL_STYLE)    = "plain";     // fill style
+  env (GR_MODE)          = "line";      // graphical mode
 
   env (IDENTITY)         = identity_m;  // identity macro
   env (TABULAR)          = tabular_m;   // tabular macro

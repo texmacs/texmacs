@@ -12,6 +12,7 @@
 
 #include "Interface/edit_graphics.hpp"
 #include "server.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -47,10 +48,24 @@ edit_graphics_rep::find_frame () {
 }
 
 void
-edit_graphics_rep::mouse_graphics (string s, SI x, SI y, time_t t) {
-  (void) s; (void) x; (void) y; (void) t;
+edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
+  (void) t;
   frame f= find_frame ();
   if (!nil (f)) {
-    cout << s << " at " << f [point (x, y)] << "\n";
+    point  p = f [point (x, y)];
+    // cout << type << " at " << p << "\n";
+    string sx= as_string (p[0]);
+    string sy= as_string (p[1]);
+    if ((type == "move") && (!win->check_event (MOTION_EVENT)))
+      call ("graphics-move-point", sx, sy);
+    if (type == "release-left"  ) call ("graphics-insert-point", sx, sy);
+    if (type == "release-middle") call ("graphics-remove-point", sx, sy);
+    if (type == "release-right" ) call ("graphics-last-point"  , sx, sy);
   }
+  if (type == "press-up") mouse_scroll (x, y, true);
+  if (type == "press-down") mouse_scroll (x, y, false);
 }
+
+/******************************************************************************
+* For editing graphics
+******************************************************************************/

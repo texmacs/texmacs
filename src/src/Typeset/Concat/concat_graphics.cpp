@@ -73,7 +73,11 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
-  if (N(a)<2) typeset_dynamic (tree (ERROR, "bad line", t), ip);
+  if (N(a) == 0) typeset_dynamic (tree (ERROR, "bad line", t), ip);
+  else if (N(a) == 1) {
+    point p= env->fr (a[0]);
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col));
+  }
   else {
     curve c= env->fr (poly_segment (a));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
