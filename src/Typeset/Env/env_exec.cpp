@@ -149,13 +149,7 @@ tree
 texmacs_exec (edit_env env, tree cmd) {
   // re-entrancy
   if (!nil (current_rewrite_env)) env= current_rewrite_env;
-  if (as_string (L (cmd)) == "value" && N (cmd) == 1)
-    return env->read (as_string (cmd[0]));
-  else
-  if (as_string (L (cmd)) == "exec" && N (cmd) == 1)
-    return env->exec (cmd[0]);
-  else
-    return tree ("");
+  return env->exec (cmd);
 }
 
 /******************************************************************************

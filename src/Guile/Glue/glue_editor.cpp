@@ -2840,9 +2840,9 @@ tmg_path_xy (SCM arg1, SCM arg2) {
 
 SCM
 tmg_texmacs_exec (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "texmacs-exec");
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
 
-  tree in1= scm_to_tree (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->texmacs_exec (in1);
