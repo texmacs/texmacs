@@ -258,7 +258,7 @@ concater_rep::typeset_argument (tree t, path ip) {
     return;
   }
   if (nil (env->macro_arg) || (!env->macro_arg->item->contains (r->label))) {
-    typeset_unknown (r->label, t, ip);
+    typeset_unknown (r->label, t, ip, true);
     return;
   }
 
