@@ -47,6 +47,7 @@
 
 (define (open-quotes lan)
   (cond ((== lan "none") (insert-object "\""))
+	((== lan "danish") (insert-object "''"))
 	((== lan "dutch") (insert-object ""))
 	((== lan "french") (insert-object " "))
 	((== lan "german") (insert-object ""))
@@ -57,6 +58,7 @@
 
 (define (close-quotes lan)
   (cond ((== lan "none") (insert-object "\""))
+	((== lan "danish") (insert-object "''"))
 	((== lan "dutch") (insert-object "''"))
 	((== lan "french") (insert-object " "))
 	((== lan "german") (insert-object "``"))
@@ -67,6 +69,7 @@
 
 (define (insert-quote-both lan)
   (cond ((== lan "none") (insert-object "\""))
+	((== lan "danish") (insert-object-go-to "''''" '(2)))
 	((== lan "dutch") (insert-object-go-to "''" '(1)))
 	((== lan "french") (insert-object-go-to "  " '(2)))
 	((== lan "german") (insert-object-go-to "``" '(1)))
