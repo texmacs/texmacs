@@ -36,6 +36,14 @@
 
     <assign|fcut|#>
 
+    <assign|iseg|<macro|x|in(<arg|x>)>>
+
+    <assign|fseg|<macro|x|fin(<arg|x>)>>
+
+    <assign|Iseg|<macro|x|In(<arg|x>)>>
+
+    <assign|Fseg|<macro|x|Fin(<arg|x>)>>
+
     \;
 
     <assign|gb|<macro|x|<with|math-font-family|mt|[<space|-0.6spc>[><arg|x><with|math-font-family|mt|]<space|-0.6spc>]>>>
@@ -66,12 +74,12 @@
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<hflush><with|color|blue|<with|mode|math|\<cdots\>>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<rightflush><action|<with|color|blue|<with|mode|math|\<cdots\>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <arg|y>
+    <surround||<rightflush><action|<with|color|blue|<with|mode|math|<op|\<Leftarrow\>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>
