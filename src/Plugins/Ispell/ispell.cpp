@@ -47,15 +47,24 @@ ispeller_rep::ispeller_rep (string lan2): rep<ispeller> (lan2), lan (lan2) {}
 string
 ispeller_rep::start () {
   if (nil (ln)) {
+#ifdef OS_WIN32
+    string prg= "\"$TEXMACS_PATH/bin/aspell/aspell.exe\"";
+    string cmd= prg * " --data-dir=.%//data --dict-dir=.%//dict -a";
+#else
     string cmd= "ispell -a -d " * ispell_dictionary (lan)
       * ispell_extra_args (lan);
+#endif
     ln= make_pipe_link (cmd);
   }
   if (ln->alive) return "ok";
   string message= ln->start ();
   if (starts (message, "Error: ")) return message;
   message= retrieve ();
+#ifdef OS_WIN32
+  if (search_forwards (message, 0, "@(#)")) return "ok";
+#else
   if (starts (message, "@(#)")) return "ok";
+#endif
   return "Error: no dictionary for#" * lan;
 }
 

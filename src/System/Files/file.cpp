@@ -155,7 +155,7 @@ is_of_type (url name, string filter) {
   if (filter == "") return true;
 #ifdef OS_WIN32
   if ((filter == "x") && (suffix(name) != "exe"))
-    name = glue(name, ".exe");
+    name = glue (name, ".exe");
 #endif
   int i, n= N(filter);
   bool preserve_links= false;

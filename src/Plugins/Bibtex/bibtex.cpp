@@ -15,6 +15,10 @@
 #include "sys_utils.hpp"
 #include "convert.hpp"
 
+#ifdef OS_WIN32
+#include <sys/misc.h>
+#endif
+
 tree
 remove_start_space (tree t) {
   if (is_atomic (t)) {
@@ -38,13 +42,18 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   bib_s << "\\bibdata{" << bib_name << "}\n";
   save_string ("$TEXMACS_HOME_PATH/system/bib/temp.aux", bib_s);
 
+#ifdef OS_WIN32
+  char *directory = as_charp(dir);
+  RunBibtex(directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
+  delete [] directory;
+#else
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "
 	<< "BSTINPUTS=" << dir << ":$BSTINPUTS "
 	<< "bibtex temp";
-  bib_s << "\\bibdata{" << fname << "}\n";
   if (DEBUG_AUTO) cout << "TeXmacs] BibTeX command: " << cmdln << "\n";
   system (cmdln);
+#endif
 
   string result;
   if (load_string ("$TEXMACS_HOME_PATH/system/bib/temp.bbl", result))
