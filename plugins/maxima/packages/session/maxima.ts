@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.7>
 
 <style|source>
 
@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <assign|maxima-output|<macro|body|<surround|<vspace*|1fn>|<vspace|0fn>|<generic-output*|<arg|body>>>>>
+  <assign|maxima-output|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<generic-output*|<arg|body>>>>>
 
   \;
 </body>
