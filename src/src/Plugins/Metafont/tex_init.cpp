@@ -132,18 +132,14 @@ search_sub_dirs (url root, url& tfm, url& pk, url& pfb) {
   }
 }
 
-#ifdef OS_WIN32
 static url
 search_sub_dirs (url root) {
   url dirs= complete (root * url_wildcard (), "dr");
   return expand (dirs);
 }
-#endif
 
 static void
 init_heuristic_tex_paths () {
-  // cout << "kpsepath = " << get_setting ("KPSEPATH") << "\n";
-  // cout << "kpsewhich= " << get_setting ("KPSEWHICH") << "\n";
 #ifndef OS_WIN32
   // Not necessary if we can use kpsepath
   if (get_setting ("KPSEPATH") == "true") {
@@ -226,7 +222,7 @@ try_dpi (int dpi, int test) {
        << "pk from " << dpi << " dpi\n";
   make_tex_pk ("ecrm10", test, dpi, "localfont");
   reset_pk_path ();
-  if (!is_none (resolve_tex ("ecrm10." * as_string (test) * "pk"))) {
+  if (!is_none (resolve_pk ("ecrm10." * as_string (test) * "pk"))) {
     set_setting ("DPI", as_string (dpi));
     set_setting ("EC", "true");
     cerr << "TeXmacs] Metafont works with " << dpi << " dpi ec-fonts\n";
@@ -237,7 +233,7 @@ try_dpi (int dpi, int test) {
        << "pk from " << dpi << " dpi\n";
   make_tex_pk ("cmr10", test, dpi, "localfont");
   reset_pk_path ();
-  if (!is_none (resolve_tex ("cmr10." * as_string (test) * "pk"))) {
+  if (!is_none (resolve_pk ("cmr10." * as_string (test) * "pk"))) {
     set_setting ("DPI", as_string (dpi));
     cerr << "TeXmacs] Metafont works with " << dpi << " dpi cm-fonts\n";
     return true;
@@ -294,7 +290,6 @@ set_font_type (int type) {
 
 void
 setup_tex () {
-  remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
   init_helper_binaries ();
   init_heuristic_tex_paths ();
   init_default_tex_settings ();

@@ -13,7 +13,6 @@
 #ifndef TREE_H
 #define TREE_H
 #include "tree_label.hpp"
-#include "observer.hpp"
 #include "array.hpp"
 
 /******************************************************************************
@@ -41,7 +40,6 @@ public:
   inline tree (string l);
   inline tree (char* l);
   inline tree (tree_label l, int n=0);
-  inline tree (tree_label l, array<tree> a);
   inline tree (tree t, int n);
   tree (tree_label l, tree t1);
   tree (tree_label l, tree t1, tree t2);
@@ -56,7 +54,6 @@ public:
   friend inline int arity (tree t);
   friend inline tree_label L (tree t);
   friend inline array<tree> A (tree t);
-  friend inline array<tree>& AR (tree t);
   friend inline bool is_atomic (tree t);
   friend inline bool is_compound (tree t);
   friend inline bool operator == (tree t, tree_label lab);
@@ -74,14 +71,12 @@ public:
   friend tree& operator << (tree& t, tree t2);
   friend tree& operator << (tree& t, array<tree> a);
   friend ostream& operator << (ostream& out, tree t);
-  friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
 };
 
 class tree_rep: concrete_struct {
 public:
   const tree_label op;
-  observer obs;
   inline tree_rep (tree_label op2): op (op2) {}
   friend class tree;
 };
@@ -143,8 +138,6 @@ inline tree::tree (string s):
   rep (new atomic_rep (s)) {}
 inline tree::tree (tree_label l, int n):
   rep (new compound_rep (l, array<tree> (n))) {}
-inline tree::tree (tree_label l, array<tree> a):
-  rep (new compound_rep (l, a)) {}
 inline tree::tree (tree t, int n):
   rep (new compound_rep (t.rep->op, array<tree> (n))) {
     CHECK_COMPOUND (t, "tree::tree (tree, int)"); }
@@ -164,9 +157,6 @@ inline tree_label L (tree t) {
   return t.rep->op; }
 inline array<tree> A (tree t) {
   CHECK_COMPOUND (t, "A (tree)");
-  return (static_cast<compound_rep*> (t.rep))->a; }
-inline array<tree>& AR (tree t) {
-  CHECK_COMPOUND (t, "AR (tree)");
   return (static_cast<compound_rep*> (t.rep))->a; }
 
 inline bool is_atomic (tree t) { return (t.rep->op == STRING); }
@@ -224,8 +214,7 @@ bool is_multi_paragraph (tree t);
 bool is_script (tree t);
 bool is_script (tree t, bool& right);
 bool is_prime (tree t);
-bool is_mod_active (tree t);
-bool is_mod_active_once (tree t);
+bool is_inactive (tree t);
 bool is_empty (tree t);
 
 inline bool
@@ -235,6 +224,10 @@ is_applicable (tree t) {
 }
 
 tree simplify_concat (tree t);
+tree simplify_paragraph (tree t);
+tree simplify_document (tree t);
+tree simplify_with (tree t);
+tree simplify_arity (tree t);
 tree simplify_correct (tree t);
 
 /******************************************************************************
@@ -281,16 +274,7 @@ inline bool is_tuple (tree t, char* s, int n) {
 * Miscellaneous
 ******************************************************************************/
 
-tree   correct (tree t);
-int    hash (tree t);
-
-template<class T>
-array<T>::operator tree () {
-  int i, n=rep->n;
-  tree t (TUPLE, n);
-  for (i=0; i<n; i++)
-    t[i]= as_tree(rep->a[i]);
-  return t;
-}
+tree math_correct (tree t);
+int  hash (tree t);
 
 #endif // defined TREE_H

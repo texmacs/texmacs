@@ -1,9 +1,0 @@
-  <expand|section|Improved style sheets and source editing mode (1.0.3.5)>
-
-  We are making it easier for users to edit style sheets. This improvement
-  made it necessary to simplify many of the standard <TeXmacs> styles and packages,
-  so that it will be easier to customize them. However, if you already designed
-  some style files, then this may break some of their features. We mainly
-  redesigned the list environments, the section environments and automatic numbering.
-  Please report any problems to us.
-

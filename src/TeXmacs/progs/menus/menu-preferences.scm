@@ -49,7 +49,6 @@
 	  ("British" "british")
 	  ("Czech" "czech")
 	  ("Dutch" "dutch")
-	  ("Danish" "danish")
 	  ("English" "english")
 	  ("Finnish" "finnish")
 	  ("French" "french")

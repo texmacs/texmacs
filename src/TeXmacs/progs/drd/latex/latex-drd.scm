@@ -115,7 +115,7 @@
   begin-figure begin-table)
 
 (drd-group latex-environment-1%
-  begin-proof* begin-tabbing begin-thebibliography)
+  begin-tabbing begin-thebibliography)
 
 (drd-group latex-environment-1*%
   begin-array begin-tabular)

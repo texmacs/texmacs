@@ -1,44 +1,45 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.1.20>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Tab-completion>
+  <expand|tmdoc-title|Tab-completion>
 
   By default, <TeXmacs> looks into your document for possible
   tab-completions. Inside sessions for your application, you might wish to
   customize this behaviour, so as to complete built-in commands. In order to
   do this, you have to specify the configuration option
 
-  <\scheme-fragment>
+  <\expand|scheme-fragment>
     (:tab-completion #t)
-  </scheme-fragment>
+  </expand>
 
   in your <verbatim|init-<em|myplugin>.scm> file, so that <TeXmacs> will send
   special tab-completion requests to your application whenever you press
-  <key|<key-tab>> inside a session. These commands are of the form
+  <key|<expand|key-tab>> inside a session. These commands are of the form
 
   <\quotation>
-    <\framed-fragment>
+    <\expand|framed-fragment>
       <\verbatim>
         <key|DATA_COMMAND>(complete <em|input-string>
-        <em|cursor-position>)<key|<key-return>>
+        <em|cursor-position>)<key|<expand|key-return>>
       </verbatim>
-    </framed-fragment>
+    </expand>
   </quotation>
 
   Here <verbatim|DATA_COMMAND> stands for the special character
   <verbatim|'\\20'> (ASCII 16). The <verbatim|<em|input-string>> is the
-  complete string in which the <key|<key-tab>> occurred and the
+  complete string in which the <key|<expand|key-tab>> occurred and the
   <verbatim|<em|cursor-position>> is an integer which specifies the position
-  of the cursor when you pressed <key|<key-tab>>. <TeXmacs> expects your
-  application to return a tuple with all possible tab-completions of the form
+  of the cursor when you pressed <key|<expand|key-tab>>. <TeXmacs> expects
+  your application to return a tuple with all possible tab-completions of the
+  form
 
   <\quotation>
-    <\framed-fragment>
+    <\expand|framed-fragment>
       <verbatim|<key|DATA_BEGIN>scheme:(tuple <em|root> <em|completion-1>
       ><with|mode|math|\<cdots\>><verbatim| <em|completion-n>)><key|DATA_END>
-    </framed-fragment>
+    </expand>
   </quotation>
 
   Here <verbatim|<em|root>> corresponds to a substring before the cursor for
@@ -60,24 +61,24 @@
     <verbatim|:serializer> option.
   </remark>
 
-  <paragraph|The <verbatim|complete> plug-in>
+  <paragraph|The <verbatim|complete> plugin>
 
   A very rudimentary example of how the tab-completion mechanism works is
-  given by the <verbatim|complete> plug-in, which consists of the following
+  given by the <verbatim|complete> plugin, which consists of the following
   files:
 
   <\verbatim>
-    \ \ \ \ <example-plugin-link|complete/Makefile>
+    \ \ \ \ <expand|example-plugin-link|complete/Makefile>
 
-    \ \ \ \ <example-plugin-link|complete/progs/init-complete.scm>
+    \ \ \ \ <expand|example-plugin-link|complete/progs/init-complete.scm>
 
-    \ \ \ \ <example-plugin-link|complete/src/complete.cpp>
+    \ \ \ \ <expand|example-plugin-link|complete/src/complete.cpp>
   </verbatim>
 
   The startup banner in <verbatim|complete.cpp> takes care of part of the
   configuration:
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "verbatim:";
 
     format_plugin ();
@@ -87,11 +88,11 @@
     cout \<less\>\<less\> DATA_END;
 
     fflush (stdout);
-  </cpp-fragment>
+  </expand>
 
-  Here <cpp-code|format_plugin> is given by
+  Here <expand|cpp-code|format_plugin> is given by
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     void
 
     format_plugin () {
@@ -108,11 +109,11 @@
     \ \ cout \<less\>\<less\> DATA_END;
 
     }
-  </cpp-fragment>
+  </expand>
 
   In the main loop, we first deal with regular input:
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     char buffer[100];
 
     cin.getline (buffer, 100, '\\n');
@@ -126,12 +127,12 @@
     \ \ cout \<less\>\<less\> DATA_END;
 
     }
-  </cpp-fragment>
+  </expand>
 
   We next treat the case when a tab-completion command is sent to the
   application:
 
-  <\cpp-fragment>
+  <\expand|cpp-fragment>
     else {
 
     \ \ cout \<less\>\<less\> DATA_BEGIN \<less\>\<less\> "scheme:";
@@ -144,35 +145,54 @@
     }
 
     fflush (stdout);
-  </cpp-fragment>
+  </expand>
 
   As you notice, the actual command is ignored, so our example is really very
   rudimentary.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
-  document under the terms of the GNU Free Documentation License, Version 1.1
-  or any later version published by the Free Software Foundation; with no
-  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-  Texts. A copy of the license is included in the section entitled "GNU Free
-  Documentation License".>
+  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
+  modify this document under the terms of the GNU Free Documentation License,
+  Version 1.1 or any later version published by the Free Software Foundation;
+  with no Invariant Sections, with no Front-Cover Texts, and with no
+  Back-Cover Texts. A copy of the license is included in the section entitled
+  "GNU Free Documentation License".>
 </body>
 
 <\initial>
   <\collection>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|2|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|<uninit>|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <with|left margin|<quote|6fn>|font size|<quote|0.84>|The <with|font
+      family|<quote|tt>|language|<quote|verbatim>|complete>
+      plugin<value|toc-dots><pageref|toc-1>>
+    </associate>
+  </collection>
+</auxiliary>

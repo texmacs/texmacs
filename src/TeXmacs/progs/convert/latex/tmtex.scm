@@ -43,7 +43,7 @@
   (tabular* ("" "c" "" #f))
   (matrix ((#{left\(}#) "c" (#{right\)}#) #f))
   (det ((left|) "c" (right|) #f))
-  (choice ((left\{) "l" (right.) #f)))
+  (choice ((left\{) "c" (right.) #f)))
 
 (drd-group tex-mathops%
   arccos arcsin arctan cos cosh cot coth csc deg det dim exp gcd
@@ -479,7 +479,7 @@
 
 (define (tmtex-big-decode s)
   (cond ((not (string? s)) "bignone")
-        ((in? s '("sum" "prod" "int" "oint" "coprod")) s)
+        ((in? s '("sum" "prod" "int" "oint")) s)
 	((== s "amalg") "coprod")
 	((== s "pluscup") "uplus")
 	((== s ".") "bignone")
@@ -877,9 +877,6 @@
 (define (tmtex-item-arg s l)
   (tex-concat (list (list 'item (list '!option (tmtex (car l)))) " ")))
 
-(define (tmtex-render-proof s l)
-  (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
-
 (define (tmtex-session s l)
   (tmtex (caddr l)))
 
@@ -1073,7 +1070,6 @@
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
-  (render-proof (,tmtex-render-proof 2))
   (session (,tmtex-session 3))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))

@@ -44,7 +44,6 @@ ostream& operator << (ostream& out, object obj);
 bool operator == (object obj1, object obj2);
 bool operator != (object obj1, object obj2);
 
-object null_object ();
 object cons (object obj1, object obj2);
 object car (object obj);
 object cdr (object obj);
@@ -79,9 +78,8 @@ widget as_widget (object obj);
 make_widget as_make_widget (object obj);
 #endif
 
-object tree_to_stree (tree t);
-tree   stree_to_tree (object obj);
-tree   content_to_tree (object obj);
+object tree_to_object (tree t);
+tree object_to_tree (object obj);
 object string_to_object (string s);
 string object_to_string (object obj);
 
@@ -96,16 +94,13 @@ object call (char* fun);
 object call (char* fun, object a1);
 object call (char* fun, object a1, object a2);
 object call (char* fun, object a1, object a2, object a3);
-object call (char* fun, array<object> a);
 object call (string fun);
 object call (string fun, object a1);
 object call (string fun, object a1, object a2);
 object call (string fun, object a1, object a2, object a3);
-object call (string fun, array<object> a);
 object call (object fun);
 object call (object fun, object a1);
 object call (object fun, object a1, object a2);
 object call (object fun, object a1, object a2, object a3);
-object call (object fun, array<object> a);
 
 #endif // defined OBJECT_H

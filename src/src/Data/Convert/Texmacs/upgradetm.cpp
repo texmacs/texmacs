@@ -37,31 +37,6 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
-  if (version_inf ("1.0.3.12", version)) return H;
-
-  new_feature (H, "unquote*");
-
-  if (version_inf ("1.0.3.4", version)) return H;
-
-  new_feature (H, "for-each");
-  new_feature (H, "quasi");
-  rename_feature (H, "hold", "quasiquote");
-  rename_feature (H, "release", "unquote");
-
-  if (version_inf ("1.0.3.3", version)) return H;
-
-  new_feature (H, "quote-value");
-  new_feature (H, "quote-arg");
-  new_feature (H, "mark");
-  new_feature (H, "use-package");
-  new_feature (H, "style-only");
-  new_feature (H, "style-only*");
-  new_feature (H, "rewrite-inactive");
-  new_feature (H, "inline-tag");
-  new_feature (H, "open-tag");
-  new_feature (H, "middle-tag");
-  new_feature (H, "close-tag");
-
   if (version_inf ("1.0.2.8", version)) return H;
 
   rename_feature (H, "raw_data", "raw-data");
@@ -1182,7 +1157,7 @@ upgrade_split (tree t) {
   else if (is_func (t, SURROUND, 3) && is_func (t[0], SPLIT)) {
     tree u= t[2];
     if (!is_concat (u)) u= tree (CONCAT, t[0], u);
-    else u= tree (CONCAT, t[0]) * u;
+    else u= join (tree (CONCAT, t[0]), u);
     return tree (SURROUND, "", upgrade_split (t[1]), upgrade_split (u));
   }
   else if (is_func (t, SURROUND, 3) && is_concat (t[0])) {
@@ -1194,7 +1169,7 @@ upgrade_split (tree t) {
     tree u= t[2];
     if (split != "") {
       if (!is_concat (u)) u= tree (CONCAT, split, u);
-      else u= tree (CONCAT, split) * u;
+      else u= join (tree (CONCAT, split), u);
     }
     r= tree (SURROUND, upgrade_split (r),
 	     upgrade_split (t[1]), upgrade_split (u));
@@ -1897,48 +1872,37 @@ static charp var_rename []= {
 static hashmap<string,string> var_rename_table ("?");
 
 static hashmap<string,string>
-cached_renamer (charp* T, hashmap<string,string>& H) {
-  if (N (H) == 0) {
+get_var_rename () {
+  if (N (var_rename_table) == 0) {
     int i;
-    for (i=0; T[i][0] != '\0'; i+=2)
-      H (T[i])= T[i+1];
+    for (i=0; var_rename[i][0] != '\0'; i+=2)
+      var_rename_table (var_rename[i])= var_rename[i+1];
   }
-  return H;
+  return var_rename_table;
 }
 
-
 static tree
-rename_vars (tree t, hashmap<string,string> H, bool flag) {
+rename_vars (tree t, hashmap<string,string> H) {
   if (is_atomic (t)) return t;
   else {
     int i, n= N(t);
     tree r (t, n);
-    static tree_label MARKUP= make_tree_label ("markup");
     for (i=0; i<n; i++) {
-      tree u= rename_vars (t[i], H, flag);
+      tree u= rename_vars (t[i], H);
       if (is_atomic (u) && H->contains (u->label))
 	if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
 	    ((L(t) == ASSIGN) && (i == 0)) ||
 	    ((L(t) == VALUE) && (i == 0)) ||
 	    ((L(t) == CWITH) && (i == 4)) ||
 	    ((L(t) == TWITH) && (i == 0)) ||
-	    ((L(t) == ASSOCIATE) && (i == 0)) ||
-	    ((L(t) == MARKUP) && (i == 0)))
+	    ((L(t) == ASSOCIATE) && (i == 0)))
 	  u= copy (H[u->label]);
       r[i]= u;
     }
-    if (flag) {
-      if (H->contains (as_string (L(t)))) {
-	tree_label l= make_tree_label (H[as_string (L(t))]);
-	r= tree (l, A(r));
-      }
-    }
-    else {
-      if ((n == 0) && H->contains (as_string (L(t)))) {
-	string v= H[as_string (L(t))];
-	r= tree (VALUE, copy (v));
-	if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
-      }
+    if ((n == 0) && H->contains (as_string (L(t)))) {
+      string v= H[as_string (L(t))];
+      r= tree (VALUE, copy (v));
+      if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
     }
     return r;
   }
@@ -1946,257 +1910,7 @@ rename_vars (tree t, hashmap<string,string> H, bool flag) {
 
 tree
 upgrade_env_vars (tree t) {
-  return rename_vars (t, cached_renamer (var_rename, var_rename_table), false);
-}
-
-/******************************************************************************
-* Use package primitive for style files
-******************************************************************************/
-
-static tree
-upgrade_use_package (tree t) {
-  tree style= extract (t, "style");
-  tree init = extract (t, "initial");
-  bool preamble= false;
-  int i, n= N(init);
-  for (i=0; i<n; i++)
-    if (init[i] == tree (ASSOCIATE, PREAMBLE, "true"))
-      preamble= true;
-
-  bool no_style= true;
-  if (preamble) {
-    n= N(t);
-    tree r (L(t));
-    for (i=0; i<n; i++)
-      if (is_compound (t[i], "style")) {
-	r << compound ("style", "source");
-	no_style= false;
-      }
-      else if (is_compound (t[i], "body", 1) && is_document (t[i][0])) {
-	tree v (USE_PACKAGE);
-	v << A (style);
-	tree u (DOCUMENT);
-	if (N(v) > 0) u << v;
-	u << A (t[i][0]);
-	if (no_style) r << compound ("style", "source");
-	r << compound ("body", u);
-      }
-      else r << t[i];
-    return r;
-  }
-  else return t;
-}
-
-/******************************************************************************
-* Normalize names of tags in the style files
-******************************************************************************/
-
-static charp style_rename []= {
-  "thelabel", "the-label",
-
-  "leftflush", "left-flush",
-  "rightflush", "right-flush",
-  "mathord", "math-ord",
-  "mathopen", "math-open",
-  "mathclose", "math-close",
-  "mathpunct", "math-punct",
-  "mathbin", "math-bin",
-  "mathrel", "math-rel",
-  "mathop", "math-op",
-  "thetoc", "the-toc",
-  "theidx", "the-idx",
-  "thegly", "the-gly",
-  "theitem", "the-item",
-  "tocnr", "toc-nr",
-  "idxnr", "idx-nr",
-  "glynr", "gly-nr",
-  "itemnr", "item-nr",
-  "itemname", "item-name",
-  "newitemize", "new-itemize",
-  "newenumerate", "new-enumerate",
-  "newdescription", "new-description",
-
-  "nextnumber", "next-number",
-  "eqnumber", "eq-number",
-  "leqnumber", "leq-number",
-  "reqnumber", "req-number",
-  "nonumber", "no-number",
-  "thefootnote", "the-footnote",
-  "theequation", "the-equation",
-  "thetheorem", "the-theorem",
-  "theproposition", "the-proposition",
-  "thelemma", "the-lemma",
-  "thecorollary", "the-corollary",
-  "theaxiom", "the-axiom",
-  "thedefinition", "the-definition",
-  "thenotation", "the-notation",
-  "theconjecture", "the-conjecture",
-  "theremark", "the-remark",
-  "theexample", "the-example",
-  "thenote", "the-note",
-  "thewarning", "the-warning",
-  "theconvention", "the-convention",
-  "theexercise", "the-exercise",
-  "theproblem", "the-problem",
-  "thefigure", "the-figure",
-  "thetable", "the-table",
-  "footnotenr", "footnote-nr",
-  "equationnr", "equation-nr",
-  "theoremnr", "theorem-nr",
-  "propositionnr", "proposition-nr",
-  "lemmanr", "lemma-nr",
-  "corollarynr", "corollary-nr",
-  "axiomnr", "axiom-nr",
-  "definitionnr", "definition-nr",
-  "notationnr", "notation-nr",
-  "conjecturenr", "conjecture-nr",
-  "remarknr", "remark-nr",
-  "examplenr", "example-nr",
-  "notenr", "note-nr",
-  "warningnr", "warning-nr",
-  "conventionnr", "convention-nr",
-  "exercisenr", "exercise-nr",
-  "problemnr", "problem-nr",
-  "figurenr", "figure-nr",
-  "tablenr", "table-nr",
-  "theoremname", "theorem-name",
-  "figurename", "figure-name",
-  "exercisename", "exercise-name",
-  "theoremsep", "theorem-sep",
-  "figuresep", "figure-sep",
-  "exercisesep", "exercise-sep",
-  "footnotesep", "footnote-sep",
-  "newtheorem", "new-theorem",
-  "newremark", "new-remark",
-  "newexercise", "new-exercise",
-  "newfigure", "new-figure",
-
-  "theprefix", "the-prefix",
-  "thechapter", "the-chapter",
-  "theappendix", "the-appendix",
-  "thesection", "the-section",
-  "thesubsection", "the-subsection",
-  "thesubsubsection", "the-subsubsection",
-  "theparagraph", "the-paragraph",
-  "thesubparagraph", "the-subparagraph",
-  "chapternr", "chapter-nr",
-  "appendixnr", "appendix-nr",
-  "sectionnr", "section-nr",
-  "subsectionnr", "subsection-nr",
-  "subsubsectionnr", "subsubsection-nr",
-  "paragraphnr", "paragraph-nr",
-  "subparagraphnr", "subparagraph-nr",
-  "sectionsep", "section-sep",
-  "subsectionsep", "subsection-sep",
-  "subsubsectionsep", "subsubsection-sep",
-
-  "theorem*", "render-theorem",
-  "remark*", "render-remark",
-  "exercise*", "render-exercise",
-  "proof*", "render-proof",
-  "small-figure*", "render-small-figure",
-  "big-figure*", "render-big-figure",
-
-  "theanswer", "the-answer",
-  "thealgorithm", "the-algorithm",
-  "answernr", "answer-nr",
-  "algorithmnr", "algorithm-nr",
-
-  ""
-};
-
-static hashmap<string,string> style_rename_table ("?");
-
-static tree
-upgrade_style_rename_sub (tree t) {
-  if (is_atomic (t)) return t;
-  else if (is_func (t, MERGE, 2) && (t[0] == "the"))
-    return tree (MERGE, "the-", t[1]);
-  else if (is_func (t, MERGE, 2) && (t[1] == "nr"))
-    return tree (MERGE, t[0], "-nr");
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_style_rename_sub (t[i]);
-    return r;
-  }
-}
-
-static tree
-upgrade_style_rename (tree t) {
-  t= upgrade_style_rename_sub (t);
-  return
-    rename_vars (t, cached_renamer (style_rename, style_rename_table), true);
-}
-
-/******************************************************************************
-* Remove trailing punctuation in item* tags
-******************************************************************************/
-
-static tree
-upgrade_item_punct (tree t) {
-  if (is_atomic (t)) return t;
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_item_punct (t[i]);
-    if (is_compound (r, "item*", 1)) {
-      tree& item= r[0];
-      if (is_atomic (item)) {
-	string s= item->label;
-	if (ends (s, ".") || ends (s, ":") || ends (s, " "))
-	  item= s (0, N(s)-1);
-      }
-      else if (is_concat (item) && is_atomic (item[N(item)-1])) {
-	string s= item [N(item)-1] -> label;
-	if ((s == ".") || (s == ":") || (s == " ")) {
-	  if (N(item) == 2) item= item[0];
-	  else item= item (0, N(item) - 1);
-	}
-      }
-    }
-    return r;
-  }
-}
-
-/******************************************************************************
-* Forget default page parameters
-******************************************************************************/
-
-tree
-upgrade_page_pars (tree t) {
-  if (is_atomic (t)) return t;
-  else if (L(t) == COLLECTION) {
-    int i, n= N(t);
-    tree r (COLLECTION);
-    for (i=0; i<n; i++) {
-      tree u= t[i];
-      if (!is_func (u, ASSOCIATE, 2));
-      else if (u == tree (ASSOCIATE, PAGE_TYPE, "a4"));
-      else if (u == tree (ASSOCIATE, PAGE_EVEN, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_ODD, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_RIGHT, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_TOP, "30mm"));
-      else if (u == tree (ASSOCIATE, PAGE_BOT, "30mm"));
-      else if (u == tree (ASSOCIATE, PAR_WIDTH, "150mm"));
-      else if (u[0] == "page-reduce-left");
-      else if (u[0] == "page-reduce-right");
-      else if (u[0] == "page-reduce-top");
-      else if (u[0] == "page-reduce-bot");
-      else if (u[0] == "sfactor");
-      else r << u;
-    }
-    return r;
-  }
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_page_pars (t[i]);
-    return r;
-  }
+  return rename_vars (t, get_var_rename ());
 }
 
 /******************************************************************************
@@ -2222,8 +1936,6 @@ upgrade_tex (tree t) {
   t= upgrade_function (t);
   t= upgrade_apply (t);
   t= upgrade_env_vars (t);
-  t= upgrade_style_rename (t);
-  t= upgrade_item_punct (t);
   return t;
 }
 
@@ -2277,13 +1989,5 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.2.8"))
     t= upgrade_env_vars (t);
-  if (version_inf_eq (version, "1.0.3.3"))
-    t= upgrade_use_package (t);
-  if (version_inf_eq (version, "1.0.3.4"))
-    t= upgrade_style_rename (t);
-  if (version_inf_eq (version, "1.0.3.4"))
-    t= upgrade_item_punct (t);
-  if (version_inf_eq (version, "1.0.3.7"))
-    t= upgrade_page_pars (t);
   return t;
 }

@@ -75,7 +75,7 @@ concater_rep::typeset_compound (tree t, path ip) {
     if (is_atomic (f)) {
       string var= f->label;
       if (!env->provides (var)) {
-	typeset_error (t, ip);
+	typeset_unknown (var, t, ip, true);
 	return;
       }
       f= env->read (var);
@@ -84,7 +84,7 @@ concater_rep::typeset_compound (tree t, path ip) {
   else {
     string var= as_string (L(t));
     if (!env->provides (var)) {
-      typeset_error (t, ip);
+      typeset_unknown (var, t, ip);
       return;
     }
     d= 0;
@@ -107,7 +107,7 @@ concater_rep::typeset_compound (tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+d]: tree (UNINIT);
+	env->macro_arg->item (var)= i<m? t[i+d]: tree("");
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     if (is_decoration (ip)) typeset (f[n], ip);
@@ -130,28 +130,10 @@ concater_rep::typeset_compound (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_auto (tree t, path ip, tree f) {
-  env->macro_arg= list<hashmap<string,tree> > (
-    hashmap<string,tree> (UNINIT), env->macro_arg);
-  env->macro_src= list<hashmap<string,path> > (
-    hashmap<string,path> (path (DECORATION)), env->macro_src);
-  string var= f[0]->label;
-  env->macro_arg->item (var)= t;
-  env->macro_src->item (var)= ip;
-  typeset (f[1], decorate_right (ip));
-  env->macro_arg= env->macro_arg->next;
-  env->macro_src= env->macro_src->next;
-}
-
-void
 concater_rep::typeset_include (tree t, path ip) {
   url file_name= as_string (t[0]);
-  url incl_file= relative (env->base_file_name, file_name);
-  tree incl= load_inclusion (incl_file);
-  url save_name= env->cur_file_name;
-  env->cur_file_name= incl_file;
+  tree incl= load_inclusion (relative (env->base_file_name, file_name));
   typeset_dynamic (incl, ip);
-  env->cur_file_name= save_name;
 }
 
 void
@@ -170,14 +152,14 @@ concater_rep::typeset_eval (tree t, path ip) {
 void
 concater_rep::typeset_value (tree t, path ip) {
   // cout << "Value " << t << ", " << ip << "\n";
-  tree r= env->exec (t[0]);
+  tree r= t[0];
   if (is_compound (r)) {
-    typeset_error (t, ip);
+    typeset_unknown ("value", t, ip);
     return;
   }
   string name= r->label;
   if (!env->provides (name)) {
-    typeset_error (t, ip);
+    typeset_unknown (name, t, ip);
     return;
   }
   typeset_dynamic (env->read (name), ip);
@@ -187,13 +169,14 @@ void
 concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
   tree r= t[0];
-  if (is_compound (r) ||
-      nil (env->macro_arg) ||
-      (!env->macro_arg->item->contains (r->label)))
-    {
-      typeset_error (t, ip);
-      return;
-    }
+  if (is_compound (r)) {
+    typeset_unknown ("argument", t, ip);
+    return;
+  }
+  if (nil (env->macro_arg) || (!env->macro_arg->item->contains (r->label))) {
+    typeset_unknown (r->label, t, ip, true);
+    return;
+  }
 
   string name = r->label;
   tree   value= env->macro_arg->item [name];
@@ -226,49 +209,6 @@ concater_rep::typeset_argument (tree t, path ip) {
   env->macro_arg= old_var;
   env->macro_src= old_src;
   marker (descend (ip, 1));
-}
-
-void
-concater_rep::typeset_eval_args (tree t, path ip) { 
-  marker (descend (ip, 0));
-  typeset_inactive (env->exec (t), decorate_right (ip));
-  marker (descend (ip, 1));
-}
-
-void
-concater_rep::typeset_mark (tree t, path ip) {
-  // cout << "Mark: " << t << ", " << ip << "\n\n";
-  if (is_func (t[0], ARG) &&
-      is_atomic (t[0][0]) &&
-      (!nil (env->macro_arg)) &&
-      env->macro_arg->item->contains (t[0][0]->label))
-    {
-      string name = t[0][0]->label;
-      tree   value= env->macro_arg->item [name];
-      path   valip= decorate_right (ip);
-      if (!is_func (value, BACKUP)) {
-	path new_valip= env->macro_src->item [name];
-	if (is_accessible (new_valip)) valip= new_valip;
-      }
-      // cout << "Src   " << name << "=\t " << valip << "\n";
-
-      if (N(t[0]) > 1) {
-	int i, n= N(t[0]);
-	for (i=1; i<n; i++) {
-	  tree r= env->exec (t[0][i]);
-	  if (!is_int (r)) break;
-	  int nr= as_int (r);
-	  if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
-	  value= value[nr];
-	  valip= descend (valip, nr);
-	}
-      }
-
-      marker (descend (valip, 0));
-      typeset (t[1], descend (ip, 1));
-      marker (descend (valip, right_index (value)));
-    }
-  else typeset (t[1], descend (ip, 1));
 }
 
 void

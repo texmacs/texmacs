@@ -37,7 +37,7 @@
 
 (define (make-header l)
   (go-end-of-header-element)
-  (if (not (== (tree->stree (the-line)) "")) (insert-return))
+  (if (not (== (tree->object (the-line)) "")) (insert-return))
   (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,22 +68,23 @@
       (make l)
       (make-return-before)))
 
-(define (toggle-number-sub s)
-  (with s* (string-append s "*")
-    (cond ((inside? s) (variant-replace s s*))
-	  ((inside? s*) (variant-replace s* s)))))
-
 (define (toggle-section-number)
-  (for-each
-   toggle-number-sub
-   '("chapter" "section" "subsection" "subsubsection"
-     "paragraph" "subparagraph" "appendix"
-
-     "theorem" "proposition" "lemma" "corollary"
-     "axiom" "definition" "notation" "conjecture"
-     "remark" "example" "note" "warning" "convention"
-     "exercise" "problem"
-     "small-figure" "big-figure" "small-table" "big-table")))
+  (cond ((inside? "chapter") (variant-replace "chapter" "chapter*"))
+	((inside? "chapter*") (variant-replace "chapter*" "chapter"))
+	((inside? "section") (variant-replace "section" "section*"))
+	((inside? "section*") (variant-replace "section*" "section"))
+	((inside? "subsection") (variant-replace "subsection" "subsection*"))
+	((inside? "subsection*") (variant-replace "subsection*" "subsection"))
+	((inside? "subsubsection")
+	 (variant-replace "subsubsection" "subsubsection*"))
+	((inside? "subsubsection*")
+	 (variant-replace "subsubsection*" "subsubsection"))
+	((inside? "paragraph") (variant-replace "paragraph" "paragraph*"))
+	((inside? "paragraph*") (variant-replace "paragraph*" "paragraph"))
+	((inside? "subparagraph")
+	 (variant-replace "subparagraph" "subparagraph*"))
+	((inside? "subparagraph*")
+	 (variant-replace "subparagraph*" "subparagraph"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
@@ -120,12 +121,13 @@
 
 (define (make-aux env aux)
   (if (not (make-return-after))
-      (insert (list (string->symbol env) aux '(document "")))))
+      (insert-object (list (string->symbol env) aux '(document "")))))
 
 (define (make-aux* env aux name)
   (if (not (make-return-after))
-      (insert (list (string->symbol env) aux name '(document "")))))
+      (insert-object (list (string->symbol env) aux name '(document "")))))
 
 (define (make-bib style file-name)
   (if (not (make-return-after))
-      (insert (list 'bibliography "bib" style file-name '(document "")))))
+      (insert-object
+       (list 'bibliography "bib" style file-name '(document "")))))

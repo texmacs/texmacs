@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
@@ -32,8 +32,6 @@
 
     <item*|Pari>Karim Belabas.
 
-    <item*|Python>Ero Carrera.
-
     <item*|Qcl>Andrey Grozin.
 
     <item*|R>Michael Lachmann.
@@ -59,18 +57,27 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
     <associate|page-even|30mm>
-    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
     <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
     <associate|page-top|30mm>
     <associate|page-type|a4>
+    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|sfactor|4>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
+    <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-1|<tuple|<uninit>|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|<uninit>|?>>
+  </collection>
+</references>

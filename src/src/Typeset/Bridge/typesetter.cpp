@@ -17,10 +17,9 @@
 * Constructor and destructor
 ******************************************************************************/
 
-typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip2):
-  env (env2), et (et2), ip (ip2), old_patch (UNINIT)
+typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip):
+  env (env2), et (et2), old_patch (UNINIT)
 {
-  paper= (env->get_string (PAGE_MEDIUM) == "paper");
   br= make_bridge (this, et, ip);
   x1= y1= x2= y2=0;
 }
@@ -131,8 +130,6 @@ typesetter_rep::determine_page_references (box b) {
     tree   old= env->local_ref [var];
     if (is_func (old, TUPLE, 2))
       env->local_ref (var)= tuple (old[0], val);
-    else if (is_func (old, TUPLE, 3))
-      env->local_ref (var)= tuple (old[0], val, old[2]);
     else env->local_ref (var)= tuple (old, val);
   }
 }
@@ -149,7 +146,7 @@ typesetter_rep::typeset () {
   env->complete= br->my_typeset_will_be_complete ();
   if (env->complete) env->local_aux= hashmap<string,tree> (UNINIT);
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
-  pager ppp= new pager_rep (ip, env, l);
+  pager ppp= new pager_rep (env, l);
   box b= ppp->make_pages ();
   if (env->complete && paper) determine_page_references (b);
   delete ppp;
@@ -179,7 +176,7 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
 void
 notify_assign (typesetter ttt, path p, tree u) {
   // cout << "Assign " << p << ", " << u << "\n";
-  if (nil (p)) ttt->br= make_bridge (ttt, u, ttt->ip);
+  if (nil (p)) ttt->br= make_bridge (ttt, u, path ());
   else ttt->br->notify_assign (p, u);
 }
 
@@ -209,7 +206,7 @@ notify_join (typesetter ttt, path p) {
 
 void
 notify_ins_unary (typesetter ttt, path p, tree_label op) {
-  // cout << "Insert unary " << p << ", " << as_string (op) << "\n";
+  // cout << "Insert unary " << p << ", " << CONSTRUCTOR_NAME [op] << "\n";
   tree t= tree (op, subtree (ttt->br->st, p));
   ttt->br->notify_assign (p, t);
 }

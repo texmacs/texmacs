@@ -13,8 +13,7 @@
 #include "Format/page_item.hpp"
 #include "Format/stack_border.hpp"
 #include "pager.hpp"
-box format_stack (path ip, array<box> bx, array<space> ht, SI height,
-		  bool may_stretch);
+box format_stack (array<box> bx, array<space> ht, SI height, bool may_stretch);
 #include "Boxes/construct.hpp"
 array<page_item> sub (array<page_item> l, path p, path q);
 SI stretch_space (space spc, double stretch);
@@ -50,7 +49,7 @@ pager_rep::pages_format (array<page_item> l, SI ht, SI tcor, SI bcor) {
   }
   if (N(bs) == 0)
     fatal_error ("zero lines in insertion", "pager_rep::pages_format");
-  box b= format_stack (ip, bs, spc, ht, true);
+  box b= format_stack (bs, spc, ht, true);
   return vcorrect_box (b->ip, b, tcor, bcor);
 }
 
@@ -69,7 +68,7 @@ pager_rep::pages_format (insertion ins) {
       y [col]= 0;
     }
     // cout << UNINDENT << "Formatted multicolumn" << LF;
-    return scatter_box (ip, bs, x, y);
+    return scatter_box (path (), bs, x, y);
   }
   else {
     array<page_item> sub_l= sub (l, ins->begin, ins->end);
@@ -144,19 +143,19 @@ pager_rep::pages_format (pagelet pg) {
       by << (fnote_y + env->fn->sep);
     }
     // cout << UNINDENT << "Formatted pagelet " << (N(pages)+1) << LF << LF;
-    return scatter_box (ip, bs, bx, by);
+    return scatter_box (path (), bs, bx, by);
   }
 }
 
 box
 pager_rep::pages_make_page (pagelet pg) {
   box sb= pages_format (pg);
-  box lb= move_box (ip, sb, 0, 0);
+  box lb= move_box (path (), sb, 0, 0);
   SI  left= (N(pages)&1)==0? odd: even;
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree page_t= env->exec (compound (PAGE_THE_PAGE));
-  return page_box (ip, lb, page_t,
+  return page_box (path (), lb, page_t,
 		   width, height, left, top, top+ text_height,
 		   make_header(), make_footer(), head_sep, foot_sep);
 }
@@ -182,13 +181,13 @@ pager_rep::papyrus_make () {
   }
 
   box sb= pages_format (sk[0]);
-  box b = move_box (ip, sb, 0, 0);
+  box b = move_box (path (), sb, 0, 0);
   SI left  = (odd+even) >> 1;
   SI height= top + bot + b->h();
   array<box> bs   (1); bs   [0]= b;
   array<SI>  bs_x (1); bs_x [0]= left;
   array<SI>  bs_y (1); bs_y [0]= -top;
-  box pb= page_box (ip, "?", width, height,
+  box pb= page_box (path (), "?", width, height,
 		    bs, bs_x, bs_y, 0, 0, 0);
   pages << pb;
 }
