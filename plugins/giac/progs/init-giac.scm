@@ -23,5 +23,6 @@
 (plugin-configure giac
   (:require (url-exists-in-path? "giac"))
   (:initialize (giac-initialize))
+  (:tab-completion #t)
   (:launch "giac --texmacs")
   (:session "Giac"))
