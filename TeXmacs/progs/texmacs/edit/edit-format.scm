@@ -19,7 +19,7 @@
     set-left-margin set-right-margin set-first-indent set-last-indent
     set-interline set-interline-spc set-interpar-spc
     ;; page breaking
-    make-page-break make-new-page
+    make-page-break make-new-page make-new-dpage
     ;; routines for floats
     test-insertion-position?
     toggle-insertion-position toggle-insertion-position-not))
@@ -58,6 +58,10 @@
 
 (define (make-new-page)
   (make 'new-page)
+  (insert-return))
+
+(define (make-new-dpage)
+  (make 'new-dpage)
   (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

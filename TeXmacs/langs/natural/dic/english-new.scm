@@ -814,6 +814,8 @@
 ("new" "")
 ("new buffer" "")
 ("new column" "")
+("new double page" "")
+("new double page before" "")
 ("new item" "")
 ("new line" "")
 ("new number" "")

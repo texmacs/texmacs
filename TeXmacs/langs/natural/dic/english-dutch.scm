@@ -822,6 +822,8 @@
 ("new" "nieuw")
 ("new buffer" "nieuwe buffer")
 ("new column" "nieuwe kolom")
+("new double page" "nieuwe dubbele pagina")
+("new double page before" "nieuwe dubbele pagina hiervoor")
 ("new item" "nieuw element")
 ("new line" "nieuwe lijn")
 ("new number" "nieuw nummer")
