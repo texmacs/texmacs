@@ -242,7 +242,6 @@ private:
   tree exec_tmpt ();
   tree exec_px ();
 
-  tree exec_tmlen (tree t);
   tree exec_point (tree t);
   tree exec_box_info (tree t);
   tree exec_frame_direct (tree t);

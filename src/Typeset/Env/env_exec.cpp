@@ -335,8 +335,6 @@ edit_env_rep::exec (tree t) {
   case REWRITE_INACTIVE:
     return exec_rewrite (t);
 
-    //case TMLEN:
-    //return exec_tmlen (t);
   case _POINT:
     return exec_point (t);
   case BOX_INFO:
@@ -1128,21 +1126,6 @@ edit_env_rep::exec_greatereq (tree t) {
   if (is_length (s1) && is_length (s2))
     return as_string_bool (as_length (s1) >= as_length (s2));
   return tree (ERROR, "bad greater or equal");
-}
-
-tree
-edit_env_rep::exec_tmlen (tree t) {
-  if (N(t) == 1) return as_tmlen (exec (t[0]));
-  if (N(t) == 3) {
-    tree _min= as_tmlen (exec (t[0]));
-    tree _def= as_tmlen (exec (t[1]));
-    tree _max= as_tmlen (exec (t[2]));
-    _min= _min[N(_min) == 3? 1: 0];
-    _def= _def[N(_def) == 3? 1: 0];
-    _max= _max[N(_max) == 3? 1: 0];
-    return tree (TMLEN, _min, _def, _max);
-  }
-  return tree (TMLEN, "0");
 }
 
 tree
