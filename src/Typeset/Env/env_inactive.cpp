@@ -387,7 +387,8 @@ edit_env_rep::rewrite_inactive_default (
       inactive_mode == INACTIVE_BLOCK_ERROR)
     op= highlight (op, "", "error");
 
-  if ((src_compact == COMPACT_ALL) ||
+  if ((N(t) == d) ||
+      (src_compact == COMPACT_ALL) ||
       ((!block) && (src_compact != COMPACT_NONE)) ||
       (!is_long (t)) && (src_compact != COMPACT_NONE))
     {
