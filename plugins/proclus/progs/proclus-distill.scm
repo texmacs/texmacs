@@ -26,7 +26,8 @@
            go-to-source-link ;; for menu in init-proclus??
            locus-action
            proclus-links-action
-	   remove-link
+           remove-link
+           remove-link-type
            edit-loci
            edit-links))
 
@@ -74,6 +75,19 @@
     (remove-link-end s (locus-self-link t))
     (go-to-locus s)
     (edit-links)))
+
+(define (remove-link-type)
+  (and-let* ((t (get-locus-or-not-locus))
+             (b (locus-self-link t))
+             (s (get-source-link)))
+    (ask-types-to-remove
+     (cut remove-link-type/callback s b <>)
+     (save-excursion (locus-link-types s b)))))
+
+(define (remove-link-type/callback s b types)
+  (locus-set-link-types s b types)
+  (go-to-locus s)
+  (edit-links))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

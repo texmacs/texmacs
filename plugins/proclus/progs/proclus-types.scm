@@ -37,7 +37,8 @@
 	   delete-types/sub
 	   delete-types-rec
 
-           ask-types))
+           ask-types
+           ask-types-to-remove))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -246,3 +247,23 @@
         ((in? s (list-types))
          (ask-reverse-types proc (cons s types)))
         (else (ask-reverse-types proc types #t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing link types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ask-types-to-remove
+  (case-lambda
+    ((proc types) (ask-types-to-remove proc types #f))
+    ((proc types error?)
+     (interactive (if (not error?)
+                      '("Type de lien à supprimer:")
+                      '("Type absent. Type de lien à supprimer:"))
+                  (cut ask-types-to-remove/callback proc types <>)))))
+
+(define (ask-types-to-remove/callback proc types s)
+  (cond ((string-null? s) (proc types))
+        ((in? s types)
+         (ask-types-to-remove
+          proc (list-filter types (lambda (x) (not (== x s))))))
+        (else (ask-types-to-remove proc types #t))))

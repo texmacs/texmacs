@@ -38,7 +38,8 @@
       ("Constellation" (absname-editor))
       ---
       (when (in-proclus-locus?)
-	    ("Supprimer le lien" (remove-link)))
+            ("Supprimer le lien" (remove-link))
+            ("Supprimer type..." (remove-link-type)))
       ---
       (when (has-source-link?)
             (link menu-proclus-types)
@@ -86,6 +87,10 @@
       ("Activer but" (active-but))
       ("Initialiser" (inactivate))
       (link menu-proclus-types)
-      ("Liens" (edit-links)))
+      ("Liens" (edit-links))
+      (if (in-proclus-links?)
+          ---
+          ("Supprimer le lien" (remove-link))
+          ("Supprimer type..." (remove-link-type))))
   (if (not (in-proclus-locus?))
       (link std-texmacs-popup-menu)))

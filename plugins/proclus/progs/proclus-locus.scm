@@ -39,6 +39,7 @@
     make-link make-root-link
     link-absname link-id link-root? link-types link-comment
     add-link-end remove-link-end
+    locus-link-types locus-set-link-types
 
     locus-path go-to-locus go-to-locus-buffer))
 
@@ -201,6 +202,9 @@
 (define (link-types link) (third link))
 (define (link-comment link) (fourth link))
 
+(define (link-dest link) (list (first link) (second link)))
+(define (link-dest-equal? lnk1 lnk2)
+  (and (== (first lnk1) (first lnk2)) (== (second lnk1) (second lnk2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Link creation
@@ -261,6 +265,36 @@
 		       (lambda (lnk)
 			 (not (and (== (link-absname lnk) absname)
 				   (== (link-id lnk) id))))))))
+
+(define (locus-link-types source but)
+  (let ((source-absname (link-absname source))
+        (source-id (link-id source))
+        (but-absname (link-absname but))
+        (but-id (link-id but)))
+    (switch-to-active-buffer (absolute-name->url source-absname))
+    (list-concatenate
+     (map link-types
+          (list-filter (locus-links (tm-substree (locus-path source-id)))
+                       (cut link-dest-equal? but <>))))))
+
+(define (locus-set-link-types source but types)
+  (let ((source-absname (link-absname source))
+        (source-id (link-id source))
+        (but-absname (link-absname but))
+        (but-id (link-id but)))
+    (switch-to-active-buffer (absolute-name->url source-absname))
+    (let ((path (locus-path source-id)))
+      (if (null? types)
+          (locus-remove-link path but)
+          (locus-set-links
+           path (map (lambda (lnk)
+                       (if (link-dest-equal? but lnk)
+                           (list but-absname
+                                 but-id
+                                 types
+                                 (link-comment lnk))
+                           lnk))
+                     (locus-links (tm-substree path))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Browsing loci
