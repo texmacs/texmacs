@@ -45,7 +45,7 @@
   shots|screenshots>|<apply|tmweb-link|News|news>|<apply|tmweb-link|Mailing
   lists|ml>>>>
 
-  <assign|tmweb-download-links|<func|<apply|tmweb-list|<apply|tmweb-link|General|download>|<apply|tmweb-link|Sources|sources>|<apply|tmweb-link|Binaries|unix>|<apply|tmweb-link|RPM|rpm>|<apply|tmweb-link|Knoppix|knoppix>|<apply|tmweb-link|Fonts|fonts>|<apply|tmweb-link|Requirements|requirements>>>>
+  <assign|tmweb-download-links|<func|<apply|tmweb-list|<apply|tmweb-link|General|download>|<apply|tmweb-link|Sources|sources>|<apply|tmweb-link|Binaries|unix>|<apply|tmweb-link|RPM|rpm>|<apply|tmweb-link|Knoppix|knoppix>|<apply|tmweb-link|CVS|cvs>|<apply|tmweb-link|Fonts|fonts>|<apply|tmweb-link|Requirements|requirements>>>>
 
   <assign|tmweb-help-links|<func|<apply|tmweb-list|<apply|tmweb-link|General|help>|<apply|tmweb-link|FAQ|faq>|<apply|tmweb-link|Tutorial|tutorial>|<apply|tmweb-link|Manual|manual>|<apply|tmweb-link|Articles|articles>>>>
 
@@ -55,7 +55,7 @@
 
   <assign|tmweb-about-links|<func|<apply|tmweb-list|<apply|tmweb-link|Authors|authors>|<apply|tmweb-link|Philosophy|philosophy>|<apply|tmweb-link|Changes|changes>|<apply|tmweb-link|Plans|plans>|<apply|tmweb-link|License|license>>>>
 
-  <assign|tmweb-contact-links|<func|<apply|tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>>>>
+  <assign|tmweb-contact-links|<func|<apply|tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>|<apply|tmweb-link|Patches|patches>>>>
 
   \;
 

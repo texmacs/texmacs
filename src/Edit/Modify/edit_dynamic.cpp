@@ -396,7 +396,7 @@ edit_dynamic_rep::make_expand (string s, int n) {
   tree ins (EXPAND, n+1);
   ins[0]= s;
 #endif
-  if (n==0) insert_tree (ins, path (d_exp));
+  if (n==0) insert_tree (ins, 1);
   else if (n==1) {
     tree f= get_env_value (s);
     if ((N(f) == 2) && contains_table_format (f[1], f[0])) {
