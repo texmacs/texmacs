@@ -27,8 +27,9 @@
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-save-buffer file fm confirm)
-  (if (yes? confirm) (texmacs-save-buffer file fm)))
+(define (conditional-save-buffer file* fm confirm)
+  (with file (url-system file*)
+    (if (yes? confirm) (texmacs-save-buffer file fm))))
 
 (define (secure-save-buffer file fm)
   (with file* (url-concretize file)
@@ -52,10 +53,11 @@
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-load-buffer file fm where confirm)
-  (if (yes? confirm)
-      (texmacs-load-buffer (url-glue file "~") fm where #t)
-      (texmacs-load-buffer file fm where #f)))
+(define (conditional-load-buffer file* fm where confirm)
+  (with file (url-system file*)
+    (if (yes? confirm)
+        (texmacs-load-buffer (url-glue file "~") fm where #t)
+        (texmacs-load-buffer file fm where #f))))
 
 (define (load-buffer-sub file fm where)
   (with file* (url-concretize file)
