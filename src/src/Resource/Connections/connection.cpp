@@ -24,6 +24,7 @@
 #include "scheme.hpp"
 #include "resource.hpp"
 #include "Generic/input.hpp"
+#include "display.hpp"
 
 static tree connection_retrieve (string name, string session);
 
@@ -72,7 +73,7 @@ connection_rep::start (bool again) {
     tm_err = texmacs_input ("error");
     status = WAITING_FOR_OUTPUT;
     if (again && (message == "ok")) {
-      cout << "\a";
+      beep ();
       (void) connection_retrieve (name, session);
     }
   }
