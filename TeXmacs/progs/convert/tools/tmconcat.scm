@@ -90,12 +90,59 @@
 ;; Grouping brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmconcat-opening? x)
+  (or (func? x 'left)
+      (in? x '("(" "[" "{"))))
+
+(define (tmconcat-closing? x)
+  (or (func? x 'right)
+      (in? x '(")" "]" "}"))))
+
+(define (tmconcat-brackets-sub l)
+  ;; used for instance in MathML generation
+  (cond ((null? l) (values l l))
+	((tmconcat-opening? (car l))
+	 (receive (r tail) (tmconcat-brackets-sub (cdr l))
+	   (receive (r2 tail2) (tmconcat-brackets-sub tail)
+	     (values (cons (cons* 'concat! (car l) r) r2) tail2))))
+	((tmconcat-closing? (car l))
+	 (values (list (car l)) (cdr l)))
+	(else
+	 (receive (r tail) (tmconcat-brackets-sub (cdr l))
+	   (values (cons (car l) r) tail)))))
+
 (tm-define (tmconcat-structure-brackets l)
-  l)
+  (:type (forall T (-> (list T) (list T))))
+  (:synopsis "Recursively group matching brackets in concatenation @l.")
+  (receive (r tail) (tmconcat-brackets-sub l)
+    (if (null? tail) r
+	(append r (tmconcat-structure-brackets tail)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grouping scripts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmconcat-structure-scripts l)
-  l)
+  ;; used for instance in MathML generation
+  (:type (forall T (-> (list T) (list T))))
+  (:synopsis "Group scripts in @l.")
+  (cond ((null? l) l)
+	((match? l '(:1 (rsub :1) (rsup :1) :*))
+	 (cons (list 'rsubsup! (car l) (cadadr l) (cadr (caddr l)))
+	       (tmconcat-structure-scripts (cdddr l))))
+	((match? l '(:1 (rsup :1) (rsub :1) :*))
+	 (cons (list 'rsubsup! (car l) (cadr (caddr l)) (cadadr l))
+	       (tmconcat-structure-scripts (cdddr l))))
+	((match? l '(:1 (rsub :1) :*))
+	 (cons (list 'rsub! (car l) (cadadr l))
+	       (tmconcat-structure-scripts (cddr l))))
+	((match? l '(:1 (rsup :1) :*))
+	 (cons (list 'rsup! (car l) (cadadr l))
+	       (tmconcat-structure-scripts (cddr l))))
+	((func? (car l) 'rsub)
+	 (cons (list 'rsub! "" (cadar l))
+	       (tmconcat-structure-scripts (cdr l))))
+	((func? (car l) 'rsup)
+	 (cons (list 'rsup! "" (cadar l))
+	       (tmconcat-structure-scripts (cdr l))))
+	(else (cons (car l) (tmconcat-structure-scripts (cdr l))))))
