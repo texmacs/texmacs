@@ -367,12 +367,12 @@ path
 concat_box_rep::find_tree_path (path bp) {
   if (atom (bp)) {
     if (bp->item == 0) {
-      if (is_accessible (lip)) return revert (lip);
-      else return revert (descend_decode (lip, 0));
+      if (is_accessible (lip)) return reverse (lip);
+      else return reverse (descend_decode (lip, 0));
     }
     else {
-      if (is_accessible (rip)) return revert (rip);
-      else return revert (descend_decode (rip, 1));
+      if (is_accessible (rip)) return reverse (rip);
+      else return reverse (descend_decode (rip, 1));
     }
   }
   else return composite_box_rep::find_tree_path (bp);

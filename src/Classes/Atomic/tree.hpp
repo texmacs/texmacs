@@ -228,10 +228,6 @@ is_applicable (tree t) {
 }
 
 tree simplify_concat (tree t);
-tree simplify_paragraph (tree t);
-tree simplify_document (tree t);
-tree simplify_with (tree t);
-tree simplify_arity (tree t);
 tree simplify_correct (tree t);
 
 /******************************************************************************

@@ -21,7 +21,7 @@ static void
 finalize_left (path& lip, box sb) {
   if (is_accessible (sb->ip)) {
     path new_lip= descend (sb->ip->next, 0);
-    if (path_less (revert (new_lip), revert (lip))) lip= new_lip;
+    if (path_less (reverse (new_lip), reverse (lip))) lip= new_lip;
   }
 }
 
@@ -29,7 +29,7 @@ static void
 finalize_right (path& rip, box sb) {
   if (is_accessible (sb->ip)) {
     path new_rip= descend (sb->ip->next, 1);
-    if (path_less (revert (rip), revert (new_rip))) rip= new_rip;
+    if (path_less (reverse (rip), reverse (new_rip))) rip= new_rip;
   }
 }
 
@@ -45,8 +45,8 @@ descend_script (path ip1, path ip2, int side) {
   if (is_accessible (ip2)) {
     if (is_decoration (ip1)) i=2;
     else {
-      if ((side == 0) && path_inf (revert (ip2), revert (ip1))) i=2;
-      if ((side == 1) && path_inf (revert (ip1), revert (ip2))) i=2;
+      if ((side == 0) && path_inf (reverse (ip2), reverse (ip1))) i=2;
+      if ((side == 1) && path_inf (reverse (ip1), reverse (ip2))) i=2;
     }
   }
   if (i==1) return descend_script (ip1, side);
@@ -57,7 +57,7 @@ static bool
 test_script_border (path p, box sb) {
   return
     is_accessible (sb->ip) &&
-    (path_up (p) == path_up (revert (sb->ip)));
+    (path_up (p) == path_up (reverse (sb->ip)));
 }
 
 /******************************************************************************
@@ -138,12 +138,12 @@ lim_box_rep::find_tree_path (path bp) {
     int nr= subnr()- 1;
     if (bp->item == 0) {
       if (is_decoration (bs[0]->ip))
-	return revert (descend_script (bs[0]->ip, 0));
+	return reverse (descend_script (bs[0]->ip, 0));
       else return bs[0]->find_tree_path (bs[0]->find_left_box_path ());
     }
     else {
-      if (nr == 1) return revert (descend_script (bs[1]->ip, 1));
-      else return revert (descend_script (bs[1]->ip, bs[2]->ip, 1));
+      if (nr == 1) return reverse (descend_script (bs[1]->ip, 1));
+      else return reverse (descend_script (bs[1]->ip, bs[2]->ip, 1));
     }
   }
   else return composite_box_rep::find_tree_path (bp);
@@ -223,12 +223,12 @@ dummy_script_box_rep::find_tree_path (path bp) {
   if (atom (bp)) {
     int nr= subnr();
     if (bp->item == 0) {
-      if (nr == 1) return revert (descend_script (bs[0]->ip, 0));
-      else return revert (descend_script (bs[0]->ip, bs[1]->ip, 0));
+      if (nr == 1) return reverse (descend_script (bs[0]->ip, 0));
+      else return reverse (descend_script (bs[0]->ip, bs[1]->ip, 0));
     }
     else {
-      if (nr == 1) return revert (descend_script (bs[0]->ip, 1));
-      else return revert (descend_script (bs[0]->ip, bs[1]->ip, 1));
+      if (nr == 1) return reverse (descend_script (bs[0]->ip, 1));
+      else return reverse (descend_script (bs[0]->ip, bs[1]->ip, 1));
     }
   }
   else return composite_box_rep::find_tree_path (bp);
@@ -447,11 +447,11 @@ path
 side_box_rep::find_box_path (path p, bool& found) {
   /*
   cout << "Search " << p << " in " << box (this) << " " << ip << "\n";
-  cout << "  l:\t" << revert (lip) << "\n";
-  cout << "  r:\t" << revert (rip) << "\n";
+  cout << "  l:\t" << reverse (lip) << "\n";
+  cout << "  r:\t" << reverse (rip) << "\n";
   int i, n= subnr ();
   for (i=0; i<n; i++)
-    cout << "  " << i << ":\t" << revert (bs[i]->ip) << "\n";
+    cout << "  " << i << ":\t" << reverse (bs[i]->ip) << "\n";
   */
 
   if (((nr_left >= 1) && test_script_border (p, bs[1])) ||
@@ -490,25 +490,25 @@ side_box_rep::find_tree_path (path bp) {
     case 0:
       if (nr_left == 0) {
 	if (is_decoration (bs[0]->ip))
-	  return revert (descend_script (bs[0]->ip, 0));
+	  return reverse (descend_script (bs[0]->ip, 0));
 	else return bs[0]->find_tree_path (bs[0]->find_left_box_path ());
       }
-      if (nr_left == 1) return revert (descend_script (bs[1]->ip, 0));
-      return revert (descend_script (bs[1]->ip, bs[2]->ip, 0));
+      if (nr_left == 1) return reverse (descend_script (bs[1]->ip, 0));
+      return reverse (descend_script (bs[1]->ip, bs[2]->ip, 0));
     case 1:
       if (nr_right == 0) {
 	if (is_decoration (bs[0]->ip))
-	  return revert (descend_script (bs[0]->ip, 1));
+	  return reverse (descend_script (bs[0]->ip, 1));
 	else return bs[0]->find_tree_path (bs[0]->find_right_box_path ());
       }
-      if (nr_right == 1) return revert (descend_script (bs[nr_left+1]->ip, 1));
-      return revert (descend_script (bs[nr_left+1]->ip, bs[nr_left+2]->ip, 1));
+      if (nr_right == 1) return reverse (descend_script (bs[nr_left+1]->ip,1));
+      return reverse (descend_script (bs[nr_left+1]->ip, bs[nr_left+2]->ip,1));
     case 2:
-      if (nr_left == 1) return revert (descend_script (bs[1]->ip, 1));
-      return revert (descend_script (bs[1]->ip, bs[2]->ip, 1));
+      if (nr_left == 1) return reverse (descend_script (bs[1]->ip, 1));
+      return reverse (descend_script (bs[1]->ip, bs[2]->ip, 1));
     case 3:
-      if (nr_right == 1) return revert (descend_script (bs[nr_left+1]->ip, 0));
-      return revert (descend_script (bs[nr_left+1]->ip, bs[nr_left+2]->ip, 0));
+      if (nr_right == 1) return reverse (descend_script (bs[nr_left+1]->ip,0));
+      return reverse (descend_script (bs[nr_left+1]->ip, bs[nr_left+2]->ip,0));
     }
     fatal_error ("bad leaf", "side_box_rep::find_tree_path");
     return composite_box_rep::find_tree_path (bp);

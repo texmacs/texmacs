@@ -187,8 +187,8 @@ text_box_rep::find_box_path (path p, bool& found) {
 
 path
 text_box_rep::find_tree_path (path bp) {
-  if (is_accessible (ip)) return revert (descend (ip, pos+ bp->item));
-  else return revert (descend_decode (ip, bp->item <= N(str) ? 0 : 1));
+  if (is_accessible (ip)) return reverse (descend (ip, pos+ bp->item));
+  else return reverse (descend_decode (ip, bp->item <= N(str) ? 0 : 1));
 }
 
 cursor
