@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.4.5>
 
 <style|source>
 
@@ -56,7 +56,7 @@
   <assign|nocite-arg|<macro|x|<write|bib|<arg|x>>>>
 
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
-  green|x><map-args|nocite-arg|concat|x|1>>>>
+  green|x><map-args|nocite-arg|concat|x>>>>
 
   \;
 
