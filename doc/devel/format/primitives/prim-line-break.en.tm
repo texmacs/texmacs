@@ -23,7 +23,7 @@
     distinct subtrees of a <markup|document> node.
 
     Paragraphs are important structures for the typesetting process. Many
-    primitives and environment variables (vertical spacing, pargraph style,
+    primitives and environment variables (vertical spacing, paragraph style,
     indentation, page breaking, etc.) operate on whole paragraphs or at the
     boundaries of the enclosing paragraph.
 
@@ -39,7 +39,7 @@
     Print an invisible space with zero hyphenation penalty. The line breaking
     algorithm searches for the set of hyphenation points minimizing the total
     penalty, so line breaking is much more likely to occur at a
-    <markup|line-break> than anywhere else in its vicinty.
+    <markup|line-break> than anywhere else in its vicinity.
 
     Unlike <markup|next-line>, this is a hint which may or may not be obeyed
     by the typesetter, and it does not prevent the previous line from being
@@ -80,8 +80,8 @@
 
 <\references>
   <\collection>
-    <associate|gly-1|<tuple|1|?>>
     <associate|idx-1|<tuple|1|?>>
+    <associate|gly-1|<tuple|1|?>>
     <associate|idx-2|<tuple|1|?>>
     <associate|idx-3|<tuple|1|?>>
     <associate|idx-4|<tuple|1|?>>
@@ -108,13 +108,13 @@
     </associate>
     <\associate|idx>
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|line-break>>|<pageref|idx-1>>
+      green>|new-line>>|<pageref|idx-1>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|new-line>>|<pageref|idx-2>>
+      green>|next-line>>|<pageref|idx-2>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|next-line>>|<pageref|idx-3>>
+      green>|line-break>>|<pageref|idx-3>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
       green>|no-break>>|<pageref|idx-4>>
@@ -146,7 +146,13 @@
       green>|line-break>>|<pageref|idx-14>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|no-break>>|<pageref|idx-15>>
+      green>|line-break>>|<pageref|idx-15>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|next-line>>|<pageref|idx-16>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|no-break>>|<pageref|idx-17>>
     </associate>
   </collection>
 </auxiliary>

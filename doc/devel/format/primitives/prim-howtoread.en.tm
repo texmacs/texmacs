@@ -48,13 +48,13 @@
       of operands. Some typesetting primitives may evaluate to error trees
       when given inappropriate operands.
 
-      <item*|Functional:>Subsituted at evaluation, yields a synthetic tree,
+      <item*|Functional:>Substituted at evaluation, yields a synthetic tree,
       possibly empty.
 
       <item*|Macro:>Substituted at evaluation, yields a tree which may have
       accessible parts.
 
-      <item*|Display:>Self-evaluating and explicitely displayed.
+      <item*|Display:>Self-evaluating and explicitly displayed.
     </description>
 
     <item*|Usage>Documents where this primitive is allowed.

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -9,7 +9,7 @@
   text using several different <hyper-link|syntaxes|language/syntax.en.tm>.
   Documents are also programs written in the <TeXmacs> typesetting
   <hyper-link|language|language/language.en.tm>. The appearance and
-  interactive behaviour of documents is ultimately controlled by the
+  interactive behavior of documents is ultimately controlled by the
   typesetting <hyper-link|primitives|primitives/primitives.en.tm> and
   <hyper-link|variables|environment/env-vars.en.tm> used in markup.
 
@@ -53,8 +53,8 @@
 
 <\references>
   <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-1|<tuple|<uninit>|?>>
+    <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-2|<tuple|<uninit>|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
     <associate|idx-3|<tuple|<uninit>|?>>

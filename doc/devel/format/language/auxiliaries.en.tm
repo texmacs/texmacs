@@ -1,12 +1,11 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Auxilliaries>
+  <tmdoc-title|Auxiliaries>
 
-  <todo|explain the auxilliary documents mechanism used for automatic
-  content>
+  <todo|explain the auxiliary documents mechanism used for automatic content>
 
   <tmdoc-copyright|2004|David Allouche>
 

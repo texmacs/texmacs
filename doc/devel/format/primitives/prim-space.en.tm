@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -26,7 +26,7 @@
     <item*|<markup|vspace*>>Vertical space before.
 
     <verbatim|(vspace* <var|len>)> and <verbatim|(space <var|len> <var|min>
-    <var|max>)> are similar to their <verbatim|vspace> conterparts but the
+    <var|max>)> are similar to their <verbatim|vspace> counterparts but the
     vertical space is inserted <em|before> the current paragraph.
 
     The actual vertical space between two consecutive paragraphs is the
@@ -79,14 +79,14 @@
     <hyper-link|length value|../language/lengths.en.tm>.
 
     <verbatim|(htab <var|min> <var|weight>)> specifies the weight, which can
-    be a postive decimal number or one of the two special values documented
+    be a positive decimal number or one of the two special values documented
     below.
 
     <verbatim|(htab <var|min> "first")> inserts a <em|tail weak> spring, only
     the first one in a paragraph is significant.
 
     <verbatim|(htab <var|min> "last")> inserts a <em|head weak> spring, only
-    the last one in a paragrah is significant.
+    the last one in a paragraph is significant.
 
     Operands are not evaluated and must be literal strings.
 
@@ -125,8 +125,8 @@
 <\references>
   <\collection>
     <associate|idx-10|<tuple|1|?>>
-    <associate|gly-1|<tuple|1|?>>
     <associate|idx-1|<tuple|1|?>>
+    <associate|gly-1|<tuple|1|?>>
     <associate|idx-2|<tuple|1|?>>
     <associate|idx-3|<tuple|1|?>>
     <associate|idx-4|<tuple|1|?>>
@@ -161,6 +161,18 @@
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
       green>|vspace>>|<pageref|idx-6>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|vspace*>>|<pageref|idx-7>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|space>>|<pageref|idx-8>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|hspace>>|<pageref|idx-9>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|htab>>|<pageref|idx-10>>
     </associate>
   </collection>
 </auxiliary>

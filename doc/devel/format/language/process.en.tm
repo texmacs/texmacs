@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -40,11 +40,11 @@
 
   Most operators are only meaningful either for evaluation or typesetting:
   <def-index|computational operators> only have a meaning for evaluation and
-  are subsituted before typesetting, <def-index|physical operators> only have
-  a meaning for typesetting and are self-evaluating. Operands are evaluated
-  in <em|applicative order>. The typesetting language does not use <em|normal
-  order> lazy evaluation, but it provides mechanisms for partial and delayed
-  evaluation.
+  are substituted before typesetting, <def-index|physical operators> only
+  have a meaning for typesetting and are self-evaluating. Operands are
+  evaluated in <em|applicative order>. The typesetting language does not use
+  <em|normal order> lazy evaluation, but it provides mechanisms for partial
+  and delayed evaluation.
 
   Operators may not display all their subtrees. Most computational operators
   and many physical operators consume at least one of their operands. Trees

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -26,9 +26,8 @@
   be the name of a typesetter primitive or the name of markup tag.
 
   Documents are generally written to disk using the <def-index|TeXmacs
-  syntax>. This syntax is designed to be unobstrusive and easy to read, so
-  the content of a document can be easily understood from a plain text
-  editor:
+  syntax>. This syntax is designed to be unobtrusive and easy to read, so the
+  content of a document can be easily understood from a plain text editor:
 
   <framed-fragment|<verbatim|\<less\>with\|mode\|math\|x+y+\<less\>frac\|1\|2\<gtr\>+\<less\>sqrt\|y+z\<gtr\>\<gtr\>>>
 
@@ -41,7 +40,7 @@
   <TeXmacs> typesetting editor. If that seems surprising to you, consider
   that a syntax is a way to represent information in a form suitable to
   understanding and modification. The on-screen typeset representation of a
-  document, together with its interactive behaviour, is a particular concrete
+  document, together with its interactive behavior, is a particular concrete
   syntax:
 
   <\framed-fragment>
@@ -56,7 +55,7 @@
   In contexts where a document cannot be represented and edited in its
   typeset form, like in <value|scheme> programs or in e-mails, or when the
   important information is the internal representation, the preferred syntax
-  is <value|scheme>. This syntax was designed to be predictible, easy to
+  is <value|scheme>. This syntax was designed to be predictable, easy to
   hand-edit, and expose the complete internal structure of the document.
 
   <\tm-fragment>
@@ -69,7 +68,7 @@
   when debugging complex stylesheets.
 
   Documents can also be represented in <acronym|XML> syntax. This syntax was
-  designed to be close to the internal tree structure and use convential
+  designed to be close to the internal tree structure and use conventional
   <acronym|XML> notations which are well supported by standard tools.
   Whitespace generally <em|is> significant in <acronym|XML>, the example
   features some whitespace inserted at a location where it is ignored:
@@ -113,8 +112,8 @@
 
 <\references>
   <\collection>
-    <associate|gly-1|<tuple|1|?>>
     <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|gly-1|<tuple|1|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
     <associate|idx-3|<tuple|<uninit>|?>>
     <associate|idx-4|<tuple|<uninit>|?>>

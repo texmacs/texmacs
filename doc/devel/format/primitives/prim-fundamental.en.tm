@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
@@ -45,8 +45,8 @@
     they contain several top-level paragraphs.
 
     The <verbatim|document> operators are also found in inner subtrees
-    wherever a multiparagraph structure is needed, for example in list
-    structures and multiparagraph table cells.
+    wherever a multi-paragraph structure is needed, for example in list
+    structures and multi-paragraph table cells.
 
     <item*|<markup|concat>>Sequence of line items.
 
@@ -98,10 +98,10 @@
 
     <item*|<markup|raw-data>>Opaque data.
 
-    In some contexts you need to embbed uneditable data inside a document,
+    In some contexts you need to embed uneditable data inside a document,
     most of the time this is uneditable binary data. The <verbatim|raw-data>
-    primive makes it impossible to view or modify its subtree from within the
-    editor.
+    primitive makes it impossible to view or modify its subtree from within
+    the editor.
   </description-dash>
 
   <tmdoc-copyright|2004|David Allouche>
@@ -133,9 +133,9 @@
 <\references>
   <\collection>
     <associate|idx-10|<tuple|1|?>>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|1|?>>
     <associate|idx-11|<tuple|1|?>>
+    <associate|idx-1|<tuple|1|?>>
+    <associate|gly-1|<tuple|1|?>>
     <associate|idx-12|<tuple|1|?>>
     <associate|idx-2|<tuple|1|?>>
     <associate|gly-2|<tuple|2|?>>
@@ -174,10 +174,22 @@
       green>|concat>>|<pageref|idx-6>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|error>>|<pageref|idx-7>>
+      green>|document>>|<pageref|idx-7>>
 
       <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|raw-data>>|<pageref|idx-8>>
+      green>|concat>>|<pageref|idx-8>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|error>>|<pageref|idx-9>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|raw-data>>|<pageref|idx-10>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|error>>|<pageref|idx-11>>
+
+      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
+      green>|raw-data>>|<pageref|idx-12>>
     </associate>
   </collection>
 </auxiliary>
