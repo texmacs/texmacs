@@ -225,13 +225,19 @@ uses_glue     := $(guile_obj)
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
   $(CPPFLAGS) $(CXXFLAGS)) 
-cxx_incl_bis = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
-  $(CPPFLAGS) $(2) $(CXXFLAGS))
-cxx_incl_sys = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
-  $(CPPFLAGS) $(DASH_I_DASH) $(2) $(CXXFLAGS))
+cxx_incl_sys = $(call cxx_flags,$(1) $(DASH_I_DASH) $(CPPFLAGS) $(2) $(CXXFLAGS))
+
+# We should use cxx_incl_sys to include external headers (splitting
+# the include path is safer), but a problem in Guile 1.6.0 does not
+# allow it. See the definition of deps_flags for details.
+#
+# Since Guile headers are now included for every compilation unit, we
+# cannot use DASH_I_DASH at all anymore. The guile headers should be
+# abstracted off the public Scheme interface. This would reduce
+# compilation times and fix this problem.
 
 $(system_obj): Objects/%.o: %.cpp
-	$(call cxx_incl_sys,$(system_incl),-I$(tmsrc)/include)
+	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
 $(classes_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(classes_incl))
 $(data_obj): Objects/%.o: %.cpp
@@ -240,12 +246,10 @@ $(edit_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(edit_incl))
 $(guile_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(guile_incl))
-# We should use cxx_incl_sys, but a problem in guile 1.6.0 does not
-# allow it. See definition deps_flags for details.
 $(resource_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(resource_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl_bis,$(plugins_incl),$(CXXXWINDOW))
+	$(call cxx_incl,$(plugins_incl) $(CXXXWINDOW))
 $(texmacs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
@@ -253,4 +257,4 @@ $(typeset_obj): Objects/%.o: %.cpp
 $(window_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(window_incl))
 $(x_window_obj): Objects/%.o: %.cpp
-	$(call cxx_incl_sys,$(window_incl),$(CXXXWINDOW))
+	$(call cxx_incl,$(window_incl) $(CXXXWINDOW))
