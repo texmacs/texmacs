@@ -213,6 +213,18 @@ static bool
 accessible_arg (drd_info_rep* drd, tree t, tree arg) {
   if (is_atomic (t)) return false;
   else if (t == arg) return true;
+  else if (is_func (t, MAP_ARGS) && (t[2] == arg[0])) {
+    if ((N(t) >= 4) && (N(arg) >= 2) && (as_int (t[3]) > as_int (arg[1])))
+      return false;
+    if ((N(t) == 5) && (N(arg) >= 2) && (as_int (t[3]) <= as_int (arg[1])))
+      return false;
+    tree_label inner= make_tree_label (as_string (t[0]));
+    tree_label outer= make_tree_label (as_string (t[1]));
+    return
+      (drd->get_nr_indices (inner) > 0) &&
+      drd->get_accessible (inner, 0) &&
+      drd->all_accessible (outer);
+  }
   else if (is_func (t, MACRO)) return false;
   else {
     int i, n= N(t);
@@ -260,7 +272,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   tag_info old_ti= copy (info[l]);
   int i, m= minimal_arity (xmacro[1], xmacro[0]);
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
-  for (i=0; i<m; i++) {
+  for (i=0; i<=m; i++) {
     tree arg (ARGUMENT, xmacro[0], as_string (i));
     set_accessible (l, i, accessible_arg (this, xmacro[1], arg));
   }
