@@ -492,14 +492,31 @@ edit_env_rep::exec_drd_props (tree t) {
       if (prop == "arity") {
 	drd->set_arity (l, as_int (val));
 	drd->set_masked_props (l, FROZEN_ARITY, FROZEN_ARITY);
+	// NEW
+	drd->set_arity (l, as_int (val), 0, ARITY_NORMAL, CHILD_DETAILED);
+	drd->freeze_arity (l);
       }
       if (prop == "accessible") {
 	drd->set_arity (l, as_int (val));
 	drd->set_masked_props (l, FROZEN_ACCESSIBLE, FROZEN_ACCESSIBLE);
-	if (val == "none")
+	if (val == "none") {
 	  drd->set_masked_props (l, ACCESSIBLE_MASK, NOT_ACCESSIBLE);
-	if (val == "all")
+	  // NEW
+	  int i, n= drd->get_nr_indices (l);
+	  for (i=0; i<n; i++) {
+	    drd->set_accessible (l, i, false);
+	    drd->freeze_accessible (l, i);
+	  }
+	}
+	if (val == "all") {
 	  drd->set_masked_props (l, ACCESSIBLE_MASK, ACCESSIBLE);
+	  // NEW
+	  int i, n= drd->get_nr_indices (l);
+	  for (i=0; i<n; i++) {
+	    drd->set_accessible (l, i, true);
+	    drd->freeze_accessible (l, i);
+	  }
+	}
 	if (is_tuple (val)) {
 	  int i, n= N(val), detailed= 0;
 	  for (i=0; i<n; i++) {

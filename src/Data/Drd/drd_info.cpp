@@ -18,9 +18,9 @@
 ******************************************************************************/
 
 drd_info_rep::drd_info_rep (string name2):
-  name (name2), ti (tag_info ()) {}
+  name (name2), info (tag_info ()) {}
 drd_info_rep::drd_info_rep (string name2, drd_info base):
-  name (name2), ti (tag_info (), base->ti) {}
+  name (name2), info (tag_info (), base->info) {}
 drd_info::drd_info (string name):
   rep (new drd_info_rep (name)) {}
 drd_info::drd_info (string name, drd_info base):
@@ -36,40 +36,112 @@ operator << (ostream& out, drd_info drd) {
 }
 
 /******************************************************************************
+* New access methods
+******************************************************************************/
+
+void
+drd_info_rep::set_arity (tree_label l, int arity, int extra, int am, int cm) {
+  tag_info& ti= info(l);
+  if (ti->pi.freeze_arity) return;
+  ti->pi.arity_mode= am;
+  ti->pi.child_mode= cm;
+  if (am != ARITY_VAR_REPEAT) {
+    ti->pi.arity_base = arity;
+    ti->pi.arity_extra= extra;
+  }
+  else {
+    ti->pi.arity_base = extra;
+    ti->pi.arity_extra= arity;
+  }
+  int n;
+  if (arity+extra == 0) n= 0;
+  else if (cm == CHILD_UNIFORM) n= 1;
+  else if (cm == CHILD_BIFORM) n= 2;
+  else n= arity+extra;
+  if (N(ti->ci) != n) ti->ci= array<child_info> (n);
+}
+
+int
+drd_info_rep::get_arity_mode (tree_label l) {
+  return info[l]->pi.arity_mode;
+}
+
+int
+drd_info_rep::get_child_mode (tree_label l) {
+  return info[l]->pi.child_mode;
+}
+
+int
+drd_info_rep::get_arity_base (tree_label l) {
+  return info[l]->pi.arity_base;
+}
+
+int
+drd_info_rep::get_arity_extra (tree_label l) {
+  return info[l]->pi.arity_extra;
+}
+
+int
+drd_info_rep::get_nr_indices (tree_label l) {
+  return N(info[l]->ci);
+}
+
+void
+drd_info_rep::freeze_arity (tree_label l) {
+  tag_info& ti= info(l);
+  ti->pi.freeze_arity= true;
+}
+
+void
+drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
+  tag_info  & ti= info(l);
+  child_info& ci= ti->ci[nr];
+  if (ci.freeze_accessible) return;
+  ci.accessible= is_accessible;
+}
+
+void
+drd_info_rep::freeze_accessible (tree_label l, int nr) {
+  tag_info  & ti= info(l);
+  child_info& ci= ti->ci[nr];
+  ci.freeze_accessible= true;
+}
+
+/******************************************************************************
 * Accessing the drd
 ******************************************************************************/
 
 bool
 drd_info_rep::contains (string l) {
-  return existing_tree_label (l) && ti->contains (as_tree_label (l));
+  return existing_tree_label (l) && info->contains (as_tree_label (l));
 }
 
 void
 drd_info_rep::set_arity (tree_label l, int arity) {
-  if (!ti->contains (l)) ti(l)= tag_info (arity, 0);
-  else ti(l)->arity= arity;
+  if (!info->contains (l)) info(l)= tag_info (arity, 0);
+  else info(l)->arity= arity;
 }
 
 void
 drd_info_rep::set_props (tree_label l, int props) {
-  if (!ti->contains (l)) ti(l)= tag_info (-1, props);
-  else ti(l)->props= props;
+  if (!info->contains (l)) info(l)= tag_info (-1, props);
+  else info(l)->props= props;
 }
 
 void
 drd_info_rep::set_masked_props (tree_label l, int mask, int props) {
-  if (!ti->contains (l)) ti(l)= tag_info (-1, mask & props);
-  else ti(l)->props= (ti[l]->props & (~mask)) | props;
+  if (!info->contains (l)) info(l)= tag_info (-1, mask & props);
+  else info(l)->props= (info[l]->props & (~mask)) | props;
 }
 
 int
 drd_info_rep::get_arity (tree_label l) {
-  return ti[l]->arity;
+  return info[l]->arity;
 }
 
 int
 drd_info_rep::get_props (tree_label l) {
-  return ti[l]->props;
+  return info[l]->props;
 }
 
 /******************************************************************************
@@ -93,19 +165,24 @@ accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
 
 bool
 drd_info_rep::heuristic_init (string var, tree macro) {
-  tree_label l= make_tree_label (var);
+  tree_label l = make_tree_label (var);
   int i, n= N(macro)-1;
   int old_arity= get_arity (l);
   int new_arity= old_arity;
   int old_props= get_props (l);
   int new_props= old_props;
-  bool changed= false;
+  bool changed = false;
+
+  // NEW
+  tag_info old_ti= copy (info[l]);
 
   /* Getting accessibility flags */
   if ((new_props & FROZEN_ARITY) == 0) {
     new_arity= n;
     set_arity (l, new_arity);
     changed= changed || (new_arity != old_arity);
+    // NEW
+    set_arity (l, new_arity, 0, ARITY_NORMAL, CHILD_DETAILED);
   }
 
   /* Getting accessibility flags */
@@ -119,8 +196,14 @@ drd_info_rep::heuristic_init (string var, tree macro) {
       if (accessible_macro_arg (this, macro[n], macro[i])) {
 	detailed += (1 << (CUSTOM_ACCESSIBLE_SHIFT + i));
 	all_off= false;
+	// NEW
+	info(l)->ci[i].accessible= true;
       }
-      else all_on= false;
+      else {
+	all_on= false;
+	// NEW
+	info(l)->ci[i].accessible= false;
+      }
     }
     if (all_on) new_props += ACCESSIBLE;
     else if (all_off) new_props += NOT_ACCESSIBLE;
@@ -128,6 +211,12 @@ drd_info_rep::heuristic_init (string var, tree macro) {
     set_props (l, new_props);
     changed= changed || (new_props != old_props);
   }
+
+  // NEW
+  bool new_changed= (old_ti != info[l]);
+  if (new_changed != changed)
+    cout << var << ": bad changed " << changed
+	 << " -> " <<new_changed << "\n";
 
   return changed;
 }
@@ -157,13 +246,18 @@ bool
 drd_info_rep::is_dynamic (tree t) {
   if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   if (is_atomic (t)) return false;
+  if (is_func (t, DOCUMENT) || is_func (t, PARAGRAPH) || is_func (t, CONCAT) ||
+      is_func (t, TABLE) || is_func (t, ROW)) return false;
+  return info[L(t)]->pi.arity_mode != ARITY_NORMAL;
+  /*
+  if (is_atomic (t)) return false;
   tree_label l= L (t);
   return (get_props (l) & DYNAMIC_MASK) == DYNAMIC;
+  */
 }
 
 bool
-drd_info_rep::is_accessible_child (tree t, int i) {
-  // if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
+drd_info_rep::old_is_accessible_child (tree t, int i) {
   switch (get_props (L(t)) & ACCESSIBLE_MASK) {
   case NOT_ACCESSIBLE:
     return false;
@@ -188,6 +282,26 @@ drd_info_rep::is_accessible_child (tree t, int i) {
 }
 
 bool
+drd_info_rep::new_is_accessible_child (tree t, int i) {
+  if (!info->contains (L(t))) return false;
+  if ((i<0) || (i>=N(t)))
+    fatal_error ("Out of range", "drd_info_rep::new_is_accessible_child");
+  tag_info   ti= info[L(t)];
+  child_info ci= ti (i, N(t));
+  return ci.accessible;
+}
+
+bool
+drd_info_rep::is_accessible_child (tree t, int i) {
+  bool b1= old_is_accessible_child (t, i);
+  bool b2= new_is_accessible_child (t, i);
+  if (b2 != b1)
+    cout << as_string (L(t)) << ": child " << i
+	 << " has bad accessability " << b1 << " -> " << b2 << "\n";
+  return b1;
+}
+
+bool
 drd_info_rep::is_child_enforcing (tree t) {
   if (L(t) >= START_EXTENSIONS) return false; // FIXME: temporary fix
   bool old_result=
@@ -195,7 +309,7 @@ drd_info_rep::is_child_enforcing (tree t) {
     ((get_props (L(t)) & BORDER_ACCESSIBLE_MASK) ==
      BORDER_NOT_ACCESSIBLE);
   bool new_result=
-    ti[L(t)]->pi.no_border && (N(t) != 0);
+    info[L(t)]->pi.no_border && (N(t) != 0);
   if (new_result != old_result)
     cout << "Warning: " << as_string (L(t)) << ": bad no_border\n";
   return new_result;

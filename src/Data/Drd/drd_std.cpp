@@ -52,13 +52,13 @@ init (tree_label l, string name, tag_info ti) {
   //cout << "Check name...\n";
   if (as_string (l) != name)
     cout << name << ": Bad name (" << as_string (l) << ")\n";
-  tag_info std= std_drd->ti[l];
+  tag_info std= std_drd->info[l];
 
   //cout << "Check arity...\n";
   bool arity_ok;
   if (ti->pi.arity_mode != ARITY_NORMAL) arity_ok= (std->arity == -1);
   else arity_ok= (std->arity ==
-		  (((int) ti->pi.arity_min) + ((int) ti->pi.arity_extra)));
+		  (((int) ti->pi.arity_base) + ((int) ti->pi.arity_extra)));
   if (!arity_ok)
     cout << name << ": Bad arity (" << std->arity << ")\n";
 
@@ -68,11 +68,13 @@ init (tree_label l, string name, tag_info ti) {
 	 << ((std->props & BORDER_ACCESSIBLE_MASK)>0) << ")\n";
 
   //cout << "Check dynamic...\n";
+  /*
   bool dyn1= (std->props & DYNAMIC_MASK) > 0;
   bool dyn2= ti->pi.arity_mode != ARITY_NORMAL;
-  if (dyn2 != dyn1)
+  if ((dyn2 != dyn1) && (std->arity <= 0))
     cout << name << ": Bad dynamic ("
 	 << ((std->props & DYNAMIC_MASK)>0) << ")\n";
+  */
 
   //cout << "Check accessible...\n";
   array<child_info>& ci= ti->ci;
@@ -91,7 +93,7 @@ init (tree_label l, string name, tag_info ti) {
     if (ti->pi.child_mode != CHILD_DETAILED) {
       access_ok= access_ok && (ti->pi.child_mode != CHILD_UNIFORM);
       access_ok= access_ok && (ti->pi.arity_mode != ARITY_VAR_REPEAT);
-      access_ok= access_ok && (ti->pi.arity_min == 1);
+      access_ok= access_ok && (ti->pi.arity_base == 1);
     }
     access_ok= access_ok && (ci[0].accessible == true);
     for (i=1; i<n; i++)
@@ -103,7 +105,7 @@ init (tree_label l, string name, tag_info ti) {
       if (ti->pi.arity_mode == ARITY_NORMAL)
 	access_ok= access_ok && (ti->pi.arity_extra == 1);
       else if (ti->pi.arity_mode == ARITY_VAR_REPEAT)
-	access_ok= access_ok && (ti->pi.arity_min == 1);
+	access_ok= access_ok && (ti->pi.arity_base == 1);
       else access_ok= false;
     }
     access_ok= access_ok && (ci[n-1].accessible == true);
@@ -114,7 +116,7 @@ init (tree_label l, string name, tag_info ti) {
     if (ti->pi.child_mode != CHILD_DETAILED) {
       access_ok= access_ok && (ti->pi.child_mode != CHILD_UNIFORM);
       access_ok= access_ok && (ti->pi.arity_mode != ARITY_VAR_REPEAT);
-      access_ok= access_ok && (ti->pi.arity_min == 1);
+      access_ok= access_ok && (ti->pi.arity_base == 1);
     }
     access_ok= access_ok && (ci[0].accessible == false);
     for (i=1; i<n; i++)
@@ -144,7 +146,7 @@ initialize_std_drd () {
 
   constructor (DOCUMENT, "document", -1, ACCESSIBLE_EXCEPT_BORDER);
   constructor (PARAGRAPH, "para", -1, ACCESSIBLE_EXCEPT_BORDER);
-  constructor (SURROUND, "surround", 3, ACCESSIBLE + DYNAMIC);
+  constructor (SURROUND, "surround", 3, ACCESSIBLE);
   constructor (CONCAT, "concat", -1, ACCESSIBLE_EXCEPT_BORDER);
   constructor (GROUP, "group", 1, ACCESSIBLE);
   constructor (HSPACE, "hspace", -1);
@@ -152,10 +154,10 @@ initialize_std_drd () {
   constructor (VSPACE_AFTER, "vspace", -1);
   constructor (SPACE, "space", -1);
   constructor (HTAB, "htab", -1, DYNAMIC);
-  constructor (MOVE, "move", 3, FIRST_ACCESSIBLE + DYNAMIC);
-  constructor (RESIZE, "resize", 5, FIRST_ACCESSIBLE + DYNAMIC);
-  constructor (REPEAT, "repeat", 2, FIRST_ACCESSIBLE + DYNAMIC);
-  constructor (_FLOAT, "float", 3, LAST_ACCESSIBLE + DYNAMIC);
+  constructor (MOVE, "move", 3, FIRST_ACCESSIBLE);
+  constructor (RESIZE, "resize", 5, FIRST_ACCESSIBLE);
+  constructor (REPEAT, "repeat", 2, FIRST_ACCESSIBLE);
+  constructor (_FLOAT, "float", 3, LAST_ACCESSIBLE);
   constructor (DECORATE_ATOMS, "datoms", -1, LAST_ACCESSIBLE + DYNAMIC);
   constructor (DECORATE_LINES, "dlines", -1, LAST_ACCESSIBLE + DYNAMIC);
   constructor (DECORATE_PAGES, "dpages", -1, LAST_ACCESSIBLE + DYNAMIC);
@@ -391,7 +393,7 @@ initialize_std_drd () {
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
   init (VALUE, "value", fixed (1));
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
-  init (DRD_PROPS, "drd_props", repeat (2, 2));
+  init (DRD_PROPS, "drd_props", repeat (3, 2));
   init (ARGUMENT, "arg", repeat (1, 1));
   init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
   init (XMACRO, "xmacro", fixed (2) -> accessible (0));

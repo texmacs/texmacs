@@ -12,23 +12,69 @@
 
 #include "tag_info.hpp"
 
+#define get_bits(which,nr) which=i&((1<<nr)-1);i=i>>nr
+#define set_bits(which,nr) i+=((int)which)<<offset;offset+=nr
+
 /******************************************************************************
 * Properties of the tag
 ******************************************************************************/
 
 parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
   arity_mode       = am;
-  arity_min        = a;
+  arity_base       = a;
   arity_extra      = x;
   child_mode       = cm;
   no_border        = false;
   block            = false;
-  dynamic          = false;
-  freeze_child     = frozen;
   freeze_arity     = frozen;
   freeze_no_border = frozen;
   freeze_block     = frozen;
-  freeze_dynamic   = frozen;
+}
+
+parent_info::parent_info (string s) {
+  int i= as_int (s);
+  get_bits (arity_mode      , 2);
+  get_bits (arity_base      , 6);
+  get_bits (arity_extra     , 4);
+  get_bits (child_mode      , 2);
+  get_bits (no_border       , 1);
+  get_bits (block           , 2);
+  get_bits (freeze_arity    , 1);
+  get_bits (freeze_no_border, 1);
+  get_bits (freeze_block    , 1);
+}
+
+parent_info::operator string () {
+  int i,offset=0;
+  set_bits (arity_mode      , 2);
+  set_bits (arity_base      , 6);
+  set_bits (arity_extra     , 4);
+  set_bits (child_mode      , 2);
+  set_bits (no_border       , 1);
+  set_bits (block           , 2);
+  set_bits (freeze_arity    , 1);
+  set_bits (freeze_no_border, 1);
+  set_bits (freeze_block    , 1);
+  return i;
+}
+
+bool
+parent_info::operator == (const parent_info& pi) {
+  return
+    (arity_mode       == pi.arity_mode      ) &&
+    (arity_base       == pi.arity_base      ) &&
+    (arity_extra      == pi.arity_extra     ) &&
+    (child_mode       == pi.child_mode      ) &&
+    (no_border        == pi.no_border       ) &&
+    (block            == pi.block           ) &&
+    (freeze_arity     == pi.freeze_arity    ) &&
+    (freeze_no_border == pi.freeze_no_border) &&
+    (freeze_block     == pi.freeze_block    );
+}
+
+bool
+parent_info::operator != (const parent_info& pi) {
+  return !(operator == (pi));
 }
 
 /******************************************************************************
@@ -36,10 +82,41 @@ parent_info::parent_info (int a, int x, int am, int cm, bool frozen) {
 ******************************************************************************/
 
 child_info::child_info (bool frozen) {
-  accessible       = 0;
-  block            = 0;
-  freeze_accessible= frozen;
-  freeze_block     = frozen;
+  accessible        = 0;
+  block             = 0;
+  freeze_accessible = frozen;
+  freeze_block      = frozen;
+}
+
+child_info::child_info (string s) {
+  int i= as_int (s);
+  get_bits (accessible       , 1);
+  get_bits (block            , 2);
+  get_bits (freeze_accessible, 1);
+  get_bits (freeze_block     , 1);
+}
+
+child_info::operator string () {
+  int i,offset=0;
+  set_bits (accessible       , 1);
+  set_bits (block            , 2);
+  set_bits (freeze_accessible, 1);
+  set_bits (freeze_block     , 1);
+  return i;
+}
+
+bool
+child_info::operator == (const child_info& ci) {
+  return
+    (accessible        == ci.accessible       ) &&
+    (block             == ci.block            ) &&
+    (freeze_accessible == ci.freeze_accessible) &&
+    (freeze_block      == ci.freeze_block     );
+}
+
+bool
+child_info::operator != (const child_info& ci) {
+  return !(operator == (ci));
 }
 
 /******************************************************************************
@@ -95,9 +172,35 @@ tag_info_rep::accessible (int i) {
   return tag_info (pi, ci);
 }
 
-/******************************************************************************
-* Properties of the children of the tag
-******************************************************************************/
+child_info&
+tag_info::operator () (int child, int n) {
+  switch (rep->pi.child_mode) {
+  case CHILD_UNIFORM:
+    return rep->ci[0];
+  case CHILD_BIFORM:
+    if (rep->pi.arity_mode != ARITY_VAR_REPEAT) {
+      if (child < ((int) rep->pi.arity_base)) return rep->ci[0];
+      else return rep->ci[1];
+    }
+    else {
+      if (child < (n-((int) rep->pi.arity_base))) return rep->ci[0];
+      else return rep->ci[1];
+    }
+  case CHILD_DETAILED:
+    if (((int) rep->pi.arity_mode) <= ARITY_OPTIONS)
+      return rep->ci[child];
+    else if (rep->pi.arity_mode == ARITY_REPEAT) {
+      if (child < ((int) rep->pi.arity_base)) return rep->ci[child];
+      else return rep->ci[(child-rep->pi.arity_base)%rep->pi.arity_extra+
+			  rep->pi.arity_base];
+    }
+    else {
+      if (child < (n-((int) rep->pi.arity_base)))
+	return rep->ci[child%rep->pi.arity_extra];
+      else return rep->ci[rep->pi.arity_base+rep->pi.arity_extra + child-n];
+    }
+  }
+}
 
 tag_info::operator tree () {
   return tree (TUPLE, "tag_info",
@@ -116,4 +219,14 @@ copy (tag_info ti) {
   ti2->pi= ti->pi;
   ti2->ci= copy (ti->ci);
   return ti2;
+}
+
+bool
+operator == (tag_info ti1, tag_info ti2) {
+  return (ti1->pi == ti2->pi) && (ti1->ci == ti2->ci);
+}
+
+bool
+operator != (tag_info ti1, tag_info ti2) {
+  return !(ti1 == ti2);
 }
