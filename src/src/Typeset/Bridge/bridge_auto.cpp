@@ -33,6 +33,7 @@ public:
   void notify_change ();
 
   void my_exec_until (path p);
+  void exec_until (path p);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
 };
@@ -155,6 +156,12 @@ bridge_auto_rep::my_exec_until (path p) {
   (void) env->exec_until (f[1], p, var, 0);
   env->macro_arg= env->macro_arg->next;
   env->macro_src= env->macro_src->next;
+}
+
+void
+bridge_auto_rep::exec_until (path p) {
+  if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
+  else my_exec_until (p);
 }
 
 bool

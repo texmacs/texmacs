@@ -168,6 +168,7 @@ private:
   tree exec_eval_args (tree t);
   tree exec_quasiquoted (tree t);
   tree exec_if (tree t);
+  bool exec_until_if (tree t, path p, string var, int level);
   tree exec_case (tree t);
   tree exec_while (tree t);
   tree exec_for_each (tree t);

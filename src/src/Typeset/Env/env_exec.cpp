@@ -1195,10 +1195,8 @@ edit_env_rep::exec_until_compound (tree t, path p) {
 
 bool
 edit_env_rep::exec_until (tree t, path p, string var, int level) {
-  /*
-  cout << "Execute " << t << " (" << var << ", "
-       << level << ") until " << p << "\n";
-  */
+  // cout << "Execute " << t << " (" << var << ", "
+  //      << level << ") until " << p << "\n";
   if (is_atomic (t)) return false;
   switch (L(t)) {
   case DATOMS:
@@ -1261,8 +1259,11 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
+    (void) exec (t);
+    return false;
   case IF:
   case VAR_IF:
+    return exec_until_if (t, p, var, level);
   case CASE:
   case WHILE:
   case FOR_EACH:
@@ -1477,6 +1478,16 @@ edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
     return found;
   }
   */
+}
+
+bool
+edit_env_rep::exec_until_if (tree t, path p, string var, int level) {
+  if ((N(t)!=2) && (N(t)!=3)) return false;
+  tree tt= exec (t[0]);
+  if (is_compound (tt) || !is_bool (tt->label)) return false;
+  if (as_bool (tt->label)) return exec_until (t[1], p, var, level);
+  if (N(t)==3) return exec_until (t[2], p, var, level);
+  return false;
 }
 
 /******************************************************************************
