@@ -5,6 +5,8 @@
 <\body>
   <tmdoc-title|Customizing sectional tags>
 
+  Please document.
+
   <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

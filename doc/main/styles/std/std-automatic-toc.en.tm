@@ -9,44 +9,69 @@
   table of contents. They are automatically called by most sectional macros,
   but it is sometimes desirable to manually add additional entries.
 
-  <\explain|<explain-macro|toc-main-1|entry>>
-    Create a primordial <src-arg|entry> in the table of contents. A
-    ``primordial entry'' may for instance be a part of a book.
+  <\explain>
+    <explain-macro|toc-main-1|entry>
+
+    <explain-macro|toc-main-2|entry>
+  <|explain>
+    Create an important <src-arg|entry> in the table of contents. The macro
+    <markup|toc-main-1> is intended to be used only for very important
+    entries, such as parts of a book; it usually has to be added manually.
+    The macro <markup|toc-main-2> is intended to be used for chapter or
+    sections. Important entries are usually displayed in a strong font.
   </explain>
 
-  <\explain|<explain-macro|toc-main-2|entry>>
-    Create a main <src-arg|entry> in the table of contents, like a chapter in
-    a book.
+  <\explain>
+    <explain-macro|toc-normal-1|entry>
+
+    <explain-macro|toc-normal-2|entry>
+
+    <explain-macro|toc-normal-3|entry>
+  <|explain>
+    Add a normal <src-arg|entry> to the table of contents, of different
+    levels of importance. Usually, <markup|toc-normal-1> corresponds to
+    sections, <markup|toc-normal-2> to subsections and <markup|toc-normal-3>
+    to subsubsections.
   </explain>
 
-  <\explain|<explain-macro|toc-normal-1|entry>>
-    Add a normal <src-arg|entry> to the table of contents, like a section.
-  </explain>
+  <\explain>
+    <explain-macro|toc-small-1|entry>
 
-  <\explain|<explain-macro|toc-normal-2|entry>>
-    Add a less important <src-arg|entry> to the table of contents, like a
-    subsection.
-  </explain>
-
-  <\explain|<explain-macro|toc-normal-3|entry>>
-    Add an even less important <src-arg|entry> to the table of contents, like
-    a subsubsection.
-  </explain>
-
-  <\explain|<explain-macro|toc-small-1|entry>>
-    Add a quite unimportant <src-arg|entry> to the table of contents, like a
+    <explain-macro|toc-small-2|entry>
+  <|explain>
+    Add an unimportant <src-arg|entry> to the table of contents, like a
     paragraph. Since such entries are not very important, some styles may
-    simply ignore the <markup|toc-small-1> tag.
+    simply ignore the <markup|toc-small-1> and <markup|toc-small-2> tags.
   </explain>
 
-  <\explain|<explain-macro|toc-small-2|entry>>
-    Similar to <markup|toc-small-1>, but for even less important entries,
-    like subparagraphs.
+  By redefining the following macros, it is possible to customize the
+  rendering of tables of contents:
+
+  <\explain>
+    <explain-macro|toc-strong-1|content|where>
+
+    <explain-macro|toc-strong-2|content|where>
+  <|explain>
+    Used for rendering table of contents entries created using
+    <markup|toc-main-1> <abbr|resp.> <markup|toc-main-2>.
   </explain>
 
-  No macros are provided yet for manually customizing the rendering of tables
-  of contents. You may only change the dots between entries and the
-  corresponding page number:
+  <\explain>
+    <explain-macro|toc-1|content|where>
+
+    <explain-macro|toc-2|content|where>
+
+    <explain-macro|toc-3|content|where>
+
+    <explain-macro|toc-4|content|where>
+
+    <explain-macro|toc-5|content|where>
+  <|explain>
+    Used for rendering table of contents entries created using
+    <markup|toc-normal-1>, <markup|toc-normal-2>,
+    <markup|toc-<no-break>normal-<no-break>3>, <markup|toc-small-1>
+    <abbr|resp.> <markup|toc-small-2>.
+  </explain>
 
   <\explain|<explain-macro|toc-dots>>
     The separation between an entry in the table of contents and the

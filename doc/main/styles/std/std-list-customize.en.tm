@@ -5,9 +5,27 @@
 <\body>
   <tmdoc-title|Customization of list environments>
 
-  The <tmdtd|std-list> also contains additional macros for defining new lists
-  and for customizing the appearance of standard list items and the lists
-  themselves.
+  The <tmdtd|std-list> provides the following redefinable macros for
+  customizing the rendering of lists and items in lists:
+
+  <\explain|<explain-macro|render-list|body>>
+    This block environment is used to render the <src-arg|body> of the list.
+    Usually, the macro indents the body and puts some vertical space around
+    it.
+  </explain>
+
+  <\explain|<explain-macro|aligned-item|item-text>>
+    This inline macro is used to render the <src-arg|item-text> in a
+    right-aligned way. As a consequence, text after such items will appear in
+    a left-aligned way.
+  </explain>
+
+  <\explain|<explain-macro|compact-item|item-text>>
+    This inline macro is used to render the <src-arg|item-text> in a
+    left-aligned way. As a consequence, text after such items may be indented
+    by the width of the <src-arg|item-text> (except when the text is rendered
+    on a different paragraph).
+  </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

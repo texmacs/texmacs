@@ -92,7 +92,28 @@
 
   <paragraph|Customization of the numbering>
 
-  \;
+  In the sections about <hyper-link|counters and counter
+  groups|../../../main/styles/std/std-counter-dtd.en.tm>, it is explained how
+  to customize the counters of numbered environments for particular purposes.
+  For instance, by redefining <markup|inc-theorem>, you may force theorems to
+  reset the counter of corollaries:
+
+  <\tm-fragment>
+    <inactive*|<style-with|src-compact|none|<quasi|<style-with|src-compact|none|<assign|inc-theorem|<macro|<compound|<unquote|<value|inc-theorem>>><reset-corollary>>>>>>>
+  </tm-fragment>
+
+  Notice the trick with <markup|quasi> and <markup|unquote> in order to take
+  into account additional action which might have been undertaken by the
+  previous value of the macro <markup|inc-theorem>.
+
+  The following code from <verbatim|number-long-article.ts> is used in order
+  to prefix all standard environments with the number of the current section:
+
+  <\tm-fragment>
+    <inactive*|<assign|section-clean|<macro|<reset-subsection><reset-std-env>>>>
+
+    <inactive*|<assign|display-std-env|<macro|nr|<section-prefix><arg|nr>>>>
+  </tm-fragment>
 
   <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 

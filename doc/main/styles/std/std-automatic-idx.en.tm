@@ -35,24 +35,35 @@
   The following macros may be redefined if you want to customize the
   rendering of the index:
 
-  <\explain|<explain-macro|index-1|entry|where>>
-    Macro for rendering a principal <src-arg|entry> in the index on page(s)
-    <src-arg|where>.
+  <\explain>
+    <explain-macro|index-1|entry|where>
+
+    <explain-macro|index-2|entry|where>
+
+    <explain-macro|index-3|entry|where>
+
+    <explain-macro|index-4|entry|where>
+
+    <explain-macro|index-5|entry|where>
+  <|explain>
+    Macro for rendering an <src-arg|entry> in the index on page(s)
+    <src-arg|where>. The macro <markup|index-1> corresponds to principal
+    entries, the macro <markup|index-2> to secondary entries, and so on.
   </explain>
 
-  <\explain|<explain-macro|index-1*|entry|where>>
-    Macro for rendering a principal <src-arg|entry> in the index on page(s)
-    <src-arg|where>.
-  </explain>
+  <\explain>
+    <explain-macro|index-1*|entry>
 
-  <\explain|<explain-macro|index-n|entry-1|<with|mode|math|\<cdots\>>|entry-n|where>>
-    Macro used for rendering subentries in the index. Here <with|mode|math|n>
-    is a number between <with|mode|math|1> and <with|mode|math|5>.
-  </explain>
+    <explain-macro|index-2*|entry>
 
-  <\explain|<explain-macro|index-n*|entry-1|<with|mode|math|\<cdots\>>|entry-n>>
-    Similar to <markup|index-<with|mode|math|n>>, but without the page
-    number.
+    <explain-macro|index-3*|entry>
+
+    <explain-macro|index-4*|entry>
+
+    <explain-macro|index-5*|entry>
+  <|explain>
+    Similar to <markup|index-1> until <markup|index-5>, but without the page
+    number(s).
   </explain>
 
   <\explain|<explain-macro|index-dots>>
