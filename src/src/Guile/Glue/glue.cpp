@@ -13,15 +13,16 @@
 #include <tm_configure.hpp>
 #include "Glue/glue.hpp"
 #include "server.hpp"
+#include "boot.hpp"
 #include "connect.hpp"
 #include "convert.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
-#include "tex_files.hpp"
 #include "analyze.hpp"
 #include "tm_layout.hpp"
 #include "converter.hpp"
 #include "timer.hpp"
+#include "Metafont/tex_files.hpp"
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include <string.h>

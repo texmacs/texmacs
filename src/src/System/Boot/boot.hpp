@@ -20,13 +20,12 @@ extern bool use_which;
 
 string get_setting (string var, string def= "");
 void   set_setting (string var, string val);
-void   init_first ();
 void   get_old_settings (string s);
 void   init_upgrade ();
-void   install_texmacs ();
-void   install_tex ();
+void   init_texmacs ();
+void   init_plugins ();
+void   setup_texmacs ();
 
-bool        use_ec_fonts ();
 scheme_tree plugin_list ();
 
 #endif // defined BOOT_H

@@ -135,7 +135,7 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_AUTO) cout << "\n";
   if (DEBUG_STD) cout << "TeXmacs] Installing TeX...\n";
-  install_tex ();
+  init_plugins ();
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   display dis= open_display (argc, argv);
   dis->set_default_font (the_default_font);
@@ -191,7 +191,7 @@ TeXmacs_main (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-  install_texmacs ();
-  install_guile (argc, argv, TeXmacs_main);
+  init_texmacs ();
+  start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

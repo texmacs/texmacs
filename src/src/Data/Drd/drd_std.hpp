@@ -19,6 +19,6 @@ extern hashmap<string,int> STD_CODE;
 
 inline int std_contains (string s) { return STD_CODE->contains (s); }
 
-void initialize_std_drd ();
+void init_std_drd ();
 
 #endif // defined DRD_STD_H

@@ -15,7 +15,7 @@
 #include "guile.hpp"
 #include "string.hpp"
 
-void install_guile (int argc, char** argv, void (*call_back) (int, char**));
+void start_guile (int argc, char** argv, void (*call_back) (int, char**));
 void initialize_guile ();
 
 extern SCM object_stack;

@@ -23,7 +23,7 @@ SCM object_stack;
 ******************************************************************************/
 
 void
-install_guile (int argc, char** argv, void (*call_back) (int, char**)) {
+start_guile (int argc, char** argv, void (*call_back) (int, char**)) {
 #ifdef DOTS_OK
   gh_enter (argc, argv, (void (*)(...)) ((void*) call_back));
 #else

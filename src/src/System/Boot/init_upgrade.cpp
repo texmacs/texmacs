@@ -116,7 +116,7 @@ init_upgrade () {
   remove (old_settings);
   remove (new_settings);
 
-  init_first ();
+  setup_texmacs ();
   init_upgrade_scheme ();
   init_upgrade_doc (install_version);
 
