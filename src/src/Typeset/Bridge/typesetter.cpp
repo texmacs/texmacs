@@ -209,7 +209,7 @@ notify_join (typesetter ttt, path p) {
 
 void
 notify_ins_unary (typesetter ttt, path p, tree_label op) {
-  // cout << "Insert unary " << p << ", " << CONSTRUCTOR_NAME [op] << "\n";
+  // cout << "Insert unary " << p << ", " << as_string (op) << "\n";
   tree t= tree (op, subtree (ttt->br->st, p));
   ttt->br->notify_assign (p, t);
 }
