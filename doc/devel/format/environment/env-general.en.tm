@@ -102,7 +102,7 @@
   </explain>
 
   <\explain>
-    <var-val|magnification|1><explain-synopsis|magnification>
+    <label|magnification><var-val|magnification|1><explain-synopsis|magnification>
   <|explain>
     This variable determines the magnification which is applied to all
     content. Magnifications bigger than one are typically useful for
@@ -116,9 +116,10 @@
       <inactive*|normal<htab|5mm><with|magnification|2|big><htab|5mm><with|magnification|3|huge>>
     </tm-fragment>
 
-    The magnification should not be confused with the font size: contrary to
-    the magnification, the font size may also affect the shapes of the
-    glyphs. The magnification is usually specified for the entire document in
+    The magnification should not be confused with the <hyper-link|font
+    size|env-font.en.tm#font-base-size>: contrary to the magnification, the
+    font size may also affect the shapes of the glyphs. The magnification is
+    usually specified for the entire document in
     <menu|Document|Magnification>.
   </explain>
 
