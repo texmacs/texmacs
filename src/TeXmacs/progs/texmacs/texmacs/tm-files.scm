@@ -18,6 +18,7 @@
     ;; general purpose loading and saving
     save-buffer load-buffer
     conditional-save-buffer conditional-load-buffer ;; due to interactive
+    conditional-recover-autosave ;; due to interactive
     ;; shortcuts for special formats or extra actions
     buffer-loader buffer-saver
     load-in-new-window load-browse-buffer))
@@ -80,6 +81,17 @@
 	  ((and (= (length l) 2) (integer? (cadr l)))
 	   (load-buffer-sub file "generic" (cadr l)))
 	  (else (load-buffer-sub file (cadr l) (caddr l))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Autosave
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (conditional-recover-autosave confirm)
+  (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
+    (if (yes? confirm)
+	(with t (texmacs-load-tree name "texmacs")
+	  (set-buffer (get-name-buffer) t))
+	(system-remove name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Shortcuts

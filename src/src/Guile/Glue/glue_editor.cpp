@@ -1668,6 +1668,15 @@ tmg_activate () {
 }
 
 SCM
+tmg_activate_compound () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->activate_compound ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_active (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-active");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "make-active");
@@ -2895,6 +2904,7 @@ initialize_glue_editor () {
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
+  gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make-active", (FN) tmg_make_active, 2, 0, 0);
   gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
   gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);

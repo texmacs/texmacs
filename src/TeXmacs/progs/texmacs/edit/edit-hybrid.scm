@@ -66,6 +66,7 @@
 		  "description" "description-compact" "description-aligned"
 		   "description-dash" "description-long"))
 	 (make-item))
+	((inside? "compound") (activate-compound))
 	(else (insert-return))))
 
 (define (make-return)

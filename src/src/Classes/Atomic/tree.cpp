@@ -259,29 +259,23 @@ is_prime (tree t) {
 
 bool
 is_expand (tree t) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND));
+  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) ||
+	  (L(t) == HIDE_EXPAND) || (L(t) == COMPOUND));
 }
 
 bool
 is_expand (tree t, int n) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND))
-    && (N(t) == n+1);
+  return is_expand (t) && (N(t) == n+1);
 }
 
 bool
 is_expand (tree t, string s) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) > 0) &&
-    (t[0] == s);
+  return is_expand (t) && (N(t) > 0) && (t[0] == s);
 }
 
 bool
 is_expand (tree t, string s, int n) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) == n+1) &&
-    (t[0] == s);
+  return is_expand (t) && (N(t) == n+1) && (t[0] == s);
 }
 
 bool

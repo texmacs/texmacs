@@ -15,8 +15,6 @@ datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@
 tmtgz = @tmtgz@
-tmorig = @tmorig@
-tmsrc = @tmsrc@
 tmbin = @tmbin@
 tmdata = @tmdata@
 so = @CONFIG_SO@
@@ -37,9 +35,10 @@ TOUCH = touch
 # Main makes
 ###############################################################################
 
-TEXMACS:
+TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
+	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
 	$(CP) misc/scripts/texmacs $(tmdir)/bin
 	$(CP) misc/scripts/tm_gs $(tmdir)/bin
@@ -50,9 +49,10 @@ TEXMACS:
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
-STATIC_TEXMACS:
+STATIC_TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=static
 	$(MAKE) -f Makefile PLUGINS
+	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
 	$(CP) misc/scripts/texmacs $(tmdir)/bin
 	$(CP) misc/scripts/tm_gs $(tmdir)/bin
@@ -63,8 +63,14 @@ STATIC_TEXMACS:
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
-DEPS:
+DEPS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile deps
+
+EMPTY_DIRS:
+	$(MKDIR) src/Deps
+	$(MKDIR) src/Objects
+	$(MKDIR) TeXmacs/bin
+	$(MKDIR) TeXmacs/lib
 
 .PHONY: TEXMACS STATIC_TEXMACS DEPS EXPERIMENTAL
 
@@ -86,6 +92,7 @@ PLUGINS_COMPILE := $(patsubst %Makefile,%COMPILE,$(PLUGINS_MAKEFILE))
 PLUGINS_CLEAN := $(patsubst %Makefile,%CLEAN,$(PLUGINS_MAKEFILE))
 
 plugins/%/COMPILE:
+	$(MKDIR) plugins/$*/bin
 	cd plugins/$*; $(MAKE) -i -f Makefile CC="@CC@" CXX="@CXX@"
 
 plugins/%/CLEAN:
@@ -96,6 +103,17 @@ PLUGINS: $(PLUGINS_COMPILE)
 CLEAN_PLUGINS: $(PLUGINS_CLEAN)
 
 .PHONY: PLUGINS CLEAN_PLUGINS
+
+EX_PLUGINS_PRG := $(wildcard TeXmacs/examples/plugins/*/progs)
+EX_PLUGINS_BIN := $(patsubst %/progs,%/bin,$(EX_PLUGINS_PRG))
+
+TeXmacs/examples/plugins/%/bin:
+	$(MKDIR) TeXmacs/examples/plugins/$*/bin
+
+EX_PLUGINS: $(EX_PLUGINS_BIN)
+	$(MKDIR) TeXmacs/examples/plugins/dynlink/lib
+
+.PHONY: EX_PLUGINS
 
 ###############################################################################
 # Installing and removing TeXmacs (for system administrators)
@@ -183,6 +201,7 @@ CLEAN_DOC:
 	$(RM) -r $(tmdir)/doc/images
 	$(RM) -r $(tmdir)/doc/tutorial
 	$(RM) -r $(tmdir)/doc/web
+	$(RM) -r $(tmdir)/doc/plugins
 	$(RM) -r $(tmdir)/doc/CVS
 	$(RM) -r $(tmdir)/doc/*/CVS
 	$(RM) -r $(tmdir)/doc/*/*/CVS
@@ -206,17 +225,17 @@ RDISTR:
 	$(RM) plugins/*/core
 	$(RM) plugins/*/*/core
 	$(RM) $(tmdir)/lib/*.a
-	$(RM) $(tmdir)/fonts/error/*
+	$(RM) $(tmdir)/fonts/error/* 2>/dev/null || :
 	$(RM) -r autom*.cache
 
 DISTR: RDISTR
 	cd src; $(MAKE) -f makefile DISTR
 
 RCLEAN: RDISTR
-	$(RM) $(tmdir)/examples/plugins/bin/*
+	$(RM) $(tmdir)/examples/plugins/bin/* 2>/dev/null || :
 	$(RM) $(tmdir)/plugins
-	$(RM) $(tmdir)/lib/*
-	$(RM) $(tmdir)/bin/*
+	$(RM) $(tmdir)/lib/* 2>/dev/null || :
+	$(RM) $(tmdir)/bin/* 2>/dev/null || :
 	$(RM) -r $(tmdir)/misc/images/.xvpics
 	$(RM) -r $(tmdir)/progs/ice-9
 	$(RM) -r X11
@@ -227,7 +246,7 @@ SCLEAN:
 CLEAN: SCLEAN RCLEAN CLEAN_PLUGINS
 
 DISTCLEAN: CLEAN
-	$(RM) src/Objects/*
+	$(RM) src/Objects/* 2>/dev/null || :
 	$(RM) misc/doxygen/Doxyfile
 	$(RM) misc/man/texmacs.1
 	$(RM) misc/scripts/fig2ps
@@ -243,7 +262,7 @@ DISTCLEAN: CLEAN
 .PHONY: RDISTR DISTR RCLEAN SCLEAN DISTCLEAN
 
 ###############################################################################
-# Making distributions: for personal use only
+# Miscellaneous targets
 ###############################################################################
 
 TOUCH:
@@ -260,75 +279,9 @@ STRIP:
 	$(STRIP) $(tmdir)/lib/*.$(so) 2>/dev/null || >/dev/null
 	$(STRIP) $(tmdir)/plugins/*/bin/* 2>/dev/null || >/dev/null
 
-PLUGIN_DISTR:
-	$(RM) $(tmdir)/plugins
-	$(CP) plugins $(tmdir)/plugins
-	$(RM) -r $(tmdir)/plugins/*/src
-
-PLUGIN_RESTORE:
-	$(RM) -r $(tmdir)/plugins
-	$(LN) -s ../plugins $(tmdir)/plugins
-
-EXTERN: STRIP PLUGIN_DISTR
-	$(RM) -r $(tmdir)/progs/ice-9
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	cp -r -f $$GUILE_LOAD_PATH $(tmdir)/progs/
-	chmod 644 $(tmdir)/progs/ice-9/*
-	chmod 755 $(tmdir)/progs/ice-9
-	$(RM) $(tmdir)/lib/libguile*
-
-COPY_GUILE:
-	GUILE_LIB_PATH=`guile-config info libdir`; \
-	export GUILE_LIB_PATH; \
-	$(CP) $$GUILE_LIB_PATH/libguile.so.4.0.0 $(tmdir)/lib;
-	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so.4
-	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so
-
 ACCESS_FLAGS:
 	$(CHMOD) -R go+rX *
 	$(CHMOD) -R go+x $(tmdir)/bin
 	$(CHMOD) -R go+x $(tmdir)/lib
 
-SHARED_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-STATIC_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-SUN_DISTR: CLEAN_DOC DISTR EXTERN COPY_GUILE ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-SRC_DISTR: CLEAN_DOC DISTCLEAN ACCESS_FLAGS
-	$(MV) $$HOME/distr/TeXmacs-src $$HOME/distr/$(tmtgz)-src
-	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-src.tar $(tmtgz)-src --exclude $(tmtgz)-src/Makefile
-	$(MV) $$HOME/distr/$(tmtgz)-src $$HOME/distr/TeXmacs-src
-	$(GZIP) $$HOME/distr/$(tmtgz)-src.tar
-
-WEB_DISTR:
-	$(RM) $$HOME/texmacs/web/*~
-	$(RM) $$HOME/texmacs/web/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*/*/*~
-	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-web.tar $(tmtgz)-web
-	$(GZIP) $$HOME/distr/$(tmtgz)-web.tar
-
-.PHONY: TOUCH STRIP EXTERN COPY_GUILE PLUGIN_RESTORE ACCESS_FLAGS SHARED_DISTR SUN_DISTR SRC_DISTR WEB_DISTR MISC_DISTR
+.PHONY: TOUCH STRIP ACCESS_FLAGS

@@ -33,7 +33,7 @@ edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   pre (UNINIT), init (UNINIT), fin (UNINIT),
-  env (dis, is_aux (buf->name)? buf->extra: buf->name,
+  env (dis, drd, is_aux (buf->name)? buf->extra: buf->name,
        buf->ref, (buf->prj==NULL? buf->ref: buf->prj->ref),
        buf->aux, (buf->prj==NULL? buf->aux: buf->prj->aux)),
   ttt (new_typesetter (env, et, path())) {}
@@ -148,6 +148,7 @@ edit_typeset_rep::typeset_preamble () {
   typeset_style_use_cache (the_style);
   env->patch_env (init);
   env->read_env (pre);
+  drd->heuristic_init (pre);
 }
 
 void
@@ -314,6 +315,7 @@ edit_typeset_rep::exec_texmacs (tree t, path p) {
 
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
+  if (p == path (0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
   tree patch= as_tree (eval ("(object->tree (tmhtml-env-patch))"));

@@ -37,6 +37,18 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.6", version)) return H;
+
+  new_feature (H, "compound");
+  new_feature (H, "xmacro");
+  new_feature (H, "get_label");
+  new_feature (H, "get_arity");
+  new_feature (H, "map_args");
+
+  if (version_inf ("1.0.2.5", version)) return H;
+
+  new_feature (H, "drd_props");
+
   if (version_inf ("1.0.2.0", version)) return H;
 
   new_feature (H, "with_limits");
@@ -1510,29 +1522,50 @@ upgrade_formatting (tree t) {
 ******************************************************************************/
 
 static tree
-upgrade_expand (tree t) {
+upgrade_expand (tree t, tree_label WHICH_EXPAND) {
 #ifdef WITH_EXTENSIONS
   if (is_atomic (t)) return t;
-  else if (is_func (t, EXPAND) && is_atomic (t[0])) {
+  else if (is_func (t, WHICH_EXPAND) && is_atomic (t[0])) {
     int i, n= N(t)-1;
     string s= t[0]->label;
     if (s == "quote") s= s * "-env";
     tree_label l= make_tree_label (s);
     tree r (l, n);
     for (i=0; i<n; i++)
-      r[i]= upgrade_expand (t[i+1]);
+      r[i]= upgrade_expand (t[i+1], WHICH_EXPAND);
     return r;
   }
   else if (is_func (t, ASSIGN, 2) &&
 	   (t[0] == "quote") &&
 	   is_func (t[1], MACRO)) {
-    return tree (ASSIGN, t[0]->label * "-env", upgrade_expand (t[1]));
+    tree arg= upgrade_expand (t[1], WHICH_EXPAND);
+    return tree (ASSIGN, t[0]->label * "-env", arg);
   }
   else {
     int i, n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
-      r[i]= upgrade_expand (t[i]);
+      r[i]= upgrade_expand (t[i], WHICH_EXPAND);
+    return r;
+  }
+#else
+  return t;
+#endif
+}
+
+static tree
+upgrade_xexpand (tree t) {
+#ifdef WITH_EXTENSIONS
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    if (is_expand (t) && (!is_func (t, COMPOUND))) {
+      // cout << "Upgrade " << t << "\n";
+      r= tree (COMPOUND, n);
+    }
+    for (i=0; i<n; i++)
+      r[i]= upgrade_xexpand (t[i]);
     return r;
   }
 #else
@@ -1556,7 +1589,10 @@ upgrade_tex (tree t) {
   t= upgrade_menus_in_help (t);
   t= upgrade_capitalize_menus (t);
   t= upgrade_formatting (t);
-  t= upgrade_expand (t);
+  t= upgrade_expand (t, EXPAND);
+  t= upgrade_expand (t, HIDE_EXPAND);
+  t= upgrade_expand (t, VAR_EXPAND);
+  t= upgrade_xexpand (t);
   return t;
 }
 
@@ -1597,6 +1633,12 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.2.0"))
     t= upgrade_formatting (t);
   if (version_inf_eq (version, "1.0.2.3"))
-    t= upgrade_expand (t);
+    t= upgrade_expand (t, EXPAND);
+  if (version_inf_eq (version, "1.0.2.4"))
+    t= upgrade_expand (t, HIDE_EXPAND);
+  if (version_inf_eq (version, "1.0.2.5")) {
+    t= upgrade_expand (t, VAR_EXPAND);
+    t= upgrade_xexpand (t);
+  }
   return t;
 }

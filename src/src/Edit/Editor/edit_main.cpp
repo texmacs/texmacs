@@ -35,11 +35,11 @@
 
 editor_rep::editor_rep ():
   attribute_widget_rep (dis),
-  drd (std_drd), et (buf->t) {}
+  drd (buf->abbr, std_drd), et (buf->t) {}
 
 editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
   attribute_widget_rep (dis),
-  sv (sv2), buf (buf2), drd (std_drd), et (buf2->t) {}
+  sv (sv2), buf (buf2), drd (buf->abbr, std_drd), et (buf2->t) {}
 
 edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   editor_rep (sv, dis, buf), props (UNKNOWN)

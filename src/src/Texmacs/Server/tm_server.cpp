@@ -21,6 +21,7 @@
 server* the_server= NULL;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
+string my_init_cmds= "";
 
 void reset_inclusions ();
 extern string printing_dpi;
@@ -97,6 +98,10 @@ tm_server_rep::tm_server_rep (display dis2):
     my_init_file= "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm";
   if (exists (tm_init_file)) exec_file (tm_init_file);
   if (exists (my_init_file)) exec_file (my_init_file);
+  if (my_init_cmds != "") {
+    my_init_cmds= "(begin" * my_init_cmds * ")";
+    exec_delayed (my_init_cmds);
+  }
   style_update_menu ();
 #ifdef OS_GNU_LINUX
   return; // in order to avoid segmentation faults
@@ -203,8 +208,9 @@ compute_style_menu (url u, bool package) {
   if (is_or (u)) {
     string sep= "\n";
     if (is_atomic (u[1]) &&
-	(is_concat (u[2]) ||
-	 (is_or (u[2]) && is_concat (u[2][1])))) sep= "\n---\n";
+	((is_concat (u[2]) && (u[2][1] != "CVS")) ||
+	 (is_or (u[2]) && is_concat (u[2][1]))))
+      sep= "\n---\n";
     return
       compute_style_menu (u[1], package) * sep *
       compute_style_menu (u[2], package);
@@ -212,7 +218,7 @@ compute_style_menu (url u, bool package) {
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
     string sub= compute_style_menu (u[2], package);
-    if ((dir == "Test") || (dir == "Obsolete")) return "";
+    if ((dir == "Test") || (dir == "Obsolete") || (dir == "CVS")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
   if (is_atomic (u)) {

@@ -25,10 +25,15 @@ public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
 
+  bool contains (string l);
   void set_arity (tree_label l, int arity);
+  void set_masked_props (tree_label l, int mask, int props);
   void set_props (tree_label l, int props);
   int  get_arity (tree_label l);
   int  get_props (tree_label l);
+
+  bool heuristic_init (string var, tree macro);
+  void heuristic_init (hashmap<string,tree> env);
 
   bool is_dynamic (tree t);
   bool is_accessible_child (tree t, int child);

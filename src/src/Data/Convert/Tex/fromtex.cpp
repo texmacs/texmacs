@@ -1009,6 +1009,7 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt5= " << t5 << "\n\n";
   tree t6= handle_improper_matches (t5);
   // cout << "\n\nt6= " << t6 << "\n\n";
+  if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
   // cout << "\n\nt7= " << t7 << "\n\n";
   tree t8= finalize_textm (t7);

@@ -51,3 +51,8 @@ tree_label
 as_tree_label (string s) {
   return (tree_label) CONSTRUCTOR_CODE[s];
 }
+
+bool
+existing_tree_label (string s) {
+  return CONSTRUCTOR_CODE->contains (s);
+}

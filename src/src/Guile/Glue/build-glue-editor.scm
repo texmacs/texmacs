@@ -170,6 +170,7 @@
   (menu-after-action after_menu_action (void))
   (is-deactivated? is_deactivated (bool))
   (activate activate (void))
+  (activate-compound activate_compound (void))
   (make-active make_active (void string int))
   (make-deactivated make_deactivated (void string int string))
   (make-deactivated-arg make_deactivated (void string int string string))

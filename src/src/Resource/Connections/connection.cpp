@@ -97,7 +97,7 @@ connection_rep::read (int channel) {
     for (i=0; i<n; i++)
       if (tm_in->put (s[i])) {
 	status= WAITING_FOR_INPUT;
-	if (DEBUG_IO) cout << LF << HRULE << LF;
+	if (DEBUG_IO) cout << LF << HRULE;
       }
   }
   else if (channel == LINK_ERR) {
@@ -228,7 +228,7 @@ connection_write (string name, string session, tree t) {
 
 tree
 connection_read (string name, string session, string channel) {
-  // cout << "Read " << name << ", " << session << ", " << channel << " -> ";
+  // cout << "Read " << name << ", " << session << ", " << channel << "\n";
   connection con= connection (name * "-" * session);
   if (nil (con)) return "";
   con->read (LINK_ERR);
@@ -237,7 +237,7 @@ connection_read (string name, string session, string channel) {
     con->read (LINK_OUT);
     t= con->tm_in->get (channel);
   }
-  // cout << t << "\n";
+  // cout << "Read result " << t << "\n";
   return t;
 }
 

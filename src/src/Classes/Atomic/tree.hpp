@@ -230,7 +230,7 @@ bool is_inactive (tree t);
 inline bool
 is_applicable (tree t) {
   return is_compound (t) && (N(t) >= 1) &&
-    ((L(t) == MACRO) || (L(t) == FUNCTION));
+    ((L(t) == MACRO) || (L(t) == FUNCTION) || (L(t) == XMACRO));
 }
 
 tree simplify_concat (tree t);

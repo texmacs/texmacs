@@ -66,6 +66,9 @@ a technical drawing editor and a presentation mode.
 \fB\-p\fR, \fB\-\-path\fR
     Echo the TeXmacs path.
 .TP
+\fB\-q\fR, \fB\-\-quit\fR
+    Shortcut for the option -x "(quit-TeXmacs)".
+.TP
 \fB\-s\fR, \fB\-\-silent\fR
     Silent execution: less messages to standard output.
 .TP
@@ -76,6 +79,11 @@ a technical drawing editor and a presentation mode.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
     Display the current TeXmacs version.
+.TP
+\fB\-x\fR, \fB\-\-execute [cmd]\fR
+    Execute the scheme command [cmd] just after startup.
+    If you specify several -x options, then the corresponding
+    scheme commands are executed in the same order.
 .TP
 \fB\-Oc\fR, \fB\-\-no\-char\-clipping\fR
     Faster but less perfect displaying of anti-aliased fonts.

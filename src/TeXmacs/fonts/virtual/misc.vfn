@@ -46,7 +46,7 @@
   (nprecprecpreceq (add precprecpreceq /))
   (nsuccsucc (add succsucc /))
   (nsuccsuccsucc (add succsuccsucc /))
-  (nsuccsucc (add succsucceq /))
+  (nsuccsucceq (add succsucceq /))
   (nsuccsuccsucceq (add succsuccsucceq /))
 
   (lleq (join (0 0 leq) (0.3 0 leq)))

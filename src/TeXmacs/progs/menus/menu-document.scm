@@ -226,6 +226,7 @@
       ("Czech" (init-language "czech"))
       ("Dutch" (init-language "dutch"))
       ("English" (init-language "english"))
+      ("Finnish" (init-language "finnish"))
       ("French" (init-language "french"))
       ("German" (init-language "german"))
       ("Hungarian" (init-language "hungarian"))

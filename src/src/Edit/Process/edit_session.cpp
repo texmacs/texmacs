@@ -24,7 +24,7 @@
 static bool
 is_empty (tree t) {
   if (is_atomic (t)) return (t == "");
-  if (is_expand (t, "math", 1)) return is_empty (t[1]);
+  if (is_compound (t, "math", 1)) return is_empty (t[d_exp]);
   if (is_document (t) || is_concat (t)) {
     int i;
     for (i=0; i<N(t); i++)
@@ -101,7 +101,11 @@ edit_process_rep::start_input () {
   if (prompt == "") prompt= copy (last_prompt [tuple (lan, session)]);
   last_prompt (tuple (lan, session))= prompt;
   if (!is_document (input)) input= tree (DOCUMENT, input);
+#ifdef WITH_EXTENSIONS
+  if (math_input) input= compound ("math", input);
+#else
   if (math_input) input= tree (VAR_EXPAND, "math", input);
+#endif
 
   path q = path_up (tp, 2);
   int  i = last_item (path_up (tp));
@@ -111,10 +115,10 @@ edit_process_rep::start_input () {
   if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "input", 2)) {
     if (is_empty (input)) {
       input= copy (st[i+1][1+d_exp]);
-      math_input= is_expand (input, "math", 1);
+      math_input= is_compound (input, "math", 1);
     }
     assign (q * (i+1), compound ("input", prompt, input));
-    go_to (q * path (i+1, 1+d_exp, end (input)));
+    go_to_correct (q * path (i+1, 1+d_exp, end (input)));
   }
   else {
     if (needs_return) insert_return ();
@@ -174,8 +178,13 @@ edit_process_rep::session_use_math_input (bool flag) {
     tree input (DOCUMENT, "");
     path q (0, 0);
     if (math_input) {
+#ifdef WITH_EXTENSIONS
+      input= compound ("math", input);
+      q= path (0, q);
+#else
       input= tree (VAR_EXPAND, "math", input);
       q= path (1, q);
+#endif
     }
     assign (p * (1+d_exp), input);
     go_to (p * path (1+d_exp, q));
@@ -198,7 +207,7 @@ edit_process_rep::session_var_go_up () {
   path q= search_previous_expand (p, "input");
   if (q != p) {
     tree st= subtree (et, q);
-    go_to (q * path (1+d_exp, end (st[1+d_exp])));
+    go_to_correct (q * path (1+d_exp, end (st[1+d_exp])));
     select_from_cursor_if_active ();
   }
 }
@@ -210,7 +219,7 @@ edit_process_rep::session_var_go_down () {
   path q= search_next_expand (p, "input");
   if (q != p) {
     tree st= subtree (et, q);
-    go_to (q * path (1+d_exp, end (st[1+d_exp])));
+    go_to_correct (q * path (1+d_exp, end (st[1+d_exp])));
     select_from_cursor_if_active ();
   }
 }
@@ -290,7 +299,7 @@ edit_process_rep::session_remove_backwards () {
     p= search_upwards_expand ("input");
     if (nil (p) || (tp == start (et, p * (1+d_exp)))) return;
   }
-  else if (tp == start (et, p * 1)) return;
+  else if (tp == start (et, p * d_exp)) return;
   remove_backwards ();
 }
 
@@ -301,7 +310,7 @@ edit_process_rep::session_remove_forwards () {
     p= search_upwards_expand ("input");
     if (nil (p) || (tp == end (et, p * (1+d_exp)))) return;
   }
-  else if (tp == end (et, p * 1)) return;
+  else if (tp == end (et, p * d_exp)) return;
   remove_forwards ();
 }
 
@@ -337,9 +346,13 @@ edit_process_rep::session_insert_input_at (path p) {
   string session= get_env_string (THIS_SESSION);
   tree prompt= copy (last_prompt [tuple (lan, session)]);
   tree input = tree (DOCUMENT, "");
-  if (math_input) input  = tree (VAR_EXPAND, "math", input);
+#ifdef WITH_EXTENSIONS
+  if (math_input) input= compound ("math", input);
+#else
+  if (math_input) input= tree (VAR_EXPAND, "math", input);
+#endif
   insert (p, tree (DOCUMENT, compound ("input", prompt, input)));
-  go_to (p * path (1+d_exp, end (input)));
+  go_to_correct (p * path (1+d_exp, end (input)));
 }
 
 void
@@ -396,7 +409,7 @@ edit_process_rep::session_remove_input_forwards () {
   skip_forwards (et, r, "textput", 1);
   if (last_item (r) >= N (subtree (et, path_up (r)))) return;
   if (!is_compound (subtree (et, r), "input", 2)) return;
-  go_to (r * path (1+d_exp, end (subtree (et, r * (1+d_exp)))));
+  go_to_correct (r * path (1+d_exp, end (subtree (et, r * (1+d_exp)))));
   remove (p, last_item (q) - last_item (p));
 }
 

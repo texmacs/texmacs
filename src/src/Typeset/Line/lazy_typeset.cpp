@@ -247,6 +247,69 @@ make_lazy_expand (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Extensions
+******************************************************************************/
+
+lazy
+make_lazy_compound (edit_env env, tree t, path ip) {
+  int d; tree f;
+  if (L(t) == COMPOUND) {
+    d= 1;
+    f= t[0];
+    if (is_compound (f)) f= env->exec (f);
+    if (is_atomic (f)) {
+      string var= f->label;
+      if (env->provides (var)) f= env->read (var);
+      else f= tree (ERROR, "compound " * var);
+    }
+  }
+  else {
+    string var= as_string (L(t));
+    if (env->provides (var)) f= env->read (var);
+    else f= tree (ERROR, "compound " * var);
+    d= 0;
+  }
+
+  array<line_item> a;
+  array<line_item> b;
+  if (/*NON_CHILD_ENFORCING(t)&&*/ (!is_decoration (ip))) {
+    a= typeset_marker (env, descend (ip, 0));
+    b= typeset_marker (env, descend (ip, 1));
+  }
+  lazy par;
+
+  if (is_applicable (f)) {
+    int i, n=N(f)-1, m=N(t)-d;
+    env->macro_arg= list<hashmap<string,tree> > (
+      hashmap<string,tree> (UNINIT), env->macro_arg);
+    env->macro_src= list<hashmap<string,path> > (
+      hashmap<string,path> (path (DECORATION)), env->macro_src);
+    if (L(f) == XMACRO) {
+      if (is_atomic (f[0])) {
+	string var= f[0]->label;
+	env->macro_arg->item (var)= t;
+	env->macro_src->item (var)= ip;
+      }
+    }
+    else for (i=0; i<n; i++)
+      if (is_atomic (f[i])) {
+	string var= f[i]->label;
+	env->macro_arg->item (var)= i<m? t[i+d]: tree("");
+	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
+      }
+    if (is_decoration (ip)) par= make_lazy (env, f[n], ip);
+    else par= make_lazy (env, f[n], decorate_right (ip));
+    env->macro_arg= env->macro_arg->next;
+    env->macro_src= env->macro_src->next;
+  }
+  else {
+    if (is_decoration (ip)) par= make_lazy (env, f, ip);
+    else par= make_lazy (env, f, decorate_right (ip));
+  }
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
 * Apply
 ******************************************************************************/
 
@@ -304,18 +367,16 @@ make_lazy_apply (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Include
+* Rewrite
 ******************************************************************************/
 
 lazy
-make_lazy_include (edit_env env, tree t, path ip) {
+make_lazy_rewrite (edit_env env, tree t, path ip) {
   if (env->preamble) return make_lazy_paragraph (env, t, ip);
-
-  url file_name= as_string (t[0]);
-  tree incl= load_inclusion (relative (env->base_file_name, file_name));
+  tree r= env->rewrite (t);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, incl, decorate_right (ip));
+  lazy par= make_lazy (env, r, decorate_right (ip));
   return lazy_surround (a, b, par, ip);
 }
 
@@ -337,10 +398,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
       value= env->macro_arg->item [name];
       if (!is_func (value, BACKUP)) {
 	path new_valip= env->macro_src->item [name];
-	if (is_accessible (new_valip)) {
-	  valip= new_valip;
-	  env->macro_src->item (name)= decorate_right (valip);
-	}
+	if (is_accessible (new_valip)) valip= new_valip;
       }
     }
     else value= tree (ERROR, "value " * name);
@@ -352,7 +410,20 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   list<hashmap<string,path> > old_src= env->macro_src;
   if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
   if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+
+  if (N(t) > 1) {
+    int i, n= N(t);
+    for (i=1; i<n; i++) {
+      tree r= env->exec (t[i]);
+      if (!is_int (r)) break;
+      int nr= as_int (r);
+      if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+      value= value[nr];
+      valip= descend (valip, nr);
+    }
+  }
   lazy par= make_lazy (env, value, valip);
+
   env->macro_arg= old_var;
   env->macro_src= old_src;
   return lazy_surround (a, b, par, ip);
@@ -385,13 +456,18 @@ make_lazy (edit_env env, tree t, path ip) {
   case VAR_EXPAND:
   case HIDE_EXPAND:
     return make_lazy_expand (env, t, ip);
+  case COMPOUND:
+    return make_lazy_compound (env, t, ip);
   case APPLY:
     return make_lazy_apply (env, t, ip);
   case INCLUDE:
-    return make_lazy_include (env, t, ip);
+    return make_lazy_rewrite (env, t, ip);
   case ARGUMENT:
     return make_lazy_argument (env, t, ip);
+  case EXTERN:
+    return make_lazy_rewrite (env, t, ip);
   default:
-    return make_lazy_paragraph (env, t, ip);
+    if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
+    else return make_lazy_compound (env, t, ip);
   }
 }

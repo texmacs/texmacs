@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "drd_info.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Constructors and basic operations
@@ -38,6 +39,11 @@ operator << (ostream& out, drd_info drd) {
 * Accessing the drd
 ******************************************************************************/
 
+bool
+drd_info_rep::contains (string l) {
+  return existing_tree_label (l) && ti->contains (as_tree_label (l));
+}
+
 void
 drd_info_rep::set_arity (tree_label l, int arity) {
   if (!ti->contains (l)) ti(l)= tag_info (arity, 0);
@@ -50,6 +56,12 @@ drd_info_rep::set_props (tree_label l, int props) {
   else ti(l)->props= props;
 }
 
+void
+drd_info_rep::set_masked_props (tree_label l, int mask, int props) {
+  if (!ti->contains (l)) ti(l)= tag_info (-1, mask & props);
+  else ti(l)->props= (ti[l]->props & (~mask)) | props;
+}
+
 int
 drd_info_rep::get_arity (tree_label l) {
   return ti[l]->arity;
@@ -58,6 +70,83 @@ drd_info_rep::get_arity (tree_label l) {
 int
 drd_info_rep::get_props (tree_label l) {
   return ti[l]->props;
+}
+
+/******************************************************************************
+* Heuristic initialization of DRD
+******************************************************************************/
+
+static bool
+accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
+  if (is_atomic (t)) return false;
+  else if (is_func (t, ARGUMENT)) return t == tree (ARGUMENT, var);
+  else if (is_func (t, MACRO)) return false;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (drd->is_accessible_child (t, i))
+	if (accessible_macro_arg (drd, t[i], var))
+	  return true;
+    return false;
+  }
+}
+
+bool
+drd_info_rep::heuristic_init (string var, tree macro) {
+  tree_label l= make_tree_label (var);
+  int i, n= N(macro)-1;
+  int old_arity= get_arity (l);
+  int new_arity= old_arity;
+  int old_props= get_props (l);
+  int new_props= old_props;
+  bool changed= false;
+
+  /* Getting accessibility flags */
+  if ((new_props & FROZEN_ARITY) == 0) {
+    new_arity= n;
+    set_arity (l, new_arity);
+    changed= changed || (new_arity != old_arity);
+  }
+
+  /* Getting accessibility flags */
+  if ((new_props & FROZEN_ACCESSIBLE) == 0) {
+    int detailed = 0;
+    bool all_on= true, all_off= true;
+    int MASK= ACCESSIBLE_MASK + CUSTOM_ACCESSIBLE_MASK;
+    int k= min (n, CUSTOM_ACCESSIBLE_MAX);
+    new_props= new_props & (~MASK);
+    for (i=0; i<k; i++) {
+      if (accessible_macro_arg (this, macro[n], macro[i])) {
+	detailed += (1 << (CUSTOM_ACCESSIBLE_SHIFT + i));
+	all_off= false;
+      }
+      else all_on= false;
+    }
+    if (all_on) new_props += ACCESSIBLE;
+    else if (all_off) new_props += NOT_ACCESSIBLE;
+    else new_props += CUSTOM_ACCESSIBLE + detailed;
+    set_props (l, new_props);
+    changed= changed || (new_props != old_props);
+  }
+
+  return changed;
+}
+
+void
+drd_info_rep::heuristic_init (hashmap<string,tree> env) {
+  bool flag= true;
+  while (flag) {
+    //cout << HRULE;
+    flag= false;
+    iterator<string> it= iterate (env);
+    while (it->busy()) {
+      string var= it->next();
+      tree   val= env[var];
+      tree_label l= make_tree_label (var);
+      if (is_func (val, MACRO) && ((get_props (l) && FROZEN_MASK) == 0))
+	flag= heuristic_init (var, val) | flag;
+    }
+  }
 }
 
 /******************************************************************************
@@ -74,7 +163,7 @@ drd_info_rep::is_dynamic (tree t) {
 
 bool
 drd_info_rep::is_accessible_child (tree t, int i) {
-  if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
+  // if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   switch (get_props (L(t)) & ACCESSIBLE_MASK) {
   case NOT_ACCESSIBLE:
     return false;
@@ -90,6 +179,9 @@ drd_info_rep::is_accessible_child (tree t, int i) {
     return i<(N(t)-2);
   case HIDE_EXPAND_ACCESSIBLE:
     return (i!=0) && (i!=(N(t)-1));
+  case CUSTOM_ACCESSIBLE:
+    if (i >= CUSTOM_ACCESSIBLE_MAX) return false;
+    return ((get_props (L(t)) >> (CUSTOM_ACCESSIBLE_SHIFT + i)) & 1) != 0;
   default:
     return false;
   }

@@ -35,9 +35,24 @@
 	   (string-append s "\n"))
 	  (else (string-append s ";\n")))))
 
+(define (maxima-versions)
+  (let ((version-list (string->object (var-eval-system "maxima_detect"))))
+    (if (list? version-list)
+      (let*
+        ((default (car version-list))
+          (rest (cdr version-list))
+          (launch-default (list :launch (string-append "tm_maxima " default)))
+          (launch-rest
+            (map
+              (lambda (version-name)
+                (list :launch version-name (string-append "tm_maxima " version-name)))
+              rest)))
+        (cons launch-default launch-rest))
+      ())))
+
 (plugin-configure maxima
   (:require (url-exists-in-path? "maxima"))
   (:initialize (maxima-initialize))
-  (:launch "tm_maxima")
+  ,@(maxima-versions)
   (:serializer ,maxima-serialize)
   (:session "Maxima"))

@@ -120,7 +120,13 @@ edit_dynamic_rep::activate () {
     return;
   }
 
-  if ((is_func (st, LATEX, 1) || (is_func (st, HYBRID, 1))) &&
+  if (is_func (st, COMPOUND) && is_atomic (st[0])) {
+    tree u (make_tree_label (st[0]->label));
+    u << A (st (1, N(st)));
+    st= u;
+  }
+
+  if ((is_func (st, LATEX, 1) || (is_func (st, HYBRID))) &&
       is_atomic (st[0])) {
     string  s= st[0]->label;
     string  help;
@@ -128,9 +134,10 @@ edit_dynamic_rep::activate () {
     if (kbd_get_command (s, help, cmd)) {
       cut (p * 0, p * 1);
       cmd ();
+      if (N(st) == 2) insert_tree (copy (st[1]));
       return;
     }
-    else if (is_func (st, HYBRID, 1)) {
+    else if (is_func (st, HYBRID)) {
       if (is_atomic (st[0])) {
 	string name= st[0]->label;
 	path mp= search_upwards (MACRO);
@@ -149,23 +156,44 @@ edit_dynamic_rep::activate () {
 	tree f= get_env_value (name);
 	if (is_func (f, MACRO)) {
 	  activate_macro (p, name, f);
+	  if (N(st) == 2) insert_tree (st[1]);
 	  return;
 	}
 	else if (is_func (f, FUNCTION)) {
 	  int n= N(f);
 	  tree r (APPLY, n);
 	  r[0]= copy (name);
+	  if ((n>1) && (N(st)==2)) r[1]= copy (st[1]);
 	  st= r;
+	}
+	else if (f == UNINIT) {
+	  set_message ("Error: unknown command", "activate hybrid command");
+	  return;
 	}
 	else st= tree (VALUE, copy (name));
       }
-      else st= tree (APPLY, copy (st[0]));
+      else {
+	set_message ("Error: not a command name", "activate hybrid command");
+	return;
+      }
     }
   }
 
   assign (p, st);
   go_to (end (et, p));
   correct (path_up (p));
+}
+
+void
+edit_dynamic_rep::activate_compound () {
+  path p= search_upwards (COMPOUND);
+  if (!nil (p)) {
+    tree st= subtree (et, p);
+    tree u (make_tree_label (st[0]->label));
+    u << A (st (1, N(st)));
+    assign (p, u);
+    go_to (end (et, p));
+  }
 }
 
 /******************************************************************************
@@ -209,6 +237,12 @@ edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
     path p (k+1, 0);
     t[k]= selection_get_cut ();
     if (n==k+1) p= path (k, end (t[k]));
+    if (is_func (t, HYBRID, 1) &&
+	(!(is_atomic (t[0]) && drd->contains (t[0]->label))))
+      {
+	t= tree (HYBRID, "", t[0]);
+	p= path (0, 0);
+      }
     make_deactivated (t, p);
   }
   else make_deactivated (t, path (k, 0));
@@ -236,11 +270,13 @@ edit_dynamic_rep::insert_argument () {
 	p= path_up (p, 2);
 	if (!is_func (subtree (et, p), INACTIVE)) return;
 	activate_macro (p, t[0]->label, f);
+	if (N(t) == 2) insert_tree (t[1]);
       }
       else if (is_func (f, FUNCTION)) {
 	p= path_up (p);
 	tree r (APPLY, n);
 	r[0]= copy (t[0]);
+	if ((n>1) && (N(t)==2)) r[1]= copy (t[1]);
 	assign (p, r);
 	go_to (p * path (1, 0));
       }
@@ -248,8 +284,10 @@ edit_dynamic_rep::insert_argument () {
     return;
   }
   if (drd->get_arity (L(t)) >= 1) return;
-  if (is_func (t, WITH) || is_func (t, ATTR)) {
+  if (is_func (t, WITH) || is_func (t, DRD_PROPS) || is_func (t, ATTR)) {
     int at= ((last_item (p) >> 1) << 1) + 2;
+    if (is_func (t, DRD_PROPS))
+      at= (((last_item (p)+1) >> 1) << 1) + 1;
     if (at > N(t)) at= N(t);
     insert (path_up (p) * at, tree (L (t), "", ""));
     go_to (path_up (p) * path (at, 0));
@@ -358,7 +396,7 @@ edit_dynamic_rep::make_expand (string s, int n) {
   tree ins (EXPAND, n+1);
   ins[0]= s;
 #endif
-  if (n==0) insert_tree (ins, path (d_exp));
+  if (n==0) insert_tree (ins, 1);
   else if (n==1) {
     tree f= get_env_value (s);
     if ((N(f) == 2) && contains_table_format (f[1], f[0])) {
@@ -400,7 +438,7 @@ edit_dynamic_rep::make_apply (string s) {
 
 void
 edit_dynamic_rep::back_dynamic (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE))
+  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
     go_to (end (et, p * (N (subtree (et, p))- 1)));
   else {
     string s= get_label (subtree (et, p));
@@ -433,10 +471,20 @@ edit_dynamic_rep::back_hide_expand (path p) {
 }
 
 void
+edit_dynamic_rep::back_compound (path p) {
+  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
+    back_dynamic (p);
+  else ins_unary (p, INACTIVE);
+}
+
+void
 edit_dynamic_rep::back_extension (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE)) back_dynamic (p);
+  tree st= subtree (et, p);
+  if ((drd->get_props (L (st)) & ACCESSIBLE_MASK) != ACCESSIBLE)
+    back_dynamic (p);
+  else if (is_func (subtree (et, path_up (p)), INACTIVE))
+    back_dynamic (p);
   else {
-    tree st= subtree (et, p);
     int n= N(st);
     if (n==0) {
       assign (p, "");
@@ -450,9 +498,9 @@ edit_dynamic_rep::back_extension (path p) {
 }
 
 static bool
-is_empty (tree t, int at, int nr) {
+is_empty (tree t, int at, int nr, int offset) {
   int i;
-  if ((at+nr > N(t)) || ((at % nr) != 0)) return false;
+  if ((at+nr > N(t)) || (((at-offset) % nr) != 0)) return false;
   for (i=at; i < at+nr; i++)
     if (t[i] != "") return false;
   return true;
@@ -464,7 +512,7 @@ edit_dynamic_rep::back_in_dynamic (tree t, path p, int min_args, int step) {
   if (node>0) {
     go_to (end (et, path_up (p) * (node-1)));
     if (N(t) > min_args) {
-      if (is_empty (t, node, step))
+      if (is_empty (t, node, step, is_func (t, DRD_PROPS)? 1: 0))
 	remove (path_up (p) * node, step);
       else go_to (end (et, path_dec (p)));
     }
@@ -517,12 +565,29 @@ edit_dynamic_rep::back_in_expand (tree t, path p) {
 }
 
 void
-edit_dynamic_rep::back_in_extension (tree t, path p) {
+edit_dynamic_rep::back_in_compound (tree t, path p) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
     back_in_dynamic (t, p, 1);
+  else ins_unary (path_up (p), INACTIVE);
+}
+
+void
+edit_dynamic_rep::back_in_extension (tree t, path p) {
+  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode()) {
+    if (last_item (p) == 0) {
+      tree u (COMPOUND, copy (as_string (L (t))));
+      u << copy (A (t));
+      assign (path_up (p), u);
+      go_to (end (et, path_up (p) * 0));
+    }
+    else back_in_dynamic (t, p, 1);
+  }
   else {
-    int node= last_item (p);
-    if (node>0) go_to (end (et, path_up (p) * (node-1)));
+    int node= last_item (p) - 1;
+    while ((node >= 0) &&
+	   (!drd->is_accessible_child (subtree (et, path_up (p)), node)))
+      node--;
+    if (node >= 0) go_to (end (et, path_up (p) * node));
     else {
       int i;
       for (i=0; i<N(t); i++)
