@@ -11,6 +11,8 @@
 ******************************************************************************/
 
 #include "edit_cursor.hpp"
+#include "iterator.hpp"
+#include "tm_buffer.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -293,16 +295,20 @@ edit_cursor_rep::go_end_with (string var, string val) {
 * Jumping to a label
 ******************************************************************************/
 
-static void
-get_labels_in (tree t, tree& u) {
-  if (is_compound (t)) {
-    if (is_func (t, LABEL, 1)) u << copy (t[0]);
-    else {
-      int i, n= N(t);
-      for (i=0; i<n; i++)
-	get_labels_in (t[i], u);
-    }
+tree
+edit_cursor_rep::get_labels () {
+  tree r (TUPLE);
+  hashmap<string,tree> h= buf->ref;
+  if (buf->prj != NULL) {
+    h= copy (buf->prj->ref);
+    h->join (buf->ref);
   }
+  iterator<string> it= iterate (h);
+  while (it->busy ()) {
+    string ref= it->next ();
+    r << ref;
+  }
+  return r;
 }
 
 static path
@@ -317,13 +323,6 @@ search_tree_in (tree t, tree what) {
     }
     return path ();
   }
-}
-
-tree
-edit_cursor_rep::get_labels () {
-  tree r (TUPLE);
-  get_labels_in (et, r);
-  return r;
 }
 
 void
