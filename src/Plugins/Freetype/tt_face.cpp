@@ -30,7 +30,6 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
     cout << "TeXmacs] Loading True Type font " << name << "\n";
   url u= tt_font_find (name);
   if (is_none (u)) return;
-  cout << "Loading " << u << "\n";
   char* _name= as_charp (concretize (u));
   if (ft_new_face (ft_library, _name, 0, &ft_face)) { delete[] _name; return; }
   ft_select_charmap (ft_face, ft_encoding_adobe_custom);

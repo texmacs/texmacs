@@ -24,14 +24,16 @@ tt_locate (string name) {
     url u= resolve_pfb (name);
     if (!is_none (u)) return u;
   }
-  string s= eval_system ("locate", "/" * name);
-  int start, i, n= N(s);
-  for (start=0, i=0; i<n; i++)
-    if (s[i]=='\n') {
-      if (ends (s (start, i), name))
-	return url (s (start, i));
-      start= i+1;
-    }
+  else {
+    string s= eval_system ("locate", "/" * name);
+    int start, i, n= N(s);
+    for (start=0, i=0; i<n; i++)
+      if (s[i]=='\n') {
+	if (ends (s (start, i), name))
+	  return url (s (start, i));
+	start= i+1;
+      }
+  }
   return url_none ();
 }
 
