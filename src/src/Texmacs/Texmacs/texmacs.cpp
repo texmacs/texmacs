@@ -25,13 +25,6 @@ extern int geometry_x, geometry_y;
 
 extern tree   the_et;
 
-extern int    file_count;
-extern time_t file_time;
-extern int    stat_count;
-extern time_t stat_time;
-extern int    dirs_count;
-extern time_t dirs_time;
-
 /******************************************************************************
 * Real main program for encaptulation of guile
 ******************************************************************************/
@@ -156,11 +149,9 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_AUTO) cout << "\n";
   if (DEBUG_STD) cout << "TeXmacs] Installing internal plug-ins...\n";
-  timer_t plugin_start= texmacs_time ();
+  bench_start ("initialize plugins");
   init_plugins ();
-  timer_t plugin_boot = texmacs_time () - plugin_start;
-  if (DEBUG_BENCH)
-    cout << "Bench  ] Initialized plug-ins in " << plugin_boot << " ms\n";
+  bench_cumul ("initialize plugins");
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   display dis= open_display (argc, argv);
   dis->set_default_font (the_default_font);
@@ -201,14 +192,10 @@ TeXmacs_main (int argc, char** argv) {
 #endif
   }
 
-  if (DEBUG_BENCH) {
-    cout << "Bench  ] Loaded " << file_count
-	 << " files in " << file_time << " ms\n";
-    cout << "Bench  ] Loaded " << dirs_count
-	 << " directories in " << dirs_time << " ms\n";
-    cout << "Bench  ] Issued " << stat_count
-	 << " stat commands in " << stat_time << " ms\n";
-  }
+  bench_print ();
+  bench_reset ("initialize texmacs");
+  bench_reset ("initialize plugins");
+  bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   sv->delayed_autosave();
@@ -229,10 +216,9 @@ main (int argc, char** argv) {
   // cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
-  // timer_t texmacs_start= texmacs_time ();
+  bench_start ("initialize texmacs");
   init_texmacs ();
-  // timer_t texmacs_boot = texmacs_time () - texmacs_start;
-  // cout << "Bench  ] Intialized TeXmacs in " << texmacs_boot << " ms\n";
+  bench_cumul ("initialize texmacs");
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

@@ -14,6 +14,16 @@
 #ifdef OS_WIN32
 #include <sys/misc.h>
 #endif
+#include "iterator.hpp"
+#include "merge_sort.hpp"
+
+static hashmap<string,int> timing_nr    (0);
+static hashmap<string,int> timing_cumul (0);
+static hashmap<string,int> timing_last  (0);
+
+/******************************************************************************
+* Getting the time
+******************************************************************************/
 
 time_t
 texmacs_time () {
@@ -28,27 +38,68 @@ texmacs_time () {
 #endif
 }
 
-timer_rep::timer_rep () { start (); }
-timer::timer () { rep= new timer_rep (); }
+/******************************************************************************
+* Routines for benchmarking
+******************************************************************************/
 
 void
-timer_rep::start () {
-  begin= texmacs_time ();
-  cumul= 0;
+bench_start (string task) {
+  // start timer for a given type of task
+  timing_last (task)= (int) texmacs_time ();
 }
 
 void
-timer_rep::restart () {
-  begin= texmacs_time ();
+bench_cumul (string task) {
+  // end timer for a given type of task, but don't reset timer
+  int ms= ((int) texmacs_time ()) - timing_last (task);
+  timing_nr    (task) ++;
+  timing_cumul (task) += ms;
+  timing_last -> reset (task);
 }
 
-time_t
-timer_rep::watch () {
-  return texmacs_time ()- begin;
+void
+bench_end (string task) {
+  // end timer for a given type of task, print result and reset timer
+  bench_cumul (task);
+  bench_print (task);
+  bench_reset (task);
 }
 
-time_t
-timer_rep::stop () {
-  cumul += watch ();
-  return cumul;
+void
+bench_reset (string task) {
+  // reset timer for a given type of task
+  timing_nr   ->reset (task);
+  timing_cumul->reset (task);
+  timing_last ->reset (task);
+}
+
+void
+bench_print (string task) {
+  // print timing for a given type of task
+  if (DEBUG_BENCH) {
+    int nr= timing_nr [task];
+    cout << "Timing ] Task '" << task
+	 << "' took " << timing_cumul [task] << " ms";
+    if (nr > 1) cout << " (" << nr << " invocations)";
+    cout << "\n";
+  }
+}
+
+static array<string>
+collect (hashmap<string,int> h) {
+  array<string> a;
+  iterator<string> it= iterate (h);
+  while (it->busy ())
+    a << it->next ();
+  merge_sort (a);
+  return a;
+}
+
+void
+bench_print () {
+  // print timings for all types of tasks
+  array<string> a= collect (timing_cumul);
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    bench_print (a[i]);
 }

@@ -14,6 +14,7 @@
 ******************************************************************************/
 
 #include "load_tex.hpp"
+#include "timer.hpp"
 
 typedef short HI;
 #define PIXEL 256
@@ -284,6 +285,7 @@ pk_loader::load_pk () {
   register SI xoff;
   register SI yoff;
   
+  bench_start ("decode pk");
   glyph* fng= new glyph [ec+1-bc];
 
   // Preamble
@@ -415,5 +417,6 @@ pk_loader::load_pk () {
       fng[c]->lwidth= ((lwidth+(PIXEL>>1)) / PIXEL);
     }
 
+  bench_cumul ("decode pk");
   return fng;
 }
