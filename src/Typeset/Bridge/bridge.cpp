@@ -33,7 +33,21 @@ bridge_rep::bridge_rep (typesetter ttt2, tree st2, path ip2):
   status (CORRUPTED), changes (UNINIT) {}
 
 bridge
+make_inactive_bridge (typesetter ttt, tree st, path ip) {
+  switch (L(st)) {
+  case DOCUMENT:
+    return bridge_document (ttt, st, ip);
+  case WITH:
+    return bridge_with (ttt, st, ip);
+  default:
+    return bridge_default (ttt, st, ip);
+  }
+}
+
+bridge
 make_bridge (typesetter ttt, tree st, path ip) {
+  if (ttt->env->preamble)
+    return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
