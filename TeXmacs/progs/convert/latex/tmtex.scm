@@ -877,6 +877,9 @@
 (define (tmtex-item-arg s l)
   (tex-concat (list (list 'item (list '!option (tmtex (car l)))) " ")))
 
+(define (tmtex-render-proof s l)
+  (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
+
 (define (tmtex-session s l)
   (tmtex (caddr l)))
 
@@ -1070,6 +1073,7 @@
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
+  (render-proof (,tmtex-render-proof 2))
   (session (,tmtex-session 3))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
