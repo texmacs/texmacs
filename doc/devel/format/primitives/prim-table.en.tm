@@ -82,16 +82,25 @@
 
     <item*|<markup|cell>>Cell data container.
 
-    Table cells can contain any document fragment.
+    Table cells can contain any document fragment. A <markup|cell> may
+    directly contain an <re-index|inline content> tag or a <markup|concat>,
+    if it has <re-index|block content> it must always contain a
+    <markup|document> tree.
 
-    It may directly contain an inline tag or a <markup|concat>, if it has
-    block content it must always contain a <markup|document> tree.
+    A <markup|cell> whose operand is a <markup|document> is a
+    <def-index|multiparagraph cell>. Since tables are allowed in
+    <re-index|line context>, this is the only construct which allows,
+    indirectly, the nesting of a <re-index|block context> within a
+    <re-index|line context>. Note that most block content can only be typeset
+    correctly within an hyphenated cell, this is controlled by the
+    <verbatim|cell-hyphen> table variable.
 
     <item*|<markup|subtable>>Subtable cell data.
 
-    In addition to regular markup, cells can contain a
-    <markup|><markup|subtable> as their immediate subtree. This tag's operand
-    is a <markup|tformat> tree containing regular table data.
+    In addition to regular markup, cells can accept
+    <markup|><markup|subtable> as an operand. The operand of
+    <markup|subtable> is a <markup|tformat> tree containing regular table
+    data.
 
     A similar effect can be obtained with normal table by setting the cell's
     padding to zero in all directions, the extra twist of a <markup|subtable>

@@ -48,6 +48,22 @@
     wherever a multi-paragraph structure is needed, for example in list
     structures and multi-paragraph table cells.
 
+    Some primitives (<em|e.g.> <markup|document>, <markup|include>) are
+    <def-index|block content> and are not allowed in line context. A position
+    is in <def-index|block context> if, after evaluation, it is immediately
+    within:
+
+    <\itemize>
+      <item>a <markup|document> tree,
+
+      <item>a <re-index|multiparagraph cell>, that is a <markup|cell> whose
+      operand is a <markup|document>
+
+      <item>the last operand of a <markup|with> in block context,
+
+      <item>the last operand of a <markup|surround> in block context.
+    </itemize>
+
     <item*|<markup|concat>>Sequence of line items.
 
     Since the interpretation of an operator is done according to the count
@@ -83,6 +99,13 @@
 
       \ \ \ \ \ \ \ \ \ \ (concat "Some " (em "emphasized") " text."))
     </scheme-fragment>
+
+    Structures which are typeset inside a <markup|concat> or some operators
+    which expect <def-index|inline content>, is said to be in <def-index|line
+    context>. A correct document may not evaluate to a tree which contains
+    block content within an inline context and, except for
+    <re-index|multiparagraph cells>, it is not possible to nest a block
+    context within a line context.
   </description-dash>
 
   The <markup|error> and <markup|raw-data> operators are much more rarely
@@ -116,87 +139,16 @@
 
 <\initial>
   <\collection>
-    <associate|preamble|false>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
+    <associate|preamble|false>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|1|?>>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|gly-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|1|?>>
-    <associate|idx-3|<tuple|1|?>>
-    <associate|idx-4|<tuple|1|?>>
-    <associate|idx-5|<tuple|1|?>>
-    <associate|idx-6|<tuple|1|?>>
-    <associate|idx-7|<tuple|1|?>>
-    <associate|idx-8|<tuple|1|?>>
-    <associate|idx-9|<tuple|1|?>>
-    <associate|idx-10|<tuple|1|?>>
-    <associate|idx-11|<tuple|1|?>>
-    <associate|idx-12|<tuple|1|?>>
-    <associate|idx-13|<tuple|1|?>>
-    <associate|idx-14|<tuple|1|?>>
-    <associate|idx-15|<tuple|1|?>>
-    <associate|idx-16|<tuple|1|?>>
-    <associate|idx-17|<tuple|1|?>>
-    <associate|idx-18|<tuple|1|?>>
-    <associate|idx-19|<tuple|1|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|table>
-      <tuple|normal|Fundamental structures|<pageref|gly-1>>
-    </associate>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|document>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|concat>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|error>>|<pageref|idx-3>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|raw-data>>|<pageref|idx-4>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|document>>|<pageref|idx-5>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|concat>>|<pageref|idx-6>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|document>>|<pageref|idx-7>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|concat>>|<pageref|idx-8>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|error>>|<pageref|idx-9>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|raw-data>>|<pageref|idx-10>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|error>>|<pageref|idx-11>>
-
-      <tuple|<tuple|<with|font-family|<quote|tt>|color|<quote|dark
-      green>|raw-data>>|<pageref|idx-12>>
-    </associate>
-  </collection>
-</auxiliary>
