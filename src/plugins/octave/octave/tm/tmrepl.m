@@ -9,7 +9,7 @@ function tmrepl()
 			dispans=0;
 		endif
 		r=sprintf("%ctexmacs%c; %s;",39,39,r);
-		eval(r,'disp(lasterr)');
+		eval(r,"tmlasterr");
 		if dispans & isnewans(ans)
 			tmdisp(ans);
 		endif
