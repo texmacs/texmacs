@@ -27,6 +27,7 @@
     ;; call-backs
     graphics-move-point graphics-insert-point
     graphics-remove-point graphics-last-point
+    graphics-start-drag graphics-dragging graphics-end-drag
     graphics-choose-point
     graphics-reset-context))
 
@@ -558,6 +559,9 @@
 (define (graphics-states-void?)
   (null? graphics-states))
 
+(define (graphics-state-first?)
+  (and (not (graphics-states-void?)) (null? (cdr graphics-states))))
+
 (define (graphics-push-state st)
   (set! graphics-states (cons st graphics-states)))
 
@@ -589,10 +593,12 @@
 (define (graphics-back-state first?)
   (if first?
       (graphics-back-first)
-      (with st (graphics-pop-state)
-        (graphics-state-set st)
-        (if (graphics-states-void?)
-            (graphics-push-state st)))))
+      (if (graphics-state-first?)
+	  (undo)
+	  (with st (graphics-pop-state)
+	    (graphics-state-set st)
+	    (if (graphics-states-void?)
+	        (graphics-push-state st))))))
 
 (define (graphics-reset-state)
   (create-graphical-object #f #f #f #f)
@@ -617,8 +623,8 @@
 ;; Graphical select
 (define (graphics-select x y d)
   (define (filter-path p)
-     (with p2 (map string->number (cdr p))
-       (if (graphics-path p2) p2 #f))
+    (with p2 (map string->number (cdr p))
+      (if (graphics-path p2) p2 #f))
   )
   (define (filter-sel e)
     (with e2 (map filter-path (cdr e))
@@ -627,12 +633,12 @@
   (define (remove-filtered-elts l)
     (if (pair? l)
       (if (pair? (cdr l))
-        (if (eq? (cadr l) #f)
-            (begin
-              (set-cdr! l (cddr l))
-              (remove-filtered-elts l))
-            (remove-filtered-elts (cdr l)))
-        l)
+	(if (eq? (cadr l) #f)
+	    (begin
+	      (set-cdr! l (cddr l))
+	      (remove-filtered-elts l))
+	    (remove-filtered-elts (cdr l)))
+	l)
       #f)
   )
   (define (filter l)
@@ -652,7 +658,7 @@
     (set! previous-selection current-selection)
     (set! current-selection sel)
     (if (or (null? sel) (not (== current-selection previous-selection)))
-        (set! subsel-no 0))
+	(set! subsel-no 0))
     (if (pair? sel) (car (list-tail sel subsel-no)) #f)))
 
 (define (select-next)
@@ -668,8 +674,8 @@
      (set! current-x x)
      (set! current-y y)
      (if sticky-point
-         (with o (graphical-object #t)
-      	   (if (and (pair? o) (not (null? (cdr o))))
+	 (with o (graphical-object #t)
+	   (if (and (pair? o) (not (null? (cdr o))))
 	       (let* ((,obj (cadr o))
 		      (,no current-point-no)
 		      (,edge current-edge-sel?)
@@ -677,12 +683,12 @@
 	            ,(cons 'begin body))
 	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
 		   (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))
-         (let* (( sel (select-choose (s2i ,x) (s2i ,y)))
-                ( pxy (if sel (car sel) '()))
-                (,path (graphics-path pxy))
-                (,obj (graphics-object pxy))
-                (,edge (and sel (== (length sel) 2)))
-	        (,no (if sel (cAr (car sel)) #f)))
+	 (let* (( sel (select-choose (s2i ,x) (s2i ,y)))
+		( pxy (if sel (car sel) '()))
+		(,path (graphics-path pxy))
+		(,obj (graphics-object pxy))
+		(,edge (and sel (== (length sel) 2)))
+		(,no (if sel (cAr (car sel)) #f)))
 	   (if ,obj
 	       ,(cons 'begin body)
 	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
@@ -754,13 +760,15 @@
 ;; Left button
 (define (point_left-button x y p obj no edge)
   (if sticky-point
-      (with l (list-tail (cdr obj) no)
-	(graphics-store-state #f)
-	(set-cdr! l (cons `(point ,x ,y) (cdr l)))
-	(create-graphical-object obj 'active 'object-and-points (+ no 1))
-	(set! current-point-no (+ no 1))
-	(set! current-edge-sel? #t)
-	(set! sticky-point #t))
+      ;;Last
+      (begin
+	(create-graphical-object obj 'active 'points #f)
+	(graphics-group-enrich-insert-bis
+	 obj graphical-color graphical-lwidth #f)
+	(set! sticky-point #f)
+	(set! current-edge-sel? #f)
+	(graphics-forget-states))
+      ;;Start move
       (begin
 	(graphics-store-state 'start-move)
 	(create-graphical-object obj p 'object-and-points #f)
@@ -768,9 +776,10 @@
 	(set! sticky-point #t)
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
-	(graphics-store-state #f)
 	(if edge
-	  (point_left-button x y p (cadr (graphical-object #t)) no edge)))))
+	  (point_sticky-right-button x y p
+	    (cadr (graphical-object #t)) no edge)
+	  (graphics-store-state #f)))))
 
 (define (text-at_left-button x y p obj no edge)
   (if sticky-point
@@ -817,14 +826,15 @@
 	      (graphics-active-assign obj)))
 	(set! sticky-point #f))))
 
-;; Right button (last)
-(define (point_sticky-right-button x y p obj no)
-  (create-graphical-object obj 'active 'points #f)
-  (graphics-group-enrich-insert-bis
-   obj graphical-color graphical-lwidth #f)
-  (set! sticky-point #f)
-  (set! current-edge-sel? #f)
-  (graphics-forget-states))
+;; Right button (add point)
+(define (point_sticky-right-button x y p obj no edge)
+  (with l (list-tail (cdr obj) no)
+    (graphics-store-state #f)
+    (set-cdr! l (cons `(point ,x ,y) (cdr l)))
+    (create-graphical-object obj 'active 'object-and-points (+ no 1))
+    (set! current-point-no (+ no 1))
+    (set! current-edge-sel? #t)
+    (set! sticky-point #t)))
 
 ;; Right button (create)
 (define (point_nonsticky-right-button x y mode)
@@ -870,7 +880,7 @@
       (with-graphics-context
        "last" x y p obj no edge
        (dispatch (car obj) ((point line cline spline cspline text-at))
-		 sticky-right-button (x y p obj no) do-tick))
+		 sticky-right-button (x y p obj no edge) do-tick))
       (with mode (cadr (graphics-mode))
 	(dispatch mode ((point)
 			(line cline spline cspline)
@@ -969,6 +979,18 @@
 	    ((edit)
 	     (edit-prop))
 	    right-button (x y)))
+
+(define (graphics-start-drag x y)
+  ;(display* "Graphics] Start-drag " x ", " y "\n")
+  (graphics-insert-point x y))
+
+(define (graphics-dragging x y)
+  ;(display* "Graphics] dragging " x ", " y "\n")
+  (graphics-move-point x y))
+
+(define (graphics-end-drag x y)
+  ;(display* "Graphics] End-drag " x ", " y "\n")
+  (graphics-insert-point x y))
 
 (define (graphics-choose-point)
   ;(display* "Graphics] Choose\n")
