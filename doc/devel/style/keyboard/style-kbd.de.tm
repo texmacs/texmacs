@@ -3,18 +3,12 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Das <TeXmacs> Dokument-Format>
+  <tmdoc-title|Tastaturkurzbefehle zur Verwendung in Stildefinitionen>
 
   <\traverse>
-    <branch|Dokumente sind Bäume|trees.de.tm>
+    <branch|Makros und <TeXmacs>-Umgebungsvariable|env.de.tm>
 
-    <branch|Die Blätter des <TeXmacs>-Baums|leaves.de.tm>
-
-    <branch|Die <TeXmacs>-Konstrukte|primitives.en.tm>
-
-    <branch|Systemumgebungs-Variablen|env-vars.en.tm>
-
-    <branch|Geplante Änderungen|planned-changes.en.tm>
+    <branch|Rechnende Befehle|compute.de.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -29,7 +23,7 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
+    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>

@@ -3,19 +3,16 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Das <TeXmacs> Dokument-Format>
+  <tmdoc-title|Zukunftspläne>
 
-  <\traverse>
-    <branch|Dokumente sind Bäume|trees.de.tm>
+  Es gibt eine groÿe Zahl möglicher Verbesserungen der
+  <TeXmacs>-Schnittstellen zu Computer Algebra Systemen. Zuerst einmal
+  sollten die Sitzungen als solche verbessert werden, z.B. durch verbesserten
+  Umbruch, besseres Verbergen und Sichtbar werden lassen usw..\ 
 
-    <branch|Die Blätter des <TeXmacs>-Baums|leaves.de.tm>
-
-    <branch|Die <TeXmacs>-Konstrukte|primitives.en.tm>
-
-    <branch|Systemumgebungs-Variablen|env-vars.en.tm>
-
-    <branch|Geplante Änderungen|planned-changes.en.tm>
-  </traverse>
+  Weitere Pläne im Hinblick auf CAS betreffen vor allem die sichere
+  Kommunikation zwischen den Systemen. Das wird möglicherweise durch einen
+  Satz von Plugins erfolgen, die Konversionen durchführen.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -30,6 +27,5 @@
 <\initial>
   <\collection>
     <associate|language|german>
-    <associate|preamble|false>
   </collection>
 </initial>

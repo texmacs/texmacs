@@ -3,18 +3,21 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Das <TeXmacs> Dokument-Format>
+  <tmdoc-title|<TeXmacs> und andere Programme (Plugins)>
 
   <\traverse>
-    <branch|Dokumente sind Bäume|trees.de.tm>
+    <branch|Das Beispiel: <verbatim|mycas>|mycas.de.tm>
 
-    <branch|Die Blätter des <TeXmacs>-Baums|leaves.de.tm>
+    <branch|So schreiben Sie Ihre erste Schnittstelle zu
+    <TeXmacs>|first.de.tm>
 
-    <branch|Die <TeXmacs>-Konstrukte|primitives.en.tm>
+    <branch|Das Plugin in die <TeXmacs>-Distribution einbinden|include.de.tm>
 
-    <branch|Systemumgebungs-Variablen|env-vars.en.tm>
+    <branch|Die Schnittstelle verbessern|customization.de.tm>
 
-    <branch|Geplante Änderungen|planned-changes.en.tm>
+    <branch|Eine Anwendung als \Rdynamic library'' einbinden|dynlibs.de.tm>
+
+    <branch|Zukunftspläne|plans.de.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -30,6 +33,5 @@
 <\initial>
   <\collection>
     <associate|language|german>
-    <associate|preamble|false>
   </collection>
 </initial>

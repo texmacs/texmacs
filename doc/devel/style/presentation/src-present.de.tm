@@ -3,21 +3,18 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Das <TeXmacs> Dokument-Format>
+  <tmdoc-title|Die Darstellung von Basis-Stil-Dateien und Paketen>
 
   <\traverse>
-    <branch|Dokumente sind Bäume|trees.de.tm>
+    <branch|ASCII-basierte oder Baum-basierte Editierung: problematische
+    Alternativen|src-present-intro.de.tm>
 
-    <branch|Die Blätter des <TeXmacs>-Baums|leaves.de.tm>
+    <branch|Anpassung der globalen Darstellung |src-present-global.de.tm>
 
-    <branch|Die <TeXmacs>-Konstrukte|primitives.en.tm>
-
-    <branch|Systemumgebungs-Variablen|env-vars.en.tm>
-
-    <branch|Geplante Änderungen|planned-changes.en.tm>
+    <branch|Lokale Anpassung |src-present-local.de.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -29,7 +26,7 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
+    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>
