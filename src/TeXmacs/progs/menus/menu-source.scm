@@ -28,7 +28,6 @@
   ("Macro" (make 'macro))
   ("Argument" (make 'arg))
   ("Compound" (make 'compound))
-  ("Extern" (make 'extern))
   ---
   ("Long macro" (make 'xmacro))
   ("Get label" (make 'get-label))
@@ -44,7 +43,7 @@
   ("Unquote" (make 'unquote))
   ---
   ("Unevaluated value" (make 'quote-value))
-  ("Unevaluated argument" (make 'quote-arg)))
+  ("Unevaluated argument" (make 'quote-argument)))
 
 (menu-bind source-flow-menu
   ("If" (make 'if))
@@ -150,12 +149,12 @@
       (link source-macro-menu))
   (=> (balloon (icon "tm_prime.xpm") "Control the evaluation of expressions")
       (link source-quote-menu))
-  (=> (balloon (icon "tm_ctrl_flow.xpm") "Insert a control flow instruction")
+  (=> (balloon (icon "tm_if.xpm") "Manipulate the control flow")
       (link source-flow-menu))
   |
-  (=> (balloon (icon "tm_three.xpm") "Insert a numerical operation")
+  (=> (balloon (icon "tm_three.xpm") "Insert an numerical operation")
       (link source-arithmetic-menu))
-  (=> (balloon (icon "tm_textual.xpm") "Insert a textual operation")
+  (=> (balloon (icon "tm_textual.xpm") "Insert an operation on text")
       (link source-text-menu))
   (=> (balloon (icon "tm_tuple.xpm") "Insert an operation on tuples")
       (link source-tuple-menu))

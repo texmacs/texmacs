@@ -42,15 +42,16 @@
       ;; FIXME: insert methods for setting width, height and centering
       ("Other" ... (graphics-set-extents-ia))))
 
+(menu-bind graphics-action-menu
+  ("Add" ())
+  ("Modify" ()))
+
 (menu-bind graphics-mode-menu
   ("Point" (graphics-set-mode "point"))
   ("Line" (graphics-set-mode "line"))
   ("Polygon" (graphics-set-mode "cline"))
   ("Spline" (graphics-set-mode "spline"))
-  ("C-Spline" (graphics-set-mode "cspline"))
-  ("Text box" (graphics-set-mode "text-at"))
-  ---
-  ("Properties" (graphics-set-mode '(edit-prop))))
+  ("CSpline" (graphics-set-mode "cspline")))
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
@@ -78,29 +79,16 @@
   ---
   ("Other" ... (interactive '("Line width:") 'graphics-set-line-width)))
 
-(menu-bind graphics-text-align-menu
-  ("Default" (begin (graphics-set-property "gr-text-halign" "left")
-                    (graphics-set-property "gr-text-valign" "bottom")))
-  ---
-  (-> "Horizontal"
-      ("Left" (graphics-set-property "gr-text-halign" "left"))
-      ("Center" (graphics-set-property "gr-text-halign" "center"))
-      ("Right" (graphics-set-property "gr-text-halign" "right")))
-  (-> "Vertical"
-      ("Bottom" (graphics-set-property "gr-text-valign" "bottom"))
-      ("Center" (graphics-set-property "gr-text-valign" "center"))
-      ("Top" (graphics-set-property "gr-text-valign" "top"))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind graphics-menu
   (-> "Geometry" (link graphics-geometry-menu))
+  ;(-> "Action" (link graphics-action-menu))
   (-> "Mode" (link graphics-mode-menu))
   (-> "Color" (link graphics-color-menu))
-  (-> "Line width" (link graphics-line-width-menu))
-  (-> "Text box alignment" (link graphics-text-align-menu)))
+  (-> "Line width" (link graphics-line-width-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for graphics mode
@@ -109,27 +97,22 @@
 (menu-bind texmacs-graphics-icons
   (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
+  ;(=> (balloon (icon "tm_graphical_action.xpm") "Graphical action")
+  ;    (link graphics-action-menu))
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
   ;    (link graphics-mode-menu))
   (=> (balloon (icon "tm_color.xpm") "Color of new graphics")
       (link graphics-color-menu))
   (=> (balloon (icon "tm_line_width.xpm") "Line width for new graphics")
       (link graphics-line-width-menu))
-  (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
-      (link graphics-text-align-menu))
   |
-  (   (balloon (icon "tm_point_mode.xpm") "Add points")
+  (   (balloon (icon "tm_point_mode.xpm") "Point mode")
       (graphics-set-mode "point"))
-  (   (balloon (icon "tm_line_mode.xpm") "Add lines")
+  (   (balloon (icon "tm_line_mode.xpm") "Line mode")
       (graphics-set-mode "line"))
-  (   (balloon (icon "tm_cline_mode.xpm") "Add polygons")
+  (   (balloon (icon "tm_cline_mode.xpm") "CLine mode")
       (graphics-set-mode "cline"))
-  (   (balloon (icon "tm_spline_mode.xpm") "Add splines")
+  (   (balloon (icon "tm_spline_mode.xpm") "Spline mode")
       (graphics-set-mode "spline"))
-  (   (balloon (icon "tm_cspline_mode.xpm") "Add connected splines")
-      (graphics-set-mode "cspline"))
-  (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
-      (graphics-set-mode "text-at"))
-  |
-  (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
-      (graphics-set-mode '(edit-prop))))
+  (   (balloon (icon "tm_cspline_mode.xpm") "CSpline mode")
+      (graphics-set-mode "cspline")))

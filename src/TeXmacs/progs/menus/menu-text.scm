@@ -91,7 +91,7 @@
       ("Exercise" (make 'exercise))
       ("Problem" (make 'problem)))
   (if (not (style-has? "header-exam-dtd"))
-      (if (style-has? "env-theorem-dtd")
+      (if (style-has? "env-default-dtd")
 	  ("Theorem" (make 'theorem))
 	  ("Proposition" (make 'proposition))
 	  ("Lemma" (make 'lemma))

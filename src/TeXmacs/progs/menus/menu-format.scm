@@ -355,7 +355,6 @@
 (menu-bind language-menu
   ("British" (make-with "language" "british"))
   ("Czech" (make-with "language" "czech"))
-  ("Danish" (make-with "language" "danish"))
   ("Dutch" (make-with "language" "dutch"))
   ("English" (make-with "language" "english"))
   ("Finnish" (make-with "language" "finnish"))

@@ -22,25 +22,18 @@ subvar (tree var, int i) {
 * Test whether a tree (argument) should be rendered in compact format or not.
 ******************************************************************************/
 
-static bool is_long (tree t);
-
 static bool
-is_long_arg (tree t, int i) {
+is_long (tree t) {
   // FIXME: should go into the DRD
-  int n= N(t);
   switch (L(t)) {
   case DOCUMENT:
+  case SURROUND:
   case INCLUDE:
   case TFORMAT:
   case TABLE:
     return true;
   case CONCAT:
     return false;
-  case SURROUND:
-    if (i == 2) return true;
-    break;
-  case ROW:
-    return is_long (t[i]);
   case ASSIGN:
   case DATOMS:
   case DLINES:
@@ -55,25 +48,55 @@ is_long_arg (tree t, int i) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
-  case VAR_UNQUOTE:
-    if (i == n-1) return is_long (t[i]);
-    break;
+    return is_long (t[N(t)-1]);
+  case ROW:
+    {
+      int i, n= N(t);
+      for (i=0; i<n; i++)
+	if (is_long (t[i]))
+	  return true;
+      return false;
+    }
   case STYLE_WITH:
   case VAR_STYLE_WITH:
-    if (i == n-1) {
+    {
+      int i, n= N(t);
       for (i=0; i<n-1; i+=2)
 	if (t[i] == SRC_COMPACT) {
 	  if (t[i+1] == "none") return true;
 	  if (t[i+1] == "all")  return false;
 	}
-      return is_long (t[i]);
+      return is_long (t[N(t)-1]);
     }
-    break;
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
   case VAR_ACTIVE:
-    return is_multi_paragraph (t[i]);
+    return is_multi_paragraph (t[0]);
+  default:
+    if (L(t) < START_EXTENSIONS) return false;
+    else {
+      int i, n= N(t);
+      for (i=0; i<n; i++)
+	if (is_long (t[i]))
+	  return true;
+      return false;
+    }
+  }
+}
+
+static bool
+is_long_arg (tree t, int i) {
+  // FIXME: should go into the DRD
+  switch (L(t)) {
+  case DOCUMENT:
+  case INCLUDE:
+  case TFORMAT:
+  case TABLE:
+    return true;
+  case SURROUND:
+    if (i == 2) return true;
+    break;
   default:
     break;
   }
@@ -85,20 +108,8 @@ is_long_arg (tree t, int i) {
   case ROW:
     return true;
   default:
-    if (L(t) < START_EXTENSIONS) return false;
     return is_long (u);
   }
-}
-
-static bool
-is_long (tree t) {
-  if (is_compound (t)) {
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (is_long_arg (t, i))
-	return true;
-  }
-  return false;
 }
 
 /******************************************************************************
@@ -110,33 +121,20 @@ arg_type (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);
   switch (L(t)) {
-  case HSPACE:
-  case VAR_VSPACE:
-  case VSPACE:
-  case SPACE:
-    return "length";
-  case HTAB:
-    if (i == 0) return "length";
-    else return "";
-  case MOVE:
-  case RESIZE:
-    if (i > 0) return "length";
-    else return "";
   case ASSIGN:
   case DRD_PROPS:
   case VALUE:
-  case QUOTE_VALUE:
-    if (i == 0) return "var";
+    if (i == 0) return "id";
     else return "";
   case WITH:
   case STYLE_WITH:
   case VAR_STYLE_WITH:
-    if ((i<n-1) && ((i&1)==0)) return "var";
+    if ((i<n-1) && ((i&1)==0)) return "id";
     else return "";
   case TWITH:
   case CWITH:
     if (i<n-2) return "integer";
-    else if (i==n-2) return "var";
+    else if (i==n-2) return "id";
     else return "";
   case MACRO:
     if (i<n-1) return "arg";
@@ -145,12 +143,11 @@ arg_type (tree t, int i) {
     if (i==0) return "arg";
     else return "";
   case ARG:
-  case QUOTE_ARG:
     if (i==0) return "arg";
     else return "integer";
     break;
   case MAP_ARGS:
-    if (i<2) return "var";
+    if (i<2) return "id";
     else if (i==2) return "arg";
     else return "";
   case SPECIFIC:
@@ -158,12 +155,8 @@ arg_type (tree t, int i) {
 	(t[0] != "screen") && (t[0] != "printer"))
       return "tt";
     else return "";
-  case HLINK:
   case ACTION:
-    if (i==1) return "tt";
-    else return "";
-  case FLAG:
-    if (i==2) return "arg";
+    if (i==n-1) return "tt";
     else return "";
   default:
     return "";
@@ -171,15 +164,13 @@ arg_type (tree t, int i) {
 }
 
 static tree
-highlight (tree t, tree orig, string kind) {
-  if (is_compound (orig)) return t;
-  else if (kind == "")        return t;
+highlight (tree t, string kind) {
+  if (kind == "") return t;
   else if (kind == "macro")   return compound ("src-macro", t);
-  else if (kind == "var")     return compound ("src-var", t);
+  else if (kind == "id")      return compound ("src-id", t);
   else if (kind == "arg")     return compound ("src-arg", t);
   else if (kind == "tt")      return compound ("src-tt", t);
   else if (kind == "integer") return compound ("src-integer", t);
-  else if (kind == "length")  return compound ("src-length", t);
   else if (kind == "error")   return compound ("src-error", t);
   return t;
 }
@@ -212,7 +203,7 @@ edit_env_rep::rewrite_inactive_arg (
       }
       else r= rewrite_inactive (t[i], r, block, flush);
     }
-  return highlight (r, t[i], arg_type (t, i));
+  return highlight (r, arg_type (t, i));
 }
 
 tree
@@ -260,10 +251,10 @@ edit_env_rep::rewrite_inactive_value (
   if ((N(t) == 1) && is_atomic (t[0]) &&
       src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
     {
-      tree r= highlight (subvar (var, 0), t[0],
+      tree r= highlight (subvar (var, 0),
         inactive_mode == INACTIVE_INLINE_ERROR ||
 	inactive_mode == INACTIVE_BLOCK_ERROR ?
-	string ("error"): string ("var"));
+	string ("error"): string ("id"));
       return tree (MARK, var, r);
   }
   return rewrite_inactive_default (t, var, block, flush);
@@ -276,7 +267,7 @@ edit_env_rep::rewrite_inactive_arg (
   if ((N(t) == 1) && is_atomic (t[0]) &&
       src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
     {
-      tree r= highlight (subvar (var, 0), t[0],
+      tree r= highlight (subvar (var, 0),
         inactive_mode == INACTIVE_INLINE_ERROR ||
 	inactive_mode == INACTIVE_BLOCK_ERROR ?
 	string ("error"): string ("arg"));
@@ -351,7 +342,7 @@ edit_env_rep::rewrite_inactive_hybrid (
   if (is_atomic (t[0]) && (src_special >= SPECIAL_NORMAL)) {
     int i, n= N(t);
     tree r (INLINE_TAG, n);
-    r[0]= tree (CONCAT, "\\", highlight (subvar (var, 0), t[0], "var"));
+    r[0]= tree (CONCAT, "\\", highlight (subvar (var, 0), "id"));
     for (i=1; i<n; i++)
       r[i]= rewrite_inactive_arg (t, var, i, false, false);
     return tree (MARK, var, r);
@@ -370,14 +361,13 @@ edit_env_rep::rewrite_inactive_default (
       (src_special >= SPECIAL_NORMAL))
     {
       d = 1;
-      op= highlight (subvar (var, 0), t[0], "var");
+      op= highlight (subvar (var, 0), "id");
     }
   if (inactive_mode == INACTIVE_INLINE_ERROR ||
       inactive_mode == INACTIVE_BLOCK_ERROR)
-    op= highlight (op, "", "error");
+    op= highlight (op, "error");
 
-  if ((N(t) == d) ||
-      (src_compact == COMPACT_ALL) ||
+  if ((src_compact == COMPACT_ALL) ||
       ((!block) && (src_compact != COMPACT_NONE)) ||
       (!is_long (t)) && (src_compact != COMPACT_NONE))
     {
@@ -440,7 +430,7 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
   switch (L(t)) {
   case UNINIT:
     if (src_special >= SPECIAL_NORMAL)
-      return tree (MARK, var, highlight ("?", "", "error"));
+      return tree (MARK, var, highlight ("?", "error"));
     else return rewrite_inactive_default (t, var, block, flush);
   case RAW_DATA:
     return rewrite_inactive_raw_data (t, var, block, flush);

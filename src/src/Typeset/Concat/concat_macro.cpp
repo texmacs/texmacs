@@ -146,12 +146,8 @@ concater_rep::typeset_auto (tree t, path ip, tree f) {
 void
 concater_rep::typeset_include (tree t, path ip) {
   url file_name= as_string (t[0]);
-  url incl_file= relative (env->base_file_name, file_name);
-  tree incl= load_inclusion (incl_file);
-  url save_name= env->cur_file_name;
-  env->cur_file_name= incl_file;
+  tree incl= load_inclusion (relative (env->base_file_name, file_name));
   typeset_dynamic (incl, ip);
-  env->cur_file_name= save_name;
 }
 
 void
@@ -237,7 +233,7 @@ concater_rep::typeset_eval_args (tree t, path ip) {
 
 void
 concater_rep::typeset_mark (tree t, path ip) {
-  // cout << "Mark: " << t << ", " << ip << "\n\n";
+  // cout << "Argument " << t << ", " << ip << "\n";
   if (is_func (t[0], ARG) &&
       is_atomic (t[0][0]) &&
       (!nil (env->macro_arg)) &&

@@ -110,8 +110,8 @@ lazy_surround_rep::query (lazy_type request, format fm) {
     query_vstream_width qvw= (query_vstream_width) fm;
     array<line_item> before= qvw->before;
     array<line_item> after = qvw->after;
-    if (N(a) != 0) before= join (before, a);
-    if (N(b) != 0) after = join (b, after);
+    if (N(a) != 0) before= join (a, before);
+    if (N(b) != 0) after = join (after, b);
     format tmp_fm= make_query_vstream_width (before, after);
     return par->query (request, tmp_fm);
   }
@@ -128,8 +128,8 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
       width = fs->width ;
-      before= join (fs->before, before);
-      after = join (after, fs->after);
+      before= join (before, fs->before);
+      after = join (fs->after, after);
     }
     format ret_fm= make_format_vstream (width, before, after);
     return par->produce (request, ret_fm);
@@ -144,7 +144,7 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
 lazy
 make_lazy_formatting (edit_env env, tree t, path ip, string v) {
   int last= N(t)-1;
-  tree new_format= env->read (v) * t (0, last);
+  tree new_format= join (env->read (v), t (0, last));
   tree old_format= env->local_begin (v, new_format);
   array<line_item> a;
   array<line_item> b;
@@ -277,19 +277,6 @@ make_lazy_rewrite (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Eval
-******************************************************************************/
-
-lazy
-make_lazy_eval (edit_env env, tree t, path ip) {
-  tree r= env->exec (is_func (t, EVAL, 1)? t[0]: tree (QUASIQUOTE, t[0]));
-  array<line_item> a= typeset_marker (env, descend (ip, 0));
-  array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, r, decorate_right (ip));
-  return lazy_surround (a, b, par, ip);
-}
-
-/******************************************************************************
 * Auto
 ******************************************************************************/
 
@@ -373,7 +360,6 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 
 lazy
 make_lazy_mark (edit_env env, tree t, path ip) {
-  // cout << "Lazy mark: " << t << ", " << ip << "\n";
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
 
@@ -417,10 +403,12 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 
 static tree inactive_m
   (MACRO, "x",
-   tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*"));
+   tree (WITH, "right-flush", tree (MACRO, ""),
+	 tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*")));
 static tree var_inactive_m
   (MACRO, "x",
-   tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*"));
+   tree (WITH, "right-flush", tree (MACRO, ""),
+	 tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*")));
 
 lazy
 make_lazy (edit_env env, tree t, path ip) {
@@ -445,9 +433,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
-  case EVAL:
-  case QUASI:
-    return make_lazy_eval (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case EXTERN:

@@ -67,16 +67,16 @@ initialize_default_env () {
   env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
 
-  env (PROG_LANGUAGE)    = "scheme";    // the default programming language
+  env (PROG_LANGUAGE)    = "?";         // the default programming language
   env (PROG_FONT)        = "roman";     // the font name in prog mode
   env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
   env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
-  env (PROG_SESSION)     = "default";   // computer algebra session name
+  env (PROG_SESSION)     = "?";         // computer algebra session name
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_HYPHEN)       = "normal";    // quality of hyphenation
-  env (PAR_WIDTH)        = "auto";      // width of paragraph
+  env (PAR_WIDTH)        = "15cm";      // width of paragraph
   env (PAR_LEFT)         = "0cm";       // left indentation
   env (PAR_RIGHT)        = "0cm";       // right indentation
   env (PAR_FIRST)        = "1.5fn";     // extra first indentation
@@ -92,21 +92,15 @@ initialize_default_env () {
   env (PAGE_MEDIUM)      = "papyrus";   // paper medium: paper, papyrus, auto
   env (PAGE_TYPE)        = "a4";        // paper type (-> width & height)
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
-  env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
-  env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
   env (PAGE_BREAKING)    = "optimal";   // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1.0";       // flexibility factor of stretch
   env (PAGE_NR)          = "0";         // the page number
   env (PAGE_THE_PAGE)    = the_page;    // the page number as text
-  env (PAGE_WIDTH)       = "auto";      // physical width of pages
-  env (PAGE_HEIGHT)      = "auto";      // physical height of pages
-  env (PAGE_ODD)         = "auto";      // left margin on odd pages
-  env (PAGE_EVEN)        = "auto";      // left margin on even pages
-  env (PAGE_RIGHT)       = "auto";      // right margin in auto mode
-  env (PAGE_TOP)         = "auto";      // top margin
-  env (PAGE_BOT)         = "auto";      // bottom margin
-  env (PAGE_ODD_SHIFT)   = "0mm";       // odd page marginal shift wrt center
-  env (PAGE_EVEN_SHIFT)  = "0mm";       // even page marginal shift wrt center
+  env (PAGE_ODD)         = "30mm";      // left margin on odd pages
+  env (PAGE_EVEN)        = "30mm";      // left margin on even pages
+  env (PAGE_RIGHT)       = "30mm";      // right margin in auto mode
+  env (PAGE_TOP)         = "30mm";      // top margin
+  env (PAGE_BOT)         = "30mm";      // bottom margin
   env (PAGE_SHRINK)      = "1fn";       // emergency page length shrinking
   env (PAGE_EXTEND)      = "0fn";       // emergency page length extension
   env (PAGE_HEAD_SEP)    = "8mm";       // separation between header and text
@@ -115,12 +109,10 @@ initialize_default_env () {
   env (PAGE_ODD_FOOTER)  = "";          // footer on odd pages
   env (PAGE_EVEN_HEADER) = "";          // header on even pages
   env (PAGE_EVEN_FOOTER) = "";          // footer on even pages
-  env (PAGE_SCREEN_WIDTH)  = "10cm";    // width of current window (for auto)
-  env (PAGE_SCREEN_HEIGHT) = "10cm";    // height of current window (for auto)
-  env (PAGE_SCREEN_LEFT) = "5mm";       // left margin for screen editing
-  env (PAGE_SCREEN_RIGHT)= "5mm";       // right margin for screen editing
-  env (PAGE_SCREEN_TOP)  = "15mm";      // top margin for screen editing
-  env (PAGE_SCREEN_BOT)  = "15mm";      // bottom margin for screen editing
+  env (PAGE_REDUCE_LEFT) = "25mm";      // screen reduction of left margin
+  env (PAGE_REDUCE_RIGHT)= "25mm";      // screen reduction of right margin
+  env (PAGE_REDUCE_TOP)  = "15mm";      // screen reduction of top margin
+  env (PAGE_REDUCE_BOT)  = "15mm";      // screen reduction of bottom margin
   env (PAGE_SHOW_HF)     = "false";     // show header and footer
   env (PAGE_FNOTE_SEP)   = "1.0fn";     // space between text & footnotes
   env (PAGE_FNOTE_BARLEN)= "7.5fn";     // length of footnote separating bar
@@ -177,8 +169,6 @@ initialize_default_env () {
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
-  env (POINT_STYLE)      = "disk";      // point style (square, circle...)
-
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
   env (LINE_ARROWS)      = "none";      // arrows at end of lines
@@ -221,25 +211,19 @@ initialize_default_env () {
 		tree (ARG, "x")));
   env ("rightflush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
-  env ("mutator")=
-    tree (MACRO, "x", "y", tree (ARG, "x"));
 
   /* syntactic highlighting */
   env ("src-macro")=
-    tree (MACRO, "x", tree (WITH, COLOR, "blue",
-			    FONT_FAMILY, "ss", tree (ARG, "x")));
-  env ("src-var")=
-    tree (MACRO, "x", tree (WITH, COLOR, "dark green",
-			    FONT_SHAPE, "italic", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "blue", tree (ARG, "x")));
+  env ("src-id")=
+    tree (MACRO, "x", tree (WITH, COLOR, "dark green", tree (ARG, "x")));
   env ("src-arg")=
-    tree (MACRO, "x", tree (WITH, COLOR, "brown",
-			    FONT_SHAPE, "italic", tree (ARG, "x")));
+    tree (MACRO, "x", tree (WITH, COLOR, "brown", tree (ARG, "x")));
   env ("src-tt")=
-    tree (MACRO, "x", tree (WITH, COLOR, "#224",
-			    FONT_FAMILY, "tt", tree (ARG, "x")));
+    tree (MACRO, "x",
+	  tree (WITH, COLOR, "dark green", FONT_FAMILY, "tt",
+		tree (ARG, "x")));
   env ("src-integer")=
-    tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
-  env ("src-length")=
     tree (MACRO, "x", tree (WITH, COLOR, "dark grey", tree (ARG, "x")));
   env ("src-error")=
     tree (MACRO, "x", tree (WITH, COLOR, "red", tree (ARG, "x")));

@@ -64,7 +64,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;(define (make-insertion s)
-;  (insert-go-to
+;  (insert-object-go-to
 ;   (list 'float s
 ;	 (if (string=? s "float") "tbh" "")
 ;	 (list 'document ""))
@@ -82,14 +82,16 @@
 ;	 (string->tree ((if flag
 ;			    string-include
 ;			    string-exclude) (tree->string
-;					     (tm-subtree (rcons p 1)))
+;					     (subtree (the-buffer)
+;						      (rcons p 1)))
 ;			    what))))))
 
 (define (test-insertion-position? what)
   (let ((p (search-upwards "float"))
 	(c (string-ref what 0)))
     (if (not (null? p))
-	(char-in-string? c (tree->string (tm-subtree (rcons p 1)))))))
+	(char-in-string? c (tree->string
+			    (subtree (the-buffer) (rcons p 1)))))))
 
 (tm-define (toggle-insertion-position what)
   (:check-mark "v" test-insertion-position?)

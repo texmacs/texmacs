@@ -29,7 +29,7 @@ void
 edit_text_rep::correct_concat (path p, int done) {
   tree t (subtree (et, p));
   if (L(t) != CONCAT) {
-    cerr << "\nThe tree was <" << t << ">\n";
+    cerr << "\nThe tree was " << t << "\n";
     fatal_error ("concat expected", "edit_text_rep::correct_concat");
   }
 
@@ -173,7 +173,7 @@ edit_text_rep::prepare_for_insert () {
     return prepare_for_insert ();
   }
 
-  if ((rp < p) && is_concat (subtree (et, path_up (p)))) {
+  if ((!nil(p)) && is_concat (subtree (et, path_up (p)))) {
     if (l==0) return p;
     if (is_compound (st) || (l==N(st->label))) return path_inc (p);
     split (tp);
@@ -380,7 +380,7 @@ edit_text_rep::make_postscript (
   }
   else {
     string s;
-    load_string (relative (get_name (), image), s);
+    load_string (image, s);
     if (s == "") {
       set_message ("File#'" * as_string (image) * "' not found", "make image");
       return;

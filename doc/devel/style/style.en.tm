@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -34,27 +34,26 @@
   packages may be used together.
 
   When you want to add your own markup to <TeXmacs> or personalize the
-  layout, then you have to choose between writing a principal style file or a
+  layout, then you have to choose between writing a pricipal style file or a
   style package. In most cases, you will probably prefer to write a style
   package, since this will allow you to combine it arbitrary other styles.
   However, in some cases you may prefer to create a new principal style,
   usually by personalizing an existing style. This is usually the case if you
-  want to mimic the layout policy of some journal. In this chapter, we will
+  want to mimick the layout policy of some journal. In this chapter, we will
   both explain how to write your own style packages and how to customize the
   standard styles.
 
   <\traverse>
     <branch|Writing a simple style package|design/style-example.en.tm>
 
-    <branch|Rendering of style files and packages|presentation/src-present.en.tm>
+    <branch|The standard <TeXmacs> styles|standard/standard.en.tm>
 
-    <branch|The style-sheet language|design/style-language.en.tm>
+    <branch|Writing your own style files|design/design.en.tm>
 
-    <branch|Customizing the standard <TeXmacs>
-    styles|customize/customize.en.tm>
+    <branch|Customizing the <TeXmacs> styles|customize/customize.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

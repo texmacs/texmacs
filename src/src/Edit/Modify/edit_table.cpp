@@ -90,7 +90,7 @@ edit_table_rep::search_format () {
 
 path
 edit_table_rep::search_format (path p) {
-  if (!(rp < p)) return path ();
+  if (nil (p)) return p;
   if (is_func (subtree (et, p), TFORMAT)) return p;
   if (is_func (subtree (et, path_up (p)), TFORMAT)) return path_up (p);
   return p;
@@ -228,7 +228,7 @@ tree
 edit_table_rep::table_get_format (path fp) {
   tree fm= get_env_value (CELL_FORMAT, fp * 0);
   tree st= subtree (et, fp);
-  return fm * st (0, N(st)-1);
+  return ::join (fm, st (0, N(st)-1));
 }
 
 void
@@ -614,12 +614,12 @@ edit_table_rep::back_table (path p, bool forward) {
     }
     p= p * (N(st)-1);
   }
-  while (rp < p) {
+  while (!nil (p)) {
     tree st= subtree (et, p);
     if (is_func (st, TABLE)) break;
     p= path_up (p);
   }
-  if (!(rp < p)) return;
+  if (nil (p)) return;
 
   if (forward) table_go_to (p, 0, 0, true);
   else {
@@ -692,16 +692,16 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     if (col>0) { table_go_to (p, row, col-1, false); return; }
     if (row>0) { table_go_to (p, row-1, nr_cols-1, false); return; }
   }
-  while ((rp < p) && (is_func (subtree (et, path_up (p)), TFORMAT)))
+  while ((!nil (p)) && (is_func (subtree (et, path_up (p)), TFORMAT)))
     p= path_up (p);
-  if ((rp < p) &&
+  if ((!nil (p)) &&
       is_document (subtree (et, path_up (p))) &&
-      (rp < path_up (p)) &&
+      (!nil (path_up (p))) &&
       is_extension (subtree (et, path_up (p, 2)), 1))
     p= path_up (p);
-  if ((rp < p) && is_extension (subtree (et, path_up (p)), 1))
+  if ((!nil (p)) && is_extension (subtree (et, path_up (p)), 1))
     p= path_up (p);
-  if ((rp < p) && is_func (subtree (et, path_up (p)), SUBTABLE, 1))
+  if ((!nil (p)) && is_func (subtree (et, path_up (p)), SUBTABLE, 1))
     p= path_up (p);
   go_to_border (p, !forward);
 }
@@ -887,7 +887,7 @@ table_undecorate (tree st, int row, int col) {
 	search_decoration (T, dec_row, dec_col);
 	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
 	tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
-	return F * T;
+	return join (F, T);
       }
   fatal_error ("decoration not found", "table_undecorate");
   return ""; // avoids error message when C++ compiler behaves badly
@@ -1043,19 +1043,19 @@ void
 edit_table_rep::destroy_table () {
   path fp= search_format ();
   if (nil (fp)) return;
-  while (rp < fp) {
+  while (!nil (fp)) {
     tree st= subtree (et, path_up (fp));
     if (!is_func (st, TFORMAT)) break;
     fp= path_up (fp);
   }
-  if ((rp < fp) &&
+  if ((!nil (fp)) &&
       is_document (subtree (et, path_up (fp))) &&
-      (rp < path_up (fp)) &&
+      (!nil (path_up (fp))) &&
       is_extension (subtree (et, path_up (fp, 2)), 1))
     fp= path_up (fp);
-  if ((rp < fp) && is_extension (subtree (et, path_up (fp)), 1))
+  if ((!nil (fp)) && is_extension (subtree (et, path_up (fp)), 1))
     fp= path_up (fp);
-  if ((rp < fp) && is_func (subtree (et, path_up (fp)), SUBTABLE, 1))
+  if ((!nil (fp)) && is_func (subtree (et, path_up (fp)), SUBTABLE, 1))
     fp= path_up (fp);
   assign (fp, "");
   correct (path_up (fp));

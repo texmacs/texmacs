@@ -13,7 +13,6 @@
 #include "boot.hpp"
 #include "file.hpp"
 #include "server.hpp"
-#include "timer.hpp"
 
 extern bool   char_clip;
 extern url    tm_init_file;
@@ -22,8 +21,6 @@ extern string my_init_cmds;
 
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
-
-extern tree   the_et;
 
 /******************************************************************************
 * Real main program for encaptulation of guile
@@ -39,17 +36,13 @@ TeXmacs_main (int argc, char** argv) {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
-      else if ((s == "-V") || (s == "-verbose"))
-	debug (DEBUG_FLAG_VERBOSE, true);
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
       else if (s == "-debug-io") debug (DEBUG_FLAG_IO, true);
-      else if (s == "-debug-bench") debug (DEBUG_FLAG_BENCH, true);
       else if (s == "-debug-all") {
 	debug (DEBUG_FLAG_EVENTS, true);
 	debug (DEBUG_FLAG_STD, true);
 	debug (DEBUG_FLAG_IO, true);
-	debug (DEBUG_FLAG_BENCH, true);
       }
       else if ((s == "-fn") || (s == "-font")) {
 	i++;
@@ -139,7 +132,6 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
-	cout << "  -V         Show some informative messages\n";
 	cout << "  -x [cmd]   Execute scheme command\n";
 	cout << "  -Oc        TeX characters bitmap clipping off\n";
 	cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
@@ -150,10 +142,9 @@ TeXmacs_main (int argc, char** argv) {
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
 
-  if (DEBUG_STD) cout << "TeXmacs] Installing internal plug-ins...\n";
-  bench_start ("initialize plugins");
+  if (DEBUG_AUTO) cout << "\n";
+  if (DEBUG_STD) cout << "TeXmacs] Installing TeX...\n";
   init_plugins ();
-  bench_cumul ("initialize plugins");
   if (DEBUG_STD) cout << "TeXmacs] Opening display...\n";
   display dis= open_display (argc, argv);
   dis->set_default_font (the_default_font);
@@ -194,11 +185,6 @@ TeXmacs_main (int argc, char** argv) {
 #endif
   }
 
-  bench_print ();
-  bench_reset ("initialize texmacs");
-  bench_reset ("initialize plugins");
-  bench_reset ("initialize scheme");
-
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
   sv->delayed_autosave();
   dis->delayed_message (sv->get_meta(), "banner", 100);
@@ -215,12 +201,7 @@ TeXmacs_main (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-  // cout << "Bench  ] Started TeXmacs\n";
-  the_et     = tuple ();
-  the_et->obs= ip_observer (path ());
-  bench_start ("initialize texmacs");
   init_texmacs ();
-  bench_cumul ("initialize texmacs");
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

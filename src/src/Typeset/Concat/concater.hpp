@@ -58,10 +58,9 @@ class concater_rep {
 
   // mathematical markup
   void typeset_group (tree t, path ip);
-  void typeset_large (tree t, path ip, int type, string prefix);
-  //void typeset_left (tree t, path ip);
-  //void typeset_middle (tree t, path ip);
-  //void typeset_right (tree t, path ip);
+  void typeset_left (tree t, path ip);
+  void typeset_middle (tree t, path ip);
+  void typeset_right (tree t, path ip);
   void typeset_bigop (tree t, path ip);
   void typeset_lprime (tree t, path ip);
   void typeset_rprime (tree t, path ip);
@@ -121,7 +120,6 @@ class concater_rep {
   void typeset_text_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   void typeset_line (tree t, path ip, bool close);
-  void typeset_arc (tree t, path ip);
   void typeset_spline (tree t, path ip, bool close);
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);

@@ -1,20 +1,37 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.2.3>
 
 <style|tmweb>
 
 <\body>
-  <tmweb-current|Help|FAQ><tmweb-title|Frequently asked
-  questions|<tmweb-help-links>>
+  <apply|tmweb-current|Help|FAQ><expand|tmweb-title|Frequently asked
+  questions|<apply|tmweb-help-links>>
 
-  <tmdoc-include|main/faq/faq.en.tm>
+  <apply|tmdoc-include|main/faq/faq.en.tm>
 
-  <tmdoc-copyright|1999--2003|Andreas Seidl|Joris van der Hoeven>
+  <apply|tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
-  <tmweb-license>
+  <expand|tmweb-license>
 </body>
 
 <\initial>
   <\collection>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|gly-1|<tuple|1|?>>
+  </collection>
+</references>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.4>
 
 <style|source>
 
@@ -35,48 +35,19 @@
 
   <\active*>
     <\src-comment>
-      Content markup. Also used for indexing purposes. The <verbatim|markup>
-      macro should be replaced by <verbatim|src-macro>.
+      Content markup. Also used for indexing purposes.
     </src-comment>
   </active*>
 
-  <assign|indexed|<macro|x|<arg|x><index|<arg|x>>>>
+  <assign|markup|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|dark
+  green|<arg|x>><index|<with|font-family|tt|color|dark green|<arg|x>>>>>>
 
-  <assign|markup|<macro|x|<src-macro|<arg|x>>>>
+  <assign|tmstyle|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|brown|<arg|x>><index|<with|font-family|tt|color|brown|<arg|x>>>>>>
 
-  <assign|tmstyle|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
+  <assign|tmpackage|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|brown|<arg|x>><index|<with|font-family|tt|color|brown|<arg|x>>>>>>
 
-  <assign|tmpackage|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
-
-  <assign|tmdtd|<macro|x|<indexed|<with|font-family|tt|color|dark
-  magenta|<arg|x>>>>>
-
-  <\active*>
-    <\src-comment>
-      Documentation of <TeXmacs> macros.
-    </src-comment>
-  </active*>
-
-  <assign|explain|<\macro|what|body>
-    <\with|par-first|0fn|par-par-sep|0fn>
-      <surround|<vspace*|0.5fn>|<no-page-break>|<arg|what>>
-    </with>
-
-    <surround||<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>
-  </macro>>
-
-  <assign|explain-macro-sub|<macro|x|pos|<if|<equal|<arg|pos>|0>|<indexed|<src-macro|<arg|x>>>|<src-arg|<arg|x>>>>>
-
-  <assign|explain-macro|<xmacro|args|<map-args|explain-macro-sub|inline-tag|args>>>
-
-  <drd-props|explain-macro|arity|<tuple|repeat|1|1>|accessible|all>
-
-  <assign|explain-synopsis|<macro|x|<htab|5mm><with|color|dark
-  grey|(<arg|x>)><vspace|0.25fn>>>
-
-  <assign|src-value|<macro|x|<with|font-shape|right|color|black|<arg|x>>>>
-
-  <assign|var-val|<macro|var|val|<src-var|<arg|var>><active*|<with|mode|math|\<assign\>>><with|font-family|tt|<arg|val>>>>
+  <assign|tmdtd|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|dark
+  magenta|<arg|x>><index|<with|font-family|tt|color|dark magenta|<arg|x>>>>>>
 
   <\active*>
     <\src-comment>
@@ -112,19 +83,11 @@
 
   <assign|cpp|<name|C++>>
 
-  <assign|framed-table|<macro|x|<with|color|dark
-  grey|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|pastel
-  blue>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|x>>>>>
-
-  <assign|framed-fragment|<macro|x|<framed-table|<tformat|<table|<row|<\cell>
+  <assign|framed-fragment|<macro|x|<with|color|dark
+  grey|<block|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|pastel
+  blue>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<\cell>
     <with|color|black|<arg|x>>
-  </cell>>>>>>>
-
-  <assign|framed-fragment*|<\macro|x>
-    <framed-table|<tformat|<twith|table-width|0.45par>|<table|<row|<\cell>
-      <with|color|black|<arg|x>>
-    </cell>>>>>
-  </macro>>
+  </cell>>>>>>>>
 
   <assign|scheme-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
@@ -180,7 +143,19 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
     <associate|par-par-sep|0fn>
+    <associate|par-width|150mm>
     <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

@@ -41,7 +41,7 @@
 	(else (xor-sub (cdr l)))))
 
 (tm-define (xor . l)
-  (:type (-> (tuple bool) bool))
+  (:type ((tuple bool) -> bool))
   (:synopsis "Exclusive or of all elements in @l.")
   (xor-sub l))
 
@@ -52,46 +52,46 @@
 ;; NOTE: guile-1.6.0 implements SRFI-13 (string library) in C.
 
 (tm-define (char->string c)
-  (:type (-> char string))
+  (:type (char -> string))
   (:synopsis "Convert @c to a string")
   (list->string (list c)))
 
 (tm-define (string-tail s n)
-  (:type (-> string int string))
+  (:type (string int -> string))
   (:synopsis "Return all but the first @n chars of @s.")
   (substring s n (string-length s)))
 
 (tm-define (char-in-string? c s)
-  (:type (-> char string bool))
+  (:type (char string -> bool))
   (:synopsis "Test whether @c occurs in @s")
   (not (== (string-index s c) #f)))
 
 (tm-define (string-starts? s what)
-  (:type (-> string string bool))
+  (:type (string string -> bool))
   (:synopsis "Test whether @s starts with @what.")
   (let ((n (string-length s))
 	(k (string-length what)))
     (and (>= n k) (== (substring s 0 k) what))))
 
 (tm-define (string-ends? s what)
-  (:type (-> string string bool))
+  (:type (string string -> bool))
   (:synopsis "Test whether @s ends with @what.")
   (let ((n (string-length s))
 	(k (string-length what)))
     (and (>= n k) (== (substring s (- n k) n) what))))
 
 (tm-define (string-contains? s what)
-  (:type (-> string string bool))
+  (:type (string string -> bool))
   (:synopsis "Test whether @s contains @what as a substring.")
   (>= (string-search-forwards what 0 s) 0))
 
 (tm-define (force-string s)
-  (:type (-> object string))
+  (:type (object -> string))
   (:synopsis "Return @s if @s is a string and the empty string otherwise")
   (if (string? s) s ""))
 
 (tm-define (reverse-list->string cs)	; srfi-13
-  (:type (-> (list char) string))
+  (:type ((list char) -> string))
   (:synopsis "Efficient implementation of (compose list->string reverse).")
   ;; Not yet any more efficient, but this may be fixed in the future.
   (list->string (reverse cs)))
@@ -104,19 +104,19 @@
     ((ss delim) (string-concatenate (list-intersperse ss delim)))))
 
 (tm-define (string-drop-right s n)	; srfi-13
-  (:type (-> string int string))
+  (:type (string int -> string))
   (:synopsis "Return all but the last @n chars of @s.")
   (substring s 0 (- (string-length s) n)))
 
 (define string-drop string-tail)	; srfi-13
 
 (tm-define (string-take s n)		; srfi-13
-  (:type (-> string int string))
+  (:type (string int -> string))
   (:synopsis "Return the first @n chars of @s.")
   (substring s 0 n))
 
 (tm-define (string-trim s)		; srfi-13 (subset)
-  (:type (-> string string))
+  (:type (string -> string))
   (:synopsis "Remove whitespace at start of @s.")
   (list->string (list-drop-while (string->list s) char-whitespace?)))
 
@@ -124,12 +124,12 @@
   (reverse! (list-drop-while (reverse l) pred)))
 
 (tm-define (string-trim-right s)	; srfi-13 (subset)
-  (:type (-> string string))
+  (:type (string -> string))
   (:synopsis "Remove whitespace at end of @s.")
   (list->string (list-drop-right-while (string->list s) char-whitespace?)))
 
 (tm-define (string-trim-both s)		; srfi-13 (subset)
-  (:type (-> string string))
+  (:type (string -> string))
   (:synopsis "Remove whitespace at start and end of @s.")
   (list->string
    (list-drop-right-while
@@ -137,26 +137,28 @@
     char-whitespace?)))
 
 (tm-define (string-concatenate ss)	; srfi-13
-  (:type (-> (list string) string))
+  (:type ((list string) -> string))
   (:synopsis "Append the elements of @ss toghether.")
   ;; WARNING: not portable for long lists
   (apply string-append ss))
 
 (tm-define (string-map proc s) 		; srfi-13 (subset)
-  (:type (-> (-> char char) string string))
+  (:type ((char -> char) string -> string))
   (:synopsis "Map @proc on every char of @s.")
   (list->string (map proc (string->list s))))
 
 (tm-define (string-fold kons knil s) 	; srfi-13 (subset))
+  (:type ((char T -> T) T string -> T))
   (:synopsis "Fundamental string iterator.")
   (list-fold kons knil (string->list s)))
 
 (tm-define (string-fold-right kons knil s) ; srfi-13 (subset)
+  (:type ((char T -> T) T string -> T))
   (:synopsis "Right to left fundamental string iterator.")
   (list-fold-right kons knil (string->list s)))
 
 (tm-define (string-split-lines s)
-  (:type (-> string (list string)))
+  (:type (string -> (list string)))
   (:synopsis "List of substrings of @s separated by newlines.")
   (map list->string
        (list-fold-right string-split-lines/kons '(()) (string->list s))))
@@ -167,7 +169,7 @@
       (cons (cons c (car cs+lines)) (cdr cs+lines))))
 		
 (tm-define (string-tokenize s c)
-  (:type (-> string char (list string)))
+  (:type (string char -> (list string)))
   (:synopsis "Cut string @s into pieces using @c as a separator.")
   (with d (string-index s c)
     (if d
@@ -176,7 +178,7 @@
 	(list s))))
 
 (tm-define (string-tokenize-n s c n)
-  (:type (-> string char int (list string)))
+  (:type (string char int -> (list string)))
   (:synopsis "As @string-tokenize, but only cut first @n pieces")
   (with d (string-index s c)
     (if (or (= n 0) (not d))
@@ -191,12 +193,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (compose g f)
-  (:type (forall A B C (-> (-> B C) (-> A B) (-> A C))))
+  (:type ((B -> C) (A -> B) -> (A -> C)))
   (:synopsis "Compose the functions @f and @g")
   (lambda x (g (apply f x))))
 
 (tm-define (negate pred?)
-  (:type (forall T (-> (-> T bool) (-> T bool))))
+  (:type ((T -> bool) -> (T -> bool)))
   (:synopsis "Return the negation of @pred?.")
   (lambda args (not (apply pred? args))))
 
@@ -212,7 +214,7 @@
 
 (tm-define (fill-dictionary d l)
   (:type (forall Key Im
-		 (-> (alias (ahash-table Key Im)) (list (cross Key Im)) void)))
+	   ((alias (ahash-table Key Im)) (list (cross Key Im)) ->)))
   (:synopsis "Fill hash table @d with list of entries @l")
   (:warning "Depreciated")
   (if (not (null? l))
@@ -226,14 +228,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (string->object s)
-  (:type (-> string object))
+  (:type (string -> object))
   (:synopsis "Parse @s and build scheme object")
   (call-with-input-string s read))
 
 (tm-define (func? x f . opts)
-  (:type (-> stree symbol bool)
-	 (-> stree symbol int bool))
-  (:synopsis "Is @x a list with first stree @f?"
+  (:type (object symbol -> bool)
+	 (object symbol int -> bool))
+  (:synopsis "Is @x a list with first object @f?"
 	     "Optionally test the length of @x.")
   (let ((n (length opts)))
     (cond ((= n 0) (and (list? x) (not (null? x)) (== (car x) f)))
@@ -244,9 +246,9 @@
 	  (else (error "Too many arguments.")))))
 
 (tm-define (tuple? x . opts)
-  (:type (-> stree bool)
-	 (-> stree symbol bool)
-	 (-> stree symbol int bool))
+  (:type (object -> bool)
+	 (object symbol -> bool)
+	 (object symbol int -> bool))
   (:synopsis "Equivalent to @list? without options"
 	     "Equivalent to @func? otherwise")
   (if (null? opts)

@@ -28,34 +28,18 @@ edit_modify_rep::~edit_modify_rep () {}
 * modification routines
 ******************************************************************************/
 
-// FIXME: the following notification loop is slow when we have many
-// open buffers. In the future, we might obtain the relevant editors
-// from all possible prefixes of p using a hashtable
-
-#define FOR_ALL_EDITORS_BEGIN(p) \
-  int i, j; \
-  for (i=0; i<sv->nr_bufs(); i++) { \
-    tm_buffer b= sv->get_buf (i); \
-    if (b->rp <= p) \
-      for (j=0; j<N(b->vws); j++) { \
-	editor& ed= ((tm_view) (b->vws[j]))->ed;
-
-#define FOR_ALL_EDITORS_END \
-      } \
-  }
-
 void
 edit_modify_rep::assign (path pp, tree u) {
   path p= copy (pp);
   // cout << "Assign " << u << " at " << p << "\n";
   notify_undo ("assign", p, subtree (et, p));
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_assign (p, u);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_assign (et, p, u);
 
-  ::assign (subtree (et, p), u);
-  finished (pp);
+  subtree (et, p)= u;
+  finished ();
 }
 
 void
@@ -64,12 +48,12 @@ edit_modify_rep::insert (path pp, tree u) {
   // cout << "Insert " << u << " at " << p << "\n";
   notify_undo ("remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_insert (p, u);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_insert (et, p, u);
 
-  ::insert (subtree (et, path_up (p)), last_item (p), u);
-  finished (pp);
+  insert_at (et, p, u);
+  finished ();
 }
 
 void
@@ -82,12 +66,12 @@ edit_modify_rep::remove (path pp, int nr) {
   if (is_atomic (st)) notify_undo ("insert", p, st->label (l, l+ nr));
   else notify_undo ("insert", p, st (l, l+ nr));
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_remove (p, nr);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_remove (et, p, nr);
 
-  ::remove (subtree (et, path_up (p)), last_item (p), nr);
-  finished (pp);
+  remove_at (et, p, nr);
+  finished ();
 }
 
 void
@@ -100,12 +84,23 @@ edit_modify_rep::split (path pp) {
   int  l2 = last_item (p);
   notify_undo ("join", path_up (p), "");
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_split (p);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_split (et, p);
 
-  ::split (st, l1, l2);
-  finished (pp);
+  if (is_atomic (st[l1])) {
+    string s1, s2;
+    ::split (st[l1]->label, l2, s1, s2);
+    st[l1]= s2;
+    st= insert_one (st, l1, tree (s1));
+  }
+  else {
+    tree st1, st2;
+    ::split (st[l1], l2, st1, st2);
+    st[l1]= st2;
+    st= insert_one (st, l1, st1);
+  }
+  finished ();
 }
 
 void
@@ -121,12 +116,18 @@ edit_modify_rep::join (path pp) {
   int len= string_mode? N (st[l1]->label): arity (st[l1]);
   notify_undo ("split", p * len, "");
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_join (p);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_join (et, p);
 
-  ::join (st, l1);
-  finished (pp);
+  if (string_mode) st[l1]->label << st[l1+1]->label;
+  else {
+    if (is_atomic (st[l1  ])) st[l1  ]= tree (L(st[l1+1]), st[l1  ]);
+    if (is_atomic (st[l1+1])) st[l1+1]= tree (L(st[l1  ]), st[l1+1]);
+    st[l1] << A (st[l1+1]);
+  }
+  st= ::remove (st, l1+1, 1);
+  finished ();
 }
 
 void
@@ -135,12 +136,13 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
   // cout << "Insert unary " << get_label (tree (op)) << " at " << p << "\n";
   notify_undo ("rem_unary", p, "");
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_ins_unary (p, op);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_ins_unary (et, p, op);
 
-  ::ins_unary (subtree (et, p), op);
-  finished (pp);
+  tree& st= subtree (et, p);
+  st= tree (op, st);
+  finished ();
 }
 
 void
@@ -151,19 +153,19 @@ edit_modify_rep::rem_unary (path pp) {
   if (arity (st) != 1) fatal_error ("not a unary tree", "editor::rem_unary");
   notify_undo ("ins_unary", p, get_label (st));
 
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_rem_unary (p);
-  FOR_ALL_EDITORS_END
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->notify_rem_unary (et, p);
 
-  ::rem_unary (st);
-  finished (pp);
+  st= st[0];
+  finished ();
 }
 
 void
-edit_modify_rep::finished (path pp) {
-  FOR_ALL_EDITORS_BEGIN (pp)
-    ed->post_notify (pp);
-  FOR_ALL_EDITORS_END
+edit_modify_rep::finished () {
+  int i;
+  for (i=0; i<N(buf->vws); i++)
+    ((tm_view) (buf->vws[i]))->ed->post_notify (et);
 }
 
 /******************************************************************************
@@ -181,17 +183,17 @@ edit_modify_rep::finished (path pp) {
   tp= pps[0]
 
 void
-edit_modify_rep::notify_assign (path p, tree u) { (void) u;
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_assign (tree& t, path p, tree u) { (void) u;
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p<pp) pp= p * 0;
   FOR_ALL_POINTERS_END;
-  ::notify_assign (get_typesetter (), p - rp, u);
+  ::notify_assign (get_typesetter (), p, u);
 }
 
 void
-edit_modify_rep::notify_insert (path p, tree u) {
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_insert (tree& t, path p, tree u) {
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if ((N(p)>=2) && path_inf (path_up (p), pp));
     else if (path_inf (p, pp) || (p <= pp)) {
@@ -199,12 +201,12 @@ edit_modify_rep::notify_insert (path p, tree u) {
       pp[N(p)-1] += nr;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_insert (get_typesetter (), p - rp, u);
+  ::notify_insert (get_typesetter (), p, u);
 }
 
 void
-edit_modify_rep::notify_remove (path p, int nr) {
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_remove (tree& t, path p, int nr) {
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if ((N(p)>=2) && path_inf (path_up (p), pp));
     else {
@@ -219,12 +221,12 @@ edit_modify_rep::notify_remove (path p, int nr) {
       }
     }
   FOR_ALL_POINTERS_END;
-  ::notify_remove (get_typesetter (), p - rp, nr);
+  ::notify_remove (get_typesetter (), p, nr);
 }
 
 void
-edit_modify_rep::notify_split (path p) {
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_split (tree& t, path p) {
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if (!(path_up (p, 2) <= path_up (pp)));
     else if (path_up (p, 2) == path_up (pp));
@@ -240,12 +242,12 @@ edit_modify_rep::notify_split (path p) {
       pp[N(p)-1] -= last_item (p);
     }
   FOR_ALL_POINTERS_END;
-  ::notify_split (get_typesetter (), p - rp);
+  ::notify_split (get_typesetter (), p);
 }
 
 void
-edit_modify_rep::notify_join (path p) {
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_join (tree& t, path p) {
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     tree& st= subtree (et, p);
     bool flag = is_atomic (st);
@@ -259,24 +261,24 @@ edit_modify_rep::notify_join (path p) {
       pp[N(p)-1] --;
     }
     FOR_ALL_POINTERS_END;
-  ::notify_join (get_typesetter (), p - rp);
+  ::notify_join (get_typesetter (), p);
 }
 
 void
-edit_modify_rep::notify_ins_unary (path p, tree_label op) { (void) op;
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_ins_unary (tree& t, path p, tree_label op) { (void) op;
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p <= path_up (pp)) {
       path add= path (0, tail (pp, N(p)));
       pp= copy (p) * add;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_ins_unary (get_typesetter (), p - rp, op);
+  ::notify_ins_unary (get_typesetter (), p, op);
 }
 
 void
-edit_modify_rep::notify_rem_unary (path p) {
-  if (!(rp <= p)) return;
+edit_modify_rep::notify_rem_unary (tree& t, path p) {
+  if ((&t)!=(&et)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p == path_up (pp)) {
       if (last_item (pp)==1)
@@ -287,14 +289,13 @@ edit_modify_rep::notify_rem_unary (path p) {
       pp= p * add;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_rem_unary (get_typesetter (), p - rp);
+  ::notify_rem_unary (get_typesetter (), p);
 }
 
 void
-edit_modify_rep::post_notify (path p) {
-  if (!(rp <= p)) return;
+edit_modify_rep::post_notify (tree& t) {
+  if ((&t)!=(&et)) return;
   selection_cancel ();
-  invalidate_mutators ();
   notify_change (THE_TREE);
   FOR_ALL_POINTERS_BEGIN
     pp= correct_cursor (et, pp);
@@ -411,8 +412,6 @@ edit_modify_rep::undo () {
     cerr << '\a';
     set_message ("Your document is back in its original state", "undo");
   }
-  if (inside_graphics ())
-    eval ("(graphics-reset-context 'undo)");
 }
 
 void
@@ -503,28 +502,6 @@ edit_modify_rep::perform_undo_redo (tree x) {
       go_to (end (et, p));
     }
   }
-}
-
-/******************************************************************************
-* Utility for only changing differences (very crude implementation though)
-******************************************************************************/
-
-void
-edit_modify_rep::assign_diff (path p, tree t) {
-  tree st= subtree (et, p);
-  if (t == st) return;
-  assign (p, copy (t));
-  /*
-  if (is_atomic (t) || (L(t) != L(st))) {
-    assign (p, copy (t));
-    return;
-  }
-  int i, n= min (N(st), N(t));
-  for (i=0; i<n; i++)
-    assign_diff (p * i, t[i]);
-  if (n < N(st)) remove (p * n, N(st)-n);
-  else if (n < N(t)) insert (p * n, copy (t) (n, N(t)));
-  */
 }
 
 /******************************************************************************

@@ -189,8 +189,8 @@
 	       (color (if e? "black" "dark grey"))
 	       #t #f)
    (if opt-symobj
-       (make-menu-command (insert opt-symobj))
-       (make-menu-command (insert symstring)))
+       (make-menu-command (insert-object opt-symobj))
+       (make-menu-command (insert-string symstring)))
    #f))
 
 (define (make-menu-symbol p e?)
@@ -403,7 +403,7 @@
 	  (else (make-menu-bad-format p e?)))))
 
 (tm-define (make-menu-widget p e?)
-  (:type (-> object widget))
+  (:type (object -> widget))
   (:synopsis "Transform a menu into a widget.")
   (:args (p "a scheme object which represents the menu")
 	 (e? "greyed menu if @e? is @#f"))
