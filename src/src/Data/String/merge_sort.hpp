@@ -18,7 +18,7 @@ template<class T> struct less_eq_operator {
 };
 
 template<class T, class LEQ> static void
-merge_sort (array<T>& a, int start, int end, array<T> &merge_buf) {
+merge_sort_sub (array<T>& a, int start, int end, array<T> &merge_buf) {
   if (end-start<=1) return;
   if (end-start==2) {
     if (!LEQ::leq(a[start], a[start+1])) {
@@ -29,8 +29,8 @@ merge_sort (array<T>& a, int start, int end, array<T> &merge_buf) {
     return;
   }
   int middle=(start+end)>>1; 
-  merge_sort<T, LEQ> (a,start,middle,merge_buf);
-  merge_sort<T, LEQ> (a,middle,end,merge_buf);
+  merge_sort_sub<T, LEQ> (a,start,middle,merge_buf);
+  merge_sort_sub<T, LEQ> (a,middle,end,merge_buf);
   int i,j,k;
   for (i=start, j=middle, k=start; (i<middle) && (j<end); )
     if (LEQ::leq(a[i], a[j])) merge_buf[k++]=a[i++];
@@ -41,12 +41,12 @@ merge_sort (array<T>& a, int start, int end, array<T> &merge_buf) {
 }
 
 template<class T, class LEQ> void
-merge_sort (array<T>& a) {
+merge_sort_leq (array<T>& a) {
   array<T> merge_buf(N(a)); 
-  merge_sort<T, LEQ> (a, 0, N(a), merge_buf); }
+  merge_sort_sub<T, LEQ> (a, 0, N(a), merge_buf); }
 
 template<class T> inline void
 merge_sort (array<T>& a) {
-  merge_sort <T, less_eq_operator<T> > (a); }
+  merge_sort_leq <T, less_eq_operator<T> > (a); }
 
 #endif // MERGE_SORT_H

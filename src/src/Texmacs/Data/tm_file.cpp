@@ -142,7 +142,7 @@ template <class T, class U> static
 tree make_collection (hashmap<T,U> h) {
   tree t(h);
   array<tree> a=A(h);
-  merge_sort <tree, less_eq_associate> (a);
+  merge_sort_leq <tree, less_eq_associate> (a);
   int i, n=N(a);
   for (i=0; i<n; i++) t[i] = a[i];
   return t;
