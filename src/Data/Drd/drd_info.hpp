@@ -25,6 +25,8 @@ public:
 public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
+  tree get_locals ();
+  void set_locals (tree t);
 
   /* Properties of the tag itself */
   void set_arity (tree_label tag, int arity, int extra, int am, int cm);
@@ -75,7 +77,6 @@ class drd_info {
   CONCRETE(drd_info);
   drd_info (string name);
   drd_info (string name, drd_info base);
-  drd_info (string name, tree t, drd_info base);
   operator tree ();
 };
 CONCRETE_CODE(drd_info);
