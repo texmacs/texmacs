@@ -725,10 +725,12 @@ resolve_in_path (url u) {
   if (use_which) {
     string name = as_string (u);
     string which= var_eval_system ("which " * name * " 2> /dev/null");
-    if ((which != "") &&
-	(!starts (which, "which: ")) &&
-	(!starts (which, "no ")))
+    if (ends (which, name))
       return which;
+    else if ((which != "") &&
+	     (!starts (which, "which: ")) &&
+	     (!starts (which, "no ")))
+      cout << "TeXmacs] " << which << "\n";
   }
   return resolve (url_path ("$PATH") * u, "x");
 }
