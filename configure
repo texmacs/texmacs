@@ -1215,10 +1215,12 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.4.2"
+DEVEL_VERSION="1.0.4.3"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.4"
 STABLE_RELEASE="3"
+WINDOWS_VERSION="1.0.4"
+WINDOWS_RELEASE="9"
 
 
 
@@ -5740,6 +5742,26 @@ echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
+  *x86_64*-*-linux-gnu*)
+    echo "$as_me:$LINENO: result: final setup for an AMD/Intel x64 GNU-Linux host" >&5
+echo "${ECHO_T}final setup for an AMD/Intel x64 GNU-Linux host" >&6
+    CONFIG_OS="OPTERON_GNU_LINUX"
+    CONFIG_OS_SUFFIX="opteron-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC="-Wl, -Bstatic"
+    CONFIG_BSHARED="-Wl, -Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
   mips-*-linux-gnu)
     echo "$as_me:$LINENO: result: final setup for a Mips/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
@@ -6343,6 +6365,12 @@ else
   tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
 fi
 tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+if test "$WINDOWS_RELEASE" = "1"; then
+  tmwin=wintexmacs-${WINDOWS_VERSION}
+else
+  tmwin=wintexmacs-${WINDOWS_VERSION}-R${WINDOWS_RELEASE}
+fi
+
 
 
 
@@ -7023,6 +7051,7 @@ s,@tmtgz@,$tmtgz,;t t
 s,@tmrpm@,$tmrpm,;t t
 s,@tmstgz@,$tmstgz,;t t
 s,@tmsrpm@,$tmsrpm,;t t
+s,@tmwin@,$tmwin,;t t
 CEOF
 
 _ACEOF

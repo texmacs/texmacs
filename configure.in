@@ -15,10 +15,12 @@
 AC_INIT(Makefile.in)
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.4.2"
+DEVEL_VERSION="1.0.4.3"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.4"
 STABLE_RELEASE="3"
+WINDOWS_VERSION="1.0.4"
+WINDOWS_RELEASE="9"
 AC_SUBST(PACKAGE)
 AC_SUBST(DEVEL_VERSION)
 AC_SUBST(DEVEL_RELEASE)
@@ -375,6 +377,25 @@ case "${host}" in
     CONFIG_WORD_LENGTH_INC="3"
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
+  ;;
+  *x86_64*-*-linux-gnu*)
+    AC_MSG_RESULT(final setup for an AMD/Intel x64 GNU-Linux host)
+    CONFIG_OS="OPTERON_GNU_LINUX"
+    CONFIG_OS_SUFFIX="opteron-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC="-Wl, -Bstatic"
+    CONFIG_BSHARED="-Wl, -Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   mips-*-linux-gnu)
     AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
@@ -952,10 +973,16 @@ else
   tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
 fi
 tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+if test "$WINDOWS_RELEASE" = "1"; then
+  tmwin=wintexmacs-${WINDOWS_VERSION}
+else
+  tmwin=wintexmacs-${WINDOWS_VERSION}-R${WINDOWS_RELEASE}
+fi
 AC_SUBST(tmtgz)
 AC_SUBST(tmrpm)
 AC_SUBST(tmstgz)
 AC_SUBST(tmsrpm)
+AC_SUBST(tmwin)
 
 #--------------------------------------------------------------------
 # Done
