@@ -424,15 +424,11 @@ edit_text_rep::remove_backwards () {
       return;
 
     case ASSIGN:
-      back_in_dynamic (u, p);
-      return;
     case WITH:
-      back_in_with (u, p);
-      return;
     case EXPAND:
     case VAR_EXPAND:
     case HIDE_EXPAND:
-      back_in_expand (u, p);
+      remove_argument (p, false);
       return;
     case COMPOUND:
       back_in_compound (u, p);
@@ -580,7 +576,7 @@ edit_text_rep::remove_backwards () {
       back_in_dynamic (u, p, 7);
       return;
     default:
-      if (L(u) >= START_EXTENSIONS) back_in_extension (u, p);
+      if (L(u) >= START_EXTENSIONS) remove_argument (p, false);
       break;
     }
   }
