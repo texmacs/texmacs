@@ -656,8 +656,9 @@ edit_select_rep::cut (path p1, path p2) {
     cut (q2, p2);
     if (i2>i1+1) remove (p * (i1+1), i2-i1-1);
     cut (p1, q1);
+    t= subtree (et, p);
     if (is_concat (t)) correct_concat (p);
-    else remove_return (p * i1);
+    else if (is_document (t)) remove_return (p * i1);
     return;
   }
 
