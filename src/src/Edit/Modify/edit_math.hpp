@@ -33,6 +33,7 @@ public:
   void make_neg ();
   void make_tree ();
   void back_prime (tree t, path p, bool forward);
+  void back_in_wide (tree t, path p, bool forward);
 
   bool inside_tree ();
   path get_tree (int& i);

@@ -77,6 +77,7 @@ protected:
 
   /* protected subroutines for deletion of content */
   virtual void back_prime (tree t, path p, bool forward) = 0;
+  virtual void back_in_wide (tree t, path p, bool forward) = 0;
   virtual void back_in_tree (tree t, path p, bool forward) = 0;
   virtual void back_table (path p, bool forward) = 0;
   virtual void back_in_table (tree t, path p, bool forward) = 0;
