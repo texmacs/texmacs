@@ -204,6 +204,7 @@ edit_env_rep::exec (tree t) {
   case QUASIQUOTE:
     return exec_quasiquoted (t[0]);
   case UNQUOTE:
+  case VAR_UNQUOTE:
     return exec (t[0]);
   case IF:
   case VAR_IF:
@@ -563,8 +564,15 @@ edit_env_rep::exec_quasiquoted (tree t) {
   else if (is_func (t, UNQUOTE, 1)) return exec (t[0]);
   else {
     int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++) r[i]= exec_quasiquoted (t[i]);
+    tree r (L(t));
+    for (i=0; i<n; i++) {
+      if (is_func (t[i], VAR_UNQUOTE, 1)) {
+	tree ins= exec (t[i]);
+	if (is_compound (ins)) r << A(ins);
+	else r << tree (ERROR, "bad unquote*");
+      }
+      else r << exec_quasiquoted (t[i]);
+    }
     return r;
   }
 }
@@ -1294,6 +1302,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
+  case VAR_UNQUOTE:
     (void) exec (t);
     return false;
   case IF:
