@@ -33,7 +33,6 @@ is_long (tree t) {
   case TABLE:
     return true;
   case CONCAT:
-  case ROW:
     return false;
   case ASSIGN:
   case DATOMS:
@@ -50,6 +49,14 @@ is_long (tree t) {
   case QUASIQUOTE:
   case UNQUOTE:
     return is_long (t[N(t)-1]);
+  case ROW:
+    {
+      int i, n= N(t);
+      for (i=0; i<n; i++)
+	if (is_long (t[i]))
+	  return true;
+      return false;
+    }
   case STYLE_WITH:
   case VAR_STYLE_WITH:
     {
@@ -81,7 +88,19 @@ is_long (tree t) {
 static bool
 is_long_arg (tree t, int i) {
   // FIXME: should go into the DRD
-  if (is_document (t)) return true;
+  switch (L(t)) {
+  case DOCUMENT:
+  case INCLUDE:
+  case TFORMAT:
+  case TABLE:
+    return true;
+  case SURROUND:
+    if (i == 2) return true;
+    break;
+  default:
+    break;
+  }
+
   tree u= t[i];
   switch (L(u)) {
   case TWITH:
