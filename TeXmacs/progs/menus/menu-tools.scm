@@ -33,17 +33,17 @@
 
 (menu-extend test-menu
   (-> "Test"
-      ("tree" (show-tree))
-      ("path" (show-path))
-      ("cursors" (show-cursor))
-      ("selection" (show-selection))
-      ("env" (show-env))
-      ("keymaps" (show-keymaps))
+      ("Tree" (show-tree))
+      ("Path" (show-path))
+      ("Cursors" (show-cursor))
+      ("Selection" (show-selection))
+      ("Environment" (show-env))
+      ("Keymaps" (show-keymaps))
       ---
-      ("error" (oops))
-      ("test" (edit-test))
-      ("timings" (bench-print-all))
-      ("meminfo" (show-meminfo))))
+      ("Error" (oops))
+      ("Test" (edit-test))
+      ("Timings" (bench-print-all))
+      ("Memory information" (show-meminfo))))
 
 (menu-bind tools-menu
   (-> "Execute"
