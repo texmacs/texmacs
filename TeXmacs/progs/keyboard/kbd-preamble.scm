@@ -52,7 +52,7 @@
   ("inactive $" (make 'symbol))
   ("inactive G" (make 'graphics))
   ("inactive S" (make 'superpose))
-  ("inactive P" (make 'point))
+  ("inactive P" (make-arity 'point 2))
   ("inactive L" (make 'line))
   ("inactive C" (make 'cline))
   ("inactive F" (make 'fill))

@@ -97,22 +97,6 @@ initialize_default_var_type () {
 }
 
 /******************************************************************************
-* Decoding graphics
-******************************************************************************/
-
-void
-edit_env_rep::get_point (tree t, SI& x, SI& y, bool& error) {
-  error= true;
-  if ((!is_tuple (t)) || (N(t)!=2)) return;
-  double xx= as_double (t[0]);
-  double yy= as_double (t[1]);
-  point  p = fr (point (xx, yy));
-  x= (SI) p[0];
-  y= (SI) p[1];
-  error= false;
-}
-
-/******************************************************************************
 * Retrieving the page size
 ******************************************************************************/
 

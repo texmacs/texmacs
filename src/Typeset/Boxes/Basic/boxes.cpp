@@ -173,26 +173,9 @@ box_rep::relocate (path new_ip, bool force) {
 * For graphical boxes
 ******************************************************************************/
 
-point
-box_rep::lift (SI x, SI y) {
-  return point (x, y);
-}
-
-void
-box_rep::project (point p, SI& x, SI& y) {
-  x= (int) p[0];
-  y= (int) p[1];
-}
-
-double
-box_rep::distance (point p) {
-  return 1.0e25;
-}
-
-path
-box_rep::closest (point p, int serial) {
-  (void) p; (void) serial;
-  return path (-1);
+frame
+box_rep::get_frame (path bp) {
+  return frame ();
 }
 
 /******************************************************************************

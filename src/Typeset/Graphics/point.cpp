@@ -47,3 +47,24 @@ operator / (point p, double x) {
     r[i]= p[i] / x;
   return r;
 }
+
+point
+as_point (tree t) {
+  if (!is_tuple (t)) return point ();
+  else {
+    int i, n= N(t);
+    point p(n);
+    for (i=0; i<n; i++)
+      p[i]= as_double (t[i]);
+    return p;
+  }
+}
+
+tree
+as_tree (point p) {
+  int i, n= N(p);
+  tree t (TUPLE, n);
+  for (i=0; i<n; i++)
+    t[i]= as_string (p[i]);
+  return t;
+}

@@ -26,18 +26,45 @@ curve_rep::rectify (double err) {
 }
 
 /******************************************************************************
-* Straight curves
+* Segments
 ******************************************************************************/
 
-struct straight_curve_rep: public curve_rep {
+struct segment_rep: public curve_rep {
   point p1, p2;
-  straight_curve_rep (point p1b, point p2b): p1 (p1b), p2 (p2b) {}
+  segment_rep (point p1b, point p2b): p1 (p1b), p2 (p2b) {}
   point evaluate (double t) { return (1.0-t)*p1 + t*p2; }
   void rectify_cumul (array<point>& a, double err) { a << p2; }
 };
 
-curve::curve (point p1, point p2):
-  rep (new straight_curve_rep (p1, p2)) {}
+curve
+segment (point p1, point p2) {
+  return new segment_rep (p1, p2);
+}
+
+/******************************************************************************
+* Poly-segments
+******************************************************************************/
+
+struct poly_segment_rep: public curve_rep {
+  array<point> a;
+  int n;
+  poly_segment_rep (array<point> a2): a (a2), n(N(a)-1) {}
+  int nr_components () { return n; }
+  point evaluate (double t) {
+    int i= min ((int) (n*t), n-1);
+    return (1.0-t)*a[i] + t*a[i+1];
+  }
+  void rectify_cumul (array<point>& cum, double err) {
+    int i;
+    for (i=0; i<n; i++)
+      cum << a[i+1];
+  }
+};
+
+curve
+poly_segment (array<point> a) {
+  return new poly_segment_rep (a);
+}
 
 /******************************************************************************
 * Compound curves

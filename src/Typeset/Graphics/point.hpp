@@ -21,4 +21,7 @@ point operator - (point p1, point p2);
 point operator * (double x, point p);
 point operator / (point p, double x);
 
+point as_point (tree t);
+tree  as_tree (point p);
+
 #endif // defined POINT_H

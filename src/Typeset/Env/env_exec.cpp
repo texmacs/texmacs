@@ -221,6 +221,9 @@ edit_env_rep::exec (tree t) {
   case VAR_ACTIVE:
     return exec_mod_active (t, VAR_ACTIVE);
 
+  case _POINT:
+    return exec_point (t);
+
   default:
     if (L(t) < START_EXTENSIONS) {
       int i, n= N(t);
@@ -948,6 +951,15 @@ edit_env_rep::exec_mod_active (tree t, tree_label which) {
   tree r (u, n);
   for (i=0; i<n; i++) r[i]= exec (u[i]);
   return tree (which, u);
+}
+
+tree
+edit_env_rep::exec_point (tree t) {
+  int i, n= N(t);
+  tree u (TUPLE, N(t));
+  for (i=0; i<n; i++)
+    u[i]= exec (t[i]);
+  return u;
 }
 
 /******************************************************************************
