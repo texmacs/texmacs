@@ -94,4 +94,4 @@
 	     tmdoc-title tmdoc-flag tmdoc-license key))
     ,@(map tmhtml-env-macro-2 '(tmdoc-title*))
     ,@(map tmhtml-env-macro-3 '(tmdoc-title**))
-    ,@(map tmhtml-env-func '(menu hyper-link tmdoc-copyright))))
+    ,@(map tmhtml-env-func '(hyper-link tmdoc-copyright))))
