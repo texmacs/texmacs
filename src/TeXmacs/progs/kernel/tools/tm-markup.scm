@@ -16,8 +16,8 @@
   (:use (kernel texmacs tm-define))
   (:export
     ext-map
-    ext-select
-    ext-the-doc-note))
+    ext-concat-tuple
+    ext-select))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Map
@@ -28,6 +28,16 @@
   (with (op . args) (tree->list to)
     (with f (lambda (x) (list 'compound fun x))
       (list 'quote (cons 'tuple (map f args))))))
+
+(tm-define (ext-concat-tuple tup sep fin)
+  (:secure #t)
+  (with (op . l) (tree->list tup)
+    (cond ((null? l) "")
+	  ((null? (cdr l)) (car l))
+	  (else `(concat ,(car l)
+			 ,@(map (lambda (x) (list 'concat sep x)) (cDdr l))
+			 ,(if (tm-equal? fin '(uninit)) sep fin)
+			 ,(cAr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rewriting document titles as a function of several style parameters
@@ -52,15 +62,3 @@
   (:secure #t)
   (with (op body2 . pat) (tree->list args)
     (list 'quote (cons 'tuple (tm-select body (map rewrite-select pat))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Miscellaneous
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (ext-the-doc-note nr)
-  (:secure #t)
-  (with n (string->number (tree->string nr))
-    (cond ((or (not n) (< n 1)) "*")
-	  ((= n 1) '(with "mode" "math" "<dag>"))
-	  ((= n 2) '(with "mode" "math" "<ddag>"))
-	  (else (make-string (- n 2) #\*)))))
