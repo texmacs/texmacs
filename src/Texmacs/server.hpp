@@ -145,8 +145,9 @@ public:
   virtual void dialogue_inquire (scheme_tree& arg) = 0;
   virtual void dialogue_end () = 0;
   virtual void choose_file (string title, string type, scheme_tree prg) = 0;
-  virtual void full_screen_mode (bool on) = 0;
+  virtual void full_screen_mode (bool on, bool edit) = 0;
   virtual bool in_full_screen_mode () = 0;
+  virtual bool in_full_screen_edit_mode () = 0;
 
   /* Misscelaneous routines */
   virtual void   interpose_handler () = 0;

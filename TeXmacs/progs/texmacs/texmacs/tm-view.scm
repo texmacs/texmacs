@@ -15,7 +15,8 @@
 (texmacs-module (texmacs texmacs tm-view)
   (:export
     toggle-visible-header toggle-visible-footer toggle-visible-icon-bar
-    toggle-full-screen-mode other-shrinking-factor))
+    toggle-full-screen-mode toggle-full-screen-edit-mode
+    other-shrinking-factor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View preferences
@@ -69,7 +70,12 @@
 (tm-define (toggle-full-screen-mode)
   (:synopsis "Toggle full screen mode.")
   (:check-mark "v" full-screen?)
-  (full-screen-mode (not (full-screen?))))
+  (full-screen-mode (not (full-screen?)) #f))
+
+(tm-define (toggle-full-screen-edit-mode)
+  (:synopsis "Toggle full screen edit mode.")
+  (:check-mark "v" full-screen-edit?)
+  (full-screen-mode (not (full-screen-edit?)) (not (full-screen-edit?))))
 
 (define (test-shrinking-factor? n) (= (get-shrinking-factor) n))
 (set-check-mark! set-shrinking-factor "*" test-shrinking-factor?)

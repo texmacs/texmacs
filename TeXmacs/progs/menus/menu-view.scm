@@ -33,6 +33,7 @@
 	("User provided icons" (toggle-visible-icon-bar 2)))
   ("Status bar" (toggle-visible-footer))
   ---
+  ("Full screen mode"  (toggle-full-screen-edit-mode))
   ("Presentation mode" (toggle-full-screen-mode))
   (-> "Shrinking factor"
       ("1" (set-shrinking-factor 1))
