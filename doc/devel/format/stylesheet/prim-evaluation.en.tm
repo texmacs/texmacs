@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -73,6 +73,25 @@
     This tag is used in combination with <markup|quasiquote> and
     <markup|quasi> in order to mark the subexpressions which need to be
     evaluated.
+  </explain>
+
+  <\explain>
+    <explain-macro|unquote*|subexprs><explain-synopsis|unquote splicing>
+  <|explain>
+    This tag is similar to <markup|unquote>, except that the argument
+    <src-arg|subexprs> now evaluates to a list of subexpressions, which are
+    inserted into the arguments of the parent node. For instance, consider
+    the macro
+
+    <\tm-fragment>
+      <inactive*|<assign|fun|<xmacro|x|<style-with|src-compact|none|<quasi|<tree|dup|<unquote*|<quote-arg|x>>|<unquote*|<quote-arg|x>>>>>>>>
+    </tm-fragment>
+
+    Then <inactive*|<fun|a|b|c>> is typeset as
+
+    <\equation*>
+      <with|fun|<xmacro|x|<quasi|<tree|dup|<unquote*|<quote-arg|x>>|<unquote*|<quote-arg|x>>>>>|<fun|a|b|c>>
+    </equation*>
   </explain>
 
   <\explain>
