@@ -313,7 +313,8 @@ edit_interface_rep::handle_clear (clear_event ev) {
 void
 edit_interface_rep::handle_repaint (repaint_event ev) {
   if (env_change != 0)
-    fatal_error ("Invalid situation", "edit_interface_rep::handle_repaint");
+    system_warning ("Invalid situation",
+		    "(edit_interface_rep::handle_repaint)");
 
   // cout << "Repainting\n";
   // Repaint slightly more in order to hide trace of moving cursor
