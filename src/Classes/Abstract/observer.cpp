@@ -24,8 +24,8 @@ extern tree the_et;
 
 static void
 consistency_check (tree t, path ip) {
-  if (_get_ip (t) != ip)
-    cout << "Wrong ip] " << t << " " << _get_ip (t)
+  if (obtain_ip (t) != ip)
+    cout << "Wrong ip] " << t << " " << obtain_ip (t)
 	 << " instead of " << ip << "\n";
   if (is_compound (t)) {
     int i, n= N(t);
@@ -46,12 +46,12 @@ stretched_print (tree t, bool ips, int indent) {
   for (i=0; i<indent; i++) cout << "  ";
   if (is_atomic (t)) {
     cout << quote (t->label);
-    if (ips) cout << " -- " << _get_ip (t);
+    if (ips) cout << " -- " << obtain_ip (t);
     cout << "\n";
   }
   else {
     cout << as_string (L(t));
-    if (ips) cout << " -- " << _get_ip (t);
+    if (ips) cout << " -- " << obtain_ip (t);
     cout << "\n";    
     for (i=0; i<N(t); i++)
       stretched_print (t[i], ips, indent+1);
@@ -68,108 +68,109 @@ stretched_print (tree t, bool ips, int indent) {
 ******************************************************************************/
 
 void
-_assign (tree& ot, tree t) {
-  // cout << "Assign " << ot << " := " << t << "\n";
-  if (!nil (ot->obs)) ot->obs->assign (ot, t);
-  ot= t;
-  // stretched_print (ot, true, 1);
+assign (tree& ref, tree t) {
+  // cout << "Assign " << ref << " := " << t << "\n";
+  if (!nil (ref->obs)) ref->obs->notify_assign (ref, t);
+  ref= t;
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_insert (tree& ot, int pos, tree t) {
-  // cout << "Insert " << ot << " += " << t << " at " << pos << "\n";
-  if (is_atomic (ot) && is_atomic (t))
-    ot->label= insert (ot->label, pos, t->label);
+insert (tree& ref, int pos, tree t) {
+  // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
+  if (is_atomic (ref) && is_atomic (t))
+    ref->label= ref->label (0, pos) * t->label * ref->label (pos, N(ref->label));
   else {
-    int i, n= N(ot), nr= N(t);
-    A(ot)->resize (n+nr);
+    int i, n= N(ref), nr= N(t);
+    A(ref)->resize (n+nr);
     for (i=n-1; i>=pos; i--)
-      ot[i+nr]= ot[i];
+      ref[i+nr]= ref[i];
     for (i=0; i<nr; i++)
-      ot[pos+i]= t[i];
+      ref[pos+i]= t[i];
   }
-  if (!nil (ot->obs))
-    ot->obs->insert (ot, pos, is_atomic (t)? N(t->label): N(t));
-  // stretched_print (ot, true, 1);
+  if (!nil (ref->obs))
+    ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_remove (tree& ot, int pos, int nr) {
-  // cout << "Remove " << ot << " -= " << nr << " at " << pos << "\n";
-  if (!nil (ot->obs)) ot->obs->remove (ot, pos, nr);
-  if (is_atomic (ot)) ot->label= remove (ot->label, pos, nr);
+remove (tree& ref, int pos, int nr) {
+  // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
+  if (!nil (ref->obs)) ref->obs->notify_remove (ref, pos, nr);
+  if (is_atomic (ref))
+    ref->label= ref->label (0, pos) * ref->label (pos+nr, N(ref->label));
   else {
-    int i, n= N(ot)-nr;
+    int i, n= N(ref)-nr;
     for (i=pos; i<n; i++)
-      ot[i]= ot[i+nr];
-    A(ot)->resize (n);
+      ref[i]= ref[i+nr];
+    A(ref)->resize (n);
   }
-  // stretched_print (ot, true, 1);
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_split (tree& ot, int pos, int at) {
-  // cout << "Split " << ot << " at " << pos << ", " << at << "\n";
+split (tree& ref, int pos, int at) {
+  // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
   tree t;
-  if (is_atomic (ot[pos])) {    
-    t= ot[pos]->label (at, N(ot[pos]->label));
-    ot[pos]->label->resize (at);
+  if (is_atomic (ref[pos])) {    
+    t= ref[pos]->label (at, N(ref[pos]->label));
+    ref[pos]->label->resize (at);
   }
   else {
-    t= ot[pos] (at, N(ot[pos]));
-    A(ot[pos])->resize (at);
+    t= ref[pos] (at, N(ref[pos]));
+    A(ref[pos])->resize (at);
   }
-  int i, n= N(ot);
-  A(ot)->resize (n+1);
+  int i, n= N(ref);
+  A(ref)->resize (n+1);
   for (i=n; i>(pos+1); i--)
-    ot[i]= ot[i-1];
-  ot[pos+1]= t;
-  if (!nil (ot->obs)) ot->obs->split (ot, pos);
-  // stretched_print (ot, true, 1);
+    ref[i]= ref[i-1];
+  ref[pos+1]= t;
+  if (!nil (ref->obs)) ref->obs->notify_split (ref, pos);
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_join (tree& ot, int pos) {
-  // cout << "Join " << ot << " at " << pos << "\n";
+join (tree& ref, int pos) {
+  // cout << "Join " << ref << " at " << pos << "\n";
   /* the following code is added for security */
-  if (is_atomic (ot[pos]) && (!is_atomic (ot[pos+1])))
-    _ins_unary (ot[pos], L(ot[pos+1]));
-  if (is_atomic (ot[pos+1]) && (!is_atomic (ot[pos])))
-    _ins_unary (ot[pos+1], L(ot[pos]));
+  if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
+    ins_unary (ref[pos], L(ref[pos+1]));
+  if (is_atomic (ref[pos+1]) && (!is_atomic (ref[pos])))
+    ins_unary (ref[pos+1], L(ref[pos]));
   /* end security code */
 
-  if (!nil (ot->obs)) ot->obs->join (ot, pos);
-  if (is_atomic (ot[pos]) && is_atomic (ot[pos+1]))
-    ot[pos]->label << ot[pos+1]->label;
-  else ot[pos] << A (ot[pos+1]);
+  if (!nil (ref->obs)) ref->obs->notify_join (ref, pos);
+  if (is_atomic (ref[pos]) && is_atomic (ref[pos+1]))
+    ref[pos]->label << ref[pos+1]->label;
+  else ref[pos] << A (ref[pos+1]);
 
-  int i, n= N(ot)-1;
+  int i, n= N(ref)-1;
   for (i=pos+1; i<n; i++)
-    ot[i]= ot[i+1];
-  A(ot)->resize (n);
-  // stretched_print (ot, true, 1);
+    ref[i]= ref[i+1];
+  A(ref)->resize (n);
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_ins_unary (tree& ot, tree_label lab) {
-  // cout << "Insert unary " << ot << " : " << as_string (lab) << "\n";
-  ot= tree (lab, ot);
-  if (!nil (ot[0]->obs)) ot[0]->obs->ins_unary (ot);
-  // stretched_print (ot, true, 1);
+ins_unary (tree& ref, tree_label lab) {
+  // cout << "Insert unary " << ref << " : " << as_string (lab) << "\n";
+  ref= tree (lab, ref);
+  if (!nil (ref[0]->obs)) ref[0]->obs->notify_ins_unary (ref);
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-_rem_unary (tree& ot) {
-  // cout << "Remove unary " << ot << "\n";
-  if (!nil (ot->obs)) ot->obs->rem_unary (ot);
-  ot= ot[0];
-  // stretched_print (ot, true, 1);
+rem_unary (tree& ref) {
+  // cout << "Remove unary " << ref << "\n";
+  if (!nil (ref->obs)) ref->obs->notify_rem_unary (ref);
+  ref= ref[0];
+  // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
@@ -178,14 +179,14 @@ _rem_unary (tree& ot) {
 ******************************************************************************/
 
 path
-observer_rep::get_ip (tree& ot) {
-  (void) ot;
+observer_rep::get_ip (tree& ref) {
+  (void) ref;
   return DETACHED;
 }
 
 bool
-observer_rep::set_ip (tree& ot, path ip) {
-  (void) ot; (void) ip;
+observer_rep::set_ip (tree& ref, path ip) {
+  (void) ref; (void) ip;
   return true;
 }
 

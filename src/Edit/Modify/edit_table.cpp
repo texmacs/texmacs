@@ -228,7 +228,7 @@ tree
 edit_table_rep::table_get_format (path fp) {
   tree fm= get_env_value (CELL_FORMAT, fp * 0);
   tree st= subtree (et, fp);
-  return ::join (fm, st (0, N(st)-1));
+  return fm * st (0, N(st)-1);
 }
 
 void
@@ -887,7 +887,7 @@ table_undecorate (tree st, int row, int col) {
 	search_decoration (T, dec_row, dec_col);
 	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
 	tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
-	return join (F, T);
+	return F * T;
       }
   fatal_error ("decoration not found", "table_undecorate");
   return ""; // avoids error message when C++ compiler behaves badly

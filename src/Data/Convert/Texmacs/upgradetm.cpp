@@ -1178,7 +1178,7 @@ upgrade_split (tree t) {
   else if (is_func (t, SURROUND, 3) && is_func (t[0], SPLIT)) {
     tree u= t[2];
     if (!is_concat (u)) u= tree (CONCAT, t[0], u);
-    else u= join (tree (CONCAT, t[0]), u);
+    else u= tree (CONCAT, t[0]) * u;
     return tree (SURROUND, "", upgrade_split (t[1]), upgrade_split (u));
   }
   else if (is_func (t, SURROUND, 3) && is_concat (t[0])) {
@@ -1190,7 +1190,7 @@ upgrade_split (tree t) {
     tree u= t[2];
     if (split != "") {
       if (!is_concat (u)) u= tree (CONCAT, split, u);
-      else u= join (tree (CONCAT, split), u);
+      else u= tree (CONCAT, split) * u;
     }
     r= tree (SURROUND, upgrade_split (r),
 	     upgrade_split (t[1]), upgrade_split (u));

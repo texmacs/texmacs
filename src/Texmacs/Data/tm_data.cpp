@@ -617,21 +617,21 @@ new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
     if (the_et[i] == UNINIT) {
-      _assign (the_et[i], tree (DOCUMENT, ""));
-      return path (i); // _get_ip (the_et[i]);
+      assign (the_et[i], tree (DOCUMENT, ""));
+      return path (i); // obtain_ip (the_et[i]);
     }
-  _insert (the_et, n, tuple (tree (DOCUMENT, "")));
-  return path (n); // _get_ip (the_et[n]);
+  insert (the_et, n, tuple (tree (DOCUMENT, "")));
+  return path (n); // obtain_ip (the_et[n]);
 }
 
 void
 delete_document (path rp) {
-  _assign (subtree (the_et, rp), UNINIT);
+  assign (subtree (the_et, rp), UNINIT);
 }
 
 void
 set_document (path rp, tree t) {
-  _assign (subtree (the_et, rp), copy (t));
+  assign (subtree (the_et, rp), copy (t));
 }
 
 /******************************************************************************

@@ -54,8 +54,7 @@ edit_modify_rep::assign (path pp, tree u) {
     ed->notify_assign (p, u);
   FOR_ALL_EDITORS_END
 
-  // subtree (et, p)= u;
-  _assign (subtree (et, p), u);
+  ::assign (subtree (et, p), u);
   finished (pp);
 }
 
@@ -69,8 +68,7 @@ edit_modify_rep::insert (path pp, tree u) {
     ed->notify_insert (p, u);
   FOR_ALL_EDITORS_END
 
-  // insert_at (et, p, u);
-  _insert (subtree (et, path_up (p)), last_item (p), u);
+  ::insert (subtree (et, path_up (p)), last_item (p), u);
   finished (pp);
 }
 
@@ -88,8 +86,7 @@ edit_modify_rep::remove (path pp, int nr) {
     ed->notify_remove (p, nr);
   FOR_ALL_EDITORS_END
 
-  // remove_at (et, p, nr);
-  _remove (subtree (et, path_up (p)), last_item (p), nr);
+  ::remove (subtree (et, path_up (p)), last_item (p), nr);
   finished (pp);
 }
 
@@ -107,21 +104,7 @@ edit_modify_rep::split (path pp) {
     ed->notify_split (p);
   FOR_ALL_EDITORS_END
 
-  /*
-  if (is_atomic (st[l1])) {
-    string s1, s2;
-    ::split (st[l1]->label, l2, s1, s2);
-    st[l1]= s2;
-    st= insert_one (st, l1, tree (s1));
-  }
-  else {
-    tree st1, st2;
-    ::split (st[l1], l2, st1, st2);
-    st[l1]= st2;
-    st= insert_one (st, l1, st1);
-  }
-  */
-  _split (st, l1, l2);
+  ::split (st, l1, l2);
   finished (pp);
 }
 
@@ -142,16 +125,7 @@ edit_modify_rep::join (path pp) {
     ed->notify_join (p);
   FOR_ALL_EDITORS_END
 
-  /*
-  if (string_mode) st[l1]->label << st[l1+1]->label;
-  else {
-    if (is_atomic (st[l1  ])) st[l1  ]= tree (L(st[l1+1]), st[l1  ]);
-    if (is_atomic (st[l1+1])) st[l1+1]= tree (L(st[l1  ]), st[l1+1]);
-    st[l1] << A (st[l1+1]);
-  }
-  st= ::remove (st, l1+1, 1);
-  */
-  _join (st, l1);
+  ::join (st, l1);
   finished (pp);
 }
 
@@ -165,11 +139,7 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
     ed->notify_ins_unary (p, op);
   FOR_ALL_EDITORS_END
 
-  /*
-  tree& st= subtree (et, p);
-  st= tree (op, st);
-  */
-  _ins_unary (subtree (et, p), op);
+  ::ins_unary (subtree (et, p), op);
   finished (pp);
 }
 
@@ -185,8 +155,7 @@ edit_modify_rep::rem_unary (path pp) {
     ed->notify_rem_unary (p);
   FOR_ALL_EDITORS_END
 
-  // st= st[0];
-  _rem_unary (st);
+  ::rem_unary (st);
   finished (pp);
 }
 

@@ -135,9 +135,9 @@ bridge_rep::notify_insert (path p, tree u) {
   if (is_atomic (t)) {
     if (is_compound (u))
       fatal_error ("two atoms expected", "bridge_rep::notify_insert");
-    t= insert (t->label, l, u->label);
+    t= t->label (0, l) * u->label * t->label (l, N(t->label));
   }
-  else t= insert (t, l, u);
+  else t= (t (0, l) * u) * t (l, N(t));
   notify_assign (q, t);
 }
 
@@ -147,8 +147,8 @@ bridge_rep::notify_remove (path p, int nr) {
   path q= path_up (p);
   int  l= last_item (p);
   tree t= subtree (st, q);
-  if (is_atomic (t)) t= remove (t->label, l, nr);
-  else t= remove (t, l, nr);
+  if (is_atomic (t)) t= t->label (0, l) * t->label (l+nr, N(t->label));
+  else t= t (0, l) * t (l+nr, N(t));
   notify_assign (q, t);
 }
 
@@ -161,14 +161,12 @@ bridge_rep::notify_split (path p) {
   tree t  = subtree (st, q);
 
   if (is_atomic (t[pos])) {
-    string s1, s2;
-    split (t[pos]->label, l, s1, s2);
+    string s1= t[pos]->label (0, l), s2= t[pos]->label (l, N (t[pos]->label));
     notify_insert (q * pos, tree (L(t), s1));
     notify_assign (q * (pos+1), s2);
   }
   else {
-    tree t1, t2;
-    split (t[pos], l, t1, t2);
+    tree t1= t[pos] (0, l), t2= t[pos] (l, N(t[pos]));
     notify_insert (q * pos, tree (L(t), t1));
     notify_assign (q * (pos+1), t2);
   }
@@ -187,7 +185,7 @@ bridge_rep::notify_join (path p) {
     notify_assign (q * pos, j);
   }
   else {
-    tree j= join (t[pos], t[pos+1]);
+    tree j= t[pos] * t[pos+1];
     notify_remove (q * pos, 1);
     notify_assign (q * pos, j);
   }

@@ -12,8 +12,8 @@
 
 #include "bridge.hpp"
 
-tree insert (tree, path, tree);
-tree remove (tree, path, int);
+tree insert_at (tree, path, tree);
+tree remove_at (tree, path, int);
 
 class bridge_auto_rep: public bridge_rep {
 protected:
@@ -88,7 +88,7 @@ bridge_auto_rep::notify_insert (path p, tree u) {
   else {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_INSERT, f[0]->label, -1, p->next, u);
-    st= insert (st, p, u);
+    st= insert_at (st, p, u);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;
@@ -102,7 +102,7 @@ bridge_auto_rep::notify_remove (path p, int nr) {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_REMOVE, f[0]->label, -1, p->next,
 		  tree (as_string (nr)));
-    st= remove (st, p, nr);
+    st= remove_at (st, p, nr);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;

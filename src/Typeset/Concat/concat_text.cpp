@@ -262,7 +262,7 @@ concater_rep::typeset_repeat (tree t, path ip) {
 void
 concater_rep::typeset_formatting (tree t, path ip, string v) {
   int n= N(t);
-  tree new_format= join (env->read (v), t (0, n-1));
+  tree new_format= env->read (v) * t (0, n-1);
   tree old_format= env->local_begin (v, new_format);
   if (v != CELL_FORMAT) {
     marker (descend (ip, 0));

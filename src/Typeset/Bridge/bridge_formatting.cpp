@@ -131,7 +131,7 @@ void
 bridge_formatting_rep::my_exec_until (path p) {
   if (p->item != last) return;
   tree oldv= env->read (v);
-  tree newv= join (oldv, st (0, last));
+  tree newv= oldv * st (0, last);
   env->monitored_write_update (v, newv);
   body->exec_until (p->next);
 }
@@ -144,7 +144,7 @@ bridge_formatting_rep::my_typeset_will_be_complete () {
 
 void
 bridge_formatting_rep::my_typeset (int desired_status) {
-  tree new_format= join (env->read (v), st (0, last));
+  tree new_format= env->read (v) * st (0, last);
   tree old_format= env->local_begin (v, new_format);
   if (v != CELL_FORMAT) ttt->insert_marker (st, ip);
   body->typeset (desired_status);

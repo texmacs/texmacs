@@ -144,7 +144,7 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
 lazy
 make_lazy_formatting (edit_env env, tree t, path ip, string v) {
   int last= N(t)-1;
-  tree new_format= join (env->read (v), t (0, last));
+  tree new_format= env->read (v) * t (0, last);
   tree old_format= env->local_begin (v, new_format);
   array<line_item> a;
   array<line_item> b;
