@@ -37,6 +37,34 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.4.1", version)) return H;
+
+  new_feature (H, "cm-length");
+  new_feature (H, "mm-length");
+  new_feature (H, "in-length");
+  new_feature (H, "pt-length");
+  new_feature (H, "bp-length");
+  new_feature (H, "dd-length");
+  new_feature (H, "pc-length");
+  new_feature (H, "cc-length");
+  new_feature (H, "fs-length");
+  new_feature (H, "fbs-length");
+  new_feature (H, "em-length");
+  new_feature (H, "ln-length");
+  new_feature (H, "sep-length");
+  new_feature (H, "yfrac-length");
+  new_feature (H, "ex-length");
+  new_feature (H, "fn-length");
+  new_feature (H, "fns-length");
+  new_feature (H, "bls-length");
+  new_feature (H, "spc-length");
+  new_feature (H, "xspc-length");
+  new_feature (H, "par-length");
+  new_feature (H, "pag-length");
+  new_feature (H, "tmpt-length");
+  new_feature (H, "px-length");
+  new_feature (H, "tmlen");
+
   if (version_inf ("1.0.3.12", version)) return H;
 
   new_feature (H, "unquote*");

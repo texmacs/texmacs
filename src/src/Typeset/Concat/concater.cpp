@@ -76,7 +76,7 @@ concater_rep::ghost (string s, path ip, color col) {
 void
 concater_rep::flag_ok (string s, path ip, color col) {
   path dip = decorate_right (ip);
-  SI h= 4*env->fn->wquad/5;
+  SI h= 4*env->fn->wfn/5;
   int r, g, b;
   env->dis->get_rgb (col, r, g, b);
   r= 255- (255 - r)/6;
@@ -470,29 +470,30 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
 
-  case CM:
-  case MM:
-  case IN:
-  case PT:
-  case BP:
-  case DD:
-  case PC:
-  case CCUNIT:
-  case QUAD:
-  case BLS:
-  case LN:
-  case SEP:
-  case YFRAC:
-  case EX:
-  case EMUNIT:
-  case _FN:
-  case FNS:
-  case SPC:
-  case XSPC:
-  case PAR:
-  case PAG:
-  case TMPT:
-  case PX:
+  case CM_LENGTH:
+  case MM_LENGTH:
+  case IN_LENGTH:
+  case PT_LENGTH:
+  case BP_LENGTH:
+  case DD_LENGTH:
+  case PC_LENGTH:
+  case CC_LENGTH:
+  case FS_LENGTH:
+  case FBS_LENGTH:
+  case EM_LENGTH:
+  case LN_LENGTH:
+  case SEP_LENGTH:
+  case YFRAC_LENGTH:
+  case EX_LENGTH:
+  case FN_LENGTH:
+  case FNS_LENGTH:
+  case BLS_LENGTH:
+  case SPC_LENGTH:
+  case XSPC_LENGTH:
+  case PAR_LENGTH:
+  case PAG_LENGTH:
+  case TMPT_LENGTH:
+  case PX_LENGTH:
     typeset_executable (t, ip);
     break;
 

@@ -126,9 +126,10 @@ edit_env_rep::as_tmlen (tree t) {
     while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
     for (i=start; (i<n) && ((s[i]<'a') || (s[i]>'z')); i++);
     string s1= s (start, i);
-    string s2= s (i, n);    
+    string s2= s (i, n);
     if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");
-    return tmlen_times (as_double (s1), as_tmlen (exec (compound (s2))));
+    return tmlen_times (as_double (s1),
+			as_tmlen (exec (compound (s2 * "-length"))));
   }
   else if (is_func (t, MACRO, 1))
     return as_tmlen (exec (t[0]));
@@ -188,64 +189,70 @@ edit_env_rep::as_point (tree t) {
 * Built-in length units
 ******************************************************************************/
 
-tree edit_env_rep::exec_cm () {
+tree edit_env_rep::exec_cm_length () {
   return tree (TMLEN, as_string (inch/2.54)); }
-tree edit_env_rep::exec_mm () {
+tree edit_env_rep::exec_mm_length () {
   return tree (TMLEN, as_string (inch/25.4)); }
-tree edit_env_rep::exec_in () {
+tree edit_env_rep::exec_in_length () {
   return tree (TMLEN, as_string (inch)); }
-tree edit_env_rep::exec_pt () {
+tree edit_env_rep::exec_pt_length () {
   return tree (TMLEN, as_string (inch/72.27)); }
-tree edit_env_rep::exec_bp () {
+tree edit_env_rep::exec_bp_length () {
   return tree (TMLEN, as_string (inch/72.0)); }
-tree edit_env_rep::exec_dd () {
+tree edit_env_rep::exec_dd_length () {
   return tree (TMLEN, as_string (0.376*inch/25.4)); }
-tree edit_env_rep::exec_pc () {
+tree edit_env_rep::exec_pc_length () {
   return tree (TMLEN, as_string (12.0*inch/72.27)); }
-tree edit_env_rep::exec_ccunit () {
+tree edit_env_rep::exec_cc_length () {
   return tree (TMLEN, as_string (4.531*inch/25.4)); }
 
 tree
-edit_env_rep::exec_quad () {
-  double fn=
+edit_env_rep::exec_fs_length () {
+  double fs=
     (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
-  return tree (TMLEN, as_string (fn));
+  return tree (TMLEN, as_string (fs));
 }
 
 tree
-edit_env_rep::exec_bls () {
-  double fn=
-    (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
-  return tmlen_plus (tree (TMLEN, as_string (fn)), get_vspace (PAR_SEP));
+edit_env_rep::exec_fbs_length () {
+  double fbs= (get_int(FONT_BASE_SIZE) * magn * inch) / 72.0;
+  return tree (TMLEN, as_string (fbs));
 }
 
-tree edit_env_rep::exec_ln () {
+tree edit_env_rep::exec_em_length () {
+  return tree (TMLEN, as_string (fn->wquad)); }
+tree edit_env_rep::exec_ln_length () {
   return tree (TMLEN, as_string (fn->wline)); }
-tree edit_env_rep::exec_sep () {
+tree edit_env_rep::exec_sep_length () {
   return tree (TMLEN, as_string (fn->sep)); }
-tree edit_env_rep::exec_yfrac () {
+tree edit_env_rep::exec_yfrac_length () {
   return tree (TMLEN, as_string (fn->yfrac)); }
-tree edit_env_rep::exec_ex () {
+tree edit_env_rep::exec_ex_length () {
   return tree (TMLEN, as_string (fn->yx)); }
-tree edit_env_rep::exec_emunit () {
-  return tree (TMLEN, as_string (fn->wM)); }
 
 tree
-edit_env_rep::exec_fn () {
+edit_env_rep::exec_fn_length () {
   double fn=
     (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
   return tree (TMLEN, as_string (0.5*fn), as_string (fn), as_string (1.5*fn));
 }
 
 tree
-edit_env_rep::exec_fns () {
+edit_env_rep::exec_fns_length () {
   double fn=
     (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
   return tree (TMLEN, "0", "0", as_string (fn));
 }
 
 tree
-edit_env_rep::exec_spc () {
+edit_env_rep::exec_bls_length () {
+  double fn=
+    (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
+  return tmlen_plus (tree (TMLEN, as_string (fn)), get_vspace (PAR_SEP));
+}
+
+tree
+edit_env_rep::exec_spc_length () {
   return tree (TMLEN,
 	       as_string (fn->spc->min),
 	       as_string (fn->spc->def),
@@ -253,7 +260,7 @@ edit_env_rep::exec_spc () {
 }
 
 tree
-edit_env_rep::exec_xspc () {
+edit_env_rep::exec_xspc_length () {
   return tree (TMLEN,
 	       as_string (fn->extra->min),
 	       as_string (fn->extra->def),
@@ -261,7 +268,7 @@ edit_env_rep::exec_xspc () {
 }
 
 tree
-edit_env_rep::exec_par () {
+edit_env_rep::exec_par_length () {
   SI width, d1, d2, d3, d4, d5, d6, d7;
   get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
   width -= (get_length (PAR_LEFT) + get_length (PAR_RIGHT));
@@ -269,13 +276,13 @@ edit_env_rep::exec_par () {
 }
 
 tree
-edit_env_rep::exec_pag () {
+edit_env_rep::exec_pag_length () {
   SI d1, height, d2, d3, d4, d5, d6, d7;
   get_page_pars (d1, height, d2, d3, d4, d5, d6, d7);
   return tree (TMLEN, as_string (height));
 }
 
-tree edit_env_rep::exec_tmpt () {
+tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
-tree edit_env_rep::exec_px () {
+tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
