@@ -51,6 +51,9 @@ public:
   int  get_block (tree_label tag);
   void freeze_block (tree_label tag);
 
+  void set_attribute (tree_label tag, string which, tree val);
+  tree get_attribute (tree_label tag, string which);
+
   /* Properties of the children of the tag */
   void set_accessible (tree_label tag, int nr, bool is_accessible);
   bool get_accessible (tree_label tag, int nr);

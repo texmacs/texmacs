@@ -140,63 +140,34 @@ string
 edit_interface_rep::compute_operation_footer (tree st) {
   string r;
   switch (L (st)) {
-  case HSPACE: r= "horizontal space"; break;
-  case VSPACE_BEFORE: r= "vertical space before"; break;
-  case VSPACE_AFTER: r= "vertical space"; break;
-  case SPACE: r= "rigid space"; break;
-  case HTAB: r= "tab"; break;
   case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-  case DECORATE_ATOMS: r= "decorate atoms"; break;
-  case DECORATE_LINES: r= "decorate lines"; break;
-  case DECORATE_PAGES: r= "decorate pages"; break;
-  case LEFT: r= "open#" * as_symbol (st[0]); break;
   case MIDDLE: r= "separator#" * as_symbol (st[0]); break;
   case RIGHT: r= "close#" * as_symbol (st[0]); break;
   case BIG: r= "big#" * as_symbol (st[0]); break;
   case LEFT_PRIME: r= "left prime#" * as_string (st[0]); break;
   case RIGHT_PRIME: r= "prime#" * as_string (st[0]); break;
-  case LEFT_SUB: r= "left subscript"; break;
-  case LEFT_SUP: r= "left superscript"; break;
-  case RIGHT_SUB: r= "subscript"; break;
-  case RIGHT_SUP: r= "superscript"; break;
-  case FRAC: r= "fraction"; break;
   case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
   case WIDE: r=  get_accent_type (as_string (st[1])); break;
   case WIDE_UNDER: r= "under#" * get_accent_type (as_string (st[1])); break;
-  case NEG: r= "negation"; break;
   case TABLE_FORMAT: r= "table"; break;
-  case TABLE_WITH: r= "table property"; break;
-  case CELL_WITH: r= "cell property"; break;
-  case TABLE_MARKER: r= "table marker"; break;
-  case SUB_TABLE: r= "subtable"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
-  case DRD_PROPS: r= "drd properties"; break;
   case ARGUMENT: r= "argument#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
-  case MAP_ARGS: r= "map arguments"; break;
-  case EVAL_ARGS: r= "evaluate arguments"; break;
-  case EVAL: r= "evaluate"; break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
-  case IS_TUPLE: r= "tuple?"; break;
-  case UNEQUAL: r= "not equal"; break;
-  case LESSEQ: r= "less or equal"; break;
-  case GREATEREQ: r= "greater or equal"; break;
-  case INACTIVE: r= "inactive#" * as_string (st[0]); break;
-  case ACTIVE: r= "active"; break;
-  case VAR_INACTIVE: r= "inactive*" * as_string (st[0]); break;
-  case VAR_ACTIVE: r= "active*"; break;
+  case INACTIVE:
+  case VAR_INACTIVE:
+    r= "inactive#" * as_string (drd->get_attribute (L(st[0]), "name")); break;
   case LABEL: r= "label: " * as_string (st[0]); break;
   case REFERENCE: r= "reference: " * as_string (st[0]); break;
   case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
   case WRITE: r= "write to " * as_string (st[0]); break;
   case SPECIFIC: r= "specific " * as_string (st[0]); break;
-  case HYPERLINK: r= "hyperlink"; break;
   case POSTSCRIPT: r= "postscript image"; break;
   default:
-    r= replace (as_string (L(st)), "_", " ");
+    r= as_string (drd->get_attribute (L(st), "name"));
   }
   if (last_item (tp) == 0) r= "before#" * r;
   return r;
@@ -209,9 +180,14 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
   switch (L (st)) {
+  case DOCUMENT:
+  case PARAGRAPH:
+    return up;
   case SURROUND:
     if (l == 0) return up * "left surrounding#";
     if (l == 1) return up * "right surrounding#";
+    return up;
+  case CONCAT:
     return up;
   case MOVE:
     if (l==0) return up * "move#";
@@ -222,26 +198,12 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case _FLOAT:
     if (is_atomic (st[0])) return up * st[0]->label * "#";
     else return up * "float#";
-  case DECORATE_ATOMS:
-    return up * "decorate atoms#";
-  case DECORATE_LINES:
-    return up * "decorate lines#";
-  case DECORATE_PAGES:
-    return up * "decorate pages#";
   case BELOW:
     if (l==0) return up * "body#";
     else return up * "script below#";
   case ABOVE:
     if (l==0) return up * "body#";
     else return up * "script above#";
-  case LEFT_SUB:
-    return up * "left subscript#";
-  case LEFT_SUP:
-    return up * "left superscript#";
-  case RIGHT_SUB:
-    return up * "subscript#";
-  case RIGHT_SUP:
-    return up * "superscript#";
   case FRAC:
     if (l==0) return up * "numerator#";
     else return up * "denominator#";
@@ -258,12 +220,6 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "branch(" * as_string (l) * ")#";
   case TABLE_FORMAT:
     return up;
-  case TABLE_WITH:
-    return up * "table property#";
-  case CELL_WITH:
-    return up * "cell property#";
-  case TABLE_MARKER:
-    return up * "table marker#";
   case TABLE:
     return up * "(" * as_string (l+1) * ",";
   case ROW:
@@ -278,12 +234,6 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * "value(" * as_string (l/2) * ")#";
   case COMPOUND:
     return up * as_string (st[0]) * "#";
-  case MAP_ARGS:
-    return up * "map arguments#";
-  case EVAL_ARGS:
-    return up * "evaluate arguments#";
-  case EVAL:
-    return up * "evaluate#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
@@ -294,8 +244,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case HYPERLINK:
     return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
-    if (L(st) < START_EXTENSIONS) return up;
-    else return up * replace (as_string (L(st)), "_", " ") * "#";
+    return up * as_string (drd->get_attribute (L(st), "name")) * "#";
   }
 }
 

@@ -133,8 +133,8 @@ operator << (ostream& out, child_info ci) {
 * Constructors, destructors and converters
 ******************************************************************************/
 
-tag_info_rep::tag_info_rep (parent_info pi2, array<child_info> ci2):
-  pi (pi2), ci (ci2) {}
+tag_info_rep::tag_info_rep (parent_info pi2, array<child_info> ci2, tree x):
+  pi (pi2), ci (ci2), extra (x) {}
 
 tag_info_rep::tag_info_rep (int a, int x, int am, int cm, bool frozen):
   pi (a, x, am, cm, frozen),
@@ -147,8 +147,8 @@ tag_info_rep::tag_info_rep (int a, int x, int am, int cm, bool frozen):
   }
 }
 
-tag_info::tag_info (parent_info pi, array<child_info> ci) {
-  rep= new tag_info_rep (pi, ci);
+tag_info::tag_info (parent_info pi, array<child_info> ci, tree extra) {
+  rep= new tag_info_rep (pi, ci, extra);
 }
 
 tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
@@ -156,7 +156,7 @@ tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
 }
 
 tag_info::tag_info (tree t) {
-  if ((!is_func (t, TUPLE, 2)) || (L(t[1]) != TUPLE)) {
+  if ((!is_func (t, TUPLE)) || (N(t)<2) || (L(t[1]) != TUPLE)) {
     cerr << "\nt= " << t << "\n";
     fatal_error ("Bad tag_info", "tag_info::tag_info (tree)");
   }
@@ -165,11 +165,12 @@ tag_info::tag_info (tree t) {
   array<child_info> ci (n);
   for (i=0; i<n; i++)
     ci[i]= as_string (t[1][i]);
-  rep= new tag_info_rep (pi, ci);
+  rep= new tag_info_rep (pi, ci, N(t)==3? t[2]: tree (""));
 }
 
 tag_info::operator tree () {
-  return tree (TUPLE, (string) rep->pi, (tree) rep->ci);
+  if (rep->extra == "") return tree (TUPLE, (string) rep->pi, (tree) rep->ci);
+  else return tree (TUPLE, (string) rep->pi, (tree) rep->ci, rep->extra);
 }
 
 /******************************************************************************
@@ -179,13 +180,35 @@ tag_info::operator tree () {
 tag_info
 tag_info_rep::no_border () {
   pi.no_border= true;
-  return tag_info (pi, ci);
+  return tag_info (pi, ci, extra);
 }
 
 tag_info
 tag_info_rep::accessible (int i) {
   ci[i].accessible= true;
-  return tag_info (pi, ci);
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::name (string s) {
+  set_attribute ("name", s);
+  return tag_info (pi, ci, extra);
+}
+
+void
+tag_info_rep::set_attribute (string which, tree val) {
+  if (extra == "") extra= tree (ATTR);
+  extra << tree (which) << val;
+}
+
+tree
+tag_info_rep::get_attribute (string which) {
+  if (!is_func (extra, ATTR)) return "";
+  int i, n= N(extra);
+  for (i=0; i+1<n; i+=2)
+    if (extra[i] == which)
+      return extra[i+1];
+  return "";
 }
 
 int
@@ -228,18 +251,20 @@ tag_info::operator () (int child, int n) {
 
 ostream&
 operator << (ostream& out, tag_info ti) {
-  out << "[ " << ti->pi << ", " << ti->ci << " ]";
-  return out;
+  out << "[ " << ti->pi << ", " << ti->ci;
+  if (ti->extra != "") out << ", " << ti->extra << "\n";
+  return out << " ]";
 }
 
 tag_info
 copy (tag_info ti) {
-  return tag_info (ti->pi, copy (ti->ci));
+  return tag_info (ti->pi, copy (ti->ci), copy (ti->extra));
 }
 
 bool
 operator == (tag_info ti1, tag_info ti2) {
-  return (ti1->pi == ti2->pi) && (ti1->ci == ti2->ci);
+  return
+    (ti1->pi == ti2->pi) && (ti1->ci == ti2->ci) && (ti1->extra == ti2->extra);
 }
 
 bool

@@ -12,6 +12,7 @@
 
 #include "drd_info.hpp"
 #include "iterator.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Constructors and basic operations
@@ -194,6 +195,26 @@ drd_info_rep::freeze_no_border (tree_label l) {
 bool
 drd_info_rep::is_child_enforcing (tree t) {
   return info[L(t)]->pi.no_border && (N(t) != 0);
+}
+
+/******************************************************************************
+* Other attributes
+******************************************************************************/
+
+void
+drd_info_rep::set_attribute (tree_label l, string which, tree val) {
+  if (info[l]->pi.freeze_no_border) return;
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->set_attribute (which, val);
+}
+
+tree
+drd_info_rep::get_attribute (tree_label l, string which) {
+  tree val= info[l]->get_attribute (which);
+  if ((which == "name") && (val == ""))
+    return replace (as_string (l), "_", " ");
+  return val;
 }
 
 /******************************************************************************
