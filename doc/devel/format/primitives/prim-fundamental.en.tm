@@ -5,18 +5,104 @@
 <\body>
   <tmdoc-title|Fundamental structures>
 
-  Fundamental document structures (document, concat) and primitive with
-  unique properties (error, raw-data).
+  <\big-table>
+    <assign|tag-info-table|<macro|x|<descriptive-table|<tformat|<cwith|1|2|1|-1|cell-halign|c>|<cwith|1|1|1|-1|cell-row-span|2>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|3|3|cell-bborder|0ln>|<cwith|1|2|1|-1|cell-lborder|1ln>|<cwith|2|2|1|-1|cell-background|pastel
+    blue>|<cwith|1|1|3|3|cell-col-span|2>|<cwith|1|1|3|3|cell-row-span|1>|<twith|table-min-rows|3>|<twith|table-min-cols|6>|<twith|table-max-cols|6>|<arg|x>>>>><tag-info-table|<tformat|<table|<row|<cell|<strong|Operator>>|<cell|<strong|Arity>>|<cell|<strong|Accessible>>|<cell|>|<cell|<strong|Process>>|<cell|<strong|Usage>>>|<row|<cell|>|<cell|>|<cell|<strong|border>>|<cell|<strong|children>>|<cell|>|<cell|>>|<row|<cell|<verbatim|document>>|<cell|<with|mode|math|1+n>>|<cell|<with|mode|math|>No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<verbatim|concat>>|<cell|<with|mode|math|1+n>>|<cell|No>|<cell|All>|<cell|Typesetting>|<cell|Logical>>|<row|<cell|<verbatim|error>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Never>>|<row|<cell|<verbatim|raw-data>>|<cell|1>|<cell|Yes>|<cell|None>|<cell|Display>|<cell|Logical>>>>>
 
-  <\itemize>
-    <item>document
+    \;
+  </big-table|Fundamental structures>
 
-    <item>concat
+  The <verbatim|document> and <verbatim|concat> operators are fundamental and
+  pervasive structures of <TeXmacs> documents. They are used to assemble
+  lines and paragraphs out of all other structures.
 
-    <item>error
+  The <verbatim|texmacs> concrete syntax, used to save documents to disk, is
+  designed to make these operators implicit, so they do not get in the way of
+  reading the document content, that is one import reason why this concrete
+  syntax is inappropriate for hand-editing.
 
-    <item>raw-data (opaque)
-  </itemize>
+  <\description-dash>
+    <item*|document>Sequence of logical paragraphs.
+
+    A simple, plain text, document is made of a simple sequence of paragraphs
+    (<em|i.e.> logical lines).
+
+    <\tm-fragment>
+      A simple document.
+
+      Made of several paragraphs.
+    </tm-fragment>
+
+    Such a document is represented a simple <verbatim|document> tree whose
+    subtrees are all strings.
+
+    <\scheme-fragment>
+      (document "A simple document." "Made of several paragraphs.")
+    </scheme-fragment>
+
+    Actually, the root of the <em|edit tree> is always a <verbatim|document>
+    node. Document fragments use a root <verbatim|document> node only when
+    they contain several top-level paragraphs.
+
+    The <verbatim|document> operators are also found in inner subtrees
+    wherever a multiparagraph structure is needed, for example in list
+    structures and multiparagraph table cells.
+
+    <item*|concat>Sequence of line items.
+
+    Since the interpretation of an operator is done according to the count
+    and position its operands, we need an operator to glue compound operands
+    into individual trees without introducing additional logical structure.
+
+    <\tm-fragment>
+      Some <em|emphasized> text.
+    </tm-fragment>
+
+    This fragment is made of several line items. The <verbatim|concat> node
+    is used to assemble them into a single logical line.
+
+    <\scheme-fragment>
+      (concat "Some " (em "emphasized") " text.")
+    </scheme-fragment>
+
+    The <verbatim|concat> operator is essential to put compound structures in
+    trees taking multiple parameters. For example, let us place the previous
+    fragment in a multi-paragraph context:
+
+    <\tm-fragment>
+      Multiple paragraphs.
+
+      Some <em|emphasized> text.
+    </tm-fragment>
+
+    We absolutely need <verbatim|concat> as a glue operator so the multiple
+    components of the second paragraph are no considered multiple paragraphs.
+
+    <\scheme-fragment>
+      (document "Multiple paragraphs."
+
+      \ \ \ \ \ \ \ \ \ \ (concat "Some " (em "emphasized") " text."))
+    </scheme-fragment>
+  </description-dash>
+
+  The <verbatim|error> and <verbatim|raw-data> operators are much more rarely
+  used. However, they are versatile, may be useful in numerous context, and
+  do not fall neatly in any category, so we chose to describe them early.
+
+  <\description-dash>
+    <item*|error>Error reporting.
+
+    This primitive should never appear in documents. It is provided as aid in
+    tracking down invalid constructs. It is produced at evaluation time by
+    any kind of primitive which is given improper operands.
+
+    <item*|raw-data>Opaque data.
+
+    In some contexts you need to embbed uneditable data inside a document,
+    most of the time this is uneditable binary data. The <verbatim|raw-data>
+    primive makes it impossible to view or modify its subtree from within the
+    editor.
+  </description-dash>
 
   <tmdoc-copyright|2004|David Allouche>
 
@@ -30,6 +116,7 @@
 
 <\initial>
   <\collection>
+    <associate|preamble|false>
     <associate|page-even|30mm>
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-right|25mm>
@@ -42,3 +129,18 @@
     <associate|page-reduce-top|15mm>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|gly-1|<tuple|1|?>>
+    <associate|gly-2|<tuple|2|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|table>
+      <tuple|normal|Fundamental structures|<pageref|gly-1>>
+    </associate>
+  </collection>
+</auxiliary>
