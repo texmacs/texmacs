@@ -65,6 +65,8 @@
 	(-> "Reference guide"
 	    ("The TeXmacs format"
 	     (load-help-article "devel/format/basics/basics"))
+	    ("Standard environment variables"
+	     (load-help-article "devel/format/environment/environment"))
 	    ("TeXmacs primitives"
 	     (load-help-article "devel/format/regular/regular"))
 	    ("Stylesheet language"
