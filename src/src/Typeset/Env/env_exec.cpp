@@ -888,7 +888,12 @@ edit_env_rep::exec_find_file (tree t) {
       return as_string (u);
     }
   }
-  return copy (r[n-1]->label);
+  url u= resolve (base_file_name * url_parent () * r[n-1]->label);
+  if (!is_none (u)) {
+    if (is_rooted (u, "default")) u= reroot (u, "file");
+    return as_string (u);
+  }
+  return "false";
 }
 
 tree
