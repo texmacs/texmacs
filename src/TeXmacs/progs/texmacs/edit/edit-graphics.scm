@@ -337,13 +337,13 @@
       0))
 
 (define (box-info t cmd)
-  (tree->stree (texmacs-exec (stree->tree `(exec (box-info ,t ,cmd))))))
+  (tree->stree (texmacs-exec `(box-info ,t ,cmd))))
 
 (define (frame-direct p)
-  (tree->stree (texmacs-exec (stree->tree `(exec (frame-direct ,p))))))
+  (tree->stree (texmacs-exec `(frame-direct ,p))))
 
 (define (frame-inverse p)
-  (tree->stree (texmacs-exec (stree->tree `(exec (frame-inverse ,p))))))
+  (tree->stree (texmacs-exec `(frame-inverse ,p))))
 
 ;; Graphical object
 (define graphical-color "default")
