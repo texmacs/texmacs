@@ -13,6 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 #include "drd_std.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Constructor and destructor

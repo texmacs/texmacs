@@ -114,7 +114,7 @@ public:
   virtual void stop_connection () = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
-  virtual bool kbd_get_command (string cmd, string& help, command& cmd) = 0;
+  virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;

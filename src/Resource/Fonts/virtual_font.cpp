@@ -266,7 +266,7 @@ virtual_font_rep::get_extents (string s, text_extents& ex) {
     ex->x1= ex->x2= ex->x3= ex->x4= ex->y3= ex->y4= 0;
   }
   else {
-    text_extents_struct* ey (cbmm->get(c));
+    text_extents_struct* ey= cbmm->get(c);
     ex->x1= ey->x1; ex->y1= ey->y1;
     ex->x2= ey->x2; ex->y2= ey->y2;
     ex->x3= ey->x3; ex->y3= ey->y3;

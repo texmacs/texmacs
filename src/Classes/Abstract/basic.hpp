@@ -36,11 +36,10 @@ typedef unsigned short HN;
 typedef char QI;
 typedef unsigned char QN;
 #ifdef OS_WIN32
-typedef unsigned long int DI;
+typedef __int64 DI;
 #else
 typedef long long int DI;
 #endif
-typedef long long int DI;
 typedef void* pointer;
 
 #ifndef NO_FAST_ALLOC

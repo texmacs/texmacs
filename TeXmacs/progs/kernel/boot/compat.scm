@@ -15,7 +15,20 @@
 (texmacs-module (kernel boot compat)
   (:export exec-file))
 
-(debug-set! stack 1000000)
+(define cout-port
+  (make-soft-port
+   (vector (lambda (c) (win32-display (char->string c)))
+	   (lambda (s) (win32-display s))
+	   (lambda () (noop))
+	   (lambda () #\?)
+	   (lambda () (noop)))
+   "w"))
+
+(if (os-win32?)
+    (begin
+      (set-current-output-port cout-port)
+      (set-current-error-port cout-port))
+    (debug-set! stack 1000000))
 
 ;;; make eval from guile>=1.6.0 backwards compatible
 (catch 'wrong-number-of-args

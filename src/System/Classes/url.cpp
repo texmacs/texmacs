@@ -133,6 +133,8 @@ url_default (string name, int type= URL_SYSTEM) {
   url u= url_get_name (name, type);
 #ifdef OS_WIN32
   // FIXME: this hack seems a bit too simple
+  if (is_concat (u) && (u[2]->t == "")) u= u[1];
+  // cout << name << " -> " << url_root ("default") * u << "\n";
   return url_root ("default") * u;
 #else
   if (u->t == "") return url_root ("default");
@@ -190,7 +192,7 @@ heuristic_is_default (string name, int type) {
   // FIXME: we probably should take into account 'type' too
   if ((name[0] == '\\') && (name[1] == '\\'))
     return true;
-  if (isalpha(name[0]) && (name[1] == ':') && (name[2] == '\\'))
+  if (isalpha(name[0]) && (name[1] == ':') && ((name[2] == '\\') || (N(name)==2)))
     return true;
   return false;
 #else
@@ -262,8 +264,19 @@ url::url (string path_name, string name):
 * Computational url constructors
 ******************************************************************************/
 
+static bool
+is_semi_root (url u) {
+  // url u such that u/.. == u (website or windows drive name)
+#ifdef OS_WIN32
+  return is_concat (u) && is_root (u[1]) && is_atomic (u[2]);
+#else
+  return is_concat (u) && is_root_web (u[1]) && is_atomic (u[2]);
+#endif
+}
+
 url
 operator * (url u1, url u2) {
+  //cout << "concat " << u1->t << " * " << u2->t << "\n";
   if (is_root (u2) || (is_concat (u2) && is_root (u2[1]))) {
     if (is_concat (u1) && is_root_web (u1[1]) &&
 	(is_root (u2, "default") ||
@@ -276,19 +289,20 @@ operator * (url u1, url u2) {
       }
     return u2;
   }
-  if (is_here (u1)) return u2;
+  if (is_here (u1) || (u1->t == "")) return u2;
   if (is_here (u2)) return u1;
   if (is_none (u1)) return url_none ();
   if (is_none (u2)) return url_none ();
   if (u2 == url_parent ()) {
     if (is_root (u1)) return u1;
     if (is_atomic (u1) && (!is_parent (u1))) return url_here ();
-    if (is_concat (u1) && is_root_web (u1[1]) && is_atomic (u1[2])) return u1;
+    if (is_semi_root (u1))
+      return u1;
   }
   if (is_concat (u2) && (u2[1] == url_parent ())) {
     if (is_root (u1)) return u1 * u2[2];
     if (is_atomic (u1) && (!is_parent (u1))) return u2[2];
-    if (is_concat (u1) && is_root_web (u1[1]) && is_atomic (u1[2]))
+    if (is_semi_root (u1))
       return u1 * u2[2];
   }
   if (is_concat (u1)) return u1[1] * (u1[2] * u2);
@@ -415,6 +429,7 @@ as_string (url u, int type) {
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
 #ifdef OS_WIN32
+    if (is_semi_root (u)) return s2 * "\\";
     if (is_root (u[1]) && stype == URL_SYSTEM) return s2;
 #endif
     return s1 * sep * s2;

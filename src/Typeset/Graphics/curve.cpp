@@ -71,12 +71,13 @@ poly_segment (array<point> a) {
 * Splines
 ******************************************************************************/
 
+static const double epsilon=0.01;//0.00005;
+
 struct spline_rep: public curve_rep {
   array<point> a;
   int n;
   array<double> U;
   array<polynomials> p;
-  static const double epsilon=0.01;//0.00005;
 
   spline_rep (array<point> a2,bool close=false);
 

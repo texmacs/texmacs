@@ -14,6 +14,7 @@
 #define FILE_H
 #include "url.hpp"
 #include "sys_utils.hpp"
+#include "analyze.hpp"
 
 bool load_string (url file_name, string& s, bool fatal=false);
 bool save_string (url file_name, string s, bool fatal=false);

@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "convert.hpp"
+#include "analyze.hpp"
 #include "drd_std.hpp"
 #include "path.hpp"
 
@@ -21,22 +22,6 @@
 static bool
 is_spc (char c) {
   return (c==' ') || (c=='\t') || (c=='\n');
-}
-
-static string
-unslash (string s, int start, int end) {
-  int i;
-  string r;
-  for (i=start; i<end; i++)
-    if ((s[i]=='\\') && ((i+1)<end))
-      switch (s[++i]) {
-      case '0': r << ((char) 0); break;
-      case 'n': r << '\n'; break;
-      case 't': r << '\t'; break;
-      default: r << s[i];
-      }
-    else r << s[i];
-  return r;
 }
 
 static scheme_tree
@@ -74,7 +59,7 @@ string_to_scheme_tree (string s, int& i) {
 	  i++;
 	}
 	if (i<N(s)) i++;
-	return scheme_tree (unslash (s, start, i));
+	return scheme_tree (unslash (s (start, i)));
       }
 
     case ';':
@@ -88,7 +73,7 @@ string_to_scheme_tree (string s, int& i) {
 	  if ((i<N(s)-1) && (s[i]=='\\')) i++;
 	  i++;
 	}
-	return scheme_tree (unslash (s, start, i));
+	return scheme_tree (unslash (s (start, i)));
       }
     }
 

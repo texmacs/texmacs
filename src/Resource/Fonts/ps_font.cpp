@@ -134,7 +134,7 @@ ps_font_rep::draw (ps_device dev, string s, SI x, SI y) {
     for (i=0; i<N(s); i++) {
       QN c= s[i];
       dev->draw (c, bmf, x, y);
-      text_extents_struct* ex (bmm->get (c));
+      text_extents_struct* ex= bmm->get (c);
       x += ex->x2;
     }
   }

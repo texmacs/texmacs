@@ -10,6 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include <tm_configure.hpp>
 #include "Glue/glue.hpp"
 #include "server.hpp"
 #include "connect.hpp"
@@ -59,6 +60,21 @@ texmacs_version (string which) {
   if (which == "stgz") return TEXMACS_STGZ;
   if (which == "srpm") return TEXMACS_SRPM;
   return TEXMACS_VERSION;
+}
+
+bool
+os_win32 () {
+#ifdef OS_WIN32
+  return true;
+#else
+  return false;
+#endif
+}
+
+void
+win32_display (string s) {
+  cout << s;
+  cout.flush ();
 }
 
 /******************************************************************************

@@ -19,6 +19,8 @@
   "initialize_glue_basic"
 
   (texmacs-version-release texmacs_version (string string))
+  (os-win32? os_win32 (bool))
+  (win32-display win32_display (void string))
 
   (tree->object tree_to_scheme_tree (scheme_tree tree))
   (object->tree scheme_tree_to_tree (tree scheme_tree))
@@ -80,6 +82,7 @@
 
   (string->url url (url string))
   (url url (url string string))
+  (url-system url_system (url string))
   (url-none url_none (url))
   (url-any url_wildcard (url))
   (url-wildcard url_wildcard (url string))
@@ -129,6 +132,8 @@
   (string-search-forwards search_forwards (int string int string))
   (string-search-backwards search_backwards (int string int string))
   (string-replace replace (string string string string))
+  (string-slash slash (string string))
+  (string-unslash unslash (string string))
   (upcase-first upcase_first (string string))
   (locase-first locase_first (string string))
   (upcase-all upcase_all (string string))

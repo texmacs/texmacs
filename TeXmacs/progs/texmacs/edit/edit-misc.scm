@@ -26,11 +26,11 @@
   (make 'latex)
   (set-message "Type a latex command followed by return" "latex"))
 
-(define (make-include s)
-  (insert-object `(include ,s)))
+(define (make-include u)
+  (insert-object `(include ,(string-slash (url->string u)))))
 
 (define (make-inline-image l)
-  (apply make-postscript (cons* (car l) #f (cdr l))))
+  (apply make-postscript (cons* (url->string (car l)) #f (cdr l))))
 
 (define (make-link-image l)
-  (apply make-postscript (cons* (car l) #t (cdr l))))
+  (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))

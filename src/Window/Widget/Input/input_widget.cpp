@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Widget/attribute_widget.hpp"
+#include "analyze.hpp"
 #include "font.hpp"
 #include "Widget/layout.hpp"
 
@@ -110,7 +111,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
   if (key == "space") key= " ";
 
-  if (key == "return") { s= "\"" * s * "\""; call_back (); }
+  if (key == "return") { s= quote (s); call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) { s= "cancel"; call_back (); }
   else if ((key == "left") || (key == "C-b")) { if (pos>0) pos--; }

@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "Freetype/free_type.hpp"
-#include "Link/dyn_link.hpp"
+#include "dyn_link.hpp"
 
 #ifdef USE_FREETYPE
 
