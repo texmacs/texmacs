@@ -22,6 +22,8 @@ extern string my_init_cmds;
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
 
+extern tree   the_et;
+
 /******************************************************************************
 * Real main program for encaptulation of guile
 ******************************************************************************/
@@ -201,6 +203,8 @@ TeXmacs_main (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  the_et     = tuple ();
+  the_et->obs= ip_observer (path ());
   init_texmacs ();
   start_guile (argc, argv, TeXmacs_main);
   return 0;

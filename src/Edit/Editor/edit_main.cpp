@@ -269,7 +269,8 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::show_tree () {
-  cout << et << "\n";
+  stretched_print (et, true);
+  // cout << et << "\n";
 }
 
 void
