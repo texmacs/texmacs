@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
@@ -41,22 +41,30 @@
     </src-comment>
   </active*>
 
+  <assign|render-cite|<macro|x|[<arg|x>]>>
+
+  <assign|render-cite-detail|<macro|x|y|<render-cite|<arg|x>, <arg|y>>>>
+
   <assign|cite-arg|<macro|x|<write|bib|<arg|x>><reference|<merge|bib-|<arg|x>>>>>
 
   <assign|cite-arg-extra|<macro|x|, <cite-arg|<arg|x>>>>
 
-  <assign|cite|<xmacro|x|[<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>]>>
+  <assign|cite|<xmacro|x|<render-cite|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>>
 
-  <assign|cite-detail|<macro|x|y|[<cite-arg|<arg|x>>, <arg|y>]>>
+  <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-arg|<arg|x>>|<arg|y>>>>
 
   <assign|nocite-arg|<macro|x|<write|bib|<arg|x>>>>
 
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
   green|x><map-args|nocite-arg|concat|x|1>>>>
 
+  \;
+
+  <assign|render-bibitem|<macro|text|<compact-strong-space-item|[<arg|text>]>>>
+
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<compact-strong-space-item|[<arg|text>]><assign|the-label|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<arg|text>><assign|the-label|<arg|text>>>>>
 
   <assign|protect|>
 
@@ -70,38 +78,47 @@
     </src-comment>
   </active*>
 
-  <assign|toc-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-  >
+  <assign|toc-entry|<macro|type|what|<quasi|<style-with|src-compact|none|<flag|<localize|table
+  of contents>|dark green|what><auto-label><write|toc|<compound|<unquote|<arg|type>>|<arg|what>|<pageref|<the-auto>>>>>>>>
 
-  <assign|toc-main-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<the-auto>><vspace|1fn>>>>>
+  <assign|toc-main-1|<macro|what|<toc-entry|toc-strong-1|<arg|what>>>>
 
-  <assign|toc-main-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.5fn>>>>>
+  <assign|toc-main-2|<macro|what|<toc-entry|toc-strong-2|<arg|what>>>>
 
-  <assign|toc-normal-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>
+  <assign|toc-normal-1|<macro|what|<toc-entry|toc-1|<arg|what>>>>
 
-  <assign|toc-normal-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
+  <assign|toc-normal-2|<macro|what|<toc-entry|toc-2|<arg|what>>>>
 
-  <assign|toc-normal-3|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>>>>>>>
+  <assign|toc-normal-3|<macro|what|<toc-entry|toc-3|<arg|what>>>>
 
-  <assign|toc-small-1|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.15fn>>>>>>
+  <assign|toc-small-1|<macro|what|<toc-entry|toc-4|<arg|what>>>>
 
-  <assign|toc-small-2|<macro|what|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<the-auto>><vspace|0.15fn>>>>>>
+  <assign|toc-small-2|<macro|what|<toc-entry|toc-5|<arg|what>>>>
+
+  \;
+
+  <assign|toc-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  >>
+
+  <assign|toc-strong-1|<macro|left|right|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|left>><toc-dots><arg|right><vspace|1fn>>>
+
+  <assign|toc-strong-2|<macro|left|right|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|left>><toc-dots><arg|right><vspace|0.5fn>>>
+
+  <assign|toc-1|<macro|left|right|<arg|left><toc-dots><arg|right>>>
+
+  <assign|toc-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><toc-dots><arg|right>>>>
+
+  <assign|toc-3|<macro|left|right|<with|par-left|3fn|<arg|left><toc-dots><arg|right>>>>
+
+  <assign|toc-4|<macro|left|right|<with|par-left|6fn|<with|font-size|0.84|<arg|left><toc-dots><arg|right><vspace|0.15fn>>>>>
+
+  <assign|toc-5|<macro|left|right|<with|par-left|7.5fn|font-size|0.84|<arg|left><toc-dots><arg|right><vspace|0.15fn>>>>
 
   <\active*>
     <\src-comment>
       Indexes.
     </src-comment>
   </active*>
-
-  <assign|index-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-  >
 
   <assign|index-line|<macro|key|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><write|idx|<tuple|<arg|key>||<arg|entry>>>>>>
@@ -120,23 +137,28 @@
   <assign|index-complex|<macro|key|how|range|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><auto-label><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<the-auto>>>>>>>
 
-  <assign|index-1|<macro|left|right|<arg|left><value|index-dots><arg|right>>>
+  \;
+
+  <assign|index-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  >>
+
+  <assign|index-1|<macro|left|right|<arg|left><index-dots><arg|right>>>
 
   <assign|index-1*|<macro|left|<arg|left><no-page-break>>>
 
-  <assign|index-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><index-dots><arg|right>>>>
 
   <assign|index-2*|<macro|left|<with|par-left|1.5fn|<arg|left><no-page-break>>>>
 
-  <assign|index-3|<macro|left|right|<with|par-left|3fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-3|<macro|left|right|<with|par-left|3fn|<arg|left><index-dots><arg|right>>>>
 
   <assign|index-3*|<macro|left|<with|par-left|3fn|<arg|left><no-page-break>>>>
 
-  <assign|index-4|<macro|left|right|<with|par-left|4.5fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-4|<macro|left|right|<with|par-left|4.5fn|<arg|left><index-dots><arg|right>>>>
 
   <assign|index-4*|<macro|left|<with|par-left|4.5fn|<arg|left><no-page-break>>>>
 
-  <assign|index-5|<macro|left|right|<with|par-left|6fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-5|<macro|left|right|<with|par-left|6fn|<arg|left><index-dots><arg|right>>>>
 
   <assign|index-5*|<macro|left|<with|par-left|6fn|<arg|left><no-page-break>>>>
 
@@ -145,9 +167,6 @@
       Glossaries.
     </src-comment>
   </active*>
-
-  <assign|glossary-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-  >
 
   <assign|glossary-line|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
   green|entry><write|gly|<tuple|<arg|entry>>>>>>
@@ -161,10 +180,15 @@
   <assign|glossary-dup|<macro|entry|<style-with|src-compact|none|<flag|<localize|glossary>|dark
   green|entry><auto-label><write|gly|<tuple|dup|<arg|entry>|<pageref|<the-auto>>>>>>>
 
-  <assign|glossary-1|<macro|left|right|<arg|left><value|glossary-dots><arg|right>>>
+  \;
+
+  <assign|glossary-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  >>
+
+  <assign|glossary-1|<macro|left|right|<arg|left><glossary-dots><arg|right>>>
 
   <assign|glossary-2|<macro|entry|explain|right|<resize|<arg|entry>
-  |||r]10fn|><arg|explain><value|glossary-dots><arg|right>>>
+  |||r]10fn|><arg|explain><glossary-dots><arg|right>>>
 
   \;
 </body>

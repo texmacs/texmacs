@@ -60,7 +60,7 @@
 	    ("Reference guide for the TeXmacs primitives"
 	     (load-help-article "devel/format/primitives/primitives"))
 	    ("Reference guide for the standard TeXmacs styles"
-	     (load-help-article "main/styles/std-dtds/dtds"))
+	     (load-help-article "main/styles/styles"))
 	    ("Customizing TeXmacs"
 	     (load-help-article "main/scheme/man-scheme"))
 	    ("Compatibility with other formats"
