@@ -1,25 +1,26 @@
-<TeXmacs|1.0.2.4>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Compatibility with other formats>
+  <compound|tmdoc-title|Compatibility with other formats>
 
-  <TeXmacs> is fully compatible with postscript, which is used as the format
-  in order to print documents. <TeXmacs> also provides converters from and to
-  <LaTeX> and an input filter for Html.
+  <TeXmacs> is fully compatible with Postscript (as well as <acronym|PDF>),
+  which is used as the format in order to <hyper-link|print
+  documents|../start/man-print.en.tm>. <TeXmacs> also provides converters
+  from and to <LaTeX> and an input filter for Html.
 
   <\traverse>
-    <apply|branch|<LaTeX>|latex/man-latex.en.tm>
+    <branch|<LaTeX>|latex/man-latex.en.tm>
 
-    <apply|branch|Html|html/man-html.en.tm>
+    <branch|Html|html/man-html.en.tm>
 
-    <apply|branch|Adding new converters|new/man-newconv.en.tm>
+    <branch|Adding new converters|new/man-newconv.en.tm>
   </traverse>
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
+  <compound|tmdoc-license|Permission is granted to copy, distribute and/or
   modify this document under the terms of the GNU Free Documentation License,
   Version 1.1 or any later version published by the Free Software Foundation;
   with no Invariant Sections, with no Front-Cover Texts, and with no
@@ -29,18 +30,18 @@
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
