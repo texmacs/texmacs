@@ -138,6 +138,7 @@ public:
   virtual void mouse_paste (SI x, SI y) = 0;
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
+  virtual cursor get_cursor () = 0;
   virtual void set_message (string l, string r= "") = 0;
   virtual void interactive (scheme_tree args, scheme_tree cmd) = 0;
 
@@ -168,9 +169,11 @@ public:
   virtual tree get_labels () = 0;
 
   /* public routines from edit_graphics */
-  virtual bool  inside_graphics () = 0;
-  virtual frame find_frame () = 0;
-  virtual void  mouse_graphics (string s, SI x, SI y, time_t t) = 0;
+  virtual bool   inside_graphics () = 0;
+  virtual frame  find_frame () = 0;
+  virtual point  adjust (point p) = 0;
+  virtual tree   find_point (point p) = 0;
+  virtual void   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;

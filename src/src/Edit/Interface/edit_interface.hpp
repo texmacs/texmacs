@@ -47,6 +47,7 @@ protected:
 
 protected:
   time_t        last_click;    // last click on left mouse button
+  SI            last_x, last_y;
   bool          start_drag;
   bool          dragging;
   SI            start_x, start_y;
@@ -135,6 +136,7 @@ public:
   void mouse_paste (SI x, SI y);
   void mouse_adjust (SI x, SI y);
   void mouse_scroll (SI x, SI y, bool up);
+  cursor get_cursor ();
 
   /* the footer */
   string compute_text_footer (tree st);

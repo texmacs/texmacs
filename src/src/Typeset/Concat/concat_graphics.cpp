@@ -23,6 +23,7 @@ concater_rep::typeset_graphics (tree t, path ip) {
   array<box> bs (n);
   for (i=0; i<n; i++)
     bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+  if (n == 0) bs << empty_box (decorate_right (ip));
   box b= graphics_box (ip, bs, env->fr, env->clip_lim1, env->clip_lim2);
   print (STD_ITEM, b);
 }
@@ -74,11 +75,8 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     a[i]= env->decode_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
   if (N(a) == 0) typeset_dynamic (tree (ERROR, "bad line", t), ip);
-  else if (N(a) == 1) {
-    point p= env->fr (a[0]);
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col));
-  }
   else {
+    if (N(a) == 1) a << copy (a[0]);
     curve c= env->fr (poly_segment (a));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }

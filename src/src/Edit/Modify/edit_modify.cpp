@@ -371,10 +371,12 @@ edit_modify_rep::notify_undo (string op, path p, tree t) {
 	string op2; path p2; tree t2;
 	decode (buf->undo[1][0], op2, p2, t2);
 	if ((op2 == "remove") && (p == path_add (p2, as_int (t2)))) {
-	  buf->unmark_undo_block ();
-	  buf->undo= buf->undo [1];
-	  int nr= as_int (t2)+ as_int (t);
-	  x= encode (op, p2, as_string (nr));
+	  if (is_atomic (subtree (et, path_up (p)))) {
+	    buf->unmark_undo_block ();
+	    buf->undo= buf->undo [1];
+	    int nr= as_int (t2)+ as_int (t);
+	    x= encode (op, p2, as_string (nr));
+	  }
 	}
       }
     buf->undo= tree (BACKUP, x, buf->undo);

@@ -44,11 +44,11 @@ edit_interface_rep::edit_interface_rep ():
   popup_win (NULL),
   sfactor (sv->get_default_shrinking_factor ()),
   pixel (sfactor*PIXEL), copy_always (),
-  last_click (0), dragging (false),
+  last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
   oc (0, 0)
 {
-  input_mode  = INPUT_NORMAL;
+  input_mode= INPUT_NORMAL;
 }
 
 edit_interface_rep::~edit_interface_rep () {}
@@ -317,40 +317,48 @@ edit_interface_rep::draw_env (ps_device dev) {
 
 void
 edit_interface_rep::draw_cursor (ps_device dev) {
-  if (got_focus || full_screen) draw_env (dev);
-  if ((got_focus || full_screen) && (!inside_graphics ())) {
-    cursor cu= copy (the_cursor());
-    cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
-    SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
-    SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
-    dev->set_line_style (pixel);
-    string mode= get_env_string (MODE);
-    string family, series;
-    if (mode == "text") {
-      family= get_env_string (TEXT_FAMILY);
-      series= get_env_string (TEXT_SERIES);
+  if (got_focus || full_screen) {
+    draw_env (dev);
+    cursor cu= get_cursor();
+    if (inside_graphics ()) {
+      dev->set_line_style (pixel);
+      dev->set_color (dis->red);
+      dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
+      dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
     }
-    else if (mode == "math") {
-      family= get_env_string (MATH_FAMILY);
-      series= get_env_string (MATH_SERIES);
-    }
-    else if (mode == "prog") {
-      family= get_env_string (PROG_FAMILY);
-      series= get_env_string (PROG_SERIES);
-    }
-    if (cu->valid) {
-      if (mode == "math")
-	dev->set_color (dis->rgb (192, 0, 255));
-      else dev->set_color (dis->red);
-    }
-    else dev->set_color (dis->green);
-    SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
-    if (family == "ss") lserif= rserif= 0;
-    dev->line (x1-lserif, y1, x1+rserif, y1);
-    if (y1<=y2-pixel) {
-      dev->line (x1, y1, x2, y2-pixel);
-      if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
-      dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+    else {
+      cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
+      SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
+      SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
+      dev->set_line_style (pixel);
+      string mode= get_env_string (MODE);
+      string family, series;
+      if (mode == "text") {
+	family= get_env_string (TEXT_FAMILY);
+	series= get_env_string (TEXT_SERIES);
+      }
+      else if (mode == "math") {
+	family= get_env_string (MATH_FAMILY);
+	series= get_env_string (MATH_SERIES);
+      }
+      else if (mode == "prog") {
+	family= get_env_string (PROG_FAMILY);
+	series= get_env_string (PROG_SERIES);
+      }
+      if (cu->valid) {
+	if (mode == "math")
+	  dev->set_color (dis->rgb (192, 0, 255));
+	else dev->set_color (dis->red);
+      }
+      else dev->set_color (dis->green);
+      SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
+      if (family == "ss") lserif= rserif= 0;
+      dev->line (x1-lserif, y1, x1+rserif, y1);
+      if (y1<=y2-pixel) {
+	dev->line (x1, y1, x2, y2-pixel);
+	if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
+	dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+      }
     }
   }
 }
@@ -440,7 +448,7 @@ edit_interface_rep::has_changed (int question) {
 
 void
 edit_interface_rep::cursor_visible () {
-  cursor cu= copy (the_cursor ());
+  cursor cu= get_cursor ();
   cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
   SI x1, y1, x2, y2;
   get_visible (x1, y1, x2, y2);
@@ -556,7 +564,7 @@ edit_interface_rep::apply_changes () {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
       cursor_visible ();
 
-    cursor& cu= the_cursor();
+    cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
 		   oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
     copy_always= rectangles (ocr, copy_always);
