@@ -3,7 +3,7 @@ Name: TeXmacs
 Version: 1.0.4.2
 Release: 1
 Url: http://www.texmacs.org
-Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-%{version}-src.tar.gz
+Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-1.0.4.2-src.tar.gz
 License: GNU GPL 2.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
@@ -11,7 +11,7 @@ Vendor: Jo the ripper software
 Group: Applications/Editors
 Requires: tetex
 Buildrequires: guile-devel
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRoot: %{_tmppath}/TeXmacs-1.0.4.2-root
 
 %description
 
@@ -33,7 +33,7 @@ a complete scientific office suite, with spreadsheet capacities,
 a technical drawing editor and a presentation mode.
 
 %prep
-%setup -q -n TeXmacs-%{version}-src
+%setup -q -n TeXmacs-1.0.4.2-src
 
 %build
 %configure
@@ -73,6 +73,9 @@ cp $RPM_BUILD_ROOT%{_datadir}/TeXmacs/misc/pixmaps/TeXmacs.xpm $RPM_BUILD_ROOT/u
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+
+* Thu Aug 30 2004   Joris van der Hoeven <vdhoeven@texmacs.org>
+- 1.0.4.2 correct name of tarball for release>1
 
 * Thu Jan 22 2004   Joris van der Hoeven <vdhoeven@texmacs.org>
 - 1.0.3.2 change VERSION -> DEVEL_VERSION, RELEASE -> DEVEL_RELEASE
