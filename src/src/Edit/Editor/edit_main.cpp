@@ -247,6 +247,12 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   ps_device dev=
     printer (dis, name, dpi, pages, page_type, landsc, w/cm, h/cm);
   for (i=start; i<end; i++) {
+    string col_name= env->get_string (BG_COLOR);
+    dev->set_background (dis->get_color (col_name));
+    cout << "col_name= " << col_name << "\n";
+    if (col_name != "white")
+      dev->clear (0, -h, w, 0);
+
     rectangles rs;
     the_box[0]->sx(i)= 0;
     the_box[0]->sy(i)= 0;
