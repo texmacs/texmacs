@@ -27,13 +27,17 @@
     Default values of TeX page layout parameters.
   </src-comment>>
 
+  <assign|tex-hoffset|<macro|0cm>>
+
   <assign|tex-odd-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|-30pt>>>
 
   <assign|tex-even-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|-30pt>>>
 
-  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|25.5cc|17.5cm>>>
+  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|25.5ccunit|17.5cm>>>
 
   \;
+
+  <assign|tex-voffset|<macro|0cm>>
 
   <assign|tex-top-margin|<macro|-10pt>>
 
@@ -55,7 +59,7 @@
 
   <assign|tex-footnote-tm-barlen|<macro|0.4par>>
 
-  <assign|tex-column-sep|<macro|1.5cc>>
+  <assign|tex-column-sep|<macro|1.5ccunit>>
 
   <assign|tex-float-sep|<macro|<tmlen|10pt|12pt|14pt>>>
 
@@ -69,9 +73,9 @@
 
   <assign|page-width-margin|tex>
 
-  <assign|page-odd|<macro|<plus|<tex-odd-side-margin>|1in>>>
+  <assign|page-odd|<macro|<plus|<tex-hoffset>|<tex-odd-side-margin>|1in>>>
 
-  <assign|page-even|<macro|<plus|<tex-even-side-margin>|1in>>>
+  <assign|page-even|<macro|<plus|<tex-hoffset>|<tex-even-side-margin>|1in>>>
 
   <assign|par-width|<macro|<tex-text-width>>>
 
@@ -81,7 +85,7 @@
 
   <assign|page-head-sep|<macro|<tex-head-sep>>>
 
-  <assign|page-top|<style-with|src-compact|none|<macro|<minus|1in|<tex-top-margin>|<tex-head-height>|<page-head-sep>|<tex-top-skip>|0.75quad>>>>
+  <assign|page-top|<macro|<minus|1in|<tex-voffset>|<tex-top-margin>|<tex-head-height>|<page-head-sep>|<tex-top-skip>|0.75quad>>>
 
   <assign|page-user-height|<macro|<tex-text-height>>>
 
