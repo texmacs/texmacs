@@ -43,7 +43,12 @@ eval_system (string s) {
   string result;
   bool flag= load_string (temp, result, false);
   system ("rm \"" * temp_s * "\"");
-  if (flag) return "";
+  if (flag) {
+#ifdef OS_WIN32
+    cerr << "TeXmacs] failed: " << s * " > " * temp_s << "\n";
+#endif
+    return "";
+  }
   return result;
 }
 

@@ -195,6 +195,9 @@ x_window_rep::get_type () {
 
 void
 x_window_rep::get_position (SI& x, SI& y) {
+#ifdef OS_WIN32
+  XGetWindowPos (dpy, win, &win_x, &win_y);
+#endif
   x=  win_x*PIXEL;
   y= -win_y*PIXEL;
 }

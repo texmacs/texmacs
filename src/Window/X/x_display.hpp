@@ -26,21 +26,12 @@ typedef x_window_rep* x_window;
 
 #define XK_CYRILLIC
 
-#ifdef OS_WIN32
-#include "X11/Xlib.hpp"
-#include "X11/Xutil.hpp"
-#include "X11/Xos.hpp"
-#include "X11/Xatom.hpp"
-#include "X11/keysym.hpp"
-#include "X11/Sunkeysym.hpp"
-#else
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <X11/Sunkeysym.h>
-#endif
 
 /******************************************************************************
 * For anti aliasing of TeX fonts
