@@ -187,7 +187,7 @@
 
   <\active*>
     <\src-comment>
-      Sections with automatically generated content.
+      Rendering of sections with automatically generated content.
     </src-comment>
   </active*>
 
@@ -219,10 +219,20 @@
     <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<arg|body>>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Sections with automatically generated content. The *-forms generate
+      content in the same way as the main form, but allow the use of another
+      auxiliary channel and another name (c.f. lists of figures).
+    </src-comment>
+  </active*>
 
   <assign|bibliography|<\macro|aux|style|file-name|body>
     <render-bibliography|<localize|Bibliography>|<arg|body>>
+  </macro>>
+
+  <assign|bibliography*|<\macro|aux|style|file-name|name|body>
+    <render-bibliography|<localize|<arg|name>>|<arg|body>>
   </macro>>
 
   <assign|thebibliography|<\macro|dummy|body>
@@ -233,12 +243,24 @@
     <render-table-of-contents|<localize|Table of contents>|<arg|body>>
   </macro>>
 
+  <assign|table-of-contents*|<\macro|aux|name|body>
+    <render-table-of-contents|<localize|<arg|name>>|<arg|body>>
+  </macro>>
+
   <assign|the-index|<\macro|aux|body>
     <render-index|<localize|Index>|<arg|body>>
   </macro>>
 
+  <assign|the-index*|<\macro|aux|name|body>
+    <render-index|<localize|<arg|name>>|<arg|body>>
+  </macro>>
+
   <assign|the-glossary|<\macro|aux|body>
     <render-glossary|<localize|Glossary>|<arg|body>>
+  </macro>>
+
+  <assign|the-glossary*|<\macro|aux|name|body>
+    <render-glossary|<localize|<arg|name>>|<arg|body>>
   </macro>>
 
   \;
