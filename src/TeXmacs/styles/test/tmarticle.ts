@@ -29,6 +29,28 @@
 
   <\active*>
     <\src-comment>
+      Titles.
+    </src-comment>
+  </active*>
+
+  <assign|doc-abstract|<\macro|body>
+    <\with|par-left|15mm|par-right|15mm>
+      <\small>
+        <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>
+          <arg|body>
+        </padded-bothlined>
+      </small>
+    </with>
+  </macro>>
+
+  <assign|doc-render-title|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<style-with|src-compact|none|<really-large|<doc-title-block|<arg|x>>>>>>>>
+
+  <assign|author-by|<macro|body|<arg|body>>>
+
+  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-shape|italic|<font-magnify|1.189|<arg|x>>>>>>>
+
+  <\active*>
+    <\src-comment>
       Headers.
     </src-comment>
   </active*>
@@ -46,22 +68,6 @@
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
-
-  \;
-
-  <assign|title*|<macro|body|<with|font-series|bold|math-font-series|bold|font-shape|small-caps|font-size|1.54|<arg|body>>>>
-
-  <assign|author*|<macro|body|<with|font-shape|italic|font-size|1.19|<arg|body>>>>
-
-  <assign|abstract|<\macro|body>
-    <\with|par-left|15mm|par-right|15mm>
-      <\small>
-        <\padded-bothlined|2.5bls|2.5bls|1ln|1ln|0.5bls|0.5bls>
-          <arg|body>
-        </padded-bothlined>
-      </small>
-    </with>
-  </macro>>
 
   <\active*>
     <\src-comment>

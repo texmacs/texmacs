@@ -23,19 +23,23 @@
 
   <use-package|title-base>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Containers.
+    </src-comment>
+  </active*>
 
-  <assign|make-title|<\macro|body>
+  <assign|doc-make-title|<\macro|body>
     <no-indent><assign|page-this-header|><assign|page-this-footer|><vspace|0.1pag>
 
-    <\with|par-mode|center>
-      <arg|body>
-    </with>
+    <doc-title-block|<arg|body>>
+
+    <vspace|0.1pag>
 
     <new-page><right-flush>
   </macro>>
 
-  <assign|abstract|<\macro|body>
+  <assign|doc-abstract|<\macro|body>
     <section*|<abstract-text>>
 
     <\wide-normal>
@@ -43,37 +47,33 @@
     </wide-normal>
   </macro>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text><localize|:>
-  ><arg|x>>>
+  <\active*>
+    <\src-comment>
+      Title elements.
+    </src-comment>
+  </active*>
 
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<AMS-class-text><localize|:>
-  ><arg|x>>>
+  <assign|doc-render-title|<macro|x|<surround||<vspace|0.1pag>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-size|2|color|red|<arg|x>>>>>>>
 
-  \;
+  <assign|doc-author|<macro|body|<\surround|<vspace*|0.1pag>|<vspace|0.1pag>>
+    <\with|par-par-sep|0fn>
+      <doc-title-block|<arg|body>>
+    </with>
+  </surround>>>
 
-  <assign|title*|<macro|name|<with|math-font-series|bold|font-series|bold|font-size|2|color|red|<arg|name>>>>
+  <assign|doc-date|<macro|x|<surround|<vspace*|0.1pag>||<doc-author-block|<with|font-shape|italic|<arg|x>>>>>>
 
-  <assign|title|<macro|body|<title*|<arg|body>><header-title|<arg|body>>>>
+  <\active*>
+    <\src-comment>
+      Author elements.
+    </src-comment>
+  </active*>
 
-  <assign|author*|<macro|body|<with|font-shape|small-caps|font-size|1.19|<by-text>
-  <arg|body>>>>
+  <assign|author-render-name|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<with|font-shape|small-caps|<large|<arg|x>>>>>>>
 
-  <assign|author|<macro|body|<vspace*|0.1pag><author*|<arg|body>><header-author|<arg|body>>>>
-
-  <assign|address*|<macro|body|<with|par-par-sep|0fn|<arg|body>>>>
-
-  <assign|address|<macro|body|<surround|<vspace*|0.1pag>||<address*|<arg|body>>>>>
-
-  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
-
-  <assign|title-email*|<macro|body|<style-with|src-compact|none|<with|font-shape|small-caps|<email-text><localize|:>
-  ><verbatim|<arg|body>>>>>
-
-  <assign|title-email|<macro|body|<vspace*|0.1pag><title-email*|<arg|body>>>>
-
-  <assign|title-date*|<macro|body|<with|font-shape|italic|<arg|body>>>>
-
-  <assign|title-date|<macro|body|<vspace*|0.1pag><left-flush><title-date*|<arg|body>><right-flush>>>
+  <assign|author-address|<\macro|x>
+    <surround|<vspace*|2fn>|<vspace|2fn>|<doc-author-block|<arg|x>>>
+  </macro>>
 
   \;
 </body>
