@@ -78,7 +78,12 @@
       "      \\captionof{#3}{#5}\n"
       "    \\end{center}\n"
       "  \\end{minipage}}"))
-
+  (define (color)
+    (string-append
+      "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
+      "\\definecolor{orange}{rgb}{1.0,0.5,0.5}\n"
+      "\\definecolor{brown}{rgb}{0.5,0.25,0.0}\n"
+      "\\definecolor{pink}{rgb}{1.0,0.5,0.5}"))
   `(;; itemize and enumerate environments
     (itemizeminus ,(newitemize "itemizeminus" "$-$"))
     (itemizedot ,(newitemize "itemizedot" "$\\bullet$"))
@@ -116,8 +121,8 @@
        " GNU T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}} ("
        (translate "see" "english" lan)
        "{\\tt http://www.texmacs.org}).}"))
-    (tmhlink 2 "{\\blue #1}")
-    (tmaction 2 "{\\blue #1}")
+    (tmhlink 2 "{\\color{blue} #1}")
+    (tmaction 2 "{\\color{blue} #1}")
     (tmmathbf 1 "\\boldsymbol{#1}")
     (tmop 1 "\\operatorname{#1}")
     (tmbsl 0 "$\\backslash$")
@@ -134,6 +139,7 @@
     (tmperson 1 "\\textsc{#1}")
     (tmdummy 0 "$\\mbox{}$")
     (tmscript 1 "\\text{\\scriptsize $#1$}")
+    (color ,(color))
 
     ;; other extra markup
     (scheme 0 "{\\sc Scheme}")
