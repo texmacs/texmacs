@@ -140,7 +140,6 @@ string
 edit_interface_rep::compute_operation_footer (tree st) {
   string r;
   switch (L (st)) {
-  case FORMAT: r= as_string (st[0]); break;
   case HSPACE: r= "horizontal space"; break;
   case VSPACE_BEFORE: r= "vertical space before"; break;
   case VSPACE_AFTER: r= "vertical space"; break;
@@ -172,14 +171,14 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case SUB_TABLE: r= "subtable"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
-  case COMPOUND: r= "compound#" * as_string (st[0]); break;
-  case INCLUDE: r= "include#" * as_string (st[0]); break;
-  case DRD_PROPS: r= "drd properties"; break;
-  case EVAL: r= "evaluate"; break;
   case VALUE: r= "value#" * as_string (st[0]); break;
+  case DRD_PROPS: r= "drd properties"; break;
   case ARGUMENT: r= "argument#" * as_string (st[0]); break;
+  case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case MAP_ARGS: r= "map arguments"; break;
   case EVAL_ARGS: r= "evaluate arguments"; break;
+  case EVAL: r= "evaluate"; break;
+  case INCLUDE: r= "include#" * as_string (st[0]); break;
   case IS_TUPLE: r= "tuple?"; break;
   case UNEQUAL: r= "not equal"; break;
   case LESSEQ: r= "less or equal"; break;
@@ -270,20 +269,20 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * as_string (l+1) * ")#";
   case CELL:
     return up;
-  case COMPOUND:
-    return up * as_string (st[0]) * "#";
   case WITH:
     return up * get_with_text (st) * "#";
   case DRD_PROPS:
     if (l == 0) return up * "drd property(variable)" * "#";
     if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
     return up * "value(" * as_string (l/2) * ")#";
-  case EVAL:
-    return up * "evaluate#";
+  case COMPOUND:
+    return up * as_string (st[0]) * "#";
   case MAP_ARGS:
     return up * "map arguments#";
   case EVAL_ARGS:
     return up * "evaluate arguments#";
+  case EVAL:
+    return up * "evaluate#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:

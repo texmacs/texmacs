@@ -49,13 +49,13 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_formatting (ttt, st, ip, CELL_FORMAT);
   case WITH:
     return bridge_with (ttt, st, ip);
-  case COMPOUND:
-    return bridge_compound (ttt, st, ip);
-  case INCLUDE:
-    return bridge_rewrite (ttt, st, ip);
   case ARGUMENT:
     return bridge_argument (ttt, st, ip);
+  case COMPOUND:
+    return bridge_compound (ttt, st, ip);
   case EXTERN:
+    return bridge_rewrite (ttt, st, ip);
+  case INCLUDE:
     return bridge_rewrite (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);

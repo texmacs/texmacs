@@ -349,13 +349,13 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_table (env, t, ip);
   case WITH:
     return make_lazy_with (env, t, ip);
-  case COMPOUND:
-    return make_lazy_compound (env, t, ip);
-  case INCLUDE:
-    return make_lazy_rewrite (env, t, ip);
   case ARGUMENT:
     return make_lazy_argument (env, t, ip);
+  case COMPOUND:
+    return make_lazy_compound (env, t, ip);
   case EXTERN:
+    return make_lazy_rewrite (env, t, ip);
+  case INCLUDE:
     return make_lazy_rewrite (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);

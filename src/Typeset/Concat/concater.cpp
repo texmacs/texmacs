@@ -166,8 +166,8 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case CONCAT:
     typeset_concat (t, ip);
     break;
-  case FORMAT:
-    typeset_inactive_string ("<" * as_string (t[0]) * ">", ip);
+  case GROUP:
+    typeset_group (t, ip);
     break;
   case HSPACE:
     if (ACTIVATED) {
@@ -204,9 +204,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive ("tab", t, ip);
     break;
-  case SPLIT:
-    typeset_inactive ("split", t, ip);
-    break;
   case MOVE:
     if (ACTIVATED) typeset_move (t, ip);
     else typeset_inactive ("move", t, ip);
@@ -215,13 +212,13 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_resize (t, ip);
     else typeset_inactive ("resize", t, ip);
     break;
-  case _FLOAT:
-    if (ACTIVATED) typeset_float (t, ip);
-    else typeset_inactive ("float", t, ip);
-    break;
   case REPEAT:
     if (ACTIVATED) typeset_repeat (t, ip);
     else typeset_inactive ("repeat", t, ip);
+    break;
+  case _FLOAT:
+    if (ACTIVATED) typeset_float (t, ip);
+    else typeset_inactive ("float", t, ip);
     break;
   case DECORATE_ATOMS:
     if (ACTIVATED) typeset_formatting (t, ip, ATOM_DECORATIONS);
@@ -279,13 +276,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive_string ("<no-break>", ip);
     break;
-  case NO_FIRST_INDENT:
-    if (ACTIVATED) {
-      flag ("no-first-indent", ip, env->dis->brown);
-      control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
-    }
-    else typeset_inactive_string ("<no-first-indent>", ip);
-    break;
   case YES_FIRST_INDENT:
     if (ACTIVATED) {
       flag ("yes-first-indent", ip, env->dis->brown);
@@ -293,12 +283,12 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive_string ("<yes-first-indent>", ip);
     break;
-  case NO_FIRST_INDENT_AFTER:
+  case NO_FIRST_INDENT:
     if (ACTIVATED) {
-      flag ("no-first-indent-after", ip, env->dis->brown);
-      control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
+      flag ("no-first-indent", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
     }
-    else typeset_inactive_string ("<no-first-indent-after>", ip);
+    else typeset_inactive_string ("<no-first-indent>", ip);
     break;
   case YES_FIRST_INDENT_AFTER:
     if (ACTIVATED) {
@@ -306,6 +296,13 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
     }
     else typeset_inactive_string ("<yes-first-indent-after>", ip);
+    break;
+  case NO_FIRST_INDENT_AFTER:
+    if (ACTIVATED) {
+      flag ("no-first-indent-after", ip, env->dis->brown);
+      control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
+    }
+    else typeset_inactive_string ("<no-first-indent-after>", ip);
     break;
   case PAGE_BREAK_BEFORE:
   case PAGE_BREAK:
@@ -325,9 +322,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       break;
     }
 
-  case GROUP:
-    typeset_group (t, ip);
-    break;
   case LEFT:
     typeset_left (t, ip);
     break;
@@ -378,15 +372,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case TREE:
     typeset_tree (t, ip);
     break;
-  case OLD_MATRIX:
-    typeset_inactive ("old-matrix", t, ip);
-    break;
-  case OLD_TABLE:
-    typeset_inactive ("old-table", t, ip);
-    break;
-  case OLD_MOSAIC:
-    typeset_inactive ("old-mosaic", t, ip);
-    break;
 
   case TABLE_FORMAT:
     if (ACTIVATED) {
@@ -420,61 +405,27 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_with (t, ip);
     else typeset_inactive ("with", t, ip, N(t)-1);
     break;
-  case SET:
-    typeset_inactive ("set", t, ip, N(t)-1);
-    break;
-  case RESET:
-    typeset_inactive ("reset", t, ip, N(t));
-    break;
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-  case COMPOUND:
-  case APPLY:
-    if (ACTIVATED) typeset_compound (t, ip);
-    else typeset_inactive_compound (t, ip);
-    break;
-  case BEGIN:
-    typeset_inactive ("begin", t, ip, N(t)-1);
-    break;
-  case END:
-    typeset_inactive ("end", t, ip, N(t));
-    break;
-  case INCLUDE:
-    if (ACTIVATED) typeset_include (t, ip);
-    else typeset_inactive ("include", t, ip);
+  case VALUE:
+    if (ACTIVATED) typeset_value (t, ip);
+    else typeset_inactive ("value", t, ip);
     break;
   case MACRO:
     typeset_inactive ("macro", t, ip, N(t)-1);
-    break;
-  case XMACRO:
-    typeset_inactive ("xmacro", t, ip, 1);
-    break;
-  case FUNCTION:
-    typeset_inactive ("function", t, ip, N(t)-1);
-    break;
-  case ENVIRONMENT:
-    typeset_inactive ("environment", t, ip, N(t)-2);
     break;
   case DRD_PROPS:
     if (ACTIVATED) typeset_drd_props (t, ip);
     else typeset_inactive ("drd-properties", t, ip, 1);
     break;
-  case EVAL:
-    if (ACTIVATED) typeset_eval (t, ip);
-    else typeset_inactive ("eval", t, ip);
-    break;
-  case PROVIDES:
-    if (ACTIVATED) typeset_executable (t, ip);
-    else typeset_inactive ("provides", t, ip);
-    break;
-  case VALUE:
-    if (ACTIVATED) typeset_value (t, ip);
-    else typeset_inactive ("value", t, ip);
-    break;
   case ARGUMENT:
     if (ACTIVATED) typeset_argument (t, ip);
     else typeset_inactive ("argument", t, ip);
+    break;
+  case COMPOUND:
+    if (ACTIVATED) typeset_compound (t, ip);
+    else typeset_inactive_compound (t, ip);
+    break;
+  case XMACRO:
+    typeset_inactive ("xmacro", t, ip, 1);
     break;
   case GET_LABEL:
     if (ACTIVATED) typeset_executable (t, ip);
@@ -492,6 +443,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_eval_args (t, ip);
     else typeset_inactive ("eval-args", t, ip);
     break;
+  case EVAL:
+    if (ACTIVATED) typeset_eval (t, ip);
+    else typeset_inactive ("eval", t, ip);
+    break;
   case QUOTE:
     typeset_inactive ("quote", t, ip);
     break;
@@ -505,6 +460,14 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case RELEASE:
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("release", t, ip);
+    break;
+  case EXTERN:
+    if (ACTIVATED) typeset_rewrite (t, ip);
+    else typeset_inactive ("extern", t, ip);
+    break;
+  case INCLUDE:
+    if (ACTIVATED) typeset_include (t, ip);
+    else typeset_inactive ("include", t, ip);
     break;
 
   case OR:
@@ -623,13 +586,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("while", t, ip);
     break;
-  case EXTERN:
-    if (ACTIVATED) typeset_rewrite (t, ip);
-    else typeset_inactive ("extern", t, ip);
-    break;
-  case AUTHORIZE:
-    typeset_inactive ("authorize", t, ip);
-    break;
 
   case INACTIVE:
     typeset_inactive (t, ip);
@@ -663,6 +619,9 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case ASSOCIATE:
     typeset_inactive ("associate", t, ip);
+    break;
+  case BACKUP:
+    typeset_inactive ("backup", t, ip);
     break;
   case LABEL:
     if (ACTIVATED) typeset_label (t, ip);

@@ -97,16 +97,6 @@ initialize_std_drd () {
   init (NEW_DOUBLE_PAGE_BEFORE, "new_double_page_before", fixed (0));
   init (NEW_DOUBLE_PAGE, "new_double_page", fixed (0));
 
-  init (TABLE_FORMAT, "tformat",
-	var_repeat (1, 1, BIFORM) -> no_border () -> accessible (1));
-  init (TABLE_WITH, "twith", fixed (2) -> accessible (0));
-  init (CELL_WITH, "cwith", fixed (6) -> accessible (0));
-  init (TABLE_MARKER, "tmarker", fixed (0));
-  init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
-  init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
-  init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
-  init (SUB_TABLE, "sub_table", fixed (1) -> no_border () -> accessible (0));
-
   init (LEFT, "left", fixed (1));
   init (MIDDLE, "mid", fixed (1));
   init (RIGHT, "right", fixed (1));
@@ -125,6 +115,16 @@ initialize_std_drd () {
   init (WIDE_UNDER, "wide*", fixed (1) -> accessible (0));
   init (NEG, "neg", fixed (1) -> accessible (0));
   init (TREE, "tree", repeat (2, 1) -> accessible (0));
+
+  init (TABLE_FORMAT, "tformat",
+	var_repeat (1, 1, BIFORM) -> no_border () -> accessible (1));
+  init (TABLE_WITH, "twith", fixed (2) -> accessible (0));
+  init (CELL_WITH, "cwith", fixed (6) -> accessible (0));
+  init (TABLE_MARKER, "tmarker", fixed (0));
+  init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
+  init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
+  init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
+  init (SUB_TABLE, "sub_table", fixed (1) -> no_border () -> accessible (0));
 
   init (ASSIGN, "assign", fixed (2));
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
