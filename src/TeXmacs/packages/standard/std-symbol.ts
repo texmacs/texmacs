@@ -43,13 +43,13 @@
 
   <assign|emdash|<macro|<with|font|roman|>>>
 
-  <assign|masculin|<rsup|<wide*|o|\<wide-bar\>>>>
+  <assign|masculine|<rsup|<wide*|o|\<wide-bar\>>>>
 
-  <assign|feminin|<rsup|<wide*|a|\<wide-bar\>>>>
+  <assign|ordfeminine|<rsup|<wide*|a|\<wide-bar\>>>>
 
-  <assign|varmasculin|<rsup|o>>
+  <assign|varmasculine|<rsup|o>>
 
-  <assign|varfeminin|<rsup|a>>
+  <assign|varordfeminine|<rsup|a>>
 
   \;
 </body>
