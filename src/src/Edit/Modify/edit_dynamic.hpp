@@ -46,7 +46,6 @@ public:
   void back_dynamic (path p);
   void back_compound (path p);
   void back_extension (path p);
-  void back_in_dynamic (tree t, path p, int min_args=1, int with=1);
   void back_in_with (tree t, path p);
   void back_in_compound (tree t, path p);
 };
