@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -35,11 +35,11 @@
 
   <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|1.5fn><no-page-break><no-indent*>>>>
 
-  <assign|section|<macro|name|<style-with|src-compact|none|<assign|thesection|<macro|<sectionnr>>><assign|sectionnr|<plus|<value|sectionnr>|1>><resetsection><assign|thelabel|<thesection>><header-primary|<arg|name>|<thesection>|<localize|Section>><toc-main-2|<thelabel><space|2spc><arg|name>><section*|<thesection><sectionsep><arg|name>>>>>
+  <assign|section|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<section-nr>>><assign|section-nr|<plus|<value|section-nr>|1>><resetsection><assign|the-label|<the-section>><header-primary|<arg|name>|<the-section>|<localize|Section>><toc-main-2|<the-label><space|2spc><arg|name>><section*|<the-section><section-sep><arg|name>>>>>
 
-  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|thesection|<macro|<number|<appendixnr>|Alpha>>><assign|appendixnr|<plus|<value|appendixnr>|1>><resetsection><assign|thelabel|<thesection>><header-primary|<arg|name>|<thesection>|<localize|Appendix>><toc-main-2|<localize|Appendix>
-  <thesection>.<space|2spc><arg|name>><section*|<localize|Appendix>
-  <thesection>.<space|2spc><arg|name>>>>>
+  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|the-section|<macro|<number|<appendix-nr>|Alpha>>><assign|appendix-nr|<plus|<value|appendix-nr>|1>><resetsection><assign|the-label|<the-section>><header-primary|<arg|name>|<the-section>|<localize|Appendix>><toc-main-2|<localize|Appendix>
+  <the-section>.<space|2spc><arg|name>><section*|<localize|Appendix>
+  <the-section>.<space|2spc><arg|name>>>>>
 
   <\active*>
     <\src-comment>

@@ -15,58 +15,58 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
 
-  <newtheorem|theorem|Theorem>
+  <new-theorem|theorem|Theorem>
 
-  <newtheorem|proposition|Proposition>
+  <new-theorem|proposition|Proposition>
 
-  <newtheorem|lemma|Lemma>
+  <new-theorem|lemma|Lemma>
 
-  <newtheorem|corollary|Corollary>
+  <new-theorem|corollary|Corollary>
 
-  <newtheorem|axiom|Axiom>
+  <new-theorem|axiom|Axiom>
 
-  <newtheorem|definition|Definition>
+  <new-theorem|definition|Definition>
 
-  <newtheorem|notation|Notation>
+  <new-theorem|notation|Notation>
 
-  <newtheorem|conjecture|Conjecture>
-
-  \;
-
-  <newremark|remark|Remark>
-
-  <newremark|example|Example>
-
-  <newremark|note|Note>
-
-  <newremark|warning|Warning>
-
-  <newremark|convention|Convention>
+  <new-theorem|conjecture|Conjecture>
 
   \;
 
-  <newexercise|exercise|Exercise>
+  <new-remark|remark|Remark>
 
-  <newexercise|problem|Problem>
+  <new-remark|example|Example>
+
+  <new-remark|note|Note>
+
+  <new-remark|warning|Warning>
+
+  <new-remark|convention|Convention>
 
   \;
 
-  <newfigure|figure|Figure>
+  <new-exercise|exercise|Exercise>
 
-  <newfigure|table|Table>
+  <new-exercise|problem|Problem>
 
   \;
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theoremname|<translate|Keywords:|english|<language>>
+  <new-figure|figure|Figure>
+
+  <new-figure|table|Table>
+
+  \;
+
+  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
   ><arg|x>>>
 
-  <assign|AMS-class|<macro|x|<no-indent><theoremname|<translate|A.M.S.
+  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
   subject classification:|english|<language>> ><arg|x>>>
 
   \;

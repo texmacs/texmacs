@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -27,21 +27,19 @@
     </src-comment>
   </active*>
 
-  <assign|mathord|<macro|x|<with|math-condensed|true|<arg|x>>>>
+  <assign|math-ord|<macro|x|<with|math-condensed|true|<arg|x>>>>
 
-  <assign|mathopen|<value|op>>
+  <assign|math-open|<value|op>>
 
-  <assign|mathclose|<value|op>>
+  <assign|math-close|<value|op>>
 
-  <assign|mathpunct|<value|op>>
+  <assign|math-punct|<value|op>>
 
-  <assign|mathpunct|<value|alpha>>
+  <assign|math-bin|<macro|x|<space|0.5spc><with|math-condensed|true|<arg|x>><space|0.5spc>>>
 
-  <assign|mathbin|<macro|x|<space|0.5spc><with|math-condensed|true|<arg|x>><space|0.5spc>>>
+  <assign|math-rel|<value|math-bin>>
 
-  <assign|mathrel|<value|mathbin>>
-
-  <assign|mathop|<macro|x|<with|math-condensed|true|<arg|x>><space|1spc>>>
+  <assign|math-op|<macro|x|<with|math-condensed|true|<arg|x>><space|1spc>>>
 
   <\active*>
     <\src-comment>
@@ -49,8 +47,7 @@
     </src-comment>
   </active*>
 
-  <assign|shrink-inline|<macro|x|<style-with|src-compact|none|<if|<equal|<value|math-display>|false>|<with|math-level|<plus|<value|math-level>|1>|display
-  style|false|<arg|x>>|<with|display style|false|<arg|x>>>>>>
+  <assign|shrink-inline|<macro|x|<style-with|src-compact|none|<if|<equal|<value|math-display>|false>|<with|math-level|<plus|<value|math-level>|1>|<arg|x>>|<with|math-display|false|<arg|x>>>>>>
 
   <drd-props|shrink-inline|arity|1|accessible|all>
 
@@ -71,6 +68,8 @@
   <assign|choice|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|{><tformat|<arg|x>><right|.>>>>>
 
   <assign|stack|<macro|x|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|-1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<arg|x>>>>
+
+  \;
 </body>
 
 <\initial>

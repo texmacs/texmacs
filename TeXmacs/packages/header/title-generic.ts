@@ -15,16 +15,16 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
 
   <assign|make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<with|par-mode|center|<arg|body>>>>>
 
-  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<rightflush><vspace|1fn>|<\with|par-left|15mm|par-right|15mm|font-size|0.84>
-    <no-indent><leftflush><with|font-series|bold|<translate|Abstract|english|<language>>><rightflush><vspace|0.5fn><no-page-break>
+  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<right-flush><vspace|1fn>|<\with|par-left|15mm|par-right|15mm|font-size|0.84>
+    <no-indent><left-flush><with|font-series|bold|<translate|Abstract|english|<language>>><right-flush><vspace|0.5fn><no-page-break>
 
     <arg|body>
   </with>>>>
@@ -53,7 +53,7 @@
 
   <assign|title-date*|<macro|body|<with|font-shape|italic|<arg|body>>>>
 
-  <assign|title-date|<macro|body|<vspace*|1.5fn><leftflush><title-date*|<arg|body>><rightflush>>>
+  <assign|title-date|<macro|body|<vspace*|1.5fn><left-flush><title-date*|<arg|body>><right-flush>>>
 
   \;
 </body>

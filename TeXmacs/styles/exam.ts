@@ -18,9 +18,9 @@
       <\src-license>
         This <TeXmacs> style file falls under the <hlink|GNU general public
         license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you don't have this file, then write to the Free
-        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-        02111-1307, USA.
+        WHATSOEVER. If you do not have a copy of the license, then write to
+        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+        Boston, MA 02111-1307, USA.
       </src-license>
     </src-title>
   </active*>
@@ -29,7 +29,7 @@
 
   \;
 
-  <assign|exercise*|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><exercisename|<arg|which><exercisesep>>|<rightflush><vspace|1fn>|<arg|body>>>>>
+  <assign|exercise*|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><exercise-name|<arg|which><exercise-sep>>|<right-flush><vspace|1fn>|<arg|body>>>>>
 
   \;
 </body>

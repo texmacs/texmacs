@@ -18,9 +18,9 @@
       <\src-license>
         This <TeXmacs> style file falls under the <hlink|GNU general public
         license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you don't have this file, then write to the Free
-        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-        02111-1307, USA.
+        WHATSOEVER. If you do not have a copy of the license, then write to
+        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+        Boston, MA 02111-1307, USA.
       </src-license>
     </src-title>
   </active*>
@@ -58,6 +58,8 @@
   <assign|menu-sub|<macro|what|<style-with|src-compact|none|<with|font-family|ss|<translate|<look-up|<arg|what>|0>|english|<language>>><style-with|src-compact|none|<if|<is-tuple|<look-up|<arg|what>|1>>|<with|mode|math|\<rightarrow\>><menu-sub|<look-up|<arg|what>|1>>>>>>>
 
   <assign|menu|<macro|what*|<if|<is-tuple|<value|what>>|<menu-sub|<value|what>>>>>
+
+  \;
 </body>
 
 <\initial>

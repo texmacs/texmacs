@@ -18,9 +18,9 @@
       <\src-license>
         This <TeXmacs> style file falls under the <hlink|GNU general public
         license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you don't have this file, then write to the Free
-        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-        02111-1307, USA.
+        WHATSOEVER. If you do not have a copy of the license, then write to
+        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+        Boston, MA 02111-1307, USA.
       </src-license>
     </src-title>
   </active*>
@@ -29,7 +29,7 @@
 
   \;
 
-  <assign|theoremname|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
+  <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
 
   \;
 </body>

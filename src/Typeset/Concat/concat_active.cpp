@@ -126,7 +126,7 @@ concater_rep::typeset_specific (tree t, path ip) {
 void
 concater_rep::typeset_label (tree t, path ip) {
   string key  = env->exec_string (t[0]);
-  tree   value= copy (env->read ("thelabel"));
+  tree   value= copy (env->read ("the-label"));
   tree   old_value= env->local_ref[key];
   if (is_func (old_value, TUPLE, 2))
     env->local_ref (key)= tuple (copy (value), old_value[1]);

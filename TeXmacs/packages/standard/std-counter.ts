@@ -15,8 +15,8 @@
     <\src-license>
       This <TeXmacs> style package falls under the <hlink|GNU general public
       license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you don't have this file, then write to the Free
-      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
       02111-1307, USA.
     </src-license>
   </src-title>>
@@ -25,10 +25,10 @@
     <\src-comment>
       The <verbatim|new-counter> primitive is used for the definition of a
       new counter. Each new counter <verbatim|x> gives rise to several new
-      environment variables: <verbatim|nr-x> contains the counter itself (an
+      environment variables: <verbatim|x-nr> contains the counter itself (an
       integer), <verbatim|display-x> a macro which will be applied to the
       counter for displaying it, <verbatim|counter-x> a macro which returns
-      the name of the counter (<verbatim|nr-x> by default),
+      the name of the counter (<verbatim|x-nr> by default),
       <verbatim|the-counter> a macro which returns the counter for display,
       <verbatim|reset-x> a macro which resets the counter, and
       <verbatim|inc-x> a macro which increases the counter. The different
@@ -38,7 +38,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|nr-|<arg|x>>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|nr-|<arg|x>>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>>>>>>
+  <assign|new-counter|<macro|x|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-nr>>|0><assign|<unquote|<merge|display-|<arg|x>>>|<value|identity>><assign|<unquote|<merge|counter-|<arg|x>>>|<macro|<style-with|src-compact|none|<unquote|<merge|<arg|x>|-nr>>>>><assign|<unquote|<merge|the-|<arg|x>>>|<macro|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|x>>>|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>>>>><assign|<unquote|<merge|reset-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0>>>><assign|<unquote|<merge|inc-|<arg|x>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|<plus|<value|<compound|<unquote|<merge|counter-|<arg|x>>>>>|1>>>>>>>>>
 
   <assign|the-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|the-|<arg|x>>>>>>
 
@@ -46,7 +46,7 @@
 
   <assign|inc-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>>>>>
 
-  <assign|next-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>><assign|thelabel|<compound|<merge|the-|<arg|x>>>>>>>
+  <assign|next-counter|<macro|x|<style-with|src-compact|none|<compound|<merge|inc-|<arg|x>>><assign|the-label|<compound|<merge|the-|<arg|x>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -83,6 +83,8 @@
   <assign|subordonate-counter|<macro|x|y|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|inc-|<arg|y>>>|<merge|<macro|<compound|<unquote|<merge|reset-|<arg|x>>>>>|<value|<merge|inc-|<arg|y>>>>>>>>>
 
   <assign|prefix-counter|<macro|x|y|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|display-|<arg|x>>>|<macro|nr|<style-with|src-compact|none|<compound|<unquote|<merge|the-|<arg|y>>>>.<compound|<unquote|<value|<merge|display-|<arg|x>>>>|<arg|nr>>>>>>>>>
+
+  \;
 </body>
 
 <\initial>

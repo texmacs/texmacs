@@ -1,7 +1,9 @@
-<TeXmacs|1.0.2.10>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
-  <\with|mode|math>
+  <style-only|<\with|mode|math>
     <assign|A|\<cal-A\>>
 
     <assign|B|\<cal-B\>>
@@ -67,19 +69,19 @@
     <assign|lcut|<macro|x|<wide|<arg|x>|\<wide-varleftarrow\>>>>
 
     <assign|rcut|<macro|x|<wide|<arg|x>|\<wide-varrightarrow\>>>>
+  </with>>
 
-    \;
-  </with>
+  \;
 
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<rightflush><action|<with|color|blue|<with|mode|math|\<cdots\>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<right-flush><action|<with|color|blue|<with|mode|math|\<cdots\>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<rightflush><action|<with|color|blue|<with|mode|math|<op|\<Leftarrow\>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
+    <surround||<right-flush><action|<with|color|blue|<with|mode|math|<op|\<Leftarrow\>>>>|(mouse-fold)|<arg|y>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>
@@ -98,17 +100,17 @@
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
+    <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

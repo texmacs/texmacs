@@ -18,9 +18,9 @@
       <\src-license>
         This <TeXmacs> style file falls under the <hlink|GNU general public
         license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-        WHATSOEVER. If you don't have this file, then write to the Free
-        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-        02111-1307, USA.
+        WHATSOEVER. If you do not have a copy of the license, then write to
+        the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+        Boston, MA 02111-1307, USA.
       </src-license>
     </src-title>
   </active*>
@@ -59,10 +59,12 @@
 
   <assign|verbatim|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn><no-page-break*>|<vspace|0.5fn><no-indent*>|<with|font-family|tt|language|verbatim|<arg|body>>>>>>
 
-  <assign|big-figure|<macro|fig|cap|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<vspace*|1fn><no-indent><assign|figurenr|<plus|<figurenr>|1>><assign|thelabel|<*prefix><figurenr>>>|<style-with|src-compact|none|<vspace|1fn><no-indent*>>|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
+  <assign|big-figure|<macro|fig|cap|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<vspace*|1fn><no-indent><assign|figure-nr|<plus|<figure-nr>|1>><assign|the-label|<prefix><figure-nr>>>|<style-with|src-compact|none|<vspace|1fn><no-indent*>>|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
     <with|font-size|0.84|<surround|<with|font-series|bold|<localize|Figure>
-    <*prefix><figurenr>. >||<arg|cap>>>
+    <prefix><figure-nr>. >||<arg|cap>>>
   </cell>>>>>>>>>
+
+  \;
 </body>
 
 <\initial>
