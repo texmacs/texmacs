@@ -154,6 +154,7 @@
 
 (define (tmp-compound-object s* . l)
   (with s (if (string? s*) s* (symbol->string s*))
-    (cond ((in? s '("fold" "switch")) (cons* 'hide_expand s l))
+    (cond ((and (= (tmp-d-hide-exp) 1) (in? s '("fold" "switch")))
+	   (cons* 'hide_expand s l))
           ((= (tmp-d-exp) 1) (cons* 'expand s l))
 	  (else (cons (string->symbol s) l)))))
