@@ -18,7 +18,6 @@ bridge bridge_surround (typesetter, tree, path);
 bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
 bridge bridge_expand (typesetter, tree, path);
-bridge bridge_apply (typesetter, tree, path);
 bridge bridge_rewrite (typesetter, tree, path);
 bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
@@ -57,8 +56,6 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_expand (ttt, st, ip);
   case COMPOUND:
     return bridge_compound (ttt, st, ip);
-  case APPLY:
-    return bridge_apply (ttt, st, ip);
   case INCLUDE:
     return bridge_rewrite (ttt, st, ip);
   case ARGUMENT:

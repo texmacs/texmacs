@@ -310,63 +310,6 @@ make_lazy_compound (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Apply
-******************************************************************************/
-
-lazy
-make_lazy_apply (edit_env env, tree t, path ip) {
-  if (env->preamble) return make_lazy_paragraph (env, t, ip);
-
-  tree f= t[0];
-  if (is_compound (f)) f= env->exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (env->provides (var)) f= env->read (var);
-    else f= tree (ERROR, "apply " * var);
-  }
-
-  lazy par;
-  array<line_item> a= typeset_marker (env, descend (ip, 0));
-  array<line_item> b= typeset_marker (env, descend (ip, 1));
-  if (is_applicable (f)) {
-    int i, k=N(f)-1, n=N(t)-1; // is k=0 allowed ?
-    STACK_NEW_ARRAY(vars,string,k);
-    STACK_NEW_ARRAY(oldv,tree,k);
-    STACK_NEW_ARRAY(newv,tree,k);
-    for (i=0; i<k; i++)
-      if (is_atomic (f[i])) {
-	vars[i]= f[i]->label;
-	oldv[i]= env->read (vars[i]);
-	newv[i]= (i<n? env->exec (t[i+1]): tree (""));
-	if ((i==k-1) && (n>=k)) {
-	  int nv= N(vars[i]);
-	  if ((nv>0) && (vars[i][nv-1]=='*')) {
-	    vars[i]= vars[i] (0, nv-1);
-	    newv[i]= env->exec_extra_list (t, i+1);
-	  }
-	  else if (n>k) newv[i]= env->exec_extra_tuple (t, i+1);
-	}
-	env->monitored_write (vars[i], newv[i]);
-      }
-      /*
-      else {
-	STACK_DELETE_ARRAY(vars);
-	STACK_DELETE_ARRAY(oldv);
-	STACK_DELETE_ARRAY(newv);
-	return;
-      }
-      */
-    par= make_lazy (env, f[k], decorate_right (ip));
-    for (i=k-1; i>=0; i--) env->write (vars[i], oldv[i]);
-    STACK_DELETE_ARRAY(vars);
-    STACK_DELETE_ARRAY(oldv);
-    STACK_DELETE_ARRAY(newv);
-  }
-  else par= make_lazy (env, f, decorate_right (ip));
-  return lazy_surround (a, b, par, ip);
-}
-
-/******************************************************************************
 * Rewrite
 ******************************************************************************/
 
@@ -458,8 +401,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_expand (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
-  case APPLY:
-    return make_lazy_apply (env, t, ip);
   case INCLUDE:
     return make_lazy_rewrite (env, t, ip);
   case ARGUMENT:
