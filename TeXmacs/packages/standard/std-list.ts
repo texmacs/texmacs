@@ -89,7 +89,7 @@
     </src-comment>
   </active*>
 
-  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|<arg|body>>>>>
+  <assign|render-list|<macro|body|<surround|<no-page-break*><vspace*|0.5fn>|<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|<arg|body>>>>>
 
   <assign|list|<\macro|item-render|item-transform|body>
     <\with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|item-nr|0>
