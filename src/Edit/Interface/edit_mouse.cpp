@@ -20,6 +20,7 @@
 
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
+  last_x= x; last_y= y;
   buf->mark_undo_block ();
 
   if ((type != "move") && (type != "enter") && (type != "leave"))
@@ -178,6 +179,25 @@ edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
   SERVER (scroll_where (x, y));
   y += dy;
   SERVER (scroll_to (x, y));
+}
+
+/******************************************************************************
+* getting the cursor (both for text and graphics)
+******************************************************************************/
+
+cursor
+edit_interface_rep::get_cursor () {
+  if (inside_graphics ()) {
+    frame f= find_frame ();
+    if (!nil (f)) {
+      point p= f [point (last_x, last_y)];
+      p= f (adjust (p));
+      SI x= (SI) p[0];
+      SI y= (SI) p[1];
+      return cursor (x, y, 0, -5*pixel, 5*pixel, 1.0);
+    }
+  }
+  return copy (the_cursor ());
 }
 
 /******************************************************************************

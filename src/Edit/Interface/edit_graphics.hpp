@@ -17,19 +17,17 @@
 
 class edit_graphics_rep: virtual public editor_rep {
 protected:
-  //time_t        last_click;    // last click on left mouse button
-  //bool          start_drag;
-  //bool          dragging;
-  //SI            start_x, start_y;
-  //SI            end_x, end_y;
+  point cur_pos;
 
 public:
   edit_graphics_rep ();
   ~edit_graphics_rep ();
 
-  bool inside_graphics ();
-  frame find_frame ();
-  void mouse_graphics (string s, SI x, SI y, time_t t);
+  bool   inside_graphics ();
+  frame  find_frame ();
+  point  adjust (point p);
+  tree   find_point (point p);
+  void   mouse_graphics (string s, SI x, SI y, time_t t);
 };
 
 #endif // defined EDIT_GRAPHICS_H
