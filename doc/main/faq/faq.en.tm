@@ -1,10 +1,9 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4>
 
 <style|tmweb>
 
 <\body>
-  <tmweb-current|Help|FAQ><tmweb-title|Frequently asked
-  questions|<tmweb-help-links>>
+  <tmdoc-title|The GNU <TeXmacs> manual>
 
   <section*|Overview>
 
@@ -390,71 +389,19 @@
     <LaTeX>.
   </answer>
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Andreas Seidl|Joris van der Hoeven>
 
-  <tmweb-license>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|false>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|preamble|false>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|1.|?>>
-    <associate|typo-1|<tuple|18|?>>
-    <associate|usage-1|<tuple|15|?>>
-    <associate|usage-2|<tuple|16|?>>
-    <associate|typo-2|<tuple|19|?>>
-    <associate|usage-3|<tuple|17|?>>
-    <associate|general-1|<tuple|1|?>>
-    <associate|general-2|<tuple|2|?>>
-    <associate|general-3|<tuple|3|?>>
-    <associate|general-4|<tuple|4|?>>
-    <associate|general-5|<tuple|5|?>>
-    <associate|general-6|<tuple|6|?>>
-    <associate|general-7|<tuple|7|?>>
-    <associate|cygwin-1|<tuple|12|?>>
-    <associate|cygwin-2|<tuple|13|?>>
-    <associate|cygwin-3|<tuple|14|?>>
-    <associate|toc-10|<tuple|2.1|?>>
-    <associate|sys-1|<tuple|8|?>>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|toc-11|<tuple|2.2|?>>
-    <associate|toc-12|<tuple|2.3|?>>
-    <associate|sys-2|<tuple|9|?>>
-    <associate|toc-13|<tuple|2.4|?>>
-    <associate|sys-3|<tuple|10|?>>
-    <associate|toc-14|<tuple|3|?>>
-    <associate|sys-4|<tuple|11|?>>
-    <associate|toc-15|<tuple|3.1|?>>
-    <associate|toc-16|<tuple|3.2|?>>
-    <associate|toc-17|<tuple|4|?>>
-    <associate|toc-18|<tuple|4.1|?>>
-    <associate|toc-19|<tuple|4.2|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|toc-2|<tuple|1.1|?>>
-    <associate|toc-3|<tuple|1.2|?>>
-    <associate|toc-4|<tuple|1.3|?>>
-    <associate|toc-5|<tuple|1.4|?>>
-    <associate|toc-6|<tuple|1.5|?>>
-    <associate|legacy-1|<tuple|20|?>>
-    <associate|toc-7|<tuple|1.6|?>>
-    <associate|toc-8|<tuple|1.7|?>>
-    <associate|toc-9|<tuple|2|?>>
-  </collection>
-</references>
