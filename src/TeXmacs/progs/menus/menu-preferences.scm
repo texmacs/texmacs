@@ -134,11 +134,17 @@
 	(toggle ("Status bar" "status bar"))
 	(enum ("Shrinking factor" "shrinking factor")
 	      "1" "2" "3" "4" "5" "7" "10" *))
-;    (-> "Converters"
+    (-> "Converters"
 ;	(-> "Html"
 ;	    (group "TeXmacs -> Html")
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
-;	    (toggle ("Use MathML" "texmacs->html:mathml"))))
+;	    (toggle ("Use MathML" "texmacs->html:mathml")))
+	(-> "LaTeX"
+	    (group "TeXmacs -> LaTeX")
+	    (toggle ("Keep unrecognized styles and packages"
+		     "texmacs->latex:faithful-style"))
+	    (toggle ("Export bibliographies as links"
+		     "texmacs->latex:indirect-bib"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
 	  ("Prompt on scripts" "prompt on scripts")
