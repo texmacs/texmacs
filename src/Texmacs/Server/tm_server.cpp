@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "tm_server.hpp"
+#include "drd_std.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "sys_utils.hpp"
@@ -163,6 +164,8 @@ tm_server_rep::get_view (bool must_be_valid) {
 void
 tm_server_rep::set_view (tm_view vw2) {
   vw= vw2;
+  if (vw != NULL)
+    the_drd= vw->ed->drd;
 }
 
 tm_buffer

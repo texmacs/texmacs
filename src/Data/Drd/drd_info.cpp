@@ -206,7 +206,6 @@ drd_info_rep::is_child_enforcing (tree t) {
 
 void
 drd_info_rep::set_attribute (tree_label l, string which, tree val) {
-  if (info[l]->pi.freeze_no_border) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->set_attribute (which, val);

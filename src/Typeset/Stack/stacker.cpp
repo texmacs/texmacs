@@ -211,9 +211,6 @@ merge_stack (array<page_item>& l, stack_border& sb,
   if (i>=0) {
     l[i]= copy (l[i]);
     if (j<N(l2)) shove (l[i], l2[j], sb, sb2);
-    // cout << "[" << N(l) << ", " << N(l2) << "; " << l[i]->b->h() << "]\t "
-    // << l[i]->spc << " += max ("
-    // << sb->vspc_after << ", " << sb2->vspc_before << ")" << LF;
     l[i]->spc= l[i]->spc + max (sb->vspc_after, sb2->vspc_before);
     if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
   }

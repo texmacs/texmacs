@@ -265,13 +265,6 @@ bridge_rep::typeset (int desired_status) {
   else {
     // cout << "Typesetting " << st << ", " << desired_status << "\n";
     // cout << "  recomputing\n";
-
-    /*
-    cout << "Before " << N(l) << ":\t "
-	 << sb->vspc_before << " -- " << sb->vspc_after
-	 << INDENT << LF;
-    */
-
     hashmap<string,tree> prev_back (UNINIT);
     ttt->local_start (l, sb);
     env->local_start (prev_back);
@@ -280,13 +273,6 @@ bridge_rep::typeset (int desired_status) {
     env->local_end (prev_back);
     ttt->local_end (l, sb);
     status= desired_status;
-
-    /*
-    cout << UNINDENT << "After [" << N(l)
-	 << "; " << l[N(l)-1]->b->h() << "]:\t "
-	 << sb->vspc_before << " -- " << sb->vspc_after << LF;
-    */
-
     // cout << "  old_patch     = " << ttt->old_patch << "\n";
     // cout << "  changes       = " << changes << "\n";
     // cout << "Typesetted " << st << ", " << desired_status << "\n";
@@ -316,23 +302,7 @@ bridge_rep::typeset (int desired_status) {
       array<page_item> new_l (1);
       new_l[0]= page_item (lb);
       new_l[0]->spc= l[last]->spc;
-      /*
-      for (i=0; i<N(ttt->l); i++)
-	cout << "Current line " << i << ":\t " << ttt->l[i]->spc << LF;
-      if (N(l)>1)
-	cout << "Compress[A] " << N(l) << ":\t "
-	     << new_l[0]->spc
-	     << "; " << sb->vspc_before << " -- " << sb->vspc_after << LF;
-      */
       ttt->insert_stack (new_l, sb);
-      /*
-      if (N(l)>1)
-	cout << "Compress[B] " << N(l) << ":\t "
-	     << new_l[0]->spc
-	     << "; " << sb->vspc_before << " -- " << sb->vspc_after << LF;
-      for (i=0; i<N(ttt->l); i++)
-	cout << "Current line " << i << ":\t " << ttt->l[i]->spc << LF;
-      */
     }
   }
 
