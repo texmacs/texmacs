@@ -115,14 +115,18 @@ class tag_info_rep: concrete_struct {
 public:
   parent_info       pi;
   array<child_info> ci;
+  tree              extra;
 
-  tag_info_rep (parent_info pi, array<child_info> ci);
+  tag_info_rep (parent_info pi, array<child_info> ci, tree extra);
   tag_info_rep (int arity, int extra, int amode, int cmode, bool frozen);
   inline ~tag_info_rep () {}
 
   tag_info no_border ();
   tag_info accessible (int i);
+  tag_info name (string s);
   int      get_index (int child, int n);
+  void     set_attribute (string which, tree val);
+  tree     get_attribute (string which);
 
   friend class tag_info;
 };
@@ -133,7 +137,7 @@ public:
 
 class tag_info {
   CONCRETE(tag_info);
-  tag_info (parent_info pi, array<child_info> ci);
+  tag_info (parent_info pi, array<child_info> ci, tree extra);
   tag_info (int arity=0, int extra=0,
 	    int am=ARITY_NORMAL, int cm= CHILD_UNIFORM,
 	    bool frozen= false);

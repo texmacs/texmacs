@@ -234,6 +234,7 @@ edit_dynamic_rep::make_compound (tree_label l) {
       t= tree (INACTIVE, t);
       p= path (0, p);
     }
+    // FIXME: should not be here
     if (is_func (t, HYBRID, 1) &&
 	(!(is_atomic (sel) && drd->contains (sel->label))))
       {
@@ -241,6 +242,7 @@ edit_dynamic_rep::make_compound (tree_label l) {
 	insert_tree (t, path (0, 0));
 	return;
       }
+    // end FIXME.
     insert_tree (t, p);
 
     tree f= get_env_value (as_string (l));
@@ -261,6 +263,18 @@ edit_dynamic_rep::make_deactivated (tree t, path p) {
 
 void
 edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
+  /*
+  int n2;
+  tree_label l= make_tree_label (s);
+  for (n2=0; true; n2++) {
+    if (drd->correct_arity (l, n2) &&
+	((n2>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
+    if (n2 == 100) return;
+  }
+  if (n != n2) cout << s << ": arity " << n << " -> " << n2 << "\n";
+  make_compound (make_tree_label (s));
+  */
+
   int k= (arg==""? 0: 1);
   tree_label l= as_tree_label (op);
   tree t (l, n);
