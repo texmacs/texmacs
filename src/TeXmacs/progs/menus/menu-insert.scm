@@ -18,16 +18,6 @@
      (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert presentation tags
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind insert-presentation-tag-menu
-  ("Underline" (make 'underline))
-  ("Overline" (make 'overline))
-  ("Subscript" (make-script #f #t))
-  ("Superscript" (make-script #t #t)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -155,9 +145,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-menu
-  (if (style-has? "std-dtd")
-      (-> "Presentation" (link insert-presentation-tag-menu))
-      ---)
   (-> "Link" (link insert-link-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))

@@ -134,6 +134,13 @@
   ("Code" (make 'code*))
   ("Variable" (make 'var)))
 
+(menu-bind presentation-tag-menu
+  (if (style-has? "std-markup-dtd")
+      ("Underline" (make 'underline))
+      ("Overline" (make 'overline)))
+  ("Subscript" (make-script #f #t))
+  ("Superscript" (make-script #t #t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -197,6 +204,7 @@
   (if (style-has? "std-markup-dtd")
       (-> "Environment" (link environment-menu))
       (-> "Content tag" (link content-tag-menu)))
+  (-> "Presentation tag" (link presentation-tag-menu))
   (if (style-has? "std-dtd")
       ---)
   (if (style-has? "std-list-dtd")

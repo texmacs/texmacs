@@ -23,9 +23,9 @@
     lazy-in-mode-do ;; for lazy-in-mode macro
     lazy-in-mode lazy-in-mode-force
     ;; general texmacs modes
-    always? in-text? in-math? in-prog? in-math-not-hybrid?
+    always? in-source? in-text? in-math? in-prog? in-math-not-hybrid?
     in-table? in-io? in-session? not-in-session? in-math-in-session?
-    in-math-not-in-session? in-plugin-with-converters? in-source?
+    in-math-not-in-session? in-plugin-with-converters?
     ;; language related modes
     in-cyrillic?
     in-czech? in-dutch? in-english? in-finnish? in-french?
@@ -123,6 +123,7 @@
 
 (texmacs-modes
   (always% #t)
+  (in-source% (== (get-env "mode") "src"))
   (in-text% (and (== (get-env "mode") "text") (not (in-graphics?))))
   (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
   (in-prog% (and (== (get-env "mode") "prog") (not (in-graphics?))))
@@ -134,8 +135,7 @@
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
   (in-plugin-with-converters%
-   (plugin-supports-math-input-ref (get-env "prog-language")))
-  (in-source% (style-has? "source-dtd")))
+   (plugin-supports-math-input-ref (get-env "prog-language"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

@@ -24,10 +24,11 @@ extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 /*static*/ string
 MODE_LANGUAGE (string mode) {
   if (mode == "text") return LANGUAGE;
-  if (mode == "math") return MATH_LANGUAGE;
-  if (mode == "prog") return PROG_LANGUAGE;
+  else if (mode == "math") return MATH_LANGUAGE;
+  else if (mode == "prog") return PROG_LANGUAGE;
+  else if (mode == "src") return LANGUAGE;
   cerr << "Mode = " << mode << "\n";
-  fatal_error ("invalid mode", "the_language", "edit_interface.cpp");
+  fatal_error ("invalid mode", "MODE_LANGUAGE", "edit_interface.cpp");
   return LANGUAGE;
 }
 
@@ -333,7 +334,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       dev->set_line_style (pixel);
       string mode= get_env_string (MODE);
       string family, series;
-      if (mode == "text") {
+      if ((mode == "text") || (mode == "src")) {
 	family= get_env_string (FONT_FAMILY);
 	series= get_env_string (FONT_SERIES);
       }
