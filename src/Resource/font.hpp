@@ -87,11 +87,13 @@ font tex_rubber_font (display dis, string trl_name,
 font tex_dummy_rubber_font (font base_fn);
 
 void font_rule (tree which, tree by);
+font find_font (display dis, scheme_tree t);
 font find_font (display dis, string family, string fn_class,
 		string series, string shape, int sz, int dpi);
 
 int  script (int sz, int level);
 
 font math_font (scheme_tree t, font base_fn, font error_fn);
+font compound_font (display dis, string name, scheme_tree def);
 
 #endif // defined FONT_H
