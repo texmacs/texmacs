@@ -68,6 +68,24 @@ edit_env_rep::rewrite (tree t) {
     }
     return object_to_tree (eval (s));
   }
+  else if (L(t) == MAP_ARGS) {
+    if (!(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
+      return tree (ERROR, "invalid map arguments");
+    if (nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
+      return tree (ERROR, "map arguments " * t[2]->label);
+    tree v= macro_arg->item [t[2]->label];
+    if (is_atomic (v))
+      return tree (ERROR, "map arguments " * t[2]->label);
+    int start= 0, end= N(v);
+    if (N(t)>=4) start= as_int (exec (t[3]));
+    if (N(t)>=5) end  = as_int (exec (t[4]));
+    int i, n= max (0, end-start);
+    tree r (make_tree_label (t[1]->label), n);
+    for (i=0; i<n; i++)
+      r[i]= tree (make_tree_label (t[0]->label),
+		  tree (ARGUMENT, copy (t[2]), as_string (start+i)));
+    return r;
+  }
   else if (L(t) == INCLUDE) {
     url file_name= as_string (t[0]);
     return load_inclusion (relative (base_file_name, file_name));
@@ -1624,11 +1642,14 @@ edit_env_rep::depends (tree t, string s, int level) {
   */
 
   if (is_atomic (t) || nil (macro_arg)) return false;
-  else if (is_func (t, ARGUMENT)) {
-    if (is_compound (t[0])) return false;
-    if (!macro_arg->item->contains (t[0]->label)) return false;
-    if (level == 0) return t[0]->label == s;
-    tree r= macro_arg->item [t[0]->label];
+  else if (is_func (t, ARGUMENT) || is_func (t, MAP_ARGS)) {
+    // FIXME: this does not handle more complex dependencies,
+    // like those encountered after rewritings (INCLUDE, EXTERN, etc.)
+    tree v= (L(t) == ARGUMENT? t[0]: t[2]);
+    if (is_compound (v)) return false;
+    if (!macro_arg->item->contains (v->label)) return false;
+    if (level == 0) return v->label == s;
+    tree r= macro_arg->item [v->label];
     list<hashmap<string,tree> > old_var= macro_arg;
     list<hashmap<string,path> > old_src= macro_src;
     if (!nil (macro_arg)) macro_arg= macro_arg->next;

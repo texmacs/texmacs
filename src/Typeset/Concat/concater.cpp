@@ -490,6 +490,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("arity", t, ip);
     break;
+  case MAP_ARGS:
+    if (ACTIVATED) typeset_rewrite (t, ip);
+    else typeset_inactive ("map-args", t, ip);
+    break;
   case QUOTE:
     typeset_inactive ("quote", t, ip);
     break;
