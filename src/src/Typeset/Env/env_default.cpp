@@ -56,6 +56,13 @@ initialize_default_env () {
   env (VERTICAL_POS)     = "0";         // used in fractions (-1, 0 or 1)
   env (COLOR)            = "black";     // the color
   env (BACKGROUND_COLOR) = "white";     // the background color
+  env (LINE_WIDTH)       = "1ln";       // line width in graphics
+  env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
+  env (LINE_ARROWS)      = "none";      // arrows at end of lines
+  env (LINE_CAPS)        = "normal";    // junctions in multilines
+  env (FILL_MODE)        = "both";      // show contour?
+  env (FILL_COLOR)       = "white";     // fill color
+  env (FILL_STYLE)       = "plain";     // fill style
   env (THIS_SESSION)     = "?";         // computer algebra session name
   env (INFO_FLAG)        = "short";     // information about labels, etc.
 
@@ -162,14 +169,9 @@ initialize_default_env () {
 
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
   env (GR_CLIP)          = gr_clip;     // clipping of graphics
-  env (GR_LINE_WIDTH)    = "1ln";       // line width in graphics
-  env (GR_LINE_STYLE)    = "solid";     // line style (dashes, etc.)
-  env (GR_LINE_ARROWS)   = "none";      // arrows at end of lines
-  env (GR_LINE_CAPS)     = "normal";    // junctions in multilines
-  env (GR_FILL_MODE)     = "both";      // show contour?
-  env (GR_FILL_COLOR)    = "white";     // fill color
-  env (GR_FILL_STYLE)    = "plain";     // fill style
   env (GR_MODE)          = "line";      // graphical mode
+  env (GR_COLOR)         = "default";   // color of new objects
+  env (GR_LINE_WIDTH)    = "default";   // line width for new objects
 
   env (IDENTITY)         = identity_m;  // identity macro
   env (TABULAR)          = tabular_m;   // tabular macro

@@ -45,6 +45,13 @@ string MATH_CONDENSED ("math condensed");
 string VERTICAL_POS ("vertical position");
 string COLOR ("color");
 string BACKGROUND_COLOR ("background color");
+string LINE_WIDTH ("line width");
+string LINE_STYLE ("line style");
+string LINE_ARROWS ("line arrows");
+string LINE_CAPS ("line caps");
+string FILL_MODE ("fill mode");
+string FILL_COLOR ("fill color");
+string FILL_STYLE ("fill style");
 string THIS_SESSION ("this session");
 string INFO_FLAG ("info flag");
 
@@ -175,14 +182,9 @@ string CELL_COL_NR ("cell col nr");
 
 string GR_FRAME ("graphical frame");
 string GR_CLIP ("graphical clip");
-string GR_LINE_WIDTH ("line width");
-string GR_LINE_STYLE ("line style");
-string GR_LINE_ARROWS ("line arrows");
-string GR_LINE_CAPS ("line caps");
-string GR_FILL_MODE ("fill mode");
-string GR_FILL_COLOR ("fill color");
-string GR_FILL_STYLE ("fill style");
 string GR_MODE ("graphical mode");
+string GR_COLOR ("graphical color");
+string GR_LINE_WIDTH ("graphical line width");
 
 string IDENTITY ("identity");
 string TABULAR ("tabular");

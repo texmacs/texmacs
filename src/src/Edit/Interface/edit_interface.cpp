@@ -625,6 +625,11 @@ edit_interface_rep::full_screen_mode (bool flag) {
   full_screen= flag;
 }
 
+static bool
+is_graphical (tree t) {
+  return is_func (t, _POINT) || is_func (t, LINE) || is_func (t, CLINE);
+}
+
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
@@ -633,6 +638,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUB_TABLE) ||
       is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT) ||
+      is_graphical (st) ||
+      (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
       (is_compound (st, "math", 1) &&
        is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);

@@ -32,10 +32,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     this << emit_mouse_grab (false);
   }
 
-  if (inside_graphics ()) {
-    mouse_graphics (type, x, y, t);
-    return;
-  }
+  if (inside_graphics () && mouse_graphics (type, x, y, t)) return;
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {

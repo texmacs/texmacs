@@ -20,7 +20,7 @@
     graphics-set-unit graphics-set-unit-ia
     graphics-set-origin graphics-set-origin-ia
     graphics-set-extents-ia
-    graphics-set-mode
+    graphics-set-mode graphics-set-color graphics-set-line-width
     ;; call-backs
     graphics-move-point graphics-insert-point
     graphics-remove-point graphics-last-point))
@@ -42,7 +42,8 @@
 
 (define (graphics-active-path)
   ;; path to active tag
-  (cDr (tm-where)))
+  (with p (cDr (tm-where))
+    (if (in? (car (object-at p)) '(point line cline)) p #f)))
 
 (define (graphics-group-path)
   ;; path to innermost group
@@ -105,6 +106,38 @@
   (graphics-group-start)
   (graphics-set-property "graphical mode" val))
 
+(define (graphics-set-color val)
+  (graphics-set-property "graphical color" val))
+
+(define (graphics-set-line-width val)
+  (graphics-set-property "graphical line width" val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enriching graphics with properties like color, line width, etc.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (graphics-enrich-filter l)
+  (if (null? l) l
+      (let* ((head (car l))
+	     (tail (graphics-enrich-filter (cdr l))))
+	(if (== (cadr head) "default") tail
+	    (cons* (car head) (cadr head) tail)))))
+
+(define (graphics-enrich-sub t l)
+  (with f (graphics-enrich-filter l)
+    (if (null? f)
+	t
+	`(with ,@f ,t))))
+
+(define (graphics-enrich t)
+  (let* ((mode (graphics-mode))
+	 (color (get-env "graphical color"))
+	 (lw (get-env "graphical line width")))
+    (cond ((== mode 'point)
+	   (graphics-enrich-sub t `(("color" , color))))
+	  ((in? mode '(line cline))
+	   (graphics-enrich-sub t `(("color" , color) ("line width" ,lw)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -113,7 +146,12 @@
   (with p (graphics-group-path)
     (if p (with n (- (length (object-at p)) 1)
 	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
-	    (tm-go-to (rcons (rcons p n) 1))))))
+	    (if (func? t 'with)
+		(tm-go-to (append p (list n (- (length t) 2) 1)))
+		(tm-go-to (append p (list n 1))))))))
+
+(define (graphics-group-enrich-insert t)
+  (graphics-group-insert (graphics-enrich t)))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -157,34 +195,25 @@
 
 (define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
-  (let* ((mode (graphics-mode))
-	 (p (cDr (tm-where)))
-	 (t (object-at p))
-	 (l (car t)))
+  (with mode (graphics-mode)
     (cond ((== mode 'point)
-	   (graphics-group-insert `(point ,x ,y)))
+	   (graphics-group-enrich-insert `(point ,x ,y)))
 	  ((in? mode '(line cline))
 	   (if (== (graphics-active-type) 'line)
 	       (graphics-active-insert `(point ,x ,y))
-	       (graphics-group-insert `(line (point ,x ,y)))))
+	       (graphics-group-enrich-insert `(line (point ,x ,y)))))
 	  (else (display* "Uncaptured insert " x ", " y "\n")))))
 
 (define (graphics-remove-point x y)
   ;(display* "Graphics] Remove " x ", " y "\n")
-  (let* ((mode (graphics-mode))
-	 (p (cDr (tm-where)))
-	 (t (object-at p))
-	 (l (car t)))
+  (with mode (graphics-mode)
     (cond (else (display* "Uncaptured remove " x ", " y "\n")))))
 
 (define (graphics-last-point x y)
   ;(display* "Graphics] Last " x ", " y "\n")
-  (let* ((mode (graphics-mode))
-	 (p (cDr (tm-where)))
-	 (t (object-at p))
-	 (l (car t)))
+  (with mode (graphics-mode)
     (cond ((== mode 'point)
-	   (graphics-group-insert `(point ,x ,y)))
+	   (graphics-group-enrich-insert `(point ,x ,y)))
 	  ((in? mode '(line cline))
 	   (graphics-active-insert `(point ,x ,y))
 	   (if (== mode 'cline) (graphics-active-set-tag 'cline))
@@ -193,10 +222,7 @@
 
 (define (graphics-finish)
   ;(display* "Graphics] Finish\n")
-  (let* ((mode (graphics-mode))
-	 (p (cDr (tm-where)))
-	 (t (object-at p))
-	 (l (car t)))
+  (with mode (graphics-mode)
     (cond ((== mode 'point) (noop))
 	  ((in? mode '(line cline)) (noop))
 	  (else (display* "Uncaptured finish\n")))))

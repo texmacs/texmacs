@@ -171,9 +171,10 @@ public:
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
   virtual frame  find_frame () = 0;
+  virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
-  virtual void   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
+  virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;

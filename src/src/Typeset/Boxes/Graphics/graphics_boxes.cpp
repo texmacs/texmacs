@@ -20,14 +20,16 @@
 
 struct graphics_box_rep: public composite_box_rep {
   frame f;
+  point lim1, lim2;
   graphics_box_rep (path ip, array<box> bs, frame f, point lim1, point lim2);
   frame get_frame ();
+  void  get_limits (point& lim1, point& lim2);
   operator tree () { return "graphics"; }
 };
 
 graphics_box_rep::graphics_box_rep (
-  path ip2, array<box> bs2, frame f2, point lim1, point lim2):
-    composite_box_rep (ip2, bs2), f (f2)
+  path ip2, array<box> bs2, frame f2, point lim1b, point lim2b):
+  composite_box_rep (ip2, bs2), f (f2), lim1 (lim1b), lim2 (lim2b)
 {
   point flim1= f(lim1), flim2= f(lim2);
   x1= (SI) min (flim1[0], flim2[0]);
@@ -40,6 +42,12 @@ graphics_box_rep::graphics_box_rep (
 frame
 graphics_box_rep::get_frame () {
   return f;
+}
+
+void
+graphics_box_rep::get_limits (point& lim1b, point& lim2b) {
+  lim1b= lim1;
+  lim2b= lim2;
 }
 
 /******************************************************************************

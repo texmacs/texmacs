@@ -178,6 +178,11 @@ box_rep::get_frame () {
   return frame ();
 }
 
+void
+box_rep::get_limits (point& lim1, point& lim2) {
+  lim1= point (); lim2= point ();
+}
+
 frame
 box_rep::find_frame (path bp) {
   SI    x= 0;
@@ -193,6 +198,22 @@ box_rep::find_frame (path bp) {
     if (!nil (g)) f= scaling (1.0, point (x, y)) * g;
   }
   return f;
+}
+
+void
+box_rep::find_limits (path bp, point& lim1, point& lim2) {
+  box b= this;
+  get_limits (lim1, lim2);
+  while (!nil (bp)) {
+    point slim1, slim2;
+    b  = b->subbox (bp->item);
+    bp = bp->next;
+    b->get_limits (slim1, slim2);
+    if (slim1 != point ()) {
+      lim1= slim1;
+      lim2= slim2;
+    }
+  }
 }
 
 /******************************************************************************
