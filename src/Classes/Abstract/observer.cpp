@@ -29,8 +29,12 @@ consistency_check (tree t, path ip) {
 	 << " instead of " << ip << "\n";
   if (is_compound (t)) {
     int i, n= N(t);
-    for (i=0; i<n; i++)
+    for (i=0; i<n; i++) {
+      //if (!strong_equal (ip, obtain_ip (t[i])->next))
+      if (obtain_ip (t) != obtain_ip (t[i])->next)
+	cout << "Bad node] " << t << " " << obtain_ip (t) << " #" << i << "\n";
       consistency_check (t[i], path (i, ip));
+    }
   }
 }
 
@@ -80,10 +84,10 @@ void
 insert (tree& ref, int pos, tree t) {
   // cout << "Insert " << ref << " += " << t << " at " << pos << "\n";
   if (is_atomic (ref) && is_atomic (t))
-    ref->label= ref->label (0, pos) * t->label * ref->label (pos, N(ref->label));
+    ref->label= ref->label (0, pos) *t->label* ref->label (pos, N(ref->label));
   else {
     int i, n= N(ref), nr= N(t);
-    A(ref)->resize (n+nr);
+    AR(ref)->resize (n+nr);
     for (i=n-1; i>=pos; i--)
       ref[i+nr]= ref[i];
     for (i=0; i<nr; i++)
@@ -105,7 +109,7 @@ remove (tree& ref, int pos, int nr) {
     int i, n= N(ref)-nr;
     for (i=pos; i<n; i++)
       ref[i]= ref[i+nr];
-    A(ref)->resize (n);
+    AR(ref)->resize (n);
   }
   // stretched_print (ref, true, 1);
   // consistency_check ();
@@ -121,10 +125,10 @@ split (tree& ref, int pos, int at) {
   }
   else {
     t= ref[pos] (at, N(ref[pos]));
-    A(ref[pos])->resize (at);
+    AR(ref[pos])->resize (at);
   }
   int i, n= N(ref);
-  A(ref)->resize (n+1);
+  AR(ref)->resize (n+1);
   for (i=n; i>(pos+1); i--)
     ref[i]= ref[i-1];
   ref[pos+1]= t;
@@ -146,12 +150,12 @@ join (tree& ref, int pos) {
   if (!nil (ref->obs)) ref->obs->notify_join (ref, pos);
   if (is_atomic (ref[pos]) && is_atomic (ref[pos+1]))
     ref[pos]->label << ref[pos+1]->label;
-  else ref[pos] << A (ref[pos+1]);
+  else ref[pos] << A(ref[pos+1]);
 
   int i, n= N(ref)-1;
   for (i=pos+1; i<n; i++)
     ref[i]= ref[i+1];
-  A(ref)->resize (n);
+  AR(ref)->resize (n);
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }

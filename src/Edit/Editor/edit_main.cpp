@@ -250,7 +250,7 @@ edit_main_rep::the_line () {
 
 tree
 edit_main_rep::the_buffer () {
-  return copy (et);
+  return subtree (et, rp);
 }
 
 tree

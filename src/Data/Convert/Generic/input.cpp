@@ -163,7 +163,7 @@ texmacs_input_rep::write (tree u) {
     if (!is_concat (u[0])) u[0]= tree (CONCAT, u[0]);
     t[N(t)-1] << A(u[0]);
   }
-  t << A (u (1, N(u)));
+  if (N(u)>1) t << A (u (1, N(u)));
 }
 
 tree

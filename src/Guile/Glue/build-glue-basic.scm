@@ -32,6 +32,7 @@
   (tree1 tree (texmacs_tree tree_label texmacs_tree))
   (tree2 tree (texmacs_tree tree_label texmacs_tree texmacs_tree))
   (tree3 tree (texmacs_tree tree_label texmacs_tree texmacs_tree texmacs_tree))
+  (tree-ip obtain_ip (path tree))
   (tree-atomic? is_atomic (bool texmacs_tree))
   (tree-compound? is_compound (bool texmacs_tree))
   (tree-arity N (int texmacs_tree))
@@ -44,15 +45,6 @@
   (tree-label-extension? is_extension (bool tree_label))
   (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
-
-  (tree-assign assign (void tree tree))
-  (tree-insert insert (void tree int tree))
-  (tree-remove remove (void tree int int))
-  (tree-split split (void tree int int))
-  (tree-join join (void tree int))
-  (tree-ins-unary ins_unary (void tree tree_label))
-  (tree-rem-unary rem_unary (void tree))
-  (tree-obtain-ip obtain_ip (path tree))
 
   (parse-texmacs texmacs_document_to_tree (tree string))
   (serialize-texmacs tree_to_texmacs (string tree))

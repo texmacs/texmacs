@@ -96,6 +96,7 @@ ip_observer_rep::notify_join (tree& ref, int pos) {
 void
 ip_observer_rep::notify_ins_unary (tree& ref) {
   ip= path (0, ip);
+  attach_ip (ref[0], ip); // updates children's ips
   attach_ip (ref, ip->next);
 }
 
@@ -103,7 +104,7 @@ void
 ip_observer_rep::notify_rem_unary (tree& ref) {
   if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[0], ip);
   else detach_ip (ref[0]);
-  detach_ip (ref);
+  ip= DETACHED; // detach_ip (ref);
 }
 
 /******************************************************************************
@@ -112,13 +113,15 @@ ip_observer_rep::notify_rem_unary (tree& ref) {
 
 path
 ip_observer_rep::get_ip (tree& ref) {
+  (void) ref;
   return ip;
 }
 
 bool
 ip_observer_rep::set_ip (tree& ref, path ip2) {
-  if (nil (ip2))
-    fatal_error ("cannot set ip to null", "ip_observer_rep::set_ip");
+  (void) ref;
+  if (nil (ip) || nil (ip2))
+    fatal_error ("cannot alter global root", "ip_observer_rep::set_ip");
   ip->item= ip2->item;
   ip->next= ip2->next;
   return false;
@@ -127,13 +130,18 @@ ip_observer_rep::set_ip (tree& ref, path ip2) {
 void
 attach_ip (tree& ref, path ip) {
   // cout << "Set ip of " << ref << " to " << ip << "\n";
-  if (nil (ref->obs) || ref->obs->set_ip (ref, ip))
+  if (nil (ref->obs) || ref->obs->set_ip (ref, ip)) {
+    // cout << "Create ip observer " << ip << " for " << ref << "\n";
     ref->obs= list_observer (ip_observer (ip), ref->obs);
+  }
   if (is_compound (ref)) {
     int i, n= N(ref);
-    for (i=0; i<n; i++)
-      if (obtain_ip (ref[i]) != path (i, ip))
+    for (i=0; i<n; i++) {
+      path old_ip= obtain_ip (ref[i]);
+      if ((old_ip->item != i) || (!strong_equal (old_ip->next, ip))) {
 	attach_ip (ref[i], path (i, ip));
+      }
+    }
   }
 }
 
