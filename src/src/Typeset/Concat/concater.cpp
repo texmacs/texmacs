@@ -659,14 +659,22 @@ box_info (edit_env env, tree t, string what) {
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {
-      case 'l': r << as_string (b->x1); break;
-      case 'b': r << as_string (b->y1); break;
-      case 'r': r << as_string (b->x2); break;
-      case 't': r << as_string (b->y2); break;
-      case 'L': r << as_string (b->x3); break;
-      case 'B': r << as_string (b->y3); break;
-      case 'R': r << as_string (b->x4); break;
-      case 'T': r << as_string (b->y4); break;
+    case 'l': r << as_string (b->x1); break;
+    case 'b': r << as_string (b->y1); break;
+    case 'r': r << as_string (b->x2); break;
+    case 't': r << as_string (b->y2); break;
+    case 'w': r << as_string (b->x2 - b->x1); break;
+    case 'h': r << as_string (b->y2 - b->y1); break;
+    case 'L': r << as_string (b->x3); break;
+    case 'B': r << as_string (b->y3); break;
+    case 'R': r << as_string (b->x4); break;
+    case 'T': r << as_string (b->y4); break;
+    case 'W': r << as_string (b->x4 - b->x3); break;
+    case 'H': r << as_string (b->y4 - b->y3); break;
+    case '.':
+      if (N(r)==1) return as_string (r[0]) * "tmpt";
+      else if (N(r)==0) return tree (ERROR, "No query for box-info");
+      else return tree (ERROR, "More than one query for box-info");
     }
   }
   return r;
