@@ -21,6 +21,8 @@ bridge bridge_rewrite (typesetter, tree, path);
 bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
+bridge bridge_mark (typesetter, tree, path);
+bridge bridge_auto (typesetter, tree, path, tree);
 
 bridge nil_bridge;
 
@@ -32,6 +34,8 @@ bridge_rep::bridge_rep (typesetter ttt2, tree st2, path ip2):
   ttt (ttt2), env (ttt->env), st (st2), ip (ip2),
   status (CORRUPTED), changes (UNINIT) {}
 
+static tree inactive_m (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x")));
+
 bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
   switch (L(st)) {
@@ -40,6 +44,7 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
   case WITH:
     return bridge_with (ttt, st, ip);
   default:
+    //return bridge_auto (ttt, st, ip, inactive_m);
     return bridge_default (ttt, st, ip);
   }
 }
@@ -71,6 +76,10 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
     return bridge_rewrite (ttt, st, ip);
+  case REWRITE_INACTIVE:
+    return bridge_rewrite (ttt, st, ip);
+  case MARK:
+    return bridge_mark (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);

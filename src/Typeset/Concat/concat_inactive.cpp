@@ -121,7 +121,6 @@ concater_rep::typeset_inactive_angular (tree t, path ip, bool err) {
 
   for (i= first; i<N(t); i++) {
     print (space (0, 0, env->fn->spc->max));
-    print (space (0, 0, env->fn->spc->max));
     ghost ("|", descend (descend (ip, i), 0));
     print (space (0, 0, env->fn->spc->max));
     if (i<N(t)-1) penalty_min (0);

@@ -196,3 +196,12 @@ string GR_COLOR ("gr-color");
 string GR_LINE_WIDTH ("gr-line-width");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
+
+/******************************************************************************
+* Environment variables for preamble mode
+******************************************************************************/
+
+string SRC_STYLE ("src-style");
+string SRC_SPECIAL ("src-special");
+string SRC_COMPACT ("src-compact");
+string SRC_CLOSE ("src-close");

@@ -114,6 +114,20 @@
       ("Detach" (project-detach)))
   (-> "View"
       ("Preamble mode" (toggle-preamble))
+      (-> "Preamble editing"
+	  (-> "Compactification"
+	      ("Default" (init-default "src-compact"))
+	      ---
+	      ("Maximal" (init-env "src-compact" "all"))
+	      ("Inline arguments" (init-env "src-compact" "inline args"))
+	      ("Normal" (init-env "src-compact" "normal"))
+	      ("Only inline tags" (init-env "src-compact" "inline"))
+	      ("Minimal" (init-env "src-compact" "none")))
+	  (-> "Closing tags"
+	      ("Default" (init-default "src-close"))
+	      ---
+	      ("Compact" (init-env "src-close" "compact"))
+	      ("Long" (init-env "src-close" "long"))))
       (-> "Informative flags"
 	  ("Default" (init-default "info-flag"))
 	  ---

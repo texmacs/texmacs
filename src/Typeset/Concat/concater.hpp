@@ -81,6 +81,7 @@ class concater_rep {
   void typeset_inactive_angular (tree t, path ip, bool err);
   void typeset_inactive (tree t, path ip);
   void typeset_error (tree t, path ip);
+  void typeset_mark (tree t, path ip);
 
   // active macro mechanisms
   void typeset_assign (tree t, path ip);

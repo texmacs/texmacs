@@ -460,6 +460,12 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case VAR_ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
+  case REWRITE_INACTIVE:
+    typeset_rewrite (t, ip);
+    break;
+  case MARK:
+    typeset_mark (t, ip);
+    break;
   case SYMBOL:
   case LATEX:
   case HYBRID:
