@@ -131,11 +131,7 @@
   ("Long macro" (make-inactive-xmacro))
   ("Get label" (make-inactive-get-label))
   ("Get arity" (make-inactive-get-arity))
-  ("Map arguments" (make-inactive-map-args))
-  (if (tmp-use-apply?)
-      ---
-      ("Function" (make-inactive-function))
-      ("Apply" (make-inactive-apply))))
+  ("Map arguments" (make-inactive-map-args)))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
