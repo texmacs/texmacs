@@ -208,6 +208,7 @@
   (the-selection selection_get (texmacs_tree))
   (the-buffer the_buffer (texmacs_tree))
   (the-path the_path (path))
+  (the-buffer-path the_buffer_path (path))
   (the-mutator-path get_mutator_path (path))
   (the-mutator-time get_mutator_time (int))
   (process-input process_input (void))

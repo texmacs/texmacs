@@ -459,6 +459,7 @@ public:
   virtual tree the_buffer () = 0;
   virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;
+  virtual path the_buffer_path () = 0;
   virtual void show_tree () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;

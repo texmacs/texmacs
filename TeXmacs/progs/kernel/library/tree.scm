@@ -28,7 +28,7 @@
   (:type (tree -> path))
   (:synopsis "Get the path associated to @t or #f.")
   (with ip (tree-ip t)
-    (if (== ip '(-5)) #f
+    (if (== (cAr ip) -5) #f
 	(reverse ip))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
