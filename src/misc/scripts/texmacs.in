@@ -16,4 +16,4 @@ PATH="$TEXMACS_BIN_PATH/bin:$PATH"
 @CONFIG_LIB_PATH@="$TEXMACS_BIN_PATH/lib${@CONFIG_LIB_PATH@+":$@CONFIG_LIB_PATH@"}"
 export PATH @CONFIG_LIB_PATH@
 
-exec texmacs.bin "$@"
+exec texmacs.bin "$@" < /dev/null
