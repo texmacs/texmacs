@@ -7,7 +7,7 @@
 
   \;
 
-  <assign|nextnumber|<macro|<assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<apply|theequation>>(<apply|theequation>)>>
+  <assign|nextnumber|<macro|<assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<apply|theequation>><with|mode|text|(<apply|theequation>)>>>
 
   <assign|leqnumber|<macro|<nextnumber><htab|5mm>>>
 
@@ -24,7 +24,7 @@
 
   <assign|equation|<macro|body|<with|mode|math|formula style|true|interline
   space|0.45fn|<surround|<format|no page break
-  before><vspace*|0.5fn><format|no first indentation><assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<apply|theequation>><htab|5mm>|<htab|5mm>(<apply|theequation>)<vspace|0.5fn><format|no
+  before><vspace*|0.5fn><format|no first indentation><assign|equationnr|<plus|<value|equationnr>|1>><assign|thelabel|<apply|theequation>><htab|5mm>|<htab|5mm><with|mode|text|(<apply|theequation>)><vspace|0.5fn><format|no
   indentation after>|<arg|body>>>>>
 
   <assign|equation*|<macro|body|<with|mode|math|formula style|true|interline
