@@ -22,6 +22,7 @@
     ;; inserting inactive content
     make-inactive make-inactive-arg make-inactive-message
     make-inactive-apply-arg make-inactive-apply-args
+    make-inactive-compound-arg make-inactive-compound-args
     make-inactive-assign-arg make-inactive-assign-function
     make-inactive-assign-function-arg))
 
@@ -92,6 +93,22 @@
   (:type (string int ->))
   (:synopsis "Make an inactive function application with name @s of arity @n.")
   (make-inactive "apply" n)
+  (insert-string s)
+  (insert-argument)
+  (set-message "Press <Return> to activate" s))
+
+(tm-define (make-inactive-compound-arg s)
+  (:type (string ->))
+  (:synopsis "Make an inactive function application with name @s.")
+  (make-inactive "compound" 1)
+  (insert-string s)
+  (insert-argument)
+  (set-message "Press <Return> to activate" s))
+
+(tm-define (make-inactive-compound-args s n)
+  (:type (string int ->))
+  (:synopsis "Make an inactive function application with name @s of arity @n.")
+  (make-inactive "compound" n)
   (insert-string s)
   (insert-argument)
   (set-message "Press <Return> to activate" s))

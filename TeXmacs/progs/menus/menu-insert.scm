@@ -47,8 +47,8 @@
   ("Action" (make-inactive-action))
   ---
   (-> "Citation"
-      ("Visible" (make-inactive-apply-arg "cite"))
-      ("Invisible" (make-inactive-apply-arg "nocite")))
+      ("Visible" (make-inactive-compound-arg "cite"))
+      ("Invisible" (make-inactive-compound-arg "nocite")))
   (-> "Index entry"
       ("Main" (make-inactive-apply-arg "index"))
       ("Sub" (make-inactive-apply-args "subindex" 2))

@@ -52,7 +52,7 @@
 
 (drd-table tex-with-cmd%
   (("font family" "rm") textrm)
-  (("font family" "ss") textss)
+  (("font family" "ss") textsf)
   (("font family" "tt") texttt)
   (("font series" "medium") textmd)
   (("font series" "bold") textbf)
@@ -1075,7 +1075,7 @@
   (session (,tmtex-session 3))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
-  (cite nocite (,tmtex-cite -1))
+  ((:or cite nocite) (,tmtex-cite -1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))

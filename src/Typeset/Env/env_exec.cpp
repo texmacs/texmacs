@@ -94,8 +94,7 @@ edit_env_rep::rewrite (tree t) {
 
 tree
 edit_env_rep::exec_rewrite (tree t) {
-  tree r= rewrite (t);
-  return exec (r);
+  return exec (rewrite (t));
 }
 
 /******************************************************************************
@@ -158,6 +157,8 @@ edit_env_rep::exec (tree t) {
     return exec_get_label (t);
   case GET_ARITY:
     return exec_get_arity (t);
+  case MAP_ARGS:
+    return exec_rewrite (t);
   case QUOTE:
     return copy (t[0]);
   case DELAY:
@@ -422,8 +423,8 @@ edit_env_rep::exec_compound (tree t) {
 
 tree
 edit_env_rep::exec_apply (tree t) {
+  // cout << "Apply " << t << "\n";
   /*
-  // cout << "  Apply " << t << "\n";
   tree x= exec (t[0]);
   tree f= is_applicable (x)? x: read (x->label);
 
@@ -585,13 +586,19 @@ edit_env_rep::exec_argument (tree t) {
 
 tree
 edit_env_rep::exec_get_label (tree t) {
-  tree r= exec (t[0]);
+  tree r;
+  if (is_func (t[0], ARGUMENT, 1))
+    r= macro_arg->item [as_string (t[0][0])];
+  else r= exec (t[0]);
   return copy (as_string (L(r)));
 }
 
 tree
 edit_env_rep::exec_get_arity (tree t) {
-  tree r= exec (t[0]);
+  tree r;
+  if (is_func (t[0], ARGUMENT, 1))
+    r= macro_arg->item [as_string (t[0][0])];
+  else r= exec (t[0]);
   return as_string (arity (r));
 }
 
@@ -1324,6 +1331,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return false;
   case ARGUMENT:
     return exec_until_argument (t, p, var, level);
+  case GET_LABEL:
+  case GET_ARITY:
+  case MAP_ARGS:
   case QUOTE:
   case DELAY:
   case OR:
