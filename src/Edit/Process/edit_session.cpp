@@ -125,7 +125,7 @@ edit_process_rep::make_session (string lan, string session) {
   string lolan= locase_all (lan);
   if ((lolan != lan) && (!connection_declared (lan))) lan= lolan;
   if (exists (url ("$TEXMACS_STYLE_PATH", lan * ".ts")))
-    init_extra_style (lan, true);
+    init_add_package (lan);
 
   /* insert session tag and output tag for start-up banner */
   path p (4, path (0, path (0, 0)));

@@ -197,7 +197,8 @@ public:
   virtual tree     exec_html (tree t) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
-  virtual void     init_extra_style (string package, bool check= false) = 0;
+  virtual void     init_add_package (string package) = 0;
+  virtual void     init_remove_package (string package) = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
   virtual void     typeset_invalidate_all () = 0;

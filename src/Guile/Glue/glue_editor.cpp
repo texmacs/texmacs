@@ -1553,13 +1553,26 @@ tmg_init_style (SCM arg1) {
 }
 
 SCM
-tmg_init_extra_style (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-extra-style");
+tmg_init_add_package (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-add-package");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->init_extra_style (in1);
+  get_server()->get_editor()->init_add_package (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_init_remove_package (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "init-remove-package");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->init_remove_package (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2922,7 +2935,8 @@ initialize_glue_editor () {
   gh_new_procedure ("init-env", (FN) tmg_init_env, 2, 0, 0);
   gh_new_procedure ("init-env-tree", (FN) tmg_init_env_tree, 2, 0, 0);
   gh_new_procedure ("init-style", (FN) tmg_init_style, 1, 0, 0);
-  gh_new_procedure ("init-extra-style", (FN) tmg_init_extra_style, 1, 0, 0);
+  gh_new_procedure ("init-add-package", (FN) tmg_init_add_package, 1, 0, 0);
+  gh_new_procedure ("init-remove-package", (FN) tmg_init_remove_package, 1, 0, 0);
   gh_new_procedure ("get-env", (FN) tmg_get_env, 1, 0, 0);
   gh_new_procedure ("get-env-tree", (FN) tmg_get_env_tree, 1, 0, 0);
   gh_new_procedure ("get-init-tree", (FN) tmg_get_init_tree, 1, 0, 0);

@@ -16,6 +16,7 @@
 #include "boot.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_face.hpp"
+#include "timer.hpp"
 
 static int
 mag (int dpi, int size, int dsize) {
@@ -187,11 +188,15 @@ void
 load_tex (string family, int size, int dpi, int dsize,
 	  tex_font_metric& tfm, font_glyphs& pk)
 {
+  bench_start ("load tex font");
   if (DEBUG_AUTO) cout << "TeXmacs] loading " << family << size
 		       << " at " << dpi << " dpi\n";
   if (load_tex_tfm (family, size, dsize, tfm) &&
       load_tex_pk (family, size, dpi, dsize, tfm, pk))
-    return;
+    {
+      bench_cumul ("load tex font");
+      return;
+    }
   if (DEBUG_AUTO) {
     cout << "TeXmacs] font " << family << size
          << " at " << dpi << " dpi not found\n";
@@ -200,9 +205,13 @@ load_tex (string family, int size, int dpi, int dsize,
   }
   if (load_tex_tfm ("cmr", size, 10, tfm) &&
       load_tex_pk ("cmr", size, dpi, 10, tfm, pk))
-    return;
+    {
+      bench_cumul ("load tex font");
+      return;
+    }
   string name= family * as_string (size) * "@" * as_string (dpi);
   cerr << "\n\nI could not open " << name << "\n";
   fatal_error ("Tex seems not to be installed properly",
 	       "load_tex", "load_tex.cpp");
+  bench_cumul ("load tex font");
 }

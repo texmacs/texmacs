@@ -21,7 +21,8 @@
 (menu-bind texmacs-extra-menu)
 (menu-bind texmacs-extra-icons)
 (menu-bind style-menu)
-(menu-bind use-package-menu)
+(menu-bind add-package-menu)
+(menu-bind remove-package-menu)
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
 

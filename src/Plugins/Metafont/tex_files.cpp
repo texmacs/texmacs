@@ -17,6 +17,7 @@
 #include "path.hpp"
 #include "hashmap.hpp"
 #include "analyze.hpp"
+#include "timer.hpp"
 
 static url the_tfm_path= url_none ();
 static url the_pk_path = url_none ();
@@ -26,10 +27,18 @@ static url the_pfb_path= url_none ();
 * Finding a TeX font
 ******************************************************************************/
 
+static string
+kpsewhich (string name) {
+  bench_start ("kpsewhich");
+  string which= var_eval_system ("kpsewhich " * name);
+  bench_cumul ("kpsewhich");
+  return which;
+}
+
 url
 resolve_tfm (url name) {
   if (get_setting ("KPSEWHICH") == "true") {
-    string which= var_eval_system ("kpsewhich " * as_string (name));
+    string which= kpsewhich (as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
@@ -40,7 +49,7 @@ url
 resolve_pk (url name) {
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pk fonts
   if (get_setting ("KPSEWHICH") == "true") {
-    string which= var_eval_system ("kpsewhich " * as_string (name));
+    string which= kpsewhich (as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
@@ -52,7 +61,7 @@ url
 resolve_pfb (url name) {
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pfb fonts
   if (get_setting ("KPSEWHICH") == "true") {
-    string which= var_eval_system ("kpsewhich " * as_string (name));
+    string which= kpsewhich (as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
@@ -67,7 +76,7 @@ exists_in_tex (url u) {
   string s= as_string (u);
   if (get_setting ("KPSEWHICH") != "true") return true;
   if (tex_file_table->contains (s)) return tex_file_table [s];
-  tex_file_table(s)= (var_eval_system ("kpsewhich " * s) != "");
+  tex_file_table(s)= (kpsewhich (s) != "");
   return tex_file_table [s];
 }
 
@@ -262,7 +271,7 @@ ec_to_cm (string& name, unsigned char& c) {
 
 static bool
 pfb_exists (string name) {
-  return var_eval_system ("kpsewhich " * name * ".pfb") != "";
+  return kpsewhich (name * ".pfb") != "";
 }
 
 static string
@@ -294,6 +303,6 @@ string
 pk_to_true_type (string& name) {
   name= find_pfb (name);
   if (name == "") return "";
-  string loc= var_eval_system ("kpsewhich " * name * ".pfb");
+  string loc= kpsewhich (name * ".pfb");
   return eval_system ("pfbtops " * loc);
 }
