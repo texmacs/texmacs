@@ -126,12 +126,12 @@
     (dueto 1 "\\textup{\\textbf{(#1) }}")
 
     ;; TeXmacs structural markup
-    (TeXmacs 0 "T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}}")
+    (TeXmacs 0 "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
     (madebyTeXmacs 0
      ,(string-append
        "\\footnote{"
        (translate "This text has been produced using" "english" lan)
-       " GNU T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}} ("
+       " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
        (translate "see" "english" lan)
        "{\\tt http://www.texmacs.org}).}"))
     (tmhlink 2 "{\\color{blue} #1}")
