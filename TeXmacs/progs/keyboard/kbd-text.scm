@@ -47,9 +47,9 @@
   ("F8" (make 'samp))
   ("S-F6" (make 'name))
 
-  ("font ^" (make-script #t #f))
-  ("font hat" (make-script #t #f))
-  ("font _" (make-script #t #t))
+  ("font ^" (make-script #t #t))
+  ("font hat" (make-script #t #t))
+  ("font _" (make-script #f #t))
   ("font s" (make-with "font-family" "ss"))
   ("font t" (make-with "font-family" "tt"))
   ("font b" (make-with "font-series" "bold"))
