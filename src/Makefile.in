@@ -95,6 +95,8 @@ PLUGINS_COMPILE := $(patsubst %Makefile,%COMPILE,$(PLUGINS_MAKEFILE))
 PLUGINS_CLEAN := $(patsubst %Makefile,%CLEAN,$(PLUGINS_MAKEFILE))
 
 plugins/%/COMPILE:
+	$(MKDIR) plugins/$*/bin
+	$(MKDIR) plugins/$*/lib
 	cd plugins/$*; $(MAKE) -i -f Makefile CC="@CC@" CXX="@CXX@"
 
 plugins/%/CLEAN:
