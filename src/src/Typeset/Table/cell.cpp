@@ -83,7 +83,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
 
     if (or_row != -1) {
       D= table (env, 1, or_row, or_col);
-      D->typeset (decoration, decorate (iq));
+      D->typeset (attach_deco (decoration, iq));
     }
   }
 }

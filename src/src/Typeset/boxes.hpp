@@ -239,6 +239,7 @@ bool outside (SI x, SI delta, SI x1, SI x2);
 #define DECORATION_LEFT   (-2)
 #define DECORATION_MIDDLE (-3)
 #define DECORATION_RIGHT  (-4)
+#define DETACHED          (-5)
 #define is_accessible(p) ((nil (p)) || ((p)->item >= 0))
 #define is_decoration(p) ((!nil (p)) && ((p)->item < 0))
 inline path descend (path ip, int i) {
@@ -257,5 +258,13 @@ path descend_decode (path ip, int side);
 
 inline bool box_rep::accessible () { return is_accessible (find_lip ()); }
 inline bool box_rep::decoration () { return is_decoration (find_lip ()); }
+
+tree attach_dip (tree ref, path ip);
+#define attach_here(t,ip) attach_dip(t,ip),ip
+#define attach_deco(t,ip) attach_dip(t,decorate(ip)),decorate(ip)
+#define attach_left(t,ip) attach_dip(t,decorate_left(ip)),decorate_left(ip)
+#define attach_middle(t,ip) \
+  attach_dip(t,decorate_middle(ip)),decorate_middle(ip)
+#define attach_right(t,ip) attach_dip(t,decorate_right(ip)),decorate_right(ip)
 
 #endif // defined BOXES_H

@@ -225,8 +225,17 @@ bridge_rep::exec_until (path p) {
   else if (p != path (0)) my_exec_until (p);
 }
 
+extern tree the_et;
+
 void
 bridge_rep::typeset (int desired_status) {
+  // FIXME: this dirty hack ensures a perfect coherence between
+  // the bridge and the edit tree at the typesetting stage.
+  // This should not be necessary, but we use because the ip_observers
+  // may become wrong otherwise.
+  if (is_accessible (ip))
+    st= subtree (the_et, reverse (ip));
+
   // cout << "Typesetting " << st << ", " << desired_status << "\n";
   if ((status==desired_status) && (N(ttt->old_patch)==0)) {
     // cout << "  cached\n";

@@ -204,6 +204,6 @@ void
 concater_rep::typeset_error (tree t, path ip) {
   tree m (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));
   marker (descend (ip, 0));
-  typeset_auto (t, decorate_right (ip), m);
+  typeset_auto (attach_right (t, ip), m);
   marker (descend (ip, 1));
 }

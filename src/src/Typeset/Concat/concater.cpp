@@ -139,7 +139,19 @@ concater_rep::with_limits (int status) {
 
 void
 concater_rep::typeset (tree t, path ip) {
-  // cout << "Typeset " << t << ", " << ip << "\n";
+  // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
+  /*
+  if (obtain_ip (t) != ip)
+    cout << "TeXmacs] Wrong ip: " << t << "\n"
+	 << "       ] " << obtain_ip (t) << " -> " << ip << "\n";
+  */
+
+  if (!is_accessible (ip)) {
+    path ip2= obtain_ip (t);
+    if (ip2 != path (DETACHED))
+      ip= ip2;
+  }
+
   if (is_atomic (t)) {
     typeset_string (t->label, ip);
     return;
@@ -184,7 +196,7 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case SPACE:
     t= env->exec (t);
-    typeset_space (t, ip);
+    typeset_space (attach_here (t, ip));
     break;
   case HTAB:
     print (space (env->decode_length (t[0])));
@@ -607,7 +619,7 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 
 tree
 box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, t, path (0));
+  box b= typeset_as_concat (env, attach_here (t, decorate ()));
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {

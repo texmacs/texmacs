@@ -502,3 +502,22 @@ descend_decode (path ip, int side) {
   default               : return descend (ip, side);
   }
 }
+
+tree
+attach_dip (tree ref, path dip) {
+  path old_ip= obtain_ip (ref);
+  if (old_ip != path (DETACHED)) return ref;
+  if (is_atomic (ref)) {
+    tree r (ref->label);
+    r->obs= list_observer (ip_observer (dip), r->obs);
+    return r;
+  }
+  else {
+    int i, n= N(ref);
+    tree r (ref, n);
+    for (i=0; i<n; i++)
+      r[i]= attach_dip (ref[i], descend (dip, i));
+    r->obs= list_observer (ip_observer (dip), r->obs);
+    return r;
+  }
+}

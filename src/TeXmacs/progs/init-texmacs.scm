@@ -29,7 +29,7 @@
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 (inherit-modules (kernel tools tm-edit) (kernel tools tm-misc)
-		 (kernel tools tm-convert))
+		 (kernel tools tm-convert) (kernel tools tm-markup))
 (retrieve-preferences)
 
 ;(display "Booting TeXmacs primitives\n")

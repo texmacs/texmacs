@@ -51,8 +51,8 @@ void
 bridge_auto_rep::initialize () {
   if ((!valid) || (body->st != f[1])) {
     valid= true;
-    if (nil (body)) body= make_bridge (ttt, f[1], decorate_right (ip));
-    else replace_bridge (body, f[1], decorate_right (ip));
+    if (nil (body)) body= make_bridge (ttt, attach_right (f[1], ip));
+    else replace_bridge (body, attach_right (f[1], ip));
   }
 }
 
