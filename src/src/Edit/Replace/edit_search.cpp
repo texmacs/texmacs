@@ -28,16 +28,12 @@ edit_replace_rep::~edit_replace_rep () {}
 
 bool
 edit_replace_rep::inside (string what) {
-  if (std_contains (what))
-    return inside (as_tree_label (what));
-  else return inside_compound (what);
+  return inside (make_tree_label (what));
 }
 
 path
 edit_replace_rep::search_upwards (string what) {
-  if (std_contains (what))
-    return search_upwards (as_tree_label (what));
-  else return search_upwards_compound (what);
+  return search_upwards (make_tree_label (what));
 }
 
 bool
@@ -49,7 +45,7 @@ path
 edit_replace_rep::search_upwards (tree_label l) {
   path p= path_up (tp, 2);
   while (!is_func (subtree (et, p), l)) {
-    if (nil (p)) return p;
+    if (p == rp) return path ();
     p= path_up (p);
   }
   return p;
@@ -60,7 +56,7 @@ edit_replace_rep::search_parent_upwards (tree_label l, int& last) {
   path p= path_up (tp);
   while (!is_func (subtree (et, path_up (p)), l)) {
     p= path_up (p);
-    if (nil (p)) {
+    if (p == rp) {
       last= -1;
       return path ();
     }
@@ -77,22 +73,6 @@ edit_replace_rep::search_parent_upwards (tree_label l) {
 }
 
 bool
-edit_replace_rep::inside_compound (string name) {
-  return !nil (search_upwards_compound (name));
-}
-
-path
-edit_replace_rep::search_upwards_compound (string name) {
-  path p= path_up (tp);
-  while (true) {
-    p= path_up (p);
-    if (nil (p)) return p;
-    tree st= subtree (et, p);
-    if (is_compound (st, name)) return p;
-  }
-}
-
-bool
 edit_replace_rep::inside_with (string var, string val) {
   return !nil (search_upwards_with (var, val));
 }
@@ -102,7 +82,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
   path p= path_up (tp);
   while (true) {
     p= path_up (p);
-    if (nil (p)) return p;
+    if (p == rp) return path ();
     tree st= subtree (et, p);
     if (is_func (st, WITH) && (st[0] == var) && (st[1] == val)) return p;
   }
@@ -111,7 +91,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
 string
 edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
-  if (nil (p)) return "";
+  if (p == rp) return "";
   tree st= subtree (et, p);
   if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));
@@ -124,7 +104,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
   path p= path_up (tp);
   while (true) {
     p= path_up (p);
-    if (nil (p)) return p;
+    if (p == rp) return path ();
     tree st= subtree (et, p);
     for (i=0; i<n; i++) {
       if (is_atomic (t[i])) {
@@ -154,7 +134,7 @@ path
 edit_replace_rep::search_previous_compound (path init, string which) {
   path p= init;
   while (true) {
-    if (nil (p)) return init;
+    if (p == rp) return init;
     if (last_item (p) == 0) p= path_up (p);
     else {
       p= path_dec (p);
@@ -174,7 +154,7 @@ path
 edit_replace_rep::search_next_compound (path init, string which) {
   path p= init;
   while (true) {
-    if (nil (p)) return init;
+    if (p == rp) return init;
     if (last_item (p) == (N (subtree (et, path_up (p))) - 1)) p= path_up (p);
     else {
       p= path_inc (p);
@@ -282,14 +262,14 @@ edit_replace_rep::step_ascend (bool forward) {
 
   if (forward) {
     if (l == N(st)) {
-      if (atom (search_at)) search_at= path ();
+      if (atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
   }
   else {
     if (l == -1) {
-      if (atom (search_at)) search_at= path ();
+      if (atom (search_at - rp)) search_at= rp;
       else step_ascend (forward);
     }
     else step_descend (forward);
@@ -310,7 +290,7 @@ edit_replace_rep::step_descend (bool forward) {
 void
 edit_replace_rep::step_horizontal (bool forward) {
   // cout << "Step horizontal at " << search_at << "\n";
-  if (nil (search_at)) step_descend (forward);
+  if (search_at == rp) step_descend (forward);
   else {
     tree st  = subtree (et, path_up (search_at));
     int  l   = last_item (search_at);
@@ -371,7 +351,7 @@ void
 edit_replace_rep::next_match (bool forward) {
   // cout << "Next match at " << search_at << "\n";
   while (true) {
-    if (nil (search_at)) {
+    if (search_at == rp) {
       set_selection (tp, tp);
       notify_change (THE_SELECTION);
       return;
@@ -415,7 +395,7 @@ edit_replace_rep::search_next (bool forward) {
   if (is_compound (search_what)) w= "compound expression";
 
   next_match (forward);
-  if (nil (search_at)) {
+  if (search_at == rp) {
     set_message ("No more matches for#" * w, r);
     cerr << '\a';
   }
@@ -491,9 +471,9 @@ edit_replace_rep::search_keypress (string s) {
     else if ((s == "C-left") || (s == "C-right")) {
       // FIXME: integrate better with general searching mechanism
       path p= path_up (search_at);
-      while ((!nil (p)) && (!is_extension (subtree (et, path_up (p)))))
+      while ((p != rp) && (!is_extension (subtree (et, path_up (p)))))
 	p= path_up (p);
-      if (nil (p)) return true;
+      if (p == rp) return true;
       path r= path_up (p);
       string w= as_string (L (subtree (et, r)));
       path q= (s == "C-right")?
@@ -550,7 +530,7 @@ edit_replace_rep::replace_next () {
   if (!forward) r= "backward replace";
 
   next_match (forward);
-  if (nil (search_at)) {
+  if (search_at == rp) {
     string l= "Replaced#" * as_string (nr_replaced) * "#occurrences";
     if (nr_replaced == 0) l= "No matches found";
     if (nr_replaced == 1) l= "Replaced one occurrence";
@@ -578,7 +558,7 @@ edit_replace_rep::replace_keypress (string s) {
     replace_next ();
   }
   else if (s == "a") {
-    while (!nil (search_at)) {
+    while (search_at != rp) {
       nr_replaced++;
       go_to (copy (search_end));
       cut (search_at, search_end);

@@ -42,6 +42,7 @@ path path_add (path p, int plus);
 path path_add (path p, int plus, int pos);
 #define path_inc(p) path_add(p,1)
 #define path_dec(p) path_add(p,-1)
+path operator - (path p, path q);
 
 /******************************************************************************
 * Routines for elementary modifications

@@ -180,7 +180,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
 
 string
 edit_interface_rep::compute_compound_footer (tree t, path p) {
-  if (nil (p) || atom (p)) return "";
+  if (!(rp < p)) return "";
   string up= compute_compound_footer (t, path_up (p));
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
@@ -271,8 +271,8 @@ edit_interface_rep::set_right_footer () {
 bool
 edit_interface_rep::set_latex_footer (tree st) {
   if (is_atomic (st)) 
-    if (is_func (subtree (et, path_up (path_up (tp))), LATEX, 1) ||
-	is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (tp, 2)), LATEX, 1) ||
+	is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
       string s= st->label;
       string help;
       command cmd;
@@ -289,7 +289,7 @@ bool
 edit_interface_rep::set_hybrid_footer (tree st) {
   // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
   if (is_atomic (st))
-    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
       string msg;
       // macro argument
       string name= st->label;

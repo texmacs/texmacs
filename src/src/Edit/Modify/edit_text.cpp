@@ -173,7 +173,7 @@ edit_text_rep::prepare_for_insert () {
     return prepare_for_insert ();
   }
 
-  if ((!nil(p)) && is_concat (subtree (et, path_up (p)))) {
+  if ((rp < p) && is_concat (subtree (et, path_up (p)))) {
     if (l==0) return p;
     if (is_compound (st) || (l==N(st->label))) return path_inc (p);
     split (tp);

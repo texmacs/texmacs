@@ -235,13 +235,13 @@ edit_cursor_rep::go_to_here () {
 
 void
 edit_cursor_rep::go_start () {
-  go_to (correct_cursor (et, path (0)));
+  go_to (correct_cursor (et, rp * 0));
   select_from_cursor_if_active ();
 }
 
 void
 edit_cursor_rep::go_end () {
-  go_to (correct_cursor (et, path (1)));
+  go_to (correct_cursor (et, rp * 1));
   select_from_cursor_if_active ();
 }
 

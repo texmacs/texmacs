@@ -222,7 +222,7 @@ init_std_drd () {
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
 
-  init (TUPLE, "tuple", repeat (0, 1));
+  init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));

@@ -2126,6 +2126,15 @@ tmg_the_path () {
 }
 
 SCM
+tmg_the_mutator_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->get_mutator_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_process_input () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->process_input ();
@@ -2635,6 +2644,21 @@ tmg_tm_rem_unary (SCM arg1) {
 }
 
 SCM
+tmg_tm_assign_diff (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign-diff");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "tm-assign-diff");
+
+  path in1= scm_to_path (arg1);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->assign_diff (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tm_correct (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-correct");
 
@@ -2960,6 +2984,7 @@ initialize_glue_editor () {
   gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
+  gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
   gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
   gh_new_procedure ("make-session", (FN) tmg_make_session, 2, 0, 0);
   gh_new_procedure ("start-input", (FN) tmg_start_input, 0, 0, 0);
@@ -3007,6 +3032,7 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-join", (FN) tmg_tm_join, 1, 0, 0);
   gh_new_procedure ("tm-ins-unary", (FN) tmg_tm_ins_unary, 2, 0, 0);
   gh_new_procedure ("tm-rem-unary", (FN) tmg_tm_rem_unary, 1, 0, 0);
+  gh_new_procedure ("tm-assign-diff", (FN) tmg_tm_assign_diff, 2, 0, 0);
   gh_new_procedure ("tm-correct", (FN) tmg_tm_correct, 1, 0, 0);
   gh_new_procedure ("tm-where", (FN) tmg_tm_where, 0, 0, 0);
   gh_new_procedure ("tm-go-to", (FN) tmg_tm_go_to, 1, 0, 0);

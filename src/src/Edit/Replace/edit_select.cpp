@@ -92,7 +92,7 @@ edit_select_rep::select (path p1, path p2) {
 
 void
 edit_select_rep::select_all () {
-  select (path ());
+  select (rp);
 }
 
 void
@@ -128,7 +128,7 @@ edit_select_rep::select_from_keyboard (bool flag) {
   selecting= flag;
   shift_selecting= false;
   if (flag) mid_p= copy (tp);
-  else mid_p= path ();
+  else mid_p= rp;
 }
 
 void
@@ -183,7 +183,7 @@ edit_select_rep::select_enlarge () {
   }
   else {
     path p= common (start_p, end_p);
-    if (nil (p)) {
+    if (!(rp < p)) {
       selection_cancel ();
       set_message ("", "");
       return;
@@ -512,16 +512,16 @@ edit_select_rep::selection_raw_get (string key) {
 void
 edit_select_rep::selection_set_start (path p) {
   bool flag= selection_active_any ();
-  if (nil(p)) start_p= tp;
-  else start_p= p;
+  if (rp < p) start_p= p;
+  else start_p= tp;
   if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
   notify_change (THE_SELECTION);
 }
 
 void
 edit_select_rep::selection_set_end (path p) {
-  if (nil(p)) end_p= tp;
-  else end_p= p;
+  if (rp < p) end_p= p;
+  else end_p= tp;
   if (path_less_eq (end_p, start_p)) start_p= end_p;
   notify_change (THE_SELECTION);
 }

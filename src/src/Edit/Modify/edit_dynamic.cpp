@@ -40,7 +40,7 @@ edit_dynamic_rep::in_source () {
 path
 edit_dynamic_rep::find_dynamic (path p) {
   path parent= path_up (p);
-  if (nil (parent)) return parent;
+  if (!(rp < parent)) return path ();
   if (drd->is_dynamic (subtree (et, parent))) return p;
   return find_dynamic (parent);
 }
@@ -340,7 +340,7 @@ edit_dynamic_rep::insert_with (path p, string var, tree val) {
       }
     insert (p * n, copy (tree (WITH, var, val)));    
   }
-  else if ((!nil (p)) && is_func (subtree (et, path_up (p)), WITH))
+  else if ((rp < p) && is_func (subtree (et, path_up (p)), WITH))
     insert_with (path_up (p), var, val);
   else {
     ins_unary (p, WITH);
@@ -360,7 +360,7 @@ edit_dynamic_rep::remove_with (path p, string var) {
 	return;
       }
   }
-  else if ((!nil (p)) && is_func (subtree (et, path_up (p)), WITH))
+  else if ((rp < p) && is_func (subtree (et, path_up (p)), WITH))
     remove_with (path_up (p), var);
 }
 
@@ -392,14 +392,13 @@ edit_dynamic_rep::make_mod_active (tree_label l) {
   else {
     path p= path_up (tp);
     if (is_atomic (subtree (et, p))) p= path_up (p);
-    if (nil (p)) return;
-    ins_unary (p, l);
+    if (rp < p) ins_unary (p, l);
   }
 }
 
 void
 edit_dynamic_rep::insert_style_with (path p, string var, string val) {
-  if (nil (p)) return;
+  if (!(rp < p)) return;
   tree st= subtree (et, path_up (p));
   if (is_func (st, STYLE_WITH)) {
     int i, n= N(st);
@@ -579,7 +578,10 @@ edit_dynamic_rep::make_return_before () {
 bool
 edit_dynamic_rep::make_return_after () {
   path q= tp;
-  while (!is_document (subtree (et, path_up (q)))) q= path_up (q);
+  while (!is_document (subtree (et, path_up (q)))) {
+    q= path_up (q);
+    if (!(rp < q)) return false;
+  }
   if (tp == start (et, q)) return false;
   return insert_return ();
 }
@@ -587,7 +589,7 @@ edit_dynamic_rep::make_return_after () {
 void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
-  path p = search_upwards_compound ("proof");
+  path p = search_upwards ("proof");
   if (nil (p) || (N(tp) < N(p)+2)) return;
   path q = head (tp, N(p)+2);
   tree st= subtree (et, path_up (q));

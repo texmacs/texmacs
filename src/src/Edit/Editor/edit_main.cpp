@@ -30,17 +30,18 @@
 
 editor_rep::editor_rep ():
   attribute_widget_rep (dis),
-  drd (buf->abbr, std_drd), et (buf->t) {}
+  drd (buf->abbr, std_drd), et (the_et), rp (buf->rp) {}
 
 editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
   attribute_widget_rep (dis),
-  sv (sv2), buf (buf2), drd (buf->abbr, std_drd), et (buf2->t) {}
+  sv (sv2), buf (buf2), drd (buf->abbr, std_drd),
+  et (the_et), rp (buf2->rp) {}
 
 edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   editor_rep (sv, dis, buf), props (UNKNOWN)
 {
   notify_change (THE_TREE);
-  tp= correct_cursor (et, path (0));
+  tp= correct_cursor (et, rp * 0);
 }
 
 edit_main_rep::~edit_main_rep () {}
@@ -100,7 +101,7 @@ edit_main_rep::get_string_property (string what) {
 
 void
 edit_main_rep::clear_buffer () {
-  assign (path (), tree (DOCUMENT, tree ("")));
+  assign (rp, tree (DOCUMENT, tree ("")));
 }
 
 void
@@ -218,7 +219,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
   // Typeset pages for printing
 
-  box the_box= typeset_as_document (env, et, path ());
+  box the_box= typeset_as_document (env, subtree (et, rp), reverse (rp));
 
   // Determine parameters for printer device
 
@@ -313,7 +314,7 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::process_input () {
-  path p= search_upwards_compound ("input");
+  path p= search_upwards ("input");
   if (nil (p) || (N (subtree (et, p)) != 2)) return;
   tree t= subtree (et, p) [1];
   string lan= get_env_string (PROG_LANGUAGE);

@@ -403,6 +403,10 @@ tm_server_rep::interpose_handler () {
     }
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= (tm_view) buf->vws[j];
+      if (vw->win != NULL) vw->ed->process_mutators ();
+    }
+    for (j=0; j<N(buf->vws); j++) {
+      tm_view vw= (tm_view) buf->vws[j];
       if (vw->win != NULL) vw->ed->apply_changes ();
     }
   }

@@ -15,7 +15,8 @@
 (texmacs-module (texmacs edit edit-misc)
   (:export
     make-specific make-latex
-    make-include make-inline-image make-link-image))
+    make-include make-inline-image make-link-image
+    mutator-date))
 
 (define (make-specific s)
   (if (or (== s "texmacs") (in-source?))
@@ -34,3 +35,7 @@
 
 (define (make-link-image l)
   (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))
+
+(tm-define (mutator-date)
+  (:secure #t)
+  (tm-assign-diff (the-mutator-path) (object->tree (var-eval-system "date"))))

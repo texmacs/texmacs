@@ -36,20 +36,22 @@ public:
   void join             (path p);
   void ins_unary        (path p, tree_label op);
   void rem_unary        (path p);
-  void finished         ();
-  void notify_assign    (tree& t, path p, tree u);
-  void notify_insert    (tree& t, path p, tree u);
-  void notify_remove    (tree& t, path p, int nr);
-  void notify_split     (tree& t, path p);
-  void notify_join      (tree& t, path p);
-  void notify_ins_unary (tree& t, path p, tree_label op);
-  void notify_rem_unary (tree& t, path p);
-  void post_notify      (tree& t);
+  void finished         (path p);
+  void notify_assign    (path p, tree u);
+  void notify_insert    (path p, tree u);
+  void notify_remove    (path p, int nr);
+  void notify_split     (path p);
+  void notify_join      (path p);
+  void notify_ins_unary (path p, tree_label op);
+  void notify_rem_unary (path p);
+  void post_notify      (path p);
 
   void notify_undo (string op, path p, tree t);
   void undo ();
   void redo ();
   void perform_undo_redo (tree x);
+  
+  void assign_diff (path p, tree u);
 
   int  position_new ();
   void position_delete (int i);

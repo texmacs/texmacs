@@ -84,7 +84,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 
   // temporary hack for clickable footnotes
   path p= path_up (tp);
-  if (!nil (p)) {
+  if (rp < p) {
     if (is_compound (subtree (et, p), "footnote", 1)) {
       go_to (start (et, p * 0));
       return true;
@@ -96,7 +96,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 	  go_to (start (et, path_inc (p) * 0));
 	  return true;
 	}
-    path q= search_upwards_compound ("footnote");
+    path q= search_upwards ("footnote");
     if ((!nil (q)) && (tp == start (et, q * 0))) {
       go_to (end (et, q));
       return true;

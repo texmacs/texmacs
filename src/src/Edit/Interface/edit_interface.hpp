@@ -60,6 +60,7 @@ protected:
   array<string> completions;
   string        completion_prefix;
   int           completion_pos;
+  int           nr_mutators;
 
 public:
   edit_interface_rep ();
@@ -74,6 +75,8 @@ public:
   void update_connection ();
   void connect ();
   void process_extern_input ();
+  void process_mutators ();
+  path get_mutator_path ();
   void feed_input (tree t);
   bool busy_connection ();
   void interrupt_connection ();

@@ -234,7 +234,7 @@ edit_math_rep::get_tree (int& i) {
   path p= tp;
   while (true) {
     path q= path_up (p);
-    if (nil (q)) return path ();
+    if (!(rp < q)) return path ();
     tree t= subtree (et, q);
     if (is_func (t, TABLE)) return path ();
     if (is_func (t, TREE)) {

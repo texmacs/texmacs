@@ -36,10 +36,10 @@ edit_modify_rep::assign (path pp, tree u) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_assign (et, p, u);
+    ((tm_view) (buf->vws[i]))->ed->notify_assign (p, u);
 
   subtree (et, p)= u;
-  finished ();
+  finished (pp);
 }
 
 void
@@ -50,10 +50,10 @@ edit_modify_rep::insert (path pp, tree u) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_insert (et, p, u);
+    ((tm_view) (buf->vws[i]))->ed->notify_insert (p, u);
 
   insert_at (et, p, u);
-  finished ();
+  finished (pp);
 }
 
 void
@@ -68,10 +68,10 @@ edit_modify_rep::remove (path pp, int nr) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_remove (et, p, nr);
+    ((tm_view) (buf->vws[i]))->ed->notify_remove (p, nr);
 
   remove_at (et, p, nr);
-  finished ();
+  finished (pp);
 }
 
 void
@@ -86,7 +86,7 @@ edit_modify_rep::split (path pp) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_split (et, p);
+    ((tm_view) (buf->vws[i]))->ed->notify_split (p);
 
   if (is_atomic (st[l1])) {
     string s1, s2;
@@ -100,7 +100,7 @@ edit_modify_rep::split (path pp) {
     st[l1]= st2;
     st= insert_one (st, l1, st1);
   }
-  finished ();
+  finished (pp);
 }
 
 void
@@ -118,7 +118,7 @@ edit_modify_rep::join (path pp) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_join (et, p);
+    ((tm_view) (buf->vws[i]))->ed->notify_join (p);
 
   if (string_mode) st[l1]->label << st[l1+1]->label;
   else {
@@ -127,7 +127,7 @@ edit_modify_rep::join (path pp) {
     st[l1] << A (st[l1+1]);
   }
   st= ::remove (st, l1+1, 1);
-  finished ();
+  finished (pp);
 }
 
 void
@@ -138,11 +138,11 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_ins_unary (et, p, op);
+    ((tm_view) (buf->vws[i]))->ed->notify_ins_unary (p, op);
 
   tree& st= subtree (et, p);
   st= tree (op, st);
-  finished ();
+  finished (pp);
 }
 
 void
@@ -155,17 +155,17 @@ edit_modify_rep::rem_unary (path pp) {
 
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->notify_rem_unary (et, p);
+    ((tm_view) (buf->vws[i]))->ed->notify_rem_unary (p);
 
   st= st[0];
-  finished ();
+  finished (pp);
 }
 
 void
-edit_modify_rep::finished () {
+edit_modify_rep::finished (path pp) {
   int i;
   for (i=0; i<N(buf->vws); i++)
-    ((tm_view) (buf->vws[i]))->ed->post_notify (et);
+    ((tm_view) (buf->vws[i]))->ed->post_notify (pp);
 }
 
 /******************************************************************************
@@ -183,17 +183,17 @@ edit_modify_rep::finished () {
   tp= pps[0]
 
 void
-edit_modify_rep::notify_assign (tree& t, path p, tree u) { (void) u;
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_assign (path p, tree u) { (void) u;
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p<pp) pp= p * 0;
   FOR_ALL_POINTERS_END;
-  ::notify_assign (get_typesetter (), p, u);
+  ::notify_assign (get_typesetter (), p - rp, u);
 }
 
 void
-edit_modify_rep::notify_insert (tree& t, path p, tree u) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_insert (path p, tree u) {
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if ((N(p)>=2) && path_inf (path_up (p), pp));
     else if (path_inf (p, pp) || (p <= pp)) {
@@ -201,12 +201,12 @@ edit_modify_rep::notify_insert (tree& t, path p, tree u) {
       pp[N(p)-1] += nr;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_insert (get_typesetter (), p, u);
+  ::notify_insert (get_typesetter (), p - rp, u);
 }
 
 void
-edit_modify_rep::notify_remove (tree& t, path p, int nr) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_remove (path p, int nr) {
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if ((N(p)>=2) && path_inf (path_up (p), pp));
     else {
@@ -221,12 +221,12 @@ edit_modify_rep::notify_remove (tree& t, path p, int nr) {
       }
     }
   FOR_ALL_POINTERS_END;
-  ::notify_remove (get_typesetter (), p, nr);
+  ::notify_remove (get_typesetter (), p - rp, nr);
 }
 
 void
-edit_modify_rep::notify_split (tree& t, path p) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_split (path p) {
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if (!(path_up (p, 2) <= path_up (pp)));
     else if (path_up (p, 2) == path_up (pp));
@@ -242,12 +242,12 @@ edit_modify_rep::notify_split (tree& t, path p) {
       pp[N(p)-1] -= last_item (p);
     }
   FOR_ALL_POINTERS_END;
-  ::notify_split (get_typesetter (), p);
+  ::notify_split (get_typesetter (), p - rp);
 }
 
 void
-edit_modify_rep::notify_join (tree& t, path p) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_join (path p) {
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     tree& st= subtree (et, p);
     bool flag = is_atomic (st);
@@ -261,24 +261,24 @@ edit_modify_rep::notify_join (tree& t, path p) {
       pp[N(p)-1] --;
     }
     FOR_ALL_POINTERS_END;
-  ::notify_join (get_typesetter (), p);
+  ::notify_join (get_typesetter (), p - rp);
 }
 
 void
-edit_modify_rep::notify_ins_unary (tree& t, path p, tree_label op) { (void) op;
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_ins_unary (path p, tree_label op) { (void) op;
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p <= path_up (pp)) {
       path add= path (0, tail (pp, N(p)));
       pp= copy (p) * add;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_ins_unary (get_typesetter (), p, op);
+  ::notify_ins_unary (get_typesetter (), p - rp, op);
 }
 
 void
-edit_modify_rep::notify_rem_unary (tree& t, path p) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::notify_rem_unary (path p) {
+  if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p == path_up (pp)) {
       if (last_item (pp)==1)
@@ -289,12 +289,12 @@ edit_modify_rep::notify_rem_unary (tree& t, path p) {
       pp= p * add;
     }
   FOR_ALL_POINTERS_END;
-  ::notify_rem_unary (get_typesetter (), p);
+  ::notify_rem_unary (get_typesetter (), p - rp);
 }
 
 void
-edit_modify_rep::post_notify (tree& t) {
-  if ((&t)!=(&et)) return;
+edit_modify_rep::post_notify (path p) {
+  if (!(rp <= p)) return;
   selection_cancel ();
   notify_change (THE_TREE);
   FOR_ALL_POINTERS_BEGIN
@@ -502,6 +502,25 @@ edit_modify_rep::perform_undo_redo (tree x) {
       go_to (end (et, p));
     }
   }
+}
+
+/******************************************************************************
+* Utility for only changing differences (very crude implementation though)
+******************************************************************************/
+
+void
+edit_modify_rep::assign_diff (path p, tree t) {
+  tree st= subtree (et, p);
+  if (t == st) return;
+  if (is_atomic (t) || (L(t) != L(st))) {
+    assign (p, t);
+    return;
+  }
+  int i, n= min (N(st), N(t));
+  for (i=0; i<n; i++)
+    assign_diff (p * i, t[i]);
+  if (n < N(st)) remove (p * n, N(st)-n);
+  else if (n < N(t)) insert (p * n, t (n, N(t)));
 }
 
 /******************************************************************************
