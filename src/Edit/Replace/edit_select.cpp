@@ -665,10 +665,14 @@ edit_select_rep::cut (path p) {
 void
 edit_select_rep::cut (path p1, path p2) {
   path p = common (p1, p2);
+  tree st= subtree (et, p);
   raw_cut (p1, p2);
-  if (!is_document (subtree (et, p)))
-    if (is_concat (subtree (et, path_up (p))))
-      correct_concat (path_up (p));
+  if (!is_func (st, TFORMAT) &&
+      !is_func (st, TABLE) &&
+      !is_func (st, ROW) &&
+      !is_document (subtree (et, p)) &&
+      is_concat (subtree (et, path_up (p))))
+    correct_concat (path_up (p));
 }
 
 void
