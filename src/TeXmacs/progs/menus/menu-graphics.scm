@@ -42,6 +42,10 @@
       ;; FIXME: insert methods for setting width, height and centering
       ("Other" ... (graphics-set-extents-ia))))
 
+(menu-bind graphics-action-menu
+  ("Add" ())
+  ("Modify" ()))
+
 (menu-bind graphics-mode-menu
   ("Point" (graphics-set-mode "point"))
   ("Line" (graphics-set-mode "line"))
@@ -79,6 +83,7 @@
 
 (menu-bind graphics-menu
   (-> "Geometry" (link graphics-geometry-menu))
+  ;(-> "Action" (link graphics-action-menu))
   (-> "Mode" (link graphics-mode-menu))
   (-> "Color" (link graphics-color-menu))
   (-> "Line width" (link graphics-line-width-menu)))
@@ -90,9 +95,11 @@
 (menu-bind texmacs-graphics-icons
   (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
+  ;(=> (balloon (icon "tm_graphical_action.xpm") "Graphical action")
+  ;(link graphics-action-menu))
   (=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
       (link graphics-mode-menu))
   (=> (balloon (icon "tm_color.xpm") "Color of new graphics")
       (link graphics-color-menu))
-  (=> (balloon (icon "tm_bigsep.xpm") "Line width for new graphics")
+  (=> (balloon (icon "tm_line_width.xpm") "Line width for new graphics")
       (link graphics-line-width-menu)))
