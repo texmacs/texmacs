@@ -5,6 +5,26 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
+  <section|Changes from version 1.0.4 to 1.0.4.1>
+
+  <\itemize>
+    <item>New implementation of header and title tags (1.0.4.1).
+
+    <item>Documentation on new headers and titles (1.0.4.1).
+
+    <item>Completed documentation on how to write style files (1.0.4.1).
+
+    <item>Reorganization of style files so as to port existing <LaTeX> style
+    files to <TeXmacs> (1.0.4.1).
+
+    <item>Cleaner implementation of extern macros (1.0.4.1).
+
+    <item>Add routines for pattern matching on document paths (1.0.4.1).
+
+    <item>Start to use inverse paths associated to trees in typesetting
+    process (1.0.4.1).
+  </itemize>
+
   <section|Changes from version 1.0.3 to 1.0.4>
 
   <\itemize>
