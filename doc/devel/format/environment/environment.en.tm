@@ -83,7 +83,7 @@
 
     <branch|Editing source trees|env-src.en.tm>
 
-    <branch|Miscellaneous environment variables|env-misc.en>
+    <branch|Miscellaneous environment variables|env-misc.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

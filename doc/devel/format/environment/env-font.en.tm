@@ -178,7 +178,9 @@
     huge>>|<cell|2>>>>>|Standard font sizes.>
 
     From a mathematical point of view, the multipliers are in a geometric
-    progression with factor <no-break><with|mode|math|<sqrt|2|4>>.
+    progression with factor <no-break><with|mode|math|<sqrt|2|4>>. Notice
+    that the font size is also affected by the <hyper-link|index
+    level|env-math.en.tm#math-level>.
   </explain>
 
   <\explain>

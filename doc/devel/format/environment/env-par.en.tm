@@ -24,25 +24,15 @@
   </explain>
 
   <\explain>
-    <var-val|par-left|0cm><explain-synopsis|left margin>
-  <|explain>
-    Please document.
-  </explain>
+    <var-val|par-left|0cm>
 
-  <\explain>
-    <var-val|par-right|0cm><explain-synopsis|right margin>
+    <var-val|par-right|0cm><explain-synopsis|left and right margins>
   <|explain>
     Please document.
   </explain>
 
   <\explain>
     <var-val|par-first|1.5fn><explain-synopsis|first indentation>
-  <|explain>
-    Please document.
-  </explain>
-
-  <\explain>
-    <var-val|par-no-first|false><explain-synopsis|>
   <|explain>
     Please document.
   </explain>

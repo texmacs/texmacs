@@ -170,12 +170,6 @@
   \;
 
   <\explain>
-    <src-var|cell-format><explain-synopsis|for internal use>
-  <|explain>
-    Please document.
-  </explain>
-
-  <\explain>
     <var-val|cell-decoration|><explain-synopsis|decorating table for cell>
   <|explain>
     Please document.

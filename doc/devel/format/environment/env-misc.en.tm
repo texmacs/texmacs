@@ -5,6 +5,9 @@
 <\body>
   <tmdoc-title|Miscellaneous environment variables>
 
+  The following miscellaneous environment variables are mainly intended for
+  internal use:
+
   <\explain>
     <var-val|save-aux|true><explain-synopsis|save auxiliary content>
   <|explain>
@@ -13,6 +16,45 @@
 
   <\explain>
     <var-val|sfactor|5><explain-synopsis|shrinking factor>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|par-no-first|false><explain-synopsis|disable first indenation
+    for next paragraph?>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <src-var|cell-format><explain-synopsis|current cell format>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <src-var|atom-decorations>
+
+    <src-var|line-decorations>
+
+    <src-var|page-decorations><explain-synopsis|placeholder for decorations>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <src-var|xoff-decorations>
+
+    <src-var|yoff-decorations><explain-synopsis|positioning of decorations>
+  <|explain>
+    Please document.
+  </explain>
+
+  Describe further macros apart.
+
+  <\explain>
+    <src-var|id><explain-synopsis|identity macro>
   <|explain>
     Please document.
   </explain>
