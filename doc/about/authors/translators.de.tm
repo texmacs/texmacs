@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
@@ -16,8 +16,8 @@
 
     <item*|French>Michèle Garoche, Joris van der Hoeven.
 
-    <item*|German>Hans Dembinski, Jan Ulrich Hasecke, Joris van der Hoeven,
-    Thomas Langen, Ralf Treinen.
+    <item*|German>Dietmar Jung, Hans Dembinski, Jan Ulrich Hasecke, Christoph
+    Strobel, Joris van der Hoeven, Thomas Langen, Ralf Treinen.
 
     <item*|Hungarian>András Kadinger.
 

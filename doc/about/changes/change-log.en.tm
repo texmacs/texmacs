@@ -5,9 +5,11 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.5>
+  <section|Changes from version 1.0.4 to 1.0.4.6>
 
   <\itemize>
+    <item>German translation of the manual by Dietmar Jung (1.0.4.6).
+
     <item>User profile for Windows, Gnome and KDE (1.0.4.5).
 
     <item>Several bug fixes: keyboard modifiers, Guile GC, Windows/Cygwin,
