@@ -231,14 +231,20 @@
   (-> "Size" (link font-size-menu)))
 
 (menu-bind font-size-menu
-  ("Tiny" (make-with "font-size" "0.59"))
-  ("Very small" (make-with "font-size" "0.71"))
-  ("Small" (make-with "font-size" "0.84"))
-  ("Normal" (make-with "font-size" "1"))
-  ("Large" (make-with "font-size" "1.19"))
-  ("Very large" (make-with "font-size" "1.41"))
-  ("Huge" (make-with "font-size" "1.68"))
-  ("Really huge" (make-with "font-size" "2")))
+  ("5" (make-with "font-base-size" "5"))
+  ("6" (make-with "font-base-size" "6"))
+  ("7" (make-with "font-base-size" "7"))
+  ("8" (make-with "font-base-size" "8"))
+  ("9" (make-with "font-base-size" "9"))
+  ("10" (make-with "font-base-size" "10"))
+  ("11" (make-with "font-base-size" "11"))
+  ("12" (make-with "font-base-size" "12"))
+  ("14" (make-with "font-base-size" "14"))
+  ("17" (make-with "font-base-size" "17"))
+  ("20" (make-with "font-base-size" "20"))
+  ("24" (make-with "font-base-size" "24"))
+  ---
+  ("Other" ... (interactive '("Font size:") 'make-with-font-base-size)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Font submenu in math mode

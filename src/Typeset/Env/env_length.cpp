@@ -199,11 +199,11 @@ tree edit_env_rep::exec_pt () {
 tree edit_env_rep::exec_bp () {
   return tree (TMLEN, as_string (inch/72.0)); }
 tree edit_env_rep::exec_dd () {
-  return tree (TMLEN, as_string (0.0148*inch/2.54)); }
+  return tree (TMLEN, as_string (0.376*inch/25.4)); }
 tree edit_env_rep::exec_pc () {
   return tree (TMLEN, as_string (12.0*inch/72.27)); }
 tree edit_env_rep::exec_ccunit () {
-  return tree (TMLEN, as_string (12.0*0.0148*inch/2.54)); }
+  return tree (TMLEN, as_string (4.531*inch/25.4)); }
 
 tree
 edit_env_rep::exec_quad () {
