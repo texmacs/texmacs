@@ -1,6 +1,6 @@
 Summary: A structured wysiwyg scientific text editor
 Name: TeXmacs
-Version: 1.0.3.10
+Version: 1.0.3.11
 Release: 1
 Url: http://www.texmacs.org
 Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-%{version}-src.tar.gz
