@@ -48,7 +48,8 @@
   ---
   (-> "Citation"
       ("Visible" (make 'cite))
-      ("Invisible" (make 'nocite)))
+      ("Invisible" (make 'nocite))
+      ("Detailed" (make 'cite-detail)))
   (-> "Index entry"
       ("Main" (make 'index))
       ("Sub" (make 'subindex))
