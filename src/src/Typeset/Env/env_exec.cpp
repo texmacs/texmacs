@@ -281,6 +281,45 @@ edit_env_rep::exec (tree t) {
   case GREATEREQ:
     return exec_greatereq (t);
 
+  case CM:
+    return exec_cm ();
+  case MM:
+    return exec_mm ();
+  case IN:
+    return exec_in ();
+  case PT:
+    return exec_pt ();
+  case BP:
+    return exec_bp ();
+  case DD:
+    return exec_dd ();
+  case PC:
+    return exec_pc ();
+  case CC:
+    return exec_cc ();
+  case _FN:
+    return exec_fn ();
+  case FNS:
+    return exec_fns ();
+  case SPC:
+    return exec_spc ();
+  case XSPC:
+    return exec_xspc ();
+  case LN:
+    return exec_ln ();
+  case SEP:
+    return exec_sep ();
+  case YFRAC:
+    return exec_yfrac ();
+  case EX:
+    return exec_ex ();
+  case PAR:
+    return exec_par ();
+  case PAG:
+    return exec_pag ();
+  case PX:
+    return exec_px ();
+
   case STYLE_WITH:
   case VAR_STYLE_WITH:
     return exec (t[N(t)-1]);
@@ -1710,164 +1749,4 @@ edit_env_rep::depends (tree t, string s, int level) {
 	return true;
     return false;
   }
-}
-
-/******************************************************************************
-* Decoding and adding lengths
-******************************************************************************/
-
-SI
-edit_env_rep::decode_length (string s) {
-  while ((N(s) >= 2) && (s[0]=='-') && (s[1]=='-')) s= s (2, N(s));
-
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
-  string s1 = s(0,i);
-  string s2 = s(i,N(s));
-  double x  = as_double (s1);
-  double in = ((double) dpi*PIXEL);
-  double cm = in/2.54;
-  double f  = (get_int(FONT_BASE_SIZE)*magn*in*get_double(FONT_SIZE))/72.0;
-
-  string s3= s2;
-  int n= N(s3);
-  if ((n>0) && ((s3[n-1] == '-') || (s3[n-1] == '+'))) s3= s3 (0, n-1);
-  if (s3 == "unit") { return (SI) (x); }
-  if (s3 == "cm") { return (SI) (x*cm); }
-  if (s3 == "mm") { return (SI) (x*cm/10.0); }
-  if (s3 == "in") { return (SI) (x*in); }
-  if (s3 == "pt") { return (SI) (x*in/72.27); }
-  if (s2 == "spc") { return (SI) (x*fn->spc->def); }
-  if (s2 == "spc-") { return (SI) (x*fn->spc->min); }
-  if (s2 == "spc+") { return (SI) (x*fn->spc->max); }
-  if (s2 == "fn") { return (SI) (x*f); }
-  if (s2 == "fn-") { return (SI) (0.5*x*f); }
-  if (s2 == "fn+") { return (SI) (1.5*x*f); }
-  if (s2 == "fn*") { return 0; }
-  if (s2 == "fn*-") { return 0; }
-  if (s2 == "fn*+") { return (SI) (x*f); }
-  if (s2 == "ln") { return (SI) (x*((double) fn->wline)); }
-  if (s2 == "sep") { return (SI) (x*((double) fn->sep)); }
-  if (s3 == "px") { return (SI) (x*(get_int(SFACTOR)*PIXEL)); }
-  if (s3 == "yfrac") { return (SI) (x*fn->yfrac); }
-  if (s3 == "ex") { return (SI) (x*fn->yx); }
-  if (s3 == "par") {
-    SI width, d1, d2, d3, d4, d5, d6, d7;
-    get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
-    width -= (get_length (PAR_LEFT) + get_length (PAR_RIGHT));
-    return (SI) (x*width);
-  }
-  if (s3 == "pag") {
-    SI d1, height, d2, d3, d4, d5, d6, d7;
-    get_page_pars (d1, height, d2, d3, d4, d5, d6, d7);
-    return (SI) (x*height);
-  }
-  if (s3 == "bp") { return (SI) (x*in/72.0); }
-  if (s3 == "dd") { return (SI) (0.0376*x*cm); }
-  if (s3 == "pc") { return (SI) (12.0*x*in/72.27); }
-  if (s3 == "cc") { return (SI) (12.0*0.0376*x*cm); }
-  if (s2 == "xspc") { return (SI) (x*fn->extra->def); }
-  if (s2 == "xspc-") { return (SI) (x*fn->extra->min); }
-  if (s2 == "xspc+") { return (SI) (x*fn->extra->max); }
-  return 0;
-}
-
-point
-edit_env_rep::decode_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
-    return as_point (t);
-  if (is_tuple (t)) {
-    int i, n= N(t);
-    point p(n);
-    for (i=0; i<n; i++)
-      p[i]= decode_length (as_string (t[i]));
-    return fr[p];
-  }
-  return point ();
-}
-
-space
-edit_env_rep::decode_space (string l) {
-  SI _min= decode_length (l * "-");
-  SI _def= decode_length (l);
-  SI _max= decode_length (l * "+");
-  return space (_def + ((SI) (flexibility * (_min - _def))),
-		_def,
-		_def + ((SI) (flexibility * (_max - _def))));
-}
-
-void
-edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {
-  int i;
-  for (i=0; i<N(s); i++)
-    if ((s[i]>='a') && (s[i]<='z')) break;
-  un= decode_length ("1" * s (i, N(s)));
-  un_str= s (i, N(s));
-}
-
-string
-edit_env_rep::add_lengths (string s1, string s2) {
-  SI l1= decode_length (s1);
-  SI l2= decode_length (s2);
-  SI un; string un_str;
-  get_length_unit (s1, un, un_str);
-  if (un==0) return "0cm";
-  double x= ((double) (l1+l2)) / ((double) un);
-  return as_string (x) * un_str;
-}
-
-string
-edit_env_rep::multiply_length (double x, string s) {
-  SI l= decode_length (s);
-  SI un; string un_str;
-  get_length_unit (s, un, un_str);
-  if (un==0) return "0cm";
-  double xl= (x*l) / ((double) un);
-  return as_string (xl) * un_str;
-}
-
-double
-edit_env_rep::divide_lengths (string s1, string s2) {
-  SI l1= decode_length (s1);
-  SI l2= decode_length (s2);
-  return ((double) l1) / ((double) l2);
-}
-
-bool
-edit_env_rep::is_length (string s) {
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
-  if (!is_double (s (0, i))) return false;
-  int j=N(s);
-  while ((j>i) && ((s[j-1]=='+') || (s[j-1]=='-') || (s[j-1]=='*'))) j--;
-  return is_alpha (s (i, j));
-}
-
-SI
-edit_env_rep::get_length (string var) {
-  tree t= env [var];
-  if (is_compound (t)) {
-    if (is_func (t, MACRO))
-      t= exec (compound (var));
-    if (is_compound (t))
-      return 0;
-  }
-  return decode_length (t->label);
-}
-
-space
-edit_env_rep::get_space (string var) {
-  tree t= env [var];
-  if (is_compound (t)) {
-    if (is_func (t, MACRO))
-      t= exec (compound (var));
-    if (is_compound (t)) {
-      if (is_tuple (t) && (N(t) == 3))
-	return space (decode_length (as_string (t[0])),
-		      decode_length (as_string (t[1])),
-		      decode_length (as_string (t[2])));
-      return 0;
-    }
-  }
-  return decode_space (t->label);
 }

@@ -469,6 +469,28 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
 
+  case CM:
+  case MM:
+  case IN:
+  case PT:
+  case BP:
+  case DD:
+  case PC:
+  case CC:
+  case _FN:
+  case FNS:
+  case SPC:
+  case XSPC:
+  case LN:
+  case SEP:
+  case YFRAC:
+  case EX:
+  case PAR:
+  case PAG:
+  case PX:
+    typeset_executable (t, ip);
+    break;
+
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
@@ -491,6 +513,7 @@ concater_rep::typeset (tree t, path ip) {
   case HYBRID:
   case TUPLE:
   case ATTR:
+  case TMLEN:
   case COLLECTION:
   case ASSOCIATE:
   case BACKUP:

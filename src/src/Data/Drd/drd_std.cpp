@@ -203,6 +203,26 @@ init_std_drd () {
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
 
+  init (CM, "cm", fixed (0));
+  init (MM, "mm", fixed (0));
+  init (IN, "in", fixed (0));
+  init (PT, "pt", fixed (0));
+  init (BP, "bp", fixed (0));
+  init (DD, "dd", fixed (0));
+  init (PC, "pc", fixed (0));
+  init (CC, "cc", fixed (0));
+  init (_FN, "fn", fixed (0));
+  init (FNS, "fn*", fixed (0));
+  init (SPC, "spc", fixed (0));
+  init (XSPC, "xspc", fixed (0));
+  init (LN, "ln", fixed (0));
+  init (SEP, "sep", fixed (0));
+  init (YFRAC, "yfrac", fixed (0));
+  init (EX, "ex", fixed (0));
+  init (PAR, "par", fixed (0));
+  init (PAG, "pag", fixed (0));
+  init (PX, "px", fixed (0));
+
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));
   init (VAR_STYLE_WITH, "style-with*",
@@ -224,6 +244,7 @@ init_std_drd () {
 
   init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
+  init (TMLEN, "tmlen", options (1, 2) -> name ("TeXmacs length"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
