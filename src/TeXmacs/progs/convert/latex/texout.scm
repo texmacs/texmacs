@@ -20,22 +20,35 @@
 ;; Outputting preamble and postamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (collection->ahash-table init)
+  (let* ((t (make-ahash-table))
+	 (l (if (func? init 'collection) (cdr init) '()))
+	 (f (lambda (x) (ahash-set! t (cadr x) (caddr x)))))
+    (for-each f l)
+    t))
+
 (define (texout-file l)
   (let* ((doc-body (car l))
 	 (styles (if (null? (cadr l)) '("letter") (cadr l)))
 	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))
-	 (doc-preamble (cadddr l))
-	 (doc-misc (append '(!concat) doc-preamble (list doc-body)))
-	 (tm-preamble (tmtex-preamble-build doc-misc style lan)))
+	 (init (collection->ahash-table (cadddr l)))
+	 (doc-preamble (car (cddddr l)))
+	 (doc-misc (append '(!concat) doc-preamble (list doc-body))))
 
-    (receive (tm-uses tm-preamble) (tmtex-preamble-build doc-misc style lan)
+    (receive
+	(tm-uses tm-init tm-preamble)
+	(tmtex-preamble-build doc-misc style lan init)
       (output-verbatim "\\documentclass{" style "}\n")
       (if (not (== tm-uses ""))
 	  (output-verbatim "\\usepackage{" tm-uses "}\n"))
       (for-each texout-usepackage (cdr styles))
 
+      (if (not (== tm-init ""))
+	  (begin
+	    (output-lf)
+	    (output-verbatim tm-init)))
       (if (not (== tm-preamble ""))
 	  (begin
 	    (output-lf)
