@@ -15,6 +15,40 @@
 #include "convert.hpp"
 
 /******************************************************************************
+* Internationalization
+******************************************************************************/
+
+string
+selection_encode (string lan, string s) {
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
+    return cork_to_il2 (s);
+  else if (lan == "russian")
+    return koi8_to_iso (s);
+  else if (lan == "ukrainian")
+    return koi8uk_to_iso (s);
+  else if (lan == "spanish")
+    return spanish_to_ispanish (s);
+  else if (lan == "german")
+    return german_to_igerman (s);
+  else return s;
+}
+
+string
+selection_decode (string lan, string s) {
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
+    return il2_to_cork (s);
+  else if (lan == "russian")
+    return iso_to_koi8 (s);
+  else if (lan == "ukrainian")
+    return iso_to_koi8uk (s);
+  else if (lan == "spanish")
+    return ispanish_to_spanish (s);
+  else if (lan == "german")
+    return igerman_to_german (s);
+  else return s;
+}
+
+/******************************************************************************
 * Constructor and destructor
 ******************************************************************************/
 
@@ -484,7 +518,7 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
       t= tree (WITH, "mode", "math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
   }
-  if (dis->set_selection (widget (this), key, sel, s) &&
+  if (dis->set_selection (widget (this), key, sel, selection_encode(lan, s)) &&
       (!persistant)) selection_cancel ();
 }
 
@@ -511,11 +545,12 @@ edit_select_rep::selection_paste (string key) {
   tree t= copy (dis->get_selection (widget (this), key));
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
+    string lan = get_env_string (LANGUAGE (mode));
     if ((selection_import == "latex") && (mode == "prog")) mode= "verbatim";
     if ((selection_import == "latex") && (mode == "math")) mode= "latex-math";
     if ((selection_import == "html") && (mode == "prog")) mode= "verbatim";
     string fm= selection_import * "-snippet";
-    tree doc= generic_to_tree (as_string (t[1]), fm);
+    tree doc= generic_to_tree (selection_decode(lan, as_string(t[1])), fm);
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
     insert_tree (doc);
   }
