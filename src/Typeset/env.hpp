@@ -124,9 +124,9 @@ private:
   bool exec_until_argument (tree t, path p, string var, int level);
   tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);
-  tree exec_extension (tree t);
-  void exec_until_extension (tree t, path p);
-  bool exec_until_extension (tree t, path p, string var, int level);
+  tree exec_compound (tree t);
+  void exec_until_compound (tree t, path p);
+  bool exec_until_compound (tree t, path p, string var, int level);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);
