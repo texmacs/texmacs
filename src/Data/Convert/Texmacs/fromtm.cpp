@@ -57,6 +57,7 @@ tm_reader::skip_blank () {
   for (; pos < N(buf); pos++) {
     if (buf[pos]==' ') continue;
     if (buf[pos]=='\t') continue;
+    if (buf[pos]=='\r') continue;
     if (buf[pos]=='\n') { n++; continue; }
     break;
   }
@@ -73,6 +74,7 @@ tm_reader::decode (string s) {
       if (s[i] == ';');
       else if (s[i] == '0') r << '\0';
       else if (s[i] == 't') r << '\t';
+      else if (s[i] == 'r') r << '\r';
       else if (s[i] == 'n') r << '\n';
       else r << s[i];
     }
@@ -99,6 +101,7 @@ tm_reader::read_next () {
   switch (c[0]) {
   case '\t':
   case '\n':
+  case '\r':
   case ' ': 
     pos--;
     if (skip_blank () <= 1) return " ";
@@ -138,6 +141,7 @@ tm_reader::read_next () {
       else r << c << read_char ();
     }
     else if (c == "\t") break;
+    else if (c == "\r") break;
     else if (c == "\n") break;
     else if (c == " ") break;
     else if (c == "<") break;
