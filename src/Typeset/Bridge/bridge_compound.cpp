@@ -145,7 +145,7 @@ bridge_compound_rep::notify_macro (
       if (is_atomic (fun[i])) {
 	string var= fun[i]->label;
 	env->macro_arg->item (var)=
-	  i<m? st[i+delta]: tree("");
+	  i<m? st[i+delta]: tree (UNINIT);
 	env->macro_src->item (var)=
 	  i<m? descend (ip,i+delta): decorate_right(ip);
       }
@@ -209,7 +209,7 @@ bridge_compound_rep::my_typeset (int desired_status) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? st[i+d]: tree("");
+	env->macro_arg->item (var)= i<m? st[i+d]: tree (UNINIT);
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);

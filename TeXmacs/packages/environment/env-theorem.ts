@@ -55,7 +55,7 @@
   <assign|proof*|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><theorem-name|<arg|which><theorem-sep>>|<space|0.5fn><right-flush><with|mode|math|\<box\>><vspace|1fn>|<arg|body>>>>>
 
   <assign|proof|<\macro|body>
-    <proof*|<translate|Proof|english|<language>>|<arg|body>>
+    <proof*|<localize|Proof>|<arg|body>>
   </macro>>
 
   \;

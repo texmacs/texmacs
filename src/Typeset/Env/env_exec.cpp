@@ -384,32 +384,13 @@ edit_env_rep::exec_compound (tree t) {
     }
     else for (i=0; i<n; i++)
       if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree("");
+	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
     tree r= exec (f[n]);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
     return r;
   }
   else return exec (f);
-}
-
-tree
-edit_env_rep::exec_extra_list (tree t, int pos) {
-  if (pos == N(t)) return "";
-  else {
-    tree u= exec (t[pos]);
-    tree v= exec_extra_list (t, pos+1);
-    return tuple (u, v);
-  }
-}
-
-tree
-edit_env_rep::exec_extra_tuple (tree t, int pos) {
-  int i, n= N(t);
-  tree u (TUPLE, n-pos);
-  for (i=pos; i<n; i++)
-    u[i-pos]= exec (t[i]);
-  return u;
 }
 
 tree
@@ -1205,7 +1186,7 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     }
     else for (i=0; i<n; i++)
       if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree("");
+	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
     (void) exec_until (f[n], p->next, var, 0);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
@@ -1434,7 +1415,7 @@ edit_env_rep::exec_until_compound (tree t, path p, string var, int level) {
     }
     for (i=0; i<n; i++)
       if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree("");
+	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
     bool done= exec_until (f[n], p, var, level+1);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;

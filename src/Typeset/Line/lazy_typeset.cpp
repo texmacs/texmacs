@@ -248,7 +248,7 @@ make_lazy_compound (edit_env env, tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+d]: tree("");
+	env->macro_arg->item (var)= i<m? t[i+d]: tree (UNINIT);
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     if (is_decoration (ip)) par= make_lazy (env, f[n], ip);

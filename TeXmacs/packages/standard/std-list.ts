@@ -23,7 +23,7 @@
 
   <\active*>
     <\src-comment>
-      Different ways to render items.
+      Customizable ways to render items.
     </src-comment>
   </active*>
 
@@ -31,15 +31,15 @@
 
   <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|||r]1.5fn|>>>>
 
-  <assign|long-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<arg|x>|||r]1.5fn|><next-line>>>>
-
   <\active*>
     <\src-comment>
-      Further variants for rendering items.
+      Further variants for rendering items which should not be customized.
     </src-comment>
   </active*>
 
   <assign|item-strong|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
+
+  <assign|item-long|<macro|name|<arg|name><next-line>>>
 
   <assign|aligned-space-item|<macro|x|<aligned-item|<arg|x> \ >>>
 
@@ -60,7 +60,7 @@
   <assign|compact-strong-dash-item|<macro|x|<compact-item|<item-strong|<arg|x>>
   <emdash> >>>
 
-  <assign|long-strong-dot-item|<macro|x|<long-item|<item-strong|<arg|x>.>>>>
+  <assign|long-compact-strong-dot-item|<macro|x|<item-long|<compact-strong-dot-item|<arg|x>>>>>
 
   <\active*>
     <\src-comment>
@@ -183,7 +183,7 @@
 
   <new-list|description-dash|<value|compact-strong-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
   <new-list|description|<value|compact-strong-dot-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
