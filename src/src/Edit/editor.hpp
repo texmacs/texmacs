@@ -311,8 +311,6 @@ public:
 
   /* public routines from edit_dynamic */
   virtual bool in_source () = 0;
-  virtual bool is_deactivated () = 0;
-  virtual path find_deactivated (path p) = 0;
   virtual path find_dynamic (path p) = 0;
   virtual void make_compound (tree_label l, int n=-1) = 0;
   virtual void activate () = 0;
@@ -327,7 +325,7 @@ public:
   virtual void make_style_with (string var, string val) = 0;
   virtual void make_hybrid () = 0;
   virtual bool activate_latex () = 0;
-  virtual void activate_hybrid () = 0;
+  virtual void activate_hybrid (bool with_args_hint) = 0;
   virtual void activate_symbol () = 0;
   virtual void activate_compound () = 0;
   virtual bool make_return_before () = 0;

@@ -1675,15 +1675,6 @@ tmg_menu_after_action () {
 }
 
 SCM
-tmg_is_deactivatedP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->is_deactivated ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
 tmg_make (SCM arg1) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make");
 
@@ -1795,9 +1786,13 @@ tmg_activate_latex () {
 }
 
 SCM
-tmg_activate_hybrid () {
+tmg_activate_hybrid (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "activate-hybrid");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->activate_hybrid ();
+  get_server()->get_editor()->activate_hybrid (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2926,7 +2921,6 @@ initialize_glue_editor () {
   gh_new_procedure ("init-has?", (FN) tmg_init_hasP, 1, 0, 0);
   gh_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
-  gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
   gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
   gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
@@ -2936,7 +2930,7 @@ initialize_glue_editor () {
   gh_new_procedure ("make-style-with", (FN) tmg_make_style_with, 2, 0, 0);
   gh_new_procedure ("make-hybrid", (FN) tmg_make_hybrid, 0, 0, 0);
   gh_new_procedure ("activate-latex", (FN) tmg_activate_latex, 0, 0, 0);
-  gh_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 0, 0, 0);
+  gh_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 1, 0, 0);
   gh_new_procedure ("activate-symbol", (FN) tmg_activate_symbol, 0, 0, 0);
   gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
