@@ -84,6 +84,15 @@ is_alpha (string s) {
 }
 
 bool
+is_locase_alpha (string s) {
+  int i;
+  if (N(s)==0) return false;
+  for (i=0; i<N(s); i++)
+    if (s[i]<'a' || s[i]>'z') return false;
+  return true;
+}
+
+bool
 is_iso_alpha (string s) {
   int i;
   if (N(s)==0) return false;

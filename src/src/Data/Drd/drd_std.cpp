@@ -221,6 +221,7 @@ init_std_drd () {
   init (EX, "ex", fixed (0));
   init (PAR, "par", fixed (0));
   init (PAG, "pag", fixed (0));
+  init (TMPT, "tmpt", fixed (0));
   init (PX, "px", fixed (0));
 
   init (STYLE_WITH, "style-with",

@@ -142,6 +142,7 @@
   (string-replace replace (string string string string))
   (string-slash slash (string string))
   (string-unslash unslash (string string))
+  (string-locase-alpha? is_locase_alpha (bool string))
   (upcase-first upcase_first (string string))
   (locase-first locase_first (string string))
   (upcase-all upcase_all (string string))

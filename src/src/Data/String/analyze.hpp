@@ -23,6 +23,7 @@ bool is_numeric (char c);
 bool is_ponctuation (char c);
 bool is_space (char s);
 bool is_alpha (string s);
+bool is_locase_alpha (string s);
 bool is_iso_alpha (string s);
 bool is_numeric (string s);
 
