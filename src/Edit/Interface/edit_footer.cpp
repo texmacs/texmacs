@@ -171,6 +171,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case SUB_TABLE: r= "subtable"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
+  case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
   case DRD_PROPS: r= "drd properties"; break;
   case ARGUMENT: r= "argument#" * as_string (st[0]); break;

@@ -39,15 +39,13 @@ public:
   void session_go_down ();
   void session_go_page_up ();
   void session_go_page_down ();
-  void session_remove_backwards ();
-  void session_remove_forwards ();
+  void session_remove (bool forward);
   void session_insert_text_field ();
   void session_insert_input_at (path p);
   void session_insert_input_below ();
   void session_insert_input_above ();
   void session_fold_input ();
-  void session_remove_input_backwards ();
-  void session_remove_input_forwards ();
+  void session_remove_input (bool forward);
   void session_remove_all_outputs ();
   void session_remove_previous_output ();
   void session_split ();

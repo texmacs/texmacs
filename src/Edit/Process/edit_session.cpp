@@ -284,25 +284,15 @@ edit_process_rep::session_go_page_down () {
 }
 
 void
-edit_process_rep::session_remove_backwards () {
+edit_process_rep::session_remove (bool forward) {
   path p= search_upwards_compound ("math");
   if (nil (p)) {
     p= search_upwards_compound ("input");
-    if (nil (p) || (tp == start (et, p * 1))) return;
+    if (nil (p) || (tp == (forward? end (et, p * 1): start (et, p * 1))))
+      return;
   }
-  else if (tp == start (et, p * 0)) return;
-  remove_text (false);
-}
-
-void
-edit_process_rep::session_remove_forwards () {
-  path p= search_upwards_compound ("math");
-  if (nil (p)) {
-    p= search_upwards_compound ("input");
-    if (nil (p) || (tp == end (et, p * 1))) return;
-  }
-  else if (tp == end (et, p * 0)) return;
-  remove_text (true);
+  else if (tp == (forward? end (et, p * 0): start (et, p * 0))) return;
+  remove_text (forward);
 }
 
 /******************************************************************************
@@ -374,30 +364,30 @@ edit_process_rep::session_fold_input () {
 }
 
 void
-edit_process_rep::session_remove_input_backwards () {
-  path p= search_upwards_compound ("input");
-  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
-  skip_backwards (et, p, "textput", 1);
-  path q= p;
-  skip_backwards (et, q, "output", 1);
-  skip_backwards (et, q, "input", 2);
-  skip_backwards (et, q, "textput", 1);
-  if (q != p) remove (q, last_item (p) - last_item (q));
-}
-
-void
-edit_process_rep::session_remove_input_forwards () {
-  path p= search_upwards_compound ("input");
-  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
-  path q= path_inc (p);
-  skip_backwards (et, p, "textput", 1);
-  skip_forwards (et, q, "output", 1);
-  path r= q;
-  skip_forwards (et, r, "textput", 1);
-  if (last_item (r) >= N (subtree (et, path_up (r)))) return;
-  if (!is_compound (subtree (et, r), "input", 2)) return;
-  go_to_correct (r * path (1, end (subtree (et, r * 1))));
-  remove (p, last_item (q) - last_item (p));
+edit_process_rep::session_remove_input (bool forward) {
+  if (forward) {
+    path p= search_upwards_compound ("input");
+    if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+    path q= path_inc (p);
+    skip_backwards (et, p, "textput", 1);
+    skip_forwards (et, q, "output", 1);
+    path r= q;
+    skip_forwards (et, r, "textput", 1);
+    if (last_item (r) >= N (subtree (et, path_up (r)))) return;
+    if (!is_compound (subtree (et, r), "input", 2)) return;
+    go_to_correct (r * path (1, end (subtree (et, r * 1))));
+    remove (p, last_item (q) - last_item (p));
+  }
+  else {
+    path p= search_upwards_compound ("input");
+    if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+    skip_backwards (et, p, "textput", 1);
+    path q= p;
+    skip_backwards (et, q, "output", 1);
+    skip_backwards (et, q, "input", 2);
+    skip_backwards (et, q, "textput", 1);
+    if (q != p) remove (q, last_item (p) - last_item (q));
+  }
 }
 
 void

@@ -2233,18 +2233,13 @@ tmg_session_go_page_down () {
 }
 
 SCM
-tmg_session_remove_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_backwards ();
-  // SCM_ALLOW_INTS;
+tmg_session_remove (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "session-remove");
 
-  return SCM_UNSPECIFIED;
-}
+  bool in1= scm_to_bool (arg1);
 
-SCM
-tmg_session_remove_forwards () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_forwards ();
+  get_server()->get_editor()->session_remove (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2287,18 +2282,13 @@ tmg_session_fold_input () {
 }
 
 SCM
-tmg_session_remove_input_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_input_backwards ();
-  // SCM_ALLOW_INTS;
+tmg_session_remove_input (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "session-remove-input");
 
-  return SCM_UNSPECIFIED;
-}
+  bool in1= scm_to_bool (arg1);
 
-SCM
-tmg_session_remove_input_forwards () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_input_forwards ();
+  get_server()->get_editor()->session_remove_input (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2936,14 +2926,12 @@ initialize_glue_editor () {
   gh_new_procedure ("session-go-right", (FN) tmg_session_go_right, 0, 0, 0);
   gh_new_procedure ("session-go-page-up", (FN) tmg_session_go_page_up, 0, 0, 0);
   gh_new_procedure ("session-go-page-down", (FN) tmg_session_go_page_down, 0, 0, 0);
-  gh_new_procedure ("session-remove-backwards", (FN) tmg_session_remove_backwards, 0, 0, 0);
-  gh_new_procedure ("session-remove-forwards", (FN) tmg_session_remove_forwards, 0, 0, 0);
+  gh_new_procedure ("session-remove", (FN) tmg_session_remove, 1, 0, 0);
   gh_new_procedure ("session-insert-text-field", (FN) tmg_session_insert_text_field, 0, 0, 0);
   gh_new_procedure ("session-insert-input-above", (FN) tmg_session_insert_input_above, 0, 0, 0);
   gh_new_procedure ("session-insert-input-below", (FN) tmg_session_insert_input_below, 0, 0, 0);
   gh_new_procedure ("session-fold-input", (FN) tmg_session_fold_input, 0, 0, 0);
-  gh_new_procedure ("session-remove-input-backwards", (FN) tmg_session_remove_input_backwards, 0, 0, 0);
-  gh_new_procedure ("session-remove-input-forwards", (FN) tmg_session_remove_input_forwards, 0, 0, 0);
+  gh_new_procedure ("session-remove-input", (FN) tmg_session_remove_input, 1, 0, 0);
   gh_new_procedure ("session-remove-all-outputs", (FN) tmg_session_remove_all_outputs, 0, 0, 0);
   gh_new_procedure ("session-remove-previous-output", (FN) tmg_session_remove_previous_output, 0, 0, 0);
   gh_new_procedure ("session-split", (FN) tmg_session_split, 0, 0, 0);

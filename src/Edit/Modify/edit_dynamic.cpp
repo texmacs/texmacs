@@ -445,7 +445,7 @@ edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
     assign (path_up (p), "");
     correct (path_up (p, 2));
   }
-  else go_to (forward? end (et, path_up (p)): start (et, path_up (p)));
+  else go_to_border (path_up (p), !forward);
 }
 
 void

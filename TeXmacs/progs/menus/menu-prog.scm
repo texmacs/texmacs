@@ -37,10 +37,8 @@
   ("Fold input field" "A-right" (session-fold-input)))
 
 (menu-bind session-remove-menu
-  ("Remove input field above" "A-backspace"
-   (session-remove-input-backwards))
-  ("Remove input field" "A-delete"
-   (session-remove-input-forwards))
+  ("Remove input field above" "A-backspace" (session-remove-input #f))
+  ("Remove input field" "A-delete" (session-remove-input #t))
   ("Remove all output fields" (session-remove-all-outputs)))
 
 (menu-bind session-main-menu
