@@ -81,10 +81,13 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
   while ((i<n) && is_space (s[i])) i++;
   while ((i<n) && (s[i]!=stop) && no_error) {
     switch (s[i]) {
-    case ' ':
     case '~':
+      t << tuple ("\\nbsp");
+      i++;
+      break;
+    case ' ':
     case '\t':
-      while ((i<n) && ((s[i]==' ') || (s[i]=='~') || (s[i]=='\t'))) i++;
+      while ((i<n) && ((s[i]==' ') || (s[i]=='\t'))) i++;
       if ((i<n) && (s[i]!='\n')) t << " ";
       break;
     case '\n': {
