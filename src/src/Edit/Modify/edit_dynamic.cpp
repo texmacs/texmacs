@@ -208,11 +208,7 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
 	  flag= flag && is_empty (t[i+j]);
 	if (flag) {
 	  remove (p, d);
-	  if ((d == n) && is_func (subtree (et, path_up (p, 2)), INACTIVE)) {
-	    rem_unary (path_up (p, 2));
-	    go_to_border (path_up (p, 2), forward);
-	  }
-	  else if (forward) go_to_argument (path_up (p) * i, true);
+	  if (forward) go_to_argument (path_up (p) * i, true);
 	  else go_to_argument (path_up (p) * (i-1), false);
 	  return;
 	}
@@ -399,7 +395,6 @@ edit_dynamic_rep::activate_latex () {
 
 void
 edit_dynamic_rep::activate_hybrid () {
-  // WARNING: update edit_interface_rep::set_hybrid_footer when updating this
   if (activate_latex ()) return;
   path p= find_deactivated (tp);
   if (nil (p)) return;

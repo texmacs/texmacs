@@ -25,7 +25,7 @@
   (when (inside? "letter-header")
 	("Address" (make-header 'address))
 	("Date" (make-header 'letter-date))
-	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
+	("Today" (begin (make-header 'letter-date) (make-date)))
 	("Destination" (make-header 'destination)))
   ---
   (when (not (inside? "letter-header"))
@@ -56,7 +56,7 @@
 	("Running author" (make-header 'header-author))
 	("Address block" (make 'address-block))
 	("Today" (begin (make-header 'title-date)
-			(make-arity 'date 0))))
+			(make-date))))
   ---
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
 	("Abstract" (make 'abstract)))
@@ -296,8 +296,6 @@
   |
   (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
       (link insert-mathematics-menu))
-  ;((balloon (icon "tm_insert_graphics.xpm") "Insert graphics")
-  ;(make-graphics))
   (if (style-has? "program-dtd")
       (=> (balloon (icon "tm_shell.xpm")
 		   "Start an interactive session")

@@ -94,7 +94,6 @@
   ("math:over }" (make-wide "<wide-underbrace*>"))
   ("math:over <" (make-wide "<wide-varleftarrow>"))
   ("math:over >" (make-wide "<wide-varrightarrow>"))
-  ("math:over -" (make-wide "<wide-bar>"))
   ("math:under B" (make-wide-under "<bar>"))
   ("math:under C" (make-wide-under "<check>"))
   ("math:under U" (make-wide-under "<breve>"))

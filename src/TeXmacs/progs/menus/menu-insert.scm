@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-     (texmacs edit edit-graphics) (texmacs edit edit-fold)
-     (texmacs edit edit-format) (texmacs edit edit-misc)))
+    (texmacs edit edit-fold) (texmacs edit edit-format)
+    (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Insert menu
@@ -48,8 +48,7 @@
   ---
   (-> "Citation"
       ("Visible" (make 'cite))
-      ("Invisible" (make 'nocite))
-      ("Detailed" (make 'cite-detail)))
+      ("Invisible" (make 'nocite)))
   (-> "Index entry"
       ("Main" (make 'index))
       ("Sub" (make 'subindex))
@@ -67,7 +66,7 @@
 (menu-bind insert-presentation-tag-menu
   ("Underline" (make 'underline))
   ("Overline" (make 'overline))
-  ("Subscript" (make-script #f #t))
+  ("Subscript" (make-script #t #f))
   ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
@@ -101,7 +100,6 @@
       ("Small figure" (make 'small-figure))
       ("Big figure" (make 'big-figure))
       ---)
-  ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
@@ -146,7 +144,7 @@
       ("Length" (make 'length))
       ("Range" (make 'range))
       ("Number" (make 'number))
-      ("Today" (make-arity 'date 0))
+      ("Date" (make 'date))
       ("Formatted date" (make 'date))
       ("Translate" (make 'translate))
       ("Find file" (make 'find-file)))

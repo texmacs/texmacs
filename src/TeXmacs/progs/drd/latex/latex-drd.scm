@@ -412,10 +412,6 @@
   (tmfloat "ifthen")
   (tmfloat "capt-of")
   (tmfloat "calc")
-  
-  (color "color")
-  (tmhlink "color")
-  (tmaction "color")
 
   (omicron "pslatex")
   (multicols "multicol"))

@@ -295,11 +295,6 @@ compound (string s, tree t1, tree t2, tree t3, tree t4) {
 }
 
 bool
-is_extension(tree_label l) {
-  return l >= START_EXTENSIONS;
-}
-
-bool
 is_extension (tree t) {
   return L(t) >= START_EXTENSIONS;
 }

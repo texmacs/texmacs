@@ -191,10 +191,6 @@ edit_text_rep::remove_text (bool forward) {
   // deletion depends on children u
   if (last == (forward? rix: 0)) {
     switch (L (u)) {
-    case WIDE:
-    case VAR_WIDE:
-      back_in_wide (u, p, forward);
-      return;
     case TREE:
       back_in_tree (u, p, forward);
       return;

@@ -770,8 +770,6 @@ finalize_pmatrix (tree t) {
       else r << u[i];
     return r;
   }
-  else if (is_func (u, APPLY, 2) && (u[0] == "matrix"))
-    return tree (APPLY, "tabular*", u[1]);
   else return u;
 }
 
@@ -1133,7 +1131,7 @@ finalize_floats (tree t) {
 
 tree
 finalize_textm (tree t) {
-  tree u=object_to_tree (call ("textm-finalize", tree_to_object (t)));
+  tree u=object_to_tree (call ("tmtm-nonumber->eqnumber", tree_to_object (t)));
   return simplify_correct (u);
 }
 

@@ -81,7 +81,7 @@
   ("executable ;" (make 'merge))
   ("executable ," (make 'range))
   ("executable #" (make 'number))
-  ("executable @" (make-arity 'date 0))
+  ("executable @" (make-date))
   ("executable [" (make 'look-up))
   ("executable =" (make 'equal))
   ("executable <" (make 'less))

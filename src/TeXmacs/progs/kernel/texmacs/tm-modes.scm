@@ -30,8 +30,8 @@
     in-cyrillic?
     in-czech? in-dutch? in-english? in-finnish? in-french?
     in-german? in-hungarian? in-italian? in-polish?
-    in-portugese? in-romanian? in-russian? in-slovene?
-    in-spanish? in-swedish? in-ukrainian?
+    in-portugese? in-romanian? in-russian? in-spanish?
+    in-swedish? in-ukrainian?
     ;; keyboard related modes
     like-emacs? like-windows? like-old? like-old-text? like-old-math?
     in-cyrillic-cp1251? in-cyrillic-jcuken? in-cyrillic-koi8?
@@ -148,13 +148,12 @@
   (in-finnish% (== (get-env "language") "finnish") in-text%)
   (in-french% (== (get-env "language") "french") in-text%)
   (in-german% (== (get-env "language") "german") in-text%)
-  (in-hungarian% (== (get-env "language") "hungarian") in-text%)
+  (in-hungarian% (== (get-env "language") "german") in-text%)
   (in-italian% (== (get-env "language") "italian") in-text%)
   (in-polish% (== (get-env "language") "polish") in-text%)
   (in-portugese% (== (get-env "language") "portugese") in-text%)
   (in-romanian% (== (get-env "language") "romanian") in-text%)
   (in-russian% (== (get-env "language") "russian") in-cyrillic%)
-  (in-slovene% (== (get-env "language") "slovene") in-text%)
   (in-spanish% (== (get-env "language") "spanish") in-text%)
   (in-swedish% (== (get-env "language") "swedish") in-text%)
   (in-ukrainian% (== (get-env "language") "ukrainian") in-cyrillic%))
