@@ -173,11 +173,8 @@ string CELL_COL_NR ("cell col nr");
 * Other variables
 ******************************************************************************/
 
-string GR_UNIT ("graphical unit");
-string GR_CLIP_LEFT ("clip left");
-string GR_CLIP_BOTTOM ("clip bottom");
-string GR_CLIP_RIGHT ("clip right");
-string GR_CLIP_TOP ("clip top");
+string GR_FRAME ("graphical frame");
+string GR_CLIP ("graphical clip");
 string GR_LINE_WIDTH ("line width");
 string GR_LINE_STYLE ("line style");
 string GR_LINE_ARROWS ("line arrows");

@@ -156,11 +156,8 @@ extern string CELL_HYPHEN;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
-extern string GR_UNIT;
-extern string GR_CLIP_LEFT;
-extern string GR_CLIP_BOTTOM;
-extern string GR_CLIP_RIGHT;
-extern string GR_CLIP_TOP;
+extern string GR_FRAME;
+extern string GR_CLIP;
 extern string GR_LINE_WIDTH;
 extern string GR_LINE_STYLE;
 extern string GR_LINE_ARROWS;

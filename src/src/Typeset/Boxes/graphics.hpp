@@ -13,14 +13,11 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 #include "boxes.hpp"
-#include "Graphics/point.hpp"
+#include "Graphics/frame.hpp"
 #include "Graphics/curve.hpp"
-#include "Graphics/transformation.hpp"
 
 box graphics_box (path ip, array<box> bs, SI x1, SI y1, SI x2, SI y2);
-box transformation_box (path ip, box b, transformation T);
-box point_box (path ip, point p, color col);
-box curve_box (path ip, curve c, color col);
-//box surface_box (path ip, surface sf, color col);
+box point_box (path ip, frame f, point p, color col);
+box curve_box (path ip, frame f, curve c, double width, color col);
 
 #endif // defined GRAPHICS_H
