@@ -76,8 +76,8 @@ public:
   //void start_page ();
   //void print (page_item item);
   //void end_page (bool flag);
-  box  make_header ();
-  box  make_footer ();
+  box  make_header (bool empty_flag);
+  box  make_footer (bool empty_flag);
   box  make_pages ();
 
   friend struct stacker_rep;

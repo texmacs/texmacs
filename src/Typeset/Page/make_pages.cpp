@@ -160,9 +160,11 @@ pager_rep::pages_make_page (pagelet pg) {
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree page_t= env->exec (compound (PAGE_THE_PAGE));
+  box header= make_header (N (pg->ins) == 0);
+  box footer= make_footer (N (pg->ins) == 0);
   return page_box (ip, lb, page_t,
 		   width, height, left, top, top+ text_height,
-		   make_header(), make_footer(), head_sep, foot_sep);
+		   header, footer, head_sep, foot_sep);
 }
 
 void
