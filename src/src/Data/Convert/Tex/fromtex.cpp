@@ -591,6 +591,14 @@ latex_command_to_tree (tree t) {
     return tree (HLINK, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\tmaction", 1))
     return tree (ACTION, l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\foldtext", 2))
+    return compound ("fold-text", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\foldproof", 2))
+    return compound ("fold-proof", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\foldalgorithm", 2))
+    return compound ("fold-algorithm", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\foldexercise", 2))
+    return compound ("fold-exercise", l2e (t[1]), l2e (t[2]));
   // End TeXmacs specific markup
 
   int i;
