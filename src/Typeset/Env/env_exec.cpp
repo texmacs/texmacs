@@ -898,10 +898,8 @@ edit_env_rep::exec_if (tree t) {
   // This case must be kept consistent with
   // concater_rep::typeset_if(tree, path)
   // in ../Concat/concat_active.cpp
-  cout << "t = " << t << "\n";
   if ((N(t)!=2) && (N(t)!=3)) return tree (ERROR, "bad if");
   tree tt= exec (t[0]);
-  cout << "tt= " << tt << "\n";
   if (is_compound (tt) || !is_bool (tt->label))
     return tree (ERROR, "bad if");
   if (as_bool (tt->label)) return exec (t[1]);
