@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.4.4>
 
 <style|tmdoc>
 
@@ -9,6 +9,9 @@
 
   <\itemize>
     <item>Several patches by Josef Weidendorfer for improving the performance
+    (1.0.4.4).
+
+    <item>Drag and drop and more intuitive buttons in graphical mode
     (1.0.4.4).
 
     <item>Synchronization with <with|mode|math|\<beta\>>-version of the
