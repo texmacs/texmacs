@@ -129,7 +129,7 @@ drd_info_rep::correct_arity (tree_label l, int i) {
   parent_info pi= info[l]->pi;
   switch (pi.arity_mode) {
   case ARITY_NORMAL:
-    return i == pi.arity_base + pi.arity_extra;
+    return i == ((int) pi.arity_base) + ((int) pi.arity_extra);
   case ARITY_OPTIONS:
     return (i >= ((int) pi.arity_base)) &&
            (i <= ((int) pi.arity_base) + ((int) pi.arity_extra));
