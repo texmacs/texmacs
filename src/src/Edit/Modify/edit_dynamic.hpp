@@ -38,7 +38,10 @@ public:
   void back_in_general (tree t, path p, bool forward);
 
   void make_with (string var, string val);
+  void insert_with (path p, string var, tree val);
+  void remove_with (path p, string var);
   void back_in_with (tree t, path p, bool forward);
+
   void make_hybrid ();
   bool activate_latex ();
   void activate_hybrid ();

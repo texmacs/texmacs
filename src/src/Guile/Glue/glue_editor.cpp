@@ -2700,6 +2700,38 @@ tmg_tm_position_get (SCM arg1) {
   return path_to_scm (out);
 }
 
+SCM
+tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tm-insert-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+  tree in3= scm_to_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->insert_with (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_remove_with (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-remove-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-remove-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_with (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
 void
 initialize_glue_editor () {
   gh_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
@@ -2936,4 +2968,6 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-delete", (FN) tmg_tm_position_delete, 1, 0, 0);
   gh_new_procedure ("tm-position-set", (FN) tmg_tm_position_set, 2, 0, 0);
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
+  gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
+  gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
 }

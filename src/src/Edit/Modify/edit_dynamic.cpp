@@ -303,6 +303,42 @@ edit_dynamic_rep::make_with (string var, string val) {
 }
 
 void
+edit_dynamic_rep::insert_with (path p, string var, tree val) {
+  tree st= subtree (et, p);
+  if (is_func (st, WITH)) {
+    int i, n= N(st)-1;
+    for (i=0; i<n; i+=2)
+      if (st[i] == var) {
+	assign (p * (i+1), copy (val));
+	return;
+      }
+    insert (p * n, copy (tree (WITH, var, val)));    
+  }
+  else if ((!nil (p)) && is_func (subtree (et, path_up (p)), WITH))
+    insert_with (path_up (p), var, val);
+  else {
+    ins_unary (p, WITH);
+    insert (p * 0, copy (tree (WITH, var, val)));
+  }
+}
+
+void
+edit_dynamic_rep::remove_with (path p, string var) {
+  tree st= subtree (et, p);
+  if (is_func (st, WITH)) {
+    int i, n= N(st)-1;
+    for (i=0; i<n; i+=2)
+      if (st[i] == var) {
+	remove (p * i, 2);
+	if (n == 2) rem_unary (p);
+	return;
+      }
+  }
+  else if ((!nil (p)) && is_func (subtree (et, path_up (p)), WITH))
+    remove_with (path_up (p), var);
+}
+
+void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
     back_in_general (t, p, forward);

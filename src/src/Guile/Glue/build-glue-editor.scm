@@ -267,4 +267,7 @@
   (tm-position-new position_new (int))
   (tm-position-delete position_delete (void int))
   (tm-position-set position_set (void int path))
-  (tm-position-get position_get (path int)))
+  (tm-position-get position_get (path int))
+
+  (tm-insert-with insert_with (void path string tree))
+  (tm-remove-with remove_with (void path string)))

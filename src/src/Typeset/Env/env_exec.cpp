@@ -956,10 +956,11 @@ edit_env_rep::exec_mod_active (tree t, tree_label which) {
 tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
-  tree u (TUPLE, N(t));
+  tree u (TUPLE, n);
   for (i=0; i<n; i++)
     u[i]= exec (t[i]);
-  return u;
+  if (is_tuple (u) && ((n==0) || is_double (u[0]))) return u;
+  return as_tree (decode_point (u));
 }
 
 /******************************************************************************
@@ -1553,6 +1554,20 @@ edit_env_rep::decode_length (string s) {
     return (SI) (x*height);
   }
   return 0;
+}
+
+point
+edit_env_rep::decode_point (tree t) {
+  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
+    return as_point (t);
+  if (is_tuple (t)) {
+    int i, n= N(t);
+    point p(n);
+    for (i=0; i<n; i++)
+      p[i]= decode_length (as_string (t[i]));
+    return fr[p];
+  }
+  return point ();
 }
 
 space

@@ -22,8 +22,10 @@ initialize_default_env () {
   tree the_page (MACRO, compound ("page number"));
   tree identity_m (MACRO, "x", tree (ARGUMENT, "x"));
   tree tabular_m (MACRO, "x", tree (TABLE_FORMAT, tree (ARGUMENT, "x")));
-  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "3cm", "1yfrac"));
-  tree gr_clip (TUPLE, "clip", tuple ("-3", "-2"), tuple ("3", "2"));
+  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
+  tree gr_clip (TUPLE, "clip",
+		tuple ("0par", "-0.3par"),
+		tuple ("1par", "0.3par"));
 
   env (DPI)              = "600";       // resolution in dots per inch
   env (SFACTOR)          = "5";         // shrinking factor on screen

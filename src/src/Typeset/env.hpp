@@ -217,6 +217,7 @@ public:
 
   /* miscellaneous and utilities */
   SI        decode_length (string l);
+  point     decode_point (tree t);
   space     decode_space (string l);
   inline SI decode_length (tree l) { return decode_length (as_string (l)); }
   void      get_length_unit (string l, SI& un, string& un_str);

@@ -70,7 +70,10 @@ bridge_with_rep::notify_assign (path p, tree u) {
       else body->notify_assign (p->next, u);
       st= substitute (st, p->item, body->st);
     }
-    else st= substitute (st, p, u);
+    else {
+      st= substitute (st, p, u);
+      body->notify_change ();
+    }
     if (mp_flag != is_multi_paragraph (st)) initialize ();
   }
   status= CORRUPTED;
