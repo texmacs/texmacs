@@ -1,0 +1,202 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : graphics.scm
+;; DESCRIPTION : editing routines for graphics mode
+;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
+;;
+;; This software falls under the GNU general public license and comes WITHOUT
+;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+;; If you don't have this file, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (texmacs edit edit-graphics)
+  (:export
+    ;; making graphics and setting global graphics properties
+    make-graphics
+    graphics-set-property graphics-remove-property
+    graphics-set-unit graphics-set-unit-ia
+    graphics-set-origin graphics-set-origin-ia
+    graphics-set-extents-ia
+    graphics-set-mode
+    ;; call-backs
+    graphics-move-point graphics-insert-point
+    graphics-remove-point graphics-last-point))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Frequently used subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (object-at p)
+  (tree->object (subtree (the-buffer) p)))
+
+(define (graphics-graphics-path)
+  ;; path to innermost graphics tag
+  (let* ((p (cDr (tm-where)))
+	 (t (object-at p)))
+    (if (func? t 'graphics) p
+	(with q (search-upwards "graphics")
+	  (if (null? q) #f q)))))
+
+(define (graphics-active-path)
+  ;; path to active tag
+  (cDr (tm-where)))
+
+(define (graphics-group-path)
+  ;; path to innermost group
+  (graphics-graphics-path))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global geometry of graphics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (make-graphics)
+  (insert-object-go-to
+   '(with "graphical mode" "point"
+          "graphical frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
+	  "graphical clip"  (tuple "clip"
+				   (tuple "0par" "-0.3par")
+				   (tuple "1par" "0.3par"))
+     (graphics))
+   '(6 1)))
+
+(define (graphics-set-property var val)
+  (with p (graphics-graphics-path)
+    (if p (tm-insert-with p var (object->tree val)))))
+
+(define (graphics-remove-property var)
+  (with p (graphics-graphics-path)
+    (if p (tm-remove-with p var))))
+
+(define (graphics-cartesian-frame)
+  (with frame (tree->object (get-env-tree "graphical frame"))
+    (if (match? frame '(tuple "scale" :2))
+	frame
+	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
+
+(define (graphics-set-unit u)
+  (with frame (graphics-cartesian-frame)
+    (with new-frame `(tuple "scale" ,u ,(cAr frame))
+      (graphics-set-property "graphical frame" new-frame))))
+
+(define (graphics-set-unit-ia)
+  (interactive '("Graphical unit:") 'graphics-set-unit))
+
+(define (graphics-set-origin x y)
+  (with frame (graphics-cartesian-frame)
+    (with new-frame (append (cDr frame) `((tuple ,x ,y)))
+      (graphics-set-property "graphical frame" new-frame))))
+
+(define (graphics-set-origin-ia)
+  (interactive
+    '("Origin's x-coordinate:" "Origin's y-coordinate:")
+    'graphics-set-origin))
+
+(define (graphics-set-extents-ia)
+  (interactive
+    '("Left corner:" "Bottom corner:" "Right corner:" "Top corner:")
+    '(lambda (l b r t)
+       (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
+	 (graphics-set-property "graphical clip" clip)))))
+
+(define (graphics-set-mode val)
+  (graphics-group-start)
+  (graphics-set-property "graphical mode" val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for modifying the innermost group of graphics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (graphics-group-insert t)
+  (with p (graphics-group-path)
+    (if p (with n (- (length (object-at p)) 1)
+	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
+	    (tm-go-to (rcons (rcons p n) 1))))))
+
+(define (graphics-group-start)
+  (graphics-finish)
+  (with p (graphics-group-path)
+    (if p (tm-go-to (rcons p 1)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for modifying the active tag
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (graphics-active-object)
+  (with p (graphics-active-path)
+    (if p (tree->object (subtree (the-buffer) p)) #f)))
+
+(define (graphics-active-type)
+  (with t (graphics-active-object)
+    (if t (car t) #f)))
+
+(define (graphics-active-assign t)
+  (with p (graphics-active-path)
+    (if p (begin
+	    (tm-assign p (object->tree t))
+	    (tm-go-to (rcons p 1))))))
+
+(define (graphics-active-set-tag l)
+  (with t (graphics-active-object)
+    (if t (graphics-active-assign (cons l (cdr t))))))
+
+(define (graphics-active-insert t)
+  (with p (graphics-active-path)
+    (if p (with n (- (length (object-at p)) 1)
+	    (tm-insert (rcons p n) (object->tree (list 'tuple t)))
+	    (tm-go-to (rcons p 1))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dispatching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (graphics-mode)
+  (string->symbol (get-env "graphical mode")))
+
+(define (graphics-insert-point x y)
+  ;(display* "Graphics] Insert " x ", " y "\n")
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
+    (cond ((== mode 'point)
+	   (graphics-group-insert `(point ,x ,y)))
+	  ((in? mode '(line cline))
+	   (if (== (graphics-active-type) 'line)
+	       (graphics-active-insert `(point ,x ,y))
+	       (graphics-group-insert `(line (point ,x ,y)))))
+	  (else (display* "Uncaptured insert " x ", " y "\n")))))
+
+(define (graphics-remove-point x y)
+  ;(display* "Graphics] Remove " x ", " y "\n")
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
+    (cond (else (display* "Uncaptured remove " x ", " y "\n")))))
+
+(define (graphics-last-point x y)
+  ;(display* "Graphics] Last " x ", " y "\n")
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
+    (cond ((== mode 'point)
+	   (graphics-group-insert `(point ,x ,y)))
+	  ((in? mode '(line cline))
+	   (graphics-active-insert `(point ,x ,y))
+	   (if (== mode 'cline) (graphics-active-set-tag 'cline))
+	   (graphics-group-start))
+	  (else (display* "Uncaptured last " x ", " y "\n")))))
+
+(define (graphics-finish)
+  ;(display* "Graphics] Finish\n")
+  (let* ((mode (graphics-mode))
+	 (p (cDr (tm-where)))
+	 (t (object-at p))
+	 (l (car t)))
+    (cond ((== mode 'point) (noop))
+	  ((in? mode '(line cline)) (noop))
+	  (else (display* "Uncaptured finish\n")))))
