@@ -1,2 +1,8 @@
 #!/bin/sh
-exec gs -q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS "$@"
+# Under Cygwin, prevent the X version of gs to be shadowed by a non-X version.
+if [ -e /usr/bin/cygwin1.dll ] ; then
+  TEXMACS_GS=/usr/X11R6/bin/gs
+else
+  TEXMACS_GS=gs
+fi
+exec $TEXMACS_GS -q -sDEVICE=x11alpha -dBATCH -dNOPAUSE -dSAFER -dNOEPS "$@"
