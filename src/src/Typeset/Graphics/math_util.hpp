@@ -15,7 +15,7 @@
 #include "tree.hpp"
 #include <math.h>
 
-const  double infinity=3.40282347e+38F;
+const  double tm_infinity= 3.40282347e+38F;
 
 inline double sq2 (double x) { return x*x; }
 inline double sq3 (double x) { return x*x*x; }
