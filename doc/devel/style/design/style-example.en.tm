@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.6>
 
 <style|tmdoc>
 
@@ -24,16 +24,29 @@
   <verbatim| \ \ \ $HOME/.TeXmacs/styles>
 
   contains your personal style files. After saving your empty style package,
-  it should automatically appear in the <menu|Document|Package> menu. If you
-  save it in a subdirectory of <verbatim|$HOME/.TeXmacs/packages>, then it
-  will automatically appear in the corresponding submenu of
-  <menu|Document|Package>.
+  it should automatically appear in the <menu|Document|Package> menu. Notice
+  that style files must be saved using the <verbatim|.ts> file extension. If
+  you save the style file in a subdirectory of
+  <verbatim|$HOME/.TeXmacs/packages>, then it will automatically appear in
+  the corresponding submenu of <menu|Document|Package>.
 
   Let us now create a simple macro <markup|hi> which displays ``Hello
-  world''. First type <key|A-=>, so as to create an assignment. Now enter
-  ``hi'' as the first argument and type <key|A-m> inside the second argument
-  in order to create a macro. Finally, type the text ``Hello world'' in the
-  body of the macro. Your document should now consist of the following line:
+  world''. First type <key|A-=>, so as to create an assignment. You should
+  see something like
+
+  <\tm-fragment>
+    <inactive*|<assign||>>
+  </tm-fragment>
+
+  Now enter ``hi'' as the first argument and type <key|A-m> inside the second
+  argument in order to create a macro. You should now see something like
+
+  <\tm-fragment>
+    <inactive*|<assign|hi|<macro|>>>
+  </tm-fragment>
+
+  Finally, type the text ``Hello world'' in the body of the macro. Your
+  document should now consist of the following line:
 
   <\tm-fragment>
     <inactive*|<assign|hi|<macro|Hello world>>>
