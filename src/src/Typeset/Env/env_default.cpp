@@ -211,4 +211,19 @@ initialize_default_env () {
 		tree (ARG, "x")));
   env ("rightflush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
+  env ("src-title")= identity_m;
+  env ("src-style-file")=
+    tree (MACRO, "x", "y",
+	  tree (ASSIGN,
+		tree (MERGE, tree (ARG, "x"), "-style"),
+		tree (ARG, "y")));
+  env ("src-package")=
+    tree (MACRO, "x", "y",
+	  tree (CONCAT,
+		tree (ASSIGN,
+		      tree (MERGE, tree (ARG, "x"), "-package"),
+		      tree (ARG, "y")),
+		tree (ASSIGN,
+		      tree (MERGE, tree (ARG, "x"), "-drd"),
+		      tree (ARG, "y"))));
 }
