@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : shrink.cpp
-* DESCRIPTION: shrinking bitmaps for anti-aliasing
+* MODULE     : glyph_shrink.cpp
+* DESCRIPTION: shrinking glyphs for anti-aliasing
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
