@@ -27,8 +27,9 @@
 (drd-group latex-command-0%
   #{\ }# #{\;}# #{\,}# #{\:}#
   - / [ ] ! * | i j ss SS oe OE ae AE
-  quad qquad par smallskip medskip bigskip nopagebreak noindent
-  newline linebreak nolinebreak
+  quad qquad par smallskip medskip bigskip
+  noindent newline linebreak nolinebreak
+  pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix nolimits
 
   ;; temporarily
@@ -145,7 +146,7 @@
 (drd-group latex-modifier-1%
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
-  mathcal mathfrak mathbb mathbbm operatorname)
+  mathcal mathfrak mathbb mathbbm operatorname boldsymbol)
 
 (drd-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))

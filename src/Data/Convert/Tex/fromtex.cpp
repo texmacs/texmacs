@@ -80,19 +80,24 @@ latex_symbol_to_tree (string s) {
       if (s == "\\SS") return "\337";
       if (s == "\\\\") return tree (FORMAT, "next line");
       if (s == "\\cr") return tree (FORMAT, "next line");
-      if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
       if (s == "\\noindent")  return tree (FORMAT, "no first indentation");
       if (s == "\\linebreak")  return tree (FORMAT, "line break");
       if (s == "\\newline")  return tree (FORMAT, "new line");
       if (s == "\\nolinebreak")  return tree (FORMAT, "no line break");
+      if (s == "\\pagebreak")  return tree (FORMAT, "page break");
+      if (s == "\\nopagebreak")  return tree (FORMAT, "no page break after");
+      if (s == "\\newpage")  return tree (FORMAT, "new page");
+      if (s == "\\newdoublepage")  return tree (FORMAT, "new double page");
+      if (s == "\\clearpage")  return tree (FORMAT, "new page");
+      if (s == "\\cleardoublepage")  return tree (FORMAT, "new double page");
       if (s == "\\!")  return tree (SPACE, "-0.25spc");
       if (s == "\\,")  return tree (SPACE, "0.25spc");
       if (s == "\\:")  return tree (SPACE, "0.5spc");
       if (s == "\\;")  return tree (SPACE, "0.75spc");
       if (s == "\\*")  return "*";
       if (s == "\\|")  return "<||>";
-      if (s == "\\quad")  return tree (SPACE, "1fn");
-      if (s == "\\qquad")  return tree (SPACE, "2fn");
+      if (s == "\\quad")  return tree (SPACE, "1em");
+      if (s == "\\qquad")  return tree (SPACE, "2em");
       if (s == "\\par")  return tree (VSPACE, "1fn");
       if (s == "\\smallskip")  return tree (VSPACE, "0.5fn");
       if (s == "\\medskip")  return tree (VSPACE, "1fn");
@@ -131,6 +136,7 @@ latex_symbol_to_tree (string s) {
       if (s == "scriptstyle") return tree (SET, MATH_LEVEL, "1");
       if (s == "scriptscriptstyle") return tree (SET, MATH_LEVEL, "2");
       if (s == "operatorname") return tree (SET, "dummy", "dummy");
+      if (s == "boldsymbol") return tree (SET, MATH_FONT_SERIES, "bold");
 
       if (s == "rm") return tree (SET, FONT_FAMILY, "rm");
       if (s == "tt") return tree (SET, FONT_FAMILY, "tt");
@@ -453,6 +459,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\emph", 1))   return m2e (t, FONT_SHAPE, "italic");
   if (is_tuple (t, "\\operatorname", 1))
     return var_m2e (t, MATH_FONT_FAMILY, "rm");
+  if (is_tuple (t, "\\boldsymbol", 1))
+    return var_m2e (t, MATH_FONT_SERIES, "bold");
   if (is_tuple (t, "\\mathnormal", 1)) return m2e (t, MATH_FONT_FAMILY, "mr");
   if (is_tuple (t, "\\mathrm", 1)) return var_m2e (t, MATH_FONT_FAMILY, "rm");
   if (is_tuple (t, "\\mathtt", 1)) return var_m2e (t, MATH_FONT_FAMILY, "tt");
@@ -488,8 +496,13 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\breve", 1))  return tree (WIDE, l2e (t[1]), "<breve>");
   if (is_tuple (t, "\\abovering", 1))
     return tree (WIDE, l2e (t[1]), "<abovering>");
-  if (is_tuple (t, "\\hspace", 1)) return tree (SPACE, t2e (t[1]));
-  if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE, t2e (t[1]));
+  if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
+    tree r= t2e (t[1]);
+    if (is_compound (r, "fill", 0)) return tree (HTAB, "1fn");
+    return tree (SPACE, r);
+  }
+  if (is_tuple (t, "\\vspace", 1) || is_tuple (t, "\\vspace*", 1))
+    return tree (VSPACE, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1))   return tree (REFERENCE, t2e (t[1]));
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
