@@ -80,6 +80,13 @@ accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
   }
 }
 
+void
+drd_info_rep::init_frozen (string var, int arity, int props) {
+  tree_label l= make_tree_label (var);
+  set_arity (l, arity);
+  set_props (l, props + FROZEN);
+}
+
 bool
 drd_info_rep::heuristic_init (string var, tree macro) {
   tree_label l= make_tree_label (var);
@@ -115,6 +122,10 @@ drd_info_rep::heuristic_init (string var, tree macro) {
 
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
+  init_frozen ("shrink-inline", 1, ACCESSIBLE);
+  init_frozen ("underline", 1, ACCESSIBLE);
+  init_frozen ("overline", 1, ACCESSIBLE);
+
   bool flag= true;
   while (flag) {
     //cout << HRULE;
@@ -123,7 +134,8 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
     while (it->busy()) {
       string var= it->next();
       tree   val= env[var];
-      if (is_func (val, MACRO))
+      tree_label l= make_tree_label (var);
+      if (is_func (val, MACRO) && ((get_props (l) && FROZEN_MASK) == 0))
 	flag= heuristic_init (var, val) | flag;
     }
   }
