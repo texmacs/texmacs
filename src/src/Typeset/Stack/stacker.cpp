@@ -24,12 +24,12 @@ void
 stacker_rep::set_env_vars (
   SI height2, SI sep2, SI hor_sep2, SI ver_sep2, SI bot2, SI top2)
 {
-  sb->height = height2;
-  sb->sep    = sep2;
-  sb->hor_sep= hor_sep2;
-  sb->ver_sep= ver_sep2;
-  sb->bot    = bot2;
-  sb->top    = top2;
+  sb->height_before = sb->height = height2;
+  sb->sep_before    = sb->sep    = sep2;
+  sb->hor_sep_before= sb->hor_sep= hor_sep2;
+  sb->ver_sep_before= sb->ver_sep= ver_sep2;
+  sb->bot           = bot2;
+  sb->top           = top2;
 }
 
 /******************************************************************************
@@ -122,45 +122,38 @@ shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
 
 static void
 shove (page_item& item1, page_item& item2, stack_border sb, stack_border sb2) {
-  SI  height = max (sb->height , sb2->height );
-  SI  sep    = max (sb->sep    , sb2->sep    );
-  SI  hor_sep= max (sb->hor_sep, sb2->hor_sep);
-  SI  ver_sep= max (sb->ver_sep, sb2->ver_sep);
-  SI  top    = sb->top;
+  SI  height = max (sb->height , sb2->height_before );
+  SI  sep    = max (sb->sep    , sb2->sep_before    );
+  SI  hor_sep= max (sb->hor_sep, sb2->hor_sep_before);
+  SI  ver_sep= max (sb->ver_sep, sb2->ver_sep_before);
   SI  bot    = sb->bot;
+  SI  top    = sb2->top;
 
-  SI dy1= 0, dy2= 0;
   box b1= item1->b, b2= item2->b;
-  //cout << "Shove: " << sb->height << ", " << sb2->height
-  //<< "; " << b1->y1 << ", " << b2->y2
-  //<< "; " << top << ", " << bot << "\n";
+  // cout << "Shove: " << sb->height << ", " << sb2->height_before
+  // << "; " << b1->y1 << ", " << b2->y2
+  // << "; " << top << ", " << bot << LF;
   while (true) {
     int type= b1->get_type ();
     if ((type == MOVE_BOX) && (b1->sx(0) == 0)) b1= b1[0];
-    else if ((type == STACK_BOX) && (N(b1)>0)) {
-      dy1 += b1->sy (N(b1)-1) - b1->sy (0);
-      b1   = b1[N(b1)-1];
-    }
+    else if ((type == STACK_BOX) && (N(b1)>0))  b1= b1[N(b1)-1];
     else break;
   }
   while (true) {
     int type= b2->get_type ();
     if ((type == MOVE_BOX) && (b2->sx(0) == 0)) b2= b2[0];
-    else if ((type == STACK_BOX) && (N(b2)>0)) {
-      dy2 += b2->sy (N(b2)-1) - b2->sy (0);
-      b2   = b2[0];
-    }
+    else if ((type == STACK_BOX) && (N(b2)>0))  b2= b2[0];
     else break;
   }
 
   if ((b2->y2- b1->y1) < (height- max (sep, ver_sep))) {
     // enough place
-    // cout << "  Normal\n";
+    // cout << "  Normal" << LF;
     item1->spc= item1->spc + space (height- (b2->y2- b1->y1));
   }
   else {
     SI sh= shove_in (b1, b2, hor_sep, top, bot);
-    // cout << "  Shove: " << sh << "\n";
+    // cout << "  Shove: " << sh << LF;
     if (sh == 0) {
       // no collisions
       SI h= max (height, max (b2->y2, b2->y2 - b1->y1 - (top - bot)));
@@ -212,28 +205,37 @@ void
 merge_stack (array<page_item>& l, stack_border& sb,
 	     array<page_item> l2, stack_border sb2)
 {
-  int i= N(l)-1;
+  int i= N(l)-1, j=0;
   while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
+  while ((j<N(l2)) && (l2[j]->type == PAGE_CONTROL_ITEM)) j++;
   if (i>=0) {
     l[i]= copy (l[i]);
-    if (N(l2)>0) shove (l[i], l2[0], sb, sb2);
-    l[i]->spc += max (sb->vspc_after, sb2->vspc_before);
+    if (j<N(l2)) shove (l[i], l2[j], sb, sb2);
+    // cout << "[" << N(l) << ", " << N(l2) << "; " << l[i]->b->h() << "]\t "
+    // << l[i]->spc << " += max ("
+    // << sb->vspc_after << ", " << sb2->vspc_before << ")" << LF;
+    l[i]->spc= l[i]->spc + max (sb->vspc_after, sb2->vspc_before);
     if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
   }
   else {
-    sb->vspc_before= sb2->vspc_before;
-    sb->nobr_before= sb2->nobr_before;
+    sb->height_before  = sb2->height_before;
+    sb->sep_before     = sb2->sep_before;
+    sb->ver_sep_before = sb2->ver_sep_before;
+    sb->hor_sep_before = sb2->hor_sep_before;
+    sb->top            = sb2->top;
+    sb->vspc_before    = sb2->vspc_before;
+    sb->nobr_before    = sb2->nobr_before;
   }
+  if (j<N(l2)) {
+    sb->height  = sb2->height;
+    sb->sep     = sb2->sep;
+    sb->ver_sep = sb2->ver_sep;
+    sb->hor_sep = sb2->hor_sep;
+    sb->bot     = sb2->bot;
+  }
+  // FIXME: shouldn't this go into the if statement?
   sb->vspc_after= sb2->vspc_after;
   sb->nobr_after= sb2->nobr_after;
-  if (N(l2) > 0) {
-    sb->height = sb2->height;
-    sb->sep    = sb2->sep;
-    sb->ver_sep= sb2->ver_sep;
-    sb->hor_sep= sb2->hor_sep;
-    sb->top    = sb2->top;
-    sb->bot    = sb2->bot;
-  }
   l << l2;
 }
 

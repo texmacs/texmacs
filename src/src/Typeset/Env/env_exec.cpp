@@ -395,7 +395,7 @@ edit_env_rep::exec_assign (tree t) {
   if (N(t)!=2) return tree (ERROR, "bad assignment");
   tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad assignment");
-  assign (r->label, t[1]);
+  assign (r->label, copy (t[1]));
   return tree (ASSIGN, r, tree (QUOTE, read (r->label)));
 }
 
@@ -977,6 +977,8 @@ edit_env_rep::exec_number (tree t) {
   if (s2 == "Roman") return Roman_nr (nr);
   if (s2 == "alpha") return alpha_nr (nr);
   if (s2 == "Alpha") return Alpha_nr (nr);
+  if (s2 == "fnsymbol")
+    return tree (WITH, MODE, "math", tree (GROUP, fnsymbol_nr (nr)));
   return tree (ERROR, "bad number");
 }
 
@@ -1087,7 +1089,7 @@ edit_env_rep::exec_lookup (tree t) {
   if (N(t)!=2) return tree (ERROR, "bad look up");
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
-  if (!(is_tuple (t1) && is_int (t2))) return tree (ERROR, "bad look up");
+  if (!(is_compound (t1) && is_int (t2))) return tree (ERROR, "bad look up");
   int i= max (0, min (N(t1)-1, as_int (t2)));
   return t1[i];
 }
