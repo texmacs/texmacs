@@ -2342,12 +2342,12 @@ tmg_session_complete_tryP () {
 }
 
 SCM
-tmg_interactive (SCM arg1, SCM arg2) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "interactive");
-  SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "interactive");
+tmg_tm_interactive (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-interactive");
+  SCM_ASSERT_OBJECT (arg2, SCM_ARG2, "tm-interactive");
 
   scheme_tree in1= scm_to_scheme_tree (arg1);
-  scheme_tree in2= scm_to_scheme_tree (arg2);
+  object in2= scm_to_object (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->interactive (in1, in2);
@@ -2982,7 +2982,7 @@ initialize_glue_editor () {
   gh_new_procedure ("session-remove-previous-output", (FN) tmg_session_remove_previous_output, 0, 0, 0);
   gh_new_procedure ("session-split", (FN) tmg_session_split, 0, 0, 0);
   gh_new_procedure ("session-complete-try?", (FN) tmg_session_complete_tryP, 0, 0, 0);
-  gh_new_procedure ("interactive", (FN) tmg_interactive, 2, 0, 0);
+  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
   gh_new_procedure ("connection-busy?", (FN) tmg_connection_busyP, 0, 0, 0);
   gh_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 0, 0, 0);
   gh_new_procedure ("connection-stop", (FN) tmg_connection_stop, 0, 0, 0);

@@ -24,7 +24,8 @@
     with-active-buffer-sub with-active-buffer
     delayed-update
     session-test-math-input?
-    set-action-path has-action-path? get-action-path))
+    set-action-path has-action-path? get-action-path
+    interactive))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
@@ -146,3 +147,13 @@
 (define (set-action-path p) (set! the-action-path p))
 (define (has-action-path?) (not (== the-action-path '(-1))))
 (define (get-action-path) the-action-path)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; For compatibility with the old "interactive" texmacs built-in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (interactive . args)
+  (let ((fun (last args)))
+    (if (not (procedure? fun))
+        (apply tm-interactive (rcons (but-last args) (eval fun)))
+        (apply tm-interactive args))))

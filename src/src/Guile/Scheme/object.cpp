@@ -15,6 +15,7 @@
 #include "Scheme/evaluate.hpp"
 #include "Scheme/object.hpp"
 #include "list.hpp"
+#include "array.hpp"
 
 /******************************************************************************
 * The object representation class
@@ -260,6 +261,15 @@ object eval_file (string name) {
 void eval_delayed (string expr) {
   (void) call ("exec-delayed", expr); }
 
+static inline array<SCM>
+array_lookup (array<object> a) {
+  const int n=N(a);
+  array<SCM> scm(n);
+  int i;
+  for (i=0; i<n; i++) scm[i]= a[i]->lookup();
+  return scm;
+}
+
 object call (char* fun) {
   return object (call_scheme (eval_scheme(fun))); }
 object call (char* fun, object a1) {
@@ -269,6 +279,8 @@ object call (char* fun, object a1, object a2) {
 object call (char* fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (char* fun, array<object> a) {
+  return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
 object call (string fun) {
   return object (call_scheme (eval_scheme(fun))); }
@@ -279,6 +291,8 @@ object call (string fun, object a1, object a2) {
 object call (string fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (string fun, array<object> a) {
+  return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
 object call (object fun) {
   return object (call_scheme (fun->lookup())); }
@@ -289,3 +303,5 @@ object call (object fun, object a1, object a2) {
 object call (object fun, object a1, object a2, object a3) {
   return object (call_scheme (fun->lookup(), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
+object call (object fun, array<object> a) {
+  return object (call_scheme (fun->lookup(), array_lookup(a))); }

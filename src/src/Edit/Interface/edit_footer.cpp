@@ -374,16 +374,15 @@ edit_interface_rep::set_footer () {
 
 class interactive_command_rep: public command_rep {
   edit_interface_rep* ed;
-  scheme_tree p;    // the interactive arguments
-  scheme_tree q;    // the function which is applied to the arguments
-  int         i;    // counter where we are
-  string*     s;    // feedback from interaction with user
+  scheme_tree   p;    // the interactive arguments
+  object        q;    // the function which is applied to the arguments
+  int           i;    // counter where we are
+  array<string> s;    // feedback from interaction with user
 
 public:
   interactive_command_rep (
-    edit_interface_rep* Ed, scheme_tree P, scheme_tree Q):
-      ed (Ed), p (P), q (Q), i (0), s (new string [N(p)]) {}
-  ~interactive_command_rep () { delete[] s; }
+    edit_interface_rep* Ed, scheme_tree P, object Q):
+      ed (Ed), p (P), q (Q), i (0), s (N(p)) {}
   void apply ();
   ostream& print (ostream& out) {
     return out << "interactive command " << p; }
@@ -393,10 +392,9 @@ void
 interactive_command_rep::apply () {
   if ((i>0) && (s[i-1] == "cancel")) return;
   if (i == arity (p)) {
-    tree prg (TUPLE, N(p)+1);
-    prg[0]= q;
-    for (i=0; i<N(p); i++) prg[i+1]= s[i];
-    string ret= as_string (eval (scheme_tree_to_string (prg)));
+    array<object> params(N(p));
+    for (i=0; i<N(p); i++) params[i]= object(unquote(s[i]));
+    string ret= as_string (call (q, params));
     if ((ret != "") && (ret != "#<unspecified>"))
       ed->set_message (ed->message_l, "interactive command");
   }
@@ -423,7 +421,7 @@ edit_interface_rep::set_message (string l, string r) {
 }
 
 void
-edit_interface_rep::interactive (scheme_tree p, scheme_tree q) {
+edit_interface_rep::interactive (scheme_tree p, object q) {
   if (!is_tuple (p))
     fatal_error ("tuple expected", "edit_interface_rep::interactive");
   command interactive_cmd= new interactive_command_rep (this, p, q);

@@ -14,6 +14,7 @@
 #define EVALUATE_H
 #include "guile.hpp"
 #include "string.hpp"
+#include "array.hpp"
 
 void start_guile (int argc, char** argv, void (*call_back) (int, char**));
 void initialize_guile ();
@@ -26,5 +27,6 @@ SCM call_scheme (SCM fun);
 SCM call_scheme (SCM fun, SCM a1);
 SCM call_scheme (SCM fun, SCM a1, SCM a2);
 SCM call_scheme (SCM fun, SCM a1, SCM a2, SCM a3);
+SCM call_scheme (SCM fun, array<SCM> a);
 
 #endif // defined EVALUATE_H
