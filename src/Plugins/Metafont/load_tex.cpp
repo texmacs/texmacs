@@ -14,6 +14,8 @@
 #include "load_tex.hpp"
 #include "path.hpp"
 #include "boot.hpp"
+#include "Freetype/tt_file.hpp"
+#include "Freetype/tt_face.hpp"
 
 static int
 mag (int dpi, int size, int dsize) {
@@ -87,6 +89,20 @@ bool
 try_pk (string family, int size, int dpi, int dsize,
 	tex_font_metric& tfm, font_glyphs& pk)
 {
+  /*
+  // Substitute by True Type font ?
+  string tt_name= family * (dsize == 0? string (""): as_string (size));
+  if (font_glyphs::instances -> contains (tt_name)) {
+    pk= font_glyphs (tt_name);
+    return true;
+  }
+  if (tt_font_exists (tt_name)) {
+    pk= tt_font_glyphs (tt_name, size, dpi);
+    return true;
+  }
+  */
+
+  // Open regular pk font
   string name_pk= family * as_string (size) * "." * as_string (dpi) * "pk";
   if (font_glyphs::instances -> contains (name_pk)) {
     pk = font_glyphs (name_pk);
