@@ -208,6 +208,7 @@ bridge_docrange_rep::notify_macro (int type, string v, int l, path p, tree u) {
   (void) type; (void) v; (void) l; (void) p; (void) u;
   fatal_error ("Method should never be called",
 	       "bridge_docrange_rep::notify_macro");
+  return false;
 }
 
 void
