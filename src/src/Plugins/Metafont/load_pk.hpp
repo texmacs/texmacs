@@ -13,7 +13,9 @@
 #ifndef LOAD_PK_H
 #define LOAD_PK_H
 #include "file.hpp"
-#include "load_tex.hpp"
+#include "tex_files.hpp"
+#include "load_tfm.hpp"
+#include "bitmap_font.hpp"
 
 struct pk_loader {
   url             file_name;

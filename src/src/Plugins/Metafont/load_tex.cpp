@@ -11,12 +11,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "load_tex.hpp"
 #include "path.hpp"
-#include "file.hpp"
-#include "tex_files.hpp"
-#include "Metafont/load_tex.hpp"
-#include "Metafont/load_pk.hpp"
-#include "Metafont/load_tfm.hpp"
 
 RESOURCE_CODE(tex_font_metric);
 static int
