@@ -289,6 +289,21 @@ tmg_tree_copy (SCM arg1) {
 }
 
 SCM
+tmg_tree_append (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-append");
+  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree-append");
+
+  tree in1= scm_to_tree (arg1);
+  tree in2= scm_to_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= join (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_tree_label_extensionP (SCM arg1) {
   SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree-label-extension?");
 
@@ -1619,6 +1634,51 @@ tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_connection_declaredP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= connection_declared (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_connection_status (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-status");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-status");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  int out= connection_status (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_connection_start (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-start");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-start");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "connection-start");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  string out= connection_start (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_connection_eval (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-eval");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-eval");
@@ -1650,6 +1710,40 @@ tmg_connection_cmd (SCM arg1, SCM arg2, SCM arg3) {
   // SCM_ALLOW_INTS;
 
   return texmacs_tree_to_scm (out);
+}
+
+SCM
+tmg_connection_write (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-write");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-write");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "connection-write");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  tree in3= scm_to_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  connection_write (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_connection_read (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-read");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "connection-read");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "connection-read");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  tree out= connection_read (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
 }
 
 SCM
@@ -2197,6 +2291,7 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
+  gh_new_procedure ("tree-append", (FN) tmg_tree_append, 2, 0, 0);
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
@@ -2299,8 +2394,13 @@ initialize_glue_basic () {
   gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
   gh_new_procedure ("xml-cdata->tm", (FN) tmg_xml_cdata_2tm, 1, 0, 0);
   gh_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
+  gh_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
+  gh_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
+  gh_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);
   gh_new_procedure ("connection-eval", (FN) tmg_connection_eval, 3, 0, 0);
   gh_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
+  gh_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
+  gh_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
   gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
