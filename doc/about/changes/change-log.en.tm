@@ -1,13 +1,20 @@
-<TeXmacs|1.0.3.1>
+<TeXmacs|1.0.3.2>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.3 to 1.0.3.2>
+  <section|Changes from version 1.0.3 to 1.0.3.3>
 
   <\itemize>
+    <item>Application of many minor bug fixing patches (1.0.3.3).
+
+    <item>Some <TeXmacs> primitives have been documented in greater detail
+    (1.0.3.3).
+
+    <item>Further fixes for using <name|True Type> fonts (1.0.3.3).
+
     <item>Reorganization of font-system so that it can work with <name|True
     Type> fonts instead of the usual pk fonts. This makes it possible to make
     <TeXmacs> distributions which do not longer rely on <name|Metafont> for
@@ -1168,16 +1175,16 @@
 <\references>
   <\collection>
     <associate|toc-10|<tuple|10|?>>
-    <associate|toc-11|<tuple|11|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-1|<tuple|1|?>>
+    <associate|idx-1|<tuple|<uninit>|?>>
+    <associate|toc-11|<tuple|11|?>>
     <associate|toc-12|<tuple|12|?>>
     <associate|toc-2|<tuple|2|?>>
     <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-13|<tuple|13|?>>
     <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
+    <associate|toc-13|<tuple|13|?>>
     <associate|toc-14|<tuple|14|?>>
+    <associate|toc-4|<tuple|4|?>>
     <associate|toc-5|<tuple|5|?>>
     <associate|toc-6|<tuple|6|?>>
     <associate|toc-7|<tuple|7|?>>
@@ -1190,7 +1197,7 @@
   <\collection>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Changes
-      from version 1.0.3 to 1.0.3.1><value|toc-dots><pageref|toc-1><vspace|0.5fn>
+      from version 1.0.3 to 1.0.3.2><value|toc-dots><pageref|toc-1><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Changes
       from version 1.0.2 to 1.0.3><value|toc-dots><pageref|toc-2><vspace|0.5fn>
