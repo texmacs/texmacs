@@ -11,7 +11,7 @@
 ;; But another symbol was chosen for the importation of the corresponding
 ;; unicode character. So the exportation is one-way only.
 
-;;; Synonym for other symbols
+;;; Synonyms for other symbols
 
 ;; Alternate symbol names. There use the same glyph and are converted to the
 ;; same unicode character as another symbol.
@@ -22,15 +22,34 @@
 ("<Re>"		"#211C") ; see <frak-R>
 ("<agemO>"	"#2127") ; see <Mho>
 ("<to>"		"#2192") ; see <rigtharrow>
+("<notin>"	"#2209") ; see <nin>
+("<notni>"	"#220C") ; see <nni>
 ("<asterisk>"	"#2217") ; see <ast>
 ("<le>"		"#2264") ; see <leq>
 ("<ge>"		"#2265") ; see <geq>
 ("<perp>"	"#22A5") ; see <bot>
 ("<lhd>"	"#22B2") ; see <vartriangleleft>
+("<wasylhd>"	"#22B2") ; see <vartriangleleft>
 ("<rhd>"	"#22B3") ; see <vartriangleright>
+("<wasyrhd>"	"#22B3") ; see <vartriangleright>
 ("<unlhd>"	"#22B4") ; see <trianglelefteq>
+("<wasyunlhd>"	"#22B4") ; see <trianglelefteq>
 ("<unrhd>"	"#22B5") ; see <trianglerighteq>
+("<wasyunrhd>"	"#22B5") ; see <trianglerighteq>
+("<box>"	"#25A1") ; see <square>
+("<Box>"	"#25A1") ; see <square>
+("<wasy-38>"	"#2641") ; see <earth>
+("<fullmoon>"	"#25CB") ; see <Circle>
+("<newmoon>"	"#25CF") ; see <CIRCLE>
 
+;; Almost synonyms.
+
+;; TeXmacs makes a difference in the baseline position, but Unicode
+;; does not have separate characters. The chosen main symbols where
+;; those which where closest to the baseline.
+
+("<venus>"	"#2640") ; see <female>
+("<mars>"	"#2642") ; see <male>
 
 ;;; Glyph variants
 
@@ -51,19 +70,134 @@
 ("<nshortparallel>"	"#2226") ; variant of <nparallel>
 ("<wasytherefore>"	"#2234") ; variant of <therefore>
 ("<thicksim>"		"#223C") ; variant of <sim>
-("<thicksim>"		"#2248") ; variant of <approx>
-("<lvertneqq>"		"#2268") ; variant of <lneqq>
-("<gvertneqq>"		"#2269") ; variant of <gneqq>
-("<varsubsetneq>"	"#228A") ; variant of <subsetneq>
-("<varsupsetneq>"	"#228B") ; variant of <supsetneq>
+("<thickapprox>"       	"#2248") ; variant of <approx>
 ("<oplus>"		"#2295") ; variant of <varoplus>
 ("<ominus>"		"#2296") ; variant of <varominus>
 ("<otimes>"		"#2297") ; variant of <varotimes>
 ("<oslash>"		"#2298") ; variant of <varoslash>
 ("<odot>"		"#2299") ; variant of <varodot>
-("<circledcirc>"	"#22A9") ; variant of <varocircle>
-("<circledast>"		"#22AA") ; variant of <varoast>
-("<varsubsetneqq>"	"#2ACB") ; variant of <subsetneqq>
-("<varsupsetneqq>"	"#2ACC") ; variant of <supsetneqq>
+("<circledcirc>"	"#229A") ; variant of <varocircle>
+("<circledast>"		"#229B") ; variant of <varoast>
+("<wasysqsubset>"	"#228F") ; variant of <sqsubset>
+("<wasysqsupset>"	"#2290") ; variant of <sqsupset>
+("<LEFTarrow>"		"#25C2") ; variant of <blacktriangleleft>
+("<RIGHTarrow>"		"#25B8") ; variant of <blacktriangleright>
+("<UParrow>"		"#25B4") ; variant of <blacktriangleup>
+("<DOWNarrow>"		"#25BE") ; variant of <blacktriangledown>
+("<bigcirc>"		"#25EF") ; variant of <varbigcirc> (slightly oval)
+("<varangle>"		"#2222") ; variant of <sphericalangle>
 
 ("<Bbbk>"		"#1D55C") ; variant of <bb-k>
+
+;;; Big delimiters
+
+;; These symbols should only be used internally by TeXmacs in the
+;; LEFT, RIGHT, MID and BIG primitive. If they are explicitely
+;; present, they are exported as a regular-sized character.	
+
+("<large-less-0>"	"<")
+("<large-gtr-0>"	">")
+("<large-(>"		"(")
+("<large-)>"		")")
+("<large-(-0>"		"(")
+("<large-)-0>"		")")
+("<large-[>"		"[")
+("<large-]>"		"]")
+("<large-[-0>"		"[")
+("<large-]-0>"		"]")
+("<large-lceil>"	"#2308")
+("<large-rceil>"	"#2309")
+("<large-lfloor>"	"#230A")
+("<large-rfloor>"	"#230B")
+("<large-lceil-0>"	"#2308")
+("<large-rceil-0>"	"#2309")
+("<large-lfloor-0>"	"#230A")
+("<large-rfloor-0>"	"#230B")
+("<large-{>"		"{")
+("<large-}>"		"}")
+("<large-{-0>"		"{")
+("<large-}-0>"		"}")
+("<large-|>"		"|")
+("<large-||>"		"#2016")
+("<large-|-0>"		"|")
+("<large-||-0>"		"#2016")
+("<large-llbracket>"	"#27E6")
+("<large-rrbracket>"	"#27E7")
+("<large-llbracket-0>"	"#27E6")
+("<large-rrbracket-0>"	"#27E7")
+("<large-langle>"	"#27E8")
+("<large-rangle>"	"#27E9")
+("<large-langle-0>"	"#27E8")
+("<large-rangle-0>"	"#27E9")
+
+;;; Big Operators
+
+;; These symbols should only be use internally by TeXmacs in BIG
+;; primitives or other special constructs. If they are explicitely
+;; present, they are exported as a regular-sized character.
+
+("<large-sqrt-0>"	"#221A") ; FIXME: wrong baseline
+
+
+;;; Limit symbols
+
+;; These symbols are displayed in the same as their base variant, but TeXmacs
+;; displays right subscripts _under_ the symbol instead of at the lower right.
+;; The difference with the base symbols must be expressed by markup.
+
+("<leftarrowlim>"		"#2190")
+("<rightarrowlim>"		"#2192")
+("<leftrightarrowlim>"		"#2194")
+("<mapstolim>"			"#21A6")
+("<longleftarrowlim>"		"#27F5")
+("<longrightarrowlim>"		"#27F6")
+("<longleftrightarrowlim>"	"#27F7")
+("<longmapstolim>"		"#27FC")
+("<Leftarrowlim>"		"#21D0")
+("<Leftrightarrowlim>"		"#21D4")
+("<Longleftarrowlim>"		"#27F8")
+("<Longleftrightarrowlim>"	"#27FA")
+("<Longrightarrowlim>"		"#27F9")
+("<Rightarrowlim>"		"#21D2")
+("<equallim>"			"=")
+("<longequallim>"		"#FF1D")
+
+;;; Long arrows
+
+;; These arrows have no long variant in unicode. They are exported as regular
+;; arrows.
+
+;; No long "two headed" arrow
+("<longtwoheadleftarrow>"	"#219E")
+("<longtwoheadrightarrow>"	"#21A0")
+
+;; No "long upwards arrow" or "long downwards arrow"
+("<longuparrow>"		"#2191")
+("<longdownarrow>"		"#2193")
+("<longupdownarrow>"		"#2195")
+("<Longuparrow>"		"#21D1")
+("<Longdownarrow>"		"#21D3")
+("<Longupdownarrow>"		"#21D5")
+("<longhookrightarrow>"		"#21AA")
+;("<longmapsup>"			"")
+;("<longmapsdown>"		"")
+
+;;; Unary operator variants
+
+;; Unicode makes no distinction between unary and binary operators. TeXmacs
+;; unary operator variants are exported as binary operators. The import filter
+;; should take care of using unary operators where appropriate.
+
+("<upm>"	"#B1")   ; see <pm>
+("<um>"		"#2212") ; see <minus>
+("<ump>"	"#2213") ; see <mp>
+
+;;; Extra Mathematical Alphanumeric Symbols
+
+;; Unicode has no character for those symbols. Their font style must
+;; be exported using markup and the import filter should import the
+;; marked-up base symbol as the correct styled symbol.
+
+("<b-backepsilon>"	"#03F6") ; see <backepsilon>
+("<b-ell>"		"#2113") ; see <ell>
+("<b-Mho>"		"#2127") ; see <Mho>

@@ -17,6 +17,13 @@
 ;; The intent is making it easy to refer to the Unicode charts, and ensure that
 ;; logical groups are complete and correct.
 
+;; General Remark about Unicode symbols
+;;
+;; Most Unicode symbols are intentionnaly defined as shape-based
+;; instead of meaning based. For example U+22C8 (bowtie) maps to
+;; symbol <join> and U+2A1D (join, large bowtie) maps to symbol
+;; <Bowtie> because <join> is the small variant of <Bowtie>.
+
 
 ;;; Symbols which do not seem to exist in Unicode
 
@@ -25,46 +32,33 @@
 ;("<Yleft>"	"")
 ;("<Yright>"	"")
 
-;; No hook character (only as combining char and combinations)
-;("<lefthook>"	"")
-;("<righthook>"	"")
-
 ;; No appropriate "arrow with hook"
-;("<longhookrightarrow>"	"")
 ;("<hookuparrow>"		"")
 ;("<hookdownarrow>"		"")
+;("<longhookuparrow>"		"")
+;("<longhookdownarrow>"		"")
 
 ;; No "open-headed arrow from bar"
 ;("<mapstotriangle>"		"")
 ;("<longmapstotriangle>"	"")
 
-;; No "long upwards arrow" or "long downwards arrow"
-;("<longtwoheadleftarrow>"	"")
-;("<longtwoheadrightarrow>"	"")
-;("<longuparrow>"		"")
-;("<longdownarrow>"		"")
-;("<longupdownarrow>"		"")
-;("<Longuparrow>"		"")
-;("<Longdownarrow>"		"")
-;("<Longupdownarrow>"		"")
-;("<longmapsup>"		"")
-;("<longmapsdown>"		"")
-;("<longhookuparrow>"		"")
-;("<longhookdownarrow>"		"")
-
-;; Not possible to express the semantic difference from regular arrows
-;("<leftarrowlim>"		"")
-;("<rightarrowlim>"		"")
-;("<leftrightarrowlim>"		"")
-;("<mapstolim>"			"")
-;("<longleftarrowlim>"		"")
-;("<longrightarrowlim>"		"")
-;("<longleftrightarrowlim>"	"")
-;("<longmapstolim>"		"")
-
-;; No appropriate bold greek symbol
+;; What is Varupsilon?
 ;("<b-Varupsilon>"	"")
-;("<b-backepsilon>"	"")
+
+;;; Symbols for internal use with a combining character equivalent
+
+;; No hook character (may use combining char?)
+;("<lefthook>"	"")
+;("<righthook>"	"")
+
+;; Negation
+;("<negate>"	"")
+;("<arrownot>"	"")
+;("<Arrownot>"	"")
+
+;("<boxempty>"	"")
+
+;;; Symbols for internal use with no Unicode equivalent
 
 ;; No component for horizontal curly brackets
 ;("<braceld>"	"")
@@ -73,15 +67,20 @@
 ;("<braceru>"	"")
 
 ;; No dotless j
-;("<jmath>"	"")
+;("<jmath>"	"") -> &jmath;
 ;("<j*>"	"")
 
 ;; Unclear translation, preferring imath
 ;("<i*>"	"") ; see <imath>
 
-;; No unary variants
-;("<um>"	"") ; see <minus>
-;("<upm>"	"") ; see <pm>
+; <vartimes>
+; maybe glyph variant of times
+; or saltyre (U+2613)
+; or n-ary times operator (U+2A09)
+
+;;; Symbols which are _maybe_ synonymous for other symbols
+;("<vernal>"	"#2648") ; see <aries>
+
 
 ;;; Big operators and delimiters
 
@@ -96,42 +95,46 @@
 ;; Large symbols may be converted to unicode
 ;("<large-/-0>"		"#29F8") ; big solidus
 ;("<large-\\-0>"	"#29F9") ; big reverse solidus
+;("<large-/-0>"		"/")
+;("<large-\\-0"		"#2216") ; see <setminus>
 
 ;; Large symbols which have an _approximative_ unicode translation
 ;("<wilde-tilde>"	"#02DC") ; small tilde
 ;("<wide-hat>"		"#02C6") ; modifier letter circumflex accent
 
-;("<large-/-0>"		"/")
-;("<large-\\-0"		"\\")
-;("<large-less-0>"	"<")
-;("<large-gtr-0>"	">")
-;("<large-(-0>"		"(")
-;("<large-)-0>"		")")
-;("<large-[-0>"		"[")
-;("<large-]-0>"		"]")
-;("<large-lceil-0>"	"#2308")
-;("<large-lfloor-0>"	"#2309")
-;("<large-lfloor-0>"	"#230A")
-;("<large-rfloor-0>"	"#230B")
-;("<large-{-0>"		"{")
-;("<large-}-0>"		"}")
-;("<large-|-0>"		"|")
-;("<large-||-0>"		"")
-
-;; The conversion of the small symbol is probematic
-;; MathML uses a symbol which unicode discourage to use in math
-;("<large-langle-0>"	"")
-;("<large-rangle-0>"	"")
 
 ;; Other problematic symbols
 
 ;; is it a variant of <leftsquigarrow> or the actual "leftwards wave arrow"?
 ;("<wasyleadsto>"	"#219C")
-;; is it a synonym for "\" or the "reverse solidus operator"
-;; (texmacs.syx defines it as a symbol)...
-;("<backslash>"		"#29F5") ; U+29F5 is "reverse solidus operator"
+
 ;; typo in the name of the symbol... should be <nshortmid>
 ("<nshormid>"		"#2224") ; variant of <nmid>
+
+
+;;; Negated symbols with no aggregated character
+("<nsqsubset>"		"#228F#0338")
+("<nsqsupset>"		"#2290#0338")
+("<nll>"		"#226A#0338")
+("<ngg>"		"#226B#0338")
+("<nlll>"		"#22D8#0338")
+("<nggg>"		"#22D9#0338")
+("<nleqslant>"		"#2A7D#0338")
+("<ngeqslant>"		"#2A7E#0338")
+("<npreceq>"		"#2AAF#0338")
+("<nsucceq>"		"#2AB0#0338")
+("<nleqq>"		"#2266#0338")
+("<ngeqq>"		"#2267#0338")
+("<nsubseteqq>"		"#2AC5#0338")
+("<nsupseteqq>"		"#2AC6#0338")
+
+;;; Glyph variants supported by Unicode
+("<lvertneqq>"		"#2268#FE00") ; variant of <lneqq>
+("<gvertneqq>"		"#2269#FE00") ; variant of <gneqq>
+("<varsubsetneq>"	"#228A#FE00") ; variant of <subsetneq>
+("<varsupsetneq>"	"#228B#FE00") ; variant of <supsetneq>
+("<varsubsetneqq>"	"#2ACB#FE00") ; variant of <subsetneqq>
+("<varsupsetneqq>"	"#2ACC#FE00") ; variant of <supsetneqq>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -139,6 +142,7 @@
 
 ("<less>"	"#3C")	; overrides corktounicode
 ("<gtr>"	"#3E")	; overrides corktounicode
+;("<backslash>"	"#5C")  ; see symbol-unicode-math.scm
 
 
 ;;; Controls and Latin-1 Supplement		0080--00FF
@@ -148,7 +152,7 @@
 ;("<flip-!>"	"#A1") ; see symbol-unicode-math.scm
 ("<cent>"	"#A2")
 ; pound sign	"#A3"
-; currency sign	"#A4"
+("<currency>"	"#A4")
 ("<yen>"	"#A5")
 ("<brokenvert>"	"#A6")
 ;("<paragraph>"	"#A7") ; see symbol-unicode-math.scm
@@ -158,7 +162,7 @@
 ; left pointing double angle quotation mark "#AB"
 ("<neg>"	"#AC")
 ; soft hyphen	"#AD"
-; registered sign "#AE"	; not circled R
+("<circledR>"	"#AE") ; for MathML compatility. Maybe U+24C7 more correct.
 ;("<bar>"	"#AF") ; see symbol-unicode-math.scm
 ; degree sign	"#B0"
 ("<pm>"		"#B1")
@@ -167,7 +171,7 @@
 ;("<acute>"	"#B4") ; see symbol-unicode-math.scm
 ; micro sign	"#B5"
 ("<endofline>"	"#B6")
-; middle dot	"#B7"  ; not <cdot>
+("<centerdot>"	"#B7")
 ;("<cedille>"	"#B8") ; see symbol-unicode-math.scm
 ; superscript one "#B9"
 ; masculine ordinal indicator "#BA"
@@ -331,7 +335,7 @@
 ("<nleftarrow>"		"#219A")
 ("<nrightarrow>"	"#219B")
 ("<leftsquigarrow>" 	"#219C") ; nominally "leftwards wave arrow"
-("<rightsquigarrow>" 	"#219C") ; nominally "rightwards wave arrow"
+("<rightsquigarrow>" 	"#219D") ; nominally "rightwards wave arrow"
 ("<twoheadleftarrow>"	"#219E")
 ; <twoheaduparrow>	"#219F"
 ("<twoheadrightarrow>"	"#21A0")
@@ -402,18 +406,27 @@
 
 ;;; Supplemental Arrows-A			27F0--27FF
 
-;; Long arrows
+;; Arrows
+; upwards quadruple arrow		"#27F0"
+; downwards quadruple arrow		"#27F1"
+; anticlockwise gapped circle arrow	"#27F2"
+; clockwise gapped circle arrow		"#27F3"
+; right arrow with circled plus		"#27F4"
 
+;; Long arrows
 ;; According to Unicode: "The long arrows are used for mapping whereas
 ;; the short forms would be used in limits.
-;("<longleftarrow>"	"#27F5")
-;("<longrightarrow>"	"#27F6")
-;("<longleftrightarrow>"	"#27F7")
-;("<Longleftarrow>"	"#27F8")
-;("<Longrightarrow>"	"#27F9")
-;("<Longleftrightarrow>"	"#27FA")
-;("<longmapsfrom>"	"#27FB")
-;("<longmapsto>"		"#27FC")
+("<longleftarrow>"	"#27F5")
+("<longrightarrow>"	"#27F6")
+("<longleftrightarrow>"	"#27F7")
+("<Longleftarrow>"	"#27F8")
+("<Longrightarrow>"	"#27F9")
+("<Longleftrightarrow>"	"#27FA")
+("<longmapsfrom>"	"#27FB")
+("<longmapsto>"		"#27FC")
+; long leftwards double arrow from bar	"#27FD"
+; long rightwards double arrow from bar	"#27FE"
+; long rightwards squiggle arrow	"#27FF"
 
 
 ;;; Mathematical Operators			2200--22FF
@@ -434,7 +447,7 @@
 ; small contains as member "#220D"
 ; end of proof		"#220E"
 ("<prod>"		"#220F")
-("<amalg>"		"#2210")
+; n-ary coproduct
 ("<sum>"		"#2211")
 ("<minus>"		"#2212")
 ("<mp>"			"#2213")
@@ -631,7 +644,7 @@
 ; hermitian conjugate matrix "#22B9"
 ("<intercal>"		"#22BA")
 ("<veebar>"		"#22BB")
-("<barwedge>"		"#22BC")
+; nand			"#22BC") ; see <barwedge>
 ; <barvee>		"#22BD"
 ; right angle with arc	"#22BE"
 ; right triangle	"#22BF"
@@ -643,7 +656,7 @@
 ("<cdot>"		"#22C5") ; not MIDDLE DOT
 ("<star>"		"#22C6")
 ("<divideontimes>"	"#22C7")
-("<bowtie>"		"#22C8") ; not <join>
+("<join>"		"#22C8")
 ("<ltimes>"		"#22C9")
 ("<rtimes>"		"#22CA")
 ("<leftthreetimes>"	"#22CB")
@@ -662,7 +675,7 @@
 ("<lll>"		"#22D8")
 ("<ggg>"		"#22D9")
 ("<lesseqgtr>"		"#22DA")
-("<gtrlesseq>"		"#22DB")
+("<gtreqless>"		"#22DB")
 ; <eqless>		"#22DC"
 ; <eqgtr>		"#22DD"
 ("<curlyeqprec>"	"#22DE")
@@ -708,7 +721,7 @@
 ; house			"#2302"
 ; up arrowhead		"#2303"
 ; down arrowhead	"#2304"
-; projective		"#2305"  ; not <barwedge> which is NAND
+("<barwedge>"		"#2305")
 ("<doublebarwedge>"	"#2306") ; perspective
 ; vawy line		"#2307"
 
@@ -718,56 +731,397 @@
 ("<lfloor>"		"#230A")
 ("<rfloor>"		"#230B")
 
+;; Miscellaneous technical
 ("<invneg>"		"#2310")
+; square lozenge	"#2311"
+; arc			"#2312"
+; segment		"#2313"
+; sector		"#2314"
+("<recorder>"		"#2315")
+; position indicator	"#2316"
+; viewdata square	"#2317"
+; place of interest sign "#2318"
+; turned not sign	"#2319"
+
+;; GUI icons
+; watch			"#231A"
+; hourglass		"#231B"
+
+;; Quine corners
+("<ulcorner>"		"#231C")
+("<urcorner>"		"#231D")
+("<llcorner>"		"#231E")
+("<lrcorner>"		"#231F")
+
+;; Frown and smile
 ("<frown>"		"#2322")
 ("<smile>"		"#2323")
+
+;; Angle brackets
+;; These are discouraged for mathematical use because of their
+;; canonical equivalence to CJK punctuation.
+; left-pointing angle bracket	"#2329" ; see <langle>
+; right-pointing angle blacket	"#232A" ; see <rangle>
+
+;; APL
+; apl functional symbol i-beam			"#2337"
+("<talloblong>"					"#2338")
+; apl functional symbol quad equal		"#2339"
+; apl functional symbol quad equal		"#2338"
+; apl functional symbol quad divide		"#2339"
+; apl functional symbol quad diamond		"#233A"
+; apl functional symbol quad jot		"#233B"
+; apl functional symbol quad circle		"#233C"
+; apl functional symbol circle stile		"#233D"
+; apl functional symbol circle jot		"#233E"
+; apl functional symbol slash bar		"#233F"
+; apl functional symbol backslash bar		"#2340"
+; apl functional symbol quad slash		"#2341"
+; apl functional symbol quad backslash		"#2342"
+; apl functional symbol quad less-than		"#2343"
+; apl functional symbol quad greater-than	"#2344"
+; apl functional symbol leftwards vane		"#2345"
+; apl functional symbol rightwards vane		"#2346"
+("<APLleftarrowbox>"				"#2347")
+("<APLrightarrowbox>"				"#2348")
+; apl functional symbol circle backslash	"#2349"
+; apl functional symbol down tack underbar	"#234A"
+; apl functional symbol delta stile		"#234B"
+; apl functional symbol quad down caret		"#234C"
+; apl functional symbol quad delta		"#234D"
+; apl functional symbol down tack jot		"#234E"
+; apl functional symbol upwards vane		"#234F"
+("<APLuparrowbox>"				"#2350")
+; apl functional symbol up tack overbar		"#2351"
+; apl functional symbol del stile		"#2352"
+; apl functional symbol quad up caret		"#2353"
+; apl functional symbol quad del		"#2354"
+; apl functional symbol up tack jot		"#2355"
+; apl functional symbol downwards vane		"#2356"
+("<APLdownarrowbox>"				"#2357")
+; apl functional symbol quote underbar		"#2358"
+; apl functional symbol delta underbar		"#2359"
+; apl functional symbol diamond underbar	"#235A"
+; apl functional symbol jot underbar		"#235B"
+; apl functional symbol circle underbar		"#235C"
+; apl functional symbol up shoe jot		"#235D"
+("<APLinput>"					"#235E")
+; apl functional symbol circle star		"#235F"
+; apl functional symbol quad colon		"#2360"
+; apl functional symbol up tack diaeresis	"#2361"
+; apl functional symbol del diaeresis		"#2362"
+; apl functional symbol star diaeresis		"#2363"
+; apl functional symbol jot diaeresis		"#2364"
+; apl functional symbol circle diaeresis	"#2365"
+; apl functional symbol down shoe stile		"#2366"
+; apl functional symbol left shoe stile		"#2367"
+; apl functional symbol tilde diaeresis		"#2368"
+; apl functional symbol greater-than diaeresis	"#2369"
+; apl functional symbol comma bar		"#236A"
+; apl functional symbol del tilde		"#236B"
+; apl functional symbol zilde			"#236C"
+; apl functional symbol stile tilde		"#236D"
+; apl functional symbol semicolon underbar	"#236E"
+; apl functional symbol quad not equal		"#236F"
+; apl functional symbol quad question		"#2370"
+; apl functional symbol down caret tilde	"#2371"
+; apl functional symbol up caret tilde		"#2372"
+; apl functional symbol iota			"#2373"
+; apl functional symbol rho			"#2374"
+; apl functional symbol omega			"#2375"
+; apl functional symbol alpha underbar		"#2376"
+; apl functional symbol epsilon underbar	"#2377"
+; apl functional symbol iota underbar		"#2378"
+; apl functional symbol omega underbar		"#2379"
+; apl functional symbol alpha			"#237A"
+
+;; APL
+("<APLbox>"				"#2395")
+
+
+;;; Enclosed Alphanumerics			2460--24FF
+
+("<circledS>"		"#24C8")
 
 
 ;;; Geometric Shapes				25A0--25FF
 
-;("<blacksquare>"	"#25A0")
-;("<box>"		"#25A1")
-;("<triangleright>"	"#25B9")
-;("<triangleleft>"	"#25C3")
+;; Geometric Shapes
+("<blacksquare>"				"#25A0")
+("<Square>"					"#25A1")
+; white square with rounded corners		"#25A2"
+; white square containing black small square	"#25A3"
+; square with horizontal fill			"#25A4"
+; square with vertical fill			"#25A5"
+; square with orthogonal crosshatch fill	"#25A6"
+; square with upper left to lower right fill	"#25A7"
+; square with upper right to lower left fill	"#25A8"
+; square with diagonal crosshatch fill		"#25A9"
+; black small square			"#25AA"
+; white small square			"#25AB"
+; black rectangle			"#25AC"
+; white rectangle			"#25AD"
+; black vertical rectangle		"#25AE"
+("<oblong>"				"#25AF")
+; black parallelogram			"#25B0"
+; white parallelogram			"#25B1"
+; black up-pointing triangle		"#25B2"
+("<bigtriangleup>"	"#25B3")
+("<blacktriangleup>"			"#25B4")
+("<triangle>"				"#25B5")
+; black right-pointing triangle		"#25B6"
+; white right-pointing triangle		"#25B7"
+("<blacktriangleright>"			"#25B8")
+("<triangleright>"	"#25B9")
+; black right-pointing pointer		"#25BA"
+; white right-pointing pointer		"#25BB"
+; black down-pointing triangle		"#25BC"
+("<bigtriangledown>"	"#25BD")
+("<blacktriangledown>"			"#25BE")
+("<triangledown>"			"#25BF")
+; black left-pointing triangle		"#25C0"
+; white left-pointing triangle		"#25C1"
+("<blacktriangleleft>"			"#25C2")
+("<triangleleft>"	"#25C3")
+; black left-pointing pointer		"#25C4"
+; white left-pointing pointer		"#25C5"
+; black diamond				"#25C6"
+("<wasyDiamond>"			"#25C7")
+; white diamond containing black small diamond	"#25C8"
+; fisheye				"#25C9"
+("<lozenge>"		"#25CA")
+("<Circle>"				"#25CB")
+; dotted circle				"#25CC"
+; circle with vertical fill		"#25CD"
+; bullseye				"#25CE"
+("<CIRCLE>"				"#25CF")
+("<LEFTcircle>"				"#25D0")
+("<RIGHTcircle>"			"#25D1")
+; circle with lower half black		"#25D2"
+; circle with upper half black		"#25D3"
+; circle with upper right quadrant black	"#25D4"
+; circle with all but upper left quadrant black	"#25D5"
+("<LEFTCIRCLE>"				"#25D6")
+("<RIGHTCIRCLE>"			"#25D7")
+; inverse bullet			"#25D8"
+; inverse white circle			"#25D9"
+; upper half inverse white circle	"#25DA"
+; lower half inverse white circle	"#25DB"
+; upper left quadrant circular arc	"#25DC"
+; upper right quadrant circular arc	"#25DD"
+; lower right quadrant circular arc	"#25DE"
+; lower left quadrant circular arc	"#25DF"
+; upper half circle			"#25E0"
+; lower half circle			"#25E1"
+; black lower right triangle		"#25E2"
+; black lower left triangle		"#25E3"
+; black upper left triangle		"#25E4"
+; black upper right triangle		"#25E5"
+; white bullet				"#25E6"
+; square with left half black		"#25E7"
+; square with right half black		"#25E8"
+; square with upper left diagonal half black	"#25E9"
+; square with lower right diagonal half black	"#25EA"
+; white square with vertical bisecting line	"#25EB"
+; white up-pointing triangle with dot		"#25EC"
+; up-pointing triangle with left half black	"#25ED"
+; up-pointing triangle with right half black	"#25EE"
+("<varbigcirc>"		"#25EF")
+
+;; Geometric shapes
+; upper left triangle			"#25F8"
+; upper right triangle			"#25F9"
+; lower left triangle			"#25FA"
+; white medium square			"#25FB"
+; black medium square			"#25FC"
+("<square>"				"#25FD") ; smaller than <Square>
+; black medium small square		"#25FE"
+; lower right triangle			"#25FF"
+
 
 ;;; Miscellaneous Symbols			2600--26FF
 
-;("<phone>"		"#260E")
-;("<female>"		"#2640")
-;("<earth>"		"#2641")
-;("<male>"		"#2642")
-;("<spadesuit>"		"#2660")
-;("<heartsuit>"		"#2661")
-;("<diamondsuit>"	"#2662")
-;("<clubsuit>"		"#2663")
-;("<quarternote>"	"#2669")
-;("<eighthnote>"		"#266A")
-;("<twonotes>"		"#266B")
-;("<flat>"		"#266D")
-;("<natural>"		"#266E")
-;("<sharp>"		"#266F")
+;; Weather and astrological symbols
+; black sun with rays	"#2600"
+; cloud			"#2601"
+; umbrella		"#2602"
+; snowman		"#2603"
+; comet			"#2604"
+("<blackstar>"		"#2605")
+; white star		"#2606"
+; lightning		"#2607"
+; thunderstorm		"#2608"
+("<astrosun>"		"#2609")
+("<ascnode>"		"#260A")
+("<descnode>"		"#260B")
+("<conjunction>"	"#260C")
+("<opposition>"		"#260D")
+
+;; Miscellaneous symbols
+("<phone>"		"#260E")
+; white telephone	"#260F"
+("<wasyBox>"		"#2610")
+("<XBox>"		"#2611")
+("<CheckedBox>"		"#2612")
+; saltire		"#2613"
+
+;; Miscellaneous symbols
+; wheel of dharma	"#2638"
+("<frownie>"		"#2639")
+("<smiley>"		"#263A")
+("<blacksmiley>"	"#263B")
+("<sun>"		"#263C")
+
+;; Astrological symbols
+("<rightmoon>"		"#263D")
+("<leftmoon>"		"#263E")
+("<mercury>"		"#263F")
+("<female>"		"#2640")
+("<earth>"		"#2641")
+("<male>"		"#2642")
+("<jupiter>"		"#2643")
+("<saturn>"		"#2644")
+("<uranus>"		"#2645")
+("<neptune>"		"#2646")
+("<pluto>"		"#2647")
+("<aries>"		"#2648")
+("<taurus>"		"#2649")
+("<gemini>"		"#264A")
+("<cancer>"		"#264B")
+("<leo>"		"#264C")
+("<virgo>"		"#264D")
+("<libra>"		"#264E")
+("<scorpio>"		"#264F")
+("<sagittarius>"	"#2650")
+("<capricornus>"	"#2651")
+("<aquarius>"		"#2652")
+("<pisces>"		"#2653")
+
+;; Playing card symbols
+("<spadesuit>"		"#2660")
+; white heart suit	"#2661"
+; white diamond suit	"#2662"
+("<clubsuit>"		"#2663")
+; white spade suit	"#2664"
+("<heartsuit>"		"#2665")
+("<diamondsuit>"	"#2666")
+
+;; Musical symbols
+("<quarternote>"	"#2669")
+("<eighthnote>"		"#266A")
+("<twonotes>"		"#266B")
+; beamed sixteenth notes "#266C"
+("<flat>"		"#266D")
+("<natural>"		"#266E")
+("<sharp>"		"#266F")
+
+
+;;; Dingbats					2710--27BF
+
+("<checkmark>"		"#2713")
+("<maltese>"		"#2720")
+
+
+;;; Supplemental Arrows-B
+
+("<leftturn>"		"#2940") ; not closed, but correct arrowhead position
+("<rightturn>"		"#2941") ; not closed, but correct arrowhead position
+
 
 ;;; Miscellaneous Mathematical Symbols-A	27C0--21FF
 
-;("<llbracket>"		"#27E6")
-;("<rrbracket>"		"#27E7")
-;("<langle>"		"#27E8")
-;("<rangle>"		"#27E9")
+;; Mathematical brackets
+("<llbracket>"		"#27E6")
+("<rrbracket>"		"#27E7")
+("<langle>"		"#27E8")
+("<rangle>"		"#27E9")
+("<llangle>"		"#27EA")
+("<rrangle>"		"#27EB")
 
-;;; Supplemental Mathematical Operators		2A00-2AFF
 
+;;; Miscellaneous Mathematical Symbols-B	2980--29FF
+
+;; Miscellaneous mathematical symbols
+; triple vertical bar delimiter	"#2980"
+; z notation spot		"#2981"
+; z notation type colon		"#2982"
+
+;; Brackets
+; left white curly bracket		"#2983"
+; right white curly bracket		"#2984"
+; left white parenthesis		"#2985"
+; right white parenthesis		"#2986"
+("<llparenthesis>"			"#2987")
+("<rrparenthesis>"			"#2987")
+; z notation left binding bracket	"#2989"
+; z notation right binding bracket	"#298A"
+; left square bracket with underbar	"#298B"
+; right square bracket with underbar	"#298C"
+; left square bracket with tick in top corner		"#298D"
+; right square bracket with tick in bottom corner	"#298E"
+; left square bracket with tick in bottom corner	"#298F"
+; right square bracket with tick in top corner		"#2990"
+; left angle bracket with dot		"#2991"
+; right angle bracket with dot		"#2992"
+; left arc less-than bracket		"#2993"
+; right arc greater-than bracket	"#2994"
+; double left arc greater-than bracket	"#2995"
+; double right arc less-than bracket	"#2996"
+; left black tortoise shell bracket	"#2997"
+; right black tortoise shell bracket	"#2998"
+
+;; Circle symbols
+("<minuso>"		"#29B5")
+("<varobar>"		"#29B6")
+; circled parallel	"#29B7"
+("<varobslash>"		"#29B8")
+; circled perpendicular	"#29B9"
+; circle divided by horizontal bar and top half divided by vertical bar	"#29BA"
+; circle with superimposed x			"#29BB"
+; circled anticlockwise-rotated division sign	"#29BC"
+; up arrow through circle			"#29BD"
+; circled white bullet				"#29BE"
+; circled bullet				"#29BF"
+; circled less-than				"#29C0"
+; circled greater-than				"#29C1"
+; circle with small circle to the right		"#29C2"
+; circle with two horizontal strokes to the right "#29C3"
+
+;; Square symbols
+("<boxslash>"		"#29C4")
+("<boxbslash>"		"#29C5")
+("<boxast>"		"#29C6")
+("<boxcircle>"		"#29C7")
+("<boxbox>"		"#29C8")
+; two joined squares	"#29C9"
+
+
+
+("<blacklozenge>"	"#29EB")
+
+;;; Supplemental Mathematical Operators		2A00--2AFF
+
+("<merge>"		"#2A07")
+("<Bowtie>"		"#2A1D")
+("<amalg>"		"#2A3F")
 ("<leqslant>"		"#2A7D")
 ("<geqslant>"		"#2A7E")
 ("<lessapprox>"		"#2A85")
 ("<gtrapprox>"		"#2A86")
 ("<lneq>"		"#2A87")
 ("<gneq>"		"#2A88")
+("<lnapprox>"		"#2A89")
+("<gnapprox>"		"#2A8A")
 ("<lesseqqgtr>"		"#2A8B")
 ("<gtreqqless>"		"#2A8C")
 ("<eqslantless>"	"#2A95")
 ("<eqslantgtr>"		"#2A96")
+("<leftslice>"		"#2AA6")
+("<rightslice>"		"#2AA7")
 ("<preceq>"		"#2AAF")
 ("<succeq>"		"#2AB0")
+("<precneqq>"		"#2AB5")
+("<succneqq>"		"#2AB6")
 ("<precapprox>"		"#2AB7")
 ("<succapprox>"		"#2AB8")
 ("<precnapprox>"	"#2AB9")
@@ -776,6 +1130,8 @@
 ("<supseteqq>"		"#2AC6")
 ("<subsetneqq>"		"#2ACB")
 ("<supsetneqq>"		"#2ACC")
+("<interleave>"		"#2AF4")
+
 
 ;;; Greek and Coptic				0370--03FF
 
@@ -810,7 +1166,7 @@
 ("<beta>"	"#03B2")
 ("<gamma>"	"#03B3")
 ("<delta>"	"#03B4")
-("<varepsilon>"	"#03B5")
+("<epsilon>"	"#03B5")
 ("<zeta>"	"#03B6")
 ("<eta>"	"#03B7")
 ("<theta>"	"#03B8")
@@ -836,10 +1192,10 @@
 ("<vartheta>"	"#03D1")
 ("<phi>"	"#03D5")
 ("<varpi>"	"#03D6")
-("<digamma>"	"#03DC")
+("<digamma>"	"#03DD")
 ("<varkappa>"	"#03F0")
 ("<varrho>"	"#03F1")
-("<epsilon>"	"#03F5")
+("<varepsilon>"	"#03F5")
 ("<backepsilon>" "#03F6")
 
 ;;; Halfwidth and Fullwidth Forms		FF00--FFEF
@@ -1154,7 +1510,7 @@
 ("<b-beta>"	"#1D6C3")
 ("<b-gamma>"	"#1D6C4")
 ("<b-delta>"	"#1D6C5")
-("<b-varepsilon>" "#1D6C6")
+("<b-epsilon>"	"#1D6C6")
 ("<b-zeta>"	"#1D6C7")
 ("<b-eta>"	"#1D6C8")
 ("<b-theta>"	"#1D6C9")
@@ -1177,7 +1533,7 @@
 ("<b-omega>"	"#1D6DA")
 
 ;; Additional bold Greek symbols
-("<b-epsilon>"	"#1D6DC")
+("<b-varepsilon>" "#1D6DC")
 ("<b-vartheta>"	"#1D6DD")
 ("<b-varkappa>"	"#1D6DE")
 ("<b-phi>"	"#1D6DF")
@@ -1195,3 +1551,7 @@
 ("<b-7>"	"#1D7D5")
 ("<b-8>"	"#1D7D6")
 ("<b-9>"	"#1D7D7")
+
+;;; Musical Symbols					1D100--1D1FF
+("<fullnote>"	"#1D15D")
+("<halfnote>"	"#1D15E")
