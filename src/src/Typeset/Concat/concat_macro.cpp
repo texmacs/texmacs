@@ -112,16 +112,33 @@ concater_rep::typeset_expand (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_extension (tree t, path ip) {
-  string var= as_string (L(t));
-  if (!env->provides (var)) {
-    typeset_unknown (var, t, ip, true);
-    return;
+concater_rep::typeset_compound (tree t, path ip) {
+  int d; tree f;
+  if (L(t) == COMPOUND) {
+    d= 1;
+    f= t[0];
+    if (is_compound (f)) f= env->exec (f);
+    if (is_atomic (f)) {
+      string var= f->label;
+      if (!env->provides (var)) {
+	typeset_unknown (var, t, ip, true);
+	return;
+      }
+      f= env->read (var);
+    }
   }
-  tree f= env->read (var);
+  else {
+    string var= as_string (L(t));
+    if (!env->provides (var)) {
+      typeset_unknown (var, t, ip, true);
+      return;
+    }
+    d= 0;
+    f= env->read (var);
+  }
 
   if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t);
+    int i, n=N(f)-1, m=N(t)-d;
     env->macro_arg= list<hashmap<string,tree> > (
       hashmap<string,tree> (UNINIT), env->macro_arg);
     env->macro_src= list<hashmap<string,path> > (
@@ -136,8 +153,8 @@ concater_rep::typeset_extension (tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i]: tree("");
-	env->macro_src->item (var)= i<m? descend (ip,i): decorate_right(ip);
+	env->macro_arg->item (var)= i<m? t[i+d]: tree("");
+	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     if (is_decoration (ip)) typeset (f[n], ip);
     else {

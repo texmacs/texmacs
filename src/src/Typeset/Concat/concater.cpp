@@ -429,8 +429,11 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
-  case COMPOUND:
     if (ACTIVATED) typeset_expand (t, ip);
+    else typeset_inactive_expand_apply (t, ip, false);
+    break;
+  case COMPOUND:
+    if (ACTIVATED) typeset_compound (t, ip);
     else typeset_inactive_expand_apply (t, ip, false);
     break;
   case APPLY:
@@ -743,7 +746,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   default:
     if (L(t) < START_EXTENSIONS) print (STD_ITEM, test_box (ip));
     else {
-      if (ACTIVATED) typeset_extension (t, ip);
+      if (ACTIVATED) typeset_compound (t, ip);
       else typeset_inactive (as_string (L(t)), t, ip);
     }
     break;

@@ -251,11 +251,24 @@ make_lazy_expand (edit_env env, tree t, path ip) {
 ******************************************************************************/
 
 lazy
-make_lazy_extension (edit_env env, tree t, path ip) {
-  tree f;
-  string var= as_string (L(t));
-  if (env->provides (var)) f= env->read (var);
-  else f= tree (ERROR, "expand " * var);
+make_lazy_compound (edit_env env, tree t, path ip) {
+  int d; tree f;
+  if (L(t) == COMPOUND) {
+    d= 1;
+    f= t[0];
+    if (is_compound (f)) f= env->exec (f);
+    if (is_atomic (f)) {
+      string var= f->label;
+      if (env->provides (var)) f= env->read (var);
+      else f= tree (ERROR, "compound " * var);
+    }
+  }
+  else {
+    string var= as_string (L(t));
+    if (env->provides (var)) f= env->read (var);
+    else f= tree (ERROR, "compound " * var);
+    d= 0;
+  }
 
   array<line_item> a;
   array<line_item> b;
@@ -266,7 +279,7 @@ make_lazy_extension (edit_env env, tree t, path ip) {
   lazy par;
 
   if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t);
+    int i, n=N(f)-1, m=N(t)-d;
     env->macro_arg= list<hashmap<string,tree> > (
       hashmap<string,tree> (UNINIT), env->macro_arg);
     env->macro_src= list<hashmap<string,path> > (
@@ -281,8 +294,8 @@ make_lazy_extension (edit_env env, tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i]: tree("");
-	env->macro_src->item (var)= i<m? descend (ip,i): decorate_right(ip);
+	env->macro_arg->item (var)= i<m? t[i+d]: tree("");
+	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     if (is_decoration (ip)) par= make_lazy (env, f[n], ip);
     else par= make_lazy (env, f[n], decorate_right (ip));
@@ -444,8 +457,9 @@ make_lazy (edit_env env, tree t, path ip) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
-  case COMPOUND:
     return make_lazy_expand (env, t, ip);
+  case COMPOUND:
+    return make_lazy_compound (env, t, ip);
   case APPLY:
     return make_lazy_apply (env, t, ip);
   case INCLUDE:
@@ -454,6 +468,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
-    else return make_lazy_extension (env, t, ip);
+    else return make_lazy_compound (env, t, ip);
   }
 }
