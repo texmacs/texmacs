@@ -924,7 +924,7 @@ expand_needs_surrounding (string s) {
     (s == "maketitle") || (s == "abstract") ||
     (s == "theorem") || (s == "proposition") || (s == "lemma") ||
     (s == "corollary") || (s == "proof") || (s == "axiom") ||
-    (s == "definition") || (s == "conjecture") ||
+    (s == "definition") || (s == "notation") || (s == "conjecture") ||
     (s == "remark") || (s == "note") || (s == "example") ||
     (s == "exercise") || (s == "warning") || (s == "convention") ||
     (s == "code") || (s == "quote") ||

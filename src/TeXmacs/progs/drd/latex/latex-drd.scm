@@ -106,7 +106,7 @@
 (drd-group latex-environment-0%
   begin-document begin-abstract begin-definition
   begin-theorem begin-proposition begin-lemma begin-corollary
-  begin-proof begin-definition begin-axiom
+  begin-proof begin-definition begin-notation begin-axiom
   begin-remark begin-warning begin-note
   begin-example begin-exercise begin-verbatim
   begin-matrix begin-pmatrix begin-center

@@ -1172,8 +1172,9 @@
   (doc-data (,tmtex-doc-data -1))
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
-  ((:or theorem proposition lemma corollary proof axiom definition conjecture
-	remark note example exercise warning convention quote quotation verse)
+  ((:or theorem proposition lemma corollary proof axiom definition
+	notation conjecture remark note example exercise warning
+	convention quote quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   ((:or center indent body) (,tmtex-std-env 1))

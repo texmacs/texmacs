@@ -115,6 +115,7 @@
     (corollary ,(newtheorem "corollary" "Corollary"))
     (axiom ,(newtheorem "axiom" "Axiom"))
     (definition ,(newtheorem "definition" "Definition"))
+    (notation ,(newtheorem "notation" "Notation"))
     (remark ,(newremark "remark" "Remark"))
     (note ,(newremark "note" "Note"))
     (example ,(newremark "example" "Example"))

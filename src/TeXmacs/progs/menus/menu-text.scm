@@ -117,6 +117,7 @@
 	  ("Proof" (make 'proof))
 	  ("Axiom" (make 'axiom))
 	  ("Definition" (make 'definition))
+	  ("Notation" (make 'notation))
 	  ---
 	  ("Remark" (make 'remark))
 	  ("Note" (make 'note))
