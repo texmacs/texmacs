@@ -30,6 +30,7 @@ protected:
 protected:
   void get_selection (path& start, path& end);
   void set_selection (path start, path end);
+  void raw_cut (path start, path end);
 
 public:
   edit_select_rep ();
