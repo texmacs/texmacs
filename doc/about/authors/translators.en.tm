@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.6>
 
 <style|tmdoc>
 
@@ -6,39 +6,41 @@
   <tmdoc-title|Internationalization of <TeXmacs>>
 
   <\description>
-    <item*|Czech:>David Rezac.
+    <item*|Czech>David Rezac.
 
-    <item*|Dutch:>Joris van der Hoeven.
+    <item*|Danish>Magnus Marius Rohde.
 
-    <item*|Finnish:>Teemu Ikonen.
+    <item*|Dutch>Joris van der Hoeven.
 
-    <item*|French:>Michèle Garoche, Joris van der Hoeven.
+    <item*|Finnish>Teemu Ikonen.
 
-    <item*|German:>Hans Dembinski, Jan Ulrich Hasecke, Joris van der Hoeven,
+    <item*|French>Michèle Garoche, Joris van der Hoeven.
+
+    <item*|German>Hans Dembinski, Jan Ulrich Hasecke, Joris van der Hoeven,
     Thomas Langen, Ralf Treinen.
 
-    <item*|Hungarian:>András Kadinger.
+    <item*|Hungarian>András Kadinger.
 
-    <item*|Italian:>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin,
+    <item*|Italian>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin,
     Gian Luigi Gragnani.
 
-    <item*|Polish:>Robert Janusz.
+    <item*|Polish>Robert Janusz.
 
-    <item*|Portuguese:>Ramiro Brito Willmersdorf, Márcio Laurini, Alexandre
+    <item*|Portuguese>Ramiro Brito Willmersdorf, Márcio Laurini, Alexandre
     Taschetto de Castro.
 
-    <item*|Romanian:>Dan Ignat.
+    <item*|Romanian>Dan Ignat.
 
-    <item*|Russian:>Andrey Grozin.
+    <item*|Russian>Andrey Grozin.
 
-    <item*|Slovene:>Ziga Kranjec.
+    <item*|Slovene>Ziga Kranjec.
 
-    <item*|Spanish:>Álvaro Cantero Tejero, Pablo Ruiz Múzquiz, David Moriano
+    <item*|Spanish>Álvaro Cantero Tejero, Pablo Ruiz Múzquiz, David Moriano
     Garcia, Offray Vladimir Luna Cárdenas.
 
-    <item*|Swedish:>Harald Ellmann.
+    <item*|Swedish>Harald Ellmann.
 
-    <item*|Ukrainian:>Volodymyr Lisivka.
+    <item*|Ukrainian>Volodymyr Lisivka.
   </description>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -53,27 +55,18 @@
 
 <\initial>
   <\collection>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
