@@ -77,7 +77,8 @@
   (texmacs-load-tree load_tree (texmacs_tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
   (texmacs-save-buffer save_buffer (void url string))
-
+  (delayed-autosave delayed_autosave (void))
+  
   (color get_color (int string))
   (style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))

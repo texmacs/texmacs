@@ -357,8 +357,8 @@ x_display_rep::event_loop () {
       time_t ct= texmacs_time ();
       message m= messages->item;
       if ((m->t - ct) <= 0) {
-	m->wid << emit_alarm (m->s, m->t);
 	messages= messages->next;
+	m->wid << emit_alarm (m->s, m->t);
       }
       else break;
     }

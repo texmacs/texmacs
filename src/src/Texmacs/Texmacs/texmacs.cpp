@@ -174,7 +174,7 @@ TeXmacs_main (int argc, char** argv) {
   }
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
-  dis->delayed_message (sv->get_meta(), "auto save", 120000);
+  sv->delayed_autosave();
   dis->delayed_message (sv->get_meta(), "banner", 100);
   dis->event_loop ();
 

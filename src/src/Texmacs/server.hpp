@@ -95,6 +95,7 @@ public:
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
   virtual void save_buffer (url name, string fm) = 0;
   virtual void auto_save () = 0;
+  virtual void delayed_autosave () = 0;
   virtual bool buffer_unsaved () = 0;
   virtual bool exists_unsaved_buffer () = 0;
   virtual void pretend_save_buffer () = 0;

@@ -88,6 +88,7 @@ public:
   void load_buffer (url name, string fm, int where= 0, bool asf= false);
   void save_buffer (url name, string fm);
   void auto_save ();
+  void delayed_autosave ();
   bool buffer_unsaved ();
   bool exists_unsaved_buffer ();
   void pretend_save_buffer ();
