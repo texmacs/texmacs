@@ -859,6 +859,19 @@ tmg_string_numberP (SCM arg1) {
 }
 
 SCM
+tmg_set_bibtex_command (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-bibtex-command");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  set_bibtex_command (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_string_2url (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->url");
 
@@ -2402,6 +2415,7 @@ initialize_glue_basic () {
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
   gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
+  gh_new_procedure ("set-bibtex-command", (FN) tmg_set_bibtex_command, 1, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);
