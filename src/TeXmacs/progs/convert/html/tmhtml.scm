@@ -960,6 +960,7 @@
   (code ,tmhtml-verbatim)
   ;; Presentation
   (tt (h:tt))
+  (hrule (h:hr))
   ;; Names
   (TeXmacs ,(lambda x '("TeXmacs")))
   (TeX ,(lambda x '("TeX")))
