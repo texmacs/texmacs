@@ -3,12 +3,11 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Primitive <TeXmacs> environment variables>
+  <tmdoc-title|Length values>
 
-  We need one file for each category and one file for each particular
-  environment variable, with an explanatory example.
+  <todo|adapt the documentation from the <hyper-link|Wiki|http://alqua.com/tmresources/length%20units>>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|2004|David Allouche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -24,23 +23,11 @@
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-right|25mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
     <associate|page-top|30mm>
-    <associate|page-type|a4>
     <associate|page-right|30mm>
     <associate|par-width|150mm>
     <associate|page-odd|30mm>
     <associate|page-bot|30mm>
-    <associate|language|english>
     <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
