@@ -166,7 +166,15 @@ SOURCE=..\..\Typeset\Bridge\bridge_default.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Typeset\Bridge\bridge_docrange.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Typeset\Bridge\bridge_document.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Typeset\Bridge\bridge_eval.cpp
 # End Source File
 # Begin Source File
 
@@ -402,6 +410,10 @@ SOURCE=..\..\Typeset\Env\env_inactive.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Typeset\Env\env_length.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Typeset\Env\env_semantics.cpp
 # End Source File
 # Begin Source File
@@ -579,6 +591,10 @@ SOURCE=..\..\Window\Widget\Input\input_widget.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Classes\Atomic\ip_observer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Plugins\Ispell\ispell.cpp
 # End Source File
 # Begin Source File
@@ -662,6 +678,10 @@ SOURCE=..\..\Typeset\Boxes\Modifier\modifier_boxes.cpp
 # Begin Source File
 
 SOURCE=..\..\Guile\Scheme\object.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Classes\Abstract\observer.cpp
 # End Source File
 # Begin Source File
 
@@ -1427,6 +1447,10 @@ SOURCE=..\Include\netdb.h
 # Begin Source File
 
 SOURCE=..\..\Guile\Scheme\object.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Classes\Abstract\observer.hpp
 # End Source File
 # Begin Source File
 
