@@ -84,7 +84,7 @@
 	 (title (tmhtml-find-title doc))
 	 (css '(h:style (@ (type "text/css")) "body { text-align: justify }"))
 	 (body (tmhtml doc)))
-    (if (not title) (set! title "No title"))
+    (set! title (if title `(concat ,title " (FSF GNU project)") "No title"))
     (if (or (in? "tmdoc" styles) (in? "tmweb" styles))
 	(begin
 	  (set! css '(h:link (@ (rel "stylesheet")
