@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.7>
 
 <style|source>
 
@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|src|env|header-seminar|section-seminar>
+  <use-package|std|env|header-seminar|section-seminar>
 
   \;
 
