@@ -1,4 +1,6 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.3.4>
+
+<style|<tuple|source|common-base>>
 
 <\body>
   <assign|std-markup-package|1.0>
@@ -7,15 +9,15 @@
 
   \;
 
-  <assign|TeXmacs|<macro|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>>>
+  <assign|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>>>>
 
-  <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<move|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||||>|0fn|-0.2fn><space|2spc><translate|This
-  document has been produced using|english|<language>> GNU <TeXmacs>
-  (<translate|see|english|<language>> <with|font-family|tt|http://www.texmacs.org>).<rightflush>>>>>
+  <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<active*|<move|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||||>|0fn|-0.2fn>><space|2spc><localize|This
+  document has been produced using> GNU <TeXmacs> (<localize|see>
+  <with|font-family|tt|http://www.texmacs.org>).<rightflush>>>>>
 
-  <assign|TeX|<macro|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>
+  <assign|TeX|<macro|<active*|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>>
 
-  <assign|LaTeX|<macro|L<rsup|<space|-0.8spc><move|A|0fn|-0.1fn>><space|-0.2spc>T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>
+  <assign|LaTeX|<macro|<active*|L<rsup|<space|-0.8spc><move|A|0fn|-0.1fn>><space|-0.2spc>T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>>
 
   <assign|hflush|<macro|<htab|0fn|0>>>
 
@@ -37,11 +39,11 @@
 
   <drd-props|underline|arity|1|accessible|all>
 
-  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<with|mode|math|<op|\<circ\>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>
+  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>
 
   <assign|unfold|<\macro|x|y>
     <\with|par-left|<plus|<value|par-left>|1.5fn>>
-      <surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<with|mode|math|\<bullet\>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>
+      <surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>
 
       <surround||<rightflush>|<arg|y>>
     </with>
@@ -114,18 +116,18 @@
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

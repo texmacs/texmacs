@@ -26,6 +26,7 @@ static bool
 is_long (tree t) {
   switch (L(t)) {
   case DOCUMENT:
+  case SURROUND:
   case INCLUDE:
   case TFORMAT:
   case TABLE:
@@ -33,7 +34,6 @@ is_long (tree t) {
   case CONCAT:
   case ROW:
     return false;
-  case SURROUND:
   case ASSIGN:
   case DATOMS:
   case DLINES:
