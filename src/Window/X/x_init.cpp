@@ -90,6 +90,12 @@ x_display_rep::get_rgb (color col, int& r, int& g, int& b) {
 
 color
 x_display_rep::get_color (string s) {
+  if ((N(s) == 4) && (s[0]=='#')) {
+    int r= 17 * from_hexadecimal (s (1, 2));
+    int g= 17 * from_hexadecimal (s (2, 3));
+    int b= 17 * from_hexadecimal (s (3, 4));
+    return rgb (r, g, b);
+  }
   if ((N(s) == 7) && (s[0]=='#')) {
     int r= from_hexadecimal (s (1, 3));
     int g= from_hexadecimal (s (3, 5));
