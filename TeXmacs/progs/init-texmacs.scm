@@ -109,6 +109,8 @@
 (lazy-define (texmacs plugin plugin-cmd) verbatim-serialize)
 (lazy-define (texmacs plugin plugin-cmd) plugin-serialize)
 (lazy-define (texmacs plugin plugin-cmd) format-command)
+(lazy-define (texmacs plugin plugin-cmd) plugin-async-feed)
+(lazy-define (texmacs plugin plugin-cmd) plugin-async-retrieve)
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))

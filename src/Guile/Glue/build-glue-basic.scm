@@ -39,6 +39,7 @@
   (tree-set! tree_set (void texmacs_tree int texmacs_tree))
   (subtree subtree (texmacs_tree texmacs_tree path))
   (tree-copy copy (tree tree))
+  (tree-append join (tree tree tree))
   (tree-label-extension? is_extension (bool tree_label))
   (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
@@ -150,8 +151,13 @@
   (xml-cdata->tm xml_cdata_to_tm (string string))
   (xml-unspace xml_unspace (string string bool bool))
 
+  (connection-declared? connection_declared (bool string))
+  (connection-status connection_status (int string string))
+  (connection-start connection_start (string string string bool))
   (connection-eval connection_eval (texmacs_tree string string texmacs_tree))
   (connection-cmd connection_cmd (texmacs_tree string string string))
+  (connection-write connection_write (void string string tree))
+  (connection-read connection_read (tree string string string))
 
   (path-inf? path_inf (bool path path))
   (path-inf-eq? path_inf_eq (bool path path))
