@@ -165,6 +165,7 @@ private:
   tree exec_compound (tree t);
   void exec_until_compound (tree t, path p);
   bool exec_until_compound (tree t, path p, string var, int level);
+  tree exec_use_package (tree t);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);

@@ -98,56 +98,6 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 * Processing preamble
 ******************************************************************************/
 
-static tree
-filter_style (tree t) {
-  if (is_atomic (t)) return t;
-  else switch (L(t)) {
-  case STYLE_ONLY:
-  case VAR_STYLE_ONLY:
-    if (is_atomic (t[0])) return "";
-    else return filter_style (t[0][N(t[0])-1]);
-  case ACTIVE:
-  case VAR_ACTIVE:
-  case INACTIVE:
-  case VAR_INACTIVE:
-    return filter_style (t[0]);
-  default:
-    {
-      int i, n= N(t);
-      tree r (t, n);
-      for (i=0; i<n; i++)
-	r[i]= filter_style (t[i]);
-      return r;
-    }
-  }
-}
-
-void
-edit_typeset_rep::typeset_style (tree style) {
-  //cout << "Process style " << style << "\n";
-  if (L(style) != TUPLE)
-    fatal_error ("tuple expected as style",
-		 "edit_interface_rep::process_style");
-
-  int i, n= N (style);
-  for (i=0; i<n; i++) {
-    url styp= "$TEXMACS_STYLE_PATH";
-    url name= as_string (style[i]) * string (".ts");
-    //cout << "Package " << name << "\n";
-    if (is_rooted_web (env->base_file_name))
-      styp= styp | head (env->base_file_name);
-    else styp= head (env->base_file_name) | styp;
-    string doc_s;
-    if (!load_string (styp * name, doc_s, false)) {
-      tree doc= texmacs_document_to_tree (doc_s);
-      if (is_compound (doc)) {
-	typeset_style (extract (doc, "style"));
-	env->exec (filter_style (extract (doc, "body")));
-      }
-    }
-  }
-}
-
 void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
@@ -159,11 +109,12 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     ok = drd->set_locals (t);
   }
   if (!ok) {
-    tree style2= style;
-    if (is_tuple (style2))
-      style2= ::join (::join (tuple ("std--before"), style2),
-		     tuple ("std--after"));
-    typeset_style (style2);
+    if (!is_tuple (style))
+      fatal_error ("tuple expected as style",
+		   "edit_interface_rep::typeset_style_using_cache");
+    tree t (USE_PACKAGE, "std--before");
+    t << A (style) << "std--after";
+    env->exec (t);
     env->read_env (H);
     drd->heuristic_init (H);
     if ((!init->contains (PREAMBLE)) || (init[PREAMBLE] == "false"))

@@ -407,6 +407,9 @@ concater_rep::typeset (tree t, path ip) {
   case INCLUDE:
     typeset_include (t, ip);
     break;
+  case USE_PACKAGE:
+    typeset_executable (t, ip);
+    break;
 
   case OR:
   case XOR:

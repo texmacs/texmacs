@@ -42,6 +42,7 @@ get_codes (string version) {
   new_feature (H, "quote-value");
   new_feature (H, "quote-arg");
   new_feature (H, "mark");
+  new_feature (H, "use-package");
   new_feature (H, "style-only");
   new_feature (H, "style-only*");
   new_feature (H, "rewrite-inactive");
@@ -1927,6 +1928,44 @@ upgrade_env_vars (tree t) {
 }
 
 /******************************************************************************
+* Use package primitive for style files
+******************************************************************************/
+
+static tree
+upgrade_use_package (tree t) {
+  tree style= extract (t, "style");
+  tree init = extract (t, "initial");
+  bool preamble= false;
+  int i, n= N(init);
+  for (i=0; i<n; i++)
+    if (init[i] == tree (ASSOCIATE, PREAMBLE, "true"))
+      preamble= true;
+
+  bool no_style= true;
+  if (preamble) {
+    n= N(t);
+    tree r (L(t));
+    for (i=0; i<n; i++)
+      if (is_compound (t[i], "style")) {
+	r << compound ("style", "generic");
+	no_style= false;
+      }
+      else if (is_compound (t[i], "body", 1) && is_document (t[i][0])) {
+	tree v (USE_PACKAGE);
+	v << A (style);
+	tree u (DOCUMENT);
+	if (N(v) > 0) u << v;
+	u << A (t[i][0]);
+	if (no_style) r << compound ("style", "generic");
+	r << compound ("body", u);
+      }
+      else r << t[i];
+    return r;
+  }
+  else return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2002,5 +2041,7 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.2.8"))
     t= upgrade_env_vars (t);
+  if (version_inf_eq (version, "1.0.3.3"))
+    t= upgrade_use_package (t);
   return t;
 }

@@ -189,6 +189,8 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case INCLUDE:
     return exec_rewrite (t);
+  case USE_PACKAGE:
+    return exec_use_package (t);
 
   case OR:
     return exec_or (t);
@@ -565,6 +567,49 @@ edit_env_rep::exec_quasiquoted (tree t) {
   }
 }
 
+static tree
+filter_style (tree t) {
+  if (is_atomic (t)) return t;
+  else switch (L(t)) {
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
+    if (is_atomic (t[0])) return "";
+    else return filter_style (t[0][N(t[0])-1]);
+  case ACTIVE:
+  case VAR_ACTIVE:
+  case INACTIVE:
+  case VAR_INACTIVE:
+    return filter_style (t[0]);
+  default:
+    {
+      int i, n= N(t);
+      tree r (t, n);
+      for (i=0; i<n; i++)
+	r[i]= filter_style (t[i]);
+      return r;
+    }
+  }
+}
+
+tree
+edit_env_rep::exec_use_package (tree t) {
+  int i, n= N(t);
+  for (i=0; i<n; i++) {
+    url styp= "$TEXMACS_STYLE_PATH";
+    url name= as_string (t[i]) * string (".ts");
+    //cout << "Package " << name << "\n";
+    if (is_rooted_web (base_file_name))
+      styp= styp | head (base_file_name);
+    else styp= head (base_file_name) | styp;
+    string doc_s;
+    if (!load_string (styp * name, doc_s, false)) {
+      tree doc= texmacs_document_to_tree (doc_s);
+      if (is_compound (doc))
+	exec (filter_style (extract (doc, "body")));
+    }
+  }
+  return "";
+}
 
 tree
 edit_env_rep::exec_or (tree t) {
@@ -1225,6 +1270,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case EXTERN:
   case INCLUDE:
     return exec_until_rewrite (t, p, var, level);
+  case USE_PACKAGE:
   case OR:
   case XOR:
   case AND:

@@ -18,11 +18,12 @@ tree remove (tree, path, int);
 class bridge_auto_rep: public bridge_rep {
 protected:
   tree   f;
+  bool   border;
   bool   valid;
   bridge body;
 
 public:
-  bridge_auto_rep (typesetter ttt, tree st, path ip, tree f);
+  bridge_auto_rep (typesetter ttt, tree st, path ip, tree f, bool border);
   void initialize ();
 
   void notify_assign (path p, tree u);
@@ -36,11 +37,13 @@ public:
   void my_typeset (int desired_status);
 };
 
-bridge_auto_rep::bridge_auto_rep (typesetter ttt, tree st, path ip, tree f2):
-  bridge_rep (ttt, st, ip)
+bridge_auto_rep::bridge_auto_rep (
+  typesetter ttt, tree st, path ip, tree f2, bool border2):
+    bridge_rep (ttt, st, ip)
 {
-  f    = f2;
-  valid= false;
+  f     = f2;
+  border= border2;
+  valid = false;
 }
 
 void
@@ -53,8 +56,8 @@ bridge_auto_rep::initialize () {
 }
 
 bridge
-bridge_auto (typesetter ttt, tree st, path ip, tree f) {
-  return new bridge_auto_rep (ttt, st, ip, f);
+bridge_auto (typesetter ttt, tree st, path ip, tree f, bool border) {
+  return new bridge_auto_rep (ttt, st, ip, f, border);
 }
 
 /******************************************************************************
@@ -171,7 +174,7 @@ bridge_auto_rep::my_typeset (int desired_status) {
   tree oldv= env->read (PREAMBLE);
   env->write_update (PREAMBLE, "false");
   initialize ();
-  ttt->insert_marker (st, ip);
+  if (border) ttt->insert_marker (st, ip);
   body->typeset (desired_status);
   env->write_update (PREAMBLE, oldv);
   env->macro_arg= env->macro_arg->next;

@@ -22,7 +22,7 @@ bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
-bridge bridge_auto (typesetter, tree, path, tree);
+bridge bridge_auto (typesetter, tree, path, tree, bool);
 
 bridge nil_bridge;
 
@@ -48,7 +48,7 @@ bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
   if (is_document (st))
     return bridge_document (ttt, st, ip);
-  else return bridge_auto (ttt, st, ip, inactive_auto);
+  else return bridge_auto (ttt, st, ip, inactive_auto, false);
 }
 
 bridge
@@ -62,7 +62,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
   case ERROR:
-    return bridge_auto (ttt, st, ip, error_m);
+    return bridge_auto (ttt, st, ip, error_m, true);
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
   case SURROUND:
@@ -93,9 +93,9 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case VAR_ACTIVE:
     return bridge_compound (ttt, st, ip);
   case INACTIVE:
-    return bridge_auto (ttt, st, ip, inactive_m);
+    return bridge_auto (ttt, st, ip, inactive_m, true);
   case VAR_INACTIVE:
-    return bridge_auto (ttt, st, ip, var_inactive_m);
+    return bridge_auto (ttt, st, ip, var_inactive_m, true);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
   default:
