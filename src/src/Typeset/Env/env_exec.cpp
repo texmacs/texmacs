@@ -1265,7 +1265,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case VAR_IF:
     return exec_until_if (t, p, var, level);
   case CASE:
+    return exec_until_case (t, p, var, level);
   case WHILE:
+    return exec_until_while (t, p, var, level);
   case FOR_EACH:
     (void) exec (t);
     return false;
@@ -1509,6 +1511,32 @@ edit_env_rep::exec_until_if (tree t, path p, string var, int level) {
   if (is_compound (tt) || !is_bool (tt->label)) return false;
   if (as_bool (tt->label)) return exec_until (t[1], p, var, level);
   if (N(t)==3) return exec_until (t[2], p, var, level);
+  return false;
+}
+
+bool
+edit_env_rep::exec_until_case (tree t, path p, string var, int level) {
+  if (N(t)<2) return false;
+  int i, n= N(t);
+  for (i=0; i<(n-1); i+=2) {
+    tree tt= exec (t[i]);
+    if (is_compound (tt) || ! is_bool (tt->label)) return false;
+    if (as_bool (tt->label)) return exec_until (t[i+1], p, var, level);
+  }
+  if (i<n) return exec_until (t[i], p, var, level);
+  return false;
+}
+
+bool
+edit_env_rep::exec_until_while (tree t, path p, string var, int level) {
+  if (N(t)!=2) return false;
+  while (1) {
+    tree tt= exec (t[0]);
+    if (is_compound (tt)) return false;
+    if (!is_bool (tt->label)) return false;
+    if (!as_bool (tt->label)) break;
+    if (exec_until (t[1], p, var, level)) return true;
+  }
   return false;
 }
 
