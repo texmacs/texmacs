@@ -280,7 +280,13 @@
 
 (kbd-map in-german?
   ("ß" "ÿ")
-  ("ÿ" "¸"))
+  ("ÿ" "¸")
+  ("<" "<less>")
+  (">" "<gtr>")
+  ("< var" "")
+  ("> var" "")
+  ("< <" "")
+  ("> >" ""))
 
 (kbd-map in-hungarian?
   ("text:symbol O" "Ž")
