@@ -1,0 +1,37 @@
+/* XPM */
+static char *tm_name[] = {
+/* columns rows colors chars-per-pixel */
+"21 17 14 1",
+"  c None",
+"Y c Gray0",
+". c #080c08",
+"X c #181c18",
+"o c #282c28",
+"O c #383c38",
+"+ c #484c48",
+"@ c #585c58",
+"# c #686c68",
+"$ c #787c78",
+"% c #888c88",
+"& c #989c98",
+"* c #a8aca8",
+"= c #b8bcb8",
+/* pixels */
+"                     ",
+"                     ",
+"                     ",
+"%OO+    OOO#         ",
+"=&YY@   &o@=         ",
+"  O.Y&   @*     &    ",
+"  O&Yo   @*    %.=   ",
+"  O @Y@  @*    OY$   ",
+"  O  XY& @*   *O.o   ",
+"  O  &YX @*   @%@Y&  ",
+"  O   @Y@@*   o =Y@  ",
+"  O    oYo*  %.OO..  ",
+"  O    &YY*  O&**$Y$ ",
+" =o     #Y* &o    .o ",
+"$YY.*    o*%YY%  $YYX",
+"                     ",
+"                     "
+};

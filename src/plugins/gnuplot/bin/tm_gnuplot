@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# tm_gnuplot 
+# ========== 
+# bash script for interfacing gnuplot from TeXmacs
+# needs option --texmacs for compatibility with TeXmacs interface convention and user information
+#
+# usage within TeXmacs:
+# =====================
+# write gnuplot-commands within the input line, 
+# use as many commands as necessary, 
+# divide them by the ~ chararacter, because the ENTER key terminates the input and sends it to gnuplot.
+# output is the graph made by gnuplot.
+
+if [ "$1" != "--texmacs" ]
+then
+	echo tm_gnuplot. This script should be started only from TeXmacs.
+	exit
+fi	
+
+# control characters
+tmp=`echo DATA_BEGIN=X DATA_END=Y DATA_ESCAPE=Z | tr "XYZ" "\002\005\027" `
+eval $tmp
+
+# defining pipe-gnuplot binary path and name 
+# for unix/linux environments
+GNUPLOT_PATH=
+PIPE_GNUPLOT=gnuplot
+# for windows/cygwin environment
+# GNUPLOT_PATH=/cygdrive/w/tex_cd/programme/gnuplot/
+# PIPE_GNUPLOT=pgnuplot.exe
+
+# defining temporary postscript file directory
+TEMPDIR=.
+if [ -d $TEMPDIR ]
+then
+	:
+else	
+	mkdir $TEMPDIR
+fi
+
+# defining temporary postscript file name
+TEMP_PS_NAME=temp.eps
+
+# standard initialization of GNUplot
+init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
+	
+# startup banner
+echo -n $DATA_BEGIN
+echo verbatim:This is a TeXmacs interface for GNUplot.
+
+# prompt-input-gnuplot-output loop
+while [ 1 ]; do
+	# prompt
+	echo -n $DATA_BEGIN
+	echo -n channel:prompt
+	echo -n $DATA_END
+	echo -n GNUplot'] '
+	echo -n $DATA_END 
+	 
+	#read a line from stdin
+	read input
+	
+	#concat init string and input string
+	input=$init$input
+	
+	#for debugging purposes
+	#echo $input | tr  "~" "\n" | tee tm_gnuplot.log | $GNUPLOT_PATH$PIPE_GNUPLOT 
+	echo -E "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
+	
+	echo -n $DATA_BEGIN
+	echo -n verbatim:
+	
+	echo -n $DATA_BEGIN
+	echo -n ps:
+	cat $TEMP_DIR$TEMP_PS_NAME 
+	echo -n $DATA_END 
+	echo -ne "\n"	
+	
+	rm $TEMP_DIR$TEMP_PS_NAME
+done

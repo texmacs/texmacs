@@ -1,0 +1,28 @@
+/* XPM */
+static char *tb_link[] = {
+/* width height num_colors chars_per_pixel */
+"    17    17      4            1",
+/* colors */
+"  c None",
+"X c #000000",
+"x c #c0c0c0",
+"y c #00ff00",
+/* pixels */
+"                 ",
+"             XX  ",
+"            X xX ",
+"        XXXX xyX ",
+"       X xX xyX  ",
+"      X xX xyX   ",
+"     X xXXyyXX   ",
+"    X xX  XX X   ",
+"   X xX  xX xX   ",
+"   XxXX xX xX    ",
+"   XX  XX xX     ",
+"   X xyX xX      ",
+"  X xyX xX       ",
+"  XxyXXXX        ",
+"  XXX            ",
+"                 ",
+"                 "
+};

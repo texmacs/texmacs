@@ -1,0 +1,841 @@
+
+/******************************************************************************
+* MODULE     : analyze.cpp
+* DESCRIPTION: Properties of characters and strings
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "string.hpp"
+
+/******************************************************************************
+* Tests for caracters
+******************************************************************************/
+
+bool
+is_alpha (register char c) {
+  return ((c>='a') && (c<='z')) || ((c>='A') && (c<='Z'));
+}
+
+bool
+is_iso_alpha (register char c) {
+  int i= ((int) ((unsigned char) c));
+  return
+    ((c>='a') && (c<='z')) ||
+    ((c>='A') && (c<='Z')) ||
+    ((i >= 128) && (i != 159) && (i != 189) && (i != 190) && (i != 191));
+}
+
+bool
+is_locase (register char c) {
+  int code= (int) ((unsigned char) c);
+  return
+    ((c>='a') && (c<='z')) ||
+    ((code >= 160) && (code < 189)) ||
+    (code >= 224);
+}
+
+bool
+is_upcase (register char c) {
+  int code= (int) ((unsigned char) c);
+  return
+    ((c>='A') && (c<='Z')) ||
+    ((code >= 128) && (code < 159)) ||
+    ((code >= 192) && (code < 224));
+}
+
+bool
+is_digit (register char c) {
+  return (c>='0') && (c<='9');
+}
+
+bool
+is_numeric (register char c) {
+  return ((c>='0') && (c<='9')) || (c=='.');
+}
+
+bool
+is_ponctuation (register char c) {
+  return
+    (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
+    (c==';') || (c=='!') || (c=='?');
+}
+
+bool
+is_space (register char c) {
+  return (c == ' ') || (c == '\11') || (c == '\12') || (c == '\15');\
+}
+
+/******************************************************************************
+* Tests for strings
+******************************************************************************/
+
+bool
+is_alpha (string s) {
+  int i;
+  if (N(s)==0) return false;
+  for (i=0; i<N(s); i++)
+    if (!is_alpha (s[i])) return false;
+  return true;
+}
+
+bool
+is_iso_alpha (string s) {
+  int i;
+  if (N(s)==0) return false;
+  for (i=0; i<N(s); i++)
+    if (!is_iso_alpha (s[i])) return false;
+  return true;
+}
+
+bool
+is_numeric (string s) {
+  int i;
+  if (N(s)==0) return false;
+  for (i=0; i<N(s); i++)
+    if (!is_numeric (s[i])) return false;
+  return true;
+}
+
+/******************************************************************************
+* Changing cases
+******************************************************************************/
+
+string
+upcase_first (string s) {
+  if ((N(s)==0) || (!is_locase (s[0]))) return s;
+  return string ((char) (((int) ((unsigned char) s[0]))-32)) * s (1, N(s));
+}
+
+string
+locase_first (string s) {
+  if ((N(s)==0) || (!is_upcase (s[0]))) return s;
+  return string ((char) (((int) ((unsigned char) s[0]))+32)) * s (1, N(s));
+}
+
+string
+upcase_all (string s) {
+  int i;
+  string r (N(s));
+  for (i=0; i<N(s); i++)
+    if (!is_locase (s[i])) r[i]= s[i];
+    else r[i]= (char) (((int) ((unsigned char) s[i]))-32);
+  return r;
+}
+
+string
+locase_all (string s) {
+  int i;
+  string r (N(s));
+  for (i=0; i<N(s); i++)
+    if (!is_upcase (s[i])) r[i]= s[i];
+    else r[i]= (char) (((int) ((unsigned char) s[i]))+32);
+  return r;
+}
+
+/******************************************************************************
+* Spanish in relation with ispell
+******************************************************************************/
+
+string
+ispanish_to_spanish (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if ((s[i] == '\'') && ((i+1)<n)) {
+      switch (s[i+1]) {
+      case 'A': r << 'Á'; break;
+      case 'E': r << 'É'; break;
+      case 'I': r << 'Í'; break;
+      case 'N': r << 'Ñ'; break;
+      case 'O': r << 'Ó'; break;
+      case 'U': r << 'Ú'; break;
+      case 'Y': r << 'İ'; break;
+      case 'a': r << 'á'; break;
+      case 'e': r << 'é'; break;
+      case 'i': r << 'í'; break;
+      case 'n': r << 'ñ'; break;
+      case 'o': r << 'ó'; break;
+      case 'u': r << 'ú'; break;
+      case 'y': r << 'ı'; break;
+      default : r << '\'' << s[i+1];
+      }
+      i++;
+    }
+    else r << s[i];
+  return r;
+}
+
+string
+spanish_to_ispanish (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case 'Á': r << "'A"; break;
+    case 'É': r << "'E"; break;
+    case 'Í': r << "'I"; break;
+    case 'Ñ': r << "'N"; break;
+    case 'Ó': r << "'O"; break;
+    case 'Ú': r << "'U"; break;
+    case 'İ': r << "'Y"; break;
+    case 'á': r << "'a"; break;
+    case 'é': r << "'e"; break;
+    case 'í': r << "'i"; break;
+    case 'ñ': r << "'n"; break;
+    case 'ó': r << "'o"; break;
+    case 'ú': r << "'u"; break;
+    case 'ı': r << "'y"; break;
+    default : r << s[i];
+    }
+  return r;
+}
+
+string
+igerman_to_german (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == 'ß') r << 'ÿ';
+    else r << s[i];
+  return r;
+}
+
+string
+german_to_igerman (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == 'ÿ') r << 'ß';
+    else r << s[i];
+  return r;
+}
+
+/******************************************************************************
+* Iso latin 2 encoding for polish and czech
+******************************************************************************/
+
+static string il2_to_cork_string=
+  "€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ Š ‰‘Ÿ’“”™š› ¡ª©±²³´¹º»ÁÂ€Äˆ‚ÇƒÉ†Ë…ÍÎ„Ğ‹ŒÓÔÖ.—Ú–Üİ•ÿ¯áâ ä¨¢ç£é¦ë¥íî¤«¬óô®ö/°·ú¶üıµ ";
+static string cork_to_il2_string=
+  "Ã¡ÆÈÏÌÊGÅ¥£ÑÒ ÕÀØ¦©ª«ŞÛÙY¬®¯IIğ§ã±æèïìêgåµ³ñò õàø¶¹º»şûùy¼¾¿i!?LAÁÂAÄAAÇEÉEËIÍÎIĞNOÓÔOÖOOUÚUÜİ Saáâaäaaçeéeëiíîiğnoóôoöoouúuüı ß";
+
+static char
+il2_to_cork (char c) {
+  int i= (int) ((unsigned char) c);
+  if (i<128) return c;
+  return il2_to_cork_string [i-128];
+}
+
+static char
+cork_to_il2 (char c) {
+  int i= (int) ((unsigned char) c);
+  if (i<128) return c;
+  return cork_to_il2_string [i-128];
+}
+
+string
+il2_to_cork (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= il2_to_cork (s[i]);
+  return r;
+}
+
+string
+cork_to_il2 (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= cork_to_il2 (s[i]);
+  return r;
+}
+
+/******************************************************************************
+* Koi8 encoding for russian
+******************************************************************************/
+
+static string koi8_to_iso_string=
+  "áâ÷çäåöúéêëìíîïğòóôõæèãşûıÿùøüàñÁÂ×ÇÄÅÖÚÉÊËÌÍÎÏĞÒÓÔÕÆÈÃŞÛİßÙØÜÀÑ";
+static string iso_to_koi8_string=
+  "şàáöäåôãõèéêëìíîïÿğñòóæâüûçøıù÷úŞÀÁÖÄÅÔÃÕÈÉÊËÌÍÎÏßĞÑÒÓÆÂÜÛÇØİÙ×Ú";
+
+static char
+koi8_to_iso (char c, bool ukrainian) {
+  int i= (int) ((unsigned char) c);
+  if (i==156) return '³';
+  if (i==188) return '£';
+  if (ukrainian)
+  {
+     switch(c)
+     {
+         case 'I':return '¶';
+         case 'ˆ':return '·';
+         case '™':return '´';
+         case '€':return '½';
+         case 'i':return '¦';
+         case '¨':return '§';
+         case '¹':return '¤';
+         case ' ':return '­';
+     }
+  }
+  if (i<192) return c;
+  return koi8_to_iso_string [i-192];
+}
+
+static char
+iso_to_koi8 (char c, bool ukrainian) {
+  int i= (int) ((unsigned char) c);
+  if (c=='³') return (char) 156;
+  if (c=='£') return (char) 188;
+  if (ukrainian)
+  {
+     switch(c)
+     {
+         case '¶':return 'I';
+         case '·':return 'ˆ';
+         case '´':return '™';
+         case '½':return '€';
+         case '¦':return 'i';
+         case '§':return '¨';
+         case '¤':return '¹';
+         case '­':return ' ';
+     }
+  }
+  if (i<192) return c;
+  return iso_to_koi8_string [i-192];
+}
+
+string
+koi8_to_iso (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= koi8_to_iso (s[i], false);
+  return r;
+}
+
+string
+iso_to_koi8 (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= iso_to_koi8 (s[i], false);
+  return r;
+}
+
+string
+koi8uk_to_iso (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= koi8_to_iso (s[i], true);
+  return r;
+}
+
+string
+iso_to_koi8uk (string s) {
+  int i, n= N(s);
+  string r (n);
+  for (i=0; i<n; i++)
+    r[i]= iso_to_koi8 (s[i], true);
+  return r;
+}
+
+/******************************************************************************
+* Convert between TeXmacs and XML strings
+******************************************************************************/
+
+static bool
+is_xml_name (char c) {
+  return
+    is_alpha (c) || is_numeric (c) ||
+    (c == '.') || (c == '-') || (c == ':');
+}
+
+string
+tm_to_xml_name (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (is_xml_name (s[i])) r << s[i];
+    else r << "_" << as_string ((int) ((unsigned char) s[i])) << "_";
+  return r;
+}
+
+string
+xml_name_to_tm (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] != '_') r << s[i];
+    else {
+      int start= ++i;
+      while ((i<n) && (s[i]!='_')) i++;
+      r << (char) ((unsigned char) as_int (s (start, i)));
+    }
+  return r;
+}
+
+string
+tm_to_xml_cdata (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] == '&') r << "&amp;";
+    else if (s[i] == '>') r << "&gt;";
+    else if (s[i] != '<') r << s[i];
+    else {
+      int start= ++i;
+      while ((i<n) && (s[i]!='>')) i++;
+      r << "&" << tm_to_xml_name (s (start, i)) << ";";
+    }
+  return r;
+}
+
+string
+xml_cdata_to_tm (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] == '<') r << "<less>";
+    else if (s[i] == '>') r << "<gtr>";
+    else if (s[i] != '&') r << s[i];
+    else {
+      int start= ++i;
+      while ((i<n) && (s[i]!=';')) i++;
+      string x= "<" * xml_name_to_tm (s (start, i)) * ">";
+      if (x == "<amp>") r << "&";
+      else r << x;
+    }
+  return r;
+}
+
+string
+xml_unspace (string s, bool first, bool last) {
+  string r;
+  int i= 0, n= N(s);
+  if (first) while ((i<n) && is_space (s[i])) i++;
+  while (i<n)
+    if (!is_space (s[i])) r << s[i++];
+    else {
+      while ((i<n) && is_space (s[i])) i++;
+      if ((i<n) || (!last)) r << ' ';
+    }
+  return r;
+}
+
+/******************************************************************************
+* Roman and alpha numbers
+******************************************************************************/
+
+static string ones[10]= {
+  "", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix" };
+static string tens[10]= {
+  "", "x", "xx", "xxx", "xl", "l", "lx", "lxx", "lxxx", "xc" };
+static string hundreds[10]= {
+  "", "c", "cc", "ccc", "cd", "d", "dc", "dcc", "dccc", "cm" };
+
+string
+roman_nr (int nr) {
+  if (nr<0) return "-" * roman_nr (nr);
+  if (nr==0) return "o";
+  if (nr>1000) return "m" * roman_nr (nr-1000);
+  if (nr==1000) return "m";
+  if (nr==999) return "im";
+  if (nr==499) return "id";
+  if ((nr%100)==99) return hundreds[nr/100] * "ic";
+  if ((nr%100)==49) return hundreds[nr/100] * "il";
+  return hundreds[nr/100] * tens[(nr%100)/10] * ones[nr%10];
+}
+
+string
+Roman_nr (int nr) {
+  return upcase_all (roman_nr (nr));
+}
+
+string
+alpha_nr (int nr) {
+  if (nr<0) return "-" * alpha_nr (nr);
+  if (nr==0) return "0";
+  if (nr<=26) return string ((char) (((int) 'a')+ nr-1));
+  return alpha_nr ((nr-1)/26) * alpha_nr (((nr-1)%26)+1);
+}
+
+string
+Alpha_nr (int nr) {
+  return upcase_all (alpha_nr (nr));
+}
+
+/******************************************************************************
+* Convert between verbatim and TeXmacs encoding
+******************************************************************************/
+
+string
+tm_encode (string s) {
+  register int i;
+  string r;
+  for (i=0; i<N(s); i++) {
+    if (s[i]=='<') r << "<less>";
+    else if (s[i]=='>') r << "<gtr>";
+    else r << s[i];
+  }
+  return r;
+}
+
+string
+tm_decode (string s) {
+  register int i;
+  string r;
+  for (i=0; i<N(s); i++) {
+    if (s[i]=='<') {
+      register int j;
+      for (j=i+1; j<N(s); j++)
+	if (s[j]=='>') break;
+      if (j<N(s)) j++;
+      if (s(i,j) == "<less>") r << "<";
+      else if (s(i,j) == "<gtr>") r << ">";
+      i=j-1;
+      if (s[i]!='>') return r;
+    }
+    else if (s[i]!='>') r << s[i];
+  }
+  return r;
+}
+
+string
+tm_correct (string s) {
+  register int i;
+  string r;
+  for (i=0; i<N(s); i++) {
+    if (s[i]=='<') {
+      register bool flag= true;
+      register int j, k;
+      for (j=i+1; j<N(s); j++)
+	if (s[j]=='>') break;
+      if (j==N(s)) return r;
+      for (k=i+1; k<j; k++)
+	if (s[k]=='<') flag= false;
+      if (flag) r << s(i,j+1);
+      i=j;
+    }
+    else if (s[i]!='>') r << s[i];
+  }
+  return r;
+}
+
+/******************************************************************************
+* Handling escape characters
+******************************************************************************/
+
+string
+escape_quotes (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if ((s[i] == '\\') || (s[i] == '\"')) r << '\\';
+    r << s[i];
+  }
+  return r;
+}
+
+string
+escape_generic (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if ((s[i] == '\2') || (s[i] == '\5') || (s[i] == '\33')) r << '\33';
+    r << s[i];
+  }
+  return r;
+}
+
+string
+escape_verbatim (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    unsigned char c= (unsigned char) s[i];
+    if ((c == '\n') || (c == '\t')) r << ' ';
+    else if (((int) c) >= 32) r << s[i];
+  }
+  return r;
+}
+
+string
+dos_to_better (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == '\015');
+    else r << s[i];
+  return r;
+}
+
+/******************************************************************************
+* Reading input from a string
+******************************************************************************/
+
+bool
+test (string s, int i, const char* test) {
+  int n= N(s), j=0;
+  while (test[j]!='\0') {
+    if (i>=n) return false;
+    if (s[i]!=test[j]) return false;
+    i++; j++;
+  }
+  return true;
+}
+
+bool
+test (string s, int i, string test) {
+  int n= N(s), m= N(test), j=0;
+  while (j<m) {
+    if (i>=n) return false;
+    if (s[i]!=test[j]) return false;
+    i++; j++;
+  }
+  return true;
+}
+
+bool
+starts (string s, const char* what) {
+  return test (s, 0, what);
+}
+
+bool
+starts (string s, const string what) {
+  return test (s, 0, what);
+}
+
+bool
+ends (string s, const char* what) {
+  string r ((char*) what);
+  if (N(r) > N(s)) return false;
+  return s (N(s)-N(r), N(s)) == r;
+}
+
+bool
+ends (string s, const string r) {
+  if (N(r) > N(s)) return false;
+  return s (N(s)-N(r), N(s)) == r;
+}
+
+bool
+read (string s, int& i, const char* test) {
+  int n= N(s), j=0, k=i;
+  while (test[j]!='\0') {
+    if (k>=n) return false;
+    if (s[k]!=test[j]) return false;
+    j++; k++;
+  }
+  i=k;
+  return true;
+}
+
+bool
+read (string s, int& i, string test) {
+  int n= N(s), m= N(test), j=0, k=i;
+  while (j<m) {
+    if (k>=n) return false;
+    if (s[k]!=test[j]) return false;
+    j++; k++;
+  }
+  i=k;
+  return true;
+}
+
+bool
+read_line (string s, int& i, string& result) {
+  int start= i;
+  for (; i<N(s); i++) {
+    if (s[i]=='\n') {
+      result= s(start,i++);
+      return true;
+    }
+  }
+  result= s(start,i);
+  return false;
+}
+
+bool
+read_int (string s, int& i, int& result) {
+  int n= N(s), start= i;
+  result= 0;
+  if (i==n) return false;
+  if (s[i]=='-') {
+    if (i+1==n) return false;
+    if (!is_digit (s[i+1])) return false;
+    i++;
+  }
+  else if (!is_digit (s[i])) return false;
+  while ((i<n) && is_digit (s[i])) i++;
+  result= as_int (s(start,i));
+  return true;
+}
+
+bool
+read_double (string s, int& i, double& result) {
+  int n= N(s), start= i;
+  result= 0.0;
+  if (i==n) return false;
+  if (s[i]=='-') {
+    if (i+1==n) return false;
+    if (!is_numeric (s[i+1])) return false;
+    i++;
+  }
+  else if (!is_numeric (s[i])) return false;
+  while ((i<n) && is_digit (s[i])) i++;
+  if ((i<n) && (s[i]=='.')) i++;
+  while ((i<n) && is_digit (s[i])) i++;
+  if ((i<n) && ((s[i]=='e') || (s[i]=='E'))) {
+    i++;
+    if ((i<n) && (s[i]=='-')) i++;
+    if ((i==n) || (!is_digit (s[i]))) { i=start; return false; }
+    while ((i<n) && is_digit (s[i])) i++;
+  }
+  result= as_double (s(start,i));
+  return true;
+}
+
+void
+skip_spaces (string s, int& i) {
+  int n=N(s);
+  while ((i<n) && ((s[i]==' ') || (s[i]=='\t'))) i++;
+}
+
+void
+skip_line (string s, int& i) {
+  int n=N(s);
+  while ((i<n) && (s[i]!='\n')) i++;
+  if (i<n) i++;
+}
+
+void
+skip_symbol (string s, int& i) {
+  int n=N(s);
+  if (i<n) {
+    if (s[i]=='<') {
+      for (i++; i<n; i++)
+	if (s[i-1]=='>') break;
+    }
+    else i++;
+  }
+}
+
+/******************************************************************************
+* Parsing binary data
+******************************************************************************/
+
+void
+parse (string s, int& pos, QI& ret) {
+  ret= (QI) s[pos++];
+}
+
+void
+parse (string s, int& pos, QN& ret) {
+  ret= (QN) s[pos++];
+}
+
+void
+parse (string s, int& pos, HI& ret) {
+  QI c1= (QI) s[pos++];
+  QN c2= (QN) s[pos++];
+  ret= (((HI) c1)<<8)+ c2;
+}
+
+void
+parse (string s, int& pos, HN& ret) {
+  QN c1= (QN) s[pos++];
+  QN c2= (QN) s[pos++];
+  ret= (((HN) c1)<<8)+ c2;
+}
+
+void
+parse (string s, int& pos, SI& ret) {
+  QI c1= (QI) s[pos++];
+  QN c2= (QN) s[pos++];
+  QN c3= (QN) s[pos++];
+  QN c4= (QN) s[pos++];
+  ret= (((((((SI) c1)<<8)+ ((SI) c2))<<8)+ ((SI) c3))<<8)+ c4;
+}
+
+void
+parse (string s, int& pos, SI*& a, int len) {
+  int i;
+  a= new int[len];
+  for (i=0; i<len; i++) parse (s, pos, a[i]);
+}
+
+/******************************************************************************
+* Searching, replacing and pattern matching
+******************************************************************************/
+
+int
+search_forwards (string s, int pos, string in) {
+  int k= N(s), n= N(in);
+  while (pos+k <= n) {
+    if (test (in, pos, s)) return pos;
+    pos++;
+  }
+  return -1;
+}
+
+int
+search_forwards (string s, string in) {
+  return search_forwards (s, 0, in);
+}
+
+int
+search_backwards (string s, int pos, string in) {
+  while (pos >= 0) {
+    if (test (in, pos, s)) return pos;
+    pos--;
+  }
+  return -1;
+}
+
+int
+search_backwards (string s, string in) {
+  return search_backwards (s, N(in)-N(s), in);
+}
+
+string
+replace (string s, string what, string by) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; )
+    if (test (s, i, what)) {
+      r << by;
+      i += N(what);
+    }
+    else {
+      r << s[i];
+      i++;
+    }
+  return r;
+}
+
+static bool
+match_wildcard (string s, int spos, string w, int wpos) {
+  if (wpos == N(w)) return spos == N(s);
+  if (w[wpos] != '*')
+    return (spos < N(s)) && (s[spos] == w[wpos]) &&
+      match_wildcard (s, spos+1, w, wpos+1);
+  while ((wpos<N(w)) && (w[wpos]=='*')) wpos++;
+  while (spos <= N(s)) {
+    if (match_wildcard (s, spos, w, wpos)) return true;
+    spos++;
+  }
+  return false;
+}
+
+bool
+match_wildcard (string s, string w) {
+  return match_wildcard (s, 0, w, 0);
+}

@@ -1,0 +1,101 @@
+.TH texmacs.1 3 "20May2000" @PACKAGE@-@VERSION@
+.SH NAME
+GNU TeXmacs - a WYSIWYG mathematical text editor
+.PP
+.SH SYNOPSIS
+texmacs [\fIOPTION\fR]... [\fISOURCE\fR]...
+.PP
+.SH INTRODUCTION
+GNU TeXmacs is a free scientific text editor, which was both inspired
+by TeX and GNU Emacs. The editor allows you to write structured documents
+via a wysiwyg (what-you-see-is-what-you-get) and user friendly interface.
+New styles may be created by the user. The program implements high-quality
+typesetting algorithms and TeX fonts, which help you to produce
+professionally looking documents.
+.PP
+The high typesetting quality still goes through for automatically
+generated formulas, which makes TeXmacs suitable as an interface
+for computer algebra systems. TeXmacs also supports the Guile/Scheme
+extension language, so that you may customize the interface and
+write your own extensions to the editor.
+.PP
+TeXmacs currently runs on PC's and PPC's under Gnu/linux
+(a >200MHz processor and >32Mb of memory are recommended)
+and on sun computers. Converters exist for TeX/LaTeX and
+they are under development for Html/Mathml/Xml.
+In the future, TeXmacs is planned to evoluate towards
+a complete scientific office suite, with spreadsheet capacities,
+a technical drawing editor and a presentation mode.
+.PP
+.SH DESCRIPTION
+.TP
+\fB\-b [file]\fR, \fB\-\-initialize\-buffer [file]\fR
+    Uses [file] as a guile/scheme initialization file for TeXmacs buffers.
+.TP
+\fB\-d\fR, \fB\-\-debug\fR
+    Display most important debugging information.
+.TP
+\fB\-\-debug-events\fR
+    Display all widget events.
+.TP
+\fB\-\-debug-io\fR
+    Display all communicated data between TeXmacs and extern systems.
+.TP
+\fB\-\-debug-all\fR
+    Turn all debugging flags on.
+.TP
+\fB\-fn [font]\fR, \fB\-\-font [font]\fR
+    Sets the default TeX fonts for menus and so to [font].
+    The [font] is of the form [name], [name][size] or [name][size]@[dpi].
+    For instance, ecss11@400 would give a sans serif font at 400 dpi.
+    By default, the [size] is 11 and the [dpi] 300.
+.TP
+\fB\-g [geom]\fR, \fB\-\-geometry [geom]\fR
+    Suggested geometry for TeXmacs windows.
+    Here [geom] may be a size [width x height] in pixels,
+    like in `texmacs -g 600x480'.
+    It may also take the form [width x height [+|-] xoff [+|-] yoff],
+    like in `texmacs -g 800x600-100+100'.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+    Display a help message, which lists the command line options of TeXmacs.
+.TP
+\fB\-i [file]\fR, \fB\-\-initialize [file]\fR
+    Uses [file] as a guile/scheme initialization file for TeXmacs.
+.TP
+\fB\-p\fR, \fB\-\-path\fR
+    Echo the TeXmacs path.
+.TP
+\fB\-s\fR, \fB\-\-silent\fR
+    Silent execution: less messages to standard output.
+.TP
+\fB\-S\fR, \fB\-\-setup\fR
+    Rerun the setup program before starting TeXmacs.
+    The setup program analyzes your TeX/LaTeX distribution and
+    the plugins which are installed on your system.
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+    Display the current TeXmacs version.
+.TP
+\fB\-Oc\fR, \fB\-\-no\-char\-clipping\fR
+    Faster but less perfect displaying of anti-aliased fonts.
+.TP
+\fB\+Oc\fR, \fB\-\-char\-clipping\fR
+    High quality displaying of anti-aliased fonts (default).
+.PP
+.SH AUTHOR
+Written by Joris van der Hoeven
+.SH "REPORTING BUGS"
+Report bugs to <bugs@texmacs.org>.
+.SH COPYRIGHT
+Copyright \(co 1999-2001 Joris van der Hoeven
+.br
+This is free software; see the source for copying conditions.
+GNU TeXmacs comes with NO WARRANTY WHATSOEVER;
+not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+The full documentation for GNU TeXmacs can be accessed through the help menu
+when starting up the editor. You may also access the online documentation
+from inside the editor. The TeXmacs website at <http://www.texmacs.org>
+can be consulted for additional information. The TeXmacs web pages are
+also available at <http://www.gnu.org/software/texmacs>.

@@ -1,0 +1,27 @@
+/* XPM */
+static char *tb_cut_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"    17    17       3           1",
+/* colors */
+"  c None	s mask",
+"n c black	s style",
+"m c darkgrey	s dark",
+/* pixels */
+"                 ",
+"    n     nm     ",
+"    nm    nm     ",
+"     n   nm      ",
+"     nm  nm      ",
+"      n nm       ",
+"      nmnm       ",
+"       nm        ",
+"      nnnm       ",
+"    mnm  nm      ",
+"   nnnm  nnn     ",
+"  nmmnm  nm n    ",
+"  n  nm  nm nm   ",
+"  n  nm  nm nm   ",
+"   nnmm   nnm    ",
+"   mm     mm     ",
+"                 "
+};

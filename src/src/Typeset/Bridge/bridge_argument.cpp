@@ -1,0 +1,158 @@
+
+/******************************************************************************
+* MODULE     : bridge_argument.cpp
+* DESCRIPTION: Bridge between logical and physical long macro expansions
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "bridge.hpp"
+
+class bridge_argument_rep: public bridge_rep {
+protected:
+  bool   valid;
+  string name;
+  bridge body;
+
+public:
+  bridge_argument_rep (typesetter ttt, tree st, path ip);
+  void initialize ();
+  void initialize (string name, tree body_t, path body_ip);
+
+  void notify_assign (path p, tree u);
+  bool notify_macro  (int type, string var, int level, path p, tree u);
+  void notify_change ();
+
+  bool my_typeset_will_be_complete ();
+  void my_typeset (int desired_status);
+};
+
+bridge_argument_rep::bridge_argument_rep (typesetter ttt, tree st, path ip):
+  bridge_rep (ttt, st, ip)
+{
+  valid= false;
+}
+
+void
+bridge_argument_rep::initialize (string name2, tree body_t, path body_ip) {
+  if ((!valid) ||
+      (name != name2) || (body->st != body_t) || (body->ip != body_ip))
+    {
+      valid= true;
+      name = name2;
+      if (nil (body)) body = make_bridge (ttt, body_t, body_ip);
+      else replace_bridge (body, body_t, body_ip);
+    }
+}
+
+bridge
+bridge_argument (typesetter ttt, tree st, path ip) {
+  return new bridge_argument_rep (ttt, st, ip);
+}
+
+/******************************************************************************
+* Event notification
+******************************************************************************/
+
+void
+bridge_argument_rep::notify_assign (path p, tree u) {
+  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  status= CORRUPTED;
+  st    = substitute (st, p, u);
+  valid = false;
+}
+
+bool
+bridge_argument_rep::notify_macro (int tp, string var, int l, path p, tree u) {
+  /*
+  cout << "Macro argument " << var << " [action=" << tp
+       << ", level=" << l << "] " << p << ", " << u << " in " << st << "\n";
+  */
+
+  bool flag;
+  if (valid) {
+    // cout << "  " << body->st << ", " << body->ip << "\n";
+    flag= true;
+    if (l==0) {
+      if (var == name)
+	switch (tp) {
+	case MACRO_ASSIGN:
+	  if (nil (p)) replace_bridge (body, u, body->ip);
+	  else body->notify_assign (p, u);
+	  break;
+	case MACRO_INSERT:
+	  body->notify_insert (p, u);
+	  break;
+	case MACRO_REMOVE:
+	  body->notify_remove (p, as_int (u->label));
+	  break;
+	}
+      else flag= false;
+    }
+    else {
+      list<hashmap<string,tree> > old_var= env->macro_arg;
+      list<hashmap<string,path> > old_src= env->macro_src;
+      if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+      if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+      flag= body->notify_macro (tp, var, l-1, p, u);
+      env->macro_arg= old_var;
+      env->macro_src= old_src;
+    }
+  }
+  else flag= env->depends (st, var, l);
+  if (flag) status= CORRUPTED;
+  return flag;
+}
+
+void
+bridge_argument_rep::notify_change () {
+  status= CORRUPTED;
+  body->notify_change ();
+}
+
+/******************************************************************************
+* Typesetting
+******************************************************************************/
+
+bool
+bridge_argument_rep::my_typeset_will_be_complete () {
+  return !valid;
+}
+
+void
+bridge_argument_rep::my_typeset (int desired_status) {
+  string name;
+  tree   value;
+  path   valip= decorate_right (ip);
+
+  tree r= st[0];
+  if (is_compound (r)) value= tree (ERROR, "value");
+  else {
+    name = r->label;
+    if ((!nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
+      value= env->macro_arg->item [name];
+      if (!is_func (value, BACKUP)) {
+	path new_valip= env->macro_src->item [name];
+	if (is_accessible (new_valip)) {
+	  valip= new_valip;
+	  env->macro_src->item (name)= decorate_right (valip);
+	}
+      }
+    }
+    else value= tree (ERROR, "value " * name);
+  }
+
+  initialize (name, value, valip);
+  ttt->insert_marker (body->st, ip);
+  list<hashmap<string,tree> > old_var= env->macro_arg;
+  list<hashmap<string,path> > old_src= env->macro_src;
+  if (!nil (env->macro_arg)) env->macro_arg= env->macro_arg->next;
+  if (!nil (env->macro_src)) env->macro_src= env->macro_src->next;
+  body->typeset (desired_status);
+  env->macro_arg= old_var;
+  env->macro_src= old_src;
+}

@@ -1,0 +1,20 @@
+  <expand|section|Macro expansion (1.0.2.3 -- 1.0.2.4)>
+
+  An important internal change concerning the data format has been made:
+  macro expansions like
+
+  <\expand|scheme-fragment>
+    (expand <em|tag> <em|arg-1> ... <em|arg-n>)
+  </expand>
+
+  are now replaced by hard-coded tags
+
+  <\expand|scheme-fragment>
+    (<em|tag> <em|arg-1> ... <em|arg-n>)
+  </expand>
+
+  This makes the internal representation match with the corresponding
+  <name|Scheme> representation. However, many perverse errors might arise in
+  the few upcoming versions. Please keep copies of your old files and report
+  any suspicious behaviour to us.
+

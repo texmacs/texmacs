@@ -1,0 +1,376 @@
+
+/******************************************************************************
+* MODULE     : init_texmacs.cpp
+* DESCRIPTION: Initialization of TeXmacs
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "boot.hpp"
+#include "file.hpp"
+#include "tex_files.hpp"
+#include "sys_utils.hpp"
+#include "analyze.hpp"
+#include "convert.hpp"
+#include "merge_sort.hpp"
+#include "drd_std.hpp"
+
+tree texmacs_settings = tuple ();
+int  install_status   = 0;
+bool use_which        = false;
+
+/******************************************************************************
+* Subroutines for paths
+******************************************************************************/
+
+static url
+get_env_path (string which) {
+  return url ("$" * which);
+}
+
+static void
+set_env_path (string which, url val) {
+  //cout << which << " := " << val << "\n";
+  if ((!is_none (val)) && (val->t != ""))
+    set_env (which, as_string (val));
+}
+
+static url
+get_env_path (string which, url def) {
+  url val= get_env_path (which);
+  if (is_none (val) || (val->t == "")) {
+    set_env_path (which, def);
+    return def;
+  }
+  return val;
+}
+
+static url
+plugin_path (string which) {
+  url base  = "$TEXMACS_HOME_PATH:$TEXMACS_PATH:/usr/share/TeXmacs";
+  url search= base * "plugins" * url_wildcard ("*") * which;
+  return expand (complete (search, "r"));
+}
+
+scheme_tree
+plugin_list () {
+  bool flag;
+  array<string> a= read_directory ("$TEXMACS_PATH/plugins", flag);
+  a << read_directory ("$TEXMACS_HOME_PATH/plugins", flag);
+  a << read_directory ("/usr/share/TeXmacs/plugins", flag);
+  merge_sort (a);
+  int i, n= N(a);
+  tree t (TUPLE);
+  for (i=0; i<n; i++)
+    if ((a[i] != ".") && (a[i] != "..") && ((i==0) || (a[i] != a[i-1])))
+      t << a[i];
+  return t;
+}
+
+/******************************************************************************
+* Initialize main paths
+******************************************************************************/
+
+static void
+init_main_paths () {
+  if (is_none (get_env_path ("TEXMACS_HOME_PATH", "~/.TeXmacs"))) {
+    cerr << "\nTeXmacs]\n";
+    cerr << "TeXmacs] Installation problem: please send a bug report.\n";
+    cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
+    cerr << "TeXmacs] You may try to set this environment variable manually\n";
+    cerr << "TeXmacs]\n";
+    exit (1);
+  }
+}
+
+/******************************************************************************
+* Make user directories
+******************************************************************************/
+
+static void
+make_dir (url which) {
+  if (!is_directory (which))
+    mkdir (which);
+}
+
+static void
+init_user_dirs () {
+  make_dir ("$TEXMACS_HOME_PATH");
+  make_dir ("$TEXMACS_HOME_PATH/doc");
+  make_dir ("$TEXMACS_HOME_PATH/doc/about");
+  make_dir ("$TEXMACS_HOME_PATH/doc/about/changes");
+  make_dir ("$TEXMACS_HOME_PATH/fonts");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/enc");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/error");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/pk");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
+  make_dir ("$TEXMACS_HOME_PATH/langs");
+  make_dir ("$TEXMACS_HOME_PATH/langs/mathematical");
+  make_dir ("$TEXMACS_HOME_PATH/langs/mathematical/syntax");
+  make_dir ("$TEXMACS_HOME_PATH/langs/natural");
+  make_dir ("$TEXMACS_HOME_PATH/langs/natural/dic");
+  make_dir ("$TEXMACS_HOME_PATH/langs/natural/hyphen");
+  make_dir ("$TEXMACS_HOME_PATH/langs/programming");
+  make_dir ("$TEXMACS_HOME_PATH/misc");
+  make_dir ("$TEXMACS_HOME_PATH/misc/pixmaps");
+  make_dir ("$TEXMACS_HOME_PATH/packages");
+  make_dir ("$TEXMACS_HOME_PATH/plugins");
+  make_dir ("$TEXMACS_HOME_PATH/progs");
+  make_dir ("$TEXMACS_HOME_PATH/styles");
+  make_dir ("$TEXMACS_HOME_PATH/system");
+  make_dir ("$TEXMACS_HOME_PATH/system/bib");
+  make_dir ("$TEXMACS_HOME_PATH/system/cache");
+  make_dir ("$TEXMACS_HOME_PATH/system/tmp");
+  make_dir ("$TEXMACS_HOME_PATH/texts");
+  system ("chmod -f 700", "$TEXMACS_HOME_PATH/system");
+  remove ("$TEXMACS_HOME_PATH/system/tmp" * url_wildcard ("*"));
+}
+
+/******************************************************************************
+* Detection of guile
+******************************************************************************/
+
+static void
+init_guile () {
+  url guile_path= "$TEXMACS_PATH/progs:$GUILE_LOAD_PATH";
+
+  if (!exists (guile_path * "init-texmacs.scm")) {
+    cerr << "\nTeXmacs]\n";
+    cerr << "TeXmacs] Installation problem: please send a bug report.\n";
+    cerr << "TeXmacs] The initialization file init-texmacs.scm"
+	 << " could not be found.\n";
+    cerr << "TeXmacs] Please check the values of the environment variables\n";
+    cerr << "TeXmacs] TEXMACS_PATH and GUILE_LOAD_PATH."
+	 << " init-texmacs.scm should\n";
+    cerr << "TeXmacs] be readable and in the directory $TEXMACS_PATH/progs\n";
+    cerr << "TeXmacs] or in the directory $GUILE_LOAD_PATH\n";
+    cerr << "TeXmacs]\n";
+    exit (1);
+  }
+
+  /*
+  if (!exists ("$GUILE_LOAD_PATH/ice-9/boot-9.scm")) {
+    int i;
+    string guile_data    = var_eval_system ("guile-config info datadir");
+    string guile_version = var_eval_system ("guile --version");
+    for (i=0; i<N(guile_version); i++)
+      if (guile_version[i] == '\n') break;
+    guile_version= guile_version (0, i);
+    for (i=N(guile_version); i>0; i--)
+      if (guile_version[i-1] == ' ') break;
+    guile_version= guile_version (i, N (guile_version));
+    if (guile_version == "") {
+      var_eval_system ("guile-config info top_srcdir");
+      for (i=N(guile_version); i>0; i--)
+	if (guile_version[i-1] == '-') break;
+      guile_version= guile_version (i, N (guile_version));
+      for (i=0; i<N(guile_version); i++)
+	if ((guile_version[i] == '/') || (guile_version[i] == '\\')) {
+	  guile_version= guile_version (0, i);
+	  break;
+	}
+    }
+    url guile_dir= url_system (guile_data) * url ("guile", guile_version);
+    guile_path= guile_path | guile_dir;
+    set_env_path ("GUILE_LOAD_PATH", guile_path);
+    if (!exists ("$GUILE_LOAD_PATH/ice-9/boot-9.scm")) {
+      cerr << "\nGUILE_LOAD_PATH=" << guile_path << "\n";
+      fatal_error ("guile seems not to be installed on your system",
+		   "install_texmacs");
+    }
+  }
+  */
+
+  guile_path= guile_path | "$TEXMACS_HOME_PATH/progs" | plugin_path ("progs");
+  set_env_path ("GUILE_LOAD_PATH", guile_path);
+}
+
+/******************************************************************************
+* Set additional environment variables
+******************************************************************************/
+
+static void
+init_env_vars () {
+  // Handle binary, library and guile paths for plugins
+  url bin_path= get_env_path ("PATH") | plugin_path ("bin");
+  set_env_path ("PATH", bin_path);
+  url lib_path= get_env_path ("LD_LIBRARY_PATH") | plugin_path ("lib");
+  set_env_path ("LD_LIBRARY_PATH", lib_path);
+
+  // Get TeXmacs style and package paths
+  url style_root=
+    get_env_path ("TEXMACS_STYLE_ROOT",
+		  "$TEXMACS_HOME_PATH/styles:$TEXMACS_PATH/styles" |
+		  plugin_path ("styles"));
+  url package_root=
+    get_env_path ("TEXMACS_PACKAGE_ROOT",
+		  "$TEXMACS_HOME_PATH/packages:$TEXMACS_PATH/packages" |
+		  plugin_path ("packages"));
+  url all_root= style_root | package_root;
+  url style_path=
+    get_env_path ("TEXMACS_STYLE_PATH",
+		  expand (complete (all_root * url_wildcard (), "dr")));
+
+  // Get other data paths
+  (void) get_env_path ("TEXMACS_FILE_PATH",
+		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
+		       style_path);
+  (void) get_env_path ("TEXMACS_DOC_PATH", "$TEXMACS_HOME_PATH/doc");
+  (void) get_env_path ("TEXMACS_SYNTAX_PATH",
+		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
+		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
+  (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
+		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
+		       url ("$TEXMACS_PATH/misc/pixmaps"));
+#ifdef OS_WIN32
+  set_env ("TEXMACS_SOURCE_PATH", "");
+#else
+  set_env ("TEXMACS_SOURCE_PATH", TEXMACS_SOURCES);
+#endif
+}
+
+/******************************************************************************
+* Miscellaneous initializations
+******************************************************************************/
+
+static void
+init_misc () {
+  // Test whether 'which' works
+  use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
+
+  // Set extra environment variables for Cygwin
+#ifdef OS_CYGWIN
+  set_env ("CYGWIN", "check_case:strict");
+  set_env ("COMSPEC", "");
+  set_env ("ComSpec", "");
+#endif
+}
+
+/******************************************************************************
+* Deprecated initializations
+******************************************************************************/
+
+static void
+init_deprecated () {
+#ifndef OS_WIN32
+  // Check for Macaulay 2
+  if (get_env ("M2HOME") == "")
+    if (exists_in_path ("M2")) {
+      string where= concretize (resolve_in_path ("M2"));
+      string s    = var_eval_system ("grep 'M2HOME=' " * where);
+      string dir  = s (search_forwards ("=", s) + 1, N(s));
+      if (dir != "") set_env ("M2HOME", dir);
+    }
+
+  // Check for Maxima
+  if (get_env ("TM_MAXIMA_HOME") == "") {
+    if (exists_in_path ("maxima")) {
+      string where= concretize (resolve_in_path ("maxima"));
+      string s    = var_eval_system ("grep 'MAXIMA_DIRECTORY=' " * where);
+      string dir  = s (search_forwards ("=", s) + 1, N(s));
+      if ((dir == "") &&
+	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
+	dir= "/usr/share/maxima/5.9.0";
+      if (dir == "") {
+	string where= var_eval_system ("locate maxima_toc.html");
+	if (ends (where, "/doc/html/maxima_toc.html"))
+	  dir= where (0, N(where)- 25);
+	if (ends (where, "/info/maxima_toc.html"))
+	  dir= where (0, N(where)- 21);
+      }
+      if (dir != "") set_env ("TM_MAXIMA_HOME", dir);
+    }
+  }
+
+  // Check for Reduce
+  if (get_env ("reduce") == "")
+    if (exists_in_path ("reduce")) {
+      string where= concretize (resolve_in_path ("reduce"));
+      string grep = "grep 'setenv reduce ' " * where;
+      string sed  = "sed 's/setenv reduce //'";
+      string dir  = var_eval_system (grep * " | " * sed);
+      if (dir != "") set_env ("reduce", dir);
+    }
+#endif
+}
+
+/******************************************************************************
+* Subroutines for the TeXmacs settings
+******************************************************************************/
+
+string
+get_setting (string var, string def) {
+  int i, n= N (texmacs_settings);
+  for (i=0; i<n; i++)
+    if (is_tuple (texmacs_settings[i], var, 1))
+      return unquote (as_string (texmacs_settings[i][1]));
+  return def;
+}
+
+void
+set_setting (string var, string val) {
+  int i, n= N (texmacs_settings);
+  for (i=0; i<n; i++)
+    if (is_tuple (texmacs_settings[i], var, 1)) {
+      texmacs_settings[i][1]= quote (val);
+      return;
+    }
+  texmacs_settings << tuple (var, quote (val));
+}
+
+bool
+use_ec_fonts () {
+  return get_setting ("EC") == "true";
+}
+
+/******************************************************************************
+* Initialize settings
+******************************************************************************/
+
+void
+init_settings () {
+  install_status= 0;
+  url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
+  url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
+  string s;
+  if (load_string (new_settings, s)) {
+    if (load_string (old_settings, s)) {
+      init_first ();
+      install_status= 1;
+    }
+    else get_old_settings (s);
+  }
+  else texmacs_settings= block_to_scheme_tree (s);
+  if (get_setting ("VERSION") != TEXMACS_VERSION) {
+    init_upgrade ();
+    url ch ("$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm");
+    install_status= exists (ch)? 2: 0;
+  }
+}
+
+/******************************************************************************
+* Installation of TeXmacs
+******************************************************************************/
+
+void
+install_texmacs () {
+  initialize_std_drd ();
+  init_main_paths ();
+  init_user_dirs ();
+  init_guile ();
+  init_env_vars ();
+  init_misc ();
+  init_deprecated ();
+}
+
+void
+install_tex () {
+  init_settings ();
+  reset_tfm_path (false);
+  reset_pk_path (false);
+}

@@ -1,0 +1,334 @@
+
+###############################################################################
+# MODULE     : main TeXmacs make file
+# BY         : Joris van der Hoeven
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+bindir = @bindir@
+datadir = @datadir@
+mandir = @mandir@
+tmdir = @tmdir@
+tmtgz = @tmtgz@
+tmorig = @tmorig@
+tmsrc = @tmsrc@
+tmbin = @tmbin@
+tmdata = @tmdata@
+so = @CONFIG_SO@
+
+DESTDIR =
+
+MKDIR = mkdir -p
+RM = rm -f
+CP = cp -r -f
+MV = mv -f
+LN = ln -f
+CHMOD = @CONFIG_CHMOD@
+GZIP = gzip -f
+STRIP = @CONFIG_STRIP@
+TOUCH = touch
+
+###############################################################################
+# Main makes
+###############################################################################
+
+TEXMACS:
+	cd src; $(MAKE) -f makefile link=shared
+	$(MAKE) -f Makefile PLUGINS
+	$(CP) misc/scripts/fig2ps $(tmdir)/bin
+	$(CP) misc/scripts/texmacs $(tmdir)/bin
+	$(CP) misc/scripts/tm_gs $(tmdir)/bin
+	$(CHMOD) 755 $(tmdir)/bin/*
+	$(CHMOD) 755 plugins/*/bin/*
+	$(RM) $(tmdir)/plugins
+	$(LN) -s ../plugins $(tmdir)/plugins
+	@echo ----------------------------------------------------
+	@echo dynamic TeXmacs has been successfully compiled
+
+STATIC_TEXMACS:
+	cd src; $(MAKE) -f makefile link=static
+	$(MAKE) -f Makefile PLUGINS
+	$(CP) misc/scripts/fig2ps $(tmdir)/bin
+	$(CP) misc/scripts/texmacs $(tmdir)/bin
+	$(CP) misc/scripts/tm_gs $(tmdir)/bin
+	$(CHMOD) 755 $(tmdir)/bin/*
+	$(CHMOD) 755 plugins/*/bin/*
+	$(RM) $(tmdir)/plugins
+	$(LN) -s ../plugins $(tmdir)/plugins
+	@echo ----------------------------------------------------
+	@echo static TeXmacs has been successfully compiled
+
+DEPS:
+	cd src; $(MAKE) -f makefile deps
+
+.PHONY: TEXMACS STATIC_TEXMACS DEPS EXPERIMENTAL
+
+deps: DEPS
+install: INSTALL
+uninstall: UNINSTALL
+clean: CLEAN
+distclean: DISTCLEAN
+
+.PHONY: deps install uninstall clean distclean
+
+###############################################################################
+# Plugins
+###############################################################################
+
+PLUGINS_ALL := $(wildcard plugins/*)
+PLUGINS_MAKEFILE := $(wildcard plugins/*/Makefile)
+PLUGINS_COMPILE := $(patsubst %Makefile,%COMPILE,$(PLUGINS_MAKEFILE))
+PLUGINS_CLEAN := $(patsubst %Makefile,%CLEAN,$(PLUGINS_MAKEFILE))
+
+plugins/%/COMPILE:
+	cd plugins/$*; $(MAKE) -i -f Makefile CC="@CC@" CXX="@CXX@"
+
+plugins/%/CLEAN:
+	cd plugins/$*; $(MAKE) -i -f Makefile clean
+
+PLUGINS: $(PLUGINS_COMPILE)
+
+CLEAN_PLUGINS: $(PLUGINS_CLEAN)
+
+.PHONY: PLUGINS CLEAN_PLUGINS
+
+###############################################################################
+# Installing and removing TeXmacs (for system administrators)
+###############################################################################
+
+INSTALL:
+	$(MKDIR) $(DESTDIR)$(tmbin)
+	$(MKDIR) $(DESTDIR)$(tmbin)/bin
+	$(MKDIR) $(DESTDIR)$(tmbin)/lib
+	$(CP) $(tmdir)/bin/texmacs.bin $(DESTDIR)$(tmbin)/bin
+	$(CP) $(tmdir)/bin/tm_gs $(DESTDIR)$(tmbin)/bin
+	$(CP) $(tmdir)/plugins/*/bin/* $(DESTDIR)$(tmbin)/bin
+	$(CP) $(tmdir)/plugins/*/lib/*.$(so) $(DESTDIR)$(tmbin)/lib 2>/dev/null || :
+	$(STRIP) $(DESTDIR)$(tmbin)/bin/texmacs.bin
+	$(CP) $(tmdir)/lib/*.$(so) $(DESTDIR)$(tmbin)/lib 2>/dev/null || :
+	$(STRIP) $(DESTDIR)$(tmbin)/lib/*.$(so) 2>/dev/null || :
+	$(CHMOD) 755 $(DESTDIR)$(tmbin)/bin/*
+	$(CHMOD) 755 $(DESTDIR)$(tmbin)/lib/*.$(so) 2>/dev/null || :
+	$(RM) $(DESTDIR)$(tmbin)/lib/*.a
+	@echo installed TeXmacs executables in $(DESTDIR)$(tmbin)
+	$(MKDIR) $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/LICENSE $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/doc $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/examples $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/fonts $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/langs $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/misc $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/packages $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/progs $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/styles $(DESTDIR)$(tmdata)
+	$(CP) $(tmdir)/texts $(DESTDIR)$(tmdata)
+	$(CHMOD) -R go=rX $(DESTDIR)$(tmdata)
+	@echo installed TeXmacs data in $(DESTDIR)$(tmdata)
+	$(CP) plugins $(DESTDIR)$(tmdata)
+	$(RM) $(DESTDIR)$(tmdata)/plugins/*/Makefile
+	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/src
+	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/bin
+	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/lib
+	@echo installed TeXmacs plugins data in $(DESTDIR)$(tmdata)/plugins
+	$(MKDIR) $(DESTDIR)$(bindir)
+	$(CHMOD) 755 $(tmdir)/bin/*
+	$(CP) $(tmdir)/bin/fig2ps $(DESTDIR)$(bindir)
+	$(CP) $(tmdir)/bin/texmacs $(DESTDIR)$(bindir)
+	@echo installed TeXmacs startup scripts in $(DESTDIR)$(bindir)
+	$(MKDIR) $(DESTDIR)$(includedir)
+	$(CP) $(tmdir)/include/TeXmacs.h $(DESTDIR)$(includedir)
+	$(CHMOD) go=rX $(DESTDIR)$(includedir)/TeXmacs.h
+	@echo installed TeXmacs include files in $(DESTDIR)$(includedir)
+	$(MKDIR) $(DESTDIR)$(mandir)
+	$(MKDIR) $(DESTDIR)$(mandir)/man1
+	$(CP) misc/man/fig2ps.1 $(DESTDIR)$(mandir)/man1
+	$(CP) misc/man/texmacs.1 $(DESTDIR)$(mandir)/man1
+	$(GZIP) $(DESTDIR)$(mandir)/man1/fig2ps.1
+	$(GZIP) $(DESTDIR)$(mandir)/man1/texmacs.1
+	$(CHMOD) go=rX $(DESTDIR)$(mandir)/man1/fig2ps.1.gz
+	$(CHMOD) go=rX $(DESTDIR)$(mandir)/man1/texmacs.1.gz
+	@echo installed TeXmacs manual pages in $(DESTDIR)$(mandir)
+	@echo ----------------------------------------------------
+	@echo TeXmacs has been successfully installed
+
+UNINSTALL:
+	$(RM) -r $(tmbin)
+	@echo removed TeXmacs executables from $(tmbin)
+	$(RM) -r $(tmdata)
+	@echo removed TeXmacs data from $(tmdata)
+	$(RM) $(includedir)/TeXmacs.h
+	@echo removed TeXmacs include files from $(includedir)
+	$(RM) $(bindir)/fig2ps
+	$(RM) $(bindir)/texmacs
+	@echo removed TeXmacs startup scripts from $(bindir)
+	$(RM) $(mandir)/man1/fig2ps.1.gz
+	$(RM) $(mandir)/man1/texmacs.1.gz
+	@echo removed TeXmacs manual pages from $(mandir)
+	@echo ----------------------------------------------------
+	@echo TeXmacs has been successfully removed
+
+.PHONY: INSTALL UNINSTALL
+
+###############################################################################
+# Cleaning and backups
+###############################################################################
+
+CLEAN_DOC:
+	$(RM) -r $(tmdir)/doc/examples
+	$(RM) -r $(tmdir)/doc/images
+	$(RM) -r $(tmdir)/doc/tutorial
+	$(RM) -r $(tmdir)/doc/web
+	$(RM) -r $(tmdir)/doc/CVS
+	$(RM) -r $(tmdir)/doc/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/*/CVS
+	$(RM) -r $(tmdir)/doc/*/*/*/*/CVS
+
+RDISTR:
+	$(RM) $(tmdir)/TEX_PATHS
+	$(RM) *~
+	$(RM) */*~
+	$(RM) */*/*~
+	$(RM) */*/*/*~
+	$(RM) */*/*/*/*~
+	$(RM) */*/*/*/*/*~
+	$(RM) core
+	$(RM) */core
+	$(RM) src/*/core
+	$(RM) src/*/*/core
+	$(RM) src/*/*/*/core
+	$(RM) misc/*/core
+	$(RM) plugins/*/core
+	$(RM) plugins/*/*/core
+	$(RM) $(tmdir)/lib/*.a
+	$(RM) $(tmdir)/fonts/error/*
+	$(RM) -r autom*.cache
+
+DISTR: RDISTR
+	cd src; $(MAKE) -f makefile DISTR
+
+RCLEAN: RDISTR
+	$(RM) $(tmdir)/examples/plugins/bin/*
+	$(RM) $(tmdir)/plugins
+	$(RM) $(tmdir)/lib/*
+	$(RM) $(tmdir)/bin/*
+	$(RM) -r $(tmdir)/misc/images/.xvpics
+	$(RM) -r $(tmdir)/progs/ice-9
+	$(RM) -r X11
+
+SCLEAN:
+	cd src; $(MAKE) -f makefile CLEAN
+
+CLEAN: SCLEAN RCLEAN CLEAN_PLUGINS
+
+DISTCLEAN: CLEAN
+	$(RM) src/Objects/*
+	$(RM) misc/doxygen/Doxyfile
+	$(RM) misc/man/texmacs.1
+	$(RM) misc/scripts/fig2ps
+	$(RM) misc/scripts/texmacs
+	$(RM) src/System/tm_configure.hpp
+	$(RM) src/common.makefile
+	$(RM) TeXmacs/examples/plugins/dynlink/Makefile
+	$(RM) config.cache
+	$(RM) config.log
+	$(RM) config.status
+	$(RM) Makefile
+
+.PHONY: RDISTR DISTR RCLEAN SCLEAN DISTCLEAN
+
+###############################################################################
+# Making distributions: for personal use only
+###############################################################################
+
+TOUCH:
+	$(TOUCH) */*.make
+	$(TOUCH) */*/*.hpp
+	$(TOUCH) */*/*/*.hpp
+	$(TOUCH) */*.cpp
+	$(TOUCH) */*/*.cpp
+	$(TOUCH) */*/*/*.cpp
+	$(TOUCH) */*/*/*/*.cpp
+
+STRIP:
+	$(STRIP) $(tmdir)/bin/texmacs.bin
+	$(STRIP) $(tmdir)/lib/*.$(so) 2>/dev/null || >/dev/null
+	$(STRIP) $(tmdir)/plugins/*/bin/* 2>/dev/null || >/dev/null
+
+PLUGIN_DISTR:
+	$(RM) $(tmdir)/plugins
+	$(CP) plugins $(tmdir)/plugins
+	$(RM) -r $(tmdir)/plugins/*/src
+
+PLUGIN_RESTORE:
+	$(RM) -r $(tmdir)/plugins
+	$(LN) -s ../plugins $(tmdir)/plugins
+
+EXTERN: STRIP PLUGIN_DISTR
+	$(RM) -r $(tmdir)/progs/ice-9
+	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
+	export GUILE_DATA_PATH; \
+	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	export GUILE_LOAD_PATH; \
+	cp -r -f $$GUILE_LOAD_PATH $(tmdir)/progs/
+	chmod 644 $(tmdir)/progs/ice-9/*
+	chmod 755 $(tmdir)/progs/ice-9
+	$(RM) $(tmdir)/lib/libguile*
+
+COPY_GUILE:
+	GUILE_LIB_PATH=`guile-config info libdir`; \
+	export GUILE_LIB_PATH; \
+	$(CP) $$GUILE_LIB_PATH/libguile.so.4.0.0 $(tmdir)/lib;
+	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so.4
+	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so
+
+ACCESS_FLAGS:
+	$(CHMOD) -R go+rX *
+	$(CHMOD) -R go+x $(tmdir)/bin
+	$(CHMOD) -R go+x $(tmdir)/lib
+
+SHARED_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
+	$(MV) $(tmdir) $(tmtgz)
+	tar -cf $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
+	$(MV) $(tmtgz) $(tmdir)
+	$(GZIP) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar
+	$(MV) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
+	$(MAKE) -f Makefile PLUGIN_RESTORE
+
+STATIC_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
+	$(MV) $(tmdir) $(tmtgz)
+	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
+	$(MV) $(tmtgz) $(tmdir)
+	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
+	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
+	$(MAKE) -f Makefile PLUGIN_RESTORE
+
+SUN_DISTR: CLEAN_DOC DISTR EXTERN COPY_GUILE ACCESS_FLAGS
+	$(MV) $(tmdir) $(tmtgz)
+	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
+	$(MV) $(tmtgz) $(tmdir)
+	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
+	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
+	$(MAKE) -f Makefile PLUGIN_RESTORE
+
+SRC_DISTR: CLEAN_DOC DISTCLEAN ACCESS_FLAGS
+	$(MV) $$HOME/distr/TeXmacs-src $$HOME/distr/$(tmtgz)-src
+	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-src.tar $(tmtgz)-src --exclude $(tmtgz)-src/Makefile
+	$(MV) $$HOME/distr/$(tmtgz)-src $$HOME/distr/TeXmacs-src
+	$(GZIP) $$HOME/distr/$(tmtgz)-src.tar
+
+WEB_DISTR:
+	$(RM) $$HOME/texmacs/web/*~
+	$(RM) $$HOME/texmacs/web/*/*~
+	$(RM) $$HOME/texmacs/web/*/*/*~
+	$(RM) $$HOME/texmacs/web/*/*/*/*~
+	$(RM) $$HOME/texmacs/web/*/*/*/*/*~
+	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-web.tar $(tmtgz)-web
+	$(GZIP) $$HOME/distr/$(tmtgz)-web.tar
+
+.PHONY: TOUCH STRIP EXTERN COPY_GUILE PLUGIN_RESTORE ACCESS_FLAGS SHARED_DISTR SUN_DISTR SRC_DISTR WEB_DISTR MISC_DISTR

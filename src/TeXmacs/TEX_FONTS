@@ -1,0 +1,47 @@
+
+-------------------------------------------------------------------------------
+Using TeX fonts
+-------------------------------------------------------------------------------
+
+1. GNU TeXmacs has been designed in order to cooporate with
+   the TeTeX distribution. The TeTeX distribution comes with
+   the programs MakeTeXTFM and MakeTeXPK to generate
+   new fonts automatically using MetaFont.
+   Furthermore, it provides the utility kpsepath,
+   for finding the different directories where TeX fonts have been installed.
+
+2. When starting GNU TeXmacs for the first time, the program examines
+   the way your TeX system has been installed. The result of this
+   examination is written the file $TEXMACS_HOME_PATH/system/TEX_PATHS.
+   By default, $TEXMACS_HOME_PATH contains ~/.TeXmacs.
+   Whenever you change your TeX system, or if you add new fonts,
+   it may be a good idea to remove this file in order to recreate it.
+   In the directory $TEXMACS_HOME_PATH/fonts/error, you also find
+   a trace of all fonts which GNU TeXmacs failed to create.
+   When adding new fonts, you should remove all files in this directory.
+
+3. If the user did not install the TeTeX distribution or
+   no TeX distribution at all, we provide by default
+   a limited set of compiled fonts in $TEXMACS_PATH/data/tfm and
+   $TEXMACS_PATH/data/pk. The user may also specify his own paths
+   TEX_TFM_PATH and TEX_PK_PATH for .tfm and .pk files
+   respectively. GNU TeXmacs uses the following algorithm to find fonts:
+
+    - Look whether the font is in one of directories specified by
+      the user paths TEX_TFM_PATH or TEX_PK_PATH.
+    - Look whether the font is installed by default in
+      $TEXMACS_PATH/data/tfm or $TEXMACS_PATH/data/pk. 
+    - Look whether the font was already generated in
+      the TeTeX distribution (using kpsepath). 
+    - Automatically generate the font using
+      MakeTeXTFM and/or MakeTeXPK.
+
+4. We also precompiled a larger set of 600 dpi fonts,
+   which can be added to the set of default fonts from 'TeXmacs'.
+   In order to do so, first download the fonts from
+
+	ftp://ftp.texmacs.org/pub/TeXmacs/targz/TeXmacs-600pk-fonts.tar.gz
+
+   Next unpack them in the installation directory using
+
+        tar -zxvf TeXmacs-600pk-fonts.tar.gz

@@ -1,0 +1,47 @@
+TeXmacsView             package:TeXmacs             R Documentation
+
+_f_u_n_c_t_i_o_n _t_o _s_t_a_r_t _p_o_s_t_s_c_r_i_p_t _T_e_X_m_a_c_s _i_n_t_e_r_f_a_c_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Usually one uses the X11 device when interacting with TeXmacs.
+     When X11 is not available (for example in a remote login,
+     start.view() will open a postscript file with all defaults set
+     correctly. end.view() will close that file. While working, use v()
+     to insert the current file into the TeXmacs buffer.
+
+_U_s_a_g_e:
+
+     start.view()
+     end.view()
+
+_D_e_t_a_i_l_s:
+
+_W_a_r_n_i_n_g:
+
+     ....
+
+_A_u_t_h_o_r(_s):
+
+     Michael Lachmann Tamarlin
+
+_S_e_e _A_l_s_o:
+
+     See also `TeXmacs',
+
+_E_x_a_m_p_l_e_s:
+
+     ##---- Should be DIRECTLY executable !! ----
+     ##-- ==>  Define data, use random,
+     ##--    or do  help(data=index)  for the standard data sets.
+
+     ## The function is currently defined as
+     function()
+       {
+         dev.off()
+         op <- options("texmacs")$texmacs
+         op$nox11 <- F
+         options(texmacs=op)
+         unlink(op$file)
+       }
+
