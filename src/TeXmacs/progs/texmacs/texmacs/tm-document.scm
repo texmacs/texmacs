@@ -30,6 +30,9 @@
 ;; Preamble mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (in-preamble?)
+  (== (get-env "preamble") "true"))
+
 (tm-define (toggle-preamble)
   (:synopsis "Toggle preamble mode.")
   (:check-mark "v" in-preamble?)

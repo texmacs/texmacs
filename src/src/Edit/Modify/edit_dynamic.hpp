@@ -19,7 +19,7 @@ public:
   edit_dynamic_rep ();
   ~edit_dynamic_rep ();
 
-  bool in_preamble_mode ();
+  bool in_source ();
   bool is_deactivated ();
   path find_deactivated (path p);
   path find_dynamic (path p);

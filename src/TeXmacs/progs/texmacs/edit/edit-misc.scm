@@ -18,7 +18,7 @@
     make-include make-inline-image make-link-image))
 
 (define (make-specific s)
-  (if (or (== s "texmacs") (in-preamble?))
+  (if (or (== s "texmacs") (in-source?))
       (insert-object-go-to `(specific ,s "") '(1 0))
       (insert-object-go-to `(inactive (specific ,s "")) '(0 1 0))))
 

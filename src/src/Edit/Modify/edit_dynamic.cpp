@@ -24,8 +24,8 @@ edit_dynamic_rep::~edit_dynamic_rep () {}
 ******************************************************************************/
 
 bool
-edit_dynamic_rep::in_preamble_mode () {
-  return get_env_string (PREAMBLE) == "true";
+edit_dynamic_rep::in_source () {
+  return get_env_string (MODE) == "src";
 }
 
 bool
@@ -113,7 +113,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 	t[0]= tree (DOCUMENT, "");
 	p   = path (0, 0, 0);
       }
-    if ((!drd->all_accessible (l)) && (!in_preamble_mode ())) {
+    if ((!drd->all_accessible (l)) && (!in_source ())) {
       t= tree (INACTIVE, t);
       p= path (0, p);
     }
@@ -163,7 +163,7 @@ edit_dynamic_rep::go_to_argument (path p, bool start_flag) {
   else if (i >= n) go_to_end (path_up (p, inactive? 2: 1));
   else {
     if ((!drd->is_accessible_child (t, i)) &&
-	(!inactive) && (!in_preamble_mode ()))
+	(!inactive) && (!in_source ()))
       {
 	ins_unary (path_up (p), INACTIVE);
 	p= path_up (p) * path (0, i);
@@ -265,7 +265,7 @@ edit_dynamic_rep::back_general (path p, bool forward) {
 
 void
 edit_dynamic_rep::back_in_general (tree t, path p, bool forward) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
+  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_source ())
     if ((L(t) >= START_EXTENSIONS) && (last_item (p) == 0)) {
       tree u (COMPOUND, copy (as_string (L(t))));
       u << A(copy(t));
@@ -355,7 +355,7 @@ edit_dynamic_rep::remove_with (path p, string var) {
 void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
-      (is_func (t, WITH) && in_preamble_mode ()))
+      (is_func (t, WITH) && in_source ()))
     back_in_general (t, p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
@@ -431,7 +431,8 @@ edit_dynamic_rep::make_hybrid () {
       (!(is_atomic (t[0]) && drd->contains (t[0]->label))))
     t= tree (HYBRID, "", t[0]);
   path p= end (t, path (0));
-  insert_tree (tree (INACTIVE, t), path (0, p));
+  if (in_source ()) insert_tree (t, p);
+  else insert_tree (tree (INACTIVE, t), path (0, p));
   set_message ("return: activate symbol or macro", "hybrid");
 }
 

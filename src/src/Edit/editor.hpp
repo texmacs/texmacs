@@ -310,7 +310,7 @@ public:
   virtual void   table_test () = 0;
 
   /* public routines from edit_dynamic */
-  virtual bool in_preamble_mode () = 0;
+  virtual bool in_source () = 0;
   virtual bool is_deactivated () = 0;
   virtual path find_deactivated (path p) = 0;
   virtual path find_dynamic (path p) = 0;

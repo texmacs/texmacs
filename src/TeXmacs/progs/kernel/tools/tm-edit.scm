@@ -57,7 +57,7 @@
 (tm-define (insert-inactive-object-go-to t p)
   (:type (object path ->))
   (:synopsis "Insert an inactive object @t and go to @p inside @t.")
-  (if (in-preamble?)
+  (if (in-source?)
       (insert-object-go-to t p)
       (insert-object-go-to (list 'inactive t) (cons 0 p))))
 
@@ -65,14 +65,14 @@
   (:type (string ->))
   (:synopsis "Make an inactive assignment for the variable @s.")
   (insert-inactive-object-go-to `(assign ,s "") '(1 0))
-  (if (not (in-preamble?)) (set-message "return: activate" "assign")))
+  (if (not (in-source?)) (set-message "return: activate" "assign")))
 
 (tm-define (make-assign-macro s)
   (:type (string ->))
   (:synopsis "Make an inactive macro assignment for the variable @s.")
   (make-assign-arg s)
   (insert-inactive-object-go-to '(macro "") '(0 0))
-  (if (not (in-preamble?))
+  (if (not (in-source?))
       (set-message "return (2x): activate" "assign#macro")))
 
 (tm-define (make-assign-macro-arg s)
@@ -80,5 +80,5 @@
   (:synopsis "Make an inactive unary macro assignment for the variable @s.")
   (make-assign-arg s)
   (insert-inactive-object-go-to '(macro "s" "") '(1 0))
-  (if (not (in-preamble?))
+  (if (not (in-source?))
       (set-message "return (2x): activate" "assign#macro")))

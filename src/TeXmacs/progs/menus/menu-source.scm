@@ -106,13 +106,37 @@
   (-> "Condition" (link source-condition-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Presentation of source code
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind source-activation-menu
+  ("Activate" (make-mod-active 'active*))
+  ("Activate once" (make-mod-active 'active))
+  (when (not (in-source?))
+	("Disactivate" (make-mod-active 'inactive*))
+	("Disactivate once" (make-mod-active 'inactive))))
+
+(menu-bind source-layout-menu
+  ("Compact" (make-style-with "src-compact" "all"))
+  ("Stretched" (make-style-with "src-compact" "none"))
+  ---
+  ("Apply macro" (make-mod-active 'style-only*))
+  ("Apply macro once" (make-mod-active 'style-only)))
+
+(menu-bind source-presentation-menu
+  (-> "Activation" (link source-activation-menu))
+  (-> "Presentation" (link source-layout-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main menu for editing source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind source-menu
   (link source-transformational-menu)
   ---
-  (link source-executable-menu))
+  (link source-executable-menu)
+  ---
+  (link source-presentation-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The icon bar for editing source files
@@ -135,4 +159,11 @@
   (=> (balloon (icon "tm_tuple.xpm") "Insert an operation on tuples")
       (link source-tuple-menu))
   (=> (balloon (icon "tm_equal.xpm") "Insert a condition")
-      (link source-condition-menu)))
+      (link source-condition-menu))
+  |
+  ((balloon (icon "tm_activate.xpm") "Activate")
+   (make-mod-active 'active*))
+  ((balloon (icon "tm_stretch.xpm") "Stretch")
+   (make-style-with "src-compact" "none"))
+  ((balloon (icon "tm_compact.xpm") "Compactify")
+   (make-style-with "src-compact" "all")))
