@@ -12,6 +12,7 @@
 
 #include "PsDevice/printer.hpp"
 #include "Metafont/tex_files.hpp"
+#include "Freetype/tt_file.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
 #include "analyze.hpp"
@@ -367,8 +368,17 @@ printer_rep::generate_tex_fonts () {
     string name = tex_fonts [fn_name], ttf;
     int    pos  = search_forwards (".", fn_name);
     string root = (pos==-1? fn_name: fn_name (0, pos));
-    if (true_type && (pos!=-1) && ends (fn_name, "pk"))
+#ifndef OS_WIN32 // we need pfbtops
+    if ((pos!=-1) && ends (fn_name, "tt")) {
+      int pos2= search_backwards (":", fn_name);
+      root= fn_name (0, pos2);
+      url u= tt_font_find (root);
+      if (suffix (u) == "pfb")
+	ttf= eval_system ("pfbtops", u);
+    }
+    else if (true_type && (pos!=-1) && ends (fn_name, "pk"))
       ttf= pk_to_true_type (root);
+#endif
 
     if (ttf != "") {
       root= upcase_all (root);
