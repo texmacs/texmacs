@@ -28,6 +28,7 @@
   ("Macro" (make 'macro))
   ("Argument" (make 'arg))
   ("Compound" (make 'compound))
+  ("Extern" (make 'extern))
   ---
   ("Long macro" (make 'xmacro))
   ("Get label" (make 'get-label))
@@ -43,7 +44,7 @@
   ("Unquote" (make 'unquote))
   ---
   ("Unevaluated value" (make 'quote-value))
-  ("Unevaluated argument" (make 'quote-argument)))
+  ("Unevaluated argument" (make 'quote-arg)))
 
 (menu-bind source-flow-menu
   ("If" (make 'if))
