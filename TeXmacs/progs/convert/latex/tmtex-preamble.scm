@@ -185,6 +185,9 @@
 	"{{\\bf "
 	(translate "A.M.S. subject classification: " "english" lan)
 	"}#1}"))
+    (subindex 2 "\\index{#1!#2}")
+    (subsubindex 3 "\\index{#1!#2!#3}")
+    (subsubsubindex 4 "\\index{#1!#2!#3!#4}")
 
     ;; arrows with limits
     (leftarrowlim 0 "\\mathop{\\leftarrow}\\limits")

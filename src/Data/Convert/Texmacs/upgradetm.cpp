@@ -2371,6 +2371,26 @@ upgrade_doc_info (tree t) {
 }
 
 /******************************************************************************
+* Temporary for Marie-Francoise
+******************************************************************************/
+
+tree latex_index_to_tree (string s);
+
+tree
+upgrade_index (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "index", 1) && is_atomic (t[0]))
+    return latex_index_to_tree (t[0]->label);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_index (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
