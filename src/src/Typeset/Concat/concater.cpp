@@ -335,13 +335,9 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_formatting (t, ip, CELL_FORMAT);
     break;
   case TWITH:
-    typeset_inactive_expand ("table-with", t, ip);
-    break;
   case CWITH:
-    typeset_inactive_expand ("cell-with", t, ip);
-    break;
   case TMARKER:
-    typeset_inactive_expand ("table-marker", t, ip);
+    typeset_inactive (t, ip);
     break;
   case TABLE:
     typeset_table (t, ip);
@@ -364,7 +360,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_value (t, ip);
     break;
   case MACRO:
-    typeset_inactive_expand ("macro", t, ip, N(t)-1);
+    typeset_inactive (t, ip);
     break;
   case DRD_PROPS:
     typeset_drd_props (t, ip);
@@ -376,7 +372,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_compound (t, ip);
     break;
   case XMACRO:
-    typeset_inactive_expand ("xmacro", t, ip, 1);
+    typeset_inactive (t, ip);
     break;
   case GET_LABEL:
     typeset_executable (t, ip);
@@ -394,10 +390,8 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_eval (t, ip);
     break;
   case QUOTE:
-    typeset_inactive_expand ("quote", t, ip);
-    break;
   case DELAY:
-    typeset_inactive_expand ("delay", t, ip);
+    typeset_inactive (t, ip);
     break;
   case HOLD:
     typeset_executable (t, ip);
@@ -474,19 +468,11 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_inactive_hybrid (t, ip);
     break;
   case TUPLE:
-    typeset_inactive_expand ("tuple", t, ip);
-    break;
   case ATTR:
-    typeset_inactive_expand ("attr", t, ip);
-    break;
   case COLLECTION:
-    typeset_inactive_expand ("collection", t, ip);
-    break;
   case ASSOCIATE:
-    typeset_inactive_expand ("associate", t, ip);
-    break;
   case BACKUP:
-    typeset_inactive_expand ("backup", t, ip);
+    typeset_inactive (t, ip);
     break;
   case LABEL:
     typeset_label (t, ip);

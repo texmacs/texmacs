@@ -80,7 +80,7 @@ class concater_rep {
   void typeset_unknown (string which, tree t, path ip, bool flag= false);
   void typeset_inactive (tree t, path ip);
   void typeset_inactive_tag (tree t, path ip);
-  void typeset_inactive_expand (string s, tree t, path ip, int p1=0, int p2=0);
+  void typeset_inactive_angular (tree t, path ip, int p1=0, int p2=0);
   void typeset_inactive_string (string s, path ip);
   void typeset_inactive_compound (tree t, path ip);
   void typeset_inactive_action (string s, tree t, path ip);

@@ -14,7 +14,7 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Typesetting deactivated trees
+* Typesetting special deactivated trees
 ******************************************************************************/
 
 void
@@ -29,38 +29,6 @@ concater_rep::typeset_eval_args (tree t, path ip) {
   marker (descend (ip, 0));
   typeset (env->exec (t), decorate_right (ip), false);
   marker (descend (ip, 1));
-}
-
-void
-concater_rep::typeset_inactive_expand (
-  string type, tree t, path ip, int pos1, int pos2)
-{
-  int i, j;
-  tree old_col;
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (ip, 0));
-  ghost (type, descend (ip, 0));
-  for (i=0; i<N(t); i++) {
-    print (space (0, 0, env->fn->spc->max));
-    int start= N(a);
-    print (space (0, 0, env->fn->spc->max));
-    ghost ("|", descend (descend (ip, i), 0));
-    print (space (0, 0, env->fn->spc->max));
-    if (i<N(t)-1) penalty_min (0);
-    if (i<pos1) old_col= env->local_begin (COLOR, "dark green");
-    typeset (t[i], descend (ip, i));
-    if (i<pos1) env->local_end (COLOR, old_col);
-    // ghost ("}", descend (descend (ip, i), right_index (t[i])));
-    int end= N(a);
-    if (i<pos2) for (j=start; j<end; j++)
-      a[j]->b->relocate (decorate_left (ip), true);
-  }
-  if (i<=pos2) ghost (">", descend (ip, 1));
-  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
 }
 
 void
@@ -236,6 +204,44 @@ concater_rep::typeset_unknown (string which, tree t, path ip, bool flag) {
 }
 
 /******************************************************************************
+* Angular deactivated representation
+******************************************************************************/
+
+void
+concater_rep::typeset_inactive_angular (
+  tree t, path ip, int pos1, int pos2)
+{
+  int i, j;
+  tree old_col;
+  string type= replace (env->drd->get_name (L(t)), " ", "-");
+
+  penalty_min (0);
+  marker (descend (ip, 0));
+  ghost ("<", descend (ip, 0));
+  ghost (type, descend (ip, 0));
+  for (i=0; i<N(t); i++) {
+    print (space (0, 0, env->fn->spc->max));
+    int start= N(a);
+    print (space (0, 0, env->fn->spc->max));
+    ghost ("|", descend (descend (ip, i), 0));
+    print (space (0, 0, env->fn->spc->max));
+    if (i<N(t)-1) penalty_min (0);
+    if (i<pos1) old_col= env->local_begin (COLOR, "dark green");
+    typeset (t[i], descend (ip, i));
+    if (i<pos1) env->local_end (COLOR, old_col);
+    // ghost ("}", descend (descend (ip, i), right_index (t[i])));
+    int end= N(a);
+    if (i<pos2) for (j=start; j<end; j++)
+      a[j]->b->relocate (decorate_left (ip), true);
+  }
+  if (i<=pos2) ghost (">", descend (ip, 1));
+  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
+  marker (descend (ip, 1));
+  print (space (0, 0, env->fn->spc->max));
+  penalty_min (0);
+}
+
+/******************************************************************************
 * Dispatching
 ******************************************************************************/
 
@@ -268,19 +274,19 @@ concater_rep::typeset_inactive (tree t, path ip) {
     */
 
   case ASSIGN:
-    typeset_inactive_expand ("assign", t, ip, 1);
+    typeset_inactive_angular (t, ip, 1);
     break;
   case WITH:
-    typeset_inactive_expand ("with", t, ip, N(t)-1);
+    typeset_inactive_angular (t, ip, N(t)-1);
     break;
   case MACRO:
-    typeset_inactive_expand ("macro", t, ip, N(t)-1);
+    typeset_inactive_angular (t, ip, N(t)-1);
     break;
   case DRD_PROPS:
-    typeset_inactive_expand ("drd-properties", t, ip, 1);
+    typeset_inactive_angular (t, ip, 1);
     break;
   case XMACRO:
-    typeset_inactive_expand ("xmacro", t, ip, 1);
+    typeset_inactive_angular (t, ip, 1);
     break;
 
   case INACTIVE:
@@ -309,10 +315,7 @@ concater_rep::typeset_inactive (tree t, path ip) {
     break;
 
   default:
-    {
-      string name= replace (env->drd->get_name (L(t)), " ", "-");
-      typeset_inactive_expand (name, t, ip);
-      break;
-    }
+    typeset_inactive_angular (t, ip);
+    break;
   }
 }
