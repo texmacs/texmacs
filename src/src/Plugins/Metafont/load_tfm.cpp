@@ -13,6 +13,8 @@
 #include "load_tex.hpp"
 #include "analyze.hpp"
 
+RESOURCE_CODE(tex_font_metric);
+
 /******************************************************************************
 * Constructors and destructors for tex_font_metric
 ******************************************************************************/
@@ -364,7 +366,8 @@ print (tex_font_metric tfm) {
 
 tex_font_metric
 load_tfm (url file_name, string family, int size) {
-  tex_font_metric tfm= new tex_font_metric_rep (family * as_string (size));
+  tex_font_metric tfm=
+    new tex_font_metric_rep (family * as_string (size) * ".tfm");
 
   int i= 0;
   string s;
