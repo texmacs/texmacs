@@ -28,6 +28,7 @@
 
   ;(mapsup (enlarge (0.18 -0.25 (rot-left mapsto)) 0.18 0.18 0 0))
   ;(mapsdown (enlarge (0.18 -0.25 (rot-right mapsto)) 0.18 0.18 0 0))
+  (upequal (enlarge (0.18 -0.25 (rot-left =)) 0.18 0.18 0 0))
   (hookuparrow (enlarge (0.18 -0.25 (rot-left hookrightarrow)) 0.18 0.18 0 0))
   (hookdownarrow (enlarge (0.18 -0.25 (rot-right hookrightarrow)) 0.18 0.18 0 0))
   (longuparrow (enlarge (0.18 -0.6 (rot-left longrightarrow)) 0.18 0.18 0 0))
