@@ -30,6 +30,10 @@
     (cond ((== l 'doc-author-data)
 	   (tm-insert q `(doc-data (,l (author-name ""))))
 	   (tm-go-to (rcons* q 0 0 0)))
+	  ((in? l '(doc-running-title doc-running-author
+		    doc-keywords doc-AMS-class))
+	   (tm-insert q `(doc-data (inactive (,l ""))))
+	   (tm-go-to (rcons* q 0 0 0)))
 	  (else
 	   (tm-insert q `(doc-data (,l "")))
 	   (tm-go-to (rcons* q 0 0))))))

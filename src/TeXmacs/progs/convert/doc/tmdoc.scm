@@ -168,4 +168,4 @@
 (define (tmdoc-include file-name)
   (let* ((body (tmdoc-expand (tree->string file-name) 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
-    (tmdoc-remove-hyper-links filt)))
+    (stree->tree (tmdoc-remove-hyper-links filt))))

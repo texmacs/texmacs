@@ -41,17 +41,31 @@
 
   <\active*>
     <\src-comment>
-      Rendering macros.
+      Frequently used block environments.
     </src-comment>
   </active*>
 
-  <assign|doc-title-block|<macro|body|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+  <assign|doc-title-block|<macro|body|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
     <\with|par-mode|center>
       <arg|body>
     </with>
   </cell>>>>>>>
 
-  <assign|doc-title|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-size|1.68|<style-with|src-compact|none|<arg|body>>>>>>>
+  <assign|doc-author-block|<macro|body|<tabular*|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
+    <\with|par-mode|center>
+      <arg|body>
+    </with>
+  </cell>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Rendering the title.
+    </src-comment>
+  </active*>
+
+  <assign|doc-title|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|<huge|<arg|body>>>>>>>
+
+  <assign|doc-subtitle|<macro|body|<surround|<vspace*|0.25fn>|<vspace|0.5fn>|<doc-title-block|<with|math-font-series|bold|font-series|bold|<larger|<arg|body>>>>>>>
 
   <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
 
@@ -66,19 +80,75 @@
     </surround>
   </macro>>
 
-  <new-counter|doc-note>
-
-  <assign|the-doc-note|<macro|<extern|ext-the-doc-note|<value|doc-note-nr>>>>
-
-  <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
-
-  <assign|doc-author-note*|<macro|x|; <arg|x>>>
-
-  <assign|doc-author-note|<macro|body|<style-with|src-compact|none|<eval|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasiquote|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-author-note*|concat|body|1>>>>>>>>>>
-
   <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
 
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
+
+  <\active*>
+    <\src-comment>
+      Rendering the abstract.
+    </src-comment>
+  </active*>
+
+  <assign|doc-abstract|<\macro|body>
+    <\padded-normal|2fn|1fn>
+      <\with|par-left|15mm|par-right|15mm>
+        <\small>
+          <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
+
+          <arg|body>
+        </small>
+      </with>
+    </padded-normal>
+  </macro>>
+
+  <assign|doc-abstract*|<\macro|body|note>
+    <\quasi>
+      <\doc-abstract>
+        <surround||<vspace|0.5fn>|<unquote|<quote-arg|body>>>
+
+        <\with|par-par-sep|0.25fn>
+          <unquote*|<arg|note>>
+        </with>
+      </doc-abstract>
+    </quasi>
+  </macro>>
+
+  <assign|doc-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
+  ><concat-tuple|<quote-arg|args>|, >>>>
+
+  <assign|doc-AMS-class|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
+  ><concat-tuple|<quote-arg|args>|, >>>>
+
+  \;
+
+  <assign|abstract|<\macro|body>
+    <style-with|src-compact|none|<with|abstract-note|<look-up|<quasi|<doc-data-abstract|<unquote*|<quote-value|the-doc-data>>>>|0>|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-value|abstract-note>>|0>|doc-abstract|doc-abstract*>>|<arg|body>|<quote-value|abstract-note>>>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Rendering footnotes.
+    </src-comment>
+  </active*>
+
+  <new-counter|doc-note>
+
+  <assign|the-doc-note|<macro|<number|<value|doc-note-nr>|fnsymbol>>>
+
+  <assign|doc-author-note-next|<macro|<inc-doc-note><the-doc-note>>>
+
+  \;
+
+  <assign|doc-footnote-ref|<macro|body|<style-with|src-compact|none|<if|<quasi|<unequal|<get-arity|<unquote|<quote-arg|body>>>|0>>|<rsup|<doc-author-note-next>>>>>>
+
+  <assign|doc-footnote-sub|<macro|x|; <arg|x>>>
+
+  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>
+
+  \;
+
+  <assign|doc-author-note|<macro|body|<quasi|<doc-footnote|<unquote|<quote-arg|body>>>>>>
 
   <\active*>
     <\src-comment>
@@ -86,36 +156,52 @@
     </src-comment>
   </active*>
 
-  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
-
   <assign|doc-data-one-author|<\xmacro|data>
     <\quasi>
       <unquote*|<select|<quote-arg|data>|doc-title>>
 
+      <unquote*|<select|<quote-arg|data>|doc-subtitle>>
+
       <unquote*|<select|<quote-arg|data>|doc-author-data>>
 
       <unquote*|<select|<quote-arg|data>|doc-date>>
+
+      <unquote*|<select|<quote-arg|data>|inactive>>
     </quasi>
   </xmacro>>
 
   <assign|doc-data-several-authors|<\xmacro|data>
-    <\style-with|src-compact|none>
-      <\quasi>
-        <unquote*|<select|<quote-arg|data>|doc-title>>
+    <\quasi>
+      <unquote*|<select|<quote-arg|data>|doc-title>>
 
-        <doc-authors-data|<unquote*|<select|<quote-arg|data>|doc-author-data>>>
+      <unquote*|<select|<quote-arg|data>|doc-subtitle>>
 
-        <unquote*|<select|<quote-arg|data>|doc-date>>
-      </quasi>
-    </style-with>
+      <doc-authors-data|<unquote*|<select|<quote-arg|data>|doc-author-data>>>
+
+      <unquote*|<select|<quote-arg|data>|doc-date>>
+
+      <unquote*|<select|<quote-arg|data>|inactive>>
+    </quasi>
+  </xmacro>>
+
+  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
+
+  <assign|doc-data-abstract|<\xmacro|data>
+    <\quasi>
+      <unquote*|<select|<quote-arg|data>|doc-keywords>>
+
+      <unquote*|<select|<quote-arg|data>|doc-AMS-class>>
+    </quasi>
   </xmacro>>
 
   <assign|doc-data|<\xmacro|data>
-    <with|par-mode|center|doc-note-nr|0|<style-with|src-compact|none|<\surround||<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
-      <\quasi>
-        <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-one-author>|<value|doc-data-several-authors>>>>|<unquote*|<quote-arg|data>>>>
-      </quasi>
-    </surround>>>
+    <style-with|src-compact|none|<\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
+      <\doc-title-block>
+        <with|doc-note-nr|0|<\quasi>
+          <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-one-author>|<value|doc-data-several-authors>>>>|<unquote*|<quote-arg|data>>>>
+        </quasi>>
+      </doc-title-block>
+    </surround>>
   </xmacro>>
 
   <\active*>
@@ -150,38 +236,34 @@
     </src-comment>
   </active*>
 
-  <assign|doc-author-produce|<\macro|name|main-data|sub-data>
-    <\style-with|src-compact|none>
-      <\quasi>
-        <\surround|<vspace*|1fn>|<vspace|1.5fn>>
-          <\with|par-par-sep|0fn>
-            <doc-author-name|<style-with|src-compact|none|<doc-author-by|<arg|name>><style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|sub-data>>|0>|<rsup|<doc-author-note-next>>>>>>
-
-            <unquote*|<style-with|src-compact|none|<if|<equal|<get-arity|<quote-arg|main-data>>|0>|<tuple>|<tuple|<quasi|<doc-author-info|<unquote|<quote-arg|main-data>>>>>>>>
-          </with>
-        </surround>
-      </quasi>
-    </style-with>
-  </macro>>
-
-  <assign|doc-author-data-name|<xmacro|data|<quasiquote|<style-with|src-compact|none|<space|0fn><unquote*|<select|<quote-arg|data>|author-name>>>>>>
-
-  <assign|doc-author-data-info|<\xmacro|data>
-    <\quasiquote>
-      <unquote*|<select|<quote-arg|data>|author-address>>
-
-      <unquote*|<select|<quote-arg|data>|author-email>>
-
-      <unquote*|<select|<quote-arg|data>|author-homepage>>
-    </quasiquote>
-  </xmacro>>
-
   <assign|doc-author-data-note|<xmacro|data|<\quasi>
     <unquote*|<select|<quote-arg|data>|author-note|document|<pat-any>>>
   </quasi>>>
 
+  <assign|doc-author-produce|<\macro|data>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <doc-author-name|<style-with|src-compact|none|<doc-author-by|<unquote*|<select|<quote-arg|data>|author-name>>><style-with|src-compact|none|<doc-footnote-ref|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|data>>>>>>>>>
+
+        <unquote*|<select|<quote-arg|data>|author-address>>
+
+        <unquote*|<select|<quote-arg|data>|author-email>>
+
+        <unquote*|<select|<quote-arg|data>|author-homepage>>
+      </quasi>
+    </style-with>
+  </macro>>
+
   <assign|doc-author-data|<\xmacro|data>
-    <quasi|<style-with|src-compact|none|<doc-author-produce|<doc-author-data-name|<unquote*|<quote-arg|data>>>|<doc-author-data-info|<unquote*|<quote-arg|data>>>|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|data>>>>>>>>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <\surround|<vspace*|1fn>|<vspace|1.5fn>>
+          <\with|par-par-sep|0fn>
+            <doc-author-produce|<unquote|<quote-arg|data>>>
+          </with>
+        </surround>
+      </quasi>
+    </style-with>
   </xmacro>>
 
   <assign|doc-author-data-bis|<macro|body|<quasi|<style-with|src-compact|none|<doc-author-note|<unquote|<quasi|<doc-author-data-note|<unquote*|<quote-arg|body>>>>>>>>>>
