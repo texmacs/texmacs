@@ -1795,7 +1795,7 @@ tmg_make_big_compound (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_big_expand (in1);
+  get_server()->get_editor()->make_big_compound (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1808,7 +1808,7 @@ tmg_make_compound (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_expand (in1);
+  get_server()->get_editor()->make_compound (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1823,7 +1823,7 @@ tmg_make_compound_arity (SCM arg1, SCM arg2) {
   int in2= scm_to_int (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_expand (in1, in2);
+  get_server()->get_editor()->make_compound (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;

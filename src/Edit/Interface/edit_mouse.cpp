@@ -92,7 +92,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 	  go_to (start (et, path_inc (p) * 0));
 	  return true;
 	}
-    path q= search_upwards_expand ("footnote");
+    path q= search_upwards_compound ("footnote");
     if ((!nil (q)) && (tp == start (et, q * 0))) {
       go_to (end (et, q));
       return true;

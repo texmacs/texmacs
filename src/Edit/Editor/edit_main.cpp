@@ -312,7 +312,7 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::process_input () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (N (subtree (et, p)) != 2)) return;
   tree t= subtree (et, p) [1];
   string lan= get_env_string (PROG_LANGUAGE);

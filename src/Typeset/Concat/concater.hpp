@@ -80,7 +80,7 @@ class concater_rep {
   void typeset_inactive (tree t, path ip);
   void typeset_inactive (string s, tree t, path ip, int pos1=0, int pos2=0);
   void typeset_inactive_string (string s, path ip);
-  void typeset_inactive_expand_apply (tree t, path ip, bool flag);
+  void typeset_inactive_compound (tree t, path ip);
   void typeset_inactive_action (string s, tree t, path ip);
   void typeset_inactive_symbol (tree t, path ip);
   void typeset_inactive_latex (tree t, path ip);
@@ -90,7 +90,6 @@ class concater_rep {
   // active macro mechanisms
   void typeset_assign (tree t, path ip);
   void typeset_with (tree t, path ip);
-  void typeset_expand (tree t, path ip);
   void typeset_compound (tree t, path ip);
   void typeset_include (tree t, path ip);
   void typeset_drd_props (tree t, path ip);

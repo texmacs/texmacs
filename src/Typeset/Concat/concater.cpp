@@ -429,15 +429,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case EXPAND:
   case VAR_EXPAND:
   case HIDE_EXPAND:
-    if (ACTIVATED) typeset_expand (t, ip);
-    else typeset_inactive_expand_apply (t, ip, false);
-    break;
   case COMPOUND:
-    if (ACTIVATED) typeset_compound (t, ip);
-    else typeset_inactive_expand_apply (t, ip, true);
-    break;
   case APPLY:
-    typeset_inactive_expand_apply (t, ip, true);
+    if (ACTIVATED) typeset_compound (t, ip);
+    else typeset_inactive_compound (t, ip);
     break;
   case BEGIN:
     typeset_inactive ("begin", t, ip, N(t)-1);

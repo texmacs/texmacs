@@ -65,11 +65,11 @@ void
 edit_process_rep::start_input () {
   path p;
   bool needs_return= false;
-  if (!nil (p= search_upwards_expand ("input"))) {
+  if (!nil (p= search_upwards_compound ("input"))) {
     needs_return= true;
     go_to (p * 1);
   }
-  else if (!nil (p= search_upwards_expand ("output"))) {
+  else if (!nil (p= search_upwards_compound ("output"))) {
     needs_return= true;
     tree st= subtree (et, p);
     if ((N(st) == 1) && is_empty (st [0])) {
@@ -133,11 +133,11 @@ void
 edit_process_rep::start_output () {
   path p;
   bool needs_return= false;
-  if (!nil (p= search_upwards_expand ("input"))) {
+  if (!nil (p= search_upwards_compound ("input"))) {
     go_to (p * 1);
     needs_return= true;
   }
-  else if (!nil (p= search_upwards_expand ("output"))) {
+  else if (!nil (p= search_upwards_compound ("output"))) {
     go_to (p * 1);
     needs_return= true;
   }
@@ -169,7 +169,7 @@ void
 edit_process_rep::session_use_math_input (bool flag) {
   if (math_input != flag) {
     math_input= flag;
-    path p= search_upwards_expand ("input");
+    path p= search_upwards_compound ("input");
     if (nil (p)) return;
     tree input (DOCUMENT, "");
     path q (0, 0);
@@ -193,9 +193,9 @@ edit_process_rep::session_is_using_math_input () {
 
 void
 edit_process_rep::session_var_go_up () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
-  path q= search_previous_expand (p, "input");
+  path q= search_previous_compound (p, "input");
   if (q != p) {
     tree st= subtree (et, q);
     go_to_correct (q * path (1, end (st[1])));
@@ -205,9 +205,9 @@ edit_process_rep::session_var_go_up () {
 
 void
 edit_process_rep::session_var_go_down () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
-  path q= search_next_expand (p, "input");
+  path q= search_next_compound (p, "input");
   if (q != p) {
     tree st= subtree (et, q);
     go_to_correct (q * path (1, end (st[1])));
@@ -217,36 +217,36 @@ edit_process_rep::session_var_go_down () {
 
 void
 edit_process_rep::session_go_left () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_left ();
-  p= search_upwards_expand ("input");
+  p= search_upwards_compound ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
   select_from_cursor_if_active ();
 }
 
 void
 edit_process_rep::session_go_right () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_right ();
-  p= search_upwards_expand ("input");
+  p= search_upwards_compound ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
   select_from_cursor_if_active ();
 }
 
 void
 edit_process_rep::session_go_up () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_up ();
-  p= search_upwards_expand ("input");
+  p= search_upwards_compound ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) {
     go_to (old_tp);
     session_var_go_up ();
@@ -256,12 +256,12 @@ edit_process_rep::session_go_up () {
 
 void
 edit_process_rep::session_go_down () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_down ();
-  p= search_upwards_expand ("input");
+  p= search_upwards_compound ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) {
     go_to (old_tp);
     session_var_go_down ();
@@ -285,9 +285,9 @@ edit_process_rep::session_go_page_down () {
 
 void
 edit_process_rep::session_remove_backwards () {
-  path p= search_upwards_expand ("math");
+  path p= search_upwards_compound ("math");
   if (nil (p)) {
-    p= search_upwards_expand ("input");
+    p= search_upwards_compound ("input");
     if (nil (p) || (tp == start (et, p * 1))) return;
   }
   else if (tp == start (et, p * 0)) return;
@@ -296,9 +296,9 @@ edit_process_rep::session_remove_backwards () {
 
 void
 edit_process_rep::session_remove_forwards () {
-  path p= search_upwards_expand ("math");
+  path p= search_upwards_compound ("math");
   if (nil (p)) {
-    p= search_upwards_expand ("input");
+    p= search_upwards_compound ("input");
     if (nil (p) || (tp == end (et, p * 1))) return;
   }
   else if (tp == end (et, p * 0)) return;
@@ -325,7 +325,7 @@ skip_backwards (tree et, path& p, string tag, int arity) {
 
 void
 edit_process_rep::session_insert_text_field () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   insert (p, tree (DOCUMENT, compound ("textput", tree (DOCUMENT, ""))));
   go_to (p * path (0, path (0, 0)));
@@ -344,7 +344,7 @@ edit_process_rep::session_insert_input_at (path p) {
 
 void
 edit_process_rep::session_insert_input_below () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   p= path_inc (p);
   skip_forwards (et, p, "output", 1);
@@ -353,7 +353,7 @@ edit_process_rep::session_insert_input_below () {
 
 void
 edit_process_rep::session_insert_input_above () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   skip_backwards (et, p, "textput", 1);
   session_insert_input_at (p);
@@ -361,7 +361,7 @@ edit_process_rep::session_insert_input_above () {
 
 void
 edit_process_rep::session_fold_input () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return;
   path q= path_inc (p);
   skip_backwards (et, p, "textput", 1);
@@ -375,7 +375,7 @@ edit_process_rep::session_fold_input () {
 
 void
 edit_process_rep::session_remove_input_backwards () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   skip_backwards (et, p, "textput", 1);
   path q= p;
@@ -387,7 +387,7 @@ edit_process_rep::session_remove_input_backwards () {
 
 void
 edit_process_rep::session_remove_input_forwards () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   path q= path_inc (p);
   skip_backwards (et, p, "textput", 1);
@@ -402,7 +402,7 @@ edit_process_rep::session_remove_input_forwards () {
 
 void
 edit_process_rep::session_remove_all_outputs () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   tree st= subtree (et, path_up (p));
   int i, n= N (st);
@@ -413,7 +413,7 @@ edit_process_rep::session_remove_all_outputs () {
 
 void
 edit_process_rep::session_remove_previous_output () {
-  path p= search_upwards_expand ("output");
+  path p= search_upwards_compound ("output");
   if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
   path q= p;
   skip_backwards (et, p, "input", 2);
@@ -425,9 +425,9 @@ edit_process_rep::session_remove_previous_output () {
 
 void
 edit_process_rep::session_split () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   skip_backwards (et, p, "textput", 1);
-  path q= search_upwards_expand ("session");
+  path q= search_upwards_compound ("session");
   if (nil (p) ||
       (N(q) < 2) ||
       (last_item (p) == 0) ||
@@ -474,7 +474,7 @@ put_cursor (tree t, path p) {
 
 bool
 edit_process_rep::session_complete_try () {
-  path p= search_upwards_expand ("input");
+  path p= search_upwards_compound ("input");
   if (nil (p)) return false;
   tree st= subtree (et, p);
   if ((N(tp) <= N(p)) || (tp[N(p)] != 1)) return false;

@@ -147,12 +147,11 @@ concater_rep::typeset_inactive_specific (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_inactive_expand_apply (tree t, path ip, bool flag) {
+concater_rep::typeset_inactive_compound (tree t, path ip) {
   int i;
   penalty_min (0);
   marker (descend (ip, 0));
-  ghost (flag? string ("<"): string ("{"),
-	 descend (descend (ip, 0), 0));
+  ghost ("<", descend (descend (ip, 0), 0));
   tree old_col= env->local_begin (COLOR, "dark green");
   typeset (t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
@@ -163,9 +162,8 @@ concater_rep::typeset_inactive_expand_apply (tree t, path ip, bool flag) {
     if (i<N(t)-1) penalty_min (0);
     typeset (t[i], descend (ip, i));
   }
-  ghost (flag? string (">"): string ("}"),
-	 N(t) == 0? descend (ip, 1):
-	            descend (descend (ip, i-1), right_index (t[i-1])));
+  ghost (">", N(t) == 0? descend (ip, 1):
+	                 descend (descend (ip, i-1), right_index (t[i-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);

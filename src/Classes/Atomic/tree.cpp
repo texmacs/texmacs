@@ -212,17 +212,6 @@ is_multi_paragraph (tree t) {
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    {
-      int i, n= N(t);
-      if (t[0] == "footnote") return false;
-      for (i=1; i<n; i++)
-	if (is_multi_paragraph (t[i]))
-	  return true;
-      return false;
-    }
   default:
     if (L(t) < START_EXTENSIONS) return false;
     else {
@@ -255,27 +244,6 @@ is_script (tree t, bool& right) {
 bool
 is_prime (tree t) {
   return ((L(t) == LEFT_PRIME) || (L(t) == RIGHT_PRIME)) && (N(t) == 1);
-}
-
-bool
-is_expand (tree t) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) ||
-	  (L(t) == HIDE_EXPAND) || (L(t) == COMPOUND));
-}
-
-bool
-is_expand (tree t, int n) {
-  return is_expand (t) && (N(t) == n+1);
-}
-
-bool
-is_expand (tree t, string s) {
-  return is_expand (t) && (N(t) > 0) && (t[0] == s);
-}
-
-bool
-is_expand (tree t, string s, int n) {
-  return is_expand (t) && (N(t) == n+1) && (t[0] == s);
 }
 
 bool

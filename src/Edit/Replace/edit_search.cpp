@@ -29,14 +29,14 @@ bool
 edit_replace_rep::inside (string what) {
   if (std_contains (what))
     return inside (as_tree_label (what));
-  else return inside_expand (what);
+  else return inside_compound (what);
 }
 
 path
 edit_replace_rep::search_upwards (string what) {
   if (std_contains (what))
     return search_upwards (as_tree_label (what));
-  else return search_upwards_expand (what);
+  else return search_upwards_compound (what);
 }
 
 bool
@@ -76,19 +76,18 @@ edit_replace_rep::search_parent_upwards (tree_label l) {
 }
 
 bool
-edit_replace_rep::inside_expand (string name) {
-  return !nil (search_upwards_expand (name));
+edit_replace_rep::inside_compound (string name) {
+  return !nil (search_upwards_compound (name));
 }
 
 path
-edit_replace_rep::search_upwards_expand (string name) {
+edit_replace_rep::search_upwards_compound (string name) {
   path p= path_up (tp);
   while (true) {
     p= path_up (p);
     if (nil (p)) return p;
     tree st= subtree (et, p);
     if (is_compound (st, name)) return p;
-    if (is_expand (st, name)) return p; // for hide_expand
   }
 }
 
@@ -113,7 +112,7 @@ edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
   if (nil (p)) return "";
   tree st= subtree (et, p);
-  if (is_expand (st)) return as_string (st[0]);
+  if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));
 }
 
@@ -151,7 +150,7 @@ is_accessible_path (drd_info drd, tree t, path p) {
 }
 
 path
-edit_replace_rep::search_previous_expand (path init, string which) {
+edit_replace_rep::search_previous_compound (path init, string which) {
   path p= init;
   while (true) {
     if (nil (p)) return init;
@@ -171,7 +170,7 @@ edit_replace_rep::search_previous_expand (path init, string which) {
 }
 
 path
-edit_replace_rep::search_next_expand (path init, string which) {
+edit_replace_rep::search_next_compound (path init, string which) {
   path p= init;
   while (true) {
     if (nil (p)) return init;
@@ -433,8 +432,8 @@ edit_replace_rep::search_keypress (string s) {
       path r= path_up (p);
       string w= as_string (L (subtree (et, r)));
       path q= (s == "C-right")?
-	search_next_expand (r, w):
-	search_previous_expand (r, w);
+	search_next_compound (r, w):
+	search_previous_compound (r, w);
       if (q == r) {
 	set_message ("No more matches", "search similar structure");
 	cerr << '\a';

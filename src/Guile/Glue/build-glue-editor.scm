@@ -179,9 +179,9 @@
   (make-return-after make_return_after (bool))
   (make-assign make_assign (void string string))
   (make-with make_with (void string string))
-  (make-big-compound make_big_expand (void string))
-  (make-compound make_expand (void string))
-  (make-compound-arity make_expand (void string int))
+  (make-big-compound make_big_compound (void string))
+  (make-compound make_compound (void string))
+  (make-compound-arity make_compound (void string int))
   (temp-proof-fix temp_proof_fix (void))
   (make-apply make_apply (void string))
 

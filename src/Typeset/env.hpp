@@ -110,9 +110,6 @@ private:
   tree exec_with (tree t);
   void exec_until_with (tree t, path p);
   bool exec_until_with (tree t, path p, string var, int level);
-  tree exec_expand (tree t);
-  void exec_until_expand (tree t, path p);
-  bool exec_until_expand (tree t, path p, string var, int level);
   tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);

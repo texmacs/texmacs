@@ -66,50 +66,6 @@ concater_rep::typeset_with (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_expand (tree t, path ip) {
-  tree f= t[0];
-  if (is_compound (f)) f= env->exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!env->provides (var)) {
-      typeset_unknown (var, t, ip, true);
-      return;
-    }
-    f= env->read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1;
-    env->macro_arg= list<hashmap<string,tree> > (
-      hashmap<string,tree> (UNINIT), env->macro_arg);
-    env->macro_src= list<hashmap<string,path> > (
-      hashmap<string,path> (path (DECORATION)), env->macro_src);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+1]: tree("");
-	env->macro_src->item (var)= i<m? descend (ip,i+1): decorate_right(ip);
-      }
-    if (is_decoration (ip)) typeset (f[n], ip);
-    else {
-      if (L(t) != VAR_EXPAND) marker (descend (ip, 0));
-      typeset (f[n], decorate_right (ip));
-      if (L(t) != VAR_EXPAND) marker (descend (ip, 1));
-    }
-    env->macro_arg= env->macro_arg->next;
-    env->macro_src= env->macro_src->next;
-  }
-  else {
-    if (is_decoration (ip)) typeset (f, ip);
-    else {
-      if (L(t) != VAR_EXPAND) marker (descend (ip, 0));
-      typeset (f, decorate_right (ip));
-      if (L(t) != VAR_EXPAND) marker (descend (ip, 1));
-    }
-  }
-}
-
-void
 concater_rep::typeset_compound (tree t, path ip) {
   int d; tree f;
   if (L(t) == COMPOUND) {

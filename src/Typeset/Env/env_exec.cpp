@@ -117,10 +117,6 @@ edit_env_rep::exec (tree t) {
     return exec_assign (t);
   case WITH:
     return exec_with (t);
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return exec_expand (t);
   case COMPOUND:
     return exec_compound (t);
   case INCLUDE:
@@ -309,63 +305,6 @@ edit_env_rep::exec_with (tree t) {
   STACK_DELETE_ARRAY(oldv);
   STACK_DELETE_ARRAY(newv);
   return u;
-}
-
-tree
-edit_env_rep::exec_expand (tree t) {
-  tree f= t[0];
-  if (is_compound (f)) f= exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!provides (var)) return tree (ERROR, "expand " * var);
-    f= read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1;
-    macro_arg= list<hashmap<string,tree> > (
-      hashmap<string,tree> (UNINIT), macro_arg);
-    macro_src= list<hashmap<string,path> > (
-      hashmap<string,path> (path (DECORATION)), macro_src);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+1]: tree("");
-    tree r= exec (f[n]);
-    macro_arg= macro_arg->next;
-    macro_src= macro_src->next;
-    return r;
-  }
-  else return exec (f);
-
-  /*
-  tree f= t[0];
-  if (is_compound (f)) f= exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!provides (var)) return tree (ERROR, "bad expand");
-    f= read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1; // is n=0 allowed ?
-    STACK_NEW_ARRAY(old_value,tree,n);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-        string var= f[i]->label;
-	old_value [i]= read (var);
-	monitored_write (var, i<m? t[i+1]: tree(""));
-      }
-    tree r= exec (f[n]);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-        string var= f[i]->label;
-	write (var, old_value[i]);
-      }
-    STACK_DELETE_ARRAY(old_value);
-    return r;
-  }
-  else return exec (f);
-  */
 }
 
 tree
@@ -1043,11 +982,6 @@ edit_env_rep::exec_until (tree t, path p) {
   case WITH:
     exec_until_with (t, p);
     return;
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    exec_until_expand (t, p);
-    return;
   case COMPOUND:
     exec_until_compound (t, p);
     return;
@@ -1112,34 +1046,6 @@ edit_env_rep::exec_until_with (tree t, path p) {
   exec_until (t[n-1], p->next);
   STACK_DELETE_ARRAY(vars);
   STACK_DELETE_ARRAY(newv);
-  return;
-}
-
-void
-edit_env_rep::exec_until_expand (tree t, path p) {
-  tree f= t[0];
-  if (is_compound (f)) f= exec (f);
-  if (is_compound (f)) return;
-  string fname= f->label;
-  if (!provides (fname)) return;
-  f= read (fname);
-  if ((p->item == 0) || ((p->item-1) >= N(f)) ||
-      is_compound (f[p->item-1])) return;
-  string var= f[p->item-1]->label;
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1;
-    macro_arg= list<hashmap<string,tree> >
-      (hashmap<string,tree> (UNINIT), macro_arg);
-    macro_src= list<hashmap<string,path> >
-      (hashmap<string,path> (path (DECORATION)), macro_src);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+1]: tree("");
-    (void) exec_until (f[n], p->next, var, 0);
-    macro_arg= macro_arg->next;
-    macro_src= macro_src->next;
-  }
   return;
 }
 
@@ -1247,10 +1153,6 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return false;
   case WITH:
     return exec_until_with (t, p, var, level);
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return exec_until_expand (t, p, var, level);
   case COMPOUND:
     return exec_until_compound (t, p, var, level);
   case INCLUDE:
@@ -1391,53 +1293,6 @@ edit_env_rep::exec_until_with (tree t, path p, string var, int level) {
   STACK_DELETE_ARRAY(oldv);
   STACK_DELETE_ARRAY(newv);
   return false;
-}
-
-bool
-edit_env_rep::exec_until_expand (tree t, path p, string var, int level) {
-  tree f= t[0];
-  if (is_compound (f)) f= exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!provides (var)) return false;
-    f= read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1;
-    macro_arg= list<hashmap<string,tree> >
-      (hashmap<string,tree> (UNINIT), macro_arg);
-    macro_src= list<hashmap<string,path> >
-      (hashmap<string,path> (path (DECORATION)), macro_src);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+1]: tree("");
-    bool done= exec_until (f[n], p, var, level+1);
-    macro_arg= macro_arg->next;
-    macro_src= macro_src->next;
-    return done;
-  }
-  return false;
-
-  /*
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1; // is n=0 allowed ?
-    tree old_value  [n];
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	old_value [i]= read (var);
-	monitored_write (var, i<m? t[i+1]: tree(""));
-      }
-    bool done= exec_until (f[n], p, var, level+1);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	write (var, old_value[i]);
-      }
-    return done;
-  }
-  */
 }
 
 bool

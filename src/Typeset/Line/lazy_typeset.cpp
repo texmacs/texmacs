@@ -201,53 +201,7 @@ make_lazy_with (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Expand
-******************************************************************************/
-
-lazy
-make_lazy_expand (edit_env env, tree t, path ip) {
-  tree f= t[0];
-  if (is_compound (f)) f= env->exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (env->provides (var)) f= env->read (var);
-    else f= tree (ERROR, "expand " * var);
-  }
-
-  array<line_item> a;
-  array<line_item> b;
-  if ((!is_func (t, VAR_EXPAND)) && (!is_decoration (ip))) {
-    a= typeset_marker (env, descend (ip, 0));
-    b= typeset_marker (env, descend (ip, 1));
-  }
-  lazy par;
-
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1;
-    env->macro_arg= list<hashmap<string,tree> > (
-      hashmap<string,tree> (UNINIT), env->macro_arg);
-    env->macro_src= list<hashmap<string,path> > (
-      hashmap<string,path> (path (DECORATION)), env->macro_src);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+1]: tree("");
-	env->macro_src->item (var)= i<m? descend (ip,i+1): decorate_right(ip);
-      }
-    if (is_decoration (ip)) par= make_lazy (env, f[n], ip);
-    else par= make_lazy (env, f[n], decorate_right (ip));
-    env->macro_arg= env->macro_arg->next;
-    env->macro_src= env->macro_src->next;
-  }
-  else {
-    if (is_decoration (ip)) par= make_lazy (env, f, ip);
-    else par= make_lazy (env, f, decorate_right (ip));
-  }
-  return lazy_surround (a, b, par, ip);
-}
-
-/******************************************************************************
-* Extensions
+* Compound
 ******************************************************************************/
 
 lazy
@@ -395,10 +349,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_table (env, t, ip);
   case WITH:
     return make_lazy_with (env, t, ip);
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return make_lazy_expand (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case INCLUDE:

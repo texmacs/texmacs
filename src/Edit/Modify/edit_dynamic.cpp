@@ -357,7 +357,7 @@ edit_dynamic_rep::make_with (string var, string val) {
 }
 
 bool
-edit_dynamic_rep::make_big_expand (string name) {
+edit_dynamic_rep::make_big_compound (string name) {
   tree body;
   bool active= selection_active_normal ();
   if (active) {
@@ -381,7 +381,7 @@ edit_dynamic_rep::make_big_expand (string name) {
 }
 
 void
-edit_dynamic_rep::make_expand (string s, int n) {
+edit_dynamic_rep::make_compound (string s, int n) {
   tree ins (make_tree_label (s), n);
   if (n==0) insert_tree (ins, 1);
   else if (n==1) {
@@ -405,7 +405,7 @@ edit_dynamic_rep::make_expand (string s, int n) {
 void
 edit_dynamic_rep::temp_proof_fix () {
   /* this routine should be removed as soon as possible */
-  path p = search_upwards_expand ("proof");
+  path p = search_upwards_compound ("proof");
   if (nil (p) || (N(tp) < N(p)+2)) return;
   path q = head (tp, N(p)+2);
   tree st= subtree (et, path_up (q));
@@ -432,29 +432,6 @@ edit_dynamic_rep::back_dynamic (path p) {
     ins_unary (p, INACTIVE);
     set_message ("return: reactivate", "delete#" * s);
   }
-}
-
-void
-edit_dynamic_rep::back_expand (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE)) back_dynamic (p);
-  else {
-    tree st= subtree (et, p);
-    int n= N(st);
-    if (n==1) {
-      assign (p, "");
-      correct (path_up (p));
-    }
-    else if ((n==2) &&
-	     ((is_func (st[1], TABLE_FORMAT) || is_func (st[1], TABLE))))
-      back_table (p * 1);
-    else go_to (end (et, p * (n-1)));
-  }
-}
-
-void
-edit_dynamic_rep::back_hide_expand (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE)) back_dynamic (p);
-  else go_to (end (et, p * (N (subtree (et, p)) - 2)));
 }
 
 void
@@ -527,26 +504,6 @@ edit_dynamic_rep::back_in_with (tree t, path p) {
     correct (path_up (p, 2));
   }
   else go_to (start (et, path_up (p)));
-}
-
-void
-edit_dynamic_rep::back_in_expand (tree t, path p) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
-    back_in_dynamic (t, p, 1);
-  else {
-    int node= last_item (p);
-    if (node>1) go_to (end (et, path_up (p) * (node-1)));
-    else {
-      int i;
-      for (i=1; i<N(t); i++)
-	if ((t[i] != "") && (t[i] != tree (DOCUMENT, ""))) {
-	  go_to (start (et, path_up (p)));
-	  return;
-	}
-      assign (path_up (p), "");
-      correct (path_up (p, 2));
-    }
-  }
 }
 
 void

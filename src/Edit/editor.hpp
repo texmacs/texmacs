@@ -83,13 +83,10 @@ protected:
   virtual void back_table (path p) = 0;
   virtual void back_in_table (tree t, path p) = 0;
   virtual void back_dynamic (path p) = 0;
-  virtual void back_expand (path p) = 0;
   virtual void back_compound (path p) = 0;
   virtual void back_extension (path p) = 0;
-  virtual void back_hide_expand (path p) = 0;
   virtual void back_in_dynamic (tree t, path p, int min_args=1, int with=1)= 0;
   virtual void back_in_with (tree t, path p) = 0;
-  virtual void back_in_expand (tree t, path p) = 0;
   virtual void back_in_compound (tree t, path p) = 0;
 
   /* other protected subroutines */
@@ -322,8 +319,8 @@ public:
   virtual bool make_return_after () = 0;
   virtual void make_assign (tree var, tree by) = 0;
   virtual void make_with (string var, string val) = 0;
-  virtual bool make_big_expand (string s) = 0;
-  virtual void make_expand (string s, int n=0) = 0;
+  virtual bool make_big_compound (string s) = 0;
+  virtual void make_compound (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
   virtual void make_apply (string s) = 0;
   virtual void go_to_argument (path p, bool start_flag) = 0;
@@ -407,18 +404,18 @@ public:
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;
   virtual bool inside (tree_label l) = 0;
-  virtual bool inside_expand (string name) = 0;
+  virtual bool inside_compound (string name) = 0;
   virtual bool inside_with (string var, string val) = 0;
   virtual string inside_which (tree t) = 0;
   virtual path search_upwards (string what) = 0;
   virtual path search_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l, int& last) = 0;
-  virtual path search_upwards_expand (string name) = 0;
+  virtual path search_upwards_compound (string name) = 0;
   virtual path search_upwards_with (string var, string val) = 0;
   virtual path search_upwards_in_set (tree t) = 0;
-  virtual path search_previous_expand (path init, string which) = 0;
-  virtual path search_next_expand (path init, string which) = 0;
+  virtual path search_previous_compound (path init, string which) = 0;
+  virtual path search_next_compound (path init, string which) = 0;
   virtual void search_start (bool forward= true) = 0;
   virtual void search_button_next () = 0;
   virtual bool search_keypress (string s) = 0;
