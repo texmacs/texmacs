@@ -54,10 +54,11 @@
 
     <branch|Writing your own style files|design/design.en.tm>
 
-    <branch|Customizing the <TeXmacs> styles|customize/customize.en.tm>
+    <branch|Customizing the standard <TeXmacs>
+    styles|customize/customize.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
