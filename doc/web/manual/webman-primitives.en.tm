@@ -3,10 +3,10 @@
 <style|tmweb>
 
 <\body>
-  <tmweb-current|Help|Manual><tmweb-title|Customizing
-  <TeXmacs>|<tmweb-manual-links|webman-style|webman-format>>
+  <tmweb-current|Help|Manual><tmweb-title|<TeXmacs>
+  primitives|<tmweb-manual-links|webman-env|webman-styling>>
 
-  <tmdoc-include|main/scheme/man-scheme.en.tm>
+  <tmdoc-include|devel/format/regular/regular.en.tm>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
