@@ -55,7 +55,8 @@ public:
   friend inline int N (tree t);
   friend inline int arity (tree t);
   friend inline tree_label L (tree t);
-  friend inline array<tree>& A (tree t);
+  friend inline array<tree> A (tree t);
+  friend inline array<tree>& AR (tree t);
   friend inline bool is_atomic (tree t);
   friend inline bool is_compound (tree t);
   friend inline bool operator == (tree t, tree_label lab);
@@ -161,8 +162,11 @@ inline int right_index (tree t) {
   return is_atomic (t)? N(t->label): 1; }
 inline tree_label L (tree t) {
   return t.rep->op; }
-inline array<tree>& A (tree t) {
+inline array<tree> A (tree t) {
   CHECK_COMPOUND (t, "A (tree)");
+  return (static_cast<compound_rep*> (t.rep))->a; }
+inline array<tree>& AR (tree t) {
+  CHECK_COMPOUND (t, "AR (tree)");
   return (static_cast<compound_rep*> (t.rep))->a; }
 
 inline bool is_atomic (tree t) { return (t.rep->op == STRING); }
