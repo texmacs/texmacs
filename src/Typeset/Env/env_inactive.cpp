@@ -129,6 +129,8 @@ highlight (tree t, string kind) {
     return tree (WITH, MODE, "text", FONT_FAMILY, "tt", t);
   else if (kind == "integer")
     return tree (WITH, COLOR, "dark grey", t);
+  else if (kind == "error")
+    return tree (WITH, COLOR, "red", t);
   return t;
 }
 
@@ -140,7 +142,10 @@ tree
 edit_env_rep::rewrite_inactive_arg (
   tree t, tree var, int i, bool block, bool flush)
 {
-  tree r= rewrite_inactive (t[i], subvar (var, i), block, flush);
+  tree r= subvar (var, i);
+  if ((inactive_mode == INACTIVE_INLINE_RECURSE) ||
+      (inactive_mode == INACTIVE_BLOCK_RECURSE))
+    r= rewrite_inactive (t[i], r, block, flush);
   return highlight (r, arg_type (t, i));
 }
 
@@ -186,10 +191,14 @@ tree
 edit_env_rep::rewrite_inactive_value (
   tree t, tree var, bool block, bool flush)
 {
-  if ((N(t) == 1) && is_atomic (t[0]) && src_special >= SPECIAL_NORMAL) {
-    tree name= rewrite_inactive_arg (t, var, 0, false, false);
-    tree r= highlight (name, "id");
-    return tree (MARK, var, r);
+  if ((N(t) == 1) && is_atomic (t[0]) &&
+      src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
+    {
+      tree r= highlight (subvar (var, 0),
+        inactive_mode == INACTIVE_INLINE_ERROR ||
+	inactive_mode == INACTIVE_BLOCK_ERROR ?
+	string ("error"): string ("id"));
+      return tree (MARK, var, r);
   }
   return rewrite_inactive_default (t, var, block, flush);
 }
@@ -198,10 +207,14 @@ tree
 edit_env_rep::rewrite_inactive_arg (
   tree t, tree var, bool block, bool flush)
 {
-  if ((N(t) == 1) && is_atomic (t[0]) && src_special >= SPECIAL_NORMAL) {
-    tree name= rewrite_inactive_arg (t, var, 0, false, false);
-    tree r= highlight (name, "arg");
-    return tree (MARK, var, r);
+  if ((N(t) == 1) && is_atomic (t[0]) &&
+      src_style != STYLE_SCHEME && src_special >= SPECIAL_NORMAL)
+    {
+      tree r= highlight (subvar (var, 0),
+        inactive_mode == INACTIVE_INLINE_ERROR ||
+	inactive_mode == INACTIVE_BLOCK_ERROR ?
+	string ("error"): string ("arg"));
+      return tree (MARK, var, r);
   }
   return rewrite_inactive_default (t, var, block, flush);
 }
@@ -245,6 +258,10 @@ edit_env_rep::rewrite_inactive_default (
       d = 1;
       op= highlight (subvar (var, 0), "id");
     }
+  if (inactive_mode == INACTIVE_INLINE_ERROR ||
+      inactive_mode == INACTIVE_BLOCK_ERROR)
+    op= highlight (op, "error");
+
   if ((src_compact == COMPACT_ALL) ||
       ((!block) && (src_compact != COMPACT_NONE)) ||
       (!is_long (t)) && (src_compact != COMPACT_NONE))
@@ -327,7 +344,8 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
 
 tree
 edit_env_rep::rewrite_inactive (tree t, tree var) {
-  tree r= rewrite_inactive (t, var, true, true);
+  bool block= (inactive_mode >= INACTIVE_BLOCK_RECURSE);
+  tree r= rewrite_inactive (t, var, block, block);
   if (is_multi_paragraph (r)) {
     r= tree (WITH, PAR_PAR_SEP, "0fn", r);
     r= tree (SURROUND, "", tree (VSPACE, "0.5fn"), r);

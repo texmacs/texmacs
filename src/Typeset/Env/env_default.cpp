@@ -189,4 +189,17 @@ initialize_default_env () {
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
+
+  env ("error")=
+    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));
+  env ("inactive")=
+    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "once"));
+  env ("inactive*")=
+    tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "recurse"));
+  env ("indent")=
+    tree (MACRO, "x",
+	  tree (WITH, PAR_LEFT, tree (PLUS, tree (VALUE, PAR_LEFT), "1.5fn"),
+		tree (ARG, "x")));
+  env ("rightflush")=
+    tree (MACRO, tree (HTAB, "0fn", "first"));
 }

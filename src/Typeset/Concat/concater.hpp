@@ -75,29 +75,27 @@ class concater_rep {
   void typeset_table (tree t, path ip);
 
   // disactivated markup
-  void typeset_colored (tree t, path ip, tree val, bool test= true);
-  void typeset_tt (tree t, path ip, bool test= true);
-  void typeset_inactive_arg (tree t, path ip, int i);
-  void typeset_inactive_angular (tree t, path ip, bool err);
-  void typeset_inactive (tree t, path ip);
-  void typeset_error (tree t, path ip);
-  void typeset_mark (tree t, path ip);
+  void typeset_blue (tree t, path ip);
   void typeset_src_open (tree t, path ip, string extra);
   void typeset_src_middle (tree t, path ip, int i);
   void typeset_src_close (tree t, path ip);
   void typeset_src_args (tree t, path ip);
   void typeset_src_tag (tree t, path ip);
+  void typeset_inactive (tree t, path ip);
+  void typeset_error (tree t, path ip);
 
   // active macro mechanisms
   void typeset_assign (tree t, path ip);
   void typeset_with (tree t, path ip);
   void typeset_compound (tree t, path ip);
+  void typeset_auto (tree t, path ip, tree macro);
   void typeset_include (tree t, path ip);
   void typeset_drd_props (tree t, path ip);
   void typeset_eval (tree t, path ip);
   void typeset_value (tree t, path ip);
   void typeset_argument (tree t, path ip);
   void typeset_eval_args (tree t, path ip);
+  void typeset_mark (tree t, path ip);
   void typeset_dynamic (tree t, path ip);
   void typeset_executable (tree t, path ip);
   void typeset_rewrite (tree t, path ip);
@@ -142,7 +140,7 @@ class concater_rep {
 
 public:
   concater_rep (edit_env env);
-  void typeset (tree t, path ip, bool active_flag= true);
+  void typeset (tree t, path ip);
   void finish ();
 
   friend class liner_rep;

@@ -130,6 +130,20 @@ concater_rep::typeset_compound (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_auto (tree t, path ip, tree f) {
+  env->macro_arg= list<hashmap<string,tree> > (
+    hashmap<string,tree> (UNINIT), env->macro_arg);
+  env->macro_src= list<hashmap<string,path> > (
+    hashmap<string,path> (path (DECORATION)), env->macro_src);
+  string var= f[0]->label;
+  env->macro_arg->item (var)= t;
+  env->macro_src->item (var)= ip;
+  typeset (f[1], decorate_right (ip));
+  env->macro_arg= env->macro_arg->next;
+  env->macro_src= env->macro_src->next;
+}
+
+void
 concater_rep::typeset_include (tree t, path ip) {
   url file_name= as_string (t[0]);
   tree incl= load_inclusion (relative (env->base_file_name, file_name));
@@ -213,7 +227,7 @@ concater_rep::typeset_argument (tree t, path ip) {
 void
 concater_rep::typeset_eval_args (tree t, path ip) { 
   marker (descend (ip, 0));
-  typeset (env->exec (t), decorate_right (ip), false);
+  typeset_inactive (env->exec (t), decorate_right (ip));
   marker (descend (ip, 1));
 }
 

@@ -136,15 +136,10 @@ concater_rep::with_limits (int status) {
 ******************************************************************************/
 
 void
-concater_rep::typeset (tree t, path ip, bool active_flag) {
+concater_rep::typeset (tree t, path ip) {
   // cout << "Typeset " << t << "\n";
   if (is_atomic (t)) {
     typeset_string (t->label, ip);
-    return;
-  }
-
-  if ((!active_flag) || env->preamble) {
-    typeset_inactive (t, ip);
     return;
   }
 
@@ -445,17 +440,13 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
 
   case INACTIVE:
-    marker (descend (ip, 0));
-    typeset (t[0], descend (ip, 0), false);
-    marker (descend (ip, 1));
+    typeset_compound (t, ip);
     break;
   case ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
   case VAR_INACTIVE:
-    marker (descend (ip, 0));
-    typeset (t[0], descend (ip, 0), false);
-    marker (descend (ip, 1));
+    typeset_compound (t, ip);
     break;
   case VAR_ACTIVE:
     typeset (t[0], descend (ip, 0));

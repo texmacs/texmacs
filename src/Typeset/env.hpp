@@ -78,6 +78,13 @@
 #define CLOSE_LONG            2
 #define CLOSE_REPEAT          3
 
+#define INACTIVE_INLINE_RECURSE  0
+#define INACTIVE_INLINE_ONCE     1
+#define INACTIVE_INLINE_ERROR    2
+#define INACTIVE_BLOCK_RECURSE   3
+#define INACTIVE_BLOCK_ONCE      4
+#define INACTIVE_BLOCK_ERROR     5
+
 /******************************************************************************
 * The edit environment
 ******************************************************************************/
@@ -125,6 +132,8 @@ public:
   int       src_special;
   int       src_compact;
   int       src_close;
+
+  int       inactive_mode;
 
 public:
   tree exec_extra_list (tree t, int pos);
