@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html tmhtml)
-  (:use (convert tools tmconcat)
+  (:use (convert tools tmconcat) (convert mathml tmmath)
 	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
 	(convert tools sxml) (convert tools environment) (convert tools sxhtml)
 	(convert html htmlout))
@@ -27,6 +27,9 @@
 
 ;; FIXME: should go into environment
 (define tmhtml-math-mode? #f)
+
+(define (cork->html s)
+  (utf8->html (cork->utf8 s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
@@ -50,16 +53,16 @@
 	((string-starts? s "<frak-") `(h:u ,(tmhtml-sub-token s 6)))
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
-	   (if (== s encoded)
-	       (tm->xml-cdata s)
-	       encoded)))
+	   (utf8->html (if (== s encoded)
+			   (tm->xml-cdata s)
+			   encoded))))
 	(else s)))
 
 (define (tmhtml-string s)
   (if tmhtml-math-mode?
       (tmhtml-post-simplify-nodes
        (map tmhtml-math-token (tmconcat-tokenize-math s)))
-      (list (cork->utf8 s))))
+      (list (cork->html s))))
 
 (define (tmhtml-text s)
   (if tmhtml-math-mode?
@@ -129,7 +132,7 @@
       (xmlns:x "http://www.texmacs.org/2002/extensions")))
   `(*TOP* (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
 	  ,((cut sxml-set-attrs <> xmlns-attrs)
-	    (sxml-strip-ns-prefix "h" top))))
+	    (sxml-strip-ns-prefix "h" (sxml-strip-ns-prefix "m" top)))))
 
 (define (tmhtml-finalize-selection l)
   ;; @l is a nodeset produced by any handler _but_ tmhtml-file
@@ -379,13 +382,13 @@
 (define (tmhtml-frac env l)
   (let* ((num (tmhtml env (car l)))
 	 (den (tmhtml env (cadr l))))
-    `("frac (" ,@num ", " ,@den ")")))
+;    `("frac (" ,@num ", " ,@den ")")))
 
-;    `((h:table (@ (style "display: inline; margin-top: -10px; padding-top: -10px")
-;		  (valign "center"))
-;	       (h:tr (h:td (@ (align "center")
-;			      (style "border-bottom: solid 1px")) ,@num))
-;	       (h:tr (h:td (@ (align "center")) ,@den))))))
+    `((h:table (@ (style "display: inline; position: relative; top: 2.5ex")
+		  (valign "center"))
+	       (h:tr (h:td (@ (align "center")
+			      (style "border-bottom: solid 1px")) ,@num))
+	       (h:tr (h:td (@ (align "center")) ,@den))))))
 
 (define (tmhtml-sqrt env l)
   (if (= (length l) 1)
@@ -448,13 +451,13 @@
 
 (define (tmhtml-label env l)
   ;; WARNING: bad conversion if ID is not a string.
-  `((h:a (@ (id ,(cork->utf8 (force-string (car l))))))))
+  `((h:a (@ (id ,(cork->html (force-string (car l))))))))
 
 ;(define (tmhtml-reference l)
-;  (list 'ref (cork->utf8 (force-string (car l)))))
+;  (list 'ref (cork->html (force-string (car l)))))
 
 ;(define (tmhtml-pageref l)
-;  (list 'pageref (cork->utf8 (force-string (car l)))))
+;  (list 'pageref (cork->html (force-string (car l)))))
 
 (define (tmhtml-suffix s)
   ;; Change .html suffix to .tm suffix for local files for correct
@@ -475,7 +478,7 @@
   ;; TODO: change label at start of content into ID attribute, move other
   ;; labels out (A elements cannot be nested!).
   (let* ((body (tmhtml env (first l)))
-	 (to (cork->utf8 (force-string (second l)))))
+	 (to (cork->html (force-string (second l)))))
     (if (string-starts? to "$")
 	body ;; temporary fix for URLs like $TEXMACS_PATH/...
 	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
@@ -506,7 +509,8 @@
 
 (define (tmhtml-table-make env p)
   `((h:table
-     ,@(if (p 'global 'border) '((@ (border "1"))) '())
+     (@ (style "display: inline")
+	,@(if (p 'global 'border) '((border "1")) '()))
      ,@(tmhtml-table-cols p)
      (h:tbody ,@(tmhtml-table-contents env p)))))
 
@@ -562,7 +566,7 @@
 (define (tmhtml-postscript env l)
   (let ((s (first l)) (w (second l)) (h (third l)))
     (if (not (string? s)) '()	; only convert linked images
-	`((h:img (@ (src ,(cork->utf8 s))
+	`((h:img (@ (src ,(cork->html s))
 		    ,@(tmhtml-dimension-attr
 		       w 'width `((par ,number->percent)
 				  (px ,exact-number->string)))
@@ -758,10 +762,14 @@
    ;; Main conversion function.
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
-  (if (string? x)
-      (if (string-null? x) '() (tmhtml-text x)) ; non-verbatim string nodes
-      (or (tmhtml-dispatch 'tmhtml-primitives% env x)
-	  (tmhtml-implicit-compound env x))))
+  (cond
+; (tmhtml-math-mode?
+;  `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
+;	    ,(texmacs->mathml env x))))
+	((string? x)
+	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
+	(else (or (tmhtml-dispatch 'tmhtml-primitives% env x)
+		  (tmhtml-implicit-compound env x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching

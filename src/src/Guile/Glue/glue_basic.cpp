@@ -833,6 +833,32 @@ tmg_system_wait (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_math_symbol_type (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-type");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= math_symbol_type (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_numberP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_double (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_2url (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->url");
 
@@ -2361,6 +2387,8 @@ initialize_glue_basic () {
   gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
+  gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
+  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);

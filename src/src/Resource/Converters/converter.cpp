@@ -103,6 +103,7 @@ void
 converter_rep::load () {
   // to handle each case individually seems unelegant, but there is simply more
   // to be done here than just loading a file.
+  // cout << "TeXmacs] load converter " << from << " -> " << to << "\n";
   if ( from=="Cork" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
