@@ -90,7 +90,8 @@
 	     description-align description-long item*
 	     strong em dfn code* samp kbd var abbr acronym
 	     verbatim code tt
-	     block block* tabular tabular* tmdoc-title key))
+	     block block* tabular tabular*
+	     tmdoc-title tmdoc-license key))
     ,@(map tmhtml-env-macro-2 '(tmdoc-title*))
     ,@(map tmhtml-env-macro-3 '(tmdoc-title**))
     ,@(map tmhtml-env-func '(menu hyper-link tmdoc-copyright))))

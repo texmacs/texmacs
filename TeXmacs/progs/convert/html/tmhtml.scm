@@ -81,16 +81,23 @@
 	 (styles (cdadr l))
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
-	 (title (tmhtml-find-title doc)))
+	 (title (tmhtml-find-title doc))
+	 (css '(h:style (@ (type "text/css")) "body { text-align: justify }"))
+	 (body (tmhtml doc)))
     (if (not title) (set! title "No title"))
+    (if (or (in? "tmdoc" styles) (in? "tmweb" styles))
+	(begin
+	  (set! css '(h:link (@ (rel "stylesheet")
+				(href "http://www.texmacs.org/css/tmdoc.css")
+				(type "text/css"))))
+	  (set! body (tmhtml-tmdoc-post body))))
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
        (h:meta (@ (name "generator")
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
-       (h:style (@ (type "text/css"))
-		"body { text-align: justify }"))
-      (h:body ,@(tmhtml doc)))))
+       ,css)
+      (h:body ,@body))))
 
 (define (tmhtml-finalize-document top)
   ;; @top must be a node produced by tmhtml-file
@@ -587,48 +594,32 @@
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-make-rule)
-  '(h:table
-    (@ (cellspacing "0") (cellpadding "0") (width "100%") (border "0"))
-    (h:tr (@ (bgcolor "#6f6f6f"))
-	  (h:td (h:img (@ (src "http://www.texmacs.org/Images/pixel.png")
-			  (width "1") (height "1") (alt "")))))))
-
-(define (tmhtml-make-block content bgcolor padding gnus? center?)
+(define (tmhtml-make-block content)
   (let* ((l '(h:td
 	      (@ (align "left"))
 	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1.png")))))
 	 (c `(h:td
-	      (@ (align ,(if center? "center" "left")) (width "100%"))
-	      ,@content))
+	      (@ (align "center") (width "100%"))
+	      ,@(tmhtml content)))
 	 (r '(h:td
 	      (@ (align "right"))
 	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2.png")))))
-	 (row (if gnus? `(h:tr ,l ,c ,r) `(h:tr ,c))))
-    `(h:table (@ (width "100%") (bgcolor ,bgcolor)
-		 (cellspacing "0") (cellpadding ,padding))
+	 (row `(h:tr ,l ,c ,r)))
+    `(h:table (@ (width "100%") (bgcolor "#ffffdf")
+		 (cellspacing "0") (cellpadding "3"))
 	      ,row)))
 
 (define (tmhtml-tmdoc-title l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (car l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)))
+  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))))
 
 (define (tmhtml-tmdoc-title* l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (car l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (cadr l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)))
+  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (cadr l)))))
 
 (define (tmhtml-tmdoc-title** l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (car l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (cadr l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (caddr l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)))	
+  (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (car l)))
+	`(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (cadr l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (caddr l)))))
 
 (define (tmhtml-tmdoc-copyright* l)
   (if (null? l) l
@@ -638,9 +629,10 @@
   (with content
       `("&copy; " ,@(tmhtml (car l))
 	" by " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
-    (list (tmhtml-make-rule)
-	  (tmhtml-make-block content "#ffffdf" "3" #f #f)
-	  (tmhtml-make-rule))))
+    (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
+
+(define (tmhtml-tmdoc-license l)
+  (list `(h:div (@ (class "tmdoc-license")) ,@(tmhtml (car l)))))
 
 (define (tmhtml-key l)
   `((h:u (h:tt ,@(tmhtml (car l))))))
@@ -651,6 +643,28 @@
 			    ,@(tmhtml (car l)))
 	(if (null? (cdr l)) (list first)
 	    (cons* first "->" (tmhtml-menu (cdr l)))))))
+
+(define (tmhtml-tmdoc-bar? y)
+  (or (func? y 'h:h1)
+      (func? y 'h:h2)
+      (and (func? y 'h:div)
+	   (not (null? (cdr y)))
+	   (func? (cadr y) '@ 1)
+	   (== (first (cadadr y)) 'class)
+	   (string-starts? (second (cadadr y)) "tmdoc"))))
+
+(define (tmhtml-tmdoc-post-sub x)
+  ;; FIXME: these rewritings are quite hacky;
+  ;; better simplification would be nice...
+  (cond ((and (func? x 'h:p) (list-find (cdr x) tmhtml-tmdoc-bar?)) (cdr x))
+	((func? x 'h:p)
+	 (with r (append-map tmhtml-tmdoc-post-sub (cdr x))
+	   (if (== (cdr x) r) (list x) r)))
+	(else (list x))))
+
+(define (tmhtml-tmdoc-post body)
+  (with r (append-map tmhtml-tmdoc-post-sub body)
+    `((h:div (@ (class "tmdoc-body")) ,@r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main conversion routines
@@ -821,6 +835,7 @@
   (tmdoc-title* ,tmhtml-tmdoc-title*)
   (tmdoc-title** ,tmhtml-tmdoc-title**)
   (tmdoc-copyright ,tmhtml-tmdoc-copyright)
+  (tmdoc-license ,tmhtml-tmdoc-license)
   (key ,tmhtml-key)
   (menu ,tmhtml-menu)
   (hyper-link ,tmhtml-hyperlink))
