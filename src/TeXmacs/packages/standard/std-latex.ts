@@ -67,37 +67,39 @@
     Computing the page layout.
   </src-comment>>
 
-  <assign|page-width-margin|false>
+  <assign|page-width-margin|tex>
 
   <assign|page-odd|<macro|<plus|<tex-odd-side-margin>|1in>>>
 
   <assign|page-even|<macro|<plus|<tex-even-side-margin>|1in>>>
 
+  <assign|par-width|<macro|<tex-text-width>>>
+
   \;
 
   <assign|page-height-margin|tex>
 
-  <assign|page-head-sep|<tex-head-sep>>
+  <assign|page-head-sep|<macro|<tex-head-sep>>>
 
   <assign|page-top|<style-with|src-compact|none|<macro|<minus|1in|<tex-top-margin>|<tex-head-height>|<page-head-sep>|<tex-top-skip>|0.75quad>>>>
 
-  <assign|page-user-height|<tex-text-height>>
+  <assign|page-user-height|<macro|<tex-text-height>>>
 
   <assign|page-foot-sep|<macro|<minus|<tex-foot-skip>|<tex-foot-height-heuristic>>>>
 
   \;
 
-  <assign|page-fnote-sep|<tex-footnote-sep>>
+  <assign|page-fnote-sep|<macro|<tex-footnote-sep>>>
 
-  <assign|page-fnote-barlen|<tex-footnote-tm-barlen>>
+  <assign|page-fnote-barlen|<macro|<tex-footnote-tm-barlen>>>
 
-  <assign|par-columns-sep|<tex-column-sep>>
+  <assign|par-columns-sep|<macro|<tex-column-sep>>>
 
-  <assign|page-float-sep|<style-with|src-compact|all|><tex-float-sep>>
+  <assign|page-float-sep|<style-with|src-compact|all|><macro|<tex-float-sep>>>
 
-  <assign|page-mnote-width|<tex-margin-par-width>>
+  <assign|page-mnote-width|<macro|<tex-margin-par-width>>>
 
-  <assign|page-mnote-sep|<tex-margin-par-sep>>
+  <assign|page-mnote-sep|<macro|<tex-margin-par-sep>>>
 
   \;
 </body>
