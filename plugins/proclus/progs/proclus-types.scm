@@ -163,7 +163,6 @@
   (eval (cons 'quasiquote
               (list (menu-pre `(,type (toggle-active-type ,type)))))))
 
-
 (define (import-types)
   (let ((from (get-strg-name-buffer)))
     (choose-file "Importer les types" "texmacs"

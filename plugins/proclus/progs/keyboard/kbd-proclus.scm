@@ -32,4 +32,4 @@
   ("proclus 1" (go-to-last-locus)))
 
 (kbd-map in-proclus-links?
-  ("proclus S" (go-to-source-buffer))) ;; FIXME: unify with go-to-source
+  ("proclus S" (go-to-source-link))) ;; FIXME: unify with go-to-source

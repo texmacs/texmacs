@@ -36,8 +36,9 @@
 
     make-locus locus-set-text locus-set-text-go-to
 
+    make-link make-root-link
     link-absname link-id link-types link-comment
-    add-link-end
+    add-link-end remove-link-end
 
     locus-path go-to-locus))
 
@@ -191,6 +192,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Structure of a link: (absolute-name locus-id (type ...) comment-string)
+;; A locus-id of "0" means "the whole document".
+(define (make-link absname id) (list absname id ""))
+(define (make-root-link absname) (make-link absname "0"))
 (define (link-absname link) (first link))
 (define (link-id link) (second link))
 (define (link-types link) (third link))
@@ -236,19 +240,42 @@
                (link-comment lnk))))
      links))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Link suppression
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Remove a link end, in an existing source LOCUS
+(define (remove-link-end source but)
+  (let ((source-absname (link-absname source))
+	(source-id (link-id source)))
+    (switch-to-active-buffer (absolute-name->url source-absname))
+    (locus-remove-link (locus-path source-id) but)))
+
+(define (locus-remove-link path link-to-rm)
+  (let ((absname (link-absname link-to-rm))
+	(id (link-id link-to-rm)))
+    (locus-set-links
+     path (list-filter (locus-links (tm-subobject path))
+		       (lambda (lnk)
+			 (not (and (== (link-absname lnk) absname)
+				   (== (link-id lnk) id))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Browsing loci
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (locus-path id)
   ;; path of the first locus in the buffer whose id is @id
-  (let sub ((p '()))
-    (search-in-tree-from (the-buffer) p 'locus
-                         (lambda (p t)
-                           (if (== id (locus-id (tree->stree t)))
-                               (reverse (tree-ip t))
-                               (sub (rcons p 0)))))))
+  (if (== "0" id) '()
+      (let sub ((p '()))
+        (search-in-tree-from (the-buffer) p 'locus
+                             (lambda (p t)
+                               (if (== id (locus-id (tree->stree t)))
+                                   (reverse (tree-ip t))
+                                   (sub (rcons p 0))))))))
 
 (define (go-to-locus lk)
   (switch-to-active-buffer (absolute-name->url (link-absname lk)))
-  (tm-go-to (append (locus-path (link-id lk)) '(0 0))))
+  (if (not (== "0" (link-id lk)))
+      (tm-go-to (append (locus-path (link-id lk)) '(0 0)))))

@@ -22,9 +22,10 @@
   (:export has-last-locus?
            set-last-locus!
            go-to-last-locus
-           has-source-buffer?
-           set-source-buffer!
-           go-to-source-buffer
+           has-source-link?
+           set-source-link!
+	   get-source-link
+           go-to-source-link
            source-buffer-excursion
            source-buffer-excursion/sub))
 
@@ -41,22 +42,26 @@
   (if (has-last-locus?)
    (go-to-locus last-locus)))
 
-(define (has-source-buffer?)
-  (not (string-null? (get-env "source-buffer"))))
+(define (has-source-link?)
+  (not (== '(uninit) (tree->stree (get-init-tree "source-link")))))
 
-(define (set-source-buffer! buf)
-  (init-env "source-buffer" buf))
+(define (set-source-link! link)
+  (init-env-tree "source-link" (list->tuple link)))
 
-(define (go-to-source-buffer)
-  (if (has-source-buffer?)
-      (switch-to-active-buffer (get-env "source-buffer"))))
+(define (get-source-link)
+  (and (has-source-link?)
+       (tuple->list (get-init-tree "source-link"))))
+
+(define (go-to-source-link)
+  (if (has-source-link?)
+      (go-to-locus (get-source-link))))
 
 (define-macro (source-buffer-excursion . body)
   `(source-buffer-excursion/sub (lambda () ,@body)))
 
 (define (source-buffer-excursion/sub thunk)
-  (if (has-source-buffer?)
+  (if (has-source-link?)
       (save-excursion
-       (go-to-source-buffer)
+       (go-to-source-link)
        (thunk))
       (thunk)))

@@ -33,11 +33,14 @@
       ---
       (when (has-last-locus?)
             ("Dernier locus" (go-to-last-locus)))
-      (when (has-source-buffer?)
-            ("Document source" (go-to-source-buffer)))
+      (when (has-source-link?)
+            ("Locus source" (go-to-source-link)))
       ("Constellation" (absname-editor))
       ---
-      (when (has-source-buffer?)
+      (when (in-proclus-locus?)
+	    ("Supprimer le lien" (remove-link)))
+      ---
+      (when (has-source-link?)
             (link menu-proclus-types)
             ---
             (link menu-proclus-edition))))

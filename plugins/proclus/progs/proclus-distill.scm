@@ -22,10 +22,11 @@
         (proclus-source))
   (:export has-last-locus?
            go-to-last-locus
-           has-source-buffer?
-           go-to-source-buffer
+           has-source-link? ;; for menu in init-proclus??
+           go-to-source-link ;; for menu in init-proclus??
            locus-action
            proclus-links-action
+	   remove-link
            edit-loci
            edit-links))
 
@@ -59,22 +60,32 @@
     (edit-links)))
 
 (define (proclus-links-action)
+  ;; WARNING: there must not be an "interactive" action before opening
+  ;; the target document in go-to-locus.
   (and-let* ((t (get-locus-or-not-locus)))
+    (save-excursion (go-to-locus (locus-self-link t)))
+    (if (style-has? "proclus-links-dtd")
+	(kill-buffer))
     (go-to-locus (locus-self-link t))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Loci
+(define (remove-link)
+  (and-let* ((t (get-locus-or-not-locus))
+	     (s (get-source-link)))
+    (remove-link-end s (locus-self-link t))
+    (go-to-locus s)
+    (edit-links)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (edit-loci)
-  (let* ((src-buff (get-strg-name-buffer))
+  (let* ((src-absname (get-absolute-name))
 	 (the-nw-buff (string-append src-buff "-loci"))
 	 (the-loci (extract locus? (tree->stree (the-buffer)))))
     (if (not (null? the-loci))
 	(begin
           (new-buffer-clear the-nw-buff)
 	  (init-style "proclus-links")
-          (set-source-buffer! src-buff)
+          (set-source-link! (make-root-link src-absname))
 	  (tm-assign (the-buffer-path) `(document ,@the-loci))
           (pretend-save-buffer)))))
 
@@ -122,7 +133,7 @@
      (string-append src-buff "-source-" (locus-id the-locus)))
     (init-style "proclus-links")
     (init-env "magnification" "1")
-    (set-source-buffer! src-buff)
+    (set-source-link! (locus-self-link the-locus))
     (tm-assign (the-buffer-path) the-stree)
     (pretend-save-buffer)))
 
@@ -148,9 +159,10 @@
                        (absname-error "Conflit de nom absolu: " (car y)))
                       (else
                        (switch-to-active-buffer (absolute-name->url (car y)))
-                       (map (cut link->edit <> (cdr y))
-                            (extract-loci (map link-id (cdr y))
-                                             (tree->stree (the-buffer)))))))
+		       `((section ,(car y))
+			 ,@(map (cut link->edit <> (cdr y))
+				(extract-loci (map link-id (cdr y))
+					      (tree->stree (the-buffer))))))))
                    (sort-links-by-file
                     (select-links (locus-links the-locus)
                                   (active-types)))))))))
