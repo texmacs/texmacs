@@ -23,20 +23,6 @@
 
   <\active*>
     <\src-comment>
-      Numbering equations.
-    </src-comment>
-  </active*>
-
-  <assign|next-number|<macro|<style-with|src-compact|none|<next-equation><with|mode|text|font-shape|right|(<the-equation>)>>>>
-
-  <assign|leq-number|<macro|<next-number><htab|5mm>>>
-
-  <assign|req-number|<macro|<htab|5mm><next-number>>>
-
-  <assign|eq-number|<value|req-number>>
-
-  <\active*>
-    <\src-comment>
       Styling parameters.
 
       \ \ eqn-short-above + par-sep: smallest skip above equation (no
@@ -62,6 +48,20 @@
   <assign|eqn-ver-sep|<macro|0.6fn>>
 
   <assign|eqn-row-sep|<macro|0.45fn>>
+
+  <\active*>
+    <\src-comment>
+      Numbering equations.
+    </src-comment>
+  </active*>
+
+  <assign|next-number|<macro|<style-with|src-compact|none|<next-equation><with|mode|text|font-shape|right|(<the-equation>)>>>>
+
+  <assign|leq-number|<macro|<next-number><htab|5mm>>>
+
+  <assign|req-number|<macro|<htab|5mm><next-number>>>
+
+  <assign|eq-number|<value|req-number>>
 
   <\active*>
     <\src-comment>
@@ -107,7 +107,7 @@
     </equations-base>
   </macro>>
 
-  <assign|eqnarray|<value|eqnarray*>>
+  <assign|eqnarray|<macro|body|<eqnarray*|<tformat|<arg|body>>>>>
 
   <assign|leqnarray*|<\macro|body>
     <\equations-base>
@@ -115,7 +115,9 @@
     </equations-base>
   </macro>>
 
-  <assign|leqnarray|<value|leqnarray*>>
+  <assign|leqnarray|<\macro|body>
+    <leqnarray*|<tformat|<arg|body>>>
+  </macro>>
 
   <assign|align*|<\macro|body>
     <\equations-base>
@@ -123,7 +125,9 @@
     </equations-base>
   </macro>>
 
-  <assign|align|<value|align*>>
+  <assign|align|<\macro|body>
+    <align*|<tformat|<arg|body>>>
+  </macro>>
 
   <assign|gather*|<\macro|body>
     <\equations-base>
@@ -131,7 +135,9 @@
     </equations-base>
   </macro>>
 
-  <assign|gather|<value|gather*>>
+  <assign|gather|<\macro|body>
+    <gather*|<tformat|<arg|body>>>
+  </macro>>
 
   <assign|eqsplit*|<\macro|body>
     <\equations-base>
@@ -139,7 +145,11 @@
     </equations-base>
   </macro>>
 
-  <assign|eqsplit|<value|eqsplit*>>
+  <assign|eqsplit|<\macro|body>
+    <eqsplit*|<tformat|<arg|body>>>
+  </macro>>
+
+  \;
 
   \;
 </body>
