@@ -117,6 +117,13 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"tmuniversaltounicode", UTF8, BIT2BIT, true);
     ht = dic;
   }
+  else if ( from=="UTF-8" && to=="HTML") {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic, "HTMLlat1"   , CHAR_ENTITY, ENTITY_NAME, true);
+    hashtree_from_dictionary (dic, "HTMLspecial", CHAR_ENTITY, ENTITY_NAME, true);
+    hashtree_from_dictionary (dic, "HTMLsymbol" , CHAR_ENTITY, ENTITY_NAME, true);
+    ht = dic;
+  }
 }
 
 /******************************************************************************
@@ -164,6 +171,12 @@ utf8_to_cork (string input) {
 string
 cork_to_utf8 (string input) {
   converter conv = load_converter ("Cork","UTF-8");
+  return apply (conv,input);
+}
+
+string
+utf8_to_html (string input) {
+  converter conv = load_converter ("UTF-8", "HTML");
   return apply (conv,input);
 }
 
@@ -327,10 +340,14 @@ hashtree_from_dictionary (
           key_string = convert_escapes (key_string, false);
         else if (key_escape == UTF8)
           key_string = convert_escapes (key_string, true);
+	else if (key_escape == CHAR_ENTITY)
+	  key_string = convert_char_entities (key_string);
         if (val_escape == BIT2BIT)
           val_string = convert_escapes (val_string, false);
         else if (val_escape == UTF8)
           val_string = convert_escapes (val_string, true);
+	else if (val_escape == ENTITY_NAME)
+	  val_string = "&" * val_string * ";";
         //cout << "key: " << key_string << " val: " << val_string << "\n";
         put_prefix_code(key_string,val_string,dic);        
       }
@@ -381,6 +398,74 @@ convert_escapes (string in, bool utf8) {
   //for(int i = 0; i < N(result);i++)
   //  printf("%x ", (unsigned char)result[i]); printf("\n");
   return result;
+}
+
+string
+convert_char_entities (string s) {
+  int i, n=N(s);
+  string r;
+  for (i=0; i<n; /* noop */) {
+    if (s[i] == '&' && i+1<n && s[i+1] == '#') {
+      i += 2;
+      bool okay= false;
+      string rr= convert_char_entity(s, i, okay);
+      if (okay) r << rr;
+      else { r << "&#"; continue; }
+    }
+    else r << s[i++];
+  }
+  return r;
+}
+
+static unsigned int
+as_unsigned_int (string s) {
+  int i=0, n=N(s);
+  unsigned int val=0;
+  if (n==0) return 0;
+  while (i<n) {
+    if (s[i]<'0') break;
+    if (s[i]>'9') break;
+    val *= 10;
+    val += (int) (s[i]-'0');
+    i++;
+  }
+  return val;
+}
+
+string
+convert_char_entity (string s, int& start, bool& success) {
+  // start: position in s after the character entity marker "&#".
+  success = false;
+  int i= start;
+  int n= N(s);
+  unsigned int num= 0;
+  if (i >= n) return "";
+  else if (s[i] == 'x' || s[i] == 'X') {
+    i++;
+    // int j=i;
+    while (i<n && is_hex_digit (s[i])) {
+      success = true;
+      num = 0x10 * num + hex_digit_to_int(s[i]);
+      i++;
+    }
+    // if (success) cout << "hex-ent: " << s(j,i) ;
+  }
+  else {
+    int j=i;
+    while (i<n && is_digit (s[i])) {
+      success = true;
+      i++;
+    }
+    // if (success) cout << "dec-ent: " << s(j,i) ;
+    num = as_unsigned_int (s(j,i));
+  }
+  if (success) {
+    if (i<n && s[i]==';') i++;
+    start= i;
+    // cout << " --> (" << num << ") " << encode_as_utf8 (num) << '\n' ;
+    return encode_as_utf8(num);
+  }
+  else return "";
 }
 
 string

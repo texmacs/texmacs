@@ -1419,6 +1419,19 @@ tmg_cork_2utf8 (SCM arg1) {
 }
 
 SCM
+tmg_utf8_2html (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->html");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= utf8_to_html (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_tm_2xml_name (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-name");
 
@@ -2152,6 +2165,7 @@ initialize_glue_basic () {
   gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
   gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
   gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
+  gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
   gh_new_procedure ("tm->xml-name", (FN) tmg_tm_2xml_name, 1, 0, 0);
   gh_new_procedure ("tm->xml-cdata", (FN) tmg_tm_2xml_cdata, 1, 0, 0);
   gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);

@@ -33,8 +33,7 @@
 
 (define (tmhtml-math-token s)
   (cond ((= (string-length s) 1)
-	 (cond ((== s "&") "&amp;")
-	       ((== s "*") " ")
+	 (cond ((== s "*") " ")
 	       ((== s "+") " + ")
 	       ((== s "-") " - ")
 	       ((char-alphabetic? (string-ref s 0)) `(h:i ,s))
@@ -43,10 +42,9 @@
 	((string-starts? s "<bbb-") `(h:u (h:b ,(tmhtml-sub-token s 5))))
 	((string-starts? s "<cal-") `(h:u (h:i ,(tmhtml-sub-token s 5))))
 	((string-starts? s "<frak-") `(h:u ,(tmhtml-sub-token s 6)))
-	((== s "<less>") "&lt;")
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
-	   (if (or (== s encoded) (> (string-length encoded) 3))
+	   (if (== s encoded)
 	       (tm->xml-cdata s)
 	       encoded)))
 	(else s)))
@@ -55,10 +53,7 @@
   (if tmhtml-math-mode?
       (tmhtml-post-simplify-nodes
        (map tmhtml-math-token (tmconcat-tokenize-math s)))
-      (let* ((r1 (string-replace s "&" "&amp;"))
-	     (r2 (string-replace r1 "<less>" "&lt;"))
-	     (r3 (cork->utf8 r2)))
-	(list r3))))
+      (list (cork->utf8 s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entire documents
@@ -635,7 +630,7 @@
 
 (define (tmhtml-tmdoc-copyright l)
   (with content
-      `("&copy; " ,@(tmhtml (car l))
+      `(,(cadr (parse-html "&copy;")) " " ,@(tmhtml (car l))
 	" " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
     (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
 

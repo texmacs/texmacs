@@ -16,7 +16,7 @@
 #include "hashtree.hpp"
 #include "file.hpp"
 
-enum escape_type { NOESCAPES, BIT2BIT, UTF8 };
+enum escape_type { NOESCAPES, BIT2BIT, UTF8, ENTITY_NAME, CHAR_ENTITY };
 
 RESOURCE(converter);
 
@@ -78,6 +78,7 @@ string convert_to_cork (string input, string from);
 string convert_from_cork (string input, string to); 
 string utf8_to_cork (string input); 
 string cork_to_utf8 (string input); 
+string utf8_to_html (string input);
 bool check_using_iconv (string input, string encoding);
 string convert_using_iconv (string input, string from, string to); 
 
@@ -108,5 +109,7 @@ bool is_hex_digit (char c);
 int hex_digit_to_int (unsigned char c);
 string encode_as_utf8 (unsigned int code);
 string convert_escapes (string in, bool utf8);
+string convert_char_entities (string s);
+string convert_char_entity (string s, int& start, bool& success);
 
 #endif // CONVERTER_H
