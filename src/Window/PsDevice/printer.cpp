@@ -44,8 +44,7 @@ printer_rep::printer_rep (
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
 {
-  true_type =
-    as_string (call ("get-preference", string ("font type"))) == "True type";
+  true_type = use_tt_fonts ();
 
   black     = dis->black;
   white     = dis->white;

@@ -89,18 +89,16 @@ bool
 try_pk (string family, int size, int dpi, int dsize,
 	tex_font_metric& tfm, font_glyphs& pk)
 {
-  /*
-  // Substitute by True Type font ?
-  string tt_name= family * (dsize == 0? string (""): as_string (size));
-  if (font_glyphs::instances -> contains (tt_name)) {
-    pk= font_glyphs (tt_name);
-    return true;
+  if (use_tt_fonts ()) {
+    // Substitute by True Type font ?
+    string tt_name= tt_find_name (family, size);
+    if (tt_name != "") {
+      if (font_glyphs::instances -> contains (tt_name))
+	pk= font_glyphs (tt_name);
+      else pk= tt_font_glyphs (tt_name, size, dpi);
+      return true;
+    }
   }
-  if (tt_font_exists (tt_name)) {
-    pk= tt_font_glyphs (tt_name, size, dpi);
-    return true;
-  }
-  */
 
   // Open regular pk font
   string name_pk= family * as_string (size) * "." * as_string (dpi) * "pk";

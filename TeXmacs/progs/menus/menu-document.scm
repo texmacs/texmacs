@@ -136,7 +136,7 @@
 	  ("Palatino" (init-env "font" "palatino"))
 	  ("Times" (init-env "font" "times"))
 	  ---
-	  (if (use-tt-fonts?)
+	  (if (support-tt-fonts?)
 	      (if (font-exists-in-tt? "luxirr")
 		  ("Luxi" (init-env "font" "luxi"))))
 	  ("Lucida" (init-env "font" "x-lucida"))

@@ -45,6 +45,16 @@ resolve_pk (url name) {
   return resolve (the_pk_path * name);
 }
 
+url
+resolve_pfb (url name) {
+  if (get_setting ("KPSEWHICH") == "true") {
+    string which= var_eval_system ("kpsewhich " * as_string (name));
+    if ((which!="") && exists (url_system (which))) return url_system (which);
+    // cout << "Missed " << name << "\n";
+  }
+  return url_none ();
+}
+
 bool
 exists_in_tex (url u) {
   // Weak check for TeXmacs menus

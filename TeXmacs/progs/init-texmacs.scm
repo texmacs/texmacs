@@ -80,14 +80,6 @@
 (lazy-in-mode (keyboard kbd-math) in-math?)
 (lazy-in-mode (keyboard kbd-table) in-table?)
 
-;(display "Booting fonts\n")
-(if (use-ec-fonts?)
-    (use-modules (fonts fonts-ec))
-    (use-modules (fonts fonts-cm)))
-(use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
-	     (fonts fonts-foreign) (fonts fonts-misc))
-(if (use-tt-fonts?) (use-modules (fonts fonts-truetype)))
-
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
 (use-modules (convert tmml init-tmml))
@@ -125,4 +117,12 @@
 (apply-preferences)
 (menu-extend page-setup-menu ,@(compute-preferences-menu page-setup-tree))
 (menu-extend preferences-menu ,@(compute-preferences-menu preferences-tree))
+
+;(display "Booting fonts\n")
+(if (use-ec-fonts?)
+    (use-modules (fonts fonts-ec))
+    (use-modules (fonts fonts-cm)))
+(use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
+	     (fonts fonts-foreign) (fonts fonts-misc))
+(if (support-tt-fonts?) (use-modules (fonts fonts-truetype)))
 ;(display "Initialization done\n")

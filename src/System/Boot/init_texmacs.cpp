@@ -21,6 +21,7 @@
 tree texmacs_settings = tuple ();
 int  install_status   = 0;
 bool use_which        = false;
+bool use_locate       = false;
 
 extern void setup_tex (); // from Plugins/Metafont/tex_init.cpp
 extern void init_tex  (); // from Plugins/Metafont/tex_init.cpp
@@ -248,6 +249,7 @@ init_misc () {
 #else
   use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
 #endif
+  use_locate= exists_in_path ("locate");
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN
