@@ -172,7 +172,8 @@ reset_tfm_path (bool rehash) { (void) rehash;
     (tfm == ""? url_none (): tfm);
   if ((get_setting ("MAKETFM") != "false") ||
       (get_setting ("TEXHASH") == "true"))
-    the_tfm_path= the_tfm_path | get_kpsepath ("tfm");
+    if (get_setting ("KPSEWHICH") != "true")
+      the_tfm_path= the_tfm_path | get_kpsepath ("tfm");
   the_tfm_path= expand (factor (the_tfm_path));
 }
 
@@ -188,7 +189,8 @@ reset_pk_path (bool rehash) { (void) rehash;
     (pk == ""? url_none (): pk);
   if ((get_setting ("MAKEPK") != "false") ||
       (get_setting ("TEXHASH") == "true"))
-    the_pk_path= the_pk_path | get_kpsepath ("pk");
+    if (get_setting ("KPSEWHICH") != "true")
+      the_pk_path= the_pk_path | get_kpsepath ("pk");
   the_pk_path= expand (factor (the_pk_path));
 }
 
