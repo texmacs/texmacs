@@ -135,5 +135,4 @@
   (=> (balloon (icon "tm_tuple.xpm") "Insert an operation on tuples")
       (link source-tuple-menu))
   (=> (balloon (icon "tm_equal.xpm") "Insert a condition")
-      (link source-condition-menu))
-  |)
+      (link source-condition-menu)))
