@@ -69,7 +69,7 @@
 
   <assign|explain-macro|<xmacro|args|<map-args|explain-macro-sub|inline-tag|args>>>
 
-  <drd-props|explain-macro|accessible|all>
+  <drd-props|explain-macro|arity|<tuple|repeat|1|1>|accessible|all>
 
   <assign|explain-synopsis|<macro|x|<htab|5mm><with|color|dark
   grey|(<arg|x>)><vspace|0.25fn>>>

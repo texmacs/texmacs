@@ -408,7 +408,12 @@ edit_env_rep::exec_drd_props (tree t) {
       tree   val  = t[i+1];
       tree_label l= make_tree_label (var);
       if (prop == "arity") {
-	drd->set_arity (l, as_int (val), 0, ARITY_NORMAL, CHILD_DETAILED);
+	if (is_tuple (val, "repeat", 2))
+	  drd->set_arity (l, as_int (val [1]), as_int (val [2]),
+			  ARITY_REPEAT, CHILD_BIFORM);
+	else
+	  drd->set_arity (l, as_int (val), 0,
+			  ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
       }
       if (prop == "accessible") {
