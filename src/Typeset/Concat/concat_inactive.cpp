@@ -18,112 +18,10 @@
 ******************************************************************************/
 
 void
-concater_rep::typeset_inactive_tag (tree t, path ip) { 
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0), false);
-  marker (descend (ip, 1));
-}
-
-void
 concater_rep::typeset_eval_args (tree t, path ip) { 
   marker (descend (ip, 0));
   typeset (env->exec (t), decorate_right (ip), false);
   marker (descend (ip, 1));
-}
-
-void
-concater_rep::typeset_inactive_symbol (tree t, path ip) {
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (ip, 0));
-  tree old_col= env->local_begin (COLOR, "blue");
-  typeset (t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  ghost (">", descend (ip, 1));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
-concater_rep::typeset_inactive_latex (tree t, path ip) {
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("\\", descend (ip, 0));
-  tree old_col= env->local_begin (COLOR, "dark green");
-  typeset (t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
-concater_rep::typeset_inactive_specific (tree t, path ip) {
-  bool flag= (t[0] != "texmacs") && (t[0] != "screen") && (t[0] != "printer");
-  string mode, var, value;
-  if (flag) {
-    mode= env->get_string (MODE);
-    if (mode == "text") { var=FONT_FAMILY; value="tt"; }
-    else if (mode == "math") { var=MATH_FONT_FAMILY; value="mt"; }
-    else { var=PROG_FONT_FAMILY; value="tt"; }
-  }
-
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (ip, 0));
-  tree old_col= env->local_begin (COLOR, "dark green");
-  ghost ("specific", descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  print (space (0, 0, env->fn->spc->max));
-  ghost ("|", descend (descend (ip, 0), 0));
-  print (space (0, 0, env->fn->spc->max));
-  typeset (t[0], descend (ip, 0));
-  print (space (0, 0, env->fn->spc->max));
-  ghost ("|", descend (descend (ip, 1), 0));
-  print (space (0, 0, env->fn->spc->max));
-  tree old;
-  if (flag) old= env->local_begin (var, value);
-  typeset (t[1], descend (ip, 1));
-  if (flag) env->local_end (var, old);
-  if (N(t) == 0) ghost (">", descend (ip, 1));
-  else ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
-concater_rep::typeset_inactive_compound (tree t, path ip) {
-  int i;
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (descend (ip, 0), 0));
-  tree old_col= env->local_begin (COLOR, "dark green");
-  typeset (t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  for (i=1; i<N(t); i++) {
-    print (space (0, 0, env->fn->spc->max));
-    ghost ("|", descend (descend (ip, i), 0));
-    print (space (0, 0, env->fn->spc->max));
-    if (i<N(t)-1) penalty_min (0);
-    typeset (t[i], descend (ip, i));
-  }
-  ghost (">", N(t) == 0? descend (ip, 1):
-	                 descend (descend (ip, i-1), right_index (t[i-1])));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
-concater_rep::typeset_inactive_string (string s, path ip) {
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost (s, descend (ip, 1));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
 }
 
 void
@@ -160,10 +58,23 @@ concater_rep::typeset_unknown (string which, tree t, path ip, bool flag) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_modified (
-  tree t, path ip, string var, tree val, bool test)
-{
+concater_rep::typeset_colored (tree t, path ip, tree val, bool test) {
   if (test) {
+    tree old_val= env->local_begin (COLOR, val);
+    typeset (t, ip);
+    env->local_end (COLOR, old_val);
+  }
+  else typeset (t, ip);
+}
+
+void
+concater_rep::typeset_tt (tree t, path ip, bool test) {
+  if (test) {
+    tree val;
+    string var, mode= env->get_string (MODE);
+    if (mode == "text") { var=FONT_FAMILY; val="tt"; }
+    else if (mode == "math") { var=MATH_FONT_FAMILY; val="mt"; }
+    else { var=PROG_FONT_FAMILY; val="tt"; }
     tree old_val= env->local_begin (var, val);
     typeset (t, ip);
     env->local_end (var, old_val);
@@ -179,29 +90,34 @@ concater_rep::typeset_inactive_angular_arg (tree t, path ip, int i) {
   case ASSIGN:
   case DRD_PROPS:
   case VALUE:
-    typeset_modified (t[i], descend (ip, i), COLOR, "dark green", i==0);
+    typeset_colored (t[i], descend (ip, i), "dark green", i==0);
     break;
   case WITH:
-    typeset_modified (t[i], descend (ip, i), COLOR, "dark green",
-		      (i<n-1) && ((i&1)==0));
+    typeset_colored (t[i], descend (ip, i), "dark green",
+		     (i<n-1) && ((i&1)==0));
     break;
   case TWITH:
   case CWITH:
-    typeset_modified (t[i], descend (ip, i), COLOR, "dark green", i==n-2);
+    typeset_colored (t[i], descend (ip, i), "dark green", i==n-2);
     break;
   case MACRO:
-    typeset_modified (t[i], descend (ip, i), COLOR, "brown", i<n-1);
+    typeset_colored (t[i], descend (ip, i), "brown", i<n-1);
     break;
   case XMACRO:
   case ARG:
-    typeset_modified (t[i], descend (ip, i), COLOR, "brown", i==0);
+    typeset_colored (t[i], descend (ip, i), "brown", i==0);
     break;
   case MAP_ARGS:
-    if (i<2) typeset_modified (t[i], descend (ip, i), COLOR, "dark green");
-    else typeset_modified (t[i], descend (ip, i), COLOR, "brown", i==2);
+    if (i<2) typeset_colored (t[i], descend (ip, i), "dark green");
+    else typeset_colored (t[i], descend (ip, i), "brown", i==2);
+    break;
+  case SPECIFIC:
+    typeset_tt (t[i], descend (ip, i),
+		(i==1) && (t[0] != "texmacs") &&
+		(t[0] != "screen") && (t[0] != "printer"));
     break;
   case ACTION:
-    typeset_modified (t[i], descend (ip, i), FONT_FAMILY, "tt", i==n-1);
+    typeset_tt (t[i], descend (ip, i), i==n-1);
     break;
   default:
     typeset (t[i], descend (ip, i));
@@ -211,25 +127,34 @@ concater_rep::typeset_inactive_angular_arg (tree t, path ip, int i) {
 
 void
 concater_rep::typeset_inactive_angular (tree t, path ip) {
-  int i=0;
-  string type= as_string (L(t));
-  //string type= replace (env->drd->get_name (L(t)), " ", "-");
+  int i, start= 1;
+  string name= as_string (L(t));
+  //string name= replace (env->drd->get_name (L(t)), " ", "-");
 
   penalty_min (0);
   marker (descend (ip, 0));
   ghost ("<", descend (ip, 0));
   switch (L(t)) {
+  case RAW_DATA:
+    ghost (name, descend (ip, 1));
+    break;
+  case COMPOUND:
+    typeset_colored (t[0], descend (ip, 0), "dark green");
+    break;
+  case SYMBOL:
+    typeset_colored (t[0], descend (ip, 0), "blue");
+    break;
   case HYBRID:
     ghost ("\\", descend (ip, 0));
-    typeset_modified (t[0], descend (ip, 0), COLOR, "dark green");
-    i=1;
+    typeset_colored (t[0], descend (ip, 0), "dark green");
     break;
   default:
-    ghost (type, descend (ip, 0));
+    ghost (name, descend (ip, 0));
+    start= 0;
     break;
   }
 
-  for (; i<N(t); i++) {
+  for (i= start; i<N(t); i++) {
     print (space (0, 0, env->fn->spc->max));
     print (space (0, 0, env->fn->spc->max));
     ghost ("|", descend (descend (ip, i), 0));
@@ -238,7 +163,7 @@ concater_rep::typeset_inactive_angular (tree t, path ip) {
     typeset_inactive_angular_arg (t, ip, i);
   }
 
-  if (i==0) ghost (">", descend (ip, 1));
+  if (i==start) ghost (">", descend (ip, 1));
   else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
@@ -264,9 +189,6 @@ concater_rep::typeset_inactive (tree t, path ip) {
   case ERROR:
     typeset_error (t, ip);
     break;
-  case RAW_DATA:
-    typeset_inactive_string ("<raw-data>", ip);
-    break;
   case CONCAT:
     typeset_concat (t, ip);
     break;
@@ -277,26 +199,11 @@ concater_rep::typeset_inactive (tree t, path ip) {
     break;
     */
 
-  case INACTIVE:
-    typeset_inactive_tag (t, ip);
-    break;
   case ACTIVE:
     typeset (t[0], descend (ip, 0));
     break;
-  case VAR_INACTIVE:
-    typeset_inactive_tag (t, ip);
-    break;
   case VAR_ACTIVE:
     typeset (t[0], descend (ip, 0));
-    break;
-  case SYMBOL:
-    typeset_inactive_symbol (t, ip);
-    break;
-  case LATEX:
-    typeset_inactive_latex (t, ip);
-    break;
-  case SPECIFIC:
-    typeset_inactive_specific (t, ip);
     break;
 
   default:

@@ -149,6 +149,7 @@ edit_text_rep::remove_text (bool forward) {
   // deletion governed by parent t
   if (last == (forward? 0: 1))
     switch (L(t)) {
+    case RAW_DATA:
     case HSPACE:
     case VAR_VSPACE:
     case VSPACE:
