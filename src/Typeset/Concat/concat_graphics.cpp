@@ -17,32 +17,26 @@
 * Typesetting graphics
 ******************************************************************************/
 
+/* NOTE: We use the ascending order for drawing, like in SVG. The code
+   below conforms to this convention, which says that the first elements
+   are painted first, and can be covered by the subsequent ones.
+ */
+/* TODO: Check that the active elements (f.e. the <action> markup) also
+   adhere to the same convention.
+ */
 void
 concater_rep::typeset_graphics (tree t, path ip) {
   int i, n= N(t);
+  grid gr= as_grid (env->read (GR_GRID));
   array<box> bs (n+1);
-/*TODO : Do we choose the ascending order for drawing, like in SVG ? [We
-    must decide]. The code below conforms to this convention, which says
-    that the first elements are painted first, and can be covered by the
-    subsequent ones (nevertheless, with the code above and the current
-    drawing routines, the grid **covers** the graphical elements...).
-    It should be noted, too, that the active elements (f.e. the <action>
-    markup) should also adhere to the same convention. */
-  bs[0]= typeset_as_grid (env, env->read (GR_GRID),
-			  ip, env->read (GR_GRID_ASPECT));
+  gr->set_aspect (env->read (GR_GRID_ASPECT));
+  bs[0]= grid_box (ip, gr, env->fr, env-> dis, env->clip_lim1, env->clip_lim2);
   for (i=0; i<n; i++)
     bs[i+1]= typeset_as_concat (env, t[i], descend (ip, i));
   // if (n == 0) bs << empty_box (decorate_right (ip));
   box b= graphics_box (ip, bs, env->fr, as_grid (env->read (GR_EDIT_GRID)),
 		       env->clip_lim1, env->clip_lim2);
   print (STD_ITEM, b);
-}
-
-box
-typeset_as_grid (edit_env env, tree t, path ip, tree aspect) {
-  grid gr= as_grid (t);
-  gr->set_aspect (aspect);
-  return grid_box (ip, gr, env->fr, env-> dis, env->clip_lim1, env->clip_lim2);
 }
 
 void

@@ -28,6 +28,10 @@ struct grid_box_rep: public composite_box_rep {
   grid_box_rep (
     path ip, grid g, frame f, display2 dis, point lim1, point lim2);
   operator tree () { return (tree)g; }
+  path find_lip () { return path (-1); }
+  path find_rip () { return path (-1); }
+  gr_selections graphical_select (SI x, SI y, SI dist);
+  int reindex (int i, int item, int n);
 };
 
 grid_box_rep::grid_box_rep (
@@ -52,6 +56,17 @@ grid_box_rep::grid_box_rep (
     box b= curve_box (decorate (ip), c, PIXEL, dis->get_color (grads[i].col));
     insert (b , 0, 0);
   }
+}
+
+gr_selections
+grid_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  return res;
+}
+
+int
+grid_box_rep::reindex (int i, int item, int n) {
+  return i;
 }
 
 /******************************************************************************

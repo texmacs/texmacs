@@ -132,8 +132,6 @@ public:
   inline            virtual ~box_rep ();
   void              relocate (path p, bool force= false);
   virtual operator  tree () = 0;
-//TODO : I don't remember exactly why we decided to use a reference for
-//       ps_device& dev in pre/post_display. Check that it is correct.
   virtual void      pre_display (ps_device& dev);
   virtual void      post_display (ps_device& dev);
   virtual void      display (ps_device dev) = 0;
@@ -146,6 +144,7 @@ public:
   virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path      find_tag (string name);
 
+  virtual int  reindex (int i, int item, int n);
   void redraw (ps_device dev, path p, rectangles& l);
   void redraw (ps_device dev, path p, rectangles& l, SI x, SI y);
 

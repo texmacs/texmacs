@@ -41,17 +41,17 @@
 			(graphics-remove-property "gr-edit-grid")
 			(graphics-remove-property "gr-grid-aspect")))
       ---
-      (-> "Grid properties"
-	  ("Center"           (graphics-set-grid-center-ia))
-	  ("Unit length"      (graphics-set-grid-step-ia))
-	  ("Nb polar steps"   (graphics-set-grid-astep-ia))
-	  ("Logarithmic base" (graphics-set-grid-base-ia)))
       (-> "Visual grid"
 	  ("No grid"     (graphics-set-visual-grid 'empty))
           ---
-	  ("Cartesian"   (graphics-set-visual-grid 'cartesian))
-	  ("Polar"       (graphics-set-visual-grid 'polar))
-	  ("Logarithmic" (graphics-set-visual-grid 'logarithmic))
+	  (-> "Type"
+	      ("Cartesian"   (graphics-set-visual-grid 'cartesian))
+    	      ("Polar"       (graphics-set-visual-grid 'polar))
+	      ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
+	  ("Center"           (graphics-set-grid-center-ia #t))
+	  ("Unit length"      (graphics-set-grid-step-ia #t))
+	  ("Nb polar steps"   (graphics-set-grid-astep-ia #t))
+	  ("Logarithmic base" (graphics-set-grid-base-ia #t))
 	  ---
 	  (-> "Aspect"
 	      ("Properties" ... (graphics-set-grid-aspect-properties-ia))
@@ -61,9 +61,14 @@
       (-> "Edit grid"
 	  ("No grid"     (graphics-set-edit-grid 'empty))
           ---
-	  ("Cartesian"   (graphics-set-edit-grid 'cartesian))
-	  ("Polar"       (graphics-set-edit-grid 'polar))
-	  ("Logarithmic" (graphics-set-edit-grid 'logarithmic))))
+	  (-> "Type"
+	      ("Cartesian"   (graphics-set-edit-grid 'cartesian))
+	      ("Polar"       (graphics-set-edit-grid 'polar))
+	      ("Logarithmic" (graphics-set-edit-grid 'logarithmic)))
+	  ("Center"           (graphics-set-grid-center-ia #f))
+	  ("Unit length"      (graphics-set-grid-step-ia #f))
+	  ("Nb polar steps"   (graphics-set-grid-astep-ia #f))
+	  ("Logarithmic base" (graphics-set-grid-base-ia #f))))
   (-> "Extents"
       ("Default" (graphics-remove-property "gr-clip"))
       ---
