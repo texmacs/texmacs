@@ -48,6 +48,13 @@ extern string VERTICAL_POS;
 extern string MATH_SPACING;
 extern string COLOR;
 extern string BACKGROUND_COLOR;
+extern string LINE_WIDTH;
+extern string LINE_STYLE;
+extern string LINE_ARROWS;
+extern string LINE_CAPS;
+extern string FILL_MODE;
+extern string FILL_COLOR;
+extern string FILL_STYLE;
 extern string THIS_SESSION;
 extern string INFO_FLAG;
 
@@ -158,14 +165,9 @@ extern string CELL_COL_NR;
 
 extern string GR_FRAME;
 extern string GR_CLIP;
-extern string GR_LINE_WIDTH;
-extern string GR_LINE_STYLE;
-extern string GR_LINE_ARROWS;
-extern string GR_LINE_CAPS;
-extern string GR_FILL_MODE;
-extern string GR_FILL_COLOR;
-extern string GR_FILL_STYLE;
 extern string GR_MODE;
+extern string GR_COLOR;
+extern string GR_LINE_WIDTH;
 
 extern string IDENTITY;
 extern string TABULAR;

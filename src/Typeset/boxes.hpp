@@ -182,8 +182,10 @@ public:
   /*************************** for graphical boxes ***************************/
 
   virtual frame     get_frame ();
+  virtual void      get_limits (point& lim1, point& lim2);
 
   frame     find_frame (path bp);
+  void      find_limits (path bp, point& lim1, point& lim2);
 
   /************************** retrieving information *************************/
 

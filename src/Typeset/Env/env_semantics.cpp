@@ -56,6 +56,7 @@ initialize_default_var_type () {
   var_type (MATH_CONDENSED)   = Env_Math_Condensed;
   var_type (VERTICAL_POS)     = Env_Vertical_Pos;
   var_type (COLOR)            = Env_Color;
+  var_type (LINE_WIDTH)       = Env_Line_Width;
 
   var_type (PAR_MODE)         = Env_Paragraph;
   var_type (PAR_HYPHEN)       = Env_Paragraph;
@@ -94,7 +95,6 @@ initialize_default_var_type () {
 
   var_type (GR_FRAME)         = Env_Frame;
   var_type (GR_CLIP)          = Env_Clipping;
-  var_type (GR_LINE_WIDTH)    = Env_Line_Width;
 }
 
 /******************************************************************************
@@ -262,7 +262,7 @@ edit_env_rep::update () {
 
   update_frame ();
   update_clipping ();
-  lw= get_length (GR_LINE_WIDTH);
+  lw= get_length (LINE_WIDTH);
 }
 
 /******************************************************************************
@@ -324,7 +324,7 @@ edit_env_rep::update (string s) {
     update_clipping ();
     break;
   case Env_Line_Width:
-    lw= get_length (GR_LINE_WIDTH);
+    lw= get_length (LINE_WIDTH);
     break;
   }
 }
