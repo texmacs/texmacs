@@ -19,15 +19,20 @@
 
 struct graphics_box_rep: public composite_box_rep {
   frame f;
-  graphics_box_rep (path ip, array<box> bs, frame f);
+  graphics_box_rep (path ip, array<box> bs, frame f, point lim1, point lim2);
   frame get_frame ();
   operator tree () { return "graphics"; }
 };
 
-graphics_box_rep::graphics_box_rep (path ip2, array<box> bs2, frame f2):
-  composite_box_rep (ip2, bs2), f (f2)
+graphics_box_rep::graphics_box_rep (
+  path ip2, array<box> bs2, frame f2, point lim1, point lim2):
+    composite_box_rep (ip2, bs2), f (f2)
 {
-  // x1= X1; y1= Y1; x2= X2; y2= Y2;
+  point flim1= f(lim1), flim2= f(lim2);
+  x1= (SI) min (flim1[0], flim2[0]);
+  y1= (SI) min (flim1[1], flim2[1]);
+  x2= (SI) max (flim1[0], flim2[0]);
+  y2= (SI) max (flim1[1], flim2[1]);
   finalize ();
 }
 
@@ -114,9 +119,8 @@ curve_box_rep::display (ps_device dev) {
 ******************************************************************************/
 
 box
-graphics_box (path ip, array<box> bs, frame f, point lo, point hi) {
-  (void) lo; (void) hi;
-  return new graphics_box_rep (ip, bs, f);
+graphics_box (path ip, array<box> bs, frame f, point lim1, point lim2) {
+  return new graphics_box_rep (ip, bs, f, lim1, lim2);
 }
 
 box

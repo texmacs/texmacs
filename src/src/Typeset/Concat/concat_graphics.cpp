@@ -23,7 +23,9 @@ concater_rep::typeset_graphics (tree t, path ip) {
   array<box> bs (n-1);
   for (i=1; i<n; i++)
     bs[i-1]= typeset_as_concat (env, t[i], descend (ip, i));
-  print (STD_ITEM, graphics_box (ip, bs, env->fr, point (), point ()));
+  point lim1 (0.0, 0.0);
+  point lim2 (5.0, 3.0);
+  print (STD_ITEM, graphics_box (ip, bs, env->fr, lim1, lim2));
 }
 
 void
