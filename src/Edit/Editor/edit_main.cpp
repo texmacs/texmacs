@@ -249,7 +249,6 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   for (i=start; i<end; i++) {
     string col_name= env->get_string (BG_COLOR);
     dev->set_background (dis->get_color (col_name));
-    cout << "col_name= " << col_name << "\n";
     if (col_name != "white")
       dev->clear (0, -h, w, 0);
 
