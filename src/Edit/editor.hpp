@@ -180,7 +180,7 @@ public:
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
-  virtual SI       decode_length (string l) = 0;
+  virtual SI       as_length (string l) = 0;
   virtual string   add_lengths (string l1, string l2) = 0;
   virtual string   multiply_length (double x, string l) = 0;
   virtual bool     is_length (string s) = 0;

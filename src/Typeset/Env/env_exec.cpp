@@ -855,7 +855,7 @@ edit_env_rep::exec_over (tree t) {
     return multiply_length (1/den, s1);
   }
   if (is_length (s1) && is_length (s2)) {
-    if (decode_length (s2) == 0) return tree (ERROR, "division by zero");
+    if (as_length (s2) == 0) return tree (ERROR, "division by zero");
     return as_string (divide_lengths(s1, s2));
   }
   return tree (ERROR, "bad over");
@@ -1049,8 +1049,7 @@ edit_env_rep::exec_equal (tree t) {
   tree t2= exec (t[1]);
   if (is_atomic (t1) && is_atomic (t2)
       && is_length (t1->label) && is_length (t2->label))
-    return as_string_bool
-      (decode_length (t1->label) == decode_length (t2->label));
+    return as_string_bool (as_length (t1) == as_length (t2));
   return as_string_bool (t1 == t2);
 }
 
@@ -1061,8 +1060,7 @@ edit_env_rep::exec_unequal (tree t) {
   tree t2= exec (t[1]);
   if (is_atomic(t1) && is_atomic(t2)
       && is_length(t1->label) && is_length(t2->label))
-    return as_string_bool
-      (decode_length(t1->label) != decode_length(t2->label));
+    return as_string_bool (as_length (t1) != as_length (t2));
   return as_string_bool (t1 != t2);
 }
 
@@ -1078,7 +1076,7 @@ edit_env_rep::exec_less (tree t) {
   if (is_double (s1) && is_double (s2))
     return as_string_bool (as_double (s1) < as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) < decode_length (s2));
+    return as_string_bool (as_length (s1) < as_length (s2));
   return tree (ERROR, "bad less");
 }
 
@@ -1094,7 +1092,7 @@ edit_env_rep::exec_lesseq (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) <= as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) <= decode_length (s2));
+    return as_string_bool (as_length (s1) <= as_length (s2));
   return tree (ERROR, "bad less or equal");
 }
 
@@ -1110,7 +1108,7 @@ edit_env_rep::exec_greater (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) > as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) > decode_length (s2));
+    return as_string_bool (as_length (s1) > as_length (s2));
   return tree (ERROR, "bad greater");
 }
 
@@ -1126,7 +1124,7 @@ edit_env_rep::exec_greatereq (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) >= as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) >= decode_length (s2));
+    return as_string_bool (as_length (s1) >= as_length (s2));
   return tree (ERROR, "bad greater or equal");
 }
 
@@ -1137,7 +1135,7 @@ edit_env_rep::exec_point (tree t) {
   for (i=0; i<n; i++)
     u[i]= exec (t[i]);
   if (is_tuple (u) && ((n==0) || is_double (u[0]))) return u;
-  return as_tree (decode_point (u));
+  return as_tree (as_point (u));
 }
 
 tree
@@ -1152,13 +1150,13 @@ edit_env_rep::exec_box_info (tree t) {
 tree
 edit_env_rep::exec_frame_direct (tree t) {
   tree t1= exec (t[0]);
-  return as_tree (!nil (fr) ? fr (as_point (t1)) : point ());
+  return as_tree (!nil (fr) ? fr (::as_point (t1)) : point ());
 }
 
 tree
 edit_env_rep::exec_frame_inverse (tree t) {
   tree t1= exec (t[0]);
-  return as_tree (!nil (fr) ? fr [as_point (t1)] : point ());
+  return as_tree (!nil (fr) ? fr [::as_point (t1)] : point ());
 }
 
 /******************************************************************************

@@ -44,7 +44,7 @@ public:
   ~edit_typeset_rep ();
   void clear_local_info ();
 
-  SI       decode_length (string l);
+  SI       as_length (string l);
   string   add_lengths (string l1, string l2);
   string   multiply_length (double x, string l);
   bool     is_length (string s);

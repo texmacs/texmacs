@@ -131,7 +131,7 @@ cell_rep::format_cell (tree fm) {
   }
   else bg= "";
   if (var->contains (CELL_WIDTH)) {
-    width= env->decode_length (env->exec (var[CELL_WIDTH]));
+    width= env->as_length (env->exec (var[CELL_WIDTH]));
     if (var->contains (CELL_HMODE))
       hmode= as_string (env->exec (var[CELL_HMODE]));
     else hmode= "exact";
@@ -141,7 +141,7 @@ cell_rep::format_cell (tree fm) {
     hmode= "";
   }
   if (var->contains (CELL_HEIGHT)) {
-    height= env->decode_length (env->exec (var[CELL_HEIGHT]));
+    height= env->as_length (env->exec (var[CELL_HEIGHT]));
     if (var->contains (CELL_VMODE))
       vmode= as_string (env->exec (var[CELL_VMODE]));
     else vmode= "exact";
@@ -157,28 +157,28 @@ cell_rep::format_cell (tree fm) {
     vpart= as_double (env->exec (var[CELL_VPART]));
   else vpart= 0.0;
   if (var->contains (CELL_LSEP))
-    lsep= env->decode_length (env->exec (var[CELL_LSEP]));
+    lsep= env->as_length (env->exec (var[CELL_LSEP]));
   else lsep= env->fn->spc->def;
   if (var->contains (CELL_RSEP))
-    rsep= env->decode_length (env->exec (var[CELL_RSEP]));
+    rsep= env->as_length (env->exec (var[CELL_RSEP]));
   else rsep= env->fn->spc->def;
   if (var->contains (CELL_BSEP))
-    bsep= env->decode_length (env->exec (var[CELL_BSEP]));
+    bsep= env->as_length (env->exec (var[CELL_BSEP]));
   else bsep= env->fn->sep;
   if (var->contains (CELL_TSEP))
-    tsep= env->decode_length (env->exec (var[CELL_TSEP]));
+    tsep= env->as_length (env->exec (var[CELL_TSEP]));
   else tsep= env->fn->sep;
   if (var->contains (CELL_LBORDER))
-    lborder= env->decode_length (env->exec (var[CELL_LBORDER])) >> 1;
+    lborder= env->as_length (env->exec (var[CELL_LBORDER])) >> 1;
   else lborder= 0;
   if (var->contains (CELL_RBORDER))
-    rborder= env->decode_length (env->exec (var[CELL_RBORDER])) >> 1;
+    rborder= env->as_length (env->exec (var[CELL_RBORDER])) >> 1;
   else rborder= 0;
   if (var->contains (CELL_BBORDER))
-    bborder= env->decode_length (env->exec (var[CELL_BBORDER])) >> 1;
+    bborder= env->as_length (env->exec (var[CELL_BBORDER])) >> 1;
   else bborder= 0;
   if (var->contains (CELL_TBORDER))
-    tborder= env->decode_length (env->exec (var[CELL_TBORDER])) >> 1;
+    tborder= env->as_length (env->exec (var[CELL_TBORDER])) >> 1;
   else tborder= 0;
   if (var->contains (CELL_HALIGN))
     halign= as_string (env->exec (var[CELL_HALIGN]));

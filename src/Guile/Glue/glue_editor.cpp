@@ -2467,7 +2467,7 @@ tmg_length_decode (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  int out= get_server()->get_editor()->decode_length (in1);
+  int out= get_server()->get_editor()->as_length (in1);
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);

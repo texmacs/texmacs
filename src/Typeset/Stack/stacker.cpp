@@ -270,9 +270,9 @@ typeset_as_stack (edit_env env, tree t, path ip) {
   // cout << "Typeset as stack " << t << "\n";
   int i, n= N(t);
   stacker sss= new stacker_rep ();
-  SI sep       = env->decode_length (env->get_string (PAR_SEP));
-  SI height    = env->decode_length (string ("1fn"))+ sep;
-  SI hor_sep   = env->decode_length (env->get_string (PAR_HOR_SEP));
+  SI sep       = env->get_length (PAR_SEP);
+  SI height    = env->as_length (string ("1fn"))+ sep;
+  SI hor_sep   = env->get_length (PAR_HOR_SEP);
   SI bot       = 0;
   SI top       = env->fn->yx;
   sss->set_env_vars (height, sep, hor_sep, bot, top);
