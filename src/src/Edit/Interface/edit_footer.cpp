@@ -345,6 +345,7 @@ DEBUG
   int line_item_count= 0;
   int list_count     = 0;
   int command_count  = 0;
+  int observer_count = 0;
   int iterator_count = 0;
   int function_count = 0;
   int instance_count = 0;
@@ -363,6 +364,7 @@ edit_interface_rep::set_footer () {
     cout << "line item " << line_item_count << "\n";
     cout << "list      " << list_count << "\n";
     cout << "command   " << command_count << "\n";
+    cout << "observer  " << observer_count << "\n";
     cout << "iterator  " << iterator_count << "\n";
     cout << "function  " << function_count << "\n";
     cout << "instance  " << instance_count << "\n";

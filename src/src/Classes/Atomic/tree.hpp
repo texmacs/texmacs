@@ -13,6 +13,7 @@
 #ifndef TREE_H
 #define TREE_H
 #include "tree_label.hpp"
+#include "observer.hpp"
 #include "array.hpp"
 
 /******************************************************************************
@@ -54,7 +55,7 @@ public:
   friend inline int N (tree t);
   friend inline int arity (tree t);
   friend inline tree_label L (tree t);
-  friend inline array<tree> A (tree t);
+  friend inline array<tree>& A (tree t);
   friend inline bool is_atomic (tree t);
   friend inline bool is_compound (tree t);
   friend inline bool operator == (tree t, tree_label lab);
@@ -78,6 +79,7 @@ public:
 class tree_rep: concrete_struct {
 public:
   const tree_label op;
+  observer obs;
   inline tree_rep (tree_label op2): op (op2) {}
   friend class tree;
 };
@@ -158,7 +160,7 @@ inline int right_index (tree t) {
   return is_atomic (t)? N(t->label): 1; }
 inline tree_label L (tree t) {
   return t.rep->op; }
-inline array<tree> A (tree t) {
+inline array<tree>& A (tree t) {
   CHECK_COMPOUND (t, "A (tree)");
   return (static_cast<compound_rep*> (t.rep))->a; }
 
