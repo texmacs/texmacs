@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.5>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|tmdoc-web-package|1.0>
@@ -56,6 +56,12 @@
   <assign|tmweb-about-links|<func|<apply|tmweb-list|<apply|tmweb-link|Authors|authors>|<apply|tmweb-link|Philosophy|philosophy>|<apply|tmweb-link|Changes|changes>|<apply|tmweb-link|Plans|plans>|<apply|tmweb-link|License|license>>>>
 
   <assign|tmweb-contact-links|<func|<apply|tmweb-list|<apply|tmweb-link|Feedback|contact>|<apply|tmweb-link|Bugs|bugs>|<apply|tmweb-link|Suggestions|wishes>>>>
+
+  \;
+
+  <assign|tmweb-manual-links|<func|previous|next|<apply|tmweb-list|<apply|tmweb-link|Manual|../help/manual>|<apply|tmweb-link|Top|web-manual>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
+
+  <assign|tmweb-tutorial-links|<func|previous|next|<apply|tmweb-list|<apply|tmweb-link|Tutorial|../help/tutorial>|<apply|tmweb-link|Top|web-tutorial>|<apply|tmweb-link|Previous|<apply|previous>>|<apply|tmweb-link|Next|<apply|next>>>>>
 
   \;
 
