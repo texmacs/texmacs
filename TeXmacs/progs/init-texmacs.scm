@@ -51,6 +51,8 @@
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
 	   insert-mathematics-menu insert-session-menu
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
+(lazy-menu (menus menu-source) source-menu texmacs-source-icons
+	   source-transformational-menu source-executable-menu)
 (lazy-menu (menus menu-text)
 	   text-menu texmacs-text-icons text-modifier-icons)
 (lazy-menu (menus menu-mathematics)
