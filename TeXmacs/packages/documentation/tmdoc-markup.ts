@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.3.7>
 
 <style|source>
 
@@ -110,11 +110,19 @@
 
   <assign|cpp|<name|C++>>
 
-  <assign|framed-fragment|<macro|x|<with|color|dark
-  grey|<block|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|pastel
-  blue>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<\cell>
+  <assign|framed-table|<macro|x|<with|color|dark
+  grey|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-bsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|-1|cell-background|pastel
+  blue>|<cwith|1|-1|1|-1|cell-lborder|0.5ln>|<cwith|1|-1|1|-1|cell-rborder|0.5ln>|<cwith|1|-1|1|-1|cell-bborder|0.5ln>|<cwith|1|-1|1|-1|cell-tborder|0.5ln>|<arg|x>>>>>
+
+  <assign|framed-fragment|<macro|x|<framed-table|<tformat|<table|<row|<\cell>
     <with|color|black|<arg|x>>
-  </cell>>>>>>>>
+  </cell>>>>>>>
+
+  <assign|framed-fragment*|<\macro|x>
+    <framed-table|<tformat|<twith|table-width|0.45par>|<table|<row|<\cell>
+      <with|color|black|<arg|x>>
+    </cell>>>>>
+  </macro>>
 
   <assign|scheme-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
@@ -170,18 +178,7 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
     <associate|par-par-sep|0fn>
-    <associate|par-width|150mm>
     <associate|preamble|true>
     <associate|sfactor|4>
   </collection>
