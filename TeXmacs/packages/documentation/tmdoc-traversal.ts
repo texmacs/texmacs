@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.5>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|tmdoc-traversal-package|1.0>
@@ -57,6 +57,25 @@
       <with|color|black|font series|medium|font size|0.84|[<arg|z>]>
     </with>
   </cell>>>>>><vspace|1fn>>>
+
+  \;
+
+  Flags from /usr/share/pixmaps/gkb
+
+  <assign|tmdoc-flag|<macro|flag| <with|color|black|<block|<tformat|<cwith|1|1|1|1|cell
+  lsep|0fn>|<cwith|1|1|1|1|cell rsep|0fn>|<cwith|1|1|1|1|cell
+  bsep|0fn>|<cwith|1|1|1|1|cell tsep|0fn>|<cwith|1|1|1|1|cell
+  vcorrect|n>|<table|<row|<cell|<arg|flag>>>>>>> >>
+
+  <assign|tmdoc-translation|<func|name|suffix|<if|<unequal|<find_file|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<postscript|<merge|http://www.texmacs.org/Images/flag|<merge|<apply|suffix>|.png>>|/2|/2||||>>|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>>>>
+
+  <assign|tmdoc-translations|<\func|name>
+    <\surround||<vspace|0.5fn>>
+      <\with|paragraph mode|center>
+        <apply|tmdoc-translation|<apply|name>|.de><apply|tmdoc-translation|<apply|name>|.en><apply|tmdoc-translation|<apply|name>|.es><apply|tmdoc-translation|<apply|name>|.fr><apply|tmdoc-translation|<apply|name>|.it><apply|tmdoc-translation|<apply|name>|.pt>
+      </with>
+    </surround>
+  </func>>
 
   \;
 

@@ -500,7 +500,7 @@ edit_text_rep::remove_backwards () {
       back_in_dynamic (u, p, 3);
       return;
     case FIND_FILE:
-      back_in_dynamic (u, p, 2);
+      back_in_dynamic (u, p, 1);
       return;
     case IS_TUPLE:
       back_in_dynamic (u, p);
