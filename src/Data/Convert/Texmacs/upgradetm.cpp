@@ -39,8 +39,10 @@ get_codes (string version) {
 
   if (version_inf ("1.0.3.3", version)) return H;
 
-  new_feature (H, "rewrite-inactive");
   new_feature (H, "mark");
+  new_feature (H, "style-only");
+  new_feature (H, "style-only*");
+  new_feature (H, "rewrite-inactive");
   new_feature (H, "inline-tag");
   new_feature (H, "open-tag");
   new_feature (H, "middle-tag");

@@ -379,6 +379,9 @@ concater_rep::typeset (tree t, path ip) {
   case EVAL_ARGS:
     typeset_eval_args (t, ip);
     break;
+  case MARK:
+    typeset_mark (t, ip);
+    break;
   case EVAL:
     typeset_eval (t, ip);
     break;
@@ -439,23 +442,16 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
 
-  case INACTIVE:
-    typeset_compound (t, ip);
-    break;
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
   case ACTIVE:
-    typeset (t[0], descend (ip, 0));
-    break;
+  case VAR_ACTIVE:
+  case INACTIVE:
   case VAR_INACTIVE:
     typeset_compound (t, ip);
     break;
-  case VAR_ACTIVE:
-    typeset (t[0], descend (ip, 0));
-    break;
   case REWRITE_INACTIVE:
     typeset_rewrite (t, ip);
-    break;
-  case MARK:
-    typeset_mark (t, ip);
     break;
   case INLINE_TAG:
   case OPEN_TAG:

@@ -75,11 +75,6 @@ bridge_rewrite_rep::notify_change () {
 
 void
 bridge_rewrite_rep::my_typeset (int desired_status) {
-  if (env->preamble) {
-    bridge_rep::my_typeset (desired_status);
-    return;
-  }
-  
   initialize (env->rewrite (st));
   ttt->insert_marker (st, ip);
   body->typeset (desired_status);

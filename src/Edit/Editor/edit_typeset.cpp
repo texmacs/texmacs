@@ -98,6 +98,30 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 * Processing preamble
 ******************************************************************************/
 
+static tree
+filter_style (tree t) {
+  if (is_atomic (t)) return t;
+  else switch (L(t)) {
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
+    if (is_atomic (t[0])) return "";
+    else return filter_style (t[0][N(t[0])-1]);
+  case ACTIVE:
+  case VAR_ACTIVE:
+  case INACTIVE:
+  case VAR_INACTIVE:
+    return filter_style (t[0]);
+  default:
+    {
+      int i, n= N(t);
+      tree r (t, n);
+      for (i=0; i<n; i++)
+	r[i]= filter_style (t[i]);
+      return r;
+    }
+  }
+}
+
 void
 edit_typeset_rep::typeset_style (tree style) {
   //cout << "Process style " << style << "\n";
@@ -118,7 +142,7 @@ edit_typeset_rep::typeset_style (tree style) {
       tree doc= texmacs_document_to_tree (doc_s);
       if (is_compound (doc)) {
 	typeset_style (extract (doc, "style"));
-	env->exec (extract (doc, "body"));
+	env->exec (filter_style (extract (doc, "body")));
       }
     }
   }
@@ -413,7 +437,7 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
 
 void
 edit_typeset_rep::typeset_invalidate_all () {
-  ::notify_assign (ttt, path(), et);
   notify_change (THE_ENVIRONMENT);
   typeset_preamble ();
+  ::notify_assign (ttt, path(), et);
 }

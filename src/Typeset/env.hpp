@@ -192,13 +192,23 @@ private:
   tree exec_if (tree t);
   tree exec_case (tree t);
   tree exec_while (tree t);
-  tree exec_rewrite (tree t);
-
-  tree exec_mod_active (tree t, tree_label which);
-  void exec_until_mod_active (tree t, path p);
-  bool exec_until_mod_active (tree t, path p, string var, int level);
 
   tree exec_point (tree t);
+
+  tree exec_rewrite (tree t);
+  bool exec_until_rewrite (tree t, path p, string var, int level);
+  tree rewrite_inactive_arg (tree t, tree var, int i, bool bl, bool fl);
+  tree rewrite_inactive_raw_data (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_document (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_concat (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_value (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_active (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_hybrid (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_default (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive (tree t, tree var);
 
 public:
   edit_env_rep (display dis,
@@ -218,17 +228,6 @@ public:
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
-  tree   rewrite_inactive_arg (tree t, tree var, int i, bool bl, bool fl);
-  tree   rewrite_inactive_raw_data (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_document (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_concat (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_value (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_hybrid (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive_default (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive (tree t, tree var, bool block, bool flush);
-  tree   rewrite_inactive (tree t, tree var);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }

@@ -210,6 +210,10 @@ is_multi_paragraph (tree t) {
   case DPAGES:
   case WITH:
   case MARK:
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
+  case ACTIVE:
+  case VAR_ACTIVE:
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;

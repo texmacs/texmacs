@@ -31,6 +31,7 @@ public:
   bool notify_macro  (int type, string var, int level, path p, tree u);
   void notify_change ();
 
+  void my_exec_until (path p);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
 };
@@ -139,6 +140,19 @@ bridge_auto_rep::notify_change () {
 /******************************************************************************
 * Typesetting
 ******************************************************************************/
+
+void
+bridge_auto_rep::my_exec_until (path p) {
+  env->macro_arg= list<hashmap<string,tree> >
+    (hashmap<string,tree> (UNINIT), env->macro_arg);
+  env->macro_src= list<hashmap<string,path> >
+    (hashmap<string,path> (path (DECORATION)), env->macro_src);
+  string var= f[0]->label;
+  env->macro_arg->item (var)= st;
+  (void) env->exec_until (f[1], p, var, 0);
+  env->macro_arg= env->macro_arg->next;
+  env->macro_src= env->macro_src->next;
+}
 
 bool
 bridge_auto_rep::my_typeset_will_be_complete () {

@@ -36,8 +36,7 @@
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
     (init-env "preamble" new)
     (generate-all-aux)
-    (update-buffer)
-    (if (== new "true") (tm-assign '() (the-buffer)))))
+    (update-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties

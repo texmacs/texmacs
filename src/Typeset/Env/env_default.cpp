@@ -190,8 +190,17 @@ initialize_default_env () {
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
 
+  /* further standard macros */
   env ("error")=
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));
+  env ("style-only")=
+    tree (MACRO, "x", tree (ARG, "x"));
+  env ("style-only*")=
+    tree (MACRO, "x", tree (ARG, "x"));
+  env ("active")=
+    tree (MACRO, "x", tree (ARG, "x"));
+  env ("active*")=
+    tree (MACRO, "x", tree (ARG, "x"));
   env ("inactive")=
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "once"));
   env ("inactive*")=
