@@ -411,5 +411,7 @@ load_tfm (url file_name, string family, int size) {
     if (byte0 (r) == 255) tfm->left_prog= word1 (r);
   }
 
+  tfm->size= (tfm->header[1] + (1<<19)) >> 20;
+
   return tfm;
 }

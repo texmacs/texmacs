@@ -38,6 +38,8 @@ struct tex_font_metric_rep: rep<tex_font_metric> {
   SI      left     , right;
   SI      left_prog, right_prog;
 
+  int     size; // original size (needed to compute magnification of pk font)
+
   /***************************************************************************/
 
   tex_font_metric_rep (string name);

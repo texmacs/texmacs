@@ -34,7 +34,7 @@ mag (int dpi, int size, int dsize) {
 
 bool
 try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
-  // cout << "Try tfm " << family << size << " (" << osize << ")\n";
+  //cout << "Try tfm " << family << size << " (" << osize << ")\n";
   string name_tfm = family * as_string (osize) * ".tfm";
   if (tex_font_metric::instances -> contains (name_tfm)) {
     tfm= tex_font_metric (name_tfm);
@@ -62,8 +62,8 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
     }
   }
   tfm= load_tfm (u, family, osize);
-  if (size ==0) {
-    size= ((tfm->header[1]+(1<<19))>>20);
+  if (size == 0) {
+    size= tfm->size;
     if (DEBUG_STD) cout << "TeXmacs] Design size = " << size << "\n";
   }
   if (size != osize)
@@ -73,6 +73,7 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
 
 bool
 load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
+  //cout << "Load TeX tfm " << family << size << " (dsize= " << dsize << ")\n";
   if (try_tfm (family, size, size, tfm))
     return true;
   if (size > 333)
@@ -105,7 +106,7 @@ bool
 try_pk (string family, int size, int dpi, int dsize,
 	tex_font_metric& tfm, font_glyphs& pk)
 {
-  // cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
+  //cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
 #ifdef USE_FREETYPE
   if (use_tt_fonts ()) {
     // Substitute by True Type font ?
@@ -126,6 +127,11 @@ try_pk (string family, int size, int dpi, int dsize,
   if (font_glyphs::instances -> contains (name_pk)) {
     pk = font_glyphs (name_pk);
     return true;
+  }
+  if (dsize == 0) {
+    int old_size= size;
+    size= tfm->size;
+    dpi = mag (dpi, old_size, size);
   }
   string size_name (dsize==0? string (""): as_string (size));
   string name (family * size_name * "." * as_string (dpi) * "pk");
