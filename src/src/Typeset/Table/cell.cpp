@@ -223,7 +223,8 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     else lw= rw= 0;
     mw += lborder + rborder;
   }
-  else if (large && (!nil (lz))) {
+  else if ((!nil (lz)) && (large || (hmode == "min"))) {
+    // FIXME: the negociation of the right width should be more elaborate
     lw= rw= 0;
     format fm= lz->query (LAZY_BOX, make_query_vstream_width (0, 0));
     format_width fw= (format_width) fm;

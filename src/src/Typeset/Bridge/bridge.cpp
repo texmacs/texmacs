@@ -235,6 +235,11 @@ bridge_rep::typeset (int desired_status) {
   // may become wrong otherwise.
   if (is_accessible (ip))
     st= subtree (the_et, reverse (ip));
+  if (!is_accessible (ip)) {
+    path ip2= obtain_ip (st);
+    if (ip2 != path (DETACHED))
+      ip= ip2;
+  }
 
   // cout << "Typesetting " << st << ", " << desired_status << "\n";
   if ((status==desired_status) && (N(ttt->old_patch)==0)) {

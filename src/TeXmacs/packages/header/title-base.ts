@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|<tuple|source|std-pattern>>
 
@@ -172,7 +172,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-authors-data*|<macro|x|<style-with|src-compact|none|<line-break><tabular*|<tformat|<cwith|1|1|1|1|cell-width|0.499par>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-lsep|1fn>|<cwith|1|1|1|1|cell-rsep|1fn>|<cwith|1|1|1|1|cell-bsep|0.75fn>|<cwith|1|1|1|1|cell-tsep|0.75fn>|<table|<row|<\cell>
+  <assign|doc-authors-data*|<macro|x|<style-with|src-compact|none|<line-break><tabular*|<tformat|<cwith|1|1|1|1|cell-width|0.8par>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-lsep|1fn>|<cwith|1|1|1|1|cell-rsep|1fn>|<cwith|1|1|1|1|cell-bsep|0.75fn>|<cwith|1|1|1|1|cell-tsep|0.75fn>|<table|<row|<\cell>
     <with|par-mode|center|par-line-sep|0fn|font-size|0.92|<style-with|src-compact|none|<arg|x>>>
   </cell>>>>>>>>
 
