@@ -33,14 +33,14 @@
 
   <assign|chapter**|<macro|chapname|name|<chapter*|<arg|chapname><vspace|1fn><new-line><arg|name>>>>
 
-  <assign|chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|the-chapter|<macro|<chapter-nr>>><assign|chapter-nr|<plus|<chapter-nr>|1>><assign|the-label|<the-chapter>><resetchapter><header-primary|<arg|name>|<the-chapter>|<localize|Chapter>><toc-main-2|<the-chapter><space|2spc><arg|name>>>||<chapter**|<localize|Chapter>
-  <the-chapter>|<arg|name>>>>>>
+  <assign|chapter|<macro|name|<style-with|src-compact|none|<assign|the-chapter|<macro|<chapter-nr>>><assign|chapter-nr|<plus|<chapter-nr>|1>><assign|the-label|<the-chapter>><resetchapter><header-primary|<arg|name>|<the-chapter>|<localize|Chapter>><toc-main-2|<the-chapter><space|2spc><arg|name>><chapter**|<localize|Chapter>
+  <the-chapter>|<arg|name>>>>>
 
-  <assign|appendix|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|the-chapter|<macro|<number|<appendix-nr>|Alpha>>><assign|appendix-nr|<plus|<appendix-nr>|1>><assign|the-label|<the-chapter>><resetchapter><header-primary|<arg|name>|<the-chapter>|<localize|Appendix>><toc-main-2|<localize|Appendix>
-  <the-chapter>.<space|2spc><arg|name>>>||<chapter**|<localize|Appendix>
-  <the-chapter>|<arg|name>>>>>>
+  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|the-chapter|<macro|<number|<appendix-nr>|Alpha>>><assign|appendix-nr|<plus|<appendix-nr>|1>><assign|the-label|<the-chapter>><resetchapter><header-primary|<arg|name>|<the-chapter>|<localize|Appendix>><toc-main-2|<localize|Appendix>
+  <the-chapter>.<space|2spc><arg|name>><chapter**|<localize|Appendix>
+  <the-chapter>|<arg|name>>>>>
 
-  <assign|special-chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|the-chapter|<macro|*>><resetchapter><assign|the-label|<the-chapter>><toc-main-2|<arg|name>><header-primary|<arg|name>|*|<arg|name>>>||<chapter*|<arg|name>>>>>>
+  <assign|special-chapter|<macro|name|<style-with|src-compact|none|<assign|the-chapter|<macro|*>><resetchapter><assign|the-label|<the-chapter>><toc-main-2|<arg|name>><header-primary|<arg|name>|*|<arg|name>><chapter*|<arg|name>>>>>
 
   <assign|prologue|<macro|<special-chapter|<localize|Prologue>>>>
 
