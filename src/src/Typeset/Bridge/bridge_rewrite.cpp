@@ -77,5 +77,11 @@ void
 bridge_rewrite_rep::my_typeset (int desired_status) {
   initialize (env->rewrite (st));
   ttt->insert_marker (st, ip);
-  body->typeset (desired_status);
+  if (is_func (st, INCLUDE)) {
+    url save_name= env->cur_file_name;
+    env->cur_file_name= relative (env->base_file_name, as_string (st[0]));
+    body->typeset (desired_status);
+    env->cur_file_name= save_name;
+  }
+  else body->typeset (desired_status);
 }
