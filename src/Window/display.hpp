@@ -56,8 +56,8 @@ public:
   /* fonts */
   virtual void set_default_font (string name) = 0;
   virtual font default_font (bool tt= false) = 0;
-  virtual void load_ps_font (string family, int size, int dpi,
-			     font_metric& fnm, font_glyphs& fng) = 0;
+  virtual void load_system_font (string family, int size, int dpi,
+				 font_metric& fnm, font_glyphs& fng) = 0;
 
   /* pointer and keyboard */
   virtual void   grab_pointer (widget wid) = 0;

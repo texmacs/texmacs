@@ -12,11 +12,34 @@
 
 #ifndef X_FONT_H
 #define X_FONT_H
+#include "font.hpp"
+
+/******************************************************************************
+* X bitmaps
+******************************************************************************/
+
 struct Bitmap_rep {
   Pixmap bm;
   int width, height;
   SI xoff, yoff;
 };
 typedef Bitmap_rep* Bitmap;
+
+/******************************************************************************
+* The x_font representation class
+******************************************************************************/
+
+struct x_font_rep: font_rep {
+  string      family;
+  int         dpi;
+  font_metric fnm;
+  font_glyphs fng;
+
+  x_font_rep (display dis, string name, string family, int size, int dpi);
+  void get_extents (string s, metric& ex);
+  void get_xpositions (string s, SI* xpos);
+  void draw (ps_device dev, string s, SI x, SI y);
+  glyph get_glyph (string s);
+};
 
 #endif // defined X_FONT_H

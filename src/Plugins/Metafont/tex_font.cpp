@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 #include "font.hpp"
-#include "tex.hpp"
+#include "Metafont/load_tex.hpp"
 
 #define TEX_ANY   0
 #define TEX_EC    1

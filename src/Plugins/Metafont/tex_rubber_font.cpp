@@ -12,7 +12,7 @@
 
 #include "font.hpp"
 #include "translator.hpp"
-#include "tex.hpp"
+#include "Metafont/load_tex.hpp"
 
 /******************************************************************************
 * TeX rubber fonts

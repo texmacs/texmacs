@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : load-pk.cpp
+* MODULE     : load_pk.cpp
 * DESCRIPTION: load pk files
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -15,8 +15,8 @@
 
 #include "string.hpp"
 #include "file.hpp"
-#include "tex.hpp"
-#include "Tex/load-pk.hpp"
+#include "Metafont/load_tex.hpp"
+#include "Metafont/load_pk.hpp"
 
 typedef short HI;
 #define PIXEL 256

@@ -69,8 +69,8 @@ find_font (display dis, tree t) {
   if (is_tuple (t, "truetype", 3))
     return tt_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
-  if (is_tuple (t, "ps", 3))
-    return ps_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+  if (is_tuple (t, "x", 3))
+    return x_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
   if (is_tuple (t, "tex", 3))
     return tex_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));

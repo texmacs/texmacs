@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : load-pk.h
+* MODULE     : load_pk.h
 * DESCRIPTION: load pk files
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -12,6 +12,8 @@
 
 #ifndef LOAD_PK_H
 #define LOAD_PK_H
+#include "file.hpp"
+#include "load_tex.hpp"
 
 struct pk_loader {
   url             file_name;
