@@ -21,6 +21,7 @@ protected:
   bool pure_line (path p);
   bool accepts_return (path p);
   path prepare_for_insert ();
+  void get_deletion_point (path& p, int& l, int& r, tree& t, tree& u, bool f);
 
 public:
   edit_text_rep ();
