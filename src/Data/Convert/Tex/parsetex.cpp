@@ -454,7 +454,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 tree
 latex_parser::parse_unknown (string s, int& i, string cmd) {
   int  n     = N(s);
-  bool option= true;
+  bool option= false;
 
   tree t (TUPLE, copy (cmd));
   while (i<n) {

@@ -226,7 +226,7 @@
   simeq mid ll gg asymp
   parallel subset supset approx bowtie
   subseteq supseteq cong Join sqsubset
-  sqsupset neq smile sqsubseteq sqsupseteq
+  sqsupset ne neq smile sqsubseteq sqsupseteq
   doteq frown in ni propto
   vdash dashv
   
