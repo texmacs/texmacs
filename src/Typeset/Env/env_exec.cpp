@@ -38,12 +38,6 @@ edit_env_rep::exec_string (tree t) {
 // across the Scheme level, and to maintain reentrancy.
 static edit_env current_rewrite_env= edit_env ();
 
-edit_env
-get_current_rewrite_env (bool &b) {
-  b= !nil (current_rewrite_env);
-  return current_rewrite_env;
-}
-
 tree
 edit_env_rep::rewrite (tree t) {
   switch (L(t)) {
@@ -149,6 +143,19 @@ edit_env_rep::exec_until_rewrite (tree t, path p, string var, int level) {
        << "  -> " << rewrite (t) << "\n";
   */
   return exec_until (rewrite (t), p, var, level);
+}
+
+tree
+texmacs_exec (edit_env env, tree cmd) {
+  // re-entrancy
+  if (!nil (current_rewrite_env)) env= current_rewrite_env;
+  if (as_string (L (cmd)) == "value" && N (cmd) == 1)
+    return env->read (as_string (cmd[0]));
+  else
+  if (as_string (L (cmd)) == "exec" && N (cmd) == 1)
+    return env->exec (cmd[0]);
+  else
+    return tree ("");
 }
 
 /******************************************************************************
@@ -1834,18 +1841,4 @@ edit_env_rep::is_length (string s) {
   int j=N(s);
   while ((j>i) && ((s[j-1]=='+') || (s[j-1]=='-') || (s[j-1]=='*'))) j--;
   return is_alpha (s (i, j));
-}
-
-tree
-texmacs_exec (edit_env env, tree cmd) {
-  bool b;
-  edit_env env2= get_current_rewrite_env (b);
-  if (!b) env2= env;
-  if (as_string (L (cmd)) == "value" && N (cmd) == 1)
-    return env2->read (as_string (cmd[0]));
-  else
-  if (as_string (L (cmd)) == "exec" && N (cmd) == 1)
-    return env2->exec (cmd[0]);
-  else
-    return tree ("");
 }
