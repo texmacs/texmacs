@@ -413,7 +413,7 @@ file_chooser_widget_rep::file_chooser_widget_rep (
 {
   ref_count++;
 
-  tree t= object_to_tree (call ("format-get-suffixes*", type));
+  tree t= stree_to_tree (call ("format-get-suffixes*", type));
   int i, n= N(t);
   for (i=0; i<n; i++)
     suffix << ("." * as_string (t[i]));

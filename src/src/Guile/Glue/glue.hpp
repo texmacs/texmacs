@@ -35,6 +35,7 @@ bool scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
 string scm_to_string (SCM obj);
 tree scm_to_tree (SCM obj);
+tree scm_to_content (SCM obj);
 path scm_to_path (SCM obj);
 url scm_to_url (SCM obj);
 scheme_tree scm_to_scheme_tree (SCM obj);

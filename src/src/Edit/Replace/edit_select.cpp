@@ -581,7 +581,7 @@ edit_select_rep::selection_paste (string key) {
     string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {
       tree in= tuple (lan, t[1]);
-      tree r= object_to_tree (call ("plugin-math-input", tree_to_object (in)));
+      tree r= stree_to_tree (call ("plugin-math-input", tree_to_stree (in)));
       insert_tree (r);
     }
     else {
