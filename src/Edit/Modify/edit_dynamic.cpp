@@ -290,16 +290,7 @@ edit_dynamic_rep::insert_argument (bool forward) {
     return;
   }
 
-  int i= last_item (p), n= N(t), d= 1;
-  if (forward) do i++; while ((i<=n) && (!drd->insert_point (L(t), i, n)));
-  else while ((i>=0) && (!drd->insert_point (L(t), i, n))) i--;
-  if ((i<0) || (i>n)) return;
-  path q= path_up (p) * i;
-  while (!drd->correct_arity (L(t), n+d)) d++;
-  tree ins (L(t), d);
-  for (i=0; i<d; i++) ins[i]= "";
-  insert (q, ins);
-  go_to (q * 0);
+  insert_argument (p, forward);
 
   /*
   if (drd->get_old_arity (L(t)) >= 1) return;
@@ -616,4 +607,87 @@ edit_dynamic_rep::back_in_extension (tree t, path p) {
       correct (path_up (p, 2));
     }
   }
+}
+
+/******************************************************************************
+* Inserting and removing arguments
+******************************************************************************/
+
+void
+edit_dynamic_rep::go_to_argument (path p, bool start_flag) {
+  tree t= subtree (et, path_up (p));
+  bool inactive= is_func (subtree (et, path_up (p, 2)), INACTIVE);
+  int i= last_item (p), n= N(t);
+  if (i < 0) go_to_start (path_up (p, inactive? 2: 1));
+  else if (i >= n) go_to_end (path_up (p, inactive? 2: 1));
+  else {
+    if ((!drd->is_accessible_child (t, i)) &&
+	(!inactive) && (!in_preamble_mode ()))
+      {
+	ins_unary (path_up (p), INACTIVE);
+	p= path_up (p) * path (0, i);
+      }
+    if (start_flag) go_to_start (p);
+    else go_to_end (p);
+  }
+}
+
+void
+edit_dynamic_rep::insert_argument (path p, bool forward) {
+  tree t= subtree (et, path_up (p));
+  int i= last_item (p), n= N(t), d= 1;
+  if (forward) do i++; while ((i<=n) && (!drd->insert_point (L(t), i, n)));
+  else while ((i>=0) && (!drd->insert_point (L(t), i, n))) i--;
+  if ((i<0) || (i>n)) return;
+  path q= path_up (p) * i;
+  while (!drd->correct_arity (L(t), n+d)) d++;
+  tree ins (L(t), d);
+  for (i=0; i<d; i++) ins[i]= "";
+  insert (q, ins);
+  go_to_argument (q, forward);
+}
+
+static bool
+is_empty (tree t) {
+  if (t == "") return true;
+  if (is_func (t, DOCUMENT, 1)) return is_empty (t[0]);
+  if (is_func (t, CONCAT, 1)) return is_empty (t[0]);
+  return false;
+}
+
+void
+edit_dynamic_rep::remove_argument (path p, bool forward) {
+  tree t= subtree (et, path_up (p));
+  int i= last_item (p), j, d, n= N(t);
+
+  for (d=1; d<n-i; d++)
+    if (drd->correct_arity (L(t), n-d) &&
+	drd->insert_point (L(t), i, n-d))
+      {
+	bool flag= true;
+	for (j=0; j<d; j++)
+	  flag= flag && is_empty (t[i+j]);
+	if (flag) {
+	  remove (p, d);
+	  if (forward) go_to_argument (path_up (p) * i, true);
+	  else go_to_argument (path_up (p) * (i-1), false);
+	  return;
+	}
+      }
+
+  bool flag= true;
+  for (j=0; j<n; j++)
+    flag= flag && is_empty (t[j]);
+  if (flag) {
+    assign (path_up (p), "");
+    if (subtree (et, path_up (p, 2)) == tree (INACTIVE, "")) {
+      assign (path_up (p, 2), "");
+      correct (path_up (p, 3));
+    }
+    else correct (path_up (p, 2));
+    return;
+  }
+
+  if (forward) go_to_argument (path_up (p) * (i+1), true);
+  else go_to_argument (path_up (p) * (i-1), false);
 }
