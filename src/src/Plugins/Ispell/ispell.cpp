@@ -100,6 +100,8 @@ ispell_dictionary (string lang) {
   if (N(the_dict) == 0) {
     init_dictionary ("english", "english");
     init_dictionary ("english", "american");
+    init_dictionary ("danish", "danish");
+    init_dictionary ("danish", "dansk");
     init_dictionary ("dutch", "dutch");
     init_dictionary ("dutch", "nederlands");
     init_dictionary ("french", "french");

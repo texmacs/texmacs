@@ -28,7 +28,7 @@
     in-math-not-in-session? in-plugin-with-converters?
     ;; language related modes
     in-cyrillic?
-    in-czech? in-dutch? in-english? in-finnish? in-french?
+    in-czech? in-danish? in-dutch? in-english? in-finnish? in-french?
     in-german? in-hungarian? in-italian? in-polish?
     in-portugese? in-romanian? in-russian? in-slovene?
     in-spanish? in-swedish? in-ukrainian?
@@ -144,6 +144,7 @@
 (texmacs-modes
   (in-cyrillic% (in? (get-env "language") '("russian" "ukrainian")) in-text%)
   (in-czech% (== (get-env "language") "czech") in-text%)
+  (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
   (in-english% (== (get-env "language") "english") in-text%)
   (in-finnish% (== (get-env "language") "finnish") in-text%)
