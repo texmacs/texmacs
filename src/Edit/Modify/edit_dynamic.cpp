@@ -126,7 +126,7 @@ edit_dynamic_rep::activate () {
     st= u;
   }
 
-  if ((is_func (st, LATEX, 1) || (is_func (st, HYBRID, 1))) &&
+  if ((is_func (st, LATEX, 1) || (is_func (st, HYBRID))) &&
       is_atomic (st[0])) {
     string  s= st[0]->label;
     string  help;
@@ -134,9 +134,10 @@ edit_dynamic_rep::activate () {
     if (kbd_get_command (s, help, cmd)) {
       cut (p * 0, p * 1);
       cmd ();
+      if (N(st) == 2) insert_tree (copy (st[1]));
       return;
     }
-    else if (is_func (st, HYBRID, 1)) {
+    else if (is_func (st, HYBRID)) {
       if (is_atomic (st[0])) {
 	string name= st[0]->label;
 	path mp= search_upwards (MACRO);
@@ -155,17 +156,26 @@ edit_dynamic_rep::activate () {
 	tree f= get_env_value (name);
 	if (is_func (f, MACRO)) {
 	  activate_macro (p, name, f);
+	  if (N(st) == 2) insert_tree (st[1]);
 	  return;
 	}
 	else if (is_func (f, FUNCTION)) {
 	  int n= N(f);
 	  tree r (APPLY, n);
 	  r[0]= copy (name);
+	  if ((n>1) && (N(st)==2)) r[1]= copy (st[1]);
 	  st= r;
+	}
+	else if (f == UNINIT) {
+	  set_message ("Error: unknown command", "activate hybrid command");
+	  return;
 	}
 	else st= tree (VALUE, copy (name));
       }
-      else st= tree (APPLY, copy (st[0]));
+      else {
+	set_message ("Error: not a command name", "activate hybrid command");
+	return;
+      }
     }
   }
 
@@ -227,6 +237,12 @@ edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
     path p (k+1, 0);
     t[k]= selection_get_cut ();
     if (n==k+1) p= path (k, end (t[k]));
+    if (is_func (t, HYBRID, 1) &&
+	(!(is_atomic (t[0]) && drd->contains (t[0]->label))))
+      {
+	t= tree (HYBRID, "", t[0]);
+	p= path (0, 0);
+      }
     make_deactivated (t, p);
   }
   else make_deactivated (t, path (k, 0));
@@ -254,11 +270,13 @@ edit_dynamic_rep::insert_argument () {
 	p= path_up (p, 2);
 	if (!is_func (subtree (et, p), INACTIVE)) return;
 	activate_macro (p, t[0]->label, f);
+	if (N(t) == 2) insert_tree (t[1]);
       }
       else if (is_func (f, FUNCTION)) {
 	p= path_up (p);
 	tree r (APPLY, n);
 	r[0]= copy (t[0]);
+	if ((n>1) && (N(t)==2)) r[1]= copy (t[1]);
 	assign (p, r);
 	go_to (p * path (1, 0));
       }
