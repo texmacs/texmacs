@@ -940,7 +940,7 @@ AC_SUBST(tmsrc)
 AC_SUBST(tmbin)
 AC_SUBST(tmdata)
 
-if test "$RELEASE" = "1"; then
+if test "$DEVEL_RELEASE" = "1"; then
   tmtgz=${PACKAGE}-${DEVEL_VERSION}
 else
   tmtgz=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
