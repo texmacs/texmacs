@@ -20,7 +20,9 @@
 
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
+  last_x= x; last_y= y;
   buf->mark_undo_block ();
+
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
   if ((popup_win != NULL) && (type != "leave")) {
@@ -29,6 +31,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     popup_win= NULL;
     this << emit_mouse_grab (false);
   }
+
+  if (inside_graphics () && mouse_graphics (type, x, y, t)) return;
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
@@ -82,18 +86,18 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
   path p= path_up (tp);
   if (!nil (p)) {
     if (is_compound (subtree (et, p), "footnote", 1)) {
-      go_to (start (et, p * d_exp));
+      go_to (start (et, p * 0));
       return true;
     }
     tree st= subtree (et, path_up (p));
     if (is_concat (st) && ((last_item (p) + 1) < N(st)))
       if (last_item (tp) == right_index (st [last_item (p)]))
 	if (is_compound (subtree (et, path_inc (p)), "footnote", 1)) {
-	  go_to (start (et, path_inc (p) * d_exp));
+	  go_to (start (et, path_inc (p) * 0));
 	  return true;
 	}
-    path q= search_upwards_expand ("footnote");
-    if ((!nil (q)) && (tp == start (et, q * d_exp))) {
+    path q= search_upwards_compound ("footnote");
+    if ((!nil (q)) && (tp == start (et, q * 0))) {
       go_to (end (et, q));
       return true;
     }
@@ -172,6 +176,25 @@ edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
   SERVER (scroll_where (x, y));
   y += dy;
   SERVER (scroll_to (x, y));
+}
+
+/******************************************************************************
+* getting the cursor (both for text and graphics)
+******************************************************************************/
+
+cursor
+edit_interface_rep::get_cursor () {
+  if (inside_graphics ()) {
+    frame f= find_frame ();
+    if (!nil (f)) {
+      point p= f [point (last_x, last_y)];
+      p= f (adjust (p));
+      SI x= (SI) p[0];
+      SI y= (SI) p[1];
+      return cursor (x, y, 0, -5*pixel, 5*pixel, 1.0);
+    }
+  }
+  return copy (the_cursor ());
 }
 
 /******************************************************************************

@@ -29,7 +29,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     t = t[0];
   }
 
-  if (is_func (t, SUB_TABLE, 1)) {
+  if (is_func (t, SUBTABLE, 1)) {
     lsep= rsep= bsep= tsep= 0;
     T= table (env, 2);
     T->typeset (t[0], descend (iq, 0));
@@ -67,14 +67,14 @@ cell_rep::typeset (tree fm, tree t, path iq) {
   if (decoration != "") {
     int i, j, or_row= -1, or_col= -1;
     tree dt= decoration;
-    while (is_func (dt, TABLE_FORMAT)) dt= dt [N(dt)-1];
+    while (is_func (dt, TFORMAT)) dt= dt [N(dt)-1];
     for (i=0; i<N(dt); i++) {
       tree dr= dt[i];
-      while (is_func (dr, TABLE_FORMAT)) dr= dr [N(dr)-1];
+      while (is_func (dr, TFORMAT)) dr= dr [N(dr)-1];
       for (j=0; j<N(dr); j++) {
 	tree dc= dc[j];
-	while (is_func (dc, TABLE_FORMAT)) dc= dc [N(dc)-1];
-	if (dc == tree (TABLE_MARKER)) {
+	while (is_func (dc, TFORMAT)) dc= dc [N(dc)-1];
+	if (dc == tree (TMARKER)) {
 	  or_row= i;
 	  or_col= j;
 	}
@@ -95,10 +95,10 @@ cell_rep::typeset (tree fm, tree t, path iq) {
 void
 extract_format (tree fm, tree* r, int n) {
   int i;
-  for (i=0; i<n; i++) r[i]= tree (TABLE_FORMAT);
-  if (!is_func (fm, TABLE_FORMAT)) return;
+  for (i=0; i<n; i++) r[i]= tree (TFORMAT);
+  if (!is_func (fm, TFORMAT)) return;
   for (i=0; i<N(fm); i++)
-    if (is_func (fm[i], CELL_WITH))
+    if (is_func (fm[i], CWITH))
       if ((N(fm[i]) >= 2) &&
 	  (is_int (fm[i][0])) &&
 	  (is_int (fm[i][1])))
@@ -202,7 +202,7 @@ cell_rep::format_cell (tree fm) {
 
 void
 cell_rep::format_item (tree with) {
-  if (is_func (with, CELL_WITH, 2))
+  if (is_func (with, CWITH, 2))
     var (as_string (with[0]))= with[1];
 }
 

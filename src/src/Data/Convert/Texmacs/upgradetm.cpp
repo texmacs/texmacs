@@ -37,6 +37,59 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.8", version)) return H;
+
+  rename_feature (H, "raw_data", "raw-data");
+  rename_feature (H, "sub_table", "subtable");
+  rename_feature (H, "drd_props", "drd-props");
+  rename_feature (H, "get_label", "get-label");
+  rename_feature (H, "get_arity", "get-arity");
+  rename_feature (H, "map_args", "map-args");
+  rename_feature (H, "eval_args", "eval-args");
+  rename_feature (H, "find_file", "find-file");
+  rename_feature (H, "is_tuple", "is-tuple");
+  rename_feature (H, "look_up", "look-up");
+  rename_feature (H, "var_if", "if*");
+  rename_feature (H, "var_inactive", "inactive*");
+  rename_feature (H, "var_active", "active*");
+  rename_feature (H, "text_at", "text-at");
+  rename_feature (H, "var_spline", "spline*");
+  rename_feature (H, "old_matrix", "old-matrix");
+  rename_feature (H, "old_table", "old-table");
+  rename_feature (H, "old_mosaic", "old-mosaic");
+  rename_feature (H, "old_mosaic_item", "old-mosaic-item");
+  rename_feature (H, "var_expand", "expand*");
+  rename_feature (H, "hide_expand", "hide-expand");
+
+  rename_feature (H, "with_limits", "with-limits");
+  rename_feature (H, "line_break", "line-break");
+  rename_feature (H, "new_line", "new-line");
+  rename_feature (H, "line_separator", "line-sep");
+  rename_feature (H, "next_line", "next-line");
+  rename_feature (H, "no_line_break", "no-break");
+  rename_feature (H, "no_first_indentation", "no-indent");
+  rename_feature (H, "enable_first_indentation", "yes-indent");
+  rename_feature (H, "no_indentation_after", "no-indent*");
+  rename_feature (H, "enable_indentation_after", "yes-indent*");
+  rename_feature (H, "page_break_before", "page-break*");
+  rename_feature (H, "page_break", "page-break");
+  rename_feature (H, "no_page_break_before", "no-page-break*");
+  rename_feature (H, "no_page_break_after", "no-page-break");
+  rename_feature (H, "new_page_before", "new-page*");
+  rename_feature (H, "new_page", "new-page");
+  rename_feature (H, "new_double_page_before", "new-dpage*");
+  rename_feature (H, "new_double_page", "new-dpage");
+
+  if (version_inf ("1.0.2.5", version)) return H;
+
+  new_feature (H, "compound");
+  new_feature (H, "xmacro");
+  new_feature (H, "get_label");
+  new_feature (H, "get_arity");
+  new_feature (H, "map_args");
+  new_feature (H, "eval_args");
+  new_feature (H, "drd_props");
+
   if (version_inf ("1.0.2.0", version)) return H;
 
   new_feature (H, "with_limits");
@@ -194,6 +247,20 @@ get_codes (string version) {
 }
 
 /******************************************************************************
+* Old style is_expand predicates
+******************************************************************************/
+
+static bool
+is_expand (tree t) {
+  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND));
+}
+
+static bool
+is_expand (tree t, string s, int n) {
+  return is_expand (t) && (N(t) == n+1) && (t[0] == s);
+}
+
+/******************************************************************************
 * Old style conversion from TeXmacs strings to TeXmacs trees
 ******************************************************************************/
 
@@ -222,7 +289,7 @@ string_to_tree (string s, int& pos, hashmap<string,int> codes) {
 static tree
 un_paragraph (tree t) {
   if (is_atomic (t)) return t;
-  if (is_func (t, PARAGRAPH, 1)) return t[0];
+  if (is_func (t, PARA, 1)) return t[0];
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -261,7 +328,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	}
 	else if (starts (ss, "<mid-")) {
 	  if (s != "") r << s; s= "";
-	  r << tree (MIDDLE, ss (5, N(ss)-1));
+	  r << tree (MID, ss (5, N(ss)-1));
 	}
 	else if (starts (ss, "<right-")) {
 	  if (s != "") r << s; s= "";
@@ -279,7 +346,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	  int start= i++;
 	  while ((i<n) && (t->label[i] == t->label[i-1])) i++;
 	  if (s != "") r << s; s= "";
-	  tree_label op= t->label[start] == '`'? LEFT_PRIME: RIGHT_PRIME;
+	  tree_label op= t->label[start] == '`'? LPRIME: RPRIME;
 	  r << tree (op, t->label (start, i));
 	}
       else s << t->label[i++];
@@ -715,7 +782,7 @@ upgrade_env_args (tree t, tree env) {
     int i, k= N(env);
     for (i=0; i<k-2; i++)
       if (t[0] == env[i])
-	return tree (ARGUMENT, t[0]);
+	return tree (ARG, t[0]);
     return t;
   }
   else {
@@ -744,13 +811,13 @@ upgrade_set_begin_env (tree t) {
   else if (!is_concat (begin)) begin= tree (CONCAT, begin);
   if (end == "") end= tree (CONCAT);
   else if (!is_concat (end)) end= tree (CONCAT, end);
-  body << A (begin) << tree (ARGUMENT, copy (s)) << A (end);
+  body << A (begin) << tree (ARG, copy (s)) << A (end);
   // cout << "mid1: " << body << "\n";
   body= upgrade_set_begin_concat (body);
   body= upgrade_env_args (body, t);
   // cout << "mid2: " << body << "\n";
   bool found= false;
-  u[n-1]= upgrade_set_begin_surround (body, tree (ARGUMENT, s), found);
+  u[n-1]= upgrade_set_begin_surround (body, tree (ARG, s), found);
   // cout << "out : " << u << "\n";
   // cout << "-------------------------------------------------------------\n";
   return u;
@@ -762,7 +829,7 @@ upgrade_set_begin (tree t) {
   else {
     if (is_concat (t)) return upgrade_set_begin_concat (t);
     else if (is_document (t)) return upgrade_set_begin_document (t);
-    else if (is_func (t, ENVIRONMENT)) return upgrade_set_begin_env (t);
+    else if (is_func (t, ENV)) return upgrade_set_begin_env (t);
     else return upgrade_set_begin_default (t);
   }
 }
@@ -772,7 +839,7 @@ eliminate_set_begin (tree t) {
   if (is_atomic (t)) return t;
   if (is_func (t, SET) || is_func (t, RESET) ||
       is_func (t, BEGIN) || is_func (t, END) ||
-      is_func (t, ENVIRONMENT)) return "";
+      is_func (t, ENV)) return "";
 
   int i, n= N(t);
   if (is_concat (t)) {
@@ -996,7 +1063,7 @@ handle_mosaic_format (tree& fm, tree t, int i, int j) {
   if ((col == "none") || (col == "")) col= "";
   else col= "foreground";
 
-  tree w (CELL_WITH);
+  tree w (CWITH);
   w << as_string (i+1) << as_string (j+1)
     << as_string (i+1) << as_string (j+1);
 
@@ -1034,15 +1101,15 @@ upgrade_table (tree t) {
   else if (is_func (t, OLD_MATRIX) ||
 	   is_func (t, OLD_TABLE) ||
 	   is_func (t, OLD_MOSAIC) ||
-	   (is_func (t, TABLE_FORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
+	   (is_func (t, TFORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
     {
-      tree ft (TABLE_FORMAT);
-      if (is_func (t, TABLE_FORMAT)) {
+      tree ft (TFORMAT);
+      if (is_func (t, TFORMAT)) {
 	ft= t (0, N(t)-1);
 	t = t [N(t)-1];
       }
       if (is_func (t, OLD_MOSAIC)) {
-	tree with (CELL_WITH);
+	tree with (CWITH);
 	with << "1" << "-1" << "1" << "-1" << "cell mode" << "c";
 	ft << with;
       }
@@ -1159,24 +1226,24 @@ upgrade_split (tree t) {
       r= T;
     }
 
-    tree tf (TABLE_FORMAT);
+    tree tf (TFORMAT);
     if (split != "") {
-      tf << tree (TABLE_WITH, "table hyphen", "y")
-	 << tree (TABLE_WITH, "table width", "1par")
-	 << tree (TABLE_WITH, "table min cols", as_string (N (split)))
-	 << tree (TABLE_WITH, "table max cols", as_string (N (split)))
-	 << tree (CELL_WITH, "1", "-1", "1", "1", "cell lsep", "0spc")
-	 << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
-	 << tree (CELL_WITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
-	 << tree (CELL_WITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
-	 << tree (CELL_WITH, "1", "-1", "1", "1", "cell hyphen", "b")
-	 << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
+      tf << tree (TWITH, "table hyphen", "y")
+	 << tree (TWITH, "table width", "1par")
+	 << tree (TWITH, "table min cols", as_string (N (split)))
+	 << tree (TWITH, "table max cols", as_string (N (split)))
+	 << tree (CWITH, "1", "-1", "1", "1", "cell lsep", "0spc")
+	 << tree (CWITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
+	 << tree (CWITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
+	 << tree (CWITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
+	 << tree (CWITH, "1", "-1", "1", "1", "cell hyphen", "b")
+	 << tree (CWITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
       if (split[0] == "right")
-	tf << tree (CELL_WITH, "1", "-1", "1", "1", "cell hpart", "1");
+	tf << tree (CWITH, "1", "-1", "1", "1", "cell hpart", "1");
       if ((split[N(split)-1] == "left") || (split[N(split)-1] == "justify"))
-	tf << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell hpart", "1");
+	tf << tree (CWITH, "1", "-1", "-1", "-1", "cell hpart", "1");
       for (i=0; i<N(split); i++) {
-	tree with (CELL_WITH);
+	tree with (CWITH);
 	int j= (i==N(split)-1)? -1: i+1;
 	with << "1" << "-1" << as_string (j) << as_string (j) << "cell halign";
 	if (split[i] == "right") with << "r";
@@ -1473,7 +1540,7 @@ upgrade_session (tree t) {
   else if (is_expand (t, "session", 3)) {
     tree u= tree (EXPAND, "session", t[3]);
     tree w= tree (WITH);
-    w << PROG_LANGUAGE << t[1] << THIS_SESSION << t[2] << u;
+    w << PROG_LANGUAGE << t[1] << PROG_SESSION << t[2] << u;
     return w;
   }
   else {
@@ -1493,7 +1560,19 @@ static tree
 upgrade_formatting (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, FORMAT, 1)) {
-    string name= replace (t[0]->label, " ", "_");
+    string name= replace (t[0]->label, " ", "-");
+    if (name == "line-separator") name= "line-sep";
+    else if (name == "no-line-break") name= "no-break";
+    else if (name == "no-first-indentation") name= "no-indent";
+    else if (name == "enable-first-indentation") name= "yes-indent";
+    else if (name == "no-indentation-after") name= "no-indent*";
+    else if (name == "enable-indentation-after") name= "yes-indent*";
+    else if (name == "page-break-before") name= "page-break*";
+    else if (name == "no-page-break-before") name= "no-page-break*";
+    else if (name == "no-page-break-after") name= "no-page-break";
+    else if (name == "new-page-before") name= "new-page*";
+    else if (name == "new-double-page-before") name= "new-dpage*";
+    else if (name == "new-double-page") name= "new-dpage";
     return tree (as_tree_label (name));
   }
   else {
@@ -1510,34 +1589,328 @@ upgrade_formatting (tree t) {
 ******************************************************************************/
 
 static tree
-upgrade_expand (tree t) {
-#ifdef WITH_EXTENSIONS
+upgrade_expand (tree t, tree_label WHICH_EXPAND) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, EXPAND) && is_atomic (t[0])) {
+  else if (is_func (t, WHICH_EXPAND) && is_atomic (t[0])) {
     int i, n= N(t)-1;
     string s= t[0]->label;
     if (s == "quote") s= s * "-env";
     tree_label l= make_tree_label (s);
     tree r (l, n);
     for (i=0; i<n; i++)
-      r[i]= upgrade_expand (t[i+1]);
+      r[i]= upgrade_expand (t[i+1], WHICH_EXPAND);
     return r;
   }
   else if (is_func (t, ASSIGN, 2) &&
 	   (t[0] == "quote") &&
 	   is_func (t[1], MACRO)) {
-    return tree (ASSIGN, t[0]->label * "-env", upgrade_expand (t[1]));
+    tree arg= upgrade_expand (t[1], WHICH_EXPAND);
+    return tree (ASSIGN, t[0]->label * "-env", arg);
   }
   else {
     int i, n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
-      r[i]= upgrade_expand (t[i]);
+      r[i]= upgrade_expand (t[i], WHICH_EXPAND);
     return r;
   }
-#else
-  return t;
-#endif
+}
+
+static tree
+upgrade_xexpand (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    if (is_expand (t))
+      r= tree (COMPOUND, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_xexpand (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
+* Upgrade apply
+******************************************************************************/
+
+static tree
+upgrade_apply (tree t) {
+  if (is_atomic (t)) return t;
+  /*
+  if (is_func (t, APPLY))
+    cout << t[0] << "\n";
+  */
+  if (is_func (t, APPLY) && is_atomic (t[0])) {
+    int i, n= N(t)-1;
+    string s= t[0]->label;
+    tree_label l= make_tree_label (s);
+    tree r (l, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_apply (t[i+1]);
+    return r;
+  }
+
+  int i, n= N(t);
+  tree r (t, n);
+  if (is_func (t, APPLY))
+    r= tree (COMPOUND, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_apply (t[i]);
+  return r;
+}
+
+static tree
+upgrade_function_arg (tree t, tree var) {
+  if (is_atomic (t)) return t;
+  else if ((t == tree (APPLY, var)) || (t == tree (VALUE, var)))
+    return tree (ARG, var);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_function_arg (t[i], var);
+    return r;
+  }
+}
+
+static tree
+upgrade_function (tree t) {
+  if (is_atomic (t)) return t;
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNC)) {
+    int i, n= N(t[1])-1;
+    for (i=0; i<n; i++)
+      if (ends (as_string (t[1][i]), "*"))
+	cout << "TeXmacs] Deprecated argument list '" << t[1][i]
+	     << "' in function '" << t[0] << "'\n"
+	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
+  }
+  /*
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNC) && (N(t[1])>1)) {
+    cout << "Function: " << t[0] << "\n";
+  }
+  */
+  if (is_func (t, FUNC)) {
+    int i, n= N(t)-1;
+    tree u= t[n], r (MACRO, n+1);
+    for (i=0; i<n; i++) {
+      u= upgrade_function_arg (u, t[i]);
+      r[i]= copy (t[i]);
+    }
+    r[n]= upgrade_function (u);
+    /*
+    if (n > 0) {
+      cout << "t= " << t << "\n";
+      cout << "r= " << r << "\n";
+      cout << HRULE;
+    }
+    */
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_function (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
+* Renaming environment variables
+******************************************************************************/
+
+static charp var_rename []= {
+  "shrinking factor", "sfactor",
+  "info flag", "info-flag",
+
+  "font family", "font-family",
+  "font series", "font-series",
+  "font shape", "font-shape",
+  "font size", "font-size",
+  "font base size", "font-base-size",
+  "background color", "bg-color",
+  "atom decorations", "atom-decorations",
+  "line decorations", "line-decorations",
+  "page decorations", "page-decorations",
+  "xoff decorations", "xoff-decorations",
+  "yoff decorations", "yoff-decorations",
+
+  "math language", "math-language",
+  "math font", "math-font",
+  "math font family", "math-font-family",
+  "math font series", "math-font-series",
+  "math font shape", "math-font-shape",
+  "index level", "math-level",
+  "formula style", "math-display",
+  "math condensed", "math-condensed",
+  "vertical position", "math-vpos",
+
+  "prog language", "prog-language",
+  "prog font", "prog-font",
+  "prog font family", "prog-font-family",
+  "prog font series", "prog-font-series",
+  "prog font shape", "prog-font-shape",
+  "this session", "prog-session",
+
+  "paragraph mode", "par-mode",
+  "paragraph hyphenation", "par-hyphen",
+  "paragraph width", "par-width",
+  "left margin", "par-left",
+  "right margin", "par-right",
+  "first indentation", "par-first",
+  "no first indentation", "par-no-first",
+  "interline space", "par-sep",
+  "horizontal ink separation", "par-hor-sep",
+  "line stretch", "par-line-sep",
+  "interparagraph space", "par-par-sep",
+  "interfootnote space", "par-fnote-sep",
+  "nr columns", "par-columns",
+  "column separation", "par-columns-sep",
+
+  "page medium", "page-medium",
+  "page type", "page-type",
+  "page orientation", "page-orientation",
+  "page breaking", "page-breaking",
+  "page flexibility", "page-flexibility",
+  "page number", "page-nr",
+  "thepage", "page-the-page",
+  "page width", "page-width",
+  "page height", "page-height",
+  "odd page margin", "page-odd",
+  "even page margin", "page-even",
+  "page right margin", "page-right",
+  "page top margin", "page-top",
+  "page bottom margin", "page-bot",
+  "page extend", "page-extend",
+  "page shrink", "page-shrink",
+  "page header separation", "page-head-sep",
+  "page footer separation", "page-foot-sep",
+  "odd page header", "page-odd-header",
+  "odd page footer", "page-odd-footer",
+  "even page header", "page-even-header",
+  "even page footer", "page-even-footer",
+  "this page header", "page-this-header",
+  "this page footer", "page-this-footer",
+  "reduction page left margin", "page-reduce-left",
+  "reduction page right margin", "page-reduce-right",
+  "reduction page top margin", "page-reduce-top",
+  "reduction page bottom margin", "page-reduce-bot",
+  "show header and footer", "page-show-hf",
+  "footnote separation", "page-fnote-sep",
+  "footnote bar length", "page-fnote-barlen",
+  "float separation", "page-float-sep",
+  "marginal note separation", "page-mnote-sep",
+  "marginal note width", "page-mnote-width",
+
+  "table width", "table-width",
+  "table height", "table-height",
+  "table hmode", "table-hmode",
+  "table vmode", "table-vmode",
+  "table halign", "table-halign",
+  "table valign", "table-valign",
+  "table row origin", "table-row-origin",
+  "table col origin", "table-col-origin",
+  "table lsep", "table-lsep",
+  "table rsep", "table-rsep",
+  "table bsep", "table-bsep",
+  "table tsep", "table-tsep",
+  "table lborder", "table-lborder",
+  "table rborder", "table-rborder",
+  "table bborder", "table-bborder",
+  "table tborder", "table-tborder",
+  "table hyphen", "table-hyphen",
+  "table min rows", "table-min-rows",
+  "table min cols", "table-min-cols",
+  "table max rows", "table-max-rows",
+  "table max cols", "table-max-cols",
+
+  "cell format", "cell-format",
+  "cell decoration", "cell-decoration",
+  "cell background", "cell-background",
+  "cell orientation", "cell-orientation",
+  "cell width", "cell-width",
+  "cell height", "cell-height",
+  "cell hpart", "cell-hpart",
+  "cell vpart", "cell-vpart",
+  "cell hmode", "cell-hmode",
+  "cell vmode", "cell-vmode",
+  "cell halign", "cell-halign",
+  "cell valign", "cell-valign",
+  "cell lsep", "cell-lsep",
+  "cell rsep", "cell-rsep",
+  "cell bsep", "cell-bsep",
+  "cell tsep", "cell-tsep",
+  "cell lborder", "cell-lborder",
+  "cell rborder", "cell-rborder",
+  "cell bborder", "cell-bborder",
+  "cell tborder", "cell-tborder",
+  "cell vcorrect", "cell-vcorrect",
+  "cell hyphen", "cell-hyphen",
+  "cell row span", "cell-row-span",
+  "cell col span", "cell-col-span",
+  "cell row nr", "cell-row-nr",
+  "cell col nr", "cell-col-nr",
+
+  "line width", "line-width",
+  "line style", "line-style",
+  "line arrows", "line-arrows",
+  "line caps", "line-caps",
+  "fill mode", "fill-mode",
+  "fill color", "fill-color",
+  "fill style", "fill-style",
+
+  "graphical frame", "gr-frame",
+  "graphical clip", "gr-clip",
+  "graphical mode", "gr-mode",
+  "graphical color", "gr-color",
+  "graphical line width", "gr-line-width",
+  
+  ""
+};
+
+static hashmap<string,string> var_rename_table ("?");
+
+static hashmap<string,string>
+get_var_rename () {
+  if (N (var_rename_table) == 0) {
+    int i;
+    for (i=0; var_rename[i][0] != '\0'; i+=2)
+      var_rename_table (var_rename[i])= var_rename[i+1];
+  }
+  return var_rename_table;
+}
+
+static tree
+rename_vars (tree t, hashmap<string,string> H) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      tree u= rename_vars (t[i], H);
+      if (is_atomic (u) && H->contains (u->label))
+	if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
+	    ((L(t) == ASSIGN) && (i == 0)) ||
+	    ((L(t) == VALUE) && (i == 0)) ||
+	    ((L(t) == CWITH) && (i == 4)) ||
+	    ((L(t) == TWITH) && (i == 0)) ||
+	    ((L(t) == ASSOCIATE) && (i == 0)))
+	  u= copy (H[u->label]);
+      r[i]= u;
+    }
+    if ((n == 0) && H->contains (as_string (L(t)))) {
+      string v= H[as_string (L(t))];
+      r= tree (VALUE, copy (v));
+      if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
+    }
+    return r;
+  }
+}
+
+tree
+upgrade_env_vars (tree t) {
+  return rename_vars (t, get_var_rename ());
 }
 
 /******************************************************************************
@@ -1556,7 +1929,13 @@ upgrade_tex (tree t) {
   t= upgrade_menus_in_help (t);
   t= upgrade_capitalize_menus (t);
   t= upgrade_formatting (t);
-  t= upgrade_expand (t);
+  t= upgrade_expand (t, EXPAND);
+  t= upgrade_expand (t, HIDE_EXPAND);
+  t= upgrade_expand (t, VAR_EXPAND);
+  t= upgrade_xexpand (t);
+  t= upgrade_function (t);
+  t= upgrade_apply (t);
+  t= upgrade_env_vars (t);
   return t;
 }
 
@@ -1597,6 +1976,18 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.0.2.0"))
     t= upgrade_formatting (t);
   if (version_inf_eq (version, "1.0.2.3"))
-    t= upgrade_expand (t);
+    t= upgrade_expand (t, EXPAND);
+  if (version_inf_eq (version, "1.0.2.4"))
+    t= upgrade_expand (t, HIDE_EXPAND);
+  if (version_inf_eq (version, "1.0.2.5")) {
+    t= upgrade_expand (t, VAR_EXPAND);
+    t= upgrade_xexpand (t);
+  }
+  if (version_inf_eq (version, "1.0.2.6")) {
+    t= upgrade_function (t);
+    t= upgrade_apply (t);
+  }
+  if (version_inf_eq (version, "1.0.2.8"))
+    t= upgrade_env_vars (t);
   return t;
 }

@@ -16,9 +16,9 @@
   (:use (texmacs tools tm-circulate))
   (:export
     ;; titles
-    go-end-of-header-element make-header-expand make-header-apply
+    go-end-of-header-element make-header
     ;; sections
-    inside-section? make-section make-section-arg toggle-section-number
+    inside-section? make-section make-unnamed-section toggle-section-number
     ;; lists
     inside-list? inside-description? make-tmlist make-item
     ;; auxiliary
@@ -35,14 +35,10 @@
   (if (inside? "encl") (go-end-of "encl"))
   (go-end-line))
 
-(define (make-header-expand s)
+(define (make-header l)
   (go-end-of-header-element)
   (if (not (== (tree->object (the-line)) "")) (insert-return))
-  (make-expand-arg s))
-
-(define (make-header-apply s)
-  (go-end-of-header-element)
-  (make-inactive-apply-arg s))
+  (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sectional commands
@@ -63,14 +59,14 @@
       (inside? "subparagraph")
       (inside? "subparagraph*")))
 
-(define (make-section s)
+(define (make-section l)
   (if (not (make-return-after))
-      (make-expand s)
-      (make-return-before)))
+      (make l)))
 
-(define (make-section-arg s)
+(define (make-unnamed-section l)
   (if (not (make-return-after))
-      (make-expand-arg s)))
+      (make l)
+      (make-return-before)))
 
 (define (toggle-section-number)
   (cond ((inside? "chapter") (variant-replace "chapter" "chapter*"))
@@ -94,33 +90,30 @@
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define list-itemize-enumerate
+  '("itemize" "itemize-minus" "itemize-dot" "itemize-arrow"
+    "enumerate" "enumerate-numeric" "enumerate-roman"
+    "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"))
+
+(define list-description
+  '("description" "description-compact" "description-aligned"
+    "description-dash" "description-long"))
+
 (define (inside-list?)
-  (or (inside? "itemize")
-      (inside? "itemize-minus")
-      (inside? "itemize-dot")
-      (inside? "itemize-arrow")
-      (inside? "enumerate")
-      (inside? "enumerate-numeric")
-      (inside? "enumerate-roman")
-      (inside? "enumerate-Roman")
-      (inside? "enumerate-alpha")
-      (inside? "enumerate-Alpha")))
+  (not (== (inside-which list-itemize-enumerate) "")))
 
 (define (inside-description?)
-  (or (inside? "description")
-      (inside? "description-compact")
-      (inside? "description-aligned")
-      (inside? "description-dash")
-      (inside? "description-long")))
+  (not (== (inside-which list-description) "")))
 
-(define (make-tmlist s)
-  (make-big-expand s)
+(define (make-tmlist l)
+  (make l)
   (make-item))
 
 (define (make-item)
   (if (not (make-return-after))
-      (cond ((inside-list?) (make-expand "item"))
-	    ((inside-description?) (make-expand-arg "item*")))))
+      (with l (inside-which (append list-itemize-enumerate list-description))
+	(cond ((in? l list-itemize-enumerate) (make 'item))
+	      ((in? l list-description) (make 'item*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content
@@ -128,14 +121,13 @@
 
 (define (make-aux env aux)
   (if (not (make-return-after))
-      (insert-object (tmp-compound-object env aux '(document "")))))
+      (insert-object (list (string->symbol env) aux '(document "")))))
 
 (define (make-aux* env aux name)
   (if (not (make-return-after))
-      (insert-object (tmp-compound-object env aux name '(document "")))))
+      (insert-object (list (string->symbol env) aux name '(document "")))))
 
 (define (make-bib style file-name)
   (if (not (make-return-after))
       (insert-object
-       (tmp-compound-object "bibliography" "bib"
-			    style file-name '(document "")))))
+       (list 'bibliography "bib" style file-name '(document "")))))

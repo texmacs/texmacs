@@ -272,10 +272,29 @@ insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
   return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
 }
 
+static list<message>
+remove_all_messages (list<message> l, widget wid, string s, int& found) {
+  if (nil (l))
+    return l;
+  else if (l->item->wid == wid && l->item->s == s) {
+    found++;
+    return remove_all_messages (l->next, wid, s, found);
+  }
+  else
+    return list<message>(l->item, remove_all_messages(l->next, wid, s, found));
+};
+
 void
 x_display_rep::delayed_message (widget wid, string s, time_t delay) {
   time_t ct= texmacs_time ();
   messages= insert_message (messages, wid, s, ct, ct+ delay);
+}
+
+int
+x_display_rep::remove_all_delayed_messages (widget wid, string s) {
+  int found= 0;
+  messages= remove_all_messages (messages, wid, s, found);
+  return found;
 }
 
 /******************************************************************************

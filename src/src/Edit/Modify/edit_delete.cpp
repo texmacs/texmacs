@@ -13,35 +13,81 @@
 #include "edit_text.hpp"
 
 /******************************************************************************
-* Delete backwards
+* Getting the point where to delete
 ******************************************************************************/
 
 void
-edit_text_rep::remove_backwards () {
-  path p= tp;
-  int  last;
-  tree t, u;
+edit_text_rep::get_deletion_point (
+  path& p, int& last, int& rix, tree& t, tree& u, bool forward)
+{
+  // make right-glued positions left-glued
+  p= tp;
+  if (forward) {
+    //cout << HRULE;
+    if ((N(p) >= 2) &&
+	is_concat (subtree (et, path_up (p, 2))) &&
+	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
+	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
+      {
+	p= path_up (p);
+	p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
+      }
+    //cout << "p= " << p << "\n";
+  }
 
-  /********************* get the position where to delete ********************/
-  
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-  } while ((last==0) && (!nil (p)) && is_format (subtree (et, path_up (p))));
+  // get the position where to delete
+  last= last_item (p);
+  p   = path_up (p);
+  t   = subtree (et, p);
+  rix = right_index (t);
+  //cout << "  t   = " << t << "\n";
+  //cout << "  last= " << last << "\n";
+  //cout << "  rix = " << rix << "\n";
+  while (((forward && (last >= rix)) || ((!forward) && (last == 0))) &&
+	 (!nil (p)) && is_format (subtree (et, path_up (p))))
+    {
+      last= last_item (p);
+      p   = path_up (p);
+      t   = subtree (et, p);
+      rix = N(t) - 1;
+      //cout << "  t   = " << t << "\n";
+      //cout << "  last= " << last << "\n";
+      //cout << "  rix = " << rix << "\n";
+    }
+  if (!nil (p)) u= subtree (et, path_up (p));
+}
+
+/******************************************************************************
+* Normal deletions
+******************************************************************************/
+
+void
+edit_text_rep::remove_text (bool forward) {
+  path p;
+  int  last, rix;
+  tree t, u;
+  get_deletion_point (p, last, rix, t, u, forward);
+
+  // multiparagraph delete
   if (is_document (t)) {
-    if (last==0) {
+    if ((forward && (last >= rix)) || ((!forward) && (last == 0))) {
       if (!nil(p)) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
-	  if (is_extension (u) && (N(u) > (1+d_exp))) {
+	  if (is_extension (u) && (N(u) > 1)) {
 	    int i, n= N(u);
 	    bool empty= true;
-	    for (i=d_exp; i<n; i++)
+	    for (i=0; i<n; i++)
 	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	    if (!empty) {
-	      if (last_item (p) == d_exp) go_to (start (et, path_up (p)));
-	      else go_to (end (et, path_dec (p)));
+	      if (forward) {
+		if (last_item (p) == n-1) go_to (end (et, path_up (p)));
+		else go_to (start (et, path_inc (p)));
+	      }
+	      else {
+		if (last_item (p) == 0) go_to (start (et, path_up (p)));
+		else go_to (end (et, path_dec (p)));
+	      }
 	      return;
 	    }
 	  }
@@ -54,674 +100,170 @@ edit_text_rep::remove_backwards () {
 	      assign (path_up (p), "");
 	    else assign (path_up (p), tree (DOCUMENT, ""));
 	  }
-	  else go_to (start (et, path_up (p)));
+	  else go_to_border (path_up (p), !forward);
 	}
       }
+      return;
     }
     else {
-      if (is_multi_paragraph (subtree (et, p * (last-1))) ||
-	  is_multi_paragraph (subtree (et, p * last)))
+      int l1= forward? last: last-1;
+      int l2= forward? last+1: last;
+      if (is_multi_paragraph (subtree (et, p * l1)) ||
+	  is_multi_paragraph (subtree (et, p * l2)))
 	{
-	  if (subtree (et, p * (last-1)) == "") remove (p * (last-1), 1);
+	  if (subtree (et, p * l1) == "") remove (p * l1, 1);
 	  else {
-	    if (subtree (et, p * last) == "") remove (p * last, 1);
-	    go_to (end (et, p * (last-1)));
+	    if (subtree (et, p * l2) == "") remove (p * l2, 1);
+	    if (!forward) go_to_end (p * l1);
+	    else if (last < N (subtree (et, p)) - 1) go_to_start (p * l2);
 	  }
 	}
-      else remove_return (p * (last-1));
+      else remove_return (p * l1);
     }
     return;
   }
-  u= subtree (et, path_up (p));
 
-  // cout << "Backspace\n-----------------------";
-  // cout << "t= " << t << "\n";
-  // cout << "u= " << u << "\n";
-  // cout << "p= " << p << "\n";
-
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last != 0)) {
-    language lan= get_env_language ();
-    int start= last;
-    if (lan->enc->token_backward (t->label, start))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::backspace");
-    remove (p * start, last-start);
-    correct (path_up (p));
-    return;
-  }
-
-  /************************ deletion governed by t ***************************/
-
-  if (last==1)
-    switch (L(t)) {
-    case SURROUND:
-      go_to (end (et, p * 2));
-      return;
-    case FORMAT:
-    case HSPACE:
-    case VSPACE_BEFORE:
-    case VSPACE_AFTER:
-    case SPACE:
-    case HTAB:
-      if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-    case SPLIT:
-      back_dynamic (p);
-      return;
-    case MOVE:
-    case RESIZE:
-      back_dynamic (p);
-      return;
-    case _FLOAT:
-      go_to (end (et, p * 2));
-      return;
-    case REPEAT:
-    case DECORATE_ATOMS:
-    case DECORATE_LINES:
-    case DECORATE_PAGES:
-      back_dynamic (p);
-      return;
-
-    case WITH_LIMITS:
-    case LINE_BREAK:
-    case NEW_LINE:
-    case LINE_SEP:
-    case NEXT_LINE:
-    case NO_BREAK:
-    case NO_FIRST_INDENT:
-    case YES_FIRST_INDENT:
-    case NO_FIRST_INDENT_AFTER:
-    case YES_FIRST_INDENT_AFTER:
-    case PAGE_BREAK_BEFORE:
-    case PAGE_BREAK:
-    case NO_PAGE_BREAK_BEFORE:
-    case NO_PAGE_BREAK_AFTER:
-    case NEW_PAGE_BEFORE:
-    case NEW_PAGE:
-    case NEW_DOUBLE_PAGE_BEFORE:
-    case NEW_DOUBLE_PAGE:
-      if (!is_concat (subtree (et, path_up (p)))) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-
-    case GROUP:
-      go_to (end (et, p * 0));
-      return;
-    case LEFT:
-    case MIDDLE:
-    case RIGHT:
-    case BIG:
-      if (!is_concat (u)) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-    case LEFT_PRIME:
-    case RIGHT_PRIME:
-      back_prime (t, p);
-      return;
-    case BELOW:
-    case ABOVE:
-      go_to (end (et, p * 1));
-      return;
-    case LEFT_SUB:
-    case LEFT_SUP:
-    case RIGHT_SUB:
-    case RIGHT_SUP:
-      go_to (end (et, p * 0));
-      return;
-    case FRAC:
-      go_to (end (et, p * 1));
-      return;
-    case SQRT:
-    case WIDE:
-    case WIDE_UNDER:
-    case NEG:
-      go_to (end (et, p * 0));
-      return;
-    case TREE:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case OLD_MATRIX:
-    case OLD_TABLE:
-    case OLD_MOSAIC:
-      back_dynamic (p);
-      return;
-
-    case TABLE_FORMAT:
-      back_table (p);
-      return;
-    case TABLE_WITH:
-    case CELL_WITH:
-    case TABLE_MARKER:
-      back_dynamic (p);
-      return;
-    case TABLE:
-    case ROW:
-    case CELL:
-    case SUB_TABLE:
-      back_table (p);
-      return;
-
-    case ASSIGN:
-      back_dynamic (p);
-      return;
-    case WITH:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case EXPAND:
-    case VAR_EXPAND:
-      back_expand (p);
-      return;
-    case HIDE_EXPAND:
-      back_hide_expand (p);
-      return;
-    case APPLY:
-    case INCLUDE:
-      back_dynamic (p);
-      return;
-    case MACRO:
-    case FUNCTION:
-    case EVAL:
-      back_dynamic (p);
-      return;
-    case PROVIDES:
-    case VALUE:
-    case ARGUMENT:
-      if (!is_concat (u)) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
-      return;
-    case QUOTE:
-    case DELAY:
-    case HOLD:
-    case RELEASE:
-      back_dynamic (p);
-      return;
-
-    case OR:
-    case XOR:
-    case AND:
-    case NOT:
-    case PLUS:
-    case MINUS:
-    case TIMES:
-    case OVER:
-    case DIVIDE:
-    case MODULO:
-    case MERGE:
-    case LENGTH:
-    case RANGE:
-    case NUMBER:
-    case _DATE:
-    case TRANSLATE:
-    case FIND_FILE:
-    case IS_TUPLE:
-    case LOOK_UP:
-    case EQUAL:
-    case UNEQUAL:
-    case LESS:
-    case LESSEQ:
-    case GREATER:
-    case GREATEREQ:
-    case IF:
-    case VAR_IF:
-    case CASE:
-    case WHILE:
-    case EXTERN:
-    case AUTHORIZE:
-      back_dynamic (p);
-      return;
-
-    case INACTIVE:
-    case ACTIVE:
-    case VAR_INACTIVE:
-    case VAR_ACTIVE:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case SYMBOL:
-    case LATEX:
-    case HYBRID:
-      back_dynamic (p);
-      return;
-    case TUPLE:
-    case ATTR:
-      go_to (end (et, p * (N(t)-1)));
-      return;
-    case COLLECTION:
-    case ASSOCIATE:
-    case LABEL:
-    case REFERENCE:
-    case PAGEREF:
-    case WRITE:
-    case SPECIFIC:
-    case HYPERLINK:
-    case ACTION:
-    case TAG:
-    case MEANING:
-      back_dynamic (p);
-      return;
-
-    case GRAPHICS:
-    case SUPERPOSE:
-    case TEXT_AT:
-    case _POINT:
-    case LINE:
-    case CLINE:
-    case SPLINE:
-    case VAR_SPLINE:
-    case CSPLINE:
-    case FILL:
-      back_dynamic (p);
-      return;
-    case POSTSCRIPT:
-      back_dynamic (p);
-      return;
-    default:
-      if (L(t) >= START_EXTENSIONS) back_extension (p);
-      break;
-    }
-
-  /************************* deletion depends on u ***************************/
-
-  if (last==0) {
-    switch (L (u)) {
-    case SURROUND:
-      back_in_dynamic (u, p, 3);
-      return;
-    case SPLIT:
-      back_in_dynamic (u, p);
-      return;
-    case MOVE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case RESIZE:
-      back_in_dynamic (u, p, 5);
-      return;
-    case _FLOAT:
-      back_in_dynamic (u, p, 3);
-      return;
-    case REPEAT:
-    case DECORATE_ATOMS:
-    case DECORATE_LINES:
-    case DECORATE_PAGES:
-      back_in_dynamic (u, p, 2);
-      return;
-
-    case GROUP:
-      back_in_math (u, p);
-      return;
-    case LEFT:
-    case MIDDLE:
-    case RIGHT:
-    case BIG:
-      fatal_error ("cursor should not be inside big symbol",
-		   "edit_text_rep::backspace");
-      return;
-    case BELOW:
-    case ABOVE:
-    case LEFT_SUB:
-    case LEFT_SUP:
-    case RIGHT_SUB:
-    case RIGHT_SUP:
-    case FRAC:
-      back_in_math (u, p);
-      return;
-    case SQRT:
-      back_in_dynamic (u, p);
-      return;
-    case WIDE:
-    case WIDE_UNDER:
-      back_in_math_accent (u, p);
-      return;
-    case NEG:
-      back_in_math (u, p);
-      return;
-    case TREE:
-      back_in_tree (u, p);
-      return;
-    case OLD_MATRIX:
-    case OLD_TABLE:
-    case OLD_MOSAIC:
-    case OLD_MOSAIC_ITEM:
-      back_in_dynamic (u, p);
-      return;
-
-    case TABLE_FORMAT:
-      back_in_table (u, p);
-      return;
-    case TABLE_WITH:
-      back_in_dynamic (u, p, 2);
-      return;
-    case CELL_WITH:
-      back_in_dynamic (u, p, 6);
-      return;
-    case TABLE_MARKER:
-      back_in_dynamic (u, p);
-      return;
-    case TABLE:
-    case ROW:
-    case CELL:
-    case SUB_TABLE:
-      back_in_table (u, p);
-      return;
-
-    case ASSIGN:
-      back_in_dynamic (u, p);
-      return;
-    case WITH:
-      back_in_with (u, p);
-      return;
-    case EXPAND:
-    case VAR_EXPAND:
-    case HIDE_EXPAND:
-      back_in_expand (u, p);
-      return;
-    case APPLY:
-    case INCLUDE:
-      back_in_dynamic (u, p);
-      return;
-    case MACRO:
-    case FUNCTION:
-      back_in_dynamic (u, p);
-      return;
-    case EVAL:
-    case PROVIDES:
-    case VALUE:
-    case ARGUMENT:
-    case QUOTE:
-    case DELAY:
-    case HOLD:
-    case RELEASE:
-      back_in_dynamic (u, p);
-      return;
-
-    case OR:
-    case XOR:
-    case AND:
-      back_in_dynamic (u, p, 2);
-      return;
-    case NOT:
-      back_in_dynamic (u, p);
-      return;
-    case PLUS:
-    case MINUS:
-    case TIMES:
-    case OVER:
-    case DIVIDE:
-    case MODULO:
-    case MERGE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case LENGTH:
-      back_in_dynamic (u, p);
-      return;
-    case RANGE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case NUMBER:
-    case _DATE:
-      back_in_dynamic (u, p);
-      return;
-    case TRANSLATE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case FIND_FILE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case IS_TUPLE:
-      back_in_dynamic (u, p);
-      return;
-    case LOOK_UP:
-    case EQUAL:
-    case UNEQUAL:
-    case LESS:
-    case LESSEQ:
-    case GREATER:
-    case GREATEREQ:
-    case IF:
-    case VAR_IF:
-    case CASE:
-    case WHILE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case EXTERN:
-      back_in_dynamic (u, p, 1);
-      return;
-    case AUTHORIZE:
-      back_in_dynamic (u, p, 2);
-      return;
-
-    case INACTIVE:
-    case ACTIVE:
-    case VAR_INACTIVE:
-    case VAR_ACTIVE:
-    case SYMBOL:
-    case LATEX:
-    case HYBRID:
-      back_in_dynamic (u, p);
-      return;
-    case TUPLE:
-      back_in_dynamic (u, p);
-      return;
-    case ATTR:
-      back_in_dynamic (u, p, 1, 2);
-      return;
-    case COLLECTION:
-      back_in_dynamic (u, p);
-      return;
-    case ASSOCIATE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case LABEL:
-    case REFERENCE:
-    case PAGEREF:
-    case WRITE:
-      back_in_dynamic (u, p);
-      return;
-    case SPECIFIC:
-    case HYPERLINK:
-    case ACTION:
-    case TAG:
-    case MEANING:
-      back_in_dynamic (u, p, 2);
-      return;
-
-    case GRAPHICS:
-    case SUPERPOSE:
-    case TEXT_AT:
-    case _POINT:
-    case LINE:
-    case CLINE:
-    case SPLINE:
-    case VAR_SPLINE:
-    case CSPLINE:
-    case FILL:
-      back_in_dynamic (u, p);
-      return;
-    case POSTSCRIPT:
-      back_in_dynamic (u, p, 7);
-      return;
-    default:
-      if (L(u) >= START_EXTENSIONS) back_in_extension (u, p);
-      break;
-    }
-  }
-}
-
-/******************************************************************************
-* Delete forwards
-******************************************************************************/
-
-void
-edit_text_rep::remove_forwards () {
-  path p= tp;
-  int  last, rix;
-  tree t, u;
-
-  /********************* get the position where to delete ********************/
-  
-  if ((last_item (p) == 1) && (!atom (p)) &&
-      is_compound (subtree (et, path_up (p))) &&
-      is_format (subtree (et, path_up (p, 2))))
-    p= path_up (p);
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-    rix = is_atomic (t)? N(t->label): (N(t)-1);
-  } while ((last >= rix) &&
-	   (!nil (p)) && is_format (subtree (et, path_up (p))));
-  if (is_document (t)) {
-    if (last >= rix) {
-      /* Not yet implemented */
-    }
-    else {
-      if (is_multi_paragraph (subtree (et, p * last)) ||
-	  is_multi_paragraph (subtree (et, p * (last+1))))
-	{
-	  if (subtree (et, p * last) == "") remove (p * last, 1);
-	  else {
-	    if (subtree (et, p * (last+1)) == "") remove (p * (last+1), 1);
-	    go_to (start (et, p * (last+1)));
-	  }
-	}
-      else remove_return (p * last);
-    }
-    return;
-  }
-  u= subtree (et, path_up (p));
-
-  // cout << "Delete\n-----------------------";
-  // cout << "t= " << t << "\n";
-  // cout << "u= " << u << "\n";
-  // cout << "p= " << p << "\n";
-
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last != rix)) {
+  // deleting text
+  if (forward && is_atomic (t) && (last != rix)) {
     language lan= get_env_language ();
     int end= last;
     if (lan->enc->token_forward (t->label, end))
       fatal_error ("bad cursor position in string",
-		   "edit_text_rep::backspace");
+		   "edit_text_rep::remove_text");
     remove (p * last, end-last);
     correct (path_up (p));
     return;
   }
 
-  /* not yet implemented */
-}
-
-/******************************************************************************
-* Backward deletion of an object
-******************************************************************************/
-
-path left_match (tree t, path p, tree which, int level= 0);
-path right_match (tree t, path p, tree which, int level= 0);
-
-void
-edit_text_rep::remove_structure_backwards () {
-  path p= tp;
-  int  last;
-  tree t, u;
-
-  /********************* get the position where to delete ********************/
-  
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-  } while ((last==0) && (!nil (p)) && is_format (subtree (et, path_up (p))));
-  if (nil (p)) {
-    if (last==0) return;
-    remove_return (path (last-1));
-    return;
-  }
-  u= subtree (et, path_up (p));
-
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last!=0)) {
+  if ((!forward) && is_atomic (t) && (last != 0)) {
     language lan= get_env_language ();
-    int start= last, end= last;
-    string s= t->label;
-    while (true) {
-      int pos= max (start-1, 0);
-      (void) lan->advance (s, pos);
-      if (pos < last) break;
-      end= pos;
-      if (start == 0) break;
-      start--;
-    }
-    while ((start>0) && (s[start-1] == ' ')) start--;
-    if (end>start) {
-      remove (p * start, end-start);
-      correct (path_up (p));
-    }
+    int start= last;
+    if (lan->enc->token_backward (t->label, start))
+      fatal_error ("bad cursor position in string",
+		   "edit_text_rep::remove_text");
+    remove (p * start, last-start);
+    correct (path_up (p));
     return;
   }
 
-  /************************** deleting structure *****************************/
+  // deletion governed by parent t
+  if (last == (forward? 0: 1))
+    switch (L(t)) {
+    case HSPACE:
+    case VAR_VSPACE:
+    case VSPACE:
+    case SPACE:
+    case HTAB:
+    case LEFT:
+    case MID:
+    case RIGHT:
+    case BIG:
+      back_monolithic (p);
+      return;
+    case LPRIME:
+    case RPRIME:
+      back_prime (t, p, forward);
+      return;
+    case WIDE:
+    case VAR_WIDE:
+      go_to_border (p * 0, forward);
+      return;
+    case TFORMAT:
+    case TABLE:
+    case ROW:
+    case CELL:
+    case SUBTABLE:
+      back_table (p, forward);
+      return;
+    case WITH:
+      go_to_border (p * (N(t) - 1), forward);
+      return;
+    case VALUE:
+    case ARG:
+      if (N(t) == 1) back_monolithic (p);
+      else back_general (p, forward);
+      return;
+    default:
+      back_general (p, forward);
+      break;
+    }
 
-  if (last==1) {
-    if (!is_concat (u)) assign (p, "");
-    else remove (p, 1);
-    correct (path_up (p));
+  // deletion depends on children u
+  if (last == (forward? rix: 0)) {
+    switch (L (u)) {
+    case WIDE:
+    case VAR_WIDE:
+      back_in_wide (u, p, forward);
+      return;
+    case TREE:
+      back_in_tree (u, p, forward);
+      return;
+    case TFORMAT:
+    case TABLE:
+    case ROW:
+    case CELL:
+    case SUBTABLE:
+      back_in_table (u, p, forward);
+      return;
+    case WITH:
+      back_in_with (u, p, forward);
+      return;
+    default:
+      back_in_general (u, p, forward);
+      break;
+    }
   }
-  else remove_structure_upwards ();
 }
 
 /******************************************************************************
-* Forward deletion of an object
+* Structured deletions
 ******************************************************************************/
 
 void
-edit_text_rep::remove_structure_forwards () {
-  path p= tp;
+edit_text_rep::remove_structure (bool forward) {
+  path p;
   int  last, rix;
   tree t, u;
+  get_deletion_point (p, last, rix, t, u, forward);
 
-  /********************* get the position where to delete ********************/
-
-  if ((last_item (p) == 1) && (!atom (p)) &&
-      is_compound (subtree (et, path_up (p))) &&
-      is_format (subtree (et, path_up (p, 2))))
-    p= path_up (p);
-  do {
-    last= last_item (p);
-    p   = path_up (p);
-    t   = subtree (et, p);
-    rix = is_atomic (t)? N(t->label): (N(t)-1);
-  } while ((last >= rix) &&
-	   (!nil (p)) && is_format (subtree (et, path_up (p))));
+  // multiparagraph delete
   if (nil (p)) {
-    if (last >= rix) return;
-    remove_return (path (last));
+    if (forward) {
+      if (last >= rix) return;
+      remove_return (path (last));
+    }
+    else {
+      if (last == 0) return;
+      remove_return (path (last-1));
+    }
     return;
   }
-  u= subtree (et, path_up (p));
 
-  /**************************** deleting text ********************************/
-
-  if (is_atomic (t) && (last != rix)) {
+  // deleting text
+  if (is_atomic (t) && (last != (forward? rix: 0))) {
     language lan= get_env_language ();
-    int start= last, end= last;
+    int start= last, end= last, pos;
     string s= t->label;
     while (true) {
-      int pos= start;
-      (void) lan->advance (s, pos);
-      if (pos <= last) break;
+      if (forward) {
+	pos= start;
+	(void) lan->advance (s, pos);
+	if (pos <= last) break;
+      }
+      else {
+	int pos= max (start-1, 0);
+	(void) lan->advance (s, pos);
+	if (pos < last) break;
+      }
       end= pos;
       if (start == 0) break;
       start--;
     }
-    start= min (start+1, last);
-    while ((end < N(s)) && (s[end] == ' ')) end++;
+    if (forward) {
+      start= min (start+1, last);
+      while ((end < N(s)) && (s[end] == ' ')) end++;
+    }
+    else while ((start>0) && (s[start-1] == ' ')) start--;
     if (end>start) {
       remove (p * start, end-start);
       correct (path_up (p));
@@ -729,17 +271,26 @@ edit_text_rep::remove_structure_forwards () {
     return;
   }
 
-  /************************** deleting structure *****************************/
-  
-  if (is_concat (t) && (last < rix)) {
-    remove (p * (last+1), 1);
-    correct (path_up (p));
+  // deleting structure
+  if (forward) {
+    if (is_concat (t) && (last < rix)) {
+      remove (p * (last+1), 1);
+      correct (path_up (p));
+    }
+    else if (is_compound (t) && (last == 0)) {
+      assign (p, "");
+      correct (path_up (p));
+    }
+    else remove_structure_upwards ();
   }
-  else if (is_compound (t) && (last == 0)) {
-    assign (p, "");
-    correct (path_up (p));
+  else {
+    if (last==1) {
+      if (!is_concat (u)) assign (p, "");
+      else remove (p, 1);
+      correct (path_up (p));
+    }
+    else remove_structure_upwards ();
   }
-  else remove_structure_upwards ();
 }
 
 /******************************************************************************
@@ -755,7 +306,7 @@ edit_text_rep::remove_structure_upwards () {
   p= path_up (p);
   tree st= subtree (et, p);
   bool recurse=
-    is_func (st, TABLE_FORMAT) || is_func (st, TABLE) ||
+    is_func (st, TFORMAT) || is_func (st, TABLE) ||
     is_func (st, ROW) || is_func (st, CELL);
   remove (p * (last+1), N(st)-(last+1));
   remove (p * 0, last);

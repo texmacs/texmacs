@@ -17,7 +17,7 @@
   (lazy-input-converter (axiom-input) axiom))
 
 (plugin-configure axiom
-  (:require (url-exists-in-path? "axiom"))
+  (:require (url-exists-in-path? "AXIOMsys"))
   (:initialize (axiom-initialize))
   (:launch "tm_axiom")
   (:session "Axiom"))

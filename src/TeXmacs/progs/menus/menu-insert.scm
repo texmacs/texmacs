@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-    (texmacs edit edit-fold) (texmacs edit edit-preamble)
-    (texmacs edit edit-format) (texmacs edit edit-misc)))
+     (texmacs edit edit-graphics) (texmacs edit edit-fold)
+     (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Insert menu
@@ -23,54 +23,55 @@
 
 (menu-bind insert-table-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (make-expand-arity "small-table" 2))
-      ("Big table" (make-expand-arity "big-table" 2))
+      ("Small table" (make 'small-table))
+      ("Big table" (make 'big-table))
       ---)
-  ("Plain tabular" (make-expand-arg "tabular"))
-  ("Centered tabular" (make-expand-arg "tabular*"))
-  ("Plain block" (make-expand-arg "block"))
-  ("Centered block" (make-expand-arg "block*"))
+  ("Plain tabular" (make 'tabular))
+  ("Centered tabular" (make 'tabular*))
+  ("Plain block" (make 'block))
+  ("Centered block" (make 'block*))
   (if (in-math?)
       ---
-      ("Matrix" (make-expand-arg "matrix"))
-      ("Determinant" (make-expand-arg "det"))
-      ("Choice" (make-expand-arg "choice"))
-      ("Stack" (make-expand-arg "stack"))))
+      ("Matrix" (make 'matrix))
+      ("Determinant" (make 'det))
+      ("Choice" (make 'choice))
+      ("Stack" (make 'stack))))
 
 (menu-bind insert-link-menu
-  ("Label" (make-inactive-label))
-  ("Reference" (make-inactive-reference))
-  ("Page reference" (make-inactive-pageref))
+  ("Label" (make 'label))
+  ("Reference" (make 'reference))
+  ("Page reference" (make 'pageref))
   ---
   ("Include" ... (choose-file "Include file" "" 'make-include))
-  ("Hyperlink" (make-inactive-hyperlink))
-  ("Action" (make-inactive-action))
+  ("Hyperlink" (make 'hlink))
+  ("Action" (make 'action))
   ---
   (-> "Citation"
-      ("Visible" (make-inactive-apply-arg "cite"))
-      ("Invisible" (make-inactive-apply-arg "nocite")))
+      ("Visible" (make 'cite))
+      ("Invisible" (make 'nocite))
+      ("Detailed" (make 'cite-detail)))
   (-> "Index entry"
-      ("Main" (make-inactive-apply-arg "index"))
-      ("Sub" (make-inactive-apply-args "subindex" 2))
-      ("Subsub" (make-inactive-apply-args "subsubindex" 3))
-      ("Complex" (make-inactive-apply-args "index-complex" 4))
+      ("Main" (make 'index))
+      ("Sub" (make 'subindex))
+      ("Subsub" (make 'subsubindex))
+      ("Complex" (make 'index-complex))
       ---
-      ("Interjection" (make-inactive-apply-args "index-line" 2)))
+      ("Interjection" (make 'index-line)))
   (-> "Glossary entry"
-      ("Regular" (make-inactive-apply-arg "glossary"))
-      ("Explained" (make-inactive-apply-args "glossary-explain" 2))
-      ("Duplicate" (make-inactive-apply-arg "glossary-dup"))
+      ("Regular" (make 'glossary))
+      ("Explained" (make 'glossary-explain))
+      ("Duplicate" (make 'glossary-dup))
       ---
-      ("Interjection" (make-inactive-apply-arg "glossary-line"))))
+      ("Interjection" (make 'glossary-line))))
 
 (menu-bind insert-presentation-tag-menu
-  ("Underline" (make-expand-arg "underline"))
-  ("Overline" (make-expand-arg "overline"))
-  ("Subscript" (make-script #t #f))
+  ("Underline" (make 'underline))
+  ("Overline" (make 'overline))
+  ("Subscript" (make-script #f #t))
   ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
-  ("Superpose" (make-inactive-superpose))
+  ("Superpose" (make 'superpose))
   ---
   ("Folded" (make-fold))
   (if (or (inside? "unfold")
@@ -97,21 +98,20 @@
 
 (menu-bind insert-image-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small figure" (make-expand-arity "small-figure" 2))
-      ("Big figure" (make-expand-arity "big-figure" 2))
+      ("Small figure" (make 'small-figure))
+      ("Big figure" (make 'big-figure))
       ---)
+  ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
 
 (menu-bind insert-page-insertion-menu
-  ("Footnote" (make-big-expand "footnote"))
+  ("Footnote" (make 'footnote))
   ---
   ("Floating object" (make-insertion "float"))
-  ("Floating figure" (begin (make-insertion "float")
-			    (make-expand-arity "big-figure" 2)))
-  ("Floating table" (begin (make-insertion "float")
-			   (make-expand-arity "big-table" 2))))
+  ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
+  ("Floating table" (begin (make-insertion "float") (make 'big-table))))
 
 (menu-bind position-float-menu
   ("Top" (toggle-insertion-position "t"))
@@ -120,59 +120,61 @@
   ("Other pages" (toggle-insertion-position-not "f")))
 
 (menu-bind insert-transformational-menu
-  ("Assign" (make-inactive-assign))
-  ("With" (make-inactive-with))
-  ("Value" (make-inactive-value))
+  ("Assign" (make 'assign))
+  ("With" (make-arity 'with 3))
+  ("Value" (make 'value))
   ---
-  ("Macro" (make-inactive-macro))
-  ("Argument" (make-inactive-argument))
-  ("Expand" (make-inactive-expand))
+  ("Macro" (make 'macro))
+  ("Argument" (make 'arg))
+  ("Compound" (make 'compound))
   ---
-  ("Function" (make-inactive-function))
-  ("Apply" (make-inactive-apply)))
+  ("Long macro" (make 'xmacro))
+  ("Get label" (make 'get-label))
+  ("Get arity" (make 'get-arity))
+  ("Map arguments" (make 'map-args)))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
-      ("Plus" (make-inactive-plus))
-      ("Minus" (make-inactive-minus))
-      ("Times" (make-inactive-times))
-      ("Over" (make-inactive-over))
-      ("Div" (make-inactive-div))
-      ("Mod" (make-inactive-mod)))
+      ("Plus" (make 'plus))
+      ("Minus" (make 'minus))
+      ("Times" (make 'times))
+      ("Over" (make 'over))
+      ("Div" (make 'div))
+      ("Mod" (make 'mod)))
   (-> "Text"
-      ("Merge" (make-inactive-merge))
-      ("Length" (make-inactive-length))
-      ("Range" (make-inactive-range))
-      ("Number" (make-inactive-number))
-      ("Date" (make-inactive-date))
-      ("Formatted date" (make-inactive-date))
-      ("Translate" (make-inactive-translate))
-      ("Find file" (make-inactive-find-file)))
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Number" (make 'number))
+      ("Today" (make-arity 'date 0))
+      ("Formatted date" (make 'date))
+      ("Translate" (make 'translate))
+      ("Find file" (make 'find-file)))
   (-> "Tuple"
-      ("Tuple?" (make-inactive-is-tuple))
-      ("Merge" (make-inactive-merge))
-      ("Length" (make-inactive-length))
-      ("Range" (make-inactive-range))
-      ("Look up" (make-inactive-look-up)))
+      ("Tuple?" (make 'is-tuple))
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Look up" (make 'look-up)))
   (-> "Condition"
-      ("Not" (make-inactive-not))
-      ("And" (make-inactive-and))
-      ("Or" (make-inactive-or))
-      ("Exclusive or" (make-inactive-xor))
+      ("Not" (make 'not))
+      ("And" (make 'and))
+      ("Or" (make 'or))
+      ("Exclusive or" (make 'xor))
       ---
-      ("Equal" (make-inactive-equal))
-      ("Not equal" (make-inactive-unequal))
-      ("Less" (make-inactive-less))
-      ("Less or equal" (make-inactive-lesseq))
-      ("Greater" (make-inactive-greater))
-      ("Greater or equal" (make-inactive-greatereq)))
+      ("Equal" (make 'equal))
+      ("Not equal" (make 'unequal))
+      ("Less" (make 'less))
+      ("Less or equal" (make 'lesseq))
+      ("Greater" (make 'greater))
+      ("Greater or equal" (make 'greatereq)))
   (-> "Programming"
-      ("If" (make-inactive-if))
-      ("Case" (make-inactive-case))
-      ;; ("for" (make-inactive-for))
-      ("While" (make-inactive-while))
-      ;; ("extern" (make-inactive-extern))
-      ;; ("authorize" (make-inactive-authorize))
+      ("If" (make 'if))
+      ("Case" (make 'case))
+      ;; ("for" (make 'for))
+      ("While" (make 'while))
+      ;; ("extern" (make 'extern))
+      ;; ("authorize" (make 'authorize))
       ))
 
 (menu-bind insert-menu
@@ -205,23 +207,23 @@
       ("Big skip" (make-vspace-after "2fn"))
       ("Other" ... (interactive '("Vertical space:") 'make-vspace-after)))
   (-> "Break"
-      ("New line" (make-format "next_line"))
-      ("Line break" (make-format "line_break"))
-      ("No line break" (make-format "no_line_break"))
-      ("New paragraph" (make-format "new_line"))
+      ("New line" (make 'next-line))
+      ("Line break" (make 'line-break))
+      ("No line break" (make 'no-break))
+      ("New paragraph" (make 'new-line))
       ---
       ("New page" (make-new-page))
-      ("New page before" (make-new-page-before))
+      ("New page before" (make 'new-page*))
       ("Page break" (make-page-break))
-      ("Page break before" (make-page-break-before))
-      ("No page break before" (make-format "no_page_break_before"))
-      ("No page break after" (make-format "no_page_break_after")))
+      ("Page break before" (make 'page-break*))
+      ("No page break before" (make 'no-page-break*))
+      ("No page break after" (make 'no-page-break)))
   (-> "Indentation flag"
-      ("Disable indentation before" (make-format "no_first_indentation"))
-      ("Enable indentation before" (make-format "enable_first_indentation"))
+      ("Disable indentation before" (make 'no-indent))
+      ("Enable indentation before" (make 'yes-indent))
       ---
-      ("Disable indentation after" (make-format "no_indentation_after"))
-      ("Enable indentation after" (make-format "enable_indentation_after")))
+      ("Disable indentation after" (make 'no-indent*))
+      ("Enable indentation after" (make 'yes-indent*)))
   (if (style-has? "env-float-dtd")
       (-> "Page insertion"
 	  (when (not (inside? "float"))
@@ -232,32 +234,30 @@
 		(link position-float-menu))))
   (-> "Header and footer"
       (group "This page")
-      ("Header" (make-inactive-assign-arg "this page header"))
-      ("Footer" (make-inactive-assign-arg "this page footer"))
+      ("Header" (make-assign-arg "page-this-header"))
+      ("Footer" (make-assign-arg "page-this-footer"))
       ---
       (group "Permanent")
-      ("Header" (make-inactive-apply-arg "set-header"))
-      ("Footer" (make-inactive-apply-arg "set-footer"))
-      ("Odd page header" (make-inactive-assign-arg "odd page header"))
-      ("Odd page footer" (make-inactive-assign-arg "odd page footer"))
-      ("Even page header" (make-inactive-assign-arg "even page header"))
-      ("Even page footer" (make-inactive-assign-arg "even page footer"))
+      ("Header" (make 'set-header))
+      ("Footer" (make 'set-footer))
+      ("Odd page header" (make-assign-arg "page-odd-header"))
+      ("Odd page footer" (make-assign-arg "page-odd-footer"))
+      ("Even page header" (make-assign-arg "page-even-header"))
+      ("Even page footer" (make-assign-arg "page-even-footer"))
       ---
       (group "Structural")
-      ("Odd page text" (make-inactive-assign-function-arg
-			"odd-page-text"))
-      ("Even page text" (make-inactive-assign-function-arg
-			 "even-page-text")))
+      ("Odd page text" (make-assign-macro-arg "odd-page-text"))
+      ("Even page text" (make-assign-macro-arg "even-page-text")))
   (-> "Page numbering"
-      ("Renumber this page" (make-inactive-assign-arg "page number"))
-      ("Page number text" (make-inactive-assign-function "thepage")))
+      ("Renumber this page" (make-assign-arg "page-nr"))
+      ("Page number text" (make-assign-macro "page-the-page")))
   ---
   (-> "Specific"
-      ("TeXmacs" (make-inactive-specific "texmacs"))
-      ("LaTeX" (make-inactive-specific "latex"))
-      ("HTML" (make-inactive-specific "html"))
-      ("Screen" (make-inactive-specific "screen"))
-      ("Printer" (make-inactive-specific "printer")))
+      ("TeXmacs" (make-specific "texmacs"))
+      ("LaTeX" (make-specific "latex"))
+      ("HTML" (make-specific "html"))
+      ("Screen" (make-specific "screen"))
+      ("Printer" (make-specific "printer")))
   (-> "Macro" (link insert-transformational-menu))
   (-> "Executable" (link insert-executable-menu))
   (-> "Special"
@@ -265,11 +265,11 @@
       ("Move object" (interactive '("Horizontal:" "Vertical:") 'make-move))
       ("Resize object" (interactive
 			'("Left:" "Bottom:" "Right:" "Top:") 'make-resize))
-      ("Repeat object" (make-inactive-repeat))
+      ("Repeat object" (make 'repeat))
 ;;    ---
-      ("Decorate atoms" (make-inactive-decorate-atoms))
-;;    ("decorate lines" (make-inactive-decorate-lines))
-;;    ("decorate pages" (make-inactive-decorate-pages))
+      ("Decorate atoms" (make-arity 'datoms 2))
+;;    ("decorate lines" (make-arity 'dlines 2))
+;;    ("decorate pages" (make-arity 'dpages 2))
 ;;    ---
-;;    ("page insertion" (make-inactive-float))
+;;    ("page insertion" (make 'float))
       ))

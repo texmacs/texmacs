@@ -107,7 +107,7 @@
    (lambda (attr)
      ;; handles correctly the pseudo-sxml produced by enumerated html
      ;; attributes without left hand side. (e.g. <frame noresize>)
-     (cons (ns-import-name env #f (first attr))
+     (cons (string->symbol (ns-import-name env #f (first attr)))
 	   (cdr attr)))))
 
 (define (ns-import-name env use-default? name)
@@ -115,15 +115,14 @@
     (let ((ns-uri (cond (ns-id (environment-ref* env (string->symbol ns-id)))
 			(use-default? (environment-ref env *default*))
 			(else ""))))
-      (string->symbol
-       (string-append
-	;; FIXME: user namespace prefix list should be extensible
-	(cond ((== ns-uri xmlns-uri-xhtml) "h:")
-	      ((== ns-uri xmlns-uri-mathml) "m:")
-	      ((== ns-uri xmlns-uri-xml) "x:")
-	      ((string-null? ns-uri) "")
-	      (else (string-append ns-uri ":")))
-	ncname)))))
+      (string-append
+       ;; FIXME: user namespace prefix list should be extensible
+       (cond ((== ns-uri xmlns-uri-xhtml) "h:")
+	     ((== ns-uri xmlns-uri-mathml) "m:")
+	     ((== ns-uri xmlns-uri-xml) "x:")
+	     ((string-null? ns-uri) "")
+	     (else (string-append ns-uri ":")))
+       ncname))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; htmltm environment
@@ -147,14 +146,13 @@
 
 ;; Conversion of Cork GRAVE ACCENT to LEFT SINGLE QUOTATION MARK
 
-(define cork-grave #\nul)
-(define cork-backquote #\`) ;; that is GRAVE ACCENT in ASCII
+(define cork-grave-char #\nul)
+(define cork-grave (list->string '(#\nul)))
+(define cork-backquote (list->string '(#\`))) ;; that is GRAVE ACCENT in ASCII
 
 (define (cork-grave->backquote s)
-  (if (char-in-string? cork-grave s)
-      (string-map (lambda (c) (if (== c cork-grave)
-				  cork-backquote c))
-		  s)
+  (if (string-index s cork-grave-char)
+      (string-replace s cork-grave cork-backquote)
       s))
 
 ;; Decoding URL strings

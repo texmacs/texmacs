@@ -316,26 +316,26 @@ edit_process_rep::generate_aux_recursively (string which, tree st, path p) {
 	cout << "tp= " << tp << "\n";
 	cout << "------------------------------------------------------\n";
       */
-      if ((arity(t) >= 3+d_exp) &&
+      if ((arity(t) >= 3) &&
 	  (is_compound (t, "bibliography") ||
 	   is_compound (t, "bibliography*")) &&
 	  ((which == "") || (which == "bibliography")))
-	generate_bibliography (as_string (t[d_exp]), as_string (t[1+d_exp]),
-			       as_string (t[2+d_exp]));
-      if ((arity(t) >= 1+d_exp) &&
+	generate_bibliography (as_string (t[0]), as_string (t[1]),
+			       as_string (t[2]));
+      if ((arity(t) >= 1) &&
 	  (is_compound (t, "table-of-contents") ||
 	   is_compound (t, "table-of-contents*")) &&
 	  ((which == "") || (which == "table-of-contents")))
-	generate_table_of_contents (as_string (t[d_exp]));
-      if ((arity(t) >= 1+d_exp) &&
+	generate_table_of_contents (as_string (t[0]));
+      if ((arity(t) >= 1) &&
 	  (is_compound (t, "the-index") || is_compound (t, "the-index*")) &&
 	  ((which == "") || (which == "the-index")))
-	generate_index (as_string (t[d_exp]));
-      if ((arity(t) >= 1+d_exp) &&
+	generate_index (as_string (t[0]));
+      if ((arity(t) >= 1) &&
 	  (is_compound (t, "the-glossary") ||
 	   is_compound (t, "the-glossary*")) &&
 	  ((which == "") || (which == "the-glossary")))
-	generate_glossary (as_string (t[d_exp]));
+	generate_glossary (as_string (t[0]));
       /*
 	cout << "et= " << et << "\n";
 	cout << "tp= " << tp << "\n";

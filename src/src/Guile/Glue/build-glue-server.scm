@@ -65,6 +65,7 @@
   (get-maximal-undo-depth get_max_undo_depth (int))
   (no-name? no_name (bool))
   (help-buffer? help_buffer (bool))
+  (set-buffer revert_buffer (void url texmacs_tree))
   (set-aux-buffer set_aux_buffer (void string url texmacs_tree))
   (set-help-buffer set_help_buffer (void url texmacs_tree))
   (browse-help browse_help (void int))
@@ -76,7 +77,8 @@
   (texmacs-load-tree load_tree (texmacs_tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
   (texmacs-save-buffer save_buffer (void url string))
-
+  (delayed-autosave delayed_autosave (void))
+  
   (color get_color (int string))
   (style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))

@@ -22,13 +22,13 @@ extern void clear_rectangles (ps_device dev, rectangles l);
 extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 
 /*static*/ string
-LANGUAGE (string mode) {
-  if (mode == "text") return TEXT_LANGUAGE;
+MODE_LANGUAGE (string mode) {
+  if (mode == "text") return LANGUAGE;
   if (mode == "math") return MATH_LANGUAGE;
   if (mode == "prog") return PROG_LANGUAGE;
   cerr << "Mode = " << mode << "\n";
   fatal_error ("invalid mode", "the_language", "edit_interface.cpp");
-  return TEXT_LANGUAGE;
+  return LANGUAGE;
 }
 
 /******************************************************************************
@@ -44,17 +44,17 @@ edit_interface_rep::edit_interface_rep ():
   popup_win (NULL),
   sfactor (sv->get_default_shrinking_factor ()),
   pixel (sfactor*PIXEL), copy_always (),
-  last_click (0), dragging (false),
+  last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
   oc (0, 0)
 {
-  input_mode  = INPUT_NORMAL;
+  input_mode= INPUT_NORMAL;
 }
 
 edit_interface_rep::~edit_interface_rep () {}
 
 edit_interface_rep::operator tree () {
-  return tuple ("edit", as_string (get_name ()));
+  return tuple ("editor", as_string (get_name ()));
 }
 
 void
@@ -92,7 +92,7 @@ edit_interface_rep::update_connection () {
   // cout << "et= " << et << "\n";
   // cout << "tp= " << tp << "\n";
   con_name   = get_env_string (PROG_LANGUAGE);
-  con_session= get_env_string (THIS_SESSION);
+  con_session= get_env_string (PROG_SESSION);
   con_status = connection_status (con_name, con_session);
   // cout << "Name   : " << con_name << "\n";
   // cout << "Session: " << con_session << "\n";
@@ -114,7 +114,8 @@ void
 edit_interface_rep::process_extern_input () {
   if (con_status == WAITING_FOR_OUTPUT) {
     update_connection ();
-    if (con_status != WAITING_FOR_OUTPUT) return;
+    if ((con_status != WAITING_FOR_OUTPUT) &&
+	(con_status != CONNECTION_DEAD)) return;
     tree doc= connection_read (con_name, con_session, "output");
     if (doc != "") {
       insert_tree (doc);
@@ -250,7 +251,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
     ev->x1/sfactor, ev->y1/sfactor,
     ev->x2/sfactor, ev->y2/sfactor);
   dev->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BACKGROUND_COLOR);
+  string bg= get_init_string (BG_COLOR);
   dev->set_background (dis->get_color (bg));
   rectangle r (
     ev->x1+ dev->ox, ev->y1+ dev->oy,
@@ -318,38 +319,46 @@ void
 edit_interface_rep::draw_cursor (ps_device dev) {
   if (got_focus || full_screen) {
     draw_env (dev);
-    cursor cu= copy (the_cursor());
-    cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
-    SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
-    SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
-    dev->set_line_style (pixel);
-    string mode= get_env_string (MODE);
-    string family, series;
-    if (mode == "text") {
-      family= get_env_string (TEXT_FAMILY);
-      series= get_env_string (TEXT_SERIES);
+    cursor cu= get_cursor();
+    if (inside_graphics ()) {
+      dev->set_line_style (pixel);
+      dev->set_color (dis->red);
+      dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
+      dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
     }
-    else if (mode == "math") {
-      family= get_env_string (MATH_FAMILY);
-      series= get_env_string (MATH_SERIES);
-    }
-    else if (mode == "prog") {
-      family= get_env_string (PROG_FAMILY);
-      series= get_env_string (PROG_SERIES);
-    }
-    if (cu->valid) {
-      if (mode == "math")
-	dev->set_color (dis->rgb (192, 0, 255));
-      else dev->set_color (dis->red);
-    }
-    else dev->set_color (dis->green);
-    SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
-    if (family == "ss") lserif= rserif= 0;
-    dev->line (x1-lserif, y1, x1+rserif, y1);
-    if (y1<=y2-pixel) {
-      dev->line (x1, y1, x2, y2-pixel);
-      if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
-      dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+    else {
+      cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
+      SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
+      SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
+      dev->set_line_style (pixel);
+      string mode= get_env_string (MODE);
+      string family, series;
+      if (mode == "text") {
+	family= get_env_string (FONT_FAMILY);
+	series= get_env_string (FONT_SERIES);
+      }
+      else if (mode == "math") {
+	family= get_env_string (MATH_FONT_FAMILY);
+	series= get_env_string (MATH_FONT_SERIES);
+      }
+      else if (mode == "prog") {
+	family= get_env_string (PROG_FONT_FAMILY);
+	series= get_env_string (PROG_FONT_SERIES);
+      }
+      if (cu->valid) {
+	if (mode == "math")
+	  dev->set_color (dis->rgb (192, 0, 255));
+	else dev->set_color (dis->red);
+      }
+      else dev->set_color (dis->green);
+      SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
+      if (family == "ss") lserif= rserif= 0;
+      dev->line (x1-lserif, y1, x1+rserif, y1);
+      if (y1<=y2-pixel) {
+	dev->line (x1, y1, x2, y2-pixel);
+	if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
+	dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+      }
     }
   }
 }
@@ -394,7 +403,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
   SI X1= ev->x1 * sfactor, Y1= ev->y1 * sfactor;
   SI X2= ev->x2 * sfactor, Y2= ev->y2 * sfactor;
   win->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BACKGROUND_COLOR);
+  string bg= get_init_string (BG_COLOR);
   win->set_background (dis->get_color (bg));
   win->clear (max (eb->x1, X1), max (eb->y1, Y1),
 	      min (eb->x2, X2), min (eb->y2, Y2));
@@ -439,7 +448,7 @@ edit_interface_rep::has_changed (int question) {
 
 void
 edit_interface_rep::cursor_visible () {
-  cursor cu= copy (the_cursor ());
+  cursor cu= get_cursor ();
   cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
   SI x1, y1, x2, y2;
   get_visible (x1, y1, x2, y2);
@@ -496,6 +505,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	update_connection ();
+	if (!win->check_event (EVENT_STATUS)) drd_update ();
 	last_update= last_change;
       }
     return;
@@ -554,7 +564,7 @@ edit_interface_rep::apply_changes () {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
       cursor_visible ();
 
-    cursor& cu= the_cursor();
+    cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
 		   oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
     copy_always= rectangles (ocr, copy_always);
@@ -615,14 +625,26 @@ edit_interface_rep::full_screen_mode (bool flag) {
   full_screen= flag;
 }
 
+static bool
+is_graphical (tree t) {
+  return
+    is_func (t, _POINT) ||
+    is_func (t, LINE) || is_func (t, CLINE) ||
+    is_func (t, SPLINE) || is_func (t, CSPLINE);
+}
+
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
   if (nil (p)) return;
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
-      is_func (st, TABLE) || is_func (st, SUB_TABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT))
+      is_func (st, TABLE) || is_func (st, SUBTABLE) ||
+      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
+      is_graphical (st) ||
+      (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
+      (is_compound (st, "math", 1) &&
+       is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);
   else {
     bool right;

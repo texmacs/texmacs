@@ -97,11 +97,7 @@ scheme_tree_to_block (scheme_tree p) {
 scheme_tree
 tree_to_scheme_tree (tree t) {
   if (is_atomic (t)) return "\"" * t->label * "\"";
-  else if (is_func (t, EXPAND) && is_atomic (t[0])
-#ifndef WITH_EXTENSIONS
-	   && (!std_contains (t[0]->label))
-#endif
-	   ) {
+  else if (is_func (t, EXPAND) && is_atomic (t[0])) {
     int i, n= N(t);
     tree u (TUPLE, n);
     u[0]= copy (t[0]);

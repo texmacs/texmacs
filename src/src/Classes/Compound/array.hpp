@@ -36,6 +36,7 @@ template<class T> class array {
   CONCRETE_TEMPLATE(array,T);
   inline array (int n=0): rep (new array_rep<T>(n)) {}
   array (T *a, int n);
+  array (T x1, T x2);
   inline T& operator [] (int i) { return rep->a[i]; }
   operator tree ();
 };

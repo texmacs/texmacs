@@ -39,33 +39,33 @@ edit_interface_rep::set_left_footer () {
   for (i=0; i<arity (the_style); i++)
     s= s * "#" * as_string (the_style[i]);
   string mode= get_env_string (MODE);
-  string lan = get_env_string (LANGUAGE (mode));
+  string lan = get_env_string (MODE_LANGUAGE (mode));
   if (mode == "prog") s= s * "#program";
-  else if (as_string (get_init_value (LANGUAGE (mode))) != lan)
+  else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s= s * "#" * lan;
   else s= s * "#" * mode;
   if (mode == "text") {
-    s= s * "#" * get_env_string (TEXT_FONT);
-    append_left_footer (s, TEXT_FAMILY);
+    s= s * "#" * get_env_string (FONT);
+    append_left_footer (s, FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, TEXT_SERIES);
-    append_left_footer (s, TEXT_SHAPE);
+    append_left_footer (s, FONT_SERIES);
+    append_left_footer (s, FONT_SHAPE);
   }
   else if (mode == "math") {
     s= s * "#" * get_env_string (MATH_FONT);
-    append_left_footer (s, MATH_FAMILY);
+    append_left_footer (s, MATH_FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, MATH_SERIES);
-    append_left_footer (s, MATH_SHAPE);
+    append_left_footer (s, MATH_FONT_SERIES);
+    append_left_footer (s, MATH_FONT_SHAPE);
   }
   else {
-    string session_name= get_env_string (THIS_SESSION);
+    string session_name= get_env_string (PROG_SESSION);
     if (session_name != "default") s= s * "-" * session_name;
     s= s * "#" * get_env_string (PROG_FONT);
-    append_left_footer (s, PROG_FAMILY);
+    append_left_footer (s, PROG_FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
-    append_left_footer (s, PROG_SERIES);
-    append_left_footer (s, PROG_SHAPE);
+    append_left_footer (s, PROG_FONT_SERIES);
+    append_left_footer (s, PROG_FONT_SHAPE);
   }
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
@@ -123,13 +123,15 @@ get_with_text (tree t) {
       if (i>0) s << "#";
       string var= t[2*i]->label;
       if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
-	  (var!=TEXT_LANGUAGE) && (var!=TEXT_FONT) &&
-	  (var!=TEXT_FAMILY) && (var!=TEXT_SHAPE) && (var!=TEXT_SERIES) &&
+	  (var!=LANGUAGE) && (var!=FONT) &&
+	  (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
 	  (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
-	  (var!=MATH_FAMILY) && (var!=MATH_SHAPE) && (var!=MATH_SERIES) &&
+	  (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
+	  (var!=MATH_FONT_SERIES) &&
 	  (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
-	  (var!=PROG_FAMILY) && (var!=PROG_SHAPE) && (var!=PROG_SERIES) &&
-	  (var!=THIS_SESSION))
+	  (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
+	  (var!=PROG_FONT_SERIES) &&
+	  (var!=PROG_SESSION))
 	s << var << "=";
       s << t[2*i+1]->label;
     }
@@ -140,154 +142,32 @@ string
 edit_interface_rep::compute_operation_footer (tree st) {
   string r;
   switch (L (st)) {
-  case RAW_DATA: r= "raw data"; break;
-  case SURROUND: r= "surround"; break;
-  case FORMAT: r= as_string (st[0]); break;
-  case HSPACE: r= "horizontal space"; break;
-  case VSPACE_BEFORE: r= "vertical space before"; break;
-  case VSPACE_AFTER: r= "vertical space"; break;
-  case SPACE: r= "rigid space"; break;
-  case HTAB: r= "tab"; break;
-  case SPLIT: r= "split"; break;
-  case MOVE: r= "move"; break;
-  case RESIZE: r= "resize"; break;
   case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-  case REPEAT: r= "repeat"; break;
-  case DECORATE_ATOMS: r= "decorate atoms"; break;
-  case DECORATE_LINES: r= "decorate lines"; break;
-  case DECORATE_PAGES: r= "decorate pages"; break;
-  case WITH_LIMITS:
-  case LINE_BREAK:
-  case NEW_LINE:
-  case LINE_SEP:
-  case NEXT_LINE:
-  case NO_BREAK:
-  case NO_FIRST_INDENT:
-  case YES_FIRST_INDENT:
-  case NO_FIRST_INDENT_AFTER:
-  case YES_FIRST_INDENT_AFTER:
-  case PAGE_BREAK_BEFORE:
-  case PAGE_BREAK:
-  case NO_PAGE_BREAK_BEFORE:
-  case NO_PAGE_BREAK_AFTER:
-  case NEW_PAGE_BEFORE:
-  case NEW_PAGE:
-  case NEW_DOUBLE_PAGE_BEFORE:
-  case NEW_DOUBLE_PAGE: r= replace (as_string (L(st)), "_", " "); break;
-  case GROUP: r= "group"; break;
-  case LEFT: r= "open#" * as_symbol (st[0]); break;
-  case MIDDLE: r= "separator#" * as_symbol (st[0]); break;
+  case MID: r= "separator#" * as_symbol (st[0]); break;
   case RIGHT: r= "close#" * as_symbol (st[0]); break;
   case BIG: r= "big#" * as_symbol (st[0]); break;
-  case LEFT_PRIME: r= "left prime#" * as_string (st[0]); break;
-  case RIGHT_PRIME: r= "prime#" * as_string (st[0]); break;
-  case BELOW: r= "below"; break;
-  case ABOVE: r= "above"; break;
-  case LEFT_SUB: r= "left subscript"; break;
-  case LEFT_SUP: r= "left superscript"; break;
-  case RIGHT_SUB: r= "subscript"; break;
-  case RIGHT_SUP: r= "superscript"; break;
-  case FRAC: r= "fraction"; break;
+  case LPRIME: r= "left prime#" * as_string (st[0]); break;
+  case RPRIME: r= "prime#" * as_string (st[0]); break;
   case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
   case WIDE: r=  get_accent_type (as_string (st[1])); break;
-  case WIDE_UNDER: r= "under#" * get_accent_type (as_string (st[1])); break;
-  case NEG: r= "negation"; break;
-  case TREE: r= "tree"; break;
-  case OLD_MATRIX: r= "old matrix"; break;
-  case OLD_TABLE: r= "old table"; break;
-  case OLD_MOSAIC: r= "old mosaic"; break;
-  case TABLE_FORMAT: r= "table"; break;
-  case TABLE_WITH: r= "table property"; break;
-  case CELL_WITH: r= "cell property"; break;
-  case TABLE_MARKER: r= "table marker"; break;
-  case TABLE: r= "table"; break;
-  case ROW: r= "row"; break;
-  case CELL: r= "cell"; break;
-  case SUB_TABLE: r= "subtable"; break;
+  case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
+  case TFORMAT: r= "table"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
-  case EXPAND: r= "expand#" * as_string (st[0]); break;
-  case VAR_EXPAND: r= "expand*#" * as_string (st[0]); break;
-  case HIDE_EXPAND: r= "expand**#" * as_string (st[0]); break;
-  case APPLY: r= "apply#" * as_string (st[0]); break;
-  case INCLUDE: r= "include#" * as_string (st[0]); break;
-  case MACRO: r= "macro"; break;
-  case FUNCTION: r= "function"; break;
-  case ENVIRONMENT: r= "environment"; break;
-  case EVAL: r= "evaluate"; break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
-  case ARGUMENT: r= "argument#" * as_string (st[0]); break;
-  case BACKUP: r= "backup"; break;
-  case QUOTE: r= "quote"; break;
-  case DELAY: r= "delay"; break;
-  case HOLD: r= "hold"; break;
-  case RELEASE: r= "release"; break;
-  case OR: r= "or"; break;
-  case XOR: r= "xor"; break;
-  case AND: r= "and"; break;
-  case NOT: r= "not"; break;
-  case PLUS: r= "plus"; break;
-  case MINUS: r= "minus"; break;
-  case TIMES: r= "times"; break;
-  case OVER: r= "over"; break;
-  case DIVIDE: r= "divide"; break;
-  case MODULO: r= "modulo"; break;
-  case MERGE: r= "merge"; break;
-  case LENGTH: r= "length"; break;
-  case RANGE: r= "range"; break;
-  case NUMBER: r= "number"; break;
-  case _DATE: r= "date"; break;
-  case TRANSLATE: r= "translate"; break;
-  case FIND_FILE: r= "find file"; break;
-  case IS_TUPLE: r= "tuple?"; break;
-  case LOOK_UP: r= "look up"; break;
-  case EQUAL: r= "equal"; break;
-  case UNEQUAL: r= "not equal"; break;
-  case LESS: r= "less"; break;
-  case LESSEQ: r= "less or equal"; break;
-  case GREATER: r= "greater"; break;
-  case GREATEREQ: r= "greater or equal"; break;
-  case IF: r= "if"; break;
-  case VAR_IF: r= "if*"; break;
-  case CASE: r= "case"; break;
-  case WHILE: r= "while"; break;
-  case EXTERN: r= "extern"; break;
-  case AUTHORIZE: r= "authorize"; break;
-  case INACTIVE: r= "inactive#" * as_string (st[0]); break;
-  case ACTIVE: r= "active"; break;
-  case VAR_INACTIVE: r= "inactive*" * as_string (st[0]); break;
-  case VAR_ACTIVE: r= "active*"; break;
-  case SYMBOL: r= "symbol"; break;
-  case LATEX: r= "latex"; break;
-  case HYBRID: r= "hybrid"; break;
-  case TUPLE: r= "tuple"; break;
-  case ATTR: r= "attr"; break;
-  case COLLECTION: r= "collection"; break;
-  case ASSOCIATE: r= "associate"; break;
+  case ARG: r= "argument#" * as_string (st[0]); break;
+  case COMPOUND: r= "compound#" * as_string (st[0]); break;
+  case INCLUDE: r= "include#" * as_string (st[0]); break;
+  case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
+  case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
   case LABEL: r= "label: " * as_string (st[0]); break;
   case REFERENCE: r= "reference: " * as_string (st[0]); break;
   case PAGEREF: r=  "page reference: " * as_string (st[0]); break;
   case WRITE: r= "write to " * as_string (st[0]); break;
   case SPECIFIC: r= "specific " * as_string (st[0]); break;
-  case HYPERLINK: r= "hyperlink"; break;
-  case ACTION: r= "action"; break;
-  case TAG: r= "tag"; break;
-  case MEANING: r= "meaning"; break;
-  case GRAPHICS: r= "graphics"; break;
-  case SUPERPOSE: r= "superpose"; break;
-  case TEXT_AT: r= "text"; break;
-  case _POINT: r= "point"; break;
-  case LINE: r= "line"; break;
-  case CLINE: r= "cline"; break;
-  case SPLINE: r= "spline"; break;
-  case VAR_SPLINE: r= "var_spline"; break;
-  case CSPLINE: r= "cspline"; break;
-  case FILL: r= "fill"; break;
   case POSTSCRIPT: r= "postscript image"; break;
-  default:
-    if (L(st) < START_EXTENSIONS) r= as_string (mem_used ())*" bytes used";
-    else r= as_string (L(st));
+  default: r= drd->get_name (L(st));
   }
   if (last_item (tp) == 0) r= "before#" * r;
   return r;
@@ -300,11 +180,14 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
   switch (L (st)) {
-  case RAW_DATA:
-    return up * "raw data#";
+  case DOCUMENT:
+  case PARA:
+    return up;
   case SURROUND:
     if (l == 0) return up * "left surrounding#";
     if (l == 1) return up * "right surrounding#";
+    return up;
+  case CONCAT:
     return up;
   case MOVE:
     if (l==0) return up * "move#";
@@ -315,38 +198,12 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case _FLOAT:
     if (is_atomic (st[0])) return up * st[0]->label * "#";
     else return up * "float#";
-  case REPEAT:
-    return up * "repeat#";
-  case DECORATE_ATOMS:
-    return up * "decorate atoms#";
-  case DECORATE_LINES:
-    return up * "decorate lines#";
-  case DECORATE_PAGES:
-    return up * "decorate pages#";
-  case GROUP:
-    return up * "group#";
-  case LEFT:
-    return up * "left#";
-  case MIDDLE:
-    return up * "middle#";
-  case RIGHT:
-    return up * "right#";
-  case BIG:
-    return up * "big#";
   case BELOW:
     if (l==0) return up * "body#";
     else return up * "script below#";
   case ABOVE:
     if (l==0) return up * "body#";
     else return up * "script above#";
-  case LEFT_SUB:
-    return up * "left subscript#";
-  case LEFT_SUP:
-    return up * "left superscript#";
-  case RIGHT_SUB:
-    return up * "subscript#";
-  case RIGHT_SUP:
-    return up * "superscript#";
   case FRAC:
     if (l==0) return up * "numerator#";
     else return up * "denominator#";
@@ -356,67 +213,27 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "index#";
   case WIDE:
     return up * get_accent_type (as_string (st[1])) * "#";
-  case WIDE_UNDER:
+  case VAR_WIDE:
     return up * "under#" * get_accent_type (as_string (st[1])) * "#";
-  case NEG:
-    return up * "negation#";
   case TREE:
     if (l==0) return up * "root#";
     else return up * "branch(" * as_string (l) * ")#";
-  case OLD_MATRIX:
-    return up * "old matrix#";
-  case OLD_TABLE:
-    return up * "old table#";
-  case OLD_MOSAIC:
-    return up * "old mosaic#";
-  case TABLE_FORMAT:
+  case TFORMAT:
     return up;
-  case TABLE_WITH:
-    return up * "table property#";
-  case CELL_WITH:
-    return up * "cell property#";
-  case TABLE_MARKER:
-    return up * "table marker#";
   case TABLE:
     return up * "(" * as_string (l+1) * ",";
   case ROW:
     return up * as_string (l+1) * ")#";
   case CELL:
     return up;
-  case SUB_TABLE:
-    return up * "subtable#";
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return up * as_string (st[0]) * "#";
   case WITH:
     return up * get_with_text (st) * "#";
-  case APPLY:
+  case DRD_PROPS:
+    if (l == 0) return up * "drd property(variable)" * "#";
+    if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
+    return up * "value(" * as_string (l/2) * ")#";
+  case COMPOUND:
     return up * as_string (st[0]) * "#";
-  case INCLUDE:
-    return up * "include#";
-  case EVAL:
-    return up * "evaluate#";
-  case PROVIDES:
-    return up * "provides#";
-  case VALUE:
-    return up * "value#";
-  case ARGUMENT:
-    return up * "argument#";
-  case QUOTE:
-    return up * "quote#";
-  case DELAY:
-    return up * "delay#";
-  case SYMBOL:
-    return up * "symbol#";
-  case HOLD:
-    return up * "hold#";
-  case RELEASE:
-    return up * "release#";
-  case LATEX:
-    return up * "latex#";
-  case HYBRID:
-    return up * "hybrid#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
@@ -424,17 +241,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "value(" * as_string (l/2+1) * ")#";
   case SPECIFIC:
     return up * "texmacs#";
-  case HYPERLINK:
+  case HLINK:
     return up * "hyperlink(" * as_string (st[1]) * ")#";
-  case ACTION:
-    return up * "action#";
-  case TAG:
-    return up * "tag#";
-  case MEANING:
-    return up * "meaning#";
   default:
-    if (L(st) < START_EXTENSIONS) return up;
-    else return up * as_string (L(st)) * "#";
+    return up * drd->get_name (L(st)) * "#";
   }
 }
 
@@ -463,6 +273,38 @@ edit_interface_rep::set_latex_footer (tree st) {
       if (sv->kbd_get_command (s, help, cmd)) {
 	set_left_footer ("return:#" * help);
 	set_right_footer ("latex command");
+	return true;
+      }
+    }
+  return false;
+}
+
+bool
+edit_interface_rep::set_hybrid_footer (tree st) {
+  // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
+  if (is_atomic (st))
+    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
+      string msg;
+      // macro argument
+      string name= st->label;
+      path mp= search_upwards (MACRO);
+      if (!nil (mp)) {
+	tree mt= subtree (et, mp);
+	int i, n= N(mt)-1;
+	for (i=0; i<n; i++)
+	  if (mt[i] == name) {
+	    set_message ("return:#insert argument#" * name, "hybrid command");
+	    return true;
+	  }
+      }
+      // macro application
+      tree f= get_env_value (name);
+      if (is_func (f, MACRO) || is_func (f, XMACRO)) {
+	set_message("return:#insert macro#" * name, "hybrid command");
+	return true;
+      }
+      else if (f != UNINIT) {
+	set_message("return:#insert value#" * name, "hybrid command");
 	return true;
       }
     }
@@ -509,6 +351,7 @@ edit_interface_rep::set_footer () {
   if ((N(message_l) == 0) && (N(message_r) == 0)) {
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
+    if (set_hybrid_footer (st)) return;
     set_left_footer();
     set_right_footer();
   }

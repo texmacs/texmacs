@@ -1,3 +1,13 @@
+;; Two-way conversions between Cork and Unicode
+
+;; (C) 2003  Felix Breuer, David Allouche
+;;
+;; This software falls under the GNU general public license and comes WITHOUT
+;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details. If
+;; you don't have this file, write to the Free Software Foundation, Inc., 59
+;; Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
 ("#00"	"#60")
 ("#01"	"#B4")
 ("#02"	"#02C6") ; modifier letter circumflex accent
@@ -60,9 +70,9 @@
 ("#39"	"#39")
 ("#3A"	"#3A")
 ("#3B"	"#3B")
-("#3C"	"#3C")
+;; ("#3C" "#3C") ; less than
 ("#3D"	"#3D")
-("#3E"	"#3E")
+;; ("#3E" "#3E") ; greater than
 ("#3F"	"#3F")
 ("#40"	"#40")
 ("#41"	"#41")

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.0.24>
+<TeXmacs|1.0.2.9>
 
 <\body>
   <assign|std-automatic-package|1.0>
@@ -7,155 +7,127 @@
 
   \;
 
-  <assign|cite-sub|<func|what|<write|bib|<look_up|<value|what>|0>><reference|\
-  <merge|bib-|<look_up|<value|what>|0>>><if|<is_tuple|<look_up|<value|what>|1\
-  >>|, <apply|cite-sub|<look_up|<value|what>|1>>>>>
+  <assign|cite-arg|<macro|x|<write|bib|<arg|x>><reference|<merge|bib-|<arg|x>>>>>
 
-  <assign|cite|<func|what*|[<if|<is_tuple|<value|what>>|<apply|cite-sub|<valu\
-  e|what>>|-->]>>
+  <assign|cite-arg-extra|<macro|x|, <cite-arg|<arg|x>>>>
 
-  <assign|nocite-sub|<func|what|<write|bib|<look_up|<value|what>|0>><if|<is_t\
-  uple|<look_up|<value|what>|1>>|<apply|nocite-sub|<look_up|<value|what>|1>>>\
-  >>
+  <assign|cite|<xmacro|x|[<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>]>>
 
-  <assign|nocite|<func|what*|<if|<is_tuple|<value|what>>|<apply|nocite-sub|<v\
-  alue|what>>>>>
+  <assign|cite-detail|<macro|x|y|[<cite-arg|<arg|x>>, <arg|y>]>>
 
-  <assign|bibitem|<func|text|<expand|item*|[<value|text>]><assign|thelabel|<v\
-  alue|text>><label|<merge|bib-|<value|text>>>>>
+  <assign|nocite-arg|<macro|x|<write|bib|<arg|x>>>>
 
-  <assign|bibitem*|<func|text|<expand|item*|[<value|text>]><assign|thelabel|<\
-  value|text>>>>
+  <assign|nocite|<xmacro|x|<flag|<localize|bibliography>|dark
+  green|x><map-args|nocite-arg|concat|x|1>>>
+
+  <assign|bibitem|<macro|text|<item*|[<arg|text>]><assign|thelabel|<arg|text>><label|<merge|bib-|<arg|text>>>>>
+
+  <assign|bibitem*|<macro|text|<item*|[<arg|text>]><assign|thelabel|<arg|text>>>>
 
   <assign|protect|>
 
   <assign|newblock|>
 
-  <assign|citeauthoryear|<func|author|year|<apply|author> <apply|year>>>
+  <assign|citeauthoryear|<macro|author|year|<arg|author> <arg|year>>>
 
   \;
 
   <assign|tocnr|0>
 
-  <assign|thetoc|<func|<merge|toc-|<value|tocnr>>>>
+  <assign|thetoc|<macro|<merge|toc-|<value|tocnr>>>>
 
-  <assign|toc-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font
-  series|medium|<with|font size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  <assign|toc-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
-  <assign|toc-main-1|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label|<\
-  apply|thetoc>><write|toc|<vspace*|2fn><with|font series|bold|math font
-  series|bold|font size|1.19|<value|what>><quote|<value|toc-dots>><pageref|<a\
-  pply|thetoc>><vspace|1fn>>>>
+  <assign|toc-main-1|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<vspace*|2fn><with|font-series|bold|math-font-series|bold|font-size|1.19|<arg|what>><quote|<value|toc-dots>><pageref|<thetoc>><vspace|1fn>>>>
 
-  <assign|toc-main-2|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label|<\
-  apply|thetoc>><write|toc|<vspace*|1fn><with|font series|bold|math font
-  series|bold|<value|what>><quote|<value|toc-dots>><pageref|<apply|thetoc>><v\
-  space|0.5fn>>>>
+  <assign|toc-main-2|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<vspace*|1fn><with|font-series|bold|math-font-series|bold|<arg|what>><quote|<value|toc-dots>><pageref|<thetoc>><vspace|0.5fn>>>>
 
-  <assign|toc-normal-1|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label\
-  |<apply|thetoc>><write|toc|<value|what><quote|<value|toc-dots>><pageref|<ap\
-  ply|thetoc>>>>>
+  <assign|toc-normal-1|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>
 
-  <assign|toc-normal-2|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label\
-  |<apply|thetoc>><write|toc|<with|left margin|1.5fn|<value|what><quote|<valu\
-  e|toc-dots>><pageref|<apply|thetoc>>>>>>
+  <assign|toc-normal-2|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|1.5fn|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>
 
-  <assign|toc-normal-3|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label\
-  |<apply|thetoc>><write|toc|<with|left margin|3fn|<value|what><quote|<value|\
-  toc-dots>><pageref|<apply|thetoc>>>>>>
+  <assign|toc-normal-3|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|3fn|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>
 
-  <assign|toc-small-1|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label|\
-  <apply|thetoc>><write|toc|<with|left margin|6fn|font
-  size|0.84|<value|what><quote|<value|toc-dots>><pageref|<apply|thetoc>>>>>>
+  <assign|toc-small-1|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|6fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>
 
-  <assign|toc-small-2|<func|what|<assign|tocnr|<plus|<value|tocnr>|1>><label|\
-  <apply|thetoc>><write|toc|<with|left margin|7.5fn|font
-  size|0.84|<value|what><quote|<value|toc-dots>><pageref|<apply|thetoc>>>>>>
+  <assign|toc-small-2|<macro|what|<flag|<localize|table of contents>|dark
+  green|what><assign|tocnr|<plus|<value|tocnr>|1>><label|<thetoc>><write|toc|<with|par-left|7.5fn|font-size|0.84|<arg|what><quote|<value|toc-dots>><pageref|<thetoc>>>>>>
 
   \;
 
   <assign|idxnr|0>
 
-  <assign|theidx|<func|<merge|idx-|<value|idxnr>>>>
+  <assign|theidx|<macro|<merge|idx-|<value|idxnr>>>>
 
-  <assign|index-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font
-  series|medium|<with|font size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  <assign|index-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
-  <assign|index-line|<func|key|entry|<write|idx|<tuple|<value|key>||<value|en\
-  try>>>>>
+  <assign|index-line|<macro|key|entry|<flag|<localize|index>|dark
+  green|key><write|idx|<tuple|<arg|key>||<arg|entry>>>>>
 
-  <assign|index-write|<func|entry|<assign|idxnr|<plus|<value|idxnr>|1>><label\
-  |<apply|theidx>><write|idx|<tuple|<value|entry>|<pageref|<apply|theidx>>>>>\
-  >
+  <assign|index-write|<macro|entry|<assign|idxnr|<plus|<value|idxnr>|1>><label|<theidx>><write|idx|<tuple|<arg|entry>|<pageref|<theidx>>>>>>
 
-  <assign|index|<func|x|<apply|index-write|<tuple|<value|x>>>>>
+  <assign|index|<macro|x|<flag|<localize|index>|dark
+  green|x><index-write|<tuple|<arg|x>>>>>
 
-  <assign|subindex|<func|x|y|<apply|index-write|<tuple|<value|x>|<value|y>>>>\
-  >
+  <assign|subindex|<macro|x|y|<flag|<localize|index>|dark
+  green|x><index-write|<tuple|<arg|x>|<arg|y>>>>>
 
-  <assign|subsubindex|<func|x|y|z|<apply|index-write|<tuple|<value|x>|<value|\
-  y>|<value|z>>>>>
+  <assign|subsubindex|<macro|x|y|z|<flag|<localize|index>|dark
+  green|x><index-write|<tuple|<arg|x>|<arg|y>|<arg|z>>>>>
 
-  <assign|index-complex|<func|key|how|range|entry|<assign|idxnr|<plus|<value|\
-  idxnr>|1>><label|<apply|theidx>><write|idx|<tuple|<value|key>|<value|how>|<\
-  value|range>|<value|entry>|<pageref|<apply|theidx>>>>>>
+  <assign|index-complex|<macro|key|how|range|entry|<flag|<localize|index>|dark
+  green|key><assign|idxnr|<plus|<value|idxnr>|1>><label|<theidx>><write|idx|<tuple|<arg|key>|<arg|how>|<arg|range>|<arg|entry>|<pageref|<theidx>>>>>>
 
   <assign|index-1|<macro|left|right|<arg|left><value|index-dots><arg|right>>>
 
-  <assign|index-1*|<macro|left|<arg|left><format|no page break after>>>
+  <assign|index-1*|<macro|left|<arg|left><no-page-break>>>
 
-  <assign|index-2|<macro|left|right|<with|left
-  margin|1.5fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-2|<macro|left|right|<with|par-left|1.5fn|<arg|left><value|index-dots><arg|right>>>>
 
-  <assign|index-2*|<macro|left|<with|left margin|1.5fn|<arg|left><format|no
-  page break after>>>>
+  <assign|index-2*|<macro|left|<with|par-left|1.5fn|<arg|left><no-page-break>>>>
 
-  <assign|index-3|<macro|left|right|<with|left
-  margin|3fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-3|<macro|left|right|<with|par-left|3fn|<arg|left><value|index-dots><arg|right>>>>
 
-  <assign|index-3*|<macro|left|<with|left margin|3fn|<arg|left><format|no
-  page break after>>>>
+  <assign|index-3*|<macro|left|<with|par-left|3fn|<arg|left><no-page-break>>>>
 
-  <assign|index-4|<macro|left|right|<with|left
-  margin|4.5fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-4|<macro|left|right|<with|par-left|4.5fn|<arg|left><value|index-dots><arg|right>>>>
 
-  <assign|index-4*|<macro|left|<with|left margin|4.5fn|<arg|left><format|no
-  page break after>>>>
+  <assign|index-4*|<macro|left|<with|par-left|4.5fn|<arg|left><no-page-break>>>>
 
-  <assign|index-5|<macro|left|right|<with|left
-  margin|6fn|<arg|left><value|index-dots><arg|right>>>>
+  <assign|index-5|<macro|left|right|<with|par-left|6fn|<arg|left><value|index-dots><arg|right>>>>
 
-  <assign|index-5*|<macro|left|<with|left margin|6fn|<arg|left><format|no
-  page break after>>>>
+  <assign|index-5*|<macro|left|<with|par-left|6fn|<arg|left><no-page-break>>>>
 
   \;
 
   <assign|glynr|0>
 
-  <assign|thegly|<func|<merge|gly-|<value|glynr>>>>
+  <assign|thegly|<macro|<merge|gly-|<value|glynr>>>>
 
-  <assign|glossary-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font
-  series|medium|<with|font size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+  <assign|glossary-dots| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >
 
-  <assign|glossary-line|<func|entry|<write|gly|<tuple|<value|entry>>>>>
+  <assign|glossary-line|<macro|entry|<flag|<localize|glossary>|dark
+  green|entry><write|gly|<tuple|<arg|entry>>>>>
 
-  <assign|glossary|<func|entry|<assign|glynr|<plus|<value|glynr>|1>><label|<a\
-  pply|thegly>><write|gly|<tuple|normal|<value|entry>|<pageref|<apply|thegly>\
-  >>>>>
+  <assign|glossary|<macro|entry|<flag|<localize|glossary>|dark
+  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|normal|<arg|entry>|<pageref|<thegly>>>>>>
 
-  <assign|glossary-explain|<func|entry|explain|<assign|glynr|<plus|<value|gly\
-  nr>|1>><label|<apply|thegly>><write|gly|<tuple|normal|<value|entry>|<value|\
-  explain>|<pageref|<apply|thegly>>>>>>
+  <assign|glossary-explain|<macro|entry|explain|<flag|<localize|glossary>|dark
+  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|normal|<arg|entry>|<arg|explain>|<pageref|<thegly>>>>>>
 
-  <assign|glossary-dup|<func|entry|<assign|glynr|<plus|<value|glynr>|1>><labe\
-  l|<apply|thegly>><write|gly|<tuple|dup|<value|entry>|<pageref|<apply|thegly\
-  >>>>>>
+  <assign|glossary-dup|<macro|entry|<flag|<localize|glossary>|dark
+  green|entry><assign|glynr|<plus|<value|glynr>|1>><label|<thegly>><write|gly|<tuple|dup|<arg|entry>|<pageref|<thegly>>>>>>
 
-  <assign|glossary-1|<macro|left|right|<arg|left><value|glossary-dots><arg|ri\
-  ght>>>
+  <assign|glossary-1|<macro|left|right|<arg|left><value|glossary-dots><arg|right>>>
 
   <assign|glossary-2|<macro|entry|explain|right|<resize|<arg|entry>
   |||r]10fn|><arg|explain><value|glossary-dots><arg|right>>>
@@ -166,17 +138,17 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-type|a4>
+    <associate|page-top|30mm>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>

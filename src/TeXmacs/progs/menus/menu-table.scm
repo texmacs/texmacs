@@ -122,6 +122,7 @@
 
 (menu-bind cell-color-menu
   ("None" (cell-set-background ""))
+  ("Foreground" (cell-set-background "foreground"))
   ---
   ("Black" (cell-set-background "black"))
   ("White" (cell-set-background "white"))
@@ -135,11 +136,11 @@
   ("Brown" (cell-set-background "brown"))
   ("Pink" (cell-set-background "pink"))
   ---
-  ("Foreground" (cell-set-background "foreground")))
+  ("Other"  ... (interactive '("Cell color:") 'cell-set-background)))
 
 (menu-bind cell-special-menu
   ("Set span" ... (cell-set-span-ia))
-  ("Subtable" (make-sub-table))
+  ("Subtable" (make-subtable))
   ---
   (-> "Text height correction"
       ("Off" (cell-set-vcorrect "n"))
@@ -196,10 +197,10 @@
   ---
   ((balloon (icon "tm_table_drow.xpm")
 	    "Delete row (M-t h delete)")
-   (table-delete-row #f))
+   (table-delete-row #t))
   ((balloon (icon "tm_table_dcol.xpm")
 	    "Delete column (M-t v delete)")
-   (table-delete-column #f)))
+   (table-delete-column #t)))
 
 (menu-bind texmacs-table-hpos-icons
   ((balloon (icon "tm_table_left.xpm")

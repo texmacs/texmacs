@@ -33,6 +33,7 @@ class concater_rep {
   void marker (path ip);
   void ghost (string s, path ip);
   void ghost (string s, path ip, color col);
+  void flag_ok (string s, path ip, color col);
   void flag (string s, path ip, color col);
   void print (space spc);
   void penalty_min (int p);
@@ -80,7 +81,7 @@ class concater_rep {
   void typeset_inactive (tree t, path ip);
   void typeset_inactive (string s, tree t, path ip, int pos1=0, int pos2=0);
   void typeset_inactive_string (string s, path ip);
-  void typeset_inactive_expand_apply (tree t, path ip, bool flag);
+  void typeset_inactive_compound (tree t, path ip);
   void typeset_inactive_action (string s, tree t, path ip);
   void typeset_inactive_symbol (tree t, path ip);
   void typeset_inactive_latex (tree t, path ip);
@@ -90,15 +91,16 @@ class concater_rep {
   // active macro mechanisms
   void typeset_assign (tree t, path ip);
   void typeset_with (tree t, path ip);
-  void typeset_expand (tree t, path ip);
-  void typeset_extension (tree t, path ip);
-  void typeset_apply (tree t, path ip);
+  void typeset_compound (tree t, path ip);
   void typeset_include (tree t, path ip);
+  void typeset_drd_props (tree t, path ip);
   void typeset_eval (tree t, path ip);
   void typeset_value (tree t, path ip);
   void typeset_argument (tree t, path ip);
+  void typeset_eval_args (tree t, path ip);
   void typeset_dynamic (tree t, path ip);
   void typeset_executable (tree t, path ip);
+  void typeset_rewrite (tree t, path ip);
 
   // miscellaneous active markup
   void typeset_if (tree t, path ip);
@@ -112,6 +114,7 @@ class concater_rep {
   void typeset_action (tree t, path ip);
   void typeset_tag (tree t, path ip);
   void typeset_meaning (tree t, path ip);
+  void typeset_flag (tree t, path ip);
 
   // graphical markup
   void typeset_graphics (tree t, path ip);
@@ -119,7 +122,7 @@ class concater_rep {
   void typeset_text_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   void typeset_line (tree t, path ip, bool close);
-  void typeset_spline (tree t, path ip);
+  void typeset_spline (tree t, path ip, bool close);
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);
   void typeset_fill (tree t, path ip);

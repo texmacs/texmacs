@@ -1,5 +1,6 @@
 
 (virtual-font
+  (ne (add = /))
   (neq (add = /))
   (nasymp (add asymp /))
   (napprox (add approx /))

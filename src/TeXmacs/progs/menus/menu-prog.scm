@@ -37,10 +37,8 @@
   ("Fold input field" "A-right" (session-fold-input)))
 
 (menu-bind session-remove-menu
-  ("Remove input field above" "A-backspace"
-   (session-remove-input-backwards))
-  ("Remove input field" "A-delete"
-   (session-remove-input-forwards))
+  ("Remove input field above" "A-backspace" (session-remove-input #f))
+  ("Remove input field" "A-delete" (session-remove-input #t))
   ("Remove all output fields" (session-remove-all-outputs)))
 
 (menu-bind session-main-menu
@@ -61,7 +59,7 @@
       (link session-remove-menu))
   ((balloon (icon "tm_session_split.xpm") "Split session")
    (session-split))
-  (if (not (== (get-env "prog language") "scheme"))
+  (if (not (== (get-env "prog-language") "scheme"))
       |
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
        (connection-interrupt))
@@ -83,8 +81,8 @@
 
 (menu-bind prog-modifier-icons
   ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
-   (make-with "prog font shape" "italic"))
+   (make-with "prog-font-shape" "italic"))
   ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")
-   (make-with "prog font series" "bold"))
+   (make-with "prog-font-series" "bold"))
   ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font#(A-C-s)")
-   (make-with "prog font family" "ss")))
+   (make-with "prog-font-family" "ss")))

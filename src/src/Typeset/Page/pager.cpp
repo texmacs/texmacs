@@ -20,7 +20,7 @@
 pager_rep::pager_rep (edit_env env2, array<page_item> l2):
   env (env2), style (UNINIT), l (l2)
 {
-  style (PAGE_THE_PAGE)   = tree (FUNCTION, tree (APPLY, "page number"));
+  style (PAGE_THE_PAGE)   = tree (MACRO, compound ("page-nr"));
   style (PAGE_ODD_HEADER) = env->read (PAGE_ODD_HEADER);
   style (PAGE_ODD_FOOTER) = env->read (PAGE_ODD_FOOTER);
   style (PAGE_EVEN_HEADER)= env->read (PAGE_EVEN_HEADER);
@@ -194,7 +194,7 @@ pager_rep::make_header () {
   tree old= env->local_begin (PAR_COLUMNS, "1");
   string which= (N(pages)&1)==0? PAGE_ODD_HEADER: PAGE_EVEN_HEADER;
   if (style [PAGE_THIS_HEADER] != "") which= PAGE_THIS_HEADER;
-  box b= typeset_as_concat (env, tree (PARAGRAPH, style[which]), decorate());
+  box b= typeset_as_concat (env, tree (PARA, style[which]), decorate());
   style (PAGE_THIS_HEADER) = "";
   env->local_end (PAR_COLUMNS, old);
   return b;
@@ -208,7 +208,7 @@ pager_rep::make_footer () {
   tree old= env->local_begin (PAR_COLUMNS, "1");
   string which= (N(pages)&1)==0? PAGE_ODD_FOOTER: PAGE_EVEN_FOOTER;
   if (style [PAGE_THIS_FOOTER] != "") which= PAGE_THIS_FOOTER;
-  box b= typeset_as_concat (env, tree (PARAGRAPH, style[which]), decorate());
+  box b= typeset_as_concat (env, tree (PARA, style[which]), decorate());
   style (PAGE_THIS_FOOTER) = "";
   env->local_end (PAR_COLUMNS, old);
   return b;

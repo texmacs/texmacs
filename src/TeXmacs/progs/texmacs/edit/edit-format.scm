@@ -14,36 +14,21 @@
 
 (texmacs-module (texmacs edit edit-format)
   (:export
-    ;; general inactive formatting markup
-    make-inactive-surround make-inactive-group make-inactive-float
-    make-inactive-repeat make-inactive-decorate-atoms
-    make-inactive-decorate-lines make-inactive-decorate-pages
-    ;; modifying paragraph style parameters
-    make-line-with
+    ;; modifying style parameters
+    make-with-color make-line-with
     set-left-margin set-right-margin set-first-indent set-last-indent
     set-interline set-interline-spc set-interpar-spc
     ;; page breaking
-    make-page-break-before make-page-break
-    make-new-page-before make-new-page
+    make-page-break make-new-page
     ;; routines for floats
     test-insertion-position?
     toggle-insertion-position toggle-insertion-position-not))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; General inactive formatting markup
+;; Modifying style parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-inactive-surround) (make-inactive "surround" 3))
-(define (make-inactive-group) (make-inactive "group" 1))
-(define (make-inactive-float) (make-inactive "float" 3))
-(define (make-inactive-repeat) (make-inactive "repeat" 2))
-(define (make-inactive-decorate-atoms) (make-inactive "datoms" 2))
-(define (make-inactive-decorate-lines) (make-inactive "dlines" 2))
-(define (make-inactive-decorate-pages) (make-inactive "dpages" 2))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying paragraph style parameters
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (make-with-color s) (make-with "color" s))
 
 (tm-define (make-line-with var val)
   (:synopsis "Make 'with' with one or more paragraphs as its scope")
@@ -52,32 +37,26 @@
       (select-line))
   (make-with var val)
   (insert-return)
-  (remove-backwards))
+  (remove-text #f))
 
-(define (set-left-margin s) (make-line-with "left margin" s))
-(define (set-right-margin s) (make-line-with "right margin" s))
-(define (set-first-indent s) (make-line-with "first indentation" s))
+(define (set-left-margin s) (make-line-with "par-left" s))
+(define (set-right-margin s) (make-line-with "par-right" s))
+(define (set-first-indent s) (make-line-with "par-first" s))
 (define (set-last-indent s) (make-line-with "last-indentation" s))
-(define (set-interline s) (make-line-with "interline space" s))
-(define (set-interline-spc s) (make-line-with "line stretch" s))
-(define (set-interpar-spc s) (make-line-with "interparagraph space" s))
+(define (set-interline s) (make-line-with "par-sep" s))
+(define (set-interline-spc s) (make-line-with "par-line-sep" s))
+(define (set-interpar-spc s) (make-line-with "par-par-sep" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-page-break-before)
-  (make-format "page_break_before"))
-
 (define (make-page-break)
-  (make-format "page_break")
+  (make 'page-break)
   (insert-return))
 
-(define (make-new-page-before)
-  (make-format "new_page_before"))
-
 (define (make-new-page)
-  (make-format "new_page")
+  (make 'new-page)
   (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -352,6 +352,50 @@ tmg_selection_set_end () {
 }
 
 SCM
+tmg_selection_get_start () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->selection_get_start ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_selection_get_end () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->selection_get_end ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_selection_set_start_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-start-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->selection_set_start (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_selection_set_end_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-end-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->selection_set_end (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_clipboard_copy (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "clipboard-copy");
 
@@ -494,6 +538,15 @@ tmg_redo () {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_in_graphicsP () {
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->inside_graphics ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -711,36 +764,26 @@ tmg_insert_return () {
 }
 
 SCM
-tmg_remove_backwards () {
+tmg_remove_text (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "remove-text");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_backwards ();
+  get_server()->get_editor()->remove_text (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_remove_forwards () {
+tmg_remove_structure (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "remove-structure");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_forwards ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_remove_structure_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_structure_backwards ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_remove_structure_forwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_structure_forwards ();
+  get_server()->get_editor()->remove_structure (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -750,19 +793,6 @@ SCM
 tmg_remove_structure_upwards () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->remove_structure_upwards ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_format (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-format");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_format (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1152,18 +1182,22 @@ tmg_branch_insert (SCM arg1) {
 }
 
 SCM
-tmg_branch_delete () {
+tmg_branch_delete (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "branch-delete");
+
+  bool in1= scm_to_bool (arg1);
+
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->branch_delete ();
+  get_server()->get_editor()->branch_delete (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_make_sub_table () {
+tmg_make_subtable () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_sub_table ();
+  get_server()->get_editor()->make_subtable ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1623,15 +1657,6 @@ tmg_init_hasP (SCM arg1) {
 }
 
 SCM
-tmg_in_preamble_modeP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->in_preamble_mode ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
 tmg_menu_before_action () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->before_menu_action ();
@@ -1650,12 +1675,49 @@ tmg_menu_after_action () {
 }
 
 SCM
+tmg_in_preambleP () {
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->in_preamble_mode ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_is_deactivatedP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->is_deactivated ();
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_make (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_compound (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_make_arity (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "make-arity");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-arity");
+
+  tree_label in1= scm_to_tree_label (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->make_compound (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -1668,60 +1730,73 @@ tmg_activate () {
 }
 
 SCM
-tmg_make_active (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-active");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-active");
+tmg_insert_argument (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "insert-argument");
 
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
+  bool in1= scm_to_bool (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_active (in1, in2);
+  get_server()->get_editor()->insert_argument (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_make_deactivated (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-deactivated");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-deactivated");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-deactivated");
+tmg_make_with (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
 
   string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
+  string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_deactivated (in1, in2, in3);
+  get_server()->get_editor()->make_with (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_make_deactivated_arg (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-deactivated-arg");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-deactivated-arg");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "make-deactivated-arg");
-  SCM_ASSERT_STRING (arg4, SCM_ARG4, "make-deactivated-arg");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-  string in4= scm_to_string (arg4);
-
+tmg_make_hybrid () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_deactivated (in1, in2, in3, in4);
+  get_server()->get_editor()->make_hybrid ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_insert_argument () {
+tmg_activate_latex () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_argument ();
+  get_server()->get_editor()->activate_latex ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_activate_hybrid () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->activate_hybrid ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_activate_symbol () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->activate_symbol ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_activate_compound () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->activate_compound ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1746,93 +1821,9 @@ tmg_make_return_after () {
 }
 
 SCM
-tmg_make_assign (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-assign");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-assign");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_assign (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_with (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_with (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_big_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-expand");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_big_expand (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_expand (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_expand_arity (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand-arity");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-expand-arity");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_expand (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_temp_proof_fix () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->temp_proof_fix ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_make_apply (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-apply");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_apply (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2239,18 +2230,13 @@ tmg_session_go_page_down () {
 }
 
 SCM
-tmg_session_remove_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_backwards ();
-  // SCM_ALLOW_INTS;
+tmg_session_remove (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "session-remove");
 
-  return SCM_UNSPECIFIED;
-}
+  bool in1= scm_to_bool (arg1);
 
-SCM
-tmg_session_remove_forwards () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_forwards ();
+  get_server()->get_editor()->session_remove (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2293,18 +2279,13 @@ tmg_session_fold_input () {
 }
 
 SCM
-tmg_session_remove_input_backwards () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_input_backwards ();
-  // SCM_ALLOW_INTS;
+tmg_session_remove_input (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "session-remove-input");
 
-  return SCM_UNSPECIFIED;
-}
+  bool in1= scm_to_bool (arg1);
 
-SCM
-tmg_session_remove_input_forwards () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->session_remove_input_forwards ();
+  get_server()->get_editor()->session_remove_input (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2750,6 +2731,38 @@ tmg_tm_position_get (SCM arg1) {
   return path_to_scm (out);
 }
 
+SCM
+tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tm-insert-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+  tree in3= scm_to_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->insert_with (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_remove_with (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-remove-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-remove-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_with (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
 void
 initialize_glue_editor () {
   gh_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
@@ -2785,6 +2798,10 @@ initialize_glue_editor () {
   gh_new_procedure ("selection-active-enlarging?", (FN) tmg_selection_active_enlargingP, 0, 0, 0);
   gh_new_procedure ("selection-set-start", (FN) tmg_selection_set_start, 0, 0, 0);
   gh_new_procedure ("selection-set-end", (FN) tmg_selection_set_end, 0, 0, 0);
+  gh_new_procedure ("selection-get-start", (FN) tmg_selection_get_start, 0, 0, 0);
+  gh_new_procedure ("selection-get-end", (FN) tmg_selection_get_end, 0, 0, 0);
+  gh_new_procedure ("selection-set-start-path", (FN) tmg_selection_set_start_path, 1, 0, 0);
+  gh_new_procedure ("selection-set-end-path", (FN) tmg_selection_set_end_path, 1, 0, 0);
   gh_new_procedure ("clipboard-copy", (FN) tmg_clipboard_copy, 1, 0, 0);
   gh_new_procedure ("clipboard-cut", (FN) tmg_clipboard_cut, 1, 0, 0);
   gh_new_procedure ("clipboard-cut-at", (FN) tmg_clipboard_cut_at, 1, 0, 0);
@@ -2798,6 +2815,7 @@ initialize_glue_editor () {
   gh_new_procedure ("clipboard-get-export", (FN) tmg_clipboard_get_export, 0, 0, 0);
   gh_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   gh_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
+  gh_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
   gh_new_procedure ("in-normal-mode?", (FN) tmg_in_normal_modeP, 0, 0, 0);
   gh_new_procedure ("in-search-mode?", (FN) tmg_in_search_modeP, 0, 0, 0);
   gh_new_procedure ("in-replace-mode?", (FN) tmg_in_replace_modeP, 0, 0, 0);
@@ -2816,12 +2834,9 @@ initialize_glue_editor () {
   gh_new_procedure ("insert-tree", (FN) tmg_insert_tree, 1, 0, 0);
   gh_new_procedure ("insert-tree-go-to", (FN) tmg_insert_tree_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
-  gh_new_procedure ("remove-backwards", (FN) tmg_remove_backwards, 0, 0, 0);
-  gh_new_procedure ("remove-forwards", (FN) tmg_remove_forwards, 0, 0, 0);
-  gh_new_procedure ("remove-structure-backwards", (FN) tmg_remove_structure_backwards, 0, 0, 0);
-  gh_new_procedure ("remove-structure-forwards", (FN) tmg_remove_structure_forwards, 0, 0, 0);
+  gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
+  gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);
   gh_new_procedure ("remove-structure-upwards", (FN) tmg_remove_structure_upwards, 0, 0, 0);
-  gh_new_procedure ("make-format", (FN) tmg_make_format, 1, 0, 0);
   gh_new_procedure ("make-htab", (FN) tmg_make_htab, 1, 0, 0);
   gh_new_procedure ("make-space", (FN) tmg_make_space, 1, 0, 0);
   gh_new_procedure ("make-var-space", (FN) tmg_make_var_space, 3, 0, 0);
@@ -2851,8 +2866,8 @@ initialize_glue_editor () {
   gh_new_procedure ("make-tree", (FN) tmg_make_tree, 0, 0, 0);
   gh_new_procedure ("inside-tree?", (FN) tmg_inside_treeP, 0, 0, 0);
   gh_new_procedure ("branch-insert", (FN) tmg_branch_insert, 1, 0, 0);
-  gh_new_procedure ("branch-delete", (FN) tmg_branch_delete, 0, 0, 0);
-  gh_new_procedure ("make-sub-table", (FN) tmg_make_sub_table, 0, 0, 0);
+  gh_new_procedure ("branch-delete", (FN) tmg_branch_delete, 1, 0, 0);
+  gh_new_procedure ("make-subtable", (FN) tmg_make_subtable, 0, 0, 0);
   gh_new_procedure ("table-disactivate", (FN) tmg_table_disactivate, 0, 0, 0);
   gh_new_procedure ("table-extract-format", (FN) tmg_table_extract_format, 0, 0, 0);
   gh_new_procedure ("table-insert-row", (FN) tmg_table_insert_row, 1, 0, 0);
@@ -2890,24 +2905,23 @@ initialize_glue_editor () {
   gh_new_procedure ("context-has?", (FN) tmg_context_hasP, 1, 0, 0);
   gh_new_procedure ("style-has?", (FN) tmg_style_hasP, 1, 0, 0);
   gh_new_procedure ("init-has?", (FN) tmg_init_hasP, 1, 0, 0);
-  gh_new_procedure ("in-preamble-mode?", (FN) tmg_in_preamble_modeP, 0, 0, 0);
   gh_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);
   gh_new_procedure ("menu-after-action", (FN) tmg_menu_after_action, 0, 0, 0);
+  gh_new_procedure ("in-preamble?", (FN) tmg_in_preambleP, 0, 0, 0);
   gh_new_procedure ("is-deactivated?", (FN) tmg_is_deactivatedP, 0, 0, 0);
+  gh_new_procedure ("make", (FN) tmg_make, 1, 0, 0);
+  gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
-  gh_new_procedure ("make-active", (FN) tmg_make_active, 2, 0, 0);
-  gh_new_procedure ("make-deactivated", (FN) tmg_make_deactivated, 3, 0, 0);
-  gh_new_procedure ("make-deactivated-arg", (FN) tmg_make_deactivated_arg, 4, 0, 0);
-  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 0, 0, 0);
+  gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
+  gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
+  gh_new_procedure ("make-hybrid", (FN) tmg_make_hybrid, 0, 0, 0);
+  gh_new_procedure ("activate-latex", (FN) tmg_activate_latex, 0, 0, 0);
+  gh_new_procedure ("activate-hybrid", (FN) tmg_activate_hybrid, 0, 0, 0);
+  gh_new_procedure ("activate-symbol", (FN) tmg_activate_symbol, 0, 0, 0);
+  gh_new_procedure ("activate-compound", (FN) tmg_activate_compound, 0, 0, 0);
   gh_new_procedure ("make-return-before", (FN) tmg_make_return_before, 0, 0, 0);
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
-  gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);
-  gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
-  gh_new_procedure ("make-big-expand", (FN) tmg_make_big_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand", (FN) tmg_make_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand-arity", (FN) tmg_make_expand_arity, 2, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
-  gh_new_procedure ("make-apply", (FN) tmg_make_apply, 1, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);
   gh_new_procedure ("view-get-property", (FN) tmg_view_get_property, 1, 0, 0);
   gh_new_procedure ("clear-buffer", (FN) tmg_clear_buffer, 0, 0, 0);
@@ -2944,14 +2958,12 @@ initialize_glue_editor () {
   gh_new_procedure ("session-go-right", (FN) tmg_session_go_right, 0, 0, 0);
   gh_new_procedure ("session-go-page-up", (FN) tmg_session_go_page_up, 0, 0, 0);
   gh_new_procedure ("session-go-page-down", (FN) tmg_session_go_page_down, 0, 0, 0);
-  gh_new_procedure ("session-remove-backwards", (FN) tmg_session_remove_backwards, 0, 0, 0);
-  gh_new_procedure ("session-remove-forwards", (FN) tmg_session_remove_forwards, 0, 0, 0);
+  gh_new_procedure ("session-remove", (FN) tmg_session_remove, 1, 0, 0);
   gh_new_procedure ("session-insert-text-field", (FN) tmg_session_insert_text_field, 0, 0, 0);
   gh_new_procedure ("session-insert-input-above", (FN) tmg_session_insert_input_above, 0, 0, 0);
   gh_new_procedure ("session-insert-input-below", (FN) tmg_session_insert_input_below, 0, 0, 0);
   gh_new_procedure ("session-fold-input", (FN) tmg_session_fold_input, 0, 0, 0);
-  gh_new_procedure ("session-remove-input-backwards", (FN) tmg_session_remove_input_backwards, 0, 0, 0);
-  gh_new_procedure ("session-remove-input-forwards", (FN) tmg_session_remove_input_forwards, 0, 0, 0);
+  gh_new_procedure ("session-remove-input", (FN) tmg_session_remove_input, 1, 0, 0);
   gh_new_procedure ("session-remove-all-outputs", (FN) tmg_session_remove_all_outputs, 0, 0, 0);
   gh_new_procedure ("session-remove-previous-output", (FN) tmg_session_remove_previous_output, 0, 0, 0);
   gh_new_procedure ("session-split", (FN) tmg_session_split, 0, 0, 0);
@@ -2990,4 +3002,6 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-delete", (FN) tmg_tm_position_delete, 1, 0, 0);
   gh_new_procedure ("tm-position-set", (FN) tmg_tm_position_set, 2, 0, 0);
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
+  gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
+  gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
 }

@@ -36,7 +36,7 @@ struct tm_writer {
   void flush ();
   void write_space ();
   void write_return ();
-  void write (string s, bool flag= true);
+  void write (string s, bool flag= true, bool encode_space= false);
   void br (int indent= 0);
   void tag (string before, string s, string after);
   void apply (string func, array<tree> args);
@@ -139,14 +139,15 @@ tm_writer::write_return () {
 }
 
 void
-tm_writer::write (string s, bool flag) {
+tm_writer::write (string s, bool flag, bool encode_space) {
   if (flag) {
     int i, n=N(s);
     for (i=0; i<n; i++) {
       char c= s[i];
-      if (c == ' ') write_space ();
+      if ((c == ' ') && (!encode_space)) write_space ();
       else {
-	if (c == '\n') tmp << "\\n";
+	if (c == ' ') tmp << "\\ ";
+	else if (c == '\n') tmp << "\\n";
 	else if (c == '\t') tmp << "\\t";
 	else if (c == '\0') tmp << "\\0";
 	else if (c == '\\') tmp << "\\\\";
@@ -191,16 +192,6 @@ tm_writer::tag (string before, string s, string after) {
   write (after, false);
 }
 
-static bool
-is_empty (tree t) {
-  if (is_atomic (t)) return t == "";
-  if (is_func (t, DOCUMENT, 0)) return true;
-  if (is_func (t, DOCUMENT, 1)) return is_empty (t[0]);
-  if (is_func (t, CONCAT, 0)) return true;
-  if (is_func (t, CONCAT, 1)) return is_empty (t[0]);
-  return false;
-}
-
 void
 tm_writer::apply (string func, array<tree> args) {
   int i, last, n=N(args);
@@ -227,10 +218,10 @@ tm_writer::apply (string func, array<tree> args) {
     for (i=0; i<=n; i++) {
       bool flag=
 	(i<n) && (is_document (args[i]) || is_func (args[i], COLLECTION));
-      if (i==0) { write ("<\\", false); write (func); }
-      else if (i==last+1) {write ("</", false); write (func); }
+      if (i==0) { write ("<\\", false); write (func, true, true); }
+      else if (i==last+1) {write ("</", false); write (func, true, true); }
       else if (is_document (args[i-1]) || is_func (args[i-1], COLLECTION)) {
-	write ("<|", false); write (func); }
+	write ("<|", false); write (func, true, true); }
       if (i==n) {
 	write (">", false);
 	break;
@@ -250,7 +241,7 @@ tm_writer::apply (string func, array<tree> args) {
   }
   else {
     write ("<", false);
-    write (func);
+    write (func, true, true);
     for (i=0; i<n; i++) {
       write ("|", false);
       write (args[i]);
@@ -322,10 +313,10 @@ tree_to_texmacs (tree t) {
     tree r (t, n);
     for (i=0; i<n; i++)
       if (is_compound (t[i], "style", 1)) {
-	tree style= t[i][d_exp];
+	tree style= t[i][0];
 	if (is_func (style, TUPLE, 1)) style= style[0];
 	r[i]= copy (t[i]);
-	r[i][d_exp]= style;
+	r[i][0]= style;
       }
       else r[i]= t[i];
     t= r;

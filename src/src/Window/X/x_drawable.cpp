@@ -311,7 +311,7 @@ x_drawable_rep::xpm_initialize (url file_name) {
   delete[] data;
 }
 
-extern int char_clip;
+extern bool char_clip;
 
 void
 x_drawable_rep::xpm (url file_name, SI x, SI y) {
@@ -464,6 +464,10 @@ x_drawable_rep::check_event (int type) {
   case INPUT_EVENT:
     if (event_status) return true;
     event_status= XCheckMaskEvent (dpy, KeyPressMask|ButtonPressMask, &ev);
+    if (event_status) XPutBackEvent (dpy, &ev);
+    break;
+  case MOTION_EVENT:
+    event_status= XCheckMaskEvent (dpy, PointerMotionMask, &ev);
     if (event_status) XPutBackEvent (dpy, &ev);
     break;
   case DRAG_EVENT:

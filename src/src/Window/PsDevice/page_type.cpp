@@ -10,7 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "string.hpp"
+#include "vars.hpp"
 #include "hashmap.hpp"
 
 static bool page_data_base_initizalized= false;
@@ -25,33 +25,33 @@ INIT (string type, string width, string height, string standard_format,
       string lan_hmargin, string lan_vmargin,
       string lan_hred, string lan_vred)
 {
-  page_data_base (type * "-P-page width") = width;
-  page_data_base (type * "-P-page height")= height;
   page_data_base (type * "-P-standard")= standard_format;
-  page_data_base (type * "-P-paragraph width")= por_parw;
-  page_data_base (type * "-P-odd page margin")= por_hmargin;
-  page_data_base (type * "-P-even page margin")= por_hmargin;
-  page_data_base (type * "-P-page right margin")= por_hmargin;
-  page_data_base (type * "-P-page top margin")= por_vmargin;
-  page_data_base (type * "-P-page bottom margin")= por_vmargin;
-  page_data_base (type * "-P-reduction page left margin")= por_hred;
-  page_data_base (type * "-P-reduction page right margin")= por_hred;
-  page_data_base (type * "-P-reduction page top margin")= por_vred;
-  page_data_base (type * "-P-reduction page bottom margin")= por_vred;
+  page_data_base (type * "-P-" * PAGE_WIDTH) = width;
+  page_data_base (type * "-P-" * PAGE_HEIGHT)= height;
+  page_data_base (type * "-P-" * PAR_WIDTH)= por_parw;
+  page_data_base (type * "-P-" * PAGE_ODD)= por_hmargin;
+  page_data_base (type * "-P-" * PAGE_EVEN)= por_hmargin;
+  page_data_base (type * "-P-" * PAGE_RIGHT)= por_hmargin;
+  page_data_base (type * "-P-" * PAGE_TOP)= por_vmargin;
+  page_data_base (type * "-P-" * PAGE_BOT)= por_vmargin;
+  page_data_base (type * "-P-" * PAGE_REDUCE_LEFT)= por_hred;
+  page_data_base (type * "-P-" * PAGE_REDUCE_RIGHT)= por_hred;
+  page_data_base (type * "-P-" * PAGE_REDUCE_TOP)= por_vred;
+  page_data_base (type * "-P-" * PAGE_REDUCE_BOT)= por_vred;
 
-  page_data_base (type * "-L-page width") = height;
-  page_data_base (type * "-L-page height")= width;
   page_data_base (type * "-L-standard")= standard_format;
-  page_data_base (type * "-L-paragraph width")= lan_parw;
-  page_data_base (type * "-L-odd page margin")= lan_hmargin;
-  page_data_base (type * "-L-even page margin")= lan_hmargin;
-  page_data_base (type * "-L-page right margin")= lan_hmargin;
-  page_data_base (type * "-L-page top margin")= lan_vmargin;
-  page_data_base (type * "-L-page bottom margin")= lan_vmargin;
-  page_data_base (type * "-L-reduction page left margin")= lan_hred;
-  page_data_base (type * "-L-reduction page right margin")= lan_hred;
-  page_data_base (type * "-L-reduction page top margin")= lan_vred;
-  page_data_base (type * "-L-reduction page bottom margin")= lan_vred;
+  page_data_base (type * "-L-" * PAGE_WIDTH) = height;
+  page_data_base (type * "-L-" * PAGE_HEIGHT)= width;
+  page_data_base (type * "-L-" * PAR_WIDTH)= lan_parw;
+  page_data_base (type * "-L-" * PAGE_ODD)= lan_hmargin;
+  page_data_base (type * "-L-" * PAGE_EVEN)= lan_hmargin;
+  page_data_base (type * "-L-" * PAGE_RIGHT)= lan_hmargin;
+  page_data_base (type * "-L-" * PAGE_TOP)= lan_vmargin;
+  page_data_base (type * "-L-" * PAGE_BOT)= lan_vmargin;
+  page_data_base (type * "-L-" * PAGE_REDUCE_LEFT)= lan_hred;
+  page_data_base (type * "-L-" * PAGE_REDUCE_RIGHT)= lan_hred;
+  page_data_base (type * "-L-" * PAGE_REDUCE_TOP)= lan_vred;
+  page_data_base (type * "-L-" * PAGE_REDUCE_BOT)= lan_vred;
 }
 
 /* this list should contain at least all the paper sizes known to

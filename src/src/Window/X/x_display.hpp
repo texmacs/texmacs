@@ -183,6 +183,7 @@ public:
   bool   set_selection (widget wid, string key, tree t, string s);
   void   clear_selection (string key);
   void   delayed_message (widget wid, string s, time_t delay);
+  int    remove_all_delayed_messages (widget wid, string s);
 
   /**************************** miscellaneous ********************************/
   void   set_help_balloon (widget wid, SI x, SI y);

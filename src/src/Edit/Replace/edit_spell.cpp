@@ -33,7 +33,7 @@ edit_replace_rep::spell_start () {
   /********** initialize spell checker ***********/
   search_mode = copy (as_string (get_env_value (MODE, spell_p)));
   search_lan  =
-    copy (as_string (get_env_value (LANGUAGE (search_mode), spell_p)));
+    copy (as_string (get_env_value (MODE_LANGUAGE (search_mode), spell_p)));
 
   string message= ispell_start (search_lan);
   if (starts (message, "Error: ")) {
@@ -118,7 +118,8 @@ edit_replace_rep::spell_next () {
       }
       if (spell_t != "ok") {
 	string mode= as_string (get_env_value (MODE, search_at));
-	string lan = as_string (get_env_value (LANGUAGE (mode), search_at));
+	string lan =
+	  as_string (get_env_value (MODE_LANGUAGE (mode), search_at));
 	if ((search_mode == mode) && (search_lan == lan)) {
 	  set_selection (search_at, search_end);
 	  notify_change (THE_SELECTION);

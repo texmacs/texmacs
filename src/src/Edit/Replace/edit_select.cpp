@@ -15,6 +15,42 @@
 #include "convert.hpp"
 
 /******************************************************************************
+* Internationalization
+******************************************************************************/
+
+string
+selection_encode (string lan, string s) {
+  if ((lan == "czech") || (lan == "hungarian") ||
+      (lan == "polish") || (lan == "slovene"))
+    return cork_to_il2 (s);
+  else if (lan == "russian")
+    return koi8_to_iso (s);
+  else if (lan == "ukrainian")
+    return koi8uk_to_iso (s);
+  else if (lan == "spanish")
+    return spanish_to_ispanish (s);
+  else if (lan == "german")
+    return german_to_igerman (s);
+  else return s;
+}
+
+string
+selection_decode (string lan, string s) {
+  if ((lan == "czech") || (lan == "hungarian") ||
+      (lan == "polish") || (lan == "slovene"))
+    return il2_to_cork (s);
+  else if (lan == "russian")
+    return iso_to_koi8 (s);
+  else if (lan == "ukrainian")
+    return iso_to_koi8uk (s);
+  else if (lan == "spanish")
+    return ispanish_to_spanish (s);
+  else if (lan == "german")
+    return igerman_to_german (s);
+  else return s;
+}
+
+/******************************************************************************
 * Constructor and destructor
 ******************************************************************************/
 
@@ -163,12 +199,12 @@ edit_select_rep::select_enlarge () {
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);
-  if (is_func (st, TABLE_FORMAT) || is_func (st, DOCUMENT, 1))
+  if (is_func (st, TFORMAT) || is_func (st, DOCUMENT, 1))
     select_enlarge ();
   else {
     string s;
     if (is_atomic (st)) s= "text";
-    else if (is_expand (st)) s= as_string (st[0]);
+    else if (is_func (st, COMPOUND)) s= as_string (st[0]);
     else if (is_func (st, WITH)) s= "with#" * as_string (st[0]);
     else s= as_string (L(st));
     set_message ("selected#" * s, "enlarge selection");
@@ -181,11 +217,7 @@ stop_enlarge_environmental (tree t) {
   if (is_func (t, WITH, 3) && (t[0]==MODE) && (t[1]=="math")) return true;
   if (!is_extension (t)) return false;
   if (is_multi_paragraph (t)) return true;
-#ifdef WITH_EXTENSIONS
   string s= as_string (L(t));
-#else
-  string s= as_string (t[0]);
-#endif
   return
     (s == "chapter") ||
     (s == "section") ||
@@ -227,7 +259,7 @@ edit_select_rep::selection_active_table () {
   if ((p == start_p) || (p == end_p)) p= path_up (p);
   tree t= subtree (et, p);
   return
-    is_func (t, TABLE_FORMAT) || is_func (t, TABLE) ||
+    is_func (t, TFORMAT) || is_func (t, TABLE) ||
     is_func (t, ROW) || is_func (t, CELL);
 }
 
@@ -253,9 +285,9 @@ edit_select_rep::selection_active_enlarging () {
 static path
 table_search_format (tree t, path p) {
   tree st= subtree (t, p);
-  if (is_func (st, TABLE_FORMAT) && is_func (st[N(st)-1], TABLE)) return p;
+  if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
   while ((!nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
-  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TABLE_FORMAT)))
+  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
     p= path_up (p);
   return p;
 }
@@ -267,7 +299,7 @@ table_search_coordinates (tree t, path p, int& row, int& col) {
     if (nil (p)) p= path (1);
     if (p == path (0)) p= path (0, 0);
     if (p == path (1)) p= path (N(t)-1, 1);
-    if (is_func (t, TABLE_FORMAT));
+    if (is_func (t, TFORMAT));
     else if (is_func (t, TABLE)) row= p->item;
     else if (is_func (t, ROW)) col= p->item;
     else return;
@@ -279,19 +311,19 @@ table_search_coordinates (tree t, path p, int& row, int& col) {
 static path
 table_search_cell (tree t, int row, int col) {
   path p;
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
   p= p * row;
   t= t [row];
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
   p= p * col;
   t= t [col];
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
@@ -325,7 +357,7 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
   }
   else {
     tree_label l= L(t);
-    if ((l==DOCUMENT) || (l==PARAGRAPH) || (l==CONCAT)) {
+    if ((l==DOCUMENT) || (l==PARA) || (l==CONCAT)) {
       if (is_compound (t[i1->item])) {
 	path mid;
 	selection_correct (t[i1->item], i1->next, end (t[i1->item]), o1, mid);
@@ -433,6 +465,16 @@ edit_select_rep::selection_get (path& start, path& end) {
   end  = sel->end;
 }
 
+path
+edit_select_rep::selection_get_start () {
+  return start_p;
+}
+
+path
+edit_select_rep::selection_get_end () {
+  return end_p;
+}
+
 tree
 edit_select_rep::selection_get () {
   if (!selection_active_any ()) return "";
@@ -457,16 +499,28 @@ edit_select_rep::selection_get () {
 ******************************************************************************/
 
 void
-edit_select_rep::selection_set_start () {
+edit_select_rep::selection_raw_set (string key, tree t) {
+  (void) dis->set_selection (widget (this), key, t, "");
+}
+
+tree
+edit_select_rep::selection_raw_get (string key) {
+  return copy (dis->get_selection (widget (this), key));
+}
+
+void
+edit_select_rep::selection_set_start (path p) {
   bool flag= selection_active_any ();
-  start_p= tp;
+  if (nil(p)) start_p= tp;
+  else start_p= p;
   if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
   notify_change (THE_SELECTION);
 }
 
 void
-edit_select_rep::selection_set_end () {
-  end_p= tp;
+edit_select_rep::selection_set_end (path p) {
+  if (nil(p)) end_p= tp;
+  else end_p= p;
   if (path_less_eq (end_p, start_p)) start_p= end_p;
   notify_change (THE_SELECTION);
 }
@@ -475,14 +529,15 @@ void
 edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
-  string lan = get_env_string (LANGUAGE (mode));
-  tree sel= tuple ("edit", t, mode, lan);
+  string lan = get_env_string (MODE_LANGUAGE (mode));
+  tree sel= tuple ("texmacs", t, mode, lan);
   string s;
   if (key == "primary") {
     if (selection_export == "html") t= exec_html (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= tree (WITH, "mode", "math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
+    s= selection_encode (lan, s);
   }
   if (dis->set_selection (widget (this), key, sel, s) &&
       (!persistant)) selection_cancel ();
@@ -511,17 +566,18 @@ edit_select_rep::selection_paste (string key) {
   tree t= copy (dis->get_selection (widget (this), key));
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
+    string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((selection_import == "latex") && (mode == "prog")) mode= "verbatim";
     if ((selection_import == "latex") && (mode == "math")) mode= "latex-math";
     if ((selection_import == "html") && (mode == "prog")) mode= "verbatim";
     string fm= selection_import * "-snippet";
-    tree doc= generic_to_tree (as_string (t[1]), fm);
+    tree doc= generic_to_tree (selection_decode(lan, as_string(t[1])), fm);
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
     insert_tree (doc);
   }
-  if (is_tuple (t, "edit", 3)) {
+  if (is_tuple (t, "texmacs", 3)) {
     string mode= get_env_string (MODE);
-    string lan = get_env_string (LANGUAGE (mode));
+    string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {
       tree in= tuple (lan, t[1]);
       tree r= object_to_tree (call ("plugin-math-input", tree_to_object (in)));
@@ -530,7 +586,7 @@ edit_select_rep::selection_paste (string key) {
     else {
       if ((t[2] != mode) && ((t[2]=="math") || (mode=="math")))
 	insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
-      if (is_func (t[1], TABLE_FORMAT) || is_func (t[1], TABLE)) {
+      if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
 	path fp= search_format (row, col);
 	if (nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
@@ -603,7 +659,7 @@ edit_select_rep::cut (path p1, path p2) {
     return;
   }
 
-  if (is_func (t, TABLE_FORMAT) || is_func (t, TABLE) || is_func (t, ROW)) {
+  if (is_func (t, TFORMAT) || is_func (t, TABLE) || is_func (t, ROW)) {
     path fp= ::table_search_format (et, p);
     tree st= subtree (et, fp);
     int row1, col1, row2, col2;
@@ -622,7 +678,7 @@ edit_select_rep::cut (path p1, path p2) {
     path cp= fp * ::table_search_cell (st, row1, col1);
     go_to (cp * path (0, 0));
 
-    if (is_func (st, TABLE_FORMAT))
+    if (is_func (st, TFORMAT))
       table_del_format (fp, row1+1, col1+1, row2+1, col2+1, "");
     return;
   }

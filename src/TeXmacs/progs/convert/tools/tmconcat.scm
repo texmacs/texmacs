@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : tmconcat.scm
 ;; DESCRIPTION : manipulation of concatenations
-;; COPYRIGHT   : (C) 2002  David Allouche
+;; COPYRIGHT   : (C) 2003  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -82,7 +82,7 @@
 (tm-define (tmconcat-structure-tabs l)
   (:type (forall T ((list T) -> (list T))))
   (:synopsis "Structure tabs in concatenation @l.")
-  (with r (list-scatter l (lambda (x) (func? x 'htab)))
+  (with r (list-scatter l (lambda (x) (func? x 'htab)) #t)
     (if (null? (cdr r)) l
 	(tmconcat-tabs-sub (car r) (cdr r) '!left))))
 

@@ -20,10 +20,10 @@
     make-return make-shift-return
     structured-insert-left structured-insert-right
     structured-insert-up structured-insert-down
-    structured-remove-backwards structured-remove-forwards
+    structured-remove
     position-default position-left position-right position-up position-down
     position-start position-end position-top position-bottom
-    general-remove-backwards general-remove-forwards general-tab))
+    general-remove general-remove general-tab))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The multi-purpose return key
@@ -42,14 +42,17 @@
   (insert-return))
 
 (define (make-return-inside x)
-  (cond ((== x "inactive") (activate))
+  (cond ((== x "hybrid") (activate-hybrid))
+	((== x "latex") (activate-latex))
+	((== x "symbol") (activate-symbol))
+	((== x "inactive") (activate))
 	((== x "title")
 	 (if (inside? "make-title")
-	     (make-header-expand "author")
+	     (make-header 'author)
 	     (return-sectional)))
 	((== x "author")
 	 (if (inside? "make-title")
-	     (make-header-expand "address")
+	     (make-header 'address)
 	     (return-sectional)))
 	((in? x '("chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"
@@ -66,11 +69,12 @@
 		  "description" "description-compact" "description-aligned"
 		   "description-dash" "description-long"))
 	 (make-item))
+	((inside? "compound") (activate-compound))
 	(else (insert-return))))
 
 (define (make-return)
   (make-return-inside
-   (inside-which '("inactive"
+   (inside-which '("inactive" "latex" "hybrid" "symbol"
 		   "title" "author"
 		   "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
@@ -100,7 +104,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (hybrid-insert forward)
-  (let ((x (inside-which '("table" "tree" "switch" "input"))))
+  (let ((x (inside-which '("table" "tree" "switch" "input" "hybrid"))))
     (cond ((== x "table")
 	   (table-insert-column forward))
 	  ((== x "tree")
@@ -108,18 +112,23 @@
 	  ((== x "switch")
 	   (switch-insert (if forward "after" "before")))
 	  ((== x "input")
-	   (session-fold-input)))))
+	   (session-fold-input))
+	  ((== x "hybrid")
+	   (activate-hybrid)))))
 
 (define (structured-insert-left)
-  (hybrid-insert #f))
+  (let ((x (inside-which '("table" "tree" "switch"
+			   "inactive" "hybrid" "tuple" "attr" "input"))))
+    (if (in? x '("table" "tree" "switch" "input" "hybrid"))
+	(hybrid-insert #f)
+	(insert-argument #f))))
 
 (define (structured-insert-right)
   (let ((x (inside-which '("table" "tree" "switch"
-			   "inactive" "tuple" "attr" "input"))))
-    (cond ((in? x '("table" "tree" "switch" "input"))
-	   (hybrid-insert #t))
-	  ((or (in-preamble-mode?) (in? x '("inactive" "tuple" "attr")))
-	   (insert-argument)))))
+			   "inactive" "hybrid" "tuple" "attr" "input"))))
+    (if (in? x '("table" "tree" "switch" "input" "hybrid"))
+	(hybrid-insert #t)
+	(insert-argument #t))))
 
 (define (structured-insert-up)
   (let ((x (inside-which '("table" "input"))))
@@ -139,16 +148,9 @@
 ;; Multi-purpose deletions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (structured-remove-backwards)
+(define (structured-remove forward?)
   (let ((x (inside-which '("input"))))
-    (cond ((== x "input")
-	   (session-remove-input-backwards))
-	  (else (remove-structure-upwards)))))
-
-(define (structured-remove-forwards)
-  (let ((x (inside-which '("input"))))
-    (cond ((== x "input")
-	   (session-remove-input-forwards))
+    (cond ((== x "input") (session-remove-input forward?))
 	  (else (remove-structure-upwards)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,23 +171,19 @@
 ;; Some multi-purpose actions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (general-remove-backwards)
+(define (general-remove forward?)
   (cond ((selection-active-normal?) (clipboard-cut "primary"))
-	((and (in-session?) (inside? "input")) (session-remove-backwards))
-	(else (remove-backwards))))
-
-(define (general-remove-forwards)
-  (cond ((selection-active-normal?) (clipboard-cut "primary"))
-	((and (in-session?) (inside? "input")) (session-remove-forwards))
-	(else (remove-forwards))))
+	((and (in-session?) (inside? "input")) (session-remove forward?))
+	(else (remove-text forward?))))
 
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
-        ((or (is-deactivated?) (in-preamble-mode?)
+        ((inside? "hybrid") (activate-hybrid))
+        ((or (is-deactivated?) (in-preamble?)
 	     (inside? "tuple") (inside? "attr"))
-	 (insert-argument))
+	 (insert-argument #t))
 	((and (in-session?)
-	      (plugin-supports-completions? (get-env "prog language")))
+	      (plugin-supports-completions? (get-env "prog-language")))
 	 (if (session-complete-try?) (noop)))
 	((complete-try?) (noop))
 	(else (set-message "Use M-tab in order to insert a tab" "tab"))))

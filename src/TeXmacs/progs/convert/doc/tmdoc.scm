@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert doc tmdoc)
-  (:export tmdoc-expand-help tmdoc-expand-this tmdoc-include))
+  (:export tmdoc-expand-help tmdoc-expand-help-manual tmdoc-expand-this
+	   tmdoc-include))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
@@ -35,7 +36,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmdoc-branch x base-name level done)
-  (let* ((name (cadddr x))
+  (let* ((name (caddr x))
 	 (rel-name (url-relative base-name name)))
     (tmdoc-expand rel-name level done)))
 
@@ -45,9 +46,9 @@
 	    (tmdoc-substitute-sub (cdr l) base-name))))
 
 (define (tmdoc-substitute x base-name)
-  (cond ((match? x '(apply "hyper-link" :2))
-	 (list 'apply "hyper-link" (caddr x)
-	       (url->string (url-relative base-name (cadddr x)))))
+  (cond ((match? x '(hyper-link :1))
+	 (list 'hyper-link (cadr x)
+	       (url->string (url-relative base-name (caddr x)))))
 	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) base-name)))
 	(else x)))
 
@@ -60,13 +61,13 @@
 	   '(document))
 	  ((func? x 'traverse)
 	   (cons 'document (tmdoc-rewrite (cdadr x) base-name level done)))
-	  ((match? x '(apply "branch" :2))
+	  ((match? x '(branch :2))
 	   (tmdoc-branch x base-name (tmdoc-down level) done))
-	  ((match? x '(apply "continue" :2))
+	  ((match? x '(continue :2))
 	   (tmdoc-branch x base-name (list level) done))
-	  ((match? x '(apply "extra-branch" :2))
-	   (tmdoc-branch x base-name 'appendix) done)
-	  ((match? x '(apply "tmdoc-copyright" :*))
+	  ((match? x '(extra-branch :2))
+	   (tmdoc-branch x base-name 'appendix done))
+	  ((match? x '(tmdoc-copyright :*))
 	   '(document))
 	  (else (tmdoc-substitute x base-name)))))
 
@@ -77,14 +78,20 @@
 	(if (func? d1 'document) (append (cdr d1) d2) (cons d1 d2)))))
 
 (define (tmdoc-expand file-name level . opts)
+  ;(display* "tmdoc-expand " file-name "\n")
   (let* ((done (if (null? opts) (make-ahash-table) (car opts)))
-	 (done? (ahash-ref done file-name))
-	 (t (texmacs-load-tree file-name "texmacs"))
-	 (u (cadr (assoc 'body (cdr (tree->object t))))))
+	 (done? (ahash-ref done file-name)))
     (ahash-set! done file-name #t)
     (if done?
 	'(document "")
-	(cons 'document (tmdoc-rewrite (cdr u) file-name level done)))))
+	(with t (tree->object (texmacs-load-tree file-name "texmacs"))
+	  (if (string? t)
+	      (begin
+		(display* "TeXmacs] bad link or file " file-name "\n")
+		'(document ""))
+	      (with u (cadr (assoc 'body (cdr t)))
+		(cons 'document
+		      (tmdoc-rewrite (cdr u) file-name level done))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further subroutines
@@ -132,7 +139,7 @@
 		    (style "tmmanual")
 		    (body ,(tmdoc-add-aux body))
 		    (initial (collection (associate "language" ,lan)
-					 (associate "page medium" "paper"))))))
+					 (associate "page-medium" "paper"))))))
 	(set-help-buffer file-name (object->tree doc)))
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))
@@ -142,12 +149,18 @@
 		    (initial (collection (associate "language" ,lan))))))
 	(set-help-buffer file-name (object->tree doc)))))
 
+(define (tmdoc-expand-help-manual file-name . cont)
+  (with s-cont (if (null? cont) "(noop)" (car cont))
+    (system-wait "Generating manual" "(can be long)")
+    (tmdoc-expand-help file-name 'title)
+    (delayed-update 3 s-cont)))
+
 (define (tmdoc-expand-this level)
   (tmdoc-expand-help (get-name-buffer) level))
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((not (pair? l)) l)
-	((match? l '(apply "hyper-link" :2)) (caddr l))
+	((match? l '(hyper-link :1)) (cadr l))
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 

@@ -22,7 +22,6 @@ protected:
   path        search_at;     // current search position
   path        search_end;    // position of the end of a match
   tree        search_what;   // search tree
-  tree        search_old;    // search tree from previous search
   list<path>  where_stack;   // last search positions
   tree        what_stack;    // last search trees
   tree        replace_by;    // replace tree
@@ -44,20 +43,21 @@ public:
   /* structural searching */
   bool inside (string what);
   bool inside (tree_label l);
-  bool inside_expand (string what);
+  bool inside_compound (string what);
   bool inside_with (string var, string val);
   string inside_which (tree t);
   path search_upwards (string what);
   path search_upwards (tree_label l);
   path search_parent_upwards (tree_label l, int& last);
   path search_parent_upwards (tree_label l);
-  path search_upwards_expand (string what);
+  path search_upwards_compound (string what);
   path search_upwards_with (string var, string val);
   path search_upwards_in_set (tree t);
-  path search_previous_expand (path init, string which);
-  path search_next_expand (path init, string which);
+  path search_previous_compound (path init, string which);
+  path search_next_compound (path init, string which);
 
   /* search and replace */
+  path test_sub (path p, tree t);
   path test (path p, tree t);
   void step_ascend (bool forward);
   void step_descend (bool forward);
@@ -66,6 +66,7 @@ public:
   void search_start (bool forward= true);
   void search_next (bool forward);
   void search_next (tree what, bool forward, bool step);
+  void search_stop ();
   void search_button_next ();
   bool search_keypress (string s);
   void replace_start (tree what, tree by, bool forward= true);

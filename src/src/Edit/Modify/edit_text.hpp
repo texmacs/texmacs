@@ -21,6 +21,7 @@ protected:
   bool pure_line (path p);
   bool accepts_return (path p);
   path prepare_for_insert ();
+  void get_deletion_point (path& p, int& l, int& r, tree& t, tree& u, bool f);
 
 public:
   edit_text_rep ();
@@ -31,10 +32,8 @@ public:
   void remove_return (path p);
   void insert_tree (tree t, path p_in_t);
   void insert_tree (tree t);
-  void remove_backwards ();
-  void remove_forwards ();
-  void remove_structure_backwards ();
-  void remove_structure_forwards ();
+  void remove_text (bool forward);
+  void remove_structure (bool forward);
   void remove_structure_upwards ();
 
   /******************************** format ***********************************/
@@ -47,7 +46,6 @@ public:
   void make_vspace_before (string smin, string sdef, string smax);
   void make_vspace_after (string s);
   void make_vspace_after (string smin, string sdef, string smax);
-  void make_format (string tag);
   void make_htab (string spc);
   void make_move (string x, string y);
   void make_resize (string x1, string y1, string x2, string y2);

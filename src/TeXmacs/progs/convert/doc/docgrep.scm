@@ -66,8 +66,7 @@
 	       ((string-before? s pos "<\\") "mode-invalid")
 	       ((string-before? s pos "<|") "mode-invalid")
 	       ((string-before? s pos "</") "mode-invalid")
-	       ((string-before? s pos "expand|") "mode-invalid")
-	       ((string-before? s pos "apply|") "mode-invalid")
+	       ((string-before? s pos "compound|") "mode-invalid")
 	       ((string-before? s pos "<name|") "mode-key")
 	       ((string-before? s pos "<markup|") "mode-key")
 	       ((string-before? s pos "<tmstyle|") "mode-key")
@@ -231,7 +230,7 @@
 
 (define (make-translate . args)
   (with s (apply string-append args)
-    `(translate ,s "english" (apply "language"))))
+    `(translate ,s "english" (value "language"))))
 
 (define (build-link-page keyword file-list)
   (let* ((lan (get-output-language))

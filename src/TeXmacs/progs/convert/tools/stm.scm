@@ -150,34 +150,15 @@
 ;; Texmacs objects predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stm-primitive? sym)
-  (check-arg-type symbol? sym "stm-primitive?")
-  (== 0 (tree-arity (object->tree (list sym)))))
+(tm-define (stm-primitive? label)
+  (:synopsis "Is it the label of a primitive texmacs construct?")
+  (:type ((:or symbol tree-label) -> bool))
+  (not (tree-label-extension? label)))
 
 (tm-define (stm-block-structure? x)
   (:synopsis "Is the texmacs document fragment @x a block-level structure?")
   (:type (scheme-tree -> bool))
-  (if (string? x) #f
-      (receive (key body) (car+cdr x)
-        (cond ((drd-ref block-structure% key)
-	       => (lambda (d) (if (procedure? d) (d body) d)))
-	       ((stm-primitive? key) #f)
-	       (else (block-structure?/expand
-		      (cons (symbol->string key) body)))))))
-
-(define (block-structure?/expand x)  
-  (and (not (== (first x) "footnote"))
-       (list-any stm-block-structure? (cdr x))))
-
-(drd-dispatcher block-structure%
-  (document #t)
-  (surround
-   (lambda (l) (stm-block-structure? (third l))))
-  ((:or datoms dlines dpages with)
-   (lambda (l) (stm-block-structure? (last l))))
-  (include #t)
-  ((:or expand var_expand hide_expand)
-   block-structure?/expand))
+  (tree-multi-paragraph? (object->tree x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Physical Predicates
@@ -193,26 +174,24 @@
   (and (stm-with? x) (stm-document? (last x))))
 (define (stm-label? x) (func? x 'label))
 (define (stm-line-break? x)
-  (in? x '((new_line) (next_line))))
+  (in? x '((new-line) (next-line))))
 
 ;; Expansion predicates
 
-(define (stm-expand-unary? x)
-  (and (pair? x)
-       (in? (first x) '(expand var_expand hide_expand))
-       (= 3 (length x))))
+(define (stm-compound-unary? x)
+  (and (pair? x) (== (first x) 'compound) (= 3 (length x))))
 
-(define (stm-expand-document? x)
-  (and (stm-expand-unary? x) (stm-document? (third x))))
+(define (stm-compound-document? x)
+  (and (stm-compound-unary? x) (stm-document? (third x))))
 
-(define (stm-implicit-expand? x)
+(define (stm-implicit-compound? x)
   (and (pair? x) (not (stm-primitive? (first x)))))
 
-(define (stm-implicit-expand-unary? x)
-  (and (stm-implicit-expand? x) (= 2 (length x))))
+(define (stm-implicit-compound-unary? x)
+  (and (stm-implicit-compound? x) (= 2 (length x))))
 
-(define (stm-implicit-expand-document? x)
-  (and (stm-implicit-expand-unary? x) (stm-document? (second x))))
+(define (stm-implicit-compound-document? x)
+  (and (stm-implicit-compound-unary? x) (stm-document? (second x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Logical Predicates
@@ -225,7 +204,7 @@
 
 (define (stm-block-environment? head)
   ;; A block environment must always contain a document node (not a concat).
-  (or (and (== (first head) 'with) (in? (second head) '("paragraph mode")))
+  (or (and (== (first head) 'with) (in? (second head) '("par-mode")))
       (in? (first head) '(quotation code))
       (stm-list-environment? head)))
 
@@ -277,7 +256,7 @@
 	   `(para ,(rec (second ser)) ,@(cddr ser)))
 	  ((stm-document? ser)
 	   `(document ,(rec (second ser)) ,@(cddr ser)))
-	  ((stm-expand-document? ser)
+	  ((stm-compound-document? ser)
 	   `(,(first ser) ,(second ser) ,(rec (third ser))))
 	  ((stm-with-document? ser)
 	   (rcons (but-last ser) (rec (last ser))))
@@ -289,7 +268,7 @@
 	       `(,(first ser) ,(rec (second ser)))
 	       ;; if section contains a document, produce invalid structure
 	       (stm-concat (list ser x))))
-	  ((stm-implicit-expand-document? ser)
+	  ((stm-implicit-compound-document? ser)
 	   `(,(first ser) ,(rec (second ser))))
 	  (else (stm-serial (list x ser))))))
 
@@ -369,7 +348,7 @@
 	(cons (cons kar line) tail))))
 
 (define (stm-unparse-lines l)
-  (list-concatenate (list-intersperse l '((next_line)))))
+  (list-concatenate (list-intersperse l '((next-line)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Line trimming

@@ -13,12 +13,14 @@
 #ifndef ENV_H
 #define ENV_H
 #include "vars.hpp"
+#include "drd_info.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "path.hpp"
 #include "hashmap.hpp"
 #include "boxes.hpp"
 #include "url.hpp"
+#include "Graphics/frame.hpp"
 
 #define DECORATION (-1)
 
@@ -41,12 +43,9 @@
 #define Env_Paragraph         12
 #define Env_Page              13
 #define Env_Preamble          14
-#define Env_Unit              15
-#define Env_Clip_Left         16
-#define Env_Clip_Bottom       17
-#define Env_Clip_Top          18
-#define Env_Clip_Right        19
-#define Env_Line_Width        20
+#define Env_Frame             15
+#define Env_Clipping          16
+#define Env_Line_Width        17
 
 /******************************************************************************
 * The edit environment
@@ -55,6 +54,7 @@
 class edit_env_rep: public concrete_struct {
 public:
   display                      dis;
+  drd_info&                    drd;
 private:
   hashmap<string,tree>         env;
   hashmap<string,tree>         back;
@@ -87,11 +87,9 @@ public:
   color     col;
   SI        lw;
   bool      preamble;
-  double    gr_unit;
-  double    gr_clip_left;
-  double    gr_clip_bottom;
-  double    gr_clip_right;
-  double    gr_clip_top;
+  frame     fr;
+  point     clip_lim1;
+  point     clip_lim2;
 
 public:
   tree exec_extra_list (tree t, int pos);
@@ -108,20 +106,19 @@ private:
   tree exec_with (tree t);
   void exec_until_with (tree t, path p);
   bool exec_until_with (tree t, path p, string var, int level);
-  tree exec_expand (tree t);
-  void exec_until_expand (tree t, path p);
-  bool exec_until_expand (tree t, path p, string var, int level);
-  tree exec_apply (tree t);
-  tree exec_include (tree t);
+  tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_argument (tree t);
   bool exec_until_argument (tree t, path p, string var, int level);
+  tree exec_get_label (tree t);
+  tree exec_get_arity (tree t);
+  tree exec_eval_args (tree t);
   tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);
-  tree exec_extension (tree t);
-  void exec_until_extension (tree t, path p);
-  bool exec_until_extension (tree t, path p, string var, int level);
+  tree exec_compound (tree t);
+  void exec_until_compound (tree t, path p);
+  bool exec_until_compound (tree t, path p, string var, int level);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);
@@ -151,14 +148,18 @@ private:
   tree exec_if (tree t);
   tree exec_case (tree t);
   tree exec_while (tree t);
-  tree exec_extern (tree t);
+  tree exec_rewrite (tree t);
 
   tree exec_mod_active (tree t, tree_label which);
   void exec_until_mod_active (tree t, path p);
   bool exec_until_mod_active (tree t, path p, string var, int level);
 
+  tree exec_point (tree t);
+
 public:
-  edit_env_rep (display dis, url base_file_name,
+  edit_env_rep (display dis,
+		drd_info& drd,
+		url base_file_name,
 		hashmap<string,tree>& local_ref,
 		hashmap<string,tree>& global_ref,
 		hashmap<string,tree>& local_aux,
@@ -172,6 +173,7 @@ public:
   string exec_string (tree t);        /* should be inline */
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
+  tree   rewrite (tree t);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }
@@ -185,9 +187,9 @@ public:
   inline void local_end (string s, tree t) {
      env (s)= t; update (s); }
   inline tree local_begin_script () {
-    return local_begin (INDEX_LEVEL, as_string (index_level+1)); }
+    return local_begin (MATH_LEVEL, as_string (index_level+1)); }
   inline void local_end_script (tree t) {
-    local_end (INDEX_LEVEL, t); }
+    local_end (MATH_LEVEL, t); }
   inline void assign (string s, tree t) {
     tree& val= env (s); t= exec(t); if (val != t) {
       back->write_back (s, env); val= t; update (s); } }
@@ -208,11 +210,14 @@ public:
   void   update_color ();
   void   update_mode ();
   void   update_language ();
+  void   update_frame ();
+  void   update_clipping ();
   void   update ();
   void   update (string env_var);
 
   /* miscellaneous and utilities */
   SI        decode_length (string l);
+  point     decode_point (tree t);
   space     decode_space (string l);
   inline SI decode_length (tree l) { return decode_length (as_string (l)); }
   void      get_length_unit (string l, SI& un, string& un_str);
@@ -220,7 +225,6 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
-  void      get_point (tree t, SI& x, SI& y, bool& error);
   void      get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			   SI& odd, SI& even, SI& top, SI& bottom);
 
@@ -256,7 +260,9 @@ public:
 
 class edit_env {
   CONCRETE(edit_env);
-  edit_env (display dis, url base_file_name,
+  edit_env (display dis,
+	    drd_info& drd,
+	    url base_file_name,
 	    hashmap<string,tree>& local_ref,
 	    hashmap<string,tree>& global_ref,
 	    hashmap<string,tree>& local_aux,

@@ -188,10 +188,10 @@ static bool
 heuristic_is_default (string name, int type) {
 #ifdef OS_WIN32
   // FIXME: we probably should take into account 'type' too
-  if((name[0] == '\\') && (name[1] == '\\'))
-		return true;
-  if(isalpha(name[0]) && (name[1] == ':') && (name[2] == '\\'))
-		return true;
+  if ((name[0] == '\\') && (name[1] == '\\'))
+    return true;
+  if (isalpha(name[0]) && (name[1] == ':') && (name[2] == '\\'))
+    return true;
   return false;
 #else
   char sep= (type==0)? URL_CONCATER: '/';
@@ -630,6 +630,7 @@ complete (url base, url sub, url u, string filter, bool flag) {
 url
 complete (url base, url u, string filter, bool flag) {
   if (is_none (base)) return base;
+  if (is_none (u)) return u;
   if ((!is_root (base)) && (!is_rooted_name (base))) {
     cerr << "base= " << base << LF;
     fatal_error ("invalid base url", "complete", "url.cpp");
@@ -671,7 +672,7 @@ complete (url base, url u, string filter, bool flag) {
   if (is_wildcard (u)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      cerr << "\nbase= " << base << "\n";
+      cerr << LF << "base= " << base << LF;
       fatal_error ("wildcards only implemented for files",
 		   "complete", "url.cpp");
     }
@@ -690,6 +691,7 @@ complete (url base, url u, string filter, bool flag) {
     }
     return ret;
   }
+  cout << LF << "url= " << u << LF;
   fatal_error ("bad url", "complete", "url.cpp");
 }
 
@@ -725,10 +727,12 @@ resolve_in_path (url u) {
   if (use_which) {
     string name = as_string (u);
     string which= var_eval_system ("which " * name * " 2> /dev/null");
-    if ((which != "") &&
-	(!starts (which, "which: ")) &&
-	(!starts (which, "no ")))
+    if (ends (which, name))
       return which;
+    else if ((which != "") &&
+	     (!starts (which, "which: ")) &&
+	     (!starts (which, "no ")))
+      cout << "TeXmacs] " << which << "\n";
   }
   return resolve (url_path ("$PATH") * u, "x");
 }

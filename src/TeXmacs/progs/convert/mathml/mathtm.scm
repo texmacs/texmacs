@@ -86,7 +86,7 @@
       (error "Parameter is not a mtable."))
   (let ((a (sxml-attr-list x))
 	(c (sxml-content x)))
-    (tmtable (list (tmformat-table "cell halign" "c"))
+    (tmtable (list (tmformat-table "cell-halign" "c"))
 	     (map (lambda (x) (mathtm-table-row env x)) c))))
 
 (define (mathtm-table-row env x)

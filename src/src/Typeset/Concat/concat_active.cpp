@@ -107,10 +107,10 @@ void
 concater_rep::typeset_specific (tree t, path ip) {
   string which= env->exec_string (t[0]);
   if (which == "texmacs") {
-    typeset_dynamic (t[1], descend (ip, 1));
-    //marker (descend (ip, 0));
-    //typeset (t[1], descend (ip, 1));
-    //marker (descend (ip, 1));
+    marker (descend (ip, 0));
+    typeset (t[1], descend (ip, 1));
+    marker (descend (ip, 1));
+    //typeset_dynamic (t[1], descend (ip, 1));
   }
   else if ((which == "screen") || (which == "printer")) {
     int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);
@@ -213,7 +213,7 @@ concater_rep::typeset_action (tree t, path ip) {
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
   path valip= decorate ();
-  if ((N(t) >= 3) && (is_func (t[2], ARGUMENT))) {
+  if ((N(t) >= 3) && (is_func (t[2], ARG))) {
     string var= env->exec_string (t[2][0]);
     tree   val= env->macro_arg->item [var];
     if ((var != "") && (!is_func (val, BACKUP))) {
@@ -239,90 +239,20 @@ concater_rep::typeset_meaning (tree t, path ip) {
   marker (descend (ip, 1));  
 }
 
-/******************************************************************************
-* Typesetting graphics
-******************************************************************************/
-
 void
-concater_rep::typeset_graphics (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
-}
-
-void
-concater_rep::typeset_superpose (tree t, path ip) {
-  int i, n= N(t);
-  array<box> bs (n);
-  for (i=0; i<n; i++)
-    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
-  print (STD_ITEM, composite_box (ip, bs));
-}
-
-void
-concater_rep::typeset_text_at (tree t, path ip) {
-  box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree   pos   = env->exec (t[1]);
-  string halign= as_string (env->exec (t[2]));
-  string valign= as_string (env->exec (t[3]));
-
-  bool error;
-  SI x, y;
-  env->get_point (pos, x, y, error);
-  if (halign == "left") x -= b->x1;
-  else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
-  else if (halign == "right") x -= b->x2;
-  if (valign == "bottom") y -= b->y1;
-  else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
-  else if (valign == "top") y -= b->y2;
-  print (STD_ITEM, move_box (ip, b, x, y));
-}
-
-void
-concater_rep::typeset_point (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
-}
-
-void
-concater_rep::typeset_line (tree t, path ip, bool close) {
-  int i, n= N(t);
-  tree u[n];
-  array<box> bs;
-  for (i=0; i<n; i++)
-    u[i]= env->exec (t[i]);
-  for (i=0; i<(close?n:n-1); i++) {
-    bool error= false;
-    SI x1, y1, x2, y2;
-    env->get_point (t[i], x1, y1, error);
-    env->get_point (t[(i+1)%n], x2, y2, error);
-    bs << line_box (decorate_right (ip), x1, y1, x2, y2, env->lw, env->col);
+concater_rep::typeset_flag (tree t, path ip) {
+  string name= env->exec_string (t[0]);
+  string col = env->exec_string (t[1]);
+  path sip= ip;
+  if ((N(t) >= 3) && (!nil (env->macro_src))) {
+    string var= env->exec_string (t[2]);
+    sip= env->macro_src->item [var];
   }
-  box b= composite_box (ip, bs);
-  print (STD_ITEM, b);
-}
-
-void
-concater_rep::typeset_spline (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
-}
-
-void
-concater_rep::typeset_var_spline (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
-}
-
-void
-concater_rep::typeset_cspline (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
-}
-
-void
-concater_rep::typeset_fill (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
+  if (is_accessible (sip) && (!env->read_only)) {
+    marker (descend (ip, 0));
+    flag_ok (name, ip, env->dis->get_color (col));
+    marker (descend (ip, 1));  
+  }
 }
 
 /******************************************************************************

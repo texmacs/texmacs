@@ -126,7 +126,7 @@ operator << (ostream& out, tree t) {
   else {
     int i, n= N(t);
     out << as_string (L(t));
-    if (n==0) return out;
+    if (n==0) return out << "()";
     out << " (";
     for (i=0; i< n-1; i++)
       out << t[i] << ", ";
@@ -168,12 +168,12 @@ hash (tree t) {
 
 bool
 is_document (tree t) {
-  return is_func (t, DOCUMENT);
+  return L(t) == DOCUMENT;
 }
 
 bool
 is_concat (tree t) {
-  return is_func (t, CONCAT);
+  return L(t) == CONCAT;
 }
 
 bool
@@ -183,19 +183,19 @@ is_format (tree t) {
 
 bool
 is_formatting (tree t) {
-  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DOUBLE_PAGE);
+  return (L(t)>=WITH_LIMITS) && (L(t)<=NEW_DPAGE);
 }
 
 bool
 is_table (tree t) {
   return
-    is_func (t, TABLE) || is_func (t, SUB_TABLE) ||
+    is_func (t, TABLE) || is_func (t, SUBTABLE) ||
     is_func (t, ROW) || is_func (t, CELL);
 }
 
 bool
 is_table_format (tree t) {
-  return is_func (t, TABLE_FORMAT);
+  return is_func (t, TFORMAT);
 }
 
 bool
@@ -205,24 +205,13 @@ is_multi_paragraph (tree t) {
     return true;
   case SURROUND:
     return is_multi_paragraph (t[2]);
-  case DECORATE_ATOMS:
-  case DECORATE_LINES:
-  case DECORATE_PAGES:
+  case DATOMS:
+  case DLINES:
+  case DPAGES:
   case WITH:
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    {
-      int i, n= N(t);
-      if (t[0] == "footnote") return false;
-      for (i=1; i<n; i++)
-	if (is_multi_paragraph (t[i]))
-	  return true;
-      return false;
-    }
   default:
     if (L(t) < START_EXTENSIONS) return false;
     else {
@@ -239,49 +228,22 @@ is_multi_paragraph (tree t) {
 bool
 is_script (tree t) {
   return
-    is_func (t, LEFT_SUB) || is_func (t, LEFT_SUP) ||
-    is_func (t, RIGHT_SUB) || is_func (t, RIGHT_SUP);
+    is_func (t, LSUB) || is_func (t, LSUP) ||
+    is_func (t, RSUB) || is_func (t, RSUP);
 }
 
 bool
 is_script (tree t, bool& right) {
-  if (is_func (t, LEFT_SUB) ||
-      is_func (t, LEFT_SUP)) { right=false; return true; }
-  if (is_func (t, RIGHT_SUB) ||
-      is_func (t, RIGHT_SUP)) { right=true; return true; }
+  if (is_func (t, LSUB) ||
+      is_func (t, LSUP)) { right=false; return true; }
+  if (is_func (t, RSUB) ||
+      is_func (t, RSUP)) { right=true; return true; }
   return false;
 }
 
 bool
 is_prime (tree t) {
-  return ((L(t) == LEFT_PRIME) || (L(t) == RIGHT_PRIME)) && (N(t) == 1);
-}
-
-bool
-is_expand (tree t) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND));
-}
-
-bool
-is_expand (tree t, int n) {
-  return ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND))
-    && (N(t) == n+1);
-}
-
-bool
-is_expand (tree t, string s) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) > 0) &&
-    (t[0] == s);
-}
-
-bool
-is_expand (tree t, string s, int n) {
-  return
-    ((L(t) == EXPAND) || (L(t) == VAR_EXPAND) || (L(t) == HIDE_EXPAND)) &&
-    (N(t) == n+1) &&
-    (t[0] == s);
+  return ((L(t) == LPRIME) || (L(t) == RPRIME)) && (N(t) == 1);
 }
 
 bool
@@ -291,11 +253,21 @@ is_inactive (tree t) {
     ((L(t) == INACTIVE) || (L(t) == VAR_INACTIVE));
 }
 
+bool
+is_empty (tree t) {
+  if (is_atomic (t)) return (t == "");
+  if (is_document (t) || is_concat (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (!is_empty (t[i])) return false;
+    return is_concat (t) || (n<=1);
+  }
+  return false;
+}
+
 /******************************************************************************
 * Compound trees
 ******************************************************************************/
-
-#ifdef WITH_EXTENSIONS
 
 tree
 compound (string s) {
@@ -323,6 +295,11 @@ compound (string s, tree t1, tree t2, tree t3, tree t4) {
 }
 
 bool
+is_extension(tree_label l) {
+  return l >= START_EXTENSIONS;
+}
+
+bool
 is_extension (tree t) {
   return L(t) >= START_EXTENSIONS;
 }
@@ -341,55 +318,6 @@ bool
 is_compound (tree t, string s, int n) {
   return (as_string (L(t)) == s) && (N(t) == n);
 }
-
-#else
-
-tree
-compound (string s) {
-  return tree (EXPAND, s);
-}
-
-tree
-compound (string s, tree t1) {
-  return tree (EXPAND, s, t1);
-}
-
-tree
-compound (string s, tree t1, tree t2) {
-  return tree (EXPAND, s, t1, t2);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3) {
-  return tree (EXPAND, s, t1, t2, t3);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3, tree t4) {
-  return tree (EXPAND, s, t1, t2, t3, t4);
-}
-
-bool
-is_extension (tree t) {
-  return is_expand (t);
-}
-
-bool
-is_extension (tree t, int n) {
-  return is_expand (t, n);
-}
-
-bool
-is_compound (tree t, string s) {
-  return is_expand (t, s);
-}
-
-bool
-is_compound (tree t, string s, int n) {
-  return is_expand (t, s, n);
-}
-
-#endif
 
 /******************************************************************************
 * Routines for simplification and correction

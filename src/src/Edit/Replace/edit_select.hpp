@@ -52,13 +52,17 @@ public:
   bool selection_active_small ();
   bool selection_active_enlarging ();
 
+  void selection_raw_set (string key, tree t);
+  tree selection_raw_get (string key);
   path selection_get_subtable (int& row1, int& col1, int& row2, int& col2);
   void selection_get (selection& sel);
   void selection_get (path& start, path& end);
+  path selection_get_start ();
+  path selection_get_end ();
   void selection_set (string key, tree t, bool persistant= false);
   void selection_set (tree t);
-  void selection_set_start ();
-  void selection_set_end ();
+  void selection_set_start (path p= path());
+  void selection_set_end (path p= path());
   void selection_copy (string key= "primary");
   void selection_paste (string key= "primary");
   void selection_clear (string key= "primary");

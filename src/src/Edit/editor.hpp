@@ -76,20 +76,15 @@ protected:
   virtual void   typeset (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
 
   /* protected subroutines for deletion of content */
-  virtual void back_prime (tree t, path p) = 0;
-  virtual void back_in_math (tree t, path p) = 0;
-  virtual void back_in_math_accent (tree t, path p) = 0;
-  virtual void back_in_tree (tree t, path p) = 0;
-  virtual void back_table (path p) = 0;
-  virtual void back_in_table (tree t, path p) = 0;
-  virtual void back_dynamic (path p) = 0;
-  virtual void back_expand (path p) = 0;
-  virtual void back_extension (path p) = 0;
-  virtual void back_hide_expand (path p) = 0;
-  virtual void back_in_dynamic (tree t, path p, int min_args=1, int with=1)= 0;
-  virtual void back_in_with (tree t, path p) = 0;
-  virtual void back_in_expand (tree t, path p) = 0;
-  virtual void back_in_extension (tree t, path p) = 0;
+  virtual void back_prime (tree t, path p, bool forward) = 0;
+  virtual void back_in_wide (tree t, path p, bool forward) = 0;
+  virtual void back_in_tree (tree t, path p, bool forward) = 0;
+  virtual void back_table (path p, bool forward) = 0;
+  virtual void back_in_table (tree t, path p, bool forward) = 0;
+  virtual void back_monolithic (path p) = 0;
+  virtual void back_general (path p, bool forward) = 0;
+  virtual void back_in_with (tree t, path p, bool forward) = 0;
+  virtual void back_in_general (tree t, path p, bool forward) = 0;
 
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
@@ -144,6 +139,7 @@ public:
   virtual void mouse_paste (SI x, SI y) = 0;
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
+  virtual cursor get_cursor () = 0;
   virtual void set_message (string l, string r= "") = 0;
   virtual void interactive (scheme_tree args, scheme_tree cmd) = 0;
 
@@ -157,8 +153,10 @@ public:
   virtual void go_page_up () = 0;
   virtual void go_page_down () = 0;
   virtual void go_to (path p) = 0;
+  virtual void go_to_correct (path p) = 0;
   virtual void go_to_start (path p) = 0;
   virtual void go_to_end (path p) = 0;
+  virtual void go_to_border (path p, bool at_start) = 0;
   virtual void go_to_here () = 0;
   virtual void go_start () = 0;
   virtual void go_end () = 0;
@@ -171,6 +169,14 @@ public:
   virtual void go_to_label (string s) = 0;
   virtual tree get_labels () = 0;
 
+  /* public routines from edit_graphics */
+  virtual bool   inside_graphics () = 0;
+  virtual frame  find_frame () = 0;
+  virtual void   find_limits (point& lim1, point& lim2) = 0;
+  virtual point  adjust (point p) = 0;
+  virtual tree   find_point (point p) = 0;
+  virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
+
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
   virtual SI       decode_length (string l) = 0;
@@ -178,6 +184,7 @@ public:
   virtual string   multiply_length (double x, string l) = 0;
   virtual bool     is_length (string s) = 0;
   virtual double   divide_lengths (string l1, string l2) = 0;
+  virtual void     drd_update () = 0;
   virtual bool     defined_at_cursor (string var_name) = 0;
   virtual bool     defined_at_init (string var_name) = 0;
   virtual bool     defined_in_init (string var_name) = 0;
@@ -230,10 +237,8 @@ public:
   virtual void remove_return (path p) = 0;
   virtual void insert_tree (tree t, path p_in_t) = 0;
   virtual void insert_tree (tree t) = 0;
-  virtual void remove_backwards () = 0;
-  virtual void remove_forwards () = 0;
-  virtual void remove_structure_backwards () = 0;
-  virtual void remove_structure_forwards () = 0;
+  virtual void remove_text (bool forward) = 0;
+  virtual void remove_structure (bool forward) = 0;
   virtual void remove_structure_upwards () = 0;
 
   virtual void make_space (tree t) = 0;
@@ -245,7 +250,6 @@ public:
   virtual void make_vspace_before (string smin, string sdef, string smax) = 0;
   virtual void make_vspace_after (string s) = 0;
   virtual void make_vspace_after (string smin, string sdef, string smax) = 0;
-  virtual void make_format (string tag) = 0;
   virtual void make_htab (string spc) = 0;
   virtual void make_move (string x, string y) = 0;
   virtual void make_resize (string x1, string y1, string x2, string y2) = 0;
@@ -273,17 +277,17 @@ public:
 
   virtual bool inside_tree () = 0;
   virtual void branch_insert (bool at_right) = 0;
-  virtual void branch_delete () = 0;
+  virtual void branch_delete (bool forward) = 0;
 
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;
-  virtual void   make_sub_table (int nr_rows=1, int nr_cols=1) = 0;
+  virtual void   make_subtable (int nr_rows=1, int nr_cols=1) = 0;
   virtual void   table_disactivate () = 0;
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;
   virtual void   table_insert_column (bool forward) = 0;
-  virtual void   table_delete_row (bool backward) = 0;
-  virtual void   table_delete_column (bool backward) = 0;
+  virtual void   table_delete_row (bool forward) = 0;
+  virtual void   table_delete_column (bool forward) = 0;
   virtual int    table_nr_rows () = 0;
   virtual int    table_nr_columns () = 0;
   virtual int    table_which_row () = 0;
@@ -306,23 +310,27 @@ public:
   virtual void   table_test () = 0;
 
   /* public routines from edit_dynamic */
-  virtual path find_dynamic (path p) = 0;
-  virtual path find_deactivated (path p) = 0;
   virtual bool in_preamble_mode () = 0;
   virtual bool is_deactivated () = 0;
+  virtual path find_deactivated (path p) = 0;
+  virtual path find_dynamic (path p) = 0;
+  virtual void make_compound (tree_label l, int n=-1) = 0;
   virtual void activate () = 0;
-  virtual void make_active (string op, int n) = 0;
-  virtual void make_deactivated (tree t, path p) = 0;
-  virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
+  virtual void go_to_argument (path p, bool start_flag) = 0;
+  virtual void insert_argument (path p, bool forward) = 0;
+  virtual void insert_argument (bool forward) = 0;
+  virtual void remove_argument (path p, bool forward) = 0;
+  virtual void make_with (string var, string val) = 0;
+  virtual void insert_with (path p, string var, tree val) = 0;
+  virtual void remove_with (path p, string var) = 0;
+  virtual void make_hybrid () = 0;
+  virtual bool activate_latex () = 0;
+  virtual void activate_hybrid () = 0;
+  virtual void activate_symbol () = 0;
+  virtual void activate_compound () = 0;
   virtual bool make_return_before () = 0;
   virtual bool make_return_after () = 0;
-  virtual void make_assign (tree var, tree by) = 0;
-  virtual void make_with (string var, string val) = 0;
-  virtual bool make_big_expand (string s) = 0;
-  virtual void make_expand (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
-  virtual void make_apply (string s) = 0;
-  virtual void insert_argument () = 0;
 
   /* public routines from edit_process */
   virtual void make_session (string lan, string session) = 0;
@@ -337,14 +345,12 @@ public:
   virtual void session_go_right () = 0;
   virtual void session_go_page_up () = 0;
   virtual void session_go_page_down () = 0;
-  virtual void session_remove_backwards () = 0;
-  virtual void session_remove_forwards () = 0;
+  virtual void session_remove (bool forward) = 0;
   virtual void session_insert_text_field () = 0;
   virtual void session_insert_input_below () = 0;
   virtual void session_insert_input_above () = 0;
   virtual void session_fold_input () = 0;
-  virtual void session_remove_input_backwards () = 0;
-  virtual void session_remove_input_forwards () = 0;
+  virtual void session_remove_input (bool forward) = 0;
   virtual void session_remove_all_outputs () = 0;
   virtual void session_remove_previous_output () = 0;
   virtual void session_split () = 0;
@@ -374,13 +380,17 @@ public:
   virtual bool selection_active_small () = 0;
   virtual bool selection_active_enlarging () = 0;
 
+  virtual void selection_raw_set (string key, tree t) = 0;
+  virtual tree selection_raw_get (string key) = 0;
   virtual path selection_get_subtable (int& i1, int& j1, int& i2, int& j2) = 0;
   virtual void selection_get (selection& sel) = 0;
   virtual void selection_get (path& start, path& end) = 0;
+  virtual path selection_get_start () = 0;
+  virtual path selection_get_end () = 0;
   virtual void selection_set (string key, tree t, bool persistant= false) = 0;
   virtual void selection_set (tree t) = 0;
-  virtual void selection_set_start () = 0;
-  virtual void selection_set_end () = 0;
+  virtual void selection_set_start (path p= path()) = 0;
+  virtual void selection_set_end (path p= path()) = 0;
   virtual void selection_copy (string key= "primary") = 0;
   virtual void selection_paste (string key= "primary") = 0;
   virtual void selection_clear (string key= "primary") = 0;
@@ -400,18 +410,18 @@ public:
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;
   virtual bool inside (tree_label l) = 0;
-  virtual bool inside_expand (string name) = 0;
+  virtual bool inside_compound (string name) = 0;
   virtual bool inside_with (string var, string val) = 0;
   virtual string inside_which (tree t) = 0;
   virtual path search_upwards (string what) = 0;
   virtual path search_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l, int& last) = 0;
-  virtual path search_upwards_expand (string name) = 0;
+  virtual path search_upwards_compound (string name) = 0;
   virtual path search_upwards_with (string var, string val) = 0;
   virtual path search_upwards_in_set (tree t) = 0;
-  virtual path search_previous_expand (path init, string which) = 0;
-  virtual path search_next_expand (path init, string which) = 0;
+  virtual path search_previous_compound (path init, string which) = 0;
+  virtual path search_next_compound (path init, string which) = 0;
   virtual void search_start (bool forward= true) = 0;
   virtual void search_button_next () = 0;
   virtual bool search_keypress (string s) = 0;

@@ -81,6 +81,7 @@ public:
   virtual bool no_bufs () = 0;
   virtual bool no_name () = 0;
   virtual bool help_buffer () = 0;
+  virtual void revert_buffer (url name, tree doc) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
   virtual void browse_help (int delta) = 0;
@@ -94,6 +95,7 @@ public:
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
   virtual void save_buffer (url name, string fm) = 0;
   virtual void auto_save () = 0;
+  virtual void delayed_autosave () = 0;
   virtual bool buffer_unsaved () = 0;
   virtual bool exists_unsaved_buffer () = 0;
   virtual void pretend_save_buffer () = 0;
@@ -113,9 +115,10 @@ public:
 
   virtual void style_update_menu () = 0;
   virtual void style_clear_cache () = 0;
-  virtual void style_set_cache (tree style, hashmap<string,tree> H) = 0;
-  virtual void style_get_cache (tree style, hashmap<string,tree>& H,
-				bool& flag) = 0;
+  virtual void style_set_cache (
+            tree style, hashmap<string,tree> H, tree drd) = 0;
+  virtual void style_get_cache (
+	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
 
   /* getting window properties */
   virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;

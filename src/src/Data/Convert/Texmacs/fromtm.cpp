@@ -176,18 +176,13 @@ get_collection (tree& u, tree t) {
 tree
 tm_reader::read_apply (string name, bool skip_flag) {
   // cout << "Read apply " << name << INDENT << LF;
-#ifdef WITH_EXTENSIONS
   tree t (make_tree_label (name));
-  if (!with_extensions) {
+  if (!with_extensions)
     t= tree (EXPAND_APPLY, name);
-    if (codes->contains (name))
-      t= tree ((tree_label) codes [name]);
-  }
-#else
-  tree t (EXPAND_APPLY, name);
-  if (codes->contains (name))
+  if (codes->contains (name)) {
+    // cout << "  " << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
     t= tree ((tree_label) codes [name]);
-#endif
+  }
 
   bool closed= !skip_flag;
   while (pos < N(buf)) {
@@ -276,18 +271,13 @@ tm_reader::read (bool skip_flag) {
 	  C << read_apply (name, false);
 	}
 	else {
-#ifdef WITH_EXTENSIONS
 	  tree t (make_tree_label (name));
-	  if (!with_extensions) {
+	  if (!with_extensions)
 	    t= tree (EXPAND_APPLY, name);
-	    if (codes->contains (name))
-	      t= tree ((tree_label) codes [name]);
-	  }
-#else
-	  tree t (EXPAND_APPLY, name);
-	  if (codes->contains (name))
+	  if (codes->contains (name)) {
+	    // cout << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
 	    t= tree ((tree_label) codes [name]);
-#endif
+	  }
 	  C << t;
 	}
       }
@@ -336,6 +326,11 @@ texmacs_to_tree (string s, string version) {
 static bool
 is_apply (tree t, string s, int n) {
   return (L(t) == APPLY) && (N(t) == n+1) && (t[0] == s);
+}
+
+static bool
+is_expand (tree t, string s, int n) {
+  return (L(t) == EXPAND) && (N(t) == n+1) && (t[0] == s);
 }
 
 tree

@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menus menu-text)
-  (:use
-    (texmacs edit edit-text) (texmacs edit edit-format)
-    (texmacs edit edit-preamble)))
+  (:use (texmacs edit edit-text) (texmacs edit edit-format)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers
@@ -23,68 +21,66 @@
 
 (menu-bind letter-header-menu
   (when (not (inside? "letter-header"))
-	("Header" (make-big-expand "letter-header")))
+	("Header" (make 'letter-header)))
   (when (inside? "letter-header")
-	("Address" (make-header-expand "address"))
-	("Date" (make-header-expand "letter-date"))
-	("Today" (begin (make-header-expand "letter-date") (make-date)))
-	("Destination" (make-header-expand "destination")))
+	("Address" (make-header 'address))
+	("Date" (make-header 'letter-date))
+	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
+	("Destination" (make-header 'destination)))
   ---
   (when (not (inside? "letter-header"))
-	("Opening" (make-big-expand "opening"))
-	("Closing" (make-big-expand "closing"))
-	("Signature" (make-big-expand "signature")))
+	("Opening" (make 'opening))
+	("Closing" (make 'closing))
+	("Signature" (make 'signature)))
   ---
-  ("C.C." (make-big-expand "cc"))
-  ("Encl." (make-big-expand "encl")))
+  ("C.C." (make 'cc))
+  ("Encl." (make 'encl)))
 
 (menu-bind exam-header-menu
-  ("Class" (make-header-expand "class"))
-  ("Date" (begin (go-end-of-header-element)
-		 (make-expand-arg "title-date")))
-  ("Title" (make-header-expand "title")))
+  ("Class" (make-header 'class))
+  ("Date" (begin (go-end-of-header-element) (make 'title-date)))
+  ("Title" (make-header 'title)))
 
 (menu-bind title-menu
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Make title" (begin (make-big-expand "make-title")
-			     (make-expand-arg "title"))))
+	("Make title" (begin (make 'make-title) (make 'title))))
   (when (inside? "make-title")
-	("Title" (make-header-expand "title"))
-	("Author" (make-header-expand "author"))
-	("Address" (make-header-expand "address"))
-	("Email" (make-header-expand "title-email"))
-	("Date" (make-header-expand "title-date"))
+	("Title" (make-header 'title))
+	("Author" (make-header 'author))
+	("Address" (make-header 'address))
+	("Email" (make-header 'title-email))
+	("Date" (make-header 'title-date))
 	---
-	("TeXmacs notice" (make-expand "made-by-TeXmacs"))
-	("Running title" (make-header-apply "header-title"))
-	("Running author" (make-header-apply "header-author"))
-	("Address block" (make-expand-arg "address-block"))
-	("Today" (begin (make-header-expand "title-date")
-			(make-date))))
+	("TeXmacs notice" (make 'made-by-TeXmacs))
+	("Running title" (make-header 'header-title))
+	("Running author" (make-header 'header-author))
+	("Address block" (make 'address-block))
+	("Today" (begin (make-header 'title-date)
+			(make-arity 'date 0))))
   ---
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Abstract" (make-big-expand "abstract")))
+	("Abstract" (make 'abstract)))
   (when (and (not (inside? "make-title")) (inside? "abstract"))
-	("Keywords" (make-section-arg "keywords"))
-	("A.M.S. subject classification" (make-section-arg "AMS-class"))))
+	("Keywords" (make-section 'keywords))
+	("A.M.S. subject classification" (make-section 'AMS-class))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind chapter-menu
-  ("Chapter" (make-section-arg "chapter"))
-  ("Appendix" (make-section-arg "appendix"))
-  ("Prologue" (make-section "prologue"))
-  ("Epilogue" (make-section "epilogue")))
+  ("Chapter" (make-section 'chapter))
+  ("Appendix" (make-section 'appendix))
+  ("Prologue" (make-unnamed-section 'prologue))
+  ("Epilogue" (make-unnamed-section 'epilogue)))
 
 (menu-bind section-menu
-  ("Section" (make-section-arg "section"))
-  ("Subsection" (make-section-arg "subsection"))
-  ("Subsubsection" (make-section-arg "subsubsection"))
+  ("Section" (make-section 'section))
+  ("Subsection" (make-section 'subsection))
+  ("Subsubsection" (make-section 'subsubsection))
   ---
-  ("Paragraph" (make-section-arg "paragraph"))
-  ("Subparagraph" (make-section-arg "subparagraph")))
+  ("Paragraph" (make-section 'paragraph))
+  ("Subparagraph" (make-section 'subparagraph)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Theorem like environments
@@ -92,79 +88,79 @@
 
 (menu-bind environment-menu
   (if (style-has? "header-exam-dtd")
-      ("Exercise" (make-big-expand "exercise"))
-      ("Problem" (make-big-expand "problem")))
+      ("Exercise" (make 'exercise))
+      ("Problem" (make 'problem)))
   (if (not (style-has? "header-exam-dtd"))
       (if (style-has? "env-default-dtd")
-	  ("Theorem" (make-big-expand "theorem"))
-	  ("Proposition" (make-big-expand "proposition"))
-	  ("Lemma" (make-big-expand "lemma"))
-	  ("Corollary" (make-big-expand "corollary"))
-	  ("Proof" (make-big-expand "proof"))
-	  ("Axiom" (make-big-expand "axiom"))
-	  ("Definition" (make-big-expand "definition"))
+	  ("Theorem" (make 'theorem))
+	  ("Proposition" (make 'proposition))
+	  ("Lemma" (make 'lemma))
+	  ("Corollary" (make 'corollary))
+	  ("Proof" (make 'proof))
+	  ("Axiom" (make 'axiom))
+	  ("Definition" (make 'definition))
 	  ---
-	  ("Remark" (make-big-expand "remark"))
-	  ("Note" (make-big-expand "note"))
-	  ("Example" (make-big-expand "example"))
-	  ("Warning" (make-big-expand "warning"))
-	  ("Exercise" (make-big-expand "exercise"))
-	  ("Problem" (make-big-expand "problem"))
+	  ("Remark" (make 'remark))
+	  ("Note" (make 'note))
+	  ("Example" (make 'example))
+	  ("Warning" (make 'warning))
+	  ("Exercise" (make 'exercise))
+	  ("Problem" (make 'problem))
 	  ---)
-      ("Verbatim" (make-big-expand "verbatim"))
-      ("Code" (make-big-expand "code"))
-      ("Quote" (make-big-expand "quote-env"))
-      ("Quotation" (make-big-expand "quotation"))
-      ("Verse" (make-big-expand "verse"))))
+      ("Verbatim" (make 'verbatim))
+      ("Code" (make 'code))
+      ("Quote" (make 'quote-env))
+      ("Quotation" (make 'quotation))
+      ("Verse" (make 'verse))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind content-tag-menu
-  ("Strong" (make-expand-arg "strong"))
-  ("Emphasize" (make-expand-arg "em"))
-  ("Definition" (make-expand-arg "dfn"))
-  ("Sample" (make-expand-arg "samp"))
+  ("Strong" (make 'strong))
+  ("Emphasize" (make 'em))
+  ("Definition" (make 'dfn))
+  ("Sample" (make 'samp))
   ---
-  ("Name" (make-expand-arg "name"))
-  ("Person" (make-expand-arg "person"))
-  ("Cite" (make-expand-arg "cite*"))
-  ("Abbreviation" (make-expand-arg "abbr"))
-  ("Acronym" (make-expand-arg "acronym"))
+  ("Name" (make 'name))
+  ("Person" (make 'person))
+  ("Cite" (make 'cite*))
+  ("Abbreviation" (make 'abbr))
+  ("Acronym" (make 'acronym))
   ---
-  ("Verbatim" (make-expand-arg "verbatim"))
-  ("Keyboard" (make-expand-arg "kbd"))
-  ("Code" (make-expand-arg "code*"))
-  ("Variable" (make-expand-arg "var")))
+  ("Verbatim" (make 'verbatim))
+  ("Keyboard" (make 'kbd))
+  ("Code" (make 'code*))
+  ("Variable" (make 'var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind itemize-menu
-  ("Default" (make-tmlist "itemize"))
+  ("Default" (make-tmlist 'itemize))
   ---
-  ("Bullets" (make-tmlist "itemize-dot"))
-  ("Dashes" (make-tmlist "itemize-minus"))
-  ("Arrows" (make-tmlist "itemize-arrow")))
+  ("Bullets" (make-tmlist 'itemize-dot))
+  ("Dashes" (make-tmlist 'itemize-minus))
+  ("Arrows" (make-tmlist 'itemize-arrow)))
 
 (menu-bind enumerate-menu
-  ("Default" (make-tmlist "enumerate"))
+  ("Default" (make-tmlist 'enumerate))
   ---
-  ("1, 2, 3, ..." (make-tmlist "enumerate-numeric"))
-  ("i, ii, iii, ..." (make-tmlist "enumerate-roman"))
-  ("I, II, III, ..." (make-tmlist "enumerate-Roman"))
-  ("a, b, c, ..." (make-tmlist "enumerate-alpha"))
-  ("A, B, C, ..." (make-tmlist "enumerate-Alpha")))
+  ("1, 2, 3, ..." (make-tmlist 'enumerate-numeric))
+  ("i, ii, iii, ..." (make-tmlist 'enumerate-roman))
+  ("I, II, III, ..." (make-tmlist 'enumerate-Roman))
+  ("a, b, c, ..." (make-tmlist 'enumerate-alpha))
+  ("A, B, C, ..." (make-tmlist 'enumerate-Alpha)))
 
 (menu-bind description-menu
-  ("Default" (make-tmlist "description"))
+  ("Default" (make-tmlist 'description))
   ---
-  ("Compact" (make-tmlist "description-compact"))
-  ("Aligned" (make-tmlist "description-aligned"))
-  ("Dashes" (make-tmlist "description-dash"))
-  ("Long" (make-tmlist "description-long")))
+  ("Compact" (make-tmlist 'description-compact))
+  ("Aligned" (make-tmlist 'description-aligned))
+  ("Dashes" (make-tmlist 'description-dash))
+  ("Long" (make-tmlist 'description-long)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatically generated content
@@ -188,8 +184,8 @@
   ("Formula" "$" (make-with "mode" "math"))
   (if (style-has? "env-math-dtd")
       ---
-      ("Equation" (begin (make-big-expand "equation*") (temp-proof-fix)))
-      ("Equations" (begin (make-expand-arg "eqnarray*") (temp-proof-fix)))))
+      ("Equation" (begin (make 'equation*) (temp-proof-fix)))
+      ("Equations" (begin (make 'eqnarray*) (temp-proof-fix)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus
@@ -259,13 +255,13 @@
 	  (link environment-menu)))
   (=> (balloon (icon "tm_parstyle.xpm") "Set paragraph mode")
       ((balloon (icon "tm_left.xpm") "Align text to the left")
-       (make-line-with "paragraph mode" "left"))
+       (make-line-with "par-mode" "left"))
       ((balloon (icon "tm_center.xpm") "Center text")
-       (make-line-with "paragraph mode" "center"))
+       (make-line-with "par-mode" "center"))
       ((balloon (icon "tm_right.xpm") "Align text to the right")
-       (make-line-with "paragraph mode" "right"))
+       (make-line-with "par-mode" "right"))
       ((balloon (icon "tm_justify.xpm") "Justify text")
-       (make-line-with "paragraph mode" "justify")))
+       (make-line-with "par-mode" "justify")))
   (=> (balloon (icon "tm_parindent.xpm") "Set paragraph margins")
       ("Left margin" (interactive '("Left margin:") 'set-left-margin))
       ("Right margin" (interactive '("Right margin:") 'set-right-margin))
@@ -300,6 +296,8 @@
   |
   (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
       (link insert-mathematics-menu))
+  ;((balloon (icon "tm_insert_graphics.xpm") "Insert graphics")
+  ;(make-graphics))
   (if (style-has? "program-dtd")
       (=> (balloon (icon "tm_shell.xpm")
 		   "Start an interactive session")
@@ -318,25 +316,25 @@
       ;;((balloon
       ;;(text (roman rm bold right 12 600) "S")
       ;;"Write bold text#(A-C-b)")
-      ;;(make-with "font series" "bold"))
+      ;;(make-with "font-series" "bold"))
       ((balloon (icon "tm_emphasize.xpm") "Emphasize text#(F5)")
-       (make-expand-arg "em"))
+       (make 'em))
       ((balloon (icon "tm_strong.xpm") "Write strong text#(F6)")
-       (make-expand-arg "strong"))
+       (make 'strong))
       ((balloon (icon "tm_verbatim.xpm") "Write verbatim text#(F7)")
-       (make-expand-arg "verbatim"))
+       (make 'verbatim))
       ((balloon (icon "tm_sansserif.xpm") "Write sample text#(F8)")
-       (make-expand-arg "samp"))
+       (make 'samp))
       ((balloon (icon "tm_name.xpm") "Write a name#(S-F6)")
-       (make-expand-arg "name")))
+       (make 'name)))
   (if (not (style-has? "std-markup-dtd"))
       ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
-       (make-with "font shape" "italic"))
+       (make-with "font-shape" "italic"))
       ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")
-       (make-with "font series" "bold"))
+       (make-with "font-series" "bold"))
       ((balloon (icon "tm_typewriter.xpm") "Use a typewriter font#(A-C-t)")
-       (make-with "font family" "tt"))
+       (make-with "font-family" "tt"))
       ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font#(A-C-s)")
-       (make-with "font family" "ss"))
+       (make-with "font-family" "ss"))
       ((balloon (icon "tm_smallcaps.xpm") "Use small capitals#(A-C-p)")
-       (make-with "font shape" "small-caps"))))
+       (make-with "font-shape" "small-caps"))))

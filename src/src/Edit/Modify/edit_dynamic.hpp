@@ -19,35 +19,38 @@ public:
   edit_dynamic_rep ();
   ~edit_dynamic_rep ();
 
-  path find_dynamic (path p);
-  path find_deactivated (path p);
   bool in_preamble_mode ();
   bool is_deactivated ();
+  path find_deactivated (path p);
+  path find_dynamic (path p);
+
   bool is_multi_paragraph_macro (tree t);
-  void activate_macro (path p, string name, tree f);
+  void make_compound (tree_label l, int n);
   void activate ();
 
-  void make_active (string op, int n);
-  void make_deactivated (tree t, path p);
-  void make_deactivated (string op, int n, string rfooter, string arg);
+  void go_to_argument (path p, bool start_flag);
+  void insert_argument (path p, bool forward);
+  void insert_argument (bool forward);
+  void remove_argument (path p, bool forward);
+
+  void back_monolithic (path p);
+  void back_general (path p, bool forward);
+  void back_in_general (tree t, path p, bool forward);
+
+  void make_with (string var, string val);
+  void insert_with (path p, string var, tree val);
+  void remove_with (path p, string var);
+  void back_in_with (tree t, path p, bool forward);
+
+  void make_hybrid ();
+  bool activate_latex ();
+  void activate_hybrid ();
+  void activate_symbol ();
+  void activate_compound ();
+
   bool make_return_before ();
   bool make_return_after ();
-  void make_assign (tree var, tree by);
-  void make_with (string var, string val);
-  bool make_big_expand (string s);
-  void make_expand (string s, int n=0);
   void temp_proof_fix ();
-  void make_apply (string s);
-  void insert_argument ();
-
-  void back_dynamic (path p);
-  void back_expand (path p);
-  void back_hide_expand (path p);
-  void back_extension (path p);
-  void back_in_dynamic (tree t, path p, int min_args=1, int with=1);
-  void back_in_with (tree t, path p);
-  void back_in_expand (tree t, path p);
-  void back_in_extension (tree t, path p);
 };
 
 #endif // defined EDIT_DYNAMIC_H

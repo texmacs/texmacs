@@ -17,13 +17,10 @@ bridge bridge_document (typesetter, tree, path);
 bridge bridge_surround (typesetter, tree, path);
 bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
-bridge bridge_expand (typesetter, tree, path);
-bridge bridge_apply (typesetter, tree, path);
-bridge bridge_include (typesetter, tree, path);
+bridge bridge_rewrite (typesetter, tree, path);
 bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
-bridge bridge_extension (typesetter, tree, path);
-bridge bridge_executable (typesetter, tree, path);
+bridge bridge_compound (typesetter, tree, path);
 
 bridge nil_bridge;
 
@@ -42,31 +39,27 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_document (ttt, st, ip);
   case SURROUND:
     return bridge_surround (ttt, st, ip);
-  case DECORATE_ATOMS:
+  case DATOMS:
     return bridge_formatting (ttt, st, ip, ATOM_DECORATIONS);
-  case DECORATE_LINES:
+  case DLINES:
     return bridge_formatting (ttt, st, ip, LINE_DECORATIONS);
-  case DECORATE_PAGES:
+  case DPAGES:
     return bridge_formatting (ttt, st, ip, PAGE_DECORATIONS);
-  case TABLE_FORMAT:
+  case TFORMAT:
     return bridge_formatting (ttt, st, ip, CELL_FORMAT);
   case WITH:
     return bridge_with (ttt, st, ip);
-  case EXPAND:
-  case VAR_EXPAND:
-  case HIDE_EXPAND:
-    return bridge_expand (ttt, st, ip);
-  case APPLY:
-    return bridge_apply (ttt, st, ip);
-  case INCLUDE:
-    return bridge_include (ttt, st, ip);
-  case ARGUMENT:
+  case ARG:
     return bridge_argument (ttt, st, ip);
+  case COMPOUND:
+    return bridge_compound (ttt, st, ip);
   case EXTERN:
-    return bridge_executable (ttt, st, ip);
+    return bridge_rewrite (ttt, st, ip);
+  case INCLUDE:
+    return bridge_rewrite (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
-    else return bridge_extension (ttt, st, ip);
+    else return bridge_compound (ttt, st, ip);
   }
 }
 

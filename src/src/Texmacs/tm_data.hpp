@@ -32,7 +32,6 @@ protected:
   /* Low level buffer manipulation */
   tm_buffer new_buffer (url name);
   tm_buffer new_buffer (url name, tree t);
-  void      revert_buffer (url name, tree doc);
   void      delete_buffer (tm_buffer buf);
   void      set_name_buffer (url name);
   url       get_name_buffer ();
@@ -74,6 +73,7 @@ public:
   bool no_bufs ();
   bool no_name ();
   bool help_buffer ();
+  void revert_buffer (url name, tree doc);
   void set_aux_buffer (string aux, url name, tree doc);
   void set_help_buffer (url name, tree doc);
   void browse_help (int delta);
@@ -88,6 +88,7 @@ public:
   void load_buffer (url name, string fm, int where= 0, bool asf= false);
   void save_buffer (url name, string fm);
   void auto_save ();
+  void delayed_autosave ();
   bool buffer_unsaved ();
   bool exists_unsaved_buffer ();
   void pretend_save_buffer ();

@@ -20,6 +20,7 @@
 #include "font.hpp"
 #include "language.hpp"
 #include "hashmap.hpp"
+#include "Graphics/frame.hpp"
 
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
@@ -82,6 +83,7 @@ ostream& operator << (ostream& out, selection sel);
 
 class box_rep;
 class lazy;
+typedef array<double> point;
 
 class box {
   ABSTRACT_NULL(box);
@@ -161,7 +163,7 @@ public:
   cursor    find_check_cursor (path p);
   selection find_check_selection (path lp, path rp);
 
-  /**************************** obsolete routines ****************************/
+  /************************ fine typesetting routines ************************/
 
   virtual double    left_slope ();
   virtual double    right_slope ();
@@ -176,6 +178,14 @@ public:
   virtual SI        sup_lo_lim  (int level);
   virtual SI        sup_lo_base (int level);
   virtual SI        sup_hi_lim  (int level);
+
+  /*************************** for graphical boxes ***************************/
+
+  virtual frame     get_frame ();
+  virtual void      get_limits (point& lim1, point& lim2);
+
+  frame     find_frame (path bp);
+  void      find_limits (path bp, point& lim1, point& lim2);
 
   /************************** retrieving information *************************/
 

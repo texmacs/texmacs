@@ -13,6 +13,7 @@
 #ifndef CURVE_H
 #define CURVE_H
 #include "point.hpp"
+#include "polynomial.hpp"
 
 class curve_rep: public abstract_struct {
 public:
@@ -32,22 +33,38 @@ public:
   // has a uniform distance of at most 'err' to the original curve
 
   virtual void rectify_cumul (array<point>& a, double err) = 0;
-  // add rectification of the curve  (except for the staring point)
+  // add rectification of the curve  (except for the starting point)
   // to an existing polysegment
 
-  /* NOTE: more routines should be added later so that one
-     can reliably compute the intersections between curves */
+  /*
+  NOTE: more routines should be added later so that one
+  can reliably compute the intersections between curves
+  One might for instance take the following:
+
+  virtual double bound (double t, double err) = 0;
+  // return delta such that |t' - t| < delta => |c(t') - c(t)| < err.
+
+  virtual point grad (double t, bool& error) = 0;
+  // compute the first derivative at t.
+  // set error= true if this derivative does not exist.
+
+  virtual double curvature (double t1, double t2) = 0;
+  // compute a bound for the second derivative between t1 and t2.
+  // return a very large number if such a bound does not exist.
+  */
 };
 
 class curve {
   ABSTRACT_NULL(curve);
-  curve (point p1, point p2); // straight curve
   inline point operator () (double t) { return rep->evaluate (t); }
   inline bool operator == (curve c) { return rep == c.rep; }
   inline bool operator != (curve c) { return rep != c.rep; }
 };
 ABSTRACT_NULL_CODE(curve);
 
+curve segment (point p1, point p2);
+curve poly_segment (array<point> a);
+curve spline (array<point> a, bool close=false);
 curve operator * (curve c1, curve c2);
 curve invert (curve c);
 

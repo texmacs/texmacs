@@ -24,6 +24,13 @@ concater_rep::typeset_inactive (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_eval_args (tree t, path ip) { 
+  marker (descend (ip, 0));
+  typeset (env->exec (t), decorate_right (ip), false);
+  marker (descend (ip, 1));
+}
+
+void
 concater_rep::typeset_inactive (
   string type, tree t, path ip, int pos1, int pos2)
 {
@@ -91,8 +98,14 @@ concater_rep::typeset_inactive_hybrid (tree t, path ip) {
   tree old_col= env->local_begin (COLOR, "dark green");
   typeset (t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
-  ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
-  // ghost (">", descend (ip, 1));
+  if (N(t) == 2) {
+    print (space (0, 0, env->fn->spc->max));
+    ghost ("|", descend (descend (ip, 1), 0));
+    print (space (0, 0, env->fn->spc->max));
+    typeset (t[1], descend (ip, 1));
+  }
+  if (N(t) == 0) ghost (">", descend (ip, 1));
+  else ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);
@@ -104,9 +117,9 @@ concater_rep::typeset_inactive_specific (tree t, path ip) {
   string mode, var, value;
   if (flag) {
     mode= env->get_string (MODE);
-    if (mode == "text") { var=TEXT_FAMILY; value="tt"; }
-    else if (mode == "math") { var=MATH_FAMILY; value="mt"; }
-    else { var=PROG_FAMILY; value="tt"; }
+    if (mode == "text") { var=FONT_FAMILY; value="tt"; }
+    else if (mode == "math") { var=MATH_FONT_FAMILY; value="mt"; }
+    else { var=PROG_FONT_FAMILY; value="tt"; }
   }
 
   penalty_min (0);
@@ -126,19 +139,19 @@ concater_rep::typeset_inactive_specific (tree t, path ip) {
   if (flag) old= env->local_begin (var, value);
   typeset (t[1], descend (ip, 1));
   if (flag) env->local_end (var, old);
-  ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
+  if (N(t) == 0) ghost (">", descend (ip, 1));
+  else ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);
 }
 
 void
-concater_rep::typeset_inactive_expand_apply (tree t, path ip, bool flag) {
+concater_rep::typeset_inactive_compound (tree t, path ip) {
   int i;
   penalty_min (0);
   marker (descend (ip, 0));
-  ghost (flag? string ("<"): string ("{"),
-	 descend (descend (ip, 0), 0));
+  ghost ("<", descend (descend (ip, 0), 0));
   tree old_col= env->local_begin (COLOR, "dark green");
   typeset (t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
@@ -149,8 +162,8 @@ concater_rep::typeset_inactive_expand_apply (tree t, path ip, bool flag) {
     if (i<N(t)-1) penalty_min (0);
     typeset (t[i], descend (ip, i));
   }
-  ghost (flag? string (">"): string ("}"),
-	 descend (descend (ip, i-1), right_index (t[i-1])));
+  ghost (">", N(t) == 0? descend (ip, 1):
+	                 descend (descend (ip, i-1), right_index (t[i-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);
@@ -170,12 +183,13 @@ concater_rep::typeset_inactive_action (string type, tree t, path ip) {
     ghost ("|", descend (descend (ip, i), 0));
     print (space (0, 0, env->fn->spc->max));
     if (i< (n-1)) penalty_min (0);
-    if (i==(n-1)) old_tf= env->local_begin (TEXT_FAMILY, "tt");
+    if (i==(n-1)) old_tf= env->local_begin (FONT_FAMILY, "tt");
     typeset (t[i], descend (ip, i));
-    if (i==(n-1)) env->local_end (TEXT_FAMILY, old_tf);
+    if (i==(n-1)) env->local_end (FONT_FAMILY, old_tf);
     // ghost ("}", descend (descend (ip, i), right_index (t[i])));
   }
-  ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
+  if (N(t) == 0) ghost (">", descend (ip, 1));
+  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
   penalty_min (0);
@@ -210,7 +224,8 @@ concater_rep::typeset_unknown (string which, tree t, path ip, bool flag) {
     if (i==0) env->local_end (COLOR, old_col);
     // ghost ("}", descend (descend (ip, i), right_index (t[i])));
   }
-  ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
+  if (N(t) == 0) ghost (">", descend (ip, 1));
+  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
   int end= N(a);
   for (i=start; i<end; i++)
     a[i]->b->relocate (decorate_right (ip), true);

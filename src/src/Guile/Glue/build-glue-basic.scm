@@ -18,8 +18,6 @@
   ""
   "initialize_glue_basic"
 
-  (tmp-d-exp get_d_exp (int))
-  (tmp-d-hide-exp get_d_hide_exp (int))
   (texmacs-version-release texmacs_version (string string))
 
   (tree->object tree_to_scheme_tree (scheme_tree tree))
@@ -39,6 +37,8 @@
   (tree-set! tree_set (void texmacs_tree int texmacs_tree))
   (subtree subtree (texmacs_tree texmacs_tree path))
   (tree-copy copy (tree tree))
+  (tree-label-extension? is_extension (bool tree_label))
+  (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
 
   (parse-texmacs texmacs_document_to_tree (tree string))
@@ -135,6 +135,7 @@
   (locase-all locase_all (string string))
   (utf8->cork utf8_to_cork (string string))
   (cork->utf8 cork_to_utf8 (string string))
+  (utf8->html utf8_to_html (string string))
   (tm->xml-name tm_to_xml_name (string string))
   (tm->xml-cdata tm_to_xml_cdata (string string))
   (xml-name->tm xml_name_to_tm (string string))

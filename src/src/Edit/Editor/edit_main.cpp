@@ -35,11 +35,11 @@
 
 editor_rep::editor_rep ():
   attribute_widget_rep (dis),
-  drd (std_drd), et (buf->t) {}
+  drd (buf->abbr, std_drd), et (buf->t) {}
 
 editor_rep::editor_rep (server_rep* sv2, display dis, tm_buffer buf2):
   attribute_widget_rep (dis),
-  sv (sv2), buf (buf2), drd (std_drd), et (buf2->t) {}
+  sv (sv2), buf (buf2), drd (buf->abbr, std_drd), et (buf2->t) {}
 
 edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   editor_rep (sv, dis, buf), props (UNKNOWN)
@@ -312,9 +312,9 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::process_input () {
-  path p= search_upwards_expand ("input");
-  if (nil (p) || (N (subtree (et, p)) != (2+d_exp))) return;
-  tree t= subtree (et, p) [1+d_exp];
+  path p= search_upwards_compound ("input");
+  if (nil (p) || (N (subtree (et, p)) != 2)) return;
+  tree t= subtree (et, p) [1];
   string lan= get_env_string (PROG_LANGUAGE);
 
   if (lan == "scheme") {

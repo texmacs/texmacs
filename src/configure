@@ -851,7 +851,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-x                use the X Window System
   --with-iconv=DIR        where to find iconv system
-  --with-freetype=DIR     with freetype support yes
+  --with-freetype=ARG     with freetype support ARG=linked
 
 Some influential environment variables:
   CC          C compiler command
@@ -1215,10 +1215,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 PACKAGE="TeXmacs"
-VERSION="1.0.2.5"
+VERSION="1.0.3"
 RELEASE="1"
-STABLE_VERSION="1.0.2"
-STABLE_RELEASE="3"
+STABLE_VERSION="1.0.3"
+STABLE_RELEASE="1"
 
 
 
@@ -4957,9 +4957,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 #--------------------------------------------------------------------
 
 
-# Check whether --with-iconv or --without-iconv was given.
-if test "${with_iconv+set}" = set; then
-  withval="$with_iconv"
+# Check whether --with-freetype or --without-freetype was given.
+if test "${with_freetype+set}" = set; then
+  withval="$with_freetype"
 
 fi;
 
@@ -5118,7 +5118,7 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 echo "${ECHO_T}yes" >&6
     CONFIG_USE_FREETYPE="#define USE_FREETYPE"
     FREETYPE_CFLAGS="$CPPFLAGS"
-    if test "$with_freetype" = "linked" ; then
+    if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
       FREETYPE_LDFLAGS="$LIBS"
       CONFIG_LINKED_FREETYPE="#define LINKED_FREETYPE"
     fi
@@ -6352,7 +6352,7 @@ tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
 # Done
 #--------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile:Makefile.in src/common.makefile:src/common.makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
+ac_config_files="$ac_config_files Makefile:Makefile.in src/common.makefile:src/common.makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6852,6 +6852,7 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.in" ;;
   "src/common.makefile" ) CONFIG_FILES="$CONFIG_FILES src/common.makefile:src/common.makefile.in" ;;
   "src/System/tm_configure.hpp" ) CONFIG_FILES="$CONFIG_FILES src/System/tm_configure.hpp:src/System/tm_configure.in" ;;
+  "misc/admin/admin.makefile" ) CONFIG_FILES="$CONFIG_FILES misc/admin/admin.makefile:misc/admin/admin.makefile.in" ;;
   "misc/doxygen/Doxyfile" ) CONFIG_FILES="$CONFIG_FILES misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in" ;;
   "misc/man/texmacs.1" ) CONFIG_FILES="$CONFIG_FILES misc/man/texmacs.1:misc/man/texmacs.1.in" ;;
   "misc/rpm/TeXmacs.spec" ) CONFIG_FILES="$CONFIG_FILES misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in" ;;

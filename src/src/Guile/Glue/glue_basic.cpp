@@ -13,24 +13,6 @@
 ******************************************************************************/
 
 SCM
-tmg_tmp_d_exp () {
-  // SCM_DEFER_INTS;
-  int out= get_d_exp ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_tmp_d_hide_exp () {
-  // SCM_DEFER_INTS;
-  int out= get_d_hide_exp ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_texmacs_version_release (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "texmacs-version-release");
 
@@ -282,6 +264,32 @@ tmg_tree_copy (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_label_extensionP (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree-label-extension?");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_extension (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_multi_paragraphP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-multi-paragraph?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_multi_paragraph (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -1437,6 +1445,19 @@ tmg_cork_2utf8 (SCM arg1) {
 }
 
 SCM
+tmg_utf8_2html (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->html");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= utf8_to_html (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_tm_2xml_name (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-name");
 
@@ -2064,8 +2085,6 @@ tmg_object_2make_widget (SCM arg1) {
 
 void
 initialize_glue_basic () {
-  gh_new_procedure ("tmp-d-exp", (FN) tmg_tmp_d_exp, 0, 0, 0);
-  gh_new_procedure ("tmp-d-hide-exp", (FN) tmg_tmp_d_hide_exp, 0, 0, 0);
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
   gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);
@@ -2084,6 +2103,8 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
+  gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
+  gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
   gh_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   gh_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
@@ -2172,6 +2193,7 @@ initialize_glue_basic () {
   gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
   gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
   gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
+  gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
   gh_new_procedure ("tm->xml-name", (FN) tmg_tm_2xml_name, 1, 0, 0);
   gh_new_procedure ("tm->xml-cdata", (FN) tmg_tm_2xml_cdata, 1, 0, 0);
   gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);

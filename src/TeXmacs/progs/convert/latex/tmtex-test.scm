@@ -57,20 +57,20 @@
 	 `(tabular* ,(tformat '() '(("a" "b") ("c" "d"))))
 	 (tabular "cc" '(("a" "b") ("c" "d"))))
    (test "tabular*, first col aligned right"
-	 `(tabular* ,(tformat (list (colwith "1" "cell halign" "r"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell-halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (tabular "rc" '(("a" "b") ("c" "d"))))
    (test "tabular*, whole table aligned right"
-	 `(tabular* ,(tformat (list (allwith "cell halign" "r"))
+	 `(tabular* ,(tformat (list (allwith "cell-halign" "r"))
 			      '(("a" "b") ("c" "d"))))
 	 (tabular "rr" '(("a" "b") ("c" "d"))))
    (test "tabular*, one row border"
-	 `(tabular* ,(tformat (list (rowwith "1" "cell bborder" "1ln"))
+	 `(tabular* ,(tformat (list (rowwith "1" "cell-bborder" "1ln"))
 			      '(("a" "b") ("c" "d"))))
 	 `((!begin "tabular" "cc") (!table ,@(!row-hline '("a" "b"))
 					   ,(!row '("c" "d")))))
    (test "tabular*, one col border"
-	 `(tabular* ,(tformat (list (colwith "1" "cell bborder" "1ln"))
+	 `(tabular* ,(tformat (list (colwith "1" "cell-bborder" "1ln"))
 			      '(("a" "b") ("c" "d"))))
 	 (tabular "cc" '(("a" "b") ("c" "d"))))))
 

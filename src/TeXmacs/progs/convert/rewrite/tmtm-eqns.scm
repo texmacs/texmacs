@@ -83,4 +83,4 @@
 
 ;; ATTENTION: output may not be concat-simplified
 (define (tmtm-nonumber->eqnumber t)
-  (tmtm-eqnumber<->nonumber t '(apply "nonumber") '(eqnumber)))
+  (tmtm-eqnumber<->nonumber t '(nonumber) '(eqnumber)))
