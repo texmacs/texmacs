@@ -1,11 +1,16 @@
 <TeXmacs|1.0.2.9>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|tmdoc-web>>
 
 <\body>
   <assign|mmxdoc-style|1.0>
 
   <assign|mmx|<with|font-shape|small-caps|Mathemagix>>
+
+  \;
+
+  <assign|mmxweb-main-links|<macro|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Download|download>|<tmweb-link|Progress|progress>|<tmweb-link|Mailing
+  lists|ml>|<tmweb-link|Contact|contact>>>>
 
   \;
 </body>
