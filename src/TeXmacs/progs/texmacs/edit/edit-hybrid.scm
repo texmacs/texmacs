@@ -47,14 +47,7 @@
 	((== x "latex") (activate-latex))
 	((== x "symbol") (activate-symbol))
 	((== x "inactive") (activate))
-	((== x "title")
-	 (if (inside? "make-title")
-	     (make-header 'author)
-	     (return-sectional)))
-	((== x "author")
-	 (if (inside? "make-title")
-	     (make-header 'address)
-	     (return-sectional)))
+	((== x "title") (return-sectional)) ;; still needed for exams
 	((== x "doc-title") (make-doc-data-element 'doc-author-data))
 	((== x "author-name") (make-author-data-element 'author-address))
 	((== x "doc-inactive") (doc-data-activate-here))
@@ -71,7 +64,7 @@
 		  "enumerate" "enumerate-numeric" "enumerate-roman"
 		  "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"
 		  "description" "description-compact" "description-aligned"
-		   "description-dash" "description-long"))
+		  "description-dash" "description-long"))
 	 (make-item))
 	((inside? "compound") (activate-compound))
 	(else (insert-return))))
@@ -79,7 +72,7 @@
 (define (make-return)
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
-		   "title" "author" "doc-title" "author-name" "doc-inactive"
+		   "title" "doc-title" "author-name" "doc-inactive"
 		   "part" "part*" "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
 		   "section*" "subsection*" "subsubsection*"
