@@ -105,6 +105,34 @@
 
   <assign|page-mnote-sep|<macro|<tex-margin-par-sep>>>
 
+  <active*|<\src-comment>
+    Default TeX values for equation layout and analogues in TeXmacs.
+  </src-comment>>
+
+  <assign|tex-jot|<macro|0.25fn>>
+
+  <assign|tex-above-display-skip|<macro|0.75fn>>
+
+  <assign|tex-below-display-skip|<macro|0.75fn>>
+
+  <assign|tex-above-display-short-skip|<macro|0.15fn>>
+
+  <assign|tex-below-display-short-skip|<macro|0.15fn>>
+
+  \;
+
+  <assign|eqn-short-above|<macro|<plus|<value|par-sep>|<tex-above-display-short-skip>>>>
+
+  <assign|eqn-short-below|<macro|<plus|<value|par-sep>|<tex-below-display-short-skip>>>>
+
+  <assign|eqn-long-above|<macro|<minus|<tex-above-display-skip>|<tex-jot>>>>
+
+  <assign|eqn-long-below|<macro|<minus|<tex-below-display-skip>|<tex-jot>>>>
+
+  <assign|eqn-row-sep|<macro|<plus|<value|par-sep>|<tex-jot>>>>
+
+  <assign|eqn-ver-sep|<macro|<style-with|src-compact|none|<over|<style-with|src-compact|none|<minus|<tex-above-display-skip>|<tex-below-display-skip>|<plus|<tex-above-display-short-skip>|<tex-below-display-short-skip>>>>|2>>>>
+
   \;
 </body>
 
