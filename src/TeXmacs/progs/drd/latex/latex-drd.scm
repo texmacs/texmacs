@@ -27,11 +27,15 @@
 (drd-group latex-command-0%
   #{\ }# #{\;}# #{\,}# #{\:}#
   - / [ ] ! * | i j ss SS oe OE ae AE
-  quad qquad par smallskip medskip bigskip nopagebreak
+  quad qquad par smallskip medskip bigskip nopagebreak noindent
+  newline linebreak nolinebreak
   newblock bgroup egroup protect cr date hfill appendix nolimits
 
   ;; temporarily
-  hline)
+  hline
+
+  ;; rewritten
+  notin vert Vert addots)
 
 (drd-group latex-command-1%
   usepackage chapter chapter*
@@ -42,10 +46,11 @@
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
   bar hat tilde widehat widetilde vec grave acute check breve
   dot ddot dddot ddddot
-  label ref pageref index hspace hspace* vspace vspace* mbox text not
+  label ref pageref index hspace hspace* vspace vspace*
+  mbox hbox text not
   #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
-  arabic)
+  arabic displaylines cases underbrace overbrace)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
