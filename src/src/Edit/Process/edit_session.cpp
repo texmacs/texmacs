@@ -16,6 +16,81 @@
 #include "convert.hpp"
 #include "analyze.hpp"
 #include "file.hpp"
+#include "timer.hpp"
+
+/******************************************************************************
+* Constructors and destructors
+******************************************************************************/
+
+edit_process_rep::edit_process_rep ():
+  new_mutators (false), mutators_updated (false),
+  nr_mutators (0), next_mutate (texmacs_time()),
+  math_input (false), message_l (""), message_r ("") {}
+edit_process_rep::~edit_process_rep () {}
+
+/******************************************************************************
+* Mutators
+******************************************************************************/
+
+#define MUTATE_FAST_INTERACTION 100
+#define MUTATE_SLOW_INTERACTION 500
+
+static path mutator_path;
+static string MUTATOR ("mutator");
+
+static int
+mutate (tree t, path ip) {
+  if (is_atomic (t)) return 0;
+  else if (is_compound (t, MUTATOR, 2)) {
+    mutator_path= reverse (path (0, ip));
+    string s= as_string (t[1]); // eval_secure (s);
+    if (s != "")
+      if (as_bool (eval ("(secure? '" * s * ")")))
+	(void) eval (s);
+    return 1;
+  }
+  else {
+    int i, n= N(t), sum=0;
+    for (i=0; i<n; i++)
+      sum += mutate (t[i], path (i, ip));
+    return sum;
+  }
+}
+
+void
+edit_process_rep::process_mutators () {
+  if (mutators_updated && (nr_mutators == 0)) return;
+  if (texmacs_time() < next_mutate) return;
+  new_mutators= false;
+  mutators_updated= true;
+  nr_mutators= mutate (subtree (et, rp), reverse (rp));
+  if (!mutators_updated) {
+    // cout << "Mutation occurred\n";
+    next_mutate= texmacs_time () + MUTATE_FAST_INTERACTION;
+  }
+  else {
+    // cout << "No mutations occurred\n";
+    next_mutate= texmacs_time () + MUTATE_SLOW_INTERACTION;
+  }
+}
+
+path
+edit_process_rep::get_mutator_path () {
+  return mutator_path;
+}
+
+void
+edit_process_rep::invalidate_mutators () {
+  mutators_updated= false;
+  if (new_mutators) next_mutate= texmacs_time ()+ MUTATE_FAST_INTERACTION;
+  else next_mutate= texmacs_time ()+ MUTATE_SLOW_INTERACTION;
+}
+
+void
+edit_process_rep::insert_mutator (tree body, string cmd) {
+  new_mutators= true;
+  insert_tree (compound ("mutator", body, cmd), path (0, end (body)));
+}
 
 /******************************************************************************
 * Other useful subroutines
@@ -40,54 +115,47 @@ is_var_empty (tree t) {
 
 void
 edit_process_rep::make_session (string lan, string session) {
+  /* add plug-in style package if provided */
   string lolan= locase_all (lan);
   if ((lolan != lan) && (!connection_declared (lan))) lan= lolan;
   if (exists (url ("$TEXMACS_STYLE_PATH", lan * ".ts")))
     init_extra_style (lan, true);
 
-  /* These two lines will become obsolete */
-  if (make_return_after ()) return;
-  if (make_return_before ()) return;
-  /* -------------------------------------*/
-
+  /* insert session tag and output tag for start-up banner */
   path p (4, path (0, path (0, 0)));
   tree body (DOCUMENT, "");
   tree w= tree (WITH);
   w << PROG_LANGUAGE << lan << PROG_SESSION << session
     << compound ("session", body);
   insert_tree (w, p);
-  if (connection_declared (lan)) connect ();
-  else start_input ();
+  insert_tree (compound ("output", tree (DOCUMENT, "")), path (0, 0, 0));
+
+  /* start asynchronous connection */
+  string handle= as_string (call ("plugin-async-start", lan, session));
+  if (starts (handle, "error:")) {
+    path op= search_upwards ("output");
+    if (!nil (op)) start_input (lan, session, op);
+    set_message (handle (7, N(handle)), "connect#" * lan);
+  }
+  else {
+    string cmd= "(mutate-plugin-result \"" * handle * "\")";
+    insert_mutator (tree (DOCUMENT, ""), cmd);
+  }
 }
 
 void
-edit_process_rep::start_input () {
-  path p;
-  bool needs_return= false;
-  if (!nil (p= search_upwards ("input"))) {
-    needs_return= true;
-    go_to (p * 1);
-  }
-  else if (!nil (p= search_upwards ("output"))) {
-    needs_return= true;
-    tree st= subtree (et, p);
-    if ((N(st) == 1) && is_var_empty (st [0])) {
-      cut (p);
-      remove_text (false);
-      if (is_compound (subtree (et, path_up (tp, 2)), "session", 1)) {
-	// fixes bug for empty startup banners
-	needs_return= false;
-	tp= end (et, path_up (tp, 2) * 0);
-      }
-    }
-    else go_to (p * 1);
-  }
+edit_process_rep::start_input (string lan, string session, path p) {
+  /* consistency checks and remove empty output */
+  bool cursor_inside= (p <= tp);
+  tree st= subtree (et, p);
+  if (!is_compound (st, "output")) return;
+  if (!is_document (subtree (et, path_up (p)))) return;
+  if ((N(st) == 1) && is_var_empty (st [0])) remove (p, 1);
+  else p= path_inc (p);
 
-  string lan    = get_env_string (PROG_LANGUAGE);
-  string session= get_env_string (PROG_SESSION);
+  /* get prompt and default input */
   tree   prompt = "";
   tree   input  = "";
-
   if (connection_declared (lan)) {
     prompt = connection_read (lan, session, "prompt");
     input  = connection_read (lan, session, "input");
@@ -102,30 +170,64 @@ edit_process_rep::start_input () {
   if (!is_document (input)) input= tree (DOCUMENT, input);
   if (math_input) input= compound ("math", input);
 
-  path q = path_up (tp, 2);
-  int  i = last_item (path_up (tp));
-  tree st= subtree (et, q);
-  if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "textput", 1))
-    i++;
-  if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "input", 2)) {
+  /* skip textput tags, remove old input tag and insert new input tag */
+  while ((last_item (p) < N (subtree (et, path_up (p)))) &&
+	 is_compound (subtree (et, p), "textput", 1))
+    p= path_inc (p);
+  if ((last_item (p) < N (subtree (et, path_up (p)))) &&
+      is_compound (subtree (et, p), "input", 2)) {
     if (is_var_empty (input)) {
-      input= copy (st[i+1][1]);
+      input= copy (subtree (et, p)[1]);
       math_input= is_compound (input, "math", 1);
     }
-    assign (q * (i+1), compound ("input", prompt, input));
-    go_to_correct (q * path (i+1, 1, end (input)));
+    remove (p, 1);
   }
-  else {
-    if (needs_return) insert_return ();
-    insert_tree (compound ("input", prompt, input),
-		 path (1, end (input)));
-  }
+  insert (p, tree (DOCUMENT, compound ("input", prompt, input)));
+  if (cursor_inside)
+    go_to_correct (p * path (1, end (input)));
+
+  /* footer messages */
   if (message_l != "") {
     set_message (message_l, message_r);
     message_l= "";
     message_r= "";
   }
   else set_message ("", "");
+}
+
+void
+edit_process_rep::process_input () {
+  path p= search_upwards ("input");
+  if (nil (p) || (N (subtree (et, p)) != 2)) return;
+  tree t= subtree (et, p) [1];
+  string lan= get_env_string (PROG_LANGUAGE);
+
+  if (lan == "scheme") {
+    start_output ();
+    tree u= sv->evaluate ("scheme", "default", t);
+    if (!is_document (u)) u= tree (DOCUMENT, u);
+    insert_tree (u);
+    path op= search_upwards ("output");
+    if (!nil (op)) start_input ("scheme", "default", op);
+  }
+  else if (connection_declared (lan)) {
+    start_output ();
+    string session= get_env_string (PROG_SESSION);
+    string handle= as_string (call ("plugin-async-feed", lan, session, t));
+    if (starts (handle, "error:")) {
+      path op= search_upwards ("output");
+      if (!nil (op)) start_input (lan, session, op);    
+      set_message (handle (7, N(handle)), "connect#" * lan);
+    }
+    else {
+      string cmd= "(mutate-plugin-result \"" * handle * "\")";
+      insert_mutator (tree (DOCUMENT, ""), cmd);
+    }
+  }
+  else {
+    set_message ("Package#'" * lan * "'#not declared",
+		 "Evaluate#'" * lan * "'#expression");
+  }
 }
 
 void
@@ -184,6 +286,34 @@ edit_process_rep::session_use_math_input (bool flag) {
 bool
 edit_process_rep::session_is_using_math_input () {
   return math_input;
+}
+
+int
+edit_process_rep::status_connection () {
+  string lan    = get_env_string (PROG_LANGUAGE);
+  string session= get_env_string (PROG_SESSION);
+  return connection_status (lan, session);
+}
+
+bool
+edit_process_rep::busy_connection () {
+  return status_connection () == WAITING_FOR_OUTPUT;
+}
+
+void
+edit_process_rep::interrupt_connection () {
+  string lan    = get_env_string (PROG_LANGUAGE);
+  string session= get_env_string (PROG_SESSION);
+  if (connection_status (lan, session) == WAITING_FOR_OUTPUT)
+    connection_interrupt (lan, session);
+}
+
+void
+edit_process_rep::stop_connection () {
+  string lan    = get_env_string (PROG_LANGUAGE);
+  string session= get_env_string (PROG_SESSION);
+  if (connection_status (lan, session) != CONNECTION_DEAD)
+    connection_stop (lan, session);
 }
 
 /******************************************************************************

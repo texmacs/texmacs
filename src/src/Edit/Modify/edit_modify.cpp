@@ -312,6 +312,7 @@ void
 edit_modify_rep::post_notify (path p) {
   if (!(rp <= p)) return;
   selection_cancel ();
+  invalidate_mutators ();
   notify_change (THE_TREE);
   FOR_ALL_POINTERS_BEGIN
     pp= correct_cursor (et, pp);
@@ -529,14 +530,14 @@ edit_modify_rep::assign_diff (path p, tree t) {
   tree st= subtree (et, p);
   if (t == st) return;
   if (is_atomic (t) || (L(t) != L(st))) {
-    assign (p, t);
+    assign (p, copy (t));
     return;
   }
   int i, n= min (N(st), N(t));
   for (i=0; i<n; i++)
     assign_diff (p * i, t[i]);
   if (n < N(st)) remove (p * n, N(st)-n);
-  else if (n < N(t)) insert (p * n, t (n, N(t)));
+  else if (n < N(t)) insert (p * n, copy (t) (n, N(t)));
 }
 
 /******************************************************************************

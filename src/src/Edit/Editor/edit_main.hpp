@@ -75,8 +75,8 @@ public:
   void footer_eval (string s);
   tree the_line ();
   tree the_buffer ();
+  tree the_subtree (path p);
   path the_path ();
-  void process_input ();
 
   void show_tree ();
   void show_env ();

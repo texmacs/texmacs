@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs plugin plugin-cmd)
-  (:export plugin-async-feed plugin-async-retrieve
+  (:export plugin-async-start plugin-async-feed plugin-async-retrieve
+	   mutate-plugin-result
            pre-serialize verbatim-serialize generic-serialize plugin-serialize
 	   plugin-serializer-set! format-command plugin-commander-set!
 	   plugin-eval
@@ -38,10 +39,24 @@
     (ahash-set! plugin-current (list name session channel) handle)
     handle))
 
+(define (plugin-async-start name session)
+  "Start an asynchronous connection"
+  (if (connection-declared? name)
+      (with status (connection-status name session)
+	(cond ((== status 0)
+	       (with handle (plugin-async-new name session "output")
+		 (with message (connection-start name session #f)
+		   (if (== message "ok") handle
+		       (string-append "error: " message)))))
+	      ((== status 2)
+	       (string-append "error: continuing#" name "#session"))
+	      (else (string-append "error: " name "#is busy"))))
+      (string-append "error: plug-in '" name "' not declared")))
+
 (define (plugin-async-feed name session t)
   "Evaluate tree @t for plug-in @name and return unique handle or error"
   (with status (connection-status name session)
-    (cond ((in? status '(3 1)) "error: busy")
+    (cond ((in? status '(3 1)) (string-append "error: " name "#is busy"))
 	  ((== status 0)
 	   (with message (connection-start name session #t)
 	     (if (== message "ok")
@@ -54,10 +69,10 @@
 
 (define (plugin-async-active? handle)
   "Is the evaluation still going on?"
-  (and (ahash-ref plugin-source handle)
-       (with (name session channel) (ahash-ref plugin-source handle)
-	 (and (== (ahash-ref (list name session channel)) handle)
-	      (== (connection-status name session) 3)))))
+  (with source (ahash-ref plugin-source handle)
+    (and source (with (name session channel) source
+		  (and (== (ahash-ref plugin-current source) handle)
+		       (== (connection-status name session) 3))))))
 
 (define (plugin-async-append doc1 name session channel flag?)
   (with doc2 (connection-read name session channel)
@@ -81,6 +96,18 @@
 		(set! doc (plugin-async-append doc name session "error" #t)))
 	    (ahash-set! plugin-results handle doc)))))
   (ahash-ref plugin-results handle))
+
+(tm-define (mutate-plugin-result handle)
+  (:secure #t)
+  (let* ((p (the-mutator-path))
+	 (doc (plugin-async-retrieve handle)))
+    (cond ((not doc) (noop))
+	  ((plugin-async-active? handle) (tm-assign-diff p doc))
+	  ((and (>= (length p) 3)
+		(== (tree-get-label (tm-subtree (cDDDr p))) 'output))
+	   (with (name session channel) (ahash-ref plugin-source handle)
+	     (tm-assign (cDDr p) doc)
+	     (start-input name session (cDDDr p)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization

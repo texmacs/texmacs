@@ -237,7 +237,7 @@ connection_read (string name, string session, string channel) {
     con->read (LINK_OUT);
     t= con->tm_in->get (channel);
   }
-  // cout << "Read result " << t << "\n";
+  // cout << "Result " << t << "\n";
   return t;
 }
 
@@ -284,6 +284,7 @@ connection_get (string name, string session) {
 
 static tree
 connection_retrieve (string name, string session) {
+  // cout << "Retrieve " << name << ", " << session << "\n";
   connection con= connection (name * "-" * session);
   if (nil (con)) return "";
   tree doc (DOCUMENT);
@@ -296,6 +297,7 @@ connection_retrieve (string name, string session) {
     if (con->status == WAITING_FOR_INPUT) break;
   }
   if (N(doc) == 0) return "";
+  // cout << "Retrieved " << doc << "\n";
   return doc;
 }
 

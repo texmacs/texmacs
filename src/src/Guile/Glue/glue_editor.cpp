@@ -2159,18 +2159,17 @@ tmg_make_session (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_start_input () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->start_input ();
-  // SCM_ALLOW_INTS;
+tmg_start_input (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "start-input");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "start-input");
+  SCM_ASSERT_PATH (arg3, SCM_ARG3, "start-input");
 
-  return SCM_UNSPECIFIED;
-}
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  path in3= scm_to_path (arg3);
 
-SCM
-tmg_start_output () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->start_output ();
+  get_server()->get_editor()->start_input (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2542,6 +2541,19 @@ tmg_length_divide (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return double_to_scm (out);
+}
+
+SCM
+tmg_tm_subtree (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-subtree");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->the_subtree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
 }
 
 SCM
@@ -2987,8 +2999,7 @@ initialize_glue_editor () {
   gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
   gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
   gh_new_procedure ("make-session", (FN) tmg_make_session, 2, 0, 0);
-  gh_new_procedure ("start-input", (FN) tmg_start_input, 0, 0, 0);
-  gh_new_procedure ("start-output", (FN) tmg_start_output, 0, 0, 0);
+  gh_new_procedure ("start-input", (FN) tmg_start_input, 3, 0, 0);
   gh_new_procedure ("session-use-math-input", (FN) tmg_session_use_math_input, 1, 0, 0);
   gh_new_procedure ("session-math-input?", (FN) tmg_session_math_inputP, 0, 0, 0);
   gh_new_procedure ("session-go-up", (FN) tmg_session_go_up, 0, 0, 0);
@@ -3025,6 +3036,7 @@ initialize_glue_editor () {
   gh_new_procedure ("length-mult", (FN) tmg_length_mult, 2, 0, 0);
   gh_new_procedure ("length?", (FN) tmg_lengthP, 1, 0, 0);
   gh_new_procedure ("length-divide", (FN) tmg_length_divide, 2, 0, 0);
+  gh_new_procedure ("tm-subtree", (FN) tmg_tm_subtree, 1, 0, 0);
   gh_new_procedure ("tm-assign", (FN) tmg_tm_assign, 2, 0, 0);
   gh_new_procedure ("tm-insert", (FN) tmg_tm_insert, 2, 0, 0);
   gh_new_procedure ("tm-remove", (FN) tmg_tm_remove, 2, 0, 0);

@@ -214,8 +214,7 @@
   (the-mutator-path get_mutator_path (path))
   (process-input process_input (void))
   (make-session make_session (void string string))
-  (start-input start_input (void))
-  (start-output start_output (void))
+  (start-input start_input (void string string path))
   (session-use-math-input session_use_math_input (void bool))
   (session-math-input? session_is_using_math_input (bool))
   (session-go-up session_go_up (void))
@@ -255,6 +254,7 @@
   (length? is_length (bool string))
   (length-divide divide_lengths (double string string))
 
+  (tm-subtree the_subtree (tree path))
   (tm-assign assign (void path texmacs_tree))
   (tm-insert insert (void path texmacs_tree))
   (tm-remove remove (void path int))
