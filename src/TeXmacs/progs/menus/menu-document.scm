@@ -141,14 +141,14 @@
 		  ("Luxi" (init-env "font" "luxi"))))
 	  ("Lucida" (init-env "font" "x-lucida"))
 	  ("Utopia" (init-env "font" "x-utopia")))
-      (-> "math-font"
+      (-> "Mathematical font"
 	  ("Default" (init-default "math-font"))
 	  ---
 	  ("Roman" (init-env "math-font" "roman"))
 	  ("Concrete" (init-env "math-font" "concrete"))
 	  ("Euler new roman" (init-env "math-font" "ENR"))
 	  ("Adobe" (init-env "math-font" "adobe")))
-      (-> "prog-font"
+      (-> "Program font"
 	  ("Default" (init-default "prog-font"))
 	  ---
 	  ("Roman" (init-env "prog-font" "roman"))

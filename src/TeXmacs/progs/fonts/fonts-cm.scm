@@ -15,7 +15,12 @@
 (texmacs-module (fonts fonts-cm))
 
 (set-font-rules
-  '(((roman rm medium right $s $d) (cm cmr $s $d))
+  '(((roman* rm medium right $s $d) (cm cmr $s $d))
+    ((roman rm medium right $s $d)
+     (compound
+       (cork-cmacc (cm cmr $s $d))
+       (cork-cmsy (tex cmsy $s $d))
+       (cork-cmmi (tex cmmi $s $d))))
     ((roman rm medium slanted $s $d) (cm cmsl $s $d))
     ((roman rm medium italic $s $d) (cm cmti $s $d))
     ((roman rm medium left-slanted $s $d) (cm cmff $s $d))
