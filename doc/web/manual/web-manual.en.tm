@@ -40,13 +40,13 @@
 
   <\enumerate>
     <\with|par-par-sep|0fn>
-      <item><hyper-link|The <TeXmacs> format|webman-style.en.tm>
+      <item><hyper-link|The <TeXmacs> format|webman-format.en.tm>
 
-      <item><hyper-link|Standard environment variables|webman-style.en.tm>
+      <item><hyper-link|Standard environment variables|webman-env.en.tm>
 
-      <item><hyper-link|<TeXmacs> primitives|webman-style.en.tm>
+      <item><hyper-link|<TeXmacs> primitives|webman-primitives.en.tm>
 
-      <item><hyper-link|The style-sheet language|webman-style.en.tm>
+      <item><hyper-link|The style-sheet language|webman-styling.en.tm>
 
       <item><hyper-link|Standard <TeXmacs> styles|webman-std-dtds.en.tm>
 
