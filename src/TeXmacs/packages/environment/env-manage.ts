@@ -1,18 +1,36 @@
-<TeXmacs|1.0.0.24>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
+  <active*|<\src-title>
+    <src-title-line|Package|env-manage-1.0 <with|font-shape|italic|(package
+    and dtd assigned below)>>
+
+    <\src-purpose>
+      Managing groups of environments.
+    </src-purpose>
+
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
   <assign|env-manage-package|1.0>
 
-  <if|<equal|<value|env-manage-dtd>|<uninit>>|<assign|init-document|<merge|<f\
-  unc|<apply|init-stdenv>>|<value|init-document>>>>
+  <if|<equal|<value|env-manage-dtd>|<uninit>>|<assign|init-document|<merge|<macro|<init-stdenv>>|<value|init-document>>>>
 
   <assign|env-manage-dtd|1.0>
 
   \;
 
-  <assign|list-add|<func|class|env|Name|render|<assign|<merge|list-|<apply|cl\
-  ass>>|<tuple|<apply|<merge|list-|<apply|class>>>|<apply|class>|<apply|env>|\
-  <apply|Name>|<apply|render>>>>>
+  <assign|list-add|<macro|class|env|Name|render|<style-with|src-compact|none|<assign|<merge|list-|<arg|class>>|<tuple|<compound|<merge|list-|<arg|class>>>|<arg|class>|<arg|env>|<arg|Name>|<arg|render>>>>>>
 
   <assign|list-theorem|>
 
@@ -20,71 +38,51 @@
 
   <assign|list-figure|>
 
-  <assign|newtheorem|<func|env|Name|<apply|list-add|theorem|<apply|env>|<appl\
-  y|Name>|theorem*>>>
+  <assign|newtheorem|<macro|env|Name|<list-add|theorem|<arg|env>|<arg|Name>|theorem*>>>
 
-  <assign|newremark|<func|env|Name|<apply|list-add|theorem|<apply|env>|<apply\
-  |Name>|remark*>>>
+  <assign|newremark|<macro|env|Name|<list-add|theorem|<arg|env>|<arg|Name>|remark*>>>
 
-  <assign|newexercise|<func|env|Name|<apply|list-add|exercise|<apply|env>|<ap\
-  ply|Name>|exercise*>>>
+  <assign|newexercise|<macro|env|Name|<list-add|exercise|<arg|env>|<arg|Name>|exercise*>>>
 
-  <assign|newfigure|<func|env|Name|<apply|list-add|figure|<apply|env>|<apply|\
-  Name>|figure*>>>
+  <assign|newfigure|<macro|env|Name|<list-add|figure|<arg|env>|<arg|Name>|figure*>>>
 
   \;
 
-  <assign|init-stdenv|<func|>>
+  <assign|init-stdenv|<macro|>>
 
-  <assign|resetstdenv|<func|<assign|footnotenr|0>>>
+  <assign|resetstdenv|<macro|<assign|footnotenr|0>>>
 
-  <assign|thefootnote|<func|<apply|footnotenr>>>
+  <assign|thefootnote|<macro|<footnotenr>>>
 
-  <assign|newstdenv-counter|<func|which|<assign|<merge|the|<apply|which>>|<ho\
-  ld|<func|<apply|theprefix><apply|<release|<merge|<apply|which>|nr>>>>>><ass\
-  ign|resetstdenv|<merge|<value|resetstdenv>|<hold|<func|<assign|<release|<me\
-  rge|<apply|which>|nr>>|0>>>>>>>
+  <assign|newstdenv-counter|<macro|which|<style-with|src-compact|none|<assign|<merge|the|<arg|which>>|<quasiquote|<macro|<style-with|src-compact|none|<theprefix><compound|<unquote|<merge|<arg|which>|nr>>>>>>><assign|resetstdenv|<style-with|src-compact|none|<merge|<value|resetstdenv>|<quasiquote|<macro|<assign|<unquote|<merge|<arg|which>|nr>>|0>>>>>>>>>
 
-  <assign|newstdenv|<func|class|env|Name|render|<assign|<apply|env>|<hold|<ma\
-  cro|body|<surround|<assign|<release|<merge|<apply|class>|nr>>|<plus|<apply|\
-  <release|<merge|<apply|class>|nr>>>|1>><assign|thelabel|<apply|<release|<me\
-  rge|the|<apply|class>>>>>||<expand|<release|<apply|render>>|<translate|<rel\
-  ease|<apply|Name>>|english|<apply|language>>
-  <apply|<release|<merge|the|<apply|class>>>>|<arg|body>>>>>>>>
+  <assign|newstdenv|<macro|class|env|Name|render|<assign|<arg|env>|<quasiquote|<macro|body|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|class>|nr>>|<plus|<compound|<unquote|<merge|<arg|class>|nr>>>|1>>><assign|thelabel|<compound|<unquote|<merge|the|<arg|class>>>>>>||<style-with|src-compact|none|<compound|<unquote|<arg|render>>|<translate|<unquote|<arg|Name>>|english|<language>>
+  <compound|<unquote|<merge|the|<arg|class>>>>|<arg|body>>>>>>>>>>
 
-  <assign|newsmallfigure|<func|env|Name|<assign|<merge|small-|<apply|env>>|<h\
-  old|<macro|body|caption|<assign|<release|<merge|<apply|env>|nr>>|<plus|<val\
-  ue|<release|<merge|<apply|env>|nr>>>|1>><assign|thelabel|<apply|<release|<m\
-  erge|the|<apply|env>>>>><expand|small-figure*|<release|<apply|env>>|<transl\
-  ate|<release|<apply|Name>>|english|<apply|language>>
-  <apply|<release|<merge|the|<apply|env>>>>|<arg|body>|<arg|caption>>>>>>>
+  <assign|newsmallfigure|<macro|env|Name|<style-with|src-compact|none|<assign|<merge|small-|<arg|env>>|<quasiquote|<macro|body|caption|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|env>|nr>>|<plus|<value|<unquote|<merge|<arg|env>|nr>>>|1>>><assign|thelabel|<compound|<unquote|<merge|the|<arg|env>>>>><style-with|src-compact|none|<small-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|Name>>>
+  <compound|<unquote|<merge|the|<arg|env>>>>|<arg|body>|<arg|caption>>>>>>>>>>
 
-  <assign|newbigfigure|<func|env|Name|<assign|<merge|big-|<apply|env>>|<hold|\
-  <macro|body|caption|<surround|<assign|<release|<merge|<apply|env>|nr>>|<plu\
-  s|<value|<release|<merge|<apply|env>|nr>>>|1>><assign|thelabel|<apply|<rele\
-  ase|<merge|the|<apply|env>>>>>||<expand|big-figure*|<release|<apply|env>>|<\
-  translate|<release|<apply|Name>>|english|<apply|language>>
-  <apply|<release|<merge|the|<apply|env>>>>|<arg|body>|<arg|caption>>>>>>>>
+  <assign|newbigfigure|<macro|env|Name|<assign|<merge|big-|<arg|env>>|<quasiquote|<macro|body|caption|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|env>|nr>>|<plus|<value|<unquote|<merge|<arg|env>|nr>>>|1>>><assign|thelabel|<compound|<unquote|<merge|the|<arg|env>>>>>>||<style-with|src-compact|none|<big-figure*|<unquote|<arg|env>>|<localize|<unquote|<arg|Name>>>
+  <compound|<unquote|<merge|the|<arg|env>>>>|<arg|body>|<arg|caption>>>>>>>>>>
 
-  <assign|newstdfigure|<func|env|Name|<apply|newsmallfigure|<apply|env>|<appl\
-  y|Name>><apply|newbigfigure|<apply|env>|<apply|Name>>>>
+  <assign|newstdfigure|<macro|env|Name|<newsmallfigure|<arg|env>|<arg|Name>><newbigfigure|<arg|env>|<arg|Name>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

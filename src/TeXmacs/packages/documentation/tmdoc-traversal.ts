@@ -3,9 +3,31 @@
 <style|source>
 
 <\body>
-  <assign|tmdoc-traversal-package|1.0>
+  <active*|<\src-title>
+    <src-package|tmdoc-traversal|1.0>
 
-  \;
+    <\src-purpose>
+      This package contains macros which allow for the automatic generation
+      or extraction of documentation from small files. For instance, there
+      are tags which indicate how to traverse the documentation.
+    </src-purpose>
+
+    <src-copyright|2001--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Decorations for title-bars with gnus.
+    </src-comment>
+  </active*>
 
   <assign|tmdoc-lgnu|<macro|<active*|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu1.ps|/4|/4||||>>>>
 
@@ -17,20 +39,26 @@
     </with>
   </cell>|<cell|<tmdoc-rgnu>>>>>>>>
 
-  <assign|tmdoc-title|<macro|x|<with|font-series|bold|font-size|1.19|color|dark
-  grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
-  yellow>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|x>>>>>>>>><vspace|1fn>>>
+  <\active*>
+    <\src-comment>
+      Title bars.
+    </src-comment>
+  </active*>
 
-  <assign|tmdoc-title*|<macro|x|y|<with|font-series|bold|font-size|1.19|color|dark
+  <assign|tmdoc-title|<macro|x|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
+  grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
+  yellow>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|x>>>>>>>>><vspace|1fn>>>>
+
+  <assign|tmdoc-title*|<macro|x|y|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
   grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|2|2|1|-1|cell-background|pastel
   orange>|<cwith|1|1|1|-1|cell-background|pastel
   yellow>|<cwith|2|2|1|1|cell-hyphen|c>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|x>>>>>|<row|<\cell>
     <\with|par-mode|center>
       <with|color|black|font-series|medium|font-size|0.84|[<arg|y>]>
     </with>
-  </cell>>>>>><vspace|1fn>>>
+  </cell>>>>>><vspace|1fn>>>>
 
-  <assign|tmdoc-title**|<macro|x|y|z|<with|font-series|bold|font-size|1.19|color|dark
+  <assign|tmdoc-title**|<macro|x|y|z|<style-with|src-compact|none|<with|font-series|bold|font-size|1.19|color|dark
   grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|2|2|1|1|cell-rsep|0fn>|<cwith|2|2|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
   orange>|<cwith|3|3|1|-1|cell-background|pastel
   orange>|<cwith|2|2|1|-1|cell-background|pastel
@@ -42,11 +70,16 @@
     <\with|par-mode|center>
       <with|color|black|font-series|medium|font-size|0.84|[<arg|z>]>
     </with>
-  </cell>>>>>><vspace|1fn>>>
+  </cell>>>>>><vspace|1fn>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Tags for displaying hyperlinks to all available translations of
+      documentation.
 
-  Flags from /usr/share/pixmaps/gkb
+      The flags were found in /usr/share/pixmaps/gkb.
+    </src-comment>
+  </active*>
 
   <assign|tmdoc-flag|<macro|flag| <with|color|black|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<cell|<arg|flag>>>>>>>
   >>
@@ -61,7 +94,11 @@
     </surround>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      The footers and copyright information.
+    </src-comment>
+  </active*>
 
   <assign|tmdoc-bar|<macro|content|<with|color|dark
   grey|<block|<tformat|<cwith|1|1|1|1|cell-background|broken
@@ -74,7 +111,11 @@
 
   <assign|tmdoc-license|<macro|x|<with|color|grey|font-size|0.59|<with|language|english|<arg|x>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Tags for the traversal of documentation.
+    </src-comment>
+  </active*>
 
   <assign|traverse|<macro|x|<itemize|<arg|x>>>>
 
@@ -87,8 +128,6 @@
   <assign|tmdoc-include|<\macro|what>
     <extern|tmdoc-include|<find-file|.|$TEXMACS_DOC_PATH|http://www.gnu.org/software/texmacs-doc|<arg|what>>>
   </macro>>
-
-  \;
 </body>
 
 <\initial>

@@ -1,87 +1,86 @@
-<TeXmacs|1.0.2.2>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
-  <assign|fold|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table
-  width|1par>|<cwith|1|1|1|1|cell lborder|0.5ln>|<cwith|1|1|1|1|cell
-  rborder|0.5ln>|<cwith|1|1|1|1|cell bborder|0.5ln>|<cwith|1|1|1|1|cell
-  tborder|0.5ln>|<cwith|1|1|2|2|cell lborder|0.5ln>|<cwith|1|1|2|2|cell
-  rborder|0.5ln>|<cwith|1|1|2|2|cell bborder|0.5ln>|<cwith|1|1|2|2|cell
-  tborder|0.5ln>|<cwith|1|1|2|2|cell hpart|1>|<cwith|1|1|2|2|cell
-  background|pastel orange>|<cwith|1|1|1|1|cell background|pastel
-  brown>|<cwith|1|1|2|2|cell hyphen|t>|<cwith|1|1|2|2|cell
-  bsep|0.25fn>|<cwith|1|1|2|2|cell tsep|0.25fn>|<cwith|1|1|2|2|cell
-  lsep|0.5fn>|<cwith|1|1|2|2|cell rsep|0.5fn>|<table|<row|<cell|<action||(mouse-unfold)|<arg|x>>>|<\cell>
+  <active*|<\src-title>
+    <src-package-dtd|var-session|1.0|session|1.0>
+
+    <\src-purpose>
+      European-style numbering.
+    </src-purpose>
+
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <use-package|session>
+
+  <\active*>
+    <\src-comment>
+      Fields for input, output, text and errors.
+    </src-comment>
+  </active*>
+
+  <assign|generic-input|<macro|prompt|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-background|pastel
+  yellow>|<cwith|1|1|1|1|cell-background|pastel
+  yellow>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|2|2|cell-lsep|0fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<table|<row|<cell|<id-function|<arg|prompt>>>|<\cell>
+    <with|math-display|true|<arg|body>>
+  </cell>>>>>>>
+
+  <assign|generic-output*|<macro|body|<with|par-left|<plus|<value|par-left>|0.5fn>|par-right|<plus|<value|par-right>|0.5fn>|par-mode|left|math-display|true|<arg|body>>>>
+
+  <assign|generic-output|<macro|body|<surround|<vspace*|0.75fn>|<vspace|0.75fn>|<generic-output*|<arg|body>>>>>
+
+  <assign|generic-textput|<macro|body|<with|par-left|<plus|<value|par-left>|0.5fn>|par-right|<plus|<value|par-right>|0.5fn>|<arg|body>>>>
+
+  <assign|generic-errput|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|pastel
+  red>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Folding
+    </src-comment>
+  </active*>
+
+  <assign|fold|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-background|pastel
+  orange>|<cwith|1|1|1|1|cell-background|pastel
+  brown>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-unfold)|<arg|x>>>|<\cell>
     <arg|x>
   </cell>>>>>>>>
 
-  <assign|unfold|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table
-  width|1par>|<cwith|1|-1|2|2|cell hpart|1>|<cwith|1|1|2|2|cell
-  lborder|0.5ln>|<cwith|1|1|2|2|cell rborder|0.5ln>|<cwith|1|1|2|2|cell
-  bborder|0.5ln>|<cwith|1|1|2|2|cell tborder|0.5ln>|<cwith|1|-1|1|1|cell
-  lborder|0.5ln>|<cwith|1|-1|1|1|cell rborder|0.5ln>|<cwith|1|-1|1|1|cell
-  bborder|0.5ln>|<cwith|1|-1|1|1|cell tborder|0.5ln>|<cwith|1|1|1|1|cell
-  bborder|0ln>|<cwith|2|2|1|1|cell tborder|0ln>|<cwith|2|2|2|2|cell
-  lsep|0fn>|<cwith|2|2|2|2|cell rsep|0fn>|<cwith|2|2|2|2|cell
-  hyphen|t>|<cwith|1|1|2|2|cell hyphen|t>|<cwith|1|1|2|2|cell
-  bsep|0.25fn>|<cwith|1|1|2|2|cell tsep|0.25fn>|<cwith|2|2|2|2|cell
-  tsep|0.5fn>|<cwith|1|-1|1|1|cell background|pastel
-  brown>|<cwith|1|1|2|2|cell background|pastel orange>|<cwith|2|2|2|2|cell
-  bsep|0fn>|<cwith|1|1|2|2|cell lsep|0.5fn>|<cwith|1|1|2|2|cell
-  rsep|0.5fn>|<table|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
+  <assign|unfold|<macro|x|y|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|-1|2|2|cell-hpart|1>|<cwith|1|1|2|2|cell-lborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|1|1|2|2|cell-tborder|0.5ln>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0ln>|<cwith|2|2|1|1|cell-tborder|0ln>|<cwith|2|2|2|2|cell-lsep|0fn>|<cwith|2|2|2|2|cell-rsep|0fn>|<cwith|2|2|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-bsep|0.25fn>|<cwith|1|1|2|2|cell-tsep|0.25fn>|<cwith|2|2|2|2|cell-tsep|0.5fn>|<cwith|1|-1|1|1|cell-background|pastel
+  brown>|<cwith|1|1|2|2|cell-background|pastel
+  orange>|<cwith|2|2|2|2|cell-bsep|0fn>|<cwith|1|1|2|2|cell-lsep|0.5fn>|<cwith|1|1|2|2|cell-rsep|0.5fn>|<table|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
     <arg|x>
   </cell>>|<row|<cell|<action||(mouse-fold)|<arg|x>>>|<\cell>
     <arg|y>
   </cell>>>>>>>>
-
-  \;
-
-  <assign|generic-input|<macro|prompt|body|<tabular|<tformat|<twith|table
-  width|1par>|<cwith|1|1|2|2|cell hpart|1>|<cwith|1|1|2|2|cell
-  background|pastel yellow>|<cwith|1|1|1|1|cell background|pastel
-  yellow>|<cwith|1|1|2|2|cell hyphen|t>|<cwith|1|1|1|1|cell
-  lborder|0.5ln>|<cwith|1|1|2|2|cell rborder|0.5ln>|<cwith|1|1|2|2|cell
-  tborder|0.5ln>|<cwith|1|1|1|1|cell tborder|0.5ln>|<cwith|1|1|1|1|cell
-  bborder|0.5ln>|<cwith|1|1|2|2|cell bborder|0.5ln>|<cwith|1|1|1|1|cell
-  lsep|0.5fn>|<cwith|1|1|2|2|cell rsep|0.5fn>|<cwith|1|1|1|1|cell
-  rsep|0fn>|<cwith|1|1|2|2|cell lsep|0fn>|<cwith|1|1|2|2|cell
-  tsep|0.25fn>|<cwith|1|1|2|2|cell bsep|0.25fn>|<table|<row|<cell|<apply|id-function|<arg|prompt>>>|<\cell>
-    <with|formula style|true|<arg|body>>
-  </cell>>>>>>>
-
-  <assign|generic-output*|<macro|body|<with|left margin|<plus|<apply|left
-  margin>|0.5fn>|right margin|<plus|<apply|right margin>|0.5fn>|paragraph
-  mode|left|formula style|true|<arg|body>>>>
-
-  <assign|generic-output|<macro|body|<surround|<vspace*|0.75fn>|<vspace|0.75fn>|<expand|generic-output*|<arg|body>>>>>
-
-  <assign|generic-textput|<macro|body|<with|left margin|<plus|<apply|left
-  margin>|0.5fn>|right margin|<plus|<apply|right margin>|0.5fn>|<arg|body>>>>
-
-  <assign|generic-errput|<macro|body|<tabular|<tformat|<twith|table
-  width|1par>|<cwith|1|1|1|1|cell lborder|0.5ln>|<cwith|1|1|1|1|cell
-  rborder|0.5ln>|<cwith|1|1|1|1|cell bborder|0.5ln>|<cwith|1|1|1|1|cell
-  tborder|0.5ln>|<cwith|1|1|1|1|cell background|pastel
-  red>|<cwith|1|1|1|1|cell hyphen|t>|<table|<row|<\cell>
-    <arg|body>
-  </cell>>>>>>>
-
-  \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|preamble|true>
   </collection>
 </initial>

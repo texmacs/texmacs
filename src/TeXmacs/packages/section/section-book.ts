@@ -1,123 +1,104 @@
-<TeXmacs|1.0.0.25>
+<TeXmacs|1.0.3.4>
 
-<style|section-automatic-long>
+<style|source>
 
 <\body>
-  <assign|section-book-package|1.0>
+  <active*|<\src-title>
+    <src-package-dtd|section-book|1.0|section-latex|1.0>
 
-  <assign|section-latex-dtd|1.0>
+    <\src-purpose>
+      Sectional markup for books.
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
 
-  Chapters and appendices
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
-  <assign|chapter*|<macro|name|<format|new page before><format|no first
-  indentation><format|new line><format|no first
-  indentation><vspace*|5fn><with|math font series|bold|font series|bold|font
-  size|2|<arg|name>><vspace|2fn><format|no page break after><format|no
-  indentation after>>>
+  <use-package|section-automatic-long>
 
-  <assign|chapter**|<macro|chapname|name|<expand|chapter*|<arg|chapname><vspa\
-  ce|1fn><format|new line><arg|name>>>>
+  <\active*>
+    <\src-comment>
+      Chapters.
+    </src-comment>
+  </active*>
 
-  <assign|chapter|<macro|name|<surround|<assign|thechapter|<func|<apply|chapt\
-  ernr>>><assign|chapternr|<plus|<apply|chapternr>|1>><assign|thelabel|<apply\
-  |thechapter>><apply|resetchapter><apply|header-primary|<arg|name>|<apply|th\
-  echapter>|<translate|Chapter|english|<apply|language>>><apply|toc-main-2|<a\
-  pply|thechapter><space|2spc><arg|name>>||<expand|chapter**|<translate|Chapt\
-  er|english|<apply|language>> <apply|thechapter>|<arg|name>>>>>
+  <assign|chapter*|<macro|name|<style-with|src-compact|none|<new-page*><no-indent><new-line><no-indent><vspace*|5fn><with|math-font-series|bold|font-series|bold|font-size|2|<arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
 
-  <assign|appendix|<macro|name|<surround|<assign|thechapter|<func|<number|<ap\
-  ply|appendixnr>|Alpha>>><assign|appendixnr|<plus|<apply|appendixnr>|1>><ass\
-  ign|thelabel|<apply|thechapter>><apply|resetchapter><apply|header-primary|<\
-  arg|name>|<apply|thechapter>|<translate|Appendix|english|<apply|language>>>\
-  <apply|toc-main-2|<translate|Appendix|english|<apply|language>>
-  <apply|thechapter>.<space|2spc><arg|name>>||<expand|chapter**|<translate|Ap\
-  pendix|english|<apply|language>> <apply|thechapter>|<arg|name>>>>>
+  <assign|chapter**|<macro|chapname|name|<chapter*|<arg|chapname><vspace|1fn><new-line><arg|name>>>>
 
-  <assign|special-chapter|<macro|name|<surround|<assign|thechapter|<func|*>><\
-  apply|resetchapter><assign|thelabel|<apply|thechapter>><apply|toc-main-2|<a\
-  rg|name>><apply|header-primary|<arg|name>|*|<arg|name>>||<expand|chapter*|<\
-  arg|name>>>>>
+  <assign|chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|thechapter|<macro|<chapternr>>><assign|chapternr|<plus|<chapternr>|1>><assign|thelabel|<thechapter>><resetchapter><header-primary|<arg|name>|<thechapter>|<localize|Chapter>><toc-main-2|<thechapter><space|2spc><arg|name>>>||<chapter**|<localize|Chapter>
+  <thechapter>|<arg|name>>>>>>
 
-  <assign|prologue|<macro|<expand|special-chapter|<translate|Prologue|english\
-  |<apply|language>>>>>
+  <assign|appendix|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|thechapter|<macro|<number|<appendixnr>|Alpha>>><assign|appendixnr|<plus|<appendixnr>|1>><assign|thelabel|<thechapter>><resetchapter><header-primary|<arg|name>|<thechapter>|<localize|Appendix>><toc-main-2|<localize|Appendix>
+  <thechapter>.<space|2spc><arg|name>>>||<chapter**|<localize|Appendix>
+  <thechapter>|<arg|name>>>>>>
 
-  <assign|epilogue|<macro|<expand|special-chapter|<translate|Epilogue|english\
-  |<apply|language>>>>>
+  <assign|special-chapter|<macro|name|<style-with|src-compact|none|<surround|<style-with|src-compact|none|<assign|thechapter|<macro|*>><resetchapter><assign|thelabel|<thechapter>><toc-main-2|<arg|name>><header-primary|<arg|name>|*|<arg|name>>>||<chapter*|<arg|name>>>>>>
 
-  \;
+  <assign|prologue|<macro|<special-chapter|<localize|Prologue>>>>
 
-  Sections
+  <assign|epilogue|<macro|<special-chapter|<localize|Epilogue>>>>
 
-  <assign|sectionsep|<func|<space|2spc>>>
+  <\active*>
+    <\src-comment>
+      Sections.
+    </src-comment>
+  </active*>
 
-  <assign|section*|<macro|name|<format|no first
-  indentation><vspace*|3fn><with|math font series|bold|font series|bold|font
-  size|1.41|<arg|name>><vspace|1fn><format|no page break after><format|no
-  indentation after>>>
+  <assign|sectionsep|<macro|<space|2spc>>>
 
-  <assign|section|<macro|name|<assign|sectionnr|<plus|<apply|sectionnr>|1>><a\
-  pply|resetsection><apply|header-secondary|<arg|name>|<apply|thesection>|<tr\
-  anslate|Section|english|<value|language>>><assign|thelabel|<apply|thesectio\
-  n>><apply|toc-normal-1|<apply|thelabel><space|2spc><arg|name>><expand|secti\
-  on*|<apply|thesection><apply|sectionsep><arg|name>>>>
+  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|3fn><with|math-font-series|bold|font-series|bold|font-size|1.41|<arg|name>><vspace|1fn><no-page-break><no-indent*>>>>
 
-  <assign|subsection*|<macro|name|<format|no first
-  indentation><vspace*|2fn><with|math font series|bold|font series|bold|font
-  size|1.19|<arg|name>><vspace|0.5fn><format|no page break after><format|no
-  indentation after>>>
+  <assign|section|<macro|name|<style-with|src-compact|none|<assign|sectionnr|<plus|<sectionnr>|1>><resetsection><header-secondary|<arg|name>|<thesection>|<localize|Section>><assign|thelabel|<thesection>><toc-normal-1|<thelabel><space|2spc><arg|name>><section*|<thesection><sectionsep><arg|name>>>>>
 
-  <assign|subsection|<macro|name|<assign|subsectionnr|<plus|<apply|subsection\
-  nr>|1>><apply|resetsubsection><assign|thelabel|<apply|thesubsection>><apply\
-  |toc-normal-2|<apply|thelabel><space|2spc><arg|name>><expand|subsection*|<a\
-  pply|thesubsection><apply|sectionsep><arg|name>>>>
+  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
 
-  <assign|subsubsection*|<macro|name|<format|no first
-  indentation><vspace*|1fn><with|math font series|bold|font
-  series|bold|<arg|name>><vspace|0.5fn><format|no page break after><format|no
-  indentation after>>>
+  <assign|subsection|<macro|name|<style-with|src-compact|none|<assign|subsectionnr|<plus|<subsectionnr>|1>><resetsubsection><assign|thelabel|<thesubsection>><toc-normal-2|<thelabel><space|2spc><arg|name>><subsection*|<thesubsection><sectionsep><arg|name>>>>>
 
-  <assign|subsubsection|<macro|name|<assign|subsubsectionnr|<plus|<apply|subs\
-  ubsectionnr>|1>><apply|resetsubsubsection><assign|thelabel|<apply|thesubsub\
-  section>><apply|toc-normal-3|<apply|thelabel><space|2spc><arg|name>><expand\
-  |subsubsection*|<apply|thesubsubsection><apply|sectionsep><arg|name>>>>
+  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
 
-  \;
+  <assign|subsubsection|<macro|name|<style-with|src-compact|none|<assign|subsubsectionnr|<plus|<subsubsectionnr>|1>><resetsubsubsection><assign|thelabel|<thesubsubsection>><toc-normal-3|<thelabel><space|2spc><arg|name>><subsubsection*|<thesubsubsection><sectionsep><arg|name>>>>>
 
-  Paragraphs and subparagraphs
+  <\active*>
+    <\src-comment>
+      Paragraphs.
+    </src-comment>
+  </active*>
 
-  <assign|paragraph*|<macro|name|<format|no first
-  indentation><vspace*|0.5fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
+  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
-  <assign|paragraph|<macro|name|<apply|toc-small-1|<arg|name>><expand|paragra\
-  ph*|<arg|name>>>>
+  <assign|paragraph|<macro|name|<toc-small-1|<arg|name>><paragraph*|<arg|name>>>>
 
-  <assign|subparagraph*|<macro|name|<format|no first
-  indentation><vspace*|0.25fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
+  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
-  <assign|subparagraph|<macro|name|<apply|toc-small-2|<arg|name>><expand|subp\
-  aragraph*|<arg|name>>>>
+  <assign|subparagraph|<macro|name|<toc-small-2|<arg|name>><subparagraph*|<arg|name>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

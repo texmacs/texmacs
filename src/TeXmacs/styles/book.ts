@@ -1,27 +1,49 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.3.4>
 
-<style|<tuple|common-base|header-book|env-us|number-book|section-book>>
+<style|source>
 
 <\body>
-  <assign|book-style|1.0>
+  <\active*>
+    <\src-title>
+      <src-style-file|book|1.0>
+
+      <\src-purpose>
+        The book style.
+      </src-purpose>
+
+      <\src-copyright|1998--2004>
+        Joris van der Hoeven
+      </src-copyright>
+
+      <\src-license>
+        This <TeXmacs> style file falls under the <hlink|GNU general public
+        license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+        WHATSOEVER. If you don't have this file, then write to the Free
+        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+        02111-1307, USA.
+      </src-license>
+    </src-title>
+  </active*>
+
+  <use-package|common-base|header-book|env-us|number-book|section-book>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,46 +1,50 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
-  <assign|number-europe-package|1.0>
+  <active*|<\src-title>
+    <src-package-dtd|number-europe|1.0|number-env|1.0>
 
-  <assign|number-env-dtd|1.0>
+    <\src-purpose>
+      European-style numbering.
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
 
-  <assign|newliststdenv|<func|l|<if|<is_tuple|<apply|l>>|<apply|newliststdenv\
-  |<look_up|<apply|l>|0>><apply|newstdenv|<look_up|<apply|l>|2>|<look_up|<app\
-  ly|l>|2>|<look_up|<apply|l>|3>|<look_up|<apply|l>|4>>>>>
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
-  <assign|newlistfigure|<func|l|<if|<is_tuple|<apply|l>>|<apply|newlistfigure\
-  |<look_up|<apply|l>|0>><apply|newstdfigure|<look_up|<apply|l>|2>|<look_up|<\
-  apply|l>|3>>>>>
+  <assign|newliststdenv|<macro|l|<if|<is-tuple|<arg|l>>|<newliststdenv|<look-up|<arg|l>|0>><newstdenv|<look-up|<arg|l>|2>|<look-up|<arg|l>|2>|<look-up|<arg|l>|3>|<look-up|<arg|l>|4>>>>>
 
-  <assign|newliststdenv-counter|<func|l|<if|<is_tuple|<apply|l>>|<apply|newli\
-  ststdenv-counter|<look_up|<apply|l>|0>><apply|newstdenv-counter|<look_up|<a\
-  pply|l>|2>>>>>
+  <assign|newlistfigure|<macro|l|<if|<is-tuple|<arg|l>>|<newlistfigure|<look-up|<arg|l>|0>><newstdfigure|<look-up|<arg|l>|2>|<look-up|<arg|l>|3>>>>>
 
-  <assign|init-stdenv|<func|<apply|newstdenv-counter|equation><apply|newlists\
-  tdenv-counter|<value|list-theorem>><apply|newliststdenv-counter|<value|list\
-  -exercise>><apply|newliststdenv-counter|<value|list-figure>><apply|newlists\
-  tdenv|<value|list-theorem>><apply|newliststdenv|<value|list-exercise>><appl\
-  y|newlistfigure|<value|list-figure>>>>
+  <assign|newliststdenv-counter|<macro|l|<if|<is-tuple|<arg|l>>|<newliststdenv-counter|<look-up|<arg|l>|0>><newstdenv-counter|<look-up|<arg|l>|2>>>>>
+
+  <assign|init-stdenv|<macro|<style-with|src-compact|none|<newstdenv-counter|equation><newliststdenv-counter|<value|list-theorem>><newliststdenv-counter|<value|list-exercise>><newliststdenv-counter|<value|list-figure>><newliststdenv|<value|list-theorem>><newliststdenv|<value|list-exercise>><newlistfigure|<value|list-figure>>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

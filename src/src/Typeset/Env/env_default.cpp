@@ -211,6 +211,7 @@ initialize_default_env () {
 		tree (ARG, "x")));
   env ("rightflush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
+
   env ("src-title")= identity_m;
   env ("src-style-file")=
     tree (MACRO, "x", "y",
@@ -224,6 +225,15 @@ initialize_default_env () {
 		      tree (MERGE, tree (ARG, "x"), "-package"),
 		      tree (ARG, "y")),
 		tree (ASSIGN,
-		      tree (MERGE, tree (ARG, "x"), "-drd"),
+		      tree (MERGE, tree (ARG, "x"), "-dtd"),
 		      tree (ARG, "y"))));
+  env ("src-package-dtd")=
+    tree (MACRO, "x", "y", "a", "b",
+	  tree (CONCAT,
+		tree (ASSIGN,
+		      tree (MERGE, tree (ARG, "x"), "-package"),
+		      tree (ARG, "y")),
+		tree (ASSIGN,
+		      tree (MERGE, tree (ARG, "a"), "-dtd"),
+		      tree (ARG, "b"))));
 }

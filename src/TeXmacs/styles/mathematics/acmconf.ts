@@ -1,50 +1,70 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.3.4>
 
-<style|<tuple|common-base|header-acmconf|env-us|number-article|section-acmcon\
-f>>
+<style|source>
 
 <\body>
-  <assign|acmconf-style|1.0>
+  <\active*>
+    <\src-title>
+      <src-style-file|acmconf|1.0>
+
+      <\src-purpose>
+        The acmconf style.
+      </src-purpose>
+
+      <\src-copyright|2002--2004>
+        Joris van der Hoeven
+      </src-copyright>
+
+      <\src-license>
+        This <TeXmacs> style file falls under the <hlink|GNU general public
+        license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+        WHATSOEVER. If you don't have this file, then write to the Free
+        Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+        02111-1307, USA.
+      </src-license>
+    </src-title>
+  </active*>
+
+  <use-package|common-base|header-acmconf|env-us|number-article|section-acmconf>
 
   \;
 
-  <assign|nr columns|2>
+  <assign|par-columns|2>
 
-  <assign|font base size|9>
+  <assign|font-base-size|9>
 
-  <assign|odd page margin|17.5mm>
+  <assign|page-odd|17.5mm>
 
-  <assign|even page margin|17.5mm>
+  <assign|page-even|17.5mm>
 
-  <assign|paragraph width|175mm>
+  <assign|par-width|175mm>
 
-  <assign|page top margin|15mm>
+  <assign|page-top|15mm>
 
-  <assign|page bottom margin|20mm>
+  <assign|page-bot|20mm>
 
   \;
 
-  <assign|item*|<macro|theitem|<vspace*|0.5fn><with|first
-  indentation|-3fn|<format|enable first indentation>><resize|<with|math font
-  series|bold|font series|bold|<arg|theitem>> |r-3fn||r|>>>
+  <assign|item*|<macro|theitem|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<with|math-font-series|bold|font-series|bold|<arg|theitem>>
+  |r-3fn||r|>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
