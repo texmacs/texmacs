@@ -73,7 +73,7 @@
 	(texmacs-load-buffer file fm where #f))))
 
 (define (load-buffer . l)
-  (with file (url "$TEXMACS_FILE_PATH" (car l))
+  (with file (url-append "$TEXMACS_FILE_PATH" (car l))
     (cond ((= (length l) 1)
 	   (load-buffer-sub file "generic" 0))
 	  ((and (= (length l) 2) (string? (cadr l)))

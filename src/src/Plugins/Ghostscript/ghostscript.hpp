@@ -13,13 +13,8 @@
 #ifndef GHOSTSCRIPT_H
 #define GHOSTSCRIPT_H
 #include "url.hpp"
-#ifdef OS_WIN32
-#include "X11/Xlib.hpp"
-#include "X11/Xatom.hpp"
-#else
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#endif
 
 bool ghostscript_bugged ();
 void ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,

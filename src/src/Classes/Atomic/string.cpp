@@ -301,21 +301,6 @@ is_charp (string s) { (void) s;
   return true;
 }
 
-string
-quote (string s) {
-  return "\"" * s * "\"";
-}
-
-string
-unquote (string s) {
-  if ((N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042')) return s (1, N(s)-1);
-  else return s;
-  /*
-  if (N(s)<2) return "";
-  return s(1,N(s)-1);
-  */
-}
-
 bool
 is_quoted (string s) {
   return (N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042');

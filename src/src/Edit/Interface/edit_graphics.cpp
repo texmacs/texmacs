@@ -53,7 +53,7 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
   lim1= point (); lim2= point ();
   bool bp_found;
   path bp= eb->find_box_path (tp, bp_found);
-  if (bp_found) return eb->find_limits (path_up (bp), lim1, lim2);
+  if (bp_found) eb->find_limits (path_up (bp), lim1, lim2);
 }
 
 point

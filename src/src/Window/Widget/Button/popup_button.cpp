@@ -39,7 +39,7 @@ private:
   void unmap_popup ();
   void consistent (string s);
 public:
-  popup_button_rep (widget w, widget pw, gravity where);
+  popup_button_rep (widget w, widget pw, gravity where, bool button_flag);
   popup_button_rep (widget w, make_widget mw, gravity where);
   void handle_attach_window (attach_window_event ev);
   void handle_mouse (mouse_event ev);
@@ -52,10 +52,10 @@ gravity opposite (gravity grav);
 * Routines for popup buttons
 ******************************************************************************/
 
-popup_button_rep::popup_button_rep (widget w, widget pw, gravity where2):
-  button_widget_rep (w, where2==east),
-  mw (), popup_w (popup_widget (pw, opposite (where2))), popup (NULL),
-  where (where2), require_map (false), stick (false)
+popup_button_rep::popup_button_rep (widget w, widget pw, gravity wh, bool fl):
+  button_widget_rep (w, wh==east, fl),
+  mw (), popup_w (popup_widget (pw, opposite (wh))), popup (NULL),
+  where (wh), require_map (false), stick (false)
 {
   if ((where!=east) && (where!=south) && (where!=south_east))
     fatal_error ("direction not implemented",
@@ -290,13 +290,13 @@ opposite (gravity grav) {
 ******************************************************************************/
 
 widget
-pulldown_button (widget w, widget pw) {
-  return new popup_button_rep (w, pw, south_east);
+pulldown_button (widget w, widget pw, bool button_flag) {
+  return new popup_button_rep (w, pw, south_east, button_flag);
 }
 
 widget
-pullright_button (widget w, widget pw) {
-  return new popup_button_rep (w, pw, east);
+pullright_button (widget w, widget pw, bool button_flag) {
+  return new popup_button_rep (w, pw, east, button_flag);
 }
 
 widget

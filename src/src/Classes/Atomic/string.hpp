@@ -69,8 +69,6 @@ bool   is_int    (string s);
 bool   is_double (string s);
 bool   is_charp  (string s);
 
-string quote     (string s);
-string unquote   (string s);
 bool   is_quoted (string s);
 bool   is_id     (string s);
 

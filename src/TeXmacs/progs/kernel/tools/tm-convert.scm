@@ -373,9 +373,13 @@
     (apply append (map format-get-suffixes-sub l))))
 
 (define (format-get-suffixes fm)
-  (if (== fm "image")
-      (format-image-suffixes)
-      (format-get-suffixes-sub fm)))
+  (cond ((and (== fm "image") (os-win32?))
+         '("ps" "eps" "bmp" "gif" "ico" "tga" "pcx" "wbmp" "wmf" "jpg"
+	     "jpeg" "png" "tif" "jbig" "ras" "pnm" "jp2" "jpc" "pgx"
+           "cut" "iff" "lbm" "jng" "koa" "mng" "pbm" "pcd" "pcx"
+           "pgm" "ppm" "psd" "tga" "tiff" "xbm" "xpm"))
+        ((== fm "image") (format-image-suffixes))
+        (else (format-get-suffixes-sub fm))))
 
 (define (format-get-suffixes* fm)
   (cons 'tuple (format-get-suffixes fm)))

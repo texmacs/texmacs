@@ -567,6 +567,75 @@ tm_correct (string s) {
 ******************************************************************************/
 
 string
+slash (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '(':
+    case ')':
+    case ' ':
+    case '\'':
+      if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
+      r << s[i];
+      break;
+    case '\\':
+      r << "\\" << s[i];
+      break;
+    case '\042':
+      if (((i==0) && (s[n-1]=='\042')) ||
+	  ((i==(n-1)) && (s[0]=='\042')))
+	r << s[i];
+      else r << "\\" << s[i];
+      break;
+    case ((char) 0):
+      r << "\\0";
+      break;
+    case '\t':
+      r << "\\t";
+      break;
+    case '\n':
+      r << "\\n";
+      break;
+    default:
+      r << s[i];
+    }
+  return r;
+}
+
+string
+unslash (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if ((s[i]=='\\') && ((i+1)<n))
+      switch (s[++i]) {
+      case '0': r << ((char) 0); break;
+      case 'n': r << '\n'; break;
+      case 't': r << '\t'; break;
+      default: r << s[i];
+      }
+    else r << s[i];
+  return r;
+}
+
+string
+quote (string s) {
+  return "\"" * slash (s) * "\"";
+}
+
+string
+unquote (string s) {
+  if ((N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042'))
+    return unslash (s (1, N(s)-1));
+  else return s;
+  /*
+  if (N(s)<2) return "";
+  return s(1,N(s)-1);
+  */
+}
+
+string
 escape_quotes (string s) {
   int i, n= N(s);
   string r;

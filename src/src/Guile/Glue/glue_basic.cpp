@@ -26,6 +26,28 @@ tmg_texmacs_version_release (SCM arg1) {
 }
 
 SCM
+tmg_os_win32P () {
+  // SCM_DEFER_INTS;
+  bool out= os_win32 ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_win32_display (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "win32-display");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  win32_display (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tree_2object (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->object");
 
@@ -767,6 +789,19 @@ tmg_url (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_url_system (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "url-system");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= url_system (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
 tmg_url_none () {
   // SCM_DEFER_INTS;
   url out= url_none ();
@@ -1361,6 +1396,32 @@ tmg_string_replace (SCM arg1, SCM arg2, SCM arg3) {
 
   // SCM_DEFER_INTS;
   string out= replace (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_slash (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-slash");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= slash (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_unslash (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-unslash");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= unslash (in1);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -2086,6 +2147,8 @@ tmg_object_2make_widget (SCM arg1) {
 void
 initialize_glue_basic () {
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
+  gh_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
+  gh_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
   gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
   gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);
   gh_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
@@ -2143,6 +2206,7 @@ initialize_glue_basic () {
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
+  gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);
   gh_new_procedure ("url-none", (FN) tmg_url_none, 0, 0, 0);
   gh_new_procedure ("url-any", (FN) tmg_url_any, 0, 0, 0);
   gh_new_procedure ("url-wildcard", (FN) tmg_url_wildcard, 1, 0, 0);
@@ -2187,6 +2251,8 @@ initialize_glue_basic () {
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
   gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
+  gh_new_procedure ("string-slash", (FN) tmg_string_slash, 1, 0, 0);
+  gh_new_procedure ("string-unslash", (FN) tmg_string_unslash, 1, 0, 0);
   gh_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
   gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
   gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);

@@ -168,9 +168,11 @@ TeXmacs_main (int argc, char** argv) {
   if (sv->no_bufs ()) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
     sv->open_window ();
+#ifndef OS_WIN32
     if ((my_init_cmds == "") &&
 	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
       sv->exec_delayed ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)");
+#endif
   }
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";

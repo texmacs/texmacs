@@ -74,7 +74,7 @@ edit_env_rep::rewrite (tree t) {
     return r;
   }
   else if (L(t) == INCLUDE) {
-    url file_name= as_string (t[0]);
+    url file_name= url_system (as_string (t[0]));
     return load_inclusion (relative (base_file_name, file_name));
   }
   return t;
@@ -1011,9 +1011,9 @@ edit_env_rep::exec_until (tree t, path p) {
       int i;
       for (i=0; i<p->item; i++) (void) exec (t[i]);
       exec_until (t[p->item], p->next);
-      return;
     }
-    else return exec_until_compound (t, p);
+    else exec_until_compound (t, p);
+	return;
   }
 }
 
