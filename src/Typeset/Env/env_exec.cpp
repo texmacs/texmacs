@@ -1009,7 +1009,7 @@ edit_env_rep::exec_translate (tree t) {
 }
 
 tree
-edit_env_rep::exec_change_case (tree t, tree nc, bool first) {
+edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
   if (is_atomic (t)) {
     string s= t->label;
     tree   r= copy (s);
@@ -1034,17 +1034,20 @@ edit_env_rep::exec_change_case (tree t, tree nc, bool first) {
     int i, n= N(t);
     tree r (t, n);
     for (i=0; i<n; i++)
-      r[i]= exec_change_case (t[i], nc, first && (i==0));
+      r[i]= exec_change_case (t[i], nc, exec_flag, first && (i==0));
     r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
     return r;
   }
-  else return t;
+  else {
+    if (exec_flag) return t;
+    else return exec_change_case (exec (t), nc, true, first);
+  }
 }
 
 tree
 edit_env_rep::exec_change_case (tree t) {
   if (N(t) < 2) return tree (ERROR, "bad change case");
-  return exec_change_case (t[0], t[1], true);
+  return exec_change_case (t[0], exec (t[1]), false, true);
 }
 
 tree
