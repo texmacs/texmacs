@@ -14,6 +14,7 @@
 
 ;;; Control and Basic Latin			0000--007F
 
+("<backslash>"	"#5C")
 ("<grave>"	"#60")
 
 
