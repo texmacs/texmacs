@@ -214,6 +214,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case MACRO: r= "macro"; break;
   case FUNCTION: r= "function"; break;
   case ENVIRONMENT: r= "environment"; break;
+  case DRD_PROPS: r= "drd properties"; break;
   case EVAL: r= "evaluate"; break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
@@ -395,6 +396,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * as_string (st[0]) * "#";
   case INCLUDE:
     return up * "include#";
+  case DRD_PROPS:
+    if (l == 0) return up * "drd property(variable)" * "#";
+    if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
+    return up * "value(" * as_string (l/2) * ")#";
   case EVAL:
     return up * "evaluate#";
   case PROVIDES:

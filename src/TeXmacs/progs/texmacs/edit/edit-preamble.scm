@@ -18,6 +18,7 @@
     make-inactive-assign make-inactive-with make-inactive-expand
     make-inactive-var-expand make-inactive-hide-expand make-inactive-apply
     make-inactive-include make-inactive-macro make-inactive-function
+    make-inactive-drd-props
     make-inactive-eval make-inactive-provides make-inactive-value
     make-inactive-argument make-inactive-quote make-inactive-delay
     make-inactive-hold make-inactive-release
@@ -49,6 +50,7 @@
 (define (make-inactive-include) (make-inactive "include" 1))
 (define (make-inactive-macro) (make-inactive "macro" 1))
 (define (make-inactive-function) (make-inactive "func" 1))
+(define (make-inactive-drd-props) (make-inactive "drd_props" 3))
 (define (make-inactive-eval) (make-inactive-message "eval" 1 "evaluate"))
 (define (make-inactive-provides) (make-inactive "provides" 1))
 (define (make-inactive-value) (make-inactive "value" 1))

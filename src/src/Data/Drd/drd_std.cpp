@@ -123,6 +123,7 @@ initialize_std_drd () {
   constructor (MACRO, "macro", -1, DYNAMIC);
   constructor (FUNCTION, "func", -1, DYNAMIC);
   constructor (ENVIRONMENT, "env", -1, DYNAMIC);
+  constructor (DRD_PROPS, "drd_props", -1, DYNAMIC);
   constructor (EVAL, "eval", 1, DYNAMIC);
   constructor (PROVIDES, "provides", 1, DYNAMIC);
   constructor (VALUE, "value", 1, DYNAMIC);

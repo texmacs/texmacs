@@ -455,6 +455,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case ENVIRONMENT:
     typeset_inactive ("environment", t, ip, N(t)-2);
     break;
+  case DRD_PROPS:
+    if (ACTIVATED) typeset_drd_props (t, ip);
+    else typeset_inactive ("drd-properties", t, ip, 1);
+    break;
   case EVAL:
     if (ACTIVATED) typeset_eval (t, ip);
     else typeset_inactive ("eval", t, ip);

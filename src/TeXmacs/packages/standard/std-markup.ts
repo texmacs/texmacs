@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.2>
+<TeXmacs|1.0.2.5>
 
 <\body>
   <assign|std-markup-package|1.0>
@@ -42,7 +42,11 @@
 
   <assign|overline|<macro|x|<hold|<datoms|<macro|x|<with|color|<release|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>
 
+  <drd_props|overline|accessible|all>
+
   <assign|underline|<macro|x|<hold|<datoms|<macro|x|<with|color|<release|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>
+
+  <drd_props|underline|accessible|all>
 
   <assign|fold|<macro|x|y|<with|left margin|<plus|<value|left
   margin>|1.5fn>|<surround|<with|first indentation|-1.5fn|<enable_first_indentation>><action|<resize|<with|mode|math|<op|\<circ\>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<apply|hflush>|<arg|x>>>>>
@@ -106,7 +110,7 @@
   <assign|code|<macro|body|<surround|<vspace*|1fn>|<apply|rightflush><htab|5mm><vspace|1fn><no_indentation_after>|<with|font
   family|tt|language|verbatim|first indentation|0fn|<arg|body>>>>>
 
-  <assign|quote|<macro|body|<surround|<vspace*|0.5fn>|<apply|rightflush><vspace|0.5fn>|<with|left
+  <assign|quote-env|<macro|body|<surround|<vspace*|0.5fn>|<apply|rightflush><vspace|0.5fn>|<with|left
   margin|<plus|<apply|left margin>|3fn>|right margin|<plus|<apply|right
   margin>|3fn>|first indentation|0fn|interparagraph
   space|0.25fn|<arg|body>>>>>

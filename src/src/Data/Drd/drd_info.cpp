@@ -51,6 +51,12 @@ drd_info_rep::set_props (tree_label l, int props) {
   else ti(l)->props= props;
 }
 
+void
+drd_info_rep::set_masked_props (tree_label l, int mask, int props) {
+  if (!ti->contains (l)) ti(l)= tag_info (-1, mask & props);
+  else ti(l)->props= (ti[l]->props & (~mask)) | props;
+}
+
 int
 drd_info_rep::get_arity (tree_label l) {
   return ti[l]->arity;
@@ -80,52 +86,49 @@ accessible_macro_arg (drd_info_rep* drd, tree t, tree var) {
   }
 }
 
-void
-drd_info_rep::init_frozen (string var, int arity, int props) {
-  tree_label l= make_tree_label (var);
-  set_arity (l, arity);
-  set_props (l, props + FROZEN);
-}
-
 bool
 drd_info_rep::heuristic_init (string var, tree macro) {
   tree_label l= make_tree_label (var);
-  int i, n= N(macro)-1, k= min (n, CUSTOM_ACCESSIBLE_MAX);
+  int i, n= N(macro)-1;
+  int old_arity= get_arity (l);
+  int new_arity= old_arity;
   int old_props= get_props (l);
   int new_props= old_props;
+  bool changed= false;
 
   /* Getting accessibility flags */
-  int detailed = 0;
-  bool all_on= true, all_off= true;
-  int MASK= ACCESSIBLE_MASK + CUSTOM_ACCESSIBLE_MASK;
-  new_props= new_props & (~MASK);
-  for (i=0; i<k; i++) {
-    if (accessible_macro_arg (this, macro[n], macro[i])) {
-      detailed += (1 << (CUSTOM_ACCESSIBLE_SHIFT + i));
-      all_off= false;
-    }
-    else all_on= false;
+  if ((new_props & FROZEN_ARITY) == 0) {
+    new_arity= n;
+    set_arity (l, new_arity);
+    changed= changed || (new_arity != old_arity);
   }
-  if (all_on) new_props += ACCESSIBLE;
-  else if (all_off) new_props += NOT_ACCESSIBLE;
-  else new_props += CUSTOM_ACCESSIBLE + detailed;
-  
-  /* storing the computed information */
-  set_arity (l, n);
-  set_props (l, new_props);
-  //if (new_props != old_props)
-  //cout << var << ": "
-  //<< (new_props & ACCESSIBLE_MASK) << ", "
-  //<< (new_props >> CUSTOM_ACCESSIBLE_SHIFT) << "\n";
-  return new_props != old_props;
+
+  /* Getting accessibility flags */
+  if ((new_props & FROZEN_ACCESSIBLE) == 0) {
+    int detailed = 0;
+    bool all_on= true, all_off= true;
+    int MASK= ACCESSIBLE_MASK + CUSTOM_ACCESSIBLE_MASK;
+    int k= min (n, CUSTOM_ACCESSIBLE_MAX);
+    new_props= new_props & (~MASK);
+    for (i=0; i<k; i++) {
+      if (accessible_macro_arg (this, macro[n], macro[i])) {
+	detailed += (1 << (CUSTOM_ACCESSIBLE_SHIFT + i));
+	all_off= false;
+      }
+      else all_on= false;
+    }
+    if (all_on) new_props += ACCESSIBLE;
+    else if (all_off) new_props += NOT_ACCESSIBLE;
+    else new_props += CUSTOM_ACCESSIBLE + detailed;
+    set_props (l, new_props);
+    changed= changed || (new_props != old_props);
+  }
+
+  return changed;
 }
 
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
-  init_frozen ("shrink-inline", 1, ACCESSIBLE);
-  init_frozen ("underline", 1, ACCESSIBLE);
-  init_frozen ("overline", 1, ACCESSIBLE);
-
   bool flag= true;
   while (flag) {
     //cout << HRULE;

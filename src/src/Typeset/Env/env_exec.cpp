@@ -92,6 +92,8 @@ edit_env_rep::exec (tree t) {
   case MACRO:
   case FUNCTION:
     return copy (t);
+  case DRD_PROPS:
+    return exec_drd_props (t);
   case EVAL:
     return exec (exec (t[0]));
   case PROVIDES:
@@ -433,6 +435,42 @@ edit_env_rep::exec_include (tree t) {
   url file_name= as_string (t[0]);
   tree incl= load_inclusion (relative (base_file_name, file_name));
   return exec (incl);
+}
+
+tree
+edit_env_rep::exec_drd_props (tree t) {
+  int i, n= N(t);
+  if ((n>=3) && is_atomic (t[0]))
+    for (i=1; i<n-1; i+=2) {
+      if (!is_atomic (t[i])) continue;
+      string var  = t[0]->label;
+      string prop = t[i]->label;
+      tree   val  = t[i+1];
+      tree_label l= make_tree_label (var);
+      if (prop == "arity") {
+	drd->set_arity (l, as_int (val));
+	drd->set_masked_props (l, FROZEN_ARITY, FROZEN_ARITY);
+      }
+      if (prop == "accessible") {
+	drd->set_arity (l, as_int (val));
+	drd->set_masked_props (l, FROZEN_ACCESSIBLE, FROZEN_ACCESSIBLE);
+	if (val == "none")
+	  drd->set_masked_props (l, ACCESSIBLE_MASK, NOT_ACCESSIBLE);
+	if (val == "all")
+	  drd->set_masked_props (l, ACCESSIBLE_MASK, ACCESSIBLE);
+	if (is_tuple (val)) {
+	  int i, n= N(val), detailed= 0;
+	  for (i=0; i<n; i++) {
+	    int nr= as_int (val[i]);
+	    if (nr < CUSTOM_ACCESSIBLE_MAX)
+	      detailed= detailed | (1 << (nr + CUSTOM_ACCESSIBLE_SHIFT));
+	  }
+	  drd->set_masked_props (l, ACCESSIBLE_MASK, CUSTOM_ACCESSIBLE);
+	  drd->set_masked_props (l, CUSTOM_ACCESSIBLE_MASK, detailed);
+	}
+      }
+    }
+  return t;
 }
 
 tree

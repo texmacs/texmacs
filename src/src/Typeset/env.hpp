@@ -115,6 +115,7 @@ private:
   bool exec_until_expand (tree t, path p, string var, int level);
   tree exec_apply (tree t);
   tree exec_include (tree t);
+  tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_argument (tree t);

@@ -248,8 +248,10 @@ edit_dynamic_rep::insert_argument () {
     return;
   }
   if (drd->get_arity (L(t)) >= 1) return;
-  if (is_func (t, WITH) || is_func (t, ATTR)) {
+  if (is_func (t, WITH) || is_func (t, DRD_PROPS) || is_func (t, ATTR)) {
     int at= ((last_item (p) >> 1) << 1) + 2;
+    if (is_func (t, DRD_PROPS))
+      at= (((last_item (p)+1) >> 1) << 1) + 1;
     if (at > N(t)) at= N(t);
     insert (path_up (p) * at, tree (L (t), "", ""));
     go_to (path_up (p) * path (at, 0));
@@ -453,9 +455,9 @@ edit_dynamic_rep::back_extension (path p) {
 }
 
 static bool
-is_empty (tree t, int at, int nr) {
+is_empty (tree t, int at, int nr, int offset) {
   int i;
-  if ((at+nr > N(t)) || ((at % nr) != 0)) return false;
+  if ((at+nr > N(t)) || (((at-offset) % nr) != 0)) return false;
   for (i=at; i < at+nr; i++)
     if (t[i] != "") return false;
   return true;
@@ -467,7 +469,7 @@ edit_dynamic_rep::back_in_dynamic (tree t, path p, int min_args, int step) {
   if (node>0) {
     go_to (end (et, path_up (p) * (node-1)));
     if (N(t) > min_args) {
-      if (is_empty (t, node, step))
+      if (is_empty (t, node, step, is_func (t, DRD_PROPS)? 1: 0))
 	remove (path_up (p) * node, step);
       else go_to (end (et, path_dec (p)));
     }

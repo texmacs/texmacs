@@ -26,11 +26,11 @@ public:
   drd_info_rep (string name, drd_info base);
 
   void set_arity (tree_label l, int arity);
+  void set_masked_props (tree_label l, int mask, int props);
   void set_props (tree_label l, int props);
   int  get_arity (tree_label l);
   int  get_props (tree_label l);
 
-  void init_frozen (string var, int arity, int props);
   bool heuristic_init (string var, tree macro);
   void heuristic_init (hashmap<string,tree> env);
 
