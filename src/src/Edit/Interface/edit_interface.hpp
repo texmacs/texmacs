@@ -23,7 +23,7 @@
 #define INPUT_SPELL       3
 #define INPUT_COMPLETE    4
 
-string LANGUAGE (string mode);
+string MODE_LANGUAGE (string mode);
 
 class edit_interface_rep: virtual public editor_rep {
 protected:

@@ -505,7 +505,7 @@ void
 edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
-  string lan = get_env_string (LANGUAGE (mode));
+  string lan = get_env_string (MODE_LANGUAGE (mode));
   tree sel= tuple ("edit", t, mode, lan);
   string s;
   if (key == "primary") {
@@ -541,7 +541,7 @@ edit_select_rep::selection_paste (string key) {
   tree t= copy (dis->get_selection (widget (this), key));
   if (is_tuple (t, "extern", 1)) {
     string mode= get_env_string (MODE);
-    string lan = get_env_string (LANGUAGE (mode));
+    string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((selection_import == "latex") && (mode == "prog")) mode= "verbatim";
     if ((selection_import == "latex") && (mode == "math")) mode= "latex-math";
     if ((selection_import == "html") && (mode == "prog")) mode= "verbatim";
@@ -552,7 +552,7 @@ edit_select_rep::selection_paste (string key) {
   }
   if (is_tuple (t, "edit", 3)) {
     string mode= get_env_string (MODE);
-    string lan = get_env_string (LANGUAGE (mode));
+    string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {
       tree in= tuple (lan, t[1]);
       tree r= object_to_tree (call ("plugin-math-input", tree_to_object (in)));

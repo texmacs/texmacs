@@ -143,7 +143,11 @@ language_to_locale (string s) {
 
 string
 get_locale_language () {
-  string env_lan= get_env ("LANG");
+  string env_lan= get_env ("LC_ALL");
+  if (env_lan != "") return locale_to_language (env_lan);
+  env_lan= get_env ("LC_MESSAGES");
+  if (env_lan != "") return locale_to_language (env_lan);
+  env_lan= get_env ("LANG");
   if (env_lan != "") return locale_to_language (env_lan);
   env_lan= get_env ("GDM_LANG");
   if (env_lan != "") return locale_to_language (env_lan);
@@ -162,9 +166,12 @@ simplify_date (string s) {
 string
 get_date (string lan, string fm) {
   if (fm == "") {
-    fm= "%d %B %Y";
     if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm= "%B %d, %Y";
+    else if (lan == "german")
+      fm= "%d. %B %Y";
+    else fm= "%d %B %Y";
+
   }
   lan= language_to_locale (lan);
   string old= get_env ("LANG");

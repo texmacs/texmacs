@@ -203,7 +203,7 @@ edit_replace_rep::test (path p, tree t) {
   if (N(st->label) < (N(t->label) + l)) return p;
   if (st->label (l, l + N(t->label)) != t->label) return p;
   string mode= as_string (get_env_value (MODE, p));
-  string lan = as_string (get_env_value (LANGUAGE (mode), p));
+  string lan = as_string (get_env_value (MODE_LANGUAGE (mode), p));
   if (search_mode != mode) return p;
   if (search_lan != lan) return p;
   return path_add (p, N (t->label));
@@ -347,7 +347,7 @@ edit_replace_rep::search_start (bool flag) {
   search_old  = copy (search_what);
   forward     = flag;
   search_mode = copy (get_env_string (MODE));
-  search_lan  = copy (get_env_string (LANGUAGE (search_mode)));
+  search_lan  = copy (get_env_string (MODE_LANGUAGE (search_mode)));
   search_at   = tp;
   search_what = tree ("");
   where_stack = list<path> ();
@@ -456,7 +456,7 @@ void
 edit_replace_rep::replace_start (tree what, tree by, bool flag) {
   forward     = flag;
   search_mode = copy (get_env_string (MODE));
-  search_lan  = copy (get_env_string (LANGUAGE (search_mode)));
+  search_lan  = copy (get_env_string (MODE_LANGUAGE (search_mode)));
   search_at   = tp;
   search_what = copy (what);
   replace_by  = copy (by);

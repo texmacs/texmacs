@@ -117,9 +117,9 @@ concater_rep::typeset_inactive_specific (tree t, path ip) {
   string mode, var, value;
   if (flag) {
     mode= env->get_string (MODE);
-    if (mode == "text") { var=TEXT_FAMILY; value="tt"; }
-    else if (mode == "math") { var=MATH_FAMILY; value="mt"; }
-    else { var=PROG_FAMILY; value="tt"; }
+    if (mode == "text") { var=FONT_FAMILY; value="tt"; }
+    else if (mode == "math") { var=MATH_FONT_FAMILY; value="mt"; }
+    else { var=PROG_FONT_FAMILY; value="tt"; }
   }
 
   penalty_min (0);
@@ -183,9 +183,9 @@ concater_rep::typeset_inactive_action (string type, tree t, path ip) {
     ghost ("|", descend (descend (ip, i), 0));
     print (space (0, 0, env->fn->spc->max));
     if (i< (n-1)) penalty_min (0);
-    if (i==(n-1)) old_tf= env->local_begin (TEXT_FAMILY, "tt");
+    if (i==(n-1)) old_tf= env->local_begin (FONT_FAMILY, "tt");
     typeset (t[i], descend (ip, i));
-    if (i==(n-1)) env->local_end (TEXT_FAMILY, old_tf);
+    if (i==(n-1)) env->local_end (FONT_FAMILY, old_tf);
     // ghost ("}", descend (descend (ip, i), right_index (t[i])));
   }
   if (N(t) == 0) ghost (">", descend (ip, 1));

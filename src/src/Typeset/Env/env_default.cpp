@@ -19,9 +19,9 @@ initialize_default_env () {
   if (N(default_env) != 0) return;
   hashmap<string,tree>& env= default_env;
 
-  tree the_page (MACRO, compound ("page number"));
   tree identity_m (MACRO, "x", tree (ARG, "x"));
   tree tabular_m (MACRO, "x", tree (TFORMAT, tree (ARG, "x")));
+  tree the_page (MACRO, compound ("page number"));
   tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
   tree gr_clip (TUPLE, "clip",
 		tuple ("0par", "-0.3par"),
@@ -29,48 +29,44 @@ initialize_default_env () {
 
   env (DPI)              = "600";       // resolution in dots per inch
   env (SFACTOR)          = "5";         // shrinking factor on screen
-  env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
-
   env (PREAMBLE)         = "false";     // preamble mode ?
   env (MODE)             = "text";      // typesetting mode
-  env (TEXT_LANGUAGE)    = "english";   // the language
-  env (TEXT_FONT)        = "roman";     // the font name in text mode
-  env (TEXT_FAMILY)      = "rm";        // the font family in text mode
-  env (TEXT_SERIES)      = "medium";    // the font series in text mode
-  env (TEXT_SHAPE)       = "right";     // the font shape in text mode
-  env (MATH_LANGUAGE)    = "texmath";   // the default mathematical language
-  env (MATH_FONT)        = "roman";     // the font name in math mode
-  env (MATH_FAMILY)      = "mr";        // the font family in math mode
-  env (MATH_SERIES)      = "medium";    // the font series in math mode
-  env (MATH_SHAPE)       = "normal";    // the font shape in math mode
-  env (PROG_LANGUAGE)    = "?";         // the default programming language
-  env (PROG_FONT)        = "roman";     // the font name in prog mode
-  env (PROG_FAMILY)      = "tt";        // the font family in prog mode
-  env (PROG_SERIES)      = "medium";    // the font series in prog mode
-  env (PROG_SHAPE)       = "right";     // the font shape in prog mode
-  env (FONT_BASE_SIZE)   = "10";        // the font base size
-  env (FONT_SIZE)        = "1";         // the font size multiplier
-  env (INDEX_LEVEL)      = "0";         // the index level (0, 1 or 2)
-  env (DISPLAY_STYLE)    = "false";     // true if we are in display style
-  env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?
-  env (VERTICAL_POS)     = "0";         // used in fractions (-1, 0 or 1)
-  env (COLOR)            = "black";     // the color
-  env (BACKGROUND_COLOR) = "white";     // the background color
-  env (LINE_WIDTH)       = "1ln";       // line width in graphics
-  env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
-  env (LINE_ARROWS)      = "none";      // arrows at end of lines
-  env (LINE_CAPS)        = "normal";    // junctions in multilines
-  env (FILL_MODE)        = "both";      // show contour?
-  env (FILL_COLOR)       = "white";     // fill color
-  env (FILL_STYLE)       = "plain";     // fill style
-  env (THIS_SESSION)     = "?";         // computer algebra session name
   env (INFO_FLAG)        = "short";     // information about labels, etc.
+  env (IDENTITY)         = identity_m;  // identity macro
+  env (TABULAR)          = tabular_m;   // tabular macro
 
+  env (FONT)             = "roman";     // the font name in text mode
+  env (FONT_FAMILY)      = "rm";        // the font family in text mode
+  env (FONT_SERIES)      = "medium";    // the font series in text mode
+  env (FONT_SHAPE)       = "right";     // the font shape in text mode
+  env (FONT_SIZE)        = "1";         // the font size multiplier
+  env (FONT_BASE_SIZE)   = "10";        // the font base size
+  env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
+  env (COLOR)            = "black";     // the color
+  env (BG_COLOR)         = "white";     // the background color
+  env (LANGUAGE)         = "english";   // the language
   env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
   env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.
   env (PAGE_DECORATIONS) = DPAGES;      // future headers, footers, etc.
   env (XOFF_DECORATIONS) = "0unit";     // hor. placement of decorations
   env (YOFF_DECORATIONS) = "0unit";     // vert. placement of decorations
+
+  env (MATH_LANGUAGE)    = "texmath";   // the default mathematical language
+  env (MATH_FONT)        = "roman";     // the font name in math mode
+  env (MATH_FONT_FAMILY) = "mr";        // the font family in math mode
+  env (MATH_FONT_SERIES) = "medium";    // the font series in math mode
+  env (MATH_FONT_SHAPE)  = "normal";    // the font shape in math mode
+  env (MATH_LEVEL)       = "0";         // the index level (0, 1 or 2)
+  env (MATH_DISPLAY)     = "false";     // true if we are in display style
+  env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?
+  env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
+
+  env (PROG_LANGUAGE)    = "?";         // the default programming language
+  env (PROG_FONT)        = "roman";     // the font name in prog mode
+  env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
+  env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
+  env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
+  env (PROG_SESSION)     = "?";         // computer algebra session name
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_HYPHEN)       = "normal";    // quality of hyphenation
@@ -167,12 +163,17 @@ initialize_default_env () {
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
 
+  env (LINE_WIDTH)       = "1ln";       // line width in graphics
+  env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
+  env (LINE_ARROWS)      = "none";      // arrows at end of lines
+  env (LINE_CAPS)        = "normal";    // junctions in multilines
+  env (FILL_MODE)        = "both";      // show contour?
+  env (FILL_COLOR)       = "white";     // fill color
+  env (FILL_STYLE)       = "plain";     // fill style
+
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
   env (GR_CLIP)          = gr_clip;     // clipping of graphics
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
-
-  env (IDENTITY)         = identity_m;  // identity macro
-  env (TABULAR)          = tabular_m;   // tabular macro
 }

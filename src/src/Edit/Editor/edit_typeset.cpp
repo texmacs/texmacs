@@ -265,7 +265,7 @@ language
 edit_typeset_rep::get_env_language () {
   string mode= get_env_string (MODE);
   if (mode == "text")
-    return text_language (get_env_string (TEXT_LANGUAGE));
+    return text_language (get_env_string (LANGUAGE));
   else if (mode == "math")
     return math_language (get_env_string (MATH_LANGUAGE));
   else return prog_language (get_env_string (PROG_LANGUAGE));

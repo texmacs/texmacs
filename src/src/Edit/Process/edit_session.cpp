@@ -54,7 +54,7 @@ edit_process_rep::make_session (string lan, string session) {
   path p (4, path (0, path (0, 0)));
   tree body (DOCUMENT, "");
   tree w= tree (WITH);
-  w << PROG_LANGUAGE << lan << THIS_SESSION << session
+  w << PROG_LANGUAGE << lan << PROG_SESSION << session
     << compound ("session", body);
   insert_tree (w, p);
   if (connection_declared (lan)) connect ();
@@ -85,7 +85,7 @@ edit_process_rep::start_input () {
   }
 
   string lan    = get_env_string (PROG_LANGUAGE);
-  string session= get_env_string (THIS_SESSION);
+  string session= get_env_string (PROG_SESSION);
   tree   prompt = "";
   tree   input  = "";
 
@@ -324,7 +324,7 @@ edit_process_rep::session_insert_text_field () {
 void
 edit_process_rep::session_insert_input_at (path p) {
   string lan    = get_env_string (PROG_LANGUAGE);
-  string session= get_env_string (THIS_SESSION);
+  string session= get_env_string (PROG_SESSION);
   tree prompt= copy (last_prompt [tuple (lan, session)]);
   tree input = tree (DOCUMENT, "");
   if (math_input) input= compound ("math", input);
@@ -472,7 +472,7 @@ edit_process_rep::session_complete_try () {
   // cout << t << LF;
 
   string lan= get_env_string (PROG_LANGUAGE);
-  string ses= get_env_string (THIS_SESSION);
+  string ses= get_env_string (PROG_SESSION);
   string s  = as_string (call ("verbatim-serialize", lan, tree_to_object (t)));
   s= s (0, N(s)-1);
 
