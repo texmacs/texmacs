@@ -36,8 +36,9 @@
   (visible-header? visible_header (bool))
   (visible-icon-bar? visible_icon_bar (bool int))
   (visible-footer? visible_footer (bool))
-  (full-screen-mode full_screen_mode (void bool))
+  (full-screen-mode full_screen_mode (void bool bool))
   (full-screen? in_full_screen_mode (bool))
+  (full-screen-edit? in_full_screen_edit_mode (bool))
   (set-shrinking-factor set_shrinking_factor (void int))
   (get-shrinking-factor get_shrinking_factor (int))
 
@@ -53,6 +54,7 @@
   (pretend-save-buffer pretend_save_buffer (void))
   (get-name-buffer get_name_buffer (url))
   (set-name-buffer set_name_buffer (void url))
+  (set-abbr-buffer set_abbr_buffer (void string))
   (new-buffer new_buffer (void))
   (switch-to-buffer switch_to_buffer (void url))
   (switch-to-active-buffer switch_to_active_buffer (void url))

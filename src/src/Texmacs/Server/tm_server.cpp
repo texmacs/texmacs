@@ -369,9 +369,9 @@ tm_server_rep::interactive (string name, string& s, command call_back) {
 }
 
 void
-tm_server_rep::full_screen_mode (bool on) {
+tm_server_rep::full_screen_mode (bool on, bool edit) {
   widget meta= (widget) get_meta ();
-  if (on) {
+  if (on && !edit) {
     show_header (false);
     show_footer (false);
     meta ["canvas"] << set_integer ("scrollbars", false);
@@ -382,13 +382,19 @@ tm_server_rep::full_screen_mode (bool on) {
     meta ["canvas"] << set_integer ("scrollbars", true);
   }
   meta->win->full_screen (on);
-  get_editor()->full_screen_mode (on);
+  get_editor()->full_screen_mode (on && !edit);
   full_screen = on;
+  full_screen_edit = on && edit;
 }
 
 bool
 tm_server_rep::in_full_screen_mode () {
-  return full_screen;
+  return full_screen && !full_screen_edit;
+}
+
+bool
+tm_server_rep::in_full_screen_edit_mode () {
+  return full_screen_edit;
 }
 
 /******************************************************************************

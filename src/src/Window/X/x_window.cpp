@@ -130,7 +130,8 @@ x_window_rep::initialize () {
 
   // cout << "Hints: " << min_w << ", " << min_h << " --- "
   // << max_w << ", " << max_h << "\n";
-  if (name==NULL) name= "popup";
+  if (name == NULL) name= "popup";
+  if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
 
   XSelectInput (dpy, win,
@@ -231,6 +232,12 @@ x_window_rep::set_name (string name) {
   XStoreName (dpy, win, s);
   XSetIconName (dpy, win, s);
   delete[] s;
+  the_name= name;
+}
+
+string
+x_window_rep::get_name () {
+  return the_name;
 }
 
 void
@@ -244,37 +251,44 @@ x_window_rep::unmap () {
 }
 
 void
-x_window_rep::full_screen_sub (bool flag) {
-  XSetWindowAttributes setattr;
-  setattr.override_redirect= flag;
-  XChangeWindowAttributes (dpy, win, CWOverrideRedirect, &setattr);
-  unmap (); map ();
-  if (flag) {
-    XSetInputFocus (dpy, win, RevertToParent, CurrentTime);
-    // unsufficient for setting focus
-    // temporary hack: full_screen_mode member function of editor_rep
-  }
-}
-
-void
 x_window_rep::full_screen (bool flag) {
   if (full_screen_flag == flag) return;
+  string old_name= get_name ();
+  if (old_name == "")
+    old_name= as_string (name);
   if (flag) {
-    XSetWindowBorderWidth (dpy, win, 0);
+    save_win= win;
+    name= NULL;
     save_x= win_x; save_y= win_y;
     save_w= win_w; save_h= win_h;
+    initialize ();
     XMoveResizeWindow (dpy, win, 0, 0,
 		       dis->display_width, dis->display_height);
     move_event   (0, 0);
     resize_event (dis->display_width, dis->display_height);
-    full_screen_sub (flag);
+    map ();
+    XSetInputFocus (dpy, win, PointerRoot, CurrentTime);
   }
   else {
-    full_screen_sub (flag);
+    unmap ();
+    Window_to_window->reset (win);
+    nr_windows--;
+    XDestroyWindow (dpy, win);
+    win= save_win;
+    unmap ();
+    Window_to_window->reset (win);
+    nr_windows--;
+    XDestroyWindow (dpy, win);
+    name= as_charp (old_name);
+    win_x= save_x; win_y= save_y;
+    win_w= save_w; win_h= save_h;
+    initialize ();
+    map ();
     XMoveResizeWindow (dpy, win, save_x, save_y, save_w, save_h);
     resize_event (save_w, save_h);
     move_event   (save_x, save_y);
   }
+  set_name (old_name);
   full_screen_flag= flag;
 }
 

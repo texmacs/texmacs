@@ -232,13 +232,15 @@ tmg_visible_footerP () {
 }
 
 SCM
-tmg_full_screen_mode (SCM arg1) {
+tmg_full_screen_mode (SCM arg1, SCM arg2) {
   SCM_ASSERT_BOOL (arg1, SCM_ARG1, "full-screen-mode");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "full-screen-mode");
 
   bool in1= scm_to_bool (arg1);
+  bool in2= scm_to_bool (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->full_screen_mode (in1);
+  get_server()->full_screen_mode (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -248,6 +250,15 @@ SCM
 tmg_full_screenP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->in_full_screen_mode ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_full_screen_editP () {
+  // SCM_DEFER_INTS;
+  bool out= get_server()->in_full_screen_edit_mode ();
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
@@ -393,6 +404,19 @@ tmg_set_name_buffer (SCM arg1) {
 
   // SCM_DEFER_INTS;
   get_server()->set_name_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_abbr_buffer (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-abbr-buffer");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_abbr_buffer (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -874,8 +898,9 @@ initialize_glue_server () {
   gh_new_procedure ("visible-header?", (FN) tmg_visible_headerP, 0, 0, 0);
   gh_new_procedure ("visible-icon-bar?", (FN) tmg_visible_icon_barP, 1, 0, 0);
   gh_new_procedure ("visible-footer?", (FN) tmg_visible_footerP, 0, 0, 0);
-  gh_new_procedure ("full-screen-mode", (FN) tmg_full_screen_mode, 1, 0, 0);
+  gh_new_procedure ("full-screen-mode", (FN) tmg_full_screen_mode, 2, 0, 0);
   gh_new_procedure ("full-screen?", (FN) tmg_full_screenP, 0, 0, 0);
+  gh_new_procedure ("full-screen-edit?", (FN) tmg_full_screen_editP, 0, 0, 0);
   gh_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
   gh_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
@@ -889,6 +914,7 @@ initialize_glue_server () {
   gh_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
   gh_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
   gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
+  gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
   gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
   gh_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
   gh_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);

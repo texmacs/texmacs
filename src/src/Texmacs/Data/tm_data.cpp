@@ -173,11 +173,18 @@ tm_data_rep::delete_buffer (tm_buffer buf) {
 
 void
 tm_data_rep::set_name_buffer (url name) {
-  int i;
   tm_buffer buf= get_buffer ();
   if (buf->name == name) return;
   buf->name= name;
-  buf->abbr= new_menu_name (name);
+  set_abbr_buffer (new_menu_name (name));
+}
+
+void
+tm_data_rep::set_abbr_buffer (string abbr) {
+  int i;
+  tm_buffer buf= get_buffer ();
+  if (buf->abbr == abbr) return;
+  buf->abbr= abbr;
   update_menu ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
