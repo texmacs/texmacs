@@ -31,7 +31,7 @@
     primitives|../devel/format/primitives/primitives.en.tm>
 
     <branch|Reference guide for the standard <TeXmacs>
-    styles|styles/std-dtds/dtds.en.tm>
+    styles|styles/styles.en.tm>
 
     <branch|Customizing <TeXmacs>|scheme/man-scheme.en.tm>
 
