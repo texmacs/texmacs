@@ -1930,48 +1930,9 @@ tmg_generate_aux (SCM arg1) {
 }
 
 SCM
-tmg_set_page_parameters () {
+tmg_notify_page_change () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_page_parameters ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_set_page_medium (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-medium");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_page_medium (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_set_page_type (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-type");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_page_type (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_set_page_orientation (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-page-orientation");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_page_orientation (in1);
+  get_server()->get_editor()->notify_page_change ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2989,10 +2950,7 @@ initialize_glue_editor () {
   gh_new_procedure ("update-buffer", (FN) tmg_update_buffer, 0, 0, 0);
   gh_new_procedure ("generate-all-aux", (FN) tmg_generate_all_aux, 0, 0, 0);
   gh_new_procedure ("generate-aux", (FN) tmg_generate_aux, 1, 0, 0);
-  gh_new_procedure ("set-page-parameters", (FN) tmg_set_page_parameters, 0, 0, 0);
-  gh_new_procedure ("set-page-medium", (FN) tmg_set_page_medium, 1, 0, 0);
-  gh_new_procedure ("set-page-type", (FN) tmg_set_page_type, 1, 0, 0);
-  gh_new_procedure ("set-page-orientation", (FN) tmg_set_page_orientation, 1, 0, 0);
+  gh_new_procedure ("notify-page-change", (FN) tmg_notify_page_change, 0, 0, 0);
   gh_new_procedure ("print-to-file", (FN) tmg_print_to_file, 1, 0, 0);
   gh_new_procedure ("print-pages-to-file", (FN) tmg_print_pages_to_file, 3, 0, 0);
   gh_new_procedure ("print", (FN) tmg_print, 0, 0, 0);

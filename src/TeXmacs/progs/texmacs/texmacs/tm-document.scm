@@ -22,8 +22,9 @@
     init-interline init-interline-spc init-interpar-spc
     init-magn init-language init-color init-bg-color
     ;; page layout
+    init-page-medium init-page-type init-page-size init-page-orientation
     toggle-visible-header-and-footer
-    toggle-page-width-margin toggle-page-screen-margin init-page-size
+    toggle-page-width-margin toggle-page-screen-margin
     init-page-shrink init-page-extend init-page-flexibility))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,17 +63,36 @@
 (define (init-bg-color s) (init-env "bg-color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Page layout
+;; Main page layout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (test-page-medium? s) (string=? (get-env "page-medium") s))
-(set-check-mark! set-page-medium "*" test-page-medium?)
+(tm-define (init-page-medium s)
+  (:check-mark "*" test-page-medium?)
+  (init-env "page-medium" s)
+  (notify-page-change))
 
 (define (test-page-type? s) (string=? (get-env "page-type") s))
-(set-check-mark! set-page-type "*" test-page-type?)
+(tm-define (init-page-type s)
+  (:check-mark "*" test-page-type?)
+  (init-env "page-type" s)
+  (init-default "page-width" "page-height")
+  (notify-page-change))
+
+(define (init-page-size w h)
+  (init-env "page-type" "user")
+  (init-env "page-width" w)
+  (init-env "page-height" h))
 
 (define (test-page-orientation? s) (string=? (get-env "page-orientation") s))
-(set-check-mark! set-page-orientation "*" test-page-orientation?)
+(tm-define (init-page-orientation s)
+  (:check-mark "*" test-page-orientation?)
+  (init-env "page-orientation" s)
+  (notify-page-change))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further page layout settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (visible-header-and-footer?)
   (== (get-env "page-show-hf") "true"))
@@ -99,11 +119,6 @@
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
 	    (if (not-page-screen-margin?) "true" "false")))
-
-(define (init-page-size w h)
-  (init-env "page-type" "user")
-  (init-env "page-width" w)
-  (init-env "page-height" h))
 
 (define (init-page-shrink s) (init-env "page-shrink" s))
 (define (init-page-extend s) (init-env "page-extend" s))

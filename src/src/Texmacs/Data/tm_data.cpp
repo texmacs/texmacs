@@ -152,7 +152,7 @@ tm_data_rep::revert_buffer (url name, tree doc) {
     vw->ed->set_style (buf->style);
     vw->ed->set_init  (buf->init);
     vw->ed->set_fin   (buf->fin);
-    vw->ed->set_page_parameters ();
+    vw->ed->notify_page_change ();
     vw->ed->add_init (buf->init);
     vw->ed->notify_change (THE_DECORATIONS);
     vw->ed->typeset_invalidate_env ();
@@ -209,7 +209,7 @@ tm_data_rep::new_view (url name) {
   ed->set_style (buf->style);
   ed->set_init (buf->init);
   ed->set_fin (buf->fin);
-  ed->set_page_parameters ();
+  ed->notify_page_change ();
   ed->add_init (buf->init);
   ed->notify_change (THE_DECORATIONS);
   ed->notify_change (THE_AUTOMATIC_SIZE);

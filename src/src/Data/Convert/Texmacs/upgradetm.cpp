@@ -2158,6 +2158,44 @@ upgrade_item_punct (tree t) {
 }
 
 /******************************************************************************
+* Forget default page parameters
+******************************************************************************/
+
+tree
+upgrade_page_pars (tree t) {
+  if (is_atomic (t)) return t;
+  else if (L(t) == COLLECTION) {
+    cout << "t= " << t << "\n";
+    int i, n= N(t);
+    tree r (COLLECTION);
+    for (i=0; i<n; i++) {
+      tree u= t[i];
+      if (!is_func (u, ASSOCIATE, 2));
+      else if (u == tree (ASSOCIATE, PAGE_TYPE, "a4"));
+      else if (u == tree (ASSOCIATE, PAGE_EVEN, "30mm"));
+      else if (u == tree (ASSOCIATE, PAGE_ODD, "30mm"));
+      else if (u == tree (ASSOCIATE, PAGE_RIGHT, "30mm"));
+      else if (u == tree (ASSOCIATE, PAGE_TOP, "30mm"));
+      else if (u == tree (ASSOCIATE, PAGE_BOT, "30mm"));
+      else if (u == tree (ASSOCIATE, PAR_WIDTH, "150mm"));
+      else if (u[0] == "page-reduce-left");
+      else if (u[0] == "page-reduce-right");
+      else if (u[0] == "page-reduce-top");
+      else if (u[0] == "page-reduce-bot");
+      else r << u;
+    }
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_page_pars (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2241,5 +2279,7 @@ upgrade (tree t, string version) {
     t= upgrade_style_rename (t);
   if (version_inf_eq (version, "1.0.3.4"))
     t= upgrade_item_punct (t);
+  if (version_inf_eq (version, "1.0.3.7"))
+    t= upgrade_page_pars (t);
   return t;
 }
