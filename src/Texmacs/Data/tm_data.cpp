@@ -120,7 +120,7 @@ tm_data_rep::new_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= new_buffer (name);
-  buf->t      = extract (doc, "body");
+  set_document (buf->rp, extract (doc, "body"));
   buf->project= extract (doc, "project");
   buf->style  = extract (doc, "style");
   buf->init   = hashmap<string,tree> (UNINIT, extract (doc, "initial"));
@@ -145,10 +145,10 @@ tm_data_rep::revert_buffer (url name, tree doc) {
   buf->fin    = hashmap<string,tree> (UNINIT, extract (doc, "final"));
   buf->ref    = hashmap<string,tree> (UNINIT, extract (doc, "references"));
   buf->aux    = hashmap<string,tree> (UNINIT, extract (doc, "auxiliary"));
-  if (N(buf->vws)==0) buf->t= extract (doc, "body");
+  if (N(buf->vws)==0) set_document (buf->rp, extract (doc, "body"));
   else for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
-    if (i==0) vw->ed->assign (path(), extract (doc, "body"));
+    if (i==0) vw->ed->assign (vw->ed->rp, extract (doc, "body"));
     vw->ed->set_style (buf->style);
     vw->ed->set_init  (buf->init);
     vw->ed->set_fin   (buf->fin);
@@ -581,7 +581,7 @@ tm_data_rep::project_update_menu () {
   s << "(\"" << buf->prj->abbr << "\" ";
   s << "(switch-to-buffer \"" * as_string (buf->prj->name) * "\"))";
 
-  tree t= buf->prj->t;
+  tree t= subtree (the_et, buf->prj->rp);
   int i, j, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], INCLUDE, 1) && is_atomic (t[i][0])) {
@@ -594,6 +594,34 @@ tm_data_rep::project_update_menu () {
 
   s << ")";
   (void) eval (s);
+}
+
+/******************************************************************************
+* Management of all edit trees
+******************************************************************************/
+
+tree the_et= tuple ();
+
+path
+new_document () {
+  int i, n= N(the_et);
+  for (i=0; i<n; i++)
+    if (the_et[i] == UNINIT) {
+      the_et[i]= tree (DOCUMENT, "");
+      return path (i);
+    }
+  the_et << tree (DOCUMENT, "");
+  return path (n);
+}
+
+void
+delete_document (path rp) {
+  subtree (the_et, rp)= UNINIT;
+}
+
+void
+set_document (path rp, tree t) {
+  subtree (the_et, rp)= copy (t);
 }
 
 /******************************************************************************

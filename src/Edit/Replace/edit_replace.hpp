@@ -43,14 +43,12 @@ public:
   /* structural searching */
   bool inside (string what);
   bool inside (tree_label l);
-  bool inside_compound (string what);
   bool inside_with (string var, string val);
   string inside_which (tree t);
   path search_upwards (string what);
   path search_upwards (tree_label l);
   path search_parent_upwards (tree_label l, int& last);
   path search_parent_upwards (tree_label l);
-  path search_upwards_compound (string what);
   path search_upwards_with (string var, string val);
   path search_upwards_in_set (tree t);
   path search_previous_compound (path init, string which);

@@ -190,7 +190,8 @@ super_correct (tree t, path p) {
   path q= path_up (p);
   path r= up_correct (t, q);
   if (q != r) {
-    if ((!nil (r)) && is_atomic (subtree (t, r))) p= path_up (r) * 0;
+    if (nil (r)) fatal_error ("Unexpected situation", "super_correct");
+    else if (is_atomic (subtree (t, r))) p= path_up (r) * 0;
     else p= r * 0;
   }
   return correct_cursor (t, p);

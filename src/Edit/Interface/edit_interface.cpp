@@ -47,7 +47,7 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0)
+  oc (0, 0), nr_mutators (-1)
 {
   input_mode= INPUT_NORMAL;
 }
@@ -138,6 +138,40 @@ edit_interface_rep::process_extern_input () {
     else if (con_status == WAITING_FOR_INPUT)
       start_input ();
   }
+}
+
+static path mutator_path;
+static string MUTATOR ("mutator");
+
+static int
+mutate (tree t, path ip) {
+  if (is_atomic (t)) return 0;
+  else if (is_compound (t, MUTATOR, 2)) {
+    mutator_path= reverse (path (0, ip));
+    string s= as_string (t[1]); // eval_secure (s);
+    if (s != "")
+      if (as_bool (eval ("(secure? '" * s * ")")))
+	(void) eval (s);
+    return 1;
+  }
+  else {
+    int i, n= N(t), sum=0;
+    for (i=0; i<n; i++)
+      sum += mutate (t[i], path (i, ip));
+    return sum;
+  }
+}
+
+void
+edit_interface_rep::process_mutators () {
+  if (nr_mutators == 0) return;
+  if (editor (this) != sv->get_editor ()) return;
+  nr_mutators= mutate (subtree (et, rp), reverse (rp));
+}
+
+path
+edit_interface_rep::get_mutator_path () {
+  return mutator_path;
 }
 
 void
@@ -492,6 +526,12 @@ edit_interface_rep::selection_visible () {
 
 void
 edit_interface_rep::apply_changes () {
+  /*
+  cout << "Apply changes\n";
+  cout << "et= " << et << "\n";
+  cout << "tp= " << tp << "\n";
+  cout << HRULE << "\n";
+  */
   if (env_change == 0) {
     if ((last_update < last_change) &&
 	(texmacs_time() >= (last_change + (1000/6))) &&
@@ -550,6 +590,7 @@ edit_interface_rep::apply_changes () {
     invalidate (x1- 2*pixel, y1- 2*pixel, x2+ 2*pixel, y2+ 2*pixel);
     // check_data_integrety ();
     the_ghost_cursor()= eb->find_check_cursor (tp);
+    nr_mutators= -1;
   }
 
   // cout << "Handling extents\n";
@@ -638,7 +679,7 @@ is_graphical (tree t) {
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
-  if (nil (p)) return;
+  if (p == rp) return;
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||

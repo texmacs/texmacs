@@ -16,6 +16,11 @@
 
 window texmacs_window (widget wid);
 
+extern tree the_et;
+path new_document ();
+void delete_document (path rp);
+void set_document (path rp, tree t);
+
 class tm_buffer_rep {
 public:
   url name;               // full name
@@ -36,7 +41,7 @@ public:
   int  last_save;         // how many changes at last save
   int  last_autosave;     // how many changes at last autosave
 
-  tree t;                     // the edit tree
+  path rp;                    // path to the document's root in the_et
   tree project;               // a project the document belongs to
   tree style;                 // the style of the buffer
   hashmap<string,tree> init;  // initial values of environment variables
@@ -50,8 +55,11 @@ public:
     need_save (false), need_autosave (false), read_only (false),
     prj (NULL), undo ("nil"), redo ("nil"), exdo ("nil"),
     undo_depth (0), redo_depth (0), last_save (0), last_autosave (0),
-    t (DOCUMENT, ""), project (""), style ("style"),
+    rp (new_document ()), project (""), style ("style"),
     init ("?"), fin ("?"), ref ("?"), aux ("?") {}
+
+  inline ~tm_buffer_rep () {
+    delete_document (rp); }
 
   void mark_undo_block ();
   void mark_redo_block ();

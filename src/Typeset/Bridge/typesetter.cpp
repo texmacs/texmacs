@@ -17,8 +17,8 @@
 * Constructor and destructor
 ******************************************************************************/
 
-typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip):
-  env (env2), et (et2), old_patch (UNINIT)
+typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip2):
+  env (env2), et (et2), ip (ip2), old_patch (UNINIT)
 {
   br= make_bridge (this, et, ip);
   x1= y1= x2= y2=0;
@@ -176,7 +176,7 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
 void
 notify_assign (typesetter ttt, path p, tree u) {
   // cout << "Assign " << p << ", " << u << "\n";
-  if (nil (p)) ttt->br= make_bridge (ttt, u, path ());
+  if (nil (p)) ttt->br= make_bridge (ttt, u, ttt->ip);
   else ttt->br->notify_assign (p, u);
 }
 

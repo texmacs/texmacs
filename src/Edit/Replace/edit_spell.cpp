@@ -22,8 +22,8 @@
 void
 edit_replace_rep::spell_start () {
   /********** get paths ***********/
-  search_at   = start (et, path ());
-  spell_end_p = end (et, path ());
+  search_at   = start (et, rp);
+  spell_end_p = end (et, rp);
   path spell_p= copy (tp);
   if (selection_active_normal ()) {
     get_selection (search_at, spell_end_p);
@@ -49,7 +49,7 @@ edit_replace_rep::spell_start () {
   spell_dicmod = false;
 
   spell_next ();
-  if (nil (search_at))
+  if (search_at == rp)
     set_message ("no spelling errors found in text", "correct text");
 }
 
@@ -103,8 +103,8 @@ void
 edit_replace_rep::spell_next () {
   while (true) {
     if (path_inf (spell_end_p, search_at))
-      search_at= path ();
-    if (nil (search_at)) {
+      search_at= rp;
+    if (search_at == rp) {
       spell_end ();
       return;
     }

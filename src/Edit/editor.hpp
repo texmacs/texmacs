@@ -39,8 +39,9 @@ public:
 protected:
   tm_buffer   buf;  // the underlying buffer
   drd_info    drd;  // the drd for the buffer
-  tree&       et;   // the tree being edited
+  tree&       et;   // all TeXmacs trees
   box         eb;   // box translation of tree
+  path        rp;   // path to the root of the document in et
   path        tp;   // path of cursor in tree
 
   /* exchanging information with the interface */
@@ -108,6 +109,8 @@ public:
   virtual void update_connection () = 0;
   virtual void connect () = 0;
   virtual void process_extern_input () = 0;
+  virtual void process_mutators () = 0;
+  virtual path get_mutator_path () = 0;
   virtual void feed_input (tree t) = 0;
   virtual bool busy_connection () = 0;
   virtual void interrupt_connection () = 0;
@@ -215,17 +218,18 @@ public:
   virtual void join (path p) = 0;
   virtual void ins_unary (path p, tree_label op) = 0;
   virtual void rem_unary (path p) = 0;
-  virtual void finished () = 0;
-  virtual void notify_assign (tree& t, path p, tree u) = 0;
-  virtual void notify_insert (tree& t, path p, tree u) = 0;
-  virtual void notify_remove (tree& t, path p, int nr) = 0;
-  virtual void notify_split (tree& t, path p) = 0;
-  virtual void notify_join (tree& t, path p) = 0;
-  virtual void notify_ins_unary (tree& t, path p, tree_label op) = 0;
-  virtual void notify_rem_unary (tree& t, path p) = 0;
-  virtual void post_notify (tree& t) = 0;
+  virtual void finished (path p) = 0;
+  virtual void notify_assign (path p, tree u) = 0;
+  virtual void notify_insert (path p, tree u) = 0;
+  virtual void notify_remove (path p, int nr) = 0;
+  virtual void notify_split (path p) = 0;
+  virtual void notify_join (path p) = 0;
+  virtual void notify_ins_unary (path p, tree_label op) = 0;
+  virtual void notify_rem_unary (path p) = 0;
+  virtual void post_notify (path p) = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
+  virtual void assign_diff (path p, tree u) = 0;
   virtual int  position_new () = 0;
   virtual void position_delete (int i) = 0;
   virtual void position_set (int i, path p) = 0;
@@ -411,14 +415,12 @@ public:
   /* public routines from edit_replace */
   virtual bool inside (string what) = 0;
   virtual bool inside (tree_label l) = 0;
-  virtual bool inside_compound (string name) = 0;
   virtual bool inside_with (string var, string val) = 0;
   virtual string inside_which (tree t) = 0;
   virtual path search_upwards (string what) = 0;
   virtual path search_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l) = 0;
   virtual path search_parent_upwards (tree_label l, int& last) = 0;
-  virtual path search_upwards_compound (string name) = 0;
   virtual path search_upwards_with (string var, string val) = 0;
   virtual path search_upwards_in_set (tree t) = 0;
   virtual path search_previous_compound (path init, string which) = 0;

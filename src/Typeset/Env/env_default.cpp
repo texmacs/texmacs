@@ -211,6 +211,8 @@ initialize_default_env () {
 		tree (ARG, "x")));
   env ("rightflush")=
     tree (MACRO, tree (HTAB, "0fn", "first"));
+  env ("mutator")=
+    tree (MACRO, "x", "y", tree (ARG, "x"));
 
   /* syntactic highlighting */
   env ("src-macro")=

@@ -36,7 +36,7 @@ edit_typeset_rep::edit_typeset_rep ():
   env (dis, drd, is_aux (buf->name)? buf->extra: buf->name,
        buf->ref, (buf->prj==NULL? buf->ref: buf->prj->ref),
        buf->aux, (buf->prj==NULL? buf->aux: buf->prj->aux)),
-  ttt (new_typesetter (env, et, path())) {}
+  ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
 
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
@@ -55,7 +55,7 @@ edit_typeset_rep::set_init (hashmap<string,tree> H) {
 void
 edit_typeset_rep::add_init (hashmap<string,tree> H) {
   init->join (H);
-  ::notify_assign (ttt, path(), et);
+  ::notify_assign (ttt, path(), subtree (et, rp));
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -160,7 +160,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
   typeset_prepare ();
-  exec_until (ttt, p);
+  exec_until (ttt, p - rp);
   env->read_env (cur (p));
 }
 
@@ -365,7 +365,7 @@ edit_typeset_rep::init_default (string var) {
 void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   typeset_prepare ();
-  eb= empty_box (path ());
+  eb= empty_box (reverse (rp));
   // saves memory, also necessary for change_log update
   eb= ::typeset (ttt, x1, y1, x2, y2);
 }
@@ -374,5 +374,5 @@ void
 edit_typeset_rep::typeset_invalidate_all () {
   notify_change (THE_ENVIRONMENT);
   typeset_preamble ();
-  ::notify_assign (ttt, path(), et);
+  ::notify_assign (ttt, path(), subtree (et, rp));
 }

@@ -127,6 +127,14 @@ path_less_eq (path p1, path p2) {
   return path_less_eq (p1->next, p2->next);
 }
 
+path
+operator - (path p, path q) {
+  if (nil (q)) return p;
+  else if (nil (p) || (p->item != q->item))
+    fatal_error ("Path did not start with required path", "path::operator -");
+  else return p->next - q-> next;
+}
+
 /******************************************************************************
 * Modification routines for strings
 ******************************************************************************/

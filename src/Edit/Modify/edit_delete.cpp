@@ -24,7 +24,7 @@ edit_text_rep::get_deletion_point (
   p= tp;
   if (forward) {
     //cout << HRULE;
-    if ((N(p) >= 2) &&
+    if ((rp < p) && (N(p-rp) >= 2) &&
 	is_concat (subtree (et, path_up (p, 2))) &&
 	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
 	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
@@ -44,7 +44,7 @@ edit_text_rep::get_deletion_point (
   //cout << "  last= " << last << "\n";
   //cout << "  rix = " << rix << "\n";
   while (((forward && (last >= rix)) || ((!forward) && (last == 0))) &&
-	 (!nil (p)) && is_format (subtree (et, path_up (p))))
+	 (rp < p) && is_format (subtree (et, path_up (p))))
     {
       last= last_item (p);
       p   = path_up (p);
@@ -54,7 +54,7 @@ edit_text_rep::get_deletion_point (
       //cout << "  last= " << last << "\n";
       //cout << "  rix = " << rix << "\n";
     }
-  if (!nil (p)) u= subtree (et, path_up (p));
+  if (rp < p) u= subtree (et, path_up (p));
 }
 
 /******************************************************************************
@@ -71,7 +71,7 @@ edit_text_rep::remove_text (bool forward) {
   // multiparagraph delete
   if (is_document (t)) {
     if ((forward && (last >= rix)) || ((!forward) && (last == 0))) {
-      if (!nil(p)) {
+      if (rp < p) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) ||
 	    is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
@@ -237,7 +237,7 @@ edit_text_rep::remove_structure (bool forward) {
   get_deletion_point (p, last, rix, t, u, forward);
 
   // multiparagraph delete
-  if (nil (p)) {
+  if (!(rp < p)) {
     if (forward) {
       if (last >= rix) return;
       remove_return (path (last));
@@ -310,8 +310,8 @@ edit_text_rep::remove_structure (bool forward) {
 void
 edit_text_rep::remove_structure_upwards () {
   path p= path_up (tp);
-  while ((!nil (p)) && is_format (subtree (et, path_up (p)))) p= path_up (p);
-  if (nil (p)) return;
+  while ((rp < p) && is_format (subtree (et, path_up (p)))) p= path_up (p);
+  if (!(rp < p)) return;
   int last= last_item (p);
   p= path_up (p);
   tree st= subtree (et, p);
