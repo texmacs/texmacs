@@ -94,6 +94,7 @@ class concater_rep {
   void typeset_extension (tree t, path ip);
   void typeset_apply (tree t, path ip);
   void typeset_include (tree t, path ip);
+  void typeset_drd_props (tree t, path ip);
   void typeset_eval (tree t, path ip);
   void typeset_value (tree t, path ip);
   void typeset_argument (tree t, path ip);

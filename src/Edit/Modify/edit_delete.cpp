@@ -226,6 +226,7 @@ edit_text_rep::remove_backwards () {
       return;
     case MACRO:
     case FUNCTION:
+    case DRD_PROPS:
     case EVAL:
       back_dynamic (p);
       return;
@@ -428,6 +429,9 @@ edit_text_rep::remove_backwards () {
     case MACRO:
     case FUNCTION:
       back_in_dynamic (u, p);
+      return;
+    case DRD_PROPS:
+      back_in_dynamic (u, p, 1, 2);
       return;
     case EVAL:
     case PROVIDES:

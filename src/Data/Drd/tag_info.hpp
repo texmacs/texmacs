@@ -27,8 +27,10 @@
 #define BORDER_NOT_ACCESSIBLE        16
 #define DYNAMIC_MASK                 32
 #define DYNAMIC                      32
-#define FROZEN_MASK                  64
-#define FROZEN                       64
+
+#define FROZEN_MASK                 192
+#define FROZEN_ARITY                 64
+#define FROZEN_ACCESSIBLE           128
 
 #define CUSTOM_ACCESSIBLE_SHIFT      16
 #define CUSTOM_ACCESSIBLE_MAX        12

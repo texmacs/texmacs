@@ -199,6 +199,13 @@ concater_rep::typeset_include (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_drd_props (tree t, path ip) {
+  (void) env->exec (t);
+  flag ("drd-properties", ip, env->dis->brown);
+  control (t, ip);
+}
+
+void
 concater_rep::typeset_eval (tree t, path ip) {
   tree r= env->exec (t[0]);
   typeset_dynamic (r, ip);
