@@ -158,6 +158,9 @@ arg_type (tree t, int i) {
   case ACTION:
     if (i==n-1) return "tt";
     else return "";
+  case FLAG:
+    if (i==2) return "arg";
+    else return "";
   default:
     return "";
   }
