@@ -52,6 +52,8 @@
       <item><hlink|What to do with Cygwin specific questions|#cygwin-1>?
 
       <item><hlink|How to associate .tm files with <TeXmacs>|#cygwin-2>?
+
+      <item><hlink|How to get spell checking working|#cygwin-3>?
     </itemize-minus>
 
     <item>Usage
@@ -271,7 +273,7 @@
     Look at the Cygwin FAQ at <hlink|http://cygwin.com/faq.html|http://cygwin.com/faq.html>,
     the Cygwin User Guide at <hlink|http://cygwin.com/cygwin-ug-net/|http://cygwin.com/cygwin-ug-net/>
     and search the Cygwin mailing list <hlink|http://www.cygwin.com/ml/cygwin/|http://www.cygwin.com/ml/cygwin/>.
-    </answer>
+  </answer>
 
   <\question>
     <label|cygwin-2>How to associate .tm files with <TeXmacs>?
@@ -281,10 +283,8 @@
     Create a file <verbatim|texmacs.bat> with the following content:
 
     <\verbatim>
-      \ \ \ \ rem cmdow @ /hid
-
-      \ \ \ \ c:\\cygwin\\bin\\bash --login -c "texmacs \\"`cygpath -u
-      "%1"`\\""
+      \ \ \ \ rem cmdow @ /hid<next-line> \ \ \ c:\\cygwin\\bin\\bash --login
+      -c "texmacs \\"`cygpath -u "%1"`\\""
     </verbatim>
 
     Ensure that it lies in your <verbatim|PATH>. Now you can associate .tm
@@ -296,6 +296,19 @@
     <verbatim|C:\\WINDOWS\\system32> directory (this applies to <name|Windows
     XP> installed on <verbatim|C:\\>) and uncomment (<abbr|i.e.> remove
     ``rem'' from) the first line of <verbatim|texmacs.bat>.
+  </answer>
+
+  <\question>
+    <label|cygwin-3>How to get spell checking working?
+  </question>
+
+  <\answer>
+    Install the Cygwin package aspell. Execute in a shell:
+
+    <\verbatim>
+      \ \ \ \ cd /usr/bin<next-line> \ \ \ ln -s /usr/share/aspell/ispell
+      ispell
+    </verbatim>
   </answer>
 
   <section*|Usage>
@@ -402,12 +415,12 @@
 
 <\references>
   <\collection>
-    <associate|typo-1|<tuple|17|?>>
-    <associate|usage-1|<tuple|14|?>>
     <associate|idx-1|<tuple|1.|?>>
-    <associate|usage-2|<tuple|15|?>>
-    <associate|typo-2|<tuple|18|?>>
-    <associate|usage-3|<tuple|16|?>>
+    <associate|typo-1|<tuple|18|?>>
+    <associate|usage-1|<tuple|15|?>>
+    <associate|usage-2|<tuple|16|?>>
+    <associate|typo-2|<tuple|19|?>>
+    <associate|usage-3|<tuple|17|?>>
     <associate|general-1|<tuple|1|?>>
     <associate|general-2|<tuple|2|?>>
     <associate|general-3|<tuple|3|?>>
@@ -417,6 +430,7 @@
     <associate|general-7|<tuple|7|?>>
     <associate|cygwin-1|<tuple|12|?>>
     <associate|cygwin-2|<tuple|13|?>>
+    <associate|cygwin-3|<tuple|14|?>>
     <associate|toc-10|<tuple|2.1|?>>
     <associate|sys-1|<tuple|8|?>>
     <associate|gly-1|<tuple|1|?>>
@@ -438,8 +452,8 @@
     <associate|toc-4|<tuple|1.3|?>>
     <associate|toc-5|<tuple|1.4|?>>
     <associate|toc-6|<tuple|1.5|?>>
+    <associate|legacy-1|<tuple|20|?>>
     <associate|toc-7|<tuple|1.6|?>>
-    <associate|legacy-1|<tuple|19|?>>
     <associate|toc-8|<tuple|1.7|?>>
     <associate|toc-9|<tuple|2|?>>
   </collection>
