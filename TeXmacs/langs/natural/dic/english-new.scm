@@ -1320,6 +1320,7 @@
 ("update from web" "")
 ("update image links" "")
 ("upper border" "")
+("upright" "")
 ("use TeXmacs" "")
 ("use a black color" "")
 ("use a blue color" "")
