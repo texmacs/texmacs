@@ -75,7 +75,6 @@ public:
   void     init_style (string style);
   void     init_extra_style (string package, bool check= false);
 
-  void     typeset_style (tree style);
   void     typeset_style_use_cache (tree style);
   void     typeset_preamble ();
   void     typeset_prepare ();
