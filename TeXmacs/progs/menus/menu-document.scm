@@ -125,20 +125,26 @@
 	  ("Short" (init-env "info-flag" "short"))
 	  ("Detailed" (init-env "info-flag" "detailed")))
       (-> "Page layout"
-	  ("Default" (init-default "page-reduce-left"
-				   "page-reduce-right"
-				   "page-reduce-top"
-				   "page-reduce-bot"
-				   "page-show-hf"))
+	  ("Default" (init-default "page-screen-margin" "page-show-hf"
+				   "page-screen-left" "page-screen-right"
+				   "page-screen-top" "page-screen-bot"))
 	  ---
-	  ("Margins as on paper" (init-as-on-paper))
-	  ("Reduce margins" ...
-	   (interactive
-	    '("Reduce left margin by:"
-	      "Reduce right margin by:"
-	      "Reduce top margin by:"
-	      "Reduce bottom margin by:") 'init-screen-reduction))
-	  ("Show header and footer" (toggle-visible-header-and-footer)))
+	  ("Show header and footer" (toggle-visible-header-and-footer))
+	  ("Margins as on paper" (toggle-page-screen-margin))
+	  ---
+	  (when (test-env? "page-screen-margin" "true")
+		("Left margin" ...
+		 (interactive '("Left margin:")
+			      '(lambda (s) (init-env "page-screen-left" s))))
+		("Right margin" ...
+		 (interactive '("Right margin:")
+			      '(lambda (s) (init-env "page-screen-right" s))))
+		("Top margin" ...
+		 (interactive '("Top margin:")
+			      '(lambda (s) (init-env "page-screen-top" s))))
+		("Bottom margin" ...
+		 (interactive '("Bottom margin:")
+			      '(lambda (s) (init-env "page-screen-bot" s))))))
       ---
       (group "Source tags")
       (-> "Style"
@@ -455,26 +461,6 @@
 		("Even page shift" ...
 		 (interactive '("Even page shift:")
 			      '(lambda (s) (init-env "page-even-shift" s))))))
-      (-> "Screen Margins"
-	  ("Default" (init-default "page-screen-margin"
-				   "page-screen-left" "page-screen-right"
-				   "page-screen-top" "page-screen-bot"))
-	  ("Margins as on paper" (toggle-page-screen-margin))
-	  ---
-	  (when (test-env? "page-screen-margin" "true")
-		("Left margin" ...
-		 (interactive '("Left margin:")
-			      '(lambda (s) (init-env "page-screen-left" s))))
-		("Right margin" ...
-		 (interactive '("Right margin:")
-			      '(lambda (s) (init-env "page-screen-right" s))))
-		("Top margin" ...
-		 (interactive '("Top margin:")
-			      '(lambda (s) (init-env "page-screen-top" s))))
-		("Bottom margin" ...
-		 (interactive '("Bottom margin:")
-			      '(lambda (s) (init-env "page-screen-bot" s))))))
-	  
       ---
       (group "Breaking")
       (-> "Algorithm"
