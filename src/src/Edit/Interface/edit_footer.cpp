@@ -159,7 +159,10 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
   case ARG: r= "argument#" * as_string (st[0]); break;
   case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
-  case COMPOUND: r= "compound#" * as_string (st[0]); break;
+  case COMPOUND:
+    if (is_atomic (st[0])) r= as_string (st[0]);
+    else r= "compound";
+    break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
   case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
@@ -235,7 +238,8 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
     return up * "value(" * as_string (l/2) * ")#";
   case COMPOUND:
-    return up * as_string (st[0]) * "#";
+    if (is_atomic (st[0])) return up * as_string (st[0]) * "#";
+    else return up * "compound#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
