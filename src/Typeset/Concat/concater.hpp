@@ -100,6 +100,7 @@ class concater_rep {
   void typeset_argument (tree t, path ip);
   void typeset_dynamic (tree t, path ip);
   void typeset_executable (tree t, path ip);
+  void typeset_rewrite (tree t, path ip);
 
   // miscellaneous active markup
   void typeset_if (tree t, path ip);

@@ -367,18 +367,16 @@ make_lazy_apply (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Include
+* Rewrite
 ******************************************************************************/
 
 lazy
-make_lazy_include (edit_env env, tree t, path ip) {
+make_lazy_rewrite (edit_env env, tree t, path ip) {
   if (env->preamble) return make_lazy_paragraph (env, t, ip);
-
-  url file_name= as_string (t[0]);
-  tree incl= load_inclusion (relative (env->base_file_name, file_name));
+  tree r= env->rewrite (t);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, incl, decorate_right (ip));
+  lazy par= make_lazy (env, r, decorate_right (ip));
   return lazy_surround (a, b, par, ip);
 }
 
@@ -463,9 +461,11 @@ make_lazy (edit_env env, tree t, path ip) {
   case APPLY:
     return make_lazy_apply (env, t, ip);
   case INCLUDE:
-    return make_lazy_include (env, t, ip);
+    return make_lazy_rewrite (env, t, ip);
   case ARGUMENT:
     return make_lazy_argument (env, t, ip);
+  case EXTERN:
+    return make_lazy_rewrite (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

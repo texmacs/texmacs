@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : bridge_include.cpp
+* MODULE     : bridge_rewrite.cpp
 * DESCRIPTION: Bridge between logical and physical long macro expansions
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
@@ -13,15 +13,15 @@
 #include "bridge.hpp"
 
 /******************************************************************************
-* The bridge_include_rep class
+* The bridge_rewrite_rep class
 ******************************************************************************/
 
-class bridge_include_rep: public bridge_rep {
+class bridge_rewrite_rep: public bridge_rep {
 protected:
   bridge body;
 
 public:
-  bridge_include_rep (typesetter ttt, tree st, path ip);
+  bridge_rewrite_rep (typesetter ttt, tree st, path ip);
   void initialize (tree body_t);
 
   void notify_assign (path p, tree u);
@@ -31,18 +31,18 @@ public:
   void my_typeset (int desired_status);
 };
 
-bridge_include_rep::bridge_include_rep (typesetter ttt, tree st, path ip):
+bridge_rewrite_rep::bridge_rewrite_rep (typesetter ttt, tree st, path ip):
   bridge_rep (ttt, st, ip) {}
 
 void
-bridge_include_rep::initialize (tree body_t) {
+bridge_rewrite_rep::initialize (tree body_t) {
   if (nil (body)) body= make_bridge (ttt, body_t, decorate_right (ip));
   else replace_bridge (body, body_t, decorate_right (ip));
 }
 
 bridge
-bridge_include (typesetter ttt, tree st, path ip) {
-  return new bridge_include_rep (ttt, st, ip);
+bridge_rewrite (typesetter ttt, tree st, path ip) {
+  return new bridge_rewrite_rep (ttt, st, ip);
 }
 
 /******************************************************************************
@@ -50,14 +50,14 @@ bridge_include (typesetter ttt, tree st, path ip) {
 ******************************************************************************/
 
 void
-bridge_include_rep::notify_assign (path p, tree u) {
+bridge_rewrite_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
   status= CORRUPTED;
   st= substitute (st, p, u);
 }
 
 bool
-bridge_include_rep::notify_macro (int tp, string v, int l, path p, tree u) {
+bridge_rewrite_rep::notify_macro (int tp, string v, int l, path p, tree u) {
   (void) tp; (void) p; (void) u;
   bool flag= env->depends (st, v, l);
   if (flag) status= CORRUPTED;
@@ -65,7 +65,7 @@ bridge_include_rep::notify_macro (int tp, string v, int l, path p, tree u) {
 }
 
 void
-bridge_include_rep::notify_change () {
+bridge_rewrite_rep::notify_change () {
   status= CORRUPTED;
 }
 
@@ -74,15 +74,13 @@ bridge_include_rep::notify_change () {
 ******************************************************************************/
 
 void
-bridge_include_rep::my_typeset (int desired_status) {
+bridge_rewrite_rep::my_typeset (int desired_status) {
   if (env->preamble) {
     bridge_rep::my_typeset (desired_status);
     return;
   }
-
-  url file_name= as_string (st[0]);
-  tree incl= load_inclusion (relative (env->base_file_name, file_name));
-  initialize (incl);
+  
+  initialize (env->rewrite (st));
   ttt->insert_marker (st, ip);
   body->typeset (desired_status);
 }

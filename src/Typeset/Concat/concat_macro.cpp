@@ -304,6 +304,12 @@ concater_rep::typeset_executable (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_rewrite (tree t, path ip) {
+  tree r= env->rewrite (t);
+  typeset_dynamic (r, ip);
+}
+
+void
 concater_rep::typeset_dynamic (tree t, path ip) {
   // cout << "Dynamic " << t << ", " << ip << "\n";
   if (is_decoration (ip)) {
