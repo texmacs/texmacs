@@ -258,7 +258,14 @@ edit_dynamic_rep::back_general (path p, bool forward) {
 
 void
 edit_dynamic_rep::back_in_general (tree t, path p, bool forward) {
-  (void) t;
+  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
+    if ((L(t) >= START_EXTENSIONS) && (last_item (p) == 0)) {
+      tree u (COMPOUND, copy (as_string (L(t))));
+      u << A(copy(t));
+      assign (path_up (p), u);
+      go_to_end (p);
+      return;
+    }
   remove_argument (p, forward);
 }
 

@@ -151,11 +151,13 @@ drd_info_rep::insert_point (tree_label l, int i, int n) {
     return (i >= ((int) pi.arity_base)) && (i <= n) &&
            (n < ((int) pi.arity_base) + ((int) pi.arity_extra));
   case ARITY_REPEAT:
-    return (i >= ((int) pi.arity_base)) &&
-           ((i - pi.arity_base) % pi.arity_extra) == 0;
+    return (i >= 0) &&
+           ((i < ((int) pi.arity_base)) ||
+	    ((i - pi.arity_base) % pi.arity_extra) == 0);
   case ARITY_VAR_REPEAT:
-    return (i >= 0) && (i <= (n - ((int) pi.arity_base))) &&
-           (i % pi.arity_extra == 0);
+    return (i >= 0) &&
+           ((i > (n - ((int) pi.arity_base))) ||
+	    (i % pi.arity_extra == 0));
   }
 }
 
