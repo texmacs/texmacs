@@ -23,9 +23,12 @@ bool is_numeric (char c);
 bool is_ponctuation (char c);
 bool is_space (char s);
 bool is_alpha (string s);
+bool is_locase_alpha (string s);
 bool is_iso_alpha (string s);
 bool is_numeric (string s);
 
+char   upcase (char s);
+char   locase (char s);
 string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);
@@ -50,6 +53,7 @@ string roman_nr (int nr);
 string Roman_nr (int nr);
 string alpha_nr (int nr);
 string Alpha_nr (int nr);
+string fnsymbol_nr (int nr);
 
 string as_hexadecimal (int i);
 string as_hexadecimal (int i, int length);

@@ -45,6 +45,9 @@
     ((cmacc ss medium flat-italic $s $d) (cm cmssqi $s $d))
     ((cmacc ss bold right $s $d) (cm cmssbx $s $d))
     ((cmacc ss bold condensed $s $d) (cm cmssdc $s $d))
+    ((cmacc $a medium right $s $d) (cmacc rm medium right $s $d))
+    ((cmacc $a $b right $s $d) (cmacc $a medium right $s $d))
+    ((cmacc $a $b $c $s $d) (cmacc $a $b right $s $d))
 
     ((pl rm medium slanted $s $d) (tex plsl $s $d))
     ((pl rm medium italic $s $d) (tex plti $s $d))

@@ -17,16 +17,23 @@
 class stack_border_rep: public concrete_struct {
 public:
   SI    height;  // default distance between successive base lines
-  SI    sep;     // minimal separation of ink
+  SI    sep;     // (~~PAR_SEP) sep-ver_sep is maximal amount of shoving
   SI    hor_sep; // min. hor. ink sep. when lines are shoved into each other
+  SI    ver_sep; // minimal separation of ink
   SI    bot;     // logical bottom of lines
   SI    top;     // logical top of lines
+
+  SI    height_before;
+  SI    sep_before;
+  SI    hor_sep_before;
+  SI    ver_sep_before;
 
   space vspc_before, vspc_after;
   bool  nobr_before, nobr_after;
 
   inline stack_border_rep ():
-    height (0), sep (0), hor_sep (0), bot (0), top (0),
+    height (0), sep (0), hor_sep (0), ver_sep (0), bot (0), top (0),
+    height_before (0), sep_before (0), hor_sep_before (0), ver_sep_before (0),
     vspc_before (0), vspc_after (0),
     nobr_before (false), nobr_after (false) {}
 };

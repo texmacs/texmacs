@@ -27,6 +27,7 @@
   ("Tree" (make-tree))
   ("Text" (make-with "mode" "text"))
   ---
+  (-> "Size tag" (link size-tag-menu))
   (-> "Script"
       ("Left subscript" (make-script #f #f))
       ("Left superscript" (make-script #t #f))

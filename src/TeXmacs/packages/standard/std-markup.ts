@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|<tuple|source|std>>
 
@@ -31,7 +31,7 @@
 
   <assign|TeXmacs-version|<macro|<extern|texmacs-version>>>
 
-  <assign|TeXmacs-version-release|<macro|type|<extern|texmacs-version-release|<quote-arg|type>>>>
+  <assign|TeXmacs-version-release|<macro|type|<extern|texmacs-version-release*|<quote-arg|type>>>>
 
   <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<active*|<move|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||||>|0fn|-0.2fn>><space|2spc><localize|This
   document has been produced using> GNU <TeXmacs> (<localize|see>
@@ -41,13 +41,48 @@
 
   <assign|LaTeX|<macro|<active*|L<rsup|<space|-0.8spc><move|A|0fn|-0.1fn>><space|-0.2spc>T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>>
 
-  <assign|hflush|<macro|<htab|0fn|0>>>
+  <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
-  <assign|right-flush|<macro|<htab|0fn|first>>>
+  <\active*>
+    <\src-comment>
+      Size tags (very-small: script-size, smaller: footnotesize, larger:
+      Large, very-large: LARGE, really-huge: HUGE)
+    </src-comment>
+  </active*>
 
-  <assign|left-flush|<macro|<htab|0fn|last>>>
+  <assign|really-tiny|<macro|x|<with|font-size|0.5|<arg|x>>>>
 
-  <assign|hrule|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>
+  <assign|very-tiny|<macro|x|<with|font-size|0.545|<arg|x>>>>
+
+  <assign|tiny|<macro|x|<with|font-size|0.595|<arg|x>>>>
+
+  <assign|really-small|<macro|x|<with|font-size|0.648|<arg|x>>>>
+
+  <assign|very-small|<macro|x|<with|font-size|0.707|<arg|x>>>>
+
+  <assign|smaller|<macro|x|<with|font-size|0.771|<arg|x>>>>
+
+  <assign|small|<macro|x|<with|font-size|0.841|<arg|x>>>>
+
+  <assign|flat-size|<macro|x|<with|font-size|0.917|<arg|x>>>>
+
+  <assign|normal-size|<macro|x|<with|font-size|1|<arg|x>>>>
+
+  <assign|sharp-size|<macro|x|<with|font-size|1.091|<arg|x>>>>
+
+  <assign|large|<macro|x|<with|font-size|1.189|<arg|x>>>>
+
+  <assign|larger|<macro|x|<with|font-size|1.297|<arg|x>>>>
+
+  <assign|very-large|<macro|x|<with|font-size|1.414|<arg|x>>>>
+
+  <assign|really-large|<macro|x|<with|font-size|1.542|<arg|x>>>>
+
+  <assign|huge|<macro|x|<with|font-size|1.682|<arg|x>>>>
+
+  <assign|very-huge|<macro|x|<with|font-size|1.834|<arg|x>>>>
+
+  <assign|really-huge|<macro|x|<with|font-size|2|<arg|x>>>>
 
   <\active*>
     <\src-comment>
@@ -93,13 +128,35 @@
 
   <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
 
-  <assign|code|<macro|body|<style-with|src-compact|none|<surround|<vspace*|1fn>|<right-flush><htab|5mm><vspace|1fn><no-indent*>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>>>>
+  <assign|code|<\macro|body>
+    <\padded-normal|1fn|1fn>
+      <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>
+    </padded-normal>
+  </macro>>
 
-  <assign|quote-env|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|3fn>|par-right|<plus|<value|par-right>|3fn>|par-first|0fn|par-par-sep|0.25fn|<arg|body>>>>>>
+  <assign|quote-env|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|3fn|3fn>
+        <with|par-first|0fn|par-par-sep|0.25fn|<arg|body>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
-  <assign|quotation|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|3fn>|par-right|<plus|<value|par-right>|3fn>|<arg|body>>>>>>
+  <assign|quotation|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|3fn|3fn>
+        <surround|<yes-indent>||<arg|body>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
-  <assign|verse|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|4.5fn>|par-right|<plus|<value|par-right>|3fn>|par-first|-1.5fn|par-par-sep|0fn|<arg|body>>>>>>
+  <assign|verse|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|4.5fn|3fn>
+        <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
   <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
 
@@ -118,12 +175,11 @@
 
   <\active*>
     <\src-comment>
-      Below follow some other frequently less frequently used macros and
-      environments.
+      Other presentation tags.
     </src-comment>
   </active*>
 
-  <assign|localize|<macro|x|<translate|<arg|x>|english|<value|language>>>>
+  <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
 
   <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
@@ -132,6 +188,12 @@
   <assign|underline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
   <drd-props|underline|arity|1|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Tags for dynamic presentations.
+    </src-comment>
+  </active*>
 
   <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>>
 
@@ -144,12 +206,6 @@
   </macro>>
 
   <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
-
-  <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
-
-  <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
-
-  <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
 
   \;
 </body>

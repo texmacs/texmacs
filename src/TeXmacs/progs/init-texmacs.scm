@@ -29,7 +29,7 @@
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 (inherit-modules (kernel tools tm-edit) (kernel tools tm-misc)
-		 (kernel tools tm-convert))
+		 (kernel tools tm-convert) (kernel tools tm-markup))
 (retrieve-preferences)
 
 ;(display "Booting TeXmacs primitives\n")
@@ -56,7 +56,7 @@
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
 (lazy-menu (menus menu-source) source-menu texmacs-source-icons
 	   source-transformational-menu source-executable-menu)
-(lazy-menu (menus menu-text)
+(lazy-menu (menus menu-text) size-tag-menu
 	   text-menu texmacs-text-icons text-modifier-icons)
 (lazy-menu (menus menu-mathematics)
 	   mathematics-menu texmacs-math-icons math-modifier-icons)

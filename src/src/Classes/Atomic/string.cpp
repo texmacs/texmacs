@@ -345,7 +345,7 @@ void
 fatal_error (string message, string routine, string file) {
   cerr << "\nFatal error: " << message << " in '" << routine << "'\n";
   if (N(file)!=0) cerr << "See file   : " << file << "\n";
-  cout << 1/0 << "\n";
+  // cout << 1/0 << "\n";
   exit (1);
 }
 

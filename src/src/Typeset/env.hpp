@@ -120,6 +120,7 @@ public:
   bool                         read_only;   // write-protected ?
 
   int       dpi;
+  double    inch;
   double    magn;
   double    flexibility;
   int       mode;
@@ -185,6 +186,7 @@ private:
   tree exec_eval_args (tree t);
   bool exec_until_mark (tree t, path p, string var, int level);
   tree exec_quasiquoted (tree t);
+  tree exec_copy (tree t);
   tree exec_if (tree t);
   bool exec_until_if (tree t, path p, string var, int level);
   tree exec_case (tree t);
@@ -198,10 +200,8 @@ private:
   tree exec_xor (tree t);
   tree exec_and (tree t);
   tree exec_not (tree t);
-  tree exec_plus (tree t);
-  tree exec_minus (tree t);
-  tree exec_times (tree t);
-  tree exec_over (tree t);
+  tree exec_plus_minus (tree t);
+  tree exec_times_over (tree t);
   tree exec_divide (tree t);
   tree exec_modulo (tree t);
   tree exec_merge (tree t);
@@ -210,6 +210,8 @@ private:
   tree exec_number (tree t);
   tree exec_date (tree t);
   tree exec_translate (tree t);
+  tree exec_change_case (tree t, tree nc, bool exec_flag, bool first);
+  tree exec_change_case (tree t);
   tree exec_find_file (tree t);
   tree exec_is_tuple (tree t);
   tree exec_lookup (tree t);
@@ -220,7 +222,35 @@ private:
   tree exec_greater (tree t);
   tree exec_greatereq (tree t);
 
+  tree exec_cm_length ();
+  tree exec_mm_length ();
+  tree exec_in_length ();
+  tree exec_pt_length ();
+  tree exec_bp_length ();
+  tree exec_dd_length ();
+  tree exec_pc_length ();
+  tree exec_cc_length ();
+  tree exec_fs_length ();
+  tree exec_fbs_length ();
+  tree exec_em_length ();
+  tree exec_ln_length ();
+  tree exec_sep_length ();
+  tree exec_yfrac_length ();
+  tree exec_ex_length ();
+  tree exec_fn_length ();
+  tree exec_fns_length ();
+  tree exec_bls_length ();
+  tree exec_spc_length ();
+  tree exec_xspc_length ();
+  tree exec_par_length ();
+  tree exec_pag_length ();
+  tree exec_tmpt_length ();
+  tree exec_px_length ();
+
   tree exec_point (tree t);
+  tree exec_box_info (tree t);
+  tree exec_frame_direct (tree t);
+  tree exec_frame_inverse (tree t);
 
   tree exec_rewrite (tree t);
   bool exec_until_rewrite (tree t, path p, string var, int level);
@@ -305,16 +335,23 @@ public:
   void   update ();
   void   update (string env_var);
 
-  /* miscellaneous and utilities */
-  SI        decode_length (string l);
-  point     decode_point (tree t);
-  space     decode_space (string l);
-  inline SI decode_length (tree l) { return decode_length (as_string (l)); }
+  /* lengths */
+  bool      is_length (string s);
+  bool      is_anylen (tree t);
+  tree      tmlen_plus (tree t1, tree t2);
+  tree      tmlen_times (double sc, tree t);
+  tree      tmlen_over (tree t1, tree t2);
+
   void      get_length_unit (string l, SI& un, string& un_str);
   string    add_lengths (string l1, string l2);
   string    multiply_length (double x, string l);
-  bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
+
+  tree      as_tmlen (tree t);
+  SI        as_length (tree t);
+  space     as_hspace (tree t);
+  space     as_vspace (tree t);
+  point     as_point (tree t);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {
@@ -335,21 +372,19 @@ public:
     return t->label; }
   inline SI get_length (string var) {
     tree t= env [var];
-    if (is_compound (t)) return 0;
-    return decode_length (t->label); }
-  inline space get_space (string var) {
+    return as_length (t); }
+  inline space get_vspace (string var) {
     tree t= env [var];
-    if (is_compound (t)) return 0;
-    return decode_space (t->label); }
+    return as_vspace (t); }
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);
 };
 
 class edit_env {
-  CONCRETE(edit_env);
+  CONCRETE_NULL(edit_env);
   inline edit_env (edit_env_rep* rep2):
-    rep(rep2) { INC_COUNT (this->rep); }
+    rep(rep2) { INC_COUNT_NULL (this->rep); }
   edit_env (display dis,
 	    drd_info& drd,
 	    url base_file_name,
@@ -358,11 +393,10 @@ class edit_env {
 	    hashmap<string,tree>& local_aux,
 	    hashmap<string,tree>& global_aux);
 };
-CONCRETE_CODE(edit_env);
+CONCRETE_NULL_CODE(edit_env);
 
+tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp
-
-edit_env get_current_rewrite_env (bool &b);
 
 #endif // defined ENV_H

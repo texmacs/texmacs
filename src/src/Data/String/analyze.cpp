@@ -84,6 +84,15 @@ is_alpha (string s) {
 }
 
 bool
+is_locase_alpha (string s) {
+  int i;
+  if (N(s)==0) return false;
+  for (i=0; i<N(s); i++)
+    if (s[i]<'a' || s[i]>'z') return false;
+  return true;
+}
+
+bool
 is_iso_alpha (string s) {
   int i;
   if (N(s)==0) return false;
@@ -104,6 +113,20 @@ is_numeric (string s) {
 /******************************************************************************
 * Changing cases
 ******************************************************************************/
+
+char
+upcase (char c) {
+  if (is_locase (c))
+    return (char) (((int) ((unsigned char) c)) - 32);
+  else return c;
+}
+
+char
+locase (char c) {
+  if (is_upcase (c))
+    return (char) (((int) ((unsigned char) c)) + 32);
+  else return c;
+}
 
 string
 upcase_first (string s) {
@@ -470,6 +493,19 @@ alpha_nr (int nr) {
 string
 Alpha_nr (int nr) {
   return upcase_all (alpha_nr (nr));
+}
+
+string
+fnsymbol_nr (int nr) {
+  string sym, r;
+  int i, m= (nr-1)%3, n= ((nr-1)/3)+1;
+  switch (m) {
+  case 0: sym= "<ast>"; break;
+  case 1: sym= "<dag>"; break;
+  case 2: sym= "<ddag>"; break;
+  }
+  for (i=0; i<n; i++) r << sym;
+  return r;
 }
 
 /******************************************************************************

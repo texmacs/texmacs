@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -55,6 +55,11 @@
     Similar to <markup|theorem-sep>, but for exercises.
   </explain>
 
+  Each standard environment <markup|<em|x>> also comes with a customizable
+  macro <markup|<em|x>-text> which renders the localized name of the
+  environment. For instance, <inactive*|<with|language|dutch|<theorem-text>>>
+  yields ``<with|language|dutch|<theorem-text>>''.
+
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
@@ -68,17 +73,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

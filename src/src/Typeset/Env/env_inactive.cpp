@@ -158,6 +158,9 @@ arg_type (tree t, int i) {
 	(t[0] != "screen") && (t[0] != "printer"))
       return "tt";
     else return "";
+  case EXTERN:
+    if (i==0) return "tt";
+    else return "";
   case HLINK:
   case ACTION:
     if (i==1) return "tt";

@@ -77,8 +77,8 @@ edit_typeset_rep::clear_local_info () {
 ******************************************************************************/
 
 SI
-edit_typeset_rep::decode_length (string l) {
-  return env->decode_length (l); }
+edit_typeset_rep::as_length (string l) {
+  return env->as_length (l); }
 
 string
 edit_typeset_rep::add_lengths (string l1, string l2) {
@@ -317,10 +317,8 @@ edit_typeset_rep::exec_html (tree t) {
 }
 
 tree
-edit_typeset_rep::box_info (tree t, string what) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  return ::box_info (b ? env : get_typesetter ()->env, t, what);
+edit_typeset_rep::texmacs_exec (tree t) {
+  return ::texmacs_exec (env, t);
 }
 
 /******************************************************************************

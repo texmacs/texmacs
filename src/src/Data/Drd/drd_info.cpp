@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "drd_info.hpp"
+#include "drd_std.hpp"
 #include "iterator.hpp"
 #include "analyze.hpp"
 
@@ -200,13 +201,17 @@ drd_info_rep::is_child_enforcing (tree t) {
   return info[L(t)]->pi.no_border && (N(t) != 0);
 }
 
+bool
+drd_info_rep::var_without_border (tree_label l) {
+  return info[l]->pi.no_border && (!std_contains (as_string (l)));
+}
+
 /******************************************************************************
 * Other attributes
 ******************************************************************************/
 
 void
 drd_info_rep::set_attribute (tree_label l, string which, tree val) {
-  if (info[l]->pi.freeze_no_border) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->set_attribute (which, val);
@@ -238,6 +243,7 @@ void
 drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
+  if (nr >= N(ti->ci)) return;
   child_info& ci= ti->ci[nr];
   if (ci.freeze_accessible) return;
   ci.accessible= is_accessible;

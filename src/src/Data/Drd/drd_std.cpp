@@ -13,6 +13,7 @@
 #include "drd_std.hpp"
 
 drd_info std_drd ("tm");
+drd_info the_drd= std_drd;
 hashmap<string,int> STD_CODE (UNKNOWN);
 
 #define BIFORM   CHILD_BIFORM
@@ -43,6 +44,10 @@ init (tree_label l, string name, tag_info ti) {
   STD_CODE(name)= (int) l;
   make_tree_label (l, name);
   std_drd->info (l)= ti;
+  std_drd->freeze_arity (l);
+  std_drd->freeze_no_border (l);
+  // std_drd->freeze_block (l);
+  // FIXME: freeze children properties
 }
 
 static bool std_drd_initialized= false;
@@ -168,6 +173,7 @@ init_std_drd () {
   init (QUASIQUOTE, "quasiquote", fixed (1));
   init (UNQUOTE, "unquote", fixed (1));
   init (VAR_UNQUOTE, "unquote*", fixed (1));
+  init (COPY, "copy", fixed (1));
   init (IF, "if", options (2, 1));
   init (VAR_IF, "if*", fixed (2));
   init (CASE, "case", repeat (2, 1));
@@ -181,10 +187,10 @@ init_std_drd () {
   init (XOR, "xor", fixed (2));
   init (AND, "and", repeat (2, 1));
   init (NOT, "not", fixed (1));
-  init (PLUS, "plus", fixed (2));
-  init (MINUS, "minus", fixed (2));
-  init (TIMES, "times", fixed (2));
-  init (OVER, "over", fixed (2));
+  init (PLUS, "plus", repeat (2, 1));
+  init (MINUS, "minus", repeat (1, 1));
+  init (TIMES, "times", repeat (2, 1));
+  init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
   init (MERGE, "merge", repeat (2, 1));
@@ -193,6 +199,7 @@ init_std_drd () {
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
   init (TRANSLATE, "translate", fixed (3));
+  init (CHANGE_CASE, "change-case", fixed (1, 1, BIFORM) -> accessible (0));
   init (FIND_FILE, "find-file", var_repeat (1, 1)); // dirs and file
   init (IS_TUPLE, "is-tuple", fixed (1) -> name ("tuple?"));
   init (LOOK_UP, "look-up", fixed (2));
@@ -202,6 +209,31 @@ init_std_drd () {
   init (LESSEQ, "lesseq", fixed (2) -> name ("less or equal"));
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
+
+  init (CM_LENGTH, "cm-length", fixed (0));
+  init (MM_LENGTH, "mm-length", fixed (0));
+  init (IN_LENGTH, "in-length", fixed (0));
+  init (PT_LENGTH, "pt-length", fixed (0));
+  init (BP_LENGTH, "bp-length", fixed (0));
+  init (DD_LENGTH, "dd-length", fixed (0));
+  init (PC_LENGTH, "pc-length", fixed (0));
+  init (CC_LENGTH, "cc-length", fixed (0));
+  init (FS_LENGTH, "fs-length", fixed (0));
+  init (FBS_LENGTH, "fbs-length", fixed (0));
+  init (EM_LENGTH, "em-length", fixed (0));
+  init (LN_LENGTH, "ln-length", fixed (0));
+  init (SEP_LENGTH, "sep-length", fixed (0));
+  init (YFRAC_LENGTH, "yfrac-length", fixed (0));
+  init (EX_LENGTH, "ex-length", fixed (0));
+  init (FN_LENGTH, "fn-length", fixed (0));
+  init (FNS_LENGTH, "fns-length", fixed (0));
+  init (BLS_LENGTH, "bls-length", fixed (0));
+  init (SPC_LENGTH, "spc-length", fixed (0));
+  init (XSPC_LENGTH, "xspc-length", fixed (0));
+  init (PAR_LENGTH, "par-length", fixed (0));
+  init (PAG_LENGTH, "pag-length", fixed (0));
+  init (TMPT_LENGTH, "tmpt-length", fixed (0));
+  init (PX_LENGTH, "px-length", fixed (0));
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));
@@ -224,6 +256,7 @@ init_std_drd () {
 
   init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
+  init (TMLEN, "tmlen", options (1, 2) -> name ("TeXmacs length"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
@@ -251,6 +284,9 @@ init_std_drd () {
   init (CSPLINE, "cspline", repeat (2, 1));
   init (FILL, "fill", repeat (1, 1));
   init (POSTSCRIPT, "postscript", fixed (7));
+  init (BOX_INFO, "box-info", fixed (2));
+  init (FRAME_DIRECT, "frame-direct", fixed (1));
+  init (FRAME_INVERSE, "frame-inverse", fixed (1));
 
   init (FORMAT, "format", repeat (1, 1));
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));

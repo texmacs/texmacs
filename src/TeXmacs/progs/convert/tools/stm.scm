@@ -214,7 +214,8 @@
 
 (define (stm-section-environment? head)
   (in? (first head)
-       '(chapter section subsection subsubsection paragraph subparagraph)))
+       '(part chapter section subsection subsubsection
+	 paragraph subparagraph)))
 
 (define (stm-section-accepts? x)
   ;; Can a Valid document contain @x inside a section-environment?

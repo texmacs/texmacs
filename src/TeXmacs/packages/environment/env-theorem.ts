@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -35,13 +35,23 @@
     </src-comment>
   </active*>
 
-  <assign|render-theorem|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><theorem-name|<arg|which><theorem-sep>>|<right-flush><vspace|1fn>|<with|font-shape|italic|<arg|body>>>>>>
-
   <assign|render-remark|<\macro|which|body>
-    <style-with|src-compact|none|<render-theorem|<arg|which>|<with|font-shape|right|<arg|body>>>>
+    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<arg|body>>>
   </macro>>
 
-  <assign|render-exercise|<macro|which|body|<surround|<vspace*|0.5fn><no-indent>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|1.5fn>|font-size|0.84|<surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>>>>>
+  <assign|render-theorem|<\macro|which|body>
+    <render-remark|<arg|which>|<with|font-shape|italic|<arg|body>>>
+  </macro>>
+
+  <assign|render-exercise|<\macro|which|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-left|1.5fn>
+        <\small>
+          <surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>
+        </small>
+      </indent-left>
+    </padded-normal>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -89,13 +99,19 @@
     </src-comment>
   </active*>
 
+  <assign|proof-text|<macro|<localize|Proof>>>
+
   <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
   >>>>
 
-  <assign|proof*|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><theorem-name|<arg|which><theorem-sep>>|<space|0.5fn><right-flush><with|mode|math|\<box\>><vspace|1fn>|<arg|body>>>>>
+  <assign|render-proof|<\macro|which|body>
+    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
+      <render-remark|<arg|which>|<arg|body>>
+    </surround>
+  </macro>>
 
   <assign|proof|<\macro|body>
-    <proof*|<localize|Proof>|<arg|body>>
+    <render-proof|<proof-text>|<arg|body>>
   </macro>>
 
   \;
@@ -103,17 +119,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

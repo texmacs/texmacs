@@ -503,7 +503,7 @@
   (basefont htmltm-drop)
 
   ;; Rules
-  (hr (handler :empty :block '((value "hrule"))))
+  (hr (handler :empty :block '((hrule))))
 
   ;;; Frames
   (frameset htmltm-drop)

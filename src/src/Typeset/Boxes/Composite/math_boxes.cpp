@@ -107,7 +107,7 @@ sqrt_box_rep::sqrt_box_rep (
 
   SI sep  = fn->sep;
   SI wline= fn->wline;
-  SI dx   = -fn->wquad/36, dy= -fn->wquad/36; // correction
+  SI dx   = -fn->wfn/36, dy= -fn->wfn/36; // correction
   SI by   = sqrtb->y2+ dy;
 
   insert (b1, 0, 0);
@@ -160,7 +160,7 @@ neg_box_rep::neg_box_rep (path ip, box b, font fn, color c):
   composite_box_rep (ip)
 {
   SI wline= fn->wline;
-  SI delta= fn->wquad/6;
+  SI delta= fn->wfn/6;
   SI X    = (b->x1 + b->x2) >> 1;
   SI Y    = (b->y1 + b->y2) >> 1;
   SI DX, DY;

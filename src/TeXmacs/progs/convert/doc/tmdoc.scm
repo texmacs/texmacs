@@ -22,6 +22,7 @@
 
 (define (tmdoc-down level)
   (cond ((== level 'title) 'chapter)
+	((== level 'part) 'chapter)
 	((== level 'tmdoc-title) 'section)
 	((== level 'tmdoc-title*) 'section)
 	((== level 'chapter) 'section)
@@ -165,6 +166,6 @@
 		    (tmdoc-remove-hyper-links (cdr l))))))
 
 (define (tmdoc-include file-name)
-  (let* ((body (tmdoc-expand file-name 'chapter))
+  (let* ((body (tmdoc-expand (tree->string file-name) 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
-    (tmdoc-remove-hyper-links filt)))
+    (stree->tree (tmdoc-remove-hyper-links filt))))

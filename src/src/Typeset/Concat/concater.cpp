@@ -76,7 +76,7 @@ concater_rep::ghost (string s, path ip, color col) {
 void
 concater_rep::flag_ok (string s, path ip, color col) {
   path dip = decorate_right (ip);
-  SI h= 4*env->fn->wquad/5;
+  SI h= 4*env->fn->wfn/5;
   int r, g, b;
   env->dis->get_rgb (col, r, g, b);
   r= 255- (255 - r)/6;
@@ -139,7 +139,19 @@ concater_rep::with_limits (int status) {
 
 void
 concater_rep::typeset (tree t, path ip) {
-  // cout << "Typeset " << t << ", " << ip << "\n";
+  // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
+  /*
+  if (obtain_ip (t) != ip)
+    cout << "TeXmacs] Wrong ip: " << t << "\n"
+	 << "       ] " << obtain_ip (t) << " -> " << ip << "\n";
+  */
+
+  if (!is_accessible (ip)) {
+    path ip2= obtain_ip (t);
+    if (ip2 != path (DETACHED))
+      ip= ip2;
+  }
+
   if (is_atomic (t)) {
     typeset_string (t->label, ip);
     return;
@@ -174,20 +186,20 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case VAR_VSPACE:
     flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
+    t= tree (VAR_VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
   case VSPACE:
     flag (env->drd->get_name (L(t)), ip, env->dis->brown);
-    t= env->exec (t);
+    t= tree (VSPACE, env->exec (tree (TMLEN, A(t))));
     control (t, ip);
     break;
   case SPACE:
     t= env->exec (t);
-    typeset_space (t, ip);
+    typeset_space (attach_here (t, ip));
     break;
   case HTAB:
-    print (space (env->decode_length (t[0])));
+    print (space (env->as_length (t[0])));
     control (t, ip);
     break;
   case MOVE:
@@ -401,6 +413,7 @@ concater_rep::typeset (tree t, path ip) {
   case QUASIQUOTE:
   case UNQUOTE:
   case VAR_UNQUOTE:
+  case COPY:
     typeset_executable (t, ip);
     break;
   case IF:
@@ -442,6 +455,7 @@ concater_rep::typeset (tree t, path ip) {
   case NUMBER:
   case _DATE:
   case TRANSLATE:
+  case CHANGE_CASE:
   case FIND_FILE:
   case IS_TUPLE:
   case LOOK_UP:
@@ -451,6 +465,36 @@ concater_rep::typeset (tree t, path ip) {
   case LESSEQ:
   case GREATER:
   case GREATEREQ:
+  case BOX_INFO:
+  case FRAME_DIRECT:
+  case FRAME_INVERSE:
+    typeset_executable (t, ip);
+    break;
+
+  case CM_LENGTH:
+  case MM_LENGTH:
+  case IN_LENGTH:
+  case PT_LENGTH:
+  case BP_LENGTH:
+  case DD_LENGTH:
+  case PC_LENGTH:
+  case CC_LENGTH:
+  case FS_LENGTH:
+  case FBS_LENGTH:
+  case EM_LENGTH:
+  case LN_LENGTH:
+  case SEP_LENGTH:
+  case YFRAC_LENGTH:
+  case EX_LENGTH:
+  case FN_LENGTH:
+  case FNS_LENGTH:
+  case BLS_LENGTH:
+  case SPC_LENGTH:
+  case XSPC_LENGTH:
+  case PAR_LENGTH:
+  case PAG_LENGTH:
+  case TMPT_LENGTH:
+  case PX_LENGTH:
     typeset_executable (t, ip);
     break;
 
@@ -476,6 +520,7 @@ concater_rep::typeset (tree t, path ip) {
   case HYBRID:
   case TUPLE:
   case ATTR:
+  case TMLEN:
   case COLLECTION:
   case ASSOCIATE:
   case BACKUP:
@@ -607,7 +652,7 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 
 tree
 box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, t, path (0));
+  box b= typeset_as_concat (env, attach_here (t, decorate ()));
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -89,7 +89,13 @@
     </src-comment>
   </active*>
 
-  <assign|render-list|<macro|body|<surround|<no-page-break*><vspace*|0.5fn>|<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|3fn>|<arg|body>>>>>
+  <assign|render-list|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-left|3fn>
+        <surround|<no-page-break*>|<no-indent*>|<arg|body>>
+      </indent-left>
+    </padded-normal>
+  </macro>>
 
   <assign|list|<\macro|item-render|item-transform|body>
     <\with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|item-nr|0>
@@ -197,16 +203,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
   </collection>
 </initial>

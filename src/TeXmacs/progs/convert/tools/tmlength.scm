@@ -22,13 +22,9 @@
 ;; Length components.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group tmlength-units%
-  unit cm mm in pt spc spc- spc+ fn fn- fn+ fn* fn*- fn*+ ln sep px par pag)
-
-(define (tmlength-unit? x)
-  (drd-in? x tmlength-units%))
-
 (define tmlength-value? number?)
+(define (tmlength-unit? x)
+  (and (symbol? x) (string-locase-alpha? (symbol->string x))))
 
 (define (tmlength-check-value x)
   (if (not (tmlength-value? x))
@@ -107,7 +103,7 @@
 		    #f (string->symbol unit-str))))
       (cond ((and (not unit) (not (zero? value))) #f)
 	    ((not unit) (tmlength))
-	    ((not (tmlength-unit? unit)) #f)
+	    ((not (tmlength-unit? unit)) (tmlength))
 	    (else (tmlength value unit))))))
 
 (tm-define (tmlength->string tmlen)

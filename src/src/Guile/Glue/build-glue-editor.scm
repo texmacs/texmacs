@@ -81,6 +81,7 @@
   (inside-with? inside_with (bool string string))
   (inside-which inside_which (string scheme_tree))
   (search-upwards search_upwards (path string))
+  (search-parent-upwards search_parent_upwards (path tree_label))
   (search-upwards-in-set search_upwards_in_set (path scheme_tree))
   (search-start search_start (void bool))
   (search-button-next search_button_next (void))
@@ -248,7 +249,7 @@
   (edit-special edit_special (void))
   (edit-test edit_test (void))
 
-  (length-decode decode_length (int string))
+  (length-decode as_length (int string))
   (length-add add_lengths (string string string))
   (length-mult multiply_length (string double string))
   (length? is_length (bool string))
@@ -277,9 +278,7 @@
   (tm-insert-with insert_with (void path string content))
   (tm-remove-with remove_with (void path string))
 
-  (frame-direct frame_direct_transform (tree tree))
-  (frame-inverse frame_inverse_transform (tree tree))
   (get-graphical-object get_graphical_object (tree))
   (set-graphical-object set_graphical_object (void tree))
   (path-xy path_xy (path double double))
-  (box-info box_info (tree tree string)))
+  (texmacs-exec texmacs_exec (tree content)))

@@ -120,7 +120,7 @@ table_rep::format_table (tree fm) {
     format_item (fm[i]);
 
   if (var->contains (TABLE_WIDTH)) {
-    width= env->decode_length (env->exec (var[TABLE_WIDTH]));
+    width= env->as_length (env->exec (var[TABLE_WIDTH]));
     if (var->contains (TABLE_HMODE))
       hmode= as_string (env->exec (var[TABLE_HMODE]));
     else hmode= "exact";
@@ -130,7 +130,7 @@ table_rep::format_table (tree fm) {
     hmode= "";
   }
   if (var->contains (TABLE_HEIGHT)) {
-    height= env->decode_length (env->exec (var[TABLE_HEIGHT]));
+    height= env->as_length (env->exec (var[TABLE_HEIGHT]));
     if (var->contains (TABLE_VMODE))
       vmode= as_string (env->exec (var[TABLE_VMODE]));
     else vmode= "exact";
@@ -140,28 +140,28 @@ table_rep::format_table (tree fm) {
     vmode = "";
   }
   if (var->contains (TABLE_LSEP))
-    lsep= env->decode_length (env->exec (var[TABLE_LSEP]));
+    lsep= env->as_length (env->exec (var[TABLE_LSEP]));
   else lsep= 0;
   if (var->contains (TABLE_RSEP))
-    rsep= env->decode_length (env->exec (var[TABLE_RSEP]));
+    rsep= env->as_length (env->exec (var[TABLE_RSEP]));
   else rsep= 0;
   if (var->contains (TABLE_BSEP))
-    bsep= env->decode_length (env->exec (var[TABLE_BSEP]));
+    bsep= env->as_length (env->exec (var[TABLE_BSEP]));
   else bsep= 0;
   if (var->contains (TABLE_TSEP))
-    tsep= env->decode_length (env->exec (var[TABLE_TSEP]));
+    tsep= env->as_length (env->exec (var[TABLE_TSEP]));
   else tsep= 0;
   if (var->contains (TABLE_LBORDER))
-    lborder= env->decode_length (env->exec (var[TABLE_LBORDER])) >> 1;
+    lborder= env->as_length (env->exec (var[TABLE_LBORDER])) >> 1;
   else lborder= 0;
   if (var->contains (TABLE_RBORDER))
-    rborder= env->decode_length (env->exec (var[TABLE_RBORDER])) >> 1;
+    rborder= env->as_length (env->exec (var[TABLE_RBORDER])) >> 1;
   else rborder= 0;
   if (var->contains (TABLE_BBORDER))
-    bborder= env->decode_length (env->exec (var[TABLE_BBORDER])) >> 1;
+    bborder= env->as_length (env->exec (var[TABLE_BBORDER])) >> 1;
   else bborder= 0;
   if (var->contains (TABLE_TBORDER))
-    tborder= env->decode_length (env->exec (var[TABLE_TBORDER])) >> 1;
+    tborder= env->as_length (env->exec (var[TABLE_TBORDER])) >> 1;
   else tborder= 0;
   if (var->contains (TABLE_HALIGN))
     halign= as_string (env->exec (var[TABLE_HALIGN]));

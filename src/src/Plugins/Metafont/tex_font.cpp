@@ -80,8 +80,8 @@ tex_font_rep::tex_font_rep (display dis, string name, int status2,
   extra->max   = extra->min << 1;
   sep          = ((((dpi*PIXEL)/72)*design_size) >> 8) / 10;
 
-  y1           = conv (-262080);
-  y2           = y1+ display_size;
+  y1           = conv (-262080);   // -0.25 quad
+  y2           = y1+ display_size; //  0.75 quad
   yx           = conv (tfm->x_height ());
   yfrac        = yx >> 1;
   ysub_lo_base = -yx/3;
@@ -92,17 +92,18 @@ tex_font_rep::tex_font_rep (display dis, string name, int status2,
   yshift       = yx/6;
 
   wpt          = (dpi*PIXEL)/72;
-  wquad        = (wpt*design_size) >> 8;
-  wline        = wquad/20;
+  wfn          = (wpt*design_size) >> 8;
+  wline        = wfn/20;
+  wquad        = conv (tfm->spc_quad ());
 
   if ((family == "cmr") || (family == "ecrm") || (family == "cmmi")) {
     if (size < 8)
-      wline= wquad / (size==7? 16: (size==6? 14: 12));
-    else if (size < 10) yfrac += (size * wquad) / 1600;
-    else if (size <= 14) yfrac += (size * wquad) / 1000;
+      wline= wfn / (size==7? 16: (size==6? 14: 12));
+    else if (size < 10) yfrac += (size * wfn) / 1600;
+    else if (size <= 14) yfrac += (size * wfn) / 1000;
     else {
-      wline= wquad / (size>16? 28: 24);
-      yfrac += (size * wquad) / 700;
+      wline= wfn / (size>16? 28: 24);
+      yfrac += (size * wfn) / 700;
     }
   }
 }

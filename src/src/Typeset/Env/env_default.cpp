@@ -54,8 +54,8 @@ initialize_default_env () {
   env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
   env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.
   env (PAGE_DECORATIONS) = DPAGES;      // future headers, footers, etc.
-  env (XOFF_DECORATIONS) = "0unit";     // hor. placement of decorations
-  env (YOFF_DECORATIONS) = "0unit";     // vert. placement of decorations
+  env (XOFF_DECORATIONS) = "0tmpt";     // hor. placement of decorations
+  env (YOFF_DECORATIONS) = "0tmpt";     // vert. placement of decorations
 
   env (MATH_LANGUAGE)    = "texmath";   // the default mathematical language
   env (MATH_FONT)        = "roman";     // the font name in math mode
@@ -81,10 +81,11 @@ initialize_default_env () {
   env (PAR_RIGHT)        = "0cm";       // right indentation
   env (PAR_FIRST)        = "1.5fn";     // extra first indentation
   env (PAR_NO_FIRST)     = "false";     // no extra first indent. on next line
-  env (PAR_SEP)          = "0.2fn";     // min. vert. spc. between ink
-  env (PAR_HOR_SEP)      = "0.5fn";     // min. hor. spc. between ink
-  env (PAR_LINE_SEP)     = "0.025fn*";  // extra (small) space between lines
-  env (PAR_PAR_SEP)      = "0.5fn*";    // extra space between paragraphs
+  env (PAR_SEP)          = "0.2fn";     // extra space between paragraph lines
+  env (PAR_HOR_SEP)      = "0.5fn";     // min. hor. spc. between ink for shove
+  env (PAR_VER_SEP)      = "0.2fn";     // min. ver. spc. between ink
+  env (PAR_LINE_SEP)     = "0.025fns";  // extra (small) space between lines
+  env (PAR_PAR_SEP)      = "0.5fns";    // extra space between paragraphs
   env (PAR_FNOTE_SEP)    = "0.2fn";     // min space between diff footnotes
   env (PAR_COLUMNS)      = "1";         // number of columns
   env (PAR_COLUMNS_SEP)  = "2fn";       // separation between columns
@@ -93,6 +94,7 @@ initialize_default_env () {
   env (PAGE_TYPE)        = "a4";        // paper type (-> width & height)
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
+  env (PAGE_HEIGHT_MARGIN) = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
   env (PAGE_BREAKING)    = "optimal";   // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1.0";       // flexibility factor of stretch
@@ -105,6 +107,7 @@ initialize_default_env () {
   env (PAGE_RIGHT)       = "auto";      // right margin in auto mode
   env (PAGE_TOP)         = "auto";      // top margin
   env (PAGE_BOT)         = "auto";      // bottom margin
+  env (PAGE_USER_HEIGHT) = "522pt";     // height of principal text
   env (PAGE_ODD_SHIFT)   = "0mm";       // odd page marginal shift wrt center
   env (PAGE_EVEN_SHIFT)  = "0mm";       // even page marginal shift wrt center
   env (PAGE_SHRINK)      = "1fn";       // emergency page length shrinking

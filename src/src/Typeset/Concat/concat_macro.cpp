@@ -21,7 +21,7 @@ concater_rep::typeset_assign (tree t, path ip) {
   tree r= env->exec (t[0]);
   if ((N(t)==2) && is_atomic (r)) {
     string var= r->label;
-    env->assign (var, t[1]);
+    env->assign (var, copy (t[1]));
     if (env->var_type [var] == Env_Paragraph)
       control (tuple ("env_par", var, env->read (var)), ip);
     else if (env->var_type [var] == Env_Page)
@@ -107,23 +107,24 @@ concater_rep::typeset_compound (tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+d]: tree (UNINIT);
+	env->macro_arg->item (var)=
+	  i<m? t[i+d]: attach_dip (tree (UNINIT), decorate_right(ip));
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
-    if (is_decoration (ip)) typeset (f[n], ip);
+    if (is_decoration (ip)) typeset (attach_here (f[n], ip));
     else {
       /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 0));
-      typeset (f[n], decorate_right (ip));
+      typeset (attach_right (f[n], ip));
       /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 1));
     }
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
   }
   else {
-    if (is_decoration (ip)) typeset (f, ip);
+    if (is_decoration (ip)) typeset (attach_here (f, ip));
     else {
       /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 0));
-      typeset (f, decorate_right (ip));
+      typeset (attach_right (f, ip));
       /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 1));
     }
   }
@@ -138,7 +139,7 @@ concater_rep::typeset_auto (tree t, path ip, tree f) {
   string var= f[0]->label;
   env->macro_arg->item (var)= t;
   env->macro_src->item (var)= ip;
-  typeset (f[1], decorate_right (ip));
+  typeset (attach_right (f[1], ip));
   env->macro_arg= env->macro_arg->next;
   env->macro_src= env->macro_src->next;
 }
@@ -221,7 +222,7 @@ concater_rep::typeset_argument (tree t, path ip) {
       valip= descend (valip, nr);
     }
   }
-  typeset (value, valip);
+  typeset (attach_here (value, valip));
 
   env->macro_arg= old_var;
   env->macro_src= old_src;
@@ -231,7 +232,7 @@ concater_rep::typeset_argument (tree t, path ip) {
 void
 concater_rep::typeset_eval_args (tree t, path ip) { 
   marker (descend (ip, 0));
-  typeset_inactive (env->exec (t), decorate_right (ip));
+  typeset_inactive (attach_right (env->exec (t), ip));
   marker (descend (ip, 1));
 }
 
@@ -285,15 +286,19 @@ concater_rep::typeset_rewrite (tree t, path ip) {
 
 void
 concater_rep::typeset_dynamic (tree t, path ip) {
+  // ATTENTION: in the future, the ip should still be passed to
+  // this routine, since the typesetting depends on whether ip
+  // is a decoration or not
+
   // cout << "Dynamic " << t << ", " << ip << "\n";
   if (is_decoration (ip)) {
-    typeset (t, ip);
+    typeset (attach_here (t, ip));
     return;
   }
 
   marker (descend (ip, 0));
   // int start= N(a);
-  typeset (t, decorate_right (ip));
+  typeset (attach_right (t, ip));
   // int end= N(a), i;
 
   /* Old style unaccessible text, using left and middle decorations

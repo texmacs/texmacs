@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (secure-symbols . l)
-  (for-each (lambda (x) (set-symbol-property! x :secure #t)) l)
+  (for-each (lambda (x) (set-symbol-prop! x :secure #t)) l)
   '(noop))
 
 (secure-symbols
@@ -34,7 +34,7 @@
   caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr
   cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
   cons list append length reverse
-  texmacs-version texmacs-version-release)
+  texmacs-version texmacs-version-release*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secure evaluation
@@ -59,22 +59,31 @@
 (define (secure-lambda? expr env)
   (secure-args? (cdr expr) (local-env env (car expr))))
 
+(define (secure-quasiquote? args env)
+  (cond ((not (pair? args)) #t)
+	((func? args 'unquote 1) (secure-expr? (cadr args) env))
+	((func? args 'unquote-splicing 1) (secure-expr? (cadr args) env))
+	(else (and (secure-quasiquote? (car args) env)
+		   (secure-quasiquote? (cdr args) env)))))
+
 (define (secure-expr? expr env)
   (cond ((pair? expr)
 	 (let* ((f (car expr))
 		(m (drd-ref secure-macros% f)))
-	   (cond ((== f 'quote) #t)
-		 (m (m (cdr expr) env))
+	   (cond (m (m (cdr expr) env))
 		 ((assoc-ref env f) (secure-args? (cdr expr) env))
+		 ((== f 'quote) #t)
+		 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
 		 ((symbol? f)
 		  (with proc (symbol-procedure f)
-		    (and (or (symbol-property f :secure)
+		    (and (or (symbol-prop f :secure)
 			     (and proc (procedure-property proc :secure)))
 			 (secure-args? (cdr expr) env))))
 		 (else (secure-args? expr env)))))
 	((symbol? expr) #t)
 	((number? expr) #t)
 	((string? expr) #t)
+	((tree? expr) #t)
 	((null? expr) #t)
 	((boolean? expr) #t)
 	(else #f)))

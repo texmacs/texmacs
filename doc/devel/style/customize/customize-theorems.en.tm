@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -43,29 +43,31 @@
   the <markup|render-theorem>, <markup|render-remark> and
   <markup|render-exercise> macros. These macros take the <src-arg|name> of
   the environment (like ``Theorem <no-break>1.2'') and its <src-arg|body> as
-  arguments. By default, the rendering of remarks is the same as the
-  rendering of theorems except that their bodies are typeset in an upright
-  font. Hence, redefining the <markup|render-theorem> macro will also affect
-  the rendering of remarks. For instance, if you want theorems to appear in a
-  slightly indented way, with a slanted body, then you may redefine
+  arguments. For instance, if you want theorems to appear in a slightly
+  indented way, with a slanted body, then you may redefine
   <markup|render-theorem> as follows:
 
   <\tm-fragment>
-    <inactive*|<assign|render-theorem|<macro|which|body|<style-with|src-compact|none|<surround|<vspace*|1fn><no-indent><theorem-name|<arg|which><theorem-sep>>|<right-flush><vspace|1fn>|<with|font-shape|slanted|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>>>>
+    <inactive*|<assign|render-theorem|<\macro|which|body>
+      <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|slanted|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>
+    </macro>>>
   </tm-fragment>
 
   This redefinition produces the following effect:
 
-  <\with|render-theorem|<macro|which|body|<surround|<vspace*|1fn><no-indent><theorem-name|<arg|which><theorem-sep>>|<right-flush><vspace|1fn>|<with|font-shape|slanted|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>>
+  <\with|render-theorem|<\macro|which|body>
+    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|slanted|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>>
+  </macro>>
     <\theorem>
       This is a theorem which has been typeset in a slanted font.
     </theorem>
-
-    <\remark>
-      The rendering of remarks is based on the rendering of theorems, except
-      that the bodies are typeset in an upright font.
-    </remark>
   </with>
+
+  By default, the theorems are rendered as remarks with the only difference
+  that their bodies are typeset in an italic font. Hence, redefining the
+  <markup|render-remark> macro will also affect the rendering of theorems.
+  The default <markup|render-proof> macro is also based on
+  <markup|render-remark>.
 
   Instead of redefining the entire rendering, the user might just wish to
   customize the way names of theorems are rendered or redefine the separator
@@ -124,18 +126,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>

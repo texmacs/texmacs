@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -39,17 +39,19 @@
 
   \;
 
-  <assign|title*|<\macro|name>
-    <style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|><vspace|0.33pag>>
+  <assign|doc-make-title|<\macro|name>
+    <assign|page-this-header|><assign|page-this-footer|><vspace|0.33pag>
 
-    <style-with|src-compact|none|<no-indent><with|math-font-series|bold|font-series|bold|font-shape|small-caps|font-size|2|<style-with|src-compact|none|<htab|0fn><arg|name><htab|0fn>>><new-page>>
+    <with|math-font-series|bold|font-series|bold|font-shape|small-caps|<style-with|src-compact|none|<really-huge|<doc-title-block|<arg|name>>>>>
 
-    <style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|><vspace|0.33pag>>
+    <new-page>
+
+    <assign|page-this-header|><assign|page-this-footer|><vspace|0.33pag>
 
     <new-page>
   </macro>>
 
-  <assign|title|<macro|body|<title*|<arg|body>>>>
+  <assign|title|<macro|name|<doc-make-title|<arg|name>>>>
 
   \;
 </body>
@@ -57,18 +59,6 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|5>
   </collection>
 </initial>

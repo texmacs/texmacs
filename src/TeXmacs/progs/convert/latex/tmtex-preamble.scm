@@ -135,7 +135,13 @@
        (translate "This text has been produced using" "english" lan)
        " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
        (translate "see" "english" lan)
-       "{\\tt http://www.texmacs.org}).}"))
+       " {\\tt http://www.texmacs.org}).}"))
+    (withTeXmacstext 0
+     ,(string-append
+       (translate "This text has been produced using" "english" lan)
+       " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
+       (translate "see" "english" lan)
+       " {\\tt http://www.texmacs.org})"))
     (tmhlink 2 "{\\color{blue} #1}")
     (tmaction 2 "{\\color{blue} #1}")
     (tmmathbf 1 "\\boldsymbol{#1}")
@@ -166,6 +172,8 @@
     (emdash 0 "---")
     (pari 0 "{\\sc Pari}")
     (op 1 "#1")
+    (email 1 "{{\\em Email}: {\\tt #1}}")
+    (homepage 1 "{{\\em Web}: {\\tt #1}}")
     (keywords 1
       ,(string-append
 	"{{\\bf "

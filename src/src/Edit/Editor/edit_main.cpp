@@ -172,7 +172,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   string page_type = env->get_string (PAGE_TYPE);
   double w         = env->page_width;
   double h         = env->page_height;
-  double cm        = env->decode_length (string ("1cm"));
+  double cm        = env->as_length (string ("1cm"));
   bool   landsc    = env->page_landscape;
   int    dpi       = as_int (printing_dpi);
   int    start     = max (0, first-1);
@@ -182,10 +182,10 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     page_type= "user";
     SI bw= the_box[0][0]->w();
     SI bh= the_box[0][0]->h();
-    string bws= as_string (bw) * "unit";
-    string bhs= as_string (bh) * "unit";
-    w= env->decode_length (bws);
-    h= env->decode_length (bhs);
+    string bws= as_string (bw) * "tmpt";
+    string bhs= as_string (bh) * "tmpt";
+    w= env->as_length (bws);
+    h= env->as_length (bhs);
   }
 
   // Print pages

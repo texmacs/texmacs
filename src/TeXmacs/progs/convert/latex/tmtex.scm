@@ -153,6 +153,16 @@
 	(if (null? (cdr r)) (car r)
 	    (cons '!concat r)))))
 
+(define (tex-concat-strings l)
+  (cond ((< (length l) 2) l)
+	((and (string? (car l)) (string? (cadr l)))
+	 (tex-concat-strings (cons (string-append (car l) (cadr l)) (cddr l))))
+	(else (cons (car l) (tex-concat-strings (cdr l))))))
+
+(define (tex-concat* l)
+  "Variant of tex-concat for which adjecent strings are concatenated"
+  (tex-concat (tex-concat-strings l)))
+
 (define tex-apply
   (lambda l
     (if (or (tmtex-math-mode?) (drd-in? (car l) tmpre-sectional%)) l
@@ -781,34 +791,75 @@
   (list 'epsfig (string-append "file=" (force-string (car l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Titles of documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-compressed sep l)
+  (cond ((null? l) l)
+	((null? (cdr l)) (list (tmtex (car l))))
+	(else (cons* (tmtex (car l))
+		     sep
+		     (tmtex-compressed sep (cdr l))))))
+
+(define (tmtex-data-assemble sep l)
+  (cond ((null? l) l)
+	((null? (cdr l)) (car l))
+	(else (with r (tmtex-data-assemble sep (cdr l))
+		(cond ((null? (car l)) r)
+		      ((null? r) (car l))
+		      (else (append (car l) (list sep) r)))))))
+
+(define (tmtex-select-data expr tag)
+  (let* ((data (tm-select expr (list tag)))
+	 (sep (if (== tag 'author-address) '(!nextline) "; "))
+	 (fun (lambda (x)
+		(cond ((func? x 'document)
+		       (list (tex-concat* (tmtex-compressed sep (cdr x)))))
+		      (else (list (tmtex x)))))))
+    (if (null? data) '()
+	(with l (cdar data)
+	  (tmtex-data-assemble ", " (map fun l))))))
+
+(define (tmtex-data-apply tag l)
+  (if (null? l) l
+      (list (list tag (tex-concat* l)))))
+
+(define (tmtex-make-author tag)
+  (let* ((name (tmtex-select-data tag 'author-name))
+	 (address (tmtex-select-data tag 'author-address))
+	 (note (tmtex-select-data tag 'author-note))
+	 (email (tmtex-select-data tag 'author-email))
+	 (homepage (tmtex-select-data tag 'author-homepage))
+	 (email* (tmtex-data-apply 'email email))
+	 (homepage* (tmtex-data-apply 'homepage homepage))
+	 (note* (tmtex-data-assemble "; " (list note email* homepage*)))
+	 (name* (append name (tmtex-data-apply 'thanks note*))))
+    (tex-concat* (tmtex-data-assemble '(!nextline)
+				      (list name* address)))))
+
+(define (tmtex-doc-data s l)
+  (let* ((tag (cons s l))
+	 (title (tmtex-select-data tag 'doc-title))
+	 (authors (map tmtex-make-author (tm-select tag '(doc-author-data))))
+	 (date (tmtex-select-data tag 'doc-date))
+	 (note (tmtex-select-data tag 'doc-note))
+	 (keywords (tmtex-select-data tag 'doc-keywords))
+	 (AMS-class (tmtex-select-data tag 'doc-AMS-class))
+	 (keywords* (tmtex-data-apply 'keywords keywords))
+	 (AMS-class* (tmtex-data-apply 'AMS-class AMS-class))
+	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
+	 (title* (append title (tmtex-data-apply 'thanks note*)))
+	 (author* (tmtex-data-assemble '(and) (map list authors))))
+    (tex-concat `((title ,(tex-concat title*))
+		  (author ,(tex-concat author*))
+		  (maketitle)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-std-env s l)
   (list (list '!begin s) (tmtex (car l))))
-
-(define (tmtex-title-extract-list l what)
-  (if (null? l) #f
-      (let ((x (tmtex-title-extract (car l) what)))
-	(if x x (tmtex-title-extract-list (cdr l) what)))))
-
-(define (tmtex-title-extract l what)
-  (cond ((or (not (list? l)) (null? l)) #f)
-	((== l `(,what)) l)
-	((match? l `(,what :1)) (cadr l))
-	(else (tmtex-title-extract-list l what))))
-
-(define (tmtex-title-get x what)
-  (let ((y (tmtex-title-extract x what)))
-    (if y (list what (tmtex y)) "")))
-
-(define (tmtex-make-title s l)
-  (let* ((aux (tmtex-title-extract (car l) 'made-by-TeXmacs))
-	 (mbtm (if aux (tmtex aux) "")))
-    (tex-concat (list (tmtex-title-get (car l) 'title)
-		      (tmtex-title-get (car l) 'author)
-		      (list 'maketitle)
-		      mbtm))))
 
 (define (tmtex-appendix s l)
   (if tmtex-appendices
@@ -1053,7 +1104,7 @@
   (!arg tmtex-tex-arg))
 
 (drd-table tmtex-tmstyle%
-  (make-title (,tmtex-make-title 1))
+  (doc-data (,tmtex-doc-data -1))
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition conjecture

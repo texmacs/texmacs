@@ -17,7 +17,7 @@
   (:export latexer))
 
 (tm-define (latexer s)
-  (:type (string -> object))
+  (:type (tree -> object))
   (:synopsis "convert LaTeX string to TeXmacs tree using plugin")
   (:secure #t)
-  (plugin-eval "secure" "default" s))
+  (plugin-eval "secure" "default" (tree->string s)))

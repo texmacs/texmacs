@@ -248,17 +248,18 @@ make_lazy_compound (edit_env env, tree t, path ip) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? t[i+d]: tree (UNINIT);
+	env->macro_arg->item (var)=
+	  i<m? t[i+d]: attach_dip (tree (UNINIT), decorate_right(ip));
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
-    if (is_decoration (ip)) par= make_lazy (env, f[n], ip);
-    else par= make_lazy (env, f[n], decorate_right (ip));
+    if (is_decoration (ip)) par= make_lazy (env, attach_here (f[n], ip));
+    else par= make_lazy (env, attach_right (f[n], ip));
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
   }
   else {
-    if (is_decoration (ip)) par= make_lazy (env, f, ip);
-    else par= make_lazy (env, f, decorate_right (ip));
+    if (is_decoration (ip)) par= make_lazy (env, attach_here (f, ip));
+    else par= make_lazy (env, attach_right (f, ip));
   }
   return lazy_surround (a, b, par, ip);
 }
@@ -272,7 +273,7 @@ make_lazy_rewrite (edit_env env, tree t, path ip) {
   tree r= env->rewrite (t);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, r, decorate_right (ip));
+  lazy par= make_lazy (env, attach_right (r, ip));
   return lazy_surround (a, b, par, ip);
 }
 
@@ -285,7 +286,7 @@ make_lazy_eval (edit_env env, tree t, path ip) {
   tree r= env->exec (is_func (t, EVAL, 1)? t[0]: tree (QUASIQUOTE, t[0]));
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, r, decorate_right (ip));
+  lazy par= make_lazy (env, attach_right (r, ip));
   return lazy_surround (a, b, par, ip);
 }
 
@@ -310,8 +311,8 @@ make_lazy_auto (edit_env env, tree t, path ip, tree f) {
   string var= f[0]->label;
   env->macro_arg->item (var)= t;
   env->macro_src->item (var)= ip;
-  if (is_decoration (ip)) par= make_lazy (env, f[1], ip);
-  else par= make_lazy (env, f[1], decorate_right (ip));
+  if (is_decoration (ip)) par= make_lazy (env, attach_here (f[1], ip));
+  else par= make_lazy (env, attach_right (f[1], ip));
   env->macro_arg= env->macro_arg->next;
   env->macro_src= env->macro_src->next;
 
@@ -360,7 +361,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
       valip= descend (valip, nr);
     }
   }
-  lazy par= make_lazy (env, value, valip);
+  lazy par= make_lazy (env, attach_here (value, valip));
 
   env->macro_arg= old_var;
   env->macro_src= old_src;
@@ -424,6 +425,19 @@ static tree var_inactive_m
 
 lazy
 make_lazy (edit_env env, tree t, path ip) {
+  /*
+  if (is_accessible (ip)) {
+    if (obtain_ip (t) != ip)
+      cout << "TeXmacs] Wrong ip: " << t << "\n";
+  }
+  */
+
+  if (!is_accessible (ip)) {
+    path ip2= obtain_ip (t);
+    if (ip2 != path (DETACHED))
+      ip= ip2;
+  }
+
   switch (L(t)) {
   case DOCUMENT:
     return lazy_document (env, t, ip);

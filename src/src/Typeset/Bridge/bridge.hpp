@@ -60,7 +60,7 @@ public:
   virtual void my_exec_until (path p);
   virtual bool my_typeset_will_be_complete ();
   virtual void my_typeset (int desired_status);
-  virtual void exec_until (path p); // only redefined in bridge_auto
+  virtual void exec_until (path p, bool skip_flag= false);
   void typeset (int desired_status);
 };
 

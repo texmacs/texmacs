@@ -45,7 +45,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (inside-section?)
-  (or (inside? "chapter")
+  (or (inside? "part")
+      (inside? "part*")
+      (inside? "chapter")
       (inside? "chapter*")
       (inside? "appendix")
       (inside? "section")
@@ -76,7 +78,7 @@
 (define (toggle-section-number)
   (for-each
    toggle-number-sub
-   '("chapter" "section" "subsection" "subsubsection"
+   '("part" "chapter" "section" "subsection" "subsubsection"
      "paragraph" "subparagraph" "appendix"
 
      "theorem" "proposition" "lemma" "corollary"

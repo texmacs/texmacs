@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -21,74 +21,69 @@
     </src-license>
   </src-title>>
 
-  <assign|make-title|<\macro|body>
-    <no-indent><assign|page-this-header|><assign|page-this-footer|><vspace|0.3pag>
+  <use-package|title-base>
 
-    <\with|par-mode|center>
-      <arg|body>
-    </with>
+  <\active*>
+    <\src-comment>
+      Containers.
+    </src-comment>
+  </active*>
+
+  <assign|doc-make-title|<\macro|body>
+    <no-indent><assign|page-this-header|><assign|page-this-footer|><vspace|0.25pag>
+
+    <doc-title-block|<font-magnify|1.414|<arg|body>>>
 
     <new-page>
 
-    <assign|page-this-header|><assign|page-this-footer|><vspace|0.3pag>
+    <assign|page-this-header|><assign|page-this-footer|><vspace|0.15pag>
 
     <surround||<hflush>|<new-page>>
   </macro>>
 
-  <assign|abstract|<\macro|body>
-    <surround|<no-indent>||<chapter*|<translate|Abstract|english|<language>>>>
+  <assign|doc-abstract|<\macro|body>
+    <surround|<no-indent>||<chapter*|<abstract-text>>>
 
     <surround||<hflush>|<arg|body>>
   </macro>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
-  ><arg|x>>>
+  <\active*>
+    <\src-comment>
+      Title elements.
+    </src-comment>
+  </active*>
 
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
-  subject classification:|english|<language>> ><arg|x>>>
+  <assign|doc-render-title|<macro|x|<surround||<vspace|0.1pag>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|<font-magnify|2|<arg|x>>>>>>>>
 
-  \;
+  <assign|doc-author|<macro|body|<\surround|<vspace*|0.1pag>|<vspace|0.1pag>>
+    <\with|par-par-sep|0fn>
+      <doc-title-block|<arg|body>>
+    </with>
+  </surround>>>
 
-  <assign|title*|<macro|name|<with|math-font-series|bold|font-series|bold|font-size|2.82|<arg|name>>>>
+  <assign|doc-date|<macro|x|<surround|<vspace*|0.1pag>||<doc-author-block|<with|font-shape|italic|<arg|x>>>>>>
 
-  <assign|title|<macro|body|<title*|<arg|body>><header-title|<arg|body>>>>
+  <\active*>
+    <\src-comment>
+      Author elements.
+    </src-comment>
+  </active*>
 
-  <assign|author*|<macro|body|<with|font-shape|small-caps|font-size|1.54|<arg|body>>>>
+  <assign|author-render-name|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<with|font-shape|small-caps|<font-magnify|1.091|<arg|x>>>>>>>
 
-  <assign|author|<macro|body|<vspace*|0.1pag><author*|<arg|body>><header-author|<arg|body>>>>
+  <assign|author-address|<\macro|x>
+    <surround|<vspace*|2fn>|<vspace|2fn>|<doc-author-block|<arg|x>>>
+  </macro>>
 
-  <assign|address*|<macro|body|<with|par-par-sep|0fn|<arg|body>>>>
+  <assign|author-email|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<email-text><localize|:>
+  ><with|font-family|tt|<arg|x>>>>>>>
 
-  <assign|address|<macro|body|<surround|<vspace*|0.1pag>||<address*|<arg|body>>>>>
-
-  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
-
-  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<localize|Email:>
-  ><verbatim|<arg|body>>>>
-
-  <assign|title-email|<macro|body|<vspace*|0.1pag><title-email*|<arg|body>>>>
-
-  <assign|title-date*|<macro|body|<with|font-shape|italic|font-size|1.41|<arg|body>>>>
-
-  <assign|title-date|<macro|body|<vspace*|0.1pag><hflush><title-date*|<arg|body>><hflush>>>
-
-  \;
+  <assign|author-homepage|<macro|x|<surround||<vspace*|1fn>|<doc-author-block|<style-with|src-compact|none|<with|font-shape|italic|<homepage-text><localize|:>
+  ><with|font-family|tt|<arg|x>>>>>>>
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
