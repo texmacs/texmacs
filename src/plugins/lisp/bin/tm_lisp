@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export TEXMACS_LISP_PATH=$TEXMACS_PATH/plugins/lisp
+cd $TEXMACS_LISP_PATH
 
 if [ "$1" = "CLisp" ]; then
 	echo -ne "\002verbatim:"
