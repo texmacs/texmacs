@@ -153,7 +153,8 @@ edit_select_rep::select_enlarge () {
     tree st= subtree (et, p);
     if (is_atomic (st)) {
       string s= st->label;
-      if (get_env_string (MODE) == "text") {
+      string mode= get_env_string (MODE);
+      if (mode == "text" || mode == "src") {
 	int i1= last_item (start_p), i2= i1;
 	while (i1>0) {
 	  if (s[i1-1] == ' ') break;
@@ -490,7 +491,7 @@ edit_select_rep::selection_get () {
     // cout << "Between paths: " << start << " and " << end << "\n";
     tree t= ::compute_selection (et, start, end);
     // cout << "Selection : " << t << "\n";
-    return t;
+    return simplify_correct (t);
   }
 }
 
@@ -686,6 +687,8 @@ edit_select_rep::cut (path p1, path p2) {
 
   if (is_compound (t) && (!is_format (t))) {
     assign (p, "");
+    if (is_concat (subtree (et, path_up (p))))
+      correct_concat (path_up (p));
     return;
   }
 
@@ -712,6 +715,8 @@ edit_select_rep::cut (path p1, path p2) {
     }
     assign (p, "");
   }
+  if ((!nil (p)) && is_concat (subtree (et, path_up (p))))
+    correct_concat (path_up (p));
 }
 
 void
@@ -731,8 +736,8 @@ edit_select_rep::selection_cut (string key) {
 
     tree sel= compute_selection (et, p1, p2);
     // cout << "Selection " << sel << "\n";
-    selection_set (key, sel);
-    // cout << "Selected  " << well_matched (sel) << "\n";
+    selection_set (key, simplify_correct (sel));
+    // cout << "Selected  " << sel << "\n";
     cut (p1, p2);
   }
 }
