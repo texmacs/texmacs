@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
@@ -9,8 +9,11 @@
   <menu|Insert|Link|Label> and a reference to this label using <kbd-gen|?> or
   <menu|Insert|Link|Reference>. Be careful to put the label at a point where
   its number will be correct. When labeling sections, the recommended place
-  is just after the section name. When labeling equations, the recommended
-  place is at the start inside the equation.
+  is just after the section name. When labeling single equations, the
+  recommended place is at the start inside the equation. When labeling
+  multiple equations, you must put the label just behind the equation number.
+  Recall that you may use <key|A-*> in order to transform an unnumbered
+  environment or equation into a numbered one, and vice versa.
 
   It is possible to create hyperlinks to other documents using
   <kbd-ia|\<gtr\>> or <menu|Insert|Link|Hyperlink>. The first field of the
@@ -54,47 +57,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-5|<tuple|<uninit>|?>>
-    <associate|idx-6|<tuple|<uninit>|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Link>|<with|font-family|<quote|ss>|Label>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Link>|<with|font-family|<quote|ss>|Reference>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Link>|<with|font-family|<quote|ss>|Hyperlink>>|<pageref|idx-3>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Link>|<with|font-family|<quote|ss>|Action>>|<pageref|idx-4>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Options>|<with|font-family|<quote|ss>|Security>>|<pageref|idx-5>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Link>|<with|font-family|<quote|ss>|Include>>|<pageref|idx-6>>
-    </associate>
-  </collection>
-</auxiliary>
