@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
@@ -35,19 +35,41 @@
 
   <\active*>
     <\src-comment>
-      Content markup. Also used for indexing purposes.
+      Content markup. Also used for indexing purposes. The <verbatim|markup>
+      macro should be replaced by <verbatim|src-macro>.
     </src-comment>
   </active*>
 
-  <assign|markup|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|dark
-  green|<arg|x>><index|<with|font-family|tt|color|dark green|<arg|x>>>>>>
+  <assign|indexed|<macro|x|<arg|x><index|<arg|x>>>>
 
-  <assign|tmstyle|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|brown|<arg|x>><index|<with|font-family|tt|color|brown|<arg|x>>>>>>
+  <assign|markup|<macro|x|<src-macro|<arg|x>>>>
 
-  <assign|tmpackage|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|brown|<arg|x>><index|<with|font-family|tt|color|brown|<arg|x>>>>>>
+  <assign|tmstyle|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
 
-  <assign|tmdtd|<macro|x|<style-with|src-compact|none|<with|font-family|tt|color|dark
-  magenta|<arg|x>><index|<with|font-family|tt|color|dark magenta|<arg|x>>>>>>
+  <assign|tmpackage|<macro|x|<indexed|<with|font-family|tt|color|brown|<arg|x>>>>>
+
+  <assign|tmdtd|<macro|x|<indexed|<with|font-family|tt|color|dark
+  magenta|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
+      Documentation of <TeXmacs> macros.
+    </src-comment>
+  </active*>
+
+  <assign|explain|<\macro|what|body>
+    <\with|par-par-sep|0fn>
+      <vspace*|0.5fn><no-indent><arg|what>
+    </with>
+
+    <surround||<right-flush><vspace|0.5fn><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|<arg|body>>>
+  </macro>>
+
+  <assign|explain-macro-sub|<macro|x|pos|<if|<equal|<arg|pos>|0>|<indexed|<src-macro|<arg|x>>>|<src-arg|<arg|x>>>>>
+
+  <assign|explain-macro|<xmacro|args|<map-args|explain-macro-sub|inline-tag|args>>>
+
+  <drd-props|explain-macro|accessible|all>
 
   <\active*>
     <\src-comment>

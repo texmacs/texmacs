@@ -70,7 +70,8 @@ edit_env_rep::rewrite (tree t) {
       tree r (make_tree_label (t[1]->label), n);
       for (i=0; i<n; i++)
 	r[i]= tree (make_tree_label (t[0]->label),
-		    tree (ARG, copy (t[2]), as_string (start+i)));
+		    tree (ARG, copy (t[2]), as_string (start+i)),
+		    as_string (start+i));
 
       macro_arg= old_var;
       macro_src= old_src;

@@ -68,7 +68,9 @@ concater_rep::ghost (string s, path ip, color col) {
   int sz= script (env->fn_size, env->index_level);
   font gfn (tex_font (env->dis, fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (decorate (ip), 0, s, gfn, col);
-  a << line_item (STD_ITEM, b, HYPH_INVALID);
+  array<box> bs (1);
+  bs[0]= b;
+  a << line_item (STD_ITEM, composite_box (decorate (ip), bs), HYPH_INVALID);
 }
 
 void
