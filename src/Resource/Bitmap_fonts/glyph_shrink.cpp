@@ -15,14 +15,10 @@
 
 static int
 log2i (int i) {
+  int l;
   if (i==1) return 0;
-  if (i<=2) return 1;
-  if (i<=4) return 2;
-  if (i<=8) return 3;
-  if (i<=16) return 4;
-  if (i<=32) return 5;
-  if (i<=64) return 6;
-  if (i<=128) return 7;
+  for (l=1; l<30; l++)
+    if (i <= (1 << l)) return l;
   fatal_error ("too large shrinking factor", "shrink", "shrink.cpp");
   return 0; // Because of bug in certain versions of g++
 }
@@ -195,9 +191,10 @@ shrink (glyph gl, int xfactor, int yfactor,
 	  if (value>bitmap[entry]) bitmap[entry]= value;
 	}
 
-  int X, Y, sum;
-  glyph CB (X2-X1, Y2-Y1, -X1, Y2-1,
-	    gl->depth+ log2i (xfactor*yfactor), gl->status);
+  int X, Y, sum, nr= xfactor*yfactor;
+  int new_depth= gl->depth+ log2i (nr);
+  if (new_depth > 8) new_depth= 8;
+  glyph CB (X2-X1, Y2-Y1, -X1, Y2-1, new_depth, gl->status);
   for (Y=Y1; Y<Y2; Y++)
     for (X=X1; X<X2; X++) {
       sum=0;
@@ -205,6 +202,7 @@ shrink (glyph gl, int xfactor, int yfactor,
       for (j=0, index= indey; j<yfactor; j++, index+=ww)
 	for (i=0; i<xfactor; i++)
 	  sum += bitmap[index+ i];
+      if (nr >= 64) sum= (64 * sum) / nr;
       CB->set (X, Y, sum);
     }
   xo= off_x;
