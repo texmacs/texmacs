@@ -25,6 +25,7 @@ struct composite_box_rep: public box_rep {
 
   composite_box_rep (path ip);
   composite_box_rep (path ip, array<box> bs);
+  composite_box_rep (path ip, array<box> bs, bool init_sx_sy);
   composite_box_rep (path ip, array<box> bs, array<SI> x, array<SI> y);
   ~composite_box_rep ();
 
@@ -51,6 +52,17 @@ struct composite_box_rep: public box_rep {
   virtual bool   access_allowed ();
   virtual void   collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path   find_tag (string name);
+};
+
+struct concrete_composite_box_rep: public composite_box_rep {
+  bool border_flag;
+  concrete_composite_box_rep (
+    path ip, array<box> bs, array<SI> x, array<SI> y, bool bfl):
+      composite_box_rep (ip, bs, x, y), border_flag (bfl) { finalize (); }
+  concrete_composite_box_rep (path ip, array<box> bs, bool bfl):
+    composite_box_rep (ip, bs, true), border_flag (bfl) { finalize (); }
+  operator tree () { return tree ("composite"); }
+  int find_child (SI x, SI y, SI delta, bool force);
 };
 
 #endif // defined COMPOSITE_H
