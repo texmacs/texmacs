@@ -1,21 +1,21 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4.2>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Neue Dateiformate und Konverter hinzufügen>
+  <tmdoc-title|Konvertierer und neue Datenformate erstellen>
 
-  Mit der <name|Guile/Scheme> Erweiterungssprache ist es möglich, neue
-  Dateiformate und Konverter in modularer Weise zu <TeXmacs> hinzuzufügen.
-  Üblicherweise sind die zusätzlichen Formate und Konverter in Ihrer Datei
-  <verbatim|~/.TeXmacs/progs/my-init-texmacs.scm> oder einem dedizierten
-  Plug-In deklariert. Einige Beispiele sind unter
-  <verbatim|$TEXMACS_PATH/progs/convert> zu finden, wie beispielsweise
-  <hlink|init-html.scm|$TEXMACS_PATH/progs/convert/html/init-html.scm>.
+  Mir der <name|Guile>/<name|Scheme>-Sprache kann man, neue Datenformate und
+  Konvertierer zu <TeXmacs> als Module hinzufügen. Normalerweise werden die
+  zusätzlichen Formate und Konvertierer in ihrer persönlichen
+  Initialisierungs-Datei <verbatim|~/.TeXmacs/progs/my-init-texmacs.scm>
+  definiert oder in einem speziellen Plugin. Einige Beispiele finden Sie in
+  einem Unterverzeichnis <verbatim|progs/convert> ihres
+  <TeXmacs>-Verzeichnisses, wie z.B. <hlink|init-html.scm|$TEXMACS_PATH/progs/convert/html/init-html.scm>.
 
-  <paragraph|Deklaration neuer Formate>
+  <paragraph|neue formate definieren>
 
-  Ein neues Format wird mit folgendem Kommando deklariert
+  Ein neues Format kann mit dem Befehl
 
   <\scheme-fragment>
     (define-format <em|format>
@@ -25,28 +25,29 @@
     \ \ <em|options>)
   </scheme-fragment>
 
-  Hier ist <kbd|<em|format>> ein Symbol das für das Format steht und
-  <em|<kbd|format-name>> ein Zeichenkette die in den Menüs benutzt werden
-  kann. Tatsächlich besteht ein Dateiformat aus verschiedenen Varianten: ein
-  Format <kbd|<em|format>-file> für Dateien, ein Format
-  <kbd|<em|format>-document> für ganze Dokumente, ein Format
-  <kbd|<em|format>-snipped> für Ausschnitte wie Selektionen und ein
-  <kbd|<em|format>-object> für die bevorzugte Interne Repräsentation des
-  Schemas für Übersetzungen (d.h. die geparste Variante des Formats).
-  Konverter von <kbd|<em|format>-file> zu <kbd|<em|format>-document> und
-  umgekehrt werden automatisch zu Verfügung gestellt.
+  erzeugt werden. <verbatim|<em|format>> ist ein Symbol, dass für das Format
+  steht und <verbatim|<em|format-name>> eine Zeichenkette, die in Menüs
+  benutzt werden kann. Tatsächlich gibt es ein Datenformat meist in mehreren
+  Varianten: ein Format <verbatim|<em|format>-file> für Dateien, ein Format
+  <verbatim|<em|format>-document> für ganze Dokumente und ein Format
+  <verbatim|<em|format>-snippet> für kurze Zeichenketten, wie z.B. Auswahlen
+  (selections), und schlieÿlich <verbatim|<em|format>-object> für die
+  bevorzugte interne <name|Scheme>-Repräsentation bei Konversionen (dies ist
+  Parser-Variante des Formats). Konvertierer von <verbatim|<em|format>-file>
+  nach <verbatim|<em|format>-document> und umgekehrt werden automatisch
+  erzeugt.
 
-  Sie können zusätzliche Optionen für die automatische Erkennung von Formaten
-  durch ihre Dateiendung und ihren Inhalt definieren. Die möglichen Endungen
-  für ein Format, mit der Standardendung zuerst aufgelistet, können wie folgt
-  spezifiziert werden
+  Der Anwender kann zusätzliche Optionen zur automatischen Erkennung von
+  Formaten mit Hilfe von Datei-Suffixen oder -Inhalten spezifizieren. Z.B.
+  können die erlaubten Suffixe eines Daten-Formats mit der Voreinstellung als
+  erstem durch
 
   <\scheme-fragment>
     (:suffix <em|default-suffix> <em|other-suffix-1> ... <em|other-suffix-n>)
   </scheme-fragment>
 
-  Eine (heuristische) Routine, die ermittelt ob das vorliegende Dokument dem
-  Format entspricht, wird durch eine der Folgenden Anweisungen spezifiziert
+  angegeben werden. Eine (heuristische) Routine, um festzustellen, ob ein
+  Dokument zu einem bestimmten Format gehört, kann mit
 
   <\scheme-fragment>
     (:recognize <em|predicate>)
@@ -54,13 +55,13 @@
     (:must-recognize <em|predicate>)
   </scheme-fragment>
 
-  Im ersten Fall bekommt die Erkennung über die Dateiendung Vorrang vor der
-  Dokumenterkennung und im zweiten Fall erfolgt die heuristische Erkennung
-  ausschlieÿlich durch die Ermittlung des Inhalts.
+  erreicht werden. Im ersten Fall hat die Suffix-Erkennung Vorrang vor der
+  heuristischen Erkennung. Im zweiten Fall ist nur die heuristische Erkennung
+  durch das Prädikat, predicate, maÿgeblich.
 
-  <paragraph|Deklaration neuer Konverter>
+  <paragraph|neue konvertierer erzeugen>
 
-  Neue Konverter werden wie folgt deklariert
+  Neue Konvertierer können mit
 
   <\scheme-fragment>
     (converter <em|from> <em|to>
@@ -68,8 +69,8 @@
     \ \ <em|options>)
   </scheme-fragment>
 
-  Der tatsächliche Konverter wird über eine der folgenden Optionen
-  spezifiziert
+  erzeugt werden. Der eigentliche Konvertierer wird durch eine der folgenden
+  Optionen spezifiziert:
 
   <\scheme-fragment>
     (:function <em|converter>)
@@ -80,25 +81,32 @@
     <em|prog-post-args>)
   </scheme-fragment>
 
-  Im ersten Fall ist der <kbd|<em|converter>> eine Routine, die ein Objekt
-  aus dem <em|<kbd|from>> Format nimmt und im <kbd|<em|to>> Format zurück
-  gibt. Im zweiten Fall benutzt der <em|<kbd|converter>> eine zusätzliche
-  Verbindungsliste und sein zweites Argument mit Optionen für den Konverter.
-  Im letzten Fall wird ein Shell-Kommando spezifiziert um zwischen zwei
-  Dateiformaten zu konvertieren. Der Konverter wird nur dann aktiviert, wenn
-  <em|<kbd|prog>> tatsächlich in dem Verzeichnis gefunden wird. Hilfsdateien
-  werden ggf. automatisch erstellt und gelöscht.
+  Im ersten Fall ist der Konvertierer <verbatim|<em|converter>> eine Routine
+  die ein Objekt im Daten-Format <verbatim|<em|from>> \ übernimmt und ein
+  Objekt im Daten-Format <verbatim|<em|to>> zurückgibt. Im zweiten Fall
+  übernimmt der <verbatim|<em|converter>> eine assoziative Liste als zweites
+  Argument und Optionen für den Konvertierer. Im letzten Fall wird ein
+  <em|shell>-Befehl angegeben, der die Konvertierung zwischen den beiden
+  Datei-Formaten durchführt. Der Konvertierer wird dann und nur dann
+  aktiviert, wenn das Programm <verbatim|<em|prog>> gefunden wird.
+  Hilfsdateien können automatisch erzeugt und wieder gelöscht werden.
 
-  Wenn Sie einen Konverter von <em|x> nach <em|y> und von <em|y> nach <em|z>
-  haben, bekommen Sie von <TeXmacs>automatisch einen weiteren Konverter von
-  <em|x> nach <em|z>. Eine Distanz zwischen zwei Formaten über einen
-  Konverter`` kann durch
+  <TeXmacs> berechnet automatisch die transitive \RClosure'' aller
+  Konvertierer, indem einen \Rkürzesten Pfad Algorithmus'' benutzt. Mit
+  anderen Worten, wenn es einen Konvertierer für <with|mode|math|x> nach
+  <with|mode|math|y> gibt und einen Konvertierer von <with|mode|math|y> nach
+  <with|mode|math|z>, dann hat man auch einen von <with|mode|math|x> nach
+  <with|mode|math|z>. Es für jede Konvertierung kann eine \RStrafe/Abstand
+  zwischen den Formaten`` mit
 
   <\scheme-fragment>
     (:penalty <em|floating-point-distance>)
   </scheme-fragment>
 
-  spezifiziert werden. Weitere Optionen sind:
+  angeben werden, um so Hinweise zum automatischen Finden eines optimalen
+  Weges für die Konvertierung zu geben.
+
+  Weitere Optionen für Konvertierer sind:
 
   <\scheme-fragment>
     (:require <em|cond>)
@@ -106,14 +114,14 @@
     (:option <em|option> <em|default-value>)
   </scheme-fragment>
 
-  Die erste Option spezifiziert eine Bedingung die erfüllt werden muss damit
-  der Konverter benutzt wird. Diese Option sollte als erste oder zweite
-  Option und ständig hinter der <kbd|:penalty> Option angegeben werden. Die
-  <kbd|:option> Option spezifiziert eine Option für den Konverter durch seine
-  default value. Diese Option wird automatisch eine Benutzereinstellung und
-  wird an alle Konverter mit Optionen weitergegeben.
+  Die erste Option spezifiziert eine Bedingung, die erfüllt sein muss, damit
+  der Konvertierer benutzt werden kann. Diese Option sollte als erste oder
+  zweite Option spezifiziert werden und immer nach der <verbatim|:penalty>
+  Option. Die <verbatim|:option> Option spezifiziert eine Option für den
+  Konvertierer, mit einer Voreinstellung. Diese Option wird automatisch an
+  alle Konvertierer mit Optionen weitergegeben.
 
-  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -125,24 +133,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|german>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-  </collection>
-</references>

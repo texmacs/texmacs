@@ -1,99 +1,95 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Anmerkungen für Anwender aus Russland und der Ukraine>
+  <tmdoc-title|Anmerkungen für russische und ukrainische Anwender>
 
-  Um russischen (und ebenso ukrainischen) Text zu schreiben, haben Sie
-  mehrere Optionen:
+  Um russischen oder ukrainischen Text einzugeben, haben Sie verschiedene
+  Optionen:
 
-  <\itemize-dot>
-    <item>Wählen Sie Russisch als Standardsprache unter
-    <menu|Edit|Preferences|Language|Russian>. Wenn <TeXmacs> mit russischen
-    Menüs startet, wird dies automatisch getan wenn die russische
-    Umgebungsvariable gesetzt ist.
+  <\itemize>
+    <item>Wählen Sie Russisch als Ihre Sprache mit dem Menübefehl
+    <menu|Edit|Preferences|Language|Russian>. Wenn \ <TeXmacs> mit russischen
+    Menüs startete, dann wurde bereits automatisch Russisch oder Ukrainisch
+    vorgegeben.
 
-    <item>Wählen Sie Russisch als Sprache für ein Dokument mit
-    <menu|Document|Language|Russian>.
+    <item>Wählen Sie Russisch bzw. Ukrainisch als Sprache für das ganze
+    Dokument mit dem Menübefehl <menu|Document|Language|Russian> bzw.
+    <menu|Document|Language|Ukrainian>.
 
-    <item>Wählen Sie Russisch als Sprache für einen Textabschnitt in einem
-    anderssprachigen Dokument über <menu|Format|Language|Russian>.
-  </itemize-dot>
+    <item>Wählen Sie Russisch bzw. Ukrainisch als Sprache für ein Textstück
+    \ mit dem Menübefehl <menu|Format|Language|Russian> bzw.
+    <menu|Format|Language|Ukrainian>.
+  </itemize>
 
-  Wenn Ihr X-Server die xkb-Erweiterung benutzt und eingestellt ist zwischen
-  den lateinischen und russischen Tastatur-Modi zu wechseln, müssen Sie
-  nichts Weiteres mehr unternehmen. Schalten Sie einfach Ihre Tastatur in den
-  russischen Modus um und fahren Sie fort. Alle Software die hierzu benötigt
-  wird ist in modernen Linux-Distributionen bereits enthalten und die
-  xkb-Erweiterung ist standardmäÿig aktiviert in der <kbd|XF86Config>. Mit
-  der xkb-Erweiterung sind die Keysyms 2 Byte groÿ und die russischen
-  Buchstaben liegen bei 0x6??. Die Tastatur wird über <kbd|setxkbmap>
-  konfiguriert. Wenn X startet, verbindet es dieses Kommando mit der
-  systemweiten Xkbmap-Datei (normalerweise finden Sie diese unter
-  <kbd|/etc/X11/xinit>) wenn Sie existiert, und mit der Benutzerdatei
-  <kbd|~/.Xkbmap>, falls diese existiert. Eine typische <kbd|~/.Xkbmap> sieht
-  möglicherweise wie folgt aus:
+  Wenn Ihr X-Server die xkb-Erweiterung nutzt und zwischen \Rlateinischen''
+  und kyrillischen Tastatur-Moden umschalten kann, dann brauchen Sie nichts
+  besonderes zu tun. Schalten Sie einfach auf den kyrillischen Tastatur-Modus
+  um. Die Software, die man dafür braucht ist in allen modernen
+  Linux-Distributionen vorhanden und normalerweise ist die xkb-Erweiterungen
+  <with|font-family|tt|XF86Config> standardmäÿig eingestellt. Die Tastatur
+  wird mit <with|font-family|tt|setxkbmap> konfiguriert. Wenn X startet führt
+  es diesen Befehl mit der systemweiten Xkbmap-Datei aus. Sie befindet sich
+  normalerweise in <with|font-family|tt|/etc/X11/xinit>. Anschlieÿend wird
+  <with|font-family|tt|setxkbmap> mit \ <with|font-family|tt|~/.Xkbmap>
+  ausgeführt, sofern diese existiert. Eine typische
+  <with|font-family|tt|~/.Xkbmap> kann so aussehen
 
-  <kbd| \ \ \ ru basic grp:shift_toggle>
+  <verbatim| \ \ \ ru basic grp:shift_toggle>
 
-  Dies bedeutet dass der Tastaturmodus über <key|l-shift r-shift>
-  umgeschaltet wird. Andere beliebte Möglichkeiten sind <key|strg shift> oder
-  <key|strg alt>, sehen Sie nach in <kbd|/usr/X11R6/lib/X11/xkb/> um weitere
-  Informationen zu erhalten. Dies ist das bevorzugte Tastatur-Setup für
-  moderne Linux-Systeme wenn Sie beabsichtigen, oft russisch zu schreiben.
+  Das bedeutet, dass der Tastatur-Modus mit <key|<localize|l-shift>
+  <localize|r-shift>> umgeschaltet wird. Andere häufig benutzte Alternativen
+  sind <key|<key-control> <key-shift>> oder <key|<key-control>
+  <key-alternate>>. Sehen sie in <with|font-family|tt|/usr/X11R6/lib/X11/xkb/>
+  für weitere Einzelheiten. Wenn Sie häufiger russische Texte schreiben
+  wollen, dann ist das die bevorzugte Methode auf modernen Linux-Systemen.\ 
 
-  Auf älteren Linux-Systemen ist die xkb-Erweiterung des Öfteren deaktiviert.
-  Die Keysyms sind 1-Byte groÿ und werden über <kbd|xmodmap> konfiguriert.
-  Beim Start von X wird dieses Kommando mit dem systemweiten <kbd|Xmodmap>
-  verbunden (diese finden Sie üblicherweise unter <kbd|/etc/X11/xinit>) wenn
-  es existiert; danach mit der Benutzerdatei <kbd|/.Xmodmap> falls diese
-  ebenso existiert. Man kann eine Tastaturkombination einrichten um den Modus
-  zu wechseln und eine 1-Byte russische Kodierung (wie z.B. koi8-r) im
-  russischen Modus zu benutzen. Einfacher geht es wenn Sie das Paket
-  <kbd|xruskb> herunterladen und beim Start der X-Session
+  Auf älteren Linux-Systemen ist die xkb-Erweiterung oft inaktiviert. Sie
+  werden mit <with|font-family|tt|xmodmap> konfiguriert. Wenn X startet führt
+  es den Befehl mit der systemweiten Xmodmap-Datei aus. Sie befindet sich
+  normalerweise in <with|font-family|tt|/etc/X11/xinit>. Anschlieÿend wird
+  mit <with|font-family|tt|xmodmap> mit <with|font-family|tt|~/.Xmodmap>
+  ausgeführt, sofern diese existiert. Sie können die Tastenkombination für
+  den Tastatur-Modus mit einem 1-Byte Code (z.B. koi8-r) im Kyrillisch-Modus
+  konfigurieren. Einfacher ist es das Paket <with|font-family|tt|xruskb>
+  herunterzuladen und zu Beginn der X-Session, den Befehl
 
-  <\kbd>
-    \ \ \ xrus jcuken-koi8
-  </kbd>
+  <verbatim| \ \ \ xrus jcuken-koi8>
 
-  ausführen. Dies setzt das Tastaturlayout auf jcuken (siehe unten) und die
-  Kodierung auf koi8-r für den russischen Modus. Wenn Sie solch ein
-  Tastaturlayout benutzen, sollten Sie die Option
-  <with|mode|math|\<rightarrow\>> international keyboard
-  <with|mode|math|\<rightarrow\>> russian <with|mode|math|\<rightarrow\>>
-  koi8-r setzen.
+  zu benutzen. das setzt das Tastatur-Layout auf jcuken (siehe unten) und den
+  Tastatur-Code auf koi8-r für den kyrillischen Modus. Auÿerdem sollten Sie
+  die Option \ <menu|Edit|Preferences|Keyboard|Cyrillic input method|Koi8-r>
+  einstellen.
 
-  Es ist auÿerdem noch möglich, die Windows cp1251 Kodierung statt koi8-r zu
-  benutzen, was aber unter <name|Unix> eher unüblich ist. Wenn Sie <kbd|xrus
-  jcuken-cp1251> nutzen, wählen Sie cp1251 statt koi8-r.
+  Man kann auch die Windows cp1251 Codierung verwenden anstelle von koi8-r,
+  obwohl das unter UNIX nur selten geschieht. Wenn Sie
+  <with|font-family|tt|xrus jcuken-cp1251> benutzen wollen, wählen Sie
+  <menu|Edit|Preferences|Keyboard|Cyrillic input method|Cp1251>.\ 
 
-  Alle oben beschriebenen Vorgehensweisen erfordern spezielle Aktionen um die
-  Tastatur zur russifizieren``. Das ist alles nicht kompliziert, schauen Sie
-  sich das Cyrillic-HOWTO an, oder besser noch seine aktualisierte Version
+  Alle diese Methoden benötigen zusätzliche Aktionen, um eine kyrillische
+  Tastatur zu erhalten. Das ist nicht schwer. Lesen Sie das Cyrillic-HOWTO
+  oder die neue Version
 
-  <\kbd>
-    http://www.inp.nsk.su/~baldin/Cyrillic-HOWTO-russian/Cyrillic-HOWTO-russian.html
-  </kbd>
+  <verbatim|http://www.inp.nsk.su/<with|font-family|tt|~baldin/Cyrillic-HOWTO-russian/Cyrillic-HOWTO-russian.html>>
 
-  Alle hier beschrieben Vorgehensweisen wirken sich auf alle X-Anwendungen
-  aus: Texteditoren (emacs, nedit, kedit,...), xterms, <TeXmacs> usw..
+  Auÿerdem beeinflussen sie alle X-Anwendungen: Text-Editoren, wie emacs,
+  nedit, kedit usw., xterms, <TeXmacs> usw..
 
-  Wenn Sie nur einmal oder sehr selten russisch Schreiben möchten, erfordert
-  ein komplettes Tastatur-Setup mehr Arbeit als die Sache letztendlich Wert
-  ist. Als Vereinfachung für solche Gelegenheitsnutzer bietet <TeXmacs>
-  einige Methoden für die Eingabe in Russisch die keine vorhergehende Arbeit
-  benötigen. Diese Methoden beeinflussen ausschlieÿliche <TeXmacs> und keine
-  anderen Anwendungen.
+  Wenn Sie kyrillische Schriftzeichen nur einmal bzw. sehr selten benötigen,
+  kann dieser ganze Aufwand die Sache nicht wert sein. Darum hat <TeXmacs>
+  noch eine weitere Möglichkeit, kyrillische Buchstaben einzugeben und die
+  ohne jegliche Vorbereitung. Natürlich beeinflusst diese Methode
+  ausschlieÿlich <TeXmacs> und keine andere Anwendung. Dazu wählen Sie auf
+  einer Standard US-Stil-Tastatur den Menübefehl
+  <menu|Edit|Preferences|Keyboard|Cyrillic input method|Translit>. Auÿerdem
+  müssen Sie für Ihr Textstück die richtige Schriftart wählen:
+  <menu|Format|Font-name|Foreign|Cyrillic>. Die Eingabe eines Buchstabens
+  wird dann einen ähnlichen kyrillischen Buchstaben erzeugen. Für einige
+  Buchstaben müssen Sie Zwei- oder Drei-Buchstaben-Kombinationen
+  verwenden:<vspace|0.5fn>
 
-  Der einfachste Weg um russisch auf einer Standardtastatur ohne
-  Software-Setup zu schreiben führt über die Option
-  <menu|Edit|Preferences|Keyboard|Cyrillic input method|translit>. Danach
-  wird bei Eingabe eines lateinischen Buchstaben der ähnlichste russische
-  Buchstabe erzeugt. Um bestimmte russische Buchstaben zu bekommen, muss man
-  2- oder 3-Buchstabenkombinationen benutzen:
-
-  <big-table|<descriptive-table|<tformat|<cwith|2|11|1|1|cell-halign|l>|<cwith|2|11|2|2|cell-halign|l>|<cwith|2|11|2|2|cell-halign|c>|<cwith|2|11|4|4|cell-halign|l>|<cwith|2|11|4|4|cell-halign|c>|<table|<row|<cell|Tastenkombination>|<cell|für>|<cell|Tastenkombination>|<cell|für>>|<row|<cell|<kbd-text|"
+  <big-table|<descriptive-table|<tformat|<cwith|2|11|1|1|cell-halign|l>|<cwith|2|11|2|2|cell-halign|l>|<cwith|2|11|2|2|cell-halign|c>|<cwith|2|11|4|4|cell-halign|l>|<cwith|2|11|4|4|cell-halign|c>|<table|<row|<cell|Eingabe>|<cell|für>|<cell|Eingabe(n)>|<cell|für>>|<row|<cell|<kbd-text|"
   e>>|<cell|<with|language|russian|font|cyrillic|¼>>|<cell|<kbd-text|"
   E>>|<cell|<with|language|russian|font|cyrillic|œ>>>|<row|<cell|<key|y
   o>>|<cell|<with|language|russian|font|cyrillic|¼>>|<cell|<key|Y o> <key|Y
@@ -113,41 +109,39 @@
   u>>|<cell|<with|language|russian|font|cyrillic|þ>>|<cell|<key|Y u> <key|Y
   U>>|<cell|<with|language|russian|font|cyrillic|Þ>>>|<row|<cell|<key|y
   a>>|<cell|<with|language|russian|font|cyrillic|ÿ>>|<cell|<key|Y a> <key|Y
-  A>>|<cell|<with|language|russian|font|cyrillic|ß>>>>>>|Kyrillischen Text
-  auf einer lateinischen Tastatur schreiben>
+  A>>|<cell|<with|language|russian|font|cyrillic|ß>>>>>>|Kyrillische
+  Buchstaben mit \Rlateinischer`` Tastatur.>
 
-  Wenn Sie beispielsweise <with|language|russian|font|cyrillic|ñõ>``, und
-  nicht <with|language|russian|font|cyrillic|ø>`` möchten, müssen Sie <key|s
-  / h> tippen. Selbstverständlich ist die optimale`` Verbindung zwischen
-  lateinischen und russischen Buchstaben nicht allgemein gültig. Sie können
-  das von <TeXmacs> mitgelieferte Schema untersuchen und, falls Ihnen etwas
-  nicht zu sagt, es in der Datei <kbd|~/TeXmacs/progs/my-init-texmacs.scm>
-  entsprechend ändern.
+  Die Verwendung von Mehrfach-Kombinationen führt manchmal zu unerwünschten
+  Ergebnissen. Versuchen Sie es dann mit <key|/> als Trennzeichen. Wenn Sie
+  <key|s h> eingeben, erhalten Sie \R<with|language|russian|font|cyrillic|ø>'';
+  um das gewünschte \R<with|language|russian|font|cyrillic|ñõ>'' zu erhalten,
+  müssen Sie \ <key|s / h> eingeben. Es gibt keine eindeutige Weise
+  lateinische Buchstaben kyrillischen Zuzuordnen. Schauen Sie sich deshalb
+  die mitgelieferten Tastatur-Dateien an und, wenn Sie ihnen nicht gefallen,
+  passen Sie sie in Ihrer Initialisierungs-Datei
+  <with|font-family|tt|~/.TeXmacs/progs/my-init-texmacs.scm> Ihren Wünschen
+  entsprechend an.
 
-  Wenn Sie jcuken statt translit verwenden bekommen Sie das offizielle``
-  russische Schreibmaschinenlayout. Es wird so genannt weil die Tasten
-  qwertz`` die Buchstabenkombination <with|language|russian|<with|font|cyrillic|éöóêåÿ>>``
-  erzeugen. <with|language|german|Diese Eingabemethode ist am sinnvollsten
-  wenn sie eine richtige russische Tastatur besitzen, bei der zusätzliche
-  russische Buchstaben in Rot im jcuken-Layout auf die Tasten geschrieben
-  sind (ein ähnlicher Effekt kann bei einer herkömmlichen deutschen Tastatur
-  erzeugt werden in dem man transparente Aufkleber mit den roten russischen
-  Buchstaben auf die Tasten klebt). Das ist auÿerdem nützlich wenn Sie ein
-  erfahrener russischer Schreiber sind und Ihre Finger bereits an das Layout
-  gewöhnt sind.>
+  Wenn Sie \Rjcuken`` anstelle von \Rtranslit`` wählen, erhalten Sie das
+  offizielle russische Tastatur-Layout. Die Tasten der oberen Reihe
+  \Rqwerty'' erzeugen dann \R<with|language|russian|<with|font|cyrillic|éöóêåí>>``.
+  Diese Methode ist dann nützlich, wenn Sie eine russische Tastatur mit der
+  richtigen Beschriftung besitzen oder eine andere passend beschriften.
+  Vielleicht können Sie ja auch kyrillisch Blindschreiben.
 
-  Diejenigen die keine russischen Buchstaben auf ihrer Tastatur dargestellt
-  haben, bevorzugen meistens das yawerty Layout, bei dem die Tasten qwertz``
-  die Buchstabenkombination <with|language|russian|<with|font|cyrillic|ÿâåðò>>``
-  ergeben. Jeder lateinische Buchstabe ist einem gleichwertigen russischen
-  Buchstaben zugeordnet; zusätzliche russische Buchstaben werden durch
-  <key|shift>-Kombinationen erzeugt. <TeXmacs> kommt mit einem leicht
-  modifizierten yawerty Layout welches die Tastenfunktion für <key|$>,
-  <key|¿>, <key|<with|mode|math|\<backslash\>>> nicht verändert weil diese
-  für <TeXmacs> sehr wichtig sind. Die entsprechenden russischen Buchstaben
-  werden stattdessen durch verschiedene <key|shift>-Kombinationen erzeugt.
+  Diejenigen, die keine russische Tastatur besitzen, bevorzugen oft das
+  \Ryawerty``-Layout, bei dem die Tasten \Rqwerty'' die Ausgabe
+  \R<with|language|russian|font|cyrillic|ÿâåðòû>`` und zusätzliche
+  kyrillische Schriftzeichen mit der Umschalt-Taste, <key|<key-shift>>,
+  erzeugt werden können. <TeXmacs> hat ein etwas modifizierte
+  \Ryawerty\R-Layout, denn es ändert nicht die Tasten <key|$>, <key|¿>,
+  <key|<with|mode|math|\<backslash\>>>, da diese für <TeXmacs> wichtig sind
+  sind und eine spezielle Bedeutung haben. Die dazugehörigen kyrillischen
+  Buchstaben können durch bestimmte Kombinationen mit der Umschalt-Taste
+  erzeugt werden.
 
-  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -159,40 +153,7 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-bot|30mm>
-    <associate|page-odd|30mm>
     <associate|language|german>
-    <associate|page-reduce-top|15mm>
+    <associate|preamble|false>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|gly-2|<tuple|2|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Bearbeiten>|<with|font-family|<quote|ss>|Einstellungen>|<with|font-family|<quote|ss>|Sprache>|<with|font-family|<quote|ss>|Russisch>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Dokument>|<with|font-family|<quote|ss>|Sprache>|<with|font-family|<quote|ss>|Russisch>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Formate>|<with|font-family|<quote|ss>|Sprache>|<with|font-family|<quote|ss>|Russisch>>|<pageref|idx-3>>
-    </associate>
-  </collection>
-</auxiliary>

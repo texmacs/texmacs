@@ -1,50 +1,50 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Konvertierung von <LaTeX> zu <TeXmacs>>
+  <tmdoc-title|Konversion von <LaTeX> nach <TeXmacs>>
 
-  Das momentane Ziel des Konvertierungsprogrammes von <LaTeX> zu <TeXmacs>
-  ist es, bei der Übersetzung von alten Dokumenten zu <TeXmacs> zu
-  <em|helfen>. In der Regel sind Konvertierungen von <LaTeX> zu <TeXmacs>
-  wesentlich problematischer als umgekehrt, wenn Sie sich aber daran halten,
-  nur die gebräuchlichen <LaTeX>-Kommandos in Ihren Dokumenten zu benutzen,
-  werden Sie Ihre alten Dokumente zufriedenstellend konvertieren können.
-  Beispielsweise wurden alle <TeXmacs>-Hilfedateien in <LaTeX> geschrieben,
-  um die Funktion des <LaTeX> zu <TeXmacs>-Konvertierungsprogrammes zu
-  überprüfen.
+  Das der Konvertierung von <LaTeX> nach <TeXmacs>, ist es, <em|Ihnen zu
+  helfen>, alte alte <LaTeX>-Dokumente nach <TeXmacs> zu übertragen, damit
+  sie für Ihre Arbeit nicht vollständig verloren sind. Es ist nicht das Ziel,
+  eine vollständige Übertragung mit identischen Layout zu erreichen.
 
-  Sie können ein <LaTeX>-Dokument <kbd|name.tex> über
-  <menu|File|Import|Latex> in <TeXmacs> importieren und es dann unter
-  <kbd|name.tm> speichern. Wenn Ihr <LaTeX>-Dokument einigermaÿen ordentlich
-  geschrieben wurde, ist das Ergebnis der Konvertierung mehr oder weniger
-  akzeptabel, abgesehen von manchen Kommandos die nicht erkannt wurden.
-  Solche werden dann in roter Schrift dargestellt. Eine mögliche Lösung ist
-  es, selbst eine Style-Datei für konvertierte Dokumente zu schreiben, die
-  auf dem originalen Style basiert und in der die unbekannten Kommandos
-  definiert sind.
+  Im allgemeinen ist die Umwandlung von \ <LaTeX> nach <TeXmacs> schwieriger
+  als umgekehrt. Wenn Sie sich aber auf die gebräuchlichsten \ <LaTeX>
+  Kommandos beschränken, sollten Sie ihre Dokumente einigermaÿen ordentlich
+  übertragen können. Beispielsweise wurden alle <TeXmacs>-Hilfe-Dateien in
+  <LaTeX> geschrieben und dann nach <TeXmacs> konvertiert, um das
+  Konversions-Programm zu testen.
 
-  In weniger glücklichen Fällen könnte das konvertierte Dokument wie ein
-  groÿer Müllhaufen aussehen. Die Ursache darin liegt dann wahrscheinlich in
-  Möglichkeit des Anwenders, den Parser dynamisch zu modifizieren,
-  beispielsweise mit dem <kbd|<verbatim|\\catcode>>-Kommando. Damit bringen
-  Sie das Konvertierungsprogramm durcheinander und es interpetiert den Modus
-  oder die Umgebung nicht richtig. Im Ergebnis kann dann normaler Text als
-  Mathematik erscheinen, Mathematik als Verbatim und Ähnliches. Trotzdem
-  können die Kommandos in der Quell-Datei <kbd|name.tex>, die das
-  Konvertierungsprogramm verwirren, relativ leicht durch Vergleichen der
-  <LaTeX>-Quelle mit dem <TeXmacs>-Ergebnis ermittelt werden. Wenn Sie in der
-  Quelldatei entsprechend suchen, werden Sie die irreführenden Codezeilen
-  entfernen können und das Dokument wird sich schlieÿlich annehmbar
-  konvertieren lassen.
+  Sie können ein <LaTeX>-Dokument<verbatim|name.tex> mit dem Befehl
+  <menu|File|Import|Latex> nach <TeXmacs> importieren und unter dem Namen
+  <verbatim|name.tm> sichern. Wenn Ihr <LaTeX>-Dokument gut genug geschrieben
+  wurde, dann sollte das Resultat der Konvertierung einigermaÿen akzeptabel
+  sein, von einigen unbekannten Befehlen abgesehen, die rot markiert sind.
+  Ein gute Lösung dafür, besteht darin, eine eigene Stil-Definition basierend
+  auf dem Original Stil zu schreiben, in der die unbekannten Befehle
+  definiert werden.
 
-  In naher Zukunft möchten wir das Konvertierungsprogramm mit einem Filter
-  für die Style-Dateien sowie weiteren Features, welche die Übersetung von
-  selbstdefinierten Kommandos mit deren Definition aus einer dritten Datei
-  ermöglichen, erweitern.
+  Dennoch gibt es Fälle, in denen das ganze Dokument ein groÿes unlesbares
+  Durcheinander ist. Das kommt meist davon, dass \ <TeX> und <LaTeX> es
+  gestatten, dass der Parser während seiner Ausführung dynamisch verändert
+  wird, indem Sie z.B. den <verbatim|\\catcode> Befehl verwenden. In solchen
+  Fällen kann das Konvertierungs-Programm manchmal den Intentionen nicht
+  folgen und macht unzutreffende Annahmen. Dann wird z.B. Text in
+  mathematische Formeln umgewandelt, mathematischer Code in wörtlichen Text
+  usw.. Meist lassen sich die problematischen Befehle in <verbatim|name.tex>
+  aber leicht herausfinden, wenn man \ <LaTeX> mit der <TeXmacs>-Version
+  vergleicht. Dann kann man meist den problematischen <LaTeX>-Code ersetzen
+  und so eine einigermaÿen akzeptable Konvertierung erreichen.
 
-  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
+  Wir planen auch eine Konverter für \ <TeX>-Stil-Dateien nach <TeXmacs>
+  sowie einige andere Erweiterungen, die die Konversion von Anwender-Befehlen
+  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ zu erleichtern, die in einem
+  anderen Dokument definiert sind, als dem, das Sie gerade konvertieren
+  wollen.
+
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -56,23 +56,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|german>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-  </collection>
-</references>

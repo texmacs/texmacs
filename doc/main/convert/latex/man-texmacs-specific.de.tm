@@ -1,37 +1,36 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4.2>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Spezifische <TeXmacs>-Features>
+  <tmdoc-title|<TeXmacs>-spezifische Besonderheiten>
 
-  Manche der Textsatz-Stammfunktionen von <TeXmacs> haben keine
-  Entsprechungen in <LaTeX>, weshalb sie der Konvertierungsalgorithmus
-  einfach durch eine Leerstelle ersetzt. Einige der Hauptfunktionen die
-  speziell in <TeXmacs> vorkommen sind folgende:
+  Einige <TeXmacs>-Konstrukte haben keine Analogien in <LaTeX>. Der
+  Konversions-Algorithmus liefert dann nur Leerraum. <TeXmacs>-spezifisch
+  sind vor allem die folgenden:
 
-  <\itemize-dot>
-    <item>
+  <\itemize>
+    <item>Linke obere Indexe.
 
-    <item>Groÿe Separatoren zwischen groÿen Klammern
+    <item>Groÿe Separatoren innerhalb groÿer Klammern.
 
-    <item>Mosaike
+    <item>Mosaiken.
 
-    <item>Bäume
+    <item>Bäume.
 
-    <item>Komplexe Benutzer-Makros
+    <item>Komplexe Benutzer-Makros.
 
-    <item>Vertikale Zwischenräume before`` und after``
+    <item>Vertikale Abstände \Rvor'' und \Rhinter''.
 
-    <item>Indentifikations-Flags before`` und after``
-  </itemize-dot>
+    <item>Einzugsmarken \Rvor'' und \Rhinter''.
+  </itemize>
 
-  Sie sollten es vermeiden, diese besonderen <TeXmacs>-Features zu verwenden,
-  wenn Ihr Dokument in <LaTeX> konvertiert werden soll. Möglicherweise wird
-  das Konvertierungsprogramm in ferner Zukunft einmal eingekapselte
-  PostScript-Blöcke generieren um eine genauere Konvertierung zu ermöglichen.
+  Sie sollten diese <TeXmacs>-spezifischen Optionen vermeiden, wenn Sie Ihr
+  \ Dokument nach <LaTeX> konvertieren müssen. In ferner Zukunft könnte das
+  Konversionsprogramm in diesen Fällen als Voreinstellung <em|encapsulated
+  PostScript> erzeugen.
 
-  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -43,17 +42,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|german>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>

@@ -1,20 +1,20 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.4.2>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Workarounds>
+  <tmdoc-title|Dennoch konvertieren>
 
-  <TeXmacs> wurde nicht entwickelt um vollständig kompatibel zu <LaTeX> zu
-  sein. Die Konvertierung von <LaTeX> zu <TeXmacs> ist hauptsächlich gedacht,
-  um bei der Übersetzung von alten Dokumenten zu <TeXmacs> zu <em|helfen>. So
-  lange Sie keine seltsamen Umgebungen definiert haben oder keine
-  merkwürdigen Style-Dateien und Kommandos verwenden, sollten Sie Ihre alten
-  Dokumente ausreichend gut übersetzen können. Ansonsten empfehlen wir Ihnen,
-  das alte Dokument so anzupassen dass es zufriedenstellend übersetzt wird
-  und schlieÿlich noch einige abschlieÿenden Änderungen vorzunehmen.
+  Das Design von <TeXmacs> hat nicht das Ziel, mit <LaTeX> voll kompatibel zu
+  sein. Unser Ziel ist es vor allem, <em|Hilfe> zu geben, damit \ bereits
+  existierende Dokumente aus <LaTeX> nach <TeXmacs> übertragen werden können.
+  Solange diese Dokumente keine ungewöhnlichen Kontexte und ungewöhnliche
+  Befehle enthalten, sollte es Ihnen möglich sein, einigermaÿen vernünftige
+  Konvertierungen zu erhalten. Ist das nicht der Fall, schlagen wir vor, ihre
+  bestehenden Dokumente so zu modifizieren, dass das gelingt, um dann
+  <TeXmacs>-Dokumente zu korrigieren.
 
-  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -26,17 +26,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-type|a4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|german>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>

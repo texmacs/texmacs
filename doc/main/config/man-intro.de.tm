@@ -1,24 +1,23 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Einleitung>
+  <tmdoc-title|Einführung>
 
-  Bevor Sie anfangen mit <TeXmacs> zu arbeiten, kann es sinnvoll sein das
-  Programm zunächst über <menu|Edit|Preferences> so anzupassen dass es Ihre
-  Anforderungen am besten erfüllt. Sehr wichtig ist es, ein Look-And-Feel``
-  über <menu|Edit|Preferences|look and feel> zu wählen. Dies ermöglicht es
-  unter anderem, das die Tastaturkürzel in <TeXmacs> genau so sind wie Sie es
-  aus anderen Anwendungen gewohnt sind.
+  Bevor Sie <TeXmacs> benutzen, kann es nützlich sein, das Programm mit den
+  Optionen im Menü <menu|Edit|Preferences> so zu konfigurieren, dass es Ihren
+  Notwendigkeiten am besten entspricht. Zuerst sollten Sie im Menü
+  <menu|Edit|Preferences|Look and feel> einen Stil wählen. Damit wird das
+  Verhalten und die Kurzbefehle, die <TeXmacs> zur Verfügung stellt,
+  bestimmten anderen Anwendungen ähnlicher.
 
-  <TeXmacs> bringt ausserdem ein mächtiges Tastaturkürzel-System mit welches
-  versucht, die Benutzung der Tastatur-Modifier wie <key|shift> und
-  <key|strg> zu optimieren. Auf manchen Systemen sind diese Modifier nicht
-  optimal eingerichtet, weshalb Sie das möglicherweise selbst in die Hand
-  nehmen möchten.
+  <TeXmacs> besitzt ein mächtiges System von Kurzbefehlen, das die Benutzung
+  von Modifiziertasten wie <key|<key-shift>>- und <key|Strg>-Tasten zu
+  optimieren versucht. Manchmal sind die Modifiziertasten aber schlecht
+  konfiguriert, so dass Sie das vielleicht selbst ändern müssen.
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -31,17 +30,5 @@
 <\initial>
   <\collection>
     <associate|language|german>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

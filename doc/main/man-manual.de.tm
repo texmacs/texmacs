@@ -1,61 +1,59 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.4.2>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Basiseinleitung von GNU <TeXmacs>>
+  <tmdoc-title|GNU <TeXmacs>-Handbuch, Browserversion>
 
   <\traverse>
-    <branch|Einführung|start|start/man-getting-started.en.tm>
+    <branch|Erste Schritte|start/man-getting-started.de.tm>
 
-    <branch|Einfache Dokumente verfassen|text|text/man-text.en.tm>
+    <branch|Einfache Dokumente verfassen|text/man-text.de.tm>
 
-    <branch|Mathematische Formeln|mathematics|math/man-math.en.tm>
+    <branch|Mathematische Formeln|math/man-math.de.tm>
 
-    <branch|Tabellen|tables|table/man-table.en.tm>
+    <branch|Tabellen|table/man-table.de.tm>
 
-    <branch|Links und automatisch erzeugter
-    Inhalt|links|links/man-links.en.tm>
+    <branch|Verknüpfungen, Hyperlinks und automatisch erzeugte
+    Verzeichnisse|links/man-links.de.tm>
 
-    <branch|Editierwerkzeuge|editing|editing/man-editing-tools.en.tm>
+    <branch|Werkzeuge zum Editieren|editing/man-editing-tools.de.tm>
 
-    <branch|Fortgeschrittene Layout Techniken|layout|layout/man-layout.en.tm>
+    <branch|Dokumente im Quellcode darstellen und
+    editieren|../devel/source/viewdocassource.de.tm>
 
-    <branch|<TeXmacs> als ein Interface benutzen|interface|interface/man-itf.\
-    en.tm>
+    <branch|Fortgeschrittene Layout-Eigenschaften|layout/man-layout.de.tm>
 
-    <branch|Kompatibilität zu Fremd-Formaten|convert|convert/man-convert.en.t\
-    m>
+    <branch|<TeXmacs> und andere Programme
+    (Plugins)|../devel/plugin/plugins.de.tm>
 
-    <\branch|<TeXmacs> anpassen|customization>
-      scheme/man-scheme.en.tm
-    </branch>
+    <branch|GNU <TeXmacs> als Schnittstelle benutzen|interface/man-itf.de.tm>
+
+    <branch|So schreiben Sie ihre erste <TeXmacs>-Stil-Definition|../devel/style/style.de.tm>
+
+    <branch|Referenzhandbuch für fundamentale
+    <TeXmacs>-Konstrukte|../devel/format/regular/regular.de.tm>
+
+    <branch|Referenzhandbuch für die Standard-<TeXmacs>-Stile|styles/styles.de.tm>
+
+    <branch|<TeXmacs> anpassen|scheme/man-scheme.de.tm>
+
+    <branch|Kompatibilität mit anderen Formaten|convert/man-convert.de.tm>
   </traverse>
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|german>
+    <associate|preamble|false>
   </collection>
 </initial>

@@ -1,64 +1,60 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Konfiguration der Tastatur-Modifier >
+  <tmdoc-title|Konfiguration der Modifizier-Tasten>
 
-  <TeXmacs> benutzt fünf Tastatur-Modifier: \ <key|<key-shift>>,
-  \ \ <key|strg>, \ <key|alt>, \ <key|meta> und \ <key|hyper> die als
-  \ <key|S->, \ <key|C->, <key|A->, <key|M-> und \ <key|H-> abgekürzt werden.
-  Die Tasten \ <key|<key-shift>> und \ <key|strg> sind normalerweise \ auf
-  praktisch allen Tastaturen vorhanden, die \ <key|alt> Taste auf den
-  Meisten. Neuere Tastaturen für PC's haben üblicherweise noch die
-  \ <key|windows> taste, diese ist in <TeXmacs> \ äquivalent zu der Taste
-  <key|meta>.
+  <TeXmacs> benutzt fünf Tastatur-Modifikatoren: <key|Umschalt>,
+  <key|Steuerung>, <key|Alt>, <key|Meta> und <key|Hyper>, die mit \ <key|S->,
+  <key|C->, <key|A->, <key|M-> und <key|H-> abgekürzt werden. Die
+  <key|Umschalt>- und die <key|Steuerung>-Taste gibt es praktisch auf allen
+  Tastaturen, die \ <key|Alt>-Taste auf fast allen. Die meisten heutigen
+  Tastaturen haben auch eine \ <key|<key-windows>>-Taste, die gewöhnlich die
+  Funktion der <key|Meta>-Taste für <TeXmacs> übernimmt.
 
-  Bevor Sie die Konfiguration Ihrer Tastatur verändern, sollten Sie prüfen ob
-  das auch wirklich nötig ist. Wenn Sie Tasten entsprechend zu \ <key|shift>,
-  \ <key|strg>, \ <key|alt> und \ <key|meta> auf Ihrer Tastatur haben,
-  sollten Sie nichts ändern. Möchten Sie jedoch einen einfachen Tastendruck
-  wie <key|feststellen> verwenden um beispielsweise mathematische Symbole zu
-  schreiben, können Sie es natürlich trotzdem tun. In diesem Fall sollten Sie
-  <key|hyper> der Taste <key|feststellen> zuweisen.
+  Bevor Sie nun Ihre Tastatur neu konfigurieren, sollten Sie überprüfen, ob
+  das erforderlich ist. Wenn Sie Tasten haben, die in vernünftigerweise die
+  Funktion der Tasten <key|Umschalt>, <key|Steuerung>, <key|Alt> und
+  <key|Meta> erfüllen, dann ist es wahrscheinlich besser, alles so zu lassen,
+  wie es ist. Eine mögliche Ausnahme ist, das Sie mit einem einfachen
+  Tastendruck z.B. auf die <key|Feststelltaste> schnell auf die Eingabe
+  mathematischer Formeln umzuschalten. In diesem Fall sollten Sie die
+  Funktion der <key|Hyper>-Taste der <key|Feststelltaste> zuweisen.
 
-  Um die Konfiguration der Tastatur zu verändern, wählen Sie einfach einen
-  der Tastatur-Modifier über <specific|texmacs|><menu|Edit|Preferences|Keyboard>,
-  den Sie einer vorhandenen Taste zuweisen möchten. Wenn Sie beispielsweise
-  <menu|Windows key|Legen auf M Modifier> wählen, wird die <key|windows>
-  Taste dem <key|meta> Modifier zugewiesen. Ebenso wird <key|feststellen> dem
-  <key|hyper> Modifier zugewiesen, wenn Sie <menu|Caps-lock key|Legen auf H
-  Modifier> aus dem Menü wählen.
+  Um die Tastaturkonfiguration anzupassen, wählen Sie im Menü
+  <menu|Edit|Preferences|Keyboard> die Taste, die Sie umlegen wollen.
+  Beispielsweise wird, wenn Sie <menu|Windows key|Map to M modifier> wählen,
+  die <key|<key-windows>>-Taste der <key|Meta>-Taste entsprechen. Wenn Sie
+  <menu|Caps-lock key|Map to H modifier> wählten entspricht die
+  <key|Feststelltaste> der <key|Hyper>-Taste.
 
-  Unglücklicherweise erlaubt X-Window nur eine systemweite Konfiguration.
-  Deshalb hat es Auswirkungen auf alle anderen Anwendungen wenn Sie in
-  <TeXmacs> die Konfiguration der <key|feststellen> Taste verändern da
-  <key|feststellen> dann dort ebenfalls die neue Funktion hat. Aus diesem
-  Grund ist es wichtig, nur die Tasten zu ändern, die nicht für etwas Anderes
-  in den übrigen Anwendungen benötigt werden. Die <key|windows> Taste
-  beispielsweise wird nicht von vielen anderen Applikationen benutzt, deshalb
-  ist es normalerweise ungefährlich die Konfiguration für diese Taste zu
-  verändern. Möglicherweise bevorzugen Sie es eine entsprechende systemweite
-  Rekonfiguration vorzunehmen. Dies können Sie mit dem Kommando <kbd|xmodmap>
-  erreichen; lesen Sie hierzu die zugehörige Manual-Page für weitere
-  Informationen.
+  Leider erlaubt das X-Window-System nur systemweite Konfigurationen, so dass
+  jede Änderung dieser Konfigurationen alle Anwendungen gleichermaÿen
+  betrifft. Deshalb sollte man nur solche Tasten umkonfigurieren, die nicht
+  von anderen Anwendungen benötigt werden, es kann sonst böse Überraschungen
+  geben. Die <key|Windows>-Taste wird selten von anderen Anwendungen benutzt.
+  Es schadet gewöhnlich nichts, wenn man diese Taste umkonfiguriert. Man kann
+  dazu die <TeXmacs>-Optionen benutzen oder \ auch den
+  <verbatim|xmodmap>-Befehl zur Systemkonfiguration. Lesen Sie dazu \Rman
+  xmodmap``.\ 
 
-  In manchen Fällen werden Sie schon die entsprechenden Tasten zu <key|alt>,
-  <key|meta> und <key|hyper> auf Ihrer Tastatur haben, was aber eventuell
-  nicht Ihren Vorstellungen entsprechen könnte. Um dies zu ändern können Sie
-  die <key|A->, <key|M-> und <key|H-> Präfixe über die erste Gruppe von
-  Untermenüs in <menu|Edit|Preferences|Keyboard> anderen Modifiern zuweisen.
+  Manchmal haben Sie bereits Tasten auf Ihrer Tastatur, die in ihrer Funktion
+  \ <key|Alt>, <key|Meta> und <key|Hyper> entsprechen, aber nicht gerade so,
+  wie Sie es gerne hätten. Dann können Sie die Kurzbefehle <key|A->, <key|M->
+  und <key|H-> auf andere logische Modifikatoren (Mod1 bis Mod4) mit den
+  Befehlen der ersten Gruppe des Menüs \ <menu|Edit|Preferences|Keyboard>
+  umlegen. Wenn Sie beispielsweise Emacs Kompatibilität haben wollen, möchten
+  Sie vielleicht die \ <key|Meta>- oder die <key|Windows>-Taste mit der
+  <key|Alt>-Taste vertauschen ohne irgendwelche systemweite Änderungen. Man
+  kann das tun, wenn man herausgefunden hat, welcher Modifikator zu welcher
+  Taste gehört. (Meist entspricht \ <key|Mod1> \ <key|Alt> und <key|Mod4>
+  \ <key|Meta> oder <key|Windows>). Dann wird die Vertauschung mit den
+  Befehlen des Menüs <menu|Edit|Preferences|Keyboard> durchgeführt, indem
+  \ man <menu|A modifier|Equivalent for Mod4> und <menu|M modifier|Equivalent
+  for Mod1> wählt.
 
-  Für die Kompatibilität zu Emacs möchten Sie vielleicht die <key|meta> oder
-  <key|windows> Tasten mit <key|alt> vertauschen ohne systemweite Änderungen
-  hervorzurufen. Um dies zu erreichen, müssen Sie herausfinden welche
-  Modifier diesen Tasten entsprechen, normalerweise ist das <key|Mod1> für
-  <key|alt> und <key|Mod4> für <key|meta> oder <key|windows>. Das Vertauschen
-  wird schlieÿlich über <menu|Edit|Preferences|Keyboard>, durch auswählen von
-  <menu|A modifier|Äquivalent für Mod4> und <menu|M Modifier|Äquivalent für
-  Mod1> durchgeführt.
-
-  <tmdoc-copyright|1998-2003|Joris van der Hoeven, Christoph Strobel>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -71,15 +67,5 @@
 <\initial>
   <\collection>
     <associate|language|german>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
   </collection>
 </initial>
