@@ -128,7 +128,8 @@ void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
   hashmap<string,tree> H;
-  SERVER (style_get_cache (style, H, ok));
+  tree t;
+  SERVER (style_get_cache (style, H, t, ok));
   if (ok) env->patch_env (H);
   else {
     tree style2= style;
@@ -137,8 +138,9 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
 		     tuple ("std--after"));
     typeset_style (style2);
     env->read_env (H);
+    drd->heuristic_init (H);
     if ((!init->contains (PREAMBLE)) || (init[PREAMBLE] == "false"))
-      SERVER (style_set_cache (style, H));
+      SERVER (style_set_cache (style, H, (tree) drd));
   }
 }
 

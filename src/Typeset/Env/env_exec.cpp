@@ -490,18 +490,11 @@ edit_env_rep::exec_drd_props (tree t) {
       tree   val  = t[i+1];
       tree_label l= make_tree_label (var);
       if (prop == "arity") {
-	drd->set_arity (l, as_int (val));
-	drd->set_masked_props (l, FROZEN_ARITY, FROZEN_ARITY);
-	// NEW
 	drd->set_arity (l, as_int (val), 0, ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
       }
       if (prop == "accessible") {
-	drd->set_arity (l, as_int (val));
-	drd->set_masked_props (l, FROZEN_ACCESSIBLE, FROZEN_ACCESSIBLE);
 	if (val == "none") {
-	  drd->set_masked_props (l, ACCESSIBLE_MASK, NOT_ACCESSIBLE);
-	  // NEW
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
 	    drd->set_accessible (l, i, false);
@@ -509,23 +502,11 @@ edit_env_rep::exec_drd_props (tree t) {
 	  }
 	}
 	if (val == "all") {
-	  drd->set_masked_props (l, ACCESSIBLE_MASK, ACCESSIBLE);
-	  // NEW
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
 	    drd->set_accessible (l, i, true);
 	    drd->freeze_accessible (l, i);
 	  }
-	}
-	if (is_tuple (val)) {
-	  int i, n= N(val), detailed= 0;
-	  for (i=0; i<n; i++) {
-	    int nr= as_int (val[i]);
-	    if (nr < CUSTOM_ACCESSIBLE_MAX)
-	      detailed= detailed | (1 << (nr + CUSTOM_ACCESSIBLE_SHIFT));
-	  }
-	  drd->set_masked_props (l, ACCESSIBLE_MASK, CUSTOM_ACCESSIBLE);
-	  drd->set_masked_props (l, CUSTOM_ACCESSIBLE_MASK, detailed);
 	}
       }
     }

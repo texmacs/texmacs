@@ -84,7 +84,8 @@ server_rep::~server_rep () {}
 
 tm_server_rep::tm_server_rep (display dis2):
   dis (dis2), vw (NULL), banner_nr (-1), full_screen (false), def_sfactor (5),
-  style_cache (hashmap<string,tree> (UNINIT))
+  style_cache (hashmap<string,tree> (UNINIT)),
+  style_drd (tree (COLLECTION))
 {
   the_server= new server (this);
   initialize_guile ();
@@ -272,29 +273,38 @@ tm_server_rep::style_clear_cache () {
 }
 
 void
-tm_server_rep::style_set_cache (tree style, hashmap<string,tree> H) {
+tm_server_rep::style_set_cache (tree style, hashmap<string,tree> H, tree t) {
   // cout << "set cache " << style << LF;
   style_cache (copy (style))= H;
+  style_drd   (copy (style))= t;
   url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
   if (!exists (name)) {
-    save_string (name, tree_to_scheme ((tree) H));
+    save_string (name, tree_to_scheme (tuple ((tree) H, t)));
     // cout << "saved " << name << LF;
   }
 }
 
 void
-tm_server_rep::style_get_cache (tree style, hashmap<string,tree>& H, bool& f) {
+tm_server_rep::style_get_cache (
+  tree style, hashmap<string,tree>& H, tree& t, bool& f)
+{
   // cout << "get cache " << style << LF;
   if ((style == "") || (style == tree (TUPLE))) { f= false; return; }
   f= style_cache->contains (style);
-  if (f) H= style_cache [style];
+  if (f) {
+    H= style_cache [style];
+    t= style_drd   [style];
+  }
   else {
     string s;
     url name ("$TEXMACS_HOME_PATH/system/cache", cache_file_name (style));
     if (exists (name) && (!load_string (name, s))) {
       // cout << "loaded " << name << LF;
-      H= hashmap<string,tree> (UNINIT, scheme_to_tree (s));
+      tree pair= scheme_to_tree (s);
+      H= hashmap<string,tree> (UNINIT, pair[0]);
+      t= pair[1];
       style_cache (copy (style))= H;
+      style_drd   (copy (style))= t;
       f= true;
     }
   }

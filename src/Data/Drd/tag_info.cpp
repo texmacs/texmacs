@@ -45,7 +45,7 @@ parent_info::parent_info (string s) {
 }
 
 parent_info::operator string () {
-  int i,offset=0;
+  int i=0, offset=0;
   set_bits (arity_mode      , 2);
   set_bits (arity_base      , 6);
   set_bits (arity_extra     , 4);
@@ -55,7 +55,7 @@ parent_info::operator string () {
   set_bits (freeze_arity    , 1);
   set_bits (freeze_no_border, 1);
   set_bits (freeze_block    , 1);
-  return i;
+  return as_string (i);
 }
 
 bool
@@ -75,6 +75,11 @@ parent_info::operator == (const parent_info& pi) {
 bool
 parent_info::operator != (const parent_info& pi) {
   return !(operator == (pi));
+}
+
+ostream&
+operator << (ostream& out, parent_info pi) {
+  return out << ((string) pi);
 }
 
 /******************************************************************************
@@ -97,12 +102,12 @@ child_info::child_info (string s) {
 }
 
 child_info::operator string () {
-  int i,offset=0;
+  int i=0, offset=0;
   set_bits (accessible       , 1);
   set_bits (block            , 2);
   set_bits (freeze_accessible, 1);
   set_bits (freeze_block     , 1);
-  return i;
+  return as_string (i);
 }
 
 bool
@@ -119,19 +124,17 @@ child_info::operator != (const child_info& ci) {
   return !(operator == (ci));
 }
 
+ostream&
+operator << (ostream& out, child_info ci) {
+  return out << ((string) ci);
+}
+
 /******************************************************************************
-* Constructors and destructors
+* Constructors, destructors and modifiers
 ******************************************************************************/
 
 tag_info_rep::tag_info_rep (parent_info pi2, array<child_info> ci2):
-  pi (pi2), ci (ci2)
-{
-}
-
-tag_info_rep::tag_info_rep (int arity2, int props2): pi (0,0,0,0,0) {
-  arity= arity2;
-  props= props2;
-}
+  pi (pi2), ci (ci2) {}
 
 tag_info_rep::tag_info_rep (int a, int x, int am, int cm, bool frozen):
   pi (a, x, am, cm, frozen),
@@ -148,17 +151,9 @@ tag_info::tag_info (parent_info pi, array<child_info> ci) {
   rep= new tag_info_rep (pi, ci);
 }
 
-tag_info::tag_info (int arity, int props) {
-  rep= new tag_info_rep (arity, props);
-}
-
 tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
   rep= new tag_info_rep (a, x, am, cm, frozen);
 }
-
-/******************************************************************************
-* Further routines
-******************************************************************************/
 
 tag_info
 tag_info_rep::no_border () {
@@ -172,53 +167,61 @@ tag_info_rep::accessible (int i) {
   return tag_info (pi, ci);
 }
 
-child_info&
-tag_info::operator () (int child, int n) {
-  switch (rep->pi.child_mode) {
+/******************************************************************************
+* Getting the index of a child
+******************************************************************************/
+
+int
+tag_info_rep::get_index (int child, int n) {
+  switch (pi.child_mode) {
   case CHILD_UNIFORM:
-    return rep->ci[0];
+    return 0;
   case CHILD_BIFORM:
-    if (rep->pi.arity_mode != ARITY_VAR_REPEAT) {
-      if (child < ((int) rep->pi.arity_base)) return rep->ci[0];
-      else return rep->ci[1];
+    if (pi.arity_mode != ARITY_VAR_REPEAT) {
+      if (child < ((int) pi.arity_base)) return 0;
+      else return 1;
     }
     else {
-      if (child < (n-((int) rep->pi.arity_base))) return rep->ci[0];
-      else return rep->ci[1];
+      if (child < (n-((int) pi.arity_base))) return 0;
+      else return 1;
     }
   case CHILD_DETAILED:
-    if (((int) rep->pi.arity_mode) <= ARITY_OPTIONS)
-      return rep->ci[child];
-    else if (rep->pi.arity_mode == ARITY_REPEAT) {
-      if (child < ((int) rep->pi.arity_base)) return rep->ci[child];
-      else return rep->ci[(child-rep->pi.arity_base)%rep->pi.arity_extra+
-			  rep->pi.arity_base];
+    if (((int) pi.arity_mode) <= ARITY_OPTIONS)
+      return child;
+    else if (pi.arity_mode == ARITY_REPEAT) {
+      if (child < ((int) pi.arity_base)) return child;
+      else return (child - pi.arity_base) % pi.arity_extra + pi.arity_base;
     }
     else {
-      if (child < (n-((int) rep->pi.arity_base)))
-	return rep->ci[child%rep->pi.arity_extra];
-      else return rep->ci[rep->pi.arity_base+rep->pi.arity_extra + child-n];
+      if (child < (n-((int) pi.arity_base))) return child % pi.arity_extra;
+      else return pi.arity_base + pi.arity_extra + child - n;
     }
   }
+  return 0;
 }
 
+child_info&
+tag_info::operator () (int child, int n) {
+  return rep->ci [rep->get_index (child, n)];
+}
+
+/******************************************************************************
+* Usual extra routines
+******************************************************************************/
+
 tag_info::operator tree () {
-  return tree (TUPLE, "tag_info",
-	       as_string (rep->arity), as_string (rep->props));
+  return tree (TUPLE, "tag_info", (string) rep->pi, (tree) rep->ci);
 }
 
 ostream&
 operator << (ostream& out, tag_info ti) {
-  out << "[ " << ti->arity << ", " << ti->props << " ]";
+  out << "[ " << ti->pi << ", " << ti->ci << " ]";
   return out;
 }
 
 tag_info
 copy (tag_info ti) {
-  tag_info ti2 (ti->arity, ti->props);
-  ti2->pi= ti->pi;
-  ti2->ci= copy (ti->ci);
-  return ti2;
+  return tag_info (ti->pi, copy (ti->ci));
 }
 
 bool

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.5>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|std-math-package|1.0>
@@ -12,7 +12,7 @@
     style>|false>|<with|index level|<plus|<value|index level>|1>|display
     style|false|<arg|x>>|<with|display style|false|<arg|x>>>>>
 
-    <drd_props|shrink-inline|accessible|all>
+    <drd_props|shrink-inline|arity|1|accessible|all>
 
     <assign|matrix|<macro|x|<shrink-inline|<left|(><tformat|<cwith|1|-1|1|-1|cell
     halign|c>|<arg|x>><right|)>>>>

@@ -14,37 +14,33 @@
 #define TAG_INFO_H
 #include "tree.hpp"
 
-#define ACCESSIBLE_MASK              15
-#define NOT_ACCESSIBLE                0
-#define ACCESSIBLE                    1
-#define FIRST_ACCESSIBLE              2
-#define LAST_ACCESSIBLE               3
-#define TAIL_ACCESSIBLE               4
-#define TABLE_ACCESSIBLE              5
-#define HIDE_EXPAND_ACCESSIBLE        6
-#define CUSTOM_ACCESSIBLE             7
-#define BORDER_ACCESSIBLE_MASK       16
-#define BORDER_NOT_ACCESSIBLE        16
-#define DYNAMIC_MASK                 32
-#define DYNAMIC                      32
-
-#define FROZEN_MASK                 192
-#define FROZEN_ARITY                 64
-#define FROZEN_ACCESSIBLE           128
-
-#define CUSTOM_ACCESSIBLE_SHIFT      16
-#define CUSTOM_ACCESSIBLE_MAX        12
-#define CUSTOM_ACCESSIBLE_MASK \
-  (((1 << CUSTOM_ACCESSIBLE_MAX) - 1) * (1 << CUSTOM_ACCESSIBLE_SHIFT))
-
-#define ACCESSIBLE_EXCEPT_BORDER (ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
-#define ONLY_LAST_ACCESSIBLE (LAST_ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
-
 /******************************************************************************
-* The child layout together with the arity information specifies
-* how to convert indices of children to indices in the array 'ci'.
-* If CHILD_UNIFORM, then ci contains only one element with information
-* about all children.
+* The parent_info class contains outer information about tags
+*
+* -  The arity fields together with the child_mode determine the possible
+*    arities and how to convert logical indices of children to
+*    physical indices in the array 'ci'.
+*
+*    o ARITY_NORMAL    : the arity is given by arity_base+arity_extra
+*    o ARITY_OPTIONS   : arity_base <= arity < arity_base+arity_extra
+*    o ARITY_REPEAT    : arity= arity_base + any_number * arity_extra
+*    o ARITY_VAR_REPEAT: as ARITY_REPEAT, but repetition "comes first"
+*
+*    o CHILD_UNIFORM : all children have the same properties
+*    o CHILD_BIFORM  : two types of properties (corresponds to base/extra)
+*    o CHILD_DETAILED: as many as arity_base+arity_extra types of properties
+*
+* - The no_border field specifies whether the cursor may be put behind and
+*   before the tag or not (the 0 and 1 paths). For instance, this field
+*   is true for CONCAT and false for FRAC.
+*
+* - The block field specifies when the parent should be considered
+*   as a block. In the case of BLOCK_OR, the parent is a block
+*   if one of the children satisfying BLOCK_REQUIRE_NONE is a block.
+*
+* - The freeze_* fields specify that the contents of the corresponding
+*   fields may not be overwritten during the heuristic determination of
+*   missing drd information.
 ******************************************************************************/
 
 #define ARITY_NORMAL          0
@@ -56,20 +52,9 @@
 #define CHILD_BIFORM          1
 #define CHILD_DETAILED        2
 
-/******************************************************************************
-* The block attributes specify when the parent should be considered
-* as a block and when the children are required to be blocks.
-* In the case of BLOCK_OR, the parent is a block if one of the children
-* satisfying BLOCK_REQUIRE_NONE is a block.
-******************************************************************************/
-
 #define BLOCK_NO              0
 #define BLOCK_YES             1
 #define BLOCK_OR              2
-
-#define BLOCK_REQUIRE_BLOCK   0
-#define BLOCK_REQUIRE_INLINE  1
-#define BLOCK_REQUIRE_NONE    2
 
 struct parent_info {
   unsigned arity_mode       : 2; // arity layout
@@ -88,7 +73,27 @@ struct parent_info {
   operator string ();
   bool operator == (const parent_info& pi);
   bool operator != (const parent_info& pi);
+  friend ostream& operator << (ostream& out, parent_info pi);
 };
+
+/******************************************************************************
+* The child_info class contains more detailed information about each of
+* the children of the tag.
+*
+* - The accessible field specifies whether the field can be edited
+*   while active.
+*
+* - The block field specifies whether the field is required to be
+*   a block structure, an inline structure, or any of the two.
+*
+* - The freeze_* fields specify that the contents of the corresponding
+*   fields may not be overwritten during the heuristic determination of
+*   missing drd information.
+******************************************************************************/
+
+#define BLOCK_REQUIRE_BLOCK   0
+#define BLOCK_REQUIRE_INLINE  1
+#define BLOCK_REQUIRE_NONE    2
 
 struct child_info {
   unsigned accessible       : 1; // child is accessible?
@@ -102,33 +107,36 @@ struct child_info {
   operator string ();
   bool operator == (const child_info& pi);
   bool operator != (const child_info& pi);
+  friend ostream& operator << (ostream& out, child_info ci);
 };
 
 class tag_info;
 class tag_info_rep: concrete_struct {
 public:
-  int    arity; // arity of the tag (-1 if several arities are possible)
-  int    props; // properties of the tag
-
   parent_info       pi;
   array<child_info> ci;
 
   tag_info_rep (parent_info pi, array<child_info> ci);
-  tag_info_rep (int arity, int props);
   tag_info_rep (int arity, int extra, int amode, int cmode, bool frozen);
   inline ~tag_info_rep () {}
 
   tag_info no_border ();
   tag_info accessible (int i);
+  int      get_index (int child, int n);
 
   friend class tag_info;
 };
 
+/******************************************************************************
+* The main tag_info class consists of parent_info and an array of child_info
+******************************************************************************/
+
 class tag_info {
   CONCRETE(tag_info);
   tag_info (parent_info pi, array<child_info> ci);
-  tag_info (int arity= -1, int props= 0);
-  tag_info (int arity, int extra, int amode, int cmode, bool frozen= false);
+  tag_info (int arity=0, int extra=0,
+	    int am=ARITY_NORMAL, int cm= CHILD_UNIFORM,
+	    bool frozen= false);
   child_info& operator () (int child, int n);
   operator tree ();
 };
