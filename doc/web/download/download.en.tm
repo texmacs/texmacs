@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.4.3>
 
 <style|tmweb>
 
@@ -17,16 +17,16 @@
     <item*|<hlink|Debian|debian.en.tm>>For users of <name|Debian>
     GNU/<name|Linux>.
 
-    <item*|<hlink|BSD|bsd.en.tm>>For users of BSD.
-
     <item*|<hlink|Cygwin|cygwin.en.tm>>For users of Windows (requires the
     installation of <name|Cygwin>).
 
-    <item*|<hlink|Windows|windows.en.tm>>An experimental native Windows
-    version.
+    <item*|<hlink|Windows|windows.en.tm>>The beta-version of a native Windows
+    port.
 
     <item*|<hlink|Fink|fink.en.tm>>For users of MacOS-X (requires the
     installation of <name|Fink>).
+
+    <item*|<hlink|BSD|bsd.en.tm>>For users of BSD <name|Unix>.
 
     <item*|<hlink|Binaries|unix.en.tm>>Binary tarballs are available for some
     other <name|Unix> systems (i386, sun, ppc).
