@@ -275,63 +275,6 @@
   ;; Miscellaneous symbols (amssymb or latexsym required)
   Box Diamond mho)
 
-(drd-group latex-ams-symbol%
-  ;; AMS symbols (amssymb required)
-  digamma varkappa beth daleth gimel
-   
-  ;; AMS delimiters (amssymb required)
-  ulcorner urcorner llcorner lrcorner
-
-  ;; AMS arrows (amssymb required)
-  dashrightarrow dashleftarrow leftleftarrows leftrightarrows
-  Lleftarrow twoheadleftarrow leftarrowtail looparrowleft
-  leftrightharpoons curvearrowleft circlearrowleft Lsh
-  upuparrows upharpoonleft downharpoonleft multimap
-  leftrightsquigarrow rightrightarrows
-  rightleftarrows leftrightarrows
-  twoheadrightarrow rightarrowtail looparrowright rightleftharpoons
-  curvearrowright circlearrowright Rsh downdownarrows
-  upharpoonright downharpoonright rightsquigarrow
-
-  ;; AMS arrows (amssymb required)
-  nleftarrow nrightarrow nLeftarrow
-  nRightarrow nleftrightarrow nLeftrightarrow
-
-  ;; AMS binary relations (amssymb required)
-  leqq lesssim lessdot lesseqgtr risingdotseq backsimeq sqsubset
-  precsim trianglelefteq smallsmile Bumpeq eqslantgtr gtrdot gtreqless
-  circeq thickapprox sqsupset succsim trianglerighteq shortparallel
-  varpropto backepsilon leqslant lessapprox lll lesseqqgtr fallingdotseq
-  subseteqq preccurlyeq precapprox vDash models smallfrown geqq gtrsim
-  ggg gtreqqless triangleq supseteqq succcurlyeq succapprox Vdash
-  between blacktriangleleft blacktriangleright eqslantless approxeq
-  lessgtr doteqdot backsim Subset curlyeqprec vartriangleleft Vvdash
-  bumpeq geqslant gtrapprox gtrless eqcirc thicksim Supset curlyeqsucc
-  vartriangleright shortmid pitchfork therefore because
-
-  ;; AMS negativ binary relations (amssymb required)
-  nless nleqq lvertneqq nprec precnapprox nmid ntriangleleft subsetneq
-  varsubsetneqq ngeqslant gneqq gnapprox succnsim nshortparallel nVDash
-  nsupseteq varsupsetneq
-  nleq lneq lnsim npreceq nsim nvdash ntrianglelefteq varsubsetneq ngtr
-  ngeqq gvertneqq nsucc succnapprox nparallel ntriangleright nsupseteqq
-  supsetneqq
-  nleqslant lneqq lnapprox precnsim nshortmid nvDash nsubseteq subsetneqq
-  ngeq gneq gnsim nsucceq ncong nvDash ntrianglerighteq supsetneq
-  varsupsetneqq
-  
-  ;; AMS binary operators (amssymb required)
-  dotplus Cup doublebarwedge boxdot ltimes rightthreetimes circleddash
-  centerdot smallsetminus barwedge boxminus boxplus rtimes curlywedge
-  circledast intercal Cap veebar boxtimes divideontimes leftthreetimes
-  curlyvee circledcirc
-
-  ;; AMS miscellaneous symbols (amssymb required)
-  hbar triangledown circledS nexists Game varnothing blacksquare
-  sphericalangle diagup hslash square angle mho Bbbk blacktriangle
-  blacklozenge complement diagdown vartriangle lozenge measuredangle Finv
-  backprime blacktriangledown bigstar eth)
-
 (drd-group latex-texmacs-symbol%
   ;; TeXmacs specific symbols
   mathd mathe mathi mathpi
@@ -353,6 +296,8 @@
   ((latex-arity% 'x 0) (latex-symbol% 'x))
   ((latex-arity% 'x 0) (latex-big-symbol% 'x))
   ((latex-symbol% 'x) (latex-ams-symbol% 'x))
+  ((latex-symbol% 'x) (latex-wasy-symbol% 'x))
+  ((latex-symbol% 'x) (latex-stmary-symbol% 'x))
   ((latex-symbol% 'x) (latex-texmacs-symbol% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

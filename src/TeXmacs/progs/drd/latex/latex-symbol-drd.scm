@@ -18,7 +18,7 @@
   ;;`
   angle	backprime backsim
   backsimeq barwedge because
-  between  blacklozenge blacksquare
+  between blacklozenge blacksquare
   blackstar blacktriangledown blacktriangleleft
   blacktriangleright blacktriangleup Box
   box boxdot boxminus
