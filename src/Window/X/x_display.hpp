@@ -39,17 +39,17 @@ typedef x_window_rep* x_window;
 
 struct x_character_rep: concrete_struct {
   int          c;
-  bitmap_font  bmf;
+  font_gliefs  bmf;
   int          sf;
   color        fg;
   color        bg;
-  x_character_rep (int c, bitmap_font bmf, int sf, color fg, color bg);
+  x_character_rep (int c, font_gliefs bmf, int sf, color fg, color bg);
   friend class x_character;
 };
 
 class x_character {
   CONCRETE(x_character);
-  x_character (int c=0, bitmap_font bmf= bitmap_font (),
+  x_character (int c=0, font_gliefs bmf= font_gliefs (),
 	       int sf=1, color fg= 0, color bg= 1);
   operator tree ();
 };
@@ -148,9 +148,9 @@ public:
   void set_default_font (string name);
   font default_font_sub (bool tt);
   font default_font (bool tt= false);
-  void get_ps_char (Font fn, int c, text_extents& ex, bitmap_char& bmc);
+  void get_ps_char (Font fn, int c, metric& ex, glief& bmc);
   void load_ps_font (string family, int size, int dpi,
-		     bitmap_metric& bmm, bitmap_font& bmf);
+		     font_metric& bmm, font_gliefs& bmf);
 
   /************************** Server languages *******************************/
   void   load_dictionary (string name, string from, string to);

@@ -13,13 +13,13 @@
 #include "bitmap_font.hpp"
 #include "ps_device.hpp"
 
-bitmap_char
-join (bitmap_char bmc1, bitmap_char bmc2) {
+glief
+join (glief bmc1, glief bmc2) {
   int x1= min (-bmc1->xoff, -bmc2->xoff);
   int y1= min (bmc1->yoff- bmc1->height, bmc2->yoff- bmc2->height);
   int x2= max (bmc1->width- bmc1->xoff, bmc2->width- bmc2->xoff);
   int y2= max (bmc1->yoff, bmc2->yoff);
-  bitmap_char bmr (x2-x1, y2-y1, -x1, y2, max (bmc1->depth, bmc2->depth));
+  glief bmr (x2-x1, y2-y1, -x1, y2, max (bmc1->depth, bmc2->depth));
 
   int i, j, dx, dy;
   dx= -bmc1->xoff- x1, dy= y2- bmc1->yoff;
@@ -36,12 +36,12 @@ join (bitmap_char bmc1, bitmap_char bmc2) {
   return bmr;
 }
 
-bitmap_char
-move (bitmap_char bmc, SI x, SI y) {
+glief
+move (glief bmc, SI x, SI y) {
   x += PIXEL/2; y += PIXEL/2; abs_round (x, y);
   int xx= x/PIXEL, yy= y/PIXEL;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (ww, hh, bmc->xoff- xx, bmc->yoff+ yy, bmc->depth);
+  glief bmr (ww, hh, bmc->xoff- xx, bmc->yoff+ yy, bmc->depth);
 
   int i, j;
   for (j=0; j<hh; j++)
@@ -51,11 +51,11 @@ move (bitmap_char bmc, SI x, SI y) {
   return bmr;
 }
 
-bitmap_char
-hor_flip (bitmap_char bmc) {
+glief
+hor_flip (glief bmc) {
   int i, j;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  glief bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (ww-1-i, j, bmc->get_x (i, j));
@@ -63,11 +63,11 @@ hor_flip (bitmap_char bmc) {
   return bmr;
 }
 
-bitmap_char
-ver_flip (bitmap_char bmc) {
+glief
+ver_flip (glief bmc) {
   int i, j;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  glief bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, hh-1-j, bmc->get_x (i, j));
@@ -75,33 +75,33 @@ ver_flip (bitmap_char bmc) {
   return bmr;
 }
 
-bitmap_char
-pos_rotate (bitmap_char bmc) {
+glief
+pos_rotate (glief bmc) {
   int i, j;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (hh, ww, bmc->yoff, bmc->width- bmc->xoff, bmc->depth);
+  glief bmr (hh, ww, bmc->yoff, bmc->width- bmc->xoff, bmc->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (j, ww-1-i, bmc->get_x (i, j));
   return bmr;
 }
 
-bitmap_char
-hor_extend (bitmap_char bmc, int pos, int by) {
+glief
+hor_extend (glief bmc, int pos, int by) {
   int i, j;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (ww+ by, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  glief bmr (ww+ by, hh, bmc->xoff, bmc->yoff, bmc->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<(ww+by); i++)
       bmr->set_x (i, j, bmc->get_x (i<pos? i: (i<pos+by? pos: i-by), j));
   return bmr;
 }
 
-bitmap_char
-ver_extend (bitmap_char bmc, int pos, int by) {
+glief
+ver_extend (glief bmc, int pos, int by) {
   int i, j;
   int ww= bmc->width, hh= bmc->height;
-  bitmap_char bmr (ww, hh+by, bmc->xoff, bmc->yoff, bmc->depth);
+  glief bmr (ww, hh+by, bmc->xoff, bmc->yoff, bmc->depth);
   for (j=0; j<(hh+by); j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, j, bmc->get_x (i, j<pos? j: (j<pos+by? pos: j-by)));

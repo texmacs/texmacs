@@ -177,12 +177,12 @@ pk_loader::realfunc () {
 ******************************************************************************/
 
 struct char_bitstream {
-  bitmap_char& bmc;
+  glief& bmc;
   int x, y;
   QN* pos;
   int bit;
 
-  char_bitstream (bitmap_char& bmc2):
+  char_bitstream (glief& bmc2):
     bmc (bmc2), x(0), y(0), pos (bmc->raster), bit (0) {}
   void write (int num, int times=1, int repeat=0) {
     int i, j;
@@ -212,7 +212,7 @@ struct char_bitstream {
 ******************************************************************************/
 
 void
-pk_loader::unpack (bitmap_char& bmc) { 
+pk_loader::unpack (glief& bmc) { 
   register SI i, j;
   register HN wordweight;
   HI rowsleft; 
@@ -275,7 +275,7 @@ pk_loader::unpack (bitmap_char& bmc) {
 * Reading the font
 ******************************************************************************/
 
-bitmap_char*
+glief*
 pk_loader::load_pk () {
   register HI i;
   register SI k;
@@ -287,7 +287,7 @@ pk_loader::load_pk () {
   register SI xoff;
   register SI yoff;
   
-  bitmap_char* bmf= new bitmap_char [ec+1-bc];
+  glief* bmf= new glief [ec+1-bc];
 
   // Preamble
   if (pkbyte ()!=247) {
@@ -371,7 +371,7 @@ pk_loader::load_pk () {
       if ((cwidth > 0) && (cheight > 0) &&
 	  (((QN) charcode) >= bc) && (((QN) charcode) <= ec)) {
 	// cout << "---> unpacking " << charcode << "!\n";
-	bitmap_char bmc (cwidth, cheight, xoff, yoff);
+	glief bmc (cwidth, cheight, xoff, yoff);
 	unpack (bmc);
 	bmf [((QN) charcode)- bc]= bmc;
 	// cout << "---> " << charcode << " done !\n";

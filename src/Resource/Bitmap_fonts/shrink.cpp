@@ -23,7 +23,7 @@ log2i (int i) {
   if (i<=32) return 5;
   if (i<=64) return 6;
   if (i<=128) return 7;
-  fatal_error ("too large shrinking factor", "shrink", "bitmap_char.cpp");
+  fatal_error ("too large shrinking factor", "shrink", "glief.cpp");
   return 0; // Because of bug in certain versions of g++
 }
 
@@ -47,7 +47,7 @@ my_norm (int a, int m) {
 }
 
 int
-get_hor_shift (bitmap_char bmc, int xfactor, int tx) {
+get_hor_shift (glief bmc, int xfactor, int tx) {
   STACK_NEW_ARRAY (flag, bool, bmc->width);
 
   // cout << "[";
@@ -101,7 +101,7 @@ get_hor_shift (bitmap_char bmc, int xfactor, int tx) {
 }
 
 int
-get_ver_shift (bitmap_char bmc, int yfactor, int ty) {
+get_ver_shift (glief bmc, int yfactor, int ty) {
   STACK_NEW_ARRAY (flag, bool, bmc->height);
 
   // cout << "[";
@@ -155,8 +155,8 @@ get_ver_shift (bitmap_char bmc, int yfactor, int ty) {
   return my_mod (bmc->height- bmc->yoff- 1- middle, yfactor);
 }
 
-bitmap_char
-shrink (bitmap_char bmc, int xfactor, int yfactor,
+glief
+shrink (glief bmc, int xfactor, int yfactor,
 	int dx, int dy, int tx, int ty, SI& xo, SI& yo)
 {
   /*
@@ -196,7 +196,7 @@ shrink (bitmap_char bmc, int xfactor, int yfactor,
 	}
 
   int X, Y, sum;
-  bitmap_char CB (X2-X1, Y2-Y1, -X1, Y2-1,
+  glief CB (X2-X1, Y2-Y1, -X1, Y2-1,
 	      bmc->depth+ log2i (xfactor*yfactor), bmc->status);
   for (Y=Y1; Y<Y2; Y++)
     for (X=X1; X<X2; X++) {
@@ -215,10 +215,10 @@ shrink (bitmap_char bmc, int xfactor, int yfactor,
   return CB;
 }
 
-bitmap_char
-shrink (bitmap_char bmc, int xfactor, int yfactor, SI& xo, SI& yo) {
+glief
+shrink (glief bmc, int xfactor, int yfactor, SI& xo, SI& yo) {
   if ((bmc->width==0) || (bmc->height==0))
-    fatal_error ("zero size character", "shrink", "bitmap_char.cpp");
+    fatal_error ("zero size character", "shrink", "glief.cpp");
 
   int tx= xfactor/3;
   int ty= yfactor/3;
@@ -226,7 +226,7 @@ shrink (bitmap_char bmc, int xfactor, int yfactor, SI& xo, SI& yo) {
   if ((bmc->status==0) && (xfactor>1)) dx= get_hor_shift (bmc, xfactor, tx);
   // if ((bmc->status==0) && (yfactor>1)) dy= get_ver_shift (bmc, yfactor, ty);
 
-  bitmap_char ret= shrink (bmc, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
+  glief ret= shrink (bmc, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
   if (ret->status != 0) {
     if (ret->status&1) ret->adjust_top ();
     if (ret->status&2) ret->adjust_bot ();

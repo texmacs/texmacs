@@ -66,7 +66,7 @@ input_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
-  text_extents ex;
+  metric ex;
   font fn= dis->default_font ();
   fn->var_get_extents (s, ex);
   SI left= ex->x1, bottom= fn->y1, right= ex->x2;
@@ -146,7 +146,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
   font   fn  = dis->default_font ();
 
   if (type == "press-left") {
-    text_extents ex;
+    metric ex;
     SI old= 0;
     for (pos=1; pos<=N(s); pos++) {
       fn->var_get_extents (s (0, pos), ex);

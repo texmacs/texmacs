@@ -197,7 +197,7 @@ list_in_directory (string dir, string name,
 void
 file_list_widget_rep::handle_get_size (get_size_event ev) {
   int i;
-  text_extents ex;
+  metric ex;
   font fn= dis->default_font ();
   ev->w= ev->h= 0;
   for (i=0; i<N(names); i++)
@@ -212,7 +212,7 @@ file_list_widget_rep::handle_get_size (get_size_event ev) {
 void
 file_list_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   int i; 
-  text_extents ex;
+  metric ex;
   win->set_background (dis->white);
   win->clear (0, -h, w, 0);
   font fn= dis->default_font ();
@@ -236,7 +236,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
   if ((type == "release-left") || (type == "release-right")) {
     int i;
     SI y= 0, search= ev->y*3;
-    text_extents ex;
+    metric ex;
     font fn= dis->default_font ();
     for (i=0; i<N(names); i++)
       if (list_in_directory (dir, names[i], suffix, dir_flag)) {

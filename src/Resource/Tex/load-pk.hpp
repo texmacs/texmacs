@@ -41,8 +41,8 @@ struct pk_loader {
   HN rest ();
   HN realfunc ();
   HN handlehuge (HN i, HN k);
-  void unpack (bitmap_char& bmc);
-  bitmap_char* load_pk ();
+  void unpack (glief& bmc);
+  glief* load_pk ();
 };
 
 #endif // defined LOAD_PK_H

@@ -70,7 +70,7 @@ wait_widget_rep::handle_repaint (repaint_event ev) {
 
   font fn= the_default_wait_font;
   win->set_shrinking_factor (3);
-  text_extents ex;
+  metric ex;
   fn->var_get_extents (wait_s, ex);
   SI x= (3*w - (ex->x1+ex->x2)) >> 1;
   SI y= 2*h - ((ex->y1+ex->y2) >> 1);

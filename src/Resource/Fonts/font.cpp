@@ -68,7 +68,7 @@ void
 font_rep::get_xpositions (string s, SI* xpos) {
   int i= 0;
   SI  x= 0;
-  text_extents ex;
+  metric ex;
   while (i < N(s)) {
     if (s[i] == '<')
       while ((i < N(s)) && (s[i] != '>')) {
@@ -83,14 +83,14 @@ font_rep::get_xpositions (string s, SI* xpos) {
 }
 
 void
-font_rep::var_get_extents (string s, text_extents& ex) {
+font_rep::var_get_extents (string s, metric& ex) {
   bool flag=true;
   int start=0, end;
   get_extents ("", ex);
   while (start<N(s)) {
     for (end=start; (end<N(s)) && (s[end]!=' '); end++);
     if (start<end) {
-      text_extents ey;
+      metric ey;
       get_extents (s (start, end), ey);
       if (flag) {
 	ex->x3= ey->x3+ ex->x2; ex->y3= ey->y3+ ex->x2;
@@ -124,7 +124,7 @@ font_rep::var_draw (ps_device dev, string s, SI x, SI y) {
   while (start<N(s)) {
     for (end=start; (end<N(s)) && (s[end]!=' '); end++);
     if (start<end) {
-      text_extents ex;
+      metric ex;
       draw (dev, s (start, end), x+dx, y);
       get_extents (s (start, end), ex);
       dx += ex->x2;
@@ -134,10 +134,10 @@ font_rep::var_draw (ps_device dev, string s, SI x, SI y) {
   }
 }
 
-bitmap_char
+glief
 font_rep::get_bitmap (string s) {
   fatal_error ("No bitmap available for " * s, "font_rep::get_bitmap");
-  return bitmap_char(); // avoids error message when C++ compiler behaves badly
+  return glief(); // avoids error message when C++ compiler behaves badly
 }
 
 /******************************************************************************
@@ -150,7 +150,7 @@ struct join_font_rep: font_rep {
   font fn1, fn2;
 
   join_font_rep (string name, font fn1, font fn2);
-  void get_extents (string s, text_extents& ex);
+  void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
 };
@@ -162,7 +162,7 @@ join_font_rep::join_font_rep (string name, font fn1b, font fn2b):
 }
 
 void
-join_font_rep::get_extents (string s, text_extents& ex) {
+join_font_rep::get_extents (string s, metric& ex) {
   if (fn1->enc->valid (s)) fn1->get_extents (s, ex);
   else fn2->get_extents (s, ex);
 }
@@ -193,7 +193,7 @@ join (font fn1, font fn2) {
 struct subfont_rep: font_rep {
   font fn;
   subfont_rep (string name, font fn, encoding enc);
-  void get_extents (string s, text_extents& ex);
+  void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
 };
@@ -205,7 +205,7 @@ subfont_rep::subfont_rep (string name, font fn2, encoding enc2):
 }
 
 void
-subfont_rep::get_extents (string s, text_extents& ex) {
+subfont_rep::get_extents (string s, metric& ex) {
   fn->get_extents (s, ex);
 }
 
@@ -232,7 +232,7 @@ subfont (font fn, encoding enc) {
 struct error_font_rep: font_rep {
   font fn;
   error_font_rep (string name, font fn);
-  void get_extents (string s, text_extents& ex);
+  void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
 };
@@ -244,7 +244,7 @@ error_font_rep::error_font_rep (string name, font fnb):
 }
 
 void
-error_font_rep::get_extents (string s, text_extents& ex) {
+error_font_rep::get_extents (string s, metric& ex) {
   fn->get_extents (s, ex);
 }
 

@@ -29,24 +29,24 @@ struct tex_font_rep: font_rep {
   int              dpi;
   int              dsize;
   tex_font_metric  tfm;
-  bitmap_font      pk;
+  font_gliefs      pk;
   double           unit;
 
   tex_font_rep (display dis, string name, int status,
 		string family, int size, int dpi, int dsize);
 
-  void get_extents (string s, text_extents& ex);
+  void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
   SI   get_left_correction (string s);
   SI   get_right_correction (string s);
-  bitmap_char get_bitmap (string s);
-  void special_get_extents (string s, text_extents& ex);
+  glief get_bitmap (string s);
+  void special_get_extents (string s, metric& ex);
   void special_get_xpositions (string s, SI* xpos);
   void special_draw (ps_device dev, string s, SI x, SI y);
   SI   special_get_left_correction (string s);
   SI   special_get_right_correction (string s);
-  void accented_get_extents (string s, text_extents& ex);
+  void accented_get_extents (string s, metric& ex);
   void accented_get_xpositions (string s, SI* xpos);
   void accented_draw (ps_device dev, string s, SI x, SI y);
   SI   accented_get_left_correction (string s);
@@ -112,7 +112,7 @@ tex_font_rep::tex_font_rep (display dis, string name, int status2,
 ******************************************************************************/
 
 void
-tex_font_rep::special_get_extents (string s, text_extents& ex) {
+tex_font_rep::special_get_extents (string s, metric& ex) {
   register int i, j;
   for (i=0; i<N(s); i++)
     if (s[i]=='<') break;
@@ -122,7 +122,7 @@ tex_font_rep::special_get_extents (string s, text_extents& ex) {
   if (j<N(s)) j++;
 
   SI x;
-  text_extents ey;
+  metric ey;
   int temp= status;
   status= TEX_ANY;
   string r= s (i, j);
@@ -163,7 +163,7 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos) {
       if (s[j]=='>') break;
     }
     if (j<n) j++;
-    text_extents ey;
+    metric ey;
     int temp= status;
     status= TEX_ANY;
     string r= s (i, j);
@@ -180,7 +180,7 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos) {
 void
 tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
   register int i, j;
-  text_extents ex;
+  metric ex;
   for (i=0; i<N(s); i++)
     if (s[i]=='<') break;
   draw (dev, s (0, i), x, y);
@@ -339,7 +339,7 @@ get_accents (string s) {
 }
 
 void
-tex_font_rep::accented_get_extents (string s, text_extents& ex) {
+tex_font_rep::accented_get_extents (string s, metric& ex) {
   int old_status= status;
   status= TEX_ANY;
 
@@ -352,7 +352,7 @@ tex_font_rep::accented_get_extents (string s, text_extents& ex) {
     if (acc[i] != ' ') {
       SI xx, yy;
       char c= acc[i];
-      text_extents ey, ez;
+      metric ey, ez;
       get_extents (s(0,i+1), ey); xx= ey->x2;
       get_extents (s[i], ey);
       get_extents (c, ez);
@@ -399,7 +399,7 @@ tex_font_rep::accented_draw (ps_device dev, string s, SI x, SI y) {
     if (acc[i] != ' ') {
       SI xx, yy;
       char c= acc[i];
-      text_extents ey, ez;
+      metric ey, ez;
       get_extents (s(0,i+1), ey); xx= ey->x2;
       get_extents (s[i], ey);
       get_extents (c, ez);
@@ -436,7 +436,7 @@ tex_font_rep::accented_get_right_correction (string s) {
 ******************************************************************************/
 
 void
-tex_font_rep::get_extents (string s, text_extents& ex) {
+tex_font_rep::get_extents (string s, metric& ex) {
   register int i;
   switch (status) {
   case TEX_ANY:
@@ -484,7 +484,7 @@ tex_font_rep::get_extents (string s, text_extents& ex) {
 
   for (i=0; i<m; i++) {
     int c= buf[i];
-    bitmap_char bmc= pk->get (c);
+    glief bmc= pk->get (c);
     if (nil (bmc)) continue;
     
     y1= min (y1, -conv (tfm->d(c)));
@@ -596,7 +596,7 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
 
   for (i=0; i<m; i++) {
     register int c= buf[i];
-    bitmap_char bmc= pk->get (c);
+    glief bmc= pk->get (c);
     if (nil (bmc)) continue;
     dev->draw (c, pk, x, y);
     x += conv (tfm->w(c)+ ker[i]);
@@ -648,7 +648,7 @@ tex_font_rep::get_right_correction (string s) {
   return conv (tfm->i ((QN) s[N(s)-1]));
 }
 
-bitmap_char
+glief
 tex_font_rep::get_bitmap (string s) {
   register int i;
   switch (status) {
@@ -670,7 +670,7 @@ tex_font_rep::get_bitmap (string s) {
   }
   if (N(s)!=1) return font_rep::get_bitmap (s);
   int c= ((QN) s[0]);
-  bitmap_char bmc= pk->get (c);
+  glief bmc= pk->get (c);
   if (nil (bmc)) return font_rep::get_bitmap (s);
   return bmc;
 }
