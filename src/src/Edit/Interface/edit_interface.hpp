@@ -68,6 +68,7 @@ public:
   widget  get_widget ();
 
   /* routines for dealing with shrinked coordinates */
+  int  get_pixel_size ();
   void set_shrinking_factor (int sf);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);

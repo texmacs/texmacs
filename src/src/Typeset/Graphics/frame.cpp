@@ -24,8 +24,8 @@ struct scaling_rep: public frame_rep {
     return tuple ("scale", as_string (magnify), as_tree (shift)); }
   point direct_transform (point p) { return shift + magnify * p; }
   point inverse_transform (point p) { return (p - shift) / magnify; }
-  double direct_bound (point p, double err) { return err / magnify; }
-  double inverse_bound (point p, double err) { return err * magnify; }
+  double direct_bound (point p, double eps) { return eps / magnify; }
+  double inverse_bound (point p, double eps) { return eps * magnify; }
 };
 
 frame
@@ -44,10 +44,10 @@ struct compound_frame_rep: public frame_rep {
   operator tree () { return tuple ("compound", (tree) f1, (tree) f2); }
   point direct_transform (point p) { return f1 (f2 (p)); }
   point inverse_transform (point p) { return f2 [f1 [p]]; }
-  double direct_bound (point p, double err) {
-    return f1->direct_bound (f2(p), f2->direct_bound (p, err)); }
-  double inverse_bound (point p, double err) {
-    return f2->inverse_bound (f1[p], f1->inverse_bound (p, err)); }
+  double direct_bound (point p, double eps) {
+    return f1->direct_bound (f2(p), f2->direct_bound (p, eps)); }
+  double inverse_bound (point p, double eps) {
+    return f2->inverse_bound (f1[p], f1->inverse_bound (p, eps)); }
 };
 
 frame
@@ -65,10 +65,10 @@ struct inverted_frame_rep: public frame_rep {
   operator tree () { return tuple ("inverse", (tree) f); }
   point direct_transform (point p) { return f [p]; }
   point inverse_transform (point p) { return f (p); }
-  double direct_bound (point p, double err) {
-    return f->inverse_bound (p, err); }
-  double inverse_bound (point p, double err) {
-    return f->direct_bound (p, err); }
+  double direct_bound (point p, double eps) {
+    return f->inverse_bound (p, eps); }
+  double inverse_bound (point p, double eps) {
+    return f->direct_bound (p, eps); }
 };
 
 frame

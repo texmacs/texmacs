@@ -216,6 +216,32 @@ box_rep::find_limits (path bp, point& lim1, point& lim2) {
   }
 }
 
+SI
+box_rep::graphical_distance (SI x, SI y) {
+  SI dx, dy;
+  if (x <=  x1) dx= x1 - x;
+  else if (x >=  x2) dx= x - x2;
+  else dx= 0;
+  if (y <  y1) dy= y1 - y;
+  else if (y >= y2) dy= y - y2;
+  else dy= 0;
+  return (SI) norm (point (dx, dy));
+}
+
+gr_selections
+box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->cp << find_tree_path (x, y, dist);
+    // FIXME: check whether this is correct: I do not remember whether
+    // find_tree_path returns an absolute or a relative path
+    res << gs;
+  }
+  return res;
+}
+
 /******************************************************************************
 * Getting information from boxes
 ******************************************************************************/
@@ -455,6 +481,22 @@ operator != (selection sel1, selection sel2) {
 ostream&
 operator << (ostream& out, selection sel) {
   return out << "selection (" << sel->start << ", " << sel->end << ")";
+}
+
+/******************************************************************************
+* Graphical selections
+******************************************************************************/
+
+gr_selection::gr_selection (array<path> cp, SI dist):
+  rep (new gr_selection_rep)
+{
+  rep->cp  = cp;
+  rep->dist= dist;
+}
+
+ostream&
+operator << (ostream& out, gr_selection sel) {
+  return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
 }
 
 /******************************************************************************

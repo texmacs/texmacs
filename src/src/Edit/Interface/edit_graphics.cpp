@@ -84,6 +84,21 @@ edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
 
+tree
+edit_graphics_rep::graphical_select (double x, double y) { 
+  frame f= find_frame ();
+  if (nil (f)) return tuple ();
+  gr_selections sels;
+  point p = f (point (x, y));
+  sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10 * get_pixel_size ());
+  // TODO: Sort sels according to graphical distances
+  int i, n= N(sels);
+  array<array<path> > gs (n);
+  for (i=0; i<n; i++)
+    gs[i]= sels[i]->cp;
+  return (tree) gs;
+}
+
 tree edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }

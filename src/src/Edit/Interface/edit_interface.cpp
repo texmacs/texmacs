@@ -87,6 +87,11 @@ edit_interface_rep::get_widget () {
 * Some routines for dealing with shrinked coordinates
 ******************************************************************************/
 
+int
+edit_interface_rep::get_pixel_size () {
+  return pixel;
+}
+
 void
 edit_interface_rep::set_shrinking_factor (int sf) {
   if (sfactor != sf) {

@@ -37,14 +37,15 @@ struct composite_box_rep: public box_rep {
   box     subbox (int i);
   void    display (ps_device dev);
 
-  virtual int       find_child (SI x, SI y, SI delta, bool force);
-  virtual path      find_box_path (SI x, SI y, SI delta, bool force);
-  virtual path      find_lip ();
-  virtual path      find_rip ();
-  virtual path      find_box_path (path p, bool& found);
-  virtual path      find_tree_path (path bp);
-  virtual cursor    find_cursor (path bp);
-  virtual selection find_selection (path lbp, path rbp);
+  virtual int             find_child (SI x, SI y, SI delta, bool force);
+  virtual path            find_box_path (SI x, SI y, SI delta, bool force);
+  virtual path            find_lip ();
+  virtual path            find_rip ();
+  virtual path            find_box_path (path p, bool& found);
+  virtual path            find_tree_path (path bp);
+  virtual cursor          find_cursor (path bp);
+  virtual selection       find_selection (path lbp, path rbp);
+  virtual gr_selections   graphical_select (SI x, SI y, SI dist);
 
   virtual tree   action (tree t, SI x, SI y, SI delta);
   virtual bool   access_allowed ();

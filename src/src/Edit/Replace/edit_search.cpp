@@ -91,7 +91,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
 string
 edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
-  if (p == rp) return "";
+  if ((p == rp) || nil (p)) return "";
   tree st= subtree (et, p);
   if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));

@@ -10,6 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "path.hpp"
 #include "curve.hpp"
 #include "frame.hpp"
 #include "equations.hpp"
@@ -20,11 +21,48 @@
 ******************************************************************************/
 
 array<point>
-curve_rep::rectify (double err) {
+curve_rep::rectify (double eps) {
   array<point> a (1);
   a[0]= evaluate (0.0);
-  rectify_cumul (a, err);
+  rectify_cumul (a, eps);
   return a;
+}
+
+double
+curve_rep::bound (double t, double eps) {
+  //TODO: Improve this, as soon as the curvature ()
+  //      for transformed_curves will be implemented
+  bool b;
+  return eps / norm (grad (t, b));
+}
+
+int
+curve_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& cip)
+{
+  abs= array<double>();
+  pts= array<point>();
+  cip= array<path>();
+  return 0;
+}
+
+double
+curve_rep::find_closest_point (
+  double t1, double t2, point p, double eps, bool& found)
+{
+  found= false;
+  double t;
+  double res= -1;
+  double n0= tm_infinity;
+  for (t=t1; t<=t2; t+=bound (t, eps)) {
+    double n= norm (evaluate(t) - p);
+    if (n < n0) {
+      n0= n;
+      res= t;
+      found= true;
+    }
+  }
+  return res;
 }
 
 /******************************************************************************
@@ -33,10 +71,41 @@ curve_rep::rectify (double err) {
 
 struct segment_rep: public curve_rep {
   point p1, p2;
+  path cip1, cip2;
   segment_rep (point p1b, point p2b): p1 (p1b), p2 (p2b) {}
   point evaluate (double t) { return (1.0-t)*p1 + t*p2; }
-  void rectify_cumul (array<point>& a, double err) { a << p2; }
+  void rectify_cumul (array<point>& a, double eps) { a << p2; }
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  point grad (double t, bool& error) {
+    error= false;
+    return p2 - p1;
+  }
+  double curvature (double t1, double t2) {
+    return tm_infinity;
+  }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
 };
+
+int
+segment_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& cip)
+{
+  array<double> u;
+  u << 0.0;
+  u << 1.0;
+  abs= u;
+  array<point> a;
+  a << p1;
+  a << p2;
+  pts= a;
+  cip= array<path> ();
+  cip << cip1;
+  cip << cip2;
+  return 2;
+}
 
 curve
 segment (point p1, point p2) {
@@ -49,23 +118,52 @@ segment (point p1, point p2) {
 
 struct poly_segment_rep: public curve_rep {
   array<point> a;
+  array<path> cip;
   int n;
-  poly_segment_rep (array<point> a2): a (a2), n(N(a)-1) {}
+  poly_segment_rep (array<point> a2, array<path> cip2):
+    a (a2), cip (cip2), n(N(a)-1) {}
   int nr_components () { return n; }
   point evaluate (double t) {
     int i= min ((int) (n*t), n-1);
     return (1.0-t)*a[i] + t*a[i+1];
   }
-  void rectify_cumul (array<point>& cum, double err) {
+  void rectify_cumul (array<point>& cum, double eps) {
     int i;
     for (i=0; i<n; i++)
       cum << a[i+1];
   }
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  double curvature (double t1, double t2) {
+    return tm_infinity;
+  }
+  point grad (double t, bool& error) {
+    error= false;
+    int i= min ((int) (n*t), n-1);
+    return a[i+1] - a[i];
+  }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
 };
 
+int
+poly_segment_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& rcip)
+{
+  array<double> u(n+1);
+  int i;
+  for (i=0; i<n+1; i++)
+    u[i]= (double)i;
+  abs = u;
+  pts = a;
+  rcip= cip;
+  return n+1;
+}
+
 curve
-poly_segment (array<point> a) {
-  return new poly_segment_rep (a);
+poly_segment (array<point> a, array<path> cip) {
+  return new poly_segment_rep (a, cip);
 }
 
 /******************************************************************************
@@ -76,6 +174,7 @@ static const double epsilon=0.01;//0.00005;
 
 struct spline_rep: public curve_rep {
   array<point> a;
+  array<path> cip;
   int n;
   array<double> U;
   array<polynomials> p;
@@ -86,6 +185,7 @@ struct spline_rep: public curve_rep {
   inline double m (int i) { return (U[i]+U[i+1])/2; }
 
   double convert (double u) { return U[2]+u*(U[n+1]-U[2]); }
+  double unconvert (double u) { return (u-U[2])/(U[n+1]-U[2]); }
   int interval_no (double u);
 
   point spline (int i,double u,int o=0);
@@ -94,16 +194,19 @@ struct spline_rep: public curve_rep {
     int i, double u);
   point evaluate (double t,int o);
   point evaluate (double t);
-  double bound (double t, double err);
+  double bound (double t, double eps);
   point grad (double t, bool& error);
 
   double curvature (int i, double t1, double t2);
   double curvature (double t1, double t2);
 
-  bool approx (int i,double u1,double u2,double err);
+  bool approx (int i, double u1, double u2, double eps);
   void rectify_cumul (array<point>& cum, int i,
-		      double u1, double u2, double err);
-  void rectify_cumul (array<point>& cum, double err);
+		      double u1, double u2, double eps);
+  void rectify_cumul (array<point>& cum, double eps);
+  /*int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
+  */
 };
 
 // Creation
@@ -216,7 +319,8 @@ spline_rep::S (
   else if (u<U[i+1]) return p1[i](u);
   else if (u<U[i+2]) return p2[i](u);
   else if (u<U[i+3]) return p3[i](u);
-  // FIXME: and otherwise ?
+  else
+    fatal_error ("We should **never** go here");
 }
 
 point
@@ -252,8 +356,8 @@ spline_rep::evaluate (double t) {
 }
 
 double
-spline_rep::bound (double t, double err) {
-  return err/norm(evaluate(t,1));
+spline_rep::bound (double t, double eps) {
+  return eps/norm(evaluate(t,1));
 }
 
 point
@@ -264,36 +368,36 @@ spline_rep::grad (double t, bool& error) {
 
 // Rectification
 bool
-spline_rep::approx (int i,double u1,double u2,double err) {
+spline_rep::approx (int i, double u1, double u2, double eps) {
   double l,R;
   point p1,p2;
   p1=spline(i,u1);
   p2=spline(i,u2);
   l=norm(p1-p2);
-// When l and R are very small, the test l<=R
-// can fail forever. So we set l to exactly 0
+  // When l and R are very small, the test l<=R
+  // can fail forever. So we set l to exactly 0
   if (l!=0 && fnull (l,1.0e-6)) l=0;
   R=curvature(i,u1,u2);
-  return l<=2*sqrt(2*R*err);
+  return l<=2*sqrt(2*R*eps);
 }
 
 void
 spline_rep::rectify_cumul (array<point>& cum, int i,
-                           double u1, double u2, double err) {
-  if (approx(i,u1,u2,err))
+                           double u1, double u2, double eps) {
+  if (approx(i,u1,u2,eps))
     cum << spline(i,u2);
   else {
     double u=(u1+u2)/2;
-    rectify_cumul(cum,i,u1,u,err);
-    rectify_cumul(cum,i,u,u2,err);
+    rectify_cumul(cum,i,u1,u,eps);
+    rectify_cumul(cum,i,u,u2,eps);
   }
 }
 
 void
-spline_rep::rectify_cumul (array<point>& cum, double err) {
+spline_rep::rectify_cumul (array<point>& cum, double eps) {
   int i;
   for (i=2;i<=n;i++)
-    rectify_cumul(cum,i,U[i],U[i+1],err);
+    rectify_cumul(cum,i,U[i],U[i+1],eps);
 }
 
 // Curvature
@@ -334,6 +438,16 @@ spline_rep::curvature (double t1, double t2) {
   return res;
 }
 
+/* Control points
+int
+spline_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& rcip)
+{
+  pts = a;
+  rcip= cip;
+}
+*/
+
 curve
 spline (array<point> a, bool close, bool interpol) {
   return new spline_rep (a, close, interpol);
@@ -352,10 +466,13 @@ struct arc_rep: public curve_rep {
     point c, double r1b, double r2b, double a, double e1b, double e2b):
     center (c), r1 (r1b), r2 (r2b), alpha (a), e1 (e1b), e2 (e2b-e1b) {}
   point evaluate (double t);
-  void rectify_cumul (array<point>& cum, double err);
-  double bound (double t, double err);
+  void rectify_cumul (array<point>& cum, double eps);
+  double bound (double t, double eps);
   point grad (double t, bool& error);
   double curvature (double t1, double t2);
+  /*int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
+  */
 };
 
 point
@@ -365,9 +482,9 @@ arc_rep::evaluate (double t) {
 }
 
 void
-arc_rep::rectify_cumul (array<point>& cum, double err) {
+arc_rep::rectify_cumul (array<point>& cum, double eps) {
   double t, step;
-  step= sqrt (2*err / max (r1, r2) ) / tm_PI;
+  step= sqrt (2*eps / max (r1, r2) ) / tm_PI;
   for (t=step; t<=e2; t+=step)
     cum << evaluate (t);
   if (t-step != e2)
@@ -375,9 +492,8 @@ arc_rep::rectify_cumul (array<point>& cum, double err) {
 }
 
 double
-arc_rep::bound (double t, double err) {
-  bool b;
-  return err/norm(grad(t,b));
+arc_rep::bound (double t, double eps) {
+  return curve_rep::bound (t, eps);
 }
 
 point
@@ -414,10 +530,24 @@ struct compound_curve_rep: public curve_rep {
     double n= n1+n2;
     if (t <= n1/n) return c1 (t*n/n1);
     else return c2 (t*n/n2 - n1); }
-  void rectify_cumul (array<point>& a, double err) {
-    c1->rectify_cumul (a, err);
-    c2->rectify_cumul (a, err);
+  void rectify_cumul (array<point>& a, double eps) {
+    c1->rectify_cumul (a, eps);
+    c2->rectify_cumul (a, eps);
   }
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  point grad (double t, bool& error) {
+    double n= n1+n2;
+    if (t <= n1/n) return c1->grad (t*n/n1, error);
+    else return c2->grad (t*n/n2 - n1, error);
+  }
+  double curvature (double t1, double t2) {
+    return max (c1->curvature (t1, t2), c2->curvature (t1, t2));
+  }
+  /*int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
+  */
 };
 
 curve
@@ -436,12 +566,35 @@ struct inverted_curve_rep: public curve_rep {
   inverted_curve_rep (curve c2): c (c2), n (c->nr_components()) {}
   int nr_components () { return n; }
   point evaluate (double t) { return c (1.0 - t); }
-  void rectify_cumul (array<point>& a, double err) {
-    array<point> b= c->rectify (err);
+  void rectify_cumul (array<point>& a, double eps) {
+    array<point> b= c->rectify (eps);
     int i, k= N(b);
     for (i=k-1; i>=0; i--) a << b[i];
   }
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  point grad (double t, bool& error) {
+    return - c->grad (1.0 - t, error);
+  }
+  double curvature (double t1, double t2) {
+    return c->curvature (1-t2, 1-t1);
+  }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
 };
+
+int
+inverted_curve_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& cip)
+{
+  int res= c->get_control_points (abs, pts, cip);
+  int i;
+  abs= copy (abs);
+  for (i=0; i<res; i++)
+    abs[i]= 1 - abs[i];
+  return res;
+}
 
 curve
 invert (curve c) {
@@ -460,19 +613,47 @@ struct transformed_curve_rep: public curve_rep {
     f (f2), c (c2), n (c->nr_components()) {}
   int nr_components () { return n; }
   point evaluate (double t) { return f (c (t)); }
-  void rectify_cumul (array<point>& a, double err);
+  void rectify_cumul (array<point>& a, double eps);
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  point grad (double t, bool& error) {
+    // FIXME: Is this correct ?
+    if (f->linear)
+      return f (c->grad (t, error));
+    else fatal_error ("Not yet implemented",
+		      "transformed_curve_rep::grad");
+  }
+  double curvature (double t1, double t2) {
+    fatal_error ("Not yet implemented",
+	         "transformed_curve_rep::curvature");
+  }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
 };
 
 void
-transformed_curve_rep::rectify_cumul (array<point>& a, double err) {
+transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
   if (f->linear) {
-    double delta= f->direct_bound (c(0.0), err);
+    double delta= f->direct_bound (c(0.0), eps);
     array<point> b= c->rectify (delta);
     int i, k= N(b);
     for (i=0; i<k; i++) a << f(b[i]);
   }
   else fatal_error ("Not yet implemented",
 		    "transformed_curve_rep::rectify_cumul");
+}
+
+int
+transformed_curve_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& cip)
+{
+  int res= c->get_control_points (abs, pts, cip);
+  int i;
+  pts= copy (pts);
+  for (i=0; i<N(pts); i++)
+    pts[i]= f (pts[i]);
+  return res;
 }
 
 curve

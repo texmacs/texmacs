@@ -2852,6 +2852,21 @@ tmg_path_xy (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_graphical_select (SCM arg1, SCM arg2) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select");
+
+  double in1= scm_to_double (arg1);
+  double in2= scm_to_double (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->graphical_select (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_texmacs_exec (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
 
@@ -3111,5 +3126,6 @@ initialize_glue_editor () {
   gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
   gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
+  gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
   gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

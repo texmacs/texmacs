@@ -30,15 +30,16 @@ public:
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  virtual path      find_box_path (SI x, SI y, SI delta, bool force);
-  virtual path      find_lip ();
-  virtual path      find_rip ();
-  virtual path      find_left_box_path ();
-  virtual path      find_right_box_path ();
-  virtual path      find_box_path (path p, bool& found);
-  virtual path      find_tree_path (path bp);
-  virtual cursor    find_cursor (path bp);
-  virtual selection find_selection (path lbp, path rbp);
+  virtual path            find_box_path (SI x, SI y, SI delta, bool force);
+  virtual path            find_lip ();
+  virtual path            find_rip ();
+  virtual path            find_left_box_path ();
+  virtual path            find_right_box_path ();
+  virtual path            find_box_path (path p, bool& found);
+  virtual path            find_tree_path (path bp);
+  virtual cursor          find_cursor (path bp);
+  virtual selection       find_selection (path lbp, path rbp);
+  virtual gr_selections   graphical_select (SI x, SI y, SI dist);
 
   double    left_slope ();
   double    right_slope ();

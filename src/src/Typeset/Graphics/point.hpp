@@ -18,6 +18,7 @@ typedef array<double> point;
 const  double E =2.718281828459045235;
 const  double PI=3.141592653589793238;
 
+point operator - (point p);
 point operator + (point p1, point p2);
 point operator - (point p1, point p2);
 point operator * (double x, point p);
@@ -31,5 +32,10 @@ tree  as_tree (point p);
 double operator * (point p1, point p2);
 double norm (point p);
 double arg (point p);
+
+typedef point axis[2];
+point  proj     (axis a, point p);
+double dist     (axis a, point p);
+double seg_dist (axis a, point p);
 
 #endif // defined POINT_H
