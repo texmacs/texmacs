@@ -47,11 +47,11 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   bot       = 0;
   top       = env->fn->yx;
   sep       = env->get_length (PAR_SEP);
-  height    = env->decode_length (string ("1fn"))+ sep;
+  height    = env->as_length (string ("1fn"))+ sep;
   hor_sep   = env->get_length (PAR_HOR_SEP);
   tab_sep   = hor_sep;
-  line_sep  = env->get_space (PAR_LINE_SEP);
-  par_sep   = env->get_space (PAR_PAR_SEP);
+  line_sep  = env->get_vspace (PAR_LINE_SEP);
+  par_sep   = env->get_vspace (PAR_PAR_SEP);
   nr_cols   = env->get_int (PAR_COLUMNS);
 
   tree dec  = env->read (ATOM_DECORATIONS);
@@ -85,9 +85,9 @@ lazy_paragraph_rep::line_print (line_item item) {
 	vmin= vspc->min; vdef= vspc->def; vmax= vspc->max;
       }
       else {
-	vmin= env->decode_length (item->t[0]);
-	vdef= env->decode_length (item->t[1]);
-	vmax= env->decode_length (item->t[2]);
+	vmin= env->as_length (item->t[0]);
+	vdef= env->as_length (item->t[1]);
+	vmax= env->as_length (item->t[2]);
       }
       if (is_func (item->t, VAR_VSPACE))
 	sss->vspace_before (space (vmin, vdef, vmax));
@@ -442,7 +442,7 @@ lazy_paragraph_rep::format_paragraph () {
     no_first= (style [PAR_NO_FIRST] == "true");
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
-    else first= env->decode_length (style [PAR_FIRST]);
+    else first= env->as_length (style [PAR_FIRST]);
     sss->set_env_vars (height, sep, hor_sep, bot, top);
 
     // typeset paragraph unit

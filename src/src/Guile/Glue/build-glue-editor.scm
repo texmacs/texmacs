@@ -248,7 +248,7 @@
   (edit-special edit_special (void))
   (edit-test edit_test (void))
 
-  (length-decode decode_length (int string))
+  (length-decode as_length (int string))
   (length-add add_lengths (string string string))
   (length-mult multiply_length (string double string))
   (length? is_length (bool string))

@@ -77,8 +77,8 @@ edit_typeset_rep::clear_local_info () {
 ******************************************************************************/
 
 SI
-edit_typeset_rep::decode_length (string l) {
-  return env->decode_length (l); }
+edit_typeset_rep::as_length (string l) {
+  return env->as_length (l); }
 
 string
 edit_typeset_rep::add_lengths (string l1, string l2) {

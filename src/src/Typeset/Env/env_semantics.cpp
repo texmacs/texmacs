@@ -120,7 +120,7 @@ initialize_default_var_type () {
 
 #define get_page_par(which) \
   (get_string (which) == "auto"? \
-   decode_length (page_get_feature (page_type, which, page_landscape)): \
+   as_length (page_get_feature (page_type, which, page_landscape)): \
    get_length (which))
 
 void
@@ -289,15 +289,15 @@ void
 edit_env_rep::update_frame () {
   tree t= env [GR_FRAME];
   if (is_tuple (t, "scale", 2) && is_func (t[2], TUPLE, 2)) {
-    SI magn= decode_length (as_string (t[1]));
-    SI x   = decode_length (as_string (t[2][0]));
-    SI y   = decode_length (as_string (t[2][1]));
+    SI magn= as_length (t[1]);
+    SI x   = as_length (t[2][0]);
+    SI y   = as_length (t[2][1]);
     fr= scaling (magn, point (x, y));
   }
   else {
-    SI cm   = decode_length (string ("1cm"));
-    SI par  = decode_length (string ("1par"));
-    SI yfrac= decode_length (string ("1yfrac"));
+    SI cm   = as_length (string ("1cm"));
+    SI par  = as_length (string ("1par"));
+    SI yfrac= as_length (string ("1yfrac"));
     fr= scaling (cm, point (par >> 1, yfrac));
   }
 }
@@ -308,12 +308,12 @@ edit_env_rep::update_clipping () {
   if (is_tuple (t, "clip", 2) &&
       is_func (t[1], TUPLE, 2) &&
       is_func (t[2], TUPLE, 2)) {
-    clip_lim1= decode_point (t[1]);
-    clip_lim2= decode_point (t[2]);
+    clip_lim1= as_point (t[1]);
+    clip_lim2= as_point (t[2]);
   }
   else {
-    clip_lim1= decode_point (tuple ("0par", "-0.3par"));
-    clip_lim2= decode_point (tuple ("1par", "0.3par"));
+    clip_lim1= as_point (tuple ("0par", "-0.3par"));
+    clip_lim2= as_point (tuple ("1par", "0.3par"));
   }
 }
 

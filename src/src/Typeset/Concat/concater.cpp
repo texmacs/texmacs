@@ -199,7 +199,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_space (attach_here (t, ip));
     break;
   case HTAB:
-    print (space (env->decode_length (t[0])));
+    print (space (env->as_length (t[0])));
     control (t, ip);
     break;
   case MOVE:

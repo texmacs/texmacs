@@ -39,10 +39,10 @@ pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
   head_sep  = env->get_length (PAGE_HEAD_SEP);
   foot_sep  = env->get_length (PAGE_FOOT_SEP);
   col_sep   = env->get_length (PAR_COLUMNS_SEP);
-  fn_sep    = env->get_space (PAR_FNOTE_SEP);
-  fnote_sep = env->get_space (PAGE_FNOTE_SEP) + (2*env->fn->sep);
+  fn_sep    = env->get_vspace (PAR_FNOTE_SEP);
+  fnote_sep = env->get_vspace (PAGE_FNOTE_SEP) + (2*env->fn->sep);
   fnote_bl  = env->get_length (PAGE_FNOTE_BARLEN);
-  float_sep = env->get_space (PAGE_FLOAT_SEP);
+  float_sep = env->get_vspace (PAGE_FLOAT_SEP);
   mnote_sep = env->get_length (PAGE_MNOTE_SEP);
   show_hf   = env->get_bool (PAGE_SHOW_HF) && paper;
   if (nr_cols > 1) text_width = (text_width+col_sep+1) * nr_cols - col_sep;

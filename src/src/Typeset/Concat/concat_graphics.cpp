@@ -87,7 +87,7 @@ typeset_as_grid (edit_env env, tree t, path ip, tree aspect) {
     }
     else
     if (is_tuple (t, "polar", 3)) { 
-      center= env->decode_point (t[1]);
+      center= env->as_point (t[1]);
       step= as_double (t[2]);
       astep= as_int (t[3]);
     }
@@ -123,7 +123,7 @@ concater_rep::typeset_superpose (tree t, path ip) {
 void
 concater_rep::typeset_text_at (tree t, path ip) {
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  point  p     = env->fr (env->decode_point (env->exec (t[1])));
+  point  p     = env->fr (env->as_point (env->exec (t[1])));
   string halign= as_string (env->exec (t[2]));
   string valign= as_string (env->exec (t[3]));
 
@@ -145,7 +145,7 @@ concater_rep::typeset_point (tree t, path ip) {
     u[i]= env->exec (t[i]);
   if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
-    point p= env->fr (env->decode_point (u));
+    point p= env->fr (env->as_point (u));
     print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col, env->point_style));
   }
 }
@@ -155,7 +155,7 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)
-    a[i]= env->decode_point (env->exec (t[i]));
+    a[i]= env->as_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad line"), ip);
@@ -174,7 +174,7 @@ concater_rep::typeset_arc (tree t, path ip) {
     point center;
     double r1, r2;
     double a1, a2, a;
-    center= env->decode_point (env->exec (t[0]));
+    center= env->as_point (env->exec (t[0]));
     r1= as_double (t[1]);
     r2= as_double (t[2]);
     a1= as_double (t[3]);
@@ -190,7 +190,7 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)
-    a[i]= env->decode_point (env->exec (t[i]));
+    a[i]= env->as_point (env->exec (t[i]));
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {

@@ -46,13 +46,13 @@ concater_rep::typeset_large (tree t, path ip, int type, string prefix) {
   else if ((N(t) >= 2) && is_atomic (t[0])) {
     SI y1, y2;
     if (N(t) == 2) {
-      SI l= env->decode_length (t[1]) >> 1;
+      SI l= env->as_length (t[1]) >> 1;
       y1= env->fn->yfrac - l;
       y2= env->fn->yfrac + l;
     }
     else {
-      y1= env->decode_length (t[1]);
-      y2= env->decode_length (t[2]);
+      y1= env->as_length (t[1]);
+      y2= env->as_length (t[2]);
     }
     string s= prefix * t[0]->label * ">";
     box b= delimiter_box (ip, s, env->fn, env->col, y1, y2);
@@ -85,7 +85,7 @@ concater_rep::typeset_lprime (tree t, path ip) {
     path sip= descend (ip, 0);
     box b1, b2= typeset_as_concat (env, t[0], sip);
     b2= symbol_box (sip, b2, N(t[0]->label));
-    b2= move_box (sip, b2, env->decode_length (string ("-0.05fn")), 0);
+    b2= move_box (sip, b2, env->as_length (string ("-0.05fn")), 0);
     env->local_end_script (old_il);
     print (LSUP_ITEM, script_box (ip, b1, b2, env->fn));
     penalty_max (HYPH_INVALID);
@@ -99,7 +99,7 @@ concater_rep::typeset_rprime (tree t, path ip) {
     path sip= descend (ip, 0);
     box b1, b2= typeset_as_concat (env, t[0], sip);
     b2= symbol_box (sip, b2, N(t[0]->label));
-    b2= move_box (sip, b2, env->decode_length (string ("0.05fn")), 0);
+    b2= move_box (sip, b2, env->as_length (string ("0.05fn")), 0);
     env->local_end_script (old_il);
     penalty_max (HYPH_INVALID);
     if (N(a)>0) a[N(a)-1]->limits= false;

@@ -330,23 +330,6 @@ public:
   void   update ();
   void   update (string env_var);
 
-  /* miscellaneous and utilities */
-  tree      as_tmlen (tree t);
-  SI        as_length (tree t);
-  space     as_hspace (tree t);
-  space     as_vspace (tree t);
-  SI        decode_length (string l);
-
-  point     decode_point (tree t);
-  inline SI decode_length (tree l) { return decode_length (as_string (l)); }
-  void      get_length_unit (string l, SI& un, string& un_str);
-  string    add_lengths (string l1, string l2);
-  string    multiply_length (double x, string l);
-  bool      is_length (string s);
-  double    divide_lengths (string l1, string l2);
-  SI        get_length (string var);
-  space     get_space (string var);
-
   /* retrieving environment variables */
   inline bool get_bool (string var) {
     tree t= env [var];
@@ -364,6 +347,28 @@ public:
     tree t= env [var];
     if (is_compound (t)) return "";
     return t->label; }
+
+  /* lengths */
+  tree      as_tmlen (tree t);
+  SI        as_length (tree t);
+  space     as_hspace (tree t);
+  space     as_vspace (tree t);
+  point     as_point (tree t);
+
+  inline SI get_length (string var) {
+    tree t= env [var];
+    if (is_compound (t)) return 0;
+    return as_length (t); }
+  inline space get_vspace (string var) {
+    tree t= env [var];
+    if (is_compound (t)) return 0;
+    return as_vspace (t); }
+
+  void      get_length_unit (string l, SI& un, string& un_str);
+  string    add_lengths (string l1, string l2);
+  string    multiply_length (double x, string l);
+  bool      is_length (string s);
+  double    divide_lengths (string l1, string l2);
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);
