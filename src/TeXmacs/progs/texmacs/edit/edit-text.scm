@@ -68,23 +68,22 @@
       (make l)
       (make-return-before)))
 
+(define (toggle-number-sub s)
+  (with s* (string-append s "*")
+    (cond ((inside? s) (variant-replace s s*))
+	  ((inside? s*) (variant-replace s* s)))))
+
 (define (toggle-section-number)
-  (cond ((inside? "chapter") (variant-replace "chapter" "chapter*"))
-	((inside? "chapter*") (variant-replace "chapter*" "chapter"))
-	((inside? "section") (variant-replace "section" "section*"))
-	((inside? "section*") (variant-replace "section*" "section"))
-	((inside? "subsection") (variant-replace "subsection" "subsection*"))
-	((inside? "subsection*") (variant-replace "subsection*" "subsection"))
-	((inside? "subsubsection")
-	 (variant-replace "subsubsection" "subsubsection*"))
-	((inside? "subsubsection*")
-	 (variant-replace "subsubsection*" "subsubsection"))
-	((inside? "paragraph") (variant-replace "paragraph" "paragraph*"))
-	((inside? "paragraph*") (variant-replace "paragraph*" "paragraph"))
-	((inside? "subparagraph")
-	 (variant-replace "subparagraph" "subparagraph*"))
-	((inside? "subparagraph*")
-	 (variant-replace "subparagraph*" "subparagraph"))))
+  (for-each
+   toggle-number-sub
+   '("chapter" "section" "subsection" "subsubsection"
+     "paragraph" "subparagraph" "appendix"
+
+     "theorem" "proposition" "lemma" "corollary"
+     "axiom" "definition" "notation" "conjecture"
+     "remark" "example" "note" "warning" "convention"
+     "exercise" "problem"
+     "small-figure" "big-figure" "small-table" "big-table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description

@@ -2086,6 +2086,12 @@ static charp style_rename []= {
   "subsectionsep", "subsection-sep",
   "subsubsectionsep", "subsubsection-sep",
 
+  "theorem*", "render-theorem",
+  "remark*", "render-remark",
+  "exercise*", "render-exercise",
+  "small-table*", "render-small-table",
+  "big-table*", "render-big-table",
+
   "theanswer", "the-answer",
   "thealgorithm", "the-algorithm",
   "answernr", "answer-nr",
