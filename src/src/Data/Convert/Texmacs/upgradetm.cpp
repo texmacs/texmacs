@@ -1947,7 +1947,7 @@ upgrade_use_package (tree t) {
     tree r (L(t));
     for (i=0; i<n; i++)
       if (is_compound (t[i], "style")) {
-	r << compound ("style", "generic");
+	r << compound ("style", "source");
 	no_style= false;
       }
       else if (is_compound (t[i], "body", 1) && is_document (t[i][0])) {
@@ -1956,7 +1956,7 @@ upgrade_use_package (tree t) {
 	tree u (DOCUMENT);
 	if (N(v) > 0) u << v;
 	u << A (t[i][0]);
-	if (no_style) r << compound ("style", "generic");
+	if (no_style) r << compound ("style", "source");
 	r << compound ("body", u);
       }
       else r << t[i];
