@@ -154,6 +154,10 @@ SOURCE=..\..\Typeset\Bridge\bridge_argument.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Typeset\Bridge\bridge_auto.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Typeset\Bridge\bridge_compound.cpp
 # End Source File
 # Begin Source File
@@ -167,6 +171,10 @@ SOURCE=..\..\Typeset\Bridge\bridge_document.cpp
 # Begin Source File
 
 SOURCE=..\..\Typeset\Bridge\bridge_formatting.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Typeset\Bridge\bridge_mark.cpp
 # End Source File
 # Begin Source File
 
@@ -390,7 +398,15 @@ SOURCE=..\..\Typeset\Env\env_exec.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Typeset\Env\env_inactive.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Typeset\Env\env_semantics.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Typeset\Graphics\equations.cpp
 # End Source File
 # Begin Source File
 
@@ -1206,6 +1222,10 @@ SOURCE=..\..\Typeset\env.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Typeset\Graphics\equations.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Guile\Scheme\evaluate.hpp
 # End Source File
 # Begin Source File
@@ -1239,6 +1259,10 @@ SOURCE=..\..\Typeset\formatter.hpp
 # Begin Source File
 
 SOURCE=..\..\Typeset\Graphics\frame.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Plugins\Freetype\free_type.hpp
 # End Source File
 # Begin Source File
 
@@ -1363,6 +1387,18 @@ SOURCE="..\..\Resource\Tex\load-pk.hpp"
 # Begin Source File
 
 SOURCE="..\..\Resource\Tex\load-tfm.hpp"
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Plugins\Metafont\load_pk.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Plugins\Metafont\load_tex.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Plugins\Metafont\load_tfm.hpp
 # End Source File
 # Begin Source File
 
@@ -1498,10 +1534,6 @@ SOURCE=..\..\Data\Drd\tag_info.hpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\Resource\tex.hpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\Plugins\Metafont\tex_files.hpp
 # End Source File
 # Begin Source File
@@ -1547,6 +1579,10 @@ SOURCE=..\..\Classes\Atomic\tree_label.hpp
 # Begin Source File
 
 SOURCE=..\..\Plugins\Freetype\tt_face.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Plugins\Freetype\tt_file.hpp
 # End Source File
 # Begin Source File
 
