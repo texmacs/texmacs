@@ -251,7 +251,7 @@ DISTCLEAN: CLEAN
 .PHONY: RDISTR DISTR RCLEAN SCLEAN DISTCLEAN
 
 ###############################################################################
-# Making distributions: for personal use only
+# Miscellaneous targets
 ###############################################################################
 
 TOUCH:
@@ -268,75 +268,9 @@ STRIP:
 	$(STRIP) $(tmdir)/lib/*.$(so) 2>/dev/null || >/dev/null
 	$(STRIP) $(tmdir)/plugins/*/bin/* 2>/dev/null || >/dev/null
 
-PLUGIN_DISTR:
-	$(RM) $(tmdir)/plugins
-	$(CP) plugins $(tmdir)/plugins
-	$(RM) -r $(tmdir)/plugins/*/src
-
-PLUGIN_RESTORE:
-	$(RM) -r $(tmdir)/plugins
-	$(LN) -s ../plugins $(tmdir)/plugins
-
-EXTERN: STRIP PLUGIN_DISTR
-	$(RM) -r $(tmdir)/progs/ice-9
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	cp -r -f $$GUILE_LOAD_PATH $(tmdir)/progs/
-	chmod 644 $(tmdir)/progs/ice-9/*
-	chmod 755 $(tmdir)/progs/ice-9
-	$(RM) $(tmdir)/lib/libguile*
-
-COPY_GUILE:
-	GUILE_LIB_PATH=`guile-config info libdir`; \
-	export GUILE_LIB_PATH; \
-	$(CP) $$GUILE_LIB_PATH/libguile.so.4.0.0 $(tmdir)/lib;
-	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so.4
-	$(LN) -s libguile.so.4.0.0 $(tmdir)/lib/libguile.so
-
 ACCESS_FLAGS:
 	$(CHMOD) -R go+rX *
 	$(CHMOD) -R go+x $(tmdir)/bin
 	$(CHMOD) -R go+x $(tmdir)/lib
 
-SHARED_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-shared-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-STATIC_DISTR: CLEAN_DOC DISTR EXTERN ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-SUN_DISTR: CLEAN_DOC DISTR EXTERN COPY_GUILE ACCESS_FLAGS
-	$(MV) $(tmdir) $(tmtgz)
-	tar -cf $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar $(tmtgz)
-	$(MV) $(tmtgz) $(tmdir)
-	$(GZIP) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar
-	$(MV) $(tmtgz)-static-@CONFIG_OS_SUFFIX@.tar.gz $$HOME/distr
-	$(MAKE) -f Makefile PLUGIN_RESTORE
-
-SRC_DISTR: CLEAN_DOC DISTCLEAN ACCESS_FLAGS
-	$(MV) $$HOME/distr/TeXmacs-src $$HOME/distr/$(tmtgz)-src
-	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-src.tar $(tmtgz)-src --exclude $(tmtgz)-src/Makefile
-	$(MV) $$HOME/distr/$(tmtgz)-src $$HOME/distr/TeXmacs-src
-	$(GZIP) $$HOME/distr/$(tmtgz)-src.tar
-
-WEB_DISTR:
-	$(RM) $$HOME/texmacs/web/*~
-	$(RM) $$HOME/texmacs/web/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*/*~
-	$(RM) $$HOME/texmacs/web/*/*/*/*/*~
-	tar -C $$HOME/distr -cf $$HOME/distr/$(tmtgz)-web.tar $(tmtgz)-web
-	$(GZIP) $$HOME/distr/$(tmtgz)-web.tar
-
-.PHONY: TOUCH STRIP EXTERN COPY_GUILE PLUGIN_RESTORE ACCESS_FLAGS SHARED_DISTR SUN_DISTR SRC_DISTR WEB_DISTR MISC_DISTR
+.PHONY: TOUCH STRIP ACCESS_FLAGS
