@@ -37,12 +37,7 @@ TOUCH = touch
 # Main makes
 ###############################################################################
 
-TEXMACS:
-	$(MKDIR) src/Deps
-	$(MKDIR) src/Objects
-	$(MKDIR) TeXmacs/bin
-	$(MKDIR) TeXmacs/lib
-	$(MKDIR) src/Objects
+TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
@@ -55,11 +50,7 @@ TEXMACS:
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
-STATIC_TEXMACS:
-	$(MKDIR) src/Deps
-	$(MKDIR) src/Objects
-	$(MKDIR) TeXmacs/bin
-	$(MKDIR) TeXmacs/lib
+STATIC_TEXMACS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile link=static
 	$(MAKE) -f Makefile PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
@@ -72,8 +63,14 @@ STATIC_TEXMACS:
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
-DEPS:
+DEPS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile deps
+
+EMPTY_DIRS:
+	$(MKDIR) src/Deps
+	$(MKDIR) src/Objects
+	$(MKDIR) TeXmacs/bin
+	$(MKDIR) TeXmacs/lib
 
 .PHONY: TEXMACS STATIC_TEXMACS DEPS EXPERIMENTAL
 
