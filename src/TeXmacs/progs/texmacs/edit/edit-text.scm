@@ -16,9 +16,9 @@
   (:use (texmacs tools tm-circulate))
   (:export
     ;; titles
-    go-end-of-header-element make-header-compound make-header-compound
+    go-end-of-header-element make-header
     ;; sections
-    inside-section? make-section make-section-arg toggle-section-number
+    inside-section? make-section make-unnamed-section toggle-section-number
     ;; lists
     inside-list? inside-description? make-tmlist make-item
     ;; auxiliary
@@ -35,14 +35,10 @@
   (if (inside? "encl") (go-end-of "encl"))
   (go-end-line))
 
-(define (make-header-compound s)
+(define (make-header l)
   (go-end-of-header-element)
   (if (not (== (tree->object (the-line)) "")) (insert-return))
-  (make-compound-arg s))
-
-(define (make-header-compound s)
-  (go-end-of-header-element)
-  (make-inactive-compound-arg s))
+  (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sectional commands
@@ -63,14 +59,14 @@
       (inside? "subparagraph")
       (inside? "subparagraph*")))
 
-(define (make-section s)
+(define (make-section l)
   (if (not (make-return-after))
-      (make-compound s)
-      (make-return-before)))
+      (make l)))
 
-(define (make-section-arg s)
+(define (make-unnamed-section l)
   (if (not (make-return-after))
-      (make-compound-arg s)))
+      (make l)
+      (make-return-before)))
 
 (define (toggle-section-number)
   (cond ((inside? "chapter") (variant-replace "chapter" "chapter*"))
@@ -119,8 +115,8 @@
 
 (define (make-item)
   (if (not (make-return-after))
-      (cond ((inside-list?) (make-compound "item"))
-	    ((inside-description?) (make-compound-arg "item*")))))
+      (cond ((inside-list?) (make 'item))
+	    ((inside-description?) (make 'item*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content

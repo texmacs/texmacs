@@ -23,19 +23,19 @@
 
 (menu-bind insert-table-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (make-compound-arity "small-table" 2))
-      ("Big table" (make-compound-arity "big-table" 2))
+      ("Small table" (make 'small-table))
+      ("Big table" (make 'big-table))
       ---)
-  ("Plain tabular" (make-compound-arg "tabular"))
-  ("Centered tabular" (make-compound-arg "tabular*"))
-  ("Plain block" (make-compound-arg "block"))
-  ("Centered block" (make-compound-arg "block*"))
+  ("Plain tabular" (make 'tabular))
+  ("Centered tabular" (make 'tabular*))
+  ("Plain block" (make 'block))
+  ("Centered block" (make 'block*))
   (if (in-math?)
       ---
-      ("Matrix" (make-compound-arg "matrix"))
-      ("Determinant" (make-compound-arg "det"))
-      ("Choice" (make-compound-arg "choice"))
-      ("Stack" (make-compound-arg "stack"))))
+      ("Matrix" (make 'matrix))
+      ("Determinant" (make 'det))
+      ("Choice" (make 'choice))
+      ("Stack" (make 'stack))))
 
 (menu-bind insert-link-menu
   ("Label" (make-inactive-label))
@@ -64,8 +64,8 @@
       ("Interjection" (make-inactive-compound-arg "glossary-line"))))
 
 (menu-bind insert-presentation-tag-menu
-  ("Underline" (make-compound-arg "underline"))
-  ("Overline" (make-compound-arg "overline"))
+  ("Underline" (make 'underline))
+  ("Overline" (make 'overline))
   ("Subscript" (make-script #t #f))
   ("Superscript" (make-script #t #t)))
 
@@ -97,8 +97,8 @@
 
 (menu-bind insert-image-menu
   (if (and (in-text?) (style-has? "env-float-dtd"))
-      ("Small figure" (make-compound-arity "small-figure" 2))
-      ("Big figure" (make-compound-arity "big-figure" 2))
+      ("Small figure" (make 'small-figure))
+      ("Big figure" (make 'big-figure))
       ---)
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
@@ -108,10 +108,8 @@
   ("Footnote" (make-big-compound "footnote"))
   ---
   ("Floating object" (make-insertion "float"))
-  ("Floating figure" (begin (make-insertion "float")
-			    (make-compound-arity "big-figure" 2)))
-  ("Floating table" (begin (make-insertion "float")
-			   (make-compound-arity "big-table" 2))))
+  ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
+  ("Floating table" (begin (make-insertion "float") (make 'big-table))))
 
 (menu-bind position-float-menu
   ("Top" (toggle-insertion-position "t"))

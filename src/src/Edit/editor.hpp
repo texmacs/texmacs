@@ -307,7 +307,7 @@ public:
   virtual bool is_deactivated () = 0;
   virtual void activate () = 0;
   virtual void activate_compound () = 0;
-  virtual void make_active (string op, int n) = 0;
+  virtual void make_compound (tree_label l) = 0;
   virtual void make_deactivated (tree t, path p) = 0;
   virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
   virtual bool make_return_before () = 0;
@@ -315,7 +315,6 @@ public:
   virtual void make_assign (tree var, tree by) = 0;
   virtual void make_with (string var, string val) = 0;
   virtual bool make_big_compound (string s) = 0;
-  virtual void make_compound (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
   virtual void go_to_argument (path p, bool start_flag) = 0;
   virtual void insert_argument (bool forward) = 0;

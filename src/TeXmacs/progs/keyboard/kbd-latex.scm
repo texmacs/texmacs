@@ -35,7 +35,7 @@
   ("equation" "Insert numbered equation"
    (begin (make-big-compound "equation") (temp-proof-fix)))
   ("eqnarray*" "Insert equation array"
-   (begin (make-compound-arg "eqnarray*") (temp-proof-fix)))
+   (begin (make 'eqnarray*) (temp-proof-fix)))
 
   ("cC" "Make Ç" (emulate-keyboard "cedilla C"))
   ("cc" "Make ç" (emulate-keyboard "cedilla c"))
@@ -99,16 +99,16 @@
   ("tanh" "Insert tanh" (insert-string "tanh"))
 
   ("maketitle" "Insert title"
-   (begin (make-big-compound "make-title") (make-compound-arg "title")))
+   (begin (make-big-compound "make-title") (make 'title)))
   ("tableofcontents" "Insert table of contents"
    (make-aux "table-of-contents" "toc"))
-  ("appendix" "Insert appendix" (make-section-arg "appendix"))
-  ("chapter" "Insert chapter" (make-section-arg "chapter"))
-  ("section" "Insert section" (make-section-arg "section"))
-  ("subsection" "Insert subsection" (make-section-arg "subsection"))
-  ("subsubsection" "Insert subsubsection" (make-section-arg "subsubsection"))
-  ("paragraph" "Insert paragraph" (make-section-arg "paragraph"))
-  ("subparagraph" "Insert subparagraph" (make-section-arg "subparagraph"))
+  ("appendix" "Insert appendix" (make-section 'appendix))
+  ("chapter" "Insert chapter" (make-section 'chapter))
+  ("section" "Insert section" (make-section 'section))
+  ("subsection" "Insert subsection" (make-section 'subsection))
+  ("subsubsection" "Insert subsubsection" (make-section 'subsubsection))
+  ("paragraph" "Insert paragraph" (make-section 'paragraph))
+  ("subparagraph" "Insert subparagraph" (make-section 'subparagraph))
 
   ("frac" "Make fraction" (make-fraction))
   ("sqrt" "Make square root" (make-sqrt))
@@ -209,7 +209,7 @@
   ("bf" "Use bold font series" (make-with "font series" "bold"))
   ("up" "Use right font shape" (make-with "font shape" "right"))
   ("it" "Use italic font shape" (make-with "font shape" "italic"))
-  ("em" "Emphasize text" (make-compound-arg "em"))
+  ("em" "Emphasize text" (make 'em))
   ("sl" "Use slanted font shape" (make-with "font shape" "slanted"))
   ("sc" "Use small-caps font shape" (make-with "font shape" "small-caps"))
   ("textrm" "Use roman font family" (make-with "font family" "rm"))
