@@ -181,6 +181,7 @@ public:
   virtual string   multiply_length (double x, string l) = 0;
   virtual bool     is_length (string s) = 0;
   virtual double   divide_lengths (string l1, string l2) = 0;
+  virtual void     drd_update () = 0;
   virtual bool     defined_at_cursor (string var_name) = 0;
   virtual bool     defined_at_init (string var_name) = 0;
   virtual bool     defined_in_init (string var_name) = 0;

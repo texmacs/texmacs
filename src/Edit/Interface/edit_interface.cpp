@@ -497,6 +497,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	update_connection ();
+	if (!win->check_event (EVENT_STATUS)) drd_update ();
 	last_update= last_change;
       }
     return;

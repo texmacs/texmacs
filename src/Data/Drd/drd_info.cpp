@@ -193,6 +193,7 @@ drd_info_rep::heuristic_init (string var, tree macro) {
 
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
+  // int tt= texmacs_time ();
   bool flag= true;
   int round= 0;
   while (flag) {
@@ -210,6 +211,7 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
       flag= false;
     }
   }
+  // cout << "--> " << (texmacs_time ()-tt) << "ms\n";
 }
 
 /******************************************************************************
