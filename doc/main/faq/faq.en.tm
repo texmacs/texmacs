@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.2>
+<TeXmacs|1.0.2.10>
 
 <style|tmweb>
 
@@ -21,6 +21,9 @@
 
       <item><hlink|What are the system requirements|#general-4>?
 
+      <item><hlink|I have already learned <TeX>/<LaTeX> and <name|Emacs>, do
+      I have to learn all over again|#general-5>?
+
       <item><hlink|I have a question, where should I ask it|#general-5>?
 
       <item><hlink|Is it free Software|#general-6>?
@@ -29,7 +32,7 @@
     <item>System Appearance and Behavior
 
     <\itemize-minus>
-      <item><hyper-link|<TeXmacs> hangs when opening a document for a whle
+      <item><hyper-link|<TeXmacs> hangs when opening a document for a while
       and my disk is being filled with files|#sys-1>?
 
       <item><hyper-link|How can I see the <LaTeX> or <TeX> code corresponding
@@ -165,7 +168,7 @@
   example, you can start a section by typing <key|\\section[return]> or you
   get <with|mode|math|\<alpha\><rsub|1>> by typing <key|$\\alpha_1$>. Note
   that there are even shorter ways provided, for example <key|$a[tab]$> gives
-  you an alpha as well, so you might want to migrage after a while. Styles
+  you an alpha as well, so you might want to migrate after a while. Styles
   like article, book or seminar, as known from <LaTeX>, are provided as well.
   Furthermore, many <name|Emacs> shortcuts like <key|C-x C-s> for saving a
   file, or <key|C-_> for undo will work. >
@@ -338,6 +341,7 @@
 
 <\initial>
   <\collection>
+    <associate|preamble|false>
     <associate|page-even|30mm>
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-right|25mm>
@@ -355,9 +359,9 @@
 
 <\references>
   <\collection>
+    <associate|usage-1|<tuple|12|?>>
     <associate|idx-1|<tuple|1.|?>>
     <associate|typo-1|<tuple|15|?>>
-    <associate|usage-1|<tuple|12|?>>
     <associate|usage-2|<tuple|13|?>>
     <associate|typo-2|<tuple|16|?>>
     <associate|usage-3|<tuple|14|?>>
@@ -369,8 +373,8 @@
     <associate|general-6|<tuple|6|?>>
     <associate|general-7|<tuple|7|?>>
     <associate|toc-10|<tuple|2.1|?>>
-    <associate|sys-1|<tuple|8|?>>
     <associate|gly-1|<tuple|1|?>>
+    <associate|sys-1|<tuple|8|?>>
     <associate|toc-11|<tuple|2.2|?>>
     <associate|toc-12|<tuple|2.3|?>>
     <associate|sys-2|<tuple|9|?>>
@@ -389,8 +393,8 @@
     <associate|toc-4|<tuple|1.3|?>>
     <associate|toc-5|<tuple|1.4|?>>
     <associate|toc-6|<tuple|1.5|?>>
-    <associate|toc-7|<tuple|1.6|?>>
     <associate|legacy-1|<tuple|17|?>>
+    <associate|toc-7|<tuple|1.6|?>>
     <associate|toc-8|<tuple|1.7|?>>
     <associate|toc-9|<tuple|2|?>>
   </collection>
