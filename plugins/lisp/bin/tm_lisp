@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export TEXMACS_LISP_PATH=$TEXMACS_PATH/plugins/lisp
+
+if [ "$1" = "CLisp" ]; then
+	echo -ne "\002verbatim:"
+	echo -ne "\002scheme:"
+	cat << EOF
+(concat (block* (tformat (table (row (cell (concat (postscript "file:///$TEXMACS_PATH/plugins/lisp/clisp/clisp.ps" "" "" "" "" "" "") (em ""))))))) (tabular (tformat (table (row (cell "Copyright (c) Bruno Haible, Michael Stoll 1992, 1993")) (row (cell "Copyright (c) Bruno Haible, Marcus Daniels 1994-1997")) (row (cell "Copyright (c) Bruno Haible, Pierpaolo Bernardi, Sam Steingold 1998")) (row (cell "Copyright (c) Bruno Haible, Sam Steingold 1999-2003"))))))
+EOF
+	echo -ne "\005"
+	echo " "
+	exec clisp -q -i $TEXMACS_LISP_PATH/clisp/clisp-init.lisp 
+fi
+
+if [ "$1" = "CMUCL" ]; then
+	echo -ne "\002verbatim:"
+	exec lisp -init $TEXMACS_LISP_PATH/cmucl/cmucl-init.lisp
+fi
+
