@@ -60,7 +60,9 @@
 
   \;
 
-  <assign|render-bibitem|<macro|text|<compact-strong-space-item|[<arg|text>]>>>
+  <assign|transform-bibitem|<macro|x|<strong|[<arg|x>] \ >>>
+
+  <assign|render-bibitem|<macro|text|<compact-item|<transform-bibitem|<arg|text>>>>>
 
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
 
@@ -71,6 +73,14 @@
   <assign|newblock|>
 
   <assign|citeauthoryear|<macro|author|year|<arg|author> <arg|year>>>
+
+  <assign|bib-list|<\macro|largest|body>
+    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>>
+      <\description>
+        <arg|body>
+      </description>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -188,10 +198,10 @@
   <assign|glossary-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >>
 
-  <assign|glossary-1|<macro|left|right|<arg|left><glossary-dots><arg|right>>>
+  <assign|glossary-1|<macro|left|right|<arg|left><glossary-dots><no-break><arg|right>>>
 
-  <assign|glossary-2|<macro|entry|explain|right|<resize|<arg|entry>
-  |||r]10fn|><arg|explain><glossary-dots><arg|right>>>
+  <assign|glossary-2|<macro|entry|explain|right|<margin-first-other|0fn|10fn|<style-with|src-compact|none|<resize|<arg|entry>
+  |||r]10fn|><arg|explain><glossary-dots><no-break><arg|right>>>>>
 
   \;
 </body>

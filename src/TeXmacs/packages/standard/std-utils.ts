@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.6>
 
 <style|<tuple|source|std>>
 
@@ -101,6 +101,8 @@
       <arg|body>
     </with>
   </macro>>
+
+  <assign|margin-first-other|<macro|head-indent|tail-indent|body|<with|par-left|<plus|<arg|tail-indent>|0em>|par-first|<minus|<arg|head-indent>|<arg|tail-indent>>|<surround|<yes-indent>||<arg|body>>>>>
 
   <\active*>
     <\src-comment>
