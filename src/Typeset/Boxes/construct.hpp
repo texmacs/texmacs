@@ -86,6 +86,4 @@ box action_box (path ip, box b, tree f, command c, bool ch, path vip);
 box macro_box (path ip, box b, font big_fn= font ());
 box tag_box (path ip, box b, string name);
 
-box graphics_box (path ip, array<box> bs, SI x1, SI y1, SI x2, SI y2);
-
 #endif // defined CONSTRUCT_H

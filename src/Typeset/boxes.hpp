@@ -82,6 +82,7 @@ ostream& operator << (ostream& out, selection sel);
 
 class box_rep;
 class lazy;
+typedef array<double> point;
 
 class box {
   ABSTRACT_NULL(box);
@@ -161,7 +162,7 @@ public:
   cursor    find_check_cursor (path p);
   selection find_check_selection (path lp, path rp);
 
-  /**************************** obsolete routines ****************************/
+  /************************ fine typesetting routines ************************/
 
   virtual double    left_slope ();
   virtual double    right_slope ();
@@ -176,6 +177,13 @@ public:
   virtual SI        sup_lo_lim  (int level);
   virtual SI        sup_lo_base (int level);
   virtual SI        sup_hi_lim  (int level);
+
+  /*************************** for graphical boxes ***************************/
+
+  virtual point     lift (SI x, SI y);
+  virtual void      project (point p, SI& x, SI& y);
+  virtual double    distance (point p);
+  virtual path      closest (point p, int serial= 1);
 
   /************************** retrieving information *************************/
 
