@@ -39,7 +39,6 @@
 (define (tmpre-non-isolated? l)
   (not (and (list? l)
 	    (= (length l) 2)
-	    (not (func? l 'paragraph))
 	    (drd-in? (car l) tmpre-sectional%))))
 
 (define (tmpre-glueable? l)
@@ -48,10 +47,10 @@
 	   (= (length l) 2)
 	   (drd-in? (car l) tmpre-inline-env%))))
 
-(define (tmpre-paragraph x l)
-  (cond ((func? (car l) 'paragraph)
-	 (cons (cons* 'paragraph x (cdar l)) (cdr l)))
-	(else (cons (list 'paragraph x (car l)) (cdr l)))))
+(define (tmpre-para x l)
+  (cond ((func? (car l) 'para)
+	 (cons (cons* 'para x (cdar l)) (cdr l)))
+	(else (cons (list 'para x (car l)) (cdr l)))))
 
 (define (tmpre-document l)
   (if (null? l) l
@@ -59,9 +58,9 @@
 	    (r (tmpre-document (cdr l))))
 	(cond ((null? (cdr l)) (list h))
 	      ((and (tmpre-non-isolated? (car l)) (tmpre-glueable? (cadr l)))
-	       (tmpre-paragraph h r))
+	       (tmpre-para h r))
 	      ((and (tmpre-glueable? (car l)) (tmpre-non-isolated? (cadr l)))
-	       (tmpre-paragraph h r))
+	       (tmpre-para h r))
 	      (else (cons h r))))))
 
 (define (tmpre-empty? x)
