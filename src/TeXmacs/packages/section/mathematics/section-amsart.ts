@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -35,10 +35,10 @@
 
   <assign|var-section-title|<macro|name|<style-with|src-compact|none|<new-page><new-line><no-indent><vspace*|3fn><with|math-font-series|bold|font-series|bold|font-size|1.41|<arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
 
-  <assign|appendix-title|<macro|name|<style-with|src-compact|none|<var-section-title|<localize|Appendix>.
+  <assign|appendix-title|<macro|name|<style-with|src-compact|none|<var-section-title|<appendix-text>.
   <arg|name>>>>>
 
-  <assign|appendix-numbered-title|<macro|name|<style-with|src-compact|none|<var-section-title|<localize|Appendix>
+  <assign|appendix-numbered-title|<macro|name|<style-with|src-compact|none|<var-section-title|<appendix-text>
   <the-appendix>. <arg|name>>>>>
 
   <\active*>
@@ -68,18 +68,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -31,16 +31,29 @@
 
   <\active*>
     <\src-comment>
+      Parts.
+    </src-comment>
+  </active*>
+
+  <assign|part-title-sub|<macro|body|<style-with|src-compact|none|<new-page*><no-indent><assign|page-this-header|><assign|page-this-footer|><new-line><no-indent><vspace*|0.25pag><with|math-font-series|bold|font-series|bold|font-size|3|<arg|body>><new-page>>>>
+
+  <assign|part-title|<macro|name|<part-title-sub|<style-with|src-compact|none|<vspace|0.05pag><new-line><htab|0fn><arg|name><htab|0fn>>>>>
+
+  <assign|part-numbered-title|<macro|name|<part-title-sub|<style-with|src-compact|none|<htab|0fn><part-text>
+  <the-part><htab|0fn><vspace|0.1pag><new-line><htab|0fn><arg|name><htab|0fn>>>>>
+
+  <\active*>
+    <\src-comment>
       Chapters.
     </src-comment>
   </active*>
 
   <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-page*><no-indent><new-line><no-indent><vspace*|5fn><with|math-font-series|bold|font-series|bold|font-size|2|<arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
 
-  <assign|chapter-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-title|<localize|Chapter>
+  <assign|chapter-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-title|<chapter-text>
   <the-chapter><vspace|1fn><new-line><arg|title>>>>>
 
-  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-title|<localize|Appendix>
+  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-title|<appendix-text>
   <the-appendix><vspace|1fn><new-line><arg|title>>>>>
 
   <\active*>
@@ -70,18 +83,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

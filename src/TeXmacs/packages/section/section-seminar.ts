@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -29,6 +29,8 @@
     </src-comment>
   </active*>
 
+  <assign|part-display-numbers|<macro|false>>
+
   <assign|chapter-display-numbers|<macro|false>>
 
   <assign|section-display-numbers|<macro|false>>
@@ -45,11 +47,20 @@
 
   <\active*>
     <\src-comment>
+      Parts.
+    </src-comment>
+  </active*>
+
+  <assign|part-title|<macro|name|<style-with|src-compact|none|<vspace*|3fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|2|color|dark
+  magenta|<arg|name>><vspace|1fn>>>>
+
+  <\active*>
+    <\src-comment>
       Chapters.
     </src-comment>
   </active*>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<vspace*|2fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|2|font-shape|long|<arg|name>><vspace|1fn>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<vspace*|2fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.68|font-shape|long|<arg|name>><vspace|1fn>>>>
 
   <\active*>
     <\src-comment>
@@ -78,18 +89,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

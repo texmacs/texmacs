@@ -22,6 +22,7 @@
 
 (define (tmdoc-down level)
   (cond ((== level 'title) 'chapter)
+	((== level 'part) 'chapter)
 	((== level 'tmdoc-title) 'section)
 	((== level 'tmdoc-title*) 'section)
 	((== level 'chapter) 'section)
