@@ -54,7 +54,7 @@
 
 (define (htmlout-tag x)
   (output-text " " (symbol->string (car x)) "=")
-  (output-verbatim "\"" (utf8->html (cadr x)) "\""))
+  (output-verbatim "\"" (cadr x) "\""))
 
 (define (htmlout-open-tags s l)
   (htmlout-text "<" (symbol->string s))
@@ -78,7 +78,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (htmlout x)
-  (cond ((string? x) (htmlout-text (utf8->html x)))
+  (cond ((string? x) (htmlout-text x))
 	((null? x) (noop))
 	((or (func? x '!concat) (func? x '*TOP*))
 	 (for-each htmlout (cdr x)))

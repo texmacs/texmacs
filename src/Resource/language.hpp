@@ -107,4 +107,6 @@ string language_to_locale (string s);
 string get_locale_language ();
 string get_date (string lan, string fm);
 
+string math_symbol_type (string s, string lan= "texmath");
+
 #endif // defined LANGUAGE_H

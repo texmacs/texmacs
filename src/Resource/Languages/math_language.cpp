@@ -326,3 +326,35 @@ math_language (string name) {
   load_string (url ("$TEXMACS_SYNTAX_PATH", fname), s, true);
   return new math_language_rep (name, s);
 }
+
+string
+math_symbol_type (string sym, string lang) {
+  int pos= 0;
+  language lan= math_language (lang);
+  text_property prop= lan->advance (sym, pos);
+  switch (prop->op_type) {
+  case OP_UNKNOWN:
+    return "unknown";
+  case OP_SYMBOL:
+    return "symbol";
+  case OP_PREFIX:
+    return "prefix";
+  case OP_POSTFIX:
+    return "postfix";
+  case OP_INFIX:
+    return "infix";
+  case OP_LEFT_ASS_INFIX:
+    return "left associative infix";
+  case OP_RIGHT_ASS_INFIX:
+    return "right associative infix";
+  case OP_ASS_INFIX:
+    return "associative infix";
+  case OP_OPENING_BRACKET:
+    return "opening bracket";
+  case OP_SEPARATOR:
+    return "separator";
+  case OP_CLOSING_BRACKET:
+    return "closing bracket";
+  }
+  return "unknown";
+}

@@ -85,6 +85,8 @@
   (escape-generic escape_generic (string string))
   (escape-verbatim escape_verbatim (string string))
   (system-wait system_wait (void string string))
+  (math-symbol-type math_symbol_type (string string))
+  (string-number? is_double (bool string))
 
   (string->url url (url string))
   (url url (url string string))

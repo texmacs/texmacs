@@ -385,20 +385,27 @@ Members arithmetic-postfix
 	!
 
 Members group-open
+	( [ { lfloor lceil langle
 	left-( left-[ left-{ left-less
 	left-} left-] left-) left-gtr
 	left-| left-|| left-.
+	left-lfloor left-lceil left-rfloor left-rceil
+	left-langle left-rangle
 
 Members group-ponctuation
 	, ; :
 
 Members group-separator
+	|
 	mid-| mid-||
 
 Members group-close
+	} ] ) rfloor rceil rangle
 	right-( right-[ right-{ right-less
 	right-} right-] right-) right-gtr
 	right-| right-|| right-.
+	right-lfloor right-lceil right-rfloor right-rceil
+	right-langle right-rangle
 
 Members group-suspension
 	ldots cdots udots
