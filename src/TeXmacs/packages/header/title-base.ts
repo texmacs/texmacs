@@ -98,8 +98,6 @@
     <with|math-font-series|bold|font-series|bold|<font-magnify|1.297|<doc-title-block|<arg|x>>>>
   </surround>>>
 
-  <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
-
   <assign|doc-author|<macro|body|<\surround|<vspace*|1fn>|<vspace|1fn>>
     <\with|par-par-sep|0fn>
       <doc-title-block|<arg|body>>
@@ -112,9 +110,11 @@
     </doc-author>
   </macro>>
 
-  <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
-
   <assign|doc-date|<macro|body|<style-with|src-compact|none|<vspace*|0.5fn><doc-title-block|<with|font-shape|italic|<arg|body>>><vspace|0.5fn>>>>
+
+  <assign|doc-running-title|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-title|<arg|body>>>>>
+
+  <assign|doc-running-author|<macro|body|<if|<unequal|<arg|body>|<uninit>>|<header-author|<arg|body>>>>>
 
   <assign|doc-inactive|<\macro|body>
     <\quasi>
@@ -202,7 +202,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-data-one-author|<\xmacro|data>
+  <assign|doc-data-main|<\xmacro|data>
     <\quasi>
       <unquote*|<select|<quote-arg|data>|doc-title>>
 
@@ -216,7 +216,7 @@
     </quasi>
   </xmacro>>
 
-  <assign|doc-data-several-authors|<\xmacro|data>
+  <assign|doc-data-main*|<\xmacro|data>
     <\quasi>
       <unquote*|<select|<quote-arg|data>|doc-title>>
 
@@ -248,7 +248,7 @@
     <style-with|src-compact|none|<\surround|<assign|the-doc-data|<quote-arg|data>>|<with|doc-note-nr|0|<quasi|<doc-data-hidden|<unquote*|<quote-arg|data>>>>>>
       <\doc-make-title>
         <with|doc-note-nr|0|<\quasi>
-          <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-one-author>|<value|doc-data-several-authors>>>>|<unquote*|<quote-arg|data>>>>
+          <style-with|src-compact|none|<compound|<unquote|<style-with|src-compact|none|<if|<lesseq|<length|<select|<quote-arg|data>|doc-author-data>>|1>|<value|doc-data-main>|<value|doc-data-main*>>>>|<unquote*|<quote-arg|data>>>>
         </quasi>>
       </doc-make-title>
     </surround>>
@@ -300,7 +300,7 @@
     </src-comment>
   </active*>
 
-  <assign|doc-author-produce|<\macro|data>
+  <assign|doc-author-main|<\macro|data>
     <\quasi>
       <unquote*|<select|<quote-arg|data>|author-name>>
 
@@ -320,7 +320,7 @@
     <\quasi>
       <\with|the-author-data|<quote-arg|data>>
         <\doc-author>
-          <doc-author-block|<doc-author-produce|<unquote|<quote-arg|data>>>>
+          <doc-author-block|<doc-author-main|<unquote|<quote-arg|data>>>>
         </doc-author>
       </with>
     </quasi>
@@ -342,14 +342,14 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|doc-authors-one|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-produce|<unquote|<quote-arg|data>>>>>><space|1em><line-break>>>>>
+  <assign|doc-author-data*|<macro|data|<quasi|<style-with|src-compact|none|<space|1em><with|the-author-data|<quote-arg|data>|<style-with|src-compact|none|<doc-authors-block|<doc-author-main|<unquote|<quote-arg|data>>>>>><space|1em><line-break>>>>>
 
   <assign|doc-authors-data|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
         <\with|author-by|<macro|body|<arg|body>>>
           <\doc-authors>
-            <space|0spc><unquote*|<map|doc-authors-one|<quote-arg|data>>>
+            <space|0spc><unquote*|<map|doc-author-data*|<quote-arg|data>>>
           </doc-authors>
         </with>
       </quasi>

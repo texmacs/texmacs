@@ -104,9 +104,13 @@
 
   <\active*>
     <\src-comment>
-      Special page types.
+      Header information.
     </src-comment>
   </active*>
+
+  <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
+
+  <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
 
   <assign|blanc-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|>>>>
 
@@ -125,10 +129,6 @@
   <assign|concat-tuple|<macro|args|sep|fin|<extern|ext-concat-tuple|<arg|args>|<arg|sep>|<arg|fin>>>>
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
-
-  <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
-
-  <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
 
   \;
 </body>
