@@ -128,6 +128,7 @@
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
 		(func? x1 '&) (func? x2 '&)
+		(func? x1 '!nbsp) (func? x2 '!nbsp)
 		(and (func? x1 '!math) (func? x2 '!math))
 		(and (texout-env? x1) (list? x2))
 		(and (list? x1) (texout-env? x2))
@@ -153,6 +154,9 @@
 (define (texout-nextline)
   (output-text "\\\\")
   (output-lf))
+
+(define (texout-nbsp)
+  (output-text "~"))
 
 (define (texout-verb x)
   (output-verb "\\verb¤" x "¤"))
@@ -260,6 +264,7 @@
 	((== (car x) '!concat) (texout-concat (cdr x)))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
+	((== (car x) '!nbsp) (texout-nbsp))
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))

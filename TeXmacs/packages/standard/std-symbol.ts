@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4.2>
 
 <style|source>
 
@@ -56,7 +56,7 @@
 
   <assign|trademark|<macro|<active*|<with|font|tcx|—>>>>
 
-  <assign|emdash|<macro|<active*|<with|font|roman|>>>>
+  <assign|emdash|<macro|<active*|<with|font|roman|\V>>>>
 
   <assign|masculine|<active*|<rsup|<wide*|o|\<wide-bar\>>>>>
 
@@ -67,22 +67,15 @@
   <assign|varordfeminine|<active*|<rsup|a>>>
 
   \;
+
+  <assign|nbsp|<macro|<style-with|src-compact|none|
+  <no-break><specific|screen|<resize|<move|<with|color|#8080FF|->|-0.3em|>|0em||0em||>>>>>
+
+  \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>
