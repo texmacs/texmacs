@@ -470,6 +470,7 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
 
 tree
 edit_env_rep::rewrite_inactive (tree t, tree var) {
+  //cout << "Rewrite inactive " << t << ", " << var << "\n";
   recover_env= tuple ();
   bool block= (inactive_mode >= INACTIVE_BLOCK_RECURSE);
   tree r= rewrite_inactive (t, var, block, block);
@@ -477,5 +478,6 @@ edit_env_rep::rewrite_inactive (tree t, tree var) {
     r= tree (WITH, PAR_PAR_SEP, "0fn", r);
     r= tree (SURROUND, "", tree (VSPACE, "0.5fn"), r);
   }
+  //cout << "---> " << r << "\n\n";
   return r;
 }

@@ -277,6 +277,35 @@ make_lazy_rewrite (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Auto
+******************************************************************************/
+
+lazy
+make_lazy_auto (edit_env env, tree t, path ip, tree f) {
+  array<line_item> a;
+  array<line_item> b;
+  if (!is_decoration (ip)) {
+    a= typeset_marker (env, descend (ip, 0));
+    b= typeset_marker (env, descend (ip, 1));
+  }
+
+  lazy par;
+  env->macro_arg= list<hashmap<string,tree> > (
+    hashmap<string,tree> (UNINIT), env->macro_arg);
+  env->macro_src= list<hashmap<string,path> > (
+    hashmap<string,path> (path (DECORATION)), env->macro_src);
+  string var= f[0]->label;
+  env->macro_arg->item (var)= t;
+  env->macro_src->item (var)= ip;
+  if (is_decoration (ip)) par= make_lazy (env, f[1], ip);
+  else par= make_lazy (env, f[1], decorate_right (ip));
+  env->macro_arg= env->macro_arg->next;
+  env->macro_src= env->macro_src->next;
+
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
 * Argument
 ******************************************************************************/
 
@@ -326,8 +355,60 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Mark
+******************************************************************************/
+
+lazy
+make_lazy_mark (edit_env env, tree t, path ip) {
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+
+  if (is_func (t[0], ARG) &&
+      is_atomic (t[0][0]) &&
+      (!nil (env->macro_arg)) &&
+      env->macro_arg->item->contains (t[0][0]->label))
+    {
+      string name = t[0][0]->label;
+      tree   value= env->macro_arg->item [name];
+      path   valip= decorate_right (ip);
+      if (!is_func (value, BACKUP)) {
+	path new_valip= env->macro_src->item [name];
+	if (is_accessible (new_valip)) valip= new_valip;
+      }
+
+      if (N(t[0]) > 1) {
+	int i, n= N(t[0]);
+	for (i=1; i<n; i++) {
+	  tree r= env->exec (t[0][i]);
+	  if (!is_int (r)) break;
+	  int nr= as_int (r);
+	  if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+	  value= value[nr];
+	  valip= descend (valip, nr);
+	}
+      }
+      if (is_compound (value)) {
+	a= typeset_marker (env, descend (valip, 0));
+	b= typeset_marker (env, descend (valip, 1));
+      }
+    }
+
+  lazy par= make_lazy (env, t[1], descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
 * Main routine
 ******************************************************************************/
+
+static tree inactive_m
+  (MACRO, "x",
+   tree (WITH, "right-flush", tree (MACRO, ""),
+	 tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*")));
+static tree var_inactive_m
+  (MACRO, "x",
+   tree (WITH, "right-flush", tree (MACRO, ""),
+	 tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*")));
 
 lazy
 make_lazy (edit_env env, tree t, path ip) {
@@ -350,11 +431,24 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_with (env, t, ip);
   case ARG:
     return make_lazy_argument (env, t, ip);
+  case MARK:
+    return make_lazy_mark (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case EXTERN:
     return make_lazy_rewrite (env, t, ip);
   case INCLUDE:
+    return make_lazy_rewrite (env, t, ip);
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
+  case ACTIVE:
+  case VAR_ACTIVE:
+    return make_lazy_compound (env, t, ip);
+  case INACTIVE:
+    return make_lazy_auto (env, t, ip, inactive_m);
+  case VAR_INACTIVE:
+    return make_lazy_auto (env, t, ip, var_inactive_m);
+  case REWRITE_INACTIVE:
     return make_lazy_rewrite (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);

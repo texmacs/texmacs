@@ -168,6 +168,11 @@ init_std_drd () {
   init (QUASI, "quasi", fixed (1));
   init (QUASIQUOTE, "quasiquote", fixed (1));
   init (UNQUOTE, "unquote", fixed (1));
+  init (IF, "if", options (2, 1));
+  init (VAR_IF, "if*", fixed (2));
+  init (CASE, "case", repeat (2, 1));
+  init (WHILE, "while", fixed (2));
+  init (FOR_EACH, "for-each", fixed (2));
   init (EXTERN, "extern", repeat (1, 1)); // func and args
   init (INCLUDE, "include", fixed (1));
   init (USE_PACKAGE, "use-package", repeat (1, 1));
@@ -197,11 +202,6 @@ init_std_drd () {
   init (LESSEQ, "lesseq", fixed (2) -> name ("less or equal"));
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
-  init (IF, "if", options (2, 1));
-  init (VAR_IF, "if*", fixed (2));
-  init (CASE, "case", repeat (2, 1));
-  init (WHILE, "while", fixed (2));
-  init (FOR_EACH, "for-each", fixed (2));
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));

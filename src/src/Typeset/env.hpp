@@ -154,6 +154,9 @@ private:
   void exec_until_with (tree t, path p);
   bool exec_until_with (tree t, path p, string var, int level);
   tree exec_drd_props (tree t);
+  tree exec_compound (tree t);
+  void exec_until_compound (tree t, path p);
+  bool exec_until_compound (tree t, path p, string var, int level);
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_quote_value (tree t);
@@ -164,9 +167,10 @@ private:
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
   tree exec_quasiquoted (tree t);
-  tree exec_compound (tree t);
-  void exec_until_compound (tree t, path p);
-  bool exec_until_compound (tree t, path p, string var, int level);
+  tree exec_if (tree t);
+  tree exec_case (tree t);
+  tree exec_while (tree t);
+  tree exec_for_each (tree t);
   tree exec_use_package (tree t);
 
   tree exec_or (tree t);
@@ -194,10 +198,6 @@ private:
   tree exec_lesseq (tree t);
   tree exec_greater (tree t);
   tree exec_greatereq (tree t);
-  tree exec_if (tree t);
-  tree exec_case (tree t);
-  tree exec_while (tree t);
-  tree exec_for_each (tree t);
 
   tree exec_point (tree t);
 

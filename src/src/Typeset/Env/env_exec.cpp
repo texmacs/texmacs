@@ -185,6 +185,15 @@ edit_env_rep::exec (tree t) {
     return exec_quasiquoted (t[0]);
   case UNQUOTE:
     return exec (t[0]);
+  case IF:
+  case VAR_IF:
+    return exec_if (t);
+  case CASE:
+    return exec_case (t);
+  case WHILE:
+    return exec_while (t);
+  case FOR_EACH:
+    return exec_for_each (t);
   case EXTERN:
     return exec_rewrite (t);
   case INCLUDE:
@@ -242,15 +251,6 @@ edit_env_rep::exec (tree t) {
     return exec_greater (t);
   case GREATEREQ:
     return exec_greatereq (t);
-  case IF:
-  case VAR_IF:
-    return exec_if (t);
-  case CASE:
-    return exec_case (t);
-  case WHILE:
-    return exec_while (t);
-  case FOR_EACH:
-    return exec_for_each (t);
 
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
@@ -539,6 +539,65 @@ edit_env_rep::exec_quasiquoted (tree t) {
     for (i=0; i<n; i++) r[i]= exec_quasiquoted (t[i]);
     return r;
   }
+}
+
+tree
+edit_env_rep::exec_if (tree t) {
+  // This case must be kept consistent with
+  // concater_rep::typeset_if(tree, path)
+  // in ../Concat/concat_active.cpp
+  if ((N(t)!=2) && (N(t)!=3)) return tree (ERROR, "bad if");
+  tree tt= exec (t[0]);
+  if (is_compound (tt) || !is_bool (tt->label))
+    return tree (ERROR, "bad if");
+  if (as_bool (tt->label)) return exec (t[1]);
+  if (N(t)==3) return exec (t[2]);
+  return "";
+}
+
+tree
+edit_env_rep::exec_case (tree t) {
+  // This case must be kept consistent with
+  // concater_rep::typeset_case(tree, path)
+  // in ../Concat/concat_active.cpp
+  if (N(t)<2) return tree (ERROR, "bad case");
+  int i, n= N(t);
+  for (i=0; i<(n-1); i+=2) {
+    tree tt= exec (t[i]);
+    if (is_compound (tt) || ! is_bool (tt->label))
+      return tree (ERROR, "bad case");
+    if (as_bool (tt->label)) return exec (t[i+1]);
+  }
+  if (i<n) return exec (t[i]);
+  return "";
+}
+
+tree
+edit_env_rep::exec_while (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad while");
+  tree r (CONCAT);
+  while (1) {
+    tree tt= exec (t[0]);
+    if (is_compound (tt)) return tree (ERROR, "bad while");
+    if (! is_bool (tt->label)) return tree (ERROR, "bad while");
+    if (! as_bool(tt->label)) break;
+    r << exec (t[1]);
+  }
+  if (N(r) == 0) return "";
+  if (N(r) == 1) return r[0];
+  return r;
+}
+
+tree
+edit_env_rep::exec_for_each (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad for each");
+  tree fun = exec (t[0]);
+  tree args= exec (t[1]);
+  if (!is_tuple (args)) return tree (ERROR, "bad for each");
+  int i, n= N(args);
+  for (i=0; i<n; i++)
+    exec (tree (COMPOUND, fun, args[i]));
+  return "";
 }
 
 static tree
@@ -978,65 +1037,6 @@ edit_env_rep::exec_greatereq (tree t) {
 }
 
 tree
-edit_env_rep::exec_if (tree t) {
-  // This case must be kept consistent with
-  // concater_rep::typeset_if(tree, path)
-  // in ../Concat/concat_active.cpp
-  if ((N(t)!=2) && (N(t)!=3)) return tree (ERROR, "bad if");
-  tree tt= exec (t[0]);
-  if (is_compound (tt) || !is_bool (tt->label))
-    return tree (ERROR, "bad if");
-  if (as_bool (tt->label)) return exec (t[1]);
-  if (N(t)==3) return exec (t[2]);
-  return "";
-}
-
-tree
-edit_env_rep::exec_case (tree t) {
-  // This case must be kept consistent with
-  // concater_rep::typeset_case(tree, path)
-  // in ../Concat/concat_active.cpp
-  if (N(t)<2) return tree (ERROR, "bad case");
-  int i, n= N(t);
-  for (i=0; i<(n-1); i+=2) {
-    tree tt= exec (t[i]);
-    if (is_compound (tt) || ! is_bool (tt->label))
-      return tree (ERROR, "bad case");
-    if (as_bool (tt->label)) return exec (t[i+1]);
-  }
-  if (i<n) return exec (t[i]);
-  return "";
-}
-
-tree
-edit_env_rep::exec_while (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad while");
-  tree r (CONCAT);
-  while (1) {
-    tree tt= exec (t[0]);
-    if (is_compound (tt)) return tree (ERROR, "bad while");
-    if (! is_bool (tt->label)) return tree (ERROR, "bad while");
-    if (! as_bool(tt->label)) break;
-    r << exec (t[1]);
-  }
-  if (N(r) == 0) return "";
-  if (N(r) == 1) return r[0];
-  return r;
-}
-
-tree
-edit_env_rep::exec_for_each (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad for each");
-  tree fun = exec (t[0]);
-  tree args= exec (t[1]);
-  if (!is_tuple (args)) return tree (ERROR, "bad for each");
-  int i, n= N(args);
-  for (i=0; i<n; i++)
-    exec (tree (COMPOUND, fun, args[i]));
-  return "";
-}
-
-tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1261,6 +1261,11 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case QUASI:
   case QUASIQUOTE:
   case UNQUOTE:
+  case IF:
+  case VAR_IF:
+  case CASE:
+  case WHILE:
+  case FOR_EACH:
     (void) exec (t);
     return false;
   case EXTERN:
@@ -1292,11 +1297,6 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case LESSEQ:
   case GREATER:
   case GREATEREQ:
-  case IF:
-  case VAR_IF:
-  case CASE:
-  case WHILE:
-  case FOR_EACH:
     (void) exec (t);
     return false;
   case STYLE_ONLY:

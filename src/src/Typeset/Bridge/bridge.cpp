@@ -42,7 +42,6 @@ static tree inactive_m
   (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*"));
 static tree var_inactive_m
   (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*"));
-		     
 
 bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
