@@ -15,7 +15,8 @@
 (texmacs-module (texmacs edit edit-hybrid)
   (:use
     (texmacs edit edit-text) (texmacs edit edit-table)
-    (texmacs edit edit-session) (texmacs edit edit-fold))
+    (texmacs edit edit-session) (texmacs edit edit-fold)
+    (texmacs edit edit-title))
   (:export
     make-return make-shift-return
     structured-insert-left structured-insert-right
@@ -54,6 +55,8 @@
 	 (if (inside? "make-title")
 	     (make-header 'address)
 	     (return-sectional)))
+	((== x "doc-title") (make-doc-data-element 'doc-author-data))
+	((== x "author-name") (make-author-data-element 'author-address))
 	((in? x '("part" "part*" "chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"
 		  "section*" "subsection*" "subsubsection*"
@@ -75,7 +78,7 @@
 (define (make-return)
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
-		   "title" "author"
+		   "title" "author" "doc-title" "author-name"
 		   "part" "part*" "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
 		   "section*" "subsection*" "subsubsection*"

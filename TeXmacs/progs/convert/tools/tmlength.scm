@@ -23,7 +23,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmlength-value? number?)
-(define tmlength-unit? string-locase-alpha?)
+(define (tmlength-unit? x)
+  (and (symbol? x) (string-locase-alpha? (symbol->string x))))
 
 (define (tmlength-check-value x)
   (if (not (tmlength-value? x))
@@ -102,7 +103,7 @@
 		    #f (string->symbol unit-str))))
       (cond ((and (not unit) (not (zero? value))) #f)
 	    ((not unit) (tmlength))
-	    ((not (tmlength-unit? unit)) #f)
+	    ((not (tmlength-unit? unit)) (tmlength))
 	    (else (tmlength value unit))))))
 
 (tm-define (tmlength->string tmlen)

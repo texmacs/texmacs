@@ -79,16 +79,22 @@
 	("Insert title" (make-doc-data)))
   ---
   (when (inside? "doc-data")
-	("Title" (make-doc-data-element 'doc-title))
+	;;("Title" (make-doc-data-element 'doc-title))
+	("Subtitle" (make-doc-data-element 'doc-subtitle))
 	(-> "Author" (link author-menu))
-	("Date" (make-doc-data-element 'doc-date))
-	;;---
-	;;("TeXmacs notice" (make 'made-by-TeXmacs))
-	;;("Running title" (make-header 'header-title))
-	;;("Running author" (make-header 'header-author))
-	;;("Today" (begin (make-header 'title-date)
-	;;(make-arity 'date 0)
-	)
+	(-> "Date"
+	    ("Default" (make-doc-data-element 'doc-date))
+	    ("Today"
+	     (begin (make-doc-data-element 'doc-date) (make-arity 'date 0))))
+	(-> "Hidden"
+	    ("Show hidden" (doc-show-hidden))
+	    ---
+	    ("Runnig title" (make-doc-data-element 'doc-running-title))
+	    ("Runnig author" (make-doc-data-element 'doc-running-author))
+	    ("TeXmacs notice" (make-doc-data-element 'doc-texmacs-notice))
+	    ("Keywords" (make-doc-data-element 'doc-keywords))
+	    ("A.M.S. subject classification"
+	     (make-doc-data-element 'doc-AMS-class))))
   ---
   (when (and (not (inside? "doc-data")) (not (inside? "abstract")))
 	("Abstract" (make 'abstract)))

@@ -112,6 +112,8 @@
 
   <assign|map|<macro|f|args|<extern|ext-map|<arg|f>|<arg|args>>>>
 
+  <assign|concat-tuple|<macro|args|sep|fin|<extern|ext-concat-tuple|<arg|args>|<arg|sep>|<arg|fin>>>>
+
   <assign|set-header|<macro|s|<assign|page-odd-header|<arg|s>><assign|page-even-header|<arg|s>>>>
 
   <assign|set-footer|<macro|s|<assign|page-odd-footer|<arg|s>><assign|page-even-footer|<arg|s>>>>
