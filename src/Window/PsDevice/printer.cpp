@@ -162,7 +162,7 @@ printer_rep::next_page () {
   cfn = "";
   xpos= 0;
   ypos= 0;
- }
+}
 
 void
 printer_rep::define (string s, string defn) {
