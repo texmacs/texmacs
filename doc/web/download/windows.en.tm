@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.4.4>
 
 <style|tmweb>
 
@@ -54,8 +54,9 @@
   <\itemize>
     <item>The online help system (using <key|F1>) is broken.
 
-    <item>Connections via pipes are still under development. Therefore, you
-    cannot use <TeXmacs> as an interface to computer algebra systems.
+    <item>Connections via pipes are still under development. Some interfaces
+    work (<name|Pari> and <name|Yacas>), but others don't. Any help with
+    getting these other ones working would be appreciated.
 
     <item>In order to compile bibliographies, you need <name|Bib><TeX> (which
     is provided as part of <name|Mik><TeX>).
