@@ -171,7 +171,7 @@ bridge_auto_rep::my_typeset (int desired_status) {
   tree oldv= env->read (PREAMBLE);
   env->write_update (PREAMBLE, "false");
   initialize ();
-  // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+  ttt->insert_marker (st, ip);
   body->typeset (desired_status);
   env->write_update (PREAMBLE, oldv);
   env->macro_arg= env->macro_arg->next;

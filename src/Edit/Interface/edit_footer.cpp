@@ -156,7 +156,9 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case WITH: r= "with#" * get_with_text (st); break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
+  case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
   case ARG: r= "argument#" * as_string (st[0]); break;
+  case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;

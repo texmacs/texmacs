@@ -180,7 +180,9 @@ edit_text_rep::remove_text (bool forward) {
       go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
+    case QUOTE_VALUE:
     case ARG:
+    case QUOTE_ARG:
       if (N(t) == 1) back_monolithic (p);
       else back_general (p, forward);
       return;

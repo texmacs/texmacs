@@ -150,8 +150,10 @@ init_std_drd () {
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
   init (PROVIDES, "provides", fixed (1));
   init (VALUE, "value", fixed (1));
+  init (QUOTE_VALUE, "quote-value", fixed (1) -> name ("quoted value"));
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
   init (DRD_PROPS, "drd-props", repeat (3, 2) -> name ("drd properties"));
+  init (QUOTE_ARG, "quote-arg", repeat (1, 1) -> name ("quoted argument"));
   init (ARG, "arg", repeat (1, 1) -> name ("argument"));
   init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"

@@ -151,12 +151,16 @@ edit_env_rep::exec (tree t) {
     return exec_provides (t);
   case VALUE:
     return exec_value (t);
+  case QUOTE_VALUE:
+    return exec_quote_value (t);
   case MACRO:
     return copy (t);
   case DRD_PROPS:
     return exec_drd_props (t);
   case ARG:
-    return exec_argument (t);
+    return exec_arg (t);
+  case QUOTE_ARG:
+    return exec_quote_arg (t);
   case COMPOUND:
     return exec_compound (t);
   case XMACRO:
@@ -453,7 +457,14 @@ edit_env_rep::exec_value (tree t) {
 }
 
 tree
-edit_env_rep::exec_argument (tree t) {
+edit_env_rep::exec_quote_value (tree t) {
+  tree r= t[0];
+  if (is_compound (r)) return tree (ERROR, "bad quoted value");
+  return read (r->label);
+}
+
+tree
+edit_env_rep::exec_arg (tree t) {
   tree r= t[0];
   if (is_compound (r))
     return tree (ERROR, "bad argument application");
@@ -481,26 +492,35 @@ edit_env_rep::exec_argument (tree t) {
 }
 
 tree
-edit_env_rep::exec_get_label (tree t) {
-  tree r;
-  if (is_func (t[0], ARG, 1)) {
-    if (nil (macro_arg))
-      return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
-    r= macro_arg->item [as_string (t[0][0])];
+edit_env_rep::exec_quote_arg (tree t) {
+  tree r= t[0];
+  if (is_compound (r))
+    return tree (ERROR, "bad quoted argument application");
+  if (nil (macro_arg) || (!macro_arg->item->contains (r->label)))
+    return tree (ERROR, "quoted argument " * r->label);
+  r= macro_arg->item [r->label];
+  if (N(t) > 1) {
+    int i, n= N(t);
+    for (i=1; i<n; i++) {
+      tree u= exec (t[i]);
+      if (!is_int (u)) break;
+      int nr= as_int (u);
+      if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
+      r= r[nr];
+    }
   }
-  else r= exec (t[0]);
+  return r;
+}
+
+tree
+edit_env_rep::exec_get_label (tree t) {
+  tree r= exec (t[0]);
   return copy (as_string (L(r)));
 }
 
 tree
 edit_env_rep::exec_get_arity (tree t) {
-  tree r;
-  if (is_func (t[0], ARG, 1)) {
-    if (nil (macro_arg))
-      return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
-    r= macro_arg->item [as_string (t[0][0])];
-  }
-  else r= exec (t[0]);
+  tree r= exec (t[0]);
   return as_string (arity (r));
 }
 
@@ -1173,12 +1193,18 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     */
     (void) exec (t);
     return false;
+  case QUOTE_VALUE:
+    (void) exec (t);
+    return false;
   case MACRO:
   case DRD_PROPS:
     (void) exec (t);
     return false;
   case ARG:
-    return exec_until_argument (t, p, var, level);
+    return exec_until_arg (t, p, var, level);
+  case QUOTE_ARG:
+    (void) exec (t);
+    return false;
   case COMPOUND:
     return exec_until_compound (t, p, var, level);
   case XMACRO:
@@ -1356,7 +1382,7 @@ edit_env_rep::exec_until_compound (tree t, path p, string var, int level) {
 }
 
 bool
-edit_env_rep::exec_until_argument (tree t, path p, string var, int level) {
+edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
   // cout << "  " << macro_arg << "\n";
   tree r= t[0];
   if (is_atomic (r) && (!nil (macro_arg)) &&
@@ -1417,7 +1443,7 @@ edit_env_rep::exec_until_argument (tree t, path p, string var, int level) {
 tree
 edit_env_rep::expand (tree t) {
   if (is_atomic (t) || nil (macro_arg)) return t;
-  else if (is_func (t, ARG)) {
+  else if (is_func (t, ARG) || is_func (t, QUOTE_ARG)) {
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
@@ -1437,7 +1463,7 @@ edit_env_rep::expand (tree t) {
 	r= r[nr];
       }
     }
-    r= expand (r);
+    if (is_func (t, ARG)) r= expand (r);
     macro_arg= old_var;
     macro_src= old_src;
     return r;
@@ -1460,6 +1486,7 @@ edit_env_rep::depends (tree t, string s, int level) {
 
   if (is_atomic (t) || nil (macro_arg)) return false;
   else if (is_func (t, ARG) ||
+	   is_func (t, QUOTE_ARG) ||
 	   is_func (t, MAP_ARGS) ||
 	   is_func (t, EVAL_ARGS))
     {

@@ -349,6 +349,9 @@ concater_rep::typeset (tree t, path ip) {
   case PROVIDES:
     typeset_executable (t, ip);
     break;
+  case QUOTE_VALUE:
+    typeset_inactive (t, ip);
+    break;
   case VALUE:
     typeset_value (t, ip);
     break;
@@ -360,6 +363,9 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case ARG:
     typeset_argument (t, ip);
+    break;
+  case QUOTE_ARG:
+    typeset_inactive (t, ip);
     break;
   case COMPOUND:
     typeset_compound (t, ip);

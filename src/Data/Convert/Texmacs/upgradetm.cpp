@@ -39,6 +39,8 @@ get_codes (string version) {
 
   if (version_inf ("1.0.3.3", version)) return H;
 
+  new_feature (H, "quote-value");
+  new_feature (H, "quote-arg");
   new_feature (H, "mark");
   new_feature (H, "style-only");
   new_feature (H, "style-only*");

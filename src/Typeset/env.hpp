@@ -153,8 +153,10 @@ private:
   tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);
-  tree exec_argument (tree t);
-  bool exec_until_argument (tree t, path p, string var, int level);
+  tree exec_quote_value (tree t);
+  tree exec_arg (tree t);
+  bool exec_until_arg (tree t, path p, string var, int level);
+  tree exec_quote_arg (tree t);
   tree exec_get_label (tree t);
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
