@@ -37,7 +37,7 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
-  if (version_inf ("1.0.3.5", version)) return H;
+  if (version_inf ("1.0.3.4", version)) return H;
 
   new_feature (H, "for-each");
   new_feature (H, "quasi");
@@ -2089,8 +2089,9 @@ static charp style_rename []= {
   "theorem*", "render-theorem",
   "remark*", "render-remark",
   "exercise*", "render-exercise",
-  "small-table*", "render-small-table",
-  "big-table*", "render-big-table",
+  "proof*", "render-proof",
+  "small-figure*", "render-small-figure",
+  "big-figure*", "render-big-figure",
 
   "theanswer", "the-answer",
   "thealgorithm", "the-algorithm",
@@ -2236,9 +2237,9 @@ upgrade (tree t, string version) {
     t= upgrade_env_vars (t);
   if (version_inf_eq (version, "1.0.3.3"))
     t= upgrade_use_package (t);
-  if (version_inf_eq (version, "1.0.3.5"))
+  if (version_inf_eq (version, "1.0.3.4"))
     t= upgrade_style_rename (t);
-  if (version_inf_eq (version, "1.0.3.5"))
+  if (version_inf_eq (version, "1.0.3.4"))
     t= upgrade_item_punct (t);
   return t;
 }
