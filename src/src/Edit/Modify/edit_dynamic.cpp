@@ -107,10 +107,12 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
     if (selection_active_small () ||
 	(block_macro && selection_active_normal ()))
       sel= selection_get_cut ();
-    if (block_macro && (!table_macro)) {
-      t[0]= tree (DOCUMENT, "");
-      p   = path (0, 0, 0);
-    }
+    if ((block_macro && (!table_macro)) ||
+	(l == make_tree_label ("footnote")))
+      {
+	t[0]= tree (DOCUMENT, "");
+	p   = path (0, 0, 0);
+      }
     if ((!drd->all_accessible (l)) && (!in_preamble_mode ())) {
       t= tree (INACTIVE, t);
       p= path (0, p);

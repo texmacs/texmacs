@@ -45,7 +45,7 @@
 
   <add-to-counter-group|equation|std-env>
 
-  <add-to-counter-group|footnote|std-en>
+  <add-to-counter-group|footnote|std-env>
 
   <assign|resetstdenv|<macro|<reset-std-env>>>
 
