@@ -26,12 +26,12 @@
     locus-path? not-locus-path? locus-or-not-locus-path?
     get-locus-path get-not-locus-path get-locus-or-not-locus-path
 
-    locus? not-locus? locus-or-not-locus? 
+    locus? not-locus? locus-or-not-locus?
     get-locus get-not-locus get-locus-or-not-locus
-    locus-with-link? 
+    locus-with-link?
 
     locus-text locus-absname locus-id
-    locus-types 
+    locus-types
     locus-self-link locus-links locus-drop-links
 
     make-locus locus-set-text locus-set-text-go-to
@@ -99,11 +99,6 @@
   ;; visible content and extra is the hidden metadata.
   (tuple->list (third t)))
 
-(define (tuple->list x)
-  ;; Strip tree labels recursively from a texmacs snippet in scheme format.
-  (let sub ((x x))
-    (if (not (pair? x)) x (map sub (cdr x)))))
-
 (define (locus-absname t)
   (first (locus-tuple t)))
 
@@ -131,8 +126,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (locus-set-text p x)
-  (tm-assign (rcons p 0)
-             (stree->tree x)))
+  (tm-assign (rcons p 0) x))
 
 (define (locus-set-text-go-to p x ppos)
   (locus-set-text p x)
@@ -140,12 +134,7 @@
 
 (define (locus-set-tuple p l)
   ;; Set the metadata of the locus at @p to the list @l converted to a tuple.
-  (tm-assign (rcons p 1)
-             (stree->tree (list->tuple l))))
-
-(define (list->tuple l)
-  (let sub ((x l))
-    (if (not (pair? x)) x (cons 'tuple (map sub x)))))
+  (tm-assign (rcons p 1) (list->tuple l)))
 
 (define (locus-set-links p links)
   (locus-set-links-flat p (list-concatenate links)))
@@ -256,8 +245,9 @@
   (let sub ((p '()))
     (search-in-tree-from (the-buffer) p 'locus
                          (lambda (p t)
-                           (if (== id (locus-id (tm-substree p)))
-                               p (sub (rcons p 0)))))))
+                           (if (== id (locus-id (tree->stree t)))
+                               (reverse (tree-ip t))
+                               (sub (rcons p 0)))))))
 
 (define (go-to-locus lk)
   (switch-to-active-buffer (absolute-name->url (link-absname lk)))

@@ -69,17 +69,14 @@
 (define (edit-loci)
   (let* ((src-buff (get-strg-name-buffer))
 	 (the-nw-buff (string-append src-buff "-loci"))
-	 (the-tree (stree->tree `(document  ,@(loci-tree)))))
-    (if (not (equal? (texmacs->verbatim the-tree) ""))
+	 (the-loci (extract locus? (tree->stree (the-buffer)))))
+    (if (not (null? the-loci))
 	(begin
           (new-buffer-clear the-nw-buff)
 	  (init-style "proclus-links")
           (set-source-buffer! src-buff)
-	  (insert the-tree)
+	  (tm-assign (the-buffer-path) `(document ,@the-loci))
           (pretend-save-buffer)))))
-
-(define (loci-tree)
-  (extract locus? (tree->stree (the-buffer))))
 
 (define (new-buffer-clear name)
   ;; Create a new buffer with the given name and switch to this buffer. If
@@ -126,7 +123,7 @@
     (init-style "proclus-links")
     (init-env "magnification" "1")
     (set-source-buffer! src-buff)
-    (insert the-stree)
+    (tm-assign (the-buffer-path) the-stree)
     (pretend-save-buffer)))
 
 (define (absname-error . args)

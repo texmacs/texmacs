@@ -136,7 +136,8 @@
 
 (define (has-absolute-name?)
   ;; Has the current buffer been assigned an absolute name?
-  (not (string-null? (get-init-env "absolute-name"))))
+  (and (init-has? "absolute-name")
+       (not (string-null? (get-init-env "absolute-name")))))
 
 (define (check-has-absolute-name where)
   (if (not (has-absolute-name?))
@@ -155,8 +156,8 @@
         (texmacs-error where msg (list buf)))))
 
 (define (has-conflicting-absolute-name?)
-  (and-let* ((absname (get-init-env "absolute-name"))
-             ((not (string-null? absname)))
+  (and-let* (((has-absolute-name?))
+             (absname (get-init-env "absolute-name"))
              ((absolute-name-exists? absname))
              ((not (== (get-strg-name-buffer)
                        (absolute-name->url absname)))))))
@@ -168,8 +169,8 @@
   (register-buffer-absolute-name-maybe))
 
 (define (has-valid-absolute-name?)
-  (and-let* ((absname (get-init-env "absolute-name"))
-             ((not (string-null? absname)))
+  (and-let* (((has-absolute-name?))
+             (absname (get-init-env "absolute-name"))
              ((absolute-name-exists? absname))
              ((== (get-strg-name-buffer)
                   (absolute-name->url absname))))))

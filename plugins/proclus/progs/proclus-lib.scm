@@ -20,7 +20,8 @@
   (:export get-init-env
            get-strg-name-buffer
            tm-substree
-           save-excursion))
+           save-excursion
+           list->tuple tuple->list))
 
 (define (get-init-env s)
   (tree->string (get-init-tree s)))
@@ -40,3 +41,15 @@
            noop
            (lambda () ,@body)
            (lambda () (switch-to-active-buffer ,buf-sym))))))
+
+(define (list->tuple l)
+  ;; Convert a nested scheme list into a stree.
+  (let sub ((x l))
+    (cond ((null? x) '(tuple))
+          ((pair? x) (cons 'tuple (map sub x)))
+          (else x))))
+
+(define (tuple->list x)
+  ;; Strip tree labels recursively from a compound stree or tree.
+  (let sub ((x (if (pair? x) x (tree->stree x))))
+    (if (not (pair? x)) x (map sub (cdr x)))))

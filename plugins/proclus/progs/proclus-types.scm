@@ -56,23 +56,24 @@
 
 (define (list-types)
   (source-buffer-excursion
-   (let ((x (tree->stree (get-init-tree "proclus-type-list"))))
-     (if (func? x 'tuple)
-         (cdr x)
-         '()))))
+   (if (style-has? "proclus-type-list")
+       (tuple->list (get-init-tree "proclus-type-list"))
+       '())))
 
 (define (active-types)
   (source-buffer-excursion
-   (let ((x (tree->stree (get-init-tree "proclus-active-types"))))
-     (if (not (func? x 'tuple))
-         (begin (set-active-types (list-types))
-                (list-types))
-         (cdr x)))))
+   (if (style-has? "proclus-active-types")
+       (tuple->list (get-init-tree "proclus-active-types"))
+       (begin (set-active-types (list-types))
+              (list-types)))))
+
+(define (set-types types)
+  (source-buffer-excursion
+   (init-env-tree "proclus-type-list" (list->tuple types))))
 
 (define (set-active-types types)
   (source-buffer-excursion
-   (init-env-tree "proclus-active-types"
-                  (stree->tree (cons 'tuple types)))))
+   (init-env-tree "proclus-active-types" (list->tuple types))))
 
 (define (types-tree)
   (transform locus? (tree->stree (the-buffer))))
@@ -85,22 +86,12 @@
    
 
 ;;adds the list of  types ltypes to the  type list of the current doc.
-(define (merge-types ltypes) 
-  (init-env-tree "proclus-type-list"
-		 (stree->tree 
-		  (cons 'tuple 
-			(uniq 
-			 (list-concatenate 
-			  (list (list-types) ltypes)))))))
+(define (merge-types types)
+  (set-types (uniq (append (list-types) types))))
 
 ;;adds the list of  types ltypes to the active  types list of the current doc.
-(define (merge-active-types ltypes) 
-  (init-env-tree "proclus-active-types"
-		 (stree->tree 
-		  (cons 'tuple 
-			(uniq 
-			 (list-concatenate 
-			  (list (active-types) ltypes)))))))
+(define (merge-active-types types) 
+  (set-active-types (uniq (append (active-types) types))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level type commands and menu
@@ -182,7 +173,8 @@
   (switch-to-active-buffer u)
   (let ((imp-types (list-types)))
     (switch-to-active-buffer from)
-     (merge-types imp-types)))
+    (merge-types imp-types)
+    (merge-active-types imp-types)))
 
 (define list-types-tmp '())
 
@@ -221,12 +213,10 @@
 		      (begin (set-cons! list-types-tmp s)
 			     (delete-types/sub))))))
 (define (delete-types-rec)
-  (init-env-tree "proclus-type-list" 
-		 (stree->tree 
-		  (cons 'tuple
-			(list-filter 
-			 (list-types) 
-			 (lambda (x) (not (in? x list-types-tmp))))))))
+  (define (f x) (not (in? x list-types-tmp)))
+  (set-types (list-filter (list-types) f))
+  (set-active-types (list-filter (list-active-types) f)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
