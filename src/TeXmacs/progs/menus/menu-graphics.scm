@@ -39,7 +39,8 @@
   (-> "Grid"
       ("Default" (begin (graphics-remove-property "gr-grid")
 			(graphics-remove-property "gr-edit-grid")
-			(graphics-remove-property "gr-grid-aspect")))
+			(graphics-remove-property "gr-grid-aspect")
+			(graphics-remove-property "gr-grid-aspect-props")))
       ---
       (-> "Visual grid"
 	  ("No grid"     (graphics-set-visual-grid 'empty))
@@ -48,16 +49,54 @@
 	      ("Cartesian"   (graphics-set-visual-grid 'cartesian))
     	      ("Polar"       (graphics-set-visual-grid 'polar))
 	      ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
-	  ("Center"           (graphics-set-grid-center-ia #t))
-	  ("Unit length"      (graphics-set-grid-step-ia #t))
-	  ("Nb polar steps"   (graphics-set-grid-astep-ia #t))
-	  ("Logarithmic base" (graphics-set-grid-base-ia #t))
+	  (-> "Center"
+	      ("Default"      (graphics-set-grid-center "0" "0" #t))
+              ---
+	      ("Other" ...    (graphics-set-grid-center-ia #t)))
+	  (-> "Unit length"
+	      ("Default"      (graphics-set-grid-step "1" #t))
+              ---
+	      ("0.05"         (graphics-set-grid-step "0.05" #t))
+	      ("0.1"          (graphics-set-grid-step "0.1" #t))
+	      ("0.2"          (graphics-set-grid-step "0.2" #t))
+	      ("0.4"          (graphics-set-grid-step "0.4" #t))
+	      ("0.5"          (graphics-set-grid-step "0.5" #t))
+	      ("1"            (graphics-set-grid-step "1" #t))
+	      ("2"            (graphics-set-grid-step "2" #t))
+	      ("3"            (graphics-set-grid-step "3" #t))
+	      ("4"            (graphics-set-grid-step "4" #t))
+	      ("5"            (graphics-set-grid-step "5" #t))
+              ---
+	      ("Other" ...    (graphics-set-grid-step-ia #t)))
+	  (-> "Nb polar steps"
+	      ("Default"      (graphics-set-grid-astep "8" #t))
+              ---
+	      ("4"            (graphics-set-grid-astep "4" #t))
+	      ("8"            (graphics-set-grid-astep "8" #t))
+	      ("16"           (graphics-set-grid-astep "16" #t))
+	      ("32"           (graphics-set-grid-astep "32" #t))
+	      ("64"           (graphics-set-grid-astep "64" #t))
+              ---
+	      ("Other" ...    (graphics-set-grid-astep-ia #t)))
+	  (-> "Logarithmic base"
+	      ("6"            (graphics-set-grid-base "6" #t))
+	      ("8"            (graphics-set-grid-base "8" #t))
+	      ("10"           (graphics-set-grid-base "10" #t))
+	      ("16"           (graphics-set-grid-base "16" #t))
+              ---
+	      ("Other" ...    (graphics-set-grid-base-ia #t)))
 	  ---
 	  (-> "Aspect"
 	      ("Properties" ... (graphics-set-grid-aspect-properties-ia))
 	      ---
-	      ("Units only" (graphics-set-grid-aspect 'units-only))
-	      ("Detailed"   (graphics-set-grid-aspect 'detailed))))
+	      ("Units only" (graphics-set-grid-aspect 'units-only #f))
+	      (-> "Detailed"
+		  ("2 subds" (graphics-set-grid-aspect 'detailed 2))
+		  ("3 subds" (graphics-set-grid-aspect 'detailed 3))
+		  ("4 subds" (graphics-set-grid-aspect 'detailed 4))
+		  ("5 subds" (graphics-set-grid-aspect 'detailed 5))
+                  ---
+		  ("Default" (graphics-set-grid-aspect 'detailed #f)))))
       (-> "Edit grid"
 	  ("No grid"     (graphics-set-edit-grid 'empty))
           ---
@@ -65,10 +104,46 @@
 	      ("Cartesian"   (graphics-set-edit-grid 'cartesian))
 	      ("Polar"       (graphics-set-edit-grid 'polar))
 	      ("Logarithmic" (graphics-set-edit-grid 'logarithmic)))
-	  ("Center"           (graphics-set-grid-center-ia #f))
-	  ("Unit length"      (graphics-set-grid-step-ia #f))
-	  ("Nb polar steps"   (graphics-set-grid-astep-ia #f))
-	  ("Logarithmic base" (graphics-set-grid-base-ia #f))))
+	  (-> "Center"
+	      ("Default"      (graphics-set-grid-center "0" "0" #f))
+              ---
+	      ("Other" ...    (graphics-set-grid-center-ia #f)))
+	  (-> "Unit length"
+	      ("Default"      (graphics-set-grid-step "0.1" #f))
+              ---
+	      ("0.025"        (graphics-set-grid-step "0.025" #f))
+	      ("0.05"         (graphics-set-grid-step "0.05" #f))
+	      ("0.1"          (graphics-set-grid-step "0.1" #f))
+	      ("0.2"          (graphics-set-grid-step "0.2" #f))
+	      ("0.4"          (graphics-set-grid-step "0.4" #f))
+	      ("0.5"          (graphics-set-grid-step "0.5" #f))
+	      ("1"            (graphics-set-grid-step "1" #f))
+	      ("2"            (graphics-set-grid-step "2" #f))
+	      ("3"            (graphics-set-grid-step "3" #f))
+	      ("4"            (graphics-set-grid-step "4" #f))
+	      ("5"            (graphics-set-grid-step "5" #f))
+              ---
+	      ("Other" ...    (graphics-set-grid-step-ia #f)))
+	  (-> "Nb polar steps"
+	      ("Default"      (graphics-set-grid-astep "80" #f))
+              ---
+	      ("8"            (graphics-set-grid-astep "8" #f))
+	      ("16"           (graphics-set-grid-astep "16" #f))
+	      ("32"           (graphics-set-grid-astep "32" #f))
+	      ("40"           (graphics-set-grid-astep "40" #f))
+	      ("80"           (graphics-set-grid-astep "80" #f))
+	      ("160"          (graphics-set-grid-astep "160" #f))
+	      ("320"          (graphics-set-grid-astep "320" #f))
+	      ("640"          (graphics-set-grid-astep "640" #f))
+              ---
+	      ("Other" ...    (graphics-set-grid-astep-ia #f)))
+	  (-> "Logarithmic base"
+	      ("6"            (graphics-set-grid-base "6" #f))
+	      ("8"            (graphics-set-grid-base "8" #f))
+	      ("10"           (graphics-set-grid-base "10" #f))
+	      ("16"           (graphics-set-grid-base "16" #f))
+              ---
+	      ("Other" ...    (graphics-set-grid-base-ia #f)))))
   (-> "Extents"
       ("Default" (graphics-remove-property "gr-clip"))
       ---

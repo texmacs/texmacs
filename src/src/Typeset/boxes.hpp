@@ -208,7 +208,7 @@ public:
   virtual void      get_limits (point& lim1, point& lim2);
 
   frame     find_frame (path bp);
-  grid     find_grid (path bp);
+  grid      find_grid (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
 
   virtual SI             graphical_distance (SI x, SI y);

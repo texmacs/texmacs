@@ -139,11 +139,13 @@
 (define graphics-current-base #f)
 
 ;; Fetching/Setting a grid
-(define (graphics-fetch-grid-vars visual?)
-  (set! graphics-current-type "cartesian")
+(define (graphics-fetch-grid-vars type visual?)
+  (set! graphics-current-type (if type (symbol->string type) "cartesian"))
   (set! graphics-current-center '(point "0" "0"))
-  (set! graphics-current-step "1")
-  (set! graphics-current-astep "8")
+  (set! graphics-current-step
+	(if (or visual?
+		(equal? graphics-current-type "logarithmic")) "1" "0.1"))
+  (set! graphics-current-astep (if visual? "8" "80"))
   (set! graphics-current-base "10")
   (with grid (tree->stree (get-env-tree (if visual? "gr-grid" "gr-edit-grid")))
     (cond ((match? grid '(tuple "cartesian"))
@@ -221,12 +223,12 @@
           )))
 
 (define (graphics-set-visual-grid type)
-  (graphics-fetch-grid-vars #t)
+  (graphics-fetch-grid-vars type #t)
   (set! graphics-current-type (symbol->string type))
   (graphics-set-grid #t))
 
 (define (graphics-set-edit-grid type)
-  (graphics-fetch-grid-vars #f)
+  (graphics-fetch-grid-vars type #f)
   (set! graphics-current-type (symbol->string type))
   (graphics-set-grid #f))
 
@@ -235,22 +237,22 @@
   (interactive prompt (lambda (x) (func x visual?))))
 
 (define (graphics-set-grid-center x y visual?)
-  (graphics-fetch-grid-vars visual?)
+  (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-center `(point ,x ,y))
   (graphics-set-grid visual?))
 
 (define (graphics-set-grid-step val visual?)
-  (graphics-fetch-grid-vars visual?)
+  (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-step val)
   (graphics-set-grid visual?))
 
 (define (graphics-set-grid-astep val visual?)
-  (graphics-fetch-grid-vars visual?)
+  (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-astep val)
   (graphics-set-grid visual?))
 
 (define (graphics-set-grid-base val visual?)
-  (graphics-fetch-grid-vars visual?)
+  (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-base val)
   (graphics-set-grid visual?))
 
@@ -293,7 +295,7 @@
 	      '(tuple (tuple "axes" "#808080") (tuple "1" "#c0c0c0")
 		      (tuple "10" "#e0e0ff")))))))
 
-(define (graphics-set-grid-aspect type)
+(define (graphics-set-grid-aspect type nsubd)
   (define (cmp x y)
     (if (equal? (cadr x) "axes")
         #t
@@ -305,13 +307,16 @@
 	  (< xval yval))))
   )
   (with aspect (graphics-grid-aspect-props)
+    (set! aspect (cons 'tuple (sort (cdr aspect) cmp)))
     (cond ((eq? type 'units-only)
 	   (graphics-set-property "gr-grid-aspect-props" aspect)
-           (set! aspect (cons 'tuple (sort (cdr aspect) cmp)))
 	   (set-cdr! (cddr aspect) '())
 	   (graphics-set-property "gr-grid-aspect" aspect)
 	  )
 	  ((eq? type 'detailed)
+           (if nsubd (begin
+               (set-car! (cdr (list-ref aspect 3)) nsubd)
+           ))
 	   (graphics-set-property "gr-grid-aspect" aspect)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
