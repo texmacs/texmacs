@@ -39,6 +39,7 @@ get_codes (string version) {
 
   if (version_inf ("1.0.4.1", version)) return H;
 
+  new_feature (H, "copy");
   new_feature (H, "cm-length");
   new_feature (H, "mm-length");
   new_feature (H, "in-length");
@@ -2245,6 +2246,131 @@ substitute (tree t, tree which, tree by) {
 }
 
 /******************************************************************************
+* Upgrading title information
+******************************************************************************/
+
+static tree doc_keywords;
+static tree doc_ams_class;
+
+static void
+abstract_add (tree& data, tree what) {
+  if (is_func (what, DOCUMENT, 1)) what= what[0];
+  if (is_atomic (what)) {
+    string s= what->label;
+    int i, start, n= N(s);
+    for (i=start=0; i<n; )
+      if (s[i] == ',') {
+	int next= i+1;
+	while ((i>start) && (s[i-1]==' ')) i--;
+	data << s (start, i);
+	i= next; if (s[i] == ' ') i++;
+	start= i;
+      }
+      else i++;
+    while ((i>start) && (s[i-1]==' ')) i--;
+    data << s (start, i);
+  }
+  else data << what;
+}
+
+static tree
+upgrade_abstract (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "abstract", 1) && is_document (t[0])) {
+    int i, n= N(t[0]);
+    tree r (DOCUMENT);
+    for (i=0; i<n; i++)
+      if (is_compound (t[0][i], "keywords", 1))
+	abstract_add (doc_keywords, t[0][i][0]);
+      else if (is_compound (t[0][i], "AMS-class"))
+	abstract_add (doc_ams_class, t[0][i][0]);
+      else r << t[0][i];
+    if (N(r) == 0) r << "";
+    return compound ("abstract", r);
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_abstract (t[i]);
+    return r;
+  }
+}
+
+static tree
+search_title_tag (tree t, string tag, bool flag= false) {
+  if (is_atomic (t)) return tuple ();
+  else if (is_compound (t, tag, 1)) return tuple (t[0]);
+  else if (flag && is_compound (t, tag)) return tuple (t);
+  else {
+    int i, n= N(t);
+    tree r (TUPLE);
+    for (i=0; i<n; i++)
+      r << A (search_title_tag (t[i], tag, flag));
+    return r;
+  }
+}
+
+static void
+title_add (tree& data, string tag, tree args, bool flag= false) {
+  int i, n= N(args);
+  for (i=0; i<n; i++) {
+    tree t= args[i];
+    if (flag && (!is_document (t))) t= tree (DOCUMENT, t);
+    if ((!flag) && is_func (t, DOCUMENT, 1)) t= t[0];
+    data << compound (tag, t);
+  }
+}
+
+static tree
+upgrade_title2 (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "make-title")) {
+    tree data       = compound ("doc-data");
+    tree author_data= compound ("doc-author-data");
+
+    tree title   = search_title_tag (t, "title");
+    tree author  = search_title_tag (t, "author");
+    tree address = search_title_tag (t, "address");
+    tree email   = search_title_tag (t, "title-email");
+    tree date    = search_title_tag (t, "title-date");
+    tree rtitle  = search_title_tag (t, "header-title");
+    tree rauthor = search_title_tag (t, "header-author");
+    tree notice  = search_title_tag (t, "made-by-TeXmacs", true);
+
+    title_add (data, "doc-title", title);
+    title_add (author_data, "author-name", author);
+    title_add (author_data, "author-address", address, true);
+    title_add (author_data, "author-email", email);
+    if (N (author_data) != 0) data << author_data;
+    title_add (data, "doc-date", date);
+    title_add (data, "doc-running-title", rtitle);
+    title_add (data, "doc-running-author", rauthor);
+    if (N (doc_keywords) != 0) data << doc_keywords;
+    if (N (doc_ams_class) != 0) data << doc_ams_class;
+    if (N (notice) != 0)
+      data << compound ("doc-note", compound ("with-TeXmacs-text"));
+    return data;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_title2 (t[i]);
+    return r;
+  }
+}
+
+static tree
+upgrade_doc_info (tree t) {
+  doc_keywords = compound ("doc-keywords");
+  doc_ams_class= compound ("doc-AMS-class");
+  t= upgrade_abstract (t);
+  t= upgrade_title2 (t);
+  return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2270,6 +2396,7 @@ upgrade_tex (tree t) {
   t= upgrade_style_rename (t);
   t= upgrade_item_punct (t);
   t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
+  t= upgrade_doc_info (t);
   return t;
 }
 
@@ -2331,7 +2458,9 @@ upgrade (tree t, string version) {
     t= upgrade_item_punct (t);
   if (version_inf_eq (version, "1.0.3.7"))
     t= upgrade_page_pars (t);
-  if (version_inf_eq (version, "1.0.4"))
+  if (version_inf_eq (version, "1.0.4")) {
     t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
+    t= upgrade_doc_info (t);
+  }
   return t;
 }
