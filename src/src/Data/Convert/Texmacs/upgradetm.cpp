@@ -2165,7 +2165,6 @@ tree
 upgrade_page_pars (tree t) {
   if (is_atomic (t)) return t;
   else if (L(t) == COLLECTION) {
-    cout << "t= " << t << "\n";
     int i, n= N(t);
     tree r (COLLECTION);
     for (i=0; i<n; i++) {
@@ -2182,6 +2181,7 @@ upgrade_page_pars (tree t) {
       else if (u[0] == "page-reduce-right");
       else if (u[0] == "page-reduce-top");
       else if (u[0] == "page-reduce-bot");
+      else if (u[0] == "sfactor");
       else r << u;
     }
     return r;
