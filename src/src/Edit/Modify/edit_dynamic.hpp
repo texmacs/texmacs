@@ -38,7 +38,6 @@ public:
   bool make_big_compound (string s);
   void make_compound (string s, int n=0);
   void temp_proof_fix ();
-  void make_apply (string s);
   void go_to_argument (path p, bool start_flag);
   void insert_argument (bool forward);
   void insert_argument (path p, bool forward);

@@ -183,7 +183,6 @@
   (make-compound make_compound (void string))
   (make-compound-arity make_compound (void string int))
   (temp-proof-fix temp_proof_fix (void))
-  (make-apply make_apply (void string))
 
   (view-set-property set_property (void scheme_tree scheme_tree))
   (view-get-property get_property (scheme_tree scheme_tree))

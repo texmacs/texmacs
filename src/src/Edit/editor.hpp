@@ -322,7 +322,6 @@ public:
   virtual bool make_big_compound (string s) = 0;
   virtual void make_compound (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
-  virtual void make_apply (string s) = 0;
   virtual void go_to_argument (path p, bool start_flag) = 0;
   virtual void insert_argument (bool forward) = 0;
   virtual void insert_argument (path p, bool forward) = 0;
