@@ -66,7 +66,7 @@ edit_env_rep::rewrite (tree t) {
       object o= eval (s);
       current_rewrite_env= old_env;
       current_rewrite_env_unspecified= old_env_unspecified;
-      return object_to_tree (o);
+      return stree_to_tree (o);
     }
   case MAP_ARGS:
     {

@@ -20,7 +20,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "tm_layout.hpp"
-#include "concater.hpp"
+#include "Concat/concater.hpp"
 #include "converter.hpp"
 #include "timer.hpp"
 #include "Metafont/tex_files.hpp"
@@ -277,6 +277,12 @@ print_tree (SCM tree_smob, SCM port, scm_print_state *pstate) {
 static SCM
 cmp_tree (SCM t1, SCM t2) {
   return scm_bool2scm (scm_to_tree (t1) == scm_to_tree (t2));
+}
+
+static SCM
+treeP (SCM t) {
+  bool b= scm_is_tree (t);
+  return bool_to_scm (b);
 }
 
 tree
@@ -809,6 +815,7 @@ initialize_glue () {
   scm_set_smob_free (url_tag, free_url);
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
+  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();
@@ -848,6 +855,7 @@ initialize_glue () {
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
+  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();
