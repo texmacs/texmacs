@@ -30,7 +30,7 @@
   paragraph subparagraph)
 
 (drd-group tmpre-theorem-env%
-  theorem proposition lemma corollary axiom definition conjecture
+  theorem proposition lemma corollary axiom definition notation conjecture
   remark note example exercise warning convention)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
