@@ -673,6 +673,7 @@ struct transformed_curve_rep: public curve_rep {
   double curvature (double t1, double t2) {
     fatal_error ("Not yet implemented",
 	         "transformed_curve_rep::curvature");
+    return 0.0;
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
