@@ -30,73 +30,73 @@ a technical drawing editor and a presentation mode.
 .SH DESCRIPTION
 .TP
 \fB\-b [file]\fR, \fB\-\-initialize\-buffer [file]\fR
-    Uses [file] as a guile/scheme initialization file for TeXmacs buffers.
+Uses [file] as a guile/scheme initialization file for TeXmacs buffers.
 .TP
 \fB\-c [in] [out]\fR, \fB\-\-convert [in] [out]\fR
-    Convert input file [in] into output file [out].
-    The file formats are determined automatically
-    from the suffixes and as a function of the contents of [in].
-    The argument list may contain several conversion instructions and
-    you will usually want to use this option in combination with --quit.
+Convert input file [in] into output file [out].
+The file formats are determined automatically
+from the suffixes and as a function of the contents of [in].
+The argument list may contain several conversion instructions and
+you will usually want to use this option in combination with --quit.
 .TP
 \fB\-d\fR, \fB\-\-debug\fR
-    Display most important debugging information.
+Display most important debugging information.
 .TP
 \fB\-\-debug-events\fR
-    Display all widget events.
+Display all widget events.
 .TP
 \fB\-\-debug-io\fR
-    Display all communicated data between TeXmacs and extern systems.
+Display all communicated data between TeXmacs and extern systems.
 .TP
 \fB\-\-debug-all\fR
-    Turn all debugging flags on.
+Turn all debugging flags on.
 .TP
 \fB\-fn [font]\fR, \fB\-\-font [font]\fR
-    Sets the default TeX fonts for menus and so to [font].
-    The [font] is of the form [name], [name][size] or [name][size]@[dpi].
-    For instance, ecss11@400 would give a sans serif font at 400 dpi.
-    By default, the [size] is 11 and the [dpi] 300.
+Sets the default TeX fonts for menus and so to [font].
+The [font] is of the form [name], [name][size] or [name][size]@[dpi].
+For instance, ecss11@400 would give a sans serif font at 400 dpi.
+By default, the [size] is 11 and the [dpi] 300.
 .TP
 \fB\-g [geom]\fR, \fB\-\-geometry [geom]\fR
-    Suggested geometry for TeXmacs windows.
-    Here [geom] may be a size [width x height] in pixels,
-    like in `texmacs -g 600x480'.
-    It may also take the form [width x height [+|-] xoff [+|-] yoff],
-    like in `texmacs -g 800x600-100+100'.
+Suggested geometry for TeXmacs windows.
+Here [geom] may be a size [width x height] in pixels,
+like in `texmacs -g 600x480'.
+It may also take the form [width x height [+|-] xoff [+|-] yoff],
+like in `texmacs -g 800x600-100+100'.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-    Display a help message, which lists the command line options of TeXmacs.
+Display a help message, which lists the command line options of TeXmacs.
 .TP
 \fB\-i [file]\fR, \fB\-\-initialize [file]\fR
-    Uses [file] as a guile/scheme initialization file for TeXmacs.
+Uses [file] as a guile/scheme initialization file for TeXmacs.
 .TP
 \fB\-p\fR, \fB\-\-path\fR
-    Echo the TeXmacs path.
+Echo the TeXmacs path.
 .TP
 \fB\-q\fR, \fB\-\-quit\fR
-    Shortcut for the option -x "(quit-TeXmacs)".
+Shortcut for the option -x "(quit-TeXmacs)".
 .TP
 \fB\-s\fR, \fB\-\-silent\fR
-    Silent execution: less messages to standard output.
+Silent execution: less messages to standard output.
 .TP
 \fB\-S\fR, \fB\-\-setup\fR
-    Rerun the setup program before starting TeXmacs.
-    The setup program analyzes your TeX/LaTeX distribution and
-    the plugins which are installed on your system.
+Rerun the setup program before starting TeXmacs.
+The setup program analyzes your TeX/LaTeX distribution and
+the plugins which are installed on your system.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
-    Display the current TeXmacs version.
+Display the current TeXmacs version.
 .TP
 \fB\-x\fR, \fB\-\-execute [cmd]\fR
-    Execute the scheme command [cmd] just after startup.
-    If you specify several -x options, then the corresponding
-    scheme commands are executed in the same order.
+Execute the scheme command [cmd] just after startup.
+If you specify several -x options, then the corresponding
+scheme commands are executed in the same order.
 .TP
 \fB\-Oc\fR, \fB\-\-no\-char\-clipping\fR
-    Faster but less perfect displaying of anti-aliased fonts.
+Faster but less perfect displaying of anti-aliased fonts.
 .TP
 \fB\+Oc\fR, \fB\-\-char\-clipping\fR
-    High quality displaying of anti-aliased fonts (default).
+High quality displaying of anti-aliased fonts (default).
 .PP
 .SH AUTHOR
 Written by Joris van der Hoeven
