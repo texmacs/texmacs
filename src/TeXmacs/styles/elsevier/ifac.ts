@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.4.7>
 
 <style|source>
 
@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <active*|><use-package|elsart>
+  <active*|><use-package|elsart|two-columns>
 
   <active*|<\src-comment>
     LaTeX-like page layout parameters.
@@ -174,8 +174,8 @@
     Rendering of floating objects.
   </src-comment>>
 
-  <assign|render-big-figure|<\macro|type|name|fig|cap>
-    <with|nr-columns|1|<padded-normal|1fn|1fn|<style-with|src-compact|none|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-valign|b>|<table|<row|<\cell>
+  <assign|render-big-figure-2col|<\macro|type|name|fig|cap>
+    <padded-normal|1fn|1fn|<style-with|src-compact|none|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-valign|b>|<table|<row|<\cell>
       <\with|par-left|<plus|<value|par-left>|4em>>
         \;
 
@@ -183,7 +183,7 @@
           <arg|cap>
         </surround>
       </with>
-    </cell>>|<row|<cell|>>|<row|<cell|<arg|fig>>>>>>>>>
+    </cell>>|<row|<cell|>>|<row|<cell|<arg|fig>>>>>>>>
   </macro>>
 
   <assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<float|footnote||<with|font-size|0.84|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<arg|nr><footnote-sep><label|<merge|footnote-|<arg|nr>>>|<right-flush>|<style-with|src-compact|none|<with|font-shape|right|<arg|body>>>>>>>>>>
@@ -193,7 +193,7 @@
   </src-comment>>
 
   <assign|abstract|<\macro|body>
-    <\with|par-left|17mm|par-right|17mm>
+    <\with|par-columns|1|par-left|17mm|par-right|17mm>
       <surround|<abstract-text><localize|:> |<right-flush>|<arg|body>>
     </with>
   </macro>>
