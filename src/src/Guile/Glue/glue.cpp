@@ -263,7 +263,7 @@ static scm_sizet
 free_tree (SCM tree_smob) {
   tree *ptr = (tree *) SCM_CDR (tree_smob);
   delete ptr;
-  return sizeof (tree); // should be replaced by total size of the tree
+  return 0;
 }
 
 static int
@@ -448,7 +448,7 @@ static scm_sizet
 free_display (SCM display_smob) {
   display *ptr = (display *) SCM_CDR (display_smob);
   delete ptr;
-  return sizeof (display); // should be replaced by total size of the display
+  return 0;
 }
 
 static int
@@ -504,7 +504,7 @@ static scm_sizet
 free_widget (SCM widget_smob) {
   widget *ptr = (widget *) SCM_CDR (widget_smob);
   delete ptr;
-  return sizeof (widget); // should be replaced by total size of the widget
+  return 0;
 }
 
 static int
@@ -557,7 +557,7 @@ free_make_widget (SCM make_widget_smob) {
   make_widget *ptr = (make_widget *) SCM_CDR (make_widget_smob);
   delete ptr;
   // should be replaced by total size of the widget factory
-  return sizeof (make_widget);
+  return 0;
 }
 
 static int
@@ -608,7 +608,7 @@ static scm_sizet
 free_command (SCM command_smob) {
   command *ptr = (command *) SCM_CDR (command_smob);
   delete ptr;
-  return sizeof (command); // should be replaced by total size of the command
+  return 0;
 }
 
 static int
@@ -666,7 +666,7 @@ static scm_sizet
 free_url (SCM url_smob) {
   url *ptr = (url *) SCM_CDR (url_smob);
   delete ptr;
-  return sizeof (url); // should be replaced by total size of the url
+  return 0;
 }
 
 static int
