@@ -1,19 +1,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;; MODULE      : regexp-match.scm
 ;; DESCRIPTION : pattern matching
 ;; COPYRIGHT   : (C) 2002  Joris van der Hoeven
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This module provides a powerful routine for pattern matching for
+;; scheme trees, trees and strings. The patterns may either be regular
+;; expressions, user defined grammars, or user defined predicates.
+;; Moreover, patterns may contain wildcard variables, and the list
+;; of all possible matches is returned.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
 ;; If you don't have this file, write to the Free Software Foundation, Inc.,
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel regexp regexp-match)
   (:export
+    bindings-add match-term match ;; for regexp-select only
     define-grammar-decls ;; for define-grammar macro
     define-grammar
     match?))
@@ -59,6 +64,8 @@
 
 (define (match-not l args pat bl)
   "Matches for @l == @((:not . args) . pat) under bindings @bl."
+  ;; WARNING: the behaviour of this routine w.r.t. bindings
+  ;; has not been investigated in detail
   (if (or (null? l) (not (= (length args) 1))
 	  (not (null? (match l (append args pat) bl)))) '()
       (match (cdr l) pat bl)))
@@ -105,9 +112,8 @@
 			      '()))
 		       ((null? l) '())
 		       ((ahash-ref match-term fpat)
-			(match l
-				(append (ahash-ref match-term fpat) (cdr pat))
-				bl))
+			(with upat (ahash-ref match-term fpat)
+			  (match l (append upat (cdr pat)) bl)))
 		       ((not (apply (eval symb) (list (car l)))) '())
 		       (else (match (cdr l) (cdr pat) bl)))))
 	      ((and (list? fpat) (not (null? fpat)))
@@ -122,9 +128,15 @@
 		       ((list? (car l))
 			(match-any (cdr l) (cdr pat)
 				   (match (car l) fpat bl)))
+		       ((compound-tree? (car l))
+			(match-any (cdr l) (cdr pat)
+				   (match (tree->list (car l)) fpat bl)))
+		       ((string? (car l))
+			(match-any (cdr l) (cdr pat)
+				   (match (string->list (car l)) fpat bl)))
 		       (else '()))))
 	      ((null? l) '())
-	      ((not (== (car l) fpat)) '())
+	      ((not (tm-equal? (car l) fpat)) '())
 	      (else (match (cdr l) (cdr pat) bl))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
