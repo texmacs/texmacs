@@ -23,6 +23,7 @@
 
   ("inactive a" (make-inactive-apply))
   ("inactive A" (make-inactive-map-args))
+  ("inactive c" (make-inactive-compound))
   ("inactive d" (make-inactive-delay))
   ("inactive D" (make-inactive-drd-props))
   ("inactive e" (make-inactive-expand))

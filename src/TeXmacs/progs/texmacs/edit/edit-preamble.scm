@@ -15,7 +15,8 @@
 (texmacs-module (texmacs edit edit-preamble)
   (:export
     ;; executable markup
-    make-inactive-assign make-inactive-with make-inactive-expand
+    make-inactive-assign make-inactive-with
+    make-inactive-compound make-inactive-expand
     make-inactive-var-expand make-inactive-hide-expand make-inactive-apply
     make-inactive-include make-inactive-macro make-inactive-function
     make-inactive-drd-props make-inactive-xmacro
@@ -44,6 +45,7 @@
 
 (define (make-inactive-assign) (make-inactive "assign" 2))
 (define (make-inactive-with) (make-inactive "with" 3))
+(define (make-inactive-compound) (make-inactive "compound" 1))
 (define (make-inactive-expand) (make-inactive "expand" 1))
 (define (make-inactive-var-expand) (make-inactive "var_expand" 1))
 (define (make-inactive-hide-expand) (make-inactive "hide_expand" 1))
