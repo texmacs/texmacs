@@ -23,7 +23,7 @@
 
   <\active*>
     <\src-comment>
-      Layout macros.
+      Layout macros for simple title or block environments.
     </src-comment>
   </active*>
 
@@ -33,13 +33,13 @@
 
   <assign|left-flush|<macro|<htab|0fn|last>>>
 
-  <assign|wide-normal|<macro|body|<surround|<no-indent>|<right-flush>|<arg|body>>>>
+  <assign|wide-normal|<macro|body|<surround|<no-indent>|<htab|0fn|first>|<arg|body>>>>
 
-  <assign|wide-centered|<macro|body|<surround|<no-indent><left-flush>|<right-flush>|<arg|body>>>>
+  <assign|wide-centered|<macro|body|<surround|<no-indent><htab|0fn|last>|<htab|0fn|first>|<arg|body>>>>
 
-  <assign|padded-normal|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent>|<right-flush><vspace|<arg|b>>|<arg|body>>>>
+  <assign|padded-normal|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
 
-  <assign|padded-centered|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent><left-flush>|<right-flush><vspace|<arg|b>>|<arg|body>>>>
+  <assign|padded-centered|<macro|a|b|body|<surround|<vspace*|<arg|a>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|b>>|<arg|body>>>>
 
   <assign|indent-left|<\macro|l|body>
     <\with|par-left|<plus|<value|par-left>|<arg|l>>>
@@ -58,6 +58,12 @@
       <arg|body>
     </with>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Underlining and overlining.
+    </src-comment>
+  </active*>
 
   <\active*>
     <\src-comment>

@@ -120,13 +120,35 @@
 
   <assign|verbatim|<macro|body|<with|font-family|tt|language|verbatim|<arg|body>>>>
 
-  <assign|code|<macro|body|<style-with|src-compact|none|<surround|<vspace*|1fn>|<right-flush><htab|5mm><vspace|1fn><no-indent*>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>>>>
+  <assign|code|<\macro|body>
+    <\padded-normal|1fn|1fn>
+      <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|<arg|body>>>
+    </padded-normal>
+  </macro>>
 
-  <assign|quote-env|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|3fn>|par-right|<plus|<value|par-right>|3fn>|par-first|0fn|par-par-sep|0.25fn|<arg|body>>>>>>
+  <assign|quote-env|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|3fn|3fn>
+        <with|par-first|0fn|par-par-sep|0.25fn|<arg|body>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
-  <assign|quotation|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|3fn>|par-right|<plus|<value|par-right>|3fn>|<arg|body>>>>>>
+  <assign|quotation|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|3fn|3fn>
+        <surround|<yes-indent>||<arg|body>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
-  <assign|verse|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|4.5fn>|par-right|<plus|<value|par-right>|3fn>|par-first|-1.5fn|par-par-sep|0fn|<arg|body>>>>>>
+  <assign|verse|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-both|4.5fn|3fn>
+        <with|par-first|-1.5fn|par-par-sep|0.fn|<surround|<yes-indent>||<arg|body>>>
+      </indent-both>
+    </padded-normal>
+  </macro>>
 
   <assign|center|<macro|body|<with|par-mode|center|<arg|body>>>>
 

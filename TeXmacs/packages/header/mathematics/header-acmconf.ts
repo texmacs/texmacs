@@ -51,11 +51,13 @@
 
   \;
 
-  <assign|abstract|<macro|body|<\surround|<vspace*|1.5fn>|<right-flush><vspace|1.5fn>>
-    <style-with|src-compact|none|<surround|<no-indent>|<vspace|1.5fn><no-indent*><no-page-break>|<with|font-series|bold|<abstract-text>>>>
+  <assign|abstract|<\macro|body>
+    <\padded-normal|1.5fn|1.5fn>
+      <with|font-series|bold|<abstract-text>><vspace|1.5fn><no-page-break>
 
-    <arg|body>
-  </surround>>>
+      <surround|<no-indent>||<arg|body>>
+    </padded-normal>
+  </macro>>
 
   \;
 </body>

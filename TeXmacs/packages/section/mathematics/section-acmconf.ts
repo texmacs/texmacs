@@ -31,7 +31,7 @@
     </src-comment>
   </active*>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|3fn><with|font-size|1.19|<arg|name>><vspace|1fn>>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|3fn><large|<arg|name>><vspace|1fn>>>>>
 
   <\active*>
     <\src-comment>

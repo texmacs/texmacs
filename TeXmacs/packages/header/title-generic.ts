@@ -27,11 +27,17 @@
 
   <assign|make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<with|par-mode|center|<arg|body>>>>>
 
-  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<right-flush><vspace|1fn>|<\with|par-left|15mm|par-right|15mm|font-size|0.84>
-    <style-with|src-compact|none|<no-indent><left-flush><with|font-series|bold|<abstract-text>><right-flush><vspace|0.5fn><no-page-break>>
+  <assign|abstract|<\macro|body>
+    <\padded-normal|2fn|1fn>
+      <\with|par-left|15mm|par-right|15mm>
+        <\small>
+          <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
 
-    <arg|body>
-  </with>>>>
+          <arg|body>
+        </small>
+      </with>
+    </padded-normal>
+  </macro>>
 
   <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<keywords-text><localize|:>
   ><arg|x>>>

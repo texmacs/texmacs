@@ -39,7 +39,7 @@
 
   <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|0.5fn>>>>>
 
-  <assign|var-section-title|<macro|name|<style-with|src-compact|none|<new-page><new-line><sectional-normal-bold|<vspace*|3fn><with|font-size|1.41|<arg|name>><vspace|2fn>>>>>
+  <assign|var-section-title|<macro|name|<style-with|src-compact|none|<new-page><new-line><sectional-normal-bold|<vspace*|3fn><very-large|<arg|name>><vspace|2fn>>>>>
 
   <assign|appendix-title|<macro|name|<style-with|src-compact|none|<var-section-title|<appendix-text>.
   <arg|name>>>>>

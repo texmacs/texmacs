@@ -48,7 +48,7 @@
     </src-comment>
   </active*>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-page*><no-indent><new-line><no-indent><vspace*|5fn><with|math-font-series|bold|font-series|bold|font-size|2|<arg|name>><vspace|2fn><no-page-break><no-indent*>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-page*><no-indent><new-line><no-indent><vspace*|5fn><with|math-font-series|bold|font-series|bold|<really-huge|<arg|name>>><vspace|2fn><no-page-break><no-indent*>>>>
 
   <assign|chapter-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-title|<chapter-text>
   <the-chapter><vspace|1fn><new-line><arg|title>>>>>
@@ -62,9 +62,9 @@
     </src-comment>
   </active*>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|3fn><with|font-size|1.41|<arg|name>><vspace|1fn>>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|3fn><very-large|<arg|name>><vspace|1fn>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|2fn><with|font-size|1.19|<arg|name>><vspace|0.5fn>>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|2fn><large|<arg|name>><vspace|0.5fn>>>>>
 
   <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><arg|name><vspace|0.5fn>>>>>
 

@@ -49,8 +49,16 @@
 
   \;
 
-  <assign|abstract|<macro|body|<surround|<vspace*|2fn>|<vspace|1fn>|<with|par-left|15mm|par-right|15mm|font-size|0.84|<style-with|src-compact|none|<surround|<no-indent><with|font-shape|small-caps|<abstract-text>>.
-  |<right-flush>|<arg|body>>>>>>>
+  <assign|abstract|<\macro|body>
+    <\padded-normal|2fn|1fn>
+      <\with|par-left|15mm|par-right|15mm>
+        <\small>
+          <surround|<with|font-shape|small-caps|<abstract-text>>.
+          ||<arg|body>>
+        </small>
+      </with>
+    </padded-normal>
+  </macro>>
 
   \;
 </body>
