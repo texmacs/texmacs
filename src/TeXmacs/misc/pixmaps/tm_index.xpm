@@ -1,0 +1,23 @@
+/* XPM */
+static char * tm_index_xpm[] = {
+"17 17 3 1",
+" 	c None",
+"=	c #000000000000",
+"X	c #999999999999",
+"                 ",
+" ===========  == ",
+" XXXXXXXXXXX  XX ",
+"   =====      == ",
+"   XXXXX      XX ",
+"   =======    == ",
+"   XXXXXXX    XX ",
+"     ======   == ",
+"     XXXXX    XX ",
+"   =======    == ",
+"   XXXXXXX    XX ",
+" ===========  == ",
+" XXXXXXXXXXX  XX ",
+"   ======     == ",
+"   XXXXXX     XX ",
+"   =========  == ",
+"                 "};

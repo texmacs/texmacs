@@ -1,0 +1,67 @@
+
+/******************************************************************************
+* MODULE     : format.cpp
+* DESCRIPTION: standard formats for placing material
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "Format/format.hpp"
+
+bool
+format_none_rep::equal (format fm) {
+  return (fm->type == type);
+}
+
+format_none_rep::operator tree () { return "none"; }
+
+bool
+format_width_rep::equal (format fm) {
+  if (fm->type != type) return false;
+  format_width fw= (format_width) fm;
+  return (fw->width == width);
+}
+
+format_width_rep::operator tree () {
+  return tuple ("format width", as_string (width));
+}
+
+bool
+format_cell_rep::equal (format fm) {
+  if (fm->type != type) return false;
+  format_cell fw= (format_cell) fm;
+  return
+    (fw->width == width) && (fw->vpos == vpos) &&
+    (fw->depth == depth) && (fw->height == height);
+}
+
+format_cell_rep::operator tree () {
+  return tuple ("format cell", as_string (width));
+}
+
+bool
+format_vstream_rep::equal (format fm) {
+  if (fm->type != type) return false;
+  format_vstream fw= (format_vstream) fm;
+  return
+    (fw->width == width) && (fw->before == before) && (fw->after == after);
+}
+
+format_vstream_rep::operator tree () {
+  return tuple ("format vstream");
+}
+
+bool
+query_vstream_width_rep::equal (format fm) {
+  if (fm->type != type) return false;
+  query_vstream_width fw= (query_vstream_width) fm;
+  return (fw->before == before) && (fw->after == after);
+}
+
+query_vstream_width_rep::operator tree () {
+  return tuple ("query vstream width");
+}

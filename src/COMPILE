@@ -1,0 +1,174 @@
+
+-------------------------------------------------------------------------------
+Compiling GNU TeXmacs
+-------------------------------------------------------------------------------
+
+1. Check dependencies.
+
+   Before you compile GNU TeXmacs on your system, you have to make
+   sure that the other programs on which GNU TeXmacs depends,
+   namely TeX and Guile Scheme (from the Gnome project)
+   have been installed correctly. You can do this by checking
+   whether the latex and guile binaries exists in your path
+
+	which latex
+	which guile
+
+   If one of these commands yields an error message,
+   then look at the webpage doc/html/web/Dependencies.html.
+
+2. Compile, install and run.
+
+   GNU TeXmacs supports the standard GNU compilation and
+   installation procedure. Assuming that you logged yourself
+   in as root, cd into the installation directory and type
+
+	./configure
+	make
+	make install
+
+   The first command examines your particular system configuration.
+   The second command launches the compilation.
+   The last command installs GNU TeXmacs in /usr/local.
+
+   If you get an error when runnig 'make', be sure that you are using
+   GNU make. You can check the version of make installed on your
+   system by running 'make -v'. You may freely download GNU make at
+ 
+	ftp://ftp.gnu.org/gnu/make
+
+   If everything works fine, then you should be able to run the program by
+
+	texmacs &
+
+   If this does not work, you should make sure that /usr/local/bin
+   is in your PATH. Depending on your shell, you can ensure this by typing
+
+	export PATH=/usr/local/bin:$PATH
+   or
+	setenv PATH /usr/local/bin:$PATH
+
+3. Feedback
+
+   Be cool and let us know if you like or dislike the program; see
+
+	http://www.texmacs.org
+
+   It is very useful for us to have a rough idea about the number of
+   permanent users and for what applications you are interested in TeXmacs.
+   Furthermore, we are glad to receive your suggestions and problems,
+   no matter how silly they may seem to you. If you really like the program,
+   then please consider donating money or services to us; see
+
+	http://www.texmacs.org/Web/Donations.html
+
+   Of course, you may also contribute yourself.
+
+-------------------------------------------------------------------------------
+
+Appendix A: Configuration options
+
+   If you cannot log yourself in as root, or if you want to install
+   TeXmacs elsewhere than in /usr/local, then you should use
+
+	./configure --prefix=[target directory]
+
+   instead of ./configure. In this case, TeXmacs will be installed in
+   [target directory] and you will have to set your PATH accordingly,
+   as to contain [target directory]/bin. You can fine tune the
+   installation paths with the options
+
+   * --bindir=[binary directory]:
+     sets the directory where the TeXmacs binaries should be installed
+     ([target directory]/bin, by default).
+
+   * --datadir=[data directory]:
+     sets the directory where other TeXmacs data should be installed
+     ([target directory]/share, by default).
+
+   The configuration script try to pick the best optimization options
+   for your architecture and compiler. Some versions of g++ have
+   trouble optimizing TeXmacs and will produce a buggy executable
+   unless inlining is turned off.
+
+   * --disable-optimize
+     --enable-optimize
+     --enable-optimize=no-inline
+     --enable-optimize=[compiler options]:
+     overrides the (system dependent) default optimization settings.
+
+   If you are hacking on TeXmacs, you may want to install an
+   executable with debugging information.
+
+   * --enable-debug
+     --enable-debug=[compiler options]:
+     build and install a debugger-enabled executable
+     (compiler options defaults to -ggdb).
+
+   This option specifies a compiler option, disable stripping of the
+   installed executable and turn optimizations off. The option
+   --enable-optimization can force optimizations, without a parameter
+   it will use the architecture dependent default *with inlining*.
+
+Appendix B: Static compilation
+
+   By default, we build TeXmacs using dynamically linked libraries.
+   If you rather want to build the static version, use
+
+	make STATIC_TEXMACS
+
+Appendix C: Possible problems
+
+   * Everything compiles fine, but you frequently get
+     a segmentation fault when running the editor.
+     Solution: This problem may have several causes:
+     o You don't use a standard version of the GNU C++ compiler.
+       We use gcc-2.95.3 on a GNU/Linux system on a PC;
+       the versions 2.95.2 and 1.1.* should also work,
+       but the optimizer may be bugged in other versions.
+       Using the --disable-optimize option to ./configure
+       may produce a more stable, but slower executable.
+     o You are compiling TeXmacs on a not yet supported system.
+       Please take a look at configure.in
+       in order to see whether your system is supported.
+       If not, please check that the macros WORD_LENGTH,
+       WORD_LENGTH_INC and WORD_MASK are OK for your system.
+
+    * You use Cygwin and you do not manage to get Guile working.
+      Solution: There may be a problem with the file name
+      ice-9/and-let*.scm (stars are not allowed in file names),
+      which should be renamed as ice-9/and-let-star.scm. You should
+      make the corresponding modifications in ice-9/Makefile.in.
+      Since you might be unable to extract ice-9/and-let*.scm
+      from the archive, you can find a copy of it (for guile-1.4)
+      at http://www.texmacs.org/Data/and-let-star.scm
+
+    * You have problems with compiling or linking with X Window.
+      Solution: modify some of the compilation options in configure.in.
+
+    * You have the impression that some of the modifications that you
+      made in the source are not taken into account when you run make.
+      Solution: type 'make deps' in order to generate the dependence
+      files and/or 'rm src/Objects/*' in order to be sure that the
+      object files are rebuilt.
+
+    * You have problems with the font system from TeX when running.
+      Solution: get a version of TeX with 'kpsepath',
+      'MakeTeXPK' and 'MakeTeXTFM'.
+
+    * TeXmacs runs fine, but certain fonts are not displayed correctly.
+      Solution: This problem may have several causes:
+      o You use a recent version (>= 7.3) of RedHat Linux or
+        one of its clones. On such systems, the installation of
+        TeTeX is bugged and you need to change some permissions
+        in order to allow font generation by Metafont.
+        As root, type
+	  chmod -R a+rw /var/lib/texmf/*
+      o You do not use a standard TeX/LaTeX distribution, such as TeTeX
+	(standard distributions come with scripts for generating fonts,
+	such as 'mktextfm' or 'MakeTeXTFM'). You may either install
+        a more standard TeX/LaTeX distribution, or download some
+        pregenerated fonts from texmacs.org.
+
+    * If you encounter other problems, or if our fixes don't work, then please
+      contact us at contact@texmacs.org.

@@ -1,0 +1,97 @@
+
+/******************************************************************************
+* MODULE     : hashmap.hpp
+* DESCRIPTION: fixed size hashmaps with reference counting
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#ifndef HASHMAP_H
+#define HASHMAP_H
+#include "list.hpp"
+
+class tree;
+template<class T> class list;
+template<class T,class U> class hashmap;
+template<class T,class U> class rel_hashmap;
+template<class T,class U> class rel_hashmap_rep;
+template<class T,class U> class hashmap_iterator_rep;
+
+template<class T, class U> struct hashentry {
+  T key;
+  U im;
+  hashentry<T,U> () { }
+  hashentry<T,U> (T key2, U im2);
+  operator tree ();
+};
+
+template<class T, class U> class hashmap_rep: concrete_struct {
+  int size;                  // size of hashmap (nr of entries)
+  int n;                     // nr of keys (a power of two)
+  int max;                   // mean number of entries per key
+  U   init;                  // default entry
+  list<hashentry<T,U> >* a;  // the array of entries
+
+public:
+  inline hashmap_rep<T,U>(U init2, int n2=1, int max2=1):
+    size(0), n(n2), max(max2), init(init2), a(new list<hashentry<T,U> >[n]) {}
+  inline ~hashmap_rep<T,U> () { delete[] a; }
+  void resize (int n);
+  void reset (T x);
+  void generate (void (*routine) (T));
+  bool contains (T x);
+  bool empty ();
+  U    bracket_ro (T x);
+  U&   bracket_rw (T x);
+  void join (hashmap<T,U> H);
+
+  friend class hashmap<T,U>;
+  friend class rel_hashmap<T,U>;
+  friend class rel_hashmap_rep<T,U>;
+  friend class hashmap_iterator_rep<T,U>;
+  friend int N LESSGTR (hashmap<T,U> h);
+  friend ostream& operator << LESSGTR (ostream& out, hashmap<T,U> h);
+
+  // only for hashmap<string,tree>
+  void write_back (T x, hashmap<T,U> base);
+  void pre_patch (hashmap<T,U> patch, hashmap<T,U> base);
+  void post_patch (hashmap<T,U> patch, hashmap<T,U> base);
+  friend hashmap<T,U> copy LESSGTR (hashmap<T,U> h);
+  friend hashmap<T,U> changes LESSGTR (hashmap<T,U> patch, hashmap<T,U> base);
+  friend hashmap<T,U> invert LESSGTR (hashmap<T,U> patch, hashmap<T,U> base);
+  friend class edit_env_rep; // FIXME: broken encapsulation
+  // end only for hashmap<string,tree>
+
+  friend bool operator == LESSGTR (hashmap<T,U> h1, hashmap<T,U> h2);
+  friend bool operator != LESSGTR (hashmap<T,U> h1, hashmap<T,U> h2);
+};
+
+template<class T, class U> class hashmap {
+  CONCRETE_TEMPLATE_2(hashmap,T,U);
+  inline hashmap ():
+    rep (new hashmap_rep<T,U>(U::init, 1, 1)) {}
+  inline hashmap (U init, int n=1, int max=1):
+    rep (new hashmap_rep<T,U>(init, n, max)) {}
+  // only for hashmap<string,tree>
+  hashmap (U init, tree t);
+  // end only for hashmap<string,tree>
+  inline U  operator [] (T x) { return rep->bracket_ro (x); }
+  inline U& operator () (T x) { return rep->bracket_rw (x); }
+  operator tree ();
+};
+CONCRETE_TEMPLATE_2_CODE(hashmap,class,T,class,U);
+
+#define TMPL template<class T, class U>
+TMPL inline int N (hashmap<T,U> h) { return h->size; }
+TMPL hashmap<T,U> changes (hashmap<T,U> patch, hashmap<T,U> base);
+TMPL hashmap<T,U> invert (hashmap<T,U> patch, hashmap<T,U> base);
+#undef TMPL
+
+#include "hashmap.cpp"
+#include "hashmap_extra.cpp"
+
+#endif // defined HASHMAP_H

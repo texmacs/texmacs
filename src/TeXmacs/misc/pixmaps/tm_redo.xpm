@@ -1,0 +1,27 @@
+/* XPM */
+static char * tb_redo_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"17 17 4 1",
+/* colors */
+" 	s mask	c None",
+".	s style	c black",
+"X	s white	c white",
+"o	s dark	c grey50",
+/* pixels */
+"                 ",
+"      .....  ..  ",
+"    ..XXXXX..X.o ",
+"   .XXXXXXXXXX.o ",
+"   .XX....XXXX.o ",
+"  .XX.ooo.XXXX.o ",
+"  .XX.o .XXXXX.o ",
+"  .XX.o .......o ",
+"  .XX.o  ooo.ooo ",
+"  .XX.o    .X.   ",
+"   .XX.....XX.o  ",
+"   .XXXXXXXX.oo  ",
+"    ..XXXXX.oo   ",
+"      .....oo    ",
+"       ooooo     ",
+"                 ",
+"                 "};

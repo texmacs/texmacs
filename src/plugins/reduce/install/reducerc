@@ -1,0 +1,3 @@
+if getenv "redfront" then in "$reduce/redfr/redfront.red"$
+if getenv "TEXMACS_REDUCE_PATH" then in "$reduce/xr/bin/texmacs.red"$
+end$

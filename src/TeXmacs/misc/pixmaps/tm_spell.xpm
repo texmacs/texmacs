@@ -1,0 +1,31 @@
+/* XPM */
+static char * tb_find_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"17 17 8 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c white",
+"o	c lightgray",
+"O	c lightsteelblue",
+"+	c grey",
+"@	c grey50",
+"Y	c red",
+/* pixels */
+" ........        ",
+" .XXXXXX..       ",
+" .XXXXXX.o.      ",
+" .XXXXXX....     ",
+" .XXXXXXXXX.     ",
+" .XXXXXX....     ",
+" .XXXXX.OOOO.    ",
+" .XXXX.OYXOYO.   ",
+" .XXXX.OXYYOO.   ",
+" .XXXX.OOYYOO.   ",
+" .XXXX.OYOXYO.   ",
+" .XXXXX.OOOO.+   ",
+" .XXXXXX....+..  ",
+" .XXXXXXXXX. ... ",
+" ...........  .. ",
+"    @@@@@@@@@    ",
+"                 "};

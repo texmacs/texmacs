@@ -1,0 +1,55 @@
+
+/******************************************************************************
+* MODULE     : page_item.hpp
+* DESCRIPTION: A typesetted document consists of an array of page_items.
+*              Each page item contains spacing and page breaking information.
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#ifndef PAGE_ITEM_H
+#define PAGE_ITEM_H
+#include "boxes.hpp"
+#include "formatter.hpp"
+
+#define PAGE_LINE_ITEM      0
+#define PAGE_CONTROL_ITEM   1
+
+class page_item;
+class page_item_rep: public concrete_struct {
+public:
+  int          type;    // type of the page item
+
+  box          b;       // the box
+  space        spc;     // separation space
+  int          penalty; // penalty for a linebreak after this page_item
+
+  array<lazy>  fl;      // floating objects attached to this item
+  int          nr_cols; // number of columns
+  tree         t;       // for page control items
+
+  page_item_rep (box b, array<lazy> fl, int nr_cols);
+  page_item_rep (tree t, int nr_cols);
+  page_item_rep (int type, box b, space spc, int pen,
+		 array<lazy> fl, int nr_cols, tree t);
+};
+
+class page_item {
+  CONCRETE_NULL(page_item);
+  page_item (box b, array<lazy> fl= 0, int nr_cols= 1);
+  page_item (tree t, int nr_cols);
+  page_item (int type, box b, space spc, int penalty,
+	     array<lazy> fl, int nr_cols, tree t);
+  bool operator == (page_item item2);
+  bool operator != (page_item item2);
+  friend page_item copy (page_item l);
+};
+CONCRETE_NULL_CODE(page_item);
+
+ostream& operator << (ostream& out, page_item item);
+
+#endif // defined PAGE_ITEM_H

@@ -1,0 +1,9 @@
+Package: TeXmacs
+Title: R interface with TeXmacs
+Version: 0.1
+Author: Michael Lachmann Tamarlin
+Description: This package provides a couple of functions for inserting
+        graphs into TeXmacs.
+Maintainer: Michael Lachmann Tamarlin <dirk@santafe.edu>
+License: GPL
+Built: R 1.7.1; i686-pc-linux-gnu; 2003-09-24 17:40:45

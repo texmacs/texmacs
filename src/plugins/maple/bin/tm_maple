@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec maple_in_filter | maple -ll  -l p=calc -c 'interface(plotoptions=`portrait,colour,width=300,height=200`)' | maple_filter

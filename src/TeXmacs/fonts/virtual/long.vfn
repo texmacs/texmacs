@@ -1,0 +1,114 @@
+
+(virtual-font
+  (minus (enlarge - 0 0 -0.3 -0.3))
+  (longminus (glue minus minus))
+  (longequal (glue = =))
+  (mapsto (join varshortmid rightarrow))
+  (mapsfrom (hor-flip mapsto))
+  (hookleftarrow (glue leftarrow righthook))
+  (hookrightarrow (glue lefthook rightarrow))
+  (longmapsto (glue (join varshortmid minus) rightarrow))
+  (longmapsfrom (hor-flip longmapsto))
+  (longhookleftarrow (glue (glue leftarrow minus) righthook))
+  (longhookrightarrow (glue lefthook (glue minus rightarrow)))
+
+  (longleftarrow (glue leftarrow minus))
+  (longrightarrow (glue minus rightarrow))
+  (longleftrightarrow (glue leftarrow rightarrow))
+  (Longleftarrow (glue Leftarrow =))
+  (Longrightarrow (glue = Rightarrow))
+  (Longleftrightarrow (glue Leftarrow Rightarrow))
+  (mapstotriangle (join varshortmid rightarrowtriangle))
+  (longmapstotriangle (glue (join varshortmid minus) rightarrowtriangle))
+  (longleftarrowtriangle (glue leftarrowtriangle minus))
+  (longrightarrowtriangle (glue minus rightarrowtriangle))
+  (longleftrightarrowtriangle (glue leftarrowtriangle rightarrowtriangle))
+  (longtwoheadleftarrow (glue twoheadleftarrow minus))
+  (longtwoheadrightarrow (glue minus twoheadrightarrow))
+
+  ;(mapsup (enlarge (0.18 -0.25 (rot-left mapsto)) 0.18 0.18 0 0))
+  ;(mapsdown (enlarge (0.18 -0.25 (rot-right mapsto)) 0.18 0.18 0 0))
+  (hookuparrow (enlarge (0.18 -0.25 (rot-left hookrightarrow)) 0.18 0.18 0 0))
+  (hookdownarrow (enlarge (0.18 -0.25 (rot-right hookrightarrow)) 0.18 0.18 0 0))
+  (longuparrow (enlarge (0.18 -0.6 (rot-left longrightarrow)) 0.18 0.18 0 0))
+  (longdownarrow (enlarge (0.18 -0.6 (rot-left longleftarrow)) 0.18 0.18 0 0))
+  (longupdownarrow (enlarge (0.18 -0.6 (rot-left longleftrightarrow)) 0.18 0.18 0 0))
+  (Longuparrow (enlarge (0.18 -0.6 (rot-left Longrightarrow)) 0.18 0.18 0 0))
+  (Longdownarrow (enlarge (0.18 -0.6 (rot-left Longleftarrow)) 0.18 0.18 0 0))
+  (Longupdownarrow (enlarge (0.18 -0.6 (rot-left Longleftrightarrow)) 0.18 0.18 0 0))
+  (longmapsup (enlarge (0.18 -0.6 (rot-left longmapsto)) 0.18 0.18 0 0))
+  (longmapsdown (enlarge (0.18 -0.6 (rot-right longmapsto)) 0.18 0.18 0 0))
+  (longhookuparrow (enlarge (0.18 -0.6 (rot-left longhookrightarrow)) 0.18 0.18 0 0))
+  (longhookdownarrow (enlarge (0.18 -0.6 (rot-right longhookrightarrow)) 0.18 0.18 0 0))
+
+  (leftarrowlim (enlarge leftarrow 0 0 -0.1 -0.1))
+  (rightarrowlim (enlarge rightarrow 0 0 -0.1 -0.1))
+  (leftrightarrowlim (enlarge leftrightarrow 0 0 -0.1 -0.1))
+  (mapstolim (enlarge mapsto 0 0 -0.1 -0.1))
+  (longleftarrowlim (enlarge longleftarrow 0 0 -0.1 -0.1))
+  (longrightarrowlim (enlarge longrightarrow 0 0 -0.1 -0.1))
+  (longleftrightarrowlim (enlarge longleftrightarrow 0 0 -0.1 -0.1))
+  (longmapstolim (enlarge longmapsto 0 0 -0.1 -0.1))
+  (equallim =)
+  (longequallim longequal)
+  (Leftarrowlim Leftarrow)
+  (Rightarrowlim Rightarrow)
+  (Leftrightarrowlim Leftrightarrow)
+  (Longleftarrowlim Longleftarrow)
+  (Longrightarrowlim Longrightarrow)
+  (Longleftrightarrowlim Longleftrightarrow)
+
+  (longvdash (join (0 0 vdash) (0.4 0.095 -)))
+  (longVdash (join (0 0 Vdash) (0.525 0.095 -)))
+  (longVvdash (join (0 0 Vvdash) (0.7 0.095 -)))
+  (longvDash (join (0 0 vDash) (0.4 0.095 =)))
+  (longdashv (join (0 0.095 -) (0.4 0 dashv)))
+
+  (rubber-overbrace-#
+    (0 0.2
+      (enlarge
+        (glue* (hor-extend braceld 1 # 0.1)
+          (glue* braceru
+            (glue* bracelu
+              (hor-extend bracerd 0 # 0.1))))
+        0 0 0.2 0)))
+  (rubber-overbrace*-#
+    (0 0
+      (enlarge
+        (glue* (hor-extend braceld 1 # 0.1)
+          (glue* braceru
+            (glue* bracelu
+              (hor-extend bracerd 0 # 0.1))))
+        0 0 0 0.2)))
+  (rubber-underbrace-#
+    (0 0
+      (enlarge
+        (glue* (hor-extend bracelu 1 # 0.1)
+          (glue* bracerd
+            (glue* braceld
+              (hor-extend braceru 0 # 0.1))))
+        0 0 0 0.2)))
+  (rubber-underbrace*-#
+    (0 0.2
+      (enlarge
+        (glue* (hor-extend bracelu 1 # 0.1)
+          (glue* bracerd
+            (glue* braceld
+              (hor-extend braceru 0 # 0.1))))
+        0 0 0.2 0)))
+
+  (rubber-varleftarrow-# (hor-extend shortleftarrow 0.9 # 0.1))
+  (rubber-varrightarrow-# (hor-extend shortrightarrow 0.1 # 0.1))
+  (rubber-leftarrow-# (hor-extend leftarrow 0.5 # 0.1))
+  (rubber-rightarrow-# (hor-extend rightarrow 0.5 # 0.1))
+  (rubber-leftrightarrow-# (hor-extend leftrightarrow 0.5 # 0.1))
+  (rubber-mapsto-# (hor-extend mapsto 0.5 # 0.1))
+  (rubber-Leftarrow-# (hor-extend Leftarrow 0.5 # 0.1))
+  (rubber-Rightarrow-# (hor-extend Rightarrow 0.5 # 0.1))
+  (rubber-Leftrightarrow-# (hor-extend Leftrightarrow 0.5 # 0.1))
+  (rubber-uparrow-# (ver-extend uparrow 0.5 # 0.1))
+  (rubber-downarrow-# (ver-extend downarrow 0.5 # 0.1))
+  (rubber-updownarrow-# (ver-extend updownarrow 0.5 # 0.1))
+  (rubber-Uparrow-# (ver-extend Uparrow 0.5 # 0.1))
+  (rubber-Downarrow-# (ver-extend Downarrow 0.5 # 0.1))
+  (rubber-Updownarrow-# (ver-extend Updownarrow 0.5 # 0.1)))

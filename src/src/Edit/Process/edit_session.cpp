@@ -1,0 +1,513 @@
+
+/******************************************************************************
+* MODULE     : edit_session.cpp
+* DESCRIPTION: input and output handling for programming sessions
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "Process/edit_process.hpp"
+#include "list.hpp"
+#include "connect.hpp"
+#include "convert.hpp"
+#include "analyze.hpp"
+#include "file.hpp"
+
+/******************************************************************************
+* Other useful subroutines
+******************************************************************************/
+
+static bool
+is_empty (tree t) {
+  if (is_atomic (t)) return (t == "");
+  if (is_expand (t, "math", 1)) return is_empty (t[1]);
+  if (is_document (t) || is_concat (t)) {
+    int i;
+    for (i=0; i<N(t); i++)
+      if (!is_empty (t[i])) return false;
+    return true;
+  }
+  return false;
+}
+
+/******************************************************************************
+* Routines for sessions
+******************************************************************************/
+
+void
+edit_process_rep::make_session (string lan, string session) {
+  string lolan= locase_all (lan);
+  if ((lolan != lan) && (!connection_declared (lan))) lan= lolan;
+  if (exists (url ("$TEXMACS_STYLE_PATH", lan * ".ts")))
+    init_extra_style (lan, true);
+  typeset_preamble ();
+
+  /* These two lines will become obsolete */
+  if (make_return_after ()) return;
+  if (make_return_before ()) return;
+  /* -------------------------------------*/
+
+  path p (4, path (d_exp, path (0, 0)));
+  tree body (DOCUMENT, "");
+  tree w= tree (WITH);
+  w << PROG_LANGUAGE << lan << THIS_SESSION << session
+    << compound ("session", body);
+  insert_tree (w, p);
+  if (connection_declared (lan)) connect ();
+  else start_input ();
+}
+
+void
+edit_process_rep::start_input () {
+  path p;
+  bool needs_return= false;
+  if (!nil (p= search_upwards_expand ("input"))) {
+    needs_return= true;
+    go_to (p * 1);
+  }
+  else if (!nil (p= search_upwards_expand ("output"))) {
+    needs_return= true;
+    tree st= subtree (et, p);
+    if ((N(st) == (1+d_exp)) && is_empty (st [d_exp])) {
+      cut (p);
+      remove_backwards ();
+      if (is_compound (subtree (et, path_up (tp, 2)), "session", 1)) {
+	// fixes bug for empty startup banners
+	needs_return= false;
+	tp= end (et, path_up (tp, 2) * d_exp);
+      }
+    }
+    else go_to (p * 1);
+  }
+
+  string lan    = get_env_string (PROG_LANGUAGE);
+  string session= get_env_string (THIS_SESSION);
+  tree   prompt = "";
+  tree   input  = "";
+
+  if (connection_declared (lan)) {
+    prompt = connection_read (lan, session, "prompt");
+    input  = connection_read (lan, session, "input");
+  }
+  while (is_document (prompt))
+    if (N(prompt) == 0) prompt= "";
+    else prompt= prompt[0];
+  if (!last_prompt->contains (tuple (lan, session)))
+    last_prompt (tuple (lan, session))= lan * "] ";
+  if (prompt == "") prompt= copy (last_prompt [tuple (lan, session)]);
+  last_prompt (tuple (lan, session))= prompt;
+  if (!is_document (input)) input= tree (DOCUMENT, input);
+  if (math_input) input= tree (VAR_EXPAND, "math", input);
+
+  path q = path_up (tp, 2);
+  int  i = last_item (path_up (tp));
+  tree st= subtree (et, q);
+  if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "textput", 1))
+    i++;
+  if (is_document (st) && (i+1 < N(st)) && is_compound (st[i+1], "input", 2)) {
+    if (is_empty (input)) {
+      input= copy (st[i+1][1+d_exp]);
+      math_input= is_expand (input, "math", 1);
+    }
+    assign (q * (i+1), compound ("input", prompt, input));
+    go_to (q * path (i+1, 1+d_exp, end (input)));
+  }
+  else {
+    if (needs_return) insert_return ();
+    insert_tree (compound ("input", prompt, input),
+		 path (1+d_exp, end (input)));
+  }
+  if (message_l != "") {
+    set_message (message_l, message_r);
+    message_l= "";
+    message_r= "";
+  }
+  else set_message ("", "");
+}
+
+void
+edit_process_rep::start_output () {
+  path p;
+  bool needs_return= false;
+  if (!nil (p= search_upwards_expand ("input"))) {
+    go_to (p * 1);
+    needs_return= true;
+  }
+  else if (!nil (p= search_upwards_expand ("output"))) {
+    go_to (p * 1);
+    needs_return= true;
+  }
+
+  path q = path_up (tp, 2);
+  int  i = last_item (path_up (tp));
+  tree st= subtree (et, q);
+  if (is_document (st) &&
+      (i+1 < N(st)) &&
+      is_compound (st[i+1], "output", 1))
+    {
+      assign (q * (i+1), compound ("output", tree (DOCUMENT, "")));
+      go_to (q * path (i+1, d_exp, 0, 0));
+    }
+  else {
+    if (needs_return) insert_return ();
+    insert_tree (compound ("output", tree (DOCUMENT, "")),
+		 path (d_exp, path (0, 0)));
+  }
+}
+
+void
+edit_process_rep::session_message (string l, string r) {
+  message_l= l;
+  message_r= r;
+}
+
+void
+edit_process_rep::session_use_math_input (bool flag) {
+  if (math_input != flag) {
+    math_input= flag;
+    path p= search_upwards_expand ("input");
+    if (nil (p)) return;
+    tree input (DOCUMENT, "");
+    path q (0, 0);
+    if (math_input) {
+      input= tree (VAR_EXPAND, "math", input);
+      q= path (1, q);
+    }
+    assign (p * (1+d_exp), input);
+    go_to (p * path (1+d_exp, q));
+  }
+}
+
+bool
+edit_process_rep::session_is_using_math_input () {
+  return math_input;
+}
+
+/******************************************************************************
+* Cursor movement inside sessions
+******************************************************************************/
+
+void
+edit_process_rep::session_var_go_up () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  path q= search_previous_expand (p, "input");
+  if (q != p) {
+    tree st= subtree (et, q);
+    go_to (q * path (1+d_exp, end (st[1+d_exp])));
+    select_from_cursor_if_active ();
+  }
+}
+
+void
+edit_process_rep::session_var_go_down () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  path q= search_next_expand (p, "input");
+  if (q != p) {
+    tree st= subtree (et, q);
+    go_to (q * path (1+d_exp, end (st[1+d_exp])));
+    select_from_cursor_if_active ();
+  }
+}
+
+void
+edit_process_rep::session_go_left () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  int i= tp[N(p)];
+  path old_tp= tp;
+  go_left ();
+  p= search_upwards_expand ("input");
+  if (nil (p) || ((tp[N(p)] != 1+d_exp) && (tp[N(p)] != i))) go_to (old_tp);
+  select_from_cursor_if_active ();
+}
+
+void
+edit_process_rep::session_go_right () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  int i= tp[N(p)];
+  path old_tp= tp;
+  go_right ();
+  p= search_upwards_expand ("input");
+  if (nil (p) || ((tp[N(p)] != 1+d_exp) && (tp[N(p)] != i))) go_to (old_tp);
+  select_from_cursor_if_active ();
+}
+
+void
+edit_process_rep::session_go_up () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  int i= tp[N(p)];
+  path old_tp= tp;
+  go_up ();
+  p= search_upwards_expand ("input");
+  if (nil (p) || ((tp[N(p)] != 1+d_exp) && (tp[N(p)] != i))) {
+    go_to (old_tp);
+    session_var_go_up ();
+  }
+  select_from_cursor_if_active ();
+}
+
+void
+edit_process_rep::session_go_down () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  int i= tp[N(p)];
+  path old_tp= tp;
+  go_down ();
+  p= search_upwards_expand ("input");
+  if (nil (p) || ((tp[N(p)] != 1+d_exp) && (tp[N(p)] != i))) {
+    go_to (old_tp);
+    session_var_go_down ();
+  }
+  select_from_cursor_if_active ();
+}
+
+void
+edit_process_rep::session_go_page_up () {
+  int i;
+  for (i=0; i<5; i++)
+    session_var_go_up ();
+}
+
+void
+edit_process_rep::session_go_page_down () {
+  int i;
+  for (i=0; i<5; i++)
+    session_var_go_down ();
+}
+
+void
+edit_process_rep::session_remove_backwards () {
+  path p= search_upwards_expand ("math");
+  if (nil (p)) {
+    p= search_upwards_expand ("input");
+    if (nil (p) || (tp == start (et, p * (1+d_exp)))) return;
+  }
+  else if (tp == start (et, p * 1)) return;
+  remove_backwards ();
+}
+
+void
+edit_process_rep::session_remove_forwards () {
+  path p= search_upwards_expand ("math");
+  if (nil (p)) {
+    p= search_upwards_expand ("input");
+    if (nil (p) || (tp == end (et, p * (1+d_exp)))) return;
+  }
+  else if (tp == end (et, p * 1)) return;
+  remove_forwards ();
+}
+
+/******************************************************************************
+* Utility operations on fields in sessions
+******************************************************************************/
+
+static void
+skip_forwards (tree et, path& p, string tag, int arity) {
+  if (last_item (p) < N (subtree (et, path_up (p))))
+    if (is_compound (subtree (et, p), tag, arity))
+      p= path_inc (p);
+}
+
+static void
+skip_backwards (tree et, path& p, string tag, int arity) {
+  if (last_item (p) > 0)
+    if (is_compound (subtree (et, path_dec (p)), tag, arity))
+      p= path_dec (p);
+}
+
+void
+edit_process_rep::session_insert_text_field () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  insert (p, tree (DOCUMENT, compound ("textput", tree (DOCUMENT, ""))));
+  go_to (p * path (d_exp, path (0, 0)));
+}
+
+void
+edit_process_rep::session_insert_input_at (path p) {
+  string lan    = get_env_string (PROG_LANGUAGE);
+  string session= get_env_string (THIS_SESSION);
+  tree prompt= copy (last_prompt [tuple (lan, session)]);
+  tree input = tree (DOCUMENT, "");
+  if (math_input) input  = tree (VAR_EXPAND, "math", input);
+  insert (p, tree (DOCUMENT, compound ("input", prompt, input)));
+  go_to (p * path (1+d_exp, end (input)));
+}
+
+void
+edit_process_rep::session_insert_input_below () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  p= path_inc (p);
+  skip_forwards (et, p, "output", 1);
+  session_insert_input_at (p);
+}
+
+void
+edit_process_rep::session_insert_input_above () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  skip_backwards (et, p, "textput", 1);
+  session_insert_input_at (p);
+}
+
+void
+edit_process_rep::session_fold_input () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return;
+  path q= path_inc (p);
+  skip_backwards (et, p, "textput", 1);
+  skip_forwards (et, q, "output", 1);
+  tree del= copy (subtree (et, path_up (p)) (last_item (p), last_item (q)));
+  tree ins= compound ("unfold", tree (DOCUMENT, ""), del);
+  remove (p, last_item (q) - last_item (p));
+  insert (p, tree (DOCUMENT, ins));
+  go_to (p * path (d_exp, path (0, 0)));
+}
+
+void
+edit_process_rep::session_remove_input_backwards () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  skip_backwards (et, p, "textput", 1);
+  path q= p;
+  skip_backwards (et, q, "output", 1);
+  skip_backwards (et, q, "input", 2);
+  skip_backwards (et, q, "textput", 1);
+  if (q != p) remove (q, last_item (p) - last_item (q));
+}
+
+void
+edit_process_rep::session_remove_input_forwards () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  path q= path_inc (p);
+  skip_backwards (et, p, "textput", 1);
+  skip_forwards (et, q, "output", 1);
+  path r= q;
+  skip_forwards (et, r, "textput", 1);
+  if (last_item (r) >= N (subtree (et, path_up (r)))) return;
+  if (!is_compound (subtree (et, r), "input", 2)) return;
+  go_to (r * path (1+d_exp, end (subtree (et, r * (1+d_exp)))));
+  remove (p, last_item (q) - last_item (p));
+}
+
+void
+edit_process_rep::session_remove_all_outputs () {
+  path p= search_upwards_expand ("input");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  tree st= subtree (et, path_up (p));
+  int i, n= N (st);
+  for (i=n-1; i>=0; i--)
+    if (is_compound (st[i], "output", 1))
+      remove (path_up (p) * i, 1);
+}
+
+void
+edit_process_rep::session_remove_previous_output () {
+  path p= search_upwards_expand ("output");
+  if (nil (p) || (!is_document (subtree (et, path_up (p))))) return;
+  path q= p;
+  skip_backwards (et, p, "input", 2);
+  skip_backwards (et, p, "textput", 1);
+  skip_backwards (et, p, "output", 1);
+  if ((p == q) || (!is_compound (subtree (et, p), "output", 1))) return;
+  remove (p, 1);
+}
+
+void
+edit_process_rep::session_split () {
+  path p= search_upwards_expand ("input");
+  skip_backwards (et, p, "textput", 1);
+  path q= search_upwards_expand ("session");
+  if (nil (p) ||
+      (N(q) < 2) ||
+      (last_item (p) == 0) ||
+      (!is_document (subtree (et, path_up (p)))) ||
+      (!is_document (subtree (et, path_up (q, 2)))) ||
+      (!is_func (subtree (et, path_up (q)), WITH, 5)) ||
+      (path_up (p, 2) != q) ||
+      (last_item (q) != 4))
+    return;
+  tree st = subtree (et, path_up (p));
+  tree del= st (last_item (p), N(st));
+  tree w  = copy (subtree (et, path_up (q)));
+  w[4]= compound ("session", del);
+  insert (path_inc (path_up (q)), tree (DOCUMENT, "", w));
+  go_to (path_inc (path_up (q)) * 0);
+  remove (p, N(del));
+}
+
+/******************************************************************************
+* Tab completion
+******************************************************************************/
+
+static string cursor_symbol ("[tmcursor]");
+
+static tree
+put_cursor (tree t, path p) {
+  if (is_atomic (t)) {
+    string s= t->label;
+    return s (0, p->item) * cursor_symbol * s (p->item, N(s));
+  }
+  else {
+    if (p == path (0)) return tree (CONCAT, cursor_symbol, t);
+    else if (p == path (1)) return tree (CONCAT, t, cursor_symbol);
+    else {
+      int i, n= N(t);
+      tree u (t, n);
+      for (i=0; i<n; i++)
+	if (i == p->item) u[i]= put_cursor (t[i], p->next);
+	else u[i]= t[i];
+      return u;
+    }
+  }
+}
+
+bool
+edit_process_rep::session_complete_try () {
+  path p= search_upwards_expand ("input");
+  if (nil (p)) return false;
+  tree st= subtree (et, p);
+  if ((N(tp) <= N(p)) || (tp[N(p)] != (1+d_exp))) return false;
+  tree t= put_cursor (st[1+d_exp], tail (tp, N(p)+1));
+  // cout << t << LF;
+
+  string lan= get_env_string (PROG_LANGUAGE);
+  string ses= get_env_string (THIS_SESSION);
+  string s  = as_string (call ("verbatim-serialize", lan, tree_to_object (t)));
+  s= s (0, N(s)-1);
+
+  int pos= search_forwards (cursor_symbol, s);
+  if (pos == -1) return false;
+  s= s (0, pos) * s (pos + N(cursor_symbol), N(s));
+  // cout << s << ", " << pos << LF;
+
+  string cmd= "(complete \"" *escape_quotes (s) *"\" " *as_string (pos)* ")";
+  tree r= connection_cmd (lan, ses, cmd);
+
+  if (!is_tuple (r)) return false;
+  int i, n= N(r);
+  string prefix;
+  array<string> compls;
+  for (i=0; i<n; i++)
+    if (is_atomic (r[i])) {
+      string l= r[i]->label;
+      if (is_quoted (l)) l= unquote (l);
+      if (prefix == "") prefix= l;
+      else compls << l;
+    }
+  // cout << prefix << ", " << compls << LF;
+
+  if ((prefix == "") || (N(compls) == 0)) return false;
+  complete_start (prefix, compls);
+  return true;
+}

@@ -1,0 +1,15 @@
+#!/bin/sh
+TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
+export TEXMACS_MAXIMA_PATH
+# Test using old (before 5.9.0) maxima command line options
+echo "quit();" | \
+ maxima -load "$TEXMACS_MAXIMA_PATH/texmacs.lisp" > /dev/null 2>&1
+test_result="$?"
+if [ "$test_result" = "0" ]; then
+  # Maxima version < 5.9.0
+  exec maxima -load "$TEXMACS_MAXIMA_PATH/texmacs.lisp" | maxima_filter
+else
+  # Maxima version >= 5.9.0
+  exec maxima --preload-lisp="$TEXMACS_MAXIMA_PATH/texmacs.lisp" | \
+   maxima_filter
+fi

@@ -1,0 +1,254 @@
+
+###############################################################################
+# MODULE     : common make file for TeXmacs source
+# BY         : David Allouche
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+#
+# Utility makefile used by TeXmacs and TeXmacs-misc.
+#
+# This file defines all the rules and variables needed to compile
+# TeXmacs objects in other source trees. It also contains the
+# configuration variables definitions so that TeXmacs-misc does not
+# have to maintain its own configure script
+#
+# The including makefile *must* define the variable:
+#
+#    $(main_src) -- relative path of the TeXmacs-$VERSION/src directory.
+#
+# The including makefile's directory must contain:
+#
+#    Deps directory -- dependences files, if requested.
+#    Objects directory -- objects, .rpo's, and group source files.
+#
+###############################################################################
+
+###############################################################################
+# Configuration variables
+###############################################################################
+
+tmsrc = @tmsrc@
+SO_SUFFIX= @CONFIG_SO@
+CONFIG_OS= @CONFIG_OS@
+
+CXX = @CXX@
+CXXWARNING = @CONFIG_CXXWARNING@
+CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
+CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
+CXXDEBUG = @CONFIG_CXXDEBUG@ 
+CXXFLAGS = $(CXXWARNING) $(CXXTEMPLATE) $(CXXOPTIMIZE) $(CXXDEBUG) @CONFIG_CXXFLAGS@ @CXXFLAGS@
+CPPFLAGS = 
+DASH_I_DASH = @CONFIG_DASH_I_DASH@
+CXXXWINDOW =@CONFIG_CX@
+CXXFREETYPE = @FREETYPE_CFLAGS@
+CXXICONV = @ICONV_CFLAGS@
+CXXGUILE = @GUILE_CFLAGS@
+LD = @CXX@
+LDFLAGS = @CONFIG_LFLAGS@
+LDSTATIC = @CONFIG_LSTATIC@
+LDSHARED = @CONFIG_LSHARED@
+LDPATH = @CONFIG_LPATH@
+LDXWINDOW =@CONFIG_LX@
+LDDL = @CONFIG_LDL@
+LDFREETYPE = @FREETYPE_LDFLAGS@
+LDICONV = @ICONV_LDFLAGS@
+LDGUILE = @GUILE_LDFLAGS@
+LDB = @CXX@
+LDBFLAGS = @CONFIG_BFLAGS@
+LDBSTATIC = @CONFIG_BSTATIC@
+LDBSHARED = @CONFIG_BSHARED@
+LDBPATH = @CONFIG_BPATH@
+LDBXWINDOW =@CONFIG_BX@
+LDBDL = @CONFIG_BDL@
+LDBFREETYPE = @FREETYPE_LDFLAGS@
+LDBICONV = @ICONV_LDFLAGS@
+LDBGUILE = @GUILE_LDFLAGS@
+AR = ar
+ARFLAGS = -r
+RM = rm -f
+CP = cp -r -f
+GLUE = cd Guile/Glue; ./build-glue
+TOUCH = touch
+
+###############################################################################
+# Handling dependencies
+###############################################################################
+
+# The following definition are used to locate source files by name in
+# the main TeXmacs source package.
+#
+# Get the file name of each source file. The files are grouped
+# according to the compilation options they require and group they
+# belong to (in aggregate compilation).
+#
+# The enclosing makefile must have a "vpath %.cpp" directive to allow
+# make to find the sources files given only their file name.
+
+findsrc_in = \
+$(foreach dir,$(patsubst %,$(1)/%,$(2)),\
+$(notdir $(wildcard $(main_src)/$(dir)/*.cpp $(main_src)/$(dir)/*/*.cpp)))
+findsrc = $(call findsrc_in,$(1),*)
+
+system_src   := $(call findsrc,System)
+classes_src  := $(call findsrc,Classes)
+data_src     := $(call findsrc,Data)
+guile_src    := $(call findsrc_in,Guile,Scheme) glue_all.cpp
+edit_src     := $(call findsrc,Edit)
+resource_src := $(call findsrc,Resource)
+plugins_src  := $(call findsrc,Plugins)
+texmacs_src  := $(call findsrc,Texmacs)
+typeset_src  := $(call findsrc,Typeset)
+x_window_src := $(call findsrc_in,Window,X)
+window_src   := $(call findsrc_in,Window,Event PsDevice Widget)
+
+# Each makefile will have its own Deps directory. Okay that is a bit
+# inefficient, but that is much simpler to maintain.
+#
+# The enclosing makefile should accumulate a dependences file name in
+# $(deps) and define an rule without command for every source file it
+# compiles.
+
+make_deps = $(patsubst %.cpp,Deps/%.d,$(notdir $(1)))
+
+texmacs_deps := $(call make_deps,$(system_src) $(classes_src) $(data_src)\
+ $(edit_src) $(guile_src) $(resource_src) $(plugins_src) $(texmacs_src)\
+ $(typeset_src) $(window_src) $(x_window_src))
+
+deps += $(texmacs_deps)
+
+###############################################################################
+# Make editor
+###############################################################################
+
+###
+# Compilation flags
+###
+
+incl_flags = $(patsubst %,-I%,$(1))
+tm_incl_flags = $(call incl_flags,$(patsubst %,$(main_src)/%,$(1)))
+
+system_incl   := $(call tm_incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Guile)
+classes_incl  := $(system_incl)
+data_incl     := $(system_incl) $(call tm_incl_flags,Resource)
+resource_incl := $(system_incl) $(call tm_incl_flags,Resource Window)
+plugins_incl  := $(resource_incl) $(call tm_incl_flags,Plugins)
+window_incl   := $(plugins_incl)
+typeset_incl  := $(resource_incl) $(call tm_incl_flags,Typeset Typeset/Bridge Typeset/Concat Typeset/Page Edit)
+guile_incl    := $(typeset_incl) $(call tm_incl_flags,Plugins Texmacs)
+edit_incl     := $(guile_incl) $(call tm_incl_flags,Edit/Editor Edit/Interface Edit/Modify)
+texmacs_incl  := $(guile_incl)
+
+deps_incl = $(call tm_incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Typeset Edit Texmacs Guile)
+
+deps_flags = $(deps_incl)\
+ $(CPPFLAGS) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+ -I$(tmsrc)/include $(CXXXWINDOW)
+# we should use -I- to separate local includes from system includes, but
+# headers of guile 1.6.0 use includes in quotes with names relative to the
+# current directory, and that feature is disable by -I-.
+
+makeobj = $(patsubst %.cpp,Objects/%.o,$(1))
+
+system_obj   := $(call makeobj,$(system_src))
+classes_obj  := $(call makeobj,$(classes_src))
+data_obj     := $(call makeobj,$(data_src))
+edit_obj     := $(call makeobj,$(edit_src))
+guile_obj    := $(call makeobj,$(guile_src))
+resource_obj := $(call makeobj,$(resource_src))
+plugins_obj  := $(call makeobj,$(plugins_src))
+texmacs_obj  := $(call makeobj,$(texmacs_src))
+typeset_obj  := $(call makeobj,$(typeset_src))
+x_window_obj := $(call makeobj,$(x_window_src))
+window_obj   := $(call makeobj,$(window_src))
+
+# Compilation rules
+#
+# The link_bin function uses different flags depending on the value
+# of the $(link) option, and on the host type. Its parameter must be a
+# sequence of options for the compiler control which libraries to link
+# with and where to find them.
+#
+# It should be used as the body of rules whose target are executable
+# binaries and the prerequisites are the object files being linked in
+# the target.
+
+ifeq "$(link)" "shared"
+ifeq "$(CONFIG_OS)" "DEC"
+link_bin = $(strip $(LDB) $(LDBFLAGS) -lstdc++ $(LDBSHARED) $^ $(1) -o $@)
+else
+link_bin = $(strip $(LDB) $(LDBFLAGS) $(LDBSHARED) $^ $(1) -o $@)
+endif
+endif
+ifeq "$(link)" "static"
+ifeq "$(CONFIG_OS)" "DEC"
+link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -lstdc++ -o $@)
+else
+link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -o $@)
+endif
+endif
+
+# Compilation of glue
+#
+# When dependences are generated, the glue code can be rebuilt
+# automatically, but only if there is an appropriate rule for
+# regenerating the glue source from the scheme documents.
+
+$(main_src)/Guile/Glue/glue_%.cpp: $(main_src)/Guile/Glue/build-glue-%.scm
+	$(MAKE) GLUE
+
+# Compilation of objects
+#
+# The 'uses' function must be used as a prerequisite of a link rule
+# (whose body is a link_bin functian call). It takes a number of
+# module names in parameters.
+
+uses = $(sort $(foreach use,$(patsubst %,uses_%,$(1)),$($(use))))
+
+uses_system   := $(system_obj)
+uses_classes  := $(classes_obj)
+uses_data     := $(data_obj)
+uses_resource := $(resource_obj)
+uses_plugins  := $(plugins_obj)
+uses_window   := $(window_obj) $(x_window_obj)
+uses_typeset  := $(typeset_obj)
+uses_edit     := $(edit_obj)
+uses_glue     := $(guile_obj)
+
+# To enforce some degree of modularity, each object file must be
+# compiled with only a specific set of include flags. To achieve that,
+# we must disable the default (implicit) compilation rule and define
+# an appropriate rule for each object file.
+
+%.o: %.cpp # Disable implicit compilation rule
+
+cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
+cxx_incl     = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+  $(CPPFLAGS) $(CXXFLAGS)) 
+cxx_incl_sys = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+  $(CPPFLAGS) $(DASH_I_DASH) $(2) $(CXXFLAGS))
+
+$(system_obj): Objects/%.o: %.cpp
+	$(call cxx_incl_sys,$(system_incl),-I$(tmsrc)/include)
+$(classes_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(classes_incl))
+$(data_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include)
+$(edit_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(edit_incl))
+$(guile_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(guile_incl))
+# We should use cxx_incl_sys, but a problem in guile 1.6.0 does not
+# allow it. See definition deps_flags for details.
+$(resource_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(resource_incl))
+$(plugins_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(plugins_incl),$(CXXXWINDOW))
+$(texmacs_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(texmacs_incl))
+$(typeset_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(typeset_incl))
+$(window_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(window_incl))
+$(x_window_obj): Objects/%.o: %.cpp
+	$(call cxx_incl_sys,$(window_incl),$(CXXXWINDOW))

@@ -1,0 +1,29 @@
+/* XPM */
+static char * tb_replace_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"17 17 6 1",
+/* colors */
+" 	c None",
+".	c black",
+"X	c red",
+"o	c grey50",
+"a	c white",
+"b      c lightgray",
+/* pixels */
+" .........       ",
+" .aaaaaaa..      ",
+" .a..aaaa.a.     ",
+" ob..oaaa....    ",
+" b.a..aaaaaa.    ",
+" o....oaaaaa.o   ",
+" .aaa..aaaaa.o   ",
+"..oao...aaa .o   ",
+" baaaaaaaaaabo   ",
+" .aXX  Xaaa....b ",
+" .aoX  XXaa.oa.. ",
+" .aaoXXXXXa....b ",
+" .aaaaaXXaa.oa.. ",
+" .aaaaaXaaa.oa.. ",
+" ......b..b....b ",
+"    ooooooobbbb  ",
+"                 "};

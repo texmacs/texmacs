@@ -1,0 +1,42 @@
+view                 package:TeXmacs                 R Documentation
+
+_I_n_s_e_r_t _c_u_r_r_e_n_t _g_r_a_p_h_i_c _i_n_t_o _T_e_X_m_a_c_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Once a graph is plotted and ready to go into the TeXmacs buffer,
+     you insert it into the buffer using the v() function. The plotv,
+     linev, and pointsv are just shortcuts for plot and then v.
+
+_U_s_a_g_e:
+
+     v(width = 4, height = 4, ...)
+     plotv(...)
+     pointsv(...)
+     linev(...)
+
+_A_r_g_u_m_e_n_t_s:
+
+   width: Width of graph in inches. 
+
+  height: Height of graph in inches. 
+
+     ...: Additional arguments for postscript. 
+
+_A_u_t_h_o_r(_s):
+
+     Michael Lachmann Tamarlin
+
+_S_e_e _A_l_s_o:
+
+     See Also `TeXmacs',
+
+_E_x_a_m_p_l_e_s:
+
+     x<-(0:600)/100;
+     plot(x,sin(x),type="l");
+     lines(x,cos(x),col=2);
+     legend(0,-0.5,c("sin(x)","cos(x)"),lty=1,col=c(1:2));
+     v();
+     plotv(x,sin(60/x),type="l");
+

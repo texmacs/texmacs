@@ -1,0 +1,517 @@
+
+/******************************************************************************
+* MODULE     : edit_search.cpp
+* DESCRIPTION: search and query replace
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "Replace/edit_replace.hpp"
+#include "Interface/edit_interface.hpp"
+#include "drd_std.hpp"
+
+/******************************************************************************
+* Constructor and destructor
+******************************************************************************/
+
+edit_replace_rep::edit_replace_rep () {}
+edit_replace_rep::~edit_replace_rep () {}
+
+/******************************************************************************
+* Structural search routines
+******************************************************************************/
+
+bool
+edit_replace_rep::inside (string what) {
+  if (std_contains (what))
+    return inside (as_tree_label (what));
+  else return inside_expand (what);
+}
+
+path
+edit_replace_rep::search_upwards (string what) {
+  if (std_contains (what))
+    return search_upwards (as_tree_label (what));
+  else return search_upwards_expand (what);
+}
+
+bool
+edit_replace_rep::inside (tree_label l) {
+  return !nil (search_upwards (l));
+}
+
+path
+edit_replace_rep::search_upwards (tree_label l) {
+  path p= path_up (tp, 2);
+  while (!is_func (subtree (et, p), l)) {
+    if (nil (p)) return p;
+    p= path_up (p);
+  }
+  return p;
+}
+
+path
+edit_replace_rep::search_parent_upwards (tree_label l, int& last) {
+  path p= path_up (tp);
+  while (!is_func (subtree (et, path_up (p)), l)) {
+    p= path_up (p);
+    if (nil (p)) {
+      last= -1;
+      return path ();
+    }
+  }
+  last= last_item (p);
+  return path_up (p);
+}
+
+path
+edit_replace_rep::search_parent_upwards (tree_label l) {
+  int last;
+  path p= search_parent_upwards (l, last);
+  return p * last;
+}
+
+bool
+edit_replace_rep::inside_expand (string name) {
+  return !nil (search_upwards_expand (name));
+}
+
+path
+edit_replace_rep::search_upwards_expand (string name) {
+  path p= path_up (tp);
+  while (true) {
+    p= path_up (p);
+    if (nil (p)) return p;
+    tree st= subtree (et, p);
+    if (is_compound (st, name)) return p;
+    if (is_expand (st, name)) return p; // for hide_expand
+  }
+}
+
+bool
+edit_replace_rep::inside_with (string var, string val) {
+  return !nil (search_upwards_with (var, val));
+}
+
+path
+edit_replace_rep::search_upwards_with (string var, string val) {
+  path p= path_up (tp);
+  while (true) {
+    p= path_up (p);
+    if (nil (p)) return p;
+    tree st= subtree (et, p);
+    if (is_func (st, WITH) && (st[0] == var) && (st[1] == val)) return p;
+  }
+}
+
+string
+edit_replace_rep::inside_which (tree t) {
+  path p= search_upwards_in_set (t);
+  if (nil (p)) return "";
+  tree st= subtree (et, p);
+  if (is_expand (st)) return as_string (st[0]);
+  else return as_string (L(st));
+}
+
+path
+edit_replace_rep::search_upwards_in_set (tree t) {
+  if (!is_tuple (t)) return path ();
+  int i, n=N(t);
+  path p= path_up (tp);
+  while (true) {
+    p= path_up (p);
+    if (nil (p)) return p;
+    tree st= subtree (et, p);
+    for (i=0; i<n; i++) {
+      if (is_atomic (t[i])) {
+	string s= t[i]->label;
+	if (is_quoted (s)) s= unquote (s);
+	if (std_contains (s)) {
+	  tree_label l= as_tree_label (s);
+	  if (is_func (st, l)) return p;
+	}
+	else if (is_compound (st, s)) return p;
+      }
+      else if (is_func (st, L(t))) return p;
+    }
+  }
+}
+
+static bool
+is_accessible_path (drd_info drd, tree t, path p) {
+  if (nil (p)) return true;
+  return
+    drd->is_accessible_child (t, p->item) &&
+    (p->item < N(t)) &&
+    is_accessible_path (drd, t[p->item], p->next);
+}
+
+path
+edit_replace_rep::search_previous_expand (path init, string which) {
+  path p= init;
+  while (true) {
+    if (nil (p)) return init;
+    if (last_item (p) == 0) p= path_up (p);
+    else {
+      p= path_dec (p);
+      while (true) {
+	tree st= subtree (et, p);
+	if (arity (st) == 0) break;
+	p= p * (N(st)-1);
+      }
+    }
+    if (is_accessible_path (drd, et, p) &&
+	is_compound (subtree (et, p), which))
+      return p;
+  }
+}
+
+path
+edit_replace_rep::search_next_expand (path init, string which) {
+  path p= init;
+  while (true) {
+    if (nil (p)) return init;
+    if (last_item (p) == (N (subtree (et, path_up (p))) - 1)) p= path_up (p);
+    else {
+      p= path_inc (p);
+      while (true) {
+	tree st= subtree (et, p);
+	if (arity (st) == 0) break;
+	p= p * 0;
+      }
+    }
+    if (is_accessible_path (drd, et, p) &&
+	is_compound (subtree (et, p), which))
+      return p;
+  }
+}
+
+/******************************************************************************
+* Test whether we found a match
+******************************************************************************/
+
+path
+edit_replace_rep::test (path p, tree t) {
+  if (is_compound (t)) return p;
+  tree st= subtree (et, path_up (p));
+  if (is_compound (st)) return p;
+  int l= last_item (p);
+  // cout << "Test with " << st->label << " at " << l << "\n";
+  if (N(st->label) < (N(t->label) + l)) return p;
+  if (st->label (l, l + N(t->label)) != t->label) return p;
+  string mode= as_string (get_env_value (MODE, p));
+  string lan = as_string (get_env_value (LANGUAGE (mode), p));
+  if (search_mode != mode) return p;
+  if (search_lan != lan) return p;
+  return path_add (p, N (t->label));
+}
+
+/******************************************************************************
+* Traversal of the edit tree
+******************************************************************************/
+
+void
+edit_replace_rep::step_ascend (bool forward) {
+  // cout << "Step ascend at " << search_at << "\n";
+  search_at= path_add (path_up (search_at), forward? 1: -1);
+  tree st;
+  int  l;
+  while (true) {
+    st= subtree (et, path_up (search_at));
+    l = last_item (search_at);
+    // cout << "  st= " << st << "\n";
+    // cout << "  l = " << l << "\n";
+    if ((l<0) || (l>=N(st)) || drd->is_accessible_child (st, l)) break;
+    search_at= path_add (search_at, forward? 1: -1);
+  }
+
+  if (forward) {
+    if (l == N(st)) {
+      if (atom (search_at)) search_at= path ();
+      else step_ascend (forward);
+    }
+    else step_descend (forward);
+  }
+  else {
+    if (l == -1) {
+      if (atom (search_at)) search_at= path ();
+      else step_ascend (forward);
+    }
+    else step_descend (forward);
+  }
+}
+
+void
+edit_replace_rep::step_descend (bool forward) {
+  // cout << "Step descend at " << search_at << "\n";
+  tree st= subtree (et, search_at);
+  // cout << "  st= " << st << "\n";
+  int last= (is_atomic (st)? N(st->label): N(st)-1);
+  search_at= search_at * (forward? 0: last);
+  if (is_format (st))
+    step_descend (forward);
+}
+
+void
+edit_replace_rep::step_horizontal (bool forward) {
+  // cout << "Step horizontal at " << search_at << "\n";
+  if (nil (search_at)) step_descend (forward);
+  else {
+    tree st  = subtree (et, path_up (search_at));
+    int  l   = last_item (search_at);
+
+    // cout << "  st= " << st << "\n";
+    if (forward) {
+      if (l == right_index (st)) step_ascend (forward);
+      else {
+	if (is_atomic (st)) {
+	  if (st->label[l]=='<') {
+	    string s= st->label;
+	    while ((l<N(s)) && (s[l]!='>')) l++;
+	    if (l<N(s)) l++;
+	    search_at= path_up (search_at) * l;
+	  }
+	  else search_at= path_inc (search_at);
+	}
+	else {
+	  int i;
+	  for (i=l; i<N(st); i++)
+	    if (drd->is_accessible_child (st, i)) {
+	      search_at= path_up (search_at) * i;
+	      step_descend (forward);
+	      return;
+	    }
+	  step_ascend (forward);
+	}
+      }
+    }
+    else {
+      if (l == 0) step_ascend (forward);
+      else {
+	if (is_atomic (st)) {
+	  if (st->label[l-1]=='>') {
+	    string s= st->label;
+	    l--;
+	    while ((l>0) && (s[l]!='<')) l--;
+	    search_at= path_up (search_at) * l;
+	  }
+	  else search_at= path_dec (search_at);
+	}
+	else {
+	  int i;
+	  for (i=l; i>=0; i--)
+	    if (drd->is_accessible_child (st, i)) {
+	      search_at= path_up (search_at) * i;
+	      step_descend (forward);
+	      return;
+	    }
+	  step_ascend (forward);
+	}
+      }
+    }
+  }
+}
+
+void
+edit_replace_rep::next_match (bool forward) {
+  // cout << "Next match at " << search_at << "\n";
+  while (true) {
+    if (nil (search_at)) {
+      set_selection (tp, tp);
+      notify_change (THE_SELECTION);
+      return;
+    }
+    search_end= test (search_at, search_what);
+    if (search_end != search_at) {
+      set_selection (search_at, search_end);
+      notify_change (THE_SELECTION);
+      go_to (copy (search_end));
+      return;
+    }
+    step_horizontal (forward);
+  }
+}
+
+/******************************************************************************
+* Searching
+******************************************************************************/
+
+void
+edit_replace_rep::search_start (bool flag) {
+  string r ("forward search");
+  if (!flag) r= "backward search";
+
+  search_old  = copy (search_what);
+  forward     = flag;
+  search_mode = copy (get_env_string (MODE));
+  search_lan  = copy (get_env_string (LANGUAGE (search_mode)));
+  search_at   = tp;
+  search_what = tree ("");
+  where_stack = list<path> ();
+  what_stack  = tree ("");
+  set_input_mode (INPUT_SEARCH);
+  set_message ("Searching", r);
+}
+
+void
+edit_replace_rep::search_next (bool forward) {
+  string r ("forward search");
+  if (!forward) r= "backward search";
+
+  next_match (forward);
+  if (nil (search_at)) {
+    set_message ("No more matches for#" * as_string (search_what), r);
+    cerr << '\a';
+  }
+  else set_message ("Searching#" * as_string (search_what), r);
+}
+
+void
+edit_replace_rep::search_next (tree what, bool forward, bool step) {
+  where_stack= list<path> (copy (search_at), where_stack);
+  what_stack = tuple (copy (search_what), what_stack);
+  search_what= copy (what);
+  if (step) step_horizontal (forward);
+  search_next (forward);
+}
+
+void
+edit_replace_rep::search_button_next () {
+  set_input_mode (INPUT_SEARCH);
+  search_next (search_what, forward, true);
+}
+
+bool
+edit_replace_rep::search_keypress (string s) {
+  if (N(s)==1) {
+    if (is_atomic (search_what))
+      search_next (as_string (search_what) * s, forward, false);
+  }
+  else {
+    if ((s == "left") || (s == "right") ||
+	(s == "up") || (s == "down") ||
+	(s == "pageup") || (s == "pagedown") ||
+	(s == "begin") || (s == "end"))
+      {
+	set_input_normal ();
+	return false;
+      }
+    else if ((s == "C-c") || (s == "C-g"))
+      set_input_normal ();
+    else if ((s == "C-r") || (s == "C-s") || (s == "find") || (s == "again")) {
+      if (search_what == "") {
+	if (search_old == "") return true;
+	search_next (search_old, s != "C-r", true);
+      }
+      else search_next (search_what, s != "C-r", true);
+    }
+    else if ((s == "delete") || (s == "backspace")) {
+      if (nil (where_stack))
+	set_input_normal ();
+      else if (atom (where_stack)) {
+	go_to (where_stack->item);
+	set_input_normal ();
+      }
+      else {
+	search_at  = where_stack->item;
+	where_stack= where_stack->next;
+	search_what= what_stack[0];
+	what_stack = what_stack[1];
+	search_next (forward);
+      }
+    }
+    else if ((s == "C-left") || (s == "C-right")) {
+      // FIXME: integrate better with general searching mechanism
+      path p= path_up (search_at);
+      while ((!nil (p)) && (!is_extension (subtree (et, path_up (p)))))
+	p= path_up (p);
+      if (nil (p)) return true;
+      path r= path_up (p);
+#ifdef WITH_EXTENSIONS
+      string w= as_string (L (subtree (et, r)));
+#else
+      string w= as_string (subtree (et, r * 0));
+#endif
+      path q= (s == "C-right")?
+	search_next_expand (r, w):
+	search_previous_expand (r, w);
+      if (q == r) {
+	set_message ("No more matches", "search similar structure");
+	cerr << '\a';
+      }
+      else {
+	q= q * min (N (subtree (et, q)) - 1, last_item (p));
+	search_at= end (et, q);
+	go_to (copy (search_at));
+      }
+    }
+  }
+  return true;
+}
+
+/******************************************************************************
+* Replacing
+******************************************************************************/
+
+void
+edit_replace_rep::replace_start (tree what, tree by, bool flag) {
+  forward     = flag;
+  search_mode = copy (get_env_string (MODE));
+  search_lan  = copy (get_env_string (LANGUAGE (search_mode)));
+  search_at   = tp;
+  search_what = copy (what);
+  replace_by  = copy (by);
+  nr_replaced = 0;
+  set_input_mode (INPUT_REPLACE);
+  replace_next ();
+}
+
+void
+edit_replace_rep::replace_next () {
+  string r ("forward replace");
+  if (!forward) r= "backward replace";
+
+  next_match (forward);
+  if (nil (search_at)) {
+    string l= "Replaced#" * as_string (nr_replaced) * "#occurrences";
+    if (nr_replaced == 0) l= "No matches found";
+    if (nr_replaced == 1) l= "Replaced one occurrence";
+    set_message (l, r);
+    cerr << '\a';
+    set_input_normal ();
+  }
+  else set_message ("Replace (y,n,a)?", r);
+}
+
+bool
+edit_replace_rep::replace_keypress (string s) {
+  if ((s == "C-c") || (s == "C-g") || (s == "escape"))
+    set_input_normal ();
+  else if (s == "y") {
+    nr_replaced++;
+    go_to (copy (search_end));
+    cut (search_at, search_end);
+    insert_tree (copy (replace_by));
+    search_at= copy (tp);
+    replace_next ();
+  }
+  else if (s == "n") {
+    step_horizontal (forward);
+    replace_next ();
+  }
+  else if (s == "a") {
+    while (!nil (search_at)) {
+      nr_replaced++;
+      go_to (copy (search_end));
+      cut (search_at, search_end);
+      insert_tree (copy (replace_by));
+      search_at= copy (tp);
+      replace_next ();
+    }
+  }
+  return true;
+}

@@ -1,0 +1,28 @@
+/* XPM */
+static char * tb_undo_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"17 17 5 1",
+/* colors */
+" 	s mask	c None",
+".	s style	c black",
+"X	s white	c white",
+"o	s dark	c grey50",
+"x	s gray	c gray",
+/* pixels */
+"                 ",
+"  ..  .....      ",
+"  .X..XXXXX..    ",
+"  .XXXXXXXXXX.   ",
+"  .XXXX....XX.o  ",
+"  .XXXX.ooo.XX.  ",
+"  .XXXXX.  .XX.o ",
+"  .......o .XX.o ",
+"   o.ooooo .XX.o ",
+"   .X.     .XX.o ",
+"   .XX.....XX.oo ",
+"    .XXXXXXXX.o  ",
+"     .XXXXX..oo  ",
+"      .....ooo   ",
+"       ooooo     ",
+"                 ",
+"                 "};

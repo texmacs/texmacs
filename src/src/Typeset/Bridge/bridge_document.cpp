@@ -1,0 +1,176 @@
+
+/******************************************************************************
+* MODULE     : bridge_document.cpp
+* DESCRIPTION: Bridge between logical and physically typesetted document
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "bridge.hpp"
+
+class bridge_document_rep: public bridge_rep {
+protected:
+  array<bridge> brs;
+
+public:
+  bridge_document_rep (typesetter ttt, tree st, path ip);
+  void initialize ();
+
+  void notify_assign (path p, tree u);
+  void notify_insert (path p, tree u);
+  void notify_remove (path p, int nr);
+  bool notify_macro  (int type, string var, int l, path p, tree u);
+  void notify_change ();
+
+  void my_exec_until (path p);
+  bool my_typeset_will_be_complete ();
+  void my_typeset (int desired_status);
+};
+
+bridge_document_rep::bridge_document_rep (typesetter ttt, tree st, path ip):
+  bridge_rep (ttt, st, ip)
+{
+  initialize ();
+}
+
+void
+bridge_document_rep::initialize () {
+  int i, n= N(st);
+  brs= array<bridge> (n);
+  for (i=0; i<n; i++)
+    brs[i]= make_bridge (ttt, st[i], descend (ip, i));
+}
+
+bridge
+bridge_document (typesetter ttt, tree st, path ip) {
+  return new bridge_document_rep (ttt, st, ip);
+}
+
+/******************************************************************************
+* Event notification
+******************************************************************************/
+
+void
+bridge_document_rep::notify_assign (path p, tree u) {
+  // cout << "Assign " << p << ", " << u << " in " << st << "\n";
+  if (nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARAGRAPH)))
+    fatal_error ("Nil path", "bridge_document_rep::notify_assign");
+  if (nil (p)) { st= u; initialize (); }
+  else if (atom (p)) {
+    replace_bridge (brs[p->item], u, descend (ip, p->item));
+    st= substitute (st, p->item, brs[p->item]->st);
+  }
+  else {
+    brs[p->item]->notify_assign (p->next, u);
+    st= substitute (st, p->item, brs[p->item]->st);
+  }
+  status= CORRUPTED;
+}
+
+void
+bridge_document_rep::notify_insert (path p, tree u) {
+  // cout << "Insert " << p << ", " << u << " in " << st << "\n";
+  if (nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_insert");
+  if (atom (p)) {
+    int i, j, n= N(brs), pos= p->item, nr= N(u);
+    array<bridge> brs2 (n+nr);
+    for (i=0; i<pos; i++) brs2[i]= brs[i];
+    for (j=0; j<nr ; j++) brs2[i+j]= make_bridge (ttt, u[j], descend (ip,i+j));
+    for (; i<n; i++) {
+      brs2[i+nr]= brs[i];
+      brs2[i+nr]->ip->item += nr;
+    }
+    brs= brs2;
+    st = insert (st, p->item, u);
+  }
+  else {
+    brs[p->item]->notify_insert (p->next, u);
+    st= substitute (st, p->item, brs[p->item]->st);
+  }
+  status= CORRUPTED;
+}
+
+void
+bridge_document_rep::notify_remove (path p, int nr) {
+  // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
+  if (nil (p)) fatal_error ("Nil path", "bridge_document_rep::notify_remove");
+  if (atom (p)) {
+    int i, n= N(brs), pos= p->item;
+    array<bridge> brs2 (n-nr);
+    for (i=0; i<pos ; i++) brs2[i]= brs[i];
+    for (; i<n-nr; i++) {
+      brs2[i]= brs[i+nr];
+      brs2[i]->ip->item -= nr;
+    }
+    bool change_flag= false;
+    for (i=pos; i<pos+nr; i++)
+      change_flag |= !brs[i]->changes->empty();
+    brs= brs2;
+    n -= nr;
+    st = remove (st, pos, nr);
+    if (pos>0) brs[pos-1]->notify_change (); // touch in case of surroundings
+    if (pos<n) brs[pos  ]->notify_change (); // touch in case of surroundings
+    if (change_flag) // touch brs[pos..n] for correct ``changes handling''
+      for (i=pos; i<n; i++)
+	brs[i]->notify_change ();
+  }
+  else {
+    brs[p->item]->notify_remove (p->next, nr);
+    st= substitute (st, p->item, brs[p->item]->st);
+  }
+  status= CORRUPTED;
+}
+
+bool
+bridge_document_rep::notify_macro (int tp, string var, int l, path p, tree u) {
+  bool flag= false;
+  int i, n= N(brs);
+  for (i=0; i<n; i++)
+    flag= brs[i]->notify_macro (tp, var, l, p, u) || flag;
+  if (flag) status= CORRUPTED;
+  return flag;
+}
+
+void
+bridge_document_rep::notify_change () {
+  status= CORRUPTED;
+  if (N(brs)>0)
+    brs[0]->notify_change ();
+}
+
+/******************************************************************************
+* Typesetting
+******************************************************************************/
+
+void
+bridge_document_rep::my_exec_until (path p) {
+  int i;
+  for (i=0; i<p->item; i++)
+    brs[i]->exec_until (path (1));
+  brs[i]->exec_until (p->next);
+}
+
+bool
+bridge_document_rep::my_typeset_will_be_complete () {
+  int i, n= N(brs);
+  for (i=0; i<n; i++)
+    if (!brs[i]->my_typeset_will_be_complete ()) return false;
+  return true;
+}
+
+void
+bridge_document_rep::my_typeset (int desired_status) {
+  int i, n= N(st);
+  array<line_item> a= ttt->a;
+  array<line_item> b= ttt->b;
+  for (i=0; i<n; i++) {
+    int wanted= (i==n-1? desired_status & WANTED_MASK: WANTED_PARAGRAPH);
+    ttt->a= (i==0  ? a: array<line_item> ());
+    ttt->b= (i==n-1? b: array<line_item> ());
+    brs[i]->typeset (PROCESSED+ wanted);
+  }
+}

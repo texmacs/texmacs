@@ -1,0 +1,113 @@
+% File received from Mario Widel at University of Illinois at Chicago. 
+% Original author unclear.
+\patterns{
+a1b a1c a1d a1f a1g a1h a1j a1k a1l a1m a1n
+    a1p a1q a1r a1s a1t a1v a1w a1x a1y a1z
+e1b e1c e1d e1f e1g e1h e1j e1k e1l e1m e1n
+    e1p e1q e1r e1s e1t e1v e1w e1x e1y e1z
+i1b i1c i1d i1f i1g i1h i1j i1k i1l i1m i1n
+    i1p i1q i1r i1s i1t i1v i1w i1x i1y i1z
+o1b o1c o1d o1f o1g o1h o1j o1k o1l o1m o1n
+    o1p o1q o1r o1s o1t o1v o1w o1x o1y o1z
+u1b u1c u1d u1f u1g u1h u1j u1k u1l u1m u1n
+    u1p u1q u1r u1s u1t u1v u1w u1x u1y u1z
+n2s1t n2s1p n2s1c b2s1t b2s1c d2s1c
+2b1b 2b1c 2b1d 2b1f 2b1g 2b1h 2b1j 2b1k      2b1m 2b1n
+     2b1p 2b1q      2b1s 2b1t 2b1v 2b1w 2b1x 2b1y 2b1z
+2c1b 2c1c 2c1d 2c1f 2c1g      2c1j 2c1k      2c1m 2c1n
+     2c1p 2c1q      2c1s 2c1t 2c1v 2c1w 2c1x 2c1y 2c1z
+2ch1t
+2d1b 2d1c 2d1d 2d1f 2d1g 2d1h 2d1j 2d1k      2d1m 2d1n
+     2d1p 2d1q      2d1s 2d1t 2d1v 2d1w 2d1x 2d1y 2d1z
+2f1b 2f1c 2f1d 2f1f 2f1g 2f1h 2f1j 2f1k      2f1m 2f1n
+     2f1p 2f1q      2f1s 2f1t 2f1v 2f1w 2f1x 2f1y 2f1z
+2g1b 2g1c 2g1d 2g1f      2g1h 2g1j 2g1k      2g1m 2g1n
+     2g1p 2g1q      2g1s 2g1t 2g1v 2g1w 2g1x 2g1y 2g1z
+2j1b 2j1c 2j1d 2j1f 2j1g 2j1h           2j1l 2j1m 2j1n
+     2j1p 2j1q 2j1r 2j1s 2j1t 2j1v 2j1w
+2l1b 2l1c 2l1d 2l1f 2l1g 2l1h 2l1j 2l1k      2l1m 2l1n
+     2l1p 2l1q 2l1r 2l1s 2l1t 2l1v 2l1w 2l1x 2l1y 2l1z
+2m1b 2m1c 2m1d 2m1f 2m1g 2m1h 2m1j 2m1k 2m1l 2m1m 2m1n
+     2m1p 2m1q 2m1r 2m1s 2m1t 2m1v 2m1w 2m1x 2m1y 2m1z
+2n1b 2n1c 2n1d 2n1f 2n1g 2n1h 2n1j 2n1k 2n1l 2n1m 2n1n
+     2n1p 2n1q 2n1r 2n1s 2n1t 2n1v 2n1w 2n1x 2n1y 2n1z
+2p1b 2p1c 2p1d 2p1f 2p1g      2p1j 2p1k      2p1m 2p1n
+     2p1p 2p1q      2p1s 2p1t 2p1v 2p1w 2p1x 2p1y 2p1z
+2r1b 2r1c 2r1d 2r1f 2r1g 2r1h 2r1j 2r1k 2r1l 2r1m 2r1n
+     2r1p 2r1q      2r1s 2r1t 2r1v 2r1w 2r1x 2r1y 2r1z
+2s1b 2s1c 2s1d 2s1f 2s1g 2s1h 2s1j 2s1k 2s1l 2s1m 2s1n
+     2s1p 2s1q 2s1r 2s1s 2s1t 2s1v 2s1w 2s1x 2s1y 2s1z
+2t1b 2t1c 2t1d 2t1f 2t1g 2t1h 2t1j 2t1k      2t1m 2t1n
+     2t1p 2t1q      2t1s 2t1t 2t1v 2t1w 2t1x 2t1y 2t1z
+2x1b 2x1c 2x1d 2x1f 2x1g 2x1h 2x1j 2x1k 2x1l 2x1m 2x1n
+     2x1p 2x1q 2x1r 2x1s 2x1t 2x1v 2x1w      2x1y 2x1z
+2y1b 2y1c 2y1d 2y1f 2y1g 2y1h 2y1j 2y1k 2y1l 2y1m 2y1n
+     2y1p 2y1q 2y1r 2y1s 2y1t 2y1v 2y1w 2y1x      2y1z
+2z1b 2z1c 2z1d 2z1f 2z1g 2z1h 2z1j 2z1k 2z1l 2z1m 2z1n
+      2z1p 2z1q 2z1r 2z1s 2z1t 2z1v 2z1w 2z1x
+.m2n .p2s .p2t
+.a2 .e2 .i2 .o2 .u2
+2a. 2b. 2c. 2d. 2e. 2f. 2g. 2h. 2i. 2j. 2k. 2l. 2m.
+    2n. 2o. 2p. 2r. 2s. 2t. 2u. 2v. 2w. 2x. 2y. 2z.
+2caca. 2cacas.
+2caga. 2cagas.
+2cola. 2colas.
+2culo. 2culos.
+2cular.
+2loco. 2locos. 2loca. 2locas.
+2moco. 2mocos.
+2mula. 2mulas.
+2pedo. 2pedos. 2peda. 2pedas.
+2pito. 2pitos.
+2puto. 2putos. 2puta. 2putas.
+.caca2
+a1a2 e1e2 i1i2 o1o2 u1u2
+.de2s1a2 .de2s1e2 .de2s1i2 .de2s1o2 .de2s1u2
+.in1a2 .in1e2 .in1i2 .in1o2 .in1u2
+.co1a2 .co1e2 .co1i2 .co1o2 .co1u2
+.re1a2 .re1e2 .re1i2 .re1o2 .re1u2
+de3s2ea
+in2i3ci
+}
+ 
+%.su2b1a2 .su2b1e2 .su2b1i2 .su2b1o2 .su2b1u2
+ 
+\hyphenation{
+arz-obis-po
+coi-to coa-hui-la
+de-sa-lar
+de-sa-li-na-do-ra
+de-seo de-ser-tar
+de-ser-tor
+de-ser-ti-co
+de-si-de-ra-tum
+de-si-dia
+de-si-dio-so
+de-sier-to
+de-sig-nar
+de-sig-na-cion
+de-sig-nio
+de-so-la-dor
+de-so-la-cion
+de-sas-tre
+hard-ware
+ino-cuo
+mi-cro-sco-pio
+ohm-me-tro
+pe-nin-su-la
+post-o-pe-ra-to-rio
+sacer-do-te
+soft-ware
+sub-acua-ti-co
+sub-al-ge-bra
+sub-al-pi-no
+sub-a-rren-dar
+sub-al-ter-no
+sub-in-di-ce
+sub-ins-pec-tor
+sub-in-ten-den-te
+sub-ur-ba-no
+sub-u-ti-li-zar
+tungs-te-no
+}
+ 

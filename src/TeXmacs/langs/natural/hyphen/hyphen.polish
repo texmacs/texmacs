@@ -1,0 +1,749 @@
+% HYPHEN.POL
+% Polish hyphenation patterns by Hanna Ko{\l}odziejska
+% (made available for network distribution by J. S. Bie\'n,
+%  Institute of Informatics, Warsaw University)
+%
+% The patterns use old Bie\'n's input conventions,
+% i.e. ª means z with dot and π means z with accent,
+% e.g.
+% PÛjdπ, ki´-ªe t¶ chmurno±¢ w g™°b flaszy.
+%                                 
+% If the patterns are used with {\TeX} 3.x, the x- and -xx breaks
+% should be disabled:
+% \lefthyphenmin=2 \righthyphenmin=3
+%
+% The patterns were published in the report described below in the
+% BibTeX format:
+%
+% @techreport{Kol87,
+%             author = "Hanna Ko{\l}odziejska",
+%             title = "Dzielenie wyraz\'ow polskich w systemie {\TeX}",
+%             institution = "Instytut Informatyki Uniwersytetu Warszawskiego",
+%             year = 1987,
+%             type = "Sprawozdania IInf UW",
+%             number = "nr.~165"
+%             }
+%
+%% CharacterTable
+%%   Upper-case    ABCDEFGHIJKLMNOPQRSTUVWXYZ
+%%   Lower-case    abcdefghijklmnopqrstuvwxyz
+%%   Digits        0123456789
+%%   Exclamation   !     Double quote  "     Hash (number) #
+%%   Dollar        $     Percent       %     Ampersand     &
+%%   Acute accent  '     Left paren    (     Right paren   )
+%%   Asterisk      *     Plus          +     Comma         ,
+%%   Minus         -     Point         .     Solidus       /
+%%   Colon         :     Semicolon     ;     Less than     <
+%%   Equals        =     Greater than  >     Question mark ?
+%%   Commercial at @     Left bracket  [     Backslash     \
+%%   Right bracket ]     Circumflex    ^     Underscore    _
+%%   Grave accent  `     Left brace    {     Vertical bar  |
+%%   Right brace   }     Tilde         ~
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                       %
+%   To jest  plik  WZORCE.TEX  zawierajacy  pelny zestaw  wzorcow       %
+%   dzielenia  wyrazow  polskich,  ktory  moze  byc  wykorzystany       %
+%   w systemie TeX  (zamiast  HYPHEN.TEX).                              %
+%      Niniejsze  wzorce  moga  byc  przekazywane  (nieodplatnie)       %
+%   wszystkim  zainteresowanym.                                         %
+%                                                                       %
+%                 Hanna Kolodziejska                                    %
+%                 Instytut Informatyki Uniwersytetu Warszawskiego       %
+%                                                                       %
+%   1987-12-15                                                          %
+%                                                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\catcode`\@=11 \lccode`@=`@
+\patterns{
+%
+  a1  e1  i1  o1  u1  y1 
+%
+  i2a   i2°   i2e    i2¶  i2o   i2Û  i2u   i2y
+%
+  d4z   d4π   d4ª   c4z   r4z   s4z   c4h
+%
+  a2u  e2u
+%
+  e3u2sz       .na3u        .nie3u       .prze3u     .za3u       .za4uto
+%
+  .br4         .dr4         .kl4         .pl4        .skr4       .tr4  
+  .brz4        .drz4        .kr4         .p™4       .sm4        .trz4   
+  .ch4         .dz4         .krz4        .prz4       .st4        .zm4   
+  .chrz4       .dπ4        .™4         .rz4        .str4       .zw4   
+  .cz4         .dª4        .mk4         .rª4       .tch4       .πdπ4   
+  .¢4         .grz4        .pch4        .sch4       .tk4        .ª4   
+%
+%  PRZEDROSTKI ZAKOãCZONE NA SP”äGäOSKÜ
+%
+  .ad3
+            .ad4a        .ad4e        .ad5iu       .ad5op       .ad4u   
+            .ad5apt      .ad4i        .ad4o        .ad5or       .ad4y 
+  .be2z3
+            .be3z4an     .be3z4ik     .bezzw2      .odbe2z3     .ubezw2
+            .be3z4ec     .bezw2       .najbe2z3    .ube2z3               
+  .de2z3   
+            .de3z4abil   .de3z4awu    .de3z4el     .de3z4er     .de3z4y 
+  .dy2s3 
+            .dy3s4e      .dy3s4y      .zdy2s3kont  .zdy2s3kwal
+            .dy3s4o      .dy3sz       .zdy2s3kred
+  .dy2z3 
+            .dy3z4e
+  .eks3  
+            .eks4y       .po3e2ks3    .pod3e4ks3   .wye2ks3 
+  .hipe2r3    
+            .hipe3r4o
+  .in3     
+            .in4f3lan    .in4o        .ino3w2      .zai2n3  
+            .in4ic       .in5ok       .in4u        .zai3n4ic
+  .kon2t2r3  
+            .kon3tr4a    .kon4tr5akc  .kon4tr5ase  .kon3tr4ol  
+            .kon4tr5adm  .kon4tr5alt  .kon4tr5asy  .kon3tr4ow
+            .kon4tr5agi  .kon4tr5arg  .kon4tr5ata  .kon3tr4y
+% .na2d2
+            .na3d°      .na3d¶      .na3dy
+  .na2j 
+            .na3j°      .na3j¶      
+  .pe2r3
+            .pe3r4e      .pe3r4i      .pe3r4o      .pe3r4u      .pe3r4y
+% .po2d2          
+            .po3d°      .po3dy
+% .post
+            .po4st3d     .po4st3h     .po4st3p     .po4st3s
+  .przeci2w3
+            .przeci3w4ie .przeciww2  
+% .prze2d2
+            .prze3d°    .prze3d¶    .prze3dy
+  .ro2z3 
+            .ro3z4a      .ro4z5e4g3z  .roz±2      .naj3ro2z3   .nieroz±2 
+            .ro4z5agi    .ro4z5emo    .ro3z4u      .najro3z4u   .niero3z4u
+            .ro4z5anie   .ro4z5e4n3t               .niero2z3    .uro2z3 
+            .rozbrz2     .rozm2                    .nierozbrz2  .zro2z3       
+            .ro3z4e      .rozpo3w2                 .nierozm2    .zro3z4u
+  .su2b3 
+            .su3b4ie
+  .supe2r3 
+            .supe3r4at   .supe3r4io   .supero2d1rzut
+  .±rÛ2d5
+            .pod3±rÛ2d5
+  .tra2n2s3 
+            .tran3s4ep    .tran3s4y    .tran3sz     .przetra2n2s3
+% .we3s2
+            .we4st3f      .we4st3m
+%
+% PIERWSZE CZäONY ZäOõEã (zako´czone na spÛ™g™osk¶)
+%
+  .cztere2ch3
+  .czwÛ2r3   .czwÛ3r4a  .czwÛ3r4°  .czwÛ3r4e  .czwÛ3r4¶  .czwÛ3r4o
+  .¢wie2r¢3 
+  .dwÛ2j3    .dwÛ3j4a   .dwÛ3j4°   .dwÛ3j4e   .dwÛ3j4¶   .dwÛ3j4o
+  .dziewi¶2¢3
+  .kro2¢3
+  .osie2m3
+  .pi¶2¢3   
+  .pi¶¢se2t3
+  .pÛ2™3    .pÛ3™4°   .pÛ3™4¶    .pÛ3™4y    .pÛ3™4ecz
+  .siede2m3        
+  .spÛ2™3 
+  .sze2s3
+  .sze2±2¢3
+  .trÛ2j3    .trÛ3j4°   .trÛ3j4¶    .trÛ3j4ecz
+  .tysi°2c3  .tysi°3c4a  .tysi°3c4e   .tysi°3cz   
+  .wewn°2trz3
+  .wieluse2t3
+  .wspÛ2™3  
+  .wsze2ch3   .wszechw2
+%
+%  PIERWSZE CZäONY ZäOõEã (zako´czone na samog™osk¶)
+%
+  .auto3ch2                               .pierwo3w2
+  .ca™o3k2       .ca™o3±2              .pi¶cio3±2
+  .ciep™o3kr2                            .piono3w2
+  .cztero3±2                             .p™asko3w2
+  .daleko3w2                              .pra3s2         .pra3w2n
+  .d™ugo3tr2     .d™ugo3w2              .przed3si¶3w2
+  .dziesi¶cio3±2                        .siedmio3±2
+  .dziewi¶cio3±2                        .sze±cio3±2
+  .jad™o3w2                              .±wiat™o3w2  
+  .ko™o3w2                               .wielo3k2       .wielo3±2
+  .krÛtko3tr2    .krÛtko3w2             .wniebo3w2
+  .moªno3w2                              .wodo3w2
+  .ogÛlno3k2                             .zimno3kr2
+  .oka3m2                                 .z™o3w2
+  .o±mio3±2
+%
+%  PRZEDROSTKI: DO- , NAJDO- , NIEDO-
+%
+  .do3b2   .najdo3b2   .niedo3b2   
+  .dobr2   
+  .dobrz2  
+  .do3c2   .najdo3c2   .niedo3c2   
+  .doch2   .najdoch2   .niedoch2   
+  .docz2   .najdocz2   .niedocz2   
+  .do3¢2  .najdo3¢2  .niedo3¢2  
+  .do3d2   .najdo3d2   .niedo3d2   
+  .dodz2   .najdodz2   .niedodz2   
+  .dodπ2  .najdodπ2  .niedodπ2  
+  .dodª2  .najdodª2  .niedodª2  
+  .do3f2   .najdo3f2   .niedo3f2   
+  .do3g2   .najdo3g2   .niedo3g2   
+  .dogrz2
+  .do3h2   .najdo3h2   .niedo3h2   
+  .do3k2   .najdo3k2   .niedo3k2   
+                       .niedokr2
+  .do3l2   .najdo3l2   .niedo3l2   
+  .do3™2  .najdo3™2  .niedo3™2  
+  .do3m2   .najdo3m2   .niedo3m2   
+  .domk2               .niedomk2   
+  .do3n2   .najdo3n2   .niedo3n2   
+  .do3´2  .najdo3´2  .niedo3´2  
+  .do3p2   .najdo3p2   .niedo3p2     
+  .dopch2              .niedopch2
+  .do3r2   .najdo3r2   .niedo3r2   
+  .dorz2   .najdorz2   .niedorz2   
+  .dorª2  
+  .do3s2   .najdo3s2   .niedo3s2   
+  .dosm2   
+  .dosz2   .najdosz2   .niedosz2   
+  .do3±2  .najdo3±2  .niedo3±2  
+  .do3t2   .najdo3t2   .niedo3t2   
+  .dotk2   .najdotk2   .niedotk2   
+  .dotr2
+  .do3w2   .najdo3w2   .niedo3w2   
+  .do3z2   .najdo3z2   .niedo3z2   
+  .do3π2  .najdo3π2  .niedo3π2  
+  .do3ª2  .najdo3ª2  .niedo3ª2  
+%
+%  PRZEDROSTKI: NA(D)- , PONA(D)-
+%
+  .na3b2               .pona3b2    
+  .nabrz2              .ponabrz2     
+  .na3c2   .nad3c2     .pona3c2     .ponad3c2
+  .nach2   .nadch2     .ponach2     .ponad3ch2
+  .nacz2   .nadcz2     .pona3cz2    .ponad3cz2
+  .na3¢2  .nad3¢2    .pona3¢2    .ponad3¢2
+  .na2d2   .nad3d2     .pona2d2     .ponad3d2
+  .nadz2   .naddz2     .ponadz2     .ponad3dz2
+  .nadπ2  .naddπ2    .ponadπ2    .ponad3dπ2
+  .nadª2  .naddª2    .ponadª2    .ponad3dª2
+  .na3f2   .nad3f2     .pona3f2     .ponad3f2
+  .na3g2   .nad3g2     .pona3g2     .ponad3g2
+  .nagrz2
+  .na3h2   .nad3h2     .pona3h2     .ponad3h2
+           .nad3j2                  .ponad3j2 
+  .na3k2   .nad3k2     .pona3k2     .ponad3k2
+  .nakr2
+  .na3l2   .nad3l2     .pona3l2     .ponad3l2
+  .na3™2              .pona3™2   
+  .na3m2               .pona3m2    
+  .na3n2   .nad3n2     .pona3n2     .ponad3n2
+  .na3´2  .nad3´2    .pona3´2    .ponad3´2
+  .na3p2   .nad3p2     .pona3p2     .ponad3p2
+  .naprz2 
+  .na3r2   .nadr2      .pona3r2     
+  .na4r3r
+  .narz2               .ponarz2    
+  .narª2
+  .na3s2   .nad3s2     .pona3s2     .ponad3s2
+  .nasm2               .ponasm2
+  .nasz2   .nadsz2     .ponasz2    
+  .na3±2  .nad3±2    .pona3±2    .ponad3±2
+  .na3t2   .nad3t2     .pona3t2     .ponad3t2
+  .natch2
+  .natk2  
+  .na3w2   .nadw2      .pona3w2     
+  .na3z2               .pona3z2     
+  .naz3m2              .ponaz3m2 
+  .nazw2               .ponazw2 
+  .na3π2              .pona3π2   
+  .na3ª2              .pona3ª2   
+%
+%  PRZEDROSTKI: NADE- , ODE- , PODE-
+%
+  .nade3b2   .ode3b2   .pode3b2   
+  .nade3c2   .ode3c2   .pode3c2   
+  .nadech2   .odech2   .podech2   
+  .nadecz2   .odecz2   .podecz2   
+  .nade3¢2  .ode3¢2  .pode3¢2  
+  .nade3d2   .ode3d2   .pode3d2   
+  .nadedz2   .odedz2   .podedz2   
+  .nadedπ2  .odedπ2  .podedπ2  
+  .nadedª2  .odedª2  .podedª2  
+  .nade3f2   .ode3f2   .pode3f2   
+  .nade3g2   .ode3g2   .pode3g2   
+  .nade3h2   .ode3h2   .pode3h2   
+  .nade3k2   .ode3k2   .pode3k2   
+  .nade3l2   .ode3l2   .pode3l2   
+  .nade3™2  .ode3™2  .pode3™2  
+  .nade3m2   .ode3m2   .pode3m2   
+             .ode3mk2  
+  .nade3n2   .ode3n2   .pode3n2   
+  .nade3´2  .ode3´2  .pode3´2  
+  .nade3p2   .ode3p2   .pode3p2   
+             .odepch2  
+  .nade3r2   .ode3r2   .pode3r2   
+  .naderz2   .oderz2   .poderz2   
+  .naderª2  .oderª2  .poderª2  
+  .nade3s2   .ode3s2   .pode3s2   
+                       .podesch2  
+  .nadesz2   .odesz2   .podesz2   
+  .nade3±2  .ode3±2  .pode3±2  
+  .nade3t2   .ode3t2   .pode3t2   
+             .odetch2
+             .odetk2   .pode3tk2  
+  .nade3w2   .ode3w2   .pode3w2   
+  .nade3z2   .ode3z2   .pode3z2   
+  .nade3π2  .ode3π2  .pode3π2  
+  .nade3ª2  .ode3ª2  .pode3ª2  
+%
+%  PRZEDROSTKI: NAJ- 
+%
+  .naj3b2                       .naj3k2                       .najsz2     
+  .naj3c2                       .najkr2                       .naj3±2    
+  .najch2                       .naj3l2                       .naj3t2     
+  .najcz2                       .naj3™2                      .najtk2
+  .naj3¢2                      .naj3m2                       .najtr2  
+  .naj3d2                       .naj3n2                       .naj3w2     
+  .najdz2                       .naj3´2                      .naj3z2     
+  .najdπ2                      .naj3p2                       .najzw2
+  .najdª2                      .naj3r2                       .naj3π2    
+  .naj3f2                       .najrz2                       .naj3ª2    
+  .naj3g2                       .naj3s2     
+  .naj3h2                       .najsm2
+%
+%  PRZEDROSTKI: NIE- , ZNIE- 
+% 
+  .nie3b2     .znie3b2                         .nie3n2     .znie3n2
+  .nie3c2     .znie3c2                         .nie3´2    .znie3´2
+  .niech2     .zniech2                         .nie3p2     .znie3p2
+  .niecz2     .zniecz2                         .nie3r2     .znie3r2
+  .nie3¢2    .znie3¢2                        .nierz2     .znierz2
+  .nie3d2     .znie3d2                         .nie3s2     .znie3s2
+  .niedz2     .zniedz2                         .niesz2     .zniesz2
+  .niedπ2    .zniedπ2                        .nie3±2    .znie3±2
+  .niedª2    .zniedª2                        .nie3t2     .znie3t2
+  .nie3f2     .znie3f2                         .nietr2     
+  .nie3g2     .znie3g2                         .nietk2     
+  .nie3h2     .znie3h2                         .nie3w2     .znie3w2
+  .nie3k2     .znie3k2                         .nie3z2     .znie3z2
+  .nie3l2     .znie3l2                         .niezw2  
+  .nie3™2    .znie3™2                        .nie3π2    .znie3π2
+  .nie3m2     .znie3m2                         .nie3ª2    .znie3ª2
+%
+%  PRZEDROSTKI: OBE-
+%
+  .obe3b2                       .obe3h2                       .obe3s2    
+  .obe3c2                       .obe3k2                       .obesch2   
+  .obech2                       .obe3l2                       .obesz2    
+  .obecz2                       .obe3™2                      .obe3±2   
+  .obe3¢2                      .obe3m2                       .obe3t2    
+  .obe3d2                       .obe3n2                       .obetk2
+  .obedz2                       .obe3´2                      .obe3w2
+  .obedπ2                      .obe3p2                       .obe3z2
+  .obedª2                      .obe3r2                       .obe3π2 
+  .obe3f2                       .oberz2                       .obe3ª2 
+  .obe3g2                       .oberª2   
+%
+%  PRZEDROSTKI: O(B/D)- , NAJO(B/D)- , NIEO(B/D)-
+%
+  .ob2    .ob3b2                 .naj3o2b2    .najob3b2    
+  .oc2    .ob3c2    .od3c2       .naj3o3c2    .najob3c2    .najod3c2 
+  .och2   .obch2    .odch2       .najoch2     .najobch2    .najodch2 
+  .ochrz2 
+  .ocz2   .obcz2    .odcz2       .najocz2     .najobcz2    .najodcz2
+  .o¢2   .ob3¢2   .od3¢2      .naj3o3¢2   .najob3¢2   .najod3¢2
+  .od2    .ob3d2    .od3d2       .naj3o2d2    .najob3d2    .najod3d2
+  .odz2   .obdz2    .oddz2       .najodz2     .najobdz2    .najoddz2
+  .odπ2  .obdπ2   .oddπ2      .najodπ2    .najobdπ2   .najoddπ2 
+  .odª2  .obdª2   .oddª2      .najodª2    .najobdª2   .najoddª2
+  .of2    .ob3f2    .od3f2       .naj3o3f2    .najob3f2    .najod3f2
+  .og2    .ob3g2    .od3g2       .naj3o3g2    .najob3g2    .najod3g2 
+  .oh2    .ob3h2    .od3h2       .naj3o3h2    .najob3h2    .najod3h2 
+          .ob3j2    .od3j2                    .najob3j2    .najod3j2
+  .ok2    .ob3k2    .od3k2       .naj3o3k2    .najob3k2    .najod3k2
+  .okr2               
+                    .odkrz2
+  .ol2              .od3l2       .naj3o3l2                 .najod3l2
+  .o™2                          .naj3o3™2   
+  .om2    .ob3m2    .odm2        .naj3o3m2    .najob3m2    .najod3m2
+  .on2    .ob3n2    .od3n2       .naj3o3n2    .najob3n2    .najod3n2
+  .o´2   .ob3´2   .od3´2      .naj3o3´2   .najob3´2   .najod3´2
+  .op2    .ob3p2    .od3p2       .naj3o3p2    .najob3p2    .najod3p2
+  .opch2 
+  .or2              .odr2        .naj3o3r2                 
+  .orz2   .obrz2                 .najorz2     .najobrz2
+  .orª2 
+  .os2    .ob3s2    .od3s2       .naj3o3s2    .najob3s2    .najod3s2
+  .osz2   .obsz2    .odsz2       .najosz2     .najobsz2    .najodsz2 
+  .o±2   .ob3±2   .od3±2      .naj3o3±2   .najob3±2   .najod3±2
+  .ot2    .ob3t2    .od3t2       .naj3o3t2    .najob3t2    .najod3t2
+  .ow2    .ob3w2    .odw2        .naj3o3w2    .najob3w2    .najodw2
+                    .od3wr                                 .najod3wr
+  .oz2                           .naj3o3z2    
+  .oπ2   .ob3π2                .naj3o3π2   .najob3π2
+  .oª2   .ob3ª2                .naj3o3ª2   .najob3ª2
+%
+  .nieo2b2     .nieob3b2
+  .nieo3c2     .nieob3c2    .nieod3c2
+  .nieoch2     .nieobch2    .nieodch2      
+  .nieocz2     .nieobcz2    .nieodcz2 
+  .nieo3¢2    .nieob3¢2   .nieod3¢2       
+  .nieo2d2     .nieob3d2    .nieod3d2       
+  .nieodz2     .nieobdz2    .nieoddz2
+  .nieodπ2    .nieobdπ2   .nieoddπ2  
+  .nieodª2    .nieobdª2   .nieoddª2  
+  .nieo3f2     .nieob3f2    .nieod3f2    
+  .nieo3g2     .nieob3g2    .nieod3g2    
+  .nieo3h2     .nieob3h2    .nieod3h2
+               .nieob3j2    .nieod3j2        
+  .nieo3k2     .nieob3k2    .nieod3k2        
+  .nieo3l2                  .nieod3l2
+  .nieo3™2           
+  .nieo3m2     .nieob3m2  
+  .nieo3n2     .nieob3n2    .nieod3n2
+  .nieo3´2    .nieob3´2   .nieod3´2       
+  .nieo3p2     .nieob3p2    .nieod3p2       
+  .nieo3r2            
+  .nieorz2          
+  .nieo3s2     .nieob3s2    .nieod3s2       
+  .nieosz2     .nieobsz2    .nieodsz2     
+  .nieo3±2    .nieob3±2   .nieod3±2       
+  .nieo3t2                  .nieod3t2
+  .nieo3w2     .nieob3w2    .nieodw2   
+                            .nieod3wr
+  .nieo3z2            
+  .nieo3π2    .nieob3π2       
+  .nieo3ª2    .nieob3ª2       
+%
+%  PRZEDROSTKI: PO(D)- , NAPO(D)- , NIEPO(D)- , SPO(D)- , UPO(D)- , POPO-
+%
+  .po3b2             .napo3b2   .niepo3b2                .spo3b2  .upo3b2  
+  .pobr2            
+  .pobrz2           
+  .po3c2   .pod3c2   .napo3c2   .niepo3c2   .niepod3c2   .spo3c2  .upo3c2  
+  .poch2   .podch2   .napoch2   .niepoch2   .niepodch2   .spoch2  .upoch2  
+  .pochrz2          
+  .pocz2   .podcz2   .napocz2   .niepocz2   .niepodcz2   .spocz2  .upocz2  
+  .po3¢2  .pod3¢2  .napo3¢2  .niepo3¢2  .niepod3¢2  .spo3¢2 .upo3¢2 
+  .po2d2   .pod3d2   .napo2d2   .niepo2d2   .niepod3d2   .spo2d2  .upo2d2  
+                     .napod3d                            .spod3d  .upod3d
+  .podz2   .poddz2   .napodz2   .niepodz2   .niepoddz2   .spodz2  .upodz2
+  .podzw2
+  .podπ2  .poddπ2  .napodπ2  .niepodπ2  .niepoddπ2  .spodπ2 .upodπ2
+  .podª2  .poddª2  .napodª2  .niepodª2  .niepoddª2  .spodª2 .upodª2
+  .po3f2   .pod3f2   .napo3f2   .niepo3f2   .niepod3f2   .spo3f2  .upo3f2  
+  .po3g2   .pod3g2   .napo3g2   .niepo3g2   .niepod3g2   .spo3g2  .upo3g2  
+  .pogrz2           
+  .po3h2   .pod3h2   .napo3h2   .niepo3h2   .niepod3h2   .spo3h2  .upo3h2  
+           .pod3j2                          .niepod3j2
+  .po3k2   .pod3k2   .napo3k2   .niepo3k2   .niepod3k2   .spo3k2  .upo3k2  
+  .pokl2
+  .pokr2            
+  .po3l2   .pod3l2   .napo3l2   .niepo3l2   .niepod3l2   .spo3l2  .upo3l2  
+  .po3™2            .napo3™2  .niepo3™2               .spo3™2 .upo3™2 
+  .po™k2
+  .po3m2             .napo3m2   .niepo3m2                .spo3m2  .upo3m2  
+  .pomk2             .napomk2          
+  .po3n2   .pod3n2   .napo3n2   .niepo3n2   .niepod3n2   .spo3n2  .upo3n2  
+  .po3´2  .pod3´2  .napo3´2  .niepo3´2  .niepod3´2  .spo3´2 .upo3´2 
+  .po3p2   .pod3p2   .napo3p2   .niepo3p2   .niepod3p2   .spo3p2  .upo3p2  
+  .popch2           
+  .poprz2           
+  .po3r2   .podr2    .napo3r2   .niepo3r2   .niepodr2    .spo3r2  .upo3r2  
+  .porz2             .naporz2   .nieporz2                .sporz2  .uporz2  
+  .po3rª  
+  .po3s2   .pod3s2   .napo3s2   .niepo3s2   .niepod3s2   .spo3s2  .upo3s2  
+  .posm2   .podsm2              .nieposm2   .niepodsm2
+  .posz2   .podsz2   .naposz2   .nieposz2   .niepodsz2   .sposz2  .uposz2  
+  .po3±2  .pod3±2  .napo3±2  .niepo3±2  .niepod3±2  .spo3±2 .upo3±2 
+  .po3t2   .pod3t2   .napo3t2   .niepo3t2   .niepod3t2   .spo3t2  .upo3t2  
+  .potk2   
+  .potr2   
+  .po3w2   .podw2    .napo3w2   .niepo3w2   .niepodw2    .spo3w2  .upo3w2 
+  .popo3w2  
+  .po3z2             .napo3z2   .niepo3z2                .spo3z2  .upo3z2  
+  .poz4m2              
+  .pozw2
+  .po3π2            .napo3π2  .niepo3π2               .spo3π2 .upo3π2 
+  .po3ª2            .napo3ª2  .niepo3ª2               .spo3ª2 .upo3ª2 
+%
+%  PRZEDROSTKI: PRZE(D)- , NIEPRZE(D)-
+%
+  .prze3b2                .nieprze3b2     
+  .przebr2  
+  .przebrz2 
+  .prze3c2    .przed3c2   .nieprze3c2     .nieprzed3c2
+  .przech2    .przedch2   .nieprzech2     .nieprzedch2
+  .przechrz2                 
+  .przecz2    .przedcz2   .nieprzecz2     .nieprzedcz2
+  .prze3¢2   .przed3¢2  .nieprze3¢2    .nieprzed3¢2
+  .prze2d2    .przed3d2   .nieprze2d2     .nieprzed3d2
+  .przedz2    .przeddz2   .nieprzedz2     .nieprzeddz2
+  .przedπ2   .przeddπ2  .nieprzedπ2    .nieprzeddπ2
+  .przedª2   .przeddª2  .nieprzedª2    .nieprzeddª2
+  .prze3f2    .przed3f2   .nieprze3f2     .nieprzed3f2
+  .prze3g2    .przed3g2   .nieprze3g2     .nieprzed3g2
+  .przegrz2 
+  .prze3h2    .przed3h2   .nieprze3h2     .nieprzed3h2
+              .przed3j2                   .nieprzed3j2
+  .prze3k2    .przed3k2   .nieprze3k2     .nieprzed3k2
+  .przekl2
+  .przekr2  
+  .prze3l2    .przed3l2   .nieprze3l2     .nieprzed3l2
+  .prze3™2               .nieprze3™2    
+  .prze™k2   
+  .prze3m2                .nieprze3m2    
+  .przemk2    
+  .prze3n2    .przed3n2   .nieprze3n2     .nieprzed3n2
+  .prze3´2   .przed3´2  .nieprze3´2    .nieprzed3´2
+  .prze3p2    .przed3p2   .nieprze3p2     .nieprzed3p2
+  .przepch2 
+  .prze3r2                .nieprze3r2     
+  .przerz2                .nieprzerz2     
+  .przerª  
+  .prze3s2    .przed3s2   .nieprze3s2     .nieprzed3s2
+  .przesm2  
+  .przesz2    .przedsz2   .nieprzesz2     .nieprzedsz2
+  .prze3±2   .przed3±2  .nieprze3±2    .nieprzed3±2
+  .prze3t2    .przed3t2   .nieprze3t2     .nieprzed3t2
+  .przetk2  
+  .przetr2  
+  .prze3w2    .przedw2    .nieprze3w2     
+              .przed3wcz
+  .prze3z2                .nieprze3z2     
+  .prze3π2               .nieprze3π2    
+  .prze3ª2               .nieprze3ª2    
+%
+%  PRZEDROSTKI: PRZY-
+%
+  .przy3b2                      .przygrz2                     .przyrz2  
+  .przybr2                      .przy3h2                      .przyrª2 
+  .przy3c2                      .przy3k2                      .przy3s2  
+  .przych2                      .przy3l2                      .przysch2 
+  .przycz2                      .przy3™2                     .przysz2  
+  .przy3¢2                     .przy3m2                      .przy3±2 
+  .przy3d2                      .przymk2                      .przy3t2  
+  .przydz2                      .przy3n2                      .przytk2 
+  .przydπ2                     .przy3´2                     .przy3w2  
+  .przydª2                     .przy3p2                      .przy3z2  
+  .przy3f2                      .przypch2                     .przy3π2 
+  .przy3g2                      .przy3r2                      .przy3ª2 
+%
+%  PRZEDROSTKI: U- , OBU- , ODU-
+%
+  .ub2                                              .un2    
+  .uc2                                              .u´2   
+  .uch2                                             .up2    
+  .ucz2                                             .upch2  
+  .u¢2                                             .ur2    
+  .ud2                                              .urz2   
+  .udz2                                             .urª2  
+  .udπ2                                            .us2    
+  .udª2                                            .usch2  
+  .uf2                                              .usz2   
+  .ug2                                              .u±2   
+  .uh2                                              .ut2    
+  .uk2                                              .utk2   
+  .ukr2                                             .utr2
+  .ul2                                              .uw2    
+  .u™2                                             .uz2    
+  .um2       .obu3m2     .odu3m2                    .uπ2   
+  .umk2                                             .uª2   
+%
+%  PRZEDROSTKI:  WE(S/Z)
+%
+  .we3b2                        .we3k2                        .we4s3prz
+  .we3c2                        .we3l2                        .we4s3tch2      
+  .wech2                        .we3™2                       .wesz2   
+  .wecz2                        .we3m2                        .we3±2  
+  .we3¢2                       .wemk2                        .we3t2   
+  .we3d2                        .we3n2                        .wetk2   
+  .wedz2                        .we3´2                       .we3w2   
+  .wedπ2                       .we3p2                        .we3z2   
+  .wedª2                       .wepch2                       .we4z3br
+  .we3f2                        .we3r2                        .we4z3g™
+  .we3g2                        .werz2                        .we3π2  
+  .we3h2                        .we3s2                        .we3ª2  
+%
+%  PRZEDROSTKI: WY- , NIEWY-
+%
+  .wy3b2      .niewy3b2                        .wymk2   
+  .wybr2                                       .wy3n2      .niewy3n2     
+  .wybrz2                                      .wy3´2     .niewy3´2    
+  .wy3c2      .niewy3c2                        .wy3p2      .niewy3p2     
+  .wych2      .niewych2                        .wypch2  
+  .wycz2      .niewycz2                        .wyprz2
+  .wy3¢2     .niewy3¢2                       .wy3r2      .niewy3r2     
+  .wy3d2      .niewy3d2                        .wyrz2      .niewyrz2     
+  .wydr2                                       .wyrª2  
+  .wydz2      .niewydz2                        .wy3s2      .niewy3s2     
+  .wydπ2     .niewydπ2                       .wysm2   
+  .wydª2     .niewydª2                       .wysz2      .niewysz2     
+  .wy3f2      .niewy3f2                        .wy3±2     .niewy3±2    
+  .wy3g2      .niewy3g2                        .wy3t2      .niewy3t2     
+  .wygrz2                                      .wytch2     
+  .wy3h2      .niewy3h2                        .wytk2      .niewytk2
+  .wy3k2      .niewy3k2                        .wytr2      .niewytr2
+  .wykl2                                       .wy3w2      .niewy3w2    
+  .wykr2                                       .wy3z2      .niewy3z2
+  .wy3l2      .niewy3l2                        .wy3π2     .niewy3π2
+  .wy3™2     .niewy3™2                       .wy3ª2     .niewy3ª2
+  .wy3m2      .niewy3m2     
+%
+%  PRZEDROSTKI: ZA-
+%
+  .za3b2                        .zagrz2                       .zarz2
+  .zabr2                        .za3h2                        .zarª2
+  .zabrz2                       .za3k2                        .za3s2
+  .za3c2                        .zakl2                        .zasm2
+  .zach2                        .zakr2                        .zasz2
+  .zacz2                        .zakrz2                       .za3±2
+  .za3¢2                       .za3l2                        .za3t2
+  .za3d2                        .za3™2                       .zatk2
+  .zadr2                        .za3m2                        .zatr2
+  .zadz2                        .zamk2                        .za3w2
+  .zadπ2                       .za3n2                        .za3z2
+  .zadª2                       .za3´2                       .za3π2
+  .za3f2                        .za3p2                        .za3ª2
+  .za3g2                        .za3r2  
+%
+%  PRZEDROSTKI: ZE- , ROZE- , UZE-
+%
+  .ze3b2    .ro3z4e3b2                    .ze3n2    .ro3z4e3n2
+  .ze3c2    .ro3z4e3c2                    .ze3´2   .ro3z4e3´2
+  .zech2    .rozech2                      .ze3p2    .ro3z4e3p2
+  .zecz2    .rozecz2                      .zepch2   .rozepch2
+  .ze3¢2   .ro3z4e3¢2                   .ze3r2    .ro3z4e3r2
+  .ze3d2    .ro3z4e3d2                    .zerz2    .rozerz2
+  .zedz2    .rozedz2                      .zerª2   .rozerª2
+  .zedπ2   .rozedπ2                     .ze3s2    .ro3z4e3s2
+  .zedª2   .rozedª2                     .zesch2   .rozesch2
+  .ze3f2    .ro3z4e3f2                    .zesm4  
+  .ze3g2    .ro3z4e3g2                    .zesz2    .rozesz2
+  .ze3h2    .ro3z4e3h2                    .ze3±2   .ro3z4e3±2   
+            .ro3z4ej                      .ze3t2    .ro3z4e3t2
+  .ze3k2    .ro3z4e3k2                    .ze3tk2   
+  .zekl2                                  .ze3w2    .ro3z4e3w2     .uze3w2
+  .ze3l2    .ro3z4e3l2                    .ze3z2    .ro3z4e3z2
+  .ze3™2   .ro3z4e3™2                   .ze3π2   .ro3z4e3π2
+  .ze3m2    .ro3z4e3m2                    .ze3ª2   .ro3z4e3ª2
+%
+%  GRUPY SP”äGäOSKOWE
+%
+  2j1b    2l1b    2™1b    2m1b    2n1b    2´1b    2r1b    2rz1b    2w1b
+  2j1c    2l1c    2™1c    2m1c    2n1c    2´1c    2r1c    2rz1c    2w1c  
+  2j1¢   2l1¢   2™1¢   2m1¢   2n1¢   2´1¢   2r1¢   2rz1¢   2w1¢
+  2j1d    2l1d    2™1d    2m1d    2n1d    2´1d    2r1d    2rz1d    2w1d
+  2j1f    2l1f    2™1f    2m1f    2n1f    2´1f    2r1f    2rz1f    2w1f
+  2j1g    2l1g    2™1g    2m1g    2n1g    2´1g    2r1g    2rz1g    2w1g
+  2j1j    2l1j    2™1j    2m1j    2n1j    2´1j    2r1j    2rz1j    2w1j    
+  2j1k    2l1k    2™1k    2m1k    2n1k    2´1k    2r1k    2rz1k    2w1k
+  2j1l    2l1l    2™1l    2m1l    2n1l    2´1l    2r1l    2rz1l    2w1l
+  2j1™   2l1™   2™1™   2m1™   2n1™   2´1™   2r1™   2rz1™   2w1™
+  2j1m    2l1m    2™1m    2m1m    2n1m    2´1m    2r1m    2rz1m    2w1m
+  2j1n    2l1n    2™1n    2m1n    2n1n    2´1n    2r1n    2rz1n    2w1n    
+  2j1´   2l1´   2™1´   2m1´   2n1´   2´1´   2r1´   2rz1´   2w1´
+  2j1p    2l1p    2™1p    2m1p    2n1p    2´1p    2r1p    2rz1p    2w1p
+  2j1r    2l1r    2™1r    2m1r    2n1r    2´1r    2r1r    2rz1r    2w1r
+  2j1s    2l1s    2™1s    2m1s    2n1s    2´1s    2r1s    2rz1s    2w1s
+  2j1±   2l1±   2™1±   2m1±   2n1±   2´1±   2r1±   2rz1±   2w1±
+  2j1t    2l1t    2™1t    2m1t    2n1t    2´1t    2r1t    2rz1t    2w1t
+  2j1w    2l1w    2™1w    2m1w    2n1w    2´1w    2r1w    2rz1w    2w1w
+  2j1z    2l1z    2™1z    2m1z    2n1z    2´1z                     2w1z
+  2j1π   2l1π   2™1π   2m1π   2n1π   2´1π   2r1π   2rz1π   2w1π
+  2j1ª   2l1ª   2™1ª   2m1ª   2n1ª   2´1ª   2r1ª   2rz1ª   2w1ª
+%
+  2b1b    2d1b    2g1b     2k1b    2p1b    2t1b      
+  2b1c    2d1c    2g1c     2k1c    2p1c    2t1c
+  2b1¢   2d1¢   2g1¢    2k1¢   2p1¢   2t1¢
+  2b1d    2d1d    2g1d     2k1d    2p1d    2t1d
+  2b1f    2d1f    2g1f     2k1f    2p1f    2t1f
+  2b1g    2d1g    2g1g     2k1g    2p1g    2t1g
+  2b1k    2d1k    2g1k     2k1k    2p1k    2t1k
+  2b1m    2d1m    2g1m     2k1m    2p1m    2t1m
+  2b1n    2d1n             2k1n    2p1n    2t1n
+  2b1´   2d1´   2g1´    2k1´   2p1´   2t1´
+  2b1p    2d1p    2g1p     2k1p    2p1p    2t1p
+  2b1s    2d1s    2g1s                     2t1s
+                           2k1sz   2p1sz
+  2b1±   2d1±   2g1±    2k1±   2p1±   2t1±
+  2b1t    2d1t    2g1t     2k1t    2p1t    2t1t
+  2b1z            2g1z     2k1z    2p1z    2t1z
+  2b1π           2g1π    2k1π   2p1π   2t1π
+  2b1ª           2g1ª    2k1ª   2p1ª   2t1ª
+%
+  2c1b    2¢1b   2cz1b    2dz1b   2dπ1b  2dª1b
+  2c1c    2¢1c   2cz1c    2dz1c   2dπ1c  2dª1c
+  2c1¢   2¢1¢  2cz1¢   2dz1¢  2dπ1¢ 2dª1¢
+  2c1d    2¢1d   2cz1d    2dz1d   2dπ1d  2dª1d
+  2c1f    2¢1f   2cz1f    2dz1f   2dπ1f  2dª1f
+  2c1g    2¢1g   2cz1g    2dz1g   2dπ1g  2dª1g                         
+                                            dª2j
+  2c1k    2¢1k   2cz1k    2dz1k   2dπ1k  2dª1k
+  2c1l     ¢2l   2cz1l    2dz1l            dª2l
+                                            dª2™
+  2c1m    2¢1m   2cz1m    2dz1m   2dπ1m  2dª1m
+  2c1n    2¢1n   2cz1n    2dz1n   2dπ1n  2dª1n
+  2c1´   2¢1´  2cz1´   2dz1´  2dπ1´ 2dª1´
+  2c1p    2¢1p   2cz1p    2dz1p   2dπ1p  2dª1p
+                                            dª2r
+  2c1s    2¢1s   2cz1s    2dz1s   2dπ1s  2dª1s
+  2c1±   2¢1±  2cz1±   2dz1±  2dπ1± 2dª1±
+  2c1t    2¢1t   2cz1t    2dz1t   2dπ1t  2dª1t
+                                            dª2w   
+          2¢1z   2cz1z    2dz1z   2dπ1z  2dª1z
+  2c1π   2¢1π  2cz1π   2dz1π  2dπ1π 2dª1π
+  2c1ª   2¢1ª  2cz1ª   2dz1ª  2dπ1ª 2dª1ª
+%
+  2ch1b   2h1b    2ª1b            2s1b    2±1b            2π1b 
+  2ch1c   2h1c    2ª1c     sz2c            ±1c    2z1c    2π1c 
+                                           1±2ci   
+  2ch1¢  2h1¢   2ª1¢    sz2¢                   2z1¢   2π1¢
+  2ch1d   2h1d    2ª1d            2s1d    2±1d            2π1d  
+  2ch1f   2h1f    2ª1f     sz2f           2±1f    2z1f    2π1f 
+  2ch1g   2h1g    2ª1g            2s1g    2±1g            2π1g       
+          2h1h                                          
+   ch2j   2h1j    2ª1j                                 
+  2ch1k   2h1k    2ª1k     sz2k           2±1k    2z1k    2π1k  
+   ch2l   2h1l    2ª1l                                 
+   ch2™  2h1™   2ª1™                                 
+  2ch1m   2h1m    2ª1m                                 
+  2ch1n   2h1n    2ª1n                                 
+  2ch1´  2h1´   2ª1´                                 
+  2ch1p   2h1p    2ª1p     sz2p           2±1p    2z1p    2π1p 
+   ch2r   2h1r    2ª1r                                 
+  2ch1s   2h1s    2ª1s     sz2s   2s1s    2±1s    2z1s    2π1s
+  2ch1±  2h1±   2ª1±    sz2±          2±1±   2z1±   2π1±
+  2ch1t   2h1t    2ª1t     sz2t           2±1t    2z1t    2π1t  
+   ch2w   2h1w    2ª1w                                 
+  2ch1z   2h1z    2ª1z     sz2z           2±1z    2z1z    2π1z      
+  2ch1π  2h1π   2ª1π           2s1π   2±1π           2π1π
+  2ch1ª  2h1ª   2ª1ª           2s1ª   2±1ª           2π1ª 
+                                                             π2dπ
+%
+  2f1f     2f1n
+%
+%  R”õNE  
+%
+  3d2ni    3m2ni    2p1sk  2p1stw
+%
+  .do4k3t       .dy3s4ta      .is3lam     ma2r6z™.       .po4r3tr   
+  .do4l3n       .fi2l3h       ma2r5zn     na2d5z2wyczaj   turboo2d3rzut   
+  .do4w3c       .fi2s3harm    ma2r5zl     nie4m3cz        .ro2k3rocz    
+  .du2sz3past   .fi2sz3bin    ma2r5z™    .po4l3s         .sy2n3opt   
+%
+  2ch3kolwiek.     2m3kolwiek.     2±3kolwiek.
+%
+%  GRUPY SP”äGäOSKOWE NA KOãCU WYRAZ”W
+%
+  4ch™.      4k™.       4rz™.      4stw.       4±l.       4trz.    
+  4d™.       4kst.       4s™.       4szt.       4±m.       4z™.    
+  4dπ.       4prz.       4str.       4szcz.      4±´.      4π´.   
+  4g™.       4rsz.       4strz.      4±¢.      4t™.    
+}
+ 
+\hyphenation{    %  WYJÅTKI
+  be-zami     be-zach     by-naj-mniej   ina-czej         ni-gdzie
+  pÛ-™ach   pÛ-™ami   pÛ-™ek       przy-naj-mniej   sk°d-in°d  
+  sk°d-ªe   trÛ-jach   trÛ-jami      trÛ-jek}
