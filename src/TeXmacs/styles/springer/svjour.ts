@@ -256,11 +256,19 @@
 
   <\active*>
     <\src-comment>
-      Other environments.
+      Customization of other environments.
     </src-comment>
   </active*>
 
   <assign|figure-text|<macro|<localize|Fig.>>>
+
+  <assign|bibliography-text|<macro|<localize|References>>>
+
+  <assign|table-of-contents-text|<macro|<localize|Table of Contents>>>
+
+  <assign|list-of-figures-text|<macro|<localize|List of Figures>>>
+
+  <assign|list-of-tables-text|<macro|<localize|List of Tables>>>
 
   <\active*>
     <\src-comment>
@@ -336,7 +344,7 @@
   </active*>
 
   <assign|doc-title-block|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <arg|body>
+    <with|par-first|0fn|<arg|body>>
   </cell>>>>>>>
 
   <assign|doc-make-title|<macro|body|<surround||<vspace|22.47pt>|<doc-title-block|<arg|body>>>>>
