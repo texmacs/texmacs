@@ -473,6 +473,39 @@ Alpha_nr (int nr) {
 }
 
 /******************************************************************************
+* Conversions to and from hexadecimal
+******************************************************************************/
+
+static char* hex_string= "0123456789ABCDEF";
+
+string
+as_hexadecimal (int i) {
+  if (i<0) return "-" * as_hexadecimal (-i);
+  if (i<16) return hex_string [i & 15];
+  return as_hexadecimal (i >> 4) * hex_string [i & 15];
+}
+
+string
+as_hexadecimal (int i, int len) {
+  if (len==1) return hex_string [i & 15];
+  else return as_hexadecimal (i >> 4, len-1) * hex_string [i & 15];
+}
+
+int
+from_hexadecimal (string s) {
+  int i, n= N(s), res= 0;
+  if ((n>0) && (s[0]=='-'))
+    return -from_hexadecimal (s (1, n));
+  for (i=0; i<n; i++) {
+    res= res << 4;
+    if ((s[i] >= '0') && (s[i] <= '9')) res += (int) (s[i] - '0');
+    if ((s[i] >= 'A') && (s[i] <= 'F')) res += (int) (s[i] + 10 - 'A');
+    if ((s[i] >= 'a') && (s[i] <= 'f')) res += (int) (s[i] + 10 - 'a');
+  }
+  return res;
+}
+
+/******************************************************************************
 * Convert between verbatim and TeXmacs encoding
 ******************************************************************************/
 

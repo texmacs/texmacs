@@ -201,6 +201,12 @@ edit_cursor_rep::go_to (path p) {
 }
 
 void
+edit_cursor_rep::go_to_correct (path p) {
+  p= correct_cursor (et, p);
+  go_to (p);
+}
+
+void
 edit_cursor_rep::go_to_start (path p) {
   go_to (start (et, p));
 }

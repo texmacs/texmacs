@@ -153,7 +153,7 @@ tt_font_rep::compute_bitmaps (string family, int size, int dpi) {
     }
     B[i]= C;
 
-    text_extents E;
+    text_extents& E= T[i];
     SI ww= w * PIXEL;
     SI hh= h * PIXEL;
     SI dx= tt_si (slot->metrics.horiBearingX);
@@ -167,7 +167,6 @@ tt_font_rep::compute_bitmaps (string family, int size, int dpi) {
     E->y3= dy - hh;
     E->x4= dx + ww;
     E->y4= dy;
-    T[i]= E;
   }
   bmm= new bitmap_metric_rep (res_name, T, 0, 255);
   bmf= new bitmap_font_rep   (res_name, B, 0, 255);

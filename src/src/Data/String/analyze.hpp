@@ -51,6 +51,10 @@ string Roman_nr (int nr);
 string alpha_nr (int nr);
 string Alpha_nr (int nr);
 
+string as_hexadecimal (int i);
+string as_hexadecimal (int i, int length);
+int    from_hexadecimal (string s);
+
 string tm_encode (string s);
 string tm_decode (string s);
 string tm_correct (string s);

@@ -231,7 +231,7 @@
 
 (define (make-translate . args)
   (with s (apply string-append args)
-    `(translate ,s "english" (apply "language"))))
+    `(translate ,s "english" (value "language"))))
 
 (define (build-link-page keyword file-list)
   (let* ((lan (get-output-language))

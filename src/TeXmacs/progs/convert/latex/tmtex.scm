@@ -52,7 +52,7 @@
 
 (drd-table tex-with-cmd%
   (("font family" "rm") textrm)
-  (("font family" "ss") textss)
+  (("font family" "ss") textsf)
   (("font family" "tt") texttt)
   (("font series" "medium") textmd)
   (("font series" "bold") textbf)
@@ -447,11 +447,6 @@
 
 (define (tmtex-float-sub position l)
   (cond ((func? l 'document 1) (tmtex-float-sub position (cadr l)))
-	((or (func? l 'var_expand) (func? l 'expand) (func? l 'apply))
-	 (let ((ll (cons (string->symbol (cadr l)) (cddr l))))
-	   (if (or (tmtex-float-table? ll) (tmtex-float-figure?))
-	       (tmtex-float-sub position ll)
-	       (tmtex-float-make "figure" position l ""))))
 	((tmtex-float-figure? l)
 	 (tmtex-float-make (tmtex-float-size l) "figure" position (cadr l)
 	   (caddr l)))
@@ -803,7 +798,6 @@
   (cond ((or (not (list? l)) (null? l)) #f)
 	((== l `(,what)) l)
 	((match? l `(,what :1)) (cadr l))
-	((match? l `(expand ,(symbol->string what) :1)) (caddr l))
 	(else (tmtex-title-extract-list l what))))
 
 (define (tmtex-title-get x what)
@@ -892,13 +886,12 @@
   (let ((prompt (car l)) (x (cadr l)))
     (tex-concat
      (list `(!group (!concat (red) (ttfamily ,(tmtex prompt))))
-	   (if (and (func? x 'var_expand 2) (== (cadr x) "math"))
-	       (begin
-		 (tmtex-env-set "mode" "math")
-		 (let ((r (tmtex (caddr x))))
-		   (tmtex-env-reset "mode")
-		   `(!math (!group (!concat (blue) ,r)))))
-	       `(!group (!concat (blue) (!verb ,(tmtex-tt x)))))))))
+	   (cond ((func? x 'math 1)
+		  (tmtex-env-set "mode" "math")
+		  (let ((r (tmtex (cadr x))))
+		    (tmtex-env-reset "mode")
+		    `(!math (!group (!concat (blue) ,r)))))
+		 (else `(!group (!concat (blue) (!verb ,(tmtex-tt x))))))))))
 
 (define (tmtex-output s l)
   (list '!group (list 'ttfamily (tmtex (car l)))))
@@ -956,7 +949,7 @@
 		   (cons (string->symbol v)
 			 (map-in-order tmtex l)))))))
 
-(define (tmtex-expand l)
+(define (tmtex-compound l)
   (tmtex-apply (string->symbol (car l)) (cdr l)))
 
 (define (tmtex-list l)
@@ -1031,11 +1024,11 @@
   (assign tmtex-assign)
   (with tmtex-with)
   ((:or set reset) tmtex-noop)
-  ((:or var_expand expand apply) tmtex-expand)
+  ((:or var_expand expand hide_expand compound apply) tmtex-compound)
   ((:or begin end) tmtex-noop)
   (include tmtex-noop)
   ((:or macro func env eval) tmtex-noop)
-  (value tmtex-expand)
+  (value tmtex-compound)
   (arg tmtex-noop)
   ((:or backup quote delay hold release) tmtex-noop)
   ((:or or xor and not plus minus times over div mod merge length range
@@ -1082,7 +1075,7 @@
   (session (,tmtex-session 3))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
-  (cite nocite (,tmtex-cite -1))
+  ((:or cite nocite) (,tmtex-cite -1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))

@@ -84,12 +84,13 @@ protected:
   virtual void back_in_table (tree t, path p) = 0;
   virtual void back_dynamic (path p) = 0;
   virtual void back_expand (path p) = 0;
+  virtual void back_compound (path p) = 0;
   virtual void back_extension (path p) = 0;
   virtual void back_hide_expand (path p) = 0;
   virtual void back_in_dynamic (tree t, path p, int min_args=1, int with=1)= 0;
   virtual void back_in_with (tree t, path p) = 0;
   virtual void back_in_expand (tree t, path p) = 0;
-  virtual void back_in_extension (tree t, path p) = 0;
+  virtual void back_in_compound (tree t, path p) = 0;
 
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
@@ -157,6 +158,7 @@ public:
   virtual void go_page_up () = 0;
   virtual void go_page_down () = 0;
   virtual void go_to (path p) = 0;
+  virtual void go_to_correct (path p) = 0;
   virtual void go_to_start (path p) = 0;
   virtual void go_to_end (path p) = 0;
   virtual void go_to_here () = 0;
@@ -178,6 +180,7 @@ public:
   virtual string   multiply_length (double x, string l) = 0;
   virtual bool     is_length (string s) = 0;
   virtual double   divide_lengths (string l1, string l2) = 0;
+  virtual void     drd_update () = 0;
   virtual bool     defined_at_cursor (string var_name) = 0;
   virtual bool     defined_at_init (string var_name) = 0;
   virtual bool     defined_in_init (string var_name) = 0;
@@ -311,6 +314,7 @@ public:
   virtual bool in_preamble_mode () = 0;
   virtual bool is_deactivated () = 0;
   virtual void activate () = 0;
+  virtual void activate_compound () = 0;
   virtual void make_active (string op, int n) = 0;
   virtual void make_deactivated (tree t, path p) = 0;
   virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
@@ -322,7 +326,10 @@ public:
   virtual void make_expand (string s, int n=0) = 0;
   virtual void temp_proof_fix () = 0;
   virtual void make_apply (string s) = 0;
-  virtual void insert_argument () = 0;
+  virtual void go_to_argument (path p, bool start_flag) = 0;
+  virtual void insert_argument (bool forward) = 0;
+  virtual void insert_argument (path p, bool forward) = 0;
+  virtual void remove_argument (path p, bool forward) = 0;
 
   /* public routines from edit_process */
   virtual void make_session (string lan, string session) = 0;

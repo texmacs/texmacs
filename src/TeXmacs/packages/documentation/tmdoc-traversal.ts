@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.5>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|tmdoc-traversal-package|1.0>
@@ -60,6 +60,25 @@
 
   \;
 
+  Flags from /usr/share/pixmaps/gkb
+
+  <assign|tmdoc-flag|<macro|flag| <with|color|black|<block|<tformat|<cwith|1|1|1|1|cell
+  lsep|0fn>|<cwith|1|1|1|1|cell rsep|0fn>|<cwith|1|1|1|1|cell
+  bsep|0fn>|<cwith|1|1|1|1|cell tsep|0fn>|<cwith|1|1|1|1|cell
+  vcorrect|n>|<table|<row|<cell|<arg|flag>>>>>>> >>
+
+  <assign|tmdoc-translation|<func|name|suffix|<if|<unequal|<find_file|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<postscript|<merge|http://www.texmacs.org/Images/flag|<merge|<apply|suffix>|.png>>|/2|/2||||>>|<merge|<apply|name>|<merge|<apply|suffix>|.tm>>>>>>
+
+  <assign|tmdoc-translations|<\func|name>
+    <\surround||<vspace|0.5fn>>
+      <\with|paragraph mode|center>
+        <apply|tmdoc-translation|<apply|name>|.de><apply|tmdoc-translation|<apply|name>|.en><apply|tmdoc-translation|<apply|name>|.es><apply|tmdoc-translation|<apply|name>|.fr><apply|tmdoc-translation|<apply|name>|.it><apply|tmdoc-translation|<apply|name>|.pt>
+      </with>
+    </surround>
+  </func>>
+
+  \;
+
   <assign|tmdoc-bar|<macro|content|<with|color|dark
   grey|<block|<tformat|<cwith|1|1|1|1|cell background|broken
   white>|<twith|table width|1par>|<cwith|1|1|1|1|cell
@@ -67,15 +86,12 @@
   rborder|0.5ln>|<cwith|1|1|1|1|cell bborder|0.5ln>|<cwith|1|1|1|1|cell
   tborder|0.5ln>|<table|<row|<cell|<with|color|black|<arg|content>>>>>>>>>>
 
-  <assign|tmdoc-copyright-ssub|<func|what|<look_up|<value|what>|0><if|<is_tuple|<look_up|<value|what>|1>>|,
-  <apply|tmdoc-copyright-ssub|<look_up|<value|what>|1>>>>>
+  <assign|tmdoc-copyright-extra|<macro|x|, <arg|x>>>
 
-  <assign|tmdoc-copyright-sub|<func|what|<look_up|<value|what>|0><if|<is_tuple|<look_up|<value|what>|1>>|
-  <translate|by|english|<value|language>>
-  <apply|tmdoc-copyright-ssub|<look_up|<value|what>|1>>>>>
-
-  <assign|tmdoc-copyright|<func|what*|<vspace*|1fn><tmdoc-bar|<copyright><with|font
-  size|0.84| <if|<is_tuple|<value|what>>|<apply|tmdoc-copyright-sub|<value|what>>|-->>>>>
+  <assign|tmdoc-copyright|<xmacro|x|<vspace*|1fn><tmdoc-bar|<copyright><with|font
+  size|0.84| <if|<less|<get_arity|<arg|x>>|2>|-- Missing copyright
+  information --| <arg|x|0> <apply|localize|by>
+  <arg|x|1><map_args|tmdoc-copyright-extra|concat|x|2>>>>>>
 
   <assign|tmdoc-license|<macro|x|<with|color|grey|font
   size|0.59|<with|language|english|<arg|x>>>>>

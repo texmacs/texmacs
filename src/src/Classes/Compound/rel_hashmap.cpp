@@ -31,7 +31,7 @@ rel_hashmap<T,U>::operator () (T x) {
   if (rep==NULL) fatal_error ("invalid relative hashmap");
   if (rep->item->contains (x)) return rep->item (x);
   if ((!nil (rep->next)) && rep->next->contains (x))
-    rep->item(x)= rep->next[x];
+    rep->item(x)= copy (rep->next[x]);
   return rep->item (x);
 }
 

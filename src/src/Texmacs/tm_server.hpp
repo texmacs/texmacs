@@ -33,6 +33,7 @@ protected:
   int def_sfactor;   // default shrinking factor
 
   hashmap<tree,hashmap<string,tree> > style_cache; // style environments cache
+  hashmap<tree,tree> style_drd;                    // style drd cache
 
 public:
   tm_server_rep (display dis);
@@ -55,8 +56,8 @@ public:
   /* Caching style files */
   void style_update_menu ();
   void style_clear_cache ();
-  void style_set_cache (tree style, hashmap<string,tree> H);
-  void style_get_cache (tree style, hashmap<string,tree>& H, bool& flag);
+  void style_set_cache (tree st, hashmap<string,tree> H, tree t);
+  void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
 
   /* Routines concerning the current editor widget */
   void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);

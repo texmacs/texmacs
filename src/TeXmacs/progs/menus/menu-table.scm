@@ -122,6 +122,7 @@
 
 (menu-bind cell-color-menu
   ("None" (cell-set-background ""))
+  ("Foreground" (cell-set-background "foreground"))
   ---
   ("Black" (cell-set-background "black"))
   ("White" (cell-set-background "white"))
@@ -135,7 +136,7 @@
   ("Brown" (cell-set-background "brown"))
   ("Pink" (cell-set-background "pink"))
   ---
-  ("Foreground" (cell-set-background "foreground")))
+  ("Other"  ... (interactive '("Cell color:") 'cell-set-background)))
 
 (menu-bind cell-special-menu
   ("Set span" ... (cell-set-span-ia))

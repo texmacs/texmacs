@@ -52,8 +52,14 @@ scheme_dialect () {
 #endif
 }
 
-int get_d_exp () { return d_exp; }
-int get_d_hide_exp () { return 1; }
+bool
+use_apply () {
+#ifdef UPGRADE_APPLY
+  return false;
+#else
+  return true;
+#endif
+}
 
 string
 texmacs_version (string which) {

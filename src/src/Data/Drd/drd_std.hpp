@@ -18,8 +18,6 @@ extern drd_info std_drd;
 extern hashmap<string,int> STD_CODE;
 
 inline int std_contains (string s) { return STD_CODE->contains (s); }
-inline int std_arity (tree_label l) { return std_drd->get_arity (l); }
-inline int std_props (tree_label l) { return std_drd->get_props (l); }
 
 void initialize_std_drd ();
 

@@ -91,14 +91,17 @@ class concater_rep {
   void typeset_assign (tree t, path ip);
   void typeset_with (tree t, path ip);
   void typeset_expand (tree t, path ip);
-  void typeset_extension (tree t, path ip);
+  void typeset_compound (tree t, path ip);
   void typeset_apply (tree t, path ip);
   void typeset_include (tree t, path ip);
+  void typeset_drd_props (tree t, path ip);
   void typeset_eval (tree t, path ip);
   void typeset_value (tree t, path ip);
   void typeset_argument (tree t, path ip);
+  void typeset_eval_args (tree t, path ip);
   void typeset_dynamic (tree t, path ip);
   void typeset_executable (tree t, path ip);
+  void typeset_rewrite (tree t, path ip);
 
   // miscellaneous active markup
   void typeset_if (tree t, path ip);
@@ -112,6 +115,7 @@ class concater_rep {
   void typeset_action (tree t, path ip);
   void typeset_tag (tree t, path ip);
   void typeset_meaning (tree t, path ip);
+  void typeset_flag (tree t, path ip);
 
   // graphical markup
   void typeset_graphics (tree t, path ip);

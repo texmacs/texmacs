@@ -66,7 +66,7 @@
 		     (set-message "Bad help file" "load help file")
 		     (set-help-buffer name doc))))
 	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))
-	      ((== type "book") (tmdoc-expand-help name 'title))))))
+	      ((== type "book") (tmdoc-expand-help-manual name))))))
 
 (define (load-help-buffer s) (load-help-buffer-sub s "normal"))
 (define (load-help-article s) (load-help-buffer-sub s "article"))

@@ -14,6 +14,7 @@
 
 (texmacs-module (texmacs edit edit-format)
   (:export
+    make-with-color
     ;; general inactive formatting markup
     make-inactive-surround make-inactive-group make-inactive-float
     make-inactive-repeat make-inactive-decorate-atoms
@@ -28,6 +29,8 @@
     ;; routines for floats
     test-insertion-position?
     toggle-insertion-position toggle-insertion-position-not))
+
+(define (make-with-color s) (make-with "color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General inactive formatting markup
