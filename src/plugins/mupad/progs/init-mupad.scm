@@ -38,15 +38,15 @@
   (in-mupad-prog% #t in-mupad% in-prog%))
 
 (kbd-map in-mupad-prog?
-  ("$"  (insert-string "$"))
-  ("\"" (insert-string "\""))
-  ("."  (insert-string "."))
-;  ("_"  (insert-string "_"))
-  ("`"  (insert-string "`")))
+  ("$"  (insert "$"))
+  ("\"" (insert "\""))
+  ("."  (insert "."))
+;  ("_"  (insert "_"))
+  ("`"  (insert "`")))
 
 (kbd-map in-mupad-math?
-  ("$"  (insert-string "$"))
-  ("\"" (insert-string "\""))
-  ("."  (insert-string "."))
-  ("`"  (insert-string "`")))
+  ("$"  (insert "$"))
+  ("\"" (insert "\""))
+  ("."  (insert "."))
+  ("`"  (insert "`")))
 

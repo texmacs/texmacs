@@ -88,9 +88,8 @@
   (spell-start spell_start (void))
   (spell-replace spell_replace (void string))
 
-  (insert-string insert_tree (void string))
-  (insert-tree insert_tree (void content))
-  (insert-tree-go-to insert_tree (void content path))
+  (insert insert_tree (void content))
+  (insert-go-to insert_tree (void content path))
   (insert-return insert_return (void))
   (remove-text remove_text (void bool))
   (remove-structure remove_structure (void bool))

@@ -120,13 +120,12 @@
 
 (define (make-aux env aux)
   (if (not (make-return-after))
-      (insert-stree (list (string->symbol env) aux '(document "")))))
+      (insert (list (string->symbol env) aux '(document "")))))
 
 (define (make-aux* env aux name)
   (if (not (make-return-after))
-      (insert-stree (list (string->symbol env) aux name '(document "")))))
+      (insert (list (string->symbol env) aux name '(document "")))))
 
 (define (make-bib style file-name)
   (if (not (make-return-after))
-      (insert-stree
-       (list 'bibliography "bib" style file-name '(document "")))))
+      (insert (list 'bibliography "bib" style file-name '(document "")))))
