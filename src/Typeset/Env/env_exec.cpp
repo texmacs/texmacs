@@ -1195,8 +1195,8 @@ edit_env_rep::exec_until_compound (tree t, path p) {
 
 bool
 edit_env_rep::exec_until (tree t, path p, string var, int level) {
-  // cout << "Execute " << t << " (" << var << ", "
-  //      << level << ") until " << p << "\n";
+  // cout << "Execute " << t << " until " << p
+  //      << " inside " << var << " level " << level << "\n";
   if (is_atomic (t)) return false;
   switch (L(t)) {
   case DATOMS:
@@ -1253,7 +1253,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case EVAL_ARGS:
     return exec_until_rewrite (t, p, var, level);
   case MARK:
-    return exec_until (t[1], p, var, level);
+    return exec_until_mark (t, p, var, level);
   case EVAL:
   case QUOTE:
   case QUASI:
@@ -1446,8 +1446,9 @@ edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
 	    tree u= exec (t[i]);
 	    if (!is_int (u)) { found= false; break; }
 	    int nr= as_int (u);
-	    if ((!is_compound (arg)) || (nr<0) || (nr>=N(arg)) ||
-		nil (p) || (p->item != nr)) { found= false; break; }
+	    if ((!is_compound (arg)) || (nr<0) || (nr>=N(arg)) || nil (p)) {
+	      found= false; break; }
+	    if (p->item != nr) found= false;
 	    arg= arg[nr];
 	    p  = p->next;
 	  }
@@ -1478,6 +1479,27 @@ edit_env_rep::exec_until_arg (tree t, path p, string var, int level) {
     return found;
   }
   */
+}
+
+bool
+edit_env_rep::exec_until_mark (tree t, path p, string var, int level) {
+  bool border= false;
+  if ((level == 0) && is_func (t[0], ARG) && (t[0][0] == var)) {
+    // cout << "\n\tTest: " << t[0] << ", " << p << "\n";
+    path q= p;
+    int i, n= N(t[0]);
+    for (i=1; (!nil (q)) && (i<n); i++, q= q->next)
+      if (t[0][i] != as_string (q->item))
+	break;
+    border= (i == n) && atom (q);
+    // FIXME: in order to be clean, we should check whether q->item
+    // is on the border of the contents of the argument t[0].
+    // Nevertheless, this only matters for strings and
+    // the present implementation seems to be OK for the moment.
+    // cout << "\tBorder= " << border << "\n\n";
+  }
+  if (border) return exec_until (t[0], p, var, level);
+  else return exec_until (t[1], p, var, level);
 }
 
 bool

@@ -166,6 +166,7 @@ private:
   tree exec_get_label (tree t);
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
+  bool exec_until_mark (tree t, path p, string var, int level);
   tree exec_quasiquoted (tree t);
   tree exec_if (tree t);
   bool exec_until_if (tree t, path p, string var, int level);

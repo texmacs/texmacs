@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|source>
 
@@ -40,7 +40,7 @@
   </cell>>>>>>>
 
   <assign|render-big-figure|<macro|type|name|fig|cap|<surround|<vspace*|1fn><no-indent>|<vspace|1fn>|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
-    <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep><list-caption|<arg|type>|<arg|cap>>>||<arg|cap>>>
+    <with|font-size|0.84|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
   </cell>>>>>>>>
 
   <new-figure|figure|Figure>
