@@ -25,6 +25,7 @@ public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
 
+  bool heuristic_init (string var, tree macro);
   void heuristic_init (hashmap<string,tree> env);
 
   void set_arity (tree_label l, int arity);
