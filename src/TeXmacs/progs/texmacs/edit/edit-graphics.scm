@@ -21,6 +21,14 @@
     graphics-set-unit graphics-set-unit-ia
     graphics-set-origin graphics-set-origin-ia
     graphics-set-extents-ia
+    graphics-set-grid-center graphics-set-grid-center-ia
+    graphics-set-grid-step graphics-set-grid-step-ia
+    graphics-set-grid-astep graphics-set-grid-astep-ia
+    graphics-set-grid-base graphics-set-grid-base-ia
+    graphics-set-visual-grid graphics-set-edit-grid
+    graphics-set-grid-aspect-properties
+    graphics-set-grid-aspect-properties-ia
+    graphics-set-grid-aspect
     graphics-set-mode graphics-set-color graphics-set-line-width
     ;; selecting
     graphics-select
@@ -119,6 +127,205 @@
     '(lambda (l b r t)
        (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
 	 (graphics-set-property "gr-clip" clip)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Grids
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define graphics-current-grid "gr-grid")
+(define graphics-current-center #f)
+(define graphics-current-step #f)
+(define graphics-current-astep #f)
+(define graphics-current-base #f)
+
+(define (graphics-fetch-grid-vars)
+  (set! graphics-current-center '(point "0" "0"))
+  (set! graphics-current-step "1")
+  (set! graphics-current-astep "8")
+  (set! graphics-current-base "10")
+  (with grid (tree->stree (get-env-tree graphics-current-grid))
+    (cond ((match? grid '(tuple "cartesian"))
+           #t
+	  )
+	  ((match? grid '(tuple "cartesian" :1))
+           (set! graphics-current-step (list-ref grid 2))
+	  )
+	  ((match? grid '(tuple "cartesian" :2))
+           (set! graphics-current-center (list-ref grid 2))
+           (set! graphics-current-step (list-ref grid 3))
+	  )
+	  ((match? grid '(tuple "polar"))
+           #t
+	  )
+	  ((match? grid '(tuple "polar" :1))
+           (set! graphics-current-step (list-ref grid 2))
+	  )
+	  ((match? grid '(tuple "polar" :2))
+           (set! graphics-current-step (list-ref grid 2))
+           (set! graphics-current-astep (list-ref grid 3))
+	  )
+	  ((match? grid '(tuple "polar" :3))
+           (set! graphics-current-center (list-ref grid 2))
+           (set! graphics-current-step (list-ref grid 3))
+           (set! graphics-current-astep (list-ref grid 4))
+	  )
+	  ((match? grid '(tuple "logarithmic"))
+           #t
+	  )
+	  ((match? grid '(tuple "logarithmic" :1))
+           (set! graphics-current-step (list-ref grid 2))
+	  )
+	  ((match? grid '(tuple "logarithmic" :2))
+           (set! graphics-current-step (list-ref grid 2))
+           (set! graphics-current-base (list-ref grid 3))
+	  )
+	  ((match? grid '(tuple "logarithmic" :3))
+           (set! graphics-current-center (list-ref grid 2))
+           (set! graphics-current-step (list-ref grid 3))
+           (set! graphics-current-base (list-ref grid 4))
+	  ))))
+
+(define (graphics-grid-center)
+  (with res (tree->stree (get-env-tree "gr-grid-center"))
+    (if (match? res '(point :2))
+	res
+    (if (match? res '(tuple :2))
+       `(point ,(cadr res) ,(caddr res))
+	(begin
+	  (graphics-fetch-grid-vars)
+	  graphics-current-center)))))
+
+(define (graphics-grid-step)
+  (with res (tree->stree (get-env-tree "gr-grid-step"))
+    (if (and (string? res) (string-number? res))
+	res
+	(begin
+	  (graphics-fetch-grid-vars)
+	  graphics-current-step))))
+
+(define (graphics-grid-astep)
+  (with res (tree->stree (get-env-tree "gr-grid-astep"))
+    (if (and (string? res) (string-number? res))
+	res
+	(begin
+	  (graphics-fetch-grid-vars)
+	  graphics-current-astep))))
+
+(define (graphics-grid-base)
+  (with res (tree->stree (get-env-tree "gr-grid-base"))
+    (if (and (string? res) (string-number? res))
+	res
+	(begin
+	  (graphics-fetch-grid-vars)
+	  graphics-current-base))))
+
+(define (graphics-grid-aspect-props)
+  (with aspect (tree->stree (get-env-tree "gr-grid-aspect-props"))
+    (if (match? aspect '(tuple (tuple :2) (tuple :2) :*))
+	aspect
+	(begin
+	  (set! aspect (graphics-path-property
+			  (graphics-graphics-path) "gr-grid-aspect"))
+	  (if (match? aspect '(tuple (tuple :2) (tuple :2) :*))
+	      aspect
+	      '(tuple (tuple "axes" "#808080") (tuple "1" "#c0c0c0")
+		      (tuple "5" "#e0e0ff")))))))
+
+(define (graphics-set-grid-center x y)
+  (graphics-set-property "gr-grid-center" `(point ,x ,y)))
+
+(define (graphics-set-grid-center-ia)
+  (interactive
+    '("X:" "Y:")
+    '(lambda (x y)
+       (graphics-set-grid-center x y))))
+
+(define (graphics-set-grid-step val)
+  (graphics-set-property "gr-grid-step" val))
+
+(define (graphics-set-grid-astep val)
+  (graphics-set-property "gr-grid-astep" val))
+
+(define (graphics-set-grid-base val)
+  (graphics-set-property "gr-grid-base" val))
+
+(define (graphics-set-grid-step-ia)
+  (interactive '("Unit length:") 'graphics-set-grid-step))
+
+(define (graphics-set-grid-astep-ia)
+  (interactive '("Nb angular steps:") 'graphics-set-grid-astep))
+
+(define (graphics-set-grid-base-ia)
+  (interactive '("Logarithmic base:") 'graphics-set-grid-base))
+
+(define (graphics-set-grid-aspect-properties c0 c1 s2 c2)
+  (with aspect `(tuple (tuple "axes" ,c0) (tuple "1" ,c1) (tuple ,s2 ,c2))
+    (graphics-set-property "gr-grid-aspect" aspect)
+    (graphics-set-property "gr-grid-aspect-props" aspect)))
+
+(define (graphics-set-grid-aspect-properties-ia)
+  (interactive
+    '("Color(axis):" "Color(unit):" "Subdivisions per unit:" "Color(subds):")
+    '(lambda (c0 c1 s2 c2)
+       (graphics-set-grid-aspect-properties c0 c1 s2 c2))))
+
+(define (graphics-set-grid type visual?)
+  (let* ((center (graphics-grid-center))
+	 (step   (graphics-grid-step))
+	 (astep  (graphics-grid-astep))
+	 (base   (graphics-grid-base))
+         (ogcg   graphics-current-grid)
+	 (prop   (if visual? "gr-grid" "gr-edit-grid"))
+    )
+    (set! graphics-current-grid prop)
+    (cond ((eq? type 'empty)
+	   (graphics-set-property prop
+	      `(tuple "empty"))
+	  )
+	  ((eq? type 'cartesian)
+	   (graphics-set-property prop
+	      `(tuple "cartesian" ,center ,step))
+	  )
+	  ((eq? type 'polar)
+	   (graphics-set-property prop
+	      `(tuple "polar" ,center ,step ,astep))
+	  )
+	  ((eq? type 'logarithmic)
+	   (graphics-set-property prop
+	      `(tuple "logarithmic" ,center ,step ,base)))
+    )
+    (set! graphics-current-grid ogcg)))
+
+(define (graphics-set-visual-grid type)
+  (graphics-set-grid type #t))
+
+(define (graphics-set-edit-grid type)
+  (graphics-set-grid type #f))
+
+(define (graphics-set-grid-aspect type)
+  (define (cmp x y)
+    (if (equal? (cadr x) "axes")
+        #t
+    (if (equal? (cadr y) "axes")
+        #f
+    (let* ((xval (s2i (cadr x)))
+	   (yval (s2i (cadr y)))
+	  )
+	  (< xval yval))))
+  )
+  (with aspect (graphics-grid-aspect-props)
+    (cond ((eq? type 'units-only)
+	   (graphics-set-property "gr-grid-aspect-props" aspect)
+           (set! aspect (cons 'tuple (sort (cdr aspect) cmp)))
+	   (set-cdr! (cddr aspect) '())
+	   (graphics-set-property "gr-grid-aspect" aspect)
+	  )
+	  ((eq? type 'detailed)
+	   (graphics-set-property "gr-grid-aspect" aspect)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Graphics edit mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (graphics-mode)
   (with m (tree->stree (get-env-tree "gr-mode"))

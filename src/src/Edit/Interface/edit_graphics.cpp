@@ -64,6 +64,14 @@ edit_graphics_rep::find_frame () {
   else return frame ();
 }
 
+grid
+edit_graphics_rep::find_grid () {
+  bool bp_found;
+  path bp= eb->find_box_path (tp, bp_found);
+  if (bp_found) return eb->find_grid (path_up (bp));
+  else return grid ();
+}
+
 void
 edit_graphics_rep::find_limits (point& lim1, point& lim2) {
   lim1= point (); lim2= point ();
@@ -74,9 +82,11 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
 
 point
 edit_graphics_rep::adjust (point p) {
-  double x= floor (10.0*p[0] + 0.5);
-  double y= floor (10.0*p[1] + 0.5);
-  return point (x / 10.0, y / 10.0);
+  grid g= find_grid ();
+  if (nil (g))
+    return p;
+  else
+    return g->find_closest_point (p);
 }
 
 tree
@@ -128,19 +138,31 @@ void edit_graphics_rep::invalidate_graphical_object () {
   }
 }
 
-void edit_graphics_rep::draw_graphical_object () {
+void edit_graphics_rep::draw_graphical_object (ps_device dev) {
   if (nil (go_box)) set_graphical_object(graphical_object);
   if (nil (go_box)) return;
+  point lim1, lim2;
+  find_limits (lim1, lim2);
+  SI ox1, oy1, ox2, oy2;
+  dev->get_clipping (ox1, oy1, ox2, oy2);
+  frame f= find_frame ();
+  if (!nil (f)) {
+    point p1= f (point (lim1[0], lim1[1]));
+    point p2= f (point (lim2[0], lim2[1]));
+    if (lim1 != point ())
+      dev->extra_clipping ((SI) p1[0], (SI) p1[1], (SI) p2[0], (SI) p2[1]);
+  }
   int i;
   for (i=0; i<go_box->subnr(); i++) {
     box b= go_box->subbox (i);
     if ((tree)b=="point" || (tree)b=="curve")
-      b->display (win);
+      b->display (dev);
     else {
       rectangles rs;
-      b->redraw (win, path (), rs);
+      b->redraw (dev, path (), rs);
     }
   }
+  dev->set_clipping (ox1, oy1, ox2, oy2);
 }
 
 bool

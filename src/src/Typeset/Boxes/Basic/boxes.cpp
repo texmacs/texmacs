@@ -178,6 +178,11 @@ box_rep::get_frame () {
   return frame ();
 }
 
+grid
+box_rep::get_grid () {
+  return grid ();
+}
+
 void
 box_rep::get_limits (point& lim1, point& lim2) {
   lim1= point (); lim2= point ();
@@ -198,6 +203,19 @@ box_rep::find_frame (path bp) {
     if (!nil (g)) f= scaling (1.0, point (x, y)) * g;
   }
   return f;
+}
+
+grid
+box_rep::find_grid (path bp) {
+  box   b= this;
+  grid g= get_grid ();
+  while (!nil (bp)) {
+    b  = b->subbox (bp->item);
+    bp = bp->next;
+    grid g2= b->get_grid ();
+    if (!nil (g2)) g= g2;
+  }
+  return g;
 }
 
 void
@@ -356,8 +374,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
   if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
     rectangles ll;
     l= rectangles();
-    color old_bg;
-    bool restore_bg= display_background (dev, old_bg);
+    pre_display (dev);
 
     int i, item=-1, n=subnr (), i1= n, i2= -1;
     if (!nil(p)) i1= i2= item= p->item;
@@ -389,7 +406,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       nr_painted++;
     }
 
-    if (restore_bg) dev->set_background (old_bg);
+    post_display (dev);
   }
   dev->move_origin (-x0, -y0);
 }
@@ -406,10 +423,14 @@ box_rep::clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2) {
   (void) rs; (void) pixel; (void) i; (void) i1; (void) i2;
 }
 
-bool
-box_rep::display_background (ps_device dev, color& col) {
-  (void) dev; (void) col;
-  return false;
+void
+box_rep::pre_display (ps_device &dev) {
+  (void) dev;
+}
+
+void
+box_rep::post_display (ps_device &dev) {
+  (void) dev;
 }
 
 /******************************************************************************

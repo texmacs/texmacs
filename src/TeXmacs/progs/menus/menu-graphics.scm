@@ -36,6 +36,34 @@
 	  ("Fraction height" (graphics-set-origin "0cm" "1yfrac"))
 	  ---
 	  ("Other"... (graphics-set-origin-ia))))
+  (-> "Grid"
+      ("Default" (begin (graphics-remove-property "gr-grid")
+			(graphics-remove-property "gr-edit-grid")
+			(graphics-remove-property "gr-grid-aspect")))
+      ---
+      (-> "Grid properties"
+	  ("Center"           (graphics-set-grid-center-ia))
+	  ("Unit length"      (graphics-set-grid-step-ia))
+	  ("Nb polar steps"   (graphics-set-grid-astep-ia))
+	  ("Logarithmic base" (graphics-set-grid-base-ia)))
+      (-> "Visual grid"
+	  ("No grid"     (graphics-set-visual-grid 'empty))
+          ---
+	  ("Cartesian"   (graphics-set-visual-grid 'cartesian))
+	  ("Polar"       (graphics-set-visual-grid 'polar))
+	  ("Logarithmic" (graphics-set-visual-grid 'logarithmic))
+	  ---
+	  (-> "Aspect"
+	      ("Properties" ... (graphics-set-grid-aspect-properties-ia))
+	      ---
+	      ("Units only" (graphics-set-grid-aspect 'units-only))
+	      ("Detailed"   (graphics-set-grid-aspect 'detailed))))
+      (-> "Edit grid"
+	  ("No grid"     (graphics-set-edit-grid 'empty))
+          ---
+	  ("Cartesian"   (graphics-set-edit-grid 'cartesian))
+	  ("Polar"       (graphics-set-edit-grid 'polar))
+	  ("Logarithmic" (graphics-set-edit-grid 'logarithmic))))
   (-> "Extents"
       ("Default" (graphics-remove-property "gr-clip"))
       ---
