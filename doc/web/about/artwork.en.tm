@@ -13,7 +13,7 @@
     src="texmacs-banner-white.png"\<gtr\>\<less\>/a\<gtr\>>
   </with>
 
-  <section|Banner>
+  <paragraph|Banners>
 
   <\itemize-dot>
     <item>Banner with white background: <verbatim|texmacs-banner-white.png>
@@ -26,9 +26,7 @@
     <postscript|texmacs-banner-trans.png|*5/8|*5/8||||>
   </itemize-dot>
 
-  \;
-
-  <section|Buttons>
+  <paragraph|Buttons>
 
   <\itemize-dot>
     <item>Button with white background: <verbatim|texmacs-button-white.png>
@@ -41,14 +39,14 @@
     <postscript|texmacs-button-trans.png|*5/8|*5/8||||>
   </itemize-dot>
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2003|Andreas Seidl>
 
   <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
+    <associate|preamble|false>
     <associate|page-even|30mm>
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-right|25mm>
@@ -67,7 +65,17 @@
 <\references>
   <\collection>
     <associate|gly-1|<tuple|1|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|toc-2|<tuple|2|?>>
+    <associate|toc-1|<tuple|<uninit>|?>>
+    <associate|toc-2|<tuple|<uninit>|?>>
   </collection>
 </references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Banner><value|toc-dots><pageref|toc-1><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Buttons><value|toc-dots><pageref|toc-2><vspace|0.5fn>
+    </associate>
+  </collection>
+</auxiliary>
