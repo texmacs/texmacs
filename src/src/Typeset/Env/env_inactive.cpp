@@ -12,149 +12,136 @@
 
 #include "env.hpp"
 
-#define COMPACT_ALL           0
-#define COMPACT_INLINE_ARGS   1
-#define COMPACT_INLINE_START  2
-#define COMPACT_INLINE        3
-#define COMPACT_NONE          4
-
-static bool normal_format = true;
-static bool compact_close = false;
-static int  compact_mode  = COMPACT_INLINE_START;
-
 static tree
 subvar (tree var, int i) {
   tree svar= copy (var);
   return svar << as_string (i);
 }
 
-inline tree
-blue (tree t) {
-  return tree (WITH, "color", "blue", t);
+static bool
+is_long (tree t) {
+  switch (L(t)) {
+  case DOCUMENT:
+  case INCLUDE:
+  case TFORMAT:
+  case TABLE:
+    return true;
+  case CONCAT:
+  case ROW:
+    return false;
+  case SURROUND:
+  case ASSIGN:
+  case DATOMS:
+  case DLINES:
+  case DPAGES:
+  case WITH:
+  case MARK:
+  case MACRO:
+  case XMACRO:
+  case CELL:
+    return is_long (t[N(t)-1]);
+  default:
+    if (L(t) < START_EXTENSIONS) return false;
+    else {
+      int i, n= N(t);
+      for (i=0; i<n; i++)
+	if (is_long (t[i]))
+	  return true;
+      return false;
+    }
+  }
 }
 
-static tree
-inline_open (string var) {
-  return blue ("(" * var);
-}
-
-static tree
-inline_middle (string var, bool first) {
-  (void) var; (void) first;
-  return blue (", ");
-}
-
-static tree
-inline_close (string var) {
-  (void) var;
-  return blue (")");
-}
-
-static tree
-long_open (string var) {
-  return blue ("(\\" * var);
-}
-
-static tree
-long_middle (string var) {
-  return blue ("(|" * var);
-}
-
-static tree
-long_close (string var) {
-  return blue ("(/" * var);
-}
-
-static tree
-short_middle (string var, bool first) {
-  (void) var; (void) first;
-  return blue (", ");
-}
-
-static tree
-short_close (string var) {
-  (void) var;
-  return blue (")");
+static bool
+is_long_arg (tree t) {
+  switch (L(t)) {
+  case TWITH:
+  case CWITH:
+  case ROW:
+    return true;
+  default:
+    return is_long (t);
+  }
 }
 
 tree
-edit_env_rep::rewrite_inactive (tree t, tree var, bool flush) {
-  if (is_atomic (t)) return var;
+edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
+  if (is_atomic (t)) {
+    if (src_style == STYLE_SCHEME)
+      return tree (CONCAT,
+		   tree (WITH, COLOR, "blue", "``"),
+		   var,
+		   tree (WITH, COLOR, "blue", "''"));
+    return var;
+  }
   else if (is_concat (t) &&
-	   normal_format &&
-	   (compact_mode != COMPACT_NONE))
+	   (src_special > SPECIAL_RAW) &&
+	   (src_compact != COMPACT_NONE))
     {
       int i, n= N(t);
       tree r (CONCAT, n);
       for (i=0; i<n; i++)
-	r[i]= rewrite_inactive (t[i], subvar (var, i), false);
+	r[i]= rewrite_inactive (t[i], subvar (var, i), false, false);
       return r;
     }
   else if (is_document (t) &&
-	   normal_format &&
-	   (compact_mode != COMPACT_ALL))
+	   (block || (src_compact == COMPACT_NONE)) &&
+	   (src_special > SPECIAL_RAW) &&
+	   (src_compact != COMPACT_ALL))
     {
       int i, n= N(t);
       tree r (DOCUMENT, n);
       for (i=0; i<n; i++)
-	r[i]= rewrite_inactive (t[i], subvar (var, i), flush || (i<n-1));
+	r[i]= rewrite_inactive (t[i], subvar (var, i), true, flush || (i<n-1));
       return r;
     }
-  else if ((compact_mode == COMPACT_ALL) ||
-	   (!is_multi_paragraph (t)) && (compact_mode != COMPACT_NONE))
+  else if ((src_compact == COMPACT_ALL) ||
+	   ((!block) && (src_compact != COMPACT_NONE)) ||
+	   (!is_long (t)) && (src_compact != COMPACT_NONE))
     {
-      string op= as_string (L(t));
-      tree r (CONCAT, inline_open (op));
       int i, n= N(t);
-      for (i=0; i<n; i++) {
-	r << inline_middle (op, i==0);
-	r << rewrite_inactive (t[i], subvar (var, i), false);
-      }
-      r << inline_close (op);
+      tree r (INLINE_TAG, n+1);
+      r[0]= as_string (L(t));
+      for (i=0; i<n; i++)
+	r[i+1]= rewrite_inactive (t[i], subvar (var, i), false, false);
       return tree (MARK, var, r);
     }
   else {
     string op= as_string (L(t));
     tree doc (DOCUMENT);
     int i=0, n= N(t);
-    bool compact= (compact_mode < COMPACT_INLINE);
-
-    if ((!compact) || ((n>0) && is_multi_paragraph (t[0]))) {
-      tree tag= long_open (op);
-      if (compact_mode < COMPACT_INLINE)
-	tag= tree (CONCAT, tag, short_close (op));
-      doc << tag;
-    }
-
+    bool compact= (src_compact < COMPACT_INLINE);
+ 
     for (i=0; i<n; i++) {
-      if (compact && (!is_multi_paragraph (t[i]))) {
-	int start= i;
-	for (; i<n; i++)
-	  if (is_multi_paragraph (t[i])) break;
-	int end= i;
-	tree hor (CONCAT);
-	if (start==0) hor << long_open (op);
-	else if (end == n) hor << long_close (op);
-	else hor << long_middle (op);
-	for (i=start; i<end; i++) {
-	  tree next= rewrite_inactive (t[i], subvar (var, i), false);
-	  hor << short_middle (op, i==start) << next;
-	}
-	hor << short_close (op);
-	doc << hor;
-	compact= (compact_mode < COMPACT_INLINE_START);
-	i= end-1;
+      tree next;
+      if ((!compact) || is_long_arg (t[i])) {
+	if (i==0) doc << tree (OPEN_TAG, op);
+	bool big= (src_close >= CLOSE_LONG);
+	next= rewrite_inactive (t[i], subvar (var, i), true, big);
+	next= compound ("indent", next);
+	i++;
       }
+
+      int start= i;
+      for (; i<n; i++)
+	if ((!compact) || is_long_arg (t[i])) break;
+      int end= i;
+      tree_label l= MIDDLE_TAG;
+      if (start == 0) l= OPEN_TAG;
+      if (end == n) l= CLOSE_TAG;
+      tree u (l, end - start + 1);
+      u[0]= op;
+      for (i=0; i<end-start; i++)
+	u[i+1]= rewrite_inactive (t[start+i], subvar (var, start+i),
+				  false, false);
+      i= end-1;
+      compact= (src_compact < COMPACT_INLINE_START);
+
+      if (start==0) doc << u;
       else {
-	tree tag;
-	tree next= rewrite_inactive (t[i], subvar (var, i), !compact_close);
-	if (i<n-1) tag= long_middle (op);
-	else tag= long_close (op);
-	if (compact_mode < COMPACT_INLINE)
-	  tag= tree (CONCAT, tag, short_close (op));
-	if (compact_close)
-	  doc << tree (SURROUND, "", tag, compound ("indent", next));
-	else doc << compound ("indent", next) << tag;
+	if (src_close < CLOSE_LONG)
+	  doc << tree (SURROUND, "", u, next);
+	else doc << next << u;
       }
     }
 
@@ -165,14 +152,13 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool flush) {
 
 tree
 edit_env_rep::rewrite_inactive (tree t, tree var) {
-  string compact= get_string (SRC_COMPACT);
-  if (compact == "all") compact_mode= COMPACT_ALL;
-  else if (compact == "inline args") compact_mode= COMPACT_INLINE_ARGS;
-  else if (compact == "normal") compact_mode= COMPACT_INLINE_START;
-  else if (compact == "inline") compact_mode= COMPACT_INLINE;
-  else compact_mode= COMPACT_NONE;
-  string close= get_string (SRC_CLOSE);
-  compact_close= (close == "compact");
-  tree r= rewrite_inactive (t, var, true);
+  tree r= rewrite_inactive (t, var, true, true);
+  if (is_multi_paragraph (r)) {
+    r= tree (WITH, PAR_PAR_SEP, "0fn", r);
+    r= tree (SURROUND,
+	     tree (VAR_VSPACE, "0.5fn"),
+	     tree (VSPACE, "0.5fn"),
+	     r);
+  }
   return r;
 }

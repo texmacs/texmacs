@@ -41,11 +41,11 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
   switch (L(st)) {
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
-  case WITH:
-    return bridge_with (ttt, st, ip);
+    //case WITH:
+    //return bridge_with (ttt, st, ip);
   default:
-    //return bridge_auto (ttt, st, ip, inactive_m);
-    return bridge_default (ttt, st, ip);
+    return bridge_auto (ttt, st, ip, inactive_m);
+    //return bridge_default (ttt, st, ip);
   }
 }
 

@@ -204,6 +204,10 @@ init_std_drd () {
   init (VAR_ACTIVE, "active*", fixed (1) -> accessible (0));
   init (REWRITE_INACTIVE, "rewrite-inactive", fixed (1));
   init (MARK, "mark", fixed (2));
+  init (INLINE_TAG, "inline-tag", repeat (1, 1) -> accessible (0));
+  init (OPEN_TAG, "open-tag", repeat (1, 1) -> accessible (0));
+  init (MIDDLE_TAG, "middle-tag", repeat (1, 1, BIFORM) -> accessible (1));
+  init (CLOSE_TAG, "close-tag", repeat (1, 1, BIFORM) -> accessible (1));
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));

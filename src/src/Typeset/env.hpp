@@ -48,6 +48,34 @@
 #define Env_Line_Width        17
 #define Env_Grid              18
 #define Env_Grid_Aspect       19
+#define Env_Src_Style         20
+#define Env_Src_Special       21
+#define Env_Src_Compact       22
+#define Env_Src_Close         23
+
+/******************************************************************************
+* For style file editing
+******************************************************************************/
+
+#define STYLE_ANGULAR         0
+#define STYLE_SCHEME          1
+#define STYLE_LATEX           2
+#define STYLE_FUNCTIONAL      3
+
+#define SPECIAL_RAW           0
+#define SPECIAL_FORMAT        1
+#define SPECIAL_MAXIMAL       2
+
+#define COMPACT_ALL           0
+#define COMPACT_INLINE_ARGS   1
+#define COMPACT_INLINE_START  2
+#define COMPACT_INLINE        3
+#define COMPACT_NONE          4
+
+#define CLOSE_MINIMAL         0
+#define CLOSE_COMPACT         1
+#define CLOSE_LONG            2
+#define CLOSE_REPEAT          3
 
 /******************************************************************************
 * The edit environment
@@ -92,6 +120,10 @@ public:
   frame     fr;
   point     clip_lim1;
   point     clip_lim2;
+  int       src_style;
+  int       src_special;
+  int       src_compact;
+  int       src_close;
 
 public:
   tree exec_extra_list (tree t, int pos);
@@ -176,7 +208,7 @@ public:
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
-  tree   rewrite_inactive (tree t, tree var, bool flush);
+  tree   rewrite_inactive (tree t, tree var, bool block, bool flush);
   tree   rewrite_inactive (tree t, tree var);
 
   inline void monitored_write (string s, tree t) {
@@ -216,6 +248,10 @@ public:
   void   update_language ();
   void   update_frame ();
   void   update_clipping ();
+  void   update_src_style ();
+  void   update_src_special ();
+  void   update_src_compact ();
+  void   update_src_close ();
   void   update ();
   void   update (string env_var);
 

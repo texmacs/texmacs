@@ -252,6 +252,42 @@ edit_env_rep::update_clipping () {
 }
 
 void
+edit_env_rep::update_src_style () {
+  string s= as_string (env [SRC_STYLE]);
+  if (s == "angular") src_style= STYLE_ANGULAR;
+  else if (s == "scheme") src_style= STYLE_SCHEME;
+  else if (s == "latex") src_style= STYLE_LATEX;
+  else if (s == "functional") src_style= STYLE_FUNCTIONAL;
+}
+
+void
+edit_env_rep::update_src_special () {
+  string s= as_string (env [SRC_SPECIAL]);
+  if (s == "raw") src_special= SPECIAL_RAW;
+  else if (s == "format") src_special= SPECIAL_FORMAT;
+  else if (s == "maximal") src_special= SPECIAL_MAXIMAL;
+}
+
+void
+edit_env_rep::update_src_compact () {
+  string s= as_string (env [SRC_COMPACT]);
+  if (s == "all") src_compact= COMPACT_ALL;
+  else if (s == "inline args") src_compact= COMPACT_INLINE_ARGS;
+  else if (s == "normal") src_compact= COMPACT_INLINE_START;
+  else if (s == "inline") src_compact= COMPACT_INLINE;
+  else if (s == "none") src_compact= COMPACT_NONE;
+}
+
+void
+edit_env_rep::update_src_close () {
+  string s= as_string (env [SRC_CLOSE]);
+  if (s == "minimal") src_close= CLOSE_MINIMAL;
+  else if (s == "compact") src_close= CLOSE_COMPACT;
+  else if (s == "long") src_close= CLOSE_LONG;
+  else if (s == "repeat") src_close= CLOSE_REPEAT;
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -268,6 +304,11 @@ edit_env_rep::update () {
   update_frame ();
   update_clipping ();
   lw= get_length (LINE_WIDTH);
+
+  update_src_style ();
+  update_src_special ();
+  update_src_compact ();
+  update_src_close ();
 }
 
 /******************************************************************************
@@ -330,6 +371,18 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);
+    break;
+  case Env_Src_Style:
+    update_src_style ();
+    break;
+  case Env_Src_Special:
+    update_src_special ();
+    break;
+  case Env_Src_Compact:
+    update_src_compact ();
+    break;
+  case Env_Src_Close:
+    update_src_close ();
     break;
   }
 }

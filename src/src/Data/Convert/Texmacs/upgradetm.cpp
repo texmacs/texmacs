@@ -37,6 +37,15 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.3.3", version)) return H;
+
+  new_feature (H, "rewrite-inactive");
+  new_feature (H, "mark");
+  new_feature (H, "inline-tag");
+  new_feature (H, "open-tag");
+  new_feature (H, "middle-tag");
+  new_feature (H, "close-tag");
+
   if (version_inf ("1.0.2.8", version)) return H;
 
   rename_feature (H, "raw_data", "raw-data");
