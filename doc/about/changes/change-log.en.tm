@@ -10,6 +10,11 @@
   <\itemize>
     <item>German translation of the manual by Dietmar Jung (1.0.4.6).
 
+    <item>Selection of visual grid and editing grid in upcoming graphical
+    mode (1.0.4.6).
+
+    <item>Several minor bug corrections (1.0.4.6).
+
     <item>User profile for Windows, Gnome and KDE (1.0.4.5).
 
     <item>Several bug fixes: keyboard modifiers, Guile GC, Windows/Cygwin,
