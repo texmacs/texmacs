@@ -185,6 +185,15 @@
   <assign|compressed|<macro|x|<flag|compressed|red|x>>>
 
   \;
+
+  <assign|thealgorithm|<macro|<theprefix><value|algorithmnr>>>
+
+  <assign|algorithm|<macro|body|<surround|<assign|algorithmnr|<plus|<value|algorithmnr>|1>><assign|thelabel|<thealgorithm>>||<remark*|<localize|Algorithm>
+  <thealgorithm>|<arg|body>>>>>
+
+  <assign|resetstdenv|<merge|<value|resetstdenv>|<hold|<macro|<assign|algorithmnr|0>>>>>
+
+  \;
 </body>
 
 <\initial>

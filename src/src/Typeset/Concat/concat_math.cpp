@@ -239,6 +239,8 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
 			  "<rubber-" * s (1, N(s)-1) * ">",
 			  env->fn, env->col, b->x2- b->x1);
     print (STD_ITEM, wide_box (ip, b, wideb, env->fn, env->fn->sep, above));
+    if ((s == "<underbrace>") || (s == "overbrace"))
+      with_limits (LIMITS_ALWAYS);
   }
   else {
     SI sep= above? -env->fn->yx: env->fn->sep;

@@ -60,6 +60,7 @@ filter_preamble (tree t) {
 #define m2e latex_modifier_to_tree
 #define var_m2e var_latex_modifier_to_tree
 tree l2e (tree);
+tree latex_command_to_tree (tree t);
 
 tree
 latex_symbol_to_tree (string s) {
@@ -321,6 +322,21 @@ var_m2e (tree t, string var, string val) {
 	       tree (RESET, copy (var)));
 }
 
+tree
+latex_verbarg_to_tree (tree t) {
+  t= l2e (t);
+  if (is_concat (t)) {
+    string s;
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (is_atomic (t[i])) s << t[i]->label;
+      else if (is_func (t[i], RIGHT_SUB, 1) && is_atomic (t[i][0]))
+	s << "_" << t[i][0]->label;
+    return s;
+  }
+  else return "";
+}
+
 static bool
 is_left_type (tree t) {
   if (is_compound (t)) return false;
@@ -469,6 +485,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\acute", 1))  return tree (WIDE, l2e (t[1]), "<acute>");
   if (is_tuple (t, "\\vec", 1))  return tree (WIDE, l2e (t[1]), "<vect>");
   if (is_tuple (t, "\\breve", 1))  return tree (WIDE, l2e (t[1]), "<breve>");
+  if (is_tuple (t, "\\abovering", 1))
+    return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\hspace", 1)) return tree (SPACE, t2e (t[1]));
   if (is_tuple (t, "\\vspace", 1)) return tree (VSPACE_AFTER, t2e (t[1]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
@@ -523,6 +541,15 @@ latex_command_to_tree (tree t) {
     r << tree (LEFT, "\{") << tree (BEGIN, "array", "lll") << u
       << tree (END, "array") << tree (RIGHT, ".");
     return r;
+  }
+  if (is_tuple (t, "\\includegraphics", 1)) {
+    tree name= latex_verbarg_to_tree (t[1]);
+    if (name == "") return "";
+    else {
+      tree g (POSTSCRIPT, 7);
+      g[0]= name;
+      return g;
+    }
   }
 
   // Start TeXmacs specific markup
@@ -669,7 +696,7 @@ parse_pmatrix (tree& r, tree t, int& i, bool bracket) {
       E= tree (CONCAT);
       continue;
     }
-    else if (is_func (v, BEGIN) && ((v[0] == "array")||(v[0] == "tabular"))) {
+    else if (is_func (v, BEGIN) && ((v[0] == "array") ||(v[0] == "tabular"))) {
       parse_pmatrix (E, t, i, false);
       if (i<N(t)) continue;
       break;
@@ -806,6 +833,34 @@ finalize_layout (tree t) {
 	r << v;
 	spc_flag = true;
 	item_flag= false;
+	continue;
+      }
+
+      if (is_func (v, BEGIN, 1) && (v[0] == "picture")) {
+	for (; i<n; i++)
+	  if (is_func (u[i], POSTSCRIPT)) r << u[i];
+	  else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
+	    break;
+	continue;
+      }
+
+      if (is_func (v, BEGIN) && ((v[0] == "figure") || (v[0] == "figure*"))) {
+	r << tree (BEGIN, "bigfigure");
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "figure")) {
+	r << tree (END, "bigfigure");
+	continue;
+      }
+
+      if (is_func (v, BEGIN) && ((v[0] == "table") || (v[0] == "table*"))) {
+	r << tree (BEGIN, "bigtable");
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "table")) {
+	r << tree (END, "bigtable");
 	continue;
       }
 
@@ -1002,11 +1057,69 @@ handle_improper_matches (tree t) {
     for (i=0; i<n; i++)
       r[i]= handle_improper_matches (t[i]);
     if (is_concat (r)) {
-      int pos= 0;
+      int pos;
       tree u (r, 0);
-      handle_improper_matches (u, r, pos);
+      for (pos=0; pos<N(r); pos++)
+	handle_improper_matches (u, r, pos);
+      if (N(u)==0) return "";
+      if (N(u)==1) return u[0];
       return u;
     }
+    return r;
+  }
+}
+
+/******************************************************************************
+* Further finalization after upgrading
+******************************************************************************/
+
+tree
+float_body (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "caption", 1)) return "";
+  else if (is_compound (t, "center", 1)) return float_body (t[0]);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= float_body (t[i]);
+    if (is_document (r) && (n>0) && (r[n-1] == "")) r= r (0, n-1);
+    return r;
+  }
+}
+
+tree
+find_caption (tree t) {
+  if (is_atomic (t)) return "";
+  else if (is_compound (t, "caption", 1)) return t[0];
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++) {
+      tree r= find_caption (t[i]);
+      if (r != "") return r;
+    }
+    return "";
+  }
+}
+
+tree
+finalize_floats (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "bigfigure", 1)) {
+    tree body= float_body (t[N(t)-1]);
+    tree capt= find_caption (t[N(t)-1]);
+    return tree (make_tree_label ("big-figure"), body, capt);
+  }
+  else if (is_compound (t, "bigtable", 1)) {
+    tree body= float_body (t[N(t)-1]);
+    tree capt= find_caption (t[N(t)-1]);
+    return tree (make_tree_label ("big-table"), body, capt);
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= finalize_floats (t[i]);
     return r;
   }
 }
@@ -1045,11 +1158,13 @@ latex_to_tree (tree t1) {
   if ((!is_document) && is_func (t6, DOCUMENT, 1)) t6= t6[0];
   tree t7= upgrade_tex (t6);
   // cout << "\n\nt7= " << t7 << "\n\n";
-  tree t8= finalize_textm (t7);
+  tree t8= finalize_floats (t7);
   // cout << "\n\nt8= " << t8 << "\n\n";
-  tree t9= simplify_correct (t8);
+  tree t9= finalize_textm (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
+  tree t10= simplify_correct (t9);
+  // cout << "\n\nt10= " << t10 << "\n\n";
   if (is_document)
-    return tree (DOCUMENT, compound ("body", t9), compound ("style", style));
-  else return t9;
+    return tree (DOCUMENT, compound ("body", t10), compound ("style", style));
+  else return t10;
 }
