@@ -65,7 +65,7 @@ edit_replace_rep::spell_end () {
     set_message (as_string (nr_replaced) *
 		 "#spelling errors have been corrected", "correct text");
   else set_message ("spell checking complete", "correct text");
-  cerr << '\a';
+  dis->beep ();
   set_input_normal ();
 }
 

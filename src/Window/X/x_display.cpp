@@ -336,6 +336,15 @@ x_display_rep::translate (string s, string from, string to) {
 ******************************************************************************/
 
 void
+x_display_rep::beep () {
+#ifdef OS_WIN32
+  XBeep ();
+#else
+  cerr << '\a';
+#endif
+}
+
+void
 x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
   unmap_balloon ();
   balloon_wid = wid;

@@ -397,7 +397,7 @@ edit_replace_rep::search_next (bool forward) {
   next_match (forward);
   if (search_at == rp) {
     set_message ("No more matches for#" * w, r);
-    cerr << '\a';
+    dis->beep ();
   }
   else set_message ("Searching#" * w, r);
 }
@@ -481,7 +481,7 @@ edit_replace_rep::search_keypress (string s) {
 	search_previous_compound (r, w);
       if (q == r) {
 	set_message ("No more matches", "search similar structure");
-	cerr << '\a';
+	dis->beep ();
       }
       else {
 	q= q * min (N (subtree (et, q)) - 1, last_item (p));
@@ -535,7 +535,7 @@ edit_replace_rep::replace_next () {
     if (nr_replaced == 0) l= "No matches found";
     if (nr_replaced == 1) l= "Replaced one occurrence";
     set_message (l, r);
-    cerr << '\a';
+    dis->beep ();
     set_input_normal ();
   }
   else set_message ("Replace (y,n,a)?", r);

@@ -242,3 +242,21 @@ read_directory (url u, bool& error_flag) {
   bench_cumul ("read directory");
   return dir;
 }
+
+/******************************************************************************
+* Miscellaneous
+******************************************************************************/
+
+void
+ps2pdf (url u1, url u2) {
+#ifdef OS_WIN32
+  char *_u1, *_u2;
+  _u1 = as_charp (concretize (u1));
+  _u2 = as_charp (concretize (u2));
+  XPs2Pdf (_u1, _u2);
+  delete [] _u1;
+  delete [] _u2;
+#else
+  system ("ps2pdf", u1, u2);
+#endif
+}
