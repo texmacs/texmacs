@@ -2120,6 +2120,37 @@ upgrade_style_rename (tree t) {
 }
 
 /******************************************************************************
+* Remove trailing punctuation in item* tags
+******************************************************************************/
+
+static tree
+upgrade_item_punct (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_item_punct (t[i]);
+    if (is_compound (r, "item*", 1)) {
+      tree& item (r[0]);
+      if (is_atomic (item)) {
+	string s= item->label;
+	if (ends (s, ".") || ends (s, ":") || ends (s, " "))
+	  item= s (0, N(s)-1);
+      }
+      else if (is_concat (item) && is_atomic (item[N(item)-1])) {
+	string s= item [N(item)-1] -> label;
+	if ((s == ".") || (s == ":") || (s == " ")) {
+	  if (N(item) == 2) item= item[0];
+	  else item= item (0, N(item) - 1);
+	}
+      }
+    }
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2143,6 +2174,7 @@ upgrade_tex (tree t) {
   t= upgrade_apply (t);
   t= upgrade_env_vars (t);
   t= upgrade_style_rename (t);
+  t= upgrade_item_punct (t);
   return t;
 }
 
@@ -2200,5 +2232,7 @@ upgrade (tree t, string version) {
     t= upgrade_use_package (t);
   if (version_inf_eq (version, "1.0.3.5"))
     t= upgrade_style_rename (t);
+  if (version_inf_eq (version, "1.0.3.5"))
+    t= upgrade_item_punct (t);
   return t;
 }
