@@ -160,6 +160,7 @@ init_std_drd () {
   init (GET_ARITY, "get-arity", fixed (1));
   init (MAP_ARGS, "map-args", options (3, 2) -> name ("map arguments"));
   init (EVAL_ARGS, "eval-args", fixed (1) -> name ("evaluate arguments"));
+  init (MARK, "mark", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1));
   init (DELAY, "delay", fixed (1));
@@ -198,12 +199,13 @@ init_std_drd () {
   init (CASE, "case", repeat (2, 1));
   init (WHILE, "while", fixed (2));
 
-  init (INACTIVE, "inactive", fixed (1) -> accessible (0));
+  init (STYLE_ONLY, "style-only", fixed (1) -> accessible (0));
+  init (VAR_STYLE_ONLY, "style-only*", fixed (1) -> accessible (0));
   init (ACTIVE, "active", fixed (1) -> accessible (0));
-  init (VAR_INACTIVE, "inactive*", fixed (1) -> accessible (0));
   init (VAR_ACTIVE, "active*", fixed (1) -> accessible (0));
+  init (INACTIVE, "inactive", fixed (1) -> accessible (0));
+  init (VAR_INACTIVE, "inactive*", fixed (1) -> accessible (0));
   init (REWRITE_INACTIVE, "rewrite-inactive", fixed (2));
-  init (MARK, "mark", fixed (2));
   init (INLINE_TAG, "inline-tag", repeat (1, 1) -> accessible (0));
   init (OPEN_TAG, "open-tag", repeat (1, 1) -> accessible (0));
   init (MIDDLE_TAG, "middle-tag", repeat (1, 1, BIFORM) -> accessible (1));

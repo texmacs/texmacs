@@ -46,19 +46,18 @@ static tree var_inactive_m
 
 bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
-  switch (L(st)) {
-  case DOCUMENT:
+  if (is_document (st))
     return bridge_document (ttt, st, ip);
-    //case WITH:
-    //return bridge_with (ttt, st, ip);
-  default:
-    return bridge_auto (ttt, st, ip, inactive_auto);
-    //return bridge_default (ttt, st, ip);
-  }
+  else return bridge_auto (ttt, st, ip, inactive_auto);
 }
 
 bridge
 make_bridge (typesetter ttt, tree st, path ip) {
+  /*
+  cout << "Make bridge " << st << ", " << ip
+       << " (" << ttt->env->get_string (PREAMBLE)
+       << ", " << ttt->env->preamble << ")\n";
+  */
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
@@ -78,22 +77,27 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_formatting (ttt, st, ip, CELL_FORMAT);
   case WITH:
     return bridge_with (ttt, st, ip);
-  case ARG:
-    return bridge_argument (ttt, st, ip);
   case COMPOUND:
     return bridge_compound (ttt, st, ip);
+  case ARG:
+    return bridge_argument (ttt, st, ip);
+  case MARK:
+    return bridge_mark (ttt, st, ip);
   case EXTERN:
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
     return bridge_rewrite (ttt, st, ip);
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
+  case ACTIVE:
+  case VAR_ACTIVE:
+    return bridge_compound (ttt, st, ip);
   case INACTIVE:
     return bridge_auto (ttt, st, ip, inactive_m);
   case VAR_INACTIVE:
     return bridge_auto (ttt, st, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
-  case MARK:
-    return bridge_mark (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);

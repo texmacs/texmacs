@@ -44,6 +44,10 @@ is_long (tree t) {
   case XMACRO:
   case CELL:
     return is_long (t[N(t)-1]);
+  case STYLE_ONLY:
+  case ACTIVE:
+  case VAR_ACTIVE:
+    return is_multi_paragraph (t[0]);
   default:
     if (L(t) < START_EXTENSIONS) return false;
     else {
@@ -231,6 +235,23 @@ edit_env_rep::rewrite_inactive_symbol (
 }
 
 tree
+edit_env_rep::rewrite_inactive_active (
+  tree t, tree var, bool block, bool flush)
+{
+  tree st= t[0];
+  tree svar= subvar (var, 0);
+  int i, n= N(st);
+  tree r (st, n);
+  bool mp= is_multi_paragraph (st);
+  for (i=0; i<n; i++) {
+    bool smp= mp && is_long_arg (st, i);
+    if (is_func (st, WITH) && (i<n-1)) r[i]= subvar (svar, i);
+    else r[i]= rewrite_inactive_arg (st, svar, i, block && smp, flush && smp);
+  }
+  return tree (MARK, var, r);
+}
+
+tree
 edit_env_rep::rewrite_inactive_hybrid (
   tree t, tree var, bool block, bool flush)
 {
@@ -333,6 +354,14 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
     return rewrite_inactive_value (t, var, block, flush);
   case ARG:
     return rewrite_inactive_arg (t, var, block, flush);
+  case STYLE_ONLY:
+    return rewrite_inactive_active (t, var, block, flush);
+  case VAR_STYLE_ONLY:
+    return tree (MARK, var, subvar (var, 0));
+  case ACTIVE:
+    return rewrite_inactive_active (t, var, block, flush);
+  case VAR_ACTIVE:
+    return tree (MARK, var, subvar (var, 0));
   case SYMBOL:
     return rewrite_inactive_symbol (t, var, block, flush);
   case HYBRID:

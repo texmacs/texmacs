@@ -114,6 +114,16 @@ edit_env_rep::exec_rewrite (tree t) {
   return exec (rewrite (t));
 }
 
+bool
+edit_env_rep::exec_until_rewrite (tree t, path p, string var, int level) {
+  /*
+  cout << "Execute " << t << " (" << var << ", "
+       << level << ") until " << p << "\n"
+       << "  -> " << rewrite (t) << "\n";
+  */
+  return exec_until (rewrite (t), p, var, level);
+}
+
 /******************************************************************************
 * Evaluation of trees
 ******************************************************************************/
@@ -122,13 +132,6 @@ tree
 edit_env_rep::exec (tree t) {
   // cout << "Execute: " << t << "\n";
   if (is_atomic (t)) return t;
-  if (preamble && ((!is_func (t, ASSIGN)) || (t[0] != MODE))) {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++) r[i]= exec (t[i]);
-    return r;
-  }
-
   switch (L(t)) {
   case DATOMS:
     return exec_formatting (t, ATOM_DECORATIONS);
@@ -166,6 +169,8 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case EVAL_ARGS:
     return exec_eval_args (t);
+  case MARK:
+    return tree (MARK, copy (t[0]), exec (t[1]));
   case EVAL:
     return exec (exec (t[0]));
   case QUOTE:
@@ -239,14 +244,13 @@ edit_env_rep::exec (tree t) {
   case WHILE:
     return exec_while (t);
 
-  case INACTIVE:
-    return exec_mod_active (t, INACTIVE);
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
   case ACTIVE:
-    return exec_mod_active (t, ACTIVE);
-  case VAR_INACTIVE:
-    return exec_mod_active (t, VAR_INACTIVE);
   case VAR_ACTIVE:
-    return exec_mod_active (t, VAR_ACTIVE);
+  case INACTIVE:
+  case VAR_INACTIVE:
+    return exec_compound (t);
   case REWRITE_INACTIVE:
     return exec_rewrite (t);
 
@@ -974,16 +978,6 @@ edit_env_rep::exec_while (tree t) {
 }
 
 tree
-edit_env_rep::exec_mod_active (tree t, tree_label which) {
-  tree u= t[0];
-  if (is_atomic (u)) return u;
-  int i, n= N(u);
-  tree r (u, n);
-  for (i=0; i<n; i++) r[i]= exec (u[i]);
-  return tree (which, u);
-}
-
-tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1029,11 +1023,16 @@ edit_env_rep::exec_until (tree t, path p) {
   case COMPOUND:
     exec_until_compound (t, p);
     return;
-  case INACTIVE:
+  case MARK:
+    if (p->item == 1) exec_until (t[1], p->next);
+    return;
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
   case ACTIVE:
-  case VAR_INACTIVE:
   case VAR_ACTIVE:
-    exec_until_mod_active (t, p);
+  case INACTIVE:
+  case VAR_INACTIVE:
+    exec_until_compound (t, p);
     return;
   default:
     if (L(t) < START_EXTENSIONS) {
@@ -1042,7 +1041,7 @@ edit_env_rep::exec_until (tree t, path p) {
       exec_until (t[p->item], p->next);
     }
     else exec_until_compound (t, p);
-	return;
+    return;
   }
 }
 
@@ -1135,52 +1134,13 @@ edit_env_rep::exec_until_compound (tree t, path p) {
   }
 }
 
-void
-edit_env_rep::exec_until_mod_active (tree t, path p) {
-  {
-    if (p->item != 0) return;
-    t= t[0];
-    p= p->next;
-    if (atom (p)) {
-      if (p->item!=0)
-	(void) exec (t);
-    }
-    else {
-      int i;
-      for (i=0; i<p->item; i++)
-	(void) exec (t[i]);
-      exec_until (t[p->item], p->next);
-    }
-    return;
-  }
-  /*
-  if (is_applicable (f)) {
-    int i, n=N(f)-1, m=N(t)-1; // is n=0 allowed ?
-    tree old_value  [n];
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var   = f[i]->label;
-	old_value [i]= read (var);
-	monitored_write (var, i<m? t[i+1]: tree(""));
-      }
-    (void) exec_until (f[n], var, p->next);
-    for (i=0; i<n; i++)
-      if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	write (var, old_value[i]);
-      }
-  }
-  */
-}
-
 bool
 edit_env_rep::exec_until (tree t, path p, string var, int level) {
   /*
   cout << "Execute " << t << " (" << var << ", "
        << level << ") until " << p << "\n";
   */
-
-  if (is_atomic (t) || preamble) return false;
+  if (is_atomic (t)) return false;
   switch (L(t)) {
   case DATOMS:
     return exec_until_formatting (t, p, var, level, ATOM_DECORATIONS);
@@ -1224,13 +1184,21 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case XMACRO:
   case GET_LABEL:
   case GET_ARITY:
-  case MAP_ARGS: // FIXME: is this OK?
-  case EVAL_ARGS: // FIXME: is this OK?
+    (void) exec (t);
+    return false;
+  case MAP_ARGS:
+  case EVAL_ARGS:
+    return exec_until_rewrite (t, p, var, level);
+  case MARK:
+    return exec_until (t[1], p, var, level);
   case EVAL:
   case QUOTE:
   case DELAY:
-  case EXTERN: // FIXME: is this OK?
-  case INCLUDE: // FIXME: is this OK?
+    (void) exec (t);
+    return false;
+  case EXTERN:
+  case INCLUDE:
+    return exec_until_rewrite (t, p, var, level);
   case OR:
   case XOR:
   case AND:
@@ -1262,14 +1230,15 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case WHILE:
     (void) exec (t);
     return false;
-  case INACTIVE:
+  case STYLE_ONLY:
+  case VAR_STYLE_ONLY:
   case ACTIVE:
-  case VAR_INACTIVE:
   case VAR_ACTIVE:
-    return exec_until_mod_active (t, p, var, level);
-  case REWRITE_INACTIVE: // FIXME: is this OK?
-    (void) exec (t);
-    return false;
+  case INACTIVE:
+  case VAR_INACTIVE:
+    return exec_until_compound (t, p, var, level);
+  case REWRITE_INACTIVE:
+    return exec_until_rewrite (t, p, var, level);
   default:
     if (L(t) < START_EXTENSIONS) {
       int i, n= N(t);
@@ -1440,24 +1409,6 @@ edit_env_rep::exec_until_argument (tree t, path p, string var, int level) {
   }
   */
 }
-
-bool
-edit_env_rep::exec_until_mod_active (
-  tree t, path p, string var, int level)
-{
-  if (p->item != 0) return false;
-  t= t[0];
-  p= p->next;
-  if (is_atomic (t) || preamble) return false;
-  else {
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (exec_until (t[i], p, var, level))
-	return true;
-    return false;
-  }
-}
-
 
 /******************************************************************************
 * Extra routines for macro expansion and function application

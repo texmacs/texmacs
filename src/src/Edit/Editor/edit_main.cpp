@@ -285,6 +285,7 @@ edit_main_rep::export_ps (url name, string first, string last) {
 
 void
 edit_main_rep::footer_eval (string s) {
+  s= unslash (s); // FIXME: dirty fix; should not be necessary
   string r= object_to_string (eval (s));
   set_message (r, "evaluate expression");
 }

@@ -269,7 +269,6 @@ make_lazy_compound (edit_env env, tree t, path ip) {
 
 lazy
 make_lazy_rewrite (edit_env env, tree t, path ip) {
-  if (env->preamble) return make_lazy_paragraph (env, t, ip);
   tree r= env->rewrite (t);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));

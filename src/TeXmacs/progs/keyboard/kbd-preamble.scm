@@ -20,6 +20,9 @@
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
 
+  ("M--" (make 'inactive*))
+  ("M-+" (make 'active*))
+
   ("inactive a" (make 'arg))
   ("inactive A" (make 'map-args))
   ("inactive c" (make 'compound))
