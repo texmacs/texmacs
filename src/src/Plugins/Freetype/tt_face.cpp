@@ -167,7 +167,8 @@ tt_font_glyphs_rep::get (int i) {
 
 font_glyphs
 tt_font_glyphs (string family, int size, int dpi) {
-  string name= family * as_string (size) * "@" * as_string (dpi);
+  string name=
+    family * ":" * as_string (size) * "." * as_string (dpi) * "tt";
   return make (font_glyphs, name,
 	       new tt_font_glyphs_rep (name, family, size, dpi));
 }

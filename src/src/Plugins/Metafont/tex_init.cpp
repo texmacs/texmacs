@@ -132,11 +132,13 @@ search_sub_dirs (url root, url& tfm, url& pk, url& pfb) {
   }
 }
 
+#ifdef OS_WIN32
 static url
 search_sub_dirs (url root) {
   url dirs= complete (root * url_wildcard (), "dr");
   return expand (dirs);
 }
+#endif
 
 static void
 init_heuristic_tex_paths () {
