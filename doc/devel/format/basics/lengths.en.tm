@@ -20,8 +20,13 @@
     width.
 
     <item*|User defined units>Any nullary macro, whose name contains only
-    lower case roman letters, and which returns a length, can be used as a
-    unit itself.
+    lower case roman letters followed by <verbatim|-length>, and which
+    returns a length, can be used as a unit itself. For instance, the
+    following macro defines the <verbatim|dm> length:
+
+    <\tm-fragment>
+      <inactive*|<assign|dm-length|<macro|10cm>>>
+    </tm-fragment>
   </description>
 
   Furthermore, length units can be <em|stretchable>. A stretchable length is
@@ -56,24 +61,19 @@
 
     <item*|<verbatim|pc>>One ``pica'' equals 12 points.
 
-    <item*|<verbatim|ccunit>>One ``cicero'' equals 12 Didôt points.
+    <item*|<verbatim|cc>>One ``cicero'' equals 12 Didôt points.
   </description>
 
   <paragraph|Rigid font-dependent length units>
 
   <\description>
-    <verbatim|quad><item*|>The reference size for the font. When using a
-    <verbatim|12pt> font, <verbatim|1quad> corresponds to <verbatim|12pt>.
+    <verbatim|fs><item*|>The font size. When using a <verbatim|12pt> font,
+    <verbatim|1fs> corresponds to <verbatim|12pt>.
 
-    <item*|<verbatim|bls>>The ``base line skip'' is the sum of
-    <verbatim|1quad> and <src-var|par-sep>. It corresponds to the distance
-    between successive lines of normal text.
-
-    Typically, the baselines of successive lines are separated by a distance
-    of <verbatim|1fn> (in <TeXmacs> and <LaTeX> a slightly larger space is
-    used though so as to allow for subscripts and superscripts and avoid a
-    too densely looking text. When stretched, <verbatim|1fn> may be reduced
-    to <verbatim|0.5fn> and extended to <verbatim|1.5fn>.
+    <verbatim|fbs><item*|>The base font size. Typically, when selecting
+    <verbatim|10> as the font size for your document and when typing large
+    text, the base font size is <verbatim|10pt> and the font size
+    <verbatim|12pt>.
 
     <item*|<code*|ln>>The width of a nicely looking fraction bar for the
     current font.
@@ -102,6 +102,16 @@
 
     <item*|<verbatim|fns>>This length defaults to zero, but it may be
     stretched up till <verbatim|1fn>.
+
+    <item*|<verbatim|bls>>The ``base line skip'' is the sum of
+    <verbatim|1quad> and <src-var|par-sep>. It corresponds to the distance
+    between successive lines of normal text.
+
+    Typically, the baselines of successive lines are separated by a distance
+    of <verbatim|1fn> (in <TeXmacs> and <LaTeX> a slightly larger space is
+    used though so as to allow for subscripts and superscripts and avoid a
+    too densely looking text. When stretched, <verbatim|1fn> may be reduced
+    to <verbatim|0.5fn> and extended to <verbatim|1.5fn>.
 
     <item*|<code*|spc>>The (stretchable) width of space character in the
     current font.
