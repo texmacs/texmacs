@@ -209,6 +209,7 @@ is_multi_paragraph (tree t) {
   case DLINES:
   case DPAGES:
   case WITH:
+  case MARK:
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;

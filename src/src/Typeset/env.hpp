@@ -176,6 +176,8 @@ public:
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
+  tree   rewrite_inactive (tree t, tree var, bool flush);
+  tree   rewrite_inactive (tree t, tree var);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }

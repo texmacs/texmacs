@@ -175,4 +175,9 @@ extern string GR_LINE_WIDTH;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 
+extern string SRC_STYLE;
+extern string SRC_SPECIAL;
+extern string SRC_COMPACT;
+extern string SRC_CLOSE;
+
 #endif // defined VARS_H

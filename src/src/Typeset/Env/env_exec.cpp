@@ -35,49 +35,65 @@ edit_env_rep::exec_string (tree t) {
 
 tree
 edit_env_rep::rewrite (tree t) {
-  if (L(t) == EXTERN) {
-    int i, n= N(t);
-    string s= "(" * as_string (exec (t[0]));
-    for (i=1; i<n; i++)
-      s << " '" << tree_to_scheme (exec (t[i]));
-    s << ")";
-    if (script_status < 2) {
-      if (!as_bool (eval ("(secure? '" * s * ")")))
-	return tree (ERROR, "insecure script");
+  switch (L(t)) {
+  case EXTERN:
+    {
+      int i, n= N(t);
+      string s= "(" * as_string (exec (t[0]));
+      for (i=1; i<n; i++)
+	s << " '" << tree_to_scheme (exec (t[i]));
+      s << ")";
+      if (script_status < 2) {
+	if (!as_bool (eval ("(secure? '" * s * ")")))
+	  return tree (ERROR, "insecure script");
+      }
+      return object_to_tree (eval (s));
     }
-    return object_to_tree (eval (s));
-  }
-  else if (L(t) == MAP_ARGS) {
-    if (!(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
-      return tree (ERROR, "invalid map arguments");
-    if (nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
-      return tree (ERROR, "map arguments " * t[2]->label);
-    tree v= macro_arg->item [t[2]->label];
-    if (is_atomic (v))
-      return tree (ERROR, "map arguments " * t[2]->label);
-    list<hashmap<string,tree> > old_var= macro_arg;
-    list<hashmap<string,path> > old_src= macro_src;
-    if (!nil (macro_arg)) macro_arg= macro_arg->next;
-    if (!nil (macro_src)) macro_src= macro_src->next;
+  case MAP_ARGS:
+    {
+      if (!(is_atomic (t[0]) && is_atomic (t[1]) && is_atomic (t[2])))
+	return tree (ERROR, "invalid map arguments");
+      if (nil (macro_arg) || (!macro_arg->item->contains (t[2]->label)))
+	return tree (ERROR, "map arguments " * t[2]->label);
+      tree v= macro_arg->item [t[2]->label];
+      if (is_atomic (v))
+	return tree (ERROR, "map arguments " * t[2]->label);
+      list<hashmap<string,tree> > old_var= macro_arg;
+      list<hashmap<string,path> > old_src= macro_src;
+      if (!nil (macro_arg)) macro_arg= macro_arg->next;
+      if (!nil (macro_src)) macro_src= macro_src->next;
 
-    int start= 0, end= N(v);
-    if (N(t)>=4) start= as_int (exec (t[3]));
-    if (N(t)>=5) end  = as_int (exec (t[4]));
-    int i, n= max (0, end-start);
-    tree r (make_tree_label (t[1]->label), n);
-    for (i=0; i<n; i++)
-      r[i]= tree (make_tree_label (t[0]->label),
-		  tree (ARG, copy (t[2]), as_string (start+i)));
+      int start= 0, end= N(v);
+      if (N(t)>=4) start= as_int (exec (t[3]));
+      if (N(t)>=5) end  = as_int (exec (t[4]));
+      int i, n= max (0, end-start);
+      tree r (make_tree_label (t[1]->label), n);
+      for (i=0; i<n; i++)
+	r[i]= tree (make_tree_label (t[0]->label),
+		    tree (ARG, copy (t[2]), as_string (start+i)));
 
-    macro_arg= old_var;
-    macro_src= old_src;
-    return r;
+      macro_arg= old_var;
+      macro_src= old_src;
+      return r;
+    }
+  case INCLUDE:
+    {
+      url file_name= url_system (as_string (t[0]));
+      return load_inclusion (relative (base_file_name, file_name));
+    }
+  case REWRITE_INACTIVE:
+    {
+      if (!is_func (t[0], ARG, 1) ||
+	  is_compound (t[0][0]) ||
+	  nil (macro_arg) ||
+	  (!macro_arg->item->contains (t[0][0]->label)))
+	return tree (ERROR, "invalid rewrite-inactive");
+      tree val= macro_arg->item [t[0][0]->label];
+      return rewrite_inactive (val, t[0]);
+    }
+  default:
+    return t;
   }
-  else if (L(t) == INCLUDE) {
-    url file_name= url_system (as_string (t[0]));
-    return load_inclusion (relative (base_file_name, file_name));
-  }
-  return t;
 }
 
 tree
@@ -220,6 +236,8 @@ edit_env_rep::exec (tree t) {
     return exec_mod_active (t, VAR_INACTIVE);
   case VAR_ACTIVE:
     return exec_mod_active (t, VAR_ACTIVE);
+  case REWRITE_INACTIVE:
+    return exec_rewrite (t);
 
   case _POINT:
     return exec_point (t);
@@ -1238,6 +1256,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case VAR_INACTIVE:
   case VAR_ACTIVE:
     return exec_until_mod_active (t, p, var, level);
+  case REWRITE_INACTIVE: // FIXME: is this OK?
+    (void) exec (t);
+    return false;
   default:
     if (L(t) < START_EXTENSIONS) {
       int i, n= N(t);

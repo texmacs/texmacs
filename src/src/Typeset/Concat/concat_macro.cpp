@@ -169,14 +169,13 @@ void
 concater_rep::typeset_argument (tree t, path ip) {
   // cout << "Argument " << t << ", " << ip << "\n";
   tree r= t[0];
-  if (is_compound (r)) {
-    typeset_error (t, ip);
-    return;
-  }
-  if (nil (env->macro_arg) || (!env->macro_arg->item->contains (r->label))) {
-    typeset_error (t, ip);
-    return;
-  }
+  if (is_compound (r) ||
+      nil (env->macro_arg) ||
+      (!env->macro_arg->item->contains (r->label)))
+    {
+      typeset_error (t, ip);
+      return;
+    }
 
   string name = r->label;
   tree   value= env->macro_arg->item [name];
@@ -216,6 +215,42 @@ concater_rep::typeset_eval_args (tree t, path ip) {
   marker (descend (ip, 0));
   typeset (env->exec (t), decorate_right (ip), false);
   marker (descend (ip, 1));
+}
+
+void
+concater_rep::typeset_mark (tree t, path ip) {
+  // cout << "Argument " << t << ", " << ip << "\n";
+  if (is_func (t[0], ARG) &&
+      is_atomic (t[0][0]) &&
+      (!nil (env->macro_arg)) &&
+      env->macro_arg->item->contains (t[0][0]->label))
+    {
+      string name = t[0][0]->label;
+      tree   value= env->macro_arg->item [name];
+      path   valip= decorate_right (ip);
+      if (!is_func (value, BACKUP)) {
+	path new_valip= env->macro_src->item [name];
+	if (is_accessible (new_valip)) valip= new_valip;
+      }
+      // cout << "Src   " << name << "=\t " << valip << "\n";
+
+      if (N(t[0]) > 1) {
+	int i, n= N(t[0]);
+	for (i=1; i<n; i++) {
+	  tree r= env->exec (t[0][i]);
+	  if (!is_int (r)) break;
+	  int nr= as_int (r);
+	  if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+	  value= value[nr];
+	  valip= descend (valip, nr);
+	}
+      }
+
+      marker (descend (valip, 0));
+      typeset (t[1], descend (ip, 1));
+      marker (descend (valip, right_index (value)));
+    }
+  else typeset (t[1], descend (ip, 1));
 }
 
 void
