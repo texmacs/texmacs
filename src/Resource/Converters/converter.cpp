@@ -180,7 +180,8 @@ cork_to_utf8 (string input) {
 string
 utf8_to_html (string input) {
   converter conv = load_converter ("UTF-8", "HTML");
-  return apply (conv,input);
+  string s = apply (conv,input);
+  return utf8_to_hex_entities(s);
 }
 
 #ifdef USE_ICONV
@@ -359,11 +360,11 @@ hashtree_from_dictionary (
   }
 }
 
-/******************************************************************************
+/***************************************************************************
 * Functions for UTF-8 handling
 * These functions are helper functions to convert escape string a la "#23F7"
-* into a UTF-8 byte sequence (or "#3A" into 111010)
-******************************************************************************/
+* and HTML/XML character entities to and from UTF-8 byte sequences.
+***************************************************************************/
 
 bool is_hex_digit (char c) {
   return
@@ -504,4 +505,54 @@ encode_as_utf8 (unsigned int code) {
     return str;
   }
   else return "";
+}
+
+string
+utf8_to_hex_entities (string s) {
+  string result;
+  const int n = N(s);
+  int i;
+  for (i=0; i<n; i++) {
+    unsigned char c = s[i];
+    if ((0x80 & c) == 0) {
+      // 0x0ddddddd
+      //cout << "ASCII: " << c << '\n';
+      result << c;
+      continue;
+    }
+    unsigned int code;
+    int trail;
+    if ((0xE0 & c) == 0xC0) {
+      // 0x110ddddd 0x10dddddd
+      trail = 1;
+      code = c & 0x1F;
+    }
+    else if ((0xF0 & c) == 0xE0) {
+      // 0x1110dddd 0x10dddddd 0x10dddddd
+      trail = 2;
+      code = c & 0x0F;
+    }
+    else if ((0xF8 & c) == 0xF0) {
+      // 0x11110dddd 0x10dddddd 0x10dddddd 0x10dddddd
+      trail = 3;
+      code = c & 0x07;
+    }
+    else {
+      // failsafe
+      //cout << "failsafe: " << c << " (" << (unsigned int)(c) << ")\n";
+      result << c;
+      continue;
+    }
+    for (/*noop*/; trail > 0; trail--) {
+      // Garbage in, garbage out. Do not resync when input is bad.
+      i++;
+      c = s[i];
+      code = (code << 6) | (c & 0x3F);
+    }
+    string hex= as_hexadecimal (code);
+    while (N(hex) < 4) hex = "0" * hex;
+    //cout << "entity: " << hex << " (" << code << ")\n";
+    result << "&#x" << hex << ";";
+  }
+  return result;
 }

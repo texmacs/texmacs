@@ -102,7 +102,7 @@ void hashtree_from_dictionary (
 /***************************************************************************
 * Functions for UTF-8 handling
 * These functions are helper functions to convert escape string a la "#23F7"
-* into a UTF-8 byte sequence (or "#3A" into 111010)
+* and HTML/XML character entities to and from UTF-8 byte sequences.
 ***************************************************************************/
 
 bool is_hex_digit (char c);
@@ -111,5 +111,6 @@ string encode_as_utf8 (unsigned int code);
 string convert_escapes (string in, bool utf8);
 string convert_char_entities (string s);
 string convert_char_entity (string s, int& start, bool& success);
+string utf8_to_hex_entities (string s);
 
 #endif // CONVERTER_H
