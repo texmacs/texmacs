@@ -219,7 +219,7 @@ logarithmic_rep::find_closest_point (point p) {
   p=p-point(x0,y0);
   p=o+p;
   double xm,ym;
-  xm=ym=infinity/2;
+  xm=ym=tm_infinity/2;
   SI i;
   for (i=1;i<base;i++) {
     SI x,y,dx,dy;

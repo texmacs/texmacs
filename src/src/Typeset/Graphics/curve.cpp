@@ -248,13 +248,13 @@ spline_rep::curvature (int i, double t1, double t2) {
   b=coeffs(p[i],1);
   double t,R;
   point pp,ps;
-  if (norm(a)==0) return infinity;
+  if (norm(a)==0) return tm_infinity;
   t=-(a*b)/(2*a*a);
   if (t1>t) t=t1;
   else if (t2<t) t=t2;
   pp=spline(i,t,1);
   ps=spline(i,t,2);
-  if (norm(ps)==0) return infinity;
+  if (norm(ps)==0) return tm_infinity;
   R=square(norm(pp))/norm(ps);
   return R;
 }
@@ -267,7 +267,7 @@ spline_rep::curvature (double t1, double t2) {
   t2=convert(t2);
   no1=interval_no(t1);
   no2=interval_no(t2);
-  res=infinity;
+  res=tm_infinity;
   for (no=no1;no<=no2;no++) {
     double r;
     if (no<2) r=curvature(2,t1,t2);
