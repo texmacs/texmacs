@@ -352,7 +352,8 @@ edit_dynamic_rep::remove_with (path p, string var) {
 
 void
 edit_dynamic_rep::back_in_with (tree t, path p, bool forward) {
-  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
+  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) ||
+      (is_func (t, WITH) && in_preamble_mode ()))
     back_in_general (t, p, forward);
   else if (t[N(t)-1] == "") {
     assign (path_up (p), "");
@@ -377,8 +378,42 @@ edit_dynamic_rep::make_mod_active (tree_label l) {
   else {
     path p= path_up (tp);
     if (is_atomic (subtree (et, p))) p= path_up (p);
+    if (nil (p)) return;
     ins_unary (p, l);
   }
+}
+
+void
+edit_dynamic_rep::insert_style_with (path p, string var, string val) {
+  if (nil (p)) return;
+  tree st= subtree (et, path_up (p));
+  if (is_func (st, STYLE_WITH)) {
+    int i, n= N(st);
+    for (i=n-1; i>=0; i-=2)
+      if (st[i] == var) {
+	assign (path_up (p) * (i+1), copy (val));
+	return;
+      }
+    insert (path_up (p) * (n-1), tree (STYLE_WITH, copy (var), copy (val)));
+  }
+  else {
+    ins_unary (p, STYLE_WITH);
+    insert (p * 0, tree (STYLE_WITH, copy (var), copy (val)));
+  }
+}
+
+void
+edit_dynamic_rep::make_style_with (string var, string val) {
+  if (selection_active_normal ()) {
+    tree t= selection_get ();
+    selection_cut ();
+    if (subtree (et, path_up (tp)) == "") {
+      insert_style_with (path_up (tp), var, val);
+      insert_tree (t);
+    }
+    else insert_tree (tree (STYLE_WITH, var, val, t), path (2, end (t)));
+  }
+  else insert_style_with (path_up (tp), var, val);
 }
 
 /******************************************************************************

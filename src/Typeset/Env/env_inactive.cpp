@@ -24,6 +24,7 @@ subvar (tree var, int i) {
 
 static bool
 is_long (tree t) {
+  // FIXME: should go into the DRD
   switch (L(t)) {
   case DOCUMENT:
   case SURROUND:
@@ -43,7 +44,23 @@ is_long (tree t) {
   case MACRO:
   case XMACRO:
   case CELL:
+  case EVAL:
+  case QUOTE:
+  case QUASI:
+  case QUASIQUOTE:
+  case UNQUOTE:
     return is_long (t[N(t)-1]);
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
+    {
+      int i, n= N(t);
+      for (i=0; i<n-1; i+=2)
+	if (t[i] == SRC_COMPACT) {
+	  if (t[i+1] == "none") return true;
+	  if (t[i+1] == "all")  return false;
+	}
+      return is_long (t[N(t)-1]);
+    }
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:
@@ -63,6 +80,7 @@ is_long (tree t) {
 
 static bool
 is_long_arg (tree t, int i) {
+  // FIXME: should go into the DRD
   if (is_document (t)) return true;
   tree u= t[i];
   switch (L(u)) {
@@ -81,6 +99,7 @@ is_long_arg (tree t, int i) {
 
 static string
 arg_type (tree t, int i) {
+  // FIXME: should go into the DRD
   int n= N(t);
   switch (L(t)) {
   case ASSIGN:
@@ -89,6 +108,8 @@ arg_type (tree t, int i) {
     if (i == 0) return "id";
     else return "";
   case WITH:
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
     if ((i<n-1) && ((i&1)==0)) return "id";
     else return "";
   case TWITH:
@@ -125,6 +146,7 @@ arg_type (tree t, int i) {
 
 static tree
 highlight (tree t, string kind) {
+  // FIXME: should be customizable
   if (kind == "") return t;
   else if (kind == "id")
     return tree (WITH, COLOR, "dark green", t);
@@ -150,7 +172,23 @@ edit_env_rep::rewrite_inactive_arg (
   tree r= subvar (var, i);
   if ((inactive_mode == INACTIVE_INLINE_RECURSE) ||
       (inactive_mode == INACTIVE_BLOCK_RECURSE))
-    r= rewrite_inactive (t[i], r, block, flush);
+    {
+      if (N (recover_env) > 0) {
+	int j;
+	tree recover= copy (recover_env), old_recover= recover_env;
+	for (j=0; j<N(recover); j+=2) {
+	  string var= recover[j]->label;
+	  recover[j+1]= read (var);
+	  write_update (var, recover_env[j+1]);
+	}
+	recover_env= tuple ();
+	r= rewrite_inactive (t[i], r, block, flush);
+	recover_env= old_recover;
+	for (j=0; j<N(recover); j+=2)
+	  write_update (recover[j]->label, recover[j+1]);
+      }
+      else r= rewrite_inactive (t[i], r, block, flush);
+    }
   return highlight (r, arg_type (t, i));
 }
 
@@ -233,6 +271,25 @@ edit_env_rep::rewrite_inactive_symbol (
     return tree (MARK, var, r);
   }
   return rewrite_inactive_default (t, var, block, flush);
+}
+
+tree
+edit_env_rep::rewrite_inactive_style_with (
+  tree t, tree var, bool block, bool flush, bool once)
+{
+  int i, n= N(t);
+  tree recover= tuple ();
+  for (i=0; i<n-1; i+=2)
+    if (is_atomic (t[i])) {
+      recover << t[i] << read (t[i]->label);
+      write_update (t[i]->label, t[i+1]);
+    }
+  if (once) recover_env= recover;
+  tree r= rewrite_inactive (t[n-1], subvar (var, n-1), block, flush);
+  for (i=0; i<N(recover); i+=2)
+    write_update (recover[i]->label, recover[i+1]);
+  if (once) recover_env= tuple ();
+  return tree (MARK, var, r);
 }
 
 tree
@@ -371,6 +428,10 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
     return rewrite_inactive_value (t, var, block, flush);
   case ARG:
     return rewrite_inactive_arg (t, var, block, flush);
+  case STYLE_WITH:
+    return rewrite_inactive_style_with (t, var, block, flush, true);
+  case VAR_STYLE_WITH:
+    return rewrite_inactive_style_with (t, var, block, flush, false);
   case STYLE_ONLY:
     return rewrite_inactive_active (t, var, block, flush);
   case VAR_STYLE_ONLY:
@@ -390,6 +451,7 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
 
 tree
 edit_env_rep::rewrite_inactive (tree t, tree var) {
+  recover_env= tuple ();
   bool block= (inactive_mode >= INACTIVE_BLOCK_RECURSE);
   tree r= rewrite_inactive (t, var, block, block);
   if (is_multi_paragraph (r)) {

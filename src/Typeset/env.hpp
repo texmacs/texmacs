@@ -85,6 +85,12 @@
 #define INACTIVE_BLOCK_ONCE      4
 #define INACTIVE_BLOCK_ERROR     5
 
+#define MODIFY_NONE              0
+#define MODIFY_COMPACT           1
+#define MODIFY_LONG              2
+#define MODIFY_PERMANENT_COMPACT 3
+#define MODIFY_PERMANENT_LONG    4
+
 /******************************************************************************
 * The edit environment
 ******************************************************************************/
@@ -134,6 +140,7 @@ public:
   int       src_close;
 
   int       inactive_mode;
+  tree      recover_env;
 
 public:
   tree exec_extra_list (tree t, int pos);
@@ -160,7 +167,6 @@ private:
   tree exec_get_label (tree t);
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
-  tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);
   tree exec_compound (tree t);
   void exec_until_compound (tree t, path p);
@@ -206,6 +212,7 @@ private:
   tree rewrite_inactive_concat (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_value (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
+  tree rewrite_inactive_style_with (tree t, tree var, bool b, bool f, bool o);
   tree rewrite_inactive_active (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_var_active (tree t, tree var, bool block, bool flush);
   tree rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);

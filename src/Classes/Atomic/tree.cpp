@@ -210,6 +210,8 @@ is_multi_paragraph (tree t) {
   case DPAGES:
   case WITH:
   case MARK:
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:

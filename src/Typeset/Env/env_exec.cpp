@@ -179,11 +179,11 @@ edit_env_rep::exec (tree t) {
     return exec (exec (t[0]));
   case QUOTE:
     return copy (t[0]);
-  case DELAY:
-    return exec_delay (t);
-  case HOLD:
+  case QUASI:
+    return exec (exec_quasiquoted (t[0]));
+  case QUASIQUOTE:
     return exec_quasiquoted (t[0]);
-  case RELEASE:
+  case UNQUOTE:
     return exec (t[0]);
   case EXTERN:
     return exec_rewrite (t);
@@ -453,14 +453,14 @@ edit_env_rep::exec_provides (tree t) {
 
 tree
 edit_env_rep::exec_value (tree t) {
-  tree r= t[0];
+  tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad value");
   return exec (read (r->label));
 }
 
 tree
 edit_env_rep::exec_quote_value (tree t) {
-  tree r= t[0];
+  tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad quoted value");
   return read (r->label);
 }
@@ -547,18 +547,9 @@ edit_env_rep::exec_eval_args (tree t) {
 }
 
 tree
-edit_env_rep::exec_delay (tree t) {
-  int i, n= N(t[0]);
-  tree u (t[0], n);
-  for (i=0; i<n; i++)
-    u[i]= exec (t[0][i]);
-  return u;
-}
-
-tree
 edit_env_rep::exec_quasiquoted (tree t) {
   if (is_atomic (t)) return t;
-  else if (is_func (t, RELEASE, 1)) return exec (t[0]);
+  else if (is_func (t, UNQUOTE, 1)) return exec (t[0]);
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -571,6 +562,9 @@ static tree
 filter_style (tree t) {
   if (is_atomic (t)) return t;
   else switch (L(t)) {
+  case STYLE_WITH:
+  case VAR_STYLE_WITH:
+    return filter_style (t[N(t)-1]);
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
     if (is_atomic (t[0])) return "";
@@ -763,28 +757,33 @@ edit_env_rep::exec_modulo (tree t) {
 
 tree
 edit_env_rep::exec_merge (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad merge");
-  tree t1= exec (t[0]);
-  tree t2= exec (t[1]);
-  if (is_compound (t1) || is_compound (t2)) {
-    if (is_tuple (t1) && is_tuple (t2)) return join (t1, t2);
-    if (is_func (t1, MACRO) && is_func (t2, MACRO) &&
-	(N(t1) == N(t2)) && (t1 (0, N(t1)-1) == t2 (0, N(t2)-1)))
+  int i, n= N(t);
+  if (n == 0) return "";
+  tree acc= exec (t[0]);
+  for (i=1; i<n; i++) {
+    tree add= exec (t[i]);
+    if (is_atomic (acc) && is_atomic (add))
+      acc= acc->label * add->label;
+    else if (is_tuple (acc) && is_tuple (add))
+      acc= join (acc, add);
+    else if (is_func (acc, MACRO) && is_func (add, MACRO) &&
+	     (N(acc) == N(add)) &&
+	     (acc (0, N(acc)-1) == add (0, N(add)-1)))
       {
-	tree r = copy (t1);
-	tree u1= copy (t1[N(t1)-1]);
-	tree u2= copy (t2[N(t2)-1]);
+	tree r = copy (acc);
+	tree u1= copy (acc[N(acc)-1]);
+	tree u2= copy (add[N(add)-1]);
 	tree u (CONCAT, u1, u2);
 	if (u1 == "") u= u2;
 	else if (u2 == "") u= u1;
 	else if (is_atomic (u1) && is_atomic (u2))
 	  u= u1->label * u2->label;
 	r[N(r)-1]= u;
-	return r;
+	acc= r;
       }
-    return tree (ERROR, "bad merge");
+    else return tree (ERROR, "bad merge");
   }
-  return t1->label * t2->label;
+  return acc;
 }
 
 tree
@@ -1264,7 +1263,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return exec_until (t[1], p, var, level);
   case EVAL:
   case QUOTE:
-  case DELAY:
+  case QUASI:
+  case QUASIQUOTE:
+  case UNQUOTE:
     (void) exec (t);
     return false;
   case EXTERN:
