@@ -63,6 +63,8 @@
 	     (load-help-article "main/convert/man-convert"))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
 	(-> "Reference guide"
+	    ("The TeXmacs format"
+	     (load-help-article "devel/format/basics/basics"))
 	    ("TeXmacs primitives"
 	     (load-help-article "devel/format/regular/regular"))
 	    ("Stylesheet language"
