@@ -308,8 +308,6 @@ public:
   virtual void activate () = 0;
   virtual void activate_compound () = 0;
   virtual void make_compound (tree_label l, int n=-1) = 0;
-  virtual void make_deactivated (tree t, path p) = 0;
-  virtual void make_deactivated (string op, int n, string rf, string arg="")=0;
   virtual bool make_return_before () = 0;
   virtual bool make_return_after () = 0;
   virtual void make_assign (tree var, tree by) = 0;

@@ -20,8 +20,6 @@
     insert-tree-at insert-object-at
     ;; inserting inactive content
     in-preamble?
-    make-inactive make-inactive-message
-    make-inactive-compound-arg make-inactive-compound-args
     make-inactive-assign-arg make-inactive-assign-function
     make-inactive-assign-function-arg))
 
@@ -62,33 +60,6 @@
   (:type (-> bool))
   (:synopsis "Are we in preamble mode?")
   (string=? (get-env "preamble") "true"))
-
-(tm-define (make-inactive name nrargs)
-  (:type (string int ->))
-  (:synopsis "Insert the inactive primitive @name with @nrargs arguments.")
-  (make-deactivated name nrargs name))
-
-(tm-define (make-inactive-message name nrargs message)
-  (:type (string int string ->))
-  (:synopsis "Insert the inactive primitve @name with @nrargs arguments and"
-	     "display @message in the footer.")
-  (make-deactivated name nrargs message))
-
-(tm-define (make-inactive-compound-arg s)
-  (:type (string ->))
-  (:synopsis "Make an inactive function application with name @s.")
-  (make-inactive "compound" 1)
-  (insert-string s)
-  (insert-argument #t)
-  (set-message "Press <Return> to activate" s))
-
-(tm-define (make-inactive-compound-args s n)
-  (:type (string int ->))
-  (:synopsis "Make an inactive function application with name @s of arity @n.")
-  (make-inactive "compound" n)
-  (insert-string s)
-  (insert-argument #t)
-  (set-message "Press <Return> to activate" s))
 
 (tm-define (make-inactive-assign-arg s)
   (:type (string ->))

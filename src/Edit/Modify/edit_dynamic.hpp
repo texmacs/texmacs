@@ -29,8 +29,6 @@ public:
   void activate_compound ();
 
   void make_compound (tree_label l, int n);
-  void make_deactivated (tree t, path p);
-  void make_deactivated (string op, int n, string rfooter, string arg);
   bool make_return_before ();
   bool make_return_after ();
   void make_assign (tree var, tree by);

@@ -15,10 +15,6 @@
 (texmacs-module (texmacs edit edit-format)
   (:export
     make-with-color
-    ;; general inactive formatting markup
-    make-inactive-surround make-inactive-group make-inactive-float
-    make-inactive-repeat make-inactive-decorate-atoms
-    make-inactive-decorate-lines make-inactive-decorate-pages
     ;; modifying paragraph style parameters
     make-line-with
     set-left-margin set-right-margin set-first-indent set-last-indent
@@ -31,18 +27,6 @@
     toggle-insertion-position toggle-insertion-position-not))
 
 (define (make-with-color s) (make-with "color" s))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; General inactive formatting markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (make-inactive-surround) (make-inactive "surround" 3))
-(define (make-inactive-group) (make-inactive "group" 1))
-(define (make-inactive-float) (make-inactive "float" 3))
-(define (make-inactive-repeat) (make-inactive "repeat" 2))
-(define (make-inactive-decorate-atoms) (make-inactive "datoms" 2))
-(define (make-inactive-decorate-lines) (make-inactive "dlines" 2))
-(define (make-inactive-decorate-pages) (make-inactive "dpages" 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying paragraph style parameters

@@ -171,8 +171,6 @@
   (activate-compound activate_compound (void))
   (make make_compound (void tree_label))
   (make-arity make_compound (void tree_label int))
-  (make-deactivated make_deactivated (void string int string))
-  (make-deactivated-arg make_deactivated (void string int string string))
   (insert-argument insert_argument (void bool))
   (make-return-before make_return_before (void))
   (make-return-after make_return_after (bool))

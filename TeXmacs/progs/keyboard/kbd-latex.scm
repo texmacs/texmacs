@@ -265,11 +265,11 @@
   ("medskip" "Insert medium vertical space" (make-vspace-after "1fn"))
   ("bigskip" "Insert big vertical space" (make-vspace-after "2fn"))
   ("item" "Insert new item or number" (make-item))
-  ("label" "Make label" (make-inactive-label))
-  ("ref" "Make reference" (make-inactive-reference))
-  ("pageref" "Make page reference" (make-inactive-pageref))
+  ("label" "Make label" (make 'label))
+  ("ref" "Make reference" (make 'reference))
+  ("pageref" "Make page reference" (make 'pageref))
   ("footnote" "Insert a footnote" (make-big-compound "footnote"))
-  ("input" "Include a document" (make-inactive-include)))
+  ("input" "Include a document" (make 'include)))
 
 (kbd-symbols
   "alpha" "beta" "gamma" "delta" "epsilon"
