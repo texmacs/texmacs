@@ -164,6 +164,9 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
     if (type == "release-left"  ) call ("graphics-insert-point", sx, sy);
     if (type == "release-middle") call ("graphics-remove-point", sx, sy);
     if (type == "release-right" ) call ("graphics-last-point"  , sx, sy);
+    if (type == "start-drag"    ) call ("graphics-start-drag"  , sx, sy);
+    if (type == "dragging"      ) call ("graphics-dragging"    , sx, sy);
+    if (type == "end-drag"      ) call ("graphics-end-drag"    , sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
     return true;
