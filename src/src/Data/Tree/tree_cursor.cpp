@@ -44,6 +44,7 @@ valid_cursor (tree t, path p, bool start_flag=false) {
 
 static path
 pre_correct (tree t, path p) {
+  // cout << "Precorrect " << p << " in " << t << "\n";
   if ((!nil (p)) && (!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] precorrecting " << p << " in " << t << "\n";
     fatal_error ("bad path", "pre_correct", "edit_cursor.cpp");
@@ -62,6 +63,7 @@ pre_correct (tree t, path p) {
     return p;
   }
   if (is_inactive (t) && is_compound (t[0]) && atom (p->next)) {
+    if (N (t[0]) == 0) return path (0);
     t= t[0]; p= p->next;
     if (p->item==0) return path (0, path (0, pre_correct (t[0], path (0))));
     else {

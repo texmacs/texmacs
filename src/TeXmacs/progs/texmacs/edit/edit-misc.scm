@@ -15,8 +15,7 @@
 (texmacs-module (texmacs edit edit-misc)
   (:export
     make-specific make-latex
-    make-include make-inline-image make-link-image
-    make-date))
+    make-include make-inline-image make-link-image))
 
 (define (make-specific s)
   (if (or (== s "texmacs") (in-preamble?))
@@ -35,8 +34,3 @@
 
 (define (make-link-image l)
   (apply make-postscript (cons* (car l) #t (cdr l))))
-
-(define (make-date)
-  (if (== (get-env "language") "english")
-      (insert-tree (object->tree '(date "%B %d, %Y")))
-      (insert-tree (object->tree '(date "%d %B %Y")))))

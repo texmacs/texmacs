@@ -748,7 +748,8 @@ edit_env_rep::exec_date (tree t) {
     if (is_compound (u)) return tree (ERROR, "bad date");
     lan= u->label;
   }
-  string fm;
+  string fm= "%d %B %Y";
+  if (lan == "english") fm= "%B %d, %Y";
   if (N(t) != 0) {
     tree u= exec (t[0]);
     if (is_compound (u)) return tree (ERROR, "bad date");
