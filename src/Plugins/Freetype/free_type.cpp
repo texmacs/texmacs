@@ -20,23 +20,25 @@ static bool ft_error      = true;
 
 FT_Library ft_library;
 
-FT_Error (*ft_init_freetype)  (FT_Library   *alibrary);
-FT_Error (*ft_new_face)       (FT_Library   library,
-			       const char*  filepathname,
-			       FT_Long      face_index,
-			       FT_Face*     aface);
-FT_Error (*ft_set_char_size)  (FT_Face      face,
-			       FT_F26Dot6   char_width,
-			       FT_F26Dot6   char_height,
-			       FT_UInt      horz_resolution,
-			       FT_UInt      vert_resolution);
-FT_UInt  (*ft_get_char_index) (FT_Face      face,
-			       FT_ULong     charcode);
-FT_Error (*ft_load_glyph)     (FT_Face      face,
-			       FT_UInt      glyph_index,
-			       FT_Int       load_flags);
-FT_Error (*ft_render_glyph)   (FT_GlyphSlot slot,
-			       FT_UInt      render_mode);
+FT_Error (*ft_init_freetype)  (FT_Library     *alibrary);
+FT_Error (*ft_new_face)       (FT_Library     library,
+			       const char*    filepathname,
+			       FT_Long        face_index,
+			       FT_Face*       aface);
+FT_Error (*ft_set_char_size)  (FT_Face        face,
+			       FT_F26Dot6     char_width,
+			       FT_F26Dot6     char_height,
+			       FT_UInt        horz_resolution,
+			       FT_UInt        vert_resolution);
+FT_UInt  (*ft_get_char_index) (FT_Face        face,
+			       FT_ULong       charcode);
+FT_Error (*ft_load_glyph)     (FT_Face        face,
+			       FT_UInt        glyph_index,
+			       FT_Int         load_flags);
+FT_Error (*ft_render_glyph)   (FT_GlyphSlot   slot,
+			       FT_Render_Mode render_mode);
+
+typedef FT_Error (*glyph_renderer) (FT_GlyphSlot, FT_Render_Mode);
 
 bool
 ft_initialize () {
@@ -48,7 +50,7 @@ ft_initialize () {
   ft_set_char_size = FT_Set_Char_Size;
   ft_get_char_index= FT_Get_Char_Index;
   ft_load_glyph    = FT_Load_Glyph;
-  ft_render_glyph  = FT_Render_Glyph;
+  ft_render_glyph  = (glyph_renderer) ((void*) FT_Render_Glyph);
   if (ft_init_freetype (&ft_library)) return true;
   if (DEBUG_AUTO) cout << "TeXmacs] With linked TrueType support\n";
 #else

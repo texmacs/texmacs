@@ -23,22 +23,22 @@ bool ft_present ();
 
 extern FT_Library ft_library;
 
-extern FT_Error (*ft_new_face)       (FT_Library   library,
-				      const char*  filepathname,
-				      FT_Long      face_index,
-				      FT_Face*     aface);
-extern FT_Error (*ft_set_char_size)  (FT_Face      face,
-				      FT_F26Dot6   char_width,
-				      FT_F26Dot6   char_height,
-				      FT_UInt      horz_resolution,
-				      FT_UInt      vert_resolution);
-extern FT_UInt  (*ft_get_char_index) (FT_Face      face,
-				      FT_ULong     charcode);
-extern FT_Error (*ft_load_glyph)     (FT_Face      face,
-				      FT_UInt      glyph_index,
-				      FT_Int       load_flags);
-extern FT_Error (*ft_render_glyph)   (FT_GlyphSlot slot,
-				      FT_UInt      render_mode);
+extern FT_Error (*ft_new_face)       (FT_Library     library,
+				      const char*    filepathname,
+				      FT_Long        face_index,
+				      FT_Face*       aface);
+extern FT_Error (*ft_set_char_size)  (FT_Face        face,
+				      FT_F26Dot6     char_width,
+				      FT_F26Dot6     char_height,
+				      FT_UInt        horz_resolution,
+				      FT_UInt        vert_resolution);
+extern FT_UInt  (*ft_get_char_index) (FT_Face        face,
+				      FT_ULong       charcode);
+extern FT_Error (*ft_load_glyph)     (FT_Face        face,
+				      FT_UInt        glyph_index,
+				      FT_Int         load_flags);
+extern FT_Error (*ft_render_glyph)   (FT_GlyphSlot   slot,
+				      FT_Render_Mode render_mode);
 
 #endif
 
