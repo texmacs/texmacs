@@ -1,4 +1,6 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.4>
+
+<style|<tuple|source|common-base>>
 
 <\body>
   <assign|tmdoc-web-package|1.0>
@@ -25,7 +27,7 @@
 
   <assign|tmweb-license|<\macro>
     <\tmdoc-license>
-      <\with|color|dark grey|font-size|0.84>
+      <active*|<\with|color|dark grey|font-size|0.84>
         This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
         and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
         copying and distribution of it is permitted in any medium, provided
@@ -34,7 +36,7 @@
 
         <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
         Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA
-      </with>
+      </with>>
     </tmdoc-license>
   </macro>>
 
@@ -65,11 +67,12 @@
 
   <assign|tmweb-image|<macro|name|<postscript|<merge|http://www.texmacs.org/Samples/|<arg|name>>|*2/3|||||>>>
 
-  <assign|tmweb-email|<macro|name|domain|<with|font-family|tt|color|dark
-  magenta|\<less\>><with|font-family|tt|color|dark
-  blue|<arg|name>><with|font-family|tt|color|dark
-  magenta|@><with|font-family|tt|color|dark
-  blue|<arg|domain>><with|font-family|tt|color|dark magenta|\<gtr\>>>>
+  <assign|tmweb-email|<macro|name|domain|<active*|<with|font-family|tt|color|dark
+  magenta|\<less\>>><with|font-family|tt|color|dark
+  blue|<arg|name>><active*|<with|font-family|tt|color|dark
+  magenta|@>><with|font-family|tt|color|dark
+  blue|<arg|domain>><active*|<with|font-family|tt|color|dark
+  magenta|\<gtr\>>>>>
 
   \;
 
@@ -84,19 +87,19 @@
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
+    <associate|language|english>
+    <associate|page-bot|30mm>
     <associate|page-even|30mm>
-    <associate|page-reduce-right|25mm>
+    <associate|page-odd|30mm>
     <associate|page-reduce-bot|15mm>
     <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
     <associate|page-top|30mm>
     <associate|page-type|a4>
-    <associate|page-right|30mm>
     <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
-    <associate|language|english>
-    <associate|page-reduce-top|15mm>
+    <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,4 +1,6 @@
-<TeXmacs|1.0.2.10>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
   <assign|std-list-package|1.0>
@@ -9,14 +11,14 @@
 
   <assign|itemname|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
 
-  <assign|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<with|mode|math|\<ast\>>
+  <assign|item|<macro|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<active*|<with|mode|math|\<ast\>>>
   |||r]1.5fn|>>>
 
   <assign|item*|<macro|theitem|<vspace*|0.5fn><with|par-first|-1.5fn|<yes-indent>><resize|<itemname|<arg|theitem>><space|0.5fn>|||r]1.5fn|>>>
 
   \;
 
-  <assign|thetag|<with|mode|math|\<ast\>>>
+  <assign|thetag|<active*|<with|mode|math|\<ast\>>>>
 
   <assign|itemize-level|0>
 
@@ -24,7 +26,7 @@
   |||r]1.5fn|>>|<arg|body>>>>>
 
   <assign|itemize|<\macro|body>
-    <with|itemize-level|<plus|<value|itemize-level>|1>|<with|thetag|<case|<equal|<mod|<value|itemize-level>|3>|1>|<with|mode|math|\<bullet\>>|<equal|<mod|<value|itemize-level>|3>|2>|<with|mode|math|\<circ\>>|<equal|<mod|<value|itemize-level>|3>|0>|<with|mode|math|->>|<itemize-base|<arg|body>>>>
+    <with|itemize-level|<plus|<value|itemize-level>|1>|<with|thetag|<case|<equal|<mod|<value|itemize-level>|3>|1>|<active*|<with|mode|math|\<bullet\>>>|<equal|<mod|<value|itemize-level>|3>|2>|<active*|<with|mode|math|\<circ\>>>|<equal|<mod|<value|itemize-level>|3>|0>|<active*|<with|mode|math|->>>|<itemize-base|<arg|body>>>>
   </macro>>
 
   \;
@@ -33,11 +35,11 @@
     <with|thetag|<release|<arg|tag>>|<itemize-base|<arg|body>>>
   </macro>>>>>
 
-  <newitemize|itemize-minus|<with|mode|math|->>
+  <newitemize|itemize-minus|<active*|<with|mode|math|->>>
 
-  <newitemize|itemize-dot|<with|mode|math|\<bullet\>>>
+  <newitemize|itemize-dot|<active*|<with|mode|math|\<bullet\>>>>
 
-  <newitemize|itemize-arrow|<with|mode|math|\<rightarrow\>>>
+  <newitemize|itemize-arrow|<active*|<with|mode|math|\<rightarrow\>>>>
 
   \;
 
@@ -91,17 +93,17 @@
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
     <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
     <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|par-width|150mm>
+    <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

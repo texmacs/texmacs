@@ -1,4 +1,6 @@
-<TeXmacs|1.0.3.3>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
   <assign|std-symbol-package|1.0>
@@ -7,49 +9,49 @@
 
   \;
 
-  <assign|cent|<macro|<with|font|tc|¢>>>
+  <assign|cent|<macro|<active*|<with|font|tc|¢>>>>
 
-  <assign|currency|<macro|<with|font|tc|¤>>>
+  <assign|currency|<macro|<active*|<with|font|tc|¤>>>>
 
-  <assign|yen|<macro|<with|font|tc|¥>>>
+  <assign|yen|<macro|<active*|<with|font|tc|¥>>>>
 
-  <assign|copyright|<macro|<with|font|tcx|©>>>
+  <assign|copyright|<macro|<active*|<with|font|tcx|©>>>>
 
-  <assign|copyleft|<macro|<with|font|tcx|«>>>
+  <assign|copyleft|<macro|<active*|<with|font|tcx|«>>>>
 
-  <assign|registered|<macro|<with|font|tcx|®>>>
+  <assign|registered|<macro|<active*|<with|font|tcx|®>>>>
 
-  <assign|degreesign|<macro|<with|font|tc|°>>>
+  <assign|degreesign|<macro|<active*|<with|font|tc|°>>>>
 
-  <assign|twosuperior|<macro|<with|font|tc|²>>>
+  <assign|twosuperior|<macro|<active*|<with|font|tc|²>>>>
 
-  <assign|threesuperior|<macro|<with|font|tc|³>>>
+  <assign|threesuperior|<macro|<active*|<with|font|tc|³>>>>
 
-  <assign|onesuperior|<macro|<with|font|tc|¹>>>
+  <assign|onesuperior|<macro|<active*|<with|font|tc|¹>>>>
 
-  <assign|mu|<macro|<with|font|tcx|µ>>>
+  <assign|mu|<macro|<active*|<with|font|tcx|µ>>>>
 
-  <assign|paragraphsign|<macro|<with|font|tc|¶>>>
+  <assign|paragraphsign|<active*|<macro|<with|font|tc|¶>>>>
 
-  <assign|onequarter|<macro|<with|font|tc|¼>>>
+  <assign|onequarter|<macro|<active*|<with|font|tc|¼>>>>
 
-  <assign|onehalf|<macro|<with|font|tc|½>>>
+  <assign|onehalf|<macro|<active*|<with|font|tc|½>>>>
 
-  <assign|threequarters|<macro|<with|font|tc|¾>>>
+  <assign|threequarters|<macro|<active*|<with|font|tc|¾>>>>
 
-  <assign|euro|<macro|<with|font|tcx|¿>>>
+  <assign|euro|<macro|<active*|<with|font|tcx|¿>>>>
 
-  <assign|trademark|<macro|<with|font|tcx|—>>>
+  <assign|trademark|<macro|<active*|<with|font|tcx|—>>>>
 
-  <assign|emdash|<macro|<with|font|roman|>>>
+  <assign|emdash|<macro|<active*|<with|font|roman|>>>>
 
-  <assign|masculine|<rsup|<wide*|o|\<wide-bar\>>>>
+  <assign|masculine|<active*|<rsup|<wide*|o|\<wide-bar\>>>>>
 
-  <assign|ordfeminine|<rsup|<wide*|a|\<wide-bar\>>>>
+  <assign|ordfeminine|<active*|<rsup|<wide*|a|\<wide-bar\>>>>>
 
-  <assign|varmasculine|<rsup|o>>
+  <assign|varmasculine|<active*|<rsup|o>>>
 
-  <assign|varordfeminine|<rsup|a>>
+  <assign|varordfeminine|<active*|<rsup|a>>>
 
   \;
 </body>
