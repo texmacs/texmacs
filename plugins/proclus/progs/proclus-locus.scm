@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; arch-tag: 300a1366-dabc-42fe-97ee-48543e6a789a
 ;;
-;; MODULE      : proclus-target.scm
-;; DESCRIPTION : Fundamental operations on Proclus targets
+;; MODULE      : proclus-locus.scm
+;; DESCRIPTION : Fundamental operations on Proclus loci
 ;; COPYRIGHT   : (C) 2003--2004  Alain Herreman, David Allouche
 ;;
 ;;   This program is free software; you can redistribute it and/or modify
@@ -16,34 +16,36 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (proclus-target)
+(texmacs-module (proclus-locus)
   (:use (kernel tools tm-misc) (search-in-tree)
         (proclus-list) ;; quadripartite
         (proclus-absname)
         (proclus-lib)
         (ice-9 common-list)) ;; uniq
   (:export
-    target-path? not-target-path? target-or-not-target-path?
-    get-target-path get-not-target-path get-target-or-not-target-path
+    locus-path? not-locus-path? locus-or-not-locus-path?
+    get-locus-path get-not-locus-path get-locus-or-not-locus-path
 
-    target? not-target? target-or-not-target?
-    get-target get-not-target get-target-or-not-target
+    locus? not-locus? locus-or-not-locus? 
+    get-locus get-not-locus get-locus-or-not-locus
+    locus-with-link? 
 
-    target-text target-absname target-id
-    target-self-link target-links target-drop-links
+    locus-text locus-absname locus-id
+    locus-types 
+    locus-self-link locus-links locus-drop-links
 
-    make-target target-set-text target-set-text-go-to
+    make-locus locus-set-text locus-set-text-go-to
 
     link-absname link-id link-types link-comment
     add-link-end
 
-    target-path go-to-target))
+    locus-path go-to-locus))
 
-;; Structure of a TARGET tag:
-;; (target <body>
+;; Structure of a LOCUS tag:
+;; (locus <body>
 ;;   (tuple
 ;;      "absname of current document" (not sure!)
-;;      "TARGET id, for use as a destination"
+;;      "LOCUS id, for use as a destination"
 ;;
 ;;      "absname of destination document"
 ;;      "id of destination"
@@ -51,45 +53,49 @@
 ;;      Those last three items can be repeated multiple times.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Access a target in the buffer given its path
+;; Access a locus in the buffer given its path
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (target-path? p)
-  (eq? 'target (tree-get-label (tm-subtree p))))
+(define (locus-path? p)
+  (eq? 'locus (tree-get-label (tm-subtree p))))
 
-(define (not-target-path? p)
-  (eq? 'not-target (tree-get-label (tm-subtree p))))
+(define (not-locus-path? p)
+  (eq? 'not-locus (tree-get-label (tm-subtree p))))
 
-(define (target-or-not-target-path? p)
-  (memq? (tree-get-label (tm-subtree p)) '(target not-target)))
+(define (locus-or-not-locus-path? p)
+  (memq? (tree-get-label (tm-subtree p)) '(locus not-locus)))
 
 (define (memq? x l)
   ;; (not (not x)) converts x to a boolean object
   (not (not (memq x l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Target accessors, expect a target in Scheme form
+;; Locus accessors, expect a locus in Scheme form
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (target? x)
+(define (locus? x)
   (and (pair? x)
        (>= (length x) 3)
-       (eq? (car x) 'target)))
+       (eq? (car x) 'locus)))
 
-(define (not-target? x)
+(define (locus-with-link? x)
+  (and (locus? x)
+       (> (length (last x)) 3)))
+
+(define (not-locus? x)
   (and (pair? x)
        (>= (length x) 3)
-       (eq? (car x) 'not-target)))
+       (eq? (car x) 'not-locus)))
 
-(define (target-or-not-target? x)
+(define (locus-or-not-locus? x)
   (and (pair? x)
        (>= (length x) 3)
-       (memq? (car x) '(target not-target))))
+       (memq? (car x) '(locus not-locus))))
 
-(define (target-text t) (second t))
+(define (locus-text t) (second t))
 
-(define (target-tuple t)
-  ;; A target tag has the structure (target body extra), where body is the
+(define (locus-tuple t)
+  ;; A locus tag has the structure (locus body extra), where body is the
   ;; visible content and extra is the hidden metadata.
   (tuple->list (third t)))
 
@@ -98,39 +104,42 @@
   (let sub ((x x))
     (if (not (pair? x)) x (map sub (cdr x)))))
 
-(define (target-absname t)
-  (first (target-tuple t)))
+(define (locus-absname t)
+  (first (locus-tuple t)))
 
-(define (target-id t)
-  (second (target-tuple t)))
+(define (locus-id t)
+  (second (locus-tuple t)))
 
-(define (target-links t)
-  (quadripartite (target-links-flat t)))
+(define (locus-types t)
+  (cdr (cADr (third t))))
 
-(define (target-links-flat t)
-  (cddr (target-tuple t)))
+(define (locus-links t)
+  (quadripartite (locus-links-flat t)))
 
-(define (target-self-link t)
-  (let ((tt (target-tuple t)))
+(define (locus-links-flat t)
+  (cddr (locus-tuple t)))
+
+(define (locus-self-link t)
+  (let ((tt (locus-tuple t)))
     (list (first tt) (second tt) "")))
 
-(define (target-drop-links t)
-  `(target ,(target-text t) (tuple ,(target-absname t) ,(target-id t))))
+(define (locus-drop-links t)
+  `(locus ,(locus-text t) (tuple ,(locus-absname t) ,(locus-id t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modify a target in the buffer given its path
+;; Modify a locus in the buffer given its path
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (target-set-text p x)
+(define (locus-set-text p x)
   (tm-assign (rcons p 0)
              (object->tree x)))
 
-(define (target-set-text-go-to p x ppos)
-  (target-set-text p x)
+(define (locus-set-text-go-to p x ppos)
+  (locus-set-text p x)
   (tm-go-to (append p '(0) ppos)))
 
-(define (target-set-tuple p l)
-  ;; Set the metadata of the target at @p to the list @l converted to a tuple.
+(define (locus-set-tuple p l)
+  ;; Set the metadata of the locus at @p to the list @l converted to a tuple.
   (tm-assign (rcons p 1)
              (object->tree (list->tuple l))))
 
@@ -138,53 +147,53 @@
   (let sub ((x l))
     (if (not (pair? x)) x (cons 'tuple (map sub x)))))
 
-(define (target-set-links p links)
-  (target-set-links-flat p (list-concatenate links)))
+(define (locus-set-links p links)
+  (locus-set-links-flat p (list-concatenate links)))
 
-(define (target-set-links-flat p links)
-  (let ((t (target-tuple (tm-subobject p))))
-    (target-set-tuple p (cons* (first t) (second t) links))))
+(define (locus-set-links-flat p links)
+  (let ((t (locus-tuple (tm-subobject p))))
+    (locus-set-tuple p (cons* (first t) (second t) links))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Access the deepest target in the buffer enclosing the caret
+;; Access the deepest locus in the buffer enclosing the caret
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-target-or-not-target-path)
-  (and-let* ((p (search-upwards-in-set '(target not-target)))
+(define (get-locus-or-not-locus-path)
+  (and-let* ((p (search-upwards-in-set '(locus not-locus)))
              ((pair? p)))
     p))
 
-(define (get-target-path)
-  (and-let* ((p (search-upwards "target"))
+(define (get-locus-path)
+  (and-let* ((p (search-upwards "locus"))
              (pair? p))
     p))
 
-(define (get-not-target-path)
-  (and-let* ((p (search-upwards "not-target"))
+(define (get-not-locus-path)
+  (and-let* ((p (search-upwards "not-locus"))
              (pair? p))
     p))
 
-(define (get-target-or-not-target)
-  (and-let* ((p (get-target-or-not-target-path)))
+(define (get-locus-or-not-locus)
+  (and-let* ((p (get-locus-or-not-locus-path)))
     (tm-subobject p)))
 
-(define (get-target)
-  (and-let* ((p (get-target-path)))
+(define (get-locus)
+  (and-let* ((p (get-locus-path)))
     (tm-subobject p)))
 
-(define (get-not-target)
-  (and-let* ((p (get-not-target-path)))
+(define (get-not-locus)
+  (and-let* ((p (get-not-locus-path)))
     (tm-subobject p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Target creation
+;; Locus creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-target absname n)
+(define (make-locus absname n)
   ;; FIXME: do not use clipboard, instead work with primitive buffer ops
   (let ((sel? (selection-active-any?)))
     (if sel? (clipboard-cut "ah"))
-    (insert-object-go-to `(target "" (tuple ,absname ,n))
+    (insert-object-go-to `(locus "" (tuple ,absname ,n))
                          '(0 0))
     (if sel? (clipboard-paste "ah"))))
 
@@ -193,7 +202,7 @@
 ;; Individual links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Structure of a link: (absolute-name target-id (type ...) comment-string)
+;; Structure of a link: (absolute-name locus-id (type ...) comment-string)
 (define (link-absname link) (first link))
 (define (link-id link) (second link))
 (define (link-types link) (third link))
@@ -204,18 +213,18 @@
 ;; Link creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Create or modify a link end, in an existing TARGET node
+;; Create or modify a link end, in an existing LOCUS node
 (define (add-link-end source but types)
   (let ((source-absname (link-absname source))
         (source-id (link-id source))
         (but-absname (link-absname but))
         (but-id (link-id but)))
     (switch-to-active-buffer (absolute-name->url source-absname))
-    (target-add-link (target-path source-id) but-absname but-id types)))
+    (locus-add-link (locus-path source-id) but-absname but-id types)))
 
-(define (target-add-link path absname id types)
-  (let ((links (target-links (tm-subobject path))))
-    (target-set-links
+(define (locus-add-link path absname id types)
+  (let ((links (locus-links (tm-subobject path))))
+    (locus-set-links
      path (if (link-in? absname id links)
               (add-types absname id types links)
               (rcons links (list absname id types ""))))))
@@ -240,17 +249,17 @@
      links))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Browsing targets
+;;; Browsing loci
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (target-path id)
-  ;; path of the first target in the buffer whose id is @id
+(define (locus-path id)
+  ;; path of the first locus in the buffer whose id is @id
   (let sub ((p '()))
-    (search-in-tree-from (the-buffer) p 'target
+    (search-in-tree-from (the-buffer) p 'locus
                          (lambda (p t)
-                           (if (== id (target-id (tm-subobject p)))
+                           (if (== id (locus-id (tm-subobject p)))
                                p (sub (rcons p 0)))))))
 
-(define (go-to-target lk)
+(define (go-to-locus lk)
   (switch-to-active-buffer (absolute-name->url (link-absname lk)))
-  (tm-go-to (append (target-path (link-id lk)) '(0 0))))
+  (tm-go-to (append (locus-path (link-id lk)) '(0 0))))
