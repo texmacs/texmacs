@@ -483,13 +483,13 @@ edit_dynamic_rep::back_extension (path p) {
     assign (p, "");
     correct (path_up (p));
   }
-  else if ((drd->get_props (L (st)) & ACCESSIBLE_MASK) != ACCESSIBLE)
+  else if (!drd->all_accessible (L (st)))
     back_dynamic (p);
   else if (is_func (subtree (et, path_up (p)), INACTIVE))
     back_dynamic (p);
   else if ((n==1) &&
 	   ((is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE))))
-    back_table (p * 1);
+    back_table (p * 0);
   else go_to (end (et, p * (n-1)));
 }
 

@@ -114,9 +114,10 @@ public:
 
   virtual void style_update_menu () = 0;
   virtual void style_clear_cache () = 0;
-  virtual void style_set_cache (tree style, hashmap<string,tree> H) = 0;
-  virtual void style_get_cache (tree style, hashmap<string,tree>& H,
-				bool& flag) = 0;
+  virtual void style_set_cache (
+            tree style, hashmap<string,tree> H, tree drd) = 0;
+  virtual void style_get_cache (
+	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
 
   /* getting window properties */
   virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;

@@ -45,7 +45,8 @@ public:
 
   /* Properties of the children of the tag */
   void set_accessible (tree_label tag, int nr, bool is_accessible);
-  int  get_accessible (tree_label tag, int nr);
+  bool get_accessible (tree_label tag, int nr);
+  bool all_accessible (tree_label tag);
   void freeze_accessible (tree_label tag, int nr);
   
   void set_block (tree_label tag, int nr, int require_block);
@@ -55,11 +56,7 @@ public:
   /* Old style */
 
   bool contains (string l);
-  void set_arity (tree_label l, int arity);
-  void set_masked_props (tree_label l, int mask, int props);
-  void set_props (tree_label l, int props);
   int  get_arity (tree_label l);
-  int  get_props (tree_label l);
 
   /* Heuristic initialization */
   bool heuristic_init (string var, tree macro);
@@ -67,8 +64,6 @@ public:
 
   /* Analyzing trees using the drd */
   bool is_dynamic (tree t);
-  bool old_is_accessible_child (tree t, int child);
-  bool new_is_accessible_child (tree t, int child);
   bool is_accessible_child (tree t, int child);
   bool is_child_enforcing (tree t);
 
@@ -80,6 +75,7 @@ class drd_info {
   CONCRETE(drd_info);
   drd_info (string name);
   drd_info (string name, drd_info base);
+  drd_info (string name, tree t, drd_info base);
   operator tree ();
 };
 CONCRETE_CODE(drd_info);

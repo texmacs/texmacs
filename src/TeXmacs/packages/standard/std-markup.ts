@@ -1,4 +1,4 @@
-<TeXmacs|1.0.2.5>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|std-markup-package|1.0>
@@ -13,9 +13,9 @@
   <assign|made-by-TeXmacs|<macro|<float|footnote||<with|font
   size|0.84|paragraph mode|justify|left margin|0cm|right
   margin|0cm|<move|<postscript|local:$TEXMACS_PATH/misc/images/tm_gnu3.ps||1fn||||>|0fn|-0.2fn><space|2spc><translate|This
-  document has been produced using|english|<apply|language>> GNU <TeXmacs>
-  (<translate|see|english|<apply|language>> <with|font
-  family|tt|http://www.texmacs.org>).<apply|rightflush>>>>>
+  document has been produced using|english|<language>> GNU <TeXmacs>
+  (<translate|see|english|<language>> <with|font
+  family|tt|http://www.texmacs.org>).<rightflush>>>>>
 
   <assign|TeX|<macro|T<rsub|<space|-0.4spc><move|<resize|<with|index
   level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>
@@ -23,11 +23,11 @@
   <assign|LaTeX|<macro|L<rsup|<space|-0.8spc><move|A|0fn|-0.1fn>><space|-0.2spc>T<rsub|<space|-0.4spc><move|<resize|<with|index
   level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X>>
 
-  <assign|hflush|<func|<htab|0fn|0>>>
+  <assign|hflush|<macro|<htab|0fn|0>>>
 
-  <assign|rightflush|<func|<htab|0fn|first>>>
+  <assign|rightflush|<macro|<htab|0fn|first>>>
 
-  <assign|leftflush|<func|<htab|0fn|last>>>
+  <assign|leftflush|<macro|<htab|0fn|last>>>
 
   <assign|hrule|<no_first_indentation><tabular|<tformat|<cwith|1|-1|1|-1|cell
   tborder|1ln>|<twith|table width|1par>|<cwith|1|-1|1|-1|cell
@@ -38,36 +38,36 @@
 
   \;
 
-  <assign|localize|<func|x|<translate|<value|x>|english|<value|language>>>>
+  <assign|localize|<macro|x|<translate|<arg|x>|english|<value|language>>>>
 
   <assign|overline|<macro|x|<hold|<datoms|<macro|x|<with|color|<release|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>
 
-  <drd_props|overline|accessible|all>
+  <drd_props|overline|arity|1|accessible|all>
 
   <assign|underline|<macro|x|<hold|<datoms|<macro|x|<with|color|<release|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>
 
-  <drd_props|underline|accessible|all>
+  <drd_props|underline|arity|1|accessible|all>
 
   <assign|fold|<macro|x|y|<with|left margin|<plus|<value|left
-  margin>|1.5fn>|<surround|<with|first indentation|-1.5fn|<enable_first_indentation>><action|<resize|<with|mode|math|<op|\<circ\>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<apply|hflush>|<arg|x>>>>>
+  margin>|1.5fn>|<surround|<with|first indentation|-1.5fn|<enable_first_indentation>><action|<resize|<with|mode|math|<op|\<circ\>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>
 
   <assign|unfold|<\macro|x|y>
     <\with|left margin|<plus|<value|left margin>|1.5fn>>
-      <surround|<with|first indentation|-1.5fn|<enable_first_indentation>><action|<resize|<with|mode|math|\<bullet\>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<apply|hflush>|<arg|x>>
+      <surround|<with|first indentation|-1.5fn|<enable_first_indentation>><action|<resize|<with|mode|math|\<bullet\>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>
 
-      <surround||<apply|rightflush>|<arg|y>>
+      <surround||<rightflush>|<arg|y>>
     </with>
   </macro>>
 
-  <assign|switch|<macro|x|y|<surround||<apply|rightflush>|<arg|x>>>>
+  <assign|switch|<macro|x|y|<surround||<rightflush>|<arg|x>>>>
 
-  <assign|phantom|<func|x|<var_if|false|<apply|x>>>>
+  <assign|phantom|<macro|x|<var_if|false|<arg|x>>>>
 
-  <assign|set-header|<func|s|<assign|odd page header|<apply|s>><assign|even
-  page header|<apply|s>>>>
+  <assign|set-header|<macro|s|<assign|odd page header|<arg|s>><assign|even
+  page header|<arg|s>>>>
 
-  <assign|set-footer|<func|s|<assign|odd page footer|<apply|s>><assign|even
-  page footer|<apply|s>>>>
+  <assign|set-footer|<macro|s|<assign|odd page footer|<arg|s>><assign|even
+  page footer|<arg|s>>>>
 
   \;
 
@@ -107,21 +107,19 @@
   <assign|verbatim|<macro|body|<with|font
   family|tt|language|verbatim|<arg|body>>>>
 
-  <assign|code|<macro|body|<surround|<vspace*|1fn>|<apply|rightflush><htab|5mm><vspace|1fn><no_indentation_after>|<with|font
+  <assign|code|<macro|body|<surround|<vspace*|1fn>|<rightflush><htab|5mm><vspace|1fn><no_indentation_after>|<with|font
   family|tt|language|verbatim|first indentation|0fn|<arg|body>>>>>
 
-  <assign|quote-env|<macro|body|<surround|<vspace*|0.5fn>|<apply|rightflush><vspace|0.5fn>|<with|left
-  margin|<plus|<apply|left margin>|3fn>|right margin|<plus|<apply|right
-  margin>|3fn>|first indentation|0fn|interparagraph
-  space|0.25fn|<arg|body>>>>>
+  <assign|quote-env|<macro|body|<surround|<vspace*|0.5fn>|<rightflush><vspace|0.5fn>|<with|left
+  margin|<plus|<left\ margin>|3fn>|right margin|<plus|<right\ margin>|3fn>|first
+  indentation|0fn|interparagraph space|0.25fn|<arg|body>>>>>
 
-  <assign|quotation|<macro|body|<surround|<vspace*|0.5fn>|<apply|rightflush><vspace|0.5fn>|<with|left
-  margin|<plus|<apply|left margin>|3fn>|right margin|<plus|<apply|right
-  margin>|3fn>|<arg|body>>>>>
+  <assign|quotation|<macro|body|<surround|<vspace*|0.5fn>|<rightflush><vspace|0.5fn>|<with|left
+  margin|<plus|<left\ margin>|3fn>|right margin|<plus|<right\ margin>|3fn>|<arg|body>>>>>
 
-  <assign|verse|<macro|body|<surround|<vspace*|0.5fn>|<apply|rightflush><vspace|0.5fn>|<with|left
-  margin|<plus|<apply|left margin>|4.5fn>|right margin|<plus|<apply|right
-  margin>|3fn>|first indentation|-1.5fn|interparagraph
+  <assign|verse|<macro|body|<surround|<vspace*|0.5fn>|<rightflush><vspace|0.5fn>|<with|left
+  margin|<plus|<left\ margin>|4.5fn>|right
+  margin|<plus|<right\ margin>|3fn>|first indentation|-1.5fn|interparagraph
   space|0fn|<arg|body>>>>>
 
   <assign|center|<macro|body|<with|paragraph mode|center|<arg|body>>>>
