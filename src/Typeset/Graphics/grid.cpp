@@ -12,6 +12,57 @@
 
 #include "grid.hpp"
 #include "math_util.hpp"
+#include "curve.hpp"
+
+/******************************************************************************
+* General routines
+******************************************************************************/
+
+void
+grid_rep::set_aspect (tree aspect) {
+  subd= array<SI> (2);
+  subd[0]= 0;
+  subd[1]= 1;
+  col= array<string> (2);
+  col[0]= "#808080";
+  col[1]= "#c0c0c0";
+  if (is_tuple (aspect)) {
+    int i;
+    bool b= false;
+    subd= array<SI> (N(aspect));
+    col= array<string> (N(aspect));
+    for (i=0; i<N(aspect); i++) {
+       if (is_tuple (aspect[i], "axes", 1)) {
+         subd[i]= 0;
+         b= true;
+       }
+       else {
+         subd[i]= as_int (aspect[i][0]);
+       }
+       col[i]= as_string (aspect[i][1]);
+    }
+    if (!b) {
+      array<SI> subd0 (1);
+      array<string> col0 (1);
+      subd0[0]= 0;
+      col0[0]= "#e0e0ff";
+      subd= subd0 << subd;
+      col= col0 << col;
+    }
+    do {
+      b= true;
+      for (i=1; i<N(subd); i++)
+         if (subd[i-1]>subd[i]) {
+           SI j;
+           string c;
+           j= subd[i-1];subd[i-1]= subd[i];subd[i]= j;
+           c= col[i-1];col[i-1]= col[i];col[i]= c;
+           b= false;
+         }
+    }
+    while (!b);
+  }
+}
 
 /******************************************************************************
 * The empty grid
@@ -20,11 +71,19 @@
 struct empty_grid_rep: public grid_rep {
   empty_grid_rep ():
     grid_rep () {}
+  array<grid_curve> get_curves (point lim1, point lim2) {
+    array<grid_curve> res;
+    return res; }
   operator tree () { return "empty_grid"; }
-  void display (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-    (void) dev; }
-  point find_closest_point (point p) { return p; }
+  point find_closest_point (point p);
 };
+
+point
+empty_grid_rep::find_closest_point (point p) {
+  double x= floor (10.0*p[0] + 0.5);
+  double y= floor (10.0*p[1] + 0.5);
+  return point (x / 10.0, y / 10.0);
+}
 
 grid
 empty_grid () {
@@ -36,55 +95,70 @@ empty_grid () {
 ******************************************************************************/
 
 struct cartesian_rep: public grid_rep {
-  SI step; // Step (on the screen)
-  cartesian_rep (array<SI> subd, array<color> col, point o, SI st):
+  double step; // Unit length
+  cartesian_rep (array<SI> subd, array<string> col, point o, double st):
     grid_rep (subd, col, o), step (st) {}
   operator tree () { return "cartesian"; }
-  void display (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  array<grid_curve> get_curves (point lim1, point lim2);
   point find_closest_point (point p);
 };
 
-void
-cartesian_rep::display (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-  SI xo,yo;
-  xo=(SI)o[0];
-  yo=(SI)o[1];
-  dev->set_line_style (PIXEL);
-  SI i;
+static grid_curve
+create_line (double x1, double y1, double x2, double y2, string col) {
+  array<point> a(2);
+  a[0]= point (x1, y1);
+  a[1]= point (x2, y2);
+  array<path> cip(2);
+  grid_curve res;
+  res.col= col;
+  res.c= poly_segment (a, cip);
+  return res;
+}
+
+array<grid_curve>
+cartesian_rep::get_curves (point lim1, point lim2) {
+  array<grid_curve> res;
+  if (N(subd)<1) return res;
+  double x1= min (lim1[0], lim2[0]);
+  double y1= min (lim1[1], lim2[1]);
+  double x2= max (lim1[0], lim2[0]);
+  double y2= max (lim1[1], lim2[1]);
+  double xo= center[0];
+  double yo= center[1];
+  int i;
   for (i= N(subd)-1; i>=1; i--) {
      SI nsub;
      nsub= subd[i];
-     dev->set_color (col[i]);
      if (nsub!=0) {
-       SI x, y;
-       for (x=xo; x<=x2; x+=step/nsub)
-         dev->line (x,y1,x,y2);
-       for (x=xo; x>=x1; x-=step/nsub)
-         dev->line (x,y1,x,y2);
-       for (y=yo; y<=y2; y+=step/nsub)
-         dev->line (x1,y,x2,y);
-       for (y=yo; y>=y1; y-=step/nsub)
-         dev->line (x1,y,x2,y);
+       double x, y;
+       for (x= xo; x<=x2; x+=step/nsub)
+         res << create_line (x, y1, x, y2, col[i]);
+       for (x= xo; x>=x1; x-=step/nsub)
+         res << create_line (x, y1, x, y2, col[i]);
+       for (y= yo; y<=y2; y+=step/nsub)
+         res << create_line (x1, y, x2, y, col[i]);
+       for (y= yo; y>=y1; y-=step/nsub)
+         res << create_line (x1, y, x2, y, col[i]);
      }
   }
-  dev->set_color (col[0]);
-  dev->line (x1,yo,x2,yo);
-  dev->line (xo,y1,xo,y2);
+  res << create_line (x1, yo, x2, yo, col[0]);
+  res << create_line (xo, y1, xo, y2, col[0]);
+  return res;
 }
 
 point
 cartesian_rep::find_closest_point (point p) {
-  double x,y,ssubd;
+  double x, y, ssubd;
   ssubd= ((double) subd[N(subd)-1]) / step;
   if (ssubd==0) return p;
-  p= p-o;
+  p= p-center;
   x= nearest (p[0]*ssubd);
   y= nearest (p[1]*ssubd);
-  return o + point (x/ssubd, y/ssubd);
+  return center + point (x/ssubd, y/ssubd);
 }
 
 grid
-cartesian (array<SI> subd, array<color> col, point o, SI step) {
+cartesian (array<SI> subd, array<string> col, point o, double step) {
   return new cartesian_rep (subd, col, o, step);
 }
 
@@ -93,60 +167,75 @@ cartesian (array<SI> subd, array<color> col, point o, SI step) {
 ******************************************************************************/
 
 struct polar_rep: public grid_rep {
-  SI step;      // Step (on the screen)
+  double step;  // Radial unit length
   SI astep;     // # angles
-  polar_rep (array<SI> subd, array<color> col, point o, SI st, SI ast):
+  polar_rep (array<SI> subd, array<string> col, point o, double st, SI ast):
     grid_rep (subd, col, o), step (st), astep (ast) {}
   operator tree () { return "polar"; }
-  void display (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  array<grid_curve> get_curves (point lim1, point lim2);
   point find_closest_point (point p);
 };
 
-void
-polar_rep::display (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-  SI ox1,oy1,ox2,oy2;
-  dev->get_clipping (ox1,oy1,ox2,oy2);
-  dev->set_clipping (x1,y1,x2,y2);
-  SI xo,yo;
-  xo=(SI)o[0];
-  yo=(SI)o[1];
-  SI r,R= (SI) norm (point (x2, y2) - point (x1, y1));
-  dev->set_line_style (PIXEL);
-  SI i;
+static grid_curve
+create_arc (
+  double x1, double y1, double x2, double y2, double x3, double y3, string col)
+{
+  array<point> a(3);
+  a[0]= point (x1, y1);
+  a[1]= point (x2, y2);
+  a[2]= point (x3, y3);
+  array<path> cip(3);
+  grid_curve res;
+  res.col= col;
+  res.c= arc (a, cip, true);
+  return res;
+}
+
+array<grid_curve>
+polar_rep::get_curves (point lim1, point lim2) {
+  array<grid_curve> res;
+  if (N(subd)<1) return res;
+  double x1= min (lim1[0], lim2[0]);
+  double y1= min (lim1[1], lim2[1]);
+  double x2= max (lim1[0], lim2[0]);
+  double y2= max (lim1[1], lim2[1]);
+  double xo= center[0];
+  double yo= center[1];
+  double r,R= (SI) norm (point (x2, y2) - point (x1, y1));
+  int i;
   for (i= N(subd)-1; i>=1; i--) {
-     SI nsub;
-     nsub= subd[i];
-     dev->set_color (col[i]);
-     if (nsub!=0) {
-       SI j;
-       for (r=0; r<=R; r+=step/nsub)
-         dev->arc (xo-r,yo-r,xo+r,yo+r,0,360<<6);
-       for (j=0; j<astep*nsub; j++)
-         dev->line (xo,yo,(SI)(xo+R*cos((2*tm_PI*j)/(astep*nsub))),
-                          (SI)(yo+R*sin((2*tm_PI*j)/(astep*nsub))));
-     }
+    SI nsub;
+    nsub= subd[i];
+    if (nsub!=0) {
+      SI j;
+      for (r=0; r<=R; r+=step/nsub)
+        res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
+      for (j=0; j<astep*nsub; j++)
+        res << create_line (xo, yo, xo+R*cos((2*tm_PI*j)/(astep*nsub)),
+                                    yo+R*sin((2*tm_PI*j)/(astep*nsub)),
+                                    col[i]);
+    }
   }
-  dev->set_color (col[0]);
-  dev->line (x1,yo,x2,yo);
-  dev->line (xo,y1,xo,y2);
-  dev->set_clipping (ox1,oy1,ox2,oy2);
+  res << create_line (x1, yo, x2, yo, col[0]);
+  res << create_line (xo, y1, xo, y2, col[0]);
+  return res;
 }
 
 point
 polar_rep::find_closest_point (point p) {
-  double n,a,ssubd;
-  ssubd=(double)subd[N(subd)-1];
+  double n, a, ssubd;
+  ssubd= (double)subd[N(subd)-1];
   if (ssubd==0) return p;
-  p=p-o;
-  n=nearest (norm(p)*(ssubd/step));
-  a=nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
-  n=n*(step/ssubd);
-  a=a/(astep*ssubd);
-  return o + n * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
+  p= p-center;
+  n= nearest (norm(p)*(ssubd/step));
+  a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
+  n= n*(step/ssubd);
+  a= a/(astep*ssubd);
+  return center + n * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
 }
 
 grid
-polar (array<SI> subd, array<color> col, point o, SI step, SI astep) {
+polar (array<SI> subd, array<string> col, point o, double step, SI astep) {
   return new polar_rep (subd, col, o, step, astep);
 }
 
@@ -155,88 +244,167 @@ polar (array<SI> subd, array<color> col, point o, SI step, SI astep) {
 ******************************************************************************/
 
 struct logarithmic_rep: public grid_rep {
-  SI step; // Step (on the screen)
+  double step; // Unit length
   SI base;
-  logarithmic_rep (array<SI> subd, array<color> col, point o, SI st, SI b):
+  logarithmic_rep (array<SI> subd, array<string> col, point o, double st, SI b):
     grid_rep (subd, col, o), step (st), base (b) {}
   operator tree () { return "logarithmic"; }
-  void display (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  array<grid_curve> get_curves (point lim1, point lim2);
   point find_closest_point (point p);
 };
 
-void
-logarithmic_rep::display (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
-  SI ox1,oy1,ox2,oy2;
-  dev->get_clipping (ox1,oy1,ox2,oy2);
-  dev->set_clipping (x1,y1,x2,y2);
-  dev->set_line_style (PIXEL);
-  SI xo,yo;
-  xo=(SI)o[0];
-  yo=(SI)o[1];
-  dev->set_color (col[2]);
-  SI i,x,y;
-  for (i=2;i<base;i++) {
-    SI dx,dy;
-    dx=dy=(SI)(step*log(i)/log(base));
-    for (x=xo; x<=x2; x+=step)
-      dev->line (x+dx,y1,x+dx,y2);
-    for (x=xo-step; x>=x1-step; x-=step)
-      dev->line (x+dx,y1,x+dx,y2);
-    for (y=yo; y<=y2; y+=step)
-      dev->line (x1,y+dy,x2,y+dy);
-    for (y=yo-step; y>=y1-step; y-=step)
-      dev->line (x1,y+dy,x2,y+dy);
+array<grid_curve>
+logarithmic_rep::get_curves (point lim1, point lim2) {
+  array<grid_curve> res;
+  if (N(subd)<1) return res;
+  double x1= min (lim1[0], lim2[0]);
+  double y1= min (lim1[1], lim2[1]);
+  double x2= max (lim1[0], lim2[0]);
+  double y2= max (lim1[1], lim2[1]);
+  double xo= center[0];
+  double yo= center[1];
+  int i;
+  double x, y;
+  if (N(col)>=3) {
+    for (i=2; i<base; i++) {
+      double dx, dy;
+      dx= dy= step*log(i)/log(base);
+      for (x=xo; x<=x2; x+=step)
+        res << create_line (x+dx, y1, x+dx, y2, col[2]);
+      for (x=xo-step; x>=x1-step; x-=step)
+        res << create_line (x+dx, y1, x+dx, y2, col[2]);
+      for (y=yo; y<=y2; y+=step)
+        res << create_line (x1, y+dy, x2, y+dy, col[2]);
+      for (y=yo-step; y>=y1-step; y-=step)
+        res << create_line (x1, y+dy, x2, y+dy, col[2]);
+    }
   }
-  dev->set_color (col[1]);
-  for (x=xo; x<=x2; x+=step)
-    dev->line (x,y1,x,y2);
-  for (x=xo; x>=x1; x-=step)
-    dev->line (x,y1,x,y2);
-  for (y=yo; y<=y2; y+=step)
-    dev->line (x1,y,x2,y);
-  for (y=yo; y>=y1; y-=step)
-    dev->line (x1,y,x2,y);
-  dev->set_color (col[0]);
-  dev->line (x1,yo,x2,yo);
-  dev->line (xo,y1,xo,y2);
-  dev->set_clipping (ox1,oy1,ox2,oy2);
+  if (N(col)>=2) {
+    for (x=xo; x<=x2; x+=step)
+      res << create_line (x, y1, x, y2, col[1]);
+    for (x=xo; x>=x1; x-=step)
+      res << create_line (x, y1, x, y2, col[1]);
+    for (y=yo; y<=y2; y+=step)
+      res << create_line (x1, y, x2, y, col[1]);
+    for (y=yo; y>=y1; y-=step)
+      res << create_line (x1, y, x2, y, col[1]);
+  }
+  res << create_line (x1, yo, x2, yo, col[0]);
+  res << create_line (xo, y1, xo, y2, col[0]);
+  return res;
 }
 
 point
 logarithmic_rep::find_closest_point (point p) {
-  SI xo,yo;
-  xo=(SI)o[0];
-  yo=(SI)o[1];
-  SI x1,y1,x2,y2;
-  x1=y1=xo-step;
-  x2=y2=xo+step;
-  p=p-o;
-  SI x0,y0;
-  x0=(SI)(p[0]/step);
-  y0=(SI)(p[1]/step);
-  x0*=step;
-  y0*=step;
-  p=p-point(x0,y0);
-  p=o+p;
-  double xm,ym;
-  xm=ym=tm_infinity/2;
+  double xo, yo;
+  xo= center[0];
+  yo= center[1];
+  double x1, y1, x2, y2;
+  x1= xo-step;
+  y1= yo-step;
+  x2= xo+step;
+  y2= yo+step;
+  p= p-center;
+  double x0, y0;
+  x0= (SI)(p[0]/step);
+  y0= (SI)(p[1]/step);
+  x0*= step;
+  y0*= step;
+  p= p-point(x0,y0);
+  p= center+p;
+  double xm, ym;
+  xm= ym= tm_infinity/2;
   SI i;
-  for (i=1;i<base;i++) {
-    SI x,y,dx,dy;
-    dx=dy=(SI)(step*log(i)/log(base));
-    for (x=xo; x<=x2; x+=step) 
-      if (norm(p[0]-x-dx)<norm(xm-x-dx)) xm=x;
+  for (i=1; i<base; i++) {
+    double x, y, dx, dy;
+    dx= dy= step*log(i)/log(base);
+    for (x=xo; x<=x2; x+=step)
+      if (norm(x+dx-p[0])<norm(xm-p[0])) xm= x+dx;
     for (x=xo-step; x>=x1-step; x-=step)
-      if (norm(p[0]-x-dx)<norm(xm-x-dx)) xm=x;
+      if (norm(x+dx-p[0])<norm(xm-p[0])) xm= x+dx;
     for (y=yo; y<=y2; y+=step)
-      if (norm(p[1]-y-dy)<norm(ym-y-dy)) ym=y;
+      if (norm(y+dy-p[1])<norm(ym-p[1])) ym= y+dy;
     for (y=yo-step; y>=y1-step; y-=step)
-      if (norm(p[1]-y-dy)<norm(ym-y-dy)) ym=y;
+      if (norm(y+dy-p[1])<norm(ym-p[1])) ym= y+dy;
   }
-  return point (x0+xm, x0+ym);
+  return point (x0+xm, y0+ym);
 }
 
 grid
-logarithmic (array<SI> subd, array<color> col, point o, SI step, SI base) {
+logarithmic (array<SI> subd, array<string> col, point o, double step, SI base) {
   return new logarithmic_rep (subd, col, o, step, base);
+}
+
+/******************************************************************************
+* User interface
+******************************************************************************/
+
+grid
+as_grid (tree t) {
+  array<SI> subd (0, 1);
+  array<string> col ("black", "black");
+  grid gr= empty_grid ();
+  double step= 1.0;
+  point center= point (0.0, 0.0);
+  if (is_tuple (t, "empty"))
+    gr= empty_grid ();
+  else
+  if (is_tuple (t, "cartesian")) {
+    if (is_tuple (t, "cartesian", 0)) ;
+    else
+    if (is_tuple (t, "cartesian", 1))
+      step= as_double (t[1]);
+    else
+    if (is_tuple (t, "cartesian", 2)) {
+      center= as_point (t[1]);
+      step= as_double (t[2]);
+    }
+    gr= cartesian (subd, col, center, step);
+  }
+  else
+  if (is_tuple (t, "polar")) {
+    SI astep= 8;
+    if (is_tuple (t, "polar", 0)) ;
+    else
+    if (is_tuple (t, "polar", 1))
+      step= as_double (t[1]);
+    else
+    if (is_tuple (t, "polar", 2)) {
+      step= as_double (t[1]);
+      astep= as_int (t[2]);
+    }
+    else
+    if (is_tuple (t, "polar", 3)) {
+      center= as_point (t[1]);
+      step= as_double (t[2]);
+      astep= as_int (t[3]);
+    }
+    gr=polar (subd, col, center, step, astep);
+  }
+  else
+  if (is_tuple (t, "logarithmic")) {
+    SI base= 10;
+    if (is_tuple (t, "logarithmic", 0)) ;
+    else
+    if (is_tuple (t, "logarithmic", 1))
+      step= as_double (t[1]);
+    else
+    if (is_tuple (t, "logarithmic", 2)) {
+      step= as_double (t[1]);
+      base= as_int (t[2]);
+    }
+    else
+    if (is_tuple (t, "logarithmic", 3)) {
+      center= as_point (t[1]);
+      step= as_double (t[2]);
+      base= as_int (t[3]);
+    }
+    gr= logarithmic (subd, col, center, step, base);
+  }
+  return gr;
+}
+
+tree
+as_tree (grid g) {
+  (tree) g;
 }

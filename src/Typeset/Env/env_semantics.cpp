@@ -97,7 +97,7 @@ initialize_default_var_type () {
   var_type (PAGE_THIS_HEADER)  = Env_Page;
   var_type (PAGE_THIS_FOOTER)  = Env_Page;
   var_type (PAGE_FNOTE_SEP)    = Env_Page;
-  var_type (POINT_STYLE)      = Env_Point_Style;
+  var_type (POINT_STYLE)       = Env_Point_Style;
   var_type (PAGE_FNOTE_BARLEN) = Env_Page;
   var_type (PAGE_FLOAT_SEP)    = Env_Page;
   var_type (PAGE_MNOTE_SEP)    = Env_Page;
@@ -108,6 +108,7 @@ initialize_default_var_type () {
   var_type (GR_CLIP)           = Env_Clipping;
   var_type (GR_GRID)           = Env_Grid;
   var_type (GR_GRID_ASPECT)    = Env_Grid_Aspect;
+  var_type (GR_EDIT_GRID)      = Env_Grid;
 
   var_type (SRC_STYLE)         = Env_Src_Style;
   var_type (SRC_SPECIAL)       = Env_Src_Special;
