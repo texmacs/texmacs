@@ -12,6 +12,7 @@
 
 #include "boxes.hpp"
 #include "formatter.hpp"
+#include "Graphics/point.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -166,6 +167,35 @@ box_rep::relocate (path new_ip, bool force) {
   ip= new_ip;
   int i, n= subnr ();
   for (i=0; i<n; i++) subbox (i)->relocate (ip, force);
+}
+
+/******************************************************************************
+* For graphical boxes
+******************************************************************************/
+
+point
+box_rep::lift (SI x, SI y) {
+  point p (2);
+  p[X]= x;
+  p[Y]= y;
+  return p;
+}
+
+void
+box_rep::project (point p, SI& x, SI& y) {
+  x= (int) p[X];
+  y= (int) p[Y];
+}
+
+double
+box_rep::distance (point p) {
+  return 1.0e25;
+}
+
+path
+box_rep::closest (point p, int serial) {
+  (void) p; (void) serial;
+  return path (-1);
 }
 
 /******************************************************************************
