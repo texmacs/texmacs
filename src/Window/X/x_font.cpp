@@ -183,8 +183,8 @@ x_display_rep::load_ps_font (string family, int size, int dpi,
   bitmap_char * bmcs= new bitmap_char [256];
   for (i=0; i<=255; i++)
     get_ps_char (fn, i, texs[i], bmcs[i]);
-  bmm= new bitmap_metric_rep (fn_name, texs, 0, 255);
-  bmf= new bitmap_font_rep   (fn_name, bmcs, 0, 255);
+  bmm= std_bitmap_metric (fn_name, texs, 0, 255);
+  bmf= std_bitmap_font (fn_name, bmcs, 0, 255);
 }
 
 /******************************************************************************

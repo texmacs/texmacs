@@ -88,42 +88,22 @@ bitmap_char hor_extend (bitmap_char bmc, int pos, int by);
 bitmap_char ver_extend (bitmap_char bmc, int pos, int by);
 
 /******************************************************************************
-* Bitmap metrics
+* Abstract bitmap fonts and font metrics
 ******************************************************************************/
 
-struct bitmap_metric_rep:rep<bitmap_metric> {
-  int bc, ec;
-  text_extents* bmm;
-  text_extents  on_error;
-
-  bitmap_metric_rep (string name, text_extents* bmm, int bc, int ec);
-  ~bitmap_metric_rep ();
-  inline text_extents_struct* get (int char_code);
+struct bitmap_metric_rep: rep<bitmap_metric> {
+  bitmap_metric_rep (string name);
+  virtual ~bitmap_metric_rep ();
+  virtual text_extents& get (int char_code) = 0;
 };
 
-inline text_extents_struct*
-bitmap_metric_rep::get (int c) {
-  if ((c<bc) || (c>ec)) return on_error;
-  return bmm [c-bc];
-}
-
-/******************************************************************************
-* Bitmap fonts
-******************************************************************************/
-
-struct bitmap_font_rep:rep<bitmap_font> {
-  int bc, ec;
-  bitmap_char* bmf; // definitions of the characters
-
-  bitmap_font_rep (string name, bitmap_char* bmf, int bc, int ec);
-  ~bitmap_font_rep ();
-  inline bitmap_char get (int char_code);
+struct bitmap_font_rep: rep<bitmap_font> {
+  bitmap_font_rep (string name);
+  virtual ~bitmap_font_rep ();
+  virtual bitmap_char& get (int char_code) = 0;
 };
 
-inline bitmap_char
-bitmap_font_rep::get (int c) {
-  if ((c<bc) || (c>ec)) return bitmap_char ();
-  return bmf [c-bc];
-}
+bitmap_metric std_bitmap_metric (string s, text_extents* bmm, int bc, int ec);
+bitmap_font std_bitmap_font (string name, bitmap_char* bmf, int bc, int ec);
 
 #endif // defined BITMAP_FONT_H

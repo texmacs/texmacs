@@ -42,10 +42,8 @@ virtual_font_rep::virtual_font_rep (
     font_rep (base->dis, name, base), base_fn (base),
     virt (load_translator (vname)), size (size2), dpi (dpi2),
     last (N(virt->virt_def)),
-    bmm (make (bitmap_metric, name,
-	   new bitmap_metric_rep (name, new text_extents [last], 0, last-1))),
-    bmf (make (bitmap_font, name,
-	   new bitmap_font_rep (name, new bitmap_char  [last], 0, last-1)))
+    bmm (std_bitmap_metric (name, new text_extents [last], 0, last-1)),
+    bmf (std_bitmap_font (name, new bitmap_char  [last], 0, last-1))
 {
   copy_math_pars (base_fn);
   unit= ((size*dpi)/72)*PIXEL;
@@ -230,10 +228,8 @@ subst_sharp (tree t, string by) {
 
 static void
 make_char_font (string name, bitmap_metric& cbmm, bitmap_font& cbmf) {
-  cbmm= make (bitmap_metric, name,
-	      new bitmap_metric_rep (name, new text_extents [1], 0, 0));
-  cbmf= make (bitmap_font, name,
-	      new bitmap_font_rep (name, new bitmap_char [1], 0, 0));
+  cbmm= std_bitmap_metric (name, new text_extents [1], 0, 0);
+  cbmf= std_bitmap_font (name, new bitmap_char [1], 0, 0);
 }
 
 /******************************************************************************
@@ -247,15 +243,15 @@ virtual_font_rep::get_char (string s, bitmap_metric& cbmm, bitmap_font& cbmf) {
   if (N(s)==1) {
     cbmm= bmm;
     cbmf= bmf;
-    if (nil (bmf->bmf[c]))
-      bmf->bmf[c]= compile (virt->virt_def[c], bmm->bmm[c]);
+    if (nil (bmf->get(c)))
+      bmf->get(c)= compile (virt->virt_def[c], bmm->get(c));
     return c;
   }
   else {
     make_char_font (res_name * s, cbmm, cbmf);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
-    if (nil (cbmf->bmf[0]))
-      cbmf->bmf[0]= compile (t, cbmm->bmm[0]);
+    if (nil (cbmf->get(0)))
+      cbmf->get(0)= compile (t, cbmm->get(0));
     return 0;
   }
 }
@@ -270,7 +266,7 @@ virtual_font_rep::get_extents (string s, text_extents& ex) {
     ex->x1= ex->x2= ex->x3= ex->x4= ex->y3= ex->y4= 0;
   }
   else {
-    text_extents_struct* ey (cbmm->bmm[c]);
+    text_extents_struct* ey (cbmm->get(c));
     ex->x1= ey->x1; ex->y1= ey->y1;
     ex->x2= ey->x2; ex->y2= ey->y2;
     ex->x3= ey->x3; ex->y3= ey->y3;
@@ -292,7 +288,7 @@ virtual_font_rep::get_bitmap (string s) {
   bitmap_font cbmf;
   int c= get_char (s, cbmm, cbmf);
   if (c == -1) return font_rep::get_bitmap (s);
-  else return cbmf->bmf[c];
+  else return cbmf->get(c);
 }
 
 /******************************************************************************
