@@ -141,7 +141,7 @@ shove (page_item& item1, page_item& item2, stack_border sb) {
     // cout << "Shove: " << sh/256 << "\n";
     if (sh == 0) {
       // no collisions
-      SI h= max (sb->height, b2->y2 + sb->sep);
+      SI h= max (sb->height, max (b2->y2, b2->y2 - b1->y1 - (sb->height>>1)));
       item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
     }
     else {
