@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.4.3>
 
 <style|tmdoc>
 
@@ -11,6 +11,9 @@
 
     <item>Christoph Benzmueller and his team for financially supporting the
     development of <TeXmacs>.
+
+    <item>Springer-Verlag for their financial support for making a better
+    Windows version.
 
     <item>Jean-Claude Fernandez, Fabien Salvi and the other persons from the
     CRI host and administrate the <TeXmacs> website.
@@ -32,28 +35,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|<uninit>|?>>
-  </collection>
-</references>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4.3>
 
 <style|tmdoc>
 
@@ -14,7 +14,10 @@
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
-    <item>Dan Martens made the current experimental port for <name|Windows>.
+    <item>Dan Martens made the <name|Windows> port.
+
+    <item>Henri Lesourd is working on native technical drawing support in
+    <TeXmacs>. He also fixed a bug in the presentation mode.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
@@ -24,19 +27,21 @@
     interfacing <TeXmacs> with scientific computation or computer algebra
     systems. He also implemented the interface with the Pari system.
 
-    <item>Felix Breuer helped with the support of Unicode and other character
-    encodings. He also made a donation to the project.
-
-    <item>Bill Page and David Mentré for the support of the free version of
-    <name|Axiom>.
-
-    <item>Stéphane Payrard made an important bugfix for destroying windows.
-
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
 
-    <item>Henri Lesourd is working on native technical drawing support in
+    <item>Felix Breuer helped with the support of Unicode and other character
+    encodings. He also made a donation to the project.
+
+    <item>Stéphane Payrard made an important bugfix for destroying windows.
+
+    <item>Josef Weidendorfer for two patches to improve the speed of
     <TeXmacs>.
+
+    <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
+
+    <item>Bill Page and David Mentré for the support of the free version of
+    <name|Axiom>.
 
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
@@ -56,8 +61,6 @@
 
     <item>Jonas Lööf for a precise installation procedure on Cygwin.
 
-    <item>Johann Dréo for the new <TeXmacs> icon.
-
     <item>Rob Clark made a patch which improves the system time support.
   </itemize>
 
@@ -74,17 +77,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>
