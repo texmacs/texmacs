@@ -154,6 +154,7 @@ public:
   virtual void go_to_correct (path p) = 0;
   virtual void go_to_start (path p) = 0;
   virtual void go_to_end (path p) = 0;
+  virtual void go_to_border (path p, bool at_start) = 0;
   virtual void go_to_here () = 0;
   virtual void go_start () = 0;
   virtual void go_end () = 0;
@@ -226,10 +227,8 @@ public:
   virtual void remove_return (path p) = 0;
   virtual void insert_tree (tree t, path p_in_t) = 0;
   virtual void insert_tree (tree t) = 0;
-  virtual void remove_backwards () = 0;
-  virtual void remove_forwards () = 0;
-  virtual void remove_structure_backwards () = 0;
-  virtual void remove_structure_forwards () = 0;
+  virtual void remove_text (bool forward) = 0;
+  virtual void remove_structure (bool forward) = 0;
   virtual void remove_structure_upwards () = 0;
 
   virtual void make_space (tree t) = 0;

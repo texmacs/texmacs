@@ -192,16 +192,6 @@ tm_writer::tag (string before, string s, string after) {
   write (after, false);
 }
 
-static bool
-is_empty (tree t) {
-  if (is_atomic (t)) return t == "";
-  if (is_func (t, DOCUMENT, 0)) return true;
-  if (is_func (t, DOCUMENT, 1)) return is_empty (t[0]);
-  if (is_func (t, CONCAT, 0)) return true;
-  if (is_func (t, CONCAT, 1)) return is_empty (t[0]);
-  return false;
-}
-
 void
 tm_writer::apply (string func, array<tree> args) {
   int i, last, n=N(args);

@@ -55,7 +55,7 @@
       (select-line))
   (make-with var val)
   (insert-return)
-  (remove-backwards))
+  (remove-text #f))
 
 (define (set-left-margin s) (make-line-with "left margin" s))
 (define (set-right-margin s) (make-line-with "right margin" s))

@@ -492,14 +492,6 @@ edit_dynamic_rep::insert_argument (path p, bool forward) {
   go_to_argument (q, forward);
 }
 
-static bool
-is_empty (tree t) {
-  if (t == "") return true;
-  if (is_func (t, DOCUMENT, 1)) return is_empty (t[0]);
-  if (is_func (t, CONCAT, 1)) return is_empty (t[0]);
-  return false;
-}
-
 void
 edit_dynamic_rep::remove_argument (path p, bool forward) {
   tree t= subtree (et, path_up (p));

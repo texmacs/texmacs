@@ -217,6 +217,12 @@ edit_cursor_rep::go_to_end (path p) {
 }
 
 void
+edit_cursor_rep::go_to_border (path p, bool at_start) {
+  if (at_start) go_to_start (p);
+  else go_to_end (p);
+}
+
+void
 edit_cursor_rep::go_to_here () {
   cu= eb->find_check_cursor (tp);
   if (!cu->valid) {

@@ -125,7 +125,7 @@
 
   ("emacs a" (go-start-line))
   ("emacs b" (go-left))
-  ("emacs d" (remove-forwards))
+  ("emacs d" (remove-text #t))
   ("emacs e" (go-end-line))
   ("emacs f" (go-right))
   ("emacs g" (selection-cancel))
