@@ -262,6 +262,8 @@ edit_env_rep::exec (tree t) {
     return exec_date (t);
   case TRANSLATE:
     return exec_translate (t);
+  case CHANGE_CASE:
+    return exec_change_case (t);
   case FIND_FILE:
     return exec_find_file (t);
   case IS_TUPLE:
@@ -1004,6 +1006,45 @@ edit_env_rep::exec_translate (tree t) {
   if (is_compound (t1) || is_compound (t2) || is_compound (t3))
     return tree (ERROR, "bad translate");
   return dis->translate (t1->label, t2->label, t3->label);
+}
+
+tree
+edit_env_rep::exec_change_case (tree t, tree nc, bool first) {
+  if (is_atomic (t)) {
+    string s= t->label;
+    tree   r= copy (s);
+    int i, n= N(s);
+
+    bool all= true;
+    bool up = false;
+    bool lo = false;
+    if (nc == "Upcase") { all= false; up= true; }
+    else if (nc == "UPCASE") { up= true; }
+    else if (nc == "locase") { lo= true; }
+
+    for (i=0; i<n; lan->enc->token_forward (s, i))
+      if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
+	if (up && is_locase (s[i])) r->label[i]= upcase (s[i]);
+	if (lo && is_upcase (s[i])) r->label[i]= locase (s[i]);
+      }
+    r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
+    return r;
+  }
+  else if (is_concat (t)) {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= exec_change_case (t[i], nc, first && (i==0));
+    r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
+    return r;
+  }
+  else return t;
+}
+
+tree
+edit_env_rep::exec_change_case (tree t) {
+  if (N(t) < 2) return tree (ERROR, "bad change case");
+  return exec_change_case (t[0], t[1], true);
 }
 
 tree

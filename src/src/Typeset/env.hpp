@@ -211,6 +211,8 @@ private:
   tree exec_number (tree t);
   tree exec_date (tree t);
   tree exec_translate (tree t);
+  tree exec_change_case (tree t, tree nc, bool first);
+  tree exec_change_case (tree t);
   tree exec_find_file (tree t);
   tree exec_is_tuple (tree t);
   tree exec_lookup (tree t);

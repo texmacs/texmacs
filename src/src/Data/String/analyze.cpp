@@ -114,6 +114,20 @@ is_numeric (string s) {
 * Changing cases
 ******************************************************************************/
 
+char
+upcase (char c) {
+  if (is_locase (c))
+    return (char) (((int) ((unsigned char) c)) - 32);
+  else return c;
+}
+
+char
+locase (char c) {
+  if (is_upcase (c))
+    return (char) (((int) ((unsigned char) c)) + 32);
+  else return c;
+}
+
 string
 upcase_first (string s) {
   if ((N(s)==0) || (!is_locase (s[0]))) return s;
