@@ -48,6 +48,8 @@
 
     <branch|Rendering of style files and packages|presentation/src-present.en.tm>
 
+    <branch|The style-sheet language|design/style-language.en.tm>
+
     <branch|The standard <TeXmacs> styles|standard/standard.en.tm>
 
     <branch|Writing your own style files|design/design.en.tm>
