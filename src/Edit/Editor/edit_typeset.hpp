@@ -69,7 +69,7 @@ public:
   tree     exec_texmacs (tree t, path p);
   tree     exec_html (tree t, path p);
   tree     exec_html (tree t);
-  tree     box_info (tree t, string what);
+  tree     texmacs_exec (tree t);
 
   void     init_env (string var, tree by);
   void     init_default (string var);

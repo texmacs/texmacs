@@ -336,6 +336,15 @@
          0)))
       0))
 
+(define (box-info t cmd)
+  (tree->stree (texmacs-exec (stree->tree `(exec (box-info ,t ,cmd))))))
+
+(define (frame-direct p)
+  (tree->stree (texmacs-exec (stree->tree `(exec (frame-direct ,p))))))
+
+(define (frame-inverse p)
+  (tree->stree (texmacs-exec (stree->tree `(exec (frame-inverse ,p))))))
+
 ;; Graphical object
 (define graphical-color "default")
 (define graphical-lwidth "default")
@@ -367,16 +376,16 @@
        `((line (point ,l ,y) (point ,(i2s (- (s2i l) len)) ,y))
 	 (line (point ,r ,y) (point ,(i2s (+ (s2i r) len)) ,y))))
   )
-  (let* ((info0 (cdr (tree->stree (box-info (stree->tree o) "lbLB"))))
-	 (info1 (cdr (tree->stree (box-info (stree->tree o) "rtRT"))))
+  (let* ((info0 (cdr (box-info o "lbLB")))
+	 (info1 (cdr (box-info o "rtRT")))
 	 (l (i2s (min (s2i (car  info0)) (s2i (caddr  info0)))))
 	 (b (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
 	 (r (i2s (max (s2i (car  info1)) (s2i (caddr  info1)))))
 	 (t (i2s (max (s2i (cadr info1)) (s2i (cadddr info1)))))
-	 (p0 (tree->stree (frame-inverse (stree->tree `(tuple ,l ,b)))))
-	 (p1 (tree->stree (frame-inverse (stree->tree `(tuple ,r ,b)))))
-	 (p2 (tree->stree (frame-inverse (stree->tree `(tuple ,r ,t)))))
-	 (p3 (tree->stree (frame-inverse (stree->tree `(tuple ,l ,t)))))
+	 (p0 (frame-inverse `(tuple ,l ,b)))
+	 (p1 (frame-inverse `(tuple ,r ,b)))
+	 (p2 (frame-inverse `(tuple ,r ,t)))
+	 (p3 (frame-inverse `(tuple ,l ,t)))
         )
 	(with res `((line ,p0 ,p1) (line ,p1 ,p2)
 		    (line ,p2 ,p3) (line ,p3 ,p0)

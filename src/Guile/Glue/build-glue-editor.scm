@@ -277,9 +277,7 @@
   (tm-insert-with insert_with (void path string content))
   (tm-remove-with remove_with (void path string))
 
-  (frame-direct frame_direct_transform (tree tree))
-  (frame-inverse frame_inverse_transform (tree tree))
   (get-graphical-object get_graphical_object (tree))
   (set-graphical-object set_graphical_object (void tree))
   (path-xy path_xy (path double double))
-  (box-info box_info (tree tree string)))
+  (texmacs-exec texmacs_exec (tree tree)))

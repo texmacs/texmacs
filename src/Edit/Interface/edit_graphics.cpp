@@ -84,22 +84,6 @@ edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
 
-tree
-edit_graphics_rep::frame_direct_transform (tree t) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  frame f= (b ? env : get_typesetter ()->env)->fr;
-  return as_tree (!nil (f) ? f (as_point (t)) : point ());
-}
-
-tree
-edit_graphics_rep::frame_inverse_transform (tree t) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  frame f= (b ? env : get_typesetter ()->env)->fr;
-  return as_tree (!nil (f) ? f [as_point (t)] : point ());
-}
-
 tree edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }
