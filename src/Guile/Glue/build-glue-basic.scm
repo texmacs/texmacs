@@ -37,6 +37,7 @@
   (tree-arity N (int texmacs_tree))
   (tree-ref tree_ref (texmacs_tree texmacs_tree int))
   (tree-set! tree_set (void texmacs_tree int texmacs_tree))
+  (tree-range tree_range (tree tree int int))
   (subtree subtree (texmacs_tree texmacs_tree path))
   (tree-copy copy (tree tree))
   (tree-append join (tree tree tree))

@@ -212,6 +212,7 @@
   (the-buffer the_buffer (texmacs_tree))
   (the-path the_path (path))
   (the-mutator-path get_mutator_path (path))
+  (the-mutator-time get_mutator_time (int))
   (process-input process_input (void))
   (make-session make_session (void string string))
   (start-input start_input (void string string path))

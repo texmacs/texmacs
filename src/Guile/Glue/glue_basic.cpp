@@ -261,6 +261,23 @@ tmg_tree_setS (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_tree_range (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-range");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-range");
+  SCM_ASSERT_INT (arg3, SCM_ARG3, "tree-range");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  int in3= scm_to_int (arg3);
+
+  // SCM_DEFER_INTS;
+  tree out= tree_range (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_subtree (SCM arg1, SCM arg2) {
   SCM_ASSERT_TEXMACS_TREE (arg1, SCM_ARG1, "subtree");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "subtree");
@@ -2289,6 +2306,7 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
   gh_new_procedure ("tree-ref", (FN) tmg_tree_ref, 2, 0, 0);
   gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
+  gh_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
   gh_new_procedure ("tree-append", (FN) tmg_tree_append, 2, 0, 0);
