@@ -12,7 +12,7 @@
 
 #include "timer.hpp"
 #ifdef OS_WIN32
-#include "sysmisc.hpp"
+#include <sys/misc.h>
 #endif
 
 time_t

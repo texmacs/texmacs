@@ -21,12 +21,7 @@
 #include "connect.hpp"
 #include "typesetter.hpp"
 #include "drd_std.hpp"
-
-#ifdef OS_WIN32
-#include "dlfcn.hpp"
-#else
 #include <dlfcn.h>
-#endif
 #include <setjmp.h>
 
 /******************************************************************************

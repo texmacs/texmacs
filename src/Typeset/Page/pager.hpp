@@ -79,7 +79,7 @@ public:
   box  make_footer ();
   box  make_pages ();
 
-  friend class stacker_rep;
+  friend struct stacker_rep;
   friend box typeset_paragraph (edit_env env, tree t, path ip);
   friend box typeset_document (edit_env env, tree t, path ip);
 };

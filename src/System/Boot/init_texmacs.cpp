@@ -241,7 +241,11 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
+#ifdef OS_WIN32
+  use_which = false;
+#else
   use_which= (var_eval_system ("which texmacs 2> /dev/null") != "");
+#endif
 
   // Set extra environment variables for Cygwin
 #ifdef OS_CYGWIN

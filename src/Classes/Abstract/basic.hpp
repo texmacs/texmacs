@@ -187,14 +187,11 @@ public:                                    \
 * null indirect structures
 ******************************************************************************/
 
-template<class T>
-inline bool nil (T x) { return x.rep==NULL; }
-
 // concrete_null
 #define CONCRETE_NULL(PTR) \
   CONCRETE(PTR);           \
   inline PTR();            \
-  friend bool nil LESSGTR (PTR x)
+  friend bool nil /*LESSGTR*/ (PTR x)
 #define CONCRETE_NULL_CODE(PTR)                         \
   inline PTR::PTR (): rep(NULL) {}                      \
   inline PTR::PTR (const PTR& x):                       \
@@ -204,7 +201,8 @@ inline bool nil (T x) { return x.rep==NULL; }
     return this->rep; }                                 \
   inline PTR& PTR::operator = (PTR x) {                 \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep); \
-    this->rep=x.rep; return *this; }
+    this->rep=x.rep; return *this; }                    \
+  inline bool nil (PTR x) { return x.rep==NULL; }
 #define CONCRETE_NULL_TEMPLATE(PTR,T) \
   CONCRETE_TEMPLATE(PTR,T);           \
   inline PTR();                       \
@@ -218,7 +216,8 @@ inline bool nil (T x) { return x.rep==NULL; }
     return this->rep; }                                                 \
   template<TT T> inline PTR<T>& PTR<T>::operator = (PTR<T> x) {         \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                 \
-    this->rep=x.rep; return *this; }
+    this->rep=x.rep; return *this; }                                    \
+  template<TT T> inline bool nil (PTR<T> x) { return x.rep==NULL; }
 
 #define CONCRETE_NULL_TEMPLATE_2(PTR,T1,T2) \
   CONCRETE_TEMPLATE_2(PTR,T1,T2);           \
@@ -235,7 +234,9 @@ inline bool nil (T x) { return x.rep==NULL; }
   template<TT1 T1, TT2 T2>                                                \
   inline PTR<T1,T2>& PTR<T1,T2>::operator = (PTR<T1,T2> x) {              \
     INC_COUNT_NULL (x.rep); DEC_COUNT_NULL (this->rep);                   \
-    this->rep=x.rep; return *this; }
+    this->rep=x.rep; return *this; }                                      \
+  template<TT1 T1, TT2 T2> inline bool nil (PTR<T1,T2> x) {               \
+    return x.rep==NULL; }
 // end concrete_null
 
 // abstract_null

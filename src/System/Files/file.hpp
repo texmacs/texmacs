@@ -27,14 +27,18 @@ url  url_temp (string suffix= "");
 
 array<string> read_directory (url name, bool& error_flag);
 
+inline string sys_concretize (url u1) {
+  return quote (concretize (u1)); }
+
 inline void system (string which, url u1) {
-  system (which * " " * concretize (u1)); }
+  system (which * " " * sys_concretize (u1)); }
 inline void system (string which, url u1, url u2) {
-  system (which * " " * concretize (u1) * " " * concretize (u2)); }
+  system (which * " " * sys_concretize (u1) * " " * sys_concretize (u2)); }
 inline void system (string which, url u1, char* post) {
-  system (which * " " * concretize (u1) * " " * post); }
+  system (which * " " * sys_concretize (u1) * " " * post); }
 inline void system (string which, url u1, char* sep, url u2) {
-  system (which * " " * concretize (u1) * " " * sep * " " * concretize (u2)); }
+  system (which * " " * sys_concretize (u1) * " " * sep *
+	          " " * sys_concretize (u2)); }
 inline string eval_system (string which, url u1) {
   return eval_system (which * " " * concretize (u1)); }
 inline string eval_system (string which, url u1, url u2) {
@@ -43,6 +47,10 @@ inline void move (url from, url to) { system ("mv", from, to); }
 inline void copy (url from, url to) { system ("cp", from, to); }
 inline void append (url from, url to) { system ("cat", from, ">>", to); }
 inline void remove (url what) { system ("rm -f", what); }
+#ifdef OS_WIN32
+inline void mkdir (url dir) { system ("mkdir", dir); }
+#else
 inline void mkdir (url dir) { system ("mkdir -p", dir); }
+#endif
 
 #endif // defined FILE_H

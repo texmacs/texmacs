@@ -49,6 +49,10 @@ init_helper_binaries () {
     cerr << "TeXmacs] MakeTeXTFM works with your TeX distribution\n";
     set_setting ("MAKETFM", "MakeTeXTFM");
   }
+  else if (exists_in_path ("maketfm")){
+    cerr << "TeXmacs] maketfm works with your TeX distribution\n";
+    set_setting ("MAKETFM", "maketfm");
+  }
   else {
     cerr << "TeXmacs] MakeTeXTFM does not work with your TeX distribution\n";
     set_setting ("MAKETFM", "false");
@@ -61,6 +65,10 @@ init_helper_binaries () {
   else if (exists_in_path ("MakeTeXPK")) {
     cerr << "TeXmacs] MakeTeXPK works with your TeX distribution\n";
     set_setting ("MAKEPK", "MakeTeXPK");
+  }
+  else if (exists_in_path ("makepk")){
+    cerr << "TeXmacs] makepk works with your TeX distribution\n";
+    set_setting ("MAKEPK", "makepk");
   }
   else {
     cerr << "TeXmacs] MakeTeXPK does not work with your TeX distribution\n";

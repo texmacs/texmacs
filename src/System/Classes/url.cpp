@@ -133,7 +133,7 @@ url_default (string name, int type= URL_SYSTEM) {
   url u= url_get_name (name, type);
 #ifdef OS_WIN32
   // FIXME: this hack seems a bit too simple
-  return u;
+  return url_root ("default") * u;
 #else
   if (u->t == "") return url_root ("default");
   return url_root ("default") * u;
@@ -414,6 +414,9 @@ as_string (url u, int type) {
     if ((!is_name (u[1])) && (!is_root (u[1]))) s1= "{" * s1 * "}";
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
+#ifdef OS_WIN32
+    if (is_root (u[1]) && stype == URL_SYSTEM) return s2;
+#endif
     return s1 * sep * s2;
   }
   if (is_or (u)) {
@@ -423,7 +426,15 @@ as_string (url u, int type) {
     if ((!is_or (u[2])) && (!is_name_in_path (u[2]))) s2= "{" * s2 * "}";
     return s1 * string (URL_SEPARATOR) * s2;
   }
+#ifdef OS_WIN32
+  if (is_root (u, "default")) {
+    int stype= type;
+    if (is_root (u[1]) && (!is_root (u[1], "default"))) stype= URL_STANDARD;
+	if (stype == URL_SYSTEM) return ""; else return "/";
+  }
+#else
   if (is_root (u, "default")) return "/";
+#endif
   if (is_root (u, "file")) return u[1]->t->label * "://";
   if (is_root (u)) return u[1]->t->label * ":/";
   if (is_wildcard (u, 0)) return "**";
@@ -433,7 +444,7 @@ as_string (url u, int type) {
 
 ostream&
 operator << (ostream& out, url u) {
-  return out << as_string (u);
+  return out << as_string (u, URL_SYSTEM);
 }
 
 /******************************************************************************
