@@ -3,25 +3,50 @@
 <style|<tuple|source|common-base>>
 
 <\body>
-  <assign|tmdoc-web-package|1.0>
+  <active*|<\src-title>
+    <src-package|tmdoc-web|1.0>
 
-  \;
+    <\src-purpose>
+      This package is used for the automatic generation of the <TeXmacs> web
+      site.
+    </src-purpose>
+
+    <src-copyright|2003--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Bars with hyperlinks.
+    </src-comment>
+  </active*>
 
   <assign|tmweb-current|<macro|main|sub|<assign|tmweb-main|<arg|main>><assign|tmweb-sub|<arg|sub>>>>
 
-  <assign|tmweb-suffix|<macro|<case|<equal|<language>|german>|.de.tm|<equal|<language>|french>|.fr.tm|<equal|<language>|italian>|.it.tm|<equal|<language>|portuguese>|.pt.tm|<equal|<language>|spanish>|.es.tm|.en.tm>>>
+  <assign|tmweb-suffix|<macro|<style-with|src-compact|none|<case|<equal|<language>|german>|.de.tm|<equal|<language>|french>|.fr.tm|<equal|<language>|italian>|.it.tm|<equal|<language>|portuguese>|.pt.tm|<equal|<language>|spanish>|.es.tm|.en.tm>>>>
 
-  <assign|tmweb-link|<macro|what|to|<hlink|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
-  green|brown>|<translate|<arg|what>|english|<language>>>|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>
+  <assign|tmweb-link|<macro|what|to|<style-with|src-compact|none|<hlink|<style-with|src-compact|none|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
+  green|brown>|<translate|<arg|what>|english|<language>>>>|<style-with|src-compact|none|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>>>
 
   <assign|tmweb-list-extra|<macro|x| \| <arg|x>>>
 
   <assign|tmweb-list|<xmacro|x| <arg|x|0><map-args|tmweb-list-extra|concat|x|1>
   >>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Main navigation bar and the license for the <TeXmacs> web pages.
+    </src-comment>
+  </active*>
 
-  <assign|tmweb-main-links|<macro|<tmweb-list|<tmweb-link|Home|../home/welcome>|<tmweb-link|Download|../download/download>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<translate|Search|english|<language>>>|http://www.texmacs.org/search>>>>
+  <assign|tmweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|../home/welcome>|<tmweb-link|Download|../download/download>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.texmacs.org/search>>>>>
 
   <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<tmweb-main-links>|<arg|title>|<arg|bar>>>>
 
@@ -40,30 +65,42 @@
     </tmdoc-license>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Hard-coded hyperlinks. Argh, but well...
+    </src-comment>
+  </active*>
 
-  <assign|tmweb-home-links|<macro|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Screen
-  shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing lists|ml>>>>
+  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Screen
+  shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing lists|ml>>>>>
 
-  <assign|tmweb-download-links|<macro|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|CVS|cvs>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>
+  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Binaries|unix>|<tmweb-link|RPM|rpm>|<tmweb-link|Knoppix|knoppix>|<tmweb-link|CVS|cvs>|<tmweb-link|Fonts|fonts>|<tmweb-link|Requirements|requirements>>>>>
 
-  <assign|tmweb-help-links|<macro|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorial|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>
+  <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorial|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>>>>>
 
-  <assign|tmweb-contribute-links|<macro|<tmweb-list|<tmweb-link|Helping|contribute>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>
+  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Helping|contribute>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
 
-  <assign|tmweb-plugin-links|<macro|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Education|education>|<tmweb-link|Tools|tools>>>>
+  <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Education|education>|<tmweb-link|Tools|tools>>>>>
 
-  <assign|tmweb-about-links|<macro|<tmweb-list|<tmweb-link|Authors|authors>|<tmweb-link|Philosophy|philosophy>|<tmweb-link|Changes|changes>|<tmweb-link|Plans|plans>|<tmweb-link|Artwork|artwork>|<tmweb-link|License|license>>>>
+  <assign|tmweb-about-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Authors|authors>|<tmweb-link|Philosophy|philosophy>|<tmweb-link|Changes|changes>|<tmweb-link|Plans|plans>|<tmweb-link|Artwork|artwork>|<tmweb-link|License|license>>>>>
 
-  <assign|tmweb-contact-links|<macro|<tmweb-list|<tmweb-link|Feedback|contact>|<tmweb-link|Bugs|bugs>|<tmweb-link|Suggestions|wishes>|<tmweb-link|Patches|patches>>>>
+  <assign|tmweb-contact-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Feedback|contact>|<tmweb-link|Bugs|bugs>|<tmweb-link|Suggestions|wishes>|<tmweb-link|Patches|patches>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Browsing the manual and the tutorial.
+    </src-comment>
+  </active*>
 
-  <assign|tmweb-manual-links|<macro|previous|next|<tmweb-list|<tmweb-link|Manual|../help/manual>|<tmweb-link|Top|web-manual>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>
+  <assign|tmweb-manual-links|<macro|previous|next|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Manual|../help/manual>|<tmweb-link|Top|web-manual>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>>
 
-  <assign|tmweb-tutorial-links|<macro|previous|next|<tmweb-list|<tmweb-link|Tutorial|../help/tutorial>|<tmweb-link|Top|web-tutorial>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>
+  <assign|tmweb-tutorial-links|<macro|previous|next|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Tutorial|../help/tutorial>|<tmweb-link|Top|web-tutorial>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Miscellaneous macros.
+    </src-comment>
+  </active*>
 
   <assign|tmweb-image|<macro|name|<postscript|<merge|http://www.texmacs.org/Samples/|<arg|name>>|*2/3|||||>>>
 

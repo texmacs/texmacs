@@ -3,9 +3,23 @@
 <style|<tuple|source|common-base>>
 
 <\body>
-  <assign|tmdoc-keyboard-package|1.0>
+  <active*|<\src-title>
+    <src-package|tmdoc-keyboard|1.0>
 
-  \;
+    <\src-purpose>
+      Macros for keyboard shortcuts in the <TeXmacs> documentation.
+    </src-purpose>
+
+    <src-copyright|2001--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
   <assign|key|<macro|x|<active*|<move|<with|font-size|0.92|<block|<tformat|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-background|broken
   white>|<table|<row|<cell|<with|font-family|tt|<inactive*|<arg|x>>>>>>>>>||0.05fn>>>>

@@ -67,8 +67,14 @@
     <src-title-line|Style|<arg|x>-<arg|y>>
   </surround>>>
 
-  <assign|src-package|<macro|x|y|<\surround|<assign|<merge|<arg|x>|-package>|<arg|y>><assign|<merge|<arg|x>|-drd>|<arg|y>>|>
-    <src-title-line|Package|<arg|x>-<arg|y>>
+  <assign|src-package|<macro|x|y|<\surround|<assign|<merge|<arg|x>|-package>|<arg|y>><assign|<merge|<arg|x>|-dtd>|<arg|y>>|>
+    <src-title-line|Package|<arg|x>-<with|font-shape|italic|<arg|y>>>
+  </surround>>>
+
+  <assign|src-package-dtd|<macro|x|y|a|b|<\surround|<assign|<merge|<arg|x>|-package>|<arg|y>><assign|<merge|<arg|a>|-dtd>|<arg|b>>|>
+    <src-title-line|Package|<arg|x>-<with|font-shape|italic|<arg|y>>>
+
+    <src-title-line|Dtd|<arg|a>-<with|font-shape|italic|<arg|b>>>
   </surround>>>
 
   <assign|src-purpose|<\macro|x>

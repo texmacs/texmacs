@@ -1,65 +1,83 @@
-<TeXmacs|1.0.0.24>
+<TeXmacs|1.0.3.4>
+
+<style|source>
 
 <\body>
-  <assign|section-automatic-short-package|1.0>
+  <active*|<\src-title>
+    <src-package-dtd|section-automatic-short|1.0|section-automatic|1.0>
 
-  <assign|section-automatic-dtd|1.0>
+    <\src-purpose>
+      Environments for automatically generated content for short works like
+      articles.
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Rendering.
+    </src-comment>
+  </active*>
 
   <assign|bibliography*|<\macro|aux|style|file-name|name|body>
-    <expand|section*|<translate|<arg|name>|english|<apply|language>>><apply|t\
-    oc-main-2|<translate|Bibliography|english|<apply|language>>>
+    <style-with|src-compact|none|<section*|<localize|<arg|name>>><toc-main-2|<localize|<arg|name>>>>
 
-    <with|interparagraph space|0fn|font size|0.84|<description|<arg|body>>>
+    <with|par-par-sep|0fn|font-size|0.84|<description|<arg|body>>>
   </macro>>
 
   <assign|table-of-contents*|<\macro|aux|name|body>
-    <expand|section*|<translate|<arg|name>|english|<apply|language>>>
+    <section*|<localize|<arg|name>>>
 
-    <with|first indentation|0fn|interparagraph space|0fn|<arg|body>>
+    <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
   </macro>>
 
   <assign|the-index*|<\macro|aux|name|body>
-    <expand|section*|<translate|<arg|name>|english|<apply|language>>><apply|t\
-    oc-main-2|<translate|<arg|name>|english|<apply|language>>>
+    <style-with|src-compact|none|<section*|<localize|<arg|name>>><toc-main-2|<localize|<arg|name>>>>
 
-    <with|first indentation|0fn|interparagraph space|0fn|font size|0.84|nr
-    columns|2|<arg|body>>
+    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|par-columns|2|<arg|body>>
   </macro>>
 
   <assign|the-glossary*|<\macro|aux|name|body>
-    <expand|section*|<translate|<arg|name>|english|<apply|language>>><apply|t\
-    oc-main-2|<translate|<arg|name>|english|<apply|language>>>
+    <style-with|src-compact|none|<section*|<localize|<arg|name>>><toc-main-2|<localize|<arg|name>>>>
 
-    <with|first indentation|0cm|interparagraph space|0fn|font
-    size|0.84|<arg|body>>
+    <with|par-first|0cm|par-par-sep|0fn|font-size|0.84|<arg|body>>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      The environments.
+    </src-comment>
+  </active*>
 
   <assign|bibliography|<\macro|aux|style|file-name|body>
-    <expand|bibliography*|<arg|aux>|<arg|style>|<arg|file-name>|Bibliography|\
-    <arg|body>>
+    <bibliography*|<arg|aux>|<arg|style>|<arg|file-name>|Bibliography|<arg|body>>
   </macro>>
 
   <assign|table-of-contents|<\macro|aux|body>
-    <expand|table-of-contents*|<arg|aux>|Table of contents|<arg|body>>
+    <table-of-contents*|<arg|aux>|Table of contents|<arg|body>>
   </macro>>
 
   <assign|the-index|<\macro|aux|body>
-    <expand|the-index*|<arg|aux>|Index|<arg|body>>
+    <the-index*|<arg|aux>|Index|<arg|body>>
   </macro>>
 
   <assign|the-glossary|<\macro|aux|body>
-    <expand|the-glossary*|<arg|aux>|Glossary|<arg|body>>
+    <the-glossary*|<arg|aux>|Glossary|<arg|body>>
   </macro>>
 
   <assign|thebibliography|<\macro|dummy|body>
-    <expand|section*|<translate|Bibliography|english|<apply|language>>><apply\
-    |toc-main-2|<translate|Bibliography|english|<apply|language>>>
+    <style-with|src-compact|none|<section*|<localize|Bibliography>><toc-main-2|<localize|Bibliography>>>
 
-    <with|interparagraph space|0fn|font size|0.84|<description|<arg|body>>>
+    <with|par-par-sep|0fn|font-size|0.84|<description|<arg|body>>>
   </macro>>
 
   \;
@@ -67,18 +85,18 @@
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

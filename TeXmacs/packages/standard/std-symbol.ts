@@ -3,11 +3,24 @@
 <style|source>
 
 <\body>
-  <assign|std-symbol-package|1.0>
+  <active*|<\src-title>
+    <src-package|std-symbol|1.0>
 
-  <assign|std-symbol-dtd|1.0>
+    <\src-purpose>
+      Some additional symbols for text mode. This file should become obsolete
+      when better support for Unicode will be implemented.
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
   <assign|cent|<macro|<active*|<with|font|tc|¢>>>>
 

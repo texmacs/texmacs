@@ -7,7 +7,7 @@
     <src-package|std-counter|1.0>
 
     <\src-purpose>
-      This packages manages counters for sections, theorems, etc.
+      This package manages counters for sections, theorems, etc.
     </src-purpose>
 
     <src-copyright|2004|Joris van der Hoeven>

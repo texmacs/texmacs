@@ -1,77 +1,79 @@
-<TeXmacs|1.0.0.5>
+<TeXmacs|1.0.3.4>
 
-<style|section-article>
+<style|source>
 
 <\body>
+  <active*|<\src-title>
+    <src-package|section-acmconf|1.0>
+
+    <\src-purpose>
+      Sectional markup for the acmconf style.
+    </src-purpose>
+
+    <src-copyright|1998--2004|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <use-package|section-article>
+
   <assign|section-article-2col-package|1.0>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Chapters.
+    </src-comment>
+  </active*>
 
-  Chapters and sections
+  <assign|chapter*|<macro|name|<style-with|src-compact|none|<vspace*|3fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|1fn><no-page-break>>>>
 
-  <assign|chapter*|<macro|name|<vspace*|3fn><with|paragraph mode|center|math
-  font series|bold|font series|bold|font size|1.19|<arg|name>><vspace|1fn><fo\
-  rmat|no page break after>>>
+  <assign|section*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|1.5fn><no-page-break><no-indent*>>>>
 
-  <assign|section*|<macro|name|<format|no first
-  indentation><vspace*|1.5fn><with|math font series|bold|font
-  series|bold|<arg|name>><vspace|1.5fn><format|no page break after><format|no
-  indentation after>>>
+  <assign|section|<macro|name|<style-with|src-compact|none|<assign|thesection|<macro|<sectionnr>>><assign|sectionnr|<plus|<value|sectionnr>|1>><resetsection><assign|thelabel|<thesection>><header-primary|<arg|name>|<thesection>|<localize|Section>><toc-main-2|<thelabel><space|2spc><arg|name>><section*|<thesection><sectionsep><arg|name>>>>>
 
-  <assign|section|<macro|name|<assign|thesection|<func|<apply|sectionnr>>><as\
-  sign|sectionnr|<plus|<value|sectionnr>|1>><apply|resetsection><assign|thela\
-  bel|<apply|thesection>><apply|header-primary|<arg|name>|<apply|thesection>|\
-  <translate|Section|english|<value|language>>><apply|toc-main-2|<apply|thela\
-  bel><space|2spc><arg|name>><expand|section*|<apply|thesection><apply|sectio\
-  nsep><arg|name>>>>
+  <assign|appendix|<macro|name|<style-with|src-compact|none|<assign|thesection|<macro|<number|<appendixnr>|Alpha>>><assign|appendixnr|<plus|<value|appendixnr>|1>><resetsection><assign|thelabel|<thesection>><header-primary|<arg|name>|<thesection>|<localize|Appendix>><toc-main-2|<localize|Appendix>
+  <thesection>.<space|2spc><arg|name>><section*|<localize|Appendix>
+  <thesection>.<space|2spc><arg|name>>>>>
 
-  <assign|appendix|<macro|name|<assign|thesection|<func|<number|<apply|append\
-  ixnr>|Alpha>>><assign|appendixnr|<plus|<value|appendixnr>|1>><apply|resetse\
-  ction><assign|thelabel|<apply|thesection>><apply|header-primary|<arg|name>|\
-  <apply|thesection>|<translate|Appendix|english|<value|language>>><apply|toc\
-  -main-2|<translate|Appendix|english|<value|language>>
-  <apply|thesection>.<space|2spc><arg|name>><expand|section*|<translate|Appen\
-  dix|english|<value|language>> <apply|thesection>.<space|2spc><arg|name>>>>
+  <\active*>
+    <\src-comment>
+      Subsections, subsubsections, paragraphs and subparagraphs.
+    </src-comment>
+  </active*>
 
-  \;
+  <assign|subsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1.5fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.75fn><no-page-break><no-indent*>>>>
 
-  Subsections, subsubsections, paragraphs and subparagraphs
+  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
 
-  <assign|subsection*|<macro|name|<format|no first
-  indentation><vspace*|1.5fn><with|math font series|bold|font
-  series|bold|<arg|name>><vspace|0.75fn><format|no page break
-  after><format|no indentation after>>>
+  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
-  <assign|subsubsection*|<macro|name|<format|no first
-  indentation><vspace*|1fn><with|math font series|bold|font
-  series|bold|<arg|name>><vspace|0.5fn><format|no page break after><format|no
-  indentation after>>>
-
-  <assign|paragraph*|<macro|name|<format|no first
-  indentation><vspace*|0.5fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
-
-  <assign|subparagraph*|<macro|name|<format|no first
-  indentation><vspace*|0.25fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
+  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|odd page margin|30mm>
-    <associate|paragraph width|150mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,85 +1,91 @@
-<TeXmacs|1.0.0.5>
+<TeXmacs|1.0.3.4>
 
-<style|section-automatic-short>
+<style|source>
 
 <\body>
-  <assign|section-seminar-package|1.0>
+  <active*|<\src-title>
+    <src-package-dtd|section-seminar|1.0|section-latex|1.0>
 
-  <assign|section-latex-dtd|1.0>
+    <\src-purpose>
+      Sectional markup for the seminar style.
+    </src-purpose>
 
-  \;
+    <src-copyright|1998--2004|Joris van der Hoeven>
 
-  Chapters
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you don't have this file, then write to the Free
+      Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
 
-  <assign|chapter*|<macro|name|<vspace*|2fn><with|paragraph mode|center|math
-  font series|bold|font series|bold|font size|2|font
-  shape|long|<arg|name>><vspace|1fn>>>
+  <use-package|section-automatic-short>
 
-  <assign|chapter**|<macro|chapname|name|<expand|chapter*|<arg|chapname>.<spa\
-  ce|2spc><arg|name>>>>
+  <\active*>
+    <\src-comment>
+      Chapters.
+    </src-comment>
+  </active*>
 
-  <assign|chapter|<macro|name|<apply|toc-main-2|<arg|name>><expand|chapter*|<\
-  arg|name>>>>
+  <assign|chapter*|<macro|name|<style-with|src-compact|none|<vspace*|2fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|2|font-shape|long|<arg|name>><vspace|1fn>>>>
 
-  \;
+  <assign|chapter**|<macro|chapname|name|<chapter*|<arg|chapname>.<space|2spc><arg|name>>>>
 
-  Sections, subsections and subsubsections
+  <assign|chapter|<macro|name|<toc-main-2|<arg|name>><chapter*|<arg|name>>>>
 
-  <assign|section*|<macro|name|<vspace*|1.5fn><with|paragraph
-  mode|center|math font series|bold|font series|bold|font
-  size|1.41|color|red|<arg|name>><vspace|0.75fn>>>
+  <\active*>
+    <\src-comment>
+      Sections, subsections and subsubsections.
+    </src-comment>
+  </active*>
 
-  <assign|section|<macro|name|<apply|toc-normal-1|<arg|name>><expand|section*\
-  |<arg|name>>>>
+  <assign|section*|<macro|name|<style-with|src-compact|none|<vspace*|1.5fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.41|color|red|<arg|name>><vspace|0.75fn>>>>
 
-  <assign|subsection*|<macro|name|<vspace*|1fn><with|math font
-  series|bold|font series|bold|font size|1.19|color|red|<arg|name>><vspace|0.\
-  5fn>>>
+  <assign|section|<macro|name|<toc-normal-1|<arg|name>><section*|<arg|name>>>>
 
-  <assign|subsection|<macro|name|<apply|toc-normal-2|<arg|name>><expand|subse\
-  ction*|<arg|name>>>>
+  <assign|subsection*|<macro|name|<style-with|src-compact|none|<vspace*|1fn><with|math-font-series|bold|font-series|bold|font-size|1.19|color|red|<arg|name>><vspace|0.5fn>>>>
 
-  <assign|subsubsection*|<macro|name|<vspace*|0.5fn><with|math font
-  series|bold|font series|bold|color|red|<arg|name>><vspace|0.25fn>>>
+  <assign|subsection|<macro|name|<toc-normal-2|<arg|name>><subsection*|<arg|name>>>>
 
-  <assign|subsubsection|<macro|name|<apply|toc-normal-3|<arg|name>><expand|su\
-  bsubsection*|<arg|name>>>>
+  <assign|subsubsection*|<macro|name|<style-with|src-compact|none|<vspace*|0.5fn><with|math-font-series|bold|font-series|bold|color|red|<arg|name>><vspace|0.25fn>>>>
 
-  \;
+  <assign|subsubsection|<macro|name|<toc-normal-3|<arg|name>><subsubsection*|<arg|name>>>>
 
-  Paragraphs and subparagraphs
+  <\active*>
+    <\src-comment>
+      Paragraphs and subparagraphs.
+    </src-comment>
+  </active*>
 
-  <assign|paragraph*|<macro|name|<format|no first
-  indentation><vspace*|0.5fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
+  <assign|paragraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
-  <assign|paragraph|<macro|name|<apply|toc-small-1|<arg|name>><expand|paragra\
-  ph*|<arg|name>>>>
+  <assign|paragraph|<macro|name|<toc-small-1|<arg|name>><paragraph*|<arg|name>>>>
 
-  <assign|subparagraph*|<macro|name|<format|no first
-  indentation><vspace*|0.25fn><with|math font series|bold|font
-  series|bold|<arg|name>> >>
+  <assign|subparagraph*|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><style-with|src-compact|all|<with|math-font-series|bold|font-series|bold|<arg|name>>
+  >>>>
 
-  <assign|subparagraph|<macro|name|<apply|toc-small-2|<arg|name>><expand|subp\
-  aragraph*|<arg|name>>>>
+  <assign|subparagraph|<macro|name|<toc-small-2|<arg|name>><subparagraph*|<arg|name>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|reduction page left margin|25mm>
-    <associate|even page margin|30mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
