@@ -12,7 +12,6 @@
 
 #include "edit_interface.hpp"
 #include "convert.hpp"
-#include "connect.hpp"
 
 /******************************************************************************
 * Set left footer with information about environment variables
@@ -45,7 +44,7 @@ edit_interface_rep::set_left_footer () {
   else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s= s * "#" * lan;
   else s= s * "#" * mode;
-  if ((mode == "text") || (mode == "src")) {
+  if (mode == "text") {
     s= s * "#" * get_env_string (FONT);
     append_left_footer (s, FONT_FAMILY);
     s= s * "#" * as_string ((int) ((base_sz+0.5)*sz));
@@ -59,7 +58,7 @@ edit_interface_rep::set_left_footer () {
     append_left_footer (s, MATH_FONT_SERIES);
     append_left_footer (s, MATH_FONT_SHAPE);
   }
-  else if (mode == "prog") {
+  else {
     string session_name= get_env_string (PROG_SESSION);
     if (session_name != "default") s= s * "-" * session_name;
     s= s * "#" * get_env_string (PROG_FONT);
@@ -71,19 +70,6 @@ edit_interface_rep::set_left_footer () {
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
   if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
-  if (inside ("session") && (lan != "scheme"))
-    switch (status_connection ()) {
-    case CONNECTION_DEAD:
-      s= s * "#[dead]";
-      break;
-    case CONNECTION_DYING:
-    case WAITING_FOR_OUTPUT:
-      s= s * "#[busy]";
-      break;
-    case WAITING_FOR_INPUT:
-      s= s * "#[idle]";
-      break;
-    }
   set_left_footer (s);
 }
 
@@ -173,10 +159,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case QUOTE_VALUE: r= "quoted value#" * as_string (st[0]); break;
   case ARG: r= "argument#" * as_string (st[0]); break;
   case QUOTE_ARG: r= "quoted argument#" * as_string (st[0]); break;
-  case COMPOUND:
-    if (is_atomic (st[0])) r= as_string (st[0]);
-    else r= "compound";
-    break;
+  case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
   case VAR_INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
@@ -194,7 +177,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
 
 string
 edit_interface_rep::compute_compound_footer (tree t, path p) {
-  if (!(rp < p)) return "";
+  if (nil (p) || atom (p)) return "";
   string up= compute_compound_footer (t, path_up (p));
   tree st= subtree (t, path_up (p));
   int  l = last_item (p);
@@ -252,8 +235,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     if ((l&1) == 1) return up * "drd property(" * as_string (l/2+1) * ")#";
     return up * "value(" * as_string (l/2) * ")#";
   case COMPOUND:
-    if (is_atomic (st[0])) return up * as_string (st[0]) * "#";
-    else return up * "compound#";
+    return up * as_string (st[0]) * "#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
@@ -285,8 +267,8 @@ edit_interface_rep::set_right_footer () {
 bool
 edit_interface_rep::set_latex_footer (tree st) {
   if (is_atomic (st)) 
-    if (is_func (subtree (et, path_up (tp, 2)), LATEX, 1) ||
-	is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (path_up (tp))), LATEX, 1) ||
+	is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
       string s= st->label;
       string help;
       command cmd;
@@ -303,7 +285,7 @@ bool
 edit_interface_rep::set_hybrid_footer (tree st) {
   // WARNING: update edit_dynamic_rep::activate_hybrid when updating this
   if (is_atomic (st))
-    if (is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
+    if (is_func (subtree (et, path_up (path_up (tp))), HYBRID, 1)) {
       string msg;
       // macro argument
       string name= st->label;
@@ -319,14 +301,14 @@ edit_interface_rep::set_hybrid_footer (tree st) {
       }
       // macro application
       tree f= get_env_value (name);
-      if (drd->contains (name) && (f == UNINIT))
-	set_message("return:#insert primitive#" * name, "hybrid command");
-      else if (is_func (f, MACRO) || is_func (f, XMACRO))
+      if (is_func (f, MACRO) || is_func (f, XMACRO)) {
 	set_message("return:#insert macro#" * name, "hybrid command");
-      else if (f != UNINIT)
+	return true;
+      }
+      else if (f != UNINIT) {
 	set_message("return:#insert value#" * name, "hybrid command");
-      else return false;
-      return true;
+	return true;
+      }
     }
   return false;
 }
@@ -345,7 +327,6 @@ DEBUG
   int line_item_count= 0;
   int list_count     = 0;
   int command_count  = 0;
-  int observer_count = 0;
   int iterator_count = 0;
   int function_count = 0;
   int instance_count = 0;
@@ -364,7 +345,6 @@ edit_interface_rep::set_footer () {
     cout << "line item " << line_item_count << "\n";
     cout << "list      " << list_count << "\n";
     cout << "command   " << command_count << "\n";
-    cout << "observer  " << observer_count << "\n";
     cout << "iterator  " << iterator_count << "\n";
     cout << "function  " << function_count << "\n";
     cout << "instance  " << instance_count << "\n";
@@ -390,15 +370,16 @@ edit_interface_rep::set_footer () {
 
 class interactive_command_rep: public command_rep {
   edit_interface_rep* ed;
-  scheme_tree   p;    // the interactive arguments
-  object        q;    // the function which is applied to the arguments
-  int           i;    // counter where we are
-  array<string> s;    // feedback from interaction with user
+  scheme_tree p;    // the interactive arguments
+  scheme_tree q;    // the function which is applied to the arguments
+  int         i;    // counter where we are
+  string*     s;    // feedback from interaction with user
 
 public:
   interactive_command_rep (
-    edit_interface_rep* Ed, scheme_tree P, object Q):
-      ed (Ed), p (P), q (Q), i (0), s (N(p)) {}
+    edit_interface_rep* Ed, scheme_tree P, scheme_tree Q):
+      ed (Ed), p (P), q (Q), i (0), s (new string [N(p)]) {}
+  ~interactive_command_rep () { delete[] s; }
   void apply ();
   ostream& print (ostream& out) {
     return out << "interactive command " << p; }
@@ -408,9 +389,10 @@ void
 interactive_command_rep::apply () {
   if ((i>0) && (s[i-1] == "cancel")) return;
   if (i == arity (p)) {
-    array<object> params(N(p));
-    for (i=0; i<N(p); i++) params[i]= object(unquote(s[i]));
-    string ret= as_string (call (q, params));
+    tree prg (TUPLE, N(p)+1);
+    prg[0]= q;
+    for (i=0; i<N(p); i++) prg[i+1]= s[i];
+    string ret= as_string (eval (scheme_tree_to_string (prg)));
     if ((ret != "") && (ret != "#<unspecified>"))
       ed->set_message (ed->message_l, "interactive command");
   }
@@ -437,7 +419,7 @@ edit_interface_rep::set_message (string l, string r) {
 }
 
 void
-edit_interface_rep::interactive (scheme_tree p, object q) {
+edit_interface_rep::interactive (scheme_tree p, scheme_tree q) {
   if (!is_tuple (p))
     fatal_error ("tuple expected", "edit_interface_rep::interactive");
   command interactive_cmd= new interactive_command_rep (this, p, q);

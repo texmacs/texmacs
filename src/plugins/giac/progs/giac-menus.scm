@@ -28,7 +28,8 @@
 	(else (+ (giac-cursor-pos (cdr l)) 1))))
 
 (define (giac-insert s)
-  (insert-go-to s (list (giac-cursor-pos (string->list s)))))
+  (insert-tree-go-to (object->tree s)
+		     (list (giac-cursor-pos (string->list s)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Giac menu

@@ -90,6 +90,7 @@ init_std_drd () {
   init (WITH_LIMITS, "with-limits", fixed (0) -> name ("with limits"));
   init (LINE_BREAK, "line-break", fixed (0) -> name ("line break"));
   init (NEW_LINE, "new-line", fixed (0) -> name ("new line"));
+  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (NEXT_LINE, "next-line", fixed (0) -> name ("next line"));
   init (NO_BREAK, "no-break", fixed (0) -> name ("no line break"));
   init (NO_INDENT, "no-indent", fixed (0) -> name ("don't indent"));
@@ -108,9 +109,9 @@ init_std_drd () {
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
-  init (LEFT, "left", options (1, 2));
-  init (MID, "mid", options (1, 2));
-  init (RIGHT, "right", options (1, 2));
+  init (LEFT, "left", fixed (1));
+  init (MID, "mid", fixed (1));
+  init (RIGHT, "right", fixed (1));
   init (BIG, "big", fixed (1));
   init (LPRIME, "lprime", fixed (1) -> name ("left prime"));
   init (RPRIME, "rprime", fixed (1) -> name ("right prime"));
@@ -164,15 +165,9 @@ init_std_drd () {
   init (MARK, "mark", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1));
-  init (QUASI, "quasi", fixed (1));
-  init (QUASIQUOTE, "quasiquote", fixed (1));
-  init (UNQUOTE, "unquote", fixed (1));
-  init (VAR_UNQUOTE, "unquote*", fixed (1));
-  init (IF, "if", options (2, 1));
-  init (VAR_IF, "if*", fixed (2));
-  init (CASE, "case", repeat (2, 1));
-  init (WHILE, "while", fixed (2));
-  init (FOR_EACH, "for-each", fixed (2));
+  init (DELAY, "delay", fixed (1));
+  init (HOLD, "hold", fixed (1));
+  init (RELEASE, "release", fixed (1));
   init (EXTERN, "extern", repeat (1, 1)); // func and args
   init (INCLUDE, "include", fixed (1));
   init (USE_PACKAGE, "use-package", repeat (1, 1));
@@ -187,7 +182,7 @@ init_std_drd () {
   init (OVER, "over", fixed (2));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
-  init (MERGE, "merge", repeat (2, 1));
+  init (MERGE, "merge", fixed (2));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (3));
   init (NUMBER, "number", fixed (2));
@@ -202,11 +197,11 @@ init_std_drd () {
   init (LESSEQ, "lesseq", fixed (2) -> name ("less or equal"));
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
+  init (IF, "if", options (2, 1));
+  init (VAR_IF, "if*", fixed (2));
+  init (CASE, "case", repeat (2, 1));
+  init (WHILE, "while", fixed (2));
 
-  init (STYLE_WITH, "style-with",
-	var_repeat (2, 1, BIFORM) -> accessible (1));
-  init (VAR_STYLE_WITH, "style-with*",
-	var_repeat (2, 1, BIFORM) -> accessible (1));
   init (STYLE_ONLY, "style-only", fixed (1) -> accessible (0));
   init (VAR_STYLE_ONLY, "style-only*", fixed (1) -> accessible (0));
   init (ACTIVE, "active", fixed (1) -> accessible (0));
@@ -221,8 +216,7 @@ init_std_drd () {
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
-
-  init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
+  init (TUPLE, "tuple", repeat (0, 1));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
@@ -245,7 +239,6 @@ init_std_drd () {
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
-  init (ARC, "arc", repeat (3, 1));
   init (SPLINE, "spline", repeat (2, 1));
   init (VAR_SPLINE, "spline*", repeat (2, 1));
   init (CSPLINE, "cspline", repeat (2, 1));
@@ -253,11 +246,7 @@ init_std_drd () {
   init (POSTSCRIPT, "postscript", fixed (7));
 
   init (FORMAT, "format", repeat (1, 1));
-  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (SPLIT, "split", repeat (1, 1));
-  init (DELAY, "delay", fixed (1));
-  init (HOLD, "hold", fixed (1));
-  init (RELEASE, "release", fixed (1));
   init (OLD_MATRIX, "old-matrix", var_repeat (1, 2, BIFORM) -> accessible (0));
   init (OLD_TABLE, "old-table", var_repeat (1, 2, BIFORM) -> accessible (0));
   init (OLD_MOSAIC, "old-mosaic", var_repeat (1, 2, BIFORM) -> accessible (0));

@@ -21,8 +21,7 @@
 (menu-bind texmacs-extra-menu)
 (menu-bind texmacs-extra-icons)
 (menu-bind style-menu)
-(menu-bind add-package-menu)
-(menu-bind remove-package-menu)
+(menu-bind use-package-menu)
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
 
@@ -34,7 +33,6 @@
   (=> "File" (link file-menu))
   (=> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (=> "Insert" (link insert-menu)))
-  (if (in-source?) (=> "Source" (link source-menu)))
   (if (in-text?) (=> "Text" (link text-menu)))
   (if (in-math?) (=> "Mathematics" (link mathematics-menu)))
   (if (in-io?) (=> "Session" (link session-main-menu)))
@@ -57,7 +55,6 @@
   (-> "File" (link file-menu))
   (-> "Edit" (link edit-menu))
   (if (not (in-graphics?)) (-> "Insert" (link insert-menu)))
-  (if (in-source?) (-> "Source" (link source-menu)))
   (if (in-text?) (-> "Text" (link text-menu)))
   (if (in-math?) (-> "Mathematics" (link mathematics-menu)))
   (if (in-graphics?) (-> "Graphics" (link graphics-menu)))
@@ -117,27 +114,20 @@
       (=> (balloon (icon "tm_link.xpm") "Insert a link")
 	  (link insert-link-menu))
       (=> (balloon (icon "tm_switch.xpm") "Switching and folding")
-	  (link insert-switch-menu))
-      (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
-	  (link insert-mathematics-menu))
-      (if (style-has? "program-dtd")
-	  (=> (balloon (icon "tm_shell.xpm")
-		       "Start an interactive session")
-	      (link insert-session-menu)))))
+	  (link insert-switch-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The context dependent icon bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-context-icons
-  (if (in-source?) (link texmacs-source-icons))
   (if (in-text?) (link texmacs-text-icons))
   (if (in-io?) (link texmacs-session-icons))
   (if (in-math?) (link texmacs-math-icons))
   (if (in-graphics?) (link texmacs-graphics-icons))
   (if (not (in-graphics?)) |)
   (if (in-prog?) (link prog-modifier-icons))
-  (if (or (in-source?) (in-text?)) (link text-modifier-icons))
+  (if (in-text?) (link text-modifier-icons))
   (if (in-math?) (link math-modifier-icons))
   (if (not (in-graphics?))
       (=> (balloon (icon "tm_color.xpm") "Select a foreground color")

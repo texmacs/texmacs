@@ -521,10 +521,10 @@ tmg_help_bufferP () {
 SCM
 tmg_set_buffer (SCM arg1, SCM arg2) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "set-buffer");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-buffer");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "set-buffer");
 
   url in1= scm_to_url (arg1);
-  content in2= scm_to_content (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->revert_buffer (in1, in2);
@@ -537,11 +537,11 @@ SCM
 tmg_set_aux_buffer (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-aux-buffer");
   SCM_ASSERT_URL (arg2, SCM_ARG2, "set-aux-buffer");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "set-aux-buffer");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "set-aux-buffer");
 
   string in1= scm_to_string (arg1);
   url in2= scm_to_url (arg2);
-  content in3= scm_to_content (arg3);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->set_aux_buffer (in1, in2, in3);
@@ -553,10 +553,10 @@ tmg_set_aux_buffer (SCM arg1, SCM arg2, SCM arg3) {
 SCM
 tmg_set_help_buffer (SCM arg1, SCM arg2) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "set-help-buffer");
-  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "set-help-buffer");
+  SCM_ASSERT_TEXMACS_TREE (arg2, SCM_ARG2, "set-help-buffer");
 
   url in1= scm_to_url (arg1);
-  content in2= scm_to_content (arg2);
+  texmacs_tree in2= scm_to_texmacs_tree (arg2);
 
   // SCM_DEFER_INTS;
   get_server()->set_help_buffer (in1, in2);
@@ -618,10 +618,10 @@ tmg_texmacs_load_tree (SCM arg1, SCM arg2) {
   string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->load_tree (in1, in2);
+  texmacs_tree out= get_server()->load_tree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 SCM
@@ -729,15 +729,6 @@ tmg_set_printer_paper_type (SCM arg1) {
 }
 
 SCM
-tmg_get_printer_paper_type () {
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_printer_page_type ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_set_printer_dpi (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-printer-dpi");
 
@@ -842,17 +833,17 @@ SCM
 tmg_package_evaluate (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "package-evaluate");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "package-evaluate");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "package-evaluate");
+  SCM_ASSERT_TEXMACS_TREE (arg3, SCM_ARG3, "package-evaluate");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
+  texmacs_tree in3= scm_to_texmacs_tree (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->evaluate (in1, in2, in3);
+  texmacs_tree out= get_server()->evaluate (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return texmacs_tree_to_scm (out);
 }
 
 void
@@ -917,7 +908,6 @@ initialize_glue_server () {
   gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
   gh_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);
   gh_new_procedure ("set-printer-paper-type", (FN) tmg_set_printer_paper_type, 1, 0, 0);
-  gh_new_procedure ("get-printer-paper-type", (FN) tmg_get_printer_paper_type, 0, 0, 0);
   gh_new_procedure ("set-printer-dpi", (FN) tmg_set_printer_dpi, 1, 0, 0);
   gh_new_procedure ("set-default-shrinking-factor", (FN) tmg_set_default_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-default-shrinking-factor", (FN) tmg_get_default_shrinking_factor, 0, 0, 0);

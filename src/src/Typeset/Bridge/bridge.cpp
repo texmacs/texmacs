@@ -22,7 +22,6 @@ bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
-bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
 
 bridge nil_bridge;
@@ -43,6 +42,7 @@ static tree inactive_m
   (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "once*"));
 static tree var_inactive_m
   (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x", "0"), "recurse*"));
+		     
 
 bridge
 make_inactive_bridge (typesetter ttt, tree st, path ip) {
@@ -53,8 +53,11 @@ make_inactive_bridge (typesetter ttt, tree st, path ip) {
 
 bridge
 make_bridge (typesetter ttt, tree st, path ip) {
-  // cout << "Make bridge " << st << ", " << ip << "\n";
-  // cout << "Preamble mode= " << ttt->env->preamble << "\n";
+  /*
+  cout << "Make bridge " << st << ", " << ip
+       << " (" << ttt->env->get_string (PREAMBLE)
+       << ", " << ttt->env->preamble << ")\n";
+  */
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
@@ -80,9 +83,6 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_argument (ttt, st, ip);
   case MARK:
     return bridge_mark (ttt, st, ip);
-  case EVAL:
-  case QUASI:
-    return bridge_eval (ttt, st, ip);
   case EXTERN:
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
@@ -139,9 +139,9 @@ bridge_rep::notify_insert (path p, tree u) {
   if (is_atomic (t)) {
     if (is_compound (u))
       fatal_error ("two atoms expected", "bridge_rep::notify_insert");
-    t= t->label (0, l) * u->label * t->label (l, N(t->label));
+    t= insert (t->label, l, u->label);
   }
-  else t= (t (0, l) * u) * t (l, N(t));
+  else t= insert (t, l, u);
   notify_assign (q, t);
 }
 
@@ -151,8 +151,8 @@ bridge_rep::notify_remove (path p, int nr) {
   path q= path_up (p);
   int  l= last_item (p);
   tree t= subtree (st, q);
-  if (is_atomic (t)) t= t->label (0, l) * t->label (l+nr, N(t->label));
-  else t= t (0, l) * t (l+nr, N(t));
+  if (is_atomic (t)) t= remove (t->label, l, nr);
+  else t= remove (t, l, nr);
   notify_assign (q, t);
 }
 
@@ -165,12 +165,14 @@ bridge_rep::notify_split (path p) {
   tree t  = subtree (st, q);
 
   if (is_atomic (t[pos])) {
-    string s1= t[pos]->label (0, l), s2= t[pos]->label (l, N (t[pos]->label));
+    string s1, s2;
+    split (t[pos]->label, l, s1, s2);
     notify_insert (q * pos, tree (L(t), s1));
     notify_assign (q * (pos+1), s2);
   }
   else {
-    tree t1= t[pos] (0, l), t2= t[pos] (l, N(t[pos]));
+    tree t1, t2;
+    split (t[pos], l, t1, t2);
     notify_insert (q * pos, tree (L(t), t1));
     notify_assign (q * (pos+1), t2);
   }
@@ -189,7 +191,7 @@ bridge_rep::notify_join (path p) {
     notify_assign (q * pos, j);
   }
   else {
-    tree j= t[pos] * t[pos+1];
+    tree j= join (t[pos], t[pos+1]);
     notify_remove (q * pos, 1);
     notify_assign (q * pos, j);
   }
@@ -219,9 +221,8 @@ bridge_rep::my_typeset (int desired_status) {
 
 void
 bridge_rep::exec_until (path p) {
-  // redefined in bridge_auto
   if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
-  else if (p == right_index (st)) env->patch_env (changes);
+  else if (p == path (1)) env->patch_env (changes);
   else if (p != path (0)) my_exec_until (p);
 }
 

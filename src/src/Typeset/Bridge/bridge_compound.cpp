@@ -12,8 +12,8 @@
 
 #include "bridge.hpp"
 
-tree insert_at (tree, path, tree);
-tree remove_at (tree, path, int);
+tree insert (tree, path, tree);
+tree remove (tree, path, int);
 
 class bridge_compound_rep: public bridge_rep {
 protected:
@@ -94,7 +94,7 @@ bridge_compound_rep::notify_insert (path p, tree u) {
       notify_macro (MACRO_INSERT, fun[0]->label, -1, p, u);
     else if (is_applicable (fun) && (p->item < N(fun)))
       notify_macro (MACRO_INSERT, fun[p->item-delta]->label, -1, p->next, u);
-    st= insert_at (st, p, u);
+    st= insert (st, p, u);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;
@@ -112,7 +112,7 @@ bridge_compound_rep::notify_remove (path p, int nr) {
     else if (is_applicable (fun) && (p->item < N(fun)))
       notify_macro (MACRO_REMOVE, fun[p->item-delta]->label, -1, p->next,
 		    tree (as_string (nr)));
-    st= remove_at (st, p, nr);
+    st= remove (st, p, nr);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;
@@ -145,7 +145,7 @@ bridge_compound_rep::notify_macro (
       if (is_atomic (fun[i])) {
 	string var= fun[i]->label;
 	env->macro_arg->item (var)=
-	  i<m? st[i+delta]: tree (UNINIT);
+	  i<m? st[i+delta]: tree("");
 	env->macro_src->item (var)=
 	  i<m? descend (ip,i+delta): decorate_right(ip);
       }
@@ -209,7 +209,7 @@ bridge_compound_rep::my_typeset (int desired_status) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? st[i+d]: tree (UNINIT);
+	env->macro_arg->item (var)= i<m? st[i+d]: tree("");
 	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);

@@ -1,31 +1,15 @@
-<TeXmacs|1.0.3.4>
-
-<style|source>
+<TeXmacs|1.0.0.4>
 
 <\body>
-  <active*|<\src-title>
-    <src-package|algo|1.0>
+  <assign|algo-package|1.0>
 
-    <\src-purpose>
-      Markup for typesetting algorithms (unfinished).
-    </src-purpose>
+  \;
 
-    <src-copyright|1998--2004|Joris van der Hoeven>
+  <assign|fun|<macro|x|<with|mode|text|font family|rm|<arg|x>>>>
 
-    <\src-license>
-      This <TeXmacs> style package falls under the <hlink|GNU general public
-      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
-      WHATSOEVER. If you do not have a copy of the license, then write to the
-      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-      02111-1307, USA.
-    </src-license>
-  </src-title>>
+  <assign|var|<macro|x|<with|mode|text|font shape|italic|<arg|x>>>>
 
-  <assign|fun|<macro|x|<with|mode|text|font-family|rm|<arg|x>>>>
-
-  <assign|var|<macro|x|<with|mode|text|font-shape|italic|<arg|x>>>>
-
-  <assign|type|<macro|x|<with|mode|text|font-family|ss|<arg|x>>>>
+  <assign|type|<macro|x|<with|mode|text|font family|ss|<arg|x>>>>
 
   <assign|vardecl|<macro|x|y|<var|<arg|x>>:<type|<arg|y>>>>
 
@@ -34,71 +18,79 @@
   \;
 
   <assign|synopsis|<\macro|x>
-    <with|par-par-sep|0fn|<vspace*|0.5fn><with|font-series|bold|font-size|1.19|Synopsis><vspace|0.5fn><no-page-break>>
+    <with|interparagraph space|0fn|<vspace*|0.5fn><with|font series|bold|font
+    size|1.19|Synopsis><vspace|0.5fn><format|no page break after>>
 
-    <with|par-left|<plus|<value|par-left>|1.5fn>|par-par-sep|0fn|<arg|x>>
+    <with|left margin|<plus|<value|left margin>|1.5fn>|interparagraph
+    space|0fn|<arg|x>>
   </macro>>
 
   <assign|parameters|<\macro|x>
-    <with|par-par-sep|0fn|<vspace*|0.5fn><with|font-series|bold|font-size|1.19|Parameters><vspace|0.5fn><no-page-break>>
+    <with|interparagraph space|0fn|<vspace*|0.5fn><with|font series|bold|font
+    size|1.19|Parameters><vspace|0.5fn><format|no page break after>>
 
-    <with|par-par-sep|0fn|<description|<arg|x>>>
+    <with|interparagraph space|0fn|<description|<arg|x>>>
   </macro>>
 
   \;
 
-  <assign|comment|<macro|x|<htab|5mm><with|mode|text|font-shape|slanted|font-size|0.84|<arg|x>>>>
+  <assign|comment|<macro|x|<htab|5mm><with|mode|text|font shape|slanted|font
+  size|0.84|<arg|x>>>>
 
-  <assign|long-comment|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|3fn>|par-right|<plus|<value|par-right>|3fn>|mode|text|font-shape|slanted|font-size|0.84|<arg|body>>>>>
+  <assign|longcomment|<macro|body|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<w\
+  ith|left margin|<plus|<apply|left margin>|3fn>|right
+  margin|<plus|<apply|right margin>|3fn>|mode|text|font shape|slanted|font
+  size|0.84|<arg|body>>>>>
 
   \;
 
-  <assign|keyw|<macro|x|<with|mode|text|font-series|bold|<arg|x>>>>
+  <assign|keyw|<macro|x|<with|mode|text|font series|bold|<arg|x>>>>
 
-  <assign|new-keyword|<macro|kw|<assign|<merge|kw-|<arg|kw>>|<quasiquote|<keyw|<unquote|<arg|kw>>>>>>>
+  <assign|newkeyword|<func|kw|<assign|<merge|kw-|<apply|kw>>|<hold|<keyw|<rel\
+  ease|<apply|kw>>>>>>>
 
-  <new-keyword|for>
+  <apply|newkeyword|for>
 
-  <new-keyword|to>
+  <apply|newkeyword|to>
 
-  <new-keyword|do>
+  <apply|newkeyword|do>
 
-  <new-keyword|begin>
+  <apply|newkeyword|begin>
 
-  <new-keyword|end>
+  <apply|newkeyword|end>
 
-  <new-keyword|while>
+  <apply|newkeyword|while>
 
-  <new-keyword|repeat>
+  <apply|newkeyword|repeat>
 
-  <new-keyword|until>
+  <apply|newkeyword|until>
 
-  <new-keyword|return>
+  <apply|newkeyword|return>
 
-  <new-keyword|if>
+  <apply|newkeyword|if>
 
-  <new-keyword|then>
+  <apply|newkeyword|then>
 
-  <new-keyword|else>
+  <apply|newkeyword|else>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
+    <associate|paragraph width|150mm>
+    <associate|odd page margin|30mm>
+    <associate|shrinking factor|4>
+    <associate|page right margin|30mm>
+    <associate|page top margin|30mm>
+    <associate|reduction page right margin|25mm>
+    <associate|page type|a4>
+    <associate|reduction page bottom margin|15mm>
+    <associate|even page margin|30mm>
+    <associate|reduction page left margin|25mm>
+    <associate|page bottom margin|30mm>
+    <associate|reduction page top margin|15mm>
+    <associate|language|english>
   </collection>
 </initial>

@@ -168,14 +168,14 @@ connection_declared (string name) {
 
 tree
 connection_info (string name, string session) {
-  return stree_to_tree (call ("connection-info", name, session));
+  return object_to_tree (call ("connection-info", name, session));
 }
 
 tree
 connection_handlers (string name) {
   static hashmap<string,tree> handlers (tuple ());
   if (!handlers->contains (name))
-    handlers (name)= stree_to_tree (call ("connection-get-handlers", name));
+    handlers (name)= object_to_tree (call ("connection-get-handlers", name));
   return handlers[name];
 }
 
@@ -191,8 +191,7 @@ connection_start (string name, string session, bool again) {
 
   connection con= connection (name * "-" * session);
   if (nil (con)) {
-    if (DEBUG_VERBOSE)
-      cout << "TeXmacs] Starting session '" << session << "'\n";
+    if (DEBUG_AUTO) cout << "TeXmacs] Starting session '" << session << "'\n";
     tree t= connection_info (name, session);
     if (is_tuple (t, "pipe", 1)) {
       tm_link ln= make_pipe_link (t[1]->label);
@@ -223,7 +222,7 @@ connection_write (string name, string session, string s) {
 void
 connection_write (string name, string session, tree t) {
   // cout << "Write " << name << ", " << session << ", " << t << "\n";
-  string s= as_string (call ("plugin-serialize", name, tree_to_stree (t)));
+  string s= as_string (call ("plugin-serialize", name, tree_to_object (t)));
   connection_write (name, session, s);
 }
 
@@ -238,7 +237,7 @@ connection_read (string name, string session, string channel) {
     con->read (LINK_OUT);
     t= con->tm_in->get (channel);
   }
-  // cout << "Result " << t << "\n";
+  // cout << "Read result " << t << "\n";
   return t;
 }
 
@@ -285,7 +284,6 @@ connection_get (string name, string session) {
 
 static tree
 connection_retrieve (string name, string session) {
-  // cout << "Retrieve " << name << ", " << session << "\n";
   connection con= connection (name * "-" * session);
   if (nil (con)) return "";
   tree doc (DOCUMENT);
@@ -298,7 +296,6 @@ connection_retrieve (string name, string session) {
     if (con->status == WAITING_FOR_INPUT) break;
   }
   if (N(doc) == 0) return "";
-  // cout << "Retrieved " << doc << "\n";
   return doc;
 }
 

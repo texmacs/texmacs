@@ -355,7 +355,6 @@
 (menu-bind language-menu
   ("British" (make-with "language" "british"))
   ("Czech" (make-with "language" "czech"))
-  ("Danish" (make-with "language" "danish"))
   ("Dutch" (make-with "language" "dutch"))
   ("English" (make-with "language" "english"))
   ("Finnish" (make-with "language" "finnish"))
@@ -431,14 +430,14 @@
 
 (menu-bind format-menu
   (group "Font")
-  (if (or (in-text?) (in-source?)) (link text-font-menu))
-  (if (in-math?) (link math-font-menu))
-  (if (in-prog?) (link prog-font-menu))
+  (if (test-env? "mode" "text") (link text-font-menu))
+  (if (test-env? "mode" "math") (link math-font-menu))
+  (if (test-env? "mode" "prog") (link prog-font-menu))
   ---
   (group "Content")
   (-> "Color" (link color-menu))
   (-> "Language" (link language-menu))
-  (if (in-math?)
+  (if (test-env? "mode" "math")
       ---
       (link math-format-menu))
   ---

@@ -15,7 +15,6 @@
 #include "Scheme/evaluate.hpp"
 #include "Scheme/object.hpp"
 #include "list.hpp"
-#include "array.hpp"
 
 /******************************************************************************
 * The object representation class
@@ -75,8 +74,6 @@ operator != (object obj1, object obj2) {
 * Utilities
 ******************************************************************************/
 
-object null_object () {
-  return object (SCM_NULL); }
 object cons (object obj1, object obj2) {
   return object (scm_cons (obj1->lookup(), obj2->lookup())); }
 object car (object obj) {
@@ -177,19 +174,13 @@ as_widget (object obj) {
 }
 
 object
-tree_to_stree (scheme_tree t) {
-  return call ("tree->stree", t);
+tree_to_object (scheme_tree t) {
+  return call ("tree->object", t);
 }
 
 tree
-stree_to_tree (object obj) {
-  return as_tree (call ("stree->tree", obj));
-}
-
-tree
-content_to_tree (object obj) {
-  return scm_to_content (obj->lookup());
-  // return as_tree (call ("content->tree", obj));
+object_to_tree (object obj) {
+  return as_tree (call ("object->tree", obj));
 }
 
 object
@@ -269,15 +260,6 @@ object eval_file (string name) {
 void eval_delayed (string expr) {
   (void) call ("exec-delayed", expr); }
 
-static inline array<SCM>
-array_lookup (array<object> a) {
-  const int n=N(a);
-  array<SCM> scm(n);
-  int i;
-  for (i=0; i<n; i++) scm[i]= a[i]->lookup();
-  return scm;
-}
-
 object call (char* fun) {
   return object (call_scheme (eval_scheme(fun))); }
 object call (char* fun, object a1) {
@@ -287,8 +269,6 @@ object call (char* fun, object a1, object a2) {
 object call (char* fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
-object call (char* fun, array<object> a) {
-  return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
 object call (string fun) {
   return object (call_scheme (eval_scheme(fun))); }
@@ -299,8 +279,6 @@ object call (string fun, object a1, object a2) {
 object call (string fun, object a1, object a2, object a3) {
   return object (call_scheme (eval_scheme(fun), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
-object call (string fun, array<object> a) {
-  return object (call_scheme (eval_scheme(fun), array_lookup(a))); }
 
 object call (object fun) {
   return object (call_scheme (fun->lookup())); }
@@ -311,5 +289,3 @@ object call (object fun, object a1, object a2) {
 object call (object fun, object a1, object a2, object a3) {
   return object (call_scheme (fun->lookup(), a1->lookup(),
 			      a2->lookup(), a3->lookup())); }
-object call (object fun, array<object> a) {
-  return object (call_scheme (fun->lookup(), array_lookup(a))); }

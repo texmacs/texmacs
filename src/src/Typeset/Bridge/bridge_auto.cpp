@@ -12,8 +12,8 @@
 
 #include "bridge.hpp"
 
-tree insert_at (tree, path, tree);
-tree remove_at (tree, path, int);
+tree insert (tree, path, tree);
+tree remove (tree, path, int);
 
 class bridge_auto_rep: public bridge_rep {
 protected:
@@ -33,7 +33,6 @@ public:
   void notify_change ();
 
   void my_exec_until (path p);
-  void exec_until (path p);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
 };
@@ -88,7 +87,7 @@ bridge_auto_rep::notify_insert (path p, tree u) {
   else {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_INSERT, f[0]->label, -1, p->next, u);
-    st= insert_at (st, p, u);
+    st= insert (st, p, u);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;
@@ -102,7 +101,7 @@ bridge_auto_rep::notify_remove (path p, int nr) {
     // bool mp_flag= is_multi_paragraph (st);
     notify_macro (MACRO_REMOVE, f[0]->label, -1, p->next,
 		  tree (as_string (nr)));
-    st= remove_at (st, p, nr);
+    st= remove (st, p, nr);
     // if (mp_flag != is_multi_paragraph (st)) valid= false;
   }
   status= CORRUPTED;
@@ -156,12 +155,6 @@ bridge_auto_rep::my_exec_until (path p) {
   (void) env->exec_until (f[1], p, var, 0);
   env->macro_arg= env->macro_arg->next;
   env->macro_src= env->macro_src->next;
-}
-
-void
-bridge_auto_rep::exec_until (path p) {
-  if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
-  else my_exec_until (p);
 }
 
 bool

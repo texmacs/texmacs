@@ -142,7 +142,7 @@ template <class T, class U> static
 tree make_collection (hashmap<T,U> h) {
   tree t(h);
   array<tree> a=A(h);
-  merge_sort_leq <tree, less_eq_associate> (a);
+  merge_sort <tree, less_eq_associate> (a);
   int i, n=N(a);
   for (i=0; i<n; i++) t[i] = a[i];
   return t;
@@ -150,7 +150,7 @@ tree make_collection (hashmap<T,U> h) {
 
 tree
 tm_data_rep::make_document (tm_view vw, string fm) {
-  tree body= subtree (the_et, vw->buf->rp);
+  tree body= vw->buf->t;
   if (fm == "html")
     body= vw->ed->exec_html (body);
 
@@ -160,7 +160,7 @@ tm_data_rep::make_document (tm_view vw, string fm) {
     doc << compound ("project", vw->buf->project);
   if (vw->ed->get_style() != tree (TUPLE))
     doc << compound ("style", copy (vw->ed->get_style()));
-  if (body != tree (DOCUMENT, ""))
+  if (vw->buf->t != tree (DOCUMENT, ""))
     doc << compound ("body", body);
   if (N (vw->ed->get_init()) != 0)
     doc << compound ("initial", make_collection (vw->ed->get_init()));

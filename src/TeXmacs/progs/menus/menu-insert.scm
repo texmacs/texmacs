@@ -18,26 +18,24 @@
      (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert objects
+;; The Insert menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-table-menu
-  (if (style-has? "std-dtd")
-      (when (and (in-text?) (style-has? "env-float-dtd"))
-	    ("Small table" (make 'small-table))
-	    ("Big table" (make 'big-table))
-	    ---))
+  (if (and (in-text?) (style-has? "env-float-dtd"))
+      ("Small table" (make 'small-table))
+      ("Big table" (make 'big-table))
+      ---)
   ("Plain tabular" (make 'tabular))
   ("Centered tabular" (make 'tabular*))
   ("Plain block" (make 'block))
   ("Centered block" (make 'block*))
-  (if (style-has? "std-dtd")
-      (when (in-math?)
-	    ---
-	    ("Matrix" (make 'matrix))
-	    ("Determinant" (make 'det))
-	    ("Choice" (make 'choice))
-	    ("Stack" (make 'stack)))))
+  (if (in-math?)
+      ---
+      ("Matrix" (make 'matrix))
+      ("Determinant" (make 'det))
+      ("Choice" (make 'choice))
+      ("Stack" (make 'stack))))
 
 (menu-bind insert-link-menu
   ("Label" (make 'label))
@@ -47,85 +45,66 @@
   ("Include" ... (choose-file "Include file" "" 'make-include))
   ("Hyperlink" (make 'hlink))
   ("Action" (make 'action))
-  (if (style-has? "std-dtd")
+  ---
+  (-> "Citation"
+      ("Visible" (make 'cite))
+      ("Invisible" (make 'nocite))
+      ("Detailed" (make 'cite-detail)))
+  (-> "Index entry"
+      ("Main" (make 'index))
+      ("Sub" (make 'subindex))
+      ("Subsub" (make 'subsubindex))
+      ("Complex" (make 'index-complex))
       ---
-      (-> "Citation"
-	  ("Visible" (make 'cite))
-	  ("Invisible" (make 'nocite))
-	  ("Detailed" (make 'cite-detail)))
-      (-> "Index entry"
-	  ("Main" (make 'index))
-	  ("Sub" (make 'subindex))
-	  ("Subsub" (make 'subsubindex))
-	  ("Complex" (make 'index-complex))
-	  ---
-	  ("Interjection" (make 'index-line)))
-      (-> "Glossary entry"
-	  ("Regular" (make 'glossary))
-	  ("Explained" (make 'glossary-explain))
-	  ("Duplicate" (make 'glossary-dup))
-	  ---
-	  ("Interjection" (make 'glossary-line)))))
+      ("Interjection" (make 'index-line)))
+  (-> "Glossary entry"
+      ("Regular" (make 'glossary))
+      ("Explained" (make 'glossary-explain))
+      ("Duplicate" (make 'glossary-dup))
+      ---
+      ("Interjection" (make 'glossary-line))))
+
+(menu-bind insert-presentation-tag-menu
+  ("Underline" (make 'underline))
+  ("Overline" (make 'overline))
+  ("Subscript" (make-script #f #t))
+  ("Superscript" (make-script #t #t)))
 
 (menu-bind insert-switch-menu
   ("Superpose" (make 'superpose))
-  (if (style-has? "std-dtd")
-      ---
-      ("Folded" (make-fold))
-      (if (or (inside? "unfold")
-	      (and (not (inside? "unfold")) (not (inside? "fold"))))
-	  (when (inside? "unfold")
-		("Fold" (fold))))
-      (if (inside? "fold")
-	  ("Unfold" (unfold)))
-      ---
-      ("Switch" (make-switch))
-      (when (inside? "switch")
-	    ("Add switch before" (switch-insert "before"))
-	    ("Add switch after" (switch-insert "after"))
-	    ("Remove this switch" (switch-remove "here"))
-	    ---
-	    (when (< 0 (switch-get-position))
-		  ("Switch to previous" (switch-to "previous")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to next" (switch-to "next")))
-	    (when (< 0 (switch-get-position))
-		  ("Switch to first" (switch-to "first")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to last" (switch-to "last"))))))
+  ---
+  ("Folded" (make-fold))
+  (if (or (inside? "unfold")
+	  (and (not (inside? "unfold")) (not (inside? "fold"))))
+      (when (inside? "unfold")
+	    ("Fold" (fold))))
+  (if (inside? "fold")
+      ("Unfold" (unfold)))
+  ---
+  ("Switch" (make-switch))
+  (when (inside? "switch")
+	("Add switch before" (switch-insert "before"))
+	("Add switch after" (switch-insert "after"))
+	("Remove this switch" (switch-remove "here"))
+	---
+	(when (< 0 (switch-get-position))
+	      ("Switch to previous" (switch-to "previous")))
+	(when (< (switch-get-position) (switch-get-last))
+	      ("Switch to next" (switch-to "next")))
+	(when (< 0 (switch-get-position))
+	      ("Switch to first" (switch-to "first")))
+	(when (< (switch-get-position) (switch-get-last))
+	      ("Switch to last" (switch-to "last")))))
 
 (menu-bind insert-image-menu
-  (if (style-has? "env-float-dtd")
-      (when (in-text?)
-	    ("Small figure" (make 'small-figure))
-	    ("Big figure" (make 'big-figure))
-	    ---))
+  (if (and (in-text?) (style-has? "env-float-dtd"))
+      ("Small figure" (make 'small-figure))
+      ("Big figure" (make 'big-figure))
+      ---)
   ;("Draw image" (make-graphics))
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
-
-(menu-bind insert-mathematics-menu
-  (when (not (in-math?))
-	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
-  (when (in-math?)
-	("Text" "A-$" (begin (noop) (make-with "mode" "text"))))
-  (if (style-has? "env-math-dtd")
-      (when (in-text?)
-	    ---
-	    ("Equation" (begin (make 'equation*) (temp-proof-fix)))
-	    ("Equations" (begin (make 'eqnarray*) (temp-proof-fix))))))
-
-(menu-bind insert-session-menu
-  (when (and (style-has? "std-dtd") (in-text?))
-	(link session-menu)
-	---
-	("Other" ...
-	 (interactive '("Session type:" "Session name:") 'make-session))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert floating content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-page-insertion-menu
   ("Footnote" (make 'footnote))
@@ -140,18 +119,70 @@
   ("Bottom" (toggle-insertion-position "b"))
   ("Other pages" (toggle-insertion-position-not "f")))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The main Insert menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(menu-bind insert-transformational-menu
+  ("Assign" (make 'assign))
+  ("With" (make-arity 'with 3))
+  ("Value" (make 'value))
+  ---
+  ("Macro" (make 'macro))
+  ("Argument" (make 'arg))
+  ("Compound" (make 'compound))
+  ---
+  ("Long macro" (make 'xmacro))
+  ("Get label" (make 'get-label))
+  ("Get arity" (make 'get-arity))
+  ("Map arguments" (make 'map-args)))
+
+(menu-bind insert-executable-menu
+  (-> "Arithmetic"
+      ("Plus" (make 'plus))
+      ("Minus" (make 'minus))
+      ("Times" (make 'times))
+      ("Over" (make 'over))
+      ("Div" (make 'div))
+      ("Mod" (make 'mod)))
+  (-> "Text"
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Number" (make 'number))
+      ("Today" (make-arity 'date 0))
+      ("Formatted date" (make 'date))
+      ("Translate" (make 'translate))
+      ("Find file" (make 'find-file)))
+  (-> "Tuple"
+      ("Tuple?" (make 'is-tuple))
+      ("Merge" (make 'merge))
+      ("Length" (make 'length))
+      ("Range" (make 'range))
+      ("Look up" (make 'look-up)))
+  (-> "Condition"
+      ("Not" (make 'not))
+      ("And" (make 'and))
+      ("Or" (make 'or))
+      ("Exclusive or" (make 'xor))
+      ---
+      ("Equal" (make 'equal))
+      ("Not equal" (make 'unequal))
+      ("Less" (make 'less))
+      ("Less or equal" (make 'lesseq))
+      ("Greater" (make 'greater))
+      ("Greater or equal" (make 'greatereq)))
+  (-> "Programming"
+      ("If" (make 'if))
+      ("Case" (make 'case))
+      ;; ("for" (make 'for))
+      ("While" (make 'while))
+      ;; ("extern" (make 'extern))
+      ;; ("authorize" (make 'authorize))
+      ))
 
 (menu-bind insert-menu
   (-> "Link" (link insert-link-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
   (-> "Switch" (link insert-switch-menu))
-  (-> "Mathematics" (link insert-mathematics-menu))
-  (if (style-has? "program-dtd")
-      (-> "Session" (link insert-session-menu)))
+  (-> "Presentation" (link insert-presentation-tag-menu))
   ---
   (-> "Space"
       ("Rigid" ...
@@ -227,9 +258,8 @@
       ("HTML" (make-specific "html"))
       ("Screen" (make-specific "screen"))
       ("Printer" (make-specific "printer")))
-  (if (not (in-source?))
-      (-> "Macro" (link source-transformational-menu))
-      (-> "Executable" (link source-executable-menu)))
+  (-> "Macro" (link insert-transformational-menu))
+  (-> "Executable" (link insert-executable-menu))
   (-> "Special"
       ("Group" (make-group))
       ("Move object" (interactive '("Horizontal:" "Vertical:") 'make-move))

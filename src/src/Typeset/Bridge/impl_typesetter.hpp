@@ -18,7 +18,6 @@ class typesetter_rep {
 public:
   edit_env&   env;
   tree&       et;
-  path        ip;
   bridge      br;
   rectangles  change_log;
 

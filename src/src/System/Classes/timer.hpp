@@ -12,7 +12,7 @@
 
 #ifndef TIMER_H
 #define TIMER_H
-#include "string.hpp"
+#include "basic.hpp"
 #include "tm_configure.hpp"
 
 #ifdef OS_SUN
@@ -32,11 +32,21 @@ extern "C" {
 
 time_t texmacs_time ();
 
-void   bench_start (string task);
-void   bench_cumul (string task);
-void   bench_end   (string task);
-void   bench_reset (string task);
-void   bench_print (string task);
-void   bench_print ();
+struct timer_rep: public concrete_struct {
+  time_t begin;
+  time_t cumul;
+
+  timer_rep ();
+  void   start ();
+  void   restart ();
+  time_t watch ();
+  time_t stop ();
+};
+
+class timer {
+  CONCRETE(timer);
+  timer ();
+};
+CONCRETE_CODE(timer);
 
 #endif // defined TIMER_H

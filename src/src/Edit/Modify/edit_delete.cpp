@@ -24,7 +24,7 @@ edit_text_rep::get_deletion_point (
   p= tp;
   if (forward) {
     //cout << HRULE;
-    if ((rp < p) && (N(p-rp) >= 2) &&
+    if ((N(p) >= 2) &&
 	is_concat (subtree (et, path_up (p, 2))) &&
 	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
 	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
@@ -44,7 +44,7 @@ edit_text_rep::get_deletion_point (
   //cout << "  last= " << last << "\n";
   //cout << "  rix = " << rix << "\n";
   while (((forward && (last >= rix)) || ((!forward) && (last == 0))) &&
-	 (rp < p) && is_format (subtree (et, path_up (p))))
+	 (!nil (p)) && is_format (subtree (et, path_up (p))))
     {
       last= last_item (p);
       p   = path_up (p);
@@ -54,7 +54,7 @@ edit_text_rep::get_deletion_point (
       //cout << "  last= " << last << "\n";
       //cout << "  rix = " << rix << "\n";
     }
-  if (rp < p) u= subtree (et, path_up (p));
+  if (!nil (p)) u= subtree (et, path_up (p));
 }
 
 /******************************************************************************
@@ -71,40 +71,37 @@ edit_text_rep::remove_text (bool forward) {
   // multiparagraph delete
   if (is_document (t)) {
     if ((forward && (last >= rix)) || ((!forward) && (last == 0))) {
-      if (rp < p) {
+      if (!nil(p)) {
 	tree u= subtree (et, path_up (p));
-	if (is_func (u, _FLOAT) || is_func (u, WITH) ||
-	    is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
-	    is_extension (u))
-	  {
-	    if (is_extension (u) && (N(u) > 1)) {
-	      int i, n= N(u);
-	      bool empty= true;
-	      for (i=0; i<n; i++)
-		empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
-	      if (!empty) {
-		if (forward) {
-		  if (last_item (p) == n-1) go_to (end (et, path_up (p)));
-		  else go_to (start (et, path_inc (p)));
-		}
-		else {
-		  if (last_item (p) == 0) go_to (start (et, path_up (p)));
-		  else go_to (end (et, path_dec (p)));
-		}
-		return;
+	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
+	  if (is_extension (u) && (N(u) > 1)) {
+	    int i, n= N(u);
+	    bool empty= true;
+	    for (i=0; i<n; i++)
+	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
+	    if (!empty) {
+	      if (forward) {
+		if (last_item (p) == n-1) go_to (end (et, path_up (p)));
+		else go_to (start (et, path_inc (p)));
 	      }
-	    }
-	    if (t == tree (DOCUMENT, "")) {
-	      if (is_func (u, _FLOAT) || is_compound (u, "footnote", 1)) {
-		assign (path_up (p), "");
-		correct (path_up (p, 2));
+	      else {
+		if (last_item (p) == 0) go_to (start (et, path_up (p)));
+		else go_to (end (et, path_dec (p)));
 	      }
-	      else if (is_document (subtree (et, path_up (p, 2))))
-		assign (path_up (p), "");
-	      else assign (path_up (p), tree (DOCUMENT, ""));
+	      return;
 	    }
-	    else go_to_border (path_up (p), !forward);
 	  }
+	  if (t == tree (DOCUMENT, "")) {
+	    if (is_func (u, _FLOAT) || is_compound (u, "footnote", 1)) {
+	      assign (path_up (p), "");
+	      correct (path_up (p, 2));
+	    }
+	    else if (is_document (subtree (et, path_up (p, 2))))
+	      assign (path_up (p), "");
+	    else assign (path_up (p), tree (DOCUMENT, ""));
+	  }
+	  else go_to_border (path_up (p), !forward);
+	}
       }
       return;
     }
@@ -180,8 +177,6 @@ edit_text_rep::remove_text (bool forward) {
       back_table (p, forward);
       return;
     case WITH:
-    case STYLE_WITH:
-    case VAR_STYLE_WITH:
       go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
@@ -214,8 +209,6 @@ edit_text_rep::remove_text (bool forward) {
       back_in_table (u, p, forward);
       return;
     case WITH:
-    case STYLE_WITH:
-    case VAR_STYLE_WITH:
       back_in_with (u, p, forward);
       return;
     default:
@@ -237,7 +230,7 @@ edit_text_rep::remove_structure (bool forward) {
   get_deletion_point (p, last, rix, t, u, forward);
 
   // multiparagraph delete
-  if (!(rp < p)) {
+  if (nil (p)) {
     if (forward) {
       if (last >= rix) return;
       remove_return (path (last));
@@ -310,8 +303,8 @@ edit_text_rep::remove_structure (bool forward) {
 void
 edit_text_rep::remove_structure_upwards () {
   path p= path_up (tp);
-  while ((rp < p) && is_format (subtree (et, path_up (p)))) p= path_up (p);
-  if (!(rp < p)) return;
+  while ((!nil (p)) && is_format (subtree (et, path_up (p)))) p= path_up (p);
+  if (nil (p)) return;
   int last= last_item (p);
   p= path_up (p);
   tree st= subtree (et, p);
