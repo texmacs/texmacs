@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.7>
 
 <style|source>
 
@@ -25,15 +25,13 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-article>
+  <use-package|std|env|title-generic|header-article|section-article|two-columns>
 
   <\active*>
     <\src-comment>
       Global lay-out.
     </src-comment>
   </active*>
-
-  <assign|par-columns|2>
 
   <assign|font-base-size|9>
 
@@ -53,8 +51,6 @@
     </src-comment>
   </active*>
 
-  <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<with|par-columns|1|<doc-title-block|<arg|body>>>>>>
-
   <assign|doc-abstract|<\macro|body>
     <\padded-normal|1.5fn|1.5fn>
       <with|font-series|bold|<abstract-text>><vspace|1.5fn><no-page-break>
@@ -62,8 +58,6 @@
       <surround|<no-indent>||<arg|body>>
     </padded-normal>
   </macro>>
-
-  <assign|doc-footnote|<macro|body|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|body>>|0>|<quasi|<with|par-columns|1|<style-with|src-compact|none|<render-footnote|<unquote|<doc-author-note-next>>|<arg|body|0><map-args|doc-footnote-sub|concat|body|1>>>>>>>>>
 
   <\active*>
     <\src-comment>

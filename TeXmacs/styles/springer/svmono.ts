@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.4.7>
 
 <style|source>
 
@@ -193,13 +193,19 @@
     </src-comment>
   </active*>
 
+  <assign|odd-page-text|<macro|s|<assign|page-odd-header|<style-with|src-compact|none|<small|<no-indent><htab|0mm><arg|s><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
+
+  <assign|even-page-text|<macro|s|<assign|page-even-header|<style-with|src-compact|none|<small|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|s>>>>>>
+
+  \;
+
   <assign|header-title|<macro|name|<blanc-page>>>
 
   <assign|header-author|<macro|name|>>
 
-  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|nr><space|<between-number-space>><arg|name>>>>>>>
+  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><odd-page-text|<arg|nr><space|<between-number-space>><arg|name>><even-page-text|<arg|nr><space|<between-number-space>><arg|name>>>>>
 
-  <assign|header-secondary|<macro|name|nr|what|<assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><htab|0mm><arg|nr><space|<between-number-space>><arg|name><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
+  <assign|header-secondary|<macro|name|nr|what|<style-with|src-compact|none|<odd-page-text|<arg|nr><space|<between-number-space>><arg|name>>>>>
 
   <active*|<\src-comment>
     Theorem-like environemments rendering.
