@@ -15,6 +15,12 @@
 #include "Widget/make_widget.hpp"
 #include "Widget/Button/button_widget.hpp"
 
+#ifdef OS_WIN32
+#define MAP_DELAY 250
+#else
+#define MAP_DELAY 100
+#endif
+
 /******************************************************************************
 * Popup buttons
 ******************************************************************************/
@@ -237,7 +243,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
     do {
       now= texmacs_time ();
       if (win->check_event (MENU_EVENT)) return;
-    } while ((now-entered_at)<100);
+    } while ((now-entered_at) < MAP_DELAY);
     map_popup ();
   }
 

@@ -35,11 +35,29 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
   int Y2= min (y2- y, h); if (Y2<0) return;
 
   if (char_clip) {
+#ifdef OS_WIN32
+    int X, Y, N;
+    for (Y=Y1; Y<Y2; Y++) {
+      for (X=X1, N=0; X<X2; X++) {
+	if (XGetBitmapPixel (bm, X, Y)) N++;
+	else {
+	  if (N > 0)
+	    XCopyArea (dpy, (Drawable)pm, win, gc, X-N, Y, N, 1, x+X1-N, y+Y1);
+	  N= 0;
+	}
+      }
+      if (N > 0)
+	XCopyArea (dpy, (Drawable)pm, win, gc, X, Y-N, N, 1, x+X1-N, y+Y1);
+    }
+#else
     XSetClipMask (dpy, gc, bm);
     XSetClipOrigin (dpy, gc, x, y);
+    XCopyArea (dpy, (Drawable) pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
+    set_clipping (cx1- ox, cy1- oy, cx2- ox, cy2- oy);
+#endif
   }
-  XCopyArea (dpy, (Drawable) pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
-  if (char_clip) set_clipping (cx1- ox, cy1- oy, cx2- ox, cy2- oy);
+  else
+    XCopyArea (dpy, (Drawable) pm, win, gc, X1, Y1, X2-X1, Y2-Y1, x+X1, y+Y1);
 }
 
 void
