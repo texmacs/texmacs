@@ -16,7 +16,7 @@
   (:use (texmacs tools tm-circulate))
   (:export
     ;; titles
-    go-end-of-header-element make-header-expand make-header-apply
+    go-end-of-header-element make-header-compound make-header-apply
     ;; sections
     inside-section? make-section make-section-arg toggle-section-number
     ;; lists
@@ -35,10 +35,10 @@
   (if (inside? "encl") (go-end-of "encl"))
   (go-end-line))
 
-(define (make-header-expand s)
+(define (make-header-compound s)
   (go-end-of-header-element)
   (if (not (== (tree->object (the-line)) "")) (insert-return))
-  (make-expand-arg s))
+  (make-compound-arg s))
 
 (define (make-header-apply s)
   (go-end-of-header-element)
@@ -65,12 +65,12 @@
 
 (define (make-section s)
   (if (not (make-return-after))
-      (make-expand s)
+      (make-compound s)
       (make-return-before)))
 
 (define (make-section-arg s)
   (if (not (make-return-after))
-      (make-expand-arg s)))
+      (make-compound-arg s)))
 
 (define (toggle-section-number)
   (cond ((inside? "chapter") (variant-replace "chapter" "chapter*"))
@@ -114,13 +114,13 @@
       (inside? "description-long")))
 
 (define (make-tmlist s)
-  (make-big-expand s)
+  (make-big-compound s)
   (make-item))
 
 (define (make-item)
   (if (not (make-return-after))
-      (cond ((inside-list?) (make-expand "item"))
-	    ((inside-description?) (make-expand-arg "item*")))))
+      (cond ((inside-list?) (make-compound "item"))
+	    ((inside-description?) (make-compound-arg "item*")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content
@@ -128,14 +128,13 @@
 
 (define (make-aux env aux)
   (if (not (make-return-after))
-      (insert-object (tmp-compound-object env aux '(document "")))))
+      (insert-object (list (string->symbol env) aux '(document "")))))
 
 (define (make-aux* env aux name)
   (if (not (make-return-after))
-      (insert-object (tmp-compound-object env aux name '(document "")))))
+      (insert-object (list (string->symbol env) aux name '(document "")))))
 
 (define (make-bib style file-name)
   (if (not (make-return-after))
       (insert-object
-       (tmp-compound-object "bibliography" "bib"
-			    style file-name '(document "")))))
+       (list 'bibliography "bib" style file-name '(document "")))))

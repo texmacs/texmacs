@@ -27,8 +27,6 @@
 
 (define (pre-serialize lan t)
   (cond ((func? t 'document 1) (pre-serialize lan (cadr t)))
-	((and (func? t 'var_expand 2) (== (cadr t) "math"))
-	 (pre-serialize lan (plugin-math-input (list 'tuple lan (caddr t)))))
 	((func? t 'math 1)
 	 (pre-serialize lan (plugin-math-input (list 'tuple lan (cadr t)))))
 	(else t)))

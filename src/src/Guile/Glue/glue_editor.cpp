@@ -1785,8 +1785,8 @@ tmg_make_with (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_make_big_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-expand");
+tmg_make_big_compound (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-big-compound");
 
   string in1= scm_to_string (arg1);
 
@@ -1798,8 +1798,8 @@ tmg_make_big_expand (SCM arg1) {
 }
 
 SCM
-tmg_make_expand (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand");
+tmg_make_compound (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound");
 
   string in1= scm_to_string (arg1);
 
@@ -1811,9 +1811,9 @@ tmg_make_expand (SCM arg1) {
 }
 
 SCM
-tmg_make_expand_arity (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-expand-arity");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-expand-arity");
+tmg_make_compound_arity (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-compound-arity");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "make-compound-arity");
 
   string in1= scm_to_string (arg1);
   int in2= scm_to_int (arg2);
@@ -2913,9 +2913,9 @@ initialize_glue_editor () {
   gh_new_procedure ("make-return-after", (FN) tmg_make_return_after, 0, 0, 0);
   gh_new_procedure ("make-assign", (FN) tmg_make_assign, 2, 0, 0);
   gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
-  gh_new_procedure ("make-big-expand", (FN) tmg_make_big_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand", (FN) tmg_make_expand, 1, 0, 0);
-  gh_new_procedure ("make-expand-arity", (FN) tmg_make_expand_arity, 2, 0, 0);
+  gh_new_procedure ("make-big-compound", (FN) tmg_make_big_compound, 1, 0, 0);
+  gh_new_procedure ("make-compound", (FN) tmg_make_compound, 1, 0, 0);
+  gh_new_procedure ("make-compound-arity", (FN) tmg_make_compound_arity, 2, 0, 0);
   gh_new_procedure ("temp-proof-fix", (FN) tmg_temp_proof_fix, 0, 0, 0);
   gh_new_procedure ("make-apply", (FN) tmg_make_apply, 1, 0, 0);
   gh_new_procedure ("view-set-property", (FN) tmg_view_set_property, 2, 0, 0);

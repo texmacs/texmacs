@@ -18,7 +18,7 @@
     ;; inserting general content
     insert-object insert-object-go-to
     insert-tree-at insert-object-at
-    make-expand-arg
+    make-compound-arg
     ;; inserting inactive content
     make-inactive make-inactive-arg make-inactive-message
     make-inactive-apply-arg make-inactive-apply-args
@@ -54,10 +54,10 @@
   (:synopsis "Insert @obj at @p.")
   (insert-tree-at (object->tree obj) p))
 
-(tm-define (make-expand-arg s)
+(tm-define (make-compound-arg s)
   (:type (string ->))
   (:synopsis "Insert an expanded macro with name @s.")
-  (make-expand-arity s 1))
+  (make-compound-arity s 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting inactive content

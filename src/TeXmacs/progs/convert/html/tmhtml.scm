@@ -393,10 +393,9 @@
 ;; Other primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-expand l)
+(define (tmhtml-compound l)
   ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml-implicit-expand (cons (string->symbol (car l))
-				(cdr l))))
+  (tmhtml-implicit-compound (cons (string->symbol (car l)) (cdr l))))
 
 (define (tmhtml-label l)
   ;; WARNING: bad conversion if ID is not a string.
@@ -682,7 +681,7 @@
 	  (else (tmhtml-post-simplify-element
 		 (append x (tmhtml-list (cdr l))))))))
 
-(define (tmhtml-implicit-expand l)
+(define (tmhtml-implicit-compound l)
   (or (tmhtml-dispatch 'tmhtml-stdmarkup% l)
       (tmhtml-dispatch 'tmhtml-tables% l)
       '()))
@@ -694,7 +693,7 @@
   (if (string? x)
       (if (string-null? x) '() (tmhtml-string x)) ; handle string nodes
       (or (tmhtml-dispatch 'tmhtml-primitives% x)
-	  (tmhtml-implicit-expand x))))
+	  (tmhtml-implicit-compound x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -766,9 +765,9 @@
   (assign tmhtml-noop)
   (with tmhtml-with)
   ((:or set reset) tmhtml-noop)
-  ((:or var_expand expand apply) tmhtml-expand)
+  ((:or var_expand expand hide_expand compound apply) tmhtml-compound)
   ((:or begin end include macro func env eval) tmhtml-noop)
-  (value tmhtml-expand)
+  (value tmhtml-compound)
   (arg tmhtml-noop)
   ((:or backup quote delay hold release) tmhtml-noop)
   

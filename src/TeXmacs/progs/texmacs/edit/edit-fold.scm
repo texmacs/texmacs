@@ -24,34 +24,22 @@
 
 (define (make-fold)
   (insert-tree-go-to
-   (object->tree (tmp-compound-object "fold" '(document "") '(document "")))
-   (list (tmp-d-hide-exp) 0)))
+   (object->tree '(fold (document "") (document "")))
+   (list 0 0)))
 
 (define (fold)
   (let ((p (search-upwards "unfold")))
     (if (not (null? p))
 	(let ((t (tm-subtree p)))
-	  (if (= (tmp-d-hide-exp) 1)
-	      (tm-assign p (tree3 'hide_expand (string->tree "fold")
-				  (tree-ref t (tmp-d-exp))
-				  (tree-ref t (+ (tmp-d-exp) 1))))
-	      (tm-assign p (tree2 'fold
-				  (tree-ref t (tmp-d-exp))
-				  (tree-ref t (+ (tmp-d-exp) 1)))))	      
-	  (tm-go-to (tm-start (rcons p (tmp-d-hide-exp))))))))
+	  (tm-assign p (tree2 'fold (tree-ref t 0) (tree-ref t 1)))
+	  (tm-go-to (tm-start (rcons p 0)))))))
 
 (define (unfold)
   (let ((p (search-upwards "fold")))
     (if (not (null? p))
 	(let ((t (tm-subtree p)))
-	  (if (= (tmp-d-exp) 1)
-	      (tm-assign p (tree3 'expand (string->tree "unfold")
-				  (tree-ref t (tmp-d-hide-exp))
-				  (tree-ref t (+ (tmp-d-hide-exp) 1))))
-	      (tm-assign p (tree2 'unfold
-				  (tree-ref t (tmp-d-hide-exp))
-				  (tree-ref t (+ (tmp-d-hide-exp) 1)))))
-	  (tm-go-to (tm-start (rcons p (+ (tmp-d-exp) 1))))))))
+	  (tm-assign p (tree2 'unfold (tree-ref t 0) (tree-ref t 1)))
+	  (tm-go-to (tm-start (rcons p 1)))))))
 
 (tm-define (mouse-fold)
   (:type (void -> void))
@@ -77,9 +65,8 @@
 
 (define (make-switch)
   (insert-tree-go-to
-   (object->tree (tmp-compound-object "switch"
-				      '(document "") '(tuple (tmarker))))
-   (list (tmp-d-hide-exp) 0)))
+   (object->tree '(switch (document "") (tuple (tmarker))))
+   (list 0 0)))
 
 (define (switch-find-marker t i)
   (cond ((= i (tree-arity t)) -1)
@@ -89,28 +76,28 @@
 (define (switch-get-position)
   (let ((p (search-upwards "switch")))
     (if (null? p) -1
-	(switch-find-marker (tm-subtree (rcons p (+ (tmp-d-hide-exp) 1))) 0))))
+	(switch-find-marker (tm-subtree (rcons p 1)) 0))))
 
 (define (switch-get-last)
   (let ((p (search-upwards "switch")))
     (if (null? p) -1
-	(- (tree-arity (tm-subtree (rcons p (+ (tmp-d-hide-exp) 1)))) 1))))
+	(- (tree-arity (tm-subtree (rcons p 1))) 1))))
 
 (define (switch-unselect)
   (let ((p (search-upwards "switch"))
 	(i (switch-get-position)))
     (if (>= i 0)
-	(let ((t (tm-subtree (rcons p (tmp-d-hide-exp)))))
-	  (tm-assign (rcons p (tmp-d-hide-exp)) (string->tree ""))
-	  (tm-assign (rcons* p (+ (tmp-d-hide-exp) 1) i) t)))))
+	(let ((t (tm-subtree (rcons p 0))))
+	  (tm-assign (rcons p 0) (string->tree ""))
+	  (tm-assign (rcons* p 1 i) t)))))
 
 (define (switch-select i)
   (let ((p (search-upwards "switch")))
     (if (not (null? p))
-	(let ((t (tm-subtree (rcons* p (+ (tmp-d-hide-exp) 1) i))))
-	  (tm-assign (rcons* p (+ (tmp-d-hide-exp) 1) i)
+	(let ((t (tm-subtree (rcons* p 1 i))))
+	  (tm-assign (rcons* p 1 i)
 		     (object->tree '(tmarker)))
-	  (tm-assign (rcons p (tmp-d-hide-exp)) t)))))
+	  (tm-assign (rcons p 0) t)))))
 
 (define (switch-pos where pos last)
   (cond ((== where "before") pos)
@@ -130,7 +117,7 @@
     (cond ((= pos -1) (noop))
 	  ((string? where) (switch-insert (switch-pos where pos last)))
 	  (else (switch-unselect)
-		(tm-insert (rcons* p (+ (tmp-d-hide-exp) 1) where)
+		(tm-insert (rcons* p 1 where)
 			   (object->tree '(tuple (document ""))))
 		(switch-select where)))))
 
@@ -142,7 +129,7 @@
 	  ((= last 0) (tm-assign p (string->tree "")) (tm-correct (cDr p)))
 	  ((string? where) (switch-remove (switch-pos where pos last)))
 	  (else (switch-unselect)
-		(tm-remove (rcons* p (+ (tmp-d-hide-exp) 1) where) 1)
+		(tm-remove (rcons* p 1 where) 1)
 		(switch-select (min where (- last 1)))))))
 
 (define (switch-to where)
