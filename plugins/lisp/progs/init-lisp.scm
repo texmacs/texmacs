@@ -31,7 +31,7 @@
 		 (list :launch version-name
 		       (string-append "tm_lisp " version-name)))
 	       rest)))
-       (cons launch-default launch-rest))
+	(cons launch-default launch-rest))
       '())))
 
 (plugin-configure lisp
