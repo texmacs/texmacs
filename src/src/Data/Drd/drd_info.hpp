@@ -20,24 +20,20 @@ class drd_info;
 class drd_info_rep: concrete_struct {
 public:
   string name;
-  rel_hashmap<tree_label,tag_info> ti;
+  rel_hashmap<tree_label,tag_info> info;
 
 public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
 
   /* Properties of the tag itself */
-  void set_arity_mode (tree_label tag, int mode);
+  void set_arity (tree_label tag, int arity, int extra, int am, int cm);
   int  get_arity_mode (tree_label tag);
-  void set_min_arity (tree_label tag, int arity);
-  int  get_min_arity (tree_label tag);
-  void set_extra_arity (tree_label tag, int arity);
-  int  get_extra_arity (tree_label tag);
-  void freeze_arity (tree_label tag);
-
-  void set_child_mode (tree_label tag, int mode);
+  int  get_arity_base (tree_label tag);
+  int  get_arity_extra (tree_label tag);
   int  get_child_mode (tree_label tag);
-  void freeze_child_mode (tree_label tag);
+  int  get_nr_indices (tree_label tag);
+  void freeze_arity (tree_label tag);
 
   void set_no_border (tree_label tag, bool has_no_border);
   int  get_no_border (tree_label tag);
@@ -47,12 +43,8 @@ public:
   int  get_block (tree_label tag);
   void freeze_block (tree_label tag);
 
-  void set_dynamic (tree_label tag, bool is_dynamic);
-  int  get_dynamic (tree_label tag);
-  void freeze_dynamic (tree_label tag);
-
   /* Properties of the children of the tag */
-  void set_accessible (tree_label tag, int nr, bool is_dynamic);
+  void set_accessible (tree_label tag, int nr, bool is_accessible);
   int  get_accessible (tree_label tag, int nr);
   void freeze_accessible (tree_label tag, int nr);
   
@@ -75,6 +67,8 @@ public:
 
   /* Analyzing trees using the drd */
   bool is_dynamic (tree t);
+  bool old_is_accessible_child (tree t, int child);
+  bool new_is_accessible_child (tree t, int child);
   bool is_accessible_child (tree t, int child);
   bool is_child_enforcing (tree t);
 

@@ -73,21 +73,21 @@
 
 struct parent_info {
   unsigned arity_mode       : 2; // arity layout
-  unsigned arity_min        : 6; // minimal number of arguments
-  unsigned arity_extra      : 4; // extra arguments
+  unsigned arity_base       : 6; // base arity (minimal arity)
+  unsigned arity_extra      : 4; // extra arity (optional, repeated, etc.)
   unsigned child_mode       : 2; // child layout
   unsigned no_border        : 1; // is the border inaccessible?
   unsigned block            : 2; // is a block structure?
-  unsigned dynamic          : 1; // admits inactive variant?
-  unsigned freeze_child     : 1; // true => disable heuristic determination
-  unsigned freeze_arity     : 1;
+  unsigned freeze_arity     : 1; // true => disable heuristic determination
   unsigned freeze_no_border : 1;
   unsigned freeze_block     : 1;
-  unsigned freeze_dynamic   : 1;
 
   parent_info (int arity, int extra, int amode, int cmode, bool frozen= false);
+  parent_info (string s);
   inline ~parent_info () {}
-  operator tree ();
+  operator string ();
+  bool operator == (const parent_info& pi);
+  bool operator != (const parent_info& pi);
 };
 
 struct child_info {
@@ -97,8 +97,11 @@ struct child_info {
   unsigned freeze_block     : 1;
 
   child_info (bool frozen= false);
+  child_info (string s);
   inline ~child_info () {}
-  operator tree ();
+  operator string ();
+  bool operator == (const child_info& pi);
+  bool operator != (const child_info& pi);
 };
 
 class tag_info;
@@ -126,10 +129,12 @@ class tag_info {
   tag_info (parent_info pi, array<child_info> ci);
   tag_info (int arity= -1, int props= 0);
   tag_info (int arity, int extra, int amode, int cmode, bool frozen= false);
+  child_info& operator () (int child, int n);
   operator tree ();
 };
 CONCRETE_CODE(tag_info);
 
+bool operator == (tag_info ti1, tag_info ti2);
 bool operator != (tag_info ti1, tag_info ti2);
 ostream& operator << (ostream& out, tag_info ti);
 tag_info copy (tag_info ti);
