@@ -117,8 +117,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     env->exec (t);
     env->read_env (H);
     drd->heuristic_init (H);
-    if ((!init->contains (PREAMBLE)) || (init[PREAMBLE] == "false"))
-      SERVER (style_set_cache (style, H, drd->get_locals ()));
+    SERVER (style_set_cache (style, H, drd->get_locals ()));
   }
 }
 
@@ -127,6 +126,7 @@ edit_typeset_rep::typeset_preamble () {
   env->write_default_env ();
   typeset_style_use_cache (the_style);
   env->patch_env (init);
+  env->update ();
   env->read_env (pre);
   drd->heuristic_init (pre);
 }
@@ -318,23 +318,17 @@ void
 edit_typeset_rep::init_style () {
   bool old_need_save    = buf->need_save;
   bool old_need_autosave= buf->need_autosave;
-  path old_tp= tp;
-  ::notify_assign (ttt, path(), et);
-  tp= old_tp;
-  notify_change (THE_ENVIRONMENT);
   buf->need_save    = old_need_save;
   buf->need_autosave= old_need_autosave;
+  notify_change (THE_ENVIRONMENT);
 }
 
 void
 edit_typeset_rep::init_style (string name) {
   if ((name == "none") || (name == "") || (name == "style")) the_style= TUPLE;
   else the_style= tree (TUPLE, name);
-  path old_tp= tp;
-  ::notify_assign (ttt, path(), et);
-  tp= old_tp;
-  notify_change (THE_ENVIRONMENT);
   buf->need_save= buf->need_autosave= true;
+  notify_change (THE_ENVIRONMENT);
 }
 
 void
@@ -347,20 +341,14 @@ edit_typeset_rep::init_extra_style (string name, bool check) {
   }
 
   the_style << tree (name);
-  path old_tp= tp;
-  ::notify_assign (ttt, path(), et);
-  tp= old_tp;
-  notify_change (THE_ENVIRONMENT);
   buf->need_save= buf->need_autosave= true;
+  notify_change (THE_ENVIRONMENT);
 }
 
 void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;
   init (var)= by;
-  path old_tp= tp;
-  ::notify_assign (ttt, path(), et);
-  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -368,9 +356,6 @@ void
 edit_typeset_rep::init_default (string var) {
   if (!init->contains (var)) return;
   init->reset (var);
-  path old_tp= tp;
-  ::notify_assign (ttt, path(), et);
-  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
 }
 

@@ -533,7 +533,8 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Handling environment\n";
-  if (env_change & THE_ENVIRONMENT) typeset_preamble ();
+  if (env_change & THE_ENVIRONMENT)
+    typeset_invalidate_all ();
 
   // cout << "Handling tree\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT)) {
