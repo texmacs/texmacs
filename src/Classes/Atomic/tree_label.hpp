@@ -22,10 +22,10 @@ enum tree_label {
   STRING, UNKNOWN, UNINIT, ERROR, RAW_DATA,
 
   // basic formatting tags
-  DOCUMENT, PARAGRAPH, SURROUND, CONCAT, GROUP,
-  HSPACE, VSPACE_BEFORE, VSPACE_AFTER, SPACE,
+  DOCUMENT, PARA, SURROUND, CONCAT, GROUP,
+  HSPACE, VAR_VSPACE, VSPACE, SPACE,
   HTAB, MOVE, RESIZE, REPEAT, _FLOAT,
-  DECORATE_ATOMS, DECORATE_LINES, DECORATE_PAGES, DECORATED_BOX,
+  DATOMS, DLINES, DPAGES, DBOX,
 
   // zero-ary formatting directives
   // modify is_formatting predicate when inserting new tags
@@ -36,25 +36,25 @@ enum tree_label {
   NEW_PAGE, NEW_DOUBLE_PAGE_BEFORE, NEW_DOUBLE_PAGE,
 
   // mathematics
-  LEFT, MIDDLE, RIGHT, BIG,
-  LEFT_PRIME, RIGHT_PRIME, BELOW, ABOVE,
-  LEFT_SUB, LEFT_SUP, RIGHT_SUB, RIGHT_SUP,
-  FRAC, SQRT, WIDE, WIDE_UNDER, NEG, TREE,
+  LEFT, MID, RIGHT, BIG,
+  LPRIME, RPRIME, BELOW, ABOVE,
+  LSUB, LSUP, RSUB, RSUP,
+  FRAC, SQRT, WIDE, VAR_WIDE, NEG, TREE,
 
   // tabular material
-  TABLE_FORMAT, TABLE_WITH, CELL_WITH, TABLE_MARKER,
-  TABLE, ROW, CELL, SUB_TABLE,
+  TFORMAT, TWITH, CWITH, TMARKER,
+  TABLE, ROW, CELL, SUBTABLE,
 
   // macro language
   ASSIGN, WITH, PROVIDES, VALUE,
-  MACRO, DRD_PROPS, ARGUMENT, COMPOUND,
+  MACRO, DRD_PROPS, ARG, COMPOUND,
   XMACRO, GET_LABEL, GET_ARITY, MAP_ARGS, EVAL_ARGS,
   EVAL, QUOTE, DELAY, HOLD, RELEASE,
   EXTERN, INCLUDE,
   
   // computational markup
   OR, XOR, AND, NOT,
-  PLUS, MINUS, TIMES, OVER, DIVIDE, MODULO,
+  PLUS, MINUS, TIMES, OVER, DIV, MOD,
   MERGE, LENGTH, RANGE, NUMBER, _DATE, TRANSLATE, FIND_FILE,
   IS_TUPLE, LOOK_UP,
   EQUAL, UNEQUAL, LESS, LESSEQ, GREATER, GREATEREQ,
@@ -65,7 +65,7 @@ enum tree_label {
   SYMBOL, LATEX, HYBRID,
   TUPLE, ATTR, COLLECTION, ASSOCIATE, BACKUP,
   LABEL, REFERENCE, PAGEREF, WRITE,
-  SPECIFIC, HYPERLINK, ACTION,
+  SPECIFIC, HLINK, ACTION,
   TAG, MEANING, FLAG,
 
   // graphical tags
@@ -77,15 +77,15 @@ enum tree_label {
   FORMAT, SPLIT,
   OLD_MATRIX, OLD_TABLE, OLD_MOSAIC, OLD_MOSAIC_ITEM,
   SET, RESET, EXPAND, VAR_EXPAND, HIDE_EXPAND,
-  APPLY, BEGIN, END, FUNCTION, ENVIRONMENT,
+  APPLY, BEGIN, END, FUNC, ENV,
   AUTHORIZE,
 
   // user extensions
   START_EXTENSIONS
 };
 
-inline tree_label SUB (bool right) { return right? RIGHT_SUB: LEFT_SUB; }
-inline tree_label SUP (bool right) { return right? RIGHT_SUP: LEFT_SUP; }
+inline tree_label SUB (bool right) { return right? RSUB: LSUB; }
+inline tree_label SUP (bool right) { return right? RSUP: LSUP; }
 
 /******************************************************************************
 * Conversions from tree_labels to strings and vice versa

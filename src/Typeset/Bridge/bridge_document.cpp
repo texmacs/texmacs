@@ -57,7 +57,7 @@ bridge_document (typesetter ttt, tree st, path ip) {
 void
 bridge_document_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARAGRAPH)))
+  if (nil (p) && (!is_func (u, DOCUMENT)) && (!is_func (u, PARA)))
     fatal_error ("Nil path", "bridge_document_rep::notify_assign");
   if (nil (p)) { st= u; initialize (); }
   else if (atom (p)) {

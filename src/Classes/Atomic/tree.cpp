@@ -189,13 +189,13 @@ is_formatting (tree t) {
 bool
 is_table (tree t) {
   return
-    is_func (t, TABLE) || is_func (t, SUB_TABLE) ||
+    is_func (t, TABLE) || is_func (t, SUBTABLE) ||
     is_func (t, ROW) || is_func (t, CELL);
 }
 
 bool
 is_table_format (tree t) {
-  return is_func (t, TABLE_FORMAT);
+  return is_func (t, TFORMAT);
 }
 
 bool
@@ -205,9 +205,9 @@ is_multi_paragraph (tree t) {
     return true;
   case SURROUND:
     return is_multi_paragraph (t[2]);
-  case DECORATE_ATOMS:
-  case DECORATE_LINES:
-  case DECORATE_PAGES:
+  case DATOMS:
+  case DLINES:
+  case DPAGES:
   case WITH:
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
@@ -228,22 +228,22 @@ is_multi_paragraph (tree t) {
 bool
 is_script (tree t) {
   return
-    is_func (t, LEFT_SUB) || is_func (t, LEFT_SUP) ||
-    is_func (t, RIGHT_SUB) || is_func (t, RIGHT_SUP);
+    is_func (t, LSUB) || is_func (t, LSUP) ||
+    is_func (t, RSUB) || is_func (t, RSUP);
 }
 
 bool
 is_script (tree t, bool& right) {
-  if (is_func (t, LEFT_SUB) ||
-      is_func (t, LEFT_SUP)) { right=false; return true; }
-  if (is_func (t, RIGHT_SUB) ||
-      is_func (t, RIGHT_SUP)) { right=true; return true; }
+  if (is_func (t, LSUB) ||
+      is_func (t, LSUP)) { right=false; return true; }
+  if (is_func (t, RSUB) ||
+      is_func (t, RSUP)) { right=true; return true; }
   return false;
 }
 
 bool
 is_prime (tree t) {
-  return ((L(t) == LEFT_PRIME) || (L(t) == RIGHT_PRIME)) && (N(t) == 1);
+  return ((L(t) == LPRIME) || (L(t) == RPRIME)) && (N(t) == 1);
 }
 
 bool

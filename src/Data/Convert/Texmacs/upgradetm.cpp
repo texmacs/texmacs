@@ -252,7 +252,7 @@ string_to_tree (string s, int& pos, hashmap<string,int> codes) {
 static tree
 un_paragraph (tree t) {
   if (is_atomic (t)) return t;
-  if (is_func (t, PARAGRAPH, 1)) return t[0];
+  if (is_func (t, PARA, 1)) return t[0];
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -291,7 +291,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	}
 	else if (starts (ss, "<mid-")) {
 	  if (s != "") r << s; s= "";
-	  r << tree (MIDDLE, ss (5, N(ss)-1));
+	  r << tree (MID, ss (5, N(ss)-1));
 	}
 	else if (starts (ss, "<right-")) {
 	  if (s != "") r << s; s= "";
@@ -309,7 +309,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	  int start= i++;
 	  while ((i<n) && (t->label[i] == t->label[i-1])) i++;
 	  if (s != "") r << s; s= "";
-	  tree_label op= t->label[start] == '`'? LEFT_PRIME: RIGHT_PRIME;
+	  tree_label op= t->label[start] == '`'? LPRIME: RPRIME;
 	  r << tree (op, t->label (start, i));
 	}
       else s << t->label[i++];
@@ -745,7 +745,7 @@ upgrade_env_args (tree t, tree env) {
     int i, k= N(env);
     for (i=0; i<k-2; i++)
       if (t[0] == env[i])
-	return tree (ARGUMENT, t[0]);
+	return tree (ARG, t[0]);
     return t;
   }
   else {
@@ -774,13 +774,13 @@ upgrade_set_begin_env (tree t) {
   else if (!is_concat (begin)) begin= tree (CONCAT, begin);
   if (end == "") end= tree (CONCAT);
   else if (!is_concat (end)) end= tree (CONCAT, end);
-  body << A (begin) << tree (ARGUMENT, copy (s)) << A (end);
+  body << A (begin) << tree (ARG, copy (s)) << A (end);
   // cout << "mid1: " << body << "\n";
   body= upgrade_set_begin_concat (body);
   body= upgrade_env_args (body, t);
   // cout << "mid2: " << body << "\n";
   bool found= false;
-  u[n-1]= upgrade_set_begin_surround (body, tree (ARGUMENT, s), found);
+  u[n-1]= upgrade_set_begin_surround (body, tree (ARG, s), found);
   // cout << "out : " << u << "\n";
   // cout << "-------------------------------------------------------------\n";
   return u;
@@ -792,7 +792,7 @@ upgrade_set_begin (tree t) {
   else {
     if (is_concat (t)) return upgrade_set_begin_concat (t);
     else if (is_document (t)) return upgrade_set_begin_document (t);
-    else if (is_func (t, ENVIRONMENT)) return upgrade_set_begin_env (t);
+    else if (is_func (t, ENV)) return upgrade_set_begin_env (t);
     else return upgrade_set_begin_default (t);
   }
 }
@@ -802,7 +802,7 @@ eliminate_set_begin (tree t) {
   if (is_atomic (t)) return t;
   if (is_func (t, SET) || is_func (t, RESET) ||
       is_func (t, BEGIN) || is_func (t, END) ||
-      is_func (t, ENVIRONMENT)) return "";
+      is_func (t, ENV)) return "";
 
   int i, n= N(t);
   if (is_concat (t)) {
@@ -1026,7 +1026,7 @@ handle_mosaic_format (tree& fm, tree t, int i, int j) {
   if ((col == "none") || (col == "")) col= "";
   else col= "foreground";
 
-  tree w (CELL_WITH);
+  tree w (CWITH);
   w << as_string (i+1) << as_string (j+1)
     << as_string (i+1) << as_string (j+1);
 
@@ -1064,15 +1064,15 @@ upgrade_table (tree t) {
   else if (is_func (t, OLD_MATRIX) ||
 	   is_func (t, OLD_TABLE) ||
 	   is_func (t, OLD_MOSAIC) ||
-	   (is_func (t, TABLE_FORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
+	   (is_func (t, TFORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
     {
-      tree ft (TABLE_FORMAT);
-      if (is_func (t, TABLE_FORMAT)) {
+      tree ft (TFORMAT);
+      if (is_func (t, TFORMAT)) {
 	ft= t (0, N(t)-1);
 	t = t [N(t)-1];
       }
       if (is_func (t, OLD_MOSAIC)) {
-	tree with (CELL_WITH);
+	tree with (CWITH);
 	with << "1" << "-1" << "1" << "-1" << "cell mode" << "c";
 	ft << with;
       }
@@ -1189,24 +1189,24 @@ upgrade_split (tree t) {
       r= T;
     }
 
-    tree tf (TABLE_FORMAT);
+    tree tf (TFORMAT);
     if (split != "") {
-      tf << tree (TABLE_WITH, "table hyphen", "y")
-	 << tree (TABLE_WITH, "table width", "1par")
-	 << tree (TABLE_WITH, "table min cols", as_string (N (split)))
-	 << tree (TABLE_WITH, "table max cols", as_string (N (split)))
-	 << tree (CELL_WITH, "1", "-1", "1", "1", "cell lsep", "0spc")
-	 << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
-	 << tree (CELL_WITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
-	 << tree (CELL_WITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
-	 << tree (CELL_WITH, "1", "-1", "1", "1", "cell hyphen", "b")
-	 << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
+      tf << tree (TWITH, "table hyphen", "y")
+	 << tree (TWITH, "table width", "1par")
+	 << tree (TWITH, "table min cols", as_string (N (split)))
+	 << tree (TWITH, "table max cols", as_string (N (split)))
+	 << tree (CWITH, "1", "-1", "1", "1", "cell lsep", "0spc")
+	 << tree (CWITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
+	 << tree (CWITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
+	 << tree (CWITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
+	 << tree (CWITH, "1", "-1", "1", "1", "cell hyphen", "b")
+	 << tree (CWITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
       if (split[0] == "right")
-	tf << tree (CELL_WITH, "1", "-1", "1", "1", "cell hpart", "1");
+	tf << tree (CWITH, "1", "-1", "1", "1", "cell hpart", "1");
       if ((split[N(split)-1] == "left") || (split[N(split)-1] == "justify"))
-	tf << tree (CELL_WITH, "1", "-1", "-1", "-1", "cell hpart", "1");
+	tf << tree (CWITH, "1", "-1", "-1", "-1", "cell hpart", "1");
       for (i=0; i<N(split); i++) {
-	tree with (CELL_WITH);
+	tree with (CWITH);
 	int j= (i==N(split)-1)? -1: i+1;
 	with << "1" << "-1" << as_string (j) << as_string (j) << "cell halign";
 	if (split[i] == "right") with << "r";
@@ -1615,7 +1615,7 @@ static tree
 upgrade_function_arg (tree t, tree var) {
   if (is_atomic (t)) return t;
   else if ((t == tree (APPLY, var)) || (t == tree (VALUE, var)))
-    return tree (ARGUMENT, var);
+    return tree (ARG, var);
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -1628,7 +1628,7 @@ upgrade_function_arg (tree t, tree var) {
 static tree
 upgrade_function (tree t) {
   if (is_atomic (t)) return t;
-  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION)) {
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNC)) {
     int i, n= N(t[1])-1;
     for (i=0; i<n; i++)
       if (ends (as_string (t[1][i]), "*"))
@@ -1637,11 +1637,11 @@ upgrade_function (tree t) {
 	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
   }
   /*
-  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNCTION) && (N(t[1])>1)) {
+  if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNC) && (N(t[1])>1)) {
     cout << "Function: " << t[0] << "\n";
   }
   */
-  if (is_func (t, FUNCTION)) {
+  if (is_func (t, FUNC)) {
     int i, n= N(t)-1;
     tree u= t[n], r (MACRO, n+1);
     for (i=0; i<n; i++) {

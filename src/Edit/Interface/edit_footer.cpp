@@ -141,20 +141,20 @@ edit_interface_rep::compute_operation_footer (tree st) {
   string r;
   switch (L (st)) {
   case _FLOAT: r= (is_atomic (st[0])? st[0]->label: string ("float")); break;
-  case MIDDLE: r= "separator#" * as_symbol (st[0]); break;
+  case MID: r= "separator#" * as_symbol (st[0]); break;
   case RIGHT: r= "close#" * as_symbol (st[0]); break;
   case BIG: r= "big#" * as_symbol (st[0]); break;
-  case LEFT_PRIME: r= "left prime#" * as_string (st[0]); break;
-  case RIGHT_PRIME: r= "prime#" * as_string (st[0]); break;
+  case LPRIME: r= "left prime#" * as_string (st[0]); break;
+  case RPRIME: r= "prime#" * as_string (st[0]); break;
   case SQRT: r= (char*) ((N(st)==1)? "square root": "n-th root"); break;
   case WIDE: r=  get_accent_type (as_string (st[1])); break;
-  case WIDE_UNDER: r= "under#" * get_accent_type (as_string (st[1])); break;
-  case TABLE_FORMAT: r= "table"; break;
+  case VAR_WIDE: r= "under#" * get_accent_type (as_string (st[1])); break;
+  case TFORMAT: r= "table"; break;
   case ASSIGN: r= "assign#" * as_string (st[0]); break;
   case WITH: r= "with#" * get_with_text (st); break;
   case PROVIDES: r= "provides#" * as_string (st[0]); break;
   case VALUE: r= "value#" * as_string (st[0]); break;
-  case ARGUMENT: r= "argument#" * as_string (st[0]); break;
+  case ARG: r= "argument#" * as_string (st[0]); break;
   case COMPOUND: r= "compound#" * as_string (st[0]); break;
   case INCLUDE: r= "include#" * as_string (st[0]); break;
   case INACTIVE: r= "inactive#" * drd->get_name (L(st[0])); break;
@@ -179,7 +179,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   int  l = last_item (p);
   switch (L (st)) {
   case DOCUMENT:
-  case PARAGRAPH:
+  case PARA:
     return up;
   case SURROUND:
     if (l == 0) return up * "left surrounding#";
@@ -211,12 +211,12 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "index#";
   case WIDE:
     return up * get_accent_type (as_string (st[1])) * "#";
-  case WIDE_UNDER:
+  case VAR_WIDE:
     return up * "under#" * get_accent_type (as_string (st[1])) * "#";
   case TREE:
     if (l==0) return up * "root#";
     else return up * "branch(" * as_string (l) * ")#";
-  case TABLE_FORMAT:
+  case TFORMAT:
     return up;
   case TABLE:
     return up * "(" * as_string (l+1) * ",";
@@ -239,7 +239,7 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "value(" * as_string (l/2+1) * ")#";
   case SPECIFIC:
     return up * "texmacs#";
-  case HYPERLINK:
+  case HLINK:
     return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
     return up * drd->get_name (L(st)) * "#";

@@ -220,7 +220,7 @@ bool is_empty (tree t);
 inline bool
 is_applicable (tree t) {
   return is_compound (t) && (N(t) >= 1) &&
-    ((L(t) == MACRO) || (L(t) == FUNCTION) || (L(t) == XMACRO));
+    ((L(t) == MACRO) || (L(t) == FUNC) || (L(t) == XMACRO));
 }
 
 tree simplify_concat (tree t);

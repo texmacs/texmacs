@@ -197,7 +197,7 @@ edit_select_rep::select_enlarge () {
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);
-  if (is_func (st, TABLE_FORMAT) || is_func (st, DOCUMENT, 1))
+  if (is_func (st, TFORMAT) || is_func (st, DOCUMENT, 1))
     select_enlarge ();
   else {
     string s;
@@ -257,7 +257,7 @@ edit_select_rep::selection_active_table () {
   if ((p == start_p) || (p == end_p)) p= path_up (p);
   tree t= subtree (et, p);
   return
-    is_func (t, TABLE_FORMAT) || is_func (t, TABLE) ||
+    is_func (t, TFORMAT) || is_func (t, TABLE) ||
     is_func (t, ROW) || is_func (t, CELL);
 }
 
@@ -283,9 +283,9 @@ edit_select_rep::selection_active_enlarging () {
 static path
 table_search_format (tree t, path p) {
   tree st= subtree (t, p);
-  if (is_func (st, TABLE_FORMAT) && is_func (st[N(st)-1], TABLE)) return p;
+  if (is_func (st, TFORMAT) && is_func (st[N(st)-1], TABLE)) return p;
   while ((!nil (p)) && (!is_func (subtree (t, p), TABLE))) p= path_up (p);
-  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TABLE_FORMAT)))
+  if ((!nil (p)) && (is_func (subtree (t, path_up (p)), TFORMAT)))
     p= path_up (p);
   return p;
 }
@@ -297,7 +297,7 @@ table_search_coordinates (tree t, path p, int& row, int& col) {
     if (nil (p)) p= path (1);
     if (p == path (0)) p= path (0, 0);
     if (p == path (1)) p= path (N(t)-1, 1);
-    if (is_func (t, TABLE_FORMAT));
+    if (is_func (t, TFORMAT));
     else if (is_func (t, TABLE)) row= p->item;
     else if (is_func (t, ROW)) col= p->item;
     else return;
@@ -309,19 +309,19 @@ table_search_coordinates (tree t, path p, int& row, int& col) {
 static path
 table_search_cell (tree t, int row, int col) {
   path p;
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
   p= p * row;
   t= t [row];
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
   p= p * col;
   t= t [col];
-  while (is_func (t, TABLE_FORMAT)) {
+  while (is_func (t, TFORMAT)) {
     p= p * (N(t)-1);
     t= t [N(t)-1];
   }
@@ -355,7 +355,7 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
   }
   else {
     tree_label l= L(t);
-    if ((l==DOCUMENT) || (l==PARAGRAPH) || (l==CONCAT)) {
+    if ((l==DOCUMENT) || (l==PARA) || (l==CONCAT)) {
       if (is_compound (t[i1->item])) {
 	path mid;
 	selection_correct (t[i1->item], i1->next, end (t[i1->item]), o1, mid);
@@ -561,7 +561,7 @@ edit_select_rep::selection_paste (string key) {
     else {
       if ((t[2] != mode) && ((t[2]=="math") || (mode=="math")))
 	insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
-      if (is_func (t[1], TABLE_FORMAT) || is_func (t[1], TABLE)) {
+      if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
 	int row, col;
 	path fp= search_format (row, col);
 	if (nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
@@ -634,7 +634,7 @@ edit_select_rep::cut (path p1, path p2) {
     return;
   }
 
-  if (is_func (t, TABLE_FORMAT) || is_func (t, TABLE) || is_func (t, ROW)) {
+  if (is_func (t, TFORMAT) || is_func (t, TABLE) || is_func (t, ROW)) {
     path fp= ::table_search_format (et, p);
     tree st= subtree (et, fp);
     int row1, col1, row2, col2;
@@ -653,7 +653,7 @@ edit_select_rep::cut (path p1, path p2) {
     path cp= fp * ::table_search_cell (st, row1, col1);
     go_to (cp * path (0, 0));
 
-    if (is_func (st, TABLE_FORMAT))
+    if (is_func (st, TFORMAT))
       table_del_format (fp, row1+1, col1+1, row2+1, col2+1, "");
     return;
   }

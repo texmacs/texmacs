@@ -155,7 +155,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_document (t, ip);
     else typeset_inactive ("document", t, ip);
     break;
-  case PARAGRAPH:
+  case PARA:
     if (ACTIVATED) typeset_paragraph (t, ip);
     else typeset_inactive ("paragraph", t, ip);
     break;
@@ -176,14 +176,14 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     }
     else typeset_inactive ("hspace", t, ip);
     break;
-  case VSPACE_BEFORE:
+  case VAR_VSPACE:
     if (ACTIVATED) {
       t= env->exec (t);
       control (t, ip);
     }
     else typeset_inactive ("vspace*", t, ip);
     break;
-  case VSPACE_AFTER:
+  case VSPACE:
     if (ACTIVATED) {
       t= env->exec (t);
       control (t, ip);
@@ -220,19 +220,19 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_float (t, ip);
     else typeset_inactive ("float", t, ip);
     break;
-  case DECORATE_ATOMS:
+  case DATOMS:
     if (ACTIVATED) typeset_formatting (t, ip, ATOM_DECORATIONS);
     else typeset_inactive ("decorate atoms", t, ip);
     break;
-  case DECORATE_LINES:
+  case DLINES:
     if (ACTIVATED) typeset_formatting (t, ip, LINE_DECORATIONS);
     else typeset_inactive ("decorate lines", t, ip);
     break;
-  case DECORATE_PAGES:
+  case DPAGES:
     if (ACTIVATED) typeset_formatting (t, ip, PAGE_DECORATIONS);
     else typeset_inactive ("decorate pages", t, ip);
     break;
-  case DECORATED_BOX:
+  case DBOX:
     typeset_decorated_box (t, ip);
     break;
 
@@ -325,7 +325,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case LEFT:
     typeset_left (t, ip);
     break;
-  case MIDDLE:
+  case MID:
     typeset_middle (t, ip);
     break;
   case RIGHT:
@@ -334,10 +334,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case BIG:
     typeset_bigop (t, ip);
     break;
-  case LEFT_PRIME:
+  case LPRIME:
     typeset_lprime (t, ip);
     break;
-  case RIGHT_PRIME:
+  case RPRIME:
     typeset_rprime (t, ip);
     break;
   case BELOW:
@@ -346,12 +346,12 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case ABOVE:
     typeset_above (t, ip);
     break;
-  case LEFT_SUB:
-  case LEFT_SUP:
+  case LSUB:
+  case LSUP:
     typeset_script (t, ip, false);
     break;
-  case RIGHT_SUB:
-  case RIGHT_SUP:
+  case RSUB:
+  case RSUP:
     typeset_script (t, ip, true);
     break;
   case FRAC:
@@ -363,7 +363,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case WIDE:
     typeset_wide (t, ip, true);
     break;
-  case WIDE_UNDER:
+  case VAR_WIDE:
     typeset_wide (t, ip, false);
     break;
   case NEG:
@@ -373,20 +373,20 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_tree (t, ip);
     break;
 
-  case TABLE_FORMAT:
+  case TFORMAT:
     if (ACTIVATED) {
       if ((N(t)>0) && is_table (t[N(t)-1])) typeset_table (t, ip);
       else typeset_formatting (t, ip, CELL_FORMAT);
     }
     else typeset_inactive ("table-format", t, ip);
     break;
-  case TABLE_WITH:
+  case TWITH:
     typeset_inactive ("table-with", t, ip);
     break;
-  case CELL_WITH:
+  case CWITH:
     typeset_inactive ("cell-with", t, ip);
     break;
-  case TABLE_MARKER:
+  case TMARKER:
     typeset_inactive ("table-marker", t, ip);
     break;
   case TABLE:
@@ -394,7 +394,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case ROW:
   case CELL:
-  case SUB_TABLE:
+  case SUBTABLE:
     break;
 
   case ASSIGN:
@@ -420,7 +420,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_drd_props (t, ip);
     else typeset_inactive ("drd-properties", t, ip, 1);
     break;
-  case ARGUMENT:
+  case ARG:
     if (ACTIVATED) typeset_argument (t, ip);
     else typeset_inactive ("argument", t, ip);
     break;
@@ -506,11 +506,11 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("/", t, ip);
     break;
-  case DIVIDE:
+  case DIV:
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("div", t, ip);
     break;
-  case MODULO:
+  case MOD:
     if (ACTIVATED) typeset_executable (t, ip);
     else typeset_inactive ("mod", t, ip);
     break;
@@ -647,7 +647,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_specific (t, ip);
     else typeset_inactive_specific (t, ip);
     break;
-  case HYPERLINK:
+  case HLINK:
     if (ACTIVATED) typeset_hyperlink (t, ip);
     else typeset_inactive_action ("hyperlink", t, ip);
     break;

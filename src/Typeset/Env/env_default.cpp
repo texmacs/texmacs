@@ -20,8 +20,8 @@ initialize_default_env () {
   hashmap<string,tree>& env= default_env;
 
   tree the_page (MACRO, compound ("page number"));
-  tree identity_m (MACRO, "x", tree (ARGUMENT, "x"));
-  tree tabular_m (MACRO, "x", tree (TABLE_FORMAT, tree (ARGUMENT, "x")));
+  tree identity_m (MACRO, "x", tree (ARG, "x"));
+  tree tabular_m (MACRO, "x", tree (TFORMAT, tree (ARG, "x")));
   tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
   tree gr_clip (TUPLE, "clip",
 		tuple ("0par", "-0.3par"),
@@ -66,11 +66,11 @@ initialize_default_env () {
   env (THIS_SESSION)     = "?";         // computer algebra session name
   env (INFO_FLAG)        = "short";     // information about labels, etc.
 
-  env (ATOM_DECORATIONS) = DECORATE_ATOMS; // dots, underln, hyperlinks?, etc.
-  env (LINE_DECORATIONS) = DECORATE_LINES; // boxed pars, nested envs, etc.
-  env (PAGE_DECORATIONS) = DECORATE_PAGES; // future headers, footers, etc.
-  env (XOFF_DECORATIONS) = "0unit";        // hor. placement of decorations
-  env (YOFF_DECORATIONS) = "0unit";        // vert. placement of decorations
+  env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
+  env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.
+  env (PAGE_DECORATIONS) = DPAGES;      // future headers, footers, etc.
+  env (XOFF_DECORATIONS) = "0unit";     // hor. placement of decorations
+  env (YOFF_DECORATIONS) = "0unit";     // vert. placement of decorations
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_HYPHEN)       = "normal";    // quality of hyphenation
@@ -141,7 +141,7 @@ initialize_default_env () {
   env (TABLE_MAX_COLS)   = "";          // suggested maximal number of columns
 
   env (CELL_DECORATION)  = "";          // decorating table of cell
-  env (CELL_FORMAT)      = TABLE_FORMAT;// format of cell
+  env (CELL_FORMAT)      = TFORMAT;     // format of cell
   env (CELL_BACKGROUND)  = "";          // background color of cell
   env (CELL_ORIENTATION) = "portrait";  // orientation of cell  
   env (CELL_WIDTH)       = "";          // width of cell

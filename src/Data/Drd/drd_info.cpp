@@ -165,7 +165,7 @@ bool
 drd_info_rep::is_dynamic (tree t) {
   if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
   if (is_atomic (t)) return false;
-  if (is_func (t, DOCUMENT) || is_func (t, PARAGRAPH) || is_func (t, CONCAT) ||
+  if (is_func (t, DOCUMENT) || is_func (t, PARA) || is_func (t, CONCAT) ||
       is_func (t, TABLE) || is_func (t, ROW)) return false;
   return info[L(t)]->pi.arity_mode != ARITY_NORMAL;
 }
@@ -310,7 +310,7 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   int i, n= N(macro)-1;
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
   for (i=0; i<n; i++) {
-    tree arg (ARGUMENT, macro[i]);
+    tree arg (ARG, macro[i]);
     set_accessible (l, i, accessible_arg (this, macro[n], arg));
   }
   // if (old_ti != info[l])
@@ -321,7 +321,7 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
 static int
 minimal_arity (tree t, tree var) {
   if (is_atomic (t)) return 0;
-  else if (is_func (t, ARGUMENT, 2) && (t[0] == var))
+  else if (is_func (t, ARG, 2) && (t[0] == var))
     return as_int (t[1]) + 1;
   else if (is_func (t, MAP_ARGS) && (N(t)>=4) && (t[2] == var))
     return as_int (t[3]);
@@ -340,7 +340,7 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   int i, m= minimal_arity (xmacro[1], xmacro[0]);
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
   for (i=0; i<=m; i++) {
-    tree arg (ARGUMENT, xmacro[0], as_string (i));
+    tree arg (ARG, xmacro[0], as_string (i));
     set_accessible (l, i, accessible_arg (this, xmacro[1], arg));
   }
   // if (old_ti != info[l])

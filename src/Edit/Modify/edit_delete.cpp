@@ -150,36 +150,36 @@ edit_text_rep::remove_text (bool forward) {
   if (last == (forward? 0: 1))
     switch (L(t)) {
     case HSPACE:
-    case VSPACE_BEFORE:
-    case VSPACE_AFTER:
+    case VAR_VSPACE:
+    case VSPACE:
     case SPACE:
     case HTAB:
     case LEFT:
-    case MIDDLE:
+    case MID:
     case RIGHT:
     case BIG:
       back_monolithic (p);
       return;
-    case LEFT_PRIME:
-    case RIGHT_PRIME:
+    case LPRIME:
+    case RPRIME:
       back_prime (t, p, forward);
       return;
     case WIDE:
-    case WIDE_UNDER:
+    case VAR_WIDE:
       go_to_border (p * 0, forward);
       return;
-    case TABLE_FORMAT:
+    case TFORMAT:
     case TABLE:
     case ROW:
     case CELL:
-    case SUB_TABLE:
+    case SUBTABLE:
       back_table (p, forward);
       return;
     case WITH:
       go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
-    case ARGUMENT:
+    case ARG:
       if (N(t) == 1) back_monolithic (p);
       else back_general (p, forward);
       return;
@@ -194,11 +194,11 @@ edit_text_rep::remove_text (bool forward) {
     case TREE:
       back_in_tree (u, p, forward);
       return;
-    case TABLE_FORMAT:
+    case TFORMAT:
     case TABLE:
     case ROW:
     case CELL:
-    case SUB_TABLE:
+    case SUBTABLE:
       back_in_table (u, p, forward);
       return;
     case WITH:
@@ -302,7 +302,7 @@ edit_text_rep::remove_structure_upwards () {
   p= path_up (p);
   tree st= subtree (et, p);
   bool recurse=
-    is_func (st, TABLE_FORMAT) || is_func (st, TABLE) ||
+    is_func (st, TFORMAT) || is_func (st, TABLE) ||
     is_func (st, ROW) || is_func (st, CELL);
   remove (p * (last+1), N(st)-(last+1));
   remove (p * 0, last);

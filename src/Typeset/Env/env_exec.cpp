@@ -67,7 +67,7 @@ edit_env_rep::rewrite (tree t) {
     tree r (make_tree_label (t[1]->label), n);
     for (i=0; i<n; i++)
       r[i]= tree (make_tree_label (t[0]->label),
-		  tree (ARGUMENT, copy (t[2]), as_string (start+i)));
+		  tree (ARG, copy (t[2]), as_string (start+i)));
 
     macro_arg= old_var;
     macro_src= old_src;
@@ -103,13 +103,13 @@ edit_env_rep::exec (tree t) {
   }
 
   switch (L(t)) {
-  case DECORATE_ATOMS:
+  case DATOMS:
     return exec_formatting (t, ATOM_DECORATIONS);
-  case DECORATE_LINES:
+  case DLINES:
     return exec_formatting (t, LINE_DECORATIONS);
-  case DECORATE_PAGES:
+  case DPAGES:
     return exec_formatting (t, PAGE_DECORATIONS);
-  case TABLE_FORMAT:
+  case TFORMAT:
     return exec_formatting (t, CELL_FORMAT);
   case TABLE:
     return exec_table (t);
@@ -125,7 +125,7 @@ edit_env_rep::exec (tree t) {
     return copy (t);
   case DRD_PROPS:
     return exec_drd_props (t);
-  case ARGUMENT:
+  case ARG:
     return exec_argument (t);
   case COMPOUND:
     return exec_compound (t);
@@ -170,9 +170,9 @@ edit_env_rep::exec (tree t) {
     return exec_times (t);
   case OVER:
     return exec_over (t);
-  case DIVIDE:
+  case DIV:
     return exec_divide (t);
-  case MODULO:
+  case MOD:
     return exec_modulo (t);
   case MERGE:
     return exec_merge (t);
@@ -246,15 +246,15 @@ edit_env_rep::exec_formatting (tree t, string v) {
   write_update (v, newv);
   tree r= exec (t[n-1]);
   write_update (v, oldv);
-  return join (t (0, n-1), tree (TABLE_FORMAT, r));
+  return join (t (0, n-1), tree (TFORMAT, r));
 }
 
 tree
 edit_env_rep::exec_table (tree t) {
   tree oldv= read (CELL_FORMAT);
   // should execute values in oldv
-  // monitored_write_update (CELL_FORMAT, tree (TABLE_FORMAT));
-  write_update (CELL_FORMAT, tree (TABLE_FORMAT));
+  // monitored_write_update (CELL_FORMAT, tree (TFORMAT));
+  write_update (CELL_FORMAT, tree (TFORMAT));
   int i, n= N(t);
   tree r (t, n);
   for (i=0; i<n; i++) r[i]= exec (t[i]);
@@ -450,7 +450,7 @@ edit_env_rep::exec_argument (tree t) {
 tree
 edit_env_rep::exec_get_label (tree t) {
   tree r;
-  if (is_func (t[0], ARGUMENT, 1)) {
+  if (is_func (t[0], ARG, 1)) {
     if (nil (macro_arg))
       return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
     r= macro_arg->item [as_string (t[0][0])];
@@ -462,7 +462,7 @@ edit_env_rep::exec_get_label (tree t) {
 tree
 edit_env_rep::exec_get_arity (tree t) {
   tree r;
-  if (is_func (t[0], ARGUMENT, 1)) {
+  if (is_func (t[0], ARG, 1)) {
     if (nil (macro_arg))
       return tree (ERROR, "Bad get_label argument " * as_string (t[0][0]));
     r= macro_arg->item [as_string (t[0][0])];
@@ -978,16 +978,16 @@ edit_env_rep::exec_until (tree t, path p) {
   }
 
   switch (L(t)) {
-  case DECORATE_ATOMS:
+  case DATOMS:
     exec_until_formatting (t, p, ATOM_DECORATIONS);
     return;
-  case DECORATE_LINES:
+  case DLINES:
     exec_until_formatting (t, p, LINE_DECORATIONS);
     return;
-  case DECORATE_PAGES:
+  case DPAGES:
     exec_until_formatting (t, p, PAGE_DECORATIONS);
     return;
-  case TABLE_FORMAT:
+  case TFORMAT:
     exec_until_formatting (t, p, CELL_FORMAT);
     return;
   case TABLE:
@@ -1029,7 +1029,7 @@ edit_env_rep::exec_until_formatting (tree t, path p, string v) {
 void
 edit_env_rep::exec_until_table (tree t, path p) {
   // should execute values in oldv
-  monitored_write_update (CELL_FORMAT, tree (TABLE_FORMAT));
+  monitored_write_update (CELL_FORMAT, tree (TFORMAT));
   int i;
   for (i=0; i<p->item; i++)
     (void) exec (t[i]);
@@ -1152,13 +1152,13 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
 
   if (is_atomic (t) || preamble) return false;
   switch (L(t)) {
-  case DECORATE_ATOMS:
+  case DATOMS:
     return exec_until_formatting (t, p, var, level, ATOM_DECORATIONS);
-  case DECORATE_LINES:
+  case DLINES:
     return exec_until_formatting (t, p, var, level, LINE_DECORATIONS);
-  case DECORATE_PAGES:
+  case DPAGES:
     return exec_until_formatting (t, p, var, level, PAGE_DECORATIONS);
-  case TABLE_FORMAT:
+  case TFORMAT:
     return exec_until_formatting (t, p, var, level, CELL_FORMAT);
   case TABLE:
     return exec_until_table (t, p, var, level);
@@ -1187,7 +1187,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case DRD_PROPS:
     (void) exec (t);
     return false;
-  case ARGUMENT:
+  case ARG:
     return exec_until_argument (t, p, var, level);
   case COMPOUND:
     return exec_until_compound (t, p, var, level);
@@ -1209,8 +1209,8 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case MINUS:
   case TIMES:
   case OVER:
-  case DIVIDE:
-  case MODULO:
+  case DIV:
+  case MOD:
   case MERGE:
   case LENGTH:
   case RANGE:
@@ -1266,7 +1266,7 @@ bool
 edit_env_rep::exec_until_table (tree t, path p, string var, int level) {
   tree oldv= read (CELL_FORMAT);
   // should execute values in oldv
-  monitored_write_update (CELL_FORMAT, tree (TABLE_FORMAT));
+  monitored_write_update (CELL_FORMAT, tree (TFORMAT));
   int i, n= N(t);
   for (i=0; i<n; i++)
     if (exec_until (t[i], p, var, level))
@@ -1433,7 +1433,7 @@ edit_env_rep::exec_until_mod_active (
 tree
 edit_env_rep::expand (tree t) {
   if (is_atomic (t) || nil (macro_arg)) return t;
-  else if (is_func (t, ARGUMENT)) {
+  else if (is_func (t, ARG)) {
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
@@ -1475,7 +1475,7 @@ edit_env_rep::depends (tree t, string s, int level) {
   */
 
   if (is_atomic (t) || nil (macro_arg)) return false;
-  else if (is_func (t, ARGUMENT) ||
+  else if (is_func (t, ARG) ||
 	   is_func (t, MAP_ARGS) ||
 	   is_func (t, EVAL_ARGS))
     {
