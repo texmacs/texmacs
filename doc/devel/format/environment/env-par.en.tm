@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -168,6 +168,58 @@
   </explain>
 
   <\explain>
+    <var-val|par-sep|0.2fn><explain-synopsis|extra separation between
+    successive lines>
+  <|explain>
+    The sum of the font size and <inactive|<value|par-sep>> determines the
+    ideal distance between two successive base lines in a paragraph (also
+    called the ``base line skip''). Of course, when the lines contain large
+    boxes, then this distance may need to be increased. When <verbatim|1fn>
+    for <inactive|<value|par-sep>>, one may for instance produce documents
+    with a double interline space:
+
+    <\tm-fragment>
+      <\with|par-sep|1fn>
+        A double interline space corresponds to <var-val|par-sep|1fn>. Double
+        interline spaces are often used by lazy people who want to pretend
+        that they have written many pages. They generally do not care about
+        tropical rain forests.
+      </with>
+    </tm-fragment>
+
+    In the case when two successive lines use different base line skips, then
+    the maximal value is used in order to compute the ideal distance between
+    their baselines. This allows for a reasonable spacing when the font size
+    is changed from one paragraph to another:
+
+    <\tm-fragment>
+      <\with|par-par-sep|0fn>
+        Normal text.
+
+        <very-large|Some very large text.>
+
+        And back to normal.
+      </with>
+    </tm-fragment>
+  </explain>
+
+  <\explain>
+    <var-val|par-line-sep|0.025fn*><explain-synopsis|extra space between
+    lines>
+  <|explain>
+    This parameter corresponds an additional stretchable amount of whitespace
+    between successive lines in a paragraph. Setting
+    <inactive|<value|par-line-sep>> to a small stretchable value which
+    defaults to <with|mode|math|0> allows the page breaker to correctly
+    stretch pages which contain a very long textual paragraph. Indeed,
+    <inactive|<value|par-line-sep>> vanishes, then the height of a textual
+    paragraph is of the form <with|mode|math|a+b*n>, where <with|mode|math|a>
+    and <with|mode|math|b> are constants and <with|mode|math|n> is the number
+    of lines. There is no reason why the usable height of a page should be of
+    this form.
+  </explain>
+
+  <\explain>
     <var-val|par-par-sep|0.5fn*><explain-synopsis|extra space between
     paragraphs>
   <|explain>
@@ -182,34 +234,9 @@
   </explain>
 
   <\explain>
-    <var-val|par-line-sep|0.025fn*><explain-synopsis|extra space between
-    lines>
-  <|explain>
-    This parameter corresponds to the <em|interline space> and specifies the
-    amount of whitespace between successive lines in a paragraph.
+    <var-val|par-hor-sep|0.5fn>
 
-    <\tm-fragment>
-      <\with|par-line-sep|1fn>
-        A double interline space corresponds to <var-val|par-line-sep|1fn>.
-        Double interline spaces are often used by lazy people who want to
-        pretend that they have written many pages. They generally do not care
-        about tropical rain forests.
-      </with>
-    </tm-fragment>
-  </explain>
-
-  <\explain>
-    <var-val|par-sep|0.2fn><explain-synopsis|minimal vertical space between
-    ink>
-  <|explain>
-    This environment variable is used to specify a minimal amount of space
-    between the visual boxes of successive lines. This avoids the collision
-    of exceptionally large boxes with boxes on a previous or next line.
-  </explain>
-
-  <\explain>
-    <var-val|par-hor-sep|0.5fn><explain-synopsis|minimal horizontal space
-    between ink>
+    <var-val|par-ver-sep|0.2fn><explain-synopsis|minimal space between ink>
   <|explain>
     When a paragraph contains several exceptionally large boxes, then
     <TeXmacs> attempts to ``shove successive lines into another'' as long as
@@ -228,12 +255,23 @@
         In the case of a fraction <with|mode|math|<frac|1|x+1>> and an
         exceptionally high expression at the wrong place, like the expression
         <with|mode|math|\<mathe\><rsup|\<mathe\><rsup|x>>> here, the boxes
-        are separated by <src-var|env-sep>.
+        are separated by <src-var|env-ver-sep>.
       </tm-fragment>
     </with>
 
     As soon as the horizontal distance between two large boxes is less than
-    <src-var|par-hor-sep>, then they are considered to be in collision.
+    <src-var|par-hor-sep>, then they are considered to be in collision. In
+    that case, the vertical distance between them must be at least
+    <src-var|par-ver-sep>. Also, the amount of showing never exceeds half of
+    the distance between successive base lines.
+
+    When using an interline space of <verbatim|1.5> or <verbatim|2>, the
+    default value of <src-var|par-ver-sep> allows the user to type larger
+    formulas in the text while preserving a uniform layout. When using a
+    small <src-var|par-sep> and a large <inactive|<value|par-ver-sep>>, the
+    distance between two successive lines remains small, except when their
+    contents are horizontally close. This may for instance be used to reduce
+    the space between a short like followed by a centered equation.
   </explain>
 
   <\explain>
