@@ -242,7 +242,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       flag ("with-limits", ip, env->dis->brown);
       control (t, ip);
     }
-    else typeset_inactive_string ("<with-limits>", ip);
+    else typeset_inactive_string ("<with limits>", ip);
     break;
   case LINE_BREAK:
     if (ACTIVATED) {
@@ -250,13 +250,13 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       flag ("line-break", ip, env->dis->brown);
       control (t, ip);
     }
-    else typeset_inactive_string ("<line-break>", ip);
+    else typeset_inactive_string ("<line break>", ip);
     break;
   case NEW_LINE:
   case LINE_SEP:
   case NEXT_LINE:
     {
-      string name= replace (as_string (L(t)), "_", "-");
+      string name= env->drd->get_name (L(t));
       if (ACTIVATED) {
 	flag (name, ip, env->dis->brown);
 	control (t, ip);
@@ -271,7 +271,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
 	  (a[N(a)-1]->type == STRING_ITEM) &&
 	  (a[N(a)-1]->b->get_leaf_string () == ""))
 	a[N(a)-2]->penalty = HYPH_INVALID;	
-      flag ("no-break", ip, env->dis->brown);
+      flag ("no line break", ip, env->dis->brown);
       control (t, ip);
     }
     else typeset_inactive_string ("<no-break>", ip);
@@ -281,28 +281,28 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
       flag ("yes-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, env->read (PAR_FIRST)), ip);
     }
-    else typeset_inactive_string ("<yes-first-indent>", ip);
+    else typeset_inactive_string ("<do indent>", ip);
     break;
   case NO_INDENT:
     if (ACTIVATED) {
       flag ("no-first-indent", ip, env->dis->brown);
       control (tuple ("env_par", PAR_FIRST, "0cm"), ip);
     }
-    else typeset_inactive_string ("<no-first-indent>", ip);
+    else typeset_inactive_string ("<don't indent>", ip);
     break;
   case VAR_YES_INDENT:
     if (ACTIVATED) {
       flag ("yes-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "false"), ip);
     }
-    else typeset_inactive_string ("<yes-first-indent-after>", ip);
+    else typeset_inactive_string ("<do indent after>", ip);
     break;
   case VAR_NO_INDENT:
     if (ACTIVATED) {
       flag ("no-first-indent-after", ip, env->dis->brown);
       control (tuple ("env_par", PAR_NO_FIRST, "true"), ip);
     }
-    else typeset_inactive_string ("<no-first-indent-after>", ip);
+    else typeset_inactive_string ("<don't indent after>", ip);
     break;
   case VAR_PAGE_BREAK:
   case PAGE_BREAK:
@@ -313,7 +313,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case VAR_NEW_DPAGE:
   case NEW_DPAGE:
     {
-      string name= replace (as_string (L(t)), "_", "-");
+      string name= env->drd->get_name (L(t));
       if (ACTIVATED) {
 	flag (name, ip, env->dis->brown);
 	control (t, ip);

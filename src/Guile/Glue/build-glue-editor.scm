@@ -91,7 +91,6 @@
   (remove-text remove_text (void bool))
   (remove-structure remove_structure (void bool))
   (remove-structure-upwards remove_structure_upwards (void))
-  (make-format make_format (void string))
   (make-htab make_htab (void string))
   (make-space make_space (void string))
   (make-var-space make_space (void string string string))

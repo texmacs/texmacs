@@ -324,11 +324,6 @@ edit_text_rep::make_htab (string spc) {
 }
 
 void
-edit_text_rep::make_format (string tag) {
-  insert_tree (tree (as_tree_label (tag)));
-}
-
-void
 edit_text_rep::make_move (string x, string y) {
   insert_tree (tree (MOVE, "", x, y), path (0, 0));
 }
