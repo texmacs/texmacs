@@ -114,7 +114,6 @@ private:
   void exec_until_expand (tree t, path p);
   bool exec_until_expand (tree t, path p, string var, int level);
   tree exec_apply (tree t);
-  tree exec_include (tree t);
   tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);
@@ -156,7 +155,7 @@ private:
   tree exec_if (tree t);
   tree exec_case (tree t);
   tree exec_while (tree t);
-  tree exec_extern (tree t);
+  tree exec_rewrite (tree t);
 
   tree exec_mod_active (tree t, tree_label which);
   void exec_until_mod_active (tree t, path p);
@@ -179,6 +178,7 @@ public:
   string exec_string (tree t);        /* should be inline */
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
+  tree   rewrite (tree t);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }

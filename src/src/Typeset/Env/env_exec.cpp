@@ -50,6 +50,37 @@ edit_env_rep::exec_string (tree t) {
 }
 
 /******************************************************************************
+* Rewriting (scheme-like macro expansion)
+******************************************************************************/
+
+tree
+edit_env_rep::rewrite (tree t) {
+  // cout << "Rewrite " << t << "\n";
+  if (L(t) == EXTERN) {
+    int i, n= N(t);
+    string s= "(" * as_string (exec (t[0]));
+    for (i=1; i<n; i++)
+      s << " '" << tree_to_scheme (exec (t[i]));
+    s << ")";
+    if (script_status < 2) {
+      if (!as_bool (eval ("(secure? '" * s * ")")))
+	return tree (ERROR, "insecure script");
+    }
+    return object_to_tree (eval (s));
+  }
+  else if (L(t) == INCLUDE) {
+    url file_name= as_string (t[0]);
+    return load_inclusion (relative (base_file_name, file_name));
+  }
+  return t;
+}
+
+tree
+edit_env_rep::exec_rewrite (tree t) {
+  return exec (rewrite (t));
+}
+
+/******************************************************************************
 * Evaluation of trees
 ******************************************************************************/
 
@@ -90,7 +121,7 @@ edit_env_rep::exec (tree t) {
   case APPLY:
     return exec_apply (t);
   case INCLUDE:
-    return exec_include (t);
+    return exec_rewrite (t);
   case MACRO:
   case XMACRO:
   case FUNCTION:
@@ -175,7 +206,7 @@ edit_env_rep::exec (tree t) {
   case WHILE:
     return exec_while (t);
   case EXTERN:
-    return exec_extern (t);
+    return exec_rewrite (t);
 
   case INACTIVE:
     return exec_mod_active (t, INACTIVE);
@@ -454,13 +485,6 @@ edit_env_rep::exec_extra_tuple (tree t, int pos) {
   for (i=pos; i<n; i++)
     u[i-pos]= exec (t[i]);
   return u;
-}
-
-tree
-edit_env_rep::exec_include (tree t) {
-  url file_name= as_string (t[0]);
-  tree incl= load_inclusion (relative (base_file_name, file_name));
-  return exec (incl);
 }
 
 tree
@@ -998,20 +1022,6 @@ edit_env_rep::exec_while (tree t) {
   if (N(r) == 0) return "";
   if (N(r) == 1) return r[0];
   return r;
-}
-
-tree
-edit_env_rep::exec_extern (tree t) {
-  int i, n= N(t);
-  string s= "(" * as_string (exec (t[0]));
-  for (i=1; i<n; i++)
-    s << " '" << tree_to_scheme (exec (t[i]));
-  s << ")";
-  if (script_status < 2) {
-    if (!as_bool (eval ("(secure? '" * s * ")")))
-      return tree (ERROR, "insecure script");
-  }
-  return exec (object_to_tree (eval (s)));
 }
 
 tree

@@ -622,7 +622,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive ("while", t, ip);
     break;
   case EXTERN:
-    if (ACTIVATED) typeset_executable (t, ip);
+    if (ACTIVATED) typeset_rewrite (t, ip);
     else typeset_inactive ("extern", t, ip);
     break;
   case AUTHORIZE:
