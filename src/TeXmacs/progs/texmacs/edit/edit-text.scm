@@ -78,7 +78,7 @@
 (define (toggle-section-number)
   (for-each
    toggle-number-sub
-   '("chapter" "section" "subsection" "subsubsection"
+   '("part" "chapter" "section" "subsection" "subsubsection"
      "paragraph" "subparagraph" "appendix"
 
      "theorem" "proposition" "lemma" "corollary"
