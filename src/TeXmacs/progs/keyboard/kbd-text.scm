@@ -266,7 +266,11 @@
   ("onehalf" (make 'onehalf))
   ("threequarters" (make 'threequarters))
   ("questiondown" "¾")
-  ("euro" (make 'euro)))
+  ("euro" (make 'euro))
+  ("masculin" (make 'masculin))
+  ("feminin" (make 'feminin))
+  ("masculin var" (make 'varmasculin))
+  ("feminin var" (make 'varfeminin)))
 
 (kbd-map like-old-text?
   ("cmd I" (make-tmlist 'itemize))
