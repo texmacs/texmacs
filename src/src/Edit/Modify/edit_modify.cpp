@@ -412,7 +412,7 @@ edit_modify_rep::undo () {
     set_message ("Your document is back in its original state", "undo");
   }
   if (inside_graphics ())
-    call ("graphics-reset-context", call ("string->symbol", (string)"undo"));
+    eval ("(graphics-reset-context 'undo)");
 }
 
 void

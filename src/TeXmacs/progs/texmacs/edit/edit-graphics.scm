@@ -183,7 +183,7 @@
 
 (define (graphics-object path)
   (with p (graphics-path path)
-    (if p (tree->stree (subtree (the-buffer) p)) #f)))
+    (if p (tree->stree (tm-subtree p)) #f)))
 
 (define (graphics-active-stree)
   (with p (graphics-active-path)
