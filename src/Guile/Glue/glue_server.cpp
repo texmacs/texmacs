@@ -729,6 +729,15 @@ tmg_set_printer_paper_type (SCM arg1) {
 }
 
 SCM
+tmg_get_printer_paper_type () {
+  // SCM_DEFER_INTS;
+  string out= get_server()->get_printer_page_type ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_set_printer_dpi (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-printer-dpi");
 
@@ -908,6 +917,7 @@ initialize_glue_server () {
   gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
   gh_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);
   gh_new_procedure ("set-printer-paper-type", (FN) tmg_set_printer_paper_type, 1, 0, 0);
+  gh_new_procedure ("get-printer-paper-type", (FN) tmg_get_printer_paper_type, 0, 0, 0);
   gh_new_procedure ("set-printer-dpi", (FN) tmg_set_printer_dpi, 1, 0, 0);
   gh_new_procedure ("set-default-shrinking-factor", (FN) tmg_set_default_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-default-shrinking-factor", (FN) tmg_get_default_shrinking_factor, 0, 0, 0);

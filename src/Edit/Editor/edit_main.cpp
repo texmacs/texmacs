@@ -169,7 +169,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
   // Determine parameters for printer device
 
-  string page_type = printing_on;
+  string page_type = env->get_string (PAGE_TYPE);
   double w         = env->page_width;
   double h         = env->page_height;
   double cm        = env->decode_length (string ("1cm"));

@@ -71,7 +71,7 @@ edit_interface_rep::set_left_footer () {
   r= get_env_string (COLOR);
   if (r != "black") s= s * "#" * r;
   if ((N(s)>0) && (s[0] == '#')) s= s (1, N(s));
-  if (inside ("session"))
+  if (inside ("session") && (lan != "scheme"))
     switch (status_connection ()) {
     case CONNECTION_DEAD:
       s= s * "#[dead]";

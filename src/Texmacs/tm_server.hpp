@@ -78,6 +78,7 @@ public:
   void   focus_on_editor (editor ed);
   void   set_printing_command (string s);
   void   set_printer_page_type (string s);
+  string get_printer_page_type ();
   void   set_printer_dpi (string dpi);
   void   set_default_shrinking_factor (int sf);
   int    get_default_shrinking_factor ();

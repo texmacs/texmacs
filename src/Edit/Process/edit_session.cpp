@@ -135,6 +135,11 @@ edit_process_rep::make_session (string lan, string session) {
     << compound ("session", body);
   insert_tree (w, p);
   insert_tree (compound ("output", tree (DOCUMENT, "")), path (0, 0, 0));
+  if (lan == "scheme") {
+    path op= search_upwards ("output");
+    start_input (lan, session, op);
+    return;
+  }
 
   /* start asynchronous connection */
   string handle= as_string (call ("plugin-async-start", lan, session));

@@ -444,6 +444,11 @@ tm_server_rep::set_printer_page_type (string type) {
   printing_on= type;
 }
 
+string
+tm_server_rep::get_printer_page_type () {
+  return printing_on;
+}
+
 void
 tm_server_rep::set_printer_dpi (string dpi) {
   printing_dpi= dpi;
