@@ -1,71 +1,90 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.0.3.4>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Defining new environments>
+  <tmdoc-title|Defining new environments>
 
-  The <tmdtd|env-manage> contains high-level markup which can be used by the
-  user to define new environments for theorems, remarks, exercises and
-  figures:
+  The <tmdtd|env-base> <abbr|d.t.d.> contains high-level markup which can be
+  used by the user to define new environments for theorems, remarks,
+  exercises and figures:
 
   <\description>
-    <expand|item*|<markup|newtheorem>>Defines a theorem-like environment. You
+    <item*|<markup|new-theorem>>Defines a theorem-like environment. You
     should specify a name for the environment (like ``experiment'') and the
-    corresponding text (like ``Experiment'').
+    corresponding text (like ``Experiment''). When defining a new
+    theorem-like environment like <markup|experiment>, an unnumbered variant
+    <markup|experiment*> is automatically defined as well.
 
-    <expand|item*|<markup|newremark>>Similar as <markup|newtheorem>, but for
+    <item*|<markup|new-remark>>Similar as <markup|new-theorem>, but for
     remarks.
 
-    <expand|item*|<markup|newexercise>>Similar as <markup|newtheorem>, but
-    for exercises.
+    <item*|<markup|new-exercise>>Similar as <markup|new-theorem>, but for
+    exercises.
 
-    <expand|item*|<markup|newfigure>>Similar as <markup|newtheorem>, but for
-    figures (in big and small pairs).
+    <item*|<markup|new-figure>>Similar as <markup|new-theorem>, but for
+    figures. When defining a new type of figure, like ``picture'', the
+    <markup|new-figure> macro defines both the inline environment
+    <markup|small-picture> and the block-environment <markup|big-picture>, as
+    well as the unnumbered variants <markup|small-picture*> and
+    <markup|big-picture*>.
   </description>
 
-  The <abbr|d.t.d.> also contains low-level markup for the actual definitions
-  of the environments. In fact, the definition of new theorems is done in two
-  stages. At the first stage, the <markup|newtheorem> tag is used in order to
-  specify which theorem-like environments should be defined. At the second
-  stage (just before the user's document is processed) the theorem-like
-  environments are actually defined. This mechanism makes it possible to
-  customize the environments in packages which are processed between the two
-  stages. For instance, the numbering of theorems is customized in this way.
+  The theorem-like and remark-like environments belong to a common
+  counter-group <verbatim|theorem-env>. By default, we use American-style
+  numbering (one common counter for all environments). When selecting the
+  package <tmpackage|number-europe>, each environment uses its own counter.
+  All exercises and figures use their own counter-group.
 
-  <\warning>
-    At the moment, you should only use the <markup|newtheorem> and similar
-    tags inside a personal style file or package. If you use
-    <markup|newtheorem> directly inside a document, then the numbering can be
-    incorrect, due to the two-stage scheme explained above. This
-    inconvenience will disappear as soon as it will be possible to specify
-    clean preambles for <TeXmacs> documents.
-  </warning>
+  More generally, the <verbatim|std-env> counter-group regroups the counters
+  for all standard <TeXmacs> environments. Typically, all counters in this
+  group are prefixed in a similar way (for instance by the number of the
+  chapter). Figure <reference|std-env-fig> shows how the hierarchical
+  organization of this counter group.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <\big-figure|<tree|<verbatim|std-env>|<tree|<verbatim|theorem-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|theorem>>>|<row|<cell|<verbatim|proposition>>>|<row|<cell|<verbatim|remark>>>|<row|<cell|<with|mode|math|\<vdots\>>>>>>>>|<tree|<verbatim|exercise-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|exercise>>>|<row|<cell|<verbatim|problem>>>>>>>|<tree|<verbatim|figure-env>|<tabular*|<tformat|<table|<row|<cell|<verbatim|figure>>>|<row|<cell|<verbatim|table>>>>>>>|<verbatim|equation>|<verbatim|footnote>>>
+    <label|std-env-fig>Organization of the counters for the standard
+    <TeXmacs> environments.
+  </big-figure>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  New unary environments may be added to arbitrary counter-groups using the
+  <markup|new-env> macro. In addition to the arguments of
+  <markup|new-theorem>, this macro takes a counter-group and the name of a
+  binary macro for rendering the environment on input. The arguments of the
+  rendering macro are a name (like ``Theorem 3.14'') and its body. For
+  instance, <markup|new-theorem> is based on <markup|new-env>, by taking
+  <verbatim|theorem-env> for the counter-group and <markup|render-theorem>
+  for the rendering macro.
+
+  We recall trat you may add new counters or counter-groups to the
+  <verbatim|theorem-env> counter-group using the <markup|new-counter-group>
+  and <markup|add-to-counter-group> macros, as described in the section about
+  counters.
+
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>
