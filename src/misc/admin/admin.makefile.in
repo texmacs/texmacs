@@ -15,6 +15,7 @@ datadir = @datadir@
 mandir = @mandir@
 tmdir = @tmdir@
 tmtgz = @tmtgz@
+tmrpm = @tmrpm@
 tmorig = @tmorig@
 tmsrc = @tmsrc@
 tmbin = @tmbin@
