@@ -71,12 +71,13 @@ $(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue-server.scm
 ###############################################################################
 
 DISTR: 
-	$(RM) Deps/*
+	$(RM) Deps/*.*
+	$(RM) Deps/stamp
 
 CLEAN: DISTR
 	$(RM) Objects/*.o
 
 maintainer-clean: CLEAN
-	$(RM) Objects/*
+	$(RM) Objects/*.*
 
 PHONY: DISTR CLEAN maintainer-clean
