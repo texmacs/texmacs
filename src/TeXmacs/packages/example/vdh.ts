@@ -82,6 +82,10 @@
 
     <assign|Fseg|<macro|x|Fin(<arg|x>)>>
 
+    <assign|bl|<macro|<left|(|-1em|1em>>>
+
+    <assign|br|<macro|<right|)|-1em|1em>>>
+
     \;
 
     <assign|gb|<macro|x|<with|math-font-family|mt|[<space|-0.6spc>[><arg|x><with|math-font-family|mt|]<space|-0.6spc>]>>>
@@ -108,6 +112,12 @@
   </with>>
 
   \;
+
+  <assign|bi-index|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subindex|<arg|x>|<arg|y>><subindex|<arg|y>|<arg|x>>>>>
+
+  <assign|bi-index*|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><index|<arg|x> <arg|y>><subindex|<arg|y>|<arg|x>>>>>
 
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
