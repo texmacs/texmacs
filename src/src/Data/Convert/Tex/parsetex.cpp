@@ -304,6 +304,10 @@ latex_parser::parse_backslash (string s, int& i) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}");
   }
+  if (((i+6)<n) && (s(i,i+5)=="\\url{")) {
+    i+=6;
+    return parse_verbatim (s, i, "}");
+  }
 
   /************************ special commands *********************************/
   i++;
