@@ -3,22 +3,11 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Standard environments>
+  <tmdoc-title|Counters and counter groups>
 
-  The <tmdtd|env> <abbr|d.t.d.> contains the standard environments which are
-  available in most styles. It is subdivided into the following parts:
+  \;
 
-  <\traverse>
-    <branch|env-manage|env-manage-dtd.en.tm>
-
-    <branch|env-math|env-math-dtd.en.tm>
-
-    <branch|env-theorem|env-theorem-dtd.en.tm>
-
-    <branch|env-float|env-float-dtd.en.tm>
-  </traverse>
-
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -30,7 +19,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>
@@ -40,8 +28,6 @@
     <associate|page-reduce-top|15mm>
     <associate|page-right|30mm>
     <associate|page-top|30mm>
-    <associate|page-type|a4>
     <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

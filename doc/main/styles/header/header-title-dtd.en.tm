@@ -3,25 +3,13 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The common base for most styles>
-
-  The <tmdtd|std> <abbr|d.t.d.> contains the markup which is common to
-  virtually all styles. It is subdivided into the following parts:
+  <tmdoc-title|Standard titles>
 
   <\traverse>
-    <branch|std-markup|std-markup-dtd.en.tm>
+    <branch|Entering titles and abstracts|header-title-export.en.tm>
 
-    <branch|std-symbol|std-symbol-dtd.en.tm>
-
-    <branch|std-math|std-math-dtd.en.tm>
-
-    <branch|std-list|std-list-dtd.en.tm>
-
-    <branch|std-automatic|std-automatic-dtd.en.tm>
-
-    <branch|program|program-dtd.en.tm>
-
-    <branch|session|session-dtd.en.tm>
+    <branch|Customizating the rendering of
+    titles|header-title-customize.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -36,7 +24,7 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
+    <associate|language|portuguese>
     <associate|page-bot|30mm>
     <associate|page-even|30mm>
     <associate|page-odd|30mm>

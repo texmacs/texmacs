@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Standard lists>
+  <tmdoc-title|Using list environments>
 
   The standard <TeXmacs> lists are defined in <tmdtd|std-list>. The
   unnumbered lists environments are:
@@ -87,10 +87,6 @@
   Each list environment <markup|<em|list>> admits a variant
   <markup|<em|list>*> whose items are prefixed by the last item in the parent
   list. Of course, this feature can be used recursively.
-
-  The <tmdtd|std-list> also contains additional macros for defining new lists
-  and for customizing the appearance of standard list items and the lists
-  themselves.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

@@ -28,13 +28,13 @@
   <\traverse>
     <branch|General organization|style-organize.en.tm>
 
-    <branch|The common base for most styles|std-dtds/common-base-dtd.en.tm>
+    <branch|The common base for most styles|std/std-dtd.en.tm>
 
-    <branch|Standard environments|std-dtds/env-dtd.en.tm>
+    <branch|Standard environments|env/env-dtd.en.tm>
 
-    <branch|Headers|std-dtds/header-dtds.en.tm>
+    <branch|Headers|header/header-dtd.en.tm>
 
-    <branch|Sections|std-dtds/section-latex-dtd.en.tm>
+    <branch|Sections|section/section-base-dtd.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>

@@ -1,18 +1,14 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Summary of the principal <TeXmacs> tags>
+  <tmdoc-title|Standard lists>
 
   <\traverse>
-    <branch|Basic tags|common-base-dtd.en.tm>
+    <branch|Using list environments|std-list-export.en.tm>
 
-    <branch|Environments inside text|env-dtd.en.tm>
-
-    <branch|Headers|header-dtds.en.tm>
-
-    <branch|Sections|section-latex-dtd.en.tm>
+    <branch|Customization of list environments|std-list-customize.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>

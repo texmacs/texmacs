@@ -3,46 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Standard titles>
-
-  The <tmdtd|header-title> <abbr|d.t.d.> provides tags for title information.
-  The following high-level tags can only be used when encapsulated inside a
-  <markup|make-title> tag:
-
-  <\explain|<explain-macro|title|title>>
-    Specify the <src-arg|title> of the document.
-  </explain>
-
-  <\explain|<explain-macro|author|author>>
-    Specify one or several authors for the document.
-  </explain>
-
-  <\explain|<explain-macro|author|address>>
-    Specify the address of the author.
-  </explain>
-
-  <\explain|<explain-macro|author-block|address>>
-    Specify an address of one of the authors (in case of multiple addresses).
-  </explain>
-
-  <\explain|<explain-macro|title-email|email>>
-    Specify the email address of the author.
-  </explain>
-
-  <\explain|<explain-macro|title-date|email>>
-    Specify the creation date of the article (which is often today,
-    <abbr|i.e.> <inactive*|<date>>).
-  </explain>
-
-  The <markup|title> and <markup|author> use the <markup|header-title> and
-  <markup|header-author> tags for specifying the running title and header.
-  You may override these by reusing <markup|header-title> <abbr|resp.>
-  <markup|header-author>.
-
-  The <tmdtd|header-title> <abbr|d.t.d.> also defines the <markup|abstract>
-  tag for abstracts of documents. Inside abstracts, you may use
-  <markup|keywords> in order to specify keywords for your paper and
-  <markup|AMS-class> for entering the <abbr|A.M.S.> subject classification.
+  <tmdoc-title|Customizing the rendering of titles>
 
   The title tags rely on the following low-level tags for their physical
   layout:
