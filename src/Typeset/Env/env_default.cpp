@@ -81,8 +81,9 @@ initialize_default_env () {
   env (PAR_RIGHT)        = "0cm";       // right indentation
   env (PAR_FIRST)        = "1.5fn";     // extra first indentation
   env (PAR_NO_FIRST)     = "false";     // no extra first indent. on next line
-  env (PAR_SEP)          = "0.2fn";     // min. vert. spc. between ink
-  env (PAR_HOR_SEP)      = "0.5fn";     // min. hor. spc. between ink
+  env (PAR_SEP)          = "0.2fn";     // extra space between paragraph lines
+  env (PAR_HOR_SEP)      = "0.5fn";     // min. hor. spc. between ink for shove
+  env (PAR_VER_SEP)      = "0.2fn";     // min. ver. spc. between ink
   env (PAR_LINE_SEP)     = "0.025fns";  // extra (small) space between lines
   env (PAR_PAR_SEP)      = "0.5fns";    // extra space between paragraphs
   env (PAR_FNOTE_SEP)    = "0.2fn";     // min space between diff footnotes

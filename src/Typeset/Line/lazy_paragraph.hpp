@@ -49,6 +49,7 @@ protected:
   SI            height;      // the minimal height of each line
   SI            sep;         // min. separation between ink of successive lines
   SI            hor_sep;     // min. hor. sep. when lines are shoved together
+  SI            ver_sep;     // min. ver. sep. when lines are shoved together
   space         line_sep;    // space between consecutive lines
   space         par_sep;     // space between consecutive paragraphs
   SI            bot;         // next line will not ascend higher than this

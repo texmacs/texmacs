@@ -30,7 +30,7 @@ private:
   array<page_item>  unit_ctrl;      // control items
 
 public:
-  void set_env_vars (SI height, SI ink_sep, SI ink_mar, SI bot, SI top);
+  void set_env_vars (SI height, SI sep, SI hsep, SI vsep, SI bot, SI top);
   void print (box b, array<lazy> fl= 0, int nr_cols= 1);
   void print (tree t, int nr_cols= 1, bool before= false);
   void print (space spc);

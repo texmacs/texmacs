@@ -75,6 +75,7 @@ string PAR_FIRST ("par-first");
 string PAR_NO_FIRST ("par-no-first");
 string PAR_SEP ("par-sep");
 string PAR_HOR_SEP ("par-hor-sep");
+string PAR_VER_SEP ("par-ver-sep");
 string PAR_LINE_SEP ("par-line-sep");
 string PAR_PAR_SEP ("par-par-sep");
 string PAR_FNOTE_SEP ("par-fnote-sep");

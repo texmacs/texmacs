@@ -69,6 +69,7 @@ extern string PAR_FIRST;
 extern string PAR_NO_FIRST;
 extern string PAR_SEP;
 extern string PAR_HOR_SEP;
+extern string PAR_VER_SEP;
 extern string PAR_LINE_SEP;
 extern string PAR_PAR_SEP;
 extern string PAR_FNOTE_SEP;

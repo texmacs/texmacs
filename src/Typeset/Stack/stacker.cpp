@@ -22,11 +22,12 @@ stacker_rep::stacker_rep ():
 
 void
 stacker_rep::set_env_vars (
-  SI height2, SI sep2, SI hor_sep2, SI bot2, SI top2)
+  SI height2, SI sep2, SI hor_sep2, SI ver_sep2, SI bot2, SI top2)
 {
   sb->height = height2;
   sb->sep    = sep2;
   sb->hor_sep= hor_sep2;
+  sb->ver_sep= ver_sep2;
   sb->bot    = bot2;
   sb->top    = top2;
 }
@@ -57,18 +58,35 @@ get_pos (array<SI> a, SI which) {
 
 static SI
 shove_in (box b1, box b2, stack_border sb) {
-  if ((N(b1)==0) || (N(b2)==0)) return sb->top- sb->bot;
   SI  hor_sep= sb->hor_sep;
   SI  top    = sb->top;
   SI  bot    = sb->bot;
 
+  // quick test whether there are boxes in b1 above boxes in b2
   int i, j;
+  SI min1= PLUS_INFINITY, max1= MINUS_INFINITY;
+  SI min2= PLUS_INFINITY, max2= MINUS_INFINITY;
+  for (i=0; i<N(b1); i++)
+    if (b1[i]->w() > 0) {
+      if (b1->sx1(i) < min1) min1= b1->sx1(i);
+      if (b1->sx2(i) > max1) max1= b1->sx2(i);
+    }
+  for (i=0; i<N(b2); i++)
+    if (b2[i]->w() > 0) {
+      if (b2->sx1(i) < min2) min2= b2->sx1(i);
+      if (b2->sx2(i) > max2) max2= b2->sx2(i);
+    }
+  if ((max1 + hor_sep < min2) || (max2 + hor_sep < min1)) return 0;
+
+  // longer determination of height after shoving
   array<SI> hpos;
   for (i=0; i<N(b1); i++)
-    hpos << (b1->sx1(i)- hor_sep) << (b1->sx2(i)+ hor_sep);
-  for (i=0; i<N(b2); i++)
-    hpos << (b2->sx1(i)- hor_sep) << (b2->sx2(i)+ hor_sep);
-  merge_sort (hpos);
+    if (b1[i]->w() > 0)
+      hpos << (b1->sx1(i)- hor_sep) << (b1->sx2(i)+ hor_sep);
+  for (i=0; i<N(b2); i++) 
+    if (b2[i]->w() > 0)
+      hpos << (b2->sx1(i)- hor_sep) << (b2->sx2(i)+ hor_sep);
+  merge_sort (hpos);  
 
   int n= N(hpos)-1;
   array<SI> vpos1 (n);
@@ -115,11 +133,22 @@ shove (page_item& item1, page_item& item2, stack_border sb) {
     else break;
   }
 
-  if ((b2->y2- b1->y1) < (sb->height- sb->sep))
+  if ((b2->y2- b1->y1) < (sb->height- max (sb->sep, sb->ver_sep)))
+    // enough place
     item1->spc= item1->spc + space (sb->height- (b2->y2- b1->y1));
   else {
-    SI h= max (sb->height, shove_in (b1, b2, sb)+ sb->sep);
-    item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
+    SI sh= shove_in (b1, b2, sb);
+    // cout << "Shove: " << sh/256 << "\n";
+    if (sh == 0) {
+      // no collisions
+      SI h= max (sb->height, b2->y2 + sb->sep);
+      item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
+    }
+    else {
+      // collisions
+      SI h= max (sb->height, sh + sb->ver_sep);
+      item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
+    }
   }
 }
 
@@ -165,7 +194,7 @@ merge_stack (array<page_item>& l, stack_border& sb,
   while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
   if (i>=0) {
     l[i]= copy (l[i]);
-    if (N(l2)>0) shove (l[i], l2[0], sb);
+    if (N(l2)>0) shove (l[i], l2[0], max (sb, sb2));
     l[i]->spc += max (sb->vspc_after, sb2->vspc_before);
     if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
   }
@@ -178,6 +207,7 @@ merge_stack (array<page_item>& l, stack_border& sb,
   if (N(l2) > 0) {
     sb->height = sb2->height;
     sb->sep    = sb2->sep;
+    sb->ver_sep= sb2->ver_sep;
     sb->hor_sep= sb2->hor_sep;
     sb->top    = sb2->top;
     sb->bot    = sb2->bot;
@@ -271,11 +301,12 @@ typeset_as_stack (edit_env env, tree t, path ip) {
   int i, n= N(t);
   stacker sss= new stacker_rep ();
   SI sep       = env->get_length (PAR_SEP);
-  SI height    = env->as_length (string ("1fn"))+ sep;
   SI hor_sep   = env->get_length (PAR_HOR_SEP);
+  SI ver_sep   = env->get_length (PAR_VER_SEP);
+  SI height    = env->as_length (string ("1fn"))+ sep;
   SI bot       = 0;
   SI top       = env->fn->yx;
-  sss->set_env_vars (height, sep, hor_sep, bot, top);
+  sss->set_env_vars (height, sep, hor_sep, ver_sep, bot, top);
   for (i=0; i<n; i++)
     sss->print (typeset_as_concat (env, t[i], descend (ip, i)));
 
