@@ -66,6 +66,8 @@
 
     <assign|rsM|<with|math-font|cal*|M>>
 
+    <assign|rsO|<with|math-font|cal*|O>>
+
     <assign|rsP|<with|math-font|cal*|P>>
 
     <assign|rsQ|<with|math-font|cal*|Q>>
