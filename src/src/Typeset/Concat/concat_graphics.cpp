@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "concater.hpp"
+#include "Boxes/graphics.hpp"
 
 /******************************************************************************
 * Typesetting graphics
@@ -18,8 +19,11 @@
 
 void
 concater_rep::typeset_graphics (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
+  int i, n= N(t);
+  array<box> bs (n-1);
+  for (i=1; i<n; i++)
+    bs[i-1]= typeset_as_concat (env, t[i], descend (ip, i));
+  print (STD_ITEM, graphics_box (ip, bs, env->fr, point (), point ()));
 }
 
 void
@@ -34,13 +38,11 @@ concater_rep::typeset_superpose (tree t, path ip) {
 void
 concater_rep::typeset_text_at (tree t, path ip) {
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
-  tree   pos   = env->exec (t[1]);
+  point  p     = env->fr (as_point  (env->exec (t[1])));
   string halign= as_string (env->exec (t[2]));
   string valign= as_string (env->exec (t[3]));
 
-  bool error;
-  SI x, y;
-  env->get_point (pos, x, y, error);
+  SI x= (SI) p[0], y= (SI) p[1];
   if (halign == "left") x -= b->x1;
   else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
   else if (halign == "right") x -= b->x2;
@@ -52,26 +54,29 @@ concater_rep::typeset_text_at (tree t, path ip) {
 
 void
 concater_rep::typeset_point (tree t, path ip) {
-  (void) t; (void) ip;
-  print (STD_ITEM, test_box (ip));
+  int i, n= N(t);
+  tree u (TUPLE, N(t));
+  for (i=0; i<n; i++)
+    u[i]= env->exec (t[i]);
+  if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
+  else {
+    point p= env->fr (as_point (u));
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col));
+  }
 }
 
 void
 concater_rep::typeset_line (tree t, path ip, bool close) {
   int i, n= N(t);
-  tree u[n];
-  array<box> bs;
+  array<point> a(n);
   for (i=0; i<n; i++)
-    u[i]= env->exec (t[i]);
-  for (i=0; i<(close?n:n-1); i++) {
-    bool error= false;
-    SI x1, y1, x2, y2;
-    env->get_point (t[i], x1, y1, error);
-    env->get_point (t[(i+1)%n], x2, y2, error);
-    bs << line_box (decorate_right (ip), x1, y1, x2, y2, env->lw, env->col);
+    a[i]= as_point (env->exec (t[i]));
+  if (close) a << copy (a[0]);
+  if (N(a)<2) typeset_dynamic (tree (ERROR, "bad line", t), ip);
+  else {
+    curve c= env->fr (poly_segment (a));
+    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
-  box b= composite_box (ip, bs);
-  print (STD_ITEM, b);
 }
 
 void

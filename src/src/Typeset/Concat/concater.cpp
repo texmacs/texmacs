@@ -681,7 +681,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive ("text at", t, ip);
     break;
   case _POINT:
-    if (ACTIVATED) typeset_graphics (t, ip);
+    if (ACTIVATED) typeset_point (t, ip);
     else typeset_inactive ("point", t, ip);
     break;
   case LINE:

@@ -20,6 +20,7 @@
 #include "font.hpp"
 #include "language.hpp"
 #include "hashmap.hpp"
+#include "Graphics/frame.hpp"
 
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
@@ -180,10 +181,7 @@ public:
 
   /*************************** for graphical boxes ***************************/
 
-  virtual point     lift (SI x, SI y);
-  virtual void      project (point p, SI& x, SI& y);
-  virtual double    distance (point p);
-  virtual path      closest (point p, int serial= 1);
+  virtual frame     get_frame (path bp);
 
   /************************** retrieving information *************************/
 

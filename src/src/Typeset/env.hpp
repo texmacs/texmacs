@@ -151,6 +151,8 @@ private:
   void exec_until_mod_active (tree t, path p);
   bool exec_until_mod_active (tree t, path p, string var, int level);
 
+  tree exec_point (tree t);
+
 public:
   edit_env_rep (display dis,
 		drd_info& drd,
@@ -218,7 +220,6 @@ public:
   string    multiply_length (double x, string l);
   bool      is_length (string s);
   double    divide_lengths (string l1, string l2);
-  void      get_point (tree t, SI& x, SI& y, bool& error);
   void      get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			   SI& odd, SI& even, SI& top, SI& bottom);
 

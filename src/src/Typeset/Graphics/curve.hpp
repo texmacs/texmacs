@@ -55,13 +55,14 @@ public:
 
 class curve {
   ABSTRACT_NULL(curve);
-  curve (point p1, point p2); // straight curve
   inline point operator () (double t) { return rep->evaluate (t); }
   inline bool operator == (curve c) { return rep == c.rep; }
   inline bool operator != (curve c) { return rep != c.rep; }
 };
 ABSTRACT_NULL_CODE(curve);
 
+curve segment (point p1, point p2);
+curve poly_segment (array<point> a);
 curve operator * (curve c1, curve c2);
 curve invert (curve c);
 
