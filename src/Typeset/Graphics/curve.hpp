@@ -28,11 +28,11 @@ public:
   // gives a point on the curve for its intrinsic parameterization
   // curves are parameterized from 0.0 to 1.0
 
-  array<point> rectify (double err);
+  array<point> rectify (double eps);
   // returns a rectification of the curve, which, modulo reparameterization
-  // has a uniform distance of at most 'err' to the original curve
+  // has a uniform distance of at most 'eps' to the original curve
 
-  virtual void rectify_cumul (array<point>& a, double err) = 0;
+  virtual void rectify_cumul (array<point>& a, double eps) = 0;
   // add rectification of the curve  (except for the starting point)
   // to an existing polysegment
 
@@ -40,9 +40,9 @@ public:
   NOTE: more routines should be added later so that one
   can reliably compute the intersections between curves
   One might for instance take the following:
-
-  virtual double bound (double t, double err) = 0;
-  // return delta such that |t' - t| < delta => |c(t') - c(t)| < err.
+  */
+  virtual double bound (double t, double eps) = 0;
+  // return delta such that |t' - t| < delta => |c(t') - c(t)| < eps.
 
   virtual point grad (double t, bool& error) = 0;
   // compute the first derivative at t.
@@ -51,7 +51,14 @@ public:
   virtual double curvature (double t1, double t2) = 0;
   // compute a bound for the second derivative between t1 and t2.
   // return a very large number if such a bound does not exist.
-  */
+
+  // returns the number of control points which belong to the curve.
+  // these control points are ordered and come first in pts & cips.
+  virtual int get_control_points (
+            array<double>&abs, array<point>& pts, array<path>& cip);
+
+  virtual double find_closest_point (
+            double t1, double t2, point p, double eps, bool& found);
 };
 
 class curve {
@@ -63,7 +70,7 @@ class curve {
 ABSTRACT_NULL_CODE(curve);
 
 curve segment (point p1, point p2);
-curve poly_segment (array<point> a);
+curve poly_segment (array<point> a, array<path> cip);
 curve spline (array<point> a, bool close=false, bool interpol=true);
 curve arc (
   point center, double r1, double r2, double alpha, double e1, double e2);

@@ -281,4 +281,5 @@
   (get-graphical-object get_graphical_object (tree))
   (set-graphical-object set_graphical_object (void tree))
   (path-xy path_xy (path double double))
+  (graphical-select graphical_select (tree double double))
   (texmacs-exec texmacs_exec (tree content)))

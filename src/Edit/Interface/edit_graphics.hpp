@@ -33,6 +33,7 @@ public:
   void   find_limits (point& lim1, point& lim2);
   point  adjust (point p);
   tree   find_point (point p);
+  tree   graphical_select (double x, double y);
   tree   get_graphical_object ();
   void   set_graphical_object (tree t);
   void   invalidate_graphical_object ();

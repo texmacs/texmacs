@@ -156,12 +156,21 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->as_point (env->exec (t[i]));
-  if (close) a << copy (a[0]);
+  array<path> cip(n);
+  for (i=0; i<n; i++)
+    cip[i]= descend (ip, i);
+  if (close) {
+    a << copy (a[0]);
+    cip << copy (cip[0]);
+  }
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
-    if (N(a) == 1) a << copy (a[0]);
-    curve c= env->fr (poly_segment (a));
+    if (N(a) == 1) {
+      a << copy (a[0]);
+      cip << copy (cip[0]);
+    }
+    curve c= env->fr (poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
@@ -191,11 +200,17 @@ concater_rep::typeset_spline (tree t,path ip,bool close) {
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->as_point (env->exec (t[i]));
+  array<path> cip(n);
+  for (i=0; i<n; i++)
+    cip[i]= descend (ip, i);
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
-    if (N(a) == 1) a << copy (a[0]);
-    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a));
+    if (N(a) == 1) {
+      a << copy (a[0]);
+      cip << copy (cip[0]);
+    }
+    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }

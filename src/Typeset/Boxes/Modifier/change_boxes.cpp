@@ -61,6 +61,8 @@ struct change_box_rep: public composite_box_rep {
 
   SI get_leaf_offset (string search) {
     return sx1(0) + bs[0]->get_leaf_offset (search); }
+
+  gr_selections graphical_select (SI x, SI y, SI dist);
 };
 
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
@@ -70,6 +72,15 @@ int
 change_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (child_flag) return composite_box_rep::find_child (x, y, delta, force);
   return 0;
+}
+
+gr_selections
+change_box_rep::graphical_select (SI x, SI y, SI dist) { 
+//TODO : Check if it is correct
+  if (child_flag)
+    return composite_box_rep::graphical_select (x, y, dist);
+  else
+    return bs[0]->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
 /******************************************************************************

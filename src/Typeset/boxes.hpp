@@ -78,6 +78,25 @@ bool operator != (selection sel1, selection sel2);
 ostream& operator << (ostream& out, selection sel);
 
 /******************************************************************************
+* The selection class
+******************************************************************************/
+
+struct gr_selection_rep: concrete_struct {
+  array<path> cp;
+  SI dist;
+};
+
+struct gr_selection {
+  CONCRETE(gr_selection);
+  gr_selection (array<path> cp= array<path> (), SI dist= 0);
+};
+CONCRETE_CODE(gr_selection);
+
+ostream& operator << (ostream& out, gr_selection sel);
+
+typedef array<gr_selection> gr_selections;
+
+/******************************************************************************
 * The box class
 ******************************************************************************/
 
@@ -186,6 +205,9 @@ public:
 
   frame     find_frame (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
+
+  virtual SI             graphical_distance (SI x, SI y);
+  virtual gr_selections  graphical_select (SI x, SI y, SI dist);
 
   /************************** retrieving information *************************/
 

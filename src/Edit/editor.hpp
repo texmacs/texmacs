@@ -106,6 +106,7 @@ public:
   /* public routines from edit_interface */
   virtual void suspend () = 0;
   virtual void resume () = 0;
+  virtual int  get_pixel_size () = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
   virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
@@ -172,6 +173,7 @@ public:
   virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
+  virtual tree   graphical_select (double x, double y) = 0;
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;

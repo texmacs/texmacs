@@ -15,6 +15,15 @@
 #include "math_util.hpp"
 
 point
+operator - (point p) {
+  int i, n= N(p);
+  point r (n);
+  for (i=0; i<n; i++)
+    r[i]= - p[i];
+  return r;
+}
+
+point
 operator + (point p1, point p2) {
   int i, n= min (N(p1), N(p2));
   point r (n);
@@ -91,4 +100,35 @@ arg (point p) {
   p=p/n;
   if (p[1]<0) return 2*PI-acos(p[0]);
   else return acos(p[0]);
+}
+
+point
+proj (axis ax, point p) {
+  int i, n= min (N(ax[0]), N(ax[1]));
+  point a (n), b (n);
+  for (i=0; i<n ; i++) {
+    a[i]= ax[1][i] - ax[0][i];
+    b[i]= ax[0][i];
+  }
+  if (norm (a) < 1.0e-6)
+    return ax[0];
+  else
+    return b + ((a*p - a*b) / (a*a)) * a;
+}
+
+double
+dist (axis ax, point p) {
+  return norm (p - proj (ax, p));
+}
+
+double
+seg_dist (axis ax, point p) {
+  point ab= ax[1] - ax[0];
+  point ba= ax[0] - ax[1];
+  point ap= p - ax[0];
+  point bp= p - ax[1];
+  if (ab * ap > 0 && ba * bp > 0)
+    return dist (ax, p);
+  else
+    return min (norm (ap), norm (bp));
 }

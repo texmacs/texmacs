@@ -60,12 +60,14 @@ struct point_box_rep: public box_rep {
   color col;
   string style;
   point_box_rep (path ip, point p, SI radius, color col, string style);
+  SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
   void display (ps_device dev);
   operator tree () { return "point"; }
 };
 
-point_box_rep::point_box_rep (path ip2, point p2, SI r2, color col2, string style2):
-  box_rep (ip2), p (p2), r (r2), col (col2), style (style2)
+point_box_rep::point_box_rep (
+  path ip2, point p2, SI r2, color col2, string style2):
+    box_rep (ip2), p (p2), r (r2), col (col2), style (style2)
 {
   x1= x3= ((SI) p[0]) - r;
   y1= y3= ((SI) p[1]) - r;
@@ -78,10 +80,14 @@ point_box_rep::display (ps_device dev) {
   if (style == "square") {
     dev->set_color (col);
     dev->set_line_style (PIXEL);
-    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r, ((SI) p[0]) - r, ((SI) p[1]) + r); 
-    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r, ((SI) p[0]) - r, ((SI) p[1]) + r); 
-    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r, ((SI) p[0]) + r, ((SI) p[1]) - r); 
-    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r, ((SI) p[0]) + r, ((SI) p[1]) - r); 
+    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r,
+	       ((SI) p[0]) - r, ((SI) p[1]) + r); 
+    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r,
+	       ((SI) p[0]) - r, ((SI) p[1]) + r); 
+    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r,
+	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
+    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r,
+	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
   }
   else {
     int i, n= 4*(r/dev->pixel+1);
@@ -103,13 +109,16 @@ struct curve_box_rep: public box_rep {
   array<point> a;
   SI width;
   color col;
+  curve c;
   curve_box_rep (path ip, curve c, SI width, color col);
+  SI graphical_distance (SI x, SI y);
+  gr_selections graphical_select (SI x, SI y, SI dist);
   void display (ps_device dev);
   operator tree () { return "curve"; }
 };
 
-curve_box_rep::curve_box_rep (path ip2, curve c, SI W, color C):
-  box_rep (ip2), width (W), col (C)
+curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C):
+  box_rep (ip2), width (W), col (C), c (c2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -123,6 +132,58 @@ curve_box_rep::curve_box_rep (path ip2, curve c, SI W, color C):
   }
   x3= x1 - (width>>1); y3= y1 - (width>>1); 
   x4= x2 + (width>>1); y4= y2 + (width>>1);
+}
+
+SI
+curve_box_rep::graphical_distance (SI x, SI y) {
+  SI gd= MAX_SI;
+  point p (x, y);
+  int i;
+  for (i=0; i<N(a)-1; i++) {
+    axis ax;
+    ax[0]= a[i];
+    ax[1]= a[i+1];
+    gd= min (gd, (SI)seg_dist (ax, p));
+  }
+  return gd;
+}
+
+gr_selections
+curve_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    array<double> abs;
+    array<point> pts;
+    array<path> paths;
+    int np= c->get_control_points (abs, pts, paths);
+    point p (x, y);
+    int i;
+    for (i=0; i<N(pts); i++) {
+      SI n= (SI)norm (p - pts[i]);
+      if (n <= dist) {
+        gr_selection gs;
+        gs->dist= n;
+        gs->cp << reverse (paths[i]);
+        res << gs;
+      }
+    }
+    for (i=0; i<np-1; i++) {
+      bool b;
+      double t= c->find_closest_point (abs[i], abs[i+1], p, PIXEL, b);
+      if (b) {
+        point p2= c->evaluate (t);
+        SI n= (SI)norm (p - p2);
+        if (n <= dist) {
+          gr_selection gs;
+          gs->dist= n;
+          gs->cp << reverse (paths[i]);
+          gs->cp << reverse (paths[i+1]);
+          res << gs;
+        }
+      }
+    }
+  }
+  return res;
 }
 
 void

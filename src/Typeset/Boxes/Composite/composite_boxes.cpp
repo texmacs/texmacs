@@ -282,6 +282,17 @@ composite_box_rep::find_selection (path lbp, path rbp) {
   else return box_rep::find_selection (lbp, rbp);
 }
 
+gr_selections
+composite_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    int i, n= subnr();
+    for (i=0; i<n; i++)
+      res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  }
+  return res;
+}
+
 /******************************************************************************
 * User interface
 ******************************************************************************/
