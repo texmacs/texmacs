@@ -78,6 +78,9 @@
   (vect (enlarge varvect -0.2 0.1 0 0))
   (bind (enlarge varbind -0.6 0 0 0))
 
+  (frak-imath (clip frak-i * * * 0.47))
+  (frak-jmath (clip frak-j * * * 0.47))
+
   (venus (join (0 0.1 female)))
   (mars (join (0 -0.1 male)))
   (earth (join (0 -0.15 wasy-38)))

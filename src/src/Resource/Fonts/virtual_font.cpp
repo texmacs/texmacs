@@ -137,6 +137,15 @@ virtual_font_rep::compile (scheme_tree t, metric& ex) {
     return gl;
   }
 
+  if (is_tuple (t, "clip")) {
+    glyph gl= compile (t[1], ex);
+    if (N(t)>2 && t[2]!="*") ex->x1= ex->x3= (SI) (as_double (t[2]) * unit);
+    if (N(t)>3 && t[3]!="*") ex->x2= ex->x4= (SI) (as_double (t[3]) * unit);
+    if (N(t)>4 && t[4]!="*") ex->y1= ex->y3= (SI) (as_double (t[4]) * unit);
+    if (N(t)>5 && t[5]!="*") ex->y2= ex->y4= (SI) (as_double (t[5]) * unit);
+    return clip (gl, ex->x3, ex->y3, ex->x4, ex->y4);
+  }
+
   if (is_tuple (t, "hor-flip", 1))
     return hor_flip (compile (t[1], ex));
 
