@@ -17,8 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(lazy-define (proclus-distill) target-action)
-(lazy-define (proclus-distill) targets-editor-action)
+(lazy-define (proclus-distill) locus-action)
+(lazy-define (proclus-distill) loci-editor-action)
 (use-modules (menu menu-proclus))
 
 (use-modules (proclus-types)) ;; FIXME: for interactive
@@ -45,6 +45,6 @@
 ;; Has to be after plugin-configure to redefine the in-proclus? predicate
 (texmacs-modes
   (in-proclus% (style-has? "proclus-dtd"))
-  (in-proclus-target% (inside? "target") in-proclus%)
+  (in-proclus-locus% (inside? "locus") in-proclus%)
   (in-proclus-editable% (style-has? "proclus-editable-dtd") in-proclus%)
   (in-proclus-links% (style-has? "proclus-links-dtd") in-proclus%))

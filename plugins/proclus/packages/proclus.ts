@@ -5,9 +5,9 @@
 <\body>
   <assign|proclus-editable-dtd|1.0>
 
-  <assign|target|<macro|x|id|<decorate-action|<arg|x>|(target-action)>>>
+  <assign|locus|<macro|x|id|<decorate-action|<arg|x>|(locus-action)>>>
 
-  <assign|not-target|<macro|x|id|<arg|x>>>
+  <assign|not-locus|<macro|x|id|<arg|x>>>
 </body>
 
 <\initial>

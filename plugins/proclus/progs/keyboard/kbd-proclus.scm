@@ -28,8 +28,8 @@
   ;; in-proclus-editable?
   ("proclus s" (active-source))
   ("proclus b" (active-but))
-  ("proclus <" (target))
-  ("proclus 1" (go-to-last-target)))
+  ("proclus <" (locus))
+  ("proclus 1" (go-to-last-locus)))
 
 (kbd-map in-proclus-links?
   ("proclus S" (go-to-source-buffer))) ;; FIXME: unify with go-to-source

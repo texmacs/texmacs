@@ -34,6 +34,7 @@
 (define-macro (save-excursion . body)
   ;; TODO: save point and mark too, like emacs
   (let ((buf-sym (gensym)))
+
     `(let ((,buf-sym (get-strg-name-buffer)))
        (dynamic-wind
            noop

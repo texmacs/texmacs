@@ -25,12 +25,14 @@
 
 (menu-bind menu-proclus-links
   (=> "Links"
-      (when (in-proclus-target?)
+      (when (in-proclus-locus?)
             ("Active source" (active-source))
-            ("Active but" (active-but)))
+	    (when (has-active-source?)
+		  ("Active but" (active-but))
+		  ("Initialiser" (inactivate))))
       ---
-      (when (has-last-target?)
-            ("Dernier locus" (go-to-last-target)))
+      (when (has-last-locus?)
+            ("Dernier locus" (go-to-last-locus)))
       (when (has-source-buffer?)
             ("Document source" (go-to-source-buffer)))
       ("Constellation" (absname-editor))
@@ -43,12 +45,15 @@
 (menu-bind menu-proclus
   (=> "Proclus"
       (when (has-absolute-name?)
-            ("Locus" (target))
-            (when (or (selection-active-any?) (in-proclus-target?))
+            ("Locus" (locus))
+            (when (or (selection-active-any?) (in-proclus-locus?))
                   ("Active source" (active-source))
-                  ("Active but" (active-but))))
-      (when (has-last-target?)
-            ("Dernier locus" (go-to-last-target)))
+		  (when (has-active-source?)
+                  ("Active but" (active-but))
+		  ("Initialiser" (inactivate)))))
+      ---
+      (when (has-last-locus?)
+            ("Retour source" (go-to-last-locus)))
       ---
       ("Constellation" (absname-editor))
       (when (has-conflicting-absolute-name?)
@@ -60,23 +65,24 @@
       (link menu-proclus-types)
       ---
       (when (in-proclus-editable?)
-            ("Loci" (edit-targets)))
+            ("Loci" (edit-loci)))
       (link menu-proclus-edition)))
 
 (menu-bind menu-proclus-types
   (promise (type-menu-promise)))
 
 (menu-bind menu-proclus-edition
-  (when (in-proclus-target?)
+  (when (in-proclus-locus?)
         ("Liens" (edit-links))))
 
 (menu-set! 'std-texmacs-popup-menu (menu-get 'texmacs-popup-menu))
 
 (menu-bind proclus-popup-menu
-  (if (in-proclus-target?)
+  (if (in-proclus-locus?)
       ("Activer source" (active-source))
       ("Activer but" (active-but))
+      ("Initialiser" (inactivate))
       (link menu-proclus-types)
       ("Liens" (edit-links)))
-  (if (not (in-proclus-target?))
+  (if (not (in-proclus-locus?))
       (link std-texmacs-popup-menu)))

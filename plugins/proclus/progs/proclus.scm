@@ -19,32 +19,33 @@
 (texmacs-module (proclus)
   (:use (proclus-lib)
         (proclus-absname)
-        (proclus-target)
+        (proclus-locus)
         (proclus-list)
         (proclus-types)
         (proclus-distill)
         (proclus-source))
-  (:export target
-           initialisation
+  (:export locus
+           inactivate
            active-source active-but
            add-link ;; FIXME: for proclus-types.scm (for interactive)
+	   has-active-source?
            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Target creation
+;; Locus creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (target)
+(define (locus)
   (if (in-proclus-editable?)
       (begin
         (register-buffer-absolute-name-maybe)
-        (make-target (get-absolute-name) (next-target-num)))))
+        (make-locus (get-absolute-name) (next-locus-num)))))
 
-(define (next-target-num)
-  (init-env "target-num" (number->string
-                          (1+ (or (string->number (get-init-env "target-num"))
+(define (next-locus-num)
+  (init-env "locus-num" (number->string
+                          (1+ (or (string->number (get-init-env "locus-num"))
                                   0))))
-  (string->number (get-init-env "target-num")))
+  (string->number (get-init-env "locus-num")))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,32 +57,35 @@
 
 ;; Initialize the link creation state machine.
 ;; Use global variables for communication across documents.
-(define (initialisation)
+(define (inactivate)
   (set! link-source '())
   (set! link-but '()))
 
-;; Designe la TARGET comme la source du prochain lien à créer.
+(define (has-active-source?)
+  (pair? link-source))
+
+;; Designe la LOCUS comme la source du prochain lien à créer.
 (define (active-source)
   (if (and (in-proclus-editable?)
            (selection-active-any?))
-      (target))
-  (if (in-proclus-target?)
-      (and-let* ((t (get-target)))
-        (initialisation)
+      (locus))
+  (if (in-proclus-locus?)
+      (and-let* ((t (get-locus)))
+        (inactivate)
         (source-buffer-excursion
          (register-buffer-absolute-name-maybe))
-        (set! link-source (target-self-link t)))))
+        (set! link-source (locus-self-link t)))))
 
 ;; Idem, désigne une destination.
 (define (active-but)
   (if (and (in-proclus-editable?)
            (selection-active-any?))
-      (target))
-  (if (in-proclus-target?)
-      (and-let* ((t (get-target)))
+      (locus))
+  (if (in-proclus-locus?)
+      (and-let* ((t (get-locus)))
         (source-buffer-excursion
          (register-buffer-absolute-name-maybe))
-        (set! link-but (target-self-link t))
+        (set! link-but (locus-self-link t))
         (if (pair? link-source) (make-link)))))
 
 

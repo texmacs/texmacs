@@ -18,10 +18,10 @@
 
 (texmacs-module (proclus-source)
   (:use (proclus-lib)
-        (proclus-target))
-  (:export has-last-target?
-           set-last-target!
-           go-to-last-target
+        (proclus-locus))
+  (:export has-last-locus?
+           set-last-locus!
+           go-to-last-locus
            has-source-buffer?
            set-source-buffer!
            go-to-source-buffer
@@ -29,17 +29,17 @@
            source-buffer-excursion/sub))
 
 
-(define last-target '())
+(define last-locus '())
 
-(define (has-last-target?)
-  (pair? last-target))
+(define (has-last-locus?)
+  (pair? last-locus))
 
-(define (set-last-target! lnk)
-  (set! last-target lnk))
+(define (set-last-locus! lnk)
+  (set! last-locus lnk))
 
-(define (go-to-last-target)
-  (if (has-last-target?)
-   (go-to-target last-target)))
+(define (go-to-last-locus)
+  (if (has-last-locus?)
+   (go-to-locus last-locus)))
 
 (define (has-source-buffer?)
   (not (string-null? (get-env "source-buffer"))))

@@ -72,15 +72,6 @@
 				     (intersection (cdr e1) e2)))
 	(else (intersection (cdr e1) e2))))
 
-(define (no-repetition-list list)
-  ;; renvoie la liste sans répétition.
-  ;; Ex : (a  b (b) a b c )->(a b (b) c)
-  (if (null? list)
-      '()
-      (cons (car list)
-	    (remove (car list)
-		    (no-repetition-list (cdr list))))))
-
 
 (define (remove term list)
   (list-filter list (lambda (x) (not (equal? x term)))))
@@ -105,3 +96,7 @@
   (if (< n (length l))
       (list-drop list n)
       '()))
+
+(define (no-repetition-list list)
+(if (null? list) '() (cons (car list) (remove (car list) (no-repetition-list (cdr list)))))
+) 

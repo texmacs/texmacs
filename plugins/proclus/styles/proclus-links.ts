@@ -5,7 +5,7 @@
 <\body>
   <assign|proclus-links-dtd|1.0>
 
-  <assign|target|<macro|x|id|<decorate-action|<arg|x>|(proclus-links-action)>>>
+  <assign|locus|<macro|x|id|<decorate-action|<arg|x>|(proclus-links-action)>>>
 </body>
 
 <\initial>

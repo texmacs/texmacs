@@ -20,12 +20,24 @@
   (:use (proclus) ;; FIXME: circular dependence
         (proclus-list)
         (proclus-lib)
-        (proclus-source))
+        (proclus-source)
+	(proclus-locus)
+	(ice-9 common-list)) ;; uniq et set-difference.
   (:export type-menu-promise
            toggle-active-type ;; FIXME: for ugly menu workaround
            
-           list-types
+           list-types 
            active-types
+
+	   
+	   import-types 
+	   import-types/sub 
+	   list-types-tmp
+	   new-types/sub
+	   new-types-rec
+	   delete-types/sub
+	   delete-types-rec
+
            
            ask-types
            
@@ -61,6 +73,34 @@
   (source-buffer-excursion
    (init-env-tree "proclus-active-types"
                   (object->tree (cons 'tuple types)))))
+
+(define (types-tree)
+  (transform locus? (tree->object (the-buffer))))
+
+(define (type? x)
+  (and (pair? x)
+       (>= (length x) 3)
+       (eq? (car x) 'locus)))
+
+   
+
+;;adds the list of  types ltypes to the  type list of the current doc.
+(define (merge-types ltypes) 
+  (init-env-tree "proclus-type-list"
+		 (object->tree 
+		  (cons 'tuple 
+			(uniq 
+			 (list-concatenate 
+			  (list (list-types) ltypes)))))))
+
+;;adds the list of  types ltypes to the active  types list of the current doc.
+(define (merge-active-types ltypes) 
+  (init-env-tree "proclus-active-types"
+		 (object->tree 
+		  (cons 'tuple 
+			(uniq 
+			 (list-concatenate 
+			  (list (active-types) ltypes)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level type commands and menu
@@ -114,9 +154,14 @@
    (clear-active-types-cache)
    (menu-dynamic
      (-> "Types"
+	 ("Importer" (import-types))
+	 ("Ajouter" (new-types))
+	 ("Supprimer" (delete-types))
+	 ---
          ("Activer tous" (activate-all-types))
          ("Désactiver tous" (deactivate-all-types))
          ("Inverser" (activate-negative-types))
+	
          ---
          ,@(let ((types (list-types)))
              (if (null? types)
@@ -128,6 +173,60 @@
               (list (menu-pre `(,type (toggle-active-type ,type)))))))
 
 
+(define (import-types)
+  (let ((from (get-strg-name-buffer)))
+    (choose-file "Importer les types" "texmacs"
+                 `(lambda (x) (import-types/sub x ,from)))))
+
+(define (import-types/sub u from)
+  (switch-to-active-buffer u)
+  (let ((imp-types (list-types)))
+    (switch-to-active-buffer from)
+     (merge-types imp-types)))
+
+(define list-types-tmp '())
+
+(define (new-types)
+  (set! list-types-tmp '())
+  (new-types/sub))
+
+(define (new-types/sub)
+  (new-types/sub2 "Ajouter le type :"))
+
+(define (new-types/sub2 msg)
+  (interactive (list msg)
+	       '(lambda(s)
+		  (if (string-null? s)
+		      (new-types-rec)
+		      (begin (set-cons! list-types-tmp s)
+			     (new-types/sub))))))
+
+;;adds list-types-tmp to the list of types. New types are active.
+(define (new-types-rec)
+  (merge-types list-types-tmp)
+  (merge-active-types list-types-tmp))
+
+(define (delete-types)
+  (set! list-types-tmp '())
+  (delete-types/sub))
+
+(define (delete-types/sub)
+  (delete-types/sub2 "Supprimer le type :"))
+
+(define (delete-types/sub2 msg)
+  (interactive (list msg)
+	       '(lambda(s)
+		  (if (string-null? s)
+		      (delete-types-rec)
+		      (begin (set-cons! list-types-tmp s)
+			     (delete-types/sub))))))
+(define (delete-types-rec)
+  (init-env-tree "proclus-type-list" 
+		 (object->tree 
+		  (cons 'tuple
+			(list-filter 
+			 (list-types) 
+			 (lambda (x) (not (in? x list-types-tmp))))))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
