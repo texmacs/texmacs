@@ -93,6 +93,7 @@ initialize_default_env () {
   env (PAGE_TYPE)        = "a4";        // paper type (-> width & height)
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
+  env (PAGE_HEIGHT_MARGIN) = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
   env (PAGE_BREAKING)    = "optimal";   // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1.0";       // flexibility factor of stretch
@@ -105,6 +106,7 @@ initialize_default_env () {
   env (PAGE_RIGHT)       = "auto";      // right margin in auto mode
   env (PAGE_TOP)         = "auto";      // top margin
   env (PAGE_BOT)         = "auto";      // bottom margin
+  env (PAGE_USER_HEIGHT) = "522pt";     // height of principal text
   env (PAGE_ODD_SHIFT)   = "0mm";       // odd page marginal shift wrt center
   env (PAGE_EVEN_SHIFT)  = "0mm";       // even page marginal shift wrt center
   env (PAGE_SHRINK)      = "1fn";       // emergency page length shrinking

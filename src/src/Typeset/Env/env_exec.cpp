@@ -1833,7 +1833,6 @@ edit_env_rep::divide_lengths (string s1, string s2) {
   return ((double) l1) / ((double) l2);
 }
 
-
 bool
 edit_env_rep::is_length (string s) {
   int i;
@@ -1842,4 +1841,33 @@ edit_env_rep::is_length (string s) {
   int j=N(s);
   while ((j>i) && ((s[j-1]=='+') || (s[j-1]=='-') || (s[j-1]=='*'))) j--;
   return is_alpha (s (i, j));
+}
+
+SI
+edit_env_rep::get_length (string var) {
+  tree t= env [var];
+  if (is_compound (t)) {
+    if (is_func (t, MACRO))
+      t= exec (compound (var));
+    if (is_compound (t))
+      return 0;
+  }
+  return decode_length (t->label);
+}
+
+space
+edit_env_rep::get_space (string var) {
+  tree t= env [var];
+  if (is_compound (t)) {
+    if (is_func (t, MACRO))
+      t= exec (compound (var));
+    if (is_compound (t)) {
+      if (is_tuple (t) && (N(t) == 3))
+	return space (decode_length (as_string (t[0])),
+		      decode_length (as_string (t[1])),
+		      decode_length (as_string (t[2])));
+      return 0;
+    }
+  }
+  return decode_space (t->label);
 }
