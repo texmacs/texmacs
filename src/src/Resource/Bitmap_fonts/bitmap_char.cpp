@@ -15,10 +15,10 @@
 #define PIXEL 256
 
 /******************************************************************************
-* Constructors and destructors for bitmap_char
+* Constructors and destructors for glief
 ******************************************************************************/
 
-bitmap_char_rep::bitmap_char_rep (int w2, int h2, int xoff2, int yoff2,
+glief_rep::glief_rep (int w2, int h2, int xoff2, int yoff2,
 				  int depth2, int status2)
 {
   depth   = depth2;
@@ -34,13 +34,12 @@ bitmap_char_rep::bitmap_char_rep (int w2, int h2, int xoff2, int yoff2,
   for (i=0; i<n; i++) raster[i]=0;
 }
 
-bitmap_char_rep::~bitmap_char_rep () {
+glief_rep::~glief_rep () {
   delete[] raster;
 }
 
-bitmap_char::bitmap_char (int w2, int h2, int xoff2, int yoff2,
-			  int depth2, int status2) {
-  rep= new bitmap_char_rep (w2, h2, xoff2, yoff2, depth2, status2);
+glief::glief (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
+  rep= new glief_rep (w2, h2, xoff2, yoff2, depth2, status2);
 }
 
 /******************************************************************************
@@ -48,7 +47,7 @@ bitmap_char::bitmap_char (int w2, int h2, int xoff2, int yoff2,
 ******************************************************************************/
 
 int
-bitmap_char_rep::get_x (int i, int j) {
+glief_rep::get_x (int i, int j) {
   if ((i<0) || (i>=width))  return 0;
   if ((j<0) || (j>=height)) return 0;
   if (depth==1) {
@@ -59,11 +58,11 @@ bitmap_char_rep::get_x (int i, int j) {
 }
 
 void
-bitmap_char_rep::set_x (int i, int j, int with) {
+glief_rep::set_x (int i, int j, int with) {
   if ((i<0) || (i>=width))
-    fatal_error ("bad x-index", "bitmap_char_rep::set_x");
+    fatal_error ("bad x-index", "glief_rep::set_x");
   if ((j<0) || (j>=height))
-    fatal_error ("bad y-index", "bitmap_char_rep::set_x");
+    fatal_error ("bad y-index", "glief_rep::set_x");
   if (depth==1) {
     int bit= j*width+i;
     if (with==0) raster[bit>>3] &= ~(1 << (bit&7));
@@ -73,12 +72,12 @@ bitmap_char_rep::set_x (int i, int j, int with) {
 }
 
 int
-bitmap_char_rep::get (int i, int j) {
+glief_rep::get (int i, int j) {
   return get_x (i+xoff, yoff-j);
 }
 
 void
-bitmap_char_rep::set (int i, int j, int with) {
+glief_rep::set (int i, int j, int with) {
   set_x (i+xoff, yoff-j, with);
 }
 
@@ -87,14 +86,14 @@ bitmap_char_rep::set (int i, int j, int with) {
 ******************************************************************************/
 
 void
-bitmap_char_rep::adjust_bot () {
+glief_rep::adjust_bot () {
   int i;
   if (height<=2) return;
   for (i=0; i<width; i++) set_x (i, height-1, get_x (i, height-2));
 }
 
 void
-bitmap_char_rep::adjust_top () {
+glief_rep::adjust_top () {
   int i;
   if (height<=2) return;
   for (i=0; i<width; i++) set_x (i, 0, get_x (i, 1));
@@ -105,7 +104,7 @@ bitmap_char_rep::adjust_top () {
 ******************************************************************************/
 
 ostream&
-operator << (ostream& out, bitmap_char bmc) {
+operator << (ostream& out, glief bmc) {
   int i, j;
   out << "Size  : (" << bmc->width << ", " << bmc->height << ")\n";
   out << "Offset: (" << bmc->xoff << ", " << bmc->yoff << ")\n";

@@ -66,17 +66,17 @@ x_drawable_rep::draw_clipped (Pixmap pm, Pixmap bm, int w, int h, SI x, SI y) {
 }
 
 void
-x_drawable_rep::draw (int c, bitmap_font bmf, SI x, SI y) {
+x_drawable_rep::draw (int c, font_gliefs bmf, SI x, SI y) {
   // get the pixmap
   x_character xc (c, bmf, sfactor, cur_fg, cur_bg);
   Pixmap pm= (Pixmap) dis->character_pixmap [xc];
   if (pm == 0) {
     dis->prepare_color (sfactor, cur_fg, cur_bg);
-    x_character col_entry (0, bitmap_font (), sfactor, cur_fg, cur_bg);
+    x_character col_entry (0, font_gliefs (), sfactor, cur_fg, cur_bg);
     color* cols= (color*) dis->color_scale [col_entry];
     SI xo, yo;
-    bitmap_char pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
-    bitmap_char bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
+    glief pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
+    glief bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
     int i, j, w= bmc->width, h= bmc->height;
     pm= XCreatePixmap (dis->dpy, dis->root, w, h, dis->depth);
     for (j=0; j<h; j++)
@@ -93,8 +93,8 @@ x_drawable_rep::draw (int c, bitmap_font bmf, SI x, SI y) {
   Bitmap bm= (Bitmap) dis->character_bitmap [xc];
   if (bm == NULL) {
     SI xo, yo;
-    bitmap_char pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
-    bitmap_char bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
+    glief pre_bmc= bmf->get (c); if (nil (pre_bmc)) return;
+    glief bmc= shrink (pre_bmc, sfactor, sfactor, xo, yo);
     int i, j, b, on, w= bmc->width, h= bmc->height;
     int byte_width= ((w-1)>>3)+1;
     char* data= new char [byte_width * h];
@@ -128,9 +128,7 @@ x_drawable_rep::draw (int c, bitmap_font bmf, SI x, SI y) {
 ******************************************************************************/
 
 void
-x_display_rep::get_ps_char (Font fn, int c,
-			    text_extents& ex, bitmap_char& bmc)
-{
+x_display_rep::get_ps_char (Font fn, int c, metric& ex, glief& bmc) {
   XCharStruct xcs;
   int i1, i2, i3;
   char temp[1]; temp[0]= (char) c;
@@ -160,7 +158,7 @@ x_display_rep::get_ps_char (Font fn, int c,
   XImage* im= XGetImage (dpy, pm, 0, 0, w, h, 0xffffffff, ZPixmap);
 
   int i, j;
-  bmc= bitmap_char (w, h, xoff, yoff);
+  bmc= glief (w, h, xoff, yoff);
   for (j=0; j<h; j++)
     for (i=0; i<w; i++) {
       int c = im->f.get_pixel (im, i, j);
@@ -175,12 +173,12 @@ x_display_rep::get_ps_char (Font fn, int c,
 
 void
 x_display_rep::load_ps_font (string family, int size, int dpi,
-			     bitmap_metric& bmm, bitmap_font& bmf)
+			     font_metric& bmm, font_gliefs& bmf)
 {
   string fn_name= "ps:" * family * as_string (size) * "@" * as_string (dpi);
-  if (bitmap_metric::instances -> contains (fn_name)) {
-    bmm= bitmap_metric (fn_name);
-    bmf= bitmap_font (fn_name);
+  if (font_metric::instances -> contains (fn_name)) {
+    bmm= font_metric (fn_name);
+    bmf= font_gliefs (fn_name);
   }
 
   string name= "-" * family;
@@ -202,12 +200,12 @@ x_display_rep::load_ps_font (string family, int size, int dpi,
   }
 
   int i;
-  text_extents* texs= new text_extents[256];
-  bitmap_char * bmcs= new bitmap_char [256];
+  metric* texs= new metric[256];
+  glief * bmcs= new glief [256];
   for (i=0; i<=255; i++)
     get_ps_char (fn, i, texs[i], bmcs[i]);
-  bmm= std_bitmap_metric (fn_name, texs, 0, 255);
-  bmf= std_bitmap_font (fn_name, bmcs, 0, 255);
+  bmm= std_font_metric (fn_name, texs, 0, 255);
+  bmf= std_font_gliefs (fn_name, bmcs, 0, 255);
 }
 
 /******************************************************************************

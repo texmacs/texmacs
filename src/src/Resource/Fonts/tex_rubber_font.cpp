@@ -24,14 +24,14 @@ struct tex_rubber_font_rep: font_rep {
   int              dsize;
   translator       ext;
   tex_font_metric  tfm;
-  bitmap_font      pk;
+  font_gliefs      pk;
   double           unit;
 
   tex_rubber_font_rep (display dis, string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
-  void get_extents (int c, text_extents& ex);
-  void get_partial_extents (int c, text_extents& ex);
-  void get_extents (string s, text_extents& ex);
+  void get_extents (int c, metric& ex);
+  void get_partial_extents (int c, metric& ex);
+  void get_extents (string s, metric& ex);
   void draw (ps_device dev, int c, SI x, SI& y, SI& real_y);
   void draw (ps_device dev, string s, SI x, SI y);
 
@@ -43,7 +43,7 @@ struct tex_rubber_font_rep: font_rep {
 struct tex_dummy_rubber_font_rep: font_rep {
   font base_fn;
   tex_dummy_rubber_font_rep (string name, font base_fn);
-  void get_extents (string s, text_extents& ex);
+  void get_extents (string s, metric& ex);
   void draw (ps_device dev, string s, SI x, SI y);
 };
 
@@ -103,8 +103,8 @@ tex_rubber_font (display dis, string trl_name,
 ******************************************************************************/
 
 void
-tex_rubber_font_rep::get_extents (int c, text_extents& ex) {
-  bitmap_char bmc= pk->get (c);
+tex_rubber_font_rep::get_extents (int c, metric& ex) {
+  glief bmc= pk->get (c);
 
   ex->x1=  0;
   ex->y1= -conv (tfm->d(c));
@@ -120,8 +120,8 @@ tex_rubber_font_rep::get_extents (int c, text_extents& ex) {
 }
 
 void
-tex_rubber_font_rep::get_partial_extents (int c, text_extents& ex) {
-  text_extents ey;
+tex_rubber_font_rep::get_partial_extents (int c, metric& ex) {
+  metric ey;
   get_extents (c, ey);
   ex->x1= min (ex->x1, ey->x1); ex->y1 -= (ey->y2-ey->y1);
   ex->x2= max (ex->x2, ey->x2);
@@ -130,7 +130,7 @@ tex_rubber_font_rep::get_partial_extents (int c, text_extents& ex) {
 }
 
 void
-tex_rubber_font_rep::get_extents (string s, text_extents& ex) {
+tex_rubber_font_rep::get_extents (string s, metric& ex) {
   if ((N(s)<2) || (s[0]!='<') || (s[N(s)-1]!='>'))
     fatal_error ("Invalid rubber character", "tex_rubber_font_rep::draw");
 
@@ -205,7 +205,7 @@ tex_rubber_font_rep::draw (ps_device dev, int c, SI x, SI& y, SI& real_y) {
 
 void
 tex_rubber_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  text_extents ex;
+  metric ex;
   get_extents (s, ex);
 
   // determining base character and serial number
@@ -280,7 +280,7 @@ tex_dummy_rubber_font_rep::tex_dummy_rubber_font_rep (string name, font fn):
   font_rep (fn->dis, name), base_fn (fn) {}
 
 void
-tex_dummy_rubber_font_rep::get_extents (string s, text_extents& ex) {
+tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {
   string r= s;
   if (s(0,8) == "<large-.") r= "<left-(" * s (8, N(s));
   if (s(0,6) == "<big-.") r= "<big-sum" * s (6, N(s));

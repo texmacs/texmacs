@@ -57,7 +57,7 @@ public:
   virtual void set_default_font (string name) = 0;
   virtual font default_font (bool tt= false) = 0;
   virtual void load_ps_font (string family, int size, int dpi,
-			     bitmap_metric& bmm, bitmap_font& bmf) = 0;
+			     font_metric& bmm, font_gliefs& bmf) = 0;
 
   /* pointer and keyboard */
   virtual void   grab_pointer (widget wid) = 0;

@@ -22,10 +22,10 @@ extern hashmap<Window,pointer> Window_to_window;
 ******************************************************************************/
 
 x_character_rep::x_character_rep (
-  int c2, bitmap_font bmf2, int sf2, color fg2, color bg2):
+  int c2, font_gliefs bmf2, int sf2, color fg2, color bg2):
     c (c2), bmf (bmf2), sf (sf2), fg (fg2), bg (bg2) {}
 
-x_character::x_character (int c, bitmap_font bmf, int sf, color fg, color bg):
+x_character::x_character (int c, font_gliefs bmf, int sf, color fg, color bg):
   rep (new x_character_rep (c, bmf, sf, fg, bg)) {}
 
 x_character::operator tree () {
@@ -51,7 +51,7 @@ x_display_rep::prepare_color (int sf, color fg, color bg) {
   int nr_cols= sf*sf;
   if (sf >= 16)
     fatal_error ("shrinking factor too large", "x_display_rep::prepare_color");
-  x_character col_entry (0, bitmap_font (), sf, fg, bg);
+  x_character col_entry (0, font_gliefs (), sf, fg, bg);
   color* cols= (color*) color_scale [col_entry];
   if (cols == NULL) {
     int fR, fG, fB, bR, bG, bB, j;

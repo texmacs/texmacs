@@ -309,7 +309,7 @@ printer_rep::select_tex_font (string name) {
 static char* hex_string= "0123456789ABCDEF";
 
 void
-printer_rep::make_tex_char (string name, unsigned char c, bitmap_char bmc) {
+printer_rep::make_tex_char (string name, unsigned char c, glief bmc) {
   string char_name (name * "-" * as_string ((int) c));
   if (tex_chars->contains (char_name)) return;
   if (!tex_fonts->contains (name)) {
@@ -471,8 +471,8 @@ printer_rep::set_background (color c) {
 }
 
 void
-printer_rep::draw (int ch, bitmap_font fn, SI x, SI y) {
-  bitmap_char bmc= fn->get(ch);
+printer_rep::draw (int ch, font_gliefs fn, SI x, SI y) {
+  glief bmc= fn->get(ch);
   if (nil (bmc)) return;
   string name= fn->res_name;
   unsigned char c= ch;

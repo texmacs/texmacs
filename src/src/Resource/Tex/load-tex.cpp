@@ -130,16 +130,16 @@ pk_find (string family, int size, int dpi, int dsize,
 
 bool
 load_tex (string family, int size, int dpi,
-	  tex_font_metric& tfm, bitmap_font& pk)
+	  tex_font_metric& tfm, font_gliefs& pk)
 {
   int status_tfm  = 2;
   string name_tfm = family * as_string (size);
   int status_pk   = 2;
   string name_pk  = family * as_string (size) * "." * as_string (dpi) * "pk";
   if (tex_font_metric::instances -> contains (name_tfm) &&
-      bitmap_font::instances -> contains (name_pk)) {
+      font_gliefs::instances -> contains (name_pk)) {
     tfm= tex_font_metric (name_tfm);
-    pk = bitmap_font (name_pk);
+    pk = font_gliefs (name_pk);
     return true;
   }
 
@@ -165,19 +165,19 @@ load_tex (string family, int size, int dpi,
     tfm= load_tfm (tfm_name, family, size);
     tfm->header[1]= mag (tfm->header[1], size, sz);
   }
-  if (bitmap_font::instances -> contains (name_pk))
-    pk= bitmap_font (name_pk);
+  if (font_gliefs::instances -> contains (name_pk))
+    pk= font_gliefs (name_pk);
   else {
     if (DEBUG_AUTO) cout << "TeXmacs] Loading " << name_pk << "\n";
     pk_loader pkl (pk_name, tfm, dpi);
-    pk= std_bitmap_font (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
+    pk= std_font_gliefs (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
   }
   return true;
 }
 
 void
 load_tex (string family, int size, int dpi, int dsize,
-	  tex_font_metric& tfm, bitmap_font& pk)
+	  tex_font_metric& tfm, font_gliefs& pk)
 {
   /////////////////////////////////////////////////////////////////////////////
   // No design size
@@ -214,9 +214,9 @@ load_tex (string family, int size, int dpi, int dsize,
   string name_tfm = family * as_string (orig_size);
   string name_pk  = family * as_string (size) * "." * as_string (dpi) * "pk";
   if (tex_font_metric::instances -> contains (name_tfm) &&
-      bitmap_font::instances -> contains (name_pk)) {
+      font_gliefs::instances -> contains (name_pk)) {
     tfm= tex_font_metric (name_tfm);
-    pk = bitmap_font (name_pk);
+    pk = font_gliefs (name_pk);
     return;
   }
 
@@ -282,11 +282,11 @@ load_tex (string family, int size, int dpi, int dsize,
     else if (status_tfm >= 2)
       tfm->header[1]= mag (tfm->header[1], orig_size, dsize);
   }
-  if (bitmap_font::instances -> contains (name_pk))
-    pk= bitmap_font (name_pk);
+  if (font_gliefs::instances -> contains (name_pk))
+    pk= font_gliefs (name_pk);
   else {
     // if (DEBUG_AUTO) cout << "TeXmacs] Loading " << name_pk << "\n";
     pk_loader pkl (pk_name, tfm, dpi);
-    pk= std_bitmap_font (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
+    pk= std_font_gliefs (name_pk, pkl.load_pk (), tfm->bc, tfm->ec);
   }
 }

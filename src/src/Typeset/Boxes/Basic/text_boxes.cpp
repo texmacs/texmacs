@@ -67,7 +67,7 @@ struct text_box_rep: public box_rep {
 text_box_rep::text_box_rep (path ip, int pos2, string s, font fn2, color col2):
   box_rep (ip), pos (pos2), str (s), fn (fn2), col (col2)
 {
-  text_extents ex;
+  metric ex;
   fn->get_extents (str, ex);
   x1= ex->x1; y1= ex->y1;
   x2= ex->x2; y2= ex->y2;
@@ -193,7 +193,7 @@ text_box_rep::find_tree_path (path bp) {
 
 cursor
 text_box_rep::find_cursor (path bp) {
-  text_extents ex;
+  metric ex;
   cursor cu (0, 0);
   fn->get_extents (str (0, bp->item), ex);
   cu->ox= ex->x2;
@@ -212,7 +212,7 @@ text_box_rep::find_cursor (path bp) {
 selection
 text_box_rep::find_selection (path lbp, path rbp) {
   SI x1, y1, x2, y2;
-  text_extents ex;
+  metric ex;
   fn->get_extents (str (0, lbp->item), ex);
   x1= ex->x2;
   fn->get_extents (str (0, rbp->item), ex);
@@ -257,7 +257,7 @@ SI
 text_box_rep::get_leaf_offset (string search) {
   int pos= search_forwards (search, 0, str);
   if (pos == -1) return w();
-  text_extents ex;
+  metric ex;
   fn->get_extents (str (0, pos), ex);
   return ex->x2- ex->x1;
 }
@@ -273,7 +273,7 @@ get_delimiter (string s, font fn, SI height) {
   height -= PIXEL;
   string radical= s (0, N(s)-1) * "-";
   string first  = radical * "0>";
-  text_extents ex;
+  metric ex;
   fn->get_extents (first, ex);
   if ((ex->y2- ex->y1) >= height) return first;
 
@@ -283,7 +283,7 @@ get_delimiter (string s, font fn, SI height) {
   if (h1 >= (height-PIXEL)) return second;
 
   string third = radical * "2>";
-  text_extents ey;
+  metric ey;
   fn->get_extents (third, ey);
   SI h2= ey->y2- ey->y1;
   if (h2 <= h1) return second;
@@ -306,12 +306,12 @@ get_wide (string s, font fn, SI width) {
     fatal_error ("Invalid rubber character", "get_wide");
   string radical= s (0, N(s)-1) * "-";
   string first  = radical * "0>";
-  text_extents ex;
+  metric ex;
   fn->get_extents (first, ex);
   if ((ex->x2- ex->x1) >= width) return first;
 
   string second = radical * "1>";
-  text_extents ey;
+  metric ey;
   fn->get_extents (second, ey);
   SI w1= ex->x2- ex->x1;
   SI w2= ey->x2- ey->x1;
@@ -334,7 +334,7 @@ get_wide (string s, font fn, SI width) {
 box
 delimiter_box (path ip, string s, font fn, color col, SI bot, SI top) {
   string r= get_delimiter (s, fn, top-bot);
-  text_extents ex;
+  metric ex;
   fn->get_extents (r, ex);
   SI x= -ex->x1;
   SI y= (top+ bot- ex->y1- ex->y2) >> 1;
@@ -347,7 +347,7 @@ big_operator_box (path ip, string s, font fn, color col, int n) {
   if ((N(s)<2) || (s[0]!='<') || (s[N(s)-1]!='>'))
     fatal_error ("Invalid rubber character", "big_operator_box");
   string r= s (0, N(s)-1) * "-" * as_string (n) * ">";
-  text_extents ex;
+  metric ex;
   fn->get_extents (r, ex);
   SI y= fn->yfrac - ((ex->y1 + ex->y2) >> 1);
   box mvb= move_box (ip, text_box (ip, 0, r, fn, col), 0, y, false, true);
@@ -357,7 +357,7 @@ big_operator_box (path ip, string s, font fn, color col, int n) {
 box
 wide_box (path ip, string s, font fn, color col, SI width) {
   string r= get_wide (s, fn, width);
-  text_extents ex;
+  metric ex;
   fn->get_extents (r, ex);
   box b= text_box (ip, 0, r, fn, col);
   return macro_box (ip, b, fn);

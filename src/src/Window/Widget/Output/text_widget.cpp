@@ -21,13 +21,13 @@
 ******************************************************************************/
 
 class text_widget_rep: public basic_widget_rep {
-  string        original, s;
-  color         col;
-  bool          transparent;
-  string        lan;
-  bool          tt;
-  text_extents  ex;
-  int           dw, dh;
+  string  original, s;
+  color   col;
+  bool    transparent;
+  string  lan;
+  bool    tt;
+  metric  ex;
+  int     dw, dh;
 
 public:
   text_widget_rep (display dis, string s, color col, bool trans,

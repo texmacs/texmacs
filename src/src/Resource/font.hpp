@@ -19,7 +19,7 @@
 
 RESOURCE(font);
 
-struct bitmap_char;
+struct glief;
 
 /******************************************************************************
 * The font structure
@@ -55,7 +55,7 @@ struct font_rep: rep<font> {
   font_rep (display dis, string name, font fn);
   void copy_math_pars (font fn);
 
-  virtual void   get_extents (string s, text_extents& ex) = 0;
+  virtual void   get_extents (string s, metric& ex) = 0;
   virtual void   get_xpositions (string s, SI* xpos);
   virtual void   draw (ps_device dev, string s, SI x, SI y) = 0;
 
@@ -64,10 +64,10 @@ struct font_rep: rep<font> {
   virtual SI     get_left_correction  (string s);
   virtual SI     get_right_correction (string s);
 
-  void var_get_extents (string s, text_extents& ex);
+  void var_get_extents (string s, metric& ex);
   void var_get_xpositions (string s, SI* xpos);
   void var_draw (ps_device dev, string s, SI x, SI y);
-  virtual bitmap_char get_bitmap (string s);
+  virtual glief get_bitmap (string s);
 };
 
 font join (font fn1, font fn2);

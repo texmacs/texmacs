@@ -85,6 +85,6 @@ tex_font_metric load_tfm (string family, int size);
 ******************************************************************************/
 
 void load_tex (string family, int size, int dpi, int dsize,
-	       tex_font_metric& tfm, bitmap_font& pk);
+	       tex_font_metric& tfm, font_gliefs& pk);
 
 #endif // defined TEX_H
