@@ -43,6 +43,11 @@
 (map 'list #'(lambda (f) (remprop f 'tex) (remprop f 'tex-rbp))
   '(%sin %cos %tan %cot %sec %csc %sinh %cosh %tanh %coth %asin %acos %atan %exp %log))
 
+(remprop '$pi 'texword)
+(remprop '$gamma 'texword)
+(setf (get '$%i 'texword) "\\mathi")
+(setf (get '$%e 'texword) "\\mathe")
+
 ;; Also, we should output f(x)^2, not f^2(x)
 
 (defun tex-mexpt (x l r)
@@ -61,6 +66,82 @@
 			(tex x (list "^")(cons "" r) 'mparen 'mparen)
 			(tex x (list "^{")(cons "}" r) 'mparen 'mparen)))))
     (append l r)))
+
+;; binomial coefficients
+
+(defun tex-choose (x l r)
+  `(,@l
+    "\\binom{"
+    ,@(tex (cadr x) nil nil 'mparen 'mparen)
+    "}{"
+    ,@(tex (caddr x) nil nil 'mparen 'mparen)
+    "}"
+    ,@r))
+
+;; Integrals, sums, products
+
+(defun tex-int (x l r)
+  (let ((s1 (tex (cadr x) nil nil 'mparen 'mparen)) ;;integrand delims / & d
+	(var (tex (caddr x) nil nil 'mparen rop))) ;; variable
+    (cond((= (length x) 3)
+	  (append l `("\\int {" ,@s1 "}{\\;\\mathd\\;" ,@var "}\\big.") r))
+	 (t ;; presumably length 5
+	  (let ((low (tex (nth 3 x) nil nil 'mparen 'mparen))
+		;; 1st item is 0
+		(hi (tex (nth 4 x) nil nil 'mparen 'mparen)))
+	    (append l `("\\int_{" ,@low "}^{" ,@hi "}{" ,@s1 "\\;\\mathd\\;" ,@var "}\\big.") r))))))
+
+(defun tex-sum(x l r)
+  (let ((op (cond ((eq (caar x) '%sum) "\\sum_{")
+		  ((eq (caar x) '%product) "\\prod_{")
+		  ;; extend here
+		  ))
+	;; gotta be one of those above
+	(s1 (tex (cadr x) nil nil 'mparen rop))	;; summand
+	(index ;; "index = lowerlimit"
+	 (tex `((mequal simp) ,(caddr x),(cadddr x)) nil nil 'mparen 'mparen))
+	(toplim (tex (car(cddddr x)) nil nil 'mparen 'mparen)))
+    (append l `( ,op ,@index "}^{" ,@toplim "}{" ,@s1 "}\\big.") r)))
+
+(defun tex-lsum(x l r)
+  (let ((op (cond ((eq (caar x) '%lsum) "\\sum_{")
+		  ;; extend here
+		  ))
+	;; gotta be one of those above 
+	(s1 (tex (cadr x) nil nil 'mparen rop))	;; summand
+	(index ;; "index = lowerlimit"
+	 (tex `((min simp) , (caddr x), (cadddr x))  nil nil 'mparen 'mparen)))
+    (append l `( ,op ,@index "}}{" ,@s1 "}\\big.") r)))
+
+;; This is a hack for math input of integrals, sums, products
+
+(defmfun $tmint (a b f x) ($integrate f x a b))
+
+(defmspec $tmsum (l) (setq l (cdr l))
+  (if (= (length l) 3)
+      (dosum (caddr l) (cadar l) (meval (caddar l)) (meval (cadr l)) t)
+      (wna-err '$tmsum)))
+
+(defmspec $tmlsum (l) (setq l (cdr l))
+  (or (= (length l) 2) (wna-err '$tmlsum))
+  (let ((form (cadr l))
+        (ind (cadar l))
+        (lis (meval (caddar l)))
+        (ans 0))
+       (or (symbolp ind) (merror "Second argument not a variable ~M" ind))
+       (cond (($listp lis)
+              (loop for v in (cdr lis)
+                    with lind = (cons ind nil)
+                    for w = (cons v nil)
+                    do
+                    (setq ans (add* ans  (mbinding (lind w) (meval form)))))
+                   ans)
+           (t `((%lsum) ,form ,ind ,lis)))))
+
+(defmspec $tmprod (l) (setq l (cdr l))
+  (if (= (length l) 3)
+      (dosum (caddr l) (cadar l) (meval (caddar l)) (meval (cadr l)) nil)
+      (wna-err '$tmprod)))
 
 #+clisp (setf custom:*suppress-check-redefinition*
 	      *old-suppress-check-redefinition*)
