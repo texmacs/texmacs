@@ -39,7 +39,7 @@
 
   <assign|tex-even-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|-30pt>>>
 
-  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|25.5ccunit|17.5cm>>>
+  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|25.5cc|17.5cm>>>
 
   \;
 
@@ -55,7 +55,7 @@
 
   <assign|tex-text-height|<macro|<if|<equal|<value|par-columns>|1>|517.5dd|640dd>>>
 
-  <assign|tex-foot-height-heuristic|<macro|1quad>>
+  <assign|tex-foot-height-heuristic|<macro|1em>>
 
   <assign|tex-foot-skip|<macro|30pt>>
 
@@ -65,7 +65,7 @@
 
   <assign|tex-footnote-tm-barlen|<macro|0.4par>>
 
-  <assign|tex-column-sep|<macro|1.5ccunit>>
+  <assign|tex-column-sep|<macro|1.5cc>>
 
   <assign|tex-float-sep|<macro|<tmlen|10pt|12pt|14pt>>>
 
@@ -91,7 +91,7 @@
 
   <assign|page-head-sep|<macro|<tex-head-sep>>>
 
-  <assign|page-top|<macro|<minus|1in|<tex-voffset>|<tex-top-margin>|<tex-head-height>|<page-head-sep>|<tex-top-skip>|0.75quad>>>
+  <assign|page-top|<macro|<minus|1in|<tex-voffset>|<tex-top-margin>|<tex-head-height>|<page-head-sep>|<tex-top-skip>|0.75em>>>
 
   <assign|page-user-height|<macro|<tex-text-height>>>
 

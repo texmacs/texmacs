@@ -67,7 +67,7 @@ tt_font_rep::tt_font_rep (display dis, string name,
   get_extents ("x", ex);
   yx           = ex->y2;
   get_extents ("M", ex);
-  wM           = ex->x2;
+  wquad        = ex->x2;
 
   // compute other heights
   yfrac        = yx >> 1;
@@ -80,8 +80,8 @@ tt_font_rep::tt_font_rep (display dis, string name,
 
   // compute other widths
   wpt          = (dpi*PIXEL)/72;
-  wquad        = (wpt*design_size) >> 8;
-  wline        = wquad/20;
+  wfn          = (wpt*design_size) >> 8;
+  wline        = wfn/20;
 
   // get fraction bar parameters
   get_extents ("-", ex);
@@ -91,7 +91,7 @@ tt_font_rep::tt_font_rep (display dis, string name,
   get_extents (" ", ex);
   spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
   extra= spc;
-  sep  = wquad/10;
+  sep  = wfn/10;
 
   // get_italic space
   get_extents ("f", ex);

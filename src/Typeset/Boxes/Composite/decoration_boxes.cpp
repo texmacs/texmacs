@@ -119,5 +119,5 @@ box info_box (path ip, SI h, SI lw, color dark, color light) {
 box
 flag_box (path ip, string s, font fn, color dark, color light) {
   box b= text_box (decorate_right (ip), 0, s, fn, dark);
-  return flag_box (ip, b, fn->wquad, fn->wline, dark, light);
+  return flag_box (ip, b, fn->wfn, fn->wline, dark, light);
 }

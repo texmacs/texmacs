@@ -61,11 +61,14 @@ enum tree_label {
   EQUAL, UNEQUAL, LESS, LESSEQ, GREATER, GREATEREQ,
 
   // built-in length units
-  CM, MM, IN, PT, BP, DD, PC, CCUNIT,     // standard absolute units
-  QUAD, BLS, LN, SEP, YFRAC, EX, EMUNIT,  // font specific
-  _FN, FNS, SPC, XSPC,                    // font specific & stretchy
-  PAR, PAG,                               // other
-  TMPT, PX,                               // miscellaneous
+  CM_LENGTH, MM_LENGTH, IN_LENGTH, PT_LENGTH,
+  BP_LENGTH, DD_LENGTH, PC_LENGTH, CC_LENGTH,      // standard absolute units
+  FS_LENGTH, FBS_LENGTH, EM_LENGTH,
+  LN_LENGTH, SEP_LENGTH, YFRAC_LENGTH, EX_LENGTH,  // font specific
+  FN_LENGTH, FNS_LENGTH, BLS_LENGTH,
+  SPC_LENGTH, XSPC_LENGTH,                         // font specific & stretchy
+  PAR_LENGTH, PAG_LENGTH,                          // other
+  TMPT_LENGTH, PX_LENGTH,                          // miscellaneous
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,

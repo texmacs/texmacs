@@ -26,8 +26,8 @@
   (" " "Insert horizontal interword space" (make-space "1spc"))
   ("!" "Insert negative horizontal space" (make-space "-0.2spc"))
   ("|" "Insert norm" (insert "<||>"))
-  ("quad" "Insert a quad space" (make-space "1fn"))
-  ("qquad" "Insert a qquad space" (make-space "2fn"))
+  ("quad" "Insert a quad space" (make-space "1em"))
+  ("qquad" "Insert a qquad space" (make-space "2em"))
   ("\\" "Go to the next line" (make 'next-line))
 
   ("[" "Insert equation"

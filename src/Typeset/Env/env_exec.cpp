@@ -281,52 +281,54 @@ edit_env_rep::exec (tree t) {
   case GREATEREQ:
     return exec_greatereq (t);
 
-  case CM:
-    return exec_cm ();
-  case MM:
-    return exec_mm ();
-  case IN:
-    return exec_in ();
-  case PT:
-    return exec_pt ();
-  case BP:
-    return exec_bp ();
-  case DD:
-    return exec_dd ();
-  case PC:
-    return exec_pc ();
-  case CCUNIT:
-    return exec_ccunit ();
-  case QUAD:
-    return exec_quad ();
-  case BLS:
-    return exec_bls ();
-  case LN:
-    return exec_ln ();
-  case SEP:
-    return exec_sep ();
-  case YFRAC:
-    return exec_yfrac ();
-  case EX:
-    return exec_ex ();
-  case EMUNIT:
-    return exec_emunit ();
-  case _FN:
-    return exec_fn ();
-  case FNS:
-    return exec_fns ();
-  case SPC:
-    return exec_spc ();
-  case XSPC:
-    return exec_xspc ();
-  case PAR:
-    return exec_par ();
-  case PAG:
-    return exec_pag ();
-  case TMPT:
-    return exec_tmpt ();
-  case PX:
-    return exec_px ();
+  case CM_LENGTH:
+    return exec_cm_length ();
+  case MM_LENGTH:
+    return exec_mm_length ();
+  case IN_LENGTH:
+    return exec_in_length ();
+  case PT_LENGTH:
+    return exec_pt_length ();
+  case BP_LENGTH:
+    return exec_bp_length ();
+  case DD_LENGTH:
+    return exec_dd_length ();
+  case PC_LENGTH:
+    return exec_pc_length ();
+  case CC_LENGTH:
+    return exec_cc_length ();
+  case FS_LENGTH:
+    return exec_fs_length ();
+  case FBS_LENGTH:
+    return exec_fbs_length ();
+  case EM_LENGTH:
+    return exec_em_length ();
+  case LN_LENGTH:
+    return exec_ln_length ();
+  case SEP_LENGTH:
+    return exec_sep_length ();
+  case YFRAC_LENGTH:
+    return exec_yfrac_length ();
+  case EX_LENGTH:
+    return exec_ex_length ();
+  case FN_LENGTH:
+    return exec_fn_length ();
+  case FNS_LENGTH:
+    return exec_fns_length ();
+  case BLS_LENGTH:
+    return exec_bls_length ();
+  case SPC_LENGTH:
+    return exec_spc_length ();
+  case XSPC_LENGTH:
+    return exec_xspc_length ();
+  case PAR_LENGTH:
+    return exec_par_length ();
+  case PAG_LENGTH:
+    return exec_pag_length ();
+  case TMPT_LENGTH:
+    return exec_tmpt_length ();
+  case PX_LENGTH:
+    return exec_px_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:

@@ -216,7 +216,7 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
     wide= true;
   }
   else {
-    wide= (b->w() >= (env->fn->wquad));
+    wide= (b->w() >= (env->fn->wfn));
     if (ends (s, "dot>") || (s == "<acute>") ||
 	(s == "<grave>") || (s == "<abovering>"))
       wide= false;
