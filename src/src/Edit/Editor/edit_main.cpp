@@ -259,6 +259,11 @@ edit_main_rep::the_subtree (path p) {
 }
 
 path
+edit_main_rep::the_buffer_path () {
+  return copy (rp);
+}
+
+path
 edit_main_rep::the_path () {
   return copy (tp);
 }
