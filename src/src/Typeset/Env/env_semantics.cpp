@@ -26,6 +26,7 @@ initialize_default_var_type () {
   var_type (DPI)              = Env_Fixed;
   var_type (SFACTOR)          = Env_Fixed;
   var_type (PREAMBLE)         = Env_Preamble;
+  var_type (SAVE_AUX)         = Env_Fixed;
   var_type (MODE)             = Env_Mode;
 
   var_type (FONT)             = Env_Font;

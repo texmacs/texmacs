@@ -14,6 +14,7 @@
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "convert.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Loading files
@@ -132,6 +133,21 @@ load_inclusion (url name) {
 * Saving files
 ******************************************************************************/
 
+struct less_eq_associate {
+  static inline bool leq (tree& a, tree& b) {
+    return as_string(a[0]) <= as_string(b[0]); }
+};
+
+template <class T, class U> static
+tree make_collection (hashmap<T,U> h) {
+  tree t(h);
+  array<tree> a=A(h);
+  merge_sort <tree, less_eq_associate> (a);
+  int i, n=N(a);
+  for (i=0; i<n; i++) t[i] = a[i];
+  return t;
+}
+
 tree
 tm_data_rep::make_document (tm_view vw, string fm) {
   tree body= vw->buf->t;
@@ -147,13 +163,15 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   if (vw->buf->t != tree (DOCUMENT, ""))
     doc << compound ("body", body);
   if (N (vw->ed->get_init()) != 0)
-    doc << compound ("initial", ((tree) vw->ed->get_init()));
+    doc << compound ("initial", make_collection (vw->ed->get_init()));
   if (N (vw->ed->get_fin()) != 0)
-    doc << compound ("final", ((tree) vw->ed->get_fin()));
-  if (N (vw->buf->ref) != 0)
-    doc << compound ("references", ((tree) vw->buf->ref));
-  if (N (vw->buf->aux) != 0)
-    doc << compound ("auxiliary", ((tree) vw->buf->aux));
+    doc << compound ("final", make_collection (vw->ed->get_fin()));
+  if (vw->ed->get_save_aux()) {
+    if (N (vw->buf->ref) != 0)
+      doc << compound ("references", make_collection (vw->buf->ref));
+    if (N (vw->buf->aux) != 0)
+      doc << compound ("auxiliary", make_collection (vw->buf->aux));
+  }
   return doc;
 }
 

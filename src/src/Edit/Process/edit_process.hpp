@@ -56,6 +56,7 @@ public:
   void generate_index (string idx);
   void generate_glossary (string glo);
   void generate_aux (string which= "");
+  bool get_save_aux ();
 
 private:
   void generate_aux_recursively (string which, tree tt, path ip);

@@ -19,6 +19,7 @@
 string DPI ("dpi");
 string SFACTOR ("sfactor");
 string PREAMBLE ("preamble");
+string SAVE_AUX ("save-aux");
 string MODE ("mode");
 string INFO_FLAG ("info-flag");
 string IDENTITY ("identity");
