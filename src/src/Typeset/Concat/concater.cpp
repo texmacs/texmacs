@@ -72,31 +72,35 @@ concater_rep::ghost (string s, path ip, color col) {
 }
 
 void
-concater_rep::flag (string s, path ip, color col) {
-  if (is_accessible (ip) && (!env->read_only)) {
-    path dip = decorate_right (ip);
-    SI h= 4*env->fn->wquad/5;
-    int r, g, b;
-    env->dis->get_rgb (col, r, g, b);
-    r= 255- (255 - r)/6;
-    g= 255- (255 - g)/6;
-    b= 255- (255 - b)/6;
-    color light= env->dis->rgb (r, g, b);
-    string info_flag= env->get_string (INFO_FLAG);
-    if (info_flag == "short") {
-      box infob= info_box (dip, h, env->fn->wline, col, light);
-      box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
-      print (STD_ITEM, specb);
-    }
-    if (info_flag == "detailed") {
-      int sz= script (env->fn_size, env->index_level+2);
-      font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
-      box textb= text_box (decorate (ip), 0, s, gfn, col);
-      box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-      box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
-      print (STD_ITEM, specb);
-    }
+concater_rep::flag_ok (string s, path ip, color col) {
+  path dip = decorate_right (ip);
+  SI h= 4*env->fn->wquad/5;
+  int r, g, b;
+  env->dis->get_rgb (col, r, g, b);
+  r= 255- (255 - r)/6;
+  g= 255- (255 - g)/6;
+  b= 255- (255 - b)/6;
+  color light= env->dis->rgb (r, g, b);
+  string info_flag= env->get_string (INFO_FLAG);
+  if (info_flag == "short") {
+    box infob= info_box (dip, h, env->fn->wline, col, light);
+    box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
+    print (STD_ITEM, specb);
   }
+  if (info_flag == "detailed") {
+    int sz= script (env->fn_size, env->index_level+2);
+    font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
+    box textb= text_box (decorate (ip), 0, s, gfn, col);
+    box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
+    box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
+    print (STD_ITEM, specb);
+  }
+}
+
+void
+concater_rep::flag (string s, path ip, color col) {
+  if (is_accessible (ip) && (!env->read_only))
+    flag_ok (s, ip, col);
 }
 
 /******************************************************************************
