@@ -263,7 +263,7 @@
       (-> "Margins"
 	  ("Default" (init-default "par-first"))
 	  ---
-	  ("par-first" ...
+	  ("First indentation" ...
 	   (interactive '("First indentation:") 'init-first-indent)))
       (-> "Spacing"
 	  ("Default" (init-default "par-sep" "par-line-sep"
@@ -271,9 +271,9 @@
 	  ---
 	  ("Interline separation" ...
 	   (interactive '("Separation between lines:") 'init-interline))
-	  ("par-sep" ...
+	  ("Interline space" ...
 	   (interactive '("Space between lines:") 'init-interline-spc))
-	  ("par-par-sep" ...
+	  ("Interparagraph space" ...
 	   (interactive '("Space between paragraphs:") 'init-interpar-spc)))
       (-> "Number of columns"
 	  ("Default" (init-default "par-columns"))
@@ -340,7 +340,7 @@
 	      "Reduce right margin by:"
 	      "Reduce top margin by:"
 	      "Reduce bottom margin by:") 'init-screen-reduction))
-	  ("page-show-hf" (toggle-visible-header-and-footer)))
+	  ("Show header and footer" (toggle-visible-header-and-footer)))
       ---
       (group "Breaking")
       (-> "Algorithm"
