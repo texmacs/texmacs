@@ -53,6 +53,9 @@
       <item><hlink|How to associate .tm files with <TeXmacs>|#cygwin-2>?
 
       <item><hlink|How to get spell checking working|#cygwin-3>?
+
+      <item><hlink|My Windows username contains spaces. Will this cause
+      problems|#cygwin-4>?
     </itemize-minus>
 
     <item>Usage
@@ -309,6 +312,15 @@
       ispell
     </verbatim>
   </answer>
+
+  <\question>
+    <label|cygwin-4>My Windows username contains spaces. Will this cause
+    problems?
+  </question>
+
+  <answer|It is strongly recommended to have a Windows username without
+  spaces. Please make a new account, as simply changing the username could be
+  insufficient.>
 
   <section*|Usage>
 
