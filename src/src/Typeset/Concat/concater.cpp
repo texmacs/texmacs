@@ -706,6 +706,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_meaning (t, ip);
     else typeset_inactive ("meaning", t, ip);
     break;
+  case FLAG:
+    if (ACTIVATED) typeset_flag (t, ip);
+    else typeset_inactive ("flag", t, ip);
+    break;
 
   case GRAPHICS:
     if (ACTIVATED) typeset_graphics (t, ip);

@@ -35,7 +35,7 @@
     make-inactive-lesseq make-inactive-greater make-inactive-greatereq
     make-inactive-if make-inactive-var-if make-inactive-case
     make-inactive-for make-inactive-while make-inactive-extern
-    make-inactive-authorize
+    make-inactive-authorize make-inactive-flag
     ;; inserting active objects
     make-tuple make-attr make-date))
 
@@ -105,6 +105,7 @@
 (define (make-inactive-while) (make-inactive "while" 2))
 (define (make-inactive-extern) (make-inactive "extern" 1))
 (define (make-inactive-authorize) (make-inactive "authorize" 2))
+(define (make-inactive-flag) (make-inactive "flag" 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting active objects

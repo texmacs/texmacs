@@ -239,6 +239,20 @@ concater_rep::typeset_meaning (tree t, path ip) {
   marker (descend (ip, 1));  
 }
 
+void
+concater_rep::typeset_flag (tree t, path ip) {
+  string name= env->exec_string (t[0]);
+  string col = env->exec_string (t[1]);
+  path sip= ip;
+  if ((N(t) >= 3) && (!nil (env->macro_src))) {
+    string var= env->exec_string (t[2]);
+    sip= env->macro_src->item [var];
+  }
+  marker (descend (ip, 0));
+  flag (name, sip, env->dis->get_color (col));
+  marker (descend (ip, 1));  
+}
+
 /******************************************************************************
 * Typesetting graphics
 ******************************************************************************/

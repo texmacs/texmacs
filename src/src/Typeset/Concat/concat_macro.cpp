@@ -128,7 +128,7 @@ concater_rep::typeset_compound (tree t, path ip) {
   else {
     string var= as_string (L(t));
     if (!env->provides (var)) {
-      typeset_unknown (var, t, ip, true);
+      typeset_unknown (var, t, ip);
       return;
     }
     d= 0;
@@ -243,7 +243,7 @@ concater_rep::typeset_value (tree t, path ip) {
   }
   string name= r->label;
   if (!env->provides (name)) {
-    typeset_unknown (name, t, ip, true);
+    typeset_unknown (name, t, ip);
     return;
   }
   typeset_dynamic (env->read (name), ip);
@@ -258,7 +258,7 @@ concater_rep::typeset_argument (tree t, path ip) {
     return;
   }
   if (nil (env->macro_arg) || (!env->macro_arg->item->contains (r->label))) {
-    typeset_unknown (r->label, t, ip, true);
+    typeset_unknown (r->label, t, ip);
     return;
   }
 

@@ -115,6 +115,7 @@ class concater_rep {
   void typeset_action (tree t, path ip);
   void typeset_tag (tree t, path ip);
   void typeset_meaning (tree t, path ip);
+  void typeset_flag (tree t, path ip);
 
   // graphical markup
   void typeset_graphics (tree t, path ip);

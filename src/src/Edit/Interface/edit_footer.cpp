@@ -281,6 +281,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case ACTION: r= "action"; break;
   case TAG: r= "tag"; break;
   case MEANING: r= "meaning"; break;
+  case FLAG: r= "flag"; break;
   case GRAPHICS: r= "graphics"; break;
   case SUPERPOSE: r= "superpose"; break;
   case TEXT_AT: r= "text"; break;
@@ -452,6 +453,8 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * "tag#";
   case MEANING:
     return up * "meaning#";
+  case FLAG:
+    return up * "flag#";
   default:
     if (L(st) < START_EXTENSIONS) return up;
     else return up * as_string (L(st)) * "#";

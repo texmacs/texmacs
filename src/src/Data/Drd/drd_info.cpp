@@ -186,7 +186,7 @@ drd_info_rep::all_accessible (tree_label l) {
   for (i=0; i<n; i++)
     if (!info[l]->ci[i].accessible)
       return false;
-  return true;
+  return n>0;
 }
 
 void
