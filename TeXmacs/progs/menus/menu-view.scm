@@ -23,7 +23,6 @@
 
 (menu-bind view-menu
   ("Open new window" (open-window))
-  ("Load in new window" ... (choose-file "Load file" "" 'load-in-new-window))
   ("Clone window" (clone-window))
   ("Close window" (safely-kill-window))
   ---

@@ -113,10 +113,11 @@
 (menu-bind file-menu
   ("New" (new-buffer))
   ("Load" ... (choose-file "Load file" "" 'load-buffer))
+  ;("Load in new window" ... (choose-file "Load file" "" 'load-in-new-window))
   ("Save" (save-buffer))
   ("Save as" ...
    (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
-  ("Revert" ... (revert-buffer))
+  ("Revert" (revert-buffer))
   ---
   (-> "Page setup" (link page-setup-menu))
   (-> "Print" (link print-menu))
