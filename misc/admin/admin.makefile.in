@@ -1,0 +1,34 @@
+
+###############################################################################
+# MODULE     : makefile which can be included in administrative makefiles
+# BY         : Joris van der Hoeven
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+bindir = @bindir@
+datadir = @datadir@
+mandir = @mandir@
+tmdir = @tmdir@
+tmtgz = @tmtgz@
+tmorig = @tmorig@
+tmsrc = @tmsrc@
+tmbin = @tmbin@
+tmdata = @tmdata@
+so = @CONFIG_SO@
+os = @CONFIG_OS_SUFFIX@
+
+MKDIR = mkdir -p
+RM = rm -f
+CP = cp -r -f
+MV = mv -f
+LN = ln -f
+CHMOD = @CONFIG_CHMOD@
+GZIP = gzip -f
+STRIP = @CONFIG_STRIP@
+TOUCH = touch
+TAR = tar
