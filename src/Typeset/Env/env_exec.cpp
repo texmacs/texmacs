@@ -317,6 +317,8 @@ edit_env_rep::exec (tree t) {
     return exec_par ();
   case PAG:
     return exec_pag ();
+  case TMPT:
+    return exec_tmpt ();
   case PX:
     return exec_px ();
 

@@ -239,6 +239,7 @@ private:
   tree exec_ex ();
   tree exec_par ();
   tree exec_pag ();
+  tree exec_tmpt ();
   tree exec_px ();
 
   tree exec_point (tree t);

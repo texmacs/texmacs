@@ -49,8 +49,8 @@ cell_rep::typeset (tree fm, tree t, path iq) {
       b= empty_box (iq);
 
       tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
-      tree old2= env->local_begin (PAR_LEFT, "0unit");
-      tree old3= env->local_begin (PAR_RIGHT, "0unit");
+      tree old2= env->local_begin (PAR_LEFT, "0tmpt");
+      tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
       tree old4= env->local_begin (PAR_MODE, "justify");
       tree old5= env->local_begin (PAR_NO_FIRST, "true");
   

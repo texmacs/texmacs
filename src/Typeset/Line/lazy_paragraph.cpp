@@ -236,7 +236,7 @@ void
 lazy_paragraph_rep::handle_decoration (
   int& i, int& j, SI& xoff, box& b, SI& b_sp)
 {
-  string xoff_str= as_string (xoff) * "unit";
+  string xoff_str= as_string (xoff) * "tmpt";
   array<box> new_items;
   array<SI>  new_items_sp;
   tree t= decs[j][1]; j++;

@@ -22,11 +22,8 @@
 ;; Length components.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group tmlength-units%
-  unit cm mm in pt spc spc- spc+ fn fn- fn+ fn* fn*- fn*+ ln sep px par pag)
-
 (define (tmlength-unit? x)
-  (drd-in? x tmlength-units%))
+  (string-alpha? x))
 
 (define tmlength-value? number?)
 

@@ -487,6 +487,7 @@ concater_rep::typeset (tree t, path ip) {
   case EX:
   case PAR:
   case PAG:
+  case TMPT:
   case PX:
     typeset_executable (t, ip);
     break;

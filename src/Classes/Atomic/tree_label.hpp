@@ -65,7 +65,7 @@ enum tree_label {
   _FN, FNS, SPC, XSPC,              // font specific & stretchy
   LN, SEP, YFRAC, EX,              // font specific
   PAR, PAG,                        // other
-  PX,                              // miscellaneous
+  TMPT, PX,                              // miscellaneous
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
