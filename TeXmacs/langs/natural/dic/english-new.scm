@@ -1109,6 +1109,7 @@
 ("size limits" "")
 ("slanted" "")
 ("sloppy" "")
+("slovene" "")
 ("small" "")
 ("small caps" "")
 ("small figure" "")

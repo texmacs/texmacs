@@ -1104,6 +1104,7 @@
 ("size limits" "limieten aan grootte")
 ("slanted" "scheef")
 ("sloppy" "slobberig")
+("slovene" "sloveens")
 ("small" "klein")
 ("small caps" "kleine hoofdletters")
 ("small figure" "klein figuur")

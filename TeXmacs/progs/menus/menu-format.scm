@@ -369,6 +369,7 @@
    (begin
      (make-with "language" "russian")
      (make-with "font" "cyrillic")))
+  ("Slovene" (make-with "language" "slovene"))
   ("Spanish" (make-with "language" "spanish"))
   ("Swedish" (make-with "language" "swedish"))
   ("Ukrainian"

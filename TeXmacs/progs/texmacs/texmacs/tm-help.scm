@@ -44,6 +44,7 @@
 			((== lan "romanian") ".ro.tm")
 			((== lan "russian") ".ru.tm")
 			((== lan "spanish") ".es.tm")
+			((== lan "slovene") ".sl.tm")
 			((== lan "swedish") ".sv.tm")
 			((== lan "ukrainian") ".uk.tm")
 			(else ".en.tm")))

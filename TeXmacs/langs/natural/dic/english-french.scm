@@ -1120,6 +1120,7 @@
 ("size limits" "limitations de taille")
 ("slanted" "oblique")
 ("sloppy" "relâché")
+("slovene" "slovène")
 ("small" "petit")
 ("small caps" "petites majuscules")
 ("small figure" "petite figure")
