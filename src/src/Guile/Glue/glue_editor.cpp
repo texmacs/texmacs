@@ -2802,32 +2802,6 @@ tmg_tm_remove_with (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_frame_direct (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-direct");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_direct_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_frame_inverse (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-inverse");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_inverse_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
 tmg_get_graphical_object () {
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->get_graphical_object ();
@@ -2865,15 +2839,13 @@ tmg_path_xy (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_box_info (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "box-info");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "box-info");
+tmg_texmacs_exec (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "texmacs-exec");
 
   tree in1= scm_to_tree (arg1);
-  string in2= scm_to_string (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->box_info (in1, in2);
+  tree out= get_server()->get_editor()->texmacs_exec (in1);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -3122,10 +3094,8 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
   gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
-  gh_new_procedure ("frame-direct", (FN) tmg_frame_direct, 1, 0, 0);
-  gh_new_procedure ("frame-inverse", (FN) tmg_frame_inverse, 1, 0, 0);
   gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
   gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
-  gh_new_procedure ("box-info", (FN) tmg_box_info, 2, 0, 0);
+  gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

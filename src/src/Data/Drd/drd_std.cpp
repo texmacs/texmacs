@@ -251,6 +251,9 @@ init_std_drd () {
   init (CSPLINE, "cspline", repeat (2, 1));
   init (FILL, "fill", repeat (1, 1));
   init (POSTSCRIPT, "postscript", fixed (7));
+  init (BOX_INFO, "box-info", fixed (2));
+  init (FRAME_DIRECT, "frame-direct", fixed (1));
+  init (FRAME_INVERSE, "frame-inverse", fixed (1));
 
   init (FORMAT, "format", repeat (1, 1));
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));

@@ -172,8 +172,6 @@ public:
   virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
-  virtual tree   frame_direct_transform (tree t) = 0;
-  virtual tree   frame_inverse_transform (tree t) = 0;
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
@@ -204,7 +202,7 @@ public:
   virtual tree     exec_texmacs (tree t, path p= 0) = 0;
   virtual tree     exec_html (tree t, path p) = 0;
   virtual tree     exec_html (tree t) = 0;
-  virtual tree     box_info (tree t, string what) = 0;
+  virtual tree     texmacs_exec (tree t) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
   virtual void     init_add_package (string package) = 0;

@@ -221,6 +221,9 @@ private:
   tree exec_greatereq (tree t);
 
   tree exec_point (tree t);
+  tree exec_box_info (tree t);
+  tree exec_frame_direct (tree t);
+  tree exec_frame_inverse (tree t);
 
   tree exec_rewrite (tree t);
   bool exec_until_rewrite (tree t, path p, string var, int level);
@@ -347,9 +350,9 @@ public:
 };
 
 class edit_env {
-  CONCRETE(edit_env);
+  CONCRETE_NULL(edit_env);
   inline edit_env (edit_env_rep* rep2):
-    rep(rep2) { INC_COUNT (this->rep); }
+    rep(rep2) { INC_COUNT_NULL (this->rep); }
   edit_env (display dis,
 	    drd_info& drd,
 	    url base_file_name,
@@ -358,11 +361,12 @@ class edit_env {
 	    hashmap<string,tree>& local_aux,
 	    hashmap<string,tree>& global_aux);
 };
-CONCRETE_CODE(edit_env);
+CONCRETE_NULL_CODE(edit_env);
 
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp
 
 edit_env get_current_rewrite_env (bool &b);
+tree texmacs_exec (edit_env env, tree cmd);
 
 #endif // defined ENV_H

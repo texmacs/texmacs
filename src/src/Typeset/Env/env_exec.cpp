@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
+#include "typesetter.hpp"
 
 extern int script_status;
 
@@ -35,13 +36,11 @@ edit_env_rep::exec_string (tree t) {
 
 // Hack to transmit the current environment back to C++
 // across the Scheme level, and to maintain reentrancy.
-static bool current_rewrite_env_unspecified= true;
-static concrete_struct never_used= concrete_struct ();
-static edit_env current_rewrite_env= edit_env ((edit_env_rep*)&never_used);
+static edit_env current_rewrite_env= edit_env ();
 
 edit_env
 get_current_rewrite_env (bool &b) {
-  b= !current_rewrite_env_unspecified;
+  b= !nil (current_rewrite_env);
   return current_rewrite_env;
 }
 
@@ -64,12 +63,9 @@ edit_env_rep::rewrite (tree t) {
 	  return tree (ERROR, "insecure script");
       }
       edit_env old_env= current_rewrite_env;
-      bool old_env_unspecified= current_rewrite_env_unspecified;
       current_rewrite_env= edit_env (this);
-      current_rewrite_env_unspecified= false;
       object o= eval (expr);
       current_rewrite_env= old_env;
-      current_rewrite_env_unspecified= old_env_unspecified;
       return content_to_tree (o);
     }
   case MAP_ARGS:
@@ -299,6 +295,12 @@ edit_env_rep::exec (tree t) {
 
   case _POINT:
     return exec_point (t);
+  case BOX_INFO:
+    return exec_box_info (t);
+  case FRAME_DIRECT:
+    return exec_frame_direct (t);
+  case FRAME_INVERSE:
+    return exec_frame_inverse (t);
 
   default:
     if (L(t) < START_EXTENSIONS) {
@@ -1096,6 +1098,27 @@ edit_env_rep::exec_point (tree t) {
   return as_tree (decode_point (u));
 }
 
+tree
+edit_env_rep::exec_box_info (tree t) {
+  tree t1= exec (t[0]);
+  tree t2= t[1];
+  if (!is_string (t2))
+    return tree (ERROR, "bad box info");
+  return box_info (edit_env (this), t1, as_string (t2));
+}
+
+tree
+edit_env_rep::exec_frame_direct (tree t) {
+  tree t1= exec (t[0]);
+  return as_tree (!nil (fr) ? fr (as_point (t1)) : point ());
+}
+
+tree
+edit_env_rep::exec_frame_inverse (tree t) {
+  tree t1= exec (t[0]);
+  return as_tree (!nil (fr) ? fr [as_point (t1)] : point ());
+}
+
 /******************************************************************************
 * Partial evaluation of trees
 ******************************************************************************/
@@ -1811,4 +1834,18 @@ edit_env_rep::is_length (string s) {
   int j=N(s);
   while ((j>i) && ((s[j-1]=='+') || (s[j-1]=='-') || (s[j-1]=='*'))) j--;
   return is_alpha (s (i, j));
+}
+
+tree
+texmacs_exec (edit_env env, tree cmd) {
+  bool b;
+  edit_env env2= get_current_rewrite_env (b);
+  if (!b) env2= env;
+  if (as_string (L (cmd)) == "value" && N (cmd) == 1)
+    return env2->read (as_string (cmd[0]));
+  else
+  if (as_string (L (cmd)) == "exec" && N (cmd) == 1)
+    return env2->exec (cmd[0]);
+  else
+    return tree ("");
 }
