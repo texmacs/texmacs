@@ -315,7 +315,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     path rp= find_tree_path (rbp);
     return selection (find_selection (lbp1, rbp2)->rs, lp, rp);
   }
-  else {
+  else if (i1 < i2) {
     selection sel1= find_selection (lbp1, rbp1);
     selection sel2= find_selection (lbp2, rbp2);
     path lp= sel1->start;
@@ -340,6 +340,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     }
     return selection (rs, lp, rp);
   }
+  else return box_rep::find_selection (lbp, rbp);
 }
 
 /******************************************************************************
