@@ -277,6 +277,19 @@ make_lazy_rewrite (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Eval
+******************************************************************************/
+
+lazy
+make_lazy_eval (edit_env env, tree t, path ip) {
+  tree r= env->exec (is_func (t, EVAL, 1)? t[0]: tree (QUASIQUOTE, t[0]));
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, r, decorate_right (ip));
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
 * Auto
 ******************************************************************************/
 
@@ -432,6 +445,9 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
+  case EVAL:
+  case QUASI:
+    return make_lazy_eval (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case EXTERN:

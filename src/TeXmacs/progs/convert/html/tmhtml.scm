@@ -474,7 +474,7 @@
 
 (define (tmhtml-open-tag env l)
   `(,(blue "&lt;\\")
-    ,(tmhtml env (car l))
+    ,@(tmhtml env (car l))
     ,@(tmhtml-src-args env (cdr l))
     ,(blue "|")))
 
@@ -550,8 +550,9 @@
 
 (define (tmhtml-table-make env p)
   `((h:table
-     (@ (style "display: inline")
-	,@(if (p 'global 'border) '((border "1")) '()))
+     (@ ,@(if (p 'global 'border)
+	      '((border "1")) 
+	      '((style "display: inline"))))
      ,@(tmhtml-table-cols p)
      (h:tbody ,@(tmhtml-table-contents env p)))))
 

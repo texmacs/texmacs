@@ -22,6 +22,7 @@ bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
+bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
 
 bridge nil_bridge;
@@ -79,6 +80,9 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_argument (ttt, st, ip);
   case MARK:
     return bridge_mark (ttt, st, ip);
+  case EVAL:
+  case QUASI:
+    return bridge_eval (ttt, st, ip);
   case EXTERN:
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
