@@ -756,9 +756,7 @@ page_breaker_rep::make_insertion (int id, int ch, int i1, int i2, bool flag) {
   tree type= "";
   if (ch == 0) type= tuple ("footnote");
   else if (ch == 1) {
-    if ((i1>1) && (p1 != path_inc (flow[id][i1-1])))
-      type= tuple ("float", "t");
-    else if (float_property (p1, 'h')) type= tuple ("float", "h");
+    if (float_property (p1, 'h')) type= tuple ("float", "h");
     else if (float_property (p1, 'b')) type= tuple ("float", "b");
     else type= tuple ("float", "t");
   }
@@ -1277,7 +1275,8 @@ page_breaker_rep::fast_assemble_skeleton (skeleton& sk, int end) {
   insertion ins= make_insertion (0, -1, start, end, end == n);
   pagelet pg (0);
   pg << ins;
-  format_pagelet (pg, height, end == n);
+  bool last_page= last_page_flag && (end == n);
+  format_pagelet (pg, height, last_page);
   sk << pg;
 }
 

@@ -39,14 +39,15 @@ drd_info_rep::get_locals () {
   return t;
 }
 
-void
+bool
 drd_info_rep::set_locals (tree t) {
   if (!is_func (t, COLLECTION))
-    fatal_error ("Bad set locals", "drd_info_rep::set_locals");
+    return false;
   int i, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], ASSOCIATE, 2) && is_atomic (t[i][0]))
       info (make_tree_label (t[i][0]->label))= tag_info (t[i][1]);
+  return true;
 }
 
 bool

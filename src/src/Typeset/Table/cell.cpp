@@ -72,7 +72,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
       tree dr= dt[i];
       while (is_func (dr, TFORMAT)) dr= dr [N(dr)-1];
       for (j=0; j<N(dr); j++) {
-	tree dc= dc[j];
+	tree dc= dr[j];
 	while (is_func (dc, TFORMAT)) dc= dc [N(dc)-1];
 	if (dc == tree (TMARKER)) {
 	  or_row= i;

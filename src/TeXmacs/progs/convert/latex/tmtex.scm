@@ -43,7 +43,7 @@
   (tabular* ("" "c" "" #f))
   (matrix ((#{left\(}#) "c" (#{right\)}#) #f))
   (det ((left|) "c" (right|) #f))
-  (choice ((left\{) "c" (right.) #f)))
+  (choice ((left\{) "l" (right.) #f)))
 
 (drd-group tex-mathops%
   arccos arcsin arctan cos cosh cot coth csc deg det dim exp gcd
@@ -348,7 +348,7 @@
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
 
-(define (tmtex-paragraph l)
+(define (tmtex-para l)
   (cons '!paragraph (tmtex-list l)))
 
 (define (tmtex-surround-sub l z)
@@ -821,7 +821,7 @@
   (cond ((string? x) (tmtex-verb-string x))
 	((== x '(next-line)) "\n")
 	((func? x 'document) (tmtex-tt-document (cdr x)))
-	((func? x 'paragraph) (tmtex-tt-document (cdr x)))
+	((func? x 'para) (tmtex-tt-document (cdr x)))
 	((func? x 'concat)
 	 (apply string-append (map-in-order tmtex-tt (cdr x))))
 	(else "")))
@@ -957,7 +957,7 @@
 
 (drd-dispatcher tmtex-methods%
   (document tmtex-document)
-  (paragraph tmtex-paragraph)
+  (para tmtex-para)
   (surround tmtex-surround)
   (concat tmtex-concat)
   (format tmtex-noop)
