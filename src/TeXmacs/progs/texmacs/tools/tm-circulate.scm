@@ -48,11 +48,10 @@
 (define (variant-replace which by)
   (let* ((p (search-upwards which))
 	 (t (tm-subtree p)))
-    (cond ((and (= (tmp-d-exp) 0) (= (tree-arity t) 1))
-	   (tm-ins-unary p (string->symbol by))
-	   (tm-rem-unary (rcons p 0)))
-	  ((in? (tree-get-label t) '(expand var_expand hide_expand))
-	   (tm-assign (rcons p 0) (string->tree by))))))
+    (if (= (tree-arity t) 1)
+	(begin
+	  (tm-ins-unary p (string->symbol by))
+	  (tm-rem-unary (rcons p 0))))))
 
 (define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))

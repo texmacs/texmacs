@@ -15,12 +15,7 @@
 #include "tree_label.hpp"
 #include "array.hpp"
 
-#define WITH_EXTENSIONS
-#ifdef WITH_EXTENSIONS
-#define d_exp 0
-#else
-#define d_exp 1
-#endif
+#define UPGRADE_APPLY
 
 /******************************************************************************
 * The tree class 'tree'
@@ -230,7 +225,7 @@ bool is_inactive (tree t);
 inline bool
 is_applicable (tree t) {
   return is_compound (t) && (N(t) >= 1) &&
-    ((L(t) == MACRO) || (L(t) == FUNCTION));
+    ((L(t) == MACRO) || (L(t) == FUNCTION) || (L(t) == XMACRO));
 }
 
 tree simplify_concat (tree t);

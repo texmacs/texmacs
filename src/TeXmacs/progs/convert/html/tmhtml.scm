@@ -81,16 +81,23 @@
 	 (styles (cdadr l))
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
-	 (title (tmhtml-find-title doc)))
-    (if (not title) (set! title "No title"))
+	 (title (tmhtml-find-title doc))
+	 (css '(h:style (@ (type "text/css")) "body { text-align: justify }"))
+	 (body (tmhtml doc)))
+    (set! title (if title `(concat ,title " (FSF GNU project)") "No title"))
+    (if (or (in? "tmdoc" styles) (in? "tmweb" styles))
+	(begin
+	  (set! css '(h:link (@ (rel "stylesheet")
+				(href "http://www.texmacs.org/css/tmdoc.css")
+				(type "text/css"))))
+	  (set! body (tmhtml-tmdoc-post body))))
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
        (h:meta (@ (name "generator")
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
-       (h:style (@ (type "text/css"))
-		"body { text-align: justify }"))
-      (h:body ,@(tmhtml doc)))))
+       ,css)
+      (h:body ,@body))))
 
 (define (tmhtml-finalize-document top)
   ;; @top must be a node produced by tmhtml-file
@@ -386,10 +393,9 @@
 ;; Other primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-expand l)
+(define (tmhtml-compound l)
   ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml-implicit-expand (cons (string->symbol (car l))
-				(cdr l))))
+  (tmhtml-implicit-compound (cons (string->symbol (car l)) (cdr l))))
 
 (define (tmhtml-label l)
   ;; WARNING: bad conversion if ID is not a string.
@@ -419,8 +425,11 @@
   ;; WARNING: bad conversion if URI is not a string.
   ;; TODO: change label at start of content into ID attribute, move other
   ;; labels out (A elements cannot be nested!).
-  `((h:a (@ (href ,(tmhtml-suffix (cork->utf8 (force-string (second l))))))
-	 ,@(tmhtml (first l)))))
+  (let* ((body (tmhtml (first l)))
+	 (to (cork->utf8 (force-string (second l)))))
+    (if (string-starts? to "$")
+	body ;; temporary fix for URLs like $TEXMACS_PATH/...
+	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
 
 (define (tmhtml-specific l)
   (if (== (car l) "html") (tmhtml (cadr l)) '()))
@@ -574,6 +583,10 @@
 	 (append (tmhtml-verb (cadr x))
 		 (tmhtml-verb (cadddr x))
 		 (tmhtml-verb (caddr x))))
+	((func? x 'verbatim) (tmhtml-verb (cadr x)))
+	((func? x 'em) `((h:em ,@(tmhtml-verb (cadr x)))))
+	((func? x 'hlink) (tmhtml-hyperlink (cdr x)))
+	((func? x 'key) (tmhtml-key (cdr x)))
 	(else
 	 ;(display* "Rejected " x "\n")
 	 '())))
@@ -587,48 +600,34 @@
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-make-rule)
-  '(h:table
-    (@ (cellspacing "0") (cellpadding "0") (width "100%") (border "0"))
-    (h:tr (@ (bgcolor "#6f6f6f"))
-	  (h:td (h:img (@ (src "http://www.texmacs.org/Images/pixel.png")
-			  (width "1") (height "1") (alt "")))))))
-
-(define (tmhtml-make-block content bgcolor padding gnus? center?)
+(define (tmhtml-make-block content)
   (let* ((l '(h:td
 	      (@ (align "left"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1.png")))))
+	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1b.png")))))
 	 (c `(h:td
-	      (@ (align ,(if center? "center" "left")) (width "100%"))
-	      ,@content))
+	      (@ (align "center") (width "100%"))
+	      ,@(tmhtml content)))
 	 (r '(h:td
 	      (@ (align "right"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2.png")))))
-	 (row (if gnus? `(h:tr ,l ,c ,r) `(h:tr ,c))))
-    `(h:table (@ (width "100%") (bgcolor ,bgcolor)
-		 (cellspacing "0") (cellpadding ,padding))
-	      ,row)))
+	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2b.png")))))
+	 (row `(h:tr ,l ,c ,r)))
+    `(h:table (@ (width "100%") (cellspacing "0") (cellpadding "3")) ,row)))
 
 (define (tmhtml-tmdoc-title l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (car l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)))
+  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))))
 
 (define (tmhtml-tmdoc-title* l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (car l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (cadr l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)))
+  (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (cadr l)))))
 
 (define (tmhtml-tmdoc-title** l)
-  (list (tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (car l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block `((h:h2 ,@(tmhtml (cadr l)))) "#ffffdf" "3" #t #t)
-	(tmhtml-make-rule)
-	(tmhtml-make-block (tmhtml (caddr l)) "#ffefdf" "3" #f #t)
-	(tmhtml-make-rule)))	
+  (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (car l)))
+	`(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (cadr l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (caddr l)))))
+
+(define (tmhtml-tmdoc-flag l)
+  ;(tmhtml (car l)))
+  (list `(h:div (@ (class "tmdoc-flag")) ,@(tmhtml (car l)))))
 
 (define (tmhtml-tmdoc-copyright* l)
   (if (null? l) l
@@ -637,20 +636,36 @@
 (define (tmhtml-tmdoc-copyright l)
   (with content
       `("&copy; " ,@(tmhtml (car l))
-	" by " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
-    (list (tmhtml-make-rule)
-	  (tmhtml-make-block content "#ffffdf" "3" #f #f)
-	  (tmhtml-make-rule))))
+	" " ,@(tmhtml (cadr l)) ,@(tmhtml-tmdoc-copyright* (cddr l)))
+    (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
+
+(define (tmhtml-tmdoc-license l)
+  (list `(h:div (@ (class "tmdoc-license")) ,@(tmhtml (car l)))))
 
 (define (tmhtml-key l)
   `((h:u (h:tt ,@(tmhtml (car l))))))
 
-(define (tmhtml-menu l)
-  (if (null? l) l
-      (with first `(h:class (@ (style "font-family: helvetica"))
-			    ,@(tmhtml (car l)))
-	(if (null? (cdr l)) (list first)
-	    (cons* first "->" (tmhtml-menu (cdr l)))))))
+(define (tmhtml-tmdoc-bar? y)
+  (or (func? y 'h:h1)
+      (func? y 'h:h2)
+      (and (func? y 'h:div)
+	   (not (null? (cdr y)))
+	   (func? (cadr y) '@ 1)
+	   (== (first (cadadr y)) 'class)
+	   (string-starts? (second (cadadr y)) "tmdoc"))))
+
+(define (tmhtml-tmdoc-post-sub x)
+  ;; FIXME: these rewritings are quite hacky;
+  ;; better simplification would be nice...
+  (cond ((and (func? x 'h:p) (list-find (cdr x) tmhtml-tmdoc-bar?)) (cdr x))
+	((func? x 'h:p)
+	 (with r (append-map tmhtml-tmdoc-post-sub (cdr x))
+	   (if (== (cdr x) r) (list x) r)))
+	(else (list x))))
+
+(define (tmhtml-tmdoc-post body)
+  (with r (append-map tmhtml-tmdoc-post-sub body)
+    `((h:div (@ (class "tmdoc-body")) ,@r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main conversion routines
@@ -666,7 +681,7 @@
 	  (else (tmhtml-post-simplify-element
 		 (append x (tmhtml-list (cdr l))))))))
 
-(define (tmhtml-implicit-expand l)
+(define (tmhtml-implicit-compound l)
   (or (tmhtml-dispatch 'tmhtml-stdmarkup% l)
       (tmhtml-dispatch 'tmhtml-tables% l)
       '()))
@@ -678,7 +693,7 @@
   (if (string? x)
       (if (string-null? x) '() (tmhtml-string x)) ; handle string nodes
       (or (tmhtml-dispatch 'tmhtml-primitives% x)
-	  (tmhtml-implicit-expand x))))
+	  (tmhtml-implicit-compound x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -750,9 +765,9 @@
   (assign tmhtml-noop)
   (with tmhtml-with)
   ((:or set reset) tmhtml-noop)
-  ((:or var_expand expand apply) tmhtml-expand)
+  ((:or var_expand expand hide_expand compound apply) tmhtml-compound)
   ((:or begin end include macro func env eval) tmhtml-noop)
-  (value tmhtml-expand)
+  (value tmhtml-compound)
   (arg tmhtml-noop)
   ((:or backup quote delay hold release) tmhtml-noop)
   
@@ -820,9 +835,10 @@
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
   (tmdoc-title** ,tmhtml-tmdoc-title**)
+  (tmdoc-flag ,tmhtml-tmdoc-flag)
   (tmdoc-copyright ,tmhtml-tmdoc-copyright)
+  (tmdoc-license ,tmhtml-tmdoc-license)
   (key ,tmhtml-key)
-  (menu ,tmhtml-menu)
   (hyper-link ,tmhtml-hyperlink))
 
 ;;    (name (h:name)) ; not in HTML4
@@ -830,6 +846,7 @@
 
 (drd-table tmhtml-with-cmd%
   (("font family" "tt") (h:tt))
+  (("font family" "ss") (h:class (@ ("style" "font-family: sans-serif"))))
   (("font series" "bold") (h:b))
   (("font shape" "italic") (h:i))
   (("font" "roman") (h:class (@ ("style" "font-family: Times New Roman"))))

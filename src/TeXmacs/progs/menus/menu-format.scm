@@ -48,9 +48,10 @@
 	  (if (url-exists-in-tex? "rptmr.tfm")
 	      ("Times" (make-with "font" "times"))))
       (if (use-tt-fonts?)
-	  (-> "True type"
-	      (if (font-exists-in-tt? "luxirr")
-		  ("Luxi" (make-with "font" "luxi"))))
+	  (if (font-exists-in-tt? "luxirr")
+	      (-> "True type"
+		  (if (font-exists-in-tt? "luxirr")
+		      ("Luxi" (make-with "font" "luxi")))))
 	  (if (font-exists-in-tt? "times")
 	      (-> "Microsoft"
 		  (if (font-exists-in-tt? "andalemo")

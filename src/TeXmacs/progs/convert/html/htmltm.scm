@@ -540,7 +540,6 @@
 	 (tm (htmltm-as-serial (sxhtml-correct-table body))))
     (if snippet? tm
 	(let* ((doc (tree-simplify (object->tree (stm-unary-document tm))))
-	       (body (tree2 'expand (string->tree "body") doc))
-	       (style (tree2 'expand (string->tree "style")
-			     (string->tree "browser"))))
+	       (body (tree1 'body doc))
+	       (style (tree1 'style (string->tree "browser"))))
 	  (tree2 'document body style)))))

@@ -1,17 +1,15 @@
-<TeXmacs|1.0.2.3>
+<TeXmacs|1.0.2.6>
 
 <\body>
   <assign|tmdoc-markup-package|1.0>
 
   \;
 
-  <assign|menu-sub|<func|what|<with|font family|ss|<translate|<look_up|<value|what>|0>|english|<apply|language>>><if|<is_tuple|<look_up|<value|what>|1>>|<with|mode|math|\<rightarrow\>><apply|menu-sub|<look_up|<value|what>|1>>>>>
+  <assign|menu-item|<macro|x|<with|font family|ss|<apply|localize|<arg|x>>>>>
 
-  <assign|menu-index|<func|what|<if|<is_tuple|<look_up|<value|what>|1>>|<merge|<tuple|<with|font
-  family|ss|<translate|<look_up|<value|what>|0>|english|<apply|language>>>>|<apply|menu-index|<look_up|<value|what>|1>>>|<tuple|<with|font
-  family|ss|<translate|<look_up|<value|what>|0>|english|<apply|language>>>>>>>
+  <assign|menu-extra|<macro|x|<with|mode|math|\<rightarrow\>><menu-item|<arg|x>>>>
 
-  <assign|menu|<func|what*|<if|<is_tuple|<value|what>>|<apply|menu-sub|<value|what>><apply|index-write|<apply|menu-index|<value|what>>>>>>
+  <assign|menu|<xmacro|x|<menu-item|<arg|x|0>><map_args|menu-extra|concat|x|1><apply|index-write|<map_args|menu-item|tuple|x>>>>
 
   \;
 
@@ -65,17 +63,17 @@
   </cell>>>>>>>>
 
   <assign|scheme-fragment|<\macro|x>
-    <expand|quote|<expand|framed-fragment|<with|interparagraph
+    <quote-env|<framed-fragment|<with|interparagraph
     space|0fn|<verbatim|<arg|x>>>>>
   </macro>>
 
   <assign|cpp-fragment|<\macro|x>
-    <expand|quote|<expand|framed-fragment|<with|interparagraph
+    <quote-env|<framed-fragment|<with|interparagraph
     space|0fn|<verbatim|<arg|x>>>>>
   </macro>>
 
   <assign|tm-fragment|<\macro|x>
-    <quotation|<expand|framed-fragment|<arg|x>>>
+    <quotation|<framed-fragment|<arg|x>>>
   </macro>>
 
   <assign|scheme-code|<macro|x|<verbatim|<arg|x>>>>

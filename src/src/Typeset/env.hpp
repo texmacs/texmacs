@@ -13,6 +13,7 @@
 #ifndef ENV_H
 #define ENV_H
 #include "vars.hpp"
+#include "drd_info.hpp"
 #include "font.hpp"
 #include "language.hpp"
 #include "path.hpp"
@@ -55,6 +56,7 @@
 class edit_env_rep: public concrete_struct {
 public:
   display                      dis;
+  drd_info&                    drd;
 private:
   hashmap<string,tree>         env;
   hashmap<string,tree>         back;
@@ -112,16 +114,19 @@ private:
   void exec_until_expand (tree t, path p);
   bool exec_until_expand (tree t, path p, string var, int level);
   tree exec_apply (tree t);
-  tree exec_include (tree t);
+  tree exec_drd_props (tree t);
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_argument (tree t);
   bool exec_until_argument (tree t, path p, string var, int level);
+  tree exec_get_label (tree t);
+  tree exec_get_arity (tree t);
+  tree exec_eval_args (tree t);
   tree exec_delay (tree t);
   tree exec_quasiquoted (tree t);
-  tree exec_extension (tree t);
-  void exec_until_extension (tree t, path p);
-  bool exec_until_extension (tree t, path p, string var, int level);
+  tree exec_compound (tree t);
+  void exec_until_compound (tree t, path p);
+  bool exec_until_compound (tree t, path p, string var, int level);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);
@@ -151,14 +156,16 @@ private:
   tree exec_if (tree t);
   tree exec_case (tree t);
   tree exec_while (tree t);
-  tree exec_extern (tree t);
+  tree exec_rewrite (tree t);
 
   tree exec_mod_active (tree t, tree_label which);
   void exec_until_mod_active (tree t, path p);
   bool exec_until_mod_active (tree t, path p, string var, int level);
 
 public:
-  edit_env_rep (display dis, url base_file_name,
+  edit_env_rep (display dis,
+		drd_info& drd,
+		url base_file_name,
 		hashmap<string,tree>& local_ref,
 		hashmap<string,tree>& global_ref,
 		hashmap<string,tree>& local_aux,
@@ -172,6 +179,7 @@ public:
   string exec_string (tree t);        /* should be inline */
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
+  tree   rewrite (tree t);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }
@@ -256,7 +264,9 @@ public:
 
 class edit_env {
   CONCRETE(edit_env);
-  edit_env (display dis, url base_file_name,
+  edit_env (display dis,
+	    drd_info& drd,
+	    url base_file_name,
 	    hashmap<string,tree>& local_ref,
 	    hashmap<string,tree>& global_ref,
 	    hashmap<string,tree>& local_aux,

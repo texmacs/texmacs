@@ -20,7 +20,11 @@
 pager_rep::pager_rep (edit_env env2, array<page_item> l2):
   env (env2), style (UNINIT), l (l2)
 {
+#ifdef UPGRADE_APPLY
+  style (PAGE_THE_PAGE)   = tree (MACRO, compound ("page number"));
+#else
   style (PAGE_THE_PAGE)   = tree (FUNCTION, tree (APPLY, "page number"));
+#endif
   style (PAGE_ODD_HEADER) = env->read (PAGE_ODD_HEADER);
   style (PAGE_ODD_FOOTER) = env->read (PAGE_ODD_FOOTER);
   style (PAGE_EVEN_HEADER)= env->read (PAGE_EVEN_HEADER);

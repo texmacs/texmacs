@@ -18,19 +18,57 @@
 
 class drd_info;
 class drd_info_rep: concrete_struct {
+public:
   string name;
-  rel_hashmap<tree_label,tag_info> ti;
+  rel_hashmap<tree_label,tag_info> info;
 
 public:
   drd_info_rep (string name);
   drd_info_rep (string name, drd_info base);
 
+  /* Properties of the tag itself */
+  void set_arity (tree_label tag, int arity, int extra, int am, int cm);
+  int  get_arity_mode (tree_label tag);
+  int  get_arity_base (tree_label tag);
+  int  get_arity_extra (tree_label tag);
+  int  get_child_mode (tree_label tag);
+  int  get_nr_indices (tree_label tag);
+  void freeze_arity (tree_label tag);
+
+  void set_no_border (tree_label tag, bool has_no_border);
+  int  get_no_border (tree_label tag);
+  void freeze_no_border (tree_label tag);
+
+  void set_block (tree_label tag, int is_block);
+  int  get_block (tree_label tag);
+  void freeze_block (tree_label tag);
+
+  /* Properties of the children of the tag */
+  void set_accessible (tree_label tag, int nr, bool is_accessible);
+  int  get_accessible (tree_label tag, int nr);
+  void freeze_accessible (tree_label tag, int nr);
+  
+  void set_block (tree_label tag, int nr, int require_block);
+  int  get_block (tree_label tag, int nr);
+  void freeze_block (tree_label tag, int nr);
+  
+  /* Old style */
+
+  bool contains (string l);
   void set_arity (tree_label l, int arity);
+  void set_masked_props (tree_label l, int mask, int props);
   void set_props (tree_label l, int props);
   int  get_arity (tree_label l);
   int  get_props (tree_label l);
 
+  /* Heuristic initialization */
+  bool heuristic_init (string var, tree macro);
+  void heuristic_init (hashmap<string,tree> env);
+
+  /* Analyzing trees using the drd */
   bool is_dynamic (tree t);
+  bool old_is_accessible_child (tree t, int child);
+  bool new_is_accessible_child (tree t, int child);
   bool is_accessible_child (tree t, int child);
   bool is_child_enforcing (tree t);
 

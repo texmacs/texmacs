@@ -42,11 +42,11 @@ enum tree_label {
   TABLE, ROW, CELL, SUB_TABLE,
 
   ASSIGN, WITH, SET, RESET,
-  EXPAND, VAR_EXPAND, HIDE_EXPAND,
+  EXPAND, VAR_EXPAND, HIDE_EXPAND, COMPOUND,
   APPLY, BEGIN, END, INCLUDE,
-  MACRO, FUNCTION, ENVIRONMENT,
-  EVAL, PROVIDES, VALUE, ARGUMENT,
-  BACKUP, QUOTE, DELAY, HOLD, RELEASE,
+  MACRO, XMACRO, FUNCTION, ENVIRONMENT, DRD_PROPS,
+  EVAL, PROVIDES, VALUE, ARGUMENT, GET_LABEL, GET_ARITY,
+  MAP_ARGS, EVAL_ARGS, BACKUP, QUOTE, DELAY, HOLD, RELEASE,
 
   OR, XOR, AND, NOT,
   PLUS, MINUS, TIMES, OVER, DIVIDE, MODULO,
@@ -81,5 +81,6 @@ void make_tree_label (tree_label l, string s);
 tree_label make_tree_label (string s); // for extensions
 string as_string (tree_label l);
 tree_label as_tree_label (string s);
+bool existing_tree_label (string s);
 
 #endif // defined TREE_LABEL_H

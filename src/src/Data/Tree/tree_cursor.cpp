@@ -35,6 +35,10 @@ valid_cursor (tree t, path p, bool start_flag=false) {
   if (is_inactive (t))
     return is_atomic (t[0]) || (!atom (p->next));
   if (is_prime (t)) return false;
+  // FIXME: hack for treating VAR_EXPAND "math"
+  if (is_compound (t, "input", 2) && (N(p) == 2) &&
+      is_compound (t[1], "math", 1) && (p->item == 1))
+    return false;
   return valid_cursor (t[p->item], p->next, false);
 }
 
@@ -48,10 +52,10 @@ pre_correct (tree t, path p) {
   if (nil (p)) return pre_correct (t, path(0));
   if (atom (p)) {
     if (std_drd->is_child_enforcing (t)) {
-      if ((p->item==0) && std_drd->is_accessible_child (t, 0))
+      if ((p->item == 0) && std_drd->is_accessible_child (t, 0))
 	return path (0, pre_correct (t[0], path (0)));
       else {
-	int l=N(t)-1;
+	int l= N(t)-1;
 	return path (l, pre_correct (t[l], path (right_index (t[l]))));
       }
     }
@@ -69,6 +73,13 @@ pre_correct (tree t, path p) {
     if (p->next->item == 0) return path (0);
     else return path (1);
   }
+  // FIXME: hack for treating VAR_EXPAND "math"
+  if (is_compound (t, "input", 2) && (N(p) == 2) &&
+      is_compound (t[1], "math", 1) && (p->item == 1))
+    {
+      int i= (p->next->item == 0? 0: right_index (t[1][0]));
+      return path (1, 0, pre_correct (t[1][0], path (i)));
+    }
   return path (p->item, pre_correct (t[p->item], p->next));
 }
 

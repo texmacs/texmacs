@@ -322,10 +322,10 @@ tree_to_texmacs (tree t) {
     tree r (t, n);
     for (i=0; i<n; i++)
       if (is_compound (t[i], "style", 1)) {
-	tree style= t[i][d_exp];
+	tree style= t[i][0];
 	if (is_func (style, TUPLE, 1)) style= style[0];
 	r[i]= copy (t[i]);
-	r[i][d_exp]= style;
+	r[i][0]= style;
       }
       else r[i]= t[i];
     t= r;

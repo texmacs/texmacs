@@ -24,6 +24,13 @@ concater_rep::typeset_inactive (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_eval_args (tree t, path ip) { 
+  marker (descend (ip, 0));
+  typeset (env->exec (t), decorate_right (ip), false);
+  marker (descend (ip, 1));
+}
+
+void
 concater_rep::typeset_inactive (
   string type, tree t, path ip, int pos1, int pos2)
 {
@@ -91,6 +98,12 @@ concater_rep::typeset_inactive_hybrid (tree t, path ip) {
   tree old_col= env->local_begin (COLOR, "dark green");
   typeset (t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
+  if (N(t) == 2) {
+    print (space (0, 0, env->fn->spc->max));
+    ghost ("|", descend (descend (ip, 1), 0));
+    print (space (0, 0, env->fn->spc->max));
+    typeset (t[1], descend (ip, 1));
+  }
   ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
   // ghost (">", descend (ip, 1));
   marker (descend (ip, 1));

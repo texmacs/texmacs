@@ -432,6 +432,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     if (ACTIVATED) typeset_expand (t, ip);
     else typeset_inactive_expand_apply (t, ip, false);
     break;
+  case COMPOUND:
+    if (ACTIVATED) typeset_compound (t, ip);
+    else typeset_inactive_expand_apply (t, ip, true);
+    break;
   case APPLY:
     if (ACTIVATED) typeset_apply (t, ip);
     else typeset_inactive_expand_apply (t, ip, true);
@@ -449,11 +453,18 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case MACRO:
     typeset_inactive ("macro", t, ip, N(t)-1);
     break;
+  case XMACRO:
+    typeset_inactive ("xmacro", t, ip, 1);
+    break;
   case FUNCTION:
     typeset_inactive ("function", t, ip, N(t)-1);
     break;
   case ENVIRONMENT:
     typeset_inactive ("environment", t, ip, N(t)-2);
+    break;
+  case DRD_PROPS:
+    if (ACTIVATED) typeset_drd_props (t, ip);
+    else typeset_inactive ("drd-properties", t, ip, 1);
     break;
   case EVAL:
     if (ACTIVATED) typeset_eval (t, ip);
@@ -470,6 +481,22 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case ARGUMENT:
     if (ACTIVATED) typeset_argument (t, ip);
     else typeset_inactive ("argument", t, ip);
+    break;
+  case GET_LABEL:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("tree-label", t, ip);
+    break;
+  case GET_ARITY:
+    if (ACTIVATED) typeset_executable (t, ip);
+    else typeset_inactive ("arity", t, ip);
+    break;
+  case MAP_ARGS:
+    if (ACTIVATED) typeset_rewrite (t, ip);
+    else typeset_inactive ("map-args", t, ip);
+    break;
+  case EVAL_ARGS:
+    if (ACTIVATED) typeset_eval_args (t, ip);
+    else typeset_inactive ("eval-args", t, ip);
     break;
   case QUOTE:
     typeset_inactive ("quote", t, ip);
@@ -603,7 +630,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive ("while", t, ip);
     break;
   case EXTERN:
-    if (ACTIVATED) typeset_executable (t, ip);
+    if (ACTIVATED) typeset_rewrite (t, ip);
     else typeset_inactive ("extern", t, ip);
     break;
   case AUTHORIZE:
@@ -727,7 +754,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   default:
     if (L(t) < START_EXTENSIONS) print (STD_ITEM, test_box (ip));
     else {
-      if (ACTIVATED) typeset_extension (t, ip);
+      if (ACTIVATED) typeset_compound (t, ip);
       else typeset_inactive (as_string (L(t)), t, ip);
     }
     break;

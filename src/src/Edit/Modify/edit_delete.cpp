@@ -34,13 +34,13 @@ edit_text_rep::remove_backwards () {
       if (!nil(p)) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
-	  if (is_extension (u) && (N(u) > (1+d_exp))) {
+	  if (is_extension (u) && (N(u) > 1)) {
 	    int i, n= N(u);
 	    bool empty= true;
-	    for (i=d_exp; i<n; i++)
+	    for (i=0; i<n; i++)
 	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	    if (!empty) {
-	      if (last_item (p) == d_exp) go_to (start (et, path_up (p)));
+	      if (last_item (p) == 0) go_to (start (et, path_up (p)));
 	      else go_to (end (et, path_dec (p)));
 	      return;
 	    }
@@ -220,22 +220,34 @@ edit_text_rep::remove_backwards () {
     case HIDE_EXPAND:
       back_hide_expand (p);
       return;
+    case COMPOUND:
+      back_compound (p);
+      return;
     case APPLY:
     case INCLUDE:
       back_dynamic (p);
       return;
     case MACRO:
+    case XMACRO:
     case FUNCTION:
+    case DRD_PROPS:
     case EVAL:
       back_dynamic (p);
       return;
     case PROVIDES:
     case VALUE:
     case ARGUMENT:
-      if (!is_concat (u)) assign (p, "");
-      else remove (p, 1);
-      correct (path_up (p));
+      if (N(t) == 1) {
+	if (!is_concat (u)) assign (p, "");
+	else remove (p, 1);
+	correct (path_up (p));
+      }
+      else back_dynamic (p);
       return;
+    case GET_LABEL:
+    case GET_ARITY:
+    case MAP_ARGS:
+    case EVAL_ARGS:
     case QUOTE:
     case DELAY:
     case HOLD:
@@ -421,18 +433,37 @@ edit_text_rep::remove_backwards () {
     case HIDE_EXPAND:
       back_in_expand (u, p);
       return;
+    case COMPOUND:
+      back_in_compound (u, p);
+      return;
     case APPLY:
     case INCLUDE:
       back_in_dynamic (u, p);
       return;
     case MACRO:
+    case XMACRO:
     case FUNCTION:
       back_in_dynamic (u, p);
+      return;
+    case DRD_PROPS:
+      back_in_dynamic (u, p, 1, 2);
       return;
     case EVAL:
     case PROVIDES:
     case VALUE:
+      back_in_dynamic (u, p);
+      return;
     case ARGUMENT:
+      back_in_dynamic (u, p, 1);
+      break;
+    case GET_LABEL:
+    case GET_ARITY:
+      back_in_dynamic (u, p);
+      return;
+    case MAP_ARGS:
+      back_in_dynamic (u, p, 3);
+      return;
+    case EVAL_ARGS:
     case QUOTE:
     case DELAY:
     case HOLD:
@@ -471,7 +502,7 @@ edit_text_rep::remove_backwards () {
       back_in_dynamic (u, p, 3);
       return;
     case FIND_FILE:
-      back_in_dynamic (u, p, 2);
+      back_in_dynamic (u, p, 1);
       return;
     case IS_TUPLE:
       back_in_dynamic (u, p);

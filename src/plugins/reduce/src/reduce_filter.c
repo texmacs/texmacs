@@ -13,13 +13,15 @@
 #include <stdio.h>
 
 int main()
-{ int c;
+{ int c,s;
   /* first */
   fputs("\2verbatim:",stdout);
+  s=0;
   while(1)
   { c=getchar();
     if (c==1) break;
-    if (c>=' ' || c=='\n') putchar(c);
+    if (c>=' ') { putchar(c); s=1; }
+    else if ((c=='\n')&&s) {putchar(c); s=0; }
   }
   /* other */
   while(1)
@@ -34,20 +36,27 @@ int main()
     fflush(stdout);
     /* main output loop */
     fputs("\2verbatim:",stdout);
+    s=0;
     while(1)
     { c=getchar();
       if ((c==EOF)||(c==1)) break;
       if (c==0x10)
-      { fputs("\2latex:$\\displaystyle ",stdout);
+      { if (s) putchar('\n');
+        fputs("\2latex:$\\displaystyle ",stdout);
         while(1)
         { c=getchar();
           if ((c==EOF)||(c==0x11)) break;
           if (c>=' ') putchar(c);
         }
         fputs("$\5",stdout);
+        s=2;
       }
       if ((c==EOF)||(c==1)) break;
-      if (c>=' ') putchar(c);
+      if ((c=='\n')&&(s==1)) putchar(c);
+      else if (c>=' ')
+      { if (s==2) putchar('\n');
+        putchar(c); s=1;
+      }
     }
     if (c==EOF) break;
   }

@@ -31,11 +31,11 @@
   ("\\" "Go to the next line" (make-format "next_line"))
 
   ("[" "Insert equation"
-   (begin (make-big-expand "equation*") (temp-proof-fix)))
+   (begin (make-big-compound "equation*") (temp-proof-fix)))
   ("equation" "Insert numbered equation"
-   (begin (make-big-expand "equation") (temp-proof-fix)))
+   (begin (make-big-compound "equation") (temp-proof-fix)))
   ("eqnarray*" "Insert equation array"
-   (begin (make-expand-arg "eqnarray*") (temp-proof-fix)))
+   (begin (make-compound-arg "eqnarray*") (temp-proof-fix)))
 
   ("cC" "Make Ç" (emulate-keyboard "cedilla C"))
   ("cc" "Make ç" (emulate-keyboard "cedilla c"))
@@ -99,7 +99,7 @@
   ("tanh" "Insert tanh" (insert-string "tanh"))
 
   ("maketitle" "Insert title"
-   (begin (make-big-expand "make-title") (make-expand-arg "title")))
+   (begin (make-big-compound "make-title") (make-compound-arg "title")))
   ("tableofcontents" "Insert table of contents"
    (make-aux "table-of-contents" "toc"))
   ("appendix" "Insert appendix" (make-section-arg "appendix"))
@@ -209,7 +209,7 @@
   ("bf" "Use bold font series" (make-with "font series" "bold"))
   ("up" "Use right font shape" (make-with "font shape" "right"))
   ("it" "Use italic font shape" (make-with "font shape" "italic"))
-  ("em" "Emphasize text" (make-expand-arg "em"))
+  ("em" "Emphasize text" (make-compound-arg "em"))
   ("sl" "Use slanted font shape" (make-with "font shape" "slanted"))
   ("sc" "Use small-caps font shape" (make-with "font shape" "small-caps"))
   ("textrm" "Use roman font family" (make-with "font family" "rm"))
@@ -268,7 +268,7 @@
   ("label" "Make label" (make-inactive-label))
   ("ref" "Make reference" (make-inactive-reference))
   ("pageref" "Make page reference" (make-inactive-pageref))
-  ("footnote" "Insert a footnote" (make-big-expand "footnote"))
+  ("footnote" "Insert a footnote" (make-big-compound "footnote"))
   ("input" "Include a document" (make-inactive-include)))
 
 (kbd-symbols
