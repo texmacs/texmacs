@@ -766,11 +766,11 @@
   (sqrt tmhtml-sqrt)
   (wide tmhtml-wide)
   (neg tmhtml-neg)
-  ((:or tree old_matrix old_table old_mosaic old_mosaic_item)
+  ((:or tree old-matrix old-table old-mosaic old-mosaic-item)
    tmhtml-noop)
   (table (lambda (l) (tmhtml `(tabular (table ,@l)))))
   (tformat (lambda (l) (tmhtml `(tabular (tformat ,@l)))))
-  ((:or twith cwith tmarker row cell sub_table) tmhtml-noop)
+  ((:or twith cwith tmarker row cell subtable) tmhtml-noop)
 
   (assign tmhtml-noop)
   (with tmhtml-with)
@@ -782,7 +782,7 @@
   ((:or backup quote delay hold release) tmhtml-noop)
   
   ((:or or xor and not plus minus times over div mod merge length range
-	number date translate is_tuple look_up equal unequal less lesseq
+	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
    tmhtml-noop)
   ((:or inactive symbol latex hybrid tuple collection associate) tmhtml-noop)

@@ -25,7 +25,7 @@ function tmp=struct2tree(n,name)
 				## Itemize the new struct, and switch the key color
 				tmp1=struct2tree(val,key);
 			otherwise
-				tmp1=["(hide_expand \"switch\" (document (with \"color\" \"", keycolor,"\" \"",key,"\")) (tuple (tmarker) (with \"color\" \"", valcolor, "\" " ,obj2scm(val),"))) "];
+				tmp1=["(switch (document (with \"color\" \"", keycolor,"\" \"",key,"\")) (tuple (tmarker) (with \"color\" \"", valcolor, "\" " ,obj2scm(val),"))) "];
 		endswitch
 		tmp=[tmp,tmp1];
 	endfor

@@ -37,6 +37,30 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.2.8", version)) return H;
+
+  rename_feature (H, "raw_data", "raw-data");
+  rename_feature (H, "sub_table", "subtable");
+  rename_feature (H, "drd_props", "drd-props");
+  rename_feature (H, "get_label", "get-label");
+  rename_feature (H, "get_arity", "get-arity");
+  rename_feature (H, "map_args", "map-args");
+  rename_feature (H, "eval_args", "eval-args");
+  rename_feature (H, "find_file", "find-file");
+  rename_feature (H, "is_tuple", "is-tuple");
+  rename_feature (H, "look_up", "look-up");
+  rename_feature (H, "var_if", "if*");
+  rename_feature (H, "var_inactive", "inactive*");
+  rename_feature (H, "var_active", "active*");
+  rename_feature (H, "text_at", "text-at");
+  rename_feature (H, "var_spline", "spline*");
+  rename_feature (H, "old_matrix", "old-matrix");
+  rename_feature (H, "old_table", "old-table");
+  rename_feature (H, "old_mosaic", "old-mosaic");
+  rename_feature (H, "old_mosaic_item", "old-mosaic-item");
+  rename_feature (H, "var_expand", "expand*");
+  rename_feature (H, "hide_expand", "hide-expand");
+
   if (version_inf ("1.0.2.7", version)) return H;
 
   // new_feature (H, "eval_args");

@@ -126,7 +126,7 @@
   (branch-insert branch_insert (void bool))
   (branch-delete branch_delete (void bool))
 
-  (make-sub-table make_sub_table (void))
+  (make-subtable make_subtable (void))
   (table-disactivate table_disactivate (void))
   (table-extract-format table_extract_format (void))
   (table-insert-row table_insert_row (void bool))

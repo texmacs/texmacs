@@ -140,7 +140,7 @@
 
 (menu-bind cell-special-menu
   ("Set span" ... (cell-set-span-ia))
-  ("Subtable" (make-sub-table))
+  ("Subtable" (make-subtable))
   ---
   (-> "Text height correction"
       ("Off" (cell-set-vcorrect "n"))

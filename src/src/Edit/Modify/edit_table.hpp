@@ -84,7 +84,7 @@ public:
   ~edit_table_rep ();
 
   void   make_table (int nr_rows, int nr_cols);
-  void   make_sub_table (int nr_rows, int nr_cols);
+  void   make_subtable (int nr_rows, int nr_cols);
   void   destroy_table ();
   void   table_disactivate ();
   void   table_extract_format ();

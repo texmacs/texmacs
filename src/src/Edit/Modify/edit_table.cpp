@@ -726,18 +726,18 @@ edit_table_rep::table_get_subtable (
   int i, j, nr_rows, nr_cols;
   table_get_extents (p, nr_rows, nr_cols);
   tree st= subtree (et, p);
-  tree sub_table (TABLE, row2+1-row1);
+  tree subtable (TABLE, row2+1-row1);
   for (i=row1; i<=row2; i++) {
     tree sr= st[i];
     tree sub_row (ROW, col2+1-col1);
     while (is_func (sr, TFORMAT)) sr= sr[N(sr)-1];
     for (j=col1; j<=col2; j++)
       sub_row[j-col1]= copy (sr[j]);
-    sub_table[i-row1]= sub_row;
+    subtable[i-row1]= sub_row;
   }
 
   st= subtree (et, fp);
-  if ((!recurse) && (!is_func (st, TFORMAT))) return sub_table;
+  if ((!recurse) && (!is_func (st, TFORMAT))) return subtable;
   if (recurse) st= table_get_format (fp);
   else st= st (0, N(st)-1);
   int k, n= N(st);
@@ -758,7 +758,7 @@ edit_table_rep::table_get_subtable (
 	sub_format << with;
       }
     }
-  sub_format << sub_table;
+  sub_format << subtable;
   return sub_format;
 }
 
@@ -1026,7 +1026,7 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
 }
 
 void
-edit_table_rep::make_sub_table (int nr_rows, int nr_cols) {
+edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   path cp= search_upwards (CELL);
   if (nil (cp)) return;
   tree T= empty_table (nr_rows, nr_cols);

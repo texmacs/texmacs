@@ -56,7 +56,7 @@ initialize_std_drd () {
   init (UNKNOWN, "unknown", fixed (0));
   init (UNINIT, "uninit", fixed (0));
   init (ERROR, "error", fixed (1));
-  init (RAW_DATA, "raw_data", fixed (1));
+  init (RAW_DATA, "raw-data", fixed (1));
 
   init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
   init (PARA, "para",
@@ -141,22 +141,22 @@ initialize_std_drd () {
   init (TABLE, "table", repeat (1, 1) -> no_border () -> accessible (0));
   init (ROW, "row", repeat (1, 1) -> no_border () -> accessible (0));
   init (CELL, "cell", fixed (1) -> no_border () -> accessible (0));
-  init (SUBTABLE, "sub_table", fixed (1) -> no_border () -> accessible (0));
+  init (SUBTABLE, "subtable", fixed (1) -> no_border () -> accessible (0));
 
   init (ASSIGN, "assign", fixed (2));
   init (WITH, "with", var_repeat (2, 1, BIFORM) -> accessible (1));
   init (PROVIDES, "provides", fixed (1));
   init (VALUE, "value", fixed (1));
   init (MACRO, "macro", var_repeat (1, 1) -> accessible (0));
-  init (DRD_PROPS, "drd_props", repeat (3, 2) -> name ("drd properties"));
+  init (DRD_PROPS, "drd-props", repeat (3, 2) -> name ("drd properties"));
   init (ARG, "arg", repeat (1, 1) -> name ("argument"));
   init (COMPOUND, "compound", repeat (1, 1, BIFORM) -> accessible (1));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"
   init (XMACRO, "xmacro", fixed (2) -> accessible (0));
-  init (GET_LABEL, "get_label", fixed (1));
-  init (GET_ARITY, "get_arity", fixed (1));
-  init (MAP_ARGS, "map_args", options (3, 2) -> name ("map arguments"));
-  init (EVAL_ARGS, "eval_args", fixed (1) -> name ("evaluate arguments"));
+  init (GET_LABEL, "get-label", fixed (1));
+  init (GET_ARITY, "get-arity", fixed (1));
+  init (MAP_ARGS, "map-args", options (3, 2) -> name ("map arguments"));
+  init (EVAL_ARGS, "eval-args", fixed (1) -> name ("evaluate arguments"));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1));
   init (DELAY, "delay", fixed (1));
@@ -181,9 +181,9 @@ initialize_std_drd () {
   init (NUMBER, "number", fixed (2));
   init (_DATE, "date", options (0, 2));
   init (TRANSLATE, "translate", fixed (3));
-  init (FIND_FILE, "find_file", var_repeat (1, 1)); // dirs and file
-  init (IS_TUPLE, "is_tuple", fixed (1) -> name ("tuple?"));
-  init (LOOK_UP, "look_up", fixed (2));
+  init (FIND_FILE, "find-file", var_repeat (1, 1)); // dirs and file
+  init (IS_TUPLE, "is-tuple", fixed (1) -> name ("tuple?"));
+  init (LOOK_UP, "look-up", fixed (2));
   init (EQUAL, "equal", fixed (2));
   init (UNEQUAL, "unequal", fixed (2) -> name ("not equal"));
   init (LESS, "less", fixed (2));
@@ -191,14 +191,14 @@ initialize_std_drd () {
   init (GREATER, "greater", fixed (2));
   init (GREATEREQ, "greatereq", fixed (2) -> name ("greater or equal"));
   init (IF, "if", options (2, 1));
-  init (VAR_IF, "var_if", fixed (2));
+  init (VAR_IF, "if*", fixed (2));
   init (CASE, "case", repeat (2, 1));
   init (WHILE, "while", fixed (2));
 
   init (INACTIVE, "inactive", fixed (1) -> accessible (0));
   init (ACTIVE, "active", fixed (1) -> accessible (0));
-  init (VAR_INACTIVE, "var_inactive", fixed (1) -> accessible (0));
-  init (VAR_ACTIVE, "var_active", fixed (1) -> accessible (0));
+  init (VAR_INACTIVE, "inactive*", fixed (1) -> accessible (0));
+  init (VAR_ACTIVE, "active*", fixed (1) -> accessible (0));
   init (SYMBOL, "symbol", fixed (1));
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
@@ -221,28 +221,28 @@ initialize_std_drd () {
 
   init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
   init (SUPERPOSE, "superpose", repeat (1, 1));
-  init (TEXT_AT, "text_at", fixed (1, 3, BIFORM) -> accessible (0));
+  init (TEXT_AT, "text-at", fixed (1, 3, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
   init (SPLINE, "spline", repeat (2, 1));
-  init (VAR_SPLINE, "var_spline", repeat (2, 1));
+  init (VAR_SPLINE, "spline*", repeat (2, 1));
   init (CSPLINE, "cspline", repeat (2, 1));
   init (FILL, "fill", repeat (1, 1));
   init (POSTSCRIPT, "postscript", fixed (7));
 
   init (FORMAT, "format", repeat (1, 1));
   init (SPLIT, "split", repeat (1, 1));
-  init (OLD_MATRIX, "old_matrix", var_repeat (1, 2, BIFORM) -> accessible (0));
-  init (OLD_TABLE, "old_table", var_repeat (1, 2, BIFORM) -> accessible (0));
-  init (OLD_MOSAIC, "old_mosaic", var_repeat (1, 2, BIFORM) -> accessible (0));
-  init (OLD_MOSAIC_ITEM, "old_mosaic_item", repeat (1, 1) -> accessible (0));
+  init (OLD_MATRIX, "old-matrix", var_repeat (1, 2, BIFORM) -> accessible (0));
+  init (OLD_TABLE, "old-table", var_repeat (1, 2, BIFORM) -> accessible (0));
+  init (OLD_MOSAIC, "old-mosaic", var_repeat (1, 2, BIFORM) -> accessible (0));
+  init (OLD_MOSAIC_ITEM, "old-mosaic-item", repeat (1, 1) -> accessible (0));
   init (SET, "set", fixed (2));
   init (RESET, "reset", fixed (1));
   init (EXPAND, "expand", repeat (1, 1, BIFORM) -> accessible (1));
-  init (VAR_EXPAND, "var_expand",
+  init (VAR_EXPAND, "expand*",
 	repeat (1, 1, BIFORM) -> no_border () -> accessible (1));
-  init (HIDE_EXPAND, "hide_expand", repeat (2, 1, DETAILED) -> accessible (1));
+  init (HIDE_EXPAND, "hide-expand", repeat (2, 1, DETAILED) -> accessible (1));
   init (APPLY, "apply", repeat (1, 1));
   init (BEGIN, "begin", repeat (1, 1));
   init (END, "end", fixed (1));

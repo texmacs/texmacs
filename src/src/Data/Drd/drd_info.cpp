@@ -215,7 +215,7 @@ tree
 drd_info_rep::get_attribute (tree_label l, string which) {
   tree val= info[l]->get_attribute (which);
   if ((which == "name") && (val == ""))
-    return replace (as_string (l), "_", " ");
+    return as_string (l);
   return val;
 }
 

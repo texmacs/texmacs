@@ -26,7 +26,7 @@
   ("table b" "" "Modify cell border (options: =, l, r, b, t)")
   ("table p" "" "Modify cell padding (options: =, l, r, b, t)")
 
-  ("table S" (make-sub-table))
+  ("table S" (make-subtable))
   ("table H l" (table-set-halign "l"))
   ("table H c" (table-set-halign "c"))
   ("table H r" (table-set-halign "r"))
