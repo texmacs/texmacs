@@ -96,21 +96,21 @@ lazy_paragraph_rep::line_print (line_item item) {
     }
     else if (L(item->t) == DATOMS)
       decs << tuple (as_string (N(items)), item->t);
-    else if (item->t == NO_PAGE_BREAK_BEFORE)
+    else if (item->t == VAR_NO_PAGE_BREAK)
       sss->no_page_break_before ();
-    else if (item->t == NO_PAGE_BREAK_AFTER)
+    else if (item->t == NO_PAGE_BREAK)
       sss->no_page_break_after ();
     else if (is_tuple (item->t, "env_page") ||
 	     (item->t == PAGE_BREAK) ||
 	     (item->t == NEW_PAGE) ||
-	     (item->t == NEW_DOUBLE_PAGE))
+	     (item->t == NEW_DPAGE))
       sss->print (item->t, nr_cols);
-    else if (item->t == PAGE_BREAK_BEFORE)
+    else if (item->t == VAR_PAGE_BREAK)
       sss->print (PAGE_BREAK, nr_cols, true);
-    else if (item->t == NEW_PAGE_BEFORE)
+    else if (item->t == VAR_NEW_PAGE)
       sss->print (NEW_PAGE, nr_cols, true);
-    else if (item->t == NEW_DOUBLE_PAGE_BEFORE)
-      sss->print (NEW_DOUBLE_PAGE, nr_cols, true);
+    else if (item->t == VAR_NEW_DPAGE)
+      sss->print (NEW_DPAGE, nr_cols, true);
   }
   else if (item->type == FLOAT_ITEM) {
     fl << item->b->get_leaf_lazy ();

@@ -93,18 +93,21 @@ initialize_std_drd () {
   init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (NEXT_LINE, "next-line", fixed (0) -> name ("next line"));
   init (NO_BREAK, "no-break", fixed (0) -> name ("no line break"));
-  init (NO_FIRST_INDENT, "no-indent", fixed (0) -> name ("don't indent"));
-  init (YES_FIRST_INDENT, "yes-indent", fixed (0) -> name ("do indent"));
-  init (NO_FIRST_INDENT_AFTER, "no-indent*", fixed (0) -> name ("don't indent after"));
-  init (YES_FIRST_INDENT_AFTER, "yes-indent*", fixed (0) -> name ("do indent after"));
-  init (PAGE_BREAK_BEFORE, "page-break*", fixed (0) -> name ("page break before"));
+  init (NO_INDENT, "no-indent", fixed (0) -> name ("don't indent"));
+  init (YES_INDENT, "yes-indent", fixed (0) -> name ("do indent"));
+  init (VAR_NO_INDENT, "no-indent*", fixed (0) -> name ("don't indent after"));
+  init (VAR_YES_INDENT, "yes-indent*", fixed (0) -> name ("do indent after"));
+  init (VAR_PAGE_BREAK, "page-break*",
+	fixed (0) -> name ("page break before"));
   init (PAGE_BREAK, "page-break", fixed (0) -> name ("page break"));
-  init (NO_PAGE_BREAK_BEFORE, "no-page-break*", fixed (0) -> name ("no page break before"));
-  init (NO_PAGE_BREAK_AFTER, "no-page-break", fixed (0) -> name ("no page break"));
-  init (NEW_PAGE_BEFORE, "new-page*", fixed (0) -> name ("new page before"));
+  init (VAR_NO_PAGE_BREAK, "no-page-break*",
+	fixed (0) -> name ("no page break before"));
+  init (NO_PAGE_BREAK, "no-page-break", fixed (0) -> name ("no page break"));
+  init (VAR_NEW_PAGE, "new-page*", fixed (0) -> name ("new page before"));
   init (NEW_PAGE, "new-page", fixed (0) -> name ("new page"));
-  init (NEW_DOUBLE_PAGE_BEFORE, "new-dpage*", fixed (0) -> name ("new double page before"));
-  init (NEW_DOUBLE_PAGE, "new-dpage", fixed (0) -> name ("new double page"));
+  init (VAR_NEW_DPAGE, "new-dpage*",
+	fixed (0) -> name ("new double page before"));
+  init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
   init (LEFT, "left", fixed (1));
   init (MID, "mid", fixed (1));
