@@ -401,6 +401,19 @@ concater_rep::typeset (tree t, path ip) {
   case UNQUOTE:
     typeset_executable (t, ip);
     break;
+  case IF:
+    typeset_if (t, ip);
+    break;
+  case VAR_IF:
+    typeset_var_if (t, ip);
+    break;
+  case CASE:
+    typeset_case (t, ip);
+    break;
+  case WHILE:
+  case FOR_EACH:
+    typeset_executable (t, ip);
+    break;
   case EXTERN:
     typeset_rewrite (t, ip);
     break;
@@ -436,19 +449,6 @@ concater_rep::typeset (tree t, path ip) {
   case LESSEQ:
   case GREATER:
   case GREATEREQ:
-    typeset_executable (t, ip);
-    break;
-  case IF:
-    typeset_if (t, ip);
-    break;
-  case VAR_IF:
-    typeset_var_if (t, ip);
-    break;
-  case CASE:
-    typeset_case (t, ip);
-    break;
-  case WHILE:
-  case FOR_EACH:
     typeset_executable (t, ip);
     break;
 

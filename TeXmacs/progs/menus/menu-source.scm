@@ -36,19 +36,20 @@
 
 (menu-bind source-quote-menu
   ("Evaluate" (make 'eval))
+  ---
   ("Quote" (make 'quote))
   ("Quasi" (make 'quasi))
-  ("Quasi-quote" (make 'quasi-quote))
-  ("Unquote" (make 'quasi-quote)))
+  ("Quasiquote" (make 'quasi-quote))
+  ("Unquote" (make 'unquote))
+  ---
+  ("Unevaluated value" (make 'quote-value))
+  ("Unevaluated argument" (make 'quote-argument)))
 
 (menu-bind source-flow-menu
   ("If" (make 'if))
   ("Case" (make 'case))
-  ;; ("for" (make 'for))
   ("While" (make 'while))
-  ;; ("extern" (make 'extern))
-  ;; ("authorize" (make 'authorize))
-  )
+  ("For each" (make 'for-each)))
 
 (menu-bind source-transformational-menu
   (-> "Definition" (link source-define-menu))
