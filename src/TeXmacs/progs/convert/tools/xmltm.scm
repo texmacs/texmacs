@@ -146,14 +146,13 @@
 
 ;; Conversion of Cork GRAVE ACCENT to LEFT SINGLE QUOTATION MARK
 
-(define cork-grave #\nul)
-(define cork-backquote #\`) ;; that is GRAVE ACCENT in ASCII
+(define cork-grave-char #\nul)
+(define cork-grave (list->string '(#\nul)))
+(define cork-backquote (list->string '(#\`))) ;; that is GRAVE ACCENT in ASCII
 
 (define (cork-grave->backquote s)
-  (if (char-in-string? cork-grave s)
-      (string-map (lambda (c) (if (== c cork-grave)
-				  cork-backquote c))
-		  s)
+  (if (string-index s cork-grave-char)
+      (string-replace s cork-grave cork-backquote)
       s))
 
 ;; Decoding URL strings
