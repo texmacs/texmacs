@@ -185,7 +185,8 @@
 				  name
 				  (stm-table-decode-format name value))))
 			(list-filter (cDdr x) (lambda (l) (= (length l) 7))))
-		   (stm-table-formats (cAr x))))))
+		   (stm-table-formats (cAr x))))
+         (else '())))
 
 (define (stm-table-length-name? name)
   (in? name
