@@ -20,51 +20,6 @@
 ;; Document headers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind letter-header-menu
-  (when (not (inside? "letter-header"))
-	("Header" (make 'letter-header)))
-  (when (inside? "letter-header")
-	("Address" (make-header 'address))
-	("Date" (make-header 'letter-date))
-	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
-	("Destination" (make-header 'destination)))
-  ---
-  (when (not (inside? "letter-header"))
-	("Opening" (make 'opening))
-	("Closing" (make 'closing))
-	("Signature" (make 'signature)))
-  ---
-  ("C.C." (make 'cc))
-  ("Encl." (make 'encl)))
-
-(menu-bind exam-header-menu
-  ("Class" (make-header 'class))
-  ("Date" (begin (go-end-of-header-element) (make 'title-date)))
-  ("Title" (make-header 'title)))
-
-(menu-bind old-title-menu
-  (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Make title" (begin (make 'make-title) (make 'title))))
-  (when (inside? "make-title")
-	("Title" (make-header 'title))
-	("Author" (make-header 'author))
-	("Address" (make-header 'address))
-	("Email" (make-header 'title-email))
-	("Date" (make-header 'title-date))
-	---
-	("TeXmacs notice" (make 'made-by-TeXmacs))
-	("Running title" (make-header 'header-title))
-	("Running author" (make-header 'header-author))
-	("Address block" (make 'address-block))
-	("Today" (begin (make-header 'title-date)
-			(make-arity 'date 0))))
-  ---
-  (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Abstract" (make 'abstract)))
-  (when (and (not (inside? "make-title")) (inside? "abstract"))
-	("Keywords" (make-section 'keywords))
-	("A.M.S. subject classification" (make-section 'AMS-class))))
-
 (menu-bind author-menu
   ("Insert author" (make-doc-data-element 'doc-author-data))
   ---
@@ -79,7 +34,6 @@
 	("Insert title" (make-doc-data)))
   ---
   (when (inside? "doc-data")
-	;;("Title" (make-doc-data-element 'doc-title))
 	("Subtitle" (make-doc-data-element 'doc-subtitle))
 	(-> "Author" (link author-menu))
 	(-> "Date"
@@ -107,6 +61,28 @@
   (when (and (not (inside? "doc-data")) (inside? "abstract"))
 	("Keywords" (make-section 'keywords))
 	("A.M.S. subject classification" (make-section 'AMS-class))))
+
+(menu-bind letter-header-menu
+  (when (not (inside? "letter-header"))
+	("Header" (make 'letter-header)))
+  (when (inside? "letter-header")
+	("Address" (make-header 'address))
+	("Date" (make-header 'letter-date))
+	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
+	("Destination" (make-header 'destination)))
+  ---
+  (when (not (inside? "letter-header"))
+	("Opening" (make 'opening))
+	("Closing" (make 'closing))
+	("Signature" (make 'signature)))
+  ---
+  ("C.C." (make 'cc))
+  ("Encl." (make 'encl)))
+
+(menu-bind exam-header-menu
+  ("Class" (make-header 'class))
+  ("Date" (begin (go-end-of-header-element) (make 'title-date)))
+  ("Title" (make-header 'title)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections

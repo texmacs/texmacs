@@ -92,8 +92,10 @@ init_upgrade_doc (string install_version) {
     append (from_dir * "changes-7.en.ptm", to);
   if (version_inf_eq (install_version, "1.0.2.8"))
     append (from_dir * "changes-8.en.ptm", to);
-  if (version_inf_eq (install_version, "1.0.3.4")) {
+  if (version_inf_eq (install_version, "1.0.3.4"))
     append (from_dir * "changes-9.en.ptm", to);
+  if (version_inf_eq (install_version, "1.0.4")) {
+    append (from_dir * "changes-10.en.ptm", to);
     append (from_dir * "changes-post.en.ptm", to);
   }
   else remove (to);
