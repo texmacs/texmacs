@@ -165,6 +165,12 @@ edit_typeset_rep::typeset_prepare () {
   env->update ();
 }
 
+void
+edit_typeset_rep::drd_update () {
+  typeset_exec_until (tp);
+  drd->heuristic_init (cur[tp]);
+}
+
 /******************************************************************************
 * Routines for getting information
 ******************************************************************************/
