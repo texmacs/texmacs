@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -18,11 +18,15 @@
     <label|tm-tree-ex>x+y+<frac|1|2>+<sqrt|y+z>
   </equation>
 
+  <paragraph|Internal nodes of <TeXmacs> trees>
+
   Each of the internal nodes of a <TeXmacs> tree is a string symbol and each
   of the leafs is an ordinary string. A string symbol is different from a
   usual string only from the efficiency point of view: <TeXmacs> represents
   each symbol by a unique number, so that it is extremely fast to test
   weather two symbols are equal.
+
+  <paragraph|Leafs of <TeXmacs> trees>
 
   Currently, all strings are represented using the <em|universal <TeXmacs>
   encoding>. This encoding coincides with the Cork font encoding for all
@@ -35,6 +39,24 @@
   characters are an exception, but this should change soon). In other words,
   the universal <TeXmacs> encoding may be seen as an analogue of Unicode. In
   the future, we might actually switch to Unicode.
+
+  The string leafs either contain ordinary text or special data. <TeXmacs>
+  supports the following atomic data types:
+
+  <\description>
+    <item*|Boolean numbers>Either <verbatim|true> or <verbatim|false>.
+
+    <item*|Integers>Sequences of digits which may be preceded by a minus
+    sign.
+
+    <item*|Floating point numbers>Specified using the usual scientific
+    notation.
+
+    <item*|Lengths>Floating point numbers followed by a <hyper-link|length
+    unit|lengths.en.tm>, like <verbatim|29.7cm> or <verbatim|2fn>.
+  </description>
+
+  <paragraph|Serialization and preferred syntax for editing>
 
   When storing a document as a file on your harddisk or when copying a
   document fragment to the clipboard, <TeXmacs> trees have to be represented

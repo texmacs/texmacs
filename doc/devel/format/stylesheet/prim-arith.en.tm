@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -6,33 +6,36 @@
   <tmdoc-title|Arithmetic operations>
 
   <\explain>
-    <explain-macro|plus|expr-1|expr-2>
+    <explain-macro|plus|expr-1|<with|mode|math|\<cdots\>>|expr-n>
 
-    <explain-macro|minus|expr-1|expr-2><explain-synopsis|addition and
-    subtraction>
+    <explain-macro|minus|expr-1|<with|mode|math|\<cdots\>>|expr-n><explain-synopsis|addition
+    and subtraction>
   <|explain>
-    Add or subtract two numbers or lengths. If <src-arg|expr-1> and
-    <src-arg|expr-2> are lengths, then the result has the same length unit as
-    <src-arg|expr-1>. For instance, <inactive*|<plus|1|2.3>> yields
-    <plus|1|2.3> and <inactive*|<plus|1cm|5mm>> produces <plus|1cm|5mm>.
+    Add or subtract numbers or lengths. For instance,
+    <inactive*|<plus|1|2.3|5>> yields <plus|1|2.3|5> and
+    <inactive*|<plus|1cm|5mm>> produces <plus|1cm|5mm>. In the case of
+    subtractions, the last argument is subtracted from the sum of the
+    preceding arguments. For instance, <inactive*|<minus|1>> produces
+    <minus|1> and <inactive*|<minus|1|2|3|4>> yields
+    <no-break><minus|1|2|3|4>.
   </explain>
 
   <\explain>
-    <explain-macro|times|expr-1|expr-2><explain-synopsis|multiplication>
+    <explain-macro|times|expr-1|<with|mode|math|\<cdots\>>|expr-n><explain-synopsis|multiplication>
   <|explain>
-    Multiply \ two numbers <src-arg|expr-1> and <src-arg|expr-2> or multiply
-    a number by a length unit. For instance, <inactive*|<times|3|3>>
-    evaluates to <times|3|3> and <inactive*|<times|3|2cm>> to <times|3|2cm>.
+    Multiply two numbers <src-arg|expr-1> until <src-arg|expr-n>. One of the
+    arguments is also allowed to be a length, in which case a length is
+    returned. For instance, <inactive*|<times|3|3>> evaluates to <times|3|3>
+    and <inactive*|<times|3|2cm>> to <times|3|2cm>.
   </explain>
 
   <\explain>
-    <explain-macro|over|expr-1|expr-2><explain-synopsis|division>
+    <explain-macro|over|expr-1|<with|mode|math|\<cdots\>>|expr-n><explain-synopsis|division>
   <|explain>
-    Divide two numbers <src-arg|expr-1> and <src-arg|expr-2>, divide a length
-    <src-arg|expr-1> by a number <src-arg|expr-2>, or divide two lengths. For
-    instance, <inactive*|<over|1|3>> evaluates to <over|1|3>.
-    <inactive*|<over|3cm|7>> to <over|3cm|7>, and <inactive*|<over|1cm|1pt>>
-    to <over|1cm|1pt>.
+    Divide the product of all but the last argument by the last argument. For
+    instance, <inactive*|<over|1|2|3|4|5|6|7>> evaluates to
+    <over|1|2|3|4|5|6|7>, <inactive*|<over|3spc|7>> to <over|3spc|7>, and
+    <inactive*|<over|1cm|1pt>> to <over|1cm|1pt>.
   </explain>
 
   <\explain>
