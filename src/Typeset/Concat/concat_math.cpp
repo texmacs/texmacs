@@ -187,6 +187,7 @@ concater_rep::typeset_frac (tree t, path ip) {
 
 void
 concater_rep::typeset_sqrt (tree t, path ip) {
+  if (N(t)==0) return; // FIXME: this should never happen
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   box ind;
   if (N(t)==2) {

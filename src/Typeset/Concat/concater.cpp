@@ -757,6 +757,7 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   array<line_item> a= ccc->a;
 
   int i, n=N(a);
+  if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
   array<box> items (n);
   array<SI>  spc (n);
   if (n>0) {
