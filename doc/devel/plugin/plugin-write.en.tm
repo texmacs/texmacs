@@ -1,9 +1,9 @@
-<TeXmacs|1.0.1.21>
+<TeXmacs|1.0.3>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Writing your own plugins>
+  <tmdoc-title|Writing your own plugins>
 
   In order to write a plugin <verbatim|<em|myplugin>>, you should start by
   creating a directory
@@ -16,24 +16,24 @@
   defaults to <verbatim|$HOME/.TeXmacs>). In addition, you may create the
   following subdirectories (when needed):
 
-  <\expand|description-dash>
-    <expand|item*|<verbatim|bin>>For binary files.
+  <\description-dash>
+    <item*|<verbatim|bin>>For binary files.
 
-    <expand|item*|<verbatim|doc>>For documentation (not yet supported).
+    <item*|<verbatim|doc>>For documentation (not yet supported).
 
-    <expand|item*|<verbatim|langs>>For language related files, such as
-    dictionaries (not yet supported).
+    <item*|<verbatim|langs>>For language related files, such as dictionaries
+    (not yet supported).
 
-    <expand|item*|<verbatim|lib>>For libraries.
+    <item*|<verbatim|lib>>For libraries.
 
-    <expand|item*|<verbatim|packages>>For style packages.
+    <item*|<verbatim|packages>>For style packages.
 
-    <expand|item*|<verbatim|progs>>For <value|scheme> programs.
+    <item*|<verbatim|progs>>For <value|scheme> programs.
 
-    <expand|item*|<verbatim|src>>For source files.
+    <item*|<verbatim|src>>For source files.
 
-    <expand|item*|<verbatim|styles>>For style files.
-  </expand>
+    <item*|<verbatim|styles>>For style files.
+  </description-dash>
 
   As a general rule, files which are present in these subdirectories will be
   automatically recognized by <TeXmacs> at startup. For instance, if you
@@ -61,9 +61,9 @@
     </verbatim>
 
     and to put your style files and packages in the last two directories.
-    After rebooting <TeXmacs>, your style files and packages will
-    automatically appear in the <apply|menu|Document|Style> and
-    <apply|menu|Document|Use package> menus.
+    After restarting <TeXmacs>, your style files and packages will
+    automatically appear in the <menu|Document|Style> and <menu|Document|Use
+    package> menus.
   </example>
 
   For more complex plugins, such as plugins with additional <value|scheme> or
@@ -76,11 +76,11 @@
 
   This configuration file should contain an instruction of the following form
 
-  <\expand|scheme-fragment>
+  <\scheme-fragment>
     (plugin-configure <em|myplugin>
 
     \ \ <em|configuration-options>)
-  </expand>
+  </scheme-fragment>
 
   Here the <verbatim|<em|configuration-options>> describe the principal
   actions which have to be undertaken at startup, including sanity checks for
@@ -94,34 +94,34 @@
     \ \ \ \ $TEXMACS_PATH/plugins
   </verbatim>
 
-  Some of these are <apply|hyper-link|described|../interface/interface.en.tm>
-  in more detail in the chapter about writing new interfaces.
+  Some of these are <hyper-link|described|../interface/interface.en.tm> in
+  more detail in the chapter about writing new interfaces.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|sfactor|4>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
 
@@ -138,11 +138,10 @@
 <\auxiliary>
   <\collection>
     <\associate|idx>
-      <tuple|<tuple|<with|font family|<quote|ss>|Document>|<with|font
-      family|<quote|ss>|Style>>|<pageref|idx-1>>
+      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Style>>|<pageref|idx-1>>
 
-      <tuple|<tuple|<with|font family|<quote|ss>|Document>|<with|font
-      family|<quote|ss>|Use package>>|<pageref|idx-2>>
+      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Use
+      package>>|<pageref|idx-2>>
     </associate>
   </collection>
 </auxiliary>
