@@ -82,6 +82,10 @@
    (begin
      (init-language "russian")
      (set-output-language "russian")))
+  ("Slovene"
+   (begin
+     (init-language "slovene")
+     (set-output-language "slovene")))
   ("Spanish"
    (begin
      (init-language "spanish")
@@ -239,6 +243,7 @@
       ("Portuguese" (init-language "portuguese"))
       ("Romanian" (init-language "romanian"))
       ("Russian" (init-language "russian"))
+      ("Slovene" (init-language "slovene"))
       ("Spanish" (init-language "spanish"))
       ("Swedish" (init-language "swedish"))
       ("Ukrainian" (init-language "ukrainian")))

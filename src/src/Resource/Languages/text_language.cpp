@@ -113,6 +113,7 @@ locale_to_language (string s) {
   if (s == "pt") return "portuguese";
   if (s == "ro") return "romanian";
   if (s == "ru") return "russian";
+  if (s == "sl") return "slovene";
   if (s == "es") return "spanish";
   if (s == "sv") return "swedish";
   if (s == "uk") return "ukrainian";
@@ -135,6 +136,7 @@ language_to_locale (string s) {
   if (s == "portuguese") return "pt_PT";
   if (s == "romanian") return "ro_RO";
   if (s == "russian") return "ru_RU";
+  if (s == "slovene") return "sl_SI";
   if (s == "spanish") return "es_ES";
   if (s == "swedish") return "sv_SV";
   if (s == "ukrainian") return "uk_UA";
@@ -205,6 +207,7 @@ text_language (string s) {
   if (s == "portuguese") return new text_language_rep (s, "portuguese");
   if (s == "romanian") return new text_language_rep (s, "romanian");
   if (s == "russian") return new text_language_rep (s, "russian");
+  if (s == "slovene") return new text_language_rep (s, "slovene");
   if (s == "spanish") return new text_language_rep (s, "spanish");
   if (s == "swedish") return new text_language_rep (s, "swedish");
   if (s == "ukrainian") return new text_language_rep (s, "ukrainian");

@@ -324,6 +324,7 @@
   ("portuguese" "\\usepackage[portuges]{babel}")
   ("romanian" "\\usepackage[romanian]{babel}")
   ("russian" "\\usepackage[cp1251]{inputenc}\n\\usepackage[russian]{babel}")
+  ("slovene" "\\usepackage[slovene]{babel}")
   ("spanish" "\\usepackage[spanish]{babel}")
   ("swedish" "\\usepackage[swedish]{babel}")
   ("ukrainian"
