@@ -61,4 +61,6 @@
   (:function latex->texmacs))
 
 (converter texmacs-stree latex-stree
-  (:function texmacs->latex))
+  (:function-with-options texmacs->latex)
+  (:option "texmacs->latex:faithful-style" "off")
+  (:option "texmacs->latex:indirect-bib" "off"))

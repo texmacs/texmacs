@@ -22,9 +22,8 @@
 
 (define (texout-file l)
   (let* ((doc-body (car l))
-	 (styles (cadr l))
-	 (prestyle (car styles))
-	 (style (if (in? prestyle '("generic" "help")) "letter" prestyle))
+	 (styles (if (null? (cadr l)) '("letter") (cadr l)))
+	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))
 	 (doc-preamble (cadddr l))

@@ -26,10 +26,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmtex-env (make-ahash-table))
-(define tmtex-appendices #f)
+(define tmtex-appendices? #f)
+(define tmtex-faithful-style? #f)
+(define tmtex-indirect-bib? #f)
 
-(define (tmtex-initialize)
-  (set! tmtex-appendices #f)
+(define (tmtex-initialize opts)
+  (set! tmtex-appendices? #f)
+  (set! tmtex-faithful-style?
+	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
+  (set! tmtex-indirect-bib?
+	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -315,13 +321,21 @@
 ;; Entire files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmtex-transform-style x)
+  (cond ((in? x '("article" "book" "letter")) x)
+	((in? x '("generic" "exam")) "letter")
+	((== x "seminar") "slides")
+	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
+	((in? x '("tmbook" "tmmanual")) "book")
+	((in? x '("acmconf" "amsart" "jsc")) x)
+	(tmtex-faithful-style? x)
+	(else #f)))
+
 (define (tmtex-filter-styles l)
-  (cond ((null? l) l)
-	((in? (car l) '("axiom" "gtybalt" "maple" "maxima" "mycas"
-			"qcl" "scilab" "giac" "macaulay2" "mathemagix"
-			"mupad" "pari" "reduce" "yacas"))
-	 (tmtex-filter-styles (cdr l)))
-	(else (cons (car l) (tmtex-filter-styles (cdr l))))))
+  (if (null? l) l
+      (let* ((next (tmtex-transform-style (car l)))
+	     (tail (tmtex-filter-styles (cdr l))))
+	(if next (cons next tail) tail))))
 
 (define (tmtex-filter-preamble l)
   (define (append-lists l)
@@ -862,10 +876,10 @@
   (list (list '!begin s) (tmtex (car l))))
 
 (define (tmtex-appendix s l)
-  (if tmtex-appendices
+  (if tmtex-appendices?
       (list 'chapter (tmtex (car l)))
       (begin
-	(set! tmtex-appendices #t)
+	(set! tmtex-appendices? #t)
 	(list '!concat '(appendix) (list 'chapter (tmtex (car l)))))))
 
 (define (tmtex-tt-document l)
@@ -1138,15 +1152,15 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->latex x)
+(define (texmacs->latex x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
 	     (doc (list '!file body style lan (get-texmacs-path))))
-	(texmacs->latex doc))
+	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
-	(tmtex-initialize)
+	(tmtex-initialize opts)
 	(tmtex (tmpre-produce x3)))))
