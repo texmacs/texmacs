@@ -3,14 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Literal data types>
-
-  Some computational typesetter primitives use numerical or boolean values.
-  These values are represented by strings. The boolean values are
-  <verbatim|"true"> and "<verbatim|false"> and numerical values are numbers
-  in decimal notation, like <verbatim|"42"> or <verbatim|"3.14">.
-
-  <value|hrule>
+  <tmdoc-title|Standard length units>
 
   In <hlink|TeXmacs|http://alqua.com/tmresources/TeXmacs>, lengths are
   denoted by decimal numbers immediately followed by a unit. For example

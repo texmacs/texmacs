@@ -6,7 +6,9 @@
   <tmdoc-title|The <TeXmacs> format>
 
   <\traverse>
-    <branch|Document trees|tm-tree.en.tm>
+    <branch|<TeXmacs> trees|tm-tree.en.tm>
+
+    <branch|<TeXmacs> documents|tm-docs.en.tm>
 
     <branch|Default serialization|tm-tm.en.tm>
 
@@ -14,11 +16,11 @@
 
     <branch|<value|scheme> serialization|tm-scm.en.tm>
 
-    <branch|Literal data types|literals.en.tm>
-
     <branch|The typesetting process|typesetting.en.tm>
 
     <branch|Data relation descriptions|tm-drd.en.tm>
+
+    <branch|Standard length units|lengths.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

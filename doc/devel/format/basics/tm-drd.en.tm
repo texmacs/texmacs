@@ -5,7 +5,11 @@
 <\body>
   <tmdoc-title|Data relation descriptions>
 
-  \;
+  Some computational typesetter primitives use numerical or boolean values.
+  These values are represented by strings. The boolean values are
+  <verbatim|"true"> and "<verbatim|false"> and numerical values are numbers
+  in decimal notation, like <verbatim|"42"> or <verbatim|"3.14">. Lengths.
+  Syntax highlighting.
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
 

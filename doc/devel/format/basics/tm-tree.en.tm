@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Document trees>
+  <tmdoc-title|<TeXmacs> trees>
 
   All <TeXmacs> documents or document fragments can be thought of as
   <em|trees>. For instance, the tree
@@ -32,27 +32,28 @@
   example, <verbatim|\<less\>alpha\<gtr\>> stands for the letter
   <with|mode|math|\<alpha\>>. The semantics of characters in the universal
   <TeXmacs> encoding does not depend on the context (currently, cyrillic
-  characters are an exception, but this should change soon). From this point
-  of view, the universal <TeXmacs> encoding may be seen as an analogue of
-  Unicode. In the future, we might actually switch to Unicode.
+  characters are an exception, but this should change soon). In other words,
+  the universal <TeXmacs> encoding may be seen as an analogue of Unicode. In
+  the future, we might actually switch to Unicode.
 
   When storing a document as a file on your harddisk or when copying a
-  document fragment to the clipboard, document trees have to represented as
-  strings. The conversion without loss of information of abstract <TeXmacs>
-  trees into strings is called <em|serialization> and the inverse process
-  <em|parsing>. <TeXmacs> provides three standard ways to serialize trees:
-  the standard <hyper-link|<TeXmacs> format|tm-tm.en.tm>, the <hyper-link|XML
-  format|tm-tmml.en.tm> and <hyper-link|<value|scheme> format|tm-scm.en.tm>.
+  document fragment to the clipboard, <TeXmacs> trees have to be represented
+  as strings. The conversion without loss of information of abstract
+  <TeXmacs> trees into strings is called <em|serialization> and the inverse
+  process <em|parsing>. <TeXmacs> provides three ways to serialize trees,
+  which correspond to the standard <hyper-link|<TeXmacs> format|tm-tm.en.tm>,
+  the <hyper-link|XML format|tm-tmml.en.tm> and the
+  <hyper-link|<value|scheme> format|tm-scm.en.tm>.
 
   However, it should be emphasized that the preferred syntax for modifying
   <TeXmacs> documents is the screen display inside the editor. If that seems
   surprising to you, consider that a syntax is a way to represent information
   in a form suitable to understanding and modification. The on-screen typeset
-  representation of a document, together with its interactive behavior, is a
-  particular concrete syntax. Moreover, in the <menu|Document|View> menu, you
-  may find different ways to customize the way documents are viewed, such as
-  different levels of informative flags and a ``source tree'' mode for
-  editing style files.
+  representation of a document, together with its interactive behaviour, is a
+  particularly concrete syntax. Moreover, in the <menu|Document|View> menu,
+  you may find different ways to customize the way documents are viewed, such
+  as different levels of informative flags and a <hyper-link|``source tree''
+  mode|../../style/presentation/src-present.en.tm> for editing style files.
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
 
