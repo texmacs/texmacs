@@ -208,8 +208,9 @@ compute_style_menu (url u, bool package) {
   if (is_or (u)) {
     string sep= "\n";
     if (is_atomic (u[1]) &&
-	(is_concat (u[2]) ||
-	 (is_or (u[2]) && is_concat (u[2][1])))) sep= "\n---\n";
+	((is_concat (u[2]) && (u[2][1] != "CVS")) ||
+	 (is_or (u[2]) && is_concat (u[2][1]))))
+      sep= "\n---\n";
     return
       compute_style_menu (u[1], package) * sep *
       compute_style_menu (u[2], package);
@@ -217,7 +218,7 @@ compute_style_menu (url u, bool package) {
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
     string sub= compute_style_menu (u[2], package);
-    if ((dir == "Test") || (dir == "Obsolete")) return "";
+    if ((dir == "Test") || (dir == "Obsolete") || (dir == "CVS")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
   if (is_atomic (u)) {
