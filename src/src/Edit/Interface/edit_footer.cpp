@@ -224,6 +224,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
   case GET_LABEL: r= "tree label"; break;
   case GET_ARITY: r= "arity"; break;
   case MAP_ARGS: r= "map arguments"; break;
+  case EVAL_ARGS: r= "evaluate arguments"; break;
   case BACKUP: r= "backup"; break;
   case QUOTE: r= "quote"; break;
   case DELAY: r= "delay"; break;
@@ -420,6 +421,8 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     return up * "arity#";
   case MAP_ARGS:
     return up * "map arguments#";
+  case EVAL_ARGS:
+    return up * "evaluate arguments#";
   case QUOTE:
     return up * "quote#";
   case DELAY:

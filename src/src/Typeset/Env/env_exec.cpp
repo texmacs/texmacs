@@ -22,26 +22,6 @@ extern int script_status;
 * Subroutines
 ******************************************************************************/
 
-tree
-typeset_substitute (tree t, tree macro, tree args) {
-  if (is_atomic (t)) return t;
-  if (is_func (t, APPLY, 1) ||
-      is_func (t, VALUE, 1) ||
-      is_func (t, ARGUMENT, 1))
-    {
-      int i, n= N(args)-1;
-      for (i=0; i<n; i++)
-	if (macro[i]==t[0])
-	  return copy (args[i+1]);
-    }
-
-  int i, n= N(t);
-  tree r (t, n);
-  for (i=0; i<n; i++)
-    r[i]= typeset_substitute (t[i], macro, args);
-  return r;
-}
-
 string
 edit_env_rep::exec_string (tree t) {
   tree r= exec (t);
@@ -75,6 +55,11 @@ edit_env_rep::rewrite (tree t) {
     tree v= macro_arg->item [t[2]->label];
     if (is_atomic (v))
       return tree (ERROR, "map arguments " * t[2]->label);
+    list<hashmap<string,tree> > old_var= macro_arg;
+    list<hashmap<string,path> > old_src= macro_src;
+    if (!nil (macro_arg)) macro_arg= macro_arg->next;
+    if (!nil (macro_src)) macro_src= macro_src->next;
+
     int start= 0, end= N(v);
     if (N(t)>=4) start= as_int (exec (t[3]));
     if (N(t)>=5) end  = as_int (exec (t[4]));
@@ -83,6 +68,9 @@ edit_env_rep::rewrite (tree t) {
     for (i=0; i<n; i++)
       r[i]= tree (make_tree_label (t[0]->label),
 		  tree (ARGUMENT, copy (t[2]), as_string (start+i)));
+
+    macro_arg= old_var;
+    macro_src= old_src;
     return r;
   }
   else if (L(t) == INCLUDE) {
@@ -159,6 +147,8 @@ edit_env_rep::exec (tree t) {
     return exec_get_arity (t);
   case MAP_ARGS:
     return exec_rewrite (t);
+  case EVAL_ARGS:
+    return exec_eval_args (t);
   case QUOTE:
     return copy (t[0]);
   case DELAY:
@@ -424,23 +414,6 @@ edit_env_rep::exec_compound (tree t) {
 tree
 edit_env_rep::exec_apply (tree t) {
   // cout << "Apply " << t << "\n";
-  /*
-  tree x= exec (t[0]);
-  tree f= is_applicable (x)? x: read (x->label);
-
-  // cout << "    Function " << f << "\n";
-  if (is_applicable (f)) {
-    if (N(f) != N(t)) return tree (ERROR, "bad apply");
-    tree f_t= typeset_substitute (f[N(f)-1], f, t);
-    // cout << "    Execute " << f_t << "\n";
-    return exec (f_t);
-  }
-  else {
-    if (N(t)==1) return f;
-    else return tree (ERROR, "bad apply");
-  }
-  */
-
   tree f= t[0];
   if (is_compound (f)) f= exec (f);
   if (is_atomic (f)) {
@@ -600,6 +573,26 @@ edit_env_rep::exec_get_arity (tree t) {
     r= macro_arg->item [as_string (t[0][0])];
   else r= exec (t[0]);
   return as_string (arity (r));
+}
+
+tree
+edit_env_rep::exec_eval_args (tree t) {
+  tree v= macro_arg->item [as_string (t[0])];
+  if (is_atomic (v))
+    return tree (ERROR, "eval arguments " * t[0]->label);
+  list<hashmap<string,tree> > old_var= macro_arg;
+  list<hashmap<string,path> > old_src= macro_src;
+  if (!nil (macro_arg)) macro_arg= macro_arg->next;
+  if (!nil (macro_src)) macro_src= macro_src->next;
+
+  int i, n= N(v);
+  tree r (v, n);
+  for (i=0; i<n; i++)
+    r[i]= exec (v[i]);
+
+  macro_arg= old_var;
+  macro_src= old_src;
+  return r;
 }
 
 tree
@@ -781,7 +774,12 @@ edit_env_rep::exec_merge (tree t) {
   tree t2= exec (t[1]);
   if (is_compound (t1) || is_compound (t2)) {
     if (is_tuple (t1) && is_tuple (t2)) return join (t1, t2);
-    if (is_func (t1, FUNCTION) && is_func (t2, FUNCTION) &&
+    if (
+#ifdef UPGRADE_APPLY
+	is_func (t1, MACRO) && is_func (t2, MACRO) &&
+#else
+	is_func (t1, FUNCTION) && is_func (t2, FUNCTION) &&
+#endif
 	(N(t1) == N(t2)) && (t1 (0, N(t1)-1) == t2 (0, N(t2)-1)))
       {
 	tree r = copy (t1);
@@ -1334,6 +1332,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case GET_LABEL:
   case GET_ARITY:
   case MAP_ARGS:
+  case EVAL_ARGS:
   case QUOTE:
   case DELAY:
   case OR:
@@ -1657,23 +1656,26 @@ edit_env_rep::depends (tree t, string s, int level) {
   */
 
   if (is_atomic (t) || nil (macro_arg)) return false;
-  else if (is_func (t, ARGUMENT) || is_func (t, MAP_ARGS)) {
-    // FIXME: this does not handle more complex dependencies,
-    // like those encountered after rewritings (INCLUDE, EXTERN, etc.)
-    tree v= (L(t) == ARGUMENT? t[0]: t[2]);
-    if (is_compound (v)) return false;
-    if (!macro_arg->item->contains (v->label)) return false;
-    if (level == 0) return v->label == s;
-    tree r= macro_arg->item [v->label];
-    list<hashmap<string,tree> > old_var= macro_arg;
-    list<hashmap<string,path> > old_src= macro_src;
-    if (!nil (macro_arg)) macro_arg= macro_arg->next;
-    if (!nil (macro_src)) macro_src= macro_src->next;
-    bool dep= depends (r, s, level-1);
-    macro_arg= old_var;
-    macro_src= old_src;
-    return dep;
-  }
+  else if (is_func (t, ARGUMENT) ||
+	   is_func (t, MAP_ARGS) ||
+	   is_func (t, EVAL_ARGS))
+    {
+      // FIXME: this does not handle more complex dependencies,
+      // like those encountered after rewritings (INCLUDE, EXTERN, etc.)
+      tree v= (L(t) == MAP_ARGS? t[2]: t[0]);
+      if (is_compound (v)) return false;
+      if (!macro_arg->item->contains (v->label)) return false;
+      if (level == 0) return v->label == s;
+      tree r= macro_arg->item [v->label];
+      list<hashmap<string,tree> > old_var= macro_arg;
+      list<hashmap<string,path> > old_src= macro_src;
+      if (!nil (macro_arg)) macro_arg= macro_arg->next;
+      if (!nil (macro_src)) macro_src= macro_src->next;
+      bool dep= depends (r, s, level-1);
+      macro_arg= old_var;
+      macro_src= old_src;
+      return dep;
+    }
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)

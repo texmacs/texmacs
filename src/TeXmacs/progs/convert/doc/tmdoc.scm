@@ -36,7 +36,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmdoc-branch x base-name level done)
-  (let* ((name (cadddr x))
+  (let* ((name (caddr x))
 	 (rel-name (url-relative base-name name)))
     (tmdoc-expand rel-name level done)))
 
@@ -49,6 +49,9 @@
   (cond ((match? x '(apply "hyper-link" :2))
 	 (list 'apply "hyper-link" (caddr x)
 	       (url->string (url-relative base-name (cadddr x)))))
+	((match? x '(hyper-link :1))
+	 (list 'hyper-link (cadr x)
+	       (url->string (url-relative base-name (caddr x)))))
 	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) base-name)))
 	(else x)))
 
@@ -62,12 +65,20 @@
 	  ((func? x 'traverse)
 	   (cons 'document (tmdoc-rewrite (cdadr x) base-name level done)))
 	  ((match? x '(apply "branch" :2))
+	   (tmdoc-branch (cdr x) base-name (tmdoc-down level) done))
+	  ((match? x '(branch :2))
 	   (tmdoc-branch x base-name (tmdoc-down level) done))
 	  ((match? x '(apply "continue" :2))
+	   (tmdoc-branch (cdr x) base-name (list level) done))
+	  ((match? x '(continue :2))
 	   (tmdoc-branch x base-name (list level) done))
 	  ((match? x '(apply "extra-branch" :2))
+	   (tmdoc-branch (cdr x) base-name 'appendix done))
+	  ((match? x '(extra-branch :2))
 	   (tmdoc-branch x base-name 'appendix done))
 	  ((match? x '(apply "tmdoc-copyright" :*))
+	   '(document))
+	  ((match? x '(tmdoc-copyright :*))
 	   '(document))
 	  (else (tmdoc-substitute x base-name)))))
 
@@ -161,6 +172,7 @@
 (define (tmdoc-remove-hyper-links l)
   (cond ((not (pair? l)) l)
 	((match? l '(apply "hyper-link" :2)) (caddr l))
+	((match? l '(hyper-link :1)) (cadr l))
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 

@@ -18,6 +18,7 @@
   ""
   "initialize_glue_basic"
 
+  (tmp-use-apply? use_apply (bool))
   (texmacs-version-release texmacs_version (string string))
 
   (tree->object tree_to_scheme_tree (scheme_tree tree))

@@ -52,6 +52,15 @@ scheme_dialect () {
 #endif
 }
 
+bool
+use_apply () {
+#ifdef UPGRADE_APPLY
+  return false;
+#else
+  return true;
+#endif
+}
+
 string
 texmacs_version (string which) {
   if (which == "tgz") return TEXMACS_TGZ;

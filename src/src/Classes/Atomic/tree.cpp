@@ -126,7 +126,7 @@ operator << (ostream& out, tree t) {
   else {
     int i, n= N(t);
     out << as_string (L(t));
-    if (n==0) return out;
+    if (n==0) return out << "()";
     out << " (";
     for (i=0; i< n-1; i++)
       out << t[i] << ", ";

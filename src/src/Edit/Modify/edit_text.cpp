@@ -106,7 +106,9 @@ edit_text_rep::accepts_return (path p) {
     (is_func (st, _FLOAT) && (last_item (p) == (N(st)-1))) ||
     (is_func (st, DECORATE_ATOMS) &&
      (last_item (p) == (N(st)-1)) && pure_line (p)) ||
+#ifndef UPGRADE_APPLY
     (is_func (st, FUNCTION) && (last_item (p) == (N(st)-1))) ||
+#endif
     (is_func (st, MACRO) && (last_item (p) == (N(st)-1))) ||
     (is_func (st, XMACRO, 2) && (last_item (p) == 1)) ||
     (is_func (st, WITH) && (last_item (p) == (N(st)-1)) && pure_line (p)) ||

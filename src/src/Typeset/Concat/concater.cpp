@@ -434,7 +434,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     break;
   case COMPOUND:
     if (ACTIVATED) typeset_compound (t, ip);
-    else typeset_inactive_expand_apply (t, ip, false);
+    else typeset_inactive_expand_apply (t, ip, true);
     break;
   case APPLY:
     if (ACTIVATED) typeset_apply (t, ip);
@@ -493,6 +493,10 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
   case MAP_ARGS:
     if (ACTIVATED) typeset_rewrite (t, ip);
     else typeset_inactive ("map-args", t, ip);
+    break;
+  case EVAL_ARGS:
+    if (ACTIVATED) typeset_eval_args (t, ip);
+    else typeset_inactive ("eval-args", t, ip);
     break;
   case QUOTE:
     typeset_inactive ("quote", t, ip);

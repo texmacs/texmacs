@@ -12,8 +12,6 @@
 
 #include "concater.hpp"
 
-tree typeset_substitute (tree t, tree macro, tree args);
-
 /******************************************************************************
 * Typesetting environment changes
 ******************************************************************************/

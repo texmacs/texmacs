@@ -21,7 +21,8 @@
     make-inactive-drd-props make-inactive-xmacro
     make-inactive-eval make-inactive-provides make-inactive-value
     make-inactive-argument make-inactive-get-label make-inactive-get-arity
-    make-inactive-map-args make-inactive-quote make-inactive-delay
+    make-inactive-map-args make-inactive-eval-args
+    make-inactive-quote make-inactive-delay
     make-inactive-hold make-inactive-release
     ;; computational markup
     make-inactive-or make-inactive-xor make-inactive-and make-inactive-not
@@ -45,7 +46,8 @@
 (define (make-inactive-assign) (make-inactive "assign" 2))
 (define (make-inactive-with) (make-inactive "with" 3))
 (define (make-inactive-compound) (make-inactive "compound" 1))
-(define (make-inactive-apply) (make-inactive "apply" 1))
+(define (make-inactive-apply)
+  (if (tmp-use-apply?) (make-inactive "apply" 1) (make-inactive "compound" 1)))
 (define (make-inactive-include) (make-inactive "include" 1))
 (define (make-inactive-macro) (make-inactive "macro" 1))
 (define (make-inactive-xmacro) (make-inactive "xmacro" 2))
@@ -58,6 +60,7 @@
 (define (make-inactive-get-label) (make-inactive "get_label" 1))
 (define (make-inactive-get-arity) (make-inactive "get_arity" 1))
 (define (make-inactive-map-args) (make-inactive "map_args" 3))
+(define (make-inactive-eval-args) (make-inactive "eval_args" 1))
 (define (make-inactive-quote) (make-inactive "quote" 1))
 (define (make-inactive-delay) (make-inactive "delay" 1))
 (define (make-inactive-hold) (make-inactive "hold" 1))

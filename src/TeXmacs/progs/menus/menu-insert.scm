@@ -50,18 +50,18 @@
       ("Visible" (make-inactive-compound-arg "cite"))
       ("Invisible" (make-inactive-compound-arg "nocite")))
   (-> "Index entry"
-      ("Main" (make-inactive-apply-arg "index"))
-      ("Sub" (make-inactive-apply-args "subindex" 2))
-      ("Subsub" (make-inactive-apply-args "subsubindex" 3))
-      ("Complex" (make-inactive-apply-args "index-complex" 4))
+      ("Main" (make-inactive-compound-arg "index"))
+      ("Sub" (make-inactive-compound-args "subindex" 2))
+      ("Subsub" (make-inactive-compound-args "subsubindex" 3))
+      ("Complex" (make-inactive-compound-args "index-complex" 4))
       ---
-      ("Interjection" (make-inactive-apply-args "index-line" 2)))
+      ("Interjection" (make-inactive-compound-args "index-line" 2)))
   (-> "Glossary entry"
-      ("Regular" (make-inactive-apply-arg "glossary"))
-      ("Explained" (make-inactive-apply-args "glossary-explain" 2))
-      ("Duplicate" (make-inactive-apply-arg "glossary-dup"))
+      ("Regular" (make-inactive-compound-arg "glossary"))
+      ("Explained" (make-inactive-compound-args "glossary-explain" 2))
+      ("Duplicate" (make-inactive-compound-arg "glossary-dup"))
       ---
-      ("Interjection" (make-inactive-apply-arg "glossary-line"))))
+      ("Interjection" (make-inactive-compound-arg "glossary-line"))))
 
 (menu-bind insert-presentation-tag-menu
   ("Underline" (make-compound-arg "underline"))
@@ -128,8 +128,14 @@
   ("Argument" (make-inactive-argument))
   ("Compound" (make-inactive-compound))
   ---
-  ("Function" (make-inactive-function))
-  ("Apply" (make-inactive-apply)))
+  ("Long macro" (make-inactive-xmacro))
+  ("Get label" (make-inactive-get-label))
+  ("Get arity" (make-inactive-get-arity))
+  ("Map arguments" (make-inactive-map-args))
+  (if (tmp-use-apply?)
+      ---
+      ("Function" (make-inactive-function))
+      ("Apply" (make-inactive-apply))))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
@@ -236,8 +242,8 @@
       ("Footer" (make-inactive-assign-arg "this page footer"))
       ---
       (group "Permanent")
-      ("Header" (make-inactive-apply-arg "set-header"))
-      ("Footer" (make-inactive-apply-arg "set-footer"))
+      ("Header" (make-inactive-compound-arg "set-header"))
+      ("Footer" (make-inactive-compound-arg "set-footer"))
       ("Odd page header" (make-inactive-assign-arg "odd page header"))
       ("Odd page footer" (make-inactive-assign-arg "odd page footer"))
       ("Even page header" (make-inactive-assign-arg "even page header"))

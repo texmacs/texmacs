@@ -154,6 +154,7 @@ edit_dynamic_rep::activate () {
 	  if (N(st) == 2) insert_tree (st[1]);
 	  return;
 	}
+#ifndef UPGRADE_APPLY
 	else if (is_func (f, FUNCTION)) {
 	  int n= N(f);
 	  tree r (APPLY, n);
@@ -161,6 +162,7 @@ edit_dynamic_rep::activate () {
 	  if ((n>1) && (N(st)==2)) r[1]= copy (st[1]);
 	  st= r;
 	}
+#endif
 	else if (f == UNINIT) {
 	  set_message ("Error: unknown command", "activate hybrid command");
 	  return;
@@ -267,6 +269,7 @@ edit_dynamic_rep::insert_argument () {
 	activate_macro (p, t[0]->label, f);
 	if (N(t) == 2) insert_tree (t[1]);
       }
+#ifndef UPGRADE_APPLY
       else if (is_func (f, FUNCTION)) {
 	p= path_up (p);
 	tree r (APPLY, n);
@@ -275,6 +278,7 @@ edit_dynamic_rep::insert_argument () {
 	assign (p, r);
 	go_to (p * path (1, 0));
       }
+#endif
     }
     return;
   }
@@ -418,7 +422,11 @@ edit_dynamic_rep::temp_proof_fix () {
 
 void
 edit_dynamic_rep::make_apply (string s) {
+#ifdef UPGRADE_APPLY
+  tree t (COMPOUND, s);
+#else
   tree t (APPLY, s);
+#endif
   insert_tree (t);
 }
 
@@ -470,21 +478,19 @@ edit_dynamic_rep::back_compound (path p) {
 void
 edit_dynamic_rep::back_extension (path p) {
   tree st= subtree (et, p);
-  if ((drd->get_props (L (st)) & ACCESSIBLE_MASK) != ACCESSIBLE)
+  int n= N(st);
+  if (n==0) {
+    assign (p, "");
+    correct (path_up (p));
+  }
+  else if ((drd->get_props (L (st)) & ACCESSIBLE_MASK) != ACCESSIBLE)
     back_dynamic (p);
   else if (is_func (subtree (et, path_up (p)), INACTIVE))
     back_dynamic (p);
-  else {
-    int n= N(st);
-    if (n==0) {
-      assign (p, "");
-      correct (path_up (p));
-    }
-    else if ((n==1) &&
-	     ((is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE))))
-      back_table (p * 1);
-    else go_to (end (et, p * (n-1)));
-  }
+  else if ((n==1) &&
+	   ((is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE))))
+    back_table (p * 1);
+  else go_to (end (et, p * (n-1)));
 }
 
 static bool
