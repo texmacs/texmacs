@@ -109,9 +109,9 @@ init_std_drd () {
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
-  init (LEFT, "left", fixed (1));
-  init (MID, "mid", fixed (1));
-  init (RIGHT, "right", fixed (1));
+  init (LEFT, "left", options (1, 2));
+  init (MID, "mid", options (1, 2));
+  init (RIGHT, "right", options (1, 2));
   init (BIG, "big", fixed (1));
   init (LPRIME, "lprime", fixed (1) -> name ("left prime"));
   init (RPRIME, "rprime", fixed (1) -> name ("right prime"));

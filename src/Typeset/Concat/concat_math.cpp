@@ -28,34 +28,35 @@ concater_rep::typeset_group (tree t, path ip) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_left (tree t, path ip) {
+concater_rep::typeset_large (tree t, path ip, int type, string prefix) {
   if ((N(t) == 1) && is_atomic (t[0])) {
-    string s= "<left-" * t[0]->label * ">";
+    string s= prefix * t[0]->label * ">";
     box b= text_box (ip, 0, s, env->fn, env->col);
-    print (LEFT_BRACKET_ITEM, b);
+    print (type, b);
     // temporarary: use parameters from group-open class in texmath.syx
-  }
-}
-
-void
-concater_rep::typeset_middle (tree t, path ip) {
-  if ((N(t) == 1) && is_atomic (t[0])) {
-    string s= "<mid-" * t[0]->label * ">";
-    box b= text_box (ip, 0, s, env->fn, env->col);
-    print (MIDDLE_BRACKET_ITEM, b);
-    penalty_min (0);
-    // temporarary: use parameters from group-separator class in texmath.syx
-  }
-}
-
-void
-concater_rep::typeset_right (tree t, path ip) {
-  if ((N(t) == 1) && is_atomic (t[0])) {
-    string s= "<right-" * t[0]->label * ">";
-    box b= text_box (ip, 0, s, env->fn, env->col);
-    print (RIGHT_BRACKET_ITEM, b);
     // bug: allow hyphenation after ) and before *
-    // temporarary: use parameters from group-close class in texmath.syx
+  }
+  else if ((N(t) == 2) && is_atomic (t[0]) && is_int (t[1])) {
+    string s= prefix * t[0]->label * "-" * t[1]->label * ">";
+    box b= text_box (ip, 0, s, env->fn, env->col);
+    SI dy= env->fn->yfrac - ((b->y1 + b->y2) >> 1);
+    box mvb= move_box (ip, b, 0, dy, false, true);
+    print (STD_ITEM, macro_box (ip, mvb, env->fn));
+  }
+  else if ((N(t) >= 2) && is_atomic (t[0])) {
+    SI y1, y2;
+    if (N(t) == 2) {
+      SI l= env->decode_length (t[1]) >> 1;
+      y1= env->fn->yfrac - l;
+      y2= env->fn->yfrac + l;
+    }
+    else {
+      y1= env->decode_length (t[1]);
+      y2= env->decode_length (t[2]);
+    }
+    string s= prefix * t[0]->label * ">";
+    box b= delimiter_box (ip, s, env->fn, env->col, y1, y2);
+    print (STD_ITEM, b);
   }
 }
 
