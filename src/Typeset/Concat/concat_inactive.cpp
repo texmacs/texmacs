@@ -59,28 +59,6 @@ concater_rep::typeset_inactive_latex (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_inactive_hybrid (tree t, path ip) {
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (ip, 0));
-  ghost ("\\", descend (ip, 0));
-  tree old_col= env->local_begin (COLOR, "dark green");
-  typeset (t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  if (N(t) == 2) {
-    print (space (0, 0, env->fn->spc->max));
-    ghost ("|", descend (descend (ip, 1), 0));
-    print (space (0, 0, env->fn->spc->max));
-    typeset (t[1], descend (ip, 1));
-  }
-  if (N(t) == 0) ghost (">", descend (ip, 1));
-  else ghost (">", descend (descend (ip, N(t)-1), right_index (t[N(t)-1])));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
 concater_rep::typeset_inactive_specific (tree t, path ip) {
   bool flag= (t[0] != "texmacs") && (t[0] != "screen") && (t[0] != "printer");
   string mode, var, value;
@@ -139,32 +117,6 @@ concater_rep::typeset_inactive_compound (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_inactive_action (string type, tree t, path ip) {
-  int i, n= N(t);
-  tree old_tf;
-  penalty_min (0);
-  marker (descend (ip, 0));
-  ghost ("<", descend (ip, 0));
-  ghost (type, descend (ip, 0));
-  for (i=0; i<n; i++) {
-    print (space (0, 0, env->fn->spc->max));
-    print (space (0, 0, env->fn->spc->max));
-    ghost ("|", descend (descend (ip, i), 0));
-    print (space (0, 0, env->fn->spc->max));
-    if (i< (n-1)) penalty_min (0);
-    if (i==(n-1)) old_tf= env->local_begin (FONT_FAMILY, "tt");
-    typeset (t[i], descend (ip, i));
-    if (i==(n-1)) env->local_end (FONT_FAMILY, old_tf);
-    // ghost ("}", descend (descend (ip, i), right_index (t[i])));
-  }
-  if (N(t) == 0) ghost (">", descend (ip, 1));
-  else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
-  marker (descend (ip, 1));
-  print (space (0, 0, env->fn->spc->max));
-  penalty_min (0);
-}
-
-void
 concater_rep::typeset_inactive_string (string s, path ip) {
   penalty_min (0);
   marker (descend (ip, 0));
@@ -208,33 +160,85 @@ concater_rep::typeset_unknown (string which, tree t, path ip, bool flag) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_inactive_angular (
-  tree t, path ip, int pos1, int pos2)
+concater_rep::typeset_modified (
+  tree t, path ip, string var, tree val, bool test)
 {
-  int i, j;
-  tree old_col;
-  string type= replace (env->drd->get_name (L(t)), " ", "-");
+  if (test) {
+    tree old_val= env->local_begin (var, val);
+    typeset (t, ip);
+    env->local_end (var, old_val);
+  }
+  else typeset (t, ip);
+}
+
+void
+concater_rep::typeset_inactive_angular_arg (tree t, path ip, int i) {
+  // NOTE: the branching information might also be stored in the DRD.
+  int n= N(t);
+  switch (L(t)) {
+  case ASSIGN:
+  case DRD_PROPS:
+  case VALUE:
+    typeset_modified (t[i], descend (ip, i), COLOR, "dark green", i==0);
+    break;
+  case WITH:
+    typeset_modified (t[i], descend (ip, i), COLOR, "dark green",
+		      (i<n-1) && ((i&1)==0));
+    break;
+  case TWITH:
+  case CWITH:
+    typeset_modified (t[i], descend (ip, i), COLOR, "dark green", i==n-2);
+    break;
+  case MACRO:
+    typeset_modified (t[i], descend (ip, i), COLOR, "brown", i<n-1);
+    break;
+  case XMACRO:
+  case ARG:
+    typeset_modified (t[i], descend (ip, i), COLOR, "brown", i==0);
+    break;
+  case MAP_ARGS:
+    if (i<2) typeset_modified (t[i], descend (ip, i), COLOR, "dark green");
+    else typeset_modified (t[i], descend (ip, i), COLOR, "brown", i==2);
+    break;
+  case ACTION:
+    typeset_modified (t[i], descend (ip, i), FONT_FAMILY, "tt", i==n-1);
+    break;
+  default:
+    typeset (t[i], descend (ip, i));
+    break;
+  }
+}
+
+void
+concater_rep::typeset_inactive_angular (tree t, path ip) {
+  int i=0;
+  string type= as_string (L(t));
+  //string type= replace (env->drd->get_name (L(t)), " ", "-");
 
   penalty_min (0);
   marker (descend (ip, 0));
   ghost ("<", descend (ip, 0));
-  ghost (type, descend (ip, 0));
-  for (i=0; i<N(t); i++) {
+  switch (L(t)) {
+  case HYBRID:
+    ghost ("\\", descend (ip, 0));
+    typeset_modified (t[0], descend (ip, 0), COLOR, "dark green");
+    i=1;
+    break;
+  default:
+    ghost (type, descend (ip, 0));
+    break;
+  }
+
+  for (; i<N(t); i++) {
     print (space (0, 0, env->fn->spc->max));
-    int start= N(a);
     print (space (0, 0, env->fn->spc->max));
     ghost ("|", descend (descend (ip, i), 0));
     print (space (0, 0, env->fn->spc->max));
     if (i<N(t)-1) penalty_min (0);
-    if (i<pos1) old_col= env->local_begin (COLOR, "dark green");
-    typeset (t[i], descend (ip, i));
-    if (i<pos1) env->local_end (COLOR, old_col);
-    // ghost ("}", descend (descend (ip, i), right_index (t[i])));
-    int end= N(a);
-    if (i<pos2) for (j=start; j<end; j++)
-      a[j]->b->relocate (decorate_left (ip), true);
+    typeset_inactive_angular_arg (t, ip, i);
   }
-  if (i<=pos2) ghost (">", descend (ip, 1));
+
+  if (i==0) ghost (">", descend (ip, 1));
   else ghost (">", descend (descend (ip, i-1), right_index (t[i-1])));
   marker (descend (ip, 1));
   print (space (0, 0, env->fn->spc->max));
@@ -273,22 +277,6 @@ concater_rep::typeset_inactive (tree t, path ip) {
     break;
     */
 
-  case ASSIGN:
-    typeset_inactive_angular (t, ip, 1);
-    break;
-  case WITH:
-    typeset_inactive_angular (t, ip, N(t)-1);
-    break;
-  case MACRO:
-    typeset_inactive_angular (t, ip, N(t)-1);
-    break;
-  case DRD_PROPS:
-    typeset_inactive_angular (t, ip, 1);
-    break;
-  case XMACRO:
-    typeset_inactive_angular (t, ip, 1);
-    break;
-
   case INACTIVE:
     typeset_inactive_tag (t, ip);
     break;
@@ -306,9 +294,6 @@ concater_rep::typeset_inactive (tree t, path ip) {
     break;
   case LATEX:
     typeset_inactive_latex (t, ip);
-    break;
-  case HYBRID:
-    typeset_inactive_hybrid (t, ip);
     break;
   case SPECIFIC:
     typeset_inactive_specific (t, ip);

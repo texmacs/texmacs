@@ -78,15 +78,15 @@ class concater_rep {
 
   // disactivated markup
   void typeset_unknown (string which, tree t, path ip, bool flag= false);
+  void typeset_modified (tree t, path ip, string v, tree t, bool test= true);
   void typeset_inactive (tree t, path ip);
   void typeset_inactive_tag (tree t, path ip);
-  void typeset_inactive_angular (tree t, path ip, int p1=0, int p2=0);
+  void typeset_inactive_angular (tree t, path ip);
+  void typeset_inactive_angular_arg (tree t, path ip, int i);
   void typeset_inactive_string (string s, path ip);
   void typeset_inactive_compound (tree t, path ip);
-  void typeset_inactive_action (string s, tree t, path ip);
   void typeset_inactive_symbol (tree t, path ip);
   void typeset_inactive_latex (tree t, path ip);
-  void typeset_inactive_hybrid (tree t, path ip);
   void typeset_inactive_specific (tree t, path ip);
 
   // active macro mechanisms

@@ -465,8 +465,6 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     typeset_inactive_latex (t, ip);
     break;
   case HYBRID:
-    typeset_inactive_hybrid (t, ip);
-    break;
   case TUPLE:
   case ATTR:
   case COLLECTION:
