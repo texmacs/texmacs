@@ -305,6 +305,8 @@ edit_env_rep::exec (tree t) {
     return exec_spc ();
   case XSPC:
     return exec_xspc ();
+  case BLS:
+    return exec_bls ();
   case LN:
     return exec_ln ();
   case SEP:
@@ -313,6 +315,8 @@ edit_env_rep::exec (tree t) {
     return exec_yfrac ();
   case EX:
     return exec_ex ();
+  case EMW:
+    return exec_emw ();
   case PAR:
     return exec_par ();
   case PAG:

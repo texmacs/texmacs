@@ -215,10 +215,12 @@ init_std_drd () {
   init (FNS, "fns", fixed (0));
   init (SPC, "spc", fixed (0));
   init (XSPC, "xspc", fixed (0));
+  init (BLS, "bls", fixed (0));
   init (LN, "ln", fixed (0));
   init (SEP, "sep", fixed (0));
   init (YFRAC, "yfrac", fixed (0));
   init (EX, "ex", fixed (0));
+  init (EMW, "emw", fixed (0));
   init (PAR, "par", fixed (0));
   init (PAG, "pag", fixed (0));
   init (TMPT, "tmpt", fixed (0));

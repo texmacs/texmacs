@@ -57,6 +57,7 @@ font_rep::copy_math_pars (font fn) {
   wpt          = fn->wpt;
   wquad        = fn->wquad;
   wline        = fn->wline;
+  wM           = fn->wM;
 }
 
 double font_rep::get_left_slope  (string s) { (void) s; return slope; }

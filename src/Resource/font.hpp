@@ -50,6 +50,7 @@ struct font_rep: rep<font> {
   SI       wpt;              // width of one point in font
   SI       wquad;            // wpt * design size in points
   SI       wline;            // width of fraction bars and so
+  SI       wM;               // width of M (widest character, usually)
 
   font_rep (display dis, string name);
   font_rep (display dis, string name, font fn);
