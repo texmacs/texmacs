@@ -399,7 +399,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 	i= j+2;
       }
       t[0]->label= t[0]->label * "*";
-      option= false;      
+      option= false;
     }
     else {
       if (arity>0) {

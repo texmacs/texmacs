@@ -74,7 +74,7 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   for (i=0; i<n; i++)
     a[i]= env->decode_point (env->exec (t[i]));
   if (close) a << copy (a[0]);
-  if (N(a) == 0) typeset_dynamic (tree (ERROR, "bad line", t), ip);
+  if (N(a) == 0) typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
     if (N(a) == 1) a << copy (a[0]);
     curve c= env->fr (poly_segment (a));
