@@ -5,7 +5,29 @@
 <\body>
   <tmdoc-title|Typesetting mathematics>
 
-  \;
+  <\explain>
+    <var-val|math-level|0><explain-synopsis|index level>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|math-display|false><explain-synopsis|display style>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|math-condensed|><explain-synopsis|condensed display style>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|math-vpos|><explain-synopsis|position in fractions>
+  <|explain>
+    Please document.
+  </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
 

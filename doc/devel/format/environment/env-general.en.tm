@@ -5,11 +5,7 @@
 <\body>
   <tmdoc-title|General environment variables>
 
-  <\explain>
-    <var-val|mode|text><explain-synopsis|major mode>
-  <|explain>
-    Please document.
-  </explain>
+  Local properties
 
   <\explain>
     <var-val|mode|text><explain-synopsis|major mode>
@@ -18,19 +14,67 @@
   </explain>
 
   <\explain>
-    <var-val|mode|text><explain-synopsis|major mode>
+    <var-val|language|english>
+
+    <var-val|math-language|texmath>
+
+    <var-val|prog-language|><explain-synopsis|language>
   <|explain>
     Please document.
   </explain>
 
   <\explain>
-    <var-val|mode|text><explain-synopsis|major mode>
+    <var-val|prog-session|><explain-synopsis|language>
   <|explain>
     Please document.
   </explain>
 
   <\explain>
-    <var-val|mode|text><explain-synopsis|major mode>
+    <var-val|magnification|1><explain-synopsis|magnification>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|color|black><explain-synopsis|foreground color>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|bg-color|white><explain-synopsis|background color>
+  <|explain>
+    Please document.
+  </explain>
+
+  (Rather) global properties
+
+  <\explain>
+    <var-val|preamble|false><explain-synopsis|edit source tree?>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|info-flag|short><explain-synopsis|informative flags style>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|save-aux|true><explain-synopsis|save auxiliary content>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|dpi|600><explain-synopsis|dots per inch>
+  <|explain>
+    Please document.
+  </explain>
+
+  <\explain>
+    <var-val|sfactor|5><explain-synopsis|shrinking factor>
   <|explain>
     Please document.
   </explain>
