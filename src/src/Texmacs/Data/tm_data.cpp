@@ -120,7 +120,7 @@ tm_data_rep::new_buffer (url name, tree doc) {
   int nr= find_buffer (name);
   if (nr != -1) return bufs[nr];
   tm_buffer buf= new_buffer (name);
-  set_document (buf->rp, extract (doc, "body"));
+  buf->t      = extract (doc, "body");
   buf->project= extract (doc, "project");
   buf->style  = extract (doc, "style");
   buf->init   = hashmap<string,tree> (UNINIT, extract (doc, "initial"));
@@ -145,14 +145,14 @@ tm_data_rep::revert_buffer (url name, tree doc) {
   buf->fin    = hashmap<string,tree> (UNINIT, extract (doc, "final"));
   buf->ref    = hashmap<string,tree> (UNINIT, extract (doc, "references"));
   buf->aux    = hashmap<string,tree> (UNINIT, extract (doc, "auxiliary"));
-  if (N(buf->vws)==0) set_document (buf->rp, extract (doc, "body"));
+  if (N(buf->vws)==0) buf->t= extract (doc, "body");
   else for (i=0; i<N(buf->vws); i++) {
     tm_view vw= buf->vws[i];
-    if (i==0) vw->ed->assign (vw->ed->rp, extract (doc, "body"));
+    if (i==0) vw->ed->assign (path(), extract (doc, "body"));
     vw->ed->set_style (buf->style);
     vw->ed->set_init  (buf->init);
     vw->ed->set_fin   (buf->fin);
-    vw->ed->notify_page_change ();
+    vw->ed->set_page_parameters ();
     vw->ed->add_init (buf->init);
     vw->ed->notify_change (THE_DECORATIONS);
     vw->ed->typeset_invalidate_env ();
@@ -209,7 +209,7 @@ tm_data_rep::new_view (url name) {
   ed->set_style (buf->style);
   ed->set_init (buf->init);
   ed->set_fin (buf->fin);
-  ed->notify_page_change ();
+  ed->set_page_parameters ();
   ed->add_init (buf->init);
   ed->notify_change (THE_DECORATIONS);
   ed->notify_change (THE_AUTOMATIC_SIZE);
@@ -347,16 +347,6 @@ tm_data_rep::new_buffer_in_new_window (url name, tree doc) {
 /******************************************************************************
 * Exported routines
 ******************************************************************************/
-
-int
-tm_data_rep::nr_bufs () {
-  return N(bufs);
-}
-
-tm_buffer
-tm_data_rep::get_buf (int i) {
-  return (tm_buffer) bufs[i];
-}
 
 void
 tm_data_rep::new_buffer () {
@@ -591,7 +581,7 @@ tm_data_rep::project_update_menu () {
   s << "(\"" << buf->prj->abbr << "\" ";
   s << "(switch-to-buffer \"" * as_string (buf->prj->name) * "\"))";
 
-  tree t= subtree (the_et, buf->prj->rp);
+  tree t= buf->prj->t;
   int i, j, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], INCLUDE, 1) && is_atomic (t[i][0])) {
@@ -604,34 +594,6 @@ tm_data_rep::project_update_menu () {
 
   s << ")";
   (void) eval (s);
-}
-
-/******************************************************************************
-* Management of all edit trees
-******************************************************************************/
-
-tree the_et;
-
-path
-new_document () {
-  int i, n= N(the_et);
-  for (i=0; i<n; i++)
-    if (the_et[i] == UNINIT) {
-      assign (the_et[i], tree (DOCUMENT, ""));
-      return path (i); // obtain_ip (the_et[i]);
-    }
-  insert (the_et, n, tuple (tree (DOCUMENT, "")));
-  return path (n); // obtain_ip (the_et[n]);
-}
-
-void
-delete_document (path rp) {
-  assign (subtree (the_et, rp), UNINIT);
-}
-
-void
-set_document (path rp, tree t) {
-  assign (subtree (the_et, rp), copy (t));
 }
 
 /******************************************************************************

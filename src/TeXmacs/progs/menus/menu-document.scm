@@ -38,10 +38,6 @@
    (begin
      (init-language "czech")
      (set-output-language "czech")))
-  ("Danish"
-   (begin
-     (init-language "danish")
-     (set-output-language "danish")))
   ("Dutch"
    (begin
      (init-language "dutch")
@@ -109,77 +105,21 @@
 
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
-  (-> "Add package"
-      (link add-package-menu)
+  (-> "Use package"
+      (link use-package-menu)
       ---
-      ("Other" ... (interactive '("Use package:") 'init-add-package)))
-  (-> "Remove package"
-      (link remove-package-menu)
-      ---
-      ("Other" ... (interactive '("Use package:") 'init-remove-package)))
+      ("Other" ... (interactive '("Use package:") 'init-extra-style)))
   (-> "Master"
       ("Attach" (interactive '("Master file:") 'project-attach))
       ("Detach" (project-detach)))
   (-> "View"
-      ("Edit source tree" (toggle-preamble))
+      ("Preamble mode" (toggle-preamble))
       (-> "Informative flags"
 	  ("Default" (init-default "info-flag"))
 	  ---
 	  ("None" (init-env "info-flag" "none"))
 	  ("Short" (init-env "info-flag" "short"))
-	  ("Detailed" (init-env "info-flag" "detailed")))
-      (-> "Page layout"
-	  ("Default" (init-default "page-screen-margin" "page-show-hf"
-				   "page-screen-left" "page-screen-right"
-				   "page-screen-top" "page-screen-bot"))
-	  ---
-	  ("Show header and footer" (toggle-visible-header-and-footer))
-	  ("Margins as on paper" (toggle-page-screen-margin))
-	  ---
-	  (when (test-env? "page-screen-margin" "true")
-		("Left margin" ...
-		 (interactive '("Left margin:")
-			      '(lambda (s) (init-env "page-screen-left" s))))
-		("Right margin" ...
-		 (interactive '("Right margin:")
-			      '(lambda (s) (init-env "page-screen-right" s))))
-		("Top margin" ...
-		 (interactive '("Top margin:")
-			      '(lambda (s) (init-env "page-screen-top" s))))
-		("Bottom margin" ...
-		 (interactive '("Bottom margin:")
-			      '(lambda (s) (init-env "page-screen-bot" s))))))
-      ---
-      (group "Source tags")
-      (-> "Style"
-	  ("Default" (init-default "src-style"))
-	  ---
-	  ("Angular" (init-env "src-style" "angular"))
-	  ("Scheme" (init-env "src-style" "scheme"))
-	  ("Functional" (init-env "src-style" "functional"))
-	  ("Latex" (init-env "src-style" "latex")))
-      (-> "Special"
-	  ("Default" (init-default "src-special"))
-	  ---
-	  ("None" (init-env "src-special" "raw"))
-	  ("Formatting" (init-env "src-special" "format"))
-	  ("Normal" (init-env "src-special" "normal"))
-	  ("Maximal" (init-env "src-special" "maximal")))
-      (-> "Compactification"
-	  ("Default" (init-default "src-compact"))
-	  ---
-	  ("Minimal" (init-env "src-compact" "none"))
-	  ("Only inline tags" (init-env "src-compact" "inline"))
-	  ("Normal" (init-env "src-compact" "normal"))
-	  ("Inline arguments" (init-env "src-compact" "inline args"))
-	  ("Maximal" (init-env "src-compact" "all")))
-      (-> "Closing style"
-	  ("Default" (init-default "src-close"))
-	  ---
-	  ("Repeat" (init-env "src-close" "repeat"))
-	  ("Stretched" (init-env "src-close" "long"))
-	  ("Compact" (init-env "src-close" "compact"))
-	  ("Minimal" (init-env "src-close" "minimal"))))
+	  ("Detailed" (init-env "info-flag" "detailed"))))
   ---
   (-> "Font"
       (-> "Text font"
@@ -292,7 +232,6 @@
       ---
       ("British" (init-language "british"))
       ("Czech" (init-language "czech"))
-      ("Danish" (init-language "danish"))
       ("Dutch" (init-language "dutch"))
       ("English" (init-language "english"))
       ("Finnish" (init-language "finnish"))
@@ -346,125 +285,116 @@
       (-> "Type"
 	  ("Default" (check "*" (test-default? "page-medium"))
 	   (init-default "page-medium")
-	   (notify-page-change))
+	   (set-page-parameters))
 	  ---
-	  ("Paper" (init-page-medium "paper"))
-	  ("Papyrus" (init-page-medium "papyrus"))
-	  ("Automatic" (init-page-medium "automatic")))
+	  ("Paper" (set-page-medium "paper"))
+	  ("Papyrus" (set-page-medium "papyrus"))
+	  ("Automatic" (set-page-medium "automatic")))
       (-> "Size"
-	  ("Default"
-	   (check "*" (test-default? "page-type" "page-width" "page-height"))
-	   (init-default "page-type" "page-width" "page-height")
-	   (notify-page-change))
+	  ("Default" (check "*" (test-default? "page-type"))
+	   (init-default "page-type")
+	   (set-page-parameters))
 	  ---
 	  (group "Common formats")
-	  ("A3" (init-page-type "a3"))
-	  ("A4" (init-page-type "a4"))
-	  ("A5" (init-page-type "a5"))
-	  ("B4" (init-page-type "b4"))
-	  ("B5" (init-page-type "b5"))
-	  ("Letter" (init-page-type "letter"))
-	  ("Legal" (init-page-type "legal"))
-	  ("Executive" (init-page-type "executive"))
+	  ("A3" (set-page-type "a3"))
+	  ("A4" (set-page-type "a4"))
+	  ("A5" (set-page-type "a5"))
+	  ("B4" (set-page-type "b4"))
+	  ("B5" (set-page-type "b5"))
+	  ("Letter" (set-page-type "letter"))
+	  ("Legal" (set-page-type "legal"))
+	  ("Executive" (set-page-type "executive"))
 	  ---
 	  (group "Standard formats")
 	  (-> "A series"
-	      ("A0" (init-page-type "a0"))
-	      ("A1" (init-page-type "a1"))
-	      ("A2" (init-page-type "a2"))
-	      ("A3" (init-page-type "a3"))
-	      ("A4" (init-page-type "a4"))
-	      ("A5" (init-page-type "a5"))
-	      ("A6" (init-page-type "a6"))
-	      ("A7" (init-page-type "a7"))
-	      ("A8" (init-page-type "a8"))
-	      ("A9" (init-page-type "a9")))
+	      ("A0" (set-page-type "a0"))
+	      ("A1" (set-page-type "a1"))
+	      ("A2" (set-page-type "a2"))
+	      ("A3" (set-page-type "a3"))
+	      ("A4" (set-page-type "a4"))
+	      ("A5" (set-page-type "a5"))
+	      ("A6" (set-page-type "a6"))
+	      ("A7" (set-page-type "a7"))
+	      ("A8" (set-page-type "a8"))
+	      ("A9" (set-page-type "a9")))
 	  (-> "B series"
-	      ("B0" (init-page-type "b0"))
-	      ("B1" (init-page-type "b1"))
-	      ("B2" (init-page-type "b2"))
-	      ("B3" (init-page-type "b3"))
-	      ("B4" (init-page-type "b4"))
-	      ("B5" (init-page-type "b5"))
-	      ("B6" (init-page-type "b6"))
-	      ("B7" (init-page-type "b7"))
-	      ("B8" (init-page-type "b8"))
-	      ("B9" (init-page-type "b9")))
+	      ("B0" (set-page-type "b0"))
+	      ("B1" (set-page-type "b1"))
+	      ("B2" (set-page-type "b2"))
+	      ("B3" (set-page-type "b3"))
+	      ("B4" (set-page-type "b4"))
+	      ("B5" (set-page-type "b5"))
+	      ("B6" (set-page-type "b6"))
+	      ("B7" (set-page-type "b7"))
+	      ("B8" (set-page-type "b8"))
+	      ("B9" (set-page-type "b9")))
 	  (-> "Arch series"
-	      ("ArchA" (init-page-type "archA"))
-	      ("ArchB" (init-page-type "archB"))
-	      ("ArchC" (init-page-type "archC"))
-	      ("ArchD" (init-page-type "archD"))
-	      ("ArchE" (init-page-type "archE")))
+	      ("ArchA" (set-page-type "archA"))
+	      ("ArchB" (set-page-type "archB"))
+	      ("ArchC" (set-page-type "archC"))
+	      ("ArchD" (set-page-type "archD"))
+	      ("ArchE" (set-page-type "archE")))
 	  (-> "American"
-	      ("10x14" (init-page-type "10x14"))
-	      ("11x17" (init-page-type "11x17"))
-	      ("C5" (init-page-type "C5"))
-	      ("Comm10" (init-page-type "Comm10"))
-	      ("DL" (init-page-type "DL"))
-	      ("Executive" (init-page-type "executive"))
-	      ("Half letter" (init-page-type "halfletter"))
-	      ("Half executive" (init-page-type "halfexecutive"))
-	      ("Ledger" (init-page-type "ledger"))
-	      ("Legal" (init-page-type "legal"))
-	      ("Letter" (init-page-type "letter"))
-	      ("Monarch" (init-page-type "Monarch")))
+	      ("10x14" (set-page-type "10x14"))
+	      ("11x17" (set-page-type "11x17"))
+	      ("C5" (set-page-type "C5"))
+	      ("Comm10" (set-page-type "Comm10"))
+	      ("DL" (set-page-type "DL"))
+	      ("Executive" (set-page-type "executive"))
+	      ("Half letter" (set-page-type "halfletter"))
+	      ("Half executive" (set-page-type "halfexecutive"))
+	      ("Ledger" (set-page-type "ledger"))
+	      ("Legal" (set-page-type "legal"))
+	      ("Letter" (set-page-type "letter"))
+	      ("Monarch" (set-page-type "Monarch")))
 	  (-> "Miscellaneous"
-	      ("C sheet" (init-page-type "csheet"))
-	      ("D sheet" (init-page-type "dsheet"))
-	      ("E sheet" (init-page-type "esheet"))
-	      ("Flsa" (init-page-type "flsa"))
-	      ("Flse" (init-page-type "flse"))
-	      ("Folio" (init-page-type "folio"))
-	      ("Lecture note" (init-page-type "lecture note"))
-	      ("Note" (init-page-type "note"))
-	      ("Quarto" (init-page-type "quarto"))
-	      ("Statement" (init-page-type "statement"))
-	      ("Tabloid" (init-page-type "tabloid")))
+	      ("C sheet" (set-page-type "csheet"))
+	      ("D sheet" (set-page-type "dsheet"))
+	      ("E sheet" (set-page-type "esheet"))
+	      ("Flsa" (set-page-type "flsa"))
+	      ("Flse" (set-page-type "flse"))
+	      ("Folio" (set-page-type "folio"))
+	      ("Lecture note" (set-page-type "lecture note"))
+	      ("Note" (set-page-type "note"))
+	      ("Quarto" (set-page-type "quarto"))
+	      ("Statement" (set-page-type "statement"))
+	      ("Tabloid" (set-page-type "tabloid")))
 	  ---
 	  ("Other" ...
 	   (interactive '("Page width:" "Page height:") 'init-page-size)))
       (-> "Orientation"
 	  ("Default" (check "*" (test-default? "page-orientation"))
 	   (init-default "page-orientation")
-	   (notify-page-change))
+	   (set-page-parameters))
 	  ---
-	  ("Portrait" (init-page-orientation "portrait"))
-	  ("Landscape" (init-page-orientation "landscape")))
-      (-> "Margins"
-	  ("Default" (init-default "page-width-margin"
-				   "page-odd" "page-even" "page-right"
-				   "par-width" "page-odd-shift"
-				   "page-even-shift"))
+	  ("Portrait" (set-page-orientation "portrait"))
+	  ("Landscape" (set-page-orientation "landscape")))
+      (-> "Layout"
+	  ("Default" (init-default "page-odd" "page-even"
+				   "page-right" "page-top"
+				   "page-bot" "par-width"))
 	  ---
-	  (when (test-env? "page-width-margin" "false")
-		("Odd page left margin" ...
-		 (interactive '("Odd page left margin:")
-			      '(lambda (s) (init-env "page-odd" s))))
-		("Odd page right margin" ...
-		 (interactive '("Odd page right margin:")
-			      '(lambda (s) (init-env "page-right" s))))
-		("Even page left margin" ...
-		 (interactive '("Even page left margin:")
-			      '(lambda (s) (init-env "page-even" s)))))
-	  ("Top margin" ...
-	   (interactive '("Top margin:")
-			'(lambda (s) (init-env "page-top" s))))
-	  ("Bottom margin" ...
-	   (interactive '("Bottom margin:")
-			'(lambda (s) (init-env "page-bot" s))))
+	  ("Set margins" ...
+	   (interactive
+	    '("Left margin:" "Right margin:"
+	      "Top margin:" "Bottom margin:") 'init-page-margins))
+	  ("Set text width" ...
+	   (interactive '("Text width:") 'init-text-width)))
+      (-> "Screen layout"
+	  ("Default" (init-default "page-reduce-left"
+				   "page-reduce-right"
+				   "page-reduce-top"
+				   "page-reduce-bot"
+				   "page-show-hf"))
 	  ---
-	  ("Alternative specification" (toggle-page-width-margin))
-	  (when (test-env? "page-width-margin" "true")
-		("Paragraph width" ...
-		 (interactive '("Paragraph width:")
-			      '(lambda (s) (init-env "par-width" s))))
-		("Odd page shift" ...
-		 (interactive '("Odd page shift:")
-			      '(lambda (s) (init-env "page-odd-shift" s))))
-		("Even page shift" ...
-		 (interactive '("Even page shift:")
-			      '(lambda (s) (init-env "page-even-shift" s))))))
+	  ("Margins as on paper" (init-as-on-paper))
+	  ("Reduce margins" ...
+	   (interactive
+	    '("Reduce left margin by:"
+	      "Reduce right margin by:"
+	      "Reduce top margin by:"
+	      "Reduce bottom margin by:") 'init-screen-reduction))
+	  ("Show header and footer" (toggle-visible-header-and-footer)))
       ---
       (group "Breaking")
       (-> "Algorithm"

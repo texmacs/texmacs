@@ -19,7 +19,7 @@
   ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
 
-  ("$" (if (inside? "hybrid") (insert "$") (make-with "mode" "math")))
+  ("$" (if (inside? "hybrid") (insert-string "$") (make-with "mode" "math")))
   ("text $" (make 'equation*) (temp-proof-fix))
   ("text &" (make 'eqnarray*) (temp-proof-fix))
   ("text *" (toggle-section-number))
@@ -89,10 +89,6 @@
   ("text:symbol ?" "¾")
   ("text:symbol p" "Ÿ")
   ("text:symbol P" "¿")
-  ("text:symbol m" (make 'masculine))
-  ("text:symbol M" (make 'varmasculine))
-  ("text:symbol f" (make 'ordfeminine))
-  ("text:symbol F" (make 'varordfeminine))
 
   ("accent:tilde" "~")
   ("accent:tilde space" "~")
@@ -270,11 +266,7 @@
   ("onehalf" (make 'onehalf))
   ("threequarters" (make 'threequarters))
   ("questiondown" "¾")
-  ("euro" (make 'euro))
-  ("masculine" (make 'masculine))
-  ("ordfeminine" (make 'ordfeminine))
-  ("masculine var" (make 'varmasculine))
-  ("ordfeminine var" (make 'varordfeminine)))
+  ("euro" (make 'euro)))
 
 (kbd-map like-old-text?
   ("cmd I" (make-tmlist 'itemize))

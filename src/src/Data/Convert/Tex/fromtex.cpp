@@ -515,8 +515,7 @@ latex_command_to_tree (tree t) {
   if (is_large_delimiter (t, dtype)) {
     string s= t[1]->label;
     if ((N(s)>1) && (s[0]=='\\')) s=s(1,N(s));
-    if (s == "vert") s= "|";
-    if (s == "Vert") s= "||";
+    if (s == "Vert") s= "|";
     if (dtype == -1) return tree (LEFT, s);
     else if (dtype == 1) return tree (RIGHT, s);
     else return tree (MID, s);
@@ -1134,7 +1133,7 @@ finalize_floats (tree t) {
 
 tree
 finalize_textm (tree t) {
-  tree u= stree_to_tree (call ("textm-finalize", tree_to_stree (t)));
+  tree u=object_to_tree (call ("textm-finalize", tree_to_object (t)));
   return simplify_correct (u);
 }
 

@@ -19,18 +19,18 @@
 ;; These routines should be moved to base.scm once
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stree-contains? t u)
+(define (object-contains? t u)
   (cond ((== t u) #t)
 	((not (list? t)) #f)
 	((null? t) #f)
-	(else (or (stree-contains? (car t) u) (stree-contains? (cdr t) u)))))
+	(else (or (object-contains? (car t) u) (object-contains? (cdr t) u)))))
 
-(define (stree-replace t what by)
+(define (object-replace t what by)
   (cond ((== t what) by)
 	((not (list? t)) t)
 	((null? t) t)
-	(else (cons (stree-replace (car t) what by)
-		    (stree-replace (cdr t) what by)))))
+	(else (cons (object-replace (car t) what by)
+		    (object-replace (cdr t) what by)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual rewriting
@@ -46,8 +46,8 @@
 (define (tmtm-add-eqnonumber t new)
   (cond ((func? t 'row)
 	 (let ((lab (tmtm-find-eqlabel t)))
-	   (if (and lab (== new '(eq-number)))
-	       (let ((u (stree-replace t lab "")))
+	   (if (and lab (== new '(eqnumber)))
+	       (let ((u (object-replace t lab "")))
 		 (rcons (cDr u)
 			(tmtm-add-eqnonumber (cAr u) (list 'concat new lab))))
 	       (rcons (cDr t) (tmtm-add-eqnonumber (cAr t) new)))))
@@ -61,15 +61,15 @@
 	       (map (lambda (x) (tmtm-eqnumber<->nonumber-sub x old new))
 		    (cdr t))))
 	((func? t 'row)
-	 (if (stree-contains? t old)
-	     (stree-replace t old "")
+	 (if (object-contains? t old)
+	     (object-replace t old "")
 	     (tmtm-add-eqnonumber t new)))
 	(else t)))
 
 (define (tmtm-eqnumber<->nonumber t old new)
   (cond ((not (list? t)) t)
 	((null? t) t)
-	((and (func? t 'eqnarray* 1) (not (stree-contains? t old))) t)
+	((and (func? t 'eqnarray* 1) (not (object-contains? t old))) t)
 	((or (func? t 'eqnarray 1) (func? t 'eqnarray* 1))
 	 (list 'eqnarray (tmtm-eqnumber<->nonumber-sub (cadr t) old new)))
 	(else (cons (car t)
@@ -79,8 +79,8 @@
 
 ;; ATTENTION: output may not be concat-simplified
 (define (tmtm-eqnumber->nonumber t)
-  (tmtm-eqnumber<->nonumber t '(eq-number) '(no-number)))
+  (tmtm-eqnumber<->nonumber t '(eqnumber) '(nonumber)))
 
 ;; ATTENTION: output may not be concat-simplified
 (define (tmtm-nonumber->eqnumber t)
-  (tmtm-eqnumber<->nonumber t '(no-number) '(eq-number)))
+  (tmtm-eqnumber<->nonumber t '(nonumber) '(eqnumber)))

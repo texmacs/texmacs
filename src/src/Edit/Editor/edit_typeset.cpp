@@ -15,10 +15,8 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
-#include "timer.hpp"
-#include "Bridge/impl_typesetter.hpp"
 
-//box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
+box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 
 /******************************************************************************
 * Contructors, destructors and notification of modifications
@@ -38,7 +36,7 @@ edit_typeset_rep::edit_typeset_rep ():
   env (dis, drd, is_aux (buf->name)? buf->extra: buf->name,
        buf->ref, (buf->prj==NULL? buf->ref: buf->prj->ref),
        buf->aux, (buf->prj==NULL? buf->aux: buf->prj->aux)),
-  ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
+  ttt (new_typesetter (env, et, path())) {}
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
 
 typesetter edit_typeset_rep::get_typesetter () { return ttt; }
@@ -57,7 +55,7 @@ edit_typeset_rep::set_init (hashmap<string,tree> H) {
 void
 edit_typeset_rep::add_init (hashmap<string,tree> H) {
   init->join (H);
-  ::notify_assign (ttt, path(), subtree (et, rp));
+  ::notify_assign (ttt, path(), et);
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -101,6 +99,32 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 ******************************************************************************/
 
 void
+edit_typeset_rep::typeset_style (tree style) {
+  //cout << "Process style " << style << "\n";
+  if (L(style) != TUPLE)
+    fatal_error ("tuple expected as style",
+		 "edit_interface_rep::process_style");
+
+  int i, n= N (style);
+  for (i=0; i<n; i++) {
+    url styp= "$TEXMACS_STYLE_PATH";
+    url name= as_string (style[i]) * string (".ts");
+    //cout << "Package " << name << "\n";
+    if (is_rooted_web (env->base_file_name))
+      styp= styp | head (env->base_file_name);
+    else styp= head (env->base_file_name) | styp;
+    string doc_s;
+    if (!load_string (styp * name, doc_s, false)) {
+      tree doc= texmacs_document_to_tree (doc_s);
+      if (is_compound (doc)) {
+	typeset_style (extract (doc, "style"));
+	env->exec (extract (doc, "body"));
+      }
+    }
+  }
+}
+
+void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
   hashmap<string,tree> H;
@@ -111,14 +135,15 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     ok = drd->set_locals (t);
   }
   if (!ok) {
-    if (!is_tuple (style))
-      fatal_error ("tuple expected as style",
-		   "edit_interface_rep::typeset_style_using_cache");
-    tree t (USE_PACKAGE, A (style));
-    env->exec (t);
+    tree style2= style;
+    if (is_tuple (style2))
+      style2= ::join (::join (tuple ("std--before"), style2),
+		     tuple ("std--after"));
+    typeset_style (style2);
     env->read_env (H);
     drd->heuristic_init (H);
-    SERVER (style_set_cache (style, H, drd->get_locals ()));
+    if ((!init->contains (PREAMBLE)) || (init[PREAMBLE] == "false"))
+      SERVER (style_set_cache (style, H, drd->get_locals ()));
   }
 }
 
@@ -127,7 +152,6 @@ edit_typeset_rep::typeset_preamble () {
   env->write_default_env ();
   typeset_style_use_cache (the_style);
   env->patch_env (init);
-  env->update ();
   env->read_env (pre);
   drd->heuristic_init (pre);
 }
@@ -162,7 +186,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
   typeset_prepare ();
-  exec_until (ttt, p - rp);
+  exec_until (ttt, p);
   env->read_env (cur (p));
 }
 
@@ -302,25 +326,13 @@ edit_typeset_rep::exec_texmacs (tree t, path p) {
 
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
-  if (p == (rp * 0)) typeset_preamble ();
+  if (p == path (0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
-  tree patch= as_tree (eval ("(stree->tree (tmhtml-env-patch))"));
+  tree patch= as_tree (eval ("(object->tree (tmhtml-env-patch))"));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
   return exec (t, H);
-}
-
-tree
-edit_typeset_rep::exec_html (tree t) {
-  return exec_html (t, rp * 0);
-}
-
-tree
-edit_typeset_rep::box_info (tree t, string what) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  return ::box_info (b ? env : get_typesetter ()->env, t, what);
 }
 
 /******************************************************************************
@@ -331,47 +343,49 @@ void
 edit_typeset_rep::init_style () {
   bool old_need_save    = buf->need_save;
   bool old_need_autosave= buf->need_autosave;
+  path old_tp= tp;
+  ::notify_assign (ttt, path(), et);
+  tp= old_tp;
+  notify_change (THE_ENVIRONMENT);
   buf->need_save    = old_need_save;
   buf->need_autosave= old_need_autosave;
-  notify_change (THE_ENVIRONMENT);
 }
 
 void
 edit_typeset_rep::init_style (string name) {
   if ((name == "none") || (name == "") || (name == "style")) the_style= TUPLE;
-  else if (arity (the_style) == 0) the_style= tree (TUPLE, name);
-  else the_style= tree (TUPLE, name) * the_style (1, N(the_style));
-  buf->need_save= buf->need_autosave= true;
+  else the_style= tree (TUPLE, name);
+  path old_tp= tp;
+  ::notify_assign (ttt, path(), et);
+  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
+  buf->need_save= buf->need_autosave= true;
 }
 
 void
-edit_typeset_rep::init_add_package (string name) {
-  int i, n= N(the_style);
-  for (i=0; i<n; i++)
-    if (the_style[i] == name)
-      return;
+edit_typeset_rep::init_extra_style (string name, bool check) {
+  if (check) {
+    int i, n= N(the_style);
+    for (i=0; i<n; i++)
+      if (the_style[i] == name)
+	return;
+  }
 
   the_style << tree (name);
-  buf->need_save= buf->need_autosave= true;
+  path old_tp= tp;
+  ::notify_assign (ttt, path(), et);
+  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
-}
-
-void
-edit_typeset_rep::init_remove_package (string name) {
-  int i, n= N(the_style);
-  for (i=0; i<n; i++)
-    if (the_style[i] == name) {
-      the_style= the_style (0, i) * the_style (i+1, N(the_style));
-      buf->need_save= buf->need_autosave= true;
-      notify_change (THE_ENVIRONMENT);
-    }
+  buf->need_save= buf->need_autosave= true;
 }
 
 void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;
   init (var)= by;
+  path old_tp= tp;
+  ::notify_assign (ttt, path(), et);
+  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -379,6 +393,9 @@ void
 edit_typeset_rep::init_default (string var) {
   if (!init->contains (var)) return;
   init->reset (var);
+  path old_tp= tp;
+  ::notify_assign (ttt, path(), et);
+  tp= old_tp;
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -389,16 +406,14 @@ edit_typeset_rep::init_default (string var) {
 void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   typeset_prepare ();
-  eb= empty_box (reverse (rp));
+  eb= empty_box (path ());
   // saves memory, also necessary for change_log update
-  bench_start ("typeset");
   eb= ::typeset (ttt, x1, y1, x2, y2);
-  bench_end ("typeset");
 }
 
 void
 edit_typeset_rep::typeset_invalidate_all () {
+  ::notify_assign (ttt, path(), et);
   notify_change (THE_ENVIRONMENT);
   typeset_preamble ();
-  ::notify_assign (ttt, path(), subtree (et, rp));
 }

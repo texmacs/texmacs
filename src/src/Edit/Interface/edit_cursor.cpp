@@ -11,8 +11,6 @@
 ******************************************************************************/
 
 #include "edit_cursor.hpp"
-#include "iterator.hpp"
-#include "tm_buffer.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -191,12 +189,6 @@ edit_cursor_rep::current_position () {
   return tp;
 }
 
-path
-edit_cursor_rep::path_xy (double x, double y) {
-  point p= find_frame()(point (x, y));
-  return tree_path ((SI)p[0], (SI)p[1], 0);
-}
-
 void
 edit_cursor_rep::go_to (path p) {
   tp= p;
@@ -243,13 +235,13 @@ edit_cursor_rep::go_to_here () {
 
 void
 edit_cursor_rep::go_start () {
-  go_to (correct_cursor (et, rp * 0));
+  go_to (correct_cursor (et, path (0)));
   select_from_cursor_if_active ();
 }
 
 void
 edit_cursor_rep::go_end () {
-  go_to (correct_cursor (et, rp * 1));
+  go_to (correct_cursor (et, path (1)));
   select_from_cursor_if_active ();
 }
 
@@ -295,20 +287,16 @@ edit_cursor_rep::go_end_with (string var, string val) {
 * Jumping to a label
 ******************************************************************************/
 
-tree
-edit_cursor_rep::get_labels () {
-  tree r (TUPLE);
-  hashmap<string,tree> h= buf->ref;
-  if (buf->prj != NULL) {
-    h= copy (buf->prj->ref);
-    h->join (buf->ref);
+static void
+get_labels_in (tree t, tree& u) {
+  if (is_compound (t)) {
+    if (is_func (t, LABEL, 1)) u << copy (t[0]);
+    else {
+      int i, n= N(t);
+      for (i=0; i<n; i++)
+	get_labels_in (t[i], u);
+    }
   }
-  iterator<string> it= iterate (h);
-  while (it->busy ()) {
-    string ref= it->next ();
-    r << ref;
-  }
-  return r;
 }
 
 static path
@@ -323,6 +311,13 @@ search_tree_in (tree t, tree what) {
     }
     return path ();
   }
+}
+
+tree
+edit_cursor_rep::get_labels () {
+  tree r (TUPLE);
+  get_labels_in (et, r);
+  return r;
 }
 
 void

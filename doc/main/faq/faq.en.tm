@@ -1,9 +1,10 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.2.10>
 
 <style|tmweb>
 
 <\body>
-  <tmdoc-title|The GNU <TeXmacs> manual>
+  <tmweb-current|Help|FAQ><tmweb-title|Frequently asked
+  questions|<tmweb-help-links>>
 
   <section*|Overview>
 
@@ -43,16 +44,6 @@
       <item><hyper-link|Trying to start <TeXmacs> remotely over a ssh
       connection, I get an error, while <abbr|e.g.> xclock works without a
       problem|#sys-4>?
-    </itemize-minus>
-
-    <item>Windows/Cygwin specific
-
-    <\itemize-minus>
-      <item><hlink|What to do with Cygwin specific questions|#cygwin-1>?
-
-      <item><hlink|How to associate .tm files with <TeXmacs>|#cygwin-2>?
-
-      <item><hlink|How to get spell checking working|#cygwin-3>?
     </itemize-minus>
 
     <item>Usage
@@ -150,7 +141,9 @@
     <TeXmacs> can be easily installed on all major systems. There are
     <name|rpm> and Debian packages as well as binaries available for
     <name|Linux>. For Mac <name|OS X> there is a <name|Fink> package. For
-    <name|MS Windows>, a <name|Cygwin> package is available.\ 
+    <name|MS Windows>, a <name|Cygwin> package is in preparation, but so far
+    you have to compile <TeXmacs> yourself, as it is the case for more exotic
+    systems.\ 
 
     Work is in progress to rewrite the graphical user interface of <TeXmacs>,
     so that it becomes more portable. Your
@@ -196,7 +189,7 @@
   <section*|System Appearance and Behavior>
 
   <\question>
-    <label|sys-1><TeXmacs> hangs when opening a document for a while and my
+    <label|sys-1><TeXmacs> hangs when opening a document for a whle and my
     disk is being filled with files?
   </question>
 
@@ -260,54 +253,6 @@
     machine and make sure your /etc/hosts file is sound, <abbr|i.e.> it
     contains the line <verbatim|127.0.0.1 localhost> and the IP information
     about the local and remote machine.
-  </answer>
-
-  <section*|Windows/Cygwin specific>
-
-  <\question>
-    <label|cygwin-1>What to do with Cygwin specific questions?
-  </question>
-
-  <\answer>
-    Look at the Cygwin FAQ at <hlink|http://cygwin.com/faq.html|http://cygwin.com/faq.html>,
-    the Cygwin User Guide at <hlink|http://cygwin.com/cygwin-ug-net/|http://cygwin.com/cygwin-ug-net/>
-    and search the Cygwin mailing list <hlink|http://www.cygwin.com/ml/cygwin/|http://www.cygwin.com/ml/cygwin/>.
-  </answer>
-
-  <\question>
-    <label|cygwin-2>How to associate .tm files with <TeXmacs>?
-  </question>
-
-  <\answer>
-    Create a file <verbatim|texmacs.bat> with the following content:
-
-    <\verbatim>
-      \ \ \ \ rem cmdow @ /hid<next-line> \ \ \ c:\\cygwin\\bin\\bash --login
-      -c "texmacs \\"`cygpath -u "%1"`\\""
-    </verbatim>
-
-    Ensure that it lies in your <verbatim|PATH>. Now you can associate .tm
-    files with this batch file.
-
-    If you want to hide the black Cygwin window when <TeXmacs> is started,
-    then download <name|cmdow> from <simple-link|http://www.commandline.co.uk/cmdow/>,
-    drop <verbatim|cmdow.exe> <abbr|e.g.> in your
-    <verbatim|C:\\WINDOWS\\system32> directory (this applies to <name|Windows
-    XP> installed on <verbatim|C:\\>) and uncomment (<abbr|i.e.> remove
-    ``rem'' from) the first line of <verbatim|texmacs.bat>.
-  </answer>
-
-  <\question>
-    <label|cygwin-3>How to get spell checking working?
-  </question>
-
-  <\answer>
-    Install the Cygwin package aspell. Execute in a shell:
-
-    <\verbatim>
-      \ \ \ \ cd /usr/bin<next-line> \ \ \ ln -s /usr/share/aspell/ispell
-      ispell
-    </verbatim>
   </answer>
 
   <section*|Usage>
@@ -389,19 +334,68 @@
     <LaTeX>.
   </answer>
 
-  <tmdoc-copyright|1998--2002|Andreas Seidl|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
-  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
-  document under the terms of the GNU Free Documentation License, Version 1.1
-  or any later version published by the Free Software Foundation; with no
-  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-  Texts. A copy of the license is included in the section entitled "GNU Free
-  Documentation License".>
+  <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
+    <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|usage-1|<tuple|12|?>>
+    <associate|idx-1|<tuple|1.|?>>
+    <associate|typo-1|<tuple|15|?>>
+    <associate|usage-2|<tuple|13|?>>
+    <associate|typo-2|<tuple|16|?>>
+    <associate|usage-3|<tuple|14|?>>
+    <associate|general-1|<tuple|1|?>>
+    <associate|general-2|<tuple|2|?>>
+    <associate|general-3|<tuple|3|?>>
+    <associate|general-4|<tuple|4|?>>
+    <associate|general-5|<tuple|5|?>>
+    <associate|general-6|<tuple|6|?>>
+    <associate|general-7|<tuple|7|?>>
+    <associate|toc-10|<tuple|2.1|?>>
+    <associate|gly-1|<tuple|1|?>>
+    <associate|sys-1|<tuple|8|?>>
+    <associate|toc-11|<tuple|2.2|?>>
+    <associate|toc-12|<tuple|2.3|?>>
+    <associate|sys-2|<tuple|9|?>>
+    <associate|toc-13|<tuple|2.4|?>>
+    <associate|sys-3|<tuple|10|?>>
+    <associate|toc-14|<tuple|3|?>>
+    <associate|sys-4|<tuple|11|?>>
+    <associate|toc-15|<tuple|3.1|?>>
+    <associate|toc-16|<tuple|3.2|?>>
+    <associate|toc-17|<tuple|4|?>>
+    <associate|toc-18|<tuple|4.1|?>>
+    <associate|toc-19|<tuple|4.2|?>>
+    <associate|toc-1|<tuple|1|?>>
+    <associate|toc-2|<tuple|1.1|?>>
+    <associate|toc-3|<tuple|1.2|?>>
+    <associate|toc-4|<tuple|1.3|?>>
+    <associate|toc-5|<tuple|1.4|?>>
+    <associate|toc-6|<tuple|1.5|?>>
+    <associate|legacy-1|<tuple|17|?>>
+    <associate|toc-7|<tuple|1.6|?>>
+    <associate|toc-8|<tuple|1.7|?>>
+    <associate|toc-9|<tuple|2|?>>
+  </collection>
+</references>

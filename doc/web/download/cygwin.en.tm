@@ -1,17 +1,17 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.2.10>
 
 <style|tmweb>
 
 <\body>
-  <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
+  <tmweb-current|Download|Sources><tmweb-title|Installing <TeXmacs> under
   <name|Cygwin>|<tmweb-download-links>>
 
   There are basically two methods to get <TeXmacs> working under
   <name|Cygwin>:
 
   <\enumerate-numeric>
-    <item>Installation of the official Cygwin package (recommended). Follow
-    these <hlink|Instructions|http://www.fmi.uni-passau.de/~seidl/texmacs/tmtour.html#2>.
+    <item>Installation of the (unofficial) Cygwin package (recommended).
+    Follow these <hlink|Instructions|http://www.fmi.uni-passau.de/~seidl/texmacs/tmtour.html#2>.
 
     <item>Download, compile and install <TeXmacs> manually. Follow the
     Instructions below, but note that the information about dependent
@@ -90,9 +90,9 @@
   <section|Download the <TeXmacs> distribution>
 
   Download the <hlink|latest version (2.5
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<extern|texmacs-version-release|tgz>|-src.tar.gz>>>
   of the source code, or the <hlink|latest stable version (2.4
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<TeXmacs-version-release|stgz>>>.
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<extern|texmacs-version-release|stgz>|-src.tar.gz>>>.
   You may for instance save the distribution in
   <with|font-family|tt|C:\\tmp>. The name of the file with the distribution
   is of the form <with|font-family|tt|TeXmacs-[source version]-src.tar.gz>,
@@ -202,6 +202,46 @@
 
 <\initial>
   <\collection>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|english>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|toc-1|<tuple|1|?>>
+    <associate|toc-2|<tuple|2|?>>
+    <associate|toc-3|<tuple|3|?>>
+    <associate|toc-4|<tuple|4|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Install
+      <with|font-shape|<quote|small-caps>|Cygwin> with
+      <with|font-family|<quote|tt>|setup.exe>><value|toc-dots><pageref|toc-1><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Download
+      the T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>
+      distribution><value|toc-dots><pageref|toc-2><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Compile
+      T<rsub|<space|-0.4spc><move|<resize|<with|math-level|<quote|0>|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>><value|toc-dots><pageref|toc-3><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Finishing
+      touches><value|toc-dots><pageref|toc-4><vspace|0.5fn>
+    </associate>
+  </collection>
+</auxiliary>
