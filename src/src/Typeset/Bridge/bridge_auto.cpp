@@ -33,7 +33,7 @@ public:
   void notify_change ();
 
   void my_exec_until (path p);
-  void exec_until (path p);
+  void exec_until (path p, bool skip_flag);
   bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
 };
@@ -159,9 +159,18 @@ bridge_auto_rep::my_exec_until (path p) {
 }
 
 void
-bridge_auto_rep::exec_until (path p) {
-  if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
-  else my_exec_until (p);
+bridge_auto_rep::exec_until (path p, bool skip_flag) {
+  // If we are executing until the start or the end of an automatic bridge,
+  // some of the environment variables may be different from the usual
+  // exec_until. For instance, for inactive* tags, we put ourselves
+  // in source mode. The usual exec_until can only be used if we are
+  // sure that are really executing until somewhere strictly after this bridge.
+
+  if (skip_flag) bridge_rep::exec_until (p, skip_flag);
+  else {
+    if ((status & VALID_MASK) != PROCESSED) env->exec_until (st, p);
+    else my_exec_until (p);
+  }
 }
 
 bool
