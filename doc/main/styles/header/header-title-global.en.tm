@@ -67,7 +67,7 @@
   information:
 
   <\explain>
-    <explain-macro|doc-author-main|data-1|<with|mode|math|\<cdots\>>|data-n>
+    <explain-macro|doc-author-main|<with|font-shape|right|<explain-macro|doc-author-data|data-1|<with|mode|math|\<cdots\>>|data-n>>>
   <|explain>
     This macro only keeps and sorts the data which should be displayed inside
     the main title.

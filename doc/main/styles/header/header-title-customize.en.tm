@@ -84,7 +84,7 @@
   abstract.
 
   <\explain>
-    <explain-macro|doc-note|note>
+    <explain-macro|doc-title-note|note>
 
     <explain-macro|doc-author-note|note>
   <|explain>
