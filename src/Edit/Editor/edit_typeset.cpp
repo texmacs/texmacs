@@ -364,7 +364,7 @@ edit_typeset_rep::init_remove_package (string name) {
       buf->need_save= buf->need_autosave= true;
       notify_change (THE_ENVIRONMENT);
     }
-    else new_style << the_style;
+    else new_style << the_style[i];
   the_style= new_style;
 }
 
