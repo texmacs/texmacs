@@ -24,8 +24,7 @@
     with-active-buffer-sub with-active-buffer
     delayed-update
     session-test-math-input?
-    set-action-path has-action-path? get-action-path
-    tmp-compound-object))
+    set-action-path has-action-path? get-action-path))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
@@ -147,14 +146,3 @@
 (define (set-action-path p) (set! the-action-path p))
 (define (has-action-path?) (not (== the-action-path '(-1))))
 (define (get-action-path) the-action-path)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Temporary stuff
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmp-compound-object s* . l)
-  (with s (if (string? s*) s* (symbol->string s*))
-    (cond ((and (= (tmp-d-hide-exp) 1) (in? s '("fold" "switch")))
-	   (cons* 'hide_expand s l))
-          ((= (tmp-d-exp) 1) (cons* 'expand s l))
-	  (else (cons (string->symbol s) l)))))
