@@ -55,7 +55,6 @@ edit_env_rep::exec_string (tree t) {
 
 tree
 edit_env_rep::rewrite (tree t) {
-  // cout << "Rewrite " << t << "\n";
   if (L(t) == EXTERN) {
     int i, n= N(t);
     string s= "(" * as_string (exec (t[0]));
@@ -95,7 +94,8 @@ edit_env_rep::rewrite (tree t) {
 
 tree
 edit_env_rep::exec_rewrite (tree t) {
-  return exec (rewrite (t));
+  tree r= rewrite (t);
+  return exec (r);
 }
 
 /******************************************************************************

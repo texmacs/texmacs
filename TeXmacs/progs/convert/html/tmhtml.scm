@@ -641,13 +641,6 @@
 (define (tmhtml-key l)
   `((h:u (h:tt ,@(tmhtml (car l))))))
 
-(define (tmhtml-menu l)
-  (if (null? l) l
-      (with first `(h:class (@ (style "font-family: helvetica"))
-			    ,@(tmhtml (car l)))
-	(if (null? (cdr l)) (list first)
-	    (cons* first "->" (tmhtml-menu (cdr l)))))))
-
 (define (tmhtml-tmdoc-bar? y)
   (or (func? y 'h:h1)
       (func? y 'h:h2)
@@ -842,7 +835,6 @@
   (tmdoc-copyright ,tmhtml-tmdoc-copyright)
   (tmdoc-license ,tmhtml-tmdoc-license)
   (key ,tmhtml-key)
-  (menu ,tmhtml-menu)
   (hyper-link ,tmhtml-hyperlink))
 
 ;;    (name (h:name)) ; not in HTML4
@@ -850,6 +842,7 @@
 
 (drd-table tmhtml-with-cmd%
   (("font family" "tt") (h:tt))
+  (("font family" "ss") (h:class (@ ("style" "font-family: sans-serif"))))
   (("font series" "bold") (h:b))
   (("font shape" "italic") (h:i))
   (("font" "roman") (h:class (@ ("style" "font-family: Times New Roman"))))
