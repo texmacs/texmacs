@@ -21,7 +21,7 @@
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
 
-  ("inactive a" (make-inactive-apply))
+  ("inactive a" (make-inactive-argument))
   ("inactive A" (make-inactive-map-args))
   ("inactive c" (make-inactive-compound))
   ("inactive d" (make-inactive-delay))
