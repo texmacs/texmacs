@@ -92,85 +92,97 @@ init_helper_binaries () {
 
 static void
 locate (string name, url& p) {
-#ifdef OS_WIN32
-  (void) name; (void) p;
-#else
-  int start=0, i;
-  string s= eval_system ("locate " * name);
-  for (i=0; i<N(s); i++)
-    if (s[i]=='\n') {
-      int j;
-      for (j=i-1; j>start; j--)
-	if ((s[j] == '/') || (s[j] == '\\')) break;
-      p= url_system (s (start, j)) | p;
-      start= i+1;
-    }
-#endif
+  if (use_locate) {
+    int start=0, i;
+    string s= eval_system ("locate " * name);
+    for (i=0; i<N(s); i++)
+      if (s[i]=='\n') {
+	int j;
+	for (j=i-1; j>start; j--)
+	  if ((s[j] == '/') || (s[j] == '\\')) break;
+	p= url_system (s (start, j)) | p;
+	start= i+1;
+      }
+  }
 }
 
 static void
-search_sub_dirs_sub (url base, url u, url& tfm, url& pk, int status) {
+search_sub_dirs_sub (url base, url u, url& tfm, url& pk, url& pfb, int status) {
   if (is_concat (u)) {
     if (u[1] == "tfm") status= 1;
-    if (u[1] == "pk")  status= 2;
-    search_sub_dirs_sub (base * u[1], u[2], tfm, pk, status);
+    if (u[1] == "pk" ) status= 2;
+    if (u[1] == "pfb" || u[1] == "type1") status= 3;
+    search_sub_dirs_sub (base * u[1], u[2], tfm, pk, pfb, status);
   }
   if (is_or (u)) {
-    search_sub_dirs_sub (base, u[2], tfm, pk, status);
-    search_sub_dirs_sub (base, u[1], tfm, pk, status);
+    search_sub_dirs_sub (base, u[2], tfm, pk, pfb, status);
+    search_sub_dirs_sub (base, u[1], tfm, pk, pfb, status);
   }
   if ((status == 1) || (u == "tfm")) tfm= (base * u) | tfm;
   if ((status == 2) || (u == "pk" )) pk = (base * u) | pk;
+  if ((status == 3) || (u == "pfb") || (u == "pfb")) pfb = (base * u) | pfb;
 }
 
 static void
-search_sub_dirs (url root, url& tfm, url& pk) {
+search_sub_dirs (url root, url& tfm, url& pk, url& pfb) {
   url dirs= complete (root * url_wildcard (), "dr");
   if (!is_none (dirs)) {
     cerr << "TeXmacs] found TeX directory " << root << "\n";
-    search_sub_dirs_sub (url_here (), dirs, tfm, pk, 0);
+    search_sub_dirs_sub (url_here (), dirs, tfm, pk, pfb, 0);
   }
+}
+
+static url
+search_sub_dirs (url root) {
+  url dirs= complete (root * url_wildcard (), "dr");
+  return expand (dirs);
 }
 
 static void
 init_heuristic_tex_paths () {
+#ifndef OS_WIN32
   // Not necessary if we can use kpsepath
   if (get_setting ("KPSEPATH") == "true") {
     set_setting ("TFM", "");
-    set_setting ("PK", "");
+    set_setting ("PK" , "");
+    set_setting ("PFB", "");
     return;
   }
+#endif
 
   // Try locate
-  url tfm= url_none (), pk= url_none ();
-  string test= eval_system ("locate cmr10.tfm");
-  if (N(test) == 0)
-    cerr << "TeXmacs] locate does not work; I will try something else\n";
-  else {
+  url tfm= url_none (), pk= url_none (), pfb= url_none ();
+  if (use_locate && (eval_system ("locate cmr10.tfm") != "")) {
     locate (".tfm", tfm);
     locate (".300pk", pk);
     locate (".360pk", pk);
     locate (".400pk", pk);
     locate (".600pk", pk);
     locate (".1200pk", pk);
+    locate (".pfb", pfb);
     if (is_none (tfm)) cerr << "TeXmacs] I could not locate any tfm files\n";
     else cerr << "TeXmacs] located tfm files in " << tfm << "\n";
     if (is_none (pk)) cerr << "TeXmacs] I could not locate any pk files\n";
     else cerr << "TeXmacs] located pk files in " << pk << "\n";
   }
+  else cerr << "TeXmacs] locate does not work; I will try something else\n";
 
   // Try some 'standard' directories
 #ifdef OS_WIN32
-  search_sub_dirs (url_system ("c:\texmf"), tfm, pk);
-  search_sub_dirs (url_system ("d:\texmf"), tfm, pk);
+  tfm= search_sub_dirs ("$TEX_HOME/fonts/tfm");
+  pk = search_sub_dirs ("$TEX_HOME/fonts/pk");
+  pfb= search_sub_dirs ("$TEX_HOME/fonts/type1");
+  if (is_none (tfm)) tfm= search_sub_dirs ("$TEXMACS_PATH/fonts/tfm");
+  if (is_none (pk )) pk = search_sub_dirs ("$TEXMACS_PATH/fonts/pk");
+  if (is_none (pfb)) pfb= search_sub_dirs ("$TEXMACS_PATH/fonts/type1");
 #else
-  search_sub_dirs ("/usr/lib/tetex/fonts", tfm, pk);
-  search_sub_dirs ("/usr/lib/texmf/fonts", tfm, pk);
-  search_sub_dirs ("/var/texfonts", tfm, pk);
-  search_sub_dirs ("/var/tmp/texfonts", tfm, pk);
-  search_sub_dirs ("/usr/TeX/lib/texmf/fonts", tfm, pk);
-  search_sub_dirs ("/usr/local/lib/texmf/fonts", tfm, pk);
-  search_sub_dirs ("/usr/share/texmf/fonts", tfm, pk);
+  search_sub_dirs ("/usr/lib/tetex/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/usr/lib/texmf/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/var/texfonts", tfm, pk, pfb);
+  search_sub_dirs ("/var/tmp/texfonts", tfm, pk, pfb);
+  search_sub_dirs ("/usr/TeX/lib/texmf/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/usr/local/lib/texmf/fonts", tfm, pk, pfb);
+  search_sub_dirs ("/usr/share/texmf/fonts", tfm, pk, pfb);
 #endif
 
   // Does TeX work?
@@ -184,12 +196,20 @@ init_heuristic_tex_paths () {
     cerr << "with the paths where the tfm resp. pk file\n";
     cerr << "can be found on your system and restart TeXmacs\n";
     cerr << HRULE;
-    exit (1);
+    fatal_error ("TeXmacs initialization failed",
+		 "init_heuristic_tex_paths", "tex_init.cpp");
   }
 
   // Done
+#ifdef OS_WIN32
+  set_setting ("TFM", as_string (tfm));
+  set_setting ("PK" , as_string (pk ));
+  set_setting ("PFB", as_string (pfb));
+#else
   set_setting ("TFM", as_string (expand (factor (tfm))));
-  set_setting ("PK", as_string (expand (factor (pk))));
+  set_setting ("PK" , as_string (expand (factor (pk ))));
+  set_setting ("PFB", as_string (expand (factor (pfb))));
+#endif
 }
 
 /******************************************************************************
@@ -279,4 +299,5 @@ void
 init_tex () {
   reset_tfm_path (false);
   reset_pk_path (false);
+  reset_pfb_path ();
 }

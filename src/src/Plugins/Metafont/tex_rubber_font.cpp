@@ -105,18 +105,21 @@ tex_rubber_font (display dis, string trl_name,
 void
 tex_rubber_font_rep::get_extents (int c, metric& ex) {
   glyph gl= pk->get (c);
+  if (nil (gl))
+    ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
+  else {
+    ex->x1=  0;
+    ex->y1= -conv (tfm->d(c));
+    ex->x2=  conv (tfm->w(c));
+    ex->y2=  conv (tfm->h(c));
+    ex->x3= -((int) gl->xoff) * PIXEL;
+    ex->x4=  ((int) (gl->width- gl->xoff)) * PIXEL;
+    ex->y3=  ((int) (gl->yoff- gl->height)) * PIXEL;
+    ex->y4=  ((int) gl->yoff) * PIXEL;
 
-  ex->x1=  0;
-  ex->y1= -conv (tfm->d(c));
-  ex->x2=  conv (tfm->w(c));
-  ex->y2=  conv (tfm->h(c));
-  ex->x3= -((int) gl->xoff) * PIXEL;
-  ex->x4=  ((int) (gl->width- gl->xoff)) * PIXEL;
-  ex->y3=  ((int) (gl->yoff- gl->height)) * PIXEL;
-  ex->y4=  ((int) gl->yoff) * PIXEL;
-
-  ex->x3 -= 2*PIXEL; ex->x4 += 2*PIXEL;
-  ex->y3 -= 2*PIXEL; ex->y4 += 3*PIXEL;
+    ex->x3 -= 2*PIXEL; ex->x4 += 2*PIXEL;
+    ex->y3 -= 2*PIXEL; ex->y4 += 3*PIXEL;
+  }
 }
 
 void
