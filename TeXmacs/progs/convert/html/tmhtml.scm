@@ -426,8 +426,11 @@
   ;; WARNING: bad conversion if URI is not a string.
   ;; TODO: change label at start of content into ID attribute, move other
   ;; labels out (A elements cannot be nested!).
-  `((h:a (@ (href ,(tmhtml-suffix (cork->utf8 (force-string (second l))))))
-	 ,@(tmhtml (first l)))))
+  (let* ((body (tmhtml (first l)))
+	 (to (cork->utf8 (force-string (second l)))))
+    (if (string-starts? to "$")
+	body ;; temporary fix for URLs like $TEXMACS_PATH/...
+	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
 
 (define (tmhtml-specific l)
   (if (== (car l) "html") (tmhtml (cadr l)) '()))
@@ -601,17 +604,15 @@
 (define (tmhtml-make-block content)
   (let* ((l '(h:td
 	      (@ (align "left"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1.png")))))
+	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1b.png")))))
 	 (c `(h:td
 	      (@ (align "center") (width "100%"))
 	      ,@(tmhtml content)))
 	 (r '(h:td
 	      (@ (align "right"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2.png")))))
+	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2b.png")))))
 	 (row `(h:tr ,l ,c ,r)))
-    `(h:table (@ (width "100%") (bgcolor "#ffffdf")
-		 (cellspacing "0") (cellpadding "3"))
-	      ,row)))
+    `(h:table (@ (width "100%") (cellspacing "0") (cellpadding "3")) ,row)))
 
 (define (tmhtml-tmdoc-title l)
   (list `(h:div (@ (class "tmdoc-title")) ,(tmhtml-make-block (car l)))))
