@@ -983,6 +983,9 @@
 (define (tmtex-render-proof s l)
   (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
 
+(define (tmtex-nbsp s l)
+  '(!nbsp))
+
 (define (tmtex-session s l)
   (tmtex (car l)))
 
@@ -1181,6 +1184,7 @@
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
   (render-proof (,tmtex-render-proof 2))
+  (nbsp (,tmtex-nbsp 0))
   (session (,tmtex-session 1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
