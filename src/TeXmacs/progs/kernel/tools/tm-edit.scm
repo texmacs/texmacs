@@ -19,7 +19,6 @@
     insert-object insert-object-go-to
     insert-tree-at insert-object-at
     ;; inserting inactive content
-    in-preamble?
     make-assign-arg make-assign-macro make-assign-macro-arg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -54,11 +53,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting inactive content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (in-preamble?)
-  (:type (-> bool))
-  (:synopsis "Are we in preamble mode?")
-  (string=? (get-env "preamble") "true"))
 
 (tm-define (insert-inactive-object-go-to t p)
   (:type (object path ->))

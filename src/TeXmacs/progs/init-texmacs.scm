@@ -36,8 +36,8 @@
 	     (texmacs texmacs tm-document) (texmacs texmacs tm-help))
 (use-modules (texmacs tools tm-cursor) (texmacs tools tm-select)
 	     (texmacs tools tm-circulate))
-(use-modules (texmacs edit edit-format)
-	     (texmacs edit edit-text) (texmacs edit edit-table)
+(use-modules (texmacs edit edit-format) (texmacs edit edit-text)
+	     (texmacs edit edit-table) (texmacs edit edit-graphics)
 	     (texmacs edit edit-fold) (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))
 (re-export safely-kill-window)
@@ -57,6 +57,7 @@
 (lazy-menu (menus menu-prog)
 	   prog-modifier-icons session-menu
 	   texmacs-session-icons texmacs-session-help-icons texmacs-help-icons)
+(lazy-menu (menus menu-graphics) graphics-menu texmacs-graphics-icons)
 (lazy-menu (menus menu-table) table-menu texmacs-table-icons)
 (lazy-menu (menus menu-format) color-menu paragraph-menu format-menu)
 (lazy-menu (menus menu-document)

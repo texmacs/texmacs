@@ -219,7 +219,7 @@ initialize_std_drd () {
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));
 
-  init (GRAPHICS, "graphics", repeat (1, 1, BIFORM) -> accessible (1));
+  init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
   init (SUPERPOSE, "superpose", repeat (1, 1));
   init (TEXT_AT, "text_at", fixed (1, 3, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));

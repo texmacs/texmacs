@@ -179,7 +179,7 @@
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
         ((inside? "hybrid") (activate-hybrid))
-        ((or (is-deactivated?) (in-preamble-mode?)
+        ((or (is-deactivated?) (in-preamble?)
 	     (inside? "tuple") (inside? "attr"))
 	 (insert-argument #t))
 	((and (in-session?)

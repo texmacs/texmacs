@@ -67,6 +67,8 @@
   (undo undo (void))
   (redo redo (void))
 
+  (in-graphics? inside_graphics (bool))
+
   (in-normal-mode? in_normal_mode (bool))
   (in-search-mode? in_search_mode (bool))
   (in-replace-mode? in_replace_mode (bool))
@@ -165,7 +167,7 @@
   (init-has? defined_in_init (bool string))
   (menu-before-action before_menu_action (void))
   (menu-after-action after_menu_action (void))
-  (in-preamble-mode? in_preamble_mode (bool))
+  (in-preamble? in_preamble_mode (bool))
   (is-deactivated? is_deactivated (bool))
   (make make_compound (void tree_label))
   (make-arity make_compound (void tree_label int))

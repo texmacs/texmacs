@@ -93,6 +93,7 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_WIDTH) = Env_Page;
 
   var_type (GR_FRAME)         = Env_Frame;
+  var_type (GR_CLIP)          = Env_Clipping;
   var_type (GR_LINE_WIDTH)    = Env_Line_Width;
 }
 
@@ -222,7 +223,26 @@ edit_env_rep::update_frame () {
     SI y   = decode_length (as_string (t[2][1]));
     fr= scaling (magn, point (x, y));
   }
-  else fr= scaling (decode_length (string ("1cm")), point (0.0, 0.0));
+  else {
+    SI cm= decode_length (string ("1cm"));
+    SI yf= decode_length (string ("1yfrac"));
+    fr= scaling (cm, point (3*cm, yf));
+  }
+}
+
+void
+edit_env_rep::update_clipping () {
+  tree t= env [GR_CLIP];
+  if (is_tuple (t, "clip", 2) &&
+      is_func (t[1], TUPLE, 2) &&
+      is_func (t[2], TUPLE, 2)) {
+    clip_lim1= as_point (t[1]);
+    clip_lim2= as_point (t[2]);
+  }
+  else {
+    clip_lim1= point (-3.0, -2.0);
+    clip_lim2= point (3.0, 2.0);
+  }
 }
 
 void
@@ -240,6 +260,7 @@ edit_env_rep::update () {
   update_font ();
 
   update_frame ();
+  update_clipping ();
   lw= get_length (GR_LINE_WIDTH);
 }
 
@@ -297,6 +318,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Frame:
     update_frame ();
+    break;
+  case Env_Clipping:
+    update_clipping ();
     break;
   case Env_Line_Width:
     lw= get_length (GR_LINE_WIDTH);

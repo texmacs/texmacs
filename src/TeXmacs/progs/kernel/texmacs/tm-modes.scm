@@ -24,7 +24,7 @@
     lazy-in-mode lazy-in-mode-force
     ;; general texmacs modes
     always? in-text? in-math? in-prog? in-math-not-hybrid?
-    in-table? in-session? not-in-session? in-math-in-session?
+    in-table? in-io? in-session? not-in-session? in-math-in-session?
     in-math-not-in-session? in-plugin-with-converters?
     ;; language related modes
     in-cyrillic?
@@ -123,11 +123,12 @@
 
 (texmacs-modes
   (always% #t)
-  (in-text% (== (get-env "mode") "text"))
-  (in-math% (== (get-env "mode") "math"))
-  (in-prog% (== (get-env "mode") "prog"))
+  (in-text% (and (== (get-env "mode") "text") (not (in-graphics?))))
+  (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
+  (in-prog% (and (== (get-env "mode") "prog") (not (in-graphics?))))
   (in-math-not-hybrid% (not (inside? "hybrid")) in-math%)
-  (in-table% (inside? "table"))
+  (in-table% (and (inside? "table") (not (in-graphics?))))
+  (in-io% (and (or (inside? "input") (inside? "output")) (not (in-graphics?))))
   (in-session% (inside? "session"))
   (not-in-session% (not (inside? "session")))
   (in-math-in-session% #t in-math% in-session%)

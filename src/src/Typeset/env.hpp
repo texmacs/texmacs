@@ -44,7 +44,8 @@
 #define Env_Page              13
 #define Env_Preamble          14
 #define Env_Frame             15
-#define Env_Line_Width        16
+#define Env_Clipping          16
+#define Env_Line_Width        17
 
 /******************************************************************************
 * The edit environment
@@ -87,6 +88,8 @@ public:
   SI        lw;
   bool      preamble;
   frame     fr;
+  point     clip_lim1;
+  point     clip_lim2;
 
 public:
   tree exec_extra_list (tree t, int pos);
@@ -208,6 +211,7 @@ public:
   void   update_mode ();
   void   update_language ();
   void   update_frame ();
+  void   update_clipping ();
   void   update ();
   void   update (string env_var);
 
