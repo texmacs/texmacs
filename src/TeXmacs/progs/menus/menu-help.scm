@@ -63,6 +63,8 @@
 	     (load-help-article "main/convert/man-convert"))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
 	(-> "Reference guide"
+	    ("Browse" (load-help-buffer "main/man-reference"))
+	    ---
 	    ("The TeXmacs format"
 	     (load-help-article "devel/format/basics/basics"))
 	    ("Standard environment variables"
