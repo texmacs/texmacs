@@ -27,6 +27,7 @@ public:
   drd_info_rep (string name, drd_info base);
   tree get_locals ();
   void set_locals (tree t);
+  bool contains (string l);
 
   /* Properties of the tag itself */
   void set_arity (tree_label tag, int arity, int extra, int am, int cm);
@@ -36,10 +37,13 @@ public:
   int  get_child_mode (tree_label tag);
   int  get_nr_indices (tree_label tag);
   void freeze_arity (tree_label tag);
+  int  get_old_arity (tree_label l);
+  bool is_dynamic (tree t);
 
   void set_no_border (tree_label tag, bool has_no_border);
-  int  get_no_border (tree_label tag);
+  bool get_no_border (tree_label tag);
   void freeze_no_border (tree_label tag);
+  bool is_child_enforcing (tree t);
 
   void set_block (tree_label tag, int is_block);
   int  get_block (tree_label tag);
@@ -50,24 +54,15 @@ public:
   bool get_accessible (tree_label tag, int nr);
   bool all_accessible (tree_label tag);
   void freeze_accessible (tree_label tag, int nr);
+  bool is_accessible_child (tree t, int child);
   
   void set_block (tree_label tag, int nr, int require_block);
   int  get_block (tree_label tag, int nr);
   void freeze_block (tree_label tag, int nr);
-  
-  /* Old style */
-
-  bool contains (string l);
-  int  get_arity (tree_label l);
 
   /* Heuristic initialization */
   bool heuristic_init (string var, tree macro);
   void heuristic_init (hashmap<string,tree> env);
-
-  /* Analyzing trees using the drd */
-  bool is_dynamic (tree t);
-  bool is_accessible_child (tree t, int child);
-  bool is_child_enforcing (tree t);
 
   friend class drd_info;
   friend ostream& operator << (ostream& out, drd_info drd);

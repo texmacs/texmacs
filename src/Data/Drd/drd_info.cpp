@@ -48,13 +48,18 @@ drd_info_rep::set_locals (tree t) {
       info (make_tree_label (t[i][0]->label))= tag_info (t[i][1]);
 }
 
+bool
+drd_info_rep::contains (string l) {
+  return existing_tree_label (l) && info->contains (as_tree_label (l));
+}
+
 ostream&
 operator << (ostream& out, drd_info drd) {
   return out << "drd [" << drd->name << "]";
 }
 
 /******************************************************************************
-* New access methods
+* Arity related methods
 ******************************************************************************/
 
 void
@@ -112,6 +117,55 @@ drd_info_rep::freeze_arity (tree_label l) {
   ti->pi.freeze_arity= true;
 }
 
+int
+drd_info_rep::get_old_arity (tree_label l) {
+  tag_info ti= info[l];
+  if (ti->pi.arity_mode != ARITY_NORMAL) return -1;
+  else return ((int) ti->pi.arity_base) + ((int) ti->pi.arity_extra);
+}
+
+bool
+drd_info_rep::is_dynamic (tree t) {
+  if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
+  if (is_atomic (t)) return false;
+  if (is_func (t, DOCUMENT) || is_func (t, PARAGRAPH) || is_func (t, CONCAT) ||
+      is_func (t, TABLE) || is_func (t, ROW)) return false;
+  return info[L(t)]->pi.arity_mode != ARITY_NORMAL;
+}
+
+/******************************************************************************
+* Border accessability related methods
+******************************************************************************/
+
+void
+drd_info_rep::set_no_border (tree_label l, bool has_no_border) {
+  if (info[l]->pi.freeze_no_border) return;
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.no_border= has_no_border;
+}
+
+bool
+drd_info_rep::get_no_border (tree_label l) {
+  return info[l]->pi.no_border;
+}
+
+void
+drd_info_rep::freeze_no_border (tree_label l) {
+  if (!info->contains (l)) info(l)= copy (info[l]);
+  tag_info& ti= info(l);
+  ti->pi.freeze_no_border= true;
+}
+
+bool
+drd_info_rep::is_child_enforcing (tree t) {
+  return info[L(t)]->pi.no_border && (N(t) != 0);
+}
+
+/******************************************************************************
+* Children's accessability related methods
+******************************************************************************/
+
 void
 drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
   if (!info->contains (l)) info(l)= copy (info[l]);
@@ -143,20 +197,12 @@ drd_info_rep::freeze_accessible (tree_label l, int nr) {
   ci.freeze_accessible= true;
 }
 
-/******************************************************************************
-* Accessing the drd
-******************************************************************************/
-
 bool
-drd_info_rep::contains (string l) {
-  return existing_tree_label (l) && info->contains (as_tree_label (l));
-}
-
-int
-drd_info_rep::get_arity (tree_label l) {
-  tag_info ti= info[l];
-  if (ti->pi.arity_mode != ARITY_NORMAL) return -1;
-  else return ((int) ti->pi.arity_base) + ((int) ti->pi.arity_extra);
+drd_info_rep::is_accessible_child (tree t, int i) {
+  tag_info ti= info[L(t)];
+  int index= ti->get_index (i, N(t));
+  if ((index<0) || (index>=N(ti->ci))) return false;
+  return ti->ci[index].accessible;
 }
 
 /******************************************************************************
@@ -212,30 +258,4 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
     }
   }
   // cout << "--> " << (texmacs_time ()-tt) << "ms\n";
-}
-
-/******************************************************************************
-* Drd-based predicates
-******************************************************************************/
-
-bool
-drd_info_rep::is_dynamic (tree t) {
-  if (L(t) >= START_EXTENSIONS) return true; // FIXME: temporary fix
-  if (is_atomic (t)) return false;
-  if (is_func (t, DOCUMENT) || is_func (t, PARAGRAPH) || is_func (t, CONCAT) ||
-      is_func (t, TABLE) || is_func (t, ROW)) return false;
-  return info[L(t)]->pi.arity_mode != ARITY_NORMAL;
-}
-
-bool
-drd_info_rep::is_accessible_child (tree t, int i) {
-  tag_info ti= info[L(t)];
-  int index= ti->get_index (i, N(t));
-  if ((index<0) || (index>=N(ti->ci))) return false;
-  return ti->ci[index].accessible;
-}
-
-bool
-drd_info_rep::is_child_enforcing (tree t) {
-  return info[L(t)]->pi.no_border && (N(t) != 0);
 }

@@ -212,7 +212,7 @@ edit_dynamic_rep::make_active (string op, int n) {
   }
   else insert_tree (t, path (0, 0));
 
-  if (drd->get_arity (l) < 0)
+  if (drd->get_old_arity (l) < 0)
     set_message ("tab: insert argument", op);
 }
 
@@ -244,7 +244,7 @@ edit_dynamic_rep::make_deactivated (string op, int n, string rf, string arg) {
   }
   else make_deactivated (t, path (k, 0));
 
-  if (drd->get_arity (l) < 0)
+  if (drd->get_old_arity (l) < 0)
     set_message ("tab: insert argument, return: activate", rf);
   else set_message ("return: activate", rf);
 }
@@ -282,7 +282,7 @@ edit_dynamic_rep::insert_argument () {
     }
     return;
   }
-  if (drd->get_arity (L(t)) >= 1) return;
+  if (drd->get_old_arity (L(t)) >= 1) return;
   if (is_func (t, WITH) || is_func (t, DRD_PROPS) || is_func (t, ATTR)) {
     int at= ((last_item (p) >> 1) << 1) + 2;
     if (is_func (t, DRD_PROPS))
