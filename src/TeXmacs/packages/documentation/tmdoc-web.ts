@@ -20,7 +20,7 @@
 
   \;
 
-  <assign|tmweb-main-links|<func|<apply|tmweb-list|<apply|tmweb-link|Home|../home/welcome>|<apply|tmweb-link|Download|../download/download>|<apply|tmweb-link|Help|../help/help>|<apply|tmweb-link|Contribute|../contribute/contribute>|<apply|tmweb-link|Plug-ins|../plugins/plugins>|<apply|tmweb-link|About|../about/authors>|<apply|tmweb-link|Contact|../contact/contact>|<apply|tmweb-link|Search|../search/search>>>>
+  <assign|tmweb-main-links|<func|<apply|tmweb-list|<apply|tmweb-link|Home|../home/welcome>|<apply|tmweb-link|Download|../download/download>|<apply|tmweb-link|Help|../help/help>|<apply|tmweb-link|Contribute|../contribute/contribute>|<apply|tmweb-link|Plug-ins|../plugins/plugins>|<apply|tmweb-link|About|../about/authors>|<apply|tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|Search>|http://www.texmacs.org/search>>>>
 
   <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<apply|tmweb-main-links>|<arg|title>|<arg|bar>>>>
 
