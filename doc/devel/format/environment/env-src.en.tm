@@ -1,33 +1,49 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Editing source trees>
 
+  The different rendering styles for source trees are described in more
+  detail in the <hyper-link|section|../../style/presentation/src-present-global.en.tm>
+  about the global presentation of source trees. The corresponding
+  environment variables are briefly described here.
+
   <\explain>
     <var-val|src-style|angular><explain-synopsis|rendering style for source
     tags>
   <|explain>
-    Please document.
+    The principal rendering style for source trees as specified in
+    <menu|Document|View|Style>. Possible values are <verbatim|angular>,
+    <verbatim|scheme>, <verbatim|functional> and <verbatim|latex>.
   </explain>
 
   <\explain>
     <var-val|src-special|normal><explain-synopsis|how to render special tags>
   <|explain>
-    Please document.
+    How to render special tags like <markup|concat>, <markup|document>,
+    <markup|compound>, <abbr|etc.>, as specified in
+    <menu|Document|View|Special>. Possible values are <verbatim|raw>,
+    <verbatim|format>, <verbatim|normal> and <verbatim|maximal>.
   </explain>
 
   <\explain>
     <var-val|src-compact|normal><explain-synopsis|compactication level>
   <|explain>
-    Please document.
+    How compact should tags be rendered, as specified in
+    <menu|Document|View|Compactification>. Possible values are
+    <verbatim|none>, <verbatim|inline>, <verbatim|normal>, <verbatim|inline
+    tags> and <verbatim|all>.
   </explain>
 
   <\explain>
     <var-val|src-close|compact><explain-synopsis|closing style for long tags>
   <|explain>
-    Please document.
+    The rendering style of closing tags as specified in
+    <menu|Document|View|Closing style>. Possible values are
+    <verbatim|repeat>, <verbatim|long>, <verbatim|compact> and
+    <verbatim|minimal>.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>

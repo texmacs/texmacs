@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -13,15 +13,32 @@
     primitive applies the <value|scheme> function or macro
     <src-arg|scheme-foo> to the arguments <src-arg|arg-1> until
     <src-arg|arg-n>. For instance, the code <inactive*|<extern|(lambda (name)
-    (string-append "hi " name))|dude>> yields ``<extern|(lambda (name)
-    (string-append "hi " name))|dude>''.
+    `(concat "hi " ,name))|dude>> yields ``<extern|(lambda (name) `(concat
+    "hi " ,name))|dude>''.
 
-    Notice that the scheme function should only rely on secure scheme
-    functions (and not on functions like <verbatim|system> which may erase
-    your hard disk). User implemented <value|scheme> functions in plug-ins
-    may be defined to be secure using the <verbatim|:secure> option.
-    Alternatively, the user may define all <value|scheme> routines to be
-    secure in <menu|Edit|Preferences|Security|Accept all scripts>.
+    The arguments <src-arg|arg-1> until <src-arg|arg-n> are evaluated and
+    then passed as trees to <src-arg|scheme-foo>. When defining a macro which
+    relies on extern scheme code, it is therefore recommended to pass the
+    macro arguments using the <markup|quote-arg> primitive:
+
+    <\tm-fragment>
+      <inactive*|<assign|inc-div|<macro|x|y|<style-with|src-compact|none|<extern|(lambda
+      (x y) `(frac ,x (concat "1+" ,y)))|<quote-arg|x>|<quote-arg|y>>>>>>
+    </tm-fragment>
+
+    It has been foreseen that the accessability of the macro arguments
+    <src-arg|x> and <src-arg|y> is preserved for this kind of definitions.
+    However, since <TeXmacs> does not heuristically analyze your
+    <value|scheme> code, you will have to manually set the <abbr|D.R.D.>
+    properties using <markup|drd-props>.
+
+    Notice also that the <value|scheme> function <src-arg|scheme-foo> should
+    only rely on secure scheme functions (and not on functions like
+    <verbatim|system> which may erase your hard disk). User implemented
+    <value|scheme> functions in plug-ins may be defined to be secure using
+    the <verbatim|:secure> option. Alternatively, the user may define all
+    <value|scheme> routines to be secure in
+    <menu|Edit|Preferences|Security|Accept all scripts>.
   </explain>
 
   <\explain>

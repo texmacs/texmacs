@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -150,6 +150,9 @@
 
   <explain|<explain-macro|TeXmacs>|The <TeXmacs> logo.>
 
+  <explain|<explain-macro|TeXmacs-version>|The current version of <TeXmacs>
+  (<TeXmacs-version>).>
+
   <explain|<explain-macro|TeX>|The <TeX> logo.>
 
   <explain|<explain-macro|LaTeX>|The <LaTeX> logo.>
@@ -228,17 +231,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -96,6 +96,13 @@
     <explain-macro|new-dpage*><explain-synopsis|new double page>
   <|explain>
     Yet to be implemented primitives for starting a new double page.
+  </explain>
+
+  <\explain>
+    <explain-macro|identity|markup><explain-synopsis|identity macro>
+  <|explain>
+    The identity macro is built-in into <TeXmacs>. It should not really be
+    considered as a primitive, but it is not part of any style file either.
   </explain>
 
   In addition to these primitives for internal use only, there are also quite

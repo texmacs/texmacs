@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.11>
 
 <style|tmweb>
 
@@ -90,9 +90,9 @@
   <section|Download the <TeXmacs> distribution>
 
   Download the <hlink|latest version (2.5
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<extern|texmacs-version-release|tgz>|-src.tar.gz>>>
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
   of the source code, or the <hlink|latest stable version (2.4
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<extern|texmacs-version-release|stgz>|-src.tar.gz>>>.
+  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<TeXmacs-version-release|stgz>>>.
   You may for instance save the distribution in
   <with|font-family|tt|C:\\tmp>. The name of the file with the distribution
   is of the form <with|font-family|tt|TeXmacs-[source version]-src.tar.gz>,
@@ -203,16 +203,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
   </collection>
 </initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -78,7 +78,7 @@
     An article with the simple text ``hello world!'' is represented as
 
     <\equation*>
-      <tree|<with|mode|text|<markup|document>>|<tree|<with|mode|text|<markup|TeXmacs>>|<with|mode|text|<extern|texmacs-version-release|version>>>|<tree|<with|mode|text|<markup|style>>|article>|<tree|<with|mode|text|<markup|body>>|<tree|<with|mode|text|<markup|document>>|hello
+      <tree|<with|mode|text|<markup|document>>|<tree|<with|mode|text|<markup|TeXmacs>>|<with|mode|text|<TeXmacs-version>>>|<tree|<with|mode|text|<markup|style>>|article>|<tree|<with|mode|text|<markup|body>>|<tree|<with|mode|text|<markup|document>>|hello
       world!>>>
     </equation*>
   </example>

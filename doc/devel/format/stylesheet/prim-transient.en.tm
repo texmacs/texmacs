@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.11>
 
 <style|tmdoc>
 
@@ -164,6 +164,75 @@
 
     The <markup|latex> tag behaves similarly as the <markup|hybrid> tag
     except that it only recognizes <LaTeX> commands.
+  </explain>
+
+  The rendering macros for source trees are built-in into <TeXmacs>. They
+  should not really be considered as primitives, but they are not part of any
+  style file either.
+
+  <\explain>
+    <explain-macro|indent|body><explain-synopsis|indent some content>
+  <|explain>
+    Typeset the <src-arg|body> using some indentation.
+  </explain>
+
+  <\explain>
+    <explain-macro|rightflush><explain-synopsis|indent some content>
+  <|explain>
+    Flush to the right. This macro is useful to make the end of a block
+    environment run until the right margin. This allows for more natural
+    cursor positioning and a better layout of the informative boxes.
+  </explain>
+
+  <\explain>
+    <explain-macro|src-macro|macro-name>
+
+    <explain-macro|src-var|variable-name>
+
+    <explain-macro|src-arg|argument-name>
+
+    <explain-macro|src-tt|verbatim-content>
+
+    <explain-macro|src-integer|interger>
+
+    <explain-macro|src-length|length>
+
+    <explain-macro|src-error|message><explain-synopsis|syntactic highlighting
+    on purpose>
+  <|explain>
+    These macros are used for the syntactic highlighting of source trees.
+    They determine how to render subtrees which correspond to macro names,
+    variable names, argument names, verbatim content, integers, lengths and
+    error messages.
+  </explain>
+
+  <\explain>
+    <explain-macro|src-title|title>
+
+    <explain-macro|src-style-file|name|version>
+
+    <explain-macro|src-package|name|version>
+
+    <explain-macro|src-package-dtd|name|version|dtd|dtd-version><explain-synopsis|style
+    and package administration>
+  <|explain>
+    These macros are used for the identification of style files and packages
+    and their corresponding <abbr|D.T.D.>s. The <markup|src-title> is a
+    container for <markup|src-style-file>, <markup|src-package>,
+    <markup|src-package-dtd> as well as <markup|src-license> and
+    <markup|src-copyright> macros.
+
+    The <markup|src-style-file> tag specifies the <src-arg|name> and
+    <src-arg|version> of a style file and sets the environment variable with
+    <src-var|<src-arg|name>-style> to <src-arg|version>. The
+    <markup|src-package-dtd> specifies the <src-arg|name> and
+    <src-arg|version> of a package, as well as the corresponding
+    <src-arg|dtd> and its version <src-arg|dtd-version>. It sets the
+    environment variable <src-var|<src-arg|name>-package> to
+    <src-arg|version> and <src-var|<src-arg|dtd>-dtd> to
+    <src-arg|dtd-version>. The <markup|src-package> tag is a shorthand for
+    <markup|src-package-dtd> when the name of the <abbr|D.T.D.> coincides
+    with the name of the package.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
