@@ -64,7 +64,8 @@
 
 #define SPECIAL_RAW           0
 #define SPECIAL_FORMAT        1
-#define SPECIAL_MAXIMAL       2
+#define SPECIAL_NORMAL        2
+#define SPECIAL_MAXIMAL       3
 
 #define COMPACT_ALL           0
 #define COMPACT_INLINE_ARGS   1
@@ -208,6 +209,15 @@ public:
   tree   expand (tree t);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
+  tree   rewrite_inactive_arg (tree t, tree var, int i, bool bl, bool fl);
+  tree   rewrite_inactive_raw_data (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_document (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_concat (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_value (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_arg (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_symbol (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_hybrid (tree t, tree var, bool block, bool flush);
+  tree   rewrite_inactive_default (tree t, tree var, bool block, bool flush);
   tree   rewrite_inactive (tree t, tree var, bool block, bool flush);
   tree   rewrite_inactive (tree t, tree var);
 

@@ -265,6 +265,7 @@ edit_env_rep::update_src_special () {
   string s= as_string (env [SRC_SPECIAL]);
   if (s == "raw") src_special= SPECIAL_RAW;
   else if (s == "format") src_special= SPECIAL_FORMAT;
+  else if (s == "normal") src_special= SPECIAL_NORMAL;
   else if (s == "maximal") src_special= SPECIAL_MAXIMAL;
 }
 
