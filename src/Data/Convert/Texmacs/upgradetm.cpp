@@ -1896,18 +1896,13 @@ rename_vars (tree t, hashmap<string,string> H) {
 	    ((L(t) == CWITH) && (i == 4)) ||
 	    ((L(t) == TWITH) && (i == 0)) ||
 	    ((L(t) == ASSOCIATE) && (i == 0)))
-	  {
-	    u= copy (H[u->label]);
-	    //cout << "]]] " << as_string (L(t)) << ", " << i
-	    //<< " -> " << u << "\n";
-	  }
+	  u= copy (H[u->label]);
       r[i]= u;
     }
     if ((n == 0) && H->contains (as_string (L(t)))) {
       string v= H[as_string (L(t))];
       r= tree (VALUE, copy (v));
       if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
-      // cout << "]]] " << t << " -> " << r << "\n";
     }
     return r;
   }
