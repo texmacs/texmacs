@@ -341,8 +341,8 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
     tree arg (ARGUMENT, xmacro[0], as_string (i));
     set_accessible (l, i, accessible_arg (this, xmacro[1], arg));
   }
-  // if (old_ti != info[l])
-  //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
+  if (old_ti != info[l])
+    cout << var << ": " << old_ti << " -> " << info[l] << "\n";
   return (old_ti != info[l]);
 }
 

@@ -42,7 +42,10 @@
   (insert-return))
 
 (define (make-return-inside x)
-  (cond ((== x "inactive") (activate))
+  (cond ((== x "hybrid") (activate-hybrid))
+	((== x "latex") (activate-latex))
+	((== x "symbol") (activate-symbol))
+	((== x "inactive") (activate))
 	((== x "title")
 	 (if (inside? "make-title")
 	     (make-header 'author)
@@ -71,7 +74,7 @@
 
 (define (make-return)
   (make-return-inside
-   (inside-which '("inactive"
+   (inside-which '("inactive" "latex" "hybrid" "symbol"
 		   "title" "author"
 		   "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
@@ -101,7 +104,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (hybrid-insert forward)
-  (let ((x (inside-which '("table" "tree" "switch" "input"))))
+  (let ((x (inside-which '("table" "tree" "switch" "input" "hybrid"))))
     (cond ((== x "table")
 	   (table-insert-column forward))
 	  ((== x "tree")
@@ -109,19 +112,21 @@
 	  ((== x "switch")
 	   (switch-insert (if forward "after" "before")))
 	  ((== x "input")
-	   (session-fold-input)))))
+	   (session-fold-input))
+	  ((== x "hybrid")
+	   (activate-hybrid)))))
 
 (define (structured-insert-left)
   (let ((x (inside-which '("table" "tree" "switch"
-			   "inactive" "tuple" "attr" "input"))))
-    (if (in? x '("table" "tree" "switch" "input"))
+			   "inactive" "hybrid" "tuple" "attr" "input"))))
+    (if (in? x '("table" "tree" "switch" "input" "hybrid"))
 	(hybrid-insert #f)
 	(insert-argument #f))))
 
 (define (structured-insert-right)
   (let ((x (inside-which '("table" "tree" "switch"
-			   "inactive" "tuple" "attr" "input"))))
-    (if (in? x '("table" "tree" "switch" "input"))
+			   "inactive" "hybrid" "tuple" "attr" "input"))))
+    (if (in? x '("table" "tree" "switch" "input" "hybrid"))
 	(hybrid-insert #t)
 	(insert-argument #t))))
 
@@ -173,6 +178,7 @@
 
 (define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
+        ((inside? "hybrid") (activate-hybrid))
         ((or (is-deactivated?) (in-preamble-mode?)
 	     (inside? "tuple") (inside? "attr"))
 	 (insert-argument #t))

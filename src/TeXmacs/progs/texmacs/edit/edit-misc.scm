@@ -14,7 +14,7 @@
 
 (texmacs-module (texmacs edit edit-misc)
   (:export
-    make-specific make-latex make-hybrid
+    make-specific make-latex
     make-include make-inline-image make-link-image
     make-date))
 
@@ -26,12 +26,6 @@
 (define (make-latex)
   (make 'latex)
   (set-message "Type a latex command followed by return" "latex"))
-
-(define (make-hybrid)
-  (make 'hybrid)
-  (set-message
-   "A-right: insert argument, return: activate or execute latex command"
-   "hybrid"))
 
 (define (make-include s)
   (insert-object `(include ,s)))

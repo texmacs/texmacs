@@ -161,9 +161,10 @@
   ("table N B" (make 'block*)))
 
 (kbd-map like-old?
-  ("tab" (if (or (is-deactivated?) (in-preamble-mode?) (inside? "tuple"))
-	     (insert-argument #t)
-	     (make-htab "5mm")))
+  ("tab" (cond ((inside? "hybrid") (activate-hybrid))
+	       ((or (is-deactivated?) (in-preamble-mode?) (inside? "tuple"))
+		(insert-argument #t))
+	       (else (make-htab "5mm"))))
   ("A-backspace" (make-space "-0.2spc"))
   ("A-delete" (cell-del-format ""))
   ("M-backspace" (remove-structure-upwards))

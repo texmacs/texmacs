@@ -19,31 +19,37 @@ public:
   edit_dynamic_rep ();
   ~edit_dynamic_rep ();
 
-  path find_dynamic (path p);
-  path find_deactivated (path p);
   bool in_preamble_mode ();
   bool is_deactivated ();
-  bool is_multi_paragraph_macro (tree t);
-  void activate_macro (path p, string name, tree f);
-  void activate ();
-  void activate_compound ();
+  path find_deactivated (path p);
+  path find_dynamic (path p);
 
+  bool is_multi_paragraph_macro (tree t);
   void make_compound (tree_label l, int n);
-  bool make_return_before ();
-  bool make_return_after ();
-  void make_assign (tree var, tree by);
-  void make_with (string var, string val);
-  bool make_big_compound (string s);
-  void temp_proof_fix ();
+  void activate ();
+
   void go_to_argument (path p, bool start_flag);
-  void insert_argument (bool forward);
   void insert_argument (path p, bool forward);
+  void insert_argument (bool forward);
   void remove_argument (path p, bool forward);
 
   void back_monolithic (path p);
   void back_general (path p, bool forward);
-  void back_in_with (tree t, path p, bool forward);
   void back_in_general (tree t, path p, bool forward);
+
+  void make_with (string var, string val);
+  void back_in_with (tree t, path p, bool forward);
+  void make_hybrid ();
+  bool activate_latex ();
+  void activate_hybrid ();
+  void activate_symbol ();
+  void activate_compound ();
+
+  bool make_return_before ();
+  bool make_return_after ();
+  bool make_big_compound (string s);
+  void temp_proof_fix ();
+  void make_assign (tree var, tree by);
 };
 
 #endif // defined EDIT_DYNAMIC_H
