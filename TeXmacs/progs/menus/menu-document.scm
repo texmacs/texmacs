@@ -127,6 +127,7 @@
 		---
 		("None" (init-env "src-special" "raw"))
 		("Formatting" (init-env "src-special" "format"))
+		("Normal" (init-env "src-special" "normal"))
 		("Maximal" (init-env "src-special" "maximal")))
 	    (-> "Compactification"
 		("Default" (init-default "src-compact"))
