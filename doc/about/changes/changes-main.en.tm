@@ -24,7 +24,7 @@
   <\traverse>
     <apply|branch|Improved titles (1.0.4.1)|changes-10.en.tm>
 
-    <apply|branch|Improved style sheeds and source editing mode (1.0.3.5)|changes-9.en.tm>
+    <apply|branch|Improved style sheets and source editing mode (1.0.3.5)|changes-9.en.tm>
 
     <apply|branch|Renaming of tags and environment variables (1.0.2.8 -- 1.0.2.9)|changes-8.en.tm>
 
