@@ -67,6 +67,8 @@
       document|#usage-2>?
 
       <item><hlink|How can I insert an OpenOffice.org table|#usage-3>?
+
+      <item><hlink|How can I insert the number of pages|#usage-4>?
     </itemize-minus>
 
     <item>Microtypography
@@ -360,6 +362,13 @@
       document.
     </enumerate>
   </answer>
+
+  <\question>
+    <label|usage-4>How can I insert the number of pages?
+  </question>
+
+  <answer| Put a label on the last page of your document and use the
+  <verbatim|pageref> primitive in order to produce the corresponding number.>
 
   <section*|Microtypography>
 
