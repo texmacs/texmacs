@@ -115,9 +115,20 @@
        (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
 	 (graphics-set-property "gr-clip" clip)))))
 
+(define (graphics-mode)
+  (with m (tree->stree (get-env-tree "gr-mode"))
+     (cond ((string? m)
+	   `(edit ,(string->symbol m)))
+	   ((pair? m)
+	    (map string->symbol (cdr m))))))
+
 (define (graphics-set-mode val)
   (graphics-group-start)
-  (graphics-set-property "gr-mode" val))
+  (graphics-set-property "gr-mode"
+     (cond ((or (symbol? val) (string? val))
+	    (list 'tuple 'edit val))
+	   ((pair? val)
+	    (cons 'tuple val)))))
 
 (define (graphics-set-color val)
   (graphics-set-property "gr-color" val))
@@ -147,7 +158,9 @@
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
 	  ((in? mode '(line cline spline cspline))
-	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw)))))))
+	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw))))
+	  (else
+	   (graphics-enrich-sub t '())))))
 
 (define (graphics-enrich t)
   (let* ((color (get-env "gr-color"))
@@ -158,19 +171,24 @@
 ;; Subroutines for modifying the innermost group of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (graphics-group-insert t)
+(define (graphics-group-insert-bis t go-into)
   (with p (graphics-group-path)
     (if p (with n (- (length (stree-at p)) 1)
 	    (tm-insert (rcons p n) (list 'tuple t))
 	    (if (func? t 'with)
 		(tm-go-to (append p (list n (- (length t) 2) 1)))
-		(tm-go-to (append p (list n 1))))))))
+		(if (and go-into (func? t 'text-at))
+		    (tm-go-to (append p (list n 0 0)))
+		    (tm-go-to (append p (list n 1)))))))))
+
+(define (graphics-group-insert t)
+  (graphics-group-insert-bis t #t))
 
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color lw)
-  (graphics-group-insert (graphics-enrich-bis t color lw)))
+(define (graphics-group-enrich-insert-bis t color lw go-into)
+  (graphics-group-insert-bis (graphics-enrich-bis t color lw) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -185,12 +203,12 @@
   (with p (graphics-path path)
     (if p (tree->stree (tm-subtree p)) #f)))
 
-(define (graphics-active-stree)
+(define (graphics-active-object)
   (with p (graphics-active-path)
     (if p (tree->stree (tm-subtree p)) #f)))
 
 (define (graphics-active-type)
-  (with t (graphics-active-stree)
+  (with t (graphics-active-object)
     (if t (car t) #f)))
 
 (define (graphics-active-color)
@@ -198,6 +216,13 @@
 
 (define (graphics-active-lwidth)
   (get-env "line-width"))
+
+(define (graphics-active-property-bis var default-val)
+  (with c (get-env var)
+    (if (== c "") default-val c)))
+
+(define (graphics-active-property var)
+  (graphics-active-property-bis var "default"))
 
 (define (search-upwards-from p tag)
   (if (null? p)
@@ -239,13 +264,12 @@
                     (get-upwards-property (cDr q) var)
                     val))))))
 
-(define (graphics-path-color p)
-  (with c (get-upwards-property p "color")
-    (if (== c nothing) "default" c)))
+(define (graphics-path-property-bis p var default-val)
+  (with c (get-upwards-property p var)
+    (if (== c nothing) default-val c)))
 
-(define (graphics-path-lwidth p)
-  (with c (get-upwards-property p "line-width")
-    (if (== c nothing) "default" c)))
+(define (graphics-path-property p var)
+  (graphics-path-property-bis p var "default"))
 
 (define (graphics-active-assign t)
   (with p (graphics-active-path)
@@ -254,7 +278,7 @@
 	    (tm-go-to (rcons p 1))))))
 
 (define (graphics-active-set-tag l)
-  (with t (graphics-active-stree)
+  (with t (graphics-active-object)
     (if t (graphics-active-assign (cons l (cdr t))))))
 
 (define (graphics-active-insert t)
@@ -280,6 +304,9 @@
 ;; Closest point
 (define (s2i s)
   (exact->inexact (string->number s)))
+
+(define (i2s s)
+  (number->string s))
 
 (define (graphics-norm p1 p2)
    (let ((x (- (s2i (cadr p2)) (s2i (cadr p1))))
@@ -323,9 +350,55 @@
         (if (== (cdr o) '()) o (car (list-tail o 7)))
         '(concat))))
             
+(define (create-graphical-contour o halign valign len)
+  (define (create-haligns l b r t)
+     (with x (cond ((== halign "left") l)
+		   ((== halign "center") (i2s (/ (+ (s2i l) (s2i r)) 2)))
+		   ((== halign "right") r)
+		   (else l))
+       `((line (point ,x ,b) (point ,x ,(i2s (- (s2i b) len))))
+	 (line (point ,x ,t) (point ,x ,(i2s (+ (s2i t) len))))))
+  )
+  (define (create-valigns l b r t)
+     (with y (cond ((== valign "bottom") b)
+		   ((== valign "center") (i2s (/ (+ (s2i b) (s2i t)) 2)))
+		   ((== valign "top") t)
+		   (else b))
+       `((line (point ,l ,y) (point ,(i2s (- (s2i l) len)) ,y))
+	 (line (point ,r ,y) (point ,(i2s (+ (s2i r) len)) ,y))))
+  )
+  (let* ((info0 (cdr (tree->stree (box-info (stree->tree o) "lbLB"))))
+	 (info1 (cdr (tree->stree (box-info (stree->tree o) "rtRT"))))
+	 (l (i2s (min (s2i (car  info0)) (s2i (caddr  info0)))))
+	 (b (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
+	 (r (i2s (max (s2i (car  info1)) (s2i (caddr  info1)))))
+	 (t (i2s (max (s2i (cadr info1)) (s2i (cadddr info1)))))
+	 (p0 (tree->stree (frame-inverse (stree->tree `(tuple ,l ,b)))))
+	 (p1 (tree->stree (frame-inverse (stree->tree `(tuple ,r ,b)))))
+	 (p2 (tree->stree (frame-inverse (stree->tree `(tuple ,r ,t)))))
+	 (p3 (tree->stree (frame-inverse (stree->tree `(tuple ,l ,t)))))
+        )
+	(with res `((line ,p0 ,p1) (line ,p1 ,p2)
+		    (line ,p2 ,p3) (line ,p3 ,p0)
+		   )
+		   (if halign (set! res (append res
+				 (create-haligns (cadr p0) (caddr p0)
+						 (cadr p1) (caddr p2)))))
+		   (if valign (set! res (append res
+				 (create-valigns (cadr p0) (caddr p0)
+						 (cadr p1) (caddr p2)))))
+		   res)))
+
 (define (create-graphical-object o mode pts)
-  (if o (with op (if (== (car o) 'point) (cons o '())
-		     (cdr o)) ;; FIXME : doesnt work for arcs
+  (if o (with op
+	      (cond ((== (car o) 'point) ;; FIXME : doesnt work for arcs
+		     (cons o '())
+		    )
+		    ((== (car o) 'text-at)
+		     (with a (cdddr o)
+			(create-graphical-contour o (car a) (cadr a) 0.1))
+		    )
+		    (else (cdr o)))
 	  (let ((color #f)
 		(lw #f))
                  (if (== mode 'active)
@@ -334,8 +407,8 @@
 		       (set! lw graphical-lwidth)))
                  (if (list? mode)
                      (begin
-		       (set! color (graphics-path-color mode))
-		       (set! lw (graphics-path-lwidth mode))))
+		       (set! color (graphics-path-property mode "color"))
+		       (set! lw (graphics-path-property mode "line-width"))))
                  (if (== mode 'new)
                      (begin
 		       (set! color (get-env "gr-color"))
@@ -347,7 +420,7 @@
 			 "line-width" lw
 			 (cons 'concat
 			       (cond ((== pts 'points) op)
-				     ((== pts 'object) o)
+				     ((== pts 'object) `(,o))
 				     ((== pts 'object-and-points)
 				      (cons o op)))))))))
       (set-graphical-object (stree->tree '(concat)))))
@@ -356,6 +429,36 @@
 ;; State variables & history for the current graphics context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Past events
+(define past-events #('() '()))
+(define (event-exists! o e)
+  (vector-set!
+     past-events 0
+     (cons (list o e) (vector-ref past-events 0))))
+
+(define (event-exists? o e t)
+  (define (seek-event l)
+     (if (or (null? l) (not (pair? (car l))))
+	 #f
+	 (with x (car l)
+	    (if (and (eq? (car x) o) (eq? (cadr x) e))
+		#t
+		(seek-event (cdr l)))))
+  )
+  (if (in? t '(0 1))
+      (seek-event (vector-ref past-events t))
+      #f))
+
+(define (events-clocktick)
+  (vector-set! past-events 1 (vector-ref past-events 0))
+  (vector-set! past-events 0 '()))
+
+(define (events-forget)
+  (set! past-events (make-vector 2))
+  (vector-set! past-events 0 '())
+  (vector-set! past-events 1 '()))
+
+;; State variables
 (define sticky-point #f)
 (define current-point-no #f)
 
@@ -445,14 +548,12 @@
 
 (define (graphics-forget-states)
   (set! graphics-first-state #f)
-  (set! graphics-states '()))
+  (set! graphics-states '())
+  (events-forget))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for using and maintaining the current graphics context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (graphics-mode)
-  (string->symbol (get-env "gr-mode")))
 
 (define-macro (with-graphics-context msg x y path obj no . body)
   `(if sticky-point
@@ -465,7 +566,7 @@
 	     (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
 		 (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))
        (let* ((pxy (path-xy (s2i ,x) (s2i ,y)))
-              (,path (cDr pxy))
+              (,path (graphics-path pxy))
               (,obj (graphics-object pxy)))
 	 (if ,obj
 	     (let* ((,no (object-closest-point-pos ,obj ,x ,y)))
@@ -477,9 +578,11 @@
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
   (cond
-   ((and (in? cmd '(begin exit)) (or (== cmd begin) (not sticky-point)))
+   ((and (in? cmd '(begin exit)) (or (== cmd 'begin) (not sticky-point)))
     (graphics-reset-state)
-    (graphics-forget-states))
+    (graphics-forget-states)
+    (with p (graphics-active-path)
+       (if p (create-graphical-object (graphics-active-object) p  'points))))
    ((and (== cmd 'exit) sticky-point)
     (if graphics-first-state
 	(begin
@@ -492,7 +595,7 @@
     (if (not sticky-point)
 	(with p (graphics-active-path)
 	  (if p
-	      (create-graphical-object (graphics-active-stree) p  'points)
+	      (create-graphical-object (graphics-active-object) p  'points)
 	      (create-graphical-object #f #f #f))))
     (set! sticky-point #f)
     (set! current-point-no #f)
@@ -509,7 +612,7 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (dispatch obj vals func vars)
+(define-macro (dispatch obj vals func vars . parms)
   (define (cond-case elt)
     `(,(if (null? (cdr elt))
 	   `(== ,obj ',(car elt))
@@ -520,13 +623,18 @@
 	  "_"
 	  (symbol->string func)))
        . ,vars)))
-  (append (cons
-	   'cond
-	   (map cond-case vals))
-	  `((else (display* "Uncaptured " ',func " " ,obj "\n")))))
+  `(begin
+    ,(if (and (pair? parms) (in? 'do-tick parms))
+	`(begin
+	    (events-clocktick)
+	    (event-exists! ,obj ',func)))
+    ,(append (cons
+	     'cond
+	     (map cond-case vals))
+	    `((else (display* "Uncaptured " ',func " " ,obj "\n"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Processing the different kinds of graphical objects
+;; Edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Left button
@@ -546,6 +654,13 @@
 	(set! current-point-no no)
 	(graphics-store-state #f))))
 
+(define (text-at_left-button x y p obj no)
+  (if sticky-point
+      (display "Text-at left-button not implemented\n")
+      (begin
+	 (if (event-exists? 'text-at 'left-button 1)
+	     (tm-go-to (path-xy (s2i x) (s2i y)))))))
+
 ;; Move
 (define (point_move x y p obj no)
   (if sticky-point
@@ -558,6 +673,11 @@
 	(create-graphical-object obj p 'points)
 	(tm-go-to (rcons p 1)))))
 
+(define (text-at_move x y p obj no)
+  (if (and (not sticky-point) (event-exists? 'text-at 'left-button 1))
+      (point_left-button x y p obj 1)
+      (point_move x y p obj 1)))
+
 ;; Middle button
 (define (point_middle-button x y p obj no)
   (if sticky-point
@@ -567,7 +687,7 @@
 	(graphics-move-point x y))
       ;;Remove
       (begin
-	(if (or (== (car obj) 'point) (null? (cddr obj)))
+	(if (or (in? (car obj) '(point text-at)) (null? (cddr obj)))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f)
@@ -582,7 +702,7 @@
 (define (point_sticky-right-button x y p obj no)
   (create-graphical-object obj 'active 'points)
   (graphics-group-enrich-insert-bis
-   obj graphical-color graphical-lwidth)
+   obj graphical-color graphical-lwidth #f)
   (set! sticky-point #f)
   (graphics-forget-states))
 
@@ -598,46 +718,135 @@
     (set! sticky-point #t)
     (graphics-store-state #f)))
 
+(define (text-at_nonsticky-right-button x y mode)
+  (graphics-group-enrich-insert
+    `(text-at "" (point ,x ,y)
+       ,(graphics-active-property-bis "gr-text-halign" "left")
+       ,(graphics-active-property-bis "gr-text-valign" "bottom"))))
+
+;; Dispatch
+(define (edit_left-button x y)
+  (with-graphics-context
+   "insert" x y p obj no
+   (dispatch (car obj) ((point line cline spline cspline)
+			(text-at))
+	     left-button (x y p obj no) do-tick)))
+
+(define (edit_move x y)
+  (with-graphics-context
+   ";move" x y p obj no
+   (dispatch (car obj) ((point line cline spline cspline)
+			(text-at))
+	     move (x y p obj no) do-tick)))
+
+(define (edit_middle-button x y)
+  (with-graphics-context
+   "remove" x y p obj no
+   (dispatch (car obj) ((point line cline spline cspline text-at))
+	     middle-button (x y p obj no) do-tick)))
+
+(define (edit_right-button x y)
+  (if sticky-point
+      (with-graphics-context
+       "last" x y p obj no
+       (dispatch (car obj) ((point line cline spline cspline text-at))
+		 sticky-right-button (x y p obj no) do-tick))
+      (with mode (cadr (graphics-mode))
+	(dispatch mode ((point)
+			(line cline spline cspline)
+			(text-at))
+		  nonsticky-right-button (x y mode) do-tick))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Edit properties mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Left button
+(define (point_assign-props p obj)
+  (graphics-remove p)
+  (graphics-group-enrich-insert-bis
+     obj (get-env "gr-color") (get-env "gr-line-width") #f)
+  (create-graphical-object obj 'new 'points))
+
+(define (text-at_change-halign p obj)
+  (graphics-remove p)
+  (with halign (cadddr obj)
+     (set-car! (cdddr obj) (cond ((== halign "left") "center")
+				 ((== halign "center") "right")
+				 ((== halign "right") "left")
+				 (else "left")))
+     (graphics-group-insert-bis obj #f)
+     (create-graphical-object obj '() 'points)))
+
+(define (text-at_assign-props p obj)
+  (text-at_change-halign p obj))
+
+;; Right button
+(define (text-at_change-valign p obj)
+  (graphics-remove p)
+  (with valign (car (cddddr obj))
+     (set-car! (cddddr obj) (cond ((== valign "bottom") "center")
+				  ((== valign "center") "top")
+				  ((== valign "top") "bottom")
+				  (else "bottom")))
+     (graphics-group-insert-bis obj #f)
+     (create-graphical-object obj '() 'points)))
+
+;; Dispatch
+(define (edit-prop_move x y)
+  (edit_move x y))
+
+(define (edit-prop_left-button x y)
+  (with-graphics-context "assign-props" x y p obj no
+     (dispatch (car obj) ((point line cline spline cspline)
+			  (text-at))
+	       assign-props (p obj) do-tick)))
+
+(define (edit-prop_right-button x y)
+  (with-graphics-context "change-valign" x y p obj no
+     (dispatch (car obj) ((text-at))
+               change-valign (p obj) do-tick)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
-  (with-graphics-context
-   "insert" x y p obj no
-   (dispatch (car obj) ((point line cline spline cspline))
-	     left-button (x y p obj no))))
+  (dispatch (car (graphics-mode))
+	    ((edit)
+	     (edit-prop))
+	    left-button (x y)))
 
 (define (graphics-move-point x y)
-  ;;(display* "Graphics] Move " x ", " y "\n")
-  (with-graphics-context
-   ";move" x y p obj no
-   (dispatch (car obj) ((point line cline spline cspline))
-	     move (x y p obj no))))
+  ;(display* "Graphics] Move " x ", " y "\n")
+  (dispatch (car (graphics-mode))
+	    ((edit)
+	     (edit-prop))
+	    move (x y)))
 
 (define (graphics-remove-point x y)
-  ;;(display* "Graphics] Remove " x ", " y "\n")
-  (with-graphics-context
-   "remove" x y p obj no
-   (dispatch (car obj) ((point line cline spline cspline))
-	     middle-button (x y p obj no))))
+  ;(display* "Graphics] Remove " x ", " y "\n")
+  (dispatch (car (graphics-mode))
+	    ((edit))
+	    middle-button (x y)))
 
 (define (graphics-last-point x y)
-  ;;(display* "Graphics] Last " x ", " y "\n")
-  (if sticky-point
-      (with-graphics-context
-       "last" x y p obj no
-       (dispatch (car obj) ((point line cline spline cspline))
-		 sticky-right-button (x y p obj no)))
-      (with mode (graphics-mode)
-	(dispatch mode ((point)
-			(line cline spline cspline))
-		  nonsticky-right-button (x y mode)))))
+  ;(display* "Graphics] Last " x ", " y "\n")
+  (dispatch (car (graphics-mode))
+	    ((edit)
+	     (edit-prop))
+	    right-button (x y)))
 
 (define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
   (with mode (graphics-mode)
-    (cond ((== mode 'point) (noop))
-	  ((in? mode '(line cline spline cspline)) (noop))
+    (cond ((== (car mode) 'edit)
+	  (with submode (cadr mode)
+	     (cond ((== submode 'point) (noop))
+		   ((in? submode '(line cline spline cspline)) (noop))
+		   ((== submode 'text-at) (noop))
+		   (else (display* "Uncaptured finish (edit)\n")))))
+	 ((== (car mode) 'edit-prop)
+	   (noop))
 	  (else (display* "Uncaptured finish\n")))))
