@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.5>
 
 <style|<tuple|source|std>>
 
@@ -92,7 +92,7 @@
 
   <assign|strong|<macro|x|<with|font-series|bold|math-font-series|bold|<arg|x>>>>
 
-  <assign|em|<macro|x|<with|font-shape|italic|<arg|x>>>>
+  <assign|em|<macro|x|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|x>>>>
 
   <assign|tt|<macro|x|<with|font-family|tt|<arg|x>>>>
 
