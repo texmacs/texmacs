@@ -1,0 +1,26 @@
+/* XPM */
+static char * tm_textat_mode_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+" 	s mask	c None",
+".	s style	c black",
+"X	s white	c white",
+"o	s dark	c darkgrey",
+/* pixels */
+"                ",
+" .............  ",
+" .XXXXXXXXXXX.  ",
+" .X.........X.o ",
+" .XXXXXXXXXXX.o ",
+" .X.........X.o ",
+" .XXXXXXXXXXX.o ",
+" .X.........X.o ",
+" .XXXXXXXXXXX.o ",
+" .X.........X.o ",
+" .XXXXXXXXXXX.o ",
+" .X..XXXXXXXX.o ",
+" .XXXXXXXXXXX.o ",
+" .............o ",
+"   oooooooooooo ",
+"                "};
