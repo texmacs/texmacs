@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.3.8>
 
 <style|tmdoc>
 
@@ -63,16 +63,17 @@
     column and -1 means the last row or column.
 
     Typical values for <with|mode|math|(<with|mode|text|<src-arg|top-row>>,<with|mode|text|<src-arg|bot-row>>,<with|mode|text|<src-arg|left-col>>,<with|mode|text|<src-arg|right-col>>)>
-    are <with|mode|math|(r,r,<op|->1,1)> for ``row <with|mode|math|r>'',
-    <with|mode|math|(<op|->1,1,c,c)> for ``column <with|mode|math|c>'', and
-    <with|mode|math|(r,r,c,c)> for ``the cell at row <with|mode|math|r>,
-    column <with|mode|math|c>''. Note that, with <with|mode|math|m> is the
-    number of rows and <with|mode|math|n> the number of columns,
-    <with|mode|math|r> is the same row as <with|mode|math|r-m-1> and
-    <with|mode|math|c> is the same column as <with|mode|math|c-n-1>, but the
-    former are relative to the top and left borders while the latter are
-    relative the bottom and right borders, this makes a difference when new
-    cells are inserted.
+    are <with|mode|math|(r,r,<op|>1,<op|->1)> for ``row <with|mode|math|r>'',
+    <with|mode|math|(<op|>1,<op|->1,c,c)> for ``column <with|mode|math|c>'',
+    and <with|mode|math|(r,r,c,c)> for ``the cell at row <with|mode|math|r>,
+    column <with|mode|math|c>''. When new cells are inserted, it makes a
+    difference whether the rows are counted from the top or bottom, and the
+    columns are counted from the left or right. If <with|mode|math|m> is the
+    number of rows and <with|mode|math|n> the number of columns, then
+    <with|mode|math|r> and <with|mode|math|r-m-1> represent the same
+    row<emdash>the former is relative to the top border while the latter is
+    relative the bottom border. Similarly, <with|mode|math|c> and
+    <with|mode|math|c-n-1> represent the same column.
   </explain>
 
   <\explain>
@@ -143,18 +144,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
