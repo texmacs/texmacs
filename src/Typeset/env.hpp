@@ -340,16 +340,16 @@ public:
   tree      tmlen_times (double sc, tree t);
   tree      tmlen_over (tree t1, tree t2);
 
+  void      get_length_unit (string l, SI& un, string& un_str);
+  string    add_lengths (string l1, string l2);
+  string    multiply_length (double x, string l);
+  double    divide_lengths (string l1, string l2);
+
   tree      as_tmlen (tree t);
   SI        as_length (tree t);
   space     as_hspace (tree t);
   space     as_vspace (tree t);
   point     as_point (tree t);
-
-  void      get_length_unit (string l, SI& un, string& un_str);
-  string    add_lengths (string l1, string l2);
-  string    multiply_length (double x, string l);
-  double    divide_lengths (string l1, string l2);
 
   /* retrieving environment variables */
   inline bool get_bool (string var) {

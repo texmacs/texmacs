@@ -63,6 +63,128 @@ edit_env_rep::tmlen_over (tree t1, tree t2) {
 }
 
 /******************************************************************************
+* Length arithmetic for strings
+******************************************************************************/
+
+void
+edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {
+  int i;
+  for (i=0; i<N(s); i++)
+    if ((s[i]>='a') && (s[i]<='z')) break;
+  un= as_length (string ("1" * s (i, N(s))));
+  un_str= s (i, N(s));
+}
+
+string
+edit_env_rep::add_lengths (string s1, string s2) {
+  SI l1= as_length (s1);
+  SI l2= as_length (s2);
+  SI un; string un_str;
+  get_length_unit (s1, un, un_str);
+  if (un==0) return "0tmpt";
+  double x= ((double) (l1+l2)) / ((double) un);
+  return as_string (x) * un_str;
+}
+
+string
+edit_env_rep::multiply_length (double x, string s) {
+  SI l= as_length (s);
+  SI un; string un_str;
+  get_length_unit (s, un, un_str);
+  if (un==0) return "0tmpt";
+  double xl= (x*l) / ((double) un);
+  return as_string (xl) * un_str;
+}
+
+double
+edit_env_rep::divide_lengths (string s1, string s2) {
+  SI l1= as_length (s1);
+  SI l2= as_length (s2);
+  return ((double) l1) / ((double) l2);
+}
+
+/******************************************************************************
+* Decoding lengths
+******************************************************************************/
+
+tree
+edit_env_rep::as_tmlen (tree t) {
+  if (is_func (t, TMLEN)) {
+    if (is_double (t[0])) return t;
+    if (N(t) < 3) return as_tmlen (t[0]);
+    tree _min= as_tmlen (t[0]);
+    tree _def= as_tmlen (t[1]);
+    tree _max= as_tmlen (t[2]);
+    _min= _min[N(_min) == 3? 1: 0];
+    _def= _def[N(_def) == 3? 1: 0];
+    _max= _max[N(_max) == 3? 1: 0];
+    return tree (TMLEN, _min, _def, _max);
+  }
+  else if (is_atomic (t)) {
+    string s= t->label;
+    int start= 0, i, n=N(s);
+    while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
+    for (i=start; (i<n) && ((s[i]<'a') || (s[i]>'z')); i++);
+    string s1= s (start, i);
+    string s2= s (i, n);    
+    if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");
+    return tmlen_times (as_double (s1), as_tmlen (exec (compound (s2))));
+  }
+  else if (is_func (t, MACRO, 1))
+    return as_tmlen (exec (t[0]));
+  else return tree (TMLEN, "0");
+}
+
+SI
+edit_env_rep::as_length (tree t) {
+  tree r= as_tmlen (t);
+  string s= (N(r)==1? r[0]->label: r[1]->label);
+  return (SI) (as_double (s));
+}
+
+space
+edit_env_rep::as_hspace (tree t) {
+  tree r= as_tmlen (t);
+  if (N(r) == 1)
+    return space ((SI) (as_double (r[0]->label)));
+  else {
+    SI _min= (SI) as_double (r[0]->label);
+    SI _def= (SI) as_double (r[1]->label);
+    SI _max= (SI) as_double (r[2]->label);
+    return space (_min, _def, _max);
+  }
+}
+
+space
+edit_env_rep::as_vspace (tree t) {
+  tree r= as_tmlen (t);
+  if (N(r) == 1)
+    return space ((SI) (as_double (r[0]->label)));
+  else {
+    SI _min= (SI) as_double (r[0]->label);
+    SI _def= (SI) as_double (r[1]->label);
+    SI _max= (SI) as_double (r[2]->label);
+    return space (_def + ((SI) (flexibility * (_min - _def))),
+		  _def,
+		  _def + ((SI) (flexibility * (_max - _def))));
+  }
+}
+
+point
+edit_env_rep::as_point (tree t) {
+  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
+    return ::as_point (t);
+  if (is_tuple (t)) {
+    int i, n= N(t);
+    point p(n);
+    for (i=0; i<n; i++)
+      p[i]= as_length (t[i]);
+    return fr[p];
+  }
+  return point ();
+}
+
+/******************************************************************************
 * Built-in length units
 ******************************************************************************/
 
@@ -157,125 +279,3 @@ tree edit_env_rep::exec_tmpt () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px () {
   return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
-
-/******************************************************************************
-* Decoding lengths
-******************************************************************************/
-
-tree
-edit_env_rep::as_tmlen (tree t) {
-  if (is_func (t, TMLEN)) {
-    if (is_double (t[0])) return t;
-    if (N(t) < 3) return as_tmlen (t[0]);
-    tree _min= as_tmlen (t[0]);
-    tree _def= as_tmlen (t[1]);
-    tree _max= as_tmlen (t[2]);
-    _min= _min[N(_min) == 3? 1: 0];
-    _def= _def[N(_def) == 3? 1: 0];
-    _max= _max[N(_max) == 3? 1: 0];
-    return tree (TMLEN, _min, _def, _max);
-  }
-  else if (is_atomic (t)) {
-    string s= t->label;
-    int start= 0, i, n=N(s);
-    while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
-    for (i=start; (i<n) && ((s[i]<'a') || (s[i]>'z')); i++);
-    string s1= s (start, i);
-    string s2= s (i, n);    
-    if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");
-    return tmlen_times (as_double (s1), as_tmlen (exec (compound (s2))));
-  }
-  else if (is_func (t, MACRO, 1))
-    return as_tmlen (exec (t[0]));
-  else return tree (TMLEN, "0");
-}
-
-SI
-edit_env_rep::as_length (tree t) {
-  tree r= as_tmlen (t);
-  string s= (N(r)==1? r[0]->label: r[1]->label);
-  return (SI) (as_double (s));
-}
-
-space
-edit_env_rep::as_hspace (tree t) {
-  tree r= as_tmlen (t);
-  if (N(r) == 1)
-    return space ((SI) (as_double (r[0]->label)));
-  else {
-    SI _min= (SI) as_double (r[0]->label);
-    SI _def= (SI) as_double (r[1]->label);
-    SI _max= (SI) as_double (r[2]->label);
-    return space (_min, _def, _max);
-  }
-}
-
-space
-edit_env_rep::as_vspace (tree t) {
-  tree r= as_tmlen (t);
-  if (N(r) == 1)
-    return space ((SI) (as_double (r[0]->label)));
-  else {
-    SI _min= (SI) as_double (r[0]->label);
-    SI _def= (SI) as_double (r[1]->label);
-    SI _max= (SI) as_double (r[2]->label);
-    return space (_def + ((SI) (flexibility * (_min - _def))),
-		  _def,
-		  _def + ((SI) (flexibility * (_max - _def))));
-  }
-}
-
-point
-edit_env_rep::as_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
-    return ::as_point (t);
-  if (is_tuple (t)) {
-    int i, n= N(t);
-    point p(n);
-    for (i=0; i<n; i++)
-      p[i]= as_length (t[i]);
-    return fr[p];
-  }
-  return point ();
-}
-
-/******************************************************************************
-* Old length arithmetic
-******************************************************************************/
-
-void
-edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {
-  int i;
-  for (i=0; i<N(s); i++)
-    if ((s[i]>='a') && (s[i]<='z')) break;
-  un= as_length (string ("1" * s (i, N(s))));
-  un_str= s (i, N(s));
-}
-
-string
-edit_env_rep::add_lengths (string s1, string s2) {
-  SI l1= as_length (s1);
-  SI l2= as_length (s2);
-  SI un; string un_str;
-  get_length_unit (s1, un, un_str);
-  if (un==0) return "0cm";
-  double x= ((double) (l1+l2)) / ((double) un);
-  return as_string (x) * un_str;
-}
-
-string
-edit_env_rep::multiply_length (double x, string s) {
-  SI l= as_length (s);
-  SI un; string un_str;
-  get_length_unit (s, un, un_str);
-  if (un==0) return "0cm";
-  double xl= (x*l) / ((double) un);
-  return as_string (xl) * un_str;
-}
-
-double
-edit_env_rep::divide_lengths (string s1, string s2) {
-  SI l1= as_length (s1);
-  SI l2= as_length (s2);
-  return ((double) l1) / ((double) l2);
-}
