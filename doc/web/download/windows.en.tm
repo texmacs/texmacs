@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.4>
+<TeXmacs|1.0.4.5>
 
 <style|tmweb>
 
@@ -23,7 +23,7 @@
 
   <\enumerate>
     <item>Download <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|.exe>>>
-    (15Mb).
+    (18Mb).
 
     <item>Install <TeXmacs> by executing <verbatim|<merge|<TeXmacs-version-release|win>|.exe>>
     and following the instructions on the screen. You may delete
