@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.4.6>
 
 <style|tmdoc>
 
@@ -117,6 +117,18 @@
     These environments may be used in order to increase the current left
     and/or right indentation by the amounts <src-arg|left-amount> and/or
     <src-arg|right-amount>.
+  </explain>
+
+  <\explain>
+    <explain-macro|margin-first-other|first-margin|other-margin|body>
+  <|explain>
+    This environment allows to set the margin <src-arg|first-margin> for the
+    first lines of paragraphs in the <src-arg|body>, as well as the margin
+    <src-arg|other-margin> for the other lines. This environment is for
+    instance useful for glossaries, indexes, <abbr|etc.>, in which case
+    <src-arg|other-margin> is often larger than <src-arg|first-margin>.
+    Notice that this environment enables indentation for the first line of
+    <src-arg|body>.
   </explain>
 
   <label|header-footer-helper>The following macros may be used in order to
