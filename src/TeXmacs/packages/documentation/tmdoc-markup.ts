@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.3.7>
 
 <style|source>
 
@@ -75,8 +75,6 @@
   grey|(<arg|x>)><vspace|0.25fn>>>
 
   <assign|src-value|<macro|x|<with|font-shape|right|color|black|<arg|x>>>>
-
-  <assign|var-val|<macro|var|val|<src-var|<arg|var>><active*|<with|mode|math|\<assign\>>><with|font-family|tt|<arg|val>>>>
 
   <\active*>
     <\src-comment>
@@ -182,5 +180,6 @@
     <associate|language|english>
     <associate|par-par-sep|0fn>
     <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

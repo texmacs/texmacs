@@ -112,7 +112,6 @@ public:
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
-  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual int  get_input_mode () = 0;
   virtual void set_input_mode (int mode) = 0;
   virtual void set_input_normal () = 0;
@@ -140,7 +139,6 @@ public:
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;
-  virtual path path_xy (double x, double y) = 0;
   virtual void go_to (SI x, SI y) = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;
@@ -167,17 +165,10 @@ public:
 
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
-  virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
-  virtual tree   frame_direct_transform (tree t) = 0;
-  virtual tree   frame_inverse_transform (tree t) = 0;
-  virtual tree   get_graphical_object () = 0;
-  virtual void   set_graphical_object (tree t) = 0;
-  virtual void   invalidate_graphical_object () = 0;
-  virtual void   draw_graphical_object () = 0;
   virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
@@ -204,11 +195,9 @@ public:
   virtual tree     exec_texmacs (tree t, path p= 0) = 0;
   virtual tree     exec_html (tree t, path p) = 0;
   virtual tree     exec_html (tree t) = 0;
-  virtual tree     box_info (tree t, string what) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
-  virtual void     init_add_package (string package) = 0;
-  virtual void     init_remove_package (string package) = 0;
+  virtual void     init_extra_style (string package, bool check= false) = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
   virtual void     typeset_invalidate_all () = 0;
@@ -467,11 +456,9 @@ public:
 			  string first="1", string last="1000000") = 0;
   virtual void footer_eval (string s) = 0;
   virtual tree the_line () = 0;
-  virtual tree the_root () = 0;
   virtual tree the_buffer () = 0;
   virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;
-  virtual path the_buffer_path () = 0;
   virtual void show_tree () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;

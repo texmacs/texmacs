@@ -197,7 +197,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     string col_name= env->get_string (BG_COLOR);
     dev->set_background (dis->get_color (col_name));
     if (col_name != "white")
-      dev->clear (0, (SI) -h, (SI) w, 0);
+      dev->clear (0, -h, w, 0);
 
     rectangles rs;
     the_box[0]->sx(i)= 0;
@@ -249,23 +249,13 @@ edit_main_rep::the_line () {
 }
 
 tree
-edit_main_rep::the_root () {
-  return et;
-}
-
-tree
 edit_main_rep::the_buffer () {
-  return subtree (et, rp);
+  return copy (et);
 }
 
 tree
 edit_main_rep::the_subtree (path p) {
   return subtree (et, p);
-}
-
-path
-edit_main_rep::the_buffer_path () {
-  return copy (rp);
 }
 
 path
@@ -279,8 +269,7 @@ edit_main_rep::the_path () {
 
 void
 edit_main_rep::show_tree () {
-  stretched_print (et, true);
-  // cout << et << "\n";
+  cout << et << "\n";
 }
 
 void

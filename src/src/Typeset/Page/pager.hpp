@@ -20,7 +20,6 @@
 
 class pager_rep {
 public:
-  path                 ip;
   edit_env             env;
   hashmap<string,tree> style;
   array<page_item>     l;
@@ -71,7 +70,7 @@ protected: // making page boxes
   void papyrus_make ();
 
 public:
-  pager_rep (path ip, edit_env env, array<page_item> l);
+  pager_rep (edit_env env, array<page_item> l);
 
   //void start_page ();
   //void print (page_item item);

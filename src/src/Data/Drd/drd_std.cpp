@@ -90,6 +90,7 @@ init_std_drd () {
   init (WITH_LIMITS, "with-limits", fixed (0) -> name ("with limits"));
   init (LINE_BREAK, "line-break", fixed (0) -> name ("line break"));
   init (NEW_LINE, "new-line", fixed (0) -> name ("new line"));
+  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (NEXT_LINE, "next-line", fixed (0) -> name ("next line"));
   init (NO_BREAK, "no-break", fixed (0) -> name ("no line break"));
   init (NO_INDENT, "no-indent", fixed (0) -> name ("don't indent"));
@@ -108,9 +109,9 @@ init_std_drd () {
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
 
-  init (LEFT, "left", options (1, 2));
-  init (MID, "mid", options (1, 2));
-  init (RIGHT, "right", options (1, 2));
+  init (LEFT, "left", fixed (1));
+  init (MID, "mid", fixed (1));
+  init (RIGHT, "right", fixed (1));
   init (BIG, "big", fixed (1));
   init (LPRIME, "lprime", fixed (1) -> name ("left prime"));
   init (RPRIME, "rprime", fixed (1) -> name ("right prime"));
@@ -167,7 +168,6 @@ init_std_drd () {
   init (QUASI, "quasi", fixed (1));
   init (QUASIQUOTE, "quasiquote", fixed (1));
   init (UNQUOTE, "unquote", fixed (1));
-  init (VAR_UNQUOTE, "unquote*", fixed (1));
   init (IF, "if", options (2, 1));
   init (VAR_IF, "if*", fixed (2));
   init (CASE, "case", repeat (2, 1));
@@ -245,7 +245,6 @@ init_std_drd () {
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));
-  init (ARC, "arc", repeat (3, 1));
   init (SPLINE, "spline", repeat (2, 1));
   init (VAR_SPLINE, "spline*", repeat (2, 1));
   init (CSPLINE, "cspline", repeat (2, 1));
@@ -253,7 +252,6 @@ init_std_drd () {
   init (POSTSCRIPT, "postscript", fixed (7));
 
   init (FORMAT, "format", repeat (1, 1));
-  init (LINE_SEP, "line-sep", fixed (0) -> name ("line separator"));
   init (SPLIT, "split", repeat (1, 1));
   init (DELAY, "delay", fixed (1));
   init (HOLD, "hold", fixed (1));

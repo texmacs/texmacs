@@ -41,21 +41,20 @@ static string MUTATOR ("mutator");
 static int
 mutate (tree t, path ip) {
   if (is_atomic (t)) return 0;
-  int i, sum=0;
-  if (is_compound (t, MUTATOR, 2) &&
-      (ip == obtain_ip (t)))
-    {
-      mutator_path= reverse (path (0, ip));
-      string s= as_string (t[1]); // eval_secure (s);
-      if (s != "")
-	if (as_bool (eval ("(secure? '" * s * ")"))) {
-	  (void) eval (s);
-	}
-      sum= 1;
-    }
-  for (i=0; i<N(t); i++)
-    sum += mutate (t[i], path (i, ip));
-  return sum;
+  else if (is_compound (t, MUTATOR, 2)) {
+    mutator_path= reverse (path (0, ip));
+    string s= as_string (t[1]); // eval_secure (s);
+    if (s != "")
+      if (as_bool (eval ("(secure? '" * s * ")")))
+	(void) eval (s);
+    return 1;
+  }
+  else {
+    int i, n= N(t), sum=0;
+    for (i=0; i<n; i++)
+      sum += mutate (t[i], path (i, ip));
+    return sum;
+  }
 }
 
 void
@@ -126,7 +125,7 @@ edit_process_rep::make_session (string lan, string session) {
   string lolan= locase_all (lan);
   if ((lolan != lan) && (!connection_declared (lan))) lan= lolan;
   if (exists (url ("$TEXMACS_STYLE_PATH", lan * ".ts")))
-    init_add_package (lan);
+    init_extra_style (lan, true);
 
   /* insert session tag and output tag for start-up banner */
   path p (4, path (0, path (0, 0)));
@@ -616,7 +615,7 @@ edit_process_rep::session_complete_try () {
 
   string lan= get_env_string (PROG_LANGUAGE);
   string ses= get_env_string (PROG_SESSION);
-  string s  = as_string (call ("verbatim-serialize", lan, tree_to_stree (t)));
+  string s  = as_string (call ("verbatim-serialize", lan, tree_to_object (t)));
   s= s (0, N(s)-1);
 
   int pos= search_forwards (cursor_symbol, s);

@@ -54,7 +54,7 @@ edit_modify_rep::assign (path pp, tree u) {
     ed->notify_assign (p, u);
   FOR_ALL_EDITORS_END
 
-  ::assign (subtree (et, p), u);
+  subtree (et, p)= u;
   finished (pp);
 }
 
@@ -68,7 +68,7 @@ edit_modify_rep::insert (path pp, tree u) {
     ed->notify_insert (p, u);
   FOR_ALL_EDITORS_END
 
-  ::insert (subtree (et, path_up (p)), last_item (p), u);
+  insert_at (et, p, u);
   finished (pp);
 }
 
@@ -86,7 +86,7 @@ edit_modify_rep::remove (path pp, int nr) {
     ed->notify_remove (p, nr);
   FOR_ALL_EDITORS_END
 
-  ::remove (subtree (et, path_up (p)), last_item (p), nr);
+  remove_at (et, p, nr);
   finished (pp);
 }
 
@@ -104,7 +104,18 @@ edit_modify_rep::split (path pp) {
     ed->notify_split (p);
   FOR_ALL_EDITORS_END
 
-  ::split (st, l1, l2);
+  if (is_atomic (st[l1])) {
+    string s1, s2;
+    ::split (st[l1]->label, l2, s1, s2);
+    st[l1]= s2;
+    st= insert_one (st, l1, tree (s1));
+  }
+  else {
+    tree st1, st2;
+    ::split (st[l1], l2, st1, st2);
+    st[l1]= st2;
+    st= insert_one (st, l1, st1);
+  }
   finished (pp);
 }
 
@@ -125,7 +136,13 @@ edit_modify_rep::join (path pp) {
     ed->notify_join (p);
   FOR_ALL_EDITORS_END
 
-  ::join (st, l1);
+  if (string_mode) st[l1]->label << st[l1+1]->label;
+  else {
+    if (is_atomic (st[l1  ])) st[l1  ]= tree (L(st[l1+1]), st[l1  ]);
+    if (is_atomic (st[l1+1])) st[l1+1]= tree (L(st[l1  ]), st[l1+1]);
+    st[l1] << A (st[l1+1]);
+  }
+  st= ::remove (st, l1+1, 1);
   finished (pp);
 }
 
@@ -139,7 +156,8 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
     ed->notify_ins_unary (p, op);
   FOR_ALL_EDITORS_END
 
-  ::ins_unary (subtree (et, p), op);
+  tree& st= subtree (et, p);
+  st= tree (op, st);
   finished (pp);
 }
 
@@ -155,7 +173,7 @@ edit_modify_rep::rem_unary (path pp) {
     ed->notify_rem_unary (p);
   FOR_ALL_EDITORS_END
 
-  ::rem_unary (st);
+  st= st[0];
   finished (pp);
 }
 
@@ -411,8 +429,6 @@ edit_modify_rep::undo () {
     cerr << '\a';
     set_message ("Your document is back in its original state", "undo");
   }
-  if (inside_graphics ())
-    eval ("(graphics-reset-context 'undo)");
 }
 
 void

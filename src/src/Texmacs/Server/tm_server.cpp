@@ -97,10 +97,8 @@ tm_server_rep::tm_server_rep (display dis2):
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
   if (is_none (my_init_file))
     my_init_file= "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm";
-  bench_start ("initialize scheme");
   if (exists (tm_init_file)) exec_file (tm_init_file);
   if (exists (my_init_file)) exec_file (my_init_file);
-  bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
     my_init_cmds= "(begin" * my_init_cmds * ")";
     exec_delayed (my_init_cmds);
@@ -207,7 +205,7 @@ tm_server_rep::get_nr_windows () {
 ******************************************************************************/
 
 static string
-compute_style_menu (url u, int kind) {
+compute_style_menu (url u, bool package) {
   if (is_or (u)) {
     string sep= "\n";
     if (is_atomic (u[1]) &&
@@ -215,12 +213,12 @@ compute_style_menu (url u, int kind) {
 	 (is_or (u[2]) && is_concat (u[2][1]))))
       sep= "\n---\n";
     return
-      compute_style_menu (u[1], kind) * sep *
-      compute_style_menu (u[2], kind);
+      compute_style_menu (u[1], package) * sep *
+      compute_style_menu (u[2], package);
   }
   if (is_concat (u)) {
     string dir= upcase_first (as_string (u[1]));
-    string sub= compute_style_menu (u[2], kind);
+    string sub= compute_style_menu (u[2], package);
     if ((dir == "Test") || (dir == "Obsolete") || (dir == "CVS")) return "";
     return "(-> \"" * dir * "\" " * sub * ")";
   }
@@ -228,9 +226,7 @@ compute_style_menu (url u, int kind) {
     string l  = as_string (u);
     if (!ends (l, ".ts")) return "";
     l= l(0, N(l)-3);
-    string cmd ("init-style");
-    if (kind == 1) cmd= "init-add-package";
-    if (kind == 2) cmd= "init-remove-package";
+    string cmd= package? string ("init-extra-style"): string ("init-style");
     return "(\"" * l * "\" (" * cmd * " \"" * l * "\"))";
   }
   return "";
@@ -238,14 +234,10 @@ compute_style_menu (url u, int kind) {
 
 void
 tm_server_rep::style_update_menu () {
-  url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
-  string sty= compute_style_menu (sty_u, 0);
-  string pck= compute_style_menu (pck_u, 1);
-  string rem= compute_style_menu (pck_u, 2);
+  string sty= compute_style_menu (descendance ("$TEXMACS_STYLE_ROOT"), false);
+  string pck= compute_style_menu (descendance ("$TEXMACS_PACKAGE_ROOT"), true);
   (void) eval ("(menu-bind style-menu " * sty * ")");
-  (void) eval ("(menu-bind add-package-menu " * pck * ")");
-  (void) eval ("(menu-bind remove-package-menu " * rem * ")");
+  (void) eval ("(menu-bind use-package-menu " * pck * ")");
 }
 
 /******************************************************************************

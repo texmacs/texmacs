@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : build-glue-editor.scm
+;; MODULE      : build-glue-basic.scm
 ;; DESCRIPTION : Building basic glue for the editor
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -88,8 +88,9 @@
   (spell-start spell_start (void))
   (spell-replace spell_replace (void string))
 
-  (insert insert_tree (void content))
-  (insert-go-to insert_tree (void content path))
+  (insert-string insert_tree (void string))
+  (insert-tree insert_tree (void texmacs_tree))
+  (insert-tree-go-to insert_tree (void texmacs_tree path))
   (insert-return insert_return (void))
   (remove-text remove_text (void bool))
   (remove-structure remove_structure (void bool))
@@ -158,13 +159,12 @@
 
   (init-default-one init_default (void string))
   (init-env init_env (void string string))
-  (init-env-tree init_env (void string content))
+  (init-env-tree init_env (void string texmacs_tree))
   (init-style init_style (void string))
-  (init-add-package init_add_package (void string))
-  (init-remove-package init_remove_package (void string))
+  (init-extra-style init_extra_style (void string))
   (get-env get_env_string (string string))
-  (get-env-tree get_env_value (tree string))
-  (get-init-tree get_init_value (tree string))
+  (get-env-tree get_env_value (texmacs_tree string))
+  (get-init-tree get_init_value (texmacs_tree string))
   (context-has? defined_at_cursor (bool string))
   (style-has? defined_at_init (bool string))
   (init-has? defined_in_init (bool string))
@@ -204,12 +204,10 @@
   (set-message set_message (void string string))
 
   (footer-eval footer_eval (void string))
-  (the-line the_line (tree))
-  (the-selection selection_get (tree))
-  (the-root the_root (tree))
-  (the-buffer the_buffer (tree))
+  (the-line the_line (texmacs_tree))
+  (the-selection selection_get (texmacs_tree))
+  (the-buffer the_buffer (texmacs_tree))
   (the-path the_path (path))
-  (the-buffer-path the_buffer_path (path))
   (the-mutator-path get_mutator_path (path))
   (the-mutator-time get_mutator_time (int))
   (process-input process_input (void))
@@ -255,14 +253,14 @@
   (length-divide divide_lengths (double string string))
 
   (tm-subtree the_subtree (tree path))
-  (tm-assign assign (void path content))
-  (tm-insert insert (void path content))
+  (tm-assign assign (void path texmacs_tree))
+  (tm-insert insert (void path texmacs_tree))
   (tm-remove remove (void path int))
   (tm-split split (void path))
   (tm-join join (void path))
   (tm-ins-unary ins_unary (void path tree_label))
   (tm-rem-unary rem_unary (void path))
-  (tm-assign-diff assign_diff (void path content))
+  (tm-assign-diff assign_diff (void path texmacs_tree))
   (tm-correct correct (void path))
   (tm-where current_position (path))
   (tm-go-to go_to (void path))
@@ -274,12 +272,5 @@
   (tm-position-set position_set (void int path))
   (tm-position-get position_get (path int))
 
-  (tm-insert-with insert_with (void path string content))
-  (tm-remove-with remove_with (void path string))
-
-  (frame-direct frame_direct_transform (tree tree))
-  (frame-inverse frame_inverse_transform (tree tree))
-  (get-graphical-object get_graphical_object (tree))
-  (set-graphical-object set_graphical_object (void tree))
-  (path-xy path_xy (path double double))
-  (box-info box_info (tree tree string)))
+  (tm-insert-with insert_with (void path string tree))
+  (tm-remove-with remove_with (void path string)))

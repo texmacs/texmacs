@@ -15,7 +15,6 @@
 #include "convert.hpp"
 #include "server.hpp"
 #include "tm_buffer.hpp"
-#include "Metafont/tex_files.hpp"
 
 extern void (*env_next_prog)(void);
 extern void clear_rectangles (ps_device dev, rectangles l);
@@ -223,7 +222,6 @@ edit_interface_rep::draw_cursor (ps_device dev) {
       dev->set_color (dis->red);
       dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
       dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
-      draw_graphical_object ();
     }
     else {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
@@ -313,8 +311,7 @@ edit_interface_rep::handle_clear (clear_event ev) {
 void
 edit_interface_rep::handle_repaint (repaint_event ev) {
   if (env_change != 0)
-    system_warning ("Invalid situation",
-		    "(edit_interface_rep::handle_repaint)");
+    fatal_error ("Invalid situation", "edit_interface_rep::handle_repaint");
 
   // cout << "Repainting\n";
   // Repaint slightly more in order to hide trace of moving cursor
@@ -391,10 +388,12 @@ edit_interface_rep::selection_visible () {
 
 void
 edit_interface_rep::apply_changes () {
-  //cout << "Apply changes\n";
-  //cout << "et= " << et << "\n";
-  //cout << "tp= " << tp << "\n";
-  //cout << HRULE << "\n";
+  /*
+  cout << "Apply changes\n";
+  cout << "et= " << et << "\n";
+  cout << "tp= " << tp << "\n";
+  cout << HRULE << "\n";
+  */
   if (env_change == 0) {
     if ((last_update < last_change) &&
 	(texmacs_time() >= (last_change + (1000/6))) &&
@@ -409,7 +408,6 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	if (!win->check_event (EVENT_STATUS)) drd_update ();
-	tex_autosave_cache ();
 	last_update= last_change;
       }
     return;
@@ -488,7 +486,6 @@ edit_interface_rep::apply_changes () {
       invalidate (env_rects);
     }
     else if (env_change & THE_FOCUS) invalidate (env_rects);
-    invalidate_graphical_object ();
   }
 
   // cout << "Handling selection\n";
@@ -536,7 +533,6 @@ is_graphical (tree t) {
   return
     is_func (t, _POINT) ||
     is_func (t, LINE) || is_func (t, CLINE) ||
-    is_func (t, ARC) ||
     is_func (t, SPLINE) || is_func (t, CSPLINE);
 }
 

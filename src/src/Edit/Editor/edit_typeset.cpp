@@ -15,10 +15,8 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
-#include "timer.hpp"
-#include "Bridge/impl_typesetter.hpp"
 
-//box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
+box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 
 /******************************************************************************
 * Contructors, destructors and notification of modifications
@@ -305,7 +303,7 @@ edit_typeset_rep::exec_html (tree t, path p) {
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
-  tree patch= as_tree (eval ("(stree->tree (tmhtml-env-patch))"));
+  tree patch= as_tree (eval ("(object->tree (tmhtml-env-patch))"));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
   return exec (t, H);
@@ -314,13 +312,6 @@ edit_typeset_rep::exec_html (tree t, path p) {
 tree
 edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
-}
-
-tree
-edit_typeset_rep::box_info (tree t, string what) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  return ::box_info (b ? env : get_typesetter ()->env, t, what);
 }
 
 /******************************************************************************
@@ -339,33 +330,23 @@ edit_typeset_rep::init_style () {
 void
 edit_typeset_rep::init_style (string name) {
   if ((name == "none") || (name == "") || (name == "style")) the_style= TUPLE;
-  else if (arity (the_style) == 0) the_style= tree (TUPLE, name);
-  else the_style= tree (TUPLE, name) * the_style (1, N(the_style));
+  else the_style= tree (TUPLE, name);
   buf->need_save= buf->need_autosave= true;
   notify_change (THE_ENVIRONMENT);
 }
 
 void
-edit_typeset_rep::init_add_package (string name) {
-  int i, n= N(the_style);
-  for (i=0; i<n; i++)
-    if (the_style[i] == name)
-      return;
+edit_typeset_rep::init_extra_style (string name, bool check) {
+  if (check) {
+    int i, n= N(the_style);
+    for (i=0; i<n; i++)
+      if (the_style[i] == name)
+	return;
+  }
 
   the_style << tree (name);
   buf->need_save= buf->need_autosave= true;
   notify_change (THE_ENVIRONMENT);
-}
-
-void
-edit_typeset_rep::init_remove_package (string name) {
-  int i, n= N(the_style);
-  for (i=0; i<n; i++)
-    if (the_style[i] == name) {
-      the_style= the_style (0, i) * the_style (i+1, N(the_style));
-      buf->need_save= buf->need_autosave= true;
-      notify_change (THE_ENVIRONMENT);
-    }
 }
 
 void
@@ -391,9 +372,7 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   typeset_prepare ();
   eb= empty_box (reverse (rp));
   // saves memory, also necessary for change_log update
-  bench_start ("typeset");
   eb= ::typeset (ttt, x1, y1, x2, y2);
-  bench_end ("typeset");
 }
 
 void

@@ -67,12 +67,12 @@ initialize_default_env () {
   env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
 
-  env (PROG_LANGUAGE)    = "scheme";    // the default programming language
+  env (PROG_LANGUAGE)    = "?";         // the default programming language
   env (PROG_FONT)        = "roman";     // the font name in prog mode
   env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
   env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
-  env (PROG_SESSION)     = "default";   // computer algebra session name
+  env (PROG_SESSION)     = "?";         // computer algebra session name
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_HYPHEN)       = "normal";    // quality of hyphenation
@@ -94,6 +94,7 @@ initialize_default_env () {
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
+  env (PAGE_ORIENTATION) = "portrait";  // paper orientation
   env (PAGE_BREAKING)    = "optimal";   // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1.0";       // flexibility factor of stretch
   env (PAGE_NR)          = "0";         // the page number
@@ -176,8 +177,6 @@ initialize_default_env () {
   env (CELL_COL_SPAN)    = "1";         // column span of cell
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
   env (CELL_COL_NR)      = "1";         // column coordinate of cell
-
-  env (POINT_STYLE)      = "disk";      // point style (square, circle...)
 
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)

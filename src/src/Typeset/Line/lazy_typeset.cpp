@@ -144,7 +144,7 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
 lazy
 make_lazy_formatting (edit_env env, tree t, path ip, string v) {
   int last= N(t)-1;
-  tree new_format= env->read (v) * t (0, last);
+  tree new_format= join (env->read (v), t (0, last));
   tree old_format= env->local_begin (v, new_format);
   array<line_item> a;
   array<line_item> b;
@@ -270,19 +270,6 @@ make_lazy_compound (edit_env env, tree t, path ip) {
 lazy
 make_lazy_rewrite (edit_env env, tree t, path ip) {
   tree r= env->rewrite (t);
-  array<line_item> a= typeset_marker (env, descend (ip, 0));
-  array<line_item> b= typeset_marker (env, descend (ip, 1));
-  lazy par= make_lazy (env, r, decorate_right (ip));
-  return lazy_surround (a, b, par, ip);
-}
-
-/******************************************************************************
-* Eval
-******************************************************************************/
-
-lazy
-make_lazy_eval (edit_env env, tree t, path ip) {
-  tree r= env->exec (is_func (t, EVAL, 1)? t[0]: tree (QUASIQUOTE, t[0]));
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   lazy par= make_lazy (env, r, decorate_right (ip));
@@ -445,9 +432,6 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
-  case EVAL:
-  case QUASI:
-    return make_lazy_eval (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case EXTERN:

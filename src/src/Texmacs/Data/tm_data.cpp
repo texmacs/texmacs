@@ -610,28 +610,28 @@ tm_data_rep::project_update_menu () {
 * Management of all edit trees
 ******************************************************************************/
 
-tree the_et;
+tree the_et= tuple ();
 
 path
 new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
     if (the_et[i] == UNINIT) {
-      assign (the_et[i], tree (DOCUMENT, ""));
-      return path (i); // obtain_ip (the_et[i]);
+      the_et[i]= tree (DOCUMENT, "");
+      return path (i);
     }
-  insert (the_et, n, tuple (tree (DOCUMENT, "")));
-  return path (n); // obtain_ip (the_et[n]);
+  the_et << tree (DOCUMENT, "");
+  return path (n);
 }
 
 void
 delete_document (path rp) {
-  assign (subtree (the_et, rp), UNINIT);
+  subtree (the_et, rp)= UNINIT;
 }
 
 void
 set_document (path rp, tree t) {
-  assign (subtree (the_et, rp), copy (t));
+  subtree (the_et, rp)= copy (t);
 }
 
 /******************************************************************************

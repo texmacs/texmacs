@@ -15,7 +15,7 @@
 (texmacs-module (kernel tools tm-misc)
   (:use (kernel texmacs tm-define) (kernel gui menu-widget))
   (:export
-    tm-start tm-end
+    tm-subtree tm-start tm-end
     init-default test-default? test-init? test-env?
     save-object load-object
     not-implemented tm-debug
@@ -31,15 +31,20 @@
 ;; Subtrees and path rounding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (tm-subtree p)
+  (:type (path -> tree))
+  (:synopsis "Return subtree of current buffer for the path @p.")
+  (subtree (the-buffer) p))
+
 (tm-define (tm-start p)
-  (:type (-> path path))
+  (:type (path -> path))
   (:synopsis "Round cursor position @p to below.")
-  (cursor-start (the-root) p))
+  (cursor-start (the-buffer) p))
 
 (tm-define (tm-end p)
-  (:type (-> path path))
+  (:type (path -> path))
   (:synopsis "Round cursor position @p to above.")
-  (cursor-end (the-root) p))
+  (cursor-end (the-buffer) p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment related
@@ -82,9 +87,9 @@
   (set-message "Error: not yet implemented" s))
 
 (tm-define (tm-debug)
-  (:type (-> void))
+  (:type (->))
   (:synopsis "For debugging purposes.")
-  (display* (tree->stree (the-root)) "\n"))
+  (display* (tree->object (the-buffer)) "\n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous commands

@@ -45,10 +45,24 @@ path path_add (path p, int plus, int pos);
 path operator - (path p, path q);
 
 /******************************************************************************
-* Getting subtrees from paths
+* Routines for elementary modifications
 ******************************************************************************/
+
+void split (string s, int pos, string& s1, string& s2);
+string insert_one (string s, int pos, char ins);
+string insert (string s, int pos, string ins);
+string remove (string s, int pos, int nr=1);
+
+void split (tree t, int pos, tree& t1, tree& t2);
+tree join (tree t1, tree t2);
+tree insert_one (tree t, int pos, tree ins);
+tree insert (tree t, int pos, tree ins);
+tree remove (tree t, int pos, int nr=1);
 
 tree& subtree (tree& t, path p);
 tree& parent_subtree (tree& t, path p);
+tree& parent_and_last (tree& t, path p, int& last);
+void insert_at (tree& t, path p, tree ins);
+void remove_at (tree& t, path p, int nr);
 
 #endif // defined PATH_H

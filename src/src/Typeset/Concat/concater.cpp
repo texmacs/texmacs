@@ -226,6 +226,7 @@ concater_rep::typeset (tree t, path ip) {
     control (t, ip);
     break;
   case NEW_LINE:
+  case LINE_SEP:
   case NEXT_LINE:
     {
       string name= env->drd->get_name (L(t));
@@ -274,13 +275,13 @@ concater_rep::typeset (tree t, path ip) {
     }
 
   case LEFT:
-    typeset_large (t, ip, LEFT_BRACKET_ITEM, "<left-");
+    typeset_left (t, ip);
     break;
   case MID:
-    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, "<mid-");
+    typeset_middle (t, ip);
     break;
   case RIGHT:
-    typeset_large (t, ip, RIGHT_BRACKET_ITEM, "<right-");
+    typeset_right (t, ip);
     break;
   case BIG:
     typeset_bigop (t, ip);
@@ -400,7 +401,6 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case QUASIQUOTE:
   case UNQUOTE:
-  case VAR_UNQUOTE:
     typeset_executable (t, ip);
     break;
   case IF:
@@ -530,9 +530,6 @@ concater_rep::typeset (tree t, path ip) {
   case CLINE:
     typeset_line (t, ip, true);
     break;
-  case ARC:
-    typeset_arc (t, ip);
-    break;
   case SPLINE:
     typeset_spline (t, ip, false);
     break;
@@ -603,23 +600,4 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 
   delete ccc;
   return b;
-}
-
-tree
-box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, t, path (0));
-  tree r= tuple();
-  for (int i=0; i<N(what); i++) {
-    switch (what[i]) {
-      case 'l': r << as_string (b->x1); break;
-      case 'b': r << as_string (b->y1); break;
-      case 'r': r << as_string (b->x2); break;
-      case 't': r << as_string (b->y2); break;
-      case 'L': r << as_string (b->x3); break;
-      case 'B': r << as_string (b->y3); break;
-      case 'R': r << as_string (b->x4); break;
-      case 'T': r << as_string (b->y4); break;
-    }
-  }
-  return r;
 }

@@ -76,8 +76,6 @@ tm_reader::decode (string s) {
       else if (s[i] == 't') r << '\t';
       else if (s[i] == 'r') r << '\r';
       else if (s[i] == 'n') r << '\n';
-      else if (s[i] == '\\') r << '\\';
-      else if ((s[i] >= '@') && (s[i] < '`')) r << (s[i] - '@');
       else r << s[i];
     }
     else r << s[i];
@@ -113,7 +111,6 @@ tm_reader::read_next () {
       old_pos= pos;
       c= read_char ();
       if (c == "") return "";
-      if (c == "#") return "<#";
       if ((c == "\\") || (c == "|") || (c == "/")) return "<" * c;
       if (is_iso_alpha (c[0]) || (c == ">")) {
 	pos= old_pos;
@@ -263,18 +260,6 @@ tm_reader::read (bool skip_flag) {
 	(void) read_function_name ();
 	if (last == ">") last= "/>";
 	else last= "/|";
-	break;
-      }
-      else if (last[N(last)-1] == '#') {
-	string r;
-	while ((buf[pos] != '>') && (pos+2<N(buf))) {
-	  r << ((char) from_hexadecimal (buf (pos, pos+2)));
-	  pos += 2;
-	}
-	if (buf[pos] == '>') pos++;
-	flush (D, C, S, spc_flag, ret_flag);
-	C << tree (RAW_DATA, r);
-	last= read_next ();
 	break;
       }
       else {
