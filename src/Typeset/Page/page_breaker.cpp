@@ -756,9 +756,11 @@ page_breaker_rep::make_insertion (int id, int ch, int i1, int i2, bool flag) {
   tree type= "";
   if (ch == 0) type= tuple ("footnote");
   else if (ch == 1) {
-    if ((i1>1) && (p1 != path_inc (flow[id][i1-1])))
-      type= tuple ("float", "t");
-    else if (float_property (p1, 'h')) type= tuple ("float", "h");
+    // -- Why did we perform the first test before David's correction?
+    // if ((i1>1) && (p1 != path_inc (flow[id][i1-1])))
+    // type= tuple ("float", "t");
+    // else if (float_property (p1, 'h')) type= tuple ("float", "h");
+    if (float_property (p1, 'h')) type= tuple ("float", "h");
     else if (float_property (p1, 'b')) type= tuple ("float", "b");
     else type= tuple ("float", "t");
   }
