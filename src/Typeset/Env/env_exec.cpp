@@ -123,8 +123,6 @@ edit_env_rep::exec (tree t) {
     return exec_expand (t);
   case COMPOUND:
     return exec_compound (t);
-  case APPLY:
-    return exec_apply (t);
   case INCLUDE:
     return exec_rewrite (t);
   case MACRO:
@@ -406,55 +404,6 @@ edit_env_rep::exec_compound (tree t) {
     tree r= exec (f[n]);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
-    return r;
-  }
-  else return exec (f);
-}
-
-tree
-edit_env_rep::exec_apply (tree t) {
-  // cout << "Apply " << t << "\n";
-  tree f= t[0];
-  if (is_compound (f)) f= exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!provides (var)) return tree (ERROR, "apply " * var);
-    f= read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, k=N(f)-1, n=N(t)-1; // is k=0 allowed ?
-    tree r;
-    STACK_NEW_ARRAY(vars,string,k);
-    STACK_NEW_ARRAY(oldv,tree,k);
-    STACK_NEW_ARRAY(newv,tree,k);
-    for (i=0; i<k; i++)
-      if (is_atomic (f[i])) {
-	vars[i]= f[i]->label;
-	oldv[i]= read (vars[i]);
-	newv[i]= (i<n? exec (t[i+1]): tree (""));
-	if ((i==k-1) && (n>=k)) {
-	  int nv= N(vars[i]);
-	  if ((nv>0) && (vars[i][nv-1]=='*')) {
-	    vars[i]= vars[i] (0, nv-1);
-	    newv[i]= exec_extra_list (t, i+1);
-	  }
-	  else if (n>k) newv[i]= exec_extra_tuple (t, i+1);
-	}
-	monitored_write (vars[i], newv[i]);
-	// cout << vars[i] << " := " << newv[i] << "\n";
-      }
-      else {
-	STACK_DELETE_ARRAY(vars);
-	STACK_DELETE_ARRAY(oldv);
-	STACK_DELETE_ARRAY(newv);
-	return tree (ERROR, "bad apply");
-      }
-    r= exec (f[k]);
-    for (i=k-1; i>=0; i--) write (vars[i], oldv[i]);
-    STACK_DELETE_ARRAY(vars);
-    STACK_DELETE_ARRAY(oldv);
-    STACK_DELETE_ARRAY(newv);
     return r;
   }
   else return exec (f);
@@ -1304,7 +1253,6 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return exec_until_expand (t, p, var, level);
   case COMPOUND:
     return exec_until_compound (t, p, var, level);
-  case APPLY:
   case INCLUDE:
   case MACRO:
   case XMACRO:

@@ -437,8 +437,7 @@ concater_rep::typeset (tree t, path ip, bool active_flag) {
     else typeset_inactive_expand_apply (t, ip, true);
     break;
   case APPLY:
-    if (ACTIVATED) typeset_apply (t, ip);
-    else typeset_inactive_expand_apply (t, ip, true);
+    typeset_inactive_expand_apply (t, ip, true);
     break;
   case BEGIN:
     typeset_inactive ("begin", t, ip, N(t)-1);

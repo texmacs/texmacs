@@ -174,46 +174,6 @@ concater_rep::typeset_compound (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_apply (tree t, path ip) {
-  tree f= t[0];
-  if (is_compound (f)) f= env->exec (f);
-  if (is_atomic (f)) {
-    string var= f->label;
-    if (!env->provides (var)) {
-      typeset_unknown (var, t, ip, true);
-      return;
-    }
-    f= env->read (var);
-  }
-
-  if (is_applicable (f)) {
-    int i, k=N(f)-1, n=N(t)-1; // is k=0 allowed ?
-    string vars [k];
-    tree   oldv [k];
-    tree   newv [k];
-    for (i=0; i<k; i++)
-      if (is_atomic (f[i])) {
-	vars[i]= f[i]->label;
-	oldv[i]= env->read (vars[i]);
-	newv[i]= (i<n? env->exec (t[i+1]): tree (""));
-	if ((i==k-1) && (n>=k)) {
-	  int nv= N(vars[i]);
-	  if ((nv>0) && (vars[i][nv-1]=='*')) {
-	    vars[i]= vars[i] (0, nv-1);
-	    newv[i]= env->exec_extra_list (t, i+1);
-	  }
-	  else if (n>k) newv[i]= env->exec_extra_tuple (t, i+1);
-	}
-	env->monitored_write (vars[i], newv[i]);
-      }
-      else return;
-    typeset_dynamic (f[k], ip);
-    for (i=k-1; i>=0; i--) env->write (vars[i], oldv[i]);
-  }
-  else typeset_dynamic (f, ip);
-}
-
-void
 concater_rep::typeset_include (tree t, path ip) {
   url file_name= as_string (t[0]);
   tree incl= load_inclusion (relative (env->base_file_name, file_name));
