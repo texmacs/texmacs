@@ -40,20 +40,45 @@
 #define ACCESSIBLE_EXCEPT_BORDER (ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
 #define ONLY_LAST_ACCESSIBLE (LAST_ACCESSIBLE+BORDER_NOT_ACCESSIBLE)
 
-#define CHILD_UNIFORM       0
-#define CHILD_LEFT_SPECIAL  1
-#define CHILD_RIGHT_SPECIAL 2
-#define CHILD_RIGHT_OPTIONS 3
-#define CHILD_LEFT_REPEAT   4
-#define CHILD_RIGHT_REPEAT  5
+/******************************************************************************
+* The child layout together with the arity information specifies
+* how to convert indices of children to indices in the array 'ci'.
+* If CHILD_UNIFORM, then ci contains only one element with information
+* about all children.
+******************************************************************************/
+
+#define CHILD_UNIFORM         0
+#define CHILD_BIFORM          1
+#define CHILD_DETAILED        2
+
+#define ARITY_NORMAL          0
+#define ARITY_OPTIONS         1
+#define ARITY_REPEAT          2
+#define ARITY_VAR_REPEAT      3
+
+/******************************************************************************
+* The block attributes specify when the parent should be considered
+* as a block and when the children are required to be blocks.
+* In the case of BLOCK_OR, the parent is a block if one of the children
+* satisfying BLOCK_REQUIRE_NONE is a block.
+******************************************************************************/
+
+#define BLOCK_NO              0
+#define BLOCK_YES             1
+#define BLOCK_OR              2
+
+#define BLOCK_REQUIRE_BLOCK   0
+#define BLOCK_REQUIRE_INLINE  1
+#define BLOCK_REQUIRE_NONE    2
 
 struct parent_info {
-  unsigned child_mode       : 3; // child layout
+  unsigned child_mode       : 2; // child layout
+  unsigned arity_mode       : 2; // arity layout
   unsigned arity_min        : 6; // minimal number of arguments
   unsigned arity_extra      : 4; // extra arguments
-  unsigned no_border        : 1; // true => inaccessible border
-  unsigned block            : 1; // is a block structure
-  unsigned dynamic          : 1; // admits inactive variant
+  unsigned no_border        : 1; // is the border inaccessible?
+  unsigned block            : 2; // is a block structure?
+  unsigned dynamic          : 1; // admits inactive variant?
 
   unsigned freeze_child     : 1; // true => disable heuristic determination
   unsigned freeze_arity     : 1;
@@ -63,17 +88,20 @@ struct parent_info {
 };
 
 struct child_info {
-  unsigned accessible  : 1;
-  unsigned block       : 1;
+  unsigned accessible       : 1; // child is accessible?
+  unsigned block            : 2; // require children to be blocks?
 
-  unsigned mask_access : 1;
-  unsigned mask_block  : 1;
+  unsigned freeze_accessible: 1; // true => disable heuristic determination
+  unsigned freeze_block     : 1;
 };
 
 class tag_info_rep: concrete_struct {
 public:
   int    arity; // arity of the tag (-1 if several arities are possible)
   int    props; // properties of the tag
+
+  // parent_info       pi;
+  // array<child_info> ci;
 
   tag_info_rep (int arity, int props);
 

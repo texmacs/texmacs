@@ -248,7 +248,7 @@ lazy_paragraph_rep::handle_decoration (
   tree e (DECORATED_BOX);
   for (k=n-1; k>=0; k--)
     if (is_func (t[k], MACRO, 2))
-      e= tree (EXPAND, t[k], e);
+      e= tree (COMPOUND, t[k], e);
   if (e != tree (DECORATED_BOX)) {
     // cout << "Typesetting " << e << LF;
     env->decorated_boxes << b;
