@@ -135,12 +135,7 @@ concater_rep::typeset_concat (tree t, path ip) {
 
 void
 concater_rep::typeset_hspace (tree t, path ip) {
-  if (N(t)==1) {
-    string s= as_string (t[0]);
-    print (space (env->decode_length (s * "-"),
-		  env->decode_length (s),
-		  env->decode_length (s * "+")));
-  }
+  if (N(t)==1) print (env->as_hspace (t[0]));
   else print (space (env->decode_length (t[0]),
 		     env->decode_length (t[1]),
 		     env->decode_length (t[2])));

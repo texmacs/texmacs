@@ -81,9 +81,8 @@ lazy_paragraph_rep::line_print (line_item item) {
     {
       SI vmin, vdef, vmax;
       if (N(item->t)==1) {
-	vmin= env->decode_length (as_string (item->t[0]) * "-");
-	vdef= env->decode_length (item->t[0]);
-	vmax= env->decode_length (as_string (item->t[0]) * "+");
+	space vspc= env->as_vspace (as_string (item->t[0]));
+	vmin= vspc->min; vdef= vspc->def; vmax= vspc->max;
       }
       else {
 	vmin= env->decode_length (item->t[0]);

@@ -331,14 +331,13 @@ public:
   void   update (string env_var);
 
   /* miscellaneous and utilities */
-  SI        decode_length_old (string s);
   tree      as_tmlen (tree t);
   SI        as_length (tree t);
-  space     as_space (tree t);
-
+  space     as_hspace (tree t);
+  space     as_vspace (tree t);
   SI        decode_length (string l);
+
   point     decode_point (tree t);
-  space     decode_space (string l);
   inline SI decode_length (tree l) { return decode_length (as_string (l)); }
   void      get_length_unit (string l, SI& un, string& un_str);
   string    add_lengths (string l1, string l2);
