@@ -84,6 +84,7 @@
   (set-script-status set_script_status (void int))
   (set-printing-command set_printing_command (void string))
   (set-printer-paper-type set_printer_page_type (void string))
+  (get-printer-paper-type get_printer_page_type (string))
   (set-printer-dpi set_printer_dpi (void string))
   (set-default-shrinking-factor set_default_shrinking_factor (void int))
   (get-default-shrinking-factor get_default_shrinking_factor (int))
