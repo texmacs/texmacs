@@ -201,6 +201,7 @@ init_std_drd () {
   init (VAR_IF, "if*", fixed (2));
   init (CASE, "case", repeat (2, 1));
   init (WHILE, "while", fixed (2));
+  init (FOR_EACH, "for-each", fixed (2));
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));

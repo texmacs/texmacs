@@ -201,6 +201,7 @@ private:
   tree exec_if (tree t);
   tree exec_case (tree t);
   tree exec_while (tree t);
+  tree exec_for_each (tree t);
 
   tree exec_point (tree t);
 
