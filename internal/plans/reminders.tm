@@ -282,6 +282,22 @@
     <|fold>
       Should be possible now using the <verbatim|extern> primitive
     </fold>
+
+    <\fold>
+      Consider fractions and scripts as operators
+    <|fold>
+      Consider fractions as operators <with|mode|math|\<Rightarrow\>> spaces
+      before and after. Similarly for scripts <with|mode|math|\<Rightarrow\>>
+      small space before left scripts and after right scripts.
+    </fold>
+
+    <\fold>
+      Better spacing
+    <|fold>
+      Determine spacing between two mathematical boxes as a function of the
+      rough semantics of the boxes. Application: no need for operators like
+      the unary minus.
+    </fold>
   </fold>
 
   <\fold>
@@ -304,6 +320,17 @@
     <|fold>
       For instance, a style might provide a limited number of font base
       sizes.
+    </fold>
+  </fold>
+
+  <\fold>
+    Boxes
+  <|fold>
+    <\fold>
+      Origin of boxes
+    <|fold>
+      Boxes should not have origins; its children should have positions
+      instead.
     </fold>
   </fold>
 
@@ -349,6 +376,13 @@
     </fold>
   </fold>
 
+  <\fold>
+    Cursor movement
+  <|fold>
+    Cursor movement along lines of a paragraph (when moving to the right at
+    the end of a line, the cursor should jump to the start of the next line).
+  </fold>
+
   <section|Tools and frequently used subroutines>
 
   <\fold>
@@ -389,21 +423,29 @@
 <\auxiliary>
   <\collection>
     <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>General
-      architecture> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Organizational
+      tasks> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-1><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Scheme>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>General
+      architecture> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-2><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Typesetter>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Scheme>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-3><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Utility
-      routines> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Typesetter>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-4><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Editor>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <pageref|auto-5><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Tools
+      and frequently used subroutines> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <pageref|auto-6><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
