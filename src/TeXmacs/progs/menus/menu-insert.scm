@@ -146,7 +146,7 @@
       ("Range" (make 'range))
       ("Number" (make 'number))
       ("Today" (make-arity 'date 0))
-      ("Date" (make 'date))
+      ("Formatted date" (make 'date))
       ("Translate" (make 'translate))
       ("Find file" (make 'find-file)))
   (-> "Tuple"
