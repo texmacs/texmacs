@@ -176,14 +176,14 @@ bridge_extension_rep::my_typeset (int desired_status) {
 	env->macro_src->item (var)= i<m? descend (ip,i): decorate_right(ip);
       }
     initialize (f[n], f);
-    if (true) ttt->insert_marker (st, ip);
+    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
     body->typeset (desired_status);
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
   }
   else {
     initialize (f, f);
-    if (true) ttt->insert_marker (st, ip);
+    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
     body->typeset (desired_status);
   }
 }

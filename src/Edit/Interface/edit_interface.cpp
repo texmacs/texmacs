@@ -623,7 +623,9 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUB_TABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT))
+      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TABLE_FORMAT) ||
+      (is_compound (st, "math", 1) &&
+       is_compound (subtree (et, path_up (p)), "input")))
     compute_env_rects (p, rs, recurse);
   else {
     bool right;

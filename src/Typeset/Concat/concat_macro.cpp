@@ -134,9 +134,9 @@ concater_rep::typeset_extension (tree t, path ip) {
       }
     if (is_decoration (ip)) typeset (f[n], ip);
     else {
-      if (true) marker (descend (ip, 0));
+      /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 0));
       typeset (f[n], decorate_right (ip));
-      if (true) marker (descend (ip, 1));
+      /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 1));
     }
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
@@ -144,9 +144,9 @@ concater_rep::typeset_extension (tree t, path ip) {
   else {
     if (is_decoration (ip)) typeset (f, ip);
     else {
-      if (true) marker (descend (ip, 0));
+      /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 0));
       typeset (f, decorate_right (ip));
-      if (true) marker (descend (ip, 1));
+      /*IF_NON_CHILD_ENFORCING(t)*/ marker (descend (ip, 1));
     }
   }
 }
