@@ -16,6 +16,53 @@
 #include "typesetter.hpp"
 
 /******************************************************************************
+* Length arithmetic
+******************************************************************************/
+
+bool
+edit_env_rep::is_length (string s) {
+  int i;
+  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
+  return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
+}
+
+bool
+edit_env_rep::is_anylen (tree t) {
+  return
+    (is_func (t, TMLEN) && ((N(t) == 1) || (N(t) == 3))) ||
+    (is_atomic (t) && is_length (t->label)) ||
+    is_func (t, MACRO, 1);
+}
+
+tree
+edit_env_rep::tmlen_plus (tree t1, tree t2) {
+  if ((N(t1) == 1) && (N(t2) == 1))
+    return tree (TMLEN, as_string (as_double (t1[0]) + as_double (t2[0])));
+  if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
+  if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
+  tree _min= as_string (as_double (t1[0]) + as_double (t2[0]));
+  tree _def= as_string (as_double (t1[1]) + as_double (t2[1]));
+  tree _max= as_string (as_double (t1[2]) + as_double (t2[2]));
+  return tree (TMLEN, _min, _def, _max);
+}
+
+tree
+edit_env_rep::tmlen_times (double sc, tree t) {
+  if (N(t) == 1) return tree (TMLEN, as_string (sc * as_double (t[0])));
+  tree _min= as_string (sc * as_double (t[0]));
+  tree _def= as_string (sc * as_double (t[1]));
+  tree _max= as_string (sc * as_double (t[2]));
+  return tree (TMLEN, _min, _def, _max);
+}
+
+tree
+edit_env_rep::tmlen_over (tree t1, tree t2) {
+  t1= t1[N(t1)==1? 0: 1];
+  t2= t2[N(t2)==1? 0: 1];
+  return as_string (as_double (t1) / as_double (t2));
+}
+
+/******************************************************************************
 * Built-in length units
 ******************************************************************************/
 
@@ -41,18 +88,6 @@ edit_env_rep::exec_quad () {
   double fn=
     (get_int(FONT_BASE_SIZE) * magn * inch * get_double(FONT_SIZE)) / 72.0;
   return tree (TMLEN, as_string (fn));
-}
-
-static tree
-tmlen_plus (tree t1, tree t2) {
-  if ((N(t1) == 1) && (N(t2) == 1))
-    return tree (TMLEN, as_string (as_double (t1[0]) + as_double (t2[0])));
-  if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
-  if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
-  tree _min= as_string (as_double (t1[0]) + as_double (t2[0]));
-  tree _def= as_string (as_double (t1[0]) + as_double (t2[0]));
-  tree _max= as_string (as_double (t1[0]) + as_double (t2[0]));
-  return tree (TMLEN, _min, _def, _max);
 }
 
 tree
@@ -127,21 +162,6 @@ tree edit_env_rep::exec_px () {
 * Decoding lengths
 ******************************************************************************/
 
-inline string
-number_times (string s1, string s2) {
-  return as_string (as_double (s1) * as_double (s2));
-}
-
-static tree
-tmlen_times (string sc, tree len) {
-  if (is_func (len, TMLEN, 1))
-    return tree (TMLEN, number_times (sc, len[0]->label));
-  return tree (TMLEN,
-	       number_times (sc, len[0]->label),
-	       number_times (sc, len[1]->label),
-	       number_times (sc, len[2]->label));
-}
-
 tree
 edit_env_rep::as_tmlen (tree t) {
   if (is_func (t, TMLEN)) {
@@ -163,8 +183,10 @@ edit_env_rep::as_tmlen (tree t) {
     string s1= s (start, i);
     string s2= s (i, n);    
     if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");
-    return tmlen_times (s1, as_tmlen (exec (compound (s2))));
+    return tmlen_times (as_double (s1), as_tmlen (exec (compound (s2))));
   }
+  else if (is_func (t, MACRO, 1))
+    return as_tmlen (exec (t[0]));
   else return tree (TMLEN, "0");
 }
 
@@ -218,15 +240,8 @@ edit_env_rep::as_point (tree t) {
 }
 
 /******************************************************************************
-* Length arithmetic
+* Old length arithmetic
 ******************************************************************************/
-
-bool
-edit_env_rep::is_length (string s) {
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
-  return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
-}
 
 void
 edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {

@@ -199,10 +199,8 @@ private:
   tree exec_xor (tree t);
   tree exec_and (tree t);
   tree exec_not (tree t);
-  tree exec_plus (tree t);
-  tree exec_minus (tree t);
-  tree exec_times (tree t);
-  tree exec_over (tree t);
+  tree exec_plus_minus (tree t);
+  tree exec_times_over (tree t);
   tree exec_divide (tree t);
   tree exec_modulo (tree t);
   tree exec_merge (tree t);
@@ -335,6 +333,24 @@ public:
   void   update ();
   void   update (string env_var);
 
+  /* lengths */
+  bool      is_length (string s);
+  bool      is_anylen (tree t);
+  tree      tmlen_plus (tree t1, tree t2);
+  tree      tmlen_times (double sc, tree t);
+  tree      tmlen_over (tree t1, tree t2);
+
+  tree      as_tmlen (tree t);
+  SI        as_length (tree t);
+  space     as_hspace (tree t);
+  space     as_vspace (tree t);
+  point     as_point (tree t);
+
+  void      get_length_unit (string l, SI& un, string& un_str);
+  string    add_lengths (string l1, string l2);
+  string    multiply_length (double x, string l);
+  double    divide_lengths (string l1, string l2);
+
   /* retrieving environment variables */
   inline bool get_bool (string var) {
     tree t= env [var];
@@ -352,14 +368,6 @@ public:
     tree t= env [var];
     if (is_compound (t)) return "";
     return t->label; }
-
-  /* lengths */
-  tree      as_tmlen (tree t);
-  SI        as_length (tree t);
-  space     as_hspace (tree t);
-  space     as_vspace (tree t);
-  point     as_point (tree t);
-
   inline SI get_length (string var) {
     tree t= env [var];
     if (is_compound (t)) return 0;
@@ -368,12 +376,6 @@ public:
     tree t= env [var];
     if (is_compound (t)) return 0;
     return as_vspace (t); }
-
-  void      get_length_unit (string l, SI& un, string& un_str);
-  string    add_lengths (string l1, string l2);
-  string    multiply_length (double x, string l);
-  bool      is_length (string s);
-  double    divide_lengths (string l1, string l2);
 
   friend class edit_env;
   friend ostream& operator << (ostream& out, edit_env env);

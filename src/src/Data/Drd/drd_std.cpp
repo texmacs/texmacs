@@ -185,10 +185,10 @@ init_std_drd () {
   init (XOR, "xor", fixed (2));
   init (AND, "and", repeat (2, 1));
   init (NOT, "not", fixed (1));
-  init (PLUS, "plus", fixed (2));
-  init (MINUS, "minus", fixed (2));
-  init (TIMES, "times", fixed (2));
-  init (OVER, "over", fixed (2));
+  init (PLUS, "plus", repeat (2, 1));
+  init (MINUS, "minus", repeat (1, 1));
+  init (TIMES, "times", repeat (2, 1));
+  init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
   init (MERGE, "merge", repeat (2, 1));
