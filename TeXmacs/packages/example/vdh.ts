@@ -52,6 +52,8 @@
 
     <assign|Set|<with|math-font|cal*|S>>
 
+    <assign|rsA|<with|math-font|cal*|A>>
+
     <assign|rsB|<with|math-font|cal*|B>>
 
     <assign|rsD|<with|math-font|cal*|D>>
