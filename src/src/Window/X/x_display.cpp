@@ -49,8 +49,7 @@ int hash (x_character xc) {
 void
 x_display_rep::prepare_color (int sf, color fg, color bg) {
   int nr_cols= sf*sf;
-  if (sf >= 16)
-    fatal_error ("shrinking factor too large", "x_display_rep::prepare_color");
+  if (nr_cols >= 64) nr_cols= 64;
   x_character col_entry (0, font_glyphs (), sf, fg, bg);
   color* cols= (color*) color_scale [col_entry];
   if (cols == NULL) {
