@@ -29,6 +29,7 @@
   ("inactive e" (make-inactive-compound))
   ("inactive E" (make-inactive-eval-args))
   ("inactive f" (make-inactive-function))
+  ("inactive g" (make-inactive-flag))
   ("inactive h" (make-inactive-hold))
   ("inactive i" (make-inactive-include))
   ("inactive l" (make-inactive-latex))

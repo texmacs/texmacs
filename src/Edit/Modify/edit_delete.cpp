@@ -315,6 +315,7 @@ edit_text_rep::remove_backwards () {
     case ACTION:
     case TAG:
     case MEANING:
+    case FLAG:
       back_dynamic (p);
       return;
 
@@ -559,6 +560,7 @@ edit_text_rep::remove_backwards () {
     case ACTION:
     case TAG:
     case MEANING:
+    case FLAG:
       back_in_dynamic (u, p, 2);
       return;
 

@@ -197,6 +197,7 @@ initialize_std_drd () {
   init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
+  init (FLAG, "flag", options (2, 1));
 
   init (GRAPHICS, "graphics", repeat (1, 1));
   init (SUPERPOSE, "superpose", repeat (1, 1));
