@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -112,6 +112,9 @@
     </src-comment>
   </active*>
 
+  <assign|src-short-comment|<macro|x|<with|color|dark grey|<htab|5mm>{
+  <arg|x> }>>>
+
   <assign|src-comment|<\macro|x>
     <surround|<vspace*|1.5fn>|<vspace|0.5fn>|<with|color|dark
     grey|<block|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|pastel
@@ -125,18 +128,7 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
+    <associate|sfactor|7>
   </collection>
 </initial>

@@ -157,5 +157,6 @@
 <\initial>
   <\collection>
     <associate|preamble|true>
+    <associate|sfactor|5>
   </collection>
 </initial>

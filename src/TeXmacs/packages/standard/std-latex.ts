@@ -27,7 +27,7 @@
     TeX-like lengths.
   </src-comment>>
 
-  <assign|tex-len|<macro|default|decrease|increase|<style-with|src-compact|none|<tmlen|<minus|<arg|default>|<arg|decrease>>|<arg|default>|<plus|<arg|default>|<arg|increase>>>>>>
+  <assign|tex-len|<macro|default|increase|decrease|<style-with|src-compact|none|<tmlen|<minus|<arg|default>|<arg|decrease>>|<arg|default>|<plus|<arg|default>|<arg|increase>>>>>>
 
   <active*|<\src-comment>
     Default values of TeX page layout parameters.
@@ -117,7 +117,7 @@
 
   <assign|tex-jot|<macro|0.25fn>>
 
-  <assign|tex-math-indent|<macro|0.5fn>>
+  <assign|tex-math-indent|<macro|1.5fn>>
 
   <assign|tex-above-display-skip|<macro|0.75fn>>
 
