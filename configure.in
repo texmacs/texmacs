@@ -280,7 +280,7 @@ AC_TRY_COMPILE([
 CXXFLAGS=""
 AC_SUBST(CONFIG_CXXDIALECT)
 
-AC_MSG_CHECKING([if statically linking with guile work])
+AC_MSG_CHECKING([if statically linking with guile works])
 CONFIG_GUILE_LTDL=""
 CPPFLAGS="$GUILE_CFLAGS"
 LDFLAGS="-static"
