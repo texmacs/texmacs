@@ -35,6 +35,9 @@
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
 
+    <item>Henri Lesourd is working on native technical drawing support in
+    <TeXmacs>.
+
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
 
@@ -44,8 +47,8 @@
     <item>Gwenael Gabard for some fixes in the <LaTeX> to <TeXmacs>
     converter.
 
-    <item>Igor V. Kovalenko for his help on debugging TeXmacs and a few
-    patches.
+    <item>Igor V. Kovalenko and Teemu Ikonen for their help on debugging
+    TeXmacs and a few patches.
 
     <item>Gareth McCaughan made several patches and comments.
 
@@ -88,7 +91,7 @@
   <\collection>
     <associate|idx-1|<tuple|<uninit>|?>>
     <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
     <associate|toc-2|<tuple|<uninit>|?>>
+    <associate|idx-2|<tuple|<uninit>|?>>
   </collection>
 </references>
