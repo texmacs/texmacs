@@ -174,9 +174,9 @@ AC_SUBST(ICONV_LDFLAGS)
 # Checks for freetype
 #--------------------------------------------------------------------
 
-AC_ARG_WITH(iconv,
+AC_ARG_WITH(freetype,
 changequote(<<, >>)dnl
-<<  --with-freetype[=DIR]     with freetype support [yes]>>dnl
+<<  --with-freetype[=ARG]     with freetype support [ARG=linked]>>dnl
 changequote([, ])dnl
 )
 
@@ -202,7 +202,7 @@ else
     AC_MSG_RESULT(yes)
     CONFIG_USE_FREETYPE="#define USE_FREETYPE"
     FREETYPE_CFLAGS="$CPPFLAGS"
-    if test "$with_freetype" = "linked" ; then
+    if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
       FREETYPE_LDFLAGS="$LIBS"
       CONFIG_LINKED_FREETYPE="#define LINKED_FREETYPE"
     fi
