@@ -765,7 +765,7 @@
   (assign tmhtml-noop)
   (with tmhtml-with)
   ((:or set reset) tmhtml-noop)
-  ((:or var_expand expand hide_expand compound) tmhtml-compound)
+  (compound tmhtml-compound)
   ((:or begin end include macro func env eval) tmhtml-noop)
   (value tmhtml-compound)
   (arg tmhtml-noop)
