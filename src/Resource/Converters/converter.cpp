@@ -108,6 +108,8 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     ht = dic;
   }
   else if ( from=="UTF-8" && to=="Cork") {
@@ -115,6 +117,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"corktounicode", UTF8, BIT2BIT, true);
     hashtree_from_dictionary (dic,"unicode-cork-oneway", UTF8, BIT2BIT, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", UTF8, BIT2BIT, true);
+    hashtree_from_dictionary (dic,"unicode-symbol-oneway", UTF8, BIT2BIT, true);
     ht = dic;
   }
   else if ( from=="UTF-8" && to=="HTML") {
@@ -295,9 +298,11 @@ convert_using_iconv (string input, string from, string to) {
 
 void
 put_prefix_code (string key, string value, hashtree<char,string> tree) {
-  // hashtree<char,string> ht= find_node (key,tree);
-  // if (ht->label != "")
-  //   cout << "overwriting: " << ht->label << " with " << value << '\n';
+  if (DEBUG_STD) {
+    hashtree<char,string> ht= find_node (key,tree);
+    if (ht->label != "")
+      cout << "overwriting: " << ht->label << " with " << value << '\n';
+  }
   find_node (key,tree)->set_label(value);
 }
 

@@ -61,6 +61,7 @@
 ;; combining characters. See the MathML rec (chap. 6) for allowed combinations.
 
 ("<binampersand>"	"#0026") ; variant of "&", same look as <bindnasrepma>
+("<i*>"			"#0131") ; variant (straight) of <imath>
 ("<hbar>"		"#210F") ; variant of <hslash>
 ("<varlightning>"	"#21AF") ; variant of <lightning>
 ("<varnothing>"		"#2205") ; variant of <emptyset>
@@ -86,8 +87,10 @@
 ("<DOWNarrow>"		"#25BE") ; variant of <blacktriangledown>
 ("<bigcirc>"		"#25EF") ; variant of <varbigcirc> (slightly oval)
 ("<varangle>"		"#2222") ; variant of <sphericalangle>
-
 ("<Bbbk>"		"#1D55C") ; variant of <bb-k>
+
+;; typo in the name of the symbol... should be <nshortmid>
+("<nshormid>"		"#2224") ; variant of <nmid>
 
 ;;; Big delimiters
 
