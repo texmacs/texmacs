@@ -71,10 +71,10 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   if (is_document (t) && is_extension (t[0])) t= t[0];
   if (is_document (t) && (N(t)>1) && is_extension (t[1])) t= t[1];
   if (arity(t) == 0) return "";
-  if ((!is_compound (t, "thebibliography", 2)) ||
-      (!is_document (t[N(t)-1])))
+  if (!is_compound (t, "thebibliography", 2) || !is_document (t[1]))
     return "";
-  t= t[N(t)-1];
+  tree largest= t[0];
+  t= t[1];
   tree u (DOCUMENT);
   for (i=0; i<arity(t); i++) {
     if (is_concat (t[i]) &&
@@ -94,5 +94,5 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	u << v;
       }
   }
-  return u;
+  return compound ("bib-list", largest, u);
 }

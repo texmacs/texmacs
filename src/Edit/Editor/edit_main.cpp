@@ -317,10 +317,7 @@ void
 edit_main_rep::edit_special () {
 }
 
-tree upgrade_index (tree);
-
 void
 edit_main_rep::edit_test () {
-  assign (rp, upgrade_index (subtree (et, rp)));
-  // cout << "Test !\n";
+  cout << "Test !\n";
 }
