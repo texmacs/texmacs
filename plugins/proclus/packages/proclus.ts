@@ -7,9 +7,7 @@
 
   <assign|proclus-editable-dtd|1.0>
 
-  <assign|locus|<\macro|x|id>
-    <decorate-action|<arg|x>|(locus-action)>
-  </macro>>
+  <assign|locus|<macro|x|id|<decorate-action|<arg|x>|(locus-action)>>>
 
   <assign|not-locus|<macro|x|id|<arg|x>>>
 </body>
