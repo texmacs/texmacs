@@ -1016,11 +1016,11 @@
   (neg tmtex-neg)
   (wide* tmtex-wide-star)
   (tree tmtex-noop)
-  ((:or old_matrix old_table old_mosaic old_mosaic_item) tmtex-noop)
+  ((:or old-matrix old-table old-mosaic old-mosaic-item) tmtex-noop)
   (tformat tmtex-tformat)
   ((:or twith cwith tmarker) tmtex-noop)
   (table tmtex-table)
-  ((:or row cell sub_table) tmtex-noop)
+  ((:or row cell subtable) tmtex-noop)
   (assign tmtex-assign)
   (with tmtex-with)
   ((:or set reset) tmtex-noop)
@@ -1032,7 +1032,7 @@
   (arg tmtex-noop)
   ((:or backup quote delay hold release) tmtex-noop)
   ((:or or xor and not plus minus times over div mod merge length range
-	number date translate is_tuple look_up equal unequal less lesseq
+	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
    tmtex-noop)
   ((:or inactive symbol latex hybrid tuple collection associate) tmtex-noop)

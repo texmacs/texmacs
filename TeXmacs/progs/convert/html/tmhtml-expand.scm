@@ -21,7 +21,7 @@
 
 (define (tmhtml-env-macro name)
   `(associate ,(symbol->string name)
-	      (xmacro "x" (eval_args "x"))))
+	      (xmacro "x" (eval-args "x"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

@@ -281,7 +281,7 @@ public:
 
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;
-  virtual void   make_sub_table (int nr_rows=1, int nr_cols=1) = 0;
+  virtual void   make_subtable (int nr_rows=1, int nr_cols=1) = 0;
   virtual void   table_disactivate () = 0;
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;

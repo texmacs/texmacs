@@ -337,7 +337,7 @@
    "tmhtml, pictures" "postscript"
    make-result make-expected
    (test "simple link" '("foo.png" "" "") '("foo.png" #f #f))
-   (test "inclusion" '((tuple (raw_data "...") "png") "" "") '())
+   (test "inclusion" '((tuple (raw-data "...") "png") "" "") '())
    (test "width percent" '("foo.png" ".666par" "") '("foo.png" "67%" #f))
    (test "width absolute" '("foo.png" "128px" "") '("foo.png" "128" #f))
    (test "width bad unit" '("foo.png" "10spc" "") '("foo.png" #f #f))

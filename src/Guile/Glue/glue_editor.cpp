@@ -1164,9 +1164,9 @@ tmg_branch_delete (SCM arg1) {
 }
 
 SCM
-tmg_make_sub_table () {
+tmg_make_subtable () {
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_sub_table ();
+  get_server()->get_editor()->make_subtable ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2833,7 +2833,7 @@ initialize_glue_editor () {
   gh_new_procedure ("inside-tree?", (FN) tmg_inside_treeP, 0, 0, 0);
   gh_new_procedure ("branch-insert", (FN) tmg_branch_insert, 1, 0, 0);
   gh_new_procedure ("branch-delete", (FN) tmg_branch_delete, 1, 0, 0);
-  gh_new_procedure ("make-sub-table", (FN) tmg_make_sub_table, 0, 0, 0);
+  gh_new_procedure ("make-subtable", (FN) tmg_make_subtable, 0, 0, 0);
   gh_new_procedure ("table-disactivate", (FN) tmg_table_disactivate, 0, 0, 0);
   gh_new_procedure ("table-extract-format", (FN) tmg_table_extract_format, 0, 0, 0);
   gh_new_procedure ("table-insert-row", (FN) tmg_table_insert_row, 1, 0, 0);

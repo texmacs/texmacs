@@ -127,9 +127,9 @@
   ("Compound" (make 'compound))
   ---
   ("Long macro" (make 'xmacro))
-  ("Get label" (make 'get_label))
-  ("Get arity" (make 'get_arity))
-  ("Map arguments" (make 'map_args)))
+  ("Get label" (make 'get-label))
+  ("Get arity" (make 'get-arity))
+  ("Map arguments" (make 'map-args)))
 
 (menu-bind insert-executable-menu
   (-> "Arithmetic"
@@ -147,13 +147,13 @@
       ("Date" (make 'date))
       ("Formatted date" (make 'date))
       ("Translate" (make 'translate))
-      ("Find file" (make 'find_file)))
+      ("Find file" (make 'find-file)))
   (-> "Tuple"
-      ("Tuple?" (make 'is_tuple))
+      ("Tuple?" (make 'is-tuple))
       ("Merge" (make 'merge))
       ("Length" (make 'length))
       ("Range" (make 'range))
-      ("Look up" (make 'look_up)))
+      ("Look up" (make 'look-up)))
   (-> "Condition"
       ("Not" (make 'not))
       ("And" (make 'and))
