@@ -430,14 +430,14 @@
 
 (menu-bind format-menu
   (group "Font")
-  (if (test-env? "mode" "text") (link text-font-menu))
-  (if (test-env? "mode" "math") (link math-font-menu))
-  (if (test-env? "mode" "prog") (link prog-font-menu))
+  (if (or (in-text?) (in-source?)) (link text-font-menu))
+  (if (in-math?) (link math-font-menu))
+  (if (in-prog?) (link prog-font-menu))
   ---
   (group "Content")
   (-> "Color" (link color-menu))
   (-> "Language" (link language-menu))
-  (if (test-env? "mode" "math")
+  (if (in-math?)
       ---
       (link math-format-menu))
   ---
