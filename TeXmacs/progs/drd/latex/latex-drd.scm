@@ -419,7 +419,11 @@
   (tmaction "color")
 
   (omicron "pslatex")
-  (multicols "multicol"))
+  (multicols "multicol")
+  (bundle "epic")
+  (chunk "epic")
+  (bundle "ecltree")
+  (chunk "ecltree"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated routines for consulting the database

@@ -613,6 +613,11 @@
 (define (tmtex-neg l)
   (tmtex-function 'not l))
 
+(define (tmtex-tree l)
+  (let* ((root (list '!begin "bundle" (tmtex (car l))))
+	 (children (map (lambda (x) (list 'chunk (tmtex x))) (cdr l))))
+    (list root (tex-concat children))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1000,7 +1005,7 @@
   (cond ((null? l) "")
 	((not (string? (car l))) (tmtex-cite-list (cdr l)))
 	((null? (cdr l)) (car l))
-	(else (string-append (car l) ", " (tmtex-cite-list (cdr l))))))
+	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
 
 (define (tmtex-cite s l)
   (tex-apply (string->symbol s) (tmtex-cite-list l)))
@@ -1115,6 +1120,7 @@
   (wide tmtex-wide)
   (neg tmtex-neg)
   (wide* tmtex-wide-star)
+  ;;(tree tmtex-tree)
   (tree tmtex-noop)
   ((:or old-matrix old-table old-mosaic old-mosaic-item) tmtex-noop)
   (tformat tmtex-tformat)
