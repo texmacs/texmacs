@@ -55,6 +55,21 @@
        (map tmhtml-math-token (tmconcat-tokenize-math s)))
       (list (cork->utf8 s))))
 
+(define (tmhtml-text s)
+  (if tmhtml-math-mode?
+      (tmhtml-string s)
+      (tmhtml-string (make-ligatures s))))
+
+(define cork-endash (char->string (integer->char 21)))
+(define cork-ldquo (char->string (integer->char 16)))
+(define cork-rdquo (char->string (integer->char 17)))
+
+(define (make-ligatures s)
+  ;; Make texmacs ligatures in Cork encoding  
+  (string-replace
+   (string-replace
+    (string-replace s "--" cork-endash) "``" cork-ldquo) "''" cork-rdquo))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entire documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -686,7 +701,7 @@
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
   (if (string? x)
-      (if (string-null? x) '() (tmhtml-string x)) ; handle string nodes
+      (if (string-null? x) '() (tmhtml-text x)) ; non-verbatim string nodes
       (or (tmhtml-dispatch 'tmhtml-primitives% x)
 	  (tmhtml-implicit-compound x))))
 
