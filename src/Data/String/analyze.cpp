@@ -574,13 +574,13 @@ slash (string s) {
     switch (s[i]) {
     case '(':
     case ')':
-    case ' ':
+    case ' ': 
     case '\'':
       if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
       r << s[i];
       break;
     case '\\':
-      r << "\\" << s[i];
+      r << '\\' << s[i];
       break;
     case '\042':
       if (((i==0) && (s[n-1]=='\042')) ||

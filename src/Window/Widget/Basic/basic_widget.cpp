@@ -258,11 +258,11 @@ test_round (widget w, string var, SI num) {
 static void
 test_window_attached (event ev, widget w) {
   if (!w->attached ()) {
-    cerr << "\n------------------------------------------------------------------------------\n";
+    cerr << "\n" << HRULE << "\n";
     cerr << ev << " was sent to\n" << w;
-    cerr << "------------------------------------------------------------------------------\n";
-    cerr << "Fatal error: widget was not yet attached to window in 'basic_widget::handle'\n";
-    exit (1);
+    cerr << HRULE << "\n";
+    fatal_error ("widget was not yet attached to window",
+		 "basic_widget::handle", "basic_diwget.cpp");
   }
 }
 

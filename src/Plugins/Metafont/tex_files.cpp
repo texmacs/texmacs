@@ -20,6 +20,7 @@
 
 static url the_tfm_path= url_none ();
 static url the_pk_path = url_none ();
+static url the_pfb_path= url_none ();
 
 /******************************************************************************
 * Finding a TeX font
@@ -37,22 +38,26 @@ resolve_tfm (url name) {
 
 url
 resolve_pk (url name) {
+#ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pk fonts
   if (get_setting ("KPSEWHICH") == "true") {
     string which= var_eval_system ("kpsewhich " * as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
+#endif
   return resolve (the_pk_path * name);
 }
 
 url
 resolve_pfb (url name) {
+#ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pfb fonts
   if (get_setting ("KPSEWHICH") == "true") {
     string which= var_eval_system ("kpsewhich " * as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
-  return url_none ();
+#endif
+  return resolve (the_pfb_path * name);
 }
 
 bool
@@ -149,13 +154,21 @@ get_kpsepath (string s) {
   return p;
 }
 
+static url
+search_sub_dirs (url root) {
+  url dirs= complete (root * url_wildcard (), "dr");
+  return expand (dirs);
+}
+
 void
 reset_tfm_path (bool rehash) { (void) rehash;
   // if (rehash && (get_setting ("TEXHASH") == "true")) system ("texhash");
   string tfm= get_setting ("TFM");
   the_tfm_path=
     url_here () |
-    "$TEX_TFM_PATH:$TEXMACS_HOME_PATH/fonts/tfm:$TEXMACS_PATH/fonts/tfm" |
+    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/tfm") |
+    search_sub_dirs ("$TEXMACS_PATH/fonts/tfm") |
+    "$TEX_TFM_PATH" |
     (tfm == ""? url_none (): tfm);
   if ((get_setting ("MAKETFM") != "false") ||
       (get_setting ("TEXHASH") == "true"))
@@ -169,12 +182,26 @@ reset_pk_path (bool rehash) { (void) rehash;
   string pk= get_setting ("PK");
   the_pk_path=
     url_here () |
-    "$TEX_PK_PATH:$TEXMACS_HOME_PATH/fonts/pk:$TEXMACS_PATH/fonts/pk" |
+    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/pk") |
+    search_sub_dirs ("$TEXMACS_PATH/fonts/pk") |
+    "$TEX_PK_PATH" |
     (pk == ""? url_none (): pk);
   if ((get_setting ("MAKEPK") != "false") ||
       (get_setting ("TEXHASH") == "true"))
     the_pk_path= the_pk_path | get_kpsepath ("pk");
   the_pk_path= expand (factor (the_pk_path));
+}
+
+void
+reset_pfb_path () {
+  string pfb= get_setting ("PFB");
+  the_pfb_path=
+    url_here () |
+    search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/type1") |
+    search_sub_dirs ("$TEXMACS_PATH/fonts/type1") |
+    "$TEX_PFB_PATH" |
+    (pfb == ""? url_none (): url_system (pfb));
+  the_pfb_path= expand (factor (the_pfb_path));
 }
 
 /******************************************************************************

@@ -12,6 +12,7 @@
 
 #include "tt_file.hpp"
 #include "file.hpp"
+#include "boot.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "Metafont/tex_files.hpp"
@@ -24,7 +25,7 @@ tt_locate (string name) {
     url u= resolve_pfb (name);
     if (!is_none (u)) return u;
   }
-  else {
+  else if (use_locate) {
     string s= eval_system ("locate", "/" * name);
     int start, i, n= N(s);
     for (start=0, i=0; i<n; i++)

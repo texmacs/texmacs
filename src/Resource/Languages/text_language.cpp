@@ -167,6 +167,9 @@ simplify_date (string s) {
 
 string
 get_date (string lan, string fm) {
+#ifdef OS_WIN32
+  return "not implemented";
+#else
   if (fm == "") {
     if ((lan == "british") || (lan == "english") || (lan == "american"))
       fm= "%B %d, %Y";
@@ -184,6 +187,7 @@ get_date (string lan, string fm) {
   // if (lan == "ru_RU") date= iso_to_koi8 (date);
   set_env ("LANG", old);
   return date;
+#endif
 }
 
 /******************************************************************************

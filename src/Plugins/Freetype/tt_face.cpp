@@ -14,6 +14,8 @@
 #include "tt_face.hpp"
 #include "tt_file.hpp"
 
+#ifdef USE_FREETYPE
+
 RESOURCE_CODE(tt_face);
 
 inline int tt_round (int l) { return ((l+0x400020) >> 6) - 0x10000; }
@@ -169,3 +171,5 @@ tt_font_glyphs (string family, int size, int dpi) {
   return make (font_glyphs, name,
 	       new tt_font_glyphs_rep (name, family, size, dpi));
 }
+
+#endif // USE_FREETYPE

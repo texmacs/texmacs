@@ -86,6 +86,8 @@ init_main_paths () {
     cerr << "TeXmacs] 'TEXMACS_HOME_PATH' could not be set to '~/.TeXmacs'.\n";
     cerr << "TeXmacs] You may try to set this environment variable manually\n";
     cerr << "TeXmacs]\n";
+    fatal_error ("Installation problem",
+	         "init_main_paths", "init_texmacs.cpp");
     exit (1);
   }
 }
@@ -111,6 +113,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/fonts/error");
   make_dir ("$TEXMACS_HOME_PATH/fonts/pk");
   make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/type1");
   make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
   make_dir ("$TEXMACS_HOME_PATH/langs");
   make_dir ("$TEXMACS_HOME_PATH/langs/mathematical");
@@ -153,7 +156,8 @@ init_guile () {
     cerr << "TeXmacs] be readable and in the directory $TEXMACS_PATH/progs\n";
     cerr << "TeXmacs] or in the directory $GUILE_LOAD_PATH\n";
     cerr << "TeXmacs]\n";
-    exit (1);
+    fatal_error ("Guile could not be found",
+	         "init_guile", "init_texmacs.cpp");
   }
 
   /*
@@ -284,7 +288,7 @@ init_deprecated () {
       if ((dir == "") &&
 	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
 	dir= "/usr/share/maxima/5.9.0";
-      if (dir == "") {
+      if ((dir == "") && use_locate) {
 	string where= var_eval_system ("locate maxima_toc.html");
 	if (ends (where, "/doc/html/maxima_toc.html"))
 	  dir= where (0, N(where)- 25);
@@ -315,8 +319,9 @@ string
 get_setting (string var, string def) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
-    if (is_tuple (texmacs_settings[i], var, 1))
+    if (is_tuple (texmacs_settings[i], var, 1)) {
       return unquote (as_string (texmacs_settings[i][1]));
+    }
   return def;
 }
 
@@ -351,6 +356,8 @@ setup_texmacs () {
   setup_tex ();
   
   string s= scheme_tree_to_block (texmacs_settings);
+  //cout << "settings_t= " << texmacs_settings << "\n";
+  //cout << "settings_s= " << s << "\n";
   if (save_string (settings_file, s) || load_string (settings_file, s)) {
     cerr << HRULE;
     cerr << "I could not save or reload the file\n\n";
@@ -358,7 +365,8 @@ setup_texmacs () {
     cerr << "Please give me full access control over this file and\n";
     cerr << "rerun 'TeXmacs'.\n";
     cerr << HRULE;
-    exit (1);
+    fatal_error ("Unable to write settings",
+		 "setup_texmacs", "init_texmacs.cpp");
   }
   
   cerr << HRULE;

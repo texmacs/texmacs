@@ -150,7 +150,7 @@ tt_font_rep::draw (ps_device dev, string s, SI x, SI y) {
     for (i=0; i<N(s); i++) {
       QN c= s[i];
       dev->draw (c, fng, x, y);
-      metric_struct* ex (fnm->get (c));
+      metric_struct* ex= fnm->get (c);
       x += ex->x2;
     }
   }

@@ -34,6 +34,7 @@ mag (int dpi, int size, int dsize) {
 
 bool
 try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
+  // cout << "Try tfm " << family << size << " (" << osize << ")\n";
   string name_tfm = family * as_string (osize) * ".tfm";
   if (tex_font_metric::instances -> contains (name_tfm)) {
     tfm= tex_font_metric (name_tfm);
@@ -45,17 +46,19 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
   if (is_none (u)) {
     if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name)))
       return false;
-    system_wait ("Generating font file", name);
-    make_tex_tfm (name);
-    system_wait ("");
-    u= resolve_tfm (name);
-    if (is_none (u)) {
-      reset_tfm_path ();
+    if (get_setting ("MAKETFM") != "false") {
+      system_wait ("Generating font file", name);
+      make_tex_tfm (name);
+      system_wait ("");
       u= resolve_tfm (name);
       if (is_none (u)) {
-	save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
-	return false;
+	reset_tfm_path ();
+	u= resolve_tfm (name);
       }
+    }
+    if (is_none (u)) {
+      save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
+      return false;
     }
   }
   tfm= load_tfm (u, family, osize);
@@ -72,6 +75,19 @@ bool
 load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
   if (try_tfm (family, size, size, tfm))
     return true;
+  if (size > 333)
+    return load_tex_tfm (family, (size+50)/100, dsize, tfm);
+  if (get_setting ("MAKETFM") == "false") {
+    if ((size > 14) && try_tfm (family, 17, size, tfm)) return true;
+    if ((size > 12) && try_tfm (family, 12, size, tfm)) return true;
+    if ((size > 10) && try_tfm (family, 10, size, tfm)) return true;
+    if ((size <  5) && try_tfm (family,  5, size, tfm)) return true;
+    if ((size <  6) && try_tfm (family,  6, size, tfm)) return true;
+    if ((size <  7) && try_tfm (family,  7, size, tfm)) return true;
+    if ((size <  8) && try_tfm (family,  8, size, tfm)) return true;
+    if ((size <  9) && try_tfm (family,  9, size, tfm)) return true;
+    if ((size < 10) && try_tfm (family, 10, size, tfm)) return true;
+  }
   if (dsize != size)
     if (try_tfm (family, dsize, size, tfm))
       return true;
@@ -89,16 +105,21 @@ bool
 try_pk (string family, int size, int dpi, int dsize,
 	tex_font_metric& tfm, font_glyphs& pk)
 {
+  // cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
+#ifdef USE_FREETYPE
   if (use_tt_fonts ()) {
     // Substitute by True Type font ?
-    string tt_name= tt_find_name (family, size);
+    int tt_size= size<333? size: (size+50)/100;
+    int tt_dpi = size<333? dpi : (size * dpi) / (100 * tt_size);
+    string tt_name= tt_find_name (family, tt_size);
     if (tt_name != "") {
       if (font_glyphs::instances -> contains (tt_name))
 	pk= font_glyphs (tt_name);
-      else pk= tt_font_glyphs (tt_name, size, dpi);
+      else pk= tt_font_glyphs (tt_name, tt_size, tt_dpi);
       return true;
     }
   }
+#endif // USE_FREETYPE
 
   // Open regular pk font
   string name_pk= family * as_string (size) * "." * as_string (dpi) * "pk";
@@ -113,18 +134,20 @@ try_pk (string family, int size, int dpi, int dsize,
   if (is_none (u)) {
     if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name)))
       return false;
-    system_wait ("Generating font file", name);
-    make_tex_pk (family * size_name, dpi,
-		 as_int (get_setting ("DPI")), "localfont");
-    system_wait ("");
-    u= resolve_pk (name);
-    if (is_none (u)) {
-      reset_pk_path ();
+    if (get_setting ("MAKEPK") != "false") {
+      system_wait ("Generating font file", name);
+      make_tex_pk (family * size_name, dpi,
+		   as_int (get_setting ("DPI")), "localfont");
+      system_wait ("");
       u= resolve_pk (name);
       if (is_none (u)) {
-	save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
-	return false;
+	reset_pk_path ();
+	u= resolve_pk (name);
       }
+    }
+    if (is_none (u)) {
+      save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
+      return false;
     }
   }
   pk_loader pkl (u, tfm, dpi);
@@ -143,6 +166,10 @@ load_tex_pk (string family, int size, int dpi, int dsize,
   if ((dsize != 10) && (size != 10))
     if (try_pk (family, 10, mag (dpi, size, 10), dsize, tfm, pk))
       return true;
+  if (size > 333) {
+    int sz= (size+50)/100;
+    return load_tex_pk (family, sz, mag (dpi, size, sz), dsize, tfm, pk);
+  }
   return false;
 }
 
@@ -159,13 +186,17 @@ load_tex (string family, int size, int dpi, int dsize,
   if (load_tex_tfm (family, size, dsize, tfm) &&
       load_tex_pk (family, size, dpi, dsize, tfm, pk))
     return;
+  if (DEBUG_AUTO) {
+    cout << "TeXmacs] font " << family << size
+         << " at " << dpi << " dpi not found\n";
+    cout << "TeXmacs] loading cmr" << size
+	 << " at " << dpi << " dpi instead\n";
+  }
   if (load_tex_tfm ("cmr", size, 10, tfm) &&
       load_tex_pk ("cmr", size, dpi, 10, tfm, pk))
     return;
   string name= family * as_string (size) * "@" * as_string (dpi);
-  cerr << "\nFatal error: I could not open " << name << "\n";
-  cerr << "           : Tex seems not to be installed properly\n";
-  cerr << "See routine: load_tex\n";
-  cerr << "See file   : load-tex.cpp\n\n";
-  exit (1);
+  cerr << "\n\nI could not open " << name << "\n";
+  fatal_error ("Tex seems not to be installed properly",
+	       "load_tex", "load_tex.cpp");
 }
