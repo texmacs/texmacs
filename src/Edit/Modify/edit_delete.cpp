@@ -109,21 +109,8 @@ edit_text_rep::remove_backwards () {
       else remove (p, 1);
       correct (path_up (p));
       return;
-    case SPLIT:
-      back_dynamic (p);
-      return;
-    case MOVE:
-    case RESIZE:
-      back_dynamic (p);
-      return;
     case _FLOAT:
       go_to (end (et, p * 2));
-      return;
-    case REPEAT:
-    case DECORATE_ATOMS:
-    case DECORATE_LINES:
-    case DECORATE_PAGES:
-      back_dynamic (p);
       return;
 
     case WITH_LIMITS:
@@ -186,20 +173,8 @@ edit_text_rep::remove_backwards () {
     case TREE:
       go_to (end (et, p * (N(t)-1)));
       return;
-    case OLD_MATRIX:
-    case OLD_TABLE:
-    case OLD_MOSAIC:
-      back_dynamic (p);
-      return;
 
     case TABLE_FORMAT:
-      back_table (p);
-      return;
-    case TABLE_WITH:
-    case CELL_WITH:
-    case TABLE_MARKER:
-      back_dynamic (p);
-      return;
     case TABLE:
     case ROW:
     case CELL:
@@ -207,9 +182,6 @@ edit_text_rep::remove_backwards () {
       back_table (p);
       return;
 
-    case ASSIGN:
-      back_dynamic (p);
-      return;
     case WITH:
       go_to (end (et, p * (N(t)-1)));
       return;
@@ -223,17 +195,6 @@ edit_text_rep::remove_backwards () {
     case COMPOUND:
       back_compound (p);
       return;
-    case APPLY:
-    case INCLUDE:
-      back_dynamic (p);
-      return;
-    case MACRO:
-    case XMACRO:
-    case FUNCTION:
-    case DRD_PROPS:
-    case EVAL:
-      back_dynamic (p);
-      return;
     case PROVIDES:
     case VALUE:
     case ARGUMENT:
@@ -244,98 +205,20 @@ edit_text_rep::remove_backwards () {
       }
       else back_dynamic (p);
       return;
-    case GET_LABEL:
-    case GET_ARITY:
-    case MAP_ARGS:
-    case EVAL_ARGS:
-    case QUOTE:
-    case DELAY:
-    case HOLD:
-    case RELEASE:
-      back_dynamic (p);
-      return;
-
-    case OR:
-    case XOR:
-    case AND:
-    case NOT:
-    case PLUS:
-    case MINUS:
-    case TIMES:
-    case OVER:
-    case DIVIDE:
-    case MODULO:
-    case MERGE:
-    case LENGTH:
-    case RANGE:
-    case NUMBER:
-    case _DATE:
-    case TRANSLATE:
-    case FIND_FILE:
-    case IS_TUPLE:
-    case LOOK_UP:
-    case EQUAL:
-    case UNEQUAL:
-    case LESS:
-    case LESSEQ:
-    case GREATER:
-    case GREATEREQ:
-    case IF:
-    case VAR_IF:
-    case CASE:
-    case WHILE:
-    case EXTERN:
-    case AUTHORIZE:
-      back_dynamic (p);
-      return;
-
     case INACTIVE:
     case ACTIVE:
     case VAR_INACTIVE:
     case VAR_ACTIVE:
       go_to (end (et, p * (N(t)-1)));
       return;
-    case SYMBOL:
-    case LATEX:
-    case HYBRID:
-      back_dynamic (p);
-      return;
     case TUPLE:
     case ATTR:
       go_to (end (et, p * (N(t)-1)));
       return;
-    case COLLECTION:
-    case ASSOCIATE:
-    case LABEL:
-    case REFERENCE:
-    case PAGEREF:
-    case WRITE:
-    case SPECIFIC:
-    case HYPERLINK:
-    case ACTION:
-    case TAG:
-    case MEANING:
-    case FLAG:
-      back_dynamic (p);
-      return;
 
-    case GRAPHICS:
-    case SUPERPOSE:
-    case TEXT_AT:
-    case _POINT:
-    case LINE:
-    case CLINE:
-    case SPLINE:
-    case VAR_SPLINE:
-    case CSPLINE:
-    case FILL:
-      back_dynamic (p);
-      return;
-    case POSTSCRIPT:
-      back_dynamic (p);
-      return;
     default:
       if (L(t) >= START_EXTENSIONS) back_extension (p);
+      else back_dynamic (p);
       break;
     }
 
@@ -343,28 +226,6 @@ edit_text_rep::remove_backwards () {
 
   if (last==0) {
     switch (L (u)) {
-    case SURROUND:
-      back_in_dynamic (u, p, 3);
-      return;
-    case SPLIT:
-      back_in_dynamic (u, p);
-      return;
-    case MOVE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case RESIZE:
-      back_in_dynamic (u, p, 5);
-      return;
-    case _FLOAT:
-      back_in_dynamic (u, p, 3);
-      return;
-    case REPEAT:
-    case DECORATE_ATOMS:
-    case DECORATE_LINES:
-    case DECORATE_PAGES:
-      back_in_dynamic (u, p, 2);
-      return;
-
     case GROUP:
       back_in_math (u, p);
       return;
@@ -384,9 +245,6 @@ edit_text_rep::remove_backwards () {
     case FRAC:
       back_in_math (u, p);
       return;
-    case SQRT:
-      back_in_dynamic (u, p);
-      return;
     case WIDE:
     case WIDE_UNDER:
       back_in_math_accent (u, p);
@@ -397,186 +255,18 @@ edit_text_rep::remove_backwards () {
     case TREE:
       back_in_tree (u, p);
       return;
-    case OLD_MATRIX:
-    case OLD_TABLE:
-    case OLD_MOSAIC:
-    case OLD_MOSAIC_ITEM:
-      back_in_dynamic (u, p);
-      return;
-
     case TABLE_FORMAT:
-      back_in_table (u, p);
-      return;
-    case TABLE_WITH:
-      back_in_dynamic (u, p, 2);
-      return;
-    case CELL_WITH:
-      back_in_dynamic (u, p, 6);
-      return;
-    case TABLE_MARKER:
-      back_in_dynamic (u, p);
-      return;
     case TABLE:
     case ROW:
     case CELL:
     case SUB_TABLE:
       back_in_table (u, p);
       return;
-
-    case ASSIGN:
-    case WITH:
-    case EXPAND:
-    case VAR_EXPAND:
-    case HIDE_EXPAND:
-      remove_argument (p, false);
-      return;
     case COMPOUND:
       back_in_compound (u, p);
       return;
-    case APPLY:
-    case INCLUDE:
-      back_in_dynamic (u, p);
-      return;
-    case MACRO:
-    case XMACRO:
-    case FUNCTION:
-      back_in_dynamic (u, p);
-      return;
-    case DRD_PROPS:
-      back_in_dynamic (u, p, 1, 2);
-      return;
-    case EVAL:
-    case PROVIDES:
-    case VALUE:
-      back_in_dynamic (u, p);
-      return;
-    case ARGUMENT:
-      back_in_dynamic (u, p, 1);
-      break;
-    case GET_LABEL:
-    case GET_ARITY:
-      back_in_dynamic (u, p);
-      return;
-    case MAP_ARGS:
-      back_in_dynamic (u, p, 3);
-      return;
-    case EVAL_ARGS:
-    case QUOTE:
-    case DELAY:
-    case HOLD:
-    case RELEASE:
-      back_in_dynamic (u, p);
-      return;
-
-    case OR:
-    case XOR:
-    case AND:
-      back_in_dynamic (u, p, 2);
-      return;
-    case NOT:
-      back_in_dynamic (u, p);
-      return;
-    case PLUS:
-    case MINUS:
-    case TIMES:
-    case OVER:
-    case DIVIDE:
-    case MODULO:
-    case MERGE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case LENGTH:
-      back_in_dynamic (u, p);
-      return;
-    case RANGE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case NUMBER:
-    case _DATE:
-      back_in_dynamic (u, p);
-      return;
-    case TRANSLATE:
-      back_in_dynamic (u, p, 3);
-      return;
-    case FIND_FILE:
-      back_in_dynamic (u, p, 1);
-      return;
-    case IS_TUPLE:
-      back_in_dynamic (u, p);
-      return;
-    case LOOK_UP:
-    case EQUAL:
-    case UNEQUAL:
-    case LESS:
-    case LESSEQ:
-    case GREATER:
-    case GREATEREQ:
-    case IF:
-    case VAR_IF:
-    case CASE:
-    case WHILE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case EXTERN:
-      back_in_dynamic (u, p, 1);
-      return;
-    case AUTHORIZE:
-      back_in_dynamic (u, p, 2);
-      return;
-
-    case INACTIVE:
-    case ACTIVE:
-    case VAR_INACTIVE:
-    case VAR_ACTIVE:
-    case SYMBOL:
-    case LATEX:
-    case HYBRID:
-      back_in_dynamic (u, p);
-      return;
-    case TUPLE:
-      back_in_dynamic (u, p);
-      return;
-    case ATTR:
-      back_in_dynamic (u, p, 1, 2);
-      return;
-    case COLLECTION:
-      back_in_dynamic (u, p);
-      return;
-    case ASSOCIATE:
-      back_in_dynamic (u, p, 2);
-      return;
-    case LABEL:
-    case REFERENCE:
-    case PAGEREF:
-    case WRITE:
-      back_in_dynamic (u, p);
-      return;
-    case SPECIFIC:
-    case HYPERLINK:
-    case ACTION:
-    case TAG:
-    case MEANING:
-    case FLAG:
-      back_in_dynamic (u, p, 2);
-      return;
-
-    case GRAPHICS:
-    case SUPERPOSE:
-    case TEXT_AT:
-    case _POINT:
-    case LINE:
-    case CLINE:
-    case SPLINE:
-    case VAR_SPLINE:
-    case CSPLINE:
-    case FILL:
-      back_in_dynamic (u, p);
-      return;
-    case POSTSCRIPT:
-      back_in_dynamic (u, p, 7);
-      return;
     default:
-      if (L(u) >= START_EXTENSIONS) remove_argument (p, false);
+      remove_argument (p, false);
       break;
     }
   }
