@@ -197,10 +197,10 @@
   ---
   ((balloon (icon "tm_table_drow.xpm")
 	    "Delete row (M-t h delete)")
-   (table-delete-row #f))
+   (table-delete-row #t))
   ((balloon (icon "tm_table_dcol.xpm")
 	    "Delete column (M-t v delete)")
-   (table-delete-column #f)))
+   (table-delete-column #t)))
 
 (menu-bind texmacs-table-hpos-icons
   ((balloon (icon "tm_table_left.xpm")

@@ -23,7 +23,7 @@ edit_text_rep::remove_backwards () {
   tree t, u;
 
   /********************* get the position where to delete ********************/
-  
+
   do {
     last= last_item (p);
     p   = path_up (p);
@@ -94,7 +94,7 @@ edit_text_rep::remove_backwards () {
 
   /************************ deletion governed by t ***************************/
 
-  if (last==1)
+  if (last == 1)
     switch (L(t)) {
     case HSPACE:
     case VSPACE_BEFORE:
@@ -109,7 +109,7 @@ edit_text_rep::remove_backwards () {
       return;
     case LEFT_PRIME:
     case RIGHT_PRIME:
-      back_prime (t, p);
+      back_prime (t, p, false);
       return;
     case WIDE:
     case WIDE_UNDER:
@@ -120,7 +120,7 @@ edit_text_rep::remove_backwards () {
     case ROW:
     case CELL:
     case SUB_TABLE:
-      back_table (p);
+      back_table (p, false);
       return;
     case WITH:
       go_to (end (et, p * (N(t)-1)));
@@ -137,17 +137,21 @@ edit_text_rep::remove_backwards () {
 
   /************************* deletion depends on u ***************************/
 
-  if (last==0) {
+  if (last == 0) {
     switch (L (u)) {
     case TREE:
-      back_in_tree (u, p);
+      back_in_tree (u, p, false);
       return;
     case TABLE_FORMAT:
     case TABLE:
     case ROW:
     case CELL:
     case SUB_TABLE:
-      back_in_table (u, p);
+      back_in_table (u, p, false);
+      return;
+    case WITH:
+      if (u[N(u)-1] == "") back_monolithic (path_up (p));
+      else go_to (start (et, path_up (p)));
       return;
     default:
       back_in_general (u, p, false);
@@ -162,26 +166,45 @@ edit_text_rep::remove_backwards () {
 
 void
 edit_text_rep::remove_forwards () {
-  path p= tp;
+  path p= tp, q;
   int  last, rix;
   tree t, u;
 
+  /******************* make right-glued positions left-glued *****************/
+
+  //cout << HRULE;
+  if ((N(p) >= 2) &&
+      is_concat (subtree (et, path_up (p, 2))) &&
+      (last_item (p) == right_index (subtree (et, path_up (p)))) &&
+      (last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
+    {
+      p= path_up (p);
+      p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
+    }
+  //cout << "p= " << p << "\n";
+
   /********************* get the position where to delete ********************/
-  
-  if ((last_item (p) == 1) && (!atom (p)) &&
-      is_compound (subtree (et, path_up (p))) &&
-      is_format (subtree (et, path_up (p, 2))))
-    p= path_up (p);
-  do {
+
+  last= last_item (p);
+  p   = path_up (p);
+  t   = subtree (et, p);
+  rix = right_index (t);
+  //cout << "  t   = " << t << "\n";
+  //cout << "  last= " << last << "\n";
+  //cout << "  rix = " << rix << "\n";
+  while ((last>=rix) && (!nil (p)) && is_format (subtree (et, path_up (p)))) {
     last= last_item (p);
     p   = path_up (p);
     t   = subtree (et, p);
-    rix = is_atomic (t)? N(t->label): (N(t)-1);
-  } while ((last >= rix) &&
-	   (!nil (p)) && is_format (subtree (et, path_up (p))));
+    rix = N(t) - 1;
+    //cout << "  t   = " << t << "\n";
+    //cout << "  last= " << last << "\n";
+    //cout << "  rix = " << rix << "\n";
+  } 
   if (is_document (t)) {
     if (last >= rix) {
       /* Not yet implemented */
+      return;
     }
     else {
       if (is_multi_paragraph (subtree (et, p * last)) ||
@@ -190,7 +213,7 @@ edit_text_rep::remove_forwards () {
 	  if (subtree (et, p * last) == "") remove (p * last, 1);
 	  else {
 	    if (subtree (et, p * (last+1)) == "") remove (p * (last+1), 1);
-	    go_to (start (et, p * (last+1)));
+	    if (last < N(subtree (et, p))-1) go_to (start (et, p * (last+1)));
 	  }
 	}
       else remove_return (p * last);
@@ -199,10 +222,11 @@ edit_text_rep::remove_forwards () {
   }
   u= subtree (et, path_up (p));
 
-  // cout << "Delete\n-----------------------";
-  // cout << "t= " << t << "\n";
-  // cout << "u= " << u << "\n";
-  // cout << "p= " << p << "\n";
+  //cout << "l= " << last << "\n";
+  //cout << "r= " << rix << "\n";
+  //cout << "t= " << t << "\n";
+  //cout << "u= " << u << "\n";
+  //cout << "p= " << p << "\n";
 
   /**************************** deleting text ********************************/
 
@@ -215,6 +239,73 @@ edit_text_rep::remove_forwards () {
     remove (p * last, end-last);
     correct (path_up (p));
     return;
+  }
+
+  /************************ deletion governed by t ***************************/
+
+  if (last == 0)
+    switch (L(t)) {
+    case HSPACE:
+    case VSPACE_BEFORE:
+    case VSPACE_AFTER:
+    case SPACE:
+    case HTAB:
+    case LEFT:
+    case MIDDLE:
+    case RIGHT:
+    case BIG:
+      back_monolithic (p);
+      return;
+    case LEFT_PRIME:
+    case RIGHT_PRIME:
+      back_prime (t, p, true);
+      return;
+    case WIDE:
+    case WIDE_UNDER:
+      go_to (start (et, p * 0));
+      return;
+    case TABLE_FORMAT:
+    case TABLE:
+    case ROW:
+    case CELL:
+    case SUB_TABLE:
+      back_table (p, true);
+      return;
+    case WITH:
+      go_to (start (et, p * (N(t)-1)));
+      return;
+    case VALUE:
+    case ARGUMENT:
+      if (N(t) == 1) back_monolithic (p);
+      else back_general (p, true);
+      return;
+    default:
+      back_general (p, true);
+      break;
+    }
+
+  /************************* deletion depends on u ***************************/
+
+  if (last == rix) {
+    switch (L (u)) {
+    case TREE:
+      back_in_tree (u, p, true);
+      return;
+    case TABLE_FORMAT:
+    case TABLE:
+    case ROW:
+    case CELL:
+    case SUB_TABLE:
+      back_in_table (u, p, true);
+      return;
+    case WITH:
+      if (u[N(u)-1] == "") back_monolithic (path_up (p));
+      else go_to (end (et, path_up (p)));
+      return;
+    default:
+      back_in_general (u, p, true);
+      break;
+    }
   }
 }
 

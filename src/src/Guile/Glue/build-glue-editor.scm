@@ -124,7 +124,7 @@
   (make-tree make_tree (void))
   (inside-tree? inside_tree (bool))
   (branch-insert branch_insert (void bool))
-  (branch-delete branch_delete (void))
+  (branch-delete branch_delete (void bool))
 
   (make-sub-table make_sub_table (void))
   (table-disactivate table_disactivate (void))

@@ -430,7 +430,7 @@ edit_dynamic_rep::back_general (path p, bool forward) {
   int n= N(st);
   if (n==0) back_monolithic (p);
   else if ((n==1) && (is_func (st[0], TABLE_FORMAT) || is_func (st[0], TABLE)))
-    back_table (p * 0);
+    back_table (p * 0, forward);
   else go_to_argument (p * (forward? 0: n-1), forward);
 }
 
