@@ -1,13 +1,21 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.4.6>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.6>
+  <section|Changes from version 1.0.4 to 1.0.5>
 
   <\itemize>
+    <item>Added a plug-in for Dra<TeX> (1.0.5).
+
+    <item>Updated and improved Maxima plug-in for upcoming version 5.9.2 of
+    Maxima (1.0.5).
+
+    <item>Further improvements for the grid in upcoming graphical mode
+    (1.0.5).
+
     <item>German translation of the manual by Dietmar Jung (1.0.4.6).
 
     <item>Selection of visual grid and editing grid in upcoming graphical
