@@ -289,7 +289,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind text-modifier-icons
-  (if (style-has? "std-markup-dtd")
+  (if (and (style-has? "std-markup-dtd") (not (in-source?)))
       ;;((balloon
       ;;(text (roman rm bold right 12 600) "S")
       ;;"Write bold text#(A-C-b)")
@@ -304,7 +304,7 @@
        (make 'samp))
       ((balloon (icon "tm_name.xpm") "Write a name#(S-F6)")
        (make 'name)))
-  (if (not (style-has? "std-markup-dtd"))
+  (if (or (not (style-has? "std-markup-dtd")) (in-source?))
       ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
        (make-with "font-shape" "italic"))
       ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")

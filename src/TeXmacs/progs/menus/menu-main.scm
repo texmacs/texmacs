@@ -136,7 +136,7 @@
   (if (in-graphics?) (link texmacs-graphics-icons))
   (if (not (in-graphics?)) |)
   (if (in-prog?) (link prog-modifier-icons))
-  (if (in-text?) (link text-modifier-icons))
+  (if (or (in-source?) (in-text?)) (link text-modifier-icons))
   (if (in-math?) (link math-modifier-icons))
   (if (not (in-graphics?))
       (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
