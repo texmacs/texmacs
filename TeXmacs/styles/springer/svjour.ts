@@ -143,6 +143,20 @@
 
   <assign|subparagraph-display-numbers|<macro|true>>
 
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><quote|<page-the-page>>>>>>>>
+
+  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><arg|name>>>>>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
+
   <active*|<\src-comment>
     Theorem-like environemments rendering.
   </src-comment>>
@@ -242,69 +256,11 @@
 
   <\active*>
     <\src-comment>
-      Title information.
+      Other environments.
     </src-comment>
   </active*>
 
-  <assign|doc-title-block|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <arg|body>
-  </cell>>>>>>>
-
-  <assign|doc-make-title|<macro|body|<surround||<vspace|22.47pt>|<doc-title-block|<arg|body>>>>>
-
-  <assign|doc-render-title|<macro|x|<\surround||<vspace|11.24pt>>
-    <doc-title-block|<larger|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
-  </surround>>>
-
-  <assign|doc-subtitle|<macro|x|<\surround||<vspace|11.24pt>>
-    <doc-title-block|<large|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
-  </surround>>>
-
-  <assign|doc-date|<\macro|body>
-    <doc-title-block|<arg|body>>
-  </macro>>
-
-  <assign|doc-abstract|<\macro|body>
-    <padded-normal|1fn|1.85fn|<surround|<sectional-short-bold|<abstract-text>><space|4mm>||<arg|body>>>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
-      Author information.
-    </src-comment>
-  </active*>
-
-  <assign|doc-author-block|<\macro|body>
-    <style-with|src-compact|none|<space|0pt><tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
-      <arg|body>
-    </cell>>>>>>
-  </macro>>
-
-  <assign|author-by|<macro|body|<arg|body>>>
-
-  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-series|bold|<arg|x>>>>>>
-
-  <assign|doc-authors-data|<\xmacro|data>
-    <\style-with|src-compact|none>
-      <\quasi>
-        <unquote*|<quote-arg|data>>
-      </quasi>
-    </style-with>
-  </xmacro>>
-
-  <\active*>
-    <\src-comment>
-      Headers.
-    </src-comment>
-  </active*>
-
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><quote|<page-the-page>>>>>>>>
-
-  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><arg|name>>>>>>
-
-  <assign|header-primary|<macro|name|nr|what|>>
-
-  <assign|header-secondary|<macro|name|nr|what|>>
+  <assign|figure-text|<macro|<localize|Fig.>>>
 
   <\active*>
     <\src-comment>
@@ -372,6 +328,58 @@
   <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
 
   <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Title information.
+    </src-comment>
+  </active*>
+
+  <assign|doc-title-block|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
+
+  <assign|doc-make-title|<macro|body|<surround||<vspace|22.47pt>|<doc-title-block|<arg|body>>>>>
+
+  <assign|doc-render-title|<macro|x|<\surround||<vspace|11.24pt>>
+    <doc-title-block|<larger|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
+  </surround>>>
+
+  <assign|doc-subtitle|<macro|x|<\surround||<vspace|11.24pt>>
+    <doc-title-block|<large|<with|math-font-series|bold|font-series|bold|<arg|x>>>>
+  </surround>>>
+
+  <assign|doc-date|<\macro|body>
+    <doc-title-block|<arg|body>>
+  </macro>>
+
+  <assign|doc-abstract|<\macro|body>
+    <padded-normal|1fn|1.85fn|<surround|<sectional-short-bold|<abstract-text>><space|4mm>||<arg|body>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Author information.
+    </src-comment>
+  </active*>
+
+  <assign|doc-author-block|<\macro|body>
+    <style-with|src-compact|none|<space|0pt><tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-hmode|min>|<cwith|1|1|1|1|cell-width|1par>|<table|<row|<\cell>
+      <arg|body>
+    </cell>>>>>>
+  </macro>>
+
+  <assign|author-by|<macro|body|<arg|body>>>
+
+  <assign|author-render-name|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-series|bold|<arg|x>>>>>>
+
+  <assign|doc-authors-data|<\xmacro|data>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <unquote*|<quote-arg|data>>
+      </quasi>
+    </style-with>
+  </xmacro>>
 
   \;
 </body>

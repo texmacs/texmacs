@@ -187,6 +187,20 @@
 
   <assign|subparagraph-display-numbers|<macro|true>>
 
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <assign|header-title|<macro|name|<blanc-page>>>
+
+  <assign|header-author|<macro|name|>>
+
+  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|nr><space|<between-number-space>><arg|name>>>>>>>
+
+  <assign|header-secondary|<macro|name|nr|what|<assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><htab|0mm><arg|nr><space|<between-number-space>><arg|name><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
+
   <active*|<\src-comment>
     Theorem-like environemments rendering.
   </src-comment>>
@@ -353,25 +367,27 @@
 
   <\active*>
     <\src-comment>
+      Customization of other environments.
+    </src-comment>
+  </active*>
+
+  <assign|figure-text|<macro|<localize|Fig.>>>
+
+  <assign|bibliography-text|<macro|<localize|References>>>
+
+  <assign|table-of-contents-text|<macro|<localize|Table of Contents>>>
+
+  <assign|list-of-figures-text|<macro|<localize|List of Figures>>>
+
+  <assign|list-of-tables-text|<macro|<localize|List of Tables>>>
+
+  <\active*>
+    <\src-comment>
       Title and author information.
     </src-comment>
   </active*>
 
   The title page and author information should be typeset manually.
-
-  <\active*>
-    <\src-comment>
-      Headers.
-    </src-comment>
-  </active*>
-
-  <assign|header-title|<macro|name|<blanc-page>>>
-
-  <assign|header-author|<macro|name|>>
-
-  <assign|header-primary|<macro|name|nr|what|<style-with|src-compact|none|<blanc-page><assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><arg|nr><space|<between-number-space>><arg|name>>>>>>>
-
-  <assign|header-secondary|<macro|name|nr|what|<assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><htab|0mm><arg|nr><space|<between-number-space>><arg|name><hspace|<tmlen|0.5cc|2.5cc|2.5cc>><quote|<page-the-page>>>>>>>
 
   <active*|<\src-comment>
     Tables of contents.
