@@ -128,9 +128,13 @@ concater_rep::typeset_label (tree t, path ip) {
   string key  = env->exec_string (t[0]);
   tree   value= copy (env->read ("the-label"));
   tree   old_value= env->local_ref[key];
-  if (is_func (old_value, TUPLE, 2))
+  if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
     env->local_ref (key)= tuple (copy (value), old_value[1]);
   else env->local_ref (key)= tuple (copy (value), "?");
+  if (env->cur_file_name != env->base_file_name) {
+    url d= delta (env->base_file_name, env->cur_file_name);
+    env->local_ref (key) << as_string (d);
+  }
 
   flag (key, ip, env->dis->blue);
   // replacement for: control ("label", ip);
@@ -145,10 +149,16 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   tree value=
     env->local_ref->contains (key)?
     env->local_ref [key]: env->global_ref [key];
-  if (is_func (value, TUPLE, 2)) value= value[type];
-  else if (type == 1) value= "?";
 
   string s= "(go-to-label \"" * key * "\")";
+  if (is_func (value, TUPLE, 3)) {
+    url name= url_system (value[2]->label);
+    string r= quote (as_string (relative (env->base_file_name, name)));
+    s= "(begin (load-browse-buffer (url-system " * r * ")) " * s * ")";
+  }
+  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
+  else if (type == 1) value= "?";
+
   command cmd (new guile_command_rep (s, 2));
   box b= typeset_as_concat (env, value, decorate_right (ip));
   string action= env->read_only? string ("select"): string ("double-click");

@@ -146,8 +146,12 @@ concater_rep::typeset_auto (tree t, path ip, tree f) {
 void
 concater_rep::typeset_include (tree t, path ip) {
   url file_name= as_string (t[0]);
-  tree incl= load_inclusion (relative (env->base_file_name, file_name));
+  url incl_file= relative (env->base_file_name, file_name);
+  tree incl= load_inclusion (incl_file);
+  url save_name= env->cur_file_name;
+  env->cur_file_name= incl_file;
   typeset_dynamic (incl, ip);
+  env->cur_file_name= save_name;
 }
 
 void

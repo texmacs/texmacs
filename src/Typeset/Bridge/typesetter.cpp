@@ -130,6 +130,8 @@ typesetter_rep::determine_page_references (box b) {
     tree   old= env->local_ref [var];
     if (is_func (old, TUPLE, 2))
       env->local_ref (var)= tuple (old[0], val);
+    else if (is_func (old, TUPLE, 3))
+      env->local_ref (var)= tuple (old[0], val, old[2]);
     else env->local_ref (var)= tuple (old, val);
   }
 }

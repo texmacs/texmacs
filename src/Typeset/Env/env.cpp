@@ -33,6 +33,7 @@ edit_env_rep::edit_env_rep (display dis2,
   env (UNINIT), back (UNINIT), src (path (DECORATION)),
   var_type (default_var_type),
   base_file_name (base_file_name2),
+  cur_file_name (base_file_name2),
   local_ref (local_ref2), global_ref (global_ref2),
   local_aux (local_aux2), global_aux (global_aux2)
 {

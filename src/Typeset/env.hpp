@@ -111,6 +111,7 @@ public:
 
   hashmap<string,int>&         var_type;
   url                          base_file_name;
+  url                          cur_file_name;
   hashmap<string,tree>&        local_ref;
   hashmap<string,tree>&        global_ref;
   hashmap<string,tree>&        local_aux;
