@@ -43,7 +43,7 @@
   (htmlout-indent s 2))
 
 (define (htmlout-tag x)
-  (output-text " " (car x) "=")
+  (output-text " " (symbol->string (car x)) "=")
   (output-verbatim "\"" (cadr x) "\""))
 
 (define (htmlout-open-tags s l)
