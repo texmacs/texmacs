@@ -34,9 +34,7 @@
   (:synopsis "Toggle preamble mode.")
   (:check-mark "v" in-preamble?)
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
-    (init-env "preamble" new)
-    (generate-all-aux)
-    (update-buffer)))
+    (init-env "preamble" new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties

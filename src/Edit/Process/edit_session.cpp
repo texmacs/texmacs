@@ -44,7 +44,6 @@ edit_process_rep::make_session (string lan, string session) {
   if ((lolan != lan) && (!connection_declared (lan))) lan= lolan;
   if (exists (url ("$TEXMACS_STYLE_PATH", lan * ".ts")))
     init_extra_style (lan, true);
-  typeset_preamble ();
 
   /* These two lines will become obsolete */
   if (make_return_after ()) return;

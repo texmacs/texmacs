@@ -7,6 +7,8 @@
 
   \;
 
+  <assign|preamble|true>
+
   <assign|par-first|0fn>
 
   <assign|par-par-sep|0.5fn>
