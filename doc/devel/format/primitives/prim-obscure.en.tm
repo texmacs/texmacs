@@ -35,7 +35,7 @@
       <item>para (for headers and footers)
     </itemize>
 
-    <item>Unknown
+    <item>Unknown: primitives which do not seem to actually do anything.
 
     <\itemize>
       <item>line-sep
@@ -45,6 +45,10 @@
       <item>active
 
       <item>active*
+
+      <item>new-dpage*
+
+      <item>new-dpage
     </itemize>
 
     <item>Obsolete
