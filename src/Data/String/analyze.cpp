@@ -670,6 +670,18 @@ escape_verbatim (string s) {
 }
 
 string
+escape_spaces (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    unsigned char c= (unsigned char) s[i];
+    if (c == ' ') r << '\\';
+    r << c;
+  }
+  return r;
+}
+
+string
 dos_to_better (string s) {
   int i, n= N(s);
   string r;
