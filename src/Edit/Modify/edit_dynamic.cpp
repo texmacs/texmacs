@@ -120,6 +120,12 @@ edit_dynamic_rep::activate () {
     return;
   }
 
+  if (is_func (st, COMPOUND) && is_atomic (st[0])) {
+    tree u (make_tree_label (st[0]->label));
+    u << A (st (1, N(st)));
+    st= u;
+  }
+
   if ((is_func (st, LATEX, 1) || (is_func (st, HYBRID, 1))) &&
       is_atomic (st[0])) {
     string  s= st[0]->label;
@@ -166,6 +172,18 @@ edit_dynamic_rep::activate () {
   assign (p, st);
   go_to (end (et, p));
   correct (path_up (p));
+}
+
+void
+edit_dynamic_rep::activate_compound () {
+  path p= search_upwards (COMPOUND);
+  if (!nil (p)) {
+    tree st= subtree (et, p);
+    tree u (make_tree_label (st[0]->label));
+    u << A (st (1, N(st)));
+    assign (p, u);
+    go_to (end (et, p));
+  }
 }
 
 /******************************************************************************
@@ -402,7 +420,7 @@ edit_dynamic_rep::make_apply (string s) {
 
 void
 edit_dynamic_rep::back_dynamic (path p) {
-  if (is_func (subtree (et, path_up (p)), INACTIVE))
+  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
     go_to (end (et, p * (N (subtree (et, p))- 1)));
   else {
     string s= get_label (subtree (et, p));
@@ -432,6 +450,13 @@ void
 edit_dynamic_rep::back_hide_expand (path p) {
   if (is_func (subtree (et, path_up (p)), INACTIVE)) back_dynamic (p);
   else go_to (end (et, p * (N (subtree (et, p)) - 2)));
+}
+
+void
+edit_dynamic_rep::back_compound (path p) {
+  if (is_func (subtree (et, path_up (p)), INACTIVE) || in_preamble_mode ())
+    back_dynamic (p);
+  else ins_unary (p, INACTIVE);
 }
 
 void
@@ -522,9 +547,23 @@ edit_dynamic_rep::back_in_expand (tree t, path p) {
 }
 
 void
-edit_dynamic_rep::back_in_extension (tree t, path p) {
+edit_dynamic_rep::back_in_compound (tree t, path p) {
   if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode ())
     back_in_dynamic (t, p, 1);
+  else ins_unary (path_up (p), INACTIVE);
+}
+
+void
+edit_dynamic_rep::back_in_extension (tree t, path p) {
+  if (is_func (subtree (et, path_up (p, 2)), INACTIVE) || in_preamble_mode()) {
+    if (last_item (p) == 0) {
+      tree u (COMPOUND, copy (as_string (L (t))));
+      u << copy (A (t));
+      assign (path_up (p), u);
+      go_to (end (et, path_up (p) * 0));
+    }
+    else back_in_dynamic (t, p, 1);
+  }
   else {
     int node= last_item (p) - 1;
     while ((node >= 0) &&
