@@ -128,7 +128,7 @@
 
   <assign|author-from-authors*|<macro|x|, <arg|x>>>
 
-  <assign|author-from-authors|<xmacro|x|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>
+  <assign|author-from-authors|<xmacro|x|<style-with|src-compact|none|<if|<unequal|<get-arity|<quote-arg|x>>|0>|<arg|x|0><map-args|author-from-authors*|concat|x|1>>>>>
 
   <assign|author-address|<\macro|x>
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<arg|x>>

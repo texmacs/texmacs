@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menus menu-text)
-  (:use (texmacs edit edit-text) (texmacs edit edit-format)))
+  (:use (texmacs edit edit-text) (texmacs edit edit-format)
+	(texmacs edit edit-title)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers
@@ -61,6 +62,37 @@
   (when (and (not (inside? "make-title")) (not (inside? "abstract")))
 	("Abstract" (make 'abstract)))
   (when (and (not (inside? "make-title")) (inside? "abstract"))
+	("Keywords" (make-section 'keywords))
+	("A.M.S. subject classification" (make-section 'AMS-class))))
+
+(menu-bind author-menu
+  ("Insert author" (make-doc-data-element 'doc-author-data))
+  ---
+  (when (inside? "doc-author-data")
+	("Address" (make-author-data-element 'author-address))
+	("Email" (make-author-data-element 'author-email))
+	("Homepage" (make-author-data-element 'author-homepage))
+	("Note" (make-author-data-element 'author-note))))
+
+(menu-bind new-title-menu
+  (when (not (inside? "doc-data"))
+	("Insert title" (make-doc-data)))
+  ---
+  (when (inside? "doc-data")
+	("Title" (make-doc-data-element 'doc-title))
+	(-> "Author" (link author-menu))
+	("Date" (make-doc-data-element 'doc-date))
+	;;---
+	;;("TeXmacs notice" (make 'made-by-TeXmacs))
+	;;("Running title" (make-header 'header-title))
+	;;("Running author" (make-header 'header-author))
+	;;("Today" (begin (make-header 'title-date)
+	;;(make-arity 'date 0)
+	)
+  ---
+  (when (and (not (inside? "doc-data")) (not (inside? "abstract")))
+	("Abstract" (make 'abstract)))
+  (when (and (not (inside? "doc-data")) (inside? "abstract"))
 	("Keywords" (make-section 'keywords))
 	("A.M.S. subject classification" (make-section 'AMS-class))))
 
