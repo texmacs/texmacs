@@ -1,13 +1,20 @@
-<TeXmacs|1.0.4.4>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.4.4>
+  <section|Changes from version 1.0.4 to 1.0.4.5>
 
   <\itemize>
+    <item>User profile for Windows, Gnome and KDE (1.0.4.5).
+
+    <item>Several bug fixes: keyboard modifiers, Guile GC, Windows/Cygwin,
+    <abbr|etc.> (1.0.4.5).
+
+    <item>Arcs, circles and enhanced undo/redo for graphical mode (1.0.4.5).
+
     <item>Several patches by Josef Weidendorfer for improving the performance
     (1.0.4.4).
 
