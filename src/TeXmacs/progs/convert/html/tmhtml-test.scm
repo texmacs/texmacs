@@ -156,9 +156,14 @@
    "tmhtml, section post-processing" "section-post"
    tmhtml-root :none
    (test "alone" '(concat (section* "a")) '((h:h2 "a")))
-   (test "with label" '(concat (section* "a") (label "l1"))
+   (test "with label before" '(concat (label "l1") (section* "a"))
 	 '((h:h2 (@ (id "l1")) "a")))
-   (test "with 2 labels"
+   (test "with label after" '(concat (section* "a") (label "l1"))
+	 '((h:h2 (@ (id "l1")) "a")))
+   (test "with label before and after"
+	 '(concat (label "l1") (section* "a") (label "l2"))
+	 '((h:h2 (@ (id "l1")) (h:a (@ (id "l2"))) "a")))
+   (test "with two labels after"
 	 '(concat (section* "a") (label "l1") (label "l2"))
 	 '((h:h2 (@ (id "l1")) (h:a (@ (id "l2"))) "a")))
    (test "with string" '(concat (section* "a") "b")
