@@ -44,7 +44,7 @@ load_string (url u, string& s, bool fatal) {
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
-    FILE* fin= fopen (_name, "rb");
+    FILE* fin= _fopen (_name, "rb");
 #else
     FILE* fin= fopen (_name, "r");
 #endif
@@ -108,7 +108,7 @@ save_string (url u, string s, bool fatal) {
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
-    FILE* fout= fopen (_name, "wb");
+    FILE* fout= _fopen (_name, "wb");
 #else
     FILE* fout= fopen (_name, "w");
 #endif
@@ -136,7 +136,12 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
   bench_start ("stat");
   bool flag;
   char* temp= as_charp (concretize (name));
-  flag= stat (temp, buf); (void) link_flag;
+#ifdef OS_WIN32
+  flag= _stat (temp, buf);
+#else
+  flag= stat (temp, buf);
+#endif
+  (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;

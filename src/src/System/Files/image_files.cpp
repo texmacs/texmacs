@@ -18,6 +18,10 @@
 #include "hashmap.hpp"
 #include "scheme.hpp"
 
+#ifdef OS_WIN32
+#include <x11/xlib.h>
+#endif
+
 hashmap<tree,string> ps_bbox ("");
 
 /******************************************************************************
@@ -71,7 +75,23 @@ ps_load (url image) {
   url name= resolve (image);
   if (is_none (name))
     name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
+#ifdef OS_WIN32
+  if (is_ramdisc (name)) name= get_from_ramdisc (name);
   string s= as_string (call ("image->postscript", object (name)));
+  if (s == "") {
+    char *data;
+    char *path= as_charp (as_string (name));
+    data= XLoadImageAsPS (path);
+    delete[] path;
+    if (!data) s= "";
+    else {
+      s= string (data);
+      free (data);
+    }
+  }
+#else
+  string s= as_string (call ("image->postscript", object (name)));
+#endif
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s);
   return s;
 }
