@@ -24,7 +24,7 @@
     <item*|Italian>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin,
     Gian Luigi Gragnani.
 
-    <item*|Polish>Robert Janusz.
+    <item*|Polish>Robert Janusz, Emil Nowak, Jan Alboszta.
 
     <item*|Portuguese>Ramiro Brito Willmersdorf, Márcio Laurini, Alexandre
     Taschetto de Castro.
