@@ -27,8 +27,9 @@
 (if (os-win32?)
     (begin
       (set-current-output-port cout-port)
-      (set-current-error-port cout-port))
-    (debug-set! stack 1000000))
+      (set-current-error-port cout-port)))
+
+(debug-set! stack 1000000)
 
 ;;; make eval from guile>=1.6.0 backwards compatible
 (catch 'wrong-number-of-args

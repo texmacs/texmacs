@@ -38,7 +38,9 @@
 	 "a4"))))
 
 (define (get-default-font-setting)
-  (if (support-ec-fonts?) "EC fonts" "CM fonts"))
+  (cond ((support-ec-fonts?) "EC fonts")
+        ((os-win32?) "True Type")
+        (else "CM fonts")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
