@@ -19,7 +19,7 @@
 
 RESOURCE(font);
 
-struct glief;
+struct glyph;
 
 /******************************************************************************
 * The font structure
@@ -67,7 +67,7 @@ struct font_rep: rep<font> {
   void var_get_extents (string s, metric& ex);
   void var_get_xpositions (string s, SI* xpos);
   void var_draw (ps_device dev, string s, SI x, SI y);
-  virtual glief get_bitmap (string s);
+  virtual glyph get_glyph (string s);
 };
 
 font join (font fn1, font fn2);

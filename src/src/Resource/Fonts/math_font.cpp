@@ -43,7 +43,7 @@ struct math_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw (ps_device dev, string s, SI x, SI y);
-  glief get_bitmap (string s);
+  glyph get_glyph (string s);
 
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -173,11 +173,11 @@ math_font_rep::draw (ps_device dev, string s, SI x, SI y) {
   fn->draw (dev, s, x, y);
 }
 
-glief
-math_font_rep::get_bitmap (string s) {
+glyph
+math_font_rep::get_glyph (string s) {
   font fn;
   search_font (s, fn);
-  return fn->get_bitmap (s);
+  return fn->get_glyph (s);
 }
 
 /******************************************************************************

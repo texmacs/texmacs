@@ -22,36 +22,36 @@ extern hashmap<Window,pointer> Window_to_window;
 ******************************************************************************/
 
 x_character_rep::x_character_rep (
-  int c2, font_gliefs bmf2, int sf2, color fg2, color bg2):
-    c (c2), bmf (bmf2), sf (sf2), fg (fg2), bg (bg2) {}
+  int c2, font_glyphs fng2, int sf2, color fg2, color bg2):
+    c (c2), fng (fng2), sf (sf2), fg (fg2), bg (bg2) {}
 
-x_character::x_character (int c, font_gliefs bmf, int sf, color fg, color bg):
-  rep (new x_character_rep (c, bmf, sf, fg, bg)) {}
+x_character::x_character (int c, font_glyphs fng, int sf, color fg, color bg):
+  rep (new x_character_rep (c, fng, sf, fg, bg)) {}
 
 x_character::operator tree () {
-  tree t (TUPLE,  as_string (rep->c), rep->bmf->res_name);
+  tree t (TUPLE,  as_string (rep->c), rep->fng->res_name);
   t << as_string (rep->sf) << as_string (rep->fg) << as_string (rep->bg);
   return t; }
 
 bool operator == (x_character xc1, x_character xc2) {
   return
-    (xc1->c==xc2->c) && (xc1->bmf.rep==xc2->bmf.rep) &&
+    (xc1->c==xc2->c) && (xc1->fng.rep==xc2->fng.rep) &&
     (xc1->sf==xc2->sf) && (xc1->fg==xc2->fg) && (xc1->bg==xc2->bg); }
 
 bool operator != (x_character xc1, x_character xc2) {
   return
-    (xc1->c!=xc2->c) || (xc1->bmf.rep!=xc2->bmf.rep) ||
+    (xc1->c!=xc2->c) || (xc1->fng.rep!=xc2->fng.rep) ||
     (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg); }
 
 int hash (x_character xc) {
-  return xc->c ^ ((int) xc->bmf.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
+  return xc->c ^ ((int) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
 
 void
 x_display_rep::prepare_color (int sf, color fg, color bg) {
   int nr_cols= sf*sf;
   if (sf >= 16)
     fatal_error ("shrinking factor too large", "x_display_rep::prepare_color");
-  x_character col_entry (0, font_gliefs (), sf, fg, bg);
+  x_character col_entry (0, font_glyphs (), sf, fg, bg);
   color* cols= (color*) color_scale [col_entry];
   if (cols == NULL) {
     int fR, fG, fB, bR, bG, bB, j;

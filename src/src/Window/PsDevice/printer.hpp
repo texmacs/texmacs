@@ -66,7 +66,7 @@ public:
 
   /********************* subroutines for drawing text ************************/
 
-  void make_tex_char (string name, QN c, glief bmc);
+  void make_tex_char (string name, QN c, glyph gl);
   void select_tex_font (string name);
   void generate_tex_fonts ();
 
@@ -78,7 +78,7 @@ public:
   color get_background ();
   void  set_color (color c);
   void  set_background (color c);
-  void  draw (int char_code, font_gliefs fn, SI x, SI y);
+  void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  set_line_style (SI w, int type=0);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  clear (SI x1, SI y1, SI x2, SI y2);

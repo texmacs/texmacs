@@ -23,7 +23,7 @@ log2i (int i) {
   if (i<=32) return 5;
   if (i<=64) return 6;
   if (i<=128) return 7;
-  fatal_error ("too large shrinking factor", "shrink", "glief.cpp");
+  fatal_error ("too large shrinking factor", "shrink", "shrink.cpp");
   return 0; // Because of bug in certain versions of g++
 }
 
@@ -47,31 +47,31 @@ my_norm (int a, int m) {
 }
 
 int
-get_hor_shift (glief bmc, int xfactor, int tx) {
-  STACK_NEW_ARRAY (flag, bool, bmc->width);
+get_hor_shift (glyph gl, int xfactor, int tx) {
+  STACK_NEW_ARRAY (flag, bool, gl->width);
 
   // cout << "[";
   int x;
-  for (x=0; x<bmc->width; x++) {
+  for (x=0; x<gl->width; x++) {
     int max_count= 0, count=0, y;
-    for (y=0; y<bmc->height; y++)
-      if (bmc->get_1 (x,y)) count++;
+    for (y=0; y<gl->height; y++)
+      if (gl->get_1 (x,y)) count++;
       else {
 	max_count = max (max_count, count);
 	count     = 0;
       }
     max_count= max (max_count, count);
-    flag[x]= (max_count>(bmc->height>>1));
+    flag[x]= (max_count>(gl->height>>1));
     // if (flag[x]) cout << "*"; else cout << " ";
   }
   // cout << "]   ";
 
   int first0=-1, first1=-1, last0=-1, last1=-1;
-  for (x=0; x<bmc->width; x++)
+  for (x=0; x<gl->width; x++)
     if (flag[x]) {
       if (first0<0) first0= x;
       last0= x;
-      while ((x<bmc->width) && flag[x]) x++;
+      while ((x<gl->width) && flag[x]) x++;
       if (first1<0) first1= x+ tx;
       last1= x+ tx;
       x--;
@@ -82,7 +82,7 @@ get_hor_shift (glief bmc, int xfactor, int tx) {
   STACK_DELETE_ARRAY (flag);
 
   if (first0==-1) return 0;
-  if (first0==last0) return my_mod (bmc->xoff- first0, xfactor);
+  if (first0==last0) return my_mod (gl->xoff- first0, xfactor);
 
   int first, last;
   int d00= my_norm (last0- first0, xfactor);
@@ -97,35 +97,35 @@ get_hor_shift (glief bmc, int xfactor, int tx) {
   int middle, rest= my_mod (last- first, xfactor);
   if (rest <= (xfactor>>1)) middle= first+ (rest>>1);
   else middle= first- ((xfactor-rest)>>1);
-  return my_mod (bmc->xoff- middle, xfactor);
+  return my_mod (gl->xoff- middle, xfactor);
 }
 
 int
-get_ver_shift (glief bmc, int yfactor, int ty) {
-  STACK_NEW_ARRAY (flag, bool, bmc->height);
+get_ver_shift (glyph gl, int yfactor, int ty) {
+  STACK_NEW_ARRAY (flag, bool, gl->height);
 
   // cout << "[";
   int y;
-  for (y=0; y<bmc->height; y++) {
+  for (y=0; y<gl->height; y++) {
     int max_count= 0, count=0, x;
-    for (x=0; x<bmc->width; x++)
-      if (bmc->get_1 (x,y)) count++;
+    for (x=0; x<gl->width; x++)
+      if (gl->get_1 (x,y)) count++;
       else {
 	max_count = max (max_count, count);
 	count     = 0;
       }
     max_count= max (max_count, count);
-    flag[y]= (max_count>(bmc->width>>1));
+    flag[y]= (max_count>(gl->width>>1));
     // if (flag[y]) cout << "*"; else cout << " ";
   }
   // cout << "]   ";
 
   int first0=-1, first1=-1, last0=-1, last1=-1;
-  for (y=0; y<bmc->height; y++)
+  for (y=0; y<gl->height; y++)
     if (flag[y]) {
       if (first0<0) first0= y;
       last0= y;
-      while ((y<bmc->height) && flag[y]) y++;
+      while ((y<gl->height) && flag[y]) y++;
       if (first1<0) first1= y+ ty;
       last1= y+ ty;
       y--;
@@ -137,7 +137,7 @@ get_ver_shift (glief bmc, int yfactor, int ty) {
 
   if (first0==-1) return 0;
   if (first0==last0)
-    return my_mod (bmc->height- bmc->yoff- 1- first0, yfactor);
+    return my_mod (gl->height- gl->yoff- 1- first0, yfactor);
 
   int first, last;
   int d00= my_norm (last0- first0, yfactor);
@@ -152,32 +152,32 @@ get_ver_shift (glief bmc, int yfactor, int ty) {
   int middle, rest= my_mod (last- first, yfactor);
   if (rest <= (yfactor>>1)) middle= first+ (rest>>1);
   else middle= first- ((yfactor-rest)>>1);
-  return my_mod (bmc->height- bmc->yoff- 1- middle, yfactor);
+  return my_mod (gl->height- gl->yoff- 1- middle, yfactor);
 }
 
-glief
-shrink (glief bmc, int xfactor, int yfactor,
+glyph
+shrink (glyph gl, int xfactor, int yfactor,
 	int dx, int dy, int tx, int ty, SI& xo, SI& yo)
 {
   /*
   cout << "------------------------------------------------------------------------------\n";
   cout << "Shift by " << dx << ", " << dy << "\n";
   cout << "------------------------------------------------------------------------------\n\n";
-  cout << bmc << "\n";
+  cout << gl << "\n";
   */
 
-  int x1= dx- bmc->xoff;
-  int x2= dx- bmc->xoff+ bmc->width+ tx;
+  int x1= dx- gl->xoff;
+  int x2= dx- gl->xoff+ gl->width+ tx;
   int X1= my_div (x1, xfactor);
   int X2= my_div (x2+xfactor-1, xfactor);
 
-  int y1= dy+ bmc->yoff+ 1- bmc->height;
-  int y2= dy+ bmc->yoff+ 1+ ty;
+  int y1= dy+ gl->yoff+ 1- gl->height;
+  int y2= dy+ gl->yoff+ 1+ ty;
   int Y1= my_div (y1, yfactor);
   int Y2= my_div (y2+yfactor-1, yfactor);
 
-  int frac_x= (dx- bmc->xoff- X1*xfactor);
-  int frac_y= (dy+ bmc->yoff- Y1*yfactor);
+  int frac_x= (dx- gl->xoff- X1*xfactor);
+  int frac_y= (dy+ gl->yoff- Y1*yfactor);
   SI  off_x = (((-X1) *xfactor+ dx)*PIXEL + ((tx*PIXEL)>>1))/xfactor;
   SI  off_y = (((Y2-1)*yfactor- dy)*PIXEL - ((ty*PIXEL)>>1))/yfactor;
 
@@ -186,18 +186,18 @@ shrink (glief bmc, int xfactor, int yfactor,
   int ww=(X2-X1)*xfactor, hh=(Y2-Y1)*yfactor;
   STACK_NEW_ARRAY (bitmap, int, ww*hh);
   for (i=0; i<ww*hh; i++) bitmap[i]=0;
-  for (y=0, index= ww*frac_y+ frac_x; y<bmc->height; y++, index-=ww)
-    for (x=0; x<bmc->width; x++)
+  for (y=0, index= ww*frac_y+ frac_x; y<gl->height; y++, index-=ww)
+    for (x=0; x<gl->width; x++)
       for (j=0, indey=ww*ty; j<=ty; j++, indey-=ww)
 	for (i=0; i<=tx; i++) {
 	  int entry= index+indey+x+i;
-	  int value= bmc->get_1(x,y);
+	  int value= gl->get_1(x,y);
 	  if (value>bitmap[entry]) bitmap[entry]= value;
 	}
 
   int X, Y, sum;
-  glief CB (X2-X1, Y2-Y1, -X1, Y2-1,
-	      bmc->depth+ log2i (xfactor*yfactor), bmc->status);
+  glyph CB (X2-X1, Y2-Y1, -X1, Y2-1,
+	    gl->depth+ log2i (xfactor*yfactor), gl->status);
   for (Y=Y1; Y<Y2; Y++)
     for (X=X1; X<X2; X++) {
       sum=0;
@@ -215,18 +215,18 @@ shrink (glief bmc, int xfactor, int yfactor,
   return CB;
 }
 
-glief
-shrink (glief bmc, int xfactor, int yfactor, SI& xo, SI& yo) {
-  if ((bmc->width==0) || (bmc->height==0))
-    fatal_error ("zero size character", "shrink", "glief.cpp");
+glyph
+shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
+  if ((gl->width==0) || (gl->height==0))
+    fatal_error ("zero size character", "shrink", "glyph.cpp");
 
   int tx= xfactor/3;
   int ty= yfactor/3;
   int dx=0, dy=0;
-  if ((bmc->status==0) && (xfactor>1)) dx= get_hor_shift (bmc, xfactor, tx);
-  // if ((bmc->status==0) && (yfactor>1)) dy= get_ver_shift (bmc, yfactor, ty);
+  if ((gl->status==0) && (xfactor>1)) dx= get_hor_shift (gl, xfactor, tx);
+  // if ((gl->status==0) && (yfactor>1)) dy= get_ver_shift (gl, yfactor, ty);
 
-  glief ret= shrink (bmc, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
+  glyph ret= shrink (gl, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
   if (ret->status != 0) {
     if (ret->status&1) ret->adjust_top ();
     if (ret->status&2) ret->adjust_bot ();

@@ -13,97 +13,97 @@
 #include "bitmap_font.hpp"
 #include "ps_device.hpp"
 
-glief
-join (glief bmc1, glief bmc2) {
-  int x1= min (-bmc1->xoff, -bmc2->xoff);
-  int y1= min (bmc1->yoff- bmc1->height, bmc2->yoff- bmc2->height);
-  int x2= max (bmc1->width- bmc1->xoff, bmc2->width- bmc2->xoff);
-  int y2= max (bmc1->yoff, bmc2->yoff);
-  glief bmr (x2-x1, y2-y1, -x1, y2, max (bmc1->depth, bmc2->depth));
+glyph
+join (glyph gl1, glyph gl2) {
+  int x1= min (-gl1->xoff, -gl2->xoff);
+  int y1= min (gl1->yoff- gl1->height, gl2->yoff- gl2->height);
+  int x2= max (gl1->width- gl1->xoff, gl2->width- gl2->xoff);
+  int y2= max (gl1->yoff, gl2->yoff);
+  glyph bmr (x2-x1, y2-y1, -x1, y2, max (gl1->depth, gl2->depth));
 
   int i, j, dx, dy;
-  dx= -bmc1->xoff- x1, dy= y2- bmc1->yoff;
-  for (j=0; j<bmc1->height; j++)
-    for (i=0; i<bmc1->width; i++)
-      bmr->set_x (i+dx, j+dy, bmc1->get_x (i, j));
+  dx= -gl1->xoff- x1, dy= y2- gl1->yoff;
+  for (j=0; j<gl1->height; j++)
+    for (i=0; i<gl1->width; i++)
+      bmr->set_x (i+dx, j+dy, gl1->get_x (i, j));
 
-  dx= -bmc2->xoff- x1; dy= y2- bmc2->yoff;
-  for (j=0; j<bmc2->height; j++)
-    for (i=0; i<bmc2->width; i++)
+  dx= -gl2->xoff- x1; dy= y2- gl2->yoff;
+  for (j=0; j<gl2->height; j++)
+    for (i=0; i<gl2->width; i++)
       bmr->set_x (i+dx, j+dy,
-		  max (bmr->get_x (i+dx, j+dy), bmc2->get_x (i, j)));
+		  max (bmr->get_x (i+dx, j+dy), gl2->get_x (i, j)));
 
   return bmr;
 }
 
-glief
-move (glief bmc, SI x, SI y) {
+glyph
+move (glyph gl, SI x, SI y) {
   x += PIXEL/2; y += PIXEL/2; abs_round (x, y);
   int xx= x/PIXEL, yy= y/PIXEL;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (ww, hh, bmc->xoff- xx, bmc->yoff+ yy, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff- xx, gl->yoff+ yy, gl->depth);
 
   int i, j;
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
-      bmr->set_x (i, j, bmc->get_x (i, j));
-  bmr->lwidth= bmc->lwidth;
+      bmr->set_x (i, j, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
-glief
-hor_flip (glief bmc) {
+glyph
+hor_flip (glyph gl) {
   int i, j;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
-      bmr->set_x (ww-1-i, j, bmc->get_x (i, j));
-  bmr->lwidth= bmc->lwidth;
+      bmr->set_x (ww-1-i, j, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
-glief
-ver_flip (glief bmc) {
+glyph
+ver_flip (glyph gl) {
   int i, j;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (ww, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
-      bmr->set_x (i, hh-1-j, bmc->get_x (i, j));
-  bmr->lwidth= bmc->lwidth;
+      bmr->set_x (i, hh-1-j, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
-glief
-pos_rotate (glief bmc) {
+glyph
+pos_rotate (glyph gl) {
   int i, j;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (hh, ww, bmc->yoff, bmc->width- bmc->xoff, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (hh, ww, gl->yoff, gl->width- gl->xoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
-      bmr->set_x (j, ww-1-i, bmc->get_x (i, j));
+      bmr->set_x (j, ww-1-i, gl->get_x (i, j));
   return bmr;
 }
 
-glief
-hor_extend (glief bmc, int pos, int by) {
+glyph
+hor_extend (glyph gl, int pos, int by) {
   int i, j;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (ww+ by, hh, bmc->xoff, bmc->yoff, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww+ by, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<(ww+by); i++)
-      bmr->set_x (i, j, bmc->get_x (i<pos? i: (i<pos+by? pos: i-by), j));
+      bmr->set_x (i, j, gl->get_x (i<pos? i: (i<pos+by? pos: i-by), j));
   return bmr;
 }
 
-glief
-ver_extend (glief bmc, int pos, int by) {
+glyph
+ver_extend (glyph gl, int pos, int by) {
   int i, j;
-  int ww= bmc->width, hh= bmc->height;
-  glief bmr (ww, hh+by, bmc->xoff, bmc->yoff, bmc->depth);
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh+by, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<(hh+by); j++)
     for (i=0; i<ww; i++)
-      bmr->set_x (i, j, bmc->get_x (i, j<pos? j: (j<pos+by? pos: j-by)));
+      bmr->set_x (i, j, gl->get_x (i, j<pos? j: (j<pos+by? pos: j-by)));
   return bmr;
 }

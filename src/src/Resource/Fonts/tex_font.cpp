@@ -29,7 +29,7 @@ struct tex_font_rep: font_rep {
   int              dpi;
   int              dsize;
   tex_font_metric  tfm;
-  font_gliefs      pk;
+  font_glyphs      pk;
   double           unit;
 
   tex_font_rep (display dis, string name, int status,
@@ -40,7 +40,7 @@ struct tex_font_rep: font_rep {
   void draw (ps_device dev, string s, SI x, SI y);
   SI   get_left_correction (string s);
   SI   get_right_correction (string s);
-  glief get_bitmap (string s);
+  glyph get_glyph (string s);
   void special_get_extents (string s, metric& ex);
   void special_get_xpositions (string s, SI* xpos);
   void special_draw (ps_device dev, string s, SI x, SI y);
@@ -484,15 +484,15 @@ tex_font_rep::get_extents (string s, metric& ex) {
 
   for (i=0; i<m; i++) {
     int c= buf[i];
-    glief bmc= pk->get (c);
-    if (nil (bmc)) continue;
+    glyph gl= pk->get (c);
+    if (nil (gl)) continue;
     
     y1= min (y1, -conv (tfm->d(c)));
     y2= max (y2,  conv (tfm->h(c)));
-    x3= min (x3, x2- ((int) bmc->xoff) * PIXEL);
-    x4= max (x4, x2+ ((int) (bmc->width- bmc->xoff)) * PIXEL);
-    y3= min (y3, ((int) (bmc->yoff- bmc->height)) * PIXEL);
-    y4= max (y4, ((int) bmc->yoff) * PIXEL);
+    x3= min (x3, x2- ((int) gl->xoff) * PIXEL);
+    x4= max (x4, x2+ ((int) (gl->width- gl->xoff)) * PIXEL);
+    y3= min (y3, ((int) (gl->yoff- gl->height)) * PIXEL);
+    y4= max (y4, ((int) gl->yoff) * PIXEL);
     x2 += conv (tfm->w(c)+ ker[i]);
   }
 
@@ -596,8 +596,8 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
 
   for (i=0; i<m; i++) {
     register int c= buf[i];
-    glief bmc= pk->get (c);
-    if (nil (bmc)) continue;
+    glyph gl= pk->get (c);
+    if (nil (gl)) continue;
     dev->draw (c, pk, x, y);
     x += conv (tfm->w(c)+ ker[i]);
   }
@@ -648,8 +648,8 @@ tex_font_rep::get_right_correction (string s) {
   return conv (tfm->i ((QN) s[N(s)-1]));
 }
 
-glief
-tex_font_rep::get_bitmap (string s) {
+glyph
+tex_font_rep::get_glyph (string s) {
   register int i;
   switch (status) {
   case TEX_ANY:
@@ -665,14 +665,14 @@ tex_font_rep::get_bitmap (string s) {
     if (s == "<gtr>") s= ">";
     for (i=0; i<N(s); i++)
       if ((s[i] & 128) != 0)
-	return font_rep::get_bitmap (s);
+	return font_rep::get_glyph (s);
     break;
   }
-  if (N(s)!=1) return font_rep::get_bitmap (s);
+  if (N(s)!=1) return font_rep::get_glyph (s);
   int c= ((QN) s[0]);
-  glief bmc= pk->get (c);
-  if (nil (bmc)) return font_rep::get_bitmap (s);
-  return bmc;
+  glyph gl= pk->get (c);
+  if (nil (gl)) return font_rep::get_glyph (s);
+  return gl;
 }
 
 #undef conv

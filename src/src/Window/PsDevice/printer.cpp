@@ -309,7 +309,7 @@ printer_rep::select_tex_font (string name) {
 static char* hex_string= "0123456789ABCDEF";
 
 void
-printer_rep::make_tex_char (string name, unsigned char c, glief bmc) {
+printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
   string char_name (name * "-" * as_string ((int) c));
   if (tex_chars->contains (char_name)) return;
   if (!tex_fonts->contains (name)) {
@@ -321,10 +321,10 @@ printer_rep::make_tex_char (string name, unsigned char c, glief bmc) {
 
   string hex_code;
   int i, j, count=0, cur= 0;
-  for (j=0; j < bmc->height; j++)
-    for (i=0; i < ((bmc->width+7) & (-8)); i++) {
+  for (j=0; j < gl->height; j++)
+    for (i=0; i < ((gl->width+7) & (-8)); i++) {
       cur= cur << 1;
-      if ((i<bmc->width) && (bmc->get_x(i,j)>0)) cur++;
+      if ((i<gl->width) && (gl->get_x(i,j)>0)) cur++;
       count++;
       if (count==4) {
 	hex_code << hex_string[cur];
@@ -333,11 +333,11 @@ printer_rep::make_tex_char (string name, unsigned char c, glief bmc) {
       }
     }
 
-  int d1= bmc->width;
-  int d2= bmc->height;
-  int d3= 130+ bmc->xoff;
-  int d4= 126+ bmc->yoff;
-  int d5= bmc->lwidth;
+  int d1= gl->width;
+  int d2= gl->height;
+  int d3= 130+ gl->xoff;
+  int d4= 126+ gl->yoff;
+  int d5= gl->lwidth;
   if ((d1<256) && (d2<256) && (d3<256) && (d4<256) && (d5<256)) {
     hex_code << as_hexadecimal (d1, 2) << as_hexadecimal (d2, 2)
 	     << as_hexadecimal (d3, 2) << as_hexadecimal (d4, 2)
@@ -471,18 +471,18 @@ printer_rep::set_background (color c) {
 }
 
 void
-printer_rep::draw (int ch, font_gliefs fn, SI x, SI y) {
-  glief bmc= fn->get(ch);
-  if (nil (bmc)) return;
+printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
+  glyph gl= fn->get(ch);
+  if (nil (gl)) return;
   string name= fn->res_name;
   unsigned char c= ch;
   if (true_type) ec_to_cm (name, c);
-  make_tex_char (name, c, bmc);
+  make_tex_char (name, c, gl);
   select_tex_font (name);
   move_to (x, y);
   print ("(" * prepare_text (string ((char) c)) * ")p");
   tex_flag= true;
-  xpos += bmc->lwidth;
+  xpos += gl->lwidth;
 }
 
 void

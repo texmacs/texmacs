@@ -13,7 +13,7 @@
 #include "bitmap_font.hpp"
 
 RESOURCE_CODE(font_metric);
-RESOURCE_CODE(font_gliefs);
+RESOURCE_CODE(font_glyphs);
 
 /******************************************************************************
 * font_metrics
@@ -36,15 +36,15 @@ static metric on_error;
 
 struct std_font_metric_rep: public font_metric_rep {
   int bc, ec;
-  metric* bmm;
+  metric* fnm;
 
-  std_font_metric_rep (string name, metric* bmm, int bc, int ec);
+  std_font_metric_rep (string name, metric* fnm, int bc, int ec);
   metric& get (int char_code);
 };
 
 std_font_metric_rep::std_font_metric_rep (
-  string name, metric* bmm2, int bc2, int ec2):
-    font_metric_rep (name), bc (bc2), ec (ec2), bmm (bmm2)
+  string name, metric* fnm2, int bc2, int ec2):
+    font_metric_rep (name), bc (bc2), ec (ec2), fnm (fnm2)
 {
   on_error->x1= on_error->y1= 0;
   on_error->x2= on_error->y2= 0;
@@ -55,53 +55,53 @@ std_font_metric_rep::std_font_metric_rep (
 metric&
 std_font_metric_rep::get (int c) {
   if ((c<bc) || (c>ec)) return on_error;
-  return bmm [c-bc];
+  return fnm [c-bc];
 }
 
 font_metric
-std_font_metric (string name, metric* bmm, int bc, int ec) {
+std_font_metric (string name, metric* fnm, int bc, int ec) {
   return make (font_metric, name,
-	       new std_font_metric_rep (name, bmm, bc, ec));
+	       new std_font_metric_rep (name, fnm, bc, ec));
 }
 
 /******************************************************************************
-* font_gliefss
+* font_glyphss
 ******************************************************************************/
 
-font_gliefs_rep::font_gliefs_rep (string name):
-  rep<font_gliefs> (name) {}
+font_glyphs_rep::font_glyphs_rep (string name):
+  rep<font_glyphs> (name) {}
 
-font_gliefs_rep::~font_gliefs_rep () {
+font_glyphs_rep::~font_glyphs_rep () {
   fatal_error ("not yet implemented",
-	       "font_gliefs_rep::~font_gliefs_rep",
-	       "font_gliefs.cpp");
+	       "font_glyphs_rep::~font_glyphs_rep",
+	       "font_glyphs.cpp");
 }
 
 /******************************************************************************
 * Standard bitmap fonts
 ******************************************************************************/
 
-struct std_font_gliefs_rep: public font_gliefs_rep {
+struct std_font_glyphs_rep: public font_glyphs_rep {
   int bc, ec;
-  glief* bmf; // definitions of the characters
+  glyph* fng; // definitions of the characters
 
-  std_font_gliefs_rep (string name, glief* bmf, int bc, int ec);
-  glief& get (int char_code);
+  std_font_glyphs_rep (string name, glyph* fng, int bc, int ec);
+  glyph& get (int char_code);
 };
 
-std_font_gliefs_rep::std_font_gliefs_rep (
-  string name, glief* bmf2, int bc2, int ec2):
-    font_gliefs_rep (name), bc (bc2), ec (ec2), bmf (bmf2) {}
+std_font_glyphs_rep::std_font_glyphs_rep (
+  string name, glyph* fng2, int bc2, int ec2):
+    font_glyphs_rep (name), bc (bc2), ec (ec2), fng (fng2) {}
 
-static glief nil_glief;
+static glyph nil_glyph;
 
-glief&
-std_font_gliefs_rep::get (int c) {
-  if ((c<bc) || (c>ec)) return nil_glief;
-  return bmf [c-bc];
+glyph&
+std_font_glyphs_rep::get (int c) {
+  if ((c<bc) || (c>ec)) return nil_glyph;
+  return fng [c-bc];
 }
 
-font_gliefs
-std_font_gliefs (string name, glief* bmf, int bc, int ec) {
-  return make (font_gliefs, name, new std_font_gliefs_rep (name, bmf, bc, ec));
+font_glyphs
+std_font_glyphs (string name, glyph* fng, int bc, int ec) {
+  return make (font_glyphs, name, new std_font_glyphs_rep (name, fng, bc, ec));
 }
