@@ -82,6 +82,8 @@
     <branch|Table layout|env-table.en.tm>
 
     <branch|Editing source trees|env-src.en.tm>
+
+    <branch|Miscellaneous environment variables|env-misc.en>
   </traverse>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
