@@ -539,6 +539,10 @@ latex_command_to_tree (tree t) {
   }
   if (is_tuple (t, "\\stackrel", 2))
     return tree (ABOVE, l2e (t[2]), l2e (t[1]));
+  if (is_tuple (t, "\\overset", 2))
+    return tree (ABOVE, l2e (t[2]), l2e (t[1]));
+  if (is_tuple (t, "\\underset", 2))
+    return tree (BELOW, l2e (t[2]), l2e (t[1]));
 
   int dtype= 0;
   if (is_large_delimiter (t, dtype)) {
@@ -561,6 +565,8 @@ latex_command_to_tree (tree t) {
     tree   ct= latex_cite_to_tree ("cite", s);
     return tree (CONCAT, ct, " (", ot, ")");
   }
+  if (is_tuple (t, "\\citedetail", 2))
+    return compound ("cite-detail", l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\index", 1)) {
     string s= as_string (t2e (t[1]));
     return latex_index_to_tree (s);
@@ -592,7 +598,7 @@ latex_command_to_tree (tree t) {
 		 tree (SET, MATH_FONT_SERIES, "bold"),
 		 l2e (t[1]),
 		 tree (RESET, MATH_FONT_SERIES));
-  if (is_tuple (t, "\\tmop", 1)) return tree (APPLY, "op", l2e (t[1]));
+  if (is_tuple (t, "\\tmop", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\tmstrong", 1)) return tree (APPLY, "strong", l2e (t[1]));
   if (is_tuple (t, "\\tmem", 1)) return tree (APPLY, "em", l2e (t[1]));
   if (is_tuple (t, "\\tmtt", 1)) return tree (APPLY, "tt", l2e (t[1]));
