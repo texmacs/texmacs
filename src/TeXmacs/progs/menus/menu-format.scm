@@ -369,7 +369,6 @@
    (begin
      (make-with "language" "russian")
      (make-with "font" "cyrillic")))
-  ("Slovene" (make-with "language" "slovene"))
   ("Spanish" (make-with "language" "spanish"))
   ("Swedish" (make-with "language" "swedish"))
   ("Ukrainian"
@@ -382,11 +381,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-format-menu
-  (-> "Index level"
+  (-> "math-level"
       ("Normal" (make-with "math-level" "0"))
       ("Script size" (make-with "math-level" "1"))
       ("Script script size" (make-with "math-level" "2")))
-  (-> "Display style"
+  (-> "math-display"
       ("On" (make-with "math-display" "true"))
       ("Off" (make-with "math-display" "false")))
   (-> "Condensed"

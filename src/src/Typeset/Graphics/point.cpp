@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "point.hpp"
-#include "math_util.hpp"
 
 point
 operator + (point p1, point p2) {
@@ -68,18 +67,4 @@ as_tree (point p) {
   for (i=0; i<n; i++)
     t[i]= as_string (p[i]);
   return t;
-}
-
-double
-operator * (point p1, point p2) {
-  int i, n= min (N(p1), N(p2));
-  double r= 0;
-  for (i=0; i<n; i++)
-    r+= p1[i] * p2[i];
-  return r;
-}
-
-double
-norm (point p) {
-  return sqrt (p*p);
 }

@@ -143,8 +143,7 @@ ispell_extra_args (string lan) {
 
 string
 ispell_encode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
     return cork_to_il2 (s);
   else if (lan == "russian")
     return koi8_to_iso (s);
@@ -159,8 +158,7 @@ ispell_encode (string lan, string s) {
 
 string
 ispell_decode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
     return il2_to_cork (s);
   else if (lan == "russian")
     return iso_to_koi8 (s);

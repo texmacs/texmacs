@@ -54,7 +54,7 @@ edit_interface_rep::edit_interface_rep ():
 edit_interface_rep::~edit_interface_rep () {}
 
 edit_interface_rep::operator tree () {
-  return tuple ("editor", as_string (get_name ()));
+  return tuple ("edit", as_string (get_name ()));
 }
 
 void
@@ -627,10 +627,7 @@ edit_interface_rep::full_screen_mode (bool flag) {
 
 static bool
 is_graphical (tree t) {
-  return
-    is_func (t, _POINT) ||
-    is_func (t, LINE) || is_func (t, CLINE) ||
-    is_func (t, SPLINE) || is_func (t, CSPLINE);
+  return is_func (t, _POINT) || is_func (t, LINE) || is_func (t, CLINE);
 }
 
 void

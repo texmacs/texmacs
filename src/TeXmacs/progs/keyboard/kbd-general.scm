@@ -151,8 +151,7 @@
   ("symbol §" "§")
   ("symbol %" "%")
   ("symbol _" "_")
-  ("symbol ^" "^")
-  ("symbol \"" "\""))
+  ("symbol ^" "^"))
 
 (kbd-map ;; inserting tables
   ("table" "" "Table command")

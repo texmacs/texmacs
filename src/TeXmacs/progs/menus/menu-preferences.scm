@@ -59,7 +59,6 @@
 	  ("Portuguese" "portuguese")
 	  ("Romanian" "romanian")
 	  ("Russian" "russian")
-	  ("Slovene" "slovene")
 	  ("Spanish" "spanish")
 	  ("Swedish" "swedish")
 	  ("Ukrainian" "ukrainian"))

@@ -20,8 +20,7 @@
 
 string
 selection_encode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
     return cork_to_il2 (s);
   else if (lan == "russian")
     return koi8_to_iso (s);
@@ -36,8 +35,7 @@ selection_encode (string lan, string s) {
 
 string
 selection_decode (string lan, string s) {
-  if ((lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovene"))
+  if ((lan == "czech") || (lan == "hungarian") || (lan == "polish"))
     return il2_to_cork (s);
   else if (lan == "russian")
     return iso_to_koi8 (s);
@@ -465,16 +463,6 @@ edit_select_rep::selection_get (path& start, path& end) {
   end  = sel->end;
 }
 
-path
-edit_select_rep::selection_get_start () {
-  return start_p;
-}
-
-path
-edit_select_rep::selection_get_end () {
-  return end_p;
-}
-
 tree
 edit_select_rep::selection_get () {
   if (!selection_active_any ()) return "";
@@ -499,28 +487,16 @@ edit_select_rep::selection_get () {
 ******************************************************************************/
 
 void
-edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) dis->set_selection (widget (this), key, t, "");
-}
-
-tree
-edit_select_rep::selection_raw_get (string key) {
-  return copy (dis->get_selection (widget (this), key));
-}
-
-void
-edit_select_rep::selection_set_start (path p) {
+edit_select_rep::selection_set_start () {
   bool flag= selection_active_any ();
-  if (nil(p)) start_p= tp;
-  else start_p= p;
+  start_p= tp;
   if (path_less_eq (end_p, start_p) || (!flag)) end_p= start_p;
   notify_change (THE_SELECTION);
 }
 
 void
-edit_select_rep::selection_set_end (path p) {
-  if (nil(p)) end_p= tp;
-  else end_p= p;
+edit_select_rep::selection_set_end () {
+  end_p= tp;
   if (path_less_eq (end_p, start_p)) start_p= end_p;
   notify_change (THE_SELECTION);
 }
@@ -530,16 +506,15 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   selecting= shift_selecting= false;
   string mode= get_env_string (MODE);
   string lan = get_env_string (MODE_LANGUAGE (mode));
-  tree sel= tuple ("texmacs", t, mode, lan);
+  tree sel= tuple ("edit", t, mode, lan);
   string s;
   if (key == "primary") {
     if (selection_export == "html") t= exec_html (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= tree (WITH, "mode", "math", t);
     s= tree_to_generic (t, selection_export * "-snippet");
-    s= selection_encode (lan, s);
   }
-  if (dis->set_selection (widget (this), key, sel, s) &&
+  if (dis->set_selection (widget (this), key, sel, selection_encode(lan, s)) &&
       (!persistant)) selection_cancel ();
 }
 
@@ -575,7 +550,7 @@ edit_select_rep::selection_paste (string key) {
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix
     insert_tree (doc);
   }
-  if (is_tuple (t, "texmacs", 3)) {
+  if (is_tuple (t, "edit", 3)) {
     string mode= get_env_string (MODE);
     string lan = get_env_string (MODE_LANGUAGE (mode));
     if ((mode == "prog") && (t[2] == "math")) {

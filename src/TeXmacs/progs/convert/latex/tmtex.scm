@@ -94,7 +94,17 @@
   (("font-shape" "right") upshape)
   (("font-shape" "slanted") slshape)
   (("font-shape" "italic") itshape)
-  (("font-shape" "small-caps") scshape))
+  (("font-shape" "small-caps") scshape)
+  (("color" "black") black)
+  (("color" "grey") grey)
+  (("color" "white") white)
+  (("color" "red") red)
+  (("color" "blue") blue)
+  (("color" "yellow") yellow)
+  (("color" "magenta") magenta)
+  (("color" "orange") orange)
+  (("color" "green") green)
+  (("color" "brown") brown))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manipulation of the environment
@@ -676,8 +686,6 @@
 	    (a (tmtex-get-assign-cmd var val)))
 	(cond (w (list w arg))
 	      (a (list '!group (tex-concat (list (list a) " " arg))))
-	      ((== var "color")
-	      	(list '!group (tex-concat (list (list 'color val) " " arg))))
 	      (else arg)))))
 
 (define (tmtex-with l)
