@@ -392,6 +392,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
       if (i<n) i++;
       arity--;
     }
+    else if (option && (s[j]=='#') && (cmd == "\\def")) {
+      if (j+2<=n) {
+	t << s (j+1, j+2);
+	u << s (j+1, j+2);
+	i= j+2;
+      }
+      t[0]->label= t[0]->label * "*";
+      option= false;      
+    }
     else {
       if (arity>0) {
 	i=j;
