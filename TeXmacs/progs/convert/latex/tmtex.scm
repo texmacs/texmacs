@@ -327,7 +327,7 @@
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
-	((in? x '("acmconf" "amsart" "jsc")) x)
+	((in? x '("acmconf" "amsart" "jsc" "svjour")) x)
 	(tmtex-faithful-style? x)
 	(else #f)))
 
