@@ -189,8 +189,8 @@ pager_rep::end_page (bool flag) {
 */
 
 box
-pager_rep::make_header () {
-  if (!show_hf) return empty_box (decorate ());
+pager_rep::make_header (bool empty_flag) {
+  if (!show_hf || empty_flag) return empty_box (decorate ());
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree old= env->local_begin (PAR_COLUMNS, "1");
@@ -204,8 +204,8 @@ pager_rep::make_header () {
 }
 
 box
-pager_rep::make_footer () {
-  if (!show_hf) return empty_box (decorate ());
+pager_rep::make_footer (bool empty_flag) {
+  if (!show_hf || empty_flag) return empty_box (decorate ());
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree old= env->local_begin (PAR_COLUMNS, "1");
