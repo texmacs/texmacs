@@ -1,0 +1,4 @@
+#!/bin/bash
+echo -ne "\002verbatim:"
+cd $TEXMACS_PATH/plugins/matlab/code
+matlab -nojvm -r tmrepl
