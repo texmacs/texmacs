@@ -86,7 +86,7 @@
     </with>
   </cell>>>>>>>
 
-  <assign|doc-make-title|<macro|body|<surround|<start-page|>|<vspace|2fn>|<doc-title-block|<arg|body>>>>>
+  <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>
 
   <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
     <with|math-font-series|bold|font-series|bold|<font-magnify|1.682|<doc-title-block|<arg|x>>>>

@@ -212,11 +212,7 @@
       ("Odd page header" (make-assign-arg "page-odd-header"))
       ("Odd page footer" (make-assign-arg "page-odd-footer"))
       ("Even page header" (make-assign-arg "page-even-header"))
-      ("Even page footer" (make-assign-arg "page-even-footer"))
-      ---
-      (group "Structural")
-      ("Odd page text" (make-assign-macro-arg "odd-page-text"))
-      ("Even page text" (make-assign-macro-arg "even-page-text")))
+      ("Even page footer" (make-assign-arg "page-even-footer")))
   (-> "Page numbering"
       ("Renumber this page" (make-assign-arg "page-nr"))
       ("Page number text" (make-assign-macro "page-the-page")))
