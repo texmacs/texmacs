@@ -15,13 +15,6 @@
 #include "tree_label.hpp"
 #include "array.hpp"
 
-#define WITH_EXTENSIONS
-#ifdef WITH_EXTENSIONS
-#define d_exp 0
-#else
-#define d_exp 1
-#endif
-
 /******************************************************************************
 * The tree class 'tree'
 ******************************************************************************/

@@ -34,13 +34,13 @@ edit_text_rep::remove_backwards () {
       if (!nil(p)) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) || is_extension (u)) {
-	  if (is_extension (u) && (N(u) > (1+d_exp))) {
+	  if (is_extension (u) && (N(u) > 1)) {
 	    int i, n= N(u);
 	    bool empty= true;
-	    for (i=d_exp; i<n; i++)
+	    for (i=0; i<n; i++)
 	      empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	    if (!empty) {
-	      if (last_item (p) == d_exp) go_to (start (et, path_up (p)));
+	      if (last_item (p) == 0) go_to (start (et, path_up (p)));
 	      else go_to (end (et, path_dec (p)));
 	      return;
 	    }

@@ -94,7 +94,7 @@ edit_text_rep::pure_line (path p) {
   return
     is_document (st) ||
     (is_func (st, WITH) && (last_item (p) == (N(st)-1)) && pure_line (p)) ||
-    (is_extension (st) && (last_item (p) >= d_exp) && pure_line (p));
+    (is_extension (st) && (last_item (p) >= 0) && pure_line (p));
 }
 
 bool
@@ -110,7 +110,7 @@ edit_text_rep::accepts_return (path p) {
     (is_func (st, MACRO) && (last_item (p) == (N(st)-1))) ||
     (is_func (st, XMACRO, 2) && (last_item (p) == 1)) ||
     (is_func (st, WITH) && (last_item (p) == (N(st)-1)) && pure_line (p)) ||
-    (is_extension (st) && (last_item (p) >= d_exp) && pure_line (p));
+    (is_extension (st) && (last_item (p) >= 0) && pure_line (p));
 }
 
 bool

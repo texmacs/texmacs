@@ -215,11 +215,7 @@ stop_enlarge_environmental (tree t) {
   if (is_func (t, WITH, 3) && (t[0]==MODE) && (t[1]=="math")) return true;
   if (!is_extension (t)) return false;
   if (is_multi_paragraph (t)) return true;
-#ifdef WITH_EXTENSIONS
   string s= as_string (L(t));
-#else
-  string s= as_string (t[0]);
-#endif
   return
     (s == "chapter") ||
     (s == "section") ||

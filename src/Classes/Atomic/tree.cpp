@@ -289,8 +289,6 @@ is_inactive (tree t) {
 * Compound trees
 ******************************************************************************/
 
-#ifdef WITH_EXTENSIONS
-
 tree
 compound (string s) {
   return tree (make_tree_label (s));
@@ -335,55 +333,6 @@ bool
 is_compound (tree t, string s, int n) {
   return (as_string (L(t)) == s) && (N(t) == n);
 }
-
-#else
-
-tree
-compound (string s) {
-  return tree (EXPAND, s);
-}
-
-tree
-compound (string s, tree t1) {
-  return tree (EXPAND, s, t1);
-}
-
-tree
-compound (string s, tree t1, tree t2) {
-  return tree (EXPAND, s, t1, t2);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3) {
-  return tree (EXPAND, s, t1, t2, t3);
-}
-
-tree
-compound (string s, tree t1, tree t2, tree t3, tree t4) {
-  return tree (EXPAND, s, t1, t2, t3, t4);
-}
-
-bool
-is_extension (tree t) {
-  return is_expand (t);
-}
-
-bool
-is_extension (tree t, int n) {
-  return is_expand (t, n);
-}
-
-bool
-is_compound (tree t, string s) {
-  return is_expand (t, s);
-}
-
-bool
-is_compound (tree t, string s, int n) {
-  return is_expand (t, s, n);
-}
-
-#endif
 
 /******************************************************************************
 * Routines for simplification and correction

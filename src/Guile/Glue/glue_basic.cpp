@@ -13,24 +13,6 @@
 ******************************************************************************/
 
 SCM
-tmg_tmp_d_exp () {
-  // SCM_DEFER_INTS;
-  int out= get_d_exp ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_tmp_d_hide_exp () {
-  // SCM_DEFER_INTS;
-  int out= get_d_hide_exp ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
 tmg_texmacs_version_release (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "texmacs-version-release");
 
@@ -2064,8 +2046,6 @@ tmg_object_2make_widget (SCM arg1) {
 
 void
 initialize_glue_basic () {
-  gh_new_procedure ("tmp-d-exp", (FN) tmg_tmp_d_exp, 0, 0, 0);
-  gh_new_procedure ("tmp-d-hide-exp", (FN) tmg_tmp_d_hide_exp, 0, 0, 0);
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("tree->object", (FN) tmg_tree_2object, 1, 0, 0);
   gh_new_procedure ("object->tree", (FN) tmg_object_2tree, 1, 0, 0);

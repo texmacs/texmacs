@@ -128,9 +128,7 @@ scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
   else {
     int i, n= N(t);
     tree_label code= (tree_label) codes [t[0]->label];
-#ifdef WITH_EXTENSIONS
     if (flag) code= make_tree_label (t[0]->label);
-#endif
     if (code == UNKNOWN) {
       tree u (EXPAND, n);
       u[0]= copy (t[0]);
