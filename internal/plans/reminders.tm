@@ -417,6 +417,29 @@
     requirement
   </fold>
 
+  <\fold>
+    <LaTeX> export
+  <|fold>
+    <\fold>
+      Non-breakable spaces
+    <|fold>
+      Currently produces spaces around <verbatim|\\nobreak> command. Should
+      also use <verbatim|~> when possible.
+    </fold>
+
+    <\fold>
+      Option for accents using ASCII only
+    <|fold>
+      I.e. é <with|mode|math|\<rightarrow\>> \\'e.
+    </fold>
+
+    <\fold>
+      Option for AMS blackboard bold
+    <|fold>
+      In order to use True Type fonts when exporting to Pdf.
+    </fold>
+  </fold>
+
   \;
 </body>
 
