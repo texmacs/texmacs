@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : tmtm-tidy.scm
 ;; DESCRIPTION : commodity routines for improving a document
-;; COPYRIGHT   : (C) 2002  Joris van der Hoeven
+;; COPYRIGHT   : (C) 2003  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -13,15 +13,51 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert rewrite tmtm-tidy)
-  (:export tmtm-eat-space-around-control
+  (:export tmtm-modernize-newlines
+	   tmtm-eat-space-around-control
 	   tmtm-remove-superfluous-newlines))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some useful subroutines
+;; FIXME: concat- and document- correction should go elsewhere
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtm-concat l)
+  ;; FIXME: we might also glue paragraphs if one of the arguments is a document
+  (cond ((null? l) "")
+	((null? (cdr l)) (car l))
+	(else (cons 'concat l))))
+
+(define (tmtm-document-sub l)
+  (cond ((null? l) l)
+	((func? (car l) 'document)
+	 (append (tmtm-document-sub (cdar l))
+		 (tmtm-document-sub (cdr l))))
+	(else (cons (car l) (tmtm-document-sub (cdr l))))))
+
+(define (tmtm-document l)
+  (with r (tmtm-document-sub l)
+    (if (null? r) "" (cons 'document r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transform formatting newlines into documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmtm-new-line? x) (== x '(new-line)))
+(define (tmtm-document? x) (func? x 'document))
+
 (define (tmtm-modernize-newlines l)
-  l)
+  (if (not (list? l)) l
+      (with r (cons (car l) (map tmtm-modernize-newlines (cdr l)))
+	(cond ((func? r 'concat)
+	       (with ll (list-scatter (cdr r) tmtm-new-line? #f)
+		 (if (< (length ll) 2) r
+		     (tmtm-document (map tmtm-concat ll)))))
+	      ((func? r 'document) (tmtm-document (cdr r)))
+	      ((and (list-find (cdr r) tmtm-document?)
+		    (not (list-find (cdr l) tmtm-document?)))
+	       (list 'document r))
+	      (else r)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove spaces before (and possibly after) control markup
@@ -53,7 +89,7 @@
   (if (not (list? l)) l
       (with r (map tmtm-eat-space-around-control (cdr l))
 	(if (func? l 'concat)
-	    (cons 'concat (tmtm-eat-space-around-control-sub r))
+	    (tmtm-concat (tmtm-eat-space-around-control-sub r))
 	    (cons (car l) r)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,7 +103,8 @@
   (cond ((tmtm-preserve-space? l) l)
 	((func? l 'document)
 	 (with r (map tmtm-remove-superfluous-newlines (cdr l))
-	   (cons 'document (list-filter r (lambda (x) (not (== x "")))))))
+	   (with f (list-filter r (lambda (x) (not (== x ""))))
+	     (if (null? f) '(document "") (cons 'document f)))))
         ((pair? l)
 	 (cons (car l) (map tmtm-remove-superfluous-newlines (cdr l))))
 	(else l)))

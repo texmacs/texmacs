@@ -103,11 +103,13 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       else {
 	while ((i<n) && (s[i]!='\n')) i++;
 	if (i<n) i++;
-	if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n"))) {
-	  int ln=0;
-	  while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
-	    if (s[i++]=='\n') ln++;
-	  if (ln>0) t[N(t)-1]= "\n";
+	int ln=0;
+	while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+	  if (s[i++]=='\n') ln++;
+	if (ln > 0) {
+	  if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
+	    t[N(t)-1]= "\n";
+	  else t << "\n";
 	}
       }
       break;
