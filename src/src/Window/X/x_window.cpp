@@ -340,7 +340,7 @@ x_window_rep::focus_out_event () {
 
 void
 x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
-  if (nil (dis->grab_ptr)) {
+  if (nil (dis->grab_ptr) || (!dis->grab_ptr->item->win)) {
     set_origin (0, 0);
     encode (x, y);
     w << emit_mouse (ev, x, y, t, dis->state);
