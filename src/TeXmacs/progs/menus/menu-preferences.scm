@@ -28,7 +28,7 @@
 	  *)
     (enum ("Paper type" "paper type")
 	  "A3" "A4" "A5" "B4" "B5" "B6"
-	  "Letter" "Legal" "Executive" "Lecture note"
+	  "Letter" "Legal" "Executive"
 	  *)
     (enum ("Printer dpi" "printer dpi")
 	  "150" "200" "300" "400" "600" "800" "1200"
