@@ -25,11 +25,27 @@ drd_info::drd_info (string name):
   rep (new drd_info_rep (name)) {}
 drd_info::drd_info (string name, drd_info base):
   rep (new drd_info_rep (name, base)) {}
-drd_info::drd_info (string name, tree t, drd_info base):
-  rep (new drd_info_rep (name, base)) {}
 
-drd_info::operator tree () {
-  return (tree) rep->info->item;
+tree
+drd_info_rep::get_locals () {
+  tree t (COLLECTION);
+  iterator<tree_label> it= iterate (info->item);
+  while (it->busy()) {
+    tree_label l= it->next();
+    tree v= (tree) info->item[l];
+    t << tree (ASSOCIATE, as_string (l), v);
+  }
+  return t;
+}
+
+void
+drd_info_rep::set_locals (tree t) {
+  if (!is_func (t, COLLECTION))
+    fatal_error ("Bad set locals", "drd_info_rep::set_locals");
+  int i, n= N(t);
+  for (i=0; i<n; i++)
+    if (is_func (t[i], ASSOCIATE, 2) && is_atomic (t[i][0]))
+      info (make_tree_label (t[i][0]->label))= tag_info (t[i][1]);
 }
 
 ostream&
@@ -112,7 +128,6 @@ drd_info_rep::get_accessible (tree_label l, int nr) {
 
 bool
 drd_info_rep::all_accessible (tree_label l) {
-  cout << as_string (l) << ": " << info[l] << "\n";
   int i, n= N(info[l]->ci);
   for (i=0; i<n; i++)
     if (!info[l]->ci[i].accessible)
@@ -179,6 +194,7 @@ drd_info_rep::heuristic_init (string var, tree macro) {
 void
 drd_info_rep::heuristic_init (hashmap<string,tree> env) {
   bool flag= true;
+  int round= 0;
   while (flag) {
     // cout << HRULE;
     flag= false;
@@ -188,6 +204,10 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env) {
       tree   val= env[var];
       if (is_func (val, MACRO))
 	flag= heuristic_init (var, val) | flag;
+    }
+    if ((round++) == 10) {
+      cout << "TeXmacs] Warning: bad heuristic drd convergence\n";
+      flag= false;
     }
   }
 }

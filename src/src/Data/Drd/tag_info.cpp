@@ -130,7 +130,7 @@ operator << (ostream& out, child_info ci) {
 }
 
 /******************************************************************************
-* Constructors, destructors and modifiers
+* Constructors, destructors and converters
 ******************************************************************************/
 
 tag_info_rep::tag_info_rep (parent_info pi2, array<child_info> ci2):
@@ -155,6 +155,27 @@ tag_info::tag_info (int a, int x, int am, int cm, bool frozen) {
   rep= new tag_info_rep (a, x, am, cm, frozen);
 }
 
+tag_info::tag_info (tree t) {
+  if ((!is_func (t, TUPLE, 2)) || (L(t[1]) != TUPLE)) {
+    cerr << "\nt= " << t << "\n";
+    fatal_error ("Bad tag_info", "tag_info::tag_info (tree)");
+  }
+  parent_info pi (as_string (t[0]));
+  int i, n= N(t[1]);
+  array<child_info> ci (n);
+  for (i=0; i<n; i++)
+    ci[i]= as_string (t[1][i]);
+  rep= new tag_info_rep (pi, ci);
+}
+
+tag_info::operator tree () {
+  return tree (TUPLE, (string) rep->pi, (tree) rep->ci);
+}
+
+/******************************************************************************
+* Access routines and getting the index of a child
+******************************************************************************/
+
 tag_info
 tag_info_rep::no_border () {
   pi.no_border= true;
@@ -166,10 +187,6 @@ tag_info_rep::accessible (int i) {
   ci[i].accessible= true;
   return tag_info (pi, ci);
 }
-
-/******************************************************************************
-* Getting the index of a child
-******************************************************************************/
 
 int
 tag_info_rep::get_index (int child, int n) {
@@ -208,10 +225,6 @@ tag_info::operator () (int child, int n) {
 /******************************************************************************
 * Usual extra routines
 ******************************************************************************/
-
-tag_info::operator tree () {
-  return tree (TUPLE, "tag_info", (string) rep->pi, (tree) rep->ci);
-}
 
 ostream&
 operator << (ostream& out, tag_info ti) {

@@ -130,7 +130,10 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   hashmap<string,tree> H;
   tree t;
   SERVER (style_get_cache (style, H, t, ok));
-  if (ok) env->patch_env (H);
+  if (ok) {
+    env->patch_env (H);
+    drd->set_locals (t);
+  }
   else {
     tree style2= style;
     if (is_tuple (style2))
@@ -140,7 +143,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     env->read_env (H);
     drd->heuristic_init (H);
     if ((!init->contains (PREAMBLE)) || (init[PREAMBLE] == "false"))
-      SERVER (style_set_cache (style, H, (tree) drd));
+      SERVER (style_set_cache (style, H, drd->get_locals ()));
   }
 }
 

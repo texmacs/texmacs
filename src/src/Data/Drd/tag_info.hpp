@@ -137,8 +137,9 @@ class tag_info {
   tag_info (int arity=0, int extra=0,
 	    int am=ARITY_NORMAL, int cm= CHILD_UNIFORM,
 	    bool frozen= false);
-  child_info& operator () (int child, int n);
+  tag_info (tree t);
   operator tree ();
+  child_info& operator () (int child, int n);
 };
 CONCRETE_CODE(tag_info);
 
