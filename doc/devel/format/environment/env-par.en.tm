@@ -231,6 +231,11 @@
     could be found (this explains the use of the <verbatim|fn*> length unit).
     Starts of new paragraphs are rather indicated through the use of first
     indentations (see table <reference|par-first-tab>).
+
+    In the case when two successive paragraph use different paragraph
+    separations, then the maximum of the two is taken. In fact, the
+    <src-var|par-par-sep> length is added to both the vertical spacing before
+    and the vertical spacing after the paragraph.
   </explain>
 
   <\explain>
@@ -262,8 +267,8 @@
     As soon as the horizontal distance between two large boxes is less than
     <src-var|par-hor-sep>, then they are considered to be in collision. In
     that case, the vertical distance between them must be at least
-    <src-var|par-ver-sep>. Also, the amount of showing never exceeds half of
-    the distance between successive base lines.
+    <src-var|par-ver-sep>. Also, the amount of showing never exceeds
+    <verbatim|1ex>.
 
     When using an interline space of <verbatim|1.5> or <verbatim|2>, the
     default value of <src-var|par-ver-sep> allows the user to type larger
