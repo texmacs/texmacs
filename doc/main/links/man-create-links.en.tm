@@ -9,11 +9,13 @@
   <menu|Insert|Link|Label> and a reference to this label using <kbd-gen|?> or
   <menu|Insert|Link|Reference>. Be careful to put the label at a point where
   its number will be correct. When labeling sections, the recommended place
-  is just after the section name. When labeling single equations, the
-  recommended place is at the start inside the equation. When labeling
-  multiple equations, you must put the label just behind the equation number.
-  Recall that you may use <key|A-*> in order to transform an unnumbered
-  environment or equation into a numbered one, and vice versa.
+  is just after the section name. When labeling single equations (created
+  using <menu|Insert|Mathematics|Equation>), the recommended place is at the
+  start inside the equation. When labeling multiple equations (created using
+  <menu|Insert|Mathematics|Equations>), you must put the labels just behind
+  the equation numbers. Recall that you may use <key|A-*> in order to
+  transform an unnumbered environment or equation into a numbered one, and
+  vice versa.
 
   It is possible to create hyperlinks to other documents using
   <kbd-ia|\<gtr\>> or <menu|Insert|Link|Hyperlink>. The first field of the
