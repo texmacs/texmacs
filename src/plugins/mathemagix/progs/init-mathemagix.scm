@@ -14,7 +14,7 @@
 
 (define (mathemagix-initialize)
   (import-from (texmacs plugin plugin-convert))
-  (plugin-input-converters mathemagix))
+  (lazy-input-converter (mathemagix-input) mathemagix))
 
 (plugin-configure mathemagix
   (:require (url-exists-in-path? "mmx-shell"))
