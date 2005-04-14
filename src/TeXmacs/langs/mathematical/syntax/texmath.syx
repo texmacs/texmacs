@@ -134,7 +134,7 @@ Class arithmetic-plus
 Class arithmetic-unary-minus
 	Type=		Prefix
 	Precedence=	100
-	Penalty=	30
+	Penalty=	Invalid
 	Spacing=	None, None
 
 Class arithmetic-minus
@@ -361,7 +361,7 @@ Members arithmetic-plus
 	boxplus dotplus dotamalg dotoplus
 
 Members arithmetic-unary-minus
-	um upm ump
+	um upl upm ump
 
 Members arithmetic-minus
 	- pm mp ominus
