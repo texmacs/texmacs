@@ -38,6 +38,9 @@
   <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Download|download>|<tmweb-link|Progress|progress>|<tmweb-link|Mailing
   lists|ml>|<tmweb-link|Contact|contact>>>>>
 
+  <assign|mmlweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome-mml>|<tmweb-link|Download|download-mml>|<tmweb-link|Mailing
+  lists|ml>|<tmweb-link|Contact|contact>>>>>
+
   <assign|aldor-fragment|<value|scheme-fragment>>
 
   <assign|caml-fragment|<value|scheme-fragment>>
