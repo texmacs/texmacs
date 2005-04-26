@@ -462,6 +462,11 @@ printer_rep::get_color () {
 }
 
 color
+printer_rep::get_color (string s) {
+  return dis->get_color (s);
+}
+
+color
 printer_rep::get_background () {
   return bg;
 }

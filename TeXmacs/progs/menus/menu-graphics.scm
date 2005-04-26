@@ -96,25 +96,25 @@
       (when (!= (graphics-get-grid-type #t) 'empty)
 	(-> "Color of the axes" (link grid-color-axes-menu))
 	(-> "Color of the units" (link grid-color-units-menu))
-	("Show subunits" (toggle-preference "show subunits"))
-	(when (== (get-preference "show subunits") "on")
+	("Show subunits" (grid-toggle-show-subunits))
+	(when (grid-show-subunits?)
 	  (-> "Color of the subunits" (link grid-color-subunits-menu))
 	  (when (or (== (graphics-get-grid-type #t) 'cartesian)
 		    (== (graphics-get-grid-type #t) 'polar))
 	    (-> "Number of subunit steps"
-		("Default" (graphics-set-grid-aspect 'detailed #f))
+		("Default" (graphics-set-grid-aspect 'detailed #f #t))
 		---
-		("2" (graphics-set-grid-aspect 'detailed 2))
-		("3" (graphics-set-grid-aspect 'detailed 3))
-		("4" (graphics-set-grid-aspect 'detailed 4))
-		("5" (graphics-set-grid-aspect 'detailed 5))
-		("6" (graphics-set-grid-aspect 'detailed 6))
-		("8" (graphics-set-grid-aspect 'detailed 8))
-		("10" (graphics-set-grid-aspect 'detailed 10))
+		("2" (graphics-set-grid-aspect 'detailed 2 #t))
+		("3" (graphics-set-grid-aspect 'detailed 3 #t))
+		("4" (graphics-set-grid-aspect 'detailed 4 #t))
+		("5" (graphics-set-grid-aspect 'detailed 5 #t))
+		("6" (graphics-set-grid-aspect 'detailed 6 #t))
+		("8" (graphics-set-grid-aspect 'detailed 8 #t))
+		("10" (graphics-set-grid-aspect 'detailed 10 #t))
 		---
-		("Other" ... (graphics-set-grid-nsubds-ia)))))))
+		("Other" ... (graphics-set-grid-nsubds-ia #t)))))))
   (-> "Edit grid"
-      ("As visual grid"  (toggle-preference "as visual grid"))
+      ("As visual grid"  (grid-toggle-as-visual-grid))
       ---
       (-> "Type"
 	  ("No grid"     (graphics-set-edit-grid 'empty))
@@ -164,7 +164,22 @@
 	    ("10"           (graphics-set-grid-base "10" #f))
 	    ("16"           (graphics-set-grid-base "16" #f))
 	    ---
-	    ("Other" ...    (graphics-set-grid-base-ia #f))))))
+	    ("Other" ...    (graphics-set-grid-base-ia #f))))
+      (when (or (== (graphics-get-grid-type #f) 'cartesian)
+		(== (graphics-get-grid-type #f) 'polar)
+	)
+	(-> "Number of subunit steps"
+	    ("Default" (graphics-set-grid-aspect 'detailed #f #f))
+	    ---
+	    ("2" (graphics-set-grid-aspect 'detailed 2 #f))
+	    ("3" (graphics-set-grid-aspect 'detailed 3 #f))
+	    ("4" (graphics-set-grid-aspect 'detailed 4 #f))
+	    ("5" (graphics-set-grid-aspect 'detailed 5 #f))
+	    ("6" (graphics-set-grid-aspect 'detailed 6 #f))
+	    ("8" (graphics-set-grid-aspect 'detailed 8 #f))
+	    ("10" (graphics-set-grid-aspect 'detailed 10 #f))
+	    ---
+	    ("Other" ... (graphics-set-grid-nsubds-ia #f))))))
 
 (menu-bind graphics-mode-menu
   ("Point" (graphics-set-mode "point"))

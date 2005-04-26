@@ -123,6 +123,11 @@ x_drawable_rep::get_color () {
 }
 
 color
+x_drawable_rep::get_color (string s) {
+  return dis->get_color (s);
+}
+
+color
 x_drawable_rep::get_background () {
   return cur_bg;
 }

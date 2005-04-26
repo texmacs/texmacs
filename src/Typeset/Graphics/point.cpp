@@ -201,3 +201,9 @@ intersect (axis A, axis B) {
     return A.p0 + t * (u[0]*i + u[1]*j);
   }
 }
+
+bool
+inside_rectangle (point p, point p1, point p2) {
+  return p[0]>=p1[0] && p[1]>=p1[1]
+      && p[0]<=p2[0] && p[1]<=p2[1];
+}

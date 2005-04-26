@@ -75,11 +75,11 @@ struct empty_grid_rep: public grid_rep {
     array<grid_curve> res;
     return res; }
   operator tree () { return "empty_grid"; }
-  point find_closest_point (point p);
+  point find_closest_point (point p, point pmin, point pmax);
 };
 
 point
-empty_grid_rep::find_closest_point (point p) {
+empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
   double x= floor (10.0*p[0] + 0.5);
   double y= floor (10.0*p[1] + 0.5);
   return point (x / 10.0, y / 10.0);
@@ -100,7 +100,7 @@ struct cartesian_rep: public grid_rep {
     grid_rep (subd, col, o), step (st) {}
   operator tree () { return "cartesian"; }
   array<grid_curve> get_curves (point lim1, point lim2);
-  point find_closest_point (point p);
+  point find_closest_point (point p, point pmin, point pmax);
 };
 
 static grid_curve
@@ -147,14 +147,29 @@ cartesian_rep::get_curves (point lim1, point lim2) {
 }
 
 point
-cartesian_rep::find_closest_point (point p) {
-  double x, y, ssubd;
-  ssubd= ((double) subd[N(subd)-1]) / step;
-  if (ssubd==0) return p;
+cartesian_rep::find_closest_point (point p, point pmin, point pmax) {
+  double x, y, oldx=0, oldy= 0, ssubd;
+  point res= p;
   p= p-center;
-  x= nearest (p[0]*ssubd);
-  y= nearest (p[1]*ssubd);
-  return center + point (x/ssubd, y/ssubd);
+  int i;
+  for (i=1; i<N(subd); i++) {
+    ssubd= ((double) subd[i]) / step;
+    if (ssubd==0) continue;
+    x= nearest (p[0]*ssubd);
+    y= nearest (p[1]*ssubd);
+    res= center + point (x/ssubd, y/ssubd);
+    if (i!=1) {
+      if (inside_rectangle (point (oldx, res[1]), pmin, pmax))
+        return point (oldx, res[1]);
+      if (inside_rectangle (point (res[0], oldy), pmin, pmax))
+        return point (res[0], oldy);
+    }
+    oldx= res[0];
+    oldy= res[1];
+    if (inside_rectangle (res, pmin, pmax))
+      return res;
+  }
+  return res;
 }
 
 grid
@@ -173,7 +188,7 @@ struct polar_rep: public grid_rep {
     grid_rep (subd, col, o), step (st), astep (ast) {}
   operator tree () { return "polar"; }
   array<grid_curve> get_curves (point lim1, point lim2);
-  point find_closest_point (point p);
+  point find_closest_point (point p, point pmin, point pmax);
 };
 
 static grid_curve
@@ -222,16 +237,33 @@ polar_rep::get_curves (point lim1, point lim2) {
 }
 
 point
-polar_rep::find_closest_point (point p) {
-  double n, a, ssubd;
-  ssubd= (double)subd[N(subd)-1];
-  if (ssubd==0) return p;
+polar_rep::find_closest_point (point p, point pmin, point pmax) {
+  double n, a, oldn= 0, olda= 0, ssubd;
+  point res= p;
   p= p-center;
-  n= nearest (norm(p)*(ssubd/step));
-  a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
-  n= n*(step/ssubd);
-  a= a/(astep*ssubd);
-  return center + n * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
+  int i;
+  for (i=1; i<N(subd); i++) {
+    ssubd= (double)subd[i];
+    if (ssubd==0) continue;
+    n= nearest (norm(p)*(ssubd/step));
+    a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
+    n= n*(step/ssubd);
+    a= a/(astep*ssubd);
+    if (i!=1) {
+      res= center + oldn * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
+      if (inside_rectangle (res, pmin, pmax))
+        return res;
+      res= center + n * point (cos(2*tm_PI*olda), sin(2*tm_PI*olda));
+      if (inside_rectangle (res, pmin, pmax))
+        return res;
+    }
+    oldn= n;
+    olda= a;
+    res= center + n * point (cos(2*tm_PI*a), sin(2*tm_PI*a));
+    if (inside_rectangle (res, pmin, pmax))
+      return res;
+  }
+  return res;
 }
 
 grid
@@ -250,7 +282,7 @@ struct logarithmic_rep: public grid_rep {
     grid_rep (subd, col, o), step (st), base (b) {}
   operator tree () { return "logarithmic"; }
   array<grid_curve> get_curves (point lim1, point lim2);
-  point find_closest_point (point p);
+  point find_closest_point (point p, point pmin, point pmax);
 };
 
 array<grid_curve>
@@ -295,7 +327,18 @@ logarithmic_rep::get_curves (point lim1, point lim2) {
 }
 
 point
-logarithmic_rep::find_closest_point (point p) {
+logarithmic_rep::find_closest_point (point p, point pmin, point pmax) {
+  double x, y, ssubd= ((double) subd[1]) / step;
+  point res= p;
+  if (ssubd!=0) {
+    p= p-center;
+    x= nearest (p[0]*ssubd);
+    y= nearest (p[1]*ssubd);
+    res= center + point (x/ssubd, y/ssubd);
+    if (inside_rectangle (res, pmin, pmax))
+      return res;
+    p= center+p;
+  }
   double xo, yo;
   xo= center[0];
   yo= center[1];
@@ -314,9 +357,9 @@ logarithmic_rep::find_closest_point (point p) {
   p= center+p;
   double xm, ym;
   xm= ym= tm_infinity/2;
-  SI i;
+  int i;
   for (i=1; i<base; i++) {
-    double x, y, dx, dy;
+    double dx, dy;
     dx= dy= step*log(i)/log(base);
     for (x=xo; x<=x2; x+=step)
       if (norm(x+dx-p[0])<norm(xm-p[0])) xm= x+dx;
@@ -327,7 +370,14 @@ logarithmic_rep::find_closest_point (point p) {
     for (y=yo-step; y>=y1-step; y-=step)
       if (norm(y+dy-p[1])<norm(ym-p[1])) ym= y+dy;
   }
-  return point (x0+xm, y0+ym);
+  p= point (x0+xm, y0+ym);
+  if (ssubd!=0) {
+    if (inside_rectangle (point (res[0], p[1]), pmin, pmax))
+      return point (res[0], p[1]);
+    if (inside_rectangle (point (p[0], res[1]), pmin, pmax))
+      return point (p[0], res[1]);
+  }
+  return p;
 }
 
 grid

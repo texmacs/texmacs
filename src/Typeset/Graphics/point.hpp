@@ -42,4 +42,6 @@ double seg_dist  (axis a, point p);
 axis   midperp   (point p1, point p2, point p3);
 point  intersect (axis A, axis B);
 
+bool inside_rectangle (point p, point p1, point p2);
+
 #endif // defined POINT_H
