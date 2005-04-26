@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.4.7>
 
 <style|article>
 
@@ -440,6 +440,27 @@
     </fold>
   </fold>
 
+  <\fold>
+    <LaTeX> import
+  <|fold>
+    <\fold>
+      Avoid name-clashes with built-in commands
+    <|fold>
+      Importation of <LaTeX> macros whose names coincide with built-in
+      commands may lead to incorrect documents (<abbr|e.g.> the
+      <verbatim|point> macro in <verbatim|publs/1998/zeta.tex>). We should
+      probably post-correct imported documents.
+    </fold>
+
+    <\fold>
+      Better parsing of verbatim arguments
+    <|fold>
+      Some commands, like <verbatim|cite>, <verbatim|documentclass>,
+      <abbr|etc.> take verbatim arguments, which should not be parsed in the
+      generic way. The <verbatim|string_arg> function is a temporary remedy.
+    </fold>
+  </fold>
+
   \;
 </body>
 
@@ -466,27 +487,27 @@
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Organizational
       tasks> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-1><vspace|0.5fn>
+      <no-break><pageref|auto-1><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>General
       architecture> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-2><vspace|0.5fn>
+      <no-break><pageref|auto-2><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Scheme>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-3><vspace|0.5fn>
+      <no-break><pageref|auto-3><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Typesetter>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-4><vspace|0.5fn>
+      <no-break><pageref|auto-4><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Editor>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-5><vspace|0.5fn>
+      <no-break><pageref|auto-5><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Tools
       and frequently used subroutines> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <pageref|auto-6><vspace|0.5fn>
+      <no-break><pageref|auto-6><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
