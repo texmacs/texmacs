@@ -32,6 +32,10 @@
     graphics-set-grid-aspect
     graphics-set-grid-nsubds-ia
     graphics-set-grid-color
+    grid-as-visual-grid?
+    grid-toggle-as-visual-grid
+    grid-show-subunits?
+    grid-toggle-show-subunits
     graphics-set-mode graphics-set-color graphics-set-line-width
     ;; selecting
     graphics-select
@@ -149,7 +153,7 @@
 (define graphics-current-astep #f)
 (define graphics-current-base #f)
 
-(define egrid-as-vgrid? #f)
+(define egrid-as-vgrid? #t)
 (define graphics-current-aspect #f)
 
 ;; Fetching/Setting a grid
@@ -281,7 +285,7 @@
 		 (begin
 		    (set! new-polar? #t)
 		    (graphics-set-grid-aspect
-		      'detailed (i2s default-polar-nsubd))
+		      'detailed (i2s default-polar-nsubd) #t)
 		    (set! graphics-current-center o1)
 		    (set! graphics-current-step o2)
 		    (set! graphics-current-astep (i2s default-polar-astep))))
@@ -320,7 +324,7 @@
 				(string->number nsubds0)
 				#f)))
 	    )
-	    (if (eq? nsubds #f)
+	    (if (or (eq? nsubds #f) (not (grid-aspect-show-subunits?)))
 		(set! nsubds 1))
 	 ;; FIXME: The difference between 'default', 'grid-change'
 	 ;;   and 'grid-aspect-change' is because currently, the
@@ -339,14 +343,11 @@
 		(graphics-fetch-grid-vars 'cartesian #t))
 	    (if (not (equal? graphics-current-type "logarithmic"))
 	    (begin
-	       (set! graphics-current-step
-		     (i2s (/ (s2i graphics-current-step) nsubds)))
-	       (set! graphics-current-astep
-		     (i2s (* (s2i graphics-current-astep) nsubds)))))
+	       (graphics-set-grid-aspect 'update nsubds #f)))
 	    (graphics-set-grid #f))
 	)
 	(else
-	  (set-preference "as visual grid" "off")
+	  (graphics-set-property "gr-as-visual-grid" "off")
 	  (graphics-fetch-grid-vars type #f)
 	  (set! graphics-current-type (symbol->string type))
 	  (graphics-set-grid #f))))
@@ -361,7 +362,7 @@
 
 (define (graphics-set-grid-center x y visual?)
   (if (not visual?)
-      (set-preference "as visual grid" "off"))
+      (graphics-set-property "gr-as-visual-grid" "off"))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-center `(point ,x ,y))
   (graphics-set-grid visual?))
@@ -373,7 +374,7 @@
 (tm-define (graphics-set-grid-step val visual?)
   (:check-mark "*" grid-step-has-value?)
   (if (not visual?)
-      (set-preference "as visual grid" "off"))
+      (graphics-set-property "gr-as-visual-grid" "off"))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-step val)
   (graphics-set-grid visual?))
@@ -385,7 +386,7 @@
 (tm-define (graphics-set-grid-astep val visual?)
   (:check-mark "*" grid-astep-has-value?)
   (if (not visual?)
-      (set-preference "as visual grid" "off"))
+      (graphics-set-property "gr-as-visual-grid" "off"))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-astep val)
   (graphics-set-grid visual?))
@@ -397,7 +398,7 @@
 (tm-define (graphics-set-grid-base val visual?)
   (:check-mark "*" grid-base-has-value?)
   (if (not visual?)
-      (set-preference "as visual grid" "off"))
+      (graphics-set-property "gr-as-visual-grid" "off"))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-base val)
   (graphics-set-grid visual?))
@@ -424,8 +425,7 @@
     (graphics-set-property "gr-grid-aspect-props" aspect)
     (set! graphics-current-aspect aspect)
   )
-  (update-edit-grid 'grid-aspect-change)
-)
+  (update-edit-grid 'grid-aspect-change))
 
 (define (graphics-set-grid-aspect-properties-ia)
   (interactive
@@ -457,55 +457,72 @@
   )
   (cons 'tuple (sort (cdr res) cmp-aspect-items)))
 
-(define (graphics-grid-aspect)
-  (with aspect (tree->stree (get-env-tree "gr-grid-aspect"))
+(define (graphics-grid-aspect visual?)
+  (with gr (if visual? "gr-grid-aspect" "gr-edit-grid-aspect")
+  (with aspect (tree->stree (get-env-tree gr))
      (if (not (match? aspect '(tuple (tuple :2) (tuple :2) :*)))
-	 (set! res (get-default-val "gr-grid-aspect")))
-     (cons 'tuple (sort (cdr aspect) cmp-aspect-items))))
+	 (set! res (get-default-val gr)))
+     (cons 'tuple (sort (cdr aspect) cmp-aspect-items)))))
 
 (define (aspect-ref a i)
   (if (and (pair? a) (integer? i) (> (length a) i))
       (list-ref a i)
       #f))
 
-(define (nsubd-has-value? type nsubd)
-  (with aspect (graphics-grid-aspect)
+(define (nsubd-has-value? type nsubd visual?)
+  (with aspect (graphics-grid-aspect visual?)
      (with ref (aspect-ref aspect 3)
 	(if ref
 	    (if (number? nsubd)
 		(== (number->string nsubd) (cadr ref))
-		(let* ((aspect (get-default-val "gr-grid-aspect"))
+		(let* ((aspect (get-default-val
+				 (if visual?
+				     "gr-grid-aspect"
+				     "gr-edit-grid-aspect")))
 		       (val    (cadr (list-ref aspect 3)))
 		   )
 		   (== (cadr ref) val))
 	    )
 	    #f))))
 
-(tm-define (graphics-set-grid-aspect type nsubd)
+(tm-define (graphics-set-grid-aspect type nsubd visual?)
   (:check-mark "*" nsubd-has-value?)
-  (with aspect (graphics-grid-aspect-props)
-    (cond ((eq? type 'units-only)
-	   (graphics-set-property "gr-grid-aspect-props" aspect)
-	   (set-cdr! (cddr aspect) '())
-	   (graphics-set-property "gr-grid-aspect" aspect)
-	  )
-	  ((eq? type 'detailed)
-	   (if nsubd
-	       (set-car! (cdr (list-ref aspect 3)) nsubd)
-	       (set-car! (cdr (list-ref aspect 3))
-			 (cadr (list-ref
-				 (get-default-val "gr-grid-aspect")
-				 3)))
-	   )
-	   (graphics-set-property "gr-grid-aspect" aspect)
-	   (graphics-set-property "gr-grid-aspect-props" aspect))
-    )
-    (set! graphics-current-aspect aspect)
-    (update-edit-grid 'grid-aspect-change)))
+  (if visual?
+      (with aspect (graphics-grid-aspect-props)
+	(cond ((eq? type 'units-only)
+	       (graphics-set-property "gr-grid-aspect-props" aspect)
+	       (set-cdr! (cddr aspect) '())
+	       (graphics-set-property "gr-grid-aspect" aspect)
+	      )
+	      ((eq? type 'detailed)
+	       (if nsubd
+		   (set-car! (cdr (list-ref aspect 3)) nsubd)
+		   (set-car! (cdr (list-ref aspect 3))
+			     (cadr (list-ref
+				     (get-default-val "gr-grid-aspect")
+			    	     3)))
+	       )
+	       (graphics-set-property "gr-grid-aspect" aspect)
+	       (graphics-set-property "gr-grid-aspect-props" aspect))
+	)
+	(set! graphics-current-aspect aspect)
+	(update-edit-grid 'grid-aspect-change)
+      )
+      (with aspect
+	    `(tuple (tuple "axes" "none") (tuple "1" "none")
+		    (tuple ,nsubd "none"))
+	(if (not nsubd)
+	    (set-car! (cdr (list-ref aspect 3))
+		      (cadr (list-ref
+			      (get-default-val "gr-edit-grid-aspect")
+			      3))))
+	(graphics-set-property "gr-edit-grid-aspect" aspect)
+	(if (not (eq? type 'update))
+	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
-(define (graphics-set-grid-nsubds-ia)
+(define (graphics-set-grid-nsubds-ia visual?)
   (interactive '("Number of subunit steps:")
-		(lambda (x) (graphics-set-grid-aspect 'detailed x))))
+		(lambda (x) (graphics-set-grid-aspect 'detailed x visual?))))
 
 ;; Setting visual grid aspect properties (colors)
 (define (grid-aspect-ofs where)
@@ -516,7 +533,7 @@
 
 (define (grid-color-has-value? where color)
   (let* ((i (grid-aspect-ofs (cadr where)))
-	 (aspect (graphics-grid-aspect))
+	 (aspect (graphics-grid-aspect #t))
 	 (aspect-props (graphics-grid-aspect-props))
 	 (ref (aspect-ref aspect i))
 	 (ref-props (aspect-ref aspect-props i))
@@ -537,7 +554,7 @@
   (:check-mark "*" grid-color-has-value?)
   (define i 0)
   (let* ((i (grid-aspect-ofs where))
-	 (aspect (graphics-grid-aspect))
+	 (aspect (graphics-grid-aspect #t))
 	 (aspect-props (graphics-grid-aspect-props))
     )
     (if i
@@ -556,51 +573,31 @@
 	  (graphics-set-property "gr-grid-aspect" aspect)))))))
 
 ;; Grid interface elements
-(define notify-as-visual-grid-firsttime #t)
-(define justforced #f)
-(define (notify-as-visual-grid var val)
-  (set! egrid-as-vgrid? (== val "on"))
-  (if (not justforced)
-      (if notify-as-visual-grid-firsttime
-	  (begin
-	     (set! notify-as-visual-grid-firsttime #f)
-	     (if (not egrid-as-vgrid?)
-	     (begin
-	     ;; FIXME: In spite of the (define-preferences) below, the menu
-	     ;;   library does what she wants with the initial value of the
-	     ;;   toggle : sometimes it is on, sometimes off. So on firsttime,
-	     ;;   we force it.
-		(notify-error "bad init of the 'As visual grid' toggle"
-			      `(,var ,val))
-		(set! justforced #t)
-		(set-preference var "on")))
-	  )
-	  (update-edit-grid 'default)
-      )
-      (set! justforced #f)))
+(define (grid-as-visual-grid?)
+  (!= (tree->stree (get-env-tree "gr-as-visual-grid")) "off"))
 
-;; FIXME: Same problem as above for the toggle's initial value.
-(define notify-show-subunits-firsttime #t)
-(define (notify-show-subunits var val)
-  (if (and notify-show-subunits-firsttime
-	   (not justforced)
-	   (not (== val "on"))
-      )
-      (begin
-	 (notify-error "bad init of the 'Show subunits' toggle"
-		       `(,var ,val))
-	 (set! justforced #t)
-	 (set-preference var "on")))
-  (set! justforced #f)
-  (if notify-show-subunits-firsttime
-      (set! notify-show-subunits-firsttime #f)
-      (if (== val "off")
-	  (graphics-set-grid-aspect 'units-only #f)
-	  (graphics-set-grid-aspect 'detailed #f))))
+(tm-define (grid-toggle-as-visual-grid)
+  (:check-mark "v" grid-as-visual-grid?)
+  (set! egrid-as-vgrid? (not (grid-as-visual-grid?)))
+  (graphics-set-property "gr-as-visual-grid"
+			 (if egrid-as-vgrid? "on" "off"))
+  (update-edit-grid 'default))
 
-(define-preferences
-  ("as visual grid" "on" notify-as-visual-grid)
-  ("show subunits" "on" notify-show-subunits))
+(define (grid-aspect-show-subunits?)
+  (with aspect (tree->stree (get-env-tree "gr-grid-aspect"))
+    (and (pair? aspect) (> (length aspect) 3))))
+
+(define (grid-show-subunits?)
+  (let* ((grid   (tree->stree (get-env-tree "gr-grid")))
+	 (aspect (tree->stree (get-env-tree "gr-grid-aspect")))
+    )
+    (and (pair? grid) (pair? aspect) (> (length aspect) 3))))
+
+(tm-define (grid-toggle-show-subunits)
+  (:check-mark "v" grid-show-subunits?)
+  (if (grid-show-subunits?)
+      (graphics-set-grid-aspect 'units-only #f #t)
+      (graphics-set-grid-aspect 'detailed #f #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Graphics edit mode

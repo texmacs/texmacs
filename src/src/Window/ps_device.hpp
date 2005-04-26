@@ -69,6 +69,7 @@ public:
   virtual color rgb (int r, int g, int b) = 0;
   virtual void  get_rgb (color col, int& r, int& g, int& b) = 0;
   virtual color get_color () = 0;
+  virtual color get_color (string s) = 0;
   virtual color get_background () = 0;
 
   /* main graphical routines */

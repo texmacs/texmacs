@@ -198,9 +198,10 @@ initialize_default_env () {
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
-  env (GR_GRID)          = gr_grid;        // grid for graphics
-  env (GR_GRID_ASPECT)   = gr_grid_aspect; // grid aspect
-  env (GR_EDIT_GRID)     = gr_edit_grid;   // edit grid
+  env (GR_GRID)             = gr_grid;        // grid for graphics
+  env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
+  env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
+  env (GR_EDIT_GRID_ASPECT) = gr_grid_aspect; // edit grid (subdivisions)
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

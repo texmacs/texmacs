@@ -37,7 +37,7 @@ public:
 
   virtual operator tree () = 0;
   virtual array<grid_curve> get_curves (point lim1, point lim2) = 0;
-  virtual point find_closest_point (point p) = 0;
+  virtual point find_closest_point (point p, point pmin, point pmax) = 0;
 };
 
 class grid {

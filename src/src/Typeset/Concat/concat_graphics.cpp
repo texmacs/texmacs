@@ -30,12 +30,13 @@ concater_rep::typeset_graphics (tree t, path ip) {
   grid gr= as_grid (env->read (GR_GRID));
   array<box> bs (n+1);
   gr->set_aspect (env->read (GR_GRID_ASPECT));
-  bs[0]= grid_box (ip, gr, env->fr, env-> dis, env->clip_lim1, env->clip_lim2);
+  bs[0]= grid_box (ip, gr, env->fr, env->clip_lim1, env->clip_lim2);
   for (i=0; i<n; i++)
     bs[i+1]= typeset_as_concat (env, t[i], descend (ip, i));
   // if (n == 0) bs << empty_box (decorate_right (ip));
-  box b= graphics_box (ip, bs, env->fr, as_grid (env->read (GR_EDIT_GRID)),
-		       env->clip_lim1, env->clip_lim2);
+  gr= as_grid (env->read (GR_EDIT_GRID));
+  gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
+  box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
   print (STD_ITEM, b);
 }
 
