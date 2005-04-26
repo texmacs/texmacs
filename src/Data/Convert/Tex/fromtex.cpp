@@ -226,6 +226,23 @@ test_alpha_on_end (tree t) {
   return false;
 }
 
+string
+string_arg (tree t) {
+  if (is_atomic (t)) return t->label;
+  else if (is_concat (t)) {
+    string r;
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      r << string_arg (t[i]);
+    return r;
+  }
+  else if (is_func (t, RSUB, 1))
+    return "_" * string_arg (t[0]);
+  else if (is_func (t, RSUP, 1))
+    return "^" * string_arg (t[0]);
+  else return "";
+}
+
 tree
 latex_concat_to_tree (tree t, bool& new_flag) {
   int i, n=N(t);
@@ -417,12 +434,12 @@ latex_index_to_tree (string s) {
 tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
-    string var= as_string (t[1]);
+    string var= string_arg (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
     return tree (ASSIGN, var, tree (FUNC, l2e (t[2])));
   }
   if (is_tuple (t, "\\def*", 3)) {
-    string var= as_string (t[1]);
+    string var= string_arg (t[1]);
     if ((N(var)>0) && (var[0]=='\\')) var= var (1, N(var));
     int i, arity= as_int (l2e(t[2]));
     tree f (FUNC);
@@ -490,7 +507,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mathbb", 1))   return m2e (t, MATH_FONT, "Bbb");
   if (is_tuple (t, "\\mathbbm", 1))   return m2e (t, MATH_FONT, "Bbb*");
 
-  if (is_tuple (t, "\\prime", 1))  return tree (RPRIME, as_string (t[1]));
+  if (is_tuple (t, "\\prime", 1))  return tree (RPRIME, string_arg (t[1]));
   if (is_tuple (t, "\\frac", 2))  return tree (FRAC, l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\sqrt", 1))  return tree (SQRT, l2e (t[1]));
   if (is_tuple (t, "\\sqrt*", 2)) return tree (SQRT, l2e (t[2]), l2e (t[1]));
@@ -556,19 +573,19 @@ latex_command_to_tree (tree t) {
   }
   if (is_tuple (t, "\\cite", 1) || is_tuple (t, "\\nocite", 1)) {
     string cite_type= t[0]->label (1, N(t[0]->label));
-    string s= as_string (t2e(t[1]));
+    string s= string_arg (t2e(t[1]));
     return latex_cite_to_tree (cite_type, s);
   }
   if (is_tuple (t, "\\cite*", 2)) {
     tree   ot= t2e(t[1])->label;
-    string s = as_string (t2e(t[2]));
+    string s = string_arg (t2e(t[2]));
     tree   ct= latex_cite_to_tree ("cite", s);
     return tree (CONCAT, ct, " (", ot, ")");
   }
   if (is_tuple (t, "\\citedetail", 2))
     return compound ("cite-detail", l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\index", 1)) {
-    string s= as_string (t2e (t[1]));
+    string s= string_arg (t2e (t[1]));
     return latex_index_to_tree (s);
   }
   if (is_tuple (t, "\\displaylines", 1)) {
@@ -689,7 +706,7 @@ static tree
 parse_matrix_params (tree t) {
   tree tformat (TFORMAT);
   if (N(t) <= 1) return tformat;
-  string s= as_string (t[1]);
+  string s= string_arg (t[1]);
   int i, n= N(s), col=1;
   for (i=0; i<n; i++) {
     switch (s[i]) {
@@ -1019,7 +1036,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
     if (t[0] == "usepackage") return true;
     if ((t[0] == "documentstyle") ||
 	(t[0] == "documentclass")) {
-      style= t[1]->label;
+      style= string_arg (t[1]);
       return true;
     }
   }
@@ -1027,7 +1044,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
     if (t[0] == "usepackage*") return true;
     if ((t[0] == "documentstyle*") ||
 	(t[0] == "documentclass*")) {
-      style= t[2]->label;
+      style= string_arg (t[2]);
       return true;
     }
   }
