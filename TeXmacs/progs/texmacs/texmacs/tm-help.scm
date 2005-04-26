@@ -75,7 +75,7 @@
 (define (load-help-book s) (load-help-buffer-sub s "book"))
 
 (define (load-help-online s)
-  (load-help-buffer (url-append "http://www.gnu.org/software/texmacs-doc" s)))
+  (load-help-buffer (url-append "http://www.texmacs.org/tmbrowse" s)))
 
 (define (update-help-online)
   (system "cd $TEXMACS_HOME_PATH; wget ftp://ftp.texmacs.org/pub/TeXmacs/doc/TeXmacs-doc.tar.gz -O TeXmacs-doc.tar.gz; gunzip TeXmacs-doc.tar.gz; tar -xvf TeXmacs-doc.tar; rm -f TeXmacs-doc.tar"))
