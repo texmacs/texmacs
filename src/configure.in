@@ -357,7 +357,7 @@ esac
 
 AC_CANONICAL_HOST
 case "${host}" in
-  i*86-*-linux-gnu* | i*86-*-freebsd*)
+  i*86-*-linux* | i*86-*-freebsd*)
     AC_MSG_RESULT(final setup for an Intel/GNU-linux host)
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
@@ -397,7 +397,28 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  mips-*-linux-gnu)
+  x86_64-*-linux* | x86_64-*-freebsd*)
+    AC_MSG_RESULT(final setup for an AMD64/x86_64/GNU-linux host)
+    CONFIG_OS="GNU_LINUX"
+    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  mips-*-linux*)
     AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
     CONFIG_OS="MIPS_GNU_LINUX"
     CONFIG_OS_SUFFIX="mips-gnu-linux"
@@ -418,7 +439,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  mipsel-*-linux-gnu)
+  mipsel-*-linux*)
     AC_MSG_RESULT(final setup for a MipsEL/GNU-linux host)
     CONFIG_OS="MIPSEL_GNU_LINUX"
     CONFIG_OS_SUFFIX="mipsel-gnu-linux"
@@ -439,7 +460,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  arm*-*-linux-gnu)
+  arm*-*-linux*)
     AC_MSG_RESULT(final setup for an Arm/GNU-linux host)
     CONFIG_OS="ARM_GNU_LINUX"
     CONFIG_OS_SUFFIX="arm-gnu-linux"
@@ -460,7 +481,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  powerpc-*-linux-gnu*)
+  powerpc-*-linux*)
     AC_MSG_RESULT(final setup for a PowerPC/GNU-linux host)
     CONFIG_OS="POWERPC_GNU_LINUX"
     CONFIG_OS_SUFFIX="powerpc-gnu-linux"
@@ -503,7 +524,7 @@ case "${host}" in
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
-  sparc*-*-linux-gnu)
+  sparc*-*-linux*)
     AC_MSG_RESULT(final setup for a Sparc host running GNU/Linux)
     CONFIG_OS="SPARC_GNU_LINUX"
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
@@ -547,7 +568,7 @@ case "${host}" in
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
-  *alpha*-*-linux-gnu*)
+  *alpha*-*-linux*)
     AC_MSG_RESULT(final setup for an Alpha/GNU-Linux host)
     CONFIG_OS="ALPHA_GNU_LINUX"
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
@@ -566,7 +587,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  s390-*-linux-gnu*)
+  s390-*-linux*)
     AC_MSG_RESULT(final setup for an IBM S/390 GNU-Linux host)
     CONFIG_OS="S390"
     CONFIG_OS_SUFFIX="s390"
@@ -633,7 +654,7 @@ case "${host}" in
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
-  ia64-*-linux-gnu*)
+  ia64-*-linux*)
     AC_MSG_RESULT(final setup for an Itanium/GNU-Linux host)
     CONFIG_OS="IA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
@@ -652,7 +673,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa*-*-linux-gnu*)
+  hppa-*-linux*)
     AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
     CONFIG_OS="HPPA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="hppa64-gnu-linux"
@@ -693,7 +714,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  *-*-linux-gnu*)
+  *-linux*)
     AC_MSG_RESULT(final setup for an unknown host running GNU/Linux)
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
