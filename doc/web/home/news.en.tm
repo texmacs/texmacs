@@ -1,10 +1,33 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.5>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
+
+  <section*|Version 1.0.5 has been released>
+
+  The main improvements with respect to <TeXmacs>-1.0.4 are:
+
+  <\itemize>
+    <item>The Windows port of <TeXmacs> is <hlink|available
+    now|../download/windows.en.tm>.
+
+    <item>Addition of the (still imperfect) <verbatim|svmono>,
+    <verbatim|svjour>, <verbatim|elsart> and <verbatim|ifac> styles.
+
+    <item>A more complete documentation on how to write style files.
+
+    <item>German translation of the manual by Dietmar Jung.
+
+    <item>Several minor improvements in performance.
+
+    <item>Updated and improved Maxima plug-in for upcoming version 5.9.2 of
+    Maxima.
+
+    <item>Addition of a plug-in for Dra<TeX>.
+  </itemize>
 
   <section*|A beta-version of the Windows port has been released>
 
@@ -60,7 +83,7 @@
     <item>Thorough reorganization of the style files, implementation of
     "mutator" tags, and location-awareness of internal trees.
 
-    <item>upport for the Danish language and partial translation of the
+    <item>Support for the Danish language and partial translation of the
     documentation into Polish.
   </itemize>
 

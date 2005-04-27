@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.5>
 
 <style|tmdoc>
 
@@ -13,6 +13,10 @@
     Cygwin package.
 
     <item>Martin Costabel ported <TeXmacs> to MacOSX.
+
+    <item>Ralf Treinen and others has been ensuring the portability of
+    <TeXmacs> to all architectures supported by <name|Debian>
+    <name|Gnu>/<name|Linux>.
 
     <item>Bruno Haible and Gregory Wright helped with porting <TeXmacs> to
     the SUN system and maintaining it.
@@ -32,28 +36,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|<uninit>|?>>
-  </collection>
-</references>

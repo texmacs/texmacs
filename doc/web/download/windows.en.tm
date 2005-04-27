@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.5>
 
 <style|tmweb>
 
@@ -6,24 +6,29 @@
   <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
   <name|Windows>|<tmweb-download-links>>
 
-  We recently released a <with|mode|math|\<beta\>>-version of the
-  <name|Windows>-port of <TeXmacs>. This <name|Windows> version of <TeXmacs>
-  is easy to install and should provide you with the basic functionality of
-  the program. However, the port is still a bit buggy, so please let us know
-  about possible problems.
+  Since <TeXmacs>-1.0.5, the <name|Windows>-port of <TeXmacs> has become
+  sufficiently stable for the needs of most users. It has the advantage of
+  being <hlink|easy to install|#install> and relatively modest in size (less
+  than 20Mb). Some minor <hlink|problems|#problems> are still particular to
+  the Windows port. We invite you to report any other problems or <hlink|help
+  us|#help> to solve them.
 
-  For a fully operational <TeXmacs>, you may either install
-  <hlink|<name|Cygwin>|cygwin.en.tm> on your <name|Windows> system, or
-  migrate to <no-break><name|Unix>. You may also <hlink|help us|#help> with
-  improving the <name|Windows> port.
+  As an alternative, we also provide a <hlink|<name|Cygwin>|cygwin.en.tm>
+  port of <TeXmacs>. This port behaves in a very similar way as the
+  <name|Unix> version of <TeXmacs>, but it requires the prior installation of
+  <name|Cygwin> and a<nbsp><LaTeX> system. It is likely to be a bit slower
+  than the native <name|Windows> version, but the number of supported
+  plug-ins is still a bit larger.
 
-  <section|Installation of <TeXmacs>>
+  <section|Installation of <TeXmacs>><label|install>
 
   In order to install <TeXmacs> on Windows, you should:
 
   <\enumerate>
     <item>Download <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|.exe>>>
-    (18Mb).
+    (18Mb). If you don't have ftp access, then you may also
+    <hlink|download|http://www.texmacs.org/Download/ftp/windows/stable/<merge|<TeXmacs-version-release|win>|.exe>>
+    this file from the web.
 
     <item>Install <TeXmacs> by executing <verbatim|<merge|<TeXmacs-version-release|win>|.exe>>
     and following the instructions on the screen. You may delete
@@ -55,8 +60,8 @@
     <item>The online help system (using <key|F1>) is broken.
 
     <item>Connections via pipes are still under development. Some interfaces
-    work (<name|Pari> and <name|Yacas>), but others don't. Any help with
-    getting these other ones working would be appreciated.
+    work (<name|Pari>, <name|Yacas> and <name|Maxima>), but others don't. Any
+    help with getting these other ones working would be appreciated.
 
     <item>Popup menus sometimes remain visible after clicking on one of the
     items. In that case, clicking anywhere in the <TeXmacs> window should

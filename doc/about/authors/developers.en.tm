@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.5>
 
 <style|tmdoc>
 
@@ -6,6 +6,8 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
+    <item>Dan Martens made the <name|Windows> port.
+
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -14,10 +16,11 @@
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
-    <item>Dan Martens made the <name|Windows> port.
-
     <item>Henri Lesourd is working on native technical drawing support in
     <TeXmacs>. He also fixed a bug in the presentation mode.
+
+    <item>Andreas Seidl has been helping with documentation, a Cygwin package
+    and several other things.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
@@ -26,9 +29,6 @@
     <item>Karim Belabas designed and developed with me the first protocol for
     interfacing <TeXmacs> with scientific computation or computer algebra
     systems. He also implemented the interface with the Pari system.
-
-    <item>Andreas Seidl has been helping with documentation, a Cygwin package
-    and several other things.
 
     <item>Felix Breuer helped with the support of Unicode and other character
     encodings. He also made a donation to the project.
@@ -65,6 +65,8 @@
     <item>Jonas Lööf for a precise installation procedure on Cygwin.
 
     <item>Rob Clark made a patch which improves the system time support.
+
+    <item>Stanislav Brabec for several patches so as to increase portability.
   </itemize>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
