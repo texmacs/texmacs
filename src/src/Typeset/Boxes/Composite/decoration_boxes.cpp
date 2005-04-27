@@ -41,22 +41,17 @@ struct specific_box_rep: public box_rep {
 ******************************************************************************/
 
 struct flag_box_rep: public composite_box_rep {
-  color light, old_bg;
+  color light;
   flag_box_rep (path ip, box b, SI h, SI lw, color dark, color light);
   operator tree () { return tree (TUPLE, "flag"); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  bool display_background (ps_device dev, color& col);
 };
 
-void
-flag_box_rep::pre_display (ps_device &dev) {
-  old_bg= dev->get_background ();
+bool
+flag_box_rep::display_background (ps_device dev, color& col) {
+  col= dev->get_background ();
   dev->set_background (light);
-}
-
-void
-flag_box_rep::post_display (ps_device &dev) {
-  dev->set_background (old_bg);
+  return true;
 }
 
 flag_box_rep::flag_box_rep (

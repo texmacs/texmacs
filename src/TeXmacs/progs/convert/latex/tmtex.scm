@@ -422,10 +422,8 @@
 (define (tmtex-next-line l) (list '!nextline))
 
 (define (tmtex-decode-length s)
-  ;; FIXME: should be completed
   (cond ((string-ends? s "fn") (string-replace s "fn" "em"))
 	((string-ends? s "spc") (string-replace s "spc" "em"))
-	((string-ends? s "par") (string-replace s "par" "\\columnwidth"))
 	(else s)))
 
 (define (tmtex-hspace l)
@@ -813,13 +811,7 @@
   (tmtex-function 'tmaction l))
 
 (define (tmtex-postscript l)
-  (let* ((fig (list 'epsfig (string-append "file=" (force-string (car l)))))
-	 (hor (if (== (cadr l) "") "!" (tmtex-decode-length (cadr l))))
-	 (ver (if (== (caddr l) "") "!" (tmtex-decode-length (caddr l)))))
-    (if (or (string-starts? hor "*") (string-starts? hor "/")) (set! hor "!"))
-    (if (or (string-starts? ver "*") (string-starts? ver "/")) (set! ver "!"))
-    (if (and (== hor "!") (== ver "!")) fig
-	(list 'resizebox hor ver fig))))
+  (list 'epsfig (string-append "file=" (force-string (car l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Titles of documents
@@ -990,9 +982,6 @@
 
 (define (tmtex-render-proof s l)
   (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
-
-(define (tmtex-nbsp s l)
-  '(!nbsp))
 
 (define (tmtex-session s l)
   (tmtex (car l)))
@@ -1172,9 +1161,8 @@
   (doc-data (,tmtex-doc-data -1))
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
-  ((:or theorem proposition lemma corollary proof axiom definition
-	notation conjecture remark note example exercise warning
-	convention quote quotation verse)
+  ((:or theorem proposition lemma corollary proof axiom definition conjecture
+	remark note example exercise warning convention quote quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   ((:or center indent body) (,tmtex-std-env 1))
@@ -1193,7 +1181,6 @@
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
   (render-proof (,tmtex-render-proof 2))
-  (nbsp (,tmtex-nbsp 0))
   (session (,tmtex-session 1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))

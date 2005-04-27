@@ -1,55 +1,10 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.4.1>
 
 <style|tmweb>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
-
-  <section*|Version 1.0.5 has been released>
-
-  The main improvements with respect to <TeXmacs>-1.0.4 are:
-
-  <\itemize>
-    <item>The Windows port of <TeXmacs> is <hlink|available
-    now|../download/windows.en.tm>.
-
-    <item>Addition of the (still imperfect) <verbatim|svmono>,
-    <verbatim|svjour>, <verbatim|elsart> and <verbatim|ifac> styles.
-
-    <item>A more complete documentation on how to write style files.
-
-    <item>German translation of the manual by Dietmar Jung.
-
-    <item>Several minor improvements in performance.
-
-    <item>Updated and improved Maxima plug-in for upcoming version 5.9.2 of
-    Maxima.
-
-    <item>Addition of a plug-in for Dra<TeX>.
-  </itemize>
-
-  <section*|A beta-version of the Windows port has been released>
-
-  A beta-version of the Windows port is <hlink|available
-  now|../download/windows.en.tm>. The new version comes with
-
-  <\itemize>
-    <item>An improved installer.
-
-    <item>Support for Windows 98 and all versions after that.
-
-    <item>Full image support.
-
-    <item>Direct integration with <name|Ghostscript> for printing.
-
-    <item>Faster and more correct display of anti-aliased characters.
-
-    <item>Support of <name|Aspell> and experimental communication by pipes.
-  </itemize>
-
-  Please try the beta-version and <hlink|let us
-  know|../contact/contact.en.tm> about possible problems!
 
   <section*|Help save the French Imprimerie Nationale heritage>
 
@@ -83,7 +38,7 @@
     <item>Thorough reorganization of the style files, implementation of
     "mutator" tags, and location-awareness of internal trees.
 
-    <item>Support for the Danish language and partial translation of the
+    <item>upport for the Danish language and partial translation of the
     documentation into Polish.
   </itemize>
 

@@ -26,8 +26,7 @@
   ("noop" (set-message "" ""))
   ("symbol" "" "Insert a TeXmacs symbol")
 
-  ("space" " ")
-  ("space tab" (make 'nbsp))
+  ("space" (insert " "))
   ("return" (make-return))
   ("backspace" (general-remove #f))
   ("delete" (general-remove #t))

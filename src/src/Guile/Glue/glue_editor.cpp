@@ -523,42 +523,6 @@ tmg_clipboard_get_export () {
 }
 
 SCM
-tmg_remove_undo_mark () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_undo_mark ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_add_undo_mark () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->add_undo_mark ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_unredoable_undo () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->unredoable_undo ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_forget_undo () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->forget_undo ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_undo () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->undo ();
@@ -2873,27 +2837,18 @@ tmg_set_graphical_object (SCM arg1) {
 }
 
 SCM
-tmg_invalidate_graphical_object () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->invalidate_graphical_object ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_graphical_select (SCM arg1, SCM arg2) {
-  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select");
-  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select");
+tmg_path_xy (SCM arg1, SCM arg2) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "path-xy");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "path-xy");
 
   double in1= scm_to_double (arg1);
   double in2= scm_to_double (arg2);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->graphical_select (in1, in2);
+  path out= get_server()->get_editor()->path_xy (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return path_to_scm (out);
 }
 
 SCM
@@ -2959,10 +2914,6 @@ initialize_glue_editor () {
   gh_new_procedure ("clipboard-set-export", (FN) tmg_clipboard_set_export, 1, 0, 0);
   gh_new_procedure ("clipboard-get-import", (FN) tmg_clipboard_get_import, 0, 0, 0);
   gh_new_procedure ("clipboard-get-export", (FN) tmg_clipboard_get_export, 0, 0, 0);
-  gh_new_procedure ("remove-undo-mark", (FN) tmg_remove_undo_mark, 0, 0, 0);
-  gh_new_procedure ("add-undo-mark", (FN) tmg_add_undo_mark, 0, 0, 0);
-  gh_new_procedure ("unredoable-undo", (FN) tmg_unredoable_undo, 0, 0, 0);
-  gh_new_procedure ("forget-undo", (FN) tmg_forget_undo, 0, 0, 0);
   gh_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   gh_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
   gh_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
@@ -3159,7 +3110,6 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
   gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
-  gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
-  gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
+  gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
   gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

@@ -68,10 +68,6 @@
   (clipboard-set-export selection_set_export (void string))
   (clipboard-get-import selection_get_import (string))
   (clipboard-get-export selection_get_export (string))
-  (remove-undo-mark remove_undo_mark (void))
-  (add-undo-mark add_undo_mark (void))
-  (unredoable-undo unredoable_undo (void))
-  (forget-undo forget_undo (void))
   (undo undo (void))
   (redo redo (void))
 
@@ -284,6 +280,5 @@
 
   (get-graphical-object get_graphical_object (tree))
   (set-graphical-object set_graphical_object (void tree))
-  (invalidate-graphical-object invalidate_graphical_object (void))
-  (graphical-select graphical_select (tree double double))
+  (path-xy path_xy (path double double))
   (texmacs-exec texmacs_exec (tree content)))

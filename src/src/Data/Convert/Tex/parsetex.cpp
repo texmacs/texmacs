@@ -81,13 +81,10 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
   while ((i<n) && is_space (s[i])) i++;
   while ((i<n) && (s[i]!=stop) && no_error) {
     switch (s[i]) {
-    case '~':
-      t << tuple ("\\nbsp");
-      i++;
-      break;
     case ' ':
+    case '~':
     case '\t':
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t'))) i++;
+      while ((i<n) && ((s[i]==' ') || (s[i]=='~') || (s[i]=='\t'))) i++;
       if ((i<n) && (s[i]!='\n')) t << " ";
       break;
     case '\n': {
@@ -303,10 +300,6 @@ latex_parser::parse_backslash (string s, int& i) {
   if (((i+29)<n) && (s(i,i+16)=="\\begin{verbatim}")) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}");
-  }
-  if (((i+6)<n) && (s(i,i+5)=="\\url{")) {
-    i+=5;
-    return parse_verbatim (s, i, "}");
   }
 
   /************************ special commands *********************************/
@@ -661,7 +654,6 @@ latex_parser::parse (string s) {
 	  a << s (start, i);
 	  start= i;
 	}
-      if (i == n) break;
     }
   a << s (start, i);
 

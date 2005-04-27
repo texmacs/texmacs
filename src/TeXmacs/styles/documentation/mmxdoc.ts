@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.0.3.4>
 
 <style|source>
 
@@ -29,16 +29,11 @@
 
   \;
 
-  <assign|mml|<with|font-shape|small-caps|Mmxlib>>
-
   <assign|mmx|<with|font-shape|small-caps|Mathemagix>>
 
   \;
 
   <assign|mmxweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Download|download>|<tmweb-link|Progress|progress>|<tmweb-link|Mailing
-  lists|ml>|<tmweb-link|Contact|contact>>>>>
-
-  <assign|mmlweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome-mml>|<tmweb-link|Download|download-mml>|<tmweb-link|Mailing
   lists|ml>|<tmweb-link|Contact|contact>>>>>
 
   <assign|aldor-fragment|<value|scheme-fragment>>
@@ -67,6 +62,18 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
     <associate|preamble|true>
+    <associate|sfactor|4>
   </collection>
 </initial>

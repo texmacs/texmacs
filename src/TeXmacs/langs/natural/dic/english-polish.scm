@@ -144,7 +144,7 @@
 ("bulgarian" "buªgarski")
 ("bullet" "kropka")
 ("bullets" "kropki")
-("by" "autor")
+("by" "twórca")
 ("by typing" "przez wpisanie")
 ("bytes free" "bajtów wolnych")
 ("bytes used" "bajtów zaj¦tych")

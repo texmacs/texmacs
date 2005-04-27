@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.3.5>
 
 <style|tmdoc>
 
@@ -6,8 +6,6 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Dan Martens made the <name|Windows> port.
-
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -16,11 +14,7 @@
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
 
-    <item>Henri Lesourd is working on native technical drawing support in
-    <TeXmacs>. He also fixed a bug in the presentation mode.
-
-    <item>Andreas Seidl has been helping with documentation, a Cygwin package
-    and several other things.
+    <item>Dan Martens made the current experimental port for <name|Windows>.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
@@ -33,18 +27,16 @@
     <item>Felix Breuer helped with the support of Unicode and other character
     encodings. He also made a donation to the project.
 
-    <item>Josef Weidendorfer made several patches for improving the
-    performance of <TeXmacs>.
+    <item>Bill Page and David Mentré for the support of the free version of
+    <name|Axiom>.
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
-    <item>Josef Weidendorfer for two patches to improve the speed of
+    <item>Andreas Seidl has been helping with documentation, a Cygwin package
+    and several other things.
+
+    <item>Henri Lesourd is working on native technical drawing support in
     <TeXmacs>.
-
-    <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
-
-    <item>Bill Page and David Mentré for the support of the free version of
-    <name|Axiom>.
 
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
@@ -64,9 +56,9 @@
 
     <item>Jonas Lööf for a precise installation procedure on Cygwin.
 
-    <item>Rob Clark made a patch which improves the system time support.
+    <item>Johann Dréo for the new <TeXmacs> icon.
 
-    <item>Stanislav Brabec for several patches so as to increase portability.
+    <item>Rob Clark made a patch which improves the system time support.
   </itemize>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -82,5 +74,17 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|page-bot|30mm>
+    <associate|page-even|30mm>
+    <associate|page-odd|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-top|15mm>
+    <associate|page-right|30mm>
+    <associate|page-top|30mm>
+    <associate|page-type|a4>
+    <associate|par-width|150mm>
+    <associate|sfactor|4>
   </collection>
 </initial>

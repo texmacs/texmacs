@@ -17,28 +17,98 @@
 * Typesetting graphics
 ******************************************************************************/
 
-/* NOTE: We use the ascending order for drawing, like in SVG. The code
-   below conforms to this convention, which says that the first elements
-   are painted first, and can be covered by the subsequent ones.
- */
-/* TODO: Check that the active elements (f.e. the <action> markup) also
-   adhere to the same convention.
- */
 void
 concater_rep::typeset_graphics (tree t, path ip) {
   int i, n= N(t);
-  grid gr= as_grid (env->read (GR_GRID));
   array<box> bs (n+1);
-  gr->set_aspect (env->read (GR_GRID_ASPECT));
-  bs[0]= grid_box (ip, gr, env->fr, env->as_length ("2ln"),
-		   env->clip_lim1, env->clip_lim2);
+  bs[0]= typeset_as_grid (env, env->read (GR_GRID),
+			  ip, env->read (GR_GRID_ASPECT));
   for (i=0; i<n; i++)
     bs[i+1]= typeset_as_concat (env, t[i], descend (ip, i));
   // if (n == 0) bs << empty_box (decorate_right (ip));
-  gr= as_grid (env->read (GR_EDIT_GRID));
-  gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
-  box b= graphics_box (ip, bs, env->fr, gr, env->clip_lim1, env->clip_lim2);
+  box b= graphics_box (ip, bs, env->fr, env->clip_lim1, env->clip_lim2);
   print (STD_ITEM, b);
+}
+
+box
+typeset_as_grid (edit_env env, tree t, path ip, tree aspect) {
+  array<SI> subd (0, 1);
+  array<color> col (env->dis->black, env->dis->black);
+  if (is_tuple (aspect)) {
+    int i;
+    bool b= false;
+    subd= array<SI> (N(aspect));
+    col= array<color> (N(aspect));
+    for (i=0; i<N(aspect); i++) {
+       if (is_tuple (aspect[i], "axes", 1)) {
+         subd[i]= 0;
+         b= true;
+       }
+       else {
+         subd[i]= as_int (aspect[i][0]);
+       }
+       col[i]= env->dis->get_color (as_string (aspect[i][1]));
+    }
+    if (!b) {
+      array<SI> subd0 (1);
+      array<color> col0 (1);
+      subd0[0]= 0;
+      col0[0]= env->dis->black;
+      subd= subd0 << subd;
+      col= col0 << col;
+    }
+    do {
+      b= true;
+      for (i=1; i<N(subd); i++)
+         if (subd[i-1]>subd[i]) {
+           SI j;
+           color c;
+           j= subd[i-1];subd[i-1]= subd[i];subd[i]= j;
+           c= col[i-1];col[i-1]= col[i];col[i]= c;
+           b= false;
+         }
+    }
+    while (!b);
+  }
+  grid gr= empty_grid ();
+  double step= 1;
+  point center= point (0.0, 0.0);
+  if (is_tuple (t, "cartesian", 1)) {
+    step= as_double (t[1]);
+    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
+    gr= cartesian (subd, col, env->fr (center), (SI)step);
+  }    
+  else   
+  if (is_tuple (t, "polar")) {
+    SI astep= 8;
+    if (is_tuple (t, "polar", 2)) {
+      step= as_double (t[1]);
+      astep= as_int (t[2]);
+    }
+    else
+    if (is_tuple (t, "polar", 3)) { 
+      center= env->as_point (t[1]);
+      step= as_double (t[2]);
+      astep= as_int (t[3]);
+    }
+    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
+    gr=polar (subd, col, env->fr (center), (SI) step, astep);
+  }
+  else
+  if (is_tuple (t, "logarithmic")) {
+    SI base= 10;
+    if (is_tuple (t, "logarithmic", 1)) {
+      base= as_int (t[1]);
+    }
+    else
+    if (is_tuple (t, "logarithmic", 2)) {
+      step= as_double (t[1]);
+      base= as_int (t[2]);
+    }
+    step= env->fr->direct_scalar (step) - env->fr->direct_scalar (0);
+    gr= logarithmic (subd, col, env->fr (center), (SI)step, base);
+  }
+  return grid_box (decorate (ip), gr, env->fr, env->clip_lim1, env->clip_lim2);
 }
 
 void
@@ -47,7 +117,7 @@ concater_rep::typeset_superpose (tree t, path ip) {
   array<box> bs (n);
   for (i=0; i<n; i++)
     bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
-  print (STD_ITEM, superpose_box (ip, bs));
+  print (STD_ITEM, composite_box (ip, bs));
 }
 
 void
@@ -86,65 +156,46 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->as_point (env->exec (t[i]));
-  array<path> cip(n);
-  for (i=0; i<n; i++)
-    cip[i]= descend (ip, i);
-  if (close) {
-    a << copy (a[0]);
-    cip << cip[0];
-  }
+  if (close) a << copy (a[0]);
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad line"), ip);
   else {
-    if (N(a) == 1) {
-      a << copy (a[0]);
-      cip << cip[0];
-    }
-    curve c= env->fr (poly_segment (a, cip));
+    if (N(a) == 1) a << copy (a[0]);
+    curve c= env->fr (poly_segment (a));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
 
 void
-concater_rep::typeset_arc (tree t, path ip, bool close) {
-  int i, n= N(t);
-  array<point> a(n);
-  for (i=0; i<n; i++)
-    a[i]= env->as_point (env->exec (t[i]));
-  array<path> cip(n);
-  for (i=0; i<n; i++)
-    cip[i]= descend (ip, i);
-  if (N(a) == 0 || N(a[0]) == 0)
+concater_rep::typeset_arc (tree t, path ip) {
+  if (N(t) != 6)
     typeset_dynamic (tree (ERROR, "bad arc"), ip);
-  else
-  if (n != 3 || linearly_dependent (a[0], a[1], a[2]) ||
-     (N (intersect (midperp (a[0], a[1], a[2]),
-		    midperp (a[1], a[2], a[0]))) == 0))
-    typeset_line (t, ip, close);
   else {
-    curve c= env->fr (arc (a, cip, close));
+    point center;
+    double r1, r2;
+    double a1, a2, a;
+    center= env->as_point (env->exec (t[0]));
+    r1= as_double (t[1]);
+    r2= as_double (t[2]);
+    a1= as_double (t[3]);
+    a2= as_double (t[4]);
+    a= as_double (t[5]);
+    curve c= env->fr (arc (center, r1, r2, a, a1, a2));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }
 
 void
-concater_rep::typeset_spline (tree t, path ip, bool close) {
+concater_rep::typeset_spline (tree t,path ip,bool close) {
   int i, n= N(t);
   array<point> a(n);
   for (i=0; i<n; i++)
     a[i]= env->as_point (env->exec (t[i]));
-  array<path> cip(n);
-  for (i=0; i<n; i++)
-    cip[i]= descend (ip, i);
   if (N(a) == 0 || N(a[0]) == 0)
     typeset_dynamic (tree (ERROR, "bad spline"), ip);
   else {
-    if (N(a) == 1) {
-      a << copy (a[0]);
-      cip << cip[0];
-    }
-    curve c= env->fr (
-      N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
+    if (N(a) == 1) a << copy (a[0]);
+    curve c= env->fr (N(a)>=3 ? spline (a, close) : poly_segment (a));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
   }
 }

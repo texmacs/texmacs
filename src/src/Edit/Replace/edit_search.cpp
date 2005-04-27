@@ -91,7 +91,7 @@ edit_replace_rep::search_upwards_with (string var, string val) {
 string
 edit_replace_rep::inside_which (tree t) {
   path p= search_upwards_in_set (t);
-  if ((p == rp) || nil (p)) return "";
+  if (p == rp) return "";
   tree st= subtree (et, p);
   if (is_func (st, COMPOUND)) return as_string (st[0]);
   else return as_string (L(st));
@@ -192,8 +192,8 @@ test_match (tree t, tree pat) {
 
 path
 edit_replace_rep::test_sub (path p, tree t) {
-  // cout << "Test " << subtree (et, path_up (p))
-  //      << " :: " << t << " at " << p << "\n";
+  //cout << "Test " << subtree (et, path_up (p))
+  //     << " :: " << t << " at " << p << "\n";
   if (is_concat (t) && (N(t) > 1)) {
     if (N(p) <= 1) return p;
     tree st= subtree (et, path_up (p, 2));
@@ -397,7 +397,7 @@ edit_replace_rep::search_next (bool forward) {
   next_match (forward);
   if (search_at == rp) {
     set_message ("No more matches for#" * w, r);
-    beep ();
+    cerr << '\a';
   }
   else set_message ("Searching#" * w, r);
 }
@@ -442,9 +442,7 @@ edit_replace_rep::search_keypress (string s) {
       }
     else if ((s == "C-c") || (s == "C-g"))
       search_stop ();
-    else if ((s == "C-r") || (s == "C-s") ||
-	     (s == "C-f") || (s == "F3") ||
-	     (s == "find") || (s == "again")) {
+    else if ((s == "C-r") || (s == "C-s") || (s == "find") || (s == "again")) {
       if (search_what == "") {
 	tree t= selection_raw_get ("search");
 	if (is_tuple (t, "texmacs", 3) &&
@@ -483,7 +481,7 @@ edit_replace_rep::search_keypress (string s) {
 	search_previous_compound (r, w);
       if (q == r) {
 	set_message ("No more matches", "search similar structure");
-	beep ();
+	cerr << '\a';
       }
       else {
 	q= q * min (N (subtree (et, q)) - 1, last_item (p));
@@ -537,7 +535,7 @@ edit_replace_rep::replace_next () {
     if (nr_replaced == 0) l= "No matches found";
     if (nr_replaced == 1) l= "Replaced one occurrence";
     set_message (l, r);
-    beep ();
+    cerr << '\a';
     set_input_normal ();
   }
   else set_message ("Replace (y,n,a)?", r);

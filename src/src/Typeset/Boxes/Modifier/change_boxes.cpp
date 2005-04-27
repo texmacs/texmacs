@@ -61,8 +61,6 @@ struct change_box_rep: public composite_box_rep {
 
   SI get_leaf_offset (string search) {
     return sx1(0) + bs[0]->get_leaf_offset (search); }
-
-  gr_selections graphical_select (SI x, SI y, SI dist);
 };
 
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
@@ -72,15 +70,6 @@ int
 change_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (child_flag) return composite_box_rep::find_child (x, y, delta, force);
   return 0;
-}
-
-gr_selections
-change_box_rep::graphical_select (SI x, SI y, SI dist) { 
-//TODO : Check if it is correct
-  if (child_flag)
-    return composite_box_rep::graphical_select (x, y, dist);
-  else
-    return bs[0]->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
 /******************************************************************************
@@ -173,13 +162,12 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
-  color fg, bg, old_bg;
+  color fg, bg;
   bool  transp;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 		SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  bool display_background (ps_device dev, color& col);
   void display (ps_device dev);
 };
 
@@ -204,18 +192,13 @@ cell_box_rep::cell_box_rep (
   finalize ();
 }
 
-void
-cell_box_rep::pre_display (ps_device& dev) {
-  if (transp) return;
-  old_bg= dev->get_background ();
+bool
+cell_box_rep::display_background (ps_device dev, color& col) {
+  if (transp) return false;
+  col= dev->get_background ();
   dev->set_background (bg);
   dev->clear (x1, y1, x2, y2);
-}
-
-void
-cell_box_rep::post_display (ps_device &dev) {
-  if (transp) return;
-  dev->set_background (old_bg);
+  return true;
 }
 
 void

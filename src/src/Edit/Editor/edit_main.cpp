@@ -143,7 +143,7 @@ string printing_on ("a4");
 void
 edit_main_rep::print (url name, bool conform, int first, int last) {
   bool pdf= (suffix (name) == "pdf");
-  url orig= resolve (name, "");
+  url orig= name;
   if (pdf) name= url_temp (".ps");
 
   string medium = env->get_string (PAGE_MEDIUM);
@@ -208,7 +208,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   delete dev;
 
   if (pdf) {
-    ps2pdf (name, orig);
+    system ("ps2pdf", name, orig);
     ::remove (name);
   }
 }

@@ -208,7 +208,6 @@ inline string as_string (tree t) {
   if (is_atomic (t)) return t->label;
   else return ""; }
 template<class T> inline tree as_tree(T x) { return (tree) x; }
-template<> inline tree as_tree(int x) { return as_string (x); }
 template<> inline tree as_tree(pointer x) { return "?"; }
 
 /******************************************************************************
@@ -247,7 +246,6 @@ tree compound (string s, tree t1);
 tree compound (string s, tree t1, tree t2);
 tree compound (string s, tree t1, tree t2, tree t3);
 tree compound (string s, tree t1, tree t2, tree t3, tree t4);
-tree compound (string s, array<tree> a);
 bool is_extension (tree t);
 bool is_extension (tree t, int n);
 bool is_compound (tree t, string s);

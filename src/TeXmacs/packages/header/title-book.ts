@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -68,8 +68,6 @@
       Author elements.
     </src-comment>
   </active*>
-
-  <assign|by-text|<macro|>>
 
   <assign|author-render-name|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<with|font-shape|small-caps|<font-magnify|1.091|<arg|x>>>>>>>
 

@@ -16,7 +16,7 @@
   (:use
     (texmacs edit edit-text) (texmacs edit edit-table)
     (texmacs edit edit-session) (texmacs edit edit-fold)
-    (texmacs edit edit-title) (texmacs edit edit-graphics))
+    (texmacs edit edit-title))
   (:export
     make-return make-shift-return
     structured-insert-left structured-insert-right
@@ -183,5 +183,4 @@
 	      (plugin-supports-completions? (get-env "prog-language")))
 	 (if (session-complete-try?) (noop)))
 	((complete-try?) (noop))
-	((in-graphics?) (graphics-choose-point))
 	(else (set-message "Use M-tab in order to insert a tab" "tab"))))

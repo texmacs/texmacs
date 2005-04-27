@@ -178,17 +178,17 @@ shrink (glyph gl, int xfactor, int yfactor,
   SI  off_y = (((Y2-1)*yfactor- dy)*PIXEL - ((ty*PIXEL)>>1))/yfactor;
 
   int i, j, x, y;
-  int index, indey, entry;
+  int index, indey;
   int ww=(X2-X1)*xfactor, hh=(Y2-Y1)*yfactor;
   STACK_NEW_ARRAY (bitmap, int, ww*hh);
   for (i=0; i<ww*hh; i++) bitmap[i]=0;
   for (y=0, index= ww*frac_y+ frac_x; y<gl->height; y++, index-=ww)
     for (x=0; x<gl->width; x++)
-      if (gl->get_1(x,y))
-        for (j=0, indey=ww*ty; j<=ty; j++, indey-=ww) {
-	  entry = index+indey+x;
-	  for (i=0; i<=tx; i++, entry++)
-	    bitmap[entry]= 1;
+      for (j=0, indey=ww*ty; j<=ty; j++, indey-=ww)
+	for (i=0; i<=tx; i++) {
+	  int entry= index+indey+x+i;
+	  int value= gl->get_1(x,y);
+	  if (value>bitmap[entry]) bitmap[entry]= value;
 	}
 
   int X, Y, sum, nr= xfactor*yfactor;

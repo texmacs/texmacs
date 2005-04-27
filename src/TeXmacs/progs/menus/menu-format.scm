@@ -218,7 +218,7 @@
       ("Medium" (make-with "font-series" "medium"))
       ("Bold" (make-with "font-series" "bold")))
   (-> "Shape"
-      ("Upright" (make-with "font-shape" "right"))
+      ("Right" (make-with "font-shape" "right"))
       ("Slanted" (make-with "font-shape" "slanted"))
       ("Italic" (make-with "font-shape" "italic"))
       ("Left slanted" (make-with "font-shape" "left-slanted"))

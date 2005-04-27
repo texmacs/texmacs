@@ -39,11 +39,7 @@ string
 eval_system (string s) {
   url temp= url_temp ();
   string temp_s= concretize (temp);
-#ifdef OS_WIN32
-  system (s * " > \"" * temp_s * "\"");
-#else
   system (s * " > " * temp_s);
-#endif
   string result;
   bool flag= load_string (temp, result, false);
   system ("rm \"" * temp_s * "\"");

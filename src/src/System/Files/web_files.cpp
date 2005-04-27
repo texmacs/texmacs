@@ -16,10 +16,6 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 
-#ifdef OS_WIN32
-#include <urlget.h>
-#endif
-
 #define MAX_CACHED 25
 static int web_nr=0;
 static array<tree> web_cache (MAX_CACHED);
@@ -66,34 +62,6 @@ get_from_web (url name) {
   url res= get_cache (name);
   if (!is_none (res)) return (res);
 
-#ifdef OS_WIN32
-  char *urlPath;
-  char *tempFilePath;
-  string urlString = as_string(name);
-  url tmp = url_temp();
-	
-  if(starts(urlString, "www."))
-    urlString = "http://" * urlString;
-  else if(starts(urlString, "ftp."))
-    urlString = "ftp://" * urlString;
-  else if(starts(urlString, "ftp://"))
-    urlPath = NULL;
-  else if(starts(urlString, "http://"))
-    urlPath = NULL;
-  else
-    urlString = "http://" * urlString;
-
-  urlPath = as_charp(urlString);
-  tempFilePath = as_charp(as_string(tmp));
-
-  if(!URL_Get(urlPath, tempFilePath)){
-    delete [] urlPath;
-    delete [] tempFilePath;
-    return url_none();
-  }
-	
-  else return set_cache (name, tmp);
-#else
   string test= var_eval_system ("which wget");
   if (!ends (test, "wget")) return url_none ();
   url tmp= url_temp ();
@@ -108,7 +76,6 @@ get_from_web (url name) {
     return url_none ();
   }
   else return set_cache (name, tmp);
-#endif
 }
 
 url
