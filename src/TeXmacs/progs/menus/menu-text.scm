@@ -13,11 +13,51 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menus menu-text)
-  (:use (texmacs edit edit-text) (texmacs edit edit-format)))
+  (:use (texmacs edit edit-text) (texmacs edit edit-format)
+	(texmacs edit edit-title)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind author-menu
+  ("Insert author" (make-doc-data-element 'doc-author-data))
+  ---
+  (when (inside? "doc-author-data")
+	("Address" (make-author-data-element 'author-address))
+	("Email" (make-author-data-element 'author-email))
+	("Homepage" (make-author-data-element 'author-homepage))
+	("Note" (make-author-data-element 'author-note))))
+
+(menu-bind title-menu
+  (when (not (inside? "doc-data"))
+	("Insert title" (make-doc-data)))
+  ---
+  (when (inside? "doc-data")
+	("Subtitle" (make-doc-data-element 'doc-subtitle))
+	(-> "Author" (link author-menu))
+	(-> "Date"
+	    ("Default" (make-doc-data-element 'doc-date))
+	    ("Today"
+	     (begin (make-doc-data-element 'doc-date) (make-arity 'date 0))))
+	(-> "Note"
+	    ("General note" (make-doc-data-element 'doc-note))
+	    ("Written with TeXmacs" (begin (make-doc-data-element 'doc-note)
+					   (make 'with-TeXmacs-text))))
+	(-> "Hidden"
+	    (if (doc-data-disactivated?)
+		("Activate hidden" (doc-data-activate-all)))
+	    (if (not (doc-data-disactivated?))
+		("Show hidden" (doc-data-disactivate-all)))
+	    ---
+	    ("Running title" (make-doc-data-element 'doc-running-title))
+	    ("Running author" (make-doc-data-element 'doc-running-author))
+	    ("Keywords" (make-doc-data-element 'doc-keywords))
+	    ("A.M.S. subject classification"
+	     (make-doc-data-element 'doc-AMS-class))))
+  ---
+  (when (and (not (inside? "doc-data")) (not (inside? "abstract")))
+	("Abstract" (make 'abstract))))
 
 (menu-bind letter-header-menu
   (when (not (inside? "letter-header"))
@@ -41,34 +81,12 @@
   ("Date" (begin (go-end-of-header-element) (make 'title-date)))
   ("Title" (make-header 'title)))
 
-(menu-bind title-menu
-  (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Make title" (begin (make 'make-title) (make 'title))))
-  (when (inside? "make-title")
-	("Title" (make-header 'title))
-	("Author" (make-header 'author))
-	("Address" (make-header 'address))
-	("Email" (make-header 'title-email))
-	("Date" (make-header 'title-date))
-	---
-	("TeXmacs notice" (make 'made-by-TeXmacs))
-	("Running title" (make-header 'header-title))
-	("Running author" (make-header 'header-author))
-	("Address block" (make 'address-block))
-	("Today" (begin (make-header 'title-date)
-			(make-arity 'date 0))))
-  ---
-  (when (and (not (inside? "make-title")) (not (inside? "abstract")))
-	("Abstract" (make 'abstract)))
-  (when (and (not (inside? "make-title")) (inside? "abstract"))
-	("Keywords" (make-section 'keywords))
-	("A.M.S. subject classification" (make-section 'AMS-class))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind chapter-menu
+  ("Part" (make-section 'part))
   ("Chapter" (make-section 'chapter))
   ("Appendix" (make-section 'appendix))
   ("Prologue" (make-unnamed-section 'prologue))
@@ -99,6 +117,7 @@
 	  ("Proof" (make 'proof))
 	  ("Axiom" (make 'axiom))
 	  ("Definition" (make 'definition))
+	  ("Notation" (make 'notation))
 	  ---
 	  ("Remark" (make 'remark))
 	  ("Note" (make 'note))
@@ -141,6 +160,17 @@
   ("Subscript" (make-script #f #t))
   ("Superscript" (make-script #t #t)))
 
+(menu-bind size-tag-menu
+  ("Really tiny" (make 'really-tiny))
+  ("Tiny" (make 'tiny))
+  ("Very small" (make 'very-small))
+  ("Small" (make 'small))
+  ("Normal" (make 'normal-size))
+  ("Large" (make 'large))
+  ("Very large" (make 'very-large))
+  ("Huge" (make 'huge))
+  ("Really huge" (make 'really-huge)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enumerations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -180,8 +210,10 @@
     '("Bibliography style:" "Bibliography file:") 'make-bib))
   ("Index" (make-aux "the-index" "idx"))
   ("Glossary" (make-aux "the-glossary" "gly"))
-  ("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
-  ("List of tables" (make-aux* "the-glossary*" "table" "List of tables")))
+  ;;("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
+  ;;("List of tables" (make-aux* "the-glossary*" "table" "List of tables"))
+  ("List of figures" (make-aux "list-of-figures" "figure"))
+  ("List of tables" (make-aux "list-of-tables" "table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus
@@ -203,7 +235,8 @@
       (-> "Section" (link section-menu)))
   (if (style-has? "std-markup-dtd")
       (-> "Environment" (link environment-menu))
-      (-> "Content tag" (link content-tag-menu)))
+      (-> "Content tag" (link content-tag-menu))
+      (-> "Size tag" (link size-tag-menu)))
   (-> "Presentation tag" (link presentation-tag-menu))
   (if (style-has? "std-dtd")
       ---)

@@ -279,9 +279,11 @@ x_font_rep::x_font_rep (
   display_size = y2-y1;
   design_size  = size << 8;
 
-  // get character heights
+  // get character dimensions
   get_extents ("x", ex);
-  yx           = ex->y4;
+  yx           = ex->y2;
+  get_extents ("M", ex);
+  wquad        = ex->x2;
 
   // compute other heights
   yfrac        = yx >> 1;
@@ -292,10 +294,10 @@ x_font_rep::x_font_rep (
   ysup_hi_lim  = yx;
   yshift       = yx/6;
 
-  // compute widths
+  // compute other widths
   wpt          = (dpi*PIXEL)/72;
-  wquad        = (wpt*design_size) >> 8;
-  wline        = wquad/20;
+  wfn          = (wpt*design_size) >> 8;
+  wline        = wfn/20;
 
   // get fraction bar parameters
   get_extents ("-", ex);
@@ -305,7 +307,7 @@ x_font_rep::x_font_rep (
   get_extents (" ", ex);
   spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
   extra= spc;
-  sep  = wquad/10;
+  sep  = wfn/10;
 
   // get_italic space
   get_extents ("f", ex);

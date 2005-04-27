@@ -135,26 +135,21 @@ concater_rep::typeset_concat (tree t, path ip) {
 
 void
 concater_rep::typeset_hspace (tree t, path ip) {
-  if (N(t)==1) {
-    string s= as_string (t[0]);
-    print (space (env->decode_length (s * "-"),
-		  env->decode_length (s),
-		  env->decode_length (s * "+")));
-  }
-  else print (space (env->decode_length (t[0]),
-		     env->decode_length (t[1]),
-		     env->decode_length (t[2])));
+  if (N(t)==1) print (env->as_hspace (t[0]));
+  else print (space (env->as_length (t[0]),
+		     env->as_length (t[1]),
+		     env->as_length (t[2])));
   control (t, ip);
 }
 
 void
 concater_rep::typeset_space (tree t, path ip) {
-  SI w = env->decode_length (t[0]);
+  SI w = env->as_length (t[0]);
   SI y1= 0;
   SI y2= env->fn->yx;
   if (N(t)==3) {
-    y1= env->decode_length (t[1]);
-    y2= env->decode_length (t[2]);
+    y1= env->as_length (t[1]);
+    y2= env->as_length (t[2]);
   }
   print (STD_ITEM, empty_box (ip, 0, y1, w, y2));
 }
@@ -168,8 +163,8 @@ concater_rep::typeset_move (tree t, path ip) {
   // IDEA: set left, right, bottom, top environment variables
   //       and allow doing computations with them
   box  b= typeset_as_concat (env, t[0], descend (ip, 0));
-  SI   x= env->decode_length (t[1]);
-  SI   y= env->decode_length (t[2]);
+  SI   x= env->as_length (env->exec (t[1]));
+  SI   y= env->as_length (env->exec (t[2]));
   print (STD_ITEM, move_box (ip, b, x, y, true));
 }
 
@@ -203,7 +198,7 @@ resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
   }
 
   if (flag) {
-    SI arg= env->decode_length (s (2, N(s)));
+    SI arg= env->as_length (s (2, N(s)));
     switch (s[1]) {
     case '+': return offset + arg;
     case '-': return offset - arg;
@@ -212,7 +207,7 @@ resize (edit_env env, SI old, SI minimum, SI maximum, tree new_size) {
     default : return arg;  
     }
   }
-  else return env->decode_length (s);
+  else return env->as_length (s);
 }
 
 void
@@ -220,10 +215,10 @@ concater_rep::typeset_resize (tree t, path ip) {
   // IDEA: set left, right, bottom, top environment variables
   //       and allow doing computations with them
   box  b = typeset_as_concat (env, t[0], descend (ip, 0));
-  SI   x1= resize (env, b->x1, b->x1, b->x2, t[1]);
-  SI   y1= resize (env, b->y1, b->y1, b->y2, t[2]);
-  SI   x2= resize (env, b->x2, b->x1, b->x2, t[3]);
-  SI   y2= resize (env, b->y2, b->y2, b->y2, t[4]);
+  SI   x1= resize (env, b->x1, b->x1, b->x2, env->exec (t[1]));
+  SI   y1= resize (env, b->y1, b->y1, b->y2, env->exec (t[2]));
+  SI   x2= resize (env, b->x2, b->x1, b->x2, env->exec (t[3]));
+  SI   y2= resize (env, b->y2, b->y2, b->y2, env->exec (t[4]));
   bool fl= is_atomic (t[1]) && (N(t[1]->label)!=0) && (t[1]->label[0]=='@');
   print (STD_ITEM, resize_box (ip, b, x1, y1, x2, y2, true, !fl));
 }

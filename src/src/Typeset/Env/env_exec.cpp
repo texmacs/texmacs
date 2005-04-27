@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
+#include "typesetter.hpp"
 
 extern int script_status;
 
@@ -35,15 +36,7 @@ edit_env_rep::exec_string (tree t) {
 
 // Hack to transmit the current environment back to C++
 // across the Scheme level, and to maintain reentrancy.
-static bool current_rewrite_env_unspecified= true;
-static concrete_struct never_used= concrete_struct ();
-static edit_env current_rewrite_env= edit_env ((edit_env_rep*)&never_used);
-
-edit_env
-get_current_rewrite_env (bool &b) {
-  b= !current_rewrite_env_unspecified;
-  return current_rewrite_env;
-}
+static edit_env current_rewrite_env= edit_env ();
 
 tree
 edit_env_rep::rewrite (tree t) {
@@ -51,22 +44,23 @@ edit_env_rep::rewrite (tree t) {
   case EXTERN:
     {
       int i, n= N(t);
-      string s= "(" * as_string (exec (t[0]));
-      for (i=1; i<n; i++)
-	s << " '" << tree_to_scheme (exec (t[i]));
-      s << ")";
+      tree r (TUPLE, n);
+      for (i=0; i<n; i++)
+	r[i]= exec (t[i]);
+      object expr= null_object ();
+      for (i=n-1; i>0; i--)
+	expr= cons (object (r[i]), expr);
+      string fun= as_string (exec (t[0]));
+      expr= cons (string_to_object (fun), expr);
       if (script_status < 2) {
-	if (!as_bool (eval ("(secure? '" * s * ")")))
+	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
       }
       edit_env old_env= current_rewrite_env;
-      bool old_env_unspecified= current_rewrite_env_unspecified;
       current_rewrite_env= edit_env (this);
-      current_rewrite_env_unspecified= false;
-      object o= eval (s);
+      object o= eval (expr);
       current_rewrite_env= old_env;
-      current_rewrite_env_unspecified= old_env_unspecified;
-      return stree_to_tree (o);
+      return content_to_tree (o);
     }
   case MAP_ARGS:
     {
@@ -131,6 +125,13 @@ edit_env_rep::rewrite (tree t) {
 
 tree
 edit_env_rep::exec_rewrite (tree t) {
+  /*
+  cout << "t= " << t << "\n";
+  tree r= rewrite (t);
+  r= exec (r);
+  cout << "r= " << r << "\n";
+  return r;
+  */
   return exec (rewrite (t));
 }
 
@@ -142,6 +143,13 @@ edit_env_rep::exec_until_rewrite (tree t, path p, string var, int level) {
        << "  -> " << rewrite (t) << "\n";
   */
   return exec_until (rewrite (t), p, var, level);
+}
+
+tree
+texmacs_exec (edit_env env, tree cmd) {
+  // re-entrancy
+  if (!nil (current_rewrite_env)) env= current_rewrite_env;
+  return env->exec (cmd);
 }
 
 /******************************************************************************
@@ -198,7 +206,7 @@ edit_env_rep::exec (tree t) {
   case EVAL:
     return exec (exec (t[0]));
   case QUOTE:
-    return copy (t[0]);
+    return t[0];
   case QUASI:
     return exec (exec_quasiquoted (t[0]));
   case QUASIQUOTE:
@@ -206,6 +214,8 @@ edit_env_rep::exec (tree t) {
   case UNQUOTE:
   case VAR_UNQUOTE:
     return exec (t[0]);
+  case COPY:
+    return copy (exec (t[0]));
   case IF:
   case VAR_IF:
     return exec_if (t);
@@ -231,13 +241,11 @@ edit_env_rep::exec (tree t) {
   case NOT:
     return exec_not (t);
   case PLUS:
-    return exec_plus (t);
   case MINUS:
-    return exec_minus (t);
+    return exec_plus_minus (t);
   case TIMES:
-    return exec_times (t);
   case OVER:
-    return exec_over (t);
+    return exec_times_over (t);
   case DIV:
     return exec_divide (t);
   case MOD:
@@ -254,6 +262,8 @@ edit_env_rep::exec (tree t) {
     return exec_date (t);
   case TRANSLATE:
     return exec_translate (t);
+  case CHANGE_CASE:
+    return exec_change_case (t);
   case FIND_FILE:
     return exec_find_file (t);
   case IS_TUPLE:
@@ -273,6 +283,55 @@ edit_env_rep::exec (tree t) {
   case GREATEREQ:
     return exec_greatereq (t);
 
+  case CM_LENGTH:
+    return exec_cm_length ();
+  case MM_LENGTH:
+    return exec_mm_length ();
+  case IN_LENGTH:
+    return exec_in_length ();
+  case PT_LENGTH:
+    return exec_pt_length ();
+  case BP_LENGTH:
+    return exec_bp_length ();
+  case DD_LENGTH:
+    return exec_dd_length ();
+  case PC_LENGTH:
+    return exec_pc_length ();
+  case CC_LENGTH:
+    return exec_cc_length ();
+  case FS_LENGTH:
+    return exec_fs_length ();
+  case FBS_LENGTH:
+    return exec_fbs_length ();
+  case EM_LENGTH:
+    return exec_em_length ();
+  case LN_LENGTH:
+    return exec_ln_length ();
+  case SEP_LENGTH:
+    return exec_sep_length ();
+  case YFRAC_LENGTH:
+    return exec_yfrac_length ();
+  case EX_LENGTH:
+    return exec_ex_length ();
+  case FN_LENGTH:
+    return exec_fn_length ();
+  case FNS_LENGTH:
+    return exec_fns_length ();
+  case BLS_LENGTH:
+    return exec_bls_length ();
+  case SPC_LENGTH:
+    return exec_spc_length ();
+  case XSPC_LENGTH:
+    return exec_xspc_length ();
+  case PAR_LENGTH:
+    return exec_par_length ();
+  case PAG_LENGTH:
+    return exec_pag_length ();
+  case TMPT_LENGTH:
+    return exec_tmpt_length ();
+  case PX_LENGTH:
+    return exec_px_length ();
+
   case STYLE_WITH:
   case VAR_STYLE_WITH:
     return exec (t[N(t)-1]);
@@ -288,6 +347,12 @@ edit_env_rep::exec (tree t) {
 
   case _POINT:
     return exec_point (t);
+  case BOX_INFO:
+    return exec_box_info (t);
+  case FRAME_DIRECT:
+    return exec_frame_direct (t);
+  case FRAME_INVERSE:
+    return exec_frame_inverse (t);
 
   default:
     if (L(t) < START_EXTENSIONS) {
@@ -332,7 +397,7 @@ edit_env_rep::exec_assign (tree t) {
   if (N(t)!=2) return tree (ERROR, "bad assignment");
   tree r= exec (t[0]);
   if (is_compound (r)) return tree (ERROR, "bad assignment");
-  assign (r->label, t[1]);
+  assign (r->label, copy (t[1]));
   return tree (ASSIGN, r, tree (QUOTE, read (r->label)));
 }
 
@@ -407,8 +472,11 @@ edit_env_rep::exec_compound (tree t) {
 	macro_arg->item (f[0]->label)= t;
     }
     else for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+      if (is_atomic (f[i])) {
+	tree st= i<m? t[i+d]: tree (UNINIT);
+	macro_arg->item (f[i]->label)= st;
+	macro_src->item (f[i]->label)= obtain_ip (st);
+      }
     tree r= exec (f[n]);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
@@ -435,6 +503,11 @@ edit_env_rep::exec_drd_props (tree t) {
 	  drd->set_arity (l, as_int (val), 0,
 			  ARITY_NORMAL, CHILD_DETAILED);
 	drd->freeze_arity (l);
+      }
+      if (prop == "border") {
+	if (val == "yes") drd->set_no_border (l, false);
+	if (val == "no") drd->set_no_border (l, true);
+	drd->freeze_no_border (l);
       }
       if (prop == "accessible") {
 	if (val == "none") {
@@ -728,79 +801,79 @@ edit_env_rep::exec_not (tree t) {
 }
 
 tree
-edit_env_rep::exec_plus (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad plus");
-  tree t1= exec (t[0]);
-  tree t2= exec (t[1]);
-  if (is_compound (t1) || is_compound (t2))
-    return tree (ERROR, "bad plus");
-  string s1= t1->label;
-  string s2= t2->label;
-  if (is_double (s1) && is_double (s2))
-    return as_string (as_double (s1)+ as_double (s2));
-  if (is_length (s1) && is_length (s2))
-    return add_lengths (s1, s2);
-  return tree (ERROR, "bad plus");
+edit_env_rep::exec_plus_minus (tree t) {
+  int i, n= N(t);
+  if (n==0) return tree (ERROR, "bad plus/minus");
+  tree inc= exec (t[0]);
+  if (is_double (inc)) {
+    double acc= as_double (inc);
+    if ((n==1) && is_func (t, MINUS))
+      acc= -acc;
+    for (i=1; i<n; i++) {
+      tree inc= exec (t[i]);
+      if (!is_double (inc))
+	return tree (ERROR, "bad plus/minus");
+      if ((i == n-1) && is_func (t, MINUS))
+	acc -= as_double (inc);
+      else acc += as_double (inc);
+    }
+    return as_string (acc);
+  }
+  else if (is_anylen (inc)) {
+    tree acc= as_tmlen (inc);
+    if ((n==1) && is_func (t, MINUS))
+      acc= tmlen_times (-1, acc);
+    for (i=1; i<n; i++) {
+      tree inc= exec (t[i]);
+      if (!is_anylen (inc))
+	return tree (ERROR, "bad plus/minus");
+      inc= as_tmlen (inc);
+      if ((i == n-1) && is_func (t, MINUS))
+	inc= tmlen_times (-1, inc);
+      acc= tmlen_plus (acc, inc);
+    }
+    return acc;
+  }
+  else return tree (ERROR, "bad plus/minus");
 }
 
 tree
-edit_env_rep::exec_minus (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad minus");
-  tree t1= exec (t[0]);
-  tree t2= exec (t[1]);
-  if (is_compound (t1) || is_compound (t2))
-    return tree (ERROR, "bad minus");
-  string s1= t1->label;
-  string s2= t2->label;
-  if (is_double (s1) && is_double (s2))
-    return as_string (as_double (s1)- as_double (s2));
-  if (is_length (s1) && is_length (s2))
-    return add_lengths (s1, "-" * s2);
-  return tree (ERROR, "bad minus");
-}
-
-tree
-edit_env_rep::exec_times (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad times");
-  tree t1= exec (t[0]);
-  tree t2= exec (t[1]);
-  if (is_compound (t1) || is_compound (t2))
-    return tree (ERROR, "bad times");
-  string s1 = t1->label;
-  string s2 = t2->label;
-  if (is_double (s1) && is_double (s2))
-    return as_string (as_double (s1) * as_double (s2));
-  if (is_double (s1) && is_length (s2))
-    return multiply_length (as_double (s1), s2);
-  if (is_length (s1) && is_double (s2))
-    return multiply_length (as_double (s2), s1);
-  return tree (ERROR, "bad times");
-}
-
-tree
-edit_env_rep::exec_over (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad over");
-  tree t1= exec (t[0]);
-  tree t2= exec (t[1]);
-  if (is_compound (t1) || is_compound (t2))
-    return tree (ERROR, "bad over");
-  string s1 = t1->label;
-  string s2 = t2->label;
-  if (is_double (s1) && is_double (s2)) {
-    double den= as_double (s2);
-    if (den == 0) return tree (ERROR, "division by zero");
-    return as_string (as_double (s1) / den);
+edit_env_rep::exec_times_over (tree t) {
+  int i, n= N(t);
+  if (n==0) return tree (ERROR, "bad times/over");
+  tree prod= exec (t[0]);
+  if (is_anylen (prod)) prod= as_tmlen (prod);
+  if ((n==1) && is_func (t, OVER)) {
+    if (is_double (prod)) return as_string (1 / as_double (prod));
+    else return tree (ERROR, "bad times/over");
   }
-  if (is_length (s1) && is_double (s2)) {
-    double den= as_double (s2);
-    if (den == 0) return tree (ERROR, "division by zero");
-    return multiply_length (1/den, s1);
+  // cout << t << "\n";
+  // cout << "  0\t" << prod << "\n";
+  for (i=1; i<n; i++) {
+    tree mul= exec (t[i]);
+    if (is_double (mul)) {
+      double _mul= as_double (mul);
+      if ((i == n-1) && is_func (t, OVER))
+	_mul= 1 / _mul;
+      if (is_double (prod))
+	prod= as_string (_mul * as_double (prod));
+      else prod= tmlen_times (_mul, prod);
+    }
+    else if (is_anylen (mul)) {
+      mul= as_tmlen (mul);
+      if ((i == n-1) && is_func (t, OVER)) {
+	if (!is_func (prod, TMLEN))
+	  return tree (ERROR, "bad times/over");
+	return tmlen_over (prod, mul);
+      }
+      if (is_double (prod))
+	prod= tmlen_times (as_double (prod), mul);
+      else return tree (ERROR, "bad times/over");
+    }
+    else return tree (ERROR, "bad times/over");
+    // cout << "  " << i << "\t" << prod << "\n";
   }
-  if (is_length (s1) && is_length (s2)) {
-    if (decode_length (s2) == 0) return tree (ERROR, "division by zero");
-    return as_string (divide_lengths(s1, s2));
-  }
-  return tree (ERROR, "bad over");
+  return prod;
 }
 
 tree
@@ -911,6 +984,8 @@ edit_env_rep::exec_number (tree t) {
   if (s2 == "Roman") return Roman_nr (nr);
   if (s2 == "alpha") return alpha_nr (nr);
   if (s2 == "Alpha") return Alpha_nr (nr);
+  if (s2 == "fnsymbol")
+    return tree (WITH, MODE, "math", tree (GROUP, fnsymbol_nr (nr)));
   return tree (ERROR, "bad number");
 }
 
@@ -942,6 +1017,48 @@ edit_env_rep::exec_translate (tree t) {
   if (is_compound (t1) || is_compound (t2) || is_compound (t3))
     return tree (ERROR, "bad translate");
   return dis->translate (t1->label, t2->label, t3->label);
+}
+
+tree
+edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
+  if (is_atomic (t)) {
+    string s= t->label;
+    tree   r= copy (s);
+    int i, n= N(s);
+
+    bool all= true;
+    bool up = false;
+    bool lo = false;
+    if (nc == "Upcase") { all= false; up= true; }
+    else if (nc == "UPCASE") { up= true; }
+    else if (nc == "locase") { lo= true; }
+
+    for (i=0; i<n; lan->enc->token_forward (s, i))
+      if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
+	if (up && is_locase (s[i])) r->label[i]= upcase (s[i]);
+	if (lo && is_upcase (s[i])) r->label[i]= locase (s[i]);
+      }
+    r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
+    return r;
+  }
+  else if (is_concat (t)) {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= exec_change_case (t[i], nc, exec_flag, first && (i==0));
+    r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
+    return r;
+  }
+  else {
+    if (exec_flag) return t;
+    else return exec_change_case (exec (t), nc, true, first);
+  }
+}
+
+tree
+edit_env_rep::exec_change_case (tree t) {
+  if (N(t) < 2) return tree (ERROR, "bad change case");
+  return exec_change_case (t[0], exec (t[1]), false, true);
 }
 
 tree
@@ -979,7 +1096,7 @@ edit_env_rep::exec_lookup (tree t) {
   if (N(t)!=2) return tree (ERROR, "bad look up");
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
-  if (!(is_tuple (t1) && is_int (t2))) return tree (ERROR, "bad look up");
+  if (!(is_compound (t1) && is_int (t2))) return tree (ERROR, "bad look up");
   int i= max (0, min (N(t1)-1, as_int (t2)));
   return t1[i];
 }
@@ -991,8 +1108,7 @@ edit_env_rep::exec_equal (tree t) {
   tree t2= exec (t[1]);
   if (is_atomic (t1) && is_atomic (t2)
       && is_length (t1->label) && is_length (t2->label))
-    return as_string_bool
-      (decode_length (t1->label) == decode_length (t2->label));
+    return as_string_bool (as_length (t1) == as_length (t2));
   return as_string_bool (t1 == t2);
 }
 
@@ -1003,8 +1119,7 @@ edit_env_rep::exec_unequal (tree t) {
   tree t2= exec (t[1]);
   if (is_atomic(t1) && is_atomic(t2)
       && is_length(t1->label) && is_length(t2->label))
-    return as_string_bool
-      (decode_length(t1->label) != decode_length(t2->label));
+    return as_string_bool (as_length (t1) != as_length (t2));
   return as_string_bool (t1 != t2);
 }
 
@@ -1020,7 +1135,7 @@ edit_env_rep::exec_less (tree t) {
   if (is_double (s1) && is_double (s2))
     return as_string_bool (as_double (s1) < as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) < decode_length (s2));
+    return as_string_bool (as_length (s1) < as_length (s2));
   return tree (ERROR, "bad less");
 }
 
@@ -1036,7 +1151,7 @@ edit_env_rep::exec_lesseq (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) <= as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) <= decode_length (s2));
+    return as_string_bool (as_length (s1) <= as_length (s2));
   return tree (ERROR, "bad less or equal");
 }
 
@@ -1052,7 +1167,7 @@ edit_env_rep::exec_greater (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) > as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) > decode_length (s2));
+    return as_string_bool (as_length (s1) > as_length (s2));
   return tree (ERROR, "bad greater");
 }
 
@@ -1068,7 +1183,7 @@ edit_env_rep::exec_greatereq (tree t) {
   if (is_double (s1) && (is_double (s2)))
     return as_string_bool (as_double (s1) >= as_double (s2));
   if (is_length (s1) && is_length (s2))
-    return as_string_bool (decode_length (s1) >= decode_length (s2));
+    return as_string_bool (as_length (s1) >= as_length (s2));
   return tree (ERROR, "bad greater or equal");
 }
 
@@ -1079,7 +1194,28 @@ edit_env_rep::exec_point (tree t) {
   for (i=0; i<n; i++)
     u[i]= exec (t[i]);
   if (is_tuple (u) && ((n==0) || is_double (u[0]))) return u;
-  return as_tree (decode_point (u));
+  return as_tree (as_point (u));
+}
+
+tree
+edit_env_rep::exec_box_info (tree t) {
+  tree t1= exec (t[0]);
+  tree t2= t[1];
+  if (!is_string (t2))
+    return tree (ERROR, "bad box info");
+  return box_info (edit_env (this), t1, as_string (t2));
+}
+
+tree
+edit_env_rep::exec_frame_direct (tree t) {
+  tree t1= exec (t[0]);
+  return as_tree (!nil (fr) ? fr (::as_point (t1)) : point ());
+}
+
+tree
+edit_env_rep::exec_frame_inverse (tree t) {
+  tree t1= exec (t[0]);
+  return as_tree (!nil (fr) ? fr [::as_point (t1)] : point ());
 }
 
 /******************************************************************************
@@ -1221,14 +1357,19 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     macro_src= list<hashmap<string,path> >
       (hashmap<string,path> (path (DECORATION)), macro_src);
     if (L(f) == XMACRO) {
-      if (is_atomic (f[0]))
+      if (is_atomic (f[0])) {
 	macro_arg->item (f[0]->label)= t;
+	macro_src->item (f[0]->label)= obtain_ip (t);
+      }
       (void) exec_until (f[n], p, var, 0);
     }
     else {
       for (i=0; i<n; i++)
-	if (is_atomic (f[i]))
-	  macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+	if (is_atomic (f[i])) {
+	  tree st= i<m? t[i+d]: tree (UNINIT);
+	  macro_arg->item (f[i]->label)= st;
+	  macro_src->item (f[i]->label)= obtain_ip (st);
+	}
       (void) exec_until (f[n], p->next, var, 0);
     }
     macro_arg= macro_arg->next;
@@ -1464,8 +1605,11 @@ edit_env_rep::exec_until_compound (tree t, path p, string var, int level) {
 	macro_arg->item (f[0]->label)= t;
     }
     for (i=0; i<n; i++)
-      if (is_atomic (f[i]))
-	macro_arg->item (f[i]->label)= i<m? t[i+d]: tree (UNINIT);
+      if (is_atomic (f[i])) {
+	tree st= i<m? t[i+d]: tree (UNINIT);
+	macro_arg->item (f[i]->label)= st;
+	macro_src->item (f[i]->label)= obtain_ip (st);
+      }
     bool done= exec_until (f[n], p, var, level+1);
     macro_arg= macro_arg->next;
     macro_src= macro_src->next;
@@ -1664,129 +1808,4 @@ edit_env_rep::depends (tree t, string s, int level) {
 	return true;
     return false;
   }
-}
-
-/******************************************************************************
-* Decoding and adding lengths
-******************************************************************************/
-
-SI
-edit_env_rep::decode_length (string s) {
-  while ((N(s) >= 2) && (s[0]=='-') && (s[1]=='-')) s= s (2, N(s));
-
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
-  string s1 = s(0,i);
-  string s2 = s(i,N(s));
-  double x  = as_double (s1);
-  double in = ((double) dpi*PIXEL);
-  double cm = in/2.54;
-  double f  = (get_int(FONT_BASE_SIZE)*magn*in*get_double(FONT_SIZE))/72.0;
-
-  string s3= s2;
-  int n= N(s3);
-  if ((n>0) && ((s3[n-1] == '-') || (s3[n-1] == '+'))) s3= s3 (0, n-1);
-  if (s3 == "unit") { return (SI) (x); }
-  if (s3 == "cm") { return (SI) (x*cm); }
-  if (s3 == "mm") { return (SI) (x*cm/10.0); }
-  if (s3 == "in") { return (SI) (x*in); }
-  if (s3 == "pt") { return (SI) (x*in/72.0); }
-  if (s2 == "spc") { return (SI) (x*fn->spc->def); }
-  if (s2 == "spc-") { return (SI) (x*fn->spc->min); }
-  if (s2 == "spc+") { return (SI) (x*fn->spc->max); }
-  if (s2 == "fn") { return (SI) (x*f); }
-  if (s2 == "fn-") { return (SI) (0.5*x*f); }
-  if (s2 == "fn+") { return (SI) (1.5*x*f); }
-  if (s2 == "fn*") { return 0; }
-  if (s2 == "fn*-") { return 0; }
-  if (s2 == "fn*+") { return (SI) (x*f); }
-  if (s2 == "ln") { return (SI) (x*((double) fn->wline)); }
-  if (s2 == "sep") { return (SI) (x*((double) fn->sep)); }
-  if (s3 == "px") { return (SI) (x*(get_int(SFACTOR)*PIXEL)); }
-  if (s3 == "yfrac") { return (SI) (x*fn->yfrac); }
-  if (s3 == "ex") { return (SI) (x*fn->yx); }
-  if (s3 == "par") {
-    SI width, d1, d2, d3, d4, d5, d6, d7;
-    get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
-    width -= (get_length (PAR_LEFT) + get_length (PAR_RIGHT));
-    return (SI) (x*width);
-  }
-  if (s3 == "pag") {
-    SI d1, height, d2, d3, d4, d5, d6, d7;
-    get_page_pars (d1, height, d2, d3, d4, d5, d6, d7);
-    return (SI) (x*height);
-  }
-  return 0;
-}
-
-point
-edit_env_rep::decode_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
-    return as_point (t);
-  if (is_tuple (t)) {
-    int i, n= N(t);
-    point p(n);
-    for (i=0; i<n; i++)
-      p[i]= decode_length (as_string (t[i]));
-    return fr[p];
-  }
-  return point ();
-}
-
-space
-edit_env_rep::decode_space (string l) {
-  SI _min= decode_length (l * "-");
-  SI _def= decode_length (l);
-  SI _max= decode_length (l * "+");
-  return space (_def + ((SI) (flexibility * (_min - _def))),
-		_def,
-		_def + ((SI) (flexibility * (_max - _def))));
-}
-
-void
-edit_env_rep::get_length_unit(string s, SI& un, string& un_str) {
-  int i;
-  for (i=0; i<N(s); i++)
-    if ((s[i]>='a') && (s[i]<='z')) break;
-  un= decode_length ("1" * s (i, N(s)));
-  un_str= s (i, N(s));
-}
-
-string
-edit_env_rep::add_lengths (string s1, string s2) {
-  SI l1= decode_length (s1);
-  SI l2= decode_length (s2);
-  SI un; string un_str;
-  get_length_unit (s1, un, un_str);
-  if (un==0) return "0cm";
-  double x= ((double) (l1+l2)) / ((double) un);
-  return as_string (x) * un_str;
-}
-
-string
-edit_env_rep::multiply_length (double x, string s) {
-  SI l= decode_length (s);
-  SI un; string un_str;
-  get_length_unit (s, un, un_str);
-  if (un==0) return "0cm";
-  double xl= (x*l) / ((double) un);
-  return as_string (xl) * un_str;
-}
-
-double
-edit_env_rep::divide_lengths (string s1, string s2) {
-  SI l1= decode_length (s1);
-  SI l2= decode_length (s2);
-  return ((double) l1) / ((double) l2);
-}
-
-
-bool
-edit_env_rep::is_length (string s) {
-  int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++);
-  if (!is_double (s (0, i))) return false;
-  int j=N(s);
-  while ((j>i) && ((s[j-1]=='+') || (s[j-1]=='-') || (s[j-1]=='*'))) j--;
-  return is_alpha (s (i, j));
 }

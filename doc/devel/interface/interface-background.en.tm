@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4.1>
 
 <style|tmdoc>
 
@@ -62,13 +62,13 @@
 
     \ \ (if (selection-active-any?)
 
-    \ \ \ \ \ \ (let* ((t (tree-\<gtr\>object (the-selection)))
+    \ \ \ \ \ \ (let* ((t (tree-\<gtr\>stree (the-selection)))
 
     \ \ \ \ \ \ \ \ \ \ \ \ \ (u (plugin-eval "substitute" "default" t)))
 
     \ \ \ \ \ \ \ \ (clipboard-cut "primary")
 
-    \ \ \ \ \ \ \ \ (insert-tree (object-\<gtr\>tree u)))))
+    \ \ \ \ \ \ \ \ (insert (stree-\<gtr\>tree u)))))
   </scheme-fragment>
 
   as well as the keyboard shortcut for <key|C-F12>:

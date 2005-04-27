@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -29,6 +29,8 @@
     </src-comment>
   </active*>
 
+  <assign|part-display-numbers|<macro|false>>
+
   <assign|chapter-display-numbers|<macro|false>>
 
   <assign|section-display-numbers|<macro|false>>
@@ -45,11 +47,13 @@
 
   <\active*>
     <\src-comment>
-      Chapters.
+      Parts and chapters.
     </src-comment>
   </active*>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<vspace*|2fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.68|<arg|name>><vspace|1fn><no-page-break>>>>
+  <assign|part-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|3fn><really-huge|<arg|name>><vspace|1.5fn>>>>>
+
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|2fn><huge|<arg|name>><vspace|1fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -57,11 +61,11 @@
     </src-comment>
   </active*>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<vspace*|1.5fn><with|math-font-series|bold|font-series|bold|font-size|1.41|<arg|name>><vspace|0.5fn><no-page-break>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1.5fn><very-large|<arg|name>><vspace|0.5fn>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<vspace*|1fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.3333fn><no-page-break>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><large|<arg|name>><vspace|0.3333fn>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<vspace*|0.75fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.25fn><no-page-break>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|0.75fn><arg|name><vspace|0.25fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -69,27 +73,15 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name><paragraph-sep>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name><paragraph-sep>>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<vspace*|0.25fn><with|math-font-series|bold|font-series|bold|<arg|name><subparagraph-sep>>>>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.25fn><arg|name><subparagraph-sep>>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

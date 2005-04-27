@@ -24,6 +24,21 @@ composite_box_rep::composite_box_rep (path ip, array<box> B): box_rep (ip) {
 }
 
 composite_box_rep::composite_box_rep (
+  path ip, array<box> B, bool init_sx_sy):
+    box_rep (ip)
+{
+  bs= B;
+  if (init_sx_sy) {
+    int i, n= N(bs);
+    for (i=0; i<n; i++) {
+      sx(i)= 0;
+      sy(i)= 0;
+    }
+  }
+  position ();
+}
+
+composite_box_rep::composite_box_rep (
   path ip, array<box> B, array<SI> x, array<SI> y):
     box_rep (ip)
 {
@@ -49,20 +64,24 @@ composite_box_rep::insert (box b, SI x, SI y) {
 void
 composite_box_rep::position () {
   int i, n= subnr();
-  if (n == 0) fatal_error ("empty composite box", "composite_box::position");
+  if (n == 0) {
+    x1= y1= x3= y3= 0;
+    x2= y2= x4= y4= 0;
+    fatal_error ("empty composite box", "composite_box::position");
+  }
   else {
     x1= y1= x3= y3= MAX_SI;
     x2= y2= x4= y4= -MAX_SI;
-  }
-  for (i=0; i<n; i++) {
-    x1= min (x1, sx1(i));
-    y1= min (y1, sy1(i));
-    x2= max (x2, sx2(i));
-    y2= max (y2, sy2(i));
-    x3= min (x3, sx3(i));
-    y3= min (y3, sy3(i));
-    x4= max (x4, sx4(i));
-    y4= max (y4, sy4(i));
+    for (i=0; i<n; i++) {
+      x1= min (x1, sx1(i));
+      y1= min (y1, sy1(i));
+      x2= max (x2, sx2(i));
+      y2= max (y2, sy2(i));
+      x3= min (x3, sx3(i));
+      y3= min (y3, sy3(i));
+      x4= max (x4, sx4(i));
+      y4= max (y4, sy4(i));
+    }
   }
 }
 
@@ -75,11 +94,13 @@ composite_box_rep::left_justify () {
 }
 
 /******************************************************************************
-* Routines for comosite boxes
+* Routines for composite boxes
 ******************************************************************************/
 
 void
-composite_box_rep::display (ps_device dev) { (void) dev; }
+composite_box_rep::display (ps_device dev) {
+  (void) dev;
+}
 
 int
 composite_box_rep::subnr () {
@@ -278,18 +299,20 @@ composite_box_rep::find_selection (path lbp, path rbp) {
   else return box_rep::find_selection (lbp, rbp);
 }
 
-/******************************************************************************
-* User interface
-******************************************************************************/
+gr_selections
+composite_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    int i, n= subnr();
+    for (i=0; i<n; i++)
+      res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  }
+  return res;
+}
 
-struct concrete_composite_box_rep: public composite_box_rep {
-  bool border_flag;
-  concrete_composite_box_rep (
-    path ip, array<box> bs, array<SI> x, array<SI> y, bool bfl):
-      composite_box_rep (ip, bs, x, y), border_flag (bfl) { finalize (); }
-  operator tree () { return tree ("composite"); }
-  int find_child (SI x, SI y, SI delta, bool force);
-};
+/******************************************************************************
+* Concrete composite box
+******************************************************************************/
 
 int
 concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
@@ -306,12 +329,13 @@ concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   return m;
 }
 
+/******************************************************************************
+* User interface
+******************************************************************************/
+
 box
 composite_box (path ip, array<box> bs, bool bfl) {
-  int i, n= N(bs);
-  array<SI> x (n), y (n);
-  for (i=0; i<n; i++) x[i]= y[i]= 0;
-  return new concrete_composite_box_rep (ip, bs, x, y, bfl);
+  return new concrete_composite_box_rep (ip, bs, bfl);
 }
 
 box

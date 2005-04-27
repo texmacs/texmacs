@@ -49,8 +49,8 @@ cell_rep::typeset (tree fm, tree t, path iq) {
       b= empty_box (iq);
 
       tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
-      tree old2= env->local_begin (PAR_LEFT, "0unit");
-      tree old3= env->local_begin (PAR_RIGHT, "0unit");
+      tree old2= env->local_begin (PAR_LEFT, "0tmpt");
+      tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
       tree old4= env->local_begin (PAR_MODE, "justify");
       tree old5= env->local_begin (PAR_NO_FIRST, "true");
   
@@ -83,7 +83,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
 
     if (or_row != -1) {
       D= table (env, 1, or_row, or_col);
-      D->typeset (decoration, decorate (iq));
+      D->typeset (attach_deco (decoration, iq));
     }
   }
 }
@@ -131,7 +131,7 @@ cell_rep::format_cell (tree fm) {
   }
   else bg= "";
   if (var->contains (CELL_WIDTH)) {
-    width= env->decode_length (env->exec (var[CELL_WIDTH]));
+    width= env->as_length (env->exec (var[CELL_WIDTH]));
     if (var->contains (CELL_HMODE))
       hmode= as_string (env->exec (var[CELL_HMODE]));
     else hmode= "exact";
@@ -141,7 +141,7 @@ cell_rep::format_cell (tree fm) {
     hmode= "";
   }
   if (var->contains (CELL_HEIGHT)) {
-    height= env->decode_length (env->exec (var[CELL_HEIGHT]));
+    height= env->as_length (env->exec (var[CELL_HEIGHT]));
     if (var->contains (CELL_VMODE))
       vmode= as_string (env->exec (var[CELL_VMODE]));
     else vmode= "exact";
@@ -157,28 +157,28 @@ cell_rep::format_cell (tree fm) {
     vpart= as_double (env->exec (var[CELL_VPART]));
   else vpart= 0.0;
   if (var->contains (CELL_LSEP))
-    lsep= env->decode_length (env->exec (var[CELL_LSEP]));
+    lsep= env->as_length (env->exec (var[CELL_LSEP]));
   else lsep= env->fn->spc->def;
   if (var->contains (CELL_RSEP))
-    rsep= env->decode_length (env->exec (var[CELL_RSEP]));
+    rsep= env->as_length (env->exec (var[CELL_RSEP]));
   else rsep= env->fn->spc->def;
   if (var->contains (CELL_BSEP))
-    bsep= env->decode_length (env->exec (var[CELL_BSEP]));
+    bsep= env->as_length (env->exec (var[CELL_BSEP]));
   else bsep= env->fn->sep;
   if (var->contains (CELL_TSEP))
-    tsep= env->decode_length (env->exec (var[CELL_TSEP]));
+    tsep= env->as_length (env->exec (var[CELL_TSEP]));
   else tsep= env->fn->sep;
   if (var->contains (CELL_LBORDER))
-    lborder= env->decode_length (env->exec (var[CELL_LBORDER])) >> 1;
+    lborder= env->as_length (env->exec (var[CELL_LBORDER])) >> 1;
   else lborder= 0;
   if (var->contains (CELL_RBORDER))
-    rborder= env->decode_length (env->exec (var[CELL_RBORDER])) >> 1;
+    rborder= env->as_length (env->exec (var[CELL_RBORDER])) >> 1;
   else rborder= 0;
   if (var->contains (CELL_BBORDER))
-    bborder= env->decode_length (env->exec (var[CELL_BBORDER])) >> 1;
+    bborder= env->as_length (env->exec (var[CELL_BBORDER])) >> 1;
   else bborder= 0;
   if (var->contains (CELL_TBORDER))
-    tborder= env->decode_length (env->exec (var[CELL_TBORDER])) >> 1;
+    tborder= env->as_length (env->exec (var[CELL_TBORDER])) >> 1;
   else tborder= 0;
   if (var->contains (CELL_HALIGN))
     halign= as_string (env->exec (var[CELL_HALIGN]));
@@ -223,7 +223,8 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     else lw= rw= 0;
     mw += lborder + rborder;
   }
-  else if (large && (!nil (lz))) {
+  else if ((!nil (lz)) && (large || (hmode == "min"))) {
+    // FIXME: the negociation of the right width should be more elaborate
     lw= rw= 0;
     format fm= lz->query (LAZY_BOX, make_query_vstream_width (0, 0));
     format_width fw= (format_width) fm;

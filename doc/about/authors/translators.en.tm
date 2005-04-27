@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.6>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
@@ -16,8 +16,8 @@
 
     <item*|French>Michèle Garoche, Joris van der Hoeven.
 
-    <item*|German>Hans Dembinski, Jan Ulrich Hasecke, Joris van der Hoeven,
-    Thomas Langen, Ralf Treinen.
+    <item*|German>Dietmar Jung, Hans Dembinski, Jan Ulrich Hasecke, Christoph
+    Strobel, Joris van der Hoeven, Thomas Langen, Ralf Treinen.
 
     <item*|Hungarian>András Kadinger.
 
@@ -56,17 +56,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

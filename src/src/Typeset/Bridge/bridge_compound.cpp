@@ -46,8 +46,8 @@ void
 bridge_compound_rep::initialize (tree body_t, int delta2, tree fun2) {
   if ((!valid) || (body->st != body_t) || (delta != delta2) || (fun != fun2)) {
     valid= true;
-    if (nil (body)) body= make_bridge (ttt, body_t, decorate_right (ip));
-    else replace_bridge (body, body_t, decorate_right (ip));
+    if (nil (body)) body= make_bridge (ttt, attach_right (body_t, ip));
+    else replace_bridge (body, attach_right (body_t, ip));
     delta= delta2;
     fun  = fun2;
   }
@@ -145,7 +145,7 @@ bridge_compound_rep::notify_macro (
       if (is_atomic (fun[i])) {
 	string var= fun[i]->label;
 	env->macro_arg->item (var)=
-	  i<m? st[i+delta]: tree (UNINIT);
+	  i<m? st[i+delta]: attach_dip (tree (UNINIT), decorate_right (ip));
 	env->macro_src->item (var)=
 	  i<m? descend (ip,i+delta): decorate_right(ip);
       }
@@ -209,8 +209,10 @@ bridge_compound_rep::my_typeset (int desired_status) {
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
 	string var= f[i]->label;
-	env->macro_arg->item (var)= i<m? st[i+d]: tree (UNINIT);
-	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
+	env->macro_arg->item (var)=
+	  i<m? st[i+d]: attach_dip (tree (UNINIT), decorate_right (ip));
+	env->macro_src->item (var)=
+	  i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);
     /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);

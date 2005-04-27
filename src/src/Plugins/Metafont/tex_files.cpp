@@ -108,7 +108,13 @@ resolve_tex (url name) {
   }
 
   url u= url_none ();
-  if (ends (s, "mf" )) u= resolve_tfm (name);
+  if (ends (s, "mf" )) {
+    u= resolve_tfm (name);
+#ifdef OS_WIN32
+    if (is_none (u))
+      u= resolve_tfm (replace (s, ".mf", ".tfm"));
+#endif
+  }
   if (ends (s, "tfm")) u= resolve_tfm (name);
   if (ends (s, "pk" )) u= resolve_pk  (name);
   if (ends (s, "pfb")) u= resolve_pfb (name);
@@ -171,11 +177,18 @@ make_tex_pk (string name, int dpi, int design_dpi, string where) {
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
-  if (get_setting ("MAKEPK") == "makepk"){
+  if (get_setting ("MAKEPK") == "makepk") {
+#ifdef OS_WIN32
+    s = "makepk --dest-dir \""
+      * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
+      * name * " " * as_string(dpi) * " " * as_string(design_dpi)
+      * " " * as_string(dpi) * "%//" * as_string(design_dpi);
+#else
     s = "makepk --dest-dir \""
       * get_env("$TEXMACS_HOME_PATH") * "\\fonts\\pk\" "
       * name * " " * as_string(dpi) * " " * as_string(design_dpi)
       * " " * as_string(dpi) * "/" * as_string(design_dpi);
+#endif
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }

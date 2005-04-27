@@ -21,6 +21,7 @@
 #include "language.hpp"
 #include "hashmap.hpp"
 #include "Graphics/frame.hpp"
+#include "Graphics/grid.hpp"
 
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
@@ -78,6 +79,25 @@ bool operator != (selection sel1, selection sel2);
 ostream& operator << (ostream& out, selection sel);
 
 /******************************************************************************
+* The selection class
+******************************************************************************/
+
+struct gr_selection_rep: concrete_struct {
+  array<path> cp;
+  SI dist;
+};
+
+struct gr_selection {
+  CONCRETE(gr_selection);
+  gr_selection (array<path> cp= array<path> (), SI dist= 0);
+};
+CONCRETE_CODE(gr_selection);
+
+ostream& operator << (ostream& out, gr_selection sel);
+
+typedef array<gr_selection> gr_selections;
+
+/******************************************************************************
 * The box class
 ******************************************************************************/
 
@@ -112,7 +132,8 @@ public:
   inline            virtual ~box_rep ();
   void              relocate (path p, bool force= false);
   virtual operator  tree () = 0;
-  virtual bool      display_background (ps_device dev, color& col);
+  virtual void      pre_display (ps_device& dev);
+  virtual void      post_display (ps_device& dev);
   virtual void      display (ps_device dev) = 0;
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
@@ -123,6 +144,7 @@ public:
   virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path      find_tag (string name);
 
+  virtual int  reindex (int i, int item, int n);
   void redraw (ps_device dev, path p, rectangles& l);
   void redraw (ps_device dev, path p, rectangles& l, SI x, SI y);
 
@@ -182,10 +204,15 @@ public:
   /*************************** for graphical boxes ***************************/
 
   virtual frame     get_frame ();
+  virtual grid      get_grid ();
   virtual void      get_limits (point& lim1, point& lim2);
 
   frame     find_frame (path bp);
+  grid      find_grid (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
+
+  virtual SI             graphical_distance (SI x, SI y);
+  virtual gr_selections  graphical_select (SI x, SI y, SI dist);
 
   /************************** retrieving information *************************/
 
@@ -239,6 +266,7 @@ bool outside (SI x, SI delta, SI x1, SI x2);
 #define DECORATION_LEFT   (-2)
 #define DECORATION_MIDDLE (-3)
 #define DECORATION_RIGHT  (-4)
+#define DETACHED          (-5)
 #define is_accessible(p) ((nil (p)) || ((p)->item >= 0))
 #define is_decoration(p) ((!nil (p)) && ((p)->item < 0))
 inline path descend (path ip, int i) {
@@ -257,5 +285,13 @@ path descend_decode (path ip, int side);
 
 inline bool box_rep::accessible () { return is_accessible (find_lip ()); }
 inline bool box_rep::decoration () { return is_decoration (find_lip ()); }
+
+tree attach_dip (tree ref, path ip);
+#define attach_here(t,ip) attach_dip(t,ip),ip
+#define attach_deco(t,ip) attach_dip(t,decorate(ip)),decorate(ip)
+#define attach_left(t,ip) attach_dip(t,decorate_left(ip)),decorate_left(ip)
+#define attach_middle(t,ip) \
+  attach_dip(t,decorate_middle(ip)),decorate_middle(ip)
+#define attach_right(t,ip) attach_dip(t,decorate_right(ip)),decorate_right(ip)
 
 #endif // defined BOXES_H

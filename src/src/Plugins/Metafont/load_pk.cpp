@@ -27,7 +27,8 @@ pk_loader::pk_loader (url pk_file_name, tex_font_metric tfm2, int dpi2):
   file_name (pk_file_name), tfm (tfm2), dpi (dpi2),
   inputbyte (0), flagbyte (0), bitweight (0), dynf (0),
   repeatcount (0), remainder (0), real_func_flag (true),
-  bc (tfm->bc), ec (tfm->ec)
+  bc (tfm->bc), ec (tfm->ec),
+  char_pos(0), char_flag(0), unpacked(0)
 {
   (void) load_string (pk_file_name, input_s);
   input_pos= 0;
@@ -277,7 +278,7 @@ glyph*
 pk_loader::load_pk () {
   register HI i;
   register SI k;
-  register SI length;
+  register SI length = 0, startpos = 0;
 
   register HI charcode= 0;
   register SI cwidth;
@@ -287,6 +288,14 @@ pk_loader::load_pk () {
   
   bench_start ("decode pk");
   glyph* fng= new glyph [ec+1-bc];
+  char_pos = new int [ec+1-bc];
+  unpacked = new bool [ec+1-bc];
+  char_flag = new HN [ec+1-bc];
+  for(i=0;i<ec+1-bc;i++) {
+    char_pos[i] = 0;
+    char_flag[i] = 0;
+    unpacked[i] = true; // set to false for still unpacked glyphs
+  }
 
   // Preamble
   if (pkbyte ()!=247) {
@@ -311,15 +320,17 @@ pk_loader::load_pk () {
       case 1:
       case 2:
       case 3:
-	length = (flagbyte & 7) * 256 + pkbyte () - 4;
+	length = (flagbyte & 7) * 256 + pkbyte ();
 	charcode = pkbyte ();
+	startpos = input_pos;
 	i = pktrio ();  /* TFM width */
 	i = pkbyte (); 	/* pixel width */
 	break;
       case 4:
 	length = pkbyte () * 256;
-	length = length + pkbyte () - 5;
+	length = length + pkbyte ();
 	charcode = pkbyte ();
+	startpos = input_pos;
 	i = pktrio ();                  /* TFM width */
 	i = pkbyte ();
 	i = i * 256 + pkbyte ();        /* pixelwidth */
@@ -335,8 +346,9 @@ pk_loader::load_pk () {
 	fatal_error ("lost sync in pk file (character too big / status = 6)",
 		     "load_pk", "load-pk.cpp");
       case 7:
-	length = pkquad () - 12;
+	length = pkquad ();
 	charcode = pkquad ();
+	startpos = input_pos;
 	(void) pkquad ();		/* TFMwidth */
 	                   /* pixelwidth = (pkquad () + 32768) >> 16; */
 	(void) pkquad ();		/* pixelwidth */
@@ -369,9 +381,18 @@ pk_loader::load_pk () {
       }
       if ((cwidth > 0) && (cheight > 0) &&
 	  (((QN) charcode) >= bc) && (((QN) charcode) <= ec)) {
-	// cout << "---> unpacking " << charcode << "!\n";
+	// cout << "---> unpacking " << charcode
+	//     << " at " << input_pos 
+	//     << " (start " << startpos << ", length " << length << ")!\n";
 	glyph gl (cwidth, cheight, xoff, yoff);
-	unpack (gl);
+
+	/* needed for lazy unpacking */
+	char_pos[((QN) charcode)- bc] = input_pos;
+	char_flag[((QN) charcode)- bc] = flagbyte;
+	unpacked[((QN) charcode)- bc] = false;
+	/* skip packed bitmap */
+	input_pos = startpos + length;
+
 	fng [((QN) charcode)- bc]= gl;
 	// cout << "---> " << charcode << " done !\n";
 	// cout << fng [((QN) charcode)- bc] << "\n";

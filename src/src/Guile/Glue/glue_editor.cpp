@@ -523,6 +523,42 @@ tmg_clipboard_get_export () {
 }
 
 SCM
+tmg_remove_undo_mark () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_undo_mark ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_add_undo_mark () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->add_undo_mark ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_unredoable_undo () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->unredoable_undo ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_forget_undo () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->forget_undo ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_undo () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->undo ();
@@ -634,6 +670,19 @@ tmg_search_upwards (SCM arg1) {
 
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->search_upwards (in1);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_search_parent_upwards (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "search-parent-upwards");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->search_parent_upwards (in1);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -2467,7 +2516,7 @@ tmg_length_decode (SCM arg1) {
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  int out= get_server()->get_editor()->decode_length (in1);
+  int out= get_server()->get_editor()->as_length (in1);
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
@@ -2802,32 +2851,6 @@ tmg_tm_remove_with (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_frame_direct (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-direct");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_direct_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_frame_inverse (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "frame-inverse");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->frame_inverse_transform (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
 tmg_get_graphical_object () {
   // SCM_DEFER_INTS;
   tree out= get_server()->get_editor()->get_graphical_object ();
@@ -2850,30 +2873,37 @@ tmg_set_graphical_object (SCM arg1) {
 }
 
 SCM
-tmg_path_xy (SCM arg1, SCM arg2) {
-  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "path-xy");
-  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "path-xy");
+tmg_invalidate_graphical_object () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->invalidate_graphical_object ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_graphical_select (SCM arg1, SCM arg2) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select");
 
   double in1= scm_to_double (arg1);
   double in2= scm_to_double (arg2);
 
   // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->path_xy (in1, in2);
+  tree out= get_server()->get_editor()->graphical_select (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return path_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
-tmg_box_info (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "box-info");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "box-info");
+tmg_texmacs_exec (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
 
-  tree in1= scm_to_tree (arg1);
-  string in2= scm_to_string (arg2);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->box_info (in1, in2);
+  tree out= get_server()->get_editor()->texmacs_exec (in1);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -2929,6 +2959,10 @@ initialize_glue_editor () {
   gh_new_procedure ("clipboard-set-export", (FN) tmg_clipboard_set_export, 1, 0, 0);
   gh_new_procedure ("clipboard-get-import", (FN) tmg_clipboard_get_import, 0, 0, 0);
   gh_new_procedure ("clipboard-get-export", (FN) tmg_clipboard_get_export, 0, 0, 0);
+  gh_new_procedure ("remove-undo-mark", (FN) tmg_remove_undo_mark, 0, 0, 0);
+  gh_new_procedure ("add-undo-mark", (FN) tmg_add_undo_mark, 0, 0, 0);
+  gh_new_procedure ("unredoable-undo", (FN) tmg_unredoable_undo, 0, 0, 0);
+  gh_new_procedure ("forget-undo", (FN) tmg_forget_undo, 0, 0, 0);
   gh_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   gh_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
   gh_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
@@ -2940,6 +2974,7 @@ initialize_glue_editor () {
   gh_new_procedure ("inside-with?", (FN) tmg_inside_withP, 2, 0, 0);
   gh_new_procedure ("inside-which", (FN) tmg_inside_which, 1, 0, 0);
   gh_new_procedure ("search-upwards", (FN) tmg_search_upwards, 1, 0, 0);
+  gh_new_procedure ("search-parent-upwards", (FN) tmg_search_parent_upwards, 1, 0, 0);
   gh_new_procedure ("search-upwards-in-set", (FN) tmg_search_upwards_in_set, 1, 0, 0);
   gh_new_procedure ("search-start", (FN) tmg_search_start, 1, 0, 0);
   gh_new_procedure ("search-button-next", (FN) tmg_search_button_next, 0, 0, 0);
@@ -3122,10 +3157,9 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
   gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
   gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
-  gh_new_procedure ("frame-direct", (FN) tmg_frame_direct, 1, 0, 0);
-  gh_new_procedure ("frame-inverse", (FN) tmg_frame_inverse, 1, 0, 0);
   gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
-  gh_new_procedure ("path-xy", (FN) tmg_path_xy, 2, 0, 0);
-  gh_new_procedure ("box-info", (FN) tmg_box_info, 2, 0, 0);
+  gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
+  gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
+  gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

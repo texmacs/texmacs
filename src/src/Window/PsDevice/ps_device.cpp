@@ -56,6 +56,15 @@ ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
   cx2= x2+ ox; cy2= y2+ oy;
 }
 
+void
+ps_device_rep::extra_clipping (SI x1, SI y1, SI x2, SI y2) {
+  SI ox1, oy1, ox2, oy2;
+  get_clipping (ox1, oy1, ox2, oy2);
+  x1= max (x1, ox1); y1= max (y1, oy1);
+  x2= max (x1, min (x2, ox2)); y2= max (y1, min (y2, oy2));
+  set_clipping (x1, y1, x2, y2);
+}
+
 bool
 ps_device_rep::is_visible (SI x1, SI y1, SI x2, SI y2) {
   return

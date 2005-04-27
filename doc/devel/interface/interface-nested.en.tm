@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -119,7 +119,7 @@
   for <markup|foo>:
 
   <\tm-fragment>
-    <with|preamble|true|<with|mode|math|<assign|foo|<macro|x|<frac|1|1+<arg|x>>>>>>
+    <inactive*|<with|mode|math|<assign|foo|<macro|x|<frac|1|1+<arg|x>>>>>>
   </tm-fragment>
 
   The <markup|foo> tag is used in the following way in the body of the main
@@ -144,7 +144,7 @@
   <markup|markup-output> environment:
 
   <\tm-fragment>
-    <with|preamble|true|<assign|markup-output|<macro|body|<generic-output|<with|par-mode|center|<arg|body>>>>>>
+    <inactive*|<assign|markup-output|<macro|body|<generic-output|<with|par-mode|center|<arg|body>>>>>>
   </tm-fragment>
 
   This has the effect of centering the output in sessions started using
@@ -163,17 +163,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

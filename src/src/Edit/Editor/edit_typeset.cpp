@@ -77,8 +77,8 @@ edit_typeset_rep::clear_local_info () {
 ******************************************************************************/
 
 SI
-edit_typeset_rep::decode_length (string l) {
-  return env->decode_length (l); }
+edit_typeset_rep::as_length (string l) {
+  return env->as_length (l); }
 
 string
 edit_typeset_rep::add_lengths (string l1, string l2) {
@@ -317,10 +317,8 @@ edit_typeset_rep::exec_html (tree t) {
 }
 
 tree
-edit_typeset_rep::box_info (tree t, string what) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  return ::box_info (b ? env : get_typesetter ()->env, t, what);
+edit_typeset_rep::texmacs_exec (tree t) {
+  return ::texmacs_exec (env, t);
 }
 
 /******************************************************************************
@@ -360,12 +358,14 @@ edit_typeset_rep::init_add_package (string name) {
 void
 edit_typeset_rep::init_remove_package (string name) {
   int i, n= N(the_style);
+  tree new_style= tree (TUPLE);
   for (i=0; i<n; i++)
     if (the_style[i] == name) {
-      the_style= the_style (0, i) * the_style (i+1, N(the_style));
       buf->need_save= buf->need_autosave= true;
       notify_change (THE_ENVIRONMENT);
     }
+    else new_style << the_style[i];
+  the_style= new_style;
 }
 
 void

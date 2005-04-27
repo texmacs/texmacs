@@ -26,10 +26,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmtex-env (make-ahash-table))
-(define tmtex-appendices #f)
+(define tmtex-appendices? #f)
+(define tmtex-faithful-style? #f)
+(define tmtex-indirect-bib? #f)
 
-(define (tmtex-initialize)
-  (set! tmtex-appendices #f)
+(define (tmtex-initialize opts)
+  (set! tmtex-appendices? #f)
+  (set! tmtex-faithful-style?
+	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
+  (set! tmtex-indirect-bib?
+	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,6 +158,16 @@
     (if (null? r) ""
 	(if (null? (cdr r)) (car r)
 	    (cons '!concat r)))))
+
+(define (tex-concat-strings l)
+  (cond ((< (length l) 2) l)
+	((and (string? (car l)) (string? (cadr l)))
+	 (tex-concat-strings (cons (string-append (car l) (cadr l)) (cddr l))))
+	(else (cons (car l) (tex-concat-strings (cdr l))))))
+
+(define (tex-concat* l)
+  "Variant of tex-concat for which adjecent strings are concatenated"
+  (tex-concat (tex-concat-strings l)))
 
 (define tex-apply
   (lambda l
@@ -305,13 +321,21 @@
 ;; Entire files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmtex-transform-style x)
+  (cond ((in? x '("article" "book" "letter")) x)
+	((in? x '("generic" "exam")) "letter")
+	((== x "seminar") "slides")
+	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
+	((in? x '("tmbook" "tmmanual")) "book")
+	((in? x '("acmconf" "amsart" "jsc" "svjour")) x)
+	(tmtex-faithful-style? x)
+	(else #f)))
+
 (define (tmtex-filter-styles l)
-  (cond ((null? l) l)
-	((in? (car l) '("axiom" "gtybalt" "maple" "maxima" "mycas"
-			"qcl" "scilab" "giac" "macaulay2" "mathemagix"
-			"mupad" "pari" "reduce" "yacas"))
-	 (tmtex-filter-styles (cdr l)))
-	(else (cons (car l) (tmtex-filter-styles (cdr l))))))
+  (if (null? l) l
+      (let* ((next (tmtex-transform-style (car l)))
+	     (tail (tmtex-filter-styles (cdr l))))
+	(if next (cons next tail) tail))))
 
 (define (tmtex-filter-preamble l)
   (define (append-lists l)
@@ -329,6 +353,7 @@
   (let* ((doc (car l))
 	 (styles (cdadr l))
 	 (lang (caddr l))
+	 (init (cadddr l))
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body (tmtex-filter-body doc)))
     (if (null? styles) (tmtex doc)
@@ -337,6 +362,7 @@
 		(tmtex doc-body)
 		(tmtex-filter-styles styles)
 		lang
+		init
 		(map-in-order tmtex doc-preamble))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,8 +422,10 @@
 (define (tmtex-next-line l) (list '!nextline))
 
 (define (tmtex-decode-length s)
+  ;; FIXME: should be completed
   (cond ((string-ends? s "fn") (string-replace s "fn" "em"))
 	((string-ends? s "spc") (string-replace s "spc" "em"))
+	((string-ends? s "par") (string-replace s "par" "\\columnwidth"))
 	(else s)))
 
 (define (tmtex-hspace l)
@@ -587,6 +615,11 @@
 (define (tmtex-neg l)
   (tmtex-function 'not l))
 
+(define (tmtex-tree l)
+  (let* ((root (list '!begin "bundle" (tmtex (car l))))
+	 (children (map (lambda (x) (list 'chunk (tmtex x))) (cdr l))))
+    (list root (tex-concat children))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -709,6 +742,8 @@
 
 (define (tmtex-var-name var)
   (cond ((not (string? var)) "")
+	((drd-in? (string->symbol var) tmtex-protected%)
+	 (string-append "tm" var))
 	((<= (string-length var) 1) var)
 	(else (list->string (tmtex-var-name-sub (string->list var))))))
 
@@ -778,7 +813,77 @@
   (tmtex-function 'tmaction l))
 
 (define (tmtex-postscript l)
-  (list 'epsfig (string-append "file=" (force-string (car l)))))
+  (let* ((fig (list 'epsfig (string-append "file=" (force-string (car l)))))
+	 (hor (if (== (cadr l) "") "!" (tmtex-decode-length (cadr l))))
+	 (ver (if (== (caddr l) "") "!" (tmtex-decode-length (caddr l)))))
+    (if (or (string-starts? hor "*") (string-starts? hor "/")) (set! hor "!"))
+    (if (or (string-starts? ver "*") (string-starts? ver "/")) (set! ver "!"))
+    (if (and (== hor "!") (== ver "!")) fig
+	(list 'resizebox hor ver fig))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Titles of documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-compressed sep l)
+  (cond ((null? l) l)
+	((null? (cdr l)) (list (tmtex (car l))))
+	(else (cons* (tmtex (car l))
+		     sep
+		     (tmtex-compressed sep (cdr l))))))
+
+(define (tmtex-data-assemble sep l)
+  (cond ((null? l) l)
+	((null? (cdr l)) (car l))
+	(else (with r (tmtex-data-assemble sep (cdr l))
+		(cond ((null? (car l)) r)
+		      ((null? r) (car l))
+		      (else (append (car l) (list sep) r)))))))
+
+(define (tmtex-select-data expr tag)
+  (let* ((data (tm-select expr (list tag)))
+	 (sep (if (== tag 'author-address) '(!nextline) "; "))
+	 (fun (lambda (x)
+		(cond ((func? x 'document)
+		       (list (tex-concat* (tmtex-compressed sep (cdr x)))))
+		      (else (list (tmtex x)))))))
+    (if (null? data) '()
+	(with l (cdar data)
+	  (tmtex-data-assemble ", " (map fun l))))))
+
+(define (tmtex-data-apply tag l)
+  (if (null? l) l
+      (list (list tag (tex-concat* l)))))
+
+(define (tmtex-make-author tag)
+  (let* ((name (tmtex-select-data tag 'author-name))
+	 (address (tmtex-select-data tag 'author-address))
+	 (note (tmtex-select-data tag 'author-note))
+	 (email (tmtex-select-data tag 'author-email))
+	 (homepage (tmtex-select-data tag 'author-homepage))
+	 (email* (tmtex-data-apply 'email email))
+	 (homepage* (tmtex-data-apply 'homepage homepage))
+	 (note* (tmtex-data-assemble "; " (list note email* homepage*)))
+	 (name* (append name (tmtex-data-apply 'thanks note*))))
+    (tex-concat* (tmtex-data-assemble '(!nextline)
+				      (list name* address)))))
+
+(define (tmtex-doc-data s l)
+  (let* ((tag (cons s l))
+	 (title (tmtex-select-data tag 'doc-title))
+	 (authors (map tmtex-make-author (tm-select tag '(doc-author-data))))
+	 (date (tmtex-select-data tag 'doc-date))
+	 (note (tmtex-select-data tag 'doc-note))
+	 (keywords (tmtex-select-data tag 'doc-keywords))
+	 (AMS-class (tmtex-select-data tag 'doc-AMS-class))
+	 (keywords* (tmtex-data-apply 'keywords keywords))
+	 (AMS-class* (tmtex-data-apply 'AMSclass AMS-class))
+	 (note* (tmtex-data-assemble "; " (list note keywords* AMS-class*)))
+	 (title* (append title (tmtex-data-apply 'thanks note*)))
+	 (author* (tmtex-data-assemble '(and) (map list authors))))
+    (tex-concat `((title ,(tex-concat title*))
+		  (author ,(tex-concat author*))
+		  (maketitle)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -787,34 +892,11 @@
 (define (tmtex-std-env s l)
   (list (list '!begin s) (tmtex (car l))))
 
-(define (tmtex-title-extract-list l what)
-  (if (null? l) #f
-      (let ((x (tmtex-title-extract (car l) what)))
-	(if x x (tmtex-title-extract-list (cdr l) what)))))
-
-(define (tmtex-title-extract l what)
-  (cond ((or (not (list? l)) (null? l)) #f)
-	((== l `(,what)) l)
-	((match? l `(,what :1)) (cadr l))
-	(else (tmtex-title-extract-list l what))))
-
-(define (tmtex-title-get x what)
-  (let ((y (tmtex-title-extract x what)))
-    (if y (list what (tmtex y)) "")))
-
-(define (tmtex-make-title s l)
-  (let* ((aux (tmtex-title-extract (car l) 'made-by-TeXmacs))
-	 (mbtm (if aux (tmtex aux) "")))
-    (tex-concat (list (tmtex-title-get (car l) 'title)
-		      (tmtex-title-get (car l) 'author)
-		      (list 'maketitle)
-		      mbtm))))
-
 (define (tmtex-appendix s l)
-  (if tmtex-appendices
+  (if tmtex-appendices?
       (list 'chapter (tmtex (car l)))
       (begin
-	(set! tmtex-appendices #t)
+	(set! tmtex-appendices? #t)
 	(list '!concat '(appendix) (list 'chapter (tmtex (car l)))))))
 
 (define (tmtex-tt-document l)
@@ -864,9 +946,38 @@
 (define (tmtex-toc s l)
   (tex-apply 'tableofcontents))
 
+(define (tmtex-bib-sub doc)
+  (cond ((nlist? doc) doc)
+	((match? doc '(concat (bibitem* :1) (label :string?) :*))
+	 (let* ((l (cadr (caddr doc)))
+		(s (if (string-starts? l "bib-") (string-drop l 4) l)))
+	   (cons* 'concat (list 'bibitem* (cadadr doc) s) (cdddr doc))))
+	(else (map tmtex-bib-sub doc))))
+
+(define (tmtex-bib-max l)
+  (cond ((npair? l) "")
+	((match? l '(bibitem* :string? :1)) (cadr l))
+	(else (let* ((s1 (tmtex-bib-max (car l)))
+		     (s2 (tmtex-bib-max (cdr l))))
+		(if (< (string-length s1) (string-length s2)) s2 s1)))))
+
 (define (tmtex-bib s l)
-  (tex-concat (list (list 'bibliographystyle (force-string (cadr l)))
-		    (list 'bibliography (force-string (caddr l))))))
+  (if tmtex-indirect-bib?
+      (tex-concat (list (list 'bibliographystyle (force-string (cadr l)))
+			(list 'bibliography (force-string (caddr l)))))
+      (let* ((doc (tmtex-bib-sub (cadddr l)))
+	     (max (tmtex-bib-max doc)))
+	(tmtex (list 'thebibliography max doc)))))
+
+(define (tmtex-thebibliography s l)
+  (list (list '!begin s (car l)) (tmtex (cadr l))))
+
+(define (tmtex-bibitem* s l)
+  (cond ((= (length l) 1)
+	 `(bibitem ,(tmtex (car l))))
+	((= (length l) 2)
+	 `(bibitem (!option ,(tmtex (car l))) ,(tmtex (cadr l))))
+	(else "")))
 
 (define (tmtex-figure s l)
   (tmtex-float-sub "h" (cons (string->symbol s) l)))
@@ -880,19 +991,23 @@
 (define (tmtex-render-proof s l)
   (list (list '!begin "proof*" (tmtex (car l))) (tmtex (cadr l))))
 
+(define (tmtex-nbsp s l)
+  '(!nbsp))
+
 (define (tmtex-session s l)
-  (tmtex (caddr l)))
+  (tmtex (car l)))
 
 (define (tmtex-input s l)
   (let ((prompt (car l)) (x (cadr l)))
     (tex-concat
-     (list `(!group (!concat (red) (ttfamily ,(tmtex prompt))))
+     (list `(!group (!concat (color "red") (ttfamily ,(tmtex prompt))))
 	   (cond ((func? x 'math 1)
 		  (tmtex-env-set "mode" "math")
 		  (let ((r (tmtex (cadr x))))
 		    (tmtex-env-reset "mode")
-		    `(!math (!group (!concat (blue) ,r)))))
-		 (else `(!group (!concat (blue) (!verb ,(tmtex-tt x))))))))))
+		    `(!math (!group (!concat (color "blue") ,r)))))
+		 (else `(!group (!concat (color "blue")
+					 (!verb ,(tmtex-tt x))))))))))
 
 (define (tmtex-output s l)
   (list '!group (list 'ttfamily (tmtex (car l)))))
@@ -901,7 +1016,7 @@
   (cond ((null? l) "")
 	((not (string? (car l))) (tmtex-cite-list (cdr l)))
 	((null? (cdr l)) (car l))
-	(else (string-append (car l) ", " (tmtex-cite-list (cdr l))))))
+	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
 
 (define (tmtex-cite s l)
   (tex-apply (string->symbol s) (tmtex-cite-list l)))
@@ -1016,6 +1131,7 @@
   (wide tmtex-wide)
   (neg tmtex-neg)
   (wide* tmtex-wide-star)
+  ;;(tree tmtex-tree)
   (tree tmtex-noop)
   ((:or old-matrix old-table old-mosaic old-mosaic-item) tmtex-noop)
   (tformat tmtex-tformat)
@@ -1053,11 +1169,12 @@
   (!arg tmtex-tex-arg))
 
 (drd-table tmtex-tmstyle%
-  (make-title (,tmtex-make-title 1))
+  (doc-data (,tmtex-doc-data -1))
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
-  ((:or theorem proposition lemma corollary proof axiom definition conjecture
-	remark note example exercise warning convention quote quotation verse)
+  ((:or theorem proposition lemma corollary proof axiom definition
+	notation conjecture remark note example exercise warning
+	convention quote quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   ((:or center indent body) (,tmtex-std-env 1))
@@ -1070,11 +1187,14 @@
   ((:or the-index the-glossary) (,tmtex-dummy -1))
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
+  (thebibliography (,tmtex-thebibliography 2))
+  (bibitem* (,tmtex-bibitem* -1))
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
   (item* (,tmtex-item-arg 1))
   (render-proof (,tmtex-render-proof 2))
-  (session (,tmtex-session 3))
+  (nbsp (,tmtex-nbsp 0))
+  (session (,tmtex-session 1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
   ((:or cite nocite) (,tmtex-cite -1))
@@ -1083,19 +1203,26 @@
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1)))
 
+(drd-group tmtex-protected%
+  a b c d i j k l o r t u v H L O P S
+  aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
+  ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
+  AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->latex x)
+(define (texmacs->latex x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
-	     (doc (list '!file body style lan (get-texmacs-path))))
-	(texmacs->latex doc))
+	     (init (tmfile-extract x 'initial))
+	     (doc (list '!file body style lan init (get-texmacs-path))))
+	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
-	(tmtex-initialize)
+	(tmtex-initialize opts)
 	(tmtex (tmpre-produce x3)))))

@@ -17,7 +17,7 @@
   oder auf <apply|hyper-link|<TeXmacs> Wiki|http://alqua.com/tmresources>.
 
   Es ist ebenso wichtig, daÿ sie der Dokumenation so viel Struktur geben wie
-  möglich, und zwar durch benutzen der speziellen Markups der <tmstyle|tmdoc>
+  möglich, und zwar durch Anwendung der speziellen Markups der <tmstyle|tmdoc>
   Stil-Datei. Die dort definierte Struktur kann genutzt werden um automatisch
   druckfertige Bücher zu kompilieren, um Dokumentation schnell brauchbar für
   andere Sichtformate zu machen, oder um die Dokumenation effektiv nach

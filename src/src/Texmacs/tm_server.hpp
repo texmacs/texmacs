@@ -26,11 +26,12 @@ class tm_server_rep:
   public tm_scheme_rep
 {
 protected:
-  display dis;       // current display
-  tm_view vw;        // current editor
-  int banner_nr;     // how far in banner
-  bool full_screen;  // full screen mode
-  int def_sfactor;   // default shrinking factor
+  display dis;            // current display
+  tm_view vw;             // current editor
+  int banner_nr;          // how far in banner
+  bool full_screen;       // full screen mode
+  bool full_screen_edit;  // full screen edit mode
+  int def_sfactor;        // default shrinking factor
 
   hashmap<tree,hashmap<string,tree> > style_cache; // style environments cache
   hashmap<tree,tree> style_drd;                    // style drd cache
@@ -68,8 +69,9 @@ public:
   void set_right_footer (string s);
   void set_message (string left, string right);
   void interactive (string name, string& s, command call_back);
-  void full_screen_mode (bool on);
+  void full_screen_mode (bool on, bool edit);
   bool in_full_screen_mode ();
+  bool in_full_screen_edit_mode ();
 
   /* Miscellaneous routines */
   void   interpose_handler ();

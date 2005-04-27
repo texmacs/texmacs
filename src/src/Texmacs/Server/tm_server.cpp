@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "tm_server.hpp"
+#include "drd_std.hpp"
 #include "convert.hpp"
 #include "connect.hpp"
 #include "sys_utils.hpp"
@@ -83,7 +84,8 @@ server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
 tm_server_rep::tm_server_rep (display dis2):
-  dis (dis2), vw (NULL), banner_nr (-1), full_screen (false), def_sfactor (5),
+  dis (dis2), vw (NULL), banner_nr (-1),
+  full_screen (false), full_screen_edit (false), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
 {
@@ -163,6 +165,8 @@ tm_server_rep::get_view (bool must_be_valid) {
 void
 tm_server_rep::set_view (tm_view vw2) {
   vw= vw2;
+  if (vw != NULL)
+    the_drd= vw->ed->drd;
 }
 
 tm_buffer
@@ -369,9 +373,9 @@ tm_server_rep::interactive (string name, string& s, command call_back) {
 }
 
 void
-tm_server_rep::full_screen_mode (bool on) {
+tm_server_rep::full_screen_mode (bool on, bool edit) {
   widget meta= (widget) get_meta ();
-  if (on) {
+  if (on && !edit) {
     show_header (false);
     show_footer (false);
     meta ["canvas"] << set_integer ("scrollbars", false);
@@ -382,13 +386,19 @@ tm_server_rep::full_screen_mode (bool on) {
     meta ["canvas"] << set_integer ("scrollbars", true);
   }
   meta->win->full_screen (on);
-  get_editor()->full_screen_mode (on);
+  get_editor()->full_screen_mode (on && !edit);
   full_screen = on;
+  full_screen_edit = on && edit;
 }
 
 bool
 tm_server_rep::in_full_screen_mode () {
-  return full_screen;
+  return full_screen && !full_screen_edit;
+}
+
+bool
+tm_server_rep::in_full_screen_edit_mode () {
+  return full_screen && full_screen_edit;
 }
 
 /******************************************************************************

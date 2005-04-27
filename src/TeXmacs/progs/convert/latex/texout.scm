@@ -20,23 +20,35 @@
 ;; Outputting preamble and postamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (collection->ahash-table init)
+  (let* ((t (make-ahash-table))
+	 (l (if (func? init 'collection) (cdr init) '()))
+	 (f (lambda (x) (ahash-set! t (cadr x) (caddr x)))))
+    (for-each f l)
+    t))
+
 (define (texout-file l)
   (let* ((doc-body (car l))
-	 (styles (cadr l))
-	 (prestyle (car styles))
-	 (style (if (in? prestyle '("generic" "help")) "letter" prestyle))
+	 (styles (if (null? (cadr l)) '("letter") (cadr l)))
+	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))
-	 (doc-preamble (cadddr l))
-	 (doc-misc (append '(!concat) doc-preamble (list doc-body)))
-	 (tm-preamble (tmtex-preamble-build doc-misc style lan)))
+	 (init (collection->ahash-table (cadddr l)))
+	 (doc-preamble (car (cddddr l)))
+	 (doc-misc (append '(!concat) doc-preamble (list doc-body))))
 
-    (receive (tm-uses tm-preamble) (tmtex-preamble-build doc-misc style lan)
+    (receive
+	(tm-uses tm-init tm-preamble)
+	(tmtex-preamble-build doc-misc style lan init)
       (output-verbatim "\\documentclass{" style "}\n")
       (if (not (== tm-uses ""))
 	  (output-verbatim "\\usepackage{" tm-uses "}\n"))
       (for-each texout-usepackage (cdr styles))
 
+      (if (not (== tm-init ""))
+	  (begin
+	    (output-lf)
+	    (output-verbatim tm-init)))
       (if (not (== tm-preamble ""))
 	  (begin
 	    (output-lf)
@@ -116,6 +128,7 @@
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
 		(func? x1 '&) (func? x2 '&)
+		(func? x1 '!nbsp) (func? x2 '!nbsp)
 		(and (func? x1 '!math) (func? x2 '!math))
 		(and (texout-env? x1) (list? x2))
 		(and (list? x1) (texout-env? x2))
@@ -141,6 +154,9 @@
 (define (texout-nextline)
   (output-text "\\\\")
   (output-lf))
+
+(define (texout-nbsp)
+  (output-text "~"))
 
 (define (texout-verb x)
   (output-verb "\\verb¤" x "¤"))
@@ -248,6 +264,7 @@
 	((== (car x) '!concat) (texout-concat (cdr x)))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
+	((== (car x) '!nbsp) (texout-nbsp))
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -105,6 +105,60 @@
     with <name|HTML>, but we do not recommend its use.
   </explain>
 
+  Most of the following logical size tags can be found in <menu|Text|Size
+  tag> (or <menu|Mathematics|Size tag>):
+
+  <\explain>
+    <explain-macro|really-tiny|content>, <explain-macro|tiny|content>
+
+    <explain-macro|really-small|content>, <explain-macro|very-small|content>,
+    <explain-macro|smaller|content>, <explain-macro|small|content>
+
+    <explain-macro|normal-size|content>
+
+    <explain-macro|large|content>, <explain-macro|larger|content>,
+    <explain-macro|very-large|content>, <explain-macro|really-large|content>
+
+    <explain-macro|huge|content>, <explain-macro|really-huge|content>
+  <|explain>
+    These logical size tags should be used by preference when typesetting
+    parts of your document in a larger or smaller font. Environments like
+    footnotes or captions of tables may also be based on logical size tags.
+    Document styles from professional publishers often assign very precise
+    font settings to each of the logical size tags. By default, the size tags
+    are rendered as follows:
+
+    <\tm-fragment>
+      <\with|par-par-sep|0fn>
+        <really-tiny|Really tiny>
+
+        <tiny|Tiny>
+
+        <really-small|Really small>
+
+        <very-small|Very small>
+
+        <smaller|Smaller>
+
+        <small|Small>
+
+        <normal-size|Normal size>
+
+        <large|Large>
+
+        <larger|Larger>
+
+        <very-large|Very large>
+
+        <really-large|Really large>
+
+        <huge|Huge>
+
+        <really-huge|Really huge>
+      </with>
+    </tm-fragment>
+  </explain>
+
   The following are standard environments:
 
   <\explain|<explain-macro|verbatim|body>>
@@ -153,23 +207,26 @@
   <explain|<explain-macro|TeXmacs-version>|The current version of <TeXmacs>
   (<TeXmacs-version>).>
 
+  <explain|<explain-macro|made-by-TeXmacs>|A macro which may be used to
+  indicate that your document was written using <TeXmacs>.>
+
   <explain|<explain-macro|TeX>|The <TeX> logo.>
 
   <explain|<explain-macro|LaTeX>|The <LaTeX> logo.>
 
-  <\explain|<explain-macro|hflush>, <explain-macro|left-flush>,
-  <explain-macro|right-flush>>
-    Used by developers for flushing to the right in the definition of
-    environments.
-  </explain>
-
   <\explain|<explain-macro|hrule>>
     A horizontal rule like the one you see below:
 
-    <value|hrule>
+    <hrule>
   </explain>
 
   The following miscellaneous tags all take one or more arguments:
+
+  <\explain|<explain-macro|phantom|content>>
+    This tag takes as much space as the typeset argument <src-arg|content>
+    would take, but <src-arg|content> is not displayed. For instance,
+    <inactive*|<phantom|phantom>> yields ``<phantom|phantom>''.
+  </explain>
 
   <\explain|<explain-macro|overline|content>>
     For <overline|overlined text>, which can be wrapped across several lines.
@@ -200,22 +257,6 @@
     presentations. The argument <src-arg|current> correspond to the currently
     visible presentation and <src-arg|alternative> to the set of
     alternatives.
-  </explain>
-
-  <\explain|<explain-macro|phantom|content>>
-    This tag takes as much space as the typeset argument <src-arg|content>
-    would take, but <src-arg|content> is not displayed. For instance,
-    <inactive*|<phantom|phantom>> yields ``<phantom|phantom>''.
-  </explain>
-
-  <\explain|<explain-macro|set-header|header-text>>
-    A macro for permanently changing the header. Notice that certain tags in
-    the style file, like sectional tags, may override such manual changes.
-  </explain>
-
-  <\explain|<explain-macro|set-footer|footer-text>>
-    A macro for permanently changing the footer. Again, certain tags in the
-    style file may override such manual changes.
   </explain>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>

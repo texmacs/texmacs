@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -22,8 +22,8 @@
 
   Environment variables are almost always attributes for controlling the
   rendering of content, or counters for sections, equations, <abbr|etc.>.
-  Although you several simple tags for the end-user like <markup|strong> may
-  be redefined in your own style files, this practice is not recommended for
+  Although several simple tags for the end-user like <markup|strong> may be
+  redefined in your own style files, this practice is not recommended for
   more complex tags like <markup|section>. Indeed, the <markup|section> tag
   involves many things like resetting subcounters, entering the title into
   the table of contents and so on. Therefore, special additional macros are
@@ -39,18 +39,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>

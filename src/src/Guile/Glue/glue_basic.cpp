@@ -859,6 +859,19 @@ tmg_string_numberP (SCM arg1) {
 }
 
 SCM
+tmg_set_bibtex_command (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-bibtex-command");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  set_bibtex_command (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_string_2url (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->url");
 
@@ -1523,6 +1536,19 @@ tmg_string_unslash (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
+}
+
+SCM
+tmg_string_locase_alphaP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-locase-alpha?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_locase_alpha (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -2389,6 +2415,7 @@ initialize_glue_basic () {
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
   gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
+  gh_new_procedure ("set-bibtex-command", (FN) tmg_set_bibtex_command, 1, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);
@@ -2438,6 +2465,7 @@ initialize_glue_basic () {
   gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
   gh_new_procedure ("string-slash", (FN) tmg_string_slash, 1, 0, 0);
   gh_new_procedure ("string-unslash", (FN) tmg_string_unslash, 1, 0, 0);
+  gh_new_procedure ("string-locase-alpha?", (FN) tmg_string_locase_alphaP, 1, 0, 0);
   gh_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
   gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
   gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);

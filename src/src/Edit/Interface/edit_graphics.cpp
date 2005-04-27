@@ -64,6 +64,14 @@ edit_graphics_rep::find_frame () {
   else return frame ();
 }
 
+grid
+edit_graphics_rep::find_grid () {
+  bool bp_found;
+  path bp= eb->find_box_path (tp, bp_found);
+  if (bp_found) return eb->find_grid (path_up (bp));
+  else return grid ();
+}
+
 void
 edit_graphics_rep::find_limits (point& lim1, point& lim2) {
   lim1= point (); lim2= point ();
@@ -74,9 +82,19 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
 
 point
 edit_graphics_rep::adjust (point p) {
-  double x= floor (10.0*p[0] + 0.5);
-  double y= floor (10.0*p[1] + 0.5);
-  return point (x / 10.0, y / 10.0);
+  frame f= find_frame ();
+  point pmin= p, pmax= p;
+  if (!nil (f)) {
+    static const int NB= 10;
+    point p2= f (p);
+    pmin= f [point (p2[0]-NB*PIXEL, p2[1]-NB*PIXEL)];
+    pmax= f [point (p2[0]+NB*PIXEL, p2[1]+NB*PIXEL)];
+  }
+  grid g= find_grid ();
+  if (nil (g))
+    return p;
+  else
+    return g->find_closest_point (p, pmin, pmax);
 }
 
 tree
@@ -85,19 +103,18 @@ edit_graphics_rep::find_point (point p) {
 }
 
 tree
-edit_graphics_rep::frame_direct_transform (tree t) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  frame f= (b ? env : get_typesetter ()->env)->fr;
-  return as_tree (!nil (f) ? f (as_point (t)) : point ());
-}
-
-tree
-edit_graphics_rep::frame_inverse_transform (tree t) {
-  bool b;
-  edit_env env= get_current_rewrite_env (b);
-  frame f= (b ? env : get_typesetter ()->env)->fr;
-  return as_tree (!nil (f) ? f [as_point (t)] : point ());
+edit_graphics_rep::graphical_select (double x, double y) { 
+  frame f= find_frame ();
+  if (nil (f)) return tuple ();
+  gr_selections sels;
+  point p = f (point (x, y));
+  sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10 * get_pixel_size ());
+  // TODO: Sort sels according to graphical distances
+  int i, n= N(sels);
+  array<array<path> > gs (n);
+  for (i=0; i<n; i++)
+    gs[i]= sels[i]->cp;
+  return (tree) gs;
 }
 
 tree edit_graphics_rep::get_graphical_object () {
@@ -129,24 +146,37 @@ void edit_graphics_rep::invalidate_graphical_object () {
   }
 }
 
-void edit_graphics_rep::draw_graphical_object () {
+void edit_graphics_rep::draw_graphical_object (ps_device dev) {
   if (nil (go_box)) set_graphical_object(graphical_object);
   if (nil (go_box)) return;
+  point lim1, lim2;
+  find_limits (lim1, lim2);
+  SI ox1, oy1, ox2, oy2;
+  dev->get_clipping (ox1, oy1, ox2, oy2);
+  frame f= find_frame ();
+  if (!nil (f)) {
+    point p1= f (point (lim1[0], lim1[1]));
+    point p2= f (point (lim2[0], lim2[1]));
+    if (lim1 != point ())
+      dev->extra_clipping ((SI) p1[0], (SI) p1[1], (SI) p2[0], (SI) p2[1]);
+  }
   int i;
   for (i=0; i<go_box->subnr(); i++) {
     box b= go_box->subbox (i);
     if ((tree)b=="point" || (tree)b=="curve")
-      b->display (win);
+      b->display (dev);
     else {
       rectangles rs;
-      b->redraw (win, path (), rs);
+      b->redraw (dev, path (), rs);
     }
   }
+  dev->set_clipping (ox1, oy1, ox2, oy2);
 }
 
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   (void) t;
+  apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!nil (f)) {
     point lim1, lim2;
@@ -165,6 +195,9 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
     if (type == "release-left"  ) call ("graphics-insert-point", sx, sy);
     if (type == "release-middle") call ("graphics-remove-point", sx, sy);
     if (type == "release-right" ) call ("graphics-last-point"  , sx, sy);
+    if (type == "start-drag"    ) call ("graphics-start-drag"  , sx, sy);
+    if (type == "dragging"      ) call ("graphics-dragging"    , sx, sy);
+    if (type == "end-drag"      ) call ("graphics-end-drag"    , sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
     return true;

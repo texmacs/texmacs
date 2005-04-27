@@ -15,7 +15,7 @@
 (define (world-initialize)
   (menu-extend texmacs-extra-menu
     (=> "World"
-	("Hello world" (insert-string "Hello world")))))
+	("Hello world" (insert "Hello world")))))
 
 (plugin-configure world
   (:require #t)

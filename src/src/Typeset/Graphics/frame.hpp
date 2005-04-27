@@ -27,10 +27,10 @@ public:
   // a point p in frame f corresponds to f(p) = f->direct_transform(p)
   // in the parent frame of f
 
-  virtual double direct_bound (point p, double err) = 0;
-  virtual double inverse_bound (point p, double err) = 0;
-  // direct_bound (p, epsilon) yields a delta such that for all p'
-  // we have |p' - p| < delta => |f(p') - f(p)| < epsilon.
+  virtual double direct_bound (point p, double eps) = 0;
+  virtual double inverse_bound (point p, double eps) = 0;
+  // direct_bound (p, eps) yields a delta such that for all p'
+  // we have |p' - p| < delta => |f(p') - f(p)| < eps.
 
   inline double direct_scalar (double x) {
     return norm (direct_transform (point (x, 0))); }

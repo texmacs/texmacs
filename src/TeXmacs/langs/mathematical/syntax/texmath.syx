@@ -9,16 +9,18 @@ Class group-ponctuation
 	Spacing=	None, Default
 	Penalty=	0
 
-Class group-separator
-	Type=		Separator
-	Precedence=	0
-	Penalty=	0
-
 Class group-suspension
 	Type=		Symbol
 	Precedence=	0
 	Left-Penalty=	Invalid
 	Penalty=	Invalid
+
+Class group-suspension-lim
+	Type=		Symbol
+	Precedence=	0
+	Left-Penalty=	Invalid
+	Penalty=	Invalid
+	Limits=		Always
 
 Class arithmetic-assign
 	Type=		Infix
@@ -132,7 +134,7 @@ Class arithmetic-plus
 Class arithmetic-unary-minus
 	Type=		Prefix
 	Precedence=	100
-	Penalty=	30
+	Penalty=	Invalid
 	Spacing=	None, None
 
 Class arithmetic-minus
@@ -194,6 +196,10 @@ Class group-open
 	Type=		Opening Bracket
 	Precedence=	160
 
+Class group-bar
+	Type=		Symbol
+	Precedence=	160
+
 Class group-close
 	Type=		Closing Bracket
 	Precedence=	160
@@ -240,10 +246,10 @@ Members logic-prefix
 
 Members logic-relation
 	= ne neq less gtr le leq prec preceq
-	ll subset subseteq sqsubset sqsubseteq in
-	ge geq succ succeq gg supset supseteq
+	ll lleq subset subseteq sqsubset sqsubseteq in
+	ge geq succ succeq gg ggeq supset supseteq
 	sqsupset sqsupseteq ni equiv nequiv
-	sim simeq asymp approx cong
+	sim simeq asymp approx cong subsetsim supsetsim
 	doteq propto perp
 	bowtie Join smile frown signchange
 	mid parallel shortmid shortparallel
@@ -355,7 +361,7 @@ Members arithmetic-plus
 	boxplus dotplus dotamalg dotoplus
 
 Members arithmetic-unary-minus
-	um upm ump
+	um upl upm ump
 
 Members arithmetic-minus
 	- pm mp ominus
@@ -395,7 +401,7 @@ Members group-open
 Members group-ponctuation
 	, ; :
 
-Members group-separator
+Members group-bar
 	|
 	mid-| mid-||
 
@@ -410,6 +416,9 @@ Members group-close
 Members group-suspension
 	ldots cdots udots
 	vdots ddots mdots
+
+Members group-suspension-lim
+	cdotslim
 
 Members symbol
 	alpha beta gamma delta varepsilon
@@ -458,3 +467,5 @@ Members symbol
 	square therefore thorn triangledown
 	triangleq ulcorner urcorner varkappa
 	varnothing varpropto vartriangle veebar yen
+
+	comma

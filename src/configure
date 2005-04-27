@@ -1215,10 +1215,12 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.4"
+DEVEL_VERSION="1.0.5"
 DEVEL_RELEASE="1"
-STABLE_VERSION="1.0.4"
+STABLE_VERSION="1.0.5"
 STABLE_RELEASE="1"
+WINDOWS_VERSION="1.0.5"
+WINDOWS_RELEASE="1"
 
 
 
@@ -5718,7 +5720,7 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 case "${host}" in
-  i*86-*-linux-gnu* | i*86-*-freebsd*)
+  i*86-*-linux* | i*86-*-freebsd*)
     echo "$as_me:$LINENO: result: final setup for an Intel/GNU-linux host" >&5
 echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
     CONFIG_OS="GNU_LINUX"
@@ -5740,7 +5742,49 @@ echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  mips-*-linux-gnu)
+  *x86_64*-*-linux-gnu*)
+    echo "$as_me:$LINENO: result: final setup for an AMD/Intel x64 GNU-Linux host" >&5
+echo "${ECHO_T}final setup for an AMD/Intel x64 GNU-Linux host" >&6
+    CONFIG_OS="OPTERON_GNU_LINUX"
+    CONFIG_OS_SUFFIX="opteron-gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O2"
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BSTATIC="-Wl, -Bstatic"
+    CONFIG_BSHARED="-Wl, -Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  x86_64-*-linux* | x86_64-*-freebsd*)
+    echo "$as_me:$LINENO: result: final setup for an AMD64/x86_64/GNU-linux host" >&5
+echo "${ECHO_T}final setup for an AMD64/x86_64/GNU-linux host" >&6
+    CONFIG_OS="GNU_LINUX"
+    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_CX="$X_CFLAGS"
+    CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_LFLAGS=""
+    CONFIG_LSTATIC="-static"
+    CONFIG_LSHARED="-shared"
+    CONFIG_LPATH="-Wl,-rpath,"
+    CONFIG_LX="$X_LIBS -lXext -lX11"
+    CONFIG_BFLAGS=""
+    CONFIG_BSTATIC="-Wl,-Bstatic"
+    CONFIG_BSHARED="-Wl,-Bdynamic"
+    CONFIG_BPATH="-Wl,-rpath,"
+    CONFIG_BX="$X_LIBS -lXext -lX11"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
+    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+  ;;
+  mips-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a Mips/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
     CONFIG_OS="MIPS_GNU_LINUX"
@@ -5762,7 +5806,7 @@ echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  mipsel-*-linux-gnu)
+  mipsel-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a MipsEL/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a MipsEL/GNU-linux host" >&6
     CONFIG_OS="MIPSEL_GNU_LINUX"
@@ -5784,7 +5828,7 @@ echo "${ECHO_T}final setup for a MipsEL/GNU-linux host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  arm*-*-linux-gnu)
+  arm*-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an Arm/GNU-linux host" >&5
 echo "${ECHO_T}final setup for an Arm/GNU-linux host" >&6
     CONFIG_OS="ARM_GNU_LINUX"
@@ -5806,7 +5850,7 @@ echo "${ECHO_T}final setup for an Arm/GNU-linux host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  powerpc-*-linux-gnu*)
+  powerpc-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a PowerPC/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a PowerPC/GNU-linux host" >&6
     CONFIG_OS="POWERPC_GNU_LINUX"
@@ -5851,7 +5895,7 @@ echo "${ECHO_T}final setup for a SUN/solaris host" >&6
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
-  sparc*-*-linux-gnu)
+  sparc*-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a Sparc host running GNU/Linux" >&5
 echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
     CONFIG_OS="SPARC_GNU_LINUX"
@@ -5897,7 +5941,7 @@ echo "${ECHO_T}final setup for a DEC/alpha host" >&6
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
-  *alpha*-*-linux-gnu*)
+  *alpha*-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an Alpha/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
     CONFIG_OS="ALPHA_GNU_LINUX"
@@ -5917,7 +5961,7 @@ echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  s390-*-linux-gnu*)
+  s390-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an IBM S/390 GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an IBM S/390 GNU-Linux host" >&6
     CONFIG_OS="S390"
@@ -5986,7 +6030,7 @@ echo "${ECHO_T}final setup for cygwin" >&6
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
-  ia64-*-linux-gnu*)
+  ia64-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an Itanium/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_OS="IA64_GNU_LINUX"
@@ -6006,7 +6050,7 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa*-*-linux-gnu*)
+  hppa-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an HP PA_RISC/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_OS="HPPA64_GNU_LINUX"
@@ -6049,7 +6093,7 @@ echo "${ECHO_T}final setup for a Motorola 68xxx host" >&6
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  *-*-linux-gnu*)
+  *-linux*)
     echo "$as_me:$LINENO: result: final setup for an unknown host running GNU/Linux" >&5
 echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
     CONFIG_OS="GNU_LINUX"
@@ -6139,6 +6183,8 @@ esac
 optimize_default="yes"
 
 case "$GXX_VERSION" in
+    3.3.3 | 3.3.4)
+    ;;
     2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
 	case "${host}" in
 	  i*86-*-linux-gnu* | i*86-*-freebsd*)
@@ -6343,6 +6389,12 @@ else
   tmstgz=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
 fi
 tmsrpm=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
+if test "$WINDOWS_RELEASE" = "1"; then
+  tmwin=wintexmacs-${WINDOWS_VERSION}
+else
+  tmwin=wintexmacs-${WINDOWS_VERSION}-R${WINDOWS_RELEASE}
+fi
+
 
 
 
@@ -7023,6 +7075,7 @@ s,@tmtgz@,$tmtgz,;t t
 s,@tmrpm@,$tmrpm,;t t
 s,@tmstgz@,$tmstgz,;t t
 s,@tmsrpm@,$tmsrpm,;t t
+s,@tmwin@,$tmwin,;t t
 CEOF
 
 _ACEOF

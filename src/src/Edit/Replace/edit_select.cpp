@@ -200,7 +200,8 @@ edit_select_rep::select_enlarge () {
 
   path p = common (start_p, end_p);
   tree st= subtree (et, p);
-  if (is_func (st, TFORMAT) || is_func (st, DOCUMENT, 1))
+  if (is_func (st, TFORMAT) || is_func (st, DOCUMENT, 1) ||
+      drd->var_without_border (L(st)))
     select_enlarge ();
   else {
     string s;
@@ -220,6 +221,7 @@ stop_enlarge_environmental (tree t) {
   if (is_multi_paragraph (t)) return true;
   string s= as_string (L(t));
   return
+    (s == "part") ||
     (s == "chapter") ||
     (s == "section") ||
     (s == "subsection") ||
@@ -379,6 +381,24 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
   }
 }
 
+static void
+selection_bcorrect (drd_info drd, tree t, path i1, path i2, path& o1, path& o2)
+{
+  o1= i1; o2= i2;
+  if (is_compound (t) && !atom (i1) && !atom (i2) && i1->item == i2->item) {
+    path O1, O2;
+    selection_bcorrect (drd, t[i1->item], i1->next, i2->next, O1, O2);
+    if (drd->var_without_border (L(t[i1->item])) && (O1->item != O2->item)) {
+      o1= path (0);
+      o2= path (1);
+    }
+    else {
+      o1= path (i1->item, O1);
+      o2= path (i1->item, O2);
+    }
+  }
+}
+
 tree
 compute_selection (tree t, path start, path end) {
   int  i1= start->item;
@@ -453,8 +473,9 @@ edit_select_rep::selection_get (selection& sel) {
     sel= selection (rectangles (r), fp * 0, fp * 1);
   }
   else {
-    path p_start, p_end;
-    selection_correct (et, start_p, end_p, p_start, p_end);
+    path aux_start, aux_end, p_start, p_end;
+    selection_bcorrect (drd, et, start_p, end_p, aux_start, aux_end);
+    selection_correct (et, aux_start, aux_end, p_start, p_end);
     sel= eb->find_check_selection (p_start, p_end);
   }
 }
@@ -644,10 +665,14 @@ edit_select_rep::cut (path p) {
 void
 edit_select_rep::cut (path p1, path p2) {
   path p = common (p1, p2);
+  tree st= subtree (et, p);
   raw_cut (p1, p2);
-  if (!is_document (subtree (et, p)))
-    if (is_concat (subtree (et, path_up (p))))
-      correct_concat (path_up (p));
+  if (!is_func (st, TFORMAT) &&
+      !is_func (st, TABLE) &&
+      !is_func (st, ROW) &&
+      !is_document (subtree (et, p)) &&
+      is_concat (subtree (et, path_up (p))))
+    correct_concat (path_up (p));
 }
 
 void

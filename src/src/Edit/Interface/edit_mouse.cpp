@@ -32,7 +32,28 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     this << emit_mouse_grab (false);
   }
 
-  if (inside_graphics () && mouse_graphics (type, x, y, t)) return;
+  if (inside_graphics ()) {
+    string type2= type;
+    if (type == "enter")
+      dragging= start_drag= false;
+    if (type == "press-left")
+      start_drag= true;
+
+    if (start_drag && (type == "move")) {
+      type2= "start-drag";
+      start_drag= false;
+      dragging= true;
+    }
+    else
+    if (dragging && (type == "move"))
+      type2= "dragging"; 
+    if (dragging && (type == "release-left"))
+      type2= "end-drag";
+
+    if (type == "release-left")
+      dragging= start_drag= false;
+    if (mouse_graphics (type2, x, y, t)) return;
+  }
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
@@ -139,11 +160,13 @@ edit_interface_rep::mouse_select (SI x, SI y) {
   bool b= inside_graphics ();
   if (b) g= get_graphics ();
   go_to (x, y);
+  if ((!b && inside_graphics ()) || (b && !inside_graphics ()))
+    dragging= start_drag= false;
   if (!b && inside_graphics ())
-    call ("graphics-reset-context", call ("string->symbol", string ("begin")));
+    eval ("(graphics-reset-context 'begin)");
   if (b && (!inside_graphics () || g != get_graphics ())) {
     invalidate_graphical_object ();
-    call ("graphics-reset-context", call ("string->symbol", string ("exit")));
+    eval ("(graphics-reset-context 'exit)");
   }
   if (selection_active_any ())
     selection_set ("primary", selection_get (), true);

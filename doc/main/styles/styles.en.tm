@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -23,7 +23,7 @@
   concerned with the description of the standard <abbr|d.t.d.>s, except when
   we focus on the rendering. Users may customize standard styles by defining
   new ones which match the same abstract interface (see the chapter on
-  <hyper-link|writing <TeXmacs> style files|../../../devel/style/style.en.tm>).
+  <hyper-link|writing <TeXmacs> style files|../../devel/style/style.en.tm>).
 
   <\traverse>
     <branch|General organization|style-organize.en.tm>

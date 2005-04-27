@@ -53,6 +53,9 @@
       <item><hlink|How to associate .tm files with <TeXmacs>|#cygwin-2>?
 
       <item><hlink|How to get spell checking working|#cygwin-3>?
+
+      <item><hlink|My Windows username contains spaces. Will this cause
+      problems|#cygwin-4>?
     </itemize-minus>
 
     <item>Usage
@@ -64,6 +67,8 @@
       document|#usage-2>?
 
       <item><hlink|How can I insert an OpenOffice.org table|#usage-3>?
+
+      <item><hlink|How can I insert the number of pages|#usage-4>?
     </itemize-minus>
 
     <item>Microtypography
@@ -310,6 +315,15 @@
     </verbatim>
   </answer>
 
+  <\question>
+    <label|cygwin-4>My Windows username contains spaces. Will this cause
+    problems?
+  </question>
+
+  <answer|It is strongly recommended to have a Windows username without
+  spaces. Please make a new account, as simply changing the username could be
+  insufficient.>
+
   <section*|Usage>
 
   <\question>
@@ -348,6 +362,13 @@
       document.
     </enumerate>
   </answer>
+
+  <\question>
+    <label|usage-4>How can I insert the number of pages?
+  </question>
+
+  <answer| Put a label on the last page of your document and use the
+  <verbatim|pageref> primitive in order to produce the corresponding number.>
 
   <section*|Microtypography>
 

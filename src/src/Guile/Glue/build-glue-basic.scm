@@ -87,6 +87,7 @@
   (system-wait system_wait (void string string))
   (math-symbol-type math_symbol_type (string string))
   (string-number? is_double (bool string))
+  (set-bibtex-command set_bibtex_command (void string))
 
   (string->url url (url string))
   (url url (url string string))
@@ -142,6 +143,7 @@
   (string-replace replace (string string string string))
   (string-slash slash (string string))
   (string-unslash unslash (string string))
+  (string-locase-alpha? is_locase_alpha (bool string))
   (upcase-first upcase_first (string string))
   (locase-first locase_first (string string))
   (upcase-all upcase_all (string string))

@@ -8,7 +8,7 @@
 
   <tmdoc-include|main/faq/faq.en.tm>
 
-  <tmdoc-copyright|1999--2003|Andreas Seidl|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2004|Andreas Seidl|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
@@ -16,5 +16,6 @@
 <\initial>
   <\collection>
     <associate|language|english>
+    <associate|preamble|true>
   </collection>
 </initial>

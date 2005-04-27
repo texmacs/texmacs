@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -29,7 +29,11 @@
 
   <assign|session|<macro|body|<style-with|src-compact|none|<compound|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>|<arg|name>|<arg|body>>>>>
 
-  <assign|generic-session|<macro|name|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<with|par-first|0fn|par-par-sep|0fn|<arg|body>>>>>>
+  <assign|generic-session|<\macro|name|body>
+    <\padded-normal|1fn|1fn>
+      <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
+    </padded-normal>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -57,11 +61,21 @@
 
   <assign|generic-output*|<macro|body|<with|par-mode|left|math-display|true|<arg|body>>>>
 
-  <assign|generic-output|<macro|body|<style-with|src-compact|none|<surround|<vspace*|0.5fn>|<right-flush><vspace|0.5fn>|<with|par-left|<plus|<value|par-left>|1.5fn>|<generic-output*|<arg|body>>>>>>>
+  <assign|generic-output|<\macro|body>
+    <\padded-normal|0.5fn|0.5fn>
+      <\indent-left|1.5fn>
+        <generic-output*|<arg|body>>
+      </indent-left>
+    </padded-normal>
+  </macro>>
 
   <assign|errput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-errput>>|<merge|<value|prog-language>|-textput>|generic-errput>>|<arg|body>>>>>
 
-  <assign|generic-errput|<macro|body|<surround||<right-flush>|<with|color|red|<arg|body>>>>>
+  <assign|generic-errput|<\macro|body>
+    <\wide-normal>
+      <with|color|red|<arg|body>>
+    </wide-normal>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -71,25 +85,17 @@
 
   <assign|textput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-textput>>|<merge|<value|prog-language>|-textput>|generic-textput>>|<arg|body>>>>>
 
-  <assign|generic-textput|<macro|body|<surround||<right-flush>|<arg|body>>>>
+  <assign|generic-textput|<\macro|body>
+    <\wide-normal>
+      <arg|body>
+    </wide-normal>
+  </macro>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

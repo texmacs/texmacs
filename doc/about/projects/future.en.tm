@@ -1,32 +1,28 @@
-<TeXmacs|1.0.1.11>
+<TeXmacs|1.0.4.1>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Plans for the future>
+  <tmdoc-title|Plans for the future>
 
-  <with|color|red|[Should be updated]>
+  <with|color|red|[Should be completed]>
 
   <section|Typesetting>
 
-  Some major typesetting facilities which have not yet been implemented are
-  the following:
+  The typesetter should be reorganized and improved as follows:
 
   <\itemize>
-    <item>Separation of a document in several parts.
+    <item>Decouple the style-sheet language from the actual typesetter.
 
-    <item>Dynamical objects like in HTML.
+    <item>Better support for agglomerated documents (from physically
+    different documents).
 
-    <item>Environments for computer algebra system interfaces.
-  </itemize>
+    <item>Incorporation of better linking primitives (XLink, Proclus).
 
-  Many minor facilities should also be completed. We list a few of them:
+    <item>More types of dynamic objects, like animations, help balloons,
+    <abbr|etc.>
 
-  <\itemize>
-    <item>Consider fractions as operators <with|mode|math|\<Rightarrow\>>
-    spaces before and after. Similarly for scripts
-    <with|mode|math|\<Rightarrow\>> small space before left scripts and after
-    right scripts.
+    <item>Better line-breaking of large formulas.
   </itemize>
 
   <section|Extra facilities for editing texts>
@@ -36,9 +32,8 @@
   mention a few of these:
 
   <\itemize>
-    <item>Searching texts, formulas, certain environments etc.
-
-    <item>Query replace.
+    <item>Searching/replacing texts, formulas, certain environments etc. and
+    regular expressions.
 
     <item>Mathematical facilities: simplification of a selected region,
     substitutions of formulas in other formulas, etc.
@@ -72,17 +67,31 @@
   or chemical components with a nice icon bar for selecting circuits or
   components, just as you select lines and circles in usual pictures.
 
+  <section|Tools for usage on the web and in networks>
+
+  It would be nice to have a better integration of <TeXmacs> with the web. As
+  a first step, we need a clean internal plug-in for <name|Wget> or
+  <name|Curl> with support for cookies, security, etc. At a second stage, the
+  Html converters should be improved to take advantage of this. After that,
+  we may think about things like collaborative authoring via the web,
+  integration with preprint servers, <abbr|etc.>
+
+  Another interesting thing would be to incorporate tools for live
+  conferencing inside <TeXmacs> using the recent concept of mutator tags. We
+  actually expect this to be quite easy and this would open a different road
+  towards collaborative authoring, instant messenging, <abbr|etc.>
+
   <section|Interface with computer algebra systems>
 
-  The following improvements should still be made in order to link
-  <apply|TeXmacs> to computer algebra systems:
+  The following improvements should still be made in order to link <TeXmacs>
+  to computer algebra systems:
 
   <\enumerate>
     <item>Improving the layout of computer algebra sessions.
 
     <item>Add extra features to increase the interoperability between
-    <apply|TeXmacs> and computer algebra systems and to give additional
-    control over the layout of big output.
+    <TeXmacs> and computer algebra systems and to give additional control
+    over the layout of big output.
 
     <item>More semantics for the objects being communicated. This may either
     be high level information (like Openmath or HTML 4.0 mathematical markup)
@@ -95,81 +104,25 @@
 
   <section|Interaction with other GNU-like projects>
 
-  It might be nice to increase the interaction between <apply|TeXmacs> and
-  other GNU-like projects, such as Gnome or multiplatform GUI's. This might
-  facilitate the incorporation of extern data into <apply|TeXmacs> documents
-  or increase the number of supported platforms. On the other hand, several
-  <apply|TeXmacs> features, such as its font handling, might be interesting
-  for other projects too.
+  It might be nice to increase the interaction between <TeXmacs> and other
+  GNU-like projects, such as Gnome or multiplatform GUI's. This might
+  facilitate the incorporation of extern data into <TeXmacs> documents or
+  increase the number of supported platforms. On the other hand, several
+  <TeXmacs> features, such as its font handling, might be interesting for
+  other projects too.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|1|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|2|?>>
-    <associate|toc-3|<tuple|3|?>>
-    <associate|toc-4|<tuple|4|?>>
-    <associate|toc-5|<tuple|5|?>>
-    <associate|toc-6|<tuple|6|?>>
-    <associate|toc-7|<tuple|<uninit>|?>>
-    <associate|toc-8|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|1<space|2spc>Typesetting><value|toc-dots><pageref|toc-1><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|2<space|2spc>Extra facilities for editing
-      texts><value|toc-dots><pageref|toc-2><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|3<space|2spc>A universal
-      spreadsheet><value|toc-dots><pageref|toc-3><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|4<space|2spc>Technical
-      pictures><value|toc-dots><pageref|toc-4><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|5<space|2spc>Interface with computer algebra
-      systems><value|toc-dots><pageref|toc-5><vspace|0.5fn>
-
-      <vspace*|1fn><with|font series|<quote|bold>|math font
-      series|<quote|bold>|6<space|2spc>Interaction with other GNU-like
-      projects><value|toc-dots><pageref|toc-6><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>

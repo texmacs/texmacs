@@ -1473,15 +1473,23 @@ skeleton
 page_breaker_rep::make_skeleton () {
   skeleton sk;
   int i, j, n= N(l);
+  bool dpage_flag= false;
   for (i=0, j=0; j<n; j++) {
     if ((!papyrus_mode) && (l[j]->type == PAGE_CONTROL_ITEM))
-      if ((l[j]->t == PAGE_BREAK) || (l[j]->t == NEW_PAGE)) {
-	last_page_flag= (l[j]->t == NEW_PAGE);
-	if (i<j) assemble_skeleton (sk, i, j);
-	i=j+1;
-      }
+      if ((l[j]->t == PAGE_BREAK) ||
+	  (l[j]->t == NEW_PAGE) || (l[j]->t == NEW_DPAGE))
+	{
+	  if (dpage_flag && ((N(sk)&1) == 1))
+	    sk << pagelet (space (0));
+	  dpage_flag= (l[j]->t == NEW_DPAGE);
+	  last_page_flag= (l[j]->t != PAGE_BREAK);
+	  if (i<j) assemble_skeleton (sk, i, j);
+	  i=j+1;
+	}
   }
   if (i<j) {
+    if (dpage_flag && ((N(sk)&1) == 1))
+      sk << pagelet (space (0));
     last_page_flag= true;
     assemble_skeleton (sk, i, j);
   }

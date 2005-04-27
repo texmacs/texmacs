@@ -15,11 +15,11 @@
 (texmacs-module (texmacs edit edit-format)
   (:export
     ;; modifying style parameters
-    make-with-color make-line-with
+    make-with-color make-with-font-base-size make-line-with
     set-left-margin set-right-margin set-first-indent set-last-indent
     set-interline set-interline-spc set-interpar-spc
     ;; page breaking
-    make-page-break make-new-page
+    make-page-break make-new-page make-new-dpage
     ;; routines for floats
     test-insertion-position?
     toggle-insertion-position toggle-insertion-position-not))
@@ -29,6 +29,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-with-color s) (make-with "color" s))
+(define (make-with-font-base-size s) (make-with "font-base-size" s))
 
 (tm-define (make-line-with var val)
   (:synopsis "Make 'with' with one or more paragraphs as its scope")
@@ -57,6 +58,10 @@
 
 (define (make-new-page)
   (make 'new-page)
+  (insert-return))
+
+(define (make-new-dpage)
+  (make 'new-dpage)
   (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

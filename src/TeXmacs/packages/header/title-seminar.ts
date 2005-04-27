@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -21,71 +21,65 @@
     </src-license>
   </src-title>>
 
-  <assign|make-title|<\macro|body>
+  <use-package|title-base>
+
+  <\active*>
+    <\src-comment>
+      Containers.
+    </src-comment>
+  </active*>
+
+  <assign|doc-make-title|<\macro|body>
     <no-indent><assign|page-this-header|><assign|page-this-footer|><vspace|0.1pag>
 
-    <\with|par-mode|center>
+    <doc-title-block|<arg|body>>
+
+    <vspace|0.1pag>
+
+    <new-page><right-flush>
+  </macro>>
+
+  <assign|doc-abstract|<\macro|body>
+    <section*|<abstract-text>>
+
+    <\wide-normal>
       <arg|body>
+    </wide-normal>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Title elements.
+    </src-comment>
+  </active*>
+
+  <assign|doc-render-title|<macro|x|<surround||<vspace|0.1pag>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-size|2|color|red|<arg|x>>>>>>>
+
+  <assign|doc-author|<macro|body|<\surround|<vspace*|0.1pag>|<vspace|0.1pag>>
+    <\with|par-par-sep|0fn>
+      <doc-title-block|<arg|body>>
     </with>
+  </surround>>>
 
-    <surround||<right-flush>|<new-page>>
+  <assign|doc-date|<macro|x|<surround|<vspace*|0.1pag>||<doc-author-block|<with|font-shape|italic|<arg|x>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Author elements.
+    </src-comment>
+  </active*>
+
+  <assign|author-render-name|<macro|x|<surround|<vspace*|1fn>||<doc-author-block|<with|font-shape|small-caps|<large|<arg|x>>>>>>>
+
+  <assign|author-address|<\macro|x>
+    <surround|<vspace*|2fn>|<vspace|2fn>|<doc-author-block|<arg|x>>>
   </macro>>
-
-  <assign|abstract|<\macro|body>
-    <surround|<no-indent>||<section*|<translate|Abstract|english|<language>>>>
-
-    <surround||<right-flush>|<arg|body>>
-  </macro>>
-
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><theorem-name|<translate|Keywords:|english|<language>>
-  ><arg|x>>>
-
-  <assign|AMS-class|<macro|x|<no-indent><theorem-name|<translate|A.M.S.
-  subject classification:|english|<language>> ><arg|x>>>
-
-  \;
-
-  <assign|title*|<macro|name|<with|math-font-series|bold|font-series|bold|font-size|2|color|red|<arg|name>>>>
-
-  <assign|title|<macro|body|<title*|<arg|body>><header-title|<arg|body>>>>
-
-  <assign|author*|<macro|body|<with|font-shape|small-caps|font-size|1.19|<translate|by|english|<language>>
-  <arg|body>>>>
-
-  <assign|author|<macro|body|<vspace*|0.1pag><author*|<arg|body>><header-author|<arg|body>>>>
-
-  <assign|address*|<macro|body|<with|par-par-sep|0fn|<arg|body>>>>
-
-  <assign|address|<macro|body|<surround|<vspace*|0.1pag>||<address*|<arg|body>>>>>
-
-  <assign|address-block|<macro|x|<tformat|<cwith|1|-1|1|1|cell-lsep|1.5fn>|<cwith|1|-1|-1|-1|cell-rsep|1.5fn>|<twith|table-valign|T>|<arg|x>>>>
-
-  <assign|title-email*|<macro|body|<with|font-shape|small-caps|<translate|Email:|english|<language>>
-  ><verbatim|<arg|body>>>>
-
-  <assign|title-email|<macro|body|<vspace*|0.1pag><title-email*|<arg|body>>>>
-
-  <assign|title-date*|<macro|body|<with|font-shape|italic|<arg|body>>>>
-
-  <assign|title-date|<macro|body|<vspace*|0.1pag><left-flush><title-date*|<arg|body>><right-flush>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

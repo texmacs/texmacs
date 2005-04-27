@@ -47,11 +47,12 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   bot       = 0;
   top       = env->fn->yx;
   sep       = env->get_length (PAR_SEP);
-  height    = env->decode_length (string ("1fn"))+ sep;
   hor_sep   = env->get_length (PAR_HOR_SEP);
+  ver_sep   = env->get_length (PAR_VER_SEP);
+  height    = env->as_length (string ("1fn"))+ sep;
   tab_sep   = hor_sep;
-  line_sep  = env->get_space (PAR_LINE_SEP);
-  par_sep   = env->get_space (PAR_PAR_SEP);
+  line_sep  = env->get_vspace (PAR_LINE_SEP);
+  par_sep   = env->get_vspace (PAR_PAR_SEP);
   nr_cols   = env->get_int (PAR_COLUMNS);
 
   tree dec  = env->read (ATOM_DECORATIONS);
@@ -76,23 +77,11 @@ lazy_paragraph_rep::line_print (line_item item) {
   if (item->type == CONTROL_ITEM) {
     if (is_func (item->t, HTAB))
       tabs << tab (N(items), item->t);
-    else if (is_func (item->t, VAR_VSPACE) ||
-	is_func (item->t, VSPACE))
-    {
-      SI vmin, vdef, vmax;
-      if (N(item->t)==1) {
-	vmin= env->decode_length (as_string (item->t[0]) * "-");
-	vdef= env->decode_length (item->t[0]);
-	vmax= env->decode_length (as_string (item->t[0]) * "+");
-      }
-      else {
-	vmin= env->decode_length (item->t[0]);
-	vdef= env->decode_length (item->t[1]);
-	vmax= env->decode_length (item->t[2]);
-      }
+    else if (is_func (item->t, VAR_VSPACE) || is_func (item->t, VSPACE)) {
+      space vspc= env->as_vspace (item->t[0]);
       if (is_func (item->t, VAR_VSPACE))
-	sss->vspace_before (space (vmin, vdef, vmax));
-      else sss->vspace_after (space (vmin, vdef, vmax));
+	sss->vspace_before (vspc);
+      else sss->vspace_after (vspc);
     }
     else if (L(item->t) == DATOMS)
       decs << tuple (as_string (N(items)), item->t);
@@ -236,7 +225,7 @@ void
 lazy_paragraph_rep::handle_decoration (
   int& i, int& j, SI& xoff, box& b, SI& b_sp)
 {
-  string xoff_str= as_string (xoff) * "unit";
+  string xoff_str= as_string (xoff) * "tmpt";
   array<box> new_items;
   array<SI>  new_items_sp;
   tree t= decs[j][1]; j++;
@@ -253,7 +242,7 @@ lazy_paragraph_rep::handle_decoration (
     // cout << "Typesetting " << e << LF;
     env->decorated_boxes << b;
     tree old_xoff= env->local_begin (XOFF_DECORATIONS, xoff_str);
-    box bb= typeset_as_concat (env, e, decorate_middle (ip));
+    box bb= typeset_as_concat (env, attach_middle (e, ip));
     env->local_end (XOFF_DECORATIONS, old_xoff);
     env->decorated_boxes->resize (N (env->decorated_boxes) - 1);
     b= bb;
@@ -339,7 +328,7 @@ lazy_paragraph_rep::line_unit (path start, path end, bool break_flag,
   tabs = array<tab> ();
   cur_w= space (0);
   int n= N(items_sp);
-  SI  m= max (the_left- cur_r, 0);
+  SI  m= the_left- cur_r;
   items_sp << m;
 
   SI the_width= the_right- the_left;
@@ -443,13 +432,13 @@ lazy_paragraph_rep::format_paragraph () {
     no_first= (style [PAR_NO_FIRST] == "true");
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
-    else first= env->decode_length (style [PAR_FIRST]);
-    sss->set_env_vars (height, sep, hor_sep, bot, top);
+    else first= env->as_length (style [PAR_FIRST]);
+    sss->set_env_vars (height, sep, hor_sep, ver_sep, bot, top);
 
     // typeset paragraph unit
     format_paragraph_unit (start, i);
-    line_end (line_sep + par_sep, 0);
-    sss->new_paragraph ();
+    line_end (line_sep /*+ par_sep*/, 0);
+    sss->new_paragraph (par_sep);
 
     start= i;
   }

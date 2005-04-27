@@ -121,7 +121,7 @@ class concater_rep {
   void typeset_text_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   void typeset_line (tree t, path ip, bool close);
-  void typeset_arc (tree t, path ip);
+  void typeset_arc (tree t, path ip, bool close);
   void typeset_spline (tree t, path ip, bool close);
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);
@@ -155,8 +155,6 @@ public:
   friend array<line_item> typeset_concat_range (edit_env env, tree t, path ip,
 						int i1, int i2);
   friend array<line_item> typeset_marker (edit_env env, path ip);
-  friend box              typeset_as_grid (edit_env env, tree t, path ip,
-					   tree aspect);
 };
 
 typedef concater_rep* concater;

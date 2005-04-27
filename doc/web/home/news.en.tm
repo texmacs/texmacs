@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.5>
 
 <style|tmweb>
 
@@ -6,9 +6,90 @@
   <tmweb-current|Home|News><tmweb-title|Last news about
   <TeXmacs>|<tmweb-home-links>>
 
+  <section*|Version 1.0.5 has been released>
+
+  The main improvements with respect to <TeXmacs>-1.0.4 are:
+
+  <\itemize>
+    <item>The Windows port of <TeXmacs> is <hlink|available
+    now|../download/windows.en.tm>.
+
+    <item>Addition of the (still imperfect) <verbatim|svmono>,
+    <verbatim|svjour>, <verbatim|elsart> and <verbatim|ifac> styles.
+
+    <item>A more complete documentation on how to write style files.
+
+    <item>German translation of the manual by Dietmar Jung.
+
+    <item>Several minor improvements in performance.
+
+    <item>Updated and improved Maxima plug-in for upcoming version 5.9.2 of
+    Maxima.
+
+    <item>Addition of a plug-in for Dra<TeX>.
+  </itemize>
+
+  <section*|A beta-version of the Windows port has been released>
+
+  A beta-version of the Windows port is <hlink|available
+  now|../download/windows.en.tm>. The new version comes with
+
+  <\itemize>
+    <item>An improved installer.
+
+    <item>Support for Windows 98 and all versions after that.
+
+    <item>Full image support.
+
+    <item>Direct integration with <name|Ghostscript> for printing.
+
+    <item>Faster and more correct display of anti-aliased characters.
+
+    <item>Support of <name|Aspell> and experimental communication by pipes.
+  </itemize>
+
+  Please try the beta-version and <hlink|let us
+  know|../contact/contact.en.tm> about possible problems!
+
+  <section*|Help save the French Imprimerie Nationale heritage>
+
+  Sign <hlink|petition|http://www.garamonpatrimoine.org/petition.html> to
+  help save the heritage of the French \S Imprimerie Nationale \T.
+
+  Click on the English flag for an English translation of the text.
+
+  <section*|Version 1.0.4 has been released>
+
+  The main improvements with respect to <TeXmacs>-1.0.3 are:
+
+  <\itemize>
+    <item>A <hlink|very experimental Windows
+    version|http://www.texmacs.org/tmweb/download/windows.en.html> as well as
+    the official inclusion into <name|Cygwin>.
+
+    <item>Higher reactivity for editing large documents and faster booting
+    and loading of files.
+
+    <item>A lot of new documentation about the TeXmacs document format,
+    environment variables and tags.
+
+    <item>Possibility to work with TrueType fonts instead of Type 3 fonts.
+
+    <item>New interfaces with <name|Python>, <name|Clisp>, <name|Cmucl> and
+    <name|Matlab>.
+
+    <item>Improved mode for editing style files.
+
+    <item>Thorough reorganization of the style files, implementation of
+    "mutator" tags, and location-awareness of internal trees.
+
+    <item>Support for the Danish language and partial translation of the
+    documentation into Polish.
+  </itemize>
+
   <section*|Version 1.0.3 has been released>
 
-  The main improvements with respect to TeXmacs-1.0.2 are:
+  The main improvements with respect to <TeXmacs>-1.0.2 are:
 
   <\itemize>
     <item>An export filter for <name|Postscript> and <name|Pdf> which
@@ -36,7 +117,7 @@
 
   <section*|Version 1.0.2 has been released>
 
-  The main improvements with respect to TeXmacs-1.0.1 are:
+  The main improvements with respect to <TeXmacs>-1.0.1 are:
 
   <\itemize>
     <item>Improved user & developer support for plugins + documentation.
@@ -61,24 +142,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|toc-1|<tuple|1|?>>
-  </collection>
-</references>

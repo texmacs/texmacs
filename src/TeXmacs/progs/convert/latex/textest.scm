@@ -221,4 +221,4 @@
   (tmtex (tmpre-produce text-document)))
 
 (define (test)
-  (serialize-latex (texmacs->latex text-document)))
+  (serialize-latex (texmacs->latex text-document '())))

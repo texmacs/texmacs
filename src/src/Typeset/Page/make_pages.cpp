@@ -83,7 +83,11 @@ pager_rep::pages_format (pagelet pg) {
   // cout << "Formatting pagelet " << (N(pages)+1)
   //      << " stretch " << pg->stretch
   //      << " height " << stretch_space (pg->ht, pg->stretch) << LF << INDENT;
-  if (N (pg->ins) == 1) {
+  if (N (pg->ins) == 0) {
+    if (N(pages) == 0) return empty_box (ip);
+    return empty_box (pages[N(pages)-1]->find_rip());
+  }
+  else if (N (pg->ins) == 1) {
     insertion ins= pg->ins[0];
     // cout << ins << " stretch " << ins->stretch
     //      << " height " << stretch_space (ins->ht, ins->stretch) << LF;
@@ -156,9 +160,11 @@ pager_rep::pages_make_page (pagelet pg) {
   env->write (PAGE_NR, as_string (N(pages)+1+page_offset));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree page_t= env->exec (compound (PAGE_THE_PAGE));
+  box header= make_header (N (pg->ins) == 0);
+  box footer= make_footer (N (pg->ins) == 0);
   return page_box (ip, lb, page_t,
 		   width, height, left, top, top+ text_height,
-		   make_header(), make_footer(), head_sep, foot_sep);
+		   header, footer, head_sep, foot_sep);
 }
 
 void

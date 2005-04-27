@@ -178,6 +178,11 @@ box_rep::get_frame () {
   return frame ();
 }
 
+grid
+box_rep::get_grid () {
+  return grid ();
+}
+
 void
 box_rep::get_limits (point& lim1, point& lim2) {
   lim1= point (); lim2= point ();
@@ -200,6 +205,19 @@ box_rep::find_frame (path bp) {
   return f;
 }
 
+grid
+box_rep::find_grid (path bp) {
+  box   b= this;
+  grid g= get_grid ();
+  while (!nil (bp)) {
+    b  = b->subbox (bp->item);
+    bp = bp->next;
+    grid g2= b->get_grid ();
+    if (!nil (g2)) g= g2;
+  }
+  return g;
+}
+
 void
 box_rep::find_limits (path bp, point& lim1, point& lim2) {
   box b= this;
@@ -214,6 +232,32 @@ box_rep::find_limits (path bp, point& lim1, point& lim2) {
       lim2= slim2;
     }
   }
+}
+
+SI
+box_rep::graphical_distance (SI x, SI y) {
+  SI dx, dy;
+  if (x <=  x1) dx= x1 - x;
+  else if (x >=  x2) dx= x - x2;
+  else dx= 0;
+  if (y <  y1) dy= y1 - y;
+  else if (y >= y2) dy= y - y2;
+  else dy= 0;
+  return (SI) norm (point (dx, dy));
+}
+
+gr_selections
+box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->cp << find_tree_path (x, y, dist);
+    // FIXME: check whether this is correct: I do not remember whether
+    // find_tree_path returns an absolute or a relative path
+    res << gs;
+  }
+  return res;
 }
 
 /******************************************************************************
@@ -309,7 +353,7 @@ clear_rectangles (ps_device dev, rectangles l) {
 }
 
 int
-reindex (int i, int item, int n) {
+box_rep::reindex (int i, int item, int n) {
   if (item<0) item=0;
   if (item>n) item=n;
   if (i==0) return item;
@@ -324,14 +368,13 @@ reindex (int i, int item, int n) {
 
 void
 box_rep::redraw (ps_device dev, path p, rectangles& l) {
-  if ((nr_painted>=10) && dev->check_event (INPUT_EVENT)) return;
+  if (((nr_painted&15) == 15) && dev->check_event (INPUT_EVENT)) return;
   dev->move_origin (x0, y0);
   SI delta= dev->pixel; // adjust visibility to compensate truncation
   if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
     rectangles ll;
     l= rectangles();
-    color old_bg;
-    bool restore_bg= display_background (dev, old_bg);
+    pre_display (dev);
 
     int i, item=-1, n=subnr (), i1= n, i2= -1;
     if (!nil(p)) i1= i2= item= p->item;
@@ -351,7 +394,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       }
     }
 
-    if ((nr_painted>=10) && dev->check_event (EVENT_STATUS)) {
+    if (((nr_painted&15) == 15) && dev->check_event (EVENT_STATUS)) {
       l= translate (l, -dev->ox, -dev->oy);
       clear_incomplete (l, dev->pixel, item, i1, i2);
       l= translate (l, dev->ox, dev->oy);
@@ -359,11 +402,11 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
     else {
       l= rectangle (x3+ dev->ox, y3+ dev->oy, x4+ dev->ox, y4+ dev->oy);
       display (dev);
-      if (nr_painted < 10) dev->apply_shadow (x1, y1, x2, y2);
+      if (nr_painted < 15) dev->apply_shadow (x1, y1, x2, y2);
       nr_painted++;
     }
 
-    if (restore_bg) dev->set_background (old_bg);
+    post_display (dev);
   }
   dev->move_origin (-x0, -y0);
 }
@@ -380,10 +423,14 @@ box_rep::clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2) {
   (void) rs; (void) pixel; (void) i; (void) i1; (void) i2;
 }
 
-bool
-box_rep::display_background (ps_device dev, color& col) {
-  (void) dev; (void) col;
-  return false;
+void
+box_rep::pre_display (ps_device &dev) {
+  (void) dev;
+}
+
+void
+box_rep::post_display (ps_device &dev) {
+  (void) dev;
 }
 
 /******************************************************************************
@@ -458,6 +505,22 @@ operator << (ostream& out, selection sel) {
 }
 
 /******************************************************************************
+* Graphical selections
+******************************************************************************/
+
+gr_selection::gr_selection (array<path> cp, SI dist):
+  rep (new gr_selection_rep)
+{
+  rep->cp  = cp;
+  rep->dist= dist;
+}
+
+ostream&
+operator << (ostream& out, gr_selection sel) {
+  return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
+}
+
+/******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
 
@@ -500,5 +563,24 @@ descend_decode (path ip, int side) {
   case DECORATION_MIDDLE: return descend (ip->next, side);
   case DECORATION_RIGHT : return descend (ip->next, 1);
   default               : return descend (ip, side);
+  }
+}
+
+tree
+attach_dip (tree ref, path dip) {
+  path old_ip= obtain_ip (ref);
+  if (old_ip != path (DETACHED)) return ref;
+  if (is_atomic (ref)) {
+    tree r (ref->label);
+    r->obs= list_observer (ip_observer (dip), r->obs);
+    return r;
+  }
+  else {
+    int i, n= N(ref);
+    tree r (ref, n);
+    for (i=0; i<n; i++)
+      r[i]= attach_dip (ref[i], descend (dip, i));
+    r->obs= list_observer (ip_observer (dip), r->obs);
+    return r;
   }
 }

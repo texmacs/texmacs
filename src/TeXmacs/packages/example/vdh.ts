@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.6>
+<TeXmacs|1.0.4.4>
 
 <style|source>
 
@@ -52,6 +52,34 @@
 
     <assign|Set|<with|math-font|cal*|S>>
 
+    <assign|rsA|<with|math-font|cal*|A>>
+
+    <assign|rsB|<with|math-font|cal*|B>>
+
+    <assign|rsC|<with|math-font|cal*|C>>
+
+    <assign|rsD|<with|math-font|cal*|D>>
+
+    <assign|rsF|<with|math-font|cal*|F>>
+
+    <assign|rsG|<with|math-font|cal*|G>>
+
+    <assign|rsI|<with|math-font|cal*|I>>
+
+    <assign|rsL|<with|math-font|cal*|L>>
+
+    <assign|rsM|<with|math-font|cal*|M>>
+
+    <assign|rsO|<with|math-font|cal*|O>>
+
+    <assign|rsP|<with|math-font|cal*|P>>
+
+    <assign|rsQ|<with|math-font|cal*|Q>>
+
+    <assign|rsS|<with|math-font|cal*|S>>
+
+    <assign|rsT|<with|math-font|cal*|T>>
+
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
     <assign|fcut|#>
@@ -63,6 +91,10 @@
     <assign|Iseg|<macro|x|In(<arg|x>)>>
 
     <assign|Fseg|<macro|x|Fin(<arg|x>)>>
+
+    <assign|bl|<macro|<left|(|-1em|1em>>>
+
+    <assign|br|<macro|<right|)|-1em|1em>>>
 
     \;
 
@@ -91,10 +123,25 @@
 
   \;
 
+  <assign|bi-index|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subindex|<arg|x>|<arg|y>><subindex|<arg|y>|<arg|x>>>>>
+
+  <assign|bi-index*|<macro|x|y|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><index|<arg|x> <arg|y>><subindex|<arg|y>|<arg|x>>>>>
+
+  <assign|sub-bi-index|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subsubindex|<arg|x>|<arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+
+  <assign|sub-bi-index*|<macro|x|y|z|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subindex|<arg|x> <arg|y>|<arg|z>><subsubindex|<arg|y>|<arg|x>|<arg|z>>>>>
+
+  <assign|subsub-bi-index|<macro|x|y|z|a|<style-with|src-compact|none|<flag|<localize|index>|dark
+  green|x><subsubsubindex|<arg|x>|<arg|y>|<arg|z>|<arg|a>><subsubsubindex|<arg|y>|<arg|x>|<arg|z>|<arg|a>>>>>
+
   <assign|recall|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
   red>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|\<cdots\>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
+  <assign|fold|<macro|x|y|<surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Rightarrow\>>>>>|(mouse-unfold)|<arg|x>>|<arg|x>>>>
 
   <assign|unfold|<\macro|x|y>
     <arg|x>
@@ -118,17 +165,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

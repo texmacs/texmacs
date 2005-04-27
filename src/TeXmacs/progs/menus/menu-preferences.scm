@@ -39,7 +39,7 @@
 (define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Emacs" "emacs")
-;	  ("Windows" "windows")
+	  ("Windows" "windows")
 	  ("Old style" "old style"))
 ;   (enum ("Profile" "profile")
 ;	  ("Beginner" "beginner")
@@ -134,11 +134,17 @@
 	(toggle ("Status bar" "status bar"))
 	(enum ("Shrinking factor" "shrinking factor")
 	      "1" "2" "3" "4" "5" "7" "10" *))
-;    (-> "Converters"
+    (-> "Converters"
 ;	(-> "Html"
 ;	    (group "TeXmacs -> Html")
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
-;	    (toggle ("Use MathML" "texmacs->html:mathml"))))
+;	    (toggle ("Use MathML" "texmacs->html:mathml")))
+	(-> "LaTeX"
+	    (group "TeXmacs -> LaTeX")
+	    (toggle ("Keep unrecognized styles and packages"
+		     "texmacs->latex:faithful-style"))
+	    (toggle ("Export bibliographies as links"
+		     "texmacs->latex:indirect-bib"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
 	  ("Prompt on scripts" "prompt on scripts")
@@ -148,7 +154,9 @@
 	  ("30 s" "30")
 	  ("120 s" "120")
 	  ("300 s" "300")
-	  ("Disable" "0"))))
+	  ("Disable" "0"))
+    (enum ("Bibtex command" "bibtex command")
+	  "bibtex" "rubibtex" *)))
 
 (menu-bind page-setup-menu)
 (menu-bind preferences-menu)

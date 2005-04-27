@@ -98,7 +98,7 @@ stack_box_rep::clear_incomplete (
       right= max (right, sx4 (i));
     }
     if ((which >= 0) && (which < n)) {
-      rectangle& r= last_item (rs);
+      rectangle& r= access_last (rs);
       if (r->x2 >= sx4 (which)) r->x2= right;
     }
 
@@ -213,9 +213,9 @@ stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 	  sb1= sb1[0];
 	  sb2= sb2[0];
 	}
-	if ((N (sb1[0]) == 0) || (N (sb2[0]) == 0)) {
+	if ((N(sb1) > 0 && N(sb1[0]) == 0) ||
+	    (N(sb2) > 0 && N(sb2[0]) == 0))
 	  if (y < ((ylo+yhi) >> 1)) continue;
-	}
 	for (j=0; j<N(sb1); j++)
 	  if (!outside (x- ox1- sb1->sx(j), delta, sb1[j]->x1, sb1[j]->x2))
 	    m= min (m, oy1+ sb1->sy1(j));
@@ -315,7 +315,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     path rp= find_tree_path (rbp);
     return selection (find_selection (lbp1, rbp2)->rs, lp, rp);
   }
-  else {
+  else if (i1 < i2) {
     selection sel1= find_selection (lbp1, rbp1);
     selection sel2= find_selection (lbp2, rbp2);
     path lp= sel1->start;
@@ -340,6 +340,7 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     }
     return selection (rs, lp, rp);
   }
+  else return box_rep::find_selection (lbp, rbp);
 }
 
 /******************************************************************************

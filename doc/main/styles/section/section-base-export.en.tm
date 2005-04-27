@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
@@ -11,6 +11,8 @@
   to produce numbered sections:
 
   <\explain>
+    <explain-macro|part|title>
+
     <explain-macro|chapter|title>
 
     <explain-macro|section|title>
@@ -25,17 +27,17 @@
 
     <explain-macro|appendix|title>
   <|explain>
-    The intention of this macro is to produce a numbered title for a chapter
-    (<abbr|resp.> section, subsection, <abbr|etc.>). The numbering is not
-    required, but merely an intention: the <markup|paragraph> and
+    The intention of this macro is to produce a numbered title for a part
+    (<abbr|resp.> chapter, section, subsection, <abbr|etc.>). The numbering
+    is not required, but merely an intention: the <markup|paragraph> and
     <markup|subparagraph> tags are usually not numbered and some styles (like
     the generic style) do not produce numbers at all.
   </explain>
 
-  The tags <markup|chapter*>, <markup|section*>, <markup|subsection*>,
-  <markup|subsubsection*>, <markup|paragraph*>, <markup|subparagraph*> and
-  <markup|appendix*> can be used for producing the unnumbered variants of the
-  above tags.
+  The tags <markup|part*>, <markup|chapter*>, <markup|section*>,
+  <markup|subsection*>, <markup|subsubsection*>, <markup|paragraph*>,
+  <markup|subparagraph*> and <markup|appendix*> can be used for producing the
+  unnumbered variants of the above tags.
 
   By default, all sectional only produce the section title. When using the
   experimental package <tmpackage|structured-section>, all sectional tags are
@@ -71,16 +73,23 @@
     <verbatim|idx>.
   </explain>
 
-  <\explain|<explain-macro|the-glossary|aux|body>>
-    Similar to <markup|table-of-contents> but for glossaries and default
-    channel <verbatim|gly>.
+  <\explain>
+    <explain-macro|the-glossary|aux|body>
+
+    <explain-macro|list-of-figures|aux|body>
+
+    <explain-macro|list-of-tables|aux|body>
+  <|explain>
+    Similar to <markup|table-of-contents> but for glossaries (default channel
+    <verbatim|gly>), lists of figures (default channel <verbatim|figure>) and
+    lists of tables (default channel <verbatim|table>).
   </explain>
 
   The above tags also admit the variants <markup|bibliography*>,
   <markup|table-of-contents*>, <markup|the-index*> and <markup|the-glossary*>
   with an additional argument <src-arg|name> before <src-arg|body>, which
   specifies the name of the section. For instance, the <markup|the-glossary*>
-  tag is used for lists of figures and lists of tables.
+  was formerly used for lists of figures and lists of tables.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -95,17 +104,5 @@
 <\initial>
   <\collection>
     <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

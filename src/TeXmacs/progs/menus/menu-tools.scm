@@ -31,6 +31,20 @@
 ;; The Tools menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-extend test-menu
+  (-> "Test"
+      ("Tree" (show-tree))
+      ("Path" (show-path))
+      ("Cursors" (show-cursor))
+      ("Selection" (show-selection))
+      ("Environment" (show-env))
+      ;;("Keymaps" (show-keymaps))
+      ---
+      ("Error" (oops))
+      ("Test" (edit-test))
+      ("Timings" (bench-print-all))
+      ("Memory information" (show-meminfo))))
+
 (menu-bind tools-menu
   (-> "Execute"
       ("Execute system command" ... (interactive '("Command:") 'system))

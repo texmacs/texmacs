@@ -1,57 +1,43 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Standard headers>
 
-  The <tmdtd|header> <abbr|d.t.d.> provides tags for customizing the headers
-  and footers. The customization is based on the idea that we may specify a
-  <em|page text> for every page. This page text can for instance be a running
-  title or the name of the current section. The page text may depend on the
-  parity of a page and appear in a different way for special pages like
-  starts of new chapters. The following tags control the physical layout of
-  different types of pages:
-
-  <\explain|<explain-macro|start-page|page-text>>
-    This macro specifies the layout of the first page of a new chapter or
-    section.
-  </explain>
-
-  <\explain|<explain-macro|odd-page-page|page-text>>
-    Similar to <markup|start-page>, but for the layout of ordinary odd pages.
-  </explain>
-
-  <\explain|<explain-macro|even-page-page|page-text>>
-    Similar to <markup|start-page>, but for the layout of ordinary even
-    pages.
-  </explain>
-
-  The following tags control the logical header-related actions to be
-  undertaken, when specifying a title, an author, or when starting a new
-  section.
+  The <tmdtd|header> <abbr|d.t.d.> provides call-back macros which allow page
+  headers and footers to change automatically when specifying the title
+  information of the document or when starting a new section.
 
   <\explain|<explain-macro|header-title|title>>
-    This macro is called when specifying of the <src-arg|title> of a
-    document.
+    This macro is called when specifying the <src-arg|title> of a document.
   </explain>
 
   <\explain|<explain-macro|header-author|author>>
-    This macro is called when specifying of the <src-arg|author>(s) of a
+    This macro is called when specifying the <src-arg|author>(s) of a
     document.
   </explain>
 
-  <\explain|<explain-macro|header-primary|section-title>>
+  <\explain|<explain-macro|header-primary|section-title|section-nr|section-type>>
     This macro is called at the start of each new primary section
     (<abbr|e.g.> <markup|chapter> for book style, or <markup|section> for
-    article style).
+    article style). The <src-arg|section-type> is a literal text like
+    ``Chapter'' or ``Section''.
   </explain>
 
-  <\explain|<explain-macro|header-secondary|section-title>>
+  <\explain|<explain-macro|header-secondary|section-title|section-nr|section-type>>
     This macro is called at the start of each new secondary section
     (<abbr|e.g.> <markup|section> for book style, or <markup|subsection> for
-    article style).
+    article style). The <src-arg|section-type> is a literal text like
+    ``Section'' or ``Paragraph''.
   </explain>
+
+  In style files, page headers and footers are usually set by the above
+  call-back macros, and not manually. You may directly modify headers and
+  footers by setting the <hyper-link|corresponding environment
+  variables|../../../devel/format/environment/env-page.en.tm#header-footer-env>
+  or using several <hyper-link|helper macros|../std/std-utils-dtd.en.tm#header-footer-helper>
+  supplied by <tmpackage|std-utils>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -62,20 +48,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>

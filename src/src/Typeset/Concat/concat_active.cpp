@@ -43,7 +43,7 @@ concater_rep::typeset_if (tree t, path ip) {
 void
 concater_rep::typeset_var_if (tree t, path ip) {
   tree flag= env->exec (t[0]);
-  box  b   = typeset_as_concat (env, t[1], decorate_right (ip));
+  box  b   = typeset_as_concat (env, attach_right (t[1], ip));
   marker (descend (ip, 0));
   if (flag == "true") print (STD_ITEM, b);
   else print (STD_ITEM, empty_box (b->ip, b->x1, b->y1, b->x2, b->y2));
@@ -114,7 +114,7 @@ concater_rep::typeset_specific (tree t, path ip) {
   }
   else if ((which == "screen") || (which == "printer")) {
     int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);
-    box  sb  = typeset_as_concat (env, t[1], decorate_right (descend (ip, 2)));
+    box  sb  = typeset_as_concat (env, attach_middle (t[1], ip));
     box  b   = specific_box (decorate_middle (ip), sb, type, env->fn);
     marker (descend (ip, 0));
     print (STD_ITEM, b);
@@ -160,7 +160,7 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   else if (type == 1) value= "?";
 
   command cmd (new guile_command_rep (s, 2));
-  box b= typeset_as_concat (env, value, decorate_right (ip));
+  box b= typeset_as_concat (env, attach_right (value, ip));
   string action= env->read_only? string ("select"): string ("double-click");
   print (STD_ITEM, action_box (ip, b, action, cmd, true));
   marker (descend (ip, 1));  
@@ -335,13 +335,13 @@ concater_rep::typeset_postscript (tree t, path ip) {
 
   SI x1, y1, x2, y2;
   if (sx1 == "") x1= bx1;
-  else x1= bx1+ ((SI) (((double) env->decode_length (sx1)) / pt));
+  else x1= bx1+ ((SI) (((double) env->as_length (sx1)) / pt));
   if (sy1 == "") y1= by1;
-  else y1= by1+ ((SI) (((double) env->decode_length (sy1)) / pt));
+  else y1= by1+ ((SI) (((double) env->as_length (sy1)) / pt));
   if (sx2 == "") x2= bx2;
-  else x2= bx1+ ((SI) (((double) env->decode_length (sx2)) / pt));
+  else x2= bx1+ ((SI) (((double) env->as_length (sx2)) / pt));
   if (sy2 == "") y2= by2;
-  else y2= by1+ ((SI) (((double) env->decode_length (sy2)) / pt));
+  else y2= by1+ ((SI) (((double) env->as_length (sy2)) / pt));
   if ((x1>=x2) || (y1>=y2))
     error_postscript (tree (WITH, "color", "red", "null box"));
   
@@ -359,8 +359,8 @@ concater_rep::typeset_postscript (tree t, path ip) {
   SI w= 0, h= 0;
   bool ws_is_len= env->is_length (ws);
   bool hs_is_len= env->is_length (hs);    
-  if (ws_is_len) w= env->decode_length (ws);
-  if (hs_is_len) h= env->decode_length (hs);
+  if (ws_is_len) w= env->as_length (ws);
+  if (hs_is_len) h= env->as_length (hs);
   if (ws_is_len && !hs_is_len) h= (w*(y2-y1)) / (x2-x1);
   if (hs_is_len && !ws_is_len) w= (h*(x2-x1)) / (y2-y1);
   if (!ws_is_len && !hs_is_len) {

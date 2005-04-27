@@ -64,7 +64,8 @@ TMPL list<T>  operator * (list<T> l1, T x);
 TMPL list<T>  operator * (list<T> l1, list<T> l2);
 TMPL list<T>  head (list<T> l, int n=1);
 TMPL list<T>  tail (list<T> l, int n=1);
-TMPL T&       last_item (list<T> l);
+TMPL T        last_item (list<T> l);
+TMPL T&       access_last (list<T>& l);
 TMPL list<T>& suppress_last (list<T>& l);
 TMPL list<T>  reverse (list<T> l);
 

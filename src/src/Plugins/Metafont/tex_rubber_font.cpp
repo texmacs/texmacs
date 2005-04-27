@@ -86,8 +86,9 @@ tex_rubber_font_rep::tex_rubber_font_rep (display dis, string name,
   yshift       = yx/6;
 
   wpt          = (dpi*PIXEL)/72;
-  wquad        = (wpt*design_size) >> 8;
-  wline        = wquad/20;
+  wfn          = (wpt*design_size) >> 8;
+  wline        = wfn/20;
+  wquad        = conv (tfm->spc_quad ());
 }
 
 font

@@ -432,10 +432,11 @@
 	  ("Portrait" (init-page-orientation "portrait"))
 	  ("Landscape" (init-page-orientation "landscape")))
       (-> "Margins"
-	  ("Default" (init-default "page-width-margin"
+	  ("Default" (init-default "page-width-margin" "page-height-margin"
 				   "page-odd" "page-even" "page-right"
 				   "par-width" "page-odd-shift"
-				   "page-even-shift"))
+				   "page-even-shift" "page-top" "page-bot"
+				   "page-height-margin"))
 	  ---
 	  (when (test-env? "page-width-margin" "false")
 		("Odd page left margin" ...
@@ -447,12 +448,13 @@
 		("Even page left margin" ...
 		 (interactive '("Even page left margin:")
 			      '(lambda (s) (init-env "page-even" s)))))
-	  ("Top margin" ...
-	   (interactive '("Top margin:")
-			'(lambda (s) (init-env "page-top" s))))
-	  ("Bottom margin" ...
-	   (interactive '("Bottom margin:")
-			'(lambda (s) (init-env "page-bot" s))))
+	  (when (test-env? "page-height-margin" "false")
+		("Top margin" ...
+		 (interactive '("Top margin:")
+			      '(lambda (s) (init-env "page-top" s))))
+		("Bottom margin" ...
+		 (interactive '("Bottom margin:")
+			      '(lambda (s) (init-env "page-bot" s)))))
 	  ---
 	  ("Alternative specification" (toggle-page-width-margin))
 	  (when (test-env? "page-width-margin" "true")

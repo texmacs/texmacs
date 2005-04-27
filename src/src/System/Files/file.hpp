@@ -59,4 +59,6 @@ inline void mkdir (url dir) { system ("mkdir", dir); }
 inline void mkdir (url dir) { system ("mkdir -p", dir); }
 #endif
 
+void ps2pdf (url u1, url u2);
+
 #endif // defined FILE_H

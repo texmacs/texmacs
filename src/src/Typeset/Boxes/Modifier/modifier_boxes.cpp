@@ -134,6 +134,11 @@ modifier_box_rep::find_selection (path lbp, path rbp) {
   return b->find_selection (lbp->next, rbp->next);
 }
 
+gr_selections
+modifier_box_rep::graphical_select (SI x, SI y, SI dist) {
+  return b->graphical_select (x- sx(0), y- sy(0), dist);
+}
+
 /******************************************************************************
 * Symbol boxes
 ******************************************************************************/

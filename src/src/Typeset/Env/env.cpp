@@ -58,7 +58,8 @@ edit_env::edit_env (display dis,
 
 void
 edit_env_rep::style_init_env () {
-  dpi= get_int (DPI);
+  dpi = get_int (DPI);
+  inch= ((double) dpi*PIXEL);
   flexibility= get_double (PAGE_FLEXIBILITY);
   back= hashmap<string,tree> (UNINIT);
   update_page_pars ();

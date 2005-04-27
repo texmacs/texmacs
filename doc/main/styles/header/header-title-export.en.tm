@@ -1,50 +1,108 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.0.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Entering titles and abstracts>
 
-  The <tmdtd|header-title> <abbr|d.t.d.> provides tags for title information.
-  The following high-level tags can only be used when encapsulated inside a
-  <markup|make-title> tag:
+  The <tmdtd|header-title> <abbr|d.t.d.> provides tags for entering
+  information about the entire document. The two top-level tags are
 
-  <\explain|<explain-macro|title|title>>
+  <\explain|<explain-macro|doc-data|data-1|<with|mode|math|\<cdots\>>|data-n>>
+    Specify data attached to your document (title, authors, <abbr|etc.>; see
+    below) and render the title.
+  </explain>
+
+  <\explain|<explain-macro|abstract|body>>
+    The abstract for your paper.
+  </explain>
+
+  When creating a <markup|doc-data> tag using <menu|Text|Title|Insert title>,
+  <TeXmacs> automatically inserts a <markup|doc-title> tag as its first
+  arguments. New data may be inserted from the <menu|Text|Title> menu. Each
+  child <src-arg|data-1>, <with|mode|math|\<ldots\>>, <src-arg|data-n> of the
+  <markup|doc-data> tag is of one of the following forms:
+
+  <\explain|<explain-macro|doc-title|title>>
     Specify the <src-arg|title> of the document.
   </explain>
 
-  <\explain|<explain-macro|author|author>>
-    Specify one or several authors for the document.
+  <\explain|<explain-macro|doc-subtitle|subtitle>>
+    Specify the <src-arg|subtitle> of the document.
   </explain>
 
-  <\explain|<explain-macro|author|address>>
-    Specify the address of the author.
+  <\explain|<explain-macro|doc-author-data|data-1|<with|mode|math|\<cdots\>>|data-n>>
+    Specify the data for one of the authors of the document (name, address,
+    <abbr|etc.>; see below).
   </explain>
 
-  <\explain|<explain-macro|author-block|address>>
-    Specify an address of one of the authors (in case of multiple addresses).
+  <\explain|<explain-macro|doc-date|date>>
+    The creation date of the document. In particular you may take
+    <inactive*|<date>> for the value of <src-arg|date> for the current date.
   </explain>
 
-  <\explain|<explain-macro|title-email|email>>
-    Specify the email address of the author.
+  <\explain|<explain-macro|doc-running-title|title>>
+    Specify a running <src-arg|title> for your document which may be used in
+    page headers.
   </explain>
 
-  <\explain|<explain-macro|title-date|email>>
-    Specify the creation date of the article (which is often today,
-    <abbr|i.e.> <inactive*|<date>>).
+  <\explain|<explain-macro|doc-running-author|author>>
+    Specify a running <src-arg|author> for your document which may be used in
+    page headers.
   </explain>
 
-  The <markup|title> and <markup|author> use the <markup|header-title> and
-  <markup|header-author> tags for specifying the running title and header.
-  You may override these by reusing <markup|header-title> <abbr|resp.>
-  <markup|header-author>.
+  <\explain|<explain-macro|doc-keywords|kw-1|<with|mode|math|\<cdots\>>|kw-n>>
+    Specify keywords <src-arg|kw-1> until <src-arg|kw-n> for your document.
+  </explain>
 
-  The <tmdtd|header-title> <abbr|d.t.d.> also defines the <markup|abstract>
-  tag for abstracts of documents. Inside abstracts, you may use
-  <markup|keywords> in order to specify keywords for your paper and
-  <markup|AMS-class> for entering the <abbr|A.M.S.> subject classification.
+  <\explain|<explain-macro|doc-AMS-class|nr-1|<with|mode|math|\<cdots\>>|nr-n>>
+    Specify <abbr|A.M.S.> subject classification numbers <src-arg|nr-1> until
+    <src-arg|nr-n> for your document.
+  </explain>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <\explain|<explain-macro|doc-note|note>>
+    A note about your document. In particular, you may take
+    <inactive*|<with-TeXmacs-text>> for the value of <src-arg|note> in order
+    to indicate that your document has been written using <TeXmacs>.
+  </explain>
+
+  When inserting an additional author using <menu|Text|Title|Author|Insert
+  author>, <TeXmacs> inserts a <markup|doc-author-data> tag with an
+  <markup|author-name> tag as its first argument. New author data may be
+  inserted from the <menu|Text|Title|Author> menu. Each child
+  <src-arg|data-1>, <with|mode|math|\<ldots\>>, <src-arg|data-n> of the
+  <markup|doc-author-data> tag is of one of the following forms:
+
+  <\explain|<explain-macro|author-name|name>>
+    Specify the <src-arg|name> of the author.
+  </explain>
+
+  <\explain|<explain-macro|author-address|address>>
+    An <src-arg|address> where the author can be reached.
+  </explain>
+
+  <\explain|<explain-macro|author-email|email>>
+    An <src-arg|email> address for the author.
+  </explain>
+
+  <\explain|<explain-macro|author-homepage|homepage>>
+    The <src-arg|homepage> of the author.
+  </explain>
+
+  <\explain|<explain-macro|author-note|note>>
+    A <src-arg|note> attached to the author, like a thank-word.
+  </explain>
+
+  As a general rule, the use of any of the subtags of <markup|doc-data> or
+  <markup|doc-author-data> is optional. An individual subtag may also be
+  specified several times. This is useful for documents with several authors,
+  or authors with several addresses. The rendering of title information is
+  very style-dependent: some styles render addresses in a single line or even
+  as a footnote, where other styles use a more widely spaced presentation.
+  Often, some information like keywords or AMS subject classification numbers
+  are only rendered as a part of the abstract.
+
+  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -53,20 +111,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>

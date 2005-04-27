@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.4>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -25,11 +25,13 @@
 
   <\active*>
     <\src-comment>
-      Chapters.
+      Parts and chapters.
     </src-comment>
   </active*>
 
-  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<vspace*|3fn><with|par-mode|center|math-font-series|bold|font-series|bold|font-size|1.68|<arg|name>><vspace|1fn><no-page-break>>>>
+  <assign|part-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|5fn><really-huge|<arg|name>><vspace|2fn>>>>>
+
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|4fn><huge|<arg|name>><vspace|1.5fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -37,11 +39,11 @@
     </src-comment>
   </active*>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|3fn><with|math-font-series|bold|font-series|bold|font-size|1.41|<arg|name>><vspace|1fn><no-page-break><no-indent*>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|3fn><very-large|<arg|name>><vspace|1fn>>>>>
 
-  <assign|appendix-title|<macro|title|<style-with|src-compact|none|<section-title|<localize|Appendix><sectional-sep><arg|title>>>>>
+  <assign|appendix-title|<macro|title|<style-with|src-compact|none|<section-title|<appendix-text><sectional-sep><arg|title>>>>>
 
-  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<section-title|<localize|Appendix>
+  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<section-title|<appendix-text>
   <the-appendix><sectional-sep><arg|title>>>>>
 
   <\active*>
@@ -50,9 +52,9 @@
     </src-comment>
   </active*>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|2fn><with|math-font-series|bold|font-series|bold|font-size|1.19|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|2fn><large|<arg|name>><vspace|0.5fn>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|1fn><with|math-font-series|bold|font-series|bold|<arg|name>><vspace|0.5fn><no-page-break><no-indent*>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><arg|name><vspace|0.5fn>>>>>
 
   <\active*>
     <\src-comment>
@@ -60,27 +62,15 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.5fn><with|math-font-series|bold|font-series|bold|<arg|name><paragraph-sep>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name><paragraph-sep>>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<no-indent><vspace*|0.25fn><with|math-font-series|bold|font-series|bold|<arg|name><subparagraph-sep>>>>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.25fn><arg|name><subparagraph-sep>>>>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
     <associate|preamble|true>
-    <associate|sfactor|4>
   </collection>
 </initial>

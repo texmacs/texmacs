@@ -24,6 +24,7 @@
 #ifdef OS_WIN32
 #include <sys/misc.h>
 #include <sys/_stat.h>
+#include <X11/Xlib.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -44,17 +45,24 @@ load_string (url u, string& s, bool fatal) {
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
-    FILE* fin= fopen (_name, "rb");
+    FILE* fin= _fopen (_name, "rb");
 #else
     FILE* fin= fopen (_name, "r");
 #endif
     if (fin == NULL) err= true;
+    int size= 0;
     if (!err) {
-      while (true) {
-	char c= getc (fin);
-	if ((c==((char) -1)) && (feof (fin))) break;
-	s << c;
+      if (fseek (fin, 0L, SEEK_END) < 0) err= true;
+      else {
+	size = ftell (fin);
+	if (size<0) err= true;
       }
+    }
+    if (!err) {
+      rewind(fin);
+      s->resize (size);
+      int read= fread (&(s[0]), 1, size, fin);
+      if (read < size) s->resize (read);
       fclose (fin);
     }
     delete[] _name;
@@ -101,7 +109,7 @@ save_string (url u, string s, bool fatal) {
     string name= concretize (r);
     char* _name= as_charp (name);
 #ifdef OS_WIN32
-    FILE* fout= fopen (_name, "wb");
+    FILE* fout= _fopen (_name, "wb");
 #else
     FILE* fout= fopen (_name, "w");
 #endif
@@ -129,7 +137,12 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
   bench_start ("stat");
   bool flag;
   char* temp= as_charp (concretize (name));
-  flag= stat (temp, buf); (void) link_flag;
+#ifdef OS_WIN32
+  flag= _stat (temp, buf);
+#else
+  flag= stat (temp, buf);
+#endif
+  (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;
@@ -141,8 +154,8 @@ bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
 #ifdef OS_WIN32
-  if ((filter == "x") && (suffix(name) != "exe"))
-    name = glue(name, ".exe");
+  if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
+    name = glue (name, ".exe");
 #endif
   int i, n= N(filter);
   bool preserve_links= false;
@@ -169,6 +182,9 @@ is_of_type (url name, string filter) {
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
       break;
     case 'x':
+#ifdef OS_WIN32
+      if (suffix(name) == "bat") break;
+#endif
       if ((buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0) return false;
       break;
     }
@@ -234,4 +250,22 @@ read_directory (url u, bool& error_flag) {
 
   bench_cumul ("read directory");
   return dir;
+}
+
+/******************************************************************************
+* Miscellaneous
+******************************************************************************/
+
+void
+ps2pdf (url u1, url u2) {
+#ifdef OS_WIN32
+  char *_u1, *_u2;
+  _u1 = as_charp (concretize (u1));
+  _u2 = as_charp (concretize (u2));
+  XPs2Pdf (_u1, _u2);
+  delete [] _u1;
+  delete [] _u2;
+#else
+  system ("ps2pdf", u1, u2);
+#endif
 }

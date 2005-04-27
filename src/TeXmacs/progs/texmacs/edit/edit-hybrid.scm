@@ -15,7 +15,8 @@
 (texmacs-module (texmacs edit edit-hybrid)
   (:use
     (texmacs edit edit-text) (texmacs edit edit-table)
-    (texmacs edit edit-session) (texmacs edit edit-fold))
+    (texmacs edit edit-session) (texmacs edit edit-fold)
+    (texmacs edit edit-title) (texmacs edit edit-graphics))
   (:export
     make-return make-shift-return
     structured-insert-left structured-insert-right
@@ -46,15 +47,11 @@
 	((== x "latex") (activate-latex))
 	((== x "symbol") (activate-symbol))
 	((== x "inactive") (activate))
-	((== x "title")
-	 (if (inside? "make-title")
-	     (make-header 'author)
-	     (return-sectional)))
-	((== x "author")
-	 (if (inside? "make-title")
-	     (make-header 'address)
-	     (return-sectional)))
-	((in? x '("chapter" "chapter*" "appendix"
+	((== x "title") (return-sectional)) ;; still needed for exams
+	((== x "doc-title") (make-doc-data-element 'doc-author-data))
+	((== x "author-name") (make-author-data-element 'author-address))
+	((== x "doc-inactive") (doc-data-activate-here))
+	((in? x '("part" "part*" "chapter" "chapter*" "appendix"
 		  "section" "subsection" "subsubsection"
 		  "section*" "subsection*" "subsubsection*"
 		  "paragraph" "subparagraph" "paragraph*" "subparagraph*"))
@@ -67,7 +64,7 @@
 		  "enumerate" "enumerate-numeric" "enumerate-roman"
 		  "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"
 		  "description" "description-compact" "description-aligned"
-		   "description-dash" "description-long"))
+		  "description-dash" "description-long"))
 	 (make-item))
 	((inside? "compound") (activate-compound))
 	(else (insert-return))))
@@ -75,8 +72,8 @@
 (define (make-return)
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
-		   "title" "author"
-		   "chapter" "chapter*" "appendix"
+		   "title" "doc-title" "author-name" "doc-inactive"
+		   "part" "part*" "chapter" "chapter*" "appendix"
 		   "section" "subsection" "subsubsection"
 		   "section*" "subsection*" "subsubsection*"
 		   "paragraph" "subparagraph" "paragraph*" "subparagraph*"
@@ -186,4 +183,5 @@
 	      (plugin-supports-completions? (get-env "prog-language")))
 	 (if (session-complete-try?) (noop)))
 	((complete-try?) (noop))
+	((in-graphics?) (graphics-choose-point))
 	(else (set-message "Use M-tab in order to insert a tab" "tab"))))

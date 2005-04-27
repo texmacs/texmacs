@@ -132,7 +132,7 @@ x_display_rep::get_color (string s) {
   if (s == "pastel yellow")  return rgb (255, 255, pastel);
   if (s == "pastel green")   return rgb (pastel, 255, pastel);
   if (s == "pastel magenta") return rgb (255, pastel, 255);
-  if (s == "pastel cyan") return rgb (pastel, 255, 255);
+  if (s == "pastel cyan")    return rgb (pastel, 255, 255);
   if (s == "pastel orange")  return rgb (255, pastel, 2*pastel-255);
   if (s == "pastel brown")   return rgb (pastel, 2*pastel-255, 2*pastel-255);
   return black;
