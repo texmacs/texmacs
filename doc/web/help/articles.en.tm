@@ -1,10 +1,10 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.5>
 
 <style|tmweb>
 
 <\body>
-  <apply|tmweb-current|Help|Articles><tmweb-title|Articles on
-  <TeXmacs>|<apply|tmweb-help-links>>
+  <tmweb-current|Help|Articles><tmweb-title|Articles on
+  <TeXmacs>|<tmweb-help-links>>
 
   The following documents on <TeXmacs> may be be worthwhile reading:
 
@@ -16,26 +16,18 @@
     <item><hlink|TeXmacs interfaces to computer algebra
     systems|http://arxiv.org/abs/cs.SC/0107036> by Andrey Grozin. Computer
     science e-print archive.
+
+    <item><hlink|TeXmacs-maxima interface|http://arxiv.org/abs/cs.SC/0504039>
+    by Andrey Grozin. Computer science e-print archive.
   </itemize>
 
-  <apply|tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
