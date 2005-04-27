@@ -21,7 +21,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #ifdef OS_WIN32
-#include <sys/pipe.h>
+#include <sys/misc.h>
 #endif
 #ifndef __APPLE__
 #include <malloc.h>
@@ -35,13 +35,9 @@ hashset<pointer> pipe_link_set;
 
 pipe_link_rep::pipe_link_rep (string cmd2): cmd (cmd2) {
   pipe_link_set->insert ((pointer) this);
-#ifdef OS_WIN32
-  memset(&conn, 0, sizeof(PIPE_CONN));
-#else
   in     = pp_in [0]= pp_in [1]= -1;
   out    = pp_out[0]= pp_out[1]= -1;
   err    = pp_err[0]= pp_err[1]= -1;
-#endif
   outbuf = "";
   errbuf = "";
   alive  = false;
@@ -61,7 +57,6 @@ make_pipe_link (string cmd) {
 * Routines for pipe_links
 ******************************************************************************/
 
-#ifndef OS_WIN32
 void
 execute_shell (string s) {
   char *_s= as_charp (s);
@@ -70,30 +65,25 @@ execute_shell (string s) {
   argv[1] = "-c";
   argv[2] = _s;
   argv[3] = 0;
+#ifdef OS_WIN32
+  _system(_s);
+#else
   execve ("/bin/sh", argv, environ);
+#endif
   delete[] _s;
 }
-#endif
 
 string
 pipe_link_rep::start () {
   if (alive) return "busy";
   if (DEBUG_AUTO) cout << "TeXmacs] Launching '" << cmd << "'\n";
 
-#ifdef OS_WIN32
-  char *cmdString;
-  bool success;
-  cmdString = as_charp(cmd);
-  success = PIPE_Create(cmdString, &conn);
-  delete [] cmdString;
-  if (!success) return "Error: Could not create pipe";
-  else {
-#else
   pipe (pp_in );
   pipe (pp_out);
   pipe (pp_err);
   pid= fork ();
   if (pid==0) { // the child
+#ifndef OS_WIN32
     close (pp_in  [OUT]);
     close (pp_out [IN ]);
     close (pp_err [IN ]);
@@ -107,6 +97,7 @@ pipe_link_rep::start () {
     execute_shell (cmd);
     exit (127);
     // exit (system (cmd) != 0);
+#endif
   }
   else { // the main process
     in = pp_in  [OUT];
@@ -115,25 +106,16 @@ pipe_link_rep::start () {
     close (pp_out [OUT]);
     err= pp_err [IN ];
     close (pp_err [OUT]);
-#endif
 
     alive= true;
     if (/* !banner */ true) return "ok";
     else {
       int r;
       char outbuf[1024];
-#ifdef OS_WIN32
-      r= PIPE_ReadStdout(&conn, outbuf, 1024);
-#else
-      r= ::read (out, outbuf, 1024);
-#endif
+      r = ::read (out, outbuf, 1024);
       if (r == 1 && outbuf[0] == TERMCHAR) return "ok";
       alive= false;
-#ifdef OS_WIN32
-      PIPE_Close(&conn);
-#else
       recursive_kill (pid);
-#endif
       wait (NULL);
       if (r == ERROR) return "Error: the application does not reply";
       else
@@ -162,11 +144,7 @@ pipe_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) cout << "[INPUT]" << debug_io_string (s);
   char* _s= as_charp (s);
-#ifdef OS_WIN32
-  PIPE_WriteStdin(&conn, _s, N(s));
-#else
   ::write (in, _s, N(s));
-#endif
   delete[] _s;
 }
 
@@ -176,23 +154,14 @@ pipe_link_rep::feed (int channel) {
 
   int r;
   char tempout[1024];
-#ifdef OS_WIN32
-  if (channel == LINK_OUT) r = PIPE_ReadStdout(&conn, tempout, 1024);
-  else r = PIPE_ReadStderr(&conn, tempout, 1024);
-#else
   if (channel == LINK_OUT) r = ::read (out, tempout, 1024);
   else r = ::read (err, tempout, 1024);
-#endif
   if (r == ERROR) {
     cerr << "TeXmacs] read failed for#'" << cmd << "'\n";
     wait (NULL);
   }
   else if (r == 0) {
-#ifdef OS_WIN32
-    PIPE_Close(&conn);
-#else
     recursive_kill (pid);
-#endif
     alive= false;
   }
   else {
@@ -214,7 +183,6 @@ pipe_link_rep::read (int channel) {
     errbuf= "";
     return r;
   }
-  else return string("");
 }
 
 void
@@ -229,24 +197,15 @@ pipe_link_rep::listen (int msecs) {
 void
 pipe_link_rep::interrupt () {
   if (!alive) return;
-#ifdef OS_WIN32
-  PIPE_Close(&conn);
-#else
   kill (pid, SIGINT);
-#endif
 }
 
 void
 pipe_link_rep::stop () {
   if (!alive) return;
-#ifdef OS_WIN32
-  PIPE_Close(&conn);
-#else
   recursive_kill (pid);
   alive= false;
   close (in);
-#endif
-  alive= false;
   wait (NULL);
 }
 
@@ -256,27 +215,6 @@ pipe_link_rep::stop () {
 
 void
 listen_to_pipes () {
-#ifdef OS_WIN32
-  while (true) {
-    int max_fd = 0;
-    iterator<pointer> it = iterate(pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con = (pipe_link_rep*) it->next();
-      if (con->alive) {
-	if (con->conn.isValid && PIPE_CheckStdout (&con->conn)) max_fd++;
-	if (con->conn.isValid && PIPE_CheckStderr (&con->conn)) max_fd++;
-      }
-    }
-    if(max_fd == 0) break;
-	
-    it= iterate (pipe_link_set);
-    while (it->busy()) {
-      pipe_link_rep* con= (pipe_link_rep*) it->next();
-      if (con->alive && PIPE_CheckStdout (&con->conn)) con->feed (LINK_OUT);
-      if (con->alive && PIPE_CheckStderr (&con->conn)) con->feed (LINK_ERR);
-    }
-  }
-#else
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -306,7 +244,6 @@ listen_to_pipes () {
       if (con->alive && FD_ISSET (con->err, &rfds)) con->feed (LINK_ERR);
     }
   }
-#endif
 }
 
 /******************************************************************************
@@ -319,11 +256,7 @@ close_all_pipes () {
   while (it->busy()) {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
     if (con->alive) {
-#ifdef OS_WIN32
-      PIPE_Close (&con->conn);
-#else
       recursive_kill (con->pid);
-#endif
       con->alive= false;
     }
   }

@@ -84,6 +84,5 @@ display open_display (int argc=0, char** argv=NULL);
 display current_display ();
 void    close_display (display dis);
 void    set_interpose_handler (void (*) (void));
-void    beep ();
 
 #endif // defined DISPLAY_H

@@ -391,12 +391,3 @@ x_display_rep::set_wait_indicator (string message, string arg) {
   XFlush (dpy);
   old_wid << emit_invalidate_all ();
 }
-
-void
-beep () {
-#ifdef OS_WIN32
-  XBeep ();
-#else
-  cerr << '\a';
-#endif
-}

@@ -173,13 +173,12 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat, SI xoff):
 
 struct cell_box_rep: public change_box_rep {
   SI    bl, br, bb, bt;
-  color fg, bg, old_bg;
+  color fg, bg;
   bool  transp;
   cell_box_rep (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 		SI bl, SI br, SI bb, SI bt, color fg, color bg, bool transp);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
+  bool display_background (ps_device dev, color& col);
   void display (ps_device dev);
 };
 
@@ -204,18 +203,13 @@ cell_box_rep::cell_box_rep (
   finalize ();
 }
 
-void
-cell_box_rep::pre_display (ps_device& dev) {
-  if (transp) return;
-  old_bg= dev->get_background ();
+bool
+cell_box_rep::display_background (ps_device dev, color& col) {
+  if (transp) return false;
+  col= dev->get_background ();
   dev->set_background (bg);
   dev->clear (x1, y1, x2, y2);
-}
-
-void
-cell_box_rep::post_display (ps_device &dev) {
-  if (transp) return;
-  dev->set_background (old_bg);
+  return true;
 }
 
 void

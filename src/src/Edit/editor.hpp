@@ -169,7 +169,6 @@ public:
   virtual bool   inside_graphics () = 0;
   virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
-  virtual grid   find_grid () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
@@ -177,7 +176,7 @@ public:
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
-  virtual void   draw_graphical_object (ps_device dev) = 0;
+  virtual void   draw_graphical_object () = 0;
   virtual bool   mouse_graphics (string s, SI x, SI y, time_t t) = 0;
 
   /* public routines from edit_typeset */
@@ -230,10 +229,6 @@ public:
   virtual void notify_ins_unary (path p, tree_label op) = 0;
   virtual void notify_rem_unary (path p) = 0;
   virtual void post_notify (path p) = 0;
-  virtual void remove_undo_mark () = 0;
-  virtual void add_undo_mark () = 0;
-  virtual void unredoable_undo () = 0;
-  virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
   virtual void assign_diff (path p, tree u) = 0;
