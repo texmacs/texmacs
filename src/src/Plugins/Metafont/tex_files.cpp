@@ -108,13 +108,7 @@ resolve_tex (url name) {
   }
 
   url u= url_none ();
-  if (ends (s, "mf" )) {
-    u= resolve_tfm (name);
-#ifdef OS_WIN32
-    if (is_none (u))
-      u= resolve_tfm (replace (s, ".mf", ".tfm"));
-#endif
-  }
+  if (ends (s, "mf" )) u= resolve_tfm (name);
   if (ends (s, "tfm")) u= resolve_tfm (name);
   if (ends (s, "pk" )) u= resolve_pk  (name);
   if (ends (s, "pfb")) u= resolve_pfb (name);

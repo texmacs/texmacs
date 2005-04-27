@@ -20,7 +20,6 @@
 #include "merge_sort.hpp"
 #include "scheme.hpp"
 
-string PS_CLIP ("cl");
 string PS_LINE ("ln");
 string PS_FILL ("fl");
 string PS_ARC ("ac");
@@ -96,9 +95,6 @@ printer_rep::printer_rep (
 	     << as_string (dpi) << " " << as_string (dpi)
 	     << " (TeXmacs) @start\n";
 
-  define (PS_CLIP, string ("/pt4 X /pt3 X /pt2 X /pt1 X\n") *
-	  string ("newpath pt1 pt2 moveto pt3 pt2 lineto ") *
-	  string ("pt3 pt4 lineto pt1 pt4 lineto pt1 pt2 lineto clip"));
   define (PS_LINE, string ("/pt4 X /pt3 X /pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 moveto pt3 pt4 lineto stroke"));
   define (PS_FILL, string ("/pt4 X /pt3 X /pt2 X /pt1 X\n") *
@@ -447,19 +443,6 @@ printer_rep::generate_tex_fonts () {
 }
 
 /******************************************************************************
-* Clipping
-******************************************************************************/
-
-void
-printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  ps_device_rep::set_clipping (x1, y1, x2, y2);
-  print (x1, y1);
-  print (x2, y2);
-  print (PS_CLIP);
-}
-  
-/******************************************************************************
 * graphical routines
 ******************************************************************************/
 
@@ -476,11 +459,6 @@ printer_rep::get_rgb (color col, int& r, int& g, int& b) {
 color
 printer_rep::get_color () {
   return fg;
-}
-
-color
-printer_rep::get_color (string s) {
-  return dis->get_color (s);
 }
 
 color

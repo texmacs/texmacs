@@ -19,13 +19,6 @@
 #include <sys/misc.h>
 #endif
 
-static string bibtex_command= "bibtex";
-
-void
-set_bibtex_command (string cmd) {
-  bibtex_command= cmd;
-}
-
 tree
 remove_start_space (tree t) {
   if (is_atomic (t)) {
@@ -57,7 +50,7 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=" << dir << ":$BIBINPUTS "
 	<< "BSTINPUTS=" << dir << ":$BSTINPUTS "
-	<< bibtex_command << " temp";
+	<< "bibtex temp";
   if (DEBUG_AUTO) cout << "TeXmacs] BibTeX command: " << cmdln << "\n";
   system (cmdln);
 #endif
@@ -71,10 +64,10 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
   if (is_document (t) && is_extension (t[0])) t= t[0];
   if (is_document (t) && (N(t)>1) && is_extension (t[1])) t= t[1];
   if (arity(t) == 0) return "";
-  if (!is_compound (t, "thebibliography", 2) || !is_document (t[1]))
+  if ((!is_compound (t, "thebibliography", 2)) ||
+      (!is_document (t[N(t)-1])))
     return "";
-  tree largest= t[0];
-  t= t[1];
+  t= t[N(t)-1];
   tree u (DOCUMENT);
   for (i=0; i<arity(t); i++) {
     if (is_concat (t[i]) &&
@@ -94,5 +87,5 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	u << v;
       }
   }
-  return compound ("bib-list", largest, u);
+  return u;
 }

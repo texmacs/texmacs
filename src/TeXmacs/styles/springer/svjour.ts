@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.4.1>
 
 <style|source>
 
@@ -11,8 +11,8 @@
         The SVJour style.
       </src-purpose>
 
-      <\src-copyright|2004--2005>
-        Joris van der Hoeven and Adrien Bourdet
+      <\src-copyright|2002--2004>
+        Adrien Bourdet
       </src-copyright>
 
       <\src-license>
@@ -25,9 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-float|header-article|title-base|section-article|std-latex>
-
-  <assign|env-theorem-dtd|1.0>
+  <inactive*|<use-package|std|env-base|env-math|env-float|header-article|title-base|section-article|std-latex>>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -77,7 +75,7 @@
 
   <assign|font-base-size|10>
 
-  <assign|par-first|15pt>
+  <assign|par-first|0fn>
 
   \;
 
@@ -123,13 +121,13 @@
     Sectional macros.
   </src-comment>>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|21dd|4pt|4pt>><normal-size|<arg|name>><vspace|<tex-len|10.5dd|4pt|4pt>>>>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<plus|21dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><vspace|<plus|10.5dd|<tmlen|-4pt|0pt|4pt>>>>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<style-with|src-compact|none|<vspace*|<tex-len|21dd|4pt|4pt>><normal-size|<arg|name>><vspace|<tex-len|10.5dd|4pt|4pt>>>>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<style-with|src-compact|none|<vspace*|<plus|21dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><vspace|<plus|10.5dd|<tmlen|-4pt|0pt|4pt>>>>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tex-len|13dd|4pt|4pt>><normal-size|<arg|name>><space|5.5pt>>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<plus|13dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><space|5.5pt>>>>>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tex-len|13dd|4pt|4pt>><normal-size|<arg|name>><space|5.5pt>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<plus|13dd|<tmlen|-4pt|0pt|4pt>>><normal-size|<arg|name>><space|5.5pt>>>>>
 
   <active*|<\src-comment>
     Section and environment numbering.
@@ -143,199 +141,85 @@
 
   <assign|subparagraph-display-numbers|<macro|true>>
 
-  <\active*>
-    <\src-comment>
-      Headers.
-    </src-comment>
-  </active*>
-
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><quote|<page-the-page>>>>>>>>
-
-  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><arg|name>>>>>>
-
-  <assign|header-primary|<macro|name|nr|what|>>
-
-  <assign|header-secondary|<macro|name|nr|what|>>
-
   <active*|<\src-comment>
     Theorem-like environemments rendering.
   </src-comment>>
 
-  <group-common-counter|theorem-env>
+  <group-individual-counters|theorem-env>
 
-  <assign|theorem-name|<macro|name|<with|font-series|bold|<arg|name>>>>
-
-  <assign|theorem-sep|<macro|. >>
-
-  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
-
-  <assign|remark-sep|<macro|. >>
-
-  <assign|exercise-name|<macro|name|<with|font-series|bold|<arg|name>>>>
-
-  <assign|exercise-sep|<macro|. >>
+  <assign|theorem-sep|<macro| >>
 
   \;
 
-  <assign|render-remark|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
-  </macro>>
+  <assign|new-theorem-bold|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold>>>
 
-  <assign|render-theorem|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|italic|<arg|body>>>>
-  </macro>>
+  <assign|new-theorem-italic|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-italic>>>
 
-  <assign|render-exercise|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><theorem-sep>>||<arg|body>>>
-  </macro>>
+  <assign|new-theorem-bold-italic|<macro|env|name|<new-env|<arg|env>|<arg|name>|theorem-env|render-theorem-bold-italic>>>
 
   \;
 
-  <assign|proof-text|<macro|<localize|Proof>>>
+  <assign|render-theorem-generic|<macro|which|body|<padded-normal|1fn|1fn|<\surround|<arg|><arg|which><arg|><theorem-sep>|>
+    <\with|font-shape|italic>
+      <arg|body>
+    </with>
+  </surround>>>>
 
-  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
-  >>>>
-
-  <assign|render-proof|<\macro|which|body>
-    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
-      <render-remark|<arg|which>|<arg|body>>
-    </surround>
+  <assign|render-theorem-bold|<\macro|which|body>
+    <\render-theorem-generic|<with|font-series|bold|<arg|which>>>
+      <arg|body>
+    </render-theorem-generic>
   </macro>>
 
-  <assign|proof|<\macro|body>
-    <render-proof|<proof-text>|<arg|body>>
+  <assign|render-theorem-italic|<\macro|which|body>
+    <\render-theorem-generic|<with|font-shape|italic|<arg|which>>>
+      <arg|body>
+    </render-theorem-generic>
+  </macro>>
+
+  <assign|render-theorem-bold-italic|<\macro|which|body>
+    <\render-theorem-generic|<with|font-shape|italic|<with|font-series|bold|<arg|which>>>>
+      <arg|body>
+    </render-theorem-generic>
   </macro>>
 
   <active*|<\src-comment>
     Theorem-like environments.
   </src-comment>>
 
-  <new-theorem|theorem|Theorem>
-
-  <new-theorem|corollary|Corollary>
-
-  <new-theorem|definition|Definition>
-
-  <new-theorem|lemma|Lemma>
-
-  <new-theorem|proposition|Proposition>
+  <new-theorem-bold|theorem|Theorem>
 
   \;
 
-  <new-exercise|exercise|Exercise>
+  <new-theorem-italic|math-case|Case>
 
-  <new-exercise|problem|Problem>
+  <new-theorem-italic|conjecture|Conjecture>
 
-  <new-exercise|solution|Solution>
+  <new-theorem-italic|example|Example>
 
-  \;
+  <new-theorem-italic|note|Note>
 
-  <new-remark|math-case|Case>
+  <new-theorem-italic|property|Property>
 
-  <new-remark|conjecture|Conjecture>
+  <new-theorem-italic|question|Question>
 
-  <new-remark|example|Example>
-
-  <new-remark|note|Note>
-
-  <new-remark|property|Property>
-
-  <new-remark|question|Question>
-
-  <new-remark|remark|Remark>
+  <new-theorem-italic|remark|Remark>
 
   \;
 
-  <active*|<src-short-comment|<TeXmacs> environments>>
+  <new-theorem-bold-italic|corollary|Corollary>
 
-  <new-theorem|axiom|Axiom>
+  <new-theorem-bold-italic|definition|Definition>
 
-  <new-theorem|notation|Notation>
+  <new-theorem-bold-italic|exercise|Exercise>
 
-  <new-remark|warning|Warning>
+  <new-theorem-bold-italic|lemma|Lemma>
 
-  <\active*>
-    <\src-comment>
-      Customization of other environments.
-    </src-comment>
-  </active*>
+  <new-theorem-bold-italic|problem|Problem>
 
-  <assign|figure-text|<macro|<localize|Fig.>>>
+  <new-theorem-bold-italic|proposition|Proposition>
 
-  <assign|bibliography-text|<macro|<localize|References>>>
-
-  <assign|table-of-contents-text|<macro|<localize|Table of Contents>>>
-
-  <assign|list-of-figures-text|<macro|<localize|List of Figures>>>
-
-  <assign|list-of-tables-text|<macro|<localize|List of Tables>>>
-
-  <\active*>
-    <\src-comment>
-      List environments.
-    </src-comment>
-  </active*>
-
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>
-  |r-15pt||r+0pt|>>>>
-
-  <assign|compact-item|<macro|x|<style-with|src-compact|none|<with|par-first|-15pt|<yes-indent>><resize|<arg|x>|||r]15pt|>>>>
-
-  \;
-
-  <assign|list-level|0>
-
-  <assign|render-list|<\macro|body>
-    <\padded-normal|<if|<equal|<value|list-level>|0>|0.5fn|0fn>|<if|<equal|<value|list-level>|0>|0.5fn|0fn>>
-      <\indent-left|15pt>
-        <\surround|<no-page-break*>|<no-indent*>>
-          <\with|list-level|<plus|<mod|<value|list-level>|3>|1>>
-            <arg|body>
-          </with>
-        </surround>
-      </indent-left>
-    </padded-normal>
-  </macro>>
-
-  \;
-
-  <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
-
-  <new-list|itemize-2|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
-
-  <new-list|itemize-3|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
-
-  <new-list|itemize-minus|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
-
-  <new-list|itemize-dot|<value|aligned-item>|<macro|x|<active*|<with|mode|math|\<bullet\>>>>>
-
-  <new-list|itemize-arrow|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<group|\<rightarrow\>>>>>>
-
-  \;
-
-  <assign|aligned-accolade-item|<macro|x|<aligned-item|<with|font-shape|right|{<arg|x>}>>>>
-
-  <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
-
-  <new-list|enumerate-2|<value|aligned-accolade-item>|<macro|x|<number|<arg|x>|alpha>>>
-
-  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|roman>>>
-
-  \;
-
-  <assign|compact-dash-item|<macro|x|<compact-item|<arg|x> <emdash> >>>
-
-  <assign|long-compact-space-item|<macro|x|<item-long|<compact-space-item|<arg|x>>>>>
-
-  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
-
-  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
-
-  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
-
-  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
-
-  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<group|\<ast\>>>>>>>
+  <new-theorem-bold-italic|solution|Solution>
 
   <\active*>
     <\src-comment>
@@ -344,7 +228,7 @@
   </active*>
 
   <assign|doc-title-block|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <with|par-first|0fn|<arg|body>>
+    <arg|body>
   </cell>>>>>>>
 
   <assign|doc-make-title|<macro|body|<surround||<vspace|22.47pt>|<doc-title-block|<arg|body>>>>>
@@ -388,6 +272,32 @@
       </quasi>
     </style-with>
   </xmacro>>
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<small|<style-with|src-compact|none|<no-indent><arg|name><htab|5mm><quote|<page-the-page>>>>>>>>
+
+  <assign|header-author|<macro|name|<assign|page-even-header|<small|<style-with|src-compact|none|<no-indent><quote|<page-the-page>><htab|5mm><arg|name>>>>>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
+
+  <\active*>
+    <\src-comment>
+      The standard itemize environment with three levels.
+    </src-comment>
+  </active*>
+
+  <new-list|itemize-1|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+
+  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|->>>>>
+
+  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<group|\<bullet\>>>>>>
 
   \;
 </body>

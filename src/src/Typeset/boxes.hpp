@@ -21,7 +21,6 @@
 #include "language.hpp"
 #include "hashmap.hpp"
 #include "Graphics/frame.hpp"
-#include "Graphics/grid.hpp"
 
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
@@ -132,8 +131,7 @@ public:
   inline            virtual ~box_rep ();
   void              relocate (path p, bool force= false);
   virtual operator  tree () = 0;
-  virtual void      pre_display (ps_device& dev);
-  virtual void      post_display (ps_device& dev);
+  virtual bool      display_background (ps_device dev, color& col);
   virtual void      display (ps_device dev) = 0;
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
@@ -144,7 +142,6 @@ public:
   virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path      find_tag (string name);
 
-  virtual int  reindex (int i, int item, int n);
   void redraw (ps_device dev, path p, rectangles& l);
   void redraw (ps_device dev, path p, rectangles& l, SI x, SI y);
 
@@ -204,11 +201,9 @@ public:
   /*************************** for graphical boxes ***************************/
 
   virtual frame     get_frame ();
-  virtual grid      get_grid ();
   virtual void      get_limits (point& lim1, point& lim2);
 
   frame     find_frame (path bp);
-  grid      find_grid (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
 
   virtual SI             graphical_distance (SI x, SI y);

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.4>
 
 <style|source>
 
@@ -206,8 +206,6 @@
 
   <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<compound|<unquote|<merge|the-|<arg|env>>>><compound|<unquote|<merge|<arg|env>|-sep>>><arg|title>|<arg|title>>>>>
 
-  <assign|part-toc|<macro|name|<toc-main-1|<toc-title|part|<arg|name>>>>>
-
   <assign|chapter-toc|<macro|name|<style-with|src-compact|none|<if|<sectional-short-style>|<toc-main-1|<toc-title|chapter|<arg|name>>>|<toc-main-2|<toc-title|chapter|<arg|name>>>>>>>
 
   <assign|section-toc|<macro|name|<style-with|src-compact|none|<if|<sectional-short-style>|<toc-main-2|<toc-title|section|<arg|name>>>|<toc-normal-1|<toc-title|section|<arg|name>>>>>>>
@@ -246,7 +244,7 @@
   <assign|render-bibliography|<\macro|name|body>
     <principal-section*|<arg|name>>
 
-    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<arg|body>>
+    <with|par-first|0fn|par-par-sep|0fn|font-size|0.84|<description|<arg|body>>>
   </macro>>
 
   <assign|render-table-of-contents|<\macro|name|body>
@@ -287,8 +285,8 @@
     <render-bibliography|<localize|<arg|name>>|<arg|body>>
   </macro>>
 
-  <assign|thebibliography|<\macro|largest|body>
-    <render-bibliography|<bibliography-text>|<bib-list|<arg|largest>|<arg|body>>>
+  <assign|thebibliography|<\macro|dummy|body>
+    <render-bibliography|<bibliography-text>|<arg|body>>
   </macro>>
 
   <assign|table-of-contents|<\macro|aux|body>

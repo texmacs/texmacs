@@ -92,8 +92,7 @@ void
 hor_scrollbar_widget_rep::decode_position (SI& x1, SI& x2) {
   SI total = sc_max- sc_min; if (total==0) total=1;
   SI extra = (((h/PIXEL)*3)/4)*PIXEL + 3*PIXEL;
-  SI min_w = min (w-2*extra, 12*PIXEL);
-  DI real_w= w- 2*extra - min_w;
+  DI real_w= w- 2*extra;
   SI bef   = (SI) ((before*real_w)/total);
   SI aft   = (SI) ((after*real_w)/total);
   SI p;
@@ -108,16 +107,15 @@ hor_scrollbar_widget_rep::decode_position (SI& x1, SI& x2) {
   
   p = (SI) (((sc_pos- sc_min)*real_w)/total);
   x1= max (0, p-bef)+ extra;
-  x2= min ((SI) real_w, p+aft)+ extra + min_w;
+  x2= min ((SI) real_w, p+aft)+ extra;
 }
 
 SI
 hor_scrollbar_widget_rep::encode_position (SI x) {
   DI total  = sc_max- sc_min; if (total==0) total=1;
   SI extra  = (((h/PIXEL)*3)/4)*PIXEL + 3*PIXEL;
-  SI min_w  = min (w-2*extra, 12*PIXEL);
-  SI real_w = w- 2*extra - min_w;
-  SI dec_x  = (SI) (((x - extra - (min_w>>1)) * total) / real_w);
+  SI real_w = w- 2*extra;
+  SI dec_x  = (SI) (((x- extra)*total)/real_w);
   return dec_x+ sc_min;
 }
 
@@ -241,8 +239,7 @@ void
 ver_scrollbar_widget_rep::decode_position (SI& y1, SI& y2) {
   SI total = sc_max- sc_min; if (total==0) total=1;
   SI extra = (((w/PIXEL)*3)/4)*PIXEL + 3*PIXEL;
-  SI min_h = min (h-2*extra, 12*PIXEL);
-  DI real_h= h- 2*extra - min_h;
+  DI real_h= h- 2*extra;
   SI bef   = (SI) ((before*real_h)/total);
   SI aft   = (SI) ((after*real_h)/total);
   SI p;
@@ -257,16 +254,15 @@ ver_scrollbar_widget_rep::decode_position (SI& y1, SI& y2) {
   
   p = (SI) (((sc_pos- sc_min)*real_h)/total);
   y1= max (0, p-bef)+ extra;
-  y2= min ((SI) real_h, p+aft) + extra + min_h;
+  y2= min ((SI) real_h, p+aft)+ extra;
 }
 
 SI
 ver_scrollbar_widget_rep::encode_position (SI y) {
   DI total  = sc_max- sc_min; if (total==0) total=1;
-  SI extra  = (((w/PIXEL)*3)/4)*PIXEL + 3*PIXEL;
-  SI min_h  = min (h-2*extra, 12*PIXEL);
-  SI real_h = h - 2*extra - min_h;
-  SI dec_y  = (SI) (((y - extra - (min_h>>1)) * total) / real_h);
+  SI extra = (((w/PIXEL)*3)/4)*PIXEL + 3*PIXEL;
+  SI real_h = h- 2*extra;
+  SI dec_y  = (SI) (((y- extra)*total)/real_h);
   return dec_y+ sc_min;
 }
 

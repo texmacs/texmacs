@@ -1,5 +1,5 @@
 :
-#!/bin/bash -- # -*- perl -*-
+#!/bin/sh -- # -*- perl -*-
 # $Id$
 #
 # MuPAD <-> TeXmacs communication link.

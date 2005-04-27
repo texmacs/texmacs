@@ -1,35 +1,36 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Noch nicht implementierte Konversionen>
+  <tmdoc-title|Noch nicht implementierte Konvertierungen>
 
-  Obwohl wir versuchen, den Konversions-Algorithmus so komplett wie möglich
-  zu halten, gibt es Dinge, die noch nicht implementiert sind. Einige
-  Beispiele dafür sind:
+  Zwar versuchen wir den Konvertierungsalgorithmus für Ihre Bedürfnisse
+  möglichst komplett zu halten, doch wurden gewisse Dinge bisher noch nicht
+  implementiert. Beispielsweise sind dies
 
-  <\itemize>
-    <item>Schriftarten, die nicht zum Standard gehören.
+  <\itemize-dot>
+    <item>Nicht-Standard-Schriftarten
 
-    <item>Konversion von Tabellen.
+    <item>Konvertierung von Tabellen
 
-    <item>Kontext-Parameter.
-  </itemize>
+    <item>Stil-Parameter
+  </itemize-dot>
 
-  Alle Anregungen zu wünschenswerten Erweiterungen sollten an
+  Falls Sie Vorschläge zu wünschenswerten Erweiterungen des
+  Konvertierungsalgorithmus haben, teilen Sie uns diese bitte unter
 
-  <\verbatim>
+  <\kbd>
     \ \ \ \ contact@texmacs.org
-  </verbatim>
+  </kbd>
 
-  gerichtet werden. Wir werden versuchen, sie sobald wie möglich zu
-  implementieren. Allerdings wird es einige Zeit dauern, bis korrekte
-  Kontext-Parameter implementiert sein werden, denn sie sind bei <TeXmacs>
-  und <LaTeX> verschieden. Auch können Layout-Unterschiede zwischen <TeXmacs>
-  und <LaTeX> nicht völlig eliminiert werden.
+  mit und wir werden so schnell wie möglich daran arbeiten. Es wird einige
+  Zeit in Anspruch nehmen, die korrekten Übersetzungen der Stil-Parameter zu
+  implementieren, da sie sich in <TeXmacs> und <LaTeX> unterscheiden.
+  Auÿerdem werden Unterschiede im Layout zwischen <TeXmacs> und <LaTeX> nicht
+  gänzlich entfernt werden können.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -41,6 +42,17 @@
 
 <\initial>
   <\collection>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-type|a4>
+    <associate|page-top|30mm>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|german>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>

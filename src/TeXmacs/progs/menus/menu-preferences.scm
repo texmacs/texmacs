@@ -154,9 +154,7 @@
 	  ("30 s" "30")
 	  ("120 s" "120")
 	  ("300 s" "300")
-	  ("Disable" "0"))
-    (enum ("Bibtex command" "bibtex command")
-	  "bibtex" "rubibtex" *)))
+	  ("Disable" "0"))))
 
 (menu-bind page-setup-menu)
 (menu-bind preferences-menu)
