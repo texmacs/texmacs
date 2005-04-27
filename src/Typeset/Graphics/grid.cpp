@@ -71,7 +71,7 @@ grid_rep::set_aspect (tree aspect) {
 struct empty_grid_rep: public grid_rep {
   empty_grid_rep ():
     grid_rep () {}
-  array<grid_curve> get_curves (point lim1, point lim2) {
+  array<grid_curve> get_curves (point lim1, point lim2, double u) {
     array<grid_curve> res;
     return res; }
   operator tree () { return "empty_grid"; }
@@ -99,7 +99,7 @@ struct cartesian_rep: public grid_rep {
   cartesian_rep (array<SI> subd, array<string> col, point o, double st):
     grid_rep (subd, col, o), step (st) {}
   operator tree () { return "cartesian"; }
-  array<grid_curve> get_curves (point lim1, point lim2);
+  array<grid_curve> get_curves (point lim1, point lim2, double u);
   point find_closest_point (point p, point pmin, point pmax);
 };
 
@@ -116,7 +116,7 @@ create_line (double x1, double y1, double x2, double y2, string col) {
 }
 
 array<grid_curve>
-cartesian_rep::get_curves (point lim1, point lim2) {
+cartesian_rep::get_curves (point lim1, point lim2, double u) {
   array<grid_curve> res;
   if (N(subd)<1) return res;
   double x1= min (lim1[0], lim2[0]);
@@ -130,14 +130,16 @@ cartesian_rep::get_curves (point lim1, point lim2) {
      SI nsub;
      nsub= subd[i];
      if (nsub!=0) {
-       double x, y;
-       for (x= xo; x<=x2; x+=step/nsub)
+       double x, y, s;
+       s= step/nsub;
+       if (s<=u) s= u;
+       for (x= xo; x<=x2; x+=s)
          res << create_line (x, y1, x, y2, col[i]);
-       for (x= xo; x>=x1; x-=step/nsub)
+       for (x= xo; x>=x1; x-=s)
          res << create_line (x, y1, x, y2, col[i]);
-       for (y= yo; y<=y2; y+=step/nsub)
+       for (y= yo; y<=y2; y+=s)
          res << create_line (x1, y, x2, y, col[i]);
-       for (y= yo; y>=y1; y-=step/nsub)
+       for (y= yo; y>=y1; y-=s)
          res << create_line (x1, y, x2, y, col[i]);
      }
   }
@@ -187,7 +189,7 @@ struct polar_rep: public grid_rep {
   polar_rep (array<SI> subd, array<string> col, point o, double st, SI ast):
     grid_rep (subd, col, o), step (st), astep (ast) {}
   operator tree () { return "polar"; }
-  array<grid_curve> get_curves (point lim1, point lim2);
+  array<grid_curve> get_curves (point lim1, point lim2, double u);
   point find_closest_point (point p, point pmin, point pmax);
 };
 
@@ -207,7 +209,7 @@ create_arc (
 }
 
 array<grid_curve>
-polar_rep::get_curves (point lim1, point lim2) {
+polar_rep::get_curves (point lim1, point lim2, double u) {
   array<grid_curve> res;
   if (N(subd)<1) return res;
   double x1= min (lim1[0], lim2[0]);
@@ -223,7 +225,9 @@ polar_rep::get_curves (point lim1, point lim2) {
     nsub= subd[i];
     if (nsub!=0) {
       SI j;
-      for (r=0; r<=R; r+=step/nsub)
+      double s= step/nsub;
+      if (s<=u) s= u;
+      for (r=0; r<=R; r+=s)
         res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
       for (j=0; j<astep*nsub; j++)
         res << create_line (xo, yo, xo+R*cos((2*tm_PI*j)/(astep*nsub)),
@@ -281,12 +285,12 @@ struct logarithmic_rep: public grid_rep {
   logarithmic_rep (array<SI> subd, array<string> col, point o, double st, SI b):
     grid_rep (subd, col, o), step (st), base (b) {}
   operator tree () { return "logarithmic"; }
-  array<grid_curve> get_curves (point lim1, point lim2);
+  array<grid_curve> get_curves (point lim1, point lim2, double u);
   point find_closest_point (point p, point pmin, point pmax);
 };
 
 array<grid_curve>
-logarithmic_rep::get_curves (point lim1, point lim2) {
+logarithmic_rep::get_curves (point lim1, point lim2, double u) {
   array<grid_curve> res;
   if (N(subd)<1) return res;
   double x1= min (lim1[0], lim2[0]);
@@ -297,6 +301,7 @@ logarithmic_rep::get_curves (point lim1, point lim2) {
   double yo= center[1];
   int i;
   double x, y;
+  if (step<=u) step= u;
   if (N(col)>=3) {
     for (i=2; i<base; i++) {
       double dx, dy;

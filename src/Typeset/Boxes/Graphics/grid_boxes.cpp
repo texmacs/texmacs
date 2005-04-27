@@ -15,7 +15,7 @@
 #include "Graphics/frame.hpp"
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
-#include <math.h>
+#include "Graphics/math_util.hpp"
 
 /******************************************************************************
 * Grid boxes
@@ -27,8 +27,9 @@ struct grid_box_rep: public box_rep {
   bool first_time;
   int dev_pixel;
   array<box> bs;
+  SI un;
   grid_box_rep (
-    path ip, grid g, frame f, point lim1, point lim2);
+    path ip, grid g, frame f, SI un, point lim1, point lim2);
   void display (ps_device dev);
   operator tree () { return (tree)g; }
   path find_lip () { return path (-1); }
@@ -37,20 +38,9 @@ struct grid_box_rep: public box_rep {
   int reindex (int i, int item, int n);
 };
 
-static bool
-array_point_closest (array<point> a1, array<point> a2, double dist) {
-  int i, n= N(a1);
-  if (n != N(a2)) return false;
-  for (i=0; i<n; i++) {
-    if (norm (a1[i] - a2[i]) >= dist)
-      return false;
-  }
-  return true;
-}
-
 grid_box_rep::grid_box_rep (
-  path ip2, grid g2, frame f2, point lim1, point lim2):
-    box_rep (ip2), g(g2), f(f2)
+  path ip2, grid g2, frame f2, SI un2, point lim1, point lim2):
+    box_rep (ip2), g(g2), f(f2), un(un2)
 {
   first_time= true;
   point flim1= f(lim1), flim2= f(lim2);
@@ -68,18 +58,34 @@ grid_box_rep::display (ps_device dev) {
     point p2= f [point (x2, y2)];
     point l1= point (min (p1[0], p2[0]), min (p1[1], p2[1]));
     point l2= point (max (p1[0], p2[0]), max (p1[1], p2[1]));
-    array<grid_curve> grads= g->get_curves (l1, l2);
+    point e1= l1, e2= point (l1[0], l2[1]);
+    point e3= l2, e4= point (l2[0], l1[1]);
+    double L1, L2, L3, L4;
+    L1= norm (e2 - e1);
+    L2= norm (e3 - e2);
+    L3= norm (e4 - e3);
+    L4= norm (e1 - e4);
+    point e1t= f (e1), e2t= f (e2);
+    point e3t= f (e3), e4t= f (e4);
+    double L1t, L2t, L3t, L4t;
+    L1t= norm (e2t - e1t);
+    L2t= norm (e3t - e2t);
+    L3t= norm (e4t - e3t);
+    L4t= norm (e1t - e4t);
+    if (fnull (L1t, 1e-6) || fnull (L2t, 1e-6) 
+     || fnull (L3t, 1e-6) || fnull (L4t, 1e-6))
+      fatal_error ("One side of the grid has length zero");
+    double u, u1, u2, u3, u4;
+    u1= u= L1 / L1t;
+    u2= min (u, L2 / L2t);
+    u3= min (u, L3 / L3t);
+    u4= min (u, L4 / L4t);
+    array<grid_curve> grads= g->get_curves (l1, l2, u*un);
 
-    array<point> a= array<point> (0);
-    array<point> aold= array<point> (0);
     for (i=0; i<N(grads); i++) {
       curve c= f (grads[i].c);
-      array<point> a= c->rectify (dev->pixel);
-      if (!array_point_closest (aold, a, 2*dev->pixel)) {
-	aold= a;
-	bs << curve_box (
-		decorate (ip), c, dev->pixel, dev->get_color (grads[i].col));
-      }
+      bs << curve_box (
+	      decorate (ip), c, dev->pixel, dev->get_color (grads[i].col));
     }
     first_time= false;
     dev_pixel= dev->pixel;
@@ -104,6 +110,6 @@ grid_box_rep::reindex (int i, int item, int n) {
 ******************************************************************************/
 
 box
-grid_box (path ip, grid g, frame f, point lim1, point lim2) {
-  return new grid_box_rep (ip, g, f, lim1, lim2);
+grid_box (path ip, grid g, frame f, SI un, point lim1, point lim2) {
+  return new grid_box_rep (ip, g, f, un, lim1, lim2);
 }
