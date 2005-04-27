@@ -30,7 +30,6 @@ public:
   bool   inside_graphics ();
   tree   get_graphics ();
   frame  find_frame ();
-  grid   find_grid ();
   void   find_limits (point& lim1, point& lim2);
   point  adjust (point p);
   tree   find_point (point p);
@@ -38,7 +37,7 @@ public:
   tree   get_graphical_object ();
   void   set_graphical_object (tree t);
   void   invalidate_graphical_object ();
-  void   draw_graphical_object (ps_device dev);
+  void   draw_graphical_object ();
   bool   mouse_graphics (string s, SI x, SI y, time_t t);
 };
 

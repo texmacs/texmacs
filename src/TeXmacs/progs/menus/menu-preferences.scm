@@ -39,7 +39,7 @@
 (define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Emacs" "emacs")
-	  ("Windows" "windows")
+;	  ("Windows" "windows")
 	  ("Old style" "old style"))
 ;   (enum ("Profile" "profile")
 ;	  ("Beginner" "beginner")
@@ -154,9 +154,7 @@
 	  ("30 s" "30")
 	  ("120 s" "120")
 	  ("300 s" "300")
-	  ("Disable" "0"))
-    (enum ("Bibtex command" "bibtex command")
-	  "bibtex" "rubibtex" *)))
+	  ("Disable" "0"))))
 
 (menu-bind page-setup-menu)
 (menu-bind preferences-menu)

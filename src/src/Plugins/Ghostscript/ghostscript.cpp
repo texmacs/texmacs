@@ -26,7 +26,7 @@ static int gs_type= -1;
 bool
 ghostscript_bugged () {
 #ifdef OS_WIN32
-  return false;
+	return 0;
 #else
   if (gs_type == -1) {
     string gs_version= var_eval_system ("gs --version");
@@ -55,7 +55,6 @@ encapsulate_postscript (string s) {
     i += 8;
     last_begin= i;
   }
-  r << s (last_begin, i);
   return r;
 }
 

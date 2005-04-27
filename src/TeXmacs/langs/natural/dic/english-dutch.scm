@@ -1326,7 +1326,6 @@
 ("update from web" "haal nieuwe dokumentatie van het web")
 ("update image links" "aktualiseer verbonden plaatjes")
 ("upper border" "bovenrand")
-("upright" "rechtop")
 ("use TeXmacs" "gebruik TeXmacs")
 ("use a black color" "gebruik zwarte kleur")
 ("use a blue color" "gebruik blauwe kleur")

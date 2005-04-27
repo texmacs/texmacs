@@ -160,7 +160,6 @@
   ("space" " ")
   ("S-space" " ")
   ("space var" "<nonesep>")
-  (", var" "<comma>")
 
   ("math:symbol a" "<amalg>")
   ("math:symbol d" "<partial>")

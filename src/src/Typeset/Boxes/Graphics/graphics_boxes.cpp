@@ -20,23 +20,16 @@
 
 struct graphics_box_rep: public composite_box_rep {
   frame f;
-  grid g;
   point lim1, lim2;
-  SI old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
-  graphics_box_rep (
-    path ip, array<box> bs, frame f, grid g, point lim1, point lim2);
+  graphics_box_rep (path ip, array<box> bs, frame f, point lim1, point lim2);
   frame get_frame ();
-  grid get_grid ();
   void  get_limits (point& lim1, point& lim2);
   operator tree () { return "graphics"; }
-  void pre_display (ps_device &dev);
-  void post_display (ps_device &dev);
-  int reindex (int i, int item, int n);
 };
 
 graphics_box_rep::graphics_box_rep (
-  path ip2, array<box> bs2, frame f2, grid g2, point lim1b, point lim2b):
-  composite_box_rep (ip2, bs2), f (f2), g (g2), lim1 (lim1b), lim2 (lim2b)
+  path ip2, array<box> bs2, frame f2, point lim1b, point lim2b):
+  composite_box_rep (ip2, bs2), f (f2), lim1 (lim1b), lim2 (lim2b)
 {
   point flim1= f(lim1), flim2= f(lim2);
   x1= (SI) min (flim1[0], flim2[0]);
@@ -51,31 +44,10 @@ graphics_box_rep::get_frame () {
   return f;
 }
 
-grid
-graphics_box_rep::get_grid () {
-  return g;
-}
-
 void
 graphics_box_rep::get_limits (point& lim1b, point& lim2b) {
   lim1b= lim1;
   lim2b= lim2;
-}
-
-void
-graphics_box_rep::pre_display (ps_device &dev) {
-  dev->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-  dev->extra_clipping (x1, y1, x2, y2);
-}
-
-void
-graphics_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-}
-
-int
-graphics_box_rep::reindex (int i, int item, int n) {
-  return i;
 }
 
 /******************************************************************************
@@ -169,8 +141,8 @@ curve_box_rep::graphical_distance (SI x, SI y) {
   int i;
   for (i=0; i<N(a)-1; i++) {
     axis ax;
-    ax.p0= a[i];
-    ax.p1= a[i+1];
+    ax[0]= a[i];
+    ax[1]= a[i+1];
     gd= min (gd, (SI)seg_dist (ax, p));
   }
   return gd;
@@ -231,10 +203,8 @@ curve_box_rep::display (ps_device dev) {
 ******************************************************************************/
 
 box
-graphics_box (
-  path ip, array<box> bs, frame f, grid g, point lim1, point lim2)
-{
-  return new graphics_box_rep (ip, bs, f, g, lim1, lim2);
+graphics_box (path ip, array<box> bs, frame f, point lim1, point lim2) {
+  return new graphics_box_rep (ip, bs, f, lim1, lim2);
 }
 
 box

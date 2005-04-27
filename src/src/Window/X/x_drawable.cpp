@@ -82,6 +82,11 @@ x_drawable_rep::decode (SI& x, SI& y) {
 ******************************************************************************/
 
 void
+x_drawable_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
+  ps_device_rep::get_clipping (x1, y1, x2, y2);
+}
+
+void
 x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
@@ -115,11 +120,6 @@ x_drawable_rep::get_rgb (color col, int& r, int& g, int& b) {
 color
 x_drawable_rep::get_color () {
   return cur_fg;
-}
-
-color
-x_drawable_rep::get_color (string s) {
-  return dis->get_color (s);
 }
 
 color

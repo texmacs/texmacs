@@ -24,21 +24,6 @@ composite_box_rep::composite_box_rep (path ip, array<box> B): box_rep (ip) {
 }
 
 composite_box_rep::composite_box_rep (
-  path ip, array<box> B, bool init_sx_sy):
-    box_rep (ip)
-{
-  bs= B;
-  if (init_sx_sy) {
-    int i, n= N(bs);
-    for (i=0; i<n; i++) {
-      sx(i)= 0;
-      sy(i)= 0;
-    }
-  }
-  position ();
-}
-
-composite_box_rep::composite_box_rep (
   path ip, array<box> B, array<SI> x, array<SI> y):
     box_rep (ip)
 {
@@ -94,13 +79,11 @@ composite_box_rep::left_justify () {
 }
 
 /******************************************************************************
-* Routines for composite boxes
+* Routines for comosite boxes
 ******************************************************************************/
 
 void
-composite_box_rep::display (ps_device dev) {
-  (void) dev;
-}
+composite_box_rep::display (ps_device dev) { (void) dev; }
 
 int
 composite_box_rep::subnr () {
@@ -311,8 +294,17 @@ composite_box_rep::graphical_select (SI x, SI y, SI dist) {
 }
 
 /******************************************************************************
-* Concrete composite box
+* User interface
 ******************************************************************************/
+
+struct concrete_composite_box_rep: public composite_box_rep {
+  bool border_flag;
+  concrete_composite_box_rep (
+    path ip, array<box> bs, array<SI> x, array<SI> y, bool bfl):
+      composite_box_rep (ip, bs, x, y), border_flag (bfl) { finalize (); }
+  operator tree () { return tree ("composite"); }
+  int find_child (SI x, SI y, SI delta, bool force);
+};
 
 int
 concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
@@ -329,13 +321,12 @@ concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   return m;
 }
 
-/******************************************************************************
-* User interface
-******************************************************************************/
-
 box
 composite_box (path ip, array<box> bs, bool bfl) {
-  return new concrete_composite_box_rep (ip, bs, bfl);
+  int i, n= N(bs);
+  array<SI> x (n), y (n);
+  for (i=0; i<n; i++) x[i]= y[i]= 0;
+  return new concrete_composite_box_rep (ip, bs, x, y, bfl);
 }
 
 box

@@ -924,7 +924,7 @@ expand_needs_surrounding (string s) {
     (s == "maketitle") || (s == "abstract") ||
     (s == "theorem") || (s == "proposition") || (s == "lemma") ||
     (s == "corollary") || (s == "proof") || (s == "axiom") ||
-    (s == "definition") || (s == "notation") || (s == "conjecture") ||
+    (s == "definition") || (s == "conjecture") ||
     (s == "remark") || (s == "note") || (s == "example") ||
     (s == "exercise") || (s == "warning") || (s == "convention") ||
     (s == "code") || (s == "quote") ||
@@ -2371,28 +2371,6 @@ upgrade_doc_info (tree t) {
 }
 
 /******************************************************************************
-* Temporary for Marie-Francoise
-******************************************************************************/
-
-tree
-upgrade_bibliography (tree t) {
-  if (is_atomic (t)) return t;
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= upgrade_bibliography (t[i]);
-    if (is_compound (t, "bibliography") || is_compound (t, "bibliography*")) {
-      int l= N(r)-1;
-      if (is_func (r[l], DOCUMENT, 1) && is_compound (r[l][0], "bib-list"));
-      else if (is_compound (r[l], "bib-list"));
-      else r[l]= tree (DOCUMENT, compound ("bib-list", "[99]", r[l]));
-    }
-    return r;
-  }
-}
-
-/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2419,7 +2397,6 @@ upgrade_tex (tree t) {
   t= upgrade_item_punct (t);
   t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
   t= upgrade_doc_info (t);
-  t= upgrade_bibliography (t);
   return t;
 }
 
@@ -2485,7 +2462,5 @@ upgrade (tree t, string version) {
     t= substitute (t, tree (VALUE, "hrule"), compound ("hrule"));
     t= upgrade_doc_info (t);
   }
-  if (version_inf_eq (version, "1.0.4.6"))
-    t= upgrade_bibliography (t);
   return t;
 }

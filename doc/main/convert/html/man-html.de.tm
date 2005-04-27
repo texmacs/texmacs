@@ -1,28 +1,27 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.3.3>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Dokumente zwischen <TeXmacs> und Html portieren>
+  <tmdoc-title|Konvertierung von <TeXmacs> Dokumenten zu HTML>
 
-  Wir haben damit begonnen die Konversion zwischen HTML und <TeXmacs> zu
-  implementieren. Im Moment gelingt nur der Import von HTML-Dokumenten mit
-  dem Menü-Befehl <menu|File|Import|Html>. Das meiste HTML 2.0 und Teile von
-  HTML 3.0 werden derzeit unterstützt. Browser-Fähigkeiten wurden noch nicht
-  implementiert. Für die Zukunft planen wir den Import von Math-ML.
+  Wir haben damit begonnen die Konvertierung zwischen HTML und <TeXmacs> zu
+  implementieren. Im Moment ist es aber nur möglich, HTML-Dokumente über
+  <menu|File|Import|Html> zu importieren. HTML 2.0 wird momentan nahezu
+  komplett und HTML 3.0 teilweise unterstützt. Was bisher komplett fehlt sind
+  Browser-Fähigkeiten. Wir planen in naher Zukunft Math-ML zu implementieren.
 
-  Wenn HTML-Dokumente importiert werden, deren Namen mit <verbatim|http:>
-  oder <verbatim|ftp:> beginnen, werden diese über das Netzwerk mit
-  <verbatim|wget> heruntergeladen. Wenn Sie <TeXmacs> selbst kompiliert
-  haben, können Sie <verbatim|wget> von
+  Beim Import von HTML-Dokumenten werden Dateien deren Namen mit <kbd|http:>
+  oder <kbd|ftp:> beginnt automatisch aus dem Web mit <kbd|wget>
+  heruntergeladen. Wenn Sie <TeXmacs> selbst kompiliert haben, können Sie
+  <kbd|wget> von
 
-  <\verbatim>
-    \ \ ftp://ftp.gnu.org/pub/gnu/wget/
-  </verbatim>
+  <kbd|ftp://ftp.gnu.org/pub/gnu/wget/>
 
-  herunterladen. In den Binär-Distributionen ist <verbatim|wget> enthalten.
+  herunterladen. In unseren Binären Distributionen ist <kbd|wget> bereits
+  enthalten.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998-2004|Joris van der Hoeven, Christoph Strobel>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -34,6 +33,23 @@
 
 <\initial>
   <\collection>
+    <associate|page-even|30mm>
+    <associate|page-reduce-bot|15mm>
+    <associate|page-reduce-right|25mm>
+    <associate|page-reduce-left|25mm>
+    <associate|page-type|a4>
+    <associate|page-top|30mm>
+    <associate|page-right|30mm>
+    <associate|par-width|150mm>
+    <associate|page-odd|30mm>
+    <associate|page-bot|30mm>
     <associate|language|german>
+    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|idx-1|<tuple|<uninit>|?>>
+  </collection>
+</references>
