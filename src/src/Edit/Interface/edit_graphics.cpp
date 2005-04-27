@@ -82,19 +82,11 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
 
 point
 edit_graphics_rep::adjust (point p) {
-  frame f= find_frame ();
-  point pmin= p, pmax= p;
-  if (!nil (f)) {
-    static const int NB= 10;
-    point p2= f (p);
-    pmin= f [point (p2[0]-NB*PIXEL, p2[1]-NB*PIXEL)];
-    pmax= f [point (p2[0]+NB*PIXEL, p2[1]+NB*PIXEL)];
-  }
   grid g= find_grid ();
   if (nil (g))
     return p;
   else
-    return g->find_closest_point (p, pmin, pmax);
+    return g->find_closest_point (p);
 }
 
 tree
@@ -176,7 +168,6 @@ void edit_graphics_rep::draw_graphical_object (ps_device dev) {
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   (void) t;
-  apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!nil (f)) {
     point lim1, lim2;

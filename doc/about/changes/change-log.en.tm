@@ -1,30 +1,13 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.4.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.4 to 1.0.5>
+  <section|Changes from version 1.0.4 to 1.0.4.6>
 
   <\itemize>
-    <item>Several minor bug corrections (1.0.5).
-
-    <item>Further improvements for grids in the upcoming graphical mode
-    (1.0.5).
-
-    <item>Added and improved still imperfect <verbatim|svmono>,
-    <verbatim|svjour>, <verbatim|elsart> and <verbatim|ifac> styles
-    (1.0.4.7).
-
-    <item>Added a plug-in for Dra<TeX> (1.0.4.7).
-
-    <item>Updated and improved Maxima plug-in for upcoming version 5.9.2 of
-    Maxima (1.0.4.7).
-
-    <item>Further improvements for grids in the upcoming graphical mode
-    (1.0.4.7).
-
     <item>German translation of the manual by Dietmar Jung (1.0.4.6).
 
     <item>Selection of visual grid and editing grid in upcoming graphical

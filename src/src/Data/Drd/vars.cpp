@@ -208,7 +208,6 @@ string GR_LINE_WIDTH ("gr-line-width");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");
-string GR_EDIT_GRID_ASPECT ("gr-edit-grid-aspect");
 
 /******************************************************************************
 * Environment variables for preamble mode

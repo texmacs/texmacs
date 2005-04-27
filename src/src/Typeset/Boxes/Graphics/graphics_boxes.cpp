@@ -31,7 +31,6 @@ struct graphics_box_rep: public composite_box_rep {
   operator tree () { return "graphics"; }
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
-  int reindex (int i, int item, int n);
 };
 
 graphics_box_rep::graphics_box_rep (
@@ -71,11 +70,6 @@ graphics_box_rep::pre_display (ps_device &dev) {
 void
 graphics_box_rep::post_display (ps_device &dev) {
   dev->set_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
-}
-
-int
-graphics_box_rep::reindex (int i, int item, int n) {
-  return i;
 }
 
 /******************************************************************************
