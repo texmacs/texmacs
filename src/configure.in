@@ -378,29 +378,10 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffc"
     CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
-  *x86_64*-*-linux-gnu*)
-    AC_MSG_RESULT(final setup for an AMD/Intel x64 GNU-Linux host)
-    CONFIG_OS="OPTERON_GNU_LINUX"
-    CONFIG_OS_SUFFIX="opteron-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_BSTATIC="-Wl, -Bstatic"
-    CONFIG_BSHARED="-Wl, -Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
-  ;;
   x86_64-*-linux* | x86_64-*-freebsd*)
     AC_MSG_RESULT(final setup for an AMD64/x86_64/GNU-linux host)
     CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
+    CONFIG_OS_SUFFIX="x86_64-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     CONFIG_LFLAGS=""
@@ -415,7 +396,7 @@ case "${host}" in
     CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   mips-*-linux*)
