@@ -83,7 +83,7 @@ inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
-inline int hash (pointer ptr) { return (int) ptr; }
+inline int hash (pointer ptr) { return (long) ptr; }
 inline int copy (int x) { return x; }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
