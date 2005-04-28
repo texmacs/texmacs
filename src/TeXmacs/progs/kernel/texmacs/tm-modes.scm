@@ -75,10 +75,13 @@
 	(catch #t (lambda () (eval (list mode))) (lambda err #f)))))
 
 (define (texmacs-mode-mode pred)
-  (let* ((pred-str (symbol->string pred))
-	 (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
-	 (mode-str (string-append pred-root "%")))
-    (string->symbol mode-str)))
+  (if (procedure? pred)
+      (with name (procedure-name pred)
+	(if name (texmacs-mode-mode name) 'unknown%))
+      (let* ((pred-str (symbol->string pred))
+	     (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
+	     (mode-str (string-append pred-root "%")))
+	(string->symbol mode-str))))
 
 (define texmacs-submode-table (make-ahash-table))
 
