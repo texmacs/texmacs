@@ -13,7 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-overload)
-  (:export ovl-insert ovl-lookup ovl-apply))
+  (:export root? ovl-insert ovl-lookup ovl-apply))
+
+(define (root? t)
+  (== (reverse (tree-ip t)) (the-buffer-path)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The creation of overloaded structures
@@ -58,8 +61,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (ovl-pattern-best match-1 match-2)
-  ;; FIXME: for the time being, we just take the first match.
-  match-1)
+  (if (== (car match-1) :*) match-2 match-1))
 
 (define (ovl-pattern-search ovl expr)
   (cond ((null? ovl) #f)
@@ -75,8 +77,7 @@
     (if match (cdr match) #f)))
 
 (define (ovl-context-best match-1 match-2)
-  ;; FIXME: for the time being, we just take the first match.
-  match-1)
+  (if (== (car match-1) root?) match-2 match-1))
 
 (define (ovl-context-search ovl path)
   (cond ((null? ovl) #f)
@@ -94,8 +95,7 @@
 	  (else (ovl-context-lookup ovl expr (cDr path))))))
 
 (define (ovl-mode-best match-1 match-2)
-  ;; FIXME: for the time being, we just take the first match.
-  match-1)
+  (if (texmacs-submode? (car match-2) (car match-1)) match-2 match-1))
 
 (define (ovl-mode-search ovl)
   (cond ((null? ovl) #f)
