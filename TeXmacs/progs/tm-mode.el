@@ -27,7 +27,8 @@
       (mapconcat 'symbol-name
        '(texmacs-module define-macro define-table define-preferences
          texmacs-modes and-let* case-lambda with values receive map-in-order
-         drd-group drd-table drd-dispatcher tm-define tm-command
+         drd-group drd-table drd-dispatcher
+         new-define tm-define tm-command
          tm-macro define-grammar drd-rule drd-rules assume menu-bind
          menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
          kbd-symbols setup-append-if when link promise
@@ -40,7 +41,8 @@
     (cons
      (concat "(\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-table tm-define tm-command
+       '(texmacs-module define-macro define-table
+	 new-define tm-define tm-command
 	 tm-macro menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
