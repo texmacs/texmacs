@@ -13,7 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-overload)
-  (:export root? ovl-insert ovl-lookup ovl-apply))
+  (:export
+    root? ovl-insert ovl-lookup ovl-apply
+    new-define new-define-sub get-synopsis
+    ovl-table define-overloaded))
 
 (define (root? t)
   (== (reverse (tree-ip t)) (the-buffer-path)))
@@ -128,3 +131,70 @@
 	(apply fun args)
 	(texmacs-error "ovl-apply"
 		       "Conditions of overloaded function cannot be met"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New style overloaded function declarations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define define-option-table (make-hash-table 100))
+
+(define (new-define-sub head body)
+  (if (or (not (pair? (car body)))
+	  (not (keyword? (caar body))))
+      (cons 'define (cons head body))
+      (let ((decl (new-define-sub head (cdr body))))
+	((hash-ref define-option-table (caar body)) (cdar body) decl))))
+
+(define-macro (new-define head . body)
+  (new-define-sub head body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Synopsis
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define define-synopsis-table (make-ahash-table))
+
+(define (define-option-synopsis opt decl)
+  (ahash-set! define-synopsis-table (caadr decl) opt)
+  decl)
+
+(hash-set! define-option-table :synopsis define-option-synopsis)
+
+(define (get-synopsis sym)
+  (ahash-ref define-synopsis-table sym))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ovl-table (make-ahash-table))
+(define ovl-cur '(always? root? ':*))
+
+(define (define-option-mode opt decl)
+  (set! ovl-cur (list (car opt) (cadr ovl-cur) (caddr ovl-cur)))
+  (cons 'define-overloaded (cdr decl)))
+
+(define (define-option-context opt decl)
+  (set! ovl-cur (list (car ovl-cur) (car opt) (caddr ovl-cur)))
+  (cons 'define-overloaded (cdr decl)))
+
+(define (define-option-pattern opt decl)
+  (set! ovl-cur (list (car ovl-cur) (caddr ovl-cur) (list 'quote opt)))
+  (cons 'define-overloaded (cdr decl)))
+
+(hash-set! define-option-table :mode define-option-mode)
+(hash-set! define-option-table :context define-option-context)
+(hash-set! define-option-table :pattern define-option-pattern)
+
+(define-macro (define-overloaded head . body)
+  (let* ((var (car head))
+	 (conds ovl-cur))
+    (if (not (ahash-ref ovl-table var)) (ahash-set! ovl-table var '()))
+    (set! ovl-cur '(always? root? ':*))
+    `(begin
+       (ahash-set! ovl-table ',var
+		   (ovl-insert (ahash-ref ovl-table ',var)
+			       (lambda ,(cdr head) ,@body)
+			       ,@conds))
+       (define (,var . args)
+	 (ovl-apply (ahash-ref ovl-table ',var) args)))))
