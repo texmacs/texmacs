@@ -5,128 +5,228 @@
 ;; DESCRIPTION : Contextual overloading for functions and data
 ;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
 ;; If you don't have this file, write to the Free Software Foundation, Inc.,
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; In TeXmacs, "contextual overloading" is done sequentially on
+;; several "kinds" of conditions: mode, context and patterns.
+;;   Mode) A predicate with no arguments, corresponding to a TeXmacs mode.
+;;   Context) A predicate with a tree argument or a pattern.
+;;     It is called outwards for the in-most tree at the cursor position
+;;     until we find a match or we attain the root of the document.
+;;   Match) A predicate or pattern which has to be matched by
+;;     the arguments to the function call.
+;; The last kind of condition "match" admits an accelerated variant "case",
+;; which allows fast dispatching on the tag of the first argument.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-overload)
   (:export
-    root? ovl-insert ovl-lookup ovl-apply
     new-define new-define-sub get-synopsis
-    ovl-table define-overloaded))
+    ovl-table define-overloaded
+    ovl-insert ovl-resolve ovl-apply))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (root? t)
   (== (reverse (tree-ip t)) (the-buffer-path)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The creation of overloaded structures
-;; Overloading is done according to three levels:
-;;   1) Mode     (a predicate)
-;;   2) Context  (a predicate with a path argument: an ancestor of the cursor)
-;;   3) Pattern  (a pattern which has to be matched at lookup time)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (ovl-pattern-create key data)
-  (list (cons (car key) data)))
-
-(define (ovl-pattern-insert ovl key data)
-  (cond ((or (null? ovl) (== (caar ovl) (car key)))
-	 (ovl-pattern-create key data))
-	(else (cons (car ovl) (ovl-pattern-insert (cdr ovl) key data)))))
-
-(define (ovl-context-create key data)
-  (list (cons (car key) (ovl-pattern-create (cdr key) data))))
-
-(define (ovl-context-insert ovl key data)
-  (cond ((null? ovl) (ovl-context-create key data))
-	((== (caar ovl) (car key))
-	 (cons (cons (caar ovl)
-		     (ovl-pattern-insert (cdar ovl) (cdr key) data))
-	       (cdr ovl)))
-	(else (cons (car ovl) (ovl-context-insert (cdr ovl) key data)))))
-
-(define (ovl-mode-create key data)
-  (list (cons (car key) (ovl-context-create (cdr key) data))))
-
-(define (ovl-mode-insert ovl key data)
-  (cond ((null? ovl) (ovl-mode-create key data))
-	((== (caar ovl) (car key))
-	 (cons (cons (caar ovl)
-		     (ovl-context-insert (cdar ovl) (cdr key) data))
-	       (cdr ovl)))
-	(else (cons (car ovl) (ovl-mode-insert (cdr ovl) key data)))))
+(define (true? . l)
+  #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Finding the best method in an overloaded structure
+;; Construction of overloaded structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (ovl-pattern-best match-1 match-2)
-  (if (== (car match-1) :*) match-2 match-1))
+(define (assoc-set l key val)
+  (cond ((or (not l) (null? l)) (list (cons key val)))
+	((== (caar l) key) (cons (cons key val) (cdr l)))
+	(else (cons (car l) (assoc-set (cdr l) key val)))))
 
-(define (ovl-pattern-search ovl expr)
-  (cond ((null? ovl) #f)
-	((match? expr (caar ovl))
-	 (with match (ovl-pattern-search (cdr ovl) expr)
-	   (if match
-	       (ovl-pattern-best (car ovl) match)
-	       (car ovl))))
-	(else (ovl-pattern-search (cdr ovl) expr))))
+(define (ahash-set t key val)
+  (if (not t) (set! t (make-ahash-table)))
+  (if (vector? key)
+      (for-each (lambda (x) (ahash-set! t x val)) (vector->list key))
+      (ahash-set! t key val)) ;; a bit dangerous, because destructive...
+  t)
 
-(define (ovl-pattern-lookup ovl expr)
-  (with match (ovl-pattern-search ovl expr)
-    (if match (cdr match) #f)))
+(define ovl-setter
+  (vector assoc-set ; mode
+	  assoc-set ; context
+	  ahash-set ; case
+	  assoc-set ; match
+	  ))
 
-(define (ovl-context-best match-1 match-2)
-  (if (== (car match-1) root?) match-2 match-1))
+(define ovl-getter
+  (vector assoc-ref ; mode
+	  assoc-ref ; context
+	  ahash-ref ; case
+	  assoc-ref ; match
+	  ))
 
-(define (ovl-context-search ovl path)
-  (cond ((null? ovl) #f)
-	(((caar ovl) (tm-subtree path))
-	 (with match (ovl-context-search (cdr ovl) path)
-	   (if match
-	       (ovl-context-best (car ovl) match)
-	       (car ovl))))
-	(else (ovl-context-search (cdr ovl) path))))
+(define ovl-always
+  (vector always?   ; mode
+	  root?     ; context
+	  #t        ; case
+	  true?     ; match
+	  ))
 
-(define (ovl-context-lookup ovl expr path)
-  (with match (ovl-context-search ovl path)
-    (cond (match (ovl-pattern-lookup (cdr match) expr))
-	  ((or (== path (the-buffer-path)) (null? path)) #f)
-	  (else (ovl-context-lookup ovl expr (cDr path))))))
+(define (ovl-insert ovl data conds)
+  ;; ovl:   overloaded structure of the form kind . contents (or #f),
+  ;;        where kind is the kind of condition and
+  ;;        contents the corresponding information
+  ;; data:  the overloaded data we want to insert
+  ;; conds: the conditions under which the data are valid
+  ;;        this is a list of the form (kind_1 cond_1 ... kind_n cond_n)
+  ;;        with kind_1 < ... < kind_n
+  (cond ((null? conds)
+	 (if (not ovl) (cons 100 data)
+	     (let* ((kind (car ovl))
+		    (set (vector-ref ovl-setter kind))
+		    (get (vector-ref ovl-getter kind))
+		    (always (vector-ref ovl-always kind))
+		    (old (get (cdr ovl) always))
+		    (new (ovl-insert old data conds)))
+	       (cons kind (set (cdr ovl) always new)))))
+	((not ovl)
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(set (vector-ref ovl-setter kind))
+		(new (ovl-insert #f data (cddr conds))))
+	   (cons kind (set #f key new))))
+	((== (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(old (get (cdr ovl) key))
+		(new (ovl-insert old data (cddr conds))))
+	   (cons kind (set (cdr ovl) key new))))
+	((> (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(cont (set #f (vector-ref ovl-always kind) ovl))
+		(old (get cont key))
+		(new (ovl-insert old data (cddr conds))))
+	   (cons kind (set cont key new))))
+	((< (car ovl) (car conds))
+	 (let* ((kind (car ovl))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(always (vector-ref ovl-always kind))
+		(old (get (cdr ovl) always))
+		(new (ovl-insert old data conds)))
+	   (cons kind (set (cdr ovl) always new))))))
 
-(define (ovl-mode-best match-1 match-2)
-  (if (texmacs-submode? (car match-2) (car match-1)) match-2 match-1))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mode-based overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (ovl-mode-search ovl)
-  (cond ((null? ovl) #f)
+(define (ovl-mode-resolve-sub ovl args)
+  (cond ((null? ovl) (values #f #f))
 	(((caar ovl))
-	 (with match (ovl-mode-search (cdr ovl))
-	   (if match
-	       (ovl-mode-best (car ovl) match)
-	       (car ovl))))
-	(else (ovl-mode-search (cdr ovl)))))
+	 (let* ((match (ovl-resolve (cdar ovl) args))
+		(key (caar ovl)))
+	   (receive (match2 key2) (ovl-mode-resolve-sub (cdr ovl) args)
+	     (cond ((not match) (values match2 key2))
+		   ((not match2) (values match key))
+		   ((texmacs-submode? key key2) (values match key))
+		   (else (values match2 key2))))))
+	(else (ovl-mode-resolve-sub (cdr ovl) args))))
 
-(define (ovl-mode-lookup ovl expr)
-  (with match (ovl-mode-search ovl)
-    (if match
-	(ovl-context-lookup (cdr match) expr (cDr (the-path)))
-	#f)))
+(define (ovl-mode-resolve ovl args)
+  (receive (match key) (ovl-mode-resolve-sub ovl args)
+    match))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Public interface
+;; Context-based overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (ovl-insert ovl data mode-pred? context-pred? pattern)
-  (ovl-mode-insert ovl (list mode-pred? context-pred? pattern) data))
+(define (ovl-context-resolve-sub ovl args t)
+  (cond ((null? ovl) (values #f #f))
+	(((caar ovl) t)
+	 (let* ((match (ovl-resolve (cdar ovl) args))
+		(key (caar ovl)))
+	   (receive
+	       (match2 key2)
+	       (ovl-context-resolve-sub (cdr ovl) args t)
+	     (cond ((not match) (values match2 key2))
+		   ((not match2) (values match key))
+		   ((== key2 root?) (values match key))
+		   (else (values match2 key2))))))
+	(else (ovl-context-resolve-sub (cdr ovl) args t))))
 
-(define (ovl-lookup ovl expr)
-  (ovl-mode-lookup ovl expr))
+(define (ovl-context-resolve-path ovl args path)
+  (receive (match key) (ovl-context-resolve-sub ovl args (tm-subtree path))
+    (cond (match match)
+	  ((or (== path (the-buffer-path)) (null? path)) #f)
+	  (else (ovl-context-resolve-path ovl args (cDr path))))))
+
+(define (ovl-context-resolve ovl args)
+  (let* ((p (cDr (the-path)))
+	 (t (tm-subtree p))
+	 (q (if (tm-compound? t) (cDr p) p)))
+    (ovl-context-resolve-path ovl args q)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Case-based overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ovl-case-resolve ovl args)
+  (cond ((not ovl) #f)
+	((and (pair? args) (tm-compound? (car args)))
+	 (with r (ovl-resolve (ahash-ref ovl (tm-car (car args))) args)
+	   (if r r (ovl-resolve (ahash-ref ovl #t) args))))
+	(else (ovl-resolve (ahash-ref ovl #t) args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Match-based overloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ovl-match-resolve-sub ovl args)
+  (cond ((null? ovl) (values #f #f))
+	((apply (caar ovl) args)
+	 (let* ((match (ovl-resolve (cdar ovl) args))
+		(key (caar ovl)))
+	   (receive (match2 key2) (ovl-match-resolve-sub (cdr ovl) args)
+	     (cond ((not match) (values match2 key2))
+		   ((not match2) (values match key))
+		   ((== key2 true?) (values match key))
+		   (else (values match2 key2))))))
+	(else (ovl-match-resolve-sub (cdr ovl) args))))
+
+(define (ovl-match-resolve ovl args)
+  (receive (match key) (ovl-match-resolve-sub ovl args)
+    match))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Resolution of overloaded function applications
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ovl-resolver
+  (vector ovl-mode-resolve
+	  ovl-context-resolve
+	  ovl-case-resolve
+	  ovl-match-resolve))
+
+(define (ovl-resolve ovl args)
+  (cond ((not ovl) #f)
+	((== (car ovl) 100) (cdr ovl))
+	(else ((vector-ref ovl-resolver (car ovl)) (cdr ovl) args))))
 
 (define (ovl-apply ovl args)
-  (with fun (ovl-mode-lookup ovl args)
+  (with fun (ovl-resolve ovl args)
     (if fun
 	(apply fun args)
 	(texmacs-error "ovl-apply"
@@ -168,33 +268,72 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define ovl-table (make-ahash-table))
-(define ovl-cur '(always? root? ':*))
+(define ovl-cur '())
+
+(define (ovl-add-option l kind opt)
+  (cond ((null? l) (list kind opt))
+	((== kind (car l)) (texmacs-error "Conflicting option"))
+	((< kind (car l)) (cons* kind opt l))
+	(else (cons* (car l) (cadr l)
+		     (ovl-add-option (cddr l) kind opt)))))
+
+(define (ovl-add-option! kind opt)
+  (set! ovl-cur (ovl-add-option ovl-cur kind opt)))
 
 (define (define-option-mode opt decl)
-  (set! ovl-cur (list (car opt) (cadr ovl-cur) (caddr ovl-cur)))
+  (ovl-add-option! 0 (car opt))
   (cons 'define-overloaded (cdr decl)))
+
+(define (predicate-option? x)
+  (or (and (symbol? x) (string-ends? (symbol->string x) "?"))
+      (and (pair? x) (== (car x) 'lambda))))
 
 (define (define-option-context opt decl)
-  (set! ovl-cur (list (car ovl-cur) (car opt) (caddr ovl-cur)))
+  (if (predicate-option? (car opt))
+      (ovl-add-option! 1 (car opt))
+      (ovl-add-option! 1 `(lambda (t) (match? t ',(car opt)))))
   (cons 'define-overloaded (cdr decl)))
 
-(define (define-option-pattern opt decl)
-  (set! ovl-cur (list (car ovl-cur) (caddr ovl-cur) (list 'quote opt)))
+(define (define-option-inside opt decl)
+  (define-option-context
+    `((lambda (t)
+	(and (tm-compound? t)
+	     (in? (tm-car t) ',opt))))
+    decl))
+
+(define (define-option-case opt decl)
+  (ovl-add-option! 2 (list quote (list->vector opt)))
   (cons 'define-overloaded (cdr decl)))
+
+(define (define-option-match opt decl)
+  (cond ((predicate-option? opt) (ovl-add-option! 3 opt))
+	((and (pair? opt) (null? (cdr opt))
+	      (predicate-option? (car opt))
+	      (list? (cadr decl)) (= (length (cadr decl)) 3))
+	 (ovl-add-option! 3 (car opt)))
+	(else (ovl-add-option! 3 `(lambda args (match? args ',opt)))))
+  (cons 'define-overloaded (cdr decl)))
+
+(define (define-option-require opt decl)
+  (define-option-match
+    `(lambda ,(cdadr decl) ,(car opt))
+    decl))
 
 (hash-set! define-option-table :mode define-option-mode)
 (hash-set! define-option-table :context define-option-context)
-(hash-set! define-option-table :pattern define-option-pattern)
+(hash-set! define-option-table :inside define-option-inside)
+(hash-set! define-option-table :case define-option-case)
+(hash-set! define-option-table :match define-option-match)
+(hash-set! define-option-table :require define-option-require)
 
 (define-macro (define-overloaded head . body)
   (let* ((var (car head))
 	 (conds ovl-cur))
-    (if (not (ahash-ref ovl-table var)) (ahash-set! ovl-table var '()))
-    (set! ovl-cur '(always? root? ':*))
+    (set! ovl-cur '())
     `(begin
        (ahash-set! ovl-table ',var
 		   (ovl-insert (ahash-ref ovl-table ',var)
 			       (lambda ,(cdr head) ,@body)
-			       ,@conds))
+			       (list ,@conds)))
        (define (,var . args)
 	 (ovl-apply (ahash-ref ovl-table ',var) args)))))
