@@ -94,5 +94,6 @@ bibtex_run (string style, string dir, string fname, tree bib_t) {
 	u << v;
       }
   }
+  if (N(u) == 0) u= tree (DOCUMENT, "");
   return compound ("bib-list", largest, u);
 }
