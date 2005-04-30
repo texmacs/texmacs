@@ -15,9 +15,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel gui menu-widget)
-  (:use (kernel texmacs tm-define) (kernel gui menu-define) (kernel gui kbd-define))
+  (:use
+    (kernel texmacs tm-define) (kernel gui menu-define)
+    (kernel gui kbd-define))
   (:export
-    set-check-mark!
     make-menu-widget menu-expand))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,14 +34,6 @@
 (define (pixel) 256) ; TODO: length arithmetic
 (define (widget-empty) (widget-glue #f #f 0 0))
 (define (make-menu-empty) (widget-harray '() -1))
-
-(define (set-check-mark! proc mark pred)
-  (set-symbol-procedure! (procedure-name proc) proc)
-  (set-procedure-property! proc :check-mark (list mark pred)))
-(define (get-check-mark proc)
-  (and (procedure? proc) (procedure-property proc :check-mark)))
-(define (get-check-mark* name)
-  (get-check-mark (and (symbol? name) (symbol-procedure name))))
 
 (define (delay-command cmd)
   (object->command (lambda () (exec-delayed-cmd cmd))))
@@ -148,7 +141,7 @@
       (if ((cadr opt-check)) (car opt-check) "")
       (with source (promise-source action)
 	(if (not (and source (pair? source))) ""
-	    (with prop (get-check-mark* (car source))
+	    (with prop (property (car source) :check-mark)
 	      (if (and prop (apply (cadr prop) (cdr source)))
 		  (car prop) ""))))))
 

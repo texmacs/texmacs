@@ -29,19 +29,7 @@
 
 (texmacs-module (kernel texmacs tm-overload)
   (:export
-    new-define new-define-sub get-synopsis
-    ovl-table define-overloaded
     ovl-insert ovl-resolve ovl-apply))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Subroutines
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (root? t)
-  (== (reverse (tree-ip t)) (the-buffer-path)))
-
-(define (true? . l)
-  #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construction of overloaded structures
@@ -89,7 +77,7 @@
   ;;        this is a list of the form (kind_1 cond_1 ... kind_n cond_n)
   ;;        with kind_1 < ... < kind_n
   (cond ((null? conds)
-	 (if (not ovl) (cons 100 data)
+	 (if (or (not ovl) (= (car ovl) 100)) (cons 100 data)
 	     (let* ((kind (car ovl))
 		    (set (vector-ref ovl-setter kind))
 		    (get (vector-ref ovl-getter kind))
@@ -130,8 +118,10 @@
 	   (cons kind (set (cdr ovl) always new))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mode-based overloading
+;; Resolve overloaded retrieval and function applications
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Mode-based
 
 (define (ovl-mode-resolve-sub ovl args)
   (cond ((null? ovl) (values #f #f))
@@ -149,9 +139,7 @@
   (receive (match key) (ovl-mode-resolve-sub ovl args)
     match))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Context-based overloading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Context-based
 
 (define (ovl-context-resolve-sub ovl args t)
   (cond ((null? ovl) (values #f #f))
@@ -179,9 +167,7 @@
 	 (q (if (tm-compound? t) (cDr p) p)))
     (ovl-context-resolve-path ovl args q)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Case-based overloading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Case-based
 
 (define (ovl-case-resolve ovl args)
   (cond ((not ovl) #f)
@@ -190,9 +176,7 @@
 	   (if r r (ovl-resolve (ahash-ref ovl #t) args))))
 	(else (ovl-resolve (ahash-ref ovl #t) args))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Match-based overloading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Match-based
 
 (define (ovl-match-resolve-sub ovl args)
   (cond ((null? ovl) (values #f #f))
@@ -210,9 +194,7 @@
   (receive (match key) (ovl-match-resolve-sub ovl args)
     match))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Resolution of overloaded function applications
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General case
 
 (define ovl-resolver
   (vector ovl-mode-resolve
@@ -231,109 +213,3 @@
 	(apply fun args)
 	(texmacs-error "ovl-apply"
 		       "Conditions of overloaded function cannot be met"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; New style overloaded function declarations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define define-option-table (make-hash-table 100))
-
-(define (new-define-sub head body)
-  (if (or (not (pair? (car body)))
-	  (not (keyword? (caar body))))
-      (cons 'define (cons head body))
-      (let ((decl (new-define-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))))
-
-(define-macro (new-define head . body)
-  (new-define-sub head body))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Synopsis
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define define-synopsis-table (make-ahash-table))
-
-(define (define-option-synopsis opt decl)
-  (ahash-set! define-synopsis-table (caadr decl) opt)
-  decl)
-
-(hash-set! define-option-table :synopsis define-option-synopsis)
-
-(define (get-synopsis sym)
-  (ahash-ref define-synopsis-table sym))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Overloading
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define ovl-table (make-ahash-table))
-(define ovl-cur '())
-
-(define (ovl-add-option l kind opt)
-  (cond ((null? l) (list kind opt))
-	((== kind (car l)) (texmacs-error "Conflicting option"))
-	((< kind (car l)) (cons* kind opt l))
-	(else (cons* (car l) (cadr l)
-		     (ovl-add-option (cddr l) kind opt)))))
-
-(define (ovl-add-option! kind opt)
-  (set! ovl-cur (ovl-add-option ovl-cur kind opt)))
-
-(define (define-option-mode opt decl)
-  (ovl-add-option! 0 (car opt))
-  (cons 'define-overloaded (cdr decl)))
-
-(define (predicate-option? x)
-  (or (and (symbol? x) (string-ends? (symbol->string x) "?"))
-      (and (pair? x) (== (car x) 'lambda))))
-
-(define (define-option-context opt decl)
-  (if (predicate-option? (car opt))
-      (ovl-add-option! 1 (car opt))
-      (ovl-add-option! 1 `(lambda (t) (match? t ',(car opt)))))
-  (cons 'define-overloaded (cdr decl)))
-
-(define (define-option-inside opt decl)
-  (define-option-context
-    `((lambda (t)
-	(and (tm-compound? t)
-	     (in? (tm-car t) ',opt))))
-    decl))
-
-(define (define-option-case opt decl)
-  (ovl-add-option! 2 (list quote (list->vector opt)))
-  (cons 'define-overloaded (cdr decl)))
-
-(define (define-option-match opt decl)
-  (cond ((predicate-option? opt) (ovl-add-option! 3 opt))
-	((and (pair? opt) (null? (cdr opt))
-	      (predicate-option? (car opt))
-	      (list? (cadr decl)) (= (length (cadr decl)) 3))
-	 (ovl-add-option! 3 (car opt)))
-	(else (ovl-add-option! 3 `(lambda args (match? args ',opt)))))
-  (cons 'define-overloaded (cdr decl)))
-
-(define (define-option-require opt decl)
-  (define-option-match
-    `(lambda ,(cdadr decl) ,(car opt))
-    decl))
-
-(hash-set! define-option-table :mode define-option-mode)
-(hash-set! define-option-table :context define-option-context)
-(hash-set! define-option-table :inside define-option-inside)
-(hash-set! define-option-table :case define-option-case)
-(hash-set! define-option-table :match define-option-match)
-(hash-set! define-option-table :require define-option-require)
-
-(define-macro (define-overloaded head . body)
-  (let* ((var (car head))
-	 (conds ovl-cur))
-    (set! ovl-cur '())
-    `(begin
-       (ahash-set! ovl-table ',var
-		   (ovl-insert (ahash-ref ovl-table ',var)
-			       (lambda ,(cdr head) ,@body)
-			       (list ,@conds)))
-       (define (,var . args)
-	 (ovl-apply (ahash-ref ovl-table ',var) args)))))

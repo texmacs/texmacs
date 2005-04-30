@@ -28,8 +28,8 @@
        '(texmacs-module define-macro define-table define-preferences
          texmacs-modes and-let* case-lambda with values receive map-in-order
          drd-group drd-table drd-dispatcher
-         new-define tm-define tm-command
-         tm-macro define-grammar drd-rule drd-rules assume menu-bind
+         tm-define tm-define-macro tm-property
+         define-grammar drd-rule drd-rules assume menu-bind
          menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
          kbd-symbols setup-append-if when link promise
 	 plugin-configure plugin-input-converters use-modules export
@@ -42,8 +42,8 @@
      (concat "(\\("
       (mapconcat 'symbol-name
        '(texmacs-module define-macro define-table
-	 new-define tm-define tm-command
-	 tm-macro menu-bind menu-extend plugin-configure
+	 tm-define tm-define-macro tm-property
+	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
      '(3 font-lock-function-name-face))
@@ -56,7 +56,8 @@
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
   (dolist (s '(with receive with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module and-let* setup-append-if tm-define tm-command
+  (dolist (s '(texmacs-module and-let* setup-append-if
+	       tm-define tm-define-macro tm-property
 	       tm-macro drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       format with-aux))

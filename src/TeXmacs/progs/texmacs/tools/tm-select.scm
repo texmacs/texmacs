@@ -21,10 +21,17 @@
 ;; Checkmarks for the current import/export formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (clipboard-test-import? s) (string=? s (clipboard-get-import)))
-(define (clipboard-test-export? s) (string=? s (clipboard-get-export)))
-(set-check-mark! clipboard-set-import "*" clipboard-test-import?)
-(set-check-mark! clipboard-set-export "*" clipboard-test-export?)
+(define (clipboard-test-import? s)
+  (string=? s (clipboard-get-import)))
+
+(tm-property (clipboard-set-import s)
+  (:check-mark "*" clipboard-test-import?))
+
+(define (clipboard-test-export? s)
+  (string=? s (clipboard-get-export)))
+
+(tm-property (clipboard-set-export s)
+  (:check-mark "*" clipboard-test-export?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Exporting and importing selections
