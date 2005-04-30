@@ -20,8 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (xmlin-make tag attrs args impl)
-  (if (not (null? attrs)) (set! attrs (list (cons '@ attrs))))
-  (if (and (not (null? args)) (func? (car args) 'tm-attr))
+  (if (nnull? attrs) (set! attrs (list (cons '@ attrs))))
+  (if (and (nnull? args) (func? (car args) 'tm-attr))
       (begin
 	(set! attrs (append attrs (list (car args))))
 	(set! args (cdr args))))
@@ -30,7 +30,7 @@
   `(,tag ,@attrs ,@args))
 
 (define (xmlin-special tag attrs l)
-  (with args (map xmlin (list-filter l (lambda (x) (not (string? x)))))
+  (with args (map xmlin (list-filter l (lambda (x) (nstring? x))))
     (with doc? (list-or (map (lambda (x) (func? x 'tm-par)) args))
       (xmlin-make tag attrs args (if doc? '!document #f)))))
 
@@ -48,15 +48,15 @@
 (define (xmlin-regular tag attrs* args*)
   (let* ((search '(xml:space "preserve"))
 	 (preserve? (in? search attrs*))
-	 (attrs (list-filter attrs* (lambda (x) (not (== x search)))))
+	 (attrs (list-filter attrs* (lambda (x) (!= x search))))
 	 (args (xmlin-unspace-args args* #t preserve?)))
-    (set! args (list-filter args (lambda (x) (not (== x "")))))
+    (set! args (list-filter args (lambda (x) (!= x ""))))
     (if (and (null? args) (in? tag '(tm-arg tm-par))) (set! args '("")))
     (xmlin-make tag attrs args '!concat)))
 
 (define (xmlin x)
   ;(display* "[xmlin] " x "\n")
-  (if (not (pair? x)) x
+  (if (npair? x) x
       (let* ((tag (car x))
 	     (attrs? (and (pair? (cdr x)) (func? (cadr x) '@)))
 	     (attrs (if attrs? (cdadr x) '()))

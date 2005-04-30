@@ -36,7 +36,7 @@
 
 (define (tmtmml-args l)
   (cond ((null? l) l)
-	((and (null? (cdr l)) (not (== (car l) ""))) (list (tmtmml (car l))))
+	((and (null? (cdr l)) (!= (car l) "")) (list (tmtmml (car l))))
 	(else (map (lambda (x) (list 'tm-arg (tmtmml x))) l))))
 
 (define (tmtmml-apply dyn tag l)
@@ -73,7 +73,7 @@
 	(else (tmtmml-regular (car x) (cdr x)))))
 
 (define (tmtmml-simplify x)
-  (cond ((not (pair? x)) x)
+  (cond ((npair? x) x)
 	((and (func? x 'quote) (string? (cadr x))) (cadr x))
 	(else (map tmtmml-simplify x))))
 

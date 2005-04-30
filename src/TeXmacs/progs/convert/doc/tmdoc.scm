@@ -99,7 +99,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmdoc-search-env-var t which)
-  (cond ((not (list? t)) #f)
+  (cond ((nlist? t) #f)
 	((null? t) #f)
 	((match? t '(associate "language" :1)) (caddr t))
 	(else (let ((val (tmdoc-search-env-var (car t) which)))
@@ -112,12 +112,12 @@
     (if lan lan "english")))
 
 (define (tmdoc-get-aux-title doc)
-  (cond ((or (not (list? doc)) (null? doc)) doc)
+  (cond ((or (nlist? doc) (null? doc)) doc)
 	((func? (car doc) 'title) (car doc))
 	(else (tmdoc-get-aux-title (cdr doc)))))
 
 (define (tmdoc-get-aux-body doc)
-  (cond ((or (not (list? doc)) (null? doc)) doc)
+  (cond ((or (nlist? doc) (null? doc)) doc)
 	((func? (car doc) 'title) (cdr doc))
 	(else (tmdoc-get-aux-body (cdr doc)))))
 
@@ -160,7 +160,7 @@
   (tmdoc-expand-help (get-name-buffer) level))
 
 (define (tmdoc-remove-hyper-links l)
-  (cond ((not (pair? l)) l)
+  (cond ((npair? l) l)
 	((match? l '(hyper-link :1)) (cadr l))
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))

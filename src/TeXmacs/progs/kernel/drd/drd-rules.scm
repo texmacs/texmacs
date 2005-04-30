@@ -64,9 +64,9 @@
 (define (logic-add-rule-sub table todo rule)
   "Add @rule to @table with @todo yet to be 'read'."
   (ahash-list-add! table :all rule)
-  (if (not (null? todo))
+  (if (nnull? todo)
       (let ((next (car todo)))
-	(cond ((not (pair? next))
+	(cond ((npair? next)
 	       (logic-add-rule-advance table next (cdr todo) rule))
 	      ((free-variable? next)
 	       (ahash-list-add! table :free rule))
@@ -92,7 +92,7 @@
   (if (null? todo)
       (ahash-list-ref table :all)
       (let ((next (car todo)))
-	(cond ((not (pair? next))
+	(cond ((npair? next)
 	       (append (ahash-list-ref table :free)
 		       (logic-get-rules-advance table next (cdr todo)))
 	       ;; FIXME: (difficult with present algorithm) messes up order
@@ -112,7 +112,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (drd-rules-decls l extra)
-  (cond ((not (pair? l)) (noop))
+  (cond ((npair? l) (noop))
 	((and (pair? (car l)) (== (caar l) 'assume))
 	 (drd-rules-decls (cdr l) (append (cdar l) extra)))
 	(else

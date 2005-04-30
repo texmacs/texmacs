@@ -76,7 +76,7 @@
   ;;     Simple menu label, its display style is controlled by tt? and e?
   ;;   <label> :: (icon <string>)
   ;;     Pixmap menu label, the <string> is the name of the pixmap.
-  (let ((tt? (and (not (null? opt)) (car opt)))
+  (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((string? p)			; "text"
 	   (widget-menu-text p col (get-input-language) tt?))
@@ -331,7 +331,7 @@
 
 (define (menu-expand p)
   "Expand links and conditional menus in menu @p."
-  (cond ((not (pair? p)) p)
+  (cond ((npair? p) p)
 	((string? (car p)) p)
 	((symbol? (car p))
 	 (with result (ahash-ref menu-expand-table (car p))

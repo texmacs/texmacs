@@ -96,8 +96,8 @@
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
 	 (ahash-set! plugin-data-table name ((second cmd))))
         ((func? cmd :setup 1)
-	 (if (not (== (ahash-ref plugin-data-table name)
-		      (ahash-ref plugin-old-data-table name)))
+	 (if (!= (ahash-ref plugin-data-table name)
+		 (ahash-ref plugin-old-data-table name))
 	     ((second cmd))))
         ((func? cmd :initialize 1)
 	 ((second cmd)))
@@ -135,7 +135,7 @@
 	 (if (second cmd) (plugin-supports-input-done-set! name)))))
 
 (define (plugin-configure-cmds name cmds)
-  (if (and (not (null? cmds)) (ahash-ref plugin-data-table name))
+  (if (and (nnull? cmds) (ahash-ref plugin-data-table name))
       (begin
         (plugin-configure-cmd name (car cmds))
 	(plugin-configure-cmds name (cdr cmds)))))

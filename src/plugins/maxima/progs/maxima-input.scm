@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maxima-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -33,7 +33,7 @@
   (display "]"))
 
 (define (maxima-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(maxima-input-row (car t))
@@ -76,8 +76,8 @@
         (display "))"))))
 
 (define (maxima-input-sum args)
-  (if (not (null? args))
-      (if (not (null? (cdr args)))
+  (if (nnull? args)
+      (if (nnull? (cdr args))
           (begin ;; both lower and upper index
             (display "tmsum(")
             (plugin-input (car args))
@@ -91,11 +91,11 @@
       (display "tmsum(")))
 
 (define (maxima-input-prod args)
-  (if (not (null? args))
+  (if (nnull? args)
       (begin
         (display "tmprod(")
         (plugin-input (car args))
-        (if (not (null? (cdr args)))
+        (if (nnull? (cdr args))
             (begin
               (display ",")
               (plugin-input (cadr args))))
@@ -103,11 +103,11 @@
       (display "tmprod(")))
 
 (define (maxima-input-int args)
-  (if (not (null? args))
+  (if (nnull? args)
       (begin
         (display "tmint(")
         (plugin-input (car args))
-        (if (not (null? (cdr args)))
+        (if (nnull? (cdr args))
             (begin
               (display ",")
               (plugin-input (cadr args))))

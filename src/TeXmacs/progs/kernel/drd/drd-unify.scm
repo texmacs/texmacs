@@ -28,8 +28,8 @@
 
 (define (unify-priority expr)
   (cond ((null? expr) 4)
-	((not (list? expr)) 3)
-	((not (list? (car expr))) 3)
+	((nlist? expr) 3)
+	((nlist? (car expr)) 3)
 	((free-variable? (car expr)) 1)
 	(else 2)))
 
@@ -42,10 +42,10 @@
 	   (list bl))
 	  ((= rp 3) ; first element of r is not a list
 	   (cond ((null? l) '())
-		 ((not (== (car l) (car r))) '())
+		 ((!= (car l) (car r)) '())
 		 (else (unify (cdr l) (cdr r) bl))))
 	  ((= rp 2) ; first element of r is again a list
-	   (if (or (null? l) (not (list? (car l)))) '()
+	   (if (or (null? l) (nlist? (car l))) '()
 	       (unify-any (cdr l) (cdr r) (unify (car l) (car r) bl))))
 	  (else ; first element of r is a free variable
 	   (unify-any (cdr l) (cdr r)

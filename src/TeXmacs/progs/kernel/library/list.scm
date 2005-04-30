@@ -443,7 +443,7 @@
 (tm-define (list-or l)
   (:type (forall T (-> (list bool) bool)))
   (:synopsis "Compute logical or of list @l of booleans.")
-  (and (not (null? l)) (or (car l) (list-or (cdr l)))))
+  (and (nnull? l) (or (car l) (list-or (cdr l)))))
 
 (tm-define (list-length=2? x)
   (:type (forall T (-> (list T) bool)))

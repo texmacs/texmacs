@@ -171,7 +171,7 @@
 
 (define (converter-walk from l*)
   ;(display* "convert-walk " from ", " l* "\n")
-  (if (not (null? l*))
+  (if (nnull? l*)
       (let* ((l (list-sort l* (lambda (x y) (< (cadr x) (cadr y)))))
 	     (aux (caar l))
 	     (d (cadar l))
@@ -244,14 +244,14 @@
   (let* ((l1 (converters-from fm))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
-	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (not (== s "texmacs")))))))
+	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
     (list-sort l4 format<=?)))
 
 (define (converters-to-special fm suf tm?)
   (let* ((l1 (converters-to fm))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
-	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (not (== s "texmacs")))))))
+	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
     (list-sort l4 format<=?)))
 
 (define (converter-build-menu item-builder l)

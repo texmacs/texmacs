@@ -367,7 +367,7 @@
 
 (define (table-inside-sub? p q)
   (or (== p q)
-      (and (not (null? q))
+      (and (nnull? q)
 	   (or (== (tree-get-label (tm-subtree q)) 'tformat)
 	       (== (tree-get-label (tm-subtree q)) 'document))
 	   (table-inside-sub? p (cDr q)))))

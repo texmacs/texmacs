@@ -37,7 +37,7 @@
 
 (define (fold-unfold l to)
   (with p (search-upwards-in-set (map car l))
-    (if (not (null? p))
+    (if (nnull? p)
 	(let* ((t (tm-subtree p))
 	       (old (tm-car t))
 	       (new (assoc-ref l old)))
@@ -97,7 +97,7 @@
 
 (define (switch-select i)
   (let ((p (search-upwards "switch")))
-    (if (not (null? p))
+    (if (nnull? p)
 	(let ((t (tm-subtree (rcons* p 1 i))))
 	  (tm-assign (rcons* p 1 i) '(tmarker))
 	  (tm-assign (rcons p 0) t)))))

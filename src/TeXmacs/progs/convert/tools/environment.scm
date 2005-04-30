@@ -91,7 +91,7 @@
     result))
 
 (define-macro (with-environment env bindings . body)
-  (if (not (list? bindings))
+  (if (nlist? bindings)
       (syntax-error "with-environment" "Bindings are not a list: ~A" bindings))
   `(with-environment* ,env
        (list ,@(map-in-order

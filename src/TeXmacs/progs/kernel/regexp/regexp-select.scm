@@ -153,7 +153,7 @@
   ;; (display* "select list " x ", " pat ", " bl "\n")
   "Selects subexpressions of @l using the pattern @pat and under bindings @bl."
   (cond ((null? pat) (list (cons* (list) x bl)))
-	((not (pair? pat)) '())
+	((npair? pat) '())
 	((keyword? (car pat))
 	 (with fpat (car pat)
 	   (cond ((== fpat :0)

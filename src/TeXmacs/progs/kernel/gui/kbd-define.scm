@@ -33,7 +33,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (kbd-wildcards-sub l post)
-  (if (not (null? l))
+  (if (nnull? l)
       (let* ((w (car l))
 	     (key (car w))
 	     (im (cadr w))
@@ -102,7 +102,7 @@
     (if l (kbd-set-inv! com (list-filter l (lambda (x) (== x what)))))))
 
 (define (kbd-find-sub l)
-  (cond ((not (pair? l)) (values #f #f))
+  (cond ((npair? l) (values #f #f))
 	((texmacs-in-mode? (caar l))
 	 (receive (mode im) (kbd-find-sub (cdr l))
 	   (cond ((not im) (values (caar l) (cadar l)))
@@ -122,7 +122,7 @@
     (if im im "")))
 
 (define (kbd-find-sub2 pred l)
-  (cond ((not (pair? l)) #f)
+  (cond ((npair? l) #f)
 	((texmacs-submode? pred (caar l)) (cadar l))
 	(else (kbd-find-sub2 pred (cdr l)))))
 
@@ -148,7 +148,7 @@
 	(let* ((prev-ss (substring s 0 prev-end))
 	       (prev (kbd-find-key-binding2 pred prev-ss)))
 	  (if (and (list? prev) (= (length prev) 2)) (set! prev (car prev)))
-	  (if (or (not prev) (not (string? prev))) (set! prev prev-ss))
+	  (if (or (not prev) (nstring? prev)) (set! prev prev-ss))
 	  (with im (kbd-append prev (substring s prev-end end))
 	    (kbd-insert-key-binding pred this-ss (list im "")))))))
 
@@ -190,7 +190,7 @@
 (define (kbd-map-pre l)
   (cond ((null? l) '())
 	((symbol? (car l)) (kbd-map-pre-list (car l) (cdr l)))
-	((and (list? (car l)) (not (null? (car l))) (== (caar l) :or))
+	((and (pair? (car l)) (== (caar l) :or))
 	 (with sub (lambda (pred) (kbd-map-pre-list pred (cdr l)))
 	   (apply append (map sub (cdar l)))))
 	(else (kbd-map-pre-list 'always? l))))
@@ -205,7 +205,7 @@
 (define (kbd-remove-body l)
   (cond ((null? l) (noop))
 	((symbol? (car l)) (kbd-remove-list (car l) (cdr l)))
-	((and (list? (car l)) (not (null? (car l))) (== (caar l) :or))
+	((and (pair? (car l)) (== (caar l) :or))
 	 (for-each (lambda (pred) (kbd-remove-list pred (cdr l))) (cdar l)))
 	(else (kbd-remove-list 'always? l))))
 

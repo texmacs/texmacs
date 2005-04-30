@@ -191,13 +191,13 @@
 	 (memq (car node) crit))))
 
 (define (sxml-control-node? x)
-  (and (not (string? x))
+  (and (nstring? x)
        (let ((name (symbol->string (sxml-name x))))
 	 (and (string-starts? name "*")
 	      (string-ends? name "*")))))
 
 (define (sxml-top-node? x)
-  (and (not (string? x))
+  (and (nstring? x)
        (== '*TOP* (car x))))
 
 (define (sxml-filter-element-content l)

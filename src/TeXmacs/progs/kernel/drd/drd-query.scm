@@ -30,7 +30,7 @@
 
 (define (logic-closure expr bl)
   "Return the closure and bindings for @expr with bindings @bl"
-  (cond ((or (null? expr) (not (pair? expr))) (cons expr bl))
+  (cond ((or (null? expr) (npair? expr)) (cons expr bl))
 	((free-variable? expr)
 	 (let ((val (assoc-ref bl (cadr expr))))
 	   (if val (cons (free-variable val) bl)

@@ -23,7 +23,7 @@
 (define structured-variants-list '())
 
 (define (set-structured-variant-sub l)
-  (if (not (null? (cddr l)))
+  (if (nnull? (cddr l))
       (begin
 	;(display* (cadr l) " -> " (car l) ", " (caddr l) "\n")
 	(ahash-set! structured-variants-table
@@ -55,7 +55,7 @@
 
 (define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))
-    (if (not (== which ""))
+    (if (!= which "")
 	(let* ((val (ahash-ref structured-variants-table which))
 	       (new (if forward? (cadr val) (car val))))
 	  (variant-replace which new)))))

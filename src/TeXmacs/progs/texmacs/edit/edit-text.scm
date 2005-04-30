@@ -37,7 +37,7 @@
 
 (define (make-header l)
   (go-end-of-header-element)
-  (if (not (== (tree->stree (the-line)) "")) (insert-return))
+  (if (!= (tree->stree (the-line)) "") (insert-return))
   (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,10 +101,10 @@
     "description-dash" "description-long"))
 
 (define (inside-list?)
-  (not (== (inside-which list-itemize-enumerate) "")))
+  (!= (inside-which list-itemize-enumerate) ""))
 
 (define (inside-description?)
-  (not (== (inside-which list-description) "")))
+  (!= (inside-which list-description) ""))
 
 (define (make-tmlist l)
   (make l)

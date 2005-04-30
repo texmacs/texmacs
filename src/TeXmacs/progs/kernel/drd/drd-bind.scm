@@ -63,7 +63,7 @@
 (define (bind-substitute expr bl)
   "Substitute bindings @bl in expression @expr."
   ;; does full substitution if the bindings have been expanded
-  (cond ((or (null? expr) (not (pair? expr))) expr)
+  (cond ((or (null? expr) (npair? expr)) expr)
 	((free-variable? expr)
 	 (let ((val (assoc-ref bl (cadr expr))))
 	   (if val val expr)))

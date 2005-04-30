@@ -140,6 +140,6 @@
 
 (menu-bind go-menu
   (link buffer-menu)
-  (if (not (null? (menu-get 'bookmarks-menu)))
+  (if (nnull? (menu-get 'bookmarks-menu))
       ---
       (link bookmarks-menu)))

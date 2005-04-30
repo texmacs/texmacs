@@ -52,7 +52,7 @@
 	     (dir help-file-path))
 	(cond ((url-exists? (url dir (string-append s suf)))
 	       (url-resolve (url dir (string-append s suf)) "r"))
-	      ((and (not (== suf ".en.tm"))
+	      ((and (!= suf ".en.tm")
 		    (url-exists? (url dir (string-append s ".en.tm"))))
 	       (url-resolve (url dir (string-append s ".en.tm")) "r"))
 	      (else (url-none))))))

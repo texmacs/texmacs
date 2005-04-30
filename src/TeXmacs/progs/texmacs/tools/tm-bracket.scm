@@ -124,7 +124,7 @@
 
 (define (make-big-operator op)
   (let ((sel? (selection-active-normal?)))
-    (if (and auto-close-brackets? (not (== op ".")))
+    (if (and auto-close-brackets? (!= op "."))
 	(begin
 	  (if sel? (clipboard-cut "temp"))
 	  (insert-go-to `(concat (big ,op) (big ".")) '(1 0))

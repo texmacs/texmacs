@@ -91,7 +91,7 @@
     (if handle (cdr handle)
 	(let* ((what (texmacs-mode-mode what*))
 	       (of (texmacs-mode-mode of*))
-	       (result (or (== of 'always%) (not (null? (query of what))))))
+	       (result (or (== of 'always%) (nnull? (query of what)))))
 	  (ahash-set! texmacs-submode-table key result)
 	  result))))
 

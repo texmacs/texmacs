@@ -114,7 +114,7 @@
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
 (for-each plugin-initialize (plugin-list))
-(if (not (== plugin-old-data-table plugin-data-table))
+(if (!= plugin-old-data-table plugin-data-table)
     (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table))
 
 ;(display "Initializing user preferences\n")

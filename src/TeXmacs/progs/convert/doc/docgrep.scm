@@ -238,7 +238,7 @@
 	 (the-result (get-final-sorted-results keyword file-list))
 	 (text (make-translate "No matches found for#\`\`" keyword "''."))
 	 (body (list text)))
-    (if (not (null? the-result))
+    (if (nnull? the-result)
 	(let ((highest-score (cdar the-result)))
 	  (set! body (map (lambda (x) (make-hlink x highest-score))
 			  the-result))

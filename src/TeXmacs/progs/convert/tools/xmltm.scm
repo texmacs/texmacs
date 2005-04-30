@@ -287,12 +287,12 @@
   ;; WARNING: non-standard (Joris wants to guess the editor's intent).
   ;; If @l ends with a line containing only spaces, drop the line.
   (let ((x (last l)))
-    (cond ((not (string? x)) l)
+    (cond ((nstring? x) l)
 	  ;; Standard compliant case. Supersed by non-standard case.
 	  ;; ((string-ends? x "\n")	; WARNING: \n is not R5RS
 	  ;;  (rcons (but-last l) (string-drop-right x 1)))
 	  ((do ((i (1- (string-length x)) (1- i)))
-	       ((not (== #\space (string-ref x i)))
+	       ((!= #\space (string-ref x i))
 		(and (== #\newline (string-ref x i)) i)))
 	   => (lambda (n) (rcons (but-last l) (string-take x n))))
 	  (else l))))

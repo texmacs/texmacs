@@ -20,7 +20,7 @@
   (let ((version-list
 	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
 		 (if (url-exists-in-path? "lisp") '("Cmucl") '()))))
-    (if (not (null? version-list))
+    (if (nnull? version-list)
       (let* ((default (car version-list))
 	     (rest (cdr version-list))
 	     (launch-default

@@ -47,7 +47,7 @@
 (define (tmtm-document? x) (func? x 'document))
 
 (define (tmtm-modernize-newlines l)
-  (if (not (list? l)) l
+  (if (nlist? l) l
       (with r (cons (car l) (map tmtm-modernize-newlines (cdr l)))
 	(cond ((func? r 'concat)
 	       (with ll (list-scatter (cdr r) tmtm-new-line? #f)
@@ -105,7 +105,7 @@
 	  (else (cons (car l) (tmtm-eat-around (cdr l) #f))))))
 
 (define (tmtm-eat-space-around-control l)
-  (if (not (list? l)) l
+  (if (nlist? l) l
       (with r (map tmtm-eat-space-around-control (cdr l))
 	(if (func? l 'concat)
 	    (tmtm-concat (tmtm-eat-around r #t))
@@ -122,7 +122,7 @@
   (cond ((tmtm-preserve-space? l) l)
 	((func? l 'document)
 	 (with r (map tmtm-remove-superfluous-newlines (cdr l))
-	   (with f (list-filter r (lambda (x) (not (== x ""))))
+	   (with f (list-filter r (lambda (x) (!= x "")))
 	     (if (null? f) '(document "") (cons 'document f)))))
         ((pair? l)
 	 (cons (car l) (map tmtm-remove-superfluous-newlines (cdr l))))
@@ -139,7 +139,7 @@
 
 (define (tmtm-concat-document-correct l)
   ;; FIXME: might go into tmtm-concat constructor
-  (if (not (list? l)) l
+  (if (nlist? l) l
       (with r (cons (car l) (map tmtm-concat-document-correct (cdr l)))
 	(if (and (func? r 'concat) (list-find (cdr r) tmtm-document?))
 	    (let* ((ll (list-scatter (cdr r) tmtm-document? #t))
