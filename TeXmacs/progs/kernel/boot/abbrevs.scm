@@ -17,7 +17,8 @@
     == != with
     nstring? nnull? npair? nlist?
     list-1? nlist-1? list-2? nlist-2?
-    keyword->number number->keyword))
+    keyword->number number->keyword
+    always? root? true?))
 
 (define == equal?)
 (define (!= x y) (not (equal? x y)))
@@ -44,3 +45,7 @@
 
 (define (number->keyword x)
   (symbol->keyword (string->symbol (number->string x))))
+
+(define (always? . l) #t)
+(define (root? t) (== (reverse (tree-ip t)) (the-buffer-path)))
+(define (true? . l) #t)

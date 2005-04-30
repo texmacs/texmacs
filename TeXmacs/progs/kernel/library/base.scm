@@ -96,12 +96,11 @@
   ;; Not yet any more efficient, but this may be fixed in the future.
   (list->string (reverse cs)))
 
-(tm-define string-join			; srfi-13 (subset)
+(tm-define (string-join	ss . opt)	; srfi-13 (subset)
   ;; (:type ... How to write that?
   (:synopsis "Concatenate elements of @ss inserting separators.")
-  (case-lambda
-    ((ss) (string-join ss " "))
-    ((ss delim) (string-concatenate (list-intersperse ss delim)))))
+  (if (null? opt) (string-join ss " ")
+      (string-concatenate (list-intersperse ss (car opt)))))
 
 (tm-define (string-drop-right s n)	; srfi-13
   (:type (-> string int string))
@@ -214,7 +213,7 @@
   (:type (forall Key Im
 		 (-> (alias (ahash-table Key Im)) (list (cross Key Im)) void)))
   (:synopsis "Fill hash table @d with list of entries @l")
-  (:warning "Depreciated")
+  (:note "Depreciated")
   (if (not (null? l))
       (begin
 	(let* ((r (reverse (car l))))

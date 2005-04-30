@@ -78,25 +78,25 @@
 ;; Selectors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define first
+(tm-define (first l)
   (:type (forall T (-> (list T) T)))
   (:synopsis "Get first element of @l.")
-  car)
+  (car l))
 
-(tm-define second
+(tm-define (second l)
   (:type (forall T (-> (list T) T)))
   (:synopsis "Get second element of @l.")
-  cadr)
+  (cadr l))
 
-(tm-define third
+(tm-define (third l)
   (:type (forall T (-> (list T) T)))
   (:synopsis "Get third element of @l.")
-  caddr)
+  (caddr l))
 
-(tm-define fourth
+(tm-define (fourth l)
   (:type (forall T (-> (list T) T)))
   (:synopsis "Get first element of @l.")
-  cadddr)
+  (cadddr l))
 
 (tm-define (fifth l)
   (:type (forall T (-> (list T) T)))
@@ -332,7 +332,7 @@
 (tm-define (list-span l pred?)
   (:type (forall T (-> (list T) (-> T bool) (cross (list T) (list T)))))
   (:synopsis "Break @l at the first element not satisfying @pred?.")
-  (:see-also list-break)
+  (:note "see also list-break")
   (list-break l (negate pred?)))
 
 (tm-define (list-drop-while l pred?)

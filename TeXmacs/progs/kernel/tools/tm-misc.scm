@@ -57,11 +57,15 @@
 
 (define (test-init? var val)
   (== (get-init-tree var) (string->tree val)))
-(set-check-mark! init-env "*" test-init?)
+
+(tm-property (init-env var val)
+  (:check-mark "*" test-init?))
 
 (define (test-env? var val)
   (== (get-env var) val))
-(set-check-mark! make-with "o" test-env?)
+
+(tm-property (make-with var val)
+  (:check-mark "o" test-env?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving and loading general objects
@@ -134,8 +138,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Should be moved to edit-session when it will exist
-(define (session-test-math-input? b?) (if (session-math-input?) b? (not b?)))
-(set-check-mark! session-use-math-input "*" session-test-math-input?)
+(define (session-test-math-input? b?)
+  (if (session-math-input?) b? (not b?)))
+
+(tm-property (session-use-math-input b?)
+  (:check-mark "*" session-test-math-input?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup

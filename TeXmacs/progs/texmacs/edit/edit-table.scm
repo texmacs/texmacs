@@ -154,7 +154,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (test-cell-mode? s) (string=? (get-cell-mode) s))
-(set-check-mark! set-cell-mode "*" test-cell-mode?)
+
+(tm-property (set-cell-mode s)
+  (:check-mark "*" test-cell-mode?))
 
 (define (cell-set-width-ia)
   (interactive '("Cell width:")

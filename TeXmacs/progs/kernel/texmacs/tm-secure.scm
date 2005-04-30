@@ -13,6 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-secure)
+  (:use (kernel texmacs tm-define))
   (:export secure-symbols xterm secure?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -20,7 +21,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (secure-symbols . l)
-  (for-each (lambda (x) (set-symbol-prop! x :secure #t)) l)
+  (for-each (lambda (x) (property-set! x :secure #t '())) l)
   '(noop))
 
 (secure-symbols
@@ -75,10 +76,8 @@
 		 ((== f 'quote) #t)
 		 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
 		 ((symbol? f)
-		  (with proc (symbol-procedure f)
-		    (and (or (symbol-prop f :secure)
-			     (and proc (procedure-property proc :secure)))
-			 (secure-args? (cdr expr) env))))
+		  (and (property f :secure)
+		       (secure-args? (cdr expr) env)))
 		 (else (secure-args? expr env)))))
 	((symbol? expr) #t)
 	((number? expr) #t)
