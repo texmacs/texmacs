@@ -64,7 +64,7 @@
 (tm-define (char-in-string? c s)
   (:type (-> char string bool))
   (:synopsis "Test whether @c occurs in @s")
-  (not (== (string-index s c) #f)))
+  (!= (string-index s c) #f))
 
 (tm-define (string-starts? s what)
   (:type (-> string string bool))
@@ -204,7 +204,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (fill-dictionary-entry d key im)
-  (if (not (null? key))
+  (if (nnull? key)
       (begin
 	(ahash-set! d (car key) im)
 	(fill-dictionary-entry d (cdr key) im))))
@@ -214,7 +214,7 @@
 		 (-> (alias (ahash-table Key Im)) (list (cross Key Im)) void)))
   (:synopsis "Fill hash table @d with list of entries @l")
   (:note "Depreciated")
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(let* ((r (reverse (car l))))
 	  (fill-dictionary-entry d (cdr r) (car r)))
@@ -235,10 +235,10 @@
   (:synopsis "Is @x a list with first stree @f?"
 	     "Optionally test the length of @x.")
   (let ((n (length opts)))
-    (cond ((= n 0) (and (list? x) (not (null? x)) (== (car x) f)))
+    (cond ((= n 0) (and (list? x) (nnull? x) (== (car x) f)))
 	  ((= n 1)
 	   (let ((nn (car opts)))
-             (and (list? x) (not (null? x))
+             (and (list? x) (nnull? x)
                   (== (car x) f) (= (length x) (+ nn 1)))))
 	  (else (error "Too many arguments.")))))
 

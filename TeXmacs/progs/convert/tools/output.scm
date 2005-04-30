@@ -58,14 +58,14 @@
     (set! output-count output-indentation)))
 
 (define (output-raw s)
-  (if (not (== s ""))
+  (if (!= s "")
       (begin
 	(set! output-start-flag #f)
 	(set! output-break-flag #t)))
   (set! output-accu (cons s output-accu)))
 
 (define (output-prepared s)
-  (if (or (not (== s "")) output-space-flag)
+  (if (or (!= s "") output-space-flag)
       (begin
 	(if output-space-flag (set! output-count (+ output-count 1)))
 	(set! output-count (+ output-count (string-length s)))
@@ -113,7 +113,7 @@
 
 (define (output-verb . ss)
   ;(display-err* "Output verb " ss "\n")
-  (if (not (== output-tail "")) (output-flush))
+  (if (!= output-tail "") (output-flush))
   (output-prepared (apply string-append ss)))
 
 (define (output-lf-verbatim . ss)
@@ -131,7 +131,7 @@
 
 (define (output-lf)
   ;(display-err* "Output lf\n")
-  (if (not (== output-tail "")) (output-flush))
+  (if (!= output-tail "") (output-flush))
   (output-return))
 
 (define (output-text . ss)

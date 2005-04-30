@@ -386,7 +386,7 @@
 	  (set! arity 0)))
     (if (string-ends? s "*")
 	(begin
-	  (if (not (== s "*"))
+	  (if (!= s "*")
 	      (set! s (substring s 0 (- (string-length s) 1))))
 	  (if (not arity)
 	      (set! arity (drd-ref latex-arity% (string->symbol s))))))

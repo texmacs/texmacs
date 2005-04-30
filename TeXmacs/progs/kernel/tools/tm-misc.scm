@@ -150,7 +150,7 @@
 
 (define the-action-path '(-1))
 (define (set-action-path p) (set! the-action-path p))
-(define (has-action-path?) (not (== the-action-path '(-1))))
+(define (has-action-path?) (!= the-action-path '(-1)))
 (define (get-action-path) the-action-path)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

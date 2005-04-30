@@ -81,7 +81,7 @@
 ;flag <boolean>: allow if true, disallow is false."
 ;
 ;  (let ((p (search-upwards "float")))
-;    (if (not (null? p))
+;    (if (nnull? p)
 ;	(tm-assign
 ;	 (rcons p 1)
 ;	 (string->tree ((if flag
@@ -93,7 +93,7 @@
 (define (test-insertion-position? what)
   (let ((p (search-upwards "float"))
 	(c (string-ref what 0)))
-    (if (not (null? p))
+    (if (nnull? p)
 	(char-in-string? c (tree->string (tm-subtree (rcons p 1)))))))
 
 (tm-define (toggle-insertion-position what)

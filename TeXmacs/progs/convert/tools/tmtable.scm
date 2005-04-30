@@ -312,7 +312,7 @@
 				(== name (tmformat-cell-name f))))))))
 
     (define (length-non-zero-by axis name)
-      (map (lambda (len) (not (== 0 (tmlength-value len))))
+      (map (lambda (len) (!= 0 (tmlength-value len)))
 	   (format-by axis name (tmlength))))
 
     ;; evaluate to dispatcher closure

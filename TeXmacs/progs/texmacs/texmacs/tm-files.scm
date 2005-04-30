@@ -69,7 +69,7 @@
   (with file* (url-concretize file)
     ;; FIXME: concretization should not be necessary
     ;; due to bad current implementation of 'interactive'
-    (if (and (not (== fm "help"))
+    (if (and (!= fm "help")
 	     (not (url-rooted-web? file))
 	     (url-exists? file)
 	     (url-exists? (url-glue file "~"))

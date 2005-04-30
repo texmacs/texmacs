@@ -59,7 +59,7 @@
       (link session-remove-menu))
   ((balloon (icon "tm_session_split.xpm") "Split session")
    (session-split))
-  (if (not (== (get-env "prog-language") "scheme"))
+  (if (!= (get-env "prog-language") "scheme")
       |
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
        (connection-interrupt))

@@ -39,7 +39,7 @@
   (if (string? t)
       (plugin-input-tmtokens (string->tmtokens t 0 (string-length t)))
       (let* ((f (car t)) (args (cdr t)) (im (plugin-input-ref f)))
-	(cond ((not (== im #f)) (im args))
+	(cond ((!= im #f) (im args))
 	      (else (noop))))))
 
 (define (plugin-input-arg t)
@@ -82,7 +82,7 @@
 (define (plugin-input-tmtoken s)
   (let ((im (plugin-input-ref s)))
     (if (== im #f)
-        (if (and (not (== s "")) (== (string-ref s 0) #\<))
+        (if (and (!= s "") (== (string-ref s 0) #\<))
             (display (substring s 1 (- (string-length s) 1)))
             (display s))
         (if (procedure? im)
@@ -90,7 +90,7 @@
             (display im)))))
 
 (define (plugin-input-tmtokens l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(plugin-input-tmtoken (car l))
 	(plugin-input-tmtokens (cdr l)))))
@@ -108,14 +108,14 @@
   (cond ((== (caar args) ".")
 	 (plugin-input (car args))
 	 (plugin-input-concat (cdr args)))
-        ((and (not (null? (cddr args)))
+        ((and (nnull? (cddr args))
 	      (func? (cadr args) 'rsub)
 	      (func? (caddr args) 'rsup))
 	 (plugin-input `(big ,(cadr (car args))
 			     ,(cadr (cadr args))
 			     ,(cadr (caddr args))))
 	 (plugin-input-concat (cdddr args)))
-	((and (not (null? (cddr args)))
+	((and (nnull? (cddr args))
 	      (func? (cadr args) 'rsup)
 	      (func? (caddr args) 'rsub))
 	 (plugin-input `(big ,(cadr (car args))
@@ -131,7 +131,7 @@
 
 (define (plugin-input-concat args)
   (cond ((null? args) (noop))
-	((and (func? (car args) 'big) (not (null? (cdr args))))
+	((and (func? (car args) 'big) (nnull? (cdr args)))
 	 (plugin-input-concat-big args))
 	(else
 	 (plugin-input (car args))
@@ -174,11 +174,11 @@
       (begin
 	(display (car args))
 	(display "(")
-	(if (not (null? (cdr args)))
+	(if (nnull? (cdr args))
 	    (begin
 	      (plugin-input (cadr args))
 	      (display ",")
-	      (if (not (null? (cddr args)))
+	      (if (nnull? (cddr args))
 		  (begin
 		    (plugin-input (caddr args))
 		    (display ","))))))))
@@ -215,7 +215,7 @@
 	(plugin-input-row (cdr r)))))
 
 (define (plugin-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display "; ")
 	(plugin-input-row (car t))

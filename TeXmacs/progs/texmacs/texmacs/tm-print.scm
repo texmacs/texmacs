@@ -83,7 +83,7 @@
 
 (define (preview-with-ghostview)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
-  (cond ((not (== preview-command "default"))
+  (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
 			       " $TEXMACS_HOME_PATH/system/tmp/preview.ps &")))
         ((os-win32?)

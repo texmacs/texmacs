@@ -103,7 +103,7 @@
 
 (define (save-preferences)
   (set! user-preferences (preferences->list preferences-table))
-  (if (not (== user-preferences saved-preferences))
+  (if (!= user-preferences saved-preferences)
       (begin
 	(save-object "$TEXMACS_HOME_PATH/system/preferences.scm"
 		     user-preferences)

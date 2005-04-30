@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mupad-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -33,7 +33,7 @@
   (display "]"))
 
 (define (mupad-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(mupad-input-row (car t))
@@ -67,7 +67,7 @@
 	    (display "product")
 	    (display (car args)))
         (display "@stdlib::swapargs)(")
-        (if (not (null? (cdr args)))
+        (if (nnull? (cdr args))
             (begin
               (plugin-input (cadr args))
 	      (if (null? (cddr args))
@@ -213,7 +213,7 @@
      ((== arg "<Omega>")      (display "&Omega;"))
 
      (else 
-      (if (and (not (== arg "")) (== (string-ref arg 0) #\<))
+      (if (and (!= arg "") (== (string-ref arg 0) #\<))
 	  (if (and (> (string-length arg) 3)
 		   (== (substring arg 0 3) "<b-"))
 	      (begin

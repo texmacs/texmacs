@@ -535,7 +535,7 @@
       (set! tmtex-preamble-hichar-flag #t)))
 
 (define (tmtex-preamble-build-sub l)
-  (if (and (list? l) (not (null? l)))
+  (if (and (list? l) (nnull? l))
       (let ((x (car l)))
 	(if (symbol? x) (tmtex-preamble-test-insert x))
 	(if (and (list? x) (>= (length l) 2) (== (car x) '!begin))

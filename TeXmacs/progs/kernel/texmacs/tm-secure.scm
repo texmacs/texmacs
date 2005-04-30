@@ -61,7 +61,7 @@
   (secure-args? (cdr expr) (local-env env (car expr))))
 
 (define (secure-quasiquote? args env)
-  (cond ((not (pair? args)) #t)
+  (cond ((npair? args) #t)
 	((func? args 'unquote 1) (secure-expr? (cadr args) env))
 	((func? args 'unquote-splicing 1) (secure-expr? (cadr args) env))
 	(else (and (secure-quasiquote? (car args) env)

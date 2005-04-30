@@ -50,7 +50,7 @@
 
 (define (notify-prefix-modifier var val)
   (if (not default-modifier-done?) (init-default-modifiers))
-  (cond ((not (== val "default"))
+  (cond ((!= val "default")
 	 (ahash-set! prefix-modifier-table var val)
 	 (if preferences-initialization-flag
 	     (set-message

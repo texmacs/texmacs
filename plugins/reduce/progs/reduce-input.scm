@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (reduce-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -33,7 +33,7 @@
   (display ")"))
 
 (define (reduce-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(reduce-input-row (car t))

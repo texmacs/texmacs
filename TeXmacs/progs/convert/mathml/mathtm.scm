@@ -82,7 +82,7 @@
 (define (smathml->tmtable env x)
   ;; Simplistic parser for mathml table.
   ;; Properly infer implied <mtr> and <mtd>.
-  (if (not (== 'mtable (sxml-name x)))
+  (if (!= 'mtable (sxml-name x))
       (error "Parameter is not a mtable."))
   (let ((a (sxml-attr-list x))
 	(c (sxml-content x)))
@@ -139,7 +139,7 @@
      ,(mathtm-as-serial env (first c))
      ,(mathtm-as-serial env (second c)))))
 
-(define (length=1? l) (and (not (null? l)) (null (cdr l))))
+(define (length=1? l) (and (nnull? l) (null (cdr l))))
 
 (define (mathtm-msub env a c)
   ;; TODO: produce <merror> if arity is incorrect

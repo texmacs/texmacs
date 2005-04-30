@@ -62,6 +62,6 @@
   (-> "Web"
       ("Create web site" ...
        (choose-file "Source directory" "directory" 'tmweb-build-from)))
-  (if (not (null? (menu-get 'test-menu)))
+  (if (nnull? (menu-get 'test-menu))
       ---
       (link test-menu)))

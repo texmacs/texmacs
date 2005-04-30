@@ -184,7 +184,7 @@
 		    (compute-preferences-enum s (cdr l))))))
 
 (define (compute-preferences-menu-sub l)
-  (cond ((or (not (list? l)) (null? l)) l)
+  (cond ((or (nlist? l) (null? l)) l)
 	((== (car l) 'string)
 	 (let* ((x (cadr l))
 		(s (id-or-car x))

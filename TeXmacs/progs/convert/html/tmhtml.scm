@@ -87,7 +87,7 @@
   (cond ((func? doc 'tmdoc-title 1) (cadr doc))
 	((func? doc 'tmdoc-title* 2) (cadr doc))
 	((func? doc 'tmdoc-title** 3) (caddr doc))
-	((not (pair? doc)) #f)
+	((npair? doc) #f)
 	(else (with title (tmhtml-find-title (car doc))
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
@@ -615,7 +615,7 @@
 
 (define (tmhtml-postscript env l)
   (let ((s (first l)) (w (second l)) (h (third l)))
-    (if (not (string? s)) '()	; only convert linked images
+    (if (nstring? s) '()	; only convert linked images
 	`((h:img (@ (src ,(cork->html s))
 		    ,@(tmhtml-dimension-attr
 		       w 'width `((par ,number->percent)
@@ -775,7 +775,7 @@
   (or (func? y 'h:h1)
       (func? y 'h:h2)
       (and (func? y 'h:div)
-	   (not (null? (cdr y)))
+	   (nnull? (cdr y))
 	   (func? (cadr y) '@ 1)
 	   (== (first (cadadr y)) 'class)
 	   (string-starts? (second (cadadr y)) "tmdoc"))))

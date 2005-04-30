@@ -54,11 +54,11 @@
   "Retrieve the non-ambiguous functional result from a list of solutions @l."
   (if (null? l) #f
       (let ((bl (car l)))
-	(if (not (= (length bl) 1))
+	(if (!= (length bl) 1)
 	    (error "Bad return values for logical apply")
 	    (let ((r (cdar bl)))
 	      (if (null? (cdr l)) r
-		  (if (not (== r (drd-unique-result (cdr l))))
+		  (if (!= r (drd-unique-result (cdr l)))
 		      (error "Ambiguous return values for logical apply")
 		      r)))))))
 
