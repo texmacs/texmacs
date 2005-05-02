@@ -12,38 +12,34 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot content)
-  (:export
-    atomic-tree? compound-tree? tree->list tree-explode
-    tm? tm-atomic? tm-compound? tm-equal?
-    tm-arity tm-car tm-cdr tm->list tm-func?))
+(texmacs-module (kernel boot content))
 
-(define (atomic-tree? t)
+(define-public (atomic-tree? t)
   (and (tree? t) (tree-atomic? t)))
 
-(define (compound-tree? t)
+(define-public (compound-tree? t)
   (and (tree? t) (tree-compound? t)))
 
-(define (tree->list t)
+(define-public (tree->list t)
   (cons (tree-get-label t) (tree-get-children t)))
 
-(define (tree-explode t)
+(define-public (tree-explode t)
   (if (atomic-tree? t)
       (tree->string t)
       (cons (tree-get-label t) (tree-get-children t))))
 
-(define (tm? x)
+(define-public (tm? x)
   (or (string? x) (list? x) (tree? x)))
 
-(define (tm-atomic? x)
+(define-public (tm-atomic? x)
   (or (string? x)
       (and (tree? x) (tree-atomic? x))))
 
-(define (tm-compound? x)
+(define-public (tm-compound? x)
   (or (pair? x)
       (and (tree? x) (tree-compound? x))))
 
-(define (tm-equal? x y)
+(define-public (tm-equal? x y)
   (cond ((tree? x)
 	 (if (tree? y)
 	     (== x y)
@@ -54,21 +50,21 @@
 	      (tm-equal? (cdr x) (cdr y))))
 	(else (== x y))))
 
-(define (tm-arity x)
+(define-public (tm-arity x)
   (cond ((list? x) (length x))
 	((string? x) 0)
 	(else (tree-arity x))))
 
-(define (tm-car x)
+(define-public (tm-car x)
   (car (if (pair? x) x (tree->list x))))
 
-(define (tm-cdr x)
+(define-public (tm-cdr x)
   (cdr (if (pair? x) x (tree->list x))))
 
-(define (tm->list x)
+(define-public (tm->list x)
   (if (list? x) x (tree->list x)))
 
-(define (tm-func? x . args)
+(define-public (tm-func? x . args)
   (cond ((list? x) (apply func? (cons x args)))
 	((compound-tree? x) (apply func? (cons (tree->list x) args)))
 	(else #f)))

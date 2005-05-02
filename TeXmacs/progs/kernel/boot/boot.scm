@@ -14,6 +14,13 @@
 
 (define texmacs-user (current-module))
 
+(define-macro (define-public-macro head . body)
+  `(define-public ,(car head)
+     ;; FIXME: why can't we use procedure->macro for a non-memoizing variant?
+     (procedure->memoizing-macro
+      (lambda (cmd env)
+	(apply (lambda ,(cdr head) ,@body) (cdr cmd))))))
+
 (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
 

@@ -32,11 +32,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel drd drd-rules)
-  (:use (kernel drd drd-bind) (kernel drd drd-unify))
-  (:export
-    logic-get-rules
-    drd-rules-decls ;; for drd-rules macro
-    drd-rules drd-rule !!!))
+  (:use (kernel drd drd-bind) (kernel drd drd-unify)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting new rules
@@ -103,7 +99,7 @@
 		     table :down
 		     (cons (car next) (cons (cdr next) (cdr todo)))))))))
 
-(define (logic-get-rules goal)
+(define-public (logic-get-rules goal)
   "Get all rules which may be applied to prove @goal."
   (reverse (logic-get-rules-sub logic-rules-table (list goal))))
 
@@ -111,7 +107,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (drd-rules-decls l extra)
+(define-public (drd-rules-decls l extra)
   (cond ((npair? l) (noop))
 	((and (pair? (car l)) (== (caar l) 'assume))
 	 (drd-rules-decls (cdr l) (append (cdar l) extra)))
@@ -119,13 +115,13 @@
 	 (logic-add-rule (cons (caar l) (append extra (cdar l))))
 	 (drd-rules-decls (cdr l) extra))))
 
-(define-macro (drd-rules . l)
+(define-public-macro (drd-rules . l)
   `(begin
      (drd-rules-decls ,(list 'quasiquote l) '())
      (display "")))
 
-(define-macro (drd-rule . l)
+(define-public-macro (drd-rule . l)
   `(drd-rules ,l))
 
-(define-macro (!!! . l)
+(define-public-macro (!!! . l)
   `(drd-rules ,l))

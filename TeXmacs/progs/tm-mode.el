@@ -25,23 +25,25 @@
     (cons
      (concat "\\<\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-table define-preferences
+       '(texmacs-module define-macro define-public-macro
+         tm-define tm-define-macro tm-property
+	 define-table define-preferences define-secure-symbols
          texmacs-modes and-let* case-lambda with values receive map-in-order
          drd-group drd-table drd-dispatcher
-         tm-define tm-define-macro tm-property
          define-grammar drd-rule drd-rules assume menu-bind
          menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
          kbd-symbols setup-append-if when link promise
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-in-mode
-	 lazy-define lazy-input-converter define-format converter
+	 lazy-define lazy-define-public lazy-input-converter
+	 define-format converter
 	 with-aux) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
      (concat "(\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-table
+       '(texmacs-module define-macro define-public-macro define-table
 	 tm-define tm-define-macro tm-property
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
@@ -57,8 +59,9 @@
   (dolist (s '(with receive with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if
+	       define-macro define-public-macro
 	       tm-define tm-define-macro tm-property
-	       tm-macro drd-group drd-table drd-dispatcher menu-bind
+	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       format with-aux))
     (put s 'scheme-indent-function 1))

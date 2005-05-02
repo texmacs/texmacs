@@ -16,18 +16,13 @@
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel regexp regexp-match)
-  (:export
-    bindings-add match-term match ;; for regexp-select only
-    define-grammar-decls ;; for define-grammar macro
-    define-grammar
-    match?))
+(texmacs-module (kernel regexp regexp-match))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Intersections and unions of solution sets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (bindings-add bl var val)
+(define-public (bindings-add bl var val)
   "Bind variable @var to @val in @bl if possible."
   (cond ((assoc-ref bl var)
 	 (if (== (assoc-ref bl var) val) bl #f))
@@ -91,7 +86,7 @@
 ;; Pattern matching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define match-term (make-ahash-table))
+(define-public match-term (make-ahash-table))
 (define match-table (make-ahash-table))
 (ahash-set! match-table :or match-or)
 (ahash-set! match-table :and match-and)
@@ -100,7 +95,7 @@
 (ahash-set! match-table :group match-group)
 (ahash-set! match-table :quote match-quote)
 
-(define (match l pat bl)
+(define-public (match l pat bl)
   "Matches for @l == @pat under bindings @bl."
   (if (null? pat) (if (== l '()) (list bl) '())
       (let ((fpat (car pat)))
@@ -144,16 +139,16 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (define-grammar-decls l)
+(define-public (define-grammar-decls l)
   (define (insert rule)
     (ahash-set! match-term (car rule) (cdr rule)))
   (for-each insert l))
 
-(define-macro (define-grammar . l)
+(define-public-macro (define-grammar . l)
   `(begin
      (define-grammar-decls ,(list 'quasiquote l))))
 
-(define (match? x pattern)
+(define-public (match? x pattern)
   "Does @x match the pattern @pat?"
   (let ((sols (match (list x) (list pattern) '())))
     (if (null? sols) #f sols)))

@@ -13,19 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel tools tm-misc)
-  (:use (kernel texmacs tm-define) (kernel gui menu-widget))
-  (:export
-    tm-start tm-end
-    init-default test-default? test-init? test-env?
-    save-object load-object
-    not-implemented tm-debug
-    texmacs-version-release* real-math-font? real-math-family?
-    kill-line replace-start-forward
-    with-active-buffer-sub with-active-buffer
-    delayed-update
-    session-test-math-input?
-    set-action-path has-action-path? get-action-path
-    interactive))
+  (:use (kernel texmacs tm-define) (kernel gui menu-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
@@ -45,7 +33,7 @@
 ;; Environment related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (test-default? . vals)
+(define-public (test-default? . vals)
   (if (null? vals)
       #t
       (and (not (init-has? (car vals)))
@@ -55,13 +43,13 @@
   (:check-mark "*" test-default?)
   (for-each init-default-one args))
 
-(define (test-init? var val)
+(define-public (test-init? var val)
   (== (get-init-tree var) (string->tree val)))
 
 (tm-property (init-env var val)
   (:check-mark "*" test-init?))
 
-(define (test-env? var val)
+(define-public (test-env? var val)
   (== (get-env var) val))
 
 (tm-property (make-with var val)
@@ -71,18 +59,18 @@
 ;; Saving and loading general objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (save-object file value)
+(define-public (save-object file value)
   (write value (open-file (url-materialize file "") OPEN_WRITE))
   (flush-all-ports))
 
-(define (load-object file)
+(define-public (load-object file)
   (read (open-file (url-materialize file "r") OPEN_READ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Debugging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (not-implemented s)
+(define-public (not-implemented s)
   (set-message "Error: not yet implemented" s))
 
 (tm-define (tm-debug)
@@ -94,34 +82,34 @@
 ;; Miscellaneous commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs-version-release* t)
+(define-public (texmacs-version-release* t)
   (texmacs-version-release (tree->string t)))
 
-(define (real-math-font? fn)
+(define-public (real-math-font? fn)
   (or (== fn "roman") (== fn "concrete")))
 
-(define (real-math-family? fn)
+(define-public (real-math-family? fn)
   (or (== fn "mr") (== fn "ms") (== fn "mt")))
 
-(define (kill-line)
+(define-public (kill-line)
   (selection-set-start)
   (go-end-line)
   (selection-set-end)
   (clipboard-cut "primary"))
 
-(define (replace-start-forward what by)
+(define-public (replace-start-forward what by)
   (replace-start what by #t))
 
-(define (with-active-buffer-sub name cmd)
+(define-public (with-active-buffer-sub name cmd)
   (let ((old (get-name-buffer)))
     (switch-to-active-buffer name)
     (eval cmd)
     (switch-to-active-buffer old)))
 
-(define-macro with-active-buffer
-  (lambda l (with-active-buffer-sub (car l) (cons 'begin (cdr l)))))
+(define-public-macro (with-active-buffer . l)
+  (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
 
-(define (delayed-update nr s-cont)
+(define-public (delayed-update nr s-cont)
   (cond ((> nr 0)
 	 (system-wait "Generating automatic content" (number->string nr))
 	 (generate-all-aux)
@@ -138,7 +126,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Should be moved to edit-session when it will exist
-(define (session-test-math-input? b?)
+(define-public (session-test-math-input? b?)
   (if (session-math-input?) b? (not b?)))
 
 (tm-property (session-use-math-input b?)
@@ -149,15 +137,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define the-action-path '(-1))
-(define (set-action-path p) (set! the-action-path p))
-(define (has-action-path?) (!= the-action-path '(-1)))
-(define (get-action-path) the-action-path)
+(define-public (set-action-path p) (set! the-action-path p))
+(define-public (has-action-path?) (!= the-action-path '(-1)))
+(define-public (get-action-path) the-action-path)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; For compatibility with the old "interactive" texmacs built-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (interactive . args)
+(define-public (interactive . args)
   (let ((fun (last args)))
     (if (not (procedure? fun))
         (apply tm-interactive (rcons (but-last args) (eval fun)))

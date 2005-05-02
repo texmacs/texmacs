@@ -12,40 +12,34 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot abbrevs)
-  (:export
-    == != with
-    nstring? nnull? npair? nlist?
-    list-1? nlist-1? list-2? nlist-2?
-    keyword->number number->keyword
-    always? root? true?))
+(texmacs-module (kernel boot abbrevs))
 
-(define == equal?)
-(define (!= x y) (not (equal? x y)))
+(define-public == equal?)
+(define-public (!= x y) (not (equal? x y)))
 
-(define-macro (with var val . body)
+(define-public-macro (with var val . body)
   (if (pair? var)
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 
-(define (nstring? x) (not (string? x)))
-(define (nnull? x) (not (null? x)))
-(define (npair? x) (not (pair? x)))
-(define (nlist? x) (not (list? x)))
+(define-public (nstring? x) (not (string? x)))
+(define-public (nnull? x) (not (null? x)))
+(define-public (npair? x) (not (pair? x)))
+(define-public (nlist? x) (not (list? x)))
 
-(define (list-1? x) (and (pair? x) (null? (cdr x))))
-(define (nlist-1? x) (not (list-1? x)))
-(define (list-2? x) (and (list? x) (= (length x) 2)))
-(define (nlist-2? x) (not (list-2? x)))
-(define (list-3? x) (and (list? x) (= (length x) 3)))
-(define (nlist-3? x) (not (list-3? x)))
+(define-public (list-1? x) (and (pair? x) (null? (cdr x))))
+(define-public (nlist-1? x) (not (list-1? x)))
+(define-public (list-2? x) (and (list? x) (= (length x) 2)))
+(define-public (nlist-2? x) (not (list-2? x)))
+(define-public (list-3? x) (and (list? x) (= (length x) 3)))
+(define-public (nlist-3? x) (not (list-3? x)))
 
-(define (keyword->number x)
+(define-public (keyword->number x)
   (string->number (symbol->string (keyword->symbol x))))
 
-(define (number->keyword x)
+(define-public (number->keyword x)
   (symbol->keyword (string->symbol (number->string x))))
 
-(define (always? . l) #t)
-(define (root? t) (== (reverse (tree-ip t)) (the-buffer-path)))
-(define (true? . l) #t)
+(define-public (always? . l) #t)
+(define-public (root? t) (== (reverse (tree-ip t)) (the-buffer-path)))
+(define-public (true? . l) #t)

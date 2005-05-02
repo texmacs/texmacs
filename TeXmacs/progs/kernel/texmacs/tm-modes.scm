@@ -15,27 +15,7 @@
 (texmacs-module (kernel texmacs tm-modes)
   (:use
     (kernel drd drd-rules) (kernel drd drd-query) (kernel drd drd-data)
-    (kernel texmacs tm-plugins) (kernel texmacs tm-preferences))
-  (:export
-    texmacs-mode ;; for texmacs-modes macro
-    texmacs-modes
-    texmacs-in-mode? texmacs-submode?
-    lazy-in-mode-do ;; for lazy-in-mode macro
-    lazy-in-mode lazy-in-mode-force
-    ;; general texmacs modes
-    always? in-source? in-text? in-math? in-prog? in-math-not-hybrid?
-    in-table? in-io? in-session? not-in-session? in-math-in-session?
-    in-math-not-in-session? in-plugin-with-converters?
-    ;; language related modes
-    in-cyrillic?
-    in-czech? in-danish? in-dutch? in-english? in-finnish? in-french?
-    in-german? in-hungarian? in-italian? in-polish?
-    in-portugese? in-romanian? in-russian? in-slovene?
-    in-spanish? in-swedish? in-ukrainian?
-    ;; keyboard related modes
-    like-emacs? like-windows? like-old? like-old-text? like-old-math?
-    in-cyrillic-cp1251? in-cyrillic-jcuken? in-cyrillic-koi8?
-    in-cyrillic-translit? in-cyrillic-yawerty?))
+    (kernel texmacs tm-plugins) (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining new modes
@@ -47,13 +27,13 @@
 	 (pred-str (string-append mode-root "?")))
     (string->symbol pred-str)))
 
-(define (texmacs-mode item)
+(define-public (texmacs-mode item)
   (with (mode action . deps) item
     (let* ((pred (texmacs-mode-pred mode))
 	   (deps* (map list (map texmacs-mode-pred deps)))
 	   (l (if (== action #t) deps* (cons action deps*)))
 	   (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-	   (defn `(define (,pred) ,test))
+	   (defn `(define-public (,pred) ,test))
 	   (rules (map (lambda (dep) (list dep mode)) deps))
 	   (drd-cmd `(drd-rules ,@rules))
 	   (arch1 `(set-symbol-procedure! ',mode ,pred))
@@ -62,14 +42,14 @@
 	  (list 'begin defn arch1 arch2)
 	  (list 'begin defn arch1 arch2 drd-cmd)))))
 
-(define-macro (texmacs-modes . l)
+(define-public-macro (texmacs-modes . l)
   `(begin ,@(map texmacs-mode l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs-in-mode? mode)
+(define-public (texmacs-in-mode? mode)
   (with proc (symbol-procedure mode)
     (if proc (proc)
 	(catch #t (lambda () (eval (list mode))) (lambda err #f)))))
@@ -85,7 +65,7 @@
 
 (define texmacs-submode-table (make-ahash-table))
 
-(define (texmacs-submode? what* of*)
+(define-public (texmacs-submode? what* of*)
   (let* ((key (cons what* of*))
 	 (handle (ahash-get-handle texmacs-submode-table key)))
     (if handle (cdr handle)
@@ -101,11 +81,11 @@
 
 (define lazy-in-mode-list '())
 
-(define (lazy-in-mode-do module mode*)
+(define-public (lazy-in-mode-do module mode*)
   (with mode (texmacs-mode-mode mode*)
     (set! lazy-in-mode-list (acons mode module lazy-in-mode-list))))
 
-(define-macro (lazy-in-mode module . modes)
+(define-public-macro (lazy-in-mode module . modes)
   (for-each (lambda (mode) (lazy-in-mode-do module mode)) modes)
   '(noop))
 
@@ -116,7 +96,7 @@
 	 (lazy-in-mode-force-do (cdr l)))
 	(else (cons (car l) (lazy-in-mode-force-do (cdr l))))))
 
-(define (lazy-in-mode-force)
+(define-public (lazy-in-mode-force)
   (set! lazy-in-mode-list
 	(reverse (lazy-in-mode-force-do (reverse lazy-in-mode-list)))))
 

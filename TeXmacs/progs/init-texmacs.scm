@@ -107,7 +107,7 @@
 (lazy-define (convert doc tmweb) tmweb-convert-dir)
 (lazy-define (convert doc tmweb) tmweb-build-from)
 (lazy-define (convert doc tmweb) tmweb-build)
-(secure-symbols tmdoc-include)
+(define-secure-symbols tmdoc-include)
 
 ;(display "Booting plugins\n")
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")

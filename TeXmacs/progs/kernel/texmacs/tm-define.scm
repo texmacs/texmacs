@@ -13,14 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-define)
-  (:use (kernel texmacs tm-overload))
-  (:export
-    ovl-conds ovl-table ; for macro expansion
-    property-set! property help
-    tm-define-sub tm-define-overloaded tm-define
-    tm-define-macro-sub tm-define-macro-overloaded tm-define-macro
-    tm-property-sub tm-property-overloaded tm-property
-    lazy-define))
+  (:use (kernel texmacs tm-overload)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables and subroutines
@@ -28,10 +21,10 @@
 
 (define define-option-table (make-hash-table 100))
 
-(define ovl-table (make-ahash-table))
-(define ovl-props-table (make-ahash-table))
+(define-public ovl-table (make-ahash-table))
+(define-public ovl-conds '())
 
-(define ovl-conds '())
+(define ovl-props-table (make-ahash-table))
 (define ovl-props '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,14 +99,14 @@
 	((>= (car l) 2) (filter-conds (cddr l)))
 	(else (cons (car l) (cons (cadr l) (filter-conds (cddr l)))))))
 
-(define (property-set! var prop what conds*)
+(define-public (property-set! var prop what conds*)
   "Associate a property to a function symbol under conditions"
   (let* ((key (cons var prop))
 	 (conds (filter-conds conds*)))
     (ahash-set! ovl-props-table key
 		(ovl-insert (ahash-ref ovl-props-table key) what conds))))
 
-(define (property var prop)
+(define-public (property var prop)
   "Retrieve a property of a function symbol"
   (if (procedure? var) (set! var (procedure-name var)))
   (let* ((key (cons var prop)))
@@ -138,7 +131,7 @@
 (hash-set! define-option-table :secure (define-property* :secure))
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
 
-(define (help about)
+(define-public (help about)
   ;; very provisional
   (cond ((property about :synopsis)
 	 (property about :synopsis))
@@ -147,64 +140,64 @@
 	(else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; New style define
+;; Overloaded functions with properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-define-sub head body)
+(define-public (tm-define-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-sub head (cdr body))))
 	((hash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-overloaded (cons head body))))
 
-(define-macro (tm-define head . body)
+(define-public-macro (tm-define head . body)
   (set! ovl-conds '())
   (set! ovl-props '())
   (tm-define-sub head body))
 
-(define-macro (tm-define-overloaded head . body)
+(define-public-macro (tm-define-overloaded head . body)
   (let* ((var (car head))
 	 (val `(lambda ,(cdr head) ,@body)))
     (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
 	`(begin
 	   (ahash-set! ovl-table ',var (cons 100 ,val))
-	   (define ,head ,@body)
+	   (define-public ,head ,@body)
 	   ,@(map property-rewrite ovl-props))
 	`(begin
 	   (ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) ,val
 				   (list ,@ovl-conds)))
-	   (define (,var . args)
+	   (define-public (,var . args)
 	     (ovl-apply (ahash-ref ovl-table ',var) args))
 	   ,@(map property-rewrite ovl-props)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Overloaded macros
+;; Overloaded macros with properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-define-macro-sub head body)
+(define-public (tm-define-macro-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-macro-sub head (cdr body))))
 	((hash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-macro-overloaded (cons head body))))
 
-(define-macro (tm-define-macro head . body)
+(define-public-macro (tm-define-macro head . body)
   (set! ovl-conds '())
   (set! ovl-props '())
   (tm-define-macro-sub head body))
 
-(define-macro (tm-define-macro-overloaded head . body)
+(define-public-macro (tm-define-macro-overloaded head . body)
   (let* ((var (car head))
 	 (val `(lambda ,(cdr head) ,@body)))
     (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
 	`(begin
 	   (ahash-set! ovl-table ',var (cons 100 ,val))
-	   (define-macro ,head ,@body)
+	   (define-public-macro ,head ,@body)
 	   ,@(map property-rewrite ovl-props))
 	`(begin
 	   (ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) ,val
 				   (list ,@ovl-conds)))
-	   (define-macro (,var . args)
+	   (define-public-macro (,var . args)
 	     (ovl-apply (ahash-ref ovl-table ',var) args))
 	   ,@(map property-rewrite ovl-props)))))
 
@@ -212,18 +205,18 @@
 ;; Associating extra properties to existing function symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-property-sub head body)
+(define-public (tm-property-sub head body)
   (if (null? body)
       (cons 'tm-property-overloaded (cons head body))
       (let ((decl (tm-property-sub head (cdr body))))
 	((hash-ref define-option-table (caar body)) (cdar body) decl))))
 
-(define-macro (tm-property head . body)
+(define-public-macro (tm-property head . body)
   (set! ovl-conds '())
   (set! ovl-props '())
   (tm-property-sub head body))
 
-(define-macro (tm-property-overloaded head . body)
+(define-public-macro (tm-property-overloaded head . body)
   `(begin
      ,@(map property-rewrite ovl-props)))
 
@@ -231,9 +224,17 @@
 ;; Lazy function declations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (lazy-define module name)
+(define-public-macro (lazy-define module name)
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
     `(define (,name . args)
+       (let* ((m (resolve-module ',module))
+	      (p (module-ref m '%module-public-interface))
+	      (r (module-ref p ',name #f)))
+	 (apply r args)))))
+
+(define-public-macro (lazy-define-public module name)
+  (with name-star (string->symbol (string-append (symbol->string name) "*"))
+    `(define-public (,name . args)
        (let* ((m (resolve-module ',module))
 	      (p (module-ref m '%module-public-interface))
 	      (r (module-ref p ',name #f)))

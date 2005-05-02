@@ -12,20 +12,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel drd drd-bind)
-  (:export
-    free-variable free-variable?
-    bind-var bind-unify
-    bind-substitute bind-substitute! bind-expand))
+(texmacs-module (kernel drd drd-bind))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Is an expression a free variable?
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (free-variable name)
+(define-public (free-variable name)
   (list 'quote name))
 
-(define (free-variable? expr)
+(define-public (free-variable? expr)
   "Is the expression @expr a free variable?"
   (and (list? expr) (= (length expr) 2) (== (car expr) 'quote)))
 
@@ -33,11 +29,11 @@
 ;; Binding variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (bind-var var val bl)
+(define-public (bind-var var val bl)
   "Force a binding of variable @var to @val in @bl."
   (list (acons var val bl)))
 
-(define (bind-unify var val bl)
+(define-public (bind-unify var val bl)
   "Bind variable @var to @val in @bl and unify if the binding already exists."
   (if (free-variable? val)
       (let* ((var2 (cadr val))
@@ -60,7 +56,7 @@
 ;; Substitution
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (bind-substitute expr bl)
+(define-public (bind-substitute expr bl)
   "Substitute bindings @bl in expression @expr."
   ;; does full substitution if the bindings have been expanded
   (cond ((or (null? expr) (npair? expr)) expr)
@@ -70,7 +66,7 @@
 	(else (cons (bind-substitute (car expr) bl)
 		    (bind-substitute (cdr expr) bl)))))
 
-(define (bind-substitute! expr bl)
+(define-public (bind-substitute! expr bl)
   "In place substitution of bindings @bl in expression @expr."
   (if (pair? expr)
       (begin
@@ -83,7 +79,7 @@
 	      (if val (set-cdr! expr val)))
 	    (bind-substitute! (cdr expr) bl)))))
 
-(define (bind-expand bl2)
+(define-public (bind-expand bl2)
   "Recursively substitute the bindings @bl2 in its own values."
   (let ((bl (copy-tree bl2)))
        ; FIXME: would be better to have a cycle-safe copy

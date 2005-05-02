@@ -13,12 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel library tree)
-  (:use (kernel texmacs tm-define) (kernel library list))
-  (:export
-    tree-path tree-assign tree-assign!
-    tree-insert tree-insert! tree-remove tree-remove!
-    tree-split tree-split! tree-join tree-join!
-    tree-ins-unary tree-ins-unary! tree-rem-unary tree-rem-unary!))
+  (:use (kernel texmacs tm-define) (kernel library list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Paths associated to trees
@@ -42,7 +37,7 @@
     (if p (tm-assign p t)
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define-macro (tree-assign! ref t)
+(define-public-macro (tree-assign! ref t)
   `(with xxx-t ,t
      (tree-assign ,ref xxx-t)
      (set! ,ref xxx-t)))
@@ -54,7 +49,7 @@
     (if p (tm-insert (rcons p pos) t)
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define tree-insert! tree-insert)
+(define-public tree-insert! tree-insert)
 
 (tm-define (tree-remove ref pos nr)
   (:type (-> tree int int void))
@@ -63,7 +58,7 @@
     (if p (tm-remove (rcons p pos) nr)
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define tree-remove! tree-remove)
+(define-public tree-remove! tree-remove)
 
 (tm-define (tree-split ref pos at)
   (:type (-> tree int int void))
@@ -72,7 +67,7 @@
     (if p (tm-split (rcons* p pos at))
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define tree-split! tree-split)
+(define-public tree-split! tree-split)
 
 (tm-define (tree-join ref pos)
   (:type (-> tree int void))
@@ -81,7 +76,7 @@
     (if p (tm-join (rcons p pos))
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define tree-join! tree-join)
+(define-public tree-join! tree-join)
 
 (tm-define (tree-ins-unary ref lab)
   (:type (-> tree symbol void))
@@ -90,7 +85,7 @@
     (if p (tm-ins-unary p lab)
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define-macro (tree-ins-unary! ref lab)
+(define-public-macro (tree-ins-unary! ref lab)
   `(with xxx-p (tree-path ,ref)
      (tree-ins-unary ,ref ,lab)
      (set! ,ref (tm-subtree xxx-p))))
@@ -102,7 +97,7 @@
     (if p (tm-rem-unary p)
 	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
 
-(define-macro (tree-rem-unary! ref)
+(define-public-macro (tree-rem-unary! ref)
   `(begin
      (tree-rem-unary ,ref)
      (set! ,ref (tree-ref ,ref 0))))

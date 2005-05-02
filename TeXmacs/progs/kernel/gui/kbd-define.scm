@@ -13,21 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel gui kbd-define)
-  (:use (kernel gui menu-define))
-  (:export
-    ;; exported macros
-    kbd-wildcards-body ;; for kbd-wildcards macro
-    kbd-wildcards
-    kbd-binding kbd-map-pre ;; for kbd-map macro
-    kbd-map
-    kbd-remove-body ;; for kbd-remove macro
-    kbd-remove
-    kbd-command-pre kbd-command ;; for kbd-commands macro
-    kbd-commands kbd-symbols
-    ;; other exported routines
-    kbd-find-inv-binding ;; for menu-widget
-    kbd-get-command kbd-find-key-binding))
-  
+  (:use (kernel gui menu-define)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard wildcards
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -42,13 +29,15 @@
 	(insert-kbd-wildcard key im post left right)
 	(kbd-wildcards-sub (cdr l) post))))
 
-(define (kbd-wildcards-body l)
+(define-public (kbd-wildcards-body l)
+  "Helper routine for kbd-wildcards macro"
   (cond ((null? l) (noop))
 	((== (car l) 'pre) (kbd-wildcards-sub (cdr l) #f))
 	((== (car l) 'post) (kbd-wildcards-sub (cdr l) #t))
 	(else (kbd-wildcards-sub l #t))))
 
-(define-macro (kbd-wildcards . l)
+(define-public-macro (kbd-wildcards . l)
+  "Add entries in @l to the keyboard wildcard table"
   `(kbd-wildcards-body ,(list 'quasiquote l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -111,12 +100,14 @@
 		 (else (values mode im)))))
 	(else (kbd-find-sub (cdr l)))))
 
-(define (kbd-find-key-binding key)
+(define-public (kbd-find-key-binding key)
+  "Find the command associated to the keystroke @key"
   ;(display* "Find binding '" key "'\n")
   (receive (mode im) (kbd-find-sub (kbd-get-map key))
     im))
 
-(define (kbd-find-inv-binding com)
+(define-public (kbd-find-inv-binding com)
+  "Find keyboard binding for command @com"
   ;(display* "Find inverse binding '" com "'\n")
   (receive (mode im) (kbd-find-sub (kbd-get-inv com))
     (if im im "")))
@@ -162,7 +153,8 @@
 (define (kbd-sub-bindings pred s)
   (kbd-sub-bindings-sub pred s 0 0))
 
-(define (kbd-binding pred key2 cmd help)
+(define-public (kbd-binding pred key2 cmd help)
+  "Helper routine for kbd-map macro"
   (with key (kbd-pre-rewrite key2)
     (kbd-sub-bindings pred key)
     (kbd-insert-key-binding pred key (list cmd help))))
@@ -187,7 +179,8 @@
 (define (kbd-map-pre-list pred l)
   (map (lambda (x) (kbd-map-pre-one pred x)) l))
 
-(define (kbd-map-pre l)
+(define-public (kbd-map-pre l)
+  "Helper routine for kbd-map macro"
   (cond ((null? l) '())
 	((symbol? (car l)) (kbd-map-pre-list (car l) (cdr l)))
 	((and (pair? (car l)) (== (caar l) :or))
@@ -195,21 +188,24 @@
 	   (apply append (map sub (cdar l)))))
 	(else (kbd-map-pre-list 'always? l))))
 
-(define-macro (kbd-map . l)
+(define-public-macro (kbd-map . l)
+  "Add entries in @l to the keyboard mapping"
   `(for-each (lambda (x) (apply kbd-binding x))
 	     ,(list 'quasiquote (kbd-map-pre l))))
 
 (define (kbd-remove-list pred l)
   (for-each (lambda (x) (kbd-delete-key-binding2 pred x)) l))
 
-(define (kbd-remove-body l)
+(define-public (kbd-remove-body l)
+  "Helper routine for kbd-remove macro"
   (cond ((null? l) (noop))
 	((symbol? (car l)) (kbd-remove-list (car l) (cdr l)))
 	((and (pair? (car l)) (== (caar l) :or))
 	 (for-each (lambda (pred) (kbd-remove-list pred (cdr l))) (cdar l)))
 	(else (kbd-remove-list 'always? l))))
 
-(define-macro (kbd-remove . l)
+(define-public-macro (kbd-remove . l)
+  "Remove entries in @l from keyboard mapping"
   `(kbd-remove-body ,(list 'quasiquote l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -218,20 +214,24 @@
 
 (define kbd-command-table (make-ahash-table))
 (define (kbd-set-command! key im) (ahash-set! kbd-command-table key im))
-(define (kbd-get-command key) (ahash-ref kbd-command-table key))
+(define-public (kbd-get-command key) (ahash-ref kbd-command-table key))
 
-(define (kbd-command-pre arg)
+(define-public (kbd-command-pre arg)
+  "Helper routine for kbd-commands macro"
   (with (cmd help . action) arg
     (list cmd help (list 'unquote `(lambda () ,@action)))))
 
-(define (kbd-command arg)
+(define-public (kbd-command arg)
+  "Helper routine for kbd-commands macro"
   (with (cmd help action) arg
     (kbd-set-command! cmd (cons help action))))
 
-(define-macro (kbd-commands . l)
+(define-public-macro (kbd-commands . l)
+  "Add backslashed commands in @l to keyboard mapping"
   `(for-each kbd-command ,(list 'quasiquote (map kbd-command-pre l))))
 
-(define-macro (kbd-symbols . l)
+(define-public-macro (kbd-symbols . l)
+  "Add symbols in @l to keyboard mapping"
   (define (fun s)
     (list s (string-append "insert#<" s ">")
 	  (list 'insert (string-append "<" s ">"))))

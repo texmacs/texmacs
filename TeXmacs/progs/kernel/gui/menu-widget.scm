@@ -17,9 +17,7 @@
 (texmacs-module (kernel gui menu-widget)
   (:use
     (kernel texmacs tm-define) (kernel gui menu-define)
-    (kernel gui kbd-define))
-  (:export
-    make-menu-widget menu-expand))
+    (kernel gui kbd-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu utilities
@@ -329,7 +327,7 @@
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
-(define (menu-expand p)
+(define-public (menu-expand p)
   "Expand links and conditional menus in menu @p."
   (cond ((npair? p) p)
 	((string? (car p)) p)

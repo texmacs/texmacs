@@ -13,23 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel library base)
-  (:use (kernel texmacs tm-define))
-  (:export ;; booleans
-    xor-sub xor
-    ;; strings
-    char->string string-tail char-in-string?
-    string-starts? string-ends? string-contains?
-    force-string reverse-list->string string-join
-    string-drop-right string-drop string-take
-    string-trim string-trim-right string-trim-both
-    string-concatenate string-map string-fold string-fold-right
-    string-split-lines string-tokenize string-tokenize-n
-    ;; functions
-    compose negate
-    ;; dictionaries
-    fill-dictionary-entry fill-dictionary
-    ;; objects
-    string->object func? tuple?))
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Booleans
@@ -107,7 +91,7 @@
   (:synopsis "Return all but the last @n chars of @s.")
   (substring s 0 (- (string-length s) n)))
 
-(define string-drop string-tail)	; srfi-13
+(define-public string-drop string-tail)	; srfi-13
 
 (tm-define (string-take s n)		; srfi-13
   (:type (-> string int string))
@@ -119,7 +103,7 @@
   (:synopsis "Remove whitespace at start of @s.")
   (list->string (list-drop-while (string->list s) char-whitespace?)))
 
-(define (list-drop-right-while l pred)
+(define-public (list-drop-right-while l pred)
   (reverse! (list-drop-while (reverse l) pred)))
 
 (tm-define (string-trim-right s)	; srfi-13 (subset)
@@ -154,17 +138,17 @@
   (:synopsis "Right to left fundamental string iterator.")
   (list-fold-right kons knil (string->list s)))
 
+(define (string-split-lines/kons c cs+lines)
+  (if (== c #\newline)
+      (cons '() cs+lines)
+      (cons (cons c (car cs+lines)) (cdr cs+lines))))
+
 (tm-define (string-split-lines s)
   (:type (-> string (list string)))
   (:synopsis "List of substrings of @s separated by newlines.")
   (map list->string
        (list-fold-right string-split-lines/kons '(()) (string->list s))))
 
-(define (string-split-lines/kons c cs+lines)
-  (if (== c #\newline)
-      (cons '() cs+lines)
-      (cons (cons c (car cs+lines)) (cdr cs+lines))))
-		
 (tm-define (string-tokenize s c)
   (:type (-> string char (list string)))
   (:synopsis "Cut string @s into pieces using @c as a separator.")
