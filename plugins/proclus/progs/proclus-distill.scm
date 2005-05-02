@@ -97,7 +97,7 @@
   (let* ((src-absname (get-absolute-name))
 	 (src-buff (get-strg-name-buffer))
 	 (the-loci (extract locus? (tree->stree (the-buffer)))))
-    (if (not (null? the-loci))
+    (if (nnull? the-loci)
 	(begin
           (new-buffer-clear (string-append src-buff "-loci"))
 	  (init-style "proclus-links")

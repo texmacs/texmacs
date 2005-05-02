@@ -80,7 +80,7 @@
 (define (sections->switch doc sections)
   (define (make-section title doc-items)
     (let ((doc2 (htmltm-list->document
-		 (list-filter doc-items (lambda (x) (not (== x "")))))))
+		 (list-filter doc-items (lambda (x) (!= x ""))))))
       (if (not title) doc2
 	  (htmltm-serial (list title
 			       (sections->switch doc2 (cdr sections)))))))
@@ -122,7 +122,7 @@
   (switch-unselect)
   (let ((oldp (the-path)))
     (go-outer-switch)
-    (if (not (== (oldp (the-path))))
+    (if (!= (oldp (the-path)))
 	(switch-unselect-recursive-sub))))
 
 (define (flatten-switch-sub x)

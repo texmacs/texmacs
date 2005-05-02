@@ -73,7 +73,7 @@
 (define (forget-absolute-name absname)
   (set-absolute-names-alist!
    (list-filter (get-absolute-names-alist)
-                (lambda (x) (not (== (car x) absname))))))
+                (lambda (x) (!= (car x) absname)))))
 
 ;; Public functions
 
@@ -133,8 +133,8 @@
   (and-let* (((has-absolute-name?))
              (absname (get-init-env "absolute-name"))
              ((absolute-name-exists? absname))
-             ((not (== (get-strg-name-buffer)
-                       (absolute-name->url absname)))))))
+             ((!= (get-strg-name-buffer)
+		  (absolute-name->url absname))))))
 
 (define (absolute-name-reregister-buffer)
   (check-has-absolute-name 'absolute-name-moved)

@@ -33,7 +33,7 @@
 	(recursive-switch-to-sub "first"))
       (let ((oldp (the-path)))
 	(go-outer-switch)
-	(if (not (== (the-path) oldp))
+	(if (!= (the-path) oldp)
 	    (next-slide-sub)))))
 
 (define (prev-slide-sub)
@@ -43,13 +43,13 @@
 	(recursive-switch-to-sub "last"))
       (let ((oldp (the-path)))
 	(go-outer-switch)
-	(if (not (== (the-path) oldp))
+	(if (!= (the-path) oldp)
 	    (prev-slide-sub)))))
 
 (define (recursive-switch-to-sub where)
   (let ((oldp (the-path)))
     (go-inner-switch)
-    (if (not (== (the-path) oldp))
+    (if (!= (the-path) oldp)
 	(begin
 	  (switch-to where)
 	  (recursive-switch-to-sub where)))))
@@ -74,7 +74,7 @@
 (define (go-outermost-switch)
   (let ((oldp (the-path)))
     (go-outer-switch)
-    (if (not (== oldp (the-path)))
+    (if (!= oldp (the-path))
 	(go-outermost-switch))))
 
 (define (go-this-switch)

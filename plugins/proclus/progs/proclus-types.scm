@@ -88,7 +88,7 @@
 
 (define (deactivate-type type)
   (set-active-types
-   (list-filter (active-types) (lambda (x) (not (== x type))))))
+   (list-filter (active-types) (lambda (x) (!= x type)))))
 
 (define (activate-type type)
   (deactivate-type type) ;; avoid duplicate entries
@@ -265,5 +265,5 @@
   (cond ((string-null? s) (proc types))
         ((in? s types)
          (ask-types-to-remove
-          proc (list-filter types (lambda (x) (not (== x s))))))
+          proc (list-filter types (lambda (x) (!= x s)))))
         (else (ask-types-to-remove proc types #t))))
