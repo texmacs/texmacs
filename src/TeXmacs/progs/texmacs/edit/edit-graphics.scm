@@ -164,7 +164,7 @@
   (set! graphics-current-center '(point "0" "0"))
   (set! graphics-current-step
 	(if (or visual?
-		(equal? graphics-current-type "logarithmic")) "1" "0.1"))
+		(== graphics-current-type "logarithmic")) "1" "0.1"))
   (set! graphics-current-astep
 	(i2s (if visual?
 		 default-polar-astep
@@ -235,19 +235,19 @@
 	 (base   graphics-current-base)
 	 (prop   (if visual? "gr-grid" "gr-edit-grid"))
     )
-    (cond ((eq? type 'empty)
+    (cond ((== type 'empty)
 	   (graphics-set-property prop
 	      `(tuple "empty"))
 	  )
-	  ((eq? type 'cartesian)
+	  ((== type 'cartesian)
 	   (graphics-set-property prop
 	      `(tuple "cartesian" ,center ,step))
 	  )
-	  ((eq? type 'polar)
+	  ((== type 'polar)
 	   (graphics-set-property prop
 	      `(tuple "polar" ,center ,step ,astep))
 	  )
-	  ((eq? type 'logarithmic)
+	  ((== type 'logarithmic)
 	   (graphics-set-property prop
 	      `(tuple "logarithmic" ,center ,step ,base)))
     )
@@ -256,13 +256,13 @@
 (define (visual-type-has-value? type)
   (graphics-fetch-grid-vars #f #t)
   (set! type (cadr type))
-  (if (eq? type 'default)
+  (if (== type 'default)
       (set! type 'empty))
   (== type (string->symbol graphics-current-type)))
 
 (tm-define (graphics-set-visual-grid type)
   (:check-mark "*" visual-type-has-value?)
-  (cond ((eq? type 'default)
+  (cond ((== type 'default)
 	 (graphics-remove-property "gr-grid")
 	 (if egrid-as-vgrid?
 	 (begin
@@ -279,8 +279,8 @@
 		 (o2 graphics-current-step)
 		 (new-polar? #f)
 	     )
-	     (if (and (eq? type 'polar)
-		      (not (eq? type (string->symbol graphics-current-type)))
+	     (if (and (== type 'polar)
+		      (!= type (string->symbol graphics-current-type))
 		 )
 		 (begin
 		    (set! new-polar? #t)
@@ -301,19 +301,19 @@
 (define (edit-type-has-value? type)
   (graphics-fetch-grid-vars #f #f)
   (set! type (cadr type))
-  (if (eq? type 'default)
+  (if (== type 'default)
       (set! type 'empty))
   (== type (string->symbol graphics-current-type)))
 
 (tm-define (graphics-set-edit-grid type)
   (:check-mark "*" edit-type-has-value?)
-  (cond ((or (eq? type 'default)
-	     (eq? type 'grid-change)
-	     (eq? type 'grid-aspect-change)
-	     (eq? type 'grid-change-aspect)
+  (cond ((or (== type 'default)
+	     (== type 'grid-change)
+	     (== type 'grid-aspect-change)
+	     (== type 'grid-change-aspect)
 	 )
-	 (let* ((aspect (if (or (eq? type 'grid-aspect-change)
-				(eq? type 'grid-change-aspect)
+	 (let* ((aspect (if (or (== type 'grid-aspect-change)
+				(== type 'grid-change-aspect)
 			    )
 			    graphics-current-aspect
 			    (graphics-grid-aspect-props)))
@@ -324,7 +324,7 @@
 				(string->number nsubds0)
 				#f)))
 	    )
-	    (if (or (eq? nsubds #f) (not (grid-aspect-show-subunits?)))
+	    (if (or (== nsubds #f) (not (grid-aspect-show-subunits?)))
 		(set! nsubds 1))
 	 ;; FIXME: The difference between 'default', 'grid-change'
 	 ;;   and 'grid-aspect-change' is because currently, the
@@ -337,11 +337,11 @@
 	 ;;   is mandatory.
 	 ;; TODO: As soon as a better control of the update synchro
 	 ;;   is available, clean this code.
-	    (if (or (eq? type 'default)
-		    (eq? type 'grid-aspect-change)
+	    (if (or (== type 'default)
+		    (== type 'grid-aspect-change)
 		)
 		(graphics-fetch-grid-vars 'cartesian #t))
-	    (if (not (equal? graphics-current-type "logarithmic"))
+	    (if (!= graphics-current-type "logarithmic")
 	    (begin
 	       (graphics-set-grid-aspect 'update nsubds #f)))
 	    (graphics-set-grid #f))
@@ -434,15 +434,12 @@
        (graphics-set-grid-aspect-properties c0 c1 s2 c2))))
 
 (define (cmp-aspect-items x y)
-  (if (equal? (cadr x) "axes")
-      #t
-  (if (equal? (cadr y) "axes")
-      #f
+  (if (== (cadr x) "axes") #t
+  (if (== (cadr y) "axes") #f
   (let* ((xval (s2i (cadr x)))
-	 (yval (s2i (cadr y)))
-	)
-	(< xval yval))))
-)
+	 (yval (s2i (cadr y))))
+    (< xval yval)))))
+
 (define (graphics-grid-aspect-props)
   (define res #f)
   (with aspect (tree->stree (get-env-tree "gr-grid-aspect-props"))
@@ -489,12 +486,12 @@
   (:check-mark "*" nsubd-has-value?)
   (if visual?
       (with aspect (graphics-grid-aspect-props)
-	(cond ((eq? type 'units-only)
+	(cond ((== type 'units-only)
 	       (graphics-set-property "gr-grid-aspect-props" aspect)
 	       (set-cdr! (cddr aspect) '())
 	       (graphics-set-property "gr-grid-aspect" aspect)
 	      )
-	      ((eq? type 'detailed)
+	      ((== type 'detailed)
 	       (if nsubd
 		   (set-car! (cdr (list-ref aspect 3)) nsubd)
 		   (set-car! (cdr (list-ref aspect 3))
@@ -517,7 +514,7 @@
 			      (get-default-val "gr-edit-grid-aspect")
 			      3))))
 	(graphics-set-property "gr-edit-grid-aspect" aspect)
-	(if (not (eq? type 'update))
+	(if (!= type 'update)
 	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
 (define (graphics-set-grid-nsubds-ia visual?)
@@ -526,9 +523,9 @@
 
 ;; Setting visual grid aspect properties (colors)
 (define (grid-aspect-ofs where)
-  (cond ((eq? where 'axes) 1)
-	 ((eq? where 'units) 2)
-	 ((eq? where 'subunits) 3)
+  (cond ((== where 'axes) 1)
+	 ((== where 'units) 2)
+	 ((== where 'subunits) 3)
 	 (else #f)))
 
 (define (grid-color-has-value? where color)
@@ -780,7 +777,7 @@
 
 (define (graphics-object-root-path p)
   (let* ((q (search-upwards-from p 'with))
-	 (path (if (and (not (null? q))
+	 (path (if (and (nnull? q)
 			(== (+ (length q) 1) (length p)))
 		   q p
 	       )))
@@ -963,10 +960,10 @@
 
 (define (event-exists? o e t)
   (define (seek-event l)
-     (if (or (null? l) (not (pair? (car l))))
+     (if (or (null? l) (npair? (car l)))
 	 #f
 	 (with x (car l)
-	    (if (and (eq? (car x) o) (eq? (cadr x) e))
+	    (if (and (== (car x) o) (== (cadr x) e))
 		#t
 		(seek-event (cdr l)))))
   )
@@ -1133,7 +1130,7 @@
   (define (remove-filtered-elts l)
     (if (pair? l)
       (if (pair? (cdr l))
-	(if (eq? (cadr l) #f)
+	(if (== (cadr l) #f)
 	    (begin
 	      (set-cdr! l (cddr l))
 	      (remove-filtered-elts l))
@@ -1157,7 +1154,7 @@
   (with sel (graphics-select x y 15)
     (set! previous-selection current-selection)
     (set! current-selection sel)
-    (if (or (null? sel) (not (== current-selection previous-selection)))
+    (if (or (null? sel) (!= current-selection previous-selection))
 	(set! subsel-no 0))
     (if (pair? sel) (car (list-tail sel subsel-no)) #f)))
 
@@ -1175,7 +1172,7 @@
      (set! current-y y)
      (if sticky-point
 	 (with o (graphical-object #t)
-	   (if (and (pair? o) (not (null? (cdr o))))
+	   (if (and (pair? o) (nnull? (cdr o)))
 	       (let* ((,obj (cadr o))
 		      (,no current-point-no)
 		      (,edge current-edge-sel?)
@@ -1207,7 +1204,7 @@
     (set! graphics-undo-enabled #t)
     (if graphics-first-state
 	(begin
-	  (if (eq? (state-ref graphics-first-state 'graphics-action)
+	  (if (== (state-ref graphics-first-state 'graphics-action)
 		   'start-move)
 	      (with p (tm-where)
 		(unredoable-undo)
@@ -1216,7 +1213,7 @@
     (graphics-forget-states))
    ((== cmd 'undo)
     (if (and sticky-point (not graphics-undo-enabled)
-	     (eq? (state-ref graphics-first-state 'graphics-action)
+	     (== (state-ref graphics-first-state 'graphics-action)
 		  'start-move))
 	(begin
 	  (set! graphics-undo-enabled #t)
@@ -1277,8 +1274,8 @@
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
 	 obj graphical-color graphical-lwidth #f)
-	(if (eq? (state-ref graphics-first-state 'graphics-action)
-		 'start-move)
+	(if (== (state-ref graphics-first-state 'graphics-action)
+		'start-move)
 	    (remove-undo-mark))
 	(set! sticky-point #f)
 	(set! current-edge-sel? #f)
