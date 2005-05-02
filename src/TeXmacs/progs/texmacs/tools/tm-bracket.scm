@@ -12,10 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs tools tm-bracket)
-  (:export
-    insert-quote
-    make-bracket-open make-separator make-bracket-close make-big-operator))
+(texmacs-module (texmacs tools tm-bracket))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User preferences for quoting and bracket behaviour
@@ -83,7 +80,7 @@
 	((close-quotes?) (close-quotes lan))
 	(else (open-quotes lan))))
 
-(define (insert-quote)
+(tm-define (insert-quote)
   (if (== quoting-style "default")
       (insert-quote-sub (get-env "language"))
       (insert-quote-sub quoting-style)))
@@ -92,7 +89,7 @@
 ;; Bracket routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-bracket-open l r . opt)
+(tm-define (make-bracket-open l r . opt)
   (let ((large? (== opt '(#t)))
 	(sel? (selection-active-normal?)))
     (if auto-close-brackets?
@@ -106,13 +103,13 @@
 	    (insert `(left ,l))
 	    (insert l)))))
 
-(define (make-separator sep . opt)
+(tm-define (make-separator sep . opt)
   (let ((large? (== opt '(#t))))
     (if large?
 	(insert `(mid ,sep))
 	(insert sep))))
 
-(define (make-bracket-close r l . opt)
+(tm-define (make-bracket-close r l . opt)
   (let ((large? (== opt '(#t))))
     (if large?
 	(insert `(right ,r))
@@ -122,7 +119,7 @@
 ;; Big operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-big-operator op)
+(tm-define (make-big-operator op)
   (let ((sel? (selection-active-normal?)))
     (if (and auto-close-brackets? (!= op "."))
 	(begin

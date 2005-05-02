@@ -16,15 +16,7 @@
   (:use
     (texmacs edit edit-text) (texmacs edit edit-table)
     (texmacs edit edit-session) (texmacs edit edit-fold)
-    (texmacs edit edit-title) (texmacs edit edit-graphics))
-  (:export
-    make-return make-shift-return
-    structured-insert-left structured-insert-right
-    structured-insert-up structured-insert-down
-    structured-remove
-    position-default position-left position-right position-up position-down
-    position-start position-end position-top position-bottom
-    general-remove general-remove general-tab))
+    (texmacs edit edit-title) (texmacs edit edit-graphics)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The multi-purpose return key
@@ -69,7 +61,7 @@
 	((inside? "compound") (activate-compound))
 	(else (insert-return))))
 
-(define (make-return)
+(tm-define (make-return)
   (make-return-inside
    (inside-which '("inactive" "latex" "hybrid" "symbol"
 		   "title" "doc-title" "author-name" "doc-inactive"
@@ -92,7 +84,7 @@
   (cond ((== x "input") (session-shift-return))
 	(else (insert-return))))
 
-(define (make-shift-return)
+(tm-define (make-shift-return)
   (make-shift-return-inside
     (inside-which '("input"))))
 
@@ -113,28 +105,28 @@
 	  ((== x "hybrid")
 	   (activate-hybrid #t)))))
 
-(define (structured-insert-left)
+(tm-define (structured-insert-left)
   (let ((x (inside-which '("table" "tree" "switch"
 			   "inactive" "hybrid" "tuple" "attr" "input"))))
     (if (in? x '("table" "tree" "switch" "input" "hybrid"))
 	(hybrid-insert #f)
 	(insert-argument #f))))
 
-(define (structured-insert-right)
+(tm-define (structured-insert-right)
   (let ((x (inside-which '("table" "tree" "switch"
 			   "inactive" "hybrid" "tuple" "attr" "input"))))
     (if (in? x '("table" "tree" "switch" "input" "hybrid"))
 	(hybrid-insert #t)
 	(insert-argument #t))))
 
-(define (structured-insert-up)
+(tm-define (structured-insert-up)
   (let ((x (inside-which '("table" "input"))))
     (cond ((== x "table")
 	   (table-insert-row #f))
 	  ((== x "input")
 	   (session-insert-input-above)))))
 
-(define (structured-insert-down)
+(tm-define (structured-insert-down)
   (let ((x (inside-which '("table" "input"))))
     (cond ((== x "table")
 	   (table-insert-row #t))
@@ -145,7 +137,7 @@
 ;; Multi-purpose deletions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (structured-remove forward?)
+(tm-define (structured-remove forward?)
   (let ((x (inside-which '("input"))))
     (cond ((== x "input") (session-remove-input forward?))
 	  (else (remove-structure-upwards)))))
@@ -154,26 +146,26 @@
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (position-default) (cell-del-format ""))
-(define (position-left) (cell-halign-left))
-(define (position-right) (cell-halign-right))
-(define (position-up) (cell-valign-up))
-(define (position-down) (cell-valign-down))
-(define (position-start) (noop))
-(define (position-end) (noop))
-(define (position-top) (noop))
-(define (position-bottom) (noop))
+(tm-define (position-default) (cell-del-format ""))
+(tm-define (position-left) (cell-halign-left))
+(tm-define (position-right) (cell-halign-right))
+(tm-define (position-up) (cell-valign-up))
+(tm-define (position-down) (cell-valign-down))
+(tm-define (position-start) (noop))
+(tm-define (position-end) (noop))
+(tm-define (position-top) (noop))
+(tm-define (position-bottom) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some multi-purpose actions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (general-remove forward?)
+(tm-define (general-remove forward?)
   (cond ((selection-active-normal?) (clipboard-cut "primary"))
 	((and (in-session?) (inside? "input")) (session-remove forward?))
 	(else (remove-text forward?))))
 
-(define (general-tab)
+(tm-define (general-tab)
   (cond ((or (inside? "label") (inside? "reference")) (complete-try?) (noop))
         ((inside? "hybrid") (activate-hybrid #t))
         ((or (inside? "inactive") (in-source?)

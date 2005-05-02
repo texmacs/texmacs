@@ -22,28 +22,28 @@
 ;; Cursor handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (cursor-left)
+(tm-define (cursor-left)
   (if (inside? "input") (session-go-left) (go-left)))
 
-(define (cursor-right)
+(tm-define (cursor-right)
   (if (inside? "input") (session-go-right) (go-right)))
 
-(define (cursor-up)
+(tm-define (cursor-up)
   (if (inside? "input") (session-go-up) (go-up)))
 
-(define (cursor-down)
+(tm-define (cursor-down)
   (if (inside? "input") (session-go-down) (go-down)))
 
-(define (cursor-page-up)
+(tm-define (cursor-page-up)
   (if (inside? "input") (session-go-page-up) (go-page-up)))
 
-(define (cursor-page-down)
+(tm-define (cursor-page-down)
   (if (inside? "input") (session-go-page-down) (go-page-down)))
 
-(define (cursor-start-line) (go-start-line))
-(define (cursor-end-line) (go-end-line))
+(tm-define (cursor-start-line) (go-start-line))
+(tm-define (cursor-end-line) (go-end-line))
 
-(define (cursor-select r)
+(tm-define (cursor-select r)
   (select-from-shift-keyboard)
   (r)
   (select-from-cursor))

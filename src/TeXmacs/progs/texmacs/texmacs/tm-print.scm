@@ -25,7 +25,7 @@
 ;; or else default to "a4"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-default-paper-size)
+(tm-define (get-default-paper-size)
   (or (getenv "PAPERSIZE")
       (let ((papersizefile (or (getenv "PAPERCONF") '"/etc/papersize")))
 	(if
@@ -81,7 +81,7 @@
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (preview-with-ghostview)
+(tm-define (preview-with-ghostview)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
   (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
@@ -98,6 +98,6 @@
 	       "Error: ghostview does not seem to be installed on your system"
 	       "preview"))))
 
-(define (choose-file-and-print-page-selection start end)
+(tm-define (choose-file-and-print-page-selection start end)
   (choose-file "Print page selection to file" "postscript"
 	       `(lambda (name) (print-pages-to-file name ,start ,end))))

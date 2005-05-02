@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs edit edit-fold)
-  (:export
-    make-fold fold unfold mouse-fold mouse-unfold
-    make-switch switch-get-position switch-get-last
-    switch-insert switch-remove switch-to))
+(texmacs-module (texmacs edit edit-fold))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
@@ -32,7 +28,9 @@
 (define unfold-fold-types
   (map (lambda (x) (cons (cdr x) (car x))) fold-unfold-types))
 
-(define (make-fold)
+(tm-define (make-fold)
+  (:type (-> void))
+  (:synopsis "Insert a 'fold' environment")
   (insert-go-to '(fold (document "") (document "")) (list 0 0)))
 
 (define (fold-unfold l to)
@@ -44,8 +42,15 @@
 	  (tm-assign p (tree2 new (tree-ref t 0) (tree-ref t 1)))
 	  (tm-go-to (tm-start (rcons p to)))))))
 
-(define (fold) (fold-unfold unfold-fold-types 0))
-(define (unfold) (fold-unfold fold-unfold-types 1))
+(tm-define (fold)
+  (:type (-> void))
+  (:synopsis "Fold at the current cursor position")
+  (fold-unfold unfold-fold-types 0))
+
+(tm-define (unfold)
+  (:type (-> void))
+  (:synopsis "Unfold at the current cursor position")
+  (fold-unfold fold-unfold-types 1))
 
 (tm-define (mouse-fold)
   (:type (-> void))
@@ -69,7 +74,9 @@
 ;; Switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-switch)
+(tm-define (make-switch)
+  (:type (-> void))
+  (:synopsis "Insert a 'switch' environment")
   (insert-go-to '(switch (document "") (tuple (tmarker))) (list 0 0)))
 
 (define (switch-find-marker t i)
@@ -77,12 +84,16 @@
 	((== (tree-ref t i) (stree->tree '(tmarker))) i)
 	(else (switch-find-marker t (+ i 1)))))
 
-(define (switch-get-position)
+(tm-define (switch-get-position)
+  (:type (-> int))
+  (:synopsis "Get current position inside a 'switch' environment or -1")
   (let ((p (search-upwards "switch")))
     (if (null? p) -1
 	(switch-find-marker (tm-subtree (rcons p 1)) 0))))
 
 (define (switch-get-last)
+  (:type (-> int))
+  (:synopsis "Get last node of the current 'switch' environment or -1")
   (let ((p (search-upwards "switch")))
     (if (null? p) -1
 	(- (tree-arity (tm-subtree (rcons p 1))) 1))))
@@ -113,7 +124,9 @@
 	((== where "first") 0)
 	((== where "last") last)))
 
-(define (switch-insert where)
+(tm-define (switch-insert where)
+  (:type (-> int void))
+  (:synopsis "Add a new branch to the current switch environment at @where")
   (let ((p (search-upwards "switch"))
 	(pos  (switch-get-position))
 	(last (switch-get-last)))
@@ -123,7 +136,9 @@
 		(tm-insert (rcons* p 1 where) '(tuple (document "")))
 		(switch-select where)))))
 
-(define (switch-remove where)
+(tm-define (switch-remove where)
+  (:type (-> int void))
+  (:synopsis "Remove a branch from the current switch environment at @where")
   (let ((p (search-upwards "switch"))
 	(pos  (switch-get-position))
 	(last (switch-get-last)))
@@ -134,7 +149,9 @@
 		(tm-remove (rcons* p 1 where) 1)
 		(switch-select (min where (- last 1)))))))
 
-(define (switch-to where)
+(tm-define (switch-to where)
+  (:type (-> int void))
+  (:synopsis "Switch to branch @where of the current switch environment")
   (let ((pos  (switch-get-position))
 	(last (switch-get-last)))
     (cond ((= pos -1) (noop))

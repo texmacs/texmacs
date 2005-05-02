@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-config)
-  (:export compute-wildcard-lines))
+(texmacs-module (keyboard kbd-config))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prefix modifiers
@@ -84,7 +83,7 @@
 	 (R (modifier-list->string r)))
     (list R L #t)))
 
-(define (compute-wildcard-lines)
+(define-public (compute-wildcard-lines)
   (map-in-order compute-wildcard-line
    '(("A")
      ("M")

@@ -14,8 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (drd latex latex-drd)
-  (:use (drd latex latex-symbol-drd))
-  (:export latex-arity latex-type))
+  (:use (drd latex latex-symbol-drd)))
 
 (drd-rules
   ((latex-tag% 'x) (latex-arity% 'x 'y)))
@@ -392,11 +391,13 @@
 	      (set! arity (drd-ref latex-arity% (string->symbol s))))))
     (values (string->symbol s) arity)))
 
-(define (latex-arity tag)
+(define-public (latex-arity tag)
+  "Get the arity of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
     (if arity arity 0)))
 
-(define (latex-type tag)
+(define-public (latex-type tag)
+  "Get the type of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
     (cond ((not arity) "undefined")
           ((drd-in? s latex-command%) "command")

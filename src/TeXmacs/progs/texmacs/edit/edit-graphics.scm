@@ -13,39 +13,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs edit edit-graphics)
-  (:export
-    ;; making graphics and setting global graphics properties
-    make-graphics
-    graphics-get-grid-type
-    graphics-set-property graphics-remove-property
-    graphics-set-unit graphics-set-unit-ia
-    graphics-set-origin graphics-set-origin-ia
-    graphics-set-extents-ia
-    graphics-set-visual-grid graphics-set-edit-grid
-    graphics-set-grid-center graphics-set-grid-center-ia
-    graphics-set-grid-step   graphics-set-grid-step-ia
-    graphics-set-grid-astep  graphics-set-grid-astep-ia
-    graphics-set-grid-base   graphics-set-grid-base-ia
-    graphics-set-grid-aspect-properties
-    graphics-set-grid-aspect-properties-ia
-    graphics-set-grid-aspect
-    graphics-set-grid-nsubds-ia
-    graphics-set-grid-color
-    grid-as-visual-grid?
-    grid-toggle-as-visual-grid
-    grid-show-subunits?
-    grid-toggle-show-subunits
-    graphics-set-mode graphics-set-color graphics-set-line-width
-    ;; selecting
-    graphics-select
-    ;; call-backs
-    graphics-move-point graphics-insert-point
-    graphics-remove-point graphics-last-point
-    graphics-start-drag graphics-dragging graphics-end-drag
-    graphics-choose-point
-    graphics-undo-enabled
-    graphics-reset-context))
+(texmacs-module (texmacs edit edit-graphics))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Frequently used subroutines
@@ -93,7 +61,7 @@
 ;; Global geometry of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-graphics)
+(tm-define (make-graphics)
   (graphics-reset-context 'begin)
   (insert-go-to
    '(with "gr-mode" "point"
@@ -104,11 +72,11 @@
       (graphics))
    '(6 1)))
 
-(define (graphics-set-property var val)
+(tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
     (if p (tm-insert-with p var val))))
 
-(define (graphics-remove-property var)
+(tm-define (graphics-remove-property var)
   (with p (graphics-graphics-path)
     (if p (tm-remove-with p var))))
 
@@ -118,25 +86,25 @@
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
 
-(define (graphics-set-unit u)
+(tm-define (graphics-set-unit u)
   (with frame (graphics-cartesian-frame)
     (with new-frame `(tuple "scale" ,u ,(cAr frame))
       (graphics-set-property "gr-frame" new-frame))))
 
-(define (graphics-set-unit-ia)
+(tm-define (graphics-set-unit-ia)
   (interactive '("Graphical unit:") 'graphics-set-unit))
 
-(define (graphics-set-origin x y)
+(tm-define (graphics-set-origin x y)
   (with frame (graphics-cartesian-frame)
     (with new-frame (append (cDr frame) `((tuple ,x ,y)))
       (graphics-set-property "gr-frame" new-frame))))
 
-(define (graphics-set-origin-ia)
+(tm-define (graphics-set-origin-ia)
   (interactive
     '("Origin's x-coordinate:" "Origin's y-coordinate:")
     'graphics-set-origin))
 
-(define (graphics-set-extents-ia)
+(tm-define (graphics-set-extents-ia)
   (interactive
     '("Left corner:" "Bottom corner:" "Right corner:" "Top corner:")
     '(lambda (l b r t)
@@ -223,7 +191,7 @@
 	   (set! graphics-current-base (list-ref grid 4))
 	  ))))
 
-(define (graphics-get-grid-type visual?)
+(tm-define (graphics-get-grid-type visual?)
   (graphics-fetch-grid-vars #f visual?)
   (string->symbol graphics-current-type))
 
@@ -360,7 +328,7 @@
 (define (grid-prop-input prompt func visual?)
   (interactive prompt (lambda (x) (func x visual?))))
 
-(define (graphics-set-grid-center x y visual?)
+(tm-define (graphics-set-grid-center x y visual?)
   (if (not visual?)
       (graphics-set-property "gr-as-visual-grid" "off"))
   (graphics-fetch-grid-vars #f visual?)
@@ -403,23 +371,23 @@
   (set! graphics-current-base val)
   (graphics-set-grid visual?))
 
-(define (graphics-set-grid-center-ia visual?)
+(tm-define (graphics-set-grid-center-ia visual?)
   (interactive
     '("X:" "Y:")
      (lambda (x y)
        (graphics-set-grid-center x y visual?))))
 
-(define (graphics-set-grid-step-ia visual?)
+(tm-define (graphics-set-grid-step-ia visual?)
   (grid-prop-input '("Unit length:") graphics-set-grid-step visual?))
 
-(define (graphics-set-grid-astep-ia visual?)
+(tm-define (graphics-set-grid-astep-ia visual?)
   (grid-prop-input '("Nb angular steps:") graphics-set-grid-astep visual?))
 
-(define (graphics-set-grid-base-ia visual?)
+(tm-define (graphics-set-grid-base-ia visual?)
   (grid-prop-input '("Logarithmic base:") graphics-set-grid-base visual?))
 
 ;; Setting visual grid aspect properties
-(define (graphics-set-grid-aspect-properties c0 c1 s2 c2)
+(tm-define (graphics-set-grid-aspect-properties c0 c1 s2 c2)
   (with aspect `(tuple (tuple "axes" ,c0) (tuple "1" ,c1) (tuple ,s2 ,c2))
     (graphics-set-property "gr-grid-aspect" aspect)
     (graphics-set-property "gr-grid-aspect-props" aspect)
@@ -427,7 +395,7 @@
   )
   (update-edit-grid 'grid-aspect-change))
 
-(define (graphics-set-grid-aspect-properties-ia)
+(tm-define (graphics-set-grid-aspect-properties-ia)
   (interactive
     '("Color(axes):" "Color(unit):" "Subdivisions per unit:" "Color(subds):")
     '(lambda (c0 c1 s2 c2)
@@ -517,7 +485,7 @@
 	(if (!= type 'update)
 	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
-(define (graphics-set-grid-nsubds-ia visual?)
+(tm-define (graphics-set-grid-nsubds-ia visual?)
   (interactive '("Number of subunit steps:")
 		(lambda (x) (graphics-set-grid-aspect 'detailed x visual?))))
 
@@ -570,7 +538,7 @@
 	  (graphics-set-property "gr-grid-aspect" aspect)))))))
 
 ;; Grid interface elements
-(define (grid-as-visual-grid?)
+(tm-define (grid-as-visual-grid?)
   (!= (tree->stree (get-env-tree "gr-as-visual-grid")) "off"))
 
 (tm-define (grid-toggle-as-visual-grid)
@@ -584,7 +552,7 @@
   (with aspect (tree->stree (get-env-tree "gr-grid-aspect"))
     (and (pair? aspect) (> (length aspect) 3))))
 
-(define (grid-show-subunits?)
+(tm-define (grid-show-subunits?)
   (let* ((grid   (tree->stree (get-env-tree "gr-grid")))
 	 (aspect (tree->stree (get-env-tree "gr-grid-aspect")))
     )
@@ -607,7 +575,7 @@
 	   ((pair? m)
 	    (map string->symbol (cdr m))))))
 
-(define (graphics-set-mode val)
+(tm-define (graphics-set-mode val)
   (graphics-group-start)
   (graphics-set-property "gr-mode"
      (cond ((or (symbol? val) (string? val))
@@ -615,10 +583,10 @@
 	   ((pair? val)
 	    (cons 'tuple val)))))
 
-(define (graphics-set-color val)
+(tm-define (graphics-set-color val)
   (graphics-set-property "gr-color" val))
 
-(define (graphics-set-line-width val)
+(tm-define (graphics-set-line-width val)
   (graphics-set-property "gr-line-width" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -989,7 +957,7 @@
 (define subsel-no #f)
 (define current-x #f)
 (define current-y #f)
-(define graphics-undo-enabled #t)
+(define-public graphics-undo-enabled #t)
 
 (define state-slots
   ''(graphics-action
@@ -1118,7 +1086,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Graphical select
-(define (graphics-select x y d)
+(tm-define (graphics-select x y d)
   (define (filter-path p)
     (with p2 (map string->number (cdr p))
       (if (graphics-path p2) p2 #f))
@@ -1191,7 +1159,7 @@
 	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
 		   (display* "Uncaptured " ,msg " " ,x ", " ,y "\n")))))))
 
-(define (graphics-reset-context cmd)
+(tm-define (graphics-reset-context cmd)
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
   (cond
@@ -1469,46 +1437,46 @@
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (graphics-insert-point x y)
+(tm-define (graphics-insert-point x y)
   ;(display* "Graphics] Insert " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (edit-prop))
 	    left-button (x y)))
 
-(define (graphics-move-point x y)
+(tm-define (graphics-move-point x y)
   ;(display* "Graphics] Move " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (edit-prop))
 	    move (x y)))
 
-(define (graphics-remove-point x y)
+(tm-define (graphics-remove-point x y)
   ;(display* "Graphics] Remove " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit))
 	    middle-button (x y)))
 
-(define (graphics-last-point x y)
+(tm-define (graphics-last-point x y)
   ;(display* "Graphics] Last " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (edit-prop))
 	    right-button (x y)))
 
-(define (graphics-start-drag x y)
+(tm-define (graphics-start-drag x y)
   ;(display* "Graphics] Start-drag " x ", " y "\n")
   (graphics-insert-point x y))
 
-(define (graphics-dragging x y)
+(tm-define (graphics-dragging x y)
   ;(display* "Graphics] dragging " x ", " y "\n")
   (graphics-move-point x y))
 
-(define (graphics-end-drag x y)
+(tm-define (graphics-end-drag x y)
   ;(display* "Graphics] End-drag " x ", " y "\n")
   (graphics-insert-point x y))
 
-(define (graphics-choose-point)
+(tm-define (graphics-choose-point)
   ;(display* "Graphics] Choose\n")
   (dispatch (car (graphics-mode))
 	    ((edit)

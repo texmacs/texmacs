@@ -13,19 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-document)
-  (:use (texmacs library length))
-  (:export
-    ;; preamble mode
-    toggle-preamble
-    ;; text and paragraph properties
-    init-text-width init-font-size init-dpi init-first-indent
-    init-interline init-interline-spc init-interpar-spc
-    init-magn init-language init-color init-bg-color
-    ;; page layout
-    init-page-medium init-page-type init-page-size init-page-orientation
-    toggle-visible-header-and-footer
-    toggle-page-width-margin toggle-page-screen-margin
-    init-page-shrink init-page-extend init-page-flexibility))
+  (:use (texmacs library length)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preamble mode
@@ -44,23 +32,23 @@
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (init-text-width s) (init-env "par-width" s))
-(define (init-font-size s) (init-env "font-base-size" s))
-(define (init-dpi s) (init-env "dpi" s))
-(define (init-first-indent s) (init-env "par-first" s))
-(define (init-interline s) (init-env "par-sep" s))
-(define (init-interline-spc s) (init-env "par-line-sep" s))
-(define (init-interpar-spc s) (init-env "par-par-sep" s))
-(define (init-magn s) (init-env "magnification" s))
-(define (init-language lan)
+(tm-define (init-text-width s) (init-env "par-width" s))
+(tm-define (init-font-size s) (init-env "font-base-size" s))
+(tm-define (init-dpi s) (init-env "dpi" s))
+(tm-define (init-first-indent s) (init-env "par-first" s))
+(tm-define (init-interline s) (init-env "par-sep" s))
+(tm-define (init-interline-spc s) (init-env "par-line-sep" s))
+(tm-define (init-interpar-spc s) (init-env "par-par-sep" s))
+(tm-define (init-magn s) (init-env "magnification" s))
+(tm-define (init-language lan)
   (let ((before (in? (tree->stree (get-init-tree "language"))
 		     '("russian" "ukrainian")))
 	(after (in? lan '("russian" "ukrainian"))))
     (if (and before (not after)) (init-default "font"))
     (init-env "language" lan)
     (if (and after (not before)) (init-env "font" "cyrillic"))))
-(define (init-color s) (init-env "color" s))
-(define (init-bg-color s) (init-env "bg-color" s))
+(tm-define (init-color s) (init-env "color" s))
+(tm-define (init-bg-color s) (init-env "bg-color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main page layout
@@ -79,7 +67,7 @@
   (init-default "page-width" "page-height")
   (notify-page-change))
 
-(define (init-page-size w h)
+(tm-define (init-page-size w h)
   (init-env "page-type" "user")
   (init-env "page-width" w)
   (init-env "page-height" h))
@@ -120,6 +108,6 @@
   (init-env "page-screen-margin"
 	    (if (not-page-screen-margin?) "true" "false")))
 
-(define (init-page-shrink s) (init-env "page-shrink" s))
-(define (init-page-extend s) (init-env "page-extend" s))
-(define (init-page-flexibility s) (init-env "page-flexibility" s))
+(tm-define (init-page-shrink s) (init-env "page-shrink" s))
+(tm-define (init-page-extend s) (init-env "page-extend" s))
+(tm-define (init-page-flexibility s) (init-env "page-flexibility" s))

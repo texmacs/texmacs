@@ -12,14 +12,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs library length)
-  (:export length+ length- length-zero?))
+(texmacs-module (texmacs library length))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Length arithmetic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (length+ . ops)
+(tm-define (length+ . ops)
   (define (length-add* ops res)
     (if (null? ops)
 	res
@@ -28,10 +27,10 @@
       "0tmpt"
       (length-add* (cdr ops) (car ops))))
 
-(define (length- . ops)
+(tm-define (length- . ops)
   (if (null? (cdr ops))
       (string-append "-" (car ops))
       (length+ (car ops) (length- (apply length+ (cdr ops))))))
 
-(define (length-zero? len)
+(tm-define (length-zero? len)
   (= 0 (length-decode len)))

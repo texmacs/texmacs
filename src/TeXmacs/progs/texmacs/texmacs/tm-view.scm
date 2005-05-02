@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs texmacs tm-view)
-  (:export
-    toggle-visible-header toggle-visible-footer toggle-visible-icon-bar
-    toggle-full-screen-mode toggle-full-screen-edit-mode
-    other-shrinking-factor))
+(texmacs-module (texmacs texmacs tm-view))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; View preferences
@@ -83,5 +79,5 @@
 (tm-property (set-shrinking-factor n)
   (:check-mark "*" test-shrinking-factor?))
 
-(define (other-shrinking-factor s)
+(tm-define (other-shrinking-factor s)
   (set-shrinking-factor (string->number s)))
