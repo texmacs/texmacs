@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert mathml tmmath)
-  (:use (convert tools tmconcat))
-  (:export texmacs->mathml))
+  (:use (convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
@@ -142,6 +141,6 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->mathml env x)
+(tm-define (texmacs->mathml env x)
   (display-err* "x= " x "\n")
   (tmmath x))

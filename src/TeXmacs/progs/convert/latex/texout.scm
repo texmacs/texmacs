@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex texout)
-  (:use (convert latex tmtex-preamble) (convert tools output))
-  (:export serialize-latex texout-contains-table?))
+  (:use (convert latex tmtex-preamble) (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting preamble and postamble
@@ -236,7 +235,7 @@
   (output-lf)
   (output-text "\\end{" what "}"))
 
-(define (texout-contains-table? x)
+(tm-define (texout-contains-table? x)
   (cond ((nlist? x) #f)
 	((and (>= (length x) 2) (== (car x) '!table)) #t)
 	(else (list-or (map-in-order texout-contains-table? (cdr x))))))
@@ -277,6 +276,6 @@
 	 (texout-begin (cadar x) (cddar x) (cadr x)))
 	(else (texout-apply (car x) (cdr x)))))
 
-(define (serialize-latex x)
+(tm-define (serialize-latex x)
   (texout x)
   (output-produce))

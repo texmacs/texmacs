@@ -18,12 +18,7 @@
     (convert tools tmtable) (convert tools stm)
     (convert tools sxml)  (convert tools sxhtml)
     (convert tools environment)
-    (convert tools xmltm) (convert mathml mathtm))
-  (:export 
-    parse-html-snippet parse-html-document
-    html->texmacs
-    htmltm-as-serial ;; for htmltm-test
-    ))
+    (convert tools xmltm) (convert mathml mathtm)))
 
 (define (assoc-string-ci key alist)
   (list-find alist (lambda (pair) (string-ci=? key (car pair)))))
@@ -389,7 +384,7 @@
 (define (cleanup-root env root)
   (sxml-set-content root (htmltm-space-mixed env (sxml-content root))))
 
-(define (htmltm-as-serial root)
+(tm-define (htmltm-as-serial root)
   ;; As htmltm, but returns a serial node.
   ;; Actually also initializes the dynamic enviroment.
   ;; FIXME: move the htmlinitialization elsewhere for symmetry with htmltm.
@@ -531,10 +526,10 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (parse-html-snippet s)
+(tm-define (parse-html-snippet s)
   (htmltm-parse s))
 
-(define (parse-html-document s)
+(tm-define (parse-html-document s)
   `(!file ,(htmltm-parse s)))
 
 (tm-define (html->texmacs html)

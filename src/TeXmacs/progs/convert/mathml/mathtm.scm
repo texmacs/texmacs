@@ -65,8 +65,7 @@
 ;; !!! Check semantic of mathvariant on multiple symbols !!!
 
 (texmacs-module (convert mathml mathtm)
-  (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm))
-  (:export mathml->tree mathtm-as-serial))
+  (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities
@@ -209,7 +208,7 @@
   (sxml-dispatch (lambda (env t) (list (mathtm-string env t)))
 		 mathtm-pass env t))
 
-(define mathtm-as-serial
+(tm-define mathtm-as-serial
   ;; TODO: replace #f by 'environment' object, see htmltm-as-serial
   (case-lambda
     ((t) (mathtm-as-serial #f t))

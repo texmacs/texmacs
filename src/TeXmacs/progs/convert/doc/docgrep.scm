@@ -13,8 +13,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert doc docgrep)
-  (:export docgrep-in-doc docgrep-in-src docgrep-in-texts))
+(texmacs-module (convert doc docgrep))
 
 ;;;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;; FIXME: improvements to be made:
@@ -282,7 +281,7 @@
 ;; External interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (docgrep-in-doc what)
+(tm-define (docgrep-in-doc what)
   (with lan (get-output-language)
     (cond ((== lan "french")
 	   (docgrep what "$TEXMACS_DOC_PATH:$TEXMACS_PATH/doc" "*.fr.tm"))
@@ -291,9 +290,9 @@
 	  (else
 	   (docgrep what "$TEXMACS_DOC_PATH:$TEXMACS_PATH/doc" "*.en.tm")))))
 
-(define (docgrep-in-src what)
+(tm-define (docgrep-in-src what)
   (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
 	   "*.scm" "*.hpp" "*.cpp"))
 
-(define (docgrep-in-texts what)
+(tm-define (docgrep-in-texts what)
   (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))

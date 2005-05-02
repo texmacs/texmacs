@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tmml tmmlout)
-  (:use (convert tools output))
-  (:export serialize-tmml))
+  (:use (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Determining output layout
@@ -131,6 +130,6 @@
 	((func? x '*TOP*) (tmmlout-stacked-args (cdr x)))
 	(else (tmmlout-tag (car x) '() (cdr x)))))
 
-(define (serialize-tmml x)
+(tm-define (serialize-tmml x)
   (tmmlout x)
   (output-produce))

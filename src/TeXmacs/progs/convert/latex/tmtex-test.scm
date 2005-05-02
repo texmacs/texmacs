@@ -74,7 +74,7 @@
 			      '(("a" "b") ("c" "d"))))
 	 (tabular "cc" '(("a" "b") ("c" "d"))))))
 
-(define (regtest-tmtex)
+(tm-define (regtest-tmtex)
   (let ((n (+ (regtest-tmtex-table))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of tmtex: ok\n")))

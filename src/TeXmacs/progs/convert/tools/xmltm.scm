@@ -13,15 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools xmltm)
-  (:use (convert tools stm) (convert tools sxml) (convert tools environment))
-  (:export xmltm-parse htmltm-parse
-	   initialize-htmltm htmltm-preserve-space?
-	   xmltm-text xmltm-url-text
-	   char-hexadecimal? hexadecimal-digit->integer
-	   xmltm-attr->label xmltm-label-decorate
-	   htmltm-space-mixed 
-	   htmltm-handler mathtm-handler sxml-dispatch
-	   htmltm-serial mathtm-serial))
+  (:use (convert tools stm) (convert tools sxml) (convert tools environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XML namespace normalization
@@ -78,10 +70,10 @@
 
 ;;; Converting nodes
 
-(define (htmltm-parse s)
+(tm-define (htmltm-parse s)
   (xmltm-parse xmlns-uri-xhtml s))
 
-(define (xmltm-parse default-ns s)
+(tm-define (xmltm-parse default-ns s)
   (with-xmltm-environment
    env default-ns
    (let sub ((env env)
@@ -128,20 +120,20 @@
 ;; htmltm environment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (initialize-htmltm env proc)
+(tm-define (initialize-htmltm env proc)
   (with-environment* env '((preserve-space? #f)) proc))
 
-(define (htmltm-preserve-space? env)
+(tm-define (htmltm-preserve-space? env)
   (environment-ref env preserve-space?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; String conversion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (xmltm-text s)
+(tm-define (xmltm-text s)
   (cork-grave->backquote (utf8->cork s)))
 
-(define (xmltm-url-text s)
+(tm-define (xmltm-url-text s)
   (cork-grave->backquote (utf8->cork (url-decode s))))
 
 ;; Conversion of Cork GRAVE ACCENT to LEFT SINGLE QUOTATION MARK
@@ -195,7 +187,7 @@
 	  (cut url-decode/trans <> (cons (hexadecimal->char hex1 kar) cs))
 	  (cut url-decode/trans <> (cons* kar hex1 #\% cs)))))
 
-(define (char-hexadecimal? c)
+(tm-define (char-hexadecimal? c)
   ;; Is @c an hexadecimal digit.
   (char-in-string? c "01234567890ABCDEFabcdef"))
 
@@ -204,7 +196,7 @@
   (integer->char (+ (* 16 (hexadecimal-digit->integer hex1))
 		    (hexadecimal-digit->integer hex2))))
 
-(define (hexadecimal-digit->integer c)
+(tm-define (hexadecimal-digit->integer c)
   (cond ((char-numeric? c) (- (char->integer c) 48))
 	((char-in-string? c "ABCDEF") (- (char->integer c) 55))
 	((char-in-string? c "abcdef") (- (char->integer c) 87))))
@@ -213,11 +205,11 @@
 ;; Label constructors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (xmltm-attr->label a name)
+(tm-define (xmltm-attr->label a name)
   (let ((val (shtml-attr-non-null a name)))
     (and val `(label ,(xmltm-url-text val)))))
 
-(define (xmltm-label-decorate a name t)
+(tm-define (xmltm-label-decorate a name t)
   (let ((label (xmltm-attr->label a name)))
     (if label
 	(stm-insert-first-data t label)
@@ -241,7 +233,7 @@
 	((char-whitespace? (first kdr)) kdr)
 	(else (cons #\space kdr))))
 
-(define (htmltm-space-mixed env l)
+(tm-define (htmltm-space-mixed env l)
   ;; remove heading and trailing spaces, and collapses whitespaces in sxml node
   ;; list @l. Correctly merges consecutive string nodes in @l.
   (cond ((null? l) '())
@@ -311,7 +303,7 @@
 ;; Producing handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (htmltm-handler model kind method args->serial)
+(tm-define (htmltm-handler model kind method args->serial)
   ;; Produce a handler for the htmltm-methods% table
   ;;  model: content model category, for whitespace handling
   ;;         :empty -- element is defined to be empty, do not change contents.
@@ -454,7 +446,7 @@
 ;; Producing handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (mathtm-handler model method)
+(tm-define (mathtm-handler model method)
   ;;  model: content model category
   ;;         :empty -- element defined to be empty
   ;;         :element -- text node are ignored
@@ -486,7 +478,7 @@
 	((== ns-id "m") (drd-ref mathtm-methods% ncname))
 	(else #f)))
 
-(define (sxml-dispatch x-string x-pass env t)
+(tm-define (sxml-dispatch x-string x-pass env t)
   ;; Generic xml dispatcher
   ;; @x-string (string env -> node-list) used to convert strings
   ;; @x-pass (method) pass method
@@ -513,7 +505,7 @@
 ;; htmltm-handler must also take care that 'expand' and 'with' methods which
 ;; take a block-structure as input have their result wrapped in a 'document'.
 
-(define (htmltm-serial p? l)
+(tm-define (htmltm-serial p? l)
   (if p? (stm-serial l stm-document?)
       (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
 
@@ -541,7 +533,7 @@
 		,@(map stm-line-trim-both (cDdr line-lists))
 		,(stm-line-trim (last line-lists)))))))))
 
-(define (mathtm-serial env l)
+(tm-define (mathtm-serial env l)
   ;; Except for the top-level math element, MathML produce only inlines.
   ;; Collapse whitespaces.
   ;; TODO: consolidate with htmltm-serial

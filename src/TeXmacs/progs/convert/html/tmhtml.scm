@@ -16,9 +16,7 @@
   (:use (convert tools tmconcat) (convert mathml tmmath)
 	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
 	(convert tools sxml) (convert tools environment) (convert tools sxhtml)
-	(convert html htmlout))
-  (:export texmacs->html tmhtml-root))
-
+	(convert html htmlout)))
 
 (define (descend env proc x)
   ;; Convenience function to call a method directly without using the tmhtml
@@ -812,7 +810,7 @@
       (tmhtml-dispatch 'tmhtml-tables% env l)
       '()))
 
-(define (tmhtml-root x)
+(tm-define (tmhtml-root x)
   ;; tmhtml ently point
   ;; Initialize the environment and start tmhtml
   (initialize-xpath
@@ -1055,7 +1053,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->html x)
+(tm-define (texmacs->html x)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
