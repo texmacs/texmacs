@@ -16,10 +16,7 @@
   (:use
     (convert tools tmpre) (convert tools tmtable)
     (convert rewrite tmtm-eqns) (convert rewrite tmtm-brackets)
-    (convert latex texout))
-  (:export
-    texmacs->latex
-    tmtex tmtex-initialize)) ;; for tmtex-test
+    (convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
@@ -30,7 +27,7 @@
 (define tmtex-faithful-style? #f)
 (define tmtex-indirect-bib? #f)
 
-(define (tmtex-initialize opts)
+(tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
   (set! tmtex-faithful-style?
 	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
@@ -1071,7 +1068,7 @@
 (define (tmtex-list l)
   (map-in-order tmtex l))
 
-(define (tmtex x)
+(tm-define (tmtex x)
   (if (string? x) (tmtex-string x)
       (tmtex-apply (car x) (cdr x))))
 
@@ -1213,7 +1210,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->latex x opts)
+(tm-define (texmacs->latex x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))

@@ -12,9 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert doc tmdoc)
-  (:export tmdoc-expand-help tmdoc-expand-help-manual tmdoc-expand-this
-	   tmdoc-include))
+(texmacs-module (convert doc tmdoc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
@@ -132,7 +130,7 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmdoc-expand-help file-name level)
+(tm-define (tmdoc-expand-help file-name level)
   (if (== level 'title)
       (let* ((body (tmdoc-expand file-name level))
 	     (lan (tmdoc-language file-name))
@@ -150,13 +148,13 @@
 		    (initial (collection (associate "language" ,lan))))))
 	(set-help-buffer file-name (stree->tree doc)))))
 
-(define (tmdoc-expand-help-manual file-name . cont)
+(tm-define (tmdoc-expand-help-manual file-name . cont)
   (with s-cont (if (null? cont) "(noop)" (car cont))
     (system-wait "Generating manual" "(can be long)")
     (tmdoc-expand-help file-name 'title)
     (delayed-update 3 s-cont)))
 
-(define (tmdoc-expand-this level)
+(tm-define (tmdoc-expand-this level)
   (tmdoc-expand-help (get-name-buffer) level))
 
 (define (tmdoc-remove-hyper-links l)
@@ -165,7 +163,7 @@
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 
-(define (tmdoc-include file-name)
+(tm-define (tmdoc-include file-name)
   (let* ((body (tmdoc-expand (tree->string file-name) 'chapter))
 	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
     (stree->tree (tmdoc-remove-hyper-links filt))))

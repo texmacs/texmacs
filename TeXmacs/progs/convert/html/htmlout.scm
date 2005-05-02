@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html htmlout)
-  (:use (convert tools output))
-  (:export serialize-html))
+  (:use (convert tools output)))
 
 (define preformatted? #f)
 
@@ -119,6 +118,6 @@
 	    thunk
 	    (lambda () (set! preformatted? saved-preformatted))))))
 
-(define (serialize-html x)
+(tm-define (serialize-html x)
   (htmlout x)
   (output-produce))

@@ -27,6 +27,14 @@
 (define ovl-props-table (make-ahash-table))
 (define ovl-props '())
 
+(define (ca*r x) (if (pair? x) (ca*r (car x)) x))
+(define (ca*adr x) (ca*r (cadr x)))
+
+(define (lambda* head body)
+  (if (pair? head)
+      (lambda* (car head) `((lambda ,(cdr head) ,@body)))
+      (car body)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,11 +124,11 @@
   `(property-set! ,@l (list ,@ovl-conds)))
 
 (define ((define-property which) opt decl)
-  (set! ovl-props (cons `(',(caadr decl) ,which ',opt) ovl-props))
+  (set! ovl-props (cons `(',(ca*adr decl) ,which ',opt) ovl-props))
   decl)
 
 (define ((define-property* which) opt decl)
-  (set! ovl-props (cons `(',(caadr decl) ,which (list ,@opt)) ovl-props))
+  (set! ovl-props (cons `(',(ca*adr decl) ,which (list ,@opt)) ovl-props))
   decl)
 
 (hash-set! define-option-table :type (define-property :type))
@@ -155,8 +163,8 @@
   (tm-define-sub head body))
 
 (define-public-macro (tm-define-overloaded head . body)
-  (let* ((var (car head))
-	 (val `(lambda ,(cdr head) ,@body)))
+  (let* ((var (ca*r head))
+	 (val (lambda* head body)))
     (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
 	`(begin
 	   (ahash-set! ovl-table ',var (cons 100 ,val))
@@ -186,8 +194,8 @@
   (tm-define-macro-sub head body))
 
 (define-public-macro (tm-define-macro-overloaded head . body)
-  (let* ((var (car head))
-	 (val `(lambda ,(cdr head) ,@body)))
+  (let* ((var (ca*r head))
+	 (val (lambda* head body)))
     (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
 	`(begin
 	   (ahash-set! ovl-table ',var (cons 100 ,val))

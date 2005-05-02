@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmpre)
-  (:export tmpre-produce))
+(texmacs-module (convert tools tmpre))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -90,5 +89,5 @@
 	((func? l 'document) (cons 'document (tmpre-document (cdr l))))
 	(else (cons (car l) (map-in-order tmpre (cdr l))))))
 
-(define (tmpre-produce l)
+(tm-define (tmpre-produce l)
   (tmpre l))

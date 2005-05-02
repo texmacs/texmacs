@@ -12,20 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools sxml)
-  (:export sxml-name sxml-element-head sxml-content
-	   sxml-set-name sxml-set-content sxml-prepend
-	   sxml-attr-list shtml-attr-non-null sxml-attr
-	   sxml-set-attr sxml-set-attrs sxml-set-attrlist
-	   sxml-ncname sxml-name->ncname sxml-name->ns-id sxml-split-name
-	   sxml-strip-ns-prefix sxml-set-ns-prefix
-	   sxml-element? ntype-names??
-	   sxml-control-node? sxml-top-node?
-	   sxml-filter-element-content))
-
+(texmacs-module (convert tools sxml))
 
 ;; Fundamental acessors
-(define sxml-name car)
+(tm-define sxml-name car)
 (define sxml-attr-list! cdadr)
 
 (define (sxml-has-attr-list? e)
@@ -34,26 +24,26 @@
        (pair? (cadr e))
        (eq? '@ (caadr e))))
 
-(define (sxml-element-head e)
+(tm-define (sxml-element-head e)
   ;; Element name and attributes (if present).
   (if (sxml-has-attr-list? e)
       (list (car e) (cadr e))
       (list (car e))))
 
-(define (sxml-content e)
+(tm-define (sxml-content e)
   ;; Complement function of sxml-element-head.
   (if (sxml-has-attr-list? e) (cddr e) (cdr e)))
 
-(define (sxml-set-name e name)
+(tm-define (sxml-set-name e name)
   ;; Set the name of the sxml element e.
   ;; Name is the new element name as a string.
   (cons (string->symbol name) (cdr e)))
 
-(define (sxml-set-content e content)
+(tm-define (sxml-set-content e content)
   ;; Replace the subnodes of e with the node-set content.
   (append (sxml-element-head e) content))
 
-(define (sxml-prepend e l)
+(tm-define (sxml-prepend e l)
   ;; Prepend a node set l to the content of an element e.
   (append (sxml-element-head e) l
 	  (sxml-content e)))
@@ -63,11 +53,11 @@
   (and (sxml-has-attr-list? e)
        (sxml-attr-list! e)))
 
-(define (sxml-attr-list e)
+(tm-define (sxml-attr-list e)
   ;; Return the attribute list of element e or empty list.
   (or (sxml-attr-list? e) '()))
 
-(define (shtml-attr-non-null as att)
+(tm-define (shtml-attr-non-null as att)
   ;; Get an HTML attribute or false if the attribute is absent, is not set, or
   ;; is set to the empty string.
   ;; FIXME: this is ugly
@@ -81,12 +71,12 @@
   (and-let* ((l (sxml-attr-list? obj)))
     (assq attr-name l)))
 
-(define (sxml-attr obj attr-name)
+(tm-define (sxml-attr obj attr-name)
   ;; Value of a named attribute of element e or #f.
   (and-let* ((x (sxml-named-attr obj attr-name)))
     (cadr x)))
 
-(define (sxml-set-attr e attr)
+(tm-define (sxml-set-attr e attr)
   ;; Set an attribute of an element e. Attr is a list (symbol? string?).
   ;; Create the attribute list or the attribute if necessary.
   (let ((attr-name (car attr)))
@@ -95,14 +85,14 @@
 			      (lambda (x) (not (eq? x attr-name)))))
       ,@(sxml-content e))))
 
-(define (sxml-set-attrs e attrs)
+(tm-define (sxml-set-attrs e attrs)
   ;; Set several attributes of an element e. Attrs is a list of attributes.
   ;; Create the attribute list or attributes if necessary.
   (let rec ((e e) (attrs attrs))
     (if (null? attrs) e
 	(rec (sxml-set-attr e (car attrs)) (cdr attrs)))))
 
-(define (sxml-set-attrlist e attrs)
+(tm-define (sxml-set-attrlist e attrs)
   ;; Replace the attribute list of @obj by @attrs.
   ;; If @attrs is #f, remove the attribute node.
   `(,(sxml-name e)
@@ -119,7 +109,7 @@
        ((char=? #\: (string-ref name pos)) pos)
        (else (rpt (1- pos))))))
 
-(define (sxml-ncname obj)
+(tm-define (sxml-ncname obj)
   ;; Returns Local Part of Qualified Name (Namespaces in XML production [6])
   ;; for given obj, which is ":"-separated suffix of its Qualified Name
   ;; If a name of a node given is NCName (Namespaces in XML production [4]),
@@ -129,7 +119,7 @@
   ;; (copied from sxml-tools)
   (sxml-name->ncname (sxml-name obj)))
 
-(define (sxml-name->ncname sxml-name)
+(tm-define (sxml-name->ncname sxml-name)
   (let* ((name (symbol->string sxml-name))
 	 (len (string-length name)))
     (cond
@@ -138,7 +128,7 @@
 	    (substring name (+ pos 1) len)))
       (else name))))
 
-(define (sxml-name->ns-id sxml-name)
+(tm-define (sxml-name->ns-id sxml-name)
   ;; Returns namespace-id part of given name, or #f if it's LocalName
   ;; (copied from sxml-tools)
   (let* ((name (symbol->string sxml-name)))
@@ -148,7 +138,7 @@
 	    (substring name  0 pos)))
       (else #f))))
 
-(define (sxml-split-name sxml-name)
+(tm-define (sxml-split-name sxml-name)
   (let* ((name (symbol->string sxml-name))
 	 (len (string-length name)))
     (cond
@@ -158,7 +148,7 @@
 		    (substring name (+ pos 1) len))))
       (else (values #f name)))))
 
-(define (sxml-strip-ns-prefix prefix x)
+(tm-define (sxml-strip-ns-prefix prefix x)
   ;; Remove a given namespace prefix wherever it appears in element names.
   ;; Prefix must be the ns-prefix as a string, and x a document fragment.
   (let rec ((x x))
@@ -169,12 +159,12 @@
 	     x)
 	 (map rec (sxml-content x))))))
 
-(define (sxml-set-ns-prefix p x)
+(tm-define (sxml-set-ns-prefix p x)
   (sxml-set-name x (string-append p ":" (sxml-ncname x))))
 
 ; Predicate which returns #t if <obj> is SXML element, otherwise returns #f.
 ; NOTE: *TOP* is a special element. All element operations are applicable.
-(define (sxml-element? obj)
+(tm-define (sxml-element? obj)
    (and (pair? obj)
 	(symbol? (car obj))
 	(not (memq (car obj)
@@ -185,20 +175,20 @@
 ; will return #t if the node name is present in criterion list and #f
 ; othervise.
 ;	ntype-names?? :: ListOfNames -> Node -> Boolean
-(define (ntype-names?? crit)
+(tm-define (ntype-names?? crit)
   (lambda(node)
     (and (pair? node)
 	 (memq (car node) crit))))
 
-(define (sxml-control-node? x)
+(tm-define (sxml-control-node? x)
   (and (nstring? x)
        (let ((name (symbol->string (sxml-name x))))
 	 (and (string-starts? name "*")
 	      (string-ends? name "*")))))
 
-(define (sxml-top-node? x)
+(tm-define (sxml-top-node? x)
   (and (nstring? x)
        (== '*TOP* (car x))))
 
-(define (sxml-filter-element-content l)
+(tm-define (sxml-filter-element-content l)
   (list-filter l (negate string?)))

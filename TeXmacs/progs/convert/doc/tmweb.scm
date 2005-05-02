@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert doc tmweb)
-  (:export tmweb-convert-dir tmweb-build-from tmweb-build))
+(texmacs-module (convert doc tmweb))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building a web site
@@ -39,7 +38,7 @@
 		 (url->list (url-ref u 2))))
 	(else (list u))))
 
-(define (tmweb-convert-dir tm-dir html-dir)
+(tm-define (tmweb-convert-dir tm-dir html-dir)
   (let* ((u1 (url-append tm-dir (url-any)))
 	 (u2 (url-expand (url-complete u1 "dr")))
 	 (u3 (url-append u2 (url-wildcard "*.tm")))
@@ -53,10 +52,10 @@
 
 (define tmweb-build-src (url-none))
 
-(define (tmweb-build-from u)
+(tm-define (tmweb-build-from u)
   (set! tmweb-build-src u)
   (exec-delayed
    "(choose-file \"Destination directory\" \"directory\" 'tmweb-build)"))
 
-(define (tmweb-build u)
+(tm-define (tmweb-build u)
   (tmweb-convert-dir tmweb-build-src u))

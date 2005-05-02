@@ -13,21 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools tmtable)
-  (:use (convert tools tmlength) (convert tools tmcolor))
-  (:export
-   ;; Constructor
-   tmtable? tmtable
-   tmtable-nrows tmtable-ncols tmtable-cell
-   ;; Table formats
-   tmformat-frame tmformat-table
-   tmformat-table-but-top tmformat-table-but-bottom
-   tmformat-table-but-left tmformat-table-but-right
-   tmformat-cell
-   ;; Output
-   tmtable->stm
-   ;; Parser
-   tmtable-parser
-   tmtable-block-borders tmtable-cell-halign))
+  (:use (convert tools tmlength) (convert tools tmcolor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities
@@ -46,13 +32,13 @@
 
 (define tmtable-type (make-record-type "tmtable" '(nrows ncols cells formats)))
 (define tmtable-record (record-constructor tmtable-type))
-(define tmtable? (record-predicate tmtable-type))
-(define tmtable-nrows (record-accessor tmtable-type 'nrows))
-(define tmtable-ncols (record-accessor tmtable-type 'ncols))
-(define tmtable-cells (record-accessor tmtable-type 'cells))
+(tm-define tmtable? (record-predicate tmtable-type))
+(tm-define tmtable-nrows (record-accessor tmtable-type 'nrows))
+(tm-define tmtable-ncols (record-accessor tmtable-type 'ncols))
+(tm-define tmtable-cells (record-accessor tmtable-type 'cells))
 (define tmtable-formats (record-accessor tmtable-type 'formats))
 
-(define (tmtable formats cells)
+(tm-define (tmtable formats cells)
   ;; Public tmtable constructor
   (tmtable-record (length cells)
 		  (list-max (map length cells))
@@ -66,22 +52,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table format
 
-(define (tmformat-frame name value)
+(tm-define (tmformat-frame name value)
   `(twith ,name ,value))
 
 ;; NOTE: if this list gets too long, we might define region arithmetic.
 ;; This might also be needed for format simplification.
-(define (tmformat-table name value)
+(tm-define (tmformat-table name value)
   `(cwith 1 -1 1 -1 ,name ,value))
-(define (tmformat-table-but-top name value)
+(tm-define (tmformat-table-but-top name value)
   `(cwith 2 -1 1 -1 ,name ,value))
-(define (tmformat-table-but-bottom name value)
+(tm-define (tmformat-table-but-bottom name value)
   `(cwith 1 -2 1 -1 ,name ,value))
-(define (tmformat-table-but-left name value)
+(tm-define (tmformat-table-but-left name value)
   `(cwith 1 -1 2 -1 ,name ,value))
-(define (tmformat-table-but-right name value)
+(tm-define (tmformat-table-but-right name value)
   `(cwith 1 -1 1 -2 ,name ,value))
-(define (tmformat-cell i j name value)
+(tm-define (tmformat-cell i j name value)
   `(cwith ,i ,i ,j ,j ,name ,value))
 
 (define (tmformat-frame? f) (func? f 'twith))
@@ -235,7 +221,7 @@
 	 (else noop))
    value))
 
-(define (tmtable->stm t)
+(tm-define (tmtable->stm t)
   (receive (centered formats)
       (list-partition (tmtable-formats t)
 		      (cute == <> (tmformat-table "cell-halign" "c")))
@@ -266,7 +252,7 @@
 ;; Legacy table parser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtable-parser x)
+(tm-define (tmtable-parser x)
   ;; Internal state
   (let ((this (stm->tmtable x)))
 
@@ -318,12 +304,12 @@
     ;; evaluate to dispatcher closure
     table-parser/dispatch))
 
-(define (tmtable-block-borders x)
+(tm-define (tmtable-block-borders x)
   (if x '((cwith "1" "-1" "1" "1" "cell-lborder" "1ln")
 	  (cwith "1" "1" "1" "-1" "cell-tborder" "1ln")
 	  (cwith "1" "-1" "1" "-1" "cell-bborder" "1ln")
 	  (cwith "1" "-1" "1" "-1" "cell-rborder" "1ln"))
       '()))
 
-(define (tmtable-cell-halign x)
+(tm-define (tmtable-cell-halign x)
   `((cwith "1" "-1" "1" "-1" "cell-halign" ,x)))

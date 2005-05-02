@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tmml tmmltm)
-  (:export parse-tmml tmml->texmacs tmmltm))
+(texmacs-module (convert tmml tmmltm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Provide the inverse functionality of tmmlout
@@ -135,7 +134,7 @@
 			     (tmmltm-args (cdr args))))
 	  (else (cons tag (tmmltm-args args))))))
 
-(define (tmmltm x)
+(tm-define (tmmltm x)
   ;(display* "[tmmltm] ") (write x) (display* "\n")
   (cond ((string? x) (xml-cdata->tm x))
 	((and (func? x '*TOP*) (>= (length x) 3) (func? (caddr x) 'TeXmacs 2))

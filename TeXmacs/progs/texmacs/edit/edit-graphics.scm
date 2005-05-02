@@ -957,7 +957,7 @@
 (define subsel-no #f)
 (define current-x #f)
 (define current-y #f)
-(define-public graphics-undo-enabled #t)
+(tm-define graphics-undo-enabled #t)
 
 (define state-slots
   ''(graphics-action

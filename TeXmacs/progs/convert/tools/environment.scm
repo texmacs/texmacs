@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools environment)
-  (:export environment environment-ref* environment-ref
-	   with-environment* with-environment
-	   initialize-xpath xpath-descend
-	   xpath-root xpath-parent xpath-current))
+(texmacs-module (convert tools environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Converter environments
@@ -46,7 +42,7 @@
 
 ;; Environment primitives
 
-(define (environment)
+(tm-define (environment)
   (make-ahash-table))
 
 (define-macro (environment-set!* env key val) ; must stay private
@@ -55,13 +51,13 @@
 (define-macro (environment-remove! env key) ; must stay private
   `(ahash-remove! ,env ,key))
 
-(define (environment-ref* env key)
+(tm-define (environment-ref* env key)
   (let ((h (ahash-get-handle env key)))
     (if h (cdr h)
 	(texmacs-error "environment-ref*" "Unbound key ~S in environment: ~S"
 		       key env))))
 
-(define-macro (environment-ref env key)
+(tm-define-macro (environment-ref env key)
   `(environment-ref* ,env (quote ,key)))
 
 (define (environment-binding env key)
@@ -78,7 +74,7 @@
       (environment-set!* env (first binding) (car (second binding)))
       (environment-remove! env (first binding))))
 
-(define (with-environment* env bindings proc)
+(tm-define (with-environment* env bindings proc)
   (let ((saves '()) (result #f))
     (for-each (lambda (b)
 		(set-cons! saves (environment-binding env (first b)))
@@ -90,7 +86,7 @@
 	      saves)
     result))
 
-(define-macro (with-environment env bindings . body)
+(tm-define-macro (with-environment env bindings . body)
   (if (nlist? bindings)
       (syntax-error "with-environment" "Bindings are not a list: ~A" bindings))
   `(with-environment* ,env
@@ -110,20 +106,20 @@
 ;; Currently, the xpath environment only stores the parent node.
 ;; Eventually, it should store an inverse list of ancestor nodes.
 
-(define (initialize-xpath env root proc)
+(tm-define (initialize-xpath env root proc)
   (with-environment* env `((xpath:root ,root)
 			   (xpath:parent #f)
 			   (xpath:current ,root))
     proc))
 
-(define (xpath-descend env child proc)
+(tm-define (xpath-descend env child proc)
   (with-environment* env `((xpath:parent ,(xpath-current env))
 			   (xpath:current ,child))
     proc))
 
-(define (xpath-root env)
+(tm-define (xpath-root env)
   (environment-ref env xpath:root))
-(define (xpath-parent env)
+(tm-define (xpath-parent env)
   (environment-ref env xpath:parent))
-(define (xpath-current env)
+(tm-define (xpath-current env)
   (environment-ref env xpath:current))

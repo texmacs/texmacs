@@ -12,12 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools output)
-  (:export
-    output-indent
-    output-test-end? output-remove output-flush
-    output-verb output-lf-verbatim output-verbatim output-lf output-text
-    output-produce))
+(texmacs-module (convert tools output))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables
@@ -35,7 +30,7 @@
 ;; The output machinery
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (output-produce)
+(tm-define (output-produce)
   (output-flush)
   (let ((r (apply string-append (reverse output-accu))))
     (set! output-accu '())
@@ -47,7 +42,7 @@
     (set! output-tail "")
     r))
 
-(define (output-indent plus)
+(tm-define (output-indent plus)
   (output-flush)
   (set! output-indentation (max 0 (min 40 (+ output-indentation plus)))))
 
@@ -94,16 +89,16 @@
 ;; Low level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (output-test-end? s)
+(tm-define (output-test-end? s)
   ; to be used with extreme care
   (string-ends? output-tail s))
 
-(define (output-remove n)
+(tm-define (output-remove n)
   ; to be used with extreme care
   (let ((k (string-length output-tail)))
     (if (>= k n) (set! output-tail (substring output-tail 0 (- k n))))))
 
-(define (output-flush)
+(tm-define (output-flush)
   (output-prepared output-tail)
   (set! output-tail ""))
 
@@ -111,30 +106,30 @@
 ;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (output-verb . ss)
+(tm-define (output-verb . ss)
   ;(display-err* "Output verb " ss "\n")
   (if (!= output-tail "") (output-flush))
   (output-prepared (apply string-append ss)))
 
-(define (output-lf-verbatim . ss)
+(tm-define (output-lf-verbatim . ss)
   ;(display-err* "Output lf verbatim " ss "\n")
   (output-flush)
   (if (not output-start-flag) (output-raw "\n"))
   (output-raw (apply string-append ss))
   (set! output-break-flag #f))
 
-(define (output-verbatim . ss)
+(tm-define (output-verbatim . ss)
   ;(display-err* "Output verbatim " ss "\n")
   (output-flush)
   (output-raw (apply string-append ss))
   (set! output-break-flag #f))
 
-(define (output-lf)
+(tm-define (output-lf)
   ;(display-err* "Output lf\n")
   (if (!= output-tail "") (output-flush))
   (output-return))
 
-(define (output-text . ss)
+(tm-define (output-text . ss)
   ;(display-err* "Output text " ss "\n")
   (let ((s (apply string-append (cons output-tail ss))))
     (output-sub s 0 (string-length s))))
