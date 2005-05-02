@@ -12,10 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs tools tm-select)
-  (:export
-    clipboard-copy-export clipboard-cut-export clipboard-paste-import
-    kbd-select-enlarge kbd-select-environment))
+(texmacs-module (texmacs tools tm-select))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checkmarks for the current import/export formats
@@ -37,19 +34,19 @@
 ;; Exporting and importing selections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (clipboard-copy-export format which)
+(tm-define (clipboard-copy-export format which)
   (let ((temp (clipboard-get-export)))
     (clipboard-set-export format)
     (clipboard-copy which)
     (clipboard-set-export temp)))
 
-(define (clipboard-cut-export format which)
+(tm-define (clipboard-cut-export format which)
   (let ((temp (clipboard-get-export)))
     (clipboard-set-export format)
     (clipboard-cut which)
     (clipboard-set-export temp)))
 
-(define (clipboard-paste-import format which)
+(tm-define (clipboard-paste-import format which)
   (let ((temp (clipboard-get-import)))
     (clipboard-set-import format)
     (clipboard-paste which)
@@ -59,7 +56,7 @@
 ;; Structured selections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (kbd-select-enlarge)
+(tm-define (kbd-select-enlarge)
   (if (selection-active-enlarging?)
       (select-enlarge)
       (begin
@@ -67,7 +64,7 @@
 	(selection-set-start)
 	(select-from-keyboard #t))))
 
-(define (kbd-select-environment)
+(tm-define (kbd-select-environment)
   (if (selection-active-enlarging?)
       (select-enlarge-environmental)
       (begin

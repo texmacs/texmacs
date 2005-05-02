@@ -12,14 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs plugin plugin-cmd)
-  (:export plugin-async-start plugin-async-feed plugin-async-retrieve
-	   mutate-plugin-result
-           pre-serialize verbatim-serialize generic-serialize plugin-serialize
-	   plugin-serializer-set! format-command plugin-commander-set!
-	   plugin-eval
-	   plugin-supports-completions-set! plugin-supports-completions?
-	   plugin-supports-input-done-set! plugin-supports-input-done?))
+(texmacs-module (texmacs plugin plugin-cmd))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; asynchronous evaluation of expressions and memorizing results
@@ -44,7 +37,7 @@
     (ahash-set! plugin-current (list name session channel) handle)
     handle))
 
-(define (plugin-async-start name session)
+(tm-define (plugin-async-start name session)
   "Start an asynchronous connection"
   (if (connection-declared? name)
       (with status (connection-status name session)
@@ -58,7 +51,7 @@
 	      (else (string-append "error: " name "#is busy"))))
       (string-append "error: plug-in '" name "' not declared")))
 
-(define (plugin-async-feed name session t)
+(tm-define (plugin-async-feed name session t)
   "Evaluate tree @t for plug-in @name and return unique handle or error"
   (with status (connection-status name session)
     (cond ((in? status '(3 1)) (string-append "error: " name "#is busy"))
@@ -95,7 +88,7 @@
 		(plugin-result-set! handle doc2)
 		(plugin-result-set! handle (tree-append doc1 doc2))))))))
 
-(define (plugin-async-retrieve handle)
+(tm-define (plugin-async-retrieve handle)
   "Obtain current result of evaluation in @handle"
   (with source (ahash-ref plugin-source handle)
     (if (== (ahash-ref plugin-current source) handle)
@@ -125,30 +118,30 @@
 
 (define plugin-serializer (make-ahash-table))
 
-(define (pre-serialize lan t)
+(tm-define (pre-serialize lan t)
   (cond ((func? t 'document 1) (pre-serialize lan (cadr t)))
 	((func? t 'math 1)
 	 (pre-serialize lan (plugin-math-input (list 'tuple lan (cadr t)))))
 	(else t)))
 
-(define (verbatim-serialize lan t)
+(tm-define (verbatim-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append
      (escape-verbatim (texmacs->verbatim (stree->tree u))) "\n")))
 
-(define (generic-serialize lan t)
+(tm-define (generic-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append (char->string #\002) "verbatim:"
 		   (escape-generic (texmacs->verbatim (stree->tree u)))
 		   (char->string #\005))))
 
-(define (plugin-serialize lan t)
+(tm-define (plugin-serialize lan t)
   (with fun (ahash-ref plugin-serializer lan)
     (if fun
 	(fun lan t)
 	(verbatim-serialize lan t))))
 
-(define (plugin-serializer-set! lan val)
+(tm-define (plugin-serializer-set! lan val)
   (ahash-set! plugin-serializer lan val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -160,13 +153,13 @@
 (define (default-format-command s)
   (string-append (char->string #\020) s "\n"))
 
-(define (format-command lan s)
+(tm-define (format-command lan s)
   (with fun (ahash-ref plugin-commander lan)
     (if fun
 	(fun s)
 	(default-format-command s))))
 
-(define (plugin-commander-set! lan val)
+(tm-define (plugin-commander-set! lan val)
   (ahash-set! plugin-commander lan val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -178,7 +171,7 @@
 	((func? t 'with) (rcons (cDr t) (plugin-output-simplify (cAr t))))
 	(else t)))
 
-(define (plugin-eval name session t)
+(tm-define (plugin-eval name session t)
   (let* ((u (connection-eval name session (stree->tree t)))
 	 (v (plugin-output-simplify (tree->stree u))))
     v))
@@ -189,10 +182,10 @@
 
 (define plugin-supports-completions (make-ahash-table))
 
-(define (plugin-supports-completions-set! key)
+(tm-define (plugin-supports-completions-set! key)
   (ahash-set! plugin-supports-completions key #t))
 
-(define (plugin-supports-completions? key)
+(tm-define (plugin-supports-completions? key)
   (ahash-ref plugin-supports-completions key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,8 +194,8 @@
 
 (define plugin-supports-input-done (make-ahash-table))
 
-(define (plugin-supports-input-done-set! key)
+(tm-define (plugin-supports-input-done-set! key)
   (ahash-set! plugin-supports-input-done key #t))
 
-(define (plugin-supports-input-done? key)
+(tm-define (plugin-supports-input-done? key)
   (ahash-ref plugin-supports-input-done key))

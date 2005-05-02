@@ -12,9 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs plugin plugin-convert)
-  (:export plugin-input plugin-input-converters lazy-input-converter
-	   plugin-supports-math-input-ref plugin-math-input))
+(texmacs-module (texmacs plugin plugin-convert))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main conversion routines
@@ -27,7 +25,7 @@
   (write (with-output-to-string plugin-input-caller))
   (display "\n"))
 
-(define (plugin-math-input l)
+(tm-define (plugin-math-input l)
   (set! current-plugin-input-stree (caddr l))
   (set! plugin-input-current-plugin (cadr l))
   (with-output-to-string plugin-input-caller))
@@ -35,7 +33,7 @@
 (define (plugin-input-caller)
   (plugin-input current-plugin-input-stree))
 
-(define (plugin-input t)
+(tm-define (plugin-input t)
   (if (string? t)
       (plugin-input-tmtokens (string->tmtokens t 0 (string-length t)))
       (let* ((f (car t)) (args (cdr t)) (im (plugin-input-ref f)))
@@ -237,7 +235,7 @@
 
 (define lazy-input-converter-table (make-ahash-table))
 
-(define-macro (lazy-input-converter module plugin)
+(tm-define-macro (lazy-input-converter module plugin)
   (lazy-input-converter-force plugin)
   (ahash-set! lazy-input-converter-table plugin module)
   '(noop))
@@ -264,7 +262,7 @@
 	      (list (list 'plugin-input-converter% (list name key) im)))
 	    (plugin-input-converters-rules name (cdr l)))))
 
-(define-macro (plugin-input-converters name2 . l)
+(tm-define-macro (plugin-input-converters name2 . l)
   (let ((name (if (string? name2) name2 (symbol->string name2))))
     (lazy-input-converter-force name)
     (drd-group plugin-input-converters% ,name)
@@ -276,7 +274,7 @@
 		     (list plugin-input-current-plugin key))))
     (if im im (drd-ref plugin-input-converter% (list "generic" key)))))
 
-(define (plugin-supports-math-input-ref key)
+(tm-define (plugin-supports-math-input-ref key)
   (lazy-input-converter-force key)
   (drd-in? key plugin-input-converters%))
 

@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs edit edit-session)
-  (:export
-    toggle-session-math-input
-    session-multiline-input? toggle-session-multiline-input
-    session-return session-shift-return))
+(texmacs-module (texmacs edit edit-session))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switches
@@ -28,7 +24,9 @@
   (session-use-math-input (not (session-math-input?))))
 
 (define session-multiline-input #f)
-(define (session-multiline-input?) session-multiline-input)
+
+(tm-define (session-multiline-input?)
+  session-multiline-input)
 
 (tm-define (toggle-session-multiline-input)
   (:synopsis "Toggle multi-line input in sessions.")

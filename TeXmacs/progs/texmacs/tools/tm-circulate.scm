@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs tools tm-circulate)
-  (:export set-structured-variants variant-replace variant-circulate))
+(texmacs-module (texmacs tools tm-circulate))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting new structured variants
@@ -35,17 +34,16 @@
 (define (set-structured-variant l)
   (set-structured-variant-sub (rcons (cons (cAr l) l) (car l))))
 
-(define-macro set-structured-variants
-  (lambda l
-    (map-in-order set-structured-variant l)
-    (display* ""); prevents strange error
-    ))
+(tm-define-macro (set-structured-variants . l)
+  (map-in-order set-structured-variant l)
+  (display* ""); prevents strange error
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actions on structured variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (variant-replace which by)
+(tm-define (variant-replace which by)
   (let* ((p (search-upwards which))
 	 (t (tm-subtree p)))
     (if (= (tree-arity t) 1)
@@ -53,7 +51,7 @@
 	  (tm-ins-unary p (string->symbol by))
 	  (tm-rem-unary (rcons p 0))))))
 
-(define (variant-circulate forward?)
+(tm-define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))
     (if (!= which "")
 	(let* ((val (ahash-ref structured-variants-table which))

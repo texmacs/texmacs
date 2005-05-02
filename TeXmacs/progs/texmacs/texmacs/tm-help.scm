@@ -13,10 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-help)
-  (:use (texmacs texmacs tm-files))
-  (:export
-    url-exists-in-help? load-help-online update-help-online
-    load-help-buffer load-help-article load-help-book))
+  (:use (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading help buffers
@@ -25,7 +22,7 @@
 (define help-file-path
   "$TEXMACS_DOC_PATH:$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc")
 
-(define (url-exists-in-help? s)
+(tm-define (url-exists-in-help? s)
   (url-exists? (url help-file-path s)))
 
 (define (url-resolve-help s)
@@ -70,12 +67,12 @@
 	      ((== type "article") (tmdoc-expand-help name 'tmdoc-title))
 	      ((== type "book") (tmdoc-expand-help-manual name))))))
 
-(define (load-help-buffer s) (load-help-buffer-sub s "normal"))
-(define (load-help-article s) (load-help-buffer-sub s "article"))
-(define (load-help-book s) (load-help-buffer-sub s "book"))
+(tm-define (load-help-buffer s) (load-help-buffer-sub s "normal"))
+(tm-define (load-help-article s) (load-help-buffer-sub s "article"))
+(tm-define (load-help-book s) (load-help-buffer-sub s "book"))
 
-(define (load-help-online s)
+(tm-define (load-help-online s)
   (load-help-buffer (url-append "http://www.texmacs.org/tmbrowse" s)))
 
-(define (update-help-online)
+(tm-define (update-help-online)
   (system "cd $TEXMACS_HOME_PATH; wget ftp://ftp.texmacs.org/pub/TeXmacs/doc/TeXmacs-doc.tar.gz -O TeXmacs-doc.tar.gz; gunzip TeXmacs-doc.tar.gz; tar -xvf TeXmacs-doc.tar; rm -f TeXmacs-doc.tar"))

@@ -13,14 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-server)
-  (:use (texmacs texmacs tm-document))
-  (:export
-    conditional-kill-buffer safely-kill-buffer safely-kill-window
-    conditional-quit-TeXmacs safely-quit-TeXmacs))
+  (:use (texmacs texmacs tm-document)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-default-look-and-feel)
+  (if (os-win32?) "windows" "emacs"))
 
 (define (notify-look-and-feel var val)
   (if preferences-initialization-flag
@@ -48,7 +48,7 @@
 
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
-  ("look and feel" "emacs" notify-look-and-feel)
+  ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
   ("language" (get-locale-language) notify-language)
   ("security" "prompt on scripts" notify-security)
   ("autosave" "120" notify-autosave)
@@ -58,23 +58,23 @@
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-kill-buffer confirm)
+(tm-define (conditional-kill-buffer confirm)
   (if (yes? confirm) (kill-buffer)))
 
-(define (safely-kill-buffer)
+(tm-define (safely-kill-buffer)
   (if (buffer-unsaved?)
       (interactive
        '("The buffer has not been saved. Really close it?")
        'conditional-kill-buffer)
       (kill-buffer)))
 
-(define (safely-kill-window)
+(tm-define (safely-kill-window)
   (if (<= (get-nr-windows) 1) (safely-quit-TeXmacs) (kill-window)))
 
-(define (conditional-quit-TeXmacs confirm)
+(tm-define (conditional-quit-TeXmacs confirm)
   (if (yes? confirm) (quit-TeXmacs)))
 
-(define (safely-quit-TeXmacs)
+(tm-define (safely-quit-TeXmacs)
   (if (exists-unsaved-buffer?)
       (interactive
        '("There are unsaved files. Really quit?")

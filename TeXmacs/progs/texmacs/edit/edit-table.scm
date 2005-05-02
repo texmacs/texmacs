@@ -15,48 +15,22 @@
 (texmacs-module (texmacs edit edit-table)
   (:use (texmacs tools tm-circulate)))
 
-(export ;; interactive table commands
-        table-set-width-ia table-use-paragraph-width table-set-height-ia
-	table-set-padding-ia table-set-lpadding-ia table-set-rpadding-ia
-	table-set-bpadding-ia table-set-tpadding-ia table-set-border-ia
-	table-set-lborder-ia table-set-rborder-ia table-set-bborder-ia
-	table-set-tborder-ia table-set-row-origin-ia table-set-column-origin-ia
-	table-set-min-rows-ia table-set-max-rows-ia
-	table-set-min-columns-ia table-set-max-columns-ia
-	;; table actions
-	table-set-halign table-set-valign toggle-table-hyphen
-	;; interactive cell commands
-	cell-set-width-ia cell-set-height-ia cell-set-hpart-ia
-	cell-set-vpart-ia cell-set-padding-ia cell-set-lpadding-ia
-	cell-set-rpadding-ia cell-set-bpadding-ia cell-set-tpadding-ia
-	cell-set-border-ia cell-set-lborder-ia cell-set-rborder-ia
-	cell-set-bborder-ia cell-set-tborder-ia cell-set-span-ia
-	;; cell actions
-	cell-set-halign cell-set-valign cell-set-hmode cell-set-vmode
-	cell-set-background cell-set-vcorrect cell-set-hyphen
-	cell-toggle-multi-paragraph cell-halign-left cell-halign-right
-	cell-valign-down cell-valign-up
-	;; other table commands
-	table-inside?
-	table-equation-numbered? table-number-equation
-	table-nonumber-equation table-toggle-number-equation)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (table-set-width-ia)
+(tm-define (table-set-width-ia)
   (interactive '("Table width:")
 	       '(lambda (s) (table-set-format "table-width" s))))
 
-(define (table-use-paragraph-width)
+(tm-define (table-use-paragraph-width)
   (table-set-format "table-width" "1par"))
 
-(define (table-set-height-ia)
+(tm-define (table-set-height-ia)
   (interactive '("Table height:")
 	       '(lambda (s) (table-set-format "table-height" s))))
 
-(define (table-set-padding-ia)
+(tm-define (table-set-padding-ia)
   (interactive '("Padding:")
 	       '(lambda (s)
 		  (table-set-format "table-lsep" s)
@@ -64,23 +38,23 @@
 		  (table-set-format "table-bsep" s)
 		  (table-set-format "table-tsep" s))))
 
-(define (table-set-lpadding-ia)
+(tm-define (table-set-lpadding-ia)
   (interactive '("Left padding:")
 	       '(lambda (s) (table-set-format "table-lsep" s))))
 
-(define (table-set-rpadding-ia)
+(tm-define (table-set-rpadding-ia)
   (interactive '("Right padding:")
 	       '(lambda (s) (table-set-format "table-rsep" s))))
 
-(define (table-set-bpadding-ia)
+(tm-define (table-set-bpadding-ia)
   (interactive '("Bottom padding:")
 	       '(lambda (s) (table-set-format "table-bsep" s))))
 
-(define (table-set-tpadding-ia)
+(tm-define (table-set-tpadding-ia)
   (interactive '("Top padding:")
 	       '(lambda (s) (table-set-format "table-tsep" s))))
 
-(define (table-set-border-ia)
+(tm-define (table-set-border-ia)
   (interactive '("Border width:")
 	       '(lambda (s)
 		  (table-set-format "table-lborder" s)
@@ -88,43 +62,43 @@
 		  (table-set-format "table-bborder" s)
 		  (table-set-format "table-tborder" s))))
 
-(define (table-set-lborder-ia)
+(tm-define (table-set-lborder-ia)
   (interactive '("Left border width:")
 	       '(lambda (s) (table-set-format "table-lborder" s))))
 
-(define (table-set-rborder-ia)
+(tm-define (table-set-rborder-ia)
   (interactive '("Right border width:")
 	       '(lambda (s) (table-set-format "table-rborder" s))))
 
-(define (table-set-bborder-ia)
+(tm-define (table-set-bborder-ia)
   (interactive '("Bottom border width:")
 	       '(lambda (s) (table-set-format "table-bborder" s))))
 
-(define (table-set-tborder-ia)
+(tm-define (table-set-tborder-ia)
   (interactive '("Top border width:")
 	       '(lambda (s) (table-set-format "table-tborder" s))))
 
-(define (table-set-row-origin-ia)
+(tm-define (table-set-row-origin-ia)
   (interactive '("Origin row:")
 	       '(lambda (s) (table-set-format "table-row-origin" s))))
 
-(define (table-set-column-origin-ia)
+(tm-define (table-set-column-origin-ia)
   (interactive '("Origin column:")
 	       '(lambda (s) (table-set-format "table-col-origin" s))))
 
-(define (table-set-min-rows-ia)
+(tm-define (table-set-min-rows-ia)
   (interactive '("Minimal number of rows:")
 	       '(lambda (s) (table-set-format "table-min-rows" s))))
 
-(define (table-set-max-rows-ia)
+(tm-define (table-set-max-rows-ia)
   (interactive '("Maximal number of rows:")
 	       '(lambda (s) (table-set-format "table-max-rows" s))))
 
-(define (table-set-min-columns-ia)
+(tm-define (table-set-min-columns-ia)
   (interactive '("Minimal number of columns:")
 	       '(lambda (s) (table-set-format "table-min-cols" s))))
 
-(define (table-set-max-columns-ia)
+(tm-define (table-set-max-columns-ia)
   (interactive '("Maximal number of columns:")
 	       '(lambda (s) (table-set-format "table-max-cols" s))))
 
@@ -158,19 +132,19 @@
 (tm-property (set-cell-mode s)
   (:check-mark "*" test-cell-mode?))
 
-(define (cell-set-width-ia)
+(tm-define (cell-set-width-ia)
   (interactive '("Cell width:")
 	       '(lambda (s) (cell-set-format "cell-width" s))))
 
-(define (cell-set-height-ia)
+(tm-define (cell-set-height-ia)
   (interactive '("Cell height:")
 	       '(lambda (s) (cell-set-format "cell-height" s))))
 
-(define (cell-set-hpart-ia)
+(tm-define (cell-set-hpart-ia)
   (interactive '("Part in unused horizontal space:")
 	       '(lambda (s) (cell-set-format "cell-hpart" s))))
 
-(define (cell-set-vpart-ia)
+(tm-define (cell-set-vpart-ia)
   (interactive '("Part in unused vertical space:")
 	       '(lambda (s) (cell-set-format "cell-vpart" s))))
 
@@ -188,50 +162,50 @@
        (tm-position-delete sp)
        (tm-position-delete ep))))
 
-(define (cell-set-padding-ia)
+(tm-define (cell-set-padding-ia)
   (interactive '("Padding:")
 	       (make-set-cell-multiple-formats
 		'("cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep"))))
 
-(define (cell-set-lpadding-ia)
+(tm-define (cell-set-lpadding-ia)
   (interactive '("Left padding:")
 	       '(lambda (s) (cell-set-format "cell-lsep" s))))
 
-(define (cell-set-rpadding-ia)
+(tm-define (cell-set-rpadding-ia)
   (interactive '("Right padding:")
 	       '(lambda (s) (cell-set-format "cell-rsep" s))))
 
-(define (cell-set-bpadding-ia)
+(tm-define (cell-set-bpadding-ia)
   (interactive '("Bottom padding:")
 	       '(lambda (s) (cell-set-format "cell-bsep" s))))
 
-(define (cell-set-tpadding-ia)
+(tm-define (cell-set-tpadding-ia)
   (interactive '("Top padding:")
 	       '(lambda (s) (cell-set-format "cell-tsep" s))))
 
-(define (cell-set-border-ia)
+(tm-define (cell-set-border-ia)
   (interactive '("Border width:")
 	       (make-set-cell-multiple-formats
 		'("cell-lborder" "cell-rborder"
 		  "cell-bborder" "cell-tborder"))))
 
-(define (cell-set-lborder-ia)
+(tm-define (cell-set-lborder-ia)
   (interactive '("Left border width:")
 	       '(lambda (s) (cell-set-format "cell-lborder" s))))
 
-(define (cell-set-rborder-ia)
+(tm-define (cell-set-rborder-ia)
   (interactive '("Right border width:")
 	       '(lambda (s) (cell-set-format "cell-rborder" s))))
 
-(define (cell-set-bborder-ia)
+(tm-define (cell-set-bborder-ia)
   (interactive '("Bottom border width:")
 	       '(lambda (s) (cell-set-format "cell-bborder" s))))
 
-(define (cell-set-tborder-ia)
+(tm-define (cell-set-tborder-ia)
   (interactive '("Top border width:")
 	       '(lambda (s) (cell-set-format "cell-tborder" s))))
 
-(define (cell-set-span-ia)
+(tm-define (cell-set-span-ia)
   (interactive '("Row span:" "Column span: ")
 	       '(lambda (rs cs)
 		  (let ((sp (tm-position-new))
@@ -299,21 +273,21 @@
   (:check-mark "v" cell-multi-paragraph?)
   (cell-multi-paragraph (not (cell-multi-paragraph?))))
 
-(define (cell-halign-left)
+(tm-define (cell-halign-left)
   (let* ((var "cell-halign")
 	 (old (cell-get-format var)))
     (cond
      ((== old "r") (cell-set-format var "c"))
      (else (cell-set-format var "l")))))
 
-(define (cell-halign-right)
+(tm-define (cell-halign-right)
   (let* ((var "cell-halign")
 	 (old (cell-get-format var)))
     (cond
      ((== old "l") (cell-set-format var "c"))
      (else (cell-set-format var "r")))))
 
-(define (cell-valign-down)
+(tm-define (cell-valign-down)
   (let* ((var "cell-valign")
 	 (old (cell-get-format var)))
     (cond
@@ -321,7 +295,7 @@
      ((== old "t") (cell-set-format var "c"))
      (else (cell-set-format var "b")))))
 
-(define (cell-valign-up)
+(tm-define (cell-valign-up)
   (let* ((var "cell-valign")
 	 (old (cell-get-format var)))
     (cond
@@ -350,10 +324,10 @@
 	 (q   (tree-search-subtree st (stree->tree '(eq-number)))))
     (if q (append p q) #f)))
 
-(define (table-equation-numbered?)
+(tm-define (table-equation-numbered?)
   (if (table-search-number-equation) #t #f))
 
-(define (table-number-equation)
+(tm-define (table-number-equation)
   (let* ((row (table-which-row))
 	 (p   (table-search-cell row -1))
 	 (end (tm-end p)))
@@ -361,7 +335,7 @@
     (tm-go-to end)
     (insert '(eq-number))))
 
-(define (table-nonumber-equation)
+(tm-define (table-nonumber-equation)
   (let ((p (table-search-number-equation)))
     (if p (clipboard-cut-at p))))
 
@@ -372,14 +346,14 @@
 	       (== (tree-get-label (tm-subtree q)) 'document))
 	   (table-inside-sub? p (cDr q)))))
 
-(define (table-inside? which)
+(tm-define (table-inside? which)
   (if (and (inside? "table") (inside? which))
       (let ((p (search-upwards which))
 	    (q (search-upwards "table")))
 	(table-inside-sub? p (cDr q)))
       #f))
 
-(define (table-toggle-number-equation)
+(tm-define (table-toggle-number-equation)
   (cond ((inside? "equation") (variant-replace "equation" "equation*"))
 	((inside? "equation*") (variant-replace "equation*" "equation"))
 	(else (if (or (table-inside? "eqnarray") (table-inside? "eqnarray*"))

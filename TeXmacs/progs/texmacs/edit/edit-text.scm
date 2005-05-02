@@ -13,29 +13,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs edit edit-text)
-  (:use (texmacs tools tm-circulate))
-  (:export
-    ;; titles
-    go-end-of-header-element make-header
-    ;; sections
-    inside-section? make-section make-unnamed-section toggle-section-number
-    ;; lists
-    inside-list? inside-description? make-tmlist make-item
-    ;; auxiliary
-    make-aux make-aux* make-bib))
+  (:use (texmacs tools tm-circulate)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Making titles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (go-end-of-header-element)
+(tm-define (go-end-of-header-element)
   (if (inside? "address") (go-end-of "address"))
   (if (inside? "destination") (go-end-of "destination"))
   (if (inside? "cc") (go-end-of "cc"))
   (if (inside? "encl") (go-end-of "encl"))
   (go-end-line))
 
-(define (make-header l)
+(tm-define (make-header l)
   (go-end-of-header-element)
   (if (!= (tree->stree (the-line)) "") (insert-return))
   (make l))
@@ -44,7 +35,7 @@
 ;; Sectional commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (inside-section?)
+(tm-define (inside-section?)
   (or (inside? "part")
       (inside? "part*")
       (inside? "chapter")
@@ -61,11 +52,11 @@
       (inside? "subparagraph")
       (inside? "subparagraph*")))
 
-(define (make-section l)
+(tm-define (make-section l)
   (if (not (make-return-after))
       (make l)))
 
-(define (make-unnamed-section l)
+(tm-define (make-unnamed-section l)
   (if (not (make-return-after))
       (make l)
       (make-return-before)))
@@ -75,7 +66,7 @@
     (cond ((inside? s) (variant-replace s s*))
 	  ((inside? s*) (variant-replace s* s)))))
 
-(define (toggle-section-number)
+(tm-define (toggle-section-number)
   (for-each
    toggle-number-sub
    '("part" "chapter" "section" "subsection" "subsubsection"
@@ -100,17 +91,17 @@
   '("description" "description-compact" "description-aligned"
     "description-dash" "description-long"))
 
-(define (inside-list?)
+(tm-define (inside-list?)
   (!= (inside-which list-itemize-enumerate) ""))
 
-(define (inside-description?)
+(tm-define (inside-description?)
   (!= (inside-which list-description) ""))
 
-(define (make-tmlist l)
+(tm-define (make-tmlist l)
   (make l)
   (make-item))
 
-(define (make-item)
+(tm-define (make-item)
   (if (not (make-return-after))
       (with l (inside-which (append list-itemize-enumerate list-description))
 	(cond ((in? l list-itemize-enumerate) (make 'item))
@@ -120,14 +111,14 @@
 ;; Routines for inserting miscellaneous content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-aux env aux)
+(tm-define (make-aux env aux)
   (if (not (make-return-after))
       (insert (list (string->symbol env) aux '(document "")))))
 
-(define (make-aux* env aux name)
+(tm-define (make-aux* env aux name)
   (if (not (make-return-after))
       (insert (list (string->symbol env) aux name '(document "")))))
 
-(define (make-bib style file-name)
+(tm-define (make-bib style file-name)
   (if (not (make-return-after))
       (insert (list 'bibliography "bib" style file-name '(document "")))))

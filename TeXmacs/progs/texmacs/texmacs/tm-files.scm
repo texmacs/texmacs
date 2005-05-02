@@ -13,21 +13,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-files)
-  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print))
-  (:export
-    ;; general purpose loading and saving
-    save-buffer export-buffer load-buffer
-    conditional-save-buffer conditional-load-buffer ;; due to interactive
-    conditional-recover-autosave ;; due to interactive
-    ;; shortcuts for special formats or extra actions
-    buffer-loader buffer-saver
-    load-in-new-window load-browse-buffer))
+  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-save-buffer file* fm confirm)
+(tm-define (conditional-save-buffer file* fm confirm)
   (with file (url-system file*)
     (if (yes? confirm) (texmacs-save-buffer file fm))))
 
@@ -41,7 +33,7 @@
 			(conditional-save-buffer ,file* ,fm confirm)))
 	(texmacs-save-buffer file fm))))
 
-(define (save-buffer . l)
+(tm-define (save-buffer . l)
   (cond ((= (length l) 0)
 	 (if (no-name?)
 	     (interactive '("Save as:") 'save-buffer)
@@ -49,7 +41,7 @@
 	((= (length l) 1) (secure-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
-(define (export-buffer to)
+(tm-define (export-buffer to)
   ;; Temporary fix for saving to postscript or pdf
   (if (in? (url-suffix to) '("ps" "pdf"))
       (print-to-file to)
@@ -59,7 +51,7 @@
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-load-buffer file* fm where confirm)
+(tm-define (conditional-load-buffer file* fm where confirm)
   (with file (url-system file*)
     (if (yes? confirm)
         (texmacs-load-buffer (url-glue file "~") fm where #t)
@@ -80,7 +72,7 @@
 	    (conditional-load-buffer ,file* ,fm ,where confirm)))
 	(texmacs-load-buffer file fm where #f))))
 
-(define (load-buffer . l)
+(tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
     (cond ((= (length l) 1)
 	   (load-buffer-sub file "generic" 0))
@@ -94,7 +86,7 @@
 ;; Autosave
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-recover-autosave confirm)
+(tm-define (conditional-recover-autosave confirm)
   (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
     (if (yes? confirm)
 	(with t (texmacs-load-tree name "texmacs")
@@ -105,8 +97,8 @@
 ;; Shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
-(define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
-(define (load-in-new-window s) (load-buffer s 1))
-(define (load-browse-buffer s)
+(tm-define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
+(tm-define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
+(tm-define (load-in-new-window s) (load-buffer s 1))
+(tm-define (load-browse-buffer s)
   (if (help-buffer?) (load-buffer s "help") (load-buffer s)))
