@@ -19,18 +19,11 @@
 (texmacs-module (proclus-distill)
   (:use (proclus-lib) (proclus-list) (search-in-tree)
         (proclus-locus) (proclus-types) (proclus-absname)
-        (proclus-source))
-  (:export has-last-locus?
-           go-to-last-locus
-           has-source-link? ;; for menu in init-proclus??
-           go-to-source-link ;; for menu in init-proclus??
-           locus-action
-           proclus-links-action
-           remove-link
-           remove-link-type
-           edit-loci
-           edit-links))
-
+        (proclus-source)))
+(export
+  has-source-link? ;; for menu in init-proclus??
+  go-to-source-link ;; for menu in init-proclus??
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,14 +64,14 @@
 	(kill-buffer))
     (go-to-locus (locus-self-link t))))
 
-(define (remove-link)
+(tm-define (remove-link)
   (and-let* ((t (get-locus-or-not-locus))
 	     (s (get-source-link)))
     (remove-link-end s (locus-self-link t))
     (go-to-locus s)
     (edit-links)))
 
-(define (remove-link-type)
+(tm-define (remove-link-type)
   (and-let* ((t (get-locus-or-not-locus))
              (b (locus-self-link t))
              (s (get-source-link)))
@@ -93,7 +86,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (edit-loci)
+(tm-define (edit-loci)
   (let* ((src-absname (get-absolute-name))
 	 (src-buff (get-strg-name-buffer))
 	 (the-loci (extract locus? (tree->stree (the-buffer)))))
@@ -140,7 +133,7 @@
 ;; Links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (edit-links)
+(tm-define (edit-links)
   (register-buffer-absolute-name-maybe)
   (and-let* ((the-locus (get-locus-or-not-locus))
              (src-buff (get-strg-name-buffer))

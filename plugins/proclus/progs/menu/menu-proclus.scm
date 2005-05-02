@@ -18,10 +18,7 @@
 
 (texmacs-module (menu menu-proclus)
   (:use (proclus) (proclus-types) (proclus-absname)
-        (proclus-distill) (proclus-source) (proclus-absname-editor))
-  (:export menu-proclus
-           menu-proclus-links
-           proclus-popup-menu))
+        (proclus-distill) (proclus-source) (proclus-absname-editor)))
 
 (menu-bind menu-proclus-links
   (=> "Links"

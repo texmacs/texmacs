@@ -17,10 +17,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-absname-editor)
-  (:use (proclus-absname))
-  (:export absname-editor))
+  (:use (proclus-absname)))
 
-(define (absname-editor)
+(tm-define (absname-editor)
   (switch-to-active-buffer
    "$TEXMACS_HOME_PATH/system/tmp/Proclus - Noms absolus")
   (tm-assign (the-buffer-path) (absname-editor/cons))

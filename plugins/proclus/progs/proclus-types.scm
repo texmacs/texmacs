@@ -22,36 +22,19 @@
         (proclus-lib)
         (proclus-source)
 	(proclus-locus)
-	(ice-9 common-list)) ;; uniq et set-difference.
-  (:export type-menu-promise
-           toggle-active-type ;; FIXME: for ugly menu workaround
-
-           list-types
-           active-types
-
-	   import-types
-	   import-types/sub
-	   list-types-tmp
-	   new-types/sub
-	   new-types-rec
-	   delete-types/sub
-	   delete-types-rec
-
-           ask-types
-           ask-types-to-remove))
-
+	(ice-9 common-list))) ;; uniq et set-difference.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low-level access to type lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (list-types)
+(tm-define (list-types)
   (source-buffer-excursion
    (if (style-has? "proclus-type-list")
        (tuple->list (get-init-tree "proclus-type-list"))
        '())))
 
-(define (active-types)
+(tm-define (active-types)
   (source-buffer-excursion
    (if (style-has? "proclus-active-types")
        (tuple->list (get-init-tree "proclus-active-types"))
@@ -126,7 +109,7 @@
       (deactivate-type type)
       (activate-type type)))
 
-(define (type-menu-promise)
+(tm-define (type-menu-promise)
   ;; FIXME: texmacs dynamic menus are dead buggy. Joris assumed that macros
   ;; shall not be memoized and decided that all menu computation work should be
   ;; done in macros :-( Luckily, there _is_ a temporary workaround.
@@ -151,19 +134,19 @@
   (eval (cons 'quasiquote
               (list (menu-pre `(,type (toggle-active-type ,type)))))))
 
-(define (import-types)
+(tm-define (import-types)
   (let ((from (get-strg-name-buffer)))
     (choose-file "Importer les types" "texmacs"
                  `(lambda (x) (import-types/sub x ,from)))))
 
-(define (import-types/sub u from)
+(tm-define (import-types/sub u from)
   (switch-to-active-buffer u)
   (let ((imp-types (list-types)))
     (switch-to-active-buffer from)
     (merge-types imp-types)
     (merge-active-types imp-types)))
 
-(define list-types-tmp '())
+(tm-define list-types-tmp '())
 
 (define (new-types)
   (set! list-types-tmp '())
@@ -181,7 +164,7 @@
 			     (new-types/sub))))))
 
 ;;adds list-types-tmp to the list of types. New types are active.
-(define (new-types-rec)
+(tm-define (new-types-rec)
   (merge-types list-types-tmp)
   (merge-active-types list-types-tmp))
 
@@ -189,7 +172,7 @@
   (set! list-types-tmp '())
   (delete-types/sub))
 
-(define (delete-types/sub)
+(tm-define (delete-types/sub)
   (delete-types/sub2 "Supprimer le type :"))
 
 (define (delete-types/sub2 msg)
@@ -199,7 +182,7 @@
 		      (delete-types-rec)
 		      (begin (set-cons! list-types-tmp s)
 			     (delete-types/sub))))))
-(define (delete-types-rec)
+(tm-define (delete-types-rec)
   (define (f x) (not (in? x list-types-tmp)))
   (set-types (list-filter (list-types) f))
   (set-active-types (list-filter (list-active-types) f)))
@@ -208,7 +191,7 @@
 ;; Creating links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define ask-types
+(tm-define ask-types
   (case-lambda
     ((proc)
      (ask-types proc '() #f))
@@ -252,7 +235,7 @@
 ;; Removing link types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define ask-types-to-remove
+(tm-define ask-types-to-remove
   (case-lambda
     ((proc types) (ask-types-to-remove proc types #f))
     ((proc types error?)

@@ -2,11 +2,7 @@
 ;Env and tags to which this plug is applied need to be redefined in sat.ts
 
 (texmacs-module (satellite)
-  (:use (kernel library list))
-  (:export
-    back-to-me-in-source
-    create-satellite
-    create-file-with-env))
+  (:use (kernel library list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; Paths in trees (by David Allouche)
@@ -101,12 +97,14 @@
 ; or tags of listenv. If the  buffer doesn't exist, creates it,
 ; otherwise refreshs it.
 
-(define (create-file-with-env lenv) 
-    (let* (
-       (src-buff (get-strg-name-buffer))
-       (the-nw-buff (cons-file-name (get-strg-name-buffer) lenv))
-       (the-tree (stree->tree (cons 'document (sublist-listenv lenv (tree->stree (the-buffer))))))) 
-      (if (not (equal? (convert the-tree "texmacs-tree" "verbatim-snippet") ""))
+(tm-define (create-file-with-env lenv) 
+  (let* ((src-buff (get-strg-name-buffer))
+	 (the-nw-buff (cons-file-name (get-strg-name-buffer) lenv))
+	 (the-tree
+	  (stree->tree
+	   (cons 'document
+		 (sublist-listenv lenv (tree->stree (the-buffer))))))) 
+      (if (!= (convert the-tree "texmacs-tree" "verbatim-snippet") "")
 	  (begin     
 	    (switch-to-active-buffer the-nw-buff) ;"trick" to test if the buffer already exists... 
 ;Joris : il faudrait faire qch de mieux pour tester si une fenêtre existe déjà...
@@ -124,7 +122,7 @@
 
 (define list-env-satellite '())
 
-(define (create-satellite)
+(tm-define (create-satellite)
   (set! list-env-satellite '())
  (create-satellite/sub))
   

@@ -5,6 +5,8 @@
     (-> "Table"
 	("Contents"
 	 (create-file-with-env '(section subsection subsubsection)))
+	("Theorems"
+	 (create-file-with-env '(theorem lemma proposition corollary)))
 	("Remarks"
 	 (create-file-with-env '(remark note)))
 	---

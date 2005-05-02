@@ -16,18 +16,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (proclus-list)
-  (:export quadripartite
-           transform
-           extract
-           disjoint?
-           no-repetition-list
-           remove
-           last-four but-last-four
-           remove-n-last
-           ))
+(texmacs-module (proclus-list))
 
-(define (quadripartite l)
+(tm-define (quadripartite l)
   ;; (a b c d e fg h)->((a b c d) (e f g h ))
   ;; suppose que l a 3*n terms
   (if (pair? l)
@@ -35,7 +26,7 @@
 	     (quadripartite (cddddr l)))
       '()))
 
-(define (transform pred? transf l)
+(tm-define (transform pred? transf l)
   ;; Traverse @l recursively in preorder, when an object matches @pred?,
   ;; replace it by the value of (@transf l) and do not descend.
   ;;
@@ -50,7 +41,7 @@
 	l)))
 
 
-(define (extract pred? lst)
+(tm-define (extract pred? lst)
   ;; Traverse @lst recursively in preorder and return the list of all objects
   ;; matching @pred?.
   ;;
@@ -63,7 +54,7 @@
                 (sub (cdr lst)))
         '())))
 
-(define (disjoint? e1 e2)
+(tm-define (disjoint? e1 e2)
   (null? (intersection e1 e2)))
 
 (define (intersection  e1 e2)
@@ -73,20 +64,20 @@
 	(else (intersection (cdr e1) e2))))
 
 
-(define (remove term list)
+(tm-define (remove term list)
   (list-filter list (lambda (x) (not (equal? x term)))))
 
-(define (last-four l)
+(tm-define (last-four l)
   (list-n-last l 4))
 
 (define (list-n-last l n)
   ;; Last @n items of @l, or @l if length(@l)<@n.
   (if (< (length l) n) l (list-take-right l n)))
 
-(define (but-last-four l)
+(tm-define (but-last-four l)
   (remove-n-last l 4))
 
-(define (remove-n-last l n)
+(tm-define (remove-n-last l n)
   (if (< n (length l))
       (list-drop-right list n)
       '()))
@@ -97,6 +88,6 @@
       (list-drop list n)
       '()))
 
-(define (no-repetition-list list)
+(tm-define (no-repetition-list list)
 (if (null? list) '() (cons (car list) (remove (car list) (no-repetition-list (cdr list)))))
 ) 

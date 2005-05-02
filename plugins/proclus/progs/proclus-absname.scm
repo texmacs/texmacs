@@ -17,26 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-absname)
-  (:use (proclus-lib))
-  (:export
-    absolute-name-exists?
-    absolute-name-valid?
-
-    absname-choose-file/sub ;; FIXME: for choose-file
-
-    absolute-name->url
-    absolute-name-fold
-
-    has-absolute-name?
-    has-conflicting-absolute-name?
-    get-absolute-name
-    register-buffer-absolute-name-maybe
-
-    absolute-name-message
-    absolute-name-reregister-buffer
-    interactive-absolute-name
-    absname-choose-file))
-
+  (:use (proclus-lib)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Absolute names dictionnary
@@ -77,10 +58,10 @@
 
 ;; Public functions
 
-(define (absolute-name-exists? s)
+(tm-define (absolute-name-exists? s)
   (not (not (assoc s (get-absolute-names-alist)))))
 
-(define (absolute-name-valid? s)
+(tm-define (absolute-name-valid? s)
   (let ((buf (get-strg-name-buffer)))
     (dynamic-wind
         noop
@@ -92,14 +73,14 @@
                      ((has-valid-absolute-name?)))))
         (cut switch-to-active-buffer buf))))
 
-(define (absolute-name->url s)
+(tm-define (absolute-name->url s)
   (or (and-let* ((l (assoc s (get-absolute-names-alist))))
         (second l))
       (let ((msg "Absolute name unknown"))
         (set-message msg s)
         (texmacs-error 'absolute-name->url msg (list s)))))
 
-(define (absolute-name-fold kons knil)
+(tm-define (absolute-name-fold kons knil)
   (list-fold (lambda (kar kdr)
                (kons (first kar) (second kar) kdr))
              knil (get-absolute-names-alist)))
@@ -108,7 +89,7 @@
 ;; Absolute name of the current buffer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (has-absolute-name?)
+(tm-define (has-absolute-name?)
   ;; Has the current buffer been assigned an absolute name?
   (and (init-has? "absolute-name")
        (not (string-null? (get-init-env "absolute-name")))))
@@ -129,14 +110,14 @@
         (set-message msg buf)
         (texmacs-error where msg (list buf)))))
 
-(define (has-conflicting-absolute-name?)
+(tm-define (has-conflicting-absolute-name?)
   (and-let* (((has-absolute-name?))
              (absname (get-init-env "absolute-name"))
              ((absolute-name-exists? absname))
              ((!= (get-strg-name-buffer)
 		  (absolute-name->url absname))))))
 
-(define (absolute-name-reregister-buffer)
+(tm-define (absolute-name-reregister-buffer)
   (check-has-absolute-name 'absolute-name-moved)
   (check-has-file-name 'absolute-name-moved)
   (forget-absolute-name (get-absolute-name))
@@ -149,13 +130,13 @@
              ((== (get-strg-name-buffer)
                   (absolute-name->url absname))))))
 
-(define (get-absolute-name)
+(tm-define (get-absolute-name)
   ;; Intrinsic absname of the current buffer.
   (check-has-absolute-name 'get-absolute-name)
   (check-has-file-name 'get-absolute-name)
   (get-init-env "absolute-name"))
 
-(define (register-buffer-absolute-name-maybe)
+(tm-define (register-buffer-absolute-name-maybe)
   ;; Assume the current buffer has an absolute name.
   ;; If this name is not in the dictionnary, register it.
   ;; If this name is associated to a different url, error.
@@ -171,12 +152,12 @@
             (set-message msg absname)
             (texmacs-error self msg (list absname)))))))
 
-(define (absolute-name-message)
+(tm-define (absolute-name-message)
   (check-has-absolute-name 'absolute-name-message)
   (set-message (string-append "Nom absolu: " (get-absolute-name))
                (get-strg-name-buffer)))
 
-(define (interactive-absolute-name)
+(tm-define (interactive-absolute-name)
   (check-has-file-name 'interactive-absolute-name)
   (interactive '("Nom absolu:") interactive-absolute-name/callback))
 
@@ -186,12 +167,12 @@
       (begin (register-absolute-name s (get-strg-name-buffer))
              (init-env "absolute-name" s))))
 
-(define (absname-choose-file)
+(tm-define (absname-choose-file)
   (let ((from (get-strg-name-buffer)))
     (choose-file "Mémoriser le nom absolu de ce fichier" "texmacs"
                  `(lambda (x) (absname-choose-file/sub x ,from)))))
 
-(define (absname-choose-file/sub u from)
+(tm-define (absname-choose-file/sub u from)
   (switch-to-active-buffer u)
   (register-buffer-absolute-name-maybe)
   (switch-to-active-buffer from))

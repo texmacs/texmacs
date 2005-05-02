@@ -16,23 +16,18 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (proclus-lib)
-  (:export get-init-env
-           get-strg-name-buffer
-           tm-substree
-           save-excursion
-           list->tuple tuple->list))
+(texmacs-module (proclus-lib))
 
-(define (get-init-env s)
+(tm-define (get-init-env s)
   (tree->string (get-init-tree s)))
 
-(define (get-strg-name-buffer)
+(tm-define (get-strg-name-buffer)
   (url->string (get-name-buffer)))
 
-(define (tm-substree p)
+(tm-define (tm-substree p)
   (tree->stree (tm-subtree p)))
 
-(define-macro (save-excursion . body)
+(tm-define-macro (save-excursion . body)
   ;; TODO: save point and mark too, like emacs
   (let ((buf-sym (gensym)))
 
@@ -42,14 +37,14 @@
            (lambda () ,@body)
            (lambda () (switch-to-active-buffer ,buf-sym))))))
 
-(define (list->tuple l)
+(tm-define (list->tuple l)
   ;; Convert a nested scheme list into a stree.
   (let sub ((x l))
     (cond ((null? x) '(tuple))
           ((pair? x) (cons 'tuple (map sub x)))
           (else x))))
 
-(define (tuple->list x)
+(tm-define (tuple->list x)
   ;; Strip tree labels recursively from a compound stree or tree.
   (let sub ((x (if (pair? x) x (tree->stree x))))
     (if (not (pair? x)) x (map sub (cdr x)))))

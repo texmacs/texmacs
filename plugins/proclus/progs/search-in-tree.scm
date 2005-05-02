@@ -16,10 +16,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (search-in-tree)
-  (:export search-in-tree-from
-	   search-in-tree-previous
-           tree-iterate))
+(texmacs-module (search-in-tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -38,7 +35,7 @@
 ;; Search forward from a point
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (search-in-tree-from t path label proc)
+(tm-define (search-in-tree-from t path label proc)
   ;; Traverse the given tree  @t is preorder, starting at the given path.
   ;; If a subtree is found whose label matches @label, return (@proc pp tt)
   ;; where tt is is the matching subtree and pp its patch. If no match is
@@ -83,7 +80,7 @@
 ;; Search ...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tree-iterate t s proc)
+(tm-define (tree-iterate t s proc)
   ;; Traverse the tree in preorder until the current subtree label matches the
   ;; symbol @s, then return (proc t p), where t is the matching subtree and p
   ;; its patch. If no matching subtree is found, return #f.
@@ -100,7 +97,7 @@
   ;; Path of the first subtree (in preorder) of t whose label is s, or #f.
   (tree-iterate t s (lambda (t p) p)))
 
-(define (search-in-tree-previous p s)
+(tm-define (search-in-tree-previous p s)
   ;; Unclear... intent seems to be: return the path the last tree in the buffer
   ;; whose label is @s and which is before @p.
   (let sub ((pred (search-in-tree (the-buffer) s))

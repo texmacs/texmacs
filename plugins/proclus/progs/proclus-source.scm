@@ -32,38 +32,38 @@
 
 (define last-locus '())
 
-(define (has-last-locus?)
+(tm-define (has-last-locus?)
   (pair? last-locus))
 
-(define (set-last-locus! lnk)
+(tm-define (set-last-locus! lnk)
   (set! last-locus lnk))
 
-(define (go-to-last-locus)
+(tm-define (go-to-last-locus)
   (if (has-last-locus?)
    (go-to-locus last-locus)))
 
-(define (has-source-link?)
+(tm-define (has-source-link?)
   (and (init-has? "source-link")
        (== 'tuple (tree-get-label (get-init-tree "source-link")))))
 
-(define (set-source-link! link)
+(tm-define (set-source-link! link)
   (init-env-tree "source-link" (list->tuple link)))
 
-(define (get-source-link)
+(tm-define (get-source-link)
   (and (has-source-link?)
        (tuple->list (get-init-tree "source-link"))))
 
-(define (go-to-source-link)
+(tm-define (go-to-source-link)
   (if (has-source-link?)
       (let ((lnk (get-source-link)))
         (if (link-root? lnk)
             (go-to-locus-buffer lnk)
             (go-to-locus lnk)))))
 
-(define-macro (source-buffer-excursion . body)
+(tm-define-macro (source-buffer-excursion . body)
   `(source-buffer-excursion/sub (lambda () ,@body)))
 
-(define (source-buffer-excursion/sub thunk)
+(tm-define (source-buffer-excursion/sub thunk)
   (if (has-source-link?)
       (save-excursion
        (go-to-locus-buffer (get-source-link))

@@ -23,18 +23,13 @@
         (proclus-list)
         (proclus-types)
         (proclus-distill)
-        (proclus-source))
-  (:export locus
-           inactivate
-           active-source active-but
-	   has-active-source?
-           ))
+        (proclus-source)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Locus creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (locus)
+(tm-define (locus)
   (if (in-proclus-editable?)
       (begin
         (register-buffer-absolute-name-maybe)
@@ -56,15 +51,15 @@
 
 ;; Initialize the link creation state machine.
 ;; Use global variables for communication across documents.
-(define (inactivate)
+(tm-define (inactivate)
   (set! link-source '())
   (set! link-but '()))
 
-(define (has-active-source?)
+(tm-define (has-active-source?)
   (pair? link-source))
 
 ;; Designe la LOCUS comme la source du prochain lien à créer.
-(define (active-source)
+(tm-define (active-source)
   (if (and (in-proclus-editable?)
            (selection-active-any?))
       (locus))
@@ -76,7 +71,7 @@
         (set! link-source (locus-self-link t)))))
 
 ;; Idem, désigne une destination.
-(define (active-but)
+(tm-define (active-but)
   (if (and (in-proclus-editable?)
            (selection-active-any?))
       (locus))
