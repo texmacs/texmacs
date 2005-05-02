@@ -13,16 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel drd drd-data)
-  (:use (kernel drd drd-rules) (kernel drd drd-query))
-  (:export
-    drd-holds? drd-apply drd-apply-list
-    drd-test? drd-lookup drd-lookup-list
-    drd-group-rules ;; for drd-group macro
-    drd-group drd-in?
-    drd-table-rules ;; for drd-table macro
-    drd-table drd-ref drd-ref-list
-    drd-dispatcher-rule ;; for drd-dispatcher macro
-    drd-dispatcher drd-dispatch))
+  (:use (kernel drd drd-rules) (kernel drd drd-query)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -41,7 +32,7 @@
 (define drd-facts-table (make-ahash-table))
 (define drd-apply-table (make-ahash-table))
 
-(define (drd-holds? test . conds)
+(define-public (drd-holds? test . conds)
   "Does the relation @test hold under conditions @conds?"
   (let* ((what (cons test conds))
 	 (handle (ahash-get-handle drd-facts-table what)))
@@ -62,7 +53,7 @@
 		      (error "Ambiguous return values for logical apply")
 		      r)))))))
 
-(define (drd-apply fun . conds)
+(define-public (drd-apply fun . conds)
   "Retrieve unique @r such that @(rcons fun r) holds under conditions @conds."
   (let* ((what (cons fun conds))
 	 (handle (ahash-get-handle drd-apply-table what)))
@@ -81,7 +72,7 @@
 	    (let ((r (cdar bl)))
 	      (cons r (drd-list-result (cdr l))))))))
 
-(define (drd-apply-list fun . conds)
+(define-public (drd-apply-list fun . conds)
   "Retrieve list of @r such that @(rcons fun r) holds under conditions @conds."
   (let* ((what (cons fun conds))
 	 (handle (ahash-get-handle drd-apply-table what)))
@@ -95,30 +86,30 @@
 ;; Public interface for drd-holds? and drd-apply
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (drd-test? name . args)
+(define-public-macro (drd-test? name . args)
   `(drd-holds? (list ,(list 'quasiquote name) ,@args)))
 
-(define-macro (drd-lookup name . keys)
+(define-public-macro (drd-lookup name . keys)
   `(drd-apply (list ,(list 'quasiquote name) ,@keys)))
 
-(define-macro (drd-lookup-list name . keys)
+(define-public-macro (drd-lookup-list name . keys)
   `(drd-apply-list (list ,(list 'quasiquote name) ,@keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of groups (should use logical programming soon)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (drd-group-rules name l)
+(define-public (drd-group-rules name l)
   (cond ((null? l) '())
 	((is-assume? (car l))
 	 (cons (car l) (drd-group-rules name (cdr l))))
 	(else
 	 (cons (list (list name (car l))) (drd-group-rules name (cdr l))))))
 
-(define-macro (drd-group name . l)
+(define-public-macro (drd-group name . l)
   `(drd-rules ,@(drd-group-rules name l)))
 
-(define-macro (drd-in? x name . conds)
+(define-public-macro (drd-in? x name . conds)
   `(drd-holds? (list ,(list 'quasiquote name) ,x) ,@(quote-all conds)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -135,34 +126,34 @@
 	  (apply append (map fun (cdr key))))
 	(list (cons (list name key im) conds)))))
 
-(define (drd-table-rules name l)
+(define-public (drd-table-rules name l)
   (cond ((null? l) '())
 	((is-assume? (car l))
 	 (cons (car l) (drd-table-rules name (cdr l))))
 	(else (append (drd-table-rule name (car l))
 		      (drd-table-rules name (cdr l))))))
 
-(define-macro (drd-table name . l)
+(define-public-macro (drd-table name . l)
   `(drd-rules ,@(drd-table-rules name l)))
 
-(define-macro (drd-ref name key . conds)
+(define-public-macro (drd-ref name key . conds)
   `(drd-apply (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
 
-(define-macro (drd-ref-list name key . conds)
+(define-public-macro (drd-ref-list name key . conds)
   `(drd-apply-list (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of dispatchers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (drd-dispatcher-rule rule)
+(define-public (drd-dispatcher-rule rule)
   (if (is-assume? rule) rule
       (cons* (car rule) (list 'unquote (cadr rule)) (cddr rule))))
 
-(define-macro (drd-dispatcher name . l)
+(define-public-macro (drd-dispatcher name . l)
   `(drd-table ,name ,@(map drd-dispatcher-rule l)))
 
-(define-macro (drd-dispatch name key . args)
+(define-public-macro (drd-dispatch name key . args)
   (let ((k (gensym)))
     (if (= (length args) 1)
 	`(let ((,k ,key))

@@ -27,9 +27,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel texmacs tm-overload)
-  (:export
-    ovl-insert ovl-resolve ovl-apply))
+(texmacs-module (kernel texmacs tm-overload))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construction of overloaded structures
@@ -68,7 +66,8 @@
 	  true?     ; match
 	  ))
 
-(define (ovl-insert ovl data conds)
+(define-public (ovl-insert ovl data conds)
+  "Insert @data under conditions @conds in overloaded structure @ovl"
   ;; ovl:   overloaded structure of the form kind . contents (or #f),
   ;;        where kind is the kind of condition and
   ;;        contents the corresponding information
@@ -202,12 +201,14 @@
 	  ovl-case-resolve
 	  ovl-match-resolve))
 
-(define (ovl-resolve ovl args)
+(define-public (ovl-resolve ovl args)
+  "Get method for arguments @args in overloaded structure @ovl"
   (cond ((not ovl) #f)
 	((== (car ovl) 100) (cdr ovl))
 	(else ((vector-ref ovl-resolver (car ovl)) (cdr ovl) args))))
 
-(define (ovl-apply ovl args)
+(define-public (ovl-apply ovl args)
+  "Apply appropriate overloaded method from @ovl to @args"
   (with fun (ovl-resolve ovl args)
     (if fun
 	(apply fun args)

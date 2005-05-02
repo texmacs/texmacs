@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel drd drd-query)
-  (:use (kernel drd drd-bind) (kernel drd drd-unify) (kernel drd drd-rules))
-  (:export
-    query ???))
+  (:use (kernel drd drd-bind) (kernel drd drd-unify) (kernel drd drd-rules)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constructing closures
@@ -101,9 +99,9 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (query goal . extra)
+(define-public (query goal . extra)
   "Prove @goal using extra rules @extra."
   (logic-prove (list goal) (map list extra) '()))
 
-(define-macro (??? . l)
+(define-public-macro (??? . l)
   (cons 'query (map (lambda (x) (list 'quote x)) l)))

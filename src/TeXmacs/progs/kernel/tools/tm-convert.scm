@@ -13,21 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel tools tm-convert)
-  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes))
-  (:export
-    format-cmd format-sub converter-save converter-load ; for format macro
-    define-format
-    format-skip-spaces format-skip-line format-test?
-    format-get-suffixes* format-default-suffix
-    format? format-recognizes? format-from-suffix format-determine
-    converter-cmd converter-sub ; for converter macro
-    converter
-    converters-from converters-to
-    converter-search convert convert-to-file
-    image->postscript texmacs->generic generic->texmacs
-    converter-from-menu converter-to-menu
-    tmfile? tmfile-extract tmfile-init
-    with-aux))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding new converters
@@ -72,7 +58,8 @@
     (define-preferences
       (option val converter-set-option))))
 
-(define (converter-cmd from to cmd)
+(define-public (converter-cmd from to cmd)
+  "Helper routine for converter macro"
   (cond ((func? cmd :penalty 1)
 	 (converter-set-penalty from to (second cmd)))
         ((func? cmd :require 1)
@@ -91,7 +78,8 @@
 		     (lambda (what opts)
 		       (converter-shell (cdr cmd) what opts))))))
 
-(define (converter-sub cmd)
+(define-public (converter-sub cmd)
+  "Helper routine for converter macro"
   (cond ((and (list? cmd) (= (length cmd) 2)
 	      (in? (car cmd) '(:function :function-with-options)))
 	 (list (car cmd) (list 'unquote (cadr cmd))))
@@ -100,7 +88,8 @@
 	 (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd)))))
 	(else cmd)))
 
-(define-macro (converter from* to* . options)
+(define-public-macro (converter from* to* . options)
+  "Declare a converter between @from@ and @to* according to @options"
   (let* ((from (if (string? from*) from* (symbol->string from*)))
 	 (to (if (string? to*) to* (symbol->string to*))))
     (set! converter-distance (make-ahash-table))
@@ -130,14 +119,16 @@
     (system cmd)
     to))
 
-(define (converter-save s opts)
+(define-public (converter-save s opts)
+  "Helper routine for define-format macro"
   (let* ((last? (assoc-ref opts 'last?))
 	 (dest (assoc-ref opts 'dest))
 	 (to (if (and last? dest) dest (url-temp))))
     (string-save s to)
     to))
 
-(define (converter-load u opts)
+(define-public (converter-load u opts)
+  "Helper routine for define-format macro"
   (string-load u))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,10 +143,10 @@
 		(ahash-set! h (car l) #t)
 		(converters-sub (append next (cdr l)) h p)))))
 
-(define (converters-from . from)
+(define-public (converters-from . from)
   (converters-sub from (make-ahash-table) converter-forward))
 
-(define (converters-to . to)
+(define-public (converters-to . to)
   (converters-sub to (make-ahash-table) converter-backward))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -186,7 +177,7 @@
 	      (converter-walk from (append (cdr l) r)))
 	    (converter-walk from (cdr l))))))
 
-(define (converter-search from to)
+(define-public (converter-search from to)
   (converter-walk from (list (list from 0.0 (list from))))
   (ahash-ref converter-path (list from to)))
 
@@ -209,27 +200,27 @@
 	      result)
 	    #f))))
 
-(define (convert what from to . options)
+(define-public (convert what from to . options)
   ;(display* "convert " what ", " from ", " to ", " options "\n")
   (with path (converter-search from to)
     (if path
 	(convert-via what from (cdr path) options)
 	#f)))
 
-(define (convert-to-file what from to dest . options)
+(define-public (convert-to-file what from to dest . options)
   (apply convert (cons* what from to (acons 'dest dest options))))
 
-(define (image->postscript name)
+(define-public (image->postscript name)
   (let* ((suffix (url-suffix name))
 	 (fm (string-append (format-from-suffix suffix) "-file"))
 	 (s (convert name fm "postscript-document")))
     (if (string? s) s "")))
 
-(define (texmacs->generic doc fm)
+(define-public (texmacs->generic doc fm)
   (with r (convert doc "texmacs-tree" fm)
     (if r r "Error: bad format or data")))
 
-(define (generic->texmacs s fm)
+(define-public (generic->texmacs s fm)
   (with r (convert s fm "texmacs-tree")
     (if r r (stree->tree '(error "bad format or data")))))
 
@@ -259,11 +250,11 @@
     (item-builder fm (ahash-ref format-name fm)))
   (map menu-item l))
 
-(define (converter-from-menu fm special tm? item-builder)
+(define-public (converter-from-menu fm special tm? item-builder)
   (with l (converters-from-special fm special tm?)
     (converter-build-menu item-builder l)))
 
-(define (converter-to-menu fm special tm? item-builder)
+(define-public (converter-to-menu fm special tm? item-builder)
   (with l (converters-to-special fm special tm?)
     (converter-build-menu item-builder l)))
 
@@ -271,10 +262,10 @@
 ;; Other useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmfile? doc)
+(define-public (tmfile? doc)
   (and (tmfile-extract doc 'TeXmacs) (tmfile-extract doc 'body)))
 
-(define (tmfile-extract doc what)
+(define-public (tmfile-extract doc what)
   (if (not (func? doc 'document)) #f
       (with val (assoc-ref (cdr doc) what)
 	(if val (car val) val))))
@@ -285,13 +276,13 @@
 	((== var "language") "english")
 	(else "")))
 
-(define (tmfile-init doc var)
+(define-public (tmfile-init doc var)
   (with init (tmfile-extract doc 'initial)
     (if (not init) (default-init var)
 	(with item (list-find (cdr init) (lambda (x) (== (cadr x) var)))
 	  (if item (caddr item) (default-init var))))))
 
-(define-macro (with-aux u . prg)
+(define-public-macro (with-aux u . prg)
   `(let* ((u ,u)
 	  (t (texmacs-load-tree u "texmacs"))
 	  (name (get-name-buffer)))
@@ -310,7 +301,8 @@
 (define format-recognize (make-ahash-table))
 (define format-must-recognize (make-ahash-table))
 
-(define (format-cmd name cmd)
+(define-public (format-cmd name cmd)
+  "Helper routine for define-format"
   (cond ((func? cmd :name 1)
 	 (ahash-set! format-name name (second cmd)))
 	((func? cmd :suffix)
@@ -322,13 +314,15 @@
 	 (ahash-set! format-recognize name (second cmd))
 	 (ahash-set! format-must-recognize name #t))))
 
-(define (format-sub cmd)
+(define-public (format-sub cmd)
+  "Helper routine for define-format"
   (if (and (list? cmd) (= (length cmd) 2)
 	   (in? (car cmd) '(:recognize :must-recognize)))
       (list (car cmd) (list 'unquote (cadr cmd)))
       cmd))
 
-(define-macro (define-format name* . options)
+(define-public-macro (define-format name* . options)
+  "Declare data format @name* according to @options"
   (let* ((name (if (string? name*) name* (symbol->string name*)))
 	 (name-document (string-append name "-document"))
 	 (name-file (string-append name "-file")))
@@ -344,18 +338,18 @@
 ;; Useful routines for format recognition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (format-skip-spaces s pos)
+(define-public (format-skip-spaces s pos)
   (cond ((>= pos (string-length s)) pos)
 	((char-whitespace? (string-ref s pos))
 	 (format-skip-spaces s (+ pos 1)))
 	(else pos)))
 
-(define (format-skip-line s pos)
+(define-public (format-skip-line s pos)
   (cond ((>= pos (string-length s)) pos)
 	((in? (string-ref s pos) '(#\newline #\cr)) (+ pos 1))
 	(else (format-skip-line s (+ pos 1)))))
 
-(define (format-test? s pos what)
+(define-public (format-test? s pos what)
   (with end (+ pos (string-length what))
     (and (>= (string-length s) end)
 	 (== (string-downcase (substring s pos end)) what))))
@@ -381,10 +375,10 @@
         ((== fm "image") (format-image-suffixes))
         (else (format-get-suffixes-sub fm))))
 
-(define (format-get-suffixes* fm)
+(define-public (format-get-suffixes* fm)
   (cons 'tuple (format-get-suffixes fm)))
 
-(define (format-default-suffix fm)
+(define-public (format-default-suffix fm)
   (with l (ahash-ref format-suffixes fm)
     (cond ((== fm "image") "png")
 	  ((or (not l) (null? l)) "")
@@ -394,18 +388,18 @@
 ;; Automatic determination of the format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (format? fm)
+(define-public (format? fm)
   (not (not (ahash-ref format-name fm))))
 
-(define (format-recognizes? doc fm)
+(define-public (format-recognizes? doc fm)
   (with pred? (ahash-ref format-recognize fm)
     (and pred? (pred? doc))))
 
-(define (format-from-suffix suffix)
+(define-public (format-from-suffix suffix)
   (with fm (ahash-ref format-mime suffix)
     (if fm fm "generic")))
 
-(define (format-determine body suffix)
+(define-public (format-determine body suffix)
   (with p (list-find (ahash-table->list format-recognize)
 		     (lambda (p) ((cdr p) body)))
     (if p (car p)

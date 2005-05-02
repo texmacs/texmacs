@@ -13,14 +13,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel drd drd-unify)
-  (:use (kernel drd drd-bind))
-  (:export unify-any unify ===))
+  (:use (kernel drd drd-bind)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unification
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (unify-any l expr bls)
+(define-public (unify-any l expr bls)
   "Unifications for @l == @expr under any of the bindings in @bls."
   (if (null? bls) '()
       (append (unify l expr (car bls))
@@ -33,7 +32,7 @@
 	((free-variable? (car expr)) 1)
 	(else 2)))
 
-(define (unify l r bl)
+(define-public (unify l r bl)
   "Unifications for @l == @r under the bindings @bl."
   (let ((lp (unify-priority l))
 	(rp (unify-priority r)))
@@ -55,7 +54,7 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (=== expr1 expr2)
+(define-public (=== expr1 expr2)
   "Compute unifications of expressions @expr1 and @expr2 with free variables."
   (let ((sols (unify (list expr1) (list expr2) '())))
     (if (null? sols) #f sols)))

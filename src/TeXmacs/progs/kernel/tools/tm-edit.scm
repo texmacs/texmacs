@@ -13,12 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel tools tm-edit)
-  (:use (kernel texmacs tm-define))
-  (:export
-    ;; inserting general content
-    insert-at
-    ;; inserting inactive content
-    make-assign-arg make-assign-macro make-assign-macro-arg))
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting general content

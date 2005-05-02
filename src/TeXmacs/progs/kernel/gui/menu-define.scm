@@ -13,14 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel gui menu-define)
-  (:use (kernel regexp regexp-match))
-  (:export
-    make-promise promise-source ;; for menu-widget and kbd-define
-    menu-set! menu-get ;; low level
-    menu-pre ;; for menu-dynamic, menu-bind and menu-extend macros
-    menu-dynamic menu-bind menu-extend
-    menu-lazy-menu ;; for lazy-menu macro
-    lazy-menu))
+  (:use (kernel regexp regexp-match)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu grammar
@@ -66,10 +59,12 @@
 (define (menu-format-error where which)
   (texmacs-error where "Bad menu format in: ~S" which))
 
-(define (make-promise x)
+(define-public (make-promise x)
+  "Helper routines for menu-widget and kbd-define"
   (list 'unquote `(lambda () ,x)))
 
-(define (promise-source action)
+(define-public (promise-source action)
+  "Helper routines for menu-widget and kbd-define"
   (and (procedure? action)
        (with source (procedure-source action)
 	 (and (== (car source) 'lambda)
@@ -117,7 +112,8 @@
 (define (menu-pre-list l)
   (map menu-pre l))
 
-(define (menu-pre p)
+(define-public (menu-pre p)
+  "Helper routine for menu-dynamic, menu-bind and menu-extend macros"
   (if (pair? p)
       (cond ((string? (car p)) (menu-pre-entry p))
 	    ((symbol? (car p))
@@ -168,7 +164,8 @@
 	(ahash-remove! menu-lazy-table name)
 	(module-load module))))
 
-(define (menu-lazy-menu module name)
+(define-public (menu-lazy-menu module name)
+  "Helper routine for lazy-menu macro"
   (menu-lazy-force name)
   (ahash-set! menu-lazy-table name module))
 
@@ -200,7 +197,8 @@
 	   (if ok ok (menu-set-in! (cdr menu) name what))))
 	(else (menu-set-in! (cdr menu) name what))))
 
-(define (menu-set! name menu)
+(define-public (menu-set! name menu)
+  "Low level function for associating @menu to @name"
   (menu-lazy-force name)
   (cond ((null? name) (menu-set! 'texmacs-menu menu))
 	((nlist? name) (menu-set! (list name) menu))
@@ -228,7 +226,8 @@
 	   (if submenu submenu (menu-get-in (cdr menu) name))))
 	(else (menu-get-in (cdr menu) name))))
 
-(define (menu-get name)
+(define-public (menu-get name)
+  "Low level function for getting menu associated to @name"
   (menu-lazy-force name)
   (cond ((null? name) (menu-get 'texmacs-menu))
 	((nlist? name) (menu-get (list name)))
@@ -243,15 +242,15 @@
 ;; Definition of menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (menu-dynamic . body)
+(define-public-macro (menu-dynamic . body)
   (list 'quasiquote (menu-pre body)))
 
-(define-macro (menu-bind name . body)
+(define-public-macro (menu-bind name . body)
   `(menu-set! ',name ,(list 'quasiquote (menu-pre body))))
 
-(define-macro (menu-extend name . body)
+(define-public-macro (menu-extend name . body)
   `(menu-set! ',name (append (menu-get ',name)
 			     ,(list 'quasiquote (menu-pre body)))))
 
-(define-macro (lazy-menu module . menus)
+(define-public-macro (lazy-menu module . menus)
   `(for-each (lambda (x) (menu-lazy-menu ',module x)) ',menus))

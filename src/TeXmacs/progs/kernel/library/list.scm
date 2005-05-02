@@ -13,26 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel library list)
-  (:use (kernel texmacs tm-define))
-  (:export
-    ;; constructors
-    rcons rcons* set-cons! set-rcons! list-concatenate list-intersperse
-    ;; selectors
-    first second third fourth fifth sixth seventh eighth ninth tenth
-    cAr cDr cADr cDDr cDDDr cDdr cDddr last but-last car+cdr
-    ;; extraction of sublists
-    list-take list-drop list-take-right list-drop-right sublist
-    ;; circulating lists
-    list-circulate-right
-    ;; fold, unfold & map
-    list-fold list-fold-right pair-fold pair-fold-right append-map
-    ;; filtering & partitioning
-    list-filter list-partition list-break list-span
-    list-drop-while list-scatter
-    ;; search and replace
-    list-find list-any list-every in? list-starts? list-replace
-    ;; other operations on lists
-    list-and list-or list-length=2?))
+  (:use (kernel texmacs tm-define)))
 (re-export cons*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,10 +37,10 @@
   (:synopsis "Append several elements @xs to @l at the end.")
   (append l xs))
 
-(define-macro (set-cons! sym x)
+(define-public-macro (set-cons! sym x)
   `(set! ,sym (cons ,x ,sym)))
 
-(define-macro (set-rcons! sym x)
+(define-public-macro (set-rcons! sym x)
   `(set! ,sym (rcons ,sym ,x)))
 
 (tm-define (list-concatenate ls)
@@ -163,8 +144,8 @@
   (:synopsis "Remove two first and last elements from @l")
   (cDr (cddr l)))
 
-(define last cAr)
-(define but-last cDr)
+(define-public last cAr)
+(define-public but-last cDr)
 
 (tm-define (car+cdr p)
   (:type (forall T (-> (list T) (cross T (list T)))))
@@ -180,8 +161,8 @@
 ;; Extraction of sublists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define list-take list-head) ;; SRFI-1
-(define list-drop list-tail) ;; SRFI-1
+(define-public list-take list-head) ;; SRFI-1
+(define-public list-drop list-tail) ;; SRFI-1
 
 (tm-define (list-take-right l i)
   (:type (forall T (-> (list T) int (list T))))
@@ -215,17 +196,17 @@
 ;; Circulating lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (list-circulate-right l n)
+(tm-define (list-circulate-right l n)
   (:type (forall T (-> (list T) int int (list T))))
   (:synopsis "Right circular shift of @n steps on @l.")
   (if (= n 1) (cons (last l) (but-last l))
       (append (list-take-right l n) (list-drop-right l n))))
 
-;(define (list-circulate-right! l n)
-;  (:type (forall T (-> (list T) int int (list T))))
-;  (:synopsis "Right circular shift of @n steps on @l. Linear update.")
-;  (if (= n 1) (cons (last l) (but-last! l))
-;      (append (list-take-right l n) (list-drop-right! l n))))
+;;(tm-define (list-circulate-right! l n)
+;;  (:type (forall T (-> (list T) int int (list T))))
+;;  (:synopsis "Right circular shift of @n steps on @l. Linear update.")
+;;  (if (= n 1) (cons (last l) (but-last! l))
+;;      (append (list-take-right l n) (list-drop-right! l n))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fold, unfold & map

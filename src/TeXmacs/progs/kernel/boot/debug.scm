@@ -12,46 +12,36 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot debug)
-  (:export
-    display* display-err display-err* tm-display-error
-    write* write-err write-err* benchmark write-diff
-    texmacs-error check-arg-type check-arg-number check-arg-range
-    regression-test-equal regression-test-nequal
-    regression-test-group regtest-table-library
-    wrap-catch wrap-catch-list
-    trace-variables trace-display
-    wrap-trace set-trace-level!
-    wrap-trace-point set-trace-point!))
+(texmacs-module (kernel boot debug))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (display* . l)
+(define-public (display* . l)
   "Display all objects in @l."
   (for-each display l))
 
-(define (display-err x)
+(define-public (display-err x)
   "Display @x to the error port."
   (display x (current-error-port)))
 
-(define (display-err* . l)
+(define-public (display-err* . l)
   "Display all objects in @l to the error port."
   (for-each display-err l))
 
-(define (tm-display-error . l)
+(define-public (tm-display-error . l)
   (apply display-err* `("TeXmacs] " ,@l "\n")))
 
-(define (write* . l)
+(define-public (write* . l)
   "Write all objects in @l to standard output."
   (for-each write l))
 
-(define (write-err x)
+(define-public (write-err x)
   "Write @x to the error port."
   (write x (current-error-port)))
 
-(define (write-err* . l)
+(define-public (write-err* . l)
   "Write all objects in @l to the error port."
   (for-each write-err l))
 
@@ -64,7 +54,7 @@
      (begin ,@args)
      (display* ,message " " (- (texmacs-time) start) "msec\n")))
 
-(define (write-diff t u)
+(define-macro (write-diff t u)
   (cond ((== t u) (noop))
 	((or (not (and (pair? t) (pair? u))) (not (= (length t) (length u))))
 	 (display "< ")
@@ -95,32 +85,32 @@
 	     (set! message (string-replace message "~A" "%s"))))
   (apply scm-error type caller message opt))
 
-(define (texmacs-error where message . args)
+(define-public (texmacs-error where message . args)
   (scm-error* 'texmacs-error where message args #f))
 
-(define (check-arg-type pred arg caller)
+(define-public (check-arg-type pred arg caller)
   (if (pred arg) arg
       (scm-error* 'wrong-type-arg caller
 		  "Wrong type argument: ~S" (list arg) '())))
   
-(define (check-arg-number pred num caller)
+(define-public (check-arg-number pred num caller)
   (if (pred num) num
       (scm-error* 'wrong-number-of-args caller
 		  "Wrong number of arguments: ~A" (list num) '())))
 
-(define (check-arg-range pred arg caller)
+(define-public (check-arg-range pred arg caller)
   (if (pred arg) arg
       (scm-error* 'out-of-range caller
 		  "Argument out of range: ~S" (list arg) '())))
 
-(define (syntax-error where message . args)
+(define-public (syntax-error where message . args)
   (scm-error* 'syntax-error where message args #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Regression testing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (regression-test-equal group test res-in result exp-in expected)
+(define-public (regression-test-equal group test res-in result exp-in expected)
   (if (not (equal? result expected))
       (begin
 	(newline)
@@ -132,7 +122,8 @@
 	(display* "Regression failure: " group " / " test)
 	(error "Regression failure:" group test))))
 
-(define (regression-test-nequal group test res-in result exp-in expected)
+(define-public (regression-test-nequal
+		group test res-in result exp-in expected)
   (if (equal? result expected)
       (begin
 	(newline)
@@ -144,8 +135,8 @@
 	(display* "Regression failure: " group " / " test)
 	(error "Regression failure:" group test))))
 
-(define-macro (regression-test-group group-desc group-id
-				     result-cmd expected-cmd . body)
+(define-public-macro (regression-test-group
+		      group-desc group-id result-cmd expected-cmd . body)
   (let* ((make-command (lambda (cmd)
 			 (if (equal? cmd ':none)
 			     (lambda (x) x)
@@ -194,7 +185,7 @@
 ;;; Test suite library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (regtest-table-library)
+(define-public-macro (regtest-table-library)
   ;; basic shorthands for input of texmacs tables
   `(begin
      (define (cell x) `(cell ,x))
@@ -209,7 +200,7 @@
 ;;; Debugging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (wrap-catch proc)
+(define-public (wrap-catch proc)
   ;; Wrap a procedure in a closure which displays and passes exceptions.
   (lambda args
     (lazy-catch #t
@@ -218,7 +209,7 @@
 		  (tm-display-error "Guile error: " (list err))
 		  (apply throw err)))))
 
-(define (wrap-catch-list expr)
+(define-public (wrap-catch-list expr)
   ;; Similar to wrap-catch for a scheme expression in list form.
   `(lazy-catch #t
 	       (lambda () ,expr)
@@ -233,7 +224,7 @@
     (if (equal? 0 n) (apply string-append s)
 	(rec (1- n) (cons "| " s)))))
 
-(define (trace-display . args)
+(define-public (trace-display . args)
   ;; As display but also print trace indentation.
   (display (trace-indent))
   (for-each (lambda (a)
@@ -242,7 +233,7 @@
 	    args)
   (newline))
 
-(define-macro (trace-variables . vars)
+(define-public-macro (trace-variables . vars)
   ;; Use trace-display to show the name and value of some variables.
   (define (trace-one-variable v)
     `(trace-display (string-append ,(symbol->string v) ": "
@@ -255,7 +246,7 @@
 ;; Increase the trace indentation to show the call hierarchy.
 ;; Do not preserve tail recursion.
 
-(define (wrap-trace name lam)
+(define-public (wrap-trace name lam)
   (lambda args
     (trace-display
      (if (null? args)
@@ -275,7 +266,7 @@
 		  (set! trace-level (1- trace-level))
 		  (apply throw err)))))
 
-(define-macro (set-trace-level! . names)
+(define-public-macro (set-trace-level! . names)
   ;; Make each function a trace-level. Functions can be set multiple
   ;; times, only the first application is effective.
   ;; Parameters are function names
@@ -291,12 +282,12 @@
 ;; Display parameters of a function when it is called.
 ;; Preserve tail recursion.
 
-(define (wrap-trace-point lam msg)
+(define-public (wrap-trace-point lam msg)
   (lambda args
     (trace-display (string-append "[" msg " " (object->string args) "]"))
     (apply lam args)))
 
-(define-macro (set-trace-point! name . opt)
+(define-public-macro (set-trace-point! name . opt)
   ;; Make one trace point.
   ;; Care must be taken of net setting the same function multiple times.
   (let ((msg (if (null? opt)

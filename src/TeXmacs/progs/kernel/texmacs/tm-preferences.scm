@@ -13,21 +13,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-preferences)
-  (:use (kernel texmacs tm-define))
-  (:export
-    preferences-initialization-flag
-    preferences-table preferences-call-back ;; for define-preferences macro
-    define-preferences
-    set-preference get-preference toggle-preference
-    notify-preference retrieve-preferences apply-preferences))
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining preference call back routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define preferences-initialization-flag #f)
-(define preferences-table (make-ahash-table))
-(define preferences-call-back (make-ahash-table))
+(define-public preferences-initialization-flag #f)
+(define-public preferences-table (make-ahash-table))
+(define-public preferences-call-back (make-ahash-table))
 
 (define (define-preference x)
   (with (which value call-back) x
@@ -40,7 +34,7 @@
        (ahash-set! preferences-call-back ,which ,call-back)
        (if preferences-initialization-flag (notify-preference ,which)))))
 
-(define-macro (define-preferences . l)
+(define-public-macro (define-preferences . l)
   (append '(begin)
 	  (map-in-order define-preference l)
 	  (map-in-order define-preference-call-back l)))
@@ -53,19 +47,22 @@
   (== what (get-preference which)))
 
 (tm-define (set-preference which what)
+  (:synopsis "Set preference @which to @what")
   (:check-mark "*" test-preference?)
   (ahash-set! preferences-table which what)
   ;(display* "set-preference " which " := " what "\n")
   ((get-call-back which) which what)
   (save-preferences))
 
-(define (get-preference which)
+(tm-define (get-preference which)
+  (:synopsis "Get preference @which")
   (ahash-ref preferences-table which))
 
 (define (preference-on? which)
   (test-preference? which "on"))
 
 (tm-define (toggle-preference which)
+  (:synopsis "Toggle the preference @which")
   (:check-mark "v" preference-on?)
   (let ((what (get-preference which)))
     (set-preference which (cond ((== what "on") "off")
@@ -80,7 +77,8 @@
   (let ((r (ahash-ref preferences-call-back what)))
     (if r r (lambda args (noop)))))
 
-(define (notify-preference var)
+(define-public (notify-preference var)
+  "Notify a change in preference @var"
   ;(display* "notify-preference " var "\n")
   ((get-call-back var) var (get-preference var)))
 
@@ -109,13 +107,15 @@
 		     user-preferences)
 	(set! saved-preferences user-preferences))))
 
-(define (retrieve-preferences)
+(define-public (retrieve-preferences)
+  "Retrieve preferences from disk"
   (if (url-exists? "$TEXMACS_HOME_PATH/system/preferences.scm")
       (set! saved-preferences
 	    (load-object "$TEXMACS_HOME_PATH/system/preferences.scm")))
   (fill-dictionary preferences-table saved-preferences))
 
-(define (apply-preferences)
+(define-public (apply-preferences)
+  "Apply the preferences"
   (import-from (keyboard kbd-config) (texmacs texmacs tm-server)
 	       (texmacs texmacs tm-view) (texmacs texmacs tm-print)
 	       (texmacs tools tm-bracket))

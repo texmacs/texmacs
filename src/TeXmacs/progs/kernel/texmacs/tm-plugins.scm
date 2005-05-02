@@ -13,28 +13,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-plugins)
-  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes))
-  (:export
-    plugin-old-data-table plugin-data-table
-    connection-defined? connection-info connection-get-handlers
-    plugin-configure-cmds plugin-configure-sub ; for plugin-configure macro
-    plugin-configure plugin-initialize
-    ;; lazy exports from other modules
-    plugin-supports-math-input-ref plugin-math-input
-    plugin-supports-completions?
-    plugin-supports-input-done?))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy exports from other modules
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-define (texmacs plugin plugin-convert) plugin-supports-math-input-ref)
-(lazy-define (texmacs plugin plugin-convert) plugin-math-input)
+(lazy-define-public (texmacs plugin plugin-convert)
+		    plugin-supports-math-input-ref)
+(lazy-define-public (texmacs plugin plugin-convert) plugin-math-input)
 (lazy-define (texmacs plugin plugin-cmd) plugin-serializer-set!)
 (lazy-define (texmacs plugin plugin-cmd) plugin-commander-set!)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-completions?)
+(lazy-define-public (texmacs plugin plugin-cmd) plugin-supports-completions?)
 (lazy-define (texmacs plugin plugin-cmd) plugin-supports-completions-set!)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-input-done?)
+(lazy-define-public (texmacs plugin plugin-cmd) plugin-supports-input-done?)
 (lazy-define (texmacs plugin plugin-cmd) plugin-supports-input-done-set!)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,10 +48,10 @@
 	(ahash-set! connection-variant (list name (car opt)) val)
 	(ahash-set! connection-varlist name (rcons l (car opt))))))
 
-(define (connection-defined? name)
+(define-public (connection-defined? name)
   (ahash-ref connection-defined name))
 
-(define (connection-info name session)
+(define-public (connection-info name session)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
 	(with val (ahash-ref connection-variant (list name session))
@@ -72,7 +64,7 @@
 	      (cons (list 'tuple channel routine)
 		    (ahash-ref connection-handler name))))
 
-(define (connection-get-handlers name)
+(define-public (connection-get-handlers name)
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
@@ -89,8 +81,8 @@
 ;; Configuration of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define plugin-old-data-table (make-ahash-table))
-(define plugin-data-table (make-ahash-table))
+(define-public plugin-old-data-table (make-ahash-table))
+(define-public plugin-data-table (make-ahash-table))
 
 (define (plugin-configure-cmd name cmd)
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
@@ -134,19 +126,22 @@
 	((func? cmd :test-input-done 1)
 	 (if (second cmd) (plugin-supports-input-done-set! name)))))
 
-(define (plugin-configure-cmds name cmds)
+(define-public (plugin-configure-cmds name cmds)
+  "Helper function for plugin-configure"
   (if (and (nnull? cmds) (ahash-ref plugin-data-table name))
       (begin
         (plugin-configure-cmd name (car cmds))
 	(plugin-configure-cmds name (cdr cmds)))))
 
-(define (plugin-configure-sub cmd)
+(define-public (plugin-configure-sub cmd)
+  "Helper function for plugin-configure"
   (if (and (list? cmd) (= (length cmd) 2)
 	   (in? (car cmd) '(:require :version :setup :initialize)))
       (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd))))
       cmd))
 
-(define-macro (plugin-configure name2 . options)
+(define-public-macro (plugin-configure name2 . options)
+  "Declare and configure plug-in with name @name2 according to @options"
   (let* ((name (if (string? name2) name2 (symbol->string name2)))
 	 (in-name (string->symbol (string-append "in-" name "?"))))
     `(begin
@@ -159,7 +154,8 @@
 ;; Initialization of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (plugin-initialize name*)
+(define-public (plugin-initialize name*)
+  "Initialize plugin with name @name*"
   ;(display* "loading plugin " name* "\n")
   (let* ((name (symbol->string name*))
 	 (file (string-append "plugins/" name "/progs/init-" name ".scm")))

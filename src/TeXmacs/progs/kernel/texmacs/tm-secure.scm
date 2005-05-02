@@ -13,18 +13,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-secure)
-  (:use (kernel texmacs tm-define))
-  (:export secure-symbols xterm secure?))
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Primitive secure functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (secure-symbols . l)
+(define-public-macro (define-secure-symbols . l)
   (for-each (lambda (x) (property-set! x :secure #t '())) l)
   '(noop))
 
-(secure-symbols
+(define-secure-symbols
   boolean? null? symbol? string? pair? list?
   equal? == not
   string-length substring string-append
@@ -99,5 +98,6 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (secure? expr)
+(define-public (secure? expr)
+  "Test whether it is secure to evaluate the expression @expr"
   (secure-expr? expr '()))
