@@ -35,11 +35,11 @@
 ;(display "Booting TeXmacs primitives\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-files)
 	     (texmacs texmacs tm-print) (texmacs texmacs tm-view)
-	     (texmacs texmacs tm-document) (texmacs texmacs tm-help))
+	     (texmacs texmacs tm-document))
 (use-modules (texmacs tools tm-cursor) (texmacs tools tm-select)
 	     (texmacs tools tm-circulate))
 (use-modules (texmacs edit edit-format)
-	     (texmacs edit edit-fold) (texmacs edit edit-misc)
+	     (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))
 (use-modules (texmacs plugin plugin-cmd))
 (re-export safely-kill-window)
@@ -53,17 +53,11 @@
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
 	   insert-mathematics-menu insert-session-menu
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
-(lazy-menu (menus menu-source) source-menu texmacs-source-icons
-	   source-transformational-menu source-executable-menu)
-(lazy-menu (menus menu-prog)
-	   prog-modifier-icons session-menu
-	   texmacs-session-icons texmacs-session-help-icons texmacs-help-icons)
 (lazy-menu (menus menu-format) color-menu paragraph-menu format-menu)
 (lazy-menu (menus menu-document)
 	   document-menu project-menu document-style-menu global-language-menu)
 (lazy-menu (menus menu-view) view-menu)
 (lazy-menu (menus menu-tools) tools-menu)
-(lazy-menu (menus menu-help) help-menu)
 (use-modules (menus menu-preferences) (menus menu-main))
 
 ;(display "Booting keyboard\n")
@@ -75,7 +69,11 @@
 (if (like-old?) (lazy-in-mode (keyboard kbd-old) always?))
 (lazy-in-mode (keyboard kbd-latex) always?)
 (lazy-in-mode (keyboard kbd-general) always?)
-(lazy-in-mode (keyboard kbd-preamble) always?)
+
+;(display "Booting source mode\n")
+(lazy-in-mode (source source-kbd) always?)
+(lazy-menu (source source-menu) source-menu texmacs-source-icons
+	   source-transformational-menu source-executable-menu)
 
 ;(display "Booting text mode\n")
 (use-modules (text text-edit))
@@ -97,6 +95,27 @@
 (use-modules (graphics graphics-edit))
 (lazy-menu (graphics graphics-menu) graphics-menu texmacs-graphics-icons)
 
+;(display "Booting dynamic features\n")
+(use-modules (dynamic fold-edit))
+(lazy-menu (dynamic session-menu)
+	   prog-modifier-icons session-menu
+	   texmacs-session-icons texmacs-session-help-icons texmacs-help-icons)
+
+;(display "Booting documentation\n")
+(use-modules (doc help-funcs))
+(lazy-menu (doc help-menu) help-menu)
+(lazy-define (doc tmdoc) tmdoc-expand-help)
+(lazy-define (doc tmdoc) tmdoc-expand-help-manual)
+(lazy-define (doc tmdoc) tmdoc-expand-this)
+(lazy-define (doc tmdoc) tmdoc-include)
+(lazy-define (doc docgrep) docgrep-in-doc)
+(lazy-define (doc docgrep) docgrep-in-src)
+(lazy-define (doc docgrep) docgrep-in-texts)
+(lazy-define (doc tmweb) tmweb-convert-dir)
+(lazy-define (doc tmweb) tmweb-build-from)
+(lazy-define (doc tmweb) tmweb-build)
+(define-secure-symbols tmdoc-include)
+
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
 (use-modules (convert tmml init-tmml))
@@ -107,17 +126,6 @@
 (lazy-define (drd latex latex-drd) latex-type)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex textm) textm-finalize)
-(lazy-define (convert doc tmdoc) tmdoc-expand-help)
-(lazy-define (convert doc tmdoc) tmdoc-expand-help-manual)
-(lazy-define (convert doc tmdoc) tmdoc-expand-this)
-(lazy-define (convert doc tmdoc) tmdoc-include)
-(lazy-define (convert doc docgrep) docgrep-in-doc)
-(lazy-define (convert doc docgrep) docgrep-in-src)
-(lazy-define (convert doc docgrep) docgrep-in-texts)
-(lazy-define (convert doc tmweb) tmweb-convert-dir)
-(lazy-define (convert doc tmweb) tmweb-build-from)
-(lazy-define (convert doc tmweb) tmweb-build)
-(define-secure-symbols tmdoc-include)
 
 ;(display "Booting plugins\n")
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")

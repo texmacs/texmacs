@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : menu-prog.scm
+;; MODULE      : session-menu.scm
 ;; DESCRIPTION : menus for prog mode
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (menus menu-prog)
-  (:use (texmacs edit edit-session)))
+(texmacs-module (dynamic session-menu)
+  (:use (dynamic session-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sessions

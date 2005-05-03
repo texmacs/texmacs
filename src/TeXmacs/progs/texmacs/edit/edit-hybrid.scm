@@ -14,9 +14,9 @@
 
 (texmacs-module (texmacs edit edit-hybrid)
   (:use
-    (text text-edit) (table table-edit)
-    (texmacs edit edit-session) (texmacs edit edit-fold)
-    (text title-edit) (graphics graphics-edit)))
+    (text text-edit) (text title-edit)
+    (table table-edit) (graphics graphics-edit)
+    (dynamic session-edit) (dynamic fold-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The multi-purpose return key

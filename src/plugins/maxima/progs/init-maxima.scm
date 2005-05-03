@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maxima-initialize)
-  (import-from (texmacs texmacs tm-help) (texmacs plugin plugin-convert))
+  (import-from (doc help-funcs) (texmacs plugin plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
   (menu-extend texmacs-session-help-icons
     (if (and (in-maxima?)

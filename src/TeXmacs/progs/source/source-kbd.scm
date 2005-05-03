@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-preamble.scm
+;; MODULE      : source-kbd.scm
 ;; DESCRIPTION : shortcuts for dynamic markup
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-preamble)
+(texmacs-module (keyboard source-kbd)
   (:use (texmacs edit edit-format) (texmacs edit edit-misc)
 	(graphics graphics-edit)))
 
