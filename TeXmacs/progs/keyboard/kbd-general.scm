@@ -14,11 +14,14 @@
 
 (texmacs-module (keyboard kbd-general)
   (:use
-    (texmacs texmacs tm-files) (texmacs texmacs tm-help)
+    (texmacs texmacs tm-files)
+    (doc help-funcs)
     (texmacs texmacs tm-print)
-    (texmacs edit edit-hybrid) (texmacs edit edit-fold)
+    (texmacs edit edit-hybrid)
+    (dynamic fold-edit)
     (texmacs edit edit-misc)
-    (texmacs tools tm-cursor) (texmacs tools tm-circulate)
+    (texmacs tools tm-cursor)
+    (texmacs tools tm-circulate)
     (texmacs tools tm-bracket)))
 
 (kbd-map

@@ -14,7 +14,7 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-    (graphics graphics-edit) (texmacs edit edit-fold)
+    (graphics graphics-edit) (dynamic fold-edit)
     (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

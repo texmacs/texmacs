@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (macaulay2-initialize)
-  (import-from (texmacs texmacs tm-help) (texmacs plugin plugin-convert))
+  (import-from (doc help-funcs) (texmacs plugin plugin-convert))
   (lazy-input-converter (m2-input) macaulay2)
   (menu-extend texmacs-session-help-icons
     (if (and (in-macaulay2?) (url-exists? "$M2HOME/html/index.html"))
