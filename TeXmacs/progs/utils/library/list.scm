@@ -36,10 +36,10 @@
   (:synopsis "Append several elements @xs to @l at the end.")
   (append l xs))
 
-(define-public-macro (set-cons! sym x)
+(tm-define-macro (set-cons! sym x)
   `(set! ,sym (cons ,x ,sym)))
 
-(define-public-macro (set-rcons! sym x)
+(tm-define-macro (set-rcons! sym x)
   `(set! ,sym (rcons ,sym ,x)))
 
 (tm-define (list-concatenate ls)
@@ -143,8 +143,8 @@
   (:synopsis "Remove two first and last elements from @l")
   (cDr (cddr l)))
 
-(define-public last cAr)
-(define-public but-last cDr)
+(tm-define last cAr)
+(tm-define but-last cDr)
 
 (tm-define (car+cdr p)
   (:type (forall T (-> (list T) (cross T (list T)))))
@@ -160,8 +160,8 @@
 ;; Extraction of sublists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public list-take list-head) ;; SRFI-1
-(define-public list-drop list-tail) ;; SRFI-1
+(tm-define list-take list-head) ;; SRFI-1
+(tm-define list-drop list-tail) ;; SRFI-1
 
 (tm-define (list-take-right l i)
   (:type (forall T (-> (list T) int (list T))))

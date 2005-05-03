@@ -391,12 +391,12 @@
 	      (set! arity (drd-ref latex-arity% (string->symbol s))))))
     (values (string->symbol s) arity)))
 
-(define-public (latex-arity tag)
+(tm-define (latex-arity tag)
   "Get the arity of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
     (if arity arity 0)))
 
-(define-public (latex-type tag)
+(tm-define (latex-type tag)
   "Get the type of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
     (cond ((not arity) "undefined")
