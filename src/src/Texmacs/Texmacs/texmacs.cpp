@@ -92,6 +92,8 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-S") || (s == "-setup")) {
 	remove ("$TEXMACS_HOME_PATH/system/settings.scm");
 	remove ("$TEXMACS_HOME_PATH/system/setup.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
       }
       else if ((s == "-v") || (s == "-version")) {
 	cout << "\n";
