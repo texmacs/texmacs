@@ -13,8 +13,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (drd latex latex-drd)
-  (:use (drd latex latex-symbol-drd)))
+(texmacs-module (convert latex latex-drd)
+  (:use (convert latex latex-symbol-drd)))
 
 (drd-rules
   ((latex-tag% 'x) (latex-arity% 'x 'y)))

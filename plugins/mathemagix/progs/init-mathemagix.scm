@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathemagix-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mathemagix-input) mathemagix))
 
 (plugin-configure mathemagix

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (secure-secure)
-  (:use (texmacs plugin plugin-cmd))
+  (:use (utils plugins plugin-cmd))
   (:export latexer))
 
 (tm-define (latexer s)

@@ -80,6 +80,25 @@
     t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dictionaries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (fill-dictionary-entry d key im)
+  (if (nnull? key)
+      (begin
+	(ahash-set! d (car key) im)
+	(fill-dictionary-entry d (cdr key) im))))
+
+(define-public (fill-dictionary d l)
+  "Fill hash table @d with list of entries @l"
+  ;; Note: depreciated
+  (if (nnull? l)
+      (begin
+	(let* ((r (reverse (car l))))
+	  (fill-dictionary-entry d (cdr r) (car r)))
+	(fill-dictionary d (cdr l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple definition of hash tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

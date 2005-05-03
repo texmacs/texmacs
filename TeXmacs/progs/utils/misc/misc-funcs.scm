@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tm-misc.scm
+;; MODULE      : misc-funcs.scm
 ;; DESCRIPTION : important miscellaneous subroutines
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel tools tm-misc)
-  (:use (kernel texmacs tm-define) (kernel gui menu-widget)))
+(texmacs-module (utils misc misc-funcs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subtrees and path rounding
@@ -33,7 +32,7 @@
 ;; Environment related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (test-default? . vals)
+(tm-define (test-default? . vals)
   (if (null? vals)
       #t
       (and (not (init-has? (car vals)))
@@ -43,34 +42,23 @@
   (:check-mark "*" test-default?)
   (for-each init-default-one args))
 
-(define-public (test-init? var val)
+(tm-define (test-init? var val)
   (== (get-init-tree var) (string->tree val)))
 
 (tm-property (init-env var val)
   (:check-mark "*" test-init?))
 
-(define-public (test-env? var val)
+(tm-define (test-env? var val)
   (== (get-env var) val))
 
 (tm-property (make-with var val)
   (:check-mark "o" test-env?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Saving and loading general objects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (save-object file value)
-  (write value (open-file (url-materialize file "") OPEN_WRITE))
-  (flush-all-ports))
-
-(define-public (load-object file)
-  (read (open-file (url-materialize file "r") OPEN_READ)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Debugging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (not-implemented s)
+(tm-define (not-implemented s)
   (set-message "Error: not yet implemented" s))
 
 (tm-define (tm-debug)
@@ -82,34 +70,34 @@
 ;; Miscellaneous commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (texmacs-version-release* t)
+(tm-define (texmacs-version-release* t)
   (texmacs-version-release (tree->string t)))
 
-(define-public (real-math-font? fn)
+(tm-define (real-math-font? fn)
   (or (== fn "roman") (== fn "concrete")))
 
-(define-public (real-math-family? fn)
+(tm-define (real-math-family? fn)
   (or (== fn "mr") (== fn "ms") (== fn "mt")))
 
-(define-public (kill-line)
+(tm-define (kill-line)
   (selection-set-start)
   (go-end-line)
   (selection-set-end)
   (clipboard-cut "primary"))
 
-(define-public (replace-start-forward what by)
+(tm-define (replace-start-forward what by)
   (replace-start what by #t))
 
-(define-public (with-active-buffer-sub name cmd)
+(tm-define (with-active-buffer-sub name cmd)
   (let ((old (get-name-buffer)))
     (switch-to-active-buffer name)
     (eval cmd)
     (switch-to-active-buffer old)))
 
-(define-public-macro (with-active-buffer . l)
+(tm-define-macro (with-active-buffer . l)
   (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
 
-(define-public (delayed-update nr s-cont)
+(tm-define (delayed-update nr s-cont)
   (cond ((> nr 0)
 	 (system-wait "Generating automatic content" (number->string nr))
 	 (generate-all-aux)
@@ -126,15 +114,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define the-action-path '(-1))
-(define-public (set-action-path p) (set! the-action-path p))
-(define-public (has-action-path?) (!= the-action-path '(-1)))
-(define-public (get-action-path) the-action-path)
+(tm-define (set-action-path p) (set! the-action-path p))
+(tm-define (has-action-path?) (!= the-action-path '(-1)))
+(tm-define (get-action-path) the-action-path)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; For compatibility with the old "interactive" texmacs built-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (interactive . args)
+(tm-define (interactive . args)
   (let ((fun (last args)))
     (if (not (procedure? fun))
         (apply tm-interactive (rcons (but-last args) (eval fun)))

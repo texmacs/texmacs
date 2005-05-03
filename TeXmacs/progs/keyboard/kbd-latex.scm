@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-latex)
-  (:use (text text-edit) (texmacs edit edit-misc)
-	(texmacs tools tm-bracket)))
+  (:use (text text-edit) (utils edit brackets-edit)))
 
 (kbd-commands
   ("#" "Insert sharp" (insert "#"))
