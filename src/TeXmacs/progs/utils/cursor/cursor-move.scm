@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tm-cursor.scm
+;; MODULE      : cursor-move.scm
 ;; DESCRIPTION : routines for cursor movement
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs tools tm-cursor)
-  (:export
-    cursor-left cursor-right cursor-up cursor-down
-    cursor-page-up cursor-page-down cursor-start-line cursor-end-line
-    cursor-select))
+(texmacs-module (utils cursor cursor-move))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cursor handling

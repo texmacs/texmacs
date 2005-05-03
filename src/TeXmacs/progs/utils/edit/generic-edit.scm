@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tm-edit.scm
+;; MODULE      : generic-edit.scm
 ;; DESCRIPTION : important subroutines for editing
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel tools tm-edit)
-  (:use (kernel texmacs tm-define)))
+(texmacs-module (utils edit generic-edit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting general content
@@ -61,3 +60,25 @@
   (insert-inactive-stree-go-to '(macro "s" "") '(1 0))
   (if (not (in-source?))
       (set-message "return (2x): activate" "assign#macro")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting miscellaneous content
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-specific s)
+  (if (or (== s "texmacs") (in-source?))
+      (insert-go-to `(specific ,s "") '(1 0))
+      (insert-go-to `(inactive (specific ,s "")) '(0 1 0))))
+
+(tm-define (make-latex)
+  (make 'latex)
+  (set-message "Type a latex command followed by return" "latex"))
+
+(tm-define (make-include u)
+  (insert `(include ,(string-slash (url->string u)))))
+
+(tm-define (make-inline-image l)
+  (apply make-postscript (cons* (url->string (car l)) #f (cdr l))))
+
+(tm-define (make-link-image l)
+  (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))

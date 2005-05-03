@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (drd latex latex-symbol-drd))
+(texmacs-module (convert latex latex-symbol-drd))
 
 (drd-group latex-ams-symbol%
   ;;`

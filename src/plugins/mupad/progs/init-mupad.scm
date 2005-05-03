@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mupad-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mupad-input) mupad)
   (lazy-menu (mupad-menus) mupad-help-menu)
   (menu-extend texmacs-session-help-icons
@@ -23,7 +23,7 @@
 	  (link mupad-help-menu)))))
 
 (define (mupad-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (string-append (generic-serialize lan t) "\n"))
 
 (plugin-configure mupad

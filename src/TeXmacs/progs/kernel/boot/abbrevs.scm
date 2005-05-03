@@ -43,3 +43,10 @@
 (define-public (always? . l) #t)
 (define-public (root? t) (== (reverse (tree-ip t)) (the-buffer-path)))
 (define-public (true? . l) #t)
+
+(define-public (save-object file value)
+  (write value (open-file (url-materialize file "") OPEN_WRITE))
+  (flush-all-ports))
+
+(define-public (load-object file)
+  (read (open-file (url-materialize file "r") OPEN_READ)))

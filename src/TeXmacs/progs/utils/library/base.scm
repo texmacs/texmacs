@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel library base)
-  (:use (kernel texmacs tm-define)))
+(texmacs-module (utils library base))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Booleans
@@ -182,27 +181,6 @@
   (:type (forall T (-> (-> T bool) (-> T bool))))
   (:synopsis "Return the negation of @pred?.")
   (lambda args (not (apply pred? args))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dictionaries
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (fill-dictionary-entry d key im)
-  (if (nnull? key)
-      (begin
-	(ahash-set! d (car key) im)
-	(fill-dictionary-entry d (cdr key) im))))
-
-(tm-define (fill-dictionary d l)
-  (:type (forall Key Im
-		 (-> (alias (ahash-table Key Im)) (list (cross Key Im)) void)))
-  (:synopsis "Fill hash table @d with list of entries @l")
-  (:note "Depreciated")
-  (if (nnull? l)
-      (begin
-	(let* ((r (reverse (car l))))
-	  (fill-dictionary-entry d (cdr r) (car r)))
-	(fill-dictionary d (cdr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Objects

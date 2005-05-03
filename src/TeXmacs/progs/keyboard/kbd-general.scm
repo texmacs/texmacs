@@ -15,14 +15,13 @@
 (texmacs-module (keyboard kbd-general)
   (:use
     (texmacs texmacs tm-files)
-    (doc help-funcs)
     (texmacs texmacs tm-print)
     (texmacs edit edit-hybrid)
+    (utils cursor cursor-move)
+    (utils edit circulate)
+    (utils edit brackets-edit)
     (dynamic fold-edit)
-    (texmacs edit edit-misc)
-    (texmacs tools tm-cursor)
-    (texmacs tools tm-circulate)
-    (texmacs tools tm-bracket)))
+    (doc help-funcs)))
 
 (kbd-map
   ("cmd" "" "Execute a TeXmacs command")
