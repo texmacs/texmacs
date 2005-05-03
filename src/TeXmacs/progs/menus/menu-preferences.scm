@@ -18,7 +18,7 @@
 ;; The Preferences menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public page-setup-tree
+(tm-define page-setup-tree
   '((enum ("Preview command" "preview command")
 	  "default" "ggv" "ghostview" "gv" "kghostview"
 	  *)
@@ -35,7 +35,7 @@
     (enum ("Font type" "font type")
 	  "EC fonts" "CM fonts" "True Type")))
 
-(define-public preferences-tree
+(tm-define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Emacs" "emacs")
 	  ("Windows" "windows")
@@ -201,5 +201,5 @@
 	   (list s (list 'toggle-preference v))))
 	(else (map-in-order compute-preferences-menu-sub l))))
 
-(define-public (compute-preferences-menu l)
+(tm-define (compute-preferences-menu l)
   (eval `(menu-dynamic ,@(compute-preferences-menu-sub l))))

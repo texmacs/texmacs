@@ -83,7 +83,7 @@
 	 (R (modifier-list->string r)))
     (list R L #t)))
 
-(define-public (compute-wildcard-lines)
+(tm-define (compute-wildcard-lines)
   (map-in-order compute-wildcard-line
    '(("A")
      ("M")

@@ -90,7 +90,7 @@
   (:synopsis "Return all but the last @n chars of @s.")
   (substring s 0 (- (string-length s) n)))
 
-(define-public string-drop string-tail)	; srfi-13
+(tm-define string-drop string-tail)	; srfi-13
 
 (tm-define (string-take s n)		; srfi-13
   (:type (-> string int string))
@@ -102,7 +102,7 @@
   (:synopsis "Remove whitespace at start of @s.")
   (list->string (list-drop-while (string->list s) char-whitespace?)))
 
-(define-public (list-drop-right-while l pred)
+(tm-define (list-drop-right-while l pred)
   (reverse! (list-drop-while (reverse l) pred)))
 
 (tm-define (string-trim-right s)	; srfi-13 (subset)
