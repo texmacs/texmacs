@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-config.scm
+;; MODULE      : config-kbd.scm
 ;; DESCRIPTION : keyboard configuration
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-config))
+(texmacs-module (texmacs keyboard config-kbd))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prefix modifiers
@@ -130,11 +130,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (notify-cyrillic-input-method var val)
-  (cond ((== val "translit") (import-from (keyboard cyrillic kbd-translit)))
-	((== val "jcuken") (import-from (keyboard cyrillic kbd-jcuken)))
-	((== val "yawerty") (import-from (keyboard cyrillic kbd-yawerty)))
-	((== val "koi8-r") (import-from (keyboard cyrillic kbd-koi8)))
-	((== val "cp1251") (import-from (keyboard cyrillic kbd-cp1251)))))
+  (cond
+   ((== val "translit") (import-from (texmacs keyboard cyrillic translit-kbd)))
+   ((== val "jcuken") (import-from (texmacs keyboard cyrillic jcuken-kbd)))
+   ((== val "yawerty") (import-from (texmacs keyboard cyrillic yawerty-kbd)))
+   ((== val "koi8-r") (import-from (texmacs keyboard cyrillic koi8-kbd)))
+   ((== val "cp1251") (import-from (texmacs keyboard cyrillic cp1251-kbd)))))
 
 (define-preferences
   ("cyrillic input method" "" notify-cyrillic-input-method))

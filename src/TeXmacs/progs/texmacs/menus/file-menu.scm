@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : menu-file.scm
+;; MODULE      : file-menu.scm
 ;; DESCRIPTION : the file menus
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (menus menu-file)
+(texmacs-module (texmacs menus file-menu)
   (:use
-    (texmacs texmacs tm-server) (texmacs texmacs tm-files)
+    (texmacs texmacs tm-server)
+    (texmacs texmacs tm-files)
     (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-emacs.scm
+;; MODULE      : emacs-kbd.scm
 ;; DESCRIPTION : keyboard shortcuts for emacs look and feel
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-emacs)
+(texmacs-module (texmacs keyboard emacs-kbd)
   (:use
-    (texmacs texmacs tm-server) (texmacs texmacs tm-files)
+    (texmacs texmacs tm-server)
+    (texmacs texmacs tm-files)
     (utils edit selections)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

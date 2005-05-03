@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-cp1251.scm
+;; MODULE      : cp1251-kbd.scm
 ;; DESCRIPTION : typing russian using the cp1251 keyboard encoding
 ;; COPYRIGHT   : (C) 1999-2001  Joris van der Hoeven and Andrey Grozin
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard cyrillic kbd-cp1251))
+(texmacs-module (texmacs keyboard cyrillic cp1251-kbd))
 
 (kbd-map in-cyrillic-cp1251?
   ("¸" "¼")

@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-koi8.scm
+;; MODULE      : koi8-kbd.scm
 ;; DESCRIPTION : typing russian using the koi8 keyboard encoding
 ;; COPYRIGHT   : (C) 1999-2001  Joris van der Hoeven and Andrey Grozin
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard cyrillic kbd-koi8))
+(texmacs-module (texmacs keyboard cyrillic koi8-kbd))
 
 (kbd-map in-cyrillic-koi8?
   ("Á" "à")

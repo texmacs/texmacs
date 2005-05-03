@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-wildcards.scm
+;; MODULE      : wildcards-kbd.scm
 ;; DESCRIPTION : setup keyboard wildcards
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-wildcards)
-  (:use (keyboard kbd-config)))
+(texmacs-module (texmacs keyboard wildcards-kbd)
+  (:use (texmacs keyboard config-kbd)))
 
 (kbd-wildcards
   ("Mod1-" "" #t)

@@ -1,8 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : russian.scm
-;; MODULE      : kbd-jcuken.scm
+;; MODULE      : jcuken-kbd.scm
 ;; DESCRIPTION : typing russian using the jcuken keyboard encoding
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -12,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard cyrillic kbd-jcuken))
+(texmacs-module (texmacs keyboard cyrillic jcuken-kbd))
 
 (kbd-map in-cyrillic-jcuken?
   ("q" "é")

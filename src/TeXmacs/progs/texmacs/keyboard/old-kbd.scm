@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-old.scm
+;; MODULE      : old-kbd.scm
 ;; DESCRIPTION : keyboard shortcuts for old look and feel
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-old)
+(texmacs-module (texmacs keyboard old-kbd)
   (:use
-    (texmacs texmacs tm-server) (texmacs texmacs tm-files)
+    (texmacs texmacs tm-server)
+    (texmacs texmacs tm-files)
     (utils edit selections)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
