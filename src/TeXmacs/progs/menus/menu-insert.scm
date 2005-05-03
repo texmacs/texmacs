@@ -14,8 +14,8 @@
 
 (texmacs-module (menus menu-insert)
   (:use
-     (texmacs edit edit-graphics) (texmacs edit edit-fold)
-     (texmacs edit edit-format) (texmacs edit edit-misc)))
+    (graphics graphics-edit) (texmacs edit edit-fold)
+    (texmacs edit edit-format) (texmacs edit edit-misc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects

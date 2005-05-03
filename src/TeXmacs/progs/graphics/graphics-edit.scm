@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : graphics.scm
+;; MODULE      : graphics-edit.scm
 ;; DESCRIPTION : editing routines for graphics mode
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;               (C) 2004  Joris van der Hoeven and Henri Lesourd
@@ -13,7 +13,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs edit edit-graphics))
+(texmacs-module (graphics graphics-edit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Frequently used subroutines

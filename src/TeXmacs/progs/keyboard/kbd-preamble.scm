@@ -14,7 +14,7 @@
 
 (texmacs-module (keyboard kbd-preamble)
   (:use (texmacs edit edit-format) (texmacs edit edit-misc)
-	(texmacs edit edit-graphics)))
+	(graphics graphics-edit)))
 
 (kbd-map
   ("executable" "" "Insert executable markup")

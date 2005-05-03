@@ -38,8 +38,7 @@
 	     (texmacs texmacs tm-document) (texmacs texmacs tm-help))
 (use-modules (texmacs tools tm-cursor) (texmacs tools tm-select)
 	     (texmacs tools tm-circulate))
-(use-modules (texmacs edit edit-format) (texmacs edit edit-text)
-	     (texmacs edit edit-table) (texmacs edit edit-graphics)
+(use-modules (texmacs edit edit-format)
 	     (texmacs edit edit-fold) (texmacs edit edit-misc)
 	     (texmacs edit edit-hybrid))
 (use-modules (texmacs plugin plugin-cmd))
@@ -56,15 +55,9 @@
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
 (lazy-menu (menus menu-source) source-menu texmacs-source-icons
 	   source-transformational-menu source-executable-menu)
-(lazy-menu (menus menu-text) size-tag-menu
-	   text-menu texmacs-text-icons text-modifier-icons)
-(lazy-menu (menus menu-mathematics)
-	   mathematics-menu texmacs-math-icons math-modifier-icons)
 (lazy-menu (menus menu-prog)
 	   prog-modifier-icons session-menu
 	   texmacs-session-icons texmacs-session-help-icons texmacs-help-icons)
-(lazy-menu (menus menu-graphics) graphics-menu texmacs-graphics-icons)
-(lazy-menu (menus menu-table) table-menu texmacs-table-icons)
 (lazy-menu (menus menu-format) color-menu paragraph-menu format-menu)
 (lazy-menu (menus menu-document)
 	   document-menu project-menu document-style-menu global-language-menu)
@@ -83,9 +76,26 @@
 (lazy-in-mode (keyboard kbd-latex) always?)
 (lazy-in-mode (keyboard kbd-general) always?)
 (lazy-in-mode (keyboard kbd-preamble) always?)
-(lazy-in-mode (keyboard kbd-text) in-text?)
-(lazy-in-mode (keyboard kbd-math) in-math?)
-(lazy-in-mode (keyboard kbd-table) in-table?)
+
+;(display "Booting text mode\n")
+(use-modules (text text-edit))
+(lazy-in-mode (text text-kbd) in-text?)
+(lazy-menu (text text-menu) size-tag-menu
+	   text-menu texmacs-text-icons text-modifier-icons)
+
+;(display "Booting table mode\n")
+(use-modules (table table-edit))
+(lazy-in-mode (table table-kbd) in-table?)
+(lazy-menu (table table-menu) table-menu texmacs-table-icons)
+
+;(display "Booting math mode\n")
+(lazy-in-mode (math math-kbd) in-math?)
+(lazy-menu (math math-menu)
+	   mathematics-menu texmacs-math-icons math-modifier-icons)
+
+;(display "Booting graphics mode\n")
+(use-modules (graphics graphics-edit))
+(lazy-menu (graphics graphics-menu) graphics-menu texmacs-graphics-icons)
 
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
