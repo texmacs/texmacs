@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : menu-insert.scm
+;; MODULE      : insert-menu.scm
 ;; DESCRIPTION : menus for inserting new structure
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,10 +12,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (menus menu-insert)
+(texmacs-module (texmacs menus insert-menu)
   (:use
-    (graphics graphics-edit) (dynamic fold-edit)
-    (texmacs edit edit-format)))
+    (texmacs edit edit-format)
+    (graphics graphics-edit)
+    (dynamic fold-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects

@@ -116,7 +116,7 @@
 
 (define-public (apply-preferences)
   "Apply the preferences"
-  (import-from (keyboard kbd-config) (texmacs texmacs tm-server)
+  (import-from (texmacs keyboard config-kbd) (texmacs texmacs tm-server)
 	       (texmacs texmacs tm-view) (texmacs texmacs tm-print)
 	       (utils edit brackets-edit))
   (map-in-order preference-apply (preferences->list preferences-table))

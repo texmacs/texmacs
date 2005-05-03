@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-yawerty.scm
+;; MODULE      : yawerty-kbd.scm
 ;; DESCRIPTION : typing russian using the yawerty keyboard encoding
 ;; COPYRIGHT   : (C) 1999-2001  Joris van der Hoeven and Andrey Grozin
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard cyrillic kbd-yawerty))
+(texmacs-module (texmacs keyboard cyrillic yawerty-kbd))
 
 (kbd-map in-cyrillic-yawerty?
   ("q" "ÿ")

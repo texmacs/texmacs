@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-windows.scm
+;; MODULE      : windows-kbd.scm
 ;; DESCRIPTION : keyboard shortcuts for windows and kde look and feel
 ;; COPYRIGHT   : (C) 2004  Joris van der Hoeven
 ;;
@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-windows)
+(texmacs-module (texmacs keyboard windows-kbd)
   (:use
-    (texmacs texmacs tm-server) (texmacs texmacs tm-files)
+    (texmacs texmacs tm-server)
+    (texmacs texmacs tm-files)
     (utils edit selections)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

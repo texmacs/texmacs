@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-translit.scm
+;; MODULE      : translit-kbd.scm
 ;; DESCRIPTION : typing russian using the translit keyboard encoding
 ;; COPYRIGHT   : (C) 1999-2001  Joris van der Hoeven and Andrey Grozin
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard cyrillic kbd-translit))
+(texmacs-module (texmacs keyboard cyrillic translit-kbd))
 
 (kbd-map in-cyrillic-translit?
   ("a" "à")

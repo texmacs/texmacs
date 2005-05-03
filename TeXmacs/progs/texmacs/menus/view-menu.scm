@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : menu-view.scm
+;; MODULE      : view-menu.scm
 ;; DESCRIPTION : the view menu
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (menus menu-view)
+(texmacs-module (texmacs menus view-menu)
   (:use
-    (texmacs texmacs tm-view) (texmacs texmacs tm-server)
+    (texmacs texmacs tm-view)
+    (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

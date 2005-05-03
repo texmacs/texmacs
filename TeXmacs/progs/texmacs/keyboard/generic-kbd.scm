@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-general.scm
+;; MODULE      : generic-kbd.scm
 ;; DESCRIPTION : general keyboard shortcuts for all modes
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-general)
+(texmacs-module (texmacs keyboard generic-kbd)
   (:use
     (texmacs texmacs tm-files)
     (texmacs texmacs tm-print)
