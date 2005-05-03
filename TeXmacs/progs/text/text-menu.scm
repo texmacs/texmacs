@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : menu-text.scm
+;; MODULE      : text-menu.scm
 ;; DESCRIPTION : menus for inserting structure in text mode
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,9 +12,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (menus menu-text)
-  (:use (texmacs edit edit-text) (texmacs edit edit-format)
-	(texmacs edit edit-title)))
+(texmacs-module (text text-menu)
+  (:use (texmacs edit edit-format)
+	(text text-edit) (text title-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers

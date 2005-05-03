@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-math.scm
+;; MODULE      : math-kbd.scm
 ;; DESCRIPTION : keyboard shortcuts for mathematics
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-math)
-  (:use (texmacs edit edit-table) (texmacs tools tm-bracket)))
+(texmacs-module (math math-kbd)
+  (:use (table table-edit) (texmacs tools tm-bracket)))
 
 (kbd-map in-math?
   ("math" "" "Insert mathematical markup")

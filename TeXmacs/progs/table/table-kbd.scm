@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-table.scm
+;; MODULE      : table-kbd.scm
 ;; DESCRIPTION : keyboard shortcuts for tables
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-table)
-  (:use (texmacs edit edit-table)))
+(texmacs-module (table table-kbd)
+  (:use (table table-edit)))
 
 (kbd-map in-table?
   ("table H" "" "Horizontal table alignment (l: left, c: center, r: right)")

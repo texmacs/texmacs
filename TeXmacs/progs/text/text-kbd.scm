@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : kbd-text.scm
+;; MODULE      : text-kbd.scm
 ;; DESCRIPTION : setup key combinations for frequently used commands
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard kbd-text)
-  (:use (texmacs edit edit-text) (texmacs tools tm-bracket)))
+(texmacs-module (text text-kbd)
+  (:use (text text-edit) (texmacs tools tm-bracket)))
 
 (kbd-map in-text?
   ("text" "" "Insert structural markup")

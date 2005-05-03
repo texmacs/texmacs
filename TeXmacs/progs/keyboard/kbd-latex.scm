@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-latex)
-  (:use (texmacs edit edit-text) (texmacs edit edit-misc)
+  (:use (text text-edit) (texmacs edit edit-misc)
 	(texmacs tools tm-bracket)))
 
 (kbd-commands
