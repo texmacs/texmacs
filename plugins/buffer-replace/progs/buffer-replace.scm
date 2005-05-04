@@ -16,12 +16,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (buffer-replace)
-  (:use (kernel tools tm-misc)) ;; tm-subtree
-  (:export buffer-replace
-	   buffer-replace-preorder
-	   buffer-replace-preorder-from
-	   buffer-replace-postorder
-	   buffer-replace-postorder-from))
+  (:use (utils misc misc-funcs))) ;; tm-subtree
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Walking and changing the buffer
@@ -53,7 +48,7 @@
       (tm-position-delete pos)
       (cont p))))
 
-(define buffer-replace 
+(tm-define buffer-replace 
   (case-lambda
     ((order pred? transf)
      (cond ((eqv? :pre order)
@@ -70,11 +65,11 @@
 	   (else
 	    (error "Bad order keyword:" order))))))
   
-(define (buffer-replace-preorder pred? transf)
+(tm-define (buffer-replace-preorder pred? transf)
   ;; Preorder traversal, do not recurse in matching subtrees.
   (buffer-replace-preorder-from '() pred? transf))
 
-(define (buffer-replace-preorder-from p pred? transf)
+(tm-define (buffer-replace-preorder-from p pred? transf)
   (let ((t (tm-subtree p)))
     (cond ((pred? p t)
 	   (protect-position
@@ -98,11 +93,11 @@
 	       (reverse (cons i ipp)) pred? transf)
 	      (ascend ipp))))))
 
-(define (buffer-replace-postorder pred? transf)
+(tm-define (buffer-replace-postorder pred? transf)
   ;; Postorder traversal, all subtrees are walked.
   (buffer-replace-postorder-from '() pred? transf))
 
-(define (buffer-replace-postorder-from p pred? transf)
+(tm-define (buffer-replace-postorder-from p pred? transf)
   (let ((t (tm-subtree p)))
     (if (and (tree-compound? t)
 	     (< 0 (tree-arity t)))

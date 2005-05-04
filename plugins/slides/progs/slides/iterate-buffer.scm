@@ -13,10 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides iterate-buffer)
-  (:use (slides search-in-tree))
-  (:export excursion clear-output))
+  (:use (slides search-in-tree)))
 
-(define (excursion thunk)
+(tm-define (excursion thunk)
   (let ((marker #f))
     (dynamic-wind
 	(lambda ()
@@ -75,5 +74,5 @@
           (tm-remove p 1))
      (clear-output/sub))))
 
-(define (clear-output)
+(tm-define (clear-output)
   (excursion (lambda () (go-root) (clear-output/sub))))

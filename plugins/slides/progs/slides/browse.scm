@@ -13,15 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides browse)
-  (:use (texmacs edit edit-fold) (slides search-in-tree))
-  (:export next-slide prev-slide))
+  (:use (dynamic fold-edit) (slides search-in-tree)))
 
-(define (next-slide)
+(tm-define (next-slide)
   (go-innermost-switch)
   (if (inside? "switch")
       (next-slide-sub)))
 
-(define (prev-slide)
+(tm-define (prev-slide)
   (go-innermost-switch)
   (if (inside? "switch")
       (prev-slide-sub)))

@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides slides)
-  (:use (convert tools stm))
-  (:export make-slides make-slides-here))
+  (:use (convert tools stm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Creating slides (nested switches) from the section structure of a document.
@@ -22,11 +21,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	Public commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-slides)
+(tm-define (make-slides)
   (apply-on-new-buffer-stree
    (lambda (x) (sections->switch x '(section subsection subsubsection)))))
 
-(define (make-slides-here)
+(tm-define (make-slides-here)
   (apply-on-buffer-stree
    (lambda (x) (sections->switch x '(section subsection subsubsection)))))
 

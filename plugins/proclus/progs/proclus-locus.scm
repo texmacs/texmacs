@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-locus)
-  (:use (kernel tools tm-misc) (search-in-tree)
+  (:use (utils misc misc-funcs)
+	(search-in-tree)
         (proclus-list) ;; quadripartite
         (proclus-absname)
         (proclus-lib)

@@ -13,21 +13,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides search-in-tree)
-  (:use (convert tools stm))
-  (:export tree-func? tree-compound-arity safe-tree-ref
-	   search-in-tree search-in-tree-from))
+  (:use (convert tools stm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Utility functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tree-func? t s)
+(tm-define (tree-func? t s)
   (or (== s (symbol->string (tree-get-label t)))
       (and (in? (tree-get-label t) '(expand var_expand hide_expand))
            (== s (tree->string (tree-ref t 0))))))
 
-(define (tree-compound-arity t)
+(tm-define (tree-compound-arity t)
   (if (tree-atomic? t) 0 (tree-arity t)))
 
-(define (safe-tree-ref t i)
+(tm-define (safe-tree-ref t i)
   (if (< i (tree-compound-arity t))
       (tree-ref t i)
       (error "safe-tree-ref, index out of range")))
@@ -40,7 +38,7 @@
 ;; returns: the path of the first (depth first) matching subtree
 ;;          or #f if no match is found.
 
-(define (search-in-tree t label)
+(tm-define (search-in-tree t label)
   (let down ((t t) (ip '()))
     (if (tree-func? t label)
         (reverse ip)
@@ -62,7 +60,7 @@
 
 ;; return: value of last invokation of @proc or #f if no match was found.
 
-(define (search-in-tree-from t path label proc)
+(tm-define (search-in-tree-from t path label proc)
   (if (null? path)
       (search-in-tree-from/down label proc '() '() t)
       (let ((t+ts (subtrees-on-path t path)))
