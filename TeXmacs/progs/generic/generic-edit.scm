@@ -12,21 +12,42 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils edit generic-edit))
+(texmacs-module (generic generic-edit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting general content
+;; Cursor handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert-at t p)
-  (:type (-> tree path void))
-  (:synopsis "Insert @t at @p.")
-  (let* ((pos (tm-position-new))
-	 (old (tm-position-get pos)))
-    (tm-go-to p)
-    (insert t)
-    (tm-go-to old)
-    (tm-position-delete pos)))
+(tm-define (kbd-left) (go-left))
+(tm-define (kbd-right) (go-right))
+(tm-define (kbd-up) (go-up))
+(tm-define (kbd-down) (go-down))
+(tm-define (kbd-page-up) (go-page-up))
+(tm-define (kbd-page-down) (go-page-down))
+(tm-define (kbd-start-line) (go-start-line))
+(tm-define (kbd-end-line) (go-end-line))
+
+(tm-define (kbd-select r)
+  (select-from-shift-keyboard)
+  (r)
+  (select-from-cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other editing functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-return) (insert-return))
+(tm-define (kbd-shift-return) (insert-return))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other editing functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kill-line)
+  (selection-set-start)
+  (go-end-line)
+  (selection-set-end)
+  (clipboard-cut "primary"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting inactive content
@@ -69,10 +90,6 @@
   (if (or (== s "texmacs") (in-source?))
       (insert-go-to `(specific ,s "") '(1 0))
       (insert-go-to `(inactive (specific ,s "")) '(0 1 0))))
-
-(tm-define (make-latex)
-  (make 'latex)
-  (set-message "Type a latex command followed by return" "latex"))
 
 (tm-define (make-include u)
   (insert `(include ,(string-slash (url->string u)))))

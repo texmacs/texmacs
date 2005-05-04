@@ -79,12 +79,6 @@
 (tm-define (real-math-family? fn)
   (or (== fn "mr") (== fn "ms") (== fn "mt")))
 
-(tm-define (kill-line)
-  (selection-set-start)
-  (go-end-line)
-  (selection-set-end)
-  (clipboard-cut "primary"))
-
 (tm-define (replace-start-forward what by)
   (replace-start what by #t))
 

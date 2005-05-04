@@ -13,7 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (math math-kbd)
-  (:use (table table-edit) (utils edit brackets-edit)))
+  (:use
+    (utils edit auto-close)
+    (math math-edit))
+    (table table-edit))
 
 (kbd-map in-math?
   ("math" "" "Insert mathematical markup")

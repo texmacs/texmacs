@@ -15,6 +15,34 @@
 (texmacs-module (dynamic session-edit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cursor movement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-left)
+  (:inside input)
+  (session-go-left))
+
+(tm-define (kbd-right)
+  (:inside input)
+  (session-go-right))
+
+(tm-define (kbd-up)
+  (:inside input)
+  (session-go-up))
+
+(tm-define (kbd-down)
+  (:inside input)
+  (session-go-down))
+
+(tm-define (kbd-page-up)
+  (:inside input)
+  (session-go-page-up))
+
+(tm-define (kbd-page-down)
+  (:inside input)
+  (session-go-page-down))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -55,14 +83,14 @@
 	      (process-input)))
 	(process-input))))
 
-(tm-define (session-return)
-  (:synopsis "Pressing return in session input.")
+(tm-define (kbd-return)
+  (:inside input)
   (if (session-multiline-input?)
       (insert-return)
       (session-process-input)))
 
-(tm-define (session-shift-return)
-  (:synopsis "Pressing shift-return in session input.")
+(tm-define (kbd-shift-return)
+  (:inside input)
   (if (session-multiline-input?)
       (session-process-input)
       (insert-return)))

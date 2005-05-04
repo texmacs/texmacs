@@ -32,29 +32,21 @@
 ;(display "Booting utilities\n")
 (inherit-modules (utils library base) (utils library list)
 		 (utils library tree))
-(inherit-modules (utils edit generic-edit) (utils misc misc-funcs)
-		 (utils misc markup-funcs))
-(use-modules (utils cursor cursor-move) (utils edit selections)
-	     (utils edit circulate))
+(inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
+(use-modules (utils edit selections) (utils edit circulate))
 (use-modules (utils plugins plugin-cmd))
 
-;(display "Booting TeXmacs fundamental mode\n")
+;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-files)
 	     (texmacs texmacs tm-print) (texmacs texmacs tm-view)
 	     (texmacs texmacs tm-document))
-(use-modules (texmacs edit edit-format)
-	     (texmacs edit edit-hybrid))
+(use-modules (texmacs edit edit-hybrid))
 (re-export safely-kill-window)
 
 (lazy-menu (texmacs menus file-menu)
 	   file-menu go-menu
 	   new-file-menu load-menu save-menu print-menu close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
-(lazy-menu (texmacs menus insert-menu)
-	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
-	   insert-mathematics-menu insert-session-menu
-	   insert-image-menu insert-page-insertion-menu position-float-menu)
-(lazy-menu (texmacs menus format-menu) color-menu paragraph-menu format-menu)
 (lazy-menu (texmacs menus document-menu)
 	   document-menu project-menu document-style-menu global-language-menu)
 (lazy-menu (texmacs menus view-menu) view-menu)
@@ -68,6 +60,14 @@
 (if (like-old?) (lazy-in-mode (texmacs keyboard old-kbd) always?))
 (lazy-in-mode (texmacs keyboard latex-kbd) always?)
 (lazy-in-mode (texmacs keyboard generic-kbd) always?)
+
+;(display "Booting generic mode\n")
+(use-modules (generic format-edit) (generic generic-edit))
+(lazy-menu (generic format-menu) color-menu paragraph-menu format-menu)
+(lazy-menu (generic insert-menu)
+	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
+	   insert-mathematics-menu insert-session-menu
+	   insert-image-menu insert-page-insertion-menu position-float-menu)
 
 ;(display "Booting source mode\n")
 (lazy-in-mode (source source-kbd) always?)

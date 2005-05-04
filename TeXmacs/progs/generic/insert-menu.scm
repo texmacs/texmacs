@@ -12,9 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs menus insert-menu)
+(texmacs-module (generic insert-menu)
   (:use
-    (texmacs edit edit-format)
+    (generic generic-edit)
+    (generic format-edit)
     (graphics graphics-edit)
     (dynamic fold-edit)))
 

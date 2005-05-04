@@ -14,9 +14,10 @@
 
 (texmacs-module (texmacs keyboard old-kbd)
   (:use
+    (utils edit selections)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)
-    (utils edit selections)))
+    (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wildcards
@@ -108,24 +109,24 @@
   ("emacs:contextual" "" "Emacs mode specific prefix command")
   ("emacs:prefix" "" "Emacs prefix command")
 
-  ("emacs a" (go-start-line))
-  ("emacs b" (go-left))
+  ("emacs a" (kbd-start-line))
+  ("emacs b" (kbd-left))
   ("emacs d" (remove-text #t))
-  ("emacs e" (go-end-line))
-  ("emacs f" (go-right))
+  ("emacs e" (kbd-end-line))
+  ("emacs f" (kbd-right))
   ("emacs g" (selection-cancel))
   ("emacs j" (insert-return))
   ("emacs k" (kill-line))
   ("emacs l" (recenter-window))
   ("emacs m" (insert-return))
-  ("emacs n" (go-down))
+  ("emacs n" (kbd-down))
   ("emacs o" (open-line))
-  ("emacs p" (go-up))
+  ("emacs p" (kbd-up))
   ("emacs q" (make 'symbol))
   ("emacs r" (search-start #f))
   ("emacs s" (search-start #t))
   ("emacs t" (transpose-chars))
-  ("emacs v" (go-page-up))
+  ("emacs v" (kbd-page-up))
   ("emacs w" (clipboard-cut "primary"))
   ("emacs y" (clipboard-paste "primary"))
   ("emacs insert" (clipboard-copy "primary"))

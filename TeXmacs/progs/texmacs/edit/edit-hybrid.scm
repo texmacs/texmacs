@@ -14,79 +14,10 @@
 
 (texmacs-module (texmacs edit edit-hybrid)
   (:use
+    (generic generic-edit)
     (text text-edit) (text title-edit)
     (table table-edit) (graphics graphics-edit)
     (dynamic session-edit) (dynamic fold-edit)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The multi-purpose return key
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (return-inside-table)
-  (let ((x (inside-which '("table" "document"))))
-    (if (== x "document")
-	(insert-return)
-	(begin
-	  (table-insert-row #t)
-	  (table-go-to (table-which-row) 1)))))
-
-(define (return-sectional)
-  (go-end-line)
-  (insert-return))
-
-(define (make-return-inside x)
-  (cond ((== x "hybrid") (activate-hybrid #f))
-	((== x "latex") (activate-latex))
-	((== x "symbol") (activate-symbol))
-	((== x "inactive") (activate))
-	((== x "title") (return-sectional)) ;; still needed for exams
-	((== x "doc-title") (make-doc-data-element 'doc-author-data))
-	((== x "author-name") (make-author-data-element 'author-address))
-	((== x "doc-inactive") (doc-data-activate-here))
-	((in? x '("part" "part*" "chapter" "chapter*" "appendix"
-		  "section" "subsection" "subsubsection"
-		  "section*" "subsection*" "subsubsection*"
-		  "paragraph" "subparagraph" "paragraph*" "subparagraph*"))
-	 (return-sectional))
-	((== x "item*") (go-end-of "item*"))
-	((== x "equation") (go-end-of "equation") (insert-return))
-	((== x "input") (session-return))
-	((== x "table") (return-inside-table))
-	((in? x '("itemize" "itemize-minus" "itemize-dot" "itemize-arrow"
-		  "enumerate" "enumerate-numeric" "enumerate-roman"
-		  "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"
-		  "description" "description-compact" "description-aligned"
-		  "description-dash" "description-long"))
-	 (make-item))
-	((inside? "compound") (activate-compound))
-	(else (insert-return))))
-
-(tm-define (make-return)
-  (make-return-inside
-   (inside-which '("inactive" "latex" "hybrid" "symbol"
-		   "title" "doc-title" "author-name" "doc-inactive"
-		   "part" "part*" "chapter" "chapter*" "appendix"
-		   "section" "subsection" "subsubsection"
-		   "section*" "subsection*" "subsubsection*"
-		   "paragraph" "subparagraph" "paragraph*" "subparagraph*"
-		   "item*" "equation" "equation*" "table" "input"
-		   "itemize" "itemize-minus" "itemize-dot" "itemize-arrow"
-		   "enumerate" "enumerate-numeric" "enumerate-roman"
-		   "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"
-		   "description" "description-compact" "description-aligned"
-		   "description-dash" "description-long"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Shift-return
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (make-shift-return-inside x)
-  (cond ((== x "input") (session-shift-return))
-	(else (insert-return))))
-
-(tm-define (make-shift-return)
-  (make-shift-return-inside
-    (inside-which '("input"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose insertions

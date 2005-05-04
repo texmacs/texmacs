@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-kbd)
-  (:use (text text-edit) (utils edit brackets-edit)))
+  (:use (text text-edit) (utils edit auto-close)))
 
 (kbd-map in-text?
   ("text" "" "Insert structural markup")
