@@ -16,6 +16,19 @@
   (:use (utils edit circulate)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Starting a new row
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-return)
+  (:inside table)
+  (let ((x (inside-which '("table" "document"))))
+    (if (== x "document")
+	(insert-return)
+	(begin
+	  (table-insert-row #t)
+	  (table-go-to (table-which-row) 1)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -331,7 +344,6 @@
   (let* ((row (table-which-row))
 	 (p   (table-search-cell row -1))
 	 (end (tm-end p)))
-    ;(insert-at '(eq-number) end)
     (tm-go-to end)
     (insert '(eq-number))))
 

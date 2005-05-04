@@ -50,6 +50,23 @@
 	   (tm-insert q `(doc-author-data (,l "")))
 	   (tm-go-to (rcons* q 0 0))))))
 
+(tm-define (kbd-return)
+  (:inside title)
+  (go-end-line)
+  (insert-return))
+
+(tm-define (kbd-return)
+  (:inside doc-title)
+  (make-doc-data-element 'doc-author-data))
+
+(tm-define (kbd-return)
+  (:inside author-name)
+  (make-author-data-element 'author-address))
+
+(tm-define (kbd-return)
+  (:inside doc-inactive)
+  (doc-data-activate-here))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Activation and disactivation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

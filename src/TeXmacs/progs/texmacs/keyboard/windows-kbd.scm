@@ -14,9 +14,10 @@
 
 (texmacs-module (texmacs keyboard windows-kbd)
   (:use
+    (utils edit selections)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)
-    (utils edit selections)))
+    (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wildcards

@@ -78,6 +78,14 @@
      "exercise" "problem"
      "small-figure" "big-figure" "small-table" "big-table")))
 
+(tm-define (kbd-return)
+  (:inside part part* chapter chapter* appendix
+	   section subsection subsubsection
+	   section* subsection* subsubsection*
+	   paragraph subparagraph paragraph* subparagraph*)
+  (go-end-line)
+  (insert-return))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,6 +114,18 @@
       (with l (inside-which (append list-itemize-enumerate list-description))
 	(cond ((in? l list-itemize-enumerate) (make 'item))
 	      ((in? l list-description) (make 'item*))))))
+
+(tm-define (kbd-return)
+  (:inside itemize itemize-minus itemize-dot itemize-arrow
+	   enumerate enumerate-numeric enumerate-roman
+	   enumerate-Roman enumerate-alpha enumerate-Alpha
+	   description description-compact description-aligned
+	   description-dash description-long)
+  (make-item))
+
+(tm-define (kbd-return)
+  (:inside item*)
+  (go-end-of "item*"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content

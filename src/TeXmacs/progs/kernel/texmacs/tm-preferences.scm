@@ -118,6 +118,6 @@
   "Apply the preferences"
   (import-from (texmacs keyboard config-kbd) (texmacs texmacs tm-server)
 	       (texmacs texmacs tm-view) (texmacs texmacs tm-print)
-	       (utils edit brackets-edit))
+	       (utils edit auto-close))
   (map-in-order preference-apply (preferences->list preferences-table))
   (set! preferences-initialization-flag #t))

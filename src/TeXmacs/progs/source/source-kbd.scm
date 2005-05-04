@@ -13,7 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard source-kbd)
-  (:use (texmacs edit edit-format) (graphics graphics-edit)))
+  (:use
+    (source source-edit)
+    (generic format-edit)
+    (graphics graphics-edit)))
 
 (kbd-map
   ("executable" "" "Insert executable markup")
