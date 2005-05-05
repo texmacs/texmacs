@@ -37,3 +37,19 @@
 (tm-define (kbd-return)
   (:inside compound)
   (activate-compound))
+
+(tm-define (kbd-tab)
+  (:inside hybrid)
+  (activate-hybrid #t))
+
+(tm-define (kbd-tab)
+  (:inside inactive tuple attr)
+  (insert-argument #t))
+
+(tm-define (kbd-tab)
+  (:mode in-source?)
+  (insert-argument #t))
+
+(tm-define (structured-insert forwards?)
+  (:inside hybrid)
+  (activate-hybrid #t))

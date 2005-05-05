@@ -12,10 +12,30 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (dynamic session-edit))
+(texmacs-module (dynamic session-edit)
+  (:use (dynamic fold-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Cursor movement
+;; Switches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (toggle-session-math-input)
+  (:synopsis "Toggle mathematical input in sessions.")
+  (:check-mark "v" session-math-input?)
+  (session-use-math-input (not (session-math-input?))))
+
+(define session-multiline-input #f)
+
+(tm-define (session-multiline-input?)
+  session-multiline-input)
+
+(tm-define (toggle-session-multiline-input)
+  (:synopsis "Toggle multi-line input in sessions.")
+  (:check-mark "v" session-multiline-input?)
+  (set! session-multiline-input (not session-multiline-input)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-left)
@@ -42,24 +62,14 @@
   (:inside input)
   (session-go-page-down))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Switches
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(tm-define (kbd-remove forward?)
+  (:inside input)
+  (session-remove forward?))
 
-(tm-define (toggle-session-math-input)
-  (:synopsis "Toggle mathematical input in sessions.")
-  (:check-mark "v" session-math-input?)
-  (session-use-math-input (not (session-math-input?))))
-
-(define session-multiline-input #f)
-
-(tm-define (session-multiline-input?)
-  session-multiline-input)
-
-(tm-define (toggle-session-multiline-input)
-  (:synopsis "Toggle multi-line input in sessions.")
-  (:check-mark "v" session-multiline-input?)
-  (set! session-multiline-input (not session-multiline-input)))
+(tm-define (kbd-tab)
+  (:inside input)
+  (:require (plugin-supports-completions? (get-env "prog-language")))
+  (if (session-complete-try?) (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The return key in session input
@@ -94,3 +104,21 @@
   (if (session-multiline-input?)
       (session-process-input)
       (insert-return)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-insert forwards?)
+  (:inside input)
+  (if forwards?
+      (session-fold-input)
+      (unfold)))
+
+(tm-define (structured-insert-up)
+  (:inside input)
+  (session-insert-input-above))
+
+(tm-define (structured-insert-down)
+  (:inside input)
+  (session-insert-input-below))

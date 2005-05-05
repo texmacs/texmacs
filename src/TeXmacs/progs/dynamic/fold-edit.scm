@@ -136,6 +136,10 @@
 		(tm-insert (rcons* p 1 where) '(tuple (document "")))
 		(switch-select where)))))
 
+(tm-define (structured-insert forwards?)
+  (:inside switch)
+  (switch-insert (if forwards? "after" "before")))
+
 (tm-define (switch-remove where)
   (:type (-> int void))
   (:synopsis "Remove a branch from the current switch environment at @where")
@@ -148,6 +152,10 @@
 	  (else (switch-unselect)
 		(tm-remove (rcons* p 1 where) 1)
 		(switch-select (min where (- last 1)))))))
+
+(tm-define (structured-remove forwards?)
+  (:inside switch)
+  (switch-remove "here"))
 
 (tm-define (switch-to where)
   (:type (-> int void))
