@@ -19,9 +19,6 @@
     (graphics graphics-edit)))
 
 (kbd-map
-  ("executable" "" "Insert executable markup")
-  ("inactive" "" "Insert inactive markup")
-
   ("M-)" (make-style-with "src-compact" "none"))
   ("M-(" (make-style-with "src-compact" "all"))
   ("M-@" (make-mod-active 'style-only*))

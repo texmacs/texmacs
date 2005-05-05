@@ -24,10 +24,6 @@
     (doc help-funcs)))
 
 (kbd-map
-  ("cmd" "" "Execute a TeXmacs command")
-  ("noop" (set-message "" ""))
-  ("symbol" "" "Insert a TeXmacs symbol")
-
   ("space" " ")
   ("space tab" (make 'nbsp))
   ("return" (kbd-return))
@@ -158,8 +154,6 @@
   ("symbol \"" "\""))
 
 (kbd-map ;; inserting tables
-  ("table" "" "Table command")
-  ("table N" "" "New table (t: tabular, b: block)")
   ("table N t" (make 'tabular))
   ("table N T" (make 'tabular*))
   ("table N b" (make 'block))

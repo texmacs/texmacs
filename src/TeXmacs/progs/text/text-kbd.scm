@@ -16,8 +16,6 @@
   (:use (utils edit auto-close)))
 
 (kbd-map in-text?
-  ("text:symbol" "" "Insert a TeXmacs symbol")
-
   ("\"" (insert-quote))
   ("<" "<less>")
   (">" "<gtr>")
