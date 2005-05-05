@@ -38,30 +38,29 @@
 
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-files)
-	     (texmacs texmacs tm-print) (texmacs texmacs tm-view)
-	     (texmacs texmacs tm-document))
+	     (texmacs texmacs tm-print) (texmacs texmacs tm-view))
 (re-export safely-kill-window)
-
 (lazy-menu (texmacs menus file-menu)
 	   file-menu go-menu
 	   new-file-menu load-menu save-menu print-menu close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
-(lazy-menu (texmacs menus document-menu)
-	   document-menu project-menu document-style-menu global-language-menu)
 (lazy-menu (texmacs menus view-menu) view-menu)
 (lazy-menu (texmacs menus tools-menu) tools-menu)
 (use-modules (texmacs menus preferences-menu) (texmacs menus main-menu))
-
 (use-modules (texmacs keyboard config-kbd))
 (lazy-in-mode (texmacs keyboard wildcards-kbd) always?)
 (if (like-emacs?) (lazy-in-mode (texmacs keyboard emacs-kbd) always?))
 (if (like-windows?) (lazy-in-mode (texmacs keyboard windows-kbd) always?))
 (lazy-in-mode (texmacs keyboard latex-kbd) always?)
-(lazy-in-mode (texmacs keyboard generic-kbd) always?)
+(lazy-in-mode (texmacs keyboard texmacs-kbd) always?)
 
 ;(display "Booting generic mode\n")
-(use-modules (generic format-edit) (generic generic-edit))
+(use-modules (generic generic-edit)
+	     (generic format-edit) (generic document-edit))
+(lazy-in-mode (generic generic-kbd) always?)
 (lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
+(lazy-menu (generic document-menu)
+	   document-menu project-menu document-style-menu global-language-menu)
 (lazy-menu (generic insert-menu)
 	   insert-menu insert-link-menu insert-image-menu
 	   insert-page-insertion-menu position-float-menu)

@@ -14,7 +14,7 @@
 
 (if (no-name?)
     (begin
-      (use-modules (texmacs texmacs tm-document) (texmacs texmacs tm-print))
+      (use-modules (generic document-edit) (texmacs texmacs tm-print))
       (init-style "generic")
       (with lan (get-preference "language")
 	(if (!= lan "english") (init-language lan)))

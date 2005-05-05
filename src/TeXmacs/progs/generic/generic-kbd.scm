@@ -12,16 +12,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard generic-kbd)
+(texmacs-module (generic generic-kbd)
   (:use
     (utils edit circulate)
     (utils edit auto-close)
-    (texmacs texmacs tm-files)
-    (texmacs texmacs tm-print)
     (generic generic-edit)
     (source source-edit)
-    (dynamic fold-edit)
-    (doc help-funcs)))
+    (dynamic fold-edit)))
 
 (kbd-map
   ("space" " ")
@@ -98,32 +95,6 @@
   ("M-A-end" (selection-set-end) (select-from-keyboard #f))
   ("M-A-pageup" (fold))
   ("M-A-pagedown" (unfold))
-
-  ("F1" (interactive '("Search words in the documentation:") 'docgrep-in-doc))
-  ("S-F1" (load-help-buffer "about/welcome/welcome"))
-  ("F2" (choose-file "Load file" "" 'load-buffer))
-  ("S-F2" (choose-file "Load file" "" 'load-in-new-window))
-  ("C-F2" (revert-buffer))
-  ("M-F2" (new-buffer))
-  ("M-S-F2" (open-window))
-  ("M-C-F2" (clone-window))
-  ("F3" (save-buffer))
-  ("S-F3" (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
-  ("F4" (print))
-  ("S-F4" (interactive '("File name:") 'print-to-file))
-  ("C-F4" (preview-with-ghostview))
-  ("M-F4" (interactive '("First page:" "Last page:") 'print-pages))
-  ("M-S-F4" (interactive
-	     '("File name:" "First page:" "Last page:")
-	     'print-pages-to-file))
-
-  ("undo" (noop) (undo))
-  ("redo" (noop) (redo))
-  ("cancel" (noop) (clipboard-clear "primary"))
-  ("cut" (noop) (clipboard-cut "primary"))
-  ("paste" (noop) (clipboard-paste "primary"))
-  ("copy" (noop) (clipboard-copy "primary"))
-  ("find" (noop) (search-start #t))
 
   ("<" "<less>")
   (">" "<gtr>")
