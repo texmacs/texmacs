@@ -64,12 +64,12 @@
 (lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
 (lazy-menu (generic insert-menu)
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
-	   insert-mathematics-menu insert-session-menu
+	   insert-math-menu insert-session-menu
 	   insert-image-menu insert-page-insertion-menu position-float-menu)
 
 ;(display "Booting source mode\n")
 (lazy-in-mode (source source-kbd) always?)
-(lazy-menu (source source-menu) source-menu texmacs-source-icons
+(lazy-menu (source source-menu) source-menu source-icons
 	   source-transformational-menu source-executable-menu)
 
 ;(display "Booting text mode\n")
@@ -78,28 +78,27 @@
 (lazy-in-mode (text format-text-kbd) in-text?)
 (lazy-in-mode (text std-text-kbd) in-std-text?)
 (lazy-menu (text format-text-menu) text-format-menu text-format-icons)
-(lazy-menu (text text-menu) text-menu texmacs-text-icons)
+(lazy-menu (text text-menu) text-menu text-icons)
 
 ;(display "Booting table mode\n")
 (use-modules (table table-edit))
 (lazy-in-mode (table table-kbd) in-table?)
-(lazy-menu (table table-menu) table-menu texmacs-table-icons)
+(lazy-menu (table table-menu) table-menu table-icons)
 
 ;(display "Booting math mode\n")
 (lazy-in-mode (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
-(lazy-menu (math math-menu) mathematics-menu texmacs-math-icons)
+(lazy-menu (math math-menu) math-menu math-icons)
 
 ;(display "Booting graphics mode\n")
 (use-modules (graphics graphics-edit))
-(lazy-menu (graphics graphics-menu) graphics-menu texmacs-graphics-icons)
+(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
 
 ;(display "Booting dynamic features\n")
 (use-modules (dynamic fold-edit))
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic session-menu)
-	   session-menu texmacs-session-icons
-	   texmacs-session-help-icons texmacs-help-icons)
+	   session-menu session-icons session-help-icons help-icons)
 
 ;(display "Booting documentation\n")
 (use-modules (doc help-funcs))

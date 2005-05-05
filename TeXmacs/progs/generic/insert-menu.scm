@@ -107,7 +107,7 @@
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
 
-(menu-bind insert-mathematics-menu
+(menu-bind insert-math-menu
   (when (not (in-math?))
 	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
   (when (in-math?)
@@ -151,7 +151,7 @@
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
   (-> "Switch" (link insert-switch-menu))
-  (-> "Mathematics" (link insert-mathematics-menu))
+  (-> "Mathematics" (link insert-math-menu))
   (if (style-has? "program-dtd")
       (-> "Session" (link insert-session-menu)))
   ---

@@ -19,7 +19,7 @@
 ;; The Mathematics menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind mathematics-menu
+(menu-bind math-menu
   ("Fraction" (make-fraction))
   ("Square root" (make-sqrt))
   ("N-th root" (make-var-sqrt))
@@ -862,7 +862,7 @@
 ;; Icons for math mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-math-icons
+(menu-bind math-icons
   ((balloon (icon "tm_fraction.xpm") "Insert a fraction#(A-f)")
    (make-fraction))
   ((balloon (icon "tm_sqrt.xpm") "Insert a square root#(A-s)")

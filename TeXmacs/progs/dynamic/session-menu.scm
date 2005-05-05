@@ -50,7 +50,7 @@
   ("Interrupt execution" (connection-interrupt))
   ("Close session" (connection-stop)))
 
-(menu-bind texmacs-session-icons
+(menu-bind session-icons
   (=> (balloon (icon "tm_plugin_input.xpm") "Input mode")
       (link session-input-menu))
   (=> (balloon (icon "tm_session_insert.xpm") "Insert fields")
@@ -68,9 +68,9 @@
   (if (in-math?)
       |))
 
-(menu-bind texmacs-session-help-icons
+(menu-bind session-help-icons
   ;; Each plugin appends its own entry
   )
 
-(menu-bind texmacs-help-icons
-  (link texmacs-session-help-icons))
+(menu-bind help-icons
+  (link session-help-icons))

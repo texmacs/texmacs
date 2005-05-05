@@ -143,7 +143,7 @@
 ;; The icon bar for editing source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-source-icons
+(menu-bind source-icons
   (=> (balloon (icon "tm_assign.xpm") "Set or get environment variables")
       (link source-define-menu))
   (=> (balloon (icon "tm_lambda.xpm") "Write a macro")

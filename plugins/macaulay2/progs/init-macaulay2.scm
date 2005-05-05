@@ -15,7 +15,7 @@
 (define (macaulay2-initialize)
   (import-from (doc help-funcs) (utils plugins plugin-convert))
   (lazy-input-converter (m2-input) macaulay2)
-  (menu-extend texmacs-session-help-icons
+  (menu-extend session-help-icons
     (if (and (in-macaulay2?) (url-exists? "$M2HOME/html/index.html"))
 	|
 	((balloon (icon "tm_help.xpm") "Macaulay2 manual")

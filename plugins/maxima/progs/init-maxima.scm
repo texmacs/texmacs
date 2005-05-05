@@ -15,7 +15,7 @@
 (define (maxima-initialize)
   (import-from (doc help-funcs) (utils plugins plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
-  (menu-extend texmacs-session-help-icons
+  (menu-extend session-help-icons
     (if (and (in-maxima?)
 	     (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
 	|

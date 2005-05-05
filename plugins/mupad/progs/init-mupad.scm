@@ -16,7 +16,7 @@
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mupad-input) mupad)
   (lazy-menu (mupad-menus) mupad-help-menu)
-  (menu-extend texmacs-session-help-icons
+  (menu-extend session-help-icons
   (if (in-mupad?)
       |
       (=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
