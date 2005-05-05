@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-menu)
-  (:use (generic format-edit) (text text-edit) (text title-edit)))
+  (:use (generic format-edit) (text std-text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document headers
@@ -315,35 +315,3 @@
       (if (or (inside-list?) (inside-description?))
 	  ((balloon (icon "tm_item.xpm") "Insert a new item#(A-;)")
 	   (make-item)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Icons for modifying text properties
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind text-modifier-icons
-  (if (and (style-has? "std-markup-dtd") (not (in-source?)))
-      ;;((balloon
-      ;;(text (roman rm bold right 12 600) "S")
-      ;;"Write bold text#(A-C-b)")
-      ;;(make-with "font-series" "bold"))
-      ((balloon (icon "tm_emphasize.xpm") "Emphasize text#(F5)")
-       (make 'em))
-      ((balloon (icon "tm_strong.xpm") "Write strong text#(F6)")
-       (make 'strong))
-      ((balloon (icon "tm_verbatim.xpm") "Write verbatim text#(F7)")
-       (make 'verbatim))
-      ((balloon (icon "tm_sansserif.xpm") "Write sample text#(F8)")
-       (make 'samp))
-      ((balloon (icon "tm_name.xpm") "Write a name#(S-F6)")
-       (make 'name)))
-  (if (or (not (style-has? "std-markup-dtd")) (in-source?))
-      ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
-       (make-with "font-shape" "italic"))
-      ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")
-       (make-with "font-series" "bold"))
-      ((balloon (icon "tm_typewriter.xpm") "Use a typewriter font#(A-C-t)")
-       (make-with "font-family" "tt"))
-      ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font#(A-C-s)")
-       (make-with "font-family" "ss"))
-      ((balloon (icon "tm_smallcaps.xpm") "Use small capitals#(A-C-p)")
-       (make-with "font-shape" "small-caps"))))

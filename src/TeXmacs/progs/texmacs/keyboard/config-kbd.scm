@@ -131,11 +131,11 @@
 
 (define (notify-cyrillic-input-method var val)
   (cond
-   ((== val "translit") (import-from (texmacs keyboard cyrillic translit-kbd)))
-   ((== val "jcuken") (import-from (texmacs keyboard cyrillic jcuken-kbd)))
-   ((== val "yawerty") (import-from (texmacs keyboard cyrillic yawerty-kbd)))
-   ((== val "koi8-r") (import-from (texmacs keyboard cyrillic koi8-kbd)))
-   ((== val "cp1251") (import-from (texmacs keyboard cyrillic cp1251-kbd)))))
+   ((== val "translit") (import-from (text cyrillic translit-kbd)))
+   ((== val "jcuken") (import-from (text cyrillic jcuken-kbd)))
+   ((== val "yawerty") (import-from (text cyrillic yawerty-kbd)))
+   ((== val "koi8-r") (import-from (text cyrillic koi8-kbd)))
+   ((== val "cp1251") (import-from (text cyrillic cp1251-kbd)))))
 
 (define-preferences
   ("cyrillic input method" "" notify-cyrillic-input-method))

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-define)
-  (:use (kernel texmacs tm-overload)))
+  (:inherit (kernel texmacs tm-overload)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables and subroutines
@@ -177,6 +177,24 @@
 	   (define-public (,var . args)
 	     (ovl-apply (ahash-ref ovl-table ',var) args))
 	   ,@(map property-rewrite ovl-props)))))
+
+;;(define-public-macro (tm-define-overloaded head . body)
+;;  (let* ((var (ca*r head))
+;;	 (val (lambda* head body)))
+;;    (if (and (pair? body) (== (car body) 'lambda))
+;;	`(begin
+;;	   (ahash-set! ovl-table ',var
+;;		       (ovl-insert (ahash-ref ovl-table ',var) ,val
+;;				   (list ,@ovl-conds)))
+;;	   (define-public (,var . args)
+;;	     (ovl-apply (ahash-ref ovl-table ',var) args))
+;;	   ,@(map property-rewrite ovl-props))
+;;	`(begin
+;;	   (ahash-set! ovl-table ',var
+;;		       (ovl-insert (ahash-ref ovl-table ',var) ,val
+;;				   (list ,@ovl-conds)))
+;;	   (define-public ,head ,@body)
+;;	   ,@(map property-rewrite ovl-props)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties

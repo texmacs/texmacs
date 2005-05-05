@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard cyrillic translit-kbd))
+(texmacs-module (text cyrillic translit-kbd))
 
 (kbd-map in-cyrillic-translit?
   ("a" "à")

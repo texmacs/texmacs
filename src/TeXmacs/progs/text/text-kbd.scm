@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : text-kbd.scm
-;; DESCRIPTION : setup key combinations for frequently used commands
+;; DESCRIPTION : basic keystrokes in text mode
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -13,53 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-kbd)
-  (:use (text text-edit) (utils edit auto-close)))
+  (:use (utils edit auto-close)))
 
 (kbd-map in-text?
-  ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
-
-  ("$" (if (inside? "hybrid") (insert "$") (make-with "mode" "math")))
-  ("text $" (make 'equation*) (temp-proof-fix))
-  ("text &" (make 'eqnarray*) (temp-proof-fix))
-  ("text *" (toggle-section-number))
-
-  ("text a" (make 'abbr))
-  ("text d" (make-tmlist 'description))
-  ("text e" (make-tmlist 'enumerate))
-  ("text i" (make-tmlist 'itemize))
-  ("text m" (make 'em))
-  ("text n" (make 'name))
-  ("text p" (make 'samp))
-  ("text s" (make 'strong))
-  ("text v" (make 'verbatim))
-  ("text ;" (make-item))
-  ("text 0" (make-section 'chapter))
-  ("text 1" (make-section 'section))
-  ("text 2" (make-section 'subsection))
-  ("text 3" (make-section 'subsubsection))
-  ("text 4" (make-section 'paragraph))
-  ("text 5" (make-section 'subparagraph))
-
-  ("F5" (make 'em))
-  ("F6" (make 'strong))
-  ("F7" (make 'verbatim))
-  ("F8" (make 'samp))
-  ("S-F6" (make 'name))
-
-  ("font ^" (make-script #t #t))
-  ("font hat" (make-script #t #t))
-  ("font _" (make-script #f #t))
-  ("font s" (make-with "font-family" "ss"))
-  ("font t" (make-with "font-family" "tt"))
-  ("font b" (make-with "font-series" "bold"))
-  ("font m" (make-with "font-series" "medium"))
-  ("font r" (make-with "font-shape" "right"))
-  ("font i" (make-with "font-shape" "italic"))
-  ("font l" (make-with "font-shape" "slanted"))
-  ("font o" (make 'overline))
-  ("font p" (make-with "font-shape" "small-caps"))
-  ("font u" (make 'underline))
 
   ("\"" (insert-quote))
   ("<" "<less>")

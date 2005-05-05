@@ -15,7 +15,7 @@
 (texmacs-module (texmacs keyboard latex-kbd)
   (:use
     (utils edit auto-close)
-    (text text-edit)))
+    (text std-text-edit)))
 
 (kbd-commands
   ("#" "Insert sharp" (insert "#"))
