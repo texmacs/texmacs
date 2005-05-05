@@ -13,11 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic insert-menu)
-  (:use
-    (generic generic-edit)
-    (generic format-edit)
-    (graphics graphics-edit)
-    (dynamic fold-edit)))
+  (:use (generic generic-edit) (generic format-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert objects

@@ -159,3 +159,46 @@
 
 (tm-define (make-link-image l)
   (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for floats
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;(define (make-insertion s)
+;  (insert-go-to
+;   (list 'float s
+;	 (if (string=? s "float") "tbh" "")
+;	 (list 'document ""))
+;   (list 2 0 0)))
+
+;(define (position-insertion what flag)
+;"Allow/disallow a position for the inner float the caret in is.
+;what <char>   : position to allow/disallow
+;flag <boolean>: allow if true, disallow is false."
+;
+;  (let ((p (search-upwards "float")))
+;    (if (nnull? p)
+;	(tm-assign
+;	 (rcons p 1)
+;	 (string->tree ((if flag
+;			    string-include
+;			    string-exclude) (tree->string
+;					     (tm-subtree (rcons p 1)))
+;			    what))))))
+
+(define (test-insertion-position? what)
+  (let ((p (search-upwards "float"))
+	(c (string-ref what 0)))
+    (if (nnull? p)
+	(char-in-string? c (tree->string (tm-subtree (rcons p 1)))))))
+
+(define (not-test-insertion-position? s)
+  (not (test-insertion-position? s)))
+
+(tm-define (toggle-insertion-position what)
+  (:check-mark "v" test-insertion-position?)
+  (position-insertion what (not-test-insertion-position? what)))
+
+(tm-define (toggle-insertion-position-not s)
+  (:check-mark "v" not-test-insertion-position?)
+  (toggle-insertion-position s))
