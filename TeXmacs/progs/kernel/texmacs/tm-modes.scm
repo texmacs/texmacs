@@ -117,6 +117,8 @@
   (not-in-session% (not (inside? "session")))
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
+  (in-std% (style-has? "std-dtd"))
+  (in-std-text% #t in-text% in-std%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (with-active-selection% (selection-active-normal?)))

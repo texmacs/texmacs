@@ -61,7 +61,7 @@
 
 ;(display "Booting generic mode\n")
 (use-modules (generic format-edit) (generic generic-edit))
-(lazy-menu (generic format-menu) color-menu paragraph-menu format-menu)
+(lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
 (lazy-menu (generic insert-menu)
 	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
 	   insert-mathematics-menu insert-session-menu
@@ -73,10 +73,12 @@
 	   source-transformational-menu source-executable-menu)
 
 ;(display "Booting text mode\n")
-(use-modules (text text-edit))
+(use-modules (text std-text-edit))
 (lazy-in-mode (text text-kbd) in-text?)
-(lazy-menu (text text-menu) size-tag-menu
-	   text-menu texmacs-text-icons text-modifier-icons)
+(lazy-in-mode (text format-text-kbd) in-text?)
+(lazy-in-mode (text std-text-kbd) in-std-text?)
+(lazy-menu (text format-text-menu) text-format-menu text-format-icons)
+(lazy-menu (text text-menu) text-menu texmacs-text-icons)
 
 ;(display "Booting table mode\n")
 (use-modules (table table-edit))
@@ -85,8 +87,8 @@
 
 ;(display "Booting math mode\n")
 (lazy-in-mode (math math-kbd) in-math?)
-(lazy-menu (math math-menu)
-	   mathematics-menu texmacs-math-icons math-modifier-icons)
+(lazy-menu (math format-math-menu) math-format-menu math-format-icons)
+(lazy-menu (math math-menu) mathematics-menu texmacs-math-icons)
 
 ;(display "Booting graphics mode\n")
 (use-modules (graphics graphics-edit))
@@ -94,9 +96,10 @@
 
 ;(display "Booting dynamic features\n")
 (use-modules (dynamic fold-edit))
+(lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic session-menu)
-	   prog-modifier-icons session-menu
-	   texmacs-session-icons texmacs-session-help-icons texmacs-help-icons)
+	   session-menu texmacs-session-icons
+	   texmacs-session-help-icons texmacs-help-icons)
 
 ;(display "Booting documentation\n")
 (use-modules (doc help-funcs))

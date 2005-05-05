@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard cyrillic jcuken-kbd))
+(texmacs-module (text cyrillic jcuken-kbd))
 
 (kbd-map in-cyrillic-jcuken?
   ("q" "é")

@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard cyrillic yawerty-kbd))
+(texmacs-module (text cyrillic yawerty-kbd))
 
 (kbd-map in-cyrillic-yawerty?
   ("q" "ÿ")

@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard cyrillic koi8-kbd))
+(texmacs-module (text cyrillic koi8-kbd))
 
 (kbd-map in-cyrillic-koi8?
   ("Á" "à")

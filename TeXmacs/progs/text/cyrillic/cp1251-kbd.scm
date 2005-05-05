@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard cyrillic cp1251-kbd))
+(texmacs-module (text cyrillic cp1251-kbd))
 
 (kbd-map in-cyrillic-cp1251?
   ("¸" "¼")

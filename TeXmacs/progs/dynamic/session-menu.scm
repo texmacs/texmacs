@@ -74,15 +74,3 @@
 
 (menu-bind texmacs-help-icons
   (link texmacs-session-help-icons))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Icons for modifying text properties
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind prog-modifier-icons
-  ((balloon (icon "tm_italic.xpm") "Write italic text#(A-C-i)")
-   (make-with "prog-font-shape" "italic"))
-  ((balloon (icon "tm_bold.xpm") "Write bold text#(A-C-b)")
-   (make-with "prog-font-series" "bold"))
-  ((balloon (icon "tm_sansserif.xpm") "Use a sans serif font#(A-C-s)")
-   (make-with "prog-font-family" "ss")))
