@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : generic-edit.scm
-;; DESCRIPTION : important subroutines for editing
+;; DESCRIPTION : Generic editing routines
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -15,7 +15,7 @@
 (texmacs-module (generic generic-edit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Cursor handling
+;; Basic editing via the keyboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-left) (go-left))
@@ -32,15 +32,75 @@
   (r)
   (select-from-cursor))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other editing functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (tm-define (kbd-return) (insert-return))
 (tm-define (kbd-shift-return) (insert-return))
 
+(tm-define (kbd-remove forward?) (remove-text forward?))
+(tm-define (kbd-remove forward?)
+  (:mode with-active-selection?)
+  (clipboard-cut "primary"))
+
+(tm-define (kbd-tab)
+  (if (not (complete-try?))
+      (set-message "Use M-tab in order to insert a tab" "tab")))
+
+(tm-define (kbd-tab)
+  (:inside label reference)
+  (if (complete-try?) (noop)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other editing functions
+;; Structured editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-insert forwards?) (insert-argument forwards?))
+(tm-define (structured-remove forwards?) (remove-structure-upwards))
+(tm-define (structured-insert-up) (noop))
+(tm-define (structured-insert-down) (noop))
+(tm-define (structured-insert-start) (noop))
+(tm-define (structured-insert-end) (noop))
+(tm-define (structured-insert-top) (noop))
+(tm-define (structured-insert-bottom) (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Multi-purpose alignment
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (position-default) (noop))
+(tm-define (position-left) (noop))
+(tm-define (position-right) (noop))
+(tm-define (position-up) (noop))
+(tm-define (position-down) (noop))
+(tm-define (position-start) (noop))
+(tm-define (position-end) (noop))
+(tm-define (position-top) (noop))
+(tm-define (position-bottom) (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tree editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-insert forwards?)
+  (:inside tree)
+  (branch-insert forwards?))
+
+(tm-define (structured-insert-up)
+  (:inside tree)
+  (let* ((q (search-parent-upwards 'tree))
+	 (l (cAr q))
+	 (p (if (== l 0) (cDr q) q)))
+    (tm-assign p (tree2 'tree (string->tree "") (tm-subtree p)))
+    (tm-go-to (rcons* p 0 0))))
+
+(tm-define (structured-insert-down)
+  (:inside tree)
+  (let* ((q (search-parent-upwards 'tree))
+	 (l (cAr q))
+	 (p (if (== l 0) (cDr q) q)))
+    (tm-ins-unary p 'tree)
+    (tm-insert (rcons p 0) '(tree ""))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra editing functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kill-line)

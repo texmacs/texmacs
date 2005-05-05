@@ -16,7 +16,7 @@
   (:use (utils edit circulate)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Starting a new row
+;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-return)
@@ -27,6 +27,42 @@
 	(begin
 	  (table-insert-row #t)
 	  (table-go-to (table-which-row) 1)))))
+
+(tm-define (structured-insert forwards?)
+  (:inside table)
+  (table-insert-column forwards?))
+
+(tm-define (structured-insert-up)
+  (:inside table)
+  (table-insert-row #f))
+
+(tm-define (structured-insert-down)
+  (:inside table)
+  (table-insert-row #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Posititioning
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (position-default)
+  (:inside table)
+  (cell-del-format ""))
+
+(tm-define (position-left)
+  (:inside table)
+  (cell-halign-left))
+
+(tm-define (position-right)
+  (:inside table)
+  (cell-halign-right))
+
+(tm-define (position-up)
+  (:inside table)
+  (cell-valign-up))
+
+(tm-define (position-down)
+  (:inside table)
+  (cell-valign-down))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables
