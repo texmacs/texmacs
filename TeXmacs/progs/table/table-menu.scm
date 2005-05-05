@@ -16,7 +16,29 @@
   (:use (table table-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Table menu
+;; Inserting tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind insert-table-menu
+  (if (style-has? "std-dtd")
+      (when (and (in-text?) (style-has? "env-float-dtd"))
+	    ("Small table" (make 'small-table))
+	    ("Big table" (make 'big-table))
+	    ---))
+  ("Plain tabular" (make 'tabular))
+  ("Centered tabular" (make 'tabular*))
+  ("Plain block" (make 'block))
+  ("Centered block" (make 'block*))
+  (if (style-has? "std-dtd")
+      (when (in-math?)
+	    ---
+	    ("Matrix" (make 'matrix))
+	    ("Determinant" (make 'det))
+	    ("Choice" (make 'choice))
+	    ("Stack" (make 'stack)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Submenus of the Table menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind table-insert-row-menu
@@ -160,6 +182,10 @@
       ("Horizontal part" ... (cell-set-hpart-ia))
       ("Vertical part" ... (cell-set-vpart-ia)))
   (-> "Glue decorations" (tile 2 (link cell-decoration-icons))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main Table menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind table-menu
   (-> "Insert row" (link table-insert-row-menu))

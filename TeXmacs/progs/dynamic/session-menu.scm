@@ -16,14 +16,25 @@
   (:use (dynamic session-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Sessions
+;; Inserting sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind session-menu
+(menu-bind supported-sessions-menu
   ("Scheme" (make-session "scheme" "default"))
   ---
   ;; Each plugin appends its own entry
   )
+
+(menu-bind insert-session-menu
+  (when (and (style-has? "std-dtd") (in-text?))
+	(link supported-sessions-menu)
+	---
+	("Other" ...
+	 (interactive '("Session type:" "Session name:") 'make-session))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Submenus of the Sessions menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-input-menu
   (when (in-plugin-with-converters?)
@@ -41,7 +52,11 @@
   ("Remove input field" "A-delete" (session-remove-input #t))
   ("Remove all output fields" (session-remove-all-outputs)))
 
-(menu-bind session-main-menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Session menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind session-menu
   (-> "Input mode" (link session-input-menu))
   (-> "Insert fields" (link session-insert-menu))
   (-> "Remove fields" (link session-remove-menu))
@@ -49,6 +64,10 @@
   ---
   ("Interrupt execution" (connection-interrupt))
   ("Close session" (connection-stop)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sessions icons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-icons
   (=> (balloon (icon "tm_plugin_input.xpm") "Input mode")
@@ -67,6 +86,10 @@
        (connection-stop)))
   (if (in-math?)
       |))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Help icons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-help-icons
   ;; Each plugin appends its own entry

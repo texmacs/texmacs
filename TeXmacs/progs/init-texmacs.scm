@@ -63,9 +63,8 @@
 (use-modules (generic format-edit) (generic generic-edit))
 (lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
 (lazy-menu (generic insert-menu)
-	   insert-menu insert-table-menu insert-link-menu insert-switch-menu
-	   insert-math-menu insert-session-menu
-	   insert-image-menu insert-page-insertion-menu position-float-menu)
+	   insert-menu insert-link-menu insert-image-menu
+	   insert-page-insertion-menu position-float-menu)
 
 ;(display "Booting source mode\n")
 (lazy-in-mode (source source-kbd) always?)
@@ -83,12 +82,12 @@
 ;(display "Booting table mode\n")
 (use-modules (table table-edit))
 (lazy-in-mode (table table-kbd) in-table?)
-(lazy-menu (table table-menu) table-menu table-icons)
+(lazy-menu (table table-menu) table-menu table-icons insert-table-menu)
 
 ;(display "Booting math mode\n")
 (lazy-in-mode (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
-(lazy-menu (math math-menu) math-menu math-icons)
+(lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
 
 ;(display "Booting graphics mode\n")
 (use-modules (graphics graphics-edit))
@@ -97,7 +96,9 @@
 ;(display "Booting dynamic features\n")
 (use-modules (dynamic fold-edit))
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
+(lazy-menu (dynamic fold-menu) insert-fold-menu)
 (lazy-menu (dynamic session-menu)
+	   supported-sessions-menu insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
 
 ;(display "Booting documentation\n")
