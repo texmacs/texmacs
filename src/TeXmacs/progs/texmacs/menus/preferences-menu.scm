@@ -38,8 +38,7 @@
 (tm-define preferences-tree
   `((enum ("Look and feel" "look and feel")
 	  ("Emacs" "emacs")
-	  ("Windows" "windows")
-	  ("Old style" "old style"))
+	  ("Windows" "windows"))
 ;   (enum ("Profile" "profile")
 ;	  ("Beginner" "beginner")
 ;	  ("Normal" "normal")

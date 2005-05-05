@@ -40,7 +40,6 @@
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-files)
 	     (texmacs texmacs tm-print) (texmacs texmacs tm-view)
 	     (texmacs texmacs tm-document))
-(use-modules (texmacs edit edit-hybrid))
 (re-export safely-kill-window)
 
 (lazy-menu (texmacs menus file-menu)
@@ -57,7 +56,6 @@
 (lazy-in-mode (texmacs keyboard wildcards-kbd) always?)
 (if (like-emacs?) (lazy-in-mode (texmacs keyboard emacs-kbd) always?))
 (if (like-windows?) (lazy-in-mode (texmacs keyboard windows-kbd) always?))
-(if (like-old?) (lazy-in-mode (texmacs keyboard old-kbd) always?))
 (lazy-in-mode (texmacs keyboard latex-kbd) always?)
 (lazy-in-mode (texmacs keyboard generic-kbd) always?)
 

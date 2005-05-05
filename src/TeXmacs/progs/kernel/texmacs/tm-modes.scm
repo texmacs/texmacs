@@ -155,9 +155,6 @@
 (texmacs-modes
   (like-emacs% (== (get-preference "look and feel") "emacs"))
   (like-windows% (== (get-preference "look and feel") "windows"))
-  (like-old% (== (get-preference "look and feel") "old style"))
-  (like-old-text% #t like-old% in-text%)
-  (like-old-math% #t like-old% in-math%)
   (in-cyrillic-cp1251% (cyrillic-input-method? "cp1251") in-cyrillic%)
   (in-cyrillic-jcuken% (cyrillic-input-method? "jcuken") in-cyrillic%)
   (in-cyrillic-koi8% (cyrillic-input-method? "koi8") in-cyrillic%)

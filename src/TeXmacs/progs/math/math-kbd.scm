@@ -1122,21 +1122,3 @@
   ("X var" "<Xi>")
   ("Y var" "<Psi>")
   ("Z var" "<Zeta>"))
-
-(kbd-map like-old-math?
-  ("math L" "" "Insert a left script")
-
-  ("math B" (make-wide "<bar>"))
-  ("math a B" (make-wide "<wide-bar>"))
-  ("math b B" (make-wide-under "<wide-bar>"))
-  ("math V" (make-wide "<vect>"))
-  ("math C" (make-wide "<check>"))
-  ("math U" (make-wide "<breve>"))
-  ("math L _" (make-script #f #f))
-  ("math L ^" (make-script #t #f))
-  ("math F" (make-fraction))
-  ("math S" (make-sqrt))
-  ("math R" (make-var-sqrt))
-  ("math N" (make-neg))
-  ("math A" (make-tree))
-  ("math s o" (make 'op)))
