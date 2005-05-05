@@ -53,6 +53,8 @@
 #define Env_Src_Compact       22
 #define Env_Src_Close         23
 #define Env_Point_Style       24
+#define Env_Line_Style        25
+#define Env_Line_Style_Unit   26
 
 /******************************************************************************
 * For style file editing
@@ -119,46 +121,48 @@ public:
   bool                         complete;    // typeset complete document ?
   bool                         read_only;   // write-protected ?
 
-  int       dpi;
-  double    inch;
-  double    magn;
-  double    flexibility;
-  int       mode;
-  language  lan;
-  font      fn;
-  int       fn_size;
-  int       index_level;
-  bool      display_style;
-  bool      math_condensed;
-  int       vert_pos;
-  color     col;
-  SI        lw;
-  string    point_style;
-  bool      preamble;
-  frame     fr;
-  point     clip_lim1;
-  point     clip_lim2;
-  int       src_style;
-  int       src_special;
-  int       src_compact;
-  int       src_close;
+  int          dpi;
+  double       inch;
+  double       magn;
+  double       flexibility;
+  int          mode;
+  language     lan;
+  font         fn;
+  int          fn_size;
+  int          index_level;
+  bool         display_style;
+  bool         math_condensed;
+  int          vert_pos;
+  color        col;
+  SI           lw;
+  string       point_style;
+  bool         preamble;
+  frame        fr;
+  point        clip_lim1;
+  point        clip_lim2;
+  int          src_style;
+  int          src_special;
+  int          src_compact;
+  int          src_close;
+  array<bool>  line_style;
+  SI           line_style_unit;
+ 
+  int          inactive_mode;
+  tree         recover_env;
 
-  int       inactive_mode;
-  tree      recover_env;
-
-  string    page_type;
-  bool      page_landscape;
-  bool      page_automatic;
-  int       page_margin_mode;
-  SI        page_width;
-  SI        page_height;
-  SI        page_user_width;
-  SI        page_user_height;
-  SI        page_odd_margin;
-  SI        page_even_margin;
-  SI        page_right_margin;
-  SI        page_top_margin;
-  SI        page_bottom_margin;
+  string       page_type;
+  bool         page_landscape;
+  bool         page_automatic;
+  int          page_margin_mode;
+  SI           page_width;
+  SI           page_height;
+  SI           page_user_width;
+  SI           page_user_height;
+  SI           page_odd_margin;
+  SI           page_even_margin;
+  SI           page_right_margin;
+  SI           page_top_margin;
+  SI           page_bottom_margin;
 
 private:
   tree exec_formatting (tree t, string v);
@@ -332,6 +336,7 @@ public:
   void   update_src_special ();
   void   update_src_compact ();
   void   update_src_close ();
+  void   update_line_style ();
   void   update ();
   void   update (string env_var);
 

@@ -268,6 +268,15 @@
   ---
   ("Other" ... (interactive '("Line width:") 'graphics-set-line-width)))
 
+(menu-bind graphics-line-style-menu
+  ("Solid" (graphics-set-line-style ""))
+  ---
+  ("- - - - - - - - -"    (graphics-set-line-style "10"))
+  ("----  ----  ----  --" (graphics-set-line-style "11100"))
+  ("---- - ---- - ---- -" (graphics-set-line-style "1111010"))
+  ---
+  ("Other" ... (interactive '("Line style:") 'graphics-set-line-style)))
+
 (menu-bind graphics-text-align-menu
   ("Default" (begin (graphics-set-property "gr-text-halign" "left")
 		    (graphics-set-property "gr-text-valign" "bottom")))
@@ -289,7 +298,9 @@
   (-> "Geometry" (link graphics-geometry-menu))
   (-> "Mode" (link graphics-mode-menu))
   (-> "Color" (link graphics-color-menu))
-  (-> "Line width" (link graphics-line-width-menu))
+  (-> "Line properties"
+      (-> "Width" (link graphics-line-width-menu))
+      (-> "Style" (link graphics-line-style-menu)))
   (-> "Text box alignment" (link graphics-text-align-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -301,10 +312,12 @@
       (link graphics-geometry-menu))
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
   ;    (link graphics-mode-menu))
-  (=> (balloon (icon "tm_color.xpm") "Color of new graphics")
+  (=> (balloon (icon "tm_color.xpm") "Color")
       (link graphics-color-menu))
-  (=> (balloon (icon "tm_line_width.xpm") "Line width for new graphics")
+  (=> (balloon (icon "tm_line_width.xpm") "Line width")
       (link graphics-line-width-menu))
+  (=> (balloon (icon "tm_line_style.xpm") "Line style")
+      (link graphics-line-style-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
       (link graphics-text-align-menu))
   |

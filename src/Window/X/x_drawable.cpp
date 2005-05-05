@@ -140,13 +140,13 @@ x_drawable_rep::set_background (color c) {
 }
 
 void
-x_drawable_rep::set_line_style (SI lw, int type) { (void) type;
+x_drawable_rep::set_line_style (SI lw, int type, bool round) { (void) type;
   if (lw <= pixel)
     XSetLineAttributes (dpy, (GC) gc, 1,
-			LineSolid, CapRound, JoinRound);
+			LineSolid, round?CapRound:CapButt, JoinRound);
   else
     XSetLineAttributes (dpy, (GC) gc, (lw+thicken) / pixel,
-			LineSolid, CapRound, JoinRound);
+			LineSolid, round?CapRound:CapButt, JoinRound);
 }
 
 void

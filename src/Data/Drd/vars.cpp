@@ -194,6 +194,7 @@ string POINT_STYLE ("point-style");
 
 string LINE_WIDTH ("line-width");
 string LINE_STYLE ("line-style");
+string LINE_STYLE_UNIT ("line-style-unit");
 string LINE_ARROWS ("line-arrows");
 string LINE_CAPS ("line-caps");
 string FILL_MODE ("fill-mode");
@@ -205,6 +206,8 @@ string GR_CLIP ("gr-clip");
 string GR_MODE ("gr-mode");
 string GR_COLOR ("gr-color");
 string GR_LINE_WIDTH ("gr-line-width");
+string GR_LINE_STYLE ("gr-line-style");
+string GR_LINE_STYLE_UNIT ("gr-line-style-unit");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");

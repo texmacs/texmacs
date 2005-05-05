@@ -12,7 +12,7 @@
 
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
-#include <math.h>
+#include "Graphics/math_util.hpp"
 
 /******************************************************************************
 * Graphics boxes
@@ -118,6 +118,7 @@ point_box_rep::display (ps_device dev) {
 	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
   }
   else {
+  //TODO : Add non filled dots
     int i, n= 4*(r/dev->pixel+1);
     array<SI> x (n), y (n);
     for (i=0; i<n; i++) {
@@ -138,15 +139,23 @@ struct curve_box_rep: public box_rep {
   SI width;
   color col;
   curve c;
-  curve_box_rep (path ip, curve c, SI width, color col);
+  array<bool> style;
+  SI style_unit;
+  array<SI> styled_n;
+  curve_box_rep (
+    path ip, curve c, SI width, color col, array<bool> style, SI style_unit);
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   void display (ps_device dev);
   operator tree () { return "curve"; }
+  SI length ();
+  void apply_style ();
 };
 
-curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C):
-  box_rep (ip2), width (W), col (C), c (c2)
+curve_box_rep::curve_box_rep (
+  path ip2, curve c2, SI W, color C, array<bool> style2, SI style_unit2):
+  box_rep (ip2), width (W), col (C), c (c2), style (style2),
+					     style_unit (style_unit2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -160,6 +169,7 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C):
   }
   x3= x1 - (width>>1); y3= y1 - (width>>1); 
   x4= x2 + (width>>1); y4= y2 + (width>>1);
+  apply_style ();
 }
 
 SI
@@ -219,11 +229,113 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
 
 void
 curve_box_rep::display (ps_device dev) {
-  int i, n= N(a);  
-  dev->set_line_style (width);
+  int i, n;
   dev->set_color (col);
-  for (i=0; i<(n-1); i++)
-    dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+  dev->set_line_style (width, 0, false);
+  if (N (style) == 0) {
+    n= N(a);
+    for (i=0; i<(n-1); i++)
+      dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+  }
+  else {
+    SI li=0, o=0;
+    i=0;
+    int no;
+    point prec;
+    for (no=0; no<N(styled_n); no++) {
+      point seg= a[i+1]-a[i];
+      while (fnull (norm(seg),1e-6) && i+2<N(a)) {
+        i++;
+        seg= a[i+1]-a[i];
+      }
+      if (fnull (norm(seg),1e-6) && i+2>=N(a))
+        break;
+      SI lno= styled_n[no]*style_unit,
+         len= li+(SI)norm(seg);
+      while (lno>len) {
+        li= len;
+        if (no%2!=0) {
+          dev->line ((SI) prec[0], (SI) prec[1],
+                     (SI) a[i+1][0], (SI) a[i+1][1]);
+	  prec= a[i+1];
+        }
+        i++;
+        seg= a[i+1]-a[i];
+        len= li+(SI)norm(seg);
+      }
+      o= lno-li;
+   /* We could also use this one in order to use lines with
+      round ends. But it doesn't work well when the width
+      of the line becomes bigger than the style unit length.
+      Anyway (although I don't know if there is a way to do
+      lines with round ends in PostScript), our current PostScript
+      output in GhostView uses square line ends, so we do the same.
+      SI inc= ((no%2==0?1:-1) * width)/2;
+      point b= a[i] + (o+inc)*(seg/norm(seg)); */
+      point b= a[i] + o*(seg/norm(seg));
+      if (no%2==0)
+        prec= b;
+      else
+        dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
+    }
+  }
+}
+
+SI
+curve_box_rep::length () {
+  int i, n= N(a);
+  SI res= 0;
+  for (i=1; i<n; i++)
+    res+= (SI)norm (a[i] - a[i-1]);
+  return res;
+}
+
+void
+curve_box_rep::apply_style () {
+  int n= N(style);
+  if (n<=0 || fnull (style_unit,1e-6)) return;
+  SI l= length (), l1= n*style_unit, n1= l/l1 + 1;
+  l1= l/n1;
+  style_unit= l1/n;
+
+  int i, nfrag=0, prevfrag=-1;
+  bool all0=true, all1=true;
+  for (i=0; i<n; i++) {
+    int frag= style[i]?1:0;
+    if (frag!=prevfrag && frag==1) nfrag++;
+    if (style[i]) all0= false;
+    if (!style[i]) all1= false;
+    prevfrag= frag;
+  }
+  if (all1) style= array<bool>(0);
+  if (all0 || all1) return;
+
+  bool common_frag= style[0] && style[n-1] && n1>1;
+  if (common_frag) nfrag--;
+  styled_n= array<SI>(2*nfrag*n1 + (common_frag?2:0));
+
+  int no=0, nbu=0;
+  prevfrag=-1;
+  for (i=0; i<n1; i++) {
+    int j;
+    for (j=0; j<n; j++) {
+      int frag= style[j]?1:0;
+      if (frag!=prevfrag) {
+        if (frag==1) {
+          styled_n[no]= nbu;
+          no++;
+        }
+        else
+        if (frag==0 && prevfrag!=-1) {
+          styled_n[no]= nbu;
+          no++;
+        }
+      }
+      prevfrag= frag;
+      nbu++;
+    }
+  }
+  if (style[n-1]) styled_n[N(styled_n)-1]= nbu;
 }
 
 /******************************************************************************
@@ -243,6 +355,8 @@ point_box (path ip, point p, SI r, color col, string style) {
 }
 
 box
-curve_box (path ip, curve c, SI width, color col) {
-  return new curve_box_rep (ip, c, width, col);
+curve_box (
+  path ip, curve c, SI width, color col, array<bool> style, SI style_unit)
+{
+  return new curve_box_rep (ip, c, width, col, style, style_unit);
 }

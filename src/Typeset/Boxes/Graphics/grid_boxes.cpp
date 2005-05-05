@@ -85,7 +85,8 @@ grid_box_rep::display (ps_device dev) {
     for (i=0; i<N(grads); i++) {
       curve c= f (grads[i]->c);
       bs << curve_box (
-	      decorate (ip), c, dev->pixel, dev->get_color (grads[i]->col));
+	      decorate (ip), c, dev->pixel, dev->get_color (grads[i]->col),
+	      array<bool> (0), 0);
     }
     first_time= false;
     dev_pixel= dev->pixel;
