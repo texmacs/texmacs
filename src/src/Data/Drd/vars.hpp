@@ -172,6 +172,7 @@ extern string POINT_STYLE;
 
 extern string LINE_WIDTH;
 extern string LINE_STYLE;
+extern string LINE_STYLE_UNIT;
 extern string LINE_ARROWS;
 extern string LINE_CAPS;
 extern string FILL_MODE;
@@ -183,6 +184,8 @@ extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
 extern string GR_LINE_WIDTH;
+extern string GR_LINE_STYLE;
+extern string GR_LINE_STYLE_UNIT;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;

@@ -517,8 +517,9 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 }
 
 void
-printer_rep::set_line_style (SI w, int type) {
+printer_rep::set_line_style (SI w, int type, bool round) {
   (void) type;
+  (void) round;
   if (lw == w) return;
   lw= w;
   select_line_width (w);

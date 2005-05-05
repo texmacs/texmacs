@@ -104,6 +104,8 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_WIDTH)  = Env_Page;
 
   var_type (LINE_WIDTH)        = Env_Line_Width;
+  var_type (LINE_STYLE)        = Env_Line_Style;
+  var_type (LINE_STYLE_UNIT)   = Env_Line_Style_Unit;
   var_type (GR_FRAME)          = Env_Frame;
   var_type (GR_CLIP)           = Env_Clipping;
   var_type (GR_GRID)           = Env_Grid;
@@ -363,6 +365,25 @@ edit_env_rep::update_src_close () {
 }
 
 void
+edit_env_rep::update_line_style () {
+  tree t= env [LINE_STYLE];
+  line_style= array<bool>(0);
+  if (is_string (t)) {
+    string s= as_string (t);
+    if (s == "solid") ;
+  }
+  else
+  if (is_tuple (t)) {
+    int i, n= N(t);
+    line_style= array<bool> (n);
+    for (i=0; i<n; i++) {
+      line_style[i]= true;
+      if (t[i] == "0") line_style[i]= false;
+    }
+  }
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -380,6 +401,8 @@ edit_env_rep::update () {
   update_clipping ();
   point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
+  update_line_style ();
+  line_style_unit= get_length (LINE_STYLE_UNIT);
 
   update_src_style ();
   update_src_special ();
@@ -450,6 +473,12 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);
+    break;
+  case Env_Line_Style:
+    update_line_style();
+    break;
+  case Env_Line_Style_Unit:
+    line_style_unit= get_length (LINE_STYLE_UNIT);
     break;
   case Env_Src_Style:
     update_src_style ();
