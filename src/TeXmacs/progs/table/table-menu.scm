@@ -159,7 +159,7 @@
   (-> "Distribute unused space"
       ("Horizontal part" ... (cell-set-hpart-ia))
       ("Vertical part" ... (cell-set-vpart-ia)))
-  (-> "Glue decorations" (tile 2 (link texmacs-cell-decoration-icons))))
+  (-> "Glue decorations" (tile 2 (link cell-decoration-icons))))
 
 (menu-bind table-menu
   (-> "Insert row" (link table-insert-row-menu))
@@ -181,7 +181,7 @@
 ;; Icons for manipulation of tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-table-insert-icons
+(menu-bind table-insert-icons
   ((balloon (icon "tm_table_arow.xpm")
 	    "Insert row above (A-up)")
    (table-insert-row #f))
@@ -202,7 +202,7 @@
 	    "Delete column (M-t v delete)")
    (table-delete-column #t)))
 
-(menu-bind texmacs-table-hpos-icons
+(menu-bind table-hpos-icons
   ((balloon (icon "tm_table_left.xpm")
 	    "Align table at the left (M-t H l)")
    (table-set-halign "l"))
@@ -226,7 +226,7 @@
 	    "Align table at base of origin column (M-t H O)")
    (table-set-halign "O")))
 
-(menu-bind texmacs-table-vpos-icons
+(menu-bind table-vpos-icons
   ((balloon (icon "tm_table_bottom.xpm")
 	    "Align table at the bottom (M-t V b)")
    (table-set-valign "b"))
@@ -252,7 +252,7 @@
 	    "Align table at the base of origin row (M-t V O)")
    (table-set-valign "O")))
 
-(menu-bind texmacs-cell-mode-icons
+(menu-bind cell-mode-icons
   ((balloon (icon "tm_cell_by_cell.xpm")
 	    "Perform operations on cells (M-t m c)")
    (set-cell-mode "cell"))
@@ -266,7 +266,7 @@
 	    "Perform operations on entire table (M-t m t)")
    (set-cell-mode "table")))
 
-(menu-bind texmacs-cell-pos-icons
+(menu-bind cell-pos-icons
   ((balloon (icon "tm_cell_left.xpm")
 	    "Align cell to the left (M-t h l)")
    (cell-set-halign "l"))
@@ -298,7 +298,7 @@
 	    "Align cell to the top (M-t v t)")
    (cell-set-valign "t")))
 
-(menu-bind texmacs-cell-size-icons
+(menu-bind cell-size-icons
   ((balloon (icon "tm_cell_width.xpm")
 	    "Set width of cell (M-t h s)")
    (cell-set-width-ia))
@@ -324,7 +324,7 @@
 	    "Height is maximum of specified height and box height (M-t v M)")
    (cell-set-vmode "max")))
 
-(menu-bind texmacs-cell-decoration-icons
+(menu-bind cell-decoration-icons
   ((balloon (icon "tm_decorate_left.xpm")
 	    "Use left hand column as border (M-t b left)")
    (table-column-decoration #f))
@@ -338,38 +338,38 @@
 	    "Use row below as border (M-t b down)")
    (table-row-decoration #t)))
 
-(menu-bind texmacs-table-icons
+(menu-bind table-icons
   |
   (=> (balloon (icon "tm_table_insert.xpm")
 	       "Insert or delete rows or columns")
-      (link texmacs-table-insert-icons))
+      (link table-insert-icons))
   (=> (balloon (icon "tm_table_pos.xpm") "Position the table")
-      (tile 4 (link texmacs-table-hpos-icons))
+      (tile 4 (link table-hpos-icons))
       ---
-      (tile 4 (link texmacs-table-vpos-icons)))
+      (tile 4 (link table-vpos-icons)))
   (=> (balloon (icon "tm_table_special.xpm") "Set special table properties")
       (link table-special-menu))
   |
   (if (== (get-cell-mode) "cell")
       (=> (balloon (icon "tm_cell_cell.xpm")
 		   "Change cell operation mode")
-	  (link texmacs-cell-mode-icons)))
+	  (link cell-mode-icons)))
   (if (== (get-cell-mode) "row")
       (=> (balloon (icon "tm_cell_row.xpm")
 		   "Change cell operation mode")
-	  (link texmacs-cell-mode-icons)))
+	  (link cell-mode-icons)))
   (if (== (get-cell-mode) "column")
       (=> (balloon (icon "tm_cell_column.xpm")
 		   "Change cell operation mode")
-	  (link texmacs-cell-mode-icons)))
+	  (link cell-mode-icons)))
   (if (== (get-cell-mode) "table")
       (=> (balloon (icon "tm_cell_table.xpm")
 		   "Change cell operation mode")
-	  (link texmacs-cell-mode-icons)))
+	  (link cell-mode-icons)))
   (=> (balloon (icon "tm_cell_pos.xpm") "Modify cell alignment")
-      (tile 6 (link texmacs-cell-pos-icons)))
+      (tile 6 (link cell-pos-icons)))
   (=> (balloon (icon "tm_cell_size.xpm") "Modify cell size")
-      (tile 4 (link texmacs-cell-size-icons)))
+      (tile 4 (link cell-size-icons)))
   (=> (balloon (icon "tm_cell_border.xpm") "Change border of cell")
       (link cell-border-menu))
   (=> (balloon (icon "tm_cell_background.xpm")

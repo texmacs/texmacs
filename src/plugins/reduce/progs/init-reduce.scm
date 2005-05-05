@@ -16,7 +16,7 @@
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (reduce-input) reduce)
   (lazy-menu (reduce-menus) reduce-help-menu)
-  (menu-extend texmacs-session-help-icons
+  (menu-extend session-help-icons
   (if (and (in-reduce?) (url-exists? "$reduce/doc/manual/abstract.tex"))
       |
       (=> (balloon (icon "tm_help.xpm") "Reduce documentation")

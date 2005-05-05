@@ -253,7 +253,7 @@
 ;; Icons for text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-text-icons
+(menu-bind text-icons
   (if (and (style-has? "header-title-dtd")
 	   (not (style-has? "header-letter-dtd"))
 	   (not (style-has? "header-exam-dtd")))

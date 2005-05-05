@@ -296,7 +296,7 @@
 ;; Icons for graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-graphics-icons
+(menu-bind graphics-icons
   (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
