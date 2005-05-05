@@ -23,24 +23,6 @@
 ;; Insert objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind insert-table-menu
-  (if (style-has? "std-dtd")
-      (when (and (in-text?) (style-has? "env-float-dtd"))
-	    ("Small table" (make 'small-table))
-	    ("Big table" (make 'big-table))
-	    ---))
-  ("Plain tabular" (make 'tabular))
-  ("Centered tabular" (make 'tabular*))
-  ("Plain block" (make 'block))
-  ("Centered block" (make 'block*))
-  (if (style-has? "std-dtd")
-      (when (in-math?)
-	    ---
-	    ("Matrix" (make 'matrix))
-	    ("Determinant" (make 'det))
-	    ("Choice" (make 'choice))
-	    ("Stack" (make 'stack)))))
-
 (menu-bind insert-link-menu
   ("Label" (make 'label))
   ("Reference" (make 'reference))
@@ -69,33 +51,6 @@
 	  ---
 	  ("Interjection" (make 'glossary-line)))))
 
-(menu-bind insert-switch-menu
-  ("Superpose" (make 'superpose))
-  (if (style-has? "std-dtd")
-      ---
-      ("Folded" (make-fold))
-      (if (or (inside? "unfold")
-	      (and (not (inside? "unfold")) (not (inside? "fold"))))
-	  (when (inside? "unfold")
-		("Fold" (fold))))
-      (if (inside? "fold")
-	  ("Unfold" (unfold)))
-      ---
-      ("Switch" (make-switch))
-      (when (inside? "switch")
-	    ("Add switch before" (switch-insert "before"))
-	    ("Add switch after" (switch-insert "after"))
-	    ("Remove this switch" (switch-remove "here"))
-	    ---
-	    (when (< 0 (switch-get-position))
-		  ("Switch to previous" (switch-to "previous")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to next" (switch-to "next")))
-	    (when (< 0 (switch-get-position))
-		  ("Switch to first" (switch-to "first")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to last" (switch-to "last"))))))
-
 (menu-bind insert-image-menu
   (if (style-has? "env-float-dtd")
       (when (in-text?)
@@ -106,24 +61,6 @@
   ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
   ("Insert image" ...
    (choose-file "Load image" "image" 'make-inline-image)))
-
-(menu-bind insert-math-menu
-  (when (not (in-math?))
-	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
-  (when (in-math?)
-	("Text" "A-$" (begin (noop) (make-with "mode" "text"))))
-  (if (style-has? "env-math-dtd")
-      (when (in-text?)
-	    ---
-	    ("Equation" (begin (make 'equation*) (temp-proof-fix)))
-	    ("Equations" (begin (make 'eqnarray*) (temp-proof-fix))))))
-
-(menu-bind insert-session-menu
-  (when (and (style-has? "std-dtd") (in-text?))
-	(link session-menu)
-	---
-	("Other" ...
-	 (interactive '("Session type:" "Session name:") 'make-session))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert floating content
@@ -150,7 +87,7 @@
   (-> "Link" (link insert-link-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
-  (-> "Switch" (link insert-switch-menu))
+  (-> "Fold" (link insert-fold-menu))
   (-> "Mathematics" (link insert-math-menu))
   (if (style-has? "program-dtd")
       (-> "Session" (link insert-session-menu)))

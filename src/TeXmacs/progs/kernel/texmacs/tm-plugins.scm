@@ -113,7 +113,7 @@
 	 (connection-insert-handler
 	  name (second cmd) (symbol->string (third cmd))))
 	((func? cmd :session 1)
-	 (menu-extend session-menu
+	 (menu-extend supported-sessions-menu
 	   (promise (connection-menu-promise name (second cmd)))))
 	((func? cmd :filter-in 1)
 	 (noop))

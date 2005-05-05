@@ -16,6 +16,21 @@
   (:use (table table-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting mathematical markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind insert-math-menu
+  (when (not (in-math?))
+	("Formula" "$" (begin (noop) (make-with "mode" "math"))))
+  (when (in-math?)
+	("Text" "A-$" (begin (noop) (make-with "mode" "text"))))
+  (if (style-has? "env-math-dtd")
+      (when (in-text?)
+	    ---
+	    ("Equation" (begin (make 'equation*) (temp-proof-fix)))
+	    ("Equations" (begin (make 'eqnarray*) (temp-proof-fix))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Mathematics menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
