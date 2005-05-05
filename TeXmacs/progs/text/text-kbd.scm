@@ -276,13 +276,6 @@
   ("masculine var" (make 'varmasculine))
   ("ordfeminine var" (make 'varordfeminine)))
 
-(kbd-map like-old-text?
-  ("cmd I" (make-tmlist 'itemize))
-  ("cmd E" (make-tmlist 'enumerate))
-  ("cmd D" (make-tmlist 'description))
-  ("cmd N" (make-item))
-  ("cmd S" (make-session "scheme")))
-
 (kbd-map in-german?
   ("ß" "ÿ")
   ("ÿ" "¸"))
