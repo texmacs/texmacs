@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text std-text-edit)
-  (:use (utils edit circulate)))
+  (:use (utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting document and author data
@@ -152,6 +152,14 @@
       (make l)
       (make-return-before)))
 
+(tm-define (kbd-return)
+  (:inside part part* chapter chapter* appendix
+	   section subsection subsubsection
+	   section* subsection* subsubsection*
+	   paragraph subparagraph paragraph* subparagraph*)
+  (go-end-line)
+  (insert-return))
+
 (define (toggle-number-sub s)
   (with s* (string-append s "*")
     (cond ((inside? s) (variant-replace s s*))
@@ -168,14 +176,6 @@
      "remark" "example" "note" "warning" "convention"
      "exercise" "problem"
      "small-figure" "big-figure" "small-table" "big-table")))
-
-(tm-define (kbd-return)
-  (:inside part part* chapter chapter* appendix
-	   section subsection subsubsection
-	   section* subsection* subsubsection*
-	   paragraph subparagraph paragraph* subparagraph*)
-  (go-end-line)
-  (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description

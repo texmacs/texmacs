@@ -13,10 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard source-kbd)
-  (:use
-    (source source-edit)
-    (generic format-edit)
-    (graphics graphics-edit)))
+  (:use (source source-edit)))
 
 (kbd-map
   ("M-)" (make-style-with "src-compact" "none"))
@@ -64,7 +61,6 @@
   ("inactive ," (make 'unquote))
   ("inactive ?" (make 'if))
   ("inactive C-?" (make 'if*))
-  ("inactive G" (make-graphics))
 
   ("executable d" (make 'div))
   ("executable f" (make 'find-file))

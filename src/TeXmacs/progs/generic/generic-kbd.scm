@@ -14,7 +14,7 @@
 
 (texmacs-module (generic generic-kbd)
   (:use
-    (utils edit circulate)
+    (utils edit variants)
     (utils edit auto-close)
     (generic generic-edit)
     (source source-edit)

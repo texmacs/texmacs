@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : circulate.scm
+;; MODULE      : variants.scm
 ;; DESCRIPTION : circulate between variants of environments
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils edit circulate))
+(texmacs-module (utils edit variants))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting new structured variants
@@ -38,25 +38,6 @@
   (map-in-order set-structured-variant l)
   (display* ""); prevents strange error
   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Actions on structured variants
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (variant-replace which by)
-  (let* ((p (search-upwards which))
-	 (t (tm-subtree p)))
-    (if (= (tree-arity t) 1)
-	(begin
-	  (tm-ins-unary p (string->symbol by))
-	  (tm-rem-unary (rcons p 0))))))
-
-(tm-define (variant-circulate forward?)
-  (let ((which (inside-which structured-variants-list)))
-    (if (!= which "")
-	(let* ((val (ahash-ref structured-variants-table which))
-	       (new (if forward? (cadr val) (car val))))
-	  (variant-replace which new)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic structured variants
@@ -85,3 +66,22 @@
   ("strong" "em" "dfn")
   ("name" "person" "cite*")
   ("verbatim" "kbd" "code*" "var"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Actions on structured variants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (variant-replace which by)
+  (let* ((p (search-upwards which))
+	 (t (tm-subtree p)))
+    (if (= (tree-arity t) 1)
+	(begin
+	  (tm-ins-unary p (string->symbol by))
+	  (tm-rem-unary (rcons p 0))))))
+
+(tm-define (variant-circulate forward?)
+  (let ((which (inside-which structured-variants-list)))
+    (if (!= which "")
+	(let* ((val (ahash-ref structured-variants-table which))
+	       (new (if forward? (cadr val) (car val))))
+	  (variant-replace which new)))))
