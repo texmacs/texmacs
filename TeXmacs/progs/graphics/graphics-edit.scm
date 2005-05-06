@@ -38,7 +38,7 @@
   (let* ((p (cDr (tm-where)))
 	 (t (stree-at p)))
     (if (func? t 'graphics) p
-	(with q (search-upwards "graphics")
+	(with q (search-upwards 'graphics)
 	  (if (null? q) #f q)))))
 
 (define (graphics-path path)

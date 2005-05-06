@@ -44,28 +44,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (set-structured-variants
-  ("chapter" "appendix" "section" "subsection" "subsubsection"
-   "paragraph" "subparagraph")
-  ("chapter*" "section*" "subsection*" "subsubsection*")
-  ("itemize" "enumerate")
-  ("itemize-minus" "itemize-dot" "itemize-arrow")
-  ("enumerate-numeric" "enumerate-roman" "enumerate-Roman"
-   "enumerate-alpha" "enumerate-Alpha")
-  ("description"
-   "description-compact" "description-aligned"
-   "description-dash" "description-long")
-  ("equation" "equation*")
-  ("eqnarray" "eqnarray*")
-  ("leqnarray" "leqnarray*")
-  ("matrix" "det")
-  ("theorem" "proposition" "lemma" "corollary" "conjecture")
-  ("definition" "axiom" "notation")
-  ("remark" "note" "example" "convention" "warning")
-  ("exercise" "problem")
-  ("tabular" "tabular*" "block" "block*")
-  ("strong" "em" "dfn")
-  ("name" "person" "cite*")
-  ("verbatim" "kbd" "code*" "var"))
+  (chapter appendix section subsection subsubsection
+   paragraph subparagraph)
+  (chapter* section* subsection* subsubsection*)
+  (itemize enumerate)
+  (itemize-minus itemize-dot itemize-arrow)
+  (enumerate-numeric enumerate-roman enumerate-Roman
+   enumerate-alpha enumerate-Alpha)
+  (description
+   description-compact description-aligned
+   description-dash description-long)
+  (equation equation*)
+  (eqnarray eqnarray*)
+  (leqnarray leqnarray*)
+  (matrix det)
+  (theorem proposition lemma corollary conjecture)
+  (definition axiom notation)
+  (remark note example convention warning)
+  (exercise problem)
+  (tabular tabular* block block*)
+  (strong em dfn)
+  (name person cite*)
+  (verbatim kbd code* var))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actions on structured variants
@@ -76,12 +76,12 @@
 	 (t (tm-subtree p)))
     (if (= (tree-arity t) 1)
 	(begin
-	  (tm-ins-unary p (string->symbol by))
+	  (tm-ins-unary p by)
 	  (tm-rem-unary (rcons p 0))))))
 
 (tm-define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))
-    (if (!= which "")
+    (if which
 	(let* ((val (ahash-ref structured-variants-table which))
 	       (new (if forward? (cadr val) (car val))))
 	  (variant-replace which new)))))

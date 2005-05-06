@@ -104,7 +104,7 @@
   ("]" (make-bracket-close "]" "["))
   ("{" (make-bracket-open "{" "}"))
   ("}" (make-bracket-close "}" "{"))
-  ("\\" (if (or (inside? "hybrid") (in-prog?))
+  ("\\" (if (or (inside? 'hybrid) (in-prog?))
 	    (insert "\\")
 	    (make-hybrid)))
   ("M-\\" (make-hybrid))

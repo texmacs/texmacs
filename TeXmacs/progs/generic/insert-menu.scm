@@ -132,10 +132,10 @@
       ("Enable indentation after" (make 'yes-indent*)))
   (if (style-has? "env-float-dtd")
       (-> "Page insertion"
-	  (when (not (inside? "float"))
+	  (when (not (inside? 'float))
 		(link insert-page-insertion-menu))
 	  ---
-	  (when (inside? "float")
+	  (when (inside? 'float)
 		(group "Position float")
 		(link position-float-menu))))
   (-> "Header and footer"

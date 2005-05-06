@@ -103,6 +103,10 @@
 	 (pretend-save-buffer)
 	 (exec-delayed s-cont))))
 
+(tm-define (inside-which l)
+  (with r (tm-inside-which l)
+    (if (== r "") #f (string->symbol r))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
