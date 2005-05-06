@@ -12,10 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs texmacs tm-print)
-  (:export
-    get-default-paper-size preview-with-ghostview
-    choose-file-and-print-page-selection))
+(texmacs-module (texmacs texmacs tm-print))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
