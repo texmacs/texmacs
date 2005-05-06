@@ -21,8 +21,8 @@
 
 (tm-define (kbd-return)
   (:inside table)
-  (let ((x (inside-which '("table" "document"))))
-    (if (== x "document")
+  (let ((x (inside-which '(table document))))
+    (if (== x 'document)
 	(insert-return)
 	(begin
 	  (table-insert-row #t)
@@ -395,16 +395,16 @@
 	   (table-inside-sub? p (cDr q)))))
 
 (tm-define (table-inside? which)
-  (if (and (inside? "table") (inside? which))
+  (if (and (inside? 'table) (inside? which))
       (let ((p (search-upwards which))
-	    (q (search-upwards "table")))
+	    (q (search-upwards 'table)))
 	(table-inside-sub? p (cDr q)))
       #f))
 
 (tm-define (table-toggle-number-equation)
-  (cond ((inside? "equation") (variant-replace "equation" "equation*"))
-	((inside? "equation*") (variant-replace "equation*" "equation"))
-	(else (if (or (table-inside? "eqnarray") (table-inside? "eqnarray*"))
+  (cond ((inside? 'equation) (variant-replace 'equation 'equation*))
+	((inside? 'equation*) (variant-replace 'equation* 'equation))
+	(else (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*))
 		  (if (table-equation-numbered?)
 		      (table-nonumber-equation)
 		      (table-number-equation))))))

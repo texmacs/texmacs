@@ -22,17 +22,17 @@
 (menu-bind author-menu
   ("Insert author" (make-doc-data-element 'doc-author-data))
   ---
-  (when (inside? "doc-author-data")
+  (when (inside? 'doc-author-data)
 	("Address" (make-author-data-element 'author-address))
 	("Email" (make-author-data-element 'author-email))
 	("Homepage" (make-author-data-element 'author-homepage))
 	("Note" (make-author-data-element 'author-note))))
 
 (menu-bind title-menu
-  (when (not (inside? "doc-data"))
+  (when (not (inside? 'doc-data))
 	("Insert title" (make-doc-data)))
   ---
-  (when (inside? "doc-data")
+  (when (inside? 'doc-data)
 	("Subtitle" (make-doc-data-element 'doc-subtitle))
 	(-> "Author" (link author-menu))
 	(-> "Date"
@@ -55,19 +55,19 @@
 	    ("A.M.S. subject classification"
 	     (make-doc-data-element 'doc-AMS-class))))
   ---
-  (when (and (not (inside? "doc-data")) (not (inside? "abstract")))
+  (when (and (not (inside? 'doc-data)) (not (inside? 'abstract)))
 	("Abstract" (make 'abstract))))
 
 (menu-bind letter-header-menu
-  (when (not (inside? "letter-header"))
+  (when (not (inside? 'letter-header))
 	("Header" (make 'letter-header)))
-  (when (inside? "letter-header")
+  (when (inside? 'letter-header)
 	("Address" (make-header 'address))
 	("Date" (make-header 'letter-date))
 	("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
 	("Destination" (make-header 'destination)))
   ---
-  (when (not (inside? "letter-header"))
+  (when (not (inside? 'letter-header))
 	("Opening" (make 'opening))
 	("Closing" (make 'closing))
 	("Signature" (make 'signature)))
@@ -290,10 +290,10 @@
       ("First indentation"
        (interactive '("First indentation:") 'set-first-indent)))
   (if (style-has? "env-float-dtd")
-      (if (not (inside? "float"))
+      (if (not (inside? 'float))
 	  (=> (balloon (icon "tm_pageins.xpm") "Make a page insertion")
 	      (link insert-page-insertion-menu)))
-      (if (inside? "float")
+      (if (inside? 'float)
 	  (=> (balloon (icon "tm_floatpos.xpm") "Position floating object")
 	      (link position-float-menu))))
 ;;((balloon (icon "tm_footnote.xpm") "Insert a footnote") ())

@@ -118,9 +118,9 @@ tmg_go_end () {
 
 SCM
 tmg_go_start_of (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "go-start-of");
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "go-start-of");
 
-  string in1= scm_to_string (arg1);
+  tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->go_start_of (in1);
@@ -131,9 +131,9 @@ tmg_go_start_of (SCM arg1) {
 
 SCM
 tmg_go_end_of (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "go-end-of");
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "go-end-of");
 
-  string in1= scm_to_string (arg1);
+  tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->go_end_of (in1);
@@ -623,9 +623,9 @@ tmg_in_spell_modeP () {
 
 SCM
 tmg_insideP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside?");
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "inside?");
 
-  string in1= scm_to_string (arg1);
+  tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->inside (in1);
@@ -650,8 +650,8 @@ tmg_inside_withP (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_inside_which (SCM arg1) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "inside-which");
+tmg_tm_inside_which (SCM arg1) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-inside-which");
 
   scheme_tree in1= scm_to_scheme_tree (arg1);
 
@@ -664,9 +664,9 @@ tmg_inside_which (SCM arg1) {
 
 SCM
 tmg_search_upwards (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "search-upwards");
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "search-upwards");
 
-  string in1= scm_to_string (arg1);
+  tree_label in1= scm_to_tree_label (arg1);
 
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->search_upwards (in1);
@@ -2972,7 +2972,7 @@ initialize_glue_editor () {
   gh_new_procedure ("in-spell-mode?", (FN) tmg_in_spell_modeP, 0, 0, 0);
   gh_new_procedure ("inside?", (FN) tmg_insideP, 1, 0, 0);
   gh_new_procedure ("inside-with?", (FN) tmg_inside_withP, 2, 0, 0);
-  gh_new_procedure ("inside-which", (FN) tmg_inside_which, 1, 0, 0);
+  gh_new_procedure ("tm-inside-which", (FN) tmg_tm_inside_which, 1, 0, 0);
   gh_new_procedure ("search-upwards", (FN) tmg_search_upwards, 1, 0, 0);
   gh_new_procedure ("search-parent-upwards", (FN) tmg_search_parent_upwards, 1, 0, 0);
   gh_new_procedure ("search-upwards-in-set", (FN) tmg_search_upwards_in_set, 1, 0, 0);

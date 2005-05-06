@@ -73,13 +73,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-data-activate-here)
-  (with p (search-upwards "doc-inactive")
+  (with p (search-upwards 'doc-inactive)
     (tm-rem-unary p)))
 
 (tm-define (doc-data-disactivated?)
-  (and (inside? "doc-data")
-       (with p (search-upwards "doc-data")
-	 (let* ((p (search-upwards "doc-data"))
+  (and (inside? 'doc-data)
+       (with p (search-upwards 'doc-data)
+	 (let* ((p (search-upwards 'doc-data))
 		(t (tm-subtree p))
 		(l (cdr (tree->list t))))
 	   (list-or (map (lambda (t) (== (tm-car t) 'doc-inactive)) l))))))
@@ -90,7 +90,7 @@
 	(tm-rem-unary p))))
 
 (tm-define (doc-data-activate-all)
-  (let* ((p (search-upwards "doc-data"))
+  (let* ((p (search-upwards 'doc-data))
 	 (t (tm-subtree p))
 	 (l (cdr (tree->list t))))
       (for-each doc-data-activate-one l)))
@@ -101,7 +101,7 @@
 	(tm-ins-unary p 'doc-inactive))))
 
 (tm-define (doc-data-disactivate-all)
-  (let* ((p (search-upwards "doc-data"))
+  (let* ((p (search-upwards 'doc-data))
 	 (t (tm-subtree p))
 	 (l (cdr (tree->list t))))
       (for-each doc-data-disactivate-one l)))
@@ -111,10 +111,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (go-end-of-header-element)
-  (if (inside? "address") (go-end-of "address"))
-  (if (inside? "destination") (go-end-of "destination"))
-  (if (inside? "cc") (go-end-of "cc"))
-  (if (inside? "encl") (go-end-of "encl"))
+  (if (inside? 'address) (go-end-of 'address))
+  (if (inside? 'destination) (go-end-of 'destination))
+  (if (inside? 'cc) (go-end-of 'cc))
+  (if (inside? 'encl) (go-end-of 'encl))
   (go-end-line))
 
 (tm-define (make-header l)
@@ -127,21 +127,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (inside-section?)
-  (or (inside? "part")
-      (inside? "part*")
-      (inside? "chapter")
-      (inside? "chapter*")
-      (inside? "appendix")
-      (inside? "section")
-      (inside? "section*")
-      (inside? "subsection")
-      (inside? "subsection*")
-      (inside? "subsubsection")
-      (inside? "subsubsection*")
-      (inside? "paragraph")
-      (inside? "paragraph*")
-      (inside? "subparagraph")
-      (inside? "subparagraph*")))
+  (or (inside? 'part)
+      (inside? 'part*)
+      (inside? 'chapter)
+      (inside? 'chapter*)
+      (inside? 'appendix)
+      (inside? 'section)
+      (inside? 'section*)
+      (inside? 'subsection)
+      (inside? 'subsection*)
+      (inside? 'subsubsection)
+      (inside? 'subsubsection*)
+      (inside? 'paragraph)
+      (inside? 'paragraph*)
+      (inside? 'subparagraph)
+      (inside? 'subparagraph*)))
 
 (tm-define (make-section l)
   (if (not (make-return-after))
@@ -161,40 +161,40 @@
   (insert-return))
 
 (define (toggle-number-sub s)
-  (with s* (string-append s "*")
+  (with s* (string->symbol (string-append (symbol->string s) "*"))
     (cond ((inside? s) (variant-replace s s*))
 	  ((inside? s*) (variant-replace s* s)))))
 
 (tm-define (toggle-section-number)
   (for-each
    toggle-number-sub
-   '("part" "chapter" "section" "subsection" "subsubsection"
-     "paragraph" "subparagraph" "appendix"
+   '(part chapter section subsection subsubsection
+     paragraph subparagraph appendix
 
-     "theorem" "proposition" "lemma" "corollary"
-     "axiom" "definition" "notation" "conjecture"
-     "remark" "example" "note" "warning" "convention"
-     "exercise" "problem"
-     "small-figure" "big-figure" "small-table" "big-table")))
+     theorem proposition lemma corollary
+     axiom definition notation conjecture
+     remark example note warning convention
+     exercise problem
+     small-figure big-figure small-table big-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define list-itemize-enumerate
-  '("itemize" "itemize-minus" "itemize-dot" "itemize-arrow"
-    "enumerate" "enumerate-numeric" "enumerate-roman"
-    "enumerate-Roman" "enumerate-alpha" "enumerate-Alpha"))
+  '(itemize itemize-minus itemize-dot itemize-arrow
+    enumerate enumerate-numeric enumerate-roman
+    enumerate-Roman enumerate-alpha enumerate-Alpha))
 
 (define list-description
-  '("description" "description-compact" "description-aligned"
-    "description-dash" "description-long"))
+  '(description description-compact description-aligned
+    description-dash description-long))
 
 (tm-define (inside-list?)
-  (!= (inside-which list-itemize-enumerate) ""))
+  (inside-which list-itemize-enumerate))
 
 (tm-define (inside-description?)
-  (!= (inside-which list-description) ""))
+  (inside-which list-description))
 
 (tm-define (make-tmlist l)
   (make l)
@@ -216,7 +216,7 @@
 
 (tm-define (kbd-return)
   (:inside item*)
-  (go-end-of "item*"))
+  (go-end-of 'item*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content

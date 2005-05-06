@@ -48,6 +48,12 @@
   (:inside label reference)
   (if (complete-try?) (noop)))
 
+;; Very temporarily
+(tm-define (kbd-return) (:require #f) (noop))
+(tm-define (kbd-shift-return) (:require #f) (noop))
+(tm-define (kbd-remove forward?) (:require #f) (noop))
+(tm-define (kbd-tab) (:require #f) (noop))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,7 +182,7 @@
 ;what <char>   : position to allow/disallow
 ;flag <boolean>: allow if true, disallow is false."
 ;
-;  (let ((p (search-upwards "float")))
+;  (let ((p (search-upwards 'float)))
 ;    (if (nnull? p)
 ;	(tm-assign
 ;	 (rcons p 1)
@@ -187,7 +193,7 @@
 ;			    what))))))
 
 (define (test-insertion-position? what)
-  (let ((p (search-upwards "float"))
+  (let ((p (search-upwards 'float))
 	(c (string-ref what 0)))
     (if (nnull? p)
 	(char-in-string? c (tree->string (tm-subtree (rcons p 1)))))))

@@ -156,8 +156,8 @@ public:
   virtual void go_to_here () = 0;
   virtual void go_start () = 0;
   virtual void go_end () = 0;
-  virtual void go_start_of (string what) = 0;
-  virtual void go_end_of (string what) = 0;
+  virtual void go_start_of (tree_label what) = 0;
+  virtual void go_end_of (tree_label what) = 0;
   virtual void go_start_with (string var, string val) = 0;
   virtual void go_end_with (string var, string val) = 0;
   virtual void go_start_line () = 0;

@@ -16,10 +16,10 @@
 
 (tm-define (kbd-return)
   (:inside equation)
-  (go-end-of "equation")
+  (go-end-of 'equation)
   (insert-return))
 
 (tm-define (kbd-return)
   (:inside equation*)
-  (go-end-of "equation*")
+  (go-end-of 'equation*)
   (insert-return))
