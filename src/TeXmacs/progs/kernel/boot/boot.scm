@@ -13,6 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define texmacs-user (current-module))
+(define temporary-module (current-module))
 
 (define-macro (define-public-macro head . body)
   `(define-public ,(car head)
@@ -27,8 +28,7 @@
 (if (guile-a?)
     (begin
       (define import-from use-modules)
-      (define re-export export)
-      (define do-export export)))
+      (define re-export export)))
 
 (if (guile-b?)
     (begin
@@ -43,23 +43,7 @@
       ;;     `(module-use! (current-module) (resolve-module ',module)))
       ;;   `(begin
       ;;     ,@(map import-from-body modules)))
-
-      (define backup-deprecation-warning noop)
-      (define-macro (do-export . syms)
-	;; guile-b gives a warning when using the export keyword in
-	;; a module which inherits from a module in which the keyword
-	;; is already defined. For module inheritance, this has been solved
-	;; by using the re-export keyword. But if the intention is to
-	;; locally *override* the outer definition, then we really *need* to
-	;; use export and not re-export. This is used during lazy definitions,
-	;; where the outer definition may call the local definition. If one
-	;; uses the outer definition as the local definition, then one obtains
-	;; an infinite loop...
-	`(begin
-	   (set! backup-deprecation-warning issue-deprecation-warning)
-	   (set! issue-deprecation-warning (lambda l (noop)))
-	   (export ,@syms)
-	   (set! issue-deprecation-warning backup-deprecation-warning)))))
+      ))
 
 (define-macro (inherit-modules . which-list)
   (define (module-exports which)
@@ -76,7 +60,9 @@
     (cond ((not (pair? action)) (noop))
 	  ((equal? (car action) :use) (cons 'use-modules (cdr action)))
 	  ((equal? (car action) :inherit) (cons 'inherit-modules (cdr action)))
-	  ((equal? (car action) :export) (cons 'do-export (cdr action)))
+	  ((equal? (car action) :export)
+	   (display "Warning] The option :export is no longer supported\n")
+	   (display "       ] Please use tm-define instead\n"))
 	  (else '(noop))))
   (let ((l (map-in-order transform options)))
     (if (guile-b?)

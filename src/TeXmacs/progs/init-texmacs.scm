@@ -12,6 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define boot-start (texmacs-time))
+
 ;(display "Booting TeXmacs kernel functionality\n")
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm"))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
@@ -28,6 +30,8 @@
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 (retrieve-preferences)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting utilities\n")
 (inherit-modules (utils library base) (utils library list)
@@ -35,11 +39,10 @@
 (inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
 (use-modules (utils edit selections) (utils edit variants))
 (use-modules (utils plugins plugin-cmd))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting main TeXmacs functionality\n")
-(use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-files)
-	     (texmacs texmacs tm-print) (texmacs texmacs tm-view))
-(re-export safely-kill-window)
 (lazy-menu (texmacs menus file-menu)
 	   file-menu go-menu
 	   new-file-menu load-menu save-menu print-menu close-menu)
@@ -53,10 +56,10 @@
 (if (like-windows?) (lazy-in-mode (texmacs keyboard windows-kbd) always?))
 (lazy-in-mode (texmacs keyboard latex-kbd) always?)
 (lazy-in-mode (texmacs keyboard texmacs-kbd) always?)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting generic mode\n")
-(use-modules (generic generic-edit)
-	     (generic format-edit) (generic document-edit))
 (lazy-in-mode (generic generic-kbd) always?)
 (lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
 (lazy-menu (generic document-menu)
@@ -64,44 +67,53 @@
 (lazy-menu (generic insert-menu)
 	   insert-menu insert-link-menu insert-image-menu
 	   insert-page-insertion-menu position-float-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting source mode\n")
 (lazy-in-mode (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
 	   source-transformational-menu source-executable-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting text mode\n")
-(use-modules (text std-text-edit))
 (lazy-in-mode (text text-kbd) in-text?)
 (lazy-in-mode (text format-text-kbd) in-text?)
 (lazy-in-mode (text std-text-kbd) in-std-text?)
 (lazy-menu (text format-text-menu) text-format-menu text-format-icons)
 (lazy-menu (text text-menu) text-menu text-icons)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting table mode\n")
-(use-modules (table table-edit))
 (lazy-in-mode (table table-kbd) in-table?)
 (lazy-menu (table table-menu) table-menu table-icons insert-table-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting math mode\n")
 (lazy-in-mode (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
 (lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting graphics mode\n")
-(use-modules (graphics graphics-edit))
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting dynamic features\n")
-(use-modules (dynamic fold-edit))
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
 (lazy-menu (dynamic session-menu)
 	   supported-sessions-menu insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting documentation\n")
-(use-modules (doc help-funcs))
 (lazy-menu (doc help-menu) help-menu)
 (lazy-define (doc tmdoc) tmdoc-expand-help)
 (lazy-define (doc tmdoc) tmdoc-expand-help-manual)
@@ -114,7 +126,11 @@
 (lazy-define (doc tmweb) tmweb-build-from)
 (lazy-define (doc tmweb) tmweb-build)
 (define-secure-symbols tmdoc-include)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
+;(define-macro (delayed-use-modules . l)
+;  `(exec-delayed-cmd (object->command (lambda () (use-modules ,@l)))))
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
 (use-modules (convert tmml init-tmml))
@@ -125,19 +141,31 @@
 (lazy-define (convert latex latex-drd) latex-arity)
 (lazy-define (convert latex latex-drd) latex-type)
 (lazy-define (convert latex textm) textm-finalize)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting plugins\n")
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
-(for-each plugin-initialize (plugin-list))
-(if (!= plugin-old-data-table plugin-data-table)
-    (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table))
+(define (delayed-plugin-initialize which)
+  (exec-delayed-cmd (object->command (lambda () (plugin-initialize which)))))
+(for-each delayed-plugin-initialize (plugin-list))
+(exec-delayed-cmd
+ (object->command
+  (lambda ()
+    (if (!= plugin-old-data-table plugin-data-table)
+	(save-object "$TEXMACS_HOME_PATH/system/setup.scm"
+		     plugin-data-table)))))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Initializing user preferences\n")
 (apply-preferences)
 (menu-extend page-setup-menu ,@(compute-preferences-menu page-setup-tree))
 (menu-extend preferences-menu ,@(compute-preferences-menu preferences-tree))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
 
 ;(display "Booting fonts\n")
 (if (use-ec-fonts?)
@@ -146,4 +174,7 @@
 (use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
 	     (fonts fonts-foreign) (fonts fonts-misc))
 (if (support-tt-fonts?) (use-modules (fonts fonts-truetype)))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(define boot-start (texmacs-time))
+
 ;(display "Initialization done\n")

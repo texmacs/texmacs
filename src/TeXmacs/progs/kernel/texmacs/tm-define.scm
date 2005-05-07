@@ -165,36 +165,20 @@
 (define-public-macro (tm-define-overloaded head . body)
   (let* ((var (ca*r head))
 	 (val (lambda* head body)))
-    (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
-	`(begin
-	   (ahash-set! ovl-table ',var (cons 100 ,val))
-	   (define-public ,head ,@body)
-	   ,@(map property-rewrite ovl-props))
-	`(begin
-	   (ahash-set! ovl-table ',var
+    `(begin
+       ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
+	    `(ahash-set! ovl-table ',var (cons 100 ,val))
+	    `(ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) ,val
-				   (list ,@ovl-conds)))
-	   (define-public (,var . args)
-	     (ovl-apply (ahash-ref ovl-table ',var) args))
-	   ,@(map property-rewrite ovl-props)))))
-
-;;(define-public-macro (tm-define-overloaded head . body)
-;;  (let* ((var (ca*r head))
-;;	 (val (lambda* head body)))
-;;    (if (and (pair? body) (== (car body) 'lambda))
-;;	`(begin
-;;	   (ahash-set! ovl-table ',var
-;;		       (ovl-insert (ahash-ref ovl-table ',var) ,val
-;;				   (list ,@ovl-conds)))
-;;	   (define-public (,var . args)
-;;	     (ovl-apply (ahash-ref ovl-table ',var) args))
-;;	   ,@(map property-rewrite ovl-props))
-;;	`(begin
-;;	   (ahash-set! ovl-table ',var
-;;		       (ovl-insert (ahash-ref ovl-table ',var) ,val
-;;				   (list ,@ovl-conds)))
-;;	   (define-public ,head ,@body)
-;;	   ,@(map property-rewrite ovl-props)))))
+				   (list ,@ovl-conds))))
+       (set! temporary-module (current-module))
+       (set-current-module texmacs-user)
+       ,(if (or (pair? head) (and (pair? body) (== (car body) 'lambda)))
+	   `(define-public (,var . args)
+	      (ovl-apply (ahash-ref ovl-table ',var) args))
+	   `(define-public ,head ,@body))
+       (set-current-module temporary-module)
+       ,@(map property-rewrite ovl-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded macros with properties
@@ -214,18 +198,20 @@
 (define-public-macro (tm-define-macro-overloaded head . body)
   (let* ((var (ca*r head))
 	 (val (lambda* head body)))
-    (if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
-	`(begin
-	   (ahash-set! ovl-table ',var (cons 100 ,val))
-	   (define-public-macro ,head ,@body)
-	   ,@(map property-rewrite ovl-props))
-	`(begin
-	   (ahash-set! ovl-table ',var
+    `(begin
+       ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
+	    `(ahash-set! ovl-table ',var (cons 100 ,val))
+	    `(ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) ,val
-				   (list ,@ovl-conds)))
-	   (define-public-macro (,var . args)
-	     (ovl-apply (ahash-ref ovl-table ',var) args))
-	   ,@(map property-rewrite ovl-props)))))
+				   (list ,@ovl-conds))))
+       (set! temporary-module (current-module))
+       (set-current-module texmacs-user)
+       ,(if (or (pair? head) (and (pair? body) (== (car body) 'lambda)))
+	   `(define-public-macro (,var . args)
+	      (ovl-apply (ahash-ref ovl-table ',var) args))
+	   `(define-public-macro ,head ,@body))
+       (set-current-module temporary-module)
+       ,@(map property-rewrite ovl-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Associating extra properties to existing function symbols
@@ -254,14 +240,10 @@
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
     `(define (,name . args)
        (let* ((m (resolve-module ',module))
-	      (p (module-ref m '%module-public-interface))
+	      (p (module-ref texmacs-user '%module-public-interface))
 	      (r (module-ref p ',name #f)))
-	 (apply r args)))))
-
-(define-public-macro (lazy-define-public module name)
-  (with name-star (string->symbol (string-append (symbol->string name) "*"))
-    `(define-public (,name . args)
-       (let* ((m (resolve-module ',module))
-	      (p (module-ref m '%module-public-interface))
-	      (r (module-ref p ',name #f)))
+	 (if (not r)
+	     (texmacs-error "lazy-define"
+			    ,(string-append "Could not retrieve "
+					    (symbol->string name))))
 	 (apply r args)))))
