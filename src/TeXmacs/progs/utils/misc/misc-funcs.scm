@@ -91,21 +91,12 @@
 (tm-define-macro (with-active-buffer . l)
   (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
 
-(tm-define (delayed-update nr s-cont)
-  (cond ((> nr 0)
-	 (system-wait "Generating automatic content" (number->string nr))
-	 (generate-all-aux)
-	 (update-buffer)
-	 (let* ((s (number->string (- nr 1)))
-		(c (escape-quotes s-cont)))
-	   (exec-delayed (string-append "(delayed-update " s " \"" c "\")"))))
-	(else
-	 (pretend-save-buffer)
-	 (exec-delayed s-cont))))
-
 (tm-define (inside-which l)
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
+
+(tm-define-macro (delayed-do . body)
+  `(exec-delayed-cmd (object->command (lambda () ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup

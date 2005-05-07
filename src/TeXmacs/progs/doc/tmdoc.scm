@@ -148,11 +148,25 @@
 		    (initial (collection (associate "language" ,lan))))))
 	(set-help-buffer file-name (stree->tree doc)))))
 
+(tm-define (delayed-update nr)
+  (system-wait "Generating automatic content" nr)
+  (generate-all-aux)
+  (update-buffer))
+
 (tm-define (tmdoc-expand-help-manual file-name . cont)
   (with s-cont (if (null? cont) "(noop)" (car cont))
     (system-wait "Generating manual" "(can be long)")
     (tmdoc-expand-help file-name 'title)
-    (delayed-update 3 s-cont)))
+    (delayed-do
+      (delayed-update "(pass 1/3)")
+      (delayed-do
+        (delayed-update "(pass 2/3)")
+	(delayed-do
+	  (delayed-update "(pass 3/3)")
+	  (delayed-do
+	    (pretend-save-buffer)
+	    (system-wait "Finishing manual" "(soon ready)")
+	    (exec-delayed s-cont)))))))
 
 (tm-define (tmdoc-expand-this level)
   (tmdoc-expand-help (get-name-buffer) level))
