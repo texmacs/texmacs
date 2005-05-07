@@ -48,12 +48,6 @@
   (:inside label reference)
   (if (complete-try?) (noop)))
 
-;; Very temporarily
-(tm-define (kbd-return) (:require #f) (noop))
-(tm-define (kbd-shift-return) (:require #f) (noop))
-(tm-define (kbd-remove forward?) (:require #f) (noop))
-(tm-define (kbd-tab) (:require #f) (noop))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

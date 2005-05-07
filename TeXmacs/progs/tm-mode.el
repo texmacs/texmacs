@@ -35,7 +35,7 @@
          kbd-symbols setup-append-if when link promise
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-in-mode
-	 lazy-define lazy-define-public lazy-input-converter
+	 lazy-define lazy-input-converter
 	 define-format converter
 	 with-aux) "\\|")
       "\\)\\>")
@@ -68,5 +68,5 @@
   (dolist (s '(values define-preferences menu-dynamic case-lambda
 	       kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       :use :inherit :export))
+	       :use :inherit))
     (put s 'scheme-indent-function 0)))

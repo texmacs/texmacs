@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert rewrite tmtm-tidy)
-  (:export tmtm-modernize-newlines
-	   tmtm-eat-space-around-control
-	   tmtm-remove-superfluous-newlines
-	   tmtm-concat-document-correct))
+(texmacs-module (convert rewrite tmtm-tidy))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some useful subroutines
