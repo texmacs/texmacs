@@ -105,7 +105,7 @@ tm_server_rep::tm_server_rep (display dis2):
   bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
     my_init_cmds= "(begin" * my_init_cmds * ")";
-    exec_delayed (my_init_cmds);
+    exec_delayed (scheme_cmd (my_init_cmds));
   }
   style_update_menu ();
 #ifdef OS_GNU_LINUX

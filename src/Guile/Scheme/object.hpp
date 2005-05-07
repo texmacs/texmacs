@@ -72,7 +72,6 @@ scheme_tree as_scheme_tree (object obj);
 path as_path (object obj);
 url as_url (object obj);
 command as_command (object obj);
-command as_command (string s);
 #ifdef WIDGET_H // FIXME: dirty hack
 #include "Widget/make_widget.hpp"
 widget as_widget (object obj);
@@ -84,6 +83,7 @@ tree   stree_to_tree (object obj);
 tree   content_to_tree (object obj);
 object string_to_object (string s);
 string object_to_string (object obj);
+object scheme_cmd (string s);
 
 object eval (char* expr);
 object eval (string expr);

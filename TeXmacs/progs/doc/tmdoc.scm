@@ -153,20 +153,20 @@
   (generate-all-aux)
   (update-buffer))
 
-(tm-define (tmdoc-expand-help-manual file-name . cont)
-  (with s-cont (if (null? cont) "(noop)" (car cont))
+(tm-define (tmdoc-expand-help-manual file-name . opts)
+  (with cont (if (null? opts) noop (car opts))
     (system-wait "Generating manual" "(can be long)")
     (tmdoc-expand-help file-name 'title)
-    (delayed-do
+    (delayed
       (delayed-update "(pass 1/3)")
-      (delayed-do
+      (delayed
         (delayed-update "(pass 2/3)")
-	(delayed-do
+	(delayed
 	  (delayed-update "(pass 3/3)")
-	  (delayed-do
+	  (delayed
 	    (pretend-save-buffer)
 	    (system-wait "Finishing manual" "(soon ready)")
-	    (exec-delayed s-cont)))))))
+	    (cont)))))))
 
 (tm-define (tmdoc-expand-this level)
   (tmdoc-expand-help (get-name-buffer) level))

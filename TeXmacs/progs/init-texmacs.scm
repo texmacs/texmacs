@@ -128,8 +128,6 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
 
-;(define-macro (delayed-use-modules . l)
-;  `(exec-delayed-cmd (object->command (lambda () (use-modules ,@l)))))
 ;(display "Booting converters\n")
 (use-modules (convert rewrite init-rewrite))
 (use-modules (convert tmml init-tmml))
@@ -147,12 +145,10 @@
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
-;(define (delayed-plugin-initialize which)
-;  (exec-delayed-cmd (object->command (lambda () (plugin-initialize which)))))
 (define (delayed-plugin-initialize which)
-  (delayed-do (plugin-initialize which)))
+  (delayed (plugin-initialize which)))
 (for-each delayed-plugin-initialize (plugin-list))
-(delayed-do
+(delayed
   (if (!= plugin-old-data-table plugin-data-table)
       (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

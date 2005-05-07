@@ -95,8 +95,8 @@
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
 
-(tm-define-macro (delayed-do . body)
-  `(exec-delayed-cmd (object->command (lambda () ,@body))))
+(tm-define-macro (delayed . body)
+  `(exec-delayed (lambda () ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup

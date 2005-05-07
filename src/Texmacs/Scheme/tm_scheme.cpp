@@ -41,32 +41,17 @@ tm_scheme_rep::preference (string var) {
 ******************************************************************************/
 
 void
-tm_scheme_rep::exec_delayed (string s) {
-  exec_delayed (as_command (s));
-}
-
-void
-tm_scheme_rep::exec_delayed (command cmd) {
+tm_scheme_rep::exec_delayed (object cmd) {
   cmds << cmd;
 }
 
 void
 tm_scheme_rep::exec_pending_commands () {
-  array<command> a= cmds;
-  cmds= array<command> (0);
+  array<object> a= cmds;
+  cmds= array<object> (0);
   int i, n= N(a);
   for (i=0; i<n; i++)
-    a[i]();
-  /*
-  while (N(cmds)!=0) {
-    int i;
-    scheme_tree p= cmds[0];
-    array<scheme_tree> a (N(cmds)-1);
-    for (i=1; i<N(cmds); i++) a[i-1]= cmds[i];
-    cmds= a;
-    (void) eval (scheme_tree_to_string (p));
-  }
-  */
+    (void) call (a[i]);
 }
 
 /******************************************************************************
@@ -83,8 +68,8 @@ public:
     scheme_tree arg;
     sv->dialogue_inquire (arg);
     string s= scheme_tree_to_string (tree (TUPLE, prg, arg));
-    if (arg != "cancel") sv->exec_delayed (s);
-    sv->exec_delayed ("(dialogue-end)"); }
+    if (arg != "cancel") sv->exec_delayed (scheme_cmd (s));
+    sv->exec_delayed (scheme_cmd ("(dialogue-end)")); }
   ostream& print (ostream& out) {
     return out << "Dialogue"; }
 };

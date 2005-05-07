@@ -372,7 +372,7 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
   // WARNING: should be removed when the window model is redesigned
   THIS ["canvas"] << emit_keyboard_focus (true);
 
-  sv->exec_delayed ("(safely-kill-window)");
+  sv->exec_delayed (scheme_cmd ("(safely-kill-window)"));
 }
 
 void

@@ -34,13 +34,13 @@
 (define (make-menu-empty) (widget-harray '() -1))
 
 (define (delay-command cmd)
-  (object->command (lambda () (exec-delayed-cmd cmd))))
+  (object->command (lambda () (exec-delayed cmd))))
 
 (define-macro (make-menu-command cmd)
-  `(delay-command (object->command (lambda ()
-				     (menu-before-action)
-				     ,cmd
-				     (menu-after-action)))))
+  `(delay-command (lambda ()
+		    (menu-before-action)
+		    ,cmd
+		    (menu-after-action))))
 
 (define (kbd-find-shortcut what)
   (with r (kbd-find-inv-binding what)

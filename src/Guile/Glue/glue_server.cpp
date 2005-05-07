@@ -288,22 +288,9 @@ tmg_get_shrinking_factor () {
 
 SCM
 tmg_exec_delayed (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "exec-delayed");
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "exec-delayed");
 
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->exec_delayed (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_exec_delayed_cmd (SCM arg1) {
-  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "exec-delayed-cmd");
-
-  command in1= scm_to_command (arg1);
+  object in1= scm_to_object (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->exec_delayed (in1);
@@ -411,7 +398,7 @@ tmg_set_name_buffer (SCM arg1) {
 
 SCM
 tmg_set_abbr_buffer (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-abbr-buffer");
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-abbr-buffer");
 
   string in1= scm_to_string (arg1);
 
@@ -904,7 +891,6 @@ initialize_glue_server () {
   gh_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
   gh_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
-  gh_new_procedure ("exec-delayed-cmd", (FN) tmg_exec_delayed_cmd, 1, 0, 0);
   gh_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
   gh_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
   gh_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);
