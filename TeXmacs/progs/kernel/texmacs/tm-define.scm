@@ -174,12 +174,10 @@
 		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
 				   (list ,@ovl-conds))))
        (set-current-module texmacs-user)
-       ,(if (or (pair? head)
-		(and (pair? body) (or (== (car body) 'lambda)
-				      (== (car body) 'case-lambda))))
-	    `(define-public (,var . args)
-	       (ovl-apply (ahash-ref ovl-table ',var) args))
-	    `(define-public ,head temp-value))
+       (if (procedure? temp-value)
+	   (define-public (,var . args)
+	     (ovl-apply (ahash-ref ovl-table ',var) args))
+	   (define-public ,head temp-value))
        (set-current-module temp-module)
        ,@(map property-rewrite ovl-props))))
 
