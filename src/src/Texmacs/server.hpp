@@ -48,8 +48,7 @@ public:
 
   /* Guile scheme motor */
   virtual bool exec_file (url u) = 0;
-  virtual void exec_delayed (string s) = 0;
-  virtual void exec_delayed (command cmd) = 0;
+  virtual void exec_delayed (object cmd) = 0;
   virtual string preference (string var) = 0;
 
   /* TeXmacs layout */
