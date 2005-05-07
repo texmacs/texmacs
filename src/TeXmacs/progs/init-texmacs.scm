@@ -37,7 +37,6 @@
 (inherit-modules (utils library base) (utils library list)
 		 (utils library tree))
 (inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
-(use-modules (utils edit selections) (utils edit variants))
 (use-modules (utils plugins plugin-cmd))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
