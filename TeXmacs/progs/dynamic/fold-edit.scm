@@ -91,7 +91,7 @@
     (if (null? p) -1
 	(switch-find-marker (tm-subtree (rcons p 1)) 0))))
 
-(define (switch-get-last)
+(tm-define (switch-get-last)
   (:type (-> int))
   (:synopsis "Get last node of the current 'switch' environment or -1")
   (let ((p (search-upwards 'switch)))
