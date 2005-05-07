@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define texmacs-user (current-module))
-(define temporary-module (current-module))
+(define temp-module (current-module))
+(define temp-value #f)
 
 (define-macro (define-public-macro head . body)
   `(define-public ,(car head)

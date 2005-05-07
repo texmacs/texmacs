@@ -166,18 +166,21 @@
   (let* ((var (ca*r head))
 	 (val (lambda* head body)))
     `(begin
+       (set! temp-module ,(current-module))
+       (set! temp-value ,val)
        ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
-	    `(ahash-set! ovl-table ',var (cons 100 ,val))
+	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
 	    `(ahash-set! ovl-table ',var
-		       (ovl-insert (ahash-ref ovl-table ',var) ,val
+		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
 				   (list ,@ovl-conds))))
-       (set! temporary-module (current-module))
        (set-current-module texmacs-user)
-       ,(if (or (pair? head) (and (pair? body) (== (car body) 'lambda)))
-	   `(define-public (,var . args)
-	      (ovl-apply (ahash-ref ovl-table ',var) args))
-	   `(define-public ,head ,@body))
-       (set-current-module temporary-module)
+       ,(if (or (pair? head)
+		(and (pair? body) (or (== (car body) 'lambda)
+				      (== (car body) 'case-lambda))))
+	    `(define-public (,var . args)
+	       (ovl-apply (ahash-ref ovl-table ',var) args))
+	    `(define-public ,head temp-value))
+       (set-current-module temp-module)
        ,@(map property-rewrite ovl-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -199,18 +202,17 @@
   (let* ((var (ca*r head))
 	 (val (lambda* head body)))
     `(begin
+       (set! temp-module ,(current-module))
+       (set! temp-value ,val)
        ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
-	    `(ahash-set! ovl-table ',var (cons 100 ,val))
+	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
 	    `(ahash-set! ovl-table ',var
-		       (ovl-insert (ahash-ref ovl-table ',var) ,val
+		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
 				   (list ,@ovl-conds))))
-       (set! temporary-module (current-module))
        (set-current-module texmacs-user)
-       ,(if (or (pair? head) (and (pair? body) (== (car body) 'lambda)))
-	   `(define-public-macro (,var . args)
-	      (ovl-apply (ahash-ref ovl-table ',var) args))
-	   `(define-public-macro ,head ,@body))
-       (set-current-module temporary-module)
+       (define-public-macro (,var . args)
+	 (ovl-apply (ahash-ref ovl-table ',var) args))
+       (set-current-module temp-module)
        ,@(map property-rewrite ovl-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
