@@ -378,7 +378,6 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
 void
 tm_widget_rep::handle_alarm (alarm_event ev) {
   if (ev->message == "auto save") sv->auto_save ();
-  if (ev->message == "banner") sv->advance_banner ();
 }
 
 /******************************************************************************

@@ -50,8 +50,11 @@ tm_scheme_rep::exec_pending_commands () {
   array<object> a= cmds;
   cmds= array<object> (0);
   int i, n= N(a);
-  for (i=0; i<n; i++)
-    (void) call (a[i]);
+  for (i=0; i<n; i++) {
+    object obj= call (a[i]);
+    if (is_bool (obj) && !as_bool (obj))
+      cmds << a[i];
+  }
 }
 
 /******************************************************************************

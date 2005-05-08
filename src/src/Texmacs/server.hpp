@@ -29,7 +29,6 @@ class server_rep: public abstract_struct {
 public:
   server_rep ();
   virtual ~server_rep ();
-  virtual void advance_banner () = 0;
 
   /* Control global server parameters */
   virtual void   set_input_language (string s) = 0;
