@@ -28,7 +28,6 @@ class tm_server_rep:
 protected:
   display dis;            // current display
   tm_view vw;             // current editor
-  int banner_nr;          // how far in banner
   bool full_screen;       // full screen mode
   bool full_screen_edit;  // full screen edit mode
   int def_sfactor;        // default shrinking factor
@@ -39,7 +38,6 @@ protected:
 public:
   tm_server_rep (display dis);
   ~tm_server_rep ();
-  void advance_banner ();
 
   /* Get and set objects associated to server */
   server_rep* get_server ();

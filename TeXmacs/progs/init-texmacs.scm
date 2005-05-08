@@ -171,4 +171,5 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
 
+(texmacs-banner)
 ;(display "Initialization done\n")

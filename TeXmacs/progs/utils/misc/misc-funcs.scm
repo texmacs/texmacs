@@ -95,8 +95,41 @@
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
 
+(tm-define (delayed-sub body)
+  (cond ((or (npair? body) (nlist? (car body)) (not (keyword? (caar body))))
+	 `(lambda () ,@body #t))
+	((== (caar body) :pause)
+	 (let* ((time (+ (texmacs-time) (cadar body)))
+		(proc (delayed-sub (cdr body))))
+	   `(lambda ()
+	      (and (> (texmacs-time) ,time) (,proc)))))
+	((== (caar body) :require)
+	 (with proc (delayed-sub (cdr body))
+	   `(lambda ()
+	      (and ,(cadar body) (,proc)))))
+	(else (delayed-sub (cdr body)))))
+
 (tm-define-macro (delayed . body)
-  `(exec-delayed (lambda () ,@body)))
+  `(exec-delayed ,(delayed-sub body)))
+
+(tm-define (texmacs-banner)
+  (with tmv (string-append "GNU TeXmacs " (texmacs-version))
+    (delayed
+     (set-message "Welcome to GNU TeXmacs" tmv)
+     (delayed
+     (:pause 2500)
+     (set-message "GNU TeXmacs falls under the GNU general public license" tmv)
+     (delayed
+     (:pause 2500)
+     (set-message "GNU TeXmacs comes without any form of legal warranty" tmv)
+     (delayed
+     (:pause 2500)
+     (set-message
+      "More information about GNU TeXmacs can be found in the Help->About menu"
+      tmv)
+     (delayed
+     (:pause 2500)
+     (set-message "" ""))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
