@@ -139,6 +139,8 @@ public:
   virtual void set_message (string l, string r= "", bool temp= false) = 0;
   virtual void recall_message () = 0;
   virtual void interactive (scheme_tree args, object cmd) = 0;
+  virtual int  idle_time () = 0;
+  virtual int  change_time () = 0;
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;

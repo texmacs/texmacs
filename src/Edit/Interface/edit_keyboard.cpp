@@ -108,6 +108,7 @@ simplify_key_press (string key) {
 
 void
 edit_interface_rep::key_press (string key) {
+  set_message ("", "");
   if (input_mode != INPUT_NORMAL)
     key= simplify_key_press (key);
   switch (input_mode) {

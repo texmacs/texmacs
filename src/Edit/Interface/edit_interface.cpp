@@ -394,6 +394,21 @@ edit_interface_rep::selection_visible () {
   }
 }
 
+int
+edit_interface_rep::idle_time () {
+  if (env_change == 0 &&
+      win->repainted () &&
+      (!win->check_event (EVENT_STATUS)) &&
+      got_focus)
+    return texmacs_time () - last_change;
+  else return 0;
+}
+
+int
+edit_interface_rep::change_time () {
+  return last_change;
+}
+
 void
 edit_interface_rep::apply_changes () {
   //cout << "Apply changes\n";
@@ -401,22 +416,17 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if ((last_update < last_change) &&
-	(texmacs_time() >= (last_change + (1000/6))) &&
-	win->repainted() &&
-	(!win->check_event (EVENT_STATUS)) &&
-	got_focus)
-      {
-	call ("lazy-in-mode-force");
-	SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-	SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-	set_footer ();
-	if (!win->check_event (EVENT_STATUS)) drd_update ();
-	tex_autosave_cache ();
-	last_update= last_change;
-      }
+    if (last_update < last_change && idle_time () >= 1000/6) {
+      call ("lazy-in-mode-force");
+      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
+      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+      set_footer ();
+      if (!win->check_event (EVENT_STATUS)) drd_update ();
+      tex_autosave_cache ();
+      last_update= last_change;
+    }
     return;
   }
 
