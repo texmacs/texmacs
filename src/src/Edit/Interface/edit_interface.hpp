@@ -93,6 +93,8 @@ public:
   void cursor_visible ();
   void selection_visible ();
   void apply_changes ();
+  int  idle_time ();
+  int  change_time ();
 
   /* miscellaneous */
   bool kbd_get_command (string which, string& help, command& cmd);

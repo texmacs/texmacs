@@ -586,6 +586,52 @@ tmg_in_graphicsP () {
 }
 
 SCM
+tmg_get_graphical_object () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->get_graphical_object ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_set_graphical_object (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "set-graphical-object");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->set_graphical_object (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_invalidate_graphical_object () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->invalidate_graphical_object ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_graphical_select (SCM arg1, SCM arg2) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select");
+
+  double in1= scm_to_double (arg1);
+  double in2= scm_to_double (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->graphical_select (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_in_normal_modeP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->in_normal_mode ();
@@ -2180,6 +2226,52 @@ tmg_the_buffer_path () {
 }
 
 SCM
+tmg_tm_interactive (SCM arg1, SCM arg2) {
+  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-interactive");
+  SCM_ASSERT_OBJECT (arg2, SCM_ARG2, "tm-interactive");
+
+  scheme_tree in1= scm_to_scheme_tree (arg1);
+  object in2= scm_to_object (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->interactive (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_texmacs_exec (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->texmacs_exec (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_idle_time () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_editor()->idle_time ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_change_time () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_editor()->change_time ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_the_mutator_path () {
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->get_mutator_path ();
@@ -2410,21 +2502,6 @@ tmg_session_complete_tryP () {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
-}
-
-SCM
-tmg_tm_interactive (SCM arg1, SCM arg2) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-interactive");
-  SCM_ASSERT_OBJECT (arg2, SCM_ARG2, "tm-interactive");
-
-  scheme_tree in1= scm_to_scheme_tree (arg1);
-  object in2= scm_to_object (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->interactive (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2795,6 +2872,38 @@ tmg_tm_go_to_end (SCM arg1) {
 }
 
 SCM
+tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tm-insert-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->insert_with (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_remove_with (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-remove-with");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-remove-with");
+
+  path in1= scm_to_path (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_with (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_tm_position_new () {
   // SCM_DEFER_INTS;
   int out= get_server()->get_editor()->position_new ();
@@ -2842,97 +2951,6 @@ tmg_tm_position_get (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
-}
-
-SCM
-tmg_tm_insert_with (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-with");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-insert-with");
-  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "tm-insert-with");
-
-  path in1= scm_to_path (arg1);
-  string in2= scm_to_string (arg2);
-  content in3= scm_to_content (arg3);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->insert_with (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tm_remove_with (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-remove-with");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tm-remove-with");
-
-  path in1= scm_to_path (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->remove_with (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_get_graphical_object () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->get_graphical_object ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_set_graphical_object (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "set-graphical-object");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_graphical_object (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_invalidate_graphical_object () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->invalidate_graphical_object ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_graphical_select (SCM arg1, SCM arg2) {
-  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select");
-  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select");
-
-  double in1= scm_to_double (arg1);
-  double in2= scm_to_double (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->graphical_select (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_texmacs_exec (SCM arg1) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
-
-  content in1= scm_to_content (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->texmacs_exec (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
 }
 
 void
@@ -2992,6 +3010,10 @@ initialize_glue_editor () {
   gh_new_procedure ("undo", (FN) tmg_undo, 0, 0, 0);
   gh_new_procedure ("redo", (FN) tmg_redo, 0, 0, 0);
   gh_new_procedure ("in-graphics?", (FN) tmg_in_graphicsP, 0, 0, 0);
+  gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
+  gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
+  gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
+  gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
   gh_new_procedure ("in-normal-mode?", (FN) tmg_in_normal_modeP, 0, 0, 0);
   gh_new_procedure ("in-search-mode?", (FN) tmg_in_search_modeP, 0, 0, 0);
   gh_new_procedure ("in-replace-mode?", (FN) tmg_in_replace_modeP, 0, 0, 0);
@@ -3124,6 +3146,10 @@ initialize_glue_editor () {
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
   gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);
+  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
+  gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
+  gh_new_procedure ("idle-time", (FN) tmg_idle_time, 0, 0, 0);
+  gh_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
   gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
   gh_new_procedure ("the-mutator-time", (FN) tmg_the_mutator_time, 0, 0, 0);
   gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
@@ -3147,7 +3173,6 @@ initialize_glue_editor () {
   gh_new_procedure ("session-remove-previous-output", (FN) tmg_session_remove_previous_output, 0, 0, 0);
   gh_new_procedure ("session-split", (FN) tmg_session_split, 0, 0, 0);
   gh_new_procedure ("session-complete-try?", (FN) tmg_session_complete_tryP, 0, 0, 0);
-  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
   gh_new_procedure ("connection-busy?", (FN) tmg_connection_busyP, 0, 0, 0);
   gh_new_procedure ("connection-interrupt", (FN) tmg_connection_interrupt, 0, 0, 0);
   gh_new_procedure ("connection-stop", (FN) tmg_connection_stop, 0, 0, 0);
@@ -3179,15 +3204,10 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-go-to", (FN) tmg_tm_go_to, 1, 0, 0);
   gh_new_procedure ("tm-go-to-start", (FN) tmg_tm_go_to_start, 1, 0, 0);
   gh_new_procedure ("tm-go-to-end", (FN) tmg_tm_go_to_end, 1, 0, 0);
+  gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
+  gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
   gh_new_procedure ("tm-position-new", (FN) tmg_tm_position_new, 0, 0, 0);
   gh_new_procedure ("tm-position-delete", (FN) tmg_tm_position_delete, 1, 0, 0);
   gh_new_procedure ("tm-position-set", (FN) tmg_tm_position_set, 2, 0, 0);
   gh_new_procedure ("tm-position-get", (FN) tmg_tm_position_get, 1, 0, 0);
-  gh_new_procedure ("tm-insert-with", (FN) tmg_tm_insert_with, 3, 0, 0);
-  gh_new_procedure ("tm-remove-with", (FN) tmg_tm_remove_with, 2, 0, 0);
-  gh_new_procedure ("get-graphical-object", (FN) tmg_get_graphical_object, 0, 0, 0);
-  gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
-  gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
-  gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
-  gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
 }

@@ -76,6 +76,10 @@
   (redo redo (void))
 
   (in-graphics? inside_graphics (bool))
+  (get-graphical-object get_graphical_object (tree))
+  (set-graphical-object set_graphical_object (void tree))
+  (invalidate-graphical-object invalidate_graphical_object (void))
+  (graphical-select graphical_select (tree double double))
 
   (in-normal-mode? in_normal_mode (bool))
   (in-search-mode? in_search_mode (bool))
@@ -209,7 +213,6 @@
   (set-message set_message (void string string))
   (set-message-temp set_message (void string string bool))
   (recall-message recall_message (void))
-
   (footer-eval footer_eval (void string))
   (the-line the_line (tree))
   (the-selection selection_get (tree))
@@ -217,6 +220,11 @@
   (the-buffer the_buffer (tree))
   (the-path the_path (path))
   (the-buffer-path the_buffer_path (path))
+  (tm-interactive interactive (void scheme_tree object))
+  (texmacs-exec texmacs_exec (tree content))
+  (idle-time idle_time (int))
+  (change-time change_time (int))
+
   (the-mutator-path get_mutator_path (path))
   (the-mutator-time get_mutator_time (int))
   (process-input process_input (void))
@@ -240,7 +248,6 @@
   (session-remove-previous-output session_remove_previous_output (void))
   (session-split session_split (void))
   (session-complete-try? session_complete_try (bool))
-  (tm-interactive interactive (void scheme_tree object))
   (connection-busy? busy_connection (bool))
   (connection-interrupt interrupt_connection (void))
   (connection-stop stop_connection (void))
@@ -275,17 +282,10 @@
   (tm-go-to go_to (void path))
   (tm-go-to-start go_to_start (void path))
   (tm-go-to-end go_to_end (void path))
+  (tm-insert-with insert_with (void path string content))
+  (tm-remove-with remove_with (void path string))
 
   (tm-position-new position_new (int))
   (tm-position-delete position_delete (void int))
   (tm-position-set position_set (void int path))
-  (tm-position-get position_get (path int))
-
-  (tm-insert-with insert_with (void path string content))
-  (tm-remove-with remove_with (void path string))
-
-  (get-graphical-object get_graphical_object (tree))
-  (set-graphical-object set_graphical_object (void tree))
-  (invalidate-graphical-object invalidate_graphical_object (void))
-  (graphical-select graphical_select (tree double double))
-  (texmacs-exec texmacs_exec (tree content)))
+  (tm-position-get position_get (path int)))
