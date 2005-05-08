@@ -65,7 +65,8 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
   void set_left_footer (string s);
   void set_right_footer (string s);
-  void set_message (string left, string right);
+  void set_message (string left, string right, bool temp= false);
+  void recall_message ();
   void interactive (string name, string& s, command call_back);
   void full_screen_mode (bool on, bool edit);
   bool in_full_screen_mode ();

@@ -136,7 +136,8 @@ public:
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
-  virtual void set_message (string l, string r= "") = 0;
+  virtual void set_message (string l, string r= "", bool temp= false) = 0;
+  virtual void recall_message () = 0;
   virtual void interactive (scheme_tree args, object cmd) = 0;
 
   /* public routines from edit_cursor */

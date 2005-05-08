@@ -55,6 +55,7 @@
 (if (like-windows?) (lazy-in-mode (texmacs keyboard windows-kbd) always?))
 (lazy-in-mode (texmacs keyboard latex-kbd) always?)
 (lazy-in-mode (texmacs keyboard texmacs-kbd) always?)
+(lazy-define (texmacs texmacs tm-files) delayed-auto-save)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
 
@@ -172,4 +173,5 @@
 ;(define boot-start (texmacs-time))
 
 (texmacs-banner)
+(delayed (:pause 10000) (delayed-auto-save))
 ;(display "Initialization done\n")

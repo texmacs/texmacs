@@ -33,6 +33,7 @@ struct object {
   object ();
   object (bool b);
   object (int i);
+  object (char* s);
   object (string s);
   object (tree t);
   object (path p);

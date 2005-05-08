@@ -86,6 +86,14 @@
 ;; Autosave
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (delayed-auto-save)
+  (let* ((pref (get-preference "autosave"))
+	 (len (if (and (string? pref) (integer? (string->number pref)))
+		  (* (string->number pref) 1000) 120000)))
+    (delayed
+      (:pause len)
+      (auto-save))))
+
 (tm-define (conditional-recover-autosave confirm)
   (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
     (if (yes? confirm)

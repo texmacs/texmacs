@@ -70,7 +70,6 @@ public:
   void handle_keyboard_focus (keyboard_focus_event ev);
   void handle_resize (resize_event ev);
   void handle_destroy (destroy_event ev);
-  void handle_alarm (alarm_event ev);
 
   bool handle (event ev);
 
