@@ -375,11 +375,6 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
   sv->exec_delayed (scheme_cmd ("(safely-kill-window)"));
 }
 
-void
-tm_widget_rep::handle_alarm (alarm_event ev) {
-  if (ev->message == "auto save") sv->auto_save ();
-}
-
 /******************************************************************************
 * Handling standard events
 ******************************************************************************/

@@ -202,7 +202,6 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
-  sv->delayed_autosave();
   dis->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";

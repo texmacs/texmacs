@@ -345,8 +345,13 @@ tm_server_rep::set_right_footer (string s) {
 }
 
 void
-tm_server_rep::set_message (string left, string right) {
-  get_editor()->set_message (left, right);
+tm_server_rep::set_message (string left, string right, bool temp) {
+  get_editor()->set_message (left, right, temp);
+}
+
+void
+tm_server_rep::recall_message () {
+  get_editor()->recall_message ();
 }
 
 void

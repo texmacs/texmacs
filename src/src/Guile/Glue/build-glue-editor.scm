@@ -207,6 +207,8 @@
   (export-postscript export_ps (void url))
   (export-pages-postscript export_ps (void url string string))
   (set-message set_message (void string string))
+  (set-message-temp set_message (void string string bool))
+  (recall-message recall_message (void))
 
   (footer-eval footer_eval (void string))
   (the-line the_line (tree))

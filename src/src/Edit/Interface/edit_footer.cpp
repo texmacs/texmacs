@@ -371,6 +371,7 @@ edit_interface_rep::set_footer () {
   )
 
   if ((N(message_l) == 0) && (N(message_r) == 0)) {
+    last_l= ""; last_r= "";
     tree st= subtree (et, path_up (tp));
     if (set_latex_footer (st)) return;
     if (set_hybrid_footer (st)) return;
@@ -430,10 +431,19 @@ interactive_command_rep::apply () {
 ******************************************************************************/
 
 void
-edit_interface_rep::set_message (string l, string r) {
+edit_interface_rep::set_message (string l, string r, bool temp) {
   message_l= l;
   message_r= r;
+  if (!temp) {
+    last_l= l;
+    last_r= r;
+  }
   notify_change (THE_DECORATIONS);
+}
+
+void
+edit_interface_rep::recall_message () {
+  set_message (last_l, last_r);
 }
 
 void

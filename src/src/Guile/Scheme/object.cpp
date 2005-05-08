@@ -116,6 +116,7 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 object::object (): rep (new object_rep (SCM_NULL)) {}
 object::object (bool b): rep (new object_rep (bool_to_scm (b))) {}
 object::object (int i): rep (new object_rep (int_to_scm (i))) {}
+object::object (char* s): rep (new object_rep (string_to_scm (string (s)))) {}
 object::object (string s): rep (new object_rep (string_to_scm (s))) {}
 object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
 object::object (path p): rep (new object_rep (path_to_scm (p))) {}

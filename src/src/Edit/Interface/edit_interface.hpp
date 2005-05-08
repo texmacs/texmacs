@@ -37,6 +37,8 @@ protected:
   window        popup_win;     // the current popup window
   string        message_l;     // a left message to display
   string        message_r;     // a right message to display
+  string        last_l;        // last displayed left message
+  string        last_r;        // last displayed right message
   int           sfactor;       // the current shrinking factor
   SI            pixel;         // sfactor*PIXEL
   rectangles    copy_always;   // for wiping out cursor
@@ -139,7 +141,8 @@ public:
   void   set_right_footer (string r);
   void   set_right_footer ();
   void   set_footer ();
-  void   set_message (string l, string r= "");
+  void   set_message (string l, string r= "", bool temp= false);
+  void   recall_message ();
   void   interactive (scheme_tree args, object cmd);
 
   /* event handlers */

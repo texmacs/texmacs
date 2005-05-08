@@ -99,14 +99,14 @@
   (cond ((or (npair? body) (nlist? (car body)) (not (keyword? (caar body))))
 	 `(lambda () ,@body #t))
 	((== (caar body) :pause)
-	 (let* ((time (+ (texmacs-time) (cadar body)))
-		(proc (delayed-sub (cdr body))))
-	   `(lambda ()
-	      (and (> (texmacs-time) ,time) (,proc)))))
+	 `(let* ((time (+ (texmacs-time) ,(cadar body)))
+		 (proc ,(delayed-sub (cdr body))))
+	    (lambda ()
+	      (and (> (texmacs-time) time) (proc)))))
 	((== (caar body) :require)
-	 (with proc (delayed-sub (cdr body))
-	   `(lambda ()
-	      (and ,(cadar body) (,proc)))))
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (and ,(cadar body) (proc)))))
 	(else (delayed-sub (cdr body)))))
 
 (tm-define-macro (delayed . body)
@@ -131,7 +131,13 @@
      (:pause 2500)
      (set-message "" ""))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(tm-define (set-temporary-message left right len)
+  (set-message-temp left right #t)
+  (delayed
+    (:pause len)
+    (recall-message)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
