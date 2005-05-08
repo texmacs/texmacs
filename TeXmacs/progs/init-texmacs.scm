@@ -147,7 +147,7 @@
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
 (define (delayed-plugin-initialize which)
-  (delayed (plugin-initialize which)))
+  (delayed (:idle 1500) (plugin-initialize which)))
 (for-each delayed-plugin-initialize (plugin-list))
 (delayed
   (if (!= plugin-old-data-table plugin-data-table)
