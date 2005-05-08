@@ -164,20 +164,24 @@
 
 (define-public-macro (tm-define-overloaded head . body)
   (let* ((var (ca*r head))
-	 (val (lambda* head body)))
+	 (val (lambda* head body))
+	 (default? (and (null? ovl-conds) (not (ahash-ref ovl-table var)))))
     `(begin
        (set! temp-module ,(current-module))
        (set! temp-value ,val)
-       ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
+       ,(if default?
 	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
 	    `(ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
 				   (list ,@ovl-conds))))
        (set-current-module texmacs-user)
-       (if (procedure? temp-value)
-	   (define-public (,var . args)
-	     (ovl-apply (ahash-ref ovl-table ',var) args))
-	   (define-public ,head temp-value))
+       (cond ((not (procedure? temp-value))
+	      (define-public ,head temp-value))
+	     (,default?
+	      (define-public ,var temp-value))
+	     (else
+	      (define-public (,var . args)
+		(ovl-apply (ahash-ref ovl-table ',var) args))))
        (set-current-module temp-module)
        ,@(map property-rewrite ovl-props))))
 
@@ -198,11 +202,12 @@
 
 (define-public-macro (tm-define-macro-overloaded head . body)
   (let* ((var (ca*r head))
-	 (val (lambda* head body)))
+	 (val (lambda* head body))
+	 (default? (and (null? ovl-conds) (not (ahash-ref ovl-table var)))))
     `(begin
        (set! temp-module ,(current-module))
        (set! temp-value ,val)
-       ,(if (and (null? ovl-conds) (not (ahash-ref ovl-table var)))
+       ,(if default?
 	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
 	    `(ahash-set! ovl-table ',var
 		       (ovl-insert (ahash-ref ovl-table ',var) temp-value

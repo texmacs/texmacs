@@ -16,6 +16,13 @@
 (define temp-module (current-module))
 (define temp-value #f)
 
+(define (guile-a?) (equal? (scheme-dialect) "guile-a"))
+(define (guile-b?) (equal? (scheme-dialect) "guile-b"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Public macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-macro (define-public-macro head . body)
   `(define-public ,(car head)
      ;; FIXME: why can't we use procedure->macro for a non-memoizing variant?
@@ -23,8 +30,9 @@
       (lambda (cmd env)
 	(apply (lambda ,(cdr head) ,@body) (cdr cmd))))))
 
-(define (guile-a?) (equal? (scheme-dialect) "guile-a"))
-(define (guile-b?) (equal? (scheme-dialect) "guile-b"))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Module handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (if (guile-a?)
     (begin
