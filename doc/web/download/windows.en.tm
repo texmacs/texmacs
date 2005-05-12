@@ -97,6 +97,7 @@
     SDK>|http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&displaylang=en>.
 
     <item>Download and install <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|-src.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|-src.exe>>>.
+    You will have to check ``source code'' during the installion.
 
     <item>Open the project file <verbatim|C:\\WinTeXmacs\\src\\Winport\\Tmwin\\tmwin.dsw>
     in <name|Visual Studio>.
