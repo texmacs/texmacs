@@ -86,16 +86,23 @@
 
   <section|The source code for Windows>
 
-  <name|Dan Martens> used <name|Microsoft Visual Studio> in order to compile
-  <TeXmacs>. The source code of the <name|Windows> port can be installed by
-  downloading <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|-src.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|-src.exe>>>
-  and selecting the corresponding option during the installation procedure.
-  By default, you will find the project file in
+  In order to compile <TeXmacs> under <name|Windows> using <name|Microsoft
+  Visual Studio>, you have to do the following:
 
-  <verbatim| \ \ \ C:\\WinTeXmacs\\src\\Winport\\Tmwin>
+  <\enumerate>
+    <item>Make sure that the latest <name|Visual Studio> service packs are
+    installed.
 
-  After configuring <name|Visual Studio> (Dan...?), you should now be able to
-  build <TeXmacs>.
+    <item>Download and install the <hlink|<name|Windows
+    SDK>|http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&displaylang=en>.
+
+    <item>Download and install <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|-src.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|-src.exe>>>.
+
+    <item>Open the project file <verbatim|C:\\WinTeXmacs\\src\\Winport\\Tmwin\\tmwin.dsw>
+    in <name|Visual Studio>.
+
+    <item>Compile.
+  </enumerate>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
