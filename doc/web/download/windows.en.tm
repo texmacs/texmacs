@@ -88,8 +88,9 @@
 
   <name|Dan Martens> used <name|Microsoft Visual Studio> in order to compile
   <TeXmacs>. The source code of the <name|Windows> port can be installed by
-  selecting the corresponding option during the installation procedure. By
-  default, you will find the project file in
+  downloading <verbatim|<hlink|<merge|<TeXmacs-version-release|win>|-src.exe>|ftp://ftp.texmacs.org/pub/TeXmacs/windows/stable/<merge|<TeXmacs-version-release|win>|-src.exe>>>
+  and selecting the corresponding option during the installation procedure.
+  By default, you will find the project file in
 
   <verbatim| \ \ \ C:\\WinTeXmacs\\src\\Winport\\Tmwin>
 
