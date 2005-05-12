@@ -102,7 +102,8 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
     }
     curve c= env->fr (poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->line_style, env->line_style_unit));
+				env->line_style, env->line_style_unit,
+				env->fill_mode, env->fill_color));
   }
 }
 
@@ -125,7 +126,8 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
   else {
     curve c= env->fr (arc (a, cip, close));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->line_style, env->line_style_unit));
+				env->line_style, env->line_style_unit,
+				env->fill_mode, env->fill_color));
   }
 }
 
@@ -148,7 +150,8 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
     curve c= env->fr (
       N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
     print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
-				env->line_style, env->line_style_unit));
+				env->line_style, env->line_style_unit,
+				env->fill_mode, env->fill_color));
   }
 }
 

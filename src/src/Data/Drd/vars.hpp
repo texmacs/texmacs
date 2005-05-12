@@ -186,6 +186,8 @@ extern string GR_COLOR;
 extern string GR_LINE_WIDTH;
 extern string GR_LINE_STYLE;
 extern string GR_LINE_STYLE_UNIT;
+extern string GR_FILL_MODE;
+extern string GR_FILL_COLOR;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;

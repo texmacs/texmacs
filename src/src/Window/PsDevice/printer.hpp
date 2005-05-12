@@ -86,7 +86,7 @@ public:
   void  clear (SI x1, SI y1, SI x2, SI y2);
   void  fill (SI x1, SI y1, SI x2, SI y2);
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y);
+  void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
   void  postscript (url image, SI w, SI h, SI x, SI y,
 		    int x1, int y1, int x2, int y2);

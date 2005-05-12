@@ -106,6 +106,8 @@ initialize_default_var_type () {
   var_type (LINE_WIDTH)        = Env_Line_Width;
   var_type (LINE_STYLE)        = Env_Line_Style;
   var_type (LINE_STYLE_UNIT)   = Env_Line_Style_Unit;
+  var_type (FILL_MODE)         = Env_Fill_Mode;
+  var_type (FILL_COLOR)        = Env_Fill_Color;
   var_type (GR_FRAME)          = Env_Frame;
   var_type (GR_CLIP)           = Env_Clipping;
   var_type (GR_GRID)           = Env_Grid;
@@ -384,6 +386,21 @@ edit_env_rep::update_line_style () {
 }
 
 void
+edit_env_rep::update_fill_mode () {
+  string s= get_string (FILL_MODE);
+  fill_mode= FILL_MODE_NONE;
+  if (s=="none") fill_mode= FILL_MODE_NONE;
+  if (s=="inside") fill_mode= FILL_MODE_INSIDE;
+  if (s=="both") fill_mode= FILL_MODE_BOTH;
+}
+
+void
+edit_env_rep::update_fill_color () {
+  string s= get_string (FILL_COLOR);
+  fill_color= dis->get_color (s);
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -403,6 +420,8 @@ edit_env_rep::update () {
   lw= get_length (LINE_WIDTH);
   update_line_style ();
   line_style_unit= get_length (LINE_STYLE_UNIT);
+  update_fill_mode ();
+  update_fill_color ();
 
   update_src_style ();
   update_src_special ();
@@ -479,6 +498,12 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Style_Unit:
     line_style_unit= get_length (LINE_STYLE_UNIT);
+    break;
+  case Env_Fill_Mode:
+    update_fill_mode ();
+    break;
+  case Env_Fill_Color:
+    update_fill_color ();
     break;
   case Env_Src_Style:
     update_src_style ();

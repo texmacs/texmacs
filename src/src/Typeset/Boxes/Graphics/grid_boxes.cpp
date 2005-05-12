@@ -10,6 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "env.hpp"
 #include "Graphics/grid.hpp"
 #include "Graphics/point.hpp"
 #include "Graphics/frame.hpp"
@@ -86,7 +87,7 @@ grid_box_rep::display (ps_device dev) {
       curve c= f (grads[i]->c);
       bs << curve_box (
 	      decorate (ip), c, dev->pixel, dev->get_color (grads[i]->col),
-	      array<bool> (0), 0);
+	      array<bool> (0), 0, FILL_MODE_NONE, dev->white);
     }
     first_time= false;
     dev_pixel= dev->pixel;
