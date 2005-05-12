@@ -269,13 +269,36 @@
   ("Other" ... (interactive '("Line width:") 'graphics-set-line-width)))
 
 (menu-bind graphics-line-style-menu
-  ("Solid" (graphics-set-line-style ""))
+  ("Default" (graphics-set-line-style "default"))
   ---
   ("- - - - - - - - -"    (graphics-set-line-style "10"))
   ("----  ----  ----  --" (graphics-set-line-style "11100"))
   ("---- - ---- - ---- -" (graphics-set-line-style "1111010"))
   ---
   ("Other" ... (interactive '("Line style:") 'graphics-set-line-style)))
+
+(menu-bind graphics-fill-mode-menu
+  ("None" (graphics-set-fill-mode "default"))
+  ---
+  ("Inside" (graphics-set-fill-mode "inside"))
+  ("Both"   (graphics-set-fill-mode "both")))
+
+(menu-bind graphics-fill-color-menu
+  ("Default" (graphics-set-fill-color "default"))
+  ---
+  ("Black" (graphics-set-fill-color "black"))
+  ("White" (graphics-set-fill-color "white"))
+  ("Grey" (graphics-set-fill-color "grey"))
+  ("Red" (graphics-set-fill-color "red"))
+  ("Blue" (graphics-set-fill-color "blue"))
+  ("Yellow" (graphics-set-fill-color "yellow"))
+  ("Green" (graphics-set-fill-color "green"))
+  ("Orange" (graphics-set-fill-color "orange"))
+  ("Magenta" (graphics-set-fill-color "magenta"))
+  ("Brown" (graphics-set-fill-color "brown"))
+  ("Pink" (graphics-set-fill-color "pink"))
+  ---
+  ("Other" ... (interactive '("Fill color:") 'graphics-set-fill-color)))
 
 (menu-bind graphics-text-align-menu
   ("Default" (begin (graphics-set-property "gr-text-halign" "left")
@@ -301,6 +324,9 @@
   (-> "Line properties"
       (-> "Width" (link graphics-line-width-menu))
       (-> "Style" (link graphics-line-style-menu)))
+  (-> "Fill"
+      (-> "Fill mode" (link graphics-fill-mode-menu))
+      (-> "Fill color" (link graphics-fill-color-menu)))
   (-> "Text box alignment" (link graphics-text-align-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -318,6 +344,10 @@
       (link graphics-line-width-menu))
   (=> (balloon (icon "tm_line_style.xpm") "Line style")
       (link graphics-line-style-menu))
+  (=> (balloon (icon "tm_fill.xpm") "Fill mode")
+      (link graphics-fill-mode-menu))
+  (=> (balloon (icon "tm_color.xpm") "Fill color")
+      (link graphics-fill-color-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
       (link graphics-text-align-menu))
   |

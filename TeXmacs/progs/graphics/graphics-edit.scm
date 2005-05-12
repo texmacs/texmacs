@@ -609,7 +609,14 @@
          (cons 'tuple (map convert-1 (string->list val)))
         'solid)
   )
-  (graphics-set-property "gr-line-style" (convert)))
+  (graphics-set-property
+    "gr-line-style" (if (== val "default") "default" (convert))))
+
+(tm-define (graphics-set-fill-mode val)
+  (graphics-set-property "gr-fill-mode" val))
+
+(tm-define (graphics-set-fill-color val)
+  (graphics-set-property "gr-fill-color" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
@@ -619,7 +626,9 @@
   (if (null? l) l
       (let* ((head (car l))
 	     (tail (graphics-enrich-filter (cdr l))))
-	(if (== (cadr head) "default") tail
+	(if (or (== (cadr head) "default")
+		(== (cadr head) (get-default-val (car head))))
+	    tail
 	    (cons* (car head) (cadr head) tail)))))
 
 (define (graphics-enrich-sub t l)
@@ -628,21 +637,24 @@
 	t
 	`(with ,@f ,t))))
 
-(define (graphics-enrich-bis t color lw st)
+(define (graphics-enrich-bis t color lw st fm fc)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
 	  ((in? mode '(line cline spline cspline arc carc))
-	   (graphics-enrich-sub t `(("color" , color) ("line-width" ,lw)
-						      ("line-style" ,st))))
+	   (graphics-enrich-sub t `(("color" , color)
+	      ("line-width" ,lw) ("line-style" ,st)
+	      ("fill-mode" ,fm) ("fill-color" ,fc))))
 	  (else
 	   (graphics-enrich-sub t '())))))
 
 (define (graphics-enrich t)
   (let* ((color (get-env "gr-color"))
 	 (lw (get-env "gr-line-width"))
-	 (st (get-env-stree "gr-line-style")))
-    (graphics-enrich-bis t color lw st)))
+	 (st (get-env-stree "gr-line-style"))
+	 (fm (get-env "gr-fill-mode"))
+	 (fc (get-env "gr-fill-color")))
+    (graphics-enrich-bis t color lw st fm fc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -664,8 +676,8 @@
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color lw st go-into)
-  (graphics-group-insert-bis (graphics-enrich-bis t color lw st) go-into))
+(define (graphics-group-enrich-insert-bis t color lw st fm fc go-into)
+  (graphics-group-insert-bis (graphics-enrich-bis t color lw st fm fc) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -747,6 +759,9 @@
 
 (define (graphics-path-property p var)
   (graphics-path-property-bis p var "default"))
+
+(define (get-default-val var)
+  (tree->stree (get-init-tree var)))
 
 (define (get-default-val var)
   (tree->stree (get-init-tree var)))
@@ -838,6 +853,8 @@
 (define graphical-color "default")
 (define graphical-lwidth "default")
 (define graphical-lstyle "default")
+(define graphical-fmode "default")
+(define graphical-fcolor "default")
 
 (define (graphical-object fetch)
   (with o (tree->stree (get-graphical-object))
@@ -845,7 +862,9 @@
        (begin
 	  (set! graphical-color (find-prop-bis o "color" "default"))
 	  (set! graphical-lwidth (find-prop-bis o "line-width" "default"))
-	  (set! graphical-lstyle (find-prop-bis o "line-style" "default"))))
+	  (set! graphical-lstyle (find-prop-bis o "line-style" "default"))
+	  (set! graphical-fmode (find-prop-bis o "fill-mode" "default"))
+	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))))
     (if (pair? o)
 	(if (== (cdr o) '()) o (cAr o))
 	'(concat))))
@@ -917,28 +936,40 @@
 			      (cdr o))))
 	  (let ((color #f)
 		(lw #f)
-		(st #f))
+		(st #f)
+		(fm #f)
+		(fc #f))
 		 (if (== mode 'active)
 		     (begin
 		       (set! color graphical-color)
 		       (set! lw graphical-lwidth)
-		       (set! st graphical-lstyle)))
+		       (set! st graphical-lstyle)
+		       (set! fm graphical-fmode)
+		       (set! fc graphical-fcolor)))
 		 (if (list? mode)
 		     (begin
 		       (set! color (graphics-path-property mode "color"))
 		       (set! lw (graphics-path-property mode "line-width"))
-		       (set! st (graphics-path-property mode "line-style"))))
+		       (set! st (graphics-path-property mode "line-style"))
+		       (set! fm (graphics-path-property mode "fill-mode"))
+		       (set! fc (graphics-path-property mode "fill-color"))))
 		 (if (== mode 'new)
 		     (begin
 		       (set! color (get-env "gr-color"))
 		       (set! lw (get-env "gr-line-width"))
-		       (set! st (get-env-stree "gr-line-style"))))
+		       (set! st (get-env-stree "gr-line-style"))
+		       (set! fm (get-env "gr-fill-mode"))
+		       (set! fc (get-env "gr-fill-color"))))
 		 (set-graphical-object
 		  (stree->tree
 		   (list 'with "point-style" "square"
 			 "color" color
 			 "line-width" lw
 			 "line-style" st
+			 "fill-mode" fm
+			 "fill-color" (if (== fc "default")
+					  (get-default-val "fill-color")
+					  fc)
 			 (cons 'concat
 			       (cond ((== pts 'points) op)
 				     ((== pts 'object) `(,o))
@@ -1272,7 +1303,8 @@
       (begin
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
-	 obj graphical-color graphical-lwidth graphical-lstyle #f)
+	 obj graphical-color graphical-lwidth
+	 graphical-lstyle graphical-fmode graphical-fcolor #f)
 	(if (== (state-ref graphics-first-state 'graphics-action)
 		'start-move)
 	    (remove-undo-mark))
@@ -1420,7 +1452,8 @@
   (graphics-remove p)
   (graphics-group-enrich-insert-bis
      obj (get-env "gr-color") (get-env "gr-line-width")
-			      (get-env-stree "gr-line-style") #f)
+     (get-env-stree "gr-line-style")
+     (get-env "gr-fill-mode") (get-env "gr-fill-color") #f)
   (create-graphical-object obj 'new 'points #f))
 
 (define (text-at_change-halign p obj)

@@ -208,6 +208,8 @@ string GR_COLOR ("gr-color");
 string GR_LINE_WIDTH ("gr-line-width");
 string GR_LINE_STYLE ("gr-line-style");
 string GR_LINE_STYLE_UNIT ("gr-line-style-unit");
+string GR_FILL_MODE ("gr-fill-mode");
+string GR_FILL_COLOR ("gr-fill-color");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");

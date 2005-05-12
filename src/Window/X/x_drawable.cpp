@@ -202,7 +202,7 @@ x_drawable_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-x_drawable_rep::polygon (array<SI> x, array<SI> y) {
+x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   STACK_NEW_ARRAY (pnt, XPoint, n);
@@ -212,7 +212,7 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y) {
     pnt[i].x= xx;
     pnt[i].y= yy;
   }
-  XFillPolygon (dpy, win, gc, pnt, n, Convex, CoordModeOrigin);
+  XFillPolygon (dpy, win, gc, pnt, n, convex?Convex:Complex, CoordModeOrigin);
   STACK_DELETE_ARRAY (pnt);
 }
 
