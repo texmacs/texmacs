@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-secure)
-  (:use (kernel texmacs tm-define)))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-plugins)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Primitive secure functions
@@ -100,4 +100,5 @@
 
 (define-public (secure? expr)
   "Test whether it is secure to evaluate the expression @expr"
-  (secure-expr? expr '()))
+  (or (secure-expr? expr '())
+      (and (lazy-plugin-force) (secure-expr? expr '()))))
