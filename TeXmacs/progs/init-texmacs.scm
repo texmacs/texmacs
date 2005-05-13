@@ -150,7 +150,7 @@
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
 (for-each lazy-plugin-initialize (plugin-list))
 (delayed
-  (:idle 3000)
+  (:idle 1000)
   (if (!= plugin-old-data-table plugin-data-table)
       (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
@@ -168,5 +168,5 @@
 
 ;(display "------------------------------------------------------\n")
 (texmacs-banner)
-(delayed (:pause 10000) (delayed-auto-save))
+(delayed (:idle 10000) (delayed-auto-save))
 ;(display "Initialization done\n")

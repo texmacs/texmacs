@@ -23,7 +23,7 @@
 
 (define-public-macro (lazy-format module . ignored)
   (set! lazy-format-todo (cons module lazy-format-todo))
-  `(delayed (:idle 3000) (import-from ,module)))
+  `(delayed (:idle 1000) (import-from ,module)))
 
 (define (lazy-format-force)
   (if (nnull? lazy-format-todo)
