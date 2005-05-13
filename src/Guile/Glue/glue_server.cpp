@@ -811,6 +811,47 @@ tmg_inclusions_gc () {
 }
 
 SCM
+tmg_set_message (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_message (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_message_temp (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message-temp");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message-temp");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "set-message-temp");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_message (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_recall_message () {
+  // SCM_DEFER_INTS;
+  get_server()->recall_message ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
@@ -936,6 +977,9 @@ initialize_glue_server () {
   gh_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
   gh_new_procedure ("postscript-gc", (FN) tmg_postscript_gc, 0, 0, 0);
   gh_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
+  gh_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
+  gh_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
+  gh_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
   gh_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
   gh_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
   gh_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);

@@ -2118,47 +2118,6 @@ tmg_export_pages_postscript (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_set_message (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_message (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_set_message_temp (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message-temp");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message-temp");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "set-message-temp");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  bool in3= scm_to_bool (arg3);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_message (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_recall_message () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->recall_message ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_footer_eval (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "footer-eval");
 
@@ -3136,9 +3095,6 @@ initialize_glue_editor () {
   gh_new_procedure ("print-pages", (FN) tmg_print_pages, 2, 0, 0);
   gh_new_procedure ("export-postscript", (FN) tmg_export_postscript, 1, 0, 0);
   gh_new_procedure ("export-pages-postscript", (FN) tmg_export_pages_postscript, 3, 0, 0);
-  gh_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
-  gh_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
-  gh_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
   gh_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
   gh_new_procedure ("the-line", (FN) tmg_the_line, 0, 0, 0);
   gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);

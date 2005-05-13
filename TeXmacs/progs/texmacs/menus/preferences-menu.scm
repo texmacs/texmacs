@@ -12,7 +12,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs menus preferences-menu))
+(texmacs-module (texmacs menus preferences-menu)
+  (:use
+    (utils edit auto-close)
+    (texmacs texmacs tm-server)
+    (texmacs texmacs tm-view)
+    (texmacs texmacs tm-print)
+    (texmacs keyboard config-kbd)
+    (convert latex init-latex)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Preferences menus
@@ -156,9 +163,6 @@
     (enum ("Bibtex command" "bibtex command")
 	  "bibtex" "rubibtex" *)))
 
-(menu-bind page-setup-menu)
-(menu-bind preferences-menu)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Computation of the preference menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,3 +206,6 @@
 
 (tm-define (compute-preferences-menu l)
   (eval `(menu-dynamic ,@(compute-preferences-menu-sub l))))
+
+(menu-bind page-setup-menu ,@(compute-preferences-menu page-setup-tree))
+(menu-bind preferences-menu ,@(compute-preferences-menu preferences-tree))

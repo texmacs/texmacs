@@ -346,16 +346,19 @@ tm_server_rep::set_right_footer (string s) {
 
 void
 tm_server_rep::set_message (string left, string right, bool temp) {
+  if ((vw == NULL) || (vw->win == NULL)) return;
   get_editor()->set_message (left, right, temp);
 }
 
 void
 tm_server_rep::recall_message () {
+  if ((vw == NULL) || (vw->win == NULL)) return;
   get_editor()->recall_message ();
 }
 
 void
 tm_server_rep::interactive (string name, string& s, command call_back) {
+  if ((vw == NULL) || (vw->win == NULL)) return;
   get_meta()->interactive (name, s, call_back);
 }
 
