@@ -23,9 +23,8 @@
   (if (os-win32?) "windows" "emacs"))
 
 (define (notify-look-and-feel var val)
-  (if preferences-initialization-flag
-      (set-message "Restart in order to let the new look and feel take effect"
-		   "configure look and feel")))
+  (set-message "Restart in order to let the new look and feel take effect"
+	       "configure look and feel"))
 
 (define (notify-language var val)
   (set-output-language val)

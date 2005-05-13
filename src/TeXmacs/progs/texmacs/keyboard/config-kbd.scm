@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs keyboard config-kbd))
+(texmacs-module (texmacs keyboard config-kbd)
+  (:use (texmacs texmacs tm-server)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prefix modifiers
@@ -51,10 +52,9 @@
   (if (not default-modifier-done?) (init-default-modifiers))
   (cond ((!= val "default")
 	 (ahash-set! prefix-modifier-table var val)
-	 (if preferences-initialization-flag
-	     (set-message
-	      "Restart in order to let the new look and feel take effect"
-	      "configure look and feel")))
+	 (set-message
+	  "Restart in order to let the new look and feel take effect"
+	  "configure look and feel"))
 	((== var "A") (notify-prefix-modifier var default-alt-modifier))
 	((== var "M") (notify-prefix-modifier var default-meta-modifier))
 	((== var "H") (notify-prefix-modifier var default-hyper-modifier))))
