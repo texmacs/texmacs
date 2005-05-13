@@ -35,7 +35,7 @@
          kbd-symbols setup-append-if when link promise
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-in-mode
-	 lazy-define lazy-input-converter delayed
+	 lazy-define lazy-format lazy-input-converter delayed
 	 define-format converter
 	 with-aux) "\\|")
       "\\)\\>")

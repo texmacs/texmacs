@@ -48,9 +48,11 @@
 	(ahash-set! connection-varlist name (rcons l (car opt))))))
 
 (define-public (connection-defined? name)
+  (lazy-plugin-force)
   (ahash-ref connection-defined name))
 
 (define-public (connection-info name session)
+  (lazy-plugin-force)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
 	(with val (ahash-ref connection-variant (list name session))
@@ -64,6 +66,7 @@
 		    (ahash-ref connection-handler name))))
 
 (define-public (connection-get-handlers name)
+  (lazy-plugin-force)
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
@@ -153,12 +156,37 @@
 ;; Initialization of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define plugin-initialize-todo (make-ahash-table))
+
 (define-public (plugin-initialize name*)
   "Initialize plugin with name @name*"
-  ;(display* "loading plugin " name* "\n")
-  (let* ((name (symbol->string name*))
-	 (file (string-append "plugins/" name "/progs/init-" name ".scm")))
-    (with u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)
-      (if (url-exists? u)
-	  (with fname (url-materialize u "r")
-	    (load fname))))))
+  (if (ahash-ref plugin-initialize-todo name*)
+      (let* ((name (symbol->string name*))
+	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
+	     (u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+	(if (url-exists? u)
+	    (with fname (url-materialize u "r")
+	      (ahash-set! plugin-initialize-todo name* #f)
+	      ;;(display* "loading plugin " name* "\n")
+	      (load fname))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy initialization of plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (lazy-plugin-initialize name)
+  "Initialize the plug-in @name in a lazy way"
+  (ahash-set! plugin-initialize-todo name #t)
+  (delayed
+    (:idle 3000)
+    (plugin-initialize name)))
+
+(define plugin-initialize-done? #f)
+
+(define-public (lazy-plugin-force)
+  "Force all lazy plugin initializations to take place"
+  (if plugin-initialize-done? #f
+      (with l (ahash-table->list plugin-initialize-todo)
+	(for-each plugin-initialize (map car l))
+	(set! plugin-initialize-done? #t)
+	#t)))

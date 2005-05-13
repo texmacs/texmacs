@@ -130,11 +130,12 @@
 ;(define boot-start (texmacs-time))
 
 ;(display "Booting converters\n")
-(use-modules (convert rewrite init-rewrite))
-(use-modules (convert tmml init-tmml))
-(use-modules (convert latex init-latex))
-(use-modules (convert html init-html))
-(use-modules (convert images init-images))
+(lazy-format (convert rewrite init-rewrite) texmacs scheme verbatim)
+(lazy-format (convert tmml init-tmml) tmml)
+(lazy-format (convert latex init-latex) latex)
+(lazy-format (convert html init-html) html)
+(lazy-format (convert images init-images)
+	     postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity)
 (lazy-define (convert latex latex-drd) latex-type)
@@ -146,10 +147,9 @@
 (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
     (set! plugin-old-data-table
 	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
-(define (delayed-plugin-initialize which)
-  (delayed (:idle 1500) (plugin-initialize which)))
-(for-each delayed-plugin-initialize (plugin-list))
+(for-each lazy-plugin-initialize (plugin-list))
 (delayed
+  (:idle 3000)
   (if (!= plugin-old-data-table plugin-data-table)
       (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
@@ -172,6 +172,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
 
+;(display "------------------------------------------------------\n")
 (texmacs-banner)
 (delayed (:pause 10000) (delayed-auto-save))
 ;(display "Initialization done\n")

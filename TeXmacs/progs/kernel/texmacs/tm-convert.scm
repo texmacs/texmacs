@@ -16,6 +16,21 @@
   (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy formats
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define lazy-format-todo '())
+
+(define-public-macro (lazy-format module . ignored)
+  (set! lazy-format-todo (cons module lazy-format-todo))
+  `(delayed (:idle 3000) (import-from ,module)))
+
+(define (lazy-format-force)
+  (if (nnull? lazy-format-todo)
+      (eval (cons 'import-from lazy-format-todo)))
+  (set! lazy-format-todo '()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adding new converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -144,9 +159,11 @@
 		(converters-sub (append next (cdr l)) h p)))))
 
 (define-public (converters-from . from)
+  (lazy-format-force)
   (converters-sub from (make-ahash-table) converter-forward))
 
 (define-public (converters-to . to)
+  (lazy-format-force)
   (converters-sub to (make-ahash-table) converter-backward))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -178,6 +195,7 @@
 	    (converter-walk from (cdr l))))))
 
 (define-public (converter-search from to)
+  (lazy-format-force)
   (converter-walk from (list (list from 0.0 (list from))))
   (ahash-ref converter-path (list from to)))
 
@@ -202,6 +220,7 @@
 
 (define-public (convert what from to . options)
   ;(display* "convert " what ", " from ", " to ", " options "\n")
+  (lazy-format-force)
   (with path (converter-search from to)
     (if path
 	(convert-via what from (cdr path) options)
@@ -369,16 +388,18 @@
 (define (format-get-suffixes fm)
   (cond ((and (== fm "image") (os-win32?))
          '("ps" "eps" "bmp" "gif" "ico" "tga" "pcx" "wbmp" "wmf" "jpg"
-	     "jpeg" "png" "tif" "jbig" "ras" "pnm" "jp2" "jpc" "pgx"
+	   "jpeg" "png" "tif" "jbig" "ras" "pnm" "jp2" "jpc" "pgx"
            "cut" "iff" "lbm" "jng" "koa" "mng" "pbm" "pcd" "pcx"
            "pgm" "ppm" "psd" "tga" "tiff" "xbm" "xpm"))
         ((== fm "image") (format-image-suffixes))
         (else (format-get-suffixes-sub fm))))
 
 (define-public (format-get-suffixes* fm)
+  (lazy-format-force)
   (cons 'tuple (format-get-suffixes fm)))
 
 (define-public (format-default-suffix fm)
+  (lazy-format-force)
   (with l (ahash-ref format-suffixes fm)
     (cond ((== fm "image") "png")
 	  ((or (not l) (null? l)) "")
@@ -389,17 +410,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (format? fm)
+  (lazy-format-force)
   (not (not (ahash-ref format-name fm))))
 
 (define-public (format-recognizes? doc fm)
+  (lazy-format-force)
   (with pred? (ahash-ref format-recognize fm)
     (and pred? (pred? doc))))
 
 (define-public (format-from-suffix suffix)
+  (lazy-format-force)
   (with fm (ahash-ref format-mime suffix)
     (if fm fm "generic")))
 
 (define-public (format-determine body suffix)
+  (lazy-format-force)
   (with p (list-find (ahash-table->list format-recognize)
 		     (lambda (p) ((cdr p) body)))
     (if p (car p)
