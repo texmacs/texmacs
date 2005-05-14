@@ -55,7 +55,7 @@
 (define (kbd-source cmd)
   (if (procedure? cmd) (promise-source cmd) cmd))
 
-(define (kbd-insert-key-binding* conds key im)
+(define (kbd-insert-key-binding conds key im)
   ;;(display* "Binding '" key "' when " conds " to " im "\n")
   (with com (kbd-source (car im))
     (kbd-delete-key-binding2 conds key)
@@ -64,9 +64,6 @@
     ;;(display* key ": " (kbd-get-map key) "\n")
     ;;(display* com "] " (kbd-get-inv com) "\n")
     ))
-
-(define (kbd-insert-key-binding pred key im)
-  (kbd-insert-key-binding* (list 0 (eval pred)) key im))
 
 (define (kbd-delete-key-binding2 conds key)
   ;;(display* "Deleting binding '" key "' when " conds "\n")
@@ -87,12 +84,9 @@
   (with r (ovl-resolve (kbd-get-inv com) #f)
     (if r r "")))
 
-(define (kbd-find-key-binding2* conds key)
+(define (kbd-find-key-binding2 conds key)
   ;;(display* "Find binding '" key "' when " conds "\n")
   (ovl-find (kbd-get-map key) conds))
-
-(define (kbd-find-key-binding2 pred key)
-  (kbd-find-key-binding2* (list 0 (eval pred)) key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yet more subroutines for the definition of keyboard shortcuts
@@ -105,32 +99,33 @@
 	 (s5 (string-replace s4 "<." "<less>")))
     (string-append prefix s5)))
 
-(define (kbd-sub-binding pred s prev-end end)
+(define (kbd-sub-binding conds s prev-end end)
   (let* ((this-ss (substring s 0 end))
-	 (this (kbd-find-key-binding2 pred this-ss)))
+	 (this (kbd-find-key-binding2 conds this-ss)))
     (if (not this)
 	(let* ((prev-ss (substring s 0 prev-end))
-	       (prev (kbd-find-key-binding2 pred prev-ss)))
+	       (prev (kbd-find-key-binding2 conds prev-ss)))
 	  (if (and (list? prev) (= (length prev) 2)) (set! prev (car prev)))
 	  (if (or (not prev) (nstring? prev)) (set! prev prev-ss))
 	  (with im (kbd-append prev (substring s prev-end end))
-	    (kbd-insert-key-binding pred this-ss (list im "")))))))
+	    (kbd-insert-key-binding conds this-ss (list im "")))))))
 
-(define (kbd-sub-bindings-sub pred s prev-end end)
+(define (kbd-sub-bindings-sub conds s prev-end end)
   (cond ((== end (string-length s)) (noop))
         ((== (string-ref s end) #\space)
-	 (kbd-sub-binding pred s prev-end end)
-	 (kbd-sub-bindings-sub pred s end (+ end 1)))
-	(else (kbd-sub-bindings-sub pred s prev-end (+ end 1)))))
+	 (kbd-sub-binding conds s prev-end end)
+	 (kbd-sub-bindings-sub conds s end (+ end 1)))
+	(else (kbd-sub-bindings-sub conds s prev-end (+ end 1)))))
 
-(define (kbd-sub-bindings pred s)
-  (kbd-sub-bindings-sub pred s 0 0))
+(define (kbd-sub-bindings conds s)
+  (kbd-sub-bindings-sub conds s 0 0))
 
 (define-public (kbd-binding pred key2 cmd help)
   "Helper routine for kbd-map macro"
-  (with key (kbd-pre-rewrite key2)
-    (kbd-sub-bindings pred key)
-    (kbd-insert-key-binding pred key (list cmd help))))
+  (with conds (list 0 (eval pred))
+    (with key (kbd-pre-rewrite key2)
+      (kbd-sub-bindings conds key)
+      (kbd-insert-key-binding conds key (list cmd help)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard shortcuts
@@ -167,7 +162,7 @@
 	     ,(list 'quasiquote (kbd-map-pre l))))
 
 (define (kbd-remove-list pred l)
-  (for-each (lambda (x) (kbd-delete-key-binding2 pred x)) l))
+  (for-each (lambda (x) (kbd-delete-key-binding2 (list 0 (eval pred)) x)) l))
 
 (define-public (kbd-remove-body l)
   "Helper routine for kbd-remove macro"
