@@ -145,14 +145,7 @@
 ;(define boot-start (texmacs-time))
 
 ;(display "Booting plugins\n")
-(if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
-    (set! plugin-old-data-table
-	  (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))
 (for-each lazy-plugin-initialize (plugin-list))
-(delayed
-  (:idle 1000)
-  (if (!= plugin-old-data-table plugin-data-table)
-      (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(define boot-start (texmacs-time))
 
