@@ -158,17 +158,32 @@
 
 (define plugin-initialize-todo (make-ahash-table))
 
+(define (plugin-load-setup)
+  (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
+      (set! plugin-old-data-table
+	    (load-object "$TEXMACS_HOME_PATH/system/setup.scm"))))
+
+(define (plugin-save-setup)
+  (if (!= plugin-old-data-table plugin-data-table)
+      (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
+
+(define (plugin-all-initialized?)
+  (with l (ahash-table->list plugin-initialize-todo)
+    (not (list-or (map cdr l)))))
+
 (define-public (plugin-initialize name*)
   "Initialize plugin with name @name*"
+  (if (== (ahash-size plugin-old-data-table) 0) (plugin-load-setup))
   (if (ahash-ref plugin-initialize-todo name*)
       (let* ((name (symbol->string name*))
 	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
 	     (u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+	(ahash-set! plugin-initialize-todo name* #f)
 	(if (url-exists? u)
 	    (with fname (url-materialize u "r")
-	      (ahash-set! plugin-initialize-todo name* #f)
 	      ;;(display* "loading plugin " name* "\n")
-	      (load fname))))))
+	      (load fname)))
+	(if (plugin-all-initialized?) (plugin-save-setup)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy initialization of plugins
