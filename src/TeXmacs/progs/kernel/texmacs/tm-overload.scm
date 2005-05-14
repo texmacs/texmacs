@@ -117,6 +117,76 @@
 	   (cons kind (set (cdr ovl) always new))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Finding and removing data associated to specific conditions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (ovl-find ovl conds)
+  "Find entry under the conditions @conds from overloaded structure @ovl"
+  (cond ((not ovl) #f)
+	((null? conds)
+	 (if (= (car ovl) 100) (cdr ovl)
+	     (let* ((kind (car ovl))
+		    (get (vector-ref ovl-getter kind))
+		    (always (vector-ref ovl-always kind))
+		    (sub (get (cdr ovl) always)))
+	       (ovl-find sub (cddr conds)))))
+	((== (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(get (vector-ref ovl-getter kind))
+		(sub (get (cdr ovl) key)))
+	   (ovl-find sub (cddr conds))))
+	((> (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(always (vector-ref ovl-always kind)))
+	   (if (== key always) (ovl-find ovl (cddr conds)) #f)))
+	((< (car ovl) (car conds))
+	 (let* ((kind (car ovl))
+		(get (vector-ref ovl-getter kind))
+		(always (vector-ref ovl-always kind))
+		(sub (get (cdr ovl) always)))
+	   (ovl-find sub (cddr conds))))))
+
+(define-public (ovl-remove ovl conds)
+  "Remove entry under conditions @conds in overloaded structure @ovl"
+  (cond ((not ovl) ovl)
+	((null? conds)
+	 (if (= (car ovl) 100) #f
+	     (let* ((kind (car ovl))
+		    (set (vector-ref ovl-setter kind))
+		    (get (vector-ref ovl-getter kind))
+		    (always (vector-ref ovl-always kind))
+		    (old (get (cdr ovl) always))
+		    (new (ovl-remove old conds)))
+	       (cons kind (set (cdr ovl) always new)))))
+	((== (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(old (get (cdr ovl) key))
+		(new (ovl-remove old (cddr conds))))
+	   (cons kind (set (cdr ovl) key new))))
+	((> (car ovl) (car conds))
+	 (let* ((key (cadr conds))
+		(kind (car conds))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(cont (set #f (vector-ref ovl-always kind) ovl))
+		(old (get cont key))
+		(new (ovl-remove old (cddr conds))))
+	   (cons kind (set cont key new))))
+	((< (car ovl) (car conds))
+	 (let* ((kind (car ovl))
+		(set (vector-ref ovl-setter kind))
+		(get (vector-ref ovl-getter kind))
+		(always (vector-ref ovl-always kind))
+		(old (get (cdr ovl) always))
+		(new (ovl-remove old conds)))
+	   (cons kind (set (cdr ovl) always new))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Resolve overloaded retrieval and function applications
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

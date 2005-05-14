@@ -41,7 +41,8 @@
 ;(define boot-start (texmacs-time))
 
 ;(display "Booting main TeXmacs functionality\n")
-(use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view))
+(use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
+	     (texmacs texmacs tm-print))
 (lazy-define (texmacs texmacs tm-files) delayed-auto-save)
 (use-modules (texmacs keyboard config-kbd))
 (lazy-in-mode (texmacs keyboard wildcards-kbd) always?)
