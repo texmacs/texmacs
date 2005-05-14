@@ -193,7 +193,7 @@
   "Initialize the plug-in @name in a lazy way"
   (ahash-set! plugin-initialize-todo name #t)
   (delayed
-    (:idle 1000)
+    (:idle 2000)
     (plugin-initialize name)))
 
 (define plugin-initialize-done? #f)
