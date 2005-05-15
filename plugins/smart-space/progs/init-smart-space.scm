@@ -2,4 +2,4 @@
 
 (plugin-configure smart-space
   (:require #t)
-  (:initialize (lazy-in-mode (keyboard kbd-smart-space) in-text?)))
+  (:initialize (lazy-keyboard (keyboard kbd-smart-space) in-text?)))

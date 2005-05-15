@@ -18,4 +18,4 @@
 
 (plugin-configure switch-buffer
   (:require #t)
-  (:initialize (lazy-in-mode (kbd-switch-buffer) always?)))
+  (:initialize (lazy-keyboard (kbd-switch-buffer) always?)))

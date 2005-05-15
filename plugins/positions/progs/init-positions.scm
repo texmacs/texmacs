@@ -26,7 +26,7 @@
 	("Remember position" (position-remember-ia))
 	("Jump to position" (position-jump-ia))
 	("Forget position" (position-forget-ia))))
-  (lazy-in-mode (kbd-positions) always?))
+  (lazy-keyboard (kbd-positions) always?))
 
 (plugin-configure positions
   (:require #t)

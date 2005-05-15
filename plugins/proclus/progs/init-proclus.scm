@@ -30,7 +30,7 @@
   (display "Installing Proclus.\n")
   (kbd-wildcards pre
     ("proclus" "emacs:contextual"))
-  (lazy-in-mode (keyboard kbd-proclus) in-proclus?)
+  (lazy-keyboard (keyboard kbd-proclus) in-proclus?)
   (menu-extend texmacs-extra-menu
     (if (in-proclus-editable?)
         (link menu-proclus))
