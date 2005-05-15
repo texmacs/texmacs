@@ -124,6 +124,7 @@
   ("symbol" "" "Insert a TeXmacs symbol")
   ("executable" "" "Insert executable markup")
   ("inactive" "" "Insert inactive markup")
+  ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
 
   ("windows" "" "Windows command")

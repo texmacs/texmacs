@@ -14,7 +14,8 @@
 
 (texmacs-module (text cyrillic cp1251-kbd))
 
-(kbd-map in-cyrillic-cp1251?
+(kbd-map
+  (:mode in-cyrillic-cp1251?)
   ("¸" "¼")
   ("accent:umlaut å" "¼")
   ("¨" "œ")

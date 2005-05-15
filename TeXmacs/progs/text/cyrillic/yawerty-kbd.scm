@@ -14,7 +14,9 @@
 
 (texmacs-module (text cyrillic yawerty-kbd))
 
-(kbd-map in-cyrillic-yawerty?
+(kbd-map
+  (:mode in-cyrillic-yawerty?)
+
   ("q" "ÿ")
   ("w" "â")
   ("e" "å")

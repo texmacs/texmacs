@@ -37,14 +37,16 @@
   (in-mupad-math% #t in-mupad% in-math%)
   (in-mupad-prog% #t in-mupad% in-prog%))
 
-(kbd-map in-mupad-prog?
+(kbd-map
+  (:mode in-mupad-prog?)
   ("$"  (insert "$"))
   ("\"" (insert "\""))
   ("."  (insert "."))
 ;  ("_"  (insert "_"))
   ("`"  (insert "`")))
 
-(kbd-map in-mupad-math?
+(kbd-map
+  (:mode in-mupad-math?)
   ("$"  (insert "$"))
   ("\"" (insert "\""))
   ("."  (insert "."))
