@@ -1,7 +1,6 @@
 ;; arch-tag: e85790a7-25de-4c7a-b6db-eea9d5e4c3c5
 
-(texmacs-module (texmacs edit smart-space)
-  (:export smart-space))
+(texmacs-module (texmacs edit smart-space))
 
 (define (string-space-at? s i) (== #\space (string-ref s i)))
 (define (tree-func? t s) (== s (tree-get-label t)))
@@ -36,7 +35,7 @@
 
 ;(set-trace-level! near-space? near-space?/leaf near-space?/after)
 
-(define (smart-space)
+(tm-define (smart-space)
   (cond ((at-start?) (noop))
 	((after-space?) (noop))
 	((before-space?) (move-next))

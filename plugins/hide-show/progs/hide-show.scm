@@ -18,8 +18,7 @@
 
 (texmacs-module (hide-show)
   (:use (buffer-replace)
-	(interactive-proc))
-  (:export hide-ia show-ia show-all))
+	(interactive-proc)))
 
 ;; TODO: use package hide.ts when hide is not defined in the initial env
 
@@ -39,7 +38,7 @@
 		      (in? (tree-get-label (tree-ref t 0)) tags)))
    (lambda (p t) (tm-rem-unary p))))
 
-(define (show-all)
+(tm-define (show-all)
   (buffer-replace-postorder
    (lambda (p t) (eq? 'hide (tree-get-label t)))
    (lambda (p t) (tm-rem-unary p))))
@@ -49,12 +48,12 @@
        (list-filter (string-tokenize s #\space)
 		    (lambda (s) (not (string-null? s))))))
 
-(define (hide-ia)
+(tm-define (hide-ia)
   (if (not (func? (tree->stree (get-init-tree "hide")) 'macro))
       (init-add-package "hide"))
   (interactive-proc '("Hide:")
 		    (lambda (s) (hide (input->symbols s)))))
 
-(define (show-ia)
+(tm-define (show-ia)
   (interactive-proc '("Show:")
 		    (lambda(s) (show (input->symbols s)))))

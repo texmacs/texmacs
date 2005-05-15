@@ -19,11 +19,11 @@
   (lazy-define (slides browse) prev-slide)
   (lazy-define (slides iterate-buffer) clear-output)
 
-  (menu-extend insert-switch-menu
+  (menu-extend insert-fold-menu
     ---
     ("Make slides" (make-slides))
     ("Make slides here" (make-slides-here))
-    (when (inside? "switch")
+    (when (inside? 'switch)
 	  ("Next slide" (next-slide))
 	  ("Previous slide" (prev-slide)))
     ---

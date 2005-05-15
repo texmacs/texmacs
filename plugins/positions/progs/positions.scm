@@ -17,8 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (positions)
-  (:use (interactive-proc))
-  (:export position-remember-ia position-jump-ia position-forget-ia))
+  (:use (interactive-proc)))
 
 (define positions (make-ahash-table))
 
@@ -29,7 +28,7 @@
 		   "error"))
     pos))
 
-(define (position-remember-ia)
+(tm-define (position-remember-ia)
   (interactive-proc '("Remember position as:")
 		    position-remember/callback))
 
@@ -38,7 +37,7 @@
     (tm-position-set pos (tm-where))
     (ahash-set! positions name pos)))
 
-(define (position-jump-ia)
+(tm-define (position-jump-ia)
   (interactive-proc '("Jump to position:")
 		    position-jump/callback))
 
@@ -46,7 +45,7 @@
   (cond ((recall-position name) =>
 	 (lambda (pos) (tm-go-to (tm-position-get pos))))))
 
-(define (position-forget-ia)
+(tm-define (position-forget-ia)
   (interactive-proc '("Forget position:")
 		    position-forget/callback))
 

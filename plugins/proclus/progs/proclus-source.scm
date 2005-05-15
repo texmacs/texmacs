@@ -18,17 +18,7 @@
 
 (texmacs-module (proclus-source)
   (:use (proclus-lib)
-        (proclus-locus))
-  (:export has-last-locus?
-           set-last-locus!
-           go-to-last-locus
-           has-source-link?
-           set-source-link!
-	   get-source-link
-           go-to-source-link
-           source-buffer-excursion
-           source-buffer-excursion/sub))
-
+        (proclus-locus)))
 
 (define last-locus '())
 

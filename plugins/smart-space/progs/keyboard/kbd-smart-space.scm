@@ -3,5 +3,6 @@
 (texmacs-module (keyboard kbd-smart-space)
   (:use (texmacs edit smart-space)))
 
-(kbd-map in-text?
+(kbd-map
+  (:mode in-text?)
   ("space" (smart-space)))

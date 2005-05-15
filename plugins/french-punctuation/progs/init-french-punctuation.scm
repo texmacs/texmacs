@@ -8,7 +8,8 @@
   (define (make-french-near-punctuation str)
     (insert `(concat (space "0.25fn") ,str)))
 
-  (kbd-map in-french?
+  (kbd-map
+    (:mode in-french?)
     (";" (make-french-near-punctuation ";"))
     ("?" (make-french-near-punctuation "?"))
     ("!" (make-french-near-punctuation "!"))

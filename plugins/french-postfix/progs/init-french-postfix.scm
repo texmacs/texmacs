@@ -1,7 +1,8 @@
 ;; arch-tag: 2f3ac941-db83-41db-beb2-92476e483697
 
 (define (french-postfix-initialize)
-  (kbd-map in-french?
+  (kbd-map
+    (:mode in-french?)
     ("a `" "à") ("A `" "À") ("a ^" "â") ("A ^" "Â")
     ("e '" "é") ("E '" "É") ("e `" "è") ("E `" "È")
     ("e ^" "ê") ("E ^" "Ê") ("e \"" "ë") ("E \"" "Ë")

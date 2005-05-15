@@ -16,21 +16,19 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (interactive-proc)
-  (:export interactive-proc interactive-default
-	   interactive-proc/callback-wrapper))
+(texmacs-module (interactive-proc))
 
 ;; The implementation of "interactive-default" would be more elegant if
 ;; "interactive" took a procedure instead of a symbol. So let us use the
 ;; "interactive-proc" wrapper function until "interactive" is updated.
 
-(define (interactive-proc prompts proc)
+(tm-define (interactive-proc prompts proc)
   (set! interactive-proc/callback proc)
   (interactive prompts 'interactive-proc/callback-wrapper))
 
 (define interactive-proc/callback #f)
 
-(define (interactive-proc/callback-wrapper . args)
+(tm-define (interactive-proc/callback-wrapper . args)
   (let ((proc interactive-proc/callback))
     (set! interactive-proc/callback #f)
     (apply proc args)))
@@ -38,7 +36,7 @@
 
 ;; "interactive" primitive with a proc parameter and an optional default value
 
-(define (interactive-default prompts defaults proc)
+(tm-define (interactive-default prompts defaults proc)
   (interactive-proc
     (map interactive-default/prompt prompts defaults)
     (cut interactive-default/callback proc defaults <...>)))

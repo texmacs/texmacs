@@ -45,6 +45,6 @@
 ;; Has to be after plugin-configure to redefine the in-proclus? predicate
 (texmacs-modes
   (in-proclus% (style-has? "proclus-dtd"))
-  (in-proclus-locus% (inside? "locus") in-proclus%)
+  (in-proclus-locus% (inside? 'locus) in-proclus%)
   (in-proclus-editable% (style-has? "proclus-editable-dtd") in-proclus%)
   (in-proclus-links% (style-has? "proclus-links-dtd") in-proclus%))

@@ -17,12 +17,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (switch-buffer switch-buffer)
-  (:use (interactive-proc))
-  (:export switch-to-recent-buffer interactive-switch-to-buffer))
+  (:use (interactive-proc)))
 
 ;; Simple switch to the last used buffer
 
-(define (switch-to-recent-buffer)
+(tm-define (switch-to-recent-buffer)
   (cond ((buffer-menu-recent-item) => buffer-menu-item-switch-to)))
 
 (define (buffer-menu-recent-item)
@@ -35,7 +34,7 @@
 ;; Switch to any buffer using the minibuffer with the last buffer as the
 ;; default value (like emacs...)
 
-(define (interactive-switch-to-buffer)
+(tm-define (interactive-switch-to-buffer)
   (cond ((buffer-menu-recent-item) =>
          (lambda (x)
            (interactive-default '("Switch to buffer:")

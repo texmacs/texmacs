@@ -136,12 +136,12 @@
     p))
 
 (tm-define (get-locus-path)
-  (and-let* ((p (search-upwards "locus"))
+  (and-let* ((p (search-upwards 'locus))
              (pair? p))
     p))
 
 (tm-define (get-not-locus-path)
-  (and-let* ((p (search-upwards "not-locus"))
+  (and-let* ((p (search-upwards 'not-locus))
              (pair? p))
     p))
 

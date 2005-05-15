@@ -24,12 +24,14 @@
 ;; Shortcuts are enabled in-proclus? even if they are only relevant in
 ;; sub-modes so they will appear in disabled menu items.
 
-(kbd-map in-proclus?
+(kbd-map
+  (:mode in-proclus?)
   ;; in-proclus-editable?
   ("proclus s" (active-source))
   ("proclus b" (active-but))
   ("proclus <" (locus))
   ("proclus 1" (go-to-last-locus)))
 
-(kbd-map in-proclus-links?
+(kbd-map
+  (:mode in-proclus-links?)
   ("proclus S" (go-to-source-link))) ;; FIXME: unify with go-to-source

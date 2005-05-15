@@ -17,12 +17,12 @@
 
 (tm-define (next-slide)
   (go-innermost-switch)
-  (if (inside? "switch")
+  (if (inside? 'switch)
       (next-slide-sub)))
 
 (tm-define (prev-slide)
   (go-innermost-switch)
-  (if (inside? "switch")
+  (if (inside? 'switch)
       (prev-slide-sub)))
 
 (define (next-slide-sub)
@@ -77,13 +77,13 @@
 	(go-outermost-switch))))
 
 (define (go-this-switch)
-  (let ((p (search-upwards "switch")))
+  (let ((p (search-upwards 'switch)))
     (if (pair? p)
 	(tm-go-to (append p '(1 0 0)))
 	(tm-go-to '(0 0)))))
 
 (define (go-outer-switch)
-  (let ((p (search-upwards "switch")))
+  (let ((p (search-upwards 'switch)))
     (if (pair? p)
 	(tm-go-to (append p '(0)))))
   (go-this-switch))
@@ -92,7 +92,7 @@
   (define (proc p t) p)
   (let ((old-p (the-path)))
     (go-this-switch)
-    (let ((p1 (search-upwards "switch")))
+    (let ((p1 (search-upwards 'switch)))
       (let ((p2 (search-in-tree-from
 		 (if (null? p1)
 		     (the-buffer)
