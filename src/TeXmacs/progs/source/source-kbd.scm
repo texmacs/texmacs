@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (keyboard source-kbd)
+(texmacs-module (source source-kbd)
   (:use (source source-edit)))
 
 (kbd-map

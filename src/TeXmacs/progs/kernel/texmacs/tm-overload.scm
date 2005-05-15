@@ -138,7 +138,7 @@
 		    (get (vector-ref ovl-getter kind))
 		    (always (vector-ref ovl-always kind))
 		    (sub (get (cdr ovl) always)))
-	       (ovl-find sub (cddr conds)))))
+	       (ovl-find sub conds))))
 	((== (car ovl) (car conds))
 	 (let* ((key (cadr conds))
 		(kind (car conds))

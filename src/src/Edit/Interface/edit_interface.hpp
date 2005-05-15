@@ -93,7 +93,7 @@ public:
   void cursor_visible ();
   void selection_visible ();
   void apply_changes ();
-  int  idle_time ();
+  int  idle_time (int event_type= ANY_EVENT);
   int  change_time ();
 
   /* miscellaneous */

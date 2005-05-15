@@ -12,8 +12,38 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel gui kbd-define)
-  (:use (kernel gui menu-define)))
+(texmacs-module (kernel gui kbd-define))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy keyboard bindings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define lazy-keyboard-waiting '())
+(define-public lazy-keyboard-done (make-ahash-table))
+
+(define-public (lazy-keyboard-do module mode*)
+  (with mode (texmacs-mode-mode mode*)
+    (set! lazy-keyboard-waiting (acons mode module lazy-keyboard-waiting))))
+
+(define-public-macro (lazy-keyboard module . modes)
+  (for-each (lambda (mode) (lazy-keyboard-do module mode)) modes)
+  `(delayed
+     (:idle 1000)
+     (ahash-set! lazy-keyboard-done ',module #t)
+     (import-from ,module)))
+
+(define (lazy-keyboard-force-do l)
+  (cond ((null? l) l)
+	((texmacs-in-mode? (caar l))
+	 (if (not (ahash-ref lazy-keyboard-done (cdar l)))
+	     (module-load (cdar l)))
+	 (ahash-set! lazy-keyboard-done (cdar l) #t)
+	 (lazy-keyboard-force-do (cdr l)))
+	(else (cons (car l) (lazy-keyboard-force-do (cdr l))))))
+
+(define-public (lazy-keyboard-force)
+  (set! lazy-keyboard-waiting
+	(reverse (lazy-keyboard-force-do (reverse lazy-keyboard-waiting)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard wildcards
@@ -76,11 +106,13 @@
 (define-public (kbd-find-key-binding key)
   "Find the command associated to the keystroke @key"
   ;;(display* "Find binding '" key "'\n")
+  (lazy-keyboard-force)
   (ovl-resolve (kbd-get-map key) #f))
 
 (define-public (kbd-find-inv-binding com)
   "Find keyboard binding for command @com"
   ;;(display* "Find inverse binding '" com "'\n")
+  (lazy-keyboard-force)
   (with r (ovl-resolve (kbd-get-inv com) #f)
     (if r r "")))
 
@@ -186,8 +218,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define kbd-command-table (make-ahash-table))
-(define (kbd-set-command! key im) (ahash-set! kbd-command-table key im))
-(define-public (kbd-get-command key) (ahash-ref kbd-command-table key))
+
+(define (kbd-set-command! key im)
+  (ahash-set! kbd-command-table key im))
+
+(define-public (kbd-get-command key)
+  (lazy-keyboard-force)
+  (ahash-ref kbd-command-table key))
 
 (define-public (kbd-command-pre arg)
   "Helper routine for kbd-commands macro"
