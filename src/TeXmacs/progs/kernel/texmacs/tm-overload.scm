@@ -33,6 +33,15 @@
 ;; Construction of overloaded structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (conditions-insert l kind opt)
+  (cond ((null? l) (list kind opt))
+	((== kind (car l))
+	 (texmacs-error "conditions-insert" "Conflicting option"))
+	((< kind (car l)) (cons kind (cons opt l)))
+	(else (cons (car l)
+		    (cons (cadr l)
+			  (conditions-insert (cddr l) kind opt))))))
+
 (define (assoc-set l key val)
   (cond ((or (not l) (null? l)) (list (cons key val)))
 	((== (caar l) key) (cons (cons key val) (cdr l)))

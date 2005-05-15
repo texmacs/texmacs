@@ -39,30 +39,21 @@
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (ovl-add-option l kind opt)
-  (cond ((null? l) (list kind opt))
-	((== kind (car l))
-	 (texmacs-error "ovl-add-option" "Conflicting option"))
-	((< kind (car l)) (cons kind (cons opt l)))
-	(else (cons (car l)
-		    (cons (cadr l)
-			  (ovl-add-option (cddr l) kind opt))))))
-
-(define (ovl-add-option! kind opt)
-  (set! ovl-conds (ovl-add-option ovl-conds kind opt)))
+(define (conditions-insert! kind opt)
+  (set! ovl-conds (conditions-insert ovl-conds kind opt)))
 
 (define (define-option-mode opt decl)
-  (ovl-add-option! 0 (car opt))
+  (conditions-insert! 0 (car opt))
   decl)
 
-(define (predicate-option? x)
+(define-public (predicate-option? x)
   (or (and (symbol? x) (string-ends? (symbol->string x) "?"))
       (and (pair? x) (== (car x) 'lambda))))
 
 (define (define-option-context opt decl)
   (if (predicate-option? (car opt))
-      (ovl-add-option! 1 (car opt))
-      (ovl-add-option! 1 `(lambda (t) (match? t ',(car opt)))))
+      (conditions-insert! 1 (car opt))
+      (conditions-insert! 1 `(lambda (t) (match? t ',(car opt)))))
   decl)
 
 (define (define-option-inside opt decl)
@@ -73,16 +64,16 @@
     decl))
 
 (define (define-option-case opt decl)
-  (ovl-add-option! 2 (list quote (list->vector opt)))
+  (conditions-insert! 2 (list quote (list->vector opt)))
   decl)
 
 (define (define-option-match opt decl)
-  (cond ((predicate-option? opt) (ovl-add-option! 3 opt))
+  (cond ((predicate-option? opt) (conditions-insert! 3 opt))
 	((and (pair? opt) (null? (cdr opt))
 	      (predicate-option? (car opt))
 	      (list? (cadr decl)) (= (length (cadr decl)) 3))
-	 (ovl-add-option! 3 (car opt)))
-	(else (ovl-add-option! 3 `(lambda args (match? args ',opt)))))
+	 (conditions-insert! 3 (car opt)))
+	(else (conditions-insert! 3 `(lambda args (match? args ',opt)))))
   decl)
 
 (define (define-option-require opt decl)

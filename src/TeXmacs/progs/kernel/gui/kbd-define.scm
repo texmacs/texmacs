@@ -65,7 +65,7 @@
     ;;(display* com "] " (kbd-get-inv com) "\n")
     ))
 
-(define (kbd-delete-key-binding2 conds key)
+(define-public (kbd-delete-key-binding2 conds key)
   ;;(display* "Deleting binding '" key "' when " conds "\n")
   (with im (ovl-find (kbd-get-map key) conds)
     (if im
@@ -120,61 +120,66 @@
 (define (kbd-sub-bindings conds s)
   (kbd-sub-bindings-sub conds s 0 0))
 
-(define-public (kbd-binding pred key2 cmd help)
+(define-public (kbd-binding conds key2 cmd help)
   "Helper routine for kbd-map macro"
-  (with conds (list 0 (eval pred))
-    (with key (kbd-pre-rewrite key2)
-      (kbd-sub-bindings conds key)
-      (kbd-insert-key-binding conds key (list cmd help)))))
+  ;;(display* conds ", " key2 ", " cmd ", " help "\n")
+  (with key (kbd-pre-rewrite key2)
+    (kbd-sub-bindings conds key)
+    (kbd-insert-key-binding conds key (list cmd help))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (kbd-map-pre-one pred2 l)
-  (if (not (and (or (string? pred2) (symbol? pred2))
-		(pair? l) (string? (car l)) (pair? (cdr l))))
+(define (kbd-add-condition conds opt)
+  (cond ((== (car opt) :mode) (conditions-insert conds 0 (cadr opt)))
+	((== (car opt) :context)
+	 (if (predicate-option? (cadr opt))
+	     (conditions-insert conds 1 (cadr opt))
+	     (with pred `(lambda (t) (match? t ',(cadr opt)))
+	       (conditions-insert conds 1 pred))))
+	((== (car opt) :inside)
+	 (with pred `(lambda (t) (and (tm-compound? t)
+				      (in? (tm-car t) ',(cdr opt))))
+	   (conditions-insert conds 1 pred)))
+	(else (texmacs-error "kbd-add-condition"
+			     "Bad keyboard option ~S" opt))))
+
+(define (kbd-map-one conds l)
+  (if (not (and (pair? l) (string? (car l)) (pair? (cdr l))))
       (texmacs-error "kbd-map-pre-one" "Bad keymap in: ~S" l))
-  (with pred (if (symbol? pred2) pred2 (string->symbol pred2))
-    (with (key action . opt) l
-      (cond ((string? action)
-	     (with help (if (null? opt) "" (car opt))
-	       (list pred key action help)))
-	    ((null? opt) (list pred key (make-promise action) ""))
-	    (else (with action* `(begin ,action ,@opt)
-		    (list pred key (make-promise action*) "")))))))
+  (with (key action . opt) l
+    (if (string? action)
+	(with help (if (null? opt) "" (car opt))
+	  `(kbd-binding (list ,@conds) ,key ,action ,help))
+	`(kbd-binding (list ,@conds) ,key (lambda () ,action ,@opt) ""))))
 
-(define (kbd-map-pre-list pred l)
-  (map (lambda (x) (kbd-map-pre-one pred x)) l))
-
-(define-public (kbd-map-pre l)
-  "Helper routine for kbd-map macro"
+(define (kbd-map-body conds l)
   (cond ((null? l) '())
-	((symbol? (car l)) (kbd-map-pre-list (car l) (cdr l)))
-	((and (pair? (car l)) (== (caar l) :or))
-	 (with sub (lambda (pred) (kbd-map-pre-list pred (cdr l)))
-	   (apply append (map sub (cdar l)))))
-	(else (kbd-map-pre-list 'always? l))))
+	((symbol? (car l))
+	 (kbd-map-body (list 0 (car l)) (cdr l)))
+	((and (pair? (car l)) (keyword? (caar l)))
+	 (kbd-map-body (kbd-add-condition conds (car l)) (cdr l)))
+	(else (map (lambda (x) (kbd-map-one conds x)) l))))
 
 (define-public-macro (kbd-map . l)
   "Add entries in @l to the keyboard mapping"
-  `(for-each (lambda (x) (apply kbd-binding x))
-	     ,(list 'quasiquote (kbd-map-pre l))))
+  `(begin ,@(kbd-map-body '() l)))
 
-(define (kbd-remove-list pred l)
-  (for-each (lambda (x) (kbd-delete-key-binding2 (list 0 (eval pred)) x)) l))
+(define (kbd-remove-one conds key)
+  `(kbd-delete-key-binding2 (list ,@conds) ,key))
 
-(define-public (kbd-remove-body l)
-  "Helper routine for kbd-remove macro"
-  (cond ((null? l) (noop))
-	((symbol? (car l)) (kbd-remove-list (car l) (cdr l)))
-	((and (pair? (car l)) (== (caar l) :or))
-	 (for-each (lambda (pred) (kbd-remove-list pred (cdr l))) (cdar l)))
-	(else (kbd-remove-list 'always? l))))
+(define (kbd-remove-body conds l)
+  (cond ((null? l) '())
+	((symbol? (car l))
+	 (kbd-remove-body (list 0 (car l)) (cdr l)))
+	((and (pair? (car l)) (keyword? (caar l)))
+	 (kbd-remove-body (kbd-add-condition conds (car l)) (cdr l)))
+	(else (map (lambda (x) (kbd-remove-one conds x)) l))))
 
 (define-public-macro (kbd-remove . l)
   "Remove entries in @l from keyboard mapping"
-  `(kbd-remove-body ,(list 'quasiquote l)))
+  `(begin ,@(kbd-remove-body '() l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of keyboard (backslashed) commands
