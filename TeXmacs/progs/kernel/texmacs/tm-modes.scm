@@ -54,7 +54,8 @@
     (if proc (proc)
 	(catch #t (lambda () (eval (list mode))) (lambda err #f)))))
 
-(define (texmacs-mode-mode pred)
+(define-public (texmacs-mode-mode pred)
+  "Get drd predicate name associated to scheme predicate or symbol"
   (if (procedure? pred)
       (with name (procedure-name pred)
 	(if name (texmacs-mode-mode name) 'unknown%))
@@ -66,6 +67,7 @@
 (define texmacs-submode-table (make-ahash-table))
 
 (define-public (texmacs-submode? what* of*)
+  "Test whether @what* is a sub-mode of @of*"
   (let* ((key (cons what* of*))
 	 (handle (ahash-get-handle texmacs-submode-table key)))
     (if handle (cdr handle)
@@ -74,31 +76,6 @@
 	       (result (or (== of 'always%) (nnull? (query of what)))))
 	  (ahash-set! texmacs-submode-table key result)
 	  result))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lazy mode dependent actions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define lazy-in-mode-list '())
-
-(define-public (lazy-in-mode-do module mode*)
-  (with mode (texmacs-mode-mode mode*)
-    (set! lazy-in-mode-list (acons mode module lazy-in-mode-list))))
-
-(define-public-macro (lazy-in-mode module . modes)
-  (for-each (lambda (mode) (lazy-in-mode-do module mode)) modes)
-  '(noop))
-
-(define (lazy-in-mode-force-do l)
-  (cond ((null? l) l)
-	((texmacs-in-mode? (caar l))
-	 (module-load (cdar l))
-	 (lazy-in-mode-force-do (cdr l)))
-	(else (cons (car l) (lazy-in-mode-force-do (cdr l))))))
-
-(define-public (lazy-in-mode-force)
-  (set! lazy-in-mode-list
-	(reverse (lazy-in-mode-force-do (reverse lazy-in-mode-list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related

@@ -174,7 +174,6 @@ edit_interface_rep::show_keymaps () {
 
 void
 edit_interface_rep::handle_keypress (keypress_event ev) {
-  call ("lazy-in-mode-force");
   buf->mark_undo_block ();
   key_press (ev->key);
   notify_change (THE_DECORATIONS);

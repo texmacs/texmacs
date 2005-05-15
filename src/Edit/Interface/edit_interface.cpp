@@ -395,10 +395,10 @@ edit_interface_rep::selection_visible () {
 }
 
 int
-edit_interface_rep::idle_time () {
+edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
       win->repainted () &&
-      (!win->check_event (EVENT_STATUS)) &&
+      (!win->check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
   else return 0;
@@ -416,8 +416,7 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if (last_update < last_change && idle_time () >= 1000/6) {
-      call ("lazy-in-mode-force");
+    if (last_update < last_change && idle_time (EVENT_STATUS) >= 1000/6) {
       SERVER (menu_main ("(horizontal (link texmacs-menu))"));
       SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
       SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));

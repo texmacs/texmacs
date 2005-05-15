@@ -131,11 +131,16 @@
 
 (define (notify-cyrillic-input-method var val)
   (cond
-   ((== val "translit") (import-from (text cyrillic translit-kbd)))
-   ((== val "jcuken") (import-from (text cyrillic jcuken-kbd)))
-   ((== val "yawerty") (import-from (text cyrillic yawerty-kbd)))
-   ((== val "koi8-r") (import-from (text cyrillic koi8-kbd)))
-   ((== val "cp1251") (import-from (text cyrillic cp1251-kbd)))))
+   ((== val "translit")
+    (lazy-keyboard (text cyrillic translit-kbd) in-cyrillic-translit?))
+   ((== val "jcuken")
+    (lazy-keyboard (text cyrillic jcuken-kbd) in-cyrillic-jcuken?))
+   ((== val "yawerty")
+    (lazy-keyboard (text cyrillic yawerty-kbd) in-cyrillic-yawerty?))
+   ((== val "koi8-r")
+    (lazy-keyboard (text cyrillic koi8-kbd) in-cyrillic-koi8?))
+   ((== val "cp1251")
+    (lazy-keyboard (text cyrillic cp1251-kbd) in-cyrillic-cp1251?))))
 
 (define-preferences
   ("cyrillic input method" "" notify-cyrillic-input-method))
