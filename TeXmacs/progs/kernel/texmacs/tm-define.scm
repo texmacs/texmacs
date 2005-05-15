@@ -232,7 +232,7 @@
 ;; Lazy function declations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public-macro (lazy-define module name)
+(define-public (lazy-define-one module name)
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
     `(define (,name . args)
        (let* ((m (resolve-module ',module))
@@ -243,3 +243,7 @@
 			    ,(string-append "Could not retrieve "
 					    (symbol->string name))))
 	 (apply r args)))))
+
+(define-public-macro (lazy-define module . names)
+  `(begin
+     ,@(map (lambda (name) (lazy-define-one module name)) names)))

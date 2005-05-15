@@ -28,7 +28,7 @@
 (define-public-macro (lazy-keyboard module . modes)
   (for-each (lambda (mode) (lazy-keyboard-do module mode)) modes)
   `(delayed
-     (:idle 1000)
+     (:idle 250)
      (ahash-set! lazy-keyboard-done ',module #t)
      (import-from ,module)))
 

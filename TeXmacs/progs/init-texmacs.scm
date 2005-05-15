@@ -30,7 +30,6 @@
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting utilities\n")
 (inherit-modules (utils library base) (utils library list)
@@ -38,7 +37,6 @@
 (inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
 (use-modules (utils plugins plugin-cmd))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
@@ -58,7 +56,6 @@
 (lazy-menu (texmacs menus preferences-menu) preferences-menu page-setup-menu)
 (use-modules (texmacs menus main-menu))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
@@ -69,14 +66,12 @@
 	   insert-menu insert-link-menu insert-image-menu
 	   insert-page-insertion-menu position-float-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting source mode\n")
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-menu source-icons
 	   source-transformational-menu source-executable-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
@@ -85,25 +80,26 @@
 (lazy-menu (text format-text-menu) text-format-menu text-format-icons)
 (lazy-menu (text text-menu) text-menu text-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting table mode\n")
 (lazy-keyboard (table table-kbd) in-table?)
 (lazy-menu (table table-menu) table-menu table-icons insert-table-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
 (lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting graphics mode\n")
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+(lazy-define (graphics graphics-edit)
+	     graphics-reset-context graphics-undo-enabled
+	     graphics-insert-point graphics-remove-point
+	     graphics-last-point graphics-start-drag
+	     graphics-dragging graphics-end-drag)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting dynamic features\n")
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
@@ -112,23 +108,15 @@
 	   supported-sessions-menu insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting documentation\n")
 (lazy-menu (doc help-menu) help-menu)
-(lazy-define (doc tmdoc) tmdoc-expand-help)
-(lazy-define (doc tmdoc) tmdoc-expand-help-manual)
-(lazy-define (doc tmdoc) tmdoc-expand-this)
-(lazy-define (doc tmdoc) tmdoc-include)
-(lazy-define (doc docgrep) docgrep-in-doc)
-(lazy-define (doc docgrep) docgrep-in-src)
-(lazy-define (doc docgrep) docgrep-in-texts)
-(lazy-define (doc tmweb) tmweb-convert-dir)
-(lazy-define (doc tmweb) tmweb-build-from)
-(lazy-define (doc tmweb) tmweb-build)
+(lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
+	     tmdoc-expand-this tmdoc-include)
+(lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
+(lazy-define (doc tmweb) tmweb-convert-dir tmweb-build-from tmweb-build)
 (define-secure-symbols tmdoc-include)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting converters\n")
 (lazy-format (convert rewrite init-rewrite) texmacs scheme verbatim)
@@ -138,16 +126,13 @@
 (lazy-format (convert images init-images)
 	     postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
-(lazy-define (convert latex latex-drd) latex-arity)
-(lazy-define (convert latex latex-drd) latex-type)
+(lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex textm) textm-finalize)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting plugins\n")
 (for-each lazy-plugin-initialize (plugin-list))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "Booting fonts\n")
 (if (use-ec-fonts?)
@@ -157,7 +142,6 @@
 	     (fonts fonts-foreign) (fonts fonts-misc))
 (if (support-tt-fonts?) (use-modules (fonts fonts-truetype)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(define boot-start (texmacs-time))
 
 ;(display "------------------------------------------------------\n")
 (texmacs-banner)
