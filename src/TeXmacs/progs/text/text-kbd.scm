@@ -15,7 +15,8 @@
 (texmacs-module (text text-kbd)
   (:use (utils edit auto-close)))
 
-(kbd-map in-text?
+(kbd-map
+  (:mode in-text?)
   ("\"" (insert-quote))
   ("<" "<less>")
   (">" "<gtr>")
@@ -231,17 +232,20 @@
   ("masculine var" (make 'varmasculine))
   ("ordfeminine var" (make 'varordfeminine)))
 
-(kbd-map in-german?
+(kbd-map
+  (:mode in-german?)
   ("ﬂ" "ˇ")
   ("ˇ" "∏"))
 
-(kbd-map in-hungarian?
+(kbd-map
+  (:mode in-hungarian?)
   ("text:symbol O" "é")
   ("text:symbol U" "ñ")
   ("text:symbol o" "Æ")
   ("text:symbol u" "∂"))
 
-(kbd-map in-spanish?
+(kbd-map
+  (:mode in-spanish?)
   ("°" "Ω")
   ("ø" "æ")
   ("! var" "Ω")
@@ -251,7 +255,8 @@
   ("! accent:grave" "Ω")
   ("? accent:grave" "æ"))
 
-(kbd-map in-polish?
+(kbd-map
+  (:mode in-polish?)
   ("text:symbol a" "°")
   ("text:symbol A" "Å")
   ("text:symbol c" "¢")
@@ -273,5 +278,6 @@
   ("text:symbol z var" "π")
   ("text:symbol Z var" "ô"))
 
-(kbd-map in-cyrillic?
+(kbd-map
+  (:mode in-cyrillic?)
   ("modeswitch" (make-with "language" "english") (make-with "font" "roman")))

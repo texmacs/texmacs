@@ -14,7 +14,9 @@
 
 (texmacs-module (text cyrillic translit-kbd))
 
-(kbd-map in-cyrillic-translit?
+(kbd-map
+  (:mode in-cyrillic-translit?)
+
   ("a" "à")
   ("b" "á")
   ("v" "â")

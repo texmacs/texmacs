@@ -14,7 +14,9 @@
 
 (texmacs-module (text cyrillic koi8-kbd))
 
-(kbd-map in-cyrillic-koi8?
+(kbd-map
+  (:mode in-cyrillic-koi8?)
+
   ("Á" "à")
   ("Â" "á")
   ("×" "â")

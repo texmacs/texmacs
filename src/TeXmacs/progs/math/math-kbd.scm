@@ -18,7 +18,8 @@
     (math math-edit))
     (table table-edit))
 
-(kbd-map in-math?
+(kbd-map
+  (:mode in-math?)
   ;; must come first in order not to screw the menus up
   ("accent:deadhat" (make-script #t #t))
   ("math:left accent:deadhat" (make-script #t #f))
@@ -1018,7 +1019,8 @@
   ("math:bbb Y" "<bbb-Y>")
   ("math:bbb Z" "<bbb-Z>"))
 
-(kbd-map in-math-not-hybrid?
+(kbd-map
+  (:mode in-math-not-hybrid?)
   ("a var" "<alpha>")
   ("b var" "<beta>")
   ("b var var" "<flat>")

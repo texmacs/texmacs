@@ -90,7 +90,8 @@
   ("executable C-<" (make 'lesseq))
   ("executable C->" (make 'greatereq)))
 
-(kbd-map in-source?
+(kbd-map
+  (:mode in-source?)
   ("A-a" (make 'arg))
   ("A-A" (make 'map-args))
   ("A-c" (make 'compound))

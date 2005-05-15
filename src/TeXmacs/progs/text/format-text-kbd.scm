@@ -14,7 +14,8 @@
 
 (texmacs-module (text format-text-kbd))
 
-(kbd-map in-text?
+(kbd-map
+  (:mode in-text?)
   ("font ^" (make-script #t #t))
   ("font hat" (make-script #t #t))
   ("font _" (make-script #f #t))

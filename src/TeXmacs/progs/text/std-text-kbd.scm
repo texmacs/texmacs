@@ -15,9 +15,8 @@
 (texmacs-module (text std-text-kbd)
   (:use (text std-text-edit)))
 
-(kbd-map in-std-text?
-  ("text" "" "Insert structural markup")
-
+(kbd-map
+  (:mode in-std-text?)
   ("$" (if (inside? 'hybrid) (insert "$") (make-with "mode" "math")))
   ("text $" (make 'equation*) (temp-proof-fix))
   ("text &" (make 'eqnarray*) (temp-proof-fix))

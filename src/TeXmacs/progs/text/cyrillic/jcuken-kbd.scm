@@ -13,7 +13,9 @@
 
 (texmacs-module (text cyrillic jcuken-kbd))
 
-(kbd-map in-cyrillic-jcuken?
+(kbd-map
+  (:mode in-cyrillic-jcuken?)
+
   ("q" "é")
   ("w" "ö")
   ("e" "ó")

@@ -15,7 +15,8 @@
 (texmacs-module (table table-kbd)
   (:use (table table-edit)))
 
-(kbd-map in-table?
+(kbd-map
+  (:mode in-table?)
   ("table S" (make-subtable))
   ("table H l" (table-set-halign "l"))
   ("table H c" (table-set-halign "c"))
