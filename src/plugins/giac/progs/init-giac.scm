@@ -12,10 +12,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (giac-menus) giac-functions-menu)
+
 (define (giac-initialize)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (giac-input) giac)
-  (lazy-menu (giac-menus) giac-functions-menu)
   (menu-extend texmacs-extra-menu
     (if (in-giac?)
 	(=> "Giac" (link giac-functions-menu)))))

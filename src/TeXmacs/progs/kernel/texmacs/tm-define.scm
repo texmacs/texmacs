@@ -229,12 +229,56 @@
      ,@(map property-rewrite ovl-props)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retrieve definitions and redefinition of functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (tm-definition-sub head body)
+  (if (and (nnull? body) (pair? (car body)) (keyword? (caar body)))
+      (let ((decl (tm-definition-sub head (cdr body))))
+	((hash-ref define-option-table (caar body)) (cdar body) decl))
+      (cons 'tm-definition-overloaded (cons head body))))
+
+(define-public-macro (tm-definition head . body)
+  (set! ovl-conds '())
+  (set! ovl-props '())
+  (tm-definition-sub head body))
+
+(define-public-macro (tm-definition-overloaded head . body)
+  (with var (ca*r head)
+    `(ovl-find (ahash-ref ovl-table ',var) (list ,@ovl-conds))))
+
+(define-public (tm-redefine-sub head body)
+  (if (and (pair? (car body)) (keyword? (caar body)))
+      (let ((decl (tm-redefine-sub head (cdr body))))
+	((hash-ref define-option-table (caar body)) (cdar body) decl))
+      (cons 'tm-redefine-overloaded (cons head body))))
+
+(define-public-macro (tm-redefine head . body)
+  (set! ovl-conds '())
+  (set! ovl-props '())
+  (tm-redefine-sub head body))
+
+(define-public-macro (tm-redefine-overloaded head . body)
+  (let* ((var (ca*r head))
+	 (val (lambda* head body)))
+    `(begin
+       (ahash-set! ovl-table ',var
+		   (ovl-insert (ahash-ref ovl-table ',var) ,val
+			       (list ,@ovl-conds)))
+       (set! ,var (lambda args (ovl-apply (ahash-ref ovl-table ',var) args)))
+       ,@(map property-rewrite ovl-props))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy function declations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (lazy-define-one module name)
+(define-public (not-define-option? item)
+  (not (and (pair? item) (keyword? (car item)))))
+
+(define-public (lazy-define-one module opts name)
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
-    `(define (,name . args)
+    `(tm-define (,name . args)
+       ,@opts
        (let* ((m (resolve-module ',module))
 	      (p (module-ref texmacs-user '%module-public-interface))
 	      (r (module-ref p ',name #f)))
@@ -245,5 +289,6 @@
 	 (apply r args)))))
 
 (define-public-macro (lazy-define module . names)
-  `(begin
-     ,@(map (lambda (name) (lazy-define-one module name)) names)))
+  (receive (opts real-names) (list-break names not-define-option?)
+    `(begin
+       ,@(map (lambda (name) (lazy-define-one module opts name)) names))))

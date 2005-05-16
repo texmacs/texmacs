@@ -12,15 +12,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (reduce-menus) reduce-help-menu)
+
 (define (reduce-initialize)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (reduce-input) reduce)
-  (lazy-menu (reduce-menus) reduce-help-menu)
   (menu-extend session-help-icons
-  (if (and (in-reduce?) (url-exists? "$reduce/doc/manual/abstract.tex"))
-      |
-      (=> (balloon (icon "tm_help.xpm") "Reduce documentation")
-	  (link reduce-help-menu)))))
+    (if (and (in-reduce?) (url-exists? "$reduce/doc/manual/abstract.tex"))
+	|
+	(=> (balloon (icon "tm_help.xpm") "Reduce documentation")
+	    (link reduce-help-menu)))))
 
 (plugin-configure reduce
   (:require (url-exists-in-path? "reduce"))
