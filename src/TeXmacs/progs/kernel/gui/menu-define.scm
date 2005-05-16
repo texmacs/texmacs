@@ -171,4 +171,8 @@
 			    ,(list 'quasiquote (menu-pre body))))))))
 
 (define-public-macro (lazy-menu module . menus)
-  `(lazy-define ,module ,@menus))
+  `(begin
+     (lazy-define ,module ,@menus)
+     (delayed
+       (:idle 500)
+       (import-from ,module))))
