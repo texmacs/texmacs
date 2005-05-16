@@ -39,6 +39,7 @@
 
 (plugin-configure proclus
   (:require #t)
+  (:prioritary (style-has? "proclus-dtd"))
   (:initialize (proclus-initialize)))
 
 ;; Has to be after plugin-configure to redefine the in-proclus? predicate

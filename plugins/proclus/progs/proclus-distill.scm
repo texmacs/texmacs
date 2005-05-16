@@ -20,10 +20,6 @@
   (:use (proclus-lib) (proclus-list) (search-in-tree)
         (proclus-locus) (proclus-types) (proclus-absname)
         (proclus-source)))
-(export
-  has-source-link? ;; for menu in init-proclus??
-  go-to-source-link ;; for menu in init-proclus??
-)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
