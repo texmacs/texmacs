@@ -163,8 +163,8 @@
        ,(if default?
 	    `(ahash-set! ovl-table ',var (cons 100 temp-value))
 	    `(ahash-set! ovl-table ',var
-		       (ovl-insert (ahash-ref ovl-table ',var) temp-value
-				   (list ,@ovl-conds))))
+			 (ovl-insert (ahash-ref ovl-table ',var) temp-value
+				     (list ,@ovl-conds))))
        (set-current-module texmacs-user)
        (cond ((not (procedure? temp-value))
 	      (define-public ,head temp-value))
@@ -277,16 +277,17 @@
 
 (define-public (lazy-define-one module opts name)
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
-    `(tm-define (,name . args)
-       ,@opts
-       (let* ((m (resolve-module ',module))
-	      (p (module-ref texmacs-user '%module-public-interface))
-	      (r (module-ref p ',name #f)))
-	 (if (not r)
-	     (texmacs-error "lazy-define"
-			    ,(string-append "Could not retrieve "
-					    (symbol->string name))))
-	 (apply r args)))))
+    `(if (not (tm-definition ,@opts ,name))
+	 (tm-define (,name . args)
+	   ,@opts
+	   (let* ((m (resolve-module ',module))
+		  (p (module-ref texmacs-user '%module-public-interface))
+		  (r (module-ref p ',name #f)))
+	     (if (not r)
+		 (texmacs-error "lazy-define"
+				,(string-append "Could not retrieve "
+						(symbol->string name))))
+	     (apply r args))))))
 
 (define-public-macro (lazy-define module . names)
   (receive (opts real-names) (list-break names not-define-option?)
