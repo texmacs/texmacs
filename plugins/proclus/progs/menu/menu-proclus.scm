@@ -76,18 +76,13 @@
   (when (in-proclus-locus?)
         ("Liens" (edit-links))))
 
-(menu-set! 'std-texmacs-popup-menu (menu-get 'texmacs-popup-menu))
-
 (menu-bind proclus-popup-menu
-  (if (in-proclus-locus?)
-      ("Activer source" (active-source))
-      ("Activer but" (active-but))
-      ("Initialiser" (inactivate))
-      (link menu-proclus-types)
-      ("Liens" (edit-links))
-      (if (in-proclus-links?)
-          ---
-          ("Supprimer le lien" (remove-link))
-          ("Supprimer type..." (remove-link-type))))
-  (if (not (in-proclus-locus?))
-      (link std-texmacs-popup-menu)))
+  ("Activer source" (active-source))
+  ("Activer but" (active-but))
+  ("Initialiser" (inactivate))
+  (link menu-proclus-types)
+  ("Liens" (edit-links))
+  (if (in-proclus-links?)
+      ---
+      ("Supprimer le lien" (remove-link))
+      ("Supprimer type..." (remove-link-type))))

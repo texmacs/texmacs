@@ -35,8 +35,7 @@
     (if (in-proclus-editable?)
         (link menu-proclus))
     (if (in-proclus-links?)
-        (link menu-proclus-links)))
-  (menu-set! 'texmacs-popup-menu (menu-get 'proclus-popup-menu)))
+        (link menu-proclus-links))))
 
 (plugin-configure proclus
   (:require #t)
@@ -48,3 +47,9 @@
   (in-proclus-locus% (inside? 'locus) in-proclus%)
   (in-proclus-editable% (style-has? "proclus-editable-dtd") in-proclus%)
   (in-proclus-links% (style-has? "proclus-links-dtd") in-proclus%))
+
+(lazy-menu (menu menu-proclus) proclus-popup-menu)
+
+(menu-bind texmacs-popup-menu
+  (:mode in-proclus?)
+  (link proclus-popup-menu))

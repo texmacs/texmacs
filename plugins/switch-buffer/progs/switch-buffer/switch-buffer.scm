@@ -25,9 +25,9 @@
   (cond ((buffer-menu-recent-item) => buffer-menu-item-switch-to)))
 
 (define (buffer-menu-recent-item)
-  (let ((buffer-menu (menu-get 'buffer-menu)))
+  (let ((buffer-menu (buffer-menu)))
     (and (< 1 (length buffer-menu))
-         (second (menu-get 'buffer-menu)))))
+         (second (buffer-menu)))))
 
 (define (buffer-menu-item-switch-to x) ((second x)))
 
@@ -45,4 +45,4 @@
   (cond ((buffer-menu-item-by-name s) => buffer-menu-item-switch-to)))
 
 (define (buffer-menu-item-by-name s)
-  (assoc s (menu-get 'buffer-menu)))
+  (assoc s (buffer-menu)))
