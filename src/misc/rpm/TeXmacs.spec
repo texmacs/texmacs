@@ -1,9 +1,9 @@
 Summary: A structured wysiwyg scientific text editor
 Name: TeXmacs
-Version: 1.0.5
+Version: 1.0.5.1
 Release: 1
 Url: http://www.texmacs.org
-Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-1.0.5-src.tar.gz
+Source: ftp://ftp.texmacs.org/pub/TeXmacs/TeXmacs-1.0.5.1-src.tar.gz
 License: GNU GPL 2.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>
 Distribution: GNU/Linux
@@ -11,7 +11,7 @@ Vendor: Jo the ripper software
 Group: Applications/Editors
 Requires: tetex
 Buildrequires: guile-devel
-BuildRoot: %{_tmppath}/TeXmacs-1.0.5-root
+BuildRoot: %{_tmppath}/TeXmacs-1.0.5.1-root
 
 %description
 
@@ -33,7 +33,7 @@ a complete scientific office suite, with spreadsheet capacities,
 a technical drawing editor and a presentation mode.
 
 %prep
-%setup -q -n TeXmacs-1.0.5-src
+%setup -q -n TeXmacs-1.0.5.1-src
 
 %build
 %configure
