@@ -197,7 +197,7 @@
   (if (eval (ahash-ref plugin-old-data-table (list name :prioritary)))
       (plugin-initialize name)
       (delayed
-       (:idle 500)
+       (:idle 1000)
        (plugin-initialize name))))
 
 (define plugin-initialize-done? #f)
