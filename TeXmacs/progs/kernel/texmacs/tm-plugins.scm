@@ -93,6 +93,8 @@
 	 (if (!= (ahash-ref plugin-data-table name)
 		 (ahash-ref plugin-old-data-table name))
 	     ((second cmd))))
+	((func? cmd :prioritary 1)
+	 (ahash-set! plugin-data-table (list name :prioritary) (cadr cmd)))
         ((func? cmd :initialize 1)
 	 ((second cmd)))
 	((func? cmd :launch 1)
@@ -192,9 +194,11 @@
 (define-public (lazy-plugin-initialize name)
   "Initialize the plug-in @name in a lazy way"
   (ahash-set! plugin-initialize-todo name #t)
-  (delayed
-    (:idle 2000)
-    (plugin-initialize name)))
+  (if (eval (ahash-ref plugin-old-data-table (list name :prioritary)))
+      (plugin-initialize name)
+      (delayed
+       (:idle 500)
+       (plugin-initialize name))))
 
 (define plugin-initialize-done? #f)
 
