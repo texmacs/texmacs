@@ -12,15 +12,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (mupad-menus) mupad-help-menu)
+
 (define (mupad-initialize)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mupad-input) mupad)
-  (lazy-menu (mupad-menus) mupad-help-menu)
   (menu-extend session-help-icons
-  (if (in-mupad?)
-      |
-      (=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
-	  (link mupad-help-menu)))))
+    (if (in-mupad?)
+	|
+	(=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
+	    (link mupad-help-menu)))))
 
 (define (mupad-serialize lan t)
   (import-from (utils plugins plugin-cmd))
@@ -51,4 +52,3 @@
   ("\"" (insert "\""))
   ("."  (insert "."))
   ("`"  (insert "`")))
-

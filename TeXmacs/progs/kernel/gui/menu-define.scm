@@ -153,92 +153,6 @@
 (ahash-set! menu-pre-table 'unquote-splicing `((:1) ,(lambda (p) p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lazy menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define menu-lazy-table (make-ahash-table))
-
-(define (menu-lazy-force name)
-  (if (ahash-ref menu-lazy-table name)
-      (with module (ahash-ref menu-lazy-table name)
-	(ahash-remove! menu-lazy-table name)
-	(module-load module))))
-
-(define-public (menu-lazy-menu module name)
-  "Helper routine for lazy-menu macro"
-  (menu-lazy-force name)
-  (ahash-set! menu-lazy-table name module))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Manipulating menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define menu-bindings-table (make-ahash-table))
-
-(define (menu-match? what label)
-  (or (== what label)
-      (match? label `(text :1 ,what))
-      (and (match? label '((:or balloon check shortcut) :1 :*))
-	   (menu-match? what (cadr label)))))
-
-(define (menu-set-in! menu name what)
-  (cond ((or (null? menu) (npair? menu)) #f)
-	;((and (null? (cdr name))
-	;      (match? (car menu) '(:menu-wide-label :*))
-	;      (menu-match? (car name) (caar menu)))
-	; (set-car! (cdar menu) what))
-	((and (match? (car menu) '((:or -> =>) :menu-label :*))
-	      (menu-match? (car name) (cadar menu)))
-	 (if (null? (cdr name))
-	     (begin (set-cdr! (cdar menu) what) what)
-	     (menu-set-in! (cddar menu) (cdr name) what)))
-	((match? (car menu) '(link :1))
-	 (let ((ok (menu-set! (cons (cadar menu) name) what)))
-	   (if ok ok (menu-set-in! (cdr menu) name what))))
-	(else (menu-set-in! (cdr menu) name what))))
-
-(define-public (menu-set! name menu)
-  "Low level function for associating @menu to @name"
-  (menu-lazy-force name)
-  (cond ((null? name) (menu-set! 'texmacs-menu menu))
-	((nlist? name) (menu-set! (list name) menu))
-	((symbol? (car name))
-	 (if (null? (cdr name))
-	     (ahash-set! menu-bindings-table (car name) menu)
-	     (let ((old-menu (ahash-ref menu-bindings-table (car name))))
-	       (if old-menu (menu-set-in! old-menu (cdr name) menu) #f))))
-	((string? (car name))
-	 (menu-set! (cons 'texmacs-menu name) menu))
-	(else #f)))
-
-(define (menu-get-in menu name)
-  (cond ((null? name) menu)
-	((or (null? menu) (npair? menu)) #f)
-	;((and (null? (cdr name))
-	;      (match? (car menu) '(:menu-wide-label :*))
-	;      (menu-match? (car name) (caar menu)))
-	; (cadar menu))
-	((and (match? (car menu) '((:or -> =>) :menu-label :*))
-	      (menu-match? (car name) (cadar menu)))
-	 (menu-get-in (cddar menu) (cdr name)))
-	((match? (car menu) '(link :1))
-	 (let ((submenu (menu-get (cons (cadar menu) name))))
-	   (if submenu submenu (menu-get-in (cdr menu) name))))
-	(else (menu-get-in (cdr menu) name))))
-
-(define-public (menu-get name)
-  "Low level function for getting menu associated to @name"
-  (menu-lazy-force name)
-  (cond ((null? name) (menu-get 'texmacs-menu))
-	((nlist? name) (menu-get (list name)))
-	((symbol? (car name))
-	 (let ((menu (ahash-ref menu-bindings-table (car name))))
-	   (if menu (menu-get-in menu (cdr name)) #f)))
-	((string? (car name))
-	 (menu-get (cons 'texmacs-menu name)))
-	(else #f)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -246,11 +160,15 @@
   (list 'quasiquote (menu-pre body)))
 
 (define-public-macro (menu-bind name . body)
-  `(menu-set! ',name ,(list 'quasiquote (menu-pre body))))
+  (receive (opts real-body) (list-break body not-define-option?)
+    `(tm-define (,name) ,@opts ,(list 'quasiquote (menu-pre real-body)))))
 
 (define-public-macro (menu-extend name . body)
-  `(menu-set! ',name (append (menu-get ',name)
-			     ,(list 'quasiquote (menu-pre body)))))
+  (receive (opts real-body) (list-break body not-define-option?)
+    `(tm-redefine ,name ,@opts
+       (with old-menu (tm-definition ,name ,@opts)
+	 (lambda () (append (old-menu)
+			    ,(list 'quasiquote (menu-pre body))))))))
 
 (define-public-macro (lazy-menu module . menus)
-  `(for-each (lambda (x) (menu-lazy-menu ',module x)) ',menus))
+  `(lazy-define ,module ,@menus))

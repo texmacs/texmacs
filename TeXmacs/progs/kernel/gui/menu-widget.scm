@@ -15,9 +15,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel gui menu-widget)
-  (:use
-    (kernel texmacs tm-define) (kernel gui menu-define)
-    (kernel gui kbd-define)))
+  (:use (kernel gui menu-define) (kernel gui kbd-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu utilities
@@ -113,7 +111,7 @@
       (widget-command-button-1 (make-menu-label label e?)
 			       command #f)
       (widget-command-button-3
-       (if (string=? check "")
+       (if (== check "")
 	   (widget-empty)
 	   (widget-box '()
 		       (cadr (assoc check '(("v" "<checked>")
@@ -122,7 +120,7 @@
 		       (color (if e? "black" "dark grey"))
 		       #t #f))
        (make-menu-label label e?)
-       (if (string=? short "")
+       (if (== short "")
 	   (widget-empty)
 	   (make-menu-label short e? #t))
        command
@@ -202,7 +200,7 @@
        opt)
       (if error? (make-menu-error "invalid symbol attribute in " p)
 	  (let ((sh (or opt-shortcut (kbd-find-shortcut symstring))))
-	    (if (string=? sh "")
+	    (if (== sh "")
 		(make-menu-symbol-button e? symstring opt-symobj)
 		(widget-balloon
 		 (make-menu-symbol-button e? symstring opt-symobj)
@@ -256,7 +254,7 @@
 
 (define (make-menu-link p e? bar?)
   "Make @(link :1) menu items."
-  (with linked (menu-get (cadr p))
+  (with linked ((eval (cadr p)))
     (if linked (make-menu-items linked e? bar?)
 	(make-menu-error "bad link: " (object->string (cadr p))))))
 
@@ -310,7 +308,7 @@
 
 (define (menu-expand-link p)
   "Expand menu link @p."
-  (with linked (menu-get (cadr p))
+  (with linked ((eval (cadr p)))
     (if linked (menu-expand linked) p)))
 
 (define (menu-expand-if p)
@@ -327,8 +325,9 @@
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
-(define-public (menu-expand p)
-  "Expand links and conditional menus in menu @p."
+(tm-define (menu-expand p)
+  (:type (-> object object))
+  (:synopsis "Expand links and conditional menus in menu @p.")
   (cond ((npair? p) p)
 	((string? (car p)) p)
 	((symbol? (car p))
