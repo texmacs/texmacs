@@ -227,13 +227,17 @@ init_env_vars () {
   (void) get_env_path ("TEXMACS_FILE_PATH",
 		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
 		       style_path);
-  (void) get_env_path ("TEXMACS_DOC_PATH", "$TEXMACS_HOME_PATH/doc");
+  (void) set_env_path ("TEXMACS_DOC_PATH",
+		       get_env_path ("TEXMACS_DOC_PATH") |
+		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |
+		       plugin_path ("doc"));
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
   (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
-		       url ("$TEXMACS_PATH/misc/pixmaps"));
+		       url ("$TEXMACS_PATH/misc/pixmaps") |
+		       plugin_path ("misc/pixmaps"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else

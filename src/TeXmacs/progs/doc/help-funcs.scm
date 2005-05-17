@@ -19,8 +19,7 @@
 ;; Loading help buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define help-file-path
-  "$TEXMACS_DOC_PATH:$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc")
+(define help-file-path "$TEXMACS_DOC_PATH")
 
 (tm-define (url-exists-in-help? s)
   (url-exists? (url help-file-path s)))
