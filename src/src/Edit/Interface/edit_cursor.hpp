@@ -60,8 +60,8 @@ public:
   void go_end ();
   void go_start_line ();
   void go_end_line ();
-  void go_start_of (string what);
-  void go_end_of (string what);
+  void go_start_of (tree_label what);
+  void go_end_of (tree_label what);
   void go_start_with (string var, string val);
   void go_end_with (string var, string val);
 

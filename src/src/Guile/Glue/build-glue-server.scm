@@ -42,8 +42,7 @@
   (set-shrinking-factor set_shrinking_factor (void int))
   (get-shrinking-factor get_shrinking_factor (int))
 
-  (exec-delayed exec_delayed (void string))
-  (exec-delayed-cmd exec_delayed (void command))
+  (exec-delayed exec_delayed (void object))
   (shell shell (void string))
   (dialogue-end dialogue_end (void))
   (choose-file choose_file (void string string scheme_tree))
@@ -79,7 +78,7 @@
   (texmacs-load-tree load_tree (tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
   (texmacs-save-buffer save_buffer (void url string))
-  (delayed-autosave delayed_autosave (void))
+  (auto-save auto_save (void))
   
   (color get_color (int string))
   (style-clear-cache style_clear_cache (void))
@@ -93,6 +92,9 @@
   (get-nr-windows get_nr_windows (int))
   (postscript-gc postscript_gc (void))
   (inclusions-gc inclusions_gc (void))
+  (set-message set_message (void string string))
+  (set-message-temp set_message (void string string bool))
+  (recall-message recall_message (void))
   (translate translate (string string string string))
   (yes? is_yes (bool string))
   (quit-TeXmacs quit (void))

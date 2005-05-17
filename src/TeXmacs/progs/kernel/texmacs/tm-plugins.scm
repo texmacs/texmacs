@@ -13,29 +13,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-plugins)
-  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes))
-  (:export
-    plugin-old-data-table plugin-data-table
-    connection-defined? connection-info connection-get-handlers
-    plugin-configure-cmds plugin-configure-sub ; for plugin-configure macro
-    plugin-configure plugin-initialize
-    ;; lazy exports from other modules
-    plugin-supports-math-input-ref plugin-math-input
-    plugin-supports-completions?
-    plugin-supports-input-done?))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy exports from other modules
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-define (texmacs plugin plugin-convert) plugin-supports-math-input-ref)
-(lazy-define (texmacs plugin plugin-convert) plugin-math-input)
-(lazy-define (texmacs plugin plugin-cmd) plugin-serializer-set!)
-(lazy-define (texmacs plugin plugin-cmd) plugin-commander-set!)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-completions?)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-completions-set!)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-input-done?)
-(lazy-define (texmacs plugin plugin-cmd) plugin-supports-input-done-set!)
+(lazy-define (utils plugins plugin-convert) plugin-supports-math-input-ref)
+(lazy-define (utils plugins plugin-convert) plugin-math-input)
+(lazy-define (utils plugins plugin-cmd) plugin-serializer-set!)
+(lazy-define (utils plugins plugin-cmd) plugin-commander-set!)
+(lazy-define (utils plugins plugin-cmd) plugin-supports-completions?)
+(lazy-define (utils plugins plugin-cmd) plugin-supports-completions-set!)
+(lazy-define (utils plugins plugin-cmd) plugin-supports-input-done?)
+(lazy-define (utils plugins plugin-cmd) plugin-supports-input-done-set!)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Connection types for plugins
@@ -56,10 +47,12 @@
 	(ahash-set! connection-variant (list name (car opt)) val)
 	(ahash-set! connection-varlist name (rcons l (car opt))))))
 
-(define (connection-defined? name)
+(define-public (connection-defined? name)
+  (lazy-plugin-force)
   (ahash-ref connection-defined name))
 
-(define (connection-info name session)
+(define-public (connection-info name session)
+  (lazy-plugin-force)
   (with pos (string-index session #\:)
     (if pos (connection-info name (substring session 0 pos))
 	(with val (ahash-ref connection-variant (list name session))
@@ -72,7 +65,8 @@
 	      (cons (list 'tuple channel routine)
 		    (ahash-ref connection-handler name))))
 
-(define (connection-get-handlers name)
+(define-public (connection-get-handlers name)
+  (lazy-plugin-force)
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
@@ -89,16 +83,18 @@
 ;; Configuration of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define plugin-old-data-table (make-ahash-table))
-(define plugin-data-table (make-ahash-table))
+(define-public plugin-old-data-table (make-ahash-table))
+(define-public plugin-data-table (make-ahash-table))
 
 (define (plugin-configure-cmd name cmd)
   (cond ((or (func? cmd :require 1) (func? cmd :version 1))
 	 (ahash-set! plugin-data-table name ((second cmd))))
         ((func? cmd :setup 1)
-	 (if (not (== (ahash-ref plugin-data-table name)
-		      (ahash-ref plugin-old-data-table name)))
+	 (if (!= (ahash-ref plugin-data-table name)
+		 (ahash-ref plugin-old-data-table name))
 	     ((second cmd))))
+	((func? cmd :prioritary 1)
+	 (ahash-set! plugin-data-table (list name :prioritary) (cadr cmd)))
         ((func? cmd :initialize 1)
 	 ((second cmd)))
 	((func? cmd :launch 1)
@@ -121,7 +117,7 @@
 	 (connection-insert-handler
 	  name (second cmd) (symbol->string (third cmd))))
 	((func? cmd :session 1)
-	 (menu-extend session-menu
+	 (menu-extend supported-sessions-menu
 	   (promise (connection-menu-promise name (second cmd)))))
 	((func? cmd :filter-in 1)
 	 (noop))
@@ -134,19 +130,22 @@
 	((func? cmd :test-input-done 1)
 	 (if (second cmd) (plugin-supports-input-done-set! name)))))
 
-(define (plugin-configure-cmds name cmds)
-  (if (and (not (null? cmds)) (ahash-ref plugin-data-table name))
+(define-public (plugin-configure-cmds name cmds)
+  "Helper function for plugin-configure"
+  (if (and (nnull? cmds) (ahash-ref plugin-data-table name))
       (begin
         (plugin-configure-cmd name (car cmds))
 	(plugin-configure-cmds name (cdr cmds)))))
 
-(define (plugin-configure-sub cmd)
+(define-public (plugin-configure-sub cmd)
+  "Helper function for plugin-configure"
   (if (and (list? cmd) (= (length cmd) 2)
 	   (in? (car cmd) '(:require :version :setup :initialize)))
       (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd))))
       cmd))
 
-(define-macro (plugin-configure name2 . options)
+(define-public-macro (plugin-configure name2 . options)
+  "Declare and configure plug-in with name @name2 according to @options"
   (let* ((name (if (string? name2) name2 (symbol->string name2)))
 	 (in-name (string->symbol (string-append "in-" name "?"))))
     `(begin
@@ -159,11 +158,54 @@
 ;; Initialization of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (plugin-initialize name*)
-  ;(display* "loading plugin " name* "\n")
-  (let* ((name (symbol->string name*))
-	 (file (string-append "plugins/" name "/progs/init-" name ".scm")))
-    (with u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)
-      (if (url-exists? u)
-	  (with fname (url-materialize u "r")
-	    (load fname))))))
+(define plugin-initialize-todo (make-ahash-table))
+
+(define (plugin-load-setup)
+  (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
+      (set! plugin-old-data-table
+	    (load-object "$TEXMACS_HOME_PATH/system/setup.scm"))))
+
+(define (plugin-save-setup)
+  (if (!= plugin-old-data-table plugin-data-table)
+      (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
+
+(define (plugin-all-initialized?)
+  (with l (ahash-table->list plugin-initialize-todo)
+    (not (list-or (map cdr l)))))
+
+(define-public (plugin-initialize name*)
+  "Initialize plugin with name @name*"
+  (if (== (ahash-size plugin-old-data-table) 0) (plugin-load-setup))
+  (if (ahash-ref plugin-initialize-todo name*)
+      (let* ((name (symbol->string name*))
+	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
+	     (u (url "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+	(ahash-set! plugin-initialize-todo name* #f)
+	(if (url-exists? u)
+	    (with fname (url-materialize u "r")
+	      ;;(display* "loading plugin " name* "\n")
+	      (load fname)))
+	(if (plugin-all-initialized?) (plugin-save-setup)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Lazy initialization of plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (lazy-plugin-initialize name)
+  "Initialize the plug-in @name in a lazy way"
+  (ahash-set! plugin-initialize-todo name #t)
+  (if (eval (ahash-ref plugin-old-data-table (list name :prioritary)))
+      (plugin-initialize name)
+      (delayed
+       (:idle 1000)
+       (plugin-initialize name))))
+
+(define plugin-initialize-done? #f)
+
+(define-public (lazy-plugin-force)
+  "Force all lazy plugin initializations to take place"
+  (if plugin-initialize-done? #f
+      (with l (ahash-table->list plugin-initialize-todo)
+	(for-each plugin-initialize (map car l))
+	(set! plugin-initialize-done? #t)
+	#t)))

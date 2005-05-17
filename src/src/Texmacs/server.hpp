@@ -29,7 +29,6 @@ class server_rep: public abstract_struct {
 public:
   server_rep ();
   virtual ~server_rep ();
-  virtual void advance_banner () = 0;
 
   /* Control global server parameters */
   virtual void   set_input_language (string s) = 0;
@@ -48,8 +47,7 @@ public:
 
   /* Guile scheme motor */
   virtual bool exec_file (url u) = 0;
-  virtual void exec_delayed (string s) = 0;
-  virtual void exec_delayed (command cmd) = 0;
+  virtual void exec_delayed (object cmd) = 0;
   virtual string preference (string var) = 0;
 
   /* TeXmacs layout */
@@ -98,7 +96,7 @@ public:
   virtual void load_buffer (url name, string f, int w=0, bool a=false)=0;
   virtual void save_buffer (url name, string fm) = 0;
   virtual void auto_save () = 0;
-  virtual void delayed_autosave () = 0;
+  //virtual void delayed_autosave () = 0;
   virtual bool buffer_unsaved () = 0;
   virtual bool exists_unsaved_buffer () = 0;
   virtual void pretend_save_buffer () = 0;
@@ -140,7 +138,8 @@ public:
   virtual void set_extents (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void set_left_footer (string s) = 0;
   virtual void set_right_footer (string s) = 0;
-  virtual void set_message (string left, string right) = 0;
+  virtual void set_message (string left, string right, bool temp= false) = 0;
+  virtual void recall_message () = 0;
   virtual void interactive (string name, string& s, command call_back) = 0;
   virtual void dialogue_start (string name, widget wid, scheme_tree prg) = 0;
   virtual void dialogue_inquire (scheme_tree& arg) = 0;

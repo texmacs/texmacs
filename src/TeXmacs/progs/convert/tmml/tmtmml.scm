@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tmml tmtmml)
-  (:use (convert tmml tmmlout))
-  (:export texmacs->tmml tmtmml))
+  (:use (convert tmml tmmlout)))
 
 (define (tmtmml-file x)
   (define (tmtmml-keep? x)
@@ -36,7 +35,7 @@
 
 (define (tmtmml-args l)
   (cond ((null? l) l)
-	((and (null? (cdr l)) (not (== (car l) ""))) (list (tmtmml (car l))))
+	((and (null? (cdr l)) (!= (car l) "")) (list (tmtmml (car l))))
 	(else (map (lambda (x) (list 'tm-arg (tmtmml x))) l))))
 
 (define (tmtmml-apply dyn tag l)
@@ -60,7 +59,7 @@
 	   (cons* tag (tmtmml-attrs (cdar l)) (tmtmml-args (cdr l))))
 	  (else (cons tag (tmtmml-args l))))))
 
-(define (tmtmml x)
+(tm-define (tmtmml x)
   (cond ((string? x) (tm->xml-cdata x))
 	((func? x '!file) (tmtmml-file (cadr x)))
 	((func? x 'document) (tmtmml-document (cdr x)))
@@ -73,7 +72,7 @@
 	(else (tmtmml-regular (car x) (cdr x)))))
 
 (define (tmtmml-simplify x)
-  (cond ((not (pair? x)) x)
+  (cond ((npair? x) x)
 	((and (func? x 'quote) (string? (cadr x))) (cadr x))
 	(else (map tmtmml-simplify x))))
 
@@ -91,7 +90,7 @@
 	(display "failed\n")
 	(write-diff orig new))))
 
-(define (texmacs->tmml x)
+(tm-define (texmacs->tmml x)
   (if (tmfile? x)
       (texmacs->tmml (list '!file x))
       (with simplified (tree->stree (tree-simplify (stree->tree x)))

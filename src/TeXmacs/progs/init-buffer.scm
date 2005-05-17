@@ -14,10 +14,10 @@
 
 (if (no-name?)
     (begin
-      (use-modules (texmacs texmacs tm-document) (texmacs texmacs tm-print))
+      (use-modules (generic document-edit) (texmacs texmacs tm-print))
       (init-style "generic")
       (with lan (get-preference "language")
-	(if (not (== lan "english")) (init-language lan)))
+	(if (!= lan "english") (init-language lan)))
       (with psz (get-printer-paper-type)
-	(if (not (== psz "a4")) (init-page-type psz)))
+	(if (!= psz "a4") (init-page-type psz)))
       (pretend-save-buffer)))

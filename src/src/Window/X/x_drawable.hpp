@@ -56,12 +56,12 @@ public:
   color get_background ();
   void  set_color (color c);
   void  set_background (color c);
-  void  set_line_style (SI w, int type=0);
+  void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
   void  clear (SI x1, SI y1, SI x2, SI y2);
   void  fill (SI x1, SI y1, SI x2, SI y2);
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
-  void  polygon (array<SI> x, array<SI> y);
+  void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
   void  postscript (url image,
 		    SI w, SI h, SI x, SI y,

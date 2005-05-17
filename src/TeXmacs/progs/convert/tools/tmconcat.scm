@@ -12,12 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmconcat)
-  (:export
-    tmconcat-tokenize-math
-    tmconcat-structure-tabs
-    tmconcat-structure-brackets
-    tmconcat-structure-scripts))
+(texmacs-module (convert tools tmconcat))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replacing mathematical string by list of tokens

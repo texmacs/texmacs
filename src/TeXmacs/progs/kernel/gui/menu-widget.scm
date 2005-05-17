@@ -15,10 +15,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel gui menu-widget)
-  (:use (kernel texmacs tm-define) (kernel gui menu-define) (kernel gui kbd-define))
-  (:export
-    set-check-mark!
-    make-menu-widget menu-expand))
+  (:use (kernel gui menu-define) (kernel gui kbd-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu utilities
@@ -34,22 +31,14 @@
 (define (widget-empty) (widget-glue #f #f 0 0))
 (define (make-menu-empty) (widget-harray '() -1))
 
-(define (set-check-mark! proc mark pred)
-  (set-symbol-procedure! (procedure-name proc) proc)
-  (set-procedure-property! proc :check-mark (list mark pred)))
-(define (get-check-mark proc)
-  (and (procedure? proc) (procedure-property proc :check-mark)))
-(define (get-check-mark* name)
-  (get-check-mark (and (symbol? name) (symbol-procedure name))))
-
 (define (delay-command cmd)
-  (object->command (lambda () (exec-delayed-cmd cmd))))
+  (object->command (lambda () (exec-delayed cmd))))
 
 (define-macro (make-menu-command cmd)
-  `(delay-command (object->command (lambda ()
-				     (menu-before-action)
-				     ,cmd
-				     (menu-after-action)))))
+  `(delay-command (lambda ()
+		    (menu-before-action)
+		    ,cmd
+		    (menu-after-action))))
 
 (define (kbd-find-shortcut what)
   (with r (kbd-find-inv-binding what)
@@ -83,7 +72,7 @@
   ;;     Simple menu label, its display style is controlled by tt? and e?
   ;;   <label> :: (icon <string>)
   ;;     Pixmap menu label, the <string> is the name of the pixmap.
-  (let ((tt? (and (not (null? opt)) (car opt)))
+  (let ((tt? (and (nnull? opt) (car opt)))
 	(col (color (if e? "black" "dark grey"))))
     (cond ((string? p)			; "text"
 	   (widget-menu-text p col (get-input-language) tt?))
@@ -122,7 +111,7 @@
       (widget-command-button-1 (make-menu-label label e?)
 			       command #f)
       (widget-command-button-3
-       (if (string=? check "")
+       (if (== check "")
 	   (widget-empty)
 	   (widget-box '()
 		       (cadr (assoc check '(("v" "<checked>")
@@ -131,7 +120,7 @@
 		       (color (if e? "black" "dark grey"))
 		       #t #f))
        (make-menu-label label e?)
-       (if (string=? short "")
+       (if (== short "")
 	   (widget-empty)
 	   (make-menu-label short e? #t))
        command
@@ -148,7 +137,7 @@
       (if ((cadr opt-check)) (car opt-check) "")
       (with source (promise-source action)
 	(if (not (and source (pair? source))) ""
-	    (with prop (get-check-mark* (car source))
+	    (with prop (property (car source) :check-mark)
 	      (if (and prop (apply (cadr prop) (cdr source)))
 		  (car prop) ""))))))
 
@@ -211,7 +200,7 @@
        opt)
       (if error? (make-menu-error "invalid symbol attribute in " p)
 	  (let ((sh (or opt-shortcut (kbd-find-shortcut symstring))))
-	    (if (string=? sh "")
+	    (if (== sh "")
 		(make-menu-symbol-button e? symstring opt-symobj)
 		(widget-balloon
 		 (make-menu-symbol-button e? symstring opt-symobj)
@@ -265,7 +254,7 @@
 
 (define (make-menu-link p e? bar?)
   "Make @(link :1) menu items."
-  (with linked (menu-get (cadr p))
+  (with linked ((eval (cadr p)))
     (if linked (make-menu-items linked e? bar?)
 	(make-menu-error "bad link: " (object->string (cadr p))))))
 
@@ -319,7 +308,7 @@
 
 (define (menu-expand-link p)
   "Expand menu link @p."
-  (with linked (menu-get (cadr p))
+  (with linked ((eval (cadr p)))
     (if linked (menu-expand linked) p)))
 
 (define (menu-expand-if p)
@@ -336,9 +325,10 @@
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
-(define (menu-expand p)
-  "Expand links and conditional menus in menu @p."
-  (cond ((not (pair? p)) p)
+(tm-define (menu-expand p)
+  (:type (-> object object))
+  (:synopsis "Expand links and conditional menus in menu @p.")
+  (cond ((npair? p) p)
 	((string? (car p)) p)
 	((symbol? (car p))
 	 (with result (ahash-ref menu-expand-table (car p))

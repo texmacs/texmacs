@@ -108,6 +108,7 @@ simplify_key_press (string key) {
 
 void
 edit_interface_rep::key_press (string key) {
+  set_message ("", "");
   if (input_mode != INPUT_NORMAL)
     key= simplify_key_press (key);
   switch (input_mode) {
@@ -173,7 +174,6 @@ edit_interface_rep::show_keymaps () {
 
 void
 edit_interface_rep::handle_keypress (keypress_event ev) {
-  call ("lazy-in-mode-force");
   buf->mark_undo_block ();
   key_press (ev->key);
   notify_change (THE_DECORATIONS);

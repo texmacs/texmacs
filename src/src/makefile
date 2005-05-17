@@ -33,7 +33,7 @@ TEXMACS_objects := $(strip $(call uses,system classes data resource plugins\
  window typeset edit glue) $(texmacs_obj) $(instanciations_obj))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDBPATH) $(LDBXWINDOW) \
-  $(LDBFREETYPE) $(LDBICONV) $(LDBGUILE) $(LDBDL)
+  $(LDBGUILE) $(LDBFREETYPE) $(LDBICONV) $(LDBDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@

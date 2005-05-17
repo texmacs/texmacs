@@ -16,7 +16,7 @@
 
 class tm_scheme_rep: virtual public server_rep {
 protected:
-  array<command> cmds;         // commands which are still to be executed
+  array<object> cmds;          // commands which are still to be executed
   window dialogue_win;         // dialogue window
   widget dialogue_wid;         // dialogue widget
 
@@ -25,8 +25,7 @@ public:
   ~tm_scheme_rep ();
 
   bool exec_file (url u);
-  void exec_delayed (string s);
-  void exec_delayed (command cmd);
+  void exec_delayed (object cmd);
   void exec_pending_commands ();
   string preference (string var);
 

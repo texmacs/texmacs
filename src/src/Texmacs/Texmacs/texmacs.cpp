@@ -92,6 +92,8 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-S") || (s == "-setup")) {
 	remove ("$TEXMACS_HOME_PATH/system/settings.scm");
 	remove ("$TEXMACS_HOME_PATH/system/setup.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
       }
       else if ((s == "-v") || (s == "-version")) {
 	cout << "\n";
@@ -190,7 +192,7 @@ TeXmacs_main (int argc, char** argv) {
 #ifndef OS_WIN32
     if ((my_init_cmds == "") &&
 	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
-      sv->exec_delayed ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)");
+      sv->exec_delayed (scheme_cmd ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)"));
 #endif
   }
 
@@ -200,8 +202,6 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
-  sv->delayed_autosave();
-  dis->delayed_message (sv->get_meta(), "banner", 100);
   dis->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";

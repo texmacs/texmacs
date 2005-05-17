@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools xmltm-test)
-  (:use (convert tools xmltm))
-  (:export regtest-xmltm))
+  (:use (convert tools xmltm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Parser
@@ -188,7 +187,7 @@
 ;; Test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (regtest-xmltm)
+(tm-define (regtest-xmltm)
   (let ((n (+ (regtest-htmltm-parse)
 	      (regtest-parse-xmlns)
 	      (regtest-parse-htmlns)

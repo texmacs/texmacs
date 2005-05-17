@@ -233,7 +233,7 @@ texmacs_input_rep::scheme_flush (bool force) {
 
 void
 texmacs_input_rep::latex_flush (bool force) {
-  if (force || ends (buf, "\n\n")) {
+  if (force || ends (buf, "\n\n") || ends (buf, "\r\n\r\n")) {
     write (generic_to_tree (buf, "latex-snippet"));
     buf= "";
   }

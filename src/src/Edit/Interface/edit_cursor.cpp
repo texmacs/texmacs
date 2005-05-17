@@ -262,13 +262,13 @@ edit_cursor_rep::go_end_line () {
 }
 
 void
-edit_cursor_rep::go_start_of (string what) {
+edit_cursor_rep::go_start_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (start (et, p));
 }
 
 void
-edit_cursor_rep::go_end_of (string what) {
+edit_cursor_rep::go_end_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (end (et, p));
 }

@@ -84,7 +84,7 @@ server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
 tm_server_rep::tm_server_rep (display dis2):
-  dis (dis2), vw (NULL), banner_nr (-1),
+  dis (dis2), vw (NULL),
   full_screen (false), full_screen_edit (false), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
@@ -105,7 +105,7 @@ tm_server_rep::tm_server_rep (display dis2):
   bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
     my_init_cmds= "(begin" * my_init_cmds * ")";
-    exec_delayed (my_init_cmds);
+    exec_delayed (scheme_cmd (my_init_cmds));
   }
   style_update_menu ();
 #ifdef OS_GNU_LINUX
@@ -113,24 +113,6 @@ tm_server_rep::tm_server_rep (display dis2):
 #elif defined OS_POWERPC_GNU_LINUX
   return; // in order to avoid segmentation faults
 #endif
-}
-
-void
-tm_server_rep::advance_banner () {
-  banner_nr++;
-  if (get_editor()->et != tree (DOCUMENT, "")) banner_nr=5;
-  if (banner_nr < 4) {
-    static string banner[4]= {
-      "Welcome to GNU TeXmacs",
-      "GNU TeXmacs falls under the GNU general public license",
-      "GNU TeXmacs comes without any form of legal warranty",
-      "More information about GNU TeXmacs can be found in the Help->About menu"
-    };
-    set_message (banner[banner_nr], "GNU TeXmacs " TEXMACS_VERSION);
-    dis->delayed_message (get_meta(), "banner", 2500);
-  }
-
-  else if (banner_nr == 4) set_message ("", "");
 }
 
 tm_server_rep::~tm_server_rep () {}
@@ -363,12 +345,20 @@ tm_server_rep::set_right_footer (string s) {
 }
 
 void
-tm_server_rep::set_message (string left, string right) {
-  get_editor()->set_message (left, right);
+tm_server_rep::set_message (string left, string right, bool temp) {
+  if ((vw == NULL) || (vw->win == NULL)) return;
+  get_editor()->set_message (left, right, temp);
+}
+
+void
+tm_server_rep::recall_message () {
+  if ((vw == NULL) || (vw->win == NULL)) return;
+  get_editor()->recall_message ();
 }
 
 void
 tm_server_rep::interactive (string name, string& s, command call_back) {
+  if ((vw == NULL) || (vw->win == NULL)) return;
   get_meta()->interactive (name, s, call_back);
 }
 
