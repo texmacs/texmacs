@@ -284,11 +284,17 @@
 (tm-define (docgrep-in-doc what)
   (with lan (get-output-language)
     (cond ((== lan "french")
-	   (docgrep what "$TEXMACS_DOC_PATH:$TEXMACS_PATH/doc" "*.fr.tm"))
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.fr.tm"))
+	  ((== lan "german")
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.de.tm"))
+	  ((== lan "italian")
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.it.tm"))
 	  ((== lan "spanish")
-	   (docgrep what "$TEXMACS_DOC_PATH:$TEXMACS_PATH/doc" "*.es.tm"))
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.es.tm"))
+	  ((== lan "portuguese")
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.pt.tm"))
 	  (else
-	   (docgrep what "$TEXMACS_DOC_PATH:$TEXMACS_PATH/doc" "*.en.tm")))))
+	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
 
 (tm-define (docgrep-in-src what)
   (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
