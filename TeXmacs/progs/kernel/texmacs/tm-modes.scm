@@ -73,7 +73,9 @@
     (if handle (cdr handle)
 	(let* ((what (texmacs-mode-mode what*))
 	       (of (texmacs-mode-mode of*))
-	       (result (or (== of 'always%) (nnull? (query of what)))))
+	       (result (or (== of 'always%)
+			   (== what 'prevail%)
+			   (nnull? (query of what)))))
 	  (ahash-set! texmacs-submode-table key result)
 	  result))))
 
@@ -83,6 +85,7 @@
 
 (texmacs-modes
   (always% #t)
+  (prevail% #t)
   (in-source% (== (get-env "mode") "src"))
   (in-text% (and (== (get-env "mode") "text") (not (in-graphics?))))
   (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
