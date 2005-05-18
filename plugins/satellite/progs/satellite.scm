@@ -67,29 +67,14 @@
    (url->string (get-name-buffer)))
 
 (define (cons-file-name name l)
-    (letrec ((append-name (lambda(l)
-                             (if (null? l)
-                                  ""
-                                  (string-append 
-				   "-" 
-				   (car l) 
-				   (append-name (cdr l)))))))
-      (cond 
-       ((equal? '(section subsection subsubsection) l)
-	(string-append name "-tdm"))
-       (else (string-append name (append-name l))))))
-
-
-
+  (with first (if (string? (car l)) (car l) (symbol->string (car l)))
+    (string-append name "-" first "s")))
 
 (define (sublist-listenv lterm l)
   (extract-included (env-in? lterm) l))
 
-
-
 (define (env-in? lterm)
   (lambda(x) (and (pair? x) (in? (car x) lterm))))
-
 
 ;listenv contains a list of environment and tag names :
 ; (section subsection subsubsection)
@@ -111,10 +96,9 @@
 	    (if (not (equal? src-buff  (get-strg-name-buffer))) (kill-buffer))
 	    (new-buffer)  
 	    (set-name-buffer the-nw-buff)
-	    (if (equal? lenv '(section subsection subsubsection))
-		(init-env "magnification" "0.8")
-		(init-env "magnification" "1"))
-	    (init-style "sat")
+	    (if (in? 'chapter lenv) (init-env "magnification" "0.8"))
+	    (init-style "generic")
+	    (init-add-package "sat")
 	    (init-env "srce" src-buff)
 	    (init-env "def-satellite" (object->string lenv))
 	    (insert  the-tree)))))
