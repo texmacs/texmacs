@@ -95,68 +95,6 @@
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
 
-(tm-define (delayed-sub body)
-  (cond ((or (npair? body) (nlist? (car body)) (not (keyword? (caar body))))
-	 `(lambda () ,@body #t))
-	((== (caar body) :pause)
-	 `(let* ((time (+ (texmacs-time) ,(cadar body)))
-		 (proc ,(delayed-sub (cdr body))))
-	    (lambda ()
-	      (and (> (texmacs-time) time) (proc)))))
-	((== (caar body) :idle)
-	 `(with proc ,(delayed-sub (cdr body))
-	    (lambda ()
-	      (and (> (idle-time) ,(cadar body)) (proc)))))
-	((== (caar body) :refresh)
-	 (with sym (gensym)
-	   `(begin
-	      (define ,sym #f)
-	      (with proc ,(delayed-sub (cdr body))
-		(lambda ()
-		  (and (!= ,sym (change-time))
-		       (> (idle-time) ,(cadar body))
-		       (proc)
-		       (begin
-			 (set! ,sym (change-time))
-			 #f)))))))
-	((== (caar body) :require)
-	 `(with proc ,(delayed-sub (cdr body))
-	    (lambda ()
-	      (and ,(cadar body) (proc)))))
-	((== (caar body) :permanent)
-	 `(with proc ,(delayed-sub (cdr body))
-	    (lambda ()
-	      (and (proc) (not ,(cadar body))))))
-	(else (delayed-sub (cdr body)))))
-
-(tm-define-macro (delayed . body)
-  `(exec-delayed ,(delayed-sub body)))
-
-(tm-define (texmacs-banner)
-  (with tmv (string-append "GNU TeXmacs " (texmacs-version))
-    (delayed
-     (set-message "Welcome to GNU TeXmacs" tmv)
-     (delayed
-     (:pause 2500)
-     (set-message "GNU TeXmacs falls under the GNU general public license" tmv)
-     (delayed
-     (:pause 2500)
-     (set-message "GNU TeXmacs comes without any form of legal warranty" tmv)
-     (delayed
-     (:pause 2500)
-     (set-message
-      "More information about GNU TeXmacs can be found in the Help->About menu"
-      tmv)
-     (delayed
-     (:pause 2500)
-     (set-message "" ""))))))))
-
-(tm-define (set-temporary-message left right len)
-  (set-message-temp left right #t)
-  (delayed
-    (:pause len)
-    (recall-message)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -165,13 +103,3 @@
 (tm-define (set-action-path p) (set! the-action-path p))
 (tm-define (has-action-path?) (!= the-action-path '(-1)))
 (tm-define (get-action-path) the-action-path)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; For compatibility with the old "interactive" texmacs built-in
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (interactive . args)
-  (let ((fun (last args)))
-    (if (not (procedure? fun))
-        (apply tm-interactive (rcons (but-last args) (eval fun)))
-        (apply tm-interactive args))))

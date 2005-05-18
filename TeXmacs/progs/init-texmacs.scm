@@ -26,7 +26,7 @@
 (inherit-modules (kernel texmacs tm-overload) (kernel texmacs tm-define)
 		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
-		 (kernel texmacs tm-convert))
+		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
