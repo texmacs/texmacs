@@ -16,26 +16,17 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(lazy-define (proclus-distill) locus-action)
-(lazy-define (proclus-distill) loci-editor-action)
-(use-modules (menu menu-proclus))
-
-(use-modules (proclus-types)) ;; FIXME: for interactive
-(use-modules (proclus-absname)) ;; FIXME: for choose-file
-(use-modules (proclus)) ;; FIXME: for interactive
-(use-modules (proclus-distill)) ;; FIXME: for menu
+(lazy-menu (menu menu-proclus) proclus-menu proclus-links-menu)
 
 (define (proclus-initialize)
-  (display "Installing Proclus.\n")
   (kbd-wildcards pre
     ("proclus" "emacs:contextual"))
   (lazy-keyboard (keyboard kbd-proclus) in-proclus?)
   (menu-extend texmacs-extra-menu
     (if (in-proclus-editable?)
-        (link menu-proclus))
+        (link proclus-menu))
     (if (in-proclus-links?)
-        (link menu-proclus-links))))
+        (link proclus-links-menu))))
 
 (plugin-configure proclus
   (:require #t)

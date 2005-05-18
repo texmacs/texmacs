@@ -17,10 +17,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menu menu-proclus)
-  (:use (proclus) (proclus-types) (proclus-absname)
-        (proclus-distill) (proclus-source) (proclus-absname-editor)))
+  (:use
+    (proclus)
+    (proclus-types)
+    (proclus-absname)
+    (proclus-distill)
+    (proclus-source)
+    (proclus-absname-editor)))
 
-(menu-bind menu-proclus-links
+(menu-bind proclus-links-menu
   (=> "Links"
       (when (in-proclus-locus?)
             ("Active source" (active-source))
@@ -39,11 +44,11 @@
             ("Supprimer type..." (remove-link-type)))
       ---
       (when (has-source-link?)
-            (link menu-proclus-types)
+            (link proclus-types-menu)
             ---
-            (link menu-proclus-edition))))
+            (link proclus-edit-menu))))
 
-(menu-bind menu-proclus
+(menu-bind proclus-menu
   (=> "Proclus"
       (when (has-absolute-name?)
             ("Locus" (locus))
@@ -63,16 +68,16 @@
             ("Nommer ce document..." (interactive-absolute-name)))
       ("Apprendre un nom..." (absname-choose-file))
       ---
-      (link menu-proclus-types)
+      (link proclus-types-menu)
       ---
       (when (in-proclus-editable?)
             ("Loci" (edit-loci)))
-      (link menu-proclus-edition)))
+      (link proclus-edit-menu)))
 
-(menu-bind menu-proclus-types
+(menu-bind proclus-types-menu
   (promise (type-menu-promise)))
 
-(menu-bind menu-proclus-edition
+(menu-bind proclus-edit-menu
   (when (in-proclus-locus?)
         ("Liens" (edit-links))))
 
@@ -80,7 +85,7 @@
   ("Activer source" (active-source))
   ("Activer but" (active-but))
   ("Initialiser" (inactivate))
-  (link menu-proclus-types)
+  (link proclus-types-menu)
   ("Liens" (edit-links))
   (if (in-proclus-links?)
       ---

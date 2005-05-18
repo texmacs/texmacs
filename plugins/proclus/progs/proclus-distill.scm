@@ -89,7 +89,8 @@
     (if (nnull? the-loci)
 	(begin
           (new-buffer-clear (string-append src-buff "-loci"))
-	  (init-style "proclus-links")
+	  (init-style "generic") ;; FIXME: combine styles from sources
+	  (init-add-package "proclus-links")
           (set-source-link! (make-root-link src-absname))
 	  (tm-assign (the-buffer-path) `(document ,@the-loci))
           (pretend-save-buffer)))))
@@ -136,7 +137,8 @@
              (the-stree (edit-links/cons the-locus)))
     (new-buffer-clear
      (string-append src-buff "-source-" (locus-id the-locus)))
-    (init-style "proclus-links")
+    (init-style "generic") ;; FIXME: combine styles from sources
+    (init-add-package "proclus-links")
     (init-env "magnification" "1")
     (set-source-link! (locus-self-link the-locus))
     (tm-assign (the-buffer-path) the-stree)
