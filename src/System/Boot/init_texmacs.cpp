@@ -238,6 +238,10 @@ init_env_vars () {
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
 		       url ("$TEXMACS_PATH/misc/pixmaps") |
 		       plugin_path ("misc/pixmaps"));
+  (void) get_env_path ("TEXMACS_DIC_PATH",
+		       "$TEXMACS_HOME_PATH/langs/natural/dic" |
+		       url ("$TEXMACS_PATH/langs/natural/dic") |
+		       plugin_path ("langs/natural/dic"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else

@@ -21,13 +21,13 @@
 
 (tm-define (absname-editor)
   (switch-to-active-buffer
-   "$TEXMACS_HOME_PATH/system/tmp/Proclus - Noms absolus")
+   "$TEXMACS_HOME_PATH/system/tmp/Proclus - Absolute names")
   (tm-assign (the-buffer-path) (absname-editor/cons))
   (pretend-save-buffer))
 
 (define (absname-editor/cons)
   `(document
-    (section "Constellation Proclus")
+    (section "Proclus constellation")
     (description-long
      (document
       ,@(absolute-name-fold
@@ -40,7 +40,7 @@
 (define (name-conflict absname)
   (cond
    ((not (url-exists? (absolute-name->url absname)))
-    `((next-line) (with "color" "red" "Fichier absent.")))
+    `((next-line) (with "color" "red" "Unexistent file.")))
    ((not (absolute-name-valid? absname))
-    `((next-line) (with "color" "red" "Conflit de nom absolu.")))
+    `((next-line) (with "color" "red" "Absolute name conflict.")))
    (else '())))

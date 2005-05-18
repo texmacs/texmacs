@@ -117,17 +117,17 @@
    (clear-active-types-cache)
    (menu-dynamic
      (-> "Types"
-	 ("Importer" (import-types))
-	 ("Ajouter" (new-types))
-	 ("Supprimer" (delete-types))
+	 ("Import" (import-types))
+	 ("Add" (new-types))
+	 ("Remove" (delete-types))
 	 ---
-         ("Activer tous" (activate-all-types))
-         ("Désactiver tous" (deactivate-all-types))
-         ("Inverser" (activate-negative-types))
+         ("Activate all" (activate-all-types))
+         ("Disactivate all" (deactivate-all-types))
+         ("Invert" (activate-negative-types))
          ---
          ,@(let ((types (list-types)))
              (if (null? types)
-                 (menu-dynamic (when #f ("Pas de type" (noop))))
+                 (menu-dynamic (when #f ("No type" (noop))))
                  (map type-menu-item types)))))))
 
 (define (type-menu-item type)
@@ -136,7 +136,7 @@
 
 (tm-define (import-types)
   (let ((from (get-strg-name-buffer)))
-    (choose-file "Importer les types" "texmacs"
+    (choose-file "Import types" "texmacs"
                  `(lambda (x) (import-types/sub x ,from)))))
 
 (tm-define (import-types/sub u from)
@@ -153,7 +153,7 @@
   (new-types/sub))
 
 (define (new-types/sub)
-  (new-types/sub2 "Ajouter le type :"))
+  (new-types/sub2 "Add type:"))
 
 (define (new-types/sub2 msg)
   (interactive (list msg)
@@ -173,7 +173,7 @@
   (delete-types/sub))
 
 (tm-define (delete-types/sub)
-  (delete-types/sub2 "Supprimer le type :"))
+  (delete-types/sub2 "Remove type:"))
 
 (define (delete-types/sub2 msg)
   (interactive (list msg)
@@ -199,8 +199,8 @@
      (ask-types proc types #f))
     ((proc types error?)
      (interactive (if (not error?)
-                      '("Type du lien:")
-                      '("Type incorrect. Type de lien:"))
+                      '("Link type:")
+                      '("Incorrect type. Link type:"))
                   (cut ask-types/callback proc types <>)))))
 
 (define (ask-types/callback proc types s)
@@ -219,8 +219,8 @@
      (ask-reverse-types proc types #f))
     ((proc types error?)
      (interactive (if (not error?)
-                      '("Type du lien inverse:")
-                      '("Type inverse incorrect. Type inverse du lien :"))
+                      '("Inverse link type:")
+                      '("Incorrect inverse type. Inverse link type:"))
                   (cut ask-reverse-types/callback proc types <>)))))
 
 (define (ask-reverse-types/callback proc types s)
@@ -240,8 +240,8 @@
     ((proc types) (ask-types-to-remove proc types #f))
     ((proc types error?)
      (interactive (if (not error?)
-                      '("Type de lien à supprimer:")
-                      '("Type absent. Type de lien à supprimer:"))
+                      '("Remove link type:")
+                      '("No such type. Remove link type:"))
                   (cut ask-types-to-remove/callback proc types <>)))))
 
 (define (ask-types-to-remove/callback proc types s)

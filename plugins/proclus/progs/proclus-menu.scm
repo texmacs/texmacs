@@ -25,18 +25,18 @@
       (when (in-proclus-locus?)
             ("Active source" (active-source))
 	    (when (has-active-source?)
-		  ("Active but" (active-but))
-		  ("Initialiser" (proclus-inactivate))))
+		  ("Active destination" (active-but))
+		  ("Initialize" (proclus-inactivate))))
       ---
       (when (has-last-locus?)
-            ("Dernier locus" (go-to-last-locus)))
+            ("Last locus" (go-to-last-locus)))
       (when (has-source-link?)
             ("Locus source" (go-to-source-link)))
       ("Constellation" (absname-editor))
       ---
       (when (in-proclus-locus?)
-            ("Supprimer le lien" (remove-link))
-            ("Supprimer type..." (remove-link-type)))
+            ("Remove link" (remove-link))
+            ("Remove type" ... (remove-link-type)))
       ---
       (when (has-source-link?)
             (link proclus-types-menu)
@@ -50,18 +50,18 @@
             (when (or (selection-active-any?) (in-proclus-locus?))
                   ("Active source" (active-source))
 		  (when (has-active-source?)
-                  ("Active but" (active-but))
-		  ("Initialiser" (proclus-inactivate)))))
+                  ("Active destination" (active-but))
+		  ("Initialize" (proclus-inactivate)))))
       ---
       (when (has-last-locus?)
-            ("Retour source" (go-to-last-locus)))
+            ("Return to source" (go-to-last-locus)))
       ---
       ("Constellation" (absname-editor))
       (when (has-conflicting-absolute-name?)
-            ("Document déplacé" (absolute-name-reregister-buffer)))
+            ("Moved document" (absolute-name-reregister-buffer)))
       (when (and (not (no-name?)) (not (has-absolute-name?)))
-            ("Nommer ce document..." (interactive-absolute-name)))
-      ("Apprendre un nom..." (absname-choose-file))
+            ("Name this document" ... (interactive-absolute-name)))
+      ("Learn a name" ... (absname-choose-file))
       ---
       (link proclus-types-menu)
       ---
@@ -74,15 +74,15 @@
 
 (menu-bind proclus-edit-menu
   (when (in-proclus-locus?)
-        ("Liens" (proclus-edit-links))))
+        ("Links" (proclus-edit-links))))
 
 (menu-bind proclus-popup-menu
-  ("Activer source" (active-source))
-  ("Activer but" (active-but))
-  ("Initialiser" (proclus-inactivate))
+  ("Activate source" (active-source))
+  ("Activate destination" (active-but))
+  ("Initialize" (proclus-inactivate))
   (link proclus-types-menu)
-  ("Liens" (proclus-edit-links))
+  ("Links" (proclus-edit-links))
   (if (in-proclus-links?)
       ---
-      ("Supprimer le lien" (remove-link))
-      ("Supprimer type..." (remove-link-type))))
+      ("Remove link" (remove-link))
+      ("Remove type" ... (remove-link-type))))

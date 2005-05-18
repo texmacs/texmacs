@@ -169,7 +169,7 @@
 
 (tm-define (absname-choose-file)
   (let ((from (get-strg-name-buffer)))
-    (choose-file "Mémoriser le nom absolu de ce fichier" "texmacs"
+    (choose-file "Save the absolute name of this file" "texmacs"
                  `(lambda (x) (absname-choose-file/sub x ,from)))))
 
 (tm-define (absname-choose-file/sub u from)
