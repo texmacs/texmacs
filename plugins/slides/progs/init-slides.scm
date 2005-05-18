@@ -12,13 +12,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (slides-initialize)
-  (lazy-define (slides slides) make-slides)
-  (lazy-define (slides slides) make-slides-here)
-  (lazy-define (slides browse) next-slide)
-  (lazy-define (slides browse) prev-slide)
-  (lazy-define (slides iterate-buffer) clear-output)
+(lazy-define (slides slides) make-slides)
+(lazy-define (slides slides) make-slides-here)
+(lazy-define (slides browse) next-slide)
+(lazy-define (slides browse) prev-slide)
+(lazy-define (slides iterate-buffer) clear-output)
 
+(define (slides-initialize)
   (menu-extend insert-fold-menu
     ---
     ("Make slides" (make-slides))

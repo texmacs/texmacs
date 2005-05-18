@@ -17,13 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (menu menu-proclus)
-  (:use
-    (proclus)
-    (proclus-types)
-    (proclus-absname)
-    (proclus-distill)
-    (proclus-source)
-    (proclus-absname-editor)))
+  (:use (proclus) (proclus-types) (proclus-absname)
+	(proclus-distill) (proclus-source) (proclus-absname-editor)))
 
 (menu-bind proclus-links-menu
   (=> "Links"

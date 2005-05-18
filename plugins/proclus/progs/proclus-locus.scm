@@ -17,12 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-locus)
-  (:use (utils misc misc-funcs)
-	(search-in-tree)
-        (proclus-list) ;; quadripartite
-        (proclus-absname)
-        (proclus-lib)
-        (ice-9 common-list))) ;; uniq
+  (:use (utils misc misc-funcs) (search-in-tree) (proclus-list)
+        (proclus-absname) (proclus-lib) (ice-9 common-list)))
 
 ;; Structure of a LOCUS tag:
 ;; (locus <body>

@@ -17,10 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (keyboard kbd-proclus)
-  (:use
-    (proclus)
-    (proclus-distill)
-    (proclus-source)))
+  (:use (proclus) (proclus-distill) (proclus-source)))
 
 ;; Shortcuts are enabled in-proclus? even if they are only relevant in
 ;; sub-modes so they will appear in disabled menu items.
