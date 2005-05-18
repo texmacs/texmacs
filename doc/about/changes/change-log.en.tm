@@ -5,9 +5,14 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.1>
+  <section|Changes from version 1.0.5 to 1.0.5.2>
 
   <\itemize>
+    <item>Support for plug-in provided icons and dictionaries (1.0.5.2).
+
+    <item>Included <name|Proclus> plug-in into the main distribution
+    (1.0.5.2).
+
     <item>Contextual overloading (1.0.5.1).
 
     <item>More rational booting and improved speed through higher lazyness
