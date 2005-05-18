@@ -15,6 +15,40 @@
 (texmacs-module (kernel texmacs tm-dialogue))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dialogues
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public dialogue-break #f)
+(define-public dialogue-continue #f)
+(define-public dialogue-return #f)
+
+(define-public-macro (dialogue . body)
+  `(begin
+     (if dialogue-break (texmacs-error "dialogue" "Already in dialogue"))
+     (call-with-current-continuation
+      (lambda (cont)
+	(set! dialogue-break cont)
+	,@body
+	(set! dialogue-break #f)
+	(set! dialogue-continue #f)))
+     (if dialogue-return (dialogue-return (noop)))))
+
+(define-public (ask-string explain)
+  (call-with-current-continuation
+   (lambda (cont)
+     (set! dialogue-continue cont)
+     (tm-interactive (list explain)
+		     (lambda (result)
+		       (call-with-current-continuation
+			(lambda (cont)
+			  (set! dialogue-return cont)
+			  (dialogue-continue result)))
+		       (set! dialogue-return #f)))
+     (if (not dialogue-break)
+	 (texmacs-error "ask-string" "Asked string outside a dialogue")
+	 (dialogue-break (noop))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delayed execution of commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
