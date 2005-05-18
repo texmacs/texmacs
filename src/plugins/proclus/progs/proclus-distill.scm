@@ -88,7 +88,7 @@
 	 (the-loci (extract locus? (tree->stree (the-buffer)))))
     (if (nnull? the-loci)
 	(begin
-          (new-buffer-clear (string-append src-buff "-loci"))
+          (new-buffer-clear (string-append src-buff " - loci"))
 	  (init-style "generic") ;; FIXME: combine styles from sources
 	  (init-add-package "proclus-links")
           (set-source-link! (make-root-link src-absname))
@@ -136,7 +136,7 @@
              (src-buff (get-strg-name-buffer))
              (the-stree (proclus-edit-links/cons the-locus)))
     (new-buffer-clear
-     (string-append src-buff "-source-" (locus-id the-locus)))
+     (string-append src-buff " - source - " (locus-id the-locus)))
     (init-style "generic") ;; FIXME: combine styles from sources
     (init-add-package "proclus-links")
     (init-env "magnification" "1")
@@ -159,11 +159,11 @@
               (map (lambda(y)
                      (cond
                       ((not (absolute-name-exists? (car y)))
-                       (absname-error "Nom absolu inconnu: " (car y)))
+                       (absname-error "Unknown absolute name: " (car y)))
                       ((not (url-exists? (absolute-name->url (car y))))
-                       (absname-error "Fichier absent: " (car y)))
+                       (absname-error "Unexistent file: " (car y)))
                       ((not (absolute-name-valid? (car y)))
-                       (absname-error "Conflit de nom absolu: " (car y)))
+                       (absname-error "Absolute name conflict: " (car y)))
                       (else
                        (switch-to-active-buffer (absolute-name->url (car y)))
 		       `((section ,(car y))
