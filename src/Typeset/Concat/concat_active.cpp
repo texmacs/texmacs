@@ -83,11 +83,10 @@ class guile_command_rep: public command_rep {
   string s;
   int    level;
 public:
-  guile_command_rep (string s2, int level2= 0): s (s2), level (level2) {
-    if (as_bool (eval ("(secure? '" * s * ")"))) level= 2;
-  }
+  guile_command_rep (string s2, int level2= 0): s (s2), level (level2) {}
   void apply () {
     string lambda;
+    if (as_bool (eval ("(secure? '" * s * ")"))) level= 2;
     switch (max (script_status, level)) {
     case 0:
       eval_delayed("(set-message \"Error: scripts not accepted\" \"script\")");
