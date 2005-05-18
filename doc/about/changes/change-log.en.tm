@@ -13,6 +13,11 @@
     <item>More rational booting and improved speed through higher lazyness
     (1.0.5.1).
 
+    <item>Simplifications in the module system (1.0.5.1).
+
+    <item>Reorganization of the scheme directory structure by functionality
+    (1.0.5.1).
+
     <item>Added first versions of dashed lines and filled curves for upcoming
     graphical mode (1.0.5.1).
   </itemize>
