@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic document-edit)
-  (:use (utils library length)))
+  (:use (utils library length) (generic env-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preamble mode
@@ -29,17 +29,18 @@
     (init-env "preamble" new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interactively change global environment variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (init-interactive-env var)
+  (:interactive #t)
+  (interactive (lambda (s) (init-env var s))
+    (drd-ref env-var-description% var)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (init-text-width s) (init-env "par-width" s))
-(tm-define (init-font-size s) (init-env "font-base-size" s))
-(tm-define (init-dpi s) (init-env "dpi" s))
-(tm-define (init-first-indent s) (init-env "par-first" s))
-(tm-define (init-interline s) (init-env "par-sep" s))
-(tm-define (init-interline-spc s) (init-env "par-line-sep" s))
-(tm-define (init-interpar-spc s) (init-env "par-par-sep" s))
-(tm-define (init-magn s) (init-env "magnification" s))
 (tm-define (init-language lan)
   (let ((before (in? (tree->stree (get-init-tree "language"))
 		     '("russian" "ukrainian")))
@@ -47,8 +48,6 @@
     (if (and before (not after)) (init-default "font"))
     (init-env "language" lan)
     (if (and after (not before)) (init-env "font" "cyrillic"))))
-(tm-define (init-color s) (init-env "color" s))
-(tm-define (init-bg-color s) (init-env "bg-color" s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main page layout
@@ -68,6 +67,8 @@
   (notify-page-change))
 
 (tm-define (init-page-size w h)
+  (:argument w "Page width")
+  (:argument h "Page height")
   (init-env "page-type" "user")
   (init-env "page-width" w)
   (init-env "page-height" h))
@@ -107,7 +108,3 @@
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
 	    (if (not-page-screen-margin?) "true" "false")))
-
-(tm-define (init-page-shrink s) (init-env "page-shrink" s))
-(tm-define (init-page-extend s) (init-env "page-extend" s))
-(tm-define (init-page-flexibility s) (init-env "page-flexibility" s))
