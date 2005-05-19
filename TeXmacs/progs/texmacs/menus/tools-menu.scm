@@ -47,8 +47,8 @@
 
 (menu-bind tools-menu
   (-> "Execute"
-      ("Execute system command" (interactive system "Command"))
-      ("Evaluate scheme expression" (interactive footer-eval "Command")))
+      ("Execute system command" (interactive system))
+      ("Evaluate scheme expression" (interactive footer-eval)))
   (-> "Selections"
       (-> "Import"
 	  (promise (clipboard-preference-menu-promise clipboard-set-import)))

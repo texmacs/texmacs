@@ -15,8 +15,17 @@
 (texmacs-module (utils edit selections))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Checkmarks for the current import/export formats
+;; Properties of built-in routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (clipboard-copy to)
+  (:argument to "Copy to"))
+
+(tm-property (clipboard-cut to)
+  (:argument to "Cut to"))
+
+(tm-property (clipboard-paste from)
+  (:argument from "Paste from"))
 
 (define (clipboard-test-import? s)
   (string=? s (clipboard-get-import)))

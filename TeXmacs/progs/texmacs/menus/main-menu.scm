@@ -101,7 +101,7 @@
       ((balloon (icon "tm_find_next.xpm") "Find next match#(C-s)")
        (search-button-next)))
   ((balloon (icon "tm_replace.xpm") "Query replace#(C-=)")
-   (interactive replace-start-forward "Replace" "Replace by"))
+   (interactive replace-start-forward))
   ((balloon (icon "tm_spell.xpm") "Check text for spelling errors#(M-$)")
    (spell-start))
   (if (not (help-buffer?))

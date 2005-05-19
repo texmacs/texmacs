@@ -80,4 +80,5 @@
   (:check-mark "*" test-shrinking-factor?))
 
 (tm-define (other-shrinking-factor s)
+  (:argument s "Shrinking factor")
   (set-shrinking-factor (string->number s)))

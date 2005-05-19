@@ -89,26 +89,25 @@
       (-> "Session" (link insert-session-menu)))
   ---
   (-> "Space"
-      ("Rigid" (interactive make-var-space
-		 "Horizontal space" "Base level" "Top level"))
+      ("Rigid" (interactive make-var-space))
       ---
       (group "Horizontal")
-      ("Stretchable" (interactive make-hspace "Horizontal space"))
-      ("Rigid" (interactive make-space "Horizontal space"))
+      ("Stretchable" (interactive make-hspace))
+      ("Rigid" (interactive make-space))
       ("Tab" (make-htab "5mm"))
-      ("Custom tab" (interactive make-htab "Minimal space"))
+      ("Custom tab" (interactive make-htab))
       ---
       (group "Vertical before")
       ("Small skip" (make-vspace-before "0.5fn"))
       ("Medium skip" (make-vspace-before "1fn"))
       ("Big skip" (make-vspace-before "2fn"))
-      ("Other" (interactive make-vspace-before "Vertical space"))
+      ("Other" (interactive make-vspace-before))
       ---
       (group "Vertical after")
       ("Small skip" (make-vspace-after "0.5fn"))
       ("Medium skip" (make-vspace-after "1fn"))
       ("Big skip" (make-vspace-after "2fn"))
-      ("Other" (interactive make-vspace-after "Vertical space")))
+      ("Other" (interactive make-vspace-after)))
   (-> "Break"
       ("New line" (make 'next-line))
       ("Line break" (make 'line-break))
@@ -164,8 +163,8 @@
       (-> "Executable" (link source-executable-menu)))
   (-> "Special"
       ("Group" (make-group))
-      ("Move object" (interactive make-move "Horizontal" "Vertical"))
-      ("Resize object" (interactive make-resize "Left" "Bottom" "Right" "Top"))
+      ("Move object" (interactive make-move))
+      ("Resize object" (interactive make-resize))
       ("Repeat object" (make 'repeat))
 ;;    ---
       ("Decorate atoms" (make-arity 'datoms 2))

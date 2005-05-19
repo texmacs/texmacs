@@ -78,6 +78,18 @@
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-property (print-to-file name)
+  (:argument name "File name"))
+
+(tm-property (print-pages first last)
+  (:argument first "First page")
+  (:argument last "Last page"))
+
+(tm-property (print-pages-to-file name first last)
+  (:argument name "File name")
+  (:argument first "First page")
+  (:argument last "Last page"))
+
 (tm-define (preview-with-ghostview)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
   (cond ((!= preview-command "default")
@@ -96,5 +108,7 @@
 	       "preview"))))
 
 (tm-define (choose-file-and-print-page-selection start end)
+  (:argument start "First page")
+  (:argument end "Last page")
   (choose-file "Print page selection to file" "postscript"
 	       `(lambda (name) (print-pages-to-file name ,start ,end))))

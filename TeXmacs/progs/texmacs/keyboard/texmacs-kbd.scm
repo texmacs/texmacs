@@ -30,11 +30,10 @@
   ("F3" (save-buffer))
   ("S-F3" (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
   ("F4" (print))
-  ("S-F4" (interactive print-to-file "File name"))
+  ("S-F4" (interactive print-to-file))
   ("C-F4" (preview-with-ghostview))
-  ("M-F4" (interactive print-pages "First page" "Last page"))
-  ("M-S-F4" (interactive print-pages-to-file
-	      "File name" "First page" "Last page"))
+  ("M-F4" (interactive print-pages))
+  ("M-S-F4" (interactive print-pages-to-file))
 
   ("undo" (noop) (undo))
   ("redo" (noop) (redo))

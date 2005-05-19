@@ -125,11 +125,19 @@
 
 (define (compute-interactive-arg fun which)
   (with arg (property fun (list :argument which))
-    (if arg (car arg) "Undocumented argument")))
+    (if arg (car arg) (upcase-first (symbol->string which)))))
+
+(define (compute-interactive-args-try-hard fun)
+  (with src (procedure-source fun)
+    (if (and (pair? src) (== (car src) 'lambda)
+	     (pair? (cdr src)) (list? (cadr src)))
+	(map upcase-first (map symbol->string (cadr src)))
+	'())))
 
 (define (compute-interactive-args fun)
   (with args (property fun :arguments)
-    (if (not args) '()
+    (if (not args)
+	(compute-interactive-args-try-hard fun)
 	(map (lambda (which) (compute-interactive-arg fun which)) args))))
 
 (define (build-interactive-arg s)
@@ -143,3 +151,6 @@
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (tm-interactive (map build-interactive-arg args) fun))
+
+(tm-property (choose-file message format routine)
+  (:interactive #t))
