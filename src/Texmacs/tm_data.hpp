@@ -24,7 +24,6 @@ protected:
   /* Low level buffer menu manipulation */
   int       find_buffer (url name);
   string    new_menu_name (url name);
-  void      update_menu ();
   void      menu_insert_buffer (tm_buffer buf);
   void      menu_delete_buffer (tm_buffer buf);
   void      menu_focus_buffer (tm_buffer buf);
@@ -80,11 +79,12 @@ public:
   void set_aux_buffer (string aux, url name, tree doc);
   void set_help_buffer (url name, tree doc);
   void browse_help (int delta);
+  object get_buffer_menu ();
 
   /* Project management */
   void project_attach (string prj_name);
   bool project_attached ();
-  void project_update_menu ();
+  object get_project_buffer_menu ();
 
   /* File management */
   tree load_tree (url name, string fm);

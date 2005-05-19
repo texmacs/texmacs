@@ -70,10 +70,12 @@
   (set-aux-buffer set_aux_buffer (void string url content))
   (set-help-buffer set_help_buffer (void url content))
   (browse-help browse_help (void int))
+  (get-buffer-menu get_buffer_menu (object))
 
   (project-attach project_attach (void string))
   (project-detach project_attach (void))
   (project-attached? project_attached (bool))
+  (get-project-buffer-menu get_project_buffer_menu (object))
 
   (texmacs-load-tree load_tree (tree url string))
   (texmacs-load-buffer load_buffer (void url string int bool))
@@ -81,6 +83,9 @@
   (auto-save auto_save (void))
   
   (color get_color (int string))
+  (get-style-menu get_style_menu (object))
+  (get-add-package-menu get_add_package_menu (object))
+  (get-remove-package-menu get_remove_package_menu (object))
   (style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))
   (set-printing-command set_printing_command (void string))

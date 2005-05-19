@@ -86,10 +86,12 @@ public:
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
   virtual void browse_help (int delta) = 0;
+  virtual object get_buffer_menu () = 0;
 
   /* Projects */
   virtual void project_attach (string prj_name= "") = 0;
   virtual bool project_attached () = 0;
+  virtual object get_project_buffer_menu () = 0;
 
   /* Loading and saving files */
   virtual tree load_tree (url name, string f) = 0;
@@ -114,7 +116,9 @@ public:
   virtual color       get_color (string s) = 0;
   virtual int         get_nr_windows () = 0;
 
-  virtual void style_update_menu () = 0;
+  virtual object get_style_menu () = 0;
+  virtual object get_add_package_menu () = 0;
+  virtual object get_remove_package_menu () = 0;
   virtual void style_clear_cache () = 0;
   virtual void style_set_cache (
             tree style, hashmap<string,tree> H, tree drd) = 0;
