@@ -19,7 +19,7 @@
     (doc help-funcs)))
 
 (kbd-map
-  ("F1" (interactive '("Search words in the documentation:") 'docgrep-in-doc))
+  ("F1" (interactive docgrep-in-doc "Search words in the documentation"))
   ("S-F1" (load-help-buffer "about/welcome/welcome"))
   ("F2" (choose-file "Load file" "" 'load-buffer))
   ("S-F2" (choose-file "Load file" "" 'load-in-new-window))
@@ -30,12 +30,11 @@
   ("F3" (save-buffer))
   ("S-F3" (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
   ("F4" (print))
-  ("S-F4" (interactive '("File name:") 'print-to-file))
+  ("S-F4" (interactive print-to-file "File name"))
   ("C-F4" (preview-with-ghostview))
-  ("M-F4" (interactive '("First page:" "Last page:") 'print-pages))
-  ("M-S-F4" (interactive
-	     '("File name:" "First page:" "Last page:")
-	     'print-pages-to-file))
+  ("M-F4" (interactive print-pages "First page" "Last page"))
+  ("M-S-F4" (interactive print-pages-to-file
+	      "File name" "First page" "Last page"))
 
   ("undo" (noop) (undo))
   ("redo" (noop) (redo))

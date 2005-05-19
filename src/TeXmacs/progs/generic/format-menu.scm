@@ -33,7 +33,7 @@
   ("20" (make-with "font-base-size" "20"))
   ("24" (make-with "font-base-size" "24"))
   ---
-  ("Other" ... (interactive '("Font size:") 'make-with-font-base-size)))
+  ("Other" (interactive make-with-font-base-size "Font size")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Color menu
@@ -52,7 +52,7 @@
   ("Brown" (make-with "color" "brown"))
   ("Pink" (make-with "color" "pink"))
   ---
-  ("Other" ... (interactive '("Color:") 'make-with-color)))
+  ("Other" (interactive make-with-color "Color")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu

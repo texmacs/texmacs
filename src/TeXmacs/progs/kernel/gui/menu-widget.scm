@@ -141,6 +141,12 @@
 	      (if (and prop (apply (cadr prop) (cdr source)))
 		  (car prop) ""))))))
 
+(define (make-menu-entry-dots label action)
+  (with source (promise-source action)
+    (if (and source (pair? source) (property (car source) :interactive))
+	(menu-label-add-dots label)
+	label)))
+
 (define (make-menu-entry-attrs label action opt-key opt-check)
   (cond ((match? label '(shortcut :1 :string?))
 	 (make-menu-entry-attrs (cadr label) action (caddr label) opt-check))
@@ -155,7 +161,7 @@
     (make-menu-entry-button
      e? bar?
      (make-menu-entry-check opt-check action)
-     label
+     (make-menu-entry-dots label action)
      (make-menu-entry-shortcut label action opt-key)
      (make-menu-command (if e? (apply action '()))))))
 

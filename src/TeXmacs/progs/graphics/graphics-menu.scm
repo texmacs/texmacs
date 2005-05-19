@@ -206,7 +206,7 @@
   ("Brown" (graphics-set-color "brown"))
   ("Pink" (graphics-set-color "pink"))
   ---
-  ("Other" ... (interactive '("Color:") 'graphics-set-color)))
+  ("Other" (interactive graphics-set-color "Color")))
 
 (menu-bind grid-color-axes-menu
   ("Default" (graphics-set-grid-color 'axes "default"))
@@ -223,7 +223,7 @@
   ("Brown" (graphics-set-grid-color 'axes "brown"))
   ("Pink" (graphics-set-grid-color 'axes "pink"))
   ---
-  ("Other" ... (interactive '("Color:") 'graphics-set-grid-color 'axes)))
+  ("Other" (interactive graphics-set-grid-color "Color")))
 
 (menu-bind grid-color-units-menu
   ("Default" (graphics-set-grid-color 'units "default"))
@@ -240,7 +240,7 @@
   ("Brown" (graphics-set-grid-color 'units "brown"))
   ("Pink" (graphics-set-grid-color 'units "pink"))
   ---
-  ("Other" ... (interactive '("Color:") 'graphics-set-grid-color 'units)))
+  ("Other" (interactive graphics-set-grid-color "Color")))
 
 (menu-bind grid-color-subunits-menu
   ("Default" (graphics-set-grid-color 'subunits "default"))
@@ -257,7 +257,7 @@
   ("Brown" (graphics-set-grid-color 'subunits "brown"))
   ("Pink" (graphics-set-grid-color 'subunits "pink"))
   ---
-  ("Other" ... (interactive '("Color:") 'graphics-set-grid-color 'subunits)))
+  ("Other" (interactive graphics-set-grid-color "Color")))
 
 (menu-bind graphics-line-width-menu
   ("Default" (graphics-set-line-width "default"))
@@ -266,7 +266,7 @@
   ("1 ln" (graphics-set-line-width "1ln"))
   ("2 ln" (graphics-set-line-width "2ln"))
   ---
-  ("Other" ... (interactive '("Line width:") 'graphics-set-line-width)))
+  ("Other" (interactive graphics-set-line-width "Line width")))
 
 (menu-bind graphics-line-style-menu
   ("Default" (graphics-set-line-style "default"))
@@ -275,7 +275,7 @@
   ("----  ----  ----  --" (graphics-set-line-style "11100"))
   ("---- - ---- - ---- -" (graphics-set-line-style "1111010"))
   ---
-  ("Other" ... (interactive '("Line style:") 'graphics-set-line-style)))
+  ("Other" (interactive graphics-set-line-style "Line style")))
 
 (menu-bind graphics-fill-mode-menu
   ("None" (graphics-set-fill-mode "default"))
@@ -298,7 +298,7 @@
   ("Brown" (graphics-set-fill-color "brown"))
   ("Pink" (graphics-set-fill-color "pink"))
   ---
-  ("Other" ... (interactive '("Fill color:") 'graphics-set-fill-color)))
+  ("Other" (interactive graphics-set-fill-color "Fill color")))
 
 (menu-bind graphics-text-align-menu
   ("Default" (begin (graphics-set-property "gr-text-halign" "left")

@@ -44,8 +44,7 @@
   ("Clear" (clipboard-clear "primary"))
   ---
   ("Search" ... (search-start #t))
-  ("Replace" ...
-   (interactive '("Replace:" "Replace by:") 'replace-start-forward))
+  ("Replace" (interactive replace-start-forward "Replace" "Replace by"))
   ("Spell" ... (spell-start))
   ---
   (when (selection-active-any?)
@@ -58,7 +57,7 @@
 	    ("Search" (clipboard-copy "search"))
 	    ("Replace" (clipboard-copy "replace"))
 	    ---
-	    ("Other" ... (interactive '("Copy to:") 'clipboard-copy)))
+	    ("Other" (interactive clipboard-copy "Copy to")))
 	(-> "Cut to"
 	    (promise (extern-clipboard-menu-promise "cut-export"))
 	    ---
@@ -68,7 +67,7 @@
 	    ("Search" (clipboard-cut "search"))
 	    ("Replace" (clipboard-cut "replace"))
 	    ---
-	    ("Other" ... (interactive '("Cut to:") 'clipboard-cut))))
+	    ("Other" (interactive clipboard-cut "Cut to"))))
   (-> "Paste from"
       (promise (extern-clipboard-menu-promise "paste-import"))
       ---
@@ -78,7 +77,7 @@
       ("Search" (clipboard-paste "search"))
       ("Replace" (clipboard-paste "replace"))
       ---
-      ("Other" ... (interactive '("Paste from:") 'clipboard-paste)))
+      ("Other" (interactive clipboard-paste "Paste from")))
   ---
   (-> "Preferences"
       (link preferences-menu)))

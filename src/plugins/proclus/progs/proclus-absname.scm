@@ -159,7 +159,7 @@
 
 (tm-define (interactive-absolute-name)
   (check-has-file-name 'interactive-absolute-name)
-  (interactive '("Nom absolu:") interactive-absolute-name/callback))
+  (interactive interactive-absolute-name/callback "Nom absolu"))
 
 (define (interactive-absolute-name/callback s)
   (if (or (string-null? s) (absolute-name-exists? s))

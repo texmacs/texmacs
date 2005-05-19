@@ -204,9 +204,8 @@
 
 (menu-bind automatic-menu
   ("Table of contents" (make-aux "table-of-contents" "toc"))
-  ("Bibliography" ...
-   (interactive
-    '("Bibliography style:" "Bibliography file:") 'make-bib))
+  ("Bibliography" (interactive make-bib
+		    "Bibliography style" "Bibliography file"))
   ("Index" (make-aux "the-index" "idx"))
   ("Glossary" (make-aux "the-glossary" "gly"))
   ;;("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
@@ -285,10 +284,9 @@
       ((balloon (icon "tm_justify.xpm") "Justify text")
        (make-line-with "par-mode" "justify")))
   (=> (balloon (icon "tm_parindent.xpm") "Set paragraph margins")
-      ("Left margin" (interactive '("Left margin:") 'set-left-margin))
-      ("Right margin" (interactive '("Right margin:") 'set-right-margin))
-      ("First indentation"
-       (interactive '("First indentation:") 'set-first-indent)))
+      ("Left margin" (interactive set-left-margin "Left margin"))
+      ("Right margin" (interactive set-right-margin "Right margin"))
+      ("First indentation" (interactive set-first-indent "First indentation")))
   (if (style-has? "env-float-dtd")
       (if (not (inside? 'float))
 	  (=> (balloon (icon "tm_pageins.xpm") "Make a page insertion")

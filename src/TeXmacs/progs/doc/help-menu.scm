@@ -210,12 +210,12 @@
 	     (load-help-article "devel/source/boxes"))))
   ---
   (-> "Search"
-      ("Documentation" ...
-       (interactive '("Search words in the documentation:") 'docgrep-in-doc))
-      ("Source code" ...
-       (interactive '("Search words in the source code:") 'docgrep-in-src))
-      ("My documents" ...
-       (interactive '("Search words in my documents:") 'docgrep-in-texts)))
+      ("Documentation"
+       (interactive docgrep-in-doc "Search words in the documentation"))
+      ("Source code"
+       (interactive docgrep-in-src "Search words in the source code"))
+      ("My documents"
+       (interactive docgrep-in-texts "Search words in my documents")))
   (-> "Full manuals"
       (when (url-exists-in-help? "main/man-user-manual.en.tm")
 	    ("User manual" (load-help-book "main/man-user-manual")))

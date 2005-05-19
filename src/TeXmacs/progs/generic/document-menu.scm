@@ -27,7 +27,7 @@
   ---
   (link style-menu)
   ---
-  ("Other style" ... (interactive '("Document style:") 'init-style)))
+  ("Other style" (interactive init-style "Document style")))
 
 (menu-bind global-language-menu
   ("British"
@@ -112,13 +112,13 @@
   (-> "Add package"
       (link add-package-menu)
       ---
-      ("Other" ... (interactive '("Use package:") 'init-add-package)))
+      ("Other" (interactive init-add-package "Use package")))
   (-> "Remove package"
       (link remove-package-menu)
       ---
-      ("Other" ... (interactive '("Use package:") 'init-remove-package)))
+      ("Other" (interactive init-remove-package "Remove package")))
   (-> "Master"
-      ("Attach" (interactive '("Master file:") 'project-attach))
+      ("Attach" (interactive project-attach "Master file"))
       ("Detach" (project-detach)))
   (-> "View"
       ("Edit source tree" (toggle-preamble))
@@ -137,18 +137,18 @@
 	  ("Margins as on paper" (toggle-page-screen-margin))
 	  ---
 	  (when (test-env? "page-screen-margin" "true")
-		("Left margin" ...
-		 (interactive '("Left margin:")
-			      '(lambda (s) (init-env "page-screen-left" s))))
-		("Right margin" ...
-		 (interactive '("Right margin:")
-			      '(lambda (s) (init-env "page-screen-right" s))))
-		("Top margin" ...
-		 (interactive '("Top margin:")
-			      '(lambda (s) (init-env "page-screen-top" s))))
-		("Bottom margin" ...
-		 (interactive '("Bottom margin:")
-			      '(lambda (s) (init-env "page-screen-bot" s))))))
+		("Left margin"
+		 (interactive (lambda (s) (init-env "page-screen-left" s))
+			      "Left margin"))
+		("Right margin"
+		 (interactive (lambda (s) (init-env "page-screen-right" s))
+			      "Right margin"))
+		("Top margin"
+		 (interactive (lambda (s) (init-env "page-screen-top" s))
+			      "Top margin"))
+		("Bottom margin"
+		 (interactive (lambda (s) (init-env "page-screen-bot" s))
+			      "Bottom margin"))))
       ---
       (group "Source tags")
       (-> "Style"
@@ -226,7 +226,7 @@
 	  ("12" (init-env "font-base-size" "12"))
 	  ("14" (init-env "font-base-size" "14"))
 	  ---
-	  ("Other" ... (interactive '("Font size:") 'init-font-size)))
+	  ("Other" (interactive init-font-size "Font size")))
       (-> "Dpi"
 	  ("Default" (init-default "dpi"))
 	  ---
@@ -238,7 +238,7 @@
 	  ("800" (init-env "dpi" "800"))
 	  ("1200" (init-env "dpi" "1200"))
 	  ---
-	  ("Other" ... (interactive '("Font dpi:") 'init-dpi))))
+	  ("Other" (interactive init-dpi "Font dpi"))))
   (-> "Magnification"
       ("Default" (init-default "magnification"))
       ---
@@ -250,7 +250,7 @@
       ("1.7" (init-env "magnification" "1.7"))
       ("2" (init-env "magnification" "2"))
       ---
-      ("Other" ... (interactive '("Magnification:") 'init-magn)))
+      ("Other" (interactive init-magn "Magnification")))
   (-> "Color"
       (-> "Foreground"
 	  ("Default" (init-default "color"))
@@ -267,7 +267,7 @@
 	  ("Brown" (init-env "color" "brown"))
 	  ("Pink" (init-env "color" "pink"))
 	  ---
-	  ("Other" ... (interactive '("Foreground color:") 'init-color)))
+	  ("Other" (interactive init-color "Foreground color")))
       (-> "Background"
 	  ("Default" (init-default "bg-color"))
 	  ---
@@ -286,7 +286,7 @@
 	  ("Dark grey" (init-env "bg-color" "dark grey"))
 	  ("Broken white" (init-env "bg-color" "broken white"))
 	  ---
-	  ("Other" ... (interactive '("Background color:") 'init-bg-color))))
+	  ("Other" (interactive init-bg-color "Background color"))))
   (-> "Language"
       ("Default" (init-default "language"))
       ---
@@ -324,18 +324,18 @@
       (-> "Margins"
 	  ("Default" (init-default "par-first"))
 	  ---
-	  ("First indentation" ...
-	   (interactive '("First indentation:") 'init-first-indent)))
+	  ("First indentation"
+	   (interactive init-first-indent "First indentation")))
       (-> "Spacing"
 	  ("Default" (init-default "par-sep" "par-line-sep"
 				   "interpargraph space"))
 	  ---
-	  ("Interline separation" ...
-	   (interactive '("Separation between lines:") 'init-interline))
-	  ("Interline space" ...
-	   (interactive '("Space between lines:") 'init-interline-spc))
-	  ("Interparagraph space" ...
-	   (interactive '("Space between paragraphs:") 'init-interpar-spc)))
+	  ("Interline separation"
+	   (interactive init-interline "Separation between lines"))
+	  ("Interline space"
+	   (interactive init-interline-spc "Space between lines"))
+	  ("Interparagraph space"
+	   (interactive init-interpar-spc "Space between paragraphs")))
       (-> "Number of columns"
 	  ("Default" (init-default "par-columns"))
 	  ---
@@ -422,8 +422,7 @@
 	      ("Statement" (init-page-type "statement"))
 	      ("Tabloid" (init-page-type "tabloid")))
 	  ---
-	  ("Other" ...
-	   (interactive '("Page width:" "Page height:") 'init-page-size)))
+	  ("Other" (interactive init-page-size "Page width" "Page height")))
       (-> "Orientation"
 	  ("Default" (check "*" (test-default? "page-orientation"))
 	   (init-default "page-orientation")
@@ -439,34 +438,34 @@
 				   "page-height-margin"))
 	  ---
 	  (when (test-env? "page-width-margin" "false")
-		("Odd page left margin" ...
-		 (interactive '("Odd page left margin:")
-			      '(lambda (s) (init-env "page-odd" s))))
-		("Odd page right margin" ...
-		 (interactive '("Odd page right margin:")
-			      '(lambda (s) (init-env "page-right" s))))
-		("Even page left margin" ...
-		 (interactive '("Even page left margin:")
-			      '(lambda (s) (init-env "page-even" s)))))
+		("Odd page left margin"
+		 (interactive (lambda (s) (init-env "page-odd" s))
+			      "Odd page left margin"))
+		("Odd page right margin"
+		 (interactive (lambda (s) (init-env "page-right" s))
+			      "Odd page right margin"))
+		("Even page left margin"
+		 (interactive (lambda (s) (init-env "page-even" s))
+			      "Even page left margin")))
 	  (when (test-env? "page-height-margin" "false")
-		("Top margin" ...
-		 (interactive '("Top margin:")
-			      '(lambda (s) (init-env "page-top" s))))
-		("Bottom margin" ...
-		 (interactive '("Bottom margin:")
-			      '(lambda (s) (init-env "page-bot" s)))))
+		("Top margin"
+		 (interactive (lambda (s) (init-env "page-top" s))
+			      "Top margin"))
+		("Bottom margin"
+		 (interactive (lambda (s) (init-env "page-bot" s))
+			      "Bottom margin")))
 	  ---
 	  ("Alternative specification" (toggle-page-width-margin))
 	  (when (test-env? "page-width-margin" "true")
-		("Paragraph width" ...
-		 (interactive '("Paragraph width:")
-			      '(lambda (s) (init-env "par-width" s))))
-		("Odd page shift" ...
-		 (interactive '("Odd page shift:")
-			      '(lambda (s) (init-env "page-odd-shift" s))))
-		("Even page shift" ...
-		 (interactive '("Even page shift:")
-			      '(lambda (s) (init-env "page-even-shift" s))))))
+		("Paragraph width"
+		 (interactive (lambda (s) (init-env "par-width" s))
+			      "Paragraph width"))
+		("Odd page shift"
+		 (interactive (lambda (s) (init-env "page-odd-shift" s))
+			      "Odd page shift"))
+		("Even page shift"
+		 (interactive (lambda (s) (init-env "page-even-shift" s))
+			      "Even page shift"))))
       ---
       (group "Breaking")
       (-> "Algorithm"
@@ -476,12 +475,10 @@
 	  ("Medium" (init-env "page-breaking" "medium"))
 	  ("Professional" (init-env "page-breaking" "optimal")))
       (-> "Limits"
-	  ("Allowed reduction" ...
-	   (interactive '("How much shorter may pages become?")
-			'init-page-shrink))
-	  ("Allowed extension" ...
-	   (interactive '("How much longer may pages become?")
-			'init-page-extend)))
+	  ("Allowed reduction"
+	   (interactive init-page-shrink "How much shorter may pages become?"))
+	  ("Allowed extension"
+	   (interactive init-page-extend "How much longer may pages become?")))
       (-> "Flexibility"
 	  ("Default" (init-default "page-flexibility"))
 	  ---
@@ -491,9 +488,9 @@
 	  ("3/4" (init-env "page-flexibility" "0.75"))
 	  ("1" (init-env "page-flexibility" "1.0"))
 	  ---
-	  ("Other" ...
-	   (interactive '("Flexibility factor for vertical spacing: ")
-			'init-page-flexibility))))
+	  ("Other"
+	   (interactive init-page-flexibility
+			"Flexibility factor for vertical spacing"))))
   ---
   (-> "Update"
       ("All" (generate-all-aux) (update-buffer))

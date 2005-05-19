@@ -199,23 +199,23 @@
   ("emacs tab" (kbd-select-environment))
 
   ("emacs:meta w" (clipboard-copy "primary"))
-  ("emacs:meta x" (interactive '("Command:") 'footer-eval))
+  ("emacs:meta x" (interactive footer-eval "Command"))
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))
 
   ("emacs:prefix k" (safely-kill-buffer))
   ("emacs:prefix C-c" (safely-quit-TeXmacs))
-  ("emacs:prefix C-f" (interactive '("File name:") 'load-buffer))
+  ("emacs:prefix C-f" (interactive load-buffer "File name"))
   ("emacs:prefix C-s" (save-buffer))
-  ("emacs:prefix C-w" (interactive '("Save as:") 'save-buffer)))
+  ("emacs:prefix C-w" (interactive save-buffer "Save as")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-ish commands added by TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  ("emacs =" (interactive '("Replace:" "Replace by:") 'replace-start-forward))
+  ("emacs =" (interactive replace-start-forward "Replace" "Replace by"))
 
   ("emacs:meta a" (make-tree))
   ("emacs:meta g" (clipboard-clear "primary"))
@@ -235,16 +235,16 @@
   ("emacs:copyto 3" (clipboard-copy "ternary"))
   ("emacs:copyto s" (clipboard-copy "search"))
   ("emacs:copyto r" (clipboard-copy "replace"))
-  ("emacs:copyto *" (interactive '("Copy to:") 'clipboard-copy))
+  ("emacs:copyto *" (interactive clipboard-copy "Copy to"))
   ("emacs:cutto 1" (noop) (clipboard-cut "primary"))
   ("emacs:cutto 2" (clipboard-cut "secondary"))
   ("emacs:cutto 3" (clipboard-cut "ternary"))
   ("emacs:cutto s" (clipboard-cut "search"))
   ("emacs:cutto r" (clipboard-cut "replace"))
-  ("emacs:cutto *" (interactive '("Cut to:") 'clipboard-cut))
+  ("emacs:cutto *" (interactive clipboard-cut "Cut to"))
   ("emacs:pastefrom 1" (noop) (clipboard-paste "primary"))
   ("emacs:pastefrom 2" (clipboard-paste "secondary"))
   ("emacs:pastefrom 3" (clipboard-paste "ternary"))
   ("emacs:pastefrom s" (clipboard-paste "search"))
   ("emacs:pastefrom r" (clipboard-paste "replace"))
-  ("emacs:pastefrom *" (interactive '("Paste from:") 'clipboard-paste)))
+  ("emacs:pastefrom *" (interactive clipboard-paste "Paste from")))

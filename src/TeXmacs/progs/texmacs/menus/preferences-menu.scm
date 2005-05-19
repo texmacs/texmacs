@@ -174,13 +174,13 @@
   (if (string? x) x (cadr x)))
 
 (define (compute-preferences-entry s)
-  `(interactive '(,(string-append (upcase-first s) ":"))
-		'(lambda (val) (set-preference ,s val))))
+  `(interactive (lambda (val) (set-preference ,s val))
+     ,(upcase-first s)))
 
 (define (compute-preferences-enum s l)
   (cond ((null? l) l)
 	((== (car l) '*)
-	 (list '--- (list "Other" '... (compute-preferences-entry s))))
+	 (list '--- (list "Other" (compute-preferences-entry s))))
 	(else (cons (list (id-or-car (car l))
 			  `(set-preference ,s ,(id-or-cadr (car l))))
 		    (compute-preferences-enum s (cdr l))))))

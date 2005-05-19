@@ -158,7 +158,7 @@
   ("Brown" (cell-set-background "brown"))
   ("Pink" (cell-set-background "pink"))
   ---
-  ("Other"  ... (interactive '("Cell color:") 'cell-set-background)))
+  ("Other"  (interactive cell-set-background "Cell color")))
 
 (menu-bind cell-special-menu
   ("Set span" ... (cell-set-span-ia))

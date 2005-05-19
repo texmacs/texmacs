@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel texmacs tm-dialogue))
+(texmacs-module (kernel texmacs tm-dialogue)
+  (:use (kernel texmacs tm-define)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dialogues
@@ -118,8 +119,12 @@
      (:pause 2500)
      (set-message "" ""))))))))
 
-(define-public (interactive . args)
-  (let ((fun (last args)))
-    (if (not (procedure? fun))
-        (apply tm-interactive (rcons (but-last args) (eval fun)))
-        (apply tm-interactive args))))
+(define (interactive-arg s)
+  (cond ((string-ends? s ":") s)
+	((string-ends? s "?") s)
+	(else (string-append s ":"))))
+
+(tm-define (interactive fun . args)
+  (:synopsis "Call @fun with interactively specified arguments @args")
+  (:interactive #t)
+  (tm-interactive (map interactive-arg args) fun))

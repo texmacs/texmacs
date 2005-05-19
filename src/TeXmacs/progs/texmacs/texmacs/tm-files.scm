@@ -28,15 +28,16 @@
     ;; FIXME: concretization should not be necessary
     ;; due to bad current implementation of 'interactive'
     (if (url-exists? file)
-	(interactive '("File already exists. Overwrite existing file?")
-		     `(lambda (confirm)
-			(conditional-save-buffer ,file* ,fm confirm)))
+	(interactive
+	    (lambda (confirm)
+	      (conditional-save-buffer file* fm confirm))
+	  "File already exists. Overwrite existing file?")
 	(texmacs-save-buffer file fm))))
 
 (tm-define (save-buffer . l)
   (cond ((= (length l) 0)
 	 (if (no-name?)
-	     (interactive '("Save as:") 'save-buffer)
+	     (interactive save-buffer "Save as")
 	     (texmacs-save-buffer (get-name-buffer) "generic")))
 	((= (length l) 1) (secure-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
@@ -67,9 +68,9 @@
 	     (url-exists? (url-glue file "~"))
 	     (url-newer? (url-glue file "~") file))
 	(interactive
-	 '("Load more recent autosave file?")
-	 `(lambda (confirm)
-	    (conditional-load-buffer ,file* ,fm ,where confirm)))
+	    (lambda (confirm)
+	      (conditional-load-buffer file* fm where confirm))
+	  "Load more recent autosave file?")
 	(texmacs-load-buffer file fm where #f))))
 
 (tm-define (load-buffer . l)

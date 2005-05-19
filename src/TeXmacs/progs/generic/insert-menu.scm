@@ -89,27 +89,26 @@
       (-> "Session" (link insert-session-menu)))
   ---
   (-> "Space"
-      ("Rigid" ...
-       (interactive
-	'("Horizontal space:" "Base level:" "Top level:") 'make-var-space))
+      ("Rigid" (interactive make-var-space
+		 "Horizontal space" "Base level" "Top level"))
       ---
       (group "Horizontal")
-      ("Stretchable" ... (interactive '("Horizontal space:") 'make-hspace))
-      ("Rigid" ... (interactive '("Horizontal space:") 'make-space))
+      ("Stretchable" (interactive make-hspace "Horizontal space"))
+      ("Rigid" (interactive make-space "Horizontal space"))
       ("Tab" (make-htab "5mm"))
-      ("Custom tab" ... (interactive '("Minimal space:") 'make-htab))
+      ("Custom tab" (interactive make-htab "Minimal space"))
       ---
       (group "Vertical before")
       ("Small skip" (make-vspace-before "0.5fn"))
       ("Medium skip" (make-vspace-before "1fn"))
       ("Big skip" (make-vspace-before "2fn"))
-      ("Other" ... (interactive '("Vertical space:") 'make-vspace-before))
+      ("Other" (interactive make-vspace-before "Vertical space"))
       ---
       (group "Vertical after")
       ("Small skip" (make-vspace-after "0.5fn"))
       ("Medium skip" (make-vspace-after "1fn"))
       ("Big skip" (make-vspace-after "2fn"))
-      ("Other" ... (interactive '("Vertical space:") 'make-vspace-after)))
+      ("Other" (interactive make-vspace-after "Vertical space")))
   (-> "Break"
       ("New line" (make 'next-line))
       ("Line break" (make 'line-break))
@@ -165,9 +164,8 @@
       (-> "Executable" (link source-executable-menu)))
   (-> "Special"
       ("Group" (make-group))
-      ("Move object" (interactive '("Horizontal:" "Vertical:") 'make-move))
-      ("Resize object" (interactive
-			'("Left:" "Bottom:" "Right:" "Top:") 'make-resize))
+      ("Move object" (interactive make-move "Horizontal" "Vertical"))
+      ("Resize object" (interactive make-resize "Left" "Bottom" "Right" "Top"))
       ("Repeat object" (make 'repeat))
 ;;    ---
       ("Decorate atoms" (make-arity 'datoms 2))
