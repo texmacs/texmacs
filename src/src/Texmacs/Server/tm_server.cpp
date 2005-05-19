@@ -107,7 +107,6 @@ tm_server_rep::tm_server_rep (display dis2):
     my_init_cmds= "(begin" * my_init_cmds * ")";
     exec_delayed (scheme_cmd (my_init_cmds));
   }
-  style_update_menu ();
 #ifdef OS_GNU_LINUX
   return; // in order to avoid segmentation faults
 #elif defined OS_POWERPC_GNU_LINUX
@@ -222,16 +221,25 @@ compute_style_menu (url u, int kind) {
   return "";
 }
 
-void
-tm_server_rep::style_update_menu () {
+object
+tm_server_rep::get_style_menu () {
   url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string sty= compute_style_menu (sty_u, 0);
+  return eval ("(menu-dynamic " * sty * ")");
+}
+
+object
+tm_server_rep::get_add_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string pck= compute_style_menu (pck_u, 1);
-  string rem= compute_style_menu (pck_u, 2);
-  (void) eval ("(menu-bind style-menu " * sty * ")");
-  (void) eval ("(menu-bind add-package-menu " * pck * ")");
-  (void) eval ("(menu-bind remove-package-menu " * rem * ")");
+  return eval ("(menu-dynamic " * pck * ")");
+}
+
+object
+tm_server_rep::get_remove_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 2);
+  return eval ("(menu-dynamic " * pck * ")");
 }
 
 /******************************************************************************
@@ -262,8 +270,6 @@ tm_server_rep::style_clear_cache () {
     for (j=0; j<N(buf->vws); j++)
       ((tm_view) (buf->vws[j]))->ed->init_style ();
   }
-
-  style_update_menu ();
 }
 
 void

@@ -590,6 +590,15 @@ tmg_browse_help (SCM arg1) {
 }
 
 SCM
+tmg_get_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
 tmg_project_attach (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "project-attach");
 
@@ -618,6 +627,15 @@ tmg_project_attachedP () {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_get_project_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_project_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
 }
 
 SCM
@@ -689,6 +707,33 @@ tmg_color (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
+}
+
+SCM
+tmg_get_style_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_style_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_add_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_add_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_remove_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_remove_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
 }
 
 SCM
@@ -958,14 +1003,19 @@ initialize_glue_server () {
   gh_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   gh_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
   gh_new_procedure ("browse-help", (FN) tmg_browse_help, 1, 0, 0);
+  gh_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
   gh_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
   gh_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
   gh_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);
+  gh_new_procedure ("get-project-buffer-menu", (FN) tmg_get_project_buffer_menu, 0, 0, 0);
   gh_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
   gh_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
   gh_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
   gh_new_procedure ("auto-save", (FN) tmg_auto_save, 0, 0, 0);
   gh_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
+  gh_new_procedure ("get-style-menu", (FN) tmg_get_style_menu, 0, 0, 0);
+  gh_new_procedure ("get-add-package-menu", (FN) tmg_get_add_package_menu, 0, 0, 0);
+  gh_new_procedure ("get-remove-package-menu", (FN) tmg_get_remove_package_menu, 0, 0, 0);
   gh_new_procedure ("style-clear-cache", (FN) tmg_style_clear_cache, 0, 0, 0);
   gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
   gh_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);

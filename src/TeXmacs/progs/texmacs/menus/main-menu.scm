@@ -20,9 +20,11 @@
 
 (menu-bind texmacs-extra-menu)
 (menu-bind texmacs-extra-icons)
-(menu-bind style-menu)
-(menu-bind add-package-menu)
-(menu-bind remove-package-menu)
+(tm-define (buffer-menu) (get-buffer-menu))
+(tm-define (project-buffer-menu) (get-project-buffer-menu))
+(tm-define (style-menu) (get-style-menu))
+(tm-define (add-package-menu) (get-add-package-menu))
+(tm-define (remove-package-menu) (get-remove-package-menu))
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
 
