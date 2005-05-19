@@ -592,27 +592,30 @@
 	    (cons 'tuple val)))))
 
 (tm-define (graphics-set-color val)
+  (:argument val "Color")
   (graphics-set-property "gr-color" val))
 
 (tm-define (graphics-set-line-width val)
+  (:argument val "Line width")
   (graphics-set-property "gr-line-width" val))
 
 (tm-define (graphics-set-line-style val)
+  (:argument val "Line style")
   (define (convert)
-     (define (convert-1 ch)
-        (if (or (eq? ch #\0) (eq? ch #\space)) "0" "1")
-     )
-     (if (and (string? val) (not (equal? val "")))
-         (cons 'tuple (map convert-1 (string->list val)))
-        'solid)
-  )
+    (define (convert-1 ch)
+      (if (or (eq? ch #\0) (eq? ch #\space)) "0" "1"))
+    (if (and (string? val) (not (equal? val "")))
+	(cons 'tuple (map convert-1 (string->list val)))
+        'solid))
   (graphics-set-property
-    "gr-line-style" (if (== val "default") "default" (convert))))
+   "gr-line-style" (if (== val "default") "default" (convert))))
 
 (tm-define (graphics-set-fill-mode val)
+  (:argument val "Fill mode")
   (graphics-set-property "gr-fill-mode" val))
 
 (tm-define (graphics-set-fill-color val)
+  (:argument val "Fill color")
   (graphics-set-property "gr-fill-color" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -18,8 +18,10 @@
 ;; Modifying text properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-with-color s) (make-with "color" s))
-(tm-define (make-with-font-base-size s) (make-with "font-base-size" s))
+(tm-define (make-interactive-with var)
+  (:interactive #t)
+  (interactive (lambda (s) (make-with var s))
+    (drd-ref env-var-description% var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking
