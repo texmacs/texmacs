@@ -37,9 +37,9 @@
 (tm-define (interactive-switch-to-buffer)
   (cond ((buffer-menu-recent-item) =>
          (lambda (x)
-           (interactive-default '("Switch to buffer:")
-                                (list (first x))
-                                interactive-switch-to-buffer/callback)))))
+           (interactive-default interactive-switch-to-buffer/callback
+				(list "Switch to buffer")
+                                (list (first x)))))))
 
 (define (interactive-switch-to-buffer/callback s)
   (cond ((buffer-menu-item-by-name s) => buffer-menu-item-switch-to)))

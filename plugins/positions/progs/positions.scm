@@ -29,8 +29,7 @@
     pos))
 
 (tm-define (position-remember-ia)
-  (interactive-proc '("Remember position as:")
-		    position-remember/callback))
+  (interactive-proc position-remember/callback (list "Remember position as")))
 
 (define (position-remember/callback name)
   (let ((pos (tm-position-new)))
@@ -38,16 +37,14 @@
     (ahash-set! positions name pos)))
 
 (tm-define (position-jump-ia)
-  (interactive-proc '("Jump to position:")
-		    position-jump/callback))
+  (interactive-proc position-jump/callback (list "Jump to position")))
 
 (define (position-jump/callback name)
   (cond ((recall-position name) =>
 	 (lambda (pos) (tm-go-to (tm-position-get pos))))))
 
 (tm-define (position-forget-ia)
-  (interactive-proc '("Forget position:")
-		    position-forget/callback))
+  (interactive-proc position-forget/callback (list "Forget position")))
 
 (define (position-forget/callback name)
   (cond ((recall-position name) =>

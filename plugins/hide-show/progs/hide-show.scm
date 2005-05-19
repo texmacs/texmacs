@@ -51,9 +51,7 @@
 (tm-define (hide-ia)
   (if (not (func? (tree->stree (get-init-tree "hide")) 'macro))
       (init-add-package "hide"))
-  (interactive-proc '("Hide:")
-		    (lambda (s) (hide (input->symbols s)))))
+  (interactive-proc (lambda (s) (hide (input->symbols s))) (list "Hide")))
 
 (tm-define (show-ia)
-  (interactive-proc '("Show:")
-		    (lambda(s) (show (input->symbols s)))))
+  (interactive-proc (lambda(s) (show (input->symbols s))) (list "Show")))

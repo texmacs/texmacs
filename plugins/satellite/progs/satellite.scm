@@ -103,22 +103,20 @@
 	    (init-env "def-satellite" (object->string lenv))
 	    (insert  the-tree)))))
 
-
 (define list-env-satellite '())
 
 (tm-define (create-satellite)
   (set! list-env-satellite '())
  (create-satellite/sub))
-  
-
 
 (define (create-satellite/sub)
-  (interactive '("Environnement ou rien :")
-                 '(lambda (s)
-		    (if (string-null? s)
-			(create-file-with-env list-env-satellite)
-			(begin (set-cons! list-env-satellite (string->object s))
-			       (create-satellite/sub))))))
+  (interactive
+      (lambda (s)
+	(if (string-null? s)
+	    (create-file-with-env list-env-satellite)
+	    (begin (set-cons! list-env-satellite (string->object s))
+		   (create-satellite/sub))))
+    "Environnement ou rien"))
 
 (define (go-to-nth-label listlabel n)
   (tm-go-to (rcons

@@ -22,9 +22,9 @@
 ;; "interactive" took a procedure instead of a symbol. So let us use the
 ;; "interactive-proc" wrapper function until "interactive" is updated.
 
-(tm-define (interactive-proc prompts proc)
+(tm-define (interactive-proc proc prompts)
   (set! interactive-proc/callback proc)
-  (interactive prompts 'interactive-proc/callback-wrapper))
+  (interactive interactive-proc/callback-wrapper prompts))
 
 (define interactive-proc/callback #f)
 
@@ -36,7 +36,7 @@
 
 ;; "interactive" primitive with a proc parameter and an optional default value
 
-(tm-define (interactive-default prompts defaults proc)
+(tm-define (interactive-default proc prompts defaults)
   (interactive-proc
     (map interactive-default/prompt prompts defaults)
     (cut interactive-default/callback proc defaults <...>)))
