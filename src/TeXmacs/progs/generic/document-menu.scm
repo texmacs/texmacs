@@ -27,7 +27,7 @@
   ---
   (link style-menu)
   ---
-  ("Other style" (interactive init-style "Document style")))
+  ("Other style" (interactive init-style)))
 
 (menu-bind global-language-menu
   ("British"
@@ -112,13 +112,13 @@
   (-> "Add package"
       (link add-package-menu)
       ---
-      ("Other" (interactive init-add-package "Use package")))
+      ("Other" (interactive init-add-package)))
   (-> "Remove package"
       (link remove-package-menu)
       ---
-      ("Other" (interactive init-remove-package "Remove package")))
+      ("Other" (interactive init-remove-package)))
   (-> "Master"
-      ("Attach" (interactive project-attach "Master file"))
+      ("Attach" (interactive project-attach))
       ("Detach" (project-detach)))
   (-> "View"
       ("Edit source tree" (toggle-preamble))

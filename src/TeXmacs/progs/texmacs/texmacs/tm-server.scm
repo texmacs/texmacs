@@ -54,6 +54,21 @@
   ("bibtex command" "bibtex" notify-bibtex-command))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Properties of some built-in routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (system cmd)
+  (:argument cmd "Command"))
+
+(tm-property (footer-eval cmd)
+  (:argument cmd "Command"))
+
+(tm-property (replace-start-forward what by)
+  ;; FIXME: should go elsewhere
+  (:argument what "Replace")
+  (:argument by "Replace by"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

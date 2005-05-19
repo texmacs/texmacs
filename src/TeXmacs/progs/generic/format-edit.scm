@@ -25,6 +25,30 @@
     (drd-ref env-var-description% var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Spacing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (make-var-space spc base top)
+  (:argument spc "Horizontal space")
+  (:argument base "Base level")
+  (:argument top "Top level"))
+
+(tm-property (make-hspace spc)
+  (:argument spc "Horizontal space"))
+
+(tm-property (make-space spc)
+  (:argument spc "Horizontal space"))
+
+(tm-property (make-htab spc)
+  (:argument spc "Minimal space"))
+
+(tm-property (make-vspace-before spc)
+  (:argument spc "Vertical space"))
+
+(tm-property (make-vspace-after)
+  (:argument spc "Vertical space"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -39,3 +63,17 @@
 (tm-define (make-new-dpage)
   (make 'new-dpage)
   (insert-return))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (make-move hor ver)
+  (:argument hor "Horizontal")
+  (:argument ver "Vertical"))
+
+(tm-property (make-resize l b r t)
+  (:argument l "Left")
+  (:argument b "Bottom")
+  (:argument r "Right")
+  (:argument t "Top"))

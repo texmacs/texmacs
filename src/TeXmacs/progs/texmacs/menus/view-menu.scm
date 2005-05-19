@@ -45,4 +45,4 @@
       ("7" (set-shrinking-factor 7))
       ("10" (set-shrinking-factor 10))
       ---
-      ("Other" (interactive other-shrinking-factor "Shrinking factor"))))
+      ("Other" (interactive other-shrinking-factor))))

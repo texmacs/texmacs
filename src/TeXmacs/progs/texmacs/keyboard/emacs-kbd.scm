@@ -199,7 +199,7 @@
   ("emacs tab" (kbd-select-environment))
 
   ("emacs:meta w" (clipboard-copy "primary"))
-  ("emacs:meta x" (interactive footer-eval "Command"))
+  ("emacs:meta x" (interactive footer-eval))
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))
@@ -215,7 +215,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
-  ("emacs =" (interactive replace-start-forward "Replace" "Replace by"))
+  ("emacs =" (interactive replace-start-forward))
 
   ("emacs:meta a" (make-tree))
   ("emacs:meta g" (clipboard-clear "primary"))
@@ -235,16 +235,16 @@
   ("emacs:copyto 3" (clipboard-copy "ternary"))
   ("emacs:copyto s" (clipboard-copy "search"))
   ("emacs:copyto r" (clipboard-copy "replace"))
-  ("emacs:copyto *" (interactive clipboard-copy "Copy to"))
+  ("emacs:copyto *" (interactive clipboard-copy))
   ("emacs:cutto 1" (noop) (clipboard-cut "primary"))
   ("emacs:cutto 2" (clipboard-cut "secondary"))
   ("emacs:cutto 3" (clipboard-cut "ternary"))
   ("emacs:cutto s" (clipboard-cut "search"))
   ("emacs:cutto r" (clipboard-cut "replace"))
-  ("emacs:cutto *" (interactive clipboard-cut "Cut to"))
+  ("emacs:cutto *" (interactive clipboard-cut))
   ("emacs:pastefrom 1" (noop) (clipboard-paste "primary"))
   ("emacs:pastefrom 2" (clipboard-paste "secondary"))
   ("emacs:pastefrom 3" (clipboard-paste "ternary"))
   ("emacs:pastefrom s" (clipboard-paste "search"))
   ("emacs:pastefrom r" (clipboard-paste "replace"))
-  ("emacs:pastefrom *" (interactive clipboard-paste "Paste from")))
+  ("emacs:pastefrom *" (interactive clipboard-paste)))

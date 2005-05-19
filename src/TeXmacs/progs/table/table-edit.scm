@@ -195,6 +195,7 @@
 (define (cell-test-background? s) (string=? (cell-get-background) s))
 (tm-define (cell-set-background s)
   (:synopsis "Set background color of cell.")
+  (:argument s "Cell color")
   (:check-mark "o" cell-test-background?)
   (cell-set-format "cell-background" s))
 

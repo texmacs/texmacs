@@ -36,7 +36,7 @@
   (when (and (style-has? "std-dtd") (in-text?))
 	(promise (supported-sessions-menu-promise))
 	---
-	("Other" (interactive make-session "Session type" "Session name"))))
+	("Other" (interactive make-session))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Sessions menu
