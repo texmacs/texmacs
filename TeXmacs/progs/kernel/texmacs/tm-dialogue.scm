@@ -140,5 +140,6 @@
 (tm-define (interactive fun . args)
   (:synopsis "Call @fun with interactively specified arguments @args")
   (:interactive #t)
+  (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (tm-interactive (map build-interactive-arg args) fun))
