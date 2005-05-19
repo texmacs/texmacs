@@ -68,16 +68,31 @@
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (table-set-width width)
-  (:argument width "Table width")
-  (table-set-format "table-width" width))
+(drd-table env-var-description%
+  ("table-width" "Table width")
+  ("table-height" "Table height")
+  ("table-lsep" "Left table padding")
+  ("table-rsep" "Right table padding")
+  ("table-bsep" "Bottom table padding")
+  ("table-tsep" "Top table padding")
+  ("table-lborder" "Left table border")
+  ("table-rborder" "Right table border")
+  ("table-bborder" "Bottom table border")
+  ("table-tborder" "Top table border")
+  ("table-row-origin" "Origin row")
+  ("table-col-origin" "Origin column")
+  ("table-min-rows" "Minimal number of rows")
+  ("table-max-rows" "Maximal number of rows")
+  ("table-min-cols" "Minimal number of columns")
+  ("table-max-cols" "Maximal number of columns"))
+
+(tm-define (table-interactive-set var)
+  (:interactive #t)
+  (interactive (lambda (s) (table-set-format var s))
+    (drd-ref env-var-description% var)))
 
 (tm-define (table-use-paragraph-width)
   (table-set-format "table-width" "1par"))
-
-(tm-define (table-set-height height)
-  (:argument width "Table height")
-  (table-set-format "table-height" height))
 
 (tm-define (table-set-padding padding)
   (:argument padding "Padding")
@@ -86,68 +101,12 @@
   (table-set-format "table-bsep" padding)
   (table-set-format "table-tsep" padding))
 
-(tm-define (table-set-lpadding-ia)
-  (interactive (lambda (s) (table-set-format "table-lsep" s))
-    "Left padding"))
-
-(tm-define (table-set-rpadding-ia)
-  (interactive (lambda (s) (table-set-format "table-rsep" s))
-    "Right padding"))
-
-(tm-define (table-set-bpadding-ia)
-  (interactive (lambda (s) (table-set-format "table-bsep" s))
-    "Bottom padding"))
-
-(tm-define (table-set-tpadding-ia)
-  (interactive (lambda (s) (table-set-format "table-tsep" s))
-    "Top padding"))
-
 (tm-define (table-set-border border)
   (:argument border "Border width")
   (table-set-format "table-lborder" border)
   (table-set-format "table-rborder" border)
   (table-set-format "table-bborder" border)
   (table-set-format "table-tborder" border))
-
-(tm-define (table-set-lborder-ia)
-  (interactive (lambda (s) (table-set-format "table-lborder" s))
-    "Left border width"))
-
-(tm-define (table-set-rborder-ia)
-  (interactive (lambda (s) (table-set-format "table-rborder" s))
-    "Right border width"))
-
-(tm-define (table-set-bborder-ia)
-  (interactive (lambda (s) (table-set-format "table-bborder" s))
-    "Bottom border width"))
-
-(tm-define (table-set-tborder-ia)
-  (interactive (lambda (s) (table-set-format "table-tborder" s))
-    "Top border width"))
-
-(tm-define (table-set-row-origin-ia)
-  (interactive (lambda (s) (table-set-format "table-row-origin" s))
-    "Origin row"))
-
-(tm-define (table-set-column-origin-ia)
-  (interactive (lambda (s) (table-set-format "table-col-origin" s))
-    "Origin column"))
-
-(tm-define (table-set-min-rows-ia)
-  (interactive (lambda (s) (table-set-format "table-min-rows" s))
-    "Minimal number of rows"))
-
-(tm-define (table-set-max-rows-ia)
-  (interactive (lambda (s) (table-set-format "table-max-rows" s))
-    "Maximal number of rows"))
-
-(tm-define (table-set-min-columns-ia)
-  (interactive (lambda (s) (table-set-format "table-min-cols" s))
-    "Minimal number of columns"))
-
-(tm-define (table-set-max-columns-ia)
-  (interactive (lambda (s) (table-set-format "table-max-cols" s))
-    "Maximal number of columns"))
 
 (define (table-get-halign) (table-get-format "table-halign"))
 (define (table-test-halign? s) (string=? (table-get-halign) s))
@@ -175,98 +134,66 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (test-cell-mode? s) (string=? (get-cell-mode) s))
-
 (tm-property (set-cell-mode s)
   (:check-mark "*" test-cell-mode?))
 
-(tm-define (cell-set-width-ia)
-  (interactive (lambda (s) (cell-set-format "cell-width" s))
-    "Cell width"))
+(drd-table env-var-description%
+  ("cell-width" "Cell width")
+  ("cell-height" "Cell height")
+  ("cell-hpart" "Part in unused horizontal space")
+  ("cell-vpart" "Part in unused vertical space")
+  ("cell-lsep" "Left cell padding")
+  ("cell-rsep" "Right cell padding")
+  ("cell-bsep" "Bottom cell padding")
+  ("cell-tsep" "Top cell padding")
+  ("cell-lborder" "Left cell border")
+  ("cell-rborder" "Right cell border")
+  ("cell-bborder" "Bottom cell border")
+  ("cell-tborder" "Top cell border"))
 
-(tm-define (cell-set-height-ia)
-  (interactive (lambda (s) (cell-set-format "cell-height" s))
-    "Cell height"))
+(tm-define (cell-interactive-set var)
+  (:interactive #t)
+  (interactive (lambda (s) (cell-set-format var s))
+    (drd-ref env-var-description% var)))
 
-(tm-define (cell-set-hpart-ia)
-  (interactive (lambda (s) (cell-set-format "cell-hpart" s))
-    "Part in unused horizontal space"))
+(define (make-set-cell-multiple-formats vars val)
+  (let ((sp (tm-position-new))
+	(ep (tm-position-new)))
+    (tm-position-set sp (selection-get-start))
+    (tm-position-set ep (selection-get-end))
+    (map (lambda (var)
+	   (selection-set-start-path (tm-position-get sp))
+	   (selection-set-end-path (tm-position-get ep))
+	   (cell-set-format var val))
+	 vars)
+    (tm-position-delete sp)
+    (tm-position-delete ep)))
 
-(tm-define (cell-set-vpart-ia)
-  (interactive (lambda (s) (cell-set-format "cell-vpart" s))
-    "Part in unused vertical space"))
+(tm-define (cell-set-padding padding)
+  (:argument padding "Cell padding")
+  (make-set-cell-multiple-formats
+   '("cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep")
+   padding))
 
-(define (make-set-cell-multiple-formats vars)
-  (lambda (val)
-    (let ((sp (tm-position-new))
-	  (ep (tm-position-new)))
-      (tm-position-set sp (selection-get-start))
-      (tm-position-set ep (selection-get-end))
-      (map (lambda (var)
-	     (selection-set-start-path (tm-position-get sp))
-	     (selection-set-end-path (tm-position-get ep))
-	     (cell-set-format var val))
-	   vars)
-      (tm-position-delete sp)
-      (tm-position-delete ep))))
+(tm-define (cell-set-border border)
+  (:argument border "Cell border width")
+  (make-set-cell-multiple-formats
+   '("cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder")
+   border))
 
-(tm-define (cell-set-padding-ia)
-  (interactive
-      (make-set-cell-multiple-formats
-       '("cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep"))
-    "Padding"))
-
-(tm-define (cell-set-lpadding-ia)
-  (interactive (lambda (s) (cell-set-format "cell-lsep" s))
-    "Left padding"))
-
-(tm-define (cell-set-rpadding-ia)
-  (interactive (lambda (s) (cell-set-format "cell-rsep" s))
-    "Right padding"))
-
-(tm-define (cell-set-bpadding-ia)
-  (interactive (lambda (s) (cell-set-format "cell-bsep" s))
-    "Bottom padding"))
-
-(tm-define (cell-set-tpadding-ia)
-  (interactive (lambda (s) (cell-set-format "cell-tsep" s))
-    "Top padding"))
-
-(tm-define (cell-set-border-ia)
-  (interactive
-      (make-set-cell-multiple-formats
-       '("cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder"))
-    "Border width"))
-
-(tm-define (cell-set-lborder-ia)
-  (interactive (lambda (s) (cell-set-format "cell-lborder" s))
-    "Left border width"))
-
-(tm-define (cell-set-rborder-ia)
-  (interactive (lambda (s) (cell-set-format "cell-rborder" s))
-    "Right border width"))
-
-(tm-define (cell-set-bborder-ia)
-  (interactive (lambda (s) (cell-set-format "cell-bborder" s))
-    "Bottom border width"))
-
-(tm-define (cell-set-tborder-ia)
-  (interactive (lambda (s) (cell-set-format "cell-tborder" s))
-    "Top border width"))
-
-(tm-define (cell-set-span-ia)
-  (interactive
-      (lambda (rs cs)
-	(let ((sp (tm-position-new))
-	      (ep (tm-position-new)))
-	  (tm-position-set sp (selection-get-start))
-	  (tm-position-set ep (selection-get-end))
-	  (cell-set-format "cell-row-span" rs)
-	  (selection-set-start-path (tm-position-get sp))
-	  (selection-set-end-path (tm-position-get ep))
-	  (cell-set-format "cell-col-span" cs)
-	  (tm-position-delete sp)
-	  (tm-position-delete ep)))
-    "Row span" "Column span"))
+(tm-define (cell-set-span rs cs)
+  (:argument rs "Row span")
+  (:argument cs "Column span")
+  (let ((sp (tm-position-new))
+	(ep (tm-position-new)))
+    (tm-position-set sp (selection-get-start))
+    (tm-position-set ep (selection-get-end))
+    (cell-set-format "cell-row-span" rs)
+    (selection-set-start-path (tm-position-get sp))
+    (selection-set-end-path (tm-position-get ep))
+    (cell-set-format "cell-col-span" cs)
+    (tm-position-delete sp)
+    (tm-position-delete ep)))
 
 (define (cell-get-halign) (cell-get-format "cell-halign"))
 (define (cell-test-halign? s) (string=? (cell-get-halign) s))

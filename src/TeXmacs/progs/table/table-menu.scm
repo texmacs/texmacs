@@ -62,22 +62,22 @@
 
 (menu-bind table-border-menu
   ("Border" (interactive table-set-border))
-  ("Left border" ... (table-set-lborder-ia))
-  ("Right border" ... (table-set-rborder-ia))
-  ("Bottom border" ... (table-set-bborder-ia))
-  ("Top border" ... (table-set-tborder-ia))
+  ("Left border" (table-interactive-set "table-lborder"))
+  ("Right border" (table-interactive-set "table-rborder"))
+  ("Bottom border" (table-interactive-set "table-bborder"))
+  ("Top border" (table-interactive-set "table-tborder"))
   ---
   ("Padding" (interactive table-set-padding))
-  ("Left padding" ... (table-set-lpadding-ia))
-  ("Right padding" ... (table-set-rpadding-ia))
-  ("Bottom padding" ... (table-set-bpadding-ia))
-  ("Top padding" ... (table-set-tpadding-ia)))
+  ("Left padding" (table-interactive-set "table-lsep"))
+  ("Right padding" (table-interactive-set "table-rsep"))
+  ("Bottom padding" (table-interactive-set "table-bsep"))
+  ("Top padding" (table-interactive-set "table-tsep")))
 
 (menu-bind table-limits-menu
-  ("Minimal number of rows" ... (table-set-min-rows-ia))
-  ("Minimal number of columns" ... (table-set-min-columns-ia))
-  ("Maximal number of rows" ... (table-set-max-rows-ia))
-  ("Maximal number of columns" ... (table-set-max-columns-ia)))
+  ("Minimal number of rows" (table-interactive-set "table-min-rows"))
+  ("Minimal number of columns" (table-interactive-set "table-min-cols"))
+  ("Maximal number of rows" (table-interactive-set "table-max-rows"))
+  ("Maximal number of columns" (table-interactive-set "table-max-cols")))
 
 (menu-bind table-special-menu
   ("Deactivate" (table-disactivate))
@@ -85,14 +85,14 @@
   ("Extract format" (table-extract-format))
   ---
   ("Use paragraph width" (table-use-paragraph-width))
-  ("Width" (interactive table-set-width))
-  ("Height" (interactive table-set-height))
+  ("Width" (table-interactive-set "table-width"))
+  ("Height" (table-interactive-set "table-height"))
   ---
   ("Hyphenation" (toggle-table-hyphen))
   (-> "Border" (link table-border-menu))
 ;;(-> "Origin"
-;;    ("Row" (table-set-row-origin-ia))
-;;    ("Column" (table-set-column-origin-ia)))
+;;    ("Row" (table-interactive-set "table-row-origin"))
+;;    ("Column" (table-interactive-set "table-col-origin")))
   (-> "Size limits" (link table-limits-menu)))
 
 (menu-bind cell-mode-menu
@@ -116,31 +116,31 @@
   ("Top" (cell-set-valign "t")))
 
 (menu-bind cell-width-menu
-  ("Set width" ... (cell-set-width-ia))
+  ("Set width" (cell-interactive-set "cell-width"))
   ---
   ("Minimum mode" (cell-set-hmode "min"))
   ("Exact mode" (cell-set-hmode "exact"))
   ("Maximum mode" (cell-set-hmode "max")))
 
 (menu-bind cell-height-menu
-  ("Set height" ... (cell-set-height-ia))
+  ("Set height" (cell-interactive-set "cell-height"))
   ---
   ("Minimum mode" (cell-set-vmode "min"))
   ("Exact mode" (cell-set-vmode "exact"))
   ("Maximum mode" (cell-set-vmode "max")))
 
 (menu-bind cell-border-menu
-  ("Border" ... (cell-set-border-ia))
-  ("Left border" ... (cell-set-lborder-ia))
-  ("Right border" ... (cell-set-rborder-ia))
-  ("Bottom border" ... (cell-set-bborder-ia))
-  ("Top border" ... (cell-set-tborder-ia))
+  ("Border" (interactive cell-set-border))
+  ("Left border" (cell-interactive-set "cell-lborder"))
+  ("Right border" (cell-interactive-set "cell-rborder"))
+  ("Bottom border" (cell-interactive-set "cell-bborder"))
+  ("Top border" (cell-interactive-set "cell-tborder"))
   ---
-  ("Padding" ... (cell-set-padding-ia))
-  ("Left padding" ... (cell-set-lpadding-ia))
-  ("Right padding" ... (cell-set-rpadding-ia))
-  ("Bottom padding" ... (cell-set-bpadding-ia))
-  ("Top padding" ... (cell-set-tpadding-ia)))
+  ("Padding" (interactive cell-set-padding))
+  ("Left padding" (cell-interactive-set "cell-lsep"))
+  ("Right padding" (cell-interactive-set "cell-rsep"))
+  ("Bottom padding" (cell-interactive-set "cell-bsep"))
+  ("Top padding" (cell-interactive-set "cell-tsep")))
 
 (menu-bind cell-color-menu
   ("None" (cell-set-background ""))
@@ -161,7 +161,7 @@
   ("Other"  (interactive cell-set-background "Cell color")))
 
 (menu-bind cell-special-menu
-  ("Set span" ... (cell-set-span-ia))
+  ("Set span" (interactive cell-set-span))
   ("Subtable" (make-subtable))
   ---
   (-> "Text height correction"
@@ -179,8 +179,8 @@
       ---
       ("Multi-paragraph" (cell-toggle-multi-paragraph)))
   (-> "Distribute unused space"
-      ("Horizontal part" ... (cell-set-hpart-ia))
-      ("Vertical part" ... (cell-set-vpart-ia)))
+      ("Horizontal part" (cell-interactive-set "cell-hpart"))
+      ("Vertical part" (cell-interactive-set "cell-vpart")))
   (-> "Glue decorations" (tile 2 (link cell-decoration-icons))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -327,7 +327,7 @@
 (menu-bind cell-size-icons
   ((balloon (icon "tm_cell_width.xpm")
 	    "Set width of cell (M-t h s)")
-   (cell-set-width-ia))
+   (cell-interactive-set "cell-width"))
   ((balloon (icon "tm_cell_hmin.xpm")
 	    "Width is minimum of specified width and box width (M-t h m)")
    (cell-set-hmode "min"))
@@ -339,7 +339,7 @@
    (cell-set-hmode "max"))
   ((balloon (icon "tm_cell_height.xpm")
 	    "Set height of cell (M-t v s)")
-   (cell-set-height-ia))
+   (cell-interactive-set "cell-height"))
   ((balloon (icon "tm_cell_vmin.xpm")
 	    "Height is minimum of specified height and box height (M-t v m)")
    (cell-set-vmode "min"))
