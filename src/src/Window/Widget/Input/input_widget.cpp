@@ -21,7 +21,10 @@
 
 class input_widget_rep: public attribute_widget_rep {
   string  s;           // the string being entered
+  string  type;        // expected type of string
+  array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
+  int     def_cur;     // current choice between default possible values
   SI      dw, dh;      // border width and height
   int     pos;         // cursor position
   SI      scroll;      // how much scrolled to the left
@@ -49,7 +52,8 @@ public:
 #define SHRINK 3
 
 input_widget_rep::input_widget_rep (display dis, command call_back2):
-  attribute_widget_rep (dis, south_west), s (""), call_back (call_back2),
+  attribute_widget_rep (dis, south_west),
+  s (""), type ("default"), def (), call_back (call_back2), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false) { dw*=SHRINK; dh*= SHRINK; }
 
@@ -118,6 +122,20 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   else if ((key == "right") || (key == "C-f")) { if (pos<N(s)) pos++; }
   else if ((key == "home") || (key == "C-a")) pos=0;
   else if ((key == "end") || (key == "C-e")) pos=N(s);
+  else if ((key == "up") || (key == "C-p")) {
+    if (def_cur>0) {
+      def_cur--;
+      s= copy (def[def_cur]);
+      pos= N(s);
+    }
+  }
+  else if ((key == "down") || (key == "C-n")) {
+    if (def_cur<N(def)-1) {
+      def_cur++;
+      s= copy (def[def_cur]);
+      pos= N(s);
+    }
+  }
   else if (key == "C-k") s= s (0, pos);
   else if ((key == "C-d") || (key == "delete")) {
     if ((pos<N(s)) && (N(s)>0))
@@ -183,6 +201,8 @@ input_widget_rep::handle_set_string (set_string_event ev) {
     pos= N(s);
     if (attached ()) this << emit_invalidate_all ();
   }
+  else if (ev->which == "type") type= copy (ev->s);
+  else if (ev->which == "default") def << copy (ev->s);
   else attribute_widget_rep::handle_set_string (ev);
 }
 

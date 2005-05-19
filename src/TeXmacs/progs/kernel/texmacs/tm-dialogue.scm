@@ -141,7 +141,8 @@
 	(map (lambda (which) (compute-interactive-arg fun which)) args))))
 
 (define (build-interactive-arg s)
-  (cond ((string-ends? s ":") s)
+  (cond ((pair? s) (cons (build-interactive-arg (car s)) (cdr s)))
+	((string-ends? s ":") s)
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
 
