@@ -98,28 +98,25 @@
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
 
 (tm-define (graphics-set-unit u)
+  (:argument u "Graphical unit")
   (with frame (graphics-cartesian-frame)
     (with new-frame `(tuple "scale" ,u ,(cAr frame))
       (graphics-set-property "gr-frame" new-frame))))
 
-(tm-define (graphics-set-unit-ia)
-  (interactive graphics-set-unit "Graphical unit"))
-
 (tm-define (graphics-set-origin x y)
+  (:argument x "Origin's x-coordinate")
+  (:argument y "Origin's y-coordinate")
   (with frame (graphics-cartesian-frame)
     (with new-frame (append (cDr frame) `((tuple ,x ,y)))
       (graphics-set-property "gr-frame" new-frame))))
 
-(tm-define (graphics-set-origin-ia)
-  (interactive graphics-set-origin
-    "Origin's x-coordinate" "Origin's y-coordinate"))
-
-(tm-define (graphics-set-extents-ia)
-  (interactive
-      (lambda (l b r t)
-	(with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
-	  (graphics-set-property "gr-clip" clip)))
-    "Left corner" "Bottom corner" "Right corner" "Top corner"))
+(tm-define (graphics-set-extents l b r t)
+  (:argument l "Left corner")
+  (:argument b "Bottom corner")
+  (:argument r "Right corner")
+  (:argument t "Top corner")
+  (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
+    (graphics-set-property "gr-clip" clip)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grids
@@ -335,9 +332,6 @@
       (graphics-set-edit-grid cmd)))
 
 ;; Setting grid properties
-(define (grid-prop-input prompt func visual?)
-  (interactive (lambda (x) (func x visual?)) prompt))
-
 (tm-define (graphics-set-grid-center x y visual?)
   (if (not visual?)
       (graphics-set-property "gr-as-visual-grid" "off"))
@@ -381,35 +375,39 @@
   (set! graphics-current-base val)
   (graphics-set-grid visual?))
 
-(tm-define (graphics-set-grid-center-ia visual?)
+(tm-define (graphics-interactive-set-grid-center visual?)
+  (:interactive #t)
   (interactive
       (lambda (x y)
 	(graphics-set-grid-center x y visual?))
-    "X" "Y"))
+    "Center's x-coordinate" "Center's y-coordinate"))
 
-(tm-define (graphics-set-grid-step-ia visual?)
-  (grid-prop-input '("Unit length:") graphics-set-grid-step visual?))
+(tm-define (graphics-interactive-set-grid-step visual?)
+  (:interactive #t)
+  (interactive (lambda (x) (graphics-set-grid-step x visual?))
+    "Unit length"))
 
-(tm-define (graphics-set-grid-astep-ia visual?)
-  (grid-prop-input '("Nb angular steps:") graphics-set-grid-astep visual?))
+(tm-define (graphics-interactive-set-grid-astep visual?)
+  (:interactive #t)
+  (interactive (lambda (x) (graphics-set-grid-astep x visual?))
+    "Number of angular steps"))
 
-(tm-define (graphics-set-grid-base-ia visual?)
-  (grid-prop-input '("Logarithmic base:") graphics-set-grid-base visual?))
+(tm-define (graphics-interactive-set-grid-base visual?)
+  (:interactive #t)
+  (interactive (lambda (x) (graphics-set-grid-base x visual?))
+    "Logarithmic base"))
 
 ;; Setting visual grid aspect properties
 (tm-define (graphics-set-grid-aspect-properties c0 c1 s2 c2)
+  (:argument c0 "Color(axes)")
+  (:argument c1 "Color(unit)")
+  (:argument s2 "Subdivisions per unit")
+  (:argument c2 "Color(subds)")
   (with aspect `(tuple (tuple "axes" ,c0) (tuple "1" ,c1) (tuple ,s2 ,c2))
     (graphics-set-property "gr-grid-aspect" aspect)
     (graphics-set-property "gr-grid-aspect-props" aspect)
-    (set! graphics-current-aspect aspect)
-  )
+    (set! graphics-current-aspect aspect))
   (update-edit-grid 'grid-aspect-change))
-
-(tm-define (graphics-set-grid-aspect-properties-ia)
-  (interactive
-      (lambda (c0 c1 s2 c2)
-	(graphics-set-grid-aspect-properties c0 c1 s2 c2))
-    "Color(axes)" "Color(unit)" "Subdivisions per unit" "Color(subds)"))
 
 (define (cmp-aspect-items x y)
   (if (== (cadr x) "axes") #t
@@ -495,7 +493,7 @@
 	(if (!= type 'update)
 	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
-(tm-define (graphics-set-grid-nsubds-ia visual?)
+(tm-define (graphics-interactive-set-grid-nsubds visual?)
   (interactive (lambda (x) (graphics-set-grid-aspect 'detailed x visual?))
     "Number of subunit steps"))
 
