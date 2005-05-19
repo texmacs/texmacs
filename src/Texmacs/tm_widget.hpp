@@ -46,7 +46,8 @@ public:
   bool get_subwidget_flag (widget w);
   void set_subwidget_flag (widget w, bool on);
 
-  void interactive (string name, string& s, command cmd);
+  void interactive (string name, string type, array<string> def,
+		    string& s, command cmd);
   void interactive_return ();
   void set_left_footer (string s);
   void set_right_footer (string s);

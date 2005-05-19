@@ -363,9 +363,10 @@ tm_server_rep::recall_message () {
 }
 
 void
-tm_server_rep::interactive (string name, string& s, command call_back) {
+tm_server_rep::interactive (string name, string type, array<string> def,
+			    string& s, command call_back) {
   if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->interactive (name, s, call_back);
+  get_meta()->interactive (name, type, def, s, call_back);
 }
 
 void
