@@ -282,6 +282,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (docgrep-in-doc what)
+  (:argument what "Search words in the documentation")
   (with lan (get-output-language)
     (cond ((== lan "french")
 	   (docgrep what "$TEXMACS_DOC_PATH" "*.fr.tm"))
@@ -297,8 +298,10 @@
 	   (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
 
 (tm-define (docgrep-in-src what)
+  (:argument what "Search words in the source code")
   (docgrep what "$TEXMACS_PATH/progs:$TEXMACS_SOURCE_PATH/src"
 	   "*.scm" "*.hpp" "*.cpp"))
 
 (tm-define (docgrep-in-texts what)
+  (:argument what "Search words in my documents")
   (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))

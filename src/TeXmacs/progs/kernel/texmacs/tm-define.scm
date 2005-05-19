@@ -288,10 +288,15 @@
 ;; Lazy function declations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define lazy-define-table (make-ahash-table))
+
 (define-public (not-define-option? item)
   (not (and (pair? item) (keyword? (car item)))))
 
 (define-public (lazy-define-one module opts name)
+  (let* ((old (ahash-ref lazy-define-table name))
+	 (new (if old (cons module old) (list module))))
+    (ahash-set! lazy-define-table name new))
   (with name-star (string->symbol (string-append (symbol->string name) "*"))
     `(if (not (tm-definition ,@opts ,name))
 	 (tm-define (,name . args)
@@ -309,3 +314,10 @@
   (receive (opts real-names) (list-break names not-define-option?)
     `(begin
        ,@(map (lambda (name) (lazy-define-one module opts name)) names))))
+
+(define-public (lazy-define-force name)
+  (if (procedure? name) (set! name (procedure-name name)))
+  (let* ((im (ahash-ref lazy-define-table name))
+	 (modules (if im im '())))
+    (ahash-remove! lazy-define-table name)
+    (map module-load modules)))

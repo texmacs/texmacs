@@ -19,7 +19,7 @@
     (doc help-funcs)))
 
 (kbd-map
-  ("F1" (interactive docgrep-in-doc "Search words in the documentation"))
+  ("F1" (interactive docgrep-in-doc))
   ("S-F1" (load-help-buffer "about/welcome/welcome"))
   ("F2" (choose-file "Load file" "" 'load-buffer))
   ("S-F2" (choose-file "Load file" "" 'load-in-new-window))

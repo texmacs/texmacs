@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : env-drd.scm
-;; DESCRIPTION : DRD properties of the built-in environment variables
+;; MODULE      : environment.scm
+;; DESCRIPTION : properties & routines for built-in environment variables
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (generic env-drd))
+(texmacs-module (utils base environment))
 
 (drd-table env-var-description%
   ("color" "Foreground Colour")
