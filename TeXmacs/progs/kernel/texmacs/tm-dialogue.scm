@@ -119,7 +119,20 @@
      (:pause 2500)
      (set-message "" ""))))))))
 
-(define (interactive-arg s)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interactive commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (compute-interactive-arg fun which)
+  (with arg (property fun (list :argument which))
+    (if arg (car arg) "Undocumented argument")))
+
+(define (compute-interactive-args fun)
+  (with args (property fun :arguments)
+    (if (not args) '()
+	(map (lambda (which) (compute-interactive-arg fun which)) args))))
+
+(define (build-interactive-arg s)
   (cond ((string-ends? s ":") s)
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
@@ -127,4 +140,5 @@
 (tm-define (interactive fun . args)
   (:synopsis "Call @fun with interactively specified arguments @args")
   (:interactive #t)
-  (tm-interactive (map interactive-arg args) fun))
+  (if (null? args) (set! args (compute-interactive-args fun)))
+  (tm-interactive (map build-interactive-arg args) fun))

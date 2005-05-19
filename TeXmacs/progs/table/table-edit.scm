@@ -68,25 +68,23 @@
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (table-set-width-ia)
-  (interactive (lambda (s) (table-set-format "table-width" s))
-    "Table width"))
+(tm-define (table-set-width width)
+  (:argument width "Table width")
+  (table-set-format "table-width" width))
 
 (tm-define (table-use-paragraph-width)
   (table-set-format "table-width" "1par"))
 
-(tm-define (table-set-height-ia)
-  (interactive (lambda (s) (table-set-format "table-height" s))
-    "Table height"))
+(tm-define (table-set-height height)
+  (:argument width "Table height")
+  (table-set-format "table-height" height))
 
-(tm-define (table-set-padding-ia)
-  (interactive
-      (lambda (s)
-	(table-set-format "table-lsep" s)
-	(table-set-format "table-rsep" s)
-	(table-set-format "table-bsep" s)
-	(table-set-format "table-tsep" s))
-    "Padding"))
+(tm-define (table-set-padding padding)
+  (:argument padding "Padding")
+  (table-set-format "table-lsep" padding)
+  (table-set-format "table-rsep" padding)
+  (table-set-format "table-bsep" padding)
+  (table-set-format "table-tsep" padding))
 
 (tm-define (table-set-lpadding-ia)
   (interactive (lambda (s) (table-set-format "table-lsep" s))
@@ -104,14 +102,12 @@
   (interactive (lambda (s) (table-set-format "table-tsep" s))
     "Top padding"))
 
-(tm-define (table-set-border-ia)
-  (interactive
-      (lambda (s)
-	(table-set-format "table-lborder" s)
-	(table-set-format "table-rborder" s)
-	(table-set-format "table-bborder" s)
-	(table-set-format "table-tborder" s))
-    "Border width"))
+(tm-define (table-set-border border)
+  (:argument border "Border width")
+  (table-set-format "table-lborder" border)
+  (table-set-format "table-rborder" border)
+  (table-set-format "table-bborder" border)
+  (table-set-format "table-tborder" border))
 
 (tm-define (table-set-lborder-ia)
   (interactive (lambda (s) (table-set-format "table-lborder" s))
