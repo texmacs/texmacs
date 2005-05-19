@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (table table-edit)
-  (:use (utils edit variants)))
+  (:use (utils edit variants) (generic env-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting rows and columns
@@ -68,24 +68,6 @@
 ;; Commands for tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table env-var-description%
-  ("table-width" "Table width")
-  ("table-height" "Table height")
-  ("table-lsep" "Left table padding")
-  ("table-rsep" "Right table padding")
-  ("table-bsep" "Bottom table padding")
-  ("table-tsep" "Top table padding")
-  ("table-lborder" "Left table border")
-  ("table-rborder" "Right table border")
-  ("table-bborder" "Bottom table border")
-  ("table-tborder" "Top table border")
-  ("table-row-origin" "Origin row")
-  ("table-col-origin" "Origin column")
-  ("table-min-rows" "Minimal number of rows")
-  ("table-max-rows" "Maximal number of rows")
-  ("table-min-cols" "Minimal number of columns")
-  ("table-max-cols" "Maximal number of columns"))
-
 (tm-define (table-interactive-set var)
   (:interactive #t)
   (interactive (lambda (s) (table-set-format var s))
@@ -136,20 +118,6 @@
 (define (test-cell-mode? s) (string=? (get-cell-mode) s))
 (tm-property (set-cell-mode s)
   (:check-mark "*" test-cell-mode?))
-
-(drd-table env-var-description%
-  ("cell-width" "Cell width")
-  ("cell-height" "Cell height")
-  ("cell-hpart" "Part in unused horizontal space")
-  ("cell-vpart" "Part in unused vertical space")
-  ("cell-lsep" "Left cell padding")
-  ("cell-rsep" "Right cell padding")
-  ("cell-bsep" "Bottom cell padding")
-  ("cell-tsep" "Top cell padding")
-  ("cell-lborder" "Left cell border")
-  ("cell-rborder" "Right cell border")
-  ("cell-bborder" "Bottom cell border")
-  ("cell-tborder" "Top cell border"))
 
 (tm-define (cell-interactive-set var)
   (:interactive #t)

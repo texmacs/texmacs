@@ -30,7 +30,6 @@
 (tm-define (set-left-margin s) (make-line-with "par-left" s))
 (tm-define (set-right-margin s) (make-line-with "par-right" s))
 (tm-define (set-first-indent s) (make-line-with "par-first" s))
-(tm-define (set-last-indent s) (make-line-with "last-indentation" s))
 (tm-define (set-interline s) (make-line-with "par-sep" s))
 (tm-define (set-interline-spc s) (make-line-with "par-line-sep" s))
 (tm-define (set-interpar-spc s) (make-line-with "par-par-sep" s))
