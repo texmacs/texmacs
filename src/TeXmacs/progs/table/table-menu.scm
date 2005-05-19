@@ -61,13 +61,13 @@
   ("Top" (table-set-valign "t")))
 
 (menu-bind table-border-menu
-  ("Border" ... (table-set-border-ia))
+  ("Border" (interactive table-set-border))
   ("Left border" ... (table-set-lborder-ia))
   ("Right border" ... (table-set-rborder-ia))
   ("Bottom border" ... (table-set-bborder-ia))
   ("Top border" ... (table-set-tborder-ia))
   ---
-  ("Padding" ... (table-set-padding-ia))
+  ("Padding" (interactive table-set-padding))
   ("Left padding" ... (table-set-lpadding-ia))
   ("Right padding" ... (table-set-rpadding-ia))
   ("Bottom padding" ... (table-set-bpadding-ia))
@@ -85,8 +85,8 @@
   ("Extract format" (table-extract-format))
   ---
   ("Use paragraph width" (table-use-paragraph-width))
-  ("Width" ... (table-set-width-ia))
-  ("Height" ... (table-set-height-ia))
+  ("Width" (interactive table-set-width))
+  ("Height" (interactive table-set-height))
   ---
   ("Hyphenation" (toggle-table-hyphen))
   (-> "Border" (link table-border-menu))

@@ -401,6 +401,6 @@
 (tm-define (make-menu-widget p e?)
   (:type (-> object widget))
   (:synopsis "Transform a menu into a widget.")
-  (:args (p "a scheme object which represents the menu")
-	 (e? "greyed menu if @e? is @#f"))
+  (:argument p "a scheme object which represents the menu")
+  (:argument e? "greyed menu if @e? is @#f")
   ((wrap-catch make-menu-main) p e?))

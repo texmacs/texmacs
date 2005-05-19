@@ -122,11 +122,26 @@
   (set! ovl-props (cons `(',(ca*adr decl) ,which (list ,@opt)) ovl-props))
   decl)
 
+(define (compute-arguments decl)
+  (cond ((pair? (cadr decl)) (cdadr decl))
+	((and (pair? (caddr decl)) (== (caaddr decl) 'lambda))
+	 (cadr (caddr decl)))
+	(else
+	 (texmacs-error "compute-arguments" "Bad argument documentation"))))
+
+(define (define-option-argument opt decl)
+  (let* ((var (ca*adr decl))
+	 (args (compute-arguments decl))
+	 (arg (list :argument (car opt))))
+    (set! ovl-props (cons `(',var :arguments ',args) ovl-props))
+    (set! ovl-props (cons `(',var ',arg ',(cdr opt)) ovl-props))
+    decl))
+
 (hash-set! define-option-table :type (define-property :type))
 (hash-set! define-option-table :synopsis (define-property :synopsis))
-(hash-set! define-option-table :args (define-property :args))
 (hash-set! define-option-table :returns (define-property :returns))
 (hash-set! define-option-table :note (define-property :note))
+(hash-set! define-option-table :argument define-option-argument)
 (hash-set! define-option-table :secure (define-property* :secure))
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
 (hash-set! define-option-table :interactive (define-property* :interactive))
