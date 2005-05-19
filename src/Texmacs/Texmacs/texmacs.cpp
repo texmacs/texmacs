@@ -192,7 +192,7 @@ TeXmacs_main (int argc, char** argv) {
 #ifndef OS_WIN32
     if ((my_init_cmds == "") &&
 	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
-      sv->exec_delayed (scheme_cmd ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)"));
+      sv->exec_delayed (scheme_cmd ("(interactive conditional-recover-autosave \"Recover autosave file (y/n)?\")"));
 #endif
   }
 

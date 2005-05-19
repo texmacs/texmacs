@@ -62,9 +62,8 @@
 
 (tm-define (safely-kill-buffer)
   (if (buffer-unsaved?)
-      (interactive
-       '("The buffer has not been saved. Really close it?")
-       'conditional-kill-buffer)
+      (interactive conditional-kill-buffer
+	"The buffer has not been saved. Really close it?")
       (kill-buffer)))
 
 (tm-define (safely-kill-window)
@@ -75,7 +74,6 @@
 
 (tm-define (safely-quit-TeXmacs)
   (if (exists-unsaved-buffer?)
-      (interactive
-       '("There are unsaved files. Really quit?")
-       'conditional-quit-TeXmacs)
+      (interactive conditional-quit-TeXmacs
+	"There are unsaved files. Really quit?")
       (quit-TeXmacs)))

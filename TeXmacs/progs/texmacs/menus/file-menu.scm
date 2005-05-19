@@ -94,13 +94,12 @@
   ("Preview with ghostview" (preview-with-ghostview))
   ---
   ("Print all" (print))
-  ("Print page selection" ...
-   (interactive '("First page:" "Last page:") 'print-pages))
-  ("Print all to file" ...
+  ("Print page selection" (interactive print-pages "First page" "Last page"))
+  ("Print all to file"
    (choose-file "Print all to file" "postscript" 'print-to-file))
-  ("Print page selection to file" ...
-   (interactive '("First page:" "Last page:")
-		'choose-file-and-print-page-selection)))
+  ("Print page selection to file"
+   (interactive choose-file-and-print-page-selection
+     "First page" "Last page")))
 
 (menu-bind close-menu
   ("Close buffer" (safely-kill-buffer))

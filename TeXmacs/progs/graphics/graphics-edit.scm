@@ -103,7 +103,7 @@
       (graphics-set-property "gr-frame" new-frame))))
 
 (tm-define (graphics-set-unit-ia)
-  (interactive '("Graphical unit:") 'graphics-set-unit))
+  (interactive graphics-set-unit "Graphical unit"))
 
 (tm-define (graphics-set-origin x y)
   (with frame (graphics-cartesian-frame)
@@ -111,16 +111,15 @@
       (graphics-set-property "gr-frame" new-frame))))
 
 (tm-define (graphics-set-origin-ia)
-  (interactive
-    '("Origin's x-coordinate:" "Origin's y-coordinate:")
-    'graphics-set-origin))
+  (interactive graphics-set-origin
+    "Origin's x-coordinate" "Origin's y-coordinate"))
 
 (tm-define (graphics-set-extents-ia)
   (interactive
-    '("Left corner:" "Bottom corner:" "Right corner:" "Top corner:")
-    '(lambda (l b r t)
-       (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
-	 (graphics-set-property "gr-clip" clip)))))
+      (lambda (l b r t)
+	(with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
+	  (graphics-set-property "gr-clip" clip)))
+    "Left corner" "Bottom corner" "Right corner" "Top corner"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grids
@@ -337,7 +336,7 @@
 
 ;; Setting grid properties
 (define (grid-prop-input prompt func visual?)
-  (interactive prompt (lambda (x) (func x visual?))))
+  (interactive (lambda (x) (func x visual?)) prompt))
 
 (tm-define (graphics-set-grid-center x y visual?)
   (if (not visual?)
@@ -384,9 +383,9 @@
 
 (tm-define (graphics-set-grid-center-ia visual?)
   (interactive
-    '("X:" "Y:")
-     (lambda (x y)
-       (graphics-set-grid-center x y visual?))))
+      (lambda (x y)
+	(graphics-set-grid-center x y visual?))
+    "X" "Y"))
 
 (tm-define (graphics-set-grid-step-ia visual?)
   (grid-prop-input '("Unit length:") graphics-set-grid-step visual?))
@@ -408,9 +407,9 @@
 
 (tm-define (graphics-set-grid-aspect-properties-ia)
   (interactive
-    '("Color(axes):" "Color(unit):" "Subdivisions per unit:" "Color(subds):")
-    '(lambda (c0 c1 s2 c2)
-       (graphics-set-grid-aspect-properties c0 c1 s2 c2))))
+      (lambda (c0 c1 s2 c2)
+	(graphics-set-grid-aspect-properties c0 c1 s2 c2))
+    "Color(axes)" "Color(unit)" "Subdivisions per unit" "Color(subds)"))
 
 (define (cmp-aspect-items x y)
   (if (== (cadr x) "axes") #t
@@ -497,8 +496,8 @@
 	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
 (tm-define (graphics-set-grid-nsubds-ia visual?)
-  (interactive '("Number of subunit steps:")
-		(lambda (x) (graphics-set-grid-aspect 'detailed x visual?))))
+  (interactive (lambda (x) (graphics-set-grid-aspect 'detailed x visual?))
+    "Number of subunit steps"))
 
 ;; Setting visual grid aspect properties (colors)
 (define (grid-aspect-ofs where)

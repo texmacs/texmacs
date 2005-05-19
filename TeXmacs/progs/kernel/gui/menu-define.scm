@@ -72,7 +72,7 @@
 	      (null? (cdddr source))
 	      (caddr source)))))
 
-(define (menu-label-add-dots l)
+(define-public (menu-label-add-dots l)
   (cond ((match? l ':string?) (string-append l "..."))
 	((match? l '(text :tuple? :string?))
 	 `(text ,(cadr l) ,(string-append (caddr l) "...")))

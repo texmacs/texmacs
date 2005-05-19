@@ -93,7 +93,7 @@ public:
       break;
     case 1:
       lambda= "(lambda (s) (if (equal? s \"y\") " * s * "))";
-      eval_delayed ("(interactive '(\"Accept script (y/n)?\") '" *lambda* ")");
+      eval_delayed ("(interactive " * lambda * "\"Accept script (y/n)?\")");
       break;
     case 2:
       eval_delayed (s);

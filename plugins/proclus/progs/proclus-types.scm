@@ -156,12 +156,13 @@
   (new-types/sub2 "Add type:"))
 
 (define (new-types/sub2 msg)
-  (interactive (list msg)
-	       '(lambda(s)
-		  (if (string-null? s)
-		      (new-types-rec)
-		      (begin (set-cons! list-types-tmp s)
-			     (new-types/sub))))))
+  (interactive
+      (lambda(s)
+	(if (string-null? s)
+	    (new-types-rec)
+	    (begin (set-cons! list-types-tmp s)
+		   (new-types/sub))))
+    (list msg)))
 
 ;;adds list-types-tmp to the list of types. New types are active.
 (tm-define (new-types-rec)
@@ -176,12 +177,14 @@
   (delete-types/sub2 "Remove type:"))
 
 (define (delete-types/sub2 msg)
-  (interactive (list msg)
-	       '(lambda(s)
-		  (if (string-null? s)
-		      (delete-types-rec)
-		      (begin (set-cons! list-types-tmp s)
-			     (delete-types/sub))))))
+  (interactive
+      (lambda(s)
+	(if (string-null? s)
+	    (delete-types-rec)
+	    (begin (set-cons! list-types-tmp s)
+		   (delete-types/sub))))
+    (list msg)))
+
 (tm-define (delete-types-rec)
   (define (f x) (not (in? x list-types-tmp)))
   (set-types (list-filter (list-types) f))
@@ -198,10 +201,8 @@
     ((proc types)
      (ask-types proc types #f))
     ((proc types error?)
-     (interactive (if (not error?)
-                      '("Link type:")
-                      '("Incorrect type. Link type:"))
-                  (cut ask-types/callback proc types <>)))))
+     (interactive (cut ask-types/callback proc types <>)
+       (if (not error?) "Link type" "Incorrect type. Link type")))))
 
 (define (ask-types/callback proc types s)
   (cond ((and (string-null? s)
@@ -218,10 +219,10 @@
     ((proc types)
      (ask-reverse-types proc types #f))
     ((proc types error?)
-     (interactive (if (not error?)
-                      '("Inverse link type:")
-                      '("Incorrect inverse type. Inverse link type:"))
-                  (cut ask-reverse-types/callback proc types <>)))))
+     (interactive (cut ask-reverse-types/callback proc types <>)
+       (if (not error?)
+	   "Inverse link type"
+	   "Incorrect inverse type. Inverse link type")))))
 
 (define (ask-reverse-types/callback proc types s)
   (cond ((and (string-null? s)
@@ -239,10 +240,10 @@
   (case-lambda
     ((proc types) (ask-types-to-remove proc types #f))
     ((proc types error?)
-     (interactive (if (not error?)
-                      '("Remove link type:")
-                      '("No such type. Remove link type:"))
-                  (cut ask-types-to-remove/callback proc types <>)))))
+     (interactive (cut ask-types-to-remove/callback proc types <>)
+       (if (not error?)
+	   "Remove link type"
+	   "No such type. Remove link type")))))
 
 (define (ask-types-to-remove/callback proc types s)
   (cond ((string-null? s) (proc types))

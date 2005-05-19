@@ -35,9 +35,9 @@
          kbd-symbols setup-append-if when link promise
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-keyboard
-	 lazy-define lazy-format lazy-input-converter delayed
-	 define-format converter
-	 with-aux) "\\|")
+	 lazy-define lazy-format lazy-input-converter
+	 define-format converter with-aux
+	 interactive dialogue delayed) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -63,11 +63,11 @@
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
-	       format with-aux))
+	       format with-aux interactive))
     (put s 'scheme-indent-function 1))
   (dolist (s '(values define-preferences menu-dynamic case-lambda
 	       kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed
+	       delayed dialogue
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))

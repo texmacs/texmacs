@@ -129,6 +129,7 @@
 (hash-set! define-option-table :note (define-property :note))
 (hash-set! define-option-table :secure (define-property* :secure))
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
+(hash-set! define-option-table :interactive (define-property* :interactive))
 
 (define-public (help about)
   ;; very provisional

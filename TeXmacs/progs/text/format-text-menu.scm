@@ -271,17 +271,16 @@
       ("Centered" (make-line-with "par-mode" "center"))
       ("Right ragged" (make-line-with "par-mode" "right")))
   (-> "Margins"
-      ("Left margin" ... (interactive '("Left margin:") 'set-left-margin))
-      ("Right margin" ... (interactive '("Right margin:") 'set-right-margin))
-      ("First indentation" ...
-       (interactive '("First indentation:") 'set-first-indent)))
+      ("Left margin" (interactive set-left-margin "Left margin"))
+      ("Right margin" (interactive set-right-margin "Right margin"))
+      ("First indentation" (interactive set-first-indent "First indentation")))
   (-> "Spacing"
-      ("Interline separation" ...
-       (interactive '("Separation between lines:") 'set-interline))
-      ("Interline space" ...
-       (interactive '("Space between lines:") 'set-interline-spc))
-      ("Interparagraph space" ...
-       (interactive '("Space between paragraphs:") 'set-interpar-spc)))
+      ("Interline separation"
+       (interactive set-interline "Separation between lines"))
+      ("Interline space"
+       (interactive set-interline-spc "Space between lines"))
+      ("Interparagraph space"
+       (interactive set-interpar-spc "Space between paragraphs")))
   (-> "Hyphenation"
       ("Normal" (make-line-with "par-hyphen" "normal"))
       ("Professional"
