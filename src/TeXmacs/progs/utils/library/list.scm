@@ -384,10 +384,9 @@
 	      (else (and (apply pred? (map-in-order car lists))
 			 (lp (map-in-order cdr lists))))))))
 
-(tm-define (in? x l)
+(tm-property (in? x l)
   (:type (forall T (-> T (list T) bool)))
-  (:synopsis "Test whether @x occurs among the elements of @l.")
-  (not (not (member x l))))
+  (:synopsis "Test whether @x occurs among the elements of @l."))
 
 (tm-define (list-starts? l what)
   (:type (forall T (-> (list T) (list T) bool)))

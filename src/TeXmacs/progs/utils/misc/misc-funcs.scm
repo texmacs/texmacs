@@ -106,7 +106,12 @@
 (tm-define (go-to-buffer name)
   (:argument name "Switch to buffer")
   (:propositions name (map car (get-buffer-menu)))
-  ((cadr (assoc name (get-buffer-menu)))))
+  (let* ((l1 (assoc name (get-buffer-menu)))
+	 (l2 (assoc (string-append name " *") (get-buffer-menu))))
+    (cond (l1 ((cadr l1)))
+	  (l2 ((cadr l2)))
+	  (else (set-message (string-append "No buffer#" name)
+			     "switch to buffer")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
