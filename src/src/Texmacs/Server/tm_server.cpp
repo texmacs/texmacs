@@ -363,13 +363,6 @@ tm_server_rep::recall_message () {
 }
 
 void
-tm_server_rep::interactive (string name, string type, array<string> def,
-			    string& s, command call_back) {
-  if ((vw == NULL) || (vw->win == NULL)) return;
-  get_meta()->interactive (name, type, def, s, call_back);
-}
-
-void
 tm_server_rep::full_screen_mode (bool on, bool edit) {
   widget meta= (widget) get_meta ();
   if (on && !edit) {

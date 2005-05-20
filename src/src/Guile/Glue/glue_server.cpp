@@ -339,6 +339,21 @@ tmg_choose_file (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
+tmg_tm_interactive (SCM arg1, SCM arg2) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "tm-interactive");
+  SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "tm-interactive");
+
+  object in1= scm_to_object (arg1);
+  scheme_tree in2= scm_to_scheme_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->interactive (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_has_viewP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->has_view ();
@@ -980,6 +995,7 @@ initialize_glue_server () {
   gh_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
   gh_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
   gh_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);
+  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
   gh_new_procedure ("has-view?", (FN) tmg_has_viewP, 0, 0, 0);
   gh_new_procedure ("buffer-unsaved?", (FN) tmg_buffer_unsavedP, 0, 0, 0);
   gh_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);

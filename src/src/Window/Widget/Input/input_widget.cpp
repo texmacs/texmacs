@@ -123,17 +123,17 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   else if ((key == "home") || (key == "C-a")) pos=0;
   else if ((key == "end") || (key == "C-e")) pos=N(s);
   else if ((key == "up") || (key == "C-p")) {
-    if (def_cur>0) {
-      def_cur--;
-      s= copy (def[def_cur]);
-      pos= N(s);
+    if (N(def) > 0) {
+      def_cur= (def_cur+1) % N(def);
+      s      = copy (def[def_cur]);
+      pos    = N(s);
     }
   }
   else if ((key == "down") || (key == "C-n")) {
-    if (def_cur<N(def)-1) {
-      def_cur++;
-      s= copy (def[def_cur]);
-      pos= N(s);
+    if (N(def) > 0) {
+      def_cur= (def_cur-1) % N(def);
+      s      = copy (def[def_cur]);
+      pos    = N(s);
     }
   }
   else if (key == "C-k") s= s (0, pos);

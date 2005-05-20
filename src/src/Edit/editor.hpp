@@ -138,7 +138,6 @@ public:
   virtual cursor get_cursor () = 0;
   virtual void set_message (string l, string r= "", bool temp= false) = 0;
   virtual void recall_message () = 0;
-  virtual void interactive (scheme_tree args, object cmd) = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;
   virtual int  change_time () = 0;
 

@@ -38,13 +38,13 @@
   (call-with-current-continuation
    (lambda (cont)
      (set! dialogue-continue cont)
-     (tm-interactive (list explain)
-		     (lambda (result)
+     (tm-interactive (lambda (result)
 		       (call-with-current-continuation
 			(lambda (cont)
 			  (set! dialogue-return cont)
 			  (dialogue-continue result)))
-		       (set! dialogue-return #f)))
+		       (set! dialogue-return #f))
+		     (list explain))
      (if (not dialogue-break)
 	 (texmacs-error "ask-string" "Asked string outside a dialogue")
 	 (dialogue-break (noop))))))
@@ -151,4 +151,4 @@
   (:interactive #t)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
-  (tm-interactive (map build-interactive-arg args) fun))
+  (tm-interactive fun (map build-interactive-arg args)))

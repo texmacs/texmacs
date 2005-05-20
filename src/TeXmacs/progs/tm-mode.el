@@ -37,7 +37,7 @@
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux
-	 interactive dialogue delayed) "\\|")
+	 dialogue delayed) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons

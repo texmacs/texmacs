@@ -69,8 +69,6 @@ public:
   void set_right_footer (string s);
   void set_message (string left, string right, bool temp= false);
   void recall_message ();
-  void interactive (string name, string type, array<string> def,
-		    string& s, command call_back);
   void full_screen_mode (bool on, bool edit);
   bool in_full_screen_mode ();
   bool in_full_screen_edit_mode ();

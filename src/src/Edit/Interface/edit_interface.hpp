@@ -145,7 +145,6 @@ public:
   void   set_footer ();
   void   set_message (string l, string r= "", bool temp= false);
   void   recall_message ();
-  void   interactive (scheme_tree args, object cmd);
 
   /* event handlers */
   void handle_get_size (get_size_event ev);

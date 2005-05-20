@@ -386,63 +386,6 @@ edit_interface_rep::set_footer () {
 }
 
 /******************************************************************************
-* Interactive commands
-******************************************************************************/
-
-class interactive_command_rep: public command_rep {
-  edit_interface_rep* ed;
-  scheme_tree   p;    // the interactive arguments
-  object        q;    // the function which is applied to the arguments
-  int           i;    // counter where we are
-  array<string> s;    // feedback from interaction with user
-
-public:
-  interactive_command_rep (
-    edit_interface_rep* Ed, scheme_tree P, object Q):
-      ed (Ed), p (P), q (Q), i (0), s (N(p)) {}
-  void apply ();
-  ostream& print (ostream& out) {
-    return out << "interactive command " << p; }
-};
-
-void
-interactive_command_rep::apply () {
-  if ((i>0) && (s[i-1] == "cancel")) return;
-  if (i == arity (p)) {
-    array<object> params(N(p));
-    for (i=0; i<N(p); i++) params[i]= object (unquote (s[i]));
-    string ret= as_string (call (q, params));
-    if ((ret != "") && (ret != "#<unspecified>"))
-      ed->set_message (ed->message_l, "interactive command");
-  }
-  else {
-    string prompt, type;
-    array<string> defs;
-    if (is_atomic (p[i])) {
-      if ((!is_atomic (p[i])) || (!is_quoted (p[i]->label))) return;
-      prompt= unquote (p[i]->label);
-    }
-    else {
-      int j;
-      array<string> a (N(p[i]));
-      if (N(p[i]) < 2) return;
-      for (j=0; j<N(p[i]); j++) {
-	if ((!is_atomic (p[i][j])) || (!is_quoted (p[i][j]->label))) return;
-	if (j == 0) prompt= unquote (p[i][j]->label);
-	else if (j == 1) type= unquote (p[i][j]->label);
-	else defs << unquote (p[i][j]->label);
-      }
-    }
-    s[i]= string ("");
-    tm_view temp_vw= ed->sv->get_view (false);
-    ed->focus_on_this_editor ();
-    ed->sv->interactive (prompt, type, defs, s[i], this);
-    ed->sv->set_view (temp_vw);
-    i++;
-  }
-}
-
-/******************************************************************************
 * Exported routines
 ******************************************************************************/
 
@@ -460,12 +403,4 @@ edit_interface_rep::set_message (string l, string r, bool temp) {
 void
 edit_interface_rep::recall_message () {
   set_message (last_l, last_r);
-}
-
-void
-edit_interface_rep::interactive (scheme_tree p, object q) {
-  if (!is_tuple (p))
-    fatal_error ("tuple expected", "edit_interface_rep::interactive");
-  command interactive_cmd= new interactive_command_rep (this, p, q);
-  interactive_cmd ();
 }
