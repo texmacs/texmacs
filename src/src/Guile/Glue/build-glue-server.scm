@@ -45,7 +45,7 @@
   (exec-delayed exec_delayed (void object))
   (shell shell (void string))
   (dialogue-end dialogue_end (void))
-  (choose-file choose_file (void string string scheme_tree))
+  (choose-file choose_file (void object string string))
 
   (has-view? has_view (bool))
   (buffer-unsaved? buffer_unsaved (bool))

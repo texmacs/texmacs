@@ -24,7 +24,7 @@
   ("Reference" (make 'reference))
   ("Page reference" (make 'pageref))
   ---
-  ("Include" ... (choose-file "Include file" "" 'make-include))
+  ("Include" (choose-file make-include "Include file" ""))
   ("Hyperlink" (make 'hlink))
   ("Action" (make 'action))
   (if (style-has? "std-dtd")
@@ -54,9 +54,8 @@
 	    ("Big figure" (make 'big-figure))
 	    ---))
   ;("Draw image" (make-graphics))
-  ("Link image" ... (choose-file "Load image" "image" 'make-link-image))
-  ("Insert image" ...
-   (choose-file "Load image" "image" 'make-inline-image)))
+  ("Link image" make-link-image (choose-file "Load image" "image"))
+  ("Insert image" (choose-file make-inline-image "Load image" "image")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert floating content

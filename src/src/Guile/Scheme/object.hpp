@@ -84,7 +84,9 @@ tree   stree_to_tree (object obj);
 tree   content_to_tree (object obj);
 object string_to_object (string s);
 string object_to_string (object obj);
+object scheme_cmd (char* s);
 object scheme_cmd (string s);
+object scheme_cmd (object cmd);
 
 object eval (char* expr);
 object eval (string expr);

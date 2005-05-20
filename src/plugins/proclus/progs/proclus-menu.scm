@@ -61,7 +61,7 @@
             ("Moved document" (absolute-name-reregister-buffer)))
       (when (and (not (no-name?)) (not (has-absolute-name?)))
             ("Name this document" ... (interactive-absolute-name)))
-      ("Learn a name" ... (absname-choose-file))
+      ("Learn a name" (absname-choose-file))
       ---
       (link proclus-types-menu)
       ---

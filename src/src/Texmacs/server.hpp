@@ -146,10 +146,10 @@ public:
   virtual void recall_message () = 0;
   virtual void interactive (string name, string type, array<string> def,
 			    string& s, command call_back) = 0;
-  virtual void dialogue_start (string name, widget wid, scheme_tree prg) = 0;
-  virtual void dialogue_inquire (scheme_tree& arg) = 0;
+  virtual void dialogue_start (string name, widget wid) = 0;
+  virtual void dialogue_inquire (string& arg) = 0;
   virtual void dialogue_end () = 0;
-  virtual void choose_file (string title, string type, scheme_tree prg) = 0;
+  virtual void choose_file (object fun, string title, string type) = 0;
   virtual void full_screen_mode (bool on, bool edit) = 0;
   virtual bool in_full_screen_mode () = 0;
   virtual bool in_full_screen_edit_mode () = 0;

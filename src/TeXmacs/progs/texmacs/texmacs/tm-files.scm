@@ -103,8 +103,11 @@
 	(system-remove name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Shortcuts
+;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (choose-file fun text type)
+  (:interactive #t))
 
 (tm-define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
 (tm-define (buffer-saver fm) (lambda (s) (save-buffer s fm)))

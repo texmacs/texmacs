@@ -136,8 +136,8 @@
 
 (tm-define (import-types)
   (let ((from (get-strg-name-buffer)))
-    (choose-file "Import types" "texmacs"
-                 `(lambda (x) (import-types/sub x ,from)))))
+    (choose-file (lambda (x) (import-types/sub x ,from))
+		 "Import types" "texmacs")))
 
 (tm-define (import-types/sub u from)
   (switch-to-active-buffer u)

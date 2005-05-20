@@ -32,13 +32,13 @@
   (let* ((import-text (string-append "Import#" name))
 	 (load-text (string-append "Load " (string-downcase name) " file"))
 	 (routine `(buffer-loader ,fm)))
-    `(,import-text (choose-file ,load-text ,(rw fm) ',routine))))
+    `(,import-text (choose-file ,routine ,load-text ,(rw fm)))))
 
 (define (import-item* fm name)
   (define (rw s) (if (== s "verbatim") "" s))
   (let* ((load-text (string-append "Load " (string-downcase name) " file"))
 	 (routine `(buffer-loader ,fm)))
-    `(,name (choose-file ,load-text ,(rw fm) ',routine))))
+    `(,name (choose-file ,routine ,load-text ,(rw fm)))))
 
 (define-macro (import-menu-promise flag?)
   `(menu-dynamic
@@ -49,12 +49,12 @@
   (let* ((export-text (string-append "Export as#" name))
 	 (load-text (string-append "Save " (string-downcase name) " file"))
 	 (routine `(buffer-saver ,fm)))
-    `(,export-text (choose-file ,load-text ,fm ',routine))))
+    `(,export-text (choose-file ,routine ,load-text ,fm))))
 
 (define (export-item* fm name)
   (let* ((load-text (string-append "Save " (string-downcase name) " file"))
 	 (routine `(buffer-saver ,fm)))
-    `(,name (choose-file ,load-text ,fm ',routine))))
+    `(,name (choose-file ,routine ,load-text ,fm))))
 
 (define-macro (export-menu-promise flag?)
   `(menu-dynamic
@@ -71,21 +71,21 @@
   ("Clone window" (clone-window)))
 
 (menu-bind load-menu
-  ("Load buffer" (choose-file "Load file" "" 'load-buffer))
+  ("Load buffer" (choose-file load-buffer "Load file" ""))
   ("Revert buffer" (revert-buffer))
-  ("Load in new window" (choose-file "Load file" "" 'load-in-new-window))
+  ("Load in new window" (choose-file load-in-new-window "Load file" ""))
   ---
   (promise (import-menu-promise #t)))
 
 (menu-bind save-menu
   ("Save buffer" (save-buffer))
-  ("Save buffer as" (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
+  ("Save buffer as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ---
   (promise (export-menu-promise #t))
   ---
-  ("Export as#Pdf" (choose-file "Save pdf file" "pdf" 'print-to-file))
+  ("Export as#Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
   ("Export as#PostScript"
-   (choose-file "Save postscript file" "postscript" 'print-to-file)))
+   (choose-file print-to-file "Save postscript file" "postscript")))
 
 (menu-bind print-menu
   ("Preview with ghostview" (preview-with-ghostview))
@@ -93,7 +93,7 @@
   ("Print all" (print))
   ("Print page selection" (interactive print-pages))
   ("Print all to file"
-   (choose-file "Print all to file" "postscript" 'print-to-file))
+   (choose-file print-to-file "Print all to file" "postscript"))
   ("Print page selection to file"
    (interactive choose-file-and-print-page-selection)))
 
@@ -108,10 +108,10 @@
 
 (menu-bind file-menu
   ("New" (new-buffer))
-  ("Load" (choose-file "Load file" "" 'load-buffer))
+  ("Load" (choose-file load-buffer "Load file" ""))
   ;("Load in new window" (choose-file "Load file" "" 'load-in-new-window))
   ("Save" (save-buffer))
-  ("Save as" (choose-file "Save TeXmacs file" "texmacs" 'save-buffer))
+  ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ("Revert" (revert-buffer))
   ---
   (-> "Page setup" (link page-setup-menu))
@@ -121,9 +121,9 @@
   (-> "Export"
       (promise (export-menu-promise #f))
       ---
-      ("Pdf" (choose-file "Save pdf file" "pdf" 'print-to-file))
+      ("Pdf" (choose-file print-to-file "Save pdf file" "pdf"))
       ("PostScript"
-       (choose-file "Save postscript file" "postscript" 'print-to-file)))
+       (choose-file print-to-file "Save postscript file" "postscript")))
   ---
   ("Close buffer" (safely-kill-buffer))
   ("Close TeXmacs" (safely-quit-TeXmacs)))
