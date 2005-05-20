@@ -30,6 +30,9 @@ class input_widget_rep: public attribute_widget_rep {
   SI      scroll;      // how much scrolled to the left
   bool    got_focus;   // got keyboard focus
   bool    hilit;       // hilit on keyboard focus
+  array<string> tabs;  // tab completions
+  int     tab_nr;      // currently visible tab-completion
+  int     tab_pos;     // cursor position where tab was pressed
 
 public:
   input_widget_rep (display dis, command call_back);
@@ -115,6 +118,43 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
   if (key == "space") key= " ";
 
+  /* tab-completion */
+  if ((key == "tab" || key == "S-tab") && N(tabs) != 0) {
+    int d = (key == "tab"? 1: N(tabs)-1);
+    tab_nr= (tab_nr + d) % N(tabs);
+    s     = s (0, tab_pos) * tabs[tab_nr];
+    pos   = N(s);
+    this << emit_invalidate_all ();
+    return;
+  }
+  else if (key == "tab" || key == "S-tab") {
+    if (pos != N(s)) return;
+    tabs= copy (def);
+    tabs= strip_completions (tabs, s);
+    tabs= close_completions (tabs);
+    if (N (tabs) == 0);
+    else if (N (tabs) == 1) {
+      s   = s * tabs[0];
+      pos = N(s);
+      tabs= array<string> (0);
+    }
+    else {
+      tab_nr = 0;
+      tab_pos= N(s);
+      s      = s * tabs[0];
+      pos    = N(s);
+      beep ();
+    }
+    this << emit_invalidate_all ();
+    return;
+  }
+  else {
+    tabs   = array<string> (0);
+    tab_nr = 0;
+    tab_pos= 0;
+  }
+
+  /* other actions */
   if (key == "return") { s= quote (s); call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) { s= "cancel"; call_back (); }
