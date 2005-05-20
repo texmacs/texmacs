@@ -100,8 +100,8 @@
   (:argument by "Replace by"))
 
 (tm-define (go-to-buffer name)
-  (:argument name "Switch to buffer")
-  (:propositions name (map car (get-buffer-menu)))
+  (:argument  name "Switch to buffer")
+  (:proposals name (map car (get-buffer-menu)))
   (let* ((l1 (assoc name (get-buffer-menu)))
 	 (l2 (assoc (string-append name " *") (get-buffer-menu))))
     (cond (l1 ((cadr l1)))
