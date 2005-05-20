@@ -63,8 +63,22 @@
 (tm-property (footer-eval cmd)
   (:argument cmd "Scheme command"))
 
+(define (symbol<=? s1 s2)
+  (string<=? (symbol->string s1) (symbol->string s2)))
+
+(define (get-function-list)
+  (list-sort (map car (ahash-table->list ovl-table)) symbol<=?))
+
+(define (get-interactive-function-list)
+  (import-from (utils library list))
+  (let* ((funs (get-function-list))
+	 (pred? (lambda (fun) (not (not (property fun :arguments))))))
+    (list-filter funs pred?)))
+
 (tm-define (exec-interactive-command cmd)
-  (:argument cmd "Interactive command")
+  (:argument  cmd "Interactive command")
+  (:proposals cmd (cons "" (map symbol->string
+				(get-interactive-function-list))))
   (interactive (eval (string->symbol cmd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

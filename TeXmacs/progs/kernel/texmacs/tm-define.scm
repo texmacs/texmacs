@@ -143,9 +143,9 @@
     (set! ovl-props (cons `(',var ',arg (lambda () ,@(cdr opt))) ovl-props))
     decl))
 
-(define (define-option-propositions opt decl)
+(define (define-option-proposals opt decl)
   (let* ((var (ca*adr decl))
-	 (arg (list :propositions (car opt))))
+	 (arg (list :proposals (car opt))))
     (set! ovl-props (cons `(',var ',arg (lambda () ,@(cdr opt))) ovl-props))
     decl))
 
@@ -155,7 +155,7 @@
 (hash-set! define-option-table :note (define-property :note))
 (hash-set! define-option-table :argument define-option-argument)
 (hash-set! define-option-table :default define-option-default)
-(hash-set! define-option-table :propositions define-option-propositions)
+(hash-set! define-option-table :proposals define-option-proposals)
 (hash-set! define-option-table :secure (define-property* :secure))
 (hash-set! define-option-table :check-mark (define-property* :check-mark))
 (hash-set! define-option-table :interactive (define-property* :interactive))

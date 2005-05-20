@@ -152,18 +152,18 @@
 	  ((symbol? (car arg)) (symbol->string (car arg)))
 	  (else "string"))))
 
-(define (compute-interactive-arg-propositions fun which)
+(define (compute-interactive-arg-proposals fun which)
   (let* ((default (property fun (list :default which)))
-	 (propositions (property fun (list :propositions which)))
+	 (proposals (property fun (list :proposals which)))
 	 (learned '()))
     (cond ((procedure? default) (list (default)))
-	  ((procedure? propositions) (propositions))
+	  ((procedure? proposals) (proposals))
 	  (else '()))))
 
 (define (compute-interactive-arg fun which)
   (cons (compute-interactive-arg-text fun which)
 	(cons (compute-interactive-arg-type fun which)
-	      (compute-interactive-arg-propositions fun which))))
+	      (compute-interactive-arg-proposals fun which))))
 
 (define (compute-interactive-args-try-hard fun)
   (with src (procedure-source fun)
