@@ -521,6 +521,7 @@ tm_server_rep::is_yes (string s) {
 void
 tm_server_rep::quit () {
   close_all_pipes ();
+  call ("quit-TeXmacs-scheme");
   exit (0);
 }
 

@@ -187,15 +187,3 @@
 	 (map (lambda (s) (and (not (memq s '(<> <...>))) (gensym))) slots)))
     `(let ,(delq! #f (map (lambda (t s) (and t (list t s))) temp slots))
        (cut ,@(map (lambda (t s) (or t s)) temp slots)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Adaptation of "break" (SRFI-26)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (list-break l pred?)
-  "Break @l at the first element satisfying @pred?."
-  (let rec ((l l))
-    (cond ((null? l) (values '() '()))
-	  ((pred? (car l)) (values '() l))
-	  (else (receive (first last) (rec (cdr l))
-		  (values (cons (car l) first) last))))))
