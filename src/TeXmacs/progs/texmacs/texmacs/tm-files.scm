@@ -106,11 +106,19 @@
 ;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (propose-name-buffer)
+  (with name (url->string (get-name-buffer))
+    (cond ((not (string-starts? name "no name")) name)
+	  ((os-win32?) "")
+	  (else (string-append (var-eval-system "pwd") "/")))))
+
 (tm-property (load-buffer name)
-  (:argument name "File name"))
+  (:argument name "File name")
+  (:default  name (propose-name-buffer)))
 
 (tm-property (save-buffer name)
-  (:argument name "Save as"))
+  (:argument name "Save as")
+  (:default  name (propose-name-buffer)))
 
 (tm-property (choose-file fun text type)
   (:interactive #t))

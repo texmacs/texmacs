@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (texmacs texmacs tm-print))
+(texmacs-module (texmacs texmacs tm-print)
+  (:use (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
@@ -78,8 +79,15 @@
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (propose-postscript-name)
+  (with name (propose-name-buffer)
+    (if (string-ends? name ".tm")
+	(string-append (string-drop-right name 3) ".ps")
+	name)))
+
 (tm-property (print-to-file name)
-  (:argument name "File name"))
+  (:argument name "File name")
+  (:default  name (propose-postscript-name)))
 
 (tm-property (print-pages first last)
   (:argument first "First page")
@@ -87,6 +95,7 @@
 
 (tm-property (print-pages-to-file name first last)
   (:argument name "File name")
+  (:default  name (propose-postscript-name))
   (:argument first "First page")
   (:argument last "Last page"))
 

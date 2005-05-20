@@ -77,7 +77,9 @@
 
 (tm-property (make-session type name)
   (:argument type "Session type")
-  (:argument name "Session name"))
+  (:default  type "scheme")
+  (:argument name "Session name")
+  (:default  name "default"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The return key in session input
