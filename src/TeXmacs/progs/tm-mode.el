@@ -37,7 +37,7 @@
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux
-	 dialogue delayed) "\\|")
+	 dialogue delayed on-entry on-exit) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -68,6 +68,6 @@
   (dolist (s '(values define-preferences menu-dynamic case-lambda
 	       kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue
+	       delayed dialogue on-entry on-exit
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))

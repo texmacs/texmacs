@@ -19,7 +19,7 @@
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
 		 (kernel boot debug) (kernel boot srfi)
 		 (kernel boot ahash-table) (kernel boot prologue)
-		 (kernel boot content))
+		 (kernel boot content) (kernel boot extra))
 (inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel drd drd-rules) (kernel drd drd-query)
 		 (kernel drd drd-data))

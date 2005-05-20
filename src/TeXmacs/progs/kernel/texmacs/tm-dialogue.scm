@@ -126,10 +126,16 @@
 (define interactive-arg-table (make-ahash-table))
 
 (tm-define (learn-interactive-arg fun nr value)
+  (if (procedure-name fun) (set! fun (procedure-name fun)))
   (let* ((l1 (ahash-ref interactive-arg-table (list fun nr)))
 	 (l2 (if l1 l1 '()))
 	 (l3 (if (in? value l2) l2 (cons value l2))))
     (ahash-set! interactive-arg-table (list fun nr) l3)))
+
+(define (learned-interactive-arg fun nr)
+  (if (procedure-name fun) (set! fun (procedure-name fun)))
+  (with l (ahash-ref interactive-arg-table (list fun nr))
+    (if l l '())))
 
 (define (compute-interactive-arg-text fun which)
   (with arg (property fun (list :argument which))
@@ -186,8 +192,7 @@
 		(type (cadar l))
 		(pl (cddar l))
 		(ql (if (null? pl) '("") pl))
-		(kl (ahash-ref interactive-arg-table (list fun nr)))
-		(ll (if kl kl '()))
+		(ll (learned-interactive-arg fun nr))
 		(props (if (<= (length ql) 1) (append ql ll) ql)))
 	   (cons (cons name (cons type props))
 		 (build-interactive-args fun (cdr l) (+ nr 1)))))))
@@ -198,3 +203,22 @@
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (tm-interactive fun (build-interactive-args fun args 0)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Store learned arguments from one session to another
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (save-learned)
+  (import-from (utils library list))
+  (let* ((l1 (ahash-table->list interactive-arg-table))
+	 (pred? (lambda (l) (symbol? (caar l))))
+	 (l2 (list-filter l1 pred?)))
+    (save-object "$TEXMACS_HOME_PATH/system/interactive.scm" l2)))
+
+(define (retrieve-learned)
+  (if (url-exists? "$TEXMACS_HOME_PATH/system/interactive.scm")
+      (with l (load-object "$TEXMACS_HOME_PATH/system/interactive.scm")
+	(set! interactive-arg-table (list->ahash-table l)))))
+
+(on-entry (retrieve-learned))
+(on-exit (save-learned))
