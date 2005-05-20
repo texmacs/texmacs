@@ -95,6 +95,10 @@
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
 
+(tm-define (exec-interactive-command cmd)
+  (:argument cmd "Command")
+  (interactive (eval (string->symbol cmd))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

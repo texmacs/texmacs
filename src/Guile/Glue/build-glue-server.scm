@@ -46,6 +46,7 @@
   (shell shell (void string))
   (dialogue-end dialogue_end (void))
   (choose-file choose_file (void object string string))
+  (tm-interactive interactive (void object scheme_tree))
 
   (has-view? has_view (bool))
   (buffer-unsaved? buffer_unsaved (bool))

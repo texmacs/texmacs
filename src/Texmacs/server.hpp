@@ -144,12 +144,11 @@ public:
   virtual void set_right_footer (string s) = 0;
   virtual void set_message (string left, string right, bool temp= false) = 0;
   virtual void recall_message () = 0;
-  virtual void interactive (string name, string type, array<string> def,
-			    string& s, command call_back) = 0;
   virtual void dialogue_start (string name, widget wid) = 0;
   virtual void dialogue_inquire (string& arg) = 0;
   virtual void dialogue_end () = 0;
   virtual void choose_file (object fun, string title, string type) = 0;
+  virtual void interactive (object fun, scheme_tree p) = 0;
   virtual void full_screen_mode (bool on, bool edit) = 0;
   virtual bool in_full_screen_mode () = 0;
   virtual bool in_full_screen_edit_mode () = 0;

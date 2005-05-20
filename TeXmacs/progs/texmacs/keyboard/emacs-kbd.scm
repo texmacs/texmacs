@@ -199,7 +199,8 @@
   ("emacs tab" (kbd-select-environment))
 
   ("emacs:meta w" (clipboard-copy "primary"))
-  ("emacs:meta x" (interactive footer-eval))
+  ("emacs:meta x" (interactive exec-interactive-command))
+  ("emacs:meta X" (interactive footer-eval))
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))

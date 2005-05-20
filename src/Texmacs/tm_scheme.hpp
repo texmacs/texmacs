@@ -33,6 +33,7 @@ public:
   void dialogue_inquire (string& arg);
   void dialogue_end ();
   void choose_file (object fun, string title, string type);
+  void interactive (object fun, scheme_tree p);
 };
 
 #endif // defined TM_SCHEME_H

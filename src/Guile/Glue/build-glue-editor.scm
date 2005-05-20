@@ -217,7 +217,6 @@
   (the-buffer the_buffer (tree))
   (the-path the_path (path))
   (the-buffer-path the_buffer_path (path))
-  (tm-interactive interactive (void scheme_tree object))
   (texmacs-exec texmacs_exec (tree content))
   (idle-time idle_time (int))
   (change-time change_time (int))

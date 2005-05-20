@@ -2185,21 +2185,6 @@ tmg_the_buffer_path () {
 }
 
 SCM
-tmg_tm_interactive (SCM arg1, SCM arg2) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-interactive");
-  SCM_ASSERT_OBJECT (arg2, SCM_ARG2, "tm-interactive");
-
-  scheme_tree in1= scm_to_scheme_tree (arg1);
-  object in2= scm_to_object (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->interactive (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_texmacs_exec (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
 
@@ -3102,7 +3087,6 @@ initialize_glue_editor () {
   gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
   gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
   gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);
-  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
   gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
   gh_new_procedure ("idle-time", (FN) tmg_idle_time, 0, 0, 0);
   gh_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
