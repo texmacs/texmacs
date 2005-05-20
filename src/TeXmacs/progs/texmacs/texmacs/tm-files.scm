@@ -106,6 +106,12 @@
 ;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-property (load-buffer name)
+  (:argument name "File name"))
+
+(tm-property (save-buffer name)
+  (:argument name "Save as"))
+
 (tm-property (choose-file fun text type)
   (:interactive #t))
 

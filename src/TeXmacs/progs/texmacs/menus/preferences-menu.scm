@@ -30,7 +30,7 @@
 	  "default" "ggv" "ghostview" "gv" "kghostview"
 	  *)
     (enum ("Printing command" "printing command")
-	  "lpr" "lp"
+	  "lpr" "lp" "pdq"
 	  *)
     (enum ("Paper type" "paper type")
 	  "A3" "A4" "A5" "B4" "B5" "B6"

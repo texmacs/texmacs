@@ -123,9 +123,32 @@
 ;; Interactive commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (compute-interactive-arg fun which)
+(define (compute-interactive-arg-text fun which)
   (with arg (property fun (list :argument which))
-    (if arg (car arg) (upcase-first (symbol->string which)))))
+    (cond ((npair? arg) (upcase-first (symbol->string which)))
+	  ((and (string? (car arg)) (null? (cdr arg))) (car arg))
+	  ((string? (cadr arg)) (cadr arg))
+	  (else (upcase-first (symbol->string which))))))
+
+(define (compute-interactive-arg-type fun which)
+  (with arg (property fun (list :argument which))
+    (cond ((or (npair? arg) (npair? (cdr arg))) "string")
+	  ((string? (car arg)) (car arg))
+	  ((symbol? (car arg)) (symbol->string (car arg)))
+	  (else "string"))))
+
+(define (compute-interactive-arg-propositions fun which)
+  (let* ((default (property fun (list :default which)))
+	 (propositions (property fun (list :propositions which)))
+	 (learned '()))
+    (cond ((procedure? default) (list (default)))
+	  ((procedure? propositions) (propositions))
+	  (else '()))))
+
+(define (compute-interactive-arg fun which)
+  (cons (compute-interactive-arg-text fun which)
+	(cons (compute-interactive-arg-type fun which)
+	      (compute-interactive-arg-propositions fun which))))
 
 (define (compute-interactive-args-try-hard fun)
   (with src (procedure-source fun)
