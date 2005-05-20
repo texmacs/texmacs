@@ -68,6 +68,7 @@
     (proclus-edit-links)))
 
 (tm-define (remove-link-type)
+  (:interactive #t)
   (and-let* ((t (get-locus-or-not-locus))
              (b (locus-self-link t))
              (s (get-source-link)))

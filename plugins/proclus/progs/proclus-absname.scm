@@ -158,6 +158,7 @@
                (get-strg-name-buffer)))
 
 (tm-define (interactive-absolute-name)
+  (:interactive #t)
   (check-has-file-name 'interactive-absolute-name)
   (interactive interactive-absolute-name/callback "Nom absolu"))
 

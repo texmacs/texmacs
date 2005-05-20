@@ -66,7 +66,7 @@
 	    ("5"            (graphics-set-grid-step "5" #t))
 	    ("10"           (graphics-set-grid-step "10" #t))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-step #t))))
+	    ("Other"        (graphics-interactive-set-grid-step #t))))
       (when (== (graphics-get-grid-type #t) 'polar)
 	(-> "Number of polar steps"
 	    ("Default"      (graphics-set-grid-astep "24" #t))
@@ -80,7 +80,7 @@
 	    ("30"           (graphics-set-grid-astep "30" #t))
 	    ("36"           (graphics-set-grid-astep "36" #t))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-astep #t))))
+	    ("Other"        (graphics-interactive-set-grid-astep #t))))
       (when (== (graphics-get-grid-type #t) 'logarithmic)
 	(-> "Logarithmic base"
 	    ("Default"      (graphics-set-grid-base "10" #t))
@@ -90,7 +90,7 @@
 	    ("10"           (graphics-set-grid-base "10" #t))
 	    ("16"           (graphics-set-grid-base "16" #t))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-base #t))))
+	    ("Other"        (graphics-interactive-set-grid-base #t))))
       ---
       (group "Aspect")
       (when (!= (graphics-get-grid-type #t) 'empty)
@@ -112,7 +112,7 @@
 		("8" (graphics-set-grid-aspect 'detailed 8 #t))
 		("10" (graphics-set-grid-aspect 'detailed 10 #t))
 		---
-		("Other" ... (graphics-interactive-set-grid-nsubds #t)))))))
+		("Other" (graphics-interactive-set-grid-nsubds #t)))))))
   (-> "Edit grid"
       ("As visual grid"  (grid-toggle-as-visual-grid))
       ---
@@ -126,7 +126,7 @@
 	(-> "Center"
 	    ("Default"      (graphics-set-grid-center "0" "0" #f))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-center #f)))
+	    ("Other"        (graphics-interactive-set-grid-center #f)))
 	(-> "Unit length"
 	    ("Default"      (graphics-set-grid-step "0.1" #f))
 	    ---
@@ -139,7 +139,7 @@
 	    ("5"            (graphics-set-grid-step "5" #f))
 	    ("10"           (graphics-set-grid-step "10" #f))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-step #f))))
+	    ("Other"        (graphics-interactive-set-grid-step #f))))
       (when (== (graphics-get-grid-type #f) 'polar)
 	(-> "Number of polar steps"
 	    ("Default"      (graphics-set-grid-astep "24" #f))
@@ -154,7 +154,7 @@
 	    ("36"           (graphics-set-grid-astep "36" #f))
 	    ("60"           (graphics-set-grid-astep "60" #f))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-astep #f))))
+	    ("Other"        (graphics-interactive-set-grid-astep #f))))
       (when (== (graphics-get-grid-type #f) 'logarithmic)
 	(-> "Logarithmic base"
 	    ("Default"      (graphics-set-grid-base "10" #f))
@@ -164,7 +164,7 @@
 	    ("10"           (graphics-set-grid-base "10" #f))
 	    ("16"           (graphics-set-grid-base "16" #f))
 	    ---
-	    ("Other" ...    (graphics-interactive-set-grid-base #f))))
+	    ("Other"        (graphics-interactive-set-grid-base #f))))
       (when (or (== (graphics-get-grid-type #f) 'cartesian)
 		(== (graphics-get-grid-type #f) 'polar)
 	)
@@ -179,7 +179,7 @@
 	    ("8" (graphics-set-grid-aspect 'detailed 8 #f))
 	    ("10" (graphics-set-grid-aspect 'detailed 10 #f))
 	    ---
-	    ("Other" ... (graphics-interactive-set-grid-nsubds #f))))))
+	    ("Other" (graphics-interactive-set-grid-nsubds #f))))))
 
 (menu-bind graphics-mode-menu
   ("Point" (graphics-set-mode "point"))

@@ -36,7 +36,7 @@
       ---
       (when (in-proclus-locus?)
             ("Remove link" (remove-link))
-            ("Remove type" ... (remove-link-type)))
+            ("Remove type" (remove-link-type)))
       ---
       (when (has-source-link?)
             (link proclus-types-menu)
@@ -60,7 +60,7 @@
       (when (has-conflicting-absolute-name?)
             ("Moved document" (absolute-name-reregister-buffer)))
       (when (and (not (no-name?)) (not (has-absolute-name?)))
-            ("Name this document" ... (interactive-absolute-name)))
+            ("Name this document" (interactive-absolute-name)))
       ("Learn a name" (absname-choose-file))
       ---
       (link proclus-types-menu)
@@ -85,4 +85,4 @@
   (if (in-proclus-links?)
       ---
       ("Remove link" (remove-link))
-      ("Remove type" ... (remove-link-type))))
+      ("Remove type" (remove-link-type))))
