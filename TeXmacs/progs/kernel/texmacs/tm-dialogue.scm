@@ -123,6 +123,14 @@
 ;; Interactive commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define interactive-arg-table (make-ahash-table))
+
+(tm-define (learn-interactive-arg fun nr value)
+  (let* ((l1 (ahash-ref interactive-arg-table (list fun nr)))
+	 (l2 (if l1 l1 '()))
+	 (l3 (if (in? value l2) l2 (cons value l2))))
+    (ahash-set! interactive-arg-table (list fun nr) l3)))
+
 (define (compute-interactive-arg-text fun which)
   (with arg (property fun (list :argument which))
     (cond ((npair? arg) (upcase-first (symbol->string which)))
@@ -164,14 +172,29 @@
 	(map (lambda (which) (compute-interactive-arg fun which)) args))))
 
 (define (build-interactive-arg s)
-  (cond ((pair? s) (cons (build-interactive-arg (car s)) (cdr s)))
-	((string-ends? s ":") s)
+  (cond ((string-ends? s ":") s)
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
+
+(define (build-interactive-args fun l nr)
+  (cond ((null? l) l)
+	((string? (car l))
+	 (build-interactive-args
+	  fun (cons (list (car l) "string") (cdr l)) nr))
+	(else
+	 (let* ((name (build-interactive-arg (caar l)))
+		(type (cadar l))
+		(pl (cddar l))
+		(ql (if (null? pl) '("") pl))
+		(kl (ahash-ref interactive-arg-table (list fun nr)))
+		(ll (if kl kl '()))
+		(props (if (<= (length ql) 1) (append ql ll) ql)))
+	   (cons (cons name (cons type props))
+		 (build-interactive-args fun (cdr l) (+ nr 1)))))))
 
 (tm-define (interactive fun . args)
   (:synopsis "Call @fun with interactively specified arguments @args")
   (:interactive #t)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
-  (tm-interactive fun (map build-interactive-arg args)))
+  (tm-interactive fun (build-interactive-args fun args 0)))

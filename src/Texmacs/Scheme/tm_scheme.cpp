@@ -188,7 +188,10 @@ interactive_command_rep::apply () {
   if ((i>0) && (s[i-1] == "cancel")) return;
   if (i == arity (p)) {
     array<object> params(N(p));
-    for (i=0; i<N(p); i++) params[i]= object (unquote (s[i]));
+    for (i=0; i<N(p); i++) {
+      params[i]= object (unquote (s[i]));
+      call ("learn-interactive-arg", fun, object (i), params[i]);
+    }
     string ret= object_to_string (call (fun, params));
     if ((ret != "") && (ret != "#<unspecified>"))
       sv->set_message (ret, "interactive command");

@@ -34,6 +34,8 @@
 (define-public (list-3? x) (and (list? x) (= (length x) 3)))
 (define-public (nlist-3? x) (not (list-3? x)))
 
+(define-public (in? x l) (not (not (member x l))))
+
 (define-public (keyword->number x)
   (string->number (symbol->string (keyword->symbol x))))
 
