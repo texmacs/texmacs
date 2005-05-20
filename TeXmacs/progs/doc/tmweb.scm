@@ -54,7 +54,7 @@
 
 (tm-define (tmweb-build-from u)
   (set! tmweb-build-src u)
-  (delayed (choose-file "Destination directory" "directory" 'tmweb-build)))
+  (delayed (choose-file tmweb-build "Destination directory" "directory")))
 
 (tm-define (tmweb-build u)
   (tmweb-convert-dir tmweb-build-src u))

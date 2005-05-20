@@ -168,9 +168,10 @@
              (init-env "absolute-name" s))))
 
 (tm-define (absname-choose-file)
+  (:interactive #t)
   (let ((from (get-strg-name-buffer)))
-    (choose-file "Save the absolute name of this file" "texmacs"
-                 `(lambda (x) (absname-choose-file/sub x ,from)))))
+    (choose-file (lambda (x) (absname-choose-file/sub x ,from))
+		 "Save the absolute name of this file" "texmacs")))
 
 (tm-define (absname-choose-file/sub u from)
   (switch-to-active-buffer u)

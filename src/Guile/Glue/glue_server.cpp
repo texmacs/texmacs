@@ -323,13 +323,13 @@ tmg_dialogue_end () {
 
 SCM
 tmg_choose_file (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "choose-file");
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "choose-file");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "choose-file");
-  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "choose-file");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "choose-file");
 
-  string in1= scm_to_string (arg1);
+  object in1= scm_to_object (arg1);
   string in2= scm_to_string (arg2);
-  scheme_tree in3= scm_to_scheme_tree (arg3);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->choose_file (in1, in2, in3);

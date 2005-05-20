@@ -29,10 +29,10 @@ public:
   void exec_pending_commands ();
   string preference (string var);
 
-  void dialogue_start (string name, widget wid, scheme_tree prg);
-  void dialogue_inquire (scheme_tree& arg);
+  void dialogue_start (string name, widget wid);
+  void dialogue_inquire (string& arg);
   void dialogue_end ();
-  void choose_file (string title, string type, scheme_tree prg);
+  void choose_file (object fun, string title, string type);
 };
 
 #endif // defined TM_SCHEME_H

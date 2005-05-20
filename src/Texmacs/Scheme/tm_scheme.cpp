@@ -63,28 +63,30 @@ tm_scheme_rep::exec_pending_commands () {
 
 class dialogue_command_rep: public command_rep {
   server_rep* sv;
-  scheme_tree prg;
+  object      fun;
 public:
-  dialogue_command_rep (server_rep* sv2, scheme_tree prg2):
-    sv (sv2), prg (prg2) {}
+  dialogue_command_rep (server_rep* sv2, object fun2):
+    sv (sv2), fun (fun2) {}
   void apply () {
-    scheme_tree arg;
-    sv->dialogue_inquire (arg);
-    string s= scheme_tree_to_string (tree (TUPLE, prg, arg));
-    if (arg != "cancel") sv->exec_delayed (scheme_cmd (s));
+    string s_arg;
+    sv->dialogue_inquire (s_arg);
+    if (s_arg != "cancel") {
+      object arg= string_to_object (s_arg);
+      object cmd= scheme_cmd (cons (fun, cons (arg, null_object ())));
+      sv->exec_delayed (cmd);
+    }
     sv->exec_delayed (scheme_cmd ("(dialogue-end)")); }
   ostream& print (ostream& out) {
     return out << "Dialogue"; }
 };
 
 command
-dialogue_command (server_rep* sv, scheme_tree prg) {
-  return new dialogue_command_rep (sv, prg);
+dialogue_command (server_rep* sv, object fun) {
+  return new dialogue_command_rep (sv, fun);
 }
 
 void
-tm_scheme_rep::dialogue_start (string name, widget wid, scheme_tree prg) {
-  (void) prg;
+tm_scheme_rep::dialogue_start (string name, widget wid) {
   if (dialogue_win == NULL) {
     string lan= get_display()->out_lan;
     if (lan == "russian") lan= "english";
@@ -98,10 +100,8 @@ tm_scheme_rep::dialogue_start (string name, widget wid, scheme_tree prg) {
 }
 
 void
-tm_scheme_rep::dialogue_inquire (scheme_tree& arg) {
-  string s;
-  dialogue_wid << get_string ("input", s);
-  arg= string_to_scheme_tree (s);
+tm_scheme_rep::dialogue_inquire (string& arg) {
+  dialogue_wid << get_string ("input", arg);
 }
 
 void
@@ -122,7 +122,7 @@ gcd (int i, int j) {
 }
 
 void
-tm_scheme_rep::choose_file (string title, string type, scheme_tree prg) {
+tm_scheme_rep::choose_file (object fun, string title, string type) {
   string magn;
   if (type == "image") {
     tm_widget meta = get_meta ();
@@ -138,7 +138,7 @@ tm_scheme_rep::choose_file (string title, string type, scheme_tree prg) {
   }
 
   url     name= get_name_buffer ();
-  command cb  = dialogue_command (get_server(), prg);
+  command cb  = dialogue_command (get_server(), fun);
   widget  wid = file_chooser_widget (cb, type, magn);
   if (!is_without_name (name)) {
     wid << set_string ("directory", as_string (head (name)));
@@ -156,7 +156,7 @@ tm_scheme_rep::choose_file (string title, string type, scheme_tree prg) {
     }
   }
   else wid << set_string ("directory", ".");
-  dialogue_start (title, wid, prg);
+  dialogue_start (title, wid);
   if (type == "directory")
     dialogue_win->set_keyboard_focus (dialogue_wid[0]["directory"]["input"]);
   else dialogue_win->set_keyboard_focus (dialogue_wid[0]["file"]["input"]);

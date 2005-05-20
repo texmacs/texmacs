@@ -204,8 +204,21 @@ object_to_string (object obj) {
 }
 
 object
+scheme_cmd (char* s) {
+  return eval ("(lambda () " * string (s) * ")");
+}
+
+object
 scheme_cmd (string s) {
   return eval ("(lambda () " * s * ")");
+}
+
+object
+scheme_cmd (object cmd) {
+  cmd= cons (cmd, null_object ());
+  cmd= cons (null_object (), cmd);
+  cmd= cons (eval ("'lambda"), cmd);
+  return eval (cmd);
 }
 
 /******************************************************************************

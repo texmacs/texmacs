@@ -152,6 +152,3 @@
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (tm-interactive (map build-interactive-arg args) fun))
-
-(tm-property (choose-file message format routine)
-  (:interactive #t))

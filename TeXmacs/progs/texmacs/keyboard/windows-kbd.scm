@@ -169,7 +169,7 @@
   ("windows c" (clipboard-copy "primary"))
   ("windows f" (search-start #t))
   ("windows n" (new-buffer))
-  ("windows o" (choose-file "Load file" "" 'load-buffer))
+  ("windows o" (choose-file load-buffer "Load file" ""))
   ("windows p" (preview-with-ghostview))
   ("windows q" (safely-quit-TeXmacs))
   ("windows r" (interactive replace-start-forward))
