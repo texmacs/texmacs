@@ -22,7 +22,7 @@
 (tm-define (make-interactive-with var)
   (:interactive #t)
   (interactive (lambda (s) (make-with var s))
-    (drd-ref env-var-description% var)))
+    (list (drd-ref env-var-description% var) "string" (get-env var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spacing

@@ -205,11 +205,12 @@
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))
 
+  ("emacs:prefix b" (interactive go-to-buffer))
   ("emacs:prefix k" (safely-kill-buffer))
   ("emacs:prefix C-c" (safely-quit-TeXmacs))
-  ("emacs:prefix C-f" (interactive load-buffer "File name"))
+  ("emacs:prefix C-f" (interactive load-buffer))
   ("emacs:prefix C-s" (save-buffer))
-  ("emacs:prefix C-w" (interactive save-buffer "Save as")))
+  ("emacs:prefix C-w" (interactive save-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs-ish commands added by TeXmacs

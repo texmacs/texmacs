@@ -131,7 +131,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
   else if ((key == "down") || (key == "C-n")) {
     if (N(def) > 0) {
-      def_cur= (def_cur-1) % N(def);
+      def_cur= (def_cur+N(def)-1) % N(def);
       s      = copy (def[def_cur]);
       pos    = N(s);
     }

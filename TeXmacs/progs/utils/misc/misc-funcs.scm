@@ -99,6 +99,15 @@
   (:argument cmd "Command")
   (interactive (eval (string->symbol cmd))))
 
+(tm-property (replace-start-forward what by)
+  (:argument what "Replace")
+  (:argument by "Replace by"))
+
+(tm-define (go-to-buffer name)
+  (:argument name "Switch to buffer")
+  (:propositions name (map car (get-buffer-menu)))
+  ((cadr (assoc name (get-buffer-menu)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; For actions which need to operate on specific markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -199,6 +199,7 @@ interactive_command_rep::apply () {
     if (is_atomic (p[i])) {
       if ((!is_atomic (p[i])) || (!is_quoted (p[i]->label))) return;
       prompt= unquote (p[i]->label);
+      type  = "string";
     }
     else {
       int j;
@@ -221,7 +222,10 @@ void
 tm_scheme_rep::interactive (object fun, scheme_tree p) {
   if (!is_tuple (p))
     fatal_error ("tuple expected", "edit_interface_rep::interactive");
-  command interactive_cmd=
-    new interactive_command_rep (this, get_meta (), fun, p);
-  interactive_cmd ();
+  if (get_meta () -> get_footer_mode () == 1) beep ();
+  else {
+    command interactive_cmd=
+      new interactive_command_rep (this, get_meta (), fun, p);
+    interactive_cmd ();
+  }
 }
