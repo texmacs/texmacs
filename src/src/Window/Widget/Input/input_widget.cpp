@@ -14,6 +14,57 @@
 #include "analyze.hpp"
 #include "font.hpp"
 #include "Widget/layout.hpp"
+#include "file.hpp"
+
+/******************************************************************************
+* Tab-completion for file names
+******************************************************************************/
+
+#ifdef OS_WIN32
+#define URL_CONCATER  '\\'
+#else
+#define URL_CONCATER  '/'
+#endif
+
+static void
+file_completions_file (array<string>& a, url search, url u) {
+  if (is_or (u)) {
+    file_completions_file (a, search, u[1]);
+    file_completions_file (a, search, u[2]);
+  }
+  else {
+    url v= delta (search * url ("dummy"), u);
+    if (is_none (v)) return;
+    string s= as_string (v);
+    if (is_directory (u)) s= s * string (URL_CONCATER);
+    a << s;
+  }
+}
+
+static void
+file_completions_dir (array<string>& a, url search, url dir) {
+  if (is_or (search)) {
+    file_completions_dir (a, search[1], dir);
+    file_completions_dir (a, search[2], dir);
+  }
+  else if (is_or (dir)) {
+    file_completions_dir (a, search, dir[1]);
+    file_completions_dir (a, search, dir[2]);
+  }
+  else {
+    url u= search * dir * url_wildcard ("*");
+    u= complete (u, "r");
+    u= expand (u);
+    file_completions_file (a, search, u);
+  }
+}
+
+static array<string>
+file_completions (url search, url dir) {
+  array<string> a;
+  file_completions_dir (a, search, dir);
+  return a;
+}
 
 /******************************************************************************
 * Input widgets
@@ -130,6 +181,14 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   else if (key == "tab" || key == "S-tab") {
     if (pos != N(s)) return;
     tabs= copy (def);
+    if (ends (type, "file")) {
+      url search= url_here ();
+      url dir= (ends (s, string (URL_CONCATER))? url (s): head (url (s)));
+      if (type == "smart-file") search= url ("$TEXMACS_FILE_PATH");
+      if (is_rooted (dir)) search= url_here ();
+      if (is_none (dir)) dir= url_here ();
+      tabs= file_completions (search, dir);
+    }
     tabs= strip_completions (tabs, s);
     tabs= close_completions (tabs);
     if (N (tabs) == 0);
@@ -181,11 +240,15 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     if ((pos<N(s)) && (N(s)>0))
       s= s (0, pos) * s (pos+1, N(s));
   }
-  else if (key == "backspace") {
+  else if (key == "backspace" || key == "S-backspace") {
     if (pos>0) {
       pos--;
       s= s (0, pos) * s (pos+1, N(s));
     }
+  }
+  else if (key == "C-backspace") {
+    s= "";
+    pos= 0;
   }
   else {
     if (N(key)!=1) return;

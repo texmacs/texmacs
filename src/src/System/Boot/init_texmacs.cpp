@@ -222,11 +222,16 @@ init_env_vars () {
   url style_path=
     get_env_path ("TEXMACS_STYLE_PATH",
 		  expand (complete (all_root * url_wildcard (), "dr")));
+  url text_root=
+    get_env_path ("TEXMACS_TEXT_ROOT",
+		  "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
+		  plugin_path ("texts"));
+  url text_path=
+    get_env_path ("TEXMACS_TEXT_PATH",
+		  expand (complete (text_root * url_wildcard (), "dr")));
 
   // Get other data paths
-  (void) get_env_path ("TEXMACS_FILE_PATH",
-		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
-		       style_path);
+  (void) get_env_path ("TEXMACS_FILE_PATH",text_path | style_path);
   (void) set_env_path ("TEXMACS_DOC_PATH",
 		       get_env_path ("TEXMACS_DOC_PATH") |
 		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |

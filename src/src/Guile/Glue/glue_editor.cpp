@@ -2521,15 +2521,6 @@ tmg_show_selection () {
 }
 
 SCM
-tmg_show_keymaps () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->show_keymaps ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_show_meminfo () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->show_meminfo ();
@@ -3121,7 +3112,6 @@ initialize_glue_editor () {
   gh_new_procedure ("show-path", (FN) tmg_show_path, 0, 0, 0);
   gh_new_procedure ("show-cursor", (FN) tmg_show_cursor, 0, 0, 0);
   gh_new_procedure ("show-selection", (FN) tmg_show_selection, 0, 0, 0);
-  gh_new_procedure ("show-keymaps", (FN) tmg_show_keymaps, 0, 0, 0);
   gh_new_procedure ("show-meminfo", (FN) tmg_show_meminfo, 0, 0, 0);
   gh_new_procedure ("edit-special", (FN) tmg_edit_special, 0, 0, 0);
   gh_new_procedure ("edit-test", (FN) tmg_edit_test, 0, 0, 0);

@@ -114,7 +114,6 @@ public:
   bool try_shortcut (string comb);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");
-  void show_keymaps ();
   bool complete_try ();
   void complete_message ();
   void complete_start (string prefix, array<string> compls);

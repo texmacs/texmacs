@@ -253,7 +253,6 @@
   (show-path show_path (void))
   (show-cursor show_cursor (void))
   (show-selection show_selection (void))
-  (show-keymaps show_keymaps (void))
   (show-meminfo show_meminfo (void))
   (edit-special edit_special (void))
   (edit-test edit_test (void))

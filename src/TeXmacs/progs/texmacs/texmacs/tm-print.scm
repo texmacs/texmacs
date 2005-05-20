@@ -86,7 +86,7 @@
 	name)))
 
 (tm-property (print-to-file name)
-  (:argument name "File name")
+  (:argument name print-file "File name")
   (:default  name (propose-postscript-name)))
 
 (tm-property (print-pages first last)
@@ -94,7 +94,7 @@
   (:argument last "Last page"))
 
 (tm-property (print-pages-to-file name first last)
-  (:argument name "File name")
+  (:argument name print-file "File name")
   (:default  name (propose-postscript-name))
   (:argument first "First page")
   (:argument last "Last page"))

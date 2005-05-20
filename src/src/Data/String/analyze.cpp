@@ -1005,6 +1005,7 @@ as_completions (hashset<string> h) {
   return a;
 }
 
+/*
 static void
 close_completions (hashset<string>& h) {
   array<string> a= as_completions (h);
@@ -1024,6 +1025,25 @@ close_completions (array<string> a) {
   for (i=0; i<n; i++) h->insert (a[i]);
   close_completions (h);
   return as_completions (h);
+}
+*/
+
+array<string>
+close_completions (array<string> a) {
+  if (N(a) == 0) return a;
+  merge_sort (a);
+  int i, j, n= N(a), l= N(a[0]);
+  for (i=1; i<n; i++) {
+    for (j=0; j<l && j<N(a[i]); j++)
+      if (a[i-1][j] != a[i][j]) break;
+    l= j;
+  }
+  array<string> r;
+  r << a[0] (0, l);
+  for (i=0; i<n; i++)
+    if (a[i] != r[N(r)-1])
+      r << a[i];
+  return r;
 }
 
 array<string>
