@@ -125,7 +125,8 @@
 
 (define interactive-arg-table (make-ahash-table))
 
-(tm-define (learn-interactive-arg fun nr value)
+(define-public (learn-interactive-arg fun nr value)
+  "Learn interactive @value for @nr-th argument of @fun"
   (if (procedure-name fun) (set! fun (procedure-name fun)))
   (let* ((l1 (ahash-ref interactive-arg-table (list fun nr)))
 	 (l2 (if l1 l1 '()))
@@ -182,6 +183,11 @@
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
 
+(define (list-but l1 l2)
+  (cond ((null? l1) l1)
+	((in? (car l1) l2) (list-but (cdr l1) l2))
+	(else (cons (car l1) (list-but (cdr l1) l2)))))
+
 (define (build-interactive-args fun l nr)
   (cond ((null? l) l)
 	((string? (car l))
@@ -193,7 +199,8 @@
 		(pl (cddar l))
 		(ql (if (null? pl) '("") pl))
 		(ll (learned-interactive-arg fun nr))
-		(props (if (<= (length ql) 1) (append ql ll) ql)))
+		(rl (append ql (list-but ll ql)))
+		(props (if (<= (length ql) 1) rl ql)))
 	   (cons (cons name (cons type props))
 		 (build-interactive-args fun (cdr l) (+ nr 1)))))))
 
@@ -208,7 +215,7 @@
 ;; Store learned arguments from one session to another
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (save-learned)
+(define (save-learned)
   (import-from (utils library list))
   (let* ((l1 (ahash-table->list interactive-arg-table))
 	 (pred? (lambda (l) (symbol? (caar l))))

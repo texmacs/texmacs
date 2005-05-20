@@ -19,13 +19,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-property (clipboard-copy to)
-  (:argument to "Copy to"))
+  (:argument to "Copy to")
+  (:default  to "primary"))
 
 (tm-property (clipboard-cut to)
-  (:argument to "Cut to"))
+  (:argument to "Cut to")
+  (:default  to "primary"))
 
 (tm-property (clipboard-paste from)
-  (:argument from "Paste from"))
+  (:argument from "Paste from")
+  (:default  to "primary"))
 
 (define (clipboard-test-import? s)
   (string=? s (clipboard-get-import)))

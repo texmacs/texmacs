@@ -20,7 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-property (init-style style)
-  (:argument style "Document style"))
+  (:argument style "Document style")
+  (:default  style "generic"))
 
 (tm-property (init-add-package pack)
   (:argument pack "Use package"))

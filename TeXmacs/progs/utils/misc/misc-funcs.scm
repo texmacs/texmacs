@@ -95,10 +95,6 @@
   (with r (tm-inside-which l)
     (if (== r "") #f (string->symbol r))))
 
-(tm-define (exec-interactive-command cmd)
-  (:argument cmd "Command")
-  (interactive (eval (string->symbol cmd))))
-
 (tm-property (replace-start-forward what by)
   (:argument what "Replace")
   (:argument by "Replace by"))

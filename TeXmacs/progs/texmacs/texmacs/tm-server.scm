@@ -58,10 +58,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-property (system cmd)
-  (:argument cmd "Command"))
+  (:argument cmd "System command"))
 
 (tm-property (footer-eval cmd)
-  (:argument cmd "Command"))
+  (:argument cmd "Scheme command"))
+
+(tm-define (exec-interactive-command cmd)
+  (:argument cmd "Interactive command")
+  (interactive (eval (string->symbol cmd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Killing buffers, windows and TeXmacs
