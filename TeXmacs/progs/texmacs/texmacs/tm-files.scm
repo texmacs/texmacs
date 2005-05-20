@@ -113,11 +113,11 @@
 	  (else (string-append (var-eval-system "pwd") "/")))))
 
 (tm-property (load-buffer name)
-  (:argument name "File name")
+  (:argument name smart-file "File name")
   (:default  name (propose-name-buffer)))
 
 (tm-property (save-buffer name)
-  (:argument name "Save as")
+  (:argument name texmacs-file "Save as")
   (:default  name (propose-name-buffer)))
 
 (tm-property (choose-file fun text type)

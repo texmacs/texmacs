@@ -168,11 +168,6 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 ******************************************************************************/
 
 void
-edit_interface_rep::show_keymaps () {
-  fatal_error ("no longer supported", "edit_interface_rep::show_keymaps");
-}
-
-void
 edit_interface_rep::handle_keypress (keypress_event ev) {
   buf->mark_undo_block ();
   key_press (ev->key);

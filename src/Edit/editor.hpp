@@ -123,7 +123,6 @@ public:
   virtual bool in_spell_mode () = 0;
   virtual void key_press (string key) = 0;
   virtual void emulate_keyboard (string keys, string action= "") = 0;
-  virtual void show_keymaps () = 0;
   virtual bool complete_try () = 0;
   virtual void complete_start (string prefix, array<string> compls) = 0;
   virtual bool complete_keypress (string key) = 0;

@@ -38,11 +38,11 @@
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))
       ("Environment" (show-env))
-      ;;("Keymaps" (show-keymaps))
       ---
       ("Error" (oops))
       ("Test" (edit-test))
       ("Timings" (bench-print-all))
+      ("Backtrace errors" (debug-enable 'backtrace 'debug))
       ("Memory information" (show-meminfo))))
 
 (menu-bind tools-menu
