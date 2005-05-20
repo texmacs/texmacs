@@ -494,6 +494,7 @@
 	    (graphics-set-property "gr-as-visual-grid" "off")))))
 
 (tm-define (graphics-interactive-set-grid-nsubds visual?)
+  (:interactive #t)
   (interactive (lambda (x) (graphics-set-grid-aspect 'detailed x visual?))
     "Number of subunit steps"))
 

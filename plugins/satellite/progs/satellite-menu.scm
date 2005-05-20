@@ -27,4 +27,4 @@
     '(small-figure big-figure
       small-figure* big-figure*)))
   ---
-  ("Other" ... (create-satellite)))
+  ("Other" (create-satellite)))

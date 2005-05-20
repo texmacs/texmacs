@@ -106,8 +106,9 @@
 (define list-env-satellite '())
 
 (tm-define (create-satellite)
+  (:interactive #t)
   (set! list-env-satellite '())
- (create-satellite/sub))
+  (create-satellite/sub))
 
 (define (create-satellite/sub)
   (interactive

@@ -191,7 +191,7 @@
 	 (let* ((x (cadr l))
 		(s (id-or-car x))
 		(v (id-or-cadr x)))
-	   (list s '... (compute-preferences-entry v))))
+	   (list s (compute-preferences-entry v))))
 	((== (car l) 'enum)
 	 (let* ((x (cadr l))
 		(s (id-or-car x))
