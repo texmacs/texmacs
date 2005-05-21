@@ -54,7 +54,7 @@
 	    ("Big figure" (make 'big-figure))
 	    ---))
   ;("Draw image" (make-graphics))
-  ("Link image" make-link-image (choose-file "Load image" "image"))
+  ("Link image" (choose-file make-link-image "Load image" "image"))
   ("Insert image" (choose-file make-inline-image "Load image" "image")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

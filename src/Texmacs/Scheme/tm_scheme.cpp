@@ -13,6 +13,7 @@
 #include "tm_scheme.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -64,25 +65,38 @@ tm_scheme_rep::exec_pending_commands () {
 class dialogue_command_rep: public command_rep {
   server_rep* sv;
   object      fun;
+  int         nr_args;
+
 public:
-  dialogue_command_rep (server_rep* sv2, object fun2):
-    sv (sv2), fun (fun2) {}
-  void apply () {
-    string s_arg;
-    sv->dialogue_inquire (s_arg);
-    if (s_arg != "cancel") {
-      object arg= string_to_object (s_arg);
-      object cmd= scheme_cmd (cons (fun, cons (arg, null_object ())));
-      sv->exec_delayed (cmd);
-    }
-    sv->exec_delayed (scheme_cmd ("(dialogue-end)")); }
+  dialogue_command_rep (server_rep* sv2, object fun2, int nr_args2):
+    sv (sv2), fun (fun2), nr_args (nr_args2) {}
+  void apply ();
   ostream& print (ostream& out) {
     return out << "Dialogue"; }
 };
 
+void
+dialogue_command_rep::apply () {
+  int i;
+  object cmd= null_object ();
+  for (i=nr_args-1; i>=0; i--) {
+    string s_arg;
+    sv->dialogue_inquire (i, s_arg);
+    if (s_arg == "#f") {
+      sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
+      return;
+    }
+    object arg= string_to_object (s_arg);
+    cmd= cons (arg, cmd);
+  }
+  cmd= cons (fun, cmd);
+  sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
+  sv->exec_delayed (scheme_cmd (cmd));
+}
+
 command
-dialogue_command (server_rep* sv, object fun) {
-  return new dialogue_command_rep (sv, fun);
+dialogue_command (server_rep* sv, object fun, int nr_args) {
+  return new dialogue_command_rep (sv, fun, nr_args);
 }
 
 void
@@ -92,16 +106,25 @@ tm_scheme_rep::dialogue_start (string name, widget wid) {
     if (lan == "russian") lan= "english";
     name= get_display()->translate (name, "english", lan);
     char* _name= as_charp (name);
+    window win= get_meta () -> win;
+    SI ox, oy, dx, dy, ex= 0, ey= 0;
+    win->get_position (ox, oy);
+    win->get_size (dx, dy);
+    wid << get_size (ex, ey, -1);
+    ox += (dx - ex) >> 1;
+    oy -= (dy - ey) >> 1;
     dialogue_wid= wid;
-    dialogue_win= plain_window (dialogue_wid, _name);
+    dialogue_win= plain_window (dialogue_wid, _name, 0, 0, ox, oy);
     dialogue_win->map ();
     delete[] _name;
   }
 }
 
 void
-tm_scheme_rep::dialogue_inquire (string& arg) {
-  dialogue_wid << get_string ("input", arg);
+tm_scheme_rep::dialogue_inquire (int i, string& arg) {
+  string s= "input";
+  if (i>0) s= "input-" * as_string (i);
+  dialogue_wid << get_string (s, arg);
 }
 
 void
@@ -138,7 +161,7 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
   }
 
   url     name= get_name_buffer ();
-  command cb  = dialogue_command (get_server(), fun);
+  command cb  = dialogue_command (get_server(), fun, 1);
   widget  wid = file_chooser_widget (cb, type, magn);
   if (!is_without_name (name)) {
     wid << set_string ("directory", as_string (head (name)));
@@ -166,6 +189,36 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
 * Interactive commands
 ******************************************************************************/
 
+static string
+get_prompt (scheme_tree p, int i) {
+  if (is_atomic (p[i]) && is_quoted (p[i]->label))
+    return unquote (p[i]->label);
+  else if (is_tuple (p[i]) && N(p[i])>0 &&
+	   is_atomic (p[i][0]) && is_quoted (p[i][0]->label))
+    return unquote (p[i][0]->label);
+  return "Input:";
+}
+
+static string
+get_type (scheme_tree p, int i) {
+  if (is_tuple (p[i]) && N(p[i])>1 &&
+      is_atomic (p[i][1]) && is_quoted (p[i][1]->label))
+    return unquote (p[i][1]->label);
+  return "string";
+}
+
+static array<string>
+get_proposals (scheme_tree p, int i) {
+  array<string> a;
+  if (is_tuple (p[i]) && N(p[i]) >= 2) {
+    int j, n= N(p[i]);
+    for (j=2; j<n; j++)
+      if (is_atomic (p[i][j]) && is_quoted (p[i][j]->label))
+	a << unquote (p[i][j]->label);
+  }
+  return a;
+}
+
 class interactive_command_rep: public command_rep {
   server_rep*   sv;   // the underlying server
   tm_widget     wid;  // the underlying TeXmacs window
@@ -185,9 +238,9 @@ public:
 
 void
 interactive_command_rep::apply () {
-  if ((i>0) && (s[i-1] == "cancel")) return;
-  if (i == arity (p)) {
-    array<object> params(N(p));
+  if ((i>0) && (s[i-1] == "#f")) return;
+  if (i == N(p)) {
+    array<object> params (N(p));
     for (i=0; i<N(p); i++) {
       params[i]= object (unquote (s[i]));
       call ("learn-interactive-arg", fun, object (i), params[i]);
@@ -197,26 +250,11 @@ interactive_command_rep::apply () {
       sv->set_message (ret, "interactive command");
   }
   else {
-    string prompt, type;
-    array<string> defs;
-    if (is_atomic (p[i])) {
-      if ((!is_atomic (p[i])) || (!is_quoted (p[i]->label))) return;
-      prompt= unquote (p[i]->label);
-      type  = "string";
-    }
-    else {
-      int j;
-      array<string> a (N(p[i]));
-      if (N(p[i]) < 2) return;
-      for (j=0; j<N(p[i]); j++) {
-	if ((!is_atomic (p[i][j])) || (!is_quoted (p[i][j]->label))) return;
-	if (j == 0) prompt= unquote (p[i][j]->label);
-	else if (j == 1) type= unquote (p[i][j]->label);
-	else defs << unquote (p[i][j]->label);
-      }
-    }
     s[i]= string ("");
-    wid->interactive (prompt, type, defs, s[i], this);
+    string prompt= get_prompt (p, i);
+    string type  = get_type (p, i);
+    array<string> proposals= get_proposals (p, i);
+    wid->interactive (prompt, type, proposals, s[i], this);
     i++;
   }
 }
@@ -225,10 +263,32 @@ void
 tm_scheme_rep::interactive (object fun, scheme_tree p) {
   if (!is_tuple (p))
     fatal_error ("tuple expected", "edit_interface_rep::interactive");
-  if (get_meta () -> get_footer_mode () == 1) beep ();
+  if (preference ("interactive questions") == "popup") {
+    int i, n= N(p);
+    array<string> prompts (n);
+    for (i=0; i<n; i++)
+      prompts[i]= get_prompt (p, i);
+    command cb= dialogue_command (get_server(), fun, n);
+    widget wid= inputs_list_widget (cb, prompts);
+    for (i=0; i<n; i++) {
+      widget input_wid= wid[0]["inputs"][i]["input"];
+      input_wid << set_string ("type", get_type (p, i));
+      array<string> proposals= get_proposals (p, i);
+      int j, k= N(proposals);
+      if (k > 0) input_wid << set_string ("input", proposals[0]);
+      for (j=0; j<k; j++) input_wid << set_string ("default", proposals[j]);
+    }
+    string title= "Enter data";
+    if (ends (prompts[0], "?")) title= "Question";
+    dialogue_start (title, wid);
+    dialogue_win->set_keyboard_focus (dialogue_wid[0]["inputs"][0]["input"]);
+  }
   else {
-    command interactive_cmd=
-      new interactive_command_rep (this, get_meta (), fun, p);
-    interactive_cmd ();
+    if (get_meta () -> get_footer_mode () == 1) beep ();
+    else {
+      command interactive_cmd=
+	new interactive_command_rep (this, get_meta (), fun, p);
+      interactive_cmd ();
+    }
   }
 }

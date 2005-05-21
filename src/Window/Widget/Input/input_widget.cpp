@@ -75,6 +75,7 @@ class input_widget_rep: public attribute_widget_rep {
   string  type;        // expected type of string
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
+  bool    ok;          // input not canceled
   int     def_cur;     // current choice between default possible values
   SI      dw, dh;      // border width and height
   int     pos;         // cursor position
@@ -107,7 +108,8 @@ public:
 
 input_widget_rep::input_widget_rep (display dis, command call_back2):
   attribute_widget_rep (dis, south_west),
-  s (""), type ("default"), def (), call_back (call_back2), def_cur (0),
+  s (""), type ("default"), def (), call_back (call_back2),
+  ok (true), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false) { dw*=SHRINK; dh*= SHRINK; }
 
@@ -117,9 +119,11 @@ input_widget_rep::operator tree () {
 
 void
 input_widget_rep::handle_get_size (get_size_event ev) {
+  SI dummy;
   font fn= dis->default_font ();
   ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
   abs_round (ev->w, ev->h);
+  if (ev->mode == 1) dis->get_max_size (ev->w, dummy);
 }
 
 void
@@ -214,9 +218,9 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
 
   /* other actions */
-  if (key == "return") { s= quote (s); call_back (); }
+  if (key == "return") { ok= true; call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
-	   (key == "C-g")) { s= "cancel"; call_back (); }
+	   (key == "C-g")) { ok= false; call_back (); }
   else if ((key == "left") || (key == "C-b")) { if (pos>0) pos--; }
   else if ((key == "right") || (key == "C-f")) { if (pos<N(s)) pos++; }
   else if ((key == "home") || (key == "C-a")) pos=0;
@@ -302,6 +306,7 @@ input_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "input") {
     s= copy (ev->s);
     pos= N(s);
+    ok= (ev->s != "#f");
     if (attached ()) this << emit_invalidate_all ();
   }
   else if (ev->which == "type") type= copy (ev->s);
@@ -311,7 +316,10 @@ input_widget_rep::handle_set_string (set_string_event ev) {
 
 void
 input_widget_rep::handle_get_string (get_string_event ev) {
-  if (ev->which == "input") ev->s= s;
+  if (ev->which == "input") {
+    if (ok) ev->s= quote (s);
+    else ev->s= "#f";
+  }
   else attribute_widget_rep::handle_get_string (ev);
 }
 
