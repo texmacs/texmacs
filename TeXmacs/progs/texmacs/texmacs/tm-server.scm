@@ -85,23 +85,21 @@
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (conditional-kill-buffer confirm)
-  (if (yes? confirm) (kill-buffer)))
-
 (tm-define (safely-kill-buffer)
-  (if (buffer-unsaved?)
-      (interactive conditional-kill-buffer
-	"The buffer has not been saved. Really close it?")
-      (kill-buffer)))
+  (dialogue
+    (if (or (not (buffer-unsaved?))
+	    (dialogue-confirm?
+	     "The buffer has not been saved. Really close it?" #f))
+	(kill-buffer))))
 
 (tm-define (safely-kill-window)
-  (if (<= (get-nr-windows) 1) (safely-quit-TeXmacs) (kill-window)))
-
-(tm-define (conditional-quit-TeXmacs confirm)
-  (if (yes? confirm) (quit-TeXmacs)))
+  (if (<= (get-nr-windows) 1)
+      (safely-quit-TeXmacs)
+      (kill-window)))
 
 (tm-define (safely-quit-TeXmacs)
-  (if (exists-unsaved-buffer?)
-      (interactive conditional-quit-TeXmacs
-	"There are unsaved files. Really quit?")
-      (quit-TeXmacs)))
+  (dialogue
+    (if (or (not (exists-unsaved-buffer?))
+	    (dialogue-confirm?
+	     "There are unsaved files. Really quit?" #f))
+	(quit-TeXmacs))))
