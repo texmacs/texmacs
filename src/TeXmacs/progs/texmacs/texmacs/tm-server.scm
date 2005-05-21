@@ -22,6 +22,9 @@
 (define (get-default-look-and-feel)
   (if (os-win32?) "windows" "emacs"))
 
+(define (get-default-interactive-questions)
+  (if (== (get-preference "look and feel") "windows") "popups" "footer"))
+
 (define (notify-look-and-feel var val)
   (set-message "Restart in order to let the new look and feel take effect"
 	       "configure look and feel"))
@@ -48,6 +51,7 @@
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
+  ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("security" "prompt on scripts" notify-security)
   ("autosave" "120" notify-autosave)
