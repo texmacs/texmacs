@@ -20,34 +20,57 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public dialogue-break #f)
-(define-public dialogue-continue #f)
 (define-public dialogue-return #f)
+(define-public dialogue-error #f)
+
+(define-public (dialogue-report-errors)
+  (if dialogue-error
+      (with error dialogue-error
+	(set! dialogue-error #f)
+	(apply throw error))))
 
 (define-public-macro (dialogue . body)
-  `(begin
-     (if dialogue-break (texmacs-error "dialogue" "Already in dialogue"))
-     (call-with-current-continuation
-      (lambda (cont)
-	(set! dialogue-break cont)
-	,@body
-	(set! dialogue-break #f)
-	(set! dialogue-continue #f)))
-     (if dialogue-return (dialogue-return (noop)))))
+  (cond
+    (dialogue-return
+     `(begin
+	(exec-delayed (lambda () (dialogue ,@body)))
+	(dialogue-return (noop))))
+    (dialogue-break
+     (texmacs-error "dialogue" "Nested dialogues not supported"))
+    (else
+     `(begin
+	(with-cc cont
+	  (set! dialogue-break cont)
+	  (catch #t
+		 (lambda () ,@body)
+		 (lambda err (set! dialogue-error err)))
+	  (set! dialogue-break #f))
+	(if dialogue-return (dialogue-return (noop)))
+	(dialogue-report-errors)))))
 
-(define-public (ask-string explain)
-  (call-with-current-continuation
-   (lambda (cont)
-     (set! dialogue-continue cont)
-     (tm-interactive (lambda (result)
-		       (call-with-current-continuation
-			(lambda (cont)
-			  (set! dialogue-return cont)
-			  (dialogue-continue result)))
-		       (set! dialogue-return #f))
-		     (list explain))
-     (if (not dialogue-break)
-	 (texmacs-error "ask-string" "Asked string outside a dialogue")
-	 (dialogue-break (noop))))))
+(define-public ((dialogue-machine local-continue) result)
+  (with-cc cont
+    (set! dialogue-return cont)
+    (local-continue result))
+  (set! dialogue-return #f)
+  (dialogue-report-errors))
+
+(define-public-macro (dialogue-user local-continue . body)
+  `(with local-break dialogue-break
+     (set! dialogue-break #f)
+     (with r (with-cc ,local-continue
+	       ,@body
+	       (local-break (noop)))
+       (set! dialogue-break local-break)
+       r)))
+
+(define-public (dialogue-ask prompt)
+  (if (not dialogue-break) (texmacs-error "dialogue-ask" "Not in dialogue"))
+  (dialogue-user local-continue
+    (tm-interactive (dialogue-machine local-continue)
+		    (if (string? prompt)
+			(list (build-interactive-arg prompt))
+			prompt))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delayed execution of commands
@@ -88,7 +111,15 @@
 	(else (delayed-sub (cdr body)))))
 
 (define-public-macro (delayed . body)
-  `(exec-delayed ,(delayed-sub body)))
+  (if dialogue-break
+      `(dialogue-user local-continue
+	 (exec-delayed
+	  (with proc ,(delayed-sub body)
+	    (lambda ()
+	      (with r (proc)
+		(if r ((dialogue-machine local-continue) (noop)))
+		r)))))
+      `(exec-delayed ,(delayed-sub body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Messages and feedback on the status bar
@@ -209,7 +240,16 @@
   (:interactive #t)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
-  (tm-interactive fun (build-interactive-args fun args 0)))
+  (with fun-args (build-interactive-args fun args 0)
+    (if dialogue-break
+	(dialogue-user local-continue
+	  (tm-interactive
+	   (lambda args*
+	     (with r* (apply fun args*)
+	       ((dialogue-machine local-continue) r*)
+	       r*))
+	   fun-args))
+	(tm-interactive fun fun-args))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Store learned arguments from one session to another
