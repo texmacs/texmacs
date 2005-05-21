@@ -64,6 +64,10 @@
        (set! dialogue-break local-break)
        r)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Simple questions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-public (dialogue-ask prompt)
   (if dialogue-break
       (dialogue-user local-continue
@@ -77,6 +81,13 @@
   (if default
       (yes? (dialogue-ask (list prompt "question" "yes" "no")))
       (yes? (dialogue-ask (list prompt "question" "no" "yes")))))
+
+(define-public (dialogue-url prompt type)
+  (if dialogue-break
+      (dialogue-user local-continue
+	(delayed
+	  (choose-file (dialogue-machine local-continue) prompt type)))
+      (texmacs-error "dialogue-ask" "Not in dialogue")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delayed execution of commands

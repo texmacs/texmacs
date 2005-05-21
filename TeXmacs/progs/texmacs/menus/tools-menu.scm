@@ -59,8 +59,7 @@
       ("Inclusions" (inclusions-gc))
       ("Styles" (style-clear-cache)))
   (-> "Web"
-      ("Create web site"
-       (choose-file tmweb-build-from "Source directory" "directory")))
+      ("Create web site" (tmweb-interactive-build)))
   (if (nnull? (test-menu))
       ---
       (link test-menu)))
