@@ -50,11 +50,9 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tmweb-build-src (url-none))
-
-(tm-define (tmweb-build-from u)
-  (set! tmweb-build-src u)
-  (delayed (choose-file tmweb-build "Destination directory" "directory")))
-
-(tm-define (tmweb-build u)
-  (tmweb-convert-dir tmweb-build-src u))
+(tm-define (tmweb-interactive-build)
+  (:interactive #t)
+  (dialogue
+    (let* ((src (dialogue-url "Source directory" "directory"))
+	   (dest (dialogue-url "Destination directory" "directory")))
+      (tmweb-convert-dir src dest))))

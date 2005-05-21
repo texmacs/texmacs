@@ -113,7 +113,7 @@
 (lazy-define (doc tmdoc) tmdoc-expand-help tmdoc-expand-help-manual
 	     tmdoc-expand-this tmdoc-include)
 (lazy-define (doc docgrep) docgrep-in-doc docgrep-in-src docgrep-in-texts)
-(lazy-define (doc tmweb) tmweb-convert-dir tmweb-build-from tmweb-build)
+(lazy-define (doc tmweb) tmweb-convert-dir tmweb-interactive-build)
 (define-secure-symbols tmdoc-include)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
