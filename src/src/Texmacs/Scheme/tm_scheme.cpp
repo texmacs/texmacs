@@ -193,7 +193,7 @@ interactive_command_rep::apply () {
       call ("learn-interactive-arg", fun, object (i), params[i]);
     }
     string ret= object_to_string (call (fun, params));
-    if ((ret != "") && (ret != "#<unspecified>"))
+    if (ret != "" && ret != "<unspecified>" && ret != "#<unspecified>")
       sv->set_message (ret, "interactive command");
   }
   else {

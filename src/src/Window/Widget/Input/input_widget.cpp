@@ -181,7 +181,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   else if (key == "tab" || key == "S-tab") {
     if (pos != N(s)) return;
     tabs= copy (def);
-    if (ends (type, "file")) {
+    if (ends (type, "file") || type == "directory") {
       url search= url_here ();
       url dir= (ends (s, string (URL_CONCATER))? url (s): head (url (s)));
       if (type == "smart-file") search= url ("$TEXMACS_FILE_PATH");

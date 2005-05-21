@@ -17,6 +17,10 @@
 (define-public == equal?)
 (define-public (!= x y) (not (equal? x y)))
 
+(define-public call/cc call-with-current-continuation)
+(define-public-macro (with-cc cont . body)
+  `(call/cc (lambda (,cont) ,@body)))
+
 (define-public-macro (with var val . body)
   (if (pair? var)
       `(apply (lambda ,var ,@body) ,val)
