@@ -31,12 +31,12 @@
 
 (define-public-macro (dialogue . body)
   (cond
+    (dialogue-break
+     `(begin ,@body))
     (dialogue-return
      `(begin
 	(exec-delayed (lambda () (dialogue ,@body)))
 	(dialogue-return (noop))))
-    (dialogue-break
-     (texmacs-error "dialogue" "Nested dialogues not supported"))
     (else
      `(begin
 	(with-cc cont
@@ -65,12 +65,18 @@
        r)))
 
 (define-public (dialogue-ask prompt)
-  (if (not dialogue-break) (texmacs-error "dialogue-ask" "Not in dialogue"))
-  (dialogue-user local-continue
-    (tm-interactive (dialogue-machine local-continue)
-		    (if (string? prompt)
-			(list (build-interactive-arg prompt))
-			prompt))))
+  (if dialogue-break
+      (dialogue-user local-continue
+	(tm-interactive (dialogue-machine local-continue)
+			(if (string? prompt)
+			    (list (build-interactive-arg prompt))
+			    (list prompt))))
+      (texmacs-error "dialogue-ask" "Not in dialogue")))
+
+(define-public (dialogue-confirm? prompt default)
+  (if default
+      (yes? (dialogue-ask (list prompt "question" "yes" "no")))
+      (yes? (dialogue-ask (list prompt "question" "no" "yes")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delayed execution of commands
@@ -136,7 +142,7 @@
     (delayed
      (set-message "Welcome to GNU TeXmacs" tmv)
      (delayed
-     (:pause 2500)
+     (:pause 5000)
      (set-message "GNU TeXmacs falls under the GNU general public license" tmv)
      (delayed
      (:pause 2500)

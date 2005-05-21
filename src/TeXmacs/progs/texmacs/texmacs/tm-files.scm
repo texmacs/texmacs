@@ -19,19 +19,11 @@
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (conditional-save-buffer file* fm confirm)
-  (with file (url-system file*)
-    (if (yes? confirm) (texmacs-save-buffer file fm))))
-
 (define (secure-save-buffer file fm)
-  (with file* (url-concretize file)
-    ;; FIXME: concretization should not be necessary
-    ;; due to bad current implementation of 'interactive'
-    (if (url-exists? file)
-	(interactive
-	    (lambda (confirm)
-	      (conditional-save-buffer file* fm confirm))
-	  "File already exists. Overwrite existing file?")
+  (dialogue
+    (if (or (not (url-exists? file))
+	    (dialogue-confirm?
+	     "File already exists. Overwrite existing file?" #f))
 	(texmacs-save-buffer file fm))))
 
 (tm-define (save-buffer . l)
@@ -52,25 +44,15 @@
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (conditional-load-buffer file* fm where confirm)
-  (with file (url-system file*)
-    (if (yes? confirm)
-        (texmacs-load-buffer (url-glue file "~") fm where #t)
-        (texmacs-load-buffer file fm where #f))))
-
 (define (load-buffer-sub file fm where)
-  (with file* (url-concretize file)
-    ;; FIXME: concretization should not be necessary
-    ;; due to bad current implementation of 'interactive'
+  (dialogue
     (if (and (!= fm "help")
 	     (not (url-rooted-web? file))
 	     (url-exists? file)
 	     (url-exists? (url-glue file "~"))
-	     (url-newer? (url-glue file "~") file))
-	(interactive
-	    (lambda (confirm)
-	      (conditional-load-buffer file* fm where confirm))
-	  "Load more recent autosave file?")
+	     (url-newer? (url-glue file "~") file)
+	     (dialogue-confirm? "Load more recent autosave file?" #t))
+	(texmacs-load-buffer (url-glue file "~") fm where #t)
 	(texmacs-load-buffer file fm where #f))))
 
 (tm-define (load-buffer . l)
@@ -95,12 +77,14 @@
       (:pause len)
       (auto-save))))
 
-(tm-define (conditional-recover-autosave confirm)
+(tm-define (recover-auto-save)
   (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
-    (if (yes? confirm)
-	(with t (texmacs-load-tree name "texmacs")
-	  (set-buffer (get-name-buffer) t))
-	(system-remove name))))
+    (if (url-exists? name)
+	(dialogue
+	  (if (dialogue-confirm? "Recover autosave file?" #t)
+	      (with t (texmacs-load-tree name "texmacs")
+		(set-buffer (get-name-buffer) t))
+	      (system-remove name))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous

@@ -40,8 +40,7 @@
 
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
-	     (texmacs texmacs tm-print))
-(lazy-define (texmacs texmacs tm-files) delayed-auto-save export-buffer)
+	     (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard wildcards-kbd) always?)
 (if (like-emacs?) (lazy-keyboard (texmacs keyboard emacs-kbd) always?))
@@ -144,6 +143,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")
-(texmacs-banner)
+(delayed (:idle 200) (recover-auto-save))
 (delayed (:idle 10000) (delayed-auto-save))
+(texmacs-banner)
 ;(display "Initialization done\n")
