@@ -1908,7 +1908,7 @@ static charp var_rename []= {
 
   "line width", "line-width",
   "line style", "line-style",
-  "line arrows", "line-arrows",
+  "line pattern", "line-pattern",
   "line caps", "line-caps",
   "fill mode", "fill-mode",
   "fill color", "fill-color",

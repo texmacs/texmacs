@@ -188,7 +188,8 @@ initialize_default_env () {
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
   env (LINE_STYLE_UNIT)  = "5ln";       // line style unit
-  env (LINE_ARROWS)      = "none";      // arrows at end of lines
+  env (LINE_PATTERN_MODE) = "none";     // pattern mode (none, pattern, both)
+  env (LINE_PATTERN)     = "none";      // arrows & pattern for lines
   env (LINE_CAPS)        = "normal";    // junctions in multilines
   env (FILL_MODE)        = "none";      // fill mode (none, inside, both)
   env (FILL_COLOR)       = "white";     // fill color
@@ -201,6 +202,8 @@ initialize_default_env () {
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
   env (GR_LINE_STYLE)      = "default"; // line style for new objects
   env (GR_LINE_STYLE_UNIT) = "default"; // line style unit for new objects
+  env (GR_LINE_PATTERN_MODE) = "default"; // line pattern mode for new objects
+  env (GR_LINE_PATTERN)    = "default"; // line pattern for new objects
   env (GR_FILL_MODE)     = "default";   // fill mode for new objects
   env (GR_FILL_COLOR)    = "default";   // fill color for new objects
   env (GR_GRID)             = gr_grid;        // grid for graphics
