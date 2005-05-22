@@ -57,6 +57,8 @@
 #define Env_Line_Style_Unit   26
 #define Env_Fill_Mode         27
 #define Env_Fill_Color        28
+#define Env_Line_Pattern_Mode 29
+#define Env_Line_Pattern      30
 
 /******************************************************************************
 * For style file editing
@@ -97,12 +99,16 @@
 #define MODIFY_PERMANENT_LONG    4
 
 /******************************************************************************
-* Other enumerated values
+* For fill and line pattern modes
 ******************************************************************************/
 
 #define FILL_MODE_NONE    0
 #define FILL_MODE_INSIDE  1
 #define FILL_MODE_BOTH    2
+
+#define LINE_PATTERN_MODE_NONE     0
+#define LINE_PATTERN_MODE_PATTERN  1
+#define LINE_PATTERN_MODE_BOTH     2
 
 /******************************************************************************
 * The edit environment
@@ -158,6 +164,8 @@ public:
   SI           line_style_unit;
   int          fill_mode;
   color        fill_color;
+  int          line_pattern_mode;
+  array<box>   line_pattern;
  
   int          inactive_mode;
   tree         recover_env;
@@ -351,6 +359,8 @@ public:
   void   update_line_style ();
   void   update_fill_mode ();
   void   update_fill_color ();
+  void   update_line_pattern_mode ();
+  void   update_line_pattern ();
   void   update ();
   void   update (string env_var);
 

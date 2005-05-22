@@ -619,6 +619,29 @@
   (:argument val "Fill color")
   (graphics-set-property "gr-fill-color" val))
 
+(define default-line-patterns
+  #((tuple
+      (line (point "1.3" "1.3") (point "1.6" "1.2") (point "1.3" "1.1")))
+    (tuple
+      (line (point "1.3" "1.3") (point "1" "1.2") (point "1.3" "1.1"))
+      (line (point "1.3" "1.3") (point "1.6" "1.2") (point "1.3" "1.1")))
+    (tuple
+      ""
+      (concat (line (point "1.3" "1.2") (point "1.6" "1.2"))
+	      (line (point "1.3" "1.3") (point "1.6" "1.2")
+		    (point "1.3" "1.1")))
+      (spline (point "0.4" "1.2") (point "0.5" "1.3")
+	      (point "0.7" "1.1") (point "0.8" "1.2")))))
+
+(tm-define (graphics-set-line-pattern mode pattern)
+  (graphics-set-property "gr-line-pattern-mode" mode)
+  (cond ((integer? pattern)
+	 (graphics-set-property
+	   "gr-line-pattern"
+	   (vector-ref default-line-patterns pattern)))
+        ((pair? pattern)
+	 (graphics-set-property "gr-line-pattern" pattern))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -638,13 +661,14 @@
 	t
 	`(with ,@f ,t))))
 
-(define (graphics-enrich-bis t color lw st fm fc)
+(define (graphics-enrich-bis t color lw st lpm lp fm fc)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
 	  ((in? mode '(line cline spline cspline arc carc))
 	   (graphics-enrich-sub t `(("color" , color)
 	      ("line-width" ,lw) ("line-style" ,st)
+	      ("line-pattern-mode" ,lpm) ("line-pattern" ,lp)
 	      ("fill-mode" ,fm) ("fill-color" ,fc))))
 	  (else
 	   (graphics-enrich-sub t '())))))
@@ -653,9 +677,11 @@
   (let* ((color (get-env "gr-color"))
 	 (lw (get-env "gr-line-width"))
 	 (st (get-env-stree "gr-line-style"))
+	 (lpm (get-env "gr-line-pattern-mode"))
+	 (lp (get-env-stree "gr-line-pattern"))
 	 (fm (get-env "gr-fill-mode"))
 	 (fc (get-env "gr-fill-color")))
-    (graphics-enrich-bis t color lw st fm fc)))
+    (graphics-enrich-bis t color lw st lpm lp fm fc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -677,8 +703,9 @@
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color lw st fm fc go-into)
-  (graphics-group-insert-bis (graphics-enrich-bis t color lw st fm fc) go-into))
+(define (graphics-group-enrich-insert-bis t color lw st lpm lp fm fc go-into)
+  (graphics-group-insert-bis
+    (graphics-enrich-bis t color lw st lpm lp fm fc) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -854,6 +881,8 @@
 (define graphical-color "default")
 (define graphical-lwidth "default")
 (define graphical-lstyle "default")
+(define graphical-lpattern-mode "default")
+(define graphical-lpattern "default")
 (define graphical-fmode "default")
 (define graphical-fcolor "default")
 
@@ -864,6 +893,9 @@
 	  (set! graphical-color (find-prop-bis o "color" "default"))
 	  (set! graphical-lwidth (find-prop-bis o "line-width" "default"))
 	  (set! graphical-lstyle (find-prop-bis o "line-style" "default"))
+          (set! graphical-lpattern-mode
+		(find-prop-bis o "line-pattern-mode" "default"))
+          (set! graphical-lpattern (find-prop-bis o "line-pattern" "default"))
 	  (set! graphical-fmode (find-prop-bis o "fill-mode" "default"))
 	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))))
     (if (pair? o)
@@ -938,6 +970,8 @@
 	  (let ((color #f)
 		(lw #f)
 		(st #f)
+		(lpm #f)
+		(lp #f)
 		(fm #f)
 		(fc #f))
 		 (if (== mode 'active)
@@ -945,6 +979,8 @@
 		       (set! color graphical-color)
 		       (set! lw graphical-lwidth)
 		       (set! st graphical-lstyle)
+		       (set! lpm graphical-lpattern-mode)
+		       (set! lp graphical-lpattern)
 		       (set! fm graphical-fmode)
 		       (set! fc graphical-fcolor)))
 		 (if (list? mode)
@@ -952,6 +988,8 @@
 		       (set! color (graphics-path-property mode "color"))
 		       (set! lw (graphics-path-property mode "line-width"))
 		       (set! st (graphics-path-property mode "line-style"))
+		       (set! lpm (graphics-path-property mode "line-pattern-mode"))
+		       (set! lp (graphics-path-property mode "line-pattern"))
 		       (set! fm (graphics-path-property mode "fill-mode"))
 		       (set! fc (graphics-path-property mode "fill-color"))))
 		 (if (== mode 'new)
@@ -959,6 +997,8 @@
 		       (set! color (get-env "gr-color"))
 		       (set! lw (get-env "gr-line-width"))
 		       (set! st (get-env-stree "gr-line-style"))
+		       (set! lpm (get-env-stree "gr-line-pattern-mode"))
+		       (set! lp (get-env-stree "gr-line-pattern"))
 		       (set! fm (get-env "gr-fill-mode"))
 		       (set! fc (get-env "gr-fill-color"))))
 		 (set-graphical-object
@@ -967,6 +1007,8 @@
 			 "color" color
 			 "line-width" lw
 			 "line-style" st
+			 "line-pattern-mode" lpm
+			 "line-pattern" lp
 			 "fill-mode" fm
 			 "fill-color" (if (== fc "default")
 					  (get-default-val "fill-color")
@@ -1305,7 +1347,9 @@
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
 	 obj graphical-color graphical-lwidth
-	 graphical-lstyle graphical-fmode graphical-fcolor #f)
+	 graphical-lstyle
+	 graphical-lpattern-mode graphical-lpattern
+	 graphical-fmode graphical-fcolor #f)
 	(if (== (state-ref graphics-first-state 'graphics-action)
 		'start-move)
 	    (remove-undo-mark))
@@ -1454,6 +1498,7 @@
   (graphics-group-enrich-insert-bis
      obj (get-env "gr-color") (get-env "gr-line-width")
      (get-env-stree "gr-line-style")
+     (get-env "gr-line-pattern-mode") (get-env-stree "gr-line-pattern")
      (get-env "gr-fill-mode") (get-env "gr-fill-color") #f)
   (create-graphical-object obj 'new 'points #f))
 

@@ -22,7 +22,9 @@ box graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2);
 box point_box (path ip, point p, SI r, color col, string style);
 box curve_box (path ip, curve c, SI width, color col,
-  array<bool> style, SI style_unit, int fill, color fill_col);
+  array<bool> style, SI style_unit,
+  int fill, color fill_col,
+  int pattern_mode, array<box> pattern);
 box grid_box (path ip, grid g, frame f, SI un, point lim1, point lim2);
 
 #endif // defined GRAPHICS_H
