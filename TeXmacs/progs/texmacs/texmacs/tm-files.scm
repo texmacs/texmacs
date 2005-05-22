@@ -86,6 +86,13 @@
 		(set-buffer (get-name-buffer) t))
 	      (system-remove name))))))
 
+(define (notify-autosave var val)
+  (if (has-view?) ; delayed-autosave would crash at initialization time
+      (delayed-autosave)))
+
+(define-preferences
+  ("autosave" "120" notify-autosave))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
