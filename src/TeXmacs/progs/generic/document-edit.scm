@@ -52,7 +52,7 @@
 (tm-define (init-interactive-env var)
   (:interactive #t)
   (interactive (lambda (s) (init-env var s))
-    (list (drd-ref env-var-description% var) "string" (init-env var))))
+    (list (drd-ref env-var-description% var) "string" (get-init-env var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties

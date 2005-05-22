@@ -42,6 +42,9 @@
   (:check-mark "*" test-default?)
   (for-each init-default-one args))
 
+(tm-define (get-init-env s)
+  (tree->string (get-init-tree s)))
+
 (tm-define (test-init? var val)
   (== (get-init-tree var) (string->tree val)))
 
