@@ -88,6 +88,7 @@ dialogue_command_rep::apply () {
     }
     object arg= string_to_object (s_arg);
     cmd= cons (arg, cmd);
+    call ("learn-interactive-arg", fun, object (i), arg);
   }
   cmd= cons (fun, cmd);
   sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
@@ -242,7 +243,7 @@ interactive_command_rep::apply () {
   if (i == N(p)) {
     array<object> params (N(p));
     for (i=0; i<N(p); i++) {
-      params[i]= object (unquote (s[i]));
+      params[i]= string_to_object (s[i]);
       call ("learn-interactive-arg", fun, object (i), params[i]);
     }
     string ret= object_to_string (call (fun, params));
