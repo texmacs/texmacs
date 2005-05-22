@@ -88,7 +88,7 @@
 
 (define (notify-autosave var val)
   (if (has-view?) ; delayed-autosave would crash at initialization time
-      (delayed-autosave)))
+      (delayed-auto-save)))
 
 (define-preferences
   ("autosave" "120" notify-autosave))
