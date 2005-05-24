@@ -8,6 +8,14 @@
   <section|Changes from version 1.0.5 to 1.0.5.2>
 
   <\itemize>
+    <item>User preference for popup instead of footer dialogues (1.0.5.2).
+
+    <item>Default values and types for interactive arguments (1.0.5.2).
+
+    <item>Better dialogue system based on scheme continuations (1.0.5.2).
+
+    <item>Arrows for the upcoming graphical mode (1.0.5.2).
+
     <item>Support for plug-in provided icons and dictionaries (1.0.5.2).
 
     <item>Included <name|Proclus> plug-in into the main distribution
