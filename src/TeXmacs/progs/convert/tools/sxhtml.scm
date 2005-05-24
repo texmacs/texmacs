@@ -13,27 +13,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools sxhtml)
-  (:use (convert tools sxml))
-  (:export sxhtml-heading? sxhtml-list? sxhtml-table?
-	   sxhtml-label? sxhtml-glue-label
-	   sxhtml-correct-table
-	   shtml-decode-span sxhtml-table-fold sxhtml-table-dimension))
+  (:use (convert tools sxml)))
 
 ;; TODO: rewrite the predicates using DRD
 ;; TODO: consolidate with htmltm dispatch DRD
 
 ;; Is the node x a HTML element whose name is a given set?
-(define sxhtml-heading? (ntype-names?? '(h:h1 h:h2 h:h3 h:h4 h:h5 h:h6)))
-(define sxhtml-list? (ntype-names?? '(h:ul h:ol h:dl)))
-(define sxhtml-table? (ntype-names?? '(h:table)))
+(tm-define sxhtml-heading? (ntype-names?? '(h:h1 h:h2 h:h3 h:h4 h:h5 h:h6)))
+(tm-define sxhtml-list? (ntype-names?? '(h:ul h:ol h:dl)))
+(tm-define sxhtml-table? (ntype-names?? '(h:table)))
 
-(define (sxhtml-label? x)
+(tm-define (sxhtml-label? x)
   ;; Is the node x a h:a element with an id attribute?
   (and (sxml-element? x)
        (eq? 'h:a (sxml-name x))
        (sxml-attr x 'id)))
 
-(define (sxhtml-glue-label x label)
+(tm-define (sxhtml-glue-label x label)
   ;; Set the id attribute of element x from the id of element label.
   (sxml-set-attr x (list 'id (sxml-attr label 'id))))
 
@@ -54,7 +50,7 @@
   (and-let* ((n (shtml-attr-number as name)))
     (if (< n 0) #f (inexact->exact n))))
 
-(define (shtml-decode-span as name)
+(tm-define (shtml-decode-span as name)
   ;; FIXME: zero spans (until end of group) are not supported
   (let ((n (shtml-attr-positive-integer as name)))
     (cond ((not n) 1) ((zero? n) 1) (else n))))
@@ -72,7 +68,7 @@
 ;;
 ;; TODO: filter contents of COLGROUP elements.
 
-(define (sxhtml-correct-table x)
+(tm-define (sxhtml-correct-table x)
   ;; Correct all TABLEs in postorder in the sxml tree @x.
   (let sub ((x x))
     (cond ((sxhtml-table? x)
@@ -156,7 +152,7 @@
 ;; Since this feature also requires a significant added complexity, it is left
 ;; out.
 
-(define (sxhtml-table-fold kons knil table)
+(tm-define (sxhtml-table-fold kons knil table)
   ;; Fundamental HTML table content iterator.
   ;; knil: T
   ;; kons: symbol (int @i) (int @j) sxml T -> T
@@ -268,7 +264,7 @@
 ;;; Table iterator applications
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (sxhtml-table-dimension table)
+(tm-define (sxhtml-table-dimension table)
   (sxhtml-table-fold
    (lambda (msg i j kar kdr)
      (with (nrows ncols) kdr

@@ -123,7 +123,6 @@ public:
   virtual bool in_spell_mode () = 0;
   virtual void key_press (string key) = 0;
   virtual void emulate_keyboard (string keys, string action= "") = 0;
-  virtual void show_keymaps () = 0;
   virtual bool complete_try () = 0;
   virtual void complete_start (string prefix, array<string> compls) = 0;
   virtual bool complete_keypress (string key) = 0;
@@ -136,8 +135,10 @@ public:
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
-  virtual void set_message (string l, string r= "") = 0;
-  virtual void interactive (scheme_tree args, object cmd) = 0;
+  virtual void set_message (string l, string r= "", bool temp= false) = 0;
+  virtual void recall_message () = 0;
+  virtual int  idle_time (int event_type= ANY_EVENT) = 0;
+  virtual int  change_time () = 0;
 
   /* public routines from edit_cursor */
   virtual path current_position () = 0;
@@ -156,8 +157,8 @@ public:
   virtual void go_to_here () = 0;
   virtual void go_start () = 0;
   virtual void go_end () = 0;
-  virtual void go_start_of (string what) = 0;
-  virtual void go_end_of (string what) = 0;
+  virtual void go_start_of (tree_label what) = 0;
+  virtual void go_end_of (tree_label what) = 0;
   virtual void go_start_with (string var, string val) = 0;
   virtual void go_end_with (string var, string val) = 0;
   virtual void go_start_line () = 0;

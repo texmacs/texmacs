@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmcolor)
-  (:export tmcolor tmcolor? rgb255->tmcolor stm->tmcolor tmcolor->stm))
+(texmacs-module (convert tools tmcolor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Internal record utilities
@@ -26,7 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors
 
-(define tmcolor? (record-predicate tmcolor-type))
+(tm-define tmcolor? (record-predicate tmcolor-type))
 (define tmcolor-red (record-accessor tmcolor-type 'red))
 (define tmcolor-green (record-accessor tmcolor-type 'green))
 (define tmcolor-blue (record-accessor tmcolor-type 'blue))
@@ -35,13 +34,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constructors
 
-(define (tmcolor red green blue)
+(tm-define (tmcolor red green blue)
   (for-each check-tmcolor-range (list red green blue))
   (tmcolor-record (delay (tmcolor-closest-name
 			  (tmcolor-record #f red green blue)))
 		  red green blue))
 
-(define (rgb255->tmcolor rgb255)
+(tm-define (rgb255->tmcolor rgb255)
   (apply tmcolor (map (cut / <> 255) rgb255)))
 
 (define (check-tmcolor-range n)
@@ -50,13 +49,13 @@
 		   (check-arg-type number? n "tmcolor")
 		   "tmcolor"))
 
-(define (stm->tmcolor name)
+(tm-define (stm->tmcolor name)
   (let ((c (list-any (lambda (c) (== name (tmcolor-name c)))
 		     texmacs-colors)))
     (if (not c) (texmacs-error "stm->tmcolor" "Bad color name: ~S" name))
     c))
 
-(define tmcolor->stm tmcolor-name)
+(tm-define tmcolor->stm tmcolor-name)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding name closest to an arbitrary color

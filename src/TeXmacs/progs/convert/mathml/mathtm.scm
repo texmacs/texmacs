@@ -65,8 +65,7 @@
 ;; !!! Check semantic of mathvariant on multiple symbols !!!
 
 (texmacs-module (convert mathml mathtm)
-  (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm))
-  (:export mathml->tree mathtm-as-serial))
+  (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities
@@ -82,7 +81,7 @@
 (define (smathml->tmtable env x)
   ;; Simplistic parser for mathml table.
   ;; Properly infer implied <mtr> and <mtd>.
-  (if (not (== 'mtable (sxml-name x)))
+  (if (!= 'mtable (sxml-name x))
       (error "Parameter is not a mtable."))
   (let ((a (sxml-attr-list x))
 	(c (sxml-content x)))
@@ -139,7 +138,7 @@
      ,(mathtm-as-serial env (first c))
      ,(mathtm-as-serial env (second c)))))
 
-(define (length=1? l) (and (not (null? l)) (null (cdr l))))
+(define (length=1? l) (and (nnull? l) (null (cdr l))))
 
 (define (mathtm-msub env a c)
   ;; TODO: produce <merror> if arity is incorrect
@@ -209,7 +208,7 @@
   (sxml-dispatch (lambda (env t) (list (mathtm-string env t)))
 		 mathtm-pass env t))
 
-(define mathtm-as-serial
+(tm-define mathtm-as-serial
   ;; TODO: replace #f by 'environment' object, see htmltm-as-serial
   (case-lambda
     ((t) (mathtm-as-serial #f t))

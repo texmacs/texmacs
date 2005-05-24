@@ -17,8 +17,7 @@
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel regexp regexp-select)
-  (:export tm-select))
+(texmacs-module (kernel regexp regexp-select))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Intersections of matches
@@ -153,7 +152,7 @@
   ;; (display* "select list " x ", " pat ", " bl "\n")
   "Selects subexpressions of @l using the pattern @pat and under bindings @bl."
   (cond ((null? pat) (list (cons* (list) x bl)))
-	((not (pair? pat)) '())
+	((npair? pat) '())
 	((keyword? (car pat))
 	 (with fpat (car pat)
 	   (cond ((== fpat :0)
@@ -178,7 +177,7 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-select x pattern)
+(define-public (tm-select x pattern)
   "Select all subtrees of @x which match a given path pattern @pattern"
   (with sols (select-list x pattern '())
     ;; (display* "sols= " sols "\n")

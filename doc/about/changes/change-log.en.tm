@@ -1,9 +1,39 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.5.1>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.0.5 to 1.0.5.2>
+
+  <\itemize>
+    <item>User preference for popup instead of footer dialogues (1.0.5.2).
+
+    <item>Default values and types for interactive arguments (1.0.5.2).
+
+    <item>Better dialogue system based on scheme continuations (1.0.5.2).
+
+    <item>Arrows for the upcoming graphical mode (1.0.5.2).
+
+    <item>Support for plug-in provided icons and dictionaries (1.0.5.2).
+
+    <item>Included <name|Proclus> plug-in into the main distribution
+    (1.0.5.2).
+
+    <item>Contextual overloading (1.0.5.1).
+
+    <item>More rational booting and improved speed through higher lazyness
+    (1.0.5.1).
+
+    <item>Simplifications in the module system (1.0.5.1).
+
+    <item>Reorganization of the scheme directory structure by functionality
+    (1.0.5.1).
+
+    <item>Added first versions of dashed lines and filled curves for upcoming
+    graphical mode (1.0.5.1).
+  </itemize>
 
   <section|Changes from version 1.0.4 to 1.0.5>
 

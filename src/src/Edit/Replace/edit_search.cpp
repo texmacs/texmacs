@@ -559,7 +559,7 @@ edit_replace_rep::replace_keypress (string s) {
     step_horizontal (forward);
     replace_next ();
   }
-  else if (s == "a") {
+  else if (s == "a" || s == "!") {
     while (search_at != rp) {
       nr_replaced++;
       go_to (copy (search_end));

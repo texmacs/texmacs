@@ -13,12 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex textm)
-  (:use
-    (convert rewrite tmtm-eqns) (convert rewrite tmtm-tidy))
-  (:export
-    textm-finalize))
+  (:use (convert rewrite tmtm-eqns) (convert rewrite tmtm-tidy)))
 
-(define (textm-finalize l1)
+(tm-define (textm-finalize l1)
   (let* ((l2 (tmtm-modernize-newlines l1))
 	 (l3 (tmtm-nonumber->eqnumber l2))
 	 (l4 (tmtm-eat-space-around-control l3))

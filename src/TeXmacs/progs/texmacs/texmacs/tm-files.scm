@@ -13,43 +13,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-files)
-  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print))
-  (:export
-    ;; general purpose loading and saving
-    save-buffer export-buffer load-buffer
-    conditional-save-buffer conditional-load-buffer ;; due to interactive
-    conditional-recover-autosave ;; due to interactive
-    ;; shortcuts for special formats or extra actions
-    buffer-loader buffer-saver
-    load-in-new-window load-browse-buffer))
+  (:use (texmacs texmacs tm-server) (texmacs texmacs tm-print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-save-buffer file* fm confirm)
-  (with file (url-system file*)
-    (if (yes? confirm) (texmacs-save-buffer file fm))))
-
 (define (secure-save-buffer file fm)
-  (with file* (url-concretize file)
-    ;; FIXME: concretization should not be necessary
-    ;; due to bad current implementation of 'interactive'
-    (if (url-exists? file)
-	(interactive '("File already exists. Overwrite existing file?")
-		     `(lambda (confirm)
-			(conditional-save-buffer ,file* ,fm confirm)))
+  (dialogue
+    (if (or (not (url-exists? file))
+	    (dialogue-confirm?
+	     "File already exists. Overwrite existing file?" #f))
 	(texmacs-save-buffer file fm))))
 
-(define (save-buffer . l)
+(tm-define (save-buffer . l)
   (cond ((= (length l) 0)
 	 (if (no-name?)
-	     (interactive '("Save as:") 'save-buffer)
+	     (interactive save-buffer "Save as")
 	     (texmacs-save-buffer (get-name-buffer) "generic")))
 	((= (length l) 1) (secure-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
 
-(define (export-buffer to)
+(tm-define (export-buffer to)
   ;; Temporary fix for saving to postscript or pdf
   (if (in? (url-suffix to) '("ps" "pdf"))
       (print-to-file to)
@@ -59,28 +44,18 @@
 ;; Loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-load-buffer file* fm where confirm)
-  (with file (url-system file*)
-    (if (yes? confirm)
-        (texmacs-load-buffer (url-glue file "~") fm where #t)
-        (texmacs-load-buffer file fm where #f))))
-
 (define (load-buffer-sub file fm where)
-  (with file* (url-concretize file)
-    ;; FIXME: concretization should not be necessary
-    ;; due to bad current implementation of 'interactive'
-    (if (and (not (== fm "help"))
+  (dialogue
+    (if (and (!= fm "help")
 	     (not (url-rooted-web? file))
 	     (url-exists? file)
 	     (url-exists? (url-glue file "~"))
-	     (url-newer? (url-glue file "~") file))
-	(interactive
-	 '("Load more recent autosave file?")
-	 `(lambda (confirm)
-	    (conditional-load-buffer ,file* ,fm ,where confirm)))
+	     (url-newer? (url-glue file "~") file)
+	     (dialogue-confirm? "Load more recent autosave file?" #t))
+	(texmacs-load-buffer (url-glue file "~") fm where #t)
 	(texmacs-load-buffer file fm where #f))))
 
-(define (load-buffer . l)
+(tm-define (load-buffer . l)
   (with file (url-append "$TEXMACS_FILE_PATH" (car l))
     (cond ((= (length l) 1)
 	   (load-buffer-sub file "generic" 0))
@@ -94,19 +69,53 @@
 ;; Autosave
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-recover-autosave confirm)
+(tm-define (delayed-auto-save)
+  (let* ((pref (get-preference "autosave"))
+	 (len (if (and (string? pref) (integer? (string->number pref)))
+		  (* (string->number pref) 1000) 120000)))
+    (delayed
+      (:pause len)
+      (auto-save))))
+
+(tm-define (recover-auto-save)
   (with name "$TEXMACS_HOME_PATH/system/autosave.tm"
-    (if (yes? confirm)
-	(with t (texmacs-load-tree name "texmacs")
-	  (set-buffer (get-name-buffer) t))
-	(system-remove name))))
+    (if (url-exists? name)
+	(dialogue
+	  (if (dialogue-confirm? "Recover autosave file?" #t)
+	      (with t (texmacs-load-tree name "texmacs")
+		(set-buffer (get-name-buffer) t))
+	      (system-remove name))))))
+
+(define (notify-autosave var val)
+  (if (has-view?) ; delayed-autosave would crash at initialization time
+      (delayed-auto-save)))
+
+(define-preferences
+  ("autosave" "120" notify-autosave))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Shortcuts
+;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
-(define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
-(define (load-in-new-window s) (load-buffer s 1))
-(define (load-browse-buffer s)
+(tm-define (propose-name-buffer)
+  (with name (url->string (get-name-buffer))
+    (cond ((not (string-starts? name "no name")) name)
+	  ((os-win32?) "")
+	  (else (string-append (var-eval-system "pwd") "/")))))
+
+(tm-property (load-buffer name)
+  (:argument name smart-file "File name")
+  (:default  name (propose-name-buffer)))
+
+(tm-property (save-buffer name)
+  (:argument name texmacs-file "Save as")
+  (:default  name (propose-name-buffer)))
+
+(tm-property (choose-file fun text type)
+  (:interactive #t))
+
+(tm-define (buffer-loader fm) (lambda (s) (load-buffer s fm)))
+(tm-define (buffer-saver fm) (lambda (s) (save-buffer s fm)))
+(tm-define (load-in-new-window s) (load-buffer s 1))
+(tm-define (load-browse-buffer s)
   (if (help-buffer?) (load-buffer s "help") (load-buffer s)))

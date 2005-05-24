@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (substitute-substitute)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (if (selection-active-any?)
       (let* ((t (tree->stree (the-selection)))
 	     (u (plugin-eval "substitute" "default" t)))

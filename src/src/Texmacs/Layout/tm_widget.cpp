@@ -282,13 +282,19 @@ tm_widget_rep::get_shrinking_factor () {
 }
 
 void
-tm_widget_rep::interactive (string name, string& s, command cmd) {
+tm_widget_rep::interactive (string name, string type, array<string> def,
+			    string& s, command cmd)
+{
+  int i, n= N(def);
   if (get_footer_mode () == 1) { s= "cancel"; return; }
   call_back= cmd;
   set_footer_mode (1);
   widget iac= THIS ["footer"] ["interactive"];
   widget tw = text_widget (name, false, "english");
   widget inp= input_text_widget (new ia_command_rep (this));
+  inp << set_string ("type", type);
+  if (N(def) > 0) inp << set_string ("input", def[0]);
+  for (i=0; i<n; i++) inp << set_string ("default", def[i]);
   iac << set_widget ("left", tw);
   iac << set_widget ("middle", inp);
   iac << emit_update ();
@@ -372,13 +378,7 @@ tm_widget_rep::handle_destroy (destroy_event ev) {
   // WARNING: should be removed when the window model is redesigned
   THIS ["canvas"] << emit_keyboard_focus (true);
 
-  sv->exec_delayed ("(safely-kill-window)");
-}
-
-void
-tm_widget_rep::handle_alarm (alarm_event ev) {
-  if (ev->message == "auto save") sv->auto_save ();
-  if (ev->message == "banner") sv->advance_banner ();
+  sv->exec_delayed (scheme_cmd ("(safely-kill-window)"));
 }
 
 /******************************************************************************

@@ -517,8 +517,9 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 }
 
 void
-printer_rep::set_line_style (SI w, int type) {
+printer_rep::set_line_style (SI w, int type, bool round) {
   (void) type;
+  (void) round;
   if (lw == w) return;
   lw= w;
   select_line_width (w);
@@ -560,7 +561,7 @@ printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-printer_rep::polygon (array<SI> x, array<SI> y) {
+printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   print (x[0], y[0]);

@@ -116,6 +116,7 @@ bool is_url (object obj) { return scm_is_url (obj->lookup()); }
 object::object (): rep (new object_rep (SCM_NULL)) {}
 object::object (bool b): rep (new object_rep (bool_to_scm (b))) {}
 object::object (int i): rep (new object_rep (int_to_scm (i))) {}
+object::object (char* s): rep (new object_rep (string_to_scm (string (s)))) {}
 object::object (string s): rep (new object_rep (string_to_scm (s))) {}
 object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
 object::object (path p): rep (new object_rep (path_to_scm (p))) {}
@@ -202,6 +203,24 @@ object_to_string (object obj) {
   return as_string (call ("object->string", obj));
 }
 
+object
+scheme_cmd (char* s) {
+  return eval ("(lambda () " * string (s) * ")");
+}
+
+object
+scheme_cmd (string s) {
+  return eval ("(lambda () " * s * ")");
+}
+
+object
+scheme_cmd (object cmd) {
+  cmd= cons (cmd, null_object ());
+  cmd= cons (null_object (), cmd);
+  cmd= cons (eval ("'lambda"), cmd);
+  return eval (cmd);
+}
+
 /******************************************************************************
 * Conversions to functional objects
 ******************************************************************************/
@@ -217,19 +236,6 @@ public:
 command
 as_command (object obj) {
   return new object_command_rep (obj);
-}
-
-class scheme_command_rep: public command_rep {
-  string s;
-public:
-  scheme_command_rep (string s2): s (s2) {}
-  void apply () { (void) eval (s); }
-  ostream& print (ostream& out) { return out << s; }
-};
-
-command
-as_command (string s) {
-  return new scheme_command_rep (s);
 }
 
 class object_make_widget_rep: public make_widget_rep {
@@ -267,7 +273,7 @@ object eval_secure (string expr) {
 object eval_file (string name) {
   return object (eval_scheme_file (name)); }
 void eval_delayed (string expr) {
-  (void) call ("exec-delayed", expr); }
+  (void) call ("exec-delayed", scheme_cmd (expr)); }
 
 static inline array<SCM>
 array_lookup (array<object> a) {

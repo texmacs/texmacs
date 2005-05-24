@@ -87,7 +87,8 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       break;
     case ' ':
     case '\t':
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t'))) i++;
+    case '\r':
+      while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\r'))) i++;
       if ((i<n) && (s[i]!='\n')) t << " ";
       break;
     case '\n': {
@@ -110,7 +111,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
 	while ((i<n) && (s[i]!='\n')) i++;
 	if (i<n) i++;
 	int ln=0;
-	while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+	while ((i<n) && is_space (s[i]))
 	  if (s[i++]=='\n') ln++;
 	if (ln > 0) {
 	  if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
@@ -210,8 +211,8 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       if ((i<n) && (s[i]=='}')) i++;
 
       int ln=0;
-      if ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) break;
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+      if ((i<n) && (!is_space (s[i]))) break;
+      while ((i<n) && is_space (s[i]))
 	if (s[i++]=='\n') ln++;
       if (ln >= 2) t << "\n"; else t << tree (TUPLE, "\\ ");
       break;
@@ -331,7 +332,7 @@ latex_parser::parse_backslash (string s, int& i) {
   if ((i<n) && (s[i]=='*')) i++;
   string r= s (start, i);
   if ((r == "\\begin") || (r == "\\end")) {
-    while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n'))) i++;
+    while ((i<n) && is_space (s[i])) i++;
     if ((i==n) || (s[i]!='{')) {
       latex_error (s, i, "begin or end which environment ?");
       return "";
@@ -411,7 +412,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   tree u (TUPLE, copy (cmd)); // unparsed arguments
   while ((i<n) && ((arity>0) || option)) {
     int j=i;
-    while ((j<n) && ((s[j]==' ') || (s[j]=='\t') || (s[j]=='\n'))) j++;
+    while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
     if (option && (s[j]=='[')) {
       j++;
@@ -511,7 +512,7 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
   tree t (TUPLE, copy (cmd));
   while (i<n) {
     int j=i;
-    while ((j<n) && ((s[j]==' ') || (s[j]=='\t') || (s[j]=='\n'))) j++;
+    while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
     if (option && (s[j]=='[')) {
       j++;
@@ -646,7 +647,7 @@ latex_parser::parse (string s) {
   int i, start=0, n= N(s);
   for (i=0; i<n; i++)
     if (s[i]=='\n') {
-      while ((i<n) && ((s[i]=='\12') || (s[i]=='\15') || (s[i]==' '))) i++;
+      while ((i<n) && is_space (s[i])) i++;
       if (test (s, i, "\\begin{document}") ||
 	  test (s, i, "\\begin{abstract}") ||
 	  test (s, i, "\\chapter") ||

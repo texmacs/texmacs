@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.5.1>
 
 <style|tmweb>
 
@@ -83,7 +83,7 @@
   the number of permanent users and for what applications you are interested
   in <TeXmacs>. Furthermore, we are glad to receive your suggestions and
   problems, no matter how silly they may seem to you. You may also
-  <hyper-link|suscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
+  <hyper-link|subscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
   <verbatim|texmacs-info> mailing lists. If you really like the program, then
   please consider <hyper-link|donating|../contribute/donations.en.tm> money
   or services to us. Of course, you may also

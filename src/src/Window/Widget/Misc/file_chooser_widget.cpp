@@ -51,7 +51,7 @@ public:
   file_chooser_command_rep (widget w, int t): fch(w.rep), type(t) {}
   void apply ();
   ostream& print (ostream& out) {
-    return out << "File chooser (" << type << ")"; }
+    return out << "File chooser command (" << type << ")"; }
 };
 
 void
@@ -62,14 +62,14 @@ file_chooser_command_rep::apply () {
     {
       string s;
       fch_wid[0]["file"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", s);
+      fch_wid << set_string ("return", unquote (s));
       break;
     }
   case CHANGE_DIR:
     {
       string dir;
       fch_wid[0]["directory"]["input"] << get_string ("input", dir);
-      if (dir == "cancel") fch_wid << set_string ("return", "cancel");
+      if (dir == "#f") fch_wid << set_string ("return", "#f");
       else {
 	dir= unquote (dir);
 	fch_wid << set_string ("directory", dir);
@@ -86,24 +86,24 @@ file_chooser_command_rep::apply () {
     {
       string s;
       fch_wid[0]["file"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", s);
+      fch_wid << set_string ("return", unquote (s));
       break;
     }
   case BUTTON_DIR_OK:
     {
       string s;
       fch_wid[0]["directory"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", s);
+      fch_wid << set_string ("return", unquote (s));
       break;
     }
   case BUTTON_CANCEL:
-    fch_wid << set_string ("return", "cancel");
+    fch_wid << set_string ("return", "#f");
     break;
   case CHANGE_SUFFIXES:
     {
       string sxs;
       fch_wid[0]["suffixes"]["input"] << get_string ("input", sxs);
-      fch_wid << set_string("suffixes", sxs);
+      fch_wid << set_string ("suffixes", unquote (sxs));
       break;
     }
   default:
@@ -117,11 +117,8 @@ file_chooser_command_rep::apply () {
       else which= "clip-y2";
       widget inp= fch_wid[0]["image"]["parameters"][which]["input"];
       inp << get_string ("input", s);
-      if (s == "cancel") fch_wid << set_string ("return", "cancel");
-      else {
-	s= unquote (s);
-	inp << set_string ("input", s);
-      }
+      if (s == "#f") fch_wid << set_string ("return", "#f");
+      else inp << set_string ("input", unquote (s));
       break;
     }
   }
@@ -253,7 +250,7 @@ file_list_widget_rep::handle_mouse (mouse_event ev) {
 	string name= as_string (url_system (dir, s));
 	fch_wid << set_string ("directory", name);
       }
-      else fch_wid << set_string ("return", "\"" * s * "\"");
+      else fch_wid << set_string ("return", s);
     }
     else {
       hilight= i;
@@ -398,6 +395,7 @@ file_chooser_widget_rep::input_widget (string what, int type) {
   ww[0]= text_widget (what, false, "english");
   ww[1]= input_text_widget (file_chooser_command (this, type));
   nn[1]= "input";
+  if (type == CHANGE_DIR) ww[1] << set_string ("type", "directory");
   return horizontal_list (ww, nn);
 }
 
@@ -596,7 +594,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     if (type == "image") {
       string dir, name= ev->s;
       a[0]["directory"]["input"] << get_string ("input", dir);
-      if (name != "") name= as_string (url_system (dir, name));
+      if (name != "") name= as_string (url_system (unquote (dir), name));
       a[0]["image"]["image"] << set_string ("name", name);
       array<string> ps_suffix;
       ps_suffix << ".ps" << ".eps";
@@ -618,8 +616,8 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
       cmd ();
     }
     else {
-      if (is_quoted (s) && (!has_suffix (unquote (s), suffix)))
-	a[0]["file"]["input"] << set_string ("input", unquote (s) * suffix[0]);
+      if (s != "#f" && !has_suffix (s, suffix))
+	a[0]["file"]["input"] << set_string ("input", s * suffix[0]);
       else {
 	a[0]["file"]["input"] << set_string ("input", s);
 	cmd ();
@@ -632,7 +630,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     suffix->resize(0);
     int i=0, any=0;
     string s= unquote (ev->s);
-    a[0]["suffixes"]["input"] << set_string("input", s);
+    a[0]["suffixes"]["input"] << set_string ("input", s);
     while (i<N(s)) {
       while (s[i]==' ') ++i;
       int j=i;
@@ -647,8 +645,8 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     // Force a refresh:
     string dir;
     a[0]["directory"]["input"] << get_string ("input", dir);
-    a[0]["list"]["directories"] << set_string ("directory", dir);
-    a[0]["list"]["files"] << set_string ("directory", dir);
+    a[0]["list"]["directories"] << set_string ("directory", unquote (dir));
+    a[0]["list"]["files"] << set_string ("directory", unquote (dir));
   }
   else attribute_widget_rep::handle_set_string (ev);
 }
@@ -660,13 +658,13 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
     a[0]["directory"]["input"] << get_string ("input", dir);
     if (type == "directory") {
       a[0]["directory"]["input"] << get_string ("input", name);
-      if (name == "cancel") { ev->s= "cancel"; return; }
+      if (name == "#f") { ev->s= "#f"; return; }
       url u= url_system (unquote (dir));
       ev->s= "(url-system " * quote (as_string (u)) * ")";
     }
     else {
       a[0]["file"]["input"] << get_string ("input", name);
-      if (name == "cancel") { ev->s= "cancel"; return; }
+      if (name == "#f") { ev->s= "#f"; return; }
       url u= url_system (unquote (dir)) * url_system (unquote (name));
       ev->s= "(url-system " * quote (as_string (u)) * ")";
     }
@@ -680,9 +678,8 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       par["clip-x2"]["input"] << get_string ("input", cx2);
       par["clip-y2"]["input"] << get_string ("input", cy2);
       ev->s=
-	"(list " * ev->s * " \"" * hsize * "\" \"" * vsize *
-	"\" \"" * cx1 * "\" \"" * cy1 *
-	"\" \"" * cx2 * "\" \"" * cy2 * "\")";
+	"(list " * ev->s * " " * hsize * " " * vsize * " "
+	         * cx1 * " " * cy1 * " " * cx2 * " " * cy2 * ")";
     }
   }
   else attribute_widget_rep::handle_get_string (ev);
@@ -691,7 +688,7 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
 void
 file_chooser_widget_rep::handle_destroy (destroy_event ev) {
   (void) ev;
-  this << set_string ("return", "cancel");
+  this << set_string ("return", "#f");
 }
 
 /******************************************************************************

@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html htmlout)
-  (:use (convert tools output))
-  (:export serialize-html))
+  (:use (convert tools output)))
 
 (define preformatted? #f)
 
@@ -67,10 +66,10 @@
   (htmlout-text "</" (symbol->string s) ">"))
 
 (define (htmlout-args l big?)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(htmlout (car l))
-	(if (and big? (not (null? (cdr l)))) (output-lf))
+	(if (and big? (nnull? (cdr l))) (output-lf))
 	(htmlout-args (cdr l) big?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,6 +118,6 @@
 	    thunk
 	    (lambda () (set! preformatted? saved-preformatted))))))
 
-(define (serialize-html x)
+(tm-define (serialize-html x)
   (htmlout x)
   (output-produce))

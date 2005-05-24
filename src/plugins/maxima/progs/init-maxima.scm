@@ -13,9 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maxima-initialize)
-  (import-from (texmacs texmacs tm-help) (texmacs plugin plugin-convert))
+  (import-from (doc help-funcs) (utils plugins plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
-  (menu-extend texmacs-session-help-icons
+  (menu-extend session-help-icons
     (if (and (in-maxima?)
 	     (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
 	|
@@ -28,7 +28,7 @@
 	 (load-help-buffer "$TM_MAXIMA_HOME/doc/html/maxima_toc.html")))))
 
 (define (maxima-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (with s (string-drop-right (verbatim-serialize lan t) 1)
     (cond ((== s "") "0;\n")
 	  ((in? (string-ref s (- (string-length s) 1)) '(#\; #\$))
