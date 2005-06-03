@@ -923,6 +923,30 @@
 		  (else r))))
     (list (list '!begin t) (tmtex (car l)))))
 
+(define (tmtex-tiny s l)
+  (tex-apply 'tiny (tmtex (car l))))
+
+(define (tmtex-scriptsize s l)
+  (tex-apply 'scriptsize (tmtex (car l))))
+
+(define (tmtex-footnotesize s l)
+  (tex-apply 'footnotesize (tmtex (car l))))
+
+(define (tmtex-normalsize s l)
+  (tex-apply 'normalsize (tmtex (car l))))
+
+(define (tmtex-large s l)
+  (tex-apply 'large (tmtex (car l))))
+
+(define (tmtex-Large s l)
+  (tex-apply 'Large (tmtex (car l))))
+
+(define (tmtex-LARGE s l)
+  (tex-apply 'LARGE (tmtex (car l))))
+
+(define (tmtex-HUGE s l)
+  (tex-apply 'HUGE (tmtex (car l))))
+
 (define (tmtex-equation s l)
   (tmtex-env-set "mode" "math")
   (let ((r (tmtex (car l))))
@@ -1179,6 +1203,19 @@
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)
    (,tmtex-list-env 1))
+  (really-tiny (,tmtex-tiny 1))
+  (very-tiny (,tmtex-tiny 1))
+  (really-small (,tmtex-scriptsize 1))
+  (very-small (,tmtex-scriptsize 1))
+  (smaller (,tmtex-footnotesize 1))
+  (flat-size (,tmtex-footnotesize 1))
+  (normal-size (,tmtex-normalsize 1))
+  (sharp-size (,tmtex-large 1))
+  (larger (,tmtex-Large 1))
+  (very-large (,tmtex-LARGE 1))
+  (really-large (,tmtex-LARGE 1))
+  (really-huge (,tmtex-HUGE 1))
+
   ((:or equation equation*) (,tmtex-equation 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   ((:or the-index the-glossary) (,tmtex-dummy -1))

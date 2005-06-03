@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.5.2>
 
 <style|<tuple|source|std>>
 
@@ -45,7 +45,7 @@
 
   <\active*>
     <\src-comment>
-      Size tags (very-small: script-size, smaller: footnotesize, larger:
+      Size tags (very-small: scriptsize, smaller: footnotesize, larger:
       Large, very-large: LARGE, really-huge: HUGE)
     </src-comment>
   </active*>
