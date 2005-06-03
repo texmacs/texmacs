@@ -100,7 +100,7 @@
       ---
       ("Number equation" (table-toggle-number-equation)))
   (if (not (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
-	       (inside? "equation") (inside? "equation*")))
+	       (inside? 'equation) (inside? 'equation*)))
       (when #f ("Number equation" (table-toggle-number-equation)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
