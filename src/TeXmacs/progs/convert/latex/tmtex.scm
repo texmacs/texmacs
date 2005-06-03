@@ -944,8 +944,8 @@
 (define (tmtex-LARGE s l)
   (tex-apply 'LARGE (tmtex (car l))))
 
-(define (tmtex-HUGE s l)
-  (tex-apply 'HUGE (tmtex (car l))))
+(define (tmtex-Huge s l)
+  (list 'Huge (tmtex (car l))))
 
 (define (tmtex-equation s l)
   (tmtex-env-set "mode" "math")
@@ -1214,7 +1214,7 @@
   (larger (,tmtex-Large 1))
   (very-large (,tmtex-LARGE 1))
   (really-large (,tmtex-LARGE 1))
-  (really-huge (,tmtex-HUGE 1))
+  (really-huge (,tmtex-Huge 1))
 
   ((:or equation equation*) (,tmtex-equation 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
