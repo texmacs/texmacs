@@ -51,7 +51,7 @@
 	(else (== x y))))
 
 (define-public (tm-arity x)
-  (cond ((list? x) (length x))
+  (cond ((list? x) (- (length x) 1))
 	((string? x) 0)
 	(else (tree-arity x))))
 

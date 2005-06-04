@@ -405,6 +405,17 @@
 	   (append by (list-replace tail what by))))
 	(else (cons (car l) (list-replace (cdr l) what by)))))
 
+(tm-define (list-common-left l1 l2)
+  (:type (forall T (-> (list T) (list T) int)))
+  (:synopsis "Length of maximal common list on the left.")
+  (if (or (npair? l1) (npair? l2) (!= (car l1) (car l2))) 0
+      (+ (list-common-left (cdr l1) (cdr l2)) 1)))
+
+(tm-define (list-common-right l1 l2)
+  (:type (forall T (-> (list T) (list T) int)))
+  (:synopsis "Length of maximal common list on the right.")
+  (list-common-left (reverse l1) (reverse l2)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
