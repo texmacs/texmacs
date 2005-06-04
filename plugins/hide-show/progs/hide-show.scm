@@ -30,18 +30,18 @@
   (buffer-replace-postorder
    (lambda (p t) (in? (tree-get-label t) tags))
    (lambda (p t)
-     (tm-ins-unary p 'hide))))
+     (tm-insert-node (rcons p 0) '(hide)))))
 
 (define (show tags)
   (buffer-replace-postorder
    (lambda (p t) (and (eq? 'hide (tree-get-label t))
 		      (in? (tree-get-label (tree-ref t 0)) tags)))
-   (lambda (p t) (tm-rem-unary p))))
+   (lambda (p t) (tm-remove-node (rcons p 0)))))
 
 (tm-define (show-all)
   (buffer-replace-postorder
    (lambda (p t) (eq? 'hide (tree-get-label t)))
-   (lambda (p t) (tm-rem-unary p))))
+   (lambda (p t) (tm-remove-node (rcons p 0)))))
 
 (define (input->symbols s)
   (map string->symbol
