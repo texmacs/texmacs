@@ -74,7 +74,7 @@
 
 (tm-define (doc-data-activate-here)
   (with p (search-upwards 'doc-inactive)
-    (tm-rem-unary p)))
+    (tm-remove-node (rcons p 0))))
 
 (tm-define (doc-data-disactivated?)
   (and (inside? 'doc-data)
@@ -87,7 +87,7 @@
 (define (doc-data-activate-one t)
   (if (== (tm-car t) 'doc-inactive)
       (with p (tree-path t)
-	(tm-rem-unary p))))
+	(tm-remove-node (rcons p 0)))))
 
 (tm-define (doc-data-activate-all)
   (let* ((p (search-upwards 'doc-data))
@@ -98,7 +98,7 @@
 (define (doc-data-disactivate-one t)
   (if (in? (tm-car t) doc-data-inactive-tags)
       (with p (tree-path t)
-	(tm-ins-unary p 'doc-inactive))))
+	(tm-insert-node (rcons p 0) '(doc-inactive)))))
 
 (tm-define (doc-data-disactivate-all)
   (let* ((p (search-upwards 'doc-data))

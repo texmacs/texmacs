@@ -26,9 +26,9 @@
 	 (s (string->number (var-eval-system "date +\"%S\"")))
 	 (e (mod s 4)))
     (if (and (<= e 1) (not (match? t '(strong :1))))
-	(tm-ins-unary p 'strong))
+	(tm-insert-node (rcons p 0) '(strong)))
     (if (and (>= e 2) (match? t '(strong :1)))
-	(tm-rem-unary p))))
+	(tm-remove-node (rcons p 0)))))
 
 (kbd-map
   ("C-F11" (insert '(mutator "" "(mutate-date)")))

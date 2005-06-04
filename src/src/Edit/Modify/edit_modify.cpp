@@ -131,37 +131,11 @@ edit_modify_rep::join (path pp) {
 
 void
 edit_modify_rep::ins_unary (path pp, tree_label op) {
-  /*
-  path p= copy (pp);
-  // cout << "Insert unary " << get_label (tree (op)) << " at " << p << "\n";
-  notify_undo ("rem_unary", p, "");
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_ins_unary (p, op);
-  FOR_ALL_EDITORS_END
-
-  ::ins_unary (subtree (et, p), op);
-  finished (pp);
-  */
   insert_node (pp * 0, tree (op));
 }
 
 void
 edit_modify_rep::rem_unary (path pp) {
-  /*
-  path p= copy (pp);
-  // cout << "Remove unary at " << p << "\n";
-  tree& st= subtree (et, p);
-  if (arity (st) != 1) fatal_error ("not a unary tree", "editor::rem_unary");
-  notify_undo ("ins_unary", p, get_label (st));
-
-  FOR_ALL_EDITORS_BEGIN (p)
-    ed->notify_rem_unary (p);
-  FOR_ALL_EDITORS_END
-
-  ::rem_unary (st);
-  finished (pp);
-  */
   remove_node (pp * 0);
 }
 
@@ -346,36 +320,6 @@ edit_modify_rep::notify_assign_node (path p, tree_label op) {
   if (!(rp <= p)) return;
   ::notify_assign_node (get_typesetter (), p - rp, op);
 }
-
-/*
-void
-edit_modify_rep::notify_ins_unary (path p, tree_label op) {
-  if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (p <= path_up (pp)) {
-      path add= path (0, tail (pp, N(p)));
-      pp= copy (p) * add;
-    }
-  FOR_ALL_POINTERS_END;
-  ::notify_ins_unary (get_typesetter (), p - rp, op);
-}
-
-void
-edit_modify_rep::notify_rem_unary (path p) {
-  if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (p == path_up (pp)) {
-      if (last_item (pp)==1)
-	pp[N(pp)-1]= right_index (subtree (et, p * 0));
-    }
-    else if (p <= path_up (pp)) {
-      path add= tail (pp, N(p)+1);
-      pp= p * add;
-    }
-  FOR_ALL_POINTERS_END;
-  ::notify_rem_unary (get_typesetter (), p - rp);
-}
-*/
 
 void
 edit_modify_rep::post_notify (path p) {
@@ -645,26 +589,6 @@ edit_modify_rep::perform_undo_redo (tree x) {
       go_to (end (et, p));
     }
   }
-  /*
-  else if (op == "ins_unary") {
-    if (p < tp) ins_unary (p, as_tree_label (t->label));
-    else {
-      ins_unary (p, as_tree_label (t->label));
-      go_to (end (et, p * 0));
-    }
-  }
-  else if (op == "rem_unary") {
-    if (p * 0 < tp) rem_unary (p);
-    else if (tp == p * 0) {
-      rem_unary (p);
-      go_to (start (et, p));
-    }
-    else {
-      rem_unary (p);
-      go_to (end (et, p));
-    }
-  }
-  */
 }
 
 /******************************************************************************

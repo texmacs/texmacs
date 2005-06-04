@@ -74,10 +74,7 @@
 (tm-define (variant-replace which by)
   (let* ((p (search-upwards which))
 	 (t (tm-subtree p)))
-    (if (= (tree-arity t) 1)
-	(begin
-	  (tm-ins-unary p by)
-	  (tm-rem-unary (rcons p 0))))))
+    (tm-assign-node p by)))
 
 (tm-define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))

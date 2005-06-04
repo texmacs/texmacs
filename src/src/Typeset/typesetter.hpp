@@ -31,8 +31,6 @@ void notify_join        (typesetter ttt, path p);
 void notify_insert_node (typesetter ttt, path p, tree t);
 void notify_remove_node (typesetter ttt, path p);
 void notify_assign_node (typesetter ttt, path p, tree_label op);
-//void notify_ins_unary (typesetter ttt, path p, tree_label op);
-//void notify_rem_unary (typesetter ttt, path p);
 void exec_until         (typesetter ttt, path p);
 box  typeset            (typesetter ttt, SI& x1, SI& y1, SI& x2, SI& y2);
 

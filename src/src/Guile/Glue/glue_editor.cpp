@@ -2703,28 +2703,43 @@ tmg_tm_join (SCM arg1) {
 }
 
 SCM
-tmg_tm_ins_unary (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-ins-unary");
-  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "tm-ins-unary");
+tmg_tm_insert_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-insert-node");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "tm-insert-node");
 
   path in1= scm_to_path (arg1);
-  tree_label in2= scm_to_tree_label (arg2);
+  content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->ins_unary (in1, in2);
+  get_server()->get_editor()->insert_node (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_tm_rem_unary (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-rem-unary");
+tmg_tm_remove_node (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-remove-node");
 
   path in1= scm_to_path (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->rem_unary (in1);
+  get_server()->get_editor()->remove_node (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_assign_node (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tm-assign-node");
+  SCM_ASSERT_TREE_LABEL (arg2, SCM_ARG2, "tm-assign-node");
+
+  path in1= scm_to_path (arg1);
+  tree_label in2= scm_to_tree_label (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->assign_node (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -3126,8 +3141,9 @@ initialize_glue_editor () {
   gh_new_procedure ("tm-remove", (FN) tmg_tm_remove, 2, 0, 0);
   gh_new_procedure ("tm-split", (FN) tmg_tm_split, 1, 0, 0);
   gh_new_procedure ("tm-join", (FN) tmg_tm_join, 1, 0, 0);
-  gh_new_procedure ("tm-ins-unary", (FN) tmg_tm_ins_unary, 2, 0, 0);
-  gh_new_procedure ("tm-rem-unary", (FN) tmg_tm_rem_unary, 1, 0, 0);
+  gh_new_procedure ("tm-insert-node", (FN) tmg_tm_insert_node, 2, 0, 0);
+  gh_new_procedure ("tm-remove-node", (FN) tmg_tm_remove_node, 1, 0, 0);
+  gh_new_procedure ("tm-assign-node", (FN) tmg_tm_assign_node, 2, 0, 0);
   gh_new_procedure ("tm-assign-diff", (FN) tmg_tm_assign_diff, 2, 0, 0);
   gh_new_procedure ("tm-correct", (FN) tmg_tm_correct, 1, 0, 0);
   gh_new_procedure ("tm-where", (FN) tmg_tm_where, 0, 0, 0);

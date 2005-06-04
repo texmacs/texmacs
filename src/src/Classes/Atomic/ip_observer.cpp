@@ -35,8 +35,6 @@ public:
   virtual void notify_insert_node (tree& ref, int pos);
   virtual void notify_remove_node (tree& ref, int pos);
   virtual void notify_assign_node (tree& ref, tree_label op);
-  //virtual void notify_ins_unary (tree& ref);
-  //virtual void notify_rem_unary (tree& ref);
 
   virtual path get_ip (tree& ref);
   virtual bool set_ip (tree& ref, path ip);
@@ -114,22 +112,6 @@ void
 ip_observer_rep::notify_assign_node (tree& ref, tree_label op) {
   (void) ref; (void) op;
 }
-
-/*
-void
-ip_observer_rep::notify_ins_unary (tree& ref) {
-  ip= path (0, ip);
-  attach_ip (ref[0], ip); // updates children's ips
-  attach_ip (ref, ip->next);
-}
-
-void
-ip_observer_rep::notify_rem_unary (tree& ref) {
-  if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[0], ip);
-  else detach_ip (ref[0]);
-  ip= DETACHED; // detach_ip (ref);
-}
-*/
 
 /******************************************************************************
 * Setting and getting inverse paths

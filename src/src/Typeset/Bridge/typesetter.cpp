@@ -228,28 +228,12 @@ notify_remove_node (typesetter ttt, path p) {
 void
 notify_assign_node (typesetter ttt, path p, tree_label op) {
   // cout << "Assign node " << p << ", " << as_string (op) << "\n";
-  tree t= ttt->br->st;
+  tree t= subtree (ttt->br->st, p);
   int i, n= N(t);
   tree r (op, n);
   for (i=0; i<n; i++) r[i]= t[i];
   ttt->br->notify_assign (p, r);
 }
-
-/*
-void
-notify_ins_unary (typesetter ttt, path p, tree_label op) {
-  // cout << "Insert unary " << p << ", " << as_string (op) << "\n";
-  tree t= tree (op, subtree (ttt->br->st, p));
-  ttt->br->notify_assign (p, t);
-}
-
-void
-notify_rem_unary (typesetter ttt, path p) {
-  // cout << "Remove unary " << p << "\n";
-  tree t= subtree (ttt->br->st, p) [0];
-  ttt->br->notify_assign (p, t);
-}
-*/
 
 /******************************************************************************
 * Getting environment variables and typesetting interface
