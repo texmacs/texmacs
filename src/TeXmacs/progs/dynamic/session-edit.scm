@@ -132,3 +132,7 @@
 (tm-define (structured-insert-down)
   (:inside input)
   (session-insert-input-below))
+
+(tm-define (structured-remove forwards?)
+  (:inside input)
+  (session-remove-input forwards?))
