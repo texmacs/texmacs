@@ -102,7 +102,7 @@ edit_table_rep::search_format (int& row, int& col) {
   if (nil (p)) return p;
   if (is_func (subtree (et, p), TFORMAT)) return p;
   if (is_func (subtree (et, path_up (p)), TFORMAT)) return path_up (p);
-  ins_unary (p, TFORMAT);
+  insert_node (p * 0, TFORMAT);
   return p;
 }
 
@@ -1005,10 +1005,10 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
     path q= fp;
     if (is_extension (subtree (et, path_up (q)), 1)) q= path_up (q);
     tree st= subtree (et, path_up (q));
-    if (is_document (st)) ins_unary (fp, DOCUMENT);
+    if (is_document (st)) insert_node (fp * 0, DOCUMENT);
     else if (is_concat (st) && is_document (subtree (et, path_up (q, 2)))) {
       int n= N(st), l= last_item (q);
-      ins_unary (fp, DOCUMENT);
+      insert_node (fp * 0, DOCUMENT);
       if (l != (n-1)) {
 	split (path_inc (q));
 	correct_concat (path_inc (path_up (q)));
@@ -1067,7 +1067,7 @@ edit_table_rep::table_disactivate () {
   if (nil (fp)) return;
   tree st= subtree (et, fp);
   if (!is_func (st, TFORMAT)) return;
-  ins_unary (fp, INACTIVE);
+  insert_node (fp * 0, INACTIVE);
   set_message ("return: reactivate", "deactivate table");
 }
 
@@ -1326,9 +1326,9 @@ edit_table_rep::cell_multi_paragraph (bool flag) {
   tree st= subtree (et, cp);
 
   if (flag && (!is_document (st)))
-    ins_unary (cp, DOCUMENT);
+    insert_node (cp * 0, DOCUMENT);
   else if ((!flag) && is_document (st) && (N(st) == 1))
-    rem_unary (cp);
+    remove_node (cp * 0);
 }
 
 bool

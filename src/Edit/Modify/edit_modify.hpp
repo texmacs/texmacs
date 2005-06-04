@@ -37,8 +37,6 @@ public:
   void insert_node        (path p, tree t);
   void remove_node        (path p);
   void assign_node        (path p, tree_label op);
-  void ins_unary          (path p, tree_label op);
-  void rem_unary          (path p);
   void finished           (path p);
   void notify_assign      (path p, tree u);
   void notify_insert      (path p, tree u);

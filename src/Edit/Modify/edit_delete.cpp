@@ -323,7 +323,7 @@ edit_text_rep::remove_structure_upwards () {
   remove (p * 0, last);
 
   do {
-    rem_unary (p);
+    remove_node (p * 0);
     last= last_item (p);
     p= path_up (p);
     st= subtree (et, p);
@@ -336,7 +336,7 @@ edit_text_rep::remove_structure_upwards () {
     tree right= st[last] (very_last+1, N(st[last]));
     remove (p * path (last, very_last+1), N(st[last])- (very_last+1));
     remove (p * path (last, 0), very_last);
-    rem_unary (p * last);
+    remove_node (p * path (last, 0));
     insert (p * (last+1), right);
     insert (p * last, left);
   }

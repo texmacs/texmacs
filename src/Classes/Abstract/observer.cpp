@@ -65,10 +65,10 @@ stretched_print (tree t, bool ips, int indent) {
 /******************************************************************************
 * Routines for modifying trees
 *******************************************************************************
-* Notice that "inserting modifications" (insert, split and ins_unary)
+* Notice that "inserting modifications" (insert, split and insert_node)
 * invoke the observers call-back routines after the actual modification and
-* "assigning and deleting modifications" (assign, remove, join and rem_unary)
-* before the actual modification.
+* "assigning and deleting modifications" (assign, remove, join,
+* assign_node and remove_node)  before the actual modification.
 ******************************************************************************/
 
 void

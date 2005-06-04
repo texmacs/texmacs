@@ -223,8 +223,6 @@ public:
   virtual void insert_node (path p, tree t) = 0;
   virtual void remove_node (path p) = 0;
   virtual void assign_node (path p, tree_label op) = 0;
-  virtual void ins_unary (path p, tree_label op) = 0;
-  virtual void rem_unary (path p) = 0;
   virtual void finished (path p) = 0;
   virtual void notify_assign (path p, tree u) = 0;
   virtual void notify_insert (path p, tree u) = 0;
