@@ -29,13 +29,16 @@ public:
   inline virtual ~observer_rep () { DEBUG(observer_count--); }
 
   // Call back routines for tree modifications
-  virtual void notify_assign    (tree& ref, tree t) = 0;
-  virtual void notify_insert    (tree& ref, int pos, int nr) = 0;
-  virtual void notify_remove    (tree& ref, int pos, int nr) = 0;
-  virtual void notify_split     (tree& ref, int pos) = 0;
-  virtual void notify_join      (tree& ref, int pos) = 0;
-  virtual void notify_ins_unary (tree& ref) = 0;
-  virtual void notify_rem_unary (tree& ref) = 0;
+  virtual void notify_assign      (tree& ref, tree t) = 0;
+  virtual void notify_insert      (tree& ref, int pos, int nr) = 0;
+  virtual void notify_remove      (tree& ref, int pos, int nr) = 0;
+  virtual void notify_split       (tree& ref, int pos) = 0;
+  virtual void notify_join        (tree& ref, int pos) = 0;
+  virtual void notify_insert_node (tree& ref, int pos) = 0;
+  virtual void notify_remove_node (tree& ref, int pos) = 0;
+  virtual void notify_assign_node (tree& ref, tree_label op) = 0;
+  //virtual void notify_ins_unary (tree& ref) = 0;
+  //virtual void notify_rem_unary (tree& ref) = 0;
 
   // Extra routines for particular types of observers
   virtual path get_ip (tree& ref);
@@ -55,13 +58,16 @@ observer list_observer (observer o1, observer o2);
 * Modification routines for trees and other observer-related facilities
 ******************************************************************************/
 
-void assign    (tree& ref, tree t);
-void insert    (tree& ref, int pos, tree t);
-void remove    (tree& ref, int pos, int nr);
-void split     (tree& ref, int pos, int at);
-void join      (tree& ref, int pos);
-void ins_unary (tree& ref, tree_label lab);
-void rem_unary (tree& ref);
+void assign      (tree& ref, tree t);
+void insert      (tree& ref, int pos, tree t);
+void remove      (tree& ref, int pos, int nr);
+void split       (tree& ref, int pos, int at);
+void join        (tree& ref, int pos);
+void insert_node (tree& ref, int pos, tree t);
+void remove_node (tree& ref, int pos);
+void assign_node (tree& ref, tree_label op);
+//void ins_unary (tree& ref, tree_label lab);
+//void rem_unary (tree& ref);
 
 path obtain_ip (tree& ref);
 void attach_ip (tree& ref, path ip);
