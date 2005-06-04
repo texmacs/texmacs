@@ -234,8 +234,6 @@ public:
   virtual void notify_insert_node (path p, tree t) = 0;
   virtual void notify_remove_node (path p) = 0;
   virtual void notify_assign_node (path p, tree_label op) = 0;
-  //virtual void notify_ins_unary (path p, tree_label op) = 0;
-  //virtual void notify_rem_unary (path p) = 0;
   virtual void post_notify (path p) = 0;
   virtual void remove_undo_mark () = 0;
   virtual void add_undo_mark () = 0;

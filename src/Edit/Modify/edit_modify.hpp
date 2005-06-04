@@ -48,8 +48,6 @@ public:
   void notify_insert_node (path p, tree t);
   void notify_remove_node (path p);
   void notify_assign_node (path p, tree_label op);
-  //void notify_ins_unary (path p, tree_label op);
-  //void notify_rem_unary (path p);
   void post_notify        (path p);
 
   void notify_undo (string op, path p, tree t);

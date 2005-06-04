@@ -145,12 +145,6 @@ join (tree& ref, int pos) {
     insert_node (ref[pos], 0, tree (L(ref[pos+1])));
   if (is_atomic (ref[pos+1]) && (!is_atomic (ref[pos])))
     insert_node (ref[pos+1], 0, tree (L(ref[pos])));
-  /*
-  if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
-    ins_unary (ref[pos], L(ref[pos+1]));
-  if (is_atomic (ref[pos+1]) && (!is_atomic (ref[pos])))
-    ins_unary (ref[pos+1], L(ref[pos]));
-  */
   /* end security code */
 
   if (!nil (ref->obs)) ref->obs->notify_join (ref, pos);
@@ -197,26 +191,6 @@ assign_node (tree& ref, tree_label op) {
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
-
-/*
-void
-ins_unary (tree& ref, tree_label lab) {
-  // cout << "Insert unary " << ref << " : " << as_string (lab) << "\n";
-  ref= tree (lab, ref);
-  if (!nil (ref[0]->obs)) ref[0]->obs->notify_ins_unary (ref);
-  // stretched_print (ref, true, 1);
-  // consistency_check ();
-}
-
-void
-rem_unary (tree& ref) {
-  // cout << "Remove unary " << ref << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_rem_unary (ref);
-  ref= ref[0];
-  // stretched_print (ref, true, 1);
-  // consistency_check ();
-}
-*/
 
 /******************************************************************************
 * Default virtual routines

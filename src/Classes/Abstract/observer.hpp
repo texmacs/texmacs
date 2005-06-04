@@ -37,8 +37,6 @@ public:
   virtual void notify_insert_node (tree& ref, int pos) = 0;
   virtual void notify_remove_node (tree& ref, int pos) = 0;
   virtual void notify_assign_node (tree& ref, tree_label op) = 0;
-  //virtual void notify_ins_unary (tree& ref) = 0;
-  //virtual void notify_rem_unary (tree& ref) = 0;
 
   // Extra routines for particular types of observers
   virtual path get_ip (tree& ref);
@@ -66,8 +64,6 @@ void join        (tree& ref, int pos);
 void insert_node (tree& ref, int pos, tree t);
 void remove_node (tree& ref, int pos);
 void assign_node (tree& ref, tree_label op);
-//void ins_unary (tree& ref, tree_label lab);
-//void rem_unary (tree& ref);
 
 path obtain_ip (tree& ref);
 void attach_ip (tree& ref, path ip);

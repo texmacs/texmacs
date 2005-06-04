@@ -96,8 +96,8 @@
   (let* ((q (search-parent-upwards 'tree))
 	 (l (cAr q))
 	 (p (if (== l 0) (cDr q) q)))
-    (tm-ins-unary p 'tree)
-    (tm-insert (rcons p 0) '(tree ""))))
+    (tm-insert-node (rcons p 0) '(tree ""))
+    (tm-go-to (rcons* p 1 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions
