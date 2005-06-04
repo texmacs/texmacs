@@ -130,16 +130,6 @@ edit_modify_rep::join (path pp) {
 }
 
 void
-edit_modify_rep::ins_unary (path pp, tree_label op) {
-  insert_node (pp * 0, tree (op));
-}
-
-void
-edit_modify_rep::rem_unary (path pp) {
-  remove_node (pp * 0);
-}
-
-void
 edit_modify_rep::insert_node (path pp, tree t) {
   path p= copy (pp);
   // cout << "Insert node " << t << " at " << p << "\n";
