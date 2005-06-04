@@ -131,6 +131,7 @@ edit_modify_rep::join (path pp) {
 
 void
 edit_modify_rep::ins_unary (path pp, tree_label op) {
+  /*
   path p= copy (pp);
   // cout << "Insert unary " << get_label (tree (op)) << " at " << p << "\n";
   notify_undo ("rem_unary", p, "");
@@ -141,10 +142,13 @@ edit_modify_rep::ins_unary (path pp, tree_label op) {
 
   ::ins_unary (subtree (et, p), op);
   finished (pp);
+  */
+  insert_node (pp * 0, tree (op));
 }
 
 void
 edit_modify_rep::rem_unary (path pp) {
+  /*
   path p= copy (pp);
   // cout << "Remove unary at " << p << "\n";
   tree& st= subtree (et, p);
@@ -156,6 +160,53 @@ edit_modify_rep::rem_unary (path pp) {
   FOR_ALL_EDITORS_END
 
   ::rem_unary (st);
+  finished (pp);
+  */
+  remove_node (pp * 0);
+}
+
+void
+edit_modify_rep::insert_node (path pp, tree t) {
+  path p= copy (pp);
+  // cout << "Insert node " << t << " at " << p << "\n";
+  notify_undo ("remove_node", p, "");
+
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_insert_node (p, t);
+  FOR_ALL_EDITORS_END
+
+  ::insert_node (subtree (et, path_up (p)), last_item (p), t);
+  finished (pp);
+}
+
+void
+edit_modify_rep::remove_node (path pp) {
+  path p= copy (pp);
+  // cout << "Remove node at " << p << "\n";
+  int pos= last_item (pp);
+  tree& st= subtree (et, path_up (p));
+  notify_undo ("insert_node", p, st (0, pos) * st (pos+1, N(st)));
+
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_remove_node (p);
+  FOR_ALL_EDITORS_END
+
+  ::remove_node (subtree (et, path_up (p)), pos);
+  finished (pp);
+}
+
+void
+edit_modify_rep::assign_node (path pp, tree_label op) {
+  path p= copy (pp);
+  // cout << "Assign node " << get_label (tree (op)) << " at " << p << "\n";
+  tree& st= subtree (et, p);
+  notify_undo ("assign_node", p, get_label (st));
+
+  FOR_ALL_EDITORS_BEGIN (p)
+    ed->notify_assign_node (p, op);
+  FOR_ALL_EDITORS_END
+
+  ::assign_node (subtree (et, p), op);
   finished (pp);
 }
 
@@ -263,7 +314,42 @@ edit_modify_rep::notify_join (path p) {
 }
 
 void
-edit_modify_rep::notify_ins_unary (path p, tree_label op) { (void) op;
+edit_modify_rep::notify_insert_node (path p, tree t) {
+  if (!(rp <= p)) return;
+  FOR_ALL_POINTERS_BEGIN
+    if (path_up (p) <= path_up (pp)) {
+      path add= path (last_item (p), tail (pp, N(p)-1));
+      pp= copy (path_up (p)) * add;
+    }
+  FOR_ALL_POINTERS_END;
+  ::notify_insert_node (get_typesetter (), p - rp, t);
+}
+
+void
+edit_modify_rep::notify_remove_node (path p) {
+  if (!(rp <= p)) return;
+  FOR_ALL_POINTERS_BEGIN
+    if (path_up (p) == path_up (pp)) {
+      if (last_item (pp) == 1)
+	pp[N(pp)-1]= right_index (subtree (et, p));
+    }
+    else if (path_up (p) <= path_up (pp)) {
+      path add= tail (pp, N(p));
+      pp= path_up (p) * add;
+    }
+  FOR_ALL_POINTERS_END;
+  ::notify_remove_node (get_typesetter (), p - rp);
+}
+
+void
+edit_modify_rep::notify_assign_node (path p, tree_label op) {
+  if (!(rp <= p)) return;
+  ::notify_assign_node (get_typesetter (), p - rp, op);
+}
+
+/*
+void
+edit_modify_rep::notify_ins_unary (path p, tree_label op) {
   if (!(rp <= p)) return;
   FOR_ALL_POINTERS_BEGIN
     if (p <= path_up (pp)) {
@@ -289,6 +375,7 @@ edit_modify_rep::notify_rem_unary (path p) {
   FOR_ALL_POINTERS_END;
   ::notify_rem_unary (get_typesetter (), p - rp);
 }
+*/
 
 void
 edit_modify_rep::post_notify (path p) {
@@ -533,6 +620,32 @@ edit_modify_rep::perform_undo_redo (tree x) {
       else go_to (end (et, p * last));
     }
   }
+  else if (op == "insert_node") {
+    if (p < tp) insert_node (p, t);
+    else {
+      insert_node (p, t);
+      go_to (end (et, p));
+    }
+  }
+  else if (op == "remove_node") {
+    if (p < tp) remove_node (p);
+    else if (tp == path_up (p) * 0) {
+      remove_node (p);
+      go_to (start (et, path_up (p)));
+    }
+    else {
+      remove_node (p);
+      go_to (end (et, path_up (p)));
+    }
+  }
+  else if (op == "assign_node") {
+    if (p <= tp) assign_node (p, as_tree_label (t->label));
+    else {
+      assign_node (p, as_tree_label (t->label));
+      go_to (end (et, p));
+    }
+  }
+  /*
   else if (op == "ins_unary") {
     if (p < tp) ins_unary (p, as_tree_label (t->label));
     else {
@@ -551,6 +664,7 @@ edit_modify_rep::perform_undo_redo (tree x) {
       go_to (end (et, p));
     }
   }
+  */
 }
 
 /******************************************************************************

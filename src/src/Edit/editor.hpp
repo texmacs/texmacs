@@ -220,6 +220,9 @@ public:
   virtual void remove (path p, int nr) = 0;
   virtual void split (path p) = 0;
   virtual void join (path p) = 0;
+  virtual void insert_node (path p, tree t) = 0;
+  virtual void remove_node (path p) = 0;
+  virtual void assign_node (path p, tree_label op) = 0;
   virtual void ins_unary (path p, tree_label op) = 0;
   virtual void rem_unary (path p) = 0;
   virtual void finished (path p) = 0;
@@ -228,8 +231,11 @@ public:
   virtual void notify_remove (path p, int nr) = 0;
   virtual void notify_split (path p) = 0;
   virtual void notify_join (path p) = 0;
-  virtual void notify_ins_unary (path p, tree_label op) = 0;
-  virtual void notify_rem_unary (path p) = 0;
+  virtual void notify_insert_node (path p, tree t) = 0;
+  virtual void notify_remove_node (path p) = 0;
+  virtual void notify_assign_node (path p, tree_label op) = 0;
+  //virtual void notify_ins_unary (path p, tree_label op) = 0;
+  //virtual void notify_rem_unary (path p) = 0;
   virtual void post_notify (path p) = 0;
   virtual void remove_undo_mark () = 0;
   virtual void add_undo_mark () = 0;

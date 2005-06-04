@@ -208,6 +208,35 @@ notify_join (typesetter ttt, path p) {
 }
 
 void
+notify_insert_node (typesetter ttt, path p, tree t) {
+  // cout << "Insert node " << p << ", " << t << "\n";
+  int i, pos= last_item (p), n= N(t);
+  tree r (t, n+1);
+  for (i=0; i<pos; i++) r[i]= t[i];
+  r[pos]= subtree (ttt->br->st, path_up (p));
+  for (i=pos; i<n; i++) r[i+1]= t[i];
+  ttt->br->notify_assign (path_up (p), r);
+}
+
+void
+notify_remove_node (typesetter ttt, path p) {
+  // cout << "Remove node " << p << "\n";
+  tree t= subtree (ttt->br->st, p);
+  ttt->br->notify_assign (path_up (p), t);
+}
+
+void
+notify_assign_node (typesetter ttt, path p, tree_label op) {
+  // cout << "Assign node " << p << ", " << as_string (op) << "\n";
+  tree t= ttt->br->st;
+  int i, n= N(t);
+  tree r (op, n);
+  for (i=0; i<n; i++) r[i]= t[i];
+  ttt->br->notify_assign (p, r);
+}
+
+/*
+void
 notify_ins_unary (typesetter ttt, path p, tree_label op) {
   // cout << "Insert unary " << p << ", " << as_string (op) << "\n";
   tree t= tree (op, subtree (ttt->br->st, p));
@@ -220,6 +249,7 @@ notify_rem_unary (typesetter ttt, path p) {
   tree t= subtree (ttt->br->st, p) [0];
   ttt->br->notify_assign (p, t);
 }
+*/
 
 /******************************************************************************
 * Getting environment variables and typesetting interface
