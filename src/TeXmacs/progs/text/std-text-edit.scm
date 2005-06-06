@@ -73,38 +73,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-data-activate-here)
-  (with p (search-upwards 'doc-inactive)
-    (tm-remove-node (rcons p 0))))
+  (with-innermost t 'doc-inactive
+    (tree-remove-node t 0)))
 
 (tm-define (doc-data-disactivated?)
-  (and (inside? 'doc-data)
-       (with p (search-upwards 'doc-data)
-	 (let* ((p (search-upwards 'doc-data))
-		(t (tm-subtree p))
-		(l (cdr (tree->list t))))
-	   (list-or (map (lambda (t) (== (tm-car t) 'doc-inactive)) l))))))
+  (with-innermost t 'doc-data
+    (with l (cdr (tree->list t))
+      (list-or (map (lambda (t) (== (tm-car t) 'doc-inactive)) l)))))
 
 (define (doc-data-activate-one t)
   (if (== (tm-car t) 'doc-inactive)
-      (with p (tree-path t)
-	(tm-remove-node (rcons p 0)))))
+      (tree-remove-node t 0)))
 
 (tm-define (doc-data-activate-all)
-  (let* ((p (search-upwards 'doc-data))
-	 (t (tm-subtree p))
-	 (l (cdr (tree->list t))))
-      (for-each doc-data-activate-one l)))
+  (with-innermost t 'doc-data
+    (with l (cdr (tree->list t))
+      (for-each doc-data-activate-one l))))
 
 (define (doc-data-disactivate-one t)
   (if (in? (tm-car t) doc-data-inactive-tags)
-      (with p (tree-path t)
-	(tm-insert-node (rcons p 0) '(doc-inactive)))))
+      (tree-insert-node t 0 '(doc-inactive))))
 
 (tm-define (doc-data-disactivate-all)
-  (let* ((p (search-upwards 'doc-data))
-	 (t (tm-subtree p))
-	 (l (cdr (tree->list t))))
-      (for-each doc-data-disactivate-one l)))
+  (with-innermost t 'doc-data
+    (with l (cdr (tree->list t))
+      (for-each doc-data-disactivate-one l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Making letter headings or titles

@@ -14,21 +14,19 @@
 
 (tm-define (mutate-date)
   (:secure #t)
-  (let* ((p (the-mutator-path))
-	 (date (var-eval-system "date +\"%H:%M:%S\"")))
-    (tm-assign-diff p date)))
+  (with-mutator t
+    (tree-set t (var-eval-system "date +\"%H:%M:%S\""))))
 
 (tm-define (mutate-blink)
   (:secure #t)
-  (let* ((mod (lambda (x y) (* y (- (/ x y) (floor (/ x y))))))
-	 (p (the-mutator-path))
-	 (t (tm-subtree p))
-	 (s (string->number (var-eval-system "date +\"%S\"")))
-	 (e (mod s 4)))
-    (if (and (<= e 1) (not (match? t '(strong :1))))
-	(tm-insert-node (rcons p 0) '(strong)))
-    (if (and (>= e 2) (match? t '(strong :1)))
-	(tm-remove-node (rcons p 0)))))
+  (with-mutator t
+    (let* ((mod (lambda (x y) (* y (- (/ x y) (floor (/ x y))))))
+	   (s (string->number (var-eval-system "date +\"%S\"")))
+	   (e (mod s 4)))
+      (if (and (<= e 1) (not (match? t '(strong :1))))
+	  (tree-set t `(strong ,t)))
+      (if (and (>= e 2) (match? t '(strong :1)))
+	  (tree-set t (tree-ref t 0))))))
 
 (kbd-map
   ("C-F11" (insert '(mutator "" "(mutate-date)")))

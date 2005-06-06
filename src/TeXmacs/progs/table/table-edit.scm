@@ -283,19 +283,17 @@
   (let ((p (table-search-number-equation)))
     (if p (clipboard-cut-at p))))
 
-(define (table-inside-sub? p q)
-  (or (== p q)
-      (and (nnull? q)
-	   (or (== (tree-get-label (tm-subtree q)) 'tformat)
-	       (== (tree-get-label (tm-subtree q)) 'document))
-	   (table-inside-sub? p (cDr q)))))
+(define (table-inside-sub? t1 t2)
+  (or (== t1 t2)
+      (and (in? (tree-get-label t2) '(tformat document))
+	   (table-inside-sub? t1 (tree-parent t2)))))
 
 (tm-define (table-inside? which)
-  (if (and (inside? 'table) (inside? which))
-      (let ((p (search-upwards which))
-	    (q (search-upwards 'table)))
-	(table-inside-sub? p (cDr q)))
-      #f))
+  (let* ((t1 (tree-innermost which))
+	 (t2 (tree-innermost 'table)))
+    (and t1 t2
+	 (tree-inside? t2 t1)
+	 (table-inside-sub? t1 (tree-parent t2)))))
 
 (tm-define (table-toggle-number-equation)
   (cond ((inside? 'equation) (variant-replace 'equation 'equation*))

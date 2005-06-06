@@ -28,7 +28,8 @@
        '(texmacs-module define-macro define-public-macro
          tm-define tm-define-macro tm-property
 	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let* case-lambda with with-innermost
+         texmacs-modes and-let* case-lambda with
+	 with-innermost with-action with-mutator with-module
 	 call/cc with-cc values receive map-in-order
          drd-group drd-table drd-dispatcher
          define-grammar drd-rule drd-rules assume menu-bind
@@ -65,7 +66,8 @@
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
-	       with-cc format with-aux interactive dialogue-user))
+	       with-cc format with-aux with-mutator with-action with-module
+	       interactive dialogue-user))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols

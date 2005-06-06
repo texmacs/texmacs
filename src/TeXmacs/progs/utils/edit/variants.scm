@@ -72,9 +72,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (variant-replace which by)
-  (let* ((p (search-upwards which))
-	 (t (tm-subtree p)))
-    (tm-assign-node p by)))
+  (with-innermost t which
+    (tree-assign-node t by)))
 
 (tm-define (variant-circulate forward?)
   (let ((which (inside-which structured-variants-list)))

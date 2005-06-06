@@ -172,25 +172,18 @@
 ;   (list 2 0 0)))
 
 ;(define (position-insertion what flag)
-;"Allow/disallow a position for the inner float the caret in is.
+;  "Allow/disallow a position for the inner float the caret in is.
 ;what <char>   : position to allow/disallow
 ;flag <boolean>: allow if true, disallow is false."
-;
-;  (let ((p (search-upwards 'float)))
-;    (if (nnull? p)
-;	(tm-assign
-;	 (rcons p 1)
-;	 (string->tree ((if flag
-;			    string-include
-;			    string-exclude) (tree->string
-;					     (tm-subtree (rcons p 1)))
-;			    what))))))
+;  (with-innermost t 'float
+;    (let ((mode (if flag string-include string-exclude))
+;	  (s (tree-ref t 1)))
+;      (tree-set s (mode (tree->string s) what)))))
 
 (define (test-insertion-position? what)
-  (let ((p (search-upwards 'float))
-	(c (string-ref what 0)))
-    (if (nnull? p)
-	(char-in-string? c (tree->string (tm-subtree (rcons p 1)))))))
+  (with-innermost t 'float
+    (with c (string-ref what 0)
+      (char-in-string? c (tree->string (tree-ref t 1))))))
 
 (define (not-test-insertion-position? s)
   (not (test-insertion-position? s)))

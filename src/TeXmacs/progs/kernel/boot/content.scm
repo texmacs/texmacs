@@ -29,9 +29,10 @@
       (cons (tree-get-label t) (tree-get-children t))))
 
 (define-public (tree-path t)
-  (let ((ip (tree-ip t)))
-    (if (== (cAr ip) -5) #f
-	(reverse ip))))
+  (and (tree? t)
+       (let ((ip (tree-ip t)))
+	 (if (== (cAr ip) -5) #f
+	     (reverse ip)))))
 
 (define-public (tm? x)
   (or (string? x) (list? x) (tree? x)))
