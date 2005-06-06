@@ -127,10 +127,9 @@
 (tm-define (tree-inside? t ref)
   (:type (-> tree tree bool))
   (:synopsis "Is @t inside @ref?")
-  (and (tree? t) (tree? ref)
-       (let ((p (tree-path ref))
-	     (q (tree-path t)))
-	 (list-starts? q p))))
+  (let ((p (tree-path ref))
+	(q (tree-path t)))
+    (and p q (list-starts? q p))))
 
 (tm-define (tree-ref t . l)
   (:synopsis "Access a subtree of @t according to @l.")
@@ -180,6 +179,10 @@
 	  ((== i :end) (tm-go-to (tm-end (tree-path u))))
 	  ((integer? i) (tm-go-to (rcons (tree-path u) i)))
 	  (else (noop)))))
+
+(tm-define (tree-correct t)
+  (with p (tree-path t)
+    (if p (tm-correct p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to use the above modification routines in an intelligent way
@@ -245,3 +248,27 @@
     `(with ,var (tree-path ,ref)
        (tree-set-diff ,ref ,t)
        (set! ,ref (tm-subtree ,var)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Accessing special trees in scheme scripts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define the-action-path '(-1))
+(tm-define (set-action-path p) (set! the-action-path p))
+(tm-define (has-action-path?) (!= the-action-path '(-1)))
+(tm-define (get-action-path) the-action-path)
+
+(tm-define (tree-action)
+  (and (has-action-path?) (tm-subtree the-action-path)))
+
+(tm-define-macro (with-action t . body)
+  `(with ,t (tree-action)
+     (if ,t (begin ,@body))))
+
+(tm-define (tree-mutator)
+  (with p (the-mutator-path)
+    (if (nnull? p) (tm-subtree p) #f)))
+
+(tm-define-macro (with-mutator t . body)
+  `(with ,t (tree-mutator)
+     (if ,t (begin ,@body))))

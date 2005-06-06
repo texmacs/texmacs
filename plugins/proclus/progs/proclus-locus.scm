@@ -127,19 +127,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (get-locus-or-not-locus-path)
-  (and-let* ((p (search-upwards-in-set '(locus not-locus)))
-             ((pair? p)))
-    p))
+  (with t (tree-innermost '(locus not-locus))
+    (and t (tree-path t))))
 
 (tm-define (get-locus-path)
-  (and-let* ((p (search-upwards 'locus))
-             (pair? p))
-    p))
+  (with t (tree-innermost 'locus)
+    (and t (tree-path t))))
 
 (tm-define (get-not-locus-path)
-  (and-let* ((p (search-upwards 'not-locus))
-             (pair? p))
-    p))
+  (with t (tree-innermost 'not-locus)
+    (and t (tree-path t))))
 
 (tm-define (get-locus-or-not-locus)
   (and-let* ((p (get-locus-or-not-locus-path)))

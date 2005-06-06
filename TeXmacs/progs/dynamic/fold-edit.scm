@@ -52,19 +52,17 @@
   (:type (-> void))
   (:synopsis "Fold using the mouse")
   (:secure #t)
-  (if (has-action-path?)
-      (begin
-	(tm-go-to-start (get-action-path))
-	(fold))))
+  (with-action t
+    (tree-go-to t :start)
+    (fold)))
 
 (tm-define (mouse-unfold)
   (:type (-> void))
   (:synopsis "Unfold using the mouse")
   (:secure #t)
-  (if (has-action-path?)
-      (begin
-	(tm-go-to-start (get-action-path))
-	(unfold))))
+  (with-action t
+    (tree-go-to t :start)
+    (unfold)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switch
@@ -76,38 +74,34 @@
   (insert-go-to '(switch (document "") (tuple (tmarker))) (list 0 0)))
 
 (define (switch-find-marker t i)
-  (cond ((= i (tree-arity t)) -1)
-	((== (tree-ref t i) (stree->tree '(tmarker))) i)
+  (cond ((= i (tree-arity t)) #f)
+	((tm-equal? (tree-ref t i) '(tmarker)) i)
 	(else (switch-find-marker t (+ i 1)))))
 
 (tm-define (switch-get-position)
   (:type (-> int))
-  (:synopsis "Get current position inside a 'switch' environment or -1")
-  (let ((p (search-upwards 'switch)))
-    (if (null? p) -1
-	(switch-find-marker (tm-subtree (rcons p 1)) 0))))
+  (:synopsis "Get current position inside a 'switch' environment")
+  (with t (tree-innermost 'switch)
+    (and t (switch-find-marker (tree-ref t 1) 0))))
 
 (tm-define (switch-get-last)
   (:type (-> int))
-  (:synopsis "Get last node of the current 'switch' environment or -1")
-  (let ((p (search-upwards 'switch)))
-    (if (null? p) -1
-	(- (tree-arity (tm-subtree (rcons p 1))) 1))))
+  (:synopsis "Get last node of the current 'switch' environment")
+  (with t (tree-innermost 'switch)
+    (and t (- (tree-arity (tree-ref t 1)) 1))))
 
 (define (switch-unselect)
-  (let ((p (search-upwards 'switch))
-	(i (switch-get-position)))
-    (if (>= i 0)
-	(let ((t (tm-subtree (rcons p 0))))
-	  (tm-assign (rcons p 0) (string->tree ""))
-	  (tm-assign (rcons* p 1 i) t)))))
+  (with-innermost t 'switch
+    (let* ((i (switch-get-position))
+	   (st (tree-copy (tree-ref t 0))))
+      (tree-set t 0 "")
+      (tree-set t 1 i st))))
 
 (define (switch-select i)
-  (let ((p (search-upwards 'switch)))
-    (if (nnull? p)
-	(let ((t (tm-subtree (rcons* p 1 i))))
-	  (tm-assign (rcons* p 1 i) '(tmarker))
-	  (tm-assign (rcons p 0) t)))))
+  (with-innermost t 'switch
+    (with st (tree-copy (tree-ref t 1 i))
+      (tree-set t 1 i '(tmarker))
+      (tree-set t 0 st))))
 
 (define (switch-pos where pos last)
   (cond ((== where "before") pos)
@@ -123,14 +117,15 @@
 (tm-define (switch-insert where)
   (:type (-> int void))
   (:synopsis "Add a new branch to the current switch environment at @where")
-  (let ((p (search-upwards 'switch))
-	(pos  (switch-get-position))
-	(last (switch-get-last)))
-    (cond ((= pos -1) (noop))
-	  ((string? where) (switch-insert (switch-pos where pos last)))
-	  (else (switch-unselect)
-		(tm-insert (rcons* p 1 where) '(tuple (document "")))
-		(switch-select where)))))
+  (with-innermost t 'switch
+    (let ((pos  (switch-get-position))
+	  (last (switch-get-last)))
+      (if (string? where)
+	  (switch-insert (switch-pos where pos last))
+	  (begin
+	    (switch-unselect)
+	    (tree-insert (tree-ref t 1) where '(tuple (document "")))
+	    (switch-select where))))))
 
 (tm-define (structured-insert forwards?)
   (:inside switch)
@@ -139,15 +134,14 @@
 (tm-define (switch-remove where)
   (:type (-> int void))
   (:synopsis "Remove a branch from the current switch environment at @where")
-  (let ((p (search-upwards 'switch))
-	(pos  (switch-get-position))
-	(last (switch-get-last)))
-    (cond ((= pos -1) (noop))
-	  ((= last 0) (tm-assign p (string->tree "")) (tm-correct (cDr p)))
-	  ((string? where) (switch-remove (switch-pos where pos last)))
-	  (else (switch-unselect)
-		(tm-remove (rcons* p 1 where) 1)
-		(switch-select (min where (- last 1)))))))
+  (with-innermost t 'switch
+    (let ((pos  (switch-get-position))
+	  (last (switch-get-last)))
+      (cond ((= last 0) (tree-set! t "") (tree-correct (tree-parent t)))
+	    ((string? where) (switch-remove (switch-pos where pos last)))
+	    (else (switch-unselect)
+		  (tree-remove (tree-ref t 1) where 1)
+		  (switch-select (min where (- last 1))))))))
 
 (tm-define (structured-remove forwards?)
   (:inside switch)
@@ -158,7 +152,7 @@
   (:synopsis "Switch to branch @where of the current switch environment")
   (let ((pos  (switch-get-position))
 	(last (switch-get-last)))
-    (cond ((= pos -1) (noop))
+    (cond ((not pos) (noop))
 	  ((string? where) (switch-to (switch-pos where pos last)))
 	  (else (switch-unselect)
 		(switch-select where)))))

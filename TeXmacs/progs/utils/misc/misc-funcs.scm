@@ -111,12 +111,3 @@
 	  (l2 ((cadr l2)))
 	  (else (set-message (string-append "No buffer#" name)
 			     "switch to buffer")))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; For actions which need to operate on specific markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define the-action-path '(-1))
-(tm-define (set-action-path p) (set! the-action-path p))
-(tm-define (has-action-path?) (!= the-action-path '(-1)))
-(tm-define (get-action-path) the-action-path)

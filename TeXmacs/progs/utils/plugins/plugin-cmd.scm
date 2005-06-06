@@ -99,18 +99,19 @@
 
 (tm-define (mutate-plugin-result handle)
   (:secure #t)
-  (let* ((p (the-mutator-path))
-	 (doc (plugin-async-retrieve handle))
-	 (t1 (the-mutator-time))
-	 (t2 (ahash-ref plugin-time-stamps handle)))
-    (cond ((not doc) (noop))
-	  ((plugin-async-active? handle)
-	   (if (<= t1 t2) (tm-assign-diff p doc)))
-	  ((and (>= (length p) 3)
-		(== (tree-get-label (tm-subtree (cDDDr p))) 'output))
-	   (with (name session channel) (ahash-ref plugin-source handle)
-	     (tm-assign (cDDr p) doc)
-	     (start-input name session (cDDDr p)))))))
+  (with-mutator t
+    (let* ((doc (plugin-async-retrieve handle))
+	   (t1 (the-mutator-time))
+	   (t2 (ahash-ref plugin-time-stamps handle))
+	   (t^^ (tree-ref t :parent :parent))
+	   (t^^^ (tree-ref t :parent :parent :parent)))
+      (cond ((not doc) (noop))
+	    ((plugin-async-active? handle)
+	     (if (<= t1 t2) (tree-set t doc)))
+	    ((and t^^^ (== (tree-get-label t^^^) 'output))
+	     (with (name session channel) (ahash-ref plugin-source handle)
+	       (tree-assign t^^ doc)
+	       (start-input name session (tree-path t^^^))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization

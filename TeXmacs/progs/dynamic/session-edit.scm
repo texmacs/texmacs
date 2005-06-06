@@ -86,8 +86,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (session-get-input-string)
-  (let* ((p (search-upwards 'input))
-	 (input (tree->stree (tm-subtree (rcons p 2))))
+  (let* ((t (tree-innermost 'input))
+	 (input (tree->stree (tree-ref t 2)))
 	 (s (verbatim-serialize (get-env "prog-language") input)))
     (substring s 0 (- (string-length s) 1))))
 

@@ -38,8 +38,8 @@
   (let* ((p (cDr (tm-where)))
 	 (t (stree-at p)))
     (if (func? t 'graphics) p
-	(with q (search-upwards 'graphics)
-	  (if (null? q) #f q)))))
+	(with u (tree-innermost 'graphics)
+	  (and u (tree-path u))))))
 
 (define (graphics-path path)
   (if (or (null? path) (null? (cdr path)))
