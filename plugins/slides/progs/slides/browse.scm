@@ -77,13 +77,13 @@
 	(go-outermost-switch))))
 
 (define (go-this-switch)
-  (let ((p (search-upwards 'switch)))
+  (let ((p (tree-path (tree-innermost 'switch))))
     (if (pair? p)
 	(tm-go-to (append p '(1 0 0)))
 	(tm-go-to '(0 0)))))
 
 (define (go-outer-switch)
-  (let ((p (search-upwards 'switch)))
+  (let ((p (tree-path (tree-innermost 'switch))))
     (if (pair? p)
 	(tm-go-to (append p '(0)))))
   (go-this-switch))
@@ -92,7 +92,7 @@
   (define (proc p t) p)
   (let ((old-p (the-path)))
     (go-this-switch)
-    (let ((p1 (search-upwards 'switch)))
+    (let ((p1 (tree-path (tree-innermost 'switch))))
       (let ((p2 (search-in-tree-from
 		 (if (null? p1)
 		     (the-buffer)
