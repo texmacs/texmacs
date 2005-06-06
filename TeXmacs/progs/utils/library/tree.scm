@@ -16,17 +16,6 @@
   (:use (utils library list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Paths associated to trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tree-path t)
-  (:type (-> tree path))
-  (:synopsis "Get the path associated to @t or #f.")
-  (with ip (tree-ip t)
-    (if (== (cAr ip) -5) #f
-	(reverse ip))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying the document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,8 +115,7 @@
        (set! ,ref (tm-subtree ,var)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Try to use the above modification routines in an intelligent way
-;; via a unique assignment routine
+;; Utilities for trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-parent t)
@@ -143,6 +131,51 @@
        (let ((p (tree-path ref))
 	     (q (tree-path t)))
 	 (list-starts? q p))))
+
+(tm-define (tree-ref t . l)
+  (:synopsis "Access a subtree of @t according to @l.")
+  (if (and (list-1? l) (integer? (car l)))
+      (tree-get-child t (car l))
+      (with r (tm-select t l)
+	(if (null? r) #f
+	    (car r)))))
+
+(tm-define (tree-set t . args)
+  (:synopsis "Set a subtree of @t to a new value according to @l.")
+  (let ((l (cDr args))
+	(u (cAr args)))
+    (with r (tm-select t l)
+      (if (nnull? r)
+	  (tree-set-diff (car r) u)))))
+
+(tm-define-macro (tree-set! t . l)
+  (if (list-1? l)
+      `(tree-set-diff! ,t ,@l)
+      `(tree-set ,t ,@l)))
+
+(define (tree-innermost-sub p labs)
+  (with t (tm-subtree p)
+    (cond ((and (tm-compound? t) (in? (tree-get-label t) labs)) t)
+	  ((or (null? p) (== p (the-buffer-path))) #f)
+	  (else (tree-innermost-sub (cDr p) labs)))))
+
+(tm-define (tree-innermost . l)
+  (:type (-> symbol tree)
+	 (-> tree symbol tree))
+  (:synopsis "Search upwards from a tree or the cursor position.")
+  (let* ((p (if (list-1? l) (cDr (tm-where)) (tree-path (car l))))
+	 (x (cAr l))
+	 (labs (if (list? x) x (list x))))
+    (tree-innermost-sub p labs)))
+
+(tm-define-macro (with-innermost t lab . body)
+  `(let ((,t (tree-innermost ,lab)))
+     (if ,t (begin ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Try to use the above modification routines in an intelligent way
+;; via a unique assignment routine
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tree-common-left t1 t2)
   (if (not (and (tm-compound? t1) (tm-compound? t2))) 0
@@ -166,19 +199,19 @@
       (with r (tree-focus t l)
 	(if r r (tree-get-focus ref (tree-parent t) l)))))
 
-(tm-define (tree-set ref t)
+(tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
   (:synopsis "Assign @ref with @t.")
   (let ((p (tree-path ref))
 	(l (tree-common-left ref t))
 	(r (tree-common-right ref t)))
     (cond ((not p)
-	   (texmacs-error "tree-set" "~S isn't part of a document" ref))
+	   (texmacs-error "tree-set-diff" "~S isn't part of a document" ref))
 	  ((tm-equal? ref t) (noop))
 	  ((tree-inside? t ref)
 	   (with q (tree-path t)
 	     (tree-remove-node! ref (list-ref q (length p)))
-	     (tree-set ref t)))
+	     (tree-set-diff ref t)))
 	  ((nlist? t) (tree-assign ref t))
 	  ((and (= l (tm-arity ref)) (= l (tm-arity t)))
 	   (tree-assign-node ref (tm-car t)))
@@ -195,11 +228,11 @@
 		 (let ((head (list-head t (+ pos 1)))
 		       (mid  (list-ref t (+ pos 1)))
 		       (tail (list-tail t (+ pos 2))))
-		   (tree-set! ref mid)
+		   (tree-set-diff! ref mid)
 		   (tree-insert-node ref pos (append head tail)))))))))
 
-(tm-define-macro (tree-set! ref t)
+(tm-define-macro (tree-set-diff! ref t)
   (with var (gensym)
     `(with ,var (tree-path ,ref)
-       (tree-set ,ref ,t)
+       (tree-set-diff ,ref ,t)
        (set! ,ref (tm-subtree ,var)))))
