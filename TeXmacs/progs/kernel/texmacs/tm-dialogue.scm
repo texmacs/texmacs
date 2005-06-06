@@ -19,9 +19,10 @@
 ;; Dialogues
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public dialogue-break #f)
-(define-public dialogue-return #f)
-(define-public dialogue-error #f)
+(with-module texmacs-user ;; switch modules for old versions of Guile
+  (define-public dialogue-break #f)
+  (define-public dialogue-return #f)
+  (define-public dialogue-error #f))
 
 (define-public (dialogue-report-errors)
   (if dialogue-error

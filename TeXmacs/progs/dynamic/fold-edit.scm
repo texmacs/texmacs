@@ -36,7 +36,7 @@
 (define (fold-unfold l to)
   (with-innermost t (map car l)
     (tree-assign-node! t (assoc-ref l (tm-car t)))
-    (tm-go-to (tm-start (rcons (tree-path t) to)))))
+    (tree-go-to t to :start)))
 
 (tm-define (fold)
   (:type (-> void))
@@ -50,7 +50,7 @@
 
 (tm-define (mouse-fold)
   (:type (-> void))
-  (:synopsis "fold using the mouse")
+  (:synopsis "Fold using the mouse")
   (:secure #t)
   (if (has-action-path?)
       (begin
@@ -59,7 +59,7 @@
 
 (tm-define (mouse-unfold)
   (:type (-> void))
-  (:synopsis "unfold using the mouse")
+  (:synopsis "Unfold using the mouse")
   (:secure #t)
   (if (has-action-path?)
       (begin

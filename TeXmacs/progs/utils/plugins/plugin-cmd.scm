@@ -83,7 +83,7 @@
       (if (and (== (tree-get-label doc2) 'document)
 	       (> (tree-arity doc2) 0))
 	  (begin
-	    (if flag? (set! doc2 (tree1 'document (tree1 'errput doc2))))
+	    (if flag? (set! doc2 (tm->tree `(document (errput ,doc2)))))
 	    (if (== doc1 (stree->tree '(document "")))
 		(plugin-result-set! handle doc2)
 		(plugin-result-set! handle (tree-append doc1 doc2))))))))

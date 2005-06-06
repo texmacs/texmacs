@@ -88,7 +88,7 @@
   (let* ((q (search-parent-upwards 'tree))
 	 (l (cAr q))
 	 (p (if (== l 0) (cDr q) q)))
-    (tm-assign p (tree2 'tree (string->tree "") (tm-subtree p)))
+    (tm-assign p `(tree "" ,(tm-subtree p)))
     (tm-go-to (rcons* p 0 0))))
 
 (tm-define (structured-insert-down)

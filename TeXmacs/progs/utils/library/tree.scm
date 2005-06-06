@@ -160,10 +160,9 @@
 	  (else (tree-innermost-sub (cDr p) labs)))))
 
 (tm-define (tree-innermost . l)
-  (:type (-> symbol tree)
-	 (-> tree symbol tree))
+  (:type (-> symbol tree))
   (:synopsis "Search upwards from a tree or the cursor position.")
-  (let* ((p (if (list-1? l) (cDr (tm-where)) (tree-path (car l))))
+  (let* ((p (cDDr (tm-where)))
 	 (x (cAr l))
 	 (labs (if (list? x) x (list x))))
     (tree-innermost-sub p labs)))
@@ -171,6 +170,16 @@
 (tm-define-macro (with-innermost t lab . body)
   `(let ((,t (tree-innermost ,lab)))
      (if ,t (begin ,@body))))
+
+(tm-define (tree-go-to t . l)
+  (:synopsis "Go to a position determined by @l inside the tree @t.")
+  (let* ((u (apply tree-ref (cons t (cDr l))))
+	 (i (cAr l)))
+    (cond ((not u) (noop))
+	  ((== i :start) (tm-go-to (tm-start (tree-path u))))
+	  ((== i :end) (tm-go-to (tm-end (tree-path u))))
+	  ((integer? i) (tm-go-to (rcons (tree-path u) i)))
+	  (else (noop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to use the above modification routines in an intelligent way
