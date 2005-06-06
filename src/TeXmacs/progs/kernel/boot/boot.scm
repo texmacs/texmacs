@@ -19,6 +19,11 @@
 (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
 
+;; Should be defined 
+(define dialogue-break #f)
+(define dialogue-return #f)
+(define dialogue-error #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,6 +34,17 @@
      (procedure->memoizing-macro
       (lambda (cmd env)
 	(apply (lambda ,(cdr head) ,@body) (cdr cmd))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Module switching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (with-module module . body)
+  `(begin
+     (set! temp-module (current-module))
+     (set-current-module ,module)
+     ,@body
+     (set-current-module temp-module)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Module handling

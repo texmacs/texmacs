@@ -48,6 +48,215 @@ tmg_win32_display (SCM arg1) {
 }
 
 SCM
+tmg_scheme_dialect () {
+  // SCM_DEFER_INTS;
+  string out= scheme_dialect ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_get_texmacs_path () {
+  // SCM_DEFER_INTS;
+  string out= get_texmacs_path ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_plugin_list () {
+  // SCM_DEFER_INTS;
+  scheme_tree out= plugin_list ();
+  // SCM_ALLOW_INTS;
+
+  return scheme_tree_to_scm (out);
+}
+
+SCM
+tmg_support_ec_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= support_ec_fonts ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_support_tt_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= ft_present ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_use_ec_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= use_ec_fonts ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_use_tt_fontsP () {
+  // SCM_DEFER_INTS;
+  bool out= use_tt_fonts ();
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_set_font_type (SCM arg1) {
+  SCM_ASSERT_INT (arg1, SCM_ARG1, "set-font-type");
+
+  int in1= scm_to_int (arg1);
+
+  // SCM_DEFER_INTS;
+  set_font_type (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_font_exists_in_ttP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "font-exists-in-tt?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= tt_font_exists (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_eval_system (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "eval-system");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= eval_system (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_var_eval_system (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "var-eval-system");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= var_eval_system (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_get_locale_language () {
+  // SCM_DEFER_INTS;
+  string out= get_locale_language ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_texmacs_time () {
+  // SCM_DEFER_INTS;
+  int out= texmacs_time ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_bench_print (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "bench-print");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bench_print (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_bench_print_all () {
+  // SCM_DEFER_INTS;
+  bench_print ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_system_wait (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "system-wait");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "system-wait");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  system_wait (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_bibtex_command (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-bibtex-command");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  set_bibtex_command (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_math_symbol_type (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-type");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= math_symbol_type (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_object_2command (SCM arg1) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->command");
+
+  object in1= scm_to_object (arg1);
+
+  // SCM_DEFER_INTS;
+  command out= as_command (in1);
+  // SCM_ALLOW_INTS;
+
+  return command_to_scm (out);
+}
+
+SCM
 tmg_tree_2stree (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->stree");
 
@@ -87,6 +296,58 @@ tmg_tree_2string (SCM arg1) {
 }
 
 SCM
+tmg_string_2tree (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->tree");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= coerce_string_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tm_2tree (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "tm->tree");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_atomicP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-atomic?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_atomic (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_compoundP (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-compound?");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_compound (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_tree_get_label (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-label");
 
@@ -110,6 +371,19 @@ tmg_tree_get_children (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return array_tree_to_scm (out);
+}
+
+SCM
+tmg_tree_arity (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-arity");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= N (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
 }
 
 SCM
@@ -145,83 +419,6 @@ tmg_tree_set_childS (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_string_2tree (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->tree");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= coerce_string_tree (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree0 (SCM arg1) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree0");
-
-  tree_label in1= scm_to_tree_label (arg1);
-
-  // SCM_DEFER_INTS;
-  tree out= tree (in1);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree1 (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree1");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree1");
-
-  tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= tree (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree2 (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree2");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree2");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree2");
-
-  tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
-  tree in3= scm_to_tree (arg3);
-
-  // SCM_DEFER_INTS;
-  tree out= tree (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree3 (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "tree3");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "tree3");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree3");
-  SCM_ASSERT_TREE (arg4, SCM_ARG4, "tree3");
-
-  tree_label in1= scm_to_tree_label (arg1);
-  tree in2= scm_to_tree (arg2);
-  tree in3= scm_to_tree (arg3);
-  tree in4= scm_to_tree (arg4);
-
-  // SCM_DEFER_INTS;
-  tree out= tree (in1, in2, in3, in4);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
 tmg_tree_ip (SCM arg1) {
   SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ip");
 
@@ -235,42 +432,18 @@ tmg_tree_ip (SCM arg1) {
 }
 
 SCM
-tmg_tree_atomicP (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-atomic?");
+tmg_subtree (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "subtree");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "subtree");
 
   tree in1= scm_to_tree (arg1);
+  path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  bool out= is_atomic (in1);
+  tree out= subtree (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_tree_compoundP (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-compound?");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= is_compound (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_tree_arity (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-arity");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  int out= N (in1);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
+  return tree_to_scm (out);
 }
 
 SCM
@@ -285,21 +458,6 @@ tmg_tree_range (SCM arg1, SCM arg2, SCM arg3) {
 
   // SCM_DEFER_INTS;
   tree out= tree_range (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_subtree (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "subtree");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "subtree");
-
-  tree in1= scm_to_tree (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= subtree (in1, in2);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -578,297 +736,6 @@ tmg_upgrade_tmml (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
-}
-
-SCM
-tmg_get_texmacs_path () {
-  // SCM_DEFER_INTS;
-  string out= get_texmacs_path ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_object_2command (SCM arg1) {
-  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "object->command");
-
-  object in1= scm_to_object (arg1);
-
-  // SCM_DEFER_INTS;
-  command out= as_command (in1);
-  // SCM_ALLOW_INTS;
-
-  return command_to_scm (out);
-}
-
-SCM
-tmg_scheme_dialect () {
-  // SCM_DEFER_INTS;
-  string out= scheme_dialect ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_cursor_start (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
-
-  content in1= scm_to_content (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  path out= start (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_cursor_end (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
-
-  content in1= scm_to_content (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  path out= end (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_support_ec_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= support_ec_fonts ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_support_tt_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= ft_present ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_use_ec_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= use_ec_fonts ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_use_tt_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= use_tt_fonts ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_set_font_type (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "set-font-type");
-
-  int in1= scm_to_int (arg1);
-
-  // SCM_DEFER_INTS;
-  set_font_type (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_font_exists_in_ttP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "font-exists-in-tt?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= tt_font_exists (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_texmacs_time () {
-  // SCM_DEFER_INTS;
-  int out= texmacs_time ();
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_bench_print (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "bench-print");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bench_print (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_bench_print_all () {
-  // SCM_DEFER_INTS;
-  bench_print ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_plugin_list () {
-  // SCM_DEFER_INTS;
-  scheme_tree out= plugin_list ();
-  // SCM_ALLOW_INTS;
-
-  return scheme_tree_to_scm (out);
-}
-
-SCM
-tmg_eval_system (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "eval-system");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= eval_system (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_var_eval_system (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "var-eval-system");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= var_eval_system (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_get_locale_language () {
-  // SCM_DEFER_INTS;
-  string out= get_locale_language ();
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_quotes (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_quotes (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_generic (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_generic (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_verbatim (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-verbatim");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_verbatim (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_system_wait (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "system-wait");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "system-wait");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  system_wait (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_math_symbol_type (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-type");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= math_symbol_type (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_numberP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= is_double (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_set_bibtex_command (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-bibtex-command");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  set_bibtex_command (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -1462,6 +1329,19 @@ tmg_system_mkdir (SCM arg1) {
 }
 
 SCM
+tmg_string_numberP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_double (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_search_forwards (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-forwards");
   SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-forwards");
@@ -1598,6 +1478,45 @@ tmg_locase_all (SCM arg1) {
 
   // SCM_DEFER_INTS;
   string out= locase_all (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_quotes (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_quotes (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_generic (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_generic (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_verbatim (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-verbatim");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_verbatim (in1);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -1882,6 +1801,36 @@ tmg_path_less_eqP (SCM arg1, SCM arg2) {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_cursor_start (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= start (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_cursor_end (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= end (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
 }
 
 SCM
@@ -2352,24 +2301,40 @@ initialize_glue_basic () {
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
   gh_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
   gh_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
+  gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
+  gh_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
+  gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
+  gh_new_procedure ("support-ec-fonts?", (FN) tmg_support_ec_fontsP, 0, 0, 0);
+  gh_new_procedure ("support-tt-fonts?", (FN) tmg_support_tt_fontsP, 0, 0, 0);
+  gh_new_procedure ("use-ec-fonts?", (FN) tmg_use_ec_fontsP, 0, 0, 0);
+  gh_new_procedure ("use-tt-fonts?", (FN) tmg_use_tt_fontsP, 0, 0, 0);
+  gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
+  gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
+  gh_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);
+  gh_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);
+  gh_new_procedure ("get-locale-language", (FN) tmg_get_locale_language, 0, 0, 0);
+  gh_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
+  gh_new_procedure ("bench-print", (FN) tmg_bench_print, 1, 0, 0);
+  gh_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
+  gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
+  gh_new_procedure ("set-bibtex-command", (FN) tmg_set_bibtex_command, 1, 0, 0);
+  gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
+  gh_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
   gh_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
   gh_new_procedure ("stree->tree", (FN) tmg_stree_2tree, 1, 0, 0);
   gh_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
-  gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
-  gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
-  gh_new_procedure ("tree-get-child", (FN) tmg_tree_get_child, 2, 0, 0);
-  gh_new_procedure ("tree-set-child!", (FN) tmg_tree_set_childS, 3, 0, 0);
   gh_new_procedure ("string->tree", (FN) tmg_string_2tree, 1, 0, 0);
-  gh_new_procedure ("tree0", (FN) tmg_tree0, 1, 0, 0);
-  gh_new_procedure ("tree1", (FN) tmg_tree1, 2, 0, 0);
-  gh_new_procedure ("tree2", (FN) tmg_tree2, 3, 0, 0);
-  gh_new_procedure ("tree3", (FN) tmg_tree3, 4, 0, 0);
-  gh_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
+  gh_new_procedure ("tm->tree", (FN) tmg_tm_2tree, 1, 0, 0);
   gh_new_procedure ("tree-atomic?", (FN) tmg_tree_atomicP, 1, 0, 0);
   gh_new_procedure ("tree-compound?", (FN) tmg_tree_compoundP, 1, 0, 0);
+  gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
+  gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
   gh_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
-  gh_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
+  gh_new_procedure ("tree-get-child", (FN) tmg_tree_get_child, 2, 0, 0);
+  gh_new_procedure ("tree-set-child!", (FN) tmg_tree_set_childS, 3, 0, 0);
+  gh_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
+  gh_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
   gh_new_procedure ("tree-append", (FN) tmg_tree_append, 2, 0, 0);
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
@@ -2391,31 +2356,6 @@ initialize_glue_basic () {
   gh_new_procedure ("parse-xml", (FN) tmg_parse_xml, 1, 0, 0);
   gh_new_procedure ("parse-html", (FN) tmg_parse_html, 1, 0, 0);
   gh_new_procedure ("upgrade-tmml", (FN) tmg_upgrade_tmml, 1, 0, 0);
-  gh_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
-  gh_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
-  gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
-  gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
-  gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
-  gh_new_procedure ("support-ec-fonts?", (FN) tmg_support_ec_fontsP, 0, 0, 0);
-  gh_new_procedure ("support-tt-fonts?", (FN) tmg_support_tt_fontsP, 0, 0, 0);
-  gh_new_procedure ("use-ec-fonts?", (FN) tmg_use_ec_fontsP, 0, 0, 0);
-  gh_new_procedure ("use-tt-fonts?", (FN) tmg_use_tt_fontsP, 0, 0, 0);
-  gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
-  gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
-  gh_new_procedure ("texmacs-time", (FN) tmg_texmacs_time, 0, 0, 0);
-  gh_new_procedure ("bench-print", (FN) tmg_bench_print, 1, 0, 0);
-  gh_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
-  gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
-  gh_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);
-  gh_new_procedure ("var-eval-system", (FN) tmg_var_eval_system, 1, 0, 0);
-  gh_new_procedure ("get-locale-language", (FN) tmg_get_locale_language, 0, 0, 0);
-  gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
-  gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
-  gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
-  gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
-  gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
-  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
-  gh_new_procedure ("set-bibtex-command", (FN) tmg_set_bibtex_command, 1, 0, 0);
   gh_new_procedure ("string->url", (FN) tmg_string_2url, 1, 0, 0);
   gh_new_procedure ("url", (FN) tmg_url, 2, 0, 0);
   gh_new_procedure ("url-system", (FN) tmg_url_system, 1, 0, 0);
@@ -2460,6 +2400,7 @@ initialize_glue_basic () {
   gh_new_procedure ("system-append", (FN) tmg_system_append, 2, 0, 0);
   gh_new_procedure ("system-remove", (FN) tmg_system_remove, 1, 0, 0);
   gh_new_procedure ("system-mkdir", (FN) tmg_system_mkdir, 1, 0, 0);
+  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
   gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
@@ -2470,6 +2411,9 @@ initialize_glue_basic () {
   gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
   gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);
   gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
+  gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
+  gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
+  gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
   gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
   gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
@@ -2489,6 +2433,8 @@ initialize_glue_basic () {
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
   gh_new_procedure ("path-less-eq?", (FN) tmg_path_less_eqP, 2, 0, 0);
+  gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
+  gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
   gh_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
   gh_new_procedure ("widget-named-hlist", (FN) tmg_widget_named_hlist, 2, 0, 0);
   gh_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);
