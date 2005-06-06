@@ -34,13 +34,9 @@
   (insert-go-to '(fold (document "") (document "")) (list 0 0)))
 
 (define (fold-unfold l to)
-  (with p (search-upwards-in-set (map car l))
-    (if (nnull? p)
-	(let* ((t (tm-subtree p))
-	       (old (tm-car t))
-	       (new (assoc-ref l old)))
-	  (tm-assign p (tree2 new (tree-ref t 0) (tree-ref t 1)))
-	  (tm-go-to (tm-start (rcons p to)))))))
+  (with-innermost t (map car l)
+    (tree-assign-node! t (assoc-ref l (tm-car t)))
+    (tm-go-to (tm-start (rcons (tree-path t) to)))))
 
 (tm-define (fold)
   (:type (-> void))

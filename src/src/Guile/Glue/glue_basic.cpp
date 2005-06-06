@@ -113,6 +113,38 @@ tmg_tree_get_children (SCM arg1) {
 }
 
 SCM
+tmg_tree_get_child (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-child");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-get-child");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= tree_ref (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_tree_set_childS (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set-child!");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-set-child!");
+  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-set-child!");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+  tree in3= scm_to_tree (arg3);
+
+  // SCM_DEFER_INTS;
+  tree_set (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_string_2tree (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string->tree");
 
@@ -239,38 +271,6 @@ tmg_tree_arity (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
-}
-
-SCM
-tmg_tree_ref (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-ref");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-ref");
-
-  tree in1= scm_to_tree (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= tree_ref (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree_setS (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set!");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-set!");
-  SCM_ASSERT_TREE (arg3, SCM_ARG3, "tree-set!");
-
-  tree in1= scm_to_tree (arg1);
-  int in2= scm_to_int (arg2);
-  tree in3= scm_to_tree (arg3);
-
-  // SCM_DEFER_INTS;
-  tree_set (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2357,6 +2357,8 @@ initialize_glue_basic () {
   gh_new_procedure ("tree->string", (FN) tmg_tree_2string, 1, 0, 0);
   gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
   gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
+  gh_new_procedure ("tree-get-child", (FN) tmg_tree_get_child, 2, 0, 0);
+  gh_new_procedure ("tree-set-child!", (FN) tmg_tree_set_childS, 3, 0, 0);
   gh_new_procedure ("string->tree", (FN) tmg_string_2tree, 1, 0, 0);
   gh_new_procedure ("tree0", (FN) tmg_tree0, 1, 0, 0);
   gh_new_procedure ("tree1", (FN) tmg_tree1, 2, 0, 0);
@@ -2366,8 +2368,6 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-atomic?", (FN) tmg_tree_atomicP, 1, 0, 0);
   gh_new_procedure ("tree-compound?", (FN) tmg_tree_compoundP, 1, 0, 0);
   gh_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
-  gh_new_procedure ("tree-ref", (FN) tmg_tree_ref, 2, 0, 0);
-  gh_new_procedure ("tree-set!", (FN) tmg_tree_setS, 3, 0, 0);
   gh_new_procedure ("tree-range", (FN) tmg_tree_range, 3, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
   gh_new_procedure ("tree-copy", (FN) tmg_tree_copy, 1, 0, 0);
