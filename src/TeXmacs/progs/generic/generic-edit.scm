@@ -81,7 +81,27 @@
 
 (tm-define (structured-insert forwards?)
   (:inside tree)
-  (branch-insert forwards?))
+  (with-innermost t 'tree
+    (if (== (tree-down-index t) 0) (set! t (tree-up t)))
+    (if (== (tm-car t) 'tree)
+	(with pos (tree-down-index t)
+	  (if forwards? (set! pos (1+ pos)))
+	  (tree-insert! t pos '(tree ""))
+	  (tree-go-to t pos 0)))))
+
+(tm-define (structured-remove forwards?)
+  (:inside tree)
+  (with-innermost t 'tree
+    (if (== (tree-down-index t) 0) (set! t (tree-up t)))
+    (if (== (tm-car t) 'tree)
+	(with pos (tree-down-index t)
+	  (cond (forwards?
+		 (tree-remove! t pos 1)
+		 (if (== pos (tree-arity t))
+		     (tree-go-to t :end)
+		     (tree-go-to t pos :start)))
+		((== pos 1) (tree-go-to t 0 :end))
+		(else (tree-remove t (- pos 1) 1)))))))
 
 (tm-define (structured-insert-up)
   (:inside tree)
@@ -93,7 +113,10 @@
 (tm-define (structured-insert-down)
   (:inside tree)
   (with-innermost t 'tree
-    (if (== (tree-down-index t) 0) (branch-insert #t)
+    (if (== (tree-down-index t) 0)
+	(with pos (tree-arity t)
+	  (tree-insert! t pos '(tree ""))
+	  (tree-go-to t pos 0))
 	(begin
 	  (set! t (tree-down t))
 	  (tree-set! t `(tree ,t ""))
@@ -164,21 +187,18 @@
 ;; Routines for floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(define (make-insertion s)
-;  (insert-go-to
-;   (list 'float s
-;	 (if (string=? s "float") "tbh" "")
-;	 (list 'document ""))
-;   (list 2 0 0)))
+(tm-define (make-insertion s)
+  (:synopsis "Make an insertion of type @s.")
+  (with pos (if (== s "float") "tbh" "")
+    (insert-go-to (list 'float s pos (list 'document ""))
+		  (list 2 0 0))))
 
-;(define (position-insertion what flag)
-;  "Allow/disallow a position for the inner float the caret in is.
-;what <char>   : position to allow/disallow
-;flag <boolean>: allow if true, disallow is false."
-;  (with-innermost t 'float
-;    (let ((mode (if flag string-include string-exclude))
-;	  (s (tree-ref t 1)))
-;      (tree-set s (mode (tree->string s) what)))))
+(tm-define (insertion-position what flag)
+  (:synopsis "Allow/disallow the position @what for innermost float.")
+  (with-innermost t 'float
+    (let ((op (if flag string-union string-minus))
+	  (st (tree-ref t 1)))
+      (tree-set st (op (tree->string st) what)))))
 
 (define (test-insertion-position? what)
   (with-innermost t 'float
@@ -190,7 +210,7 @@
 
 (tm-define (toggle-insertion-position what)
   (:check-mark "v" test-insertion-position?)
-  (position-insertion what (not-test-insertion-position? what)))
+  (insertion-position what (not-test-insertion-position? what)))
 
 (tm-define (toggle-insertion-position-not s)
   (:check-mark "v" not-test-insertion-position?)

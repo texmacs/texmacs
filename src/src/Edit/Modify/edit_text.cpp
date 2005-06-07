@@ -344,30 +344,6 @@ edit_text_rep::make_resize (string x1, string y1, string x2, string y2) {
 }
 
 void
-edit_text_rep::make_insertion (string s) {
-  tree t (_FLOAT, s, "", tree (DOCUMENT, ""));
-  if (s == "float") t[1]= "tbh";
-  insert_tree (t, path (2, 0, 0));
-}
-
-void
-edit_text_rep::position_insertion (string what, bool flag) {
-  path p= search_upwards (_FLOAT);
-  if ((N(what) == 1) && (!nil (p))) {
-    tree st= subtree (et, p);
-    string arg= as_string (st[1]);
-    int i, n= N(arg);
-    for (i=0; i<n; i++)
-      if (arg[i] == what[0]) {
-	arg= arg (0, i) * arg (i+1, n);
-	break;
-      }
-    if (flag) arg= arg * what;
-    assign (p * 1, arg);
-  }
-}
-
-void
 edit_text_rep::make_postscript (
   string file_name, bool link, string w, string h,
   string x1, string y1, string x2, string y2)

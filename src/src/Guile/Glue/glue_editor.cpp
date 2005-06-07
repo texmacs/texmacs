@@ -981,34 +981,6 @@ tmg_make_resize (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
 }
 
 SCM
-tmg_make_insertion (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-insertion");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->make_insertion (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_position_insertion (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "position-insertion");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "position-insertion");
-
-  string in1= scm_to_string (arg1);
-  bool in2= scm_to_bool (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->position_insertion (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_make_postscript (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5, SCM arg6, SCM arg7, SCM arg8) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-postscript");
   SCM_ASSERT_BOOL (arg2, SCM_ARG2, "make-postscript");
@@ -1169,41 +1141,6 @@ SCM
 tmg_make_tree () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->make_tree ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_inside_treeP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->inside_tree ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_branch_insert (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "branch-insert");
-
-  bool in1= scm_to_bool (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->branch_insert (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_branch_delete (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "branch-delete");
-
-  bool in1= scm_to_bool (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->branch_delete (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2924,8 +2861,6 @@ initialize_glue_editor () {
   gh_new_procedure ("make-var-vspace-after", (FN) tmg_make_var_vspace_after, 3, 0, 0);
   gh_new_procedure ("make-move", (FN) tmg_make_move, 2, 0, 0);
   gh_new_procedure ("make-resize", (FN) tmg_make_resize, 4, 0, 0);
-  gh_new_procedure ("make-insertion", (FN) tmg_make_insertion, 1, 0, 0);
-  gh_new_procedure ("position-insertion", (FN) tmg_position_insertion, 2, 0, 0);
   gh_new_procedure ("make-postscript", (FN) tmg_make_postscript, 8, 0, 0);
   gh_new_procedure ("make-group", (FN) tmg_make_group, 0, 0, 0);
   gh_new_procedure ("make-lprime", (FN) tmg_make_lprime, 1, 0, 0);
@@ -2940,9 +2875,6 @@ initialize_glue_editor () {
   gh_new_procedure ("make-var-sqrt", (FN) tmg_make_var_sqrt, 0, 0, 0);
   gh_new_procedure ("make-neg", (FN) tmg_make_neg, 0, 0, 0);
   gh_new_procedure ("make-tree", (FN) tmg_make_tree, 0, 0, 0);
-  gh_new_procedure ("inside-tree?", (FN) tmg_inside_treeP, 0, 0, 0);
-  gh_new_procedure ("branch-insert", (FN) tmg_branch_insert, 1, 0, 0);
-  gh_new_procedure ("branch-delete", (FN) tmg_branch_delete, 1, 0, 0);
   gh_new_procedure ("make-subtable", (FN) tmg_make_subtable, 0, 0, 0);
   gh_new_procedure ("table-disactivate", (FN) tmg_table_disactivate, 0, 0, 0);
   gh_new_procedure ("table-extract-format", (FN) tmg_table_extract_format, 0, 0, 0);

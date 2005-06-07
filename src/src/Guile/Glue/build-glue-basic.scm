@@ -136,6 +136,8 @@
   (locase-first locase_first (string string))
   (upcase-all upcase_all (string string))
   (locase-all locase_all (string string))
+  (string-union string_union (string string string))
+  (string-minus string_minus (string string string))
   (escape-quotes escape_quotes (string string))
   (escape-generic escape_generic (string string))
   (escape-verbatim escape_verbatim (string string))

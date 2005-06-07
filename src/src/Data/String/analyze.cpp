@@ -162,6 +162,27 @@ locase_all (string s) {
 }
 
 /******************************************************************************
+* Inserting or removing a character into a string as a set of characters
+******************************************************************************/
+
+string
+string_union (string s1, string s2) {
+  return string_minus (s1, s2) * s2;
+}
+
+string
+string_minus (string s1, string s2) {
+  string r;
+  int i1, n1= N(s1), i2, n2= N(s2);
+  for (i1=0; i1<n1; i1++) {
+    for (i2=0; i2<n2; i2++)
+      if (s1[i1] == s2[i2]) break;
+    if (i2==n2) r << s1[i1];
+  }
+  return r;
+}
+
+/******************************************************************************
 * Spanish in relation with ispell
 ******************************************************************************/
 
