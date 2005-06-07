@@ -1,3 +1,4 @@
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; arch-tag: 78866f97-a87b-42c1-91d1-33142c08439f
 ;;
 ;; MODULE      : buffer-replace.scm
@@ -16,7 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (buffer-replace)
-  (:use (utils misc misc-funcs))) ;; tm-subtree
+  (:use (utils misc misc-funcs))) ;; path->tree
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Walking and changing the buffer
@@ -24,7 +25,7 @@
 ;;
 ;; (pred? p t) -> bool
 ;;   p: a path in the buffer tree
-;;   t: the buffer subtree (tm-subtree) for that path
+;;   t: the buffer subtree (path->tree) for that path
 ;;   returns: should transf be called, with saved position.
 ;;   Must not modify the buffer.
 ;;
@@ -41,11 +42,11 @@
 (define (protect-position p thunk cont)
   ;; Save @p as an editor position, execute @thunk, get the updated value of
   ;; @p, deleted the position, and apply the updated value to @cont.
-  (let ((pos (tm-position-new)))
-    (tm-position-set pos p)
+  (let ((pos (position-new)))
+    (position-set pos p)
     (thunk)
-    (let ((p (tm-position-get pos)))
-      (tm-position-delete pos)
+    (let ((p (position-get pos)))
+      (position-delete pos)
       (cont p))))
 
 (tm-define buffer-replace 
@@ -70,7 +71,7 @@
   (buffer-replace-preorder-from '() pred? transf))
 
 (tm-define (buffer-replace-preorder-from p pred? transf)
-  (let ((t (tm-subtree p)))
+  (let ((t (path->tree p)))
     (cond ((pred? p t)
 	   (protect-position
 	    (rcons p 0) (cut transf p t)
@@ -86,7 +87,7 @@
     (if (pair? ip)
 	(let* ((i (1+ (car ip)))
 	       (ipp (cdr ip))
-	       (t (tm-subtree (reverse ipp))))
+	       (t (path->tree (reverse ipp))))
 	  ;; by construction, t is a compound tree
 	  (if (< i (tree-arity t))
 	      (buffer-replace-preorder-from
@@ -98,7 +99,7 @@
   (buffer-replace-postorder-from '() pred? transf))
 
 (tm-define (buffer-replace-postorder-from p pred? transf)
-  (let ((t (tm-subtree p)))
+  (let ((t (path->tree p)))
     (if (and (tree-compound? t)
 	     (< 0 (tree-arity t)))
 	(buffer-replace-postorder-from (rcons p 0) pred? transf)
@@ -109,7 +110,7 @@
     (if (pair? ip)
 	(let* ((i (1+ (car ip)))
 	       (ipp (cdr ip))
-	       (t (tm-subtree (reverse ipp))))
+	       (t (path->tree (reverse ipp))))
 	  ;; by construction, t is a compound tree
 	  (cond ((< i (tree-arity t))
 		 (buffer-replace-postorder-from

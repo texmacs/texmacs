@@ -1,9 +1,10 @@
+
 ;; arch-tag: e85790a7-25de-4c7a-b6db-eea9d5e4c3c5
 
 (texmacs-module (texmacs edit smart-space))
 
 (define (string-space-at? s i) (== #\space (string-ref s i)))
-(define (tree-func? t s) (== s (tree-get-label t)))
+(define (tree-func? t s) (== s (tree-label t)))
 
 ; (define (near-space?/leaf t1 i)
 ;   (let ((s (tree->stree t1)))
@@ -13,7 +14,7 @@
 ;              (string-space-at? s i)))))
 
 ; (define (near-space?/after p1)
-;   (and-let* ((t2 (tm-subtree (cDr p1)))
+;   (and-let* ((t2 (path->tree (cDr p1)))
 ;              ((tree-func? t2 'concat))
 ;              (i (cAr p1))
 ;              ((< (1+ i) (tree-arity t2)))
@@ -25,7 +26,7 @@
 ;   (let* ((p (cursor-path))
 ;          (p1 (cDr p))
 ;          (i (cAr p))
-;          (t1 (tm-subtree p1)))
+;          (t1 (path->tree p1)))
 ;     (cond ((tree-atomic? t1) (near-space?/leaf t1 i))
 ;           ((== i 1) (near-space?/after p1))
 ;           (else #f))))
@@ -44,13 +45,13 @@
 (define (at-start?)
   (let ((p (but-last (cursor-path)))
 	(i (last (cursor-path))))
-    (let ((t (tm-subtree p)))
+    (let ((t (path->tree p)))
       (and (tree-atomic? t) (zero? i)))))
 
 (define (before-space?)
   (let ((p (but-last (cursor-path)))
 	(i (last (cursor-path))))
-    (let ((t (tm-subtree p)))
+    (let ((t (path->tree p)))
       (cond ((tree-atomic? t) (before-space?/atomic t i))
 	    (else #f)))))
 
@@ -62,7 +63,7 @@
 (define (after-space?)
   (let ((p (but-last (cursor-path)))
 	(i (last (cursor-path))))
-    (let ((t (tm-subtree p)))
+    (let ((t (path->tree p)))
       (cond ((tree-atomic? t) (after-space?/atomic t i))
 	    (else #f)))))
 
@@ -73,8 +74,8 @@
 (define (move-next)
   (let ((p (but-last (cursor-path)))
 	(i (last (cursor-path))))
-    (let ((t (tm-subtree p)))
+    (let ((t (path->tree p)))
       (if (tree-atomic? t)
 	  (let ((s (tree->stree t)))
 	    (if (< i (string-length s))
-		(tm-go-to (rcons p (1+ i)))))))))
+		(go-to (rcons p (1+ i)))))))))

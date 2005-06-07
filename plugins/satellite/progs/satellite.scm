@@ -9,8 +9,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tree-func? t s)
-  (or (in? (object->string (tree-get-label t))  s)
-      (and (equal? 'expand (tree-get-label t))
+  (or (in? (object->string (tree-label t))  s)
+      (and (equal? 'expand (tree-label t))
 	   (in? (tree->string (tree-ref t 0)) s))))
 
 (define (tree-compound-arity t)
@@ -120,7 +120,7 @@
     "Environnement ou rien"))
 
 (define (go-to-nth-label listlabel n)
-  (tm-go-to (rcons
+  (go-to (rcons
 	     (search-nth-in-tree (buffer-tree) listlabel n) 
 	     0)))
 

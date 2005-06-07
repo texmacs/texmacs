@@ -18,8 +18,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Utility functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-func? t s)
-  (or (== s (symbol->string (tree-get-label t)))
-      (and (in? (tree-get-label t) '(expand var_expand hide_expand))
+  (or (== s (symbol->string (tree-label t)))
+      (and (in? (tree-label t) '(expand var_expand hide_expand))
            (== s (tree->string (tree-ref t 0))))))
 
 (tm-define (tree-compound-arity t)
@@ -104,7 +104,7 @@
 ; (define (find-next-em)
 ;   (let ((p+t (search-in-tree-from
 ; 	      (buffer-tree) (but-last (cursor-path)) "em" list)))
-;     (tm-go-to (rcons (first p+t) 0))
+;     (go-to (rcons (first p+t) 0))
 ;     (display-found-em p+t)))
 
 ; (define (find-all-em)

@@ -58,8 +58,8 @@
 (define (go-innermost-switch)
   (let ((p (search-innermost-switch)))
     (if p
-	(tm-go-to
-	 (if (== (tree-get-label (subtree (buffer-tree) p)) "document")
+	(go-to
+	 (if (== (tree-label (subtree (buffer-tree) p)) "document")
 	     (append p '(0 0))
 	     (rcons p 0))))))
 
@@ -77,22 +77,22 @@
 	(go-outermost-switch))))
 
 (define (go-this-switch)
-  (let ((p (tree-path (tree-innermost 'switch))))
+  (let ((p (tree->path (tree-innermost 'switch))))
     (if (pair? p)
-	(tm-go-to (append p '(1 0 0)))
-	(tm-go-to '(0 0)))))
+	(go-to (append p '(1 0 0)))
+	(go-to '(0 0)))))
 
 (define (go-outer-switch)
-  (let ((p (tree-path (tree-innermost 'switch))))
+  (let ((p (tree->path (tree-innermost 'switch))))
     (if (pair? p)
-	(tm-go-to (append p '(0)))))
+	(go-to (append p '(0)))))
   (go-this-switch))
 
 (define (go-inner-switch)
   (define (proc p t) p)
   (let ((old-p (cursor-path)))
     (go-this-switch)
-    (let ((p1 (tree-path (tree-innermost 'switch))))
+    (let ((p1 (tree->path (tree-innermost 'switch))))
       (let ((p2 (search-in-tree-from
 		 (if (null? p1)
 		     (buffer-tree)
@@ -100,6 +100,6 @@
 		 '() "switch" proc)))
 	(if p2
 	    (if (null? p1)
-		(tm-go-to (append p2 '(1 0 0)))
-		(tm-go-to (append p1 '(1) p2 '(1 0 0))))
-	    (tm-go-to old-p))))))
+		(go-to (append p2 '(1 0 0)))
+		(go-to (append p1 '(1) p2 '(1 0 0))))
+	    (go-to old-p))))))
