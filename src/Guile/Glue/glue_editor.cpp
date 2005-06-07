@@ -668,60 +668,6 @@ tmg_in_spell_modeP () {
 }
 
 SCM
-tmg_insideP (SCM arg1) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "inside?");
-
-  tree_label in1= scm_to_tree_label (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->inside (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_inside_withP (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside-with?");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "inside-with?");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->inside_with (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_tm_inside_which (SCM arg1) {
-  SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "tm-inside-which");
-
-  scheme_tree in1= scm_to_scheme_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= get_server()->get_editor()->inside_which (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_search_parent_upwards (SCM arg1) {
-  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "search-parent-upwards");
-
-  tree_label in1= scm_to_tree_label (arg1);
-
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->search_parent_upwards (in1);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
 tmg_search_start (SCM arg1) {
   SCM_ASSERT_BOOL (arg1, SCM_ARG1, "search-start");
 
@@ -780,6 +726,19 @@ tmg_spell_replace (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_insideP (SCM arg1) {
+  SCM_ASSERT_TREE_LABEL (arg1, SCM_ARG1, "inside?");
+
+  tree_label in1= scm_to_tree_label (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->get_editor()->inside (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
 }
 
 SCM
@@ -2942,15 +2901,12 @@ initialize_glue_editor () {
   gh_new_procedure ("in-search-mode?", (FN) tmg_in_search_modeP, 0, 0, 0);
   gh_new_procedure ("in-replace-mode?", (FN) tmg_in_replace_modeP, 0, 0, 0);
   gh_new_procedure ("in-spell-mode?", (FN) tmg_in_spell_modeP, 0, 0, 0);
-  gh_new_procedure ("inside?", (FN) tmg_insideP, 1, 0, 0);
-  gh_new_procedure ("inside-with?", (FN) tmg_inside_withP, 2, 0, 0);
-  gh_new_procedure ("tm-inside-which", (FN) tmg_tm_inside_which, 1, 0, 0);
-  gh_new_procedure ("search-parent-upwards", (FN) tmg_search_parent_upwards, 1, 0, 0);
   gh_new_procedure ("search-start", (FN) tmg_search_start, 1, 0, 0);
   gh_new_procedure ("search-button-next", (FN) tmg_search_button_next, 0, 0, 0);
   gh_new_procedure ("replace-start", (FN) tmg_replace_start, 3, 0, 0);
   gh_new_procedure ("spell-start", (FN) tmg_spell_start, 0, 0, 0);
   gh_new_procedure ("spell-replace", (FN) tmg_spell_replace, 1, 0, 0);
+  gh_new_procedure ("inside?", (FN) tmg_insideP, 1, 0, 0);
   gh_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
   gh_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);

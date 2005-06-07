@@ -26,30 +26,30 @@
   (insert-go-to '(doc-data (doc-title "")) '(0 0 0)))
 
 (tm-define (make-doc-data-element l)
-  (let* ((p (search-parent-upwards 'doc-data))
-	 (q (rcons (cDr p) (+ (cAr p) 1))))
-    (cond ((== l 'doc-author-data)
-	   (tm-insert q `(doc-data (,l (author-name ""))))
-	   (tm-go-to (rcons* q 0 0 0)))
-	  ((== l 'doc-note)
-	   (tm-insert q `(doc-data (,l (document ""))))
-	   (tm-go-to (rcons* q 0 0 0)))
-	  ((in? l doc-data-inactive-tags)
-	   (tm-insert q `(doc-data (doc-inactive (,l ""))))
-	   (tm-go-to (rcons* q 0 0 0)))
-	  (else
-	   (tm-insert q `(doc-data (,l "")))
-	   (tm-go-to (rcons* q 0 0))))))
+  (with-innermost t 'doc-data
+    (with pos (1+ (tree-down-index t))
+      (cond ((== l 'doc-author-data)
+	     (tree-insert t pos `(doc-data (,l (author-name ""))))
+	     (tree-go-to t pos 0 0 0))
+	    ((== l 'doc-note)
+	     (tree-insert t pos `(doc-data (,l (document ""))))
+	     (tree-go-to t pos 0 0 0))
+	    ((in? l doc-data-inactive-tags)
+	     (tree-insert t pos `(doc-data (doc-inactive (,l ""))))
+	     (tree-go-to t pos 0 0 0))
+	    (else
+	     (tree-insert t pos `(doc-data (,l "")))
+	     (tree-go-to t pos 0 0))))))
 
 (tm-define (make-author-data-element l)
-  (let* ((p (search-parent-upwards 'doc-author-data))
-	 (q (rcons (cDr p) (+ (cAr p) 1))))
-    (cond ((in? l '(author-address author-note))
-	   (tm-insert q `(doc-author-data (,l (document ""))))
-	   (tm-go-to (rcons* q 0 0 0)))
-	  (else
-	   (tm-insert q `(doc-author-data (,l "")))
-	   (tm-go-to (rcons* q 0 0))))))
+  (with-innermost t 'doc-author-data
+    (with pos (1+ (tree-down-index t))
+      (cond ((in? l '(author-address author-note))
+	     (tree-insert t pos `(doc-author-data (,l (document ""))))
+	     (tree-go-to t pos 0 0 0))
+	    (else
+	     (tree-insert t pos `(doc-author-data (,l "")))
+	     (tree-go-to t pos 0 0))))))
 
 (tm-define (kbd-return)
   (:inside title)

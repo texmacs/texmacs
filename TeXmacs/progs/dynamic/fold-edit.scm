@@ -137,7 +137,7 @@
   (with-innermost t 'switch
     (let ((pos  (switch-get-position))
 	  (last (switch-get-last)))
-      (cond ((= last 0) (tree-set! t "") (tree-correct (tree-parent t)))
+      (cond ((= last 0) (tree-set! t "") (tree-correct (tree-up t)))
 	    ((string? where) (switch-remove (switch-pos where pos last)))
 	    (else (switch-unselect)
 		  (tree-remove (tree-ref t 1) where 1)

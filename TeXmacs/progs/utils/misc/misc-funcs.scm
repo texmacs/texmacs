@@ -94,10 +94,6 @@
 (tm-define-macro (with-active-buffer . l)
   (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
 
-(tm-define (inside-which l)
-  (with r (tm-inside-which l)
-    (if (== r "") #f (string->symbol r))))
-
 (tm-property (replace-start-forward what by)
   (:argument what "Replace")
   (:argument by "Replace by"))

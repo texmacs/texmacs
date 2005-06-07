@@ -23,6 +23,13 @@
 	  (else (receive (first last) (rec (cdr l))
 		  (values (cons (car l) first) last))))))
 
+(define-public (list-starts? l what)
+  "Test whether @what is a prefix of @l."
+  (cond ((null? what) #t)
+	((null? l) #f)
+	(else (and (== (car l) (car what))
+		   (list-starts? (cdr l) (cdr what))))))
+
 (define-public (quit-TeXmacs-scheme) (noop))
 
 (define-public-macro (on-entry . cmd)
