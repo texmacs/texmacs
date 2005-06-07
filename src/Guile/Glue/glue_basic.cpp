@@ -591,9 +591,9 @@ tmg_path_less_eqP (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_cursor_start (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
+tmg_path_start (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-start");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-start");
 
   content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
@@ -606,9 +606,9 @@ tmg_cursor_start (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_cursor_end (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
+tmg_path_end (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-end");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-end");
 
   content in1= scm_to_content (arg1);
   path in2= scm_to_path (arg2);
@@ -2374,8 +2374,8 @@ initialize_glue_basic () {
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
   gh_new_procedure ("path-less-eq?", (FN) tmg_path_less_eqP, 2, 0, 0);
-  gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
-  gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
+  gh_new_procedure ("path-start", (FN) tmg_path_start, 2, 0, 0);
+  gh_new_procedure ("path-end", (FN) tmg_path_end, 2, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

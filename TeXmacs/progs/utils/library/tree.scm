@@ -275,8 +275,8 @@
   (let* ((u (apply tree-ref (cons t (cDr l))))
 	 (i (cAr l)))
     (cond ((not u) (noop))
-	  ((== i :start) (go-to (cursor-start (root-tree) (tree->path u))))
-	  ((== i :end) (go-to (cursor-end (root-tree) (tree->path u))))
+	  ((== i :start) (go-to (path-start (root-tree) (tree->path u))))
+	  ((== i :end) (go-to (path-end (root-tree) (tree->path u))))
 	  ((integer? i) (go-to (rcons (tree->path u) i)))
 	  (else (noop)))))
 

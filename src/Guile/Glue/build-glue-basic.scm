@@ -68,8 +68,8 @@
   (path-inf-eq? path_inf_eq (bool path path))
   (path-less? path_less (bool path path))
   (path-less-eq? path_less_eq (bool path path))
-  (cursor-start start (path content path))
-  (cursor-end end (path content path))
+  (path-start start (path content path))
+  (path-end end (path content path))
 
   ;; routines for strings
   (string-number? is_double (bool string))
