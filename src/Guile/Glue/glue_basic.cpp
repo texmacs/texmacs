@@ -1484,6 +1484,36 @@ tmg_locase_all (SCM arg1) {
 }
 
 SCM
+tmg_string_union (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-union");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-union");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= string_union (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_minus (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-minus");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-minus");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= string_minus (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_escape_quotes (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
 
@@ -2411,6 +2441,8 @@ initialize_glue_basic () {
   gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
   gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);
   gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
+  gh_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
+  gh_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
   gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
   gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);

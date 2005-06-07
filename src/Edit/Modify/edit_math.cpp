@@ -223,65 +223,24 @@ edit_math_rep::make_tree () {
   }
 }
 
-bool
-edit_math_rep::inside_tree () {
-  int i;
-  return !nil (get_tree (i));
-}
-
-path
-edit_math_rep::get_tree (int& i) {
-  path p= tp;
-  while (true) {
-    path q= path_up (p);
-    if (!(rp < q)) return path ();
-    tree t= subtree (et, q);
-    if (is_func (t, TABLE)) return path ();
-    if (is_func (t, TREE)) {
-      i= last_item (p);
-      return q;
-    }
-    p= q;
-  }
-}
-
-void
-edit_math_rep::branch_insert (bool at_right) {
-  int i;
-  path p= get_tree (i);
-  if (nil (p)) return;
-  if (i==0) {
-    if (at_right) i= N (subtree (et, p));
-    else i= 1;
-  }
-  else if (at_right) i++;
-  insert (p * i, tree (TREE, ""));
-  go_to (p * path (i, 0));
-}
-
-void
-edit_math_rep::branch_delete (bool forward) {
-  int i;
-  path p= get_tree (i);
-  if (nil (p) || (i==0)) return;
-  if (N (subtree (et, p)) == 2) {
-    assign (p, subtree (et, p * 0));
-    correct (path_up (p));
-  }
-  else {
-    remove (p * i, 1);
-    if (forward) {
-      if (i == N (subtree (et, p))) go_to_end (p);
-      else go_to_start (p * i);
-    }
-  }
-}
-
 void
 edit_math_rep::back_in_tree (tree t, path p, bool forward) {
   int i= last_item (p);
   if (i>0) {
-    if ((i>0) && (t[i] == "")) branch_delete (forward);
+    if ((i>0) && (t[i] == "")) {
+      path q= path_up (p);
+      if (N (t) == 2) {
+	assign (q, t[0]);
+	correct (path_up (q));
+      }
+      else {
+	remove (q * i, 1);
+	if (forward) {
+	  if (i == N (subtree (et, q))) go_to_end (q);
+	  else go_to_start (q * i);
+	}
+      }
+    }
     else if (!forward) go_to_end (path_up (p) * (i-1));
     else if (i == N(t)-1) go_to_end (path_up (p));
     else go_to_start (path_up (p) * (i+1));

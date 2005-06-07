@@ -35,6 +35,8 @@ string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);
 string locase_all (string s);
+string string_union (string s1, string s2);
+string string_minus (string s1, string s2);
 string iso_to_koi8 (string s);
 string koi8_to_iso (string s);
 string iso_to_koi8uk (string s);

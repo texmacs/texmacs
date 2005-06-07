@@ -267,8 +267,6 @@ public:
   virtual void make_htab (string spc) = 0;
   virtual void make_move (string x, string y) = 0;
   virtual void make_resize (string x1, string y1, string x2, string y2) = 0;
-  virtual void make_insertion (string s) = 0;
-  virtual void position_insertion (string what, bool flag) = 0;
   virtual void make_postscript (string file_name, bool link,
 				string w, string h,
 				string x1, string y1,
@@ -288,10 +286,6 @@ public:
   virtual void make_wide_under (string wide) = 0;
   virtual void make_neg () = 0;
   virtual void make_tree () = 0;
-
-  virtual bool inside_tree () = 0;
-  virtual void branch_insert (bool at_right) = 0;
-  virtual void branch_delete (bool forward) = 0;
 
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;

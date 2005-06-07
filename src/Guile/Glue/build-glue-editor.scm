@@ -111,8 +111,6 @@
   (make-var-vspace-after make_vspace_after (void string string string))
   (make-move make_move (void string string))
   (make-resize make_resize (void string string string string))
-  (make-insertion make_insertion (void string))
-  (position-insertion position_insertion (void string bool))
   (make-postscript make_postscript
     (void string bool string string string string string string))
 
@@ -129,9 +127,6 @@
   (make-var-sqrt make_var_sqrt (void))
   (make-neg make_neg (void))
   (make-tree make_tree (void))
-  (inside-tree? inside_tree (bool))
-  (branch-insert branch_insert (void bool))
-  (branch-delete branch_delete (void bool))
 
   (make-subtable make_subtable (void))
   (table-disactivate table_disactivate (void))
