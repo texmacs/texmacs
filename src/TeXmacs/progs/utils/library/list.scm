@@ -388,13 +388,8 @@
   (:type (forall T (-> T (list T) bool)))
   (:synopsis "Test whether @x occurs among the elements of @l."))
 
-(tm-define (list-starts? l what)
-  (:type (forall T (-> (list T) (list T) bool)))
-  (:synopsis "Test whether @what is a prefix of @l.")
-  (cond ((null? what) #t)
-	((null? l) #f)
-	(else (and (== (car l) (car what))
-		   (list-starts? (cdr l) (cdr what))))))
+(tm-property (list-starts? l what)
+  (:type (forall T (-> (list T) (list T) bool))))
 
 (tm-define (list-replace l what by)
   (:type (forall T (-> (list T) (list T) (list T) (list T))))

@@ -85,19 +85,19 @@
 
 (tm-define (structured-insert-up)
   (:inside tree)
-  (let* ((q (search-parent-upwards 'tree))
-	 (l (cAr q))
-	 (p (if (== l 0) (cDr q) q)))
-    (tm-assign p `(tree "" ,(tm-subtree p)))
-    (tm-go-to (rcons* p 0 0))))
+  (with-innermost t 'tree
+    (if (!= (tree-down-index t) 0) (set! t (tree-down t)))
+    (tree-set! t `(tree "" ,t))
+    (tree-go-to t 0 0)))
 
 (tm-define (structured-insert-down)
   (:inside tree)
-  (let* ((q (search-parent-upwards 'tree))
-	 (l (cAr q))
-	 (p (if (== l 0) (cDr q) q)))
-    (tm-insert-node (rcons p 0) '(tree ""))
-    (tm-go-to (rcons* p 1 0))))
+  (with-innermost t 'tree
+    (if (== (tree-down-index t) 0) (branch-insert #t)
+	(begin
+	  (set! t (tree-down t))
+	  (tree-set! t `(tree ,t ""))
+	  (tree-go-to t 1 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions

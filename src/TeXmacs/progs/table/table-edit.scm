@@ -286,14 +286,14 @@
 (define (table-inside-sub? t1 t2)
   (or (== t1 t2)
       (and (in? (tree-get-label t2) '(tformat document))
-	   (table-inside-sub? t1 (tree-parent t2)))))
+	   (table-inside-sub? t1 (tree-up t2)))))
 
 (tm-define (table-inside? which)
   (let* ((t1 (tree-innermost which))
 	 (t2 (tree-innermost 'table)))
     (and t1 t2
 	 (tree-inside? t2 t1)
-	 (table-inside-sub? t1 (tree-parent t2)))))
+	 (table-inside-sub? t1 (tree-up t2)))))
 
 (tm-define (table-toggle-number-equation)
   (cond ((inside? 'equation) (variant-replace 'equation 'equation*))

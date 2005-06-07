@@ -16,6 +16,45 @@
   (:use (utils library list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation inside trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-up t)
+  (:type (-> tree tree))
+  (:synopsis "Get the parent of @t.")
+  (with p (tree-path t)
+    (and (pair? p) (tm-subtree (cDr p)))))
+
+(tm-define (tree-down t)
+  (:type (-> tree tree))
+  (:synopsis "Get the child where the cursor is.")
+  (let ((p (tree-path t))
+	(q (cDr (tm-where))))
+    (and (list-starts? (cDr q) p)
+	 (tm-subtree (list-head q (1+ (length p)))))))
+
+(tm-define (tree-index t)
+  (:type (-> tree int))
+  (:synopsis "Get the child number of @t in its parent.")
+  (with p (tree-path t)
+    (and (pair? p) (cAr p))))
+
+(tm-define (tree-down-index t)
+  (:type (-> tree int))
+  (:synopsis "Get the number the child where the cursor is.")
+  (let ((p (tree-path t))
+	(q (cDr (tm-where))))
+    (and (list-starts? (cDr q) p)
+	 (list-ref q (length p)))))
+
+(tm-define (tree-inside? t ref)
+  (:type (-> tree tree bool))
+  (:synopsis "Is @t inside @ref?")
+  (let ((p (tree-path ref))
+	(q (tree-path t)))
+    (and p q (list-starts? q p))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying the document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -115,76 +154,6 @@
        (set! ,ref (tm-subtree ,var)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities for trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tree-parent t)
-  (:type (-> tree tree))
-  (:synopsis "Get the parent of @t.")
-  (with p (tree-path t)
-    (if (pair? p) (tm-subtree (cDr p)) #f)))
-
-(tm-define (tree-inside? t ref)
-  (:type (-> tree tree bool))
-  (:synopsis "Is @t inside @ref?")
-  (let ((p (tree-path ref))
-	(q (tree-path t)))
-    (and p q (list-starts? q p))))
-
-(tm-define (tree-ref t . l)
-  (:synopsis "Access a subtree of @t according to @l.")
-  (if (and (list-1? l) (integer? (car l)))
-      (tree-get-child t (car l))
-      (with r (tm-select t l)
-	(if (null? r) #f
-	    (car r)))))
-
-(tm-define (tree-set t . args)
-  (:synopsis "Set a subtree of @t to a new value according to @l.")
-  (let ((l (cDr args))
-	(u (cAr args)))
-    (with r (tm-select t l)
-      (if (nnull? r)
-	  (tree-set-diff (car r) u)))))
-
-(tm-define-macro (tree-set! t . l)
-  (if (list-1? l)
-      `(tree-set-diff! ,t ,@l)
-      `(tree-set ,t ,@l)))
-
-(define (tree-innermost-sub p labs)
-  (with t (tm-subtree p)
-    (cond ((and (tm-compound? t) (in? (tree-get-label t) labs)) t)
-	  ((or (null? p) (== p (the-buffer-path))) #f)
-	  (else (tree-innermost-sub (cDr p) labs)))))
-
-(tm-define (tree-innermost . l)
-  (:type (-> symbol tree))
-  (:synopsis "Search upwards from a tree or the cursor position.")
-  (let* ((p (cDDr (tm-where)))
-	 (x (cAr l))
-	 (labs (if (list? x) x (list x))))
-    (tree-innermost-sub p labs)))
-
-(tm-define-macro (with-innermost t lab . body)
-  `(let ((,t (tree-innermost ,lab)))
-     (if ,t (begin ,@body))))
-
-(tm-define (tree-go-to t . l)
-  (:synopsis "Go to a position determined by @l inside the tree @t.")
-  (let* ((u (apply tree-ref (cons t (cDr l))))
-	 (i (cAr l)))
-    (cond ((not u) (noop))
-	  ((== i :start) (tm-go-to (tm-start (tree-path u))))
-	  ((== i :end) (tm-go-to (tm-end (tree-path u))))
-	  ((integer? i) (tm-go-to (rcons (tree-path u) i)))
-	  (else (noop)))))
-
-(tm-define (tree-correct t)
-  (with p (tree-path t)
-    (if p (tm-correct p))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to use the above modification routines in an intelligent way
 ;; via a unique assignment routine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -209,7 +178,7 @@
   (if (or (== t ref) (not (tree-inside? t ref)))
       (tree-focus ref l)
       (with r (tree-focus t l)
-	(if r r (tree-get-focus ref (tree-parent t) l)))))
+	(if r r (tree-get-focus ref (tree-up t) l)))))
 
 (tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
@@ -248,6 +217,68 @@
     `(with ,var (tree-path ,ref)
        (tree-set-diff ,ref ,t)
        (set! ,ref (tm-subtree ,var)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Utilities for trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-ref t . l)
+  (:synopsis "Access a subtree of @t according to @l.")
+  (if (and (list-1? l) (integer? (car l)))
+      (tree-get-child t (car l))
+      (with r (tm-select t l)
+	(if (null? r) #f
+	    (car r)))))
+
+(tm-define (tree-set t . args)
+  (:synopsis "Set a subtree of @t to a new value according to @l.")
+  (let ((l (cDr args))
+	(u (cAr args)))
+    (with r (tm-select t l)
+      (if (nnull? r)
+	  (tree-set-diff (car r) u)))))
+
+(tm-define-macro (tree-set! t . l)
+  (if (list-1? l)
+      `(tree-set-diff! ,t ,@l)
+      `(tree-set ,t ,@l)))
+
+(define (tree-innermost-sub p labs)
+  (with t (tm-subtree p)
+    (cond ((and (tm-compound? t) (in? (tree-get-label t) labs)) t)
+	  ((or (null? p) (== p (the-buffer-path))) #f)
+	  (else (tree-innermost-sub (cDr p) labs)))))
+
+(tm-define (tree-innermost l)
+  (:type (-> symbol tree))
+  (:synopsis "Search upwards from a tree or the cursor position.")
+  (let* ((p (cDDr (tm-where)))
+	 (labs (if (list? l) l (list l))))
+    (tree-innermost-sub p labs)))
+
+(tm-define (inside-which l)
+  (:type (-> (list symbol) symbol))
+  (:synopsis "Get innermost node type among possibilities in @l.")
+  (with t (tree-innermost l)
+    (and t (tree-get-label t))))
+
+(tm-define-macro (with-innermost t lab . body)
+  `(let ((,t (tree-innermost ,lab)))
+     (if ,t (begin ,@body))))
+
+(tm-define (tree-go-to t . l)
+  (:synopsis "Go to a position determined by @l inside the tree @t.")
+  (let* ((u (apply tree-ref (cons t (cDr l))))
+	 (i (cAr l)))
+    (cond ((not u) (noop))
+	  ((== i :start) (tm-go-to (tm-start (tree-path u))))
+	  ((== i :end) (tm-go-to (tm-end (tree-path u))))
+	  ((integer? i) (tm-go-to (rcons (tree-path u) i)))
+	  (else (noop)))))
+
+(tm-define (tree-correct t)
+  (with p (tree-path t)
+    (if p (tm-correct p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessing special trees in scheme scripts
