@@ -277,7 +277,7 @@
   ;; path of the first locus in the buffer whose id is @id
   ;; #f if no locus with the given id is found in the buffer
   (let sub ((p '()))
-    (search-in-tree-from (the-buffer) p 'locus
+    (search-in-tree-from (buffer-tree) p 'locus
                          (lambda (p t)
                            (if (== id (locus-id (tree->stree t)))
                                (reverse (tree-ip t))

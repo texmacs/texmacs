@@ -15,7 +15,7 @@
 (define (substitute-substitute)
   (import-from (utils plugins plugin-cmd))
   (if (selection-active-any?)
-      (let* ((t (tree->stree (the-selection)))
+      (let* ((t (tree->stree (selection-tree)))
 	     (u (plugin-eval "substitute" "default" t)))
 	(clipboard-cut "primary")
 	(insert (stree->tree u)))))

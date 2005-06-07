@@ -2064,60 +2064,6 @@ tmg_footer_eval (SCM arg1) {
 }
 
 SCM
-tmg_the_line () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_line ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_the_selection () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->selection_get ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_the_root () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_root ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_the_buffer () {
-  // SCM_DEFER_INTS;
-  tree out= get_server()->get_editor()->the_buffer ();
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_the_path () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->the_path ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_the_buffer_path () {
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->the_buffer_path ();
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
 tmg_texmacs_exec (SCM arg1) {
   SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "texmacs-exec");
 
@@ -2149,7 +2095,61 @@ tmg_change_time () {
 }
 
 SCM
-tmg_the_mutator_path () {
+tmg_root_tree () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->the_root ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_buffer_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->the_buffer_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_buffer_tree () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->the_buffer ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_paragraph_tree () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->the_line ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_cursor_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->the_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_selection_tree () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->selection_get ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
+tmg_mutator_path () {
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->get_mutator_path ();
   // SCM_ALLOW_INTS;
@@ -2158,21 +2158,12 @@ tmg_the_mutator_path () {
 }
 
 SCM
-tmg_the_mutator_time () {
+tmg_mutator_time () {
   // SCM_DEFER_INTS;
   int out= get_server()->get_editor()->get_mutator_time ();
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
-}
-
-SCM
-tmg_process_input () {
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->process_input ();
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
 }
 
 SCM
@@ -2202,6 +2193,15 @@ tmg_start_input (SCM arg1, SCM arg2, SCM arg3) {
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->start_input (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_process_input () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->process_input ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -3015,20 +3015,20 @@ initialize_glue_editor () {
   gh_new_procedure ("export-postscript", (FN) tmg_export_postscript, 1, 0, 0);
   gh_new_procedure ("export-pages-postscript", (FN) tmg_export_pages_postscript, 3, 0, 0);
   gh_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
-  gh_new_procedure ("the-line", (FN) tmg_the_line, 0, 0, 0);
-  gh_new_procedure ("the-selection", (FN) tmg_the_selection, 0, 0, 0);
-  gh_new_procedure ("the-root", (FN) tmg_the_root, 0, 0, 0);
-  gh_new_procedure ("the-buffer", (FN) tmg_the_buffer, 0, 0, 0);
-  gh_new_procedure ("the-path", (FN) tmg_the_path, 0, 0, 0);
-  gh_new_procedure ("the-buffer-path", (FN) tmg_the_buffer_path, 0, 0, 0);
   gh_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
   gh_new_procedure ("idle-time", (FN) tmg_idle_time, 0, 0, 0);
   gh_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
-  gh_new_procedure ("the-mutator-path", (FN) tmg_the_mutator_path, 0, 0, 0);
-  gh_new_procedure ("the-mutator-time", (FN) tmg_the_mutator_time, 0, 0, 0);
-  gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
+  gh_new_procedure ("root-tree", (FN) tmg_root_tree, 0, 0, 0);
+  gh_new_procedure ("buffer-path", (FN) tmg_buffer_path, 0, 0, 0);
+  gh_new_procedure ("buffer-tree", (FN) tmg_buffer_tree, 0, 0, 0);
+  gh_new_procedure ("paragraph-tree", (FN) tmg_paragraph_tree, 0, 0, 0);
+  gh_new_procedure ("cursor-path", (FN) tmg_cursor_path, 0, 0, 0);
+  gh_new_procedure ("selection-tree", (FN) tmg_selection_tree, 0, 0, 0);
+  gh_new_procedure ("mutator-path", (FN) tmg_mutator_path, 0, 0, 0);
+  gh_new_procedure ("mutator-time", (FN) tmg_mutator_time, 0, 0, 0);
   gh_new_procedure ("make-session", (FN) tmg_make_session, 2, 0, 0);
   gh_new_procedure ("start-input", (FN) tmg_start_input, 3, 0, 0);
+  gh_new_procedure ("process-input", (FN) tmg_process_input, 0, 0, 0);
   gh_new_procedure ("session-use-math-input", (FN) tmg_session_use_math_input, 1, 0, 0);
   gh_new_procedure ("session-math-input?", (FN) tmg_session_math_inputP, 0, 0, 0);
   gh_new_procedure ("session-go-up", (FN) tmg_session_go_up, 0, 0, 0);

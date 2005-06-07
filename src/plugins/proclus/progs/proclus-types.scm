@@ -50,7 +50,7 @@
    (init-env-tree "proclus-active-types" (list->tuple types))))
 
 (define (types-tree)
-  (transform locus? (tree->stree (the-buffer))))
+  (transform locus? (tree->stree (buffer-tree))))
 
 (define (type? x)
   (and (pair? x)

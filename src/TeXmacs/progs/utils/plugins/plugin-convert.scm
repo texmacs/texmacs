@@ -21,7 +21,7 @@
 (define current-plugin-input-stree "")
 
 (define (convert-test)
-  (set! current-plugin-input-stree (tree->stree (the-selection)))
+  (set! current-plugin-input-stree (tree->stree (selection-tree)))
   (write (with-output-to-string plugin-input-caller))
   (display "\n"))
 
