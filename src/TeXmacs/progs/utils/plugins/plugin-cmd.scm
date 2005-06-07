@@ -77,10 +77,10 @@
     (if flag? (set! channel "error"))
     (let* ((doc1 (ahash-ref plugin-results handle))
 	   (doc2 (connection-read name session channel)))
-      (if (and (== (tree-get-label doc2) 'document)
+      (if (and (== (tree-label doc2) 'document)
 	       (== (tree-ref doc2 (- (tree-arity doc2) 1)) (string->tree "")))
 	  (set! doc2 (tree-range doc2 0 (- (tree-arity doc2) 1))))
-      (if (and (== (tree-get-label doc2) 'document)
+      (if (and (== (tree-label doc2) 'document)
 	       (> (tree-arity doc2) 0))
 	  (begin
 	    (if flag? (set! doc2 (tm->tree `(document (errput ,doc2)))))
@@ -107,10 +107,10 @@
       (cond ((not doc) (noop))
 	    ((plugin-async-active? handle)
 	     (if (<= t1 t2) (tree-set t doc)))
-	    ((and u (== (tree-get-label u) 'output))
+	    ((and u (== (tree-label u) 'output))
 	     (with (name session channel) (ahash-ref plugin-source handle)
 	       (tree-assign (tree-up t 2) doc)
-	       (start-input name session (tree-path u))))))))
+	       (start-input name session (tree->path u))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization

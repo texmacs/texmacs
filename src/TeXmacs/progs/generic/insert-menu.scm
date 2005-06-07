@@ -69,10 +69,10 @@
   ("Floating table" (begin (make-insertion "float") (make 'big-table))))
 
 (menu-bind position-float-menu
-  ("Top" (toggle-insertion-position "t"))
-  ("Here" (toggle-insertion-position "h"))
-  ("Bottom" (toggle-insertion-position "b"))
-  ("Other pages" (toggle-insertion-position-not "f")))
+  ("Top" (toggle-insertion-positioning "t"))
+  ("Here" (toggle-insertion-positioning "h"))
+  ("Bottom" (toggle-insertion-positioning "b"))
+  ("Other pages" (toggle-insertion-positioning-not "f")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Insert menu

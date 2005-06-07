@@ -28,18 +28,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (stree-at p)
-  (tree->stree (tm-subtree p)))
+  (tree->stree (path->tree p)))
 
 (define (get-env-stree var)
   (tree->stree (get-env-tree var)))
 
 (define (graphics-graphics-path)
   ;; path to innermost graphics tag
-  (let* ((p (cDr (tm-where)))
+  (let* ((p (cDr (cursor-path)))
 	 (t (stree-at p)))
     (if (func? t 'graphics) p
 	(with u (tree-innermost 'graphics)
-	  (and u (tree-path u))))))
+	  (and u (tree->path u))))))
 
 (define (graphics-path path)
   (if (or (null? path) (null? (cdr path)))
@@ -54,7 +54,7 @@
 
 (define (graphics-active-path)
   ;; path to active tag
-  (graphics-path (tm-where)))
+  (graphics-path (cursor-path)))
 
 (define (graphics-group-path)
   ;; path to innermost group
@@ -85,11 +85,11 @@
 
 (tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
-    (if p (tm-insert-with p var val))))
+    (if p (path-insert-with p var val))))
 
 (tm-define (graphics-remove-property var)
   (with p (graphics-graphics-path)
-    (if p (tm-remove-with p var))))
+    (if p (path-remove-with p var))))
 
 (define (graphics-cartesian-frame)
   (with frame (tree->stree (get-env-tree "gr-frame"))
@@ -249,7 +249,7 @@
 	  (graphics-fetch-grid-vars type #t)
        ;; FIXME: Remove this bloat with o1, o2, new-polar?, etc. when
        ;;   an appropriate means of synchronization will be available
-       ;;   for (tm-assign), etc.
+       ;;   for (path-assign), etc.
 	  (let* ((o1 graphics-current-center)
 		 (o2 graphics-current-step)
 		 (new-polar? #f)
@@ -303,8 +303,8 @@
 		(set! nsubds 1))
 	 ;; FIXME: The difference between 'default', 'grid-change'
 	 ;;   and 'grid-aspect-change' is because currently, the
-	 ;;   updates with (tm-assign), etc., are asynchronous.
-	 ;;   When the grid has been (tm-assign)-ed in (graphics-set-grid),
+	 ;;   updates with (path-assign), etc., are asynchronous.
+	 ;;   When the grid has been (path-assign)-ed in (graphics-set-grid),
 	 ;;   the (graphics-fetch-grid-vars) below fetches the not
 	 ;;   yet updated version of the grid, and this is wrong.
 	 ;;   On the other hand, when (graphics-set-edit-grid) is
@@ -690,12 +690,12 @@
 (define (graphics-group-insert-bis t go-into)
   (with p (graphics-group-path)
     (if p (with n (- (length (stree-at p)) 1)
-	    (tm-insert (rcons p n) (list 'tuple t))
+	    (path-insert (rcons p n) (list 'tuple t))
 	    (if (func? t 'with)
-		(tm-go-to (append p (list n (- (length t) 2) 1)))
+		(go-to (append p (list n (- (length t) 2) 1)))
 		(if (and go-into (func? t 'text-at))
-		    (tm-go-to (append p (list n 0 0)))
-		    (tm-go-to (append p (list n 1)))))))))
+		    (go-to (append p (list n 0 0)))
+		    (go-to (append p (list n 1)))))))))
 
 (define (graphics-group-insert t)
   (graphics-group-insert-bis t #t))
@@ -710,7 +710,7 @@
 (define (graphics-group-start)
   (graphics-finish)
   (with p (graphics-group-path)
-    (if p (tm-go-to (rcons p 1)))))
+    (if p (go-to (rcons p 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the active tag
@@ -718,11 +718,11 @@
 
 (define (graphics-object path)
   (with p (graphics-path path)
-    (if p (tree->stree (tm-subtree p)) #f)))
+    (if p (tree->stree (path->tree p)) #f)))
 
 (define (graphics-active-object)
   (with p (graphics-active-path)
-    (if p (tree->stree (tm-subtree p)) #f)))
+    (if p (tree->stree (path->tree p)) #f)))
 
 (define (graphics-active-type)
   (with t (graphics-active-object)
@@ -797,8 +797,8 @@
 (define (graphics-active-assign t)
   (with p (graphics-active-path)
     (if p (begin
-	    (tm-assign p t)
-	    (tm-go-to (rcons p 1))))))
+	    (path-assign p t)
+	    (go-to (rcons p 1))))))
 
 (define (graphics-active-set-tag l)
   (with t (graphics-active-object)
@@ -807,8 +807,8 @@
 (define (graphics-active-insert t)
   (with p (graphics-active-path)
     (if p (with n (- (length (stree-at p)) 1)
-	    (tm-insert (rcons p n) (list 'tuple t))
-	    (tm-go-to (rcons p 1))))))
+	    (path-insert (rcons p n) (list 'tuple t))
+	    (go-to (rcons p 1))))))
 
 (define (graphics-object-root-path p)
   (let* ((q (search-upwards-from p 'with))
@@ -819,7 +819,7 @@
 	path))
     
 (define (graphics-remove p)
-  (tm-remove (graphics-object-root-path p) 1))
+  (path-remove (graphics-object-root-path p) 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for calculating with the graphical object
@@ -1249,7 +1249,7 @@
 	       (let* ((,obj (cadr o))
 		      (,no current-point-no)
 		      (,edge current-edge-sel?)
-		      (,path (cDr (tm-where))))
+		      (,path (cDr (cursor-path))))
 		    ,(cons 'begin body))
 	       (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
 		   (display* "Uncaptured " ,msg " " ,x ", " ,y "\n"))))
@@ -1279,9 +1279,9 @@
 	(begin
 	  (if (== (state-ref graphics-first-state 'graphics-action)
 		   'start-move)
-	      (with p (tm-where)
+	      (with p (cursor-path)
 		(unredoable-undo)
-		(tm-go-to p)))))
+		(go-to p)))))
     (graphics-reset-state)
     (graphics-forget-states))
    ((== cmd 'undo)
@@ -1376,7 +1376,7 @@
       (point_left-button x y p obj 1 edge)
       (begin
 	 (if (event-exists? 'text-at 'left-button 1)
-	     (tm-go-to (car (select-first (s2i x) (s2i y))))))))
+	     (go-to (car (select-first (s2i x) (s2i y))))))))
 
 ;; Move
 (define (point_move x y p obj no edge)
@@ -1389,7 +1389,7 @@
 	  (if edge no #f)))
       (begin
 	(create-graphical-object obj p 'points (if edge no #f))
-	(tm-go-to (rcons p 1)))))
+	(go-to (rcons p 1)))))
 
 (define (text-at_move x y p obj no edge)
   (if (and (not sticky-point) (event-exists? 'text-at 'left-button 1))

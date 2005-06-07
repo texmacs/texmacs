@@ -21,14 +21,14 @@
   (and (tree? t) (tree-compound? t)))
 
 (define-public (tree->list t)
-  (cons (tree-get-label t) (tree-get-children t)))
+  (cons (tree-label t) (tree-children t)))
 
 (define-public (tree-explode t)
   (if (atomic-tree? t)
       (tree->string t)
-      (cons (tree-get-label t) (tree-get-children t))))
+      (cons (tree-label t) (tree-children t))))
 
-(define-public (tree-path t)
+(define-public (tree->path t)
   (and (tree? t)
        (let ((ip (tree-ip t)))
 	 (if (== (cAr ip) -5) #f

@@ -141,7 +141,6 @@ public:
   virtual int  change_time () = 0;
 
   /* public routines from edit_cursor */
-  virtual path current_position () = 0;
   virtual void go_to (SI x, SI y) = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;
@@ -239,7 +238,6 @@ public:
   virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
-  virtual void assign_diff (path p, tree u) = 0;
   virtual int  position_new () = 0;
   virtual void position_delete (int i) = 0;
   virtual void position_set (int i, path p) = 0;

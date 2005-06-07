@@ -34,7 +34,7 @@
 
 (tm-define (has-source-link?)
   (and (init-has? "source-link")
-       (== 'tuple (tree-get-label (get-init-tree "source-link")))))
+       (== 'tuple (tree-label (get-init-tree "source-link")))))
 
 (tm-define (set-source-link! link)
   (init-env-tree "source-link" (list->tuple link)))

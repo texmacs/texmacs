@@ -65,15 +65,15 @@
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (position-default) (noop))
-(tm-define (position-left) (noop))
-(tm-define (position-right) (noop))
-(tm-define (position-up) (noop))
-(tm-define (position-down) (noop))
-(tm-define (position-start) (noop))
-(tm-define (position-end) (noop))
-(tm-define (position-top) (noop))
-(tm-define (position-bottom) (noop))
+(tm-define (positioning-default) (noop))
+(tm-define (positioning-left) (noop))
+(tm-define (positioning-right) (noop))
+(tm-define (positioning-up) (noop))
+(tm-define (positioning-down) (noop))
+(tm-define (positioning-start) (noop))
+(tm-define (positioning-end) (noop))
+(tm-define (positioning-top) (noop))
+(tm-define (positioning-bottom) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
@@ -193,25 +193,25 @@
     (insert-go-to (list 'float s pos (list 'document ""))
 		  (list 2 0 0))))
 
-(tm-define (insertion-position what flag)
+(tm-define (insertion-positioning what flag)
   (:synopsis "Allow/disallow the position @what for innermost float.")
   (with-innermost t 'float
     (let ((op (if flag string-union string-minus))
 	  (st (tree-ref t 1)))
       (tree-set st (op (tree->string st) what)))))
 
-(define (test-insertion-position? what)
+(define (test-insertion-positioning? what)
   (with-innermost t 'float
     (with c (string-ref what 0)
       (char-in-string? c (tree->string (tree-ref t 1))))))
 
-(define (not-test-insertion-position? s)
-  (not (test-insertion-position? s)))
+(define (not-test-insertion-positioning? s)
+  (not (test-insertion-positioning? s)))
 
-(tm-define (toggle-insertion-position what)
-  (:check-mark "v" test-insertion-position?)
-  (insertion-position what (not-test-insertion-position? what)))
+(tm-define (toggle-insertion-positioning what)
+  (:check-mark "v" test-insertion-positioning?)
+  (insertion-positioning what (not-test-insertion-positioning? what)))
 
-(tm-define (toggle-insertion-position-not s)
-  (:check-mark "v" not-test-insertion-position?)
-  (toggle-insertion-position s))
+(tm-define (toggle-insertion-positioning-not s)
+  (:check-mark "v" not-test-insertion-positioning?)
+  (toggle-insertion-positioning s))

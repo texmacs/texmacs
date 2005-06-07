@@ -234,14 +234,14 @@
 	(else (ovl-context-resolve-sub (cdr ovl) args t))))
 
 (define (ovl-context-resolve-path ovl args path)
-  (receive (match key) (ovl-context-resolve-sub ovl args (tm-subtree path))
+  (receive (match key) (ovl-context-resolve-sub ovl args (path->tree path))
     (cond (match match)
 	  ((or (== path (buffer-path)) (null? path)) #f)
 	  (else (ovl-context-resolve-path ovl args (cDr path))))))
 
 (define (ovl-context-resolve ovl args)
   (let* ((p (cDr (cursor-path)))
-	 (t (tm-subtree p))
+	 (t (path->tree p))
 	 (q (if (tm-compound? t) (cDr p) p)))
     (ovl-context-resolve-path ovl args q)))
 

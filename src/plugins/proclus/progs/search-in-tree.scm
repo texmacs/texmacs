@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tree-func? t s)
-  (eq? s (tree-get-label t)))
+  (eq? s (tree-label t)))
 
 (define (safe-tree-ref t i)
   (if (and (tree-compound? t)

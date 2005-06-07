@@ -57,8 +57,6 @@ public:
   void undo ();
   void redo ();
   void perform_undo_redo (tree x);
-  
-  void assign_diff (path p, tree u);
 
   int  position_new ();
   void position_delete (int i);

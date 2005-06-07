@@ -49,7 +49,6 @@ public:
   void go_page_down ();
 
   /* logical cursor movement */
-  path current_position ();
   void go_to (path p);
   void go_to_correct (path p);
   void go_to_start (path p);
