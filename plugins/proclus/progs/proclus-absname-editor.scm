@@ -22,7 +22,7 @@
 (tm-define (absname-editor)
   (switch-to-active-buffer
    "$TEXMACS_HOME_PATH/system/tmp/Proclus - Absolute names")
-  (tm-assign (the-buffer-path) (absname-editor/cons))
+  (tree-assign (buffer-tree) (absname-editor/cons))
   (pretend-save-buffer))
 
 (define (absname-editor/cons)

@@ -101,17 +101,16 @@
   (:secure #t)
   (with-mutator t
     (let* ((doc (plugin-async-retrieve handle))
-	   (t1 (the-mutator-time))
+	   (t1 (mutator-time))
 	   (t2 (ahash-ref plugin-time-stamps handle))
-	   (t^^ (tree-ref t :up :up))
-	   (t^^^ (tree-ref t :up :up :up)))
+	   (u (tree-up t 3)))
       (cond ((not doc) (noop))
 	    ((plugin-async-active? handle)
 	     (if (<= t1 t2) (tree-set t doc)))
-	    ((and t^^^ (== (tree-get-label t^^^) 'output))
+	    ((and u (== (tree-get-label u) 'output))
 	     (with (name session channel) (ahash-ref plugin-source handle)
-	       (tree-assign t^^ doc)
-	       (start-input name session (tree-path t^^^))))))))
+	       (tree-assign (tree-up t 2) doc)
+	       (start-input name session (tree-path u))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization

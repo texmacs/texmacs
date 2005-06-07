@@ -47,7 +47,7 @@
   (symbol->keyword (string->symbol (number->string x))))
 
 (define-public (always? . l) #t)
-(define-public (root? t) (== (reverse (tree-ip t)) (the-buffer-path)))
+(define-public (root? t) (== (reverse (tree-ip t)) (buffer-path)))
 (define-public (true? . l) #t)
 
 (define-public (save-object file value)

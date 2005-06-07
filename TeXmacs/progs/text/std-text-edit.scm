@@ -112,7 +112,7 @@
 
 (tm-define (make-header l)
   (go-end-of-header-element)
-  (if (!= (tree->stree (the-line)) "") (insert-return))
+  (if (!= (tree->stree (paragraph-tree)) "") (insert-return))
   (make l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -88,7 +88,7 @@
 (define (make-link)
   ;; Initiate footer interaction, control ends up in add-link, below.
   (set! active-buffer (get-strg-name-buffer))
-  (set! active-pos-temp (the-path))
+  (set! active-pos-temp (cursor-path))
   (ask-types add-link))
 
 ;; Creation of bidirectional links

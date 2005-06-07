@@ -86,14 +86,14 @@
 (tm-define (proclus-edit-loci)
   (let* ((src-absname (get-absolute-name))
 	 (src-buff (get-strg-name-buffer))
-	 (the-loci (extract locus? (tree->stree (the-buffer)))))
+	 (the-loci (extract locus? (tree->stree (buffer-tree)))))
     (if (nnull? the-loci)
 	(begin
           (new-buffer-clear (string-append src-buff " - loci"))
 	  (init-style "generic") ;; FIXME: combine styles from sources
 	  (init-add-package "proclus-links")
           (set-source-link! (make-root-link src-absname))
-	  (tm-assign (the-buffer-path) `(document ,@the-loci))
+	  (tree-assign (buffer-tree) `(document ,@the-loci))
           (pretend-save-buffer)))))
 
 (define (new-buffer-clear name)
@@ -142,7 +142,7 @@
     (init-add-package "proclus-links")
     (init-env "magnification" "1")
     (set-source-link! (locus-self-link the-locus))
-    (tm-assign (the-buffer-path) the-stree)
+    (tree-assign (buffer-tree) the-stree)
     (pretend-save-buffer)))
 
 (define (absname-error . args)
@@ -170,7 +170,7 @@
 		       `((section ,(car y))
 			 ,@(map (cut link->edit <> (cdr y))
 				(extract-loci (map link-id (cdr y))
-					      (tree->stree (the-buffer))))))))
+					      (tree->stree (buffer-tree))))))))
                    (sort-links-by-file
                     (select-links (locus-links the-locus)
                                   (active-types)))))))))

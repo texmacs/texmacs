@@ -19,19 +19,23 @@
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tree-up t)
+(tm-define (tree-up t . opt)
   (:type (-> tree tree))
   (:synopsis "Get the parent of @t.")
-  (with p (tree-path t)
-    (and (pair? p) (tm-subtree (cDr p)))))
+  (let* ((p   (tree-path t))
+	 (nr  (if (null? opt) 1 (car opt)))
+	 (len (if (list? p) (length p) -1)))
+    (and (>= len nr) (tm-subtree (list-head p (- len nr))))))
 
-(tm-define (tree-down t)
+(tm-define (tree-down t . opt)
   (:type (-> tree tree))
   (:synopsis "Get the child where the cursor is.")
-  (let ((p (tree-path t))
-	(q (cDr (tm-where))))
-    (and (list-starts? (cDr q) p)
-	 (tm-subtree (list-head q (1+ (length p)))))))
+  (let* ((p   (tree-path t))
+	 (q   (cDr (tm-where)))
+	 (nr  (if (null? opt) 1 (car opt))))
+    (and p (list-starts? (cDr q) p)
+	 (>= (length q) (+ (length p) nr))
+	 (tm-subtree (list-head q (+ (length p) nr))))))
 
 (tm-define (tree-index t)
   (:type (-> tree int))
@@ -246,7 +250,7 @@
 (define (tree-innermost-sub p labs)
   (with t (tm-subtree p)
     (cond ((and (tm-compound? t) (in? (tree-get-label t) labs)) t)
-	  ((or (null? p) (== p (the-buffer-path))) #f)
+	  ((or (null? p) (== p (buffer-path))) #f)
 	  (else (tree-innermost-sub (cDr p) labs)))))
 
 (tm-define (tree-innermost l)
@@ -281,25 +285,31 @@
     (if p (tm-correct p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Accessing special trees in scheme scripts
+;; Special trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define the-action-path '(-1))
-(tm-define (set-action-path p) (set! the-action-path p))
-(tm-define (has-action-path?) (!= the-action-path '(-1)))
-(tm-define (get-action-path) the-action-path)
+(tm-define (cursor-tree)
+  (tm-subtree (cDr (cursor-path))))
 
-(tm-define (tree-action)
-  (and (has-action-path?) (tm-subtree the-action-path)))
+(define the-action-path '(-1))
+
+(tm-define (action-set-path p)
+  (set! the-action-path p))
+
+(tm-define (action-path)
+  (and (!= the-action-path '(-1)) the-action-path))
+
+(tm-define (action-tree)
+  (and (!= the-action-path '(-1)) (tm-subtree the-action-path)))
 
 (tm-define-macro (with-action t . body)
-  `(with ,t (tree-action)
+  `(with ,t (action-tree)
      (if ,t (begin ,@body))))
 
-(tm-define (tree-mutator)
-  (with p (the-mutator-path)
+(tm-define (mutator-tree)
+  (with p (mutator-path)
     (if (nnull? p) (tm-subtree p) #f)))
 
 (tm-define-macro (with-mutator t . body)
-  `(with ,t (tree-mutator)
+  `(with ,t (mutator-tree)
      (if ,t (begin ,@body))))

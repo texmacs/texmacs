@@ -265,8 +265,9 @@ action_box_rep::action_box_rep (
 tree
 action_box_rep::action (tree t, SI x, SI y, SI delta) {
   if (t == filter) {
-    call ("set-action-path", reverse (vip));
+    call ("action-set-path", reverse (vip));
     cmd ();
+    call ("action-set-path", path (-1));
     return "done";
   }
   return change_box_rep::action (t, x, y, delta);

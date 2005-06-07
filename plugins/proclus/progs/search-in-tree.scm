@@ -100,9 +100,9 @@
 (tm-define (search-in-tree-previous p s)
   ;; Unclear... intent seems to be: return the path the last tree in the buffer
   ;; whose label is @s and which is before @p.
-  (let sub ((pred (search-in-tree (the-buffer) s))
+  (let sub ((pred (search-in-tree (buffer-tree) s))
             (pos (but-last (but-last p))))
-    (let ((p (search-in-tree-from (the-buffer)
+    (let ((p (search-in-tree-from (buffer-tree)
                                   (rcons pred 0)
                                   s
                                   (lambda (p t) p))))
