@@ -38,17 +38,17 @@
   ;; content by the result of @proc.
   (let ((t (stree->tree
 	    (htmltm-unary-document
-	     (proc (tree->stree (the-buffer)))))))
-    (tm-assign '() t)))
+	     (proc (tree->stree (buffer-tree)))))))
+    (tree-assign (buffer-tree) t)))
 
 (define (apply-on-new-buffer-stree proc)
   ;; Do as apply-on-buffer-stree but create a new buffer, do not overwrite the
   ;; current buffer.
   (let ((t (stree->tree
 	    (htmltm-unary-document
-	     (proc (tree->stree (the-buffer)))))))
+	     (proc (tree->stree (buffer-tree)))))))
     (new-buffer)
-    (tm-assign '() t)))
+    (tree-assign (buffer-tree) t)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	List utilities ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,9 +119,9 @@
 
 (define (switch-unselect-recursive-sub)
   (switch-unselect)
-  (let ((oldp (the-path)))
+  (let ((oldp (cursor-path)))
     (go-outer-switch)
-    (if (!= (oldp (the-path)))
+    (if (!= (oldp (cursor-path)))
 	(switch-unselect-recursive-sub))))
 
 (define (flatten-switch-sub x)

@@ -20,7 +20,7 @@
     (dynamic-wind
 	(lambda ()
 	  (set! marker (tm-position-new))
-	  (tm-position-set marker (the-path)))
+	  (tm-position-set marker (cursor-path)))
 	thunk
 	(lambda ()
 	  (tm-go-to (tm-position-get marker))
@@ -30,18 +30,18 @@
   (tm-go-to '(0 0)))
 
 (define (go-child i)
-  (let ((p (but-last (the-path))))
+  (let ((p (but-last (cursor-path))))
     (if (< i (tree-compound-arity (tm-subtree p)))
         (begin (tm-go-to (append p `(,i 0))) #t)
         #f)))
 
 (define (go-parent)
-  (let ((p (but-last (the-path))))
+  (let ((p (but-last (cursor-path))))
     (and (pair? p)
          (begin (tm-go-to (rcons (but-last p) 0)) #t))))
 
 (define (go-next-sibling)
-  (and-let* ((p (but-last (the-path)))
+  (and-let* ((p (but-last (cursor-path)))
              ((pair? p))
              (i (1+ (last p)))
              (pp (but-last p)))
@@ -60,10 +60,10 @@
            (go-preorder/backtrack))))
 
 (define (clear-output/sub)
-  (trace-display "the-path:" (the-path))
+  (trace-display "cursor-path:" (cursor-path))
   (if (go-preorder)
       (begin (and-let*
-            ((p (but-last (the-path)))
+            ((p (but-last (cursor-path)))
              ((tree-func? (tm-subtree p) "output"))
              (pp (but-last p))
              ((tree-func? (tm-subtree pp) "document"))

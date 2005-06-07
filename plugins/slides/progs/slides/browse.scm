@@ -30,9 +30,9 @@
       (begin
 	(switch-to "next")
 	(recursive-switch-to-sub "first"))
-      (let ((oldp (the-path)))
+      (let ((oldp (cursor-path)))
 	(go-outer-switch)
-	(if (!= (the-path) oldp)
+	(if (!= (cursor-path) oldp)
 	    (next-slide-sub)))))
 
 (define (prev-slide-sub)
@@ -40,15 +40,15 @@
       (begin
 	(switch-to "previous")
 	(recursive-switch-to-sub "last"))
-      (let ((oldp (the-path)))
+      (let ((oldp (cursor-path)))
 	(go-outer-switch)
-	(if (!= (the-path) oldp)
+	(if (!= (cursor-path) oldp)
 	    (prev-slide-sub)))))
 
 (define (recursive-switch-to-sub where)
-  (let ((oldp (the-path)))
+  (let ((oldp (cursor-path)))
     (go-inner-switch)
-    (if (!= (the-path) oldp)
+    (if (!= (cursor-path) oldp)
 	(begin
 	  (switch-to where)
 	  (recursive-switch-to-sub where)))))
@@ -59,21 +59,21 @@
   (let ((p (search-innermost-switch)))
     (if p
 	(tm-go-to
-	 (if (== (tree-get-label (subtree (the-buffer) p)) "document")
+	 (if (== (tree-get-label (subtree (buffer-tree) p)) "document")
 	     (append p '(0 0))
 	     (rcons p 0))))))
 
 (define (search-innermost-switch)
-  (let rec ((t (the-buffer)) (p '()))
+  (let rec ((t (buffer-tree)) (p '()))
     (define (proc p2 t2)
       (let ((p3 (rec (safe-tree-ref t2 1) '())))
 	(if p3 (append p2 '(1) p3) (rcons p2 1))))
     (search-in-tree-from t p "switch" proc)))
 
 (define (go-outermost-switch)
-  (let ((oldp (the-path)))
+  (let ((oldp (cursor-path)))
     (go-outer-switch)
-    (if (!= oldp (the-path))
+    (if (!= oldp (cursor-path))
 	(go-outermost-switch))))
 
 (define (go-this-switch)
@@ -90,13 +90,13 @@
 
 (define (go-inner-switch)
   (define (proc p t) p)
-  (let ((old-p (the-path)))
+  (let ((old-p (cursor-path)))
     (go-this-switch)
     (let ((p1 (tree-path (tree-innermost 'switch))))
       (let ((p2 (search-in-tree-from
 		 (if (null? p1)
-		     (the-buffer)
-		     (subtree (the-buffer) (rcons p1 1)))
+		     (buffer-tree)
+		     (subtree (buffer-tree) (rcons p1 1)))
 		 '() "switch" proc)))
 	(if p2
 	    (if (null? p1)

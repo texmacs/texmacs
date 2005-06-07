@@ -88,7 +88,7 @@
 	 (the-tree
 	  (stree->tree
 	   (cons 'document
-		 (sublist-listenv lenv (tree->stree (the-buffer))))))) 
+		 (sublist-listenv lenv (tree->stree (buffer-tree))))))) 
       (if (!= (convert the-tree "texmacs-tree" "verbatim-snippet") "")
 	  (begin     
 	    (switch-to-active-buffer the-nw-buff) ;"trick" to test if the buffer already exists... 
@@ -121,13 +121,13 @@
 
 (define (go-to-nth-label listlabel n)
   (tm-go-to (rcons
-	     (search-nth-in-tree (the-buffer) listlabel n) 
+	     (search-nth-in-tree (buffer-tree) listlabel n) 
 	     0)))
 
 (tm-define (back-to-me-in-source)
   (:secure #t)
   (let ((srce (get-env "srce"))
 	(listlab (get-env "def-satellite"))
-	(n (1+ (car (the-path)))))
+	(n (1+ (car (cursor-path)))))
     (switch-to-active-buffer srce) 
     (go-to-nth-label (atom->string (string->object listlab)) n)))

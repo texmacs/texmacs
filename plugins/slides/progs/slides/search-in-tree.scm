@@ -103,7 +103,7 @@
 
 ; (define (find-next-em)
 ;   (let ((p+t (search-in-tree-from
-; 	      (the-buffer) (but-last (the-path)) "em" list)))
+; 	      (buffer-tree) (but-last (cursor-path)) "em" list)))
 ;     (tm-go-to (rcons (first p+t) 0))
 ;     (display-found-em p+t)))
 
@@ -111,7 +111,7 @@
 ;   (define found '())
 ;   (define (proc p t) (set-rcons! found (list p t)) #f)
 ;   (search-in-tree-from
-;    (the-buffer) (but-last (the-path)) "em" proc)
+;    (buffer-tree) (but-last (cursor-path)) "em" proc)
 ;   (for-each display-found-em found))
 
 ; (kbd-map
