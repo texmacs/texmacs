@@ -838,7 +838,7 @@
 		      (else (append (car l) (list sep) r)))))))
 
 (define (tmtex-select-data expr tag)
-  (let* ((data (tm-select expr (list tag)))
+  (let* ((data (select expr (list tag)))
 	 (sep (if (== tag 'author-address) '(!nextline) "; "))
 	 (fun (lambda (x)
 		(cond ((func? x 'document)
@@ -868,7 +868,7 @@
 (define (tmtex-doc-data s l)
   (let* ((tag (cons s l))
 	 (title (tmtex-select-data tag 'doc-title))
-	 (authors (map tmtex-make-author (tm-select tag '(doc-author-data))))
+	 (authors (map tmtex-make-author (select tag '(doc-author-data))))
 	 (date (tmtex-select-data tag 'doc-date))
 	 (note (tmtex-select-data tag 'doc-note))
 	 (keywords (tmtex-select-data tag 'doc-keywords))

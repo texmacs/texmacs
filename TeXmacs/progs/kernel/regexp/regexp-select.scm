@@ -162,15 +162,15 @@
 			 (l (select-one x :1 bl)))
 		    (append r (select-continue l pat))))
 		 ((== fpat :up)
-		  (with p (and (tree? x) (tree-path x))
+		  (with p (and (tree? x) (tree->path x))
 		    (if (and p (nnull? p))
-			(select-list (tm-subtree (cDr p)) (cdr pat) bl)
+			(select-list (path->tree (cDr p)) (cdr pat) bl)
 			'())))
 		 ((== fpat :down)
-		  (let* ((p (and (tree? x) (tree-path x)))
-			 (q (cDr (tm-where))))
+		  (let* ((p (and (tree? x) (tree->path x)))
+			 (q (cDr (cursor-path))))
 		    (if (and p (list-starts? (cDr q) p))
-			(select-list (tm-subtree (list-head q (1+ (length p))))
+			(select-list (path->tree (list-head q (1+ (length p))))
 				     (cdr pat) bl)
 			'())))
 		 ((integer? (keyword->number fpat))
@@ -189,8 +189,13 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (tm-select x pattern)
+(define built-in-select select)
+
+(define-public (select . args)
   "Select all subtrees of @x which match a given path pattern @pattern"
-  (with sols (select-list x pattern '())
-    ;; (display* "sols= " sols "\n")
-    (map cadr sols)))
+  (if (= (length args) 2)
+      (with (x pattern) args
+	(with sols (select-list x pattern '())
+	  ;; (display* "sols= " sols "\n")
+	  (map cadr sols)))
+      (apply built-in-select args)))

@@ -582,28 +582,6 @@ edit_modify_rep::perform_undo_redo (tree x) {
 }
 
 /******************************************************************************
-* Utility for only changing differences (very crude implementation though)
-******************************************************************************/
-
-void
-edit_modify_rep::assign_diff (path p, tree t) {
-  tree st= subtree (et, p);
-  if (t == st) return;
-  assign (p, copy (t));
-  /*
-  if (is_atomic (t) || (L(t) != L(st))) {
-    assign (p, copy (t));
-    return;
-  }
-  int i, n= min (N(st), N(t));
-  for (i=0; i<n; i++)
-    assign_diff (p * i, t[i]);
-  if (n < N(st)) remove (p * n, N(st)-n);
-  else if (n < N(t)) insert (p * n, copy (t) (n, N(t)));
-  */
-}
-
-/******************************************************************************
 * handling multiple cursor positions
 ******************************************************************************/
 

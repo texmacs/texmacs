@@ -186,11 +186,6 @@ edit_cursor_rep::go_page_down () {
 * Logical cursor changes
 ******************************************************************************/
 
-path
-edit_cursor_rep::current_position () {
-  return tp;
-}
-
 void
 edit_cursor_rep::go_to (path p) {
   tp= p;

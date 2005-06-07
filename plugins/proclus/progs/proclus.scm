@@ -98,4 +98,4 @@
       #f (begin (add-link-end link-source link-but direct-types)
 		(add-link-end link-but link-source reverse-types)
 		(switch-to-active-buffer active-buffer)
-		(tm-go-to active-pos-temp))))
+		(go-to active-pos-temp))))

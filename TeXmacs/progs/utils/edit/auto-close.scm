@@ -36,8 +36,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (close-quotes?)
-  (let* ((p (tm-where))
-	 (t (tree->stree (tm-subtree (cDr p)))))
+  (let* ((p (cursor-path))
+	 (t (tree->stree (path->tree (cDr p)))))
     (if (string? t)
 	(not (or (== t "") (string-ends? t " ")))
 	(> (cAr p) 0))))

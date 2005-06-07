@@ -348,8 +348,8 @@ tmg_tree_compoundP (SCM arg1) {
 }
 
 SCM
-tmg_tree_get_label (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-label");
+tmg_tree_label (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-label");
 
   tree in1= scm_to_tree (arg1);
 
@@ -361,8 +361,8 @@ tmg_tree_get_label (SCM arg1) {
 }
 
 SCM
-tmg_tree_get_children (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-children");
+tmg_tree_children (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-children");
 
   tree in1= scm_to_tree (arg1);
 
@@ -387,9 +387,9 @@ tmg_tree_arity (SCM arg1) {
 }
 
 SCM
-tmg_tree_get_child (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-child");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-get-child");
+tmg_tree_child (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-child");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-child");
 
   tree in1= scm_to_tree (arg1);
   int in2= scm_to_int (arg2);
@@ -528,6 +528,428 @@ tmg_tree_simplify (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
+}
+
+SCM
+tmg_path_infP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
+
+  path in1= scm_to_path (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= path_inf (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_path_inf_eqP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf-eq?");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf-eq?");
+
+  path in1= scm_to_path (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= path_inf_eq (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_path_lessP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-less?");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-less?");
+
+  path in1= scm_to_path (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= path_less (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_path_less_eqP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-less-eq?");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-less-eq?");
+
+  path in1= scm_to_path (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= path_less_eq (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_cursor_start (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= start (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_cursor_end (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= end (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_string_numberP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_double (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_string_search_forwards (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-forwards");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-forwards");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-search-forwards");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  int out= search_forwards (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_string_search_backwards (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-backwards");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-backwards");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-search-backwards");
+
+  string in1= scm_to_string (arg1);
+  int in2= scm_to_int (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  int out= search_backwards (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
+tmg_string_replace (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-replace");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-replace");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-replace");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  string out= replace (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_slash (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-slash");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= slash (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_unslash (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-unslash");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= unslash (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_locase_alphaP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-locase-alpha?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_locase_alpha (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_upcase_first (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "upcase-first");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= upcase_first (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_locase_first (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "locase-first");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= locase_first (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_upcase_all (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "upcase-all");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= upcase_all (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_locase_all (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "locase-all");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= locase_all (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_union (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-union");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-union");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= string_union (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_string_minus (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-minus");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-minus");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  string out= string_minus (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_quotes (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_quotes (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_generic (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_generic (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_escape_verbatim (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-verbatim");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_verbatim (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_utf8_2cork (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->cork");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= utf8_to_cork (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_cork_2utf8 (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cork->utf8");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= cork_to_utf8 (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_utf8_2html (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->html");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= utf8_to_html (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tm_2xml_name (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-name");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_to_xml_name (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_tm_2xml_cdata (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-cdata");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= tm_to_xml_cdata (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_xml_name_2tm (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-name->tm");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= xml_name_to_tm (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_xml_cdata_2tm (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-cdata->tm");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= xml_cdata_to_tm (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-unspace");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "xml-unspace");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "xml-unspace");
+
+  string in1= scm_to_string (arg1);
+  bool in2= scm_to_bool (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  string out= xml_unspace (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
 }
 
 SCM
@@ -1329,338 +1751,6 @@ tmg_system_mkdir (SCM arg1) {
 }
 
 SCM
-tmg_string_numberP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= is_double (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_string_search_forwards (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-forwards");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-forwards");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-search-forwards");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  int out= search_forwards (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_string_search_backwards (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-search-backwards");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "string-search-backwards");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-search-backwards");
-
-  string in1= scm_to_string (arg1);
-  int in2= scm_to_int (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  int out= search_backwards (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_string_replace (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-replace");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-replace");
-  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-replace");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-  string in3= scm_to_string (arg3);
-
-  // SCM_DEFER_INTS;
-  string out= replace (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_slash (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-slash");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= slash (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_unslash (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-unslash");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= unslash (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_locase_alphaP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-locase-alpha?");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  bool out= is_locase_alpha (in1);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_upcase_first (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "upcase-first");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= upcase_first (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_locase_first (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "locase-first");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= locase_first (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_upcase_all (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "upcase-all");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= upcase_all (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_locase_all (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "locase-all");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= locase_all (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_union (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-union");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-union");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  string out= string_union (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_minus (SCM arg1, SCM arg2) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-minus");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-minus");
-
-  string in1= scm_to_string (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  string out= string_minus (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_quotes (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_quotes (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_generic (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-generic");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_generic (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_verbatim (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-verbatim");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_verbatim (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_utf8_2cork (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->cork");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= utf8_to_cork (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_cork_2utf8 (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cork->utf8");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= cork_to_utf8 (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_utf8_2html (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->html");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= utf8_to_html (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_tm_2xml_name (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-name");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= tm_to_xml_name (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_tm_2xml_cdata (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-cdata");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= tm_to_xml_cdata (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_xml_name_2tm (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-name->tm");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= xml_name_to_tm (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_xml_cdata_2tm (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-cdata->tm");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= xml_cdata_to_tm (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_xml_unspace (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-unspace");
-  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "xml-unspace");
-  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "xml-unspace");
-
-  string in1= scm_to_string (arg1);
-  bool in2= scm_to_bool (arg2);
-  bool in3= scm_to_bool (arg3);
-
-  // SCM_DEFER_INTS;
-  string out= xml_unspace (in1, in2, in3);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_connection_declaredP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
 
@@ -1771,96 +1861,6 @@ tmg_connection_read (SCM arg1, SCM arg2, SCM arg3) {
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
-}
-
-SCM
-tmg_path_infP (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
-
-  path in1= scm_to_path (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  bool out= path_inf (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_path_inf_eqP (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf-eq?");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf-eq?");
-
-  path in1= scm_to_path (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  bool out= path_inf_eq (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_path_lessP (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-less?");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-less?");
-
-  path in1= scm_to_path (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  bool out= path_less (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_path_less_eqP (SCM arg1, SCM arg2) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-less-eq?");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-less-eq?");
-
-  path in1= scm_to_path (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  bool out= path_less_eq (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_cursor_start (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-start");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-start");
-
-  content in1= scm_to_content (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  path out= start (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_cursor_end (SCM arg1, SCM arg2) {
-  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "cursor-end");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "cursor-end");
-
-  content in1= scm_to_content (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  path out= end (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
 }
 
 SCM
@@ -2357,10 +2357,10 @@ initialize_glue_basic () {
   gh_new_procedure ("tm->tree", (FN) tmg_tm_2tree, 1, 0, 0);
   gh_new_procedure ("tree-atomic?", (FN) tmg_tree_atomicP, 1, 0, 0);
   gh_new_procedure ("tree-compound?", (FN) tmg_tree_compoundP, 1, 0, 0);
-  gh_new_procedure ("tree-get-label", (FN) tmg_tree_get_label, 1, 0, 0);
-  gh_new_procedure ("tree-get-children", (FN) tmg_tree_get_children, 1, 0, 0);
+  gh_new_procedure ("tree-label", (FN) tmg_tree_label, 1, 0, 0);
+  gh_new_procedure ("tree-children", (FN) tmg_tree_children, 1, 0, 0);
   gh_new_procedure ("tree-arity", (FN) tmg_tree_arity, 1, 0, 0);
-  gh_new_procedure ("tree-get-child", (FN) tmg_tree_get_child, 2, 0, 0);
+  gh_new_procedure ("tree-child", (FN) tmg_tree_child, 2, 0, 0);
   gh_new_procedure ("tree-set-child!", (FN) tmg_tree_set_childS, 3, 0, 0);
   gh_new_procedure ("tree-ip", (FN) tmg_tree_ip, 1, 0, 0);
   gh_new_procedure ("subtree", (FN) tmg_subtree, 2, 0, 0);
@@ -2370,6 +2370,36 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
+  gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
+  gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
+  gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
+  gh_new_procedure ("path-less-eq?", (FN) tmg_path_less_eqP, 2, 0, 0);
+  gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
+  gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
+  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
+  gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
+  gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
+  gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
+  gh_new_procedure ("string-slash", (FN) tmg_string_slash, 1, 0, 0);
+  gh_new_procedure ("string-unslash", (FN) tmg_string_unslash, 1, 0, 0);
+  gh_new_procedure ("string-locase-alpha?", (FN) tmg_string_locase_alphaP, 1, 0, 0);
+  gh_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
+  gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
+  gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);
+  gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
+  gh_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
+  gh_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
+  gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
+  gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
+  gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
+  gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
+  gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
+  gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
+  gh_new_procedure ("tm->xml-name", (FN) tmg_tm_2xml_name, 1, 0, 0);
+  gh_new_procedure ("tm->xml-cdata", (FN) tmg_tm_2xml_cdata, 1, 0, 0);
+  gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
+  gh_new_procedure ("xml-cdata->tm", (FN) tmg_xml_cdata_2tm, 1, 0, 0);
+  gh_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
   gh_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   gh_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);
   gh_new_procedure ("parse-texmacs-snippet", (FN) tmg_parse_texmacs_snippet, 1, 0, 0);
@@ -2430,30 +2460,6 @@ initialize_glue_basic () {
   gh_new_procedure ("system-append", (FN) tmg_system_append, 2, 0, 0);
   gh_new_procedure ("system-remove", (FN) tmg_system_remove, 1, 0, 0);
   gh_new_procedure ("system-mkdir", (FN) tmg_system_mkdir, 1, 0, 0);
-  gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
-  gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
-  gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
-  gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
-  gh_new_procedure ("string-slash", (FN) tmg_string_slash, 1, 0, 0);
-  gh_new_procedure ("string-unslash", (FN) tmg_string_unslash, 1, 0, 0);
-  gh_new_procedure ("string-locase-alpha?", (FN) tmg_string_locase_alphaP, 1, 0, 0);
-  gh_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
-  gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
-  gh_new_procedure ("upcase-all", (FN) tmg_upcase_all, 1, 0, 0);
-  gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
-  gh_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
-  gh_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
-  gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
-  gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
-  gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
-  gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
-  gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
-  gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
-  gh_new_procedure ("tm->xml-name", (FN) tmg_tm_2xml_name, 1, 0, 0);
-  gh_new_procedure ("tm->xml-cdata", (FN) tmg_tm_2xml_cdata, 1, 0, 0);
-  gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
-  gh_new_procedure ("xml-cdata->tm", (FN) tmg_xml_cdata_2tm, 1, 0, 0);
-  gh_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
   gh_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   gh_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   gh_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);
@@ -2461,12 +2467,6 @@ initialize_glue_basic () {
   gh_new_procedure ("connection-cmd", (FN) tmg_connection_cmd, 3, 0, 0);
   gh_new_procedure ("connection-write", (FN) tmg_connection_write, 3, 0, 0);
   gh_new_procedure ("connection-read", (FN) tmg_connection_read, 3, 0, 0);
-  gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
-  gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
-  gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
-  gh_new_procedure ("path-less-eq?", (FN) tmg_path_less_eqP, 2, 0, 0);
-  gh_new_procedure ("cursor-start", (FN) tmg_cursor_start, 2, 0, 0);
-  gh_new_procedure ("cursor-end", (FN) tmg_cursor_end, 2, 0, 0);
   gh_new_procedure ("widget-hlist", (FN) tmg_widget_hlist, 1, 0, 0);
   gh_new_procedure ("widget-named-hlist", (FN) tmg_widget_named_hlist, 2, 0, 0);
   gh_new_procedure ("widget-vlist", (FN) tmg_widget_vlist, 1, 0, 0);

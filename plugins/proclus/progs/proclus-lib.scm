@@ -29,7 +29,7 @@
   (url->string (get-name-buffer)))
 
 (define-public (tm-substree p)
-  (tree->stree (tm-subtree p)))
+  (tree->stree (path->tree p)))
 
 (define-public-macro (save-excursion . body)
   ;; TODO: save point and mark too, like emacs

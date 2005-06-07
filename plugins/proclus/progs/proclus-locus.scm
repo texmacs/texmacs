@@ -36,13 +36,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (locus-path? p)
-  (eq? 'locus (tree-get-label (tm-subtree p))))
+  (eq? 'locus (tree-label (path->tree p))))
 
 (tm-define (not-locus-path? p)
-  (eq? 'not-locus (tree-get-label (tm-subtree p))))
+  (eq? 'not-locus (tree-label (path->tree p))))
 
 (tm-define (locus-or-not-locus-path? p)
-  (memq? (tree-get-label (tm-subtree p)) '(locus not-locus)))
+  (memq? (tree-label (path->tree p)) '(locus not-locus)))
 
 (define (memq? x l)
   ;; (not (not x)) converts x to a boolean object
@@ -105,15 +105,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (locus-set-text p x)
-  (tm-assign (rcons p 0) x))
+  (path-assign (rcons p 0) x))
 
 (tm-define (locus-set-text-go-to p x ppos)
   (locus-set-text p x)
-  (tm-go-to (append p '(0) ppos)))
+  (go-to (append p '(0) ppos)))
 
 (define (locus-set-tuple p l)
   ;; Set the metadata of the locus at @p to the list @l converted to a tuple.
-  (tm-assign (rcons p 1) (list->tuple l)))
+  (path-assign (rcons p 1) (list->tuple l)))
 
 (define (locus-set-links p links)
   (locus-set-links-flat p (list-concatenate links)))
@@ -128,15 +128,15 @@
 
 (tm-define (get-locus-or-not-locus-path)
   (with t (tree-innermost '(locus not-locus))
-    (and t (tree-path t))))
+    (and t (tree->path t))))
 
 (tm-define (get-locus-path)
   (with t (tree-innermost 'locus)
-    (and t (tree-path t))))
+    (and t (tree->path t))))
 
 (tm-define (get-not-locus-path)
   (with t (tree-innermost 'not-locus)
-    (and t (tree-path t))))
+    (and t (tree->path t))))
 
 (tm-define (get-locus-or-not-locus)
   (and-let* ((p (get-locus-or-not-locus-path)))
@@ -286,7 +286,7 @@
 (tm-define (go-to-locus lk)
   ;; FIXME: raise distinctive exception for root links and id not found
   (go-to-locus-buffer lk)
-  (tm-go-to (append (locus-path (link-id lk)) '(0 0))))
+  (go-to (append (locus-path (link-id lk)) '(0 0))))
 
 (tm-define (go-to-locus-buffer lk)
   (switch-to-active-buffer (absolute-name->url (link-absname lk))))

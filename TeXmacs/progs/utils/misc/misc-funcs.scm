@@ -15,20 +15,6 @@
 (texmacs-module (utils misc misc-funcs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Subtrees and path rounding
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (tm-start p)
-  (:type (-> path path))
-  (:synopsis "Round cursor position @p to below.")
-  (cursor-start (root-tree) p))
-
-(tm-define (tm-end p)
-  (:type (-> path path))
-  (:synopsis "Round cursor position @p to above.")
-  (cursor-end (root-tree) p))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
