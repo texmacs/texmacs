@@ -3,14 +3,17 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Programming routines for editing documents>
+  <tmdoc-title|Programming <value|scheme> extensions to <TeXmacs>>
 
   <\traverse>
-    <branch|The <TeXmacs> editing model|edit-model.en.tm>
+    <branch|Overwiew of the <value|scheme> extension
+    language|overview/scheme-overview.en.tm>
 
-    <branch|Modifying trees|edit-modify.en.tm>
+    <branch|<TeXmacs> extensions to <value|scheme> and
+    utilities|utils/scheme-utils.en.tm>
 
-    <branch|Path-based navigation|edit-path-navigate.en.tm>
+    <branch|Programming routines for editing
+    documents|edit/scheme-edit.en.tm>
   </traverse>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>

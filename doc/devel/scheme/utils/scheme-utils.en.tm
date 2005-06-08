@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Utilities for <value|scheme> programming>
+  <tmdoc-title|<TeXmacs> extensions to <value|scheme> and utilities>
 
   <\traverse>
     <branch|<TeXmacs> abbreviations|utils-abbrevs.en.tm>
