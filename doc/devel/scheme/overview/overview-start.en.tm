@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -233,8 +233,8 @@
 
   <paragraph|Invoking <value|scheme> scrips from <TeXmacs> markup>
 
-  <TeXmacs> provides three major tags for invoking <value|scheme> scripts
-  from within the markup:
+  <label|markup-scripts><TeXmacs> provides three major tags for invoking
+  <value|scheme> scripts from within the markup:
 
   <\description-long>
     <item*|<with|font-series|medium|<explain-macro|action|text|script>>>This
