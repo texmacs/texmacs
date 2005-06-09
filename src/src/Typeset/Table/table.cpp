@@ -656,7 +656,7 @@ table_rep::finish () {
   SI    y2= tb->y2;
   color fg= env->col;
   b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-	       lborder, rborder, bborder, rborder, fg, fg, true);
+	       lborder, rborder, bborder, tborder, fg, fg, true);
   SI Lsep= lsep+lborder, Rsep= rsep+rborder;
   SI Bsep= bsep+bborder, Tsep= tsep+tborder;
   if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))

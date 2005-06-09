@@ -12,34 +12,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools stm)
-  ;; TODO: clean public interface
-  (:export
-   ;; Construction of serial nodes
-   stm-serial stm-concat
-   stm-list->concat stm-concat->list
-   stm-list->document stm-document->list
-   ;; Physical predicates
-   stm-primitive? stm-block-structure?
-   stm-document? stm-concat? stm-paragraph?
-   stm-with? stm-with-document? stm-label? stm-line-break?
-   ;; Logical predicates
-   stm-list-environment? stm-block-environment? stm-list-marker?
-   stm-section-environment? stm-invisible?
-   ;; Tree constructors and deconstructors
-   stm-unary-document stm-remove-unary-document
-   stm-insert-first-data
-   stm-first-data stm-remove-first-data
-   stm-list-map
-   ;; Operation on list of line items
-   stm-parse-lines stm-unparse-lines
-   stm-line-trim stm-line-trim-right stm-line-trim-both))
+(texmacs-module (convert tools stm))
+;; TODO: clean public interface
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construction of serial nodes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define stm-serial
+(tm-define stm-serial
   ;; Convert a texmacs node list @l to a texmacs serial node.
   ;;
   ;; A serial node is either a 'concat' or a 'document'.
@@ -99,7 +79,7 @@
 	  (else (cons '() (cons x blocks)))))
   (call-with-values (lambda () (car+cdr line+blocks)) sub))
 
-(define stm-concat
+(tm-define stm-concat
   ;; Build a concat node from an list of inline nodes.
   ;; Performs concat simplification and catenate adjacent string nodes.
   ;; Drop root concat if it contains only one item.
@@ -128,22 +108,22 @@
 
 ;; Document and concat constructors and deconstructors
 
-(define (stm-list->concat l)
+(tm-define (stm-list->concat l)
   ;; This is the reverse of concat->list.
   ;; Both functions assume that (concat) is equivalent to null-string.
   (cond ((null? l) "")
 	((null? (cdr l)) (car l))
 	(else (cons 'concat l))))
 
-(define (stm-concat->list x)
+(tm-define (stm-concat->list x)
   (if (stm-concat? x)
       (if (null? (cdr x)) '("") (cdr x))
       (list x)))
 
-(define (stm-list->document l)
+(tm-define (stm-list->document l)
   (cons 'document l))
 
-(define (stm-document->list x)
+(tm-define (stm-document->list x)
   (cdr x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -166,14 +146,14 @@
 
 ;; Basic predicates
 
-(define (stm-document? x) (func? x 'document))
-(define (stm-concat? x) (func? x 'concat))
-(define (stm-paragraph? x) (func? x 'para))
-(define (stm-with? x) (func? x 'with))
-(define (stm-with-document? x)
+(tm-define (stm-document? x) (func? x 'document))
+(tm-define (stm-concat? x) (func? x 'concat))
+(tm-define (stm-paragraph? x) (func? x 'para))
+(tm-define (stm-with? x) (func? x 'with))
+(tm-define (stm-with-document? x)
   (and (stm-with? x) (stm-document? (last x))))
-(define (stm-label? x) (func? x 'label))
-(define (stm-line-break? x)
+(tm-define (stm-label? x) (func? x 'label))
+(tm-define (stm-line-break? x)
   (in? x '((new-line) (next-line))))
 
 ;; Expansion predicates
@@ -199,20 +179,20 @@
 
 ;; WARNING: all these functions should use DRD
 
-(define (stm-list-environment? head)
+(tm-define (stm-list-environment? head)
   (in? (first head) '(itemize enumerate description)))
 
-(define (stm-block-environment? head)
+(tm-define (stm-block-environment? head)
   ;; A block environment must always contain a document node (not a concat).
   (or (and (== (first head) 'with) (in? (second head) '("par-mode")))
       (in? (first head) '(quotation code))
       (stm-list-environment? head)))
 
-(define (stm-list-marker? x)
+(tm-define (stm-list-marker? x)
   (or (== x '(item))
       (func? x 'item*)))
 
-(define (stm-section-environment? head)
+(tm-define (stm-section-environment? head)
   (in? (first head)
        '(part chapter section subsection subsubsection
 	 paragraph subparagraph)))
@@ -221,20 +201,20 @@
   ;; Can a Valid document contain @x inside a section-environment?
   (not (stm-label? x)))
 
-(define (stm-invisible? x)
+(tm-define (stm-invisible? x)
   (stm-label? x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree constructors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stm-unary-document t)
+(tm-define (stm-unary-document t)
   (if (stm-document? t) t `(document ,t)))
 
-(define (stm-remove-unary-document t)
+(tm-define (stm-remove-unary-document t)
   (if (func? t 'document 1) (second t) t))
 
-(define (stm-insert-first-data serial x)
+(tm-define (stm-insert-first-data serial x)
   ;; Given a @serial and a line node @x (must not be a block-structure), return
   ;; @serial with @x inserted at the first possible position, doing its best
   ;; not to create any new paragraph and not to change a Valid @serial into an
@@ -273,7 +253,7 @@
 	   `(,(first ser) ,(rec (second ser))))
 	  (else (stm-serial (list x ser))))))
 
-(define (stm-first-data doc-item)
+(tm-define (stm-first-data doc-item)
   ;; Given a doc-item, return its first data node. That is the first node found
   ;; by preorder traversal which is neither a 'concat' nor a 'paragraph'.
   ;;
@@ -287,7 +267,7 @@
 	    (rec (cadr x))	      ; assume at least one para/concat-item
 	    x))))
 
-(define (stm-remove-first-data doc-item)
+(tm-define (stm-remove-first-data doc-item)
   ;; Given a doc-item, remove its first data node. Simplify concats and
   ;; preserve paragraph structure. If the first data node is an empty
   ;; paragraph-item, do nothing.
@@ -302,7 +282,7 @@
 	       `(concat ,@(cddr x))))
 	  (else ""))))
 
-(define (stm-list-map proc pred doc-body)
+(tm-define (stm-list-map proc pred doc-body)
   ;; General mapping over LaTeX-style lists
   ;; proc: mark item -> x. Mapping function
   ;; pred: doc-item -> ?. Is the doc-item an list item start?
@@ -339,7 +319,7 @@
 ;; TODO: extend to allow preservation of the line break nodes through a
 ;;   parsing-unparsing cycle.
 
-(define (stm-parse-lines l)
+(tm-define (stm-parse-lines l)
   (list-fold-right parse-lines/kons '(().()) l))
 
 (define (parse-lines/kons kar kdr)
@@ -348,23 +328,23 @@
 	(cons '() (cons line tail))
 	(cons (cons kar line) tail))))
 
-(define (stm-unparse-lines l)
+(tm-define (stm-unparse-lines l)
   (list-concatenate (list-intersperse l '((next-line)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Line trimming
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stm-line-trim-both l)
+(tm-define (stm-line-trim-both l)
   (cond ((null? l) '())
 	((pair? (cdr l)) (stm-line-trim-right (stm-line-trim l)))
 	((string? (first l)) (list (string-trim-both (first l))))
 	(else l)))
 
-(define (stm-line-trim l)
+(tm-define (stm-line-trim l)
   (line-trim/sub l string-trim))
 
-(define (stm-line-trim-right l)
+(tm-define (stm-line-trim-right l)
   (reverse! (line-trim/sub (reverse l) string-trim-right)))
 
 (define (line-trim/sub l trim)

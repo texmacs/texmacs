@@ -17,8 +17,7 @@
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel regexp regexp-select)
-  (:export tm-select))
+(texmacs-module (kernel regexp regexp-select))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Intersections of matches
@@ -153,7 +152,7 @@
   ;; (display* "select list " x ", " pat ", " bl "\n")
   "Selects subexpressions of @l using the pattern @pat and under bindings @bl."
   (cond ((null? pat) (list (cons* (list) x bl)))
-	((not (pair? pat)) '())
+	((npair? pat) '())
 	((keyword? (car pat))
 	 (with fpat (car pat)
 	   (cond ((== fpat :0)
@@ -162,6 +161,18 @@
 		  (let* ((r (select-list x (cdr pat) bl))
 			 (l (select-one x :1 bl)))
 		    (append r (select-continue l pat))))
+		 ((== fpat :up)
+		  (with p (and (tree? x) (tree->path x))
+		    (if (and p (nnull? p))
+			(select-list (path->tree (cDr p)) (cdr pat) bl)
+			'())))
+		 ((== fpat :down)
+		  (let* ((p (and (tree? x) (tree->path x)))
+			 (q (cDr (cursor-path))))
+		    (if (and p (list-starts? (cDr q) p))
+			(select-list (path->tree (list-head q (1+ (length p))))
+				     (cdr pat) bl)
+			'())))
 		 ((integer? (keyword->number fpat))
 		  (let* ((h (number->keyword (- (keyword->number fpat) 1)))
 			 (l (select-one x :1 bl)))
@@ -178,8 +189,13 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-select x pattern)
+(define built-in-select select)
+
+(define-public (select . args)
   "Select all subtrees of @x which match a given path pattern @pattern"
-  (with sols (select-list x pattern '())
-    ;; (display* "sols= " sols "\n")
-    (map cadr sols)))
+  (if (= (length args) 2)
+      (with (x pattern) args
+	(with sols (select-list x pattern '())
+	  ;; (display* "sols= " sols "\n")
+	  (map cadr sols)))
+      (apply built-in-select args)))

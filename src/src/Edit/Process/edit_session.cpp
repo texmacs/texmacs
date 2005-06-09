@@ -52,6 +52,7 @@ mutate (tree t, path ip) {
 	  (void) eval (s);
 	}
       sum= 1;
+      mutator_path= path ();
     }
   for (i=0; i<N(t); i++)
     sum += mutate (t[i], path (i, ip));

@@ -49,8 +49,6 @@ public:
   void make_htab (string spc);
   void make_move (string x, string y);
   void make_resize (string x1, string y1, string x2, string y2);
-  void make_insertion (string s);
-  void position_insertion (string what, bool flag);
   void make_postscript (string file_name, bool link, string w, string h,
 			string x1, string y1, string x2, string y2);
 };

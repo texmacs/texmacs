@@ -37,6 +37,8 @@ protected:
   window        popup_win;     // the current popup window
   string        message_l;     // a left message to display
   string        message_r;     // a right message to display
+  string        last_l;        // last displayed left message
+  string        last_r;        // last displayed right message
   int           sfactor;       // the current shrinking factor
   SI            pixel;         // sfactor*PIXEL
   rectangles    copy_always;   // for wiping out cursor
@@ -91,6 +93,8 @@ public:
   void cursor_visible ();
   void selection_visible ();
   void apply_changes ();
+  int  idle_time (int event_type= ANY_EVENT);
+  int  change_time ();
 
   /* miscellaneous */
   bool kbd_get_command (string which, string& help, command& cmd);
@@ -110,7 +114,6 @@ public:
   bool try_shortcut (string comb);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");
-  void show_keymaps ();
   bool complete_try ();
   void complete_message ();
   void complete_start (string prefix, array<string> compls);
@@ -139,8 +142,8 @@ public:
   void   set_right_footer (string r);
   void   set_right_footer ();
   void   set_footer ();
-  void   set_message (string l, string r= "");
-  void   interactive (scheme_tree args, object cmd);
+  void   set_message (string l, string r= "", bool temp= false);
+  void   recall_message ();
 
   /* event handlers */
   void handle_get_size (get_size_event ev);

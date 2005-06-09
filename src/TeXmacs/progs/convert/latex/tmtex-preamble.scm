@@ -20,8 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-preamble)
-  (:use (drd latex latex-drd) (convert latex texout))
-  (:export tmtex-preamble-build))
+  (:use (convert latex latex-drd) (convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of all extra commands
@@ -535,7 +534,7 @@
       (set! tmtex-preamble-hichar-flag #t)))
 
 (define (tmtex-preamble-build-sub l)
-  (if (and (list? l) (not (null? l)))
+  (if (and (list? l) (nnull? l))
       (let ((x (car l)))
 	(if (symbol? x) (tmtex-preamble-test-insert x))
 	(if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
@@ -552,7 +551,7 @@
         (else (string-append (force-string (car l)) ","
           (tmtex-preamble-make-package-list (cdr l))))))
 
-(define (tmtex-preamble-build text style lan init)
+(tm-define (tmtex-preamble-build text style lan init)
   (set! tmtex-preamble-dic (tmtex-preamble-table style lan))
   (set! tmtex-preamble-done (make-ahash-table))
   (set! tmtex-preamble-uses (make-ahash-table))

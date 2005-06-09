@@ -13,6 +13,8 @@
 #ifndef ANALYZE_H
 #define ANALYZE_H
 #include "string.hpp"
+#include "array.hpp"
+#include "hashset.hpp"
 
 bool is_alpha (char c);
 bool is_iso_alpha (char c);
@@ -33,6 +35,8 @@ string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);
 string locase_all (string s);
+string string_union (string s1, string s2);
+string string_minus (string s1, string s2);
 string iso_to_koi8 (string s);
 string koi8_to_iso (string s);
 string iso_to_koi8uk (string s);
@@ -100,5 +104,9 @@ int    search_backwards (string s, string in);
 int    search_backwards (string s, int pos, string in);
 string replace (string s, string what, string by);
 bool   match_wildcard (string s, string w);
+
+array<string> as_completions (hashset<string> h);
+array<string> close_completions (array<string> a);
+array<string> strip_completions (array<string> a, string prefix);
 
 #endif // defined ANALYZE_H

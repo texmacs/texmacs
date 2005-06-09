@@ -265,7 +265,8 @@ action_box_rep::action_box_rep (
 tree
 action_box_rep::action (tree t, SI x, SI y, SI delta) {
   if (t == filter) {
-    call ("set-action-path", reverse (vip));
+    call ("action-set-path", reverse (vip));
+    // FIXME: we should also reset the action path
     cmd ();
     return "done";
   }

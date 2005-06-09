@@ -558,6 +558,8 @@ delta_sub (url base, url u) {
 
 url
 delta (url base, url u) {
+  if (is_or (u))
+    return delta (base, u[1]) | delta (base, u[2]);
   url res= delta_sub (base, u);
   if (is_none (res)) return u;
   return res;

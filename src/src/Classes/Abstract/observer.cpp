@@ -65,10 +65,10 @@ stretched_print (tree t, bool ips, int indent) {
 /******************************************************************************
 * Routines for modifying trees
 *******************************************************************************
-* Notice that "inserting modifications" (insert, split and ins_unary)
+* Notice that "inserting modifications" (insert, split and insert_node)
 * invoke the observers call-back routines after the actual modification and
-* "assigning and deleting modifications" (assign, remove, join and rem_unary)
-* before the actual modification.
+* "assigning and deleting modifications" (assign, remove, join,
+* assign_node and remove_node)  before the actual modification.
 ******************************************************************************/
 
 void
@@ -142,9 +142,9 @@ join (tree& ref, int pos) {
   // cout << "Join " << ref << " at " << pos << "\n";
   /* the following code is added for security */
   if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
-    ins_unary (ref[pos], L(ref[pos+1]));
+    insert_node (ref[pos], 0, tree (L(ref[pos+1])));
   if (is_atomic (ref[pos+1]) && (!is_atomic (ref[pos])))
-    ins_unary (ref[pos+1], L(ref[pos]));
+    insert_node (ref[pos+1], 0, tree (L(ref[pos])));
   /* end security code */
 
   if (!nil (ref->obs)) ref->obs->notify_join (ref, pos);
@@ -161,19 +161,33 @@ join (tree& ref, int pos) {
 }
 
 void
-ins_unary (tree& ref, tree_label lab) {
-  // cout << "Insert unary " << ref << " : " << as_string (lab) << "\n";
-  ref= tree (lab, ref);
-  if (!nil (ref[0]->obs)) ref[0]->obs->notify_ins_unary (ref);
+insert_node (tree& ref, int pos, tree t) {
+  // cout << "Insert node " << ref << " : " << t << " at " << pos << "\n";
+  int i, n= N(t);
+  tree r (t, n+1);
+  for (i=0; i<pos; i++) r[i]= t[i];
+  r[pos]= ref;
+  for (i=pos; i<n; i++) r[i+1]= t[i];
+  ref= r;
+  if (!nil (ref[pos]->obs)) ref[pos]->obs->notify_insert_node (ref, pos);
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
 
 void
-rem_unary (tree& ref) {
-  // cout << "Remove unary " << ref << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_rem_unary (ref);
-  ref= ref[0];
+remove_node (tree& ref, int pos) {
+  // cout << "Remove node " << ref << " : " << pos << "\n";
+  if (!nil (ref->obs)) ref->obs->notify_remove_node (ref, pos);
+  ref= ref[pos];
+  // stretched_print (ref, true, 1);
+  // consistency_check ();
+}
+
+void
+assign_node (tree& ref, tree_label op) {
+  // cout << "Assign node " << ref << " : " << tree (op) << "\n";
+  if (!nil (ref->obs)) ref->obs->notify_assign_node (ref, op);
+  LR (ref)= op;
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }

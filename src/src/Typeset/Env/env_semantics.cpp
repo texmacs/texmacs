@@ -12,6 +12,7 @@
 
 #include "env.hpp"
 #include "PsDevice/page_type.hpp"
+#include "typesetter.hpp"
 
 /******************************************************************************
 * Retrieving the page size
@@ -104,6 +105,12 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_WIDTH)  = Env_Page;
 
   var_type (LINE_WIDTH)        = Env_Line_Width;
+  var_type (LINE_STYLE)        = Env_Line_Style;
+  var_type (LINE_STYLE_UNIT)   = Env_Line_Style_Unit;
+  var_type (FILL_MODE)         = Env_Fill_Mode;
+  var_type (FILL_COLOR)        = Env_Fill_Color;
+  var_type (LINE_PATTERN_MODE) = Env_Line_Pattern_Mode;
+  var_type (LINE_PATTERN)      = Env_Line_Pattern;
   var_type (GR_FRAME)          = Env_Frame;
   var_type (GR_CLIP)           = Env_Clipping;
   var_type (GR_GRID)           = Env_Grid;
@@ -363,6 +370,86 @@ edit_env_rep::update_src_close () {
 }
 
 void
+edit_env_rep::update_line_style () {
+  tree t= env [LINE_STYLE];
+  line_style= array<bool>(0);
+  if (is_string (t)) {
+    string s= as_string (t);
+    if (s == "solid") ;
+  }
+  else
+  if (is_tuple (t)) {
+    int i, n= N(t);
+    line_style= array<bool> (n);
+    for (i=0; i<n; i++) {
+      line_style[i]= true;
+      if (t[i] == "0") line_style[i]= false;
+    }
+  }
+}
+
+void
+edit_env_rep::update_fill_mode () {
+  string s= get_string (FILL_MODE);
+  fill_mode= FILL_MODE_NONE;
+  if (s=="none") fill_mode= FILL_MODE_NONE;
+  if (s=="inside") fill_mode= FILL_MODE_INSIDE;
+  if (s=="both") fill_mode= FILL_MODE_BOTH;
+}
+
+void
+edit_env_rep::update_fill_color () {
+  string s= get_string (FILL_COLOR);
+  fill_color= dis->get_color (s);
+}
+
+void
+edit_env_rep::update_line_pattern_mode () {
+  string s= get_string (LINE_PATTERN_MODE);
+  line_pattern_mode= LINE_PATTERN_MODE_NONE;
+  if (s=="none") line_pattern_mode= LINE_PATTERN_MODE_NONE;
+  if (s=="pattern") line_pattern_mode= LINE_PATTERN_MODE_PATTERN;
+  if (s=="both") line_pattern_mode= LINE_PATTERN_MODE_BOTH;
+}
+
+/*FIXME: Currently, the line-pattern property is evaluated
+  only in the context of the variables which appear before
+  it in the <with>. For example :
+
+  - <with|color|blue|<with|color|green|line-pattern|<line|...>|...>
+    draws green objects with green line pattern ;
+
+  - while <with|color|blue|<with|line-pattern|<line|...>|color|green|...>
+    draws green objects with blue line pattern.
+ */
+void
+edit_env_rep::update_line_pattern () {
+  tree t= env [LINE_PATTERN];
+  line_pattern= array<box>(2);
+  if (is_string (t)) {
+    string s= as_string (t);
+    if (s == "none") ;
+  }
+  else
+  if (is_tuple (t) && N(t)<=3 && N(t)>0) {
+    array<box> b (3);
+    b[1]= t[0]=="" ? box () : typeset_as_concat (this,
+	    tree (WITH, "line-style", "solid",
+			"line-pattern-mode", "none", t[0]), path(0));
+    if (N(t)>=2) {
+      b[0]= b[1];
+      b[1]= t[1]=="" ? box () : typeset_as_concat (this,
+	      tree (WITH, "line-style", "solid",
+			  "line-pattern-mode", "none", t[1]), path(0));
+    }
+    if (N(t)==3)
+      b[2]= t[2]=="" ? box () : typeset_as_concat (this,
+	      tree (WITH, "line-pattern-mode", "none", t[2]), path(0));
+    line_pattern= b;
+  }
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -380,6 +467,12 @@ edit_env_rep::update () {
   update_clipping ();
   point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
+  update_line_style ();
+  line_style_unit= get_length (LINE_STYLE_UNIT);
+  update_fill_mode ();
+  update_fill_color ();
+  update_line_pattern_mode ();
+  update_line_pattern ();
 
   update_src_style ();
   update_src_special ();
@@ -450,6 +543,24 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);
+    break;
+  case Env_Line_Style:
+    update_line_style();
+    break;
+  case Env_Line_Style_Unit:
+    line_style_unit= get_length (LINE_STYLE_UNIT);
+    break;
+  case Env_Fill_Mode:
+    update_fill_mode ();
+    break;
+  case Env_Fill_Color:
+    update_fill_color ();
+    break;
+  case Env_Line_Pattern_Mode:
+    update_line_pattern_mode();
+    break;
+  case Env_Line_Pattern:
+    update_line_pattern();
     break;
   case Env_Src_Style:
     update_src_style ();

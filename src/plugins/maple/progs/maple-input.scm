@@ -13,14 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (maple-input)
-  (:use (texmacs plugin plugin-convert)))
+  (:use (utils plugins plugin-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (maple-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -33,7 +33,7 @@
   (display "]"))
 
 (define (maple-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(maple-input-row (car t))

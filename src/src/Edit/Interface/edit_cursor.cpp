@@ -186,11 +186,6 @@ edit_cursor_rep::go_page_down () {
 * Logical cursor changes
 ******************************************************************************/
 
-path
-edit_cursor_rep::current_position () {
-  return tp;
-}
-
 void
 edit_cursor_rep::go_to (path p) {
   tp= p;
@@ -262,13 +257,13 @@ edit_cursor_rep::go_end_line () {
 }
 
 void
-edit_cursor_rep::go_start_of (string what) {
+edit_cursor_rep::go_start_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (start (et, p));
 }
 
 void
-edit_cursor_rep::go_end_of (string what) {
+edit_cursor_rep::go_end_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (end (et, p));
 }

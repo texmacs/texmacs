@@ -10,7 +10,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#include "string.hpp"
+#include "analyze.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Tests for caracters
@@ -157,6 +158,27 @@ locase_all (string s) {
   for (i=0; i<N(s); i++)
     if (!is_upcase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))+32);
+  return r;
+}
+
+/******************************************************************************
+* Inserting or removing a character into a string as a set of characters
+******************************************************************************/
+
+string
+string_union (string s1, string s2) {
+  return string_minus (s1, s2) * s2;
+}
+
+string
+string_minus (string s1, string s2) {
+  string r;
+  int i1, n1= N(s1), i2, n2= N(s2);
+  for (i1=0; i1<n1; i1++) {
+    for (i2=0; i2<n2; i2++)
+      if (s1[i1] == s2[i2]) break;
+    if (i2==n2) r << s1[i1];
+  }
   return r;
 }
 
@@ -988,4 +1010,69 @@ match_wildcard (string s, int spos, string w, int wpos) {
 bool
 match_wildcard (string s, string w) {
   return match_wildcard (s, 0, w, 0);
+}
+
+/******************************************************************************
+* Computations with completions
+******************************************************************************/
+
+array<string>
+as_completions (hashset<string> h) {
+  tree t= (tree) h;
+  int i, n= N(t);
+  array<string> a (n);
+  for (i=0; i<n; i++) a[i]= t[i]->label;
+  merge_sort (a);
+  return a;
+}
+
+/*
+static void
+close_completions (hashset<string>& h) {
+  array<string> a= as_completions (h);
+  int i, j, n= N(a);
+  for (i=1; i<n; i++) {
+    for (j=0; j < min (N(a[i-1]), N(a[i])); j++)
+      if (a[i-1][j] != a[i][j]) break;
+    if (j < min (N(a[i-1]), N(a[i])))
+      h->insert (a[i](0,j));
+  }
+}
+
+array<string>
+close_completions (array<string> a) {
+  int i, n= N(a);
+  hashset<string> h;
+  for (i=0; i<n; i++) h->insert (a[i]);
+  close_completions (h);
+  return as_completions (h);
+}
+*/
+
+array<string>
+close_completions (array<string> a) {
+  if (N(a) == 0) return a;
+  merge_sort (a);
+  int i, j, n= N(a), l= N(a[0]);
+  for (i=1; i<n; i++) {
+    for (j=0; j<l && j<N(a[i]); j++)
+      if (a[i-1][j] != a[i][j]) break;
+    l= j;
+  }
+  array<string> r;
+  r << a[0] (0, l);
+  for (i=0; i<n; i++)
+    if (a[i] != r[N(r)-1])
+      r << a[i];
+  return r;
+}
+
+array<string>
+strip_completions (array<string> a, string prefix) {
+  int i, n= N(a);
+  array<string> b;
+  for (i=0; i<n; i++)
+    if (starts (a[i], prefix))
+      b << a[i] (N(prefix), N(a[i]));
+  return b;
 }

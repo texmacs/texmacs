@@ -27,13 +27,14 @@ class ip_observer_rep: public observer_rep {
 public:
   ip_observer_rep (path ip2): ip (ip2) {}
 
-  virtual void notify_assign    (tree& ref, tree t);
-  virtual void notify_insert    (tree& ref, int pos, int nr);
-  virtual void notify_remove    (tree& ref, int pos, int nr);
-  virtual void notify_split     (tree& ref, int pos);
-  virtual void notify_join      (tree& ref, int pos);
-  virtual void notify_ins_unary (tree& ref);
-  virtual void notify_rem_unary (tree& ref);
+  virtual void notify_assign      (tree& ref, tree t);
+  virtual void notify_insert      (tree& ref, int pos, int nr);
+  virtual void notify_remove      (tree& ref, int pos, int nr);
+  virtual void notify_split       (tree& ref, int pos);
+  virtual void notify_join        (tree& ref, int pos);
+  virtual void notify_insert_node (tree& ref, int pos);
+  virtual void notify_remove_node (tree& ref, int pos);
+  virtual void notify_assign_node (tree& ref, tree_label op);
 
   virtual path get_ip (tree& ref);
   virtual bool set_ip (tree& ref, path ip);
@@ -94,17 +95,22 @@ ip_observer_rep::notify_join (tree& ref, int pos) {
 }
 
 void
-ip_observer_rep::notify_ins_unary (tree& ref) {
-  ip= path (0, ip);
-  attach_ip (ref[0], ip); // updates children's ips
+ip_observer_rep::notify_insert_node (tree& ref, int pos) {
+  ip= path (pos, ip);
+  attach_ip (ref[pos], ip); // updates children's ips
   attach_ip (ref, ip->next);
 }
 
 void
-ip_observer_rep::notify_rem_unary (tree& ref) {
-  if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[0], ip);
-  else detach_ip (ref[0]);
+ip_observer_rep::notify_remove_node (tree& ref, int pos) {
+  if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[pos], ip);
+  else detach_ip (ref[pos]);
   ip= DETACHED; // detach_ip (ref);
+}
+
+void
+ip_observer_rep::notify_assign_node (tree& ref, tree_label op) {
+  (void) ref; (void) op;
 }
 
 /******************************************************************************
