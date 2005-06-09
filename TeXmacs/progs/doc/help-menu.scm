@@ -208,6 +208,16 @@
 	     (load-help-article "devel/source/maths"))
 	    ("The boxes produced by the typesetter"
 	     (load-help-article "devel/source/boxes"))))
+  (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
+	(-> "Scheme extensions"
+	    ("Browse" (load-help-buffer "devel/scheme/scheme"))
+	    ---
+	    ("Overview of the scheme extension language"
+	     (load-help-article "devel/scheme/overview/scheme-overview"))
+	    ("TeXmacs extensions to scheme and utilities"
+	     (load-help-article "devel/scheme/utils/scheme-utils"))
+	    ("Programming routines for editing documents"
+	     (load-help-article "devel/scheme/edit/scheme-edit"))))
   ---
   (-> "Search"
       ("Documentation" (interactive docgrep-in-doc))
