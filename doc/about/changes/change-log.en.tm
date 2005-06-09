@@ -5,9 +5,13 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.2>
+  <section|Changes from version 1.0.5 to 1.0.5.3>
 
   <\itemize>
+    <item>Reorganized and consolidated tree API (1.0.5.3).
+
+    <item>Started documentation of Scheme API (1.0.5.3).
+
     <item>User preference for popup instead of footer dialogues (1.0.5.2).
 
     <item>Default values and types for interactive arguments (1.0.5.2).
