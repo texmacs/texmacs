@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.5.2>
 
 <style|source>
 
@@ -127,6 +127,10 @@
   </macro>>
 
   <assign|scheme-fragment|<\macro|x>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
+  </macro>>
+
+  <assign|shell-fragment|<\macro|x>
     <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
   </macro>>
 
