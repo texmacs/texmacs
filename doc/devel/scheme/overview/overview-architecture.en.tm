@@ -59,17 +59,20 @@
   following:
 
   <\itemize>
-    <item>A certain number of frequently used abbreviations, like
+    <item>A certain number of frequently used
+    <hyper-link|abbreviations|../utils/utils-abbrevs.en.tm>, like
     <verbatim|==> for <verbatim|equal?>.
 
     <item>General language extensions for <hyper-link|contextual
-    overloading|overview-overloading.en.tm>, logical programming, <abbr|etc.>
+    overloading|overview-overloading.en.tm>, <hyper-link|logical
+    programming|overview-meta.en.tm>, <abbr|etc.>
 
-    <item><TeXmacs>-specific language extensions for the definition of menus,
-    keyboard shortcuts, <abbr|etc.>
+    <item><TeXmacs>-specific language extensions for the definition of
+    <hyper-link|menus|../utils/utils-menus.en.tm>, <hyper-link|keyboard
+    shortcuts|../utils/utils-keyboard.en.tm>, <abbr|etc.>
 
-    <item>Additional functionality for <TeXmacs> content and pattern
-    matching.
+    <item>Additional routines for <hyper-link|<TeXmacs> content
+    manipulation|overview-content.en.tm> and pattern matching.
 
     <item>Further utilities and libraries for common types like strings and
     lists.

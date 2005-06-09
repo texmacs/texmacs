@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The module system and lazy definitions>
+  <tmdoc-title|Meta information and logical programming>
 
   \;
 

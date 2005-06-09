@@ -48,9 +48,11 @@
     <branch|General architecture of the <value|scheme>
     API|overview-architecture.en.tm>
 
+    <branch|The module system and lazy definitions|overview-lazyness.en.tm>
+
     <branch|Contextual overloading|overview-overloading.en.tm>
 
-    <branch|Lazy loading of modules|overview-lazyness.en.tm>
+    <branch|Meta information and logical programming|overview-meta.en.tm>
 
     <branch|The <TeXmacs> content model|overview-content.en.tm>
 
