@@ -36,8 +36,9 @@
 
   For further information about <value|scheme>, we refer to
   <hlink|<verbatim|http://www.schemers.org>|http://www.schemers.org>. As a
-  general rule, we also encourage users to take a look at the source code for
-  examples on how to use <value|scheme> from within <TeXmacs>.
+  general rule, we also encourage users to take a look at the <TeXmacs>
+  source code for concrete examples on how to use <value|scheme> from within
+  <TeXmacs>.
 
   <\traverse>
     <branch|Why <TeXmacs> uses <value|scheme> as its extension

@@ -64,7 +64,11 @@
 
   The customization of the <hlink|keyboard|../utils/utils-keyboard.en.tm> and
   <hlink|menus|../utils/utils-menus.en.tm> is described in more detail in the
-  chapter about the <TeXmacs> extensions of <value|scheme>.
+  chapter about the <TeXmacs> extensions of <value|scheme>. Notice also that,
+  because of the <hyper-link|lazy loading mechanism|overview-lazyness.en.tm>,
+  you can not always assume that the standard key-bindings and menus are
+  loaded before <verbatim|my-init-texmacs.scm>. This implies that some care
+  is needed in the case of <hyper-link|redefinitions|overview-lazyness.en.tm#redefinitions>.
 
   The file <verbatim|my-init-buffer.scm> can for instance be used in order to
   automatically select a certain style when starting a new document:

@@ -80,7 +80,7 @@
 
   <paragraph|Internal modules and plug-ins>
 
-  The remaining <value|scheme> extensions of <TeXmacs> are regrouped in
+  The remaining <value|scheme> extensions of <TeXmacs> are regrouped into
   <em|internal modules> which usually correspond to a particular type of
   content. For instance, the directories
 
