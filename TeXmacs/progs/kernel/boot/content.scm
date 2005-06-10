@@ -14,6 +14,11 @@
 
 (texmacs-module (kernel boot content))
 
+(define-public (tree . l)
+  (if (string? (car l))
+      (string->tree (car l))
+      (tm->tree l)))
+
 (define-public (atomic-tree? t)
   (and (tree? t) (tree-atomic? t)))
 

@@ -145,95 +145,36 @@ struct curve_box_rep: public box_rep {
   array<SI> styled_n;
   int fill;
   color fill_col;
-  int pattern_mode;
-  array<box> pattern;
-// Constructor
-  void calc_extent (
-    SI &X1, SI &Y1, SI &X2, SI &Y2, SI &X3, SI &Y3, SI &X4, SI &Y4);
-  curve_box_rep (
-    path ip, curve c, SI width, color col, array<bool> style, SI style_unit,
-    int fill, color fill_col, int pattern_mode, array<box> pattern);
-  operator tree () { return "curve"; }
-// Graphical select
+  curve_box_rep (path ip, curve c, SI width, color col,
+		 array<bool> style, SI style_unit, int fill, color fill_col);
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
-// Display
-  void curve_box_rep::traverse_subboxes (
-    ps_device dev, box b, point p1, point p2, double magn, bool b2, bool draw);
-  void display_pattern (ps_device dev, bool draw);
   void display (ps_device dev);
-// Operations on translated/rotated curves
-  void extent  (point u, double magn, point o, double angle,
-		SI &x1, SI &y1, SI &x2, SI &y2,
-		SI &x3, SI &y3, SI &x4, SI &y4);
-  void display (ps_device dev, point u, double magn, point o, double angle);
-// Calculating the style
+  operator tree () { return "curve"; }
   SI length ();
   void apply_style ();
 };
 
-static ps_device dummy_dev= ps_device ();
-
-// Constructor
-void
-curve_box_rep::calc_extent (
-  SI &X1, SI &Y1, SI &X2, SI &Y2, SI &X3, SI &Y3, SI &X4, SI &Y4)
-{
-  int i, n= N(a);
-  X1= Y1= X3= Y3= MAX_SI;
-  X2= Y2= X4= Y4= -MAX_SI;
-  for (i=0; i<(n-1); i++) {
-    X1= min (X1, min ((SI) a[i][0], (SI) a[i+1][0]));
-    Y1= min (Y1, min ((SI) a[i][1], (SI) a[i+1][1]));
-    X2= max (X2, max ((SI) a[i][0], (SI) a[i+1][0]));
-    Y2= max (Y2, max ((SI) a[i][1], (SI) a[i+1][1]));
-  }
-  X3= X1 - (width>>1); Y3= Y1 - (width>>1); 
-  X4= X2 + (width>>1); Y4= Y2 + (width>>1);
-}
-
-static void
-calc_composite_extent (box b) {
-  b->x1= b->y1= b->x3= b->y3= MAX_SI;
-  b->x2= b->y2= b->x4= b->y4= -MAX_SI;
-  int i;
-  for (i= 0; i<b->subnr(); i++) {
-    box sb= b->subbox (i);
-    if ((tree)sb == "curve") {
-      b->x1= min (b->x1, sb->x1);
-      b->y1= min (b->y1, sb->y1);
-      b->x2= max (b->x2, sb->x2);
-      b->y2= max (b->y2, sb->y2);
-      b->x3= min (b->x3, sb->x3);
-      b->y3= min (b->y3, sb->y3);
-      b->x4= max (b->x4, sb->x4);
-      b->y4= max (b->y4, sb->y4);
-    }
-  }
-}
-
-curve_box_rep::curve_box_rep (
-  path ip2, curve c2, SI W, color C, array<bool> style2, SI style_unit2,
-  int fill2, color fill_col2, int pattern_mode2, array<box> pattern2)
-  :
+curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
+  array<bool> style2, SI style_unit2, int fill2, color fill_col2):
   box_rep (ip2), width (W), col (C), c (c2),
-  style (style2), style_unit (style_unit2),
-  fill (fill2), fill_col (fill_col2),
-  pattern_mode (pattern_mode2), pattern (pattern2)
+  style (style2), style_unit (style_unit2), fill (fill2), fill_col (fill_col2)
 {
   a= c->rectify (PIXEL);
-  calc_extent (x1, y1, x2, y2, x3, y3, x4, y4);
-  if (N(pattern)>0 && !nil (pattern[0]))
-    calc_composite_extent (pattern[0]);
-  if (N(pattern)>1 && !nil (pattern[1]))
-    calc_composite_extent (pattern[1]);
-  if (N(pattern)>2 && !nil (pattern[2]))
-    calc_composite_extent (pattern[2]);
-  display_pattern (dummy_dev, false);
+  int i, n= N(a);
+  x1= y1= x3= y3= MAX_SI;
+  x2= y2= x4= y4= -MAX_SI;
+  for (i=0; i<(n-1); i++) {
+    x1= min (x1, min ((SI) a[i][0], (SI) a[i+1][0]));
+    y1= min (y1, min ((SI) a[i][1], (SI) a[i+1][1]));
+    x2= max (x2, max ((SI) a[i][0], (SI) a[i+1][0]));
+    y2= max (y2, max ((SI) a[i][1], (SI) a[i+1][1]));
+  }
+  x3= x1 - (width>>1); y3= y1 - (width>>1); 
+  x4= x2 + (width>>1); y4= y2 + (width>>1);
   apply_style ();
 }
 
-// Graphical select
 SI
 curve_box_rep::graphical_distance (SI x, SI y) {
   SI gd= MAX_SI;
@@ -289,145 +230,6 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
   return res;
 }
 
-// Display
-static bool
-find_first_point (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  p= a[0];
-  return true;
-}
-
-static bool
-find_last_point (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  p= a[N(a)-1];
-  return true;
-}
-
-static bool
-find_prev_last (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  int i= N(a)-1;
-  point p0= a[i];
-  while (i>=0) {
-    if (!fnull (norm(a[i]-p0),1e-6)) {
-      p= a[i];
-      return true;
-    }
-    i--;
-  }
-  return false;
-}
-
-static bool
-find_next_first (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  int i= 0;
-  point p0= a[i];
-  while (i<N(a)) {
-    if (!fnull (norm(a[i]-p0),1e-6)) {
-      p= a[i];
-      return true;
-    }
-    i++;
-  }
-  return false;
-}
-
-void
-curve_box_rep::traverse_subboxes (
-  ps_device dev, box b, point p1, point p2, double magn, bool b2, bool draw)
-{
-  if (!nil (b)) {
-    point o1 (2), o2 (2);
-    o1[0]= b2 ? b->x2 : b->x1;
-    o1[1]= (b->y1 + b->y2) / 2;
-    o2= b2 ? p2 : p1;
-    double angle= arg (p2-p1);
-    int i;
-    for (i= 0; i<b->subnr(); i++) {
-      box sb= b->subbox (i);
-      if (draw)
-        sb->display (dev, point (sb->x1, sb->y1) +o2 -o1, magn, o2, angle);
-      else {
-        if ((tree)sb == "curve") {
-          SI X1, Y1, X2, Y2;
-          SI X3, Y3, X4, Y4;
-          sb->extent (point (sb->x1, sb->y1) +o2 -o1, magn, o2, angle,
-		      X1, Y1, X2, Y2, X3, Y3, X4, Y4);
-          x1= min (x1, X1);
-          y1= min (y1, Y1);
-          x2= max (x2, X2);
-          y2= max (y2, Y2);
-          x3= min (x3, X3);
-          y3= min (y3, Y3);
-          x4= max (x4, X4);
-          y4= max (y4, Y4);
-        }
-      }
-    }
-  }
-}
-
-void
-curve_box_rep::display_pattern (ps_device dev, bool draw) {
-  int n= N(a);
-  if (n<=1) return;
-  SI l0= 0, l1=0;
-  point p1, p2;
-  if (N(pattern)>0 && find_first_point (a, p1) && find_next_first (a, p2)) {
-    traverse_subboxes (dev, pattern[0], p1, p2, 1.0, false, draw);
-    if (!nil (pattern[0])) l0= pattern[0]->x2 - pattern[0]->x1;
-  }
-  if (N(pattern)>1 && find_prev_last (a, p1) && find_last_point (a, p2)) {
-    traverse_subboxes (dev, pattern[1], p1, p2, 1.0, true, draw);
-    if (!nil (pattern[1])) l1= pattern[1]->x2 - pattern[1]->x1;
-  }
-  if (N(pattern)>2) {
-    box rep= pattern[2];
-
-    if (!nil (rep)) {
-      SI L= length (), L2= L -l0 -l1, lm= rep->x2 - rep->x1;
-      if (L2<lm) return; //FIXME: Should shrink the pattern
-      SI l= L2 / (L2 / lm);
-      SI li= 0, li1= (SI)norm (a[1]-a[0]), len= l0;
-    //FIXME: Thats better if we start from l0+l/2, drawing the
-    //  pattern accordingly (i.e., using the middle point on
-    //  the curve in the area where the pattern is displayed)
-
-      int i= 0;
-      while (len<=L-l1-l+1e-6 && i+1<n) {
-        point seg= a[i+1]-a[i];
-        while (fnull (norm(seg),1e-6) && i+2<n) {
-          i++;
-          li= li1;
-          seg= a[i+1]-a[i];
-          li1+= (SI)norm (seg);
-        }
-        if (fnull (norm(seg),1e-6) && i+2>=n)
-          break;
-        while (li1<len && i+1<n) {
-          i++;
-          if (i+1<n) {
-            li= li1;
-            seg= a[i+1]-a[i];
-            li1+= (SI)norm (seg);
-          }
-        }
-        if (i+1>=n) break;
-        point o= a[i] + (len-li) * (seg/norm(seg));
-        traverse_subboxes (dev, rep,
-	  o, a[i+1], ((double)l)/((double)lm), false, draw); 
-        len+= l;
-      }
-    }
-  }
-}
-
 void
 curve_box_rep::display (ps_device dev) {
   int i, n;
@@ -441,9 +243,7 @@ curve_box_rep::display (ps_device dev) {
     }
     dev->polygon (x, y, false);
   }
-  if ((fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) &&
-      pattern_mode != LINE_PATTERN_MODE_PATTERN)
-  {
+  if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
     dev->set_color (col);
     dev->set_line_style (width, 0, false);
     if (N (style) == 0) {
@@ -494,49 +294,8 @@ curve_box_rep::display (ps_device dev) {
       }
     }
   }
-  if ((fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) &&
-      (pattern_mode == LINE_PATTERN_MODE_PATTERN ||
-       pattern_mode == LINE_PATTERN_MODE_BOTH
-    ))
-    display_pattern (dev, true);
 }
 
-// Operations on translated/rotated curves
-void
-curve_box_rep::extent (point u, double magn, point o, double angle,
-  SI &X1, SI &Y1, SI &X2, SI &Y2, SI &X3, SI &Y3, SI &X4, SI &Y4)
-{
-  array<point> a0= a;
-  a= array<point> (N(a));
-  int i;
-  for (i=0; i<N(a); i++) {
-    a[i]= a0[i] -point (x1, y1);
-    a[i]= magn * a[i];
-    a[i]= a[i] + u;
-    a[i]= rotate2D (a[i], o, angle);
-  }
-  calc_extent (X1, Y1, X2, Y2, X3, Y3, X4, Y4);
-  a= a0;
-}
-
-void
-curve_box_rep::display (
-  ps_device dev, point u, double magn, point o, double angle)
-{
-  array<point> a0= a;
-  a= array<point> (N(a));
-  int i;
-  for (i=0; i<N(a); i++) {
-    a[i]= a0[i] -point (x1, y1);
-    a[i]= magn * a[i];
-    a[i]= a[i] + u;
-    a[i]= rotate2D (a[i], o, angle);
-  }
-  display (dev);
-  a= a0;
-}
-
-// Calculating the style
 SI
 curve_box_rep::length () {
   int i, n= N(a);
@@ -611,10 +370,9 @@ point_box (path ip, point p, SI r, color col, string style) {
 }
 
 box
-curve_box (
-  path ip, curve c, SI width, color col, array<bool> style, SI style_unit,
-  int fill, color fill_col, int pattern_mode, array<box> pattern)
+curve_box (path ip, curve c, SI width, color col,
+  array<bool> style, SI style_unit, int fill, color fill_col)
 {
-  return new curve_box_rep (ip, c, width, col, style, style_unit,
-			    fill, fill_col, pattern_mode, pattern);
+  return new curve_box_rep (ip, c, width, col,
+			    style, style_unit, fill, fill_col);
 }
