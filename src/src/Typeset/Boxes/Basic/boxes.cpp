@@ -433,20 +433,6 @@ box_rep::post_display (ps_device &dev) {
   (void) dev;
 }
 
-void
-box_rep::extent (point u, double magn, point o, double angle,
-  SI &X1, SI &Y1, SI &X2, SI &Y2, SI &X3, SI &Y3, SI &X4, SI &Y4)
-{
-  (void) u; (void) magn; (void) o; (void) angle;
-  X1= x1; Y1= y1; X2= x2; Y2= y2;
-  X3= x3; Y3= y3; X4= x4; Y4= y4;
-}
-
-void
-box_rep::display (ps_device dev, point u, double magn, point o, double angle) {
-  (void) dev; (void) u; (void) magn; (void) o; (void) angle;
-}
-
 /******************************************************************************
 * The cursor class
 ******************************************************************************/

@@ -27,20 +27,7 @@ inline point as_point(double x) {
 point as_point (tree t);
 tree  as_tree (point p);
 
-struct tm_complex {
-/* FIXME: should we use this class or either use the standard <complex> C++
-   lib ? In this latter case, compilation problems occur : either we have
-   a warning if we use the old '#include <complex.h>' syntax, or a kilometer
-   of error messages (conflict with the standard C++ type 'string') if we use
-   the '#include <complex>' \ 'using namespace std;' nondeprecated syntax.
- */
-  double x, y;
-  tm_complex (double x2, double y2): x (x2), y (y2) {}
-};
 double operator * (point p1, point p2);
-point  operator * (tm_complex c, point p);
-point  rotate2D (point p, point o, double angle);
-
 double norm (point p);
 double arg (point p);
 bool   collinear (point p1, point p2);

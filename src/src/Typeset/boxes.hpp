@@ -135,11 +135,6 @@ public:
   virtual void      pre_display (ps_device& dev);
   virtual void      post_display (ps_device& dev);
   virtual void      display (ps_device dev) = 0;
-  virtual void      extent  (point u, double magn, point o, double angle,
-			     SI &x1, SI &y1, SI &x2, SI &y2,
-			     SI &x3, SI &y3, SI &x4, SI &y4);
-  virtual void      display (ps_device dev,
-			     point u, double magn, point o, double angle);
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
   virtual int       subnr ();

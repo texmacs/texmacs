@@ -89,19 +89,6 @@ operator * (point p1, point p2) {
   return r;
 }
 
-point
-operator * (tm_complex c, point p) {
-  if (N(p)==1) p= point (p[0], 0);
-  if (N(p)==0) p= point (0, 0);
-  return point (c.x*p[0] - c.y*p[1], c.x*p[1] + c.y*p[0]);
-}
-
-point
-rotate2D (point p, point o, double angle) {
-  tm_complex rot=  tm_complex (cos (angle), sin (angle));
-  return rot * (p - o) + o;
-}
-
 double
 norm (point p) {
   return sqrt (p*p);
