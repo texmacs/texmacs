@@ -242,6 +242,10 @@ public:
   virtual void position_delete (int i) = 0;
   virtual void position_set (int i, path p) = 0;
   virtual path position_get (int i) = 0;
+  virtual observer tree_position_new (path p) = 0;
+  virtual void tree_position_delete (observer o) = 0;
+  virtual void tree_position_set (observer o, path p) = 0;
+  virtual path tree_position_get (observer o) = 0;
 
   /* public routines from edit_text */
   virtual void correct (path p) = 0;

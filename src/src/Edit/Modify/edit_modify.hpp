@@ -62,6 +62,10 @@ public:
   void position_delete (int i);
   void position_set (int i, path p);
   path position_get (int i);
+  observer tree_position_new (path p);
+  void tree_position_delete (observer o);
+  void tree_position_set (observer o, path p);
+  path tree_position_get (observer o);
 };
 
 #endif // defined EDIT_MODIFY_H

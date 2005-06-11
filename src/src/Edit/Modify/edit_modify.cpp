@@ -621,3 +621,32 @@ path
 edit_modify_rep::position_get (int i) {
   return copy (pps[code_to_nr(i)]);
 }
+
+observer
+edit_modify_rep::tree_position_new (path p) {
+  tree st= subtree (et, path_up (p));
+  int index= last_item (p);
+  observer o= tree_position (st, index);
+  attach_position (st, o);
+  return o;
+}
+
+void
+edit_modify_rep::tree_position_delete (observer o) {
+  tree st;
+  int  index;
+  if (o->get_position (st, index))
+    detach_position (st, o);
+}
+
+void
+edit_modify_rep::tree_position_set (observer o, path p) {
+  tree st= subtree (et, path_up (p));
+  int index= last_item (p);
+  o->set_position (st, index);
+}
+
+path
+edit_modify_rep::tree_position_get (observer o) {
+  return obtain_position (o);
+}
