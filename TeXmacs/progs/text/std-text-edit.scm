@@ -184,10 +184,10 @@
     description-dash description-long))
 
 (tm-define (inside-list?)
-  (inside-which list-itemize-enumerate))
+  (not (not (inside-which list-itemize-enumerate))))
 
 (tm-define (inside-description?)
-  (inside-which list-description))
+  (not (not (inside-which list-description))))
 
 (tm-define (make-tmlist l)
   (make l)
