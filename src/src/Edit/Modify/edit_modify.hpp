@@ -58,14 +58,10 @@ public:
   void redo ();
   void perform_undo_redo (tree x);
 
-  int  position_new ();
-  void position_delete (int i);
-  void position_set (int i, path p);
-  path position_get (int i);
-  observer tree_position_new (path p);
-  void tree_position_delete (observer o);
-  void tree_position_set (observer o, path p);
-  path tree_position_get (observer o);
+  observer position_new (path p);
+  void position_delete (observer o);
+  void position_set (observer o, path p);
+  path position_get (observer o);
 };
 
 #endif // defined EDIT_MODIFY_H

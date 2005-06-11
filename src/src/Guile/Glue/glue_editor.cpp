@@ -257,19 +257,23 @@ tmg_path_remove_with (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_position_new () {
+tmg_position_new_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "position-new-path");
+
+  path in1= scm_to_path (arg1);
+
   // SCM_DEFER_INTS;
-  int out= get_server()->get_editor()->position_new ();
+  observer out= get_server()->get_editor()->position_new (in1);
   // SCM_ALLOW_INTS;
 
-  return int_to_scm (out);
+  return observer_to_scm (out);
 }
 
 SCM
 tmg_position_delete (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "position-delete");
+  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "position-delete");
 
-  int in1= scm_to_int (arg1);
+  observer in1= scm_to_observer (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->get_editor()->position_delete (in1);
@@ -280,10 +284,10 @@ tmg_position_delete (SCM arg1) {
 
 SCM
 tmg_position_set (SCM arg1, SCM arg2) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "position-set");
+  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "position-set");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "position-set");
 
-  int in1= scm_to_int (arg1);
+  observer in1= scm_to_observer (arg1);
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
@@ -295,66 +299,12 @@ tmg_position_set (SCM arg1, SCM arg2) {
 
 SCM
 tmg_position_get (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "position-get");
+  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "position-get");
 
-  int in1= scm_to_int (arg1);
+  observer in1= scm_to_observer (arg1);
 
   // SCM_DEFER_INTS;
   path out= get_server()->get_editor()->position_get (in1);
-  // SCM_ALLOW_INTS;
-
-  return path_to_scm (out);
-}
-
-SCM
-tmg_tree_position_new (SCM arg1) {
-  SCM_ASSERT_PATH (arg1, SCM_ARG1, "tree-position-new");
-
-  path in1= scm_to_path (arg1);
-
-  // SCM_DEFER_INTS;
-  observer out= get_server()->get_editor()->tree_position_new (in1);
-  // SCM_ALLOW_INTS;
-
-  return observer_to_scm (out);
-}
-
-SCM
-tmg_tree_position_delete (SCM arg1) {
-  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "tree-position-delete");
-
-  observer in1= scm_to_observer (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->tree_position_delete (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tree_position_set (SCM arg1, SCM arg2) {
-  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "tree-position-set");
-  SCM_ASSERT_PATH (arg2, SCM_ARG2, "tree-position-set");
-
-  observer in1= scm_to_observer (arg1);
-  path in2= scm_to_path (arg2);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->tree_position_set (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tree_position_get (SCM arg1) {
-  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "tree-position-get");
-
-  observer in1= scm_to_observer (arg1);
-
-  // SCM_DEFER_INTS;
-  path out= get_server()->get_editor()->tree_position_get (in1);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -2799,14 +2749,10 @@ initialize_glue_editor () {
   gh_new_procedure ("path-correct", (FN) tmg_path_correct, 1, 0, 0);
   gh_new_procedure ("path-insert-with", (FN) tmg_path_insert_with, 3, 0, 0);
   gh_new_procedure ("path-remove-with", (FN) tmg_path_remove_with, 2, 0, 0);
-  gh_new_procedure ("position-new", (FN) tmg_position_new, 0, 0, 0);
+  gh_new_procedure ("position-new-path", (FN) tmg_position_new_path, 1, 0, 0);
   gh_new_procedure ("position-delete", (FN) tmg_position_delete, 1, 0, 0);
   gh_new_procedure ("position-set", (FN) tmg_position_set, 2, 0, 0);
   gh_new_procedure ("position-get", (FN) tmg_position_get, 1, 0, 0);
-  gh_new_procedure ("tree-position-new", (FN) tmg_tree_position_new, 1, 0, 0);
-  gh_new_procedure ("tree-position-delete", (FN) tmg_tree_position_delete, 1, 0, 0);
-  gh_new_procedure ("tree-position-set", (FN) tmg_tree_position_set, 2, 0, 0);
-  gh_new_procedure ("tree-position-get", (FN) tmg_tree_position_get, 1, 0, 0);
   gh_new_procedure ("inside?", (FN) tmg_insideP, 1, 0, 0);
   gh_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
   gh_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
