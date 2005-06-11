@@ -42,15 +42,10 @@
   (path-insert-with insert_with (void path string content))
   (path-remove-with remove_with (void path string))
 
-  (position-new position_new (int))
-  (position-delete position_delete (void int))
-  (position-set position_set (void int path))
-  (position-get position_get (path int))
-
-  (tree-position-new tree_position_new (observer path))
-  (tree-position-delete tree_position_delete (void observer))
-  (tree-position-set tree_position_set (void observer path))
-  (tree-position-get tree_position_get (path observer))
+  (position-new-path position_new (observer path))
+  (position-delete position_delete (void observer))
+  (position-set position_set (void observer path))
+  (position-get position_get (path observer))
 
   ;; general modification routines
   (inside? inside (bool tree_label))

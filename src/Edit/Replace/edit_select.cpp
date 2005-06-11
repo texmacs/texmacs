@@ -781,7 +781,7 @@ edit_select_rep::selection_get_cut () {
 
 void
 edit_select_rep::selection_move () {
-  int pos= position_new ();
+  observer pos= position_new (tp);
   tree t= selection_get_cut ();
   go_to (position_get (pos));
   insert_tree (t);
