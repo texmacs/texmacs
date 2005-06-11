@@ -16,6 +16,8 @@
 
 #define DETACHED (-5)
 
+observer nil_observer;
+
 /******************************************************************************
 * Debugging facilities
 ******************************************************************************/
@@ -62,19 +64,64 @@ stretched_print (tree t, bool ips, int indent) {
   }
 }
 
+ostream&
+operator << (ostream& out, observer o) {
+  out << "<observer";
+  if (nil (o)) out << " null";
+  else o->print (out);
+  out << ">";
+  return out;
+}
+
 /******************************************************************************
 * Routines for modifying trees
 *******************************************************************************
-* Notice that "inserting modifications" (insert, split and insert_node)
-* invoke the observers call-back routines after the actual modification and
-* "assigning and deleting modifications" (assign, remove, join,
-* assign_node and remove_node)  before the actual modification.
+* 1) The "inserting modifications" (insert, split and insert_node) invoke
+*    the observers call-back routines after the actual modification and
+*    "assigning and deleting modifications" (assign, remove, join,
+*    assign_node and remove_node)  before the actual modification.
+* 2) The split and join modifications pass the joined tree
+*    at position pos as an additional argument to the call-back routines.
+* 3) They also admit variant call back routines for the split/join nodes.
 ******************************************************************************/
+
+static void
+simplify (observer& obs) {
+  if (nil (obs)) return;
+  observer& o1= obs->get_child (0);
+  observer& o2= obs->get_child (1);  
+  if (!nil (o1) || !nil (o2)) {
+    simplify (o1);
+    simplify (o2);
+    obs= list_observer (o1, o2);
+  }
+}
+
+static void
+detach (tree& ref, tree closest, bool right) {
+  if (!nil (ref->obs)) {
+    ref->obs->notify_detach (ref, closest, right);
+    simplify (ref->obs);
+  }
+  if (is_compound (ref)) {
+    int i, n= N(ref);
+    for (i=0; i<n; i++)
+      detach (ref[i], closest, right);
+  }
+}
 
 void
 assign (tree& ref, tree t) {
   // cout << "Assign " << ref << " := " << t << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_assign (ref, t);
+  if (!nil (ref->obs)) {
+    ref->obs->notify_assign (ref, t);
+    simplify (ref->obs);
+  }
+  if (is_compound (ref)) {
+    int i, n= N(ref), mid= (n+1)>>1;
+    for (i=0; i<n; i++)
+      detach (ref[i], t, i >= mid);
+  }
   ref= t;
   // stretched_print (ref, true, 1);
   // consistency_check ();
@@ -93,8 +140,10 @@ insert (tree& ref, int pos, tree t) {
     for (i=0; i<nr; i++)
       ref[pos+i]= t[i];
   }
-  if (!nil (ref->obs))
+  if (!nil (ref->obs)) {
     ref->obs->notify_insert (ref, pos, is_atomic (t)? N(t->label): N(t));
+    simplify (ref->obs);
+  }
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -102,7 +151,20 @@ insert (tree& ref, int pos, tree t) {
 void
 remove (tree& ref, int pos, int nr) {
   // cout << "Remove " << ref << " -= " << nr << " at " << pos << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_remove (ref, pos, nr);
+  if (!nil (ref->obs)) {
+    ref->obs->notify_remove (ref, pos, nr);
+    simplify (ref->obs);
+  }
+  if (is_compound (ref)) {
+    int i, n= N(ref), end= pos+nr, mid= (pos+end+1) >> 1;
+    for (i=pos; i<mid; i++)
+      if (pos == 0) detach (ref[i], ref, false);
+      else detach (ref[i], ref[pos-1], true);
+    for (; i<end; i++)
+      if (end == n) detach (ref[i], ref, true);
+      else detach (ref[i], ref[pos+nr], false);
+  }
+
   if (is_atomic (ref))
     ref->label= ref->label (0, pos) * ref->label (pos+nr, N(ref->label));
   else {
@@ -118,21 +180,30 @@ remove (tree& ref, int pos, int nr) {
 void
 split (tree& ref, int pos, int at) {
   // cout << "Split " << ref << " at " << pos << ", " << at << "\n";
-  tree t;
+  tree t= ref[pos], t1, t2;
   if (is_atomic (ref[pos])) {    
-    t= ref[pos]->label (at, N(ref[pos]->label));
-    ref[pos]->label->resize (at);
+    t1= ref[pos]->label (0, at);
+    t2= ref[pos]->label (at, N(ref[pos]->label));
   }
   else {
-    t= ref[pos] (at, N(ref[pos]));
-    AR(ref[pos])->resize (at);
+    t1= ref[pos] (0, at);
+    t2= ref[pos] (at, N(ref[pos]));
   }
   int i, n= N(ref);
   AR(ref)->resize (n+1);
   for (i=n; i>(pos+1); i--)
     ref[i]= ref[i-1];
-  ref[pos+1]= t;
-  if (!nil (ref->obs)) ref->obs->notify_split (ref, pos);
+  ref[pos  ]= t1;
+  ref[pos+1]= t2;
+
+  if (!nil (ref->obs)) {
+    ref->obs->notify_split (ref, pos, t);
+    simplify (ref->obs);
+  }
+  if (!nil (t->obs)) {
+    t->obs->notify_var_split (t, t1, t2);
+    simplify (t->obs);
+  }
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -140,17 +211,27 @@ split (tree& ref, int pos, int at) {
 void
 join (tree& ref, int pos) {
   // cout << "Join " << ref << " at " << pos << "\n";
-  /* the following code is added for security */
+  // the following code is added for security
   if (is_atomic (ref[pos]) && (!is_atomic (ref[pos+1])))
     insert_node (ref[pos], 0, tree (L(ref[pos+1])));
   if (is_atomic (ref[pos+1]) && (!is_atomic (ref[pos])))
     insert_node (ref[pos+1], 0, tree (L(ref[pos])));
-  /* end security code */
+  // end security code
 
-  if (!nil (ref->obs)) ref->obs->notify_join (ref, pos);
-  if (is_atomic (ref[pos]) && is_atomic (ref[pos+1]))
-    ref[pos]->label << ref[pos+1]->label;
-  else ref[pos] << A(ref[pos+1]);
+  tree t1= ref[pos], t2= ref[pos+1], t;
+  int offset= is_atomic (ref)? N(t1->label): N(t1);
+  if (is_atomic (t1) && is_atomic (t2)) t= t1->label * t2->label;
+  else t= t1 * t2;
+  if (!nil (ref->obs)) ref->obs->notify_join (ref, pos, t);
+  if (!nil (t1->obs)) {
+    t1->obs->notify_var_join (t1, t, 0);
+    simplify (t1->obs);
+  }
+  if (!nil (t2->obs)) {
+    t2->obs->notify_var_join (t2, t, offset);
+    simplify (t2->obs);
+  }
+  ref[pos]= t;
 
   int i, n= N(ref)-1;
   for (i=pos+1; i<n; i++)
@@ -169,7 +250,10 @@ insert_node (tree& ref, int pos, tree t) {
   r[pos]= ref;
   for (i=pos; i<n; i++) r[i+1]= t[i];
   ref= r;
-  if (!nil (ref[pos]->obs)) ref[pos]->obs->notify_insert_node (ref, pos);
+  if (!nil (ref[pos]->obs)) {
+    ref[pos]->obs->notify_insert_node (ref, pos);
+    simplify (ref[pos]->obs);
+  }
   // stretched_print (ref, true, 1);
   // consistency_check ();
 }
@@ -177,7 +261,10 @@ insert_node (tree& ref, int pos, tree t) {
 void
 remove_node (tree& ref, int pos) {
   // cout << "Remove node " << ref << " : " << pos << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_remove_node (ref, pos);
+  if (!nil (ref->obs)) {
+    ref->obs->notify_remove_node (ref, pos);
+    simplify (ref->obs);
+  }
   ref= ref[pos];
   // stretched_print (ref, true, 1);
   // consistency_check ();
@@ -186,7 +273,10 @@ remove_node (tree& ref, int pos) {
 void
 assign_node (tree& ref, tree_label op) {
   // cout << "Assign node " << ref << " : " << tree (op) << "\n";
-  if (!nil (ref->obs)) ref->obs->notify_assign_node (ref, op);
+  if (!nil (ref->obs)) {
+    ref->obs->notify_assign_node (ref, op);
+    simplify (ref->obs);
+  }
   LR (ref)= op;
   // stretched_print (ref, true, 1);
   // consistency_check ();
@@ -196,25 +286,32 @@ assign_node (tree& ref, tree_label op) {
 * Default virtual routines
 ******************************************************************************/
 
-path
-observer_rep::get_ip (tree& ref) {
-  (void) ref;
-  return DETACHED;
+bool
+observer_rep::get_ip (path& ip) {
+  (void) ip;
+  return false;
 }
 
 bool
-observer_rep::set_ip (tree& ref, path ip) {
-  (void) ref; (void) ip;
-  return true;
+observer_rep::set_ip (path ip) {
+  (void) ip;
+  return false;
 }
 
-/******************************************************************************
-* This routine should go to list_observer.cpp later on
-******************************************************************************/
+bool
+observer_rep::get_position (tree& t, int& index) {
+  (void) t; (void) index;
+  return false;
+}
 
-observer
-list_observer (observer o1, observer o2) {
-  if (!nil (o2))
-    fatal_error ("not yet implemented", "list_observer");
-  return o1;
+bool
+observer_rep::set_position (tree t, int index) {
+  (void) t; (void) index;
+  return false;
+}
+
+observer&
+observer_rep::get_child (int which) {
+  (void) which;
+  return nil_observer;
 }

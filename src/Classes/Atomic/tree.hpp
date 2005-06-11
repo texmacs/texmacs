@@ -25,6 +25,8 @@ class atomic_rep;
 class compound_rep;
 class tree {
   tree_rep* rep; // can be atomic or compound
+  inline tree (tree_rep* rep2);
+
 public:
 #ifdef OS_WIN32
   static const tree_label init; // used by hashmap<tree>() constructor
@@ -77,6 +79,7 @@ public:
   friend ostream& operator << (ostream& out, tree t);
   friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
+  friend class tree_position_rep;
 };
 
 class tree_rep: concrete_struct {
@@ -124,6 +127,7 @@ typedef tree scheme_tree;
 #endif
 
 void destroy_tree_rep (tree_rep* rep);
+inline tree::tree (tree_rep* rep2): rep (rep2) { rep->ref_count++; }
 inline tree::tree (const tree& x): rep (x.rep) { rep->ref_count++; }
 inline tree::~tree () {
   if ((--rep->ref_count)==0) { destroy_tree_rep (rep); rep= NULL; } }
