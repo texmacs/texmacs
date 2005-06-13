@@ -102,6 +102,31 @@
   Most higher level routines are built on top of these routines, so as to
   accept arguments of type <verbatim|content> whenever appropriate.
 
+  <paragraph|Persistent positions inside trees>
+
+  Besides the fact that trees remember their <em|positions> inside the global
+  edit tree, it is also possible to create cursor positions inside the global
+  edit tree, which are naturally updated when modifications take place. This
+  technique is useful when you want to write and editing routine which does
+  not act locally at the cursor position. For instance, the following routine
+  can be used to insert content at the start of the current buffer in a
+  reliable way:
+
+  <\scheme-fragment>
+    (define (insert-at-buffer-start t)
+
+    \ \ (with-cursor (path-start (root-tree) (buffer-path))
+
+    \ \ \ \ (insert t)))
+  </scheme-fragment>
+
+  The <verbatim|with-cursor> macro temporarily changes the cursor position,
+  while storing the old cursor position in such a way that it will be updated
+  during changes of the document. The user may also use the more explicit
+  routines <verbatim|position-new>, <verbatim|position-delete>,
+  <verbatim|position-set> and <verbatim|position-get> to manage persistent
+  positions.
+
   <tmdoc-copyright|2005|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
