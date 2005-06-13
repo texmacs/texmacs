@@ -189,13 +189,16 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define built-in-select select)
-
-(define-public (select . args)
+(define-public (tm-select x pattern)
   "Select all subtrees of @x which match a given path pattern @pattern"
-  (if (= (length args) 2)
-      (with (x pattern) args
-	(with sols (select-list x pattern '())
-	  ;; (display* "sols= " sols "\n")
-	  (map cadr sols)))
-      (apply built-in-select args)))
+  (with sols (select-list x pattern '())
+    ;; (display* "sols= " sols "\n")
+    (map cadr sols)))
+
+(with-module texmacs-user
+  (define-public guile-select select)
+  (define-public (select . args)
+    (import-from (kernel regexp regexp-select))
+    (if (= (length args) 2)
+	(apply tm-select args)
+	(apply guile-select args))))
