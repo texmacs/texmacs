@@ -17,8 +17,8 @@
 * Subroutines for cursor paths in trees
 ******************************************************************************/
 
-static bool
-valid_cursor (tree t, path p, bool start_flag=false) {
+bool
+valid_cursor (tree t, path p, bool start_flag) {
   if ((!nil (p)) && (!atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
     cerr << "TeXmacs] testing valid cursor " << p << " in " << t << "\n";
     fatal_error ("bad path", "valid_cursor", "edit_cursor.cpp");
@@ -26,8 +26,8 @@ valid_cursor (tree t, path p, bool start_flag=false) {
 
   if (nil (p)) return false;
   if (atom (p)) {
-    if (start_flag && (is_concat (t) || is_prime (t))) return (p->item!=0);
     if (the_drd->is_child_enforcing (t)) return false;
+    if (start_flag) return (p->item!=0);
     return true;
   }
   if (is_concat (t))

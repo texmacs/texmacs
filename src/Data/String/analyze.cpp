@@ -564,11 +564,12 @@ from_hexadecimal (string s) {
 }
 
 /******************************************************************************
-* Convert between verbatim and TeXmacs encoding
+* Routines for the TeXmacs encoding
 ******************************************************************************/
 
 string
 tm_encode (string s) {
+  // verbatim to TeXmacs encoding
   register int i;
   string r;
   for (i=0; i<N(s); i++) {
@@ -581,6 +582,7 @@ tm_encode (string s) {
 
 string
 tm_decode (string s) {
+  // TeXmacs encoding to verbatim
   register int i;
   string r;
   for (i=0; i<N(s); i++) {
@@ -618,6 +620,27 @@ tm_correct (string s) {
     else if (s[i]!='>') r << s[i];
   }
   return r;
+}
+
+void
+tm_char_forwards (string s, int& pos) {
+  int n= N(s);
+  if (pos == n);
+  else if (s[pos] != '<') pos++;
+  else {
+    while (pos<n && s[pos] != '>') pos++;
+    if (pos<n) pos++;
+  }
+}
+
+void
+tm_char_backwards (string s, int& pos) {
+  if (pos == 0);
+  else if (s[pos-1] != '>') pos--;
+  else {
+    while (pos>0 && s[pos-1] != '<') pos--;
+    if (pos>0) pos--;
+  }
 }
 
 /******************************************************************************

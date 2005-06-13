@@ -19,6 +19,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
+#include "tree_traverse.hpp"
 #include "tm_layout.hpp"
 #include "Concat/concater.hpp"
 #include "converter.hpp"

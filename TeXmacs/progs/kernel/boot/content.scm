@@ -59,6 +59,15 @@
        (go-to (position-get ,pos))
        (position-delete ,pos))))
 
+(define (apply-go-to routine)
+  (with p (routine (root-tree) (cursor-path))
+    (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
+
+(define-public (go-to-next) (apply-go-to path-next))
+(define-public (go-to-previous) (apply-go-to path-previous))
+(define-public (go-to-next-word) (apply-go-to path-next-word))
+(define-public (go-to-previous-word) (apply-go-to path-previous-word))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

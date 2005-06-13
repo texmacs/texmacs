@@ -14,6 +14,7 @@
 #define TREE_CURSOR_H
 #include "path.hpp"
 
+bool valid_cursor (tree t, path p, bool start_flag= false);
 path start (tree t, path p);
 path end (tree t, path p);
 path start (tree t);

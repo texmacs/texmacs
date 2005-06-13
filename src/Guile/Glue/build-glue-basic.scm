@@ -70,6 +70,10 @@
   (path-less-eq? path_less_eq (bool path path))
   (path-start start (path content path))
   (path-end end (path content path))
+  (path-next next (path content path))
+  (path-previous previous (path content path))
+  (path-next-word next_word (path content path))
+  (path-previous-word previous_word (path content path))
 
   ;; routines for strings
   (string-number? is_double (bool string))
