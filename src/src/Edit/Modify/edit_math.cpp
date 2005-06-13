@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "edit_math.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -176,25 +177,21 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
     string s= t[0]->label;
     if (forward) {
       int i= 0, n= N(s);
-      if ((i<n) && (s[i] == '<'))
-	for (; i<n; i++)
-	  if (s[i] == '>') break;
-      if (i>=n-1) {
+      tm_char_forwards (s, i);
+      if (i >= n) {
 	assign (p, "");
 	correct (path_up (p));
       }
-      else remove (p * path (0, 0), i+1);
+      else remove (p * path (0, 0), i);
     }
     else {
-      int i= N(s)-1;
-      if ((i>=0) && (s[i] == '>'))
-	for (; i>=0; i--)
-	  if (s[i] == '<') break;
-      if (i<=0) {
+      int n= N(s), i= n;
+      tm_char_backwards (s, i);
+      if (i <= 0) {
 	assign (p, "");
 	correct (path_up (p));
       }
-      else remove (p * path (0, i), N(s)-i);
+      else remove (p * path (0, i), n-i);
     }
   }
 }
