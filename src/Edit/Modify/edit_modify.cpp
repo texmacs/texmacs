@@ -20,8 +20,7 @@ extern int max_undo_depth;
 ******************************************************************************/
 
 edit_modify_rep::edit_modify_rep ():
-  undo_flag (false), redo_flag (false),
-  pps (1), nr_to_code (1), code_to_nr (-1) {}
+  undo_flag (false), redo_flag (false) {}
 edit_modify_rep::~edit_modify_rep () {}
 
 /******************************************************************************
@@ -185,129 +184,60 @@ edit_modify_rep::finished (path pp) {
 * Cursor handling after notification of changes in document
 ******************************************************************************/
 
-#define FOR_ALL_POINTERS_BEGIN \
-  pps[0]= tp; \
-  int idx, n= N(pps); \
-  for (idx=0; idx<n; idx++) { \
-    path& pp= pps[idx];
-
-#define FOR_ALL_POINTERS_END \
-  } \
-  tp= pps[0]
-
 void
-edit_modify_rep::notify_assign (path p, tree u) { (void) u;
+edit_modify_rep::notify_assign (path p, tree u) {
+  (void) u;
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (p<pp) pp= p * 0;
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_assign (get_typesetter (), p - rp, u);
 }
 
 void
 edit_modify_rep::notify_insert (path p, tree u) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if ((N(p)>=2) && path_inf (path_up (p), pp));
-    else if (path_inf (p, pp) || (p <= pp)) {
-      int nr= is_atomic (u)? N(u->label): N(u);
-      pp[N(p)-1] += nr;
-    }
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_insert (get_typesetter (), p - rp, u);
 }
 
 void
 edit_modify_rep::notify_remove (path p, int nr) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if ((N(p)>=2) && path_inf (path_up (p), pp));
-    else {
-      tree& st= subtree (et, path_up (p));
-      path p2= path_add (p, nr, N(p)-1);
-      if ((path_up (p) <= pp) && (arity (st) == nr))
-	pp= path_up (p) * 0;
-      else if (path_inf (p2, pp) || (p2 <= pp)) pp[N(p)-1] -= nr;
-      else if (path_inf (p, pp)  || (p <= pp)) {
-	if (is_atomic (st) || (last_item(p)==0)) pp= copy (p);
-	else pp= path_dec (p) * right_index (st [last_item(p)-1]);
-      }
-    }
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_remove (get_typesetter (), p - rp, nr);
 }
 
 void
 edit_modify_rep::notify_split (path p) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (!(path_up (p, 2) <= path_up (pp)));
-    else if (path_up (p, 2) == path_up (pp));
-    else if (pp[N(p)-2]<p[N(p)-2]);
-    else if (pp[N(p)-2]>p[N(p)-2]) pp[N(p)-2] ++;
-    else if ((path_up (p) == path_up (pp)) &&
-	     is_compound (subtree (et, path_up (p)))) {
-      if (last_item (pp)==1) pp[N(p)-2] ++;
-    }
-    else if (pp[N(p)-1]<p[N(p)-1]);
-    else {
-      pp[N(p)-2] ++;
-      pp[N(p)-1] -= last_item (p);
-    }
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_split (get_typesetter (), p - rp);
 }
 
 void
 edit_modify_rep::notify_join (path p) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    tree& st= subtree (et, p);
-    bool flag = is_atomic (st);
-    int  extra= flag? N(st->label): N(st);
-    if (!(path_up (p) <= path_up (pp)));
-    else if (path_up (p) == path_up (pp));
-    else if (pp[N(p)-1] <= p[N(p)-1]);
-    else {
-      if ((pp[N(p)-1] == p[N(p)-1]+1) &&
-	  (flag || (path_inc (p) != path_up (pp)))) pp[N(p)] += extra;
-      pp[N(p)-1] --;
-    }
-    FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_join (get_typesetter (), p - rp);
 }
 
 void
 edit_modify_rep::notify_insert_node (path p, tree t) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (path_up (p) <= path_up (pp)) {
-      path add= path (last_item (p), tail (pp, N(p)-1));
-      pp= copy (path_up (p)) * add;
-    }
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_insert_node (get_typesetter (), p - rp, t);
 }
 
 void
 edit_modify_rep::notify_remove_node (path p) {
   if (!(rp <= p)) return;
-  FOR_ALL_POINTERS_BEGIN
-    if (path_up (p) == path_up (pp)) {
-      if (last_item (pp) == 1)
-	pp[N(pp)-1]= right_index (subtree (et, p));
-    }
-    else if (path_up (p) <= path_up (pp)) {
-      path add= tail (pp, N(p));
-      pp= path_up (p) * add;
-    }
-  FOR_ALL_POINTERS_END;
+  cur_pos= position_new (tp);
   ::notify_remove_node (get_typesetter (), p - rp);
 }
 
 void
 edit_modify_rep::notify_assign_node (path p, tree_label op) {
   if (!(rp <= p)) return;
+  cur_pos= position_new (tp);
   ::notify_assign_node (get_typesetter (), p - rp, op);
 }
 
@@ -317,9 +247,9 @@ edit_modify_rep::post_notify (path p) {
   selection_cancel ();
   invalidate_mutators ();
   notify_change (THE_TREE);
-  FOR_ALL_POINTERS_BEGIN
-    pp= correct_cursor (et, pp);
-  FOR_ALL_POINTERS_END;
+  tp= position_get (cur_pos);
+  position_delete (cur_pos);
+  cur_pos= nil_observer;
   go_to (tp);
   /*
   cout << "et= " << et << "\n";
@@ -650,5 +580,5 @@ edit_modify_rep::position_set (observer o, path p) {
 
 path
 edit_modify_rep::position_get (observer o) {
-  return obtain_position (o);
+  return correct_cursor (et, obtain_position (o));
 }

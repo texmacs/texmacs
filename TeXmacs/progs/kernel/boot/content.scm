@@ -50,6 +50,15 @@
 (define-public (position-new . opts)
   (position-new-path (if (null? opts) (cursor-path) (car opts))))
 
+(define-public-macro (with-cursor p . body)
+  (with pos (gensym)
+    `(with ,pos (position-new)
+       (position-set ,pos (cursor-path))
+       (go-to ,p)
+       ,@body
+       (go-to (position-get ,pos))
+       (position-delete ,pos))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

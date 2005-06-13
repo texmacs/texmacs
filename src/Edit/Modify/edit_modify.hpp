@@ -18,12 +18,9 @@ path inner_paragraph (tree t, path p);
 
 class edit_modify_rep: virtual public editor_rep {
 protected:
-  bool undo_flag;                // when undoing some text
-  bool redo_flag;                // when redoing some text
-
-  array<path>      pps;          // all cursor positions
-  array<int>       nr_to_code;   // code name for i-th cursor position
-  hashmap<int,int> code_to_nr;   // inverse to nr_to_code
+  bool     undo_flag;                // when undoing some text
+  bool     redo_flag;                // when redoing some text
+  observer cur_pos;                  // tree_position corresponding to tp
 
 public:
   edit_modify_rep ();
