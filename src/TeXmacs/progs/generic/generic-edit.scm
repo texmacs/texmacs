@@ -107,31 +107,36 @@
 (tm-define (structured-insert-top) (noop))
 (tm-define (structured-insert-bottom) (noop))
 
+(define (context-structure? t)
+  (and (!= t (cursor-tree))
+       (not (in? (tree-label t) '(concat document cell row table tree)))
+       (> (tree-arity t) 1)))
+
 (tm-define (structured-left)
-  (:context always?)
-  (let* ((t (traverse-tree))
-	 (p (path-previous-argument (root-tree) (tree->path (tree-down t)))))
-    (if (nnull? p) (go-to p))))
+  (:context context-structure?)
+  (with-innermost t context-structure?
+    (with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-right)
-  (:context always?)
-  (let* ((t (traverse-tree))
-	 (p (path-next-argument (root-tree) (tree->path (tree-down t)))))
-    (if (nnull? p) (go-to p))))
+  (:context context-structure?)
+  (with-innermost t context-structure?
+    (with p (path-next-argument (root-tree) (tree->path (tree-down t)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-first)
-  (:context always?)
-  (let* ((t (traverse-tree))
-	 (q (rcons (tree->path t) -1))
-	 (p (path-next-argument (root-tree) q)))
-    (if (nnull? p) (go-to p))))
+  (:context context-structure?)
+  (with-innermost t context-structure?
+    (let* ((q (rcons (tree->path t) -1))
+	   (p (path-next-argument (root-tree) q)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-last)
-  (:context always?)
-  (let* ((t (traverse-tree))
-	 (q (rcons (tree->path t) (tree-arity t)))
-	 (p (path-previous-argument (root-tree) q)))
-    (if (nnull? p) (go-to p))))
+  (:context context-structure?)
+  (with-innermost t context-structure?
+    (let* ((q (rcons (tree->path t) (tree-arity t)))
+	   (p (path-previous-argument (root-tree) q)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-up) (noop))
 (tm-define (structured-down) (noop))
