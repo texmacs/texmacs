@@ -49,34 +49,6 @@
   (if (complete-try?) (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured editing
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (structured-insert forwards?) (insert-argument forwards?))
-(tm-define (structured-remove forwards?) (remove-argument forwards?))
-(tm-define (structured-insert-up) (noop))
-(tm-define (structured-insert-down) (noop))
-(tm-define (structured-insert-start) (noop))
-(tm-define (structured-insert-end) (noop))
-(tm-define (structured-insert-top) (noop))
-(tm-define (structured-insert-bottom) (noop))
-
-(tm-define (structured-right) (noop))
-(tm-define (structured-left) (noop))
-(tm-define (structured-up) (noop))
-(tm-define (structured-down) (noop))
-(tm-define (structured-next) (noop))
-(tm-define (structured-previous) (noop))
-(tm-define (structured-first) (noop))
-(tm-define (structured-last) (noop))
-
-;(tm-define (structured-right)
-;  (:context always?)
-;  (let* ((t (tree-up (cursor-tree)))
-;	 (i (tree-down-index t)))
-;    (if (< i (- (tree-arity t) 1)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -91,11 +63,14 @@
   (:inside document)
   (go-to-next-tag 'document))
 
-(define (traverse-label . l)
-  (cond ((null? l) (traverse-label (tree-up (cursor-tree))))
+(define (traverse-tree . l)
+  (cond ((null? l) (traverse-tree (tree-up (cursor-tree))))
 	((in? (tree-label (car l)) '(concat document))
-	 (traverse-label (tree-up (car l))))
-	(else (tree-label (car l)))))
+	 (traverse-tree (tree-up (car l))))
+	(else (car l))))
+
+(define (traverse-label . l)
+  (tree-label (apply traverse-tree l)))
 
 (tm-define (traverse-next)
   (:context always?)
@@ -118,6 +93,52 @@
   (with l (traverse-label)
     (tree-go-to (buffer-tree) :end)
     (go-to-previous-tag l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-insert forwards?) (insert-argument forwards?))
+(tm-define (structured-remove forwards?) (remove-argument forwards?))
+(tm-define (structured-insert-up) (noop))
+(tm-define (structured-insert-down) (noop))
+(tm-define (structured-insert-start) (noop))
+(tm-define (structured-insert-end) (noop))
+(tm-define (structured-insert-top) (noop))
+(tm-define (structured-insert-bottom) (noop))
+
+(tm-define (structured-up) (noop))
+(tm-define (structured-down) (noop))
+(tm-define (structured-next) (noop))
+(tm-define (structured-previous) (noop))
+(tm-define (structured-first) (noop))
+(tm-define (structured-last) (noop))
+
+(tm-define (structured-left)
+  (:context always?)
+  (let* ((t (traverse-tree))
+	 (p (path-previous-argument (root-tree) (tree->path (tree-down t)))))
+    (if (nnull? p) (go-to p))))
+
+(tm-define (structured-right)
+  (:context always?)
+  (let* ((t (traverse-tree))
+	 (p (path-next-argument (root-tree) (tree->path (tree-down t)))))
+    (if (nnull? p) (go-to p))))
+
+(tm-define (structured-first)
+  (:context always?)
+  (let* ((t (traverse-tree))
+	 (q (rcons (tree->path t) -1))
+	 (p (path-next-argument (root-tree) q)))
+    (if (nnull? p) (go-to p))))
+
+(tm-define (structured-last)
+  (:context always?)
+  (let* ((t (traverse-tree))
+	 (q (rcons (tree->path t) (tree-arity t)))
+	 (p (path-previous-argument (root-tree) q)))
+    (if (nnull? p) (go-to p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
