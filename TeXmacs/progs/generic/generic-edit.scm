@@ -110,6 +110,8 @@
 (define (context-structure? t)
   (and (!= t (cursor-tree))
        (not (in? (tree-label t) '(concat document cell row table tree)))
+       ;; FIXME: we should extend the particularization system for
+       ;; context predicates, so as to treat tables and trees more elegantly
        (> (tree-arity t) 1)))
 
 (tm-define (structured-left)
