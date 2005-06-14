@@ -561,7 +561,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
+      is_func (st, ROW) || is_func (st, TFORMAT) ||
       is_graphical (st) ||
       (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
       (is_compound (st, "math", 1) &&
@@ -574,7 +574,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       p1= start (et, p * 0);
       p2= end   (et, p * 0);
     }
-    selection_correct (et, p1, p2, q1, q2);
+    if (is_func (st, CELL)) { q1= p1; q2= p2; }
+    else selection_correct (et, p1, p2, q1, q2);
     selection sel= eb->find_check_selection (q1, q2);
     rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
 			       thicken (sel->rs, 0, 2*pixel)));
