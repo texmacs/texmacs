@@ -63,13 +63,6 @@ void edit_select_rep::get_selection (path& start, path& end) {
 void edit_select_rep::set_selection (path start, path end) {
   start_p= copy (start); end_p= copy (end); }
 
-path
-common (path start, path end) {
-  if (nil (start) || nil (end)) return path ();
-  if (start->item != end->item) return path ();
-  return path (start->item, common (start->next, end->next));
-}
-
 /******************************************************************************
 * Selecting particular things
 ******************************************************************************/

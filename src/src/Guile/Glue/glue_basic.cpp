@@ -681,6 +681,40 @@ tmg_path_previous_word (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_path_next_tag (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-next-tag");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-next-tag");
+  SCM_ASSERT_TREE_LABEL (arg3, SCM_ARG3, "path-next-tag");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+  tree_label in3= scm_to_tree_label (arg3);
+
+  // SCM_DEFER_INTS;
+  path out= next_tag (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_previous_tag (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-previous-tag");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-previous-tag");
+  SCM_ASSERT_TREE_LABEL (arg3, SCM_ARG3, "path-previous-tag");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+  tree_label in3= scm_to_tree_label (arg3);
+
+  // SCM_DEFER_INTS;
+  path out= previous_tag (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_string_numberP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
 
@@ -2440,6 +2474,8 @@ initialize_glue_basic () {
   gh_new_procedure ("path-previous", (FN) tmg_path_previous, 2, 0, 0);
   gh_new_procedure ("path-next-word", (FN) tmg_path_next_word, 2, 0, 0);
   gh_new_procedure ("path-previous-word", (FN) tmg_path_previous_word, 2, 0, 0);
+  gh_new_procedure ("path-next-tag", (FN) tmg_path_next_tag, 3, 0, 0);
+  gh_new_procedure ("path-previous-tag", (FN) tmg_path_previous_tag, 3, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

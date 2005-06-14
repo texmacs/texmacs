@@ -67,6 +67,12 @@
 (define-public (go-to-previous) (apply-go-to path-previous))
 (define-public (go-to-next-word) (apply-go-to path-next-word))
 (define-public (go-to-previous-word) (apply-go-to path-previous-word))
+(define-public (go-to-next-node) (apply-go-to path-next-node))
+(define-public (go-to-previous-node) (apply-go-to path-previous-node))
+(define-public (go-to-next-tag lab)
+  (apply-go-to (lambda (t p) (path-next-tag t p lab))))
+(define-public (go-to-previous-tag lab)
+  (apply-go-to (lambda (t p) (path-previous-tag t p lab))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content
