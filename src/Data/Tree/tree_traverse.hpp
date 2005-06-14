@@ -18,5 +18,9 @@ path next (tree t, path p);
 path previous (tree t, path p);
 path next_word (tree t, path p);
 path previous_word (tree t, path p);
+path next_node (tree t, path p);
+path previous_node (tree t, path p);
+path next_tag (tree t, path p, tree_label lab);
+path previous_tag (tree t, path p, tree_label lab);
 
 #endif // defined TREE_TRAVERSE_H

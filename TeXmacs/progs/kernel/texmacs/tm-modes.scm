@@ -103,6 +103,8 @@
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (with-active-selection% (selection-active-normal?)))
 
+(define-public (always? . l) #t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

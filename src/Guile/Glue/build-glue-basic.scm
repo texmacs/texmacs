@@ -74,6 +74,8 @@
   (path-previous previous (path content path))
   (path-next-word next_word (path content path))
   (path-previous-word previous_word (path content path))
+  (path-next-tag next_tag (path content path tree_label))
+  (path-previous-tag previous_tag (path content path tree_label))
 
   ;; routines for strings
   (string-number? is_double (bool string))

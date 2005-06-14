@@ -70,36 +70,54 @@
 (tm-define (structured-first) (noop))
 (tm-define (structured-last) (noop))
 
+;(tm-define (structured-right)
+;  (:context always?)
+;  (let* ((t (tree-up (cursor-tree)))
+;	 (i (tree-down-index t)))
+;    (if (< i (- (tree-arity t) 1)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (traverse-right) (go-to-next-word))
 (tm-define (traverse-left) (go-to-previous-word))
-(tm-define (traverse-up) (noop))
-(tm-define (traverse-down) (noop))
-(tm-define (traverse-next) (noop))
-(tm-define (traverse-previous) (noop))
-(tm-define (traverse-first) (noop))
-(tm-define (traverse-last) (noop))
-
-(define (document-accept-up? t)
-  (and (== (tree-label t) 'document)
-       (> (tree-down-index t) 0)))
 
 (tm-define (traverse-up)
-  (:context document-accept-up?)
-  (with-innermost t document-accept-up?
-    (tree-go-to t (- (tree-down-index t) 1) :start)))
-
-(define (document-accept-down? t)
-  (and (== (tree-label t) 'document)
-       (< (tree-down-index t) (- (tree-arity t) 1))))
+  (:inside document)
+  (go-to-previous-tag 'document))
 
 (tm-define (traverse-down)
-  (:context document-accept-down?)
-  (with-innermost t document-accept-down?
-    (tree-go-to t (+ (tree-down-index t) 1) :end)))
+  (:inside document)
+  (go-to-next-tag 'document))
+
+(define (traverse-label . l)
+  (cond ((null? l) (traverse-label (tree-up (cursor-tree))))
+	((in? (tree-label (car l)) '(concat document))
+	 (traverse-label (tree-up (car l))))
+	(else (tree-label (car l)))))
+
+(tm-define (traverse-next)
+  (:context always?)
+  (with l (traverse-label)
+    (go-to-next-tag l)))
+
+(tm-define (traverse-previous)
+  (:context always?)
+  (with l (traverse-label)
+    (go-to-previous-tag l)))
+
+(tm-define (traverse-first)
+  (:context always?)
+  (with l (traverse-label)
+    (tree-go-to (buffer-tree) :start)
+    (go-to-next-tag l)))
+
+(tm-define (traverse-last)
+  (:context always?)
+  (with l (traverse-label)
+    (tree-go-to (buffer-tree) :end)
+    (go-to-previous-tag l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment

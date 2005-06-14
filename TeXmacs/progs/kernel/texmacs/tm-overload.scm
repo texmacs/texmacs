@@ -229,6 +229,7 @@
 	       (ovl-context-resolve-sub (cdr ovl) args t)
 	     (cond ((not match) (values match2 key2))
 		   ((not match2) (values match key))
+		   ((== key2 always?) (values match key))
 		   ((== key2 root?) (values match key))
 		   (else (values match2 key2))))))
 	(else (ovl-context-resolve-sub (cdr ovl) args t))))

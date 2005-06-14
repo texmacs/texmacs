@@ -83,15 +83,10 @@ traverse (tree t, path p, bool forward) {
   }
 }
 
-path
-next (tree t, path p) {
-  return traverse (t, p, true);
-}
-
-path
-previous (tree t, path p) {
-  return traverse (t, p, false);
-}
+path next (tree t, path p) {
+  return traverse (t, p, true); }
+path previous (tree t, path p) {
+  return traverse (t, p, false); }
 
 /******************************************************************************
 * Word based traversal of a tree
@@ -154,12 +149,51 @@ traverse_word (tree t, path p, bool forward) {
   }
 }
 
-path
-next_word (tree t, path p) {
-  return traverse_word (t, p, true);
+path next_word (tree t, path p) {
+  return traverse_word (t, p, true); }
+path previous_word (tree t, path p) {
+  return traverse_word (t, p, false); }
+
+/******************************************************************************
+* Node based traversal of a tree
+******************************************************************************/
+
+static path
+traverse_node (tree t, path p, bool forward) {
+  tree st= subtree (t, path_up (p));
+  if (is_atomic (st)) {
+    if (forward) p= path_up (p) * N (st->label);
+    else p= path_up (p) * 0;
+  }
+  return traverse (t, p, forward);
 }
 
-path
-previous_word (tree t, path p) {
-  return traverse_word (t, p, false);
+path next_node (tree t, path p) {
+  return traverse_node (t, p, true); }
+path previous_node (tree t, path p) {
+  return traverse_node (t, p, false); }
+
+/******************************************************************************
+* Tag based traversal of a tree
+******************************************************************************/
+
+static path
+traverse_tag (tree t, path p, tree_label which, bool forward) {
+  path q= p;
+  while (true) {
+    path r= traverse_node (t, q, forward);
+    if (r == q) return p;
+    path c= common (p, r);
+    q= r;
+    r= path_up (q);
+    while (!nil (r) && (r != c)) {
+      r= path_up (r);
+      if (L (subtree (t, r)) == which) return q;
+    }
+  }
 }
+
+path next_tag (tree t, path p, tree_label which) {
+  return traverse_tag (t, p, which, true); }
+path previous_tag (tree t, path p, tree_label which) {
+  return traverse_tag (t, p, which, false); }
