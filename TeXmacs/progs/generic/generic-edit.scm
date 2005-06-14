@@ -107,13 +107,6 @@
 (tm-define (structured-insert-top) (noop))
 (tm-define (structured-insert-bottom) (noop))
 
-(tm-define (structured-up) (noop))
-(tm-define (structured-down) (noop))
-(tm-define (structured-next) (noop))
-(tm-define (structured-previous) (noop))
-(tm-define (structured-first) (noop))
-(tm-define (structured-last) (noop))
-
 (tm-define (structured-left)
   (:context always?)
   (let* ((t (traverse-tree))
@@ -139,6 +132,11 @@
 	 (q (rcons (tree->path t) (tree-arity t)))
 	 (p (path-previous-argument (root-tree) q)))
     (if (nnull? p) (go-to p))))
+
+(tm-define (structured-up) (noop))
+(tm-define (structured-down) (noop))
+(tm-define (structured-first) (noop))
+(tm-define (structured-last) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
