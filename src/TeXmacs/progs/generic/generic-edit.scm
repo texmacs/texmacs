@@ -83,6 +83,24 @@
 (tm-define (traverse-first) (noop))
 (tm-define (traverse-last) (noop))
 
+(define (document-accept-up? t)
+  (and (== (tree-label t) 'document)
+       (> (tree-down-index t) 0)))
+
+(tm-define (traverse-up)
+  (:context document-accept-up?)
+  (with-innermost t document-accept-up?
+    (tree-go-to t (- (tree-down-index t) 1) :start)))
+
+(define (document-accept-down? t)
+  (and (== (tree-label t) 'document)
+       (< (tree-down-index t) (- (tree-arity t) 1))))
+
+(tm-define (traverse-down)
+  (:context document-accept-down?)
+  (with-innermost t document-accept-down?
+    (tree-go-to t (+ (tree-down-index t) 1) :end)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
