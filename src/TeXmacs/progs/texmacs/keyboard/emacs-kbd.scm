@@ -31,6 +31,7 @@
   ("text" "A-")
   ("math" "A-")
   ("prog" "A-")
+  ("special" "H-")
   ("symbol" "S-F5" #t)
   ("table" "cmd t")
   ("inactive" "cmd i")
@@ -82,12 +83,8 @@
   ("escape escape" "A-" #t)
   ("escape escape escape" "H-" #t)
   ("escape escape escape escape" "noop" #t)
-  ("A-C-" "H-" #t)
-  ("H-" "F5" #t)
-  ("H-C-" "F6" #t)
-  ("H-C-S-" "S-F6" #t)
-  ("H-A-" "F7" #t)
-  ("H-M-" "F8" #t)
+  ("S-escape" "A-" #t)
+  ("C-escape" "H-" #t)
 
   ("tilde" "A-~")
   ("hat" "accent:deadhat") ;; needed for dead ^ in math mode
@@ -128,6 +125,7 @@
   ("inactive" "" "Insert inactive markup")
   ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
+  ("special" "" "Special command")
 
   ("emacs" "" "Emacs command")
   ("emacs:contextual" "" "Emacs mode specific prefix command")
@@ -146,8 +144,10 @@
   ("table h" "" "Horizontal cell alignment (l: left, c: center, r: right)")
   ("table v" "" "Vertical cell alignment: (b: bottom, c: center, t: top)")
   ("table b" "" "Modify cell border (options: =, l, r, b, t)")
-  ("table p" "" "Modify cell padding (options: =, l, r, b, t)")
+  ("table p" "" "Modify cell padding (options: =, l, r, b, t)"))
 
+(kbd-map
+  (:mode in-math?)
   ("math" "" "Insert mathematical markup")
   ("math:greek" "" "Insert a Greek character")
   ("math:bold" "" "Insert a bold character")

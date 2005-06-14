@@ -60,6 +60,7 @@
   (make-arity make_compound (void tree_label int))
   (activate activate (void))
   (insert-argument insert_argument (void bool))
+  (remove-argument remove_argument (void bool))
   (make-with make_with (void string string))
   (make-mod-active make_mod_active (void tree_label))
   (make-style-with make_style_with (void string string))

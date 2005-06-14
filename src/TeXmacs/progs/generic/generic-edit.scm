@@ -53,13 +53,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-insert forwards?) (insert-argument forwards?))
-(tm-define (structured-remove forwards?) (remove-structure-upwards))
+(tm-define (structured-remove forwards?) (remove-argument forwards?))
 (tm-define (structured-insert-up) (noop))
 (tm-define (structured-insert-down) (noop))
 (tm-define (structured-insert-start) (noop))
 (tm-define (structured-insert-end) (noop))
 (tm-define (structured-insert-top) (noop))
 (tm-define (structured-insert-bottom) (noop))
+
+(tm-define (structured-right) (noop))
+(tm-define (structured-left) (noop))
+(tm-define (structured-up) (noop))
+(tm-define (structured-down) (noop))
+(tm-define (structured-next) (noop))
+(tm-define (structured-previous) (noop))
+(tm-define (structured-first) (noop))
+(tm-define (structured-last) (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tree traversal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (traverse-right) (go-to-next-word))
+(tm-define (traverse-left) (go-to-previous-word))
+(tm-define (traverse-up) (noop))
+(tm-define (traverse-down) (noop))
+(tm-define (traverse-next) (noop))
+(tm-define (traverse-previous) (noop))
+(tm-define (traverse-first) (noop))
+(tm-define (traverse-last) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment

@@ -118,7 +118,9 @@
 
 (define (kbd-find-key-binding2 conds key)
   ;;(display* "Find binding '" key "' when " conds "\n")
-  (ovl-find (kbd-get-map key) conds))
+  ;; FIXME: we really need an ovl-find which does mode inference
+  (or (ovl-find (kbd-get-map key) conds)
+      (ovl-find (kbd-get-map key) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yet more subroutines for the definition of keyboard shortcuts
