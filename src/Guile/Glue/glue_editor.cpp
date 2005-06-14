@@ -446,6 +446,19 @@ tmg_insert_argument (SCM arg1) {
 }
 
 SCM
+tmg_remove_argument (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "remove-argument");
+
+  bool in1= scm_to_bool (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->remove_argument (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_make_with (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "make-with");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "make-with");
@@ -2764,6 +2777,7 @@ initialize_glue_editor () {
   gh_new_procedure ("make-arity", (FN) tmg_make_arity, 2, 0, 0);
   gh_new_procedure ("activate", (FN) tmg_activate, 0, 0, 0);
   gh_new_procedure ("insert-argument", (FN) tmg_insert_argument, 1, 0, 0);
+  gh_new_procedure ("remove-argument", (FN) tmg_remove_argument, 1, 0, 0);
   gh_new_procedure ("make-with", (FN) tmg_make_with, 2, 0, 0);
   gh_new_procedure ("make-mod-active", (FN) tmg_make_mod_active, 1, 0, 0);
   gh_new_procedure ("make-style-with", (FN) tmg_make_style_with, 2, 0, 0);

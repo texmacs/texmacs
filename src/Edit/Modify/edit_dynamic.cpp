@@ -258,6 +258,31 @@ edit_dynamic_rep::remove_argument (path p, bool forward) {
   else go_to_argument (path_up (p) * (i-1), false);
 }
 
+void
+edit_dynamic_rep::remove_argument (bool forward) {
+  path p= find_dynamic (tp);
+  if (nil (p)) return;
+  if (p == tp) p= find_dynamic (path_up (tp));
+  if (nil (p)) return;
+
+  tree t= subtree (et, path_up (p));
+  int i= last_item (p), n= N(t), d= 1;
+  if ((!in_source ()) || drd->contains (as_string (L(t)))) {
+    if (forward) do i++; while (i<=n && !drd->insert_point (L(t), i, n));
+    else while (i>=0 && !drd->insert_point (L(t), i, n)) i--;
+    if ((i<0) || (i>n)) return;
+    while (i>=d && !drd->correct_arity (L(t), n-d)) d++;
+    if (i<d || n<=d || !drd->insert_point (L(t), i-d, n-d)) return;
+  }
+  else {
+    if (forward) i++;
+    if (i<d || n<=d) return;
+  }
+  path q= path_up (p) * (i-d);
+  remove (q, d);
+  go_to_argument (q, forward);
+}
+
 /******************************************************************************
 * Backspace and delete
 ******************************************************************************/

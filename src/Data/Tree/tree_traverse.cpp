@@ -97,23 +97,59 @@ previous (tree t, path p) {
 * Word based traversal of a tree
 ******************************************************************************/
 
+static inline bool
+is_iso_alphanum (char c) {
+  return is_iso_alpha (c) || is_digit (c);
+}
+
+static bool
+at_border (tree t, path p, bool forward) {
+  tree st= subtree (t, path_up (p));
+  int l= last_item (p), n= N(st);
+  if (!is_concat (st) && !is_document (st)) return true;
+  if ((forward && l!=n-1) || (!forward && l!=0)) return false;
+  return at_border (t, path_up (p), forward);
+}
+
+static bool
+next_is_word (tree t, path p) {
+  tree st= subtree (t, path_up (p));
+  int l= last_item (p), n= N(st);
+  if (!is_concat (st) || l+1 >= n) return false;
+  if (is_compound (st[l+1])) return true;
+  return st[l+1] != "" && is_iso_alphanum (st[l+1]->label[0]);
+}
+
 static path
 traverse_word (tree t, path p, bool forward) {
   while (true) {
     path q= traverse (t, p, forward);
+    int l= last_item (q);
     if (q == p) return p;
     tree st= subtree (t, path_up (q));
     if (is_atomic (st)) {
       string s= st->label;
-      int l= last_item (q), n= N(s);
-      if (forward && l>0 && is_iso_alpha (s[l-1]) &&
-	  (l==n || !is_iso_alpha (s[l])))
+      int n= N(s);
+      if (s == "") return q;
+      if (forward && l>0 &&
+	  (is_iso_alphanum (s[l-1]) ||
+	   (l==n && at_border (t, path_up (q), forward))) &&
+	  (l==n || !is_iso_alphanum (s[l])))
 	return q;
-      if (!forward && l<n && is_iso_alpha (s[l]) &&
-	  (l==0 || !is_iso_alpha (s[l-1])))
+      if (!forward && l<n &&
+	  (is_iso_alphanum (s[l]) ||
+	   (l==0 && at_border (t, path_up (q), forward))) &&
+	  (l==0 || !is_iso_alphanum (s[l-1])))
+	return q;
+      if (!forward && l==n && next_is_word (t, path_up (q)))
 	return q;
     }
-    else return q;
+    else {
+      if (forward && l==1) return q;
+      if (!forward && l==0) return q;
+      if (!forward && next_is_word (t, path_up (q)))
+	return q;
+    }
     p= q;
   }
 }
