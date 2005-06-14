@@ -135,8 +135,8 @@
 
 (tm-define (structured-up) (noop))
 (tm-define (structured-down) (noop))
-(tm-define (structured-first) (noop))
-(tm-define (structured-last) (noop))
+(tm-define (structured-top) (noop))
+(tm-define (structured-bottom) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
