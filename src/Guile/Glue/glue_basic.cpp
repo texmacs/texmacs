@@ -629,7 +629,7 @@ tmg_path_next (SCM arg1, SCM arg2) {
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  path out= next (in1, in2);
+  path out= next_valid (in1, in2);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -644,7 +644,7 @@ tmg_path_previous (SCM arg1, SCM arg2) {
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
-  path out= previous (in1, in2);
+  path out= previous_valid (in1, in2);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -709,6 +709,36 @@ tmg_path_previous_tag (SCM arg1, SCM arg2, SCM arg3) {
 
   // SCM_DEFER_INTS;
   path out= previous_tag (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_next_argument (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-next-argument");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-next-argument");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= next_argument (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
+tmg_path_previous_argument (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "path-previous-argument");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-previous-argument");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  path out= previous_argument (in1, in2);
   // SCM_ALLOW_INTS;
 
   return path_to_scm (out);
@@ -2476,6 +2506,8 @@ initialize_glue_basic () {
   gh_new_procedure ("path-previous-word", (FN) tmg_path_previous_word, 2, 0, 0);
   gh_new_procedure ("path-next-tag", (FN) tmg_path_next_tag, 3, 0, 0);
   gh_new_procedure ("path-previous-tag", (FN) tmg_path_previous_tag, 3, 0, 0);
+  gh_new_procedure ("path-next-argument", (FN) tmg_path_next_argument, 2, 0, 0);
+  gh_new_procedure ("path-previous-argument", (FN) tmg_path_previous_argument, 2, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
