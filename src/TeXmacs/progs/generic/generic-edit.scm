@@ -52,15 +52,21 @@
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (traverse-generic-context? t)
+  (and (nleaf? t) (nin? (tree-label t) '(concat document))))
+
+(tm-define (traverse-document-context? t)
+  (tree-is? t 'document))
+
 (tm-define (traverse-right) (go-to-next-word))
 (tm-define (traverse-left) (go-to-previous-word))
 
 (tm-define (traverse-up)
-  (:inside document)
+  (:context traverse-document-context?)
   (go-to-previous-tag 'document))
 
 (tm-define (traverse-down)
-  (:inside document)
+  (:context traverse-document-context?)
   (go-to-next-tag 'document))
 
 (define (traverse-tree . l)
@@ -73,30 +79,31 @@
   (tree-label (apply traverse-tree l)))
 
 (tm-define (traverse-next)
-  (:context always?)
+  (:context traverse-generic-context?)
   (with l (traverse-label)
     (go-to-next-tag l)))
 
 (tm-define (traverse-previous)
-  (:context always?)
+  (:context traverse-generic-context?)
   (with l (traverse-label)
     (go-to-previous-tag l)))
 
 (tm-define (traverse-first)
-  (:context always?)
-  (with l (traverse-label)
-    (tree-go-to (buffer-tree) :start)
-    (go-to-next-tag l)))
+  (go-to-repeat traverse-previous))
 
 (tm-define (traverse-last)
-  (:context always?)
-  (with l (traverse-label)
-    (tree-go-to (buffer-tree) :end)
-    (go-to-previous-tag l)))
+  (go-to-repeat traverse-next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-generic-context? t)
+  (and (nleaf? t) (nin? tree-label '(concat document))))
+
+(define (structured-pluraly-context? t)
+  (and (structured-generic-context? t)
+       (> (tree-arity t) 1)))
 
 (tm-define (structured-insert forwards?) (insert-argument forwards?))
 (tm-define (structured-remove forwards?) (remove-argument forwards?))
@@ -109,45 +116,32 @@
 
 (tm-define (structured-left) (noop))
 (tm-define (structured-right) (noop))
-(tm-define (structured-top) (noop))
-(tm-define (structured-bottom) (noop))
 (tm-define (structured-up) (noop))
 (tm-define (structured-down) (noop))
-(tm-define (structured-top) (noop))
-(tm-define (structured-bottom) (noop))
-
-(define (context-structure? t)
-  (and (!= t (cursor-tree))
-       (not (in? (tree-label t) '(concat document cell row table tree)))
-       ;; FIXME: we should extend the particularization system for
-       ;; context predicates, so as to treat tables and trees more elegantly
-       (> (tree-arity t) 1)))
 
 (tm-define (structured-left)
-  (:context context-structure?)
-  (with-innermost t context-structure?
+  (:context structured-pluraly-context?)
+  (with-innermost t structured-pluraly-context?
     (with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
       (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-right)
-  (:context context-structure?)
-  (with-innermost t context-structure?
+  (:context structured-pluraly-context?)
+  (with-innermost t structured-pluraly-context?
     (with p (path-next-argument (root-tree) (tree->path (tree-down t)))
       (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-first)
-  (:context context-structure?)
-  (with-innermost t context-structure?
-    (let* ((q (rcons (tree->path t) -1))
-	   (p (path-next-argument (root-tree) q)))
-      (if (nnull? p) (go-to p)))))
+  (go-to-repeat structured-left))
 
 (tm-define (structured-last)
-  (:context context-structure?)
-  (with-innermost t context-structure?
-    (let* ((q (rcons (tree->path t) (tree-arity t)))
-	   (p (path-previous-argument (root-tree) q)))
-      (if (nnull? p) (go-to p)))))
+  (go-to-repeat structured-right))
+
+(tm-define (structured-top)
+  (go-to-repeat structured-up))
+
+(tm-define (structured-bottom)
+  (go-to-repeat structured-down))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
@@ -166,6 +160,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-generic-context? t)
+  (:case tree)
+  #f)
 
 (tm-define (structured-insert forwards?)
   (:inside tree)
@@ -248,30 +246,6 @@
   (with-innermost t 'tree
     (if (== (tree-down-index t) 0)
 	(branch-go-to t (quotient (tree-arity t) 2) :start))))
-
-(tm-define (structured-first)
-  (:inside tree)
-  (let* ((t (branch-active))
-	 (i (tree-down-index t)))
-    (if (> i 0) (branch-go-to t 1 :start))))
-
-(tm-define (structured-last)
-  (:inside tree)
-  (let* ((t (branch-active))
-	 (i (tree-down-index t)))
-    (if (> i 0) (branch-go-to t (- (tree-arity t) 1) :end))))
-
-(tm-define (structured-top)
-  (:inside tree)
-  (with p (cursor-path)
-    (structured-up)
-    (if (!= (cursor-path) p) (structured-top))))
-
-(tm-define (structured-bottom)
-  (:inside tree)
-  (with p (cursor-path)
-    (structured-down)
-    (if (!= (cursor-path) p) (structured-bottom))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions

@@ -68,17 +68,21 @@
 ;; Structured traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (context-cell? t)
+(tm-define (structured-generic-context? t)
+  (:case table row cell)
+  #f)
+
+(define (cell-context? t)
   (and (== (tree-label t) 'cell)
        (== (tree-label (tree-up t)) 'row)
        (== (tree-label (tree-up t 2)) 'table)))
 
-(define (context-cell-not-at-top? t)
-  (and (context-cell? t)
+(define (cell-not-at-top-context? t)
+  (and (cell-context? t)
        (> (tree-index (tree-up t)) 0)))
 
-(define (context-cell-not-at-bottom? t)
-  (and (context-cell? t)
+(define (cell-not-at-bottom-context? t)
+  (and (cell-context? t)
        (< (tree-index (tree-up t)) (- (tree-arity (tree-up t 2)) 1))))
 
 (define (cell-move-absolute c row col)
@@ -98,13 +102,13 @@
     (cell-move-absolute c row col)))
 
 (tm-define (traverse-up)
-  (:context context-cell-not-at-top?)
-  (with-innermost c context-cell-not-at-top?
+  (:context cell-not-at-top-context?)
+  (with-innermost c cell-not-at-top-context?
     (cell-move-relative c -1 0)))
 
 (tm-define (traverse-down)
-  (:context context-cell-not-at-bottom?)
-  (with-innermost c context-cell-not-at-bottom?
+  (:context cell-not-at-bottom-context?)
+  (with-innermost c cell-not-at-bottom-context?
     (cell-move-relative c 1 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,46 +116,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-left)
-  (:context context-cell?)
-  (with-innermost c context-cell?
+  (:context cell-context?)
+  (with-innermost c cell-context?
     (cell-move-relative c 0 -1)))
 
 (tm-define (structured-right)
-  (:context context-cell?)
-  (with-innermost c context-cell?
+  (:context cell-context?)
+  (with-innermost c cell-context?
     (cell-move-relative c 0 1)))
 
 (tm-define (structured-up)
-  (:context context-cell?)
-  (with-innermost c context-cell?
+  (:context cell-context?)
+  (with-innermost c cell-context?
     (cell-move-relative c -1 0)))
 
 (tm-define (structured-down)
-  (:context context-cell?)
-  (with-innermost c context-cell?
+  (:context cell-context?)
+  (with-innermost c cell-context?
     (cell-move-relative c 1 0)))
-
-(tm-define (structured-first)
-  (:context context-cell?)
-  (with-innermost c context-cell?
-    (cell-move-absolute c (tree-index (tree-up c)) 0)))
-
-(tm-define (structured-last)
-  (:context context-cell?)
-  (with-innermost c context-cell?
-    (with cols (tree-arity (tree-up c))
-      (cell-move-absolute c (tree-index (tree-up c)) (- cols 1)))))
-
-(tm-define (structured-top)
-  (:context context-cell?)
-  (with-innermost c context-cell?
-    (cell-move-absolute c 0 (tree-index c))))
-
-(tm-define (structured-bottom)
-  (:context context-cell?)
-  (with-innermost c context-cell?
-    (with rows (tree-arity (tree-up c 2))
-      (cell-move-absolute c (- rows 1) (tree-index c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables

@@ -48,8 +48,13 @@
   (symbol->keyword (string->symbol (number->string x))))
 
 (define-public (always? . l) #t)
+(define-public (never? . l) #f)
 (define-public (root? t) (== (reverse (tree-ip t)) (buffer-path)))
+(define-public (nroot? t) (!= (reverse (tree-ip t)) (buffer-path)))
+(define-public (leaf? t) (== (tree-ip t) (cdr (reverse (cursor-path)))))
+(define-public (nleaf? t) (!= (tree-ip t) (cdr (reverse (cursor-path)))))
 (define-public (true? . l) #t)
+(define-public (false? . l) #f)
 
 (define-public (save-object file value)
   (write value (open-file (url-materialize file "") OPEN_WRITE))

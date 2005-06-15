@@ -66,6 +66,30 @@
   (with p (routine (root-tree) (cursor-path))
     (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for cursor movement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (label-in-range? lab p until)
+  (cond ((== p until) #f)
+	((tree-is? (path->tree p) lab) #t)
+	(else (label-in-range? lab (cDr p) until))))
+
+(define-public (go-to-remain-inside fun lab)
+  (with p (cursor-path)
+    (fun)
+    (let* ((q (cursor-path))
+	   (r (list-head q (list-common-left p q))))
+      (if (or (tree-is? (path->tree (cDr q)) lab)
+	      (label-in-range? lab (cDr q) (cDr r)))
+	  (go-to p)))))
+
+(define-public (go-to-repeat fun)
+  (with p (cursor-path)
+    (fun)
+    (if (!= (cursor-path) p)
+	(go-to-repeat fun))))
+
 (define-public (go-to-next) (apply-go-to path-next))
 (define-public (go-to-previous) (apply-go-to path-previous))
 (define-public (go-to-next-word) (apply-go-to path-next-word))
