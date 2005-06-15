@@ -107,6 +107,15 @@
 (tm-define (structured-insert-top) (noop))
 (tm-define (structured-insert-bottom) (noop))
 
+(tm-define (structured-left) (noop))
+(tm-define (structured-right) (noop))
+(tm-define (structured-top) (noop))
+(tm-define (structured-bottom) (noop))
+(tm-define (structured-up) (noop))
+(tm-define (structured-down) (noop))
+(tm-define (structured-top) (noop))
+(tm-define (structured-bottom) (noop))
+
 (define (context-structure? t)
   (and (!= t (cursor-tree))
        (not (in? (tree-label t) '(concat document cell row table tree)))
@@ -140,11 +149,6 @@
 	   (p (path-previous-argument (root-tree) q)))
       (if (nnull? p) (go-to p)))))
 
-(tm-define (structured-up) (noop))
-(tm-define (structured-down) (noop))
-(tm-define (structured-top) (noop))
-(tm-define (structured-bottom) (noop))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -154,8 +158,8 @@
 (tm-define (positioning-right) (noop))
 (tm-define (positioning-up) (noop))
 (tm-define (positioning-down) (noop))
-(tm-define (positioning-start) (noop))
-(tm-define (positioning-end) (noop))
+(tm-define (positioning-first) (noop))
+(tm-define (positioning-last) (noop))
 (tm-define (positioning-top) (noop))
 (tm-define (positioning-bottom) (noop))
 
@@ -205,6 +209,69 @@
 	  (set! t (tree-down t))
 	  (tree-set! t `(tree ,t ""))
 	  (tree-go-to t 1 0)))))
+
+(define (branch-active)
+  (with-innermost t 'tree
+    (with i (tree-down-index t)
+      (if (and (= i 0) (tree-is? (tree-up t) 'tree))
+	  (tree-up t)
+	  t))))
+
+(define (branch-go-to . l)
+  (apply tree-go-to l)
+  (if (tree-is? (cursor-tree) 'tree)
+      (with last (cAr l)
+	(if (nin? last '(:start :end)) (set! last :start))
+	(tree-go-to (cursor-tree) 0 last))))
+
+(tm-define (structured-left)
+  (:inside tree)
+  (let* ((t (branch-active))
+	 (i (tree-down-index t)))
+    (if (> i 1) (branch-go-to t (- i 1) :end))))
+
+(tm-define (structured-right)
+  (:inside tree)
+  (let* ((t (branch-active))
+	 (i (tree-down-index t)))
+    (if (and (!= i 0) (< i (- (tree-arity t) 1)))
+	(branch-go-to t (+ i 1) :start))))
+
+(tm-define (structured-up)
+  (:inside tree)
+  (let* ((t (branch-active))
+	 (i (tree-down-index t)))
+    (if (!= i 0) (tree-go-to t 0 :end))))
+
+(tm-define (structured-down)
+  (:inside tree)
+  (with-innermost t 'tree
+    (if (== (tree-down-index t) 0)
+	(branch-go-to t (quotient (tree-arity t) 2) :start))))
+
+(tm-define (structured-first)
+  (:inside tree)
+  (let* ((t (branch-active))
+	 (i (tree-down-index t)))
+    (if (> i 0) (branch-go-to t 1 :start))))
+
+(tm-define (structured-last)
+  (:inside tree)
+  (let* ((t (branch-active))
+	 (i (tree-down-index t)))
+    (if (> i 0) (branch-go-to t (- (tree-arity t) 1) :end))))
+
+(tm-define (structured-top)
+  (:inside tree)
+  (with p (cursor-path)
+    (structured-up)
+    (if (!= (cursor-path) p) (structured-top))))
+
+(tm-define (structured-bottom)
+  (:inside tree)
+  (with p (cursor-path)
+    (structured-down)
+    (if (!= (cursor-path) p) (structured-bottom))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra editing functions

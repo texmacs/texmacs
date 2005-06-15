@@ -29,6 +29,9 @@
 (define-public (compound-tree? t)
   (and (tree? t) (tree-compound? t)))
 
+(define-public (tree-is? t lab)
+  (== (tree-label t) lab))
+
 (define-public (tree->list t)
   (cons (tree-label t) (tree-children t)))
 
