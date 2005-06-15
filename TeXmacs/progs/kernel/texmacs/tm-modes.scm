@@ -38,6 +38,7 @@
 	   (drd-cmd `(drd-rules ,@rules))
 	   (arch1 `(set-symbol-procedure! ',mode ,pred))
 	   (arch2 `(set-symbol-procedure! ',pred ,pred)))
+      (if (== mode 'always%) (set! defn '(noop)))
       (if (null? deps)
 	  (list 'begin defn arch1 arch2)
 	  (list 'begin defn arch1 arch2 drd-cmd)))))
@@ -102,8 +103,6 @@
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (with-active-selection% (selection-active-normal?)))
-
-(define-public (always? . l) #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

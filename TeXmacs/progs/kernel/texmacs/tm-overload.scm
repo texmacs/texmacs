@@ -219,6 +219,20 @@
 
 ;; Context-based
 
+(define subpredicate-table (make-ahash-table))
+
+(define (subpredicate? what* of*)
+  "Test whether @what* is a sub-predicate of @of*"
+  (let* ((key (cons what* of*))
+	 (handle (ahash-get-handle subpredicate-table key)))
+    (if handle (cdr handle)
+	(let* ((what (procedure-name what*))
+	       (of (procedure-name of*))
+	       (result (or (in? of '(always? root?))
+			   (nnull? (query of what)))))
+	  (ahash-set! subpredicate-table key result)
+	  result))))
+
 (define (ovl-context-resolve-sub ovl args t)
   (cond ((null? ovl) (values #f #f))
 	(((caar ovl) t)
@@ -229,8 +243,8 @@
 	       (ovl-context-resolve-sub (cdr ovl) args t)
 	     (cond ((not match) (values match2 key2))
 		   ((not match2) (values match key))
-		   ((== key2 always?) (values match key))
 		   ((== key2 root?) (values match key))
+		   ((subpredicate? key key2) (values match key))
 		   (else (values match2 key2))))))
 	(else (ovl-context-resolve-sub (cdr ovl) args t))))
 

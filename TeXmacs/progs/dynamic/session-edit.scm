@@ -72,6 +72,63 @@
   (if (session-complete-try?) (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured keyboard editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (traverse-generic-context? t)
+  (:case input math)
+  #f)
+
+(tm-define (traverse-document-context? t)
+  (:case document)
+  (:require (tree-is? (tree-up t) 'input))
+  #f)
+
+(tm-define (traverse-left)
+  (:inside input)
+  (go-to-remain-inside go-to-previous-word 'input))
+
+(tm-define (traverse-right)
+  (:inside input)
+  (go-to-remain-inside go-to-next-word 'input))
+
+(tm-define (traverse-up)
+  (:inside input)
+  (session-go-up))
+
+(tm-define (traverse-down)
+  (:inside input)
+  (session-go-down))
+
+(tm-define (traverse-previous)
+  (:inside input)
+  (session-go-up))
+
+(tm-define (traverse-next)
+  (:inside input)
+  (session-go-down))
+
+(tm-define (structured-generic-context? t)
+  (:case input math)
+  #f)
+
+(tm-define (structured-left)
+  (:inside input)
+  (noop))
+
+(tm-define (structured-right)
+  (:inside input)
+  (noop))
+
+(tm-define (structured-up)
+  (:inside input)
+  (go-to-remain-inside session-go-up 'session))
+
+(tm-define (structured-down)
+  (:inside input)
+  (go-to-remain-inside session-go-down 'session))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
