@@ -29,9 +29,6 @@
 (define-public (compound-tree? t)
   (and (tree? t) (tree-compound? t)))
 
-(define-public (tree-is? t lab)
-  (== (tree-label t) lab))
-
 (define-public (tree->list t)
   (cons (tree-label t) (tree-children t)))
 
@@ -40,11 +37,11 @@
       (tree->string t)
       (cons (tree-label t) (tree-children t))))
 
-(define-public (tree->path t)
+(define-public (tree-get-path t)
   (and (tree? t)
        (let ((ip (tree-ip t)))
-	 (if (== (cAr ip) -5) #f
-	     (reverse ip)))))
+	 (and (or (null? ip) (!= (cAr ip) -5))
+	      (reverse ip)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra routines for positions
@@ -61,45 +58,6 @@
        ,@body
        (go-to (position-get ,pos))
        (position-delete ,pos))))
-
-(define (apply-go-to routine)
-  (with p (routine (root-tree) (cursor-path))
-    (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Routines for cursor movement
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (label-in-range? lab p until)
-  (cond ((== p until) #f)
-	((tree-is? (path->tree p) lab) #t)
-	(else (label-in-range? lab (cDr p) until))))
-
-(define-public (go-to-remain-inside fun lab)
-  (with p (cursor-path)
-    (fun)
-    (let* ((q (cursor-path))
-	   (r (list-head q (list-common-left p q))))
-      (if (or (tree-is? (path->tree (cDr q)) lab)
-	      (label-in-range? lab (cDr q) (cDr r)))
-	  (go-to p)))))
-
-(define-public (go-to-repeat fun)
-  (with p (cursor-path)
-    (fun)
-    (if (!= (cursor-path) p)
-	(go-to-repeat fun))))
-
-(define-public (go-to-next) (apply-go-to path-next))
-(define-public (go-to-previous) (apply-go-to path-previous))
-(define-public (go-to-next-word) (apply-go-to path-next-word))
-(define-public (go-to-previous-word) (apply-go-to path-previous-word))
-(define-public (go-to-next-node) (apply-go-to path-next-node))
-(define-public (go-to-previous-node) (apply-go-to path-previous-node))
-(define-public (go-to-next-tag lab)
-  (apply-go-to (lambda (t p) (path-next-tag t p lab))))
-(define-public (go-to-previous-tag lab)
-  (apply-go-to (lambda (t p) (path-previous-tag t p lab))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content
@@ -142,6 +100,13 @@
   (if (list? x) x (tree->list x)))
 
 (define-public (tm-func? x . args)
-  (cond ((list? x) (apply func? (cons x args)))
-	((compound-tree? x) (apply func? (cons (tree->list x) args)))
-	(else #f)))
+  (or (and (list? x) (apply func? (cons x args)))
+      (and (compound-tree? x) (apply func? (cons (tree->list x) args)))))
+
+(define-public (tm-is? x lab)
+  (or (and (pair? x) (== (car x) lab))
+      (and (compound-tree? x) (== (tree-label x) lab))))
+
+(define-public (tm-in? x l)
+  (or (and (pair? x) (in? (car x) l))
+      (and (compound-tree? x) (in? (tree-label x) l))))

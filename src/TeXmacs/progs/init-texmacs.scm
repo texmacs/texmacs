@@ -66,12 +66,6 @@
 	   insert-page-insertion-menu position-float-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;(display "Booting source mode\n")
-(lazy-keyboard (source source-kbd) always?)
-(lazy-menu (source source-menu) source-menu source-icons
-	   source-transformational-menu source-executable-menu)
-;(display* "time: " (- (texmacs-time) boot-start) "\n")
-
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
 (lazy-keyboard (text format-text-kbd) in-text?)
@@ -80,15 +74,21 @@
 (lazy-menu (text text-menu) text-menu text-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
-;(display "Booting table mode\n")
-(lazy-keyboard (table table-kbd) in-table?)
-(lazy-menu (table table-menu) table-menu table-icons insert-table-menu)
-;(display* "time: " (- (texmacs-time) boot-start) "\n")
-
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-menu (math format-math-menu) math-format-menu math-format-icons)
 (lazy-menu (math math-menu) math-menu math-icons insert-math-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
+;(display "Booting source mode\n")
+(lazy-keyboard (source source-kbd) always?)
+(lazy-menu (source source-menu) source-menu source-icons
+	   source-transformational-menu source-executable-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
+;(display "Booting table mode\n")
+(lazy-keyboard (table table-kbd) in-table?)
+(lazy-menu (table table-menu) table-menu table-icons insert-table-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting graphics mode\n")
