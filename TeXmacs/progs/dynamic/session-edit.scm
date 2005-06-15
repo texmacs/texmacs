@@ -81,7 +81,7 @@
 
 (tm-define (traverse-document-context? t)
   (:case document)
-  (:require (tree-is? (tree-up t) 'input))
+  (:require (tree-is? t :up 'input))
   #f)
 
 (tm-define (traverse-left)

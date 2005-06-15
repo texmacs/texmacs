@@ -73,9 +73,9 @@
   #f)
 
 (define (cell-context? t)
-  (and (== (tree-label t) 'cell)
-       (== (tree-label (tree-up t)) 'row)
-       (== (tree-label (tree-up t 2)) 'table)))
+  (and (tree-is? t 'cell)
+       (tree-is? t :up 'row)
+       (tree-is? t :up :up 'table)))
 
 (define (cell-not-at-top-context? t)
   (and (cell-context? t)
@@ -353,7 +353,7 @@
 
 (define (table-inside-sub? t1 t2)
   (or (== t1 t2)
-      (and (in? (tree-label t2) '(tformat document))
+      (and (tree-in? t2 '(tformat document))
 	   (table-inside-sub? t1 (tree-up t2)))))
 
 (tm-define (table-inside? which)

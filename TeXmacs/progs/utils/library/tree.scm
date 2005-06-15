@@ -223,7 +223,7 @@
        (set! ,ref (path->tree ,var)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities for trees
+;; High level tree access
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-ref t . l)
@@ -246,6 +246,10 @@
   (if (list-1? l)
       `(tree-set-diff! ,t ,@l)
       `(tree-set ,t ,@l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Upward searching
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tree-innermost-sub p pred?)
   (with t (path->tree p)
@@ -275,20 +279,6 @@
 (tm-define-macro (with-innermost t x . body)
   `(let ((,t (tree-innermost ,x)))
      (if ,t (begin ,@body))))
-
-(tm-define (tree-go-to t . l)
-  (:synopsis "Go to a position determined by @l inside the tree @t.")
-  (let* ((u (apply tree-ref (cons t (cDr l))))
-	 (i (cAr l)))
-    (cond ((not u) (noop))
-	  ((== i :start) (go-to (path-start (root-tree) (tree->path u))))
-	  ((== i :end) (go-to (path-end (root-tree) (tree->path u))))
-	  ((integer? i) (go-to (rcons (tree->path u) i)))
-	  (else (noop)))))
-
-(tm-define (tree-correct t)
-  (with p (tree->path t)
-    (if p (path-correct p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special trees
@@ -322,3 +312,80 @@
 (tm-define-macro (with-mutator t . body)
   `(with ,t (mutator-tree)
      (if ,t (begin ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further routines for trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-is? t . l)
+  (let* ((st  (apply tree-ref (cons t (cDr l))))
+	 (lab (cAr l)))
+    (and st (== (tree-label st) lab))))
+
+(tm-define (tree-in? t . l)
+  (let* ((st (apply tree-ref (cons t (cDr l))))
+	 (ls (cAr l)))
+    (and st (in? (tree-label st) ls))))
+
+(tm-define (tree->path t . l)
+  (:synopsis "Get the position of the tree @t.")
+  (if (null? l) (tree-get-path t)
+      (with i (cAr l)
+	(if (or (== i :start) (== i :end) (integer? i))
+	    (with u (apply tree-ref (cons t (cDr l)))
+	      (cond ((not u) #f)
+		    ((== i :start) (path-start (root-tree) (tree->path u)))
+		    ((== i :end) (path-end (root-tree) (tree->path u)))
+		    ((integer? i) (rcons (tree->path u) i))))
+	    (with u (apply tree-ref (cons t l))
+	      (and u (tree->path u)))))))
+
+(tm-define (tree-go-to t . l)
+  (:synopsis "Go to a position determined by @l inside the tree @t.")
+  (with p (apply tree->path (cons t l))
+    (if p (go-to p))))
+
+(tm-define (tree-correct t . l)
+  (with p (apply tree->path (cons t l))
+    (if p (path-correct p))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for cursor movement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (go-to-same-buffer routine)
+  (with p (routine (root-tree) (cursor-path))
+    (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
+
+(tm-define (go-to-repeat fun)
+  (with p (cursor-path)
+    (fun)
+    (if (!= (cursor-path) p)
+	(go-to-repeat fun))))
+
+(define (label-in-range? lab p until)
+  (cond ((== p until) #f)
+	((tree-is? (path->tree p) lab) #t)
+	(else (label-in-range? lab (cDr p) until))))
+
+(tm-define (go-to-remain-inside fun lab)
+  (with p (cursor-path)
+    (fun)
+    (let* ((q (cursor-path))
+	   (r (list-head q (list-common-left p q))))
+      (if (or (tree-is? (path->tree (cDr q)) lab)
+	      (label-in-range? lab (cDr q) (cDr r)))
+	  (go-to p)))))
+
+(tm-define (go-to-next) (go-to-same-buffer path-next))
+(tm-define (go-to-previous) (go-to-same-buffer path-previous))
+(tm-define (go-to-next-word) (go-to-same-buffer path-next-word))
+(tm-define (go-to-previous-word) (go-to-same-buffer path-previous-word))
+(tm-define (go-to-next-node) (go-to-same-buffer path-next-node))
+(tm-define (go-to-previous-node) (go-to-same-buffer path-previous-node))
+
+(tm-define (go-to-next-tag lab)
+  (go-to-same-buffer (lambda (t p) (path-next-tag t p lab))))
+
+(tm-define (go-to-previous-tag lab)
+  (go-to-same-buffer (lambda (t p) (path-previous-tag t p lab))))

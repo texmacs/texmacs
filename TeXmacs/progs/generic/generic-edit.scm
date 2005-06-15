@@ -71,7 +71,7 @@
 
 (define (traverse-tree . l)
   (cond ((null? l) (traverse-tree (tree-up (cursor-tree))))
-	((in? (tree-label (car l)) '(concat document))
+	((tree-in? (car l) '(concat document))
 	 (traverse-tree (tree-up (car l))))
 	(else (car l))))
 
@@ -152,8 +152,8 @@
 (tm-define (positioning-right) (noop))
 (tm-define (positioning-up) (noop))
 (tm-define (positioning-down) (noop))
-(tm-define (positioning-first) (noop))
-(tm-define (positioning-last) (noop))
+(tm-define (positioning-start) (noop))
+(tm-define (positioning-end) (noop))
 (tm-define (positioning-top) (noop))
 (tm-define (positioning-bottom) (noop))
 
@@ -211,7 +211,7 @@
 (define (branch-active)
   (with-innermost t 'tree
     (with i (tree-down-index t)
-      (if (and (= i 0) (tree-is? (tree-up t) 'tree))
+      (if (and (= i 0) (tree-is? t :up 'tree))
 	  (tree-up t)
 	  t))))
 
