@@ -1666,6 +1666,24 @@ tmg_go_page_down () {
 }
 
 SCM
+tmg_go_start_paragraph () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->go_start_paragraph ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_go_end_paragraph () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->go_end_paragraph ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_go_to_label (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "go-to-label");
 
@@ -2877,6 +2895,8 @@ initialize_glue_editor () {
   gh_new_procedure ("go-end-line", (FN) tmg_go_end_line, 0, 0, 0);
   gh_new_procedure ("go-page-up", (FN) tmg_go_page_up, 0, 0, 0);
   gh_new_procedure ("go-page-down", (FN) tmg_go_page_down, 0, 0, 0);
+  gh_new_procedure ("go-start-paragraph", (FN) tmg_go_start_paragraph, 0, 0, 0);
+  gh_new_procedure ("go-end-paragraph", (FN) tmg_go_end_paragraph, 0, 0, 0);
   gh_new_procedure ("go-to-label", (FN) tmg_go_to_label, 1, 0, 0);
   gh_new_procedure ("select-all", (FN) tmg_select_all, 0, 0, 0);
   gh_new_procedure ("select-line", (FN) tmg_select_line, 0, 0, 0);

@@ -175,6 +175,8 @@
   (go-end-line go_end_line (void))
   (go-page-up go_page_up (void))
   (go-page-down go_page_down (void))
+  (go-start-paragraph go_start_paragraph (void))
+  (go-end-paragraph go_end_paragraph (void))
   (go-to-label go_to_label (void string))
 
   ;; selections

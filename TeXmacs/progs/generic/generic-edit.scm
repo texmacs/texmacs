@@ -253,9 +253,9 @@
 ;; Extra editing functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kill-line)
+(tm-define (kill-paragraph)
   (selection-set-start)
-  (go-end-line)
+  (go-end-paragraph)
   (selection-set-end)
   (clipboard-cut "primary"))
 
