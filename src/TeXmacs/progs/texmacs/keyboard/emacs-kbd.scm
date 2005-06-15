@@ -187,7 +187,7 @@
   ("emacs r" (search-start #f))
   ("emacs s" (search-start #t))
   ("emacs t" (transpose-chars))
-  ("emacs v" (kbd-page-up))
+  ("emacs v" (kbd-page-down))
   ("emacs w" (clipboard-cut "primary"))
   ("emacs y" (clipboard-paste "primary"))
   ("emacs insert" (clipboard-copy "primary"))
@@ -198,6 +198,7 @@
   ("emacs space" (kbd-select-enlarge))
   ("emacs tab" (kbd-select-environment))
 
+  ("emacs:meta v" (kbd-page-up))
   ("emacs:meta w" (clipboard-copy "primary"))
   ("emacs:meta x" (interactive exec-interactive-command))
   ("emacs:meta X" (interactive footer-eval))
