@@ -1,13 +1,20 @@
-<TeXmacs|1.0.5.1>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.3>
+  <section|Changes from version 1.0.5 to 1.0.5.4>
 
   <\itemize>
+    <item>Fixed some long standing bugs concerning cursor movement (1.0.5.4).
+
+    <item>Implementation of structured cursor movement (1.0.5.4).
+
+    <item>Enrichment of the Scheme API with routines for tree traversal
+    (1.0.5.4).
+
     <item>Reorganized and consolidated tree API (1.0.5.3).
 
     <item>Started documentation of Scheme API (1.0.5.3).
