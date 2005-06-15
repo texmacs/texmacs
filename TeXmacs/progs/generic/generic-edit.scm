@@ -60,6 +60,8 @@
 
 (tm-define (traverse-right) (go-to-next-word))
 (tm-define (traverse-left) (go-to-previous-word))
+(tm-define (traverse-up) (noop))
+(tm-define (traverse-down) (noop))
 
 (tm-define (traverse-up)
   (:context traverse-document-context?)
@@ -78,6 +80,9 @@
 (define (traverse-label . l)
   (tree-label (apply traverse-tree l)))
 
+(tm-define (traverse-next) (noop))
+(tm-define (traverse-previous) (noop))
+
 (tm-define (traverse-next)
   (:context traverse-generic-context?)
   (with l (traverse-label)
@@ -88,11 +93,8 @@
   (with l (traverse-label)
     (go-to-previous-tag l)))
 
-(tm-define (traverse-first)
-  (go-to-repeat traverse-previous))
-
-(tm-define (traverse-last)
-  (go-to-repeat traverse-next))
+(tm-define (traverse-first) (go-to-repeat traverse-previous))
+(tm-define (traverse-last) (go-to-repeat traverse-next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing

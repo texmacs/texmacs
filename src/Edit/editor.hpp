@@ -142,10 +142,14 @@ public:
 
   /* public routines from edit_cursor */
   virtual void go_to (SI x, SI y) = 0;
+  virtual void go_left_physical () = 0;
+  virtual void go_right_physical () = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;
   virtual void go_up () = 0;
   virtual void go_down () = 0;
+  virtual void go_start_line () = 0;
+  virtual void go_end_line () = 0;
   virtual void go_page_up () = 0;
   virtual void go_page_down () = 0;
   virtual void go_to (path p) = 0;
@@ -160,8 +164,8 @@ public:
   virtual void go_end_of (tree_label what) = 0;
   virtual void go_start_with (string var, string val) = 0;
   virtual void go_end_with (string var, string val) = 0;
-  virtual void go_start_line () = 0;
-  virtual void go_end_line () = 0;
+  virtual void go_start_paragraph () = 0;
+  virtual void go_end_paragraph () = 0;
   virtual void go_to_label (string s) = 0;
   virtual tree get_labels () = 0;
 

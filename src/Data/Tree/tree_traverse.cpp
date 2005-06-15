@@ -186,19 +186,25 @@ path previous_node (tree t, path p) {
 * Tag based traversal of a tree
 ******************************************************************************/
 
+static bool
+inside_same_argument (tree t, path p, path q, tree_label which) {
+  path c= common (p, q);
+  path r= path_up (q);
+  while (!nil (r) && (r != c)) {
+    r= path_up (r);
+    if (L (subtree (t, r)) == which) return false;
+  }
+  return true;
+}
+
 static path
 move_tag (tree t, path p, tree_label which, bool forward) {
   path q= p;
   while (true) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
-    path c= common (p, r);
+    if (!inside_same_argument (t, p, r, which)) return r;
     q= r;
-    r= path_up (q);
-    while (!nil (r) && (r != c)) {
-      r= path_up (r);
-      if (L (subtree (t, r)) == which) return q;
-    }
   }
 }
 
@@ -234,3 +240,27 @@ path next_argument (tree t, path p) {
   return move_argument (t, p, true); }
 path previous_argument (tree t, path p) {
   return move_argument (t, p, false); }
+
+/******************************************************************************
+* Other routines
+******************************************************************************/
+
+static path
+search_upwards (tree t, path p, tree_label which) {
+  if (nil (p) || L (subtree (t, p)) == which) return p;
+  else return search_upwards (t, path_up (p), which);
+}
+
+bool
+inside_same (tree t, path p, path q, tree_label which) {
+  return
+    search_upwards (t, path_up (p), which) ==
+    search_upwards (t, path_up (q), which);
+}
+
+bool
+more_inside (tree t, path p, path q, tree_label which) {
+  return
+    search_upwards (t, path_up (q), which) <=
+    search_upwards (t, path_up (p), which);
+}
