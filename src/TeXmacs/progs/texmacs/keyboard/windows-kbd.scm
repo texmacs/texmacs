@@ -185,7 +185,7 @@
 
 (kbd-map
   ("windows g" (selection-cancel))
-  ("windows k" (kill-line))
+  ("windows k" (kill-paragraph))
   ("windows F" (search-start #f))
   ("windows space" (kbd-select-enlarge))
 

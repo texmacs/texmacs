@@ -177,7 +177,7 @@
   ("emacs f" (kbd-right))
   ("emacs g" (selection-cancel))
   ("emacs j" (insert-return))
-  ("emacs k" (kill-line))
+  ("emacs k" (kill-paragraph))
   ("emacs l" (recenter-window))
   ("emacs m" (insert-return))
   ("emacs n" (kbd-down))
