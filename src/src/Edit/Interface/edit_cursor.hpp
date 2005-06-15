@@ -41,10 +41,14 @@ public:
 
   /* visual cursor movement */
   void go_to (SI x, SI y);
+  void go_left_physical ();
+  void go_right_physical ();
   void go_left ();
   void go_right ();
   void go_up ();
   void go_down ();
+  void go_start_line ();
+  void go_end_line ();
   void go_page_up ();
   void go_page_down ();
 
@@ -57,8 +61,8 @@ public:
   void go_to_here ();
   void go_start ();
   void go_end ();
-  void go_start_line ();
-  void go_end_line ();
+  void go_start_paragraph ();
+  void go_end_paragraph ();
   void go_start_of (tree_label what);
   void go_end_of (tree_label what);
   void go_start_with (string var, string val);

@@ -13,6 +13,7 @@
 #include "edit_cursor.hpp"
 #include "iterator.hpp"
 #include "tm_buffer.hpp"
+#include "tree_traverse.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -131,7 +132,7 @@ edit_cursor_rep::go_to (SI x, SI y) {
 }
 
 void
-edit_cursor_rep::go_left () {
+edit_cursor_rep::go_left_physical () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   adjust_ghost_cursor (VERTICAL);
   cursor_move (-1, 0);
@@ -140,7 +141,7 @@ edit_cursor_rep::go_left () {
 }
 
 void
-edit_cursor_rep::go_right () {
+edit_cursor_rep::go_right_physical () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   adjust_ghost_cursor (VERTICAL);
   cursor_move (1, 0);
@@ -180,6 +181,60 @@ edit_cursor_rep::go_page_down () {
   if (mv->oy < eb->y1) return;
   go_to (mv->ox, mv->oy- get_window_height ());
   select_from_cursor_if_active ();
+}
+
+/******************************************************************************
+* Adapt physical horizontal cursor movement to line breaking
+******************************************************************************/
+
+void
+edit_cursor_rep::go_left () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path old_tp= copy (tp);
+  go_left_physical ();
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
+  go_to (previous_valid (et, old_tp));
+  select_from_cursor_if_active ();
+}
+
+void
+edit_cursor_rep::go_right () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path old_tp= copy (tp);
+  go_right_physical ();
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
+  go_to (next_valid (et, old_tp));
+  select_from_cursor_if_active ();
+}
+
+void
+edit_cursor_rep::go_start_line () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  while (true) {
+    path old_tp= copy (tp);
+    go_left_physical ();
+    if (tp == old_tp) return;
+    if (!more_inside (et, tp, old_tp, DOCUMENT)) {
+      go_to (old_tp);
+      select_from_cursor_if_active ();
+      return;
+    }
+  }
+}
+
+void
+edit_cursor_rep::go_end_line () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  while (true) {
+    path old_tp= copy (tp);
+    go_right_physical ();
+    if (tp == old_tp) return;
+    if (!more_inside (et, tp, old_tp, DOCUMENT)) {
+      go_to (old_tp);
+      select_from_cursor_if_active ();
+      return;
+    }
+  }
 }
 
 /******************************************************************************
@@ -243,14 +298,14 @@ edit_cursor_rep::go_end () {
 }
 
 void
-edit_cursor_rep::go_start_line () {
+edit_cursor_rep::go_start_paragraph () {
   path p= search_parent_upwards (DOCUMENT);
   go_to (start (et, p));
   select_from_cursor_if_active ();
 }
 
 void
-edit_cursor_rep::go_end_line () {
+edit_cursor_rep::go_end_paragraph () {
   path p= search_parent_upwards (DOCUMENT);
   go_to (end (et, p));
   select_from_cursor_if_active ();

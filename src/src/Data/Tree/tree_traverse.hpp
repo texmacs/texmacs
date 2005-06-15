@@ -25,4 +25,7 @@ path previous_tag (tree t, path p, tree_label lab);
 path next_argument (tree t, path p);
 path previous_argument (tree t, path p);
 
+bool inside_same (tree t, path p, path q, tree_label which);
+bool more_inside (tree t, path p, path q, tree_label which);
+
 #endif // defined TREE_TRAVERSE_H
