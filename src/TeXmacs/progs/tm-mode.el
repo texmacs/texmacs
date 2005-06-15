@@ -34,7 +34,7 @@
          drd-group drd-table drd-dispatcher
          define-grammar drd-rule drd-rules assume menu-bind
          menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
-         kbd-symbols setup-append-if when link promise
+         kbd-symbols setup-append-if when link promise while
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
@@ -62,7 +62,7 @@
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if
-	       define-macro define-public-macro
+	       define-macro define-public-macro while
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
