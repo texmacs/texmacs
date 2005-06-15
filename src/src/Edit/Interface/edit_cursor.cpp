@@ -193,7 +193,8 @@ edit_cursor_rep::go_left () {
   path old_tp= copy (tp);
   go_left_physical ();
   if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
-  go_to (previous_valid (et, old_tp));
+  path p= previous_valid (et, old_tp);
+  if (rp <= p) go_to (p);
   select_from_cursor_if_active ();
 }
 
@@ -203,7 +204,8 @@ edit_cursor_rep::go_right () {
   path old_tp= copy (tp);
   go_right_physical ();
   if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
-  go_to (next_valid (et, old_tp));
+  path p= next_valid (et, old_tp);
+  if (rp <= p) go_to (p);
   select_from_cursor_if_active ();
 }
 
@@ -211,11 +213,15 @@ void
 edit_cursor_rep::go_start_line () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   while (true) {
-    path old_tp= copy (tp);
+    cursor old_cu= copy (cu);
+    cursor old_mv= copy (mv);
+    path   old_tp= copy (tp);
     go_left_physical ();
-    if (tp == old_tp) return;
-    if (!more_inside (et, tp, old_tp, DOCUMENT)) {
-      go_to (old_tp);
+    if (tp == old_tp || !more_inside (et, tp, old_tp, DOCUMENT)) {
+      notify_cursor_moved (HORIZONTAL);
+      cu= old_cu;
+      mv= old_mv;
+      tp= old_tp;
       select_from_cursor_if_active ();
       return;
     }
@@ -226,11 +232,15 @@ void
 edit_cursor_rep::go_end_line () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   while (true) {
-    path old_tp= copy (tp);
+    cursor old_cu= copy (cu);
+    cursor old_mv= copy (mv);
+    path   old_tp= copy (tp);
     go_right_physical ();
-    if (tp == old_tp) return;
-    if (!more_inside (et, tp, old_tp, DOCUMENT)) {
-      go_to (old_tp);
+    if (tp == old_tp || !more_inside (et, tp, old_tp, DOCUMENT)) {
+      notify_cursor_moved (HORIZONTAL);
+      cu= old_cu;
+      mv= old_mv;
+      tp= old_tp;
       select_from_cursor_if_active ();
       return;
     }
@@ -242,11 +252,55 @@ edit_cursor_rep::go_end_line () {
 ******************************************************************************/
 
 void
+edit_cursor_rep::adjust_cursor () {
+  cursor mv= copy (cu);
+  SI dx= PIXEL << 8, ddelta= 0;
+  path p= tree_path (mv->ox, mv->oy, mv->delta);
+  if (p != tp) {
+    // cout << "Cursors don't match\n";
+    while (dx != 0 || ddelta != 0) {
+      // cout << "  " << tp << ", " << p << "\n";
+      p= tree_path (mv->ox, mv->oy, mv->delta);
+      int eps= (path_inf (p, tp)? 1: -1);
+      if (p == tp) eps= (mv->ox < cu->ox? 1: -1);
+      if (p == tp && mv->ox == cu->ox) eps= (mv->delta < cu->delta? 1: -1);
+      if (dx > 0) {
+	if (p != tp ||
+	    tree_path (mv->ox + eps * dx, mv->oy, mv->delta) == tp)
+	  mv->ox += eps * dx;
+	dx >>= 1;
+	if (dx == 0) ddelta= DELTA;
+      }
+      else if (ddelta > 0) {
+	if (p != tp ||
+	    tree_path (mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
+	  mv->delta += eps * ddelta;
+	ddelta >>= 1;
+      }
+    }
+  }
+  if (p == tp) cu= mv;
+}
+
+void
+edit_cursor_rep::go_to_here () {
+  cu= eb->find_check_cursor (tp);
+  if (!cu->valid) {
+    tp= super_correct (et, tp);
+    cu= eb->find_check_cursor (tp);
+  }
+  if (cu->valid) adjust_cursor ();
+  if (mv_status == DIRECT) mv= copy (cu);
+  notify_change (THE_CURSOR);
+}
+
+void
 edit_cursor_rep::go_to (path p) {
   tp= p;
   mv_status= DIRECT;
   if (!has_changed (THE_TREE+THE_ENVIRONMENT)) {
     cu= eb->find_check_cursor (tp);
+    if (cu->valid) adjust_cursor ();
     mv= copy (cu);
   }
   notify_change (THE_CURSOR);
@@ -272,17 +326,6 @@ void
 edit_cursor_rep::go_to_border (path p, bool at_start) {
   if (at_start) go_to_start (p);
   else go_to_end (p);
-}
-
-void
-edit_cursor_rep::go_to_here () {
-  cu= eb->find_check_cursor (tp);
-  if (!cu->valid) {
-    tp= super_correct (et, tp);
-    cu= eb->find_check_cursor (tp);
-  }
-  if (mv_status == DIRECT) mv= copy (cu);
-  notify_change (THE_CURSOR);
 }
 
 void
