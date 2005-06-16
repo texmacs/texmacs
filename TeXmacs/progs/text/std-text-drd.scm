@@ -17,15 +17,15 @@
 ;; General groups
 
 (define-group variant-tag
-  (sectional-tag) (list-tag) (named-environment-tag) (figure-tag)
+  (section-tag) (list-tag) (named-environment-tag) (figure-tag)
   (textual-tag))
 
 (define-group numbered-tag
-  (sectional-tag) (named-environment-tag) (figure-tag) equation)
+  (section-tag) (named-environment-tag) (figure-tag) equation)
 
 ;; Sections
 
-(define-group sectional-tag
+(define-group section-tag
   part chapter appendix
   section subsection subsubsection
   paragraph subparagraph)

@@ -119,22 +119,8 @@
 ;; Sectional commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (inside-section?)
-  (or (inside? 'part)
-      (inside? 'part*)
-      (inside? 'chapter)
-      (inside? 'chapter*)
-      (inside? 'appendix)
-      (inside? 'section)
-      (inside? 'section*)
-      (inside? 'subsection)
-      (inside? 'subsection*)
-      (inside? 'subsubsection)
-      (inside? 'subsubsection*)
-      (inside? 'paragraph)
-      (inside? 'paragraph*)
-      (inside? 'subparagraph)
-      (inside? 'subparagraph*)))
+(define (section-context? t)
+  (tree-in? t (numbered-unnumbered (section-tag-list))))
 
 (tm-define (make-section l)
   (if (not (make-return-after))
@@ -146,10 +132,7 @@
       (make-return-before)))
 
 (tm-define (kbd-return)
-  (:inside part part* chapter chapter* appendix
-	   section subsection subsubsection
-	   section* subsection* subsubsection*
-	   paragraph subparagraph paragraph* subparagraph*)
+  (:context section-context?)
   (go-end-line)
   (insert-return))
 
@@ -157,20 +140,14 @@
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define list-itemize-enumerate
-  '(itemize itemize-minus itemize-dot itemize-arrow
-    enumerate enumerate-numeric enumerate-roman
-    enumerate-Roman enumerate-alpha enumerate-Alpha))
+(define (list-context? t)
+  (tree-in? t (list-tag-list)))
 
-(define list-description
-  '(description description-compact description-aligned
-    description-dash description-long))
+(define (itemize-context? t)
+  (tree-in? t (itemize-tag-list)))
 
-(tm-define (inside-list?)
-  (not (not (inside-which list-itemize-enumerate))))
-
-(tm-define (inside-description?)
-  (not (not (inside-which list-description))))
+(define (enumerate-context? t)
+  (tree-in? t (enumerate-tag-list)))
 
 (tm-define (make-tmlist l)
   (make l)
@@ -178,21 +155,28 @@
 
 (tm-define (make-item)
   (if (not (make-return-after))
-      (with l (inside-which (append list-itemize-enumerate list-description))
-	(cond ((in? l list-itemize-enumerate) (make 'item))
-	      ((in? l list-description) (make 'item*))))))
+      (with lab (inside-which (list-tag-list))
+	(cond ((in? lab (itemize-tag-list)) (make 'item))
+	      ((in? lab (enumerate-tag-list)) (make 'item))
+	      ((in? lab (description-tag-list)) (make 'item*))))))
 
 (tm-define (kbd-return)
-  (:inside itemize itemize-minus itemize-dot itemize-arrow
-	   enumerate enumerate-numeric enumerate-roman
-	   enumerate-Roman enumerate-alpha enumerate-Alpha
-	   description description-compact description-aligned
-	   description-dash description-long)
+  (:context list-context?)
   (make-item))
 
 (tm-define (kbd-return)
   (:inside item*)
   (go-end-of 'item*))
+
+(tm-define (toggle-number)
+  (:context itemize-context?)
+  (with-innermost t itemize-context?
+    (variant-replace (tree-label t) 'enumerate)))
+
+(tm-define (toggle-number)
+  (:context enumerate-context?)
+  (with-innermost t enumerate-context?
+    (variant-replace (tree-label t) 'itemize)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content
