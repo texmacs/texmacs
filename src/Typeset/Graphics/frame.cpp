@@ -34,6 +34,27 @@ scaling (double magnify, point shift) {
 }
 
 /******************************************************************************
+* Rotations
+******************************************************************************/
+
+struct rotation_2D_rep: public frame_rep {
+  point center;
+  double angle;
+  rotation_2D_rep (point o, double a): center (o), angle (a) { linear= true; }
+  operator tree () {
+    return tuple ("rotation_2D", as_tree (center), as_string (angle)); }
+  point direct_transform (point p) { return rotate_2D (p, center, angle); }
+  point inverse_transform (point p) { return rotate_2D (p, center, -angle); }
+  double direct_bound (point p, double eps) { return eps; }
+  double inverse_bound (point p, double eps) { return eps; }
+};
+
+frame
+rotation_2D (point center, double angle) {
+  return new rotation_2D_rep (center, angle);
+}
+
+/******************************************************************************
 * Compound frames
 ******************************************************************************/
 

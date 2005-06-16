@@ -53,10 +53,11 @@
 #define Env_Src_Compact       22
 #define Env_Src_Close         23
 #define Env_Point_Style       24
-#define Env_Line_Style        25
-#define Env_Line_Style_Unit   26
+#define Env_Dash_Style        25
+#define Env_Dash_Style_Unit   26
 #define Env_Fill_Mode         27
 #define Env_Fill_Color        28
+#define Env_Line_Arrows       29
 
 /******************************************************************************
 * For style file editing
@@ -154,10 +155,11 @@ public:
   int          src_special;
   int          src_compact;
   int          src_close;
-  array<bool>  line_style;
-  SI           line_style_unit;
+  array<bool>  dash_style;
+  SI           dash_style_unit;
   int          fill_mode;
   color        fill_color;
+  array<box>   line_arrows;
  
   int          inactive_mode;
   tree         recover_env;
@@ -348,9 +350,10 @@ public:
   void   update_src_special ();
   void   update_src_compact ();
   void   update_src_close ();
-  void   update_line_style ();
+  void   update_dash_style ();
   void   update_fill_mode ();
   void   update_fill_color ();
+  void   update_line_arrows ();
   void   update ();
   void   update (string env_var);
 

@@ -82,7 +82,8 @@ x_drawable_rep::decode (SI& x, SI& y) {
 ******************************************************************************/
 
 void
-x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
+  (void) restore;
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
   Region region= XCreateRegion ();

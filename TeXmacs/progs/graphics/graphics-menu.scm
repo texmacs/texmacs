@@ -268,14 +268,20 @@
   ---
   ("Other" (interactive graphics-set-line-width)))
 
-(menu-bind graphics-line-style-menu
-  ("Default" (graphics-set-line-style "default"))
+(menu-bind graphics-dash-style-menu
+  ("None" (graphics-set-dash-style "default"))
   ---
-  ("- - - - - - - - -"    (graphics-set-line-style "10"))
-  ("----  ----  ----  --" (graphics-set-line-style "11100"))
-  ("---- - ---- - ---- -" (graphics-set-line-style "1111010"))
+  ("- - - - - - - - -"    (graphics-set-dash-style "10"))
+  ("----  ----  ----  --" (graphics-set-dash-style "11100"))
+  ("---- - ---- - ---- -" (graphics-set-dash-style "1111010"))
   ---
-  ("Other" (interactive graphics-set-line-style)))
+  ("Other" (interactive graphics-set-dash-style)))
+
+(menu-bind graphics-line-arrows-menu
+  ("None" (graphics-set-line-arrows 0))
+  ---
+  (" ------------------>" (graphics-set-line-arrows 1))
+  ("<---------------->" (graphics-set-line-arrows 2)))
 
 (menu-bind graphics-fill-mode-menu
   ("None" (graphics-set-fill-mode "default"))
@@ -323,7 +329,8 @@
   (-> "Color" (link graphics-color-menu))
   (-> "Line properties"
       (-> "Width" (link graphics-line-width-menu))
-      (-> "Style" (link graphics-line-style-menu)))
+      (-> "Style" (link graphics-dash-style-menu))
+      (-> "Arrows" (link graphics-line-arrows-menu)))
   (-> "Fill"
       (-> "Fill mode" (link graphics-fill-mode-menu))
       (-> "Fill color" (link graphics-fill-color-menu)))
@@ -343,7 +350,9 @@
   (=> (balloon (icon "tm_line_width.xpm") "Line width")
       (link graphics-line-width-menu))
   (=> (balloon (icon "tm_line_style.xpm") "Line style")
-      (link graphics-line-style-menu))
+      (link graphics-dash-style-menu))
+  (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
+      (link graphics-line-arrows-menu))
   (=> (balloon (icon "tm_fill.xpm") "Fill mode")
       (link graphics-fill-mode-menu))
   (=> (balloon (icon "tm_color.xpm") "Fill color")

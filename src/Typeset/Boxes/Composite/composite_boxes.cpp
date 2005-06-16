@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Setting up composite boxes
@@ -140,6 +141,19 @@ composite_box_rep::find_tag (string name) {
 bool
 composite_box_rep::access_allowed () {
   return true;
+}
+
+box
+composite_box_rep::transform (frame fr) {
+  int i;
+  array<box> bs;
+  for (i= 0; i<subnr(); i++) {
+    if (!nil (subbox (i))) {
+      box sb= subbox (i)->transform (fr);
+      if (!nil (sb)) bs << sb;
+    }
+  }
+  return N (bs)==0?box ():composite_box (ip, bs);
 }
 
 /******************************************************************************
