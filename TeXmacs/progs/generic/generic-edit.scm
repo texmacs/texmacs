@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (generic generic-edit))
+(texmacs-module (generic generic-edit)
+  (:use (utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic editing via the keyboard
@@ -60,6 +61,9 @@
       (and (tree-in? t '(concat document))
 	   (simple-context? (tree-down t)))))
 
+(tm-define (similar-complex-context? t)
+  (complex-context? t))
+
 (tm-define (document-context? t)
   (tree-is? t 'document))
 
@@ -86,12 +90,12 @@
   (tree-label (apply traverse-tree l)))
 
 (tm-define (traverse-previous)
-  (with-innermost t complex-context?
-    (go-to-previous-tag (tree-label t))))
+  (with-innermost t similar-complex-context?
+    (go-to-previous-tag (similar-to (tree-label t)))))
 
 (tm-define (traverse-next)
-  (with-innermost t complex-context?
-    (go-to-next-tag (tree-label t))))
+  (with-innermost t similar-complex-context?
+    (go-to-next-tag (similar-to (tree-label t)))))
 
 (tm-define (traverse-first)
   (go-to-repeat traverse-previous)

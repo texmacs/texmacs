@@ -58,6 +58,11 @@
 (tm-define (numbered-unnumbered l)
   (append l (map (lambda (x) (symbol-append x '*)) l)))
 
+(tm-define (numbered-unnumbered-complete l)
+  (let* ((nl (numbered-tag-list))
+	 (bl (list-intersection l nl)))
+    (append l (map (lambda (x) (symbol-append x '*)) bl))))
+
 (define (numbered-tag-list*)
   (numbered-unnumbered (numbered-tag-list)))
 
@@ -92,28 +97,27 @@
   (with-innermost t which
     (tree-assign-node t by)))
 
-(define (variant-tag-list*)
-  (let* ((vl (variant-tag-list))
-	 (nl (numbered-tag-list))
-	 (bl (list-intersection vl nl)))
-    (append vl (map (lambda (x) (symbol-append x '*)) bl))))
-
-(tm-define (variants-of lab nv?)
-  (:synopsis "Retrieve list of variants of @lab")
-  (:argument lab "Tag")
-  (:argument nv? "Also consider (un)numbered variants?")
+(define (variants-of-sub lab type nv?)
   (with numbered? (in? lab (numbered-tag-list*))
     (cond ((and numbered? (symbol-ends? lab '*))
-	   (with l (variants-of (symbol-drop-right lab 1) nv?)
+	   (with l (variants-of-sub (symbol-drop-right lab 1) type nv?)
 	     (if nv? l (map (lambda (x) (symbol-append x '*)) l))))
 	  ((and numbered? nv?)
-	   (numbered-unnumbered (variants-of lab #f)))
-	  (else (with vg (group-find lab 'variant-tag)
+	   (numbered-unnumbered (variants-of-sub lab type #f)))
+	  (else (with vg (group-find lab type)
 		  (if (not vg) (list lab)
 		      (group-resolve vg)))))))
 
+(tm-define (variants-of lab)
+  (:synopsis "Retrieve list of variants of @lab")
+  (variants-of-sub lab 'variant-tag #f))
+
+(tm-define (similar-to lab)
+  (:synopsis "Retrieve list of tags similar to @lab")
+  (variants-of-sub lab 'similar-tag #t))
+
 (tm-define (variant-context? t)
-  (tree-in? t (variant-tag-list*)))
+  (tree-in? t (numbered-unnumbered-complete (variant-tag-list))))
 
 (tm-define (variant-circulate forward?)
   (noop))
@@ -126,7 +130,7 @@
   (:context variant-context?)
   (with-innermost t variant-context?
     (let* ((old (tree-label t))
-	   (val (variants-of old #f))
+	   (val (variants-of old))
 	   (rot (list-rotate val old))
 	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
       (variant-replace old new))))
