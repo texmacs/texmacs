@@ -412,6 +412,24 @@
   (list-common-left (reverse l1) (reverse l2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set operations on lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (list->ahash-set l)
+  (list->ahash-table (map (lambda (x) (cons x #t)) l)))
+
+(tm-define (list-intersection l1 l2)
+  (with s (list->ahash-set l2)
+    (list-filter l1 (lambda (x) (ahash-ref s x)))))
+
+(tm-define (list-difference l1 l2)
+  (with s (list->ahash-set l2)
+    (list-filter l1 (lambda (x) (not (ahash-ref s x))))))
+
+(tm-define (list-union l1 l2)
+  (append l1 (list-difference l2 l1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

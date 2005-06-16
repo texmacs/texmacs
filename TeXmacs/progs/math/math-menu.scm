@@ -87,21 +87,14 @@
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))
   (-> "Symbol" (link symbol-menu))
-  (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*))
-      ---
-      (if (not (table-equation-numbered?))
-	  ("Number equation" (table-toggle-number-equation)))
-      (if (table-equation-numbered?)
-	  ("Remove number" (table-toggle-number-equation))))
-  (if (inside? 'equation)
-      ---
-      ("Remove number" (table-toggle-number-equation)))
-  (if (inside? 'equation*)
-      ---
-      ("Number equation" (table-toggle-number-equation)))
+  ---
+  (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
+	  (inside? 'equation) (inside? 'equation*))
+      (if (not (numbered?)) ("Number equation" (toggle-number)))
+      (if (numbered?) ("Remove number" (toggle-number))))
   (if (not (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*)
 	       (inside? 'equation) (inside? 'equation*)))
-      (when #f ("Number equation" (table-toggle-number-equation)))))
+      (when #f ("Number equation" (toggle-number)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mathematical Symbol menu

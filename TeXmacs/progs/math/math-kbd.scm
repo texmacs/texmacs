@@ -43,7 +43,6 @@
 
   ("$" (go-end-with "mode" "math"))
   ("math $" (make-with "mode" "text"))
-  ("math *" (table-toggle-number-equation))
   ("`" (make-lprime "`"))
   ("'" (make-rprime "'"))
   ("math:greek '" (make-rprime "<dag>"))

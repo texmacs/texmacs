@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text std-text-edit)
-  (:use (utils edit variants)))
+  (:use (utils edit variants) (text std-text-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting document and author data
@@ -152,23 +152,6 @@
 	   paragraph subparagraph paragraph* subparagraph*)
   (go-end-line)
   (insert-return))
-
-(define (toggle-number-sub s)
-  (with s* (string->symbol (string-append (symbol->string s) "*"))
-    (cond ((inside? s) (variant-replace s s*))
-	  ((inside? s*) (variant-replace s* s)))))
-
-(tm-define (toggle-section-number)
-  (for-each
-   toggle-number-sub
-   '(part chapter section subsection subsubsection
-     paragraph subparagraph appendix
-
-     theorem proposition lemma corollary
-     axiom definition notation conjecture
-     remark example note warning convention
-     exercise problem
-     small-figure big-figure small-table big-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
