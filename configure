@@ -6030,7 +6030,7 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa-*-linux*)
+  hppa*-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an HP PA_RISC/GNU-Linux host" >&5
 echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_OS="HPPA64_GNU_LINUX"

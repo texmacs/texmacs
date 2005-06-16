@@ -654,7 +654,7 @@ case "${host}" in
     CONFIG_WORD_MASK="0xfffffffffffffff8"
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
-  hppa-*-linux*)
+  hppa*-*-linux*)
     AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
     CONFIG_OS="HPPA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="hppa64-gnu-linux"
