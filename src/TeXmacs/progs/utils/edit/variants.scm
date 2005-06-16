@@ -15,57 +15,72 @@
 (texmacs-module (utils edit variants))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting new structured variants
+;; Definition of tag groups (could be done using drds in the future)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define structured-variants-table (make-ahash-table))
-(define structured-variants-list '())
+(tm-define group-table (make-ahash-table))
 
-(define (set-structured-variant-sub l)
-  (if (nnull? (cddr l))
-      (begin
-	;(display* (cadr l) " -> " (car l) ", " (caddr l) "\n")
-	(ahash-set! structured-variants-table
-		    (cadr l) (list (car l) (caddr l)))
-	(set! structured-variants-list
-	      (cons (cadr l) structured-variants-list))
-	(set-structured-variant-sub (cdr l)))))
+(define (group-resolve-one x)
+  (if (pair? x) (group-resolve (car x)) (list x)))
 
-(define (set-structured-variant l)
-  (set-structured-variant-sub (rcons (cons (cAr l) l) (car l))))
+(tm-define (group-resolve which)
+  (with l (ahash-ref group-table which)
+    (if l (append-map group-resolve-one l) '())))
 
-(tm-define-macro (set-structured-variants . l)
-  (map-in-order set-structured-variant l)
-  (display* ""); prevents strange error
-  )
+(tm-define-macro (define-group group . l)
+  (with old (ahash-ref group-table group)
+    (if old
+	`(ahash-set! group-table ',group (append ',old ',l))
+	`(begin
+	   (ahash-set! group-table ',group ',l)
+	   (tm-define (,(symbol-append group '-list))
+	     (group-resolve ',group))
+	   (tm-define (,(symbol-append group '?) lab)
+	     (in? lab (group-resolve ',group)))
+	   (tm-define (,(symbol-append 'inside- group))
+	     (inside-which (group-resolve ',group)))))))
+
+(tm-define (group-find which group)
+  (:synopsis "Find subgroup of @group which contains @which")
+  (with l (ahash-ref group-table group)
+    (cond ((not l) #f)
+	  ((in? which l) group)
+	  (else (with f (map car (list-filter l (lambda (x) (pair? x))))
+		  (list-any (lambda (x) (group-find which x)) f))))))
+
+(define-group variant-tag)
+(define-group numbered-tag)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic structured variants
+;; Toggle numbers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(set-structured-variants
-  (chapter appendix section subsection subsubsection
-   paragraph subparagraph)
-  (chapter* section* subsection* subsubsection*)
-  (itemize enumerate)
-  (itemize-minus itemize-dot itemize-arrow)
-  (enumerate-numeric enumerate-roman enumerate-Roman
-   enumerate-alpha enumerate-Alpha)
-  (description
-   description-compact description-aligned
-   description-dash description-long)
-  (equation equation*)
-  (eqnarray eqnarray*)
-  (leqnarray leqnarray*)
-  (matrix det)
-  (theorem proposition lemma corollary conjecture)
-  (definition axiom notation)
-  (remark note example convention warning)
-  (exercise problem)
-  (tabular tabular* block block*)
-  (strong em dfn)
-  (name person cite*)
-  (verbatim kbd code* var))
+(define (numbered-tag-list*)
+  (with l (numbered-tag-list)
+    (append l (map (lambda (x) (symbol-append x '*)) l))))
+
+(tm-define (numbered-context? t)
+  (tree-in? t (numbered-tag-list*)))
+
+(tm-define (symbol-toggle-number s)
+  (if (symbol-ends? s '*)
+      (symbol-drop-right s 1)
+      (symbol-append s '*)))
+
+(tm-define (numbered?) #f)
+(tm-define (toggle-number) (noop))
+
+(tm-define (numbered?)
+  (:context numbered-context?)
+  (with-innermost t numbered-context?
+    (not (symbol-ends? (tree-label t) '*))))
+
+(tm-define (toggle-number)
+  (:context numbered-context?)
+  (with-innermost t numbered-context?
+    (let* ((old (tree-label t))
+	   (new (symbol-toggle-number old)))
+      (variant-replace old new))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actions on structured variants
@@ -75,9 +90,42 @@
   (with-innermost t which
     (tree-assign-node t by)))
 
+(define (variant-tag-list*)
+  (let* ((vl (variant-tag-list))
+	 (nl (numbered-tag-list))
+	 (bl (list-intersection vl nl)))
+    (append vl (map (lambda (x) (symbol-append x '*)) bl))))
+
+(tm-define (variants-of lab nv?)
+  (:synopsis "Retrieve list of variants of @lab")
+  (:argument lab "Tag")
+  (:argument nv? "Also consider (un)numbered variants?")
+  (with numbered? (in? lab (numbered-tag-list*))
+    (cond ((and numbered? (symbol-ends? lab '*))
+	   (with l (variants-of (symbol-drop-right lab 1) nv?)
+	     (if nv? l (map (lambda (x) (symbol-append x '*)) l))))
+	  ((and numbered? nv?)
+	   (with l (variants-of lab #f)
+	     (append l (map (lambda (x) (symbol-append x '*)) l))))
+	  (else (with vg (group-find lab 'variant-tag)
+		  (if (not vg) (list lab)
+		      (group-resolve vg)))))))
+
+(tm-define (variant-context? t)
+  (tree-in? t (variant-tag-list*)))
+
 (tm-define (variant-circulate forward?)
-  (let ((which (inside-which structured-variants-list)))
-    (if which
-	(let* ((val (ahash-ref structured-variants-table which))
-	       (new (if forward? (cadr val) (car val))))
-	  (variant-replace which new)))))
+  (noop))
+
+(define (list-rotate which search)
+  (receive (l r) (list-break which (lambda (x) (== x search)))
+    (append r l)))
+
+(tm-define (variant-circulate forward?)
+  (:context variant-context?)
+  (with-innermost t variant-context?
+    (let* ((old (tree-label t))
+	   (val (variants-of old #f))
+	   (rot (list-rotate val old))
+	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
+      (variant-replace old new))))

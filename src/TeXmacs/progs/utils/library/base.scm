@@ -169,6 +169,19 @@
 				 (- n 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some string-like functions on symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (symbol-starts? s1 s2)
+  (string-starts? (symbol->string s1) (symbol->string s2)))
+
+(tm-define (symbol-ends? s1 s2)
+  (string-ends? (symbol->string s1) (symbol->string s2)))
+
+(tm-define (symbol-drop-right s n)
+  (string->symbol (string-drop-right (symbol->string s) n)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

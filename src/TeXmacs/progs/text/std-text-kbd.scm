@@ -20,7 +20,6 @@
   ("$" (if (inside? 'hybrid) (insert "$") (make-with "mode" "math")))
   ("text $" (make 'equation*) (temp-proof-fix))
   ("text &" (make 'eqnarray*) (temp-proof-fix))
-  ("text *" (toggle-section-number))
 
   ("text a" (make 'abbr))
   ("text d" (make-tmlist 'description))

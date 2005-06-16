@@ -16,6 +16,16 @@
   (:use (utils base environment) (utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some drd properties, which should go into table-drd.scm later on
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-group variant-tag
+  (table-tag))
+
+(define-group table-tag
+  tabular tabular* block block*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -353,7 +363,8 @@
 	 (st  (table-cell-tree row -1)))
     (tree-search-subtree st (stree->tree '(eq-number)))))
 
-(tm-define (table-equation-numbered?)
+(tm-define (numbered?)
+  (:inside eqnarray eqnarray*)
   (if (table-search-number-equation) #t #f))
 
 (tm-define (table-number-equation)
@@ -378,10 +389,8 @@
 	 (tree-inside? t2 t1)
 	 (table-inside-sub? t1 (tree-up t2)))))
 
-(tm-define (table-toggle-number-equation)
-  (cond ((inside? 'equation) (variant-replace 'equation 'equation*))
-	((inside? 'equation*) (variant-replace 'equation* 'equation))
-	(else (if (or (table-inside? 'eqnarray) (table-inside? 'eqnarray*))
-		  (if (table-equation-numbered?)
-		      (table-nonumber-equation)
-		      (table-number-equation))))))
+(tm-define (toggle-number)
+  (:inside eqnarray eqnarray*)
+  (if (table-search-number-equation)
+      (table-nonumber-equation)
+      (table-number-equation)))

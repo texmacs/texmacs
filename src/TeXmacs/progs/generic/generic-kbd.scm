@@ -35,6 +35,7 @@
   ("C-delete" (remove-structure-upwards))
   ("C-tab" (variant-circulate #t))
   ("C-S-tab" (variant-circulate #f))
+  ("A-*" (toggle-number))
   ("A-space" (make-space "0.2spc"))
   ("A-S-space" (make-space "-0.2spc"))
   ("A-backspace" (structured-remove #f))

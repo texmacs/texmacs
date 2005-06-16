@@ -38,7 +38,7 @@
 	 plugin-configure plugin-input-converters use-modules export
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
-	 define-format converter with-aux
+	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
@@ -46,7 +46,7 @@
      (concat "(\\("
       (mapconcat 'symbol-name
        '(texmacs-module define-macro define-public-macro define-table
-	 tm-define tm-define-macro tm-property
+	 tm-define tm-define-macro tm-property define-group
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
@@ -61,7 +61,7 @@
   (dolist (s '(with with-innermost receive
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module and-let* setup-append-if
+  (dolist (s '(texmacs-module and-let* setup-append-if define-group
 	       define-macro define-public-macro while
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
