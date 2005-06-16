@@ -87,11 +87,11 @@
 
 (tm-define (traverse-previous)
   (with-innermost t complex-context?
-    (if t (go-to-previous-tag (tree-label t)))))
+    (go-to-previous-tag (tree-label t))))
 
 (tm-define (traverse-next)
   (with-innermost t complex-context?
-    (if t (go-to-next-tag (tree-label t)))))
+    (go-to-next-tag (tree-label t))))
 
 (tm-define (traverse-first)
   (go-to-repeat traverse-previous)
@@ -116,34 +116,32 @@
 
 (tm-define (structured-left)
   (with-innermost t complex-context?
-    (if t
-	(with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
-	  (if (nnull? p) (go-to p))))))
+    (with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-right)
   (with-innermost t complex-context?
-    (if t
-	(with p (path-next-argument (root-tree) (tree->path (tree-down t)))
-	  (if (nnull? p) (go-to p))))))
+    (with p (path-next-argument (root-tree) (tree->path (tree-down t)))
+      (if (nnull? p) (go-to p)))))
 
 (tm-define (structured-up) (noop))
 (tm-define (structured-down) (noop))
 
 (tm-define (structured-start)
   (with-innermost t complex-context?
-    (if t (tree-go-to t :down :start))))
+    (tree-go-to t :down :start)))
 
 (tm-define (structured-end)
   (with-innermost t complex-context?
-    (if t (tree-go-to t :down :end))))
+    (tree-go-to t :down :end)))
 
 (tm-define (structured-exit-left)
   (with-innermost t complex-context?
-    (if t (tree-go-to t :start))))
+    (tree-go-to t :start)))
 
 (tm-define (structured-exit-right)
   (with-innermost t complex-context?
-    (if t (tree-go-to t :end))))
+    (tree-go-to t :end)))
 
 (tm-define (structured-first)
   (go-to-repeat structured-left)
