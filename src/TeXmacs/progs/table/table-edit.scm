@@ -19,8 +19,8 @@
 ;; Some drd properties, which should go into table-drd.scm later on
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-group variant-tag
-  (table-tag))
+(define-group variant-tag (table-tag))
+(define-group similar-tag (table-tag))
 
 (define-group table-tag
   tabular tabular* block block*)
@@ -77,6 +77,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (similar-complex-context? t)
+  (:case cell row table tformat)
+  #f)
 
 (define (cell-context? t)
   (and (tree-is? t 'cell)

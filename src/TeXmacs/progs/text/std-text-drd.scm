@@ -20,8 +20,12 @@
   (section-tag) (list-tag) (named-environment-tag) (figure-tag)
   (textual-tag))
 
+(define-group similar-tag
+  (section-tag) (list-tag) (named-environment-tag) (figure-tag)
+  (textual-tag) (equation-tag))
+
 (define-group numbered-tag
-  (section-tag) (named-environment-tag) (figure-tag) equation)
+  (section-tag) (named-environment-tag) (figure-tag) (equation-tag))
 
 ;; Sections
 
@@ -87,3 +91,8 @@
 
 (define-group big-figure-tag
   big-figure big-table)
+
+;; Figures and tables
+
+(define-group equation-tag
+  equation eqnarray)

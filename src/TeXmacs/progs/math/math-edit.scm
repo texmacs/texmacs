@@ -18,8 +18,8 @@
 ;; Some drd properties, which should go into table-drd.scm later on
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-group variant-tag
-  (math-table-tag))
+(define-group variant-tag (math-table-tag))
+(define-group similar-tag (math-table-tag))
 
 (define-group math-table-tag
   matrix det)

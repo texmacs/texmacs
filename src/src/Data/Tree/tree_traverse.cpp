@@ -13,6 +13,7 @@
 #include "tree_traverse.hpp"
 #include "drd_std.hpp"
 #include "analyze.hpp"
+#include "hashset.hpp"
 
 /******************************************************************************
 * Traversal of a tree
@@ -187,31 +188,45 @@ path previous_node (tree t, path p) {
 ******************************************************************************/
 
 static bool
-inside_same_argument (tree t, path p, path q, tree_label which) {
+inside_same_argument (tree t, path p, path q, hashset<int> labs) {
   path c= common (p, q);
   path r= path_up (q);
   while (!nil (r) && (r != c)) {
     r= path_up (r);
-    if (L (subtree (t, r)) == which) return false;
+    if (labs->contains ((int) L (subtree (t, r)))) return false;
   }
   return true;
 }
 
 static path
-move_tag (tree t, path p, tree_label which, bool forward) {
+move_tag (tree t, path p, hashset<int> labs, bool forward) {
   path q= p;
   while (true) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
-    if (!inside_same_argument (t, p, r, which)) return r;
+    if (!inside_same_argument (t, p, r, labs)) return r;
     q= r;
   }
 }
 
-path next_tag (tree t, path p, tree_label which) {
-  return move_tag (t, p, which, true); }
-path previous_tag (tree t, path p, tree_label which) {
-  return move_tag (t, p, which, false); }
+static hashset<int>
+get_labels (scheme_tree t) {
+  hashset<int> labs;
+  if (is_atomic (t))
+    labs->insert ((int) as_tree_label (t->label));
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (is_atomic (t[i]))
+	labs->insert ((int) as_tree_label (t[i]->label));
+  }
+  return labs;
+}
+
+path next_tag (tree t, path p, scheme_tree which) {
+  return move_tag (t, p, get_labels (which), true); }
+path previous_tag (tree t, path p, scheme_tree which) {
+  return move_tag (t, p, get_labels (which), false); }
 
 /******************************************************************************
 * Traverse the children of a node

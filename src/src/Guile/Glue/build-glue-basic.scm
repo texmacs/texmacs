@@ -74,8 +74,8 @@
   (path-previous previous_valid (path content path))
   (path-next-word next_word (path content path))
   (path-previous-word previous_word (path content path))
-  (path-next-tag next_tag (path content path tree_label))
-  (path-previous-tag previous_tag (path content path tree_label))
+  (path-next-tag next_tag (path content path scheme_tree))
+  (path-previous-tag previous_tag (path content path scheme_tree))
   (path-next-argument next_argument (path content path))
   (path-previous-argument previous_argument (path content path))
 
