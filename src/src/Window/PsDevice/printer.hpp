@@ -72,7 +72,7 @@ public:
 
   /******************** routines from ps_device.hpp ************************/
 
-  void  set_clipping (SI x1, SI y1, SI x2, SI y2);
+  void  set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   color rgb (int r, int g, int b);
   void  get_rgb (color col, int& r, int& g, int& b);
   color get_color ();

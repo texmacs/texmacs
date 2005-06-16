@@ -20,6 +20,8 @@
 #include "merge_sort.hpp"
 #include "scheme.hpp"
 
+string PS_CLIP_PUSH ("gsave");
+string PS_CLIP_POP ("grestore");
 string PS_CLIP ("cl");
 string PS_LINE ("ln");
 string PS_FILL ("fl");
@@ -451,12 +453,17 @@ printer_rep::generate_tex_fonts () {
 ******************************************************************************/
 
 void
-printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
-  print (x1, y1);
-  print (x2, y2);
-  print (PS_CLIP);
+  if (restore)
+    print (PS_CLIP_POP);
+  else {
+    print (PS_CLIP_PUSH);
+    print (x1, y1);
+    print (x2, y2);
+    print (PS_CLIP);
+  }
 }
   
 /******************************************************************************

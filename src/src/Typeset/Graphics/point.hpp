@@ -28,6 +28,8 @@ point as_point (tree t);
 tree  as_tree (point p);
 
 double operator * (point p1, point p2);
+point  rotate_2D (point p, point o, double angle);
+
 double norm (point p);
 double arg (point p);
 bool   collinear (point p1, point p2);

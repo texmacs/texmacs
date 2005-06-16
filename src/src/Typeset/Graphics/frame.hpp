@@ -52,7 +52,11 @@ class frame {
 };
 ABSTRACT_NULL_CODE(frame);
 
-frame scaling (double magnify, array<double> shift);
+// Transformations
+frame scaling (double magnify, point shift);
+frame rotation_2D (point center, double angle);
+
+// Operations on transformations
 frame operator * (frame f1, frame f2);
 frame invert (frame f);
 

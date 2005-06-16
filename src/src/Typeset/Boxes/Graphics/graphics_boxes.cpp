@@ -71,7 +71,8 @@ graphics_box_rep::pre_display (ps_device &dev) {
 
 void
 graphics_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  dev->set_clipping (
+    old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
 }
 
 int
@@ -145,8 +146,12 @@ struct curve_box_rep: public box_rep {
   array<SI> styled_n;
   int fill;
   color fill_col;
+  array<box> arrows;
   curve_box_rep (path ip, curve c, SI width, color col,
-		 array<bool> style, SI style_unit, int fill, color fill_col);
+		 array<bool> style, SI style_unit,
+		 int fill, color fill_col,
+		 array<box> arrows);
+  box transform (frame fr);
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   void display (ps_device dev);
@@ -155,10 +160,81 @@ struct curve_box_rep: public box_rep {
   void apply_style ();
 };
 
+static bool
+find_first_point (array<point> a, point &p) {
+  p= point ();
+  if (N(a)<=0) return false;
+  p= a[0];
+  return true;
+}
+
+static bool
+find_last_point (array<point> a, point &p) {
+  p= point ();
+  if (N(a)<=0) return false;
+  p= a[N(a)-1];
+  return true;
+}
+
+static bool
+find_prev_last (array<point> a, point &p) {
+  p= point ();
+  if (N(a)<=0) return false;
+  int i= N(a)-1;
+  point p0= a[i];
+  while (i>=0) {
+    if (!fnull (norm(a[i]-p0),1e-6)) {
+      p= a[i];
+      return true;
+    }
+    i--;
+  }
+  return false;
+}
+
+static bool
+find_next_first (array<point> a, point &p) {
+  p= point ();
+  if (N(a)<=0) return false;
+  int i= 0;
+  point p0= a[i];
+  while (i<N(a)) {
+    if (!fnull (norm(a[i]-p0),1e-6)) {
+      p= a[i];
+      return true;
+    }
+    i++;
+  }
+  return false;
+}
+
+static void
+calc_composite_extent (box b) {
+  b->x1= b->y1= b->x3= b->y3= MAX_SI;
+  b->x2= b->y2= b->x4= b->y4= -MAX_SI;
+  int i;
+  for (i= 0; i<b->subnr(); i++) {
+    box sb= b->subbox (i);
+    if ((tree)sb == "curve") {
+      b->x1= min (b->x1, sb->x1);
+      b->y1= min (b->y1, sb->y1);
+      b->x2= max (b->x2, sb->x2);
+      b->y2= max (b->y2, sb->y2);
+      b->x3= min (b->x3, sb->x3);
+      b->y3= min (b->y3, sb->y3);
+      b->x4= max (b->x4, sb->x4);
+      b->y4= max (b->y4, sb->y4);
+    }
+  }
+}
+
 curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
-  array<bool> style2, SI style_unit2, int fill2, color fill_col2):
+  array<bool> style2, SI style_unit2, int fill2, color fill_col2,
+  array<box> arrows2)
+  :
   box_rep (ip2), width (W), col (C), c (c2),
-  style (style2), style_unit (style_unit2), fill (fill2), fill_col (fill_col2)
+  style (style2), style_unit (style_unit2),
+  fill (fill2), fill_col (fill_col2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -170,9 +246,49 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
     x2= max (x2, max ((SI) a[i][0], (SI) a[i+1][0]));
     y2= max (y2, max ((SI) a[i][1], (SI) a[i+1][1]));
   }
+  apply_style ();
+  arrows= array<box>(2);
+  point p1, p2;
+  if (N(arrows2)>0 && find_first_point (a, p1) && find_next_first (a, p2)) {
+    box b= arrows2[0];
+    if (!nil (b)) {
+      calc_composite_extent (b);
+      point o1= point (b->x1, (b->y1 + b->y2) / 2);
+      point o2= p1;
+      frame fr= scaling (1.0, o2-o1) * rotation_2D (o1, arg (p2-p1));
+      arrows[0]= arrows2[0]->transform (fr);
+      if (!nil (arrows[0])) {
+        x1= min (x1, arrows[0]->x1);
+        y1= min (y1, arrows[0]->y1);
+        x2= max (x2, arrows[0]->x2);
+        y2= max (y2, arrows[0]->y2);
+      }
+    }
+  }
+  if (N(arrows2)>1 && find_prev_last (a, p1) && find_last_point (a, p2)) {
+    box b= arrows2[1];
+    if (!nil (b)) {
+      calc_composite_extent (b);
+      point o1= point (b->x2, (b->y1 + b->y2) / 2);
+      point o2= p2;
+      frame fr= scaling (1.0, o2-o1) * rotation_2D (o1, arg (p2-p1));
+      arrows[1]= arrows2[1]->transform (fr);
+      if (!nil (arrows[1])) {
+        x1= min (x1, arrows[1]->x1);
+        y1= min (y1, arrows[1]->y1);
+        x2= max (x2, arrows[1]->x2);
+        y2= max (y2, arrows[1]->y2);
+      }
+    }
+  }
   x3= x1 - (width>>1); y3= y1 - (width>>1); 
   x4= x2 + (width>>1); y4= y2 + (width>>1);
-  apply_style ();
+}
+
+box
+curve_box_rep::transform (frame fr) {
+  return curve_box (ip, fr (c), width, col,
+    style, style_unit, fill, fill_col, arrows);
 }
 
 SI
@@ -269,6 +385,7 @@ curve_box_rep::display (ps_device dev) {
         while (lno>len) {
           li= len;
           if (no%2!=0) {
+         // 1st subsegment of a dash
             dev->line ((SI) prec[0], (SI) prec[1],
                        (SI) a[i+1][0], (SI) a[i+1][1]);
   	    prec= a[i+1];
@@ -290,9 +407,20 @@ curve_box_rep::display (ps_device dev) {
         if (no%2==0)
           prec= b;
         else
+       // Last subsegment of a dash
           dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
+       // TODO: Use XDrawLines() and the join style to draw correctly
+       //   the subsegments ; implement this for Postscript as well.
       }
     }
+  }
+  if (!nil (arrows[0])) {
+    int i, n=arrows[0]->subnr();
+    for (i=0; i<n; i++) arrows[0]->subbox(i)->display (dev);
+  }
+  if (!nil (arrows[1])) {
+    int i, n=arrows[1]->subnr();
+    for (i=0; i<n; i++) arrows[1]->subbox(i)->display (dev);
   }
 }
 
@@ -371,8 +499,10 @@ point_box (path ip, point p, SI r, color col, string style) {
 
 box
 curve_box (path ip, curve c, SI width, color col,
-  array<bool> style, SI style_unit, int fill, color fill_col)
+  array<bool> style, SI style_unit,
+  int fill, color fill_col,
+  array<box> arrows)
 {
   return new curve_box_rep (ip, c, width, col,
-			    style, style_unit, fill, fill_col);
+			    style, style_unit, fill, fill_col, arrows);
 }

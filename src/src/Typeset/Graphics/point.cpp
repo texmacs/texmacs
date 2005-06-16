@@ -89,6 +89,19 @@ operator * (point p1, point p2) {
   return r;
 }
 
+static point
+mult (double re, double im, point p) {
+  if (N(p)==1) p= point (p[0], 0);
+  if (N(p)==0) p= point (0, 0);
+  return point (re * p[0] - im * p[1],
+		re * p[1] + im * p[0]);
+}
+
+point
+rotate_2D (point p, point o, double angle) {
+  return mult (cos (angle), sin (angle), p - o) + o;
+}
+
 double
 norm (point p) {
   return sqrt (p*p);

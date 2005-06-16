@@ -87,7 +87,7 @@ public:
 			   SI w, SI h, SI x, SI y,
 			   int x1, int y1, int x2, int y2) = 0;
   virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
-  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2);
+  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   void extra_clipping (SI x1, SI y1, SI x2, SI y2);
 
   /* routines for specific devices */
