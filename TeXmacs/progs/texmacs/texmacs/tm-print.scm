@@ -36,9 +36,9 @@
 	 "a4"))))
 
 (define (get-default-font-setting)
-  (cond ((support-ec-fonts?) "EC fonts")
-        ((os-win32?) "True Type")
-        (else "CM fonts")))
+  (cond ((support-ec-fonts?) "EC bitmap")
+        ((os-win32?) "Type 1")
+        (else "CM bitmap")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
@@ -60,11 +60,10 @@
 
 (define (notify-font-type var val)
   (with type
-      (cond ((== val "EC fonts") 0)
-	    ((== val "CM fonts") 1)
+      (cond ((in? val '("EC bitmap" "EC fonts")) 0)
+	    ((in? val '("CM bitmap" "CM fonts")) 1)
 	    ((== val "Bitmap") (if (support-ec-fonts?) 0 1))
-	    ((== val "True Type") 2)
-	    ((== val "True type") 2)
+	    ((in? val '("True Type" "Type 1")) 2)
 	    (else 1))
     (set-font-type type)))
 
