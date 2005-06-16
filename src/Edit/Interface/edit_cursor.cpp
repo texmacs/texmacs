@@ -194,7 +194,7 @@ edit_cursor_rep::go_left () {
   go_left_physical ();
   if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
   path p= previous_valid (et, old_tp);
-  if (rp <= p) go_to (p);
+  if (rp < p) go_to (p);
   select_from_cursor_if_active ();
 }
 
@@ -205,7 +205,7 @@ edit_cursor_rep::go_right () {
   go_right_physical ();
   if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
   path p= next_valid (et, old_tp);
-  if (rp <= p) go_to (p);
+  if (rp < p) go_to (p);
   select_from_cursor_if_active ();
 }
 
