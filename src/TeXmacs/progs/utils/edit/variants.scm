@@ -37,8 +37,8 @@
 	     (group-resolve ',group))
 	   (tm-define (,(symbol-append group '?) lab)
 	     (in? lab (group-resolve ',group)))
-	   (tm-define (,(symbol-append 'inside- group))
-	     (inside-which (group-resolve ',group)))))))
+	   (tm-define (,(symbol-append 'inside- group '?))
+	     (not (not (inside-which (group-resolve ',group)))))))))
 
 (tm-define (group-find which group)
   (:synopsis "Find subgroup of @group which contains @which")
@@ -55,9 +55,11 @@
 ;; Toggle numbers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (numbered-unnumbered l)
+  (append l (map (lambda (x) (symbol-append x '*)) l)))
+
 (define (numbered-tag-list*)
-  (with l (numbered-tag-list)
-    (append l (map (lambda (x) (symbol-append x '*)) l))))
+  (numbered-unnumbered (numbered-tag-list)))
 
 (tm-define (numbered-context? t)
   (tree-in? t (numbered-tag-list*)))
@@ -105,8 +107,7 @@
 	   (with l (variants-of (symbol-drop-right lab 1) nv?)
 	     (if nv? l (map (lambda (x) (symbol-append x '*)) l))))
 	  ((and numbered? nv?)
-	   (with l (variants-of lab #f)
-	     (append l (map (lambda (x) (symbol-append x '*)) l))))
+	   (numbered-unnumbered (variants-of lab #f)))
 	  (else (with vg (group-find lab 'variant-tag)
 		  (if (not vg) (list lab)
 		      (group-resolve vg)))))))
