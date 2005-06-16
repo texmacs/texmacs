@@ -52,10 +52,15 @@
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (traverse-generic-context? t)
+(tm-define (complex-context? t)
   (and (nleaf? t) (nin? (tree-label t) '(concat document))))
 
-(tm-define (traverse-document-context? t)
+(tm-define (simple-context? t)
+  (or (leaf? t)
+      (and (tree-in? t '(concat document))
+	   (simple-context? (tree-down t)))))
+
+(tm-define (document-context? t)
   (tree-is? t 'document))
 
 (tm-define (traverse-right) (go-to-next-word))
@@ -64,11 +69,11 @@
 (tm-define (traverse-down) (noop))
 
 (tm-define (traverse-up)
-  (:context traverse-document-context?)
+  (:context document-context?)
   (go-to-previous-tag 'document))
 
 (tm-define (traverse-down)
-  (:context traverse-document-context?)
+  (:context document-context?)
   (go-to-next-tag 'document))
 
 (define (traverse-tree . l)
@@ -80,32 +85,25 @@
 (define (traverse-label . l)
   (tree-label (apply traverse-tree l)))
 
-(tm-define (traverse-next) (noop))
-(tm-define (traverse-previous) (noop))
+(tm-define (traverse-previous)
+  (with-innermost t complex-context?
+    (if t (go-to-previous-tag (tree-label t)))))
 
 (tm-define (traverse-next)
-  (:context traverse-generic-context?)
-  (with l (traverse-label)
-    (go-to-next-tag l)))
+  (with-innermost t complex-context?
+    (if t (go-to-next-tag (tree-label t)))))
 
-(tm-define (traverse-previous)
-  (:context traverse-generic-context?)
-  (with l (traverse-label)
-    (go-to-previous-tag l)))
+(tm-define (traverse-first)
+  (go-to-repeat traverse-previous)
+  (structured-start))
 
-(tm-define (traverse-first) (go-to-repeat traverse-previous))
-(tm-define (traverse-last) (go-to-repeat traverse-next))
+(tm-define (traverse-last)
+  (go-to-repeat traverse-next)
+  (structured-end))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (structured-generic-context? t)
-  (and (nleaf? t) (nin? tree-label '(concat document))))
-
-(define (structured-pluraly-context? t)
-  (and (structured-generic-context? t)
-       (> (tree-arity t) 1)))
 
 (tm-define (structured-insert forwards?) (insert-argument forwards?))
 (tm-define (structured-remove forwards?) (remove-argument forwards?))
@@ -116,34 +114,52 @@
 (tm-define (structured-insert-top) (noop))
 (tm-define (structured-insert-bottom) (noop))
 
-(tm-define (structured-left) (noop))
-(tm-define (structured-right) (noop))
+(tm-define (structured-left)
+  (with-innermost t complex-context?
+    (if t
+	(with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
+	  (if (nnull? p) (go-to p))))))
+
+(tm-define (structured-right)
+  (with-innermost t complex-context?
+    (if t
+	(with p (path-next-argument (root-tree) (tree->path (tree-down t)))
+	  (if (nnull? p) (go-to p))))))
+
 (tm-define (structured-up) (noop))
 (tm-define (structured-down) (noop))
 
-(tm-define (structured-left)
-  (:context structured-pluraly-context?)
-  (with-innermost t structured-pluraly-context?
-    (with p (path-previous-argument (root-tree) (tree->path (tree-down t)))
-      (if (nnull? p) (go-to p)))))
+(tm-define (structured-start)
+  (with-innermost t complex-context?
+    (if t (tree-go-to t :down :start))))
 
-(tm-define (structured-right)
-  (:context structured-pluraly-context?)
-  (with-innermost t structured-pluraly-context?
-    (with p (path-next-argument (root-tree) (tree->path (tree-down t)))
-      (if (nnull? p) (go-to p)))))
+(tm-define (structured-end)
+  (with-innermost t complex-context?
+    (if t (tree-go-to t :down :end))))
+
+(tm-define (structured-exit-left)
+  (with-innermost t complex-context?
+    (if t (tree-go-to t :start))))
+
+(tm-define (structured-exit-right)
+  (with-innermost t complex-context?
+    (if t (tree-go-to t :end))))
 
 (tm-define (structured-first)
-  (go-to-repeat structured-left))
+  (go-to-repeat structured-left)
+  (structured-start))
 
 (tm-define (structured-last)
-  (go-to-repeat structured-right))
+  (go-to-repeat structured-right)
+  (structured-end))
 
 (tm-define (structured-top)
-  (go-to-repeat structured-up))
+  (go-to-repeat structured-up)
+  (structured-start))
 
 (tm-define (structured-bottom)
-  (go-to-repeat structured-down))
+  (go-to-repeat structured-down)
+  (structured-end))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multi-purpose alignment
@@ -163,9 +179,10 @@
 ;; Tree editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (structured-generic-context? t)
-  (:case tree)
-  #f)
+(define (tree-simple-context? t)
+  (and (nleaf? t)
+       (tree-is? t 'tree)
+       (simple-context? (tree-down t))))
 
 (tm-define (structured-insert forwards?)
   (:inside tree)
@@ -225,26 +242,26 @@
 	(tree-go-to (cursor-tree) 0 last))))
 
 (tm-define (structured-left)
-  (:inside tree)
+  (:context tree-simple-context?)
   (let* ((t (branch-active))
 	 (i (tree-down-index t)))
     (if (> i 1) (branch-go-to t (- i 1) :end))))
 
 (tm-define (structured-right)
-  (:inside tree)
+  (:context tree-simple-context?)
   (let* ((t (branch-active))
 	 (i (tree-down-index t)))
     (if (and (!= i 0) (< i (- (tree-arity t) 1)))
 	(branch-go-to t (+ i 1) :start))))
 
 (tm-define (structured-up)
-  (:inside tree)
+  (:context tree-simple-context?)
   (let* ((t (branch-active))
 	 (i (tree-down-index t)))
     (if (!= i 0) (tree-go-to t 0 :end))))
 
 (tm-define (structured-down)
-  (:inside tree)
+  (:context tree-simple-context?)
   (with-innermost t 'tree
     (if (== (tree-down-index t) 0)
 	(branch-go-to t (quotient (tree-arity t) 2) :start))))

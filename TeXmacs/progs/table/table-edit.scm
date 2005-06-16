@@ -68,10 +68,6 @@
 ;; Structured traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (structured-generic-context? t)
-  (:case table row cell)
-  #f)
-
 (define (cell-context? t)
   (and (tree-is? t 'cell)
        (tree-is? t :up 'row)
@@ -115,25 +111,44 @@
 ;; Structured movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (cell-simple-context? t)
+  (and (nleaf? t)
+       (simple-context? (tree-down t))
+       (cell-context? t)))
+
 (tm-define (structured-left)
-  (:context cell-context?)
-  (with-innermost c cell-context?
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
     (cell-move-relative c 0 -1)))
 
 (tm-define (structured-right)
-  (:context cell-context?)
-  (with-innermost c cell-context?
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
     (cell-move-relative c 0 1)))
 
 (tm-define (structured-up)
-  (:context cell-context?)
-  (with-innermost c cell-context?
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
     (cell-move-relative c -1 0)))
 
 (tm-define (structured-down)
-  (:context cell-context?)
-  (with-innermost c cell-context?
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
     (cell-move-relative c 1 0)))
+
+(tm-define (structured-exit-left)
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
+    (with t (tree-ref c :up :up)
+      (while (tree-in? t :up '(tformat document)) (set! t (tree-up t)))
+      (tree-go-to t :up :start))))
+
+(tm-define (structured-exit-right)
+  (:context cell-simple-context?)
+  (with-innermost c cell-simple-context?
+    (with t (tree-ref c :up :up)
+      (while (tree-in? t :up '(tformat document)) (set! t (tree-up t)))
+      (tree-go-to t :up :end))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands for tables

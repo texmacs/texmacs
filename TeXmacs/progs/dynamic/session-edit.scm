@@ -72,14 +72,16 @@
   (if (session-complete-try?) (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured keyboard editing
+;; Structured keyboard movements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (traverse-generic-context? t)
-  (:case input math)
-  #f)
+(define (input-simple-context? t)
+  (and (nleaf? t)
+       (simple-context? (tree-down t))
+       (or (tree-is? t 'input)
+	   (and (tree-is? t 'math) (tree-is? t :up 'input)))))
 
-(tm-define (traverse-document-context? t)
+(tm-define (document-context? t)
   (:case document)
   (:require (tree-is? t :up 'input))
   #f)
@@ -108,24 +110,20 @@
   (:inside input)
   (session-go-down))
 
-(tm-define (structured-generic-context? t)
-  (:case input math)
-  #f)
-
 (tm-define (structured-left)
-  (:inside input)
+  (:context input-simple-context?)
   (noop))
 
 (tm-define (structured-right)
-  (:inside input)
+  (:context input-simple-context?)
   (noop))
 
 (tm-define (structured-up)
-  (:inside input)
+  (:context input-simple-context?)
   (go-to-remain-inside session-go-up 'session))
 
 (tm-define (structured-down)
-  (:inside input)
+  (:context input-simple-context?)
   (go-to-remain-inside session-go-down 'session))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
