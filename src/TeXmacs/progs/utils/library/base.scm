@@ -190,7 +190,7 @@
   (:synopsis "Compose the functions @f and @g")
   (lambda x (g (apply f x))))
 
-(tm-define (negate pred?)
+(tm-define (non pred?)
   (:type (forall T (-> (-> T bool) (-> T bool))))
   (:synopsis "Return the negation of @pred?.")
   (lambda args (not (apply pred? args))))
