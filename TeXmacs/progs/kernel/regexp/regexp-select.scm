@@ -110,6 +110,39 @@
     (list (cons* (list (list ':replace r)) r bl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (navigate-up p pat bl)
+  (if (and p (nnull? p))
+      (select-list (path->tree (cDr p)) pat bl)
+      '()))
+
+(define (navigate-down p pat bl)
+  (with q (cDr (cursor-path))
+    (if (and p (list-starts? (cDr q) p))
+	(select-list (path->tree (list-head q (1+ (length p)))) pat bl)
+	'())))
+
+(define (navigate-next p pat bl)
+  (if (and p (nnull? p))
+      (let* ((t (path->tree (cDr p)))
+	     (l (cAr p)))
+	(if (< l (- (tree-arity t) 1))
+	    (select-list (tree-ref t (+ l 1)) pat bl)
+	    '()))
+      '()))
+
+(define (navigate-previous p pat bl)
+  (if (and p (nnull? p))
+      (let* ((t (path->tree (cDr p)))
+	     (l (cAr p)))
+	(if (> l 0)
+	    (select-list (tree-ref t (- l 1)) pat bl)
+	    '()))
+      '()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pattern selecting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -121,6 +154,12 @@
 (ahash-set! select-table :group select-group)
 (ahash-set! select-table :match select-match)
 (ahash-set! select-table :replace select-replace)
+
+(define navigate-table (make-ahash-table))
+(ahash-set! navigate-table :up navigate-up)
+(ahash-set! navigate-table :down navigate-down)
+(ahash-set! navigate-table :next navigate-next)
+(ahash-set! navigate-table :previous navigate-previous)
 
 (define (select-one x pat bl)
   (cond  ((pair? pat)
@@ -161,22 +200,13 @@
 		  (let* ((r (select-list x (cdr pat) bl))
 			 (l (select-one x :1 bl)))
 		    (append r (select-continue l pat))))
-		 ((== fpat :up)
-		  (with p (and (tree? x) (tree-get-path x))
-		    (if (and p (nnull? p))
-			(select-list (path->tree (cDr p)) (cdr pat) bl)
-			'())))
-		 ((== fpat :down)
-		  (let* ((p (and (tree? x) (tree-get-path x)))
-			 (q (cDr (cursor-path))))
-		    (if (and p (list-starts? (cDr q) p))
-			(select-list (path->tree (list-head q (1+ (length p))))
-				     (cdr pat) bl)
-			'())))
 		 ((integer? (keyword->number fpat))
 		  (let* ((h (number->keyword (- (keyword->number fpat) 1)))
 			 (l (select-one x :1 bl)))
 		    (select-continue l (cons h (cdr pat)))))
+		 ((ahash-ref navigate-table fpat)
+		  ((ahash-ref navigate-table fpat)
+		   (and (tree? x) (tree-get-path x)) (cdr pat) bl))
 		 ((ahash-ref match-term fpat)
 		  (with upat (ahash-ref match-term fpat)
 		    (select-list x (append upat (cdr pat)) bl)))

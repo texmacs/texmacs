@@ -228,11 +228,11 @@
 
 (tm-define (tree-ref t . l)
   (:synopsis "Access a subtree of @t according to @l.")
-  (if (and (list-1? l) (integer? (car l)))
-      (tree-child t (car l))
-      (with r (select t l)
-	(if (null? r) #f
-	    (car r)))))
+  (cond ((not (tree? t)) #f)
+	((and (list-1? l) (integer? (car l)))
+	 (tree-child t (car l)))
+	(else (with r (select t l)
+		(and (nnull? r) (car r))))))
 
 (tm-define (tree-set t . args)
   (:synopsis "Set a subtree of @t to a new value according to @l.")
@@ -246,6 +246,12 @@
   (if (list-1? l)
       `(tree-set-diff! ,t ,@l)
       `(tree-set ,t ,@l)))
+
+(tm-define (tree-start t . l)
+  (path->tree (cDr (apply tree->path (rcons (cons t l) :start)))))
+
+(tm-define (tree-end t . l)
+  (path->tree (cDr (apply tree->path (rcons (cons t l) :end)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Upward searching

@@ -51,13 +51,26 @@
   (position-new-path (if (null? opts) (cursor-path) (car opts))))
 
 (define-public-macro (with-cursor p . body)
-  (with pos (gensym)
+  (let* ((pos (gensym))
+	 (res (gensym)))
     `(with ,pos (position-new)
        (position-set ,pos (cursor-path))
        (go-to ,p)
+       (with ,res (begin ,@body)
+	 (go-to (position-get ,pos))
+	 (position-delete ,pos)
+	 ,res))))
+
+(define-public-macro (cursor-after . body)
+  (let* ((pos (gensym))
+	 (res (gensym)))
+    `(with ,pos (position-new)
+       (position-set ,pos (cursor-path))
        ,@body
-       (go-to (position-get ,pos))
-       (position-delete ,pos))))
+       (with ,res (cursor-path)
+	 (go-to (position-get ,pos))
+	 (position-delete ,pos)
+	 ,res))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content

@@ -61,6 +61,14 @@ edit_text_rep::get_deletion_point (
 * Normal deletions
 ******************************************************************************/
 
+static bool
+is_multi_paragraph_or_sectional (tree t) {
+  if (is_atomic (t)) return false;
+  if (is_multi_paragraph (t)) return true;
+  eval ("(use-modules (utils library tree) (text std-text-drd))");
+  return as_bool (call ("tree-in?", t, call ("section-tag-list")));
+}
+
 void
 edit_text_rep::remove_text (bool forward) {
   path p;
@@ -111,8 +119,8 @@ edit_text_rep::remove_text (bool forward) {
     else {
       int l1= forward? last: last-1;
       int l2= forward? last+1: last;
-      if (is_multi_paragraph (subtree (et, p * l1)) ||
-	  is_multi_paragraph (subtree (et, p * l2)))
+      if (is_multi_paragraph_or_sectional (subtree (et, p * l1)) ||
+	  is_multi_paragraph_or_sectional (subtree (et, p * l2)))
 	{
 	  if (subtree (et, p * l1) == "") remove (p * l1, 1);
 	  else {

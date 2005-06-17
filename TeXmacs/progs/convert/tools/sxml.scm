@@ -191,4 +191,4 @@
        (== '*TOP* (car x))))
 
 (tm-define (sxml-filter-element-content l)
-  (list-filter l (negate string?)))
+  (list-filter l nstring?))

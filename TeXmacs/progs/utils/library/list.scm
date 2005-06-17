@@ -308,7 +308,7 @@
   (:type (forall T (-> (list T) (-> T bool) (cross (list T) (list T)))))
   (:synopsis "Break @l at the first element not satisfying @pred?.")
   (:note "see also list-break")
-  (list-break l (negate pred?)))
+  (list-break l (non pred?)))
 
 (tm-define (list-drop-while l pred?)
   (:type (forall T (-> (list T) (-> T bool) (list T))))
