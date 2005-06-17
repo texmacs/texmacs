@@ -151,6 +151,7 @@ public:
   friend class document_rep;
 
   friend box              typeset_as_concat (edit_env env, tree t, path ip);
+  friend box              typeset_as_box (edit_env env, tree t, path ip);
   friend array<line_item> typeset_concat (edit_env env, tree t, path ip);
   friend array<line_item> typeset_concat_range (edit_env env, tree t, path ip,
 						int i1, int i2);

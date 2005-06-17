@@ -208,26 +208,6 @@ find_next_first (array<point> a, point &p) {
   return false;
 }
 
-static void
-calc_composite_extent (box b) {
-  b->x1= b->y1= b->x3= b->y3= MAX_SI;
-  b->x2= b->y2= b->x4= b->y4= -MAX_SI;
-  int i;
-  for (i= 0; i<b->subnr(); i++) {
-    box sb= b->subbox (i);
-    if ((tree)sb == "curve") {
-      b->x1= min (b->x1, sb->x1);
-      b->y1= min (b->y1, sb->y1);
-      b->x2= max (b->x2, sb->x2);
-      b->y2= max (b->y2, sb->y2);
-      b->x3= min (b->x3, sb->x3);
-      b->y3= min (b->y3, sb->y3);
-      b->x4= max (b->x4, sb->x4);
-      b->y4= max (b->y4, sb->y4);
-    }
-  }
-}
-
 curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   array<bool> style2, SI style_unit2, int fill2, color fill_col2,
   array<box> arrows2)
@@ -252,10 +232,8 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   if (N(arrows2)>0 && find_first_point (a, p1) && find_next_first (a, p2)) {
     box b= arrows2[0];
     if (!nil (b)) {
-      calc_composite_extent (b);
-      point o1= point (b->x1, (b->y1 + b->y2) / 2);
-      point o2= p1;
-      frame fr= scaling (1.0, o2-o1) * rotation_2D (o1, arg (p2-p1));
+      frame fr= scaling (1.0, p1) *
+	        rotation_2D (point (0.0, 0.0), arg (p2-p1));
       arrows[0]= arrows2[0]->transform (fr);
       if (!nil (arrows[0])) {
         x1= min (x1, arrows[0]->x1);
@@ -268,10 +246,8 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   if (N(arrows2)>1 && find_prev_last (a, p1) && find_last_point (a, p2)) {
     box b= arrows2[1];
     if (!nil (b)) {
-      calc_composite_extent (b);
-      point o1= point (b->x2, (b->y1 + b->y2) / 2);
-      point o2= p2;
-      frame fr= scaling (1.0, o2-o1) * rotation_2D (o1, arg (p2-p1));
+      frame fr= scaling (1.0, p2) *
+	        rotation_2D (point (0.0, 0.0), arg (p2-p1));
       arrows[1]= arrows2[1]->transform (fr);
       if (!nil (arrows[1])) {
         x1= min (x1, arrows[1]->x1);
@@ -414,14 +390,11 @@ curve_box_rep::display (ps_device dev) {
       }
     }
   }
-  if (!nil (arrows[0])) {
-    int i, n=arrows[0]->subnr();
-    for (i=0; i<n; i++) arrows[0]->subbox(i)->display (dev);
-  }
-  if (!nil (arrows[1])) {
-    int i, n=arrows[1]->subnr();
-    for (i=0; i<n; i++) arrows[1]->subbox(i)->display (dev);
-  }
+
+  rectangles ll;
+  // FIXME: using redraw instead of display is not very nice
+  if (!nil (arrows[0])) arrows[0]->redraw (dev, path (), ll);
+  if (!nil (arrows[1])) arrows[1]->redraw (dev, path (), ll);
 }
 
 SI
