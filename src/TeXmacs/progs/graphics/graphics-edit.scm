@@ -620,12 +620,20 @@
   (graphics-set-property "gr-fill-color" val))
 
 (define default-line-arrows
+  ;; IMPORTANT NOTE: the points of the arrow are specified
+  ;; in absolute coordinates using tuples. Alternatively,
+  ;; one might include the arrows in a (with "gr-frame" ...) tag,
+  ;; but this does not yet work due to incorrect frame retrieval
+  ;; in edit_graphics.cpp.
   #("none"
     (tuple
-      (line (point "1.3" "1.3") (point "1.6" "1.2") (point "1.3" "1.1")))
+     (line (tuple "-10ln" "6ln") (tuple "0ln" "0ln")
+	   (tuple "-10ln" "-6ln")))
     (tuple
-      (line (point "1.3" "1.3") (point "1" "1.2") (point "1.3" "1.1"))
-      (line (point "1.3" "1.3") (point "1.6" "1.2") (point "1.3" "1.1")))))
+     (line (tuple "10ln" "6ln") (tuple "0ln" "0ln")
+	   (tuple "10ln" "-6ln"))
+     (line (tuple "-10ln" "6ln") (tuple "0ln" "0ln")
+	   (tuple "-10ln" "-6ln")))))
 
 (tm-define (graphics-set-line-arrows arrows)
   (cond ((integer? arrows)

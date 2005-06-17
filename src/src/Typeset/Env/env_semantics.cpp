@@ -423,12 +423,10 @@ edit_env_rep::update_line_arrows () {
   else
   if (is_tuple (t) && N(t)<=2 && N(t)>0) {
     array<box> b (2);
-    b[1]= t[0]=="" ? box () : typeset_as_concat (this,
-	   tree (WITH, "dash-style", "none", t[0]), path(0));
+    b[1]= t[0]=="" ? box () : typeset_as_box (this, t[0], path(0));
     if (N(t)>=2) {
       b[0]= b[1];
-      b[1]= t[1]=="" ? box () : typeset_as_concat (this,
-	     tree (WITH, "dash-style", "none", t[1]), path(0));
+      b[1]= t[1]=="" ? box () : typeset_as_box (this, t[1], path (0));
     }
     line_arrows= b;
   }
