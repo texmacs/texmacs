@@ -20,6 +20,8 @@
 		 (kernel boot debug) (kernel boot srfi)
 		 (kernel boot ahash-table) (kernel boot prologue)
 		 (kernel boot content) (kernel boot extra))
+(inherit-modules (kernel library base) (kernel library list)
+		 (kernel library tree))
 (inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel drd drd-rules) (kernel drd drd-query)
 		 (kernel drd drd-data))
@@ -32,8 +34,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")
-(inherit-modules (utils library base) (utils library list)
-		 (utils library tree))
+(inherit-modules (utils library tree))
 (inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
 (use-modules (utils plugins plugin-cmd))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

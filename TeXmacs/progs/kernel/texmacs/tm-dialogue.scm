@@ -275,7 +275,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (save-learned)
-  (import-from (utils library list))
   (let* ((l1 (ahash-table->list interactive-arg-table))
 	 (pred? (lambda (l) (symbol? (caar l))))
 	 (l2 (list-filter l1 pred?)))
