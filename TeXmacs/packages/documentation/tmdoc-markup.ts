@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.5.3>
 
 <style|source>
 
@@ -168,6 +168,10 @@
   <assign|icon|<macro|name|<postscript|<find-file|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>|/2|/2||||>>>
 
   <assign|screenshot|<macro|name|<postscript|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|/2|/2||||>>>
+
+  \;
+
+  <assign|cursor|<with|color|red|\|>>
 
   \;
 
