@@ -24,6 +24,8 @@
 
     <branch|Undoing and redoing changes|man-undo-and-redo.en.tm>
 
+    <branch|Structured editing|man-structured-editing.en.tm>
+
     <branch|Structured cursor movement|man-structured-move.en.tm>
 
     <branch|Structured variants|man-structured-variants.en.tm>
