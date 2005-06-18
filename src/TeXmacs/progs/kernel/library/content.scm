@@ -12,65 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot content))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra routines on trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (tree . l)
-  (if (string? (car l))
-      (string->tree (car l))
-      (tm->tree l)))
-
-(define-public (atomic-tree? t)
-  (and (tree? t) (tree-atomic? t)))
-
-(define-public (compound-tree? t)
-  (and (tree? t) (tree-compound? t)))
-
-(define-public (tree->list t)
-  (cons (tree-label t) (tree-children t)))
-
-(define-public (tree-explode t)
-  (if (atomic-tree? t)
-      (tree->string t)
-      (cons (tree-label t) (tree-children t))))
-
-(define-public (tree-get-path t)
-  (and (tree? t)
-       (let ((ip (tree-ip t)))
-	 (and (or (null? ip) (!= (cAr ip) -5))
-	      (reverse ip)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra routines for positions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (position-new . opts)
-  (position-new-path (if (null? opts) (cursor-path) (car opts))))
-
-(define-public-macro (with-cursor p . body)
-  (let* ((pos (gensym))
-	 (res (gensym)))
-    `(with ,pos (position-new)
-       (position-set ,pos (cursor-path))
-       (go-to ,p)
-       (with ,res (begin ,@body)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
-
-(define-public-macro (cursor-after . body)
-  (let* ((pos (gensym))
-	 (res (gensym)))
-    `(with ,pos (position-new)
-       (position-set ,pos (cursor-path))
-       ,@body
-       (with ,res (cursor-path)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
+(texmacs-module (kernel library content))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for general content
