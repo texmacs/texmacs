@@ -392,7 +392,6 @@ curve_box_rep::display (ps_device dev) {
   }
 
   rectangles ll;
-  // FIXME: using redraw instead of display is not very nice
   if (!nil (arrows[0])) arrows[0]->redraw (dev, path (), ll);
   if (!nil (arrows[1])) arrows[1]->redraw (dev, path (), ll);
 }
