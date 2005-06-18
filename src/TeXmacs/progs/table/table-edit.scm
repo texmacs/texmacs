@@ -50,6 +50,10 @@
   (:inside table)
   (table-insert-row #t))
 
+(tm-define (structured-remove forwards?)
+  (:inside table)
+  (table-remove-column forwards?))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Posititioning
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1195,26 +1195,26 @@ tmg_table_insert_column (SCM arg1) {
 }
 
 SCM
-tmg_table_delete_row (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "table-delete-row");
+tmg_table_remove_row (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "table-remove-row");
 
   bool in1= scm_to_bool (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->table_delete_row (in1);
+  get_server()->get_editor()->table_remove_row (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_table_delete_column (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "table-delete-column");
+tmg_table_remove_column (SCM arg1) {
+  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "table-remove-column");
 
   bool in1= scm_to_bool (arg1);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->table_delete_column (in1);
+  get_server()->get_editor()->table_remove_column (in1);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -2854,8 +2854,8 @@ initialize_glue_editor () {
   gh_new_procedure ("table-extract-format", (FN) tmg_table_extract_format, 0, 0, 0);
   gh_new_procedure ("table-insert-row", (FN) tmg_table_insert_row, 1, 0, 0);
   gh_new_procedure ("table-insert-column", (FN) tmg_table_insert_column, 1, 0, 0);
-  gh_new_procedure ("table-delete-row", (FN) tmg_table_delete_row, 1, 0, 0);
-  gh_new_procedure ("table-delete-column", (FN) tmg_table_delete_column, 1, 0, 0);
+  gh_new_procedure ("table-remove-row", (FN) tmg_table_remove_row, 1, 0, 0);
+  gh_new_procedure ("table-remove-column", (FN) tmg_table_remove_column, 1, 0, 0);
   gh_new_procedure ("table-nr-rows", (FN) tmg_table_nr_rows, 0, 0, 0);
   gh_new_procedure ("table-nr-columns", (FN) tmg_table_nr_columns, 0, 0, 0);
   gh_new_procedure ("table-which-row", (FN) tmg_table_which_row, 0, 0, 0);

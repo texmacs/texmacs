@@ -60,8 +60,8 @@ protected:
   // Main routines for manipulating the entire table
   void table_get_extents (path fp, int& nr_rows, int& nr_cols);
   void table_get_limits (path fp, int& i1, int& j1, int& i2, int& j2);
-  void table_delete (path fp, int row, int col, int nr_rows, int nr_cols);
   void table_insert (path fp, int row, int col, int nr_rows, int nr_cols);
+  void table_remove (path fp, int row, int col, int nr_rows, int nr_cols);
   tree table_get_subtable (path p, int i1, int j1, int i2, int j2);
   tree table_get_subtable (path p, int i1, int j1, int i2, int j2, bool rec);
   void table_write_subtable (path fp, int row, int col, tree subt);
@@ -76,6 +76,7 @@ protected:
   // Positioning the cursor inside tables
   void table_bound (path fp, int& row1, int& col1, int& row2, int& col2);
   void table_go_to (path fp, int row, int col, bool at_start= false);
+  void table_go_to_border (path fp, bool right);
   void back_table (path p, bool forward);
   void back_in_table (tree t, path p, bool forward);
 
@@ -90,8 +91,8 @@ public:
   void   table_extract_format ();
   void   table_insert_row (bool forward);
   void   table_insert_column (bool forward);
-  void   table_delete_row (bool forward);
-  void   table_delete_column (bool forward);
+  void   table_remove_row (bool forward, bool flag= false);
+  void   table_remove_column (bool forward, bool flag= false);
   int    table_nr_rows ();
   int    table_nr_columns ();
   int    table_which_row ();
