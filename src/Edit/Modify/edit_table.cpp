@@ -426,7 +426,7 @@ edit_table_rep::table_get_limits (
 }
 
 void
-edit_table_rep::table_delete (path fp, int row, int col, int delr, int delc) {
+edit_table_rep::table_remove (path fp, int row, int col, int delr, int delc) {
   path p= search_table (fp);
   int nr_rows, nr_cols;
   table_get_extents (p, nr_rows, nr_cols);
@@ -604,6 +604,22 @@ edit_table_rep::table_go_to (path fp, int row, int col, bool at_start) {
 }
 
 void
+edit_table_rep::table_go_to_border (path fp, bool right) {
+  while ((rp < fp) && (is_func (subtree (et, path_up (fp)), TFORMAT)))
+    fp= path_up (fp);
+  if ((rp < fp) &&
+      is_document (subtree (et, path_up (fp))) &&
+      (rp < path_up (fp)) &&
+      is_extension (subtree (et, path_up (fp, 2)), 1))
+    fp= path_up (fp);
+  if ((rp < fp) && is_extension (subtree (et, path_up (fp)), 1))
+    fp= path_up (fp);
+  if ((rp < fp) && is_func (subtree (et, path_up (fp)), SUBTABLE, 1))
+    fp= path_up (fp);
+  go_to_border (fp, right);
+}
+
+void
 edit_table_rep::back_table (path p, bool forward) {
   while (true) {
     tree st= subtree (et, p);
@@ -653,7 +669,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_rows-1 >= i1) {
-      table_delete_row (forward);
+      table_remove_row (forward, true);
       return;
     }
   }
@@ -668,7 +684,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_cols-1 >= j1) {
-      table_delete_column (forward);
+      table_remove_column (forward, true);
       return;
     }
   }
@@ -692,18 +708,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     if (col>0) { table_go_to (p, row, col-1, false); return; }
     if (row>0) { table_go_to (p, row-1, nr_cols-1, false); return; }
   }
-  while ((rp < p) && (is_func (subtree (et, path_up (p)), TFORMAT)))
-    p= path_up (p);
-  if ((rp < p) &&
-      is_document (subtree (et, path_up (p))) &&
-      (rp < path_up (p)) &&
-      is_extension (subtree (et, path_up (p, 2)), 1))
-    p= path_up (p);
-  if ((rp < p) && is_extension (subtree (et, path_up (p)), 1))
-    p= path_up (p);
-  if ((rp < p) && is_func (subtree (et, path_up (p)), SUBTABLE, 1))
-    p= path_up (p);
-  go_to_border (p, !forward);
+  table_go_to_border (p, !forward);
 }
 
 /******************************************************************************
@@ -912,8 +917,8 @@ edit_table_rep::table_hor_decorate (path fp, int col, int cbef, int caft) {
     t2= table_get_subtable (fp, 0, col+1   , nr_rows-1, col+caft, true);
   if (cbef>0)
     t1= table_get_subtable (fp, 0, col-cbef, nr_rows-1, col-1   , true);
-  if (caft>0) table_delete (fp, 0, col+1   , 0, caft);
-  if (cbef>0) table_delete (fp, 0, col-cbef, 0, cbef);
+  if (caft>0) table_remove (fp, 0, col+1   , 0, caft);
+  if (cbef>0) table_remove (fp, 0, col-cbef, 0, cbef);
   col -= cbef;
 
   st= subtree (et, fp);
@@ -955,8 +960,8 @@ edit_table_rep::table_ver_decorate (path fp, int row, int rbef, int raft) {
     t2= table_get_subtable (fp, row+1   , 0, row+raft, nr_cols-1, true);
   if (rbef>0)
     t1= table_get_subtable (fp, row-rbef, 0, row-1   , nr_cols-1, true);
-  if (raft>0) table_delete (fp, row+1   , 0, raft, 0);
-  if (rbef>0) table_delete (fp, row-rbef, 0, rbef, 0);
+  if (raft>0) table_remove (fp, row+1   , 0, raft, 0);
+  if (rbef>0) table_remove (fp, row-rbef, 0, rbef, 0);
   row -= rbef;
 
   st= subtree (et, fp);
@@ -1109,41 +1114,51 @@ edit_table_rep::table_insert_column (bool forward) {
 }
 
 void
-edit_table_rep::table_delete_row (bool forward) {
+edit_table_rep::table_remove_row (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
-  if (nr_rows-1 < i1) {
-    destroy_table ();
-    return;
+  if (nr_rows-1 < i1) destroy_table ();
+  else if (flag) {
+    table_remove (fp, row, col, 1, 0);
+    int ncol= col;
+    if ((!forward) && (col == 0)) ncol= nr_cols-1;
+    if (forward && (col == nr_cols-1)) ncol= 0;
+    table_go_to (fp, max (0, row + (forward? 0: -1)), ncol, forward);
   }
-  table_delete (fp, row, col, 1, 0);
-  int ncol= col;
-  if ((!forward) && (col == 0)) ncol= nr_cols-1;
-  if (forward && (col == nr_cols-1)) ncol= 0;
-  table_go_to (fp, max (0, row + (forward? 0: -1)), ncol, forward);
+  else {
+    if (!forward) row--;
+    if (row >= 0) table_remove (fp, row, col, 1, 0);
+    if (row < nr_rows-1 && forward) table_go_to (fp, row, col, forward);
+    else if (forward || row < 0) table_go_to_border (fp, !forward);
+  }
 }
 
 void
-edit_table_rep::table_delete_column (bool forward) {
+edit_table_rep::table_remove_column (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
-  if (nr_cols-1 < j1) {
-    destroy_table ();
-    return;
+  if (nr_cols-1 < j1) destroy_table ();
+  else if (flag) {
+    table_remove (fp, row, col, 0, 1);
+    int ncol= max (0, col + (forward? 0: -1));
+    if ((!forward) && (col == 0)) ncol= nr_cols-1;
+    if (forward && (col == nr_cols-1)) ncol= 0;
+    table_go_to (fp, row, ncol, forward);
   }
-  table_delete (fp, row, col, 0, 1);
-  int ncol= max (0, col + (forward? 0: -1));
-  if ((!forward) && (col == 0)) ncol= nr_cols-1;
-  if (forward && (col == nr_cols-1)) ncol= 0;
-  table_go_to (fp, row, ncol, forward);
+  else {
+    if (!forward) col--;
+    if (col >= 0) table_remove (fp, row, col, 0, 1);
+    if (col < nr_cols-1 && forward) table_go_to (fp, row, col, forward);
+    else if (forward || col < 0) table_go_to_border (fp, !forward);
+  }
 }
 
 int

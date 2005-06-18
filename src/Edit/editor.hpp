@@ -296,8 +296,8 @@ public:
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;
   virtual void   table_insert_column (bool forward) = 0;
-  virtual void   table_delete_row (bool forward) = 0;
-  virtual void   table_delete_column (bool forward) = 0;
+  virtual void   table_remove_row (bool forward, bool flag= false) = 0;
+  virtual void   table_remove_column (bool forward, bool flag= false) = 0;
   virtual int    table_nr_rows () = 0;
   virtual int    table_nr_columns () = 0;
   virtual int    table_which_row () = 0;
