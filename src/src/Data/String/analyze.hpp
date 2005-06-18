@@ -22,7 +22,7 @@ bool is_locase (char c);
 bool is_upcase (char c);
 bool is_digit (char c);
 bool is_numeric (char c);
-bool is_ponctuation (char c);
+bool is_punctuation (char c);
 bool is_space (char s);
 bool is_alpha (string s);
 bool is_locase_alpha (string s);

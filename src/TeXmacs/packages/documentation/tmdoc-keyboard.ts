@@ -62,6 +62,8 @@
 
   <assign|key-escape|<macro|<localize|escape>>>
 
+  <assign|key-space|<macro|<localize|space>>>
+
   <assign|key-variant|<macro|<localize|tab>>>
 
   <assign|key-tab|<macro|<localize|tab>>>

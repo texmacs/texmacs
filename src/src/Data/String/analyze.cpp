@@ -60,7 +60,7 @@ is_numeric (register char c) {
 }
 
 bool
-is_ponctuation (register char c) {
+is_punctuation (register char c) {
   return
     (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
     (c==';') || (c=='!') || (c=='?');

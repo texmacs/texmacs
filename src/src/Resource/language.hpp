@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : language.hpp
 * DESCRIPTION: language specific features, which include
-*              - ponctuation rules
+*              - punctuation rules
 *              - hyphenation
 *              - (future) dictionary and grammar rumes for spell-checker
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven

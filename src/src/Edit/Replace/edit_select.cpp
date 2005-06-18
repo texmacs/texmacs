@@ -150,14 +150,12 @@ edit_select_rep::select_enlarge () {
       if (mode == "text" || mode == "src") {
 	int i1= last_item (start_p), i2= i1;
 	while (i1>0) {
-	  if (s[i1-1] == ' ') break;
-	  if (s[i1-1] == '>') do { i1--; } while ((i1>0) && (s[i1]!='<'));
-	  i1--;
+	  if (s[i1-1] == ' ' || is_punctuation (s[i1-1])) break;
+	  tm_char_backwards (s, i1);
 	}
 	while (i2<N(s)) {
-	  if (s[i2] == ' ') break;
-	  if (s[i2] == '<') do { i2++; } while ((i2<N(s)) && (s[i2]!='>'));
-	  i2++;
+	  if (s[i2] == ' ' || is_punctuation (s[i2])) break;
+	  tm_char_forwards (s, i2);
 	}
 	if (i1<i2) select (p * i1, p * i2);
 	else {
