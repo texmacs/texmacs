@@ -105,6 +105,9 @@
   (go-to-repeat traverse-next)
   (structured-end))
 
+(tm-define (traverse-previous-section-title)
+  (go-to-previous-tag (similar-to 'section)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
