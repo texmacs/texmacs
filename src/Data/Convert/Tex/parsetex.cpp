@@ -245,7 +245,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
 	int end= i;
 	if ((i >= start+3) && (command_type ["!mode"] == "math")) {
 	  while ((i<n) && (is_iso_alpha (s[i]) ||
-			   is_ponctuation (s[i]) ||
+			   is_punctuation (s[i]) ||
 			   is_space (s[i])))
 	    i++;
 	  if (i >= start+20) {
