@@ -14,22 +14,6 @@
 
 (texmacs-module (kernel boot extra))
 
-(define-public (list-break l pred?)
-  "Break @l at the first element satisfying @pred?."
-  ;; Adaptation of "break" (SRFI-26)
-  (let rec ((l l))
-    (cond ((null? l) (values '() '()))
-	  ((pred? (car l)) (values '() l))
-	  (else (receive (first last) (rec (cdr l))
-		  (values (cons (car l) first) last))))))
-
-(define-public (list-starts? l what)
-  "Test whether @what is a prefix of @l."
-  (cond ((null? what) #t)
-	((null? l) #f)
-	(else (and (== (car l) (car what))
-		   (list-starts? (cdr l) (cdr what))))))
-
 (define-public (quit-TeXmacs-scheme) (noop))
 
 (define-public-macro (on-entry . cmd)

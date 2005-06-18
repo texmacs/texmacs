@@ -69,7 +69,6 @@
   (list-sort (map car (ahash-table->list ovl-table)) symbol<=?))
 
 (define (get-interactive-function-list)
-  (import-from (utils library list))
   (let* ((funs (get-function-list))
 	 (pred? (lambda (fun) (not (not (property fun :arguments))))))
     (list-filter funs pred?)))
