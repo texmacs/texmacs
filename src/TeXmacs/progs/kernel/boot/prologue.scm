@@ -63,14 +63,18 @@
 ;; Sorting lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (list-sort-insert x l comp?)
-  (cond ((null? l) (list x))
-	((comp? x (car l)) (cons x l))
-	(else (cons (car l) (list-sort-insert x (cdr l) comp?)))))
+(define (list-sort-merge l1 l2 comp?)
+  (cond ((null? l1) l2)
+	((null? l2) l1)
+	((comp? (car l1) (car l2))
+	 (cons (car l1) (list-sort-merge (cdr l1) l2 comp?)))
+	(else (cons (car l2) (list-sort-merge l1 (cdr l2) comp?)))))
 
 (define-public (list-sort l comp?)
-  "Sort @l using the comparison @comp?."
-  ;; Should be replaced by built-in 'sort' routine later on (Guile > 1.3.4)
-  (if (null? l) l
-      (let ((r (list-sort (cdr l) comp?)))
-	(list-sort-insert (car l) r comp?))))
+  "Merge sort of @l using the comparison @comp?."
+  (with n (length l)
+    (if (< n 2) l
+	(let* ((m  (quotient n 2))
+	       (ll (list-sort (list-head l m) comp?))
+	       (rl (list-sort (list-tail l m) comp?)))
+	  (list-sort-merge ll rl comp?)))))
