@@ -70,14 +70,29 @@
   (with r (ahash-ref connection-handler name)
     (if r (cons 'tuple r) '(tuple))))
 
-(define (connection-menu-promise name menu-name)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu for the supported sessions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define supported-sessions-list '())
+(define supported-sessions-table (make-ahash-table))
+
+(define (supported-sessions-add name menu-name)
+  (set! supported-sessions-list (cons name supported-sessions-list))
+  (ahash-set! supported-sessions-table name menu-name))
+
+(define (supported-sessions-menu-entry name)
   (define (menu-item variant)
     (list variant (lambda () (make-session name variant))))
-  (menu-dynamic
-    ,(with l (ahash-ref connection-varlist name)
-       (if (not l)
-	   (list menu-name (lambda () (make-session name "default")))
-	   `(-> ,menu-name ,@(map menu-item l))))))
+  (let* ((menu-name (ahash-ref supported-sessions-table name))
+	 (l (ahash-ref connection-varlist name)))
+    (if (not l)
+	(list menu-name (lambda () (make-session name "default")))
+	`(-> ,menu-name ,@(map menu-item l)))))
+
+(define-public (supported-sessions-menu)
+  (with l (list-sort supported-sessions-list string<=?)
+    (menu-dynamic ,@(map supported-sessions-menu-entry l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuration of plugins
@@ -117,8 +132,7 @@
 	 (connection-insert-handler
 	  name (second cmd) (symbol->string (third cmd))))
 	((func? cmd :session 1)
-	 (menu-extend supported-sessions-menu
-	   (promise (connection-menu-promise name (second cmd)))))
+	 (supported-sessions-add name (second cmd)))
 	((func? cmd :filter-in 1)
 	 (noop))
 	((func? cmd :serializer 1)

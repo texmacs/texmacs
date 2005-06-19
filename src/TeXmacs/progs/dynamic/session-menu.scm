@@ -15,17 +15,9 @@
 (texmacs-module (dynamic session-menu)
   (:use (dynamic session-edit)))
 
-;(lazy-plugin-force)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind supported-sessions-menu
-  ("Scheme" (make-session "scheme" "default"))
-  ---
-  ;; Each plugin appends its own entry
-  )
 
 (define (supported-sessions-menu-promise)
   (lazy-plugin-force)
@@ -34,6 +26,8 @@
 
 (menu-bind insert-session-menu
   (when (and (style-has? "std-dtd") (in-text?))
+	("Scheme" (make-session "scheme" "default"))
+	---
 	(promise (supported-sessions-menu-promise))
 	---
 	("Other" (interactive make-session))))
