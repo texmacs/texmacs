@@ -196,3 +196,10 @@
   (if (null? opts)
       (list? x)
       (apply func? (cons x opts))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Positions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (position-new . opts)
+  (position-new-path (if (null? opts) (cursor-path) (car opts))))

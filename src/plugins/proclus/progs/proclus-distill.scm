@@ -17,8 +17,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-distill)
-  (:use (proclus-lib) (proclus-list) (search-in-tree)
-        (proclus-locus) (proclus-types) (proclus-absname)
+  (:use (utils library tree)
+	(proclus-lib)
+	(proclus-list)
+	(search-in-tree)
+        (proclus-locus)
+	(proclus-types)
+	(proclus-absname)
         (proclus-source)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

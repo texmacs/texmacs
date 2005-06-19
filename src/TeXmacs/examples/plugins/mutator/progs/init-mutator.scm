@@ -12,6 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-modules (utils library tree))
+
 (tm-define (mutate-date)
   (:secure #t)
   (with-mutator t

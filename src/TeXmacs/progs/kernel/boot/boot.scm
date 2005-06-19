@@ -2,7 +2,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : boot.scm
-;; DESCRIPTION : initialization of the TeXmacs module system
+;; DESCRIPTION : some global variables, public macros, on-entry, on-exit and
+;;               initialization of the TeXmacs module system
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -34,6 +35,18 @@
      (procedure->memoizing-macro
       (lambda (cmd env)
 	(apply (lambda ,(cdr head) ,@body) (cdr cmd))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; On-entry and on-exit macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (quit-TeXmacs-scheme) (noop))
+
+(define-macro (on-entry . cmd)
+  `(begin ,@cmd))
+
+(define-macro (on-exit . cmd)
+  `(set! quit-TeXmacs-scheme (lambda () ,@cmd (,quit-TeXmacs-scheme))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Module switching
