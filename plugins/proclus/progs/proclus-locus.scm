@@ -18,7 +18,6 @@
 
 (texmacs-module (proclus-locus)
   (:use (utils library tree)
-	(utils misc misc-funcs)
 	(search-in-tree)
 	(proclus-list)
         (proclus-absname)

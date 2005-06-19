@@ -100,8 +100,7 @@
 ;(display "Booting dynamic features\n")
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
-(lazy-menu (dynamic session-menu)
-	   supported-sessions-menu insert-session-menu
+(lazy-menu (dynamic session-menu) insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
