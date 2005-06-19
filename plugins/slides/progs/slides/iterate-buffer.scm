@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides iterate-buffer)
-  (:use (slides search-in-tree)))
+  (:use (utils library tree)
+	(slides search-in-tree)))
 
 (tm-define (excursion thunk)
   (let ((marker #f))

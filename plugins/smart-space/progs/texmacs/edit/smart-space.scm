@@ -1,7 +1,8 @@
 
 ;; arch-tag: e85790a7-25de-4c7a-b6db-eea9d5e4c3c5
 
-(texmacs-module (texmacs edit smart-space))
+(texmacs-module (texmacs edit smart-space)
+  (:use (utils library tree)))
 
 (define (string-space-at? s i) (== #\space (string-ref s i)))
 (define (tree-func? t s) (== s (tree-label t)))

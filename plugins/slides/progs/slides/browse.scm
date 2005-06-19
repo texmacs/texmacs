@@ -13,7 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (slides browse)
-  (:use (dynamic fold-edit) (slides search-in-tree)))
+  (:use (utils library tree)
+	(dynamic fold-edit)
+	(slides search-in-tree)))
 
 (tm-define (next-slide)
   (go-innermost-switch)

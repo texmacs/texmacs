@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (hide-show)
-  (:use (buffer-replace)
+  (:use (utils library tree)
+	(buffer-replace)
 	(interactive-proc)))
 
 ;; TODO: use package hide.ts when hide is not defined in the initial env
