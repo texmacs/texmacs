@@ -2,7 +2,8 @@
 ;Env and tags to which this plug is applied need to be redefined in sat.ts
 
 (texmacs-module (satellite)
-  (:use (utils library tree)))
+  (:use (utils library tree)
+	(generic document-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; Paths in trees (by David Allouche)
