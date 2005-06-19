@@ -16,8 +16,14 @@
   (:use (utils base environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying text properties
+;; Modifying environment variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (test-env? var val)
+  (== (get-env var) val))
+
+(tm-property (make-with var val)
+  (:check-mark "o" test-env?))
 
 (tm-define (make-interactive-with var)
   (:interactive #t)

@@ -18,6 +18,7 @@
 
 (texmacs-module (proclus-source)
   (:use (utils library tree)
+	(generic document-edit)
 	(proclus-lib)
         (proclus-locus)))
 

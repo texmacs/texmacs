@@ -15,6 +15,7 @@
 (texmacs-module (math math-kbd)
   (:use
     (utils edit auto-close)
+    (generic format-edit)
     (math math-edit))
     (table table-edit))
 

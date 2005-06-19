@@ -33,8 +33,6 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")
-(inherit-modules (utils misc misc-funcs) (utils misc markup-funcs))
-(use-modules (utils plugins plugin-cmd))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting main TeXmacs functionality\n")

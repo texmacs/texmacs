@@ -17,8 +17,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus)
-  (:use (proclus-lib) (proclus-absname) (proclus-locus) (proclus-list)
-	(proclus-types) (proclus-distill) (proclus-source)))
+  (:use (generic document-edit)
+	(proclus-lib)
+	(proclus-absname)
+	(proclus-locus)
+	(proclus-list)
+	(proclus-types)
+	(proclus-distill)
+	(proclus-source)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Locus creation

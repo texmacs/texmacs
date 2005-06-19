@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-lib)
-  (:use (utils library tree)))
+  (:use (utils library tree)
+	(generic document-edit)))
 
 ;; FIXME: the routines below should not be publicly visible outside
 ;;        the proclus plug-in. Some of the routines should become part

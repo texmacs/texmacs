@@ -46,8 +46,27 @@
     (init-env "preamble" new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Interactively change global environment variables
+;; Global environment variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (test-default? . vals)
+  (if (null? vals)
+      #t
+      (and (not (init-has? (car vals)))
+	   (apply test-default? (cdr vals)))))
+
+(tm-define (init-default . args)
+  (:check-mark "*" test-default?)
+  (for-each init-default-one args))
+
+(tm-define (get-init-env s)
+  (tree->string (get-init-tree s)))
+
+(tm-define (test-init? var val)
+  (== (get-init-tree var) (string->tree val)))
+
+(tm-property (init-env var val)
+  (:check-mark "*" test-init?))
 
 (tm-define (init-interactive-env var)
   (:interactive #t)

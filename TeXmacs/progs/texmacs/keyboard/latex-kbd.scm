@@ -15,6 +15,7 @@
 (texmacs-module (texmacs keyboard latex-kbd)
   (:use
     (utils edit auto-close)
+    (generic format-edit)
     (text std-text-edit)))
 
 (kbd-commands

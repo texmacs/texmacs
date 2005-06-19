@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-kbd)
-  (:use (utils edit auto-close)))
+  (:use (utils edit auto-close)
+	(text format-text-edit)))
 
 (kbd-map
   (:mode in-text?)
