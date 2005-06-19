@@ -45,35 +45,6 @@
 	      (reverse ip)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra routines for positions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (position-new . opts)
-  (position-new-path (if (null? opts) (cursor-path) (car opts))))
-
-(define-public-macro (with-cursor p . body)
-  (let* ((pos (gensym))
-	 (res (gensym)))
-    `(with ,pos (position-new)
-       (position-set ,pos (cursor-path))
-       (go-to ,p)
-       (with ,res (begin ,@body)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
-
-(define-public-macro (cursor-after . body)
-  (let* ((pos (gensym))
-	 (res (gensym)))
-    `(with ,pos (position-new)
-       (position-set ,pos (cursor-path))
-       ,@body
-       (with ,res (cursor-path)
-	 (go-to (position-get ,pos))
-	 (position-delete ,pos)
-	 ,res))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -111,93 +82,35 @@
 	(q (tree->path t)))
     (and p q (list-starts? q p))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying the document
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (tree-assign ref t)
-  "Assign @ref with @t."
-  ;;(display* "Assign " ref ", " t "\n")
-  (with p (tree->path ref)
-    (if p (path-assign p t)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (cursor-tree)
+  (path->tree (cDr (cursor-path))))
 
-(define-public-macro (tree-assign! ref t)
-  (with var (gensym)
-    `(with ,var ,t
-       (tree-assign ,ref ,var)
-       (set! ,ref ,var))))
+(define-public (table-cell-tree row col)
+  (path->tree (table-cell-path row col)))
 
-(define-public (tree-insert ref pos t)
-  "Insert the children of @t into @ref at position @pos."
-  ;;(display* "Insert " ref ", " pos ", " t "\n")
-  (with p (tree->path ref)
-    (if p (path-insert (rcons p pos) t)
-	(texmacs-error "tree-insert" "~S is not part of a document" ref))))
+(define the-action-path '(-1))
 
-(define-public tree-insert! tree-insert)
+(define-public (action-set-path p)
+  (set! the-action-path p))
 
-(define-public (tree-remove ref pos nr)
-  "Remove @nr children from @ref at position @pos."
-  ;;(display* "Remove " ref ", " pos ", " nr "\n")
-  (with p (tree->path ref)
-    (if p (path-remove (rcons p pos) nr)
-	(texmacs-error "tree-remove" "~S is not part of a document" ref))))
+(define-public (action-path)
+  (and (!= the-action-path '(-1)) the-action-path))
 
-(define-public tree-remove! tree-remove)
+(define-public (action-tree)
+  (and (!= the-action-path '(-1)) (path->tree the-action-path)))
 
-(define-public (tree-split ref pos at)
-  "Split the @pos-th child of @ref at position @at."
-  ;;(display* "Split " ref ", " pos ", " at "\n")
-  (with p (tree->path ref)
-    (if p (path-split (rcons* p pos at))
-	(texmacs-error "tree-split" "~S is not part of a document" ref))))
+(define-public-macro (with-action t . body)
+  `(with ,t (action-tree)
+     (if ,t (begin ,@body))))
 
-(define-public tree-split! tree-split)
+(define-public (mutator-tree)
+  (with p (mutator-path)
+    (if (nnull? p) (path->tree p) #f)))
 
-(define-public (tree-join ref pos)
-  "Split the @pos-th child of @ref with the next child."
-  ;;(display* "Join " ref ", " pos "\n")
-  (with p (tree->path ref)
-    (if p (path-join (rcons p pos))
-	(texmacs-error "tree-join" "~S is not part of a document" ref))))
-
-(define-public tree-join! tree-join)
-
-(define-public (tree-insert-node ref pos ins)
-  "Transform @ref into @lab with @ref inserted at position @pos."
-  ;;(display* "Insert node " ref ", " pos ", " ins "\n")
-  (with p (tree->path ref)
-    (if p (path-insert-node (rcons p pos) ins)
-	(texmacs-error "tree-insert-node" "~S isn't part of a document" ref))))
-
-(define-public-macro (tree-insert-node! ref pos ins)
-  (with var (gensym)
-    `(with ,var (tree->path ,ref)
-       (tree-insert-node ,ref ,pos ,ins)
-       (set! ,ref (path->tree ,var)))))
-
-(define-public (tree-remove-node ref pos)
-  "Replace @ref by its @pos-th child."
-  ;;(display* "Remove node " ref ", " pos "\n")
-  (with p (tree->path ref)
-    (if p (path-remove-node (rcons p pos))
-	(texmacs-error "tree-remove-node" "~S isn't part of a document" ref))))
-
-(define-public-macro (tree-remove-node! ref pos)
-  `(begin
-     (tree-remove-node ,ref ,pos)
-     (set! ,ref (tree-ref ,ref ,pos))))
-
-(define-public (tree-assign-node ref lab)
-  "Replace the label of @ref by @lab."
-  ;;(display* "Assign node " ref ", " lab "\n")
-  (with p (tree->path ref)
-    (if p (path-assign-node p lab)
-	(texmacs-error "tree-assign-node" "~S isn't part of a document" ref))))
-
-(define-public-macro (tree-assign-node! ref lab)
-  (with var (gensym)
-    `(with ,var (tree->path ,ref)
-       (tree-assign-node ,ref ,lab)
-       (set! ,ref (path->tree ,var)))))
+(define-public-macro (with-mutator t . body)
+  `(with ,t (mutator-tree)
+     (if ,t (begin ,@body))))

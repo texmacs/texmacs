@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-source)
-  (:use (proclus-lib)
+  (:use (utils library tree)
+	(proclus-lib)
         (proclus-locus)))
 
 (define last-locus '())

@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-absname-editor)
-  (:use (proclus-absname)))
+  (:use (utils library tree)
+        (proclus-absname)))
 
 (tm-define (absname-editor)
   (switch-to-active-buffer

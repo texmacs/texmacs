@@ -15,6 +15,97 @@
 (texmacs-module (utils library tree))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Fundamental modification routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-assign ref t)
+  (:synopsis "Assign @ref with @t.")
+  ;;(display* "Assign " ref ", " t "\n")
+  (with p (tree->path ref)
+    (if p (path-assign p t)
+	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+
+(tm-define-macro (tree-assign! ref t)
+  (with var (gensym)
+    `(with ,var ,t
+       (tree-assign ,ref ,var)
+       (set! ,ref ,var))))
+
+(tm-define (tree-insert ref pos t)
+  (:synopsis "Insert the children of @t into @ref at position @pos.")
+  ;;(display* "Insert " ref ", " pos ", " t "\n")
+  (with p (tree->path ref)
+    (if p (path-insert (rcons p pos) t)
+	(texmacs-error "tree-insert" "~S is not part of a document" ref))))
+
+(tm-define tree-insert! tree-insert)
+
+(tm-define (tree-remove ref pos nr)
+  (:synopsis "Remove @nr children from @ref at position @pos.")
+  ;;(display* "Remove " ref ", " pos ", " nr "\n")
+  (with p (tree->path ref)
+    (if p (path-remove (rcons p pos) nr)
+	(texmacs-error "tree-remove" "~S is not part of a document" ref))))
+
+(tm-define tree-remove! tree-remove)
+
+(tm-define (tree-split ref pos at)
+  (:synopsis "Split the @pos-th child of @ref at position @at.")
+  ;;(display* "Split " ref ", " pos ", " at "\n")
+  (with p (tree->path ref)
+    (if p (path-split (rcons* p pos at))
+	(texmacs-error "tree-split" "~S is not part of a document" ref))))
+
+(tm-define tree-split! tree-split)
+
+(tm-define (tree-join ref pos)
+  (:synopsis "Split the @pos-th child of @ref with the next child.")
+  ;;(display* "Join " ref ", " pos "\n")
+  (with p (tree->path ref)
+    (if p (path-join (rcons p pos))
+	(texmacs-error "tree-join" "~S is not part of a document" ref))))
+
+(tm-define tree-join! tree-join)
+
+(tm-define (tree-insert-node ref pos ins)
+  (:synopsis "Transform @ref into @lab with @ref inserted at position @pos.")
+  ;;(display* "Insert node " ref ", " pos ", " ins "\n")
+  (with p (tree->path ref)
+    (if p (path-insert-node (rcons p pos) ins)
+	(texmacs-error "tree-insert-node" "~S isn't part of a document" ref))))
+
+(tm-define-macro (tree-insert-node! ref pos ins)
+  (with var (gensym)
+    `(with ,var (tree->path ,ref)
+       (tree-insert-node ,ref ,pos ,ins)
+       (set! ,ref (path->tree ,var)))))
+
+(tm-define (tree-remove-node ref pos)
+  (:synopsis "Replace @ref by its @pos-th child.")
+  ;;(display* "Remove node " ref ", " pos "\n")
+  (with p (tree->path ref)
+    (if p (path-remove-node (rcons p pos))
+	(texmacs-error "tree-remove-node" "~S isn't part of a document" ref))))
+
+(tm-define-macro (tree-remove-node! ref pos)
+  `(begin
+     (tree-remove-node ,ref ,pos)
+     (set! ,ref (tree-ref ,ref ,pos))))
+
+(tm-define (tree-assign-node ref lab)
+  (:synopsis "Replace the label of @ref by @lab.")
+  ;;(display* "Assign node " ref ", " lab "\n")
+  (with p (tree->path ref)
+    (if p (path-assign-node p lab)
+	(texmacs-error "tree-assign-node" "~S isn't part of a document" ref))))
+
+(tm-define-macro (tree-assign-node! ref lab)
+  (with var (gensym)
+    `(with ,var (tree->path ,ref)
+       (tree-assign-node ,ref ,lab)
+       (set! ,ref (path->tree ,var)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Use fundamental modification routines in an intelligent way
 ;; via a unique assignment routine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,39 +235,6 @@
      (if ,t (begin ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (cursor-tree)
-  (path->tree (cDr (cursor-path))))
-
-(tm-define (table-cell-tree row col)
-  (path->tree (table-cell-path row col)))
-
-(define the-action-path '(-1))
-
-(tm-define (action-set-path p)
-  (set! the-action-path p))
-
-(tm-define (action-path)
-  (and (!= the-action-path '(-1)) the-action-path))
-
-(tm-define (action-tree)
-  (and (!= the-action-path '(-1)) (path->tree the-action-path)))
-
-(tm-define-macro (with-action t . body)
-  `(with ,t (action-tree)
-     (if ,t (begin ,@body))))
-
-(tm-define (mutator-tree)
-  (with p (mutator-path)
-    (if (nnull? p) (path->tree p) #f)))
-
-(tm-define-macro (with-mutator t . body)
-  `(with ,t (mutator-tree)
-     (if ,t (begin ,@body))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further routines for trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -211,44 +269,3 @@
 (tm-define (tree-correct t . l)
   (with p (apply tree->path (cons t l))
     (if p (path-correct p))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Routines for cursor movement
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (go-to-same-buffer routine)
-  (with p (routine (root-tree) (cursor-path))
-    (if (list-starts? (cDr p) (buffer-path)) (go-to p))))
-
-(tm-define (go-to-repeat fun)
-  (with p (cursor-path)
-    (fun)
-    (if (!= (cursor-path) p)
-	(go-to-repeat fun))))
-
-(define (label-in-range? lab p until)
-  (cond ((== p until) #f)
-	((tree-is? (path->tree p) lab) #t)
-	(else (label-in-range? lab (cDr p) until))))
-
-(tm-define (go-to-remain-inside fun lab)
-  (with p (cursor-path)
-    (fun)
-    (let* ((q (cursor-path))
-	   (r (list-head q (list-common-left p q))))
-      (if (or (tree-is? (path->tree (cDr q)) lab)
-	      (label-in-range? lab (cDr q) (cDr r)))
-	  (go-to p)))))
-
-(tm-define (go-to-next) (go-to-same-buffer path-next))
-(tm-define (go-to-previous) (go-to-same-buffer path-previous))
-(tm-define (go-to-next-word) (go-to-same-buffer path-next-word))
-(tm-define (go-to-previous-word) (go-to-same-buffer path-previous-word))
-(tm-define (go-to-next-node) (go-to-same-buffer path-next-node))
-(tm-define (go-to-previous-node) (go-to-same-buffer path-previous-node))
-
-(tm-define (go-to-next-tag lab)
-  (go-to-same-buffer (lambda (t p) (path-next-tag t p lab))))
-
-(tm-define (go-to-previous-tag lab)
-  (go-to-same-buffer (lambda (t p) (path-previous-tag t p lab))))

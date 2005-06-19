@@ -69,27 +69,6 @@
   (or (== fn "mr") (== fn "ms") (== fn "mt")))
 
 (tm-define (replace-start-forward what by)
-  (replace-start what by #t))
-
-(tm-define (with-active-buffer-sub name cmd)
-  (let ((old (get-name-buffer)))
-    (switch-to-active-buffer name)
-    (eval cmd)
-    (switch-to-active-buffer old)))
-
-(tm-define-macro (with-active-buffer . l)
-  (with-active-buffer-sub (car l) (cons 'begin (cdr l))))
-
-(tm-property (replace-start-forward what by)
   (:argument what "Replace")
-  (:argument by "Replace by"))
-
-(tm-define (go-to-buffer name)
-  (:argument  name "Switch to buffer")
-  (:proposals name (map car (get-buffer-menu)))
-  (let* ((l1 (assoc name (get-buffer-menu)))
-	 (l2 (assoc (string-append name " *") (get-buffer-menu))))
-    (cond (l1 ((cadr l1)))
-	  (l2 ((cadr l2)))
-	  (else (set-message (string-append "No buffer#" name)
-			     "switch to buffer")))))
+  (:argument by "Replace by")
+  (replace-start what by #t))
