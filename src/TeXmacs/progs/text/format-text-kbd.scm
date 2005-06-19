@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (text format-text-kbd))
+(texmacs-module (text format-text-kbd)
+  (:use (text format-text-edit)))
 
 (kbd-map
   (:mode in-text?)

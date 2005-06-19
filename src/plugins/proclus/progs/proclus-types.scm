@@ -17,7 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (proclus-types)
-  (:use (proclus) ;; FIXME: circular dependence
+  (:use (generic document-edit)
+	(proclus) ;; FIXME: circular dependence
         (proclus-list)
         (proclus-lib)
         (proclus-source)

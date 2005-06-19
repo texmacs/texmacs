@@ -14,6 +14,7 @@
 
 (texmacs-module (texmacs keyboard windows-kbd)
   (:use
+    (utils library cursor)
     (utils edit selections)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)

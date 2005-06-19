@@ -144,6 +144,7 @@ edit_process_rep::make_session (string lan, string session) {
   }
 
   /* start asynchronous connection */
+  (void) eval ("(use-modules (utils plugins plugin-cmd))");
   string handle= as_string (call ("plugin-async-start", lan, session));
   if (starts (handle, "error:")) {
     path op= search_upwards ("output");
@@ -225,6 +226,7 @@ edit_process_rep::process_input () {
   }
   else if (connection_declared (lan)) {
     start_output ();
+    (void) eval ("(use-modules (utils plugins plugin-cmd))");
     string session= get_env_string (PROG_SESSION);
     string handle= as_string (call ("plugin-async-feed", lan, session, t));
     if (starts (handle, "error:")) {
@@ -615,6 +617,7 @@ edit_process_rep::session_complete_try () {
   tree t= put_cursor (st[1], tail (tp, N(p)+1));
   // cout << t << LF;
 
+  (void) eval ("(use-modules (utils plugins plugin-cmd))");
   string lan= get_env_string (PROG_LANGUAGE);
   string ses= get_env_string (PROG_SESSION);
   string s  = as_string (call ("verbatim-serialize", lan, tree_to_stree (t)));

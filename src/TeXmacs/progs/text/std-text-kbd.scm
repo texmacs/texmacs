@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text std-text-kbd)
-  (:use (text std-text-edit)))
+  (:use (text format-text-edit)
+	(text std-text-edit)))
 
 (kbd-map
   (:mode in-std-text?)

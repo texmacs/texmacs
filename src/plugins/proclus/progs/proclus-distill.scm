@@ -18,6 +18,7 @@
 
 (texmacs-module (proclus-distill)
   (:use (utils library tree)
+	(generic document-edit)
 	(proclus-lib)
 	(proclus-list)
 	(search-in-tree)
