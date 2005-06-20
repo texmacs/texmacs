@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -8,7 +8,9 @@
   <\traverse>
     <branch|The <TeXmacs> editing model|edit-model.en.tm>
 
-    <branch|Modifying trees|edit-modify.en.tm>
+    <branch|Fundamental tree modification routines|edit-fundamental.en.tm>
+
+    <branch|High level editing routines|edit-modify.en.tm>
 
     <branch|Path-based navigation|edit-path-navigate.en.tm>
   </traverse>
