@@ -281,6 +281,12 @@
 	    (with u (apply tree-ref (cons t l))
 	      (and u (tree->path u)))))))
 
+(tm-define (tree-cursor-path t . l)
+  (:synopsis "Retrieve the current cursor position relative to the tree @t.")
+  (let* ((p (apply tree->path (cons t l)))
+	 (c (cursor-path)))
+    (and p (list-starts? c p) (list-tail c (length p)))))
+
 (tm-define (tree-go-to t . l)
   (:synopsis "Go to a position determined by @l inside the tree @t.")
   (with p (apply tree->path (cons t l))
