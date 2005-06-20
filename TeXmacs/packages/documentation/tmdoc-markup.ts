@@ -80,6 +80,33 @@
 
   <\active*>
     <\src-comment>
+      Documentation of scheme macros.
+    </src-comment>
+  </active*>
+
+  <assign|scm|<macro|x|<with|mode|prog|<arg|x>>>>
+
+  <assign|scm-fun|<macro|x|<with|color|dark blue|<scm|<arg|x>>>>>
+
+  <assign|scm-macro|<macro|x|<with|color|dark magenta|<scm|<arg|x>>>>>
+
+  <assign|scm-arg|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>>>>>
+
+  <assign|scm-args|<macro|x|<scm|. <with|prog-font-shape|italic|<arg|x>>>>>
+
+  <assign|scm-opt-arg|<macro|x|<with|color|dark
+  grey|[<style-with|<scm-arg|<arg|x>>>]>>>
+
+  <assign|explain-scm-sub|<macro|x| <arg|x>>>
+
+  <assign|explain-scm-fun|<xmacro|x|<style-with|src-compact|none|<scm|(<scm-fun|<arg|x|0>><map-args|explain-scm-sub|concat|x|1>)>>>>
+
+  <assign|explain-scm-macro|<xmacro|x|<style-with|src-compact|none|<scm|(<scm-macro|<arg|x|0>><map-args|explain-scm-sub|concat|x|1>)>>>>
+
+  <drd-props|explain-scm-macro|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
       Links inside the documentation and special types of links. We are not
       very happy about this yet, so part of these macros will probably be
       modified sometime in the future.
@@ -127,7 +154,7 @@
   </macro>>
 
   <assign|scheme-fragment|<\macro|x>
-    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<verbatim|<arg|x>>>>>
+    <quote-env|<framed-fragment|<with|par-par-sep|0fn|<scm|<arg|x>>>>>
   </macro>>
 
   <assign|shell-fragment|<\macro|x>
