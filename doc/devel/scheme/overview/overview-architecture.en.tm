@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -77,6 +77,10 @@
     <item>Further utilities and libraries for common types like strings and
     lists.
   </itemize>
+
+  Whereas the modules in <verbatim|$TEXMACS_PATH/progs/kernel> are
+  automatically loaded, all modules in <verbatim|$TEXMACS_PATH/progs/utils>
+  have to be explicitly included.
 
   <paragraph|Internal modules and plug-ins>
 

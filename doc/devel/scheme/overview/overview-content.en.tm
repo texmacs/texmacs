@@ -11,7 +11,7 @@
   Inside <value|scheme> programs, there are two main ways to represent such
   trees, depending on whether one manipulates active or passive documents:
 
-  <paragraph|Passive documents and <value|scheme> trees>
+  <paragraph|Passive documents and <value|scheme> trees><label|tree-passive>
 
   Passive documents, like those which are processed by a<nbsp>conversion
   tool, are usually represented by <em|scheme trees>. For instance, the
@@ -30,7 +30,7 @@
   This representation is convenient in the sense that they can be manipulated
   directly using standard <value|scheme> routines on lists.
 
-  <paragraph|Active documents and C++ trees>
+  <paragraph|Active documents and C++ trees><label|tree-active>
 
   Active documents, like ones which are visible in one of the editors
   windows, are rather represented using the internal C++ type
@@ -42,9 +42,13 @@
 
   For instance, consider the following experiment: open two windows and start
   a <value|scheme> session in each window. In the second window, enter the
-  line
+  lines
 
   <with|prog-language|scheme|prog-session|default|<\session>
+    <\input|scheme] >
+      (use-modules (utils library tree))
+    </input>
+
     <\input|scheme] >
       (define t (buffer-tree))
     </input>
@@ -70,7 +74,7 @@
     </input>
   </session>>
 
-  <paragraph|A common framework>
+  <paragraph|A common framework><label|tree-hybrid>
 
   From the last three lines in above experiment, it becomes apparent that it
   is quite cumbersome to manipulate trees using the standard tree
