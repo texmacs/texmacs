@@ -300,6 +300,10 @@
       ("Spanish" (init-language "spanish"))
       ("Swedish" (init-language "swedish"))
       ("Ukrainian" (init-language "ukrainian")))
+  (-> "Scripts"
+      ("Default" (init-default "prog-scripts"))
+      ---
+      ("Maxima" (init-env "prog-scripts" "maxima")))
   (-> "Paragraph"
       (-> "Style"
 	  ("Default" (init-default "par-mode"))

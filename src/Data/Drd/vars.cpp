@@ -56,6 +56,7 @@ string MATH_CONDENSED ("math-condensed");
 string MATH_VPOS ("math-vpos");
 
 string PROG_LANGUAGE ("prog-language");
+string PROG_SCRIPTS ("prog-scripts");
 string PROG_FONT ("prog-font");
 string PROG_FONT_FAMILY ("prog-font-family");
 string PROG_FONT_SERIES ("prog-font-series");
