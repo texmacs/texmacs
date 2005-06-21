@@ -724,13 +724,7 @@ struct transformed_curve_rep: public curve_rep {
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
-  point grad (double t, bool& error) {
-    // FIXME: Is this correct ?
-    if (f->linear)
-      return f (c->grad (t, error));
-    else fatal_error ("Not yet implemented",
-		      "transformed_curve_rep::grad");
-  }
+  point grad (double t, bool& error);
   double curvature (double t1, double t2) {
     fatal_error ("Not yet implemented",
 	         "transformed_curve_rep::curvature");
@@ -750,6 +744,15 @@ transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
   }
   else fatal_error ("Not yet implemented",
 		    "transformed_curve_rep::rectify_cumul");
+}
+
+point
+transformed_curve_rep::grad (double t, bool& error) {
+  bool error2;
+  point w2= c->grad (t, error2);
+  point w1= f->jacobian (c(t), w2, error);
+  error |= error2;
+  return w1;
 }
 
 int

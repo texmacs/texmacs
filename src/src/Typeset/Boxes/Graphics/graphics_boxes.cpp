@@ -160,54 +160,6 @@ struct curve_box_rep: public box_rep {
   void apply_style ();
 };
 
-static bool
-find_first_point (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  p= a[0];
-  return true;
-}
-
-static bool
-find_last_point (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  p= a[N(a)-1];
-  return true;
-}
-
-static bool
-find_prev_last (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  int i= N(a)-1;
-  point p0= a[i];
-  while (i>=0) {
-    if (!fnull (norm(a[i]-p0),1e-6)) {
-      p= a[i];
-      return true;
-    }
-    i--;
-  }
-  return false;
-}
-
-static bool
-find_next_first (array<point> a, point &p) {
-  p= point ();
-  if (N(a)<=0) return false;
-  int i= 0;
-  point p0= a[i];
-  while (i<N(a)) {
-    if (!fnull (norm(a[i]-p0),1e-6)) {
-      p= a[i];
-      return true;
-    }
-    i++;
-  }
-  return false;
-}
-
 curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   array<bool> style2, SI style_unit2, int fill2, color fill_col2,
   array<box> arrows2)
@@ -229,11 +181,13 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   apply_style ();
   arrows= array<box>(2);
   point p1, p2;
-  if (N(arrows2)>0 && find_first_point (a, p1) && find_next_first (a, p2)) {
+  bool error;
+  point tg= c->grad (0.0, error);
+  if (N(arrows2)>0 && !error) {
     box b= arrows2[0];
     if (!nil (b)) {
-      frame fr= scaling (1.0, p1) *
-	        rotation_2D (point (0.0, 0.0), arg (p2-p1));
+      frame fr= scaling (1.0, a[0]) *
+	        rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[0]= arrows2[0]->transform (fr);
       if (!nil (arrows[0])) {
         x1= min (x1, arrows[0]->x1);
@@ -243,11 +197,12 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
       }
     }
   }
-  if (N(arrows2)>1 && find_prev_last (a, p1) && find_last_point (a, p2)) {
+  tg= c->grad (1.0, error);
+  if (N(arrows2)>1 && !error) {
     box b= arrows2[1];
     if (!nil (b)) {
-      frame fr= scaling (1.0, p2) *
-	        rotation_2D (point (0.0, 0.0), arg (p2-p1));
+      frame fr= scaling (1.0, a[N(a)-1]) *
+	        rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[1]= arrows2[1]->transform (fr);
       if (!nil (arrows[1])) {
         x1= min (x1, arrows[1]->x1);
@@ -409,31 +364,53 @@ void
 curve_box_rep::apply_style () {
   int n= N(style);
   if (n<=0 || fnull (style_unit,1e-6)) return;
-  SI l= length (), l1= n*style_unit, n1= l/l1 + 1;
-  l1= l/n1;
-  style_unit= l1/n;
-
-  int i, nfrag=0, prevfrag=-1;
+  int i;
   bool all0=true, all1=true;
   for (i=0; i<n; i++) {
-    int frag= style[i]?1:0;
-    if (frag!=prevfrag && frag==1) nfrag++;
     if (style[i]) all0= false;
     if (!style[i]) all1= false;
-    prevfrag= frag;
   }
   if (all1) style= array<bool>(0);
   if (all0 || all1) return;
 
+  int n2= n;
+  i= N(style) - 1;
+  while (i>=0) {
+    if (!style[i]) n2--; else i=0;
+    i--;
+  }
+
+  if (a[0]==a[N(a)-1]) n2= n; // Closed curves
+
+  SI l= length (), l1= n*style_unit, n1= l/l1 + 1, l2= n2*style_unit;
+  l1= (SI)((((double)l)*((double)l1)) / ((double)(n1*l1 + l2)));
+  style_unit= l1/n;
+  l2= n2*style_unit;
+
+  int nfrag=0, prevfrag=-1;
+  for (i=0; i<n; i++) {
+    int frag= style[i]?1:0;
+    if (frag!=prevfrag && frag==1) nfrag++;
+    prevfrag= frag;
+  }
+
+  int nfrag2=0;
+  prevfrag=-1;
+  for (i=0; i<n2; i++) {
+    int frag= style[i]?1:0;
+    if (frag!=prevfrag && frag==1) nfrag2++;
+    prevfrag= frag;
+  }
+
   bool common_frag= style[0] && style[n-1] && n1>1;
   if (common_frag) nfrag--;
-  styled_n= array<SI>(2*nfrag*n1 + (common_frag?2:0));
+  styled_n= array<SI>(2*(nfrag*n1 + nfrag2));
 
   int no=0, nbu=0;
   prevfrag=-1;
-  for (i=0; i<n1; i++) {
+  for (i=0; i<n1+1; i++) {
     int j;
-    for (j=0; j<n; j++) {
+    for (j=0; j<(i==n1?n2:n); j++) {
       int frag= style[j]?1:0;
       if (frag!=prevfrag) {
         if (frag==1) {
@@ -450,7 +427,7 @@ curve_box_rep::apply_style () {
       nbu++;
     }
   }
-  if (style[n-1]) styled_n[N(styled_n)-1]= nbu;
+  if (style[n2-1]) styled_n[N(styled_n)-1]= nbu;
 }
 
 /******************************************************************************
