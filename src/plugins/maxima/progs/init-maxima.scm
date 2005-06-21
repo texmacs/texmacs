@@ -52,4 +52,5 @@
   (:initialize (maxima-initialize))
   ,@(maxima-versions)
   (:serializer ,maxima-serialize)
-  (:session "Maxima"))
+  (:session "Maxima")
+  (:scripts "Maxima"))

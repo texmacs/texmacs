@@ -19,16 +19,11 @@
 ;; Inserting sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (supported-sessions-menu-promise)
-  (lazy-plugin-force)
-  (menu-dynamic
-    (link supported-sessions-menu)))
-
 (menu-bind insert-session-menu
   (when (and (style-has? "std-dtd") (in-text?))
 	("Scheme" (make-session "scheme" "default"))
 	---
-	(promise (supported-sessions-menu-promise))
+	(link supported-sessions-menu)
 	---
 	("Other" (interactive make-session))))
 

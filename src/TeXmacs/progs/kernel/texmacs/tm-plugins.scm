@@ -78,6 +78,7 @@
 (define supported-sessions-table (make-ahash-table))
 
 (define (supported-sessions-add name menu-name)
+  (if (symbol? name) (set! name (symbol->string name)))
   (set! supported-sessions-list (cons name supported-sessions-list))
   (ahash-set! supported-sessions-table name menu-name))
 
@@ -91,8 +92,30 @@
 	`(-> ,menu-name ,@(map menu-item l)))))
 
 (define-public (supported-sessions-menu)
+  (lazy-plugin-force)
   (with l (list-sort supported-sessions-list string<=?)
     (menu-dynamic ,@(map supported-sessions-menu-entry l))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu for the supported scripting languages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define supported-scripts-list '())
+(define supported-scripts-table (make-ahash-table))
+
+(define (supported-scripts-add name menu-name)
+  (if (symbol? name) (set! name (symbol->string name)))
+  (set! supported-scripts-list (cons name supported-scripts-list))
+  (ahash-set! supported-scripts-table name menu-name))
+
+(tm-define (supported-scripts-menu-entry name)
+  (let* ((menu-name (ahash-ref supported-scripts-table name)))
+    (list menu-name (lambda () (init-env "prog-scripts" "maxima")))))
+
+(define-public (supported-scripts-menu)
+  (lazy-plugin-force)
+  (with l (list-sort supported-scripts-list string<=?)
+    (menu-dynamic ,@(map supported-scripts-menu-entry l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuration of plugins
@@ -133,6 +156,8 @@
 	  name (second cmd) (symbol->string (third cmd))))
 	((func? cmd :session 1)
 	 (supported-sessions-add name (second cmd)))
+	((func? cmd :scripts 1)
+	 (supported-scripts-add name (second cmd)))
 	((func? cmd :filter-in 1)
 	 (noop))
 	((func? cmd :serializer 1)
