@@ -20,6 +20,8 @@
 #include "merge_sort.hpp"
 #include "scheme.hpp"
 
+string PS_CLIP_PUSH ("gsave");
+string PS_CLIP_POP ("grestore");
 string PS_CLIP ("cl");
 string PS_LINE ("ln");
 string PS_FILL ("fl");
@@ -451,12 +453,17 @@ printer_rep::generate_tex_fonts () {
 ******************************************************************************/
 
 void
-printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
-  print (x1, y1);
-  print (x2, y2);
-  print (PS_CLIP);
+  if (restore)
+    print (PS_CLIP_POP);
+  else {
+    print (PS_CLIP_PUSH);
+    print (x1, y1);
+    print (x2, y2);
+    print (PS_CLIP);
+  }
 }
   
 /******************************************************************************
@@ -517,8 +524,9 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 }
 
 void
-printer_rep::set_line_style (SI w, int type) {
+printer_rep::set_line_style (SI w, int type, bool round) {
   (void) type;
+  (void) round;
   if (lw == w) return;
   lw= w;
   select_line_width (w);
@@ -560,7 +568,7 @@ printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-printer_rep::polygon (array<SI> x, array<SI> y) {
+printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   print (x[0], y[0]);

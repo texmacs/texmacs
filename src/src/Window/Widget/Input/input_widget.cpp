@@ -14,6 +14,57 @@
 #include "analyze.hpp"
 #include "font.hpp"
 #include "Widget/layout.hpp"
+#include "file.hpp"
+
+/******************************************************************************
+* Tab-completion for file names
+******************************************************************************/
+
+#ifdef OS_WIN32
+#define URL_CONCATER  '\\'
+#else
+#define URL_CONCATER  '/'
+#endif
+
+static void
+file_completions_file (array<string>& a, url search, url u) {
+  if (is_or (u)) {
+    file_completions_file (a, search, u[1]);
+    file_completions_file (a, search, u[2]);
+  }
+  else {
+    url v= delta (search * url ("dummy"), u);
+    if (is_none (v)) return;
+    string s= as_string (v);
+    if (is_directory (u)) s= s * string (URL_CONCATER);
+    a << s;
+  }
+}
+
+static void
+file_completions_dir (array<string>& a, url search, url dir) {
+  if (is_or (search)) {
+    file_completions_dir (a, search[1], dir);
+    file_completions_dir (a, search[2], dir);
+  }
+  else if (is_or (dir)) {
+    file_completions_dir (a, search, dir[1]);
+    file_completions_dir (a, search, dir[2]);
+  }
+  else {
+    url u= search * dir * url_wildcard ("*");
+    u= complete (u, "r");
+    u= expand (u);
+    file_completions_file (a, search, u);
+  }
+}
+
+static array<string>
+file_completions (url search, url dir) {
+  array<string> a;
+  file_completions_dir (a, search, dir);
+  return a;
+}
 
 /******************************************************************************
 * Input widgets
@@ -21,12 +72,19 @@
 
 class input_widget_rep: public attribute_widget_rep {
   string  s;           // the string being entered
+  string  type;        // expected type of string
+  array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
+  bool    ok;          // input not canceled
+  int     def_cur;     // current choice between default possible values
   SI      dw, dh;      // border width and height
   int     pos;         // cursor position
   SI      scroll;      // how much scrolled to the left
   bool    got_focus;   // got keyboard focus
   bool    hilit;       // hilit on keyboard focus
+  array<string> tabs;  // tab completions
+  int     tab_nr;      // currently visible tab-completion
+  int     tab_pos;     // cursor position where tab was pressed
 
 public:
   input_widget_rep (display dis, command call_back);
@@ -49,7 +107,9 @@ public:
 #define SHRINK 3
 
 input_widget_rep::input_widget_rep (display dis, command call_back2):
-  attribute_widget_rep (dis, south_west), s (""), call_back (call_back2),
+  attribute_widget_rep (dis, south_west),
+  s (""), type ("default"), def (), call_back (call_back2),
+  ok (true), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false) { dw*=SHRINK; dh*= SHRINK; }
 
@@ -59,9 +119,11 @@ input_widget_rep::operator tree () {
 
 void
 input_widget_rep::handle_get_size (get_size_event ev) {
+  SI dummy;
   font fn= dis->default_font ();
   ev->h = (fn->y2- fn->y1+ 2*dh+ (SHRINK-1))/SHRINK;
   abs_round (ev->w, ev->h);
+  if (ev->mode == 1) dis->get_max_size (ev->w, dummy);
 }
 
 void
@@ -111,23 +173,86 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 	 (key[3] >= '1') && (key[3] <= '5')) key= key (5, N(key));
   if (key == "space") key= " ";
 
-  if (key == "return") { s= quote (s); call_back (); }
+  /* tab-completion */
+  if ((key == "tab" || key == "S-tab") && N(tabs) != 0) {
+    int d = (key == "tab"? 1: N(tabs)-1);
+    tab_nr= (tab_nr + d) % N(tabs);
+    s     = s (0, tab_pos) * tabs[tab_nr];
+    pos   = N(s);
+    this << emit_invalidate_all ();
+    return;
+  }
+  else if (key == "tab" || key == "S-tab") {
+    if (pos != N(s)) return;
+    tabs= copy (def);
+    if (ends (type, "file") || type == "directory") {
+      url search= url_here ();
+      url dir= (ends (s, string (URL_CONCATER))? url (s): head (url (s)));
+      if (type == "smart-file") search= url ("$TEXMACS_FILE_PATH");
+      if (is_rooted (dir)) search= url_here ();
+      if (is_none (dir)) dir= url_here ();
+      tabs= file_completions (search, dir);
+    }
+    tabs= strip_completions (tabs, s);
+    tabs= close_completions (tabs);
+    if (N (tabs) == 0);
+    else if (N (tabs) == 1) {
+      s   = s * tabs[0];
+      pos = N(s);
+      tabs= array<string> (0);
+    }
+    else {
+      tab_nr = 0;
+      tab_pos= N(s);
+      s      = s * tabs[0];
+      pos    = N(s);
+      beep ();
+    }
+    this << emit_invalidate_all ();
+    return;
+  }
+  else {
+    tabs   = array<string> (0);
+    tab_nr = 0;
+    tab_pos= 0;
+  }
+
+  /* other actions */
+  if (key == "return") { ok= true; call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
-	   (key == "C-g")) { s= "cancel"; call_back (); }
+	   (key == "C-g")) { ok= false; call_back (); }
   else if ((key == "left") || (key == "C-b")) { if (pos>0) pos--; }
   else if ((key == "right") || (key == "C-f")) { if (pos<N(s)) pos++; }
   else if ((key == "home") || (key == "C-a")) pos=0;
   else if ((key == "end") || (key == "C-e")) pos=N(s);
+  else if ((key == "up") || (key == "C-p")) {
+    if (N(def) > 0) {
+      def_cur= (def_cur+1) % N(def);
+      s      = copy (def[def_cur]);
+      pos    = N(s);
+    }
+  }
+  else if ((key == "down") || (key == "C-n")) {
+    if (N(def) > 0) {
+      def_cur= (def_cur+N(def)-1) % N(def);
+      s      = copy (def[def_cur]);
+      pos    = N(s);
+    }
+  }
   else if (key == "C-k") s= s (0, pos);
   else if ((key == "C-d") || (key == "delete")) {
     if ((pos<N(s)) && (N(s)>0))
       s= s (0, pos) * s (pos+1, N(s));
   }
-  else if (key == "backspace") {
+  else if (key == "backspace" || key == "S-backspace") {
     if (pos>0) {
       pos--;
       s= s (0, pos) * s (pos+1, N(s));
     }
+  }
+  else if (key == "C-backspace") {
+    s= "";
+    pos= 0;
   }
   else {
     if (N(key)!=1) return;
@@ -181,14 +306,20 @@ input_widget_rep::handle_set_string (set_string_event ev) {
   if (ev->which == "input") {
     s= copy (ev->s);
     pos= N(s);
+    ok= (ev->s != "#f");
     if (attached ()) this << emit_invalidate_all ();
   }
+  else if (ev->which == "type") type= copy (ev->s);
+  else if (ev->which == "default") def << copy (ev->s);
   else attribute_widget_rep::handle_set_string (ev);
 }
 
 void
 input_widget_rep::handle_get_string (get_string_event ev) {
-  if (ev->which == "input") ev->s= s;
+  if (ev->which == "input") {
+    if (ok) ev->s= quote (s);
+    else ev->s= "#f";
+  }
   else attribute_widget_rep::handle_get_string (ev);
 }
 

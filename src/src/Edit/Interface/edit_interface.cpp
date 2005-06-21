@@ -394,6 +394,21 @@ edit_interface_rep::selection_visible () {
   }
 }
 
+int
+edit_interface_rep::idle_time (int event_type) {
+  if (env_change == 0 &&
+      win->repainted () &&
+      (!win->check_event (event_type)) &&
+      got_focus)
+    return texmacs_time () - last_change;
+  else return 0;
+}
+
+int
+edit_interface_rep::change_time () {
+  return last_change;
+}
+
 void
 edit_interface_rep::apply_changes () {
   //cout << "Apply changes\n";
@@ -401,22 +416,16 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if ((last_update < last_change) &&
-	(texmacs_time() >= (last_change + (1000/6))) &&
-	win->repainted() &&
-	(!win->check_event (EVENT_STATUS)) &&
-	got_focus)
-      {
-	call ("lazy-in-mode-force");
-	SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-	SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-	set_footer ();
-	if (!win->check_event (EVENT_STATUS)) drd_update ();
-	tex_autosave_cache ();
-	last_update= last_change;
-      }
+    if (last_update < last_change && idle_time (EVENT_STATUS) >= 1000/6) {
+      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
+      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+      set_footer ();
+      if (!win->check_event (EVENT_STATUS)) drd_update ();
+      tex_autosave_cache ();
+      last_update= last_change;
+    }
     return;
   }
 
@@ -552,7 +561,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   tree st= subtree (et, p);
   if (is_atomic (st) || is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
+      is_func (st, ROW) || is_func (st, TFORMAT) ||
       is_graphical (st) ||
       (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
       (is_compound (st, "math", 1) &&
@@ -565,7 +574,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       p1= start (et, p * 0);
       p2= end   (et, p * 0);
     }
-    selection_correct (et, p1, p2, q1, q2);
+    if (is_func (st, CELL)) { q1= p1; q2= p2; }
+    else selection_correct (et, p1, p2, q1, q2);
     selection sel= eb->find_check_selection (q1, q2);
     rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
 			       thicken (sel->rs, 0, 2*pixel)));

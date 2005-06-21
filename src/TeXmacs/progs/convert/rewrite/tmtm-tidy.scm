@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert rewrite tmtm-tidy)
-  (:export tmtm-modernize-newlines
-	   tmtm-eat-space-around-control
-	   tmtm-remove-superfluous-newlines
-	   tmtm-concat-document-correct))
+(texmacs-module (convert rewrite tmtm-tidy))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some useful subroutines
@@ -46,8 +42,8 @@
 (define (tmtm-new-line? x) (== x '(new-line)))
 (define (tmtm-document? x) (func? x 'document))
 
-(define (tmtm-modernize-newlines l)
-  (if (not (list? l)) l
+(tm-define (tmtm-modernize-newlines l)
+  (if (nlist? l) l
       (with r (cons (car l) (map tmtm-modernize-newlines (cdr l)))
 	(cond ((func? r 'concat)
 	       (with ll (list-scatter (cdr r) tmtm-new-line? #f)
@@ -104,8 +100,8 @@
 	     (cons (car l) (tmtm-eat-around (if r r (cdr l)) #f))))
 	  (else (cons (car l) (tmtm-eat-around (cdr l) #f))))))
 
-(define (tmtm-eat-space-around-control l)
-  (if (not (list? l)) l
+(tm-define (tmtm-eat-space-around-control l)
+  (if (nlist? l) l
       (with r (map tmtm-eat-space-around-control (cdr l))
 	(if (func? l 'concat)
 	    (tmtm-concat (tmtm-eat-around r #t))
@@ -118,11 +114,11 @@
 (define (tmtm-preserve-space? l)
   (and (list? l) (in? (car l) '(verbatim code))))
 
-(define (tmtm-remove-superfluous-newlines l)
+(tm-define (tmtm-remove-superfluous-newlines l)
   (cond ((tmtm-preserve-space? l) l)
 	((func? l 'document)
 	 (with r (map tmtm-remove-superfluous-newlines (cdr l))
-	   (with f (list-filter r (lambda (x) (not (== x ""))))
+	   (with f (list-filter r (lambda (x) (!= x "")))
 	     (if (null? f) '(document "") (cons 'document f)))))
         ((pair? l)
 	 (cons (car l) (map tmtm-remove-superfluous-newlines (cdr l))))
@@ -137,9 +133,9 @@
       (cdar l)
       (append (cdar l) (list (tmtm-concat (cdr l))))))
 
-(define (tmtm-concat-document-correct l)
+(tm-define (tmtm-concat-document-correct l)
   ;; FIXME: might go into tmtm-concat constructor
-  (if (not (list? l)) l
+  (if (nlist? l) l
       (with r (cons (car l) (map tmtm-concat-document-correct (cdr l)))
 	(if (and (func? r 'concat) (list-find (cdr r) tmtm-document?))
 	    (let* ((ll (list-scatter (cdr r) tmtm-document? #t))

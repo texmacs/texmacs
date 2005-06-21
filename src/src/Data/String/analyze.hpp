@@ -13,6 +13,8 @@
 #ifndef ANALYZE_H
 #define ANALYZE_H
 #include "string.hpp"
+#include "array.hpp"
+#include "hashset.hpp"
 
 bool is_alpha (char c);
 bool is_iso_alpha (char c);
@@ -20,7 +22,7 @@ bool is_locase (char c);
 bool is_upcase (char c);
 bool is_digit (char c);
 bool is_numeric (char c);
-bool is_ponctuation (char c);
+bool is_punctuation (char c);
 bool is_space (char s);
 bool is_alpha (string s);
 bool is_locase_alpha (string s);
@@ -33,6 +35,8 @@ string upcase_first (string s);
 string locase_first (string s);
 string upcase_all (string s);
 string locase_all (string s);
+string string_union (string s1, string s2);
+string string_minus (string s1, string s2);
 string iso_to_koi8 (string s);
 string koi8_to_iso (string s);
 string iso_to_koi8uk (string s);
@@ -62,6 +66,8 @@ int    from_hexadecimal (string s);
 string tm_encode (string s);
 string tm_decode (string s);
 string tm_correct (string s);
+void   tm_char_forwards (string s, int& pos);
+void   tm_char_backwards (string s, int& pos);
 string slash (string s);
 string unslash (string s);
 string quote     (string s);
@@ -100,5 +106,9 @@ int    search_backwards (string s, string in);
 int    search_backwards (string s, int pos, string in);
 string replace (string s, string what, string by);
 bool   match_wildcard (string s, string w);
+
+array<string> as_completions (hashset<string> h);
+array<string> close_completions (array<string> a);
+array<string> strip_completions (array<string> a, string prefix);
 
 #endif // defined ANALYZE_H

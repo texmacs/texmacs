@@ -13,23 +13,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-server)
-  (:use (texmacs texmacs tm-document))
-  (:export
-    conditional-kill-buffer safely-kill-buffer safely-kill-window
-    conditional-quit-TeXmacs safely-quit-TeXmacs))
+  (:use (generic document-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (get-default-look-and-feel)
+  (if (os-win32?) "windows" "emacs"))
+
+(define (get-default-interactive-questions)
+  (if (== (get-preference "look and feel") "windows") "popups" "footer"))
+
 (define (notify-look-and-feel var val)
-  (if preferences-initialization-flag
-      (set-message "Restart in order to let the new look and feel take effect"
-		   "configure look and feel")))
+  (set-message "Restart in order to let the new look and feel take effect"
+	       "configure look and feel"))
 
 (define (notify-language var val)
   (set-output-language val)
-  (if (and (has-view?) (== (the-buffer) (stree->tree '(document ""))))
+  (if (and (has-view?) (== (buffer-tree) (stree->tree '(document ""))))
       (init-language val))
   (cond ((or (== val "russian") (== val "ukrainian"))
 	 (notify-preference "cyrillic input method"))))
@@ -39,44 +41,63 @@
 	((== val "prompt on scripts") (set-script-status 1))
 	((== val "accept all scripts") (set-script-status 2))))
 
-(define (notify-autosave var val)
-  (if (has-view?) ; delayed-autosave would crash at initialization time
-      (delayed-autosave)))
-
 (define (notify-bibtex-command var val)
   (set-bibtex-command val))
 
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
-  ("look and feel" "emacs" notify-look-and-feel)
+  ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
+  ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("security" "prompt on scripts" notify-security)
-  ("autosave" "120" notify-autosave)
   ("bibtex command" "bibtex" notify-bibtex-command))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Properties of some built-in routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-property (system cmd)
+  (:argument cmd "System command"))
+
+(tm-property (footer-eval cmd)
+  (:argument cmd "Scheme command"))
+
+(define (symbol<=? s1 s2)
+  (string<=? (symbol->string s1) (symbol->string s2)))
+
+(define (get-function-list)
+  (list-sort (map car (ahash-table->list ovl-table)) symbol<=?))
+
+(define (get-interactive-function-list)
+  (let* ((funs (get-function-list))
+	 (pred? (lambda (fun) (not (not (property fun :arguments))))))
+    (list-filter funs pred?)))
+
+(tm-define (exec-interactive-command cmd)
+  (:argument  cmd "Interactive command")
+  (:proposals cmd (cons "" (map symbol->string
+				(get-interactive-function-list))))
+  (interactive (eval (string->symbol cmd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (conditional-kill-buffer confirm)
-  (if (yes? confirm) (kill-buffer)))
+(tm-define (safely-kill-buffer)
+  (dialogue
+    (if (or (not (buffer-unsaved?))
+	    (dialogue-confirm?
+	     "The buffer has not been saved. Really close it?" #f))
+	(kill-buffer))))
 
-(define (safely-kill-buffer)
-  (if (buffer-unsaved?)
-      (interactive
-       '("The buffer has not been saved. Really close it?")
-       'conditional-kill-buffer)
-      (kill-buffer)))
+(tm-define (safely-kill-window)
+  (if (<= (get-nr-windows) 1)
+      (safely-quit-TeXmacs)
+      (kill-window)))
 
-(define (safely-kill-window)
-  (if (<= (get-nr-windows) 1) (safely-quit-TeXmacs) (kill-window)))
-
-(define (conditional-quit-TeXmacs confirm)
-  (if (yes? confirm) (quit-TeXmacs)))
-
-(define (safely-quit-TeXmacs)
-  (if (exists-unsaved-buffer?)
-      (interactive
-       '("There are unsaved files. Really quit?")
-       'conditional-quit-TeXmacs)
-      (quit-TeXmacs)))
+(tm-define (safely-quit-TeXmacs)
+  (dialogue
+    (if (or (not (exists-unsaved-buffer?))
+	    (dialogue-confirm?
+	     "There are unsaved files. Really quit?" #f))
+	(quit-TeXmacs))))

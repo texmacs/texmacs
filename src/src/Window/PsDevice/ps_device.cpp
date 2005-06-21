@@ -50,7 +50,8 @@ ps_device_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
 }
 
 void
-ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+ps_device_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
+  (void) restore;
   outer_round (x1, y1, x2, y2);
   cx1= x1+ ox; cy1= y1+ oy;
   cx2= x2+ ox; cy2= y2+ oy;

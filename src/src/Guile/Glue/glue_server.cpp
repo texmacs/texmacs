@@ -288,22 +288,9 @@ tmg_get_shrinking_factor () {
 
 SCM
 tmg_exec_delayed (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "exec-delayed");
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "exec-delayed");
 
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->exec_delayed (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_exec_delayed_cmd (SCM arg1) {
-  SCM_ASSERT_COMMAND (arg1, SCM_ARG1, "exec-delayed-cmd");
-
-  command in1= scm_to_command (arg1);
+  object in1= scm_to_object (arg1);
 
   // SCM_DEFER_INTS;
   get_server()->exec_delayed (in1);
@@ -336,16 +323,31 @@ tmg_dialogue_end () {
 
 SCM
 tmg_choose_file (SCM arg1, SCM arg2, SCM arg3) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "choose-file");
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "choose-file");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "choose-file");
-  SCM_ASSERT_SCHEME_TREE (arg3, SCM_ARG3, "choose-file");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "choose-file");
 
-  string in1= scm_to_string (arg1);
+  object in1= scm_to_object (arg1);
   string in2= scm_to_string (arg2);
-  scheme_tree in3= scm_to_scheme_tree (arg3);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
   get_server()->choose_file (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tm_interactive (SCM arg1, SCM arg2) {
+  SCM_ASSERT_OBJECT (arg1, SCM_ARG1, "tm-interactive");
+  SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "tm-interactive");
+
+  object in1= scm_to_object (arg1);
+  scheme_tree in2= scm_to_scheme_tree (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->interactive (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -411,7 +413,7 @@ tmg_set_name_buffer (SCM arg1) {
 
 SCM
 tmg_set_abbr_buffer (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-abbr-buffer");
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-abbr-buffer");
 
   string in1= scm_to_string (arg1);
 
@@ -603,6 +605,15 @@ tmg_browse_help (SCM arg1) {
 }
 
 SCM
+tmg_get_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
 tmg_project_attach (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "project-attach");
 
@@ -631,6 +642,15 @@ tmg_project_attachedP () {
   // SCM_ALLOW_INTS;
 
   return bool_to_scm (out);
+}
+
+SCM
+tmg_get_project_buffer_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_project_buffer_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
 }
 
 SCM
@@ -683,9 +703,9 @@ tmg_texmacs_save_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_delayed_autosave () {
+tmg_auto_save () {
   // SCM_DEFER_INTS;
-  get_server()->delayed_autosave ();
+  get_server()->auto_save ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -702,6 +722,33 @@ tmg_color (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return int_to_scm (out);
+}
+
+SCM
+tmg_get_style_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_style_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_add_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_add_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
+}
+
+SCM
+tmg_get_remove_package_menu () {
+  // SCM_DEFER_INTS;
+  object out= get_server()->get_remove_package_menu ();
+  // SCM_ALLOW_INTS;
+
+  return object_to_scm (out);
 }
 
 SCM
@@ -824,6 +871,47 @@ tmg_inclusions_gc () {
 }
 
 SCM
+tmg_set_message (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_message (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_message_temp (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message-temp");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message-temp");
+  SCM_ASSERT_BOOL (arg3, SCM_ARG3, "set-message-temp");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  bool in3= scm_to_bool (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_message (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_recall_message () {
+  // SCM_DEFER_INTS;
+  get_server()->recall_message ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_translate (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "translate");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "translate");
@@ -904,10 +992,10 @@ initialize_glue_server () {
   gh_new_procedure ("set-shrinking-factor", (FN) tmg_set_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-shrinking-factor", (FN) tmg_get_shrinking_factor, 0, 0, 0);
   gh_new_procedure ("exec-delayed", (FN) tmg_exec_delayed, 1, 0, 0);
-  gh_new_procedure ("exec-delayed-cmd", (FN) tmg_exec_delayed_cmd, 1, 0, 0);
   gh_new_procedure ("shell", (FN) tmg_shell, 1, 0, 0);
   gh_new_procedure ("dialogue-end", (FN) tmg_dialogue_end, 0, 0, 0);
   gh_new_procedure ("choose-file", (FN) tmg_choose_file, 3, 0, 0);
+  gh_new_procedure ("tm-interactive", (FN) tmg_tm_interactive, 2, 0, 0);
   gh_new_procedure ("has-view?", (FN) tmg_has_viewP, 0, 0, 0);
   gh_new_procedure ("buffer-unsaved?", (FN) tmg_buffer_unsavedP, 0, 0, 0);
   gh_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);
@@ -931,14 +1019,19 @@ initialize_glue_server () {
   gh_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   gh_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
   gh_new_procedure ("browse-help", (FN) tmg_browse_help, 1, 0, 0);
+  gh_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
   gh_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
   gh_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
   gh_new_procedure ("project-attached?", (FN) tmg_project_attachedP, 0, 0, 0);
+  gh_new_procedure ("get-project-buffer-menu", (FN) tmg_get_project_buffer_menu, 0, 0, 0);
   gh_new_procedure ("texmacs-load-tree", (FN) tmg_texmacs_load_tree, 2, 0, 0);
   gh_new_procedure ("texmacs-load-buffer", (FN) tmg_texmacs_load_buffer, 4, 0, 0);
   gh_new_procedure ("texmacs-save-buffer", (FN) tmg_texmacs_save_buffer, 2, 0, 0);
-  gh_new_procedure ("delayed-autosave", (FN) tmg_delayed_autosave, 0, 0, 0);
+  gh_new_procedure ("auto-save", (FN) tmg_auto_save, 0, 0, 0);
   gh_new_procedure ("color", (FN) tmg_color, 1, 0, 0);
+  gh_new_procedure ("get-style-menu", (FN) tmg_get_style_menu, 0, 0, 0);
+  gh_new_procedure ("get-add-package-menu", (FN) tmg_get_add_package_menu, 0, 0, 0);
+  gh_new_procedure ("get-remove-package-menu", (FN) tmg_get_remove_package_menu, 0, 0, 0);
   gh_new_procedure ("style-clear-cache", (FN) tmg_style_clear_cache, 0, 0, 0);
   gh_new_procedure ("set-script-status", (FN) tmg_set_script_status, 1, 0, 0);
   gh_new_procedure ("set-printing-command", (FN) tmg_set_printing_command, 1, 0, 0);
@@ -950,6 +1043,9 @@ initialize_glue_server () {
   gh_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
   gh_new_procedure ("postscript-gc", (FN) tmg_postscript_gc, 0, 0, 0);
   gh_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
+  gh_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
+  gh_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
+  gh_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);
   gh_new_procedure ("translate", (FN) tmg_translate, 3, 0, 0);
   gh_new_procedure ("yes?", (FN) tmg_yesP, 1, 0, 0);
   gh_new_procedure ("quit-TeXmacs", (FN) tmg_quit_TeXmacs, 0, 0, 0);

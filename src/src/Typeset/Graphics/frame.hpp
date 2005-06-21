@@ -27,6 +27,9 @@ public:
   // a point p in frame f corresponds to f(p) = f->direct_transform(p)
   // in the parent frame of f
 
+  virtual point jacobian (point p, point v, bool &error) = 0;
+  // the Jacobian matrix at p applied to v
+
   virtual double direct_bound (point p, double eps) = 0;
   virtual double inverse_bound (point p, double eps) = 0;
   // direct_bound (p, eps) yields a delta such that for all p'
@@ -52,7 +55,11 @@ class frame {
 };
 ABSTRACT_NULL_CODE(frame);
 
-frame scaling (double magnify, array<double> shift);
+// Transformations
+frame scaling (double magnify, point shift);
+frame rotation_2D (point center, double angle);
+
+// Operations on transformations
 frame operator * (frame f1, frame f2);
 frame invert (frame f);
 

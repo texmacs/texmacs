@@ -25,23 +25,29 @@
     (cons
      (concat "\\<\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-table define-preferences
-         texmacs-modes and-let* case-lambda with values receive map-in-order
-         drd-group drd-table drd-dispatcher tm-define tm-command
-         tm-macro define-grammar drd-rule drd-rules assume menu-bind
+       '(texmacs-module define-macro define-public-macro
+         tm-define tm-define-macro tm-property
+	 define-table define-preferences define-secure-symbols
+         texmacs-modes and-let* case-lambda with
+	 with-innermost with-action with-mutator with-module with-cursor
+	 call/cc with-cc values receive map-in-order
+         drd-group drd-table drd-dispatcher
+         define-grammar drd-rule drd-rules assume menu-bind
          menu-extend menu-dynamic kbd-map kbd-wildcards kbd-commands
-         kbd-symbols setup-append-if when link promise
+         kbd-symbols setup-append-if when link promise while
 	 plugin-configure plugin-input-converters use-modules export
-	 import-from inherit-modules lazy-menu lazy-in-mode
-	 lazy-define lazy-input-converter define-format converter
-	 with-aux) "\\|")
+	 import-from inherit-modules lazy-menu lazy-keyboard
+	 lazy-define lazy-format lazy-input-converter
+	 define-format converter with-aux define-group
+	 dialogue delayed on-entry on-exit) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
      (concat "(\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-table tm-define tm-command
-	 tm-macro menu-bind menu-extend plugin-configure
+       '(texmacs-module define-macro define-public-macro define-table
+	 tm-define tm-define-macro tm-property define-group
+	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
      '(3 font-lock-function-name-face))
@@ -52,15 +58,21 @@
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
-  (dolist (s '(with receive with-environment with-environment* converter))
+  (dolist (s '(with with-innermost receive
+	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module and-let* setup-append-if tm-define tm-command
-	       tm-macro drd-group drd-table drd-dispatcher menu-bind
+  (dolist (s '(texmacs-module and-let* setup-append-if define-group
+	       define-macro define-public-macro while
+	       tm-define tm-define-macro tm-property
+	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
-	       format with-aux))
+	       with-cc format with-aux with-mutator
+	       with-action with-module with-cursor
+	       interactive dialogue-user))
     (put s 'scheme-indent-function 1))
-  (dolist (s '(values define-preferences menu-dynamic case-lambda
-	       kbd-map kbd-wildcards kbd-commands kbd-symbols
+  (dolist (s '(cond call/cc values define-preferences menu-dynamic
+	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       :use :inherit :export))
+	       delayed dialogue on-entry on-exit
+	       :use :inherit))
     (put s 'scheme-indent-function 0)))

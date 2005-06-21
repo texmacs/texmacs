@@ -1,42 +1,66 @@
-<TeXmacs|1.0.3>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|Mathematical formulas>
 
-  To type mathematical formulas, you need first to enter ``math mode''. This
-  is a special text property enabled in structures created by the
-  <menu|Text|Mathematics> menu.
+  To type mathematical formulas, you need first to enter ``math mode'' using
+  one of the following methods:
 
   <\description>
-    <item*|Formula <key|$>>is used for small mathematical fragments inside a
-    textual paragraph.\ 
+    <item*|<menu|Insert|Mathematics|Formula> or <key|$>>
 
-    Note that formulas are typeset specially so they do not take too much
-    vertical space. For example, limits are always displayed on the left.
-    Limits can be displayed below in formulas with <menu|Format|Formula
+    This entry corresponds to small <em|inline formulas> like
+    <with|mode|math|a<rsup|2>+b<rsup|2>=c<rsup|2>> inside a textual
+    paragraph. Note that formulas are typeset specially so they do not take
+    too much vertical space. For example, limits are always displayed on the
+    left. Limits can be displayed below in formulas with <menu|Format|Formula
     style|on>. In formulas, formula style is off by default.
 
-    <item*|Equation <key|A-$>>is the structure for bigger mathematical
-    expressions which are typeset in a paragraph of their own.
+    <item*|<menu|Insert|Mathematics|Equation> or <key|A-$>>
 
-    <item*|Equations <key|A-&>>create an <markup|eqnarray*>, a three columns
+    This entry is used for entering bigger <em|displayed equations>, like
+
+    <\equation*>
+      x<rsup|n>+y<rsup|n>=z<rsup|n>,
+    </equation*>
+
+    which are typeset in a paragraph of their own. You may use the shortcut
+    <key|A-*> in order to give the equation a number (or to remove the number
+    of an equation). Also, <key|C-<key-tab>> allows you to switch between
+    inline formulas and displayed equations.
+
+    <item*|<menu|Insert|Mathematics|Equations> or <key|A-&>>
+
+    This entry allows you to create an <markup|eqnarray*>, a three columns
     wide table-like environment (see <hyper-link|creating
-    tables|../table/man-create-table.en.tm>).
+    tables|../table/man-create-table.en.tm>). This environment is typically
+    used for lists of multiple relations like
 
-    This environment should be used for multiple relations where each line
-    repeats the relation symbol. The first column should contain the left
-    hand side, the middle column the relational symbol, and the left column
-    the right hand side. The typical use for <markup|eqnarray*> is a step by
-    step computation where each line describes a simple operation on the
-    right hand side of an equation.
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|x+0>|<cell|=>|<cell|x>>|<row|<cell|x+(\<um\>x)>|<cell|=>|<cell|0>>|<row|<cell|x+y>|<cell|=>|<cell|y+x>>|<row|<cell|(x+y)+z>|<cell|=>|<cell|x+(y+z)>>>>
+    </eqnarray*>
+
+    The first column is centered to the right, the second one at the middle
+    and the last one at the left. An other typical use of the
+    <markup|eqnarray*> environment is a step by step computation like
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|<left|(>\<mathe\><rsup|sin x>+sin
+      \<mathe\><rsup|x><right|)><rprime|'>>|<cell|=>|<cell|<left|(>\<mathe\><rsup|sin
+      x>)<rprime|'>+<left|(>sin \<mathe\><rsup|x><right|)><rprime|'>>>|<row|<cell|>|<cell|=>|<cell|(sin
+      x)<rprime|'>*\<mathe\><rsup|sin x>+<left|(>\<mathe\><rsup|x><right|)><rprime|'>*sin
+      \<mathe\><rsup|x>>>|<row|<cell|>|<cell|=>|<cell|\<mathe\><rsup|sin
+      x>*cos x+\<mathe\><rsup|x>*sin \<mathe\><rsup|x>,>>>>
+    </eqnarray*>
+
+    in which many entries of the left column are left open.
   </description>
 
   In math mode, you have specific commands and key-combinations to type
-  mathematical symbols and formulas. For instance, the <key|H-> prefix can be
-  used in order to enter Greek symbols (recall that <key|H-> is equivalent to
-  <key|F5>, <key|<key-escape> <key-escape> <key-escape>> or <key|A-C->).
+  mathematical symbols and formulas. For instance, the <key|F5> prefix can be
+  used in order to enter Greek symbols.
 
   The editor favors typing mathematics with a certain meaning. This feature,
   which will be developed more in future releases, is useful when
@@ -69,34 +93,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Mathematics>|<with|font-family|<quote|ss>|Equation>>|<pageref|idx-1>>
-    </associate>
-  </collection>
-</auxiliary>

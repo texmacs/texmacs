@@ -1,0 +1,14 @@
+Plugin: smart-space
+Summary: prevent typing spurious white spaces
+Release: 0.1
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU GPL v2.0 or later
+
+Though TeXmacs tries to emphasize structural edition of document, it
+also support visual edition very easily: it is easy to format a
+document by inserting multiple whitespace and empty lines.
+
+This plugin modifies the behaviour of the "space" key in text mode to
+prevent the user from typing multiple white spaces in a few
+situations.

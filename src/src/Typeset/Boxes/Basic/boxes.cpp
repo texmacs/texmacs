@@ -169,6 +169,12 @@ box_rep::relocate (path new_ip, bool force) {
   for (i=0; i<n; i++) subbox (i)->relocate (ip, force);
 }
 
+box
+box_rep::transform (frame fr) {
+  (void) fr;
+  return box ();
+}
+
 /******************************************************************************
 * For graphical boxes
 ******************************************************************************/

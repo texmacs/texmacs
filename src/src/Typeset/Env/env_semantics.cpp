@@ -12,6 +12,7 @@
 
 #include "env.hpp"
 #include "PsDevice/page_type.hpp"
+#include "typesetter.hpp"
 
 /******************************************************************************
 * Retrieving the page size
@@ -104,6 +105,11 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_WIDTH)  = Env_Page;
 
   var_type (LINE_WIDTH)        = Env_Line_Width;
+  var_type (DASH_STYLE)        = Env_Dash_Style;
+  var_type (DASH_STYLE_UNIT)   = Env_Dash_Style_Unit;
+  var_type (FILL_MODE)         = Env_Fill_Mode;
+  var_type (FILL_COLOR)        = Env_Fill_Color;
+  var_type (LINE_ARROWS)       = Env_Line_Arrows;
   var_type (GR_FRAME)          = Env_Frame;
   var_type (GR_CLIP)           = Env_Clipping;
   var_type (GR_GRID)           = Env_Grid;
@@ -363,6 +369,70 @@ edit_env_rep::update_src_close () {
 }
 
 void
+edit_env_rep::update_dash_style () {
+  tree t= env [DASH_STYLE];
+  dash_style= array<bool>(0);
+  if (is_string (t)) {
+    string s= as_string (t);
+    if (s == "none") ;
+  }
+  else
+  if (is_tuple (t)) {
+    int i, n= N(t);
+    dash_style= array<bool> (n);
+    for (i=0; i<n; i++) {
+      dash_style[i]= true;
+      if (t[i] == "0") dash_style[i]= false;
+    }
+  }
+}
+
+void
+edit_env_rep::update_fill_mode () {
+  string s= get_string (FILL_MODE);
+  fill_mode= FILL_MODE_NONE;
+  if (s=="none") fill_mode= FILL_MODE_NONE;
+  if (s=="inside") fill_mode= FILL_MODE_INSIDE;
+  if (s=="both") fill_mode= FILL_MODE_BOTH;
+}
+
+void
+edit_env_rep::update_fill_color () {
+  string s= get_string (FILL_COLOR);
+  fill_color= dis->get_color (s);
+}
+
+/*FIXME: Currently, the line-arrows property is evaluated
+  only in the context of the variables which appear before
+  it in the <with>. For example :
+
+  - <with|color|blue|<with|color|green|line-arrows|<line|...>|...>
+    draws green objects with green line arrows;
+
+  - while <with|color|blue|<with|line-arrows|<line|...>|color|green|...>
+    draws green objects with blue line arrows.
+ */
+void
+edit_env_rep::update_line_arrows () {
+  tree t= env [LINE_ARROWS];
+  line_arrows= array<box>(2);
+  if (is_string (t)) {
+    string s= as_string (t);
+    if (s == "none") ;
+  }
+  else
+  if (is_tuple (t) && N(t)<=2 && N(t)>0) {
+    array<box> b (2);
+    b[1]= t[0]=="" ? box () : typeset_as_box (this, t[0], path(0));
+    if (N(t)>=2) {
+      b[0]= b[1];
+      b[1]= t[1]=="" ? box () : typeset_as_box (this, t[1], path (0));
+    }
+    line_arrows= b;
+  }
+}
+
+void
 edit_env_rep::update () {
   magn           = get_double (MAGNIFICATION);
   index_level    = get_int (MATH_LEVEL);
@@ -380,6 +450,11 @@ edit_env_rep::update () {
   update_clipping ();
   point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
+  update_dash_style ();
+  dash_style_unit= get_length (DASH_STYLE_UNIT);
+  update_fill_mode ();
+  update_fill_color ();
+  update_line_arrows ();
 
   update_src_style ();
   update_src_special ();
@@ -450,6 +525,21 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Width:
     lw= get_length (LINE_WIDTH);
+    break;
+  case Env_Dash_Style:
+    update_dash_style();
+    break;
+  case Env_Dash_Style_Unit:
+    dash_style_unit= get_length (DASH_STYLE_UNIT);
+    break;
+  case Env_Fill_Mode:
+    update_fill_mode ();
+    break;
+  case Env_Fill_Color:
+    update_fill_color ();
+    break;
+  case Env_Line_Arrows:
+    update_line_arrows();
     break;
   case Env_Src_Style:
     update_src_style ();

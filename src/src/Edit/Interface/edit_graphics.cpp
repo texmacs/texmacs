@@ -117,23 +117,28 @@ edit_graphics_rep::graphical_select (double x, double y) {
   return (tree) gs;
 }
 
-tree edit_graphics_rep::get_graphical_object () {
+tree
+edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }
 
-void edit_graphics_rep::set_graphical_object (tree t) {
+void
+edit_graphics_rep::set_graphical_object (tree t) {
   go_box= box ();
   graphical_object= t;
   if (N (graphical_object) == 0) return;
   edit_env env= get_typesetter ()->env;
+  //tree old_fr= env->local_begin (GR_FRAME, (tree) find_frame ());  
   frame f_env= env->fr;
   env->fr= find_frame ();
   if (!nil (env->fr))
     go_box= typeset_as_concat (env, t, path (0));
   env->fr= f_env;
+  //env->local_end (GR_FRAME, old_fr);
 }
 
-void edit_graphics_rep::invalidate_graphical_object () {
+void
+edit_graphics_rep::invalidate_graphical_object () {
   if (nil (go_box)) return;
   int i;
   for (i=0; i<go_box->subnr(); i++) {
@@ -146,7 +151,8 @@ void edit_graphics_rep::invalidate_graphical_object () {
   }
 }
 
-void edit_graphics_rep::draw_graphical_object (ps_device dev) {
+void
+edit_graphics_rep::draw_graphical_object (ps_device dev) {
   if (nil (go_box)) set_graphical_object(graphical_object);
   if (nil (go_box)) return;
   point lim1, lim2;

@@ -51,7 +51,8 @@ public:
 
   x_window_rep (widget w, x_display dis, char* name);
   x_window_rep (widget w, x_display dis, char* name, SI x, SI y);
-  x_window_rep (widget wdgt, x_display dis, char* name, SI w, SI h, SI x, SI y);  ~x_window_rep ();
+  x_window_rep (widget wid, x_display dis, char* name, SI w, SI h, SI x, SI y);
+  ~x_window_rep ();
   int get_type ();
 
   void compute_size (SI& w1, SI& h1, SI& w2, SI& h2, SI& w3, SI& h3);
