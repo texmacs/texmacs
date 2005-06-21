@@ -24,6 +24,8 @@ struct scaling_rep: public frame_rep {
     return tuple ("scale", as_string (magnify), as_tree (shift)); }
   point direct_transform (point p) { return shift + magnify * p; }
   point inverse_transform (point p) { return (p - shift) / magnify; }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return magnify * v; }
   double direct_bound (point p, double eps) { return eps / magnify; }
   double inverse_bound (point p, double eps) { return eps * magnify; }
 };
@@ -45,6 +47,8 @@ struct rotation_2D_rep: public frame_rep {
     return tuple ("rotation_2D", as_tree (center), as_string (angle)); }
   point direct_transform (point p) { return rotate_2D (p, center, angle); }
   point inverse_transform (point p) { return rotate_2D (p, center, -angle); }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return rotate_2D (v, point (0.0, 0.0), angle); }
   double direct_bound (point p, double eps) { return eps; }
   double inverse_bound (point p, double eps) { return eps; }
 };
@@ -65,6 +69,13 @@ struct compound_frame_rep: public frame_rep {
   operator tree () { return tuple ("compound", (tree) f1, (tree) f2); }
   point direct_transform (point p) { return f1 (f2 (p)); }
   point inverse_transform (point p) { return f2 [f1 [p]]; }
+  point jacobian (point p, point v, bool &error) {
+    bool error2;
+    point w2= f2->jacobian (p, v, error2);
+    point w1= f1->jacobian (f2 (p), w1, error);
+    error |= error2;
+    return w1;
+  }
   double direct_bound (point p, double eps) {
     return f1->direct_bound (f2(p), f2->direct_bound (p, eps)); }
   double inverse_bound (point p, double eps) {
@@ -86,6 +97,10 @@ struct inverted_frame_rep: public frame_rep {
   operator tree () { return tuple ("inverse", (tree) f); }
   point direct_transform (point p) { return f [p]; }
   point inverse_transform (point p) { return f (p); }
+  point jacobian (point p, point v, bool &error) {
+    fatal_error ("Not yet implemented",
+		 "inverted_frame_rep::jacobian");
+  }
   double direct_bound (point p, double eps) {
     return f->inverse_bound (p, eps); }
   double inverse_bound (point p, double eps) {
