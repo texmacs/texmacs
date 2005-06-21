@@ -109,8 +109,9 @@
   (ahash-set! supported-scripts-table name menu-name))
 
 (tm-define (supported-scripts-menu-entry name)
-  (let* ((menu-name (ahash-ref supported-scripts-table name)))
-    (list menu-name (lambda () (init-env "prog-scripts" "maxima")))))
+  (let* ((fun `(lambda () (init-env "prog-scripts" ,name)))
+	 (menu-name (ahash-ref supported-scripts-table name)))
+    (list menu-name (eval fun))))
 
 (define-public (supported-scripts-menu)
   (lazy-plugin-force)

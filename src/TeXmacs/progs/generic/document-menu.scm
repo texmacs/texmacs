@@ -302,7 +302,6 @@
       ("Ukrainian" (init-language "ukrainian")))
   (-> "Scripts"
       ("Default" (init-default "prog-scripts"))
-      ("Scheme" (make-session "scheme" "default"))
       ---
       (link supported-scripts-menu))
   (-> "Paragraph"

@@ -25,19 +25,11 @@
   (cond ((match? t '(concat
 		     (with "mode" "text" "font-family" "tt" "color" "red" :*) 
 		     :*))
-	 (plugin-output-std-simplify name `(concat ,@(cddr t))))
-	(else t)))
+	 (plugin-output-simplify name `(concat ,@(cddr t))))
+	(else (plugin-output-std-simplify name t))))
 
-(define (maxima-apply fun)
-  (cond ((and (selection-active-any?)
-	      (test-env? "prog-scripts" "maxima"))
-	 (plugin-selection-apply fun))
-	((selection-active-any?)
-	 (clipboard-cut "primary")
-	 (maxima-apply fun)
-	 (clipboard-paste "primary"))
-	(else (insert-go-to (string-append fun "()")
-			    (list (1+ (string-length fun)))))))
+(define maxima-evaluate plugin-evaluate)
+(define maxima-apply plugin-apply-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Maxima menu
@@ -46,7 +38,7 @@
 (menu-bind maxima-menu
   (if (test-env? "prog-scripts" "maxima")
       (when (selection-active-any?)
-	    ("Evaluate" (plugin-selection-eval)))
+	    ("Evaluate" (maxima-evaluate)))
       ---)
   (-> "Simplification"
       ("Factor" (maxima-apply "factor"))
@@ -72,7 +64,7 @@
       ("Gamma" (maxima-apply "Gamma"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
+;; Additional icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind maxima-help-icons
