@@ -16,11 +16,12 @@
 
 typedef array<double> point;
 
-point operator - (point p);
-point operator + (point p1, point p2);
-point operator - (point p1, point p2);
-point operator * (double x, point p);
-point operator / (point p, double x);
+point operator -  (point p);
+point operator +  (point p1, point p2);
+point operator -  (point p1, point p2);
+point operator *  (double x, point p );
+point operator /  (point  p, double x);
+bool  operator == (point p1, point p2);
 
 inline point as_point(double x) {
   point p(1); p[0]=x; return p; }

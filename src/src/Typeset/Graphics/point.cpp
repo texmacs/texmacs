@@ -59,6 +59,15 @@ operator / (point p, double x) {
   return r;
 }
 
+bool
+operator == (point p1, point p2) {
+  if (N(p1) != N(p2)) return false;
+  int i, n= N(p1);
+  for (i=0; i<n; i++)
+    if (!fnull (p1[i]-p2[i], 1e-6)) return false;
+  return true;
+}
+
 point
 as_point (tree t) {
   if (!is_tuple (t)) return point ();
