@@ -92,7 +92,7 @@
 
   <assign|scm-arg|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>>>>>
 
-  <assign|scm-args|<macro|x|<scm|. <with|prog-font-shape|italic|<arg|x>>>>>
+  <assign|scm-args|<macro|x|<scm|<with|prog-font-shape|italic|<arg|x>><rsup|*>>>>
 
   <assign|scm-opt-arg|<macro|x|<with|color|dark
   grey|[<style-with|<scm-arg|<arg|x>>>]>>>

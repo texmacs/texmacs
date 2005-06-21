@@ -8,12 +8,16 @@
   <section|Changes from version 1.0.5 to 1.0.5.4>
 
   <\itemize>
+    <item>Documentation of tree API (partial) and structured editing (1.0.5.4).
+
     <item>Fixed some long standing bugs concerning cursor movement (1.0.5.4).
 
     <item>Implementation of structured cursor movement (1.0.5.4).
 
     <item>Enrichment of the Scheme API with routines for tree traversal
     (1.0.5.4).
+
+    <item>Improved arrows and dashes for upcoming graphical mode(1.0.5.4).
 
     <item>Reorganized and consolidated tree API (1.0.5.3).
 
