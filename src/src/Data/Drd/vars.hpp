@@ -54,6 +54,7 @@ extern string MATH_CONDENSED;
 extern string MATH_VPOS;
 
 extern string PROG_LANGUAGE;
+extern string PROG_SCRIPTS;
 extern string PROG_FONT;
 extern string PROG_FONT_FAMILY;
 extern string PROG_FONT_SERIES;

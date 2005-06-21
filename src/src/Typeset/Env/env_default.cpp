@@ -71,6 +71,7 @@ initialize_default_env () {
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
 
   env (PROG_LANGUAGE)    = "scheme";    // the default programming language
+  env (PROG_SCRIPTS)     = "scheme";    // the scripting language
   env (PROG_FONT)        = "roman";     // the font name in prog mode
   env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode

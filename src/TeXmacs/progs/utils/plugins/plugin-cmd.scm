@@ -167,15 +167,49 @@
 ;; evaluation + simplification of documents with one paragraph
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (plugin-output-simplify t)
-  (cond ((func? t 'document 1) (plugin-output-simplify (cadr t)))
-	((func? t 'with) (rcons (cDr t) (plugin-output-simplify (cAr t))))
-	(else t)))
+(tm-define (plugin-output-simplify name t) t)
+
+(tm-define (plugin-output-std-simplify name t)
+  (cond ((or (func? t 'document 0) (func? 'concat 0)) "")
+	((or (func? t 'document 1) (func? t 'concat 1))
+	 (plugin-output-std-simplify name (cadr t)))
+	((and (or (func? t 'document) (func? t 'concat))
+	      (in? (cadr t) '("" " " "  ")))
+	 (plugin-output-std-simplify name (cons (car t) (cddr t))))
+	((and (or (func? t 'document) (func? t 'concat))
+	      (in? (cAr t) '("" " " "  ")))
+	 (plugin-output-std-simplify name (cDr t)))
+	((func? t 'with)
+	 (rcons (cDr t) (plugin-output-std-simplify name (cAr t))))
+	(else (plugin-output-simplify name t))))
 
 (tm-define (plugin-eval name session t)
-  (let* ((u (connection-eval name session (stree->tree t)))
-	 (v (plugin-output-simplify (tree->stree u))))
+  (let* ((u (connection-eval name session t))
+	 (v (plugin-output-std-simplify name (tree->stree u))))
     v))
+
+(tm-define (plugin-eval* name session t)
+  (if (plugin-supports-math-input-ref name)
+      (set! t (plugin-math-input (list 'tuple name t))))
+  (plugin-eval name session t))
+
+(tm-define (plugin-selection-eval)
+  (if (selection-active-any?)
+      (let* ((name (get-env "prog-scripts"))
+	     (session (get-env "prog-session"))
+	     (t (tree->stree (selection-tree)))
+	     (r (plugin-eval* name session t)))
+	(clipboard-cut "primary")
+	(insert r))))
+
+(tm-define (plugin-selection-apply fun)
+  (if (selection-active-any?)
+      (let* ((name (get-env "prog-scripts"))
+	     (session (get-env "prog-session"))
+	     (t (list 'concat fun "(" (tree->stree (selection-tree)) ")"))
+	     (r (plugin-eval* name session t)))
+	(clipboard-cut "primary")
+	(insert r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tab completion

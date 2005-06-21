@@ -12,20 +12,16 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (maxima-menus) maxima-menu maxima-help-icons)
+
 (define (maxima-initialize)
-  (import-from (doc help-funcs) (utils plugins plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
-  (menu-extend session-help-icons
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/info/maxima_toc.html")))
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/doc/html/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/doc/html/maxima_toc.html")))))
+  (menu-extend session-help-icons (link maxima-help-icons))
+  (menu-extend texmacs-extra-menu
+    (if (or (in-maxima?) (test-env? "prog-scripts" "maxima"))
+	(=> "Maxima"
+	    (link maxima-menu)))))
 
 (define (maxima-serialize lan t)
   (import-from (utils plugins plugin-cmd))
