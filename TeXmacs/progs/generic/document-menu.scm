@@ -302,8 +302,9 @@
       ("Ukrainian" (init-language "ukrainian")))
   (-> "Scripts"
       ("Default" (init-default "prog-scripts"))
+      ("Scheme" (make-session "scheme" "default"))
       ---
-      ("Maxima" (init-env "prog-scripts" "maxima")))
+      (link supported-scripts-menu))
   (-> "Paragraph"
       (-> "Style"
 	  ("Default" (init-default "par-mode"))
