@@ -10,7 +10,7 @@
 
     <branch|Fundamental tree modification routines|edit-fundamental.en.tm>
 
-    <branch|High level editing routines|edit-modify.en.tm>
+    <branch|High level modification routines|edit-modify.en.tm>
 
     <branch|Path-based navigation|edit-path-navigate.en.tm>
   </traverse>

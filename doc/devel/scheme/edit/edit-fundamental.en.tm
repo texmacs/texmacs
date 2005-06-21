@@ -9,8 +9,9 @@
   tree are decomposed into atomic modifications of eight different types. In
   this section, we describe the <value|scheme> interface to these fundamental
   modification routines. Even though it is usually more convenient to use
-  higher level modification routines, as described in the next section, the
-  fundamental tree modification routines may occasionally be useful as well.
+  higher level modification routines, as described in the <hlink|next
+  section|edit-modify.en.tm>, the fundamental tree modification routines may
+  occasionally be useful as well.
 
   It should be emphasized that the fundamental tree modification routines are
   <em|not> checked for their correctness. It is the responsability of the
