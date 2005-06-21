@@ -99,11 +99,7 @@
     (if p (path-assign-node p lab)
 	(texmacs-error "tree-assign-node" "~S isn't part of a document" ref))))
 
-(tm-define-macro (tree-assign-node! ref lab)
-  (with var (gensym)
-    `(with ,var (tree->path ,ref)
-       (tree-assign-node ,ref ,lab)
-       (set! ,ref (path->tree ,var)))))
+(tm-define tree-assign-node! tree-assign-node)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Use fundamental modification routines in an intelligent way
