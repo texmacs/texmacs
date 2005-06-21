@@ -12,9 +12,15 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (pari-menus) pari-menu)
+
 (define (pari-initialize)
   (import-from (utils plugins plugin-convert))
-  (plugin-input-converters pari))
+  (plugin-input-converters pari)
+  (menu-extend texmacs-extra-menu
+    (if (or (in-pari?) (test-env? "prog-scripts" "pari"))
+	(=> "Pari"
+	    (link pari-menu)))))
 
 (define (cas-supports-completions-set! must-be-pari)
   ;; Hack for old versions of Pari
@@ -30,4 +36,5 @@
   (:require (url-exists-in-path? "gp"))
   (:initialize (pari-initialize))
   (:launch "gp --texmacs")
-  (:session "Pari"))
+  (:session "Pari")
+  (:scripts "Pari"))

@@ -164,28 +164,29 @@
   (ahash-set! plugin-commander lan val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; evaluation + simplification of documents with one paragraph
+;; evaluation + simplification of document fragments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (plugin-output-simplify name t) t)
 
 (tm-define (plugin-output-std-simplify name t)
   (cond ((or (func? t 'document 0) (func? 'concat 0)) "")
 	((or (func? t 'document 1) (func? t 'concat 1))
-	 (plugin-output-std-simplify name (cadr t)))
+	 (plugin-output-simplify name (cadr t)))
 	((and (or (func? t 'document) (func? t 'concat))
 	      (in? (cadr t) '("" " " "  ")))
-	 (plugin-output-std-simplify name (cons (car t) (cddr t))))
+	 (plugin-output-simplify name (cons (car t) (cddr t))))
 	((and (or (func? t 'document) (func? t 'concat))
 	      (in? (cAr t) '("" " " "  ")))
-	 (plugin-output-std-simplify name (cDr t)))
+	 (plugin-output-simplify name (cDr t)))
 	((func? t 'with)
-	 (rcons (cDr t) (plugin-output-std-simplify name (cAr t))))
-	(else (plugin-output-simplify name t))))
+	 (rcons (cDr t) (plugin-output-simplify name (cAr t))))
+	(else t)))
+
+(tm-define (plugin-output-simplify name t)
+  (plugin-output-std-simplify name t))
 
 (tm-define (plugin-eval name session t)
   (let* ((u (connection-eval name session t))
-	 (v (plugin-output-std-simplify name (tree->stree u))))
+	 (v (plugin-output-simplify name (tree->stree u))))
     v))
 
 (tm-define (plugin-eval* name session t)
@@ -193,7 +194,11 @@
       (set! t (plugin-math-input (list 'tuple name t))))
   (plugin-eval name session t))
 
-(tm-define (plugin-selection-eval)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High-level evaluation and function application via plug-in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (plugin-evaluate)
   (if (selection-active-any?)
       (let* ((name (get-env "prog-scripts"))
 	     (session (get-env "prog-session"))
@@ -202,14 +207,21 @@
 	(clipboard-cut "primary")
 	(insert r))))
 
-(tm-define (plugin-selection-apply fun)
-  (if (selection-active-any?)
-      (let* ((name (get-env "prog-scripts"))
-	     (session (get-env "prog-session"))
-	     (t (list 'concat fun "(" (tree->stree (selection-tree)) ")"))
-	     (r (plugin-eval* name session t)))
-	(clipboard-cut "primary")
-	(insert r))))
+(tm-define (plugin-apply-function fun)
+  (cond ((and (selection-active-any?)
+	      (not (test-env? "prog-scripts" "scheme")))
+	 (let* ((name (get-env "prog-scripts"))
+		(session (get-env "prog-session"))
+		(t (list 'concat fun "(" (tree->stree (selection-tree)) ")"))
+		(r (plugin-eval* name session t)))
+	   (clipboard-cut "primary")
+	   (insert r)))
+	((selection-active-any?)
+	 (clipboard-cut "primary")
+	 (plugin-apply-function fun)
+	 (clipboard-paste "primary"))
+	(else (insert-go-to (string-append fun "()")
+			    (list (1+ (string-length fun)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tab completion
