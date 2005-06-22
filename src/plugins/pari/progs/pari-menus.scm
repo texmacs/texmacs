@@ -30,10 +30,10 @@
   (:require (== name "pari"))
   (cond ((match? t '(with "color" "magenta"
 		      (concat :1 (with "mode" "math" "color" "blue" :1))))
-	 `(with "mode" "math"
-	    ,(plugin-output-simplify name (tm-ref t 2 1 4))))
+	 `(math ,(plugin-output-simplify name (tm-ref t 2 1 4))))
 	(else (plugin-output-std-simplify name t))))
 
+(define pari-evaluable? plugin-evaluable?)
 (define pari-evaluate plugin-evaluate)
 (define pari-apply plugin-apply-function)
 
@@ -43,7 +43,7 @@
 
 (menu-bind pari-menu
   (if (test-env? "prog-scripts" "pari")
-      (when (selection-active-any?)
+      (when (pari-evaluable?)
 	    ("Evaluate" (pari-evaluate)))
       ---)
   (-> "Elementary functions"

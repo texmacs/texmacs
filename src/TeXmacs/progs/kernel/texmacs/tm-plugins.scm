@@ -97,7 +97,7 @@
     (menu-dynamic ,@(map supported-sessions-menu-entry l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menu for the supported scripting languages
+;; Supported scripting languages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define supported-scripts-list '())
@@ -117,6 +117,10 @@
   (lazy-plugin-force)
   (with l (list-sort supported-scripts-list string<=?)
     (menu-dynamic ,@(map supported-scripts-menu-entry l))))
+
+(tm-define (supports-scripts? name)
+  (if (symbol? name) (set! name (symbol->string name)))
+  (not (not (ahash-ref supported-scripts-table name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuration of plugins

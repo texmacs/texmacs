@@ -26,6 +26,7 @@
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 
+(define-public (nnot x) (not (not x)))
 (define-public (nstring? x) (not (string? x)))
 (define-public (nnull? x) (not (null? x)))
 (define-public (npair? x) (not (pair? x)))

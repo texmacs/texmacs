@@ -223,21 +223,19 @@
 
 (define (tree-innermost-sub p pred?)
   (with t (path->tree p)
-    (cond ((and (tm-compound? t) (pred? t)) t)
+    (cond ((pred? t) t)
 	  ((or (null? p) (== p (buffer-path))) #f)
 	  (else (tree-innermost-sub (cDr p) pred?)))))
 
-(tm-define (tree-innermost x)
+(tm-define (tree-innermost x . opt-flag)
   (:type (-> symbol tree)
 	 (-> (list symbol) tree)
 	 (-> (-> bool) tree))
   (:synopsis "Search upwards from the cursor position.")
-  (let* ((p (cDDr (cursor-path)))
+  (let* ((p ((if (null? opt-flag) cDDr cDr) (cursor-path)))
 	 (pred? (cond ((procedure? x) x)
-		      ((list? x) (lambda (t) (and (tm-compound? t)
-						  (in? (tree-label t) x))))
-		      (else (lambda (t) (and (tm-compound? t)
-					     (== (tree-label t) x)))))))
+		      ((list? x) (lambda (t) (in? (tree-label t) x)))
+		      (else (lambda (t) (== (tree-label t) x))))))
     (tree-innermost-sub p pred?)))
 
 (tm-define (inside-which l)
@@ -287,6 +285,14 @@
   (:synopsis "Go to a position determined by @l inside the tree @t.")
   (with p (apply tree->path (cons t l))
     (if p (go-to p))))
+
+(tm-define (tree-select t . l)
+  (:synopsis "Select the tree @(tree-ref t . l)")
+  (with t (apply tree-ref (cons t l))
+    (if t
+	(begin
+	  (selection-set-start-path (tree->path t :start))
+	  (selection-set-end-path (tree->path t :end))))))
 
 (tm-define (tree-correct t . l)
   (with p (apply tree->path (cons t l))
