@@ -20,14 +20,26 @@
 ;; Several subroutines for the evaluation of Maxima expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (maxima-output? t)
+  (match? t
+    '(concat (with "mode" "text" "font-family" "tt" "color" "red" :*) :*)))
+
+(define (maxima-var-output? t)
+  (or (maxima-output? t)
+      (match? t '(concat (with "mode" "math" "math-display" "true" :*) :*))))
+
 (tm-define (plugin-output-simplify name t)
   (:require (== name "maxima"))
-  (cond ((match? t '(concat
-		     (with "mode" "text" "font-family" "tt" "color" "red" :*) 
-		     :*))
+  (cond ((func? t 'document)
+	 (with u (list-find (cdr t) maxima-var-output?)
+	   (if u (plugin-output-simplify name u) "")))
+	((maxima-output? t)
 	 (plugin-output-simplify name `(concat ,@(cddr t))))
+	((match? t '(with "mode" "math" "math-display" "true" :1))
+	 `(math ,(plugin-output-simplify name (list-ref t 5))))
 	(else (plugin-output-std-simplify name t))))
 
+(define maxima-evaluable? plugin-evaluable?)
 (define maxima-evaluate plugin-evaluate)
 (define maxima-apply plugin-apply-function)
 
@@ -37,7 +49,7 @@
 
 (menu-bind maxima-menu
   (if (test-env? "prog-scripts" "maxima")
-      (when (selection-active-any?)
+      (when (maxima-evaluable?)
 	    ("Evaluate" (maxima-evaluate)))
       ---)
   (-> "Simplification"
@@ -60,8 +72,19 @@
       ("Arc cosine" (maxima-apply "acos"))
       ("Arc tangent" (maxima-apply "atan")))
   (-> "Special functions"
+      ("Airy" (maxima-apply "Airy"))
       ("Erf" (maxima-apply "erf"))
-      ("Gamma" (maxima-apply "Gamma"))))
+      ("Gamma" (maxima-apply "Gamma"))
+      ("Psi" (maxima-apply "Psi")))
+  (-> "Matrices"
+      ("Determinant" (maxima-apply "determinant"))
+      ("Echelon" (maxima-apply "echelon"))
+      ("Eigenvalues" (maxima-apply "eigenvalues"))
+      ("Invert" (maxima-apply "invert"))
+      ("Rank" (maxima-apply "rank"))
+      ("Transpose" (maxima-apply "transpose"))
+      ("Triangularize" (maxima-apply "triangularize"))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Additional icons

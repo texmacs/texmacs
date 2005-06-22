@@ -177,6 +177,8 @@
 	((and (or (func? t 'document) (func? t 'concat))
 	      (in? (cAr t) '("" " " "  ")))
 	 (plugin-output-simplify name (cDr t)))
+	((match? t '(with "mode" "math" :1))
+	 `(math ,(plugin-output-simplify name (cAr t))))
 	((func? t 'with)
 	 (rcons (cDr t) (plugin-output-simplify name (cAr t))))
 	(else t)))
@@ -195,32 +197,69 @@
   (plugin-eval name session t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some subroutines for mathematical content
+;; FIXME: these should be moved into table-edit.scm and math-edit.scm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (cell-context-inside-sub? t which)
+  (or (and (list? which) (tree-in? t which))
+      (and (nlist? which) (tree-is? t which))
+      (and (tree-in? t '(table tformat document))
+	   (cell-context-inside-sub? (tree-up t) which))))
+
+(define (cell-context-inside? t which)
+  (and (tree-is? t 'cell)
+       (tree-is? t :up 'row)
+       (cell-context-inside-sub? (tree-ref t :up :up)  which)))
+
+(define (formula-context? t)
+  (with u (tree-up t)
+    (and u (or (tree-in? u '(math equation equation*))
+	       (match? u '(with "mode" "math" :1))
+	       (cell-context-inside? u '(eqnarray eqnarray*))))))
+
+(define (in-var-math?)
+  (let* ((t1 (tree-innermost formula-context? #t))
+	 (t2 (tree-innermost 'text)))
+    (and (nnot t1) (or (not t2) (tree-inside? t1 t2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level evaluation and function application via plug-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (plugin-evaluable?)
+  (or (selection-active-any?)
+      (nnot (tree-innermost formula-context? #t))))
+
+(tm-define (plugin-modified-evaluate fun1 fun2)
+  (let* ((name (get-env "prog-scripts"))
+	 (session (get-env "prog-session"))
+	 (scripts? (supports-scripts? name)))
+    (cond ((and (selection-active-any?) scripts?)
+	   (let* ((t (fun1 (tree->stree (selection-tree))))
+		  (r (plugin-eval* name session t)))
+	     (if (and (in-var-math?) (tm-func? r 'math 1)) (set! r (cadr r)))
+	     (clipboard-cut "primary")
+	     (insert r)))
+	  ((and (tree-innermost formula-context? #t) scripts?)
+	   (with t (tree-innermost formula-context? #t)
+	     (tree-select t)
+	     (plugin-modified-evaluate fun1 fun2)))
+	  ((selection-active-any?)
+	   (clipboard-cut "primary")
+	   (plugin-modified-evaluate fun1 fun2)
+	   (clipboard-paste "primary"))
+	  (else (fun2)))))
+
 (tm-define (plugin-evaluate)
-  (if (selection-active-any?)
-      (let* ((name (get-env "prog-scripts"))
-	     (session (get-env "prog-session"))
-	     (t (tree->stree (selection-tree)))
-	     (r (plugin-eval* name session t)))
-	(clipboard-cut "primary")
-	(insert r))))
+  (plugin-modified-evaluate
+   (lambda (t) t)
+   noop))
 
 (tm-define (plugin-apply-function fun)
-  (cond ((and (selection-active-any?)
-	      (not (test-env? "prog-scripts" "scheme")))
-	 (let* ((name (get-env "prog-scripts"))
-		(session (get-env "prog-session"))
-		(t (list 'concat fun "(" (tree->stree (selection-tree)) ")"))
-		(r (plugin-eval* name session t)))
-	   (clipboard-cut "primary")
-	   (insert r)))
-	((selection-active-any?)
-	 (clipboard-cut "primary")
-	 (plugin-apply-function fun)
-	 (clipboard-paste "primary"))
-	(else (insert-go-to (string-append fun "()")
+  (plugin-modified-evaluate
+   (lambda (t) (list 'concat fun "(" t ")"))
+   (lambda () (insert-go-to (string-append fun "()")
 			    (list (1+ (string-length fun)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
