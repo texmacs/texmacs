@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic fold-edit)
-  (:use (utils library tree)))
+  (:use (utils library tree)
+	(utils plugins plugin-cmd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
@@ -65,6 +66,14 @@
     (tree-go-to t :start)
     (unfold)))
 
+(tm-define (hidden-variant)
+  (:inside fold)
+  (unfold))
+
+(tm-define (hidden-variant)
+  (:inside unfold)
+  (fold))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,8 +119,8 @@
 	((== where "here") pos)
 	((== where "previous") (max 0 (- pos 1)))
 	((== where "next") (min last (+ pos 1)))
-	((== where "rotate backward") (switch-to "rotated previous"))
-	((== where "rotate forward") (switch-to "rotated next"))
+	((== where "rotate backward") (if (= pos 0) last (- pos 1)))
+	((== where "rotate forward") (if (= pos last) 0 (+ pos 1)))
 	((== where "first") 0)
 	((== where "last") last)))
 
@@ -157,3 +166,38 @@
 	  ((string? where) (switch-to (switch-pos where pos last)))
 	  (else (switch-unselect)
 		(switch-select where)))))
+
+(tm-define (hidden-variant)
+  (:inside switch)
+  (switch-to "rotate forward"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; On-the-fly plug-in evaluations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-return)
+  (:inside script-eval)
+  (with-innermost t 'script-eval
+    (let* ((name (get-env "prog-scripts"))
+	   (session (get-env "prog-session"))
+	   (in (tree->stree (tree-ref t 0))))
+      (tree-select t)
+      (clipboard-cut "primary")
+      (insert (plugin-eval name session in :math-correct :math-input)))))
+
+(tm-define (hidden-variant)
+  (:inside script-input)
+  (with-innermost t 'script-input
+    (let* ((name (get-env "prog-scripts"))
+	   (session (get-env "prog-session"))
+	   (in (tree->stree (tree-ref t 0)))
+	   (out (plugin-eval name session in :math-correct :math-input)))
+      (tree-set! t 1 out)
+      (tree-assign-node! t 'script-output)
+      (tree-go-to t 1 :end))))
+
+(tm-define (hidden-variant)
+  (:inside script-output)
+  (with-innermost t 'script-output
+    (tree-assign-node! t 'script-input)
+    (tree-go-to t 0 :end)))

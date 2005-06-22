@@ -15,7 +15,7 @@
 (texmacs-module (utils base environment))
 
 (drd-table env-var-description%
-  ("color" "Foreground Colour")
+  ("color" "Foreground colour")
   ("bg-color" "Background colour")
   ("magnification" "Magnification")
   ("font-base-size" "Font size")
