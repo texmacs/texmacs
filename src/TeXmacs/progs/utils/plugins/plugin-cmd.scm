@@ -187,15 +187,20 @@
 (tm-define (plugin-output-simplify name t)
   (plugin-output-std-simplify name t))
 
-(tm-define (plugin-eval name session t)
-  (let* ((u (connection-eval name session t))
-	 (v (plugin-output-simplify name (tree->stree u))))
-    v))
-
-(tm-define (plugin-eval* name session t)
-  (if (plugin-supports-math-input-ref name)
-      (set! t (plugin-math-input (list 'tuple name t))))
-  (plugin-eval name session t))
+(tm-define (plugin-eval name session t . opts)
+  (cond ((null? opts)
+	 (let* ((u (connection-eval name session t))
+		(v (plugin-output-simplify name (tree->stree u))))
+	   v))
+	((== (car opts) :math-input)
+	 (if (plugin-supports-math-input-ref name)
+	     (set! t (plugin-math-input (list 'tuple name t))))
+	 (apply plugin-eval (cons* name session t (cdr opts))))
+	((== (car opts) :math-correct)
+	 (with r (apply plugin-eval (cons* name session t (cdr opts)))
+	   (if (and (in-var-math?) (tm-func? r 'math 1)) (cadr r) r)))
+	(else
+	 (texmacs-error "plugin-eval" "unrecognized option ~S" (car opts)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some subroutines for mathematical content
@@ -253,7 +258,7 @@
 	 (scripts? (supports-scripts? name)))
     (cond ((and (selection-active-any?) scripts?)
 	   (let* ((t (fun1 (tree->stree (selection-tree))))
-		  (r (plugin-eval* name session t))
+		  (r (plugin-eval name session t :math-input))
 		  (m1? (in-var-math?))
 		  (m2? (tm-func? r 'math 1)))
 	     (clipboard-cut "primary")
@@ -295,7 +300,9 @@
 
 (menu-bind plugin-eval-menu
   (when (plugin-evaluable?)
-	("Evaluate" (plugin-evaluate))))
+	("Evaluate" (plugin-evaluate)))
+  ("Evaluation tag" (make 'script-eval))
+  ("Input switch" (insert-go-to '(script-input "" "") '(0 0))))
 
 (menu-bind plugin-eval-toggle-menu
   ("Keep evaluated expressions" (toggle-keep-input))

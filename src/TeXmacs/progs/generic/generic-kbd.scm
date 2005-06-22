@@ -31,6 +31,7 @@
   ("S-return" (kbd-shift-return))
   ("S-backspace" (kbd-remove #f))
   ("S-delete" (kbd-remove #t))
+  ("C-*" (hidden-variant))
   ("C-backspace" (remove-structure-upwards))
   ("C-delete" (remove-structure-upwards))
   ("C-tab" (variant-circulate #t))

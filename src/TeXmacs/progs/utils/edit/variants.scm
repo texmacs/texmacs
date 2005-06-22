@@ -135,3 +135,10 @@
 	   (rot (list-rotate val old))
 	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
       (variant-replace old new))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Folding-unfolding variants of tags with hidden arguments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (hidden-variant)
+  (noop))
