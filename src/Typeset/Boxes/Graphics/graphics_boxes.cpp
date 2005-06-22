@@ -373,11 +373,12 @@ curve_box_rep::apply_style () {
   if (all1) style= array<bool>(0);
   if (all0 || all1) return;
 
-  int n2= n;
-  i= N(style) - 1;
-  while (i>=0) {
-    if (!style[i]) n2--; else i=0;
-    i--;
+  int n2= 0;
+  i= 0;
+  while (!style[i]) i++;
+  while (i<N(style)) {
+    if (style[i]) n2++; else break;
+    i++;
   }
 
   if (a[0]==a[N(a)-1]) n2= n; // Closed curves
