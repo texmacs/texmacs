@@ -26,11 +26,12 @@
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 
-(define-public (nnot x) (not (not x)))
 (define-public (nstring? x) (not (string? x)))
 (define-public (nnull? x) (not (null? x)))
 (define-public (npair? x) (not (pair? x)))
 (define-public (nlist? x) (not (list? x)))
+(define-public (nnot x) (not (not x)))
+(define-public-macro (toggle! x) `(set! ,x (not ,x)))
 
 (define-public (list-1? x) (and (pair? x) (null? (cdr x))))
 (define-public (nlist-1? x) (not (list-1? x)))

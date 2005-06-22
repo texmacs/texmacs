@@ -42,9 +42,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind pari-menu
-  (if (test-env? "prog-scripts" "pari")
-      (when (pari-evaluable?)
-	    ("Evaluate" (pari-evaluate)))
+  (if (not-in-session?)
+      (link plugin-eval-menu)
       ---)
   (-> "Elementary functions"
       ("Exponential" (pari-apply "exp"))
@@ -55,4 +54,6 @@
       ("Tangent" (pari-apply "tan"))
       ("Arc sine" (pari-apply "asin"))
       ("Arc cosine" (pari-apply "acos"))
-      ("Arc tangent" (pari-apply "atan"))))
+      ("Arc tangent" (pari-apply "atan")))
+  ---
+  (link plugin-eval-toggle-menu))

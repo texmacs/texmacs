@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils plugins plugin-cmd)
-  (:use (utils library tree)))
+  (:use (utils library tree)
+	(utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; asynchronous evaluation of expressions and memorizing results
@@ -227,6 +228,21 @@
 ;; High-level evaluation and function application via plug-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define plugin-keep-input-flag? #f)
+(define plugin-eval-math-flag? #t)
+
+(tm-define (plugin-keep-input?) plugin-keep-input-flag?)
+(tm-define (toggle-keep-input)
+  (:synopsis "Toggle whether we keep the input of evaluations.")
+  (:check-mark "v" plugin-keep-input?)
+  (toggle! plugin-keep-input-flag?))
+
+(tm-define (plugin-eval-math?) plugin-eval-math-flag?)
+(tm-define (toggle-eval-math)
+  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas.")
+  (:check-mark "v" plugin-eval-math?)
+  (toggle! plugin-eval-math-flag?))
+
 (tm-define (plugin-evaluable?)
   (or (selection-active-any?)
       (nnot (tree-innermost formula-context? #t))))
@@ -237,11 +253,21 @@
 	 (scripts? (supports-scripts? name)))
     (cond ((and (selection-active-any?) scripts?)
 	   (let* ((t (fun1 (tree->stree (selection-tree))))
-		  (r (plugin-eval* name session t)))
-	     (if (and (in-var-math?) (tm-func? r 'math 1)) (set! r (cadr r)))
+		  (r (plugin-eval* name session t))
+		  (m1? (in-var-math?))
+		  (m2? (tm-func? r 'math 1)))
 	     (clipboard-cut "primary")
+	     (if m2? (set! r (cadr r)))
+	     (if (and (not m1?) m2?) (insert-go-to '(math "") '(0 0)))
+	     (if (plugin-keep-input?)
+		 (begin
+		   (insert "=")
+		   (with-cursor (cursor-after (go-to-previous))
+		     (fun2)
+		     (clipboard-paste "primary"))))
 	     (insert r)))
-	  ((and (tree-innermost formula-context? #t) scripts?)
+	  ((and (tree-innermost formula-context? #t)
+		scripts? plugin-eval-math-flag?)
 	   (with t (tree-innermost formula-context? #t)
 	     (tree-select t)
 	     (plugin-modified-evaluate fun1 fun2)))
@@ -256,11 +282,24 @@
    (lambda (t) t)
    noop))
 
+(define (insert-function fun)
+  (insert fun)
+  (if (in-var-math?)
+      (insert-go-to '(concat (left "(") (right ")")) '(0 1))
+      (insert-go-to "()" '(1))))
+
 (tm-define (plugin-apply-function fun)
   (plugin-modified-evaluate
    (lambda (t) (list 'concat fun "(" t ")"))
-   (lambda () (insert-go-to (string-append fun "()")
-			    (list (1+ (string-length fun)))))))
+   (lambda () (insert-function fun))))
+
+(menu-bind plugin-eval-menu
+  (when (plugin-evaluable?)
+	("Evaluate" (plugin-evaluate))))
+
+(menu-bind plugin-eval-toggle-menu
+  ("Keep evaluated expressions" (toggle-keep-input))
+  ("Quick evaluation of formulas" (toggle-eval-math)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tab completion
