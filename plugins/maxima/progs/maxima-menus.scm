@@ -39,8 +39,6 @@
 	 `(math ,(plugin-output-simplify name (list-ref t 5))))
 	(else (plugin-output-std-simplify name t))))
 
-(define maxima-evaluable? plugin-evaluable?)
-(define maxima-evaluate plugin-evaluate)
 (define maxima-apply plugin-apply-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,9 +46,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind maxima-menu
-  (if (test-env? "prog-scripts" "maxima")
-      (when (maxima-evaluable?)
-	    ("Evaluate" (maxima-evaluate)))
+  (if (not-in-session?)
+      (link plugin-eval-menu)
       ---)
   (-> "Simplification"
       ("Factor" (maxima-apply "factor"))
@@ -83,7 +80,9 @@
       ("Invert" (maxima-apply "invert"))
       ("Rank" (maxima-apply "rank"))
       ("Transpose" (maxima-apply "transpose"))
-      ("Triangularize" (maxima-apply "triangularize"))))
+      ("Triangularize" (maxima-apply "triangularize")))
+  ---
+  (link plugin-eval-toggle-menu))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
