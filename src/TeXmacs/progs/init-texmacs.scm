@@ -98,6 +98,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting dynamic features\n")
+(lazy-keyboard (dynamic scripts-kbd) always?)
 (lazy-menu (dynamic format-prog-menu) prog-format-menu prog-format-icons)
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
 (lazy-menu (dynamic session-menu) insert-session-menu
