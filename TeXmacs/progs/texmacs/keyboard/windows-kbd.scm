@@ -37,6 +37,7 @@
   ("table" "cmd t")
   ("inactive" "cmd i")
   ("executable" "cmd e")
+  ("script" "cmd *")
   ("text:symbol" "S-F5" #t)
   ("var" "tab" #t)
   ("unvar" "S-tab" #t)
@@ -125,6 +126,7 @@
   ("text" "" "Insert structural markup")
   ("text:symbol" "" "Insert a TeXmacs symbol")
   ("special" "" "Special command")
+  ("script" "" "Evaluate function or insert evaluation tag")
 
   ("windows" "" "Windows command")
   ("windows:copyto" "" "Copy to (1, 2, 3, s:search, r:replace, *:other)")

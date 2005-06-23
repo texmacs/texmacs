@@ -208,3 +208,31 @@
   (with-innermost t 'plot-output
     (tree-remove-node! t 0)
     (tree-go-to t 0 :end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Converters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-return)
+  (:inside converter-eval)
+  (with-innermost t 'converter-eval
+    (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
+	   (in (texmacs->verbatim (tree-ref t 1))))
+      (tree-select t)
+      (clipboard-cut "primary")
+      (insert (convert in format "texmacs-tree")))))
+
+(tm-define (hidden-variant)
+  (:inside converter-input)
+  (with-innermost t 'converter-input
+    (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))
+	   (in (texmacs->verbatim (tree-ref t 1))))
+      (tree-set! t 2 (convert in format "texmacs-tree"))
+      (tree-assign-node! t 'converter-output)
+      (tree-go-to t 2 :end))))
+
+(tm-define (hidden-variant)
+  (:inside converter-output)
+  (with-innermost t 'converter-output
+    (tree-assign-node! t 'converter-input)
+    (tree-go-to t 1 :end)))

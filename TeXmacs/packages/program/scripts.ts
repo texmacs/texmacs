@@ -133,6 +133,20 @@
   </plot>>>
 
   <assign|plot-output|<macro|in|out|<arg|out>>>
+
+  <\active*>
+    <\src-comment>
+      Converters.
+    </src-comment>
+  </active*>
+
+  <assign|converter-input|<macro|format|in|out|<style-with|src-compact|none|<compound|<if|<equal|<get-label|<arg|in>>|document>|render-big-script|render-small-script>|<arg|format>|<with|mode|prog|prog-language|verbatim|<arg|in>>>>>>
+
+  <assign|converter-output|<macro|format|in|out|<arg|out>>>
+
+  <assign|converter-eval|<macro|format|in|<style-with|src-compact|none|<render-small-script|<arg|format>|<with|mode|prog|prog-language|verbatim|<arg|in>>>>>>
+
+  \;
 </body>
 
 <\initial>
