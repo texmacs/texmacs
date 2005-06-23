@@ -14,6 +14,7 @@
 
 (texmacs-module (dynamic scripts-edit)
   (:use (utils library tree)
+	(utils library cursor)
 	(utils plugins plugin-cmd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

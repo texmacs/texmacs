@@ -175,6 +175,7 @@ edit_modify_rep::assign_node (path pp, tree_label op) {
 
 void
 edit_modify_rep::finished (path pp) {
+  // cout << "Finished at " << pp << "\n";
   FOR_ALL_EDITORS_BEGIN (pp)
     ed->post_notify (pp);
   FOR_ALL_EDITORS_END
@@ -250,7 +251,7 @@ edit_modify_rep::post_notify (path p) {
   tp= position_get (cur_pos);
   position_delete (cur_pos);
   cur_pos= nil_observer;
-  go_to (tp);
+  go_to_correct (tp);
   /*
   cout << "et= " << et << "\n";
   cout << "tp= " << tp << "\n\n";
@@ -580,5 +581,5 @@ edit_modify_rep::position_set (observer o, path p) {
 
 path
 edit_modify_rep::position_get (observer o) {
-  return correct_cursor (et, obtain_position (o));
+  return super_correct (et, obtain_position (o));
 }
