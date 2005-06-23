@@ -15,17 +15,17 @@
 (texmacs-module (dynamic scripts-menu)
   (:use (dynamic scripts-edit)))
 
-(menu-bind plugin-eval-menu
-  (when (plugin-evaluable?)
-	("Evaluate" (plugin-evaluate)))
+(menu-bind scripts-eval-menu
+  (when (script-evaluable?)
+	("Evaluate" (script-eval)))
   ("Evaluation tag" (make 'script-eval))
   ("Evaluation switch" (make-script-input)))
 
-(menu-bind plugin-eval-toggle-menu
+(menu-bind scripts-eval-toggle-menu
   ("Keep evaluated expressions" (toggle-keep-input))
   ("Quick evaluation of formulas" (toggle-eval-math)))
 
-(menu-bind plugin-plot-menu
+(menu-bind scripts-plot-menu
   ("Curve" (make 'plot-curve))
   ("Surface" (make 'plot-surface))
   ("Parametric curve" (make 'plot-curve*))

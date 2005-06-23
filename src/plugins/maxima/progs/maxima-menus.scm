@@ -39,7 +39,7 @@
 	 `(math ,(plugin-output-simplify name (list-ref t 5))))
 	(else (plugin-output-std-simplify name t))))
 
-(define maxima-apply plugin-apply-function)
+(define maxima-apply script-apply)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Maxima menu
@@ -47,7 +47,7 @@
 
 (menu-bind maxima-menu
   (if (not-in-session?)
-      (link plugin-eval-menu)
+      (link scripts-eval-menu)
       ---)
   (-> "Simplification"
       ("Simplify" (maxima-apply "fullratsimp"))
@@ -93,7 +93,7 @@
       ("Triangularize" (maxima-apply "triangularize")))
   (if (not-in-session?)
       ---
-      (link plugin-eval-toggle-menu)))
+      (link scripts-eval-toggle-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Additional icons
