@@ -27,9 +27,7 @@
 	 `(math ,(plugin-output-simplify name (tm-ref t 2 1 4))))
 	(else (plugin-output-std-simplify name t))))
 
-(define pari-evaluable? plugin-evaluable?)
-(define pari-evaluate plugin-evaluate)
-(define pari-apply plugin-apply-function)
+(define pari-apply script-apply)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Pari menu
@@ -37,7 +35,7 @@
 
 (menu-bind pari-menu
   (if (not-in-session?)
-      (link plugin-eval-menu)
+      (link scripts-eval-menu)
       ---)
   (-> "Elementary functions"
       ("exp" (pari-apply "exp"))
@@ -71,4 +69,4 @@
       ("N-th prime" (pari-apply "prime")))
   (if (not-in-session?)
       ---
-      (link plugin-eval-toggle-menu)))
+      (link scripts-eval-toggle-menu)))

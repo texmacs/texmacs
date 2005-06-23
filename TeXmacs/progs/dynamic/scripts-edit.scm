@@ -20,30 +20,30 @@
 ;; Some switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define plugin-keep-input-flag? #f)
-(define plugin-eval-math-flag? #t)
+(define script-keep-input-flag? #f)
+(define script-eval-math-flag? #t)
 
-(tm-define (plugin-keep-input?) plugin-keep-input-flag?)
+(tm-define (script-keep-input?) script-keep-input-flag?)
 (tm-define (toggle-keep-input)
   (:synopsis "Toggle whether we keep the input of evaluations.")
-  (:check-mark "v" plugin-keep-input?)
-  (toggle! plugin-keep-input-flag?))
+  (:check-mark "v" script-keep-input?)
+  (toggle! script-keep-input-flag?))
 
-(tm-define (plugin-eval-math?) plugin-eval-math-flag?)
+(tm-define (script-eval-math?) script-eval-math-flag?)
 (tm-define (toggle-eval-math)
   (:synopsis "Toggle whether we evaluate the innermost non-selected formulas.")
-  (:check-mark "v" plugin-eval-math?)
-  (toggle! plugin-eval-math-flag?))
+  (:check-mark "v" script-eval-math?)
+  (toggle! script-eval-math-flag?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level evaluation and function application via plug-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (plugin-evaluable?)
+(tm-define (script-evaluable?)
   (or (selection-active-any?)
       (nnot (tree-innermost formula-context? #t))))
 
-(tm-define (plugin-modified-evaluate fun1 fun2)
+(tm-define (script-modified-evaluate fun1 fun2)
   (let* ((lan (get-env "prog-scripts"))
 	 (session (get-env "prog-session"))
 	 (scripts? (supports-scripts? lan)))
@@ -55,7 +55,7 @@
 	     (clipboard-cut "primary")
 	     (if m2? (set! r (cadr r)))
 	     (if (and (not m1?) m2?) (insert-go-to '(math "") '(0 0)))
-	     (if (plugin-keep-input?)
+	     (if (script-keep-input?)
 		 (begin
 		   (insert "=")
 		   (with-cursor (cursor-after (go-to-previous))
@@ -63,20 +63,20 @@
 		     (clipboard-paste "primary"))))
 	     (insert r)))
 	  ((and (tree-innermost formula-context? #t)
-		scripts? plugin-eval-math-flag?)
+		scripts? script-eval-math-flag?)
 	   (with t (tree-innermost formula-context? #t)
 	     (tree-select t)
-	     (plugin-modified-evaluate fun1 fun2)))
+	     (script-modified-evaluate fun1 fun2)))
 	  ((selection-active-any?)
 	   (clipboard-cut "primary")
-	   (plugin-modified-evaluate fun1 fun2)
+	   (script-modified-evaluate fun1 fun2)
 	   (clipboard-paste "primary"))
 	  (else
 	   (if (not-in-session?) (make 'script-eval))
 	   (fun2)))))
 
-(tm-define (plugin-evaluate)
-  (plugin-modified-evaluate
+(tm-define (script-eval)
+  (script-modified-evaluate
    (lambda (t) t)
    noop))
 
@@ -86,10 +86,10 @@
       (insert-go-to '(concat (left "(") (right ")")) '(0 1))
       (insert-go-to "()" '(1))))
 
-(tm-define (plugin-apply-function fun . opts)
+(tm-define (script-apply fun . opts)
   (with n (if (null? opts) 1 (car opts))
     (cond ((= n 1)
-	   (plugin-modified-evaluate
+	   (script-modified-evaluate
 	    (lambda (t) (list 'concat fun "(" t ")"))
 	    (lambda () (insert-function fun))))
 	  ((selection-active-any?)
@@ -101,10 +101,10 @@
 	   (repeat (- n 2) (insert-go-to "," '(0))))
 	  ((and (tree-innermost formula-context? #t)
 		(supports-scripts? (get-env "prog-scripts"))
-		plugin-eval-math-flag?)
+		script-eval-math-flag?)
 	   (with t (tree-innermost formula-context? #t)
 	     (tree-select t)
-	     (plugin-apply-function fun n)))
+	     (script-apply fun n)))
 	  (else
 	   (if (not-in-session?) (make 'script-eval))
 	   (insert-function fun)
@@ -157,7 +157,7 @@
        (with r (select t l)
 	 (and (nnull? r) (car r)))))
 
-(tm-define (plugin-plot-command lan t)
+(tm-define (script-plot-command lan t)
   (cond ((== (car t) 'plot-curve)
 	 `(concat "set samples 1000 ~ "
 		  "set xrange [" ,(tm-ref t 1) ":" ,(tm-ref t 2) "] ~ "
@@ -187,7 +187,7 @@
   (with-innermost t '(plot-curve plot-curve* plot-surface plot-surface*)
     (let* ((lan "gnuplot")
 	   (session "default")
-	   (in (plugin-plot-command lan (tree->stree t)))
+	   (in (script-plot-command lan (tree->stree t)))
 	   (out (plugin-eval lan session in :math-correct :math-input)))
       (tree-set! t `(plot-output ,t ,out))
       (tree-go-to t 1 :end))))
