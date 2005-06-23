@@ -20,12 +20,6 @@
 ;; Several subroutines for the evaluation of Pari expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-ref t . l)
-  ;; FIXME: this routine should go into the standard library
-  (and (tm? t)
-       (with r (select t l)
-	 (and (nnull? r) (car r)))))
-
 (tm-define (plugin-output-simplify name t)
   (:require (== name "pari"))
   (cond ((match? t '(with "color" "magenta"

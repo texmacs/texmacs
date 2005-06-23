@@ -44,12 +44,12 @@
       (nnot (tree-innermost formula-context? #t))))
 
 (tm-define (plugin-modified-evaluate fun1 fun2)
-  (let* ((name (get-env "prog-scripts"))
+  (let* ((lan (get-env "prog-scripts"))
 	 (session (get-env "prog-session"))
-	 (scripts? (supports-scripts? name)))
+	 (scripts? (supports-scripts? lan)))
     (cond ((and (selection-active-any?) scripts?)
 	   (let* ((t (fun1 (tree->stree (selection-tree))))
-		  (r (plugin-eval name session t :math-input))
+		  (r (plugin-eval lan session t :math-input))
 		  (m1? (in-var-math?))
 		  (m2? (tm-func? r 'math 1)))
 	     (clipboard-cut "primary")
@@ -117,12 +117,12 @@
 (tm-define (kbd-return)
   (:inside script-eval)
   (with-innermost t 'script-eval
-    (let* ((name (get-env "prog-scripts"))
+    (let* ((lan (get-env "prog-scripts"))
 	   (session (get-env "prog-session"))
 	   (in (tree->stree (tree-ref t 0))))
       (tree-select t)
       (clipboard-cut "primary")
-      (insert (plugin-eval name session in :math-correct :math-input)))))
+      (insert (plugin-eval lan session in :math-correct :math-input)))))
 
 (tm-define (make-script-input)
   (let* ((lan (get-env "prog-scripts"))
@@ -133,10 +133,10 @@
 (tm-define (hidden-variant)
   (:inside script-input)
   (with-innermost t 'script-input
-    (let* ((name (tree->string (tree-ref t 0)))
+    (let* ((lan (tree->string (tree-ref t 0)))
 	   (session (tree->string (tree-ref t 1)))
 	   (in (tree->stree (tree-ref t 2)))
-	   (out (plugin-eval name session in :math-correct :math-input)))
+	   (out (plugin-eval lan session in :math-correct :math-input)))
       (tree-set! t 3 out)
       (tree-assign-node! t 'script-output)
       (tree-go-to t 3 :end))))
@@ -146,3 +146,65 @@
   (with-innermost t 'script-output
     (tree-assign-node! t 'script-input)
     (tree-go-to t 2 :end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plots
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tm-ref t . l)
+  ;; FIXME: this routine should go into the standard library
+  (and (tm? t)
+       (with r (select t l)
+	 (and (nnull? r) (car r)))))
+
+(tm-define (plugin-plot-command lan t)
+  (cond ((== (car t) 'plot-curve)
+	 `(concat "set samples 1000 ~ "
+		  "set xrange [" ,(tm-ref t 1) ":" ,(tm-ref t 2) "] ~ "
+		  "plot " ,(tm-ref t 0)))
+	((== (car t) 'plot-curve*)
+	 `(concat "set samples 1000 ~ "
+		  "set parametric ~ "
+		  "set trange [" ,(tm-ref t 2) ":" ,(tm-ref t 3) "] ~ "
+		  "plot " ,(tm-ref t 0) ", " ,(tm-ref t 1)))
+	((== (car t) 'plot-surface)
+	 `(concat "set samples 50 ~ set isosamples 50 ~ set hidden3d ~"
+		  "set pm3d ~ "
+		  "set xrange [" ,(tm-ref t 1) ":" ,(tm-ref t 2) "] ~ "
+		  "set yrange [" ,(tm-ref t 3) ":" ,(tm-ref t 4) "] ~ "
+		  "splot " ,(tm-ref t 0)))
+	((== (car t) 'plot-surface*)
+	 `(concat "set samples 50 ~ set isosamples 50 ~ set hidden3d ~"
+		  "set parametric ~ "
+		  "set pm3d ~ "
+		  "set urange [" ,(tm-ref t 3) ":" ,(tm-ref t 4) "] ~ "
+		  "set vrange [" ,(tm-ref t 5) ":" ,(tm-ref t 6) "] ~ "
+		  "splot " ,(tm-ref t 0)
+		  ", " ,(tm-ref t 1)
+		  ", " ,(tm-ref t 2)))))
+
+(define (activate-plot)
+  (with-innermost t '(plot-curve plot-curve* plot-surface plot-surface*)
+    (let* ((lan "gnuplot")
+	   (session "default")
+	   (in (plugin-plot-command lan (tree->stree t)))
+	   (out (plugin-eval lan session in :math-correct :math-input)))
+      (tree-set! t `(plot-output ,t ,out))
+      (tree-go-to t 1 :end))))
+
+(tm-define (kbd-return)
+  (:inside plot-curve plot-curve* plot-surface plot-surface*)
+  (with-innermost t '(plot-curve plot-curve* plot-surface plot-surface*)
+    (if (= (tree-down-index t) (- (tree-arity t) 1))
+	(activate-plot)
+	(tree-go-to t (1+ (tree-down-index t)) :end))))
+
+(tm-define (hidden-variant)
+  (:inside plot-curve plot-curve* plot-surface plot-surface*)
+  (activate-plot))
+
+(tm-define (hidden-variant)
+  (:inside plot-output)
+  (with-innermost t 'plot-output
+    (tree-remove-node! t 0)
+    (tree-go-to t 0 :end)))

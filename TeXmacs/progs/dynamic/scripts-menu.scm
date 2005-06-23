@@ -24,3 +24,9 @@
 (menu-bind plugin-eval-toggle-menu
   ("Keep evaluated expressions" (toggle-keep-input))
   ("Quick evaluation of formulas" (toggle-eval-math)))
+
+(menu-bind plugin-plot-menu
+  ("Curve" (make 'plot-curve))
+  ("Surface" (make 'plot-surface))
+  ("Parametric curve" (make 'plot-curve*))
+  ("Parametric surface" (make 'plot-surface*)))

@@ -55,7 +55,9 @@
 	    ---))
   ;("Draw image" (make-graphics))
   ("Link image" (choose-file make-link-image "Load image" "image"))
-  ("Insert image" (choose-file make-inline-image "Load image" "image")))
+  ("Insert image" (choose-file make-inline-image "Load image" "image"))
+  (if (and (style-has? "scripts-dtd") (supports-scripts? "gnuplot"))
+      (-> "Plot" (link plugin-plot-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert floating content

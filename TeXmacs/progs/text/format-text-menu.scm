@@ -298,6 +298,7 @@
   (group "Content")
   (-> "Color" (link color-menu))
   (-> "Language" (link text-language-menu))
+  (-> "Scripts" (link local-supported-scripts-menu))
   ---
   (group "Paragraph")
   (link paragraph-menu))
