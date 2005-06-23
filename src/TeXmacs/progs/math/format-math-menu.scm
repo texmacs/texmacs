@@ -119,6 +119,7 @@
   ---
   (group "Content")
   (-> "Color" (link color-menu))
+  (-> "Scripts" (link local-supported-scripts-menu))
   (link math-special-format-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

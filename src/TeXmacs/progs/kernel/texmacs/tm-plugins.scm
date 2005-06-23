@@ -118,6 +118,16 @@
   (with l (list-sort supported-scripts-list string<=?)
     (menu-dynamic ,@(map supported-scripts-menu-entry l))))
 
+(tm-define (local-supported-scripts-menu-entry name)
+  (let* ((fun `(lambda () (make-with "prog-scripts" ,name)))
+	 (menu-name (ahash-ref supported-scripts-table name)))
+    (list menu-name (eval fun))))
+
+(define-public (local-supported-scripts-menu)
+  (lazy-plugin-force)
+  (with l (list-sort supported-scripts-list string<=?)
+    (menu-dynamic ,@(map local-supported-scripts-menu-entry l))))
+
 (tm-define (supports-scripts? name)
   (if (symbol? name) (set! name (symbol->string name)))
   (not (not (ahash-ref supported-scripts-table name))))

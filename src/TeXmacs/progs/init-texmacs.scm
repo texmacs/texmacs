@@ -102,7 +102,8 @@
 (lazy-menu (dynamic fold-menu) insert-fold-menu)
 (lazy-menu (dynamic session-menu) insert-session-menu
 	   session-menu session-icons session-help-icons help-icons)
-(lazy-menu (dynamic scripts-menu) plugin-eval-menu plugin-eval-toggle-menu)
+(lazy-menu (dynamic scripts-menu)
+	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")

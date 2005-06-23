@@ -12,6 +12,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (gnuplot-initialize)
+  (import-from (utils plugins plugin-convert))
+  (lazy-input-converter (gnuplot-input) gnuplot))
+
 (define (gnuplot-serialize lan t)
   (import-from (utils plugins plugin-cmd))
   (with u (pre-serialize lan t)
@@ -20,6 +24,8 @@
 
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
+  (:initialize (gnuplot-initialize))
   (:launch "tm_gnuplot --texmacs")
   (:serializer ,gnuplot-serialize)
-  (:session "Gnuplot"))
+  (:session "Gnuplot")
+  (:scripts "Gnuplot"))

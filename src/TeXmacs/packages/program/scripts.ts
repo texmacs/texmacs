@@ -59,6 +59,80 @@
   <assign|script-output|<macro|lan|session|in|out|<arg|out>>>
 
   <assign|script-eval|<macro|in|<render-eval-script|<value|prog-scripts>|<script-aux-3|<value|prog-scripts>|<arg|in>>>>>
+
+  <\active*>
+    <\src-comment>
+      Plots.
+    </src-comment>
+  </active*>
+
+  <assign|plot|<macro|name|body|<render-big-script|<arg|name>|<arg|body>>>>
+
+  <assign|plot-group|<macro|text|<style-with|src-compact|none|<resize|<small|<with|font-shape|italic|font-series|bold|<arg|text>>>||b-0.3fn||t+0.3fn|>>>>
+
+  <assign|plot-input-field|<macro|size|body|<with|color|grey|<tabular|<tformat|<cwith|1|1|1|1|cell-background|white>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-width|<arg|size>>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|color|black|<arg|body>>>>>>>>>>
+
+  <assign|plot-function|<macro|x|body|<style-with|src-compact|none|<resize|<math|<arg|x>>:
+  |||1.5fn||><plot-input-field|0.666par|<math|<arg|body>>>>>>
+
+  <assign|plot-range|<macro|x|start|end|<style-with|src-compact|none|<resize|<math|<arg|x>>:
+  |||1.5fn||><plot-input-field|0.25par|<math|<arg|start>>> --
+  <plot-input-field|0.25par|<math|<arg|end>>>>>>
+
+  <assign|plot-curve|<macro|fun-f|start-x|end-x|<\plot|<localize|Plot curve>>
+    <plot-group|<localize|Function>>
+
+    <plot-function|f|<arg|fun-f>>
+
+    <plot-group|<localize|Range>>
+
+    <plot-range|x|<arg|start-x>|<arg|end-x>>
+  </plot>>>
+
+  <assign|plot-curve*|<macro|fun-x|fun-y|start-t|end-t|<\plot|<localize|Plot
+  parametric curve>>
+    <plot-group|<localize|Function>>
+
+    <plot-function|x|<arg|fun-x>>
+
+    <plot-function|y|<arg|fun-y>>
+
+    <plot-group|<localize|Range>>
+
+    <plot-range|t|<arg|start-t>|<arg|end-t>>
+  </plot>>>
+
+  <assign|plot-surface|<macro|fun-f|start-x|end-x|start-y|end-y|<\plot|<localize|Plot
+  surface>>
+    <plot-group|<localize|Function>>
+
+    <plot-function|f|<arg|fun-f>>
+
+    <plot-group|<localize|Range>>
+
+    <plot-range|x|<arg|start-x>|<arg|end-x>>
+
+    <plot-range|y|<arg|start-y>|<arg|end-y>>
+  </plot>>>
+
+  <assign|plot-surface*|<macro|fun-x|fun-y|fun-z|start-u|end-u|start-v|end-v|<\plot|<localize|Plot
+  parametric surface>>
+    <plot-group|<localize|Function>>
+
+    <plot-function|x|<arg|fun-x>>
+
+    <plot-function|y|<arg|fun-y>>
+
+    <plot-function|z|<arg|fun-z>>
+
+    <plot-group|<localize|Range>>
+
+    <plot-range|u|<arg|start-u>|<arg|end-u>>
+
+    <plot-range|v|<arg|start-v>|<arg|end-v>>
+  </plot>>>
+
+  <assign|plot-output|<macro|in|out|<arg|out>>>
 </body>
 
 <\initial>

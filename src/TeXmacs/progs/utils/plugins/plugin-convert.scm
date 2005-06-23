@@ -317,6 +317,8 @@
   ("<ll>" "<less><less>")
   ("<gg>" "<gtr><gtr>")
   ("<assign>" ":=")
+  ("<um>" "-")
+  ("<upl>" "+")
   ("<bbb-C>" "CC")
   ("<bbb-F>" "FF")
   ("<bbb-N>" "NN")

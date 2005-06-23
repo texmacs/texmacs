@@ -47,7 +47,8 @@
 (menu-bind prog-format-menu
   (group "Font")
   (link prog-font-menu)
-  (-> "Color" (link color-menu)))
+  (-> "Color" (link color-menu))
+  (-> "Scripts" (link local-supported-scripts-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties
