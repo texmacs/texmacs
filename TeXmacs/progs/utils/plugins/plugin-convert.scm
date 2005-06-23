@@ -317,6 +317,7 @@
   ("<ll>" "<less><less>")
   ("<gg>" "<gtr><gtr>")
   ("<assign>" ":=")
+  ("<ldots>" "..")
   ("<um>" "-")
   ("<upl>" "+")
   ("<bbb-C>" "CC")
