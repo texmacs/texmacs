@@ -165,6 +165,33 @@
   (ahash-set! plugin-commander lan val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some subroutines for mathematical content
+;; FIXME: these should be moved into table-edit.scm and math-edit.scm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (cell-context-inside-sub? t which)
+  (or (and (list? which) (tree-in? t which))
+      (and (nlist? which) (tree-is? t which))
+      (and (tree-in? t '(table tformat document))
+	   (cell-context-inside-sub? (tree-up t) which))))
+
+(define (cell-context-inside? t which)
+  (and (tree-is? t 'cell)
+       (tree-is? t :up 'row)
+       (cell-context-inside-sub? (tree-ref t :up :up)  which)))
+
+(tm-define (formula-context? t)
+  (with u (tree-up t)
+    (and u (or (tree-in? u '(math equation equation*))
+	       (match? u '(with "mode" "math" :1))
+	       (cell-context-inside? u '(eqnarray eqnarray*))))))
+
+(tm-define (in-var-math?)
+  (let* ((t1 (tree-innermost formula-context? #t))
+	 (t2 (tree-innermost 'text)))
+    (and (nnot t1) (or (not t2) (tree-inside? t1 t2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; evaluation + simplification of document fragments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -201,112 +228,6 @@
 	   (if (and (in-var-math?) (tm-func? r 'math 1)) (cadr r) r)))
 	(else
 	 (texmacs-error "plugin-eval" "unrecognized option ~S" (car opts)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Some subroutines for mathematical content
-;; FIXME: these should be moved into table-edit.scm and math-edit.scm
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (cell-context-inside-sub? t which)
-  (or (and (list? which) (tree-in? t which))
-      (and (nlist? which) (tree-is? t which))
-      (and (tree-in? t '(table tformat document))
-	   (cell-context-inside-sub? (tree-up t) which))))
-
-(define (cell-context-inside? t which)
-  (and (tree-is? t 'cell)
-       (tree-is? t :up 'row)
-       (cell-context-inside-sub? (tree-ref t :up :up)  which)))
-
-(define (formula-context? t)
-  (with u (tree-up t)
-    (and u (or (tree-in? u '(math equation equation*))
-	       (match? u '(with "mode" "math" :1))
-	       (cell-context-inside? u '(eqnarray eqnarray*))))))
-
-(define (in-var-math?)
-  (let* ((t1 (tree-innermost formula-context? #t))
-	 (t2 (tree-innermost 'text)))
-    (and (nnot t1) (or (not t2) (tree-inside? t1 t2)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High-level evaluation and function application via plug-in
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define plugin-keep-input-flag? #f)
-(define plugin-eval-math-flag? #t)
-
-(tm-define (plugin-keep-input?) plugin-keep-input-flag?)
-(tm-define (toggle-keep-input)
-  (:synopsis "Toggle whether we keep the input of evaluations.")
-  (:check-mark "v" plugin-keep-input?)
-  (toggle! plugin-keep-input-flag?))
-
-(tm-define (plugin-eval-math?) plugin-eval-math-flag?)
-(tm-define (toggle-eval-math)
-  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas.")
-  (:check-mark "v" plugin-eval-math?)
-  (toggle! plugin-eval-math-flag?))
-
-(tm-define (plugin-evaluable?)
-  (or (selection-active-any?)
-      (nnot (tree-innermost formula-context? #t))))
-
-(tm-define (plugin-modified-evaluate fun1 fun2)
-  (let* ((name (get-env "prog-scripts"))
-	 (session (get-env "prog-session"))
-	 (scripts? (supports-scripts? name)))
-    (cond ((and (selection-active-any?) scripts?)
-	   (let* ((t (fun1 (tree->stree (selection-tree))))
-		  (r (plugin-eval name session t :math-input))
-		  (m1? (in-var-math?))
-		  (m2? (tm-func? r 'math 1)))
-	     (clipboard-cut "primary")
-	     (if m2? (set! r (cadr r)))
-	     (if (and (not m1?) m2?) (insert-go-to '(math "") '(0 0)))
-	     (if (plugin-keep-input?)
-		 (begin
-		   (insert "=")
-		   (with-cursor (cursor-after (go-to-previous))
-		     (fun2)
-		     (clipboard-paste "primary"))))
-	     (insert r)))
-	  ((and (tree-innermost formula-context? #t)
-		scripts? plugin-eval-math-flag?)
-	   (with t (tree-innermost formula-context? #t)
-	     (tree-select t)
-	     (plugin-modified-evaluate fun1 fun2)))
-	  ((selection-active-any?)
-	   (clipboard-cut "primary")
-	   (plugin-modified-evaluate fun1 fun2)
-	   (clipboard-paste "primary"))
-	  (else (fun2)))))
-
-(tm-define (plugin-evaluate)
-  (plugin-modified-evaluate
-   (lambda (t) t)
-   noop))
-
-(define (insert-function fun)
-  (insert fun)
-  (if (in-var-math?)
-      (insert-go-to '(concat (left "(") (right ")")) '(0 1))
-      (insert-go-to "()" '(1))))
-
-(tm-define (plugin-apply-function fun)
-  (plugin-modified-evaluate
-   (lambda (t) (list 'concat fun "(" t ")"))
-   (lambda () (insert-function fun))))
-
-(menu-bind plugin-eval-menu
-  (when (plugin-evaluable?)
-	("Evaluate" (plugin-evaluate)))
-  ("Evaluation tag" (make 'script-eval))
-  ("Input switch" (insert-go-to '(script-input "" "") '(0 0))))
-
-(menu-bind plugin-eval-toggle-menu
-  ("Keep evaluated expressions" (toggle-keep-input))
-  ("Quick evaluation of formulas" (toggle-eval-math)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tab completion

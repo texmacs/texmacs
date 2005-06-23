@@ -50,29 +50,39 @@
       (link plugin-eval-menu)
       ---)
   (-> "Simplification"
+      ("Simplify" (maxima-apply "fullratsimp"))
       ("Factor" (maxima-apply "factor"))
       ("Expand" (maxima-apply "expand"))
-      ---
-      ("Contract logarithms" (maxima-apply "logcontract"))
-      ("Expand logarithms" (maxima-apply "logexpand"))
-      ---
-      ("Contract trigonometric functions" (maxima-apply "trigreduce"))
-      ("Expand trigonometric functions" (maxima-apply "trigexpand")))
-  (-> "Elementary functions"
+      ("Expand w.r.t." (maxima-apply "expandwrt" 2)))
+  (-> "Arithmetic"
+      ("Factor" (maxima-apply "factor"))
+      ("Gcd" (maxima-apply "gcd"))
+      ("Lcm" (maxima-apply "lcm")))
+  (-> "Logarithms"
       ("Exponential" (maxima-apply "exp"))
       ("Logarithm" (maxima-apply "log"))
       ---
+      ("Contract logarithms" (maxima-apply "logcontract"))
+      ("Expand logarithms" (maxima-apply "logexpand")))
+  (-> "Trigonometric"
       ("Sine" (maxima-apply "sin"))
       ("Cosine" (maxima-apply "cos"))
       ("Tangent" (maxima-apply "tan"))
       ("Arc sine" (maxima-apply "asin"))
       ("Arc cosine" (maxima-apply "acos"))
-      ("Arc tangent" (maxima-apply "atan")))
+      ("Arc tangent" (maxima-apply "atan"))
+      ---
+      ("Reduce trigonometric functions" (maxima-apply "trigreduce"))
+      ("Reduce trigonometric functions w.r.t." (maxima-apply "trigreduce" 2))
+      ("Expand trigonometric functions" (maxima-apply "trigexpand")))
   (-> "Special functions"
       ("Airy" (maxima-apply "Airy"))
       ("Erf" (maxima-apply "erf"))
       ("Gamma" (maxima-apply "Gamma"))
       ("Psi" (maxima-apply "Psi")))
+  (-> "Calculus"
+      ("Differentiate" (maxima-apply "diff" 2))
+      ("Integrate" (maxima-apply "integrate" 2)))
   (-> "Matrices"
       ("Determinant" (maxima-apply "determinant"))
       ("Echelon" (maxima-apply "echelon"))
@@ -81,9 +91,9 @@
       ("Rank" (maxima-apply "rank"))
       ("Transpose" (maxima-apply "transpose"))
       ("Triangularize" (maxima-apply "triangularize")))
-  ---
-  (link plugin-eval-toggle-menu))
-
+  (if (not-in-session?)
+      ---
+      (link plugin-eval-toggle-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Additional icons

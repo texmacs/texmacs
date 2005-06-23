@@ -17,15 +17,6 @@
 (define-public == equal?)
 (define-public (!= x y) (not (equal? x y)))
 
-(define-public call/cc call-with-current-continuation)
-(define-public-macro (with-cc cont . body)
-  `(call/cc (lambda (,cont) ,@body)))
-
-(define-public-macro (with var val . body)
-  (if (pair? var)
-      `(apply (lambda ,var ,@body) ,val)
-      `(let ((,var ,val)) ,@body)))
-
 (define-public (nstring? x) (not (string? x)))
 (define-public (nnull? x) (not (null? x)))
 (define-public (npair? x) (not (pair? x)))
@@ -64,3 +55,30 @@
 
 (define-public (load-object file)
   (read (open-file (url-materialize file "r") OPEN_READ)))
+
+(define-public call/cc call-with-current-continuation)
+(define-public-macro (with-cc cont . body)
+  `(call/cc (lambda (,cont) ,@body)))
+
+(define-public-macro (with var val . body)
+  (if (pair? var)
+      `(apply (lambda ,var ,@body) ,val)
+      `(let ((,var ,val)) ,@body)))
+
+(define-public (.. start end)
+  (if (< start end)
+      (cons start (.. (1+ start) end))
+      '()))
+
+(define-public-macro (for what . body)
+  (cond ((list-2? what)
+	 `(for-each (lambda (,(car what)) ,@body)
+		    ,(cadr what)))
+	((list-3? what)
+	 `(for-each (lambda (,(car what)) ,@body)
+		    (.. ,(cadr what) ,(caddr what))))
+	(else '(noop))))
+
+(define-public-macro (repeat n . body)
+  (let ((x (gensym)))
+    `(for (,x 0 ,n) ,@body)))
