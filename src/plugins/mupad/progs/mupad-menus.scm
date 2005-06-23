@@ -51,8 +51,7 @@
       ("sh" (mupad-apply "sinh"))
       ("th" (mupad-apply "tanh")))
   (-> "Transcendental functions"
-      ("Gamma" (mupad-apply "gamma"))
-      ("Psi" (mupad-apply "psi"))
+      ("Gamma" (mupad-apply "Gamma"))
       ("Zeta" (mupad-apply "zeta")))
   (-> "Number theoretical functions"
       ("Factor" (mupad-apply "factor"))
