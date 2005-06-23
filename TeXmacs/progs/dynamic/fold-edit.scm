@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic fold-edit)
-  (:use (utils library tree)
-	(utils plugins plugin-cmd)))
+  (:use (utils library tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
@@ -170,34 +169,3 @@
 (tm-define (hidden-variant)
   (:inside switch)
   (switch-to "rotate forward"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; On-the-fly plug-in evaluations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (kbd-return)
-  (:inside script-eval)
-  (with-innermost t 'script-eval
-    (let* ((name (get-env "prog-scripts"))
-	   (session (get-env "prog-session"))
-	   (in (tree->stree (tree-ref t 0))))
-      (tree-select t)
-      (clipboard-cut "primary")
-      (insert (plugin-eval name session in :math-correct :math-input)))))
-
-(tm-define (hidden-variant)
-  (:inside script-input)
-  (with-innermost t 'script-input
-    (let* ((name (get-env "prog-scripts"))
-	   (session (get-env "prog-session"))
-	   (in (tree->stree (tree-ref t 0)))
-	   (out (plugin-eval name session in :math-correct :math-input)))
-      (tree-set! t 1 out)
-      (tree-assign-node! t 'script-output)
-      (tree-go-to t 1 :end))))
-
-(tm-define (hidden-variant)
-  (:inside script-output)
-  (with-innermost t 'script-output
-    (tree-assign-node! t 'script-input)
-    (tree-go-to t 0 :end)))

@@ -28,7 +28,7 @@
        '(texmacs-module define-macro define-public-macro
          tm-define tm-define-macro tm-property
 	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let* case-lambda with
+         texmacs-modes and-let* case-lambda with for repeat
 	 with-innermost with-action with-mutator with-module with-cursor
 	 call/cc with-cc values receive map-in-order
          drd-group drd-table drd-dispatcher
@@ -62,7 +62,7 @@
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if define-group
-	       define-macro define-public-macro while
+	       define-macro define-public-macro while for repeat
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters

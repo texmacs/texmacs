@@ -19,7 +19,7 @@
   (lazy-input-converter (maxima-input) maxima)
   (menu-extend session-help-icons (link maxima-help-icons))
   (menu-extend texmacs-extra-menu
-    (if (or (in-maxima?) (test-env? "prog-scripts" "maxima"))
+    (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
 	(=> "Maxima"
 	    (link maxima-menu)))))
 
