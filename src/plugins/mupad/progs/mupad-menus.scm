@@ -15,13 +15,63 @@
 
 (texmacs-module (mupad-menus))
 
-(define (mupad-show-help arg)
-  (with root (var-eval-system "mupad -r")
-    (system (string-append "mxdvi " root "/share/doc/dvi/" arg " &"))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Several subroutines for the evaluation of Mupad expressions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (plugin-output-simplify name t)
+  (:require (== name "mupad"))
+  (cond ((match? t '(concat (with "mode" "math" "math-display" "true" :1) :*))
+	 `(math ,(plugin-output-simplify name (tm-ref t 0 4))))
+	(else (plugin-output-std-simplify name t))))
+
+(define mupad-apply script-apply)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Mupad menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind mupad-menu
+  (if (not-in-session?)
+      (link scripts-eval-menu)
+      ---)
+  (-> "Elementary functions"
+      ("exp" (mupad-apply "exp"))
+      ("log" (mupad-apply "log"))
+      ("sqrt" (mupad-apply "sqrt"))
+      ---
+      ("cos" (mupad-apply "cos"))
+      ("sin" (mupad-apply "sin"))
+      ("tan" (mupad-apply "tan"))
+      ("arccos" (mupad-apply "arccos"))
+      ("arcsin" (mupad-apply "arcsin"))
+      ("arctan" (mupad-apply "arctan"))
+      ---
+      ("ch" (mupad-apply "cosh"))
+      ("sh" (mupad-apply "sinh"))
+      ("th" (mupad-apply "tanh")))
+  (-> "Transcendental functions"
+      ("Gamma" (mupad-apply "gamma"))
+      ("Psi" (mupad-apply "psi"))
+      ("Zeta" (mupad-apply "zeta")))
+  (-> "Number theoretical functions"
+      ("Factor" (mupad-apply "factor"))
+      ("Gcd" (mupad-apply "gcd"))
+      ("Lcm" (mupad-apply "lcm")))
+  (-> "Calculus"
+      ("Differentiate" (mupad-apply "diff" 2))
+      ("Integrate" (mupad-apply "int" 2)))
+  (if (not-in-session?)
+      ---
+      (link scripts-eval-toggle-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mupad-show-help arg)
+  (with root (var-eval-system "mupad -r")
+    (system (string-append "mxdvi " root "/share/doc/dvi/" arg " &"))))
 
 (menu-bind mupad-help-menu
   ("Tutorial" (mupad-show-help "tutorium"))

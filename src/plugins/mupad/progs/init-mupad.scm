@@ -12,11 +12,15 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (mupad-menus) mupad-help-menu)
+(lazy-menu (mupad-menus) mupad-menu mupad-help-menu)
 
 (define (mupad-initialize)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mupad-input) mupad)
+  (menu-extend texmacs-extra-menu
+    (if (or (in-mupad?) (and (not-in-session?) (mupad-scripts?)))
+	(=> "Mupad"
+	    (link mupad-menu))))
   (menu-extend session-help-icons
     (if (in-mupad?)
 	|
@@ -32,7 +36,8 @@
   (:initialize (mupad-initialize))
   (:launch "tm_mupad --texmacs")
   (:serializer ,mupad-serialize)
-  (:session "Mupad"))
+  (:session "Mupad")
+  (:scripts "Mupad"))
 
 (texmacs-modes
   (in-mupad-math% #t in-mupad% in-math%)

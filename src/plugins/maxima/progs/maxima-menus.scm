@@ -61,6 +61,7 @@
   (-> "Logarithms"
       ("Exponential" (maxima-apply "exp"))
       ("Logarithm" (maxima-apply "log"))
+      ("Square root" (maxima-apply "sqrt"))
       ---
       ("Contract logarithms" (maxima-apply "logcontract"))
       ("Expand logarithms" (maxima-apply "logexpand")))
