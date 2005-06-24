@@ -181,6 +181,9 @@ concater_rep::typeset (tree t, path ip) {
   case GROUP:
     typeset_group (t, ip);
     break;
+  case HIDDEN:
+    (void) env->exec (t);
+    break;
   case HSPACE:
     t= env->exec (t);
     typeset_hspace (t, ip);

@@ -15,6 +15,7 @@
 
 bridge bridge_document (typesetter, tree, path);
 bridge bridge_surround (typesetter, tree, path);
+bridge bridge_hidden (typesetter, tree, path);
 bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
 bridge bridge_rewrite (typesetter, tree, path);
@@ -64,6 +65,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_document (ttt, st, ip);
   case SURROUND:
     return bridge_surround (ttt, st, ip);
+  case HIDDEN:
+    return bridge_hidden (ttt, st, ip);
   case DATOMS:
     return bridge_formatting (ttt, st, ip, ATOM_DECORATIONS);
   case DLINES:
@@ -280,7 +283,8 @@ bridge_rep::typeset (int desired_status) {
   // cout << "Typesetted " << st << ", " << desired_status << "\n";
 
   // ttt->insert_stack (l, sb);
-  if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
+  if (N(l) == 0);
+  else if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
   else {
     bool flag= false;
     int i, n= N(l);

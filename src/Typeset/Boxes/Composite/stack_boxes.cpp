@@ -44,9 +44,6 @@ struct stack_box_rep: public composite_box_rep {
 void
 stack_box_rep::position (array<SI> spc) {
   int i;
-  if (N(bs)==0)
-    fatal_error ("stack of zero boxes", "stack_box_rep::position");
-  // y1= bs[0]->y2; y2= 0;
   y1 = y2 = 0;
   for (i=0; i<N(bs); i++) {
     sx(i)= 0;
@@ -59,8 +56,9 @@ stack_box_rep::position (array<SI> spc) {
 stack_box_rep::stack_box_rep (path ip, array<box> bs2, array<SI> spc):
   composite_box_rep (ip)
 {
-  bs = bs2;
-  position (spc);
+  bs= bs2;
+  if (N(bs) != 0)
+    position (spc);
   finalize ();
 }
 
@@ -86,6 +84,7 @@ void
 stack_box_rep::clear_incomplete (
   rectangles& rs, SI pixel, int which, int i1, int i2)
 {
+  if (N(bs) == 0) return;
   if ((i1 <= i2) && (!nil (rs))) {
     // cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )\n";
     // cout << "  in : " << rs << "\n";
@@ -173,7 +172,8 @@ stack_box_rep::clear_incomplete (
 int
 stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   int i, h, n=N(bs);
-  if (n<4) i=0;
+  if (n==0) return -1;
+  else if (n<4) i=0;
   else {
     i= h= n>>1;
     while (h != 0) {
