@@ -581,5 +581,6 @@ edit_modify_rep::position_set (observer o, path p) {
 
 path
 edit_modify_rep::position_get (observer o) {
-  return super_correct (et, obtain_position (o));
+  //return super_correct (et, obtain_position (o));
+  return correct_cursor (et, obtain_position (o));
 }
