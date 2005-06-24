@@ -195,7 +195,9 @@
     </src-comment>
   </active*>
 
-  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>>
+  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hidden|<arg|y>><hflush>>
+    <arg|x>
+  </surround>>>>>
 
   <assign|unfold|<\macro|x|y>
     <\with|par-left|<plus|<value|par-left>|1.5fn>>

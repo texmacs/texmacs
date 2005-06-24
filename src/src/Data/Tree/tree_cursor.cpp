@@ -12,6 +12,94 @@
 
 #include "tree_cursor.hpp"
 #include "drd_std.hpp"
+#include "analyze.hpp"
+
+/******************************************************************************
+* Finding a closest cursor inside a tree
+******************************************************************************/
+
+bool
+is_inside (tree t, path p) {
+  if (nil (p)) return false;
+  else if (is_atomic (t)) {
+    string s= t->label;
+    int i, n= N(s), k= p->item;
+    if (!atom (p) || k<0 || k>n) return false;
+    for (i=0; i<k; tm_char_forwards (s, i));
+    return i == k;
+  }
+  else if (atom (p)) return p->item == 0 || p->item == 1;
+  else return p->item >= 0 && p->item < N(t) &&
+	      is_inside (t[p->item], p->next);
+}
+
+path
+closest_inside (tree t, path p) {
+  // Arbitrary paths may be outside the tree.
+  // This routine returns a closest path to p inside the tree t
+  if (nil (p)) return path (0);
+  else if (is_atomic (t)) {
+    string s= t->label;
+    int i, n= N(s), k= max (0, min (n, p->item));
+    for (i=0; i<k; tm_char_forwards (s, i));
+    return i;
+  }
+  else if (atom (p) || p->item < 0 || p->item >= N(t))
+    return path (max (0, min (1, p->item)));
+  else return path (p->item, closest_inside (t[p->item], p->next));
+}
+
+bool
+is_accessible (tree t, path p) {
+  if (is_atomic (t)) return true;
+  else if (atom (p)) return !the_drd->is_child_enforcing (t);
+  else return the_drd->is_accessible_child (t, p->item) &&
+	      is_accessible (t[p->item], p->next);
+}
+
+path
+closest_accessible (tree t, path p) {
+  // Given a path p inside t, the path may be unaccessible
+  // This routine returns the closest path to p inside t which is accessible
+  // The routine returns nil if there exists no accessible path inside t
+  if (is_atomic (t)) return p;
+  else if (atom (p) && !the_drd->is_child_enforcing (t)) return p;
+  else {
+    int i, k= p->item, n= N(t);
+    if (p == 1) k= max (0, n-1);
+    for (i=0; i<n; i++) {
+      int j= (i&1 == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
+      if (the_drd->is_accessible_child (t, j)) {
+	// FIXME: certain tags modify source accessability props
+	// FIXME: cells with non-trivial span may lead to unaccessability
+	// FIXME: very dynamic markup should be treated after typesetting
+	if (atom (p) && is_atomic (t[j]))
+	  return path (j, p->item * N (t[j]->label));
+	path r= closest_accessible (t[j], atom (p)? p: p->next);
+	if (!nil (r)) return path (j, r);
+      }
+      return path ();
+    }
+  }
+}
+
+bool
+is_shifted (tree t, path p, int dir= -1, bool flag= false) {
+  if (dir == 0) return true;
+  else if (atom (p)) {
+    if (flag) {
+      if (dir < 0) return p->item != 0;
+      else return p->item != right_index (t);
+    }
+    else return true;
+  }
+  else if (is_concat (t)) {
+    int  i    = p->item;
+    bool sflag= flag || (dir<0? i>0: i<N(t)-1);
+    return is_shifted (t[i], p->next, dir, sflag);
+  }
+  else return is_shifted (t[p->item], p->next, dir, false);
+}
 
 /******************************************************************************
 * Subroutines for cursor paths in trees
