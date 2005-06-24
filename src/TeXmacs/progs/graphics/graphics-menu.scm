@@ -377,5 +377,13 @@
   (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
       (graphics-set-mode "text-at"))
   |
+  (   (balloon (icon "tm_group_move.xpm") "Move objects")
+      (graphics-set-mode '(group-edit move)))
+  (   (balloon (icon "tm_group_zoom.xpm") "Zoom/unzoom objects")
+      (graphics-set-mode '(group-edit zoom)))
+  (   (balloon (icon "tm_group_rotate.xpm") "Rotate objects")
+      (graphics-set-mode '(group-edit rotate)))
+  |
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
-      (graphics-set-mode '(edit-prop))))
+      (graphics-set-mode '(edit-prop)))
+)

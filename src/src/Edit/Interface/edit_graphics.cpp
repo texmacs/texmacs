@@ -131,8 +131,25 @@ edit_graphics_rep::set_graphical_object (tree t) {
   //tree old_fr= env->local_begin (GR_FRAME, (tree) find_frame ());  
   frame f_env= env->fr;
   env->fr= find_frame ();
-  if (!nil (env->fr))
+  if (!nil (env->fr)) {
+    int i,n=0;
     go_box= typeset_as_concat (env, t, path (0));
+    for (i=0; i<N(go_box); i++)
+      if (go_box[i]!="") n++;
+    if (n) {
+      array<box> bx(n);
+      n=0;
+      for (i=0; i<N(go_box); i++) if (go_box[i]!="") {
+	array<box> bx2(1);
+	array<SI> spc2(1);
+	bx2[0]= go_box[i];
+	spc2[0]=0;
+	bx[n]= concat_box (path (0), bx2, spc2);
+	n++;
+      }
+      go_box= composite_box (path (0), bx);
+    }
+  }
   env->fr= f_env;
   //env->local_end (GR_FRAME, old_fr);
 }
