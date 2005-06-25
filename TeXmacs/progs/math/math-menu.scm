@@ -65,6 +65,8 @@
       ---
       ("Overbrace" (make-wide "<wide-overbrace>"))
       ("Underbrace" (make-wide "<wide-underbrace*>"))
+      ("Square overbrace" (make-wide "<wide-sqoverbrace>"))
+      ("Square underbrace" (make-wide "<wide-squnderbrace*>"))
       ("Right arrow" (make-wide "<wide-varrightarrow>"))
       ("Left arrow" (make-wide "<wide-varleftarrow>"))
       ("Wide bar" (make-wide "<wide-bar>")))
@@ -83,6 +85,8 @@
       ---
       ("Overbrace" (make-wide-under "<wide-overbrace*>"))
       ("Underbrace" (make-wide-under "<wide-underbrace>"))
+      ("Square overbrace" (make-wide-under "<wide-sqoverbrace*>"))
+      ("Square underbrace" (make-wide-under "<wide-squnderbrace>"))
       ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))

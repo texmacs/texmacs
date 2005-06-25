@@ -42,6 +42,8 @@ box wide_bar_box (path ip, SI x1, SI x2, SI penw, color col);
 box wide_vect_box (path ip, SI x1, SI x2, SI penw, color col);
 box wide_check_box (path ip, SI x1, SI x2, SI penw, color col);
 box wide_breve_box (path ip, SI x1, SI x2, SI penw, color col);
+box wide_squbr_box (path ip, SI x1, SI x2, SI penw, color col);
+box wide_sqobr_box (path ip, SI x1, SI x2, SI penw, color col);
 box image_box (path ip, string fname, SI w, SI h, double mw, double mh,
 	       int x1, int y1, int x2, int y2);
 box control_box (path ip, tree t, font fn);
