@@ -92,5 +92,7 @@ box tag_box (path ip, box b, string name);
 box anim_compose_box (path ip, array<box> b);
 box anim_repeat_box (path ip, box b);
 box anim_constant_box (path ip, box b, int l);
+box sound_box (path ip, url u, SI h);
+box video_box (path ip, url u);
 
 #endif // defined CONSTRUCT_H
