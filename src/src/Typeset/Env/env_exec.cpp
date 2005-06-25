@@ -332,6 +332,14 @@ edit_env_rep::exec (tree t) {
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case MSEC_LENGTH:
+    return exec_msec_length ();
+  case SEC_LENGTH:
+    return exec_sec_length ();
+  case MIN_LENGTH:
+    return exec_min_length ();
+  case H_LENGTH:
+    return exec_h_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:

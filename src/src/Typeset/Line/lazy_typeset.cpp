@@ -138,6 +138,16 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
 }
 
 /******************************************************************************
+* Hidden
+******************************************************************************/
+
+lazy
+make_lazy_hidden (edit_env env, tree t, path ip) {
+  (void) make_lazy (env, t[0], descend (ip, 0));
+  return lazy_document (env, tree (DOCUMENT), ip);
+}
+
+/******************************************************************************
 * Formatting
 ******************************************************************************/
 
@@ -443,6 +453,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
+  case HIDDEN:
+    return make_lazy_hidden (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:

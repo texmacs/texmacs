@@ -264,6 +264,10 @@ private:
   tree exec_pag_length ();
   tree exec_tmpt_length ();
   tree exec_px_length ();
+  tree exec_msec_length ();
+  tree exec_sec_length ();
+  tree exec_min_length ();
+  tree exec_h_length ();
 
   tree exec_point (tree t);
   tree exec_box_info (tree t);

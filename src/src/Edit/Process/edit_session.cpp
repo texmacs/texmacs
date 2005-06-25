@@ -62,7 +62,7 @@ mutate (tree t, path ip) {
 void
 edit_process_rep::process_mutators () {
   if (mutators_updated && (nr_mutators == 0)) return;
-  if (texmacs_time() < next_mutate) return;
+  if (texmacs_time()-next_mutate < 0) return;
   new_mutators= false;
   mutators_updated= true;
   mutator_time= texmacs_time ();

@@ -115,6 +115,14 @@ class concater_rep {
   void typeset_meaning (tree t, path ip);
   void typeset_flag (tree t, path ip);
 
+  // animations
+  void typeset_anim_compose (tree t, path ip);
+  void typeset_anim_repeat (tree t, path ip);
+  void typeset_anim_constant (tree t, path ip);
+  void typeset_anim_effect (tree t, path ip);
+  void typeset_video (tree t, path ip);
+  void typeset_sound (tree t, path ip);
+
   // graphical markup
   void typeset_graphics (tree t, path ip);
   void typeset_superpose (tree t, path ip);

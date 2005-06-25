@@ -54,6 +54,13 @@ public:
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+
+  virtual int   anim_length ();
+  virtual bool  anim_started ();
+  virtual bool  anim_finished ();
+  virtual void  anim_start_at (time_t at);
+  virtual void  anim_finish_now ();
+  virtual void  anim_get_invalid (time_t& at, rectangles& rs);
 };
 
 #endif // defined MODIFIER_H

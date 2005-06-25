@@ -140,6 +140,18 @@ modifier_box_rep::graphical_select (SI x, SI y, SI dist) {
 }
 
 /******************************************************************************
+* Animations
+******************************************************************************/
+
+int modifier_box_rep::anim_length () { return b->anim_length (); }
+bool modifier_box_rep::anim_started () { return b->anim_started (); }
+bool modifier_box_rep::anim_finished () { return b->anim_finished (); }
+void modifier_box_rep::anim_finish_now () { b->anim_finish_now (); }
+void modifier_box_rep::anim_start_at (time_t at) { b->anim_start_at (at); }
+void modifier_box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
+  b->anim_get_invalid (at, rs); }
+
+/******************************************************************************
 * Symbol boxes
 ******************************************************************************/
 

@@ -561,6 +561,25 @@ concater_rep::typeset (tree t, path ip) {
     typeset_flag (t, ip);
     break;
 
+  case ANIM_COMPOSE:
+    typeset_anim_compose (t, ip);
+    break;
+  case ANIM_REPEAT:
+    typeset_anim_repeat (t, ip);
+    break;
+  case ANIM_CONSTANT:
+    typeset_anim_constant (t, ip);
+    break;
+  case ANIM_EFFECT:
+    typeset_anim_effect (t, ip);
+    break;
+  case VIDEO:
+    typeset_video (t, ip);
+    break;
+  case SOUND:
+    typeset_sound (t, ip);
+    break;
+
   case GRAPHICS:
     typeset_graphics (t, ip);
     break;

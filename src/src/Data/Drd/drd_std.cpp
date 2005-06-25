@@ -63,6 +63,8 @@ init_std_drd () {
   init (ERROR, "error", fixed (1));
   init (RAW_DATA, "raw-data", fixed (1));
 
+  init (MULTI_PART, "multi-part",
+	repeat (3, 3) -> no_border () -> accessible (0));
   init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
   init (PARA, "para",
 	repeat (1, 1) -> no_border () -> accessible (0) -> name ("paragraph"));
@@ -235,6 +237,10 @@ init_std_drd () {
   init (PAG_LENGTH, "pag-length", fixed (0));
   init (TMPT_LENGTH, "tmpt-length", fixed (0));
   init (PX_LENGTH, "px-length", fixed (0));
+  init (MSEC_LENGTH, "msec-length", fixed (0));
+  init (SEC_LENGTH, "sec-length", fixed (0));
+  init (MIN_LENGTH, "min-length", fixed (0));
+  init (H_LENGTH, "h-length", fixed (0));
 
   init (STYLE_WITH, "style-with",
 	var_repeat (2, 1, BIFORM) -> accessible (1));
@@ -272,6 +278,15 @@ init_std_drd () {
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));
+
+  init (ANIM_COMPOSE, "anim-compose", repeat (1, 1));
+  init (ANIM_REPEAT, "anim-repeat", fixed (1) -> accessible (0));
+  init (ANIM_CONSTANT, "anim-constant",
+	fixed (1, 1, BIFORM) -> accessible (1));
+  init (ANIM_EFFECT, "anim-effect",
+	var_repeat (1, 1, BIFORM) -> accessible (1));
+  init (VIDEO, "video", fixed (5));
+  init (SOUND, "sound", fixed (1));
 
   init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
   init (SUPERPOSE, "superpose", repeat (1, 1));

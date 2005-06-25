@@ -22,7 +22,7 @@ enum tree_label {
   STRING, UNKNOWN, UNINIT, ERROR, RAW_DATA,
 
   // basic formatting tags
-  DOCUMENT, PARA, SURROUND, CONCAT, GROUP, HIDDEN,
+  MULTI_PART, DOCUMENT, PARA, SURROUND, CONCAT, GROUP, HIDDEN,
   HSPACE, VAR_VSPACE, VSPACE, SPACE,
   HTAB, MOVE, RESIZE, REPEAT, _FLOAT,
   DATOMS, DLINES, DPAGES, DBOX,
@@ -69,6 +69,7 @@ enum tree_label {
   SPC_LENGTH, XSPC_LENGTH,                         // font specific & stretchy
   PAR_LENGTH, PAG_LENGTH,                          // other
   TMPT_LENGTH, PX_LENGTH,                          // miscellaneous
+  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, H_LENGTH,   // durations
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
@@ -81,6 +82,10 @@ enum tree_label {
   LABEL, REFERENCE, PAGEREF, WRITE,
   SPECIFIC, HLINK, ACTION,
   TAG, MEANING, FLAG,
+
+  // animations
+  ANIM_COMPOSE, ANIM_REPEAT, ANIM_CONSTANT,
+  ANIM_EFFECT, VIDEO, SOUND,
 
   // graphical tags
   GRAPHICS, SUPERPOSE, TEXT_AT, _POINT,

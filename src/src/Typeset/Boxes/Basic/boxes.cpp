@@ -527,6 +527,67 @@ operator << (ostream& out, gr_selection sel) {
 }
 
 /******************************************************************************
+* Animations
+******************************************************************************/
+
+int
+box_rep::anim_length () {
+  int i, n= subnr (), len=0;
+  for (i=0; i<n; i++) {
+    int slen= subbox (i)->anim_length ();
+    if (slen == -1) return -1;
+    if (slen > len) len= slen;
+  }
+  return len;
+}
+
+bool
+box_rep::anim_started () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_started ()) return false;
+  return true;
+}
+
+bool
+box_rep::anim_finished () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_finished ()) return false;
+  return true;
+}
+
+void
+box_rep::anim_start_at (time_t at) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_start_at (at);
+}
+
+void
+box_rep::anim_finish_now () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_finish_now ();
+}
+
+void
+box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    time_t at2= at;
+    rectangles rs2;
+    subbox (i)->anim_get_invalid (at2, rs2);
+    if (N(rs2) != 0) {
+      rs2= translate (rs2, sx (i), sy (i));
+      if (at2 - (at-3) < 0) rs= rs2;
+      else rs << rs2;
+      at= at2;
+    }
+  }
+}
+
+/******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
 

@@ -90,6 +90,7 @@ protected:
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
   virtual void apply_changes () = 0;
+  virtual void animate () = 0;
   virtual void correct_concat (path p, int done=0) = 0;
   virtual path search_format (int& row, int& col) = 0;
   virtual void table_bound (path fp, int& i1, int& j1, int& i2, int& j2) = 0;
