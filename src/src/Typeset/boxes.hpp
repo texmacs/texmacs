@@ -231,12 +231,14 @@ public:
 
   /******************************** animations *******************************/
 
-  virtual int   anim_length ();
-  virtual bool  anim_started ();
-  virtual bool  anim_finished ();
-  virtual void  anim_start_at (time_t at);
-  virtual void  anim_finish_now ();
-  virtual void  anim_get_invalid (time_t& at, rectangles& rs);
+  virtual int    anim_length ();
+  virtual bool   anim_started ();
+  virtual bool   anim_finished ();
+  virtual void   anim_start_at (time_t at);
+  virtual void   anim_finish_now ();
+  virtual time_t anim_next_update ();
+          void   anim_check_invalid (bool& flag, time_t& at, rectangles& rs);
+  virtual void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 
   /********************************* obsolete ********************************/
 
@@ -271,6 +273,10 @@ inline int N (box b) { return b.rep->subnr(); }
 ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
+
+extern bool   refresh_needed;
+extern time_t refresh_next;
+void          refresh_at (time_t t);
 
 #define DECORATION        (-1)
 #define DECORATION_LEFT   (-2)
