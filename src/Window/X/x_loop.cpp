@@ -338,7 +338,7 @@ x_display_rep::event_loop () {
 
     // Popup help balloons
     if (!nil (balloon_wid))
-      if (texmacs_time () >= (balloon_time+666))
+      if (texmacs_time () - balloon_time >= 666)
 	if (balloon_win == NULL)
 	  map_balloon ();
 

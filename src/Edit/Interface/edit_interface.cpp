@@ -333,7 +333,7 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   draw_cursor (win);
   draw_selection (win);
   win->set_shrinking_factor (1);
-  if (last_change>last_update) last_change= texmacs_time ();
+  if (last_change-last_update > 0) last_change= texmacs_time ();
   // cout << "Repainted\n";
 }
 
@@ -416,7 +416,7 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if (last_update < last_change && idle_time (EVENT_STATUS) >= 1000/6) {
+    if (last_change-last_update > 0 && idle_time (EVENT_STATUS) >= 1000/6) {
       SERVER (menu_main ("(horizontal (link texmacs-menu))"));
       SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
       SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
@@ -532,7 +532,20 @@ edit_interface_rep::apply_changes () {
 }
 
 /******************************************************************************
-* miscellaneous routines
+* Animations
+******************************************************************************/
+
+void
+edit_interface_rep::animate () {
+  time_t at= texmacs_time () - 1, at2= at;
+  rectangles rs;
+  eb->anim_get_invalid (at2, rs);
+  if (at2 != at && texmacs_time () >= at2)
+    invalidate (rs);
+}
+
+/******************************************************************************
+* Miscellaneous routines
 ******************************************************************************/
 
 bool

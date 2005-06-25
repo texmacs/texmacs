@@ -89,4 +89,8 @@ box action_box (path ip, box b, tree f, command c, bool ch, path vip);
 box macro_box (path ip, box b, font big_fn= font ());
 box tag_box (path ip, box b, string name);
 
+box anim_compose_box (path ip, array<box> b);
+box anim_repeat_box (path ip, box b);
+box anim_constant_box (path ip, box b, int l);
+
 #endif // defined CONSTRUCT_H

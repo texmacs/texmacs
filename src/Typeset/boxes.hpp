@@ -229,6 +229,15 @@ public:
   virtual lazy      get_leaf_lazy ();
   virtual SI        get_leaf_offset (string search);
 
+  /******************************** animations *******************************/
+
+  virtual int   anim_length ();
+  virtual bool  anim_started ();
+  virtual bool  anim_finished ();
+  virtual void  anim_start_at (time_t at);
+  virtual void  anim_finish_now ();
+  virtual void  anim_get_invalid (time_t& at, rectangles& rs);
+
   /********************************* obsolete ********************************/
 
   friend struct page_box_rep; // temporary friends for accessing x0 and y0
