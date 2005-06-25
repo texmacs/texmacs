@@ -13,6 +13,7 @@
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
 #include "timer.hpp"
+#include "../Plugins/Mplayer/mplayer.hpp"
 
 /******************************************************************************
 * Global animation tracking
@@ -347,6 +348,30 @@ anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 }
 
 /******************************************************************************
+* Sound boxes
+******************************************************************************/
+
+struct sound_box_rep: public box_rep {
+  url    u;
+  bool   started;
+
+  sound_box_rep (path ip, url u2, SI h):
+    box_rep (ip), u (u2), started (false) { y2= h; }
+  operator tree () { return tree (TUPLE, "sound", u->t); }
+  void display (ps_device dev) { (void) dev; }
+
+  void play_sound () {
+    if (supports_mplayer ()) mplayer_play_sound (u); }
+  void pre_display (ps_device& dev) {
+    if (!started) anim_start_at (texmacs_time ()); }
+  int  anim_length () { return 0; }
+  bool anim_started () { return started; }
+  bool anim_finished () { return anim_started (); }
+  void anim_start_at (time_t at) { (void) at; play_sound (); started= true; }
+  void anim_finish_now () { if (!started) { play_sound (); started= true; } }
+};
+
+/******************************************************************************
 * box construction routines
 ******************************************************************************/
 
@@ -363,4 +388,9 @@ anim_compose_box (path ip, array<box> bs) {
 box
 anim_repeat_box (path ip, box b) {
   return new anim_repeat_box_rep (ip, b);
+}
+
+box
+sound_box (path ip, url u, SI h) {
+  return new sound_box_rep (ip, u, h);
 }

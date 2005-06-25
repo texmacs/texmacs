@@ -59,6 +59,17 @@ concater_rep::typeset_video (tree t, path ip) {
 
 void
 concater_rep::typeset_sound (tree t, path ip) {
-  (void) t;
-  print (STD_ITEM, empty_box (ip));
+  tree sound_t= env->exec (t[0]);
+  url sound= url_none ();
+  if (is_atomic (sound_t)) {
+    url sound_u= sound_t->label;
+    sound= resolve (relative (env->base_file_name, sound_u));
+  }
+  if (!is_none (sound)) {
+    int sz= script (env->fn_size, env->index_level);
+    font gfn (tex_font (env->dis, "cmr", sz, (int) (env->magn*env->dpi)));
+    print (STD_ITEM, sound_box (ip, sound, gfn->yx));
+    flag ("sound", ip, env->dis->brown);
+  }
+  else typeset_dynamic (tree (ERROR, "bad sound", t), ip);
 }
