@@ -1179,7 +1179,7 @@
 (define current-x #f)
 (define current-y #f)
 (tm-define graphics-undo-enabled #t)
-(define selected-objects #f)
+(define selected-objects '())
 
 (define state-slots
   ''(graphics-action
