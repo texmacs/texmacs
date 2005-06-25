@@ -60,7 +60,7 @@ public:
   virtual bool  anim_finished ();
   virtual void  anim_start_at (time_t at);
   virtual void  anim_finish_now ();
-  virtual void  anim_get_invalid (time_t& at, rectangles& rs);
+  virtual void  anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
 #endif // defined MODIFIER_H

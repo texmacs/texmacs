@@ -13,6 +13,7 @@
 #include "boxes.hpp"
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
+#include "timer.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -571,18 +572,43 @@ box_rep::anim_finish_now () {
     subbox (i)->anim_finish_now ();
 }
 
+time_t
+box_rep::anim_next_update () {
+  fatal_error ("Invalid situation", "box_rep::anim_next_update");
+  return texmacs_time ();
+}
+
 void
-box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
+box_rep::anim_check_invalid (bool& flag, time_t& at, rectangles& rs) {
+  time_t now= texmacs_time ();
+  time_t finish_at= anim_next_update ();
+  if (finish_at - now < 0) finish_at= now;
+  if (flag && at - now < 0) at= now;
+  if (!flag || finish_at - (at - 3) < 0) {
+    flag= true;
+    at  = finish_at;
+    rs  = rectangle (x1, y1, x2, y2);
+  }
+  else if (finish_at - (at + 3) <= 0) {
+    rs << rectangle (x1, y1, x2, y2);
+    if (finish_at - at < 0) at= finish_at;
+  }
+}
+
+void
+box_rep::anim_get_invalid (bool& flag, time_t& at, rectangles& rs) {
   int i, n= subnr ();
   for (i=0; i<n; i++) {
+    bool   flag2= false;
     time_t at2= at;
     rectangles rs2;
-    subbox (i)->anim_get_invalid (at2, rs2);
-    if (N(rs2) != 0) {
+    subbox (i)->anim_get_invalid (flag2, at2, rs2);
+    if (flag2) {
       rs2= translate (rs2, sx (i), sy (i));
       if (at2 - (at-3) < 0) rs= rs2;
       else rs << rs2;
-      at= at2;
+      flag= true;
+      at  = at2;
     }
   }
 }

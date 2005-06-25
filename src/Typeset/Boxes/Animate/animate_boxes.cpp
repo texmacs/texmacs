@@ -15,6 +15,28 @@
 #include "timer.hpp"
 
 /******************************************************************************
+* Global animation tracking
+******************************************************************************/
+
+bool   refresh_needed= false;
+time_t refresh_next  = 0;
+
+void
+refresh_at (time_t t) {
+  // cout << "Refresh at " << t << "\n";
+  time_t now= texmacs_time ();
+  if (t - now < 0) t= now;
+  if (refresh_needed) {
+    if (refresh_next - now < 0) refresh_next= now;
+    if (t - refresh_next < 0) refresh_next= t;
+  }
+  else {
+    refresh_needed= true;
+    refresh_next  = t;
+  }
+}
+
+/******************************************************************************
 * Animations which remain constant for a fixed duration
 ******************************************************************************/
 
@@ -27,13 +49,14 @@ struct anim_constant_box_rep: public composite_box_rep {
   anim_constant_box_rep (path ip, box b, int length);
   operator tree () { return tree (TUPLE, "anim_constant", (tree) bs[0]); }
 
-  void pre_display (ps_device& dev);
-  int  anim_length () { return length; }
-  bool anim_started () { return started; }
-  bool anim_finished () { return finished; }
-  void anim_start_at (time_t at);
-  void anim_finish_now ();
-  void anim_get_invalid (time_t& at, rectangles& rs);
+  void   pre_display (ps_device& dev);
+  int    anim_length () { return length; }
+  bool   anim_started () { return started; }
+  bool   anim_finished () { return finished; }
+  void   anim_start_at (time_t at);
+  void   anim_finish_now ();
+  time_t anim_next_update () { return started_at + length; }
+  void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
 anim_constant_box_rep::anim_constant_box_rep (path ip, box b, int length2):
@@ -48,8 +71,10 @@ anim_constant_box_rep::anim_constant_box_rep (path ip, box b, int length2):
 void
 anim_constant_box_rep::pre_display (ps_device& dev) {
   if (!started) anim_start_at (texmacs_time ());
-  else if (!finished)
+  else if (!finished) {
     finished= (texmacs_time () - (started_at+length) >= 0);
+  }
+  if (!finished) refresh_at (anim_next_update ());
 }
 
 void
@@ -67,16 +92,10 @@ anim_constant_box_rep::anim_finish_now () {
 }
 
 void
-anim_constant_box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
+anim_constant_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
   if (started && !finished) {
-    bs[0]->anim_get_invalid (at, rs);
-    time_t finish_at= started_at + length;
-    if (at - texmacs_time () < 0 || finish_at - (at - 3) < 0) {
-      at= finish_at;
-      rs= rectangle (x1, y1, x2, y2);
-    }
-    else if (finish_at - (at + 3) <= 0)
-      rs << rectangle (x1, y1, x2, y2);
+    bs[0]->anim_get_invalid (f, at, rs);
+    anim_check_invalid (f, at, rs);
   }
 }
 
@@ -104,13 +123,14 @@ public:
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  void      pre_display (ps_device& dev);
-  int       anim_length () { return cum_len[N(bs)-1]; }
-  bool      anim_started () { return started; }
-  bool      anim_finished () { return finished; }
-  void      anim_start_at (time_t at);
-  void      anim_finish_now ();
-  void      anim_get_invalid (time_t& at, rectangles& rs);
+  void   pre_display (ps_device& dev);
+  int    anim_length () { return cum_len[N(bs)-1]; }
+  bool   anim_started () { return started; }
+  bool   anim_finished () { return finished; }
+  void   anim_start_at (time_t at);
+  void   anim_finish_now ();
+  time_t anim_next_update () { return started_at + cum_len[current]; }
+  void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 
   path          find_box_path (SI x, SI y, SI delta, bool force);
   path          find_box_path (path p, bool& found);
@@ -139,14 +159,14 @@ anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> bs2):
   x1= y1= x3= y3= MAX_SI;
   x2= y2= x4= y4= -MAX_SI;
   for (i=0; i<n; i++) {
-    x1= min (x1, sx1(i));
-    y1= min (y1, sy1(i));
-    x2= max (x2, sx2(i));
-    y2= max (y2, sy2(i));
-    x3= min (x3, sx3(i));
-    y3= min (y3, sy3(i));
-    x4= max (x4, sx4(i));
-    y4= max (y4, sy4(i));
+    x1= min (x1, bs[i]->x1);
+    y1= min (y1, bs[i]->y1);
+    x2= max (x2, bs[i]->x2);
+    y2= max (y2, bs[i]->y2);
+    x3= min (x3, bs[i]->x3);
+    y3= min (y3, bs[i]->y3);
+    x4= max (x4, bs[i]->x4);
+    y4= max (y4, bs[i]->y4);
   }
 
   int len= 0;
@@ -198,6 +218,7 @@ anim_compose_box_rep::pre_display (ps_device& dev) {
     else if (current != cur)
       bs[current]->anim_start_at (started_at + cum_len[current-1]);
   }
+  if (!finished) refresh_at (anim_next_update ());
 }
 
 void
@@ -219,18 +240,11 @@ anim_compose_box_rep::anim_finish_now () {
 }
 
 void
-anim_compose_box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
+anim_compose_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
   if (started && !finished) {
-    bs[current]->anim_get_invalid (at, rs);
-    time_t finish_at= started_at + cum_len[current];
-    if (at - texmacs_time () < 0 || finish_at - (at - 3) < 0) {
-      at= finish_at;
-      rs= rectangle (x1, y1, x2, y2);
-    }
-    else if (finish_at - (at + 3) <= 0)
-      rs << rectangle (x1, y1, x2, y2);
+    bs[current]->anim_get_invalid (f, at, rs);
+    anim_check_invalid (f, at, rs);
   }
-
 }
 
 /******************************************************************************
@@ -293,7 +307,7 @@ struct anim_repeat_box_rep: public composite_box_rep {
   bool anim_finished () { return false; }
   void anim_start_at (time_t at);
   void anim_finish_now () {}
-  void anim_get_invalid (time_t& at, rectangles& rs);
+  void anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
 anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b):
@@ -328,8 +342,8 @@ anim_repeat_box_rep::anim_start_at (time_t at) {
 }
 
 void
-anim_repeat_box_rep::anim_get_invalid (time_t& at, rectangles& rs) {
-  if (started) bs[0]->anim_get_invalid (at, rs);
+anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
+  if (started) bs[0]->anim_get_invalid (f, at, rs);
 }
 
 /******************************************************************************

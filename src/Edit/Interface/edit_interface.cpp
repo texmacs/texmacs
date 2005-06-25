@@ -39,6 +39,7 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
+  do_animate (false), next_animate (last_change-1),
   full_screen (false), got_focus (false),
   sh_s (""), sh_len (0),
   popup_win (NULL),
@@ -179,7 +180,11 @@ edit_interface_rep::draw_text (repaint_event ev) {
   nr_painted=0;
   bool tp_found= false;
   dev->set_background (dis->get_color (bg));
+  refresh_needed= do_animate;
+  refresh_next  = next_animate;
   eb->redraw (dev, eb->find_box_path (tp, tp_found), l);
+  do_animate  = refresh_needed;
+  next_animate= refresh_next;
   draw_cursor (dev);
   draw_selection (dev);
   if (dev->check_event (EVENT_STATUS)) {
@@ -333,7 +338,8 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   draw_cursor (win);
   draw_selection (win);
   win->set_shrinking_factor (1);
-  if (last_change-last_update > 0) last_change= texmacs_time ();
+  if (last_change-last_update > 0)
+    last_change = texmacs_time ();
   // cout << "Repainted\n";
 }
 
@@ -526,9 +532,9 @@ edit_interface_rep::apply_changes () {
     this << emit_invalidate_all ();
 
   // cout << "Applied changes\n";
-  env_change= 0;
-  last_change= texmacs_time ();
-  last_update= last_change-1;
+  env_change  = 0;
+  last_change = texmacs_time ();
+  last_update = last_change-1;
 }
 
 /******************************************************************************
@@ -537,11 +543,17 @@ edit_interface_rep::apply_changes () {
 
 void
 edit_interface_rep::animate () {
-  time_t at= texmacs_time () - 1, at2= at;
-  rectangles rs;
-  eb->anim_get_invalid (at2, rs);
-  if (at2 != at && texmacs_time () >= at2)
-    invalidate (rs);
+  // cout << do_animate << ", " << next_animate << "\n";
+  if (do_animate && texmacs_time () - next_animate >= 0) {
+    bool flag= false;
+    time_t at= 0;
+    rectangles rs;
+    eb->anim_get_invalid (flag, at, rs);
+    if (flag && texmacs_time () - at >= 0)
+      invalidate (rs);
+    do_animate  = flag;
+    next_animate= at;
+  }
 }
 
 /******************************************************************************
