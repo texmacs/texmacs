@@ -591,7 +591,8 @@ box_rep::anim_check_invalid (bool& flag, time_t& at, rectangles& rs) {
   }
   else if (finish_at - (at + 3) <= 0) {
     rs << rectangle (x1, y1, x2, y2);
-    if (finish_at - at < 0) at= finish_at;
+    if (finish_at - at < 0)
+      at= finish_at;
   }
 }
 
@@ -608,7 +609,7 @@ box_rep::anim_get_invalid (bool& flag, time_t& at, rectangles& rs) {
       if (at2 - (at-3) < 0) rs= rs2;
       else rs << rs2;
       flag= true;
-      at  = at2;
+      if (at2 - at < 0) at= at2;
     }
   }
 }

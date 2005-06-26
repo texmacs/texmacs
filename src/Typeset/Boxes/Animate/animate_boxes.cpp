@@ -24,7 +24,6 @@ time_t refresh_next  = 0;
 
 void
 refresh_at (time_t t) {
-  // cout << "Refresh at " << t << "\n";
   time_t now= texmacs_time ();
   if (t - now < 0) t= now;
   if (refresh_needed) {
@@ -35,6 +34,7 @@ refresh_at (time_t t) {
     refresh_needed= true;
     refresh_next  = t;
   }
+  //cout << "Refresh at " << t << " -> " << refresh_next << "\n";
 }
 
 /******************************************************************************
@@ -206,18 +206,17 @@ void
 anim_compose_box_rep::pre_display (ps_device& dev) {
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
-    int    cur= current;
     time_t now= texmacs_time ();
     while (current < N(bs) && now - (started_at+cum_len[current]) >= 0) {
       bs[current]->anim_finish_now ();
       current++;
+      if (current<N(bs))
+	bs[current]->anim_start_at (started_at + cum_len[current-1]);
     }
     if (current == N(bs)) {
       finished= true;
       current--;
     }
-    else if (current != cur)
-      bs[current]->anim_start_at (started_at + cum_len[current-1]);
   }
   if (!finished) refresh_at (anim_next_update ());
 }
@@ -234,8 +233,11 @@ anim_compose_box_rep::anim_start_at (time_t at) {
 void
 anim_compose_box_rep::anim_finish_now () {
   int i, n= N(bs);
-  for (i=current; i<n; i++)
+  for (i=current; i<n; i++) {
     bs[i]->anim_finish_now ();
+    if (i+1 < n)
+      bs[i+1]->anim_start_at (started_at + cum_len[i]);
+  }
   current= n-1;
   started= finished= true;
 }
@@ -361,14 +363,15 @@ struct sound_box_rep: public box_rep {
   void display (ps_device dev) { (void) dev; }
 
   void play_sound () {
-    if (supports_mplayer ()) mplayer_play_sound (u); }
+    if (supports_mplayer ()) mplayer_play_sound (u);
+    started= true; }
   void pre_display (ps_device& dev) {
     if (!started) anim_start_at (texmacs_time ()); }
   int  anim_length () { return 0; }
   bool anim_started () { return started; }
   bool anim_finished () { return anim_started (); }
-  void anim_start_at (time_t at) { (void) at; play_sound (); started= true; }
-  void anim_finish_now () { if (!started) { play_sound (); started= true; } }
+  void anim_start_at (time_t at) { (void) at; play_sound (); }
+  void anim_finish_now () { if (!started) play_sound (); }
 };
 
 /******************************************************************************
