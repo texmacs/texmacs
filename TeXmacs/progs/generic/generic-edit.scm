@@ -409,3 +409,15 @@
 (tm-define (toggle-insertion-positioning-not s)
   (:check-mark "v" not-test-insertion-positioning?)
   (toggle-insertion-positioning s))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Animations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-anim-constant duration)
+  (:argument duration "Duration")
+  (insert-go-to `(anim-constant ,duration "") '(1 0)))
+
+(tm-define (make-sound u)
+  (if (not (url-none? u))
+      (insert `(sound ,(url->string u)))))

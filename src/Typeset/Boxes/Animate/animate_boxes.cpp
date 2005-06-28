@@ -13,8 +13,7 @@
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
 #include "timer.hpp"
-#include "../Plugins/Mplayer/mplayer.hpp"
-#include "../Plugins/Imlib2/imlib2.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * Global animation tracking
@@ -364,7 +363,8 @@ struct sound_box_rep: public box_rep {
   void display (ps_device dev) { (void) dev; }
 
   void play_sound () {
-    if (supports_mplayer ()) mplayer_play_sound (u);
+    if (exists_in_path ("play"))
+      system ("play", u, "&");
     started= true; }
   void pre_display (ps_device& dev) {
     if (!started) anim_start_at (texmacs_time ()); }
@@ -389,10 +389,7 @@ struct video_box_rep: public box_rep {
     x2= x4= 300*5*PIXEL; y2= y4= 200*5*PIXEL;
   }
   operator tree () { return tree (TUPLE, "video", u->t); }
-  void display (ps_device dev) {
-    cout << "Display image\n";
-    //display_image (dev, u, 300, 200, 0, 200*dev->pixel);
-    cout << "Done\n"; }
+  void display (ps_device dev) { (void) dev; }
 };
 
 /******************************************************************************

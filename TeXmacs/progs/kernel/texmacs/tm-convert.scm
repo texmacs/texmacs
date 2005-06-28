@@ -396,6 +396,8 @@
            "cut" "iff" "lbm" "jng" "koa" "mng" "pbm" "pcd" "pcx"
            "pgm" "ppm" "psd" "tga" "tiff" "xbm" "xpm"))
         ((== fm "image") (format-image-suffixes))
+        ((== fm "sound")
+	 '("au" "cdr" "cvs" "dat" "gsm" "ogg" "snd" "voc" "wav"))
         (else (format-get-suffixes-sub fm))))
 
 (define-public (format-get-suffixes* fm)

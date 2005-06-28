@@ -56,10 +56,10 @@
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
 (lazy-menu (generic format-menu) format-menu font-size-menu color-menu)
-(lazy-menu (generic document-menu)
-	   document-menu project-menu document-style-menu global-language-menu)
-(lazy-menu (generic insert-menu)
-	   insert-menu insert-link-menu insert-image-menu
+(lazy-menu (generic document-menu) document-menu
+	   project-menu document-style-menu global-language-menu)
+(lazy-menu (generic insert-menu) insert-menu
+	   insert-link-menu insert-image-menu insert-animation-menu
 	   insert-page-insertion-menu position-float-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

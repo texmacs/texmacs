@@ -62,6 +62,16 @@
       ---
       (-> "Plot" (link scripts-plot-menu))))
 
+(menu-bind insert-animation-menu
+  ("Fixed" (interactive make-anim-constant))
+  ("Compose" (make 'anim-compose))
+  ("Repeat" (make 'anim-repeat))
+  ---
+  ;(group "Effects")
+  ;("Slide" "")
+  ;---
+  ("Sound" (choose-file make-sound "Load file" "sound")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert floating content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,13 +94,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-menu
-  (-> "Link" (link insert-link-menu))
-  (-> "Image" (link insert-image-menu))
   (-> "Table" (link insert-table-menu))
-  (-> "Fold" (link insert-fold-menu))
   (-> "Mathematics" (link insert-math-menu))
   (if (style-has? "program-dtd")
       (-> "Session" (link insert-session-menu)))
+  (-> "Link" (link insert-link-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Fold" (link insert-fold-menu))
+  (-> "Animation" (link insert-animation-menu))
   ---
   (-> "Space"
       ("Rigid" (interactive make-var-space))
