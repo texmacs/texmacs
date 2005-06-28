@@ -14,6 +14,7 @@
 #include "Boxes/construct.hpp"
 #include "timer.hpp"
 #include "../Plugins/Mplayer/mplayer.hpp"
+#include "../Plugins/Imlib2/imlib2.hpp"
 
 /******************************************************************************
 * Global animation tracking
@@ -375,6 +376,26 @@ struct sound_box_rep: public box_rep {
 };
 
 /******************************************************************************
+* video boxes
+******************************************************************************/
+
+struct video_box_rep: public box_rep {
+  url    u;
+
+  video_box_rep (path ip, url u2):
+    box_rep (ip), u (u2)
+  {
+    x1= x3= 0; y1= y3= 0;
+    x2= x4= 300*5*PIXEL; y2= y4= 200*5*PIXEL;
+  }
+  operator tree () { return tree (TUPLE, "video", u->t); }
+  void display (ps_device dev) {
+    cout << "Display image\n";
+    //display_image (dev, u, 300, 200, 0, 200*dev->pixel);
+    cout << "Done\n"; }
+};
+
+/******************************************************************************
 * box construction routines
 ******************************************************************************/
 
@@ -396,4 +417,9 @@ anim_repeat_box (path ip, box b) {
 box
 sound_box (path ip, url u, SI h) {
   return new sound_box_rep (ip, u, h);
+}
+
+box
+video_box (path ip, url u) {
+  return new video_box_rep (ip, u);
 }

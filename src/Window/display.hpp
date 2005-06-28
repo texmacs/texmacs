@@ -75,7 +75,7 @@ public:
 
   /* miscellaneous */
   virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
-  virtual void   postscript_gc (string name= "*") = 0;
+  virtual void   image_gc (string name= "*") = 0;
   virtual void   set_pointer (string pixmap_name= "") = 0;
   virtual void   set_wait_indicator (string message, string arg) = 0;
 };

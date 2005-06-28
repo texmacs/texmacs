@@ -179,33 +179,33 @@ arc_box_rep::display (ps_device dev) {
 }
 
 /******************************************************************************
-* Postscript boxes
+* Image boxes
 ******************************************************************************/
 
-struct postscript_box_rep: public box_rep {
-  url image;
-  int X1, Y1, X2, Y2;
+struct image_box_rep: public box_rep {
+  url u;
+  double cx1, cy1, cx2, cy2;
 
-  postscript_box_rep (path ip, url image2, SI w, SI h,
-		      int X1, int Y1, int X2, int Y2);
-  operator tree () { return "postscript"; }
+  image_box_rep (path ip, url u2, SI w, SI h,
+		 double cx1, double cy1, double cx2, double cy2);
+  operator tree () { return "image"; }
   void display (ps_device dev);
 };
 
-postscript_box_rep::postscript_box_rep (
-  path ip, url image2,
-  SI w, SI h, int X1b, int Y1b, int X2b, int Y2b):
-    box_rep (ip), image (image2)
+image_box_rep::image_box_rep (
+  path ip, url u2,
+  SI w, SI h, double cx1b, double cy1b, double cx2b, double cy2b):
+    box_rep (ip), u (u2)
 {
-  X1= X1b; Y1= Y1b;
-  X2= X2b; Y2= Y2b;
+  cx1= cx1b; cy1= cy1b;
+  cx2= cx2b; cy2= cy2b;
   x1= x3= 0; y1= y3= 0;
   x2= x4= w; y2= y4= h;
 }
 
 void
-postscript_box_rep::display (ps_device dev) {
-  dev->postscript (image, x2, y2, 0, 0, X1, Y1, X2, Y2);
+image_box_rep::display (ps_device dev) {
+  dev->image (u, x2, y2, 0, 0, cx1, cy1, cx2, cy2);
 }
 
 /******************************************************************************
@@ -260,10 +260,10 @@ polygon_box (path ip, array<SI> x, array<SI> y, color c) {
 }
 
 box
-postscript_box (path ip, url image, SI w, SI h,
-		int x1, int y1, int x2, int y2)
+image_box (path ip, url u, SI w, SI h,
+	   double cx1, double cy1, double cx2, double cy2)
 {
-  return new postscript_box_rep (ip, image, w, h, x1, y1, x2, y2);
+  return new image_box_rep (ip, u, w, h, cx1, cy1, cx2, cy2);
 }
 
 box

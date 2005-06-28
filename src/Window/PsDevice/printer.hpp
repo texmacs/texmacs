@@ -88,8 +88,8 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
   void  xpm (url file_name, SI x, SI y);
-  void  postscript (url image, SI w, SI h, SI x, SI y,
-		    int x1, int y1, int x2, int y2);
+  void  image (url u, SI w, SI h, SI x, SI y,
+	       double cx1, double cy1, double cx2, double cy2);
 
   void next_page ();
   bool check_event (int type);

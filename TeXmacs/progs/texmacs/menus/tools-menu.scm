@@ -55,7 +55,7 @@
       (-> "Export"
 	  (promise (clipboard-preference-menu-promise clipboard-set-export))))
   (-> "Update"
-      ("Image links" (postscript-gc))
+      ("Image links" (image-gc))
       ("Inclusions" (inclusions-gc))
       ("Styles" (style-clear-cache)))
   (-> "Web"

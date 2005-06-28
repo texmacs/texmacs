@@ -44,16 +44,6 @@ concater_rep::typeset_anim_effect (tree t, path ip) {
 }
 
 /******************************************************************************
-* Videos
-******************************************************************************/
-
-void
-concater_rep::typeset_video (tree t, path ip) {
-  (void) t;
-  print (STD_ITEM, empty_box (ip));
-}
-
-/******************************************************************************
 * Sounds
 ******************************************************************************/
 
@@ -72,4 +62,21 @@ concater_rep::typeset_sound (tree t, path ip) {
     flag ("sound", ip, env->dis->brown);
   }
   else typeset_dynamic (tree (ERROR, "bad sound", t), ip);
+}
+
+/******************************************************************************
+* Videos
+******************************************************************************/
+
+void
+concater_rep::typeset_video (tree t, path ip) {
+  tree video_t= env->exec (t[0]);
+  url video= url_none ();
+  if (is_atomic (video_t)) {
+    url video_u= video_t->label;
+    video= resolve (relative (env->base_file_name, video_u));
+  }
+  if (!is_none (video))
+    print (STD_ITEM, video_box (ip, video));
+  else typeset_dynamic (tree (ERROR, "bad video", t), ip);
 }

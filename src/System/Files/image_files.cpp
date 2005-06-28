@@ -17,6 +17,7 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "scheme.hpp"
+#include "../Plugins/Imlib2/imlib2.hpp"
 
 #ifdef OS_WIN32
 #include <x11/xlib.h>
@@ -132,4 +133,20 @@ ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2) {
   x2= (int) X2; y2= (int) Y2;
   if (ok) return;
   x1= y1= 0; x2= 596; y2= 842;
+}
+
+/******************************************************************************
+* Getting the size of an image, using internal plug-ins if possible
+******************************************************************************/
+
+void
+image_size (url image, int& w, int& h) {
+  if (imlib2_supports (image))
+    imlib2_image_size (image, w, h);
+  else {
+    int x1, y1, x2, y2;
+    ps_bounding_box (image, x1, y1, x2, y2);
+    w= x2 - x1;
+    h= y2 - y1;
+  }
 }
