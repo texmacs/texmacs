@@ -13,26 +13,22 @@
 #include "Imlib2/imlib2.hpp"
 #include "hashmap.hpp"
 
-#include <X11/Xlib.h>
-#include <Imlib2.h>
-#include <stdio.h>
-#include <string.h>
+#ifdef USE_IMLIB2
 
 hashmap<tree,tree> imlib2_size_cache ("");
 
 bool
-supports_imlib2 () {
+imlib2_present () {
   return true;
 }
 
 bool
 imlib2_supports (url u) {
-  if (!supports_imlib2 ()) return false;
   string s= suffix (u);
   return s != "ps" && s != "eps" && s != "pdf" && s != "xpm";
 }
 
-Imlib_Image
+static Imlib_Image
 imlib2_load_image (url u) {
   url name= resolve (u);
   if (is_none (name))
@@ -89,3 +85,26 @@ imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
     imlib_free_image ();
   }
 }
+
+#else // USE_IMLIB2
+
+bool imlib2_present () { return false; }
+bool imlib2_supports (url u) { (void) u; return false; }
+
+void
+imlib2_image_size (url u, int& w, int& h) {
+  (void) u; (void) w; (void) h;
+  fatal_error ("Imlib2 is not present", "imlib2_image_size");
+}
+
+void
+imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
+		double cx1, double cy1, double cx2, double cy2)
+{
+  (void) dpy; (void) pm;
+  (void) u; (void) w; (void) h;
+  (void) cx1; (void) cy1; (void) cx2; (void) cy2;
+  fatal_error ("Imlib2 is not present", "imlib2_display");
+}
+
+#endif // USE_IMLIB2

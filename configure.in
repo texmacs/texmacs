@@ -222,6 +222,56 @@ AC_SUBST(FREETYPE_CFLAGS)
 AC_SUBST(FREETYPE_LDFLAGS)
 
 #--------------------------------------------------------------------
+# Checks for Imlib2
+#--------------------------------------------------------------------
+
+AC_ARG_WITH(imlib2,
+changequote(<<, >>)dnl
+<<  --with-imlib2[=ARG]     with imlib2 support [ARG=linked]>>dnl
+changequote([, ])dnl
+)
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+CONFIG_USE_IMLIB2=""
+if test "$with_imlib2" = "no" ; then
+    AC_MSG_RESULT([disabling imlib2 support])
+else
+    CPPFLAGS=`imlib2-config --cflags`
+    LIBS=`imlib2-config --libs`
+    AC_CHECK_HEADER(ft2build.h,
+    AC_MSG_CHECKING(for imlib2)
+    AC_TRY_LINK(
+[
+#include <X11/Xlib.h>
+#include <Imlib2.h>
+#include <stdio.h>
+#include <string.h>
+],[
+    Imlib_Image image= imlib_load_image("");
+],[
+    AC_MSG_RESULT(yes)
+    CONFIG_USE_IMLIB2="#define USE_IMLIB2"
+    IMLIB2_CFLAGS="$CPPFLAGS"
+    if test "$with_imlib2" = "linked" -o "$with_imlib2" = "" ; then
+      IMLIB2_LDFLAGS="$LIBS"
+      CONFIG_LINKED_IMLIB2="#define LINKED_IMLIB2"
+    fi
+],[
+    AC_MSG_RESULT(no)]))
+fi
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+
+AC_SUBST(CONFIG_USE_IMLIB2)
+AC_SUBST(CONFIG_LINKED_IMLIB2)
+AC_SUBST(IMLIB2_CFLAGS)
+AC_SUBST(IMLIB2_LDFLAGS)
+
+#--------------------------------------------------------------------
 # Checks for library functions
 #--------------------------------------------------------------------
 
