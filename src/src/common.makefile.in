@@ -41,6 +41,7 @@ CXXFLAGS = $(CXXWARNING) $(CXXTEMPLATE) $(CXXOPTIMIZE) $(CXXDEBUG) @CONFIG_CXXFL
 CPPFLAGS = 
 DASH_I_DASH = @CONFIG_DASH_I_DASH@
 CXXXWINDOW =@CONFIG_CX@
+CXXIMLIB2 = @IMLIB2_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
@@ -51,6 +52,7 @@ LDSHARED = @CONFIG_LSHARED@
 LDPATH = @CONFIG_LPATH@
 LDXWINDOW =@CONFIG_LX@
 LDDL = @CONFIG_LDL@
+LDIMLIB2 = @IMLIB2_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
 LDGUILE = @GUILE_LDFLAGS@
@@ -61,6 +63,7 @@ LDBSHARED = @CONFIG_BSHARED@
 LDBPATH = @CONFIG_BPATH@
 LDBXWINDOW =@CONFIG_BX@
 LDBDL = @CONFIG_BDL@
+LDBIMLIB2 = @IMLIB2_LDFLAGS@
 LDBFREETYPE = @FREETYPE_LDFLAGS@
 LDBICONV = @ICONV_LDFLAGS@
 LDBGUILE = @GUILE_LDFLAGS@
@@ -142,7 +145,7 @@ texmacs_incl  := $(guile_incl)
 deps_incl = $(call tm_incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Typeset Edit Texmacs Guile)
 
 deps_flags = $(deps_incl)\
- $(CPPFLAGS) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
+ $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
  -I$(tmsrc)/include $(CXXXWINDOW)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
@@ -223,8 +226,8 @@ uses_glue     := $(guile_obj)
 %.o: %.cpp # Disable implicit compilation rule
 
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
-cxx_incl     = $(call cxx_flags,$(1) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \
-  $(CPPFLAGS) $(CXXFLAGS)) 
+cxx_incl     = $(call cxx_flags,$(1) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
+  $(CXXGUILE) $(CPPFLAGS) $(CXXFLAGS)) 
 cxx_incl_sys = $(call cxx_flags,$(1) $(DASH_I_DASH) $(CPPFLAGS) $(2) $(CXXFLAGS))
 
 # We should use cxx_incl_sys to include external headers (splitting
