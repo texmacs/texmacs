@@ -61,8 +61,27 @@ encapsulate_postscript (string s) {
 
 void
 ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
-		 url image, SI w, SI h, int x1, int y1, int x2, int y2)
+		 url image, SI w, SI h,
+		 double cx1, double cy1, double cx2, double cy2)
 {
+  if (DEBUG_VERBOSE)
+    cout << "TeXmacs] Running ghostscript " << image << "\n";
+
+  int bx1, by1, bx2, by2;
+  ps_bounding_box (image, bx1, by1, bx2, by2);
+  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
+  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
+  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
+  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+
+  if (ghostscript_bugged ()) {
+    int scr  = DefaultScreen (dpy);
+    int max_w= 2 * DisplayWidth (dpy, scr);
+    int max_h= 2 * DisplayHeight (dpy, scr);
+    w= min (w, max_w);
+    h= min (h, max_h);
+  }
+
 #ifndef OS_WIN32
   int win_id= (int) gs_win;
   int pix_id= (int) pm;
@@ -84,6 +103,7 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
   delete[] _data;
   XSync(dpy, false);
 #endif
+
   string raw_ps, nice_ps;
   raw_ps= ps_load (image);
   nice_ps= encapsulate_postscript (raw_ps);

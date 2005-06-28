@@ -180,8 +180,8 @@ public:
   void   set_help_balloon (widget wid, SI x, SI y);
   void   map_balloon ();
   void   unmap_balloon ();
-  void   postscript_auto_gc ();
-  void   postscript_gc (string name);
+  void   image_auto_gc ();
+  void   image_gc (string name);
   void   set_pointer (string pixmap_name);
   void   set_wait_indicator (string message, string arg);
 

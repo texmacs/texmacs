@@ -319,18 +319,18 @@ image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   win->clear (0, 0, w, h);
   layout_dark_outline (win, 0, 0, w, h);
   if (file_name != "") {
-    SI x1, y1, x2, y2;
-    ps_bounding_box (url_system (file_name), x1, y1, x2, y2);
+    SI iw, ih;
+    image_size (url_system (file_name), iw, ih);
     
     SI ww= w-2*PIXEL, hh= h-2*PIXEL;
-    if ((x2>x1) && (y2>y1) && (ww>0) && (hh>0)) {
-      if (((x2-x1)*hh) > ((y2-y1)*ww))
-	hh= (ww*(y2-y1))/(x2-x1);
-      else ww= (hh*(x2-x1))/(y2-y1);
+    if ((ww>0) && (hh>0)) {
+      if (iw * hh > ih * ww)
+	hh= (ww * ih) / iw;
+      else ww= (hh * iw) / ih;
     }
 
-    win->postscript (url_system (file_name),
-		     ww, hh, PIXEL, PIXEL, x1, y1, x2, y2);
+    win->image (url_system (file_name),
+		ww, hh, PIXEL, PIXEL, 0.0, 0.0, 1.0, 1.0);
   }
 }
 

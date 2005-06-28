@@ -853,9 +853,9 @@ tmg_get_nr_windows () {
 }
 
 SCM
-tmg_postscript_gc () {
+tmg_image_gc () {
   // SCM_DEFER_INTS;
-  get_server()->postscript_gc ();
+  get_server()->image_gc ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1041,7 +1041,7 @@ initialize_glue_server () {
   gh_new_procedure ("set-default-shrinking-factor", (FN) tmg_set_default_shrinking_factor, 1, 0, 0);
   gh_new_procedure ("get-default-shrinking-factor", (FN) tmg_get_default_shrinking_factor, 0, 0, 0);
   gh_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
-  gh_new_procedure ("postscript-gc", (FN) tmg_postscript_gc, 0, 0, 0);
+  gh_new_procedure ("image-gc", (FN) tmg_image_gc, 0, 0, 0);
   gh_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
   gh_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
   gh_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);

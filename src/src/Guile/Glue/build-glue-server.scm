@@ -96,7 +96,7 @@
   (set-default-shrinking-factor set_default_shrinking_factor (void int))
   (get-default-shrinking-factor get_default_shrinking_factor (int))
   (get-nr-windows get_nr_windows (int))
-  (postscript-gc postscript_gc (void))
+  (image-gc image_gc (void))
   (inclusions-gc inclusions_gc (void))
   (set-message set_message (void string string))
   (set-message-temp set_message (void string string bool))

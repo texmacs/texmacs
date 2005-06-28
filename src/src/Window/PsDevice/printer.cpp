@@ -605,10 +605,17 @@ incorporate_postscript (string s) {
 */
 
 void
-printer_rep::postscript (
-  url image, SI w, SI h, SI x, SI y,
-  int x1, int y1, int x2, int y2)
+printer_rep::image (
+  url u, SI w, SI h, SI x, SI y,
+  double cx1, double cy1, double cx2, double cy2)
 {
+  int bx1, by1, bx2, by2;
+  ps_bounding_box (u, bx1, by1, bx2, by2);
+  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
+  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
+  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
+  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+
   double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
   double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));
   cr ();
@@ -650,8 +657,8 @@ printer_rep::postscript (
   /* @beginspecial 0 @llx 0 @lly 613.291260 @urx 613.291260 @ury 6110 @rwi
      @clip @setspecial */
   
-  string ps_image= ps_load (image);
-  string imtext= is_ramdisc (image)? "inline image": as_string (image);
+  string ps_image= ps_load (u);
+  string imtext= is_ramdisc (u)? "inline image": as_string (u);
   body << "%%BeginDocument: " << imtext  << "\n";
   body << ps_image; // incorporate_postscript (ps_image);
   body << "%%EndDocument";

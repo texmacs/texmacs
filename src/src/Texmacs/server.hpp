@@ -164,7 +164,7 @@ public:
   virtual void   set_printer_dpi (string dpi) = 0;
   virtual void   set_default_shrinking_factor (int sf) = 0;
   virtual int    get_default_shrinking_factor () = 0;
-  virtual void   postscript_gc (string which= "*") = 0;
+  virtual void   image_gc (string which= "*") = 0;
   virtual void   inclusions_gc (string which= "*") = 0;
   virtual string translate (string which, string from, string to) = 0;
   virtual bool   is_yes (string s) = 0;

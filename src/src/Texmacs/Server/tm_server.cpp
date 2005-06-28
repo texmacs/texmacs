@@ -477,8 +477,8 @@ tm_server_rep::get_default_shrinking_factor () {
 }
 
 void
-tm_server_rep::postscript_gc (string which) {
-  dis->postscript_gc (which);
+tm_server_rep::image_gc (string which) {
+  dis->image_gc (which);
   int i,j;
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= (tm_buffer) bufs[i];

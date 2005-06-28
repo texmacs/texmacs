@@ -91,7 +91,7 @@
 	     (converter-remove from to))
 	 (ahash-set! converter-function (list from to)
 		     (lambda (what opts)
-		       (converter-shell (cdr cmd) what opts))))))
+		       (converter-shell (cdr cmd) what to opts))))))
 
 (define-public (converter-sub cmd)
   "Helper routine for converter macro"
@@ -126,11 +126,15 @@
 		       " "
 		       (converter-shell-cmd (cdr l) from to)))))
 
-(define (converter-shell l from opts)
+(define (converter-shell l from to-format opts)
+  ;;(display* "converter-shell " l ", " from ", " to-format ", " opts "\n")
   (let* ((last? (assoc-ref opts 'last?))
 	 (dest (assoc-ref opts 'dest))
-	 (to (if (and last? dest) dest (url-temp)))
+	 (suf (format-default-suffix to-format))
+	 (suf (if (and suf (!= suf "")) (string-append "." suf) ""))
+	 (to (if (and last? dest) dest (url-glue (url-temp) suf)))
 	 (cmd (converter-shell-cmd l from to)))
+    ;;(display* "shell: " cmd "\n")
     (system cmd)
     to))
 
@@ -178,7 +182,7 @@
 	#t)))
 
 (define (converter-walk from l*)
-  ;(display* "convert-walk " from ", " l* "\n")
+  ;;(display* "convert-walk " from ", " l* "\n")
   (if (nnull? l*)
       (let* ((l (list-sort l* (lambda (x y) (< (cadr x) (cadr y)))))
 	     (aux (caar l))
@@ -204,14 +208,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (convert-via what from path options)
-  ;(display* "convert-via " what ", " from ", " path ", " options "\n")
+  ;;(display* "convert-via " what ", " from ", " path ", " options "\n")
   (if (null? path) what
       (with fun (ahash-ref converter-function (list from (car path)))
 	(if fun
 	    (let* ((last? (null? (cdr path)))
 		   (opts1 (acons 'last? last? options))
 		   (opts2 (ahash-ref converter-options (list from (car path))))
-		   (what* (fun what (append opts1 opts2)))
+		   (what* (fun what (append opts1 (or opts2 '()))))
 		   (result (convert-via what* (car path) (cdr path) options)))
 	      (if (and (not last?) (string-ends? (car path) "-file"))
 		  (system-remove what*))
@@ -219,7 +223,7 @@
 	    #f))))
 
 (define-public (convert what from to . options)
-  ;(display* "convert " what ", " from ", " to ", " options "\n")
+  ;;(display* "convert " what ", " from ", " to ", " options "\n")
   (lazy-format-force)
   (with path (converter-search from to)
     (if path
@@ -402,7 +406,9 @@
   (lazy-format-force)
   (with l (ahash-ref format-suffixes fm)
     (cond ((== fm "image") "png")
-	  ((or (not l) (null? l)) "")
+	  ((or (not l) (null? l))
+	   (if (string-ends? fm "-file")
+	       (format-default-suffix (string-drop-right fm 5))))
 	  (else (car l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

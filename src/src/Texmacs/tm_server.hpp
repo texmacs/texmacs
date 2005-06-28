@@ -84,7 +84,7 @@ public:
   void   set_printer_dpi (string dpi);
   void   set_default_shrinking_factor (int sf);
   int    get_default_shrinking_factor ();
-  void   postscript_gc (string which);
+  void   image_gc (string which);
   void   inclusions_gc (string which);
   string translate (string which, string from, string to);
   bool   is_yes (string s);
