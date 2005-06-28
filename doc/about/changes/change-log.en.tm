@@ -1,14 +1,24 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.5.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.4>
+  <section|Changes from version 1.0.5 to 1.0.5.5>
 
   <\itemize>
-    <item>Documentation of tree API (partial) and structured editing (1.0.5.4).
+    <item>Simple animations (1.0.5.5).
+
+    <item>On-the-fly evaluation of computer algebra scripts (1.0.5.5).
+
+    <item>Improved rendering speed of images based on plug-in for Imlib2
+    (1.0.5.5).
+
+    <item>A simple thumbnail facility (1.0.5.5).
+
+    <item>Documentation of tree API (partial) and structured editing
+    (1.0.5.4).
 
     <item>Fixed some long standing bugs concerning cursor movement (1.0.5.4).
 
