@@ -335,6 +335,49 @@
   (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Thumbnails facility
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (thumbnail-suffixes)
+  (url-or (url-wildcard "*.gif")
+	  (url-or (url-wildcard "*.jpg")
+		  (url-wildcard "*.jpeg"))))
+
+(define (url->list u)
+  (cond ((url-none? u) '())
+	((url-or? u) (append (url->list (url-ref u 1))
+			     (url->list (url-ref u 2))))
+	(else (list u))))
+
+(define (fill-row l nr)
+  (cond ((= nr 0) '())
+	((nnull? l) (cons (car l) (fill-row (cdr l) (- nr 1))))
+	(else (cons "" (fill-row l (- nr 1))))))
+
+(define (make-rows l nr)
+  (if (> (length l) nr)
+      (cons (list-head l nr) (make-rows (list-tail l nr) nr))
+      (list (fill-row l nr))))
+
+(define (make-thumbnails-sub l)
+  (define (mapper x)
+    `(postscript ,(url->string x) "0.2par" "" "" "" "" ""))
+  (let* ((l1 (map mapper l))
+	 (l2 (make-rows l1 4))
+	 (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
+    (insert `(tabular (table ,@l3)))))
+
+(tm-define (make-thumbnails)
+  (:interactive #t)
+  (dialogue
+    (let* ((dir (dialogue-url "Picture directory" "directory"))
+	   (find (url-append dir (thumbnail-suffixes)))
+	   (files (url->list (url-expand (url-complete find "r"))))
+	   (base (get-name-buffer))
+	   (rel-files (map (lambda (x) (url-delta base x)) files)))
+      (if (nnull? rel-files) (make-thumbnails-sub rel-files)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
