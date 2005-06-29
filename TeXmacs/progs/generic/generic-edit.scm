@@ -418,7 +418,49 @@
 
 (tm-define (make-anim-constant duration)
   (:argument duration "Duration")
-  (insert-go-to `(anim-constant ,duration "") '(1 0)))
+  (insert-go-to `(anim-constant "" ,duration) '(0 0)))
+
+(define (make-anim-translate duration start)
+  (insert-go-to `(anim-translate "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-translate-right duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "-1.0" "0.0")))
+
+(tm-define (make-anim-translate-left duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "1.0" "0.0")))
+
+(tm-define (make-anim-translate-up duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "-1.0")))
+
+(tm-define (make-anim-translate-down duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "1.0")))
+
+(define (make-anim-progressive duration start)
+  (insert-go-to `(anim-progressive "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-progressive-right duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "0.0" "1.0")))
+
+(tm-define (make-anim-progressive-left duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "1.0" "0.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-up duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "1.0" "0.0")))
+
+(tm-define (make-anim-progressive-down duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "1.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-center duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.5" "0.5" "0.5" "0.5")))
 
 (tm-define (make-sound u)
   (if (not (url-none? u))

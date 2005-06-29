@@ -31,6 +31,7 @@ public:
   bool insert_return ();
   void remove_return (path p);
   void insert_tree (tree t, path p_in_t);
+  void var_insert_tree (tree t, path p_in_t);
   void insert_tree (tree t);
   void remove_text (bool forward);
   void remove_structure (bool forward);

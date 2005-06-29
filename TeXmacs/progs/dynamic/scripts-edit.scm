@@ -55,7 +55,7 @@
 		  (m2? (tm-func? r 'math 1)))
 	     (clipboard-cut "primary")
 	     (if m2? (set! r (cadr r)))
-	     (if (and (not m1?) m2?) (insert-go-to '(math "") '(0 0)))
+	     (if (and (not m1?) m2?) (insert-raw-go-to '(math "") '(0 0)))
 	     (if (script-keep-input?)
 		 (begin
 		   (insert "=")
@@ -84,8 +84,8 @@
 (define (insert-function fun)
   (insert fun)
   (if (in-var-math?)
-      (insert-go-to '(concat (left "(") (right ")")) '(0 1))
-      (insert-go-to "()" '(1))))
+      (insert-raw-go-to '(concat (left "(") (right ")")) '(0 1))
+      (insert-raw-go-to "()" '(1))))
 
 (tm-define (script-apply fun . opts)
   (with n (if (null? opts) 1 (car opts))
@@ -99,7 +99,7 @@
 	   (insert-function fun)
 	   (clipboard-paste "primary")
 	   (insert ",")
-	   (repeat (- n 2) (insert-go-to "," '(0))))
+	   (repeat (- n 2) (insert-raw-go-to "," '(0))))
 	  ((and (tree-innermost formula-context? #t)
 		(supports-scripts? (get-env "prog-scripts"))
 		script-eval-math-flag?)
@@ -109,7 +109,7 @@
 	  (else
 	   (if (not-in-session?) (make 'script-eval))
 	   (insert-function fun)
-	   (repeat (- n 1) (insert-go-to "," '(0)))))))
+	   (repeat (- n 1) (insert-raw-go-to "," '(0)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; On-the-fly plug-in evaluations

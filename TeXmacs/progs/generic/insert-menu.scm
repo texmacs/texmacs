@@ -67,9 +67,18 @@
   ("Compose" (make 'anim-compose))
   ("Repeat" (make 'anim-repeat))
   ---
-  ;(group "Effects")
-  ;("Slide" "")
-  ;---
+  (-> "Translate"
+      ("Rightwards" (interactive make-anim-translate-right))
+      ("Leftwards" (interactive make-anim-translate-left))
+      ("Upwards" (interactive make-anim-translate-up))
+      ("Downwards" (interactive make-anim-translate-down)))
+  (-> "Progressive"
+      ("Rightwards" (interactive make-anim-progressive-right))
+      ("Leftwards" (interactive make-anim-progressive-left))
+      ("Upwards" (interactive make-anim-progressive-up))
+      ("Downwards" (interactive make-anim-progressive-down))
+      ("From center" (interactive make-anim-progressive-center)))
+  ---
   ("Animation" (choose-file make-animation "Load file" "animation"))
   ("Sound" (choose-file make-sound "Load file" "sound")))
 

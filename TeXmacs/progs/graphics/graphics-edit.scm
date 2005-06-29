@@ -121,7 +121,7 @@
 
 (tm-define (make-graphics)
   (graphics-reset-context 'begin)
-  (insert-go-to
+  (insert-raw-go-to
    '(with "gr-mode" "point"
 	  "gr-frame" (tuple "scale" "1cm" (tuple "0.5par" "0cm"))
 	  "gr-clip"  (tuple "clip"

@@ -253,6 +253,7 @@ public:
   virtual bool insert_return () = 0;
   virtual void remove_return (path p) = 0;
   virtual void insert_tree (tree t, path p_in_t) = 0;
+  virtual void var_insert_tree (tree t, path p_in_t) = 0;
   virtual void insert_tree (tree t) = 0;
   virtual void remove_text (bool forward) = 0;
   virtual void remove_structure (bool forward) = 0;

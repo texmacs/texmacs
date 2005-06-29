@@ -32,15 +32,48 @@ concater_rep::typeset_anim_repeat (tree t, path ip) {
 
 void
 concater_rep::typeset_anim_constant (tree t, path ip) {
-  int l= env->as_length (env->exec (t[0]));
-  box b= typeset_as_concat (env, t[1], descend (ip, 1));
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  int l= env->as_length (env->exec (t[1]));
   print (STD_ITEM, anim_constant_box (ip, b, l));
 }
 
+static void
+effect_point (edit_env env, box b, tree xt, tree yt, SI& x, SI& y) {
+  if (is_double (xt)) x= as_int (b->x1 + as_double (xt) * b->w ());
+  else x= env->as_length (xt);
+  if (is_double (yt)) y= as_int (b->y1 + as_double (yt) * b->h ());
+  else y= env->as_length (yt);
+}
+
 void
-concater_rep::typeset_anim_effect (tree t, path ip) {
-  (void) t;
-  print (STD_ITEM, empty_box (ip));
+concater_rep::typeset_anim_translate (tree t, path ip) {
+  box b  = typeset_as_concat (env, t[0], descend (ip, 0));
+  int  len= env->as_length (t[1]);
+  tree t1 = env->exec (t[2]);
+  tree t2 = env->exec (t[3]);
+  SI x1= b->x1, y1= b->y1, x2= b->x1, y2= b->y1;
+  if (is_tuple (t1) && N(t1)==2) effect_point (env, b, t1[0], t1[1], x1, y1);
+  if (is_tuple (t2) && N(t2)==2) effect_point (env, b, t2[0], t2[1], x2, y2);
+  print (STD_ITEM, anim_translate_box (ip, b, len, x1, y1, x2, y2));
+}
+
+void
+concater_rep::typeset_anim_progressive (tree t, path ip) {
+  box b  = typeset_as_concat (env, t[0], descend (ip, 0));
+  int  len= env->as_length (t[1]);
+  tree t1 = env->exec (t[2]);
+  tree t2 = env->exec (t[3]);
+  rectangle r1 (b->x1, b->y1, b->x2, b->y2);
+  rectangle r2 (b->x1, b->y1, b->x2, b->y2);
+  if (is_tuple (t1) && N(t1)==4) {
+    effect_point (env, b, t1[0], t1[1], r1->x1, r1->y1);
+    effect_point (env, b, t1[2], t1[3], r1->x2, r1->y2);
+  }
+  if (is_tuple (t2) && N(t2)==4) {
+    effect_point (env, b, t2[0], t2[1], r2->x1, r2->y1);
+    effect_point (env, b, t2[2], t2[3], r2->x2, r2->y2);
+  }
+  print (STD_ITEM, anim_progressive_box (ip, b, len, r1, r2));
 }
 
 /******************************************************************************

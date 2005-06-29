@@ -50,7 +50,8 @@
   ;; general modification routines
   (inside? inside (bool tree_label))
   (insert insert_tree (void content))
-  (insert-go-to insert_tree (void content path))
+  (insert-go-to var_insert_tree (void content path))
+  (insert-raw-go-to insert_tree (void content path))
   (insert-return insert_return (void))
   (remove-text remove_text (void bool))
   (remove-structure remove_structure (void bool))

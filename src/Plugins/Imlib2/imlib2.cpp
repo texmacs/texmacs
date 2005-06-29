@@ -142,10 +142,10 @@ imlib2_display (Display* dpy, Pixmap pm, url u, SI w, SI h,
     IMLIB2_context_set_image (image);
     int iw= IMLIB2_image_get_width ();
     int ih= IMLIB2_image_get_height ();
-    int x1= (int) (cx1 * iw + 0.5);
-    int y1= (int) (cy1 * ih + 0.5);
-    int x2= (int) (cx2 * iw + 0.5);
-    int y2= (int) (cy2 * ih + 0.5);
+    int x1= as_int (cx1 * iw);
+    int y1= as_int (cy1 * ih);
+    int x2= as_int (cx2 * iw);
+    int y2= as_int (cy2 * ih);
     int ww= x2 - x1;
     int hh= y2 - y1;
     IMLIB2_render_image_part_on_drawable_at_size
