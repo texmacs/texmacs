@@ -376,21 +376,39 @@ struct sound_box_rep: public box_rep {
 };
 
 /******************************************************************************
-* video boxes
+* Animated gifs
 ******************************************************************************/
 
-struct video_box_rep: public box_rep {
-  url    u;
+static hashmap<tree,tree> decomposed_gif ("");
 
-  video_box_rep (path ip, url u2):
-    box_rep (ip), u (u2)
-  {
-    x1= x3= 0; y1= y3= 0;
-    x2= x4= 300*5*PIXEL; y2= y4= 200*5*PIXEL;
+static url
+decompose_gif (url u) {
+  if (!exists_in_path ("convert"))
+    return url_none ();
+  if (!decomposed_gif->contains (u->t)) {
+    url tmp= url_temp ("");
+    url res= glue (tmp, "_%04d.gif");
+    system ("convert +adjoin -coalesce", u, res);
+    decomposed_gif (u->t)= tmp->t;
   }
-  operator tree () { return tree (TUPLE, "video", u->t); }
-  void display (ps_device dev) { (void) dev; }
-};
+  url tmp= as_url (decomposed_gif [u->t]);
+  url dir= head (tmp);
+  url nam= tail (tmp);
+  return expand (complete (dir * url_wildcard (as_string (nam) * "_*.gif")));
+}
+
+static void
+add_frames (array<box>& a, path ip, url u, int w, int h, int msecs) {
+  if (is_none (u)) return;
+  else if (is_or (u)) {
+    add_frames (a, ip, u[1], w, h, msecs);
+    add_frames (a, ip, u[2], w, h, msecs);
+  }
+  else {
+    box imb= image_box (ip, u, w, h, 0.0, 0.0, 1.0, 1.0);
+    a << anim_constant_box (ip, imb, msecs);
+  }
+}
 
 /******************************************************************************
 * box construction routines
@@ -417,6 +435,12 @@ sound_box (path ip, url u, SI h) {
 }
 
 box
-video_box (path ip, url u) {
-  return new video_box_rep (ip, u);
+video_box (path ip, url u, SI w, SI h, int msecs, bool repeat_flag) {
+  url frames= decompose_gif (u);
+  if (is_none (frames)) return empty_box (ip, 0, 0, w, h);
+  array<box> bs;
+  add_frames (bs, decorate (ip), frames, w, h, msecs);
+  box b= anim_compose_box (repeat_flag? decorate (ip): ip, bs);
+  if (repeat_flag) return anim_repeat_box (ip, b);
+  else return b;
 }

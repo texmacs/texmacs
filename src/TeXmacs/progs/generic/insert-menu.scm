@@ -70,6 +70,7 @@
   ;(group "Effects")
   ;("Slide" "")
   ;---
+  ("Animation" (choose-file make-animation "Load file" "animation"))
   ("Sound" (choose-file make-sound "Load file" "sound")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,13 +96,13 @@
 
 (menu-bind insert-menu
   (-> "Table" (link insert-table-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Link" (link insert-link-menu))
+  (-> "Fold" (link insert-fold-menu))
+  (-> "Animation" (link insert-animation-menu))
   (-> "Mathematics" (link insert-math-menu))
   (if (style-has? "program-dtd")
       (-> "Session" (link insert-session-menu)))
-  (-> "Link" (link insert-link-menu))
-  (-> "Image" (link insert-image-menu))
-  (-> "Fold" (link insert-fold-menu))
-  (-> "Animation" (link insert-animation-menu))
   ---
   (-> "Space"
       ("Rigid" (interactive make-var-space))

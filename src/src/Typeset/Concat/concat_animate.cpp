@@ -76,7 +76,12 @@ concater_rep::typeset_video (tree t, path ip) {
     url video_u= video_t->label;
     video= resolve (relative (env->base_file_name, video_u));
   }
-  if (!is_none (video))
-    print (STD_ITEM, video_box (ip, video));
+  if (!is_none (video)) {
+    SI   w  = env->as_length (t[1]);
+    SI   h  = env->as_length (t[2]);
+    int  len= env->as_length (t[3]);
+    bool rep= env->exec (t[4]) != "false";
+    print (STD_ITEM, video_box (ip, video, w, h, len, rep));
+  }
   else typeset_dynamic (tree (ERROR, "bad video", t), ip);
 }

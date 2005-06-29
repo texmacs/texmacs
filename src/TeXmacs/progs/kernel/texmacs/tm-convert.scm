@@ -398,6 +398,7 @@
         ((== fm "image") (format-image-suffixes))
         ((== fm "sound")
 	 '("au" "cdr" "cvs" "dat" "gsm" "ogg" "snd" "voc" "wav"))
+        ((== fm "animation") '("gif"))
         (else (format-get-suffixes-sub fm))))
 
 (define-public (format-get-suffixes* fm)
