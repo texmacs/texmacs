@@ -15,7 +15,6 @@
 #include "scheme.hpp"
 #include "Graphics/curve.hpp"
 #include "Boxes/graphics.hpp"
-#include <math.h>
 #include "Bridge/impl_typesetter.hpp"
 
 /******************************************************************************

@@ -14,6 +14,7 @@
 #define BASIC_H
 #include "tm_configure.hpp"
 #include <stdlib.h>
+#include <math.h>
 
 // g++ >= 3.2 requires
 #include <iostream>
@@ -85,6 +86,7 @@ inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
 inline int hash (pointer ptr) { return (long) ptr; }
 inline int copy (int x) { return x; }
+inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
 ostream& operator << (ostream& out, display_control ctrl);

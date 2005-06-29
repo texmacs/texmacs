@@ -69,10 +69,10 @@ ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
 
   int bx1, by1, bx2, by2;
   ps_bounding_box (image, bx1, by1, bx2, by2);
-  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
-  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
-  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
-  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+  int x1= bx1 + as_int (cx1 * (bx2 - bx1));
+  int y1= by1 + as_int (cy1 * (by2 - by1));
+  int x2= bx1 + as_int (cx2 * (bx2 - bx1));
+  int y2= by1 + as_int (cy2 * (by2 - by1));
 
   if (ghostscript_bugged ()) {
     int scr  = DefaultScreen (dpy);

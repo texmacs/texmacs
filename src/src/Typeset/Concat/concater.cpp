@@ -570,8 +570,11 @@ concater_rep::typeset (tree t, path ip) {
   case ANIM_CONSTANT:
     typeset_anim_constant (t, ip);
     break;
-  case ANIM_EFFECT:
-    typeset_anim_effect (t, ip);
+  case ANIM_TRANSLATE:
+    typeset_anim_translate (t, ip);
+    break;
+  case ANIM_PROGRESSIVE:
+    typeset_anim_progressive (t, ip);
     break;
   case VIDEO:
     typeset_video (t, ip);

@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "point.hpp"
-#include <math.h>
 #include "math_util.hpp"
 
 point

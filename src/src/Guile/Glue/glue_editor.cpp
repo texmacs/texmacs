@@ -345,6 +345,21 @@ tmg_insert_go_to (SCM arg1, SCM arg2) {
   path in2= scm_to_path (arg2);
 
   // SCM_DEFER_INTS;
+  get_server()->get_editor()->var_insert_tree (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_insert_raw_go_to (SCM arg1, SCM arg2) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "insert-raw-go-to");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "insert-raw-go-to");
+
+  content in1= scm_to_content (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
   get_server()->get_editor()->insert_tree (in1, in2);
   // SCM_ALLOW_INTS;
 
@@ -2787,6 +2802,7 @@ initialize_glue_editor () {
   gh_new_procedure ("inside?", (FN) tmg_insideP, 1, 0, 0);
   gh_new_procedure ("insert", (FN) tmg_insert, 1, 0, 0);
   gh_new_procedure ("insert-go-to", (FN) tmg_insert_go_to, 2, 0, 0);
+  gh_new_procedure ("insert-raw-go-to", (FN) tmg_insert_raw_go_to, 2, 0, 0);
   gh_new_procedure ("insert-return", (FN) tmg_insert_return, 0, 0, 0);
   gh_new_procedure ("remove-text", (FN) tmg_remove_text, 1, 0, 0);
   gh_new_procedure ("remove-structure", (FN) tmg_remove_structure, 1, 0, 0);

@@ -231,6 +231,16 @@ edit_text_rep::insert_tree (tree t) {
   insert_tree (t, end (t));
 }
 
+void
+edit_text_rep::var_insert_tree (tree t, path p_in_t) {
+  if (selection_active_any ()) {
+    selection_cut ("primary");
+    insert_tree (t, p_in_t);
+    selection_paste ("primary");
+  }
+  else insert_tree (t, p_in_t);
+}
+
 /******************************************************************************
 * Spaces
 ******************************************************************************/

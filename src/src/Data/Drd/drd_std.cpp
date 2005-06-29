@@ -282,9 +282,11 @@ init_std_drd () {
   init (ANIM_COMPOSE, "anim-compose", repeat (1, 1));
   init (ANIM_REPEAT, "anim-repeat", fixed (1) -> accessible (0));
   init (ANIM_CONSTANT, "anim-constant",
-	fixed (1, 1, BIFORM) -> accessible (1));
-  init (ANIM_EFFECT, "anim-effect",
-	var_repeat (1, 1, BIFORM) -> accessible (1));
+	fixed (1, 1, BIFORM) -> accessible (0));
+  init (ANIM_TRANSLATE, "anim-translate",
+	fixed (1, 3, BIFORM) -> accessible (0));
+  init (ANIM_PROGRESSIVE, "anim-progressive",
+	fixed (1, 3, BIFORM) -> accessible (0));
   init (VIDEO, "video", fixed (5));
   init (SOUND, "sound", fixed (1));
 

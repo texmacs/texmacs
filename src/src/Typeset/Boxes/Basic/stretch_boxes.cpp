@@ -16,8 +16,6 @@
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 
-#include <math.h>
-
 static void
 get_wide_parameters (SI x1, SI x2, SI penw, SI& width, SI& height) {
   width = max (x2-x1, 10*penw)- (8*penw);

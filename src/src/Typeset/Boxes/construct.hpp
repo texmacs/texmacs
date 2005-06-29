@@ -92,6 +92,8 @@ box tag_box (path ip, box b, string name);
 box anim_compose_box (path ip, array<box> b);
 box anim_repeat_box (path ip, box b);
 box anim_constant_box (path ip, box b, int l);
+box anim_translate_box (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey);
+box anim_progressive_box (path ip, box b, int len, rectangle r1, rectangle r2);
 box sound_box (path ip, url u, SI h);
 box video_box (path ip, url u, SI w, SI h, int msecs, bool repeat_flag);
 
