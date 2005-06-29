@@ -121,7 +121,7 @@
 	  (link insert-link-menu))
       (=> (balloon (icon "tm_switch.xpm") "Switching and folding")
 	  (link insert-fold-menu))
-      (=> (balloon (icon "tm_switch.xpm") "Animation")
+      (=> (balloon (icon "tm_animate.xpm") "Animation")
 	  (link insert-animation-menu))
       (=> (balloon (icon "tm_math.xpm") "Insert mathematics")
 	  (link insert-math-menu))
