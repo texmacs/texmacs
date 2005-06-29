@@ -361,11 +361,13 @@
 
 (define (make-thumbnails-sub l)
   (define (mapper x)
-    `(postscript ,(url->string x) "0.2par" "" "" "" "" ""))
+    `(postscript ,(url->string x) "0.22par" "" "" "" "" ""))
   (let* ((l1 (map mapper l))
 	 (l2 (make-rows l1 4))
 	 (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
-    (insert `(tabular (table ,@l3)))))
+    (insert `(tabular* (tformat (twith "table-width" "1par")
+				(twith "table-hyphen" "yes")
+				(table ,@l3))))))
 
 (tm-define (make-thumbnails)
   (:interactive #t)
@@ -421,3 +423,10 @@
 (tm-define (make-sound u)
   (if (not (url-none? u))
       (insert `(sound ,(url->string u)))))
+
+(tm-define (make-animation u)
+  (interactive
+      (lambda (w h len rep)
+	(if (== rep "no") (set! rep "false"))
+	(insert `(video ,(url->string u) ,w ,h ,len ,rep)))
+    "Width" "Height" "Length" "Repeat?"))
