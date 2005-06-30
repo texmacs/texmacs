@@ -297,6 +297,22 @@ extend_right (rectangles l, SI x) {
 		     extend_right (l->next, x));
 }
 
+static rectangles
+truncate_top (rectangles l, SI y) {
+  if (nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, r->y1, r->x2, min (r->y2, y)),
+		     truncate_top (l->next, y));
+}
+
+static rectangles
+truncate_bottom (rectangles l, SI y) {
+  if (nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, max (r->y1, y), r->x2, r->y2),
+		     truncate_bottom (l->next, y));
+}
+
 selection
 stack_box_rep::find_selection (path lbp, path rbp) {
   if ((N(bs) == 0) ||
@@ -305,12 +321,6 @@ stack_box_rep::find_selection (path lbp, path rbp) {
 
   int  i1  = atom (lbp)? 0      : lbp->item;
   int  i2  = atom (rbp)? N(bs)-1: rbp->item;
-  /* This hack produces nicer selections in case of a hidden top */
-  while (i1 < N(bs)-1 && bs[i1]->h() == 0) { i1++;
-    if (!atom (lbp)) lbp= path (i1, bs[i1]->find_left_box_path ()); }
-  //while (i2 > 0 && bs[i2]->h() == 0) { i2--;
-  //  if (!atom (rbp)) rbp= path (i2, bs[i2]->find_right_box_path ()); }
-  /* End hack (be careful in case of bottom because of right flush) */
   path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());
@@ -344,6 +354,15 @@ stack_box_rep::find_selection (path lbp, path rbp) {
       rs << extend_left  (ascend  (sel2->rs, midy1), x1);
       if (midy1 < midy2) rs << rectangle (x1, midy1, x2, midy2);
     }
+
+    /* This hack produces nicer selections in case of a hidden top/bottom */
+    int j1= i1, j2= i2;
+    while (j1 < i2 && bs[j1]->h() == 0) j1++;
+    while (j2 > j1 && bs[j2]->h() == 0) j2--;
+    if (j1 != i1) rs= truncate_top    (rs, sy2 (j1));
+    if (j2 != i2) rs= truncate_bottom (rs, sy1 (j2));
+    /* End hack */
+
     return selection (rs, lp, rp);
   }
   else return box_rep::find_selection (lbp, rbp);
