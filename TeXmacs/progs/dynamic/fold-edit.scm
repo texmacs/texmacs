@@ -289,19 +289,19 @@
 
 (tm-define (structured-left)
   (:context new-switch-context?)
-  (new-switch-to :previous))
+  (new-switch-to :previous :end))
 
 (tm-define (structured-right)
   (:context new-switch-context?)
-  (new-switch-to :next))
+  (new-switch-to :next :start))
 
 (tm-define (structured-up)
   (:context new-switch-context?)
-  (new-switch-to :previous))
+  (new-switch-to :previous :end))
 
 (tm-define (structured-down)
   (:context new-switch-context?)
-  (new-switch-to :next))
+  (new-switch-to :next :start))
 
 (tm-define (structured-first)
   (:context new-switch-context?)
@@ -348,7 +348,7 @@
   (:context new-switch-context?)
   (with-innermost t new-switch-context?
     (let* ((old (tree-label t))
-	   (val (switch-tag-list))
+	   (val (big-switch-tag-list))
 	   (rot (list-search-rotate val old))
 	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot)))
 	   (i (new-switch-index)))
