@@ -135,16 +135,25 @@ shove (page_item& item1, page_item& item2, stack_border sb, stack_border sb2) {
   // cout << "Shove: " << sb->height << ", " << sb2->height_before
   // << "; " << b1->y1 << ", " << b2->y2
   // << "; " << top << ", " << bot << LF;
+
   while (true) {
     int type= b1->get_type ();
     if ((type == MOVE_BOX) && (b1->sx(0) == 0)) b1= b1[0];
-    else if ((type == STACK_BOX) && (N(b1)>0))  b1= b1[N(b1)-1];
+    else if ((type == STACK_BOX) && (N(b1)>0)) {
+      int i= N(b1)-1;
+      while ((i >= 1) && (b1[i]->h() == 0)) i--;
+      b1= b1[i];
+    }
     else break;
   }
   while (true) {
     int type= b2->get_type ();
     if ((type == MOVE_BOX) && (b2->sx(0) == 0)) b2= b2[0];
-    else if ((type == STACK_BOX) && (N(b2)>0))  b2= b2[0];
+    else if ((type == STACK_BOX) && (N(b2)>0)) {
+      int i= 0, n= N(b2);
+      while ((i < n-1) && (b2[i]->h() == 0)) i++;
+      b2= b2[i];
+    }
     else break;
   }
 
