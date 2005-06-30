@@ -453,8 +453,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
-  case HIDDEN:
-    return make_lazy_hidden (env, t, ip);
+    //case HIDDEN:
+    //return make_lazy_hidden (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:
