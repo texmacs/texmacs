@@ -60,10 +60,17 @@
 (define-public-macro (with-cc cont . body)
   `(call/cc (lambda (,cont) ,@body)))
 
+(define-public-macro (when cond . body)
+  `(if cond (begin ,@body)))
+
 (define-public-macro (with var val . body)
   (if (pair? var)
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
+
+(define-public-macro (and-with var val . body)
+  `(with var val
+     (and var (begin ,@body))))
 
 (define-public (.. start end)
   (if (< start end)

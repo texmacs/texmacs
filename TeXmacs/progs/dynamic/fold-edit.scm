@@ -169,3 +169,81 @@
 (tm-define (hidden-variant)
   (:inside switch)
   (switch-to "rotate forward"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New type switches (common library)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (new-switch-arity)
+  (with t (tree-innermost 'new-switch)
+    (and t (tree-arity t))))
+
+(tm-define (new-switch-valid-child? i)
+  (with t (tree-innermost 'new-switch)
+    (and t i (>= i 0) (< i (tree-arity t)))))
+
+(tm-define (new-switch-ref i)
+  (:inside new-switch)
+  (with t (tree-innermost 'new-switch)
+    (and t (>= i 0) (< i (tree-arity t)) (not (tree-is? t i 'hidden)))))
+
+(tm-define (new-switch-set i on?)
+  (:inside new-switch)
+  (with-innermost t 'new-switch
+    (when (and (>= i 0) (< i (tree-arity t)))
+      (cond ((and on? (tree-is? t i 'hidden))
+	     (tree-remove-node (tree-ref t i) 0))
+	    ((and (not on?) (not (tree-is? t i 'hidden)))
+	     (tree-insert-node (tree-ref t i) 0 '(hidden)))))))
+
+(tm-define (new-switch-set-range first last on?)
+  (:inside new-switch)
+  (if (== last :last) (set! last (new-switch-arity)))
+  (for (i first last) (new-switch-set i on?)))
+
+(tm-define (new-switch-index . args)
+  (:inside new-switch)
+  (and-let* ((i (if (null? args) :current (car args)))
+	     (t (tree-innermost 'new-switch))
+	     (l (- (tree-arity t) 1))
+	     (c l))
+    (while (and (>= c 0) (not (new-switch-ref c)))
+      (set! c (- c 1)))
+    (cond ((< c 0) #f)
+	  ((== i :current) c)
+	  ((== i :previous) (and (> c 0) (- c 1)))
+	  ((== i :next) (and (< c l) (+ c 1)))
+	  ((== i :rotate-backward) (if (= c 0) l (- c 1)))
+	  ((== i :rotate-forward) (if (= c l) 0 (+ c 1)))
+	  ((== i :first) 0)
+	  ((== i :last) l)
+	  (else i))))
+
+(tm-define (new-switch-go-to i . args)
+  (with-innermost t 'new-switch
+    (apply tree-go-to (cons* t i args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; New type switches (specific types of switches)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (new-switch-to i . args)
+  (set! i (new-switch-index i))
+  (if (null? args) (set! args '(:start)))
+  (when (new-switch-valid-child? i)
+    (new-switch-set-range 0 :last #f)
+    (new-switch-set i #t)
+    (apply new-switch-go-to (cons i args))))
+
+(tm-define (unroll-to i . args)
+  (set! i (new-switch-index i))
+  (if (null? args) (set! args '(:start)))
+  (when (new-switch-valid-child? i)
+    (new-switch-set-range 0 (+ i 1) #t)
+    (new-switch-set-range (+ i 1) :last #f)
+    (apply new-switch-go-to (cons i args))))
+
+(tm-define (hidden-variant)
+  (:inside new-switch)
+  (unroll-to :rotate-forward))
+;;(new-switch-to :rotate-forward))

@@ -28,7 +28,7 @@
        '(texmacs-module define-macro define-public-macro
          tm-define tm-define-macro tm-property
 	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let* case-lambda with for repeat
+         texmacs-modes and-let\\* case-lambda with and-with for repeat
 	 with-innermost with-action with-mutator with-module with-cursor
 	 call/cc with-cc values receive map-in-order
          drd-group drd-table drd-dispatcher
@@ -58,11 +58,11 @@
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
-  (dolist (s '(with with-innermost receive
+  (dolist (s '(with and-with with-innermost receive
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if define-group
-	       define-macro define-public-macro while for repeat
+	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
