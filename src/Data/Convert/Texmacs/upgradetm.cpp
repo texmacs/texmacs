@@ -2393,6 +2393,30 @@ upgrade_bibliography (tree t) {
 }
 
 /******************************************************************************
+* Upgrade switches
+******************************************************************************/
+
+tree
+upgrade_switch (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_switch (t[i]);
+    if (is_compound (r, "switch", 2)) {
+      int i, n= N(r[1]);
+      tree u (make_tree_label ("new-switch"), n);
+      for (i=0; i<n; i++)
+	if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
+	else u[i]= compound ("hidden", r[1][i]);
+      return u;
+    }
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2487,5 +2511,7 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.4.6"))
     t= upgrade_bibliography (t);
+  if (version_inf_eq (version, "1.0.5.4"))
+    t= upgrade_switch (t);
   return t;
 }

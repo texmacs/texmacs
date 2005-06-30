@@ -305,6 +305,12 @@ stack_box_rep::find_selection (path lbp, path rbp) {
 
   int  i1  = atom (lbp)? 0      : lbp->item;
   int  i2  = atom (rbp)? N(bs)-1: rbp->item;
+  /* This hack produces nicer selections in case of a hidden top */
+  while (i1 < N(bs)-1 && bs[i1]->h() == 0) { i1++;
+    if (!atom (lbp)) lbp= path (i1, bs[i1]->find_left_box_path ()); }
+  //while (i2 > 0 && bs[i2]->h() == 0) { i2--;
+  //  if (!atom (rbp)) rbp= path (i2, bs[i2]->find_right_box_path ()); }
+  /* End hack (be careful in case of bottom because of right flush) */
   path lbp1= atom (lbp)? path (i1, bs[i1]->find_left_box_path ()) : lbp;
   path rbp1= path (i1, bs[i1]->find_right_box_path ());
   path lbp2= path (i2, bs[i2]->find_left_box_path ());

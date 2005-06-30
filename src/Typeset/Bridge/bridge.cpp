@@ -292,17 +292,18 @@ bridge_rep::typeset (int desired_status) {
       flag= flag || (N (l[i]->fl) != 0) || (l[i]->nr_cols > 1);
     if (flag) ttt->insert_stack (l, sb);
     else {
-      int last=-1;
+      int first=-1, last=-1;
       array<box> bs;
       array<SI>  spc;
       for (i=0; i<n; i++)
 	if (l[i]->type != PAGE_CONTROL_ITEM) {
+	  if (first == -1 && l[i]->type == PAGE_LINE_ITEM) first= N(bs);
 	  bs  << l[i]->b;
 	  spc << l[i]->spc->def;
 	  last= i;
 	}
       box lb= stack_box (path (ip), bs, spc);
-      lb= move_box (path (ip), lb, 0, bs[0]->y2);
+      if (first != -1) lb= move_box (path (ip), lb, 0, bs[first]->y2);
       array<page_item> new_l (1);
       new_l[0]= page_item (lb);
       new_l[0]->spc= l[last]->spc;
