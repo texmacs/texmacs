@@ -132,7 +132,18 @@ bridge_hidden_rep::my_typeset_will_be_complete () {
 
 void
 bridge_hidden_rep::my_typeset (int desired_status) {
-  body->typeset (desired_status);
-  ttt->l = array<page_item> (0);
-  ttt->sb= stack_border ();
+  stack_border temp_sb;
+  array<page_item> temp_l=
+    typeset_stack (env, st, ip, ttt->a, ttt->b, temp_sb);
+  int i=0, n= N(temp_l);
+  for (i=0; i<n; i++)
+    if (temp_l[i]->type != PAGE_CONTROL_ITEM) {
+      box b= temp_l[i]->b;
+      temp_l[i]->type= PAGE_HIDDEN_ITEM;
+      temp_l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
+      temp_l[i]->spc = space (0, 0, 0);
+    }
+  ttt->l = temp_l;
+  ttt->sb= temp_sb; // stack_border ();
+  //ttt->insert_stack (temp_l, temp_sb);
 }
