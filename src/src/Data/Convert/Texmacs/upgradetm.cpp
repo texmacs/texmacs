@@ -2406,7 +2406,7 @@ upgrade_switch (tree t) {
       r[i]= upgrade_switch (t[i]);
     if (is_compound (r, "switch", 2)) {
       int i, n= N(r[1]);
-      tree u (make_tree_label ("new-switch"), n);
+      tree u (make_tree_label ("switch"), n);
       for (i=0; i<n; i++)
 	if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
 	else u[i]= compound ("hidden", r[1][i]);

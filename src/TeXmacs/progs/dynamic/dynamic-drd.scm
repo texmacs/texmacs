@@ -41,10 +41,10 @@
   (alternative-tag) (unroll-tag) (expanded-tag))
 
 (define-group big-switch-tag
-  new-switch unroll expanded)
+  switch unroll expanded)
 
 (define-group alternative-tag
-  new-switch)
+  switch)
 
 (define-group unroll-tag
   unroll)
