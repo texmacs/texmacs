@@ -221,6 +221,10 @@
 
   <drd-props|unroll|accessible|all>
 
+  <assign|expanded|<value|new-switch>>
+
+  <drd-props|expanded|accessible|all>
+
   \;
 </body>
 

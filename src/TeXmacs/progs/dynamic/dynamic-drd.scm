@@ -41,7 +41,7 @@
   (alternative-tag) (unroll-tag) (expanded-tag))
 
 (define-group big-switch-tag
-  new-switch unroll)
+  new-switch unroll expanded)
 
 (define-group alternative-tag
   new-switch)
@@ -49,4 +49,5 @@
 (define-group unroll-tag
   unroll)
 
-(define-group expanded-tag)
+(define-group expanded-tag
+  expanded)
