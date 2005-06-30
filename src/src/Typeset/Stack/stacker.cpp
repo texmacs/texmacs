@@ -208,33 +208,43 @@ merge_stack (array<page_item>& l, stack_border& sb,
 	     array<page_item> l2, stack_border sb2)
 {
   int i= N(l)-1, j=0;
-  while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
-  while ((j<N(l2)) && (l2[j]->type == PAGE_CONTROL_ITEM)) j++;
-  if (i>=0) {
-    l[i]= copy (l[i]);
-    if (j<N(l2)) shove (l[i], l2[j], sb, sb2);
-    l[i]->spc= l[i]->spc + max (sb->vspc_after, sb2->vspc_before);
-    if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
+  while ((i >= 0) && (l[i]->type != PAGE_LINE_ITEM)) i--;
+  while ((j < N(l2)) && (l2[j]->type != PAGE_LINE_ITEM)) j++;
+
+  if (j >= N(l2)) {
+    // no real lines in l2
+    sb->vspc_after = max (sb->vspc_after, sb2->vspc_after);
+    sb->nobr_after = sb->nobr_after || sb2->nobr_after;
   }
   else {
-    sb->height_before  = sb2->height_before;
-    sb->sep_before     = sb2->sep_before;
-    sb->ver_sep_before = sb2->ver_sep_before;
-    sb->hor_sep_before = sb2->hor_sep_before;
-    sb->top            = sb2->top;
-    sb->vspc_before    = sb2->vspc_before;
-    sb->nobr_before    = sb2->nobr_before;
+    if (i < 0) {
+      // no real lines in l1
+      sb->height_before  = sb2->height_before;
+      sb->sep_before     = sb2->sep_before;
+      sb->ver_sep_before = sb2->ver_sep_before;
+      sb->hor_sep_before = sb2->hor_sep_before;
+      sb->top            = sb2->top;
+      sb->vspc_before    = max (sb->vspc_before, sb2->vspc_before);
+      sb->nobr_before    = sb->nobr_before || sb2->nobr_before;
+      //sb->vspc_before    = sb2->vspc_before;
+      //sb->nobr_before    = sb2->nobr_before;
+    }
+    else {
+      // normal case
+      l[i]= copy (l[i]);
+      shove (l[i], l2[j], sb, sb2);
+      l[i]->spc= l[i]->spc + max (sb->vspc_after, sb2->vspc_before);
+      if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
+    }
+    sb->height    = sb2->height;
+    sb->sep       = sb2->sep;
+    sb->ver_sep   = sb2->ver_sep;
+    sb->hor_sep   = sb2->hor_sep;
+    sb->bot       = sb2->bot;
+    sb->vspc_after= sb2->vspc_after;
+    sb->nobr_after= sb2->nobr_after;
   }
-  if (j<N(l2)) {
-    sb->height  = sb2->height;
-    sb->sep     = sb2->sep;
-    sb->ver_sep = sb2->ver_sep;
-    sb->hor_sep = sb2->hor_sep;
-    sb->bot     = sb2->bot;
-  }
-  // FIXME: shouldn't this go into the if statement?
-  sb->vspc_after= sb2->vspc_after;
-  sb->nobr_after= sb2->nobr_after;
+
   l << l2;
 }
 

@@ -259,7 +259,7 @@ bridge_rep::typeset (int desired_status) {
       ip= ip2;
   }
 
-  // cout << "Typesetting " << st << ", " << desired_status << "\n";
+  //cout << "Typesetting " << st << ", " << desired_status << LF << INDENT;
   if ((status==desired_status) && (N(ttt->old_patch)==0)) {
     // cout << "  cached\n";
     env->monitored_patch_env (changes);
@@ -283,8 +283,8 @@ bridge_rep::typeset (int desired_status) {
   // cout << "Typesetted " << st << ", " << desired_status << "\n";
 
   // ttt->insert_stack (l, sb);
-  if (N(l) == 0);
-  else if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
+  //if (N(l) == 0); else
+  if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
   else {
     bool flag= false;
     int i, n= N(l);
@@ -296,7 +296,7 @@ bridge_rep::typeset (int desired_status) {
       array<box> bs;
       array<SI>  spc;
       for (i=0; i<n; i++)
-	if (l[i]->type == PAGE_LINE_ITEM) {
+	if (l[i]->type != PAGE_CONTROL_ITEM) {
 	  bs  << l[i]->b;
 	  spc << l[i]->spc->def;
 	  last= i;
@@ -310,6 +310,10 @@ bridge_rep::typeset (int desired_status) {
     }
   }
 
-  // cout << "  l   = " << l << "\n";
-  // cout << "  sb  = " << sb << "\n";
+  //cout << UNINDENT;
+  //cout << "l   = " << l << LF;
+  //cout << "sb  = " << sb << LF;
+  //cout << "l   = " << ttt->l << LF;
+  //cout << "a   = " << ttt->a << LF;
+  //cout << "b   = " << ttt->b << LF;
 }
