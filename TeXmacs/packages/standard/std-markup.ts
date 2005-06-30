@@ -210,16 +210,16 @@
   <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
 
   <assign|new-switch|<\xmacro|switch-args>
-    <surround||<right-flush>|<extern|ext-filter-visible|<quote-arg|switch-args>>>
-  </xmacro>>
-
-  <assign|new-switch|<\xmacro|switch-args>
     <surround||<right-flush>|<\quasi>
       <unquote*|<quote-arg|switch-args>>
     </quasi>>
   </xmacro>>
 
   <drd-props|new-switch|accessible|all>
+
+  <assign|unroll|<value|new-switch>>
+
+  <drd-props|unroll|accessible|all>
 
   \;
 </body>
