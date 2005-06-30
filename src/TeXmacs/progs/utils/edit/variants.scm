@@ -123,7 +123,7 @@
 (tm-define (variant-circulate forward?)
   (noop))
 
-(define (list-rotate which search)
+(tm-define (list-search-rotate which search)
   (receive (l r) (list-break which (lambda (x) (== x search)))
     (append r l)))
 
@@ -132,7 +132,7 @@
   (with-innermost t variant-context?
     (let* ((old (tree-label t))
 	   (val (variants-of old))
-	   (rot (list-rotate val old))
+	   (rot (list-search-rotate val old))
 	   (new (if (and forward? (nnull? rot)) (cadr rot) (cAr rot))))
       (variant-replace old new))))
 

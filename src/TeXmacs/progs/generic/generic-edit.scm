@@ -118,10 +118,22 @@
 (tm-define (structured-remove forwards?) (remove-argument forwards?))
 (tm-define (structured-insert-up) (noop))
 (tm-define (structured-insert-down) (noop))
-(tm-define (structured-insert-start) (noop))
-(tm-define (structured-insert-end) (noop))
-(tm-define (structured-insert-top) (noop))
-(tm-define (structured-insert-bottom) (noop))
+
+(tm-define (structured-insert-start)
+  (structured-first)
+  (structured-insert #f))
+
+(tm-define (structured-insert-end)
+  (structured-first)
+  (structured-insert #t))
+
+(tm-define (structured-insert-top)
+  (structured-top)
+  (structured-insert-up))
+
+(tm-define (structured-insert-bottom)
+  (structured-bottom)
+  (structured-insert-down))
 
 (tm-define (structured-left)
   (with-innermost t complex-context?
