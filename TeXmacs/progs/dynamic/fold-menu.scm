@@ -15,7 +15,6 @@
 (texmacs-module (dynamic fold-menu)
   (:use (dynamic fold-edit)))
 
-
 (menu-bind insert-fold-menu
   ("Superpose" (make 'superpose))
   (if (style-has? "std-dtd")
@@ -28,17 +27,20 @@
       (if (inside? 'fold)
 	  ("Unfold" (unfold)))
       ---
-      ("Switch" (make-switch))
-      (when (inside? 'switch)
-	    ("Add switch before" (switch-insert "before"))
-	    ("Add switch after" (switch-insert "after"))
-	    ("Remove this switch" (switch-remove "here"))
+      (-> "Switch"
+	  ("Alternatives" (make-switch 'switch))
+	  ("Unroll" (make-switch 'unroll))
+	  ("Expanded" (make-switch 'expanded)))
+      (when (nnot (tree-innermost switch-context?))
+	    ("Add switch before" (switch-insert-at :current))
+	    ("Add switch after" (switch-insert-at :var-next))
+	    ("Remove this switch" (switch-remove-at :current))
 	    ---
-	    (when (< 0 (switch-get-position))
-		  ("Switch to previous" (switch-to "previous")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to next" (switch-to "next")))
-	    (when (< 0 (switch-get-position))
-		  ("Switch to first" (switch-to "first")))
-	    (when (< (switch-get-position) (switch-get-last))
-		  ("Switch to last" (switch-to "last"))))))
+	    (when (< 0 (switch-index))
+		  ("Switch to first" (switch-to :first)))
+	    (when (< 0 (switch-index))
+		  ("Switch to previous" (switch-to :previous)))
+	    (when (< (switch-index) (switch-index :last))
+		  ("Switch to next" (switch-to :next)))
+	    (when (< (switch-index) (switch-index :last))
+		  ("Switch to last" (switch-to :last))))))

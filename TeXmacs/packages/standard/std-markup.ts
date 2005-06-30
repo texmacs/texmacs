@@ -207,21 +207,21 @@
     </with>
   </macro>>
 
-  <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
+  <assign|old-switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
 
-  <assign|new-switch|<\xmacro|switch-args>
+  <assign|switch|<\xmacro|switch-args>
     <surround||<right-flush>|<\quasi>
       <unquote*|<quote-arg|switch-args>>
     </quasi>>
   </xmacro>>
 
-  <drd-props|new-switch|accessible|all>
+  <drd-props|switch|accessible|all>
 
-  <assign|unroll|<value|new-switch>>
+  <assign|unroll|<value|switch>>
 
   <drd-props|unroll|accessible|all>
 
-  <assign|expanded|<value|new-switch>>
+  <assign|expanded|<value|switch>>
 
   <drd-props|expanded|accessible|all>
 
