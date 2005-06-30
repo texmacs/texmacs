@@ -534,7 +534,7 @@ lazy_paragraph_rep::query (lazy_type request, format fm) {
     int i, n= N(li);
     for (i=0; i<n-1; i++)
       w += li[i]->spc->def + li[i]->b->x2;
-    w += li[i]->b->x2;
+    if (i<n) w += li[i]->b->x2;
     w= max (w, 1);  // width of a paragraph must be strictly positive for
                     // correct positioning inside tables
     return make_format_width (w);
@@ -546,6 +546,7 @@ lazy
 lazy_paragraph_rep::produce (lazy_type request, format fm) {
   if (request == type) return this;
   if (request == LAZY_VSTREAM) {
+    bool hidden= (N(a) == 0);
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
       width= fs->width;
@@ -553,6 +554,16 @@ lazy_paragraph_rep::produce (lazy_type request, format fm) {
       if (N (fs->after ) != 0) a= join (a, fs->after );
     }
     format_paragraph ();
+    /* Hide line items of height 0 */
+    int i, n= N(sss->l);
+    if (hidden)
+      for (i=0; i<n; i++) {
+	box b= sss->l[i]->b;
+	sss->l[i]->type= PAGE_HIDDEN_ITEM;
+	sss->l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
+	sss->l[i]->spc = space (0, 0, 0);
+      }
+    /* End hiding code */
     return lazy_vstream (ip, "", sss->l, sss->sb);
   }
   return lazy_rep::produce (request, fm);
