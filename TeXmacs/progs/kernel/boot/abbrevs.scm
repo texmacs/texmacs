@@ -61,7 +61,7 @@
   `(call/cc (lambda (,cont) ,@body)))
 
 (define-public-macro (when cond . body)
-  `(if cond (begin ,@body)))
+  `(if ,cond (begin ,@body)))
 
 (define-public-macro (with var val . body)
   (if (pair? var)

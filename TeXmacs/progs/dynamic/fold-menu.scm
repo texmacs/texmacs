@@ -42,4 +42,9 @@
     (when (< (switch-index) (switch-index :last))
       ("Switch to next" (switch-to :next :start)))
     (when (< (switch-index) (switch-index :last))
-      ("Switch to last" (switch-to :last :end)))))
+      ("Switch to last" (switch-to :last :end))))
+  ---
+  ("Fold all" (dynamic-operate-on-buffer :fold))
+  ("Unfold all" (dynamic-operate-on-buffer :unfold))
+  ("Compress all" (dynamic-operate-on-buffer :compress))
+  ("Expand all" (dynamic-operate-on-buffer :expand)))
