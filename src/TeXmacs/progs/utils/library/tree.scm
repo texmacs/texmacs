@@ -193,6 +193,7 @@
 (tm-define (tree-ref t . l)
   (:synopsis "Access a subtree of @t according to @l.")
   (cond ((not (tree? t)) #f)
+	((null? l) t)
 	((and (list-1? l) (integer? (car l)))
 	 (tree-child t (car l)))
 	(else (with r (select t l)

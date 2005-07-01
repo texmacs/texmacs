@@ -73,7 +73,26 @@
   (fold))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Switches (general routines)
+;; Operations on switch trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (switch-ref t i)
+  (and t (>= i 0) (< i (tree-arity t)) (not (tree-is? t i 'hidden))))
+
+(define (switch-set t i on?)
+  (if (== i :last) (set! i (- (tree-arity t) 1)))
+  (when (and (>= i 0) (< i (tree-arity t)))
+    (cond ((and on? (tree-is? t i 'hidden))
+	   (tree-remove-node (tree-ref t i) 0))
+	  ((and (not on?) (not (tree-is? t i 'hidden)))
+	   (tree-insert-node (tree-ref t i) 0 '(hidden))))))
+
+(define (switch-set-range t first last on?)
+  (if (== last :last) (set! last (tree-arity t)))
+  (for (i first last) (switch-set t i on?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines on innermost switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (switch-context? t)
@@ -87,25 +106,6 @@
   (with t (tree-innermost switch-context?)
     (and t i (>= i 0) (< i (tree-arity t)))))
 
-(tm-define (switch-ref i)
-  (:context switch-context?)
-  (with t (tree-innermost switch-context?)
-    (and t (>= i 0) (< i (tree-arity t)) (not (tree-is? t i 'hidden)))))
-
-(tm-define (switch-set i on?)
-  (:context switch-context?)
-  (with-innermost t switch-context?
-    (when (and (>= i 0) (< i (tree-arity t)))
-      (cond ((and on? (tree-is? t i 'hidden))
-	     (tree-remove-node (tree-ref t i) 0))
-	    ((and (not on?) (not (tree-is? t i 'hidden)))
-	     (tree-insert-node (tree-ref t i) 0 '(hidden)))))))
-
-(tm-define (switch-set-range first last on?)
-  (:context switch-context?)
-  (if (== last :last) (set! last (switch-arity)))
-  (for (i first last) (switch-set i on?)))
-
 (tm-define (switch-index . args)
   (:context switch-context?)
   (and-let* ((i (if (null? args) :current (car args)))
@@ -113,7 +113,7 @@
 	     (c (tree-down-index t))
 	     (l (- (tree-arity t) 1))
 	     (v l))
-    (while (and (>= v 0) (not (switch-ref v)))
+    (while (and (>= v 0) (not (switch-ref t v)))
       (set! v (- v 1)))
     (cond ((< v 0) #f)
 	  ((== i :visible) v)
@@ -154,7 +154,7 @@
     (when (and (>= i 0) (< i (tree-arity t)) (> (tree-arity t) 1))
       (let* ((v (switch-index :visible))
 	     (l (- (tree-arity t) 2)))
-	(switch-set-range (max 0 (- i 1)) (min l (+ i 1)) #t)
+	(switch-set-range t (max 0 (- i 1)) (min l (+ i 1)) #t)
 	(tree-remove! t i 1)
 	(tree-go-to t (min i l) :start)
 	(if (tree-in? t (alternative-tag-list))
@@ -170,23 +170,26 @@
 
 (tm-define (switch-select i)
   (:context alternative-context?)
-  (switch-set-range 0 :last #f)
-  (switch-set i #t))
+  (with-innermost t alternative-context?
+    (switch-set-range t 0 :last #f)
+    (switch-set t i #t)))
 
 (define (unroll-context? t)
   (tree-in? t (unroll-tag-list)))
 
 (tm-define (switch-select i)
   (:context unroll-context?)
-  (switch-set-range 0 (+ i 1) #t)
-  (switch-set-range (+ i 1) :last #f))
+  (with-innermost t unroll-context?
+    (switch-set-range t 0 (+ i 1) #t)
+    (switch-set-range t (+ i 1) :last #f)))
 
 (define (expanded-context? t)
   (tree-in? t (expanded-tag-list)))
 
 (tm-define (switch-select i)
   (:context expanded-context?)
-  (switch-set-range 0 :last #t))
+  (with-innermost t expanded-context?
+    (switch-set-range t 0 :last #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface to switches
@@ -264,3 +267,43 @@
 	   (i (switch-index)))
       (variant-replace old new)
       (switch-select i))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global routines for folding/unfolding/compressing/expanding
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dynamic-operate t mode)
+  (force-output)
+  (when (tree-compound? t)
+    (for-each (lambda (x) (dynamic-operate x mode)) (tree-children t))
+    (cond ((toggle-first-context? t)
+	   (cond ((in? mode '(:unfold :expand :last))
+		  (tree-assign-node!
+		   t (ahash-ref toggle-table (tree-label t))))))
+	  ((toggle-second-context? t)
+	   (cond ((in? mode '(:fold :compress :first))
+		  (tree-assign-node!
+		   t (ahash-ref toggle-table (tree-label t))))))
+	  ((alternative-context? t)
+	   (cond ((in? mode '(:expand))
+		  (tree-assign-node! t 'expanded)
+		  (switch-set-range t 0 :last #t))
+		 ((in? mode '(:first))
+		  (switch-set-range t 1 :last #f)
+		  (switch-set t 0 #t))
+		 ((in? mode '(:last))
+		  (switch-set-range t 0 :last #f)
+		  (switch-set t :last #t))))
+	  ((unroll-context? t)
+	   (cond ((in? mode '(:expand :last))
+		  (switch-set-range t 0 :last #t))
+		 ((in? mode '(:compress :first))
+		  (switch-set-range t 1 :last #f))))
+	  ((expanded-context? t)
+	   (cond ((in? mode '(:compress))
+		  (tree-assign-node! t 'switch)
+		  (switch-set t 0 #t)
+		  (switch-set-range t 1 :last #f)))))))
+
+(tm-define (dynamic-operate-on-buffer mode)
+  (dynamic-operate (buffer-tree) mode))
