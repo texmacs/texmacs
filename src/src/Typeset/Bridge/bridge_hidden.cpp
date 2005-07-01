@@ -18,30 +18,16 @@ protected:
 
 public:
   bridge_hidden_rep (typesetter ttt, tree st, path ip);
-  void initialize ();
 
   void notify_assign (path p, tree u);
-  void notify_insert (path p, tree u);
-  void notify_remove (path p, int nr);
   bool notify_macro  (int type, string var, int level, path p, tree u);
   void notify_change ();
 
-  void my_exec_until (path p);
-  bool my_typeset_will_be_complete ();
   void my_typeset (int desired_status);
 };
 
 bridge_hidden_rep::bridge_hidden_rep (typesetter ttt, tree st, path ip):
-  bridge_rep (ttt, st, ip)
-{
-  initialize ();
-}
-
-void
-bridge_hidden_rep::initialize () {
-  if (nil(body)) body= make_bridge (ttt, st[0], descend (ip, 0));
-  else replace_bridge (body, st[0], descend (ip, 0));
-}
+  bridge_rep (ttt, st, ip) {}
 
 bridge
 bridge_hidden (typesetter ttt, tree st, path ip) {
@@ -55,55 +41,14 @@ bridge_hidden (typesetter ttt, tree st, path ip) {
 void
 bridge_hidden_rep::notify_assign (path p, tree u) {
   // cout << "Assign " << p << ", " << u << " in " << st << "\n";
-  if (nil (p) && (!is_func (u, HIDDEN)))
-    fatal_error ("Nil path", "bridge_hidden_rep::notify_assign");
-  if (nil (p)) {
-    st= u;
-    initialize ();
-  }
-  else {
-    bool mp_flag= is_multi_paragraph (st);
-    if (p->item != 0)
-      fatal_error ("Invalid path", "bridge_hidden_rep::notify_assign");
-    if (atom (p)) body= make_bridge (ttt, u, descend (ip, 0));
-    else body->notify_assign (p->next, u);
-    st= substitute (st, p->item, body->st);
-    if (mp_flag != is_multi_paragraph (st)) initialize ();
-  }
   status= CORRUPTED;
-}
-
-void
-bridge_hidden_rep::notify_insert (path p, tree u) {
-  // cout << "Insert " << p << ", " << u << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_hidden_rep::notify_insert");
-  if (atom (p) || (p->item != 0)) bridge_rep::notify_insert (p, u);
-  else {
-    bool mp_flag= is_multi_paragraph (st);
-    body->notify_insert (p->next, u);
-    st= substitute (st, 0, body->st);
-    if (mp_flag != is_multi_paragraph (st)) initialize ();
-  }
-  status= CORRUPTED;
-}
-
-void
-bridge_hidden_rep::notify_remove (path p, int nr) {
-  // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
-  if (nil (p)) fatal_error ("Nil path", "bridge_hidden_rep::notify_remove");
-  if (atom (p) || (p->item != 0)) bridge_rep::notify_remove (p, nr);
-  else {
-    bool mp_flag= is_multi_paragraph (st);
-    body->notify_remove (p->next, nr);
-    st= substitute (st, 0, body->st);
-    if (mp_flag != is_multi_paragraph (st)) initialize ();
-  }
-  status= CORRUPTED;
+  st= substitute (st, p, u);
 }
 
 bool
-bridge_hidden_rep::notify_macro (int type, string var, int l, path p, tree u) {
-  bool flag= body->notify_macro (type, var, l, p, u);
+bridge_hidden_rep::notify_macro (int tp, string var, int l, path p, tree u) {
+  (void) tp; (void) p; (void) u;
+  bool flag= env->depends (st, var, l);
   if (flag) status= CORRUPTED;
   return flag;
 }
@@ -111,24 +56,11 @@ bridge_hidden_rep::notify_macro (int type, string var, int l, path p, tree u) {
 void
 bridge_hidden_rep::notify_change () {
   status= CORRUPTED;
-  body->notify_change ();
 }
 
 /******************************************************************************
 * Typesetting
 ******************************************************************************/
-
-void
-bridge_hidden_rep::my_exec_until (path p) {
-  if (p->item != 0) return;
-  body->exec_until (p->next);
-}
-
-bool
-bridge_hidden_rep::my_typeset_will_be_complete () {
-  if (status != CORRUPTED) return false;
-  return body->my_typeset_will_be_complete ();
-}
 
 void
 bridge_hidden_rep::my_typeset (int desired_status) {

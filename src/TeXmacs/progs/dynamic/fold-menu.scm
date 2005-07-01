@@ -16,31 +16,30 @@
   (:use (dynamic fold-edit)))
 
 (menu-bind insert-fold-menu
-  ("Superpose" (make 'superpose))
-  (if (style-has? "std-dtd")
-      ---
-      ("Folded" (make-fold))
-      (if (or (inside? 'unfold)
-	      (and (not (inside? 'unfold)) (not (inside? 'fold))))
-	  (when (inside? 'unfold)
-		("Fold" (fold))))
-      (if (inside? 'fold)
-	  ("Unfold" (unfold)))
-      ---
-      (-> "Switch"
-	  ("Alternatives" (make-switch 'switch))
-	  ("Unroll" (make-switch 'unroll))
-	  ("Expanded" (make-switch 'expanded)))
-      (when (nnot (tree-innermost switch-context?))
-	    ("Add switch before" (switch-insert-at :current))
-	    ("Add switch after" (switch-insert-at :var-next))
-	    ("Remove this switch" (switch-remove-at :current))
-	    ---
-	    (when (< 0 (switch-index))
-		  ("Switch to first" (switch-to :first)))
-	    (when (< 0 (switch-index))
-		  ("Switch to previous" (switch-to :previous)))
-	    (when (< (switch-index) (switch-index :last))
-		  ("Switch to next" (switch-to :next)))
-	    (when (< (switch-index) (switch-index :last))
-		  ("Switch to last" (switch-to :last))))))
+  (-> "Insert toggle"
+      ("Folded text" (make-toggle 'fold))
+      ("Folded environment" (make-toggle 'fold-env))
+      ("Folded group" (make-toggle 'fold-bracket))
+      ("Condensed text" (make-toggle 'condensed)))
+  (when (nnot (tree-innermost toggle-second-context?))
+    ("Fold" (fold)))
+  (when (nnot (tree-innermost toggle-first-context?))
+    ("Unfold" (unfold)))
+  ---
+  (-> "Insert switch"
+      ("Alternatives" (make-switch 'switch))
+      ("Unroll" (make-switch 'unroll))
+      ("Expanded" (make-switch 'expanded)))
+  (when (nnot (tree-innermost switch-context?))
+    (-> "Branch"
+	("Add branch before" (switch-insert-at :current))
+	("Add branch after" (switch-insert-at :var-next))
+	("Remove this branch" (switch-remove-at :current)))
+    (when (< 0 (switch-index))
+      ("Switch to first" (switch-to :first :start)))
+    (when (< 0 (switch-index))
+      ("Switch to previous" (switch-to :previous :end)))
+    (when (< (switch-index) (switch-index :last))
+      ("Switch to next" (switch-to :next :start)))
+    (when (< (switch-index) (switch-index :last))
+      ("Switch to last" (switch-to :last :end)))))

@@ -20,35 +20,33 @@
 ;; Folding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define fold-unfold-types
-  '((fold . unfold)
-    (fold-text . unfold-text)
-    (fold-proof . unfold-proof)
-    (fold-algorithm . unfold-algorithm)
-    (fold-exercise . unfold-exercise)))
+(tm-define (toggle-context? t)
+  (tree-in? t (toggle-tag-list)))
 
-(define unfold-fold-types
-  (map (lambda (x) (cons (cdr x) (car x))) fold-unfold-types))
+(tm-define (toggle-first-context? t)
+  (tree-in? t (toggle-first-tag-list)))
 
-(tm-define (make-fold)
+(tm-define (toggle-second-context? t)
+  (tree-in? t (toggle-second-tag-list)))
+
+(tm-define (make-toggle tag)
   (:type (-> void))
   (:synopsis "Insert a 'fold' environment")
-  (insert-go-to '(fold (document "") (document "")) (list 0 0)))
-
-(define (fold-unfold l to)
-  (with-innermost t (map car l)
-    (tree-assign-node! t (assoc-ref l (tm-car t)))
-    (tree-go-to t to :start)))
+  (insert-go-to `(,tag (document "") (document "")) (list 0 0)))
 
 (tm-define (fold)
   (:type (-> void))
   (:synopsis "Fold at the current cursor position")
-  (fold-unfold unfold-fold-types 0))
+  (with-innermost t toggle-second-context?
+    (tree-assign-node! t (ahash-ref toggle-table (tree-label t)))
+    (tree-go-to t 0 :start)))
 
 (tm-define (unfold)
   (:type (-> void))
   (:synopsis "Unfold at the current cursor position")
-  (fold-unfold fold-unfold-types 1))
+  (with-innermost t toggle-first-context?
+    (tree-assign-node! t (ahash-ref toggle-table (tree-label t)))
+    (tree-go-to t 1 :start)))
 
 (tm-define (mouse-fold)
   (:type (-> void))
@@ -67,11 +65,11 @@
     (unfold)))
 
 (tm-define (hidden-variant)
-  (:inside fold)
+  (:context toggle-first-context?)
   (unfold))
 
 (tm-define (hidden-variant)
-  (:inside unfold)
+  (:context toggle-second-context?)
   (fold))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -194,10 +192,10 @@
 ;; User interface to switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-switch lab)
-  (if (in? lab (big-switch-tag-list))
-      (insert-go-to `(,lab (document "")) '(0 0 0))
-      (insert-go-to `(,lab "") '(0 0))))
+(tm-define (make-switch tag)
+  (if (in? tag (big-switch-tag-list))
+      (insert-go-to `(,tag (document "")) '(0 0 0))
+      (insert-go-to `(,tag "") '(0 0))))
 
 (tm-define (structured-left)
   (:context switch-context?)
