@@ -34,6 +34,7 @@ struct stack_box_rep: public composite_box_rep {
 
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_tree_path (path bp);
+  cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
 };
 
@@ -259,6 +260,21 @@ stack_box_rep::find_tree_path (path bp) {
     }
   }
   else return composite_box_rep::find_tree_path (bp);
+}
+
+cursor
+stack_box_rep::find_cursor (path bp) {
+  cursor cu= composite_box_rep::find_cursor (bp);
+  int i= bp->item, j1, j2, n= N(bs);
+  if (atom (bp)) i= (bp == 0? 0: N(bs)-1);
+  if (bs[i]->h() != 0) return cu;
+  for (j1= i-1; j1>=0; j1--)
+    if (bs[j1]->h () != 0) break;
+  for (j2= i+1; j2<n; j2++)
+    if (bs[j2]->h () != 0) break;
+  if (j2 < n) cu->oy += sy (j2) - sy (i);
+  else if (j1 >= 0) cu->oy += sy (j1) - sy (i);
+  return cu;
 }
 
 /******************************************************************************

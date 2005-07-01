@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "edit_text.hpp"
+#include "tree_traverse.hpp"
 
 /******************************************************************************
 * Getting the point where to delete
@@ -91,14 +92,8 @@ edit_text_rep::remove_text (bool forward) {
 	      for (i=0; i<n; i++)
 		empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	      if (!empty) {
-		if (forward) {
-		  if (last_item (p) == n-1) go_to (end (et, path_up (p)));
-		  else go_to (start (et, path_inc (p)));
-		}
-		else {
-		  if (last_item (p) == 0) go_to (start (et, path_up (p)));
-		  else go_to (end (et, path_dec (p)));
-		}
+		if (forward) go_to (next_valid (et, tp));
+		else go_to (previous_valid (et, tp));
 		return;
 	      }
 	    }
