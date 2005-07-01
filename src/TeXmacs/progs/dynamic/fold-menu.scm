@@ -44,6 +44,11 @@
     (when (< (switch-index) (switch-index :last))
       ("Switch to last" (switch-to :last :end))))
   ---
+  ("First" (dynamic-operate-on-buffer :first))
+  ("Previous" (dynamic-traverse-buffer #f))
+  ("Next" (dynamic-traverse-buffer #t))
+  ("Last" (dynamic-operate-on-buffer :last))
+  ---
   ("Fold all" (dynamic-operate-on-buffer :fold))
   ("Unfold all" (dynamic-operate-on-buffer :unfold))
   ("Compress all" (dynamic-operate-on-buffer :compress))

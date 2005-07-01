@@ -62,6 +62,8 @@
   (tree-label-extension? is_extension (bool tree_label))
   (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
+  (tree-accessible-child? is_accessible_child (bool tree int))
+  (tree-accessible-children accessible_children (array_tree tree))
 
   ;; paths
   (path-inf? path_inf (bool path path))

@@ -160,15 +160,15 @@
     </quasi>>
   </xmacro>>
 
-  <drd-props|switch|accessible|all>
+  <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
 
   <assign|unroll|<value|switch>>
 
-  <drd-props|unroll|accessible|all>
+  <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
 
   <assign|expanded|<value|switch>>
 
-  <drd-props|expanded|accessible|all>
+  <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
 
   \;
 </body>

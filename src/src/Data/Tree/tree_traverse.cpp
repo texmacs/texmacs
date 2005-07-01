@@ -16,6 +16,25 @@
 #include "hashset.hpp"
 
 /******************************************************************************
+* Accessability
+******************************************************************************/
+
+bool
+is_accessible_child (tree t, int i) {
+  return the_drd->is_accessible_child (t, i);
+}
+
+array<tree>
+accessible_children (tree t) {
+  array<tree> a;
+  int i, n= N(t);
+  for (i=0; i<n; i++)
+    if (the_drd->is_accessible_child (t, i))
+      a << t[i];
+  return a;
+}
+
+/******************************************************************************
 * Traversal of a tree
 ******************************************************************************/
 
