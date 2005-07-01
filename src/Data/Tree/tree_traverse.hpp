@@ -14,6 +14,9 @@
 #define TREE_TRAVERSE_H
 #include "tree_cursor.hpp"
 
+bool is_accessible_child (tree t, int i);
+array<tree> accessible_children (tree t);
+
 path next_valid (tree t, path p);
 path previous_valid (tree t, path p);
 path next_word (tree t, path p);

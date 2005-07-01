@@ -17,6 +17,13 @@
 	(dynamic dynamic-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operations on toggle trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (toggle-toggle t)
+  (tree-assign-node! t (ahash-ref toggle-table (tree-label t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Folding
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -38,14 +45,14 @@
   (:type (-> void))
   (:synopsis "Fold at the current cursor position")
   (with-innermost t toggle-second-context?
-    (tree-assign-node! t (ahash-ref toggle-table (tree-label t)))
+    (toggle-toggle t)
     (tree-go-to t 0 :start)))
 
 (tm-define (unfold)
   (:type (-> void))
   (:synopsis "Unfold at the current cursor position")
   (with-innermost t toggle-first-context?
-    (tree-assign-node! t (ahash-ref toggle-table (tree-label t)))
+    (toggle-toggle t)
     (tree-go-to t 1 :start)))
 
 (tm-define (mouse-fold)
@@ -91,6 +98,12 @@
   (if (== last :last) (set! last (tree-arity t)))
   (for (i first last) (switch-set t i on?)))
 
+(define (switch-last-visible t)
+  (with v (- (tree-arity t) 1)
+    (while (and (>= v 0) (not (switch-ref t v)))
+      (set! v (- v 1)))
+    v))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines on innermost switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,9 +125,7 @@
 	     (t (tree-innermost switch-context?))
 	     (c (tree-down-index t))
 	     (l (- (tree-arity t) 1))
-	     (v l))
-    (while (and (>= v 0) (not (switch-ref t v)))
-      (set! v (- v 1)))
+	     (v (switch-last-visible t)))
     (cond ((< v 0) #f)
 	  ((== i :visible) v)
 	  ((== i :current) c)
@@ -273,17 +284,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (dynamic-operate t mode)
-  (force-output)
   (when (tree-compound? t)
     (for-each (lambda (x) (dynamic-operate x mode)) (tree-children t))
     (cond ((toggle-first-context? t)
 	   (cond ((in? mode '(:unfold :expand :last))
-		  (tree-assign-node!
-		   t (ahash-ref toggle-table (tree-label t))))))
+		  (toggle-toggle t))))
 	  ((toggle-second-context? t)
 	   (cond ((in? mode '(:fold :compress :first))
-		  (tree-assign-node!
-		   t (ahash-ref toggle-table (tree-label t))))))
+		  (toggle-toggle t))))
 	  ((alternative-context? t)
 	   (cond ((in? mode '(:expand))
 		  (tree-assign-node! t 'expanded)
@@ -307,3 +315,50 @@
 
 (tm-define (dynamic-operate-on-buffer mode)
   (dynamic-operate (buffer-tree) mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global navigation in fold/switch structure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dynamic-traverse-sub t forward?)
+  (cond ((and (toggle-first-context? t) forward?)
+	 (toggle-toggle t)
+	 (dynamic-operate (tree-ref t 1) :first)
+	 (tree-go-to t 1 :end)
+	 #t)
+	((and (toggle-second-context? t) (not forward?))
+	 (toggle-toggle t)
+	 (dynamic-operate (tree-ref t 0) :last)
+	 (tree-go-to t 0 :end)
+	 #t)
+	((and (switch-context? t) forward?)
+	 (with l (switch-last-visible t)
+	   (and (< l (- (tree-arity t) 1))
+		(begin
+		  (dynamic-operate (tree-ref t (1+ l)) :first)
+		  (tree-go-to t l :end)
+		  (switch-to :next)
+		  #t))))
+	((and (switch-context? t) (not forward?))
+	 (with l (switch-last-visible t)
+	   (and (> l 0)
+		(begin
+		  (dynamic-operate (tree-ref t (- l 1)) :last)
+		  (tree-go-to t l :start)
+		  (switch-to :previous)
+		  #t))))
+	(else #f)))
+
+(define (dynamic-traverse-list l forward?)
+  (and (nnull? l)
+       (or (dynamic-traverse (car l) forward?)
+	   (dynamic-traverse-list (cdr l) forward?))))
+
+(define (dynamic-traverse t forward?)
+  (and (tree-compound? t)
+       (with c (tree-accessible-children t)
+	 (or (dynamic-traverse-list (if forward? c (reverse c)) forward?)
+	     (dynamic-traverse-sub t forward?)))))
+
+(tm-define (dynamic-traverse-buffer forward?)
+  (dynamic-traverse (buffer-tree) forward?))

@@ -531,6 +531,34 @@ tmg_tree_simplify (SCM arg1) {
 }
 
 SCM
+tmg_tree_accessible_childP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-accessible-child?");
+  SCM_ASSERT_INT (arg2, SCM_ARG2, "tree-accessible-child?");
+
+  tree in1= scm_to_tree (arg1);
+  int in2= scm_to_int (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= is_accessible_child (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_tree_accessible_children (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-accessible-children");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  array_tree out= accessible_children (in1);
+  // SCM_ALLOW_INTS;
+
+  return array_tree_to_scm (out);
+}
+
+SCM
 tmg_path_infP (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
@@ -2494,6 +2522,8 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-label-extension?", (FN) tmg_tree_label_extensionP, 1, 0, 0);
   gh_new_procedure ("tree-multi-paragraph?", (FN) tmg_tree_multi_paragraphP, 1, 0, 0);
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
+  gh_new_procedure ("tree-accessible-child?", (FN) tmg_tree_accessible_childP, 2, 0, 0);
+  gh_new_procedure ("tree-accessible-children", (FN) tmg_tree_accessible_children, 1, 0, 0);
   gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);
