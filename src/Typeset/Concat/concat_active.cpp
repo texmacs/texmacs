@@ -218,7 +218,7 @@ concater_rep::typeset_action (tree t, path ip) {
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   env->local_end (COLOR, old_col);
   path valip= decorate ();
-  if ((N(t) >= 3) && (is_func (t[2], ARG))) {
+  if ((N(t) >= 3) && (is_func (t[2], ARG)) && !nil (env->macro_arg)) {
     string var= env->exec_string (t[2][0]);
     tree   val= env->macro_arg->item [var];
     if ((var != "") && (!is_func (val, BACKUP))) {

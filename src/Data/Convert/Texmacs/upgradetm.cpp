@@ -2412,6 +2412,24 @@ upgrade_switch (tree t) {
 	else u[i]= compound ("hidden", r[1][i]);
       return u;
     }
+    if (is_compound (r, "fold-bpr", 2) ||
+	is_compound (r, "fold-text", 2) ||
+	is_compound (r, "fold-proof", 2) ||
+	is_compound (r, "fold-exercise", 2))
+      return compound ("condensed", r[0], r[1]);
+    if (is_compound (r, "unfold-bpr", 2) ||
+	is_compound (r, "unfold-text", 2) ||
+	is_compound (r, "unfold-proof", 2) ||
+	is_compound (r, "unfold-exercise", 2))
+      return compound ("detailed", r[0], r[1]);
+    if (is_compound (r, "fold-algorithm", 2))
+      return compound ("condensed-algorithm", r[0], r[1]);
+    if (is_compound (r, "unfold-algorithm", 2))
+      return compound ("detailed-algorithm", r[0], r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "fold-algorithm")
+      return tree (ASSIGN, "condensed-algorithm", r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "unfold-algorithm")
+      return tree (ASSIGN, "detailed-algorithm", r[1]);
     return r;
   }
 }

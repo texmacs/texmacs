@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|std-counter|std-markup|std-utils|std-symbol|std-math|std-list|std-automatic|std-pattern|program|session|scripts>
+  <use-package|std-counter|std-markup|std-utils|std-symbol|std-math|std-list|std-automatic|std-pattern|std-fold|program|session|scripts>
 
   \;
 </body>

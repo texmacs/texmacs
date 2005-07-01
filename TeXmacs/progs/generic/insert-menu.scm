@@ -107,7 +107,8 @@
   (-> "Table" (link insert-table-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Link" (link insert-link-menu))
-  (-> "Fold" (link insert-fold-menu))
+  (if (style-has? "std-fold-dtd")
+      (-> "Fold" (link insert-fold-menu)))
   (-> "Animation" (link insert-animation-menu))
   (-> "Mathematics" (link insert-math-menu))
   (if (style-has? "program-dtd")
@@ -188,6 +189,7 @@
       (-> "Executable" (link source-executable-menu)))
   (-> "Special"
       ("Group" (make-group))
+      ("Superpose" (make 'superpose))
       ("Move object" (interactive make-move))
       ("Resize object" (interactive make-resize))
       ("Repeat object" (make 'repeat))

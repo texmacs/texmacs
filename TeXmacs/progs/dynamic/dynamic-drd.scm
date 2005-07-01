@@ -15,27 +15,49 @@
 (texmacs-module (dynamic dynamic-drd)
   (:use (utils edit variants)))
 
-;; Variants
+;; fold <-> unfold toggles
 
-; (define-group variant-tag
-;   (fold-tag) (unfold-tag))
+(define-group toggle-tag (fold-tag))
+(define-group toggle-first-tag (folded-tag))
+(define-group toggle-second-tag (unfolded-tag))
+(define-group variant-tag (folded-tag) (unfolded-tag))
+(define-group similar-tag (fold-tag))
 
-; (define-group similar-tag
-;   (fold-tag) (unfold-tag))
+(tm-define toggle-table (make-ahash-table))
+(tm-define-macro (define-fold folded unfolded)
+  `(begin
+     (define-group folded-tag ,folded)
+     (define-group unfolded-tag ,unfolded)
+     (define-group fold-tag ,folded ,unfolded)
+     (ahash-set! toggle-table ',folded ',unfolded)
+     (ahash-set! toggle-table ',unfolded ',folded)))
 
-;; Fold-unfold
+(define-fold fold unfold)
+(define-fold fold-plain unfold-plain)
+(define-fold fold-std unfold-std)
+(define-fold fold-env unfold-env)
+(define-fold fold-bracket unfold-bracket)
 
-; (tm-define fold-table (make-ahash-table))
-; (tm-define-macro (define-toggle folded unfolded)
-;   `(begin
-;      (define-group fold-tag ,folded)
-;      (define-group unfold-tag ,unfolded)
-;      (ahash-set! fold-table ,folded ,unfolded)
-;      (ahash-set! fold-table ,unfolded ,folded)))
+;; condensed <-> detailed toggles
 
-; (define-toggle fold unfold)
+(define-group toggle-tag (condense-tag))
+(define-group toggle-first-tag (condensed-tag))
+(define-group toggle-second-tag (detailed-tag))
+(define-group variant-tag (condensed-tag) (detailed-tag))
+(define-group similar-tag (condense-tag))
 
-;; Switches
+(tm-define-macro (define-condense short long)
+  `(begin
+     (define-group condensed-tag ,short)
+     (define-group detailed-tag ,long)
+     (define-group condense-tag ,short ,long)
+     (ahash-set! toggle-table ',short ',long)
+     (ahash-set! toggle-table ',long ',short)))
+
+(define-condense condensed detailed)
+(define-condense condensed-algorithm detailed-algorithm)
+
+;; switches
 
 (define-group switch-tag
   (alternative-tag) (unroll-tag) (expanded-tag))

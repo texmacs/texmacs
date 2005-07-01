@@ -189,42 +189,6 @@
 
   <drd-props|underline|arity|1|accessible|all>
 
-  <\active*>
-    <\src-comment>
-      Tags for dynamic presentations.
-    </src-comment>
-  </active*>
-
-  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hidden|<arg|y>><hflush>>
-    <arg|x>
-  </surround>>>>>
-
-  <assign|unfold|<\macro|x|y>
-    <\with|par-left|<plus|<value|par-left>|1.5fn>>
-      <style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>>
-
-      <surround||<right-flush>|<arg|y>>
-    </with>
-  </macro>>
-
-  <assign|old-switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
-
-  <assign|switch|<\xmacro|switch-args>
-    <surround||<right-flush>|<\quasi>
-      <unquote*|<quote-arg|switch-args>>
-    </quasi>>
-  </xmacro>>
-
-  <drd-props|switch|accessible|all>
-
-  <assign|unroll|<value|switch>>
-
-  <drd-props|unroll|accessible|all>
-
-  <assign|expanded|<value|switch>>
-
-  <drd-props|expanded|accessible|all>
-
   \;
 </body>
 
