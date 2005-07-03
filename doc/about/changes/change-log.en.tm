@@ -8,6 +8,9 @@
   <section|Changes from version 1.0.5 to 1.0.5.5>
 
   <\itemize>
+    <item>More and improved folding and switching functionality for
+    presentation mode (1.0.5.5).
+
     <item>Simple animations (1.0.5.5).
 
     <item>On-the-fly evaluation of computer algebra scripts (1.0.5.5).
