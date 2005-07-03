@@ -67,13 +67,16 @@
   (alternative-tag) (unroll-tag) (expanded-tag))
 
 (define-group big-switch-tag
-  switch unroll expanded)
+  (big-alternative-tag) (unroll-tag) (expanded-tag))
 
 (define-group alternative-tag
-  switch)
+  (big-alternative-tag) tiny-switch)
+
+(define-group big-alternative-tag
+  switch screens)
 
 (define-group unroll-tag
   unroll)
 
 (define-group expanded-tag
-  expanded)
+  expanded slides)

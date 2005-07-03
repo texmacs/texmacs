@@ -41,8 +41,8 @@
 
 (menu-bind insert-fold-menu
   ("First" (dynamic-operate-on-buffer :first))
-  ("Previous" (dynamic-traverse-buffer #f))
-  ("Next" (dynamic-traverse-buffer #t))
+  ("Previous" (dynamic-traverse-buffer :previous))
+  ("Next" (dynamic-traverse-buffer :next))
   ("Last" (dynamic-operate-on-buffer :last))
   ---
   (-> "Folded"
@@ -64,17 +64,26 @@
       ---
       (link fold-menu))
   (-> "Switch"
-      ("New" (make-switch 'switch))
+      ("Standard" (make-switch 'switch))
+      ("Screens" (make-switch 'screens))
+      ("Tiny" (make-switch 'tiny-switch))
       ---
       (link switch-menu))
   (-> "Unroll"
-      ("New" (make-switch 'unroll))
+      ("Standard" (make-switch 'unroll))
       ---
       (link switch-menu))
   (-> "Expanded"
-      ("New" (make-switch 'expanded))
+      ("Standard" (make-switch 'expanded))
+      ("Slides" (make-switch 'slides))
       ---
       (link switch-menu))
+  (-> "Traversal"
+      ("Fold back" (make 'fold-back))
+      ("Keep unfolded" (make 'keep-unfolded))
+      (when #f
+	("Animate folding" (noop))
+	("Animate unfolding" (noop))))
   ---
   (-> "Compress"
       ("Fold" (dynamic-operate-on-buffer :fold))

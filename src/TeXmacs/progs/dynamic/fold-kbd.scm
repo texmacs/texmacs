@@ -17,8 +17,8 @@
 
 (kbd-map
   ("F9" (dynamic-operate-on-buffer :first))
-  ("F10" (dynamic-traverse-buffer #f))
-  ("F11" (dynamic-traverse-buffer #t))
+  ("F10" (dynamic-traverse-buffer :previous))
+  ("F11" (dynamic-traverse-buffer :next))
   ("F12" (dynamic-operate-on-buffer :last))
   ("S-F9" (dynamic-first))
   ("S-F10" (dynamic-previous))

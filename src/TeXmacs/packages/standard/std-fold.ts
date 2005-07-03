@@ -196,21 +196,53 @@
     </src-comment>
   </active*>
 
-  <assign|switch|<\xmacro|switch-args>
+  <assign|document-block|<\xmacro|switch-args>
     <surround||<right-flush>|<\quasi>
       <unquote*|<quote-arg|switch-args>>
     </quasi>>
   </xmacro>>
 
+  <assign|slide|<\macro|body>
+    <\surround||<right-flush><new-page>>
+      <arg|body>
+    </surround>
+  </macro>>
+
+  <assign|slides-block|<\xmacro|switch-args>
+    <surround||<right-flush>|<\quasi>
+      <unquote*|<map|slide|<quote-arg|switch-args>>>
+    </quasi>>
+  </xmacro>>
+
+  \;
+
+  <assign|switch|<value|document-block>>
+
   <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <assign|unroll|<value|switch>>
+  <assign|screens|<value|document-block>>
+
+  <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <assign|unroll|<value|document-block>>
 
   <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <assign|expanded|<value|switch>>
+  <assign|expanded|<value|document-block>>
 
   <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <assign|slides|<value|slides-block>>
+
+  <drd-props|slides|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|traversed|<value|identity>>
+
+  <assign|fold-back|<value|identity>>
+
+  <assign|keep-unfolded|<value|identity>>
 
   \;
 </body>
