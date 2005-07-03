@@ -1216,7 +1216,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 PACKAGE="TeXmacs"
-DEVEL_VERSION="1.0.5.4"
+DEVEL_VERSION="1.0.5.5"
 DEVEL_RELEASE="1"
 STABLE_VERSION="1.0.5"
 STABLE_RELEASE="1"
