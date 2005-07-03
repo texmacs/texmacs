@@ -113,6 +113,8 @@
   ("subsubsection" "Insert subsubsection" (make-section 'subsubsection))
   ("paragraph" "Insert paragraph" (make-section 'paragraph))
   ("subparagraph" "Insert subparagraph" (make-section 'subparagraph))
+  ("table" "Insert a big table" (make 'big-table))
+  ("figure" "Insert a big figure" (make 'big-figure))
 
   ("frac" "Make fraction" (make-fraction))
   ("sqrt" "Make square root" (make-sqrt))
