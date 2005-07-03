@@ -234,7 +234,8 @@ tm_data_rep::auto_save () {
 	  set_message ("Error: " * as_string (name) * " did not open",
 		       "save TeXmacs file");
 	else {
-	  set_message ("saved " * as_string (name), "save TeXmacs file");
+	  call ("set-temporary-message",
+		"saved " * as_string (name), "save TeXmacs file", 2500);
 	  buf->mark_undo_block ();
 	  buf->need_autosave= false;
 	  buf->last_autosave= buf->undo_depth- 1;
@@ -242,20 +243,7 @@ tm_data_rep::auto_save () {
       }
     }
   }
-  delayed_autosave();
-}
-
-void
-tm_data_rep::delayed_autosave () {
-  display d= get_display();
-  d->remove_all_delayed_messages (get_meta()->get_this(), "auto save");
-  string s= as_string(eval ("(get-preference \"autosave\")"));
-  int p;
-  if (is_int(s)) p= as_int(s) * 1000;
-  else p= 120000;
-  if (p>0) {
-    d->delayed_message (get_meta()->get_this(), "auto save", p);
-  }
+  call ("delayed-auto-save");
 }
 
 /******************************************************************************

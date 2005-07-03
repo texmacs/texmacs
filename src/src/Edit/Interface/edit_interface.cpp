@@ -39,6 +39,7 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
+  do_animate (false), next_animate (last_change-1),
   full_screen (false), got_focus (false),
   sh_s (""), sh_len (0),
   popup_win (NULL),
@@ -179,7 +180,11 @@ edit_interface_rep::draw_text (repaint_event ev) {
   nr_painted=0;
   bool tp_found= false;
   dev->set_background (dis->get_color (bg));
+  refresh_needed= do_animate;
+  refresh_next  = next_animate;
   eb->redraw (dev, eb->find_box_path (tp, tp_found), l);
+  do_animate  = refresh_needed;
+  next_animate= refresh_next;
   draw_cursor (dev);
   draw_selection (dev);
   if (dev->check_event (EVENT_STATUS)) {
@@ -333,7 +338,8 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   draw_cursor (win);
   draw_selection (win);
   win->set_shrinking_factor (1);
-  if (last_change>last_update) last_change= texmacs_time ();
+  if (last_change-last_update > 0)
+    last_change = texmacs_time ();
   // cout << "Repainted\n";
 }
 
@@ -394,6 +400,21 @@ edit_interface_rep::selection_visible () {
   }
 }
 
+int
+edit_interface_rep::idle_time (int event_type) {
+  if (env_change == 0 &&
+      win->repainted () &&
+      (!win->check_event (event_type)) &&
+      got_focus)
+    return texmacs_time () - last_change;
+  else return 0;
+}
+
+int
+edit_interface_rep::change_time () {
+  return last_change;
+}
+
 void
 edit_interface_rep::apply_changes () {
   //cout << "Apply changes\n";
@@ -401,22 +422,16 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if ((last_update < last_change) &&
-	(texmacs_time() >= (last_change + (1000/6))) &&
-	win->repainted() &&
-	(!win->check_event (EVENT_STATUS)) &&
-	got_focus)
-      {
-	call ("lazy-in-mode-force");
-	SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-	SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-	set_footer ();
-	if (!win->check_event (EVENT_STATUS)) drd_update ();
-	tex_autosave_cache ();
-	last_update= last_change;
-      }
+    if (last_change-last_update > 0 && idle_time (EVENT_STATUS) >= 1000/6) {
+      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
+      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+      set_footer ();
+      if (!win->check_event (EVENT_STATUS)) drd_update ();
+      tex_autosave_cache ();
+      last_update= last_change;
+    }
     return;
   }
 
@@ -517,13 +532,32 @@ edit_interface_rep::apply_changes () {
     this << emit_invalidate_all ();
 
   // cout << "Applied changes\n";
-  env_change= 0;
-  last_change= texmacs_time ();
-  last_update= last_change-1;
+  env_change  = 0;
+  last_change = texmacs_time ();
+  last_update = last_change-1;
 }
 
 /******************************************************************************
-* miscellaneous routines
+* Animations
+******************************************************************************/
+
+void
+edit_interface_rep::animate () {
+  // cout << do_animate << ", " << next_animate << "\n";
+  if (do_animate && texmacs_time () - next_animate >= 0) {
+    bool flag= false;
+    time_t at= 0;
+    rectangles rs;
+    eb->anim_get_invalid (flag, at, rs);
+    if (flag && texmacs_time () - at >= 0)
+      invalidate (rs);
+    do_animate  = flag;
+    next_animate= at;
+  }
+}
+
+/******************************************************************************
+* Miscellaneous routines
 ******************************************************************************/
 
 bool
@@ -550,9 +584,11 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
   if (p == rp) return;
   tree st= subtree (et, p);
-  if (is_atomic (st) || is_document (st) || is_concat (st) ||
+  if (is_atomic (st) ||
+      drd->is_child_enforcing (st) ||
+      //is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||
-      is_func (st, ROW) || is_func (st, CELL) || is_func (st, TFORMAT) ||
+      is_func (st, ROW) || is_func (st, TFORMAT) ||
       is_graphical (st) ||
       (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
       (is_compound (st, "math", 1) &&
@@ -565,7 +601,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       p1= start (et, p * 0);
       p2= end   (et, p * 0);
     }
-    selection_correct (et, p1, p2, q1, q2);
+    if (is_func (st, CELL)) { q1= p1; q2= p2; }
+    else selection_correct (et, p1, p2, q1, q2);
     selection sel= eb->find_check_selection (q1, q2);
     rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
 			       thicken (sel->rs, 0, 2*pixel)));

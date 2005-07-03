@@ -18,5 +18,6 @@ void   xpm_size (url file_name, int& w, int& h);
 tree   xpm_load (url file_name);
 void   ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
 string ps_load (url image);
+void   image_size (url image, int& w, int& h);
 
 #endif // defined IMAGE_FILES_H

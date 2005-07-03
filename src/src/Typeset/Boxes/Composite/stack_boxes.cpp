@@ -34,6 +34,7 @@ struct stack_box_rep: public composite_box_rep {
 
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_tree_path (path bp);
+  cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
 };
 
@@ -44,9 +45,6 @@ struct stack_box_rep: public composite_box_rep {
 void
 stack_box_rep::position (array<SI> spc) {
   int i;
-  if (N(bs)==0)
-    fatal_error ("stack of zero boxes", "stack_box_rep::position");
-  // y1= bs[0]->y2; y2= 0;
   y1 = y2 = 0;
   for (i=0; i<N(bs); i++) {
     sx(i)= 0;
@@ -59,8 +57,9 @@ stack_box_rep::position (array<SI> spc) {
 stack_box_rep::stack_box_rep (path ip, array<box> bs2, array<SI> spc):
   composite_box_rep (ip)
 {
-  bs = bs2;
-  position (spc);
+  bs= bs2;
+  if (N(bs) != 0)
+    position (spc);
   finalize ();
 }
 
@@ -86,6 +85,7 @@ void
 stack_box_rep::clear_incomplete (
   rectangles& rs, SI pixel, int which, int i1, int i2)
 {
+  if (N(bs) == 0) return;
   if ((i1 <= i2) && (!nil (rs))) {
     // cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )\n";
     // cout << "  in : " << rs << "\n";
@@ -173,7 +173,8 @@ stack_box_rep::clear_incomplete (
 int
 stack_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   int i, h, n=N(bs);
-  if (n<4) i=0;
+  if (n==0) return -1;
+  else if (n<4) i=0;
   else {
     i= h= n>>1;
     while (h != 0) {
@@ -261,6 +262,21 @@ stack_box_rep::find_tree_path (path bp) {
   else return composite_box_rep::find_tree_path (bp);
 }
 
+cursor
+stack_box_rep::find_cursor (path bp) {
+  cursor cu= composite_box_rep::find_cursor (bp);
+  int i= bp->item, j1, j2, n= N(bs);
+  if (atom (bp)) i= (bp == 0? 0: N(bs)-1);
+  if (bs[i]->h() != 0) return cu;
+  for (j1= i-1; j1>=0; j1--)
+    if (bs[j1]->h () != 0) break;
+  for (j2= i+1; j2<n; j2++)
+    if (bs[j2]->h () != 0) break;
+  if (j2 < n) cu->oy += sy (j2) - sy (i);
+  else if (j1 >= 0) cu->oy += sy (j1) - sy (i);
+  return cu;
+}
+
 /******************************************************************************
 * Selections
 ******************************************************************************/
@@ -295,6 +311,22 @@ extend_right (rectangles l, SI x) {
   rectangle& r= l->item;
   return rectangles (rectangle (r->x1, r->y1, max (r->x2, x), r->y2),
 		     extend_right (l->next, x));
+}
+
+static rectangles
+truncate_top (rectangles l, SI y) {
+  if (nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, r->y1, r->x2, min (r->y2, y)),
+		     truncate_top (l->next, y));
+}
+
+static rectangles
+truncate_bottom (rectangles l, SI y) {
+  if (nil (l)) return l;
+  rectangle& r= l->item;
+  return rectangles (rectangle (r->x1, max (r->y1, y), r->x2, r->y2),
+		     truncate_bottom (l->next, y));
 }
 
 selection
@@ -338,6 +370,15 @@ stack_box_rep::find_selection (path lbp, path rbp) {
       rs << extend_left  (ascend  (sel2->rs, midy1), x1);
       if (midy1 < midy2) rs << rectangle (x1, midy1, x2, midy2);
     }
+
+    /* This hack produces nicer selections in case of a hidden top/bottom */
+    int j1= i1, j2= i2;
+    while (j1 < i2 && bs[j1]->h() == 0) j1++;
+    while (j2 > j1 && bs[j2]->h() == 0) j2--;
+    if (j1 != i1) rs= truncate_top    (rs, sy2 (j1));
+    if (j2 != i2) rs= truncate_bottom (rs, sy1 (j2));
+    /* End hack */
+
     return selection (rs, lp, rp);
   }
   else return box_rep::find_selection (lbp, rbp);

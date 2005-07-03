@@ -115,6 +115,15 @@ class concater_rep {
   void typeset_meaning (tree t, path ip);
   void typeset_flag (tree t, path ip);
 
+  // animations
+  void typeset_anim_compose (tree t, path ip);
+  void typeset_anim_repeat (tree t, path ip);
+  void typeset_anim_constant (tree t, path ip);
+  void typeset_anim_translate (tree t, path ip);
+  void typeset_anim_progressive (tree t, path ip);
+  void typeset_video (tree t, path ip);
+  void typeset_sound (tree t, path ip);
+
   // graphical markup
   void typeset_graphics (tree t, path ip);
   void typeset_superpose (tree t, path ip);
@@ -151,6 +160,7 @@ public:
   friend class document_rep;
 
   friend box              typeset_as_concat (edit_env env, tree t, path ip);
+  friend box              typeset_as_box (edit_env env, tree t, path ip);
   friend array<line_item> typeset_concat (edit_env env, tree t, path ip);
   friend array<line_item> typeset_concat_range (edit_env env, tree t, path ip,
 						int i1, int i2);

@@ -20,6 +20,8 @@
 #include "merge_sort.hpp"
 #include "scheme.hpp"
 
+string PS_CLIP_PUSH ("gsave");
+string PS_CLIP_POP ("grestore");
 string PS_CLIP ("cl");
 string PS_LINE ("ln");
 string PS_FILL ("fl");
@@ -451,12 +453,17 @@ printer_rep::generate_tex_fonts () {
 ******************************************************************************/
 
 void
-printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
-  print (x1, y1);
-  print (x2, y2);
-  print (PS_CLIP);
+  if (restore)
+    print (PS_CLIP_POP);
+  else {
+    print (PS_CLIP_PUSH);
+    print (x1, y1);
+    print (x2, y2);
+    print (PS_CLIP);
+  }
 }
   
 /******************************************************************************
@@ -517,8 +524,9 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
 }
 
 void
-printer_rep::set_line_style (SI w, int type) {
+printer_rep::set_line_style (SI w, int type, bool round) {
   (void) type;
+  (void) round;
   if (lw == w) return;
   lw= w;
   select_line_width (w);
@@ -560,7 +568,7 @@ printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-printer_rep::polygon (array<SI> x, array<SI> y) {
+printer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   print (x[0], y[0]);
@@ -597,10 +605,17 @@ incorporate_postscript (string s) {
 */
 
 void
-printer_rep::postscript (
-  url image, SI w, SI h, SI x, SI y,
-  int x1, int y1, int x2, int y2)
+printer_rep::image (
+  url u, SI w, SI h, SI x, SI y,
+  double cx1, double cy1, double cx2, double cy2)
 {
+  int bx1, by1, bx2, by2;
+  ps_bounding_box (u, bx1, by1, bx2, by2);
+  int x1= bx1 + (int) (cx1 * (bx2 - bx1) + 0.5);
+  int y1= by1 + (int) (cy1 * (by2 - by1) + 0.5);
+  int x2= bx1 + (int) (cx2 * (bx2 - bx1) + 0.5);
+  int y2= by1 + (int) (cy2 * (by2 - by1) + 0.5);
+
   double sc_x= (72.0/dpi) * ((double) (w/PIXEL)) / ((double) (x2-x1));
   double sc_y= (72.0/dpi) * ((double) (h/PIXEL)) / ((double) (y2-y1));
   cr ();
@@ -642,8 +657,8 @@ printer_rep::postscript (
   /* @beginspecial 0 @llx 0 @lly 613.291260 @urx 613.291260 @ury 6110 @rwi
      @clip @setspecial */
   
-  string ps_image= ps_load (image);
-  string imtext= is_ramdisc (image)? "inline image": as_string (image);
+  string ps_image= ps_load (u);
+  string imtext= is_ramdisc (u)? "inline image": as_string (u);
   body << "%%BeginDocument: " << imtext  << "\n";
   body << ps_image; // incorporate_postscript (ps_image);
   body << "%%EndDocument";

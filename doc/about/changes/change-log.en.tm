@@ -1,9 +1,67 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.5.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.0.5 to 1.0.5.5>
+
+  <\itemize>
+    <item>More and improved folding and switching functionality for
+    presentation mode (1.0.5.5).
+
+    <item>Simple animations (1.0.5.5).
+
+    <item>On-the-fly evaluation of computer algebra scripts (1.0.5.5).
+
+    <item>Improved rendering speed of images based on plug-in for Imlib2
+    (1.0.5.5).
+
+    <item>A simple thumbnail facility (1.0.5.5).
+
+    <item>Documentation of tree API (partial) and structured editing
+    (1.0.5.4).
+
+    <item>Fixed some long standing bugs concerning cursor movement (1.0.5.4).
+
+    <item>Implementation of structured cursor movement (1.0.5.4).
+
+    <item>Enrichment of the Scheme API with routines for tree traversal
+    (1.0.5.4).
+
+    <item>Improved arrows and dashes for upcoming graphical mode(1.0.5.4).
+
+    <item>Reorganized and consolidated tree API (1.0.5.3).
+
+    <item>Started documentation of Scheme API (1.0.5.3).
+
+    <item>User preference for popup instead of footer dialogues (1.0.5.2).
+
+    <item>Default values and types for interactive arguments (1.0.5.2).
+
+    <item>Better dialogue system based on scheme continuations (1.0.5.2).
+
+    <item>Arrows for the upcoming graphical mode (1.0.5.2).
+
+    <item>Support for plug-in provided icons and dictionaries (1.0.5.2).
+
+    <item>Included <name|Proclus> plug-in into the main distribution
+    (1.0.5.2).
+
+    <item>Contextual overloading (1.0.5.1).
+
+    <item>More rational booting and improved speed through higher lazyness
+    (1.0.5.1).
+
+    <item>Simplifications in the module system (1.0.5.1).
+
+    <item>Reorganization of the scheme directory structure by functionality
+    (1.0.5.1).
+
+    <item>Added first versions of dashed lines and filled curves for upcoming
+    graphical mode (1.0.5.1).
+  </itemize>
 
   <section|Changes from version 1.0.4 to 1.0.5>
 

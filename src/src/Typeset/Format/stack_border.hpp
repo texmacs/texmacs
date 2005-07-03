@@ -44,4 +44,12 @@ class stack_border {
 };
 CONCRETE_CODE(stack_border);
 
+inline ostream&
+operator << (ostream& out, stack_border sb) {
+  return out << "[Before: " << sb->vspc_before
+	     << ", " << sb->nobr_before << "; "
+	     << "After: " << sb->vspc_after
+	     << ", " << sb->nobr_after << "]";
+}
+
 #endif // defined STACK_BORDER_H

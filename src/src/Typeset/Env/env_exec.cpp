@@ -52,6 +52,7 @@ edit_env_rep::rewrite (tree t) {
 	expr= cons (object (r[i]), expr);
       string fun= as_string (exec (t[0]));
       expr= cons (string_to_object (fun), expr);
+      (void) eval ("(lazy-markup-modules-force)");
       if (script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
@@ -331,6 +332,14 @@ edit_env_rep::exec (tree t) {
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case MSEC_LENGTH:
+    return exec_msec_length ();
+  case SEC_LENGTH:
+    return exec_sec_length ();
+  case MIN_LENGTH:
+    return exec_min_length ();
+  case H_LENGTH:
+    return exec_h_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:

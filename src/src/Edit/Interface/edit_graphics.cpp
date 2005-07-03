@@ -15,7 +15,6 @@
 #include "scheme.hpp"
 #include "Graphics/curve.hpp"
 #include "Boxes/graphics.hpp"
-#include <math.h>
 #include "Bridge/impl_typesetter.hpp"
 
 /******************************************************************************
@@ -117,23 +116,45 @@ edit_graphics_rep::graphical_select (double x, double y) {
   return (tree) gs;
 }
 
-tree edit_graphics_rep::get_graphical_object () {
+tree
+edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }
 
-void edit_graphics_rep::set_graphical_object (tree t) {
+void
+edit_graphics_rep::set_graphical_object (tree t) {
   go_box= box ();
   graphical_object= t;
   if (N (graphical_object) == 0) return;
   edit_env env= get_typesetter ()->env;
+  //tree old_fr= env->local_begin (GR_FRAME, (tree) find_frame ());  
   frame f_env= env->fr;
   env->fr= find_frame ();
-  if (!nil (env->fr))
+  if (!nil (env->fr)) {
+    int i,n=0;
     go_box= typeset_as_concat (env, t, path (0));
+    for (i=0; i<N(go_box); i++)
+      if (go_box[i]!="") n++;
+    if (n) {
+      array<box> bx(n);
+      n=0;
+      for (i=0; i<N(go_box); i++) if (go_box[i]!="") {
+	array<box> bx2(1);
+	array<SI> spc2(1);
+	bx2[0]= go_box[i];
+	spc2[0]=0;
+	bx[n]= concat_box (path (0), bx2, spc2);
+	n++;
+      }
+      go_box= composite_box (path (0), bx);
+    }
+  }
   env->fr= f_env;
+  //env->local_end (GR_FRAME, old_fr);
 }
 
-void edit_graphics_rep::invalidate_graphical_object () {
+void
+edit_graphics_rep::invalidate_graphical_object () {
   if (nil (go_box)) return;
   int i;
   for (i=0; i<go_box->subnr(); i++) {
@@ -146,7 +167,8 @@ void edit_graphics_rep::invalidate_graphical_object () {
   }
 }
 
-void edit_graphics_rep::draw_graphical_object (ps_device dev) {
+void
+edit_graphics_rep::draw_graphical_object (ps_device dev) {
   if (nil (go_box)) set_graphical_object(graphical_object);
   if (nil (go_box)) return;
   point lim1, lim2;

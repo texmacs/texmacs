@@ -14,8 +14,8 @@
 
 class bridge_with_rep: public bridge_rep {
 protected:
-  int                  last;
-  bridge               body;
+  int    last;
+  bridge body;
 
 public:
   bridge_with_rep (typesetter ttt, tree st, path ip);

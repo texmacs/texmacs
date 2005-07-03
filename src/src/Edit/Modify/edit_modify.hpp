@@ -18,33 +18,32 @@ path inner_paragraph (tree t, path p);
 
 class edit_modify_rep: virtual public editor_rep {
 protected:
-  bool undo_flag;                // when undoing some text
-  bool redo_flag;                // when redoing some text
-
-  array<path>      pps;          // all cursor positions
-  array<int>       nr_to_code;   // code name for i-th cursor position
-  hashmap<int,int> code_to_nr;   // inverse to nr_to_code
+  bool     undo_flag;                // when undoing some text
+  bool     redo_flag;                // when redoing some text
+  observer cur_pos;                  // tree_position corresponding to tp
 
 public:
   edit_modify_rep ();
   ~edit_modify_rep ();
 
-  void assign           (path p, tree u);
-  void insert           (path p, tree u);
-  void remove           (path p, int nr);
-  void split            (path p);
-  void join             (path p);
-  void ins_unary        (path p, tree_label op);
-  void rem_unary        (path p);
-  void finished         (path p);
-  void notify_assign    (path p, tree u);
-  void notify_insert    (path p, tree u);
-  void notify_remove    (path p, int nr);
-  void notify_split     (path p);
-  void notify_join      (path p);
-  void notify_ins_unary (path p, tree_label op);
-  void notify_rem_unary (path p);
-  void post_notify      (path p);
+  void assign             (path p, tree u);
+  void insert             (path p, tree u);
+  void remove             (path p, int nr);
+  void split              (path p);
+  void join               (path p);
+  void insert_node        (path p, tree t);
+  void remove_node        (path p);
+  void assign_node        (path p, tree_label op);
+  void finished           (path p);
+  void notify_assign      (path p, tree u);
+  void notify_insert      (path p, tree u);
+  void notify_remove      (path p, int nr);
+  void notify_split       (path p);
+  void notify_join        (path p);
+  void notify_insert_node (path p, tree t);
+  void notify_remove_node (path p);
+  void notify_assign_node (path p, tree_label op);
+  void post_notify        (path p);
 
   void notify_undo (string op, path p, tree t);
   void remove_undo_mark ();
@@ -55,13 +54,11 @@ public:
   void undo ();
   void redo ();
   void perform_undo_redo (tree x);
-  
-  void assign_diff (path p, tree u);
 
-  int  position_new ();
-  void position_delete (int i);
-  void position_set (int i, path p);
-  path position_get (int i);
+  observer position_new (path p);
+  void position_delete (observer o);
+  void position_set (observer o, path p);
+  path position_get (observer o);
 };
 
 #endif // defined EDIT_MODIFY_H

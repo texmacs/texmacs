@@ -46,6 +46,8 @@ operator << (ostream& out, page_item item) {
   switch (item->type) {
   case PAGE_LINE_ITEM:
     return out << "line (" << item->b << ")";
+  case PAGE_HIDDEN_ITEM:
+    return out << "hidden (" << item->b << ")";
   case PAGE_CONTROL_ITEM:
     return out << "control (" << item->t << ")";
   }

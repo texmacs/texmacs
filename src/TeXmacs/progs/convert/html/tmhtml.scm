@@ -16,9 +16,7 @@
   (:use (convert tools tmconcat) (convert mathml tmmath)
 	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
 	(convert tools sxml) (convert tools environment) (convert tools sxhtml)
-	(convert html htmlout))
-  (:export texmacs->html tmhtml-root))
-
+	(convert html htmlout)))
 
 (define (descend env proc x)
   ;; Convenience function to call a method directly without using the tmhtml
@@ -87,7 +85,7 @@
   (cond ((func? doc 'tmdoc-title 1) (cadr doc))
 	((func? doc 'tmdoc-title* 2) (cadr doc))
 	((func? doc 'tmdoc-title** 3) (caddr doc))
-	((not (pair? doc)) #f)
+	((npair? doc) #f)
 	(else (with title (tmhtml-find-title (car doc))
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
@@ -615,7 +613,7 @@
 
 (define (tmhtml-postscript env l)
   (let ((s (first l)) (w (second l)) (h (third l)))
-    (if (not (string? s)) '()	; only convert linked images
+    (if (nstring? s) '()	; only convert linked images
 	`((h:img (@ (src ,(cork->html s))
 		    ,@(tmhtml-dimension-attr
 		       w 'width `((par ,number->percent)
@@ -775,7 +773,7 @@
   (or (func? y 'h:h1)
       (func? y 'h:h2)
       (and (func? y 'h:div)
-	   (not (null? (cdr y)))
+	   (nnull? (cdr y))
 	   (func? (cadr y) '@ 1)
 	   (== (first (cadadr y)) 'class)
 	   (string-starts? (second (cadadr y)) "tmdoc"))))
@@ -812,7 +810,7 @@
       (tmhtml-dispatch 'tmhtml-tables% env l)
       '()))
 
-(define (tmhtml-root x)
+(tm-define (tmhtml-root x)
   ;; tmhtml ently point
   ;; Initialize the environment and start tmhtml
   (initialize-xpath
@@ -1055,7 +1053,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->html x)
+(tm-define (texmacs->html x)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))

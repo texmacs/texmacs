@@ -30,6 +30,7 @@ public:
   void insert_argument (path p, bool forward);
   void insert_argument (bool forward);
   void remove_argument (path p, bool forward);
+  void remove_argument (bool forward);
 
   void back_monolithic (path p);
   void back_general (path p, bool forward);

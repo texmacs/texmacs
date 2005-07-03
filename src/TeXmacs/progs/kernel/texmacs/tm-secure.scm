@@ -13,17 +13,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-secure)
-  (:export secure-symbols xterm secure?))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-plugins)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Primitive secure functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (secure-symbols . l)
-  (for-each (lambda (x) (set-symbol-prop! x :secure #t)) l)
+(define-public-macro (define-secure-symbols . l)
+  (for-each (lambda (x) (property-set! x :secure #t '())) l)
   '(noop))
 
-(secure-symbols
+(define-secure-symbols
   boolean? null? symbol? string? pair? list?
   equal? == not
   string-length substring string-append
@@ -60,7 +60,7 @@
   (secure-args? (cdr expr) (local-env env (car expr))))
 
 (define (secure-quasiquote? args env)
-  (cond ((not (pair? args)) #t)
+  (cond ((npair? args) #t)
 	((func? args 'unquote 1) (secure-expr? (cadr args) env))
 	((func? args 'unquote-splicing 1) (secure-expr? (cadr args) env))
 	(else (and (secure-quasiquote? (car args) env)
@@ -75,10 +75,8 @@
 		 ((== f 'quote) #t)
 		 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
 		 ((symbol? f)
-		  (with proc (symbol-procedure f)
-		    (and (or (symbol-prop f :secure)
-			     (and proc (procedure-property proc :secure)))
-			 (secure-args? (cdr expr) env))))
+		  (and (property f :secure)
+		       (secure-args? (cdr expr) env)))
 		 (else (secure-args? expr env)))))
 	((symbol? expr) #t)
 	((number? expr) #t)
@@ -100,5 +98,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (secure? expr)
-  (secure-expr? expr '()))
+(define-public (secure? expr)
+  "Test whether it is secure to evaluate the expression @expr"
+  (or (secure-expr? expr '())
+      (and (lazy-plugin-force) (secure-expr? expr '()))))

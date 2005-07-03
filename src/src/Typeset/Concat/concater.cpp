@@ -140,6 +140,7 @@ concater_rep::with_limits (int status) {
 void
 concater_rep::typeset (tree t, path ip) {
   // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
+
   /*
   if (obtain_ip (t) != ip)
     cout << "TeXmacs] Wrong ip: " << t << "\n"
@@ -179,6 +180,9 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case GROUP:
     typeset_group (t, ip);
+    break;
+  case HIDDEN:
+    (void) env->exec (t);
     break;
   case HSPACE:
     t= env->exec (t);
@@ -557,6 +561,28 @@ concater_rep::typeset (tree t, path ip) {
     typeset_flag (t, ip);
     break;
 
+  case ANIM_COMPOSE:
+    typeset_anim_compose (t, ip);
+    break;
+  case ANIM_REPEAT:
+    typeset_anim_repeat (t, ip);
+    break;
+  case ANIM_CONSTANT:
+    typeset_anim_constant (t, ip);
+    break;
+  case ANIM_TRANSLATE:
+    typeset_anim_translate (t, ip);
+    break;
+  case ANIM_PROGRESSIVE:
+    typeset_anim_progressive (t, ip);
+    break;
+  case VIDEO:
+    typeset_video (t, ip);
+    break;
+  case SOUND:
+    typeset_sound (t, ip);
+    break;
+
   case GRAPHICS:
     typeset_graphics (t, ip);
     break;
@@ -651,6 +677,25 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 
   delete ccc;
   return b;
+}
+
+box
+typeset_as_box (edit_env env, tree t, path ip) {
+  box b= typeset_as_concat (env, t, ip);
+
+  SI ox= 0;
+  int i, n=N(b);
+  for (i=0; i<n; i++)
+    if (b[i]->w() != 0)
+      ox= b[i]->x1;
+
+  array<box> bs (1);
+  array<SI>  xs (1);
+  array<SI>  ys (1);
+  bs[0]= b;
+  xs[0]= ox;
+  ys[0]= 0;
+  return composite_box (ip, bs, xs, ys);
 }
 
 tree
