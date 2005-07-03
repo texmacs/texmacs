@@ -17,10 +17,19 @@
 
 (menu-bind insert-fold-menu
   (-> "Insert toggle"
-      ("Folded text" (make-toggle 'fold))
-      ("Folded environment" (make-toggle 'fold-env))
-      ("Folded group" (make-toggle 'fold-bracket))
-      ("Condensed text" (make-toggle 'condensed)))
+      (group "Folded")
+      ("Default" (make-toggle 'folded))
+      ("Plain" (make-toggle 'folded-plain))
+      ("Standard" (make-toggle 'folded-std))
+      ("Environment" (make-toggle 'folded-env))
+      ("Grouped" (make-toggle 'folded-bracket))
+      ---
+      (group "Summarized")
+      ("Default" (make-toggle 'summarized))
+      ("Plain" (make-toggle 'summarized-plain))
+      ("Standard" (make-toggle 'summarized-std))
+      ("Environment" (make-toggle 'summarized-env))
+      ("Grouped" (make-toggle 'summarized-bracket)))
   (when (nnot (tree-innermost toggle-second-context?))
     ("Fold" (fold)))
   (when (nnot (tree-innermost toggle-first-context?))

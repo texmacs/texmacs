@@ -17,45 +17,49 @@
 
 ;; fold <-> unfold toggles
 
-(define-group toggle-tag (fold-tag))
+(define-group toggle-tag (folded-tag) (unfolded-tag))
 (define-group toggle-first-tag (folded-tag))
 (define-group toggle-second-tag (unfolded-tag))
 (define-group variant-tag (folded-tag) (unfolded-tag))
-(define-group similar-tag (fold-tag))
+(define-group similar-tag (folded-tag) (unfolded-tag))
 
 (tm-define toggle-table (make-ahash-table))
 (tm-define-macro (define-fold folded unfolded)
   `(begin
      (define-group folded-tag ,folded)
      (define-group unfolded-tag ,unfolded)
-     (define-group fold-tag ,folded ,unfolded)
      (ahash-set! toggle-table ',folded ',unfolded)
      (ahash-set! toggle-table ',unfolded ',folded)))
 
-(define-fold fold unfold)
-(define-fold fold-plain unfold-plain)
-(define-fold fold-std unfold-std)
-(define-fold fold-env unfold-env)
-(define-fold fold-bracket unfold-bracket)
+(define-fold folded unfolded)
+(define-fold folded-plain unfolded-plain)
+(define-fold folded-std unfolded-std)
+(define-fold folded-env unfolded-env)
+(define-fold folded-grouped unfolded-grouped)
 
-;; condensed <-> detailed toggles
+;; summarized <-> detailed toggles
 
-(define-group toggle-tag (condense-tag))
-(define-group toggle-first-tag (condensed-tag))
+(define-group toggle-tag (summarized-tag) (detailed-tag))
+(define-group toggle-first-tag (summarized-tag))
 (define-group toggle-second-tag (detailed-tag))
-(define-group variant-tag (condensed-tag) (detailed-tag))
-(define-group similar-tag (condense-tag))
+(define-group variant-tag (summarized-tag) (detailed-tag))
+(define-group similar-tag (summarized-tag) (detailed-tag))
 
-(tm-define-macro (define-condense short long)
+(tm-define-macro (define-summarize short long)
   `(begin
-     (define-group condensed-tag ,short)
+     (define-group summarized-tag ,short)
      (define-group detailed-tag ,long)
-     (define-group condense-tag ,short ,long)
      (ahash-set! toggle-table ',short ',long)
      (ahash-set! toggle-table ',long ',short)))
 
-(define-condense condensed detailed)
-(define-condense condensed-algorithm detailed-algorithm)
+(define-summarize summarized detailed)
+(define-summarize summarized-plain detailed-plain)
+(define-summarize summarized-std detailed-std)
+(define-summarize summarized-env detailed-env)
+(define-summarize summarized-grouped detailed-grouped)
+
+(ahash-set! toggle-table 'summarized-algorithm 'detailed-algorithm)
+(ahash-set! toggle-table 'detailed-algorithm 'summarized-algorithm)
 
 ;; switches
 
