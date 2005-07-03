@@ -17,6 +17,51 @@
 	(dynamic dynamic-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Abstract stuff for fold tags and switches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (dynamic-context? t)
+  (or (tree-in? t (toggle-tag-list))
+      (tree-in? t (switch-tag-list))))
+
+(tm-define (dynamic-first) (noop))
+(tm-define (dynamic-previous) (noop))
+(tm-define (dynamic-next) (noop))
+(tm-define (dynamic-last) (noop))
+
+(tm-define (structured-left)
+  (:context dynamic-context?)
+  (dynamic-previous))
+
+(tm-define (structured-right)
+  (:context dynamic-context?)
+  (dynamic-next))
+
+(tm-define (structured-up)
+  (:context dynamic-context?)
+  (dynamic-previous))
+
+(tm-define (structured-down)
+  (:context dynamic-context?)
+  (dynamic-next))
+
+(tm-define (structured-first)
+  (:context dynamic-context?)
+  (dynamic-first))
+
+(tm-define (structured-last)
+  (:context dynamic-context?)
+  (dynamic-last))
+
+(tm-define (structured-top)
+  (:context dynamic-context?)
+  (dynamic-first))
+
+(tm-define (structured-bottom)
+  (:context dynamic-context?)
+  (dynamic-last))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on toggle trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -78,6 +123,22 @@
 (tm-define (hidden-variant)
   (:context toggle-second-context?)
   (fold))
+
+(tm-define (dynamic-first)
+  (:context toggle-context?)
+  (fold))
+
+(tm-define (dynamic-previous)
+  (:context toggle-context?)
+  (fold))
+
+(tm-define (dynamic-next)
+  (:context toggle-context?)
+  (unfold))
+
+(tm-define (dynamic-last)
+  (:context toggle-context?)
+  (unfold))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on switch trees
@@ -211,35 +272,19 @@
       (insert-go-to `(,tag (document "")) '(0 0 0))
       (insert-go-to `(,tag "") '(0 0))))
 
-(tm-define (structured-left)
-  (:context switch-context?)
-  (switch-to :previous :end))
-
-(tm-define (structured-right)
-  (:context switch-context?)
-  (switch-to :next :start))
-
-(tm-define (structured-up)
-  (:context switch-context?)
-  (switch-to :previous :end))
-
-(tm-define (structured-down)
-  (:context switch-context?)
-  (switch-to :next :start))
-
-(tm-define (structured-first)
+(tm-define (dynamic-first)
   (:context switch-context?)
   (switch-to :first :start))
 
-(tm-define (structured-last)
+(tm-define (dynamic-previous)
   (:context switch-context?)
-  (switch-to :last :end))
+  (switch-to :previous :end))
 
-(tm-define (structured-top)
+(tm-define (dynamic-next)
   (:context switch-context?)
-  (switch-to :first :start))
+  (switch-to :next :start))
 
-(tm-define (structured-bottom)
+(tm-define (dynamic-last)
   (:context switch-context?)
   (switch-to :last :end))
 
