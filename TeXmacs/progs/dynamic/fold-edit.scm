@@ -331,7 +331,7 @@
 	 (dynamic-operate (tree-ref t 0) :last)
 	 (tree-go-to t 0 :end)
 	 #t)
-	((and (switch-context? t) forward?)
+	((and (or (alternative-context? t) (unroll-context? t)) forward?)
 	 (with l (switch-last-visible t)
 	   (and (< l (- (tree-arity t) 1))
 		(begin
@@ -339,7 +339,7 @@
 		  (tree-go-to t l :end)
 		  (switch-to :next)
 		  #t))))
-	((and (switch-context? t) (not forward?))
+	((and (or (alternative-context? t) (unroll-context? t)) (not forward?))
 	 (with l (switch-last-visible t)
 	   (and (> l 0)
 		(begin

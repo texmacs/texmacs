@@ -27,25 +27,25 @@
     </src-comment>
   </active*>
 
-  <assign|render-fold-std|<\macro|button|body>
+  <assign|render-folded-std|<\macro|button|body>
     <with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent>><arg|button>|<hflush>>
       <arg|body>
     </surround>>>
   </macro>>
 
-  <assign|fold-padded-normal|<macro|a|b|body|<\surround|<vspace*|<arg|a>>|<htab|0fn|first><vspace|<arg|b>>>
+  <assign|folded-padded-normal|<macro|a|b|body|<\surround|<vspace*|<arg|a>>|<htab|0fn|first><vspace|<arg|b>>>
     <\with|padded-normal|<value|old-padded-normal>>
       <arg|body>
     </with>
   </surround>>>
 
-  <assign|render-fold-env|<macro|button|body|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent><arg|button>>|<right-flush>>
+  <assign|render-folded-env|<macro|button|body|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent><arg|button>>|<right-flush>>
     <\with|old-padded-normal|<value|padded-normal>|padded-normal|<value|fold-padded-normal>>
       <arg|body>
     </with>
   </surround>>>>
 
-  <assign|render-fold-bracket|<\macro|button|body>
+  <assign|render-folded-grouped|<\macro|button|body>
     <with|old-color|<value|color>|color|blue|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-valign|c>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-vcorrect|n>|<cwith|1|1|2|2|cell-bsep|0.2fn>|<cwith|1|1|2|2|cell-tsep|0.2fn>|<cwith|1|-1|1|-1|cell-hmode|min>|<table|<row|<cell|<subtable|<tformat|<twith|table-valign|T>|<cwith|3|3|1|-1|cell-vpart|1>|<cwith|2|2|2|2|cell-background|pastel
     blue>|<cwith|2|2|1|1|cell-background|pastel
     blue>|<cwith|3|3|1|1|cell-background|pastel
@@ -60,11 +60,11 @@
 
   <\active*>
     <\src-comment>
-      Tags for folding and toggles.
+      Tags for folding and unfolding.
     </src-comment>
   </active*>
 
-  <assign|fold-plain|<\macro|x|y>
+  <assign|folded-plain|<\macro|x|y>
     <\surround||<right-flush>>
       <arg|x>
 
@@ -72,7 +72,7 @@
     </surround>
   </macro>>
 
-  <assign|unfold-plain|<\macro|x|y>
+  <assign|unfolded-plain|<\macro|x|y>
     <\surround||<right-flush>>
       <arg|x>
 
@@ -80,73 +80,115 @@
     </surround>
   </macro>>
 
-  <assign|fold-std|<\macro|x|y>
-    <\render-fold-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+  <assign|folded-std|<\macro|x|y>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
-    </render-fold-std>
+    </render-folded-std>
   </macro>>
 
-  <assign|unfold-std|<\macro|x|y>
-    <\render-fold-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+  <assign|unfolded-std|<\macro|x|y>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
       <arg|x>
 
       <arg|y>
-    </render-fold-std>
+    </render-folded-std>
   </macro>>
 
-  <assign|fold-env|<\macro|x|y>
-    <\render-fold-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+  <assign|folded-env|<\macro|x|y>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
-    </render-fold-env>
+    </render-folded-env>
   </macro>>
 
-  <assign|unfold-env|<\macro|x|y>
-    <\render-fold-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+  <assign|unfolded-env|<\macro|x|y>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
       <arg|x>
 
       <arg|y>
-    </render-fold-env>
+    </render-folded-env>
   </macro>>
 
-  <assign|fold-bracket|<\macro|x|y>
-    <\render-fold-bracket|<action| |(mouse-unfold)|<arg|x>>>
+  <assign|folded-grouped|<\macro|x|y>
+    <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
       <arg|x>
 
       <hidden|<arg|y>>
-    </render-fold-bracket>
+    </render-folded-grouped>
   </macro>>
 
-  <assign|unfold-bracket|<\macro|x|y>
-    <\render-fold-bracket|<action| |(mouse-fold)|<arg|x>>>
+  <assign|unfolded-grouped|<\macro|x|y>
+    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
       <arg|x>
 
       <arg|y>
-    </render-fold-bracket>
+    </render-folded-grouped>
   </macro>>
 
-  \;
+  <assign|folded|<value|folded-std>>
 
-  <assign|fold|<value|fold-std>>
+  <assign|unfolded|<value|unfolded-std>>
 
-  <assign|unfold|<value|unfold-std>>
+  <\active*>
+    <\src-comment>
+      Tags for toggling between summarized and detailed text.
+    </src-comment>
+  </active*>
 
-  \;
-
-  <assign|condensed|<\macro|x|y>
-    <\render-fold-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+  <assign|summarized-plain|<\macro|x|y>
+    <\surround||<right-flush>>
       <arg|x>
-    </render-fold-env>
+    </surround>
   </macro>>
 
-  <assign|detailed|<\macro|x|y>
-    <\render-fold-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+  <assign|detailed-plain|<\macro|x|y>
+    <\surround||<right-flush>>
       <arg|y>
-    </render-fold-env>
+    </surround>
   </macro>>
+
+  <assign|summarized-std|<\macro|x|y>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+      <arg|x>
+    </render-folded-std>
+  </macro>>
+
+  <assign|detailed-std|<\macro|x|y>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+      <arg|y>
+    </render-folded-std>
+  </macro>>
+
+  <assign|summarized-env|<\macro|x|y>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>>
+      <arg|x>
+    </render-folded-env>
+  </macro>>
+
+  <assign|detailed-env|<\macro|x|y>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+      <arg|y>
+    </render-folded-env>
+  </macro>>
+
+  <assign|summarized-grouped|<\macro|x|y>
+    <\render-folded-grouped|<action| |(mouse-unfold)|<arg|x>>>
+      <arg|x>
+    </render-folded-grouped>
+  </macro>>
+
+  <assign|detailed-grouped|<\macro|x|y>
+    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
+      <arg|y>
+    </render-folded-grouped>
+  </macro>>
+
+  <assign|summarized|<value|summarized-env>>
+
+  <assign|detailed|<value|detailed-env>>
 
   <\active*>
     <\src-comment>
