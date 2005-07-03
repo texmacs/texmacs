@@ -584,7 +584,9 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   p= path_up (p);
   if (p == rp) return;
   tree st= subtree (et, p);
-  if (is_atomic (st) || is_document (st) || is_concat (st) ||
+  if (is_atomic (st) ||
+      drd->is_child_enforcing (st) ||
+      //is_document (st) || is_concat (st) ||
       is_func (st, TABLE) || is_func (st, SUBTABLE) ||
       is_func (st, ROW) || is_func (st, TFORMAT) ||
       is_graphical (st) ||

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.5.4>
 
 <style|<tuple|source|std>>
 
@@ -132,7 +132,9 @@
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
-  \;
+  <assign|inline-block|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
 </body>
 
 <\initial>
