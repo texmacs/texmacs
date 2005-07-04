@@ -227,7 +227,7 @@ AC_SUBST(FREETYPE_LDFLAGS)
 
 AC_ARG_WITH(imlib2,
 changequote(<<, >>)dnl
-<<  --with-imlib2[=ARG]     with imlib2 support [ARG=yes]>>dnl
+<<  --with-imlib2[=ARG]       with imlib2 support [ARG=linked]>>dnl
 changequote([, ])dnl
 )
 
