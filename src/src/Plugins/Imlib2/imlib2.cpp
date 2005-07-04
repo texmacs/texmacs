@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Imlib2/imlib2.hpp"
+#include "dyn_link.hpp"
 #include "hashmap.hpp"
 
 #ifdef USE_IMLIB2

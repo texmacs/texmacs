@@ -852,7 +852,7 @@ Optional Packages:
   --with-x                use the X Window System
   --with-iconv=DIR        where to find iconv system
   --with-freetype=ARG     with freetype support ARG=linked
-  --with-imlib2=ARG     with imlib2 support ARG=yes
+  --with-imlib2=ARG       with imlib2 support ARG=linked
 
 Some influential environment variables:
   CC          C compiler command
