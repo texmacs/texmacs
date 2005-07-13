@@ -39,6 +39,26 @@
     (when (< (switch-index) (switch-index :last))
       ("Switch to last" (dynamic-last)))))
 
+(define (fold/unfold-menu-entry x which action)
+  (with sym (string->symbol x)
+    (list 'when (lambda () (ahash-ref which sym))
+	  (list (upcase-first x)
+		(lambda () (dynamic-operate-on-buffer (list action sym)))))))
+
+(tm-define (fold-environments-menu)
+  (receive (l first second) (fold-get-environments-in-buffer)
+    (if (null? l) (menu-dynamic ())
+	(menu-dynamic
+	  ---
+	  ,@(map (lambda (x) (fold/unfold-menu-entry x second :fold)) l)))))
+
+(tm-define (unfold-environments-menu)
+  (receive (l first second) (fold-get-environments-in-buffer)
+    (if (null? l) (menu-dynamic ())
+	(menu-dynamic
+	  ---
+	  ,@(map (lambda (x) (fold/unfold-menu-entry x first :unfold)) l)))))
+
 (menu-bind insert-fold-menu
   ("First" (dynamic-operate-on-buffer :first))
   ("Previous" (dynamic-traverse-buffer :previous))
@@ -85,9 +105,15 @@
 	("Animate folding" (noop))
 	("Animate unfolding" (noop))))
   ---
+  (-> "Fold"
+      ("All" (dynamic-operate-on-buffer :fold))
+      (link fold-environments-menu))
+  (-> "Unfold"
+      ("All" (dynamic-operate-on-buffer :unfold))
+      (link unfold-environments-menu))
   (-> "Compress"
-      ("Fold" (dynamic-operate-on-buffer :fold))
-      ("Compress" (dynamic-operate-on-buffer :compress)))
+      ("Preserve tags" (dynamic-operate-on-buffer :compress))
+      ("Change tags" (dynamic-operate-on-buffer :var-compress)))
   (-> "Expand"
-      ("Unfold" (dynamic-operate-on-buffer :unfold))
-      ("Expand" (dynamic-operate-on-buffer :expand))))
+      ("Preserve tags" (dynamic-operate-on-buffer :expand))
+      ("Change tags" (dynamic-operate-on-buffer :var-expand))))
