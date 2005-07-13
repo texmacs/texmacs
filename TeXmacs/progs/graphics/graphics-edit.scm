@@ -42,14 +42,19 @@
 	(with u (tree-innermost 'graphics)
 	  (and u (tree->path u))))))
 
+(define gr-tags-all '(point
+		      line cline spline cspline
+		      arc carc
+		      text-at
+		      gr-group))
+(define gr-tags-curves  '(line cline spline cspline arc carc))
+(define gr-tags-oneshot '(point arc carc text-at gr-group))
 (define (graphics-path path)
   (if (or (null? path) (null? (cdr path)))
       #f
       (with p (cDr path)
 	 (with o (stree-at p)
-	    (if (and (pair? o)
-		     (in? (car o)
-			  '(point line cline spline cspline arc carc text-at)))
+	    (if (and (pair? o) (in? (car o) gr-tags-all))
 		p
 		(graphics-path (cDr path)))))))
 
@@ -722,7 +727,7 @@
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
-	  ((in? mode '(line cline spline cspline arc carc))
+	  ((in? mode gr-tags-curves)
 	   (graphics-enrich-sub t `(("color" , color)
 	      ("line-width" ,lw) ("dash-style" ,st)
 	      ("line-arrows" ,lp)
@@ -919,7 +924,7 @@
       (with type (car obj)
 	 (if (== type 'point)
 	     0
-	 (if (in? (car obj) '(line cline spline cspline arc carc))
+	 (if (in? (car obj) gr-tags-curves)
 	     (graphics-closest-point-pos (list 'point x y) (cdr obj))
 	 0)))
       0))
@@ -1003,7 +1008,7 @@
 						 (cadr p1) (caddr p2)))))
 		   res)))
 
-(define (create-graphical-props mode)
+(define (create-graphical-props mode ps)
   (let ((color #f)
 	(lw #f)
 	(st #f)
@@ -1038,7 +1043,7 @@
 	(set! fm (get-env "gr-fill-mode"))
 	(set! fc (get-env "gr-fill-color")))
      )
-     (list 'with "point-style" "square"
+     (list 'with "point-style" (if ps ps "square")
 		 "color" color
 		 "line-width" lw
 		 "dash-style" st
@@ -1057,7 +1062,9 @@
 	)
 	(if (tree? o)
 	    (begin
-	       (set! props (create-graphical-props (reverse (tree-ip o))))
+	       (set! props (create-graphical-props (reverse (tree-ip o))
+						   (if (== mode 'object)
+						       "disc" "square")))
 	       (set! o (tree->stree o)))
 	)
 	(cond ((== (car o) 'point)
@@ -1065,14 +1072,30 @@
 	      )
 	      ((== (car o) 'text-at)
 	       (set! t (let* ((a (cdddr o))
-			      (gc (create-graphical-contour o (car a) (cadr a) 0.1))
+			      (gc (create-graphical-contour
+				    o (car a) (cadr a) 0.1))
 			  )
-			  (if (== mode 'object-and-points) (cons o gc) gc)))
+			  (if (== mode 'object-and-points)
+			      (cons o gc)
+			      (if (== mode 'object)
+				 `(,o)
+				  gc))))
+	      )
+	      ((== (car o) 'gr-group)
+	       (set! t (with gc (create-graphical-contour
+				   o "center" "center" 0.1)
+			  (if (== mode 'object-and-points)
+			      (cons o gc)
+			      (if (== mode 'object)
+				 `(,o)
+				  gc))))
 	      )
 	      (else
 		 (set! t (if (== mode 'object-and-points)
 			     (cons o (cdr o))
-			     (cdr o))))
+			     (if (== mode 'object)
+				`(,o)
+				 (cdr o)))))
 	)
 	(set! res (append res
 			  (if props
@@ -1089,6 +1112,9 @@
 		      ((== (car o) 'text-at)
 		       (with a (cdddr o)
 			  (create-graphical-contour o (car a) (cadr a) 0.1))
+		      )
+		      ((== (car o) 'gr-group)
+		       (create-graphical-contour o "center" "center" 0.1)
 		      )
 		      (else (if (integer? no)
 			        (let* ((l (list-tail (cdr o) no))
@@ -1110,7 +1136,7 @@
 				        (if (> ll 2) (list-tail l 2) '())))
 			        (cdr o))))
 	       )
-	       (props (create-graphical-props mode))
+	       (props (create-graphical-props mode #f))
 	   )
 	   (graphical-object!
 	      (if (or (eq? no 'group)
@@ -1338,6 +1364,7 @@
       (cdr l2))
   )
   (with res (tree->stree (graphical-select x y))
+   ;(display* "res=" res "\n")
     (filter res)))
 
 (define (select-first x y)
@@ -1545,6 +1572,12 @@
       (point_left-button x y p obj 1 edge)
       (point_move x y p obj 1 edge)))
 
+(define (gr-group_move x y p obj no edge)
+  (if sticky-point
+      (display* "Sticky move(gr-group) !yet implemented\n")
+      (begin
+	(create-graphical-object obj p 'points #f))))
+
 ;; Middle button
 (define (point_middle-button x y p obj no)
   (if sticky-point
@@ -1554,7 +1587,7 @@
 	(graphics-move-point x y))
       ;;Remove
       (begin
-	(if (or (in? (car obj) '(point text-at arc carc)) (null? (cddr obj)))
+	(if (or (in? (car obj) gr-tags-oneshot) (null? (cddr obj)))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f #f)
@@ -1607,13 +1640,15 @@
   (with-graphics-context
    ";move" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline arc carc)
-			(text-at))
+			(text-at)
+			(gr-group))
 	     move (x y p obj no edge) do-tick)))
 
 (define (edit_middle-button x y)
   (with-graphics-context
    "remove" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline arc carc text-at))
+   (dispatch (car obj) ((point line cline spline cspline arc carc
+			 text-at gr-group))
 	     middle-button (x y p obj no) do-tick)))
 
 (define (edit_right-button x y)
@@ -1824,6 +1859,69 @@
   (lambda (o)
      (traverse-transform o (rotate-point group-bary-x group-bary-y alpha)))))
 
+;; Grouping/Ungrouping
+(tm-define (group-selected-objects)
+  (if (and (not sticky-point) (nnull? selected-objects))
+  (begin
+    (graphics-store-state 'group-selected-objects)
+    (create-graphical-object '(nothing) #f 'object 'group)
+    (foreach (o selected-objects)
+       (graphics-remove (reverse (tree-ip o)))
+    )
+    (set! selected-objects '())
+    (with go (tree->stree (get-graphical-object))
+       (if (nnull? (cdr go))
+       (with l '()
+	  (foreach (o (cdr go))
+	  (with t (cadr (cAr o))
+	     (set-cdr! (list-tail o (- (length o) 2)) '())
+	     (set! l (cons (graphics-enrich-sub t (group-list (cdr o))) l))
+	  ))
+	  (graphics-group-insert
+	     (cons 'gr-group (reverse l))
+	  )
+	  (create-graphical-object #f #f #f #f)
+	  (graphics-group-start)))
+    )
+    (set! graphics-undo-enabled #t)
+    (graphics-forget-states))))
+
+(tm-define (ungroup-current-object)
+  (if (and (not sticky-point)
+	   (== (length selected-objects) 1)
+	   (== (tree-label (car selected-objects)) 'gr-group))
+  (let* ((so0 selected-objects)
+	 (obj (car selected-objects))
+    )
+    (graphics-store-state 'ungroup-selected-objects)
+    (set! selected-objects '())
+    (foreach-number (i 0 < (tree-arity obj))
+       (with o (tree-ref obj i)
+          (if (== (tree-label o) 'with)
+	      (set! o (tree-ref o (- (tree-arity o) 1))))
+          (set! selected-objects (cons o selected-objects)))
+    )
+    (set! selected-objects (reverse selected-objects))
+    (create-graphical-object '(nothing) #f 'object 'group)
+    (foreach (o so0)
+       (graphics-remove (reverse (tree-ip o)))
+    )
+    (set! selected-objects '())
+    (with go (tree->stree (get-graphical-object))
+       (if (nnull? (cdr go))
+       (with l '()
+	  (foreach (o (cdr go))
+	  (with t (cadr (cAr o))
+	     (set-cdr! (list-tail o (- (length o) 2)) '())
+	     (graphics-group-insert
+		(graphics-enrich-sub t (group-list (cdr o))))
+	  ))
+	  (create-graphical-object #f #f #f #f)
+	  (graphics-group-start)))
+    )
+    (set! graphics-undo-enabled #t)
+    (graphics-forget-states))))
+
 ;; State transitions
 (define (point_start-operation opn p obj)
   (if sticky-point
@@ -1844,7 +1942,7 @@
 	       ))
 	      ;(restore-selected-objects n)
 	       (set! selected-objects '())
-               (create-graphical-object '(nothing) #f 'points 'group)
+	       (create-graphical-object '(nothing) #f 'points 'group)
 	       (graphics-group-start)))
 	 )
 	 (if (== (state-ref graphics-first-state 'graphics-action)
@@ -1861,7 +1959,7 @@
 	 (if (store-important-points)
 	 (begin
 	    (graphics-store-state 'start-operation)
-	    (create-graphical-object obj p 'object-and-points #f)
+	    (create-graphical-object obj p 'object #f)
 	    (set! group-first-go (get-graphical-object))
 	    (foreach (o selected-objects)
 	       (graphics-remove (reverse (tree-ip o)))
@@ -1990,7 +2088,7 @@
     (cond ((== (car mode) 'edit)
 	  (with submode (cadr mode)
 	     (cond ((== submode 'point) (noop))
-		   ((in? submode '(line cline spline cspline arc carc)) (noop))
+		   ((in? submode gr-tags-curves) (noop))
 		   ((== submode 'text-at) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
 	 ((== (car mode) 'edit-prop)

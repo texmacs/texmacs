@@ -1208,7 +1208,7 @@ edit_env_rep::exec_point (tree t) {
 
 tree
 edit_env_rep::exec_box_info (tree t) {
-  tree t1= exec (t[0]);
+  tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
     return tree (ERROR, "bad box info");

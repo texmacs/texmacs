@@ -292,6 +292,8 @@ init_std_drd () {
 
   init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
   init (SUPERPOSE, "superpose", repeat (1, 1));
+  init (GR_GROUP, "gr-group", repeat (1, 1));
+  init (GR_LINEAR_TRANSFORM, "gr-linear-transform", fixed (2));
   init (TEXT_AT, "text-at", fixed (1, 3, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
