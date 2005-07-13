@@ -228,11 +228,12 @@ edit_interface_rep::draw_cursor (ps_device dev) {
   if (got_focus || full_screen) {
     draw_env (dev);
     cursor cu= get_cursor();
-    if (inside_graphics ()) {
-      dev->set_line_style (pixel);
+    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
+    /*dev->set_line_style (pixel);
       dev->set_color (dis->red);
       dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
-      dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
+      dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);*/
+      eval ("(graphics-reset-context 'graphics-cursor)");
       draw_graphical_object (dev);
     }
     else {
@@ -268,6 +269,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
 	if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
 	dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
       }
+      eval ("(graphics-reset-context 'text-cursor)");
     }
   }
 }

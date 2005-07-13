@@ -67,6 +67,46 @@ xpm_size (url u, int& w, int& h) {
   if (!ok) fatal_error ("Invalid xpm (" * file_name * ")", "xpm_size");
 }
 
+array<string>
+xpm_colors (tree t) {
+  array<string> res(0);
+  string s= t[0]->label;
+  int ok, i=0, j, k, w, h, c, b;
+  skip_spaces (s, i);
+  ok= read_int (s, i, w);
+  skip_spaces (s, i);
+  ok= read_int (s, i, h) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, c) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, b) && ok;
+  if ((!ok) || (N(t)<(c+1)) || (c<=0))
+    fatal_error ("Invalid xpm tree", "x_drawable_rep::xpm_colors");
+
+  for (k=0; k<c; k++) {
+    string s   = as_string (t[k+1]);
+    string def = "none";
+    if (N(s)<b) i=N(s); else i=b;
+
+    skip_spaces (s, i);
+    if ((i<N(s)) && (s[i]=='s')) {
+      i++;
+      skip_spaces (s, i);
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      skip_spaces (s, i);
+    }
+    if ((i<N(s)) && (s[i]=='c')) {
+      i++;
+      skip_spaces (s, i);
+      j=i;
+      while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
+      def= locase_all (s (j, i));
+    }
+    res<<def;
+  }
+  return res;
+}
+
 /******************************************************************************
 * Loading postscript files or conversion to postscript
 ******************************************************************************/

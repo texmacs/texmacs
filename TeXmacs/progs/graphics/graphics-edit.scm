@@ -1389,10 +1389,34 @@
 		      (display* "Uncaptured gc(!sticky) " ,msg " " ,obj ", "
 						          ,x ", " ,y "\n"))))))))
 
+(define current-cursor #f)
+(define TM_PATH (var-eval-system "echo $TEXMACS_PATH"))
+(define (tm_xpm name)
+  (string-append TM_PATH "/misc/pixmaps/" name))
+
 (tm-define (graphics-reset-context cmd)
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
   (cond
+   ((== cmd 'text-cursor)
+    (if (not (== current-cursor 'text-cursor))
+    (begin
+       (set! current-cursor 'text-cursor)
+       (set-default-mouse-pointer "XC_top_left_arrow"))))
+   ((== cmd 'graphics-cursor)
+    (if (not (== current-cursor 'graphics-cursor))
+    (begin
+       (set! current-cursor 'graphics-cursor)
+       (set-mouse-pointer
+	 (tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm")
+	 7 7))))
+      ;; TODO: There is a problem now that we use the X cursor
+      ;;   during graphics editing : the cursor doesn't aligns
+      ;;   on the grid anymore. A good solution to this problem
+      ;;   would be to shut it down as soon as we enter the
+      ;;   sticky mode (all the more because that most of the
+      ;;   time, the cursor is more a hindrance than something
+      ;;   else, e.g., when editing a line).
    ((and (in? cmd '(begin exit)) (or (== cmd 'begin) (not sticky-point)))
     (graphics-reset-state)
     (graphics-forget-states)

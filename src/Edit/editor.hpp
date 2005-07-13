@@ -136,6 +136,9 @@ public:
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
+  virtual void set_pointer (string name) = 0;
+  virtual void set_pointer (string curs_name, string mask_name,
+			    SI x, SI y) = 0;
   virtual void set_message (string l, string r= "", bool temp= false) = 0;
   virtual void recall_message () = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;

@@ -13,8 +13,11 @@
 #include "timer.hpp"
 #include "dictionary.hpp"
 #include "X/x_display.hpp"
+#include "X/x_drawable.hpp"
 #include "X/x_window.hpp"
 #include "iterator.hpp"
+#include "image_files.hpp"
+#include <X11/cursorfont.h>
 extern hashmap<Window,pointer> Window_to_window;
 
 /******************************************************************************
@@ -363,12 +366,195 @@ x_display_rep::unmap_balloon () {
   }
 }
 
-void
-x_display_rep::set_pointer (string pixmap_name) {
-  (void) pixmap_name;
+window (*get_current_window) (void)= NULL; // FIXME: dirty hack
+
+// Definitions from X11/cursorfont.h
+static
+int fetch_X11_cursor_no (string name) {
+  string pref= name(0,3);
+  if (pref!="XC_") return -1;
+  name= name (3,N(name));
+  switch (name[0]) {
+    case 'X':
+      if (name=="X_cursor") return XC_X_cursor;
+    break;
+    case 'a':
+      if (name=="arrow") return XC_arrow;
+    break;
+    case 'b':
+      if (name=="based_arrow_down") return XC_based_arrow_down;
+      if (name=="based_arrow_up") return XC_based_arrow_up;
+      if (name=="boat") return XC_boat;
+      if (name=="bogosity") return XC_bogosity;
+      if (name=="bottom_left_corner") return XC_bottom_left_corner;
+      if (name=="bottom_right_corner") return XC_bottom_right_corner;
+      if (name=="bottom_side") return XC_bottom_side;
+      if (name=="bottom_tee") return XC_bottom_tee;
+      if (name=="box_spiral") return XC_box_spiral;
+    break;
+    case 'c':
+      if (name=="center_ptr") return XC_center_ptr;
+      if (name=="circle") return XC_circle;
+      if (name=="clock") return XC_clock;
+      if (name=="coffee_mug") return XC_coffee_mug;
+      if (name=="cross") return XC_cross;
+      if (name=="cross_reverse") return XC_cross_reverse;
+      if (name=="crosshair") return XC_crosshair;
+    break;
+    case 'd':
+      if (name=="diamond_cross") return XC_diamond_cross;
+      if (name=="dot") return XC_dot;
+      if (name=="dotbox") return XC_dotbox;
+      if (name=="double_arrow") return XC_double_arrow;
+      if (name=="draft_large") return XC_draft_large;
+      if (name=="draft_small") return XC_draft_small;
+      if (name=="draped_box") return XC_draped_box;
+    break;
+    case 'e':
+      if (name=="exchange") return XC_exchange;
+    break;
+    case 'f':
+      if (name=="fleur") return XC_fleur;
+    break;
+    case 'g':
+      if (name=="gobbler") return XC_gobbler;
+      if (name=="gumby") return XC_gumby;
+    break;
+    case 'h':
+      if (name=="hand1") return XC_hand1;
+      if (name=="hand2") return XC_hand2;
+      if (name=="heart") return XC_heart;
+    break;
+    case 'i':
+      if (name=="icon") return XC_icon;
+      if (name=="iron_cross") return XC_iron_cross;
+    break;
+    case 'l':
+      if (name=="left_ptr") return XC_left_ptr;
+      if (name=="left_side") return XC_left_side;
+      if (name=="left_tee") return XC_left_tee;
+      if (name=="leftbutton") return XC_leftbutton;
+      if (name=="ll_angle") return XC_ll_angle;
+      if (name=="lr_angle") return XC_lr_angle;
+    break;
+    case 'm':
+      if (name=="man") return XC_man;
+      if (name=="middlebutton") return XC_middlebutton;
+      if (name=="mouse") return XC_mouse;
+    break;
+    case 'p':
+      if (name=="pencil") return XC_pencil;
+      if (name=="pirate") return XC_pirate;
+      if (name=="plus") return XC_plus;
+    break;
+    case 'q':
+      if (name=="question_arrow") return XC_question_arrow;
+    break;
+    case 'r':
+      if (name=="right_ptr") return XC_right_ptr;
+      if (name=="right_side") return XC_right_side;
+      if (name=="right_tee") return XC_right_tee;
+      if (name=="rightbutton") return XC_rightbutton;
+      if (name=="rtl_logo") return XC_rtl_logo;
+    break;
+    case 's':
+      if (name=="sailboat") return XC_sailboat;
+      if (name=="sb_down_arrow") return XC_sb_down_arrow;
+      if (name=="sb_h_double_arrow") return XC_sb_h_double_arrow;
+      if (name=="sb_left_arrow") return XC_sb_left_arrow;
+      if (name=="sb_right_arrow") return XC_sb_right_arrow;
+      if (name=="sb_up_arrow") return XC_sb_up_arrow;
+      if (name=="sb_v_double_arrow") return XC_sb_v_double_arrow;
+      if (name=="shuttle") return XC_shuttle;
+      if (name=="sizing") return XC_sizing;
+      if (name=="spider") return XC_spider;
+      if (name=="spraycan") return XC_spraycan;
+      if (name=="star") return XC_star;
+    break;
+    case 't':
+      if (name=="target") return XC_target;
+      if (name=="tcross") return XC_tcross;
+      if (name=="top_left_arrow") return XC_top_left_arrow;
+      if (name=="top_left_corner") return XC_top_left_corner;
+      if (name=="top_right_corner") return XC_top_right_corner;
+      if (name=="top_side") return XC_top_side;
+      if (name=="top_tee") return XC_top_tee;
+      if (name=="trek") return XC_trek;
+    break;
+    case 'u':
+      if (name=="ul_angle") return XC_ul_angle;
+      if (name=="umbrella") return XC_umbrella;
+      if (name=="ur_angle") return XC_ur_angle;
+    break;
+    case 'w':
+      if (name=="watch") return XC_watch;
+    break;
+    case 'x':
+      if (name=="xterm") return XC_xterm;
+    break;
+  }
+  return -1;
 }
 
-window (*get_current_window) (void)= NULL; // FIXME: dirty hack
+void
+x_display_rep::set_pointer (string name) {
+  int no= fetch_X11_cursor_no (name);
+  if (no==-1) return;
+  Cursor cursor=XCreateFontCursor(dpy, no);
+  if (get_current_window != NULL)
+    XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);
+}
+
+void
+x_display_rep::set_pointer (string curs_name, string mask_name, SI x, SI y) {
+  static hashmap<string,tree> xpm_cache ("");
+  if (mask_name=="") mask_name= curs_name;
+  x_drawable_rep dra= x_drawable_rep (this);
+  dra.xpm_initialize (curs_name);
+  if (mask_name!=curs_name) dra.xpm_initialize (mask_name);
+  dra.~x_drawable_rep ();
+  Pixmap curs= (Pixmap) xpm_bitmap [curs_name];
+  Pixmap mask= (Pixmap) xpm_bitmap [mask_name];
+
+  if (!xpm_cache->contains (curs_name))
+    xpm_cache (curs_name)= xpm_load (curs_name);
+
+  if (!xpm_cache->contains (mask_name))
+    xpm_cache (mask_name)= xpm_load (mask_name);
+
+  array<string> cnames_curs= xpm_colors (xpm_cache[curs_name]);
+  array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
+  char* bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
+					      string ("white"));
+  char* fgcolor= as_charp (N(cnames_curs)>1 ? cnames_curs[1] :
+					      string ("black"));
+  if (!strcmp (bgcolor, "none")) bgcolor= as_charp (string ("white"));
+  if (!strcmp (fgcolor, "none")) fgcolor= as_charp (string ("white"));
+
+  XColor *bg= NULL, *fg= NULL;
+  XColor exact1, closest1;
+  XLookupColor(dpy, cols, fgcolor, &exact1, &closest1);
+  if (XAllocColor (dpy, cols, &exact1)) fg= &exact1;
+  else
+  if (XAllocColor (dpy, cols, &closest1)) fg= &closest1;
+  else
+    fatal_error ("Unable to allocate fgcolor", "x_display_rep::set_pointer");
+
+  XColor exact2, closest2;
+  XLookupColor(dpy, cols, bgcolor, &exact2, &closest2);
+  if (XAllocColor (dpy, cols, &exact2)) bg= &exact2;
+  else
+  if (XAllocColor (dpy, cols, &closest2)) bg= &closest2;
+  else
+    fatal_error ("Unable to allocate bgcolor", "x_display_rep::set_pointer");
+
+  delete[] bgcolor;
+  delete[] fgcolor;
+
+  Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);
+  if (get_current_window != NULL)
+    XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);
+}
 
 void
 x_display_rep::set_wait_indicator (string message, string arg) {
