@@ -39,9 +39,9 @@
 
 ;; summarized <-> detailed toggles
 
-(define-group toggle-tag (summarized-tag) (detailed-tag))
-(define-group toggle-first-tag (summarized-tag))
-(define-group toggle-second-tag (detailed-tag))
+(define-group toggle-tag (toggle-first-tag) (toggle-second-tag))
+(define-group toggle-first-tag (summarized-tag) summarized-algorithm)
+(define-group toggle-second-tag (detailed-tag) detailed-algorithm)
 (define-group variant-tag (summarized-tag) (detailed-tag))
 (define-group similar-tag (summarized-tag) (detailed-tag))
 
