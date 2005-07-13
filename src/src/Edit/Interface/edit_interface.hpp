@@ -132,6 +132,8 @@ public:
   void mouse_adjust (SI x, SI y);
   void mouse_scroll (SI x, SI y, bool up);
   cursor get_cursor ();
+  void set_pointer (string name);
+  void set_pointer (string curs_name, string mask_name, SI x, SI y);
 
   /* the footer */
   string compute_text_footer (tree st);

@@ -229,6 +229,18 @@ edit_interface_rep::get_cursor () {
   return copy (the_cursor ());
 }
 
+void
+edit_interface_rep::set_pointer (string name) {
+  sv->get_display()->set_pointer(name);
+}
+
+void
+edit_interface_rep::set_pointer (
+  string curs_name, string mask_name, SI x, SI y)
+{
+  sv->get_display()->set_pointer(curs_name, mask_name, x, y);
+}
+
 /******************************************************************************
 * event handlers
 ******************************************************************************/

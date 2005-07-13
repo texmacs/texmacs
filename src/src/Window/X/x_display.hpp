@@ -182,7 +182,8 @@ public:
   void   unmap_balloon ();
   void   image_auto_gc ();
   void   image_gc (string name);
-  void   set_pointer (string pixmap_name);
+  void   set_pointer (string name);
+  void   set_pointer (string curs_name, string mask_name, SI x, SI y);
   void   set_wait_indicator (string message, string arg);
 
   /************************** Event processing *******************************/

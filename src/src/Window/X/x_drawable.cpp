@@ -272,6 +272,9 @@ x_drawable_rep::xpm_initialize (url file_name) {
       def= "lightgrey";
     }
     else bmcs(name)= 1;
+ /* FIXME: to avoid code duplication, replace this code by
+      a call to xpm_colors(), plus the appropriate code to
+      fill bmcs() & set first_name. */
 
     char* _def= as_charp (def);
     XColor exact, closest;
