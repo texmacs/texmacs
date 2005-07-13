@@ -81,6 +81,38 @@ graphics_box_rep::reindex (int i, int item, int n) {
 }
 
 /******************************************************************************
+* Group boxes
+******************************************************************************/
+
+struct graphics_group_box_rep: public composite_box_rep {
+  graphics_group_box_rep (path ip, array<box> bs):
+    composite_box_rep (ip, bs, true) { finalize (); }
+  bool access_allowed () { return false; }
+  operator tree () { return "graphics_group"; }
+  path find_lip () { return path (-1); }
+  path find_rip () { return path (-1); }
+  gr_selections graphical_select (SI x, SI y, SI dist);
+  int reindex (int i, int item, int n);
+};
+
+gr_selections
+graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->cp << reverse (path (0, ip));
+    res << gs;
+  }
+  return res;
+}
+
+int
+graphics_group_box_rep::reindex (int i, int item, int n) {
+  return i;
+}
+
+/******************************************************************************
 * Point boxes
 ******************************************************************************/
 
@@ -182,10 +214,9 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
   arrows= array<box>(2);
   point p1, p2;
   bool error;
-  point tg= c->grad (0.0, error);
-  if (N(arrows2)>0 && !error) {
-    box b= arrows2[0];
-    if (!nil (b)) {
+  if (N(arrows2)>0 && !nil (arrows2[0])) {
+    point tg= c->grad (0.0, error);
+    if (!error) {
       frame fr= scaling (1.0, a[0]) *
 	        rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[0]= arrows2[0]->transform (fr);
@@ -197,10 +228,9 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
       }
     }
   }
-  tg= c->grad (1.0, error);
-  if (N(arrows2)>1 && !error) {
-    box b= arrows2[1];
-    if (!nil (b)) {
+  if (N(arrows2)>1 && !nil (arrows2[1])) {
+    point tg= c->grad (1.0, error);
+    if (!error) {
       frame fr= scaling (1.0, a[N(a)-1]) *
 	        rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[1]= arrows2[1]->transform (fr);
@@ -440,6 +470,11 @@ graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2)
 {
   return new graphics_box_rep (ip, bs, f, g, lim1, lim2);
+}
+
+box
+graphics_group_box (path ip, array<box> bs) {
+  return new graphics_group_box_rep (ip, bs);
 }
 
 box

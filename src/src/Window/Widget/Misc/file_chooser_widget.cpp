@@ -323,7 +323,7 @@ image_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
     image_size (url_system (file_name), iw, ih);
     
     SI ww= w-2*PIXEL, hh= h-2*PIXEL;
-    if ((ww>0) && (hh>0)) {
+    if ((ww>0) && (hh>0) && (iw>0) && (ih>0)) {
       if (iw * hh > ih * ww)
 	hh= (ww * ih) / iw;
       else ww= (hh * iw) / ih;

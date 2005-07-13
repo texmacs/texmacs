@@ -189,6 +189,10 @@
   ("C-Spline" (graphics-set-mode "cspline"))
   ("Text box" (graphics-set-mode "text-at"))
   ---
+  ("Move" (graphics-set-mode '(group-edit move)))
+  ("Zoom/unzoom" (graphics-set-mode '(group-edit zoom)))
+  ("Rotate" (graphics-set-mode '(group-edit rotate)))
+  ---
   ("Properties" (graphics-set-mode '(edit-prop))))
 
 (menu-bind graphics-color-menu
@@ -383,6 +387,11 @@
       (graphics-set-mode '(group-edit zoom)))
   (   (balloon (icon "tm_group_rotate.xpm") "Rotate objects")
       (graphics-set-mode '(group-edit rotate)))
+  |
+  (   (balloon (icon "tm_group_group.xpm") "Group objects")
+      (group-selected-objects))
+  (   (balloon (icon "tm_group_ungroup.xpm") "Ungroup objects")
+      (ungroup-current-object))
   |
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
       (graphics-set-mode '(edit-prop)))

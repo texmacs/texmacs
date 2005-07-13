@@ -51,6 +51,40 @@ concater_rep::typeset_superpose (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_gr_group (tree t, path ip) {
+  int i, n= N(t);
+  array<box> bs (n);
+  for (i=0; i<n; i++)
+    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+
+  int j, n2= 0;
+  for (i=0; i<n; i++)
+    for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") n2++;
+  if (n2) {
+    array<box> bs2 (n2);
+    n2= 0;
+    for (i=0; i<n; i++) {
+      for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") {
+        bs2[n2]= bs[i][j];
+	n2++;
+      }
+    }
+    bs= bs2;
+  }
+  print (STD_ITEM, graphics_group_box (ip, bs));
+}
+
+void
+concater_rep::typeset_gr_linear_transform (tree t, path ip) {
+  if (!is_tuple (t[1]))
+    typeset_dynamic (tree (ERROR, "bad linear transform"), ip);
+
+  frame f= affine_2D (as_matrix (t[1]));
+  box   b= typeset_as_concat (env, t[0], descend (ip, 0));
+  print (STD_ITEM, b->transform (env->fr * (f * invert (env->fr))));
+}
+
+void
 concater_rep::typeset_text_at (tree t, path ip) {
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
   point  p     = env->fr (env->as_point (env->exec (t[1])));

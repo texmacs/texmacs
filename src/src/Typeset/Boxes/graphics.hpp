@@ -20,6 +20,7 @@
 
 box graphics_box (
   path ip, array<box> bs, frame f, grid g, point lim1, point lim2);
+box graphics_group_box (path ip, array<box> bs);
 box point_box (path ip, point p, SI r, color col, string style);
 box curve_box (path ip, curve c, SI width, color col,
   array<bool> style, SI style_unit,
