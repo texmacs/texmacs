@@ -89,13 +89,19 @@ concater_rep::flag_ok (string s, path ip, color col) {
     box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
     print (STD_ITEM, specb);
   }
-  if (info_flag == "detailed") {
+  if (info_flag == "detailed" || info_flag == "paper") {
     int sz= script (env->fn_size, env->index_level+2);
     font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
-    print (STD_ITEM, specb);
+    if (info_flag == "detailed") {
+      box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
+      print (STD_ITEM, specb);
+    }
+    else {
+      box b= resize_box (ip, flagb, 0, 0, 0, env->fn->yx);
+      print (STD_ITEM, b);
+    }
   }
 }
 
