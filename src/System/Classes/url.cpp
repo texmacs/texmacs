@@ -463,6 +463,7 @@ as_string (url u, int type) {
   if (is_wildcard (u, 0)) return "**";
   if (is_wildcard (u, 1)) return u->t[1]->label;
   fatal_error ("bad url", "as_string", "url.cpp");
+  return ""; // NOT REACHED
 }
 
 ostream&
@@ -514,6 +515,7 @@ glue (url u, string s) {
   cerr << "\nu= " << u << "\n";
   cerr << "s= " << s << "\n";
   fatal_error ("can't glue string to url", "glue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -525,6 +527,7 @@ unglue (url u, int nr) {
   cerr << "\nu= " << u << "\n";
   cerr << "nr= " << nr << "\n";
   fatal_error ("can't unglue from url", "unglue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -734,6 +737,7 @@ complete (url base, url u, string filter, bool flag) {
   }
   cout << LF << "url= " << u << LF;
   fatal_error ("bad url", "complete", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url

@@ -141,6 +141,7 @@ drd_info_rep::correct_arity (tree_label l, int i) {
     return (i >= ((int) pi.arity_base)) &&
            (((i-pi.arity_base) % pi.arity_extra) == 0);
   }
+  return false; // NOT REACHED
 }
 
 bool
@@ -161,6 +162,7 @@ drd_info_rep::insert_point (tree_label l, int i, int n) {
            ((i > (n - ((int) pi.arity_base))) ||
 	    (i % pi.arity_extra == 0));
   }
+  return false; // NOT REACHED
 }
 
 bool
