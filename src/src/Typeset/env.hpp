@@ -109,6 +109,7 @@
 * The edit environment
 ******************************************************************************/
 
+class edit_env;
 class edit_env_rep: public concrete_struct {
 public:
   display                      dis;

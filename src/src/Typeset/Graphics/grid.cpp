@@ -457,5 +457,5 @@ as_grid (tree t) {
 
 tree
 as_tree (grid g) {
-  (tree) g;
+  return (tree) g;
 }
