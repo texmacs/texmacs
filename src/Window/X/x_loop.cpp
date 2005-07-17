@@ -306,14 +306,14 @@ void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
 
 void
 x_display_rep::event_loop () {
-  bool wait= true;
-  int count= 0;
-  int delay= MIN_DELAY;
+  bool wait  = true;
+  int count  = 0;
+  int delay  = MIN_DELAY;
 
   while (nr_windows>0) {
     // Get events
+    XEvent report;
     if (XPending (dpy) > 0) {
-      XEvent report;
       XNextEvent (dpy, &report);
       // cout << "Event: " << event_name[report.type] << "\n";
       x_window win= (x_window) Window_to_window[report.xany.window];
@@ -321,8 +321,13 @@ x_display_rep::event_loop () {
       count= 0;
       delay= MIN_DELAY;
       wait = false;
-      continue;
     }
+
+    // Don't typeset when resizing window
+    if (XPending (dpy) > 0)
+      if (report.type == ConfigureNotify ||
+	  report.type == Expose ||
+	  report.type == NoExpose) continue;
 
     // Wait for events on all channels and interpose
     if (wait) {
@@ -343,6 +348,9 @@ x_display_rep::event_loop () {
 	  map_balloon ();
 
     // Redraw invalid windows
+    // NOTE: We might provide a small rendering time inversily proportional to
+    // the number of pending X events and look for new events only every once
+    // this time has elapsed.
     iterator<Window> it= iterate (Window_to_window);
     while (it->busy()) {
       x_window win= (x_window) Window_to_window[it->next()];
