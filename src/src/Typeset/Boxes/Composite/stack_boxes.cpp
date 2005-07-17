@@ -87,8 +87,8 @@ stack_box_rep::clear_incomplete (
 {
   if (N(bs) == 0) return;
   if ((i1 <= i2) && (!nil (rs))) {
-    // cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )\n";
-    // cout << "  in : " << rs << "\n";
+    //cout << "Stack " << which << " ( " << i1 << " - " << i2 << " )" << LF;
+    //cout << "  in: " << (rs/256) << LF;
     
     int i, n= N(bs);
     rectangle bound= least_upper_bound (rs);
@@ -106,8 +106,8 @@ stack_box_rep::clear_incomplete (
     SI Min_y= min_y, Max_y= max_y;
     if (i2+1<n) Min_y= sy4 (i2+1) + 2*pixel;
     if (i1  >0) Max_y= sy3 (i1-1) - 2*pixel;
+    // cout << "  ys : " << Min_y/256 << ", " << min_y/256 << ", " << max_y/256 << ", " << Max_y/256 << "\n";
     */
-    // cout << "  ys : " << Min_y << ", " << min_y << ", " << max_y << ", " << Max_y << "\n";
 
     SI min_y= sy4 (i2) + 2*pixel, max_y= sy3 (i1) - 2*pixel;
     if ((min_y < max_y) && (bound->y1 < min_y) && (max_y < bound->y2)) {
@@ -123,46 +123,7 @@ stack_box_rep::clear_incomplete (
       rs= reverse (new_rs);
     }
 
-    // cout << "  out: " << rs << "\n\n";
-
-    /*
-    SI min_y= sy4(i2), max_y= sy3(i1);
-    if ((i1 < i2) && (min_y < max_y) &&
-	(bound->y1 < min_y) && (max_y < bound->y2))
-      {
-	rectangles count= rs;
-	SI new_min_y= bound->y2, new_max_y= bound->y1;
-	while (!nil (count)) {
-	  rectangle& r= count->item;
-	  if (r->y1 > min_y) new_min_y= min (new_min_y, r->y1);
-	  if (r->y2 < max_y) new_max_y= max (new_max_y, r->y2);
-	  count= count->next;
-	}
-	if ((new_min_y == bound->y2) || (new_max_y == bound->y1)) return;
-	if (new_min_y > new_max_y) {
-	  if ((i1+1) < i2) return;
-	  SI mid_delta= (new_min_y- new_max_y) >> 1;
-	  abs_round (mid_delta);
-	  new_min_y= new_max_y= new_max_y+ mid_delta;
-	  if ((new_min_y < min_y) || (new_max_y > max_y)) return;
-	}
-	min_y= new_min_y;
-	max_y= new_max_y;
-
-	rectangles new_rs (rectangle (left, min_y, right, max_y));
-	SI semi_left= right, semi_right= left;
-	count= rs;
-	while (!nil (count)) {
-	  rectangle& r= count->item;
-	  if (r->y1 < min_y) semi_right= max (semi_right, r->x2);
-	  if (r->y2 > max_y) semi_left = min (semi_left , r->x1);
-	  count= count->next;
-	}
-	new_rs << rectangle (left, bound->y1, semi_right, min_y);
-	new_rs << rectangle (semi_left, max_y, right, bound->y2);
-	rs= new_rs;
-      }
-    */
+    // cout << "  out: " << (rs/256) << "\n\n";
   }
 }
 
