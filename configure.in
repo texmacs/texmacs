@@ -388,8 +388,8 @@ AC_SUBST(CONFIG_NO_FAST_ALLOC)
 #--------------------------------------------------------------------
 
 CONFIG_CXXFLAGS=""
-CONFIG_CXXWARNING="-Wall -Wno-return-type"
 CONFIG_CXXTEMPLATE=""
+CONFIG_CXXWARNING="-Wall -Wno-return-type"
 CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
@@ -827,7 +827,7 @@ case "$GXX_VERSION" in
 esac
 
 #--------------------------------------------------------------------
-# Enable debug and optimizations
+# Enable debugging, optimizations and warnings
 #--------------------------------------------------------------------
 
 optimize_default="yes"
@@ -893,6 +893,20 @@ case "$enable_optimize" in
     *)
 	CONFIG_CXXOPTIMIZE="$enable_optimize"
 	AC_MSG_RESULT([customizing optimizations, $enable_optimize]) ;;
+esac
+
+AC_ARG_ENABLE(warnings,
+[  --enable-warnings       print warning messages during compilation],
+    [], [enable_warnings="yes"])
+case "$enable_warnings" in
+    yes)
+	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
+    no)
+        CONFIG_CXXWARNING=""
+	AC_MSG_RESULT([disabling warning flags]) ;;
+    *)
+        CONFIG_CXXWARNING="$enable_warnings"
+	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
 esac
 
 #--------------------------------------------------------------------

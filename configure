@@ -845,6 +845,7 @@ Optional Features:
   --disable-fastalloc     omit fast allocator for small objects
   --enable-debug=ARG      install a debugging enable executable -ggdb
   --enable-optimize=ARG   compile with optimizations guessed
+  --enable-warnings       print warning messages during compilation
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -5818,8 +5819,8 @@ esac
 #--------------------------------------------------------------------
 
 CONFIG_CXXFLAGS=""
-CONFIG_CXXWARNING="-Wall -Wno-return-type"
 CONFIG_CXXTEMPLATE=""
+CONFIG_CXXWARNING="-Wall -Wno-return-type"
 CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
@@ -6352,7 +6353,7 @@ case "$GXX_VERSION" in
 esac
 
 #--------------------------------------------------------------------
-# Enable debug and optimizations
+# Enable debugging, optimizations and warnings
 #--------------------------------------------------------------------
 
 optimize_default="yes"
@@ -6430,6 +6431,27 @@ echo "${ECHO_T}disabling optimizations" >&6 ;;
 	CONFIG_CXXOPTIMIZE="$enable_optimize"
 	echo "$as_me:$LINENO: result: customizing optimizations, $enable_optimize" >&5
 echo "${ECHO_T}customizing optimizations, $enable_optimize" >&6 ;;
+esac
+
+# Check whether --enable-warnings or --disable-warnings was given.
+if test "${enable_warnings+set}" = set; then
+  enableval="$enable_warnings"
+
+else
+  enable_warnings="yes"
+fi;
+case "$enable_warnings" in
+    yes)
+	echo "$as_me:$LINENO: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+echo "${ECHO_T}enabling warning flags $CONFIG_CXXWARNING" >&6 ;;
+    no)
+        CONFIG_CXXWARNING=""
+	echo "$as_me:$LINENO: result: disabling warning flags" >&5
+echo "${ECHO_T}disabling warning flags" >&6 ;;
+    *)
+        CONFIG_CXXWARNING="$enable_warnings"
+	echo "$as_me:$LINENO: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+echo "${ECHO_T}enabling warning flags $CONFIG_CXXWARNING" >&6 ;;
 esac
 
 #--------------------------------------------------------------------
