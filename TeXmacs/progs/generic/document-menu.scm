@@ -127,7 +127,8 @@
 	  ---
 	  ("None" (init-env "info-flag" "none"))
 	  ("Short" (init-env "info-flag" "short"))
-	  ("Detailed" (init-env "info-flag" "detailed")))
+	  ("Detailed" (init-env "info-flag" "detailed"))
+	  ("Also on paper" (init-env "info-flag" "paper")))
       (-> "Page layout"
 	  ("Default" (init-default "page-screen-margin" "page-show-hf"
 				   "page-screen-left" "page-screen-right"
