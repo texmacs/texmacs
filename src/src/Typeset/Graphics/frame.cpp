@@ -116,7 +116,7 @@ struct compound_frame_rep: public frame_rep {
   point jacobian (point p, point v, bool &error) {
     bool error2;
     point w2= f2->jacobian (p, v, error2);
-    point w1= f1->jacobian (f2 (p), w1, error);
+    point w1= f1->jacobian (f2 (p), w2, error);
     error |= error2;
     return w1;
   }
