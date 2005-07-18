@@ -2774,27 +2774,23 @@ tmg_edit_test () {
 }
 
 SCM
-tmg_set_mouse_pointer (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+tmg_set_mouse_pointer (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-mouse-pointer");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-mouse-pointer");
-  SCM_ASSERT_INT (arg3, SCM_ARG3, "set-mouse-pointer");
-  SCM_ASSERT_INT (arg4, SCM_ARG4, "set-mouse-pointer");
 
   string in1= scm_to_string (arg1);
   string in2= scm_to_string (arg2);
-  int in3= scm_to_int (arg3);
-  int in4= scm_to_int (arg4);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->set_pointer (in1, in2, in3, in4);
+  get_server()->get_editor()->set_pointer (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
 }
 
 SCM
-tmg_set_default_mouse_pointer (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-default-mouse-pointer");
+tmg_set_predef_mouse_pointer (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-predef-mouse-pointer");
 
   string in1= scm_to_string (arg1);
 
@@ -3048,6 +3044,6 @@ initialize_glue_editor () {
   gh_new_procedure ("show-meminfo", (FN) tmg_show_meminfo, 0, 0, 0);
   gh_new_procedure ("edit-special", (FN) tmg_edit_special, 0, 0, 0);
   gh_new_procedure ("edit-test", (FN) tmg_edit_test, 0, 0, 0);
-  gh_new_procedure ("set-mouse-pointer", (FN) tmg_set_mouse_pointer, 4, 0, 0);
-  gh_new_procedure ("set-default-mouse-pointer", (FN) tmg_set_default_mouse_pointer, 1, 0, 0);
+  gh_new_procedure ("set-mouse-pointer", (FN) tmg_set_mouse_pointer, 2, 0, 0);
+  gh_new_procedure ("set-predef-mouse-pointer", (FN) tmg_set_predef_mouse_pointer, 1, 0, 0);
 }

@@ -236,9 +236,9 @@ edit_interface_rep::set_pointer (string name) {
 
 void
 edit_interface_rep::set_pointer (
-  string curs_name, string mask_name, SI x, SI y)
+  string curs_name, string mask_name)
 {
-  sv->get_display()->set_pointer(curs_name, mask_name, x, y);
+  sv->get_display()->set_pointer(curs_name, mask_name);
 }
 
 /******************************************************************************

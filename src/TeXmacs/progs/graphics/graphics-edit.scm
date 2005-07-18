@@ -170,6 +170,21 @@
   (with clip `(tuple "clip" (tuple ,l ,b) (tuple ,r ,t))
     (graphics-set-property "gr-clip" clip)))
 
+(tm-define (length-extract-unit len)
+  (define l (reverse (string->list len)))
+  (define (traverse l)
+     (if (pair? l)
+         (if (char-alphabetic? (car l))
+	     (traverse (cdr l))
+	     (set-cdr! l '())))
+  )
+  (traverse l)
+  (set! l (reverse l))
+  (if (and (pair? l) (not (char-alphabetic? (car l))))
+      (set! l (cdr l))
+  )
+  (list->string l))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grids
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1429,14 +1444,13 @@
     (if (not (== current-cursor 'text-cursor))
     (begin
        (set! current-cursor 'text-cursor)
-       (set-default-mouse-pointer "XC_top_left_arrow"))))
+       (set-predef-mouse-pointer "XC_top_left_arrow"))))
    ((== cmd 'graphics-cursor)
     (if (not (== current-cursor 'graphics-cursor))
     (begin
        (set! current-cursor 'graphics-cursor)
        (set-mouse-pointer
-	 (tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm")
-	 7 7))))
+	 (tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm")))))
       ;; TODO: There is a problem now that we use the X cursor
       ;;   during graphics editing : the cursor doesn't aligns
       ;;   on the grid anymore. A good solution to this problem
@@ -1463,7 +1477,7 @@
    ((== cmd 'undo)
     (if (and sticky-point (not graphics-undo-enabled)
 	     (in? (state-ref graphics-first-state 'graphics-action)
-		 '(start-move start-operation)))
+		 '(start-move start-operation start-redim)))
 	(begin
 	  (set! graphics-undo-enabled #t)
 	  (unredoable-undo))
@@ -2019,6 +2033,129 @@
 	       toggle-select (p obj) do-tick)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Redim graphics mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define redim-did1move #f)
+(define redim-direction #f)
+(define redim-precx #f)
+(define redim-precy #f)
+(define (redim-graphics_left-button x y)
+  (if sticky-point
+      (begin
+	(set! sticky-point #f)
+	(set! graphics-undo-enabled #t)
+	(graphics-forget-states))
+      (begin
+	(set! redim-direction #f)
+	(let* ((p (frame-direct `(point ,x ,y)))
+	       (xp (cadr p))
+	       (yp (caddr p))
+	   )
+	   (set! redim-precx (s2i xp))
+	   (set! redim-precy (s2i yp)))
+	(redim-graphics_move x y)
+	(graphics-store-state 'start-redim)
+	(set! redim-did1move #f)
+        (create-graphical-object '(nothing) #f 'points #f)
+	(set! sticky-point #t)
+	(set! graphics-undo-enabled #f))))
+
+(define (redim-graphics_move x y)
+  (let* ((p (frame-direct `(point ,x ,y)))
+	 (xp (cadr p))
+	 (yp (caddr p))
+	 (clip (get-env-stree "gr-clip"))
+	 (N (caddr (cadddr clip)))
+	 (S (caddr (caddr clip)))
+	 (E (cadr (cadddr clip)))
+	 (O (cadr (caddr clip)))
+	 (UN (length-extract-unit N))
+	 (US (length-extract-unit S))
+	 (UE (length-extract-unit E))
+	 (UND (length-decode (string-append "1" UN)))
+	 (USD (length-decode (string-append "1" US)))
+	 (UED (length-decode (string-append "1" UE)))
+     )
+     (if sticky-point
+	 (let* ((newN N)
+		(newS S)
+		(newE E)
+	    )
+	    (cond ((== redim-direction 'N)
+		   (set! newN (+ (length-decode N) (- (s2i xp) redim-precx)))
+		   (if (< newN (length-decode "2mm"))
+		       (set! newN (length-decode "2mm")))
+		   (set! newN (/ newN UND))
+		   (set! newN (string-append (i2s newN) UN))
+		  )
+		  ((== redim-direction 'S)
+		   (set! newS (- (s2i yp) (length-decode "5mm")))
+		   (if (> newS (length-decode "2mm"))
+		       (set! newS (length-decode "2mm")))
+		   (set! newS (/ newS USD))
+		   (set! newS (string-append (i2s newS) US))
+		  )
+		  ((== redim-direction 'E)
+		   (set! newE (+ (s2i xp) (length-decode "5mm")))
+		   (if (> newE (length-decode "1par"))
+		       (set! newE (length-decode "1par")))
+		   (set! newE (/ newE UED))
+		   (set! newE (string-append (i2s newE) UE))
+		  )
+	    )
+	    (with clip `(tuple "clip" (tuple ,O ,newS) (tuple ,newE ,newN))
+	       (graphics-set-property "gr-clip" clip)
+	    )
+	    (set! redim-precx (s2i xp))
+	    (set! redim-precy (s2i yp))
+	    (if redim-did1move
+	        (remove-undo-mark)
+	        (set! redim-did1move #t))
+         )
+         (let* ((OX (length-decode O))
+		(OY (length-decode S))
+		(wquad (/ (- (length-decode E) OX) 3))
+		(hquad (/ (- (length-decode N) OY) 3))
+	   )
+           (set! xp (s2i xp))
+           (set! yp (s2i yp))
+           (set! redim-direction (cond
+		 ((and (>= (- xp OX) wquad) (<= (- xp OX) (* 2 wquad))
+		       (>= (- yp OY) (* 2 hquad)))
+		  'N
+		 )
+		 ((and (>= (- xp OX) wquad) (<= (- xp OX) (* 2 wquad))
+		       (<= (- yp OY) hquad))
+		  'S
+		 )
+		 ((and (>= (- xp OX) (* 2 wquad))
+		       (>= (- yp OY) hquad) (<= (- yp OY) (* 2 hquad)))
+		  'E
+		 )
+		 (else #f)
+	   ))
+	   (cond ((== redim-direction 'N)
+		  (set-mouse-pointer
+		     (tm_xpm "tm_graphics_cursor_redimN.xpm")
+		     (tm_xpm "tm_graphics_mask_redimN.xpm"))
+		 )
+		 ((== redim-direction 'S)
+		  (set-mouse-pointer
+		     (tm_xpm "tm_graphics_cursor_redimS.xpm")
+		     (tm_xpm "tm_graphics_mask_redimS.xpm"))
+		 )
+		 ((== redim-direction 'E)
+		  (set-mouse-pointer
+		     (tm_xpm "tm_graphics_cursor_redimE.xpm")
+		     (tm_xpm "tm_graphics_mask_redimE.xpm"))
+		 )
+		 (else
+		    (set-mouse-pointer
+		       (tm_xpm "tm_graphics_cursor.xpm")
+		       (tm_xpm "tm_graphics_mask.xpm"))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2027,7 +2164,8 @@
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (edit-prop)
-	     (group-edit))
+	     (group-edit)
+	     (redim-graphics))
 	    left-button (x y)))
 
 (tm-define (graphics-move-point x y)
@@ -2035,7 +2173,8 @@
   (dispatch (car (graphics-mode))
 	    ((edit)
 	     (edit-prop)
-	     (group-edit))
+	     (group-edit)
+	     (redim-graphics))
 	    move (x y)))
 
 (tm-define (graphics-remove-point x y)
@@ -2080,7 +2219,11 @@
   (if (and (not (graphics-group-mode? old-mode))
            (graphics-group-mode? new-mode)
       )
-      (create-graphical-object '(nothing) #f 'points 'group)))
+      (create-graphical-object '(nothing) #f 'points 'group)
+  )
+  (if (== old-mode '(redim-graphics))
+      (set-mouse-pointer
+	(tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm"))))
 
 (define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
@@ -2094,5 +2237,7 @@
 	 ((== (car mode) 'edit-prop)
 	   (noop))
 	 ((== (car mode) 'group-edit)
+	   (noop))
+	 ((== (car mode) 'redim-graphics)
 	   (noop))
 	  (else (display* "Uncaptured finish\n")))))
