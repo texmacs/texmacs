@@ -107,6 +107,33 @@ xpm_colors (tree t) {
   return res;
 }
 
+array<SI>
+xpm_hotspot (tree t) {
+  array<SI> res(0);
+  string s= t[0]->label;
+  int ok, i=0, w, h, c, b, x, y;
+  skip_spaces (s, i);
+  ok= read_int (s, i, w);
+  skip_spaces (s, i);
+  ok= read_int (s, i, h) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, c) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, b) && ok;
+  if ((!ok) || (N(t)<(c+1)) || (c<=0))
+    fatal_error ("Invalid xpm tree", "x_drawable_rep::xpm_hotspot");
+
+  skip_spaces (s, i);
+  ok= read_int (s, i, x) && ok;
+  skip_spaces (s, i);
+  ok= read_int (s, i, y) && ok;
+  if (ok) {
+    res<<x;
+    res<<y;
+  }
+  return res;
+}
+
 /******************************************************************************
 * Loading postscript files or conversion to postscript
 ******************************************************************************/

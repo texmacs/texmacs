@@ -295,5 +295,5 @@
   (edit-special edit_special (void))
   (edit-test edit_test (void))
 
-  (set-mouse-pointer set_pointer (void string string int int))
-  (set-default-mouse-pointer set_pointer (void string)))
+  (set-mouse-pointer set_pointer (void string string))
+  (set-predef-mouse-pointer set_pointer (void string)))

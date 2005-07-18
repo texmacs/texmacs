@@ -506,7 +506,7 @@ x_display_rep::set_pointer (string name) {
 }
 
 void
-x_display_rep::set_pointer (string curs_name, string mask_name, SI x, SI y) {
+x_display_rep::set_pointer (string curs_name, string mask_name) {
   static hashmap<string,tree> xpm_cache ("");
   if (mask_name=="") mask_name= curs_name;
   x_drawable_rep dra= x_drawable_rep (this);
@@ -523,6 +523,9 @@ x_display_rep::set_pointer (string curs_name, string mask_name, SI x, SI y) {
     xpm_cache (mask_name)= xpm_load (mask_name);
 
   array<string> cnames_curs= xpm_colors (xpm_cache[curs_name]);
+  array<SI> hotspot= xpm_hotspot (xpm_cache[curs_name]);
+  if (N(hotspot) == 0)
+    fatal_error ("Missing hotspot", "x_display_rep::set_pointer");
   array<string> cnames_mask= xpm_colors (xpm_cache[mask_name]);
   char* bgcolor= as_charp (N(cnames_mask)>1 ? cnames_mask[1] :
 					      string ("white"));
@@ -551,6 +554,7 @@ x_display_rep::set_pointer (string curs_name, string mask_name, SI x, SI y) {
   delete[] bgcolor;
   delete[] fgcolor;
 
+  SI x= hotspot[0], y= hotspot[1];
   Cursor cursor=XCreatePixmapCursor (dpy, curs, mask, fg, bg, x, y);
   if (get_current_window != NULL)
     XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);

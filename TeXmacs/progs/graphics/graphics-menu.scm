@@ -395,4 +395,7 @@
   |
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
       (graphics-set-mode '(edit-prop)))
+  |
+  (   (balloon (icon "tm_graphics_redim.xpm") "Redim graphics")
+      (graphics-set-mode '(redim-graphics)))
 )

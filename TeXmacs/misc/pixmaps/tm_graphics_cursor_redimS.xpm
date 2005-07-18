@@ -1,6 +1,6 @@
 /* XPM */
-static char * tm_graphics_cursor_xpm[] = {
-"15 15 2 1 7 7",
+static char * tm_graphics_cursor_redimS_xpm[] = {
+"15 15 2 1 7 14",
 " 	c None",
 ".	c red",
 "               ",
@@ -10,11 +10,11 @@ static char * tm_graphics_cursor_xpm[] = {
 "       .       ",
 "       .       ",
 "       .       ",
-"  ...........  ",
 "       .       ",
-"       .       ",
-"       .       ",
-"       .       ",
+"    .  .  .    ",
+"     . . .     ",
+"      ...      ",
 "       .       ",
 "               ",
+"    .......    ",
 "               "};
