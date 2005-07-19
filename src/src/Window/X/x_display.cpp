@@ -335,36 +335,8 @@ x_display_rep::translate (string s, string from, string to) {
 }
 
 /******************************************************************************
-* Miscellaneous
+* X Pointers
 ******************************************************************************/
-
-void
-x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
-  unmap_balloon ();
-  balloon_wid = wid;
-  balloon_win = NULL;
-  balloon_x   = x;
-  balloon_y   = y;
-  balloon_time= texmacs_time ();
-}
-
-void
-x_display_rep::map_balloon () {
-  balloon_win= popup_window (balloon_wid, balloon_x, balloon_y);
-  balloon_win->map ();
-}
-
-void
-x_display_rep::unmap_balloon () {
-  if (!nil (balloon_wid)) {
-    if (balloon_win != NULL) {
-      balloon_win->unmap ();
-      delete balloon_win;
-      balloon_win= NULL;
-    }
-    balloon_wid= widget ();
-  }
-}
 
 window (*get_current_window) (void)= NULL; // FIXME: dirty hack
 
@@ -560,6 +532,38 @@ x_display_rep::set_pointer (string curs_name, string mask_name) {
     XDefineCursor(dpy, ((x_window_rep*)get_current_window())->win, cursor);
 }
 
+/******************************************************************************
+* Miscellaneous
+******************************************************************************/
+
+void
+x_display_rep::set_help_balloon (widget wid, SI x, SI y) {
+  unmap_balloon ();
+  balloon_wid = wid;
+  balloon_win = NULL;
+  balloon_x   = x;
+  balloon_y   = y;
+  balloon_time= texmacs_time ();
+}
+
+void
+x_display_rep::map_balloon () {
+  balloon_win= popup_window (balloon_wid, balloon_x, balloon_y);
+  balloon_win->map ();
+}
+
+void
+x_display_rep::unmap_balloon () {
+  if (!nil (balloon_wid)) {
+    if (balloon_win != NULL) {
+      balloon_win->unmap ();
+      delete balloon_win;
+      balloon_win= NULL;
+    }
+    balloon_wid= widget ();
+  }
+}
+
 void
 x_display_rep::set_wait_indicator (string message, string arg) {
   if ((get_current_window == NULL) || (message == "")) return;
@@ -589,4 +593,43 @@ beep () {
 #else
   cerr << '\a';
 #endif
+}
+
+/******************************************************************************
+* Check for events
+******************************************************************************/
+
+bool
+x_display_rep::check_event (int type) {
+  bool status;
+  XEvent ev;
+  switch (type) {
+  case INTERRUPT_EVENT:
+    if (interrupted) return true;
+    else  {
+      time_t now= texmacs_time ();
+      if (now - interrupt_time < 0) return false;
+      else interrupt_time= now + (100 / (XPending (dpy) + 1));
+      interrupted= XCheckMaskEvent (dpy, KeyPressMask|ButtonPressMask, &ev);
+      if (interrupted) XPutBackEvent (dpy, &ev);
+      return interrupted;
+    }
+  case INTERRUPTED_EVENT:
+    return interrupted;
+  case ANY_EVENT:
+    return (XPending (dpy)>0);
+  case MOTION_EVENT:
+    status= XCheckMaskEvent (dpy, PointerMotionMask, &ev);
+    if (status) XPutBackEvent (dpy, &ev);
+    return status;
+  case DRAG_EVENT:
+    status= XCheckMaskEvent (dpy, ButtonMotionMask, &ev);
+    if (status) XPutBackEvent (dpy, &ev);
+    return status;
+  case MENU_EVENT:
+    status= XCheckMaskEvent (dpy, ButtonMotionMask|ButtonReleaseMask, &ev);
+    if (status) XPutBackEvent (dpy, &ev);
+    return status;
+  }
+  return interrupted;
 }

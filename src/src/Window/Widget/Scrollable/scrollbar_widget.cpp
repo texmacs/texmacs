@@ -183,7 +183,7 @@ hor_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
 
   if ((type == "move") &&
       ((gripped && ev->pressed ("left")) || ev->pressed ("middle"))) {
-    if (win->check_event (DRAG_EVENT)) return;
+    if (dis->check_event (DRAG_EVENT)) return;
     SI x = encode_position (X);
     SI dx= (SI) ((after+before)*factor);
     this << emit_bar_scroll_to (x+ before- dx);
@@ -330,7 +330,7 @@ ver_scrollbar_widget_rep::handle_mouse (mouse_event ev) {
 
   if ((type == "move") &&
       ((gripped && ev->pressed ("left")) || ev->pressed ("middle"))) {
-    if (win->check_event (DRAG_EVENT)) return;
+    if (dis->check_event (DRAG_EVENT)) return;
     SI y = encode_position (Y);
     SI dy= (SI) ((after+before)*factor);
     this << emit_bar_scroll_to (y+ before- dy);

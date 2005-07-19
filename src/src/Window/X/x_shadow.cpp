@@ -35,7 +35,6 @@ x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
   x += x1 - X1;
   y += y2 - Y1;
   XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
-  event_status= event_status || src->event_status;
 }
 
 /******************************************************************************
@@ -81,7 +80,6 @@ x_drawable_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-  shadow->event_status= event_status;
   shadow->master= this;
   decode (x1, y1);
   decode (x2, y2);

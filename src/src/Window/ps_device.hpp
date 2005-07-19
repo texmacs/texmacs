@@ -22,13 +22,6 @@ typedef int color;
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
 
-#define ANY_EVENT      0
-#define INPUT_EVENT    1
-#define DRAG_EVENT     2
-#define MOTION_EVENT   3
-#define MENU_EVENT     4
-#define EVENT_STATUS   5
-
 /******************************************************************************
 * The abstract ps_device class
 ******************************************************************************/
@@ -56,8 +49,8 @@ public:
   virtual x_drawable_rep* as_x_drawable ();
   virtual void get_extents (int& w, int& h);
   virtual void next_page ();
-  virtual bool check_event (int type);
-  
+  virtual bool interrupted (bool check= false);
+
   /* basic routines */
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
