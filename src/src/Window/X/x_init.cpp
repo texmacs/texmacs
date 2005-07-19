@@ -722,8 +722,6 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   display_height= DisplayHeight (dpy, scr);
   cols          = DefaultColormap (dpy, DefaultScreen (dpy));
   state         = 0;
-  //shadow        = NULL;
-  //shadow_src    = NULL;
   gswindow      = NULL;
   argc          = argc2;
   argv          = argv2;
