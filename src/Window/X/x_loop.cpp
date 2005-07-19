@@ -348,13 +348,17 @@ x_display_rep::event_loop () {
 	  map_balloon ();
 
     // Redraw invalid windows
-    // NOTE: We might provide a small rendering time inversily proportional to
-    // the number of pending X events and look for new events only every once
-    // this time has elapsed.
+    interrupted= false;
+    interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
     iterator<Window> it= iterate (Window_to_window);
-    while (it->busy()) {
+    while (it->busy()) { // first the window which has the focus
       x_window win= (x_window) Window_to_window[it->next()];
-      win->repaint_invalid_regions();
+      if (win->has_focus) win->repaint_invalid_regions();
+    }
+    it= iterate (Window_to_window);
+    while (it->busy()) { // and then the other windows
+      x_window win= (x_window) Window_to_window[it->next()];
+      if (!win->has_focus) win->repaint_invalid_regions();
     }
 
     // Handle alarm messages

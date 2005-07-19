@@ -57,7 +57,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
-    if (attached () && win->check_event (DRAG_EVENT)) return;
+    if (attached () && dis->check_event (DRAG_EVENT)) return;
     mouse_drag (x, y);
   }
   if (type == "release-left") {

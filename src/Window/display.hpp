@@ -28,6 +28,13 @@ class display_rep;
 typedef display_rep* display;
 typedef int color;
 
+#define INTERRUPT_EVENT   0
+#define INTERRUPTED_EVENT 1
+#define ANY_EVENT         2
+#define DRAG_EVENT        3
+#define MOTION_EVENT      4
+#define MENU_EVENT        5
+
 class display_rep {
 public:
   display_rep ();
@@ -79,6 +86,7 @@ public:
   virtual void   set_pointer (string name) = 0;
   virtual void   set_pointer (string curs_name, string mask_name) = 0;
   virtual void   set_wait_indicator (string message, string arg) = 0;
+  virtual bool   check_event (int type) = 0;
 };
 
 display open_display (int argc=0, char** argv=NULL);

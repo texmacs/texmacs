@@ -51,8 +51,8 @@ ps_device_rep::next_page () {
 }
 
 bool
-ps_device_rep::check_event (int type) {
-  (void) type;
+ps_device_rep::interrupted (bool check) {
+  (void) check;
   return false;
 }
 

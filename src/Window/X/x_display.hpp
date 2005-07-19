@@ -84,6 +84,7 @@ ostream& operator << (ostream& out, message m);
 ******************************************************************************/
 
 class x_display_rep: public display_rep {
+public:
   Display*        dpy;
   GC              gc;
   GC              pixmap_gc;
@@ -106,6 +107,8 @@ class x_display_rep: public display_rep {
   SI              balloon_x;
   SI              balloon_y;
   time_t          balloon_time;
+  bool            interrupted;
+  time_t          interrupt_time;
 
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
@@ -183,6 +186,7 @@ public:
   void   set_pointer (string name);
   void   set_pointer (string curs_name, string mask_name);
   void   set_wait_indicator (string message, string arg);
+  bool   check_event (int type);
 
   /************************** Event processing *******************************/
   void process_event (x_window win, XEvent* ev);

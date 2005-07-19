@@ -197,7 +197,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
   next_animate= refresh_next;
   draw_cursor (dev);
   draw_selection (dev);
-  if (dev->check_event (EVENT_STATUS)) {
+  if (dev->interrupted ()) {
     ev->stop= true;
     l= l & rectangles (r);
     simplify (l);
@@ -416,7 +416,7 @@ int
 edit_interface_rep::idle_time (int event_type) {
   if (env_change == 0 &&
       win->repainted () &&
-      (!win->check_event (event_type)) &&
+      (!dis->check_event (event_type)) &&
       got_focus)
     return texmacs_time () - last_change;
   else return 0;
@@ -434,16 +434,18 @@ edit_interface_rep::apply_changes () {
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
   if (env_change == 0) {
-    if (last_change-last_update > 0 && idle_time (EVENT_STATUS) >= 1000/6) {
-      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-      SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
-      SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-      set_footer ();
-      if (!win->check_event (EVENT_STATUS)) drd_update ();
-      tex_autosave_cache ();
-      last_update= last_change;
-    }
+    if (last_change-last_update > 0 &&
+	idle_time (INTERRUPTED_EVENT) >= 1000/6)
+      {
+	SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+	SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+	SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
+	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+	set_footer ();
+	if (!win->interrupted ()) drd_update ();
+	tex_autosave_cache ();
+	last_update= last_change;
+      }
     return;
   }
 

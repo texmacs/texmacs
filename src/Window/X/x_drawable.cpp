@@ -32,7 +32,6 @@ x_drawable_rep::x_drawable_rep (x_display dis2, int w2, int h2):
   gc          = dis->gc;
   cur_fg      = dis->black;
   cur_bg      = dis->white;
-  event_status= false;
 
   black       = dis->black;
   white       = dis->white;
@@ -61,10 +60,20 @@ x_drawable_rep::is_x_drawable () {
   return true;
 }
 
+x_drawable_rep*
+x_drawable_rep::as_x_drawable () {
+  return this;
+}
+
 void
 x_drawable_rep::get_extents (int& w2, int& h2) {
   w2= w;
   h2= h;
+}
+
+bool
+x_drawable_rep::interrupted (bool check) {
+  return dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
 }
 
 /******************************************************************************
@@ -465,40 +474,3 @@ x_display_rep::image_gc (string name) {
 /******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
-
-bool
-x_drawable_rep::check_event (int type) {
-  bool status;
-  XEvent ev;
-  switch (type) {
-  case ANY_EVENT:
-    if (event_status) return true;
-    event_status= (XPending (dpy)>0);
-    break;
-  case INPUT_EVENT:
-    if (event_status) return true;
-    event_status= XCheckMaskEvent (dpy, KeyPressMask|ButtonPressMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case MOTION_EVENT:
-    event_status= XCheckMaskEvent (dpy, PointerMotionMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case DRAG_EVENT:
-    event_status= XCheckMaskEvent (dpy, ButtonMotionMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case MENU_EVENT:
-    status= XCheckMaskEvent (dpy, ButtonMotionMask|ButtonReleaseMask, &ev);
-    if (status) XPutBackEvent (dpy, &ev);
-    return status;
-  case EVENT_STATUS:
-    break;
-  }
-  return event_status;
-}
-
-x_drawable_rep*
-x_drawable_rep::as_x_drawable () {
-  return this;
-}

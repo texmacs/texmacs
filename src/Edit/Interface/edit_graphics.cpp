@@ -198,7 +198,7 @@ edit_graphics_rep::draw_graphical_object (ps_device dev) {
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   (void) t;
-  apply_changes (); // FIXME: remove after review of synchronization
+  // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!nil (f)) {
     point lim1, lim2;
@@ -206,14 +206,15 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
     point p = adjust (f [point (x, y)]);
     // cout << type << " at " << p << " [" << lim1 << ", " << lim2 << "]\n";
     if (N(lim1) == 2)
-      if ((p[0]<lim1[0]) || (p[0]>lim2[0]) ||
-	  (p[1]<lim1[1]) || (p[1]>lim2[1]))
+      if ((p[0]<lim1[0]) || (p[0]>lim2[0]) || (p[1]<lim1[1]) || (p[1]>lim2[1]))
 	return false;
+    if (type == "move" || type == "dragging")
+      if (dis->check_event (MOTION_EVENT))
+	return true;
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();
-    if ((type == "move") && (!win->check_event (MOTION_EVENT)))
-      call ("graphics-move-point", sx, sy);
+    if (type == "move"          ) call ("graphics-move-point"  , sx, sy);
     if (type == "release-left"  ) call ("graphics-insert-point", sx, sy);
     if (type == "release-middle") call ("graphics-remove-point", sx, sy);
     if (type == "release-right" ) call ("graphics-last-point"  , sx, sy);

@@ -362,7 +362,6 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
 void
 x_window_rep::repaint_invalid_regions () {
   rectangles new_regions;
-  event_status=false;
   while (!nil (invalid_regions)) {
     set_origin (0, 0);
     rectangle r= copy (invalid_regions->item);

@@ -24,6 +24,9 @@ static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
+static x_display_rep* cur_x_display= NULL;
+static display cur_display= NULL;
+
 /******************************************************************************
 * Set up colors
 ******************************************************************************/
@@ -726,6 +729,8 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   argc          = argc2;
   argv          = argv2;
   balloon_win   = NULL;
+  interrupted   = false;
+  interrupt_time= texmacs_time ();
 
   XSetGraphicsExposures (dpy, gc, true);
 
@@ -743,11 +748,10 @@ x_display_rep::~x_display_rep () {
   XCloseDisplay (dpy);
 }
 
-static display cur_display= NULL;
-
 display
 open_display (int argc2, char** argv2) {
-  cur_display= new x_display_rep (argc2, argv2);
+  cur_x_display= new x_display_rep (argc2, argv2);
+  cur_display  = (display) cur_x_display;
   return cur_display;
 }
 
@@ -756,6 +760,11 @@ current_display () {
   if (cur_display == NULL)
     fatal_error ("No display has been opened yet", "current_display");
   return cur_display;
+}
+
+void
+flush_display () {
+  XFlush (cur_x_display->dpy);
 }
 
 void

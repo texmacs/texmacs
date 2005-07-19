@@ -29,7 +29,6 @@ class x_drawable_rep: virtual public ps_device_rep {
   int       w, h;
   GC        gc;
   color     cur_fg, cur_bg;
-  bool      event_status;
 
 public:
 
@@ -37,9 +36,9 @@ public:
   ~x_drawable_rep ();
 
   bool is_x_drawable ();
-  virtual void get_extents (int& w, int& h);
-  bool check_event (int type);
   x_drawable_rep* as_x_drawable ();
+  virtual void get_extents (int& w, int& h);
+  bool interrupted (bool check= false);
 
   void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates
   void decode (SI& x, SI& y);  // mathematical coordinates -> X coordinates
