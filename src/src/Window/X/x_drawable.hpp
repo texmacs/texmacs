@@ -35,7 +35,11 @@ public:
 
   x_drawable_rep (x_display dis, int w=0, int h=0);
   ~x_drawable_rep ();
-  int get_type ();
+
+  bool is_x_drawable ();
+  virtual void get_extents (int& w, int& h);
+  bool check_event (int type);
+  x_drawable_rep* as_x_drawable ();
 
   void encode (SI& x, SI& y);  // X coordinates -> mathematical coordinates
   void decode (SI& x, SI& y);  // mathematical coordinates -> X coordinates
@@ -66,8 +70,11 @@ public:
   void  image (url u, SI w, SI h, SI x, SI y,
 	       double cx1, double cy1, double cx2, double cy2);
 
-  void next_page ();
-  bool check_event (int type);
+  void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y);
+  void new_shadow (ps_device& dev);
+  void delete_shadow (ps_device& dev);
+  void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   /****************************** friends ************************************/

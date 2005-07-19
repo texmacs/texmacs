@@ -56,9 +56,15 @@ x_drawable_rep::~x_drawable_rep () {
   if ((w>0) && (h>0)) XFreePixmap (dis->dpy, (Pixmap) win);
 }
 
-int
-x_drawable_rep::get_type () {
-  return PS_DEVICE_SCREEN;
+bool
+x_drawable_rep::is_x_drawable () {
+  return true;
+}
+
+void
+x_drawable_rep::get_extents (int& w2, int& h2) {
+  w2= w;
+  h2= h;
 }
 
 /******************************************************************************
@@ -460,10 +466,6 @@ x_display_rep::image_gc (string name) {
 * Miscellaneous routines
 ******************************************************************************/
 
-void
-x_drawable_rep::next_page () {
-}
-
 bool
 x_drawable_rep::check_event (int type) {
   bool status;
@@ -496,13 +498,7 @@ x_drawable_rep::check_event (int type) {
   return event_status;
 }
 
-void
-x_drawable_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-  if (this != dis->shadow) return;
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  dis->shadow_src->encode (x1, y1);
-  dis->shadow_src->encode (x2, y2);
-  dis->shadow_src->shadow_to_window (x1, y1, x2, y2);
+x_drawable_rep*
+x_drawable_rep::as_x_drawable () {
+  return this;
 }

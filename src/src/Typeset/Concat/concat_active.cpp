@@ -112,9 +112,9 @@ concater_rep::typeset_specific (tree t, path ip) {
     //typeset_dynamic (t[1], descend (ip, 1));
   }
   else if ((which == "screen") || (which == "printer")) {
-    int  type= (which == "screen"? PS_DEVICE_SCREEN: PS_DEVICE_PRINTER);
-    box  sb  = typeset_as_concat (env, attach_middle (t[1], ip));
-    box  b   = specific_box (decorate_middle (ip), sb, type, env->fn);
+    bool pr= (which != "screen");
+    box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
+    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
     marker (descend (ip, 0));
     print (STD_ITEM, b);
     marker (descend (ip, 1));

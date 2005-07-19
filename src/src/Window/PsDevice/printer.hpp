@@ -51,7 +51,8 @@ public:
   printer_rep (display dis, url ps_file_name, int dpi, int nr_pages,
 	       string ptype, bool landsc, double paper_w, double paper_h);
   ~printer_rep ();
-  int get_type ();
+  bool is_printer ();
+  void next_page ();
 
   /*********************** subroutines for printing **************************/
 
@@ -91,8 +92,11 @@ public:
   void  image (url u, SI w, SI h, SI x, SI y,
 	       double cx1, double cy1, double cx2, double cy2);
 
-  void next_page ();
-  bool check_event (int type);
+  void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y);
+  void new_shadow (ps_device& dev);
+  void delete_shadow (ps_device& dev);
+  void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2);
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 };
 

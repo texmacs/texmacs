@@ -709,6 +709,7 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   if ((dpy= XOpenDisplay (NULL)) == NULL)
     fatal_error ("I failed to connect to Xserver",
 		 "x_display_rep::x_display_rep");
+  // XSynchronize (dpy, true);
 
   XGCValues values;
 
@@ -721,8 +722,8 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   display_height= DisplayHeight (dpy, scr);
   cols          = DefaultColormap (dpy, DefaultScreen (dpy));
   state         = 0;
-  shadow        = NULL;
-  shadow_src    = NULL;
+  //shadow        = NULL;
+  //shadow_src    = NULL;
   gswindow      = NULL;
   argc          = argc2;
   argv          = argv2;

@@ -47,12 +47,14 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0)
+  oc (0, 0), shadow (NULL)
 {
   input_mode= INPUT_NORMAL;
 }
 
-edit_interface_rep::~edit_interface_rep () {}
+edit_interface_rep::~edit_interface_rep () {
+  win->delete_shadow (shadow);
+}
 
 edit_interface_rep::operator tree () {
   return tuple ("editor", as_string (get_name ()));
@@ -62,6 +64,7 @@ void
 edit_interface_rep::suspend () {
   got_focus= false;
   notify_change (THE_FOCUS);
+  win->delete_shadow (shadow);
 }
 
 void
@@ -150,10 +153,25 @@ edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 extern int nr_painted;
 
 void
+edit_interface_rep::prepare_shadow (repaint_event ev) {
+  win->new_shadow (shadow);  
+  win->get_shadow (shadow,
+		   ev->x1/sfactor, ev->y1/sfactor,
+		   ev->x2/sfactor, ev->y2/sfactor);
+}
+
+void
 edit_interface_rep::draw_text (repaint_event ev) {
+  //for (int hh=0; hh<10000000; hh++);
+  //ps_device dev= shadow;
+  /*
   ps_device dev= win->window_to_shadow (
     ev->x1/sfactor, ev->y1/sfactor,
     ev->x2/sfactor, ev->y2/sfactor);
+  */
+  //ps_device dev= shadow;
+  prepare_shadow (ev);
+  ps_device dev= shadow;
   dev->set_shrinking_factor (sfactor);
   string bg= get_init_string (BG_COLOR);
   dev->set_background (dis->get_color (bg));
@@ -173,7 +191,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
   rectangles l= copy_always;
   while (!nil (l)) {
     rectangle r (l->item);
-    dev->apply_shadow (r->x1, r->y1, r->x2, r->y2);
+    win->put_shadow (dev, r->x1, r->y1, r->x2, r->y2);
     l= l->next;
   }
   // rectangles l;
@@ -206,7 +224,7 @@ edit_interface_rep::draw_text (repaint_event ev) {
     SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
     SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
     dev->outer_round (x1, y1, x2, y2);
-    win->shadow_to_window (x1, y1, x2, y2);
+    win->put_shadow (dev, x1, y1, x2, y2);
     l= l->next;
   }
 }
