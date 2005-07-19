@@ -62,6 +62,8 @@ protected:
   string        completion_prefix;
   int           completion_pos;
   ps_device     shadow;
+  rectangles    stored_rects;
+  ps_device     stored;
 
 public:
   edit_interface_rep ();
@@ -83,13 +85,13 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */
-  void prepare_shadow (repaint_event ev);
   void draw_text (repaint_event ev);
   void draw_surround (ps_device dev, SI X1, SI Y1, SI X2, SI Y2);
   void draw_context (repaint_event ev);
   void draw_env (ps_device dev);
   void draw_cursor (ps_device dev);
   void draw_selection (ps_device dev);
+  void draw_graphics (ps_device dev);
 
   /* handle changes */
   void notify_change (int changed);
