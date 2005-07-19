@@ -125,7 +125,6 @@ void
 hor_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI X1, X2;
   decode_position (X1, X2);
-  // ps_device dev= win->window_to_shadow (ev->x1, ev->y1, ev->x2, ev->y2);
   layout_dark (win, 0, 0, w, h);
   layout_lower (win, 0, 0, w, h); 
   layout_default (win, X1, PIXEL, X2, h-PIXEL);
@@ -135,7 +134,6 @@ hor_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI ah= h-4*PIXEL;
   layout_left_arrow (win, 2*PIXEL, 2*PIXEL, aw, ah);
   layout_right_arrow (win, w- 2*PIXEL- aw, 2*PIXEL, aw, ah);
-  // win->shadow_to_window (ev->x1, ev->y1, ev->x2, ev->y2);
 }
 
 void
@@ -274,7 +272,6 @@ void
 ver_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI Y1, Y2;
   decode_position (Y1, Y2);
-  // ps_device dev= win->window_to_shadow (ev->x1, ev->y1, ev->x2, ev->y2);
   layout_dark (win, 0, 0, w, h);
   layout_lower (win, 0, 0, w, h); 
   layout_default (win, PIXEL, Y1, w- PIXEL, Y2);
@@ -284,7 +281,6 @@ ver_scrollbar_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   SI ah= (((w/PIXEL)*3)/4)*PIXEL;
   layout_up_arrow (win, 2*PIXEL, h- 2*PIXEL- ah, aw, ah);
   layout_down_arrow (win, 2*PIXEL, 2*PIXEL, aw, ah);
-  // win->shadow_to_window (ev->x1, ev->y1, ev->x2, ev->y2);
 }
 
 void

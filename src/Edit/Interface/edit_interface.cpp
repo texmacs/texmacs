@@ -162,14 +162,6 @@ edit_interface_rep::prepare_shadow (repaint_event ev) {
 
 void
 edit_interface_rep::draw_text (repaint_event ev) {
-  //for (int hh=0; hh<10000000; hh++);
-  //ps_device dev= shadow;
-  /*
-  ps_device dev= win->window_to_shadow (
-    ev->x1/sfactor, ev->y1/sfactor,
-    ev->x2/sfactor, ev->y2/sfactor);
-  */
-  //ps_device dev= shadow;
   prepare_shadow (ev);
   ps_device dev= shadow;
   dev->set_shrinking_factor (sfactor);
