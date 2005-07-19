@@ -86,7 +86,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
   string info_flag= env->get_string (INFO_FLAG);
   if (info_flag == "short") {
     box infob= info_box (dip, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
+    box specb= specific_box (ip, infob, false, env->fn);
     print (STD_ITEM, specb);
   }
   if (info_flag == "detailed" || info_flag == "paper") {
@@ -95,7 +95,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
     if (info_flag == "detailed") {
-      box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
+      box specb= specific_box (ip, flagb, false, env->fn);
       print (STD_ITEM, specb);
     }
     else {

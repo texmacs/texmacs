@@ -185,9 +185,10 @@ x_window_rep::~x_window_rep () {
   XDestroyWindow (dpy, win);
 }
 
-int
-x_window_rep::get_type () {
-  return PS_DEVICE_SCREEN;
+void
+x_window_rep::get_extents (int& w, int& h) {
+  w= win_w;
+  h= win_h;
 }
 
 /******************************************************************************
@@ -440,52 +441,6 @@ x_window_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
 bool
 x_window_rep::repainted () {
   return nil (invalid_regions);
-}
-
-ps_device
-x_window_rep::window_to_shadow (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  SI scx1= x1+ ox;
-  SI scy1= y1+ oy;
-  SI scx2= x2+ ox;
-  SI scy2= y2+ oy;
-  decode (x1, y1);
-  decode (x2, y2);
-  if ((dis->shadow==NULL) || (x2 > dis->shadow->w) || (y1 > dis->shadow->h)) {
-    SI w= max (x2, dis->display_width);
-    SI h= max (y1, dis->display_height);
-    if (dis->shadow != NULL) delete dis->shadow;
-    dis->shadow= new x_drawable_rep (dis, w, h);
-  } 
-  XCopyArea (dpy, win, dis->shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-
-  dis->shadow->ox = ox;
-  dis->shadow->oy = oy;
-  dis->shadow->cx1= scx1;
-  dis->shadow->cy1= scy1;
-  dis->shadow->cx2= scx2;
-  dis->shadow->cy2= scy2;
-  dis->shadow->event_status= event_status;
-  dis->shadow_src= this;
-
-  return dis->shadow;
-}
-
-void
-x_window_rep::shadow_to_window (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  decode (x1, y1);
-  decode (x2, y2);
-  XCopyArea (dpy, dis->shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  event_status= event_status || dis->shadow->event_status;
 }
 
 /******************************************************************************

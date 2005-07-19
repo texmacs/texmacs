@@ -61,6 +61,7 @@ protected:
   array<string> completions;
   string        completion_prefix;
   int           completion_pos;
+  ps_device     shadow;
 
 public:
   edit_interface_rep ();
@@ -82,6 +83,7 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */
+  void prepare_shadow (repaint_event ev);
   void draw_text (repaint_event ev);
   void draw_surround (ps_device dev, SI X1, SI Y1, SI X2, SI Y2);
   void draw_context (repaint_event ev);

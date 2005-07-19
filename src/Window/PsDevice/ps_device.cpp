@@ -12,11 +12,53 @@
 
 #include "ps_device.hpp"
 
+/******************************************************************************
+* Constructors
+******************************************************************************/
+
 ps_device_rep::ps_device_rep ():
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
-  sfactor (1), pixel (PIXEL), thicken (0) {}
+  sfactor (1), pixel (PIXEL), thicken (0), master (NULL) {}
 
 ps_device_rep::~ps_device_rep () {}
+
+/******************************************************************************
+* Device specific
+******************************************************************************/
+
+bool
+ps_device_rep::is_printer () {
+  return false;
+}
+
+bool
+ps_device_rep::is_x_drawable () {
+  return false;
+}
+
+void
+ps_device_rep::get_extents (int& w, int& h) {
+  w= h= 0;
+}
+
+x_drawable_rep*
+ps_device_rep::as_x_drawable () {
+  return NULL;
+}
+
+void
+ps_device_rep::next_page () {
+}
+
+bool
+ps_device_rep::check_event (int type) {
+  (void) type;
+  return false;
+}
+
+/******************************************************************************
+* Origin and shrinking factor
+******************************************************************************/
 
 void
 ps_device_rep::set_origin (SI x, SI y) {
@@ -42,6 +84,10 @@ ps_device_rep::set_shrinking_factor (int sf) {
   cx1 *= sfactor; cy1 *= sfactor;
   cx2 *= sfactor; cy2 *= sfactor;
 }
+
+/******************************************************************************
+* Clipping
+******************************************************************************/
 
 void
 ps_device_rep::get_clipping (SI &x1, SI &y1, SI &x2, SI &y2) {
@@ -127,6 +173,10 @@ abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
   x2= RND (x2+PIXEL-1);
   y2= RND (y2+PIXEL-1);
 }
+
+/******************************************************************************
+* Default rendering routines
+******************************************************************************/
 
 void
 ps_device_rep::triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {

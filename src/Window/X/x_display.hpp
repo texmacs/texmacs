@@ -98,8 +98,8 @@ class x_display_rep: public display_rep {
   list<widget>    grab_kbd;
   unsigned int    state;
   list<message>   messages;
-  x_drawable_rep* shadow;
-  x_window_rep*   shadow_src;
+  //x_drawable_rep* shadow;
+  //x_drawable_rep* shadow_src;
   x_window_rep*   gswindow;
   int             argc;
   char**          argv;

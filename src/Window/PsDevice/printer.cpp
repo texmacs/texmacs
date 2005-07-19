@@ -143,14 +143,10 @@ printer_rep::~printer_rep () {
   save_string (ps_file_name, ps_text);
 }
 
-int
-printer_rep::get_type () {
-  return PS_DEVICE_PRINTER;
+bool
+printer_rep::is_printer () {
+  return true;
 }
-
-/******************************************************************************
-* subroutines for printing
-******************************************************************************/
 
 void
 printer_rep::next_page () {
@@ -169,6 +165,10 @@ printer_rep::next_page () {
   xpos= 0;
   ypos= 0;
 }
+
+/******************************************************************************
+* subroutines for printing
+******************************************************************************/
 
 void
 printer_rep::define (string s, string defn) {
@@ -690,10 +690,30 @@ printer_rep::image (
   (void) w; (void) h;
 }
 
-bool
-printer_rep::check_event (int type) {
-  (void) type;
-  return false;
+void
+printer_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
+  (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) dev; (void) x; (void) y;
+}
+
+void
+printer_rep::new_shadow (ps_device& dev) {
+  (void) dev;
+}
+
+void
+printer_rep::delete_shadow (ps_device& dev) {
+  (void) dev;
+}
+
+void
+printer_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) dev; (void) x1; (void) y1; (void) x2; (void) y2;
+}
+
+void
+printer_rep::put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
+  (void) dev; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void

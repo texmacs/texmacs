@@ -19,17 +19,18 @@
 
 struct specific_box_rep: public box_rep {
   box b;
-  int type;
-  specific_box_rep (path ip, box b2, int type2, font fn):
-    box_rep (ip), b (b2), type (type2) {
+  bool printer_flag;
+  specific_box_rep (path ip, box b2, bool flag, font fn):
+    box_rep (ip), b (b2), printer_flag (flag) {
       x1=x2=y1=0;
       y2=fn->yx;
       x3= b->x3; y3= b->y3;
       x4= b->x4; y4= b->y4;
     }
-  operator tree () { return tuple ("specific", (tree) b, as_string (type)); }
+  operator tree () {
+    return tuple ("specific", (tree) b, as_string (printer_flag)); }
   void display (ps_device dev) {
-    if (dev->get_type () == type) {
+    if (dev->is_printer () == printer_flag) {
       rectangles rs;
       b->redraw (dev, path (), rs);
     }
@@ -109,8 +110,8 @@ info_box_rep::info_box_rep (
 ******************************************************************************/
 
 box
-specific_box (path ip, box b, int type, font fn) {
-  return new specific_box_rep (ip, b, type, fn);
+specific_box (path ip, box b, bool printer_flag, font fn) {
+  return new specific_box_rep (ip, b, printer_flag, fn);
 }
 
 box flag_box (path ip, box b, SI h, SI lw, color dark, color light) {
