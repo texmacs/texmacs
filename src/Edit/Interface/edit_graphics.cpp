@@ -169,7 +169,7 @@ edit_graphics_rep::invalidate_graphical_object () {
 
 void
 edit_graphics_rep::draw_graphical_object (ps_device dev) {
-  if (nil (go_box)) set_graphical_object(graphical_object);
+  if (nil (go_box)) set_graphical_object (graphical_object);
   if (nil (go_box)) return;
   point lim1, lim2;
   find_limits (lim1, lim2);

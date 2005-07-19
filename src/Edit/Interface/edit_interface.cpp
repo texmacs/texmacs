@@ -47,13 +47,14 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0), shadow (NULL)
+  oc (0, 0), shadow (NULL), stored (NULL)
 {
   input_mode= INPUT_NORMAL;
 }
 
 edit_interface_rep::~edit_interface_rep () {
   win->delete_shadow (shadow);
+  win->delete_shadow (stored);
 }
 
 edit_interface_rep::operator tree () {
@@ -65,6 +66,7 @@ edit_interface_rep::suspend () {
   got_focus= false;
   notify_change (THE_FOCUS);
   win->delete_shadow (shadow);
+  win->delete_shadow (stored);
 }
 
 void
@@ -147,22 +149,68 @@ edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 }
 
 /******************************************************************************
+* subroutines for repainting the window
+******************************************************************************/
+
+static bool
+is_graphical (tree t) {
+  return
+    is_func (t, _POINT) ||
+    is_func (t, LINE) || is_func (t, CLINE) ||
+    is_func (t, ARC) || is_func (t, CARC) ||
+    is_func (t, SPLINE) || is_func (t, CSPLINE);
+}
+
+void
+edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
+  p= path_up (p);
+  if (p == rp) return;
+  tree st= subtree (et, p);
+  if (is_atomic (st) ||
+      drd->is_child_enforcing (st) ||
+      //is_document (st) || is_concat (st) ||
+      is_func (st, TABLE) || is_func (st, SUBTABLE) ||
+      is_func (st, ROW) || is_func (st, TFORMAT) ||
+      is_graphical (st) ||
+      (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
+      (is_compound (st, "math", 1) &&
+       is_compound (subtree (et, path_up (p)), "input")))
+    compute_env_rects (p, rs, recurse);
+  else {
+    bool right;
+    path p1= p * 0, p2= p * 1, q1, q2;
+    if (is_script (subtree (et, p), right)) {
+      p1= start (et, p * 0);
+      p2= end   (et, p * 0);
+    }
+    if (is_func (st, CELL)) { q1= p1; q2= p2; }
+    else selection_correct (et, p1, p2, q1, q2);
+    selection sel= eb->find_check_selection (q1, q2);
+    rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
+			       thicken (sel->rs, 0, 2*pixel)));
+    if (recurse) compute_env_rects (p, rs, recurse);
+  }
+}
+
+/******************************************************************************
 * repainting the window
 ******************************************************************************/
 
 extern int nr_painted;
 
 void
-edit_interface_rep::prepare_shadow (repaint_event ev) {
-  win->new_shadow (shadow);  
-  win->get_shadow (shadow,
-		   ev->x1/sfactor, ev->y1/sfactor,
-		   ev->x2/sfactor, ev->y2/sfactor);
-}
-
-void
 edit_interface_rep::draw_text (repaint_event ev) {
-  prepare_shadow (ev);
+  SI sh_x1= ev->x1/sfactor, sh_y1= ev->y1/sfactor;
+  SI sh_x2= ev->x2/sfactor, sh_y2= ev->y2/sfactor;
+  rectangle sh_r (sh_x1, sh_y1, sh_x2, sh_y2);
+  if (rectangles (sh_r) - stored_rects == rectangles ()) {
+    if (stored != NULL)
+      win->put_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
+    return;
+  }
+
+  win->new_shadow (shadow);
+  win->get_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
   ps_device dev= shadow;
   dev->set_shrinking_factor (sfactor);
   string bg= get_init_string (BG_COLOR);
@@ -219,6 +267,13 @@ edit_interface_rep::draw_text (repaint_event ev) {
     win->put_shadow (dev, x1, y1, x2, y2);
     l= l->next;
   }
+
+  if (!dev->interrupted ())
+    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
+      win->new_shadow (stored);
+      win->get_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
+      stored_rects= rectangles (sh_r, stored_rects);
+    }
 }
 
 void
@@ -238,15 +293,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
   if (got_focus || full_screen) {
     draw_env (dev);
     cursor cu= get_cursor();
-    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
-    /*dev->set_line_style (pixel);
-      dev->set_color (dis->red);
-      dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
-      dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);*/
-      eval ("(graphics-reset-context 'graphics-cursor)");
-      draw_graphical_object (dev);
-    }
-    else {
+    if (!inside_graphics () || get_env_string (PREAMBLE) != "false") {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
       SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
@@ -279,7 +326,6 @@ edit_interface_rep::draw_cursor (ps_device dev) {
 	if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
 	dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
       }
-      eval ("(graphics-reset-context 'text-cursor)");
     }
   }
 }
@@ -320,6 +366,17 @@ edit_interface_rep::draw_selection (ps_device dev) {
 }
 
 void
+edit_interface_rep::draw_graphics (ps_device dev) {
+  if (got_focus || full_screen) {
+    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
+      eval ("(graphics-reset-context 'graphics-cursor)");
+      draw_graphical_object (dev);
+    }
+    else eval ("(graphics-reset-context 'text-cursor)");
+  }
+}
+
+void
 edit_interface_rep::handle_clear (clear_event ev) {
   SI X1= ev->x1 * sfactor, Y1= ev->y1 * sfactor;
   SI X2= ev->x2 * sfactor, Y2= ev->y2 * sfactor;
@@ -349,6 +406,7 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   draw_context (sev);
   draw_cursor (win);
   draw_selection (win);
+  draw_graphics (win);
   win->set_shrinking_factor (1);
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
@@ -541,6 +599,11 @@ edit_interface_rep::apply_changes () {
     }
   }
 
+  // cout << "Handling backing store\n";
+  if (env_change & (THE_TREE + THE_ENVIRONMENT + THE_SELECTION +
+		    THE_EXTENTS + THE_FOCUS))
+    stored_rects= rectangles ();
+
   // cout << "Handling environment changes\n";
   if (env_change & THE_ENVIRONMENT)
     this << emit_invalidate_all ();
@@ -582,46 +645,6 @@ edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
 void
 edit_interface_rep::full_screen_mode (bool flag) {
   full_screen= flag;
-}
-
-static bool
-is_graphical (tree t) {
-  return
-    is_func (t, _POINT) ||
-    is_func (t, LINE) || is_func (t, CLINE) ||
-    is_func (t, ARC) || is_func (t, CARC) ||
-    is_func (t, SPLINE) || is_func (t, CSPLINE);
-}
-
-void
-edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
-  p= path_up (p);
-  if (p == rp) return;
-  tree st= subtree (et, p);
-  if (is_atomic (st) ||
-      drd->is_child_enforcing (st) ||
-      //is_document (st) || is_concat (st) ||
-      is_func (st, TABLE) || is_func (st, SUBTABLE) ||
-      is_func (st, ROW) || is_func (st, TFORMAT) ||
-      is_graphical (st) ||
-      (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
-      (is_compound (st, "math", 1) &&
-       is_compound (subtree (et, path_up (p)), "input")))
-    compute_env_rects (p, rs, recurse);
-  else {
-    bool right;
-    path p1= p * 0, p2= p * 1, q1, q2;
-    if (is_script (subtree (et, p), right)) {
-      p1= start (et, p * 0);
-      p2= end   (et, p * 0);
-    }
-    if (is_func (st, CELL)) { q1= p1; q2= p2; }
-    else selection_correct (et, p1, p2, q1, q2);
-    selection sel= eb->find_check_selection (q1, q2);
-    rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-			       thicken (sel->rs, 0, 2*pixel)));
-    if (recurse) compute_env_rects (p, rs, recurse);
-  }
 }
 
 void
