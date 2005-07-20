@@ -586,19 +586,6 @@ x_display_rep::set_wait_indicator (string message, string arg) {
   old_wid << emit_invalidate_all ();
 }
 
-void
-beep () {
-#ifdef OS_WIN32
-  XBeep ();
-#else
-  cerr << '\a';
-#endif
-}
-
-/******************************************************************************
-* Check for events
-******************************************************************************/
-
 bool
 x_display_rep::check_event (int type) {
   bool status;
@@ -632,4 +619,20 @@ x_display_rep::check_event (int type) {
     return status;
   }
   return interrupted;
+}
+
+bool
+x_display_rep::partial_redrawing (bool new_value) {
+  bool old_value= partial_redraw_flag;
+  partial_redraw_flag= new_value;
+  return old_value;
+}
+
+void
+beep () {
+#ifdef OS_WIN32
+  XBeep ();
+#else
+  cerr << '\a';
+#endif
 }

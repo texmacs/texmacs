@@ -87,6 +87,7 @@ public:
   virtual void   set_pointer (string curs_name, string mask_name) = 0;
   virtual void   set_wait_indicator (string message, string arg) = 0;
   virtual bool   check_event (int type) = 0;
+  virtual bool   partial_redrawing (bool new_value) = 0;
 };
 
 display open_display (int argc=0, char** argv=NULL);

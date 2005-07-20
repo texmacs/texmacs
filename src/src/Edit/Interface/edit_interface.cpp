@@ -125,16 +125,15 @@ edit_interface_rep::invalidate (rectangles rs) {
 }
 
 void
-edit_interface_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
-  SERVER (get_visible (x1, y1, x2, y2));
-  x1*=sfactor; y1*=sfactor; x2*=sfactor; y2*=sfactor;
+edit_interface_rep::update_visible () {
+  SERVER (get_visible (vx1, vy1, vx2, vy2));
+  vx1 *= sfactor; vy1 *= sfactor; vx2 *= sfactor; vy2 *= sfactor;
 }
 
 SI
 edit_interface_rep::get_window_height () {
-  SI x1, y1, x2, y2;
-  get_visible (x1, y1, x2, y2);
-  return (y2-y1);
+  update_visible ();
+  return vy2 - vy1;
 }
 
 void
@@ -204,20 +203,6 @@ void
 edit_interface_rep::draw_text (repaint_event ev) {
   SI sh_x1= ev->x1/sfactor, sh_y1= ev->y1/sfactor;
   SI sh_x2= ev->x2/sfactor, sh_y2= ev->y2/sfactor;
-  rectangle sh_r (sh_x1, sh_y1, sh_x2, sh_y2);
-  if (rectangles (sh_r) - stored_rects == rectangles ()) {
-    if (stored == NULL) return;
-    SI w1, h1, w2, h2;
-    win    -> get_extents (w1, h1);
-    stored -> get_extents (w2, h2);
-    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2)
-      stored_rects= rectangles ();
-    else {
-      win->put_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
-      return;
-    }
-  }
-
   win->new_shadow (shadow);
   win->get_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
   ps_device dev= shadow;
@@ -254,35 +239,33 @@ edit_interface_rep::draw_text (repaint_event ev) {
   next_animate= refresh_next;
   draw_cursor (dev);
   draw_selection (dev);
+
   if (dev->interrupted ()) {
     ev->stop= true;
     l= l & rectangles (r);
     simplify (l);
-  }
-  else l= rectangles (r);
-  copy_always= translate (copy_always, dev->ox, dev->oy);
-  while (!nil (copy_always)) {
-    l= rectangles (copy_always->item, l);
-    copy_always= copy_always->next;
-  }
 
-  dev->set_shrinking_factor (1);
-  while (!nil(l)) {
-    SI x1= (l->item->x1)/sfactor - dev->ox - PIXEL;
-    SI y1= (l->item->y1)/sfactor - dev->oy - PIXEL;
-    SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
-    SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
-    dev->outer_round (x1, y1, x2, y2);
-    win->put_shadow (dev, x1, y1, x2, y2);
-    l= l->next;
-  }
-
-  if (!dev->interrupted ())
-    if (inside_active_graphics ()) {
-      win->new_shadow (stored);
-      win->get_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
-      stored_rects= simplify (rectangles (sh_r, stored_rects));
+    copy_always= translate (copy_always, dev->ox, dev->oy);
+    while (!nil (copy_always)) {
+      l= rectangles (copy_always->item, l);
+      copy_always= copy_always->next;
     }
+
+    dev->set_shrinking_factor (1);
+    while (!nil(l)) {
+      SI x1= (l->item->x1)/sfactor - dev->ox - PIXEL;
+      SI y1= (l->item->y1)/sfactor - dev->oy - PIXEL;
+      SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
+      SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
+      dev->outer_round (x1, y1, x2, y2);
+      win->put_shadow (dev, x1, y1, x2, y2);
+      l= l->next;
+    }
+  }
+  else {
+    dev->set_shrinking_factor (1);
+    win->put_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
+  }
 }
 
 void
@@ -407,10 +390,39 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   // cout << "Repainting\n";
   // Repaint slightly more in order to hide trace of moving cursor
   SI extra= 3 * get_init_int(FONT_BASE_SIZE) * PIXEL / (2*sfactor);
-  event sev= ::emit_repaint
-    ((ev->x1-extra)*sfactor, (ev->y1-extra)*sfactor,
-     (ev->x2+extra)*sfactor, (ev->y2+extra)*sfactor, ev->stop);
-  draw_text (sev);
+  SI sx1= (ev->x1-extra) * sfactor, sy1= (ev->y1-extra) * sfactor;
+  SI sx2= (ev->x2+extra) * sfactor, sy2= (ev->y2+extra) * sfactor;
+  rectangle sr (sx1, sy1, sx2, sy2);
+  event sev= ::emit_repaint (sx1, sy1, sx2, sy2, ev->stop);
+
+  if (!nil (stored_rects)) {
+    SI w1, h1, w2, h2;
+    win    -> get_extents (w1, h1);
+    stored -> get_extents (w2, h2);
+    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
+      //cout << "x"; cout.flush ();
+      stored_rects= rectangles ();
+    }
+  }
+
+  if (nil (rectangles (sr) - stored_rects)) {
+    if (stored != NULL)
+      win->put_shadow (stored,
+		       sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
+    //cout << "*"; cout.flush ();
+  }
+  else {
+    draw_text (sev);
+    //cout << "."; cout.flush ();
+    if (!win->interrupted ())
+      if (inside_active_graphics ()) {
+	win->new_shadow (stored);
+	win->get_shadow (stored,
+			 sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
+	stored_rects= stored_rects | rectangles (sr);
+      }
+  }
+
   win->set_shrinking_factor (sfactor);
   draw_context (sev);
   draw_cursor (win);
@@ -440,42 +452,40 @@ void
 edit_interface_rep::cursor_visible () {
   cursor cu= get_cursor ();
   cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
-  SI x1, y1, x2, y2;
-  get_visible (x1, y1, x2, y2);
-  if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  x1) ||
-      (cu->ox+ ((SI) (cu->y2 * cu->slope)) >= x2) ||
-      (cu->oy+ cu->y1 <  y1) ||
-      (cu->oy+ cu->y2 >= y2))
+  update_visible ();
+  if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
+      (cu->ox+ ((SI) (cu->y2 * cu->slope)) >= vx2) ||
+      (cu->oy+ cu->y1 <  vy1) ||
+      (cu->oy+ cu->y2 >= vy2))
     {
-      scroll_to (cu->ox- ((x2-x1)>>1), cu->oy+ ((y2-y1)>>1));
+      scroll_to (cu->ox- ((vx2-vx1)>>1), cu->oy+ ((vy2-vy1)>>1));
       this << emit_invalidate_all ();
     }
 }
 
 void
 edit_interface_rep::selection_visible () {
-  SI x1, y1, x2, y2;
-  get_visible (x1, y1, x2, y2);
-  if ((x2-x1 <= 80*pixel) || (y2-y1 <= 80*pixel)) return;
+  update_visible ();
+  if ((vx2 - vx1 <= 80*pixel) || (vy2 - vy1 <= 80*pixel)) return;
 
   bool scroll_x=
-    (end_x <  x1+20*pixel) ||
-    (end_x >= x2-20*pixel);
+    (end_x <  vx1 + 20*pixel) ||
+    (end_x >= vx2 - 20*pixel);
   bool scroll_y=
-    (end_y <  y1+20*pixel) ||
-    (end_y >= y2-20*pixel);
-  SI new_x= x1;
-  if (scroll_x) new_x= end_x- ((x2-x1)>>1);
-  SI new_y= y2;
-  if (scroll_y) new_y= end_y+ ((y2-y1)>>1);
+    (end_y <  vy1 + 20*pixel) ||
+    (end_y >= vy2 - 20*pixel);
+  SI new_x= vx1;
+  if (scroll_x) new_x= end_x - ((vx2-vx1)>>1);
+  SI new_y= vy2;
+  if (scroll_y) new_y= end_y + ((vy2-vy1)>>1);
 
   if (scroll_x || scroll_y) {
     scroll_to (new_x, new_y);
     this << emit_invalidate_all ();
-    SI X1, Y1, X2, Y2;
-    get_visible (X1, Y1, X2, Y2);
-    end_x += X1- x1;
-    end_y += Y1- y1;
+    SI old_vx1= vx1, old_vy1= vy1;
+    update_visible ();
+    end_x += vx1- old_vx1;
+    end_y += vy1- old_vy1;
   }
 }
 
@@ -517,6 +527,10 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
+
+  // cout << "Always\n";
+  update_visible ();
+  dis->partial_redrawing (nil (stored_rects));
 
   // cout << "Handling automatic resizing\n";
   if (env_change & THE_AUTOMATIC_SIZE) {
@@ -613,6 +627,14 @@ edit_interface_rep::apply_changes () {
   if (!nil (stored_rects)) {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION+THE_EXTENTS))
       stored_rects= rectangles ();
+  }
+  if (inside_active_graphics ()) {
+    SI gx1, gy1, gx2, gy2;
+    if (find_graphical_region (gx1, gy1, gx2, gy2)) {
+      rectangle gr= rectangle (gx1, gy1, gx2, gy2);
+      if (!nil (gr - stored_rects))
+	invalidate (gx1, gy1, gx2, gy2);
+    }
   }
 
   // cout << "Handling environment changes\n";

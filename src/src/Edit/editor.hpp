@@ -179,6 +179,7 @@ public:
   virtual frame  find_frame () = 0;
   virtual grid   find_grid () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
+  virtual bool   find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
   virtual tree   graphical_select (double x, double y) = 0;
