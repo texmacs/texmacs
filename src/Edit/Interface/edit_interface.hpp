@@ -86,13 +86,17 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */
-  void draw_text (repaint_event ev);
+  void draw_text (ps_device dev, rectangles& l);
   void draw_surround (ps_device dev, SI X1, SI Y1, SI X2, SI Y2);
-  void draw_context (repaint_event ev);
+  void draw_context (ps_device dev, repaint_event ev);
   void draw_env (ps_device dev);
   void draw_cursor (ps_device dev);
   void draw_selection (ps_device dev);
   void draw_graphics (ps_device dev);
+  void draw_pre (ps_device dev, repaint_event ev);
+  void draw_post (ps_device dev, repaint_event ev);
+  ps_device draw_with_shadow (repaint_event ev);
+  void draw_with_stored (repaint_event ev);
 
   /* handle changes */
   void notify_change (int changed);

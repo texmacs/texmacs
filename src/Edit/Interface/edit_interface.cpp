@@ -200,72 +200,16 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 extern int nr_painted;
 
 void
-edit_interface_rep::draw_text (repaint_event ev) {
-  SI sh_x1= ev->x1/sfactor, sh_y1= ev->y1/sfactor;
-  SI sh_x2= ev->x2/sfactor, sh_y2= ev->y2/sfactor;
-  win->new_shadow (shadow);
-  win->get_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
-  ps_device dev= shadow;
-  dev->set_shrinking_factor (sfactor);
-  string bg= get_init_string (BG_COLOR);
-  dev->set_background (dis->get_color (bg));
-  rectangle r (
-    ev->x1+ dev->ox, ev->y1+ dev->oy,
-    ev->x2+ dev->ox, ev->y2+ dev->oy);
-  clear_rectangles (dev, rectangles (r));
-  draw_surround (dev, ev->x1, ev->y1, ev->x2, ev->y2);
-  //win->set_shrinking_factor (sfactor);
-  //win->set_background (dis->red);
-  //clear_rectangles (win, rectangles (r));  
-  //win->set_shrinking_factor (1);
-  //dev->set_background (dis->get_color (bg));
-
-  draw_cursor (dev);
-  // rectangles l= translate (copy_always, dev->ox, dev->oy);
-  rectangles l= copy_always;
-  while (!nil (l)) {
-    rectangle r (l->item);
-    win->put_shadow (dev, r->x1, r->y1, r->x2, r->y2);
-    l= l->next;
-  }
-  // rectangles l;
+edit_interface_rep::draw_text (ps_device dev, rectangles& l) {
   nr_painted=0;
   bool tp_found= false;
+  string bg= get_init_string (BG_COLOR);
   dev->set_background (dis->get_color (bg));
   refresh_needed= do_animate;
   refresh_next  = next_animate;
   eb->redraw (dev, eb->find_box_path (tp, tp_found), l);
   do_animate  = refresh_needed;
   next_animate= refresh_next;
-  draw_cursor (dev);
-  draw_selection (dev);
-
-  if (dev->interrupted ()) {
-    ev->stop= true;
-    l= l & rectangles (r);
-    simplify (l);
-
-    copy_always= translate (copy_always, dev->ox, dev->oy);
-    while (!nil (copy_always)) {
-      l= rectangles (copy_always->item, l);
-      copy_always= copy_always->next;
-    }
-
-    dev->set_shrinking_factor (1);
-    while (!nil(l)) {
-      SI x1= (l->item->x1)/sfactor - dev->ox - PIXEL;
-      SI y1= (l->item->y1)/sfactor - dev->oy - PIXEL;
-      SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
-      SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
-      dev->outer_round (x1, y1, x2, y2);
-      win->put_shadow (dev, x1, y1, x2, y2);
-      l= l->next;
-    }
-  }
-  else {
-    dev->set_shrinking_factor (1);
-    win->put_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
-  }
 }
 
 void
@@ -333,16 +277,16 @@ edit_interface_rep::draw_surround (ps_device dev, SI X1, SI Y1, SI X2, SI Y2) {
 }
 
 void
-edit_interface_rep::draw_context (repaint_event ev) {
+edit_interface_rep::draw_context (ps_device dev, repaint_event ev) {
   int i;
-  win->set_color (dis->light_grey);
-  win->set_line_style (pixel);
+  dev->set_color (dis->light_grey);
+  dev->set_line_style (pixel);
   for (i=1; i<N(eb[0]); i++) {
     SI y= eb->sy(0)+ eb[0]->sy2(i);
     if ((y >= ev->y1) && (y < ev->y2))
-      win->line (ev->x1, y, ev->x2, y);
+      dev->line (ev->x1, y, ev->x2, y);
   }
-  draw_surround (win, ev->x1, ev->y1, ev->x2, ev->y2);
+  draw_surround (dev, ev->x1, ev->y1, ev->x2, ev->y2);
 }
 
 void
@@ -369,6 +313,125 @@ edit_interface_rep::draw_graphics (ps_device dev) {
 }
 
 void
+edit_interface_rep::draw_pre (ps_device dev, repaint_event ev) {
+  // draw surroundings
+  string bg= get_init_string (BG_COLOR);
+  dev->set_background (dis->get_color (bg));
+  rectangle r (
+    ev->x1+ dev->ox, ev->y1+ dev->oy,
+    ev->x2+ dev->ox, ev->y2+ dev->oy);
+  clear_rectangles (dev, rectangles (r));
+  draw_surround (dev, ev->x1, ev->y1, ev->x2, ev->y2);
+
+  // predraw cursor
+  draw_cursor (dev);
+  rectangles l= copy_always;
+  while (!nil (l)) {
+    rectangle r (l->item);
+    win->put_shadow (dev, r->x1, r->y1, r->x2, r->y2);
+    l= l->next;
+  }
+}
+
+void
+edit_interface_rep::draw_post (ps_device dev, repaint_event ev) {
+  dev->set_shrinking_factor (sfactor);
+  draw_context (dev, ev);
+  draw_cursor (dev);
+  draw_selection (dev);
+  draw_graphics (dev);
+  dev->set_shrinking_factor (1);
+}
+
+ps_device
+edit_interface_rep::draw_with_shadow (repaint_event ev) {
+  SI sh_x1= ev->x1/sfactor, sh_y1= ev->y1/sfactor;
+  SI sh_x2= ev->x2/sfactor, sh_y2= ev->y2/sfactor;
+  win->new_shadow (shadow);
+  win->get_shadow (shadow, sh_x1, sh_y1, sh_x2, sh_y2);
+  ps_device dev= shadow;
+
+  rectangles l;
+  dev->set_shrinking_factor (sfactor);
+  draw_pre (dev, ev);
+  draw_text (dev, l);
+  dev->set_shrinking_factor (1);
+
+  if (dev->interrupted ()) {
+    dev->set_shrinking_factor (sfactor);
+    rectangle r (ev->x1+ dev->ox, ev->y1+ dev->oy,
+		 ev->x2+ dev->ox, ev->y2+ dev->oy);
+    ev->stop= true;
+    l= l & rectangles (r);
+    simplify (l);
+
+    copy_always= translate (copy_always, dev->ox, dev->oy);
+    while (!nil (copy_always)) {
+      l= rectangles (copy_always->item, l);
+      copy_always= copy_always->next;
+    }
+    dev->set_shrinking_factor (1);
+
+    draw_post (dev, ev);
+    while (!nil(l)) {
+      SI x1= (l->item->x1)/sfactor - dev->ox - PIXEL;
+      SI y1= (l->item->y1)/sfactor - dev->oy - PIXEL;
+      SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
+      SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
+      dev->outer_round (x1, y1, x2, y2);
+      win->put_shadow (dev, x1, y1, x2, y2);
+      l= l->next;
+    }
+  }
+  return dev;
+}
+
+void
+edit_interface_rep::draw_with_stored (repaint_event ev) {
+  SI sx1= ev->x1, sy1= ev->y1;
+  SI sx2= ev->x2, sy2= ev->y2;
+  rectangle sr (sx1, sy1, sx2, sy2);
+
+  /* Verify whether the backing store is still valid */
+  if (!nil (stored_rects)) {
+    SI w1, h1, w2, h2;
+    win    -> get_extents (w1, h1);
+    stored -> get_extents (w2, h2);
+    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
+      //cout << "x"; cout.flush ();
+      stored_rects= rectangles ();
+    }
+  }
+
+  /* Either draw with backing store or regenerate */
+  if (nil (rectangles (sr) - stored_rects)) {
+    //cout << "*"; cout.flush ();
+    if (stored != NULL)
+      win->new_shadow (shadow);
+    ps_device dev= shadow;
+    dev->put_shadow (stored,
+		     sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
+    draw_post (dev, ev);
+    win->put_shadow (dev, sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
+  }
+  else {
+    //cout << "."; cout.flush ();
+    ps_device dev= draw_with_shadow (ev);
+    if (!win->interrupted ()) {
+      if (inside_active_graphics ()) {
+	win->new_shadow (stored);
+	dev->get_shadow (stored,
+			 sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
+	stored_rects= stored_rects | rectangles (sr);
+      }
+      draw_post (dev, ev);
+      win->put_shadow (dev, sx1/sfactor,sy1/sfactor, sx2/sfactor,sy2/sfactor);
+    }
+    else draw_post (win, ev);
+  }
+}
+
+void
 edit_interface_rep::handle_clear (clear_event ev) {
   SI X1= ev->x1 * sfactor, Y1= ev->y1 * sfactor;
   SI X2= ev->x2 * sfactor, Y2= ev->y2 * sfactor;
@@ -389,46 +452,11 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
 
   // cout << "Repainting\n";
   // Repaint slightly more in order to hide trace of moving cursor
-  SI extra= 3 * get_init_int(FONT_BASE_SIZE) * PIXEL / (2*sfactor);
+  SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL / (2*sfactor);
   SI sx1= (ev->x1-extra) * sfactor, sy1= (ev->y1-extra) * sfactor;
   SI sx2= (ev->x2+extra) * sfactor, sy2= (ev->y2+extra) * sfactor;
-  rectangle sr (sx1, sy1, sx2, sy2);
   event sev= ::emit_repaint (sx1, sy1, sx2, sy2, ev->stop);
-
-  if (!nil (stored_rects)) {
-    SI w1, h1, w2, h2;
-    win    -> get_extents (w1, h1);
-    stored -> get_extents (w2, h2);
-    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
-      //cout << "x"; cout.flush ();
-      stored_rects= rectangles ();
-    }
-  }
-
-  if (nil (rectangles (sr) - stored_rects)) {
-    if (stored != NULL)
-      win->put_shadow (stored,
-		       sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
-    //cout << "*"; cout.flush ();
-  }
-  else {
-    draw_text (sev);
-    //cout << "."; cout.flush ();
-    if (!win->interrupted ())
-      if (inside_active_graphics ()) {
-	win->new_shadow (stored);
-	win->get_shadow (stored,
-			 sx1/sfactor, sy1/sfactor, sx2/sfactor, sy2/sfactor);
-	stored_rects= stored_rects | rectangles (sr);
-      }
-  }
-
-  win->set_shrinking_factor (sfactor);
-  draw_context (sev);
-  draw_cursor (win);
-  draw_selection (win);
-  draw_graphics (win);
-  win->set_shrinking_factor (1);
+  draw_with_stored (sev);
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
   // cout << "Repainted\n";
