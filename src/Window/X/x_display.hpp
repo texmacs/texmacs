@@ -109,6 +109,7 @@ public:
   time_t          balloon_time;
   bool            interrupted;
   time_t          interrupt_time;
+  bool            partial_redraw_flag;
 
   hashmap<x_character,pointer> color_scale;       // for anti-aliasing
   hashmap<x_character,pointer> character_bitmap;  // bitmaps of all characters
@@ -187,6 +188,7 @@ public:
   void   set_pointer (string curs_name, string mask_name);
   void   set_wait_indicator (string message, string arg);
   bool   check_event (int type);
+  bool   partial_redrawing (bool new_value);
 
   /************************** Event processing *******************************/
   void process_event (x_window win, XEvent* ev);

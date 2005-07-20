@@ -716,21 +716,22 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
 
   XGCValues values;
 
-  scr           = DefaultScreen (dpy);
-  root          = RootWindow (dpy, scr);
-  gc            = XCreateGC (dpy, root, 0, &values);
-  pixmap_gc     = XCreateGC (dpy, root, 0, &values);
-  depth         = DefaultDepth (dpy, scr);
-  display_width = DisplayWidth  (dpy, scr);
-  display_height= DisplayHeight (dpy, scr);
-  cols          = DefaultColormap (dpy, DefaultScreen (dpy));
-  state         = 0;
-  gswindow      = NULL;
-  argc          = argc2;
-  argv          = argv2;
-  balloon_win   = NULL;
-  interrupted   = false;
-  interrupt_time= texmacs_time ();
+  scr                = DefaultScreen (dpy);
+  root               = RootWindow (dpy, scr);
+  gc                 = XCreateGC (dpy, root, 0, &values);
+  pixmap_gc          = XCreateGC (dpy, root, 0, &values);
+  depth              = DefaultDepth (dpy, scr);
+  display_width      = DisplayWidth  (dpy, scr);
+  display_height     = DisplayHeight (dpy, scr);
+  cols               = DefaultColormap (dpy, DefaultScreen (dpy));
+  state              = 0;
+  gswindow           = NULL;
+  argc               = argc2;
+  argv               = argv2;
+  balloon_win        = NULL;
+  interrupted        = false;
+  interrupt_time     = texmacs_time ();
+  partial_redraw_flag= true;
 
   XSetGraphicsExposures (dpy, gc, true);
 

@@ -62,6 +62,7 @@ protected:
   string        completion_prefix;
   int           completion_pos;
   ps_device     shadow;
+  SI            vx1, vy1, vx2, vy2;
   rectangles    stored_rects;
   ps_device     stored;
 
@@ -79,7 +80,7 @@ public:
   void set_shrinking_factor (int sf);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);
-  void get_visible (SI& x1, SI& y1, SI& x2, SI& y2);
+  void update_visible ();
   SI   get_window_height ();
   void scroll_to (SI x, SI y1);
   void set_extents (SI x1, SI y1, SI x2, SI y2);

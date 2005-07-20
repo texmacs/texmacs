@@ -348,17 +348,19 @@ x_display_rep::event_loop () {
 	  map_balloon ();
 
     // Redraw invalid windows
-    interrupted= false;
-    interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
-    iterator<Window> it= iterate (Window_to_window);
-    while (it->busy()) { // first the window which has the focus
-      x_window win= (x_window) Window_to_window[it->next()];
-      if (win->has_focus) win->repaint_invalid_regions();
-    }
-    it= iterate (Window_to_window);
-    while (it->busy()) { // and then the other windows
-      x_window win= (x_window) Window_to_window[it->next()];
-      if (!win->has_focus) win->repaint_invalid_regions();
+    if (XPending (dpy) == 0 || partial_redraw_flag) {
+      interrupted= false;
+      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
+      iterator<Window> it= iterate (Window_to_window);
+      while (it->busy()) { // first the window which has the focus
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (win->has_focus) win->repaint_invalid_regions();
+      }
+      it= iterate (Window_to_window);
+      while (it->busy()) { // and then the other windows
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (!win->has_focus) win->repaint_invalid_regions();
+      }
     }
 
     // Handle alarm messages

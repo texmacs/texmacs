@@ -84,6 +84,20 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
   if (bp_found) eb->find_limits (path_up (bp), lim1, lim2);
 }
 
+bool
+edit_graphics_rep::find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) {
+  point lim1, lim2;
+  find_limits (lim1, lim2);
+  if (lim1 == point ()) return false;
+  frame f= find_frame ();
+  if (nil (f)) return false;
+  point p1= f (point (lim1[0], lim1[1]));
+  point p2= f (point (lim2[0], lim2[1]));
+  x1= (SI) p1[0]; y1= (SI) p1[1];
+  x2= (SI) p2[0]; y2= (SI) p2[1];
+  return true;
+}
+
 point
 edit_graphics_rep::adjust (point p) {
   frame f= find_frame ();
@@ -176,17 +190,11 @@ void
 edit_graphics_rep::draw_graphical_object (ps_device dev) {
   if (nil (go_box)) set_graphical_object (graphical_object);
   if (nil (go_box)) return;
-  point lim1, lim2;
-  find_limits (lim1, lim2);
   SI ox1, oy1, ox2, oy2;
   dev->get_clipping (ox1, oy1, ox2, oy2);
-  frame f= find_frame ();
-  if (!nil (f)) {
-    point p1= f (point (lim1[0], lim1[1]));
-    point p2= f (point (lim2[0], lim2[1]));
-    if (lim1 != point ())
-      dev->extra_clipping ((SI) p1[0], (SI) p1[1], (SI) p2[0], (SI) p2[1]);
-  }
+  SI gx1, gy1, gx2, gy2;
+  if (find_graphical_region (gx1, gy1, gx2, gy2))
+    dev->extra_clipping (gx1, gy1, gx2, gy2);
   int i;
   for (i=0; i<go_box->subnr(); i++) {
     box b= go_box->subbox (i);
