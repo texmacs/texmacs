@@ -28,6 +28,7 @@ public:
   ~edit_graphics_rep ();
 
   bool   inside_graphics ();
+  bool   inside_active_graphics ();
   tree   get_graphics ();
   frame  find_frame ();
   grid   find_grid ();

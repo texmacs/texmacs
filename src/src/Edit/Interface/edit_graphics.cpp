@@ -42,6 +42,11 @@ edit_graphics_rep::inside_graphics () {
   return flag || (L(st) == GRAPHICS);
 }
 
+bool
+edit_graphics_rep::inside_active_graphics () {
+  return inside_graphics () && get_env_string (PREAMBLE) == "false";
+}
+
 tree
 edit_graphics_rep::get_graphics () {
   path p   = path_up (tp);

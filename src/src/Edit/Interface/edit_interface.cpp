@@ -139,11 +139,13 @@ edit_interface_rep::get_window_height () {
 
 void
 edit_interface_rep::scroll_to (SI x, SI y) {
+  stored_rects= rectangles ();
   SERVER (scroll_to (x/sfactor, y/sfactor));
 }
 
 void
 edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
+  stored_rects= rectangles ();
   SERVER (set_extents ((x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
 		       (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor));
 }
@@ -204,9 +206,16 @@ edit_interface_rep::draw_text (repaint_event ev) {
   SI sh_x2= ev->x2/sfactor, sh_y2= ev->y2/sfactor;
   rectangle sh_r (sh_x1, sh_y1, sh_x2, sh_y2);
   if (rectangles (sh_r) - stored_rects == rectangles ()) {
-    if (stored != NULL)
+    if (stored == NULL) return;
+    SI w1, h1, w2, h2;
+    win    -> get_extents (w1, h1);
+    stored -> get_extents (w2, h2);
+    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2)
+      stored_rects= rectangles ();
+    else {
       win->put_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
-    return;
+      return;
+    }
   }
 
   win->new_shadow (shadow);
@@ -269,10 +278,10 @@ edit_interface_rep::draw_text (repaint_event ev) {
   }
 
   if (!dev->interrupted ())
-    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
+    if (inside_active_graphics ()) {
       win->new_shadow (stored);
       win->get_shadow (stored, sh_x1, sh_y1, sh_x2, sh_y2);
-      stored_rects= rectangles (sh_r, stored_rects);
+      stored_rects= simplify (rectangles (sh_r, stored_rects));
     }
 }
 
@@ -293,7 +302,7 @@ edit_interface_rep::draw_cursor (ps_device dev) {
   if (got_focus || full_screen) {
     draw_env (dev);
     cursor cu= get_cursor();
-    if (!inside_graphics () || get_env_string (PREAMBLE) != "false") {
+    if (!inside_active_graphics ()) {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
       SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
@@ -368,7 +377,7 @@ edit_interface_rep::draw_selection (ps_device dev) {
 void
 edit_interface_rep::draw_graphics (ps_device dev) {
   if (got_focus || full_screen) {
-    if (inside_graphics () && get_env_string (PREAMBLE) == "false") {
+    if (inside_active_graphics ()) {
       eval ("(graphics-reset-context 'graphics-cursor)");
       draw_graphical_object (dev);
     }
@@ -559,7 +568,8 @@ edit_interface_rep::apply_changes () {
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
-      cursor_visible ();
+      if (!inside_active_graphics ())
+	cursor_visible ();
 
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
@@ -600,9 +610,10 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Handling backing store\n";
-  if (env_change & (THE_TREE + THE_ENVIRONMENT + THE_SELECTION +
-		    THE_EXTENTS + THE_FOCUS))
-    stored_rects= rectangles ();
+  if (!nil (stored_rects)) {
+    if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION+THE_EXTENTS))
+      stored_rects= rectangles ();
+  }
 
   // cout << "Handling environment changes\n";
   if (env_change & THE_ENVIRONMENT)
