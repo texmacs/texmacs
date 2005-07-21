@@ -115,6 +115,11 @@ intersection (rectangle r1, rectangle r2, rectangles& l) {
 }
 
 rectangle
+operator * (rectangle r, int d) {
+  return rectangle (r->x1*d, r->y1*d, r->x2*d, r->y2*d);
+}
+
+rectangle
 operator / (rectangle r, int d) {
   return rectangle (r->x1/d, r->y1/d, r->x2/d, r->y2/d);
 }
@@ -186,6 +191,12 @@ thicken (rectangles l, SI width, SI height) {
   return rectangles (rectangle (r->x1- width, r->y1- height,
 				r->x2+ width, r->y2+ height),
 		     thicken (l->next, width, height));
+}
+
+rectangles
+operator * (rectangles l, int d) {
+  if (nil (l)) return l;
+  return rectangles (l->item*d, l->next*d);
 }
 
 rectangles

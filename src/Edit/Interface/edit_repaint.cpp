@@ -205,6 +205,8 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 
 void
 edit_interface_rep::draw_with_stored (rectangle r) {
+  // cout << "Redraw " << (r/(sfactor*PIXEL)) << "\n";
+
   /* Verify whether the backing store is still valid */
   if (!nil (stored_rects)) {
     SI w1, h1, w2, h2;
@@ -269,13 +271,20 @@ edit_interface_rep::handle_repaint (repaint_event ev) {
   if (env_change != 0)
     system_warning ("Invalid situation",
 		    "(edit_interface_rep::handle_repaint)");
-
-  // cout << "Repainting\n";
-  // Repaint slightly more in order to hide trace of moving cursor
+  /*
+  // In the past, we used the code below in order to hide the trace of
+  // a moving cursor. This code is now incorrect, because the rectangle
+  // (x1, y1)--(x2, y2) does not correspond to the repaint region clipping.
+  // Nevertheless, the code seems no longer necessary. In case it would be,
+  // it should be moved somewhere inside the internal repaint routines.
   SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL / (2*sfactor);
   SI x1= (ev->x1-extra) * sfactor, y1= (ev->y1-extra) * sfactor;
   SI x2= (ev->x2+extra) * sfactor, y2= (ev->y2+extra) * sfactor;
   draw_with_stored (rectangle (x1, y1, x2, y2));
+  */
+
+  // cout << "Repainting\n";
+  draw_with_stored (rectangle (ev->x1, ev->y1, ev->x2, ev->y2) * sfactor);
   if (win->interrupted ()) ev->stop= true;
   if (last_change-last_update > 0)
     last_change = texmacs_time ();
