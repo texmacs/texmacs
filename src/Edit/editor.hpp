@@ -109,6 +109,7 @@ public:
   virtual void resume () = 0;
   virtual int  get_pixel_size () = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void invalidate (rectangles rs) = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;

@@ -39,6 +39,7 @@ bool intersect (rectangle r1, rectangle r2);
 bool operator <= (rectangle r1, rectangle r2);
 rectangle translate (rectangle r, SI x, SI y);
 rectangle operator / (rectangle r, int d);
+double area (rectangle r);
 
 typedef list<rectangle> rectangles;
 
@@ -51,5 +52,6 @@ rectangles thicken (rectangles l, SI width, SI height);
 rectangles correct (rectangles l);
 rectangles simplify (rectangles l);
 rectangle  least_upper_bound (rectangles l);
+double area (rectangles r);
 
 #endif // defined RECTANGLES_H

@@ -166,7 +166,7 @@ edit_interface_rep::draw_post (ps_device dev, rectangle r) {
   dev->set_shrinking_factor (1);
 }
 
-ps_device
+void
 edit_interface_rep::draw_with_shadow (rectangle r) {
   rectangle sr= r / sfactor;
   win->new_shadow (shadow);
@@ -201,45 +201,47 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
       l= l->next;
     }
   }
-  return dev;
 }
 
 void
 edit_interface_rep::draw_with_stored (rectangle r) {
-  rectangle sr= r / sfactor;
-
   /* Verify whether the backing store is still valid */
   if (!nil (stored_rects)) {
     SI w1, h1, w2, h2;
     win    -> get_extents (w1, h1);
     stored -> get_extents (w2, h2);
     if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
-      //cout << "x"; cout.flush ();
+      // cout << "x"; cout.flush ();
       stored_rects= rectangles ();
     }
   }
 
   /* Either draw with backing store or regenerate */
-  if (nil (rectangles (r) - stored_rects)) {
-    //cout << "*"; cout.flush ();
-    if (stored != NULL)
-      win->new_shadow (shadow);
-    ps_device dev= shadow;
-    dev->put_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
-    draw_post (dev, r);
-    win->put_shadow (dev, sr->x1, sr->y1, sr->x2, sr->y2);
+  rectangle sr= r / sfactor;
+  if (nil (rectangles (r) - stored_rects) && !nil (stored_rects)) {
+    // cout << "*"; cout.flush ();
+    win->new_shadow (shadow);
+    win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
+    shadow->put_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+    draw_post (shadow, r);
+    win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
   }
   else {
-    //cout << "."; cout.flush ();
-    ps_device dev= draw_with_shadow (r);
+    // cout << "."; cout.flush ();
+    draw_with_shadow (r);
     if (!win->interrupted ()) {
       if (inside_active_graphics ()) {
 	win->new_shadow (stored);
-	dev->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
-	stored_rects= stored_rects | rectangles (r);
+	//win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
+	//win->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+	shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+	//stored_rects= /*stored_rects |*/ rectangles (r);
+	stored_rects= simplify (rectangles (r, stored_rects));
+	//cout << "Stored: " << stored_rects << "\n";
+	//cout << "M"; cout.flush ();
       }
-      draw_post (dev, r);
-      win->put_shadow (dev, sr->x1, sr->y1, sr->x2, sr->y2);
+      draw_post (shadow, r);
+      win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
     }
     else draw_post (win, r);
   }
