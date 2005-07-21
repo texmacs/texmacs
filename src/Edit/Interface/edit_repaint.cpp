@@ -11,11 +11,6 @@
 ******************************************************************************/
 
 #include "Interface/edit_interface.hpp"
-//#include "file.hpp"
-//#include "convert.hpp"
-//#include "server.hpp"
-//#include "tm_buffer.hpp"
-//#include "Metafont/tex_files.hpp"
 
 extern int nr_painted;
 extern void clear_rectangles (ps_device dev, rectangles l);
@@ -234,8 +229,6 @@ edit_interface_rep::draw_with_stored (rectangle r) {
     if (!win->interrupted ()) {
       if (inside_active_graphics ()) {
 	win->new_shadow (stored);
-	//win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
-	//win->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
 	shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
 	//stored_rects= /*stored_rects |*/ rectangles (r);
 	stored_rects= simplify (rectangles (r, stored_rects));
