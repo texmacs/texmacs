@@ -15,6 +15,11 @@
 #include "string.hpp"
 #include "tm_configure.hpp"
 
+#ifndef HAVE_TIME_T
+#define HAVE_TIME_T
+typedef long time_t;
+#endif
+
 #ifdef OS_SUN
 #include <sys/types.h>
 #endif

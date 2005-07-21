@@ -23,6 +23,12 @@ using std::cout;
 using std::cerr;
 // instead of include <iostream.h>
 
+#ifdef HAVE_INTPTR_T
+#include <stdint.h>
+#else
+typedef long intptr_t;
+#endif
+
 #ifdef OS_WIN32
 #define LESSGTR
 #else
@@ -84,7 +90,7 @@ inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
-inline int hash (pointer ptr) { return (long) ptr; }
+inline int hash (pointer ptr) { return (intptr_t) ptr; }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 

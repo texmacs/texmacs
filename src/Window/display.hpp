@@ -14,11 +14,7 @@
 #define DISPLAY_H
 #include "tree.hpp"
 #include "bitmap_font.hpp"
-
-#ifndef _TIME_T
-#define _TIME_T
-typedef long time_t;
-#endif
+#include "timer.hpp"
 
 struct font;
 class widget;
