@@ -174,15 +174,19 @@ edit_graphics_rep::set_graphical_object (tree t) {
 
 void
 edit_graphics_rep::invalidate_graphical_object () {
-  if (nil (go_box)) return;
-  int i;
-  for (i=0; i<go_box->subnr(); i++) {
-    box b= go_box->subbox (i);
-    SI x1= b->x3 - 2*PIXEL;
-    SI y1= b->y3 - 2*PIXEL;
-    SI x2= b->x4 + 2*PIXEL;
-    SI y2= b->y4 + 2*PIXEL;
-    invalidate (x1, y1, x2, y2);
+  SI gx1, gy1, gx2, gy2;
+  if (find_graphical_region (gx1, gy1, gx2, gy2) && !nil (go_box)) {
+    int i;
+    rectangles rs;
+    rectangle gr (gx1, gy1, gx2, gy2);
+    for (i=0; i<go_box->subnr(); i++) {
+      box b= go_box->subbox (i);
+      rs= rectangles (rectangle (b->x3, b->y3, b->x4, b->y4), rs);
+    }
+    rectangle lub= least_upper_bound (rs);
+    if (area (lub) < 2.0 * area (rs)) rs= rectangles (lub);
+    rs= rs & rectangles (gr);
+    invalidate (rs);
   }
 }
 

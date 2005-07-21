@@ -95,7 +95,7 @@ public:
   void draw_graphics (ps_device dev);
   void draw_pre (ps_device dev, rectangle r);
   void draw_post (ps_device dev, rectangle r);
-  ps_device draw_with_shadow (rectangle r);
+  void draw_with_shadow (rectangle r);
   void draw_with_stored (rectangle r);
 
   /* handle changes */

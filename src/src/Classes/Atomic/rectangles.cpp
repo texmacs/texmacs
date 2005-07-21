@@ -75,6 +75,13 @@ translate (rectangle r, SI x, SI y) {
   return rectangle (r->x1+x, r->y1+y, r->x2+x, r->y2+y);
 }
 
+double
+area (rectangle r) {
+  double w= max (r->x2 - r->x1, 0);
+  double h= max (r->y2 - r->y1, 0);
+  return w*h;
+}
+
 /******************************************************************************
 * Miscellaneous subroutines
 ******************************************************************************/
@@ -214,4 +221,14 @@ least_upper_bound (rectangles l) {
     r1->y2= max (r1->y2, r2->y2);
   }
   return r1;
+}
+
+double
+area (rectangles r) {
+  double sum= 0.0;
+  while (!nil (r)) {
+    sum += area (r->item);
+    r= r->next;
+  }
+  return sum;
 }
