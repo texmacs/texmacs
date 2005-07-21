@@ -47,7 +47,7 @@ bool operator != (x_character xc1, x_character xc2) {
     (xc1->sf!=xc2->sf) || (xc1->fg!=xc2->fg) || (xc1->bg!=xc2->bg); }
 
 int hash (x_character xc) {
-  return xc->c ^ ((long) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
+  return xc->c ^ ((intptr_t) xc->fng.rep) ^ xc->fg ^ xc->bg ^ xc->sf; }
 
 void
 x_display_rep::prepare_color (int sf, color fg, color bg) {
