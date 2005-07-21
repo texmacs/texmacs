@@ -87,31 +87,30 @@ public:
 
   /* repainting the window */
   void draw_text (ps_device dev, rectangles& l);
-  void draw_surround (ps_device dev, SI X1, SI Y1, SI X2, SI Y2);
-  void draw_context (ps_device dev, repaint_event ev);
+  void draw_surround (ps_device dev, rectangle r);
+  void draw_context (ps_device dev, rectangle r);
   void draw_env (ps_device dev);
   void draw_cursor (ps_device dev);
   void draw_selection (ps_device dev);
   void draw_graphics (ps_device dev);
-  void draw_pre (ps_device dev, repaint_event ev);
-  void draw_post (ps_device dev, repaint_event ev);
-  ps_device draw_with_shadow (repaint_event ev);
-  void draw_with_stored (repaint_event ev);
+  void draw_pre (ps_device dev, rectangle r);
+  void draw_post (ps_device dev, rectangle r);
+  ps_device draw_with_shadow (rectangle r);
+  void draw_with_stored (rectangle r);
 
   /* handle changes */
   void notify_change (int changed);
   bool has_changed (int question);
-  void cursor_visible ();
-  void selection_visible ();
-  void apply_changes ();
-  void animate ();
   int  idle_time (int event_type= ANY_EVENT);
   int  change_time ();
+  void apply_changes ();
+  void animate ();
 
   /* miscellaneous */
-  bool kbd_get_command (string which, string& help, command& cmd);
-  void full_screen_mode (bool flag);
   void compute_env_rects (path p, rectangles& rs, bool recurse);
+  void cursor_visible ();
+  void selection_visible ();
+  void full_screen_mode (bool flag);
   void before_menu_action ();
   void after_menu_action ();
 
@@ -123,6 +122,7 @@ public:
   bool in_search_mode ();
   bool in_replace_mode ();
   bool in_spell_mode ();
+  bool kbd_get_command (string which, string& help, command& cmd);
   bool try_shortcut (string comb);
   void key_press (string key);
   void emulate_keyboard (string keys, string action= "");

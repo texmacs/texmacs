@@ -1,0 +1,281 @@
+
+/******************************************************************************
+* MODULE     : edit_repaint.cpp
+* DESCRIPTION: repaint invalid rectangles
+* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+******************************************************************************/
+
+#include "Interface/edit_interface.hpp"
+//#include "file.hpp"
+//#include "convert.hpp"
+//#include "server.hpp"
+//#include "tm_buffer.hpp"
+//#include "Metafont/tex_files.hpp"
+
+extern int nr_painted;
+extern void clear_rectangles (ps_device dev, rectangles l);
+
+/******************************************************************************
+* repainting the window
+******************************************************************************/
+
+void
+edit_interface_rep::draw_text (ps_device dev, rectangles& l) {
+  nr_painted=0;
+  bool tp_found= false;
+  string bg= get_init_string (BG_COLOR);
+  dev->set_background (dis->get_color (bg));
+  refresh_needed= do_animate;
+  refresh_next  = next_animate;
+  eb->redraw (dev, eb->find_box_path (tp, tp_found), l);
+  do_animate  = refresh_needed;
+  next_animate= refresh_next;
+}
+
+void
+edit_interface_rep::draw_env (ps_device dev) {
+  if (!full_screen) {
+    rectangles rs= env_rects;
+    while (!nil (rs)) {
+      dev->set_color (dis->rgb (0, 255, 255));
+      dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
+      rs= rs->next;
+    }
+  }
+}
+
+void
+edit_interface_rep::draw_cursor (ps_device dev) {
+  if (got_focus || full_screen) {
+    draw_env (dev);
+    cursor cu= get_cursor();
+    if (!inside_active_graphics ()) {
+      cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
+      SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
+      SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
+      dev->set_line_style (pixel);
+      string mode= get_env_string (MODE);
+      string family, series;
+      if ((mode == "text") || (mode == "src")) {
+	family= get_env_string (FONT_FAMILY);
+	series= get_env_string (FONT_SERIES);
+      }
+      else if (mode == "math") {
+	family= get_env_string (MATH_FONT_FAMILY);
+	series= get_env_string (MATH_FONT_SERIES);
+      }
+      else if (mode == "prog") {
+	family= get_env_string (PROG_FONT_FAMILY);
+	series= get_env_string (PROG_FONT_SERIES);
+      }
+      if (cu->valid) {
+	if (mode == "math")
+	  dev->set_color (dis->rgb (192, 0, 255));
+	else dev->set_color (dis->red);
+      }
+      else dev->set_color (dis->green);
+      SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
+      if (family == "ss") lserif= rserif= 0;
+      dev->line (x1-lserif, y1, x1+rserif, y1);
+      if (y1<=y2-pixel) {
+	dev->line (x1, y1, x2, y2-pixel);
+	if (series == "bold") dev->line (x1-pixel, y1, x2-pixel, y2-pixel);
+	dev->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+      }
+    }
+  }
+}
+
+void
+edit_interface_rep::draw_surround (ps_device dev, rectangle r) {
+  dev->set_background (dis->light_grey);
+  string medium= get_init_string (PAGE_MEDIUM);
+  if ((medium == "papyrus") || (medium == "paper"))
+    dev->clear (max (eb->x2, r->x1), r->y1,
+		r->x2, min (eb->y2+ 2*pixel, r->y2));
+  else if (medium == "paper")
+    dev->clear (r->x1, r->y1, r->x2, min (eb->y1, r->y2));
+}
+
+void
+edit_interface_rep::draw_context (ps_device dev, rectangle r) {
+  int i;
+  dev->set_color (dis->light_grey);
+  dev->set_line_style (pixel);
+  for (i=1; i<N(eb[0]); i++) {
+    SI y= eb->sy(0)+ eb[0]->sy2(i);
+    if ((y >= r->y1) && (y < r->y2))
+      dev->line (r->x1, y, r->x2, y);
+  }
+  draw_surround (dev, r);
+}
+
+void
+edit_interface_rep::draw_selection (ps_device dev) {
+  if (made_selection) {
+    rectangles rs= selection_rects;
+    while (!nil (rs)) {
+      dev->set_color (table_selection? dis->rgb (192, 0, 255): dis->red);
+      dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
+      rs= rs->next;
+    }
+  }
+}
+
+void
+edit_interface_rep::draw_graphics (ps_device dev) {
+  if (got_focus || full_screen) {
+    if (inside_active_graphics ()) {
+      eval ("(graphics-reset-context 'graphics-cursor)");
+      draw_graphical_object (dev);
+    }
+    else eval ("(graphics-reset-context 'text-cursor)");
+  }
+}
+
+void
+edit_interface_rep::draw_pre (ps_device dev, rectangle r) {
+  // draw surroundings
+  string bg= get_init_string (BG_COLOR);
+  dev->set_background (dis->get_color (bg));
+  clear_rectangles (dev, rectangles (translate (r, dev->ox, dev->oy)));
+  draw_surround (dev, r);
+
+  // predraw cursor
+  draw_cursor (dev);
+  rectangles l= copy_always;
+  while (!nil (l)) {
+    rectangle lr (l->item);
+    win->put_shadow (dev, lr->x1, lr->y1, lr->x2, lr->y2);
+    l= l->next;
+  }
+}
+
+void
+edit_interface_rep::draw_post (ps_device dev, rectangle r) {
+  dev->set_shrinking_factor (sfactor);
+  draw_context (dev, r);
+  draw_cursor (dev);
+  draw_selection (dev);
+  draw_graphics (dev);
+  dev->set_shrinking_factor (1);
+}
+
+ps_device
+edit_interface_rep::draw_with_shadow (rectangle r) {
+  rectangle sr= r / sfactor;
+  win->new_shadow (shadow);
+  win->get_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);
+  ps_device dev= shadow;
+
+  rectangles l;
+  dev->set_shrinking_factor (sfactor);
+  draw_pre (dev, r);
+  draw_text (dev, l);
+  dev->set_shrinking_factor (1);
+
+  if (dev->interrupted ()) {
+    dev->set_shrinking_factor (sfactor);
+    l= l & rectangles (translate (r, dev->ox, dev->oy));
+    simplify (l);
+    copy_always= translate (copy_always, dev->ox, dev->oy);
+    while (!nil (copy_always)) {
+      l= rectangles (copy_always->item, l);
+      copy_always= copy_always->next;
+    }
+    dev->set_shrinking_factor (1);
+
+    draw_post (dev, r);
+    while (!nil(l)) {
+      SI x1= (l->item->x1)/sfactor - dev->ox - PIXEL;
+      SI y1= (l->item->y1)/sfactor - dev->oy - PIXEL;
+      SI x2= (l->item->x2)/sfactor - dev->ox + PIXEL;
+      SI y2= (l->item->y2)/sfactor - dev->oy + PIXEL;
+      dev->outer_round (x1, y1, x2, y2);
+      win->put_shadow (dev, x1, y1, x2, y2);
+      l= l->next;
+    }
+  }
+  return dev;
+}
+
+void
+edit_interface_rep::draw_with_stored (rectangle r) {
+  rectangle sr= r / sfactor;
+
+  /* Verify whether the backing store is still valid */
+  if (!nil (stored_rects)) {
+    SI w1, h1, w2, h2;
+    win    -> get_extents (w1, h1);
+    stored -> get_extents (w2, h2);
+    if (stored->ox!=win->ox || stored->oy!=win->oy || w1!=w2 || h1!=h2) {
+      //cout << "x"; cout.flush ();
+      stored_rects= rectangles ();
+    }
+  }
+
+  /* Either draw with backing store or regenerate */
+  if (nil (rectangles (r) - stored_rects)) {
+    //cout << "*"; cout.flush ();
+    if (stored != NULL)
+      win->new_shadow (shadow);
+    ps_device dev= shadow;
+    dev->put_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+    draw_post (dev, r);
+    win->put_shadow (dev, sr->x1, sr->y1, sr->x2, sr->y2);
+  }
+  else {
+    //cout << "."; cout.flush ();
+    ps_device dev= draw_with_shadow (r);
+    if (!win->interrupted ()) {
+      if (inside_active_graphics ()) {
+	win->new_shadow (stored);
+	dev->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+	stored_rects= stored_rects | rectangles (r);
+      }
+      draw_post (dev, r);
+      win->put_shadow (dev, sr->x1, sr->y1, sr->x2, sr->y2);
+    }
+    else draw_post (win, r);
+  }
+}
+
+/******************************************************************************
+* event handlers
+******************************************************************************/
+
+void
+edit_interface_rep::handle_clear (clear_event ev) {
+  SI x1= ev->x1 * sfactor, y1= ev->y1 * sfactor;
+  SI x2= ev->x2 * sfactor, y2= ev->y2 * sfactor;
+  win->set_shrinking_factor (sfactor);
+  string bg= get_init_string (BG_COLOR);
+  win->set_background (dis->get_color (bg));
+  win->clear (max (eb->x1, x1), max (eb->y1, y1),
+	      min (eb->x2, x2), min (eb->y2, y2));
+  draw_surround (win, rectangle (x1, y1, x2, y2));
+  win->set_shrinking_factor (1);
+}
+
+void
+edit_interface_rep::handle_repaint (repaint_event ev) {
+  if (env_change != 0)
+    system_warning ("Invalid situation",
+		    "(edit_interface_rep::handle_repaint)");
+
+  // cout << "Repainting\n";
+  // Repaint slightly more in order to hide trace of moving cursor
+  SI extra= 3 * get_init_int (FONT_BASE_SIZE) * PIXEL / (2*sfactor);
+  SI x1= (ev->x1-extra) * sfactor, y1= (ev->y1-extra) * sfactor;
+  SI x2= (ev->x2+extra) * sfactor, y2= (ev->y2+extra) * sfactor;
+  draw_with_stored (rectangle (x1, y1, x2, y2));
+  if (win->interrupted ()) ev->stop= true;
+  if (last_change-last_update > 0)
+    last_change = texmacs_time ();
+  // cout << "Repainted\n";
+}

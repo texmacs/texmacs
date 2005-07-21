@@ -108,13 +108,14 @@ public:
   virtual void suspend () = 0;
   virtual void resume () = 0;
   virtual int  get_pixel_size () = 0;
+  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
-  virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
+  virtual int  idle_time (int event_type= ANY_EVENT) = 0;
+  virtual int  change_time () = 0;
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
-  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual int  get_input_mode () = 0;
   virtual void set_input_mode (int mode) = 0;
   virtual void set_input_normal () = 0;
@@ -122,6 +123,7 @@ public:
   virtual bool in_search_mode () = 0;
   virtual bool in_replace_mode () = 0;
   virtual bool in_spell_mode () = 0;
+  virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
   virtual void key_press (string key) = 0;
   virtual void emulate_keyboard (string keys, string action= "") = 0;
   virtual bool complete_try () = 0;
@@ -140,8 +142,6 @@ public:
   virtual void set_pointer (string curs_name, string mask_name) = 0;
   virtual void set_message (string l, string r= "", bool temp= false) = 0;
   virtual void recall_message () = 0;
-  virtual int  idle_time (int event_type= ANY_EVENT) = 0;
-  virtual int  change_time () = 0;
 
   /* public routines from edit_cursor */
   virtual void go_to (SI x, SI y) = 0;

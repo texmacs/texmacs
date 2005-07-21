@@ -57,17 +57,22 @@ operator != (rectangle r1, rectangle r2) {
 }
 
 bool
+operator <= (rectangle r1, rectangle r2) {
+  return
+    (r1->x1>=r2->x1) && (r1->x2<=r2->x2) &&
+    (r1->y1>=r2->y1) && (r1->y2<=r2->y2);
+}
+
+bool
 intersect (rectangle r1, rectangle r2) {
   return
     (r1->x1<r2->x2) && (r1->x2>r2->x1) &&
     (r1->y1<r2->y2) && (r1->y2>r2->y1);
 }
 
-bool
-operator <= (rectangle r1, rectangle r2) {
-  return
-    (r1->x1>=r2->x1) && (r1->x2<=r2->x2) &&
-    (r1->y1>=r2->y1) && (r1->y2<=r2->y2);
+rectangle
+translate (rectangle r, SI x, SI y) {
+  return rectangle (r->x1+x, r->y1+y, r->x2+x, r->y2+y);
 }
 
 /******************************************************************************

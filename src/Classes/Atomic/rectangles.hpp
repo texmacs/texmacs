@@ -37,6 +37,7 @@ bool operator == (rectangle r1, rectangle r2);
 bool operator != (rectangle r1, rectangle r2);
 bool intersect (rectangle r1, rectangle r2);
 bool operator <= (rectangle r1, rectangle r2);
+rectangle translate (rectangle r, SI x, SI y);
 rectangle operator / (rectangle r, int d);
 
 typedef list<rectangle> rectangles;
