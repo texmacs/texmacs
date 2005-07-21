@@ -183,8 +183,6 @@ edit_graphics_rep::invalidate_graphical_object () {
       box b= go_box->subbox (i);
       rs= rectangles (rectangle (b->x3, b->y3, b->x4, b->y4), rs);
     }
-    rectangle lub= least_upper_bound (rs);
-    if (area (lub) < 2.0 * area (rs)) rs= rectangles (lub);
     rs= rs & rectangles (gr);
     invalidate (rs);
   }

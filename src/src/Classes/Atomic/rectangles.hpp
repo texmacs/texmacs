@@ -38,6 +38,7 @@ bool operator != (rectangle r1, rectangle r2);
 bool intersect (rectangle r1, rectangle r2);
 bool operator <= (rectangle r1, rectangle r2);
 rectangle translate (rectangle r, SI x, SI y);
+rectangle operator * (rectangle r, int d);
 rectangle operator / (rectangle r, int d);
 double area (rectangle r);
 
@@ -46,6 +47,7 @@ typedef list<rectangle> rectangles;
 rectangles operator - (rectangles l1, rectangles l2);
 rectangles operator & (rectangles l1, rectangles l2);
 rectangles operator | (rectangles l1, rectangles l2);
+rectangles operator * (rectangles l, int d);
 rectangles operator / (rectangles l, int d);
 rectangles translate (rectangles l, SI x, SI y);
 rectangles thicken (rectangles l, SI width, SI height);
