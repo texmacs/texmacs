@@ -15,7 +15,7 @@
 #include "tm_buffer.hpp"
 
 /******************************************************************************
-* Keyboard
+* Basic subroutines for keyboard handling
 ******************************************************************************/
 
 int
@@ -60,8 +60,13 @@ edit_interface_rep::in_spell_mode () {
   return input_mode == INPUT_SPELL;
 }
 
+bool
+edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
+  return sv->kbd_get_command (which, help, c);
+}
+
 /******************************************************************************
-* Keyboard
+* Main keyboard routines
 ******************************************************************************/
 
 bool
