@@ -621,13 +621,6 @@ x_display_rep::check_event (int type) {
   return interrupted;
 }
 
-bool
-x_display_rep::partial_redrawing (bool new_value) {
-  bool old_value= partial_redraw_flag;
-  partial_redraw_flag= new_value;
-  return old_value;
-}
-
 void
 beep () {
 #ifdef OS_WIN32

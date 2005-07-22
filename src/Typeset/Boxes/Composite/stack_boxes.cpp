@@ -73,7 +73,7 @@ stack_box_rep::finalize () {
 
 void
 stack_box_rep::display (ps_device dev) {
-  //dev->apply_shadow (x1, y1, x2, y2);
+  dev->apply_shadow (x1, y1, x2, y2);
 }
 
 bool

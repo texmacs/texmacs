@@ -731,7 +731,6 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   balloon_win        = NULL;
   interrupted        = false;
   interrupt_time     = texmacs_time ();
-  partial_redraw_flag= true;
 
   XSetGraphicsExposures (dpy, gc, true);
 
