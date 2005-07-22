@@ -80,6 +80,13 @@
 (converter jpeg-file pnm-file
   (:shell "djpeg" "-pnm" from ">" to))
 
+(define-format tif
+  (:name "Tif")
+  (:suffix "tif"))
+
+(converter tif-file postscript-file
+  (:shell "tiff2ps" from ">" to))
+
 (define-format ppm
   (:name "Ppm")
   (:suffix "ppm"))
