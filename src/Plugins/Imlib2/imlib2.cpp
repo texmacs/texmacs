@@ -93,7 +93,8 @@ imlib2_present () {
 bool
 imlib2_supports (url u) {
   string s= suffix (u);
-  if (s == "ps" || s == "eps" || s == "pdf" || s == "xpm") return false;
+  if (s == "ps" || s == "eps" || s == "pdf" ||
+      s == "xpm" || s == "tif") return false;
   return imlib2_present ();
 }
 
