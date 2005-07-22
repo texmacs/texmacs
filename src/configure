@@ -4434,7 +4434,6 @@ _ACEOF
 fi
 done
 
-    CONFIG_LDL="-ldl"
     CONFIG_BDL="-ldl"
     CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
   else
@@ -4504,7 +4503,6 @@ _ACEOF
 fi
 
     if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-      CONFIG_LDL="-ldl"
       CONFIG_BDL="-ldl"
       CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
     else
@@ -4585,7 +4583,6 @@ fi
 done
 
       if test "$ac_cv_func_shl_load" = "yes"; then
-        CONFIG_LDL="-ldl"
         CONFIG_BDL="-ldl"
         CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
       else
@@ -4672,7 +4669,6 @@ done
     fi
   fi
 fi
-
 
 
 
@@ -6024,11 +6020,6 @@ echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6046,11 +6037,6 @@ echo "${ECHO_T}final setup for an AMD64/x86_64/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="x86_64-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6068,11 +6054,6 @@ echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="mips-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6090,11 +6071,6 @@ echo "${ECHO_T}final setup for a MipsEL/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="mipsel-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6112,11 +6088,6 @@ echo "${ECHO_T}final setup for an Arm/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="arm-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6134,11 +6105,6 @@ echo "${ECHO_T}final setup for a PowerPC/GNU-linux host" >&6
     CONFIG_OS_SUFFIX="powerpc-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6156,11 +6122,6 @@ echo "${ECHO_T}final setup for a SUN/solaris host" >&6
     CONFIG_OS_SUFFIX="sun"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-G"
-    CONFIG_LPATH="-Wl,-R,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
@@ -6179,11 +6140,6 @@ echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6202,11 +6158,6 @@ echo "${ECHO_T}final setup for a DEC/alpha host" >&6
     CONFIG_OS_SUFFIX="dec"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
@@ -6225,10 +6176,6 @@ echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -6245,11 +6192,6 @@ echo "${ECHO_T}final setup for an IBM S/390 GNU-Linux host" >&6
     CONFIG_OS_SUFFIX="s390"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6268,11 +6210,6 @@ echo "${ECHO_T}final setup for cygwin" >&6
     CONFIG_OS_SUFFIX="cygwin"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS="-Wl,-stack,8388608"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6292,11 +6229,6 @@ echo "${ECHO_T}final setup for cygwin" >&6
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-dynamiclib -undefined suppress -flat_namespace"
-    CONFIG_LPATH=
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_LDL="-L${prefix}/lib -ldl"
     CONFIG_BSHARED=
     CONFIG_BPATH=
     CONFIG_BX="$X_LIBS -lXext -lX11"
@@ -6314,10 +6246,6 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -6335,10 +6263,6 @@ echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -6355,11 +6279,6 @@ echo "${ECHO_T}final setup for a Motorola 68xxx host" >&6
     CONFIG_OS_SUFFIX="m68k"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6376,11 +6295,6 @@ echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
     CONFIG_CX="$X_CFLAGS"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6398,12 +6312,7 @@ echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_CXXFLAGS=""
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH=""
     X_LIBS=-L/usr/lib32
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
@@ -6424,11 +6333,6 @@ echo "${ECHO_T}final setup for an unsupported host" >&6
     CONFIG_OS_SUFFIX="unknown"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -6566,11 +6470,6 @@ esac
 #--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
-
-
-
-
-
 
 
 
@@ -7320,7 +7219,6 @@ s,@X_PRE_LIBS@,$X_PRE_LIBS,;t t
 s,@X_LIBS@,$X_LIBS,;t t
 s,@X_EXTRA_LIBS@,$X_EXTRA_LIBS,;t t
 s,@CONFIG_GET_TIME_OF_DAY@,$CONFIG_GET_TIME_OF_DAY,;t t
-s,@CONFIG_LDL@,$CONFIG_LDL,;t t
 s,@CONFIG_BDL@,$CONFIG_BDL,;t t
 s,@CONFIG_DYNAMIC_LINKING@,$CONFIG_DYNAMIC_LINKING,;t t
 s,@CPP@,$CPP,;t t
@@ -7354,11 +7252,6 @@ s,@CONFIG_CXXWARNING@,$CONFIG_CXXWARNING,;t t
 s,@CONFIG_CXXTEMPLATE@,$CONFIG_CXXTEMPLATE,;t t
 s,@CONFIG_CXXOPTIMIZE@,$CONFIG_CXXOPTIMIZE,;t t
 s,@CONFIG_CXXDEBUG@,$CONFIG_CXXDEBUG,;t t
-s,@CONFIG_LFLAGS@,$CONFIG_LFLAGS,;t t
-s,@CONFIG_LSTATIC@,$CONFIG_LSTATIC,;t t
-s,@CONFIG_LSHARED@,$CONFIG_LSHARED,;t t
-s,@CONFIG_LPATH@,$CONFIG_LPATH,;t t
-s,@CONFIG_LX@,$CONFIG_LX,;t t
 s,@CONFIG_BFLAGS@,$CONFIG_BFLAGS,;t t
 s,@CONFIG_BSTATIC@,$CONFIG_BSTATIC,;t t
 s,@CONFIG_BSHARED@,$CONFIG_BSHARED,;t t

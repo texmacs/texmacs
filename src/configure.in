@@ -98,19 +98,16 @@ else
   AC_CHECK_LIB(dl,dlopen)
   if test "$ac_cv_lib_dl_dlopen" = "yes"; then
     AC_CHECK_FUNCS(dlopen)
-    CONFIG_LDL="-ldl"
     CONFIG_BDL="-ldl"
     CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
   else
     AC_CHECK_LIB(dld,dld_link)
     if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-      CONFIG_LDL="-ldl"
       CONFIG_BDL="-ldl"
       CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
     else
       AC_CHECK_FUNCS(shl_load)
       if test "$ac_cv_func_shl_load" = "yes"; then
-        CONFIG_LDL="-ldl"
         CONFIG_BDL="-ldl"
         CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
       else
@@ -122,7 +119,6 @@ else
     fi
   fi
 fi
-AC_SUBST(CONFIG_LDL)
 AC_SUBST(CONFIG_BDL)
 AC_SUBST(CONFIG_DYNAMIC_LINKING)
 
@@ -427,11 +423,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -448,11 +439,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="x86_64-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -469,11 +455,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="mips-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -490,11 +471,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="mipsel-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -511,11 +487,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="arm-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -532,11 +503,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="powerpc-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -553,11 +519,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="sun"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-G"
-    CONFIG_LPATH="-Wl,-R,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
@@ -575,11 +536,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -597,11 +553,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="dec"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC=""
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
@@ -619,10 +570,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -638,11 +585,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="s390"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -660,11 +602,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="cygwin"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS="-Wl,-stack,8388608"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -684,11 +621,6 @@ case "${host}" in
     CONFIG_CX="$X_CFLAGS" 
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-dynamiclib -undefined suppress -flat_namespace"
-    CONFIG_LPATH=
-    CONFIG_LX="$X_LIBS -lXext -lX11"
-    CONFIG_LDL="-L${prefix}/lib -ldl"
     CONFIG_BSHARED=
     CONFIG_BPATH=
     CONFIG_BX="$X_LIBS -lXext -lX11"
@@ -705,10 +637,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -725,10 +653,6 @@ case "${host}" in
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_BPATH="-Wl,-rpath,"
@@ -744,11 +668,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="m68k"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -764,11 +683,6 @@ case "${host}" in
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
     CONFIG_CX="$X_CFLAGS"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -786,12 +700,7 @@ case "${host}" in
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_CXXFLAGS=""
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH=""
     X_LIBS=-L/usr/lib32
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
@@ -811,11 +720,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="unknown"
     CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_LFLAGS=""
-    CONFIG_LSTATIC="-static"
-    CONFIG_LSHARED="-shared"
-    CONFIG_LPATH="-Wl,-rpath,"
-    CONFIG_LX="$X_LIBS -lXext -lX11"
     CONFIG_BFLAGS=""
     CONFIG_BSTATIC="-Wl,-Bstatic"
     CONFIG_BSHARED="-Wl,-Bdynamic"
@@ -942,11 +846,6 @@ AC_SUBST(CONFIG_CXXWARNING)
 AC_SUBST(CONFIG_CXXTEMPLATE)
 AC_SUBST(CONFIG_CXXOPTIMIZE)
 AC_SUBST(CONFIG_CXXDEBUG)
-AC_SUBST(CONFIG_LFLAGS)
-AC_SUBST(CONFIG_LSTATIC)
-AC_SUBST(CONFIG_LSHARED)
-AC_SUBST(CONFIG_LPATH)
-AC_SUBST(CONFIG_LX)
 AC_SUBST(CONFIG_BFLAGS)
 AC_SUBST(CONFIG_BSTATIC)
 AC_SUBST(CONFIG_BSHARED)
