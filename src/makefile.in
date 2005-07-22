@@ -31,27 +31,16 @@ CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CFLAGS@
 CXXGUILE = @GUILE_CFLAGS@
 LD = @CXX@
-LDFLAGS = @CONFIG_LFLAGS@
-LDSTATIC = @CONFIG_LSTATIC@
-LDSHARED = @CONFIG_LSHARED@
-LDPATH = @CONFIG_LPATH@
-LDXWINDOW =@CONFIG_LX@
-LDDL = @CONFIG_LDL@
+LDFLAGS = @CONFIG_BFLAGS@
+LDSTATIC = @CONFIG_BSTATIC@
+LDSHARED = @CONFIG_BSHARED@
+LDPATH = @CONFIG_BPATH@
+LDXWINDOW =@CONFIG_BX@
+LDDL = @CONFIG_BDL@
 LDIMLIB2 = @IMLIB2_LDFLAGS@
 LDFREETYPE = @FREETYPE_LDFLAGS@
 LDICONV = @ICONV_LDFLAGS@
 LDGUILE = @GUILE_LDFLAGS@
-LDB = @CXX@
-LDBFLAGS = @CONFIG_BFLAGS@
-LDBSTATIC = @CONFIG_BSTATIC@
-LDBSHARED = @CONFIG_BSHARED@
-LDBPATH = @CONFIG_BPATH@
-LDBXWINDOW =@CONFIG_BX@
-LDBDL = @CONFIG_BDL@
-LDBIMLIB2 = @IMLIB2_LDFLAGS@
-LDBFREETYPE = @FREETYPE_LDFLAGS@
-LDBICONV = @ICONV_LDFLAGS@
-LDBGUILE = @GUILE_LDFLAGS@
 AR = ar
 ARFLAGS = -r
 RM = rm -f
@@ -225,16 +214,16 @@ $(x_window_obj): Objects/%.o: %.cpp
 
 ifeq "$(link)" "shared"
 ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LDB) $(LDBFLAGS) -lstdc++ $(LDBSHARED) $^ $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) -o $@)
 else
-link_bin = $(strip $(LDB) $(LDBFLAGS) $(LDBSHARED) $^ $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) -o $@)
 endif
 endif
 ifeq "$(link)" "static"
 ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -lstdc++ -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) -lstdc++ -o $@)
 else
-link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) -o $@)
 endif
 endif
 
@@ -262,8 +251,8 @@ uses_texmacs  := $(texmacs_obj)
 TEXMACS_objects := $(strip $(call uses,system classes data resource plugins\
  window typeset edit glue texmacs))
 
-link_options:=-L$(tmsrc)/lib -lm $(LDBPATH) $(LDBXWINDOW) \
-  $(LDBGUILE) $(LDBIMLIB2) $(LDBFREETYPE) $(LDBICONV) $(LDBDL)
+link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDXWINDOW) \
+  $(LDGUILE) $(LDIMLIB2) $(LDFREETYPE) $(LDICONV) $(LDDL)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@
