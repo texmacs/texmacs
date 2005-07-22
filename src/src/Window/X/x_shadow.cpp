@@ -34,7 +34,8 @@ x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y) {
   decode (x, y);
   x += x1 - X1;
   y += y2 - Y1;
-  XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
+  if (x1<x2 && y2<y1)
+    XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
 }
 
 /******************************************************************************
@@ -83,7 +84,8 @@ x_drawable_rep::get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
   shadow->master= this;
   decode (x1, y1);
   decode (x2, y2);
-  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  if (x1<x2 && y2<y1)
+    XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
 }
 
 void
@@ -99,7 +101,8 @@ x_drawable_rep::put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) {
   y2= min (y2, cy2- oy);
   decode (x1, y1);
   decode (x2, y2);
-  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+  if (x1<x2 && y2<y1)
+    XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
 }
 
 void
