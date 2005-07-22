@@ -217,6 +217,7 @@ uses_window   := $(window_obj) $(x_window_obj)
 uses_typeset  := $(typeset_obj)
 uses_edit     := $(edit_obj)
 uses_glue     := $(guile_obj)
+uses_texmacs  := $(texmacs_obj)
 
 # To enforce some degree of modularity, each object file must be
 # compiled with only a specific set of include flags. To achieve that,
