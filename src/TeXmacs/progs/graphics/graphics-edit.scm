@@ -1023,6 +1023,30 @@
 						 (cadr p1) (caddr p2)))))
 		   res)))
 
+(define (in-interval? x i1 i2)
+  (and (>= x i1) (<= x i2)))
+
+(define (on-graphical-contour? x y o eps)
+  (set! eps (length-decode eps))
+  (let* ((info0 (cdr (box-info o "lbLB")))
+	 (info1 (cdr (box-info o "rtRT")))
+	 (l (min (s2i (car  info0)) (s2i (caddr  info0))))
+	 (b (min (s2i (cadr info0)) (s2i (cadddr info0))))
+	 (r (max (s2i (car  info1)) (s2i (caddr  info1))))
+	 (t (max (s2i (cadr info1)) (s2i (cadddr info1))))
+	 (p (frame-direct `(tuple ,x ,y)))
+	)
+	(set! x (s2i (cadr p)))
+	(set! y (s2i (caddr p)))
+        (or (and (in-interval? x (- l eps) (+ l eps))
+		 (in-interval? y (- b eps) (+ t eps)))
+	    (and (in-interval? x (- r eps) (+ r eps))
+		 (in-interval? y (- b eps) (+ t eps)))
+	    (and (in-interval? x (- l eps) (+ r eps))
+		 (in-interval? y (- b eps) (+ b eps)))
+	    (and (in-interval? x (- l eps) (+ r eps))
+		 (in-interval? y (- t eps) (+ t eps))))))
+
 (define (create-graphical-props mode ps)
   (let ((color #f)
 	(lw #f)
@@ -1120,6 +1144,11 @@
   res)
 
 (define (create-graphical-object o mode pts no)
+  (define edge #t)
+  (if (pair? no)
+      (begin
+	 (set! edge (car no))
+         (set! no (cadr no))))
   (if o (let* ((op
 	        (cond ((== (car o) 'point)
 		       (cons o '())
@@ -1136,8 +1165,9 @@
 				       (ll (length l)))
 				      (append
 				        (with h (list-head (cdr o) no)
-					  (if (and (in? (car o)
-						       '(cline cspline))
+					  (if (and edge
+						(in? (car o)
+						    '(cline cspline))
 					        (== (+ no 1) (length (cdr o))))
 					    (cons `(with "point-style" "disk"
 					      ,(car h)) (cdr h))
@@ -1145,8 +1175,15 @@
 				        (cons
 					  (list 'with "point-style" "disk"
 					    (cons 'concat
-					      (if (< ll 2) (list-head l 1)
-							   (list-head l 2)))
+					      (if (< ll 2)
+						  (list-head l 1)
+ 						  (if edge
+						      (list-head l 2)
+						      (cons
+							`(with "point-style"
+							       "square"
+							      ,(list-ref l 1))
+							 (list-head l 1)))))
 					  ) '())
 				        (if (> ll 2) (list-tail l 2) '())))
 			        (cdr o))))
@@ -1427,7 +1464,10 @@
 		   (,no (if sel (cAr (car sel)) #f)))
 	      (if ,obj
 	          ,(cons 'begin body)
-	          (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
+	          (if (and (string? ,msg) (== (substring ,msg 0 1) ";"))
+		      (if (== (substring ,msg 0 2) ";:")
+			 ,(cons 'begin body)
+			  #t)
 		      (display* "Uncaptured gc(!sticky) " ,msg " " ,obj ", "
 						          ,x ", " ,y "\n"))))))))
 
@@ -1564,9 +1604,14 @@
 (define (text-at_left-button x y p obj no edge)
   (if sticky-point
       (point_left-button x y p obj 1 edge)
-      (begin
-	 (if (event-exists? 'text-at 'left-button 1)
-	     (go-to (car (select-first (s2i x) (s2i y))))))))
+      (if (on-graphical-contour? x y obj "1mm")
+	  (begin
+	     (set-mouse-pointer
+		(tm_xpm "tm_graphics_cursor.xpm")
+		(tm_xpm "tm_graphics_mask.xpm")
+	     )
+	     (point_left-button x y p obj 1 edge))
+	  (go-to (car (select-first (s2i x) (s2i y)))))))
 
 ;; Move
 (define (point_move x y p obj no edge)
@@ -1576,15 +1621,22 @@
 	    (set! obj `(point ,x ,y))
 	    (set-car! (list-tail (cdr obj) no) `(point ,x ,y)))
 	(create-graphical-object obj 'active 'object-and-points
-	  (if edge no #f)))
+	  (if edge no `(,edge ,no))))
       (begin
-	(create-graphical-object obj p 'points (if edge no #f))
+	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
 	(go-to (rcons p 1)))))
 
 (define (text-at_move x y p obj no edge)
-  (if (and (not sticky-point) (event-exists? 'text-at 'left-button 1))
-      (point_left-button x y p obj 1 edge)
-      (point_move x y p obj 1 edge)))
+  (if (and (not sticky-point)
+	   (on-graphical-contour? x y obj "1mm"))
+      (set-mouse-pointer
+	 (tm_xpm "tm_graphics_cursorM.xpm")
+	 (tm_xpm "tm_graphics_maskM.xpm"))
+      (set-mouse-pointer
+	 (tm_xpm "tm_graphics_cursor.xpm")
+	 (tm_xpm "tm_graphics_mask.xpm"))
+  )
+  (point_move x y p obj 1 edge))
 
 (define (gr-group_move x y p obj no edge)
   (if sticky-point
@@ -1601,7 +1653,7 @@
 	(graphics-move-point x y))
       ;;Remove
       (begin
-	(if (or (in? (car obj) gr-tags-oneshot) (null? (cddr obj)))
+	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj)))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f #f)
@@ -1652,11 +1704,19 @@
 
 (define (edit_move x y)
   (with-graphics-context
-   ";move" x y p obj no edge
-   (dispatch (car obj) ((point line cline spline cspline arc carc)
-			(text-at)
-			(gr-group))
-	     move (x y p obj no edge) do-tick)))
+   ";:move" x y p obj no edge
+   (if obj
+       (dispatch (car obj) ((point line cline spline cspline arc carc)
+			    (text-at)
+			    (gr-group))
+		 move (x y p obj no edge) do-tick
+       )
+       (begin
+	  (set-mouse-pointer
+	     (tm_xpm "tm_graphics_cursor.xpm")
+	     (tm_xpm "tm_graphics_mask.xpm")
+	  )
+	  (create-graphical-object '(nothing) #f 'points #f)))))
 
 (define (edit_middle-button x y)
   (with-graphics-context
