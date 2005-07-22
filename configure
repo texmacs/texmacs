@@ -5927,7 +5927,6 @@ CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
-CONFIG_DASH_I_DASH="-I-"
 
 case "$GUILE_VERSION" in
   1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
@@ -6416,7 +6415,6 @@ echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
     CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
     CONFIG_CHMOD="chmod"
-    CONFIG_DASH_I_DASH=""
     CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
   ;;
   *)
@@ -6568,7 +6566,6 @@ esac
 #--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
-
 
 
 
@@ -7377,7 +7374,6 @@ s,@CONFIG_SO@,$CONFIG_SO,;t t
 s,@CONFIG_LIB_PATH@,$CONFIG_LIB_PATH,;t t
 s,@CONFIG_STRIP@,$CONFIG_STRIP,;t t
 s,@CONFIG_CHMOD@,$CONFIG_CHMOD,;t t
-s,@CONFIG_DASH_I_DASH@,$CONFIG_DASH_I_DASH,;t t
 s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@tmorig@,$tmorig,;t t
 s,@tmdir@,$tmdir,;t t
