@@ -30,7 +30,7 @@ clean: CLEAN
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system classes data resource plugins\
- window typeset edit glue) $(texmacs_obj) $(instanciations_obj))
+ window typeset edit glue texmacs))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDBPATH) $(LDBXWINDOW) \
   $(LDBGUILE) $(LDBIMLIB2) $(LDBFREETYPE) $(LDBICONV) $(LDBDL)
