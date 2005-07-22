@@ -25,7 +25,8 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
-int nr_windows=0;
+int nr_windows= 0;
+bool request_partial_redraw= false;
 
 /******************************************************************************
 * Look up keys and mouse
@@ -243,14 +244,15 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
     unmap_balloon ();
     set_button_state (ev->xmotion.state);
     win->mouse_event ("move", ev->xmotion.x, ev->xmotion.y, ev->xmotion.time);
-
     break;
   case KeyPress:
     unmap_balloon ();
     {
       string key= look_up_key (&ev->xkey);
-      // cout << "Press " << key << " at " << ev->xkey.time
-      // << " (" << texmacs_time() << ")\n";
+      //cout << "Press " << key << " at " << (time_t) ev->xkey.time
+      //<< " (" << texmacs_time() << ")\n";
+      if (texmacs_time () - ((time_t) ev->xkey.time) < 100)
+	request_partial_redraw= true;
       if (N(key)>0) win->key_event (key);
       break;
     }
@@ -311,6 +313,8 @@ x_display_rep::event_loop () {
   int delay  = MIN_DELAY;
 
   while (nr_windows>0) {
+    request_partial_redraw= false;
+
     // Get events
     XEvent report;
     if (XPending (dpy) > 0) {
@@ -348,7 +352,7 @@ x_display_rep::event_loop () {
 	  map_balloon ();
 
     // Redraw invalid windows
-    if (XPending (dpy) == 0 || partial_redraw_flag) {
+    if (XPending (dpy) == 0 || request_partial_redraw) {
       interrupted= false;
       interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
       iterator<Window> it= iterate (Window_to_window);

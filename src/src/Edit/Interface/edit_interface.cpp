@@ -292,7 +292,6 @@ edit_interface_rep::apply_changes () {
 
   // cout << "Always\n";
   update_visible ();
-  dis->partial_redrawing (nil (stored_rects));
 
   // cout << "Handling automatic resizing\n";
   if (env_change & THE_AUTOMATIC_SIZE) {
