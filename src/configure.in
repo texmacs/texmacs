@@ -59,6 +59,16 @@ AC_MSG_CHECKING(version of guile)
 GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
 AC_MSG_RESULT($GUILE_VERSION)
 
+case "$GUILE_VERSION" in
+  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+    CONFIG_GUILE_SERIAL="A"
+  ;;
+  *)
+    CONFIG_GUILE_SERIAL="B"
+  ;;
+esac
+AC_SUBST(CONFIG_GUILE_SERIAL)
+
 #--------------------------------------------------------------------
 # Checks for include files and standard types
 #--------------------------------------------------------------------
@@ -405,15 +415,17 @@ CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
-
-case "$GUILE_VERSION" in
-  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-    CONFIG_GUILE_SERIAL="A"
-  ;;
-  *)
-    CONFIG_GUILE_SERIAL="B"
-  ;;
-esac
+CONFIG_CX="$X_CFLAGS"
+CONFIG_CXXOPTIMIZE="-O2"
+CONFIG_BSTATIC="-Wl,-Bstatic"
+CONFIG_BSHARED="-Wl,-Bdynamic"
+CONFIG_BFLAGS=""
+CONFIG_BPATH="-Wl,-rpath,"
+CONFIG_BX="$X_LIBS -lXext -lX11"
+CONFIG_WORD_LENGTH="4"
+CONFIG_WORD_LENGTH_INC="3"
+CONFIG_WORD_MASK="0xfffffffc"
+CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
 AC_CANONICAL_HOST
 case "${host}" in
@@ -421,29 +433,13 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an Intel/GNU-linux host)
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   x86_64-*-linux* | x86_64-*-freebsd*)
     AC_MSG_RESULT(final setup for an AMD64/x86_64/GNU-linux host)
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="x86_64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -453,73 +449,27 @@ case "${host}" in
     AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
     CONFIG_OS="MIPS_GNU_LINUX"
     CONFIG_OS_SUFFIX="mips-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   mipsel-*-linux*)
     AC_MSG_RESULT(final setup for a MipsEL/GNU-linux host)
     CONFIG_OS="MIPSEL_GNU_LINUX"
     CONFIG_OS_SUFFIX="mipsel-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   arm*-*-linux*)
     AC_MSG_RESULT(final setup for an Arm/GNU-linux host)
     CONFIG_OS="ARM_GNU_LINUX"
     CONFIG_OS_SUFFIX="arm-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   powerpc-*-linux*)
     AC_MSG_RESULT(final setup for a PowerPC/GNU-linux host)
     CONFIG_OS="POWERPC_GNU_LINUX"
     CONFIG_OS_SUFFIX="powerpc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sun*)
     AC_MSG_RESULT(final setup for a SUN/solaris host)
     CONFIG_OS="SUN"
     CONFIG_OS_SUFFIX="sun"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
@@ -534,13 +484,7 @@ case "${host}" in
     AC_MSG_RESULT(final setup for a Sparc host running GNU/Linux)
     CONFIG_OS="SPARC_GNU_LINUX"
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
@@ -551,13 +495,8 @@ case "${host}" in
     AC_MSG_RESULT(final setup for a DEC/alpha host)
     CONFIG_OS="DEC"
     CONFIG_OS_SUFFIX="dec"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -568,12 +507,8 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an Alpha/GNU-Linux host)
     CONFIG_OS="ALPHA_GNU_LINUX"
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -583,34 +518,13 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an IBM S/390 GNU-Linux host)
     CONFIG_OS="S390"
     CONFIG_OS_SUFFIX="s390"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   *-*-cygwin)
     AC_MSG_RESULT(final setup for cygwin)
     CONFIG_OS="CYGWIN"
     CONFIG_OS_SUFFIX="cygwin"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 #    CXX="export CYGWIN=check_case:strict; $CXX"
 #    AC_SUBST(CXX)
   ;;
@@ -618,16 +532,9 @@ case "${host}" in
     echo "$ac_t""final setup for a PowerPC/Darwin host" 1>&6
     CONFIG_OS="POWERPC_APPLE_DARWIN"
     CONFIG_OS_SUFFIX="powerpc-apple-darwin"
-    CONFIG_CX="$X_CFLAGS" 
     CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSHARED=
     CONFIG_BPATH=
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
@@ -635,12 +542,8 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an Itanium/GNU-Linux host)
     CONFIG_OS="IA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -650,58 +553,26 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
     CONFIG_OS="HPPA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="hppa64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   m68k-*-linux*)
     AC_MSG_RESULT(final setup for a Motorola 68xxx host)
     CONFIG_OS="M68K"
     CONFIG_OS_SUFFIX="m68k"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *-linux*)
     AC_MSG_RESULT(final setup for an unknown host running GNU/Linux)
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sgi-irix*)
     echo "$ac_t""final setup for a SGI/Irix host" 1>&6
     CONFIG_OS="IRIX"
     CONFIG_OS_SUFFIX="irix"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_CXXFLAGS=""
     X_LIBS=-L/usr/lib32
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
@@ -718,17 +589,6 @@ case "${host}" in
     AC_MSG_RESULT(final setup for an unsupported host)
     CONFIG_OS="UNKNOWN"
     CONFIG_OS_SUFFIX="unknown"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
 esac
 
@@ -861,7 +721,6 @@ AC_SUBST(CONFIG_SO)
 AC_SUBST(CONFIG_LIB_PATH)
 AC_SUBST(CONFIG_STRIP)
 AC_SUBST(CONFIG_CHMOD)
-AC_SUBST(CONFIG_GUILE_SERIAL)
 
 #--------------------------------------------------------------------
 # Default paths for installation

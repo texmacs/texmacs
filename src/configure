@@ -2467,6 +2467,16 @@ GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\
 echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
 echo "${ECHO_T}$GUILE_VERSION" >&6
 
+case "$GUILE_VERSION" in
+  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+    CONFIG_GUILE_SERIAL="A"
+  ;;
+  *)
+    CONFIG_GUILE_SERIAL="B"
+  ;;
+esac
+
+
 #--------------------------------------------------------------------
 # Checks for include files and standard types
 #--------------------------------------------------------------------
@@ -5923,15 +5933,17 @@ CONFIG_STD_SETENV="#define STD_SETENV"
 CONFIG_SO="so"
 CONFIG_LIB_PATH="LD_LIBRARY_PATH"
 CONFIG_CHMOD="chmod -f"
-
-case "$GUILE_VERSION" in
-  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-    CONFIG_GUILE_SERIAL="A"
-  ;;
-  *)
-    CONFIG_GUILE_SERIAL="B"
-  ;;
-esac
+CONFIG_CX="$X_CFLAGS"
+CONFIG_CXXOPTIMIZE="-O2"
+CONFIG_BSTATIC="-Wl,-Bstatic"
+CONFIG_BSHARED="-Wl,-Bdynamic"
+CONFIG_BFLAGS=""
+CONFIG_BPATH="-Wl,-rpath,"
+CONFIG_BX="$X_LIBS -lXext -lX11"
+CONFIG_WORD_LENGTH="4"
+CONFIG_WORD_LENGTH_INC="3"
+CONFIG_WORD_MASK="0xfffffffc"
+CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
 ac_aux_dir=
 for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
@@ -6018,30 +6030,14 @@ case "${host}" in
 echo "${ECHO_T}final setup for an Intel/GNU-linux host" >&6
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   x86_64-*-linux* | x86_64-*-freebsd*)
     echo "$as_me:$LINENO: result: final setup for an AMD64/x86_64/GNU-linux host" >&5
 echo "${ECHO_T}final setup for an AMD64/x86_64/GNU-linux host" >&6
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="x86_64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -6052,77 +6048,31 @@ echo "${ECHO_T}final setup for an AMD64/x86_64/GNU-linux host" >&6
 echo "${ECHO_T}final setup for a Mips/GNU-linux host" >&6
     CONFIG_OS="MIPS_GNU_LINUX"
     CONFIG_OS_SUFFIX="mips-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   mipsel-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a MipsEL/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a MipsEL/GNU-linux host" >&6
     CONFIG_OS="MIPSEL_GNU_LINUX"
     CONFIG_OS_SUFFIX="mipsel-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   arm*-*-linux*)
     echo "$as_me:$LINENO: result: final setup for an Arm/GNU-linux host" >&5
 echo "${ECHO_T}final setup for an Arm/GNU-linux host" >&6
     CONFIG_OS="ARM_GNU_LINUX"
     CONFIG_OS_SUFFIX="arm-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   powerpc-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a PowerPC/GNU-linux host" >&5
 echo "${ECHO_T}final setup for a PowerPC/GNU-linux host" >&6
     CONFIG_OS="POWERPC_GNU_LINUX"
     CONFIG_OS_SUFFIX="powerpc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sun*)
     echo "$as_me:$LINENO: result: final setup for a SUN/solaris host" >&5
 echo "${ECHO_T}final setup for a SUN/solaris host" >&6
     CONFIG_OS="SUN"
     CONFIG_OS_SUFFIX="sun"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
@@ -6138,13 +6088,7 @@ echo "${ECHO_T}final setup for a SUN/solaris host" >&6
 echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
     CONFIG_OS="SPARC_GNU_LINUX"
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
@@ -6156,13 +6100,8 @@ echo "${ECHO_T}final setup for a Sparc host running GNU/Linux" >&6
 echo "${ECHO_T}final setup for a DEC/alpha host" >&6
     CONFIG_OS="DEC"
     CONFIG_OS_SUFFIX="dec"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -6174,12 +6113,8 @@ echo "${ECHO_T}final setup for a DEC/alpha host" >&6
 echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
     CONFIG_OS="ALPHA_GNU_LINUX"
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -6190,17 +6125,6 @@ echo "${ECHO_T}final setup for an Alpha/GNU-Linux host" >&6
 echo "${ECHO_T}final setup for an IBM S/390 GNU-Linux host" >&6
     CONFIG_OS="S390"
     CONFIG_OS_SUFFIX="s390"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   *-*-cygwin)
@@ -6208,17 +6132,7 @@ echo "${ECHO_T}final setup for an IBM S/390 GNU-Linux host" >&6
 echo "${ECHO_T}final setup for cygwin" >&6
     CONFIG_OS="CYGWIN"
     CONFIG_OS_SUFFIX="cygwin"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 #    CXX="export CYGWIN=check_case:strict; $CXX"
 #    AC_SUBST(CXX)
   ;;
@@ -6226,16 +6140,9 @@ echo "${ECHO_T}final setup for cygwin" >&6
     echo "$ac_t""final setup for a PowerPC/Darwin host" 1>&6
     CONFIG_OS="POWERPC_APPLE_DARWIN"
     CONFIG_OS_SUFFIX="powerpc-apple-darwin"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSHARED=
     CONFIG_BPATH=
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
@@ -6244,12 +6151,8 @@ echo "${ECHO_T}final setup for cygwin" >&6
 echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
     CONFIG_OS="IA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
     CONFIG_WORD_LENGTH="8"
     CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffffffffffff8"
@@ -6260,60 +6163,28 @@ echo "${ECHO_T}final setup for an Itanium/GNU-Linux host" >&6
 echo "${ECHO_T}final setup for an HP PA_RISC/GNU-Linux host" >&6
     CONFIG_OS="HPPA64_GNU_LINUX"
     CONFIG_OS_SUFFIX="hppa64-gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   m68k-*-linux*)
     echo "$as_me:$LINENO: result: final setup for a Motorola 68xxx host" >&5
 echo "${ECHO_T}final setup for a Motorola 68xxx host" >&6
     CONFIG_OS="M68K"
     CONFIG_OS_SUFFIX="m68k"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *-linux*)
     echo "$as_me:$LINENO: result: final setup for an unknown host running GNU/Linux" >&5
 echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="gnu-linux"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
   *sgi-irix*)
     echo "$ac_t""final setup for a SGI/Irix host" 1>&6
     CONFIG_OS="IRIX"
     CONFIG_OS_SUFFIX="irix"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
     CONFIG_CXXFLAGS=""
     X_LIBS=-L/usr/lib32
-    CONFIG_BFLAGS=""
     CONFIG_BSTATIC=""
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
@@ -6331,17 +6202,6 @@ echo "${ECHO_T}final setup for an unknown host running GNU/Linux" >&6
 echo "${ECHO_T}final setup for an unsupported host" >&6
     CONFIG_OS="UNKNOWN"
     CONFIG_OS_SUFFIX="unknown"
-    CONFIG_CX="$X_CFLAGS"
-    CONFIG_CXXOPTIMIZE="-O2"
-    CONFIG_BFLAGS=""
-    CONFIG_BSTATIC="-Wl,-Bstatic"
-    CONFIG_BSHARED="-Wl,-Bdynamic"
-    CONFIG_BPATH="-Wl,-rpath,"
-    CONFIG_BX="$X_LIBS -lXext -lX11"
-    CONFIG_WORD_LENGTH="4"
-    CONFIG_WORD_LENGTH_INC="3"
-    CONFIG_WORD_MASK="0xfffffffc"
-    CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   ;;
 esac
 
@@ -6470,7 +6330,6 @@ esac
 #--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
-
 
 
 
@@ -7212,6 +7071,7 @@ s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
 s,@GUILE_CFLAGS@,$GUILE_CFLAGS,;t t
 s,@GUILE_LDFLAGS@,$GUILE_LDFLAGS,;t t
+s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@CXXCPP@,$CXXCPP,;t t
 s,@CONFIG_HAVE_INTPTR_T@,$CONFIG_HAVE_INTPTR_T,;t t
 s,@X_CFLAGS@,$X_CFLAGS,;t t
@@ -7267,7 +7127,6 @@ s,@CONFIG_SO@,$CONFIG_SO,;t t
 s,@CONFIG_LIB_PATH@,$CONFIG_LIB_PATH,;t t
 s,@CONFIG_STRIP@,$CONFIG_STRIP,;t t
 s,@CONFIG_CHMOD@,$CONFIG_CHMOD,;t t
-s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@tmorig@,$tmorig,;t t
 s,@tmdir@,$tmdir,;t t
 s,@tmsrc@,$tmsrc,;t t
