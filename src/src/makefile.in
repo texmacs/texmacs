@@ -8,33 +8,6 @@
 
 default: all
 
-main_src:=.
-
-###############################################################################
-# MODULE     : common make file for TeXmacs source
-# BY         : David Allouche
-# COPYRIGHT  : This software falls under the GNU general public license;
-#              see the file 'LICENSE', which is provided with this package.
-###############################################################################
-#
-# Utility makefile used by TeXmacs and TeXmacs-misc.
-#
-# This file defines all the rules and variables needed to compile
-# TeXmacs objects in other source trees. It also contains the
-# configuration variables definitions so that TeXmacs-misc does not
-# have to maintain its own configure script
-#
-# The including makefile *must* define the variable:
-#
-#    $(main_src) -- relative path of the TeXmacs-$DEVEL_VERSION/src directory.
-#
-# The including makefile's directory must contain:
-#
-#    Deps directory -- dependences files, if requested.
-#    Objects directory -- objects, .rpo's, and group source files.
-#
-###############################################################################
-
 ###############################################################################
 # Configuration variables
 ###############################################################################
@@ -101,7 +74,7 @@ TOUCH = touch
 
 findsrc_in = \
 $(foreach dir,$(patsubst %,$(1)/%,$(2)),\
-$(notdir $(wildcard $(main_src)/$(dir)/*.cpp $(main_src)/$(dir)/*/*.cpp)))
+$(notdir $(wildcard $(dir)/*.cpp $(dir)/*/*.cpp)))
 findsrc = $(call findsrc_in,$(1),*)
 
 system_src   := $(call findsrc,System)
@@ -140,7 +113,7 @@ deps += $(texmacs_deps)
 ###
 
 incl_flags = $(patsubst %,-I%,$(1))
-tm_incl_flags = $(call incl_flags,$(patsubst %,$(main_src)/%,$(1)))
+tm_incl_flags = $(call incl_flags,$(patsubst %,%,$(1)))
 
 system_incl   := $(call tm_incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Guile)
 classes_incl  := $(system_incl)
@@ -208,7 +181,7 @@ endif
 # automatically, but only if there is an appropriate rule for
 # regenerating the glue source from the scheme documents.
 
-$(main_src)/Guile/Glue/glue_%.cpp: $(main_src)/Guile/Glue/build-glue-%.scm
+Guile/Glue/glue_%.cpp: Guile/Glue/build-glue-%.scm
 	$(MAKE) GLUE
 
 # Compilation of objects
