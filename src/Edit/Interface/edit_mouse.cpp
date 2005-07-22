@@ -39,13 +39,12 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     if (type == "press-left")
       start_drag= true;
 
-    if (start_drag && (type == "move")) {
+    if (start_drag && type == "move") {
       type2= "start-drag";
       start_drag= false;
       dragging= true;
     }
-    else
-    if (dragging && (type == "move"))
+    else if (dragging && (type == "move"))
       type2= "dragging"; 
     if (dragging && (type == "release-left"))
       type2= "end-drag";

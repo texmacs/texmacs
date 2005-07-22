@@ -200,7 +200,7 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
 
 void
 edit_interface_rep::draw_with_stored (rectangle r) {
-  // cout << "Redraw " << (r/(sfactor*PIXEL)) << "\n";
+  //cout << "Redraw " << (r/(sfactor*PIXEL)) << "\n";
 
   /* Verify whether the backing store is still valid */
   if (!nil (stored_rects)) {

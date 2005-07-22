@@ -409,7 +409,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
     else {
       l= rectangle (x3+ dev->ox, y3+ dev->oy, x4+ dev->ox, y4+ dev->oy);
       display (dev);
-      if (nr_painted < 15) dev->apply_shadow (x1, y1, x2, y2);
+      //if (nr_painted < 15) dev->apply_shadow (x1, y1, x2, y2);
       nr_painted++;
     }
 
