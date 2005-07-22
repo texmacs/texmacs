@@ -105,11 +105,10 @@ texmacs_deps := $(call make_deps,$(system_src) $(classes_src) $(data_src)\
 deps += $(texmacs_deps)
 
 ###############################################################################
-# Include files and compilation flags
+# Include files
 ###############################################################################
 
 incl_flags = $(patsubst %,-I%,$(1))
-#tm_incl_flags = $(call incl_flags,$(patsubst %,%,$(1)))
 
 system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Guile)
 classes_incl  := $(system_incl)
@@ -122,6 +121,10 @@ guile_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
 edit_incl     := $(guile_incl) $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(guile_incl)
 
+###############################################################################
+# Dependencies
+###############################################################################
+
 deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Typeset Edit Texmacs Guile)
 
 deps_flags = $(deps_incl)\
@@ -130,6 +133,27 @@ deps_flags = $(deps_incl)\
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
 # current directory, and that feature is disable by -I-.
+
+$(texmacs_deps): Deps/%.d: %.cpp
+
+$(deps):
+	@ echo "make deps: $@"
+	@ set -e; $(CXX) -M $(deps_flags) $< \
+	  | sed 's|\($*\)\.o[ :]*|Objects/\1.o $@ : |g' > $@; \
+	  [ -s $@ ] || $(RM) $@
+
+# To avoid unneeded processing, the Deps will not be included (and thus
+# remade if needed) unless the "deps" target has been previously made,
+# by hand.
+
+deps: $(deps)
+	$(TOUCH) Deps/stamp
+
+.PHONY: deps
+
+ifeq ($(shell test -f Deps/stamp && echo yes || echo no),yes)
+include $(deps)
+endif
 
 ###############################################################################
 # Object files
@@ -148,51 +172,6 @@ texmacs_obj  := $(call makeobj,$(texmacs_src))
 typeset_obj  := $(call makeobj,$(typeset_src))
 x_window_obj := $(call makeobj,$(x_window_src))
 window_obj   := $(call makeobj,$(window_src))
-
-# Compilation rules
-#
-# The link_bin function uses different flags depending on the value
-# of the $(link) option, and on the host type. Its parameter must be a
-# sequence of options for the compiler control which libraries to link
-# with and where to find them.
-#
-# It should be used as the body of rules whose target are executable
-# binaries and the prerequisites are the object files being linked in
-# the target.
-
-ifeq "$(link)" "shared"
-ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LDB) $(LDBFLAGS) -lstdc++ $(LDBSHARED) $^ $(1) -o $@)
-else
-link_bin = $(strip $(LDB) $(LDBFLAGS) $(LDBSHARED) $^ $(1) -o $@)
-endif
-endif
-ifeq "$(link)" "static"
-ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -lstdc++ -o $@)
-else
-link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -o $@)
-endif
-endif
-
-# Compilation of objects
-#
-# The 'uses' function must be used as a prerequisite of a link rule
-# (whose body is a link_bin functian call). It takes a number of
-# module names in parameters.
-
-uses = $(sort $(foreach use,$(patsubst %,uses_%,$(1)),$($(use))))
-
-uses_system   := $(system_obj)
-uses_classes  := $(classes_obj)
-uses_data     := $(data_obj)
-uses_resource := $(resource_obj)
-uses_plugins  := $(plugins_obj)
-uses_window   := $(window_obj) $(x_window_obj)
-uses_typeset  := $(typeset_obj)
-uses_edit     := $(edit_obj)
-uses_glue     := $(guile_obj)
-uses_texmacs  := $(texmacs_obj)
 
 # To enforce some degree of modularity, each object file must be
 # compiled with only a specific set of include flags. To achieve that,
@@ -239,31 +218,6 @@ $(x_window_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(window_incl) $(CXXXWINDOW))
 
 ###############################################################################
-# Dependencies
-###############################################################################
-
-$(texmacs_deps): Deps/%.d: %.cpp
-
-$(deps):
-	@ echo "make deps: $@"
-	@ set -e; $(CXX) -M $(deps_flags) $< \
-	  | sed 's|\($*\)\.o[ :]*|Objects/\1.o $@ : |g' > $@; \
-	  [ -s $@ ] || $(RM) $@
-
-# To avoid unneeded processing, the Deps will not be included (and thus
-# remade if needed) unless the "deps" target has been previously made,
-# by hand.
-
-deps: $(deps)
-	$(TOUCH) Deps/stamp
-
-.PHONY: deps
-
-ifeq ($(shell test -f Deps/stamp && echo yes || echo no),yes)
-include $(deps)
-endif
-
-###############################################################################
 # Main makes
 ###############################################################################
 
@@ -277,6 +231,51 @@ clean: CLEAN
 ###############################################################################
 # Make editor
 ###############################################################################
+
+# Linking rules
+#
+# The link_bin function uses different flags depending on the value
+# of the $(link) option, and on the host type. Its parameter must be a
+# sequence of options for the compiler control which libraries to link
+# with and where to find them.
+#
+# It should be used as the body of rules whose target are executable
+# binaries and the prerequisites are the object files being linked in
+# the target.
+
+ifeq "$(link)" "shared"
+ifeq "$(CONFIG_OS)" "DEC"
+link_bin = $(strip $(LDB) $(LDBFLAGS) -lstdc++ $(LDBSHARED) $^ $(1) -o $@)
+else
+link_bin = $(strip $(LDB) $(LDBFLAGS) $(LDBSHARED) $^ $(1) -o $@)
+endif
+endif
+ifeq "$(link)" "static"
+ifeq "$(CONFIG_OS)" "DEC"
+link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -lstdc++ -o $@)
+else
+link_bin = $(strip $(LDB) $(LDBFLAGS) $^ $(LDBSTATIC) $(1) -o $@)
+endif
+endif
+
+# Compilation of objects
+#
+# The 'uses' function must be used as a prerequisite of a link rule
+# (whose body is a link_bin functian call). It takes a number of
+# module names in parameters.
+
+uses = $(sort $(foreach use,$(patsubst %,uses_%,$(1)),$($(use))))
+
+uses_system   := $(system_obj)
+uses_classes  := $(classes_obj)
+uses_data     := $(data_obj)
+uses_resource := $(resource_obj)
+uses_plugins  := $(plugins_obj)
+uses_window   := $(window_obj) $(x_window_obj)
+uses_typeset  := $(typeset_obj)
+uses_edit     := $(edit_obj)
+uses_glue     := $(guile_obj)
+uses_texmacs  := $(texmacs_obj)
 
 # Compilation rules
 
