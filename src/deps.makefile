@@ -6,7 +6,7 @@ $(deps):
 	  | sed 's|\($*\)\.o[ :]*|Objects/\1.o $@ : |g' > $@; \
 	  [ -s $@ ] || $(RM) $@
 
-# To avoid uneeded processing, the Deps will not be included (and thus
+# To avoid unneeded processing, the Deps will not be included (and thus
 # remade if needed) unless the "deps" target has been previously made,
 # by hand.
 

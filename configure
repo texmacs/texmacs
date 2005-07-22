@@ -6712,7 +6712,7 @@ fi
 # Done
 #--------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile:Makefile.in src/common.makefile:src/common.makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
+ac_config_files="$ac_config_files Makefile:Makefile.in src/makefile:src/makefile.in src/System/tm_configure.hpp:src/System/tm_configure.in misc/admin/admin.makefile:misc/admin/admin.makefile.in misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in misc/rpm/TeXmacs.spec:misc/rpm/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -7210,7 +7210,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.in" ;;
-  "src/common.makefile" ) CONFIG_FILES="$CONFIG_FILES src/common.makefile:src/common.makefile.in" ;;
+  "src/makefile" ) CONFIG_FILES="$CONFIG_FILES src/makefile:src/makefile.in" ;;
   "src/System/tm_configure.hpp" ) CONFIG_FILES="$CONFIG_FILES src/System/tm_configure.hpp:src/System/tm_configure.in" ;;
   "misc/admin/admin.makefile" ) CONFIG_FILES="$CONFIG_FILES misc/admin/admin.makefile:misc/admin/admin.makefile.in" ;;
   "misc/doxygen/Doxyfile" ) CONFIG_FILES="$CONFIG_FILES misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in" ;;
