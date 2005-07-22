@@ -8,6 +8,8 @@
 
 default: all
 
+vpath %.cpp $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
+
 ###############################################################################
 # Configuration variables
 ###############################################################################
@@ -22,8 +24,7 @@ CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
 CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
 CXXDEBUG = @CONFIG_CXXDEBUG@ 
 CXXFLAGS = $(CXXWARNING) $(CXXTEMPLATE) $(CXXOPTIMIZE) $(CXXDEBUG) @CONFIG_CXXFLAGS@ @CXXFLAGS@
-CPPFLAGS = 
-DASH_I_DASH = @CONFIG_DASH_I_DASH@
+CPPFLAGS = @CPPFLAGS@
 CXXXWINDOW =@CONFIG_CX@
 CXXIMLIB2 = @IMLIB2_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
@@ -183,16 +184,6 @@ window_obj   := $(call makeobj,$(window_src))
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) \
   $(CXXGUILE) $(CPPFLAGS) $(CXXFLAGS)) 
-cxx_incl_sys = $(call cxx_flags,$(1) $(DASH_I_DASH) $(CPPFLAGS) $(2) $(CXXFLAGS))
-
-# We should use cxx_incl_sys to include external headers (splitting
-# the include path is safer), but a problem in Guile 1.6.0 does not
-# allow it. See the definition of deps_flags for details.
-#
-# Since Guile headers are now included for every compilation unit, we
-# cannot use DASH_I_DASH at all anymore. The guile headers should be
-# abstracted off the public Scheme interface. This would reduce
-# compilation times and fix this problem.
 
 $(system_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
@@ -216,17 +207,6 @@ $(window_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(window_incl))
 $(x_window_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(window_incl) $(CXXXWINDOW))
-
-###############################################################################
-# Main makes
-###############################################################################
-
-vpath %.cpp $(shell find . -type d '!' -name Deps '!' -name Objects|tr '\n' ' ')
-
-all: $(tmsrc)/bin/texmacs.bin
-clean: CLEAN
-
-.PHONY: all clean
 
 ###############################################################################
 # Make editor
@@ -291,7 +271,9 @@ $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 Objects/texmacs-$(link).bin: $(TEXMACS_objects)
 	$(call link_bin,$(link_options))
 
-.PHONY: $(tmsrc)/bin/texmacs.bin
+all: $(tmsrc)/bin/texmacs.bin
+
+.PHONY: all $(tmsrc)/bin/texmacs.bin
 
 ###############################################################################
 # Interface for Guile
@@ -336,7 +318,9 @@ DISTR:
 CLEAN: DISTR
 	$(RM) Objects/*.o
 
+clean: CLEAN
+
 maintainer-clean: CLEAN
 	$(RM) Objects/*.*
 
-PHONY: DISTR CLEAN maintainer-clean
+PHONY: DISTR CLEAN clean maintainer-clean
