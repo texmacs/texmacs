@@ -597,7 +597,7 @@ esac
 #--------------------------------------------------------------------
 
 case "$GXX_VERSION" in
-     3.*)
+     3.* | 4.*)
 	 CONFIG_BSTATIC="-static"
 	 CONFIG_BSHARED="-dynamic"
      ;;
@@ -610,7 +610,7 @@ esac
 optimize_default="yes"
 
 case "$GXX_VERSION" in
-    3.3.3 | 3.3.4)
+    3.3.3 | 3.3.4 | 4.*)
     ;;
     2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
 	case "${host}" in
