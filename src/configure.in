@@ -258,7 +258,7 @@ AC_SUBST(FREETYPE_LDFLAGS)
 
 AC_ARG_WITH(imlib2,
 changequote(<<, >>)dnl
-<<  --with-imlib2[=ARG]       with imlib2 support [ARG=linked]>>dnl
+<<  --with-imlib2[=ARG]       with imlib2 support [ARG=no]>>dnl
 changequote([, ])dnl
 )
 
@@ -266,7 +266,7 @@ SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
 CONFIG_USE_IMLIB2=""
-if test "$with_imlib2" = "no" ; then
+if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
     AC_MSG_RESULT([disabling imlib2 support])
 else
     CPPFLAGS=`imlib2-config --cflags`
@@ -285,7 +285,7 @@ else
     AC_MSG_RESULT(yes)
     CONFIG_USE_IMLIB2="#define USE_IMLIB2"
     IMLIB2_CFLAGS="$CPPFLAGS"
-    if test "$with_imlib2" = "linked" -o "$with_imlib2" = "" ; then
+    if test "$with_imlib2" = "linked" ; then
       IMLIB2_LDFLAGS="$LIBS"
       CONFIG_LINKED_IMLIB2="#define LINKED_IMLIB2"
     fi
@@ -306,11 +306,14 @@ AC_SUBST(IMLIB2_LDFLAGS)
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
 #--------------------------------------------------------------------
 
-AC_MSG_CHECKING(whether ... arguments behave correctly)
+AC_MSG_CHECKING(whether ... arguments bahave correctly)
+CXXFLAGS="`guile-config compile`"
 AC_TRY_COMPILE([
-  void gh_enter (void (*call_back) (int, char**));
-  void install_guile (void (*call_back) (int, char**)) {
-    gh_enter ((void (*)(...)) ((void*) call_back)); }
+  #include <guile/gh.h>
+  #include <libguile.h>
+  typedef SCM (*FN)(...);
+  static SCM identity (SCM x) { return x; }
+  void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
 ],[
 ],[
   CONFIG_DOTS="#define DOTS_OK 1"
@@ -318,6 +321,7 @@ AC_TRY_COMPILE([
 ],[
   AC_MSG_RESULT(no)
 ])
+CXXFLAGS=""
 AC_SUBST(CONFIG_DOTS)
 
 AC_MSG_CHECKING(the size_t of guile strings)

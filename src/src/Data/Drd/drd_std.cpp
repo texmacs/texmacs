@@ -63,8 +63,6 @@ init_std_drd () {
   init (ERROR, "error", fixed (1));
   init (RAW_DATA, "raw-data", fixed (1));
 
-  init (MULTI_PART, "multi-part",
-	repeat (3, 3) -> no_border () -> accessible (0));
   init (DOCUMENT, "document", repeat (1, 1) -> no_border () -> accessible (0));
   init (PARA, "para",
 	repeat (1, 1) -> no_border () -> accessible (0) -> name ("paragraph"));

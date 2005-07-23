@@ -853,7 +853,7 @@ Optional Packages:
   --with-x                use the X Window System
   --with-iconv=DIR        where to find iconv system
   --with-freetype=ARG     with freetype support ARG=linked
-  --with-imlib2=ARG       with imlib2 support ARG=linked
+  --with-imlib2=ARG       with imlib2 support ARG=no
 
 Some influential environment variables:
   CC          C compiler command
@@ -5357,7 +5357,7 @@ SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
 CONFIG_USE_IMLIB2=""
-if test "$with_imlib2" = "no" ; then
+if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
     echo "$as_me:$LINENO: result: disabling imlib2 support" >&5
 echo "${ECHO_T}disabling imlib2 support" >&6
 else
@@ -5509,7 +5509,7 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 echo "${ECHO_T}yes" >&6
     CONFIG_USE_IMLIB2="#define USE_IMLIB2"
     IMLIB2_CFLAGS="$CPPFLAGS"
-    if test "$with_imlib2" = "linked" -o "$with_imlib2" = "" ; then
+    if test "$with_imlib2" = "linked" ; then
       IMLIB2_LDFLAGS="$LIBS"
       CONFIG_LINKED_IMLIB2="#define LINKED_IMLIB2"
     fi
@@ -5540,15 +5540,18 @@ LIBS="$SAVE_LIBS"
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
 #--------------------------------------------------------------------
 
-echo "$as_me:$LINENO: checking whether ... arguments behave correctly" >&5
-echo $ECHO_N "checking whether ... arguments behave correctly... $ECHO_C" >&6
+echo "$as_me:$LINENO: checking whether ... arguments bahave correctly" >&5
+echo $ECHO_N "checking whether ... arguments bahave correctly... $ECHO_C" >&6
+CXXFLAGS="`guile-config compile`"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
 
-  void gh_enter (void (*call_back) (int, char**));
-  void install_guile (void (*call_back) (int, char**)) {
-    gh_enter ((void (*)(...)) ((void*) call_back)); }
+  #include <guile/gh.h>
+  #include <libguile.h>
+  typedef SCM (*FN)(...);
+  static SCM identity (SCM x) { return x; }
+  void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
 
 #ifdef F77_DUMMY_MAIN
 #  ifdef __cplusplus
@@ -5591,6 +5594,7 @@ echo "${ECHO_T}no" >&6
 
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
+CXXFLAGS=""
 
 
 echo "$as_me:$LINENO: checking the size_t of guile strings" >&5
