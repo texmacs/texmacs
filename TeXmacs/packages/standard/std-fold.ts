@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.4>
+<TeXmacs|1.0.5.5>
 
 <style|<tuple|source|std>>
 
@@ -243,6 +243,36 @@
   <assign|fold-back|<value|identity>>
 
   <assign|keep-unfolded|<value|identity>>
+
+  <\active*>
+    <\src-comment>
+      Parts of documents.
+    </src-comment>
+  </active*>
+
+  <assign|show-preamble|<\macro|body>
+    <with|mode|src|preamble|true|par-first|0fn|par-par-sep|0.5fn|<arg|body>>
+  </macro>>
+
+  <assign|hide-preamble|<\macro|body>
+    <hidden|<arg|body>>
+  </macro>>
+
+  <assign|show-part|<\macro|id|active|inactive>
+    <arg|active>
+  </macro>>
+
+  <assign|hide-part|<\macro|id|active|inactive>
+    <hidden|<arg|inactive>>
+  </macro>>
+
+  <drd-props|show-preamble|border|no>
+
+  <drd-props|hide-preamble|border|no>
+
+  <drd-props|show-part|border|no>
+
+  <drd-props|hide-part|border|no>
 
   \;
 </body>
