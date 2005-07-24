@@ -26,6 +26,8 @@
   (display "\n"))
 
 (tm-define (plugin-math-input l)
+  (:synopsis "Convert mathematical input to a string")
+  (:argument l "A list of the form @(tuple plugin expr)")
   (set! current-plugin-input-stree (caddr l))
   (set! plugin-input-current-plugin (cadr l))
   (with-output-to-string plugin-input-caller))

@@ -104,6 +104,39 @@
      (set-output-language "ukrainian"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The dynamic document parts menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (document-parts-menu-entry id active?)
+  (list (list 'check (upcase-first id) "v" (lambda () active?))
+	(lambda ()
+	  (if (== (buffer-get-part-mode) :one)
+	      (buffer-show-part id)
+	      (buffer-toggle-part id)))))
+
+(tm-define (document-parts-menu)
+  (let* ((all (buffer-parts-list #t))
+	 (active (buffer-parts-list #f))
+	 (make (lambda (id) (document-parts-menu-entry id (in? id active)))))
+    (menu-dynamic
+      ,@(map make all))))
+
+(tm-define (document-part-menu)
+  (import-from (generic document-part))
+  (menu-dynamic
+    (if (buffer-has-preamble?)
+	  ("Show preamble" (buffer-set-part-mode :preamble)))
+      (if (not (buffer-has-preamble?))
+	  ("Create preamble" (buffer-make-preamble)))
+      ("Show one part" (buffer-set-part-mode :one))
+      ("Show several parts" (buffer-set-part-mode :several))
+      ("Show all parts" (buffer-set-part-mode :all))
+      (if (nnull? (buffer-parts-list #t))
+	  ---
+	  (when (in? (buffer-get-part-mode) '(:one :several))
+	    (link document-parts-menu)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -120,6 +153,7 @@
   (-> "Master"
       ("Attach" (interactive project-attach))
       ("Detach" (project-detach)))
+  (-> "Part" (link document-part-menu))
   (-> "View"
       ("Edit source tree" (toggle-preamble))
       (-> "Informative flags"
