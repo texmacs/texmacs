@@ -1,13 +1,28 @@
-<TeXmacs|1.0.5.4>
+<TeXmacs|1.0.5.5>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.5>
+  <section|Changes from version 1.0.5 to 1.0.5.6>
 
   <\itemize>
+    <item>Improvements in the double-buffering system (1.0.5.6).
+
+    <item>Implementation of a triple-buffering system for the graphical
+    object (1.0.5.6).
+
+    <item>Improvements in the partial redraw system (1.0.5.6).
+
+    <item>Start the implementation of document parts and preambles (1.0.5.6).
+
+    <item>Simplifications in <verbatim|configure.in> and the main makefile
+    (1.0.5.6).
+
+    <item>Global folding and unfolding according to type of contents
+    (1.0.5.6).
+
     <item>More and improved folding and switching functionality for
     presentation mode (1.0.5.5).
 
