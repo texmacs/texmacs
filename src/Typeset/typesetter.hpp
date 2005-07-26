@@ -20,7 +20,7 @@
 class typesetter_rep;
 typedef typesetter_rep* typesetter;
 
-typesetter new_typesetter (edit_env& env, tree& et, path ip);
+typesetter new_typesetter (edit_env& env, tree et, path ip);
 void       delete_typesetter (typesetter ttt);
 
 void notify_assign      (typesetter ttt, path p, tree u);

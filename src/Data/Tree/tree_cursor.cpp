@@ -50,11 +50,11 @@ closest_inside (tree t, path p) {
 }
 
 bool
-is_accessible (tree t, path p) {
+is_accessible_cursor (tree t, path p) {
   if (is_atomic (t)) return true;
   else if (atom (p)) return !the_drd->is_child_enforcing (t);
   else return the_drd->is_accessible_child (t, p->item) &&
-	      is_accessible (t[p->item], p->next);
+	      is_accessible_cursor (t[p->item], p->next);
 }
 
 path

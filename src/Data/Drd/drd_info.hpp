@@ -58,10 +58,10 @@ public:
   string get_name (tree_label tag);
 
   /* Properties of the children of the tag */
-  void set_accessible (tree_label tag, int nr, bool is_accessible);
-  bool get_accessible (tree_label tag, int nr);
-  bool all_accessible (tree_label tag);
+  void set_accessible (tree_label tag, int nr, int access_mode);
+  int  get_accessible (tree_label tag, int nr);
   void freeze_accessible (tree_label tag, int nr);
+  bool all_accessible (tree_label tag);
   bool is_accessible_child (tree t, int child);
   
   void set_block (tree_label tag, int nr, int require_block);

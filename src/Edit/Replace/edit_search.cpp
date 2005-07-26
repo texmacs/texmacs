@@ -13,6 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
@@ -358,12 +359,15 @@ edit_replace_rep::next_match (bool forward) {
     }
     search_end= test (search_at, search_what);
     if (search_end != search_at) {
+      go_to (copy (search_end));
+      show_cursor_if_hidden ();
       set_selection (search_at, search_end);
       notify_change (THE_SELECTION);
-      go_to (copy (search_end));
       return;
     }
+    int old_mode= set_access_mode (ACCESSIBLE_HIDDEN);
     step_horizontal (forward);
+    set_access_mode (old_mode);
   }
 }
 

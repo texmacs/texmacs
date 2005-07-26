@@ -33,21 +33,32 @@
 ;; Detecting sections inside paragraph lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tm/section-get-title-string-sub l)
+  (if (null? l) "no title"
+      (with title (tm/section-get-title-string (car l))
+	(if (!= title "no title") title
+	    (tm/section-get-title-string-sub (cdr l))))))
+
 (tm-define (tm/section-get-title-string t)
   (cond ((tm-atomic? t) "no title")
-	((tree-is? t 'concat) (tm/section-get-title-string (tm-ref t 0)))
-	((section-tag? (tm-car t))
+	((or (section-tag? (tm-car t)) (section*-tag? (tm-car t)))
 	 (plugin-math-input
 	  (list 'tuple "default" (tree->stree (tm->tree (tm-ref t 0))))))
+	((tree-is? (tm-car t) 'the-index) "Index")
+	((tree-is? (tm-car t) 'the-glossary) "Glossary")
 	((or (special-section-tag? (tm-car t))
 	     (automatic-section-tag? (tm-car t)))
 	 (upcase-first (string-replace (symbol->string (tm-car t)) "-" " ")))
+	((tree-is? t 'concat)
+	 (tm/section-get-title-string-sub (tree-children t)))
 	(else "no title")))
 
 (define (tm/section-detect? t pred?)
   (cond ((tm-atomic? t) #f)
-	((tree-is? t 'concat) (tm/section-detect? (tm-ref t 0) pred?))
 	((pred? (tm-car t)) #t)
+	((tree-is? t 'concat)
+	 (list-find (tree-children t)
+		    (lambda (x) (tm/section-detect? x pred?))))
 	(else #f)))
 
 (define (tm/section-split l pred?)
@@ -58,7 +69,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (principal-section-predicate)
-  (if (== (get-env-tree "sectional-short-style") (tree 'macro "true"))
+  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
       short-principal-section-tag?
       long-principal-section-tag?))
 
@@ -66,10 +77,9 @@
   (tm/section-detect? t (principal-section-predicate)))
 
 (define (list->document-part l)
-  (with section? (tm/section-detect? (car l) (principal-section-predicate))
-    (if section?
-	`(show-part "auto" (document ,@l) (document ,(car l)))
-	`(show-part "front matter" (document ,@l) ""))))
+  (if (tm/section-detect? (car l) (principal-section-predicate))
+      `(show-part "auto" (document ,@l) (document ,(car l)))
+      `(show-part "front matter" (document ,@l) "")))
 
 (tm-define (principal-sections-to-document-parts l)
   (with r (tm/section-split l (principal-section-predicate))

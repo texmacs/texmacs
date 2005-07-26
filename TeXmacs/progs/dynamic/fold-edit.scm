@@ -22,8 +22,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (dynamic-context? t)
-  (or (tree-in? t (toggle-tag-list))
-      (tree-in? t (switch-tag-list))))
+  (or (toggle-tag? (tree-label t))
+      (switch-tag? (tree-label t))))
 
 (tm-define (dynamic-first) (noop))
 (tm-define (dynamic-previous) (noop))
@@ -74,13 +74,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (toggle-context? t)
-  (tree-in? t (toggle-tag-list)))
+  (toggle-tag? (tree-label t)))
 
 (tm-define (toggle-first-context? t)
-  (tree-in? t (toggle-first-tag-list)))
+  (toggle-first-tag? (tree-label t)))
 
 (tm-define (toggle-second-context? t)
-  (tree-in? t (toggle-second-tag-list)))
+  (toggle-second-tag? (tree-label t)))
 
 (tm-define (make-toggle tag)
   (:type (-> void))
@@ -141,6 +141,10 @@
   (:context toggle-context?)
   (unfold))
 
+(tm-define (tree-show-hidden t)
+  (:require (toggle-context? t))
+  (toggle-toggle t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on switch trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,7 +156,11 @@
   (if (== i :last) (set! i (- (tree-arity t) 1)))
   (when (and (>= i 0) (< i (tree-arity t)))
     (cond ((and on? (tree-is? t i 'hidden))
-	   (tree-remove-node (tree-ref t i) 0))
+	   (tree-assign-node (tree-ref t i) 'shown))
+	  ((and (not on?) (tree-is? t i 'shown))
+	   (tree-assign-node (tree-ref t i) 'hidden))
+	  ((and on? (not (tree-is? t i 'shown)))
+	   (tree-insert-node (tree-ref t i) 0 '(shown)))
 	  ((and (not on?) (not (tree-is? t i 'hidden)))
 	   (tree-insert-node (tree-ref t i) 0 '(hidden))))))
 
@@ -171,7 +179,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (switch-context? t)
-  (tree-in? t (switch-tag-list)))
+  (switch-tag? (tree-label t)))
 
 (tm-define (switch-arity)
   (with t (tree-innermost switch-context?)
@@ -207,7 +215,7 @@
   (when (switch-valid-child? i)
     (switch-select i)
     (with-innermost t switch-context?
-      (apply tree-go-to (cons* t i args)))))
+      (apply tree-go-to (cons* t i 0 args)))))
 
 (tm-define (switch-insert-at i)
   (set! i (if (== i :end) (switch-arity) (switch-index i)))
@@ -215,7 +223,7 @@
     (when (and (>= i 0) (<= i (tree-arity t)))
       (let* ((empty (if (tree-in? t (big-switch-tag-list)) '(document "") ""))
 	     (v (switch-index :visible)))
-	(tree-insert! t i `(,(tree-label t) ,empty))
+	(tree-insert! t i `(,(tree-label t) (shown ,empty)))
 	(if (tree-in? t (alternative-tag-list))
 	    (switch-select i)
 	    (switch-select (+ v 1)))
@@ -239,30 +247,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (alternative-context? t)
-  (tree-in? t (alternative-tag-list)))
+  (alternative-tag? (tree-label t)))
 
-(tm-define (switch-select i)
-  (:context alternative-context?)
-  (with-innermost t alternative-context?
-    (switch-set-range t 0 :last #f)
-    (switch-set t i #t)))
+(tm-define (tree/switch-select t i)
+  (:require (alternative-context? t))
+  (switch-set-range t 0 :last #f)
+  (switch-set t i #t))
 
 (define (unroll-context? t)
-  (tree-in? t (unroll-tag-list)))
+  (unroll-tag? (tree-label t)))
 
-(tm-define (switch-select i)
-  (:context unroll-context?)
-  (with-innermost t unroll-context?
-    (switch-set-range t 0 (+ i 1) #t)
-    (switch-set-range t (+ i 1) :last #f)))
+(tm-define (tree/switch-select t i)
+  (:require (unroll-context? t))
+  (switch-set-range t 0 (+ i 1) #t)
+  (switch-set-range t (+ i 1) :last #f))
 
 (define (expanded-context? t)
-  (tree-in? t (expanded-tag-list)))
+  (expanded-tag? (tree-label t)))
+
+(tm-define (tree/switch-select t i)
+  (:require (expanded-context? t))
+  (switch-set-range t 0 :last #t))
 
 (tm-define (switch-select i)
-  (:context expanded-context?)
-  (with-innermost t expanded-context?
-    (switch-set-range t 0 :last #t)))
+  (with-innermost t switch-context?
+    (tree/switch-select t i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface to switches
@@ -270,8 +279,8 @@
 
 (tm-define (make-switch tag)
   (if (in? tag (big-switch-tag-list))
-      (insert-go-to `(,tag (document "")) '(0 0 0))
-      (insert-go-to `(,tag "") '(0 0))))
+      (insert-go-to `(,tag (shown (document ""))) '(0 0 0 0))
+      (insert-go-to `(,tag (shown "")) '(0 0 0))))
 
 (tm-define (dynamic-first)
   (:context switch-context?)
@@ -324,6 +333,12 @@
 	   (i (switch-index)))
       (variant-replace old new)
       (switch-select i))))
+
+(tm-define (tree-show-hidden t)
+  (:require (switch-context? t))
+  (with i (tree-down-index t)
+    (if (tree-is? (tree-ref t i) 'hidden)
+	(tree/switch-select t i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analyzing the environments occurring in folds
@@ -464,7 +479,9 @@
 	  (else (dynamic-operate-sub t mode)))))
 
 (tm-define (dynamic-operate-on-buffer mode)
-  (dynamic-operate (buffer-tree) mode))
+  (dynamic-operate (buffer-tree) mode)
+  (if (in? mode '(:first :var-first)) (tree-go-to (buffer-tree) :start))
+  (if (in? mode '(:last :var-last)) (tree-go-to (buffer-tree) :end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global navigation in recursive fold/switch structure

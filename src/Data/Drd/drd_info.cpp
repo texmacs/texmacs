@@ -12,6 +12,7 @@
 
 #include "drd_info.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "iterator.hpp"
 #include "analyze.hpp"
 
@@ -242,7 +243,7 @@ drd_info_rep::get_name (tree_label l) {
 ******************************************************************************/
 
 void
-drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
+drd_info_rep::set_accessible (tree_label l, int nr, int is_accessible) {
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -251,18 +252,9 @@ drd_info_rep::set_accessible (tree_label l, int nr, bool is_accessible) {
   ci.accessible= is_accessible;
 }
 
-bool
+int
 drd_info_rep::get_accessible (tree_label l, int nr) {
   return info[l]->ci[nr].accessible;
-}
-
-bool
-drd_info_rep::all_accessible (tree_label l) {
-  int i, n= N(info[l]->ci);
-  for (i=0; i<n; i++)
-    if (!info[l]->ci[i].accessible)
-      return false;
-  return n>0;
 }
 
 void
@@ -274,11 +266,29 @@ drd_info_rep::freeze_accessible (tree_label l, int nr) {
 }
 
 bool
+drd_info_rep::all_accessible (tree_label l) {
+  int i, n= N(info[l]->ci);
+  for (i=0; i<n; i++)
+    if (info[l]->ci[i].accessible != ACCESSIBLE_ALWAYS)
+      return false;
+  return n>0;
+}
+
+bool
 drd_info_rep::is_accessible_child (tree t, int i) {
   tag_info ti= info[L(t)];
   int index= ti->get_index (i, N(t));
   if ((index<0) || (index>=N(ti->ci))) return false;
-  return ti->ci[index].accessible;
+  switch (get_access_mode ()) {
+  case DRD_ACCESS_NORMAL:
+    return ti->ci[index].accessible == ACCESSIBLE_ALWAYS;
+  case DRD_ACCESS_HIDDEN:
+    return ti->ci[index].accessible == ACCESSIBLE_ALWAYS ||
+           ti->ci[index].accessible == ACCESSIBLE_HIDDEN;
+  case DRD_ACCESS_SOURCE:
+    return true;
+  }
+  return true; // NOT REACHED
 }
 
 /******************************************************************************
@@ -298,7 +308,7 @@ accessible_arg (drd_info_rep* drd, tree t, tree arg) {
     tree_label outer= make_tree_label (as_string (t[1]));
     return
       (drd->get_nr_indices (inner) > 0) &&
-      drd->get_accessible (inner, 0) &&
+      (drd->get_accessible (inner, 0) == ACCESSIBLE_ALWAYS) &&
       drd->all_accessible (outer);
   }
   else if (is_func (t, MACRO)) return false;
@@ -320,7 +330,8 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
   set_arity (l, n, 0, ARITY_NORMAL, CHILD_DETAILED);
   for (i=0; i<n; i++) {
     tree arg (ARG, macro[i]);
-    set_accessible (l, i, accessible_arg (this, macro[n], arg));
+    if (accessible_arg (this, macro[n], arg))
+      set_accessible (l, i, ACCESSIBLE_ALWAYS);
   }
   // if (old_ti != info[l])
   //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";
@@ -350,7 +361,8 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
   for (i=0; i<=m; i++) {
     tree arg (ARG, xmacro[0], as_string (i));
-    set_accessible (l, i, accessible_arg (this, xmacro[1], arg));
+    if (accessible_arg (this, xmacro[1], arg))
+      set_accessible (l, i, ACCESSIBLE_ALWAYS);
   }
   // if (old_ti != info[l])
   //   cout << var << ": " << old_ti << " -> " << info[l] << "\n";

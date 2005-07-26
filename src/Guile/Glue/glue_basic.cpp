@@ -559,6 +559,19 @@ tmg_tree_accessible_children (SCM arg1) {
 }
 
 SCM
+tmg_tree_load_inclusion (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "tree-load-inclusion");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= load_inclusion (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_path_infP (SCM arg1, SCM arg2) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "path-inf?");
   SCM_ASSERT_PATH (arg2, SCM_ARG2, "path-inf?");
@@ -2524,6 +2537,7 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-simplify", (FN) tmg_tree_simplify, 1, 0, 0);
   gh_new_procedure ("tree-accessible-child?", (FN) tmg_tree_accessible_childP, 2, 0, 0);
   gh_new_procedure ("tree-accessible-children", (FN) tmg_tree_accessible_children, 1, 0, 0);
+  gh_new_procedure ("tree-load-inclusion", (FN) tmg_tree_load_inclusion, 1, 0, 0);
   gh_new_procedure ("path-inf?", (FN) tmg_path_infP, 2, 0, 0);
   gh_new_procedure ("path-inf-eq?", (FN) tmg_path_inf_eqP, 2, 0, 0);
   gh_new_procedure ("path-less?", (FN) tmg_path_lessP, 2, 0, 0);

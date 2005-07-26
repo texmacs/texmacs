@@ -17,8 +17,8 @@
 * Constructor and destructor
 ******************************************************************************/
 
-typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip2):
-  env (env2), et (et2), ip (ip2), old_patch (UNINIT)
+typesetter_rep::typesetter_rep (edit_env& env2, tree et, path ip):
+  env (env2), old_patch (UNINIT)
 {
   paper= (env->get_string (PAGE_MEDIUM) == "paper");
   br= make_bridge (this, et, ip);
@@ -26,7 +26,7 @@ typesetter_rep::typesetter_rep (edit_env& env2, tree& et2, path ip2):
 }
 
 typesetter
-new_typesetter (edit_env& env, tree& et, path ip) {
+new_typesetter (edit_env& env, tree et, path ip) {
   return new typesetter_rep (env, et, ip);
 }
 
@@ -146,10 +146,21 @@ typesetter_rep::typeset () {
   b        = array<line_item> ();
   paper    = (env->get_string (PAGE_MEDIUM) == "paper");
 
+  // Test whether we are doing a complete typesetting
   env->complete= br->my_typeset_will_be_complete ();
+  tree st= br->st;
+  int i= 0, n= N(st);
+  if (is_compound (st[0], "show-preamble")) { i++; env->complete= false; }
+  if (is_compound (st[0], "hide-preamble")) i++;
+  for (; i<n && env->complete; i++) {
+    if (is_compound (st[i], "hide-part")) env->complete= false;
+    if (!is_compound (st[i], "show-part")) break;
+  }
+
+  // Typeset
   if (env->complete) env->local_aux= hashmap<string,tree> (UNINIT);
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
-  pager ppp= new pager_rep (ip, env, l);
+  pager ppp= new pager_rep (br->ip, env, l);
   box b= ppp->make_pages ();
   if (env->complete && paper) determine_page_references (b);
   delete ppp;
@@ -179,7 +190,7 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
 void
 notify_assign (typesetter ttt, path p, tree u) {
   // cout << "Assign " << p << ", " << u << "\n";
-  if (nil (p)) ttt->br= make_bridge (ttt, u, ttt->ip);
+  if (nil (p)) ttt->br= make_bridge (ttt, u, ttt->br->ip);
   else ttt->br->notify_assign (p, u);
 }
 

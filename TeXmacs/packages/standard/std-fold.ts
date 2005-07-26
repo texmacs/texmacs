@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.5>
+<TeXmacs|1.0.5.6>
 
 <style|<tuple|source|std>>
 
@@ -132,6 +132,18 @@
 
   <assign|unfolded|<value|unfolded-std>>
 
+  \;
+
+  <drd-props|folded-plain|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-std|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-env|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-grouped|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded|arity|2|accessible|0|hidden|1>
+
   <\active*>
     <\src-comment>
       Tags for toggling between summarized and detailed text.
@@ -190,6 +202,28 @@
 
   <assign|detailed|<value|detailed-env>>
 
+  \;
+
+  <drd-props|summarized-plain|arity|2|accessible|0|hidden|1>
+
+  <drd-props|summarized-std|arity|2|accessible|0|hidden|1>
+
+  <drd-props|summarized-env|arity|2|accessible|0|hidden|1>
+
+  <drd-props|summarizes-grouped|arity|2|accessible|0|hidden|1>
+
+  <drd-props|summarized|arity|2|accessible|0|hidden|1>
+
+  <drd-props|detailed-plain|arity|2|accessible|1|hidden|0>
+
+  <drd-props|detailed-std|arity|2|accessible|1|hidden|0>
+
+  <drd-props|detailed-env|arity|2|accessible|1|hidden|0>
+
+  <drd-props|detailed-grouped|arity|2|accessible|1|hidden|0>
+
+  <drd-props|detailed|arity|2|accessible|1|hidden|0>
+
   <\active*>
     <\src-comment>
       Tags for switches.
@@ -218,21 +252,23 @@
 
   <assign|switch|<value|document-block>>
 
-  <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
-
   <assign|screens|<value|document-block>>
-
-  <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
 
   <assign|unroll|<value|document-block>>
 
-  <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
-
   <assign|expanded|<value|document-block>>
 
-  <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
-
   <assign|slides|<value|slides-block>>
+
+  \;
+
+  <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|slides|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -263,7 +299,7 @@
   </macro>>
 
   <assign|hide-part|<\macro|id|active|inactive>
-    <hidden|<arg|inactive>>
+    <hidden|<if|<sectional-short-style>|<arg|active>|<arg|inactive>>>
   </macro>>
 
   <drd-props|show-preamble|border|no>
@@ -272,7 +308,7 @@
 
   <drd-props|show-part|border|no>
 
-  <drd-props|hide-part|border|no>
+  <drd-props|hide-part|border|no|arity|3|hidden|1>
 
   \;
 </body>
