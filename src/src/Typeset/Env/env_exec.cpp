@@ -16,6 +16,7 @@
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
+#include "drd_mode.hpp"
 
 extern int script_status;
 
@@ -518,18 +519,17 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_no_border (l, true);
 	drd->freeze_no_border (l);
       }
-      if (prop == "accessible") {
-	if (val == "none") {
+      if (prop == "unaccessible" || prop == "hidden" || prop == "accessible") {
+	int prop_code= ACCESSIBLE_NEVER;
+	if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
+	if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
+	if (val == "none") prop_code= ACCESSIBLE_NEVER;
+	if (is_int (val))
+	  drd->set_accessible (l, as_int (val), prop_code);
+	else if (val == "none" || val == "all") {
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, false);
-	    drd->freeze_accessible (l, i);
-	  }
-	}
-	if (val == "all") {
-	  int i, n= drd->get_nr_indices (l);
-	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, true);
+	    drd->set_accessible (l, i, prop_code);
 	    drd->freeze_accessible (l, i);
 	  }
 	}

@@ -16,8 +16,36 @@
   (:use (generic document-edit) (text tm-structure)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flatten old-style projects into one file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (inclusion-children t)
+  (cond ((tree-is? t 'with) (inclusion-children (cAr (tree-children t))))
+	((tree-is? t 'document) (tree-children t))
+	(else (list t))))
+
+(define (expand-includes-one t r)
+  (if (tree-is? t 'include)
+      (with u (url-relative r (string->url (tree->string (tree-ref t 0))))
+	(inclusion-children (tree-load-inclusion u)))
+      (list (expand-includes t r))))
+
+(define (expand-includes t r)
+  (cond ((tree-atomic? t) t)
+	((tree-is? t 'document)
+	 (with l (map (lambda (x) (expand-includes-one x r)) (tree-children t))
+	   (cons 'document (apply append l))))
+	(else
+	 (with l (map (lambda (x) (expand-includes x r)) (tree-children t))
+	   (cons (tree-label t) l)))))
+
+(tm-define (buffer-expand-includes)
+  (tree-assign (buffer-tree)
+	       (expand-includes (buffer-tree) (get-name-buffer))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main internal representations for document parts:
-;;   :preamble -> (document (show-preamble preamble) (hidden body))
+;;   :preamble -> (document (show-preamble preamble) (ignore body))
 ;;   :one, :several -> (document [optional (hide-preamble pre)] hide-show-list)
 ;;   :all -> (document [optional (hide-preamble preamble)] body)
 ;; In the case of :one and :several, the hide-show-list contains items
@@ -41,12 +69,12 @@
       (buffer-flatten-parts)
       (let* ((t (buffer-tree))
 	     (preamble `(show-preamble ,(tree-ref t 0 0)))
-	     (body `(hidden (document ,@(cdr (tree-children t))))))
+	     (body `(ignore (document ,@(cdr (tree-children t))))))
 	(tree-assign! t `(document ,preamble ,body))))))
 
 (define (buffer-hide-preamble)
   (with t (buffer-tree)
-    (when (match? t '(document (show-preamble :1) (hidden (document :*))))
+    (when (match? t '(document (show-preamble :1) (ignore (document :*))))
       (tree-assign t `(document (hide-preamble ,(tree-ref t 0 0))
 				,@(tree-children (tree-ref t 1 0)))))))
 
@@ -122,7 +150,7 @@
 	 (list (document-part-name t)))
 	((principal-section? t)
 	 (list (tm/section-get-title-string t)))
-	((not (tree-in? t '(document hidden))) '())
+	((not (tree-in? t '(document ignore))) '())
 	(else (with ls (map (lambda (x) (document-get-parts x all?))
 			    (tree-children t))
 		(apply append ls)))))
@@ -135,7 +163,7 @@
 (tm-define (buffer-parts-list all?)
   (:synopsis "Get the list of all document parts of the current buffer")
   (with l (buffer-body-paragraphs)
-    (if (match? l '((hidden (document :*))))
+    (if (match? l '((ignore (document :*))))
 	(set! l (tree-children (tree-ref (car l) 0))))
     (with parts (document-get-parts (tm->tree `(document ,@l)) all?)
       (if (and (not (tree-in? (car l) '(show-part hide-part)))
@@ -152,7 +180,7 @@
   (cond ((tree-atomic? t) #f)
 	((tree-in? t '(show-part hide-part))
 	 (and (== id (document-part-name t)) t))
-	((not (tree-in? t '(document hidden))) #f)
+	((not (tree-in? t '(document ignore))) #f)
 	(else (list-find (tree-children t)
 			 (lambda (x) (document-find-part x id))))))
 
@@ -198,3 +226,56 @@
     (with t (buffer-tree)
       (tree-insert! t 0 '(document (hide-preamble (document ""))))
       (buffer-set-part-mode :preamble))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Making hidden parts visible
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-show-hidden t)
+  (:require (and (tree-is? t 'hide-part) (== (tree-up t) (buffer-tree))))
+  (if (== (buffer-get-part-mode) :one)
+      (with id (document-part-name t)
+	(document-select-part (tree-up t) id))
+      (tree-assign-node t 'show-part)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The dynamic document part menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (document-parts-menu-entry id active?)
+  (list (list 'check (upcase-first id) "v" (lambda () active?))
+	(lambda ()
+	  (if (== (buffer-get-part-mode) :one)
+	      (buffer-show-part id)
+	      (buffer-toggle-part id)))))
+
+(tm-define (document-parts-menu)
+  (let* ((all (buffer-parts-list #t))
+	 (active (buffer-parts-list #f))
+	 (make (lambda (id) (document-parts-menu-entry id (in? id active)))))
+    (menu-dynamic
+      ,@(map make all))))
+
+(menu-bind document-part-menu
+  (if (buffer-has-preamble?)
+      ("Show preamble" (buffer-set-part-mode :preamble)))
+  (if (not (buffer-has-preamble?))
+      ("Create preamble" (buffer-make-preamble)))
+  ("Show one part" (buffer-set-part-mode :one))
+  ("Show several parts" (buffer-set-part-mode :several))
+  ("Show all parts" (buffer-set-part-mode :all))
+  (if (or (in? (buffer-get-part-mode) '(:one :several))
+	  (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
+      ---
+      (when (in? (buffer-get-part-mode) '(:one :several))
+	(link document-parts-menu))))
+
+(menu-bind project-manage-menu
+  (group "Upgrade")
+  ("Expand inclusions" (buffer-expand-includes))
+  ---
+  (group "Old style")
+  (when (not (project-attached?))
+    ("Attach master" (interactive project-attach)))
+  (when (project-attached?)
+    ("Detach master" (project-detach))))

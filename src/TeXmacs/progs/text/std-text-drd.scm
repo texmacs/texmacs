@@ -35,11 +35,16 @@
   section subsection subsubsection
   paragraph subparagraph)
 
+(define-group section*-tag
+  part* chapter* appendix*
+  section* subsection* subsubsection*
+  paragraph* subparagraph*)
+
 (define-group special-section-tag
   prologue epilogue)
 
 (define-group automatic-section-tag
-  table-of-contents bibliography index glossary
+  table-of-contents bibliography the-index the-glossary
   list-of-figures list-of-tables)
 
 (define-group long-principal-section-tag

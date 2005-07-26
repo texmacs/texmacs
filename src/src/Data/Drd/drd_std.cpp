@@ -69,7 +69,7 @@ init_std_drd () {
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
-  init (HIDDEN, "hidden", fixed (1) -> no_border ());
+  init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
@@ -329,4 +329,8 @@ init_std_drd () {
   init (FUNC, "func", var_repeat (1, 1));
   init (ENV, "env", var_repeat (1, 2));
   init (AUTHORIZE, "authorize", fixed (2));
+
+  init (make_tree_label ("shown"), "shown",
+	fixed (1) -> accessible (0) -> no_border ());
+  init (make_tree_label ("ignore"), "ignore", fixed (1) -> no_border ());
 }

@@ -147,3 +147,16 @@
 
 (tm-define (hidden-variant)
   (noop))
+
+(tm-define (tree-show-hidden t)
+  (noop))
+
+(tm-define (tree-show-hidden t)
+  (:require (tree-is? t 'hidden))
+  (tree-assign-node t 'shown))
+
+(tm-define (cursor-show-hidden)
+  (with t (buffer-tree)
+    (while (!= t (cursor-tree))
+      (tree-show-hidden t)
+      (set! t (tree-ref t :down)))))

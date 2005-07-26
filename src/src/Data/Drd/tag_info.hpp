@@ -91,12 +91,16 @@ struct parent_info {
 *   missing drd information.
 ******************************************************************************/
 
+#define ACCESSIBLE_NEVER      0
+#define ACCESSIBLE_HIDDEN     1
+#define ACCESSIBLE_ALWAYS     2
+
 #define BLOCK_REQUIRE_BLOCK   0
 #define BLOCK_REQUIRE_INLINE  1
 #define BLOCK_REQUIRE_NONE    2
 
 struct child_info {
-  unsigned accessible       : 1; // child is accessible?
+  unsigned accessible       : 2; // child is accessible?
   unsigned block            : 2; // require children to be blocks?
   unsigned freeze_accessible: 1; // true => disable heuristic determination
   unsigned freeze_block     : 1;
@@ -123,6 +127,7 @@ public:
 
   tag_info no_border ();
   tag_info accessible (int i);
+  tag_info hidden (int i);
   tag_info name (string s);
   int      get_index (int child, int n);
   void     set_attribute (string which, tree val);

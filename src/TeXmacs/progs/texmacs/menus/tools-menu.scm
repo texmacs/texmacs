@@ -60,6 +60,8 @@
       ("Styles" (style-clear-cache)))
   (-> "Web"
       ("Create web site" (tmweb-interactive-build)))
+  (-> "Project"
+      (link project-manage-menu))
   (if (nnull? (test-menu))
       ---
       (link test-menu)))

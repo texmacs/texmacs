@@ -87,7 +87,7 @@ operator << (ostream& out, parent_info pi) {
 ******************************************************************************/
 
 child_info::child_info (bool frozen) {
-  accessible        = 0;
+  accessible        = ACCESSIBLE_NEVER;
   block             = 0;
   freeze_accessible = frozen;
   freeze_block      = frozen;
@@ -95,7 +95,7 @@ child_info::child_info (bool frozen) {
 
 child_info::child_info (string s) {
   int i= as_int (s);
-  get_bits (accessible       , 1);
+  get_bits (accessible       , 2);
   get_bits (block            , 2);
   get_bits (freeze_accessible, 1);
   get_bits (freeze_block     , 1);
@@ -103,7 +103,7 @@ child_info::child_info (string s) {
 
 child_info::operator string () {
   int i=0, offset=0;
-  set_bits (accessible       , 1);
+  set_bits (accessible       , 2);
   set_bits (block            , 2);
   set_bits (freeze_accessible, 1);
   set_bits (freeze_block     , 1);
@@ -185,7 +185,13 @@ tag_info_rep::no_border () {
 
 tag_info
 tag_info_rep::accessible (int i) {
-  ci[i].accessible= true;
+  ci[i].accessible= ACCESSIBLE_ALWAYS;
+  return tag_info (pi, ci, extra);
+}
+
+tag_info
+tag_info_rep::hidden (int i) {
+  ci[i].accessible= ACCESSIBLE_HIDDEN;
   return tag_info (pi, ci, extra);
 }
 

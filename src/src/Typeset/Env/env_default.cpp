@@ -215,6 +215,11 @@ initialize_default_env () {
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
 
+  /* hiding and showing content */
+  env ("shown")= identity_m;
+  env ("ignore")=
+    tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
+
   /* further standard macros */
   env ("error")=
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));

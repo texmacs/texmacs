@@ -29,11 +29,13 @@ protected:
   cursor& the_cursor ();
   cursor& the_ghost_cursor ();
 
+  path make_cursor_accessible (path p, bool forwards);
   path tree_path (SI x, SI y, SI delta);
   bool cursor_move_sub (SI& x0, SI& y0, SI& delta, SI dx, SI dy);
   void cursor_move (SI dx, SI dy);
   void adjust_ghost_cursor (int status);
   void notify_cursor_moved (int status);
+  void show_cursor_if_hidden ();
 
 public:
   edit_cursor_rep ();

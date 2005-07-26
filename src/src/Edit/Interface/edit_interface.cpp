@@ -75,7 +75,8 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
   SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
-  notify_change (THE_FOCUS + THE_EXTENTS);
+  tp= make_cursor_accessible (tp, true);
+  notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
 }
 
 display

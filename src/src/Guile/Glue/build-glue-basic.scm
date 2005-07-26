@@ -64,6 +64,7 @@
   (tree-simplify simplify_correct (tree tree))
   (tree-accessible-child? is_accessible_child (bool tree int))
   (tree-accessible-children accessible_children (array_tree tree))
+  (tree-load-inclusion load_inclusion (tree url))
 
   ;; paths
   (path-inf? path_inf (bool path path))

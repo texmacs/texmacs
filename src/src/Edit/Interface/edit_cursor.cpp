@@ -31,13 +31,36 @@ cursor& edit_cursor_rep::the_ghost_cursor () { return mv; }
 
 #define DELTA (1<<23)
 
+static bool searching_forwards;
+
+path
+edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
+  path start_p= p;
+  bool inverse= false;
+  while (!is_accessible_cursor (et, p) && !in_source ()) {
+    path pp;
+    if (forwards ^ inverse)
+      pp= rp * next_valid (subtree (et, rp), p - rp);
+    else
+      pp= rp * previous_valid (subtree (et, rp), p - rp);
+    if (pp == p) {
+      if (inverse) break;
+      else { p= start_p; inverse= true; }
+    }
+    else p= pp;
+  }
+  return p;
+}
+
 path
 edit_cursor_rep::tree_path (SI x, SI y, SI delta) {
-  return correct_cursor (et, eb->find_tree_path (x, y, delta));
+  path p= correct_cursor (et, eb->find_tree_path (x, y, delta));
+  return make_cursor_accessible (p, searching_forwards);
 }
 
 bool
 edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
+  searching_forwards= dx == 1 || dy == -1;
   int i,d;
   path ref_p= tree_path (x0, y0, d0);
   if (ref_p != tp) {
@@ -289,6 +312,10 @@ edit_cursor_rep::go_to_here () {
     tp= super_correct (et, tp);
     cu= eb->find_check_cursor (tp);
   }
+  if (!cu->valid) {
+    tp= make_cursor_accessible (tp, false);
+    cu= eb->find_check_cursor (tp);
+  }
   if (cu->valid) adjust_cursor ();
   if (mv_status == DIRECT) mv= copy (cu);
   notify_change (THE_CURSOR);
@@ -413,6 +440,14 @@ search_tree_in (tree t, tree what) {
 }
 
 void
+edit_cursor_rep::show_cursor_if_hidden () {
+  if (!is_accessible_cursor (et, tp) && !in_source ()) {
+    eval ("(use-modules (utils edit variants))");
+    eval ("(cursor-show-hidden)");
+  }
+}
+
+void
 edit_cursor_rep::go_to_label (string s) {
   path p= search_tree_in (et, tree (LABEL, s));
   if (!nil (p)) go_to (p);
@@ -420,4 +455,5 @@ edit_cursor_rep::go_to_label (string s) {
     p= eb->find_tag (s);
     if (!nil (p)) go_to (p);
   }
+  show_cursor_if_hidden ();
 }
