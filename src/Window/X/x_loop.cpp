@@ -39,9 +39,10 @@ static long time_difference = 0;
 
 static void
 synchronize_time (Time t) {
+  if (time_initialized && time_difference == 0) return;
   long d= texmacs_time () - ((time_t) t);
   if (time_initialized) {
-    if (d < time_difference && d != 0)
+    if (d < time_difference)
       time_difference= d;
   }
   else {
