@@ -30,6 +30,6 @@ MV = mv -f
 LN = ln -f
 CHMOD = chmod -f
 GZIP = gzip -f
-STRIP = true
+STRIP = strip
 TOUCH = touch
 TAR = tar

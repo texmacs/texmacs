@@ -25,8 +25,37 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
-int nr_windows= 0;
-bool request_partial_redraw= false;
+int  nr_windows= 0;
+
+static int  kbd_count= 0;
+static bool request_partial_redraw= false;
+
+/******************************************************************************
+* Hack for getting the remote time
+******************************************************************************/
+
+static bool time_initialized= false;
+static long time_difference = 0;
+
+static void
+synchronize_time (Time t) {
+  long d= texmacs_time () - ((time_t) t);
+  if (time_initialized) {
+    if (d < time_difference && d != 0)
+      time_difference= d;
+  }
+  else {
+    time_initialized= true;
+    time_difference = d;
+  }
+  if (-1000 <= time_difference && time_difference <= 1000)
+    time_difference= 0;
+}
+
+static time_t
+remote_time (Time t) {
+  return ((time_t) t) + time_difference;
+}
 
 /******************************************************************************
 * Look up keys and mouse
@@ -251,7 +280,10 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
       string key= look_up_key (&ev->xkey);
       //cout << "Press " << key << " at " << (time_t) ev->xkey.time
       //<< " (" << texmacs_time() << ")\n";
-      if (texmacs_time () - ((time_t) ev->xkey.time) < 100)
+      kbd_count++;
+      synchronize_time (ev->xkey.time);
+      if (texmacs_time () - remote_time (ev->xkey.time) < 100 ||
+	  (kbd_count & 15) == 0)
 	request_partial_redraw= true;
       if (N(key)>0) win->key_event (key);
       break;
