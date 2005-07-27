@@ -143,12 +143,14 @@ edit_interface_rep::get_window_height () {
 void
 edit_interface_rep::scroll_to (SI x, SI y) {
   stored_rects= rectangles ();
+  copy_always = rectangles ();
   SERVER (scroll_to (x/sfactor, y/sfactor));
 }
 
 void
 edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
   stored_rects= rectangles ();
+  copy_always = rectangles ();
   SERVER (set_extents ((x1-sfactor+1)/sfactor, (y1-sfactor+1)/sfactor,
 		       (x2+sfactor-1)/sfactor, (y2+sfactor-1)/sfactor));
 }

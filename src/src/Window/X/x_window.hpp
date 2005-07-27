@@ -34,8 +34,7 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   rectangles   clipping;
   int          win_x, win_y;
   int          win_w, win_h;
-  bool         off_initialized;
-  int          off_x, off_y;
+  bool         win_flag;
 
   widget_rep*  kbd_focus;
   bool         has_focus;
