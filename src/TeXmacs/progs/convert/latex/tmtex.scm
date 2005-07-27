@@ -339,11 +339,13 @@
     (if (null? l) l (append (car l) (append-lists (cdr l)))))
   (cond ((or (nlist? l) (null? l)) '())
 	((== (car l) 'assign) (list l))
+	((== (car l) 'hide-preamble) (cdadr l))
 	(else (append-lists (map tmtex-filter-preamble (cdr l))))))
 
 (define (tmtex-filter-body l)
   (cond ((or (nlist? l) (null? l)) l)
 	((== (car l) 'assign) "")
+	((== (car l) 'hide-preamble) "")
 	(else (cons (car l) (map tmtex-filter-body (cdr l))))))
 
 (define (tmtex-file l)
@@ -367,6 +369,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-noop l) "")
+(define (tmtex-id l) (tmtex (car l)))
+(define (tmtex-hide-part l) "")
+(define (tmtex-show-part l) (tmtex (cadr l)))
 
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
@@ -1186,6 +1191,10 @@
   ((:or graphics point line arc bezier) tmtex-noop)
   (postscript tmtex-postscript)
   
+  (hidden tmtex-noop)
+  (shown tmtex-id)
+  (hide-part tmtex-hide-part)
+  (show-part tmtex-show-part)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
 
@@ -1235,7 +1244,9 @@
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
-  (menu (,tmtex-menu -1)))
+  (menu (,tmtex-menu -1))
+  ((:or shown show-part) (,tmtex-id 1))
+  ((:or hidden hide-part) (,tmtex-noop 1)))
 
 (drd-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
