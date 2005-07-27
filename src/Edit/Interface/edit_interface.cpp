@@ -52,8 +52,10 @@ edit_interface_rep::edit_interface_rep ():
 }
 
 edit_interface_rep::~edit_interface_rep () {
-  win->delete_shadow (shadow);
-  win->delete_shadow (stored);
+  if (attached ()) {
+    win->delete_shadow (shadow);
+    win->delete_shadow (stored);
+  }
 }
 
 edit_interface_rep::operator tree () {
@@ -64,8 +66,10 @@ void
 edit_interface_rep::suspend () {
   got_focus= false;
   notify_change (THE_FOCUS);
-  win->delete_shadow (shadow);
-  win->delete_shadow (stored);
+  if (attached ()) {
+    win->delete_shadow (shadow);
+    win->delete_shadow (stored);
+  }
 }
 
 void
