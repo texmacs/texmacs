@@ -109,7 +109,7 @@
   begin-remark begin-warning begin-note
   begin-example begin-exercise begin-verbatim
   begin-matrix begin-pmatrix begin-center
-  begin-picture)
+  begin-picture begin-hide-preamble)
 
 (drd-group latex-environment-0*%
   begin-figure begin-table)

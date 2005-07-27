@@ -26,13 +26,18 @@ filter_preamble (tree t) {
   int i, n=N(t);
   bool in_preamble= true;
   tree r (CONCAT);
-  array<tree> preamble;
+  tree preamble (CONCAT);
+  tree title_info (CONCAT);
 
   for (i=0; i<n; i++) {
     tree u= t[i];
     if (in_preamble) {
       if (u == tuple ("\\begin-document")) {
-	r << u << preamble;
+	r << u;
+	if (N(preamble) > 0)
+	  r << tuple ("\\begin-hide-preamble") << A(preamble)
+	    << tuple ("\\end-hide-preamble");
+	r << A(title_info);
 	in_preamble= false;
       }
       else if (is_tuple (u, "\\documentclass") ||
@@ -40,10 +45,11 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentstyle") ||
 	       is_tuple (u, "\\documentstyle*"))
 	r << u;
-      else if (is_tuple (u, "\\def") || is_tuple (u, "\\def*") ||
-	       is_tuple (u, "\\title") || is_tuple (u, "\\author") ||
+      else if (is_tuple (u, "\\def") || is_tuple (u, "\\def*"))
+	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\title") || is_tuple (u, "\\author") ||
 	       is_tuple (u, "\\address"))
-	preamble << u;
+	title_info << u;
     }
     else r << u;
   }
@@ -930,6 +936,18 @@ finalize_layout (tree t) {
 	r << tree (END, "bigtable");
 	continue;
       }
+
+      /*
+      if (is_func (v, BEGIN) && (v[0] == "hide-preamble")) {
+	r << tree (BEGIN, "hide-preamble");
+	continue;
+      }
+
+      if (is_func (v, END) && (v[0] == "hide-preamble")) {
+	r << tree (END, "hide-preamble");
+	continue;
+      }
+      */
 
       if (is_func (v, BEGIN, 1) && admissible_env (v)) {
 	if (v == tree (BEGIN, "verbatim")) {
