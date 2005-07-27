@@ -73,6 +73,10 @@ AC_SUBST(CONFIG_GUILE_SERIAL)
 # Checks for include files and standard types
 #--------------------------------------------------------------------
 
+#AC_CHECK_TYPES(FILE)
+#AC_CHECK_TYPES(intptr_t)
+#AC_CHECK_TYPES(time_t)
+
 AC_CHECK_TYPE(time_t)
 
 AC_MSG_CHECKING(for intptr_t in C library)
@@ -431,6 +435,19 @@ CONFIG_WORD_LENGTH_INC="3"
 CONFIG_WORD_MASK="0xfffffffc"
 CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
 
+AC_MSG_CHECKING(if we are on a 64-bits computer)
+AC_RUN_IFELSE([AC_LANG_PROGRAM([],[exit(sizeof(void*))])],
+  [void_size=0],[void_size=$?])
+if test "$void_size" = "8"; then
+  AC_MSG_RESULT([yes])
+  CONFIG_WORD_LENGTH="8"
+  CONFIG_WORD_LENGTH_INC="7"
+  CONFIG_WORD_MASK="0xfffffffffffffff8"
+  CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
+else
+  AC_MSG_RESULT([no])
+fi
+
 AC_CANONICAL_HOST
 case "${host}" in
   i*86-*-linux* | i*86-*-freebsd*)
@@ -444,10 +461,6 @@ case "${host}" in
     CONFIG_OS="GNU_LINUX"
     CONFIG_OS_SUFFIX="x86_64-gnu-linux"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   mips-*-linux*)
     AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
@@ -478,10 +491,7 @@ case "${host}" in
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
     CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   sparc*-*-linux*)
@@ -489,10 +499,7 @@ case "${host}" in
     CONFIG_OS="SPARC_GNU_LINUX"
     CONFIG_OS_SUFFIX="sparc-gnu-linux"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2" 
     CONFIG_STD_SETENV=""
   ;;
   *dec*)
@@ -501,10 +508,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="dec"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   *alpha*-*-linux*)
@@ -513,10 +516,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="alpha-gnu-linux"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   s390-*-linux*)
     AC_MSG_RESULT(final setup for an IBM S/390 GNU-Linux host)
@@ -548,10 +547,6 @@ case "${host}" in
     CONFIG_OS_SUFFIX="ia64-gnu-linux"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
   ;;
   hppa*-*-linux*)
     AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
@@ -581,10 +576,7 @@ case "${host}" in
     CONFIG_BSHARED=""
     CONFIG_BPATH=""
     CONFIG_BX="$X_LIBS -lX11"
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
     CONFIG_CHMOD="chmod"
     CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
