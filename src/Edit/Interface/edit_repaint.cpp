@@ -153,12 +153,14 @@ edit_interface_rep::draw_pre (ps_device dev, rectangle r) {
 
 void
 edit_interface_rep::draw_post (ps_device dev, rectangle r) {
+  win->set_shrinking_factor (sfactor);
   dev->set_shrinking_factor (sfactor);
   draw_context (dev, r);
   draw_cursor (dev);
   draw_selection (dev);
   draw_graphics (dev);
   dev->set_shrinking_factor (1);
+  win->set_shrinking_factor (1);
 }
 
 void
@@ -169,10 +171,12 @@ edit_interface_rep::draw_with_shadow (rectangle r) {
   ps_device dev= shadow;
 
   rectangles l;
+  win->set_shrinking_factor (sfactor);
   dev->set_shrinking_factor (sfactor);
   draw_pre (dev, r);
   draw_text (dev, l);
   dev->set_shrinking_factor (1);
+  win->set_shrinking_factor (1);
 
   if (dev->interrupted ()) {
     dev->set_shrinking_factor (sfactor);

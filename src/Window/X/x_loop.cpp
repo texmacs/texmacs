@@ -352,7 +352,8 @@ x_display_rep::event_loop () {
     XEvent report;
     if (XPending (dpy) > 0) {
       XNextEvent (dpy, &report);
-      // cout << "Event: " << event_name[report.type] << "\n";
+      //if (string (event_name[report.type]) != "No expose")
+      //cout << "Event: " << event_name[report.type] << "\n";
       x_window win= (x_window) Window_to_window[report.xany.window];
       if (win!=NULL) process_event (win, &report);
       count= 0;

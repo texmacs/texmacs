@@ -122,6 +122,7 @@ x_window_rep::initialize () {
   if (win_x < 0) win_x= 0;
   if ((win_y+ win_h) > dis->display_height) win_y= dis->display_height- win_h;
   if (win_y < 0) win_y=0;
+  win_flag= false;
   win= XCreateWindow (dpy, dis->root, win_x, win_y, win_w, win_h, 0,
 		      dis->depth, InputOutput, CopyFromParent,
 		      valuemask, &setattr);
@@ -305,7 +306,10 @@ x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
   if (flag) w << emit_resize ();
-  w << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+  if (flag || !win_flag) {
+    w << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+    win_flag= true;
+  }
 }
 
 void
