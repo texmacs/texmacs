@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.5.6>
 
 <style|tmdoc>
 
@@ -7,6 +7,10 @@
 
   <\description-dash>
     <item*|Axiom>Andrey Grozin, Bill Page, David Mentré and Tim Daly.
+
+    <item*|CLisp>Michael Graffam.
+
+    <item*|CMucl>Michael Graffam.
 
     <item*|DraTeX>Nicolas Ratier.
 
@@ -20,11 +24,15 @@
 
     <item*|GTybalt>Stefan Weinzierl.
 
+    <item*|Lush>Michael Graffam.
+
     <item*|Macaulay 2>Dan Grayson.
 
     <item*|Maple>Christian Even.
 
     <item*|Mathemagix>Joris van der Hoeven.
+
+    <item*|Matlab>Michael Graffam.
 
     <item*|Maxima>Andrey Grozin and James Amundson.
 
