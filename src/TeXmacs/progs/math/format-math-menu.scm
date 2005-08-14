@@ -35,7 +35,7 @@
       (if (url-exists-in-tex? "ccr10.mf")
 	  ("Concrete" (make-with "math-font" "concrete")))
       (if (url-exists-in-tex? "eurm10.mf")
-	  ("New Roman" "E-C-E" (make-with "math-font" "ENR")))
+	  ("New Roman" (make-with "math-font" "ENR")))
       ---
       (if (url-exists-in-tex? "rpsyr.tfm")
 	  ("Adobe" (make-with "math-font" "adobe")))

@@ -115,6 +115,7 @@
   ("font E" (make-with "math-font" "ENR"))
   ("font C" (make-with "math-font" "cal"))
   ("font B" (make-with "math-font" "Bbb*"))
+  ("font A" (make-with "math-font" "adobe"))
   ("font o" (make-with "math-font-family" "mr"))
   ("font s" (make-with "math-font-family" "ms"))
   ("font t" (make-with "math-font-family" "mt"))
