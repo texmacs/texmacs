@@ -12,6 +12,7 @@
 
 #include "tree_cursor.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
@@ -49,12 +50,44 @@ closest_inside (tree t, path p) {
   else return path (p->item, closest_inside (t[p->item], p->next));
 }
 
+static bool
+is_modified_accessible (tree t, path p, bool activate, bool persistent) {
+  if (p->item != 0) return false;
+  t= t[0]; p= p->next;
+  if (is_atomic (t)) return is_accessible_cursor (t, p);
+  else if (atom (p) && !persistent) return false;
+  else {
+    bool r;
+    int old= get_access_mode ();
+    set_access_mode (activate? DRD_ACCESS_NORMAL: DRD_ACCESS_SOURCE);
+    if (persistent) r= is_accessible_cursor (t, p);
+    else r= the_drd->is_accessible_child (t, p->item);
+    set_access_mode (old);
+    if (!persistent) r= r && is_accessible_cursor (t[p->item], p->next);
+    return r;
+  }
+}
+
 bool
 is_accessible_cursor (tree t, path p) {
-  if (is_atomic (t)) return true;
-  else if (atom (p)) return !the_drd->is_child_enforcing (t);
-  else return the_drd->is_accessible_child (t, p->item) &&
-	      is_accessible_cursor (t[p->item], p->next);
+  if (is_atomic (t))
+    return atom (p) && p->item >= 0 && p->item <= N(t->label);
+  else if (atom (p))
+    return !the_drd->is_child_enforcing (t);
+  else switch (L(t)) {
+  case ACTIVE:
+    return is_modified_accessible (t, p, true, false);
+  case VAR_ACTIVE:
+    return is_modified_accessible (t, p, true, true);
+  case INACTIVE:
+    return is_modified_accessible (t, p, false, false);
+  case VAR_INACTIVE:
+    return is_modified_accessible (t, p, false, true);
+  default:
+    return
+      the_drd->is_accessible_child (t, p->item) &&
+      is_accessible_cursor (t[p->item], p->next);
+  }
 }
 
 path
