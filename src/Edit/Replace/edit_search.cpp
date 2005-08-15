@@ -365,9 +365,12 @@ edit_replace_rep::next_match (bool forward) {
       notify_change (THE_SELECTION);
       return;
     }
-    int old_mode= set_access_mode (ACCESSIBLE_HIDDEN);
+    int old= get_access_mode ();
+    if (get_init_string (MODE) == "src" || inside ("show-preamble"))
+      set_access_mode (DRD_ACCESS_SOURCE);
+    else set_access_mode (DRD_ACCESS_HIDDEN);
     step_horizontal (forward);
-    set_access_mode (old_mode);
+    set_access_mode (old);
   }
 }
 
