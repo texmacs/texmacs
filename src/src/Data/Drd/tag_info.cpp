@@ -89,24 +89,30 @@ operator << (ostream& out, parent_info pi) {
 child_info::child_info (bool frozen) {
   accessible        = ACCESSIBLE_NEVER;
   block             = 0;
+  mode              = MODE_PARENT;
   freeze_accessible = frozen;
   freeze_block      = frozen;
+  freeze_mode       = frozen;
 }
 
 child_info::child_info (string s) {
   int i= as_int (s);
   get_bits (accessible       , 2);
   get_bits (block            , 2);
+  get_bits (mode             , 3);
   get_bits (freeze_accessible, 1);
   get_bits (freeze_block     , 1);
+  get_bits (freeze_mode      , 1);
 }
 
 child_info::operator string () {
   int i=0, offset=0;
   set_bits (accessible       , 2);
   set_bits (block            , 2);
+  set_bits (mode             , 3);
   set_bits (freeze_accessible, 1);
   set_bits (freeze_block     , 1);
+  set_bits (freeze_mode      , 1);
   return as_string (i);
 }
 
@@ -115,8 +121,10 @@ child_info::operator == (const child_info& ci) {
   return
     (accessible        == ci.accessible       ) &&
     (block             == ci.block            ) &&
+    (mode              == ci.mode             ) &&
     (freeze_accessible == ci.freeze_accessible) &&
-    (freeze_block      == ci.freeze_block     );
+    (freeze_block      == ci.freeze_block     ) &&
+    (freeze_mode       == ci.freeze_mode      );
 }
 
 bool

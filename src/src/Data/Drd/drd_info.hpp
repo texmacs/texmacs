@@ -63,10 +63,15 @@ public:
   void freeze_accessible (tree_label tag, int nr);
   bool all_accessible (tree_label tag);
   bool is_accessible_child (tree t, int child);
-  
+
   void set_block (tree_label tag, int nr, int require_block);
   int  get_block (tree_label tag, int nr);
   void freeze_block (tree_label tag, int nr);
+
+  void set_mode (tree_label tag, int nr, int mode);
+  int  get_mode (tree_label tag, int nr);
+  void freeze_mode (tree_label tag, int nr);
+  int  get_mode_child (tree t, int child, int mode);
 
   /* Heuristic initialization */
   bool heuristic_init_macro (string var, tree macro);

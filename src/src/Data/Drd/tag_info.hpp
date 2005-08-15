@@ -80,11 +80,16 @@ struct parent_info {
 * The child_info class contains more detailed information about each of
 * the children of the tag.
 *
-* - The accessible field specifies whether the field can be edited
-*   while active.
+* - The accessible field specifies whether the field can be edited.
+*   ACCESSIBLE_ALWAYS children can always be edited, ACCESSIBLE_NEVER children
+*   can only be edited in source mode and ACCESSIBLE_HIDDEN children may
+*   require unfolding in order to be edited.
 *
 * - The block field specifies whether the field is required to be
 *   a block structure, an inline structure, or any of the two.
+*
+* - The mode field specifies the mode for each child. In case of MODE_PARENT,
+*   the mode of the child is the same as the mode of its parent.
 *
 * - The freeze_* fields specify that the contents of the corresponding
 *   fields may not be overwritten during the heuristic determination of
@@ -99,11 +104,19 @@ struct parent_info {
 #define BLOCK_REQUIRE_INLINE  1
 #define BLOCK_REQUIRE_NONE    2
 
+#define MODE_PARENT           0
+#define MODE_TEXT             1
+#define MODE_MATH             2
+#define MODE_PROG             3
+#define MODE_SRC              4
+
 struct child_info {
   unsigned accessible       : 2; // child is accessible?
   unsigned block            : 2; // require children to be blocks?
+  unsigned mode             : 3; // in which mode is the child?
   unsigned freeze_accessible: 1; // true => disable heuristic determination
   unsigned freeze_block     : 1;
+  unsigned freeze_mode      : 1;
 
   child_info (bool frozen= false);
   child_info (string s);

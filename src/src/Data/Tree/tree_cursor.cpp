@@ -84,9 +84,15 @@ is_accessible_cursor (tree t, path p) {
   case VAR_INACTIVE:
     return is_modified_accessible (t, p, false, true);
   default:
-    return
-      the_drd->is_accessible_child (t, p->item) &&
-      is_accessible_cursor (t[p->item], p->next);
+    if (!the_drd->is_accessible_child (t, p->item)) return false;
+    else if (the_drd->get_mode_child (t, p->item, MODE_PARENT) == MODE_SRC) {
+      int old= get_access_mode ();
+      set_access_mode (DRD_ACCESS_SOURCE);
+      bool r= is_accessible_cursor (t[p->item], p->next);
+      set_access_mode (old);
+      return r;
+    }
+    else return is_accessible_cursor (t[p->item], p->next);
   }
 }
 
