@@ -1,4 +1,4 @@
-.TH texmacs.1 3 "20May2000" @PACKAGE@-@DEVEL_VERSION@
+.TH texmacs 1 "20May2000" @PACKAGE@-@DEVEL_VERSION@
 .SH NAME
 GNU TeXmacs - a WYSIWYG mathematical text editor
 .PP

@@ -399,7 +399,7 @@ case "${host}" in
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   *-*-cygwin)
-    AC_MSG_RESULT(final adjustments for cygwin)
+    AC_MSG_RESULT(final adjustments for cygwin host)
     CONFIG_OS="CYGWIN"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
 #    CXX="export CYGWIN=check_case:strict; $CXX"
@@ -408,8 +408,8 @@ case "${host}" in
   powerpc-*-darwin*)
     echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
     CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_BSHARED=
-    CONFIG_BPATH=
+    CONFIG_BSHARED=""
+    CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;

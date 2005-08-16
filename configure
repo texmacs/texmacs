@@ -6133,8 +6133,8 @@ echo "${ECHO_T}final adjustments for an Intel or AMD GNU/BSD host" >&6
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   *-*-cygwin)
-    echo "$as_me:$LINENO: result: final adjustments for cygwin" >&5
-echo "${ECHO_T}final adjustments for cygwin" >&6
+    echo "$as_me:$LINENO: result: final adjustments for cygwin host" >&5
+echo "${ECHO_T}final adjustments for cygwin host" >&6
     CONFIG_OS="CYGWIN"
     CONFIG_BFLAGS="-Wl,-stack,8388608"
 #    CXX="export CYGWIN=check_case:strict; $CXX"
@@ -6143,8 +6143,8 @@ echo "${ECHO_T}final adjustments for cygwin" >&6
   powerpc-*-darwin*)
     echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
     CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_BSHARED=
-    CONFIG_BPATH=
+    CONFIG_BSHARED=""
+    CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
