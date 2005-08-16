@@ -55,18 +55,6 @@ case "$GXX" in
 esac
 
 #--------------------------------------------------------------------
-# Checks for standard functionality
-#--------------------------------------------------------------------
-
-CPP_X_HEADERS
-AC_CHECK_TYPES(FILE)
-AC_CHECK_TYPES(intptr_t)
-AC_CHECK_TYPES(time_t)
-AC_PATH_X
-AC_PATH_XTRA
-AC_CHECK_FUNCS(gettimeofday)
-
-#--------------------------------------------------------------------
 # Checks for Guile
 #--------------------------------------------------------------------
 
@@ -84,6 +72,18 @@ case "$GUILE_VERSION" in
   ;;
 esac
 AC_SUBST(CONFIG_GUILE_SERIAL)
+
+#--------------------------------------------------------------------
+# Checks for standard functionality
+#--------------------------------------------------------------------
+
+CPP_X_HEADERS
+AC_CHECK_TYPES(FILE)
+AC_CHECK_TYPES(intptr_t)
+AC_CHECK_TYPES(time_t)
+AC_PATH_X
+AC_PATH_XTRA
+AC_CHECK_FUNCS(gettimeofday)
 
 #--------------------------------------------------------------------
 # Checks for dl library
