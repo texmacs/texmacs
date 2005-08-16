@@ -251,6 +251,7 @@ DISTCLEAN: CLEAN
 	$(RM) misc/man/texmacs.1
 	$(RM) misc/scripts/fig2ps
 	$(RM) misc/scripts/texmacs
+	$(RM) src/System/config.h
 	$(RM) src/System/tm_configure.hpp
 	$(RM) src/makefile
 	$(RM) TeXmacs/examples/plugins/dynlink/Makefile

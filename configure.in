@@ -12,7 +12,8 @@
 #
 #--------------------------------------------------------------------
 
-AC_INIT(Makefile.in)
+AC_INIT
+AC_CONFIG_HEADERS([src/System/config.h:src/System/config.in])
 
 PACKAGE="TeXmacs"
 DEVEL_VERSION="1.0.5.6"
@@ -28,7 +29,7 @@ AC_SUBST(STABLE_VERSION)
 AC_SUBST(STABLE_RELEASE)
 
 #--------------------------------------------------------------------
-# Checks for programs
+# Checks for C++ compiler
 #--------------------------------------------------------------------
 
 AC_PROG_CC
@@ -52,7 +53,22 @@ case "$GXX" in
     AC_MSG_WARN(cannot find GNU C++ compiler)
   ;;
 esac
+
+#--------------------------------------------------------------------
+# Checks for standard functionality
+#--------------------------------------------------------------------
+
 CPP_X_HEADERS
+AC_CHECK_TYPES(FILE)
+AC_CHECK_TYPES(intptr_t)
+AC_CHECK_TYPES(time_t)
+AC_PATH_X
+AC_PATH_XTRA
+AC_CHECK_FUNCS(gettimeofday)
+
+#--------------------------------------------------------------------
+# Checks for Guile
+#--------------------------------------------------------------------
 
 GUILE_FLAGS
 AC_MSG_CHECKING(version of guile)
@@ -70,74 +86,41 @@ esac
 AC_SUBST(CONFIG_GUILE_SERIAL)
 
 #--------------------------------------------------------------------
-# Checks for include files and standard types
+# Checks for dl library
 #--------------------------------------------------------------------
-
-#AC_CHECK_TYPES(FILE)
-#AC_CHECK_TYPES(intptr_t)
-#AC_CHECK_TYPES(time_t)
-
-AC_CHECK_TYPE(time_t)
-
-AC_MSG_CHECKING(for intptr_t in C library)
-AC_CACHE_VAL(gdb_cv_have_intptr_t,
-[AC_TRY_COMPILE([#include <stdint.h>],
-		[intptr_t foo = 0;
-	         return foo;],
-                gdb_cv_have_intptr_t=yes,
-                gdb_cv_have_intptr_t=no)])
-AC_MSG_RESULT($gdb_cv_have_intptr_t)
-CONFIG_HAVE_INTPTR_T=""
-if test $gdb_cv_have_intptr_t = yes; then
-  CONFIG_HAVE_INTPTR_T="#define HAVE_INTPTR_T"
-fi
-AC_SUBST(CONFIG_HAVE_INTPTR_T)
-
-#--------------------------------------------------------------------
-# Checks for libraries and library functionality
-#--------------------------------------------------------------------
-
-AC_PATH_X
-AC_PATH_XTRA
-
-AC_CHECK_FUNCS(gettimeofday,[
-  CONFIG_GET_TIME_OF_DAY="#define USE_GET_TIME_OF_DAY 1"
-])
-AC_SUBST(CONFIG_GET_TIME_OF_DAY)
 
 AC_CHECK_FUNC(dlopen)
 if test "$ac_cv_func_dl" = "yes"; then
-  CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+  AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
 else
   AC_CHECK_LIB(dl,dlopen)
   if test "$ac_cv_lib_dl_dlopen" = "yes"; then
     AC_CHECK_FUNCS(dlopen)
     CONFIG_BDL="-ldl"
-    CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+    AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
   else
     AC_CHECK_LIB(dld,dld_link)
     if test "$ac_cv_lib_dld_dld_link" = "yes"; then
       CONFIG_BDL="-ldl"
-      CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+      AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
     else
       AC_CHECK_FUNCS(shl_load)
       if test "$ac_cv_func_shl_load" = "yes"; then
         CONFIG_BDL="-ldl"
-        CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+        AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
       else
         AC_CHECK_FUNCS(dlopen)
         if test "$ac_cv_func_dlopen" = "yes"; then
-          CONFIG_DYNAMIC_LINKING="#define DYNAMIC_LINKING 1"
+          AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
         fi
       fi
     fi
   fi
 fi
 AC_SUBST(CONFIG_BDL)
-AC_SUBST(CONFIG_DYNAMIC_LINKING)
 
 #--------------------------------------------------------------------
-# Checks for iconv
+# Checks for iconv library
 #--------------------------------------------------------------------
 
 AC_ARG_WITH(iconv,
@@ -153,7 +136,6 @@ AC_LANG_C  # compile C to avoid the 'const char**' problem
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-CONFIG_USE_ICONV=""
 if test "$with_iconv" = "no" ; then
     AC_MSG_RESULT([disabling iconv support])
 else
@@ -174,7 +156,7 @@ else
     iconv (cd, NULL, NULL, NULL, NULL);
 ],[
     AC_MSG_RESULT(yes)
-    CONFIG_USE_ICONV="#define USE_ICONV"
+    AC_DEFINE(USE_ICONV, 1, [Use iconv library])
 ],[
     AC_MSG_RESULT(no)
     AC_MSG_CHECKING(for iconv in -liconv)
@@ -189,26 +171,24 @@ else
       iconv (cd, NULL, NULL, NULL, NULL);
 ],[
       AC_MSG_RESULT(yes)
-      CONFIG_USE_ICONV="#define USE_ICONV"
+      AC_DEFINE(USE_ICONV, 1, [Use iconv library])
       ICONV_LDFLAGS="${ICONV_LDFLAGS} -liconv"
 ],[
-      AC_MSG_RESULT(no)])]))
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN([absence of iconv may crash HTML import])
+  ])]))
 fi
 
-if test "$CONFIG_USE_ICONV" = "" ; then
-   AC_MSG_WARN([iconv was not found, HTML import may crash])
-fi
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 AC_LANG_RESTORE  # restore C++ language
 
-AC_SUBST(CONFIG_USE_ICONV)
 AC_SUBST(ICONV_CFLAGS)
 AC_SUBST(ICONV_LDFLAGS)
 
 #--------------------------------------------------------------------
-# Checks for freetype
+# Checks for freetype library
 #--------------------------------------------------------------------
 
 AC_ARG_WITH(freetype,
@@ -220,7 +200,6 @@ changequote([, ])dnl
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-CONFIG_USE_FREETYPE=""
 if test "$with_freetype" = "no" ; then
     AC_MSG_RESULT([disabling freetype support])
 else
@@ -237,11 +216,11 @@ else
     (void) FT_Init_FreeType (&ft_library);
 ],[
     AC_MSG_RESULT(yes)
-    CONFIG_USE_FREETYPE="#define USE_FREETYPE"
+    AC_DEFINE(USE_FREETYPE, 1, [Use freetype library])
     FREETYPE_CFLAGS="$CPPFLAGS"
     if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
       FREETYPE_LDFLAGS="$LIBS"
-      CONFIG_LINKED_FREETYPE="#define LINKED_FREETYPE"
+      AC_DEFINE(LINKED_FREETYPE, 1, [Link freetype library with TeXmacs])
     fi
 ],[
     AC_MSG_RESULT(no)]))
@@ -251,13 +230,11 @@ CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 
-AC_SUBST(CONFIG_USE_FREETYPE)
-AC_SUBST(CONFIG_LINKED_FREETYPE)
 AC_SUBST(FREETYPE_CFLAGS)
 AC_SUBST(FREETYPE_LDFLAGS)
 
 #--------------------------------------------------------------------
-# Checks for Imlib2
+# Checks for Imlib2 library
 #--------------------------------------------------------------------
 
 AC_ARG_WITH(imlib2,
@@ -269,7 +246,6 @@ changequote([, ])dnl
 SAVE_CPPFLAGS="$CPPFLAGS"
 SAVE_LDFLAGS="$LDFLAGS"
 SAVE_LIBS="$LIBS"
-CONFIG_USE_IMLIB2=""
 if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
     AC_MSG_RESULT([disabling imlib2 support])
 else
@@ -287,11 +263,11 @@ else
     Imlib_Image image= imlib_load_image("");
 ],[
     AC_MSG_RESULT(yes)
-    CONFIG_USE_IMLIB2="#define USE_IMLIB2"
+    AC_DEFINE(USE_IMLIB2, 1, [Use imlib2 library])
     IMLIB2_CFLAGS="$CPPFLAGS"
     if test "$with_imlib2" = "linked" ; then
       IMLIB2_LDFLAGS="$LIBS"
-      CONFIG_LINKED_IMLIB2="#define LINKED_IMLIB2"
+      AC_DEFINE(LINKED_IMLIB2, 1, [Link imlib2 library with TeXmacs])
     fi
 ],[
     AC_MSG_RESULT(no)]))
@@ -301,8 +277,6 @@ CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
 
-AC_SUBST(CONFIG_USE_IMLIB2)
-AC_SUBST(CONFIG_LINKED_IMLIB2)
 AC_SUBST(IMLIB2_CFLAGS)
 AC_SUBST(IMLIB2_LDFLAGS)
 
@@ -320,13 +294,12 @@ AC_TRY_COMPILE([
   void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
 ],[
 ],[
-  CONFIG_DOTS="#define DOTS_OK 1"
+  AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
   AC_MSG_RESULT(yes)
 ],[
   AC_MSG_RESULT(no)
 ])
 CXXFLAGS=""
-AC_SUBST(CONFIG_DOTS)
 
 AC_MSG_CHECKING(the size_t of guile strings)
 CXXFLAGS="`guile-config compile`"
@@ -338,32 +311,15 @@ AC_TRY_COMPILE([
     char* r= gh_scm2newstr (s, &len_r); }
 ],[
 ],[
-  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t int"
+  AC_DEFINE(guile_str_size_t, int, [Guile string size type])
   AC_MSG_RESULT(int)
 ],[
-  CONFIG_GUILE_STR_SIZE_T="#define guile_str_size_t size_t"
+  AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
   AC_MSG_RESULT(size_t)
 ])
 CXXFLAGS=""
-AC_SUBST(CONFIG_GUILE_STR_SIZE_T)
-
-AC_MSG_CHECKING(if compiler supports -fno-rtti -fno-exceptions)
-CXXFLAGS="-fno-rtti -fno-exceptions"
-AC_TRY_COMPILE([
-  int some_variable = 0;
-],[
-],[
-  CONFIG_CXXDIALECT="-fno-rtti -fno-exceptions"
-  AC_MSG_RESULT(yes)
-],[
-  CONFIG_CXXDIALECT=""
-  AC_MSG_RESULT(no)
-])
-CXXFLAGS=""
-AC_SUBST(CONFIG_CXXDIALECT)
 
 AC_MSG_CHECKING([if statically linking with guile works])
-CONFIG_GUILE_LTDL=""
 CPPFLAGS="$GUILE_CFLAGS"
 LDFLAGS="-static"
 LIBS="$GUILE_LDFLAGS"
@@ -396,27 +352,11 @@ LDFLAGS=""
 LIBS=""
 
 #--------------------------------------------------------------------
-# Disable customized allocator
-#--------------------------------------------------------------------
-
-AC_ARG_ENABLE(fastalloc,
-[  --disable-fastalloc     omit fast allocator for small objects],
-    [], [enable_fastalloc="yes"])
-case "$enable_fastalloc" in
-    yes)
-	CONFIG_NO_FAST_ALLOC="" ;;
-    no)
-	CONFIG_NO_FAST_ALLOC="#define NO_FAST_ALLOC"
-	AC_MSG_RESULT([disabling fast allocator for small objects]) ;;
-    *)
-	AC_MSG_ERROR([bad option --enable-fastalloc=$enable_fastalloc]) ;;
-esac
-AC_SUBST(CONFIG_NO_FAST_ALLOC)
-
-#--------------------------------------------------------------------
 # Handle different systems case by case
 #--------------------------------------------------------------------
 
+CONFIG_OS="GNU_LINUX"
+CONFIG_OS_SUFFIX="gnu-linux"
 CONFIG_CXXFLAGS=""
 CONFIG_CXXTEMPLATE=""
 CONFIG_STD_SETENV="#define STD_SETENV"
@@ -450,41 +390,36 @@ fi
 
 AC_CANONICAL_HOST
 case "${host}" in
-  i*86-*-linux* | i*86-*-freebsd*)
-    AC_MSG_RESULT(final setup for an Intel/GNU-linux host)
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
+  i*86-*-linux* | x86_64-*-linux*)
+    AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/Linux host)
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
-  x86_64-*-linux* | x86_64-*-freebsd*)
-    AC_MSG_RESULT(final setup for an AMD64/x86_64/GNU-linux host)
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="x86_64-gnu-linux"
+  i*86-*-freebsd* | x86_64-*-freebsd*)
+    AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/BSD host)
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
-  mips-*-linux*)
-    AC_MSG_RESULT(final setup for a Mips/GNU-linux host)
-    CONFIG_OS="MIPS_GNU_LINUX"
-    CONFIG_OS_SUFFIX="mips-gnu-linux"
+  *-*-cygwin)
+    AC_MSG_RESULT(final adjustments for cygwin)
+    CONFIG_OS="CYGWIN"
+    CONFIG_BFLAGS="-Wl,-stack,8388608"
+#    CXX="export CYGWIN=check_case:strict; $CXX"
+#    AC_SUBST(CXX)
   ;;
-  mipsel-*-linux*)
-    AC_MSG_RESULT(final setup for a MipsEL/GNU-linux host)
-    CONFIG_OS="MIPSEL_GNU_LINUX"
-    CONFIG_OS_SUFFIX="mipsel-gnu-linux"
-  ;;
-  arm*-*-linux*)
-    AC_MSG_RESULT(final setup for an Arm/GNU-linux host)
-    CONFIG_OS="ARM_GNU_LINUX"
-    CONFIG_OS_SUFFIX="arm-gnu-linux"
+  powerpc-*-darwin*)
+    echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
+    CONFIG_CXXFLAGS="-I${prefix}/include"
+    CONFIG_BSHARED=
+    CONFIG_BPATH=
+    CONFIG_SO="dylib"
+    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
   ;;
   powerpc-*-linux*)
-    AC_MSG_RESULT(final setup for a PowerPC/GNU-linux host)
+    AC_MSG_RESULT(final adjustments for a PowerPC/GNU-linux host)
     CONFIG_OS="POWERPC_GNU_LINUX"
-    CONFIG_OS_SUFFIX="powerpc-gnu-linux"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
   *sun*)
-    AC_MSG_RESULT(final setup for a SUN/solaris host)
+    AC_MSG_RESULT(final adjustments for a SUN/solaris host)
     CONFIG_OS="SUN"
     CONFIG_OS_SUFFIX="sun"
     CONFIG_BSTATIC=""
@@ -495,81 +430,40 @@ case "${host}" in
     CONFIG_STD_SETENV=""
   ;;
   sparc*-*-linux*)
-    AC_MSG_RESULT(final setup for a Sparc host running GNU/Linux)
-    CONFIG_OS="SPARC_GNU_LINUX"
-    CONFIG_OS_SUFFIX="sparc-gnu-linux"
+    AC_MSG_RESULT(final adjustments for a Sparc host running GNU/Linux)
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     CONFIG_WORD_MASK="0xfffffff8"
     CONFIG_STD_SETENV=""
   ;;
   *dec*)
-    AC_MSG_RESULT(final setup for a DEC/alpha host)
-    CONFIG_OS="DEC"
-    CONFIG_OS_SUFFIX="dec"
+    AC_MSG_RESULT(final adjustments for a DEC/alpha host)
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
     CONFIG_STD_SETENV=""
   ;;
   *alpha*-*-linux*)
-    AC_MSG_RESULT(final setup for an Alpha/GNU-Linux host)
-    CONFIG_OS="ALPHA_GNU_LINUX"
-    CONFIG_OS_SUFFIX="alpha-gnu-linux"
+    AC_MSG_RESULT(final adjustments for an Alpha GNU/Linux host)
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
   ;;
   s390-*-linux*)
-    AC_MSG_RESULT(final setup for an IBM S/390 GNU-Linux host)
-    CONFIG_OS="S390"
-    CONFIG_OS_SUFFIX="s390"
+    AC_MSG_RESULT(final adjustments for an IBM S/390 GNU/Linux host)
     CONFIG_STD_SETENV=""
   ;;
-  *-*-cygwin)
-    AC_MSG_RESULT(final setup for cygwin)
-    CONFIG_OS="CYGWIN"
-    CONFIG_OS_SUFFIX="cygwin"
-    CONFIG_BFLAGS="-Wl,-stack,8388608"
-#    CXX="export CYGWIN=check_case:strict; $CXX"
-#    AC_SUBST(CXX)
-  ;;
-  powerpc-*-darwin*)
-    echo "$ac_t""final setup for a PowerPC/Darwin host" 1>&6
-    CONFIG_OS="POWERPC_APPLE_DARWIN"
-    CONFIG_OS_SUFFIX="powerpc-apple-darwin"
-    CONFIG_CXXFLAGS="-I${prefix}/include"
-    CONFIG_BSHARED=
-    CONFIG_BPATH=
-    CONFIG_SO="dylib"
-    CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-  ;;
   ia64-*-linux*)
-    AC_MSG_RESULT(final setup for an Itanium/GNU-Linux host)
-    CONFIG_OS="IA64_GNU_LINUX"
-    CONFIG_OS_SUFFIX="ia64-gnu-linux"
+    AC_MSG_RESULT(final adjustments for an Itanium GNU/Linux host)
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
   ;;
   hppa*-*-linux*)
-    AC_MSG_RESULT(final setup for an HP PA_RISC/GNU-Linux host)
-    CONFIG_OS="HPPA64_GNU_LINUX"
-    CONFIG_OS_SUFFIX="hppa64-gnu-linux"
+    AC_MSG_RESULT(final adjustments for an HP PA_RISC GNU/Linux host)
     CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
     CONFIG_BSTATIC=""
     CONFIG_BSHARED="-shared"
   ;;
-  m68k-*-linux*)
-    AC_MSG_RESULT(final setup for a Motorola 68xxx host)
-    CONFIG_OS="M68K"
-    CONFIG_OS_SUFFIX="m68k"
-  ;;
-  *-linux*)
-    AC_MSG_RESULT(final setup for an unknown host running GNU/Linux)
-    CONFIG_OS="GNU_LINUX"
-    CONFIG_OS_SUFFIX="gnu-linux"
-  ;;
   *sgi-irix*)
-    echo "$ac_t""final setup for a SGI/Irix host" 1>&6
+    echo "$ac_t""final adjustments for a SGI/Irix host" 1>&6
     CONFIG_OS="IRIX"
-    CONFIG_OS_SUFFIX="irix"
     CONFIG_CXXFLAGS=""
     X_LIBS=-L/usr/lib32
     CONFIG_BSTATIC=""
@@ -581,10 +475,14 @@ case "${host}" in
     CONFIG_CHMOD="chmod"
     CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
   ;;
+  m68k-*-linux* | mips-*-linux* | mipsel-*-linux* | arm*-*-linux*)
+    AC_MSG_RESULT(final adjustments for a supported GNU/Linux host)
+  ;;
+  *-linux*)
+    AC_MSG_RESULT(final adjustments for a generic GNU/Linux host)
+  ;;
   *)
-    AC_MSG_RESULT(final setup for an unsupported host)
-    CONFIG_OS="UNKNOWN"
-    CONFIG_OS_SUFFIX="unknown"
+    AC_MSG_RESULT(final adjustments for a generic host)
   ;;
 esac
 
@@ -600,36 +498,42 @@ case "$GXX_VERSION" in
 esac
 
 #--------------------------------------------------------------------
-# Enable debugging, optimizations and warnings
+# Memory allocation options
 #--------------------------------------------------------------------
 
-optimize_default="yes"
-
-case "$GXX_VERSION" in
-    3.3.3 | 3.3.4 | 4.*)
-    ;;
-    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
-	case "${host}" in
-	  i*86-*-linux-gnu* | i*86-*-freebsd*)
-	    AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
-	    optimize_default="no-inline"
-	  ;;
-	  *)
-	    AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
-	    optimize_default="no-inline"
-	  ;;
-	esac
-    ;;
+AC_ARG_ENABLE(fastalloc,
+[  --disable-fastalloc     omit fast allocator for small objects],
+    [], [enable_fastalloc="yes"])
+case "$enable_fastalloc" in
+    yes)
+        ;;
+    no)
+	AC_MSG_RESULT([disabling fast allocator for small objects])
+        AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
+	;;
+    *)
+	AC_MSG_ERROR([bad option --enable-fastalloc=$enable_fastalloc])
+	;;
 esac
 
-case "$GXX_VERSION" in
-  none)
-    CONFIG_CXXWARNING="";
-  ;;
-  *)
-    CONFIG_CXXWARNING="-Wall -Wno-return-type"
-  ;;
-esac
+#--------------------------------------------------------------------
+# Debugging options
+#--------------------------------------------------------------------
+
+AC_MSG_CHECKING(if compiler supports -fno-rtti -fno-exceptions)
+CXXFLAGS="-fno-rtti -fno-exceptions"
+AC_TRY_COMPILE([
+  int some_variable = 0;
+],[
+],[
+  CONFIG_CXXDIALECT="-fno-rtti -fno-exceptions"
+  AC_MSG_RESULT(yes)
+],[
+  CONFIG_CXXDIALECT=""
+  AC_MSG_RESULT(no)
+])
+CXXFLAGS=""
+AC_SUBST(CONFIG_CXXDIALECT)
 
 AC_ARG_ENABLE(debug,
 changequote(<<, >>)dnl
@@ -644,15 +548,67 @@ if test "$enable_debug" = "yes"; then
         enable_debug="-g3"
     fi
 fi
+
 if test "$enable_debug" = "no"; then
     AC_MSG_RESULT([disabling debugging])
     CONFIG_STRIP="strip"
     CONFIG_CXXDEBUG=""
+    optimize_default="yes"
 else
     AC_MSG_RESULT([enabling debugging, $enable_debug])
     CONFIG_STRIP="true"
     CONFIG_CXXDEBUG="$enable_debug"
     optimize_default="no"
+fi
+
+#--------------------------------------------------------------------
+# Warning options
+#--------------------------------------------------------------------
+
+case "$GXX_VERSION" in
+  none)
+    CONFIG_CXXWARNING="";
+  ;;
+  *)
+    CONFIG_CXXWARNING="-Wall -Wno-return-type"
+  ;;
+esac
+
+AC_ARG_ENABLE(warnings,
+[  --enable-warnings       print warning messages during compilation],
+    [], [enable_warnings="yes"])
+case "$enable_warnings" in
+    yes)
+	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
+    no)
+        CONFIG_CXXWARNING=""
+	AC_MSG_RESULT([disabling warning flags]) ;;
+    *)
+        CONFIG_CXXWARNING="$enable_warnings"
+	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
+esac
+
+#--------------------------------------------------------------------
+# Optimization options
+#--------------------------------------------------------------------
+
+if test "$optimize_default" = "yes"; then
+  case "$GXX_VERSION" in
+    3.3.3 | 3.3.4 | 4.*)
+      ;;
+    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
+      case "${host}" in
+	i*86-*-linux-gnu* | i*86-*-freebsd*)
+	  AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
+	  optimize_default="no-inline"
+	;;
+	*)
+	  AC_MSG_WARN([using g++ 3.*, optimize without inline by default])
+	  optimize_default="no-inline"
+	;;
+      esac
+    ;;
+  esac
 fi
 
 AC_ARG_ENABLE(optimize,
@@ -675,20 +631,6 @@ case "$enable_optimize" in
     *)
 	CONFIG_CXXOPTIMIZE="$enable_optimize"
 	AC_MSG_RESULT([customizing optimizations, $enable_optimize]) ;;
-esac
-
-AC_ARG_ENABLE(warnings,
-[  --enable-warnings       print warning messages during compilation],
-    [], [enable_warnings="yes"])
-case "$enable_warnings" in
-    yes)
-	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
-    no)
-        CONFIG_CXXWARNING=""
-	AC_MSG_RESULT([disabling warning flags]) ;;
-    *)
-        CONFIG_CXXWARNING="$enable_warnings"
-	AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
 esac
 
 #--------------------------------------------------------------------

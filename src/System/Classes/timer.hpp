@@ -24,7 +24,7 @@ typedef long time_t;
 #include <sys/types.h>
 #endif
 
-#ifdef USE_GET_TIME_OF_DAY
+#ifdef HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #else
 #include <sys/timeb.h>
