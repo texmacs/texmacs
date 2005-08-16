@@ -2350,6 +2350,45 @@ echo "$as_me: WARNING: cannot find GNU C++ compiler" >&2;}
 esac
 
 #--------------------------------------------------------------------
+# Checks for Guile
+#--------------------------------------------------------------------
+
+
+## The GUILE_FLAGS macro.
+  ## First, let's just see if we can find Guile at all.
+  echo "$as_me:$LINENO: checking for Guile" >&5
+echo $ECHO_N "checking for Guile... $ECHO_C" >&6
+  guile-config link > /dev/null || {
+    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
+    exit 1
+  }
+  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
+  GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
+  GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
+  GUILE_LDFLAGS="`guile-config link`"
+  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
+
+
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking version of guile" >&5
+echo $ECHO_N "checking version of guile... $ECHO_C" >&6
+GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\)/\1/'`
+echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
+echo "${ECHO_T}$GUILE_VERSION" >&6
+
+case "$GUILE_VERSION" in
+  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+    CONFIG_GUILE_SERIAL="A"
+  ;;
+  *)
+    CONFIG_GUILE_SERIAL="B"
+  ;;
+esac
+
+
+#--------------------------------------------------------------------
 # Checks for standard functionality
 #--------------------------------------------------------------------
 
@@ -4258,45 +4297,6 @@ _ACEOF
 
 fi
 done
-
-
-#--------------------------------------------------------------------
-# Checks for Guile
-#--------------------------------------------------------------------
-
-
-## The GUILE_FLAGS macro.
-  ## First, let's just see if we can find Guile at all.
-  echo "$as_me:$LINENO: checking for Guile" >&5
-echo $ECHO_N "checking for Guile... $ECHO_C" >&6
-  guile-config link > /dev/null || {
-    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
-    exit 1
-  }
-  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
-  GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
-  GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
-  GUILE_LDFLAGS="`guile-config link`"
-  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
-
-
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-
-echo "$as_me:$LINENO: checking version of guile" >&5
-echo $ECHO_N "checking version of guile... $ECHO_C" >&6
-GUILE_VERSION=`guile --version | grep 'Guile \([0-9]\)' | sed 's/Guile \([0-9]*\)/\1/'`
-echo "$as_me:$LINENO: result: $GUILE_VERSION" >&5
-echo "${ECHO_T}$GUILE_VERSION" >&6
-
-case "$GUILE_VERSION" in
-  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-    CONFIG_GUILE_SERIAL="A"
-  ;;
-  *)
-    CONFIG_GUILE_SERIAL="B"
-  ;;
-esac
 
 
 #--------------------------------------------------------------------
@@ -7166,14 +7166,14 @@ s,@OBJEXT@,$OBJEXT,;t t
 s,@CXX@,$CXX,;t t
 s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
+s,@GUILE_CFLAGS@,$GUILE_CFLAGS,;t t
+s,@GUILE_LDFLAGS@,$GUILE_LDFLAGS,;t t
+s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@CXXCPP@,$CXXCPP,;t t
 s,@X_CFLAGS@,$X_CFLAGS,;t t
 s,@X_PRE_LIBS@,$X_PRE_LIBS,;t t
 s,@X_LIBS@,$X_LIBS,;t t
 s,@X_EXTRA_LIBS@,$X_EXTRA_LIBS,;t t
-s,@GUILE_CFLAGS@,$GUILE_CFLAGS,;t t
-s,@GUILE_LDFLAGS@,$GUILE_LDFLAGS,;t t
-s,@CONFIG_GUILE_SERIAL@,$CONFIG_GUILE_SERIAL,;t t
 s,@CONFIG_BDL@,$CONFIG_BDL,;t t
 s,@CPP@,$CPP,;t t
 s,@ICONV_CFLAGS@,$ICONV_CFLAGS,;t t
