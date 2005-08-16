@@ -851,7 +851,9 @@ edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
   if (n==0) return tree (ERROR, "bad times/over");
   tree prod= exec (t[0]);
-  if (is_anylen (prod)) prod= as_tmlen (prod);
+  if (is_double (prod));
+  else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else return tree (ERROR, "bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
     else return tree (ERROR, "bad times/over");
