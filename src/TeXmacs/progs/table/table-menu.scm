@@ -223,10 +223,10 @@
   ---
   ((balloon (icon "tm_table_drow.xpm")
 	    "Delete row (M-t h delete)")
-   (table-delete-row #t))
+   (table-remove-row #t))
   ((balloon (icon "tm_table_dcol.xpm")
 	    "Delete column (M-t v delete)")
-   (table-delete-column #t)))
+   (table-remove-column #t)))
 
 (menu-bind table-hpos-icons
   ((balloon (icon "tm_table_left.xpm")
