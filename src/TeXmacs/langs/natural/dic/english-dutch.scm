@@ -1300,6 +1300,8 @@
 ("this document has been produced using" "dit dokument is tot stand gekomen met behulp van")
 ("this line" "deze regel")
 ("this page" "deze pagina")
+("this page footer" "voet voor deze pagina")
+("this page header" "kop voor deze pagina")
 ("tilda" "slangetje")
 ("tilde" "slangetje")
 ("times" "maal")
