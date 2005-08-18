@@ -1294,6 +1294,8 @@
 ("this document has been produced using" "")
 ("this line" "")
 ("this page" "")
+("this page footer" "")
+("this page header" "")
 ("tilda" "")
 ("tilde" "")
 ("times" "")
