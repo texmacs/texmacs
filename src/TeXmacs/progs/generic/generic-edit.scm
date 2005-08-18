@@ -296,39 +296,6 @@
   (clipboard-cut "primary"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting inactive content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (insert-inactive-stree-go-to t p)
-  (:type (-> stree path void))
-  (:synopsis "Insert an inactive stree @t and go to @p inside @t.")
-  (if (in-source?)
-      (insert-go-to t p)
-      (insert-go-to (list 'inactive t) (cons 0 p))))
-
-(tm-define (make-assign-arg s)
-  (:type (-> string void))
-  (:synopsis "Make an inactive assignment for the variable @s.")
-  (insert-inactive-stree-go-to `(assign ,s "") '(1 0))
-  (if (not (in-source?)) (set-message "return: activate" "assign")))
-
-(tm-define (make-assign-macro s)
-  (:type (-> string void))
-  (:synopsis "Make an inactive macro assignment for the variable @s.")
-  (make-assign-arg s)
-  (insert-inactive-stree-go-to '(macro "") '(0 0))
-  (if (not (in-source?))
-      (set-message "return (2x): activate" "assign#macro")))
-
-(tm-define (make-assign-macro-arg s)
-  (:type (-> string void))
-  (:synopsis "Make an inactive unary macro assignment for the variable @s.")
-  (make-assign-arg s)
-  (insert-inactive-stree-go-to '(macro "s" "") '(1 0))
-  (if (not (in-source?))
-      (set-message "return (2x): activate" "assign#macro")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting miscellaneous content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
