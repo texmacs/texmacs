@@ -76,7 +76,9 @@
 
 (tm-define (doc-data-activate-here)
   (with-innermost t 'doc-inactive
-    (tree-remove-node t 0)))
+    (tree-remove-node t 0)
+    (with-innermost t 'doc-data
+      (tree-go-to t :start))))
 
 (tm-define (doc-data-disactivated?)
   (with-innermost t 'doc-data

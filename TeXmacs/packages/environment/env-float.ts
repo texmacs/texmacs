@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.5.6>
 
 <style|source>
 
@@ -41,7 +41,9 @@
 
   <assign|render-big-figure|<\macro|type|name|fig|cap>
     <padded-normal|1fn|1fn|<tabular*|<tformat|<twith|table-width|1par>|<cwith|3|3|1|1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|2|2|1|1|cell-height|0.5fn>|<cwith|3|3|1|1|cell-lsep|1.5fn>|<cwith|3|3|1|1|cell-rsep|1.5fn>|<table|<row|<cell|<arg|fig>>>|<row|<cell|>>|<row|<\cell>
-      <small|<surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>||<arg|cap>>>
+      <small|<\surround|<figure-name|<arg|name><figure-sep>><list-caption|<arg|type>|<arg|cap>>|>
+        <arg|cap>
+      </surround>>
     </cell>>>>>>
   </macro>>
 
