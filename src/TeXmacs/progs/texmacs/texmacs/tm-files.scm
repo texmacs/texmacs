@@ -29,7 +29,7 @@
 (tm-define (save-buffer . l)
   (cond ((= (length l) 0)
 	 (if (no-name?)
-	     (interactive save-buffer "Save as")
+	     (interactive save-buffer)
 	     (texmacs-save-buffer (get-name-buffer) "generic")))
 	((= (length l) 1) (secure-save-buffer (car l) "generic"))
 	(else (secure-save-buffer (car l) (cadr l)))))
