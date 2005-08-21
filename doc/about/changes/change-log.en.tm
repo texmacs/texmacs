@@ -1,13 +1,17 @@
-<TeXmacs|1.0.5.5>
+<TeXmacs|1.0.5.6>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.6>
+  <section|Changes from version 1.0.5 to 1.0.5.7>
 
   <\itemize>
+    <item>Finished implementation of document parts and preambles (1.0.5.7).
+
+    <item>Improved cursor accessability handling (1.0.5.7).
+
     <item>Improvements in the double-buffering system (1.0.5.6).
 
     <item>Implementation of a triple-buffering system for the graphical
