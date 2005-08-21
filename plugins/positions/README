@@ -1,0 +1,16 @@
+Plugin: positions
+Summary: saving and jumping to positions
+Release: 1.0
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU Public License v2 or later
+Depends: interactive-proc
+
+TeXmacs has internal support for saving positions which are updated
+when the document is modified.
+
+This plugin provides a user interface to use positions.
+
+[C-x M-p] saves the caret position as.
+[C-x p] jumps to a saved position.
+[C-x A-p] forgets a position.

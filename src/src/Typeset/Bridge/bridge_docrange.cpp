@@ -214,7 +214,10 @@ bridge_docrange_rep::notify_macro (int type, string v, int l, path p, tree u) {
 void
 bridge_docrange_rep::notify_change () {
   status= CORRUPTED;
-  if (divide) acc[0]->notify_change ();
+  if (divide) {
+    acc[0]->notify_change ();
+    if (N(acc)>1) acc[N(acc)-1]->notify_change ();
+  }
 }
 
 /******************************************************************************

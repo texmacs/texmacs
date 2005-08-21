@@ -12,23 +12,19 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (maxima-menus) maxima-menu maxima-help-icons)
+
 (define (maxima-initialize)
-  (import-from (texmacs texmacs tm-help) (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
-  (menu-extend texmacs-session-help-icons
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/info/maxima_toc.html")))
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/doc/html/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/doc/html/maxima_toc.html")))))
+  (menu-extend session-help-icons (link maxima-help-icons))
+  (menu-extend texmacs-extra-menu
+    (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
+	(=> "Maxima"
+	    (link maxima-menu)))))
 
 (define (maxima-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (with s (string-drop-right (verbatim-serialize lan t) 1)
     (cond ((== s "") "0;\n")
 	  ((in? (string-ref s (- (string-length s) 1)) '(#\; #\$))
@@ -56,4 +52,5 @@
   (:initialize (maxima-initialize))
   ,@(maxima-versions)
   (:serializer ,maxima-serialize)
-  (:session "Maxima"))
+  (:session "Maxima")
+  (:scripts "Maxima"))

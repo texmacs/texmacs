@@ -71,6 +71,7 @@ initialize_default_env () {
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
 
   env (PROG_LANGUAGE)    = "scheme";    // the default programming language
+  env (PROG_SCRIPTS)     = "scheme";    // the scripting language
   env (PROG_FONT)        = "roman";     // the font name in prog mode
   env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
@@ -186,10 +187,11 @@ initialize_default_env () {
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
 
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
-  env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
+  env (DASH_STYLE)       = "none";      // dash style
+  env (DASH_STYLE_UNIT)  = "5ln";       // dash style unit
   env (LINE_ARROWS)      = "none";      // arrows at end of lines
   env (LINE_CAPS)        = "normal";    // junctions in multilines
-  env (FILL_MODE)        = "both";      // show contour?
+  env (FILL_MODE)        = "none";      // fill mode (none, inside, both)
   env (FILL_COLOR)       = "white";     // fill color
   env (FILL_STYLE)       = "plain";     // fill style
 
@@ -198,6 +200,11 @@ initialize_default_env () {
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
+  env (GR_DASH_STYLE)      = "default"; // dash style for new objects
+  env (GR_DASH_STYLE_UNIT) = "default"; // dash style unit for new objects
+  env (GR_LINE_ARROWS)   = "default";   // line arrows for new objects
+  env (GR_FILL_MODE)     = "default";   // fill mode for new objects
+  env (GR_FILL_COLOR)    = "default";   // fill color for new objects
   env (GR_GRID)             = gr_grid;        // grid for graphics
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
@@ -207,6 +214,11 @@ initialize_default_env () {
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
+
+  /* hiding and showing content */
+  env ("shown")= identity_m;
+  env ("ignore")=
+    tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
 
   /* further standard macros */
   env ("error")=

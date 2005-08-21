@@ -34,11 +34,6 @@ public:
   void make_tree ();
   void back_prime (tree t, path p, bool forward);
   void back_in_wide (tree t, path p, bool forward);
-
-  bool inside_tree ();
-  path get_tree (int& i);
-  void branch_insert (bool at_right);
-  void branch_delete (bool forward);
   void back_in_tree (tree t, path p, bool forward);
 };
 

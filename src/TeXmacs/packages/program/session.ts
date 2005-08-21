@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.5.4>
 
 <style|source>
 
@@ -27,7 +27,7 @@
     </src-comment>
   </active*>
 
-  <assign|session|<macro|body|<style-with|src-compact|none|<compound|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>|<arg|name>|<arg|body>>>>>
+  <assign|session|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-session>>|<merge|<value|prog-language>|-session>|generic-session>>|<value|prog-language>|<arg|body>>>>>
 
   <assign|generic-session|<\macro|name|body>
     <\padded-normal|1fn|1fn>

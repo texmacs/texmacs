@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (qcl-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (qcl-input) qcl))
 
 (plugin-configure qcl

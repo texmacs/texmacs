@@ -53,6 +53,8 @@ struct concat_box_rep: public composite_box_rep {
 
   tree      action (tree t, SI x, SI y, SI delta);
   SI        get_leaf_offset (string search);
+
+  box       transform (frame fr);
 };
 
 concat_box_rep::operator tree () {
@@ -102,6 +104,11 @@ concat_box_rep::finalize () {
 bool
 concat_box_rep::access_allowed () {
   return false;
+}
+
+box
+concat_box_rep::transform (frame fr) {
+  return composite_box_rep::transform (fr);
 }
 
 void

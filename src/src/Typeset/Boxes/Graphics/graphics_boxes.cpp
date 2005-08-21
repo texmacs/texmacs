@@ -10,9 +10,10 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "env.hpp"
 #include "Boxes/graphics.hpp"
 #include "Boxes/composite.hpp"
-#include <math.h>
+#include "Graphics/math_util.hpp"
 
 /******************************************************************************
 * Graphics boxes
@@ -70,11 +71,44 @@ graphics_box_rep::pre_display (ps_device &dev) {
 
 void
 graphics_box_rep::post_display (ps_device &dev) {
-  dev->set_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  dev->set_clipping (
+    old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2, true);
 }
 
 int
 graphics_box_rep::reindex (int i, int item, int n) {
+  return i;
+}
+
+/******************************************************************************
+* Group boxes
+******************************************************************************/
+
+struct graphics_group_box_rep: public composite_box_rep {
+  graphics_group_box_rep (path ip, array<box> bs):
+    composite_box_rep (ip, bs, true) { finalize (); }
+  bool access_allowed () { return false; }
+  operator tree () { return "graphics_group"; }
+  path find_lip () { return path (-1); }
+  path find_rip () { return path (-1); }
+  gr_selections graphical_select (SI x, SI y, SI dist);
+  int reindex (int i, int item, int n);
+};
+
+gr_selections
+graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->cp << reverse (path (0, ip));
+    res << gs;
+  }
+  return res;
+}
+
+int
+graphics_group_box_rep::reindex (int i, int item, int n) {
   return i;
 }
 
@@ -118,6 +152,7 @@ point_box_rep::display (ps_device dev) {
 	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
   }
   else {
+  //TODO : Add non filled dots
     int i, n= 4*(r/dev->pixel+1);
     array<SI> x (n), y (n);
     for (i=0; i<n; i++) {
@@ -138,15 +173,32 @@ struct curve_box_rep: public box_rep {
   SI width;
   color col;
   curve c;
-  curve_box_rep (path ip, curve c, SI width, color col);
+  array<bool> style;
+  SI style_unit;
+  array<SI> styled_n;
+  int fill;
+  color fill_col;
+  array<box> arrows;
+  curve_box_rep (path ip, curve c, SI width, color col,
+		 array<bool> style, SI style_unit,
+		 int fill, color fill_col,
+		 array<box> arrows);
+  box transform (frame fr);
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   void display (ps_device dev);
   operator tree () { return "curve"; }
+  SI length ();
+  void apply_style ();
 };
 
-curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C):
-  box_rep (ip2), width (W), col (C), c (c2)
+curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
+  array<bool> style2, SI style_unit2, int fill2, color fill_col2,
+  array<box> arrows2)
+  :
+  box_rep (ip2), width (W), col (C), c (c2),
+  style (style2), style_unit (style_unit2),
+  fill (fill2), fill_col (fill_col2)
 {
   a= c->rectify (PIXEL);
   int i, n= N(a);
@@ -158,8 +210,46 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C):
     x2= max (x2, max ((SI) a[i][0], (SI) a[i+1][0]));
     y2= max (y2, max ((SI) a[i][1], (SI) a[i+1][1]));
   }
+  apply_style ();
+  arrows= array<box>(2);
+  point p1, p2;
+  bool error;
+  if (N(arrows2)>0 && !nil (arrows2[0])) {
+    point tg= c->grad (0.0, error);
+    if (!error) {
+      frame fr= scaling (1.0, a[0]) *
+	        rotation_2D (point (0.0, 0.0), arg (tg));
+      arrows[0]= arrows2[0]->transform (fr);
+      if (!nil (arrows[0])) {
+        x1= min (x1, arrows[0]->x1);
+        y1= min (y1, arrows[0]->y1);
+        x2= max (x2, arrows[0]->x2);
+        y2= max (y2, arrows[0]->y2);
+      }
+    }
+  }
+  if (N(arrows2)>1 && !nil (arrows2[1])) {
+    point tg= c->grad (1.0, error);
+    if (!error) {
+      frame fr= scaling (1.0, a[N(a)-1]) *
+	        rotation_2D (point (0.0, 0.0), arg (tg));
+      arrows[1]= arrows2[1]->transform (fr);
+      if (!nil (arrows[1])) {
+        x1= min (x1, arrows[1]->x1);
+        y1= min (y1, arrows[1]->y1);
+        x2= max (x2, arrows[1]->x2);
+        y2= max (y2, arrows[1]->y2);
+      }
+    }
+  }
   x3= x1 - (width>>1); y3= y1 - (width>>1); 
   x4= x2 + (width>>1); y4= y2 + (width>>1);
+}
+
+box
+curve_box_rep::transform (frame fr) {
+  return curve_box (ip, fr (c), width, col,
+    style, style_unit, fill, fill_col, arrows);
 }
 
 SI
@@ -219,11 +309,156 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
 
 void
 curve_box_rep::display (ps_device dev) {
-  int i, n= N(a);  
-  dev->set_line_style (width);
-  dev->set_color (col);
-  for (i=0; i<(n-1); i++)
-    dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+  int i, n;
+  if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+    dev->set_color (fill_col);
+    n= N(a);
+    array<SI> x (n), y (n);
+    for (i=0; i<n; i++) {
+      x[i]= (SI)a[i][0];
+      y[i]= (SI)a[i][1];
+    }
+    dev->polygon (x, y, false);
+  }
+  if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
+    dev->set_color (col);
+    dev->set_line_style (width, 0, false);
+    if (N (style) == 0) {
+      n= N(a);
+      for (i=0; i<(n-1); i++)
+        dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+    }
+    else {
+      SI li=0, o=0;
+      i=0;
+      int no;
+      point prec;
+      for (no=0; no<N(styled_n); no++) {
+        point seg= a[i+1]-a[i];
+        while (fnull (norm(seg),1e-6) && i+2<N(a)) {
+          i++;
+          seg= a[i+1]-a[i];
+        }
+        if (fnull (norm(seg),1e-6) && i+2>=N(a))
+          break;
+        SI lno= styled_n[no]*style_unit,
+           len= li+(SI)norm(seg);
+        while (lno>len) {
+          li= len;
+          if (no%2!=0) {
+         // 1st subsegment of a dash
+            dev->line ((SI) prec[0], (SI) prec[1],
+                       (SI) a[i+1][0], (SI) a[i+1][1]);
+  	    prec= a[i+1];
+          }
+          i++;
+          seg= a[i+1]-a[i];
+          len= li+(SI)norm(seg);
+        }
+        o= lno-li;
+     /* We could also use this one in order to use lines with
+        round ends. But it doesn't work well when the width
+        of the line becomes bigger than the style unit length.
+        Anyway (although I don't know if there is a way to do
+        lines with round ends in PostScript), our current PostScript
+        output in GhostView uses square line ends, so we do the same.
+        SI inc= ((no%2==0?1:-1) * width)/2;
+        point b= a[i] + (o+inc)*(seg/norm(seg)); */
+        point b= a[i] + o*(seg/norm(seg));
+        if (no%2==0)
+          prec= b;
+        else
+       // Last subsegment of a dash
+          dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
+       // TODO: Use XDrawLines() and the join style to draw correctly
+       //   the subsegments ; implement this for Postscript as well.
+      }
+    }
+  }
+
+  rectangles ll;
+  if (!nil (arrows[0])) arrows[0]->redraw (dev, path (), ll);
+  if (!nil (arrows[1])) arrows[1]->redraw (dev, path (), ll);
+}
+
+SI
+curve_box_rep::length () {
+  int i, n= N(a);
+  SI res= 0;
+  for (i=1; i<n; i++)
+    res+= (SI)norm (a[i] - a[i-1]);
+  return res;
+}
+
+void
+curve_box_rep::apply_style () {
+  int n= N(style);
+  if (n<=0 || fnull (style_unit,1e-6)) return;
+  int i;
+  bool all0=true, all1=true;
+  for (i=0; i<n; i++) {
+    if (style[i]) all0= false;
+    if (!style[i]) all1= false;
+  }
+  if (all1) style= array<bool>(0);
+  if (all0 || all1) return;
+
+  int n2= 0;
+  i= 0;
+  while (!style[i]) i++;
+  while (i<N(style)) {
+    if (style[i]) n2++; else break;
+    i++;
+  }
+
+  if (a[0]==a[N(a)-1]) n2= n; // Closed curves
+
+  SI l= length (), l1= n*style_unit, n1= l/l1 + 1, l2= n2*style_unit;
+  l1= (SI)((((double)l)*((double)l1)) / ((double)(n1*l1 + l2)));
+  style_unit= l1/n;
+  l2= n2*style_unit;
+
+  int nfrag=0, prevfrag=-1;
+  for (i=0; i<n; i++) {
+    int frag= style[i]?1:0;
+    if (frag!=prevfrag && frag==1) nfrag++;
+    prevfrag= frag;
+  }
+
+  int nfrag2=0;
+  prevfrag=-1;
+  for (i=0; i<n2; i++) {
+    int frag= style[i]?1:0;
+    if (frag!=prevfrag && frag==1) nfrag2++;
+    prevfrag= frag;
+  }
+
+  bool common_frag= style[0] && style[n-1] && n1>1;
+  if (common_frag) nfrag--;
+  styled_n= array<SI>(2*(nfrag*n1 + nfrag2));
+
+  int no=0, nbu=0;
+  prevfrag=-1;
+  for (i=0; i<n1+1; i++) {
+    int j;
+    for (j=0; j<(i==n1?n2:n); j++) {
+      int frag= style[j]?1:0;
+      if (frag!=prevfrag) {
+        if (frag==1) {
+          styled_n[no]= nbu;
+          no++;
+        }
+        else
+        if (frag==0 && prevfrag!=-1) {
+          styled_n[no]= nbu;
+          no++;
+        }
+      }
+      prevfrag= frag;
+      nbu++;
+    }
+  }
+  if (style[n2-1]) styled_n[N(styled_n)-1]= nbu;
 }
 
 /******************************************************************************
@@ -238,11 +473,21 @@ graphics_box (
 }
 
 box
+graphics_group_box (path ip, array<box> bs) {
+  return new graphics_group_box_rep (ip, bs);
+}
+
+box
 point_box (path ip, point p, SI r, color col, string style) {
   return new point_box_rep (ip, p, r, col, style);
 }
 
 box
-curve_box (path ip, curve c, SI width, color col) {
-  return new curve_box_rep (ip, c, width, col);
+curve_box (path ip, curve c, SI width, color col,
+  array<bool> style, SI style_unit,
+  int fill, color fill_col,
+  array<box> arrows)
+{
+  return new curve_box_rep (ip, c, width, col,
+			    style, style_unit, fill, fill_col, arrows);
 }

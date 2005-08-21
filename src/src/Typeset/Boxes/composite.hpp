@@ -52,6 +52,8 @@ struct composite_box_rep: public box_rep {
   virtual bool   access_allowed ();
   virtual void   collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path   find_tag (string name);
+
+  virtual box    transform (frame fr);
 };
 
 struct concrete_composite_box_rep: public composite_box_rep {

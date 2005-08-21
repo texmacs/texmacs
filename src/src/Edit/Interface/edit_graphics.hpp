@@ -28,10 +28,12 @@ public:
   ~edit_graphics_rep ();
 
   bool   inside_graphics ();
+  bool   inside_active_graphics ();
   tree   get_graphics ();
   frame  find_frame ();
   grid   find_grid ();
   void   find_limits (point& lim1, point& lim2);
+  bool   find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2);
   point  adjust (point p);
   tree   find_point (point p);
   tree   graphical_select (double x, double y);

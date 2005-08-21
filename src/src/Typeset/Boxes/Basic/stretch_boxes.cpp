@@ -16,8 +16,6 @@
 #include "boxes.hpp"
 #include "Boxes/construct.hpp"
 
-#include <math.h>
-
 static void
 get_wide_parameters (SI x1, SI x2, SI penw, SI& width, SI& height) {
   width = max (x2-x1, 10*penw)- (8*penw);
@@ -102,4 +100,32 @@ wide_breve_box (path ip, SI x1, SI x2, SI penw, color col) {
   SI width, height;
   get_wide_parameters (x1, x2, penw, width, height);
   return arc_box (ip, 0, 0, width, 2*height, 180<<6, 360<<6, penw, col);
+}
+
+box
+wide_squbr_box (path ip, SI x1, SI x2, SI penw, color col) {
+  path dip= decorate_middle (ip);
+  SI width= max (x2-x1, 6*penw), height= 6*penw;
+  array<box> bs (3);
+  array<SI>  xs (3);
+  array<SI>  ys (3);
+  xs[0]= ys[0]= xs[1]= ys[1]= xs[2]= ys[2]= 0;
+  bs[0]= line_box (dip, 0, 0, width, 0, penw, col);
+  bs[1]= line_box (dip, 0, height, 0, 0, penw/2, col);
+  bs[2]= line_box (dip, width, height, width, 0, penw/2, col);
+  return composite_box (ip, bs, xs, ys);
+}
+
+box
+wide_sqobr_box (path ip, SI x1, SI x2, SI penw, color col) {
+  path dip= decorate_middle (ip);
+  SI width= max (x2-x1, 6*penw), height= 6*penw;
+  array<box> bs (3);
+  array<SI>  xs (3);
+  array<SI>  ys (3);
+  xs[0]= ys[0]= xs[1]= ys[1]= xs[2]= ys[2]= 0;
+  bs[0]= line_box (dip, 0, height, width, height, penw, col);
+  bs[1]= line_box (dip, 0, height, 0, 0, penw/2, col);
+  bs[2]= line_box (dip, width, height, width, 0, penw/2, col);
+  return composite_box (ip, bs, xs, ys);
 }

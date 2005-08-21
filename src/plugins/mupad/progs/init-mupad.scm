@@ -12,18 +12,23 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (mupad-menus) mupad-menu mupad-help-menu)
+
 (define (mupad-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mupad-input) mupad)
-  (lazy-menu (mupad-menus) mupad-help-menu)
-  (menu-extend texmacs-session-help-icons
-  (if (in-mupad?)
-      |
-      (=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
-	  (link mupad-help-menu)))))
+  (menu-extend texmacs-extra-menu
+    (if (or (in-mupad?) (and (not-in-session?) (mupad-scripts?)))
+	(=> "Mupad"
+	    (link mupad-menu))))
+  (menu-extend session-help-icons
+    (if (in-mupad?)
+	|
+	(=> (balloon (icon "tm_help.xpm") "MuPAD documentation")
+	    (link mupad-help-menu)))))
 
 (define (mupad-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (string-append (generic-serialize lan t) "\n"))
 
 (plugin-configure mupad
@@ -31,22 +36,24 @@
   (:initialize (mupad-initialize))
   (:launch "tm_mupad --texmacs")
   (:serializer ,mupad-serialize)
-  (:session "Mupad"))
+  (:session "Mupad")
+  (:scripts "Mupad"))
 
 (texmacs-modes
   (in-mupad-math% #t in-mupad% in-math%)
   (in-mupad-prog% #t in-mupad% in-prog%))
 
-(kbd-map in-mupad-prog?
+(kbd-map
+  (:mode in-mupad-prog?)
   ("$"  (insert "$"))
   ("\"" (insert "\""))
   ("."  (insert "."))
 ;  ("_"  (insert "_"))
   ("`"  (insert "`")))
 
-(kbd-map in-mupad-math?
+(kbd-map
+  (:mode in-mupad-math?)
   ("$"  (insert "$"))
   ("\"" (insert "\""))
   ("."  (insert "."))
   ("`"  (insert "`")))
-

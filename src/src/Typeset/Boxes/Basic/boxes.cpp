@@ -13,6 +13,7 @@
 #include "boxes.hpp"
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
+#include "timer.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -167,6 +168,12 @@ box_rep::relocate (path new_ip, bool force) {
   ip= new_ip;
   int i, n= subnr ();
   for (i=0; i<n; i++) subbox (i)->relocate (ip, force);
+}
+
+box
+box_rep::transform (frame fr) {
+  (void) fr;
+  return box ();
 }
 
 /******************************************************************************
@@ -368,7 +375,7 @@ box_rep::reindex (int i, int item, int n) {
 
 void
 box_rep::redraw (ps_device dev, path p, rectangles& l) {
-  if (((nr_painted&15) == 15) && dev->check_event (INPUT_EVENT)) return;
+  if (((nr_painted&15) == 15) && dev->interrupted (true)) return;
   dev->move_origin (x0, y0);
   SI delta= dev->pixel; // adjust visibility to compensate truncation
   if (dev->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
@@ -394,7 +401,7 @@ box_rep::redraw (ps_device dev, path p, rectangles& l) {
       }
     }
 
-    if (((nr_painted&15) == 15) && dev->check_event (EVENT_STATUS)) {
+    if (((nr_painted&15) == 15) && dev->interrupted ()) {
       l= translate (l, -dev->ox, -dev->oy);
       clear_incomplete (l, dev->pixel, item, i1, i2);
       l= translate (l, dev->ox, dev->oy);
@@ -518,6 +525,93 @@ gr_selection::gr_selection (array<path> cp, SI dist):
 ostream&
 operator << (ostream& out, gr_selection sel) {
   return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
+}
+
+/******************************************************************************
+* Animations
+******************************************************************************/
+
+int
+box_rep::anim_length () {
+  int i, n= subnr (), len=0;
+  for (i=0; i<n; i++) {
+    int slen= subbox (i)->anim_length ();
+    if (slen == -1) return -1;
+    if (slen > len) len= slen;
+  }
+  return len;
+}
+
+bool
+box_rep::anim_started () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_started ()) return false;
+  return true;
+}
+
+bool
+box_rep::anim_finished () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    if (!subbox (i)->anim_finished ()) return false;
+  return true;
+}
+
+void
+box_rep::anim_start_at (time_t at) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_start_at (at);
+}
+
+void
+box_rep::anim_finish_now () {
+  int i, n= subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->anim_finish_now ();
+}
+
+time_t
+box_rep::anim_next_update () {
+  fatal_error ("Invalid situation", "box_rep::anim_next_update");
+  return texmacs_time ();
+}
+
+void
+box_rep::anim_check_invalid (bool& flag, time_t& at, rectangles& rs) {
+  time_t now= texmacs_time ();
+  time_t finish_at= anim_next_update ();
+  if (finish_at - now < 0) finish_at= now;
+  if (flag && at - now < 0) at= now;
+  if (!flag || finish_at - (at - 3) < 0) {
+    flag= true;
+    at  = finish_at;
+    rs  = rectangle (x1, y1, x2, y2);
+  }
+  else if (finish_at - (at + 3) <= 0) {
+    rs << rectangle (x1, y1, x2, y2);
+    if (finish_at - at < 0)
+      at= finish_at;
+  }
+}
+
+void
+box_rep::anim_get_invalid (bool& flag, time_t& at, rectangles& rs) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    bool   flag2= false;
+    time_t at2= at;
+    rectangles rs2;
+    subbox (i)->anim_get_invalid (flag2, at2, rs2);
+    if (flag2) {
+      rs2= translate (rs2, sx (i), sy (i));
+      if (at2 - (at-3) < 0) rs= rs2;
+      else rs << rs2;
+      flag= true;
+      if (at2 - at < 0) at= at2;
+    }
+  }
 }
 
 /******************************************************************************

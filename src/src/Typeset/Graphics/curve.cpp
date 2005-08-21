@@ -341,8 +341,8 @@ spline_rep::S (
   else if (u<U[i+1]) return p1[i](u);
   else if (u<U[i+2]) return p2[i](u);
   else if (u<U[i+3]) return p3[i](u);
-  else
-    fatal_error ("We should **never** go here");
+  else fatal_error ("We should **never** go here");
+  return 0.0; // NOT REACHED
 }
 
 point
@@ -724,17 +724,11 @@ struct transformed_curve_rep: public curve_rep {
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
-  point grad (double t, bool& error) {
-    // FIXME: Is this correct ?
-    if (f->linear)
-      return f (c->grad (t, error));
-    else fatal_error ("Not yet implemented",
-		      "transformed_curve_rep::grad");
-  }
+  point grad (double t, bool& error);
   double curvature (double t1, double t2) {
     fatal_error ("Not yet implemented",
 	         "transformed_curve_rep::curvature");
-    return 0.0;
+    return 0.0; // NOT REACHED
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -750,6 +744,15 @@ transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
   }
   else fatal_error ("Not yet implemented",
 		    "transformed_curve_rep::rectify_cumul");
+}
+
+point
+transformed_curve_rep::grad (double t, bool& error) {
+  bool error2;
+  point w2= c->grad (t, error2);
+  point w1= f->jacobian (c(t), w2, error);
+  error |= error2;
+  return w1;
 }
 
 int

@@ -131,6 +131,7 @@ public:
   inline            box_rep (path ip);
   inline            virtual ~box_rep ();
   void              relocate (path p, bool force= false);
+  virtual box	    transform (frame fr);
   virtual operator  tree () = 0;
   virtual void      pre_display (ps_device& dev);
   virtual void      post_display (ps_device& dev);
@@ -228,6 +229,17 @@ public:
   virtual lazy      get_leaf_lazy ();
   virtual SI        get_leaf_offset (string search);
 
+  /******************************** animations *******************************/
+
+  virtual int    anim_length ();
+  virtual bool   anim_started ();
+  virtual bool   anim_finished ();
+  virtual void   anim_start_at (time_t at);
+  virtual void   anim_finish_now ();
+  virtual time_t anim_next_update ();
+          void   anim_check_invalid (bool& flag, time_t& at, rectangles& rs);
+  virtual void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+
   /********************************* obsolete ********************************/
 
   friend struct page_box_rep; // temporary friends for accessing x0 and y0
@@ -261,6 +273,10 @@ inline int N (box b) { return b.rep->subnr(); }
 ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
+
+extern bool   refresh_needed;
+extern time_t refresh_next;
+void          refresh_at (time_t t);
 
 #define DECORATION        (-1)
 #define DECORATION_LEFT   (-2)

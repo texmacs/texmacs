@@ -14,8 +14,7 @@
 
 (texmacs-module (convert html htmltm-test)
   (:use (convert html htmltm) (convert tools xmltm)
-	(convert tools sxml) (convert tools sxhtml))
-  (:export regtest-htmltm))
+	(convert tools sxml) (convert tools sxhtml)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Markup
@@ -833,7 +832,7 @@
 ;; Test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (regtest-htmltm)
+(tm-define (regtest-htmltm)
   (let ((n (+ (regtest-htmltm-grouping)
 	      (regtest-htmltm-headings)
 	      (regtest-htmltm-address-bdo)

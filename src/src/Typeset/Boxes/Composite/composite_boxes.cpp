@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Boxes/composite.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Setting up composite boxes
@@ -142,6 +143,19 @@ composite_box_rep::access_allowed () {
   return true;
 }
 
+box
+composite_box_rep::transform (frame fr) {
+  int i;
+  array<box> bs;
+  for (i= 0; i<subnr(); i++) {
+    if (!nil (subbox (i))) {
+      box sb= subbox (i)->transform (fr);
+      if (!nil (sb)) bs << sb;
+    }
+  }
+  return N (bs)==0?box ():composite_box (ip, bs);
+}
+
 /******************************************************************************
 * Cursor routines
 ******************************************************************************/
@@ -210,10 +224,8 @@ composite_box_rep::find_rip () {
 path
 composite_box_rep::find_box_path (path p, bool& found) {
   int n= subnr();
-  /*
-  cout << "Search cursor " << p << " among " << n
-       << " at " << box (this) << " " << reverse (ip) << "\n";
-  */
+  // cout << "Search cursor " << p << " among " << n
+  //      << " at " << box (this) << " " << reverse (ip) << "\n";
   if (n == 0) return box_rep::find_box_path (p, found);
 
   int start= n>>1, acc= start, step= (start+1)>>1;
@@ -267,6 +279,18 @@ composite_box_rep::find_box_path (path p, bool& found) {
   if (is_accessible (ip) && (path_up (p) == reverse (ip)) && access_allowed ())
     return box_rep::find_box_path (p, found);
   if (flag) return bp;
+  if (start > 0) {
+    path sl= bs[start-1]->find_rip ();
+    path sr= bs[start  ]->find_lip ();
+    if (is_accessible (sl) && is_accessible (sr) &&
+	path_less_eq (reverse (sl), p) && path_less_eq (p, reverse (sr)))
+      {
+	int c1= N (common (reverse (sl), p));
+	int c2= N (common (reverse (sr), p));
+	int i = (c1 >= c2? start-1: start);
+	return path (i, bs[i]->find_box_path (p, found));
+      }
+  }
   return box_rep::find_box_path (p, flag);
 }
 

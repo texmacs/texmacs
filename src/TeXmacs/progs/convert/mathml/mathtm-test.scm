@@ -13,10 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert mathml mathtm-test)
-  (:use (convert html htmltm))
-  (:export regtest-htmltm))
+  (:use (convert html htmltm)))
 
-(define (regtest-mathtm)
+(tm-define (regtest-mathtm)
   (define (with-math x) `(with "mode" "math" ,x))
   (define (math->tree x) (htmltm-as-serial (cons 'math x)))
   (regression-test-group

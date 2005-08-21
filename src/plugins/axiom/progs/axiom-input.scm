@@ -13,14 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (axiom-input)
-  (:use (texmacs plugin plugin-convert)))
+  (:use (utils plugins plugin-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (axiom-input-var-row r)
-  (if (not (null? r))
+  (if (nnull? r)
       (begin
 	(display ", ")
 	(plugin-input (car r))
@@ -33,7 +33,7 @@
   (display "]"))
 
 (define (axiom-input-var-rows t)
-  (if (not (null? t))
+  (if (nnull? t)
       (begin
 	(display ", ")
 	(axiom-input-row (car t))

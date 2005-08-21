@@ -35,13 +35,13 @@ text_language_rep::advance (string s, int& pos) {
   if (s[pos]==' ') {
     pos++;
     // while ((pos<N(s)) && (s[pos]==' ')) pos++;
-    if ((pos == N(s)) || (!is_ponctuation (s[pos])))
+    if ((pos == N(s)) || (!is_punctuation (s[pos])))
       return &tp_space_rep;
     return &tp_blank_rep;
   }
   
-  if (is_ponctuation (s[pos])) {
-    while ((pos<N(s)) && is_ponctuation (s[pos])) pos++;
+  if (is_punctuation (s[pos])) {
+    while ((pos<N(s)) && is_punctuation (s[pos])) pos++;
     if ((pos==N(s)) || (s[pos]!=' ')) return &tp_normal_rep;
     switch (s[pos-1]) {
     case ',': case ':': case ';': case '`': case '\'':

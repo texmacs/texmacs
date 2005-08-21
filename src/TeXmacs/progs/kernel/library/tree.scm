@@ -13,96 +13,104 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel library tree)
-  (:use (kernel texmacs tm-define) (kernel library list))
-  (:export
-    tree-path tree-assign tree-assign!
-    tree-insert tree-insert! tree-remove tree-remove!
-    tree-split tree-split! tree-join tree-join!
-    tree-ins-unary tree-ins-unary! tree-rem-unary tree-rem-unary!))
+  (:use (kernel library list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Paths associated to trees
+;; Extra routines on trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tree-path t)
-  (:type (-> tree path))
-  (:synopsis "Get the path associated to @t or #f.")
-  (with ip (tree-ip t)
-    (if (== (cAr ip) -5) #f
-	(reverse ip))))
+(define-public (tree . l)
+  (if (string? (car l))
+      (string->tree (car l))
+      (tm->tree l)))
+
+(define-public (atomic-tree? t)
+  (and (tree? t) (tree-atomic? t)))
+
+(define-public (compound-tree? t)
+  (and (tree? t) (tree-compound? t)))
+
+(define-public (tree->list t)
+  (cons (tree-label t) (tree-children t)))
+
+(define-public (tree-explode t)
+  (if (atomic-tree? t)
+      (tree->string t)
+      (cons (tree-label t) (tree-children t))))
+
+(define-public (tree-get-path t)
+  (and (tree? t)
+       (let ((ip (tree-ip t)))
+	 (and (or (null? ip) (!= (cAr ip) -5))
+	      (reverse ip)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modifying the document
+;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tree-assign ref t)
-  (:type (-> tree tree void))
-  (:synopsis "Assign @ref with @t.")
-  (with p (tree-path ref)
-    (if p (tm-assign p t)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (tree-up t . opt)
+  "Get the parent of @t."
+  (let* ((p   (tree->path t))
+	 (nr  (if (null? opt) 1 (car opt)))
+	 (len (if (list? p) (length p) -1)))
+    (and (>= len nr) (path->tree (list-head p (- len nr))))))
 
-(define-macro (tree-assign! ref t)
-  `(with xxx-t ,t
-     (tree-assign ,ref xxx-t)
-     (set! ,ref xxx-t)))
+(define-public (tree-down t . opt)
+  "Get the child where the cursor is."
+  (let* ((p   (tree->path t))
+	 (q   (cDr (cursor-path)))
+	 (nr  (if (null? opt) 1 (car opt))))
+    (and p (list-starts? (cDr q) p)
+	 (>= (length q) (+ (length p) nr))
+	 (path->tree (list-head q (+ (length p) nr))))))
 
-(tm-define (tree-insert ref pos t)
-  (:type (-> tree int tree void))
-  (:synopsis "Insert the children of @t into @ref at position @pos.")
-  (with p (tree-path ref)
-    (if p (tm-insert (rcons p pos) t)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (tree-index t)
+  "Get the child number of @t in its parent."
+  (with p (tree->path t)
+    (and (pair? p) (cAr p))))
 
-(define tree-insert! tree-insert)
+(define-public (tree-down-index t)
+  "Get the number the child where the cursor is."
+  (let ((p (tree->path t))
+	(q (cDr (cursor-path))))
+    (and (list-starts? (cDr q) p)
+	 (list-ref q (length p)))))
 
-(tm-define (tree-remove ref pos nr)
-  (:type (-> tree int int void))
-  (:synopsis "Remove @nr children from @ref at position @pos.")
-  (with p (tree-path ref)
-    (if p (tm-remove (rcons p pos) nr)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (tree-inside? t ref)
+  "Is @t inside @ref?"
+  (let ((p (tree->path ref))
+	(q (tree->path t)))
+    (and p q (list-starts? q p))))
 
-(define tree-remove! tree-remove)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special trees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tree-split ref pos at)
-  (:type (-> tree int int void))
-  (:synopsis "Split the @pos-th child of @ref at position @at.")
-  (with p (tree-path ref)
-    (if p (tm-split (rcons* p pos at))
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (cursor-tree)
+  (path->tree (cDr (cursor-path))))
 
-(define tree-split! tree-split)
+(define-public (table-cell-tree row col)
+  (path->tree (table-cell-path row col)))
 
-(tm-define (tree-join ref pos)
-  (:type (-> tree int void))
-  (:synopsis "Split the @pos-th child of @ref with the next child.")
-  (with p (tree-path ref)
-    (if p (tm-join (rcons p pos))
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define the-action-path '(-1))
 
-(define tree-join! tree-join)
+(define-public (action-set-path p)
+  (set! the-action-path p))
 
-(tm-define (tree-ins-unary ref lab)
-  (:type (-> tree symbol void))
-  (:synopsis "Transform @ref into the tree @(lab ref).")
-  (with p (tree-path ref)
-    (if p (tm-ins-unary p lab)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public (action-path)
+  (and (!= the-action-path '(-1)) the-action-path))
 
-(define-macro (tree-ins-unary! ref lab)
-  `(with xxx-p (tree-path ,ref)
-     (tree-ins-unary ,ref ,lab)
-     (set! ,ref (tm-subtree xxx-p))))
+(define-public (action-tree)
+  (and (!= the-action-path '(-1)) (path->tree the-action-path)))
 
-(tm-define (tree-rem-unary ref)
-  (:type (-> tree symbol void))
-  (:synopsis "Set a unary tree @ref to its unique child.")
-  (with p (tree-path ref)
-    (if p (tm-rem-unary p)
-	(texmacs-error "tree-assign" "~S is not part of a document" ref))))
+(define-public-macro (with-action t . body)
+  `(with ,t (action-tree)
+     (if ,t (begin ,@body))))
 
-(define-macro (tree-rem-unary! ref)
-  `(begin
-     (tree-rem-unary ,ref)
-     (set! ,ref (tree-ref ,ref 0))))
+(define-public (mutator-tree)
+  (with p (mutator-path)
+    (if (nnull? p) (path->tree p) #f)))
+
+(define-public-macro (with-mutator t . body)
+  `(with ,t (mutator-tree)
+     (if ,t (begin ,@body))))
