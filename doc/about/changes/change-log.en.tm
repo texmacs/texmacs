@@ -10,6 +10,9 @@
   <\itemize>
     <item>Several minor bugfixes from buglist (1.0.5.7).
 
+    <item>Further improvements in <verbatim|configure.in> and
+    use of <verbatim|autoheader> (1.0.5.7).
+
     <item>Finished implementation of document parts and preambles (1.0.5.7).
 
     <item>Improved cursor accessability handling (1.0.5.7).
