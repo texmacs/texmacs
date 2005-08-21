@@ -8,6 +8,8 @@
   <section|Changes from version 1.0.5 to 1.0.5.7>
 
   <\itemize>
+    <item>Several minor bugfixes from buglist (1.0.5.7).
+
     <item>Finished implementation of document parts and preambles (1.0.5.7).
 
     <item>Improved cursor accessability handling (1.0.5.7).
