@@ -1,15 +1,77 @@
 #!/bin/bash
+# if there is an argument, find maxima_toc.html
+
+find_old_help()
+{
+  if grep -F 'MAXIMA_DIRECTORY=' $MAXIMA >/dev/null
+  then
+    MAXIMA_DIRECTORY=`grep -F 'MAXIMA_DIRECTORY=' $MAXIMA | sed -e 's/MAXIMA_DIRECTORY=//'`
+    if [ -f "$MAXIMA_DIRECTORY/doc/html/maxima_toc.html" ]
+    then echo "\"$MAXIMA_DIRECTORY/doc/html/maxima_toc.html\""
+    elif [ -f "$MAXIMA_DIRECTORY/info/maxima_toc.html" ]
+    then echo "\"$MAXIMA_DIRECTORY/info/maxima_toc.html\""
+    else echo '#f'
+    fi
+  else
+    # resorting to locate
+    MAXIMA_HELP=`locate maxima_toc.html`
+    if [ $? -eq 0 ]
+    then
+      MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep -F /doc/html/maxima_toc.html`
+      if [ $? -eq 0 ]
+      then MAXIMA_HELP="$MAXIMA_HELP2"
+      else
+        MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep -F /info/maxima_toc.html`
+        if [ $? -eq 0 ]
+        then MAXIMA_HELP="$MAXIMA_HELP2"
+        fi
+      fi
+      MAXIMA_HELP2=`echo "$MAXIMA_HELP" | grep '^/usr'`
+      if [ $? -eq 0 ]
+      then MAXIMA_HELP="$MAXIMA_HELP2"
+      fi
+      echo "$MAXIMA_HELP" | sed -e 's/^/"/' -e 's/$/"/' -e '1s/^/(/' -e '$s/$/)/'
+    else echo '#f'
+    fi
+  fi
+}
+
 MAXIMA=`type -p maxima 2>/dev/null`
+
 if [ $? -eq 0 ]
 then
   if grep -F list-avail $MAXIMA >/dev/null
-  then maxima --list-avail | sed -e '1d' -e 's/version /"/' \
-    -e 's/, lisp / /' -e 's/$/"/' -e '2s/^/(/' -e '$s/$/)/'
+  then
+    # 5.9.0 or later
+    if [ "$1" ]
+    then
+      if $MAXIMA --list-avail | grep -F "version 5.9.1
+version 5.9.2" >/dev/null
+      then
+        # 5.9.1 or 5.9.2
+        maxima -d | grep -F 'maxima-htmldir=' | sed -e 's/maxima-htmldir=/"/' \
+        -e 's|$|/maxima_toc.html"|'
+      else
+        # 5.9.0
+        find_old_help
+      fi
+    else
+      maxima --list-avail | sed -e '1d' -e 's/version /"/' \
+      -e 's/, lisp / /' -e 's/$/"/' -e '2s/^/(/' -e '$s/$/)/'
+    fi
   else
-    if grep -F clisp $MAXIMA >/dev/null
-    then echo '("5.6 clisp")'
-    else echo '("5.6 gcl")'
+    # 5.6
+    if [ "$1" ]
+    then
+      find_old_help
+    else
+      if grep -F clisp $MAXIMA >/dev/null
+      then echo '("5.6 clisp")'
+      else echo '("5.6 gcl")'
+      fi
     fi
   fi
-else echo '#f'
+else
+  # maxima not found
+  echo '#f'
 fi

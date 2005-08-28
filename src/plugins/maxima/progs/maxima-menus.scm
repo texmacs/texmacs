@@ -101,13 +101,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind maxima-help-icons
-  (if (and (in-maxima?)
-	   (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
+  (if (and (in-maxima?) maxima-help)
       |
       ((balloon (icon "tm_help.xpm") "Maxima manual")
-       (load-help-buffer "$TM_MAXIMA_HOME/info/maxima_toc.html")))
-  (if (and (in-maxima?)
-	   (url-exists? "$TM_MAXIMA_HOME/doc/html/maxima_toc.html"))
-      |
-      ((balloon (icon "tm_help.xpm") "Maxima manual")
-       (load-help-buffer "$TM_MAXIMA_HOME/doc/html/maxima_toc.html"))))
+       (load-help-buffer maxima-help))))
