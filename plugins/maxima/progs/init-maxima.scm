@@ -14,9 +14,15 @@
 
 (lazy-menu (maxima-menus) maxima-menu maxima-help-icons)
 
+(define maxima-help #f)
+
 (define (maxima-initialize)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (maxima-input) maxima)
+  (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
+    (if help-list
+      (cond ((list? help-list) (if (not (null? help-list)) (set! maxima-help (car help-list))))
+            ((string? help-list) (set! maxima-help help-list)))))
   (menu-extend session-help-icons (link maxima-help-icons))
   (menu-extend texmacs-extra-menu
     (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
