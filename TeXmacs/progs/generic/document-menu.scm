@@ -34,6 +34,10 @@
    (begin
      (init-language "british")
      (set-output-language "british")))
+  ("Bulgarian"
+   (begin
+     (init-language "bulgarian")
+     (set-output-language "bulgarian")))
   ("Czech"
    (begin
      (init-language "czech")
@@ -283,6 +287,7 @@
       ("Default" (init-default "language"))
       ---
       ("British" (init-language "british"))
+      ("Bulgarian" (init-language "bulgarian"))
       ("Czech" (init-language "czech"))
       ("Danish" (init-language "danish"))
       ("Dutch" (init-language "dutch"))

@@ -353,6 +353,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table tmtex-preamble-language-def%
+  ("bulgarian"
+   "\\usepackage[cp1251]{inputenc}\n\\usepackage[bulgarian]{babel}")
   ("czech" "\\usepackage[czech]{babel}")
   ("danish" "\\usepackage[danish]{babel}")
   ("dutch" "\\usepackage[dutch]{babel}")
@@ -564,7 +566,7 @@
 	    (string-append (drd-ref tmtex-preamble-language% lan) "\n")))
   (tmtex-preamble-build-sub text)
   (if tmtex-preamble-hichar-flag
-      (let ((extra (if (in? lan '("russian" "ukrainian"))
+      (let ((extra (if (in? lan '("bulgarian" "russian" "ukrainian"))
 		       tmtex-preamble-cyrillic
 		       tmtex-preamble-iso-latin)))
 	(set! tmtex-preamble-result

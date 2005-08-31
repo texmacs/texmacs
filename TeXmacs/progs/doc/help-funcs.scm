@@ -28,7 +28,8 @@
   (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
       s
       (let* ((lan (get-output-language))
-	     (suf (cond ((== lan "czech") ".cs.tm")
+	     (suf (cond ((== lan "bulgarian") ".bg.tm")
+			((== lan "czech") ".cs.tm")
 			((== lan "danish") ".da.tm")
 			((== lan "dutch") ".nl.tm")
 			((== lan "finnish") ".fi.tm")

@@ -147,7 +147,8 @@ x_display_rep::default_font_sub (bool tt) {
   int dpi= (j<n? as_int (s (j, n)): 300);
   if (N(fam) >= 2) {
     string ff= fam (0, 2);
-    if (((out_lan == "russian") || (out_lan == "ukrainian")) &&
+    if (((out_lan == "bulgarian") || (out_lan == "russian") ||
+	 (out_lan == "ukrainian")) &&
 	((ff == "cm") || (ff == "ec"))) {
       fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
     if (ff == "ec")

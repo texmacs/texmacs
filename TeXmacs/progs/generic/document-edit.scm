@@ -79,8 +79,8 @@
 
 (tm-define (init-language lan)
   (let ((before (in? (tree->stree (get-init-tree "language"))
-		     '("russian" "ukrainian")))
-	(after (in? lan '("russian" "ukrainian"))))
+		     '("bulgarian" "russian" "ukrainian")))
+	(after (in? lan '("bulgarian" "russian" "ukrainian"))))
     (if (and before (not after)) (init-default "font"))
     (init-env "language" lan)
     (if (and after (not before)) (init-env "font" "cyrillic"))))
