@@ -236,6 +236,10 @@
 
 (menu-bind text-language-menu
   ("British" (make-with "language" "british"))
+  ("Bulgarian"
+   (begin
+     (make-with "language" "bulgarian")
+     (make-with "font" "cyrillic")))
   ("Czech" (make-with "language" "czech"))
   ("Danish" (make-with "language" "danish"))
   ("Dutch" (make-with "language" "dutch"))

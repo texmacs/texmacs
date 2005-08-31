@@ -55,6 +55,7 @@
 	  ("In popup windows" "popup"))
     (enum ("Language" "language")
 	  ("British" "british")
+	  ("Bulgarian" "bulgarian")
 	  ("Czech" "czech")
 	  ("Dutch" "dutch")
 	  ("Danish" "danish")

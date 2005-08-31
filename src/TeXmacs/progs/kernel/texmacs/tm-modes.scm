@@ -109,7 +109,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (in-cyrillic% (in? (get-env "language") '("russian" "ukrainian")) in-text%)
+  (in-cyrillic% (in? (get-env "language")
+		     '("bulgarian" "russian" "ukrainian")) in-text%)
+  (in-bulgarian% (== (get-env "language") "bulgarian") in-text%)
   (in-czech% (== (get-env "language") "czech") in-text%)
   (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
