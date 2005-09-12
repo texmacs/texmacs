@@ -569,23 +569,24 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   u[0]= 0;
   u[1]= e3;
   u[2]= e2;
-  if (close) e2= 1;
+  if (close) e2= 1.0;
 }
 
 point
 arc_rep::evaluate (double t) {
-  return center + r1*cos(2*tm_PI*(e1+t))*i
-                + r2*sin(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return center + r1*cos(2*tm_PI*t)*i
+                + r2*sin(2*tm_PI*t)*j;
 }
 
 void
 arc_rep::rectify_cumul (array<point>& cum, double eps) {
   double t, step;
   step= sqrt (2*eps / max (r1, r2) ) / tm_PI;
-  for (t=step; t<=e2; t+=step)
+  for (t=step; t<=1.0; t+=step)
     cum << evaluate (t);
-  if (t-step != e2)
-    cum << evaluate (e2);
+  if (t-step != 1.0)
+    cum << evaluate (1.0);
 }
 
 double
@@ -596,8 +597,9 @@ arc_rep::bound (double t, double eps) {
 point
 arc_rep::grad (double t, bool& error) {
   error= false;
-  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*i
-         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return -2*tm_PI*r1*sin(2*tm_PI*t)*i
+         +2*tm_PI*r2*cos(2*tm_PI*t)*j;
 }
 
 double

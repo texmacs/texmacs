@@ -80,9 +80,10 @@ struct empty_grid_rep: public grid_rep {
 
 point
 empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
-  double x= floor (10.0*p[0] + 0.5);
+/*double x= floor (10.0*p[0] + 0.5);
   double y= floor (10.0*p[1] + 0.5);
-  return point (x / 10.0, y / 10.0);
+  return point (x / 10.0, y / 10.0);*/
+  return p;
 }
 
 grid
