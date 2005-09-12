@@ -318,6 +318,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
         res << gs;
       }
     }
+    if (N(res) != 0) return res;
     int ne= np-1;
     if (np>1 && (abs[0]!=0.0 || abs[np-1]!=1.0))
       ne++;
