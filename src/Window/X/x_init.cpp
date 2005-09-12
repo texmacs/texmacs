@@ -19,6 +19,8 @@
 #define	XK_ISO_Left_Tab 0xFE20
 #endif
 
+bool reverse_colors= false;
+
 static int CSCALES= 4;
 static int CFACTOR= 5;
 static int GREYS  = 16;
@@ -33,6 +35,25 @@ static display cur_display= NULL;
 
 int
 x_display_rep::alloc_color (int r, int g, int b) {
+  if (reverse_colors) {
+    int m= min (r, min (g, b));
+    int M= max (r, max (g, b));
+    int t= (r + g + b) / 3;
+    int tt= 65535 - t;
+    double mu= 1.0;
+    tt= 6 * tt / 7;
+    if (M != m) {
+      double lambda1= max (((double) (t - m)) / t,
+			   ((double) (M - t)) / (65535 - t));
+      double lambda2= max (((double) (t - m)) / tt,
+			   ((double) (M - t)) / (65535 - tt));
+      mu= lambda1 / lambda2;
+    }
+    r= (int) (tt + mu * (r - t) + 0.5);
+    g= (int) (tt + mu * (g - t) + 0.5);
+    b= (int) (tt + mu * (b - t) + 0.5);
+  }
+
   XColor col;
   col.red  = r;
   col.green= g;
