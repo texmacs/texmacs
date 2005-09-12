@@ -997,12 +997,26 @@
        `((line (point ,l ,y) (point ,(i2s (- (s2i l) len)) ,y))
 	 (line (point ,r ,y) (point ,(i2s (+ (s2i r) len)) ,y))))
   )
+  (define (get-textat-vbase b0)
+     (if (and (eq? (car o) 'text-at)
+	      (equal? (car (cddddr o)) "base"))
+	 (begin
+	    (set-car! (cddddr o) "bottom")
+	    (let* ((info0 (cdr (box-info o "lbLB")))
+		   (b (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
+		  )
+		  (set-car! (cddddr o) "base")
+		  b)
+	 )
+	 b0)
+  )
   (let* ((info0 (cdr (box-info o "lbLB")))
 	 (info1 (cdr (box-info o "rtRT")))
 	 (l (i2s (min (s2i (car  info0)) (s2i (caddr  info0)))))
-	 (b (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
+	 (b0 (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
 	 (r (i2s (max (s2i (car  info1)) (s2i (caddr  info1)))))
 	 (t (i2s (max (s2i (cadr info1)) (s2i (cadddr info1)))))
+         (b (get-textat-vbase b0))
 	 (p0 (frame-inverse `(tuple ,l ,b)))
 	 (p1 (frame-inverse `(tuple ,r ,b)))
 	 (p2 (frame-inverse `(tuple ,r ,t)))
@@ -1777,7 +1791,8 @@
 (define (text-at_change-valign p obj)
   (graphics-remove p)
   (with valign (car (cddddr obj))
-     (set-car! (cddddr obj) (cond ((== valign "bottom") "center")
+     (set-car! (cddddr obj) (cond ((== valign "bottom") "base")
+				  ((== valign "base") "center")
 				  ((== valign "center") "top")
 				  ((== valign "top") "bottom")
 				  (else "bottom")))
@@ -2014,8 +2029,8 @@
 		  )
 		  (set! n (+ n 1))
 	       ))
-	      ;(restore-selected-objects n)
-	       (set! selected-objects '())
+	       (restore-selected-objects n)
+	      ;(set! selected-objects '())
 	       (create-graphical-object '(nothing) #f 'points 'group)
 	       (graphics-group-start)))
 	 )
@@ -2052,6 +2067,10 @@
 	 (set! selected-objects (rcons selected-objects t)))
   ))
   (create-graphical-object obj p 'points #f))
+
+(define (point_unselect-all)
+  (set! selected-objects '())
+  (create-graphical-object '(nothing) #f 'points 'group))
 
 ;; Dispatch
 (define (group-edit_move x y)
@@ -2091,6 +2110,12 @@
      (dispatch (car obj) ((point line cline spline cspline arc carc
 			   text-at))
 	       toggle-select (p obj) do-tick)))
+
+(define (group-edit_middle-button x y)
+  (with-graphics-context "unselect-all" x y p obj no edge
+     (dispatch (car obj) ((point line cline spline cspline arc carc
+			   text-at))
+	       unselect-all () do-tick)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redim graphics mode
@@ -2240,7 +2265,8 @@
 (tm-define (graphics-remove-point x y)
   ;(display* "Graphics] Remove " x ", " y "\n")
   (dispatch (car (graphics-mode))
-	    ((edit))
+	    ((edit)
+	     (group-edit))
 	    middle-button (x y)))
 
 (tm-define (graphics-last-point x y)
