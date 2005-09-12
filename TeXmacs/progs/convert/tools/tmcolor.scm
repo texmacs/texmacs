@@ -52,8 +52,7 @@
 (tm-define (stm->tmcolor name)
   (let ((c (list-any (lambda (c) (== name (tmcolor-name c)))
 		     texmacs-colors)))
-    (if (not c) (texmacs-error "stm->tmcolor" "Bad color name: ~S" name))
-    c))
+    (if c c (stm->tmcolor "black"))))
 
 (tm-define tmcolor->stm tmcolor-name)
 

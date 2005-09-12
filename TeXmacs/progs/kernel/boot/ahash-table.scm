@@ -79,6 +79,15 @@
     (for-each (lambda (x) (ahash-set! t (car x) (cdr x))) l)
     t))
 
+(define-public-macro (ahash-with t var val . body)
+  (let ((old-val (gensym))
+	(ret-val (gensym)))
+    `(with ,old-val (ahash-ref ,t ,var)
+       (ahash-set! ,t ,var ,val)
+       (with ,ret-val (begin ,@body)
+	 (ahash-set! ,t ,var ,old-val)
+	 ,ret-val))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dictionaries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
