@@ -684,6 +684,10 @@
   (graphics-set-property
    "gr-dash-style" (if (== val "default") "default" (convert))))
 
+(tm-define (graphics-set-dash-style-unit val)
+  (:argument val "Dash style unit")
+  (graphics-set-property "gr-dash-style-unit" val))
+
 (tm-define (graphics-set-fill-mode val)
   (:argument val "Fill mode")
   (graphics-set-property "gr-fill-mode" val))
@@ -738,13 +742,14 @@
 	t
 	`(with ,@f ,t))))
 
-(define (graphics-enrich-bis t color lw st lp fm fc)
+(define (graphics-enrich-bis t color lw st stu lp fm fc)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t `(("color" , color))))
 	  ((in? mode gr-tags-curves)
 	   (graphics-enrich-sub t `(("color" , color)
-	      ("line-width" ,lw) ("dash-style" ,st)
+	      ("line-width" ,lw)
+	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
 	      ("fill-mode" ,fm) ("fill-color" ,fc))))
 	  (else
@@ -754,10 +759,11 @@
   (let* ((color (get-env "gr-color"))
 	 (lw (get-env "gr-line-width"))
 	 (st (get-env-stree "gr-dash-style"))
+	 (stu (get-env-stree "gr-dash-style-unit"))
 	 (lp (get-env-stree "gr-line-arrows"))
 	 (fm (get-env "gr-fill-mode"))
 	 (fc (get-env "gr-fill-color")))
-    (graphics-enrich-bis t color lw st lp fm fc)))
+    (graphics-enrich-bis t color lw st stu lp fm fc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -779,9 +785,9 @@
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color lw st lp fm fc go-into)
+(define (graphics-group-enrich-insert-bis t color lw st stu lp fm fc go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t color lw st lp fm fc) go-into))
+    (graphics-enrich-bis t color lw st stu lp fm fc) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -957,6 +963,7 @@
 (define graphical-color "default")
 (define graphical-lwidth "default")
 (define graphical-lstyle "default")
+(define graphical-lstyle-unit "default")
 (define graphical-larrows "default")
 (define graphical-fmode "default")
 (define graphical-fcolor "default")
@@ -969,6 +976,8 @@
 	  (set! graphical-color (find-prop-bis o "color" "default"))
 	  (set! graphical-lwidth (find-prop-bis o "line-width" "default"))
 	  (set! graphical-lstyle (find-prop-bis o "dash-style" "default"))
+	  (set! graphical-lstyle-unit
+		(find-prop-bis o "dash-style-unit" "default"))
           (set! graphical-larrows (find-prop-bis o "line-arrows" "default"))
 	  (set! graphical-fmode (find-prop-bis o "fill-mode" "default"))
 	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))))
@@ -1065,6 +1074,7 @@
   (let ((color #f)
 	(lw #f)
 	(st #f)
+	(stu #f)
 	(lp #f)
 	(fm #f)
 	(fc #f)
@@ -1074,6 +1084,7 @@
 	(set! color graphical-color)
 	(set! lw graphical-lwidth)
 	(set! st graphical-lstyle)
+	(set! stu graphical-lstyle-unit)
 	(set! lp graphical-larrows)
 	(set! fm graphical-fmode)
 	(set! fc graphical-fcolor))
@@ -1083,6 +1094,7 @@
 	(set! color (graphics-path-property mode "color"))
 	(set! lw (graphics-path-property mode "line-width"))
 	(set! st (graphics-path-property mode "dash-style"))
+	(set! stu (graphics-path-property mode "dash-style-unit"))
 	(set! lp (graphics-path-property mode "line-arrows"))
 	(set! fm (graphics-path-property mode "fill-mode"))
 	(set! fc (graphics-path-property mode "fill-color")))
@@ -1092,6 +1104,7 @@
 	(set! color (get-env "gr-color"))
 	(set! lw (get-env "gr-line-width"))
 	(set! st (get-env-stree "gr-dash-style"))
+	(set! stu (get-env-stree "gr-dash-style-unit"))
 	(set! lp (get-env-stree "gr-line-arrows"))
 	(set! fm (get-env "gr-fill-mode"))
 	(set! fc (get-env "gr-fill-color")))
@@ -1100,6 +1113,7 @@
 		 "color" color
 		 "line-width" lw
 		 "dash-style" st
+		 "dash-style-unit" stu
 		 "line-arrows" lp
 		 "fill-mode" fm
 		 "fill-color" (if (== fc "default")
@@ -1592,6 +1606,7 @@
 	(graphics-group-enrich-insert-bis
 	 obj graphical-color graphical-lwidth
 	 graphical-lstyle
+	 graphical-lstyle-unit
 	 graphical-larrows
 	 graphical-fmode graphical-fcolor #f)
 	(if (== (state-ref graphics-first-state 'graphics-action)
@@ -1770,6 +1785,7 @@
   (graphics-group-enrich-insert-bis
      obj (get-env "gr-color") (get-env "gr-line-width")
      (get-env-stree "gr-dash-style")
+     (get-env-stree "gr-dash-style-unit")
      (get-env-stree "gr-line-arrows")
      (get-env "gr-fill-mode") (get-env "gr-fill-color") #f)
   (create-graphical-object obj 'new 'points #f))
