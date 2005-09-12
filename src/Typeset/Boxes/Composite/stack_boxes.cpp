@@ -36,6 +36,7 @@ struct stack_box_rep: public composite_box_rep {
   path      find_tree_path (path bp);
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 /******************************************************************************
@@ -343,6 +344,16 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     return selection (rs, lp, rp);
   }
   else return box_rep::find_selection (lbp, rbp);
+}
+
+gr_selections
+stack_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=0; i<n; i++)
+    res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+				    x2- sx(i), y2- sy(i));
+  return res;
 }
 
 /******************************************************************************

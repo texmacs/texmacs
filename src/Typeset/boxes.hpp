@@ -169,6 +169,8 @@ public:
   inline bool decoration ();
 
   SI distance (int i, SI x, SI y, SI delta);
+  bool in_rectangle (SI x1, SI y1, SI x2, SI y2);
+  bool contains_rectangle (SI x1, SI y1, SI x2, SI y2);
 
   /******************* path conversions and cursor routines ******************/
 
@@ -214,6 +216,7 @@ public:
 
   virtual SI             graphical_distance (SI x, SI y);
   virtual gr_selections  graphical_select (SI x, SI y, SI dist);
+  virtual gr_selections  graphical_select (SI x1, SI y1, SI x2, SI y2);
 
   /************************** retrieving information *************************/
 

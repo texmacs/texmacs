@@ -69,6 +69,16 @@ box_rep::distance (int i, SI x, SI y, SI delta) {
   return dx+dy;
 }
 
+bool
+box_rep::in_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
+  return x1>=X1 && y1>=Y1 && x2<=X2 && y2<=Y2;
+}
+
+bool
+box_rep::contains_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
+  return x1<=X1 && y1<=Y1 && x2>=X2 && y2>=Y2;
+}
+
 /******************************************************************************
 * Cursor routines
 ******************************************************************************/
@@ -262,6 +272,20 @@ box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->cp << find_tree_path (x, y, dist);
     // FIXME: check whether this is correct: I do not remember whether
     // find_tree_path returns an absolute or a relative path
+    res << gs;
+  }
+  return res;
+}
+
+gr_selections
+box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (in_rectangle (x1, y1, x2, y2)) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x1, y1);
+    SI dist= (SI)norm (point (x2-x1, y2-y1));
+    gs->cp << find_tree_path (x1, y1, dist);
+    // FIXME: as above, check whether this is correct or not
     res << gs;
   }
   return res;

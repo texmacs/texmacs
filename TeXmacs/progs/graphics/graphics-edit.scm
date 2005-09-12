@@ -1286,6 +1286,9 @@
 (define current-y #f)
 (tm-define graphics-undo-enabled #t)
 (define selected-objects '())
+(define selecting-x0 #f)
+(define selecting-y0 #f)
+(define multiselecting #f)
 
 (define state-slots
   ''(graphics-action
@@ -1299,7 +1302,10 @@
      current-x
      current-y
      graphics-undo-enabled
-     selected-objects))
+     selected-objects
+     selecting-x0
+     selecting-y0
+     multiselecting))
 
 (define-macro (state-len)
   `(length ,state-slots))
@@ -1330,6 +1336,9 @@
     (state-set! st 'current-y current-y)
     (state-set! st 'graphics-undo-enabled graphics-undo-enabled)
     (state-set! st 'selected-objects selected-objects)
+    (state-set! st 'selecting-x0 selecting-x0)
+    (state-set! st 'selecting-y0 selecting-y0)
+    (state-set! st 'multiselecting multiselecting)
     st))
 
 (define (graphics-state-set st)
@@ -1346,7 +1355,10 @@
   (set! current-x (state-ref st 'current-x))
   (set! current-y (state-ref st 'current-y))
   (set! graphics-undo-enabled (state-ref st 'graphics-undo-enabled))
-  (set! selected-objects (state-ref st 'selected-objects)))
+  (set! selected-objects (state-ref st 'selected-objects))
+  (set! selecting-x0 (state-ref st 'selecting-x0))
+  (set! selecting-y0 (state-ref st 'selecting-y0))
+  (set! multiselecting (state-ref st 'multiselecting)))
 
 ;; State stack
 (define graphics-states '())
@@ -1406,7 +1418,10 @@
   (set! current-x #f)
   (set! current-y #f)
   (set! graphics-undo-enabled #t)
-  (set! selected-objects '()))
+  (set! selected-objects '())
+  (set! selecting-x0 #f)
+  (set! selecting-y0 #f)
+  (set! multiselecting #f))
 
 (define (graphics-forget-states)
   (set! graphics-first-state #f)
@@ -1418,7 +1433,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Graphical select
-(tm-define (graphics-select x y d)
+(define (filter-graphical-select l)
   (define (filter-path p)
     (with p2 (map string->number (cdr p))
       (if (graphics-path p2) p2 #f))
@@ -1438,14 +1453,24 @@
 	l)
       #f)
   )
-  (define (filter l)
-    (with l2 (cons 'tuple (map filter-sel (cdr l)))
-      (remove-filtered-elts l2)
-      (cdr l2))
-  )
+  (with l2 (cons 'tuple (map filter-sel (cdr l)))
+    (remove-filtered-elts l2)
+    (cdr l2)))
+
+(tm-define (graphics-select x y d)
   (with res (tree->stree (graphical-select x y))
    ;(display* "res=" res "\n")
-    (filter res)))
+    (filter-graphical-select res)))
+
+(tm-define (graphics-select-area x1 y1 x2 y2)
+  (define l '())
+  (with res (tree->stree (graphical-select-area x1 y1 x2 y2))
+   ;(display* "res=" res "\n")
+    (set! res (filter-graphical-select res))
+    (foreach (e res)
+       (set! l (cons (cDr (car e)) l))
+    )
+    (reverse l)))
 
 (define (select-first x y)
   (with sel (graphics-select x y 15)
@@ -2057,10 +2082,10 @@
 	 (set! graphics-undo-enabled #t)
 	 (graphics-forget-states))
       ;;Start operation
-      (if (or p (nnull? selected-objects))
+      (if (and (not multiselecting) (or p (nnull? selected-objects)))
       (begin
 	 (if (null? selected-objects)
-	     (point_toggle-select p obj))
+	     (point_toggle-select #f #f p obj))
 	 (if (store-important-points)
 	 (begin
 	    (graphics-store-state 'start-operation)
@@ -2076,13 +2101,50 @@
 	    (set! group-old-x (s2i current-x))
 	    (set! group-old-y (s2i current-y))))))))
 
-(define (point_toggle-select p obj)
-  (if p (with t (path->tree p)
-     (if (seek-eq? t selected-objects)
-	 (seek-eq?-remove t selected-objects)
-	 (set! selected-objects (rcons selected-objects t)))
-  ))
-  (create-graphical-object obj p 'points #f))
+(define (point_toggle-select x y p obj)
+  (if multiselecting
+      (let* ((x1 (s2i selecting-x0))
+	     (y1 (s2i selecting-y0))
+	     (x2 (s2i x))
+	     (y2 (s2i y))
+	     (tmp 0)
+	     (sel #f)
+	 )
+	 (if (> x1 x2)
+	     (begin
+		(set! tmp x1)
+		(set! x1 x2)
+		(set! x2 tmp))
+	 )
+	 (if (> y1 y2)
+	     (begin
+		(set! tmp y1)
+		(set! y1 y2)
+		(set! y2 tmp))
+	 )
+	 (set! sel (graphics-select-area x1 y1 x2 y2))
+	 (set! selected-objects '())
+	 (foreach (p sel)
+	    (set! selected-objects (cons (path->tree p) selected-objects))
+	 )
+	 (set! selected-objects (reverse selected-objects))
+	 (create-graphical-object '(nothing) #f 'points 'group)
+	 (set! multiselecting #f)
+	 (set! selecting-x0 #f)
+	 (set! selecting-y0 #f)
+      )
+      (if p
+          (with t (path->tree p)
+	     (if (seek-eq? t selected-objects)
+	         (seek-eq?-remove t selected-objects)
+	         (set! selected-objects (rcons selected-objects t))
+	     )
+             (create-graphical-object obj p 'points #f)
+          )
+          (begin
+	     (set! selecting-x0 x)
+	     (set! selecting-y0 y)
+	     (set! multiselecting #t)))))
 
 (define (point_unselect-all)
   (set! selected-objects '())
@@ -2113,7 +2175,15 @@
 	    )
 	    (set! group-old-x x)
 	    (set! group-old-y y))
-	 (create-graphical-object obj p 'points #f))))
+	 (if multiselecting
+	     (begin
+		(graphical-object!
+		  `(with color red
+		      (cline (point ,selecting-x0 ,selecting-y0)
+			     (point ,x ,selecting-y0)
+			     (point ,x ,y)
+			     (point ,selecting-x0 ,y)))))
+	     (create-graphical-object obj p 'points #f)))))
 
 (define (group-edit_left-button x y)
   (with-graphics-context "start-operation" x y p obj no edge
@@ -2125,7 +2195,7 @@
   (with-graphics-context "toggle-select" x y p obj no edge
      (dispatch (car obj) ((point line cline spline cspline arc carc
 			   text-at))
-	       toggle-select (p obj) do-tick)))
+	       toggle-select (x y p obj) do-tick)))
 
 (define (group-edit_middle-button x y)
   (with-graphics-context "unselect-all" x y p obj no edge

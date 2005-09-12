@@ -40,6 +40,7 @@ public:
   virtual cursor          find_cursor (path bp);
   virtual selection       find_selection (path lbp, path rbp);
   virtual gr_selections   graphical_select (SI x, SI y, SI dist);
+  virtual gr_selections   graphical_select (SI x1, SI y1, SI x2, SI y2);
 
   double    left_slope ();
   double    right_slope ();
