@@ -19,6 +19,7 @@
 #include "Ghostscript/ghostscript.hpp"
 #include "Imlib2/imlib2.hpp"
 
+extern bool reverse_colors;
 extern hashmap<tree,string> ps_bbox;
 
 /******************************************************************************
@@ -294,14 +295,12 @@ x_drawable_rep::xpm_initialize (url file_name) {
     char* _def= as_charp (def);
     XColor exact, closest;
     XLookupColor (dis->dpy, dis->cols, _def, &exact, &closest);
-    if (XAllocColor (dis->dpy, dis->cols, &exact))
+    if (!reverse_colors && XAllocColor (dis->dpy, dis->cols, &exact))
       pmcs(name)= exact.pixel;
-    else if (XAllocColor (dis->dpy, dis->cols, &closest))
+    else if (!reverse_colors && XAllocColor (dis->dpy, dis->cols, &closest))
       pmcs(name)= closest.pixel;
     else {
-      int myc= dis->rgb ((exact.red+128)/256,
-			 (exact.green+128)/256,
-			 (exact.blue+128)/256);
+      int myc= dis->rgb (exact.red/256, exact.green/256, exact.blue/256);
       pmcs(name)= dis->cmap[myc];
     }
     delete[] _def;
@@ -470,7 +469,3 @@ x_display_rep::image_gc (string name) {
     }
   }
 }
-
-/******************************************************************************
-* Miscellaneous routines
-******************************************************************************/

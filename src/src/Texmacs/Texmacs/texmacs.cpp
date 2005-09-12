@@ -16,6 +16,8 @@
 #include "timer.hpp"
 
 extern bool   char_clip;
+extern bool   reverse_colors;
+
 extern url    tm_init_file;
 extern url    tm_init_buffer_file;
 extern string my_init_cmds;
@@ -112,6 +114,8 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+      else if ((s == "-r") || (s == "-reverse"))
+	reverse_colors= true;
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc)
@@ -138,6 +142,7 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -i [file]  Specify scheme initialization file\n";
 	cout << "  -p         Get the TeXmacs path\n";
 	cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
+	cout << "  -r         Reverse video mode\n";
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
