@@ -36,6 +36,7 @@ struct grid_box_rep: public box_rep {
   path find_lip () { return path (-1); }
   path find_rip () { return path (-1); }
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
   int reindex (int i, int item, int n);
 };
 
@@ -98,6 +99,12 @@ grid_box_rep::display (ps_device dev) {
 
 gr_selections
 grid_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  return res;
+}
+
+gr_selections
+grid_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   return res;
 }

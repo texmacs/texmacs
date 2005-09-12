@@ -334,6 +334,18 @@ composite_box_rep::graphical_select (SI x, SI y, SI dist) {
   return res;
 }
 
+gr_selections
+composite_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (contains_rectangle (x1, y1, x2, y2)) {
+    int i, n= subnr();
+    for (i=0; i<n; i++)
+      res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+				      x2- sx(i), y2- sy(i));
+  }
+  return res;
+}
+
 /******************************************************************************
 * Concrete composite box
 ******************************************************************************/

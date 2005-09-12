@@ -186,6 +186,8 @@ public:
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
   virtual tree   graphical_select (double x, double y) = 0;
+  virtual tree   graphical_select (double x1, double y1,
+				   double x2, double y2) = 0;
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;

@@ -63,6 +63,7 @@ struct change_box_rep: public composite_box_rep {
     return sx1(0) + bs[0]->get_leaf_offset (search); }
 
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
@@ -81,6 +82,16 @@ change_box_rep::graphical_select (SI x, SI y, SI dist) {
     return composite_box_rep::graphical_select (x, y, dist);
   else
     return bs[0]->graphical_select (x- sx(0), y- sy(0), dist);
+}
+
+gr_selections
+change_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+//TODO : Check if it is correct
+  if (child_flag)
+    return composite_box_rep::graphical_select (x1, y1, x2, y2);
+  else
+    return bs[0]->graphical_select (x1- sx(0), y1- sy(0),
+				    x2- sx(0), y2- sy(0));
 }
 
 /******************************************************************************

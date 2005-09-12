@@ -152,6 +152,23 @@ edit_graphics_rep::graphical_select (double x, double y) {
 }
 
 tree
+edit_graphics_rep::graphical_select (
+  double x1, double y1, double x2, double y2)
+{ 
+  frame f= find_frame ();
+  if (nil (f)) return tuple ();
+  gr_selections sels;
+  point p1 = f (point (x1, y1)), p2= f (point (x2, y2));
+  sels= eb->graphical_select ((SI)p1[0], (SI)p1[1], (SI)p2[0], (SI)p2[1]);
+  sort_graphical_select (sels);
+  int i, n= N(sels);
+  array<array<path> > gs (n);
+  for (i=0; i<n; i++)
+    gs[i]= sels[i]->cp;
+  return (tree) gs;
+}
+
+tree
 edit_graphics_rep::get_graphical_object () {
   return graphical_object;
 }

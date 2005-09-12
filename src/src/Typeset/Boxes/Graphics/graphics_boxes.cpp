@@ -33,6 +33,7 @@ struct graphics_box_rep: public composite_box_rep {
   void pre_display (ps_device &dev);
   void post_display (ps_device &dev);
   int reindex (int i, int item, int n);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 graphics_box_rep::graphics_box_rep (
@@ -80,6 +81,24 @@ graphics_box_rep::reindex (int i, int item, int n) {
   return i;
 }
 
+gr_selections
+graphics_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=0; i<n; i++)
+    res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
+                                    x2- sx(i), y2- sy(i));
+  return res;
+}
+/*NOTE: It seems that the dimensions of the boxes that inherit from
+  composite_box are not calculated correctly (namely : one can find
+  points inside the box that are outside the rectangle (x1, y1, x2, y2)
+  that defines the border of the box). As a consequence, we use a traversal
+  routine that doesn't tests contains_rectangle(). When this problem
+  will have been corrected, the method of composite_box should work,
+  and consequently, its more specific implementation above should be
+  removed (this is the same in concat_boxes and stack_boxes). */
+
 /******************************************************************************
 * Group boxes
 ******************************************************************************/
@@ -92,6 +111,7 @@ struct graphics_group_box_rep: public composite_box_rep {
   path find_lip () { return path (-1); }
   path find_rip () { return path (-1); }
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
   int reindex (int i, int item, int n);
 };
 
@@ -101,6 +121,18 @@ graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
     gs->dist= graphical_distance (x, y);
+    gs->cp << reverse (path (0, ip));
+    res << gs;
+  }
+  return res;
+}
+
+gr_selections
+graphics_group_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (in_rectangle (x1, y1, x2, y2)) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
     res << gs;
   }
@@ -186,6 +218,7 @@ struct curve_box_rep: public box_rep {
   box transform (frame fr);
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
   void display (ps_device dev);
   operator tree () { return "curve"; }
   SI length ();
@@ -303,6 +336,18 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
         }
       }
     }
+  }
+  return res;
+}
+
+gr_selections
+curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  gr_selections res;
+  if (in_rectangle (x1, y1, x2, y2)) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x1, y1);
+    gs->cp << reverse (path (0, ip));
+    res << gs;
   }
   return res;
 }

@@ -225,6 +225,7 @@
   (set-graphical-object set_graphical_object (void tree))
   (invalidate-graphical-object invalidate_graphical_object (void))
   (graphical-select graphical_select (tree double double))
+  (graphical-select-area graphical_select (tree double double double double))
 
   ;; search, replace and spell checking
   (in-normal-mode? in_normal_mode (bool))

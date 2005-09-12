@@ -139,6 +139,11 @@ modifier_box_rep::graphical_select (SI x, SI y, SI dist) {
   return b->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
+gr_selections
+modifier_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  return b->graphical_select (x1- sx(0), y1- sy(0), x2- sx(0), y2- sy(0));
+}
+
 /******************************************************************************
 * Animations
 ******************************************************************************/

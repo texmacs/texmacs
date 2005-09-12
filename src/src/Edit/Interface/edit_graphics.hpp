@@ -37,6 +37,7 @@ public:
   point  adjust (point p);
   tree   find_point (point p);
   tree   graphical_select (double x, double y);
+  tree   graphical_select (double x1, double y1, double x2, double y2);
   tree   get_graphical_object ();
   void   set_graphical_object (tree t);
   void   invalidate_graphical_object ();

@@ -2122,6 +2122,25 @@ tmg_graphical_select (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_graphical_select_area (SCM arg1, SCM arg2, SCM arg3, SCM arg4) {
+  SCM_ASSERT_DOUBLE (arg1, SCM_ARG1, "graphical-select-area");
+  SCM_ASSERT_DOUBLE (arg2, SCM_ARG2, "graphical-select-area");
+  SCM_ASSERT_DOUBLE (arg3, SCM_ARG3, "graphical-select-area");
+  SCM_ASSERT_DOUBLE (arg4, SCM_ARG4, "graphical-select-area");
+
+  double in1= scm_to_double (arg1);
+  double in2= scm_to_double (arg2);
+  double in3= scm_to_double (arg3);
+  double in4= scm_to_double (arg4);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->graphical_select (in1, in2, in3, in4);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_in_normal_modeP () {
   // SCM_DEFER_INTS;
   bool out= get_server()->get_editor()->in_normal_mode ();
@@ -2982,6 +3001,7 @@ initialize_glue_editor () {
   gh_new_procedure ("set-graphical-object", (FN) tmg_set_graphical_object, 1, 0, 0);
   gh_new_procedure ("invalidate-graphical-object", (FN) tmg_invalidate_graphical_object, 0, 0, 0);
   gh_new_procedure ("graphical-select", (FN) tmg_graphical_select, 2, 0, 0);
+  gh_new_procedure ("graphical-select-area", (FN) tmg_graphical_select_area, 4, 0, 0);
   gh_new_procedure ("in-normal-mode?", (FN) tmg_in_normal_modeP, 0, 0, 0);
   gh_new_procedure ("in-search-mode?", (FN) tmg_in_search_modeP, 0, 0, 0);
   gh_new_procedure ("in-replace-mode?", (FN) tmg_in_replace_modeP, 0, 0, 0);
