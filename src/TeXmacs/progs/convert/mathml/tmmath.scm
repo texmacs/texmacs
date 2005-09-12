@@ -141,6 +141,6 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (texmacs->mathml env x)
+(tm-define (texmacs->mathml x)
   (display-err* "x= " x "\n")
   (tmmath x))
