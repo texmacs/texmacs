@@ -396,12 +396,14 @@
       (graphics-set-mode '(group-edit zoom)))
   (   (balloon (icon "tm_group_rotate.xpm") "Rotate objects")
       (graphics-set-mode '(group-edit rotate)))
+  (   (balloon (icon "tm_group_group.xpm") "Group/ungroup objects")
+      (graphics-set-mode '(group-edit group-ungroup)))
   |
-  (   (balloon (icon "tm_group_group.xpm") "Group objects")
-      (group-selected-objects))
-  (   (balloon (icon "tm_group_ungroup.xpm") "Ungroup objects")
-      (ungroup-current-object))
-  |
+ ;(   (balloon (icon "tm_group_group.xpm") "Group objects")
+ ;    (group-selected-objects))
+ ;(   (balloon (icon "tm_group_ungroup.xpm") "Ungroup objects")
+ ;    (ungroup-current-object))
+ ;|
   (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
       (graphics-set-mode '(edit-prop)))
   |
