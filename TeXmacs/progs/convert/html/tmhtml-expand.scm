@@ -41,7 +41,7 @@
 	     strong em dfn code* samp kbd var abbr acronym
 	     verbatim code tt
 	     block block* tabular tabular*
-	     doc-title-block equation-lab
+	     doc-title-block equation* equation-lab equations-base
 	     tmdoc-title tmdoc-flag tmdoc-license key
 	     tmdoc-title*
 	     tmdoc-title**

@@ -142,27 +142,27 @@
 
 (define (mathtm-msub env a c)
   ;; TODO: produce <merror> if arity is incorrect
-  ;; NOTE: invisible delimiters are required when 'base' is complex.
   (let ((base (mathtm env (first c)))
 	(sub (mathtm-as-serial env (second c))))
-    (list (mathtm-serial
-	   env (if (length=1? base)
-		   `(,@base (rsub ,sub))
-		   `((left ".") ,@base (right ".") (rsub ,sub)))))))
+    (list (mathtm-serial env `(,@base (rsub ,sub))))))
 
 (define (mathtm-msup env a c)
   ;; TODO: produce <merror> if arity is incorrect
-  ;; NOTE: invisible delimiters are required when 'base' is complex.
-  ;; TODO: maybe consolidate with mathtm-sub?
+  ;; TODO: primes
   (let ((base (mathtm env (first c)))
 	(sup (mathtm-as-serial env (second c))))
-    (list (mathtm-serial
-	   env (if (length=1? base)
-		   `(,@base (rsup ,sup))
-		   `((left ".") ,@base (right ".") (rsup ,sup)))))))
+    (list (mathtm-serial env `(,@base (rsup ,sup))))))
+
+(define (mathtm-msubsup env a c)
+  ;; TODO: produce <merror> if arity is incorrect
+  ;; TODO: primes
+  (let ((base (mathtm env (first c)))
+	(sub (mathtm-as-serial env (second c)))
+	(sup (mathtm-as-serial env (third c))))
+    (list (mathtm-serial env `(,@base (rsub ,sub) (rsup ,sup))))))
 
 (define (mathtm-mtable env a c)
-  (list (tmtable->tm (smathml->tmtable env `(mtable (@ ,a) ,@c)))))
+  (list (tmtable->stm (smathml->tmtable env `(mtable (@ ,a) ,@c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
@@ -241,7 +241,7 @@
   ;; Script and limits
   (msub (mathtm-handler :element mathtm-msub))
   (msup (mathtm-handler :element mathtm-msup))
-  (msubsup (mathtm-handler :element mathtm-pass))
+  (msubsup (mathtm-handler :element mathtm-msubsup))
   (munder (mathtm-handler :element mathtm-pass))
   (mover (mathtm-handler :element mathtm-pass))
   (munderover (mathtm-handler :element mathtm-pass))
