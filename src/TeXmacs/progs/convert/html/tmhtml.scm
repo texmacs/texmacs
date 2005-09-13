@@ -18,7 +18,20 @@
 	(convert tools sxml) (convert tools sxhtml)
 	(convert html htmlout)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initialization
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define tmhtml-env (make-ahash-table))
+(define tmhtml-css? #t)
+(define tmhtml-mathml? #f)
+
+(tm-define (tmhtml-initialize opts)
+  (set! tmhtml-css?
+	(== (assoc-ref opts "texmacs->html:css") "on"))
+  (set! tmhtml-mathml?
+	(== (assoc-ref opts "texmacs->html:mathml") "on"))
+  (set! tmhtml-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
@@ -704,12 +717,18 @@
   `((h:table (@ (class "title-block"))
 	     (h:tr (h:td ,@(tmhtml (car l)))))))
 
+(define (tmhtml-equation* l)
+  (with x `(with "mode" "math" (with "math-display" "true" ,(car l)))
+    `((h:table (@ (width "100%"))
+	       (h:tr (h:td (@ (align "center")) ,@(tmhtml x)))))))
+
 (define (tmhtml-equation-lab l)
-  `((h:table (@ (width "100%"))
-	     (h:tr (h:td (@ (align "center") (width "100%"))
-			 ,@(tmhtml (car l)))
-		   (h:td (@ (align "right"))
-			 "(" ,@(tmhtml (cadr l)) ")")))))
+  (with x `(with "mode" "math" (with "math-display" "true" ,(car l)))
+    `((h:table (@ (width "100%"))
+	       (h:tr (h:td (@ (align "center") (width "100%"))
+			   ,@(tmhtml x))
+		     (h:td (@ (align "right"))
+			   "(" ,@(tmhtml (cadr l)) ")"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
@@ -813,10 +832,9 @@
   ;; Main conversion function.
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
-  (cond
-; ((ahash-ref tmhtml-env :math)
-;  `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
-;	    ,(texmacs->mathml x))))
+  (cond ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
+	 `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
+		   ,(texmacs->mathml x tmhtml-env))))
 	((string? x)
 	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
 	(else (or (tmhtml-dispatch 'tmhtml-primitives% x)
@@ -975,7 +993,9 @@
   (LaTeX ,(lambda x '("LaTeX")))
   ;; additional tags
   (doc-title-block ,tmhtml-doc-title-block)
+  (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
+  (equations-base ,tmhtml-equation*)
   ;; tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
@@ -1040,15 +1060,17 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (texmacs->html x)
+(tm-define (texmacs->html x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
 	     (doc (list '!file body style lan (get-texmacs-path))))
-	(texmacs->html doc))
-      ((if (func? x '!file)
-	   tmhtml-finalize-document
-	   tmhtml-finalize-selection)
-       (tmhtml-root x))))
+	(texmacs->html doc opts))
+      (begin
+	(tmhtml-initialize opts)
+	((if (func? x '!file)
+	     tmhtml-finalize-document
+	     tmhtml-finalize-selection)
+	 (tmhtml-root x)))))

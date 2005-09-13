@@ -94,7 +94,7 @@
 
 (define (table-formats env a c)
   ;; As a convention, global properties are placed at the end of the list.
-  ;; Remember that tmtable->tm reverses the list of table formats.
+  ;; Remember that tmtable->stm reverses the list of table formats.
   (append (table-content-formats env c)
 	  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	  ;; TODO: table cellspacing and cellpadding
