@@ -614,6 +614,8 @@ latex_command_to_tree (tree t) {
       return g;
     }
   }
+  if (is_tuple (t, "\\noalign", 1))
+    return ""; // FIXME: for larger space in maple matrices
 
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
