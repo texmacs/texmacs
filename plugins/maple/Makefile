@@ -6,17 +6,18 @@
 #              see the file 'LICENSE', which is provided with this package.
 ###############################################################################
 
+CC = gcc
 CXX = g++
 RM = rm -f
 
-all: bin/maple_in_filter bin/maple_filter
+all: bin/tm_maple_5
 
-bin/maple_in_filter: src/maple_in_filter.cpp
-	$(CXX) src/maple_in_filter.cpp -o bin/maple_in_filter
-
-bin/maple_filter: src/maple_filter.cpp
-	$(CXX) src/maple_filter.cpp -o bin/maple_filter
+bin/tm_maple_5: src/tm_maple_5.cpp
+	$(CXX) src/tm_maple_5.cpp -o bin/tm_maple_5
 
 clean:
-	$(RM) bin/maple_in_filter
-	$(RM) bin/maple_filter
+	$(RM) *~
+	$(RM) */*~
+	$(RM) bin/tm_maple_5
+	$(RM) $(HOME)/.TeXmacs/system/tm_maple_9.sh
+	$(RM) $(HOME)/.TeXmacs/system/tm_maple_9

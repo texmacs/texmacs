@@ -1,0 +1,22 @@
+
+###############################################################################
+# MODULE     : Make file for maple plugin
+# BY         : Joris van der Hoeven
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+
+CC = gcc
+
+MAPLEDIR = $(shell which maple | sed -e 's%/bin/maple$$%%')
+MAPLECPPFLAGS = -I$(MAPLEDIR)/extern/include
+MAPLELDFLAGS = -L$(MAPLEDIR)/bin.IBM_INTEL_LINUX -Wl,-rpath,$(MAPLEDIR)/bin.IBM_INTEL_LINUX -lmaplec
+
+all: $(HOME)/.TeXmacs/system/tm_maple_9.sh $(HOME)/.TeXmacs/system/tm_maple_9
+
+$(HOME)/.TeXmacs/system/tm_maple_9.sh: $(MAPLEDIR)/bin/maple
+	cat $(MAPLEDIR)/bin/maple | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/cmaple%$${HOME}/.TeXmacs/system/tm_maple_9%' | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/maplew%$${HOME}/.TeXmacs/system/tm_maple_9%' > $(HOME)/.TeXmacs/system/tm_maple_9.sh
+	chmod a+x $(HOME)/.TeXmacs/system/tm_maple_9.sh
+
+$(HOME)/.TeXmacs/system/tm_maple_9: src/tm_maple_9.c
+	$(CC) $(MAPLELDFLAGS) $(MAPLECPPFLAGS) src/tm_maple_9.c -o $(HOME)/.TeXmacs/system/tm_maple_9
