@@ -221,6 +221,7 @@ init_maple () {
   cout << DATA_BEGIN << "verbatim:";
   cout << "Maple session inside TeXmacs";
   send ("tmmaple:=5:\n");
+  send ("interface(errorbreak=0):\n");
   char* tm_path= getenv ("TEXMACS_PATH");
   send ("read (`");
   send (tm_path);
@@ -228,6 +229,7 @@ init_maple () {
   fflush (fin);
   next_input ();
   cout << DATA_END;
+  cout.flush ();
 }
 
 int
