@@ -24,8 +24,9 @@
     (texmacs-save-buffer html-file "html")))
 
 (define (tmweb-convert-file-dir file tm-dir html-dir)
-  (let* ((u1 (url-delta (url-append tm-dir "dummy") file))
-	 (u2 (url-glue (url-unglue u1 2) "html"))
+  (let* ((m? (== (get-preference "texmacs->html:mathml") "on"))
+	 (u1 (url-delta (url-append tm-dir "dummy") file))
+	 (u2 (url-glue (url-unglue u1 2) (if m? "xhtml" "html")))
 	 (u3 (url-append html-dir u2)))
     (system-wait "Converting" (url->string u1))
     (display* "TeXmacs] Converting " (url->string u1) "\n")

@@ -76,6 +76,15 @@
 ;; Main output routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (htmlout-doctype l)
+  (define (helper x)
+    (if (string? x) (string-append "\"" x "\"") (symbol->string x)))
+  (let* ((l1 (map (lambda (x) (list " " (helper x))) l))
+	 (l2 (apply append l1))
+	 (l3 (append '("<!DOCTYPE") l2 '(">"))))
+    (apply output-lf-verbatim l3)
+    (output-lf)))
+
 (define (htmlout x)
   (cond ((string? x) (htmlout-text x))
 	((null? x) (noop))
@@ -88,6 +97,8 @@
   	((func? x '*PI*)
 	 (output-lf-verbatim "<?" (symbol->string (cadr x)) " " (caddr x) "?>")
 	 (output-lf))
+	((func? x '*DOCTYPE*)
+	 (htmlout-doctype (cdr x)))
 	((null? (cdr x))
 	 (htmlout-open (car x))
 	 (htmlout-close (car x)))

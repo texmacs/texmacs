@@ -97,10 +97,13 @@
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
 
-(define tmhtml-css-header
-  (string-append "body { text-align: justify } "
-		 ".title-block { width: 100%; text-align: center } "
-		 ".title-block p { margin: 0px } "))
+(define (tmhtml-css-header)
+  (let ((html (string-append
+	       "body { text-align: justify } "
+	       ".title-block { width: 100%; text-align: center } "
+	       ".title-block p { margin: 0px } "))
+	(mathml "math { font-family: cmr, times, verdana } "))
+    (if tmhtml-mathml? (string-append html mathml) html)))
 
 (define (tmhtml-file l)
   ;; This handler is special:
@@ -111,7 +114,7 @@
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
 	 (title (tmhtml-find-title doc))
-	 (css `(h:style (@ (type "text/css")) ,tmhtml-css-header))
+	 (css `(h:style (@ (type "text/css")) ,(tmhtml-css-header)))
 	 (body (tmhtml doc)))
     (set! title (cond ((not title) "No title")
 		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
@@ -140,7 +143,12 @@
     '((xmlns "http://www.w3.org/1999/xhtml")
       (xmlns:m "http://www.w3.org/1998/Math/MathML")
       (xmlns:x "http://www.texmacs.org/2002/extensions")))
+  (define doctype-list
+    (let ((html "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
+	  (mathml "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd"))
+      (if tmhtml-mathml? (list html mathml) (list html))))
   `(*TOP* (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
+	  (*DOCTYPE* html PUBLIC ,@doctype-list)
 	  ,((cut sxml-set-attrs <> xmlns-attrs)
 	    (sxml-strip-ns-prefix "h" (sxml-strip-ns-prefix "m" top)))))
 
@@ -517,7 +525,7 @@
 ;  (list 'pageref (cork->html (force-string (car l)))))
 
 (define (tmhtml-suffix s)
-  ;; Change .html suffix to .tm suffix for local files for correct
+  ;; Change .tm suffix to .xhtml suffix for local files for correct
   ;; conversion of entire web-sites. We might create an option
   ;; in order to disable this suffix change
   (let* ((sdir (string-rindex s #\/))
@@ -527,7 +535,8 @@
 	   (string-append (tmhtml-suffix (substring s 0 sep))
 			  (string-drop s sep)))
 	  ((string-ends? s ".tm")
-	   (string-append (string-drop-right s 3) ".html"))
+	   (string-append (string-drop-right s 3)
+			  (if tmhtml-mathml? ".xhtml" ".html")))
 	  (else s))))
 
 (define (tmhtml-hyperlink l)
@@ -718,17 +727,21 @@
 	     (h:tr (h:td ,@(tmhtml (car l)))))))
 
 (define (tmhtml-equation* l)
-  (with x `(with "mode" "math" (with "math-display" "true" ,(car l)))
-    `((h:table (@ (width "100%"))
-	       (h:tr (h:td (@ (align "center")) ,@(tmhtml x)))))))
+  (with first (car l)
+    (if (func? first 'document 1) (set! first (cadr first)))
+    (with x `(with "mode" "math" (with "math-display" "true" ,first))
+      `((h:table (@ (width "100%"))
+		 (h:tr (h:td (@ (align "center")) ,@(tmhtml x))))))))
 
 (define (tmhtml-equation-lab l)
-  (with x `(with "mode" "math" (with "math-display" "true" ,(car l)))
-    `((h:table (@ (width "100%"))
-	       (h:tr (h:td (@ (align "center") (width "100%"))
-			   ,@(tmhtml x))
-		     (h:td (@ (align "right"))
-			   "(" ,@(tmhtml (cadr l)) ")"))))))
+  (with first (car l)
+    (if (func? first 'document 1) (set! first (cadr first)))
+    (with x `(with "mode" "math" (with "math-display" "true" ,first))
+      `((h:table (@ (width "100%"))
+		 (h:tr (h:td (@ (align "center") (width "100%"))
+			     ,@(tmhtml x))
+		       (h:td (@ (align "right"))
+			     "(" ,@(tmhtml (cadr l)) ")")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags

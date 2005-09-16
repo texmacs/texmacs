@@ -15,6 +15,33 @@
 (texmacs-module (convert tools tmconcat))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constructor for concatenations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmconcat* . l)
+  (:synopsis "Non-correcting constructor of horizontal concatenations.")
+  (cond ((null? l) "")
+	((null? (cdr l)) (car l))
+	(else (cons 'concat l))))
+
+(define (tmconcat-simplify l)
+  (cond ((null? l) l)
+	((func? (car l) 'concat) (tmconcat-simplify (append (cdar l) (cdr l))))
+	((== (car l) "") (tmconcat-simplify (cdr l)))
+	((and (string? (car l)) (nnull? (cdr l)) (string? (cadr l)))
+	 (tmconcat-simplify (cons (string-append (car l) (cadr l)) (cddr l))))
+	(else (cons (car l) (tmconcat-simplify (cdr l))))))
+
+(tm-define (tmconcat . in)
+  (:synopsis "Constructor of horizontal concatenations with corrections.")
+  (let* ((l (tmconcat-simplify in))
+	 (o (length (list-filter l (lambda (x) (func? 'left x)))))
+	 (c (length (list-filter l (lambda (x) (func? 'right x))))))
+    (if (> o c) (set! l (append l (make-list (- o c) '(right ".")))))
+    (if (< o c) (set! l (append l '(right ".") (make-list (- o c)))))
+    (apply tmconcat* l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replacing mathematical string by list of tokens
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

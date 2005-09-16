@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : mathtm.scm
 ;; DESCRIPTION : conversion of MathML trees to TeXmacs trees
-;; COPYRIGHT   : (C) 2002  David Allouche
+;; COPYRIGHT   : (C) 2002, 2005 Joris van der Hoeven and David Allouche
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -11,32 +11,6 @@
 ;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; MathML markup found by inspection of Macaulay2
-;; String -- <mtext>
-;; Symbol -- <mi>
-;; MatrixExpression -- <mrow> <mo> <mtable> <mtr> <mtd>
-;; operators -- <mo> <mfrac>
-;; literals -- <mn> (0 or 1)
-;; Power -- <msup>
-;; ZZ -- <mn>ZZ</mn>
-;; RR -- <mn>RR</mn>
-;; QQ -- <mfrac>...
-;; Inifinite -- <mrow> <mo> <mi> &infin;
-
-;; -- Special symbols
-;; symbol ii => "&ii;" &ImaginaryI;
-;; booleans &true; &false;
-;; -- mo contents
-;; ( ) - + * &InvisibleTimes; &it;
-
-;; Extra markup used in the texmacs interface
-;; <mrow> <mi> <mo>:</mo> <mo>=</mo> <mtext>
-
-;; Extra symbols to support
-;; &#2124; -- bbb-Z
-;; &#211A; -- bbb-Q
-;; &#211D; -- bbb-R
 
 ;; -- MathML notes --
 ;;
@@ -57,26 +31,109 @@
 ;; . <mo> containing text may be rendered as nested text delimited by spaces
 ;;   (see 3.2.6.4)
 
-;; It is non-trivial to support the correct semantics of mrows w.r.t. to
-;; delimiters and indices. That may be done by producing a pair of invisible
-;; big delimiters for every mrow. Extensible <mo> will then be rendered as big
-;; separators, and indices will correctly be attached to a block.
-
 ;; !!! Check semantic of mathvariant on multiple symbols !!!
 
 (texmacs-module (convert mathml mathtm)
   (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities
+;; Literals
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (safe-cdr l)
-  (if (null? l) '() (cdr l)))
+(define (mathtm-string env s)
+  ;; FIXME: use translators or parser for this!!!
+  ;; TODO: learn when the trailing ';' is optional
+  (cond ((assoc s '(("&ii;" . "<mathi>")
+		    ("&ImaginaryI;" . "<mathi>")
+		    ("&true;" . "true")
+		    ("&false;" . "false")
+		    ("&InvisibleTimes;" . "*")
+		    ("&it;" . "*")
+		    ("*" . "*")
+		    ("&ApplyFunction;" . " ")
+		    ("&RightArrow;" . "<rightarrow>")
+		    ("&infin;" . "<infty>")
+		    ("&Copf;" . "<bbb-C>")
+		    ("&Qopf;" . "<bbb-Q>")
+		    ("&Zopf;" . "<bbb-Z>")
+		    ("&Ropf;" . "<bbb-R>")))
+	 => (lambda (p) (cdr p)))
+	(else (xmltm-text s))))
+
+(define (mathtm-mo env a c)
+  (cond ((== c '("(")) '((left "(")))
+	((== c '(")")) '((right ")")))
+	((== c '("[")) '((left "[")))
+	((== c '("]")) '((right "]")))
+	((== c '("{")) '((left "{")))
+	((== c '("}")) '((right "}")))
+	(else (list (mathtm-args-serial env c)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mathematical constructs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathtm-mfrac env a c)
+  (if (== (length c) 2)
+      `((frac
+	 ,(mathtm-as-serial env (first c))
+	 ,(mathtm-as-serial env (second c))))
+      (mathtm-error "bad mfrac")))
+
+(define (mathtm-msqrt env a c)
+  (if (== (length c) 1)
+      `((sqrt ,(mathtm-as-serial env (first c))))
+      (mathtm-error "bad msqrt")))
+
+(define (mathtm-mroot env a c)
+  (if (== (length c) 2)
+      `((sqrt
+	 ,(mathtm-as-serial env (first c))
+	 ,(mathtm-as-serial env (second c))))
+      (mathtm-error "bad mroot")))
+
+(define (mathtm-error message)
+  `((with "color" "red" ,message)))
+
+(define (mathtm-merror env a c)
+  (matthtm-error (mathtm-mrow env a c)))
+
+(define (mathtm-msub env a c)
+  (if (== (length c) 2)
+      (let ((base (mathtm env (first c)))
+	    (sub (mathtm-as-serial env (second c))))
+	(append base `((rsup ,sub))))
+      (mathtm-error "bad msub")))
+
+(define (mathtm-msup env a c)
+  ;; TODO: primes
+  (if (== (length c) 2)
+      (let ((base (mathtm env (first c)))
+	    (sup (mathtm-as-serial env (second c))))
+	(append base `((rsup ,sup))))
+      (mathtm-error "bad msup")))
+
+(define (mathtm-msubsup env a c)
+  ;; TODO: primes
+  (if (== (length c) 3)
+      (let ((base (mathtm env (first c)))
+	    (sub (mathtm-as-serial env (second c)))
+	    (sup (mathtm-as-serial env (third c))))
+	(append base `((rsub ,sub) (rsup ,sup))))
+      (mathtm-error "bad msubsup")))
+
+(define (mathtm-math env a c)
+  `((with "mode" "math" ,(mathtm-args-serial env c))))
+
+(define (mathtm-mtext env a c)
+  `((with "mode" "text" ,(mathtm-args-serial env c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MathML tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (safe-cdr l)
+  (if (null? l) '() (cdr l)))
 
 (define (smathml->tmtable env x)
   ;; Simplistic parser for mathml table.
@@ -111,82 +168,12 @@
 				(else `(mrow ,@content)))
 			  x))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Specific markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (mathtm-math env a c)
-  ;; TODO: support display modes
-  `((with "mode" "math" ,(mathtm-args-serial env c))))
-
-(define (mathtm-mo env a c)
-  ;; TODO: something smart for unbalanced parenthesis
-  ;;       can be done in the method for mrow
-  ;;       additional plumbing is required for implied mrows
-  (cond ((== c '("(")) '((left "(")))
-	((== c '(")")) '((right ")")))
-	(else (list (mathtm-args-serial env c)))))
-
-(define (mathtm-mtext env a c)
-  ;; TODO: be smarter with spaces
-  `((with "mode" "text"
-      ,(mathtm-args-serial env c))))
-
-(define (mathtm-mfrac env a c)
-  ;; TODO: produce <merror> if arity is incorrect
-  `((frac
-     ,(mathtm-as-serial env (first c))
-     ,(mathtm-as-serial env (second c)))))
-
-(define (length=1? l) (and (nnull? l) (null (cdr l))))
-
-(define (mathtm-msub env a c)
-  ;; TODO: produce <merror> if arity is incorrect
-  (let ((base (mathtm env (first c)))
-	(sub (mathtm-as-serial env (second c))))
-    (list (mathtm-serial env `(,@base (rsub ,sub))))))
-
-(define (mathtm-msup env a c)
-  ;; TODO: produce <merror> if arity is incorrect
-  ;; TODO: primes
-  (let ((base (mathtm env (first c)))
-	(sup (mathtm-as-serial env (second c))))
-    (list (mathtm-serial env `(,@base (rsup ,sup))))))
-
-(define (mathtm-msubsup env a c)
-  ;; TODO: produce <merror> if arity is incorrect
-  ;; TODO: primes
-  (let ((base (mathtm env (first c)))
-	(sub (mathtm-as-serial env (second c)))
-	(sup (mathtm-as-serial env (third c))))
-    (list (mathtm-serial env `(,@base (rsub ,sub) (rsup ,sup))))))
-
 (define (mathtm-mtable env a c)
   (list (tmtable->stm (smathml->tmtable env `(mtable (@ ,a) ,@c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (mathtm-string env s)
-  ;; FIXME: use translators or parser for this!!!
-  ;; TODO: learn when the trailing ';' is optional
-  (cond ((assoc s '(("&ii;" . "<mathi>")
-		    ("&ImaginaryI;" . "<mathi>")
-		    ("&true;" . "true")
-		    ("&false;" . "false")
-		    ("&InvisibleTimes;" . "*")
-		    ("&it;" . "*")
-		    ("*" . "*")
-		    ("&ApplyFunction;" . " ")
-		    ("&RightArrow;" . "<rightarrow>")
-		    ("&infin;" . "<infty>")
-		    ("&Copf;" . "<bbb-C>")
-		    ("&Qopf;" . "<bbb-Q>")
-		    ("&Zopf;" . "<bbb-Z>")
-		    ("&Ropf;" . "<bbb-R>")))
-	 => (lambda (p) (cdr p)))
-	(else (xmltm-text s))))
 
 (define (mathtm-drop env a c) '())
 
@@ -230,10 +217,10 @@
   ;; General layout
   (mrow (mathtm-handler :element mathtm-pass))
   (mfrac (mathtm-handler :element mathtm-mfrac))
-  (msqrt (mathtm-handler :element mathtm-pass))
-  (mroot (mathtm-handler :element mathtm-pass))
+  (msqrt (mathtm-handler :element mathtm-msqrt))
+  (mroot (mathtm-handler :element mathtm-mroot))
   (mstyle (mathtm-handler :element mathtm-pass))
-  (merror (mathtm-handler :element mathtm-pass))
+  (merror (mathtm-handler :element mathtm-merror))
   (mpadded (mathtm-handler :element mathtm-pass))
   (mphantom (mathtm-handler :element mathtm-pass))
   (mfenced (mathtm-handler :element mathtm-pass))

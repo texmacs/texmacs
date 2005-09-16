@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools xmltm)
-  (:use (convert tools stm) (convert tools sxml) (convert tools environment)))
+  (:use (convert tools stm) (convert tools sxml)
+	(convert tools environment) (convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XML namespace normalization
@@ -537,4 +538,7 @@
   ;; Except for the top-level math element, MathML produce only inlines.
   ;; Collapse whitespaces.
   ;; TODO: consolidate with htmltm-serial
-  (stm-concat l htmltm-make-concat))
+  (with c (apply tmconcat l)
+    (if (func? c 'concat)
+	(stm-concat (cdr c) htmltm-make-concat)
+	c)))
