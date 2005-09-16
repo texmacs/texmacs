@@ -32,6 +32,17 @@
   ("*" . "&InvisibleTimes;")
   (" " . "&ApplyFunction;"))
 
+(define-table tmmath-large-table
+  ("langle" . "&LeftAngleBracket;")
+  ("rangle" . "&RightAngleBracket;")
+  ("lfloor" . "&LeftFloor;")
+  ("rfloor" . "&RightFloor;")
+  ("lceil" . "&LeftCeiling;")
+  ("rceil" . "&RightCeiling;")
+  ("llbracket" . "&LeftDoubleBracket;")
+  ("rrbracket" . "&RightDoubleBracket;")
+  ("\\\\" . "&Backslash;"))
+
 (define-table tmmath-bigop-table
   ("sum" . "&Sum;")
   ("prod" . "&Product;")
@@ -95,6 +106,10 @@
 	 (l3 (tmconcat-structure-brackets l2)))
     (tmmath (cons 'concat! l3))))
 
+(define (cork->utf8* x)
+  (with y (cork->utf8 x)
+    (if (and (== x y) (== (string-ref y 0) #\<)) "?" y)))
+
 (define (tmmath-concat-item x)
   (if (string? x)
       (with type (math-symbol-type x)
@@ -103,9 +118,9 @@
 	       `(m:mn ,(ahash-ref tmmath-number-table x)))
 	      ((ahash-ref tmmath-operator-table x)
 	       `(m:mo ,(ahash-ref tmmath-operator-table x)))
-	      ((== type "unknown") `(m:mi ,(cork->utf8 x)))
-	      ((== type "symbol") `(m:mi ,(cork->utf8 x)))
-	      (else `(m:mo ,(cork->utf8 x)))))
+	      ((== type "unknown") `(m:mi ,(cork->utf8* x)))
+	      ((== type "symbol") `(m:mi ,(cork->utf8* x)))
+	      (else `(m:mo ,(cork->utf8* x)))))
       (tmmath x)))
 
 (define (tmmath-concat! l)
@@ -122,9 +137,13 @@
 (define (tmmath-group l)
   `(m:mrow ,(tmmath (car l))))
 
-(define (tmmath-left l) `(m:mo (@ (form "prefix")) ,(cork->utf8 (car l))))
-(define (tmmath-mid l) `(m:mo ,(cork->utf8 (car l))))
-(define (tmmath-right l) `(m:mo (@ (form "postfix")) ,(cork->utf8 (car l))))
+(define (tmmath-large x)
+  (with y (ahash-ref tmmath-large-table x)
+    (if y y (cork->utf8 x))))
+
+(define (tmmath-left l) `(m:mo (@ (form "prefix")) ,(tmmath-large (car l))))
+(define (tmmath-mid l) `(m:mo ,(tmmath-large (car l))))
+(define (tmmath-right l) `(m:mo (@ (form "postfix")) ,(tmmath-large (car l))))
 
 (define (tmmath-big l)
   (cond ((== (car l) ".") "")
@@ -320,10 +339,16 @@
   (wide* tmmath-wide*)
   (neg tmmath-neg)
   (tree tmmath-noop)
+
+  ;; Tabular markup
   (tformat tmmath-tformat)
   (table tmmath-table)
   (row tmmath-row)
   (cell tmmath-cell)
+  (tabular tmmath-first)
+  (tabular* tmmath-first)
+  (block tmmath-first)
+  (block* tmmath-first)
 
   ;; Other markup
   (document tmmath-concat)
