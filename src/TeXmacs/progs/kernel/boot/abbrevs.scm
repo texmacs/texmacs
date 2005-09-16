@@ -34,12 +34,6 @@
 (define-public (in? x l) (not (not (member x l))))
 (define-public (nin? x l) (not (member x l)))
 
-(define-public (keyword->number x)
-  (string->number (symbol->string (keyword->symbol x))))
-
-(define-public (number->keyword x)
-  (symbol->keyword (string->symbol (number->string x))))
-
 (define-public (always? . l) #t)
 (define-public (never? . l) #f)
 (define-public (root? t) (== (reverse (tree-ip t)) (buffer-path)))
@@ -48,6 +42,13 @@
 (define-public (nleaf? t) (!= (tree-ip t) (cdr (reverse (cursor-path)))))
 (define-public (true? . l) #t)
 (define-public (false? . l) #f)
+
+(define-public (identity x) x)
+
+(define-public (keyword->number x)
+  (string->number (symbol->string (keyword->symbol x))))
+(define-public (number->keyword x)
+  (symbol->keyword (string->symbol (number->string x))))
 
 (define-public (save-object file value)
   (write value (open-file (url-materialize file "") OPEN_WRITE))
