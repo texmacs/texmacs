@@ -19,5 +19,5 @@ clean:
 	$(RM) *~
 	$(RM) */*~
 	$(RM) bin/tm_maple_5
-	$(RM) $(HOME)/.TeXmacs/system/tm_maple_9.sh
-	$(RM) $(HOME)/.TeXmacs/system/tm_maple_9
+	$(RM) $(HOME)/.TeXmacs/bin/tm_maple_9.sh
+	$(RM) $(HOME)/.TeXmacs/bin/tm_maple_9
