@@ -13,17 +13,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
-#include <string>
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <iostream>
 using namespace std;
 
 typedef char* charp;
@@ -49,6 +43,48 @@ int   fromchild[2];   // for data coming from the child
 int   in;             // file descriptor for data going to the child
 int   out;            // file descriptor for data coming from the child
 FILE* fin;            // file associated to in
+
+/******************************************************************************
+* A very simple string class
+******************************************************************************/
+
+class string {
+public:
+  int   l; // reserved number of bytes
+  char* s; // the string
+  int   n; // length
+  string (int len):
+    l (len+1), s (new char[l]), n (0) { s[0]='\0'; }
+  string (char *s2):
+    l (strlen(s2)+1), s (new char[l]), n (l-1) { strcpy (s, s2); }
+  string (const string& s2):
+    l (s2.n+1), s (new char[l]), n (l-1) { strcpy (s, s2.s); }
+  ~string () { delete[] s; }
+  inline char& operator [] (int i) { return s[i]; }
+};
+
+string
+operator * (const string& s1, const string& s2) {
+  string s (s1.n + s2.n);
+  strcpy (s.s, s1.s);
+  strcpy (s.s + s1.n, s2.s);
+  s.n= s1.n + s2.n;
+  return s;
+}
+
+string&
+operator << (string& s, const string& s2) {
+  if (s.n + s2.n >= s.l) {
+    char* old= s.s;
+    s.l= ((s.n + s2.n) << 1) + 1;
+    s.s= new char[s.l];
+    strcpy (s.s, old);
+    delete[] old;
+  }
+  strcpy (s.s + s.n, s2.s);
+  s.n += s2.n;
+  return s;
+}
 
 /******************************************************************************
 * Handling maple output
@@ -163,27 +199,36 @@ maple_output () {
 ******************************************************************************/
 
 void
-send (char* s) {
-  write (in, s, strlen (s));
+send (const string& s) {
+  write (in, s.s, s.n);
+}
+
+void
+strip (string& s, char c1, char c2) {
+  while (s.n>0 && (s[s.n-1] == c1 || s[s.n-1] == c2)) {
+    s.s[s.n-1]= '\0';
+    s.n--;
+  }
 }
 
 void
 maple_input () {
-  char input [10001];
-  cin.getline (input, 10000, '\n');
+  char input_s[10001];
+  cin.getline (input_s, 10000, '\n');
+  string input (input_s);
   send ("printf(`tmstart\\n`):\n");
-  int i, n= strlen (input);
-  while (n > 0 && (input[n-1] == ';' || input[n-1] == '\n')) {
-    input[n-1]= '\0';
-    n--;
-  }
-  if (n > 0 && input[0] != '?') {
-    send ("tmresult := tmdummy:\n");
-    send (input); send (":\n");
-    send ("if \" <> tmdummy then tmprint(\") fi:\n");
+  strip (input, ' ', '\n');
+  if (input.n == 0 || input[0] == '?')
+    send (input * "\n");
+  else if (input[input.n-1] == ':') {
+    strip (input, ':', ';');
+    send (input * ":\n");
   }
   else {
-    send (input); send ("\n");
+    strip (input, ':', ';');
+    send ("tmresult := tmdummy:\n");
+    send (input * ":\n");
+    send ("if \" <> tmdummy then tmprint(\") fi:\n");
   }
   send ("printf(`tmend\\n`):\n");
   fflush (fin);
@@ -221,11 +266,12 @@ init_maple () {
   cout << DATA_BEGIN << "verbatim:";
   cout << "Maple session inside TeXmacs";
   send ("tmmaple:=5:\n");
-  send ("interface(errorbreak=0):\n");
+  send ("interface(errorbreak=0,screenheight=9999):\n");
   char* tm_path= getenv ("TEXMACS_PATH");
-  send ("read (`");
-  send (tm_path);
-  send ("/plugins/maple/maple/init-maple.mpl`):\n");
+  //send ("read (`");
+  //send (tm_path);
+  //send ("/plugins/maple/maple/init-maple.mpl`):\n");
+  send ("read (`" * string (tm_path) * "/plugins/maple/maple/init-maple.mpl`):\n");
   fflush (fin);
   next_input ();
   cout << DATA_END;
