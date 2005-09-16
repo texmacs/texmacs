@@ -7,11 +7,11 @@ export TEXMACS_MAPLE_DIR
 
 if [ -e "$TEXMACS_MAPLE_DIR/extern" ]
 then
-    if [ -f "$HOME/.TeXmacs/bin/tm_maple_9.sh" ]
+    if [ -f "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]
     then
         DUMMY="dummy"
     else
-        cd $TEXMACS_PATH/plugins/maple; make -f Makefile.9
+        cd $TEXMACS_PATH/plugins/maple; make -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
     fi
     exec "${HOME}/.TeXmacs/bin/tm_maple_9.sh"
 elif [ -e "$TEXMACS_MAPLE_DIR/mwshelp" ]
