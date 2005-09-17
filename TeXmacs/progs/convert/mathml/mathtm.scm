@@ -213,44 +213,34 @@
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (safe-cdr l)
-  (if (null? l) '() (cdr l)))
+(define (mathml-func? x y)
+  (and (list? x)
+       (or (== (car x) y)
+	   (== (car x) (symbol-append 'm:' y)))))
 
-(define (smathml->tmtable env x)
-  ;; Simplistic parser for mathml table.
-  ;; Properly infer implied <mtr> and <mtd>.
-  (if (!= 'mtable (sxml-name x))
-      (error "Parameter is not a mtable."))
-  (let ((a (sxml-attr-list x))
-	(c (sxml-content x)))
-    (tmtable (list (tmformat-table "cell-halign" "c"))
-	     (map (lambda (x) (mathtm-table-row env x)) c))))
+(define (mathml-func-in? x l)
+  (list-or (map (cut mathml-func? x <>) l)))
 
-(define (mathtm-table-row env x)
-  ;; Given a mtable item, produce a list of cell contents, inferring <mtr> for
-  ;; single column rows if necessary.
-  (let ((name (sxml-name x))
-	(content (sxml-filter-element-content (sxml-content x))))
-    (cond ((== 'mtr name)
-	   (map (lambda (x) (mathtm-table-cell env x)) content))
-	  ((== 'mlabeledtr name)
-	   (map (lambda (x) (mathtm-table-cell env x)) (safe-cdr content)))
-	  (else (list mathtm-table-cell env x)))))
+(define (mathtm-mtd env a c)
+  `((cell ,(mathtm-serial env (mathtm-pass env a c)))))
 
-(define (mathtm-table-cell env x)
-  ;; Given an mrow item, produce a cell content, inferring <mtd> or <mrow> if
-  ;; necessary.
-  (let ((name (sxml-name x))
-	(content (sxml-filter-element-content (sxml-content x))))
-    (mathtm-as-serial env
-		      (if (== 'mtd name)
-			  (cond ((null? content) '(mrow))
-				((null? (cdr content)) (car content))
-				(else `(mrow ,@content)))
-			  x))))
+(define (mathtm-mtr env a c)
+  (let* ((cell? (lambda (x) (mathml-func? x 'mtd)))
+	 (c2 (map (lambda (x) (if (cell? x) x `(m:mtd ,x))) c))
+	 (l (map (cut mathtm-as-serial env <>) c)))
+    `((row ,@l))))
+
+(define (mathtm-mlabeledtr env a c)
+  ;; FIXME: label is still ignored
+  (if (null? c) '((row))
+      (mathtm-mtr env a (cdr c))))
 
 (define (mathtm-mtable env a c)
-  (list (tmtable->stm (smathml->tmtable env `(mtable (@ ,a) ,@c)))))
+  ;; TODO: rows of unequal lengths
+  (let* ((row? (lambda (x) (mathml-func-in? x '(mtr mlabeledtr))))
+	 (c2 (map (lambda (x) (if (row? x) x `(m:mtr ,x))) c))
+	 (l (map (cut mathtm-as-serial env <>) c)))
+    `((tformat (table ,@l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
@@ -317,9 +307,9 @@
   (mmultiscripts (mathtm-handler :element mathtm-mmultiscripts))
   ;; Tables
   (mtable (mathtm-handler :element mathtm-mtable))
-  (mtr (mathtm-handler :element mathtm-pass))
-  (mlabeledtr (mathtm-handler :element mathtm-pass))
-  (mtd (mathtm-handler :element mathtm-pass))
+  (mtr (mathtm-handler :element mathtm-mtr))
+  (mlabeledtr (mathtm-handler :element mathtm-mlabeledtr))
+  (mtd (mathtm-handler :element mathtm-mtd))
   ;; Actions
   (maction (mathtm-handler :element mathtm-pass)))
 
