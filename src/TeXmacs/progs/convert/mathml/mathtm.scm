@@ -213,6 +213,72 @@
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmcell-format-up c)
+  (cond ((func? c 'tformat) c)
+	((func? c 'cell) `(tformat ,c))
+	(else (texmacs-error "tmcell-format-up" "~S is not a cell" c))))
+
+(define (tmrow-append r1 r2)
+  `(tformat ,@(cdDr r1) ,@(cdDr r2) (row ,@(cdAr r1) ,@(cdAr r2))))
+
+(define (tmrow-format-up-sub l nr)
+  (if (null? l) `(tmformat (row))
+      (let* ((cell (tmcell-format-up (car l)))
+	     (snr (number->string nr))
+	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
+	     (head `(tformat ,@(map fun (cdDr cell)) (row ,(cAr cell)))))
+	(tmrow-append head (tmrow-format-up (cdr l) (+ nr 1))))))
+
+(define (tmrow-format-up r)
+  "Raise tformat tags in cells and cells of @r to the upmost level"
+  (cond ((func? r 'tformat)
+	 (with s (tmrow-raise-format (cAr r))
+	   (append (cDr r) (cdr s))))
+	((func? r 'row) (tmrow-format-up-sub (cdr r) 1))
+	(else (texmacs-error "tmrow-format-up" "~S is not a row" r))))
+
+(define (tmtable-append t1 t2)
+  `(tformat ,@(cdDr t1) ,@(cdDr t2) (table ,@(cdAr t1) ,@(cdAr t2))))
+
+(define (tmtable-format-up-sub l nr)
+  (if (null? l) `(tmformat (table))
+      (let* ((row (tmrow-format-up (car l)))
+	     (snr (number->string nr))
+	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
+	     (head `(tformat ,@(map fun (cdDr row)) (table ,(cAr row)))))
+	(tmtable-append head (tmtable-format-up (cdr l) (+ nr 1))))))
+
+(define (tmtable-format-up t)
+  "Raise tformat tags in rows and cells of @t to the upmost level"
+  (cond ((func? t 'tformat)
+	 (with u (tmtable-raise-format (cAr t))
+	   (append (cDr t) (cdr u))))
+	((func? t 'table) (tmtable-format-up-sub (cdr t) 1))
+	(else (texmacs-error "tmtable-format-up" "~S is not a table" t))))
+
+(define (tmrow-cols r)
+  "Return the number of columns of the row @r"
+  (cond ((func? r 'tformat) (tmrow-cols (cAr r)))
+	((func? r 'row) (- (length r) 1))
+	(else (texmacs-error "tmrow-cols" "~S is not a row" r))))
+
+(define (tmrow-complete r n)
+  "Complete the row @r with empty strings to become at least @n columns wide"
+  (cond ((func? r 'tformat) (rcons (cDr r) (tmrow-complete (cAr r) n)))
+	((== r '(row)) (cons 'row (make-list (max n 0) "")))
+	((func? r 'row)
+	 (with next (tmrow-complete (cons 'row (cddr r)) (- n 1))
+	   (cons* 'row (cadr r) (cdr next))))
+	(else (texmacs-error "tmrow-complete" "~S is not a row" r))))
+
+(define (tmtable-complete t)
+  "Completes missing cells on rows of @t with empty strings"
+  (cond ((func? t 'tformat) (rcons (cDr t) (tmtable-complete (cAr t))))
+	((func? t 'table)
+	 (with cols (apply max (map tmrow-cols (cdr t)))
+	   (cons 'table (map (cut tmrow-complete <> cols) (cdr t)))))
+	(else (texmacs-error "tmtable-complete" "~S is not a table" t))))
+
 (define (mathml-func? x y)
   (and (list? x)
        (or (== (car x) y)
@@ -235,12 +301,31 @@
   (if (null? c) '((row))
       (mathtm-mtr env a (cdr c))))
 
+(define (mathtm-table-align l nr)
+  (if (null? l) '()
+      (let* ((h (substring (car l) 0 1))
+	     (r (mathtm-table-align (cdr l) (+ nr 1)))
+	     (s (number->string nr))
+	     (c `(cwith "1" "-1" ,s ,s "cell-halign" ,h)))
+	(if (in? h '("l" "c" "r"))
+	    (cons c r)
+	    r))))
+
+(define (mathtm-table-format a)
+  (cond ((func? a 'columnalign)
+	 (with l (string-tokenize (cadr a) #\space)
+	   (mathtm-table-align l 1)))
+	(else '())))
+
 (define (mathtm-mtable env a c)
   ;; TODO: rows of unequal lengths
   (let* ((row? (lambda (x) (mathml-func-in? x '(mtr mlabeledtr))))
 	 (c2 (map (lambda (x) (if (row? x) x `(m:mtr ,x))) c))
-	 (l (map (cut mathtm-as-serial env <>) c)))
-    `((tformat (table ,@l)))))
+	 (l (map (cut mathtm-as-serial env <>) c))
+	 (fm (append-map mathtm-table-format a))
+	 (t (tmtable-complete `(tformat ,@fm (table ,@l)))))
+    (if (func? t 'tformat 1) (set! t (cAr t)))
+    `((tabular ,t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
