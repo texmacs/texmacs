@@ -34,7 +34,20 @@
 ;; !!! Check semantic of mathvariant on multiple symbols !!!
 
 (texmacs-module (convert mathml mathtm)
-  (:use (convert tools tmtable) (convert tools sxml) (convert tools xmltm)))
+  (:use (convert tools tmtable)
+	(convert tools sxml)
+	(convert tools xmltm)
+	(convert mathml mathml-drd)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathtm-math env a c)
+  `((with "mode" "math" ,(mathtm-args-serial env c))))
+
+(define (mathtm-none env a c)
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Literals
@@ -43,34 +56,18 @@
 (define (mathtm-string env s)
   ;; FIXME: use translators or parser for this!!!
   ;; TODO: learn when the trailing ';' is optional
-  (cond ((assoc s '(("&ii;" . "<mathi>")
-		    ("&ImaginaryI;" . "<mathi>")
-		    ("&true;" . "true")
-		    ("&false;" . "false")
-		    ("&InvisibleTimes;" . "*")
-		    ("&it;" . "*")
-		    ("*" . "*")
-		    ("&ApplyFunction;" . " ")
-		    ("&RightArrow;" . "<rightarrow>")
-		    ("&infin;" . "<infty>")
-		    ("&Copf;" . "<bbb-C>")
-		    ("&Qopf;" . "<bbb-Q>")
-		    ("&Zopf;" . "<bbb-Z>")
-		    ("&Ropf;" . "<bbb-R>")))
-	 => (lambda (p) (cdr p)))
+  (cond ((drd-ref mathml-symbol->tm% s) => identity)
 	(else (xmltm-text s))))
 
 (define (mathtm-mo env a c)
-  (cond ((== c '("(")) '((left "(")))
-	((== c '(")")) '((right ")")))
-	((== c '("[")) '((left "[")))
-	((== c '("]")) '((right "]")))
-	((== c '("{")) '((left "{")))
-	((== c '("}")) '((right "}")))
+  (cond ((null? c) '())
+	((drd-ref mathml-left->tm% (car c)) => (lambda (x) `((left ,x))))
+	((drd-ref mathml-right->tm% (car c)) => (lambda (x) `((right ,x))))
+	((drd-ref mathml-big->tm% (car c)) => (lambda (x) `((big ,x))))
 	(else (list (mathtm-args-serial env c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mathematical constructs
+;; Simple mathematical constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathtm-mfrac env a c)
@@ -98,38 +95,122 @@
 (define (mathtm-merror env a c)
   (matthtm-error (mathtm-mrow env a c)))
 
-(define (mathtm-msub env a c)
-  (if (== (length c) 2)
-      (let ((base (mathtm env (first c)))
-	    (sub (mathtm-as-serial env (second c))))
-	(append base `((rsup ,sub))))
-      (mathtm-error "bad msub")))
-
-(define (mathtm-msup env a c)
-  ;; TODO: primes
-  (if (== (length c) 2)
-      (let ((base (mathtm env (first c)))
-	    (sup (mathtm-as-serial env (second c))))
-	(append base `((rsup ,sup))))
-      (mathtm-error "bad msup")))
-
-(define (mathtm-msubsup env a c)
-  ;; TODO: primes
-  (if (== (length c) 3)
-      (let ((base (mathtm env (first c)))
-	    (sub (mathtm-as-serial env (second c)))
-	    (sup (mathtm-as-serial env (third c))))
-	(append base `((rsub ,sub) (rsup ,sup))))
-      (mathtm-error "bad msubsup")))
-
-(define (mathtm-math env a c)
-  `((with "mode" "math" ,(mathtm-args-serial env c))))
-
 (define (mathtm-mtext env a c)
   `((with "mode" "text" ,(mathtm-args-serial env c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; MathML tables
+;; Scripts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathtm-prime-sub? s)
+  (or (== s "'") (== s "`") (== s "<dagger>") ))
+
+(define (mathtm-prime? s)
+  (and (string? s)
+       (list-every mathtm-prime-sub? (tmconcat-tokenize-math s))))
+
+(define (mathtm-superscript type1 type2 sup)
+  (if (mathtm-prime? sup)
+      (list type2 sup)
+      (list type1 sup)))
+
+(define (mathtm-scripts base lsub lsup rsub rsup)
+  (if lsub (set! base (cons `(lsub ,lsub) base)))
+  (if lsup (set! base (cons (mathtm-superscript `lsup `lprime lsup) base)))
+  (if rsub (set! base (rcons base `(rsub ,rsub))))
+  (if rsup (set! base (rcons base (mathtm-superscript `rsup `rprime rsup))))
+  base)
+
+(define (mathtm-msub env a c)
+  (if (== (length c) 2)
+      (let ((base (mathtm env (first c)))
+	    (sub (mathtm-as-serial env (second c))))
+	(mathtm-scripts base #f #f sub #f))
+      (mathtm-error "bad msub")))
+
+(define (mathtm-msup env a c)
+  (if (== (length c) 2)
+      (let ((base (mathtm env (first c)))
+	    (sup (mathtm-as-serial env (second c))))
+	(mathtm-scripts base #f #f #f sup))
+      (mathtm-error "bad msup")))
+
+(define (mathtm-msubsup env a c)
+  (if (== (length c) 3)
+      (let ((base (mathtm env (first c)))
+	    (sub (mathtm-as-serial env (second c)))
+	    (sup (mathtm-as-serial env (third c))))
+	(mathtm-scripts base #f #f sub sup))
+      (mathtm-error "bad msubsup")))
+
+(define (mathtm-mmultiscripts-sub env l right?)
+  (cond ((or (null? l) (null? (cdr l))) (values '() '() '() '()))
+	((or (func? (car l) 'mprescripts) (func? (car l) 'm:mprescripts))
+	 (mathtm-mmultiscripts-sub env (cdr l) #f))
+	(else (receive (lsub lsup rsub rsup)
+		  (mathtm-mmultiscripts-sub env (cddr l) right?)
+		(let ((sub (mathtm env (car l)))
+		      (sup (mathtm env (cadr l))))
+		  (if right?
+		      (values lsub lsup
+			      (append rsub sub) (append rsup sup))
+		      (values (append sub lsub)
+			      (append sup lsup) rsub rsup)))))))
+
+(define (mathtm-multiscript env l)
+  (if (null? l) #f
+      (mathtm-serial env l)))
+
+(define (mathtm-mmultiscripts env a c)
+  (if (> (length c) 0)
+      (with base (mathtm env (first c))
+	(receive (lsub lsup rsub rsup)
+	    (mathtm-mmultiscripts-sub env (cdr c) #t)
+	  (mathtm-scripts base
+			  (mathtm-multiscript env lsub)
+			  (mathtm-multiscript env lsup)
+			  (mathtm-multiscript env rsub)
+			  (mathtm-multiscript env rsup))))
+      (mathtm-error "bad mmultiscripts")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Under and over scripts and wide accents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathtm-below base sub)
+  (cond ((drd-ref mathml-below->tm% sub) =>
+	 (lambda (x) `((wide* ,base ,x))))
+	(else `((below ,base ,sub)))))
+
+(define (mathtm-above base sup)
+  (cond ((drd-ref mathml-above->tm% sup) =>
+	 (lambda (x) `((wide ,base ,x))))
+	(else `((above ,base ,sup)))))
+
+(define (mathtm-munder env a c)
+  (if (== (length c) 2)
+      (let ((base (mathtm-as-serial env (first c)))
+	    (sub (mathtm-as-serial env (second c))))
+	(mathtm-below base sub))
+      (mathtm-error "bad munder")))
+
+(define (mathtm-mover env a c)
+  (if (== (length c) 2)
+      (let ((base (mathtm-as-serial env (first c)))
+	    (sup (mathtm-as-serial env (second c))))
+	(mathtm-above base sup))
+      (mathtm-error "bad mover")))
+
+(define (mathtm-munderover env a c)
+  (if (== (length c) 3)
+      (let ((base (mathtm-as-serial env (first c)))
+	    (sub (mathtm-as-serial env (second c)))
+	    (sup (mathtm-as-serial env (third c))))
+	(mathtm-above (car (mathtm-below base sub)) sup))
+      (mathtm-error "bad munderover")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (safe-cdr l)
@@ -204,6 +285,7 @@
 (drd-dispatcher mathtm-methods%
   ;;; Interface
   (math (mathtm-handler :element mathtm-math))
+  (none (mathtm-handler :mixed mathtm-none))
   ;;; Presentation
   ;; Token
   ;; presentation tokens contain CDATA, MathML entities, align marks, or glyphs
@@ -229,10 +311,10 @@
   (msub (mathtm-handler :element mathtm-msub))
   (msup (mathtm-handler :element mathtm-msup))
   (msubsup (mathtm-handler :element mathtm-msubsup))
-  (munder (mathtm-handler :element mathtm-pass))
-  (mover (mathtm-handler :element mathtm-pass))
-  (munderover (mathtm-handler :element mathtm-pass))
-  (mmultiscripts (mathtm-handler :element mathtm-pass))
+  (munder (mathtm-handler :element mathtm-munder))
+  (mover (mathtm-handler :element mathtm-mover))
+  (munderover (mathtm-handler :element mathtm-munderover))
+  (mmultiscripts (mathtm-handler :element mathtm-mmultiscripts))
   ;; Tables
   (mtable (mathtm-handler :element mathtm-mtable))
   (mtr (mathtm-handler :element mathtm-pass))

@@ -13,84 +13,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert mathml tmmath)
-  (:use (convert tools tmconcat)))
+  (:use (convert tools tmconcat)
+	(convert mathml mathml-drd)))
 
 (define tmmath-env (make-ahash-table))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special sumbols
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-table tmmath-number-table
-  ("<mathe>" . "e")
-  ("<mathi>" . "&ImaginaryI;")
-  ("<mathpi>" . "&pi;"))
-
-(define-table tmmath-operator-table
-  ("&" . "&amp;")
-  ("<less>" . "&lt;")
-  ("*" . "&InvisibleTimes;")
-  (" " . "&ApplyFunction;"))
-
-(define-table tmmath-large-table
-  ("langle" . "&LeftAngleBracket;")
-  ("rangle" . "&RightAngleBracket;")
-  ("lfloor" . "&LeftFloor;")
-  ("rfloor" . "&RightFloor;")
-  ("lceil" . "&LeftCeiling;")
-  ("rceil" . "&RightCeiling;")
-  ("llbracket" . "&LeftDoubleBracket;")
-  ("rrbracket" . "&RightDoubleBracket;")
-  ("\\\\" . "&Backslash;"))
-
-(define-table tmmath-bigop-table
-  ("sum" . "&Sum;")
-  ("prod" . "&Product;")
-  ("int" . "&Integral;")
-  ("oint" . "&ContourIntegral;")
-  ("amalg" . "&Coproduct;")
-  ("cap" . "&Intersection;")
-  ("cup" . "&Union;")
-  ("wedge" . "&Wedge;")
-  ("vee" . "&Vee;")
-  ("odot" . "&CircleDot;")
-  ("oplus" . "&CirclePlus;")
-  ("otimes" . "&CircleTimes;")
-;;  ("sqcap" . "&SquareIntersection;")
-;;  ("sqcup" . "&SquareUnion;")
-;;  ("curlywedge" . "&CurlyWedge;")
-;;  ("curlyvee" . "&CurlyVee;")
-;;  ("triangleup" . "&TriangleUp;")
-;;  ("triangledown" . "&TriangleDown;")
-;;  ("box" . "&Box;")
-  ("pluscup" . "&UnionPlus;")
-;;  ("parallel" . "&Parallel;")
-;;  ("interleave" . "&Interleave;")
-)
-
-(define-table tmmath-wide-table
-  ("^" . "&Hat;")
-  ("~" . "&Tilde;")
-  ("<bar>" . "&OverBar;")
-  ("<vect>" . "&RightVector;")
-  ("<check>" . "&Hacek;")
-  ("<breve>" . "&Breve;")
-  ("<acute>" . "&DiacriticalAcute;")
-  ("<grave>" . "&DiacriticalGrave;")
-  ("<dot>" . "&DiacriticalDot;")
-  ("<ddot>" . "&DoubleDot;")
-;;  ("<abovering>" . "&AboveRing;")
-  ("<wide-overbrace>" . "&OverBrace;")
-  ("<wide-overbrace*>" . "&OverBrace;")
-  ("<wide-underbrace>" . "&UnderBrace;")
-  ("<wide-underbrace*>" . "&UnderBrace;")
-  ("<wide-sqoverbrace>" . "&OverBracket;")
-  ("<wide-sqoverbrace*>" . "&OverBracket;")
-  ("<wide-squnderbrace>" . "&UnderBracket;")
-  ("<wide-squnderbrace*>" . "&UnderBracket;")
-  ("<wide-varrightarrow>" . "&RightArrow;")
-  ("<wide-varleftarrow>" . "&LeftArrow;")
-  ("<wide-bar>" . "&OverBar;"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Horizontal concatenations
@@ -114,12 +40,9 @@
   (if (string? x)
       (with type (math-symbol-type x)
 	(cond ((string-number? x) `(m:mn ,x))
-	      ((ahash-ref tmmath-number-table x)
-	       `(m:mn ,(ahash-ref tmmath-number-table x)))
-	      ((ahash-ref tmmath-operator-table x)
-	       `(m:mo ,(ahash-ref tmmath-operator-table x)))
-	      ((== type "unknown") `(m:mi ,(cork->utf8* x)))
-	      ((== type "symbol") `(m:mi ,(cork->utf8* x)))
+	      ((drd-ref tm->mathml-constant% x) => (lambda (y) `(m:mn ,y)))
+	      ((drd-ref tm->mathml-operator% x) => (lambda (y) `(m:mo ,y)))
+	      ((in? type '("unknown" "symbol")) `(m:mi ,(cork->utf8* x)))
 	      (else `(m:mo ,(cork->utf8* x)))))
       (tmmath x)))
 
@@ -138,7 +61,7 @@
   `(m:mrow ,(tmmath (car l))))
 
 (define (tmmath-large x)
-  (with y (ahash-ref tmmath-large-table x)
+  (with y (drd-ref tm->mathml-large% x)
     (if y y (cork->utf8 x))))
 
 (define (tmmath-left l) `(m:mo (@ (form "prefix")) ,(tmmath-large (car l))))
@@ -147,8 +70,7 @@
 
 (define (tmmath-big l)
   (cond ((== (car l) ".") "")
-	((ahash-ref tmmath-bigop-table (car l))
-	 `(m:mo ,(ahash-ref tmmath-bigop-table (car l))))
+	((drd-ref tm->mathml-big% (car l)) => (lambda (y) `(m:mo ,y)))
 	(else `(m:mo ,(car l)))))
 
 (define (tmmath-lsub l) (tmmath-concat `((lsub ,(car l)))))
@@ -202,11 +124,11 @@
       `(m:mroot ,(tmmath (car l)) ,(tmmath (cadr l)))))
 
 (define (tmmath-wide l)
-  (with acc (or (ahash-ref tmmath-wide-table (cadr l)) "")
+  (with acc (or (drd-ref tm->mathml-wide% (cadr l)) "")
     `(m:mover ,(tmmath (car l)) (m:mo ,acc))))
 
 (define (tmmath-wide* l)
-  (with acc (or (ahash-ref tmmath-wide-table (cadr l)) "")
+  (with acc (or (drd-ref tm->mathml-wide% (cadr l)) "")
     `(m:munder ,(tmmath (car l)) (m:mo ,acc))))
 
 (define (tmmath-above l)
