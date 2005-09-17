@@ -66,6 +66,9 @@
 	((drd-ref mathml-big->tm% (car c)) => (lambda (x) `((big ,x))))
 	(else (list (mathtm-args-serial env c)))))
 
+(define (mathtm-mtext env a c)
+  `((with "mode" "text" ,(mathtm-args-serial env c))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple mathematical constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,8 +98,24 @@
 (define (mathtm-merror env a c)
   (matthtm-error (mathtm-mrow env a c)))
 
-(define (mathtm-mtext env a c)
-  `((with "mode" "text" ,(mathtm-args-serial env c))))
+(define (mathtm-style l)
+  (if (null? l) l
+      (let* ((h (car l))
+	     (r (mathtm-style (cdr l))))
+	(cond ((or (func? h 'mathcolor) (func? h 'color))
+	       (cons* "color" (cadr h) r))
+	      ((or (== h '(mathvariant "bold"))
+		   (== h '(mathvariant "bold-italic")))
+	       (cons* "math-font-series" "bold" r))
+	      (else r)))))
+
+(define (mathtm-mstyle env a c)
+  (let* ((attrs (mathtm-style a))
+	 (l (mathtm-args env c)))
+    (if (null? attrs) l `((with ,@attrs ,(mathtm-serial env l))))))
+
+(define (mathtm-mphantom env a c)
+  `((phantom ,(mathtm-args-serial env c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scripts
@@ -210,7 +229,7 @@
       (mathtm-error "bad munderover")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Tables
+;; Helper routine on TeXmacs tables (should go into other file)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmcell-format-up c)
@@ -219,15 +238,15 @@
 	(else (texmacs-error "tmcell-format-up" "~S is not a cell" c))))
 
 (define (tmrow-append r1 r2)
-  `(tformat ,@(cdDr r1) ,@(cdDr r2) (row ,@(cdAr r1) ,@(cdAr r2))))
+  `(tformat ,@(cDdr r1) ,@(cDdr r2) (row ,@(cdAr r1) ,@(cdAr r2))))
 
 (define (tmrow-format-up-sub l nr)
   (if (null? l) `(tmformat (row))
       (let* ((cell (tmcell-format-up (car l)))
 	     (snr (number->string nr))
 	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
-	     (head `(tformat ,@(map fun (cdDr cell)) (row ,(cAr cell)))))
-	(tmrow-append head (tmrow-format-up (cdr l) (+ nr 1))))))
+	     (head `(tformat ,@(map fun (cDdr cell)) (row ,(cAr cell)))))
+	(tmrow-append head (tmrow-format-up-sub (cdr l) (+ nr 1))))))
 
 (define (tmrow-format-up r)
   "Raise tformat tags in cells and cells of @r to the upmost level"
@@ -238,20 +257,20 @@
 	(else (texmacs-error "tmrow-format-up" "~S is not a row" r))))
 
 (define (tmtable-append t1 t2)
-  `(tformat ,@(cdDr t1) ,@(cdDr t2) (table ,@(cdAr t1) ,@(cdAr t2))))
+  `(tformat ,@(cDdr t1) ,@(cDdr t2) (table ,@(cdAr t1) ,@(cdAr t2))))
 
 (define (tmtable-format-up-sub l nr)
   (if (null? l) `(tmformat (table))
       (let* ((row (tmrow-format-up (car l)))
 	     (snr (number->string nr))
 	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
-	     (head `(tformat ,@(map fun (cdDr row)) (table ,(cAr row)))))
-	(tmtable-append head (tmtable-format-up (cdr l) (+ nr 1))))))
+	     (head `(tformat ,@(map fun (cDdr row)) (table ,(cAr row)))))
+	(tmtable-append head (tmtable-format-up-sub (cdr l) (+ nr 1))))))
 
 (define (tmtable-format-up t)
   "Raise tformat tags in rows and cells of @t to the upmost level"
   (cond ((func? t 'tformat)
-	 (with u (tmtable-raise-format (cAr t))
+	 (with u (tmtable-format-up (cAr t))
 	   (append (cDr t) (cdr u))))
 	((func? t 'table) (tmtable-format-up-sub (cdr t) 1))
 	(else (texmacs-error "tmtable-format-up" "~S is not a table" t))))
@@ -265,7 +284,7 @@
 (define (tmrow-complete r n)
   "Complete the row @r with empty strings to become at least @n columns wide"
   (cond ((func? r 'tformat) (rcons (cDr r) (tmrow-complete (cAr r) n)))
-	((== r '(row)) (cons 'row (make-list (max n 0) "")))
+	((== r '(row)) (cons 'row (make-list (max n 0) '(cell ""))))
 	((func? r 'row)
 	 (with next (tmrow-complete (cons 'row (cddr r)) (- n 1))
 	   (cons* 'row (cadr r) (cdr next))))
@@ -279,51 +298,104 @@
 	   (cons 'table (map (cut tmrow-complete <> cols) (cdr t)))))
 	(else (texmacs-error "tmtable-complete" "~S is not a table" t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (mathml-func? x y)
   (and (list? x)
        (or (== (car x) y)
-	   (== (car x) (symbol-append 'm:' y)))))
+	   (== (car x) (symbol-append 'm: y)))))
 
 (define (mathml-func-in? x l)
   (list-or (map (cut mathml-func? x <>) l)))
 
+(define (mathtm-halign s)
+  (cond ((== s "left") "l")
+	((== s "center") "c")
+	((== s "right") "r")
+	(else #f)))
+
+(define (mathtm-valign s)
+  (cond ((== s "bottom") "b")
+	((== s "baseline") "B")
+	((== s "axis") "f")
+	((== s "center") "c")
+	((== s "top") "t")
+	(else #f)))
+
+(define (mathtm-cell-format a)
+  (cond ((and (func? a 'columnalign) (mathtm-halign (cadr a)))
+	 `((cwith "cell-halign" ,(mathtm-halign (cadr a)))))
+	((and (func? a 'rowalign) (mathtm-valign (cadr a)))
+	 `((cwith "cell-valign" ,(mathtm-valign (cadr a)))))
+	(else '())))
+
 (define (mathtm-mtd env a c)
-  `((cell ,(mathtm-serial env (mathtm-pass env a c)))))
+  (let ((fm (append-map mathtm-cell-format a))
+	(c `(cell ,(mathtm-serial env (mathtm-pass env a c)))))
+    (if (null? fm) `(,c) `((tformat ,@fm ,c)))))
+
+(define (mathtm-row-halign l nr)
+  (if (null? l) '()
+      (let* ((h (mathtm-halign (car l)))
+	     (r (mathtm-row-halign (cdr l) (+ nr 1)))
+	     (s (number->string nr))
+	     (c `(cwith ,s ,s "cell-halign" ,h)))
+	(if h (cons c r) r))))
+
+(define (mathtm-row-format a)
+  (cond ((func? a 'columnalign)
+	 (with l (string-tokenize (cadr a) #\space)
+	   (mathtm-row-halign l 1)))
+	((and (func? a 'rowalign) (mathtm-valign (cadr a)))
+	 `((cwith "1" "-1" "cell-valign" ,(mathtm-valign (cadr a)))))
+	(else '())))
 
 (define (mathtm-mtr env a c)
   (let* ((cell? (lambda (x) (mathml-func? x 'mtd)))
 	 (c2 (map (lambda (x) (if (cell? x) x `(m:mtd ,x))) c))
-	 (l (map (cut mathtm-as-serial env <>) c)))
-    `((row ,@l))))
+	 (r `(row ,@(map (cut mathtm-as-serial env <>) c2)))
+	 (fm (append-map mathtm-row-format a)))
+    (if (null? fm) `(,r) `((tformat ,@fm ,r)))))
 
 (define (mathtm-mlabeledtr env a c)
   ;; FIXME: label is still ignored
   (if (null? c) '((row))
       (mathtm-mtr env a (cdr c))))
 
-(define (mathtm-table-align l nr)
+(define (mathtm-table-halign l nr)
   (if (null? l) '()
-      (let* ((h (substring (car l) 0 1))
-	     (r (mathtm-table-align (cdr l) (+ nr 1)))
+      (let* ((h (mathtm-halign (car l)))
+	     (r (mathtm-table-halign (cdr l) (+ nr 1)))
 	     (s (number->string nr))
 	     (c `(cwith "1" "-1" ,s ,s "cell-halign" ,h)))
-	(if (in? h '("l" "c" "r"))
-	    (cons c r)
-	    r))))
+	(if h (cons c r) r))))
+
+(define (mathtm-table-valign l nr)
+  (if (null? l) '()
+      (let* ((h (mathtm-valign (car l)))
+	     (r (mathtm-table-valign (cdr l) (+ nr 1)))
+	     (s (number->string nr))
+	     (c `(cwith ,s ,s "1" "-1" "cell-valign" ,h)))
+	(if h (cons c r) r))))
 
 (define (mathtm-table-format a)
   (cond ((func? a 'columnalign)
 	 (with l (string-tokenize (cadr a) #\space)
-	   (mathtm-table-align l 1)))
+	   (mathtm-table-halign l 1)))
+	((func? a 'rowalign)
+	 (with l (string-tokenize (cadr a) #\space)
+	   (mathtm-table-valign l 1)))
 	(else '())))
 
 (define (mathtm-mtable env a c)
-  ;; TODO: rows of unequal lengths
   (let* ((row? (lambda (x) (mathml-func-in? x '(mtr mlabeledtr))))
 	 (c2 (map (lambda (x) (if (row? x) x `(m:mtr ,x))) c))
-	 (l (map (cut mathtm-as-serial env <>) c))
+	 (l (map (cut mathtm-as-serial env <>) c2))
 	 (fm (append-map mathtm-table-format a))
 	 (t (tmtable-complete `(tformat ,@fm (table ,@l)))))
+    (set! t (tmtable-format-up t))
     (if (func? t 'tformat 1) (set! t (cAr t)))
     `((tabular ,t))))
 
@@ -376,10 +448,10 @@
   (mfrac (mathtm-handler :element mathtm-mfrac))
   (msqrt (mathtm-handler :element mathtm-msqrt))
   (mroot (mathtm-handler :element mathtm-mroot))
-  (mstyle (mathtm-handler :element mathtm-pass))
+  (mstyle (mathtm-handler :element mathtm-mstyle))
   (merror (mathtm-handler :element mathtm-merror))
   (mpadded (mathtm-handler :element mathtm-pass))
-  (mphantom (mathtm-handler :element mathtm-pass))
+  (mphantom (mathtm-handler :element mathtm-mphantom))
   (mfenced (mathtm-handler :element mathtm-pass))
   (menclose (mathtm-handler :element mathtm-pass))
   ;; Script and limits

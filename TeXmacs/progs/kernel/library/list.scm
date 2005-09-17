@@ -120,6 +120,10 @@
   "Remove two first and last elements from @l"
   (cDr (cddr l)))
 
+(define-public (cdAr l)
+  "All but the first element of the last element of @l"
+  (cdr (cAr l)))
+
 (define-public last cAr)
 (define-public but-last cDr)
 
