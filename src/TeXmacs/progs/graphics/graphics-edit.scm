@@ -55,7 +55,9 @@
       (with p (cDr path)
 	 (with o (stree-at p)
 	    (if (and (pair? o) (in? (car o) gr-tags-all))
-		p
+		(begin
+		  ;(display* "gp=" (path->tree (cDr path)) "\n")
+		   p)
 		(graphics-path (cDr path)))))))
 
 (define (graphics-active-path)
@@ -101,6 +103,14 @@
       (if seek-eq?-prec
           (set-cdr! seek-eq?-prec (cddr seek-eq?-prec))
           (set! ,l (cdr ,l)))))
+
+(define (list-filter-multiple-elements l)
+  (define already '())
+  (foreach (e l)
+     (if (not (in? e already))
+	 (set! already (cons e already)))
+  )
+  (reverse already))
 
 (define-macro (foreach i . b)
   `(for-each (lambda
@@ -669,6 +679,10 @@
   (:argument val "Color")
   (graphics-set-property "gr-color" val))
 
+(tm-define (graphics-set-point-style val)
+  (:argument val "Point style")
+  (graphics-set-property "gr-point-style" val))
+
 (tm-define (graphics-set-line-width val)
   (:argument val "Line width")
   (graphics-set-property "gr-line-width" val))
@@ -687,10 +701,6 @@
 (tm-define (graphics-set-dash-style-unit val)
   (:argument val "Dash style unit")
   (graphics-set-property "gr-dash-style-unit" val))
-
-(tm-define (graphics-set-fill-mode val)
-  (:argument val "Fill mode")
-  (graphics-set-property "gr-fill-mode" val))
 
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
@@ -742,28 +752,30 @@
 	t
 	`(with ,@f ,t))))
 
-(define (graphics-enrich-bis t color lw st stu lp fm fc)
+(define (graphics-enrich-bis t color ps lw st stu lp fc)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
-	   (graphics-enrich-sub t `(("color" , color))))
+	   (graphics-enrich-sub t `(("color" ,color)
+				    ("fill-color" ,fc)
+				    ("point-style" ,ps))))
 	  ((in? mode gr-tags-curves)
-	   (graphics-enrich-sub t `(("color" , color)
+	   (graphics-enrich-sub t `(("color" ,color)
 	      ("line-width" ,lw)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
-	      ("fill-mode" ,fm) ("fill-color" ,fc))))
+	      ("fill-color" ,fc))))
 	  (else
 	   (graphics-enrich-sub t '())))))
 
 (define (graphics-enrich t)
   (let* ((color (get-env "gr-color"))
+	 (ps "default")
 	 (lw (get-env "gr-line-width"))
 	 (st (get-env-stree "gr-dash-style"))
 	 (stu (get-env-stree "gr-dash-style-unit"))
 	 (lp (get-env-stree "gr-line-arrows"))
-	 (fm (get-env "gr-fill-mode"))
 	 (fc (get-env "gr-fill-color")))
-    (graphics-enrich-bis t color lw st stu lp fm fc)))
+    (graphics-enrich-bis t color ps lw st stu lp fc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -792,9 +804,9 @@
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color lw st stu lp fm fc go-into)
+(define (graphics-group-enrich-insert-bis t color ps lw st stu lp fc go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t color lw st stu lp fm fc) go-into))
+    (graphics-enrich-bis t color ps lw st stu lp fc) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -967,12 +979,14 @@
   (tree->stree (texmacs-exec `(frame-inverse ,p))))
 
 ;; Graphical object
+(define default-color-go-points "#4040ff")
+(define default-color-selected-points "#ff6060")
 (define graphical-color "default")
+(define graphical-pstyle "default")
 (define graphical-lwidth "default")
 (define graphical-lstyle "default")
 (define graphical-lstyle-unit "default")
 (define graphical-larrows "default")
-(define graphical-fmode "default")
 (define graphical-fcolor "default")
 
 (define (graphical-object fetch)
@@ -981,12 +995,12 @@
     (if (and fetch (pair? o))
        (begin
 	  (set! graphical-color (find-prop-bis o "color" "default"))
+	  (set! graphical-pstyle (find-prop-bis o "point-style" "default"))
 	  (set! graphical-lwidth (find-prop-bis o "line-width" "default"))
 	  (set! graphical-lstyle (find-prop-bis o "dash-style" "default"))
 	  (set! graphical-lstyle-unit
 		(find-prop-bis o "dash-style-unit" "default"))
           (set! graphical-larrows (find-prop-bis o "line-arrows" "default"))
-	  (set! graphical-fmode (find-prop-bis o "fill-mode" "default"))
 	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))))
     (if (pair? o)
 	(if (== (cdr o) '()) o (cAr o))
@@ -1077,33 +1091,38 @@
 	    (and (in-interval? x (- l eps) (+ r eps))
 		 (in-interval? y (- t eps) (+ t eps))))))
 
-(define (create-graphical-props mode ps)
+(define (create-graphical-props mode ps0)
+  (define (dv var val)
+     (if (== val "default")
+	 (get-default-val var)
+	 val)
+  )
   (let ((color #f)
+	(ps #f)
 	(lw #f)
 	(st #f)
 	(stu #f)
 	(lp #f)
-	(fm #f)
 	(fc #f)
      )
      (if (== mode 'active)
      (begin
 	(set! color graphical-color)
+	(set! ps graphical-pstyle)
 	(set! lw graphical-lwidth)
 	(set! st graphical-lstyle)
 	(set! stu graphical-lstyle-unit)
 	(set! lp graphical-larrows)
-	(set! fm graphical-fmode)
 	(set! fc graphical-fcolor))
      )
      (if (list? mode)
      (begin
 	(set! color (graphics-path-property mode "color"))
+	(set! ps (graphics-path-property mode "point-style"))
 	(set! lw (graphics-path-property mode "line-width"))
 	(set! st (graphics-path-property mode "dash-style"))
 	(set! stu (graphics-path-property mode "dash-style-unit"))
 	(set! lp (graphics-path-property mode "line-arrows"))
-	(set! fm (graphics-path-property mode "fill-mode"))
 	(set! fc (graphics-path-property mode "fill-color")))
      )
      (if (== mode 'new)
@@ -1113,41 +1132,78 @@
 	(set! st (get-env-stree "gr-dash-style"))
 	(set! stu (get-env-stree "gr-dash-style-unit"))
 	(set! lp (get-env-stree "gr-line-arrows"))
-	(set! fm (get-env "gr-fill-mode"))
 	(set! fc (get-env "gr-fill-color")))
      )
-     (list 'with "point-style" (if ps ps "square")
-		 "color" color
-		 "line-width" lw
-		 "dash-style" st
-		 "dash-style-unit" stu
-		 "line-arrows" lp
-		 "fill-mode" fm
-		 "fill-color" (if (== fc "default")
-				  (get-default-val "fill-color")
-				  fc))))
+     (list 'with "point-style"
+		  (if ps0 ps0 (if ps (dv "point-style" ps) "square"))
+		 "color" (dv "color" color)
+		 "line-width" (dv "line-width" lw)
+		 "dash-style" (dv "dash-style" st)
+		 "dash-style-unit" (dv "dash-style-unit" stu)
+		 "line-arrows" (dv "line-arrows" lp)
+		 "fill-color" (dv "fill-color" fc))))
 
+(define (add-selections-colors op color fill-color)
+  (if (not color) (set! color "none"))
+  (if (not fill-color) (set! fill-color "none"))
+  (list (list 'with "color" color
+                    "point-style" "square"
+		    "fill-color" fill-color
+		    (cons 'concat op))))
+
+;; FIXME: This routine is hardwired to draw the current
+;;   selection & the points of the object under cursor.
+;;   Generalize it, and reuse it to clean the code around.
 (define (create-graphical-contours l mode)
+  (define on-aobj #f)
+  (define aobj-selected #f)
+  (define (asc col fcol op)
+     (if (and on-aobj (not aobj-selected))
+	 (set! fcol #f))
+     (add-selections-colors op col fcol)
+  )
   (define res '())
+  (define curscol #f)
+  (foreach (o l)
+     (if (tree? o)
+	 (with path (reverse (tree-ip o))
+	       (if (equal? path current-path-under-mouse)
+		   (set! aobj-selected #t)))))
+  (if (and (== mode 'points) current-path-under-mouse)
+  (begin
+     (set! l (cons (path->tree current-path-under-mouse) l))))
   (foreach (o l)
      (if (not (and (tree? o) (< (cAr (tree-ip o)) 0)))
      (let* ((props #f)
 	    (t #f)
 	)
+        (set! curscol #f)
+        (set! on-aobj #f)
 	(if (tree? o)
-	    (begin
-	       (set! props (create-graphical-props (reverse (tree-ip o))
+	    (with path (reverse (tree-ip o))
+	       (set! props (create-graphical-props path
 						   (if (== mode 'object)
-						       "disc" "square")))
+						       #f "square")))
+	       (if (equal? path current-path-under-mouse)
+	       (begin
+		  (set! on-aobj #t)
+		  (set! curscol default-color-go-points)))
 	       (set! o (tree->stree o)))
 	)
 	(cond ((== (car o) 'point)
-	       (set! t `(,o))
+	       (if (not curscol)
+		   (set! curscol default-color-selected-points))
+	       (set! t (if (== mode 'object)
+			  `(,o)
+			   (asc curscol #f `(,o))))
 	      )
 	      ((== (car o) 'text-at)
+	       (if (not curscol)
+		   (set! curscol default-color-selected-points))
 	       (set! t (let* ((a (cdddr o))
-			      (gc (create-graphical-contour
-				    o (car a) (cadr a) 0.1))
+			      (gc (asc curscol #f
+				    (create-graphical-contour
+				      o (car a) (cadr a) 0.1)))
 			  )
 			  (if (== mode 'object-and-points)
 			      (cons o gc)
@@ -1156,8 +1212,11 @@
 				  gc))))
 	      )
 	      ((== (car o) 'gr-group)
-	       (set! t (with gc (create-graphical-contour
-				   o "center" "center" 0.1)
+	       (if (not curscol)
+		   (set! curscol default-color-selected-points))
+	       (set! t (with gc (asc curscol #f
+				  (create-graphical-contour
+				     o "center" "center" 0.1))
 			  (if (== mode 'object-and-points)
 			      (cons o gc)
 			      (if (== mode 'object)
@@ -1166,10 +1225,12 @@
 	      )
 	      (else
 		 (set! t (if (== mode 'object-and-points)
-			     (cons o (cdr o))
+			     (cons o (asc curscol default-color-selected-points
+					  (cdr o)))
 			     (if (== mode 'object)
 				`(,o)
-				 (cdr o)))))
+				 (asc curscol default-color-selected-points
+				      (cdr o))))))
 	)
 	(set! res (append res
 			  (if props
@@ -1225,6 +1286,7 @@
 	       )
 	       (props (create-graphical-props mode #f))
 	   )
+	   (set! op (add-selections-colors op default-color-go-points #f))
 	   (graphical-object!
 	      (if (or (eq? no 'group)
 		      (graphics-group-mode? (graphics-mode))
@@ -1296,6 +1358,7 @@
 (define selecting-x0 #f)
 (define selecting-y0 #f)
 (define multiselecting #f)
+(define current-path-under-mouse #f) ; volatile
 
 (define state-slots
   ''(graphics-action
@@ -1475,9 +1538,9 @@
    ;(display* "res=" res "\n")
     (set! res (filter-graphical-select res))
     (foreach (e res)
-       (set! l (cons (cDr (car e)) l))
+       (set! l (cons (graphics-path (car e)) l))
     )
-    (reverse l)))
+    (reverse (list-filter-multiple-elements l))))
 
 (define (select-first x y)
   (with sel (graphics-select x y 15)
@@ -1503,6 +1566,7 @@
   `(begin
      (set! current-x x)
      (set! current-y y)
+     (set! current-path-under-mouse #f)
      (with gm (graphics-group-mode? (graphics-mode))
 	(if sticky-point
 	    (with o (graphical-object #t)
@@ -1522,6 +1586,7 @@
 		   (,obj (if gm '(point) (graphics-object pxy)))
 		   (,edge (and sel (== (length sel) 2)))
 		   (,no (if sel (cAr (car sel)) #f)))
+              (set! current-path-under-mouse ,path)
 	      (if ,obj
 	          ,(cons 'begin body)
 	          (if (and (string? ,msg) (== (substring ,msg 0 1) ";"))
@@ -1593,6 +1658,7 @@
 	  (set! sticky-point #f)
 	  (set! current-point-no #f)
 	  (set! graphics-undo-enabled #t)
+          (set! selected-objects '())
 	  (if graphics-first-state
 	      (graphics-back-first))
 	  (graphics-forget-states)
@@ -1636,11 +1702,12 @@
       (begin
 	(create-graphical-object obj 'active 'points #f)
 	(graphics-group-enrich-insert-bis
-	 obj graphical-color graphical-lwidth
+	 obj graphical-color graphical-pstyle
+	 graphical-lwidth
 	 graphical-lstyle
 	 graphical-lstyle-unit
 	 graphical-larrows
-	 graphical-fmode graphical-fcolor #f)
+	 graphical-fcolor #f)
 	(if (== (state-ref graphics-first-state 'graphics-action)
 		'start-move)
 	    (remove-undo-mark))
@@ -1815,11 +1882,13 @@
 (define (point_assign-props p obj)
   (graphics-remove p)
   (graphics-group-enrich-insert-bis
-     obj (get-env "gr-color") (get-env "gr-line-width")
+     obj (get-env "gr-color")
+     (get-env "gr-point-style")
+     (get-env "gr-line-width")
      (get-env-stree "gr-dash-style")
      (get-env-stree "gr-dash-style-unit")
      (get-env-stree "gr-line-arrows")
-     (get-env "gr-fill-mode") (get-env "gr-fill-color") #f)
+     (get-env "gr-fill-color") #f)
   (create-graphical-object obj 'new 'points #f))
 
 (define (text-at_change-halign p obj)
@@ -1871,11 +1940,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Util
-(define (group-list l)
+(define (group-list l tag)
   (if (pair? l)
-      (if (== (car l) "point-style")
-	  (group-list (cddr l))
-	  (cons `(,(car l) ,(cadr l)) (group-list (cddr l))))
+      (if (and (!= tag 'point)
+	       (== (car l) "point-style"))
+	  (group-list (cddr l) tag)
+	  (cons `(,(car l) ,(cadr l)) (group-list (cddr l) tag)))
      '()))
 
 (define (restore-selected-objects n)
@@ -2012,7 +2082,8 @@
 	  (foreach (o (cdr go))
 	  (with t (cadr (cAr o))
 	     (set-cdr! (list-tail o (- (length o) 2)) '())
-	     (set! l (cons (graphics-enrich-sub t (group-list (cdr o))) l))
+	     (set! l (cons (graphics-enrich-sub
+			      t (group-list (cdr o) (car t))) l))
 	  ))
 	  (with p (graphics-group-insert (cons 'gr-group (reverse l)))
 	     (set! selected-objects `(,(path->tree p)))
@@ -2052,7 +2123,8 @@
 	  (with t (cadr (cAr o))
 	     (set-cdr! (list-tail o (- (length o) 2)) '())
 	     (with p (graphics-group-insert
-			(graphics-enrich-sub t (group-list (cdr o))))
+			(graphics-enrich-sub
+			   t (group-list (cdr o) (car t))))
 		(set! selected-objects
 		      (cons (path->tree p) selected-objects))
 	     )
@@ -2079,7 +2151,8 @@
 	       (with t (cadr (cAr o))
 		  (set-cdr! (list-tail o (- (length o) 2)) '())
 		  (graphics-group-insert
-		     (graphics-enrich-sub t (group-list (cdr o)))
+		     (graphics-enrich-sub
+			t (group-list (cdr o) (car t)))
 		  )
 		  (set! n (+ n 1))
 	       ))

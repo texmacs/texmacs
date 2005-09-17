@@ -220,6 +220,14 @@ x_drawable_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
+x_drawable_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  if ((x1>=x2) || (y1>=y2)) return;
+  decode (x1, y1);
+  decode (x2, y2);
+  XFillArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
+}
+
+void
 x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;

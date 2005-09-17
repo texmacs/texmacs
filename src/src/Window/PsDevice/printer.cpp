@@ -26,6 +26,7 @@ string PS_CLIP ("cl");
 string PS_LINE ("ln");
 string PS_FILL ("fl");
 string PS_ARC ("ac");
+string PS_FILL_ARC ("fac");
 string PS_POL_START ("sp");
 string PS_POL_NEXT ("np");
 string PS_POL_END ("ep");
@@ -108,6 +109,8 @@ printer_rep::printer_rep (
 	  string ("pt3 pt4 lineto pt1 pt4 lineto pt1 pt2 eofill stroke"));
   define (PS_ARC, string ("/a2 X /a1 X /r2 X /r1 X /pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 r1 r2 a1 a2 ellipse stroke"));
+  define (PS_FILL_ARC, string ("/a2 X /a1 X /r2 X /r1 X /pt2 X /pt1 X\n") *
+	  string ("newpath pt1 pt2 r1 r2 a1 a2 ellipse eofill stroke"));
   define (PS_POL_START, string ("/pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 moveto"));
   define (PS_POL_NEXT, string ("/pt2 X /pt1 X\n") *
@@ -565,6 +568,16 @@ printer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   print (as_string (((double) alpha)/64));
   print (as_string (((double) (alpha+delta))/64));
   print (PS_ARC);
+}
+
+void
+printer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  print ((x1+x2)/2, (y1+y2)/2);
+  print (as_string ((x2-x1)/(2*PIXEL)));
+  print (as_string ((y1-y2)/(2*PIXEL)));
+  print (as_string (((double) alpha)/64));
+  print (as_string (((double) (alpha+delta))/64));
+  print (PS_FILL_ARC);
 }
 
 void

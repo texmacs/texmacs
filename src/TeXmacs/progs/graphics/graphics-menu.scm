@@ -187,16 +187,20 @@
   ("Polygon" (graphics-set-mode "cline"))
   ("Spline" (graphics-set-mode "spline"))
   ("C-Spline" (graphics-set-mode "cspline"))
+  ("Arc" (graphics-set-mode "arc"))
+  ("C-Arc" (graphics-set-mode "carc"))
   ("Text box" (graphics-set-mode "text-at"))
   ---
   ("Move" (graphics-set-mode '(group-edit move)))
   ("Zoom/unzoom" (graphics-set-mode '(group-edit zoom)))
   ("Rotate" (graphics-set-mode '(group-edit rotate)))
+  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
   ---
   ("Properties" (graphics-set-mode '(edit-prop))))
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
+  ("None" (graphics-set-color "none"))
   ---
   ("Black" (graphics-set-color "black"))
   ("White" (graphics-set-color "white"))
@@ -263,6 +267,12 @@
   ---
   ("Other" (interactive (lambda (x) (graphics-set-grid-color 2 x)) "Color")))
 
+(menu-bind graphics-point-style-menu
+  ("Default" (graphics-set-point-style "default"))
+  ---
+  ("Round" (graphics-set-point-style "round"))
+  ("Square" (graphics-set-point-style "square")))
+
 (menu-bind graphics-line-width-menu
   ("Default" (graphics-set-line-width "default"))
   ---
@@ -296,14 +306,9 @@
   (" ------------------>" (graphics-set-line-arrows 1))
   ("<---------------->" (graphics-set-line-arrows 2)))
 
-(menu-bind graphics-fill-mode-menu
-  ("None" (graphics-set-fill-mode "default"))
-  ---
-  ("Inside" (graphics-set-fill-mode "inside"))
-  ("Both"   (graphics-set-fill-mode "both")))
-
 (menu-bind graphics-fill-color-menu
   ("Default" (graphics-set-fill-color "default"))
+  ("None" (graphics-set-fill-color "none"))
   ---
   ("Black" (graphics-set-fill-color "black"))
   ("White" (graphics-set-fill-color "white"))
@@ -340,13 +345,15 @@
   (-> "Geometry" (link graphics-geometry-menu))
   (-> "Mode" (link graphics-mode-menu))
   (-> "Color" (link graphics-color-menu))
+  (-> "Point style" (link graphics-point-style-menu))
+  (-> "Fill color" (link graphics-fill-color-menu))
   (-> "Line properties"
       (-> "Width" (link graphics-line-width-menu))
       (-> "Dashes" (link graphics-dash-menu))
       (-> "Arrows" (link graphics-line-arrows-menu)))
-  (-> "Fill"
-      (-> "Fill mode" (link graphics-fill-mode-menu))
-      (-> "Fill color" (link graphics-fill-color-menu)))
+ ;(-> "Fill"
+ ;    (-> "Fill mode" ...)
+ ;    (-> "Fill color" ...))
   (-> "Text box alignment" (link graphics-text-align-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -360,14 +367,14 @@
   ;    (link graphics-mode-menu))
   (=> (balloon (icon "tm_color.xpm") "Color")
       (link graphics-color-menu))
+  (=> (balloon (icon "tm_point_style.xpm") "Point style")
+      (link graphics-point-style-menu))
   (=> (balloon (icon "tm_line_width.xpm") "Line width")
       (link graphics-line-width-menu))
   (=> (balloon (icon "tm_line_style.xpm") "Dashes")
       (link graphics-dash-menu))
   (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
       (link graphics-line-arrows-menu))
-  (=> (balloon (icon "tm_fill.xpm") "Fill mode")
-      (link graphics-fill-mode-menu))
   (=> (balloon (icon "tm_color.xpm") "Fill color")
       (link graphics-fill-color-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")

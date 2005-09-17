@@ -152,16 +152,22 @@ struct point_box_rep: public box_rep {
   point p;
   SI r;
   color col;
+  int fill;
+  color fill_col;
   string style;
-  point_box_rep (path ip, point p, SI radius, color col, string style);
+  point_box_rep (
+    path ip, point p, SI radius, color col,
+    int fill, color fill_col, string style);
   SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
   void display (ps_device dev);
   operator tree () { return "point"; }
 };
 
 point_box_rep::point_box_rep (
-  path ip2, point p2, SI r2, color col2, string style2):
-    box_rep (ip2), p (p2), r (r2), col (col2), style (style2)
+  path ip2, point p2, SI r2, color col2,
+  int fill2, color fill_col2, string style2):
+    box_rep (ip2), p (p2), r (r2), col (col2),
+    fill (fill2), fill_col (fill_col2), style (style2)
 {
   x1= x3= ((SI) p[0]) - r;
   y1= y3= ((SI) p[1]) - r;
@@ -171,28 +177,44 @@ point_box_rep::point_box_rep (
 
 void
 point_box_rep::display (ps_device dev) {
+  array<SI> x (4), y (4);
+  x[0]= ((SI) p[0]) - r;
+  y[0]= ((SI) p[1]) - r;
+  x[1]= ((SI) p[0]) - r;
+  y[1]= ((SI) p[1]) + r;
+  x[2]= ((SI) p[0]) + r;
+  y[2]= ((SI) p[1]) + r;
+  x[3]= ((SI) p[0]) + r;
+  y[3]= ((SI) p[1]) - r;
+  dev->set_line_style (PIXEL);
   if (style == "square") {
-    dev->set_color (col);
-    dev->set_line_style (PIXEL);
-    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r,
-	       ((SI) p[0]) - r, ((SI) p[1]) + r); 
-    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r,
-	       ((SI) p[0]) - r, ((SI) p[1]) + r); 
-    dev->line (((SI) p[0]) + r, ((SI) p[1]) + r,
-	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
-    dev->line (((SI) p[0]) - r, ((SI) p[1]) - r,
-	       ((SI) p[0]) + r, ((SI) p[1]) - r); 
+    if (fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+      dev->set_color (fill_col);
+      dev->line (x[0], y[0], x[1], y[1]);
+      dev->line (x[1], y[1], x[2], y[2]);
+      dev->line (x[2], y[2], x[3], y[3]);
+      dev->line (x[3], y[3], x[0], y[0]);
+      dev->polygon (x, y, false);
+    }
+    if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
+      dev->set_color (col);
+      dev->line (x[0], y[0], x[1], y[1]);
+      dev->line (x[1], y[1], x[2], y[2]);
+      dev->line (x[2], y[2], x[3], y[3]);
+      dev->line (x[3], y[3], x[0], y[0]);
+    }
   }
   else {
-  //TODO : Add non filled dots
-    int i, n= 4*(r/dev->pixel+1);
-    array<SI> x (n), y (n);
-    for (i=0; i<n; i++) {
-      x[i]= (SI) (p[0] + r * cos ((6.283185307*i)/n));
-      y[i]= (SI) (p[1] + r * sin ((6.283185307*i)/n));
+    if (style == "disk"
+     || fill == FILL_MODE_INSIDE || fill == FILL_MODE_BOTH) {
+      dev->set_color (style == "disk" ? col : fill_col);
+      dev->arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
+      dev->fill_arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
     }
-    dev->set_color (col);
-    dev->polygon (x, y);
+    if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
+      dev->set_color (col);
+      dev->arc (x[0], y[0]+dev->pixel, x[2], y[2]+dev->pixel, 0, 64*360);
+    }
   }
 }
 
@@ -524,8 +546,9 @@ graphics_group_box (path ip, array<box> bs) {
 }
 
 box
-point_box (path ip, point p, SI r, color col, string style) {
-  return new point_box_rep (ip, p, r, col, style);
+point_box (
+  path ip, point p, SI r, color col, int fill, color fill_col, string style) {
+  return new point_box_rep (ip, p, r, col, fill, fill_col, style);
 }
 
 box
