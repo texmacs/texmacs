@@ -110,7 +110,9 @@ concater_rep::typeset_point (tree t, path ip) {
   if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
     point p= env->fr (env->as_point (u));
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col, env->point_style));
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
+				env->fill_mode, env->fill_color,
+				env->point_style));
   }
 }
 

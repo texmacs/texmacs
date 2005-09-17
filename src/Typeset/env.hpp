@@ -55,9 +55,8 @@
 #define Env_Point_Style       24
 #define Env_Dash_Style        25
 #define Env_Dash_Style_Unit   26
-#define Env_Fill_Mode         27
-#define Env_Fill_Color        28
-#define Env_Line_Arrows       29
+#define Env_Fill_Color        27
+#define Env_Line_Arrows       28
 
 /******************************************************************************
 * For style file editing
@@ -101,9 +100,10 @@
 * Other enumerated values
 ******************************************************************************/
 
-#define FILL_MODE_NONE    0
-#define FILL_MODE_INSIDE  1
-#define FILL_MODE_BOTH    2
+#define FILL_MODE_NOTHING  0
+#define FILL_MODE_NONE     1
+#define FILL_MODE_INSIDE   2
+#define FILL_MODE_BOTH     3
 
 /******************************************************************************
 * The edit environment
@@ -356,8 +356,6 @@ public:
   void   update_src_compact ();
   void   update_src_close ();
   void   update_dash_style ();
-  void   update_fill_mode ();
-  void   update_fill_color ();
   void   update_line_arrows ();
   void   update ();
   void   update (string env_var);

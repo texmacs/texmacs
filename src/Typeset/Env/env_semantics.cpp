@@ -107,7 +107,6 @@ initialize_default_var_type () {
   var_type (LINE_WIDTH)        = Env_Line_Width;
   var_type (DASH_STYLE)        = Env_Dash_Style;
   var_type (DASH_STYLE_UNIT)   = Env_Dash_Style_Unit;
-  var_type (FILL_MODE)         = Env_Fill_Mode;
   var_type (FILL_COLOR)        = Env_Fill_Color;
   var_type (LINE_ARROWS)       = Env_Line_Arrows;
   var_type (GR_FRAME)          = Env_Frame;
@@ -270,8 +269,18 @@ edit_env_rep::update_font () {
 
 void
 edit_env_rep::update_color () {
-  string s= get_string (COLOR);
-  col= dis->get_color (s);
+  string c= get_string (COLOR);
+  string fc= get_string (FILL_COLOR);
+  if (c == "none") {
+    if (fc == "none") fill_mode= FILL_MODE_NOTHING;
+    else fill_mode= FILL_MODE_INSIDE;
+  }
+  else {
+    if (fc == "none") fill_mode= FILL_MODE_NONE;
+    else fill_mode= FILL_MODE_BOTH;
+  }
+  col= dis->get_color (c);
+  fill_color= dis->get_color (fc);
 }
 
 void
@@ -387,21 +396,6 @@ edit_env_rep::update_dash_style () {
   }
 }
 
-void
-edit_env_rep::update_fill_mode () {
-  string s= get_string (FILL_MODE);
-  fill_mode= FILL_MODE_NONE;
-  if (s=="none") fill_mode= FILL_MODE_NONE;
-  if (s=="inside") fill_mode= FILL_MODE_INSIDE;
-  if (s=="both") fill_mode= FILL_MODE_BOTH;
-}
-
-void
-edit_env_rep::update_fill_color () {
-  string s= get_string (FILL_COLOR);
-  fill_color= dis->get_color (s);
-}
-
 /*FIXME: Currently, the line-arrows property is evaluated
   only in the context of the variables which appear before
   it in the <with>. For example :
@@ -452,8 +446,6 @@ edit_env_rep::update () {
   lw= get_length (LINE_WIDTH);
   update_dash_style ();
   dash_style_unit= get_length (DASH_STYLE_UNIT);
-  update_fill_mode ();
-  update_fill_color ();
   update_line_arrows ();
 
   update_src_style ();
@@ -532,11 +524,8 @@ edit_env_rep::update (string s) {
   case Env_Dash_Style_Unit:
     dash_style_unit= get_length (DASH_STYLE_UNIT);
     break;
-  case Env_Fill_Mode:
-    update_fill_mode ();
-    break;
   case Env_Fill_Color:
-    update_fill_color ();
+    update_color ();
     break;
   case Env_Line_Arrows:
     update_line_arrows();
