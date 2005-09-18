@@ -117,6 +117,30 @@
 (define (mathtm-mphantom env a c)
   `((phantom ,(mathtm-args-serial env c))))
 
+(define (mathtm-sep-list l seps)
+  (cond ((null? l) l)
+	((null? seps) l)
+	(else (cons* (car l) `(m:mo ,(car seps))
+		     (mathtm-sep-list (cdr l) (cdr seps))))))
+
+(define (mathtm-mfenced env a c)
+  (let* ((open (car (or (assoc-ref a 'open) '("("))))
+	 (close (car (or (assoc-ref a 'close) '(")"))))
+	 (seps (string-tokenize (car (or (assoc-ref a 'separators) '("")))
+				#\space)))
+    (if (== seps '("")) (set! seps '()))
+    (mathtm env `(m:mrow (m:mo ,open)
+			 ,@(mathtm-sep-list c seps)
+			 (m:mo ,close)))))
+
+(define (mathtm-menclose env a c)
+  (let* ((args (mathtm-args env c))
+	 (notation (car (or (assoc-ref a 'notation) '(""))))
+	 (l (if (== notation "") '() (string-tokenize notation #\space))))
+    (if (in? "updiagonalstrike" l)
+	`((neg ,(mathtm-serial env args)))
+	args)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scripts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -452,8 +476,8 @@
   (merror (mathtm-handler :element mathtm-merror))
   (mpadded (mathtm-handler :element mathtm-pass))
   (mphantom (mathtm-handler :element mathtm-mphantom))
-  (mfenced (mathtm-handler :element mathtm-pass))
-  (menclose (mathtm-handler :element mathtm-pass))
+  (mfenced (mathtm-handler :element mathtm-mfenced))
+  (menclose (mathtm-handler :element mathtm-menclose))
   ;; Script and limits
   (msub (mathtm-handler :element mathtm-msub))
   (msup (mathtm-handler :element mathtm-msup))
