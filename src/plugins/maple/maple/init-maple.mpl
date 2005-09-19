@@ -230,23 +230,23 @@ end:
 # Top-level interface
 ##############################################################################
 
-tmprint := proc (x)
-  printf (`%c`, 2):
-  printf (`scheme:(math `):
-  tmout (tmrewrite (x), 0):
-  printf (`)`):
-  printf (`%c`, 5):
-  printf (`\n`):
-end:
-
 #tmprint := proc (x)
 #  printf (`%c`, 2):
-#  printf (`latex:$`):
-#  latex (x);
-#  printf (`$`):
+#  printf (`scheme:(math `):
+#  tmout (tmrewrite (x), 0):
+#  printf (`)`):
 #  printf (`%c`, 5):
 #  printf (`\n`):
 #end:
+
+tmprint := proc (x)
+  printf (`%c`, 2):
+  printf (`latex:$`):
+  latex (x);
+  printf (`$`):
+  printf (`%c`, 5):
+  printf (`\n`):
+end:
 
 unprotect (print):
 unprotect (lprint):
