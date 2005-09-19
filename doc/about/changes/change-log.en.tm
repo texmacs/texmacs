@@ -1,17 +1,26 @@
-<TeXmacs|1.0.5.6>
+<TeXmacs|1.0.5.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.7>
+  <section|Changes from version 1.0.5 to 1.0.5.8>
 
   <\itemize>
+    <item>Added converters from and to MathML (1.0.5.8).
+
+    <item>XML parser now expands entities which are defined in the document
+    (1.0.5.8).
+
+    <item>Added an option for reverse video mode (1.0.5.8).
+
+    <item>Further improvements for the upcoming graphical mode (1.0.5.8).
+
     <item>Several minor bugfixes from buglist (1.0.5.7).
 
-    <item>Further improvements in <verbatim|configure.in> and
-    use of <verbatim|autoheader> (1.0.5.7).
+    <item>Further improvements in <verbatim|configure.in> and use of
+    <verbatim|autoheader> (1.0.5.7).
 
     <item>Finished implementation of document parts and preambles (1.0.5.7).
 
