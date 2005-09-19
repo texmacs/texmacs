@@ -88,6 +88,20 @@
 	 (ahash-set! ,t ,var ,old-val)
 	 ,ret-val))))
 
+(define-public (ahash-table-invert t)
+  (let* ((l (ahash-table->list t))
+	 (u (map (lambda (x) (cons (cdr x) (car x))) l)))
+    (list->ahash-table u)))
+
+(define-public (ahash-table-append . tl)
+  (with ls (map ahash-table->list tl)
+    (list->ahash-table (apply append ls))))
+
+(define-public (ahash-table-map fun t)
+  (let* ((l (ahash-table->list t))
+	 (r (map (lambda (x) (cons (car x) (fun (cdr x)))) l)))
+    (list->ahash-table r)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dictionaries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
