@@ -8,6 +8,8 @@
   <section|Changes from version 1.0.5 to 1.0.5.8>
 
   <\itemize>
+    <item>Added a new interface with Maple (1.0.5.8).
+
     <item>Added converters from and to MathML (1.0.5.8).
 
     <item>XML parser now expands entities which are defined in the document

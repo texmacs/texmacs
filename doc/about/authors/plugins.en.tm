@@ -28,7 +28,7 @@
 
     <item*|Macaulay 2>Dan Grayson.
 
-    <item*|Maple>Christian Even.
+    <item*|Maple>Joris van der Hoeven.
 
     <item*|Mathemagix>Joris van der Hoeven.
 
