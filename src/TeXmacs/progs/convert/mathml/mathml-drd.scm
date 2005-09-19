@@ -23,25 +23,35 @@
   ("<mathi>" "&ImaginaryI;")
   ("<mathpi>" "&pi;"))
 
+(drd-table mathml-constant->tm%
+  ("&ii;" "<mathi>")
+  ("&true;" "true")
+  ("&false;" "false")
+  ("&phiv;" "<varphi>")
+  ("&ell;" "<ell>")
+  ("&Copf;" "<bbb-C>")
+  ("&Qopf;" "<bbb-Q>")
+  ("&Zopf;" "<bbb-Z>")
+  ("&Ropf;" "<bbb-R>"))
+
 (drd-table tm->mathml-operator%
   ("&" "&amp;")
   ("<less>" "&lt;")
   ("*" "&InvisibleTimes;")
   (" " "&ApplyFunction;"))
 
-(drd-table mathml-constant->tm%
-  ("&ii;" "<mathi>")
-  ("&true;" "true")
-  ("&false;" "false")
-  ("&Copf;" "<bbb-C>")
-  ("&Qopf;" "<bbb-Q>")
-  ("&Zopf;" "<bbb-Z>")
-  ("&Ropf;" "<bbb-R>"))
-
 (drd-table mathml-operator->tm%
   ("&it;" "*")
   ("*" "*")
+  ("&leq;" "<leq>")
+  ("&geq;" "<geq>")
   ("&RightArrow;" "<rightarrow>"))
+
+(drd-table mathml-symbol->tm%
+  ("&mldr;" "<cdots>")
+  ("&ThinSpace;" (hspace "0.1666667em"))
+  ("&MediumSpace;" (hspace "0.2222222em"))
+  ("&ThickSpace;" (hspace "0.2777778em")))
 
 (drd-rules
   ((mathml-constant->tm% 'x 'y) (tm->mathml-constant% 'y 'x))
@@ -63,6 +73,12 @@
   ("llbracket" "&LeftDoubleBracket;")
   ("/" "/"))
 
+(drd-table tmtm-left%
+  ;; For HTML entities &lfloor;, &lceil, etc.
+  ("<lfloor>" "lfloor")
+  ("<lceil>" "lceil")
+  ("<langle>" "langle"))
+
 (drd-table tm->mathml-right%
   (")" ")")
   ("]" "]")
@@ -72,6 +88,12 @@
   ("rceil" "&RightCeiling;")
   ("rrbracket" "&RightDoubleBracket;")
   ("\\\\" "&Backslash;"))
+
+(drd-table tmtm-right%
+  ;; For HTML entities &rfloor;, &rceil, etc.
+  ("<rfloor>" "rfloor")
+  ("<rceil>" "rceil")
+  ("<rangle>" "rangle"))
 
 (drd-table tm->mathml-big%
   ("sum" "&Sum;")
@@ -97,6 +119,12 @@
 ;;  ("parallel" "&Parallel;")
 ;;  ("interleave" "&Interleave;")
 )
+
+(drd-table tmtm-big%
+  ;; For HTML entities &sum;, &prod;, etc.
+  ("<sum>" "sum")
+  ("<prod>" "prod")
+  ("<int>" "int"))
 
 (drd-table tm->mathml-above-below%
   ("^" "&Hat;")
@@ -130,7 +158,8 @@
   ((tm->mathml-large% 'x 'y) (tm->mathml-right% 'x 'y))
   ((mathml-left->tm% 'x 'y) (tm->mathml-left% 'y 'x))
   ((mathml-right->tm% 'x 'y) (tm->mathml-right% 'y 'x))
-  ((mathml-large->tm% 'x 'y) (tm->mathml-large% 'y 'x))
+  ((mathml-large->tm% 'x 'y) (mathml-left->tm% 'x 'y))
+  ((mathml-large->tm% 'x 'y) (mathml-right->tm% 'x 'y))
   ((mathml-big->tm% 'x 'y) (tm->mathml-big% 'y 'x))
   ((tm->mathml-above% 'x 'y) (tm->mathml-only-above% 'x 'y))
   ((tm->mathml-above% 'x 'y) (tm->mathml-above-below% 'x 'y))

@@ -81,7 +81,7 @@
 	 "<?xml version='1.0'?>" '(*TOP* (*PI* xml "version='1.0'")))
    (test "empty PI" "<?empty?>" '(*TOP* (*PI* empty "")))
    (test "null PI" "<??>" `(*TOP* (*PI* ,(string->symbol "") "")))
-   (test "doctype" "<!DOCTYPE some stuff>" '(*TOP* (*DOCTYPE* "some stuff")))
+   (test "doctype" "<!DOCTYPE mytype>" '(*TOP* (*DOCTYPE* "mytype")))
    (test "implicit /p" "<p>hello<p>b" '(*TOP* (p "hello") (p "b")))
    (test "implicit /li" "<ul><li>a<li>b</ul>" '(*TOP* (ul (li "a")  (li "b"))))
    (test "implici /dt /dd"

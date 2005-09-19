@@ -61,10 +61,19 @@
 
 (define (mathtm-mo env a c)
   (cond ((null? c) '())
-	((drd-ref mathml-left->tm% (car c)) => (lambda (x) `((left ,x))))
-	((drd-ref mathml-right->tm% (car c)) => (lambda (x) `((right ,x))))
-	((drd-ref mathml-big->tm% (car c)) => (lambda (x) `((big ,x))))
-	(else (list (mathtm-args-serial env c)))))
+	((or (nnull? (cdr c)) (nstring? (car c)))
+	 (list (mathtm-args-serial env c)))
+	(else
+	 (let* ((s (car c))
+		(r (xmltm-text s)))
+	   (cond ((drd-ref mathml-left->tm% s) => (lambda (x) `((left ,x))))
+		 ((drd-ref mathml-right->tm% s) => (lambda (x) `((right ,x))))
+		 ((drd-ref mathml-big->tm% s) => (lambda (x) `((big ,x))))
+		 ((drd-ref mathml-symbol->tm% s) => (lambda (x) `(,x)))
+		 ((drd-ref tmtm-left% r) => (lambda (x) `((left ,x))))
+		 ((drd-ref tmtm-right% r) => (lambda (x) `((right ,x))))
+		 ((drd-ref tmtm-big% r) => (lambda (x) `((big ,x))))
+		 (else (list r)))))))
 
 (define (mathtm-mtext env a c)
   `((with "mode" "text" ,(mathtm-args-serial env c))))
@@ -81,9 +90,7 @@
       (mathtm-error "bad mfrac")))
 
 (define (mathtm-msqrt env a c)
-  (if (== (length c) 1)
-      `((sqrt ,(mathtm-as-serial env (first c))))
-      (mathtm-error "bad msqrt")))
+  `((sqrt ,(mathtm-args-serial env c))))
 
 (define (mathtm-mroot env a c)
   (if (== (length c) 2)
