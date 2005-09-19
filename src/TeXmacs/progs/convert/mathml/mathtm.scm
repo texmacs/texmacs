@@ -104,6 +104,8 @@
 	     (r (mathtm-style (cdr l))))
 	(cond ((or (func? h 'mathcolor) (func? h 'color))
 	       (cons* "color" (cadr h) r))
+	      ((func? h 'displaystyle)
+	       (cons* "math-display" (cadr h) r))
 	      ((or (== h '(mathvariant "bold"))
 		   (== h '(mathvariant "bold-italic")))
 	       (cons* "math-font-series" "bold" r))
