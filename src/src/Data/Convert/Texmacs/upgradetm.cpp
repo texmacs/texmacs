@@ -2371,7 +2371,7 @@ upgrade_doc_info (tree t) {
 }
 
 /******************************************************************************
-* Temporary for Marie-Francoise
+* Upgrade bibliographies
 ******************************************************************************/
 
 tree
@@ -2388,6 +2388,52 @@ upgrade_bibliography (tree t) {
       else if (is_compound (r[l], "bib-list"));
       else r[l]= tree (DOCUMENT, compound ("bib-list", "[99]", r[l]));
     }
+    return r;
+  }
+}
+
+/******************************************************************************
+* Upgrade switches
+******************************************************************************/
+
+tree
+upgrade_switch (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_switch (t[i]);
+    if (is_compound (r, "switch", 2)) {
+      int i, n= N(r[1]);
+      tree u (make_tree_label ("switch"), n);
+      for (i=0; i<n; i++)
+	if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
+	else u[i]= compound ("hidden", r[1][i]);
+      return u;
+    }
+    if (is_compound (r, "fold", 2))
+      return compound ("folded", r[0], r[1]);
+    if (is_compound (r, "unfold", 2))
+      return compound ("unfolded", r[0], r[1]);
+    if (is_compound (r, "fold-bpr", 2) ||
+	is_compound (r, "fold-text", 2) ||
+	is_compound (r, "fold-proof", 2) ||
+	is_compound (r, "fold-exercise", 2))
+      return compound ("summarized", r[0], r[1]);
+    if (is_compound (r, "unfold-bpr", 2) ||
+	is_compound (r, "unfold-text", 2) ||
+	is_compound (r, "unfold-proof", 2) ||
+	is_compound (r, "unfold-exercise", 2))
+      return compound ("detailed", r[0], r[1]);
+    if (is_compound (r, "fold-algorithm", 2))
+      return compound ("summarized-algorithm", r[0], r[1]);
+    if (is_compound (r, "unfold-algorithm", 2))
+      return compound ("detailed-algorithm", r[0], r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "fold-algorithm")
+      return tree (ASSIGN, "summarized-algorithm", r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "unfold-algorithm")
+      return tree (ASSIGN, "detailed-algorithm", r[1]);
     return r;
   }
 }
@@ -2487,5 +2533,7 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.4.6"))
     t= upgrade_bibliography (t);
+  if (version_inf_eq (version, "1.0.5.4"))
+    t= upgrade_switch (t);
   return t;
 }

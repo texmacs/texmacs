@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html htmlout)
-  (:use (convert tools output))
-  (:export serialize-html))
+  (:use (convert tools output)))
 
 (define preformatted? #f)
 
@@ -67,15 +66,24 @@
   (htmlout-text "</" (symbol->string s) ">"))
 
 (define (htmlout-args l big?)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(htmlout (car l))
-	(if (and big? (not (null? (cdr l)))) (output-lf))
+	(if (and big? (nnull? (cdr l))) (output-lf))
 	(htmlout-args (cdr l) big?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main output routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (htmlout-doctype l)
+  (define (helper x)
+    (if (string? x) (string-append "\"" x "\"") (symbol->string x)))
+  (let* ((l1 (map (lambda (x) (list " " (helper x))) l))
+	 (l2 (apply append l1))
+	 (l3 (append '("<!DOCTYPE") l2 '(">"))))
+    (apply output-lf-verbatim l3)
+    (output-lf)))
 
 (define (htmlout x)
   (cond ((string? x) (htmlout-text x))
@@ -89,6 +97,8 @@
   	((func? x '*PI*)
 	 (output-lf-verbatim "<?" (symbol->string (cadr x)) " " (caddr x) "?>")
 	 (output-lf))
+	((func? x '*DOCTYPE*)
+	 (htmlout-doctype (cdr x)))
 	((null? (cdr x))
 	 (htmlout-open (car x))
 	 (htmlout-close (car x)))
@@ -119,6 +129,6 @@
 	    thunk
 	    (lambda () (set! preformatted? saved-preformatted))))))
 
-(define (serialize-html x)
+(tm-define (serialize-html x)
   (htmlout x)
   (output-produce))

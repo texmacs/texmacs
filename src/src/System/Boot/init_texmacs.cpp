@@ -105,6 +105,7 @@ make_dir (url which) {
 static void
 init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH");
+  make_dir ("$TEXMACS_HOME_PATH/bin");
   make_dir ("$TEXMACS_HOME_PATH/doc");
   make_dir ("$TEXMACS_HOME_PATH/doc/about");
   make_dir ("$TEXMACS_HOME_PATH/doc/about/changes");
@@ -222,18 +223,31 @@ init_env_vars () {
   url style_path=
     get_env_path ("TEXMACS_STYLE_PATH",
 		  expand (complete (all_root * url_wildcard (), "dr")));
+  url text_root=
+    get_env_path ("TEXMACS_TEXT_ROOT",
+		  "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
+		  plugin_path ("texts"));
+  url text_path=
+    get_env_path ("TEXMACS_TEXT_PATH",
+		  expand (complete (text_root * url_wildcard (), "dr")));
 
   // Get other data paths
-  (void) get_env_path ("TEXMACS_FILE_PATH",
-		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
-		       style_path);
-  (void) get_env_path ("TEXMACS_DOC_PATH", "$TEXMACS_HOME_PATH/doc");
+  (void) get_env_path ("TEXMACS_FILE_PATH",text_path | style_path);
+  (void) set_env_path ("TEXMACS_DOC_PATH",
+		       get_env_path ("TEXMACS_DOC_PATH") |
+		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |
+		       plugin_path ("doc"));
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
   (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
-		       url ("$TEXMACS_PATH/misc/pixmaps"));
+		       url ("$TEXMACS_PATH/misc/pixmaps") |
+		       plugin_path ("misc/pixmaps"));
+  (void) get_env_path ("TEXMACS_DIC_PATH",
+		       "$TEXMACS_HOME_PATH/langs/natural/dic" |
+		       url ("$TEXMACS_PATH/langs/natural/dic") |
+		       plugin_path ("langs/natural/dic"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else

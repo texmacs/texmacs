@@ -13,15 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tmml tmmlout)
-  (:use (convert tools output))
-  (:export serialize-tmml))
+  (:use (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Determining output layout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmmlout-big? doc)
-  (cond ((not (pair? doc)) #f)
+  (cond ((npair? doc) #f)
 	((func? doc '!document) #t)
 	((func? doc 'tformat) #t)
 	((func? doc 'table) #t)
@@ -34,7 +33,7 @@
 
 (define (tmmlout-preserve-one? x first? last?)
   (cond ((func? x '!concat) (tmmlout-preserve? (cdr x) first? last?))
-	((not (string? x)) #f)
+	((nstring? x) #f)
 	((and first? (string-starts? x " ")) #t)
 	((and last? (string-ends? x " ")) #t)
 	(else (>= (string-search-forwards "  " 0 x) 0))))
@@ -59,10 +58,10 @@
   (output-verbatim "\"" (string-replace (cadr x) "\"" "\\\"") "\""))
 
 (define (tmmlout-stacked-args l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(tmmlout (car l))
-	(if (not (null? (cdr l)))
+	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
 	      (output-lf)))
@@ -89,8 +88,8 @@
 	 (tmmlout (car l))
 	 (if (and big?
 		  (pair? (cdr l))
-		  (not (string? (car l)))
-		  (not (string? (cadr l))))
+		  (nstring? (car l))
+		  (nstring? (cadr l)))
 	     (begin
 	       (output-lf)
 	       (if (func? (cadr l) 'tm-par) (output-lf))))
@@ -106,7 +105,7 @@
     (for-each tmmlout-attr attrs)
     (if (null? args) (output-text "/"))
     (output-text ">")
-    (if (not (null? args))
+    (if (nnull? args)
 	(begin
 	  (tmmlout-indent 2 big? preserve?)
 	  (tmmlout-args args big? preserve?)
@@ -131,6 +130,6 @@
 	((func? x '*TOP*) (tmmlout-stacked-args (cdr x)))
 	(else (tmmlout-tag (car x) '() (cdr x)))))
 
-(define (serialize-tmml x)
+(tm-define (serialize-tmml x)
   (tmmlout x)
   (output-produce))

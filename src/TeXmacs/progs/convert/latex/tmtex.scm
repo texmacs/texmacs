@@ -16,10 +16,7 @@
   (:use
     (convert tools tmpre) (convert tools tmtable)
     (convert rewrite tmtm-eqns) (convert rewrite tmtm-brackets)
-    (convert latex texout))
-  (:export
-    texmacs->latex
-    tmtex tmtex-initialize)) ;; for tmtex-test
+    (convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
@@ -30,7 +27,7 @@
 (define tmtex-faithful-style? #f)
 (define tmtex-indirect-bib? #f)
 
-(define (tmtex-initialize opts)
+(tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
   (set! tmtex-faithful-style?
 	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
@@ -128,7 +125,7 @@
 
 (define (tmtex-env-reset var)
   (let ((val (tmtex-env-list var)))
-    (if (not (null? val))
+    (if (nnull? val)
 	(ahash-set! tmtex-env var (cdr val)))))
 
 (define (tmtex-env-assign var val)
@@ -259,7 +256,7 @@
 	      ((== c #\*) (tmtex-math-list (cdr l)))
 ;;	      ((== c #\space) (tmtex-math-list (cdr l)))
 	      ((and (char-alphabetic? c)
-		    (not (null? (cdr l)))
+		    (nnull? (cdr l))
 		    (char-alphabetic? (cadr l)))
 	       (tmtex-math-operator l))
 	      (else (cons c (tmtex-math-list (cdr l))))))))
@@ -340,13 +337,15 @@
 (define (tmtex-filter-preamble l)
   (define (append-lists l)
     (if (null? l) l (append (car l) (append-lists (cdr l)))))
-  (cond ((or (not (list? l)) (null? l)) '())
+  (cond ((or (nlist? l) (null? l)) '())
 	((== (car l) 'assign) (list l))
+	((== (car l) 'hide-preamble) (cdadr l))
 	(else (append-lists (map tmtex-filter-preamble (cdr l))))))
 
 (define (tmtex-filter-body l)
-  (cond ((or (not (list? l)) (null? l)) l)
+  (cond ((or (nlist? l) (null? l)) l)
 	((== (car l) 'assign) "")
+	((== (car l) 'hide-preamble) "")
 	(else (cons (car l) (map tmtex-filter-body (cdr l))))))
 
 (define (tmtex-file l)
@@ -370,6 +369,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-noop l) "")
+(define (tmtex-id l) (tmtex (car l)))
+(define (tmtex-hide-part l) "")
+(define (tmtex-show-part l) (tmtex (cadr l)))
 
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
@@ -398,7 +400,7 @@
 (define (tmtex-script? x)
   (or (func? x '!sub)
       (func? x '!sup)
-      (and (string? x) (not (== x "")) (in? (string-ref x 0) '(#\' #\,)))
+      (and (string? x) (!= x "") (in? (string-ref x 0) '(#\' #\,)))
       (and (func? x '!concat) (tmtex-script? (cadr x)))))
 
 (define (tmtex-math-concat-spaces l)
@@ -487,7 +489,7 @@
   (tmtex-function '!group l))
 
 (define (tmtex-large-decode s)
-  (cond ((not (string? s)) ".")
+  (cond ((nstring? s) ".")
         ((in? s '("(" ")" "[" "]" "|" "/" ".")) s)
 	((== s "||") "\\|")
 	((== s "\\") "\\backslash")
@@ -506,7 +508,7 @@
   (list (string->symbol (string-append "right" (tmtex-large-decode (car l))))))
 
 (define (tmtex-big-decode s)
-  (cond ((not (string? s)) "bignone")
+  (cond ((nstring? s) "bignone")
         ((in? s '("sum" "prod" "int" "oint" "coprod")) s)
 	((== s "amalg") "coprod")
 	((== s "pluscup") "uplus")
@@ -566,18 +568,18 @@
 
 (define (tmtex-token? s)
   (or (= (string-length s) 1)
-      (and (not (== s ""))
+      (and (!= s "")
 	   (== (string-ref s 0) #\<)
 	   (== (string-index s #\>) (- (string-length s) 1)))))
        
 (define (tmtex-wide-star? x)
   (cond ((func? x 'wide* 1) (tmtex-wide-star? (cadr x)))
-	((not (string? x)) #t)
+	((nstring? x) #t)
 	(else (not (tmtex-token? x)))))
 
 (define (tmtex-wide-star l)
   (let ((wide (tmtex-wide-star? (car l))) (arg (tmtex (car l))) (acc (cadr l)))
-    (cond ((not (string? acc)) arg)
+    (cond ((nstring? acc) arg)
 	  ((== acc "<bar>") (list 'underline arg))
 	  ((== acc "<wide-bar>") (list 'underline arg))
 	  ((== acc "<wide-underbrace>") (list 'underbrace arg))
@@ -589,12 +591,12 @@
 
 (define (tmtex-wide? x)
   (cond ((func? x 'wide 1) (tmtex-wide? (cadr x)))
-	((not (string? x)) #t)
+	((nstring? x) #t)
 	(else (not (tmtex-token? x)))))
 
 (define (tmtex-wide l)
   (let ((wide (tmtex-wide? (car l))) (arg (tmtex (car l))) (acc (cadr l)))
-    (cond ((not (string? acc)) arg)
+    (cond ((nstring? acc) arg)
 	  ((== acc "<check>") (list 'check arg))
 	  ((== acc "<vect>") (list (if wide 'overrightarrow 'vec) arg))
 	  ((== acc "<acute>") (list 'acute arg))
@@ -700,9 +702,9 @@
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
       (let ((old (tmtex-env-get-previous "mode")))
-	(cond ((and (== val "text") (not (== old "text")))
+	(cond ((and (== val "text") (!= old "text"))
 	       (list 'text arg))
-	      ((and (== val "math") (not (== old "math")))
+	      ((and (== val "math") (!= old "math"))
 	       (list '!math arg))
 	      (else arg)))
       (let ((w (tmtex-get-with-cmd var val))
@@ -741,7 +743,7 @@
 	      (else r)))))
 
 (define (tmtex-var-name var)
-  (cond ((not (string? var)) "")
+  (cond ((nstring? var) "")
 	((drd-in? (string->symbol var) tmtex-protected%)
 	 (string-append "tm" var))
 	((<= (string-length var) 1) var)
@@ -763,7 +765,7 @@
 	    (tmtex-args-sub (cdr l) args))))
 
 (define (tmtex-args x args)
-  (cond ((not (list? x)) x)
+  (cond ((nlist? x) x)
 	((or (func? x 'arg) (func? x 'value))
 	 (let ((n (tmtex-args-search (cadr x) args)))
 	   (if n (list '!arg (number->string n)) (tmtex-args-sub x args))))
@@ -771,7 +773,7 @@
 
 (define (tmtex-assign l)
   (let ((var (tmtex-var-name (car l))) (val (cadr l)))
-    (if (not (== var ""))
+    (if (!= var "")
 	(begin
 	  (tmtex-env-assign var val)
 	  (cond ((string? val)
@@ -841,7 +843,7 @@
 		      (else (append (car l) (list sep) r)))))))
 
 (define (tmtex-select-data expr tag)
-  (let* ((data (tm-select expr (list tag)))
+  (let* ((data (select expr (list tag)))
 	 (sep (if (== tag 'author-address) '(!nextline) "; "))
 	 (fun (lambda (x)
 		(cond ((func? x 'document)
@@ -871,7 +873,7 @@
 (define (tmtex-doc-data s l)
   (let* ((tag (cons s l))
 	 (title (tmtex-select-data tag 'doc-title))
-	 (authors (map tmtex-make-author (tm-select tag '(doc-author-data))))
+	 (authors (map tmtex-make-author (select tag '(doc-author-data))))
 	 (date (tmtex-select-data tag 'doc-date))
 	 (note (tmtex-select-data tag 'doc-note))
 	 (keywords (tmtex-select-data tag 'doc-keywords))
@@ -925,6 +927,30 @@
 		  ((== r "enumerateAlpha") "enumeratealphacap")
 		  (else r))))
     (list (list '!begin t) (tmtex (car l)))))
+
+(define (tmtex-tiny s l)
+  (tex-apply 'tiny (tmtex (car l))))
+
+(define (tmtex-scriptsize s l)
+  (tex-apply 'scriptsize (tmtex (car l))))
+
+(define (tmtex-footnotesize s l)
+  (tex-apply 'footnotesize (tmtex (car l))))
+
+(define (tmtex-normalsize s l)
+  (tex-apply 'normalsize (tmtex (car l))))
+
+(define (tmtex-large s l)
+  (tex-apply 'large (tmtex (car l))))
+
+(define (tmtex-Large s l)
+  (tex-apply 'Large (tmtex (car l))))
+
+(define (tmtex-LARGE s l)
+  (tex-apply 'LARGE (tmtex (car l))))
+
+(define (tmtex-Huge s l)
+  (list 'Huge (tmtex (car l))))
 
 (define (tmtex-equation s l)
   (tmtex-env-set "mode" "math")
@@ -1014,7 +1040,7 @@
 
 (define (tmtex-cite-list l)
   (cond ((null? l) "")
-	((not (string? (car l))) (tmtex-cite-list (cdr l)))
+	((nstring? (car l)) (tmtex-cite-list (cdr l)))
 	((null? (cdr l)) (car l))
 	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
 
@@ -1071,7 +1097,7 @@
 (define (tmtex-list l)
   (map-in-order tmtex l))
 
-(define (tmtex x)
+(tm-define (tmtex x)
   (if (string? x) (tmtex-string x)
       (tmtex-apply (car x) (cdr x))))
 
@@ -1165,6 +1191,10 @@
   ((:or graphics point line arc bezier) tmtex-noop)
   (postscript tmtex-postscript)
   
+  (hidden tmtex-noop)
+  (shown tmtex-id)
+  (hide-part tmtex-hide-part)
+  (show-part tmtex-show-part)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
 
@@ -1182,6 +1212,19 @@
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)
    (,tmtex-list-env 1))
+  (really-tiny (,tmtex-tiny 1))
+  (very-tiny (,tmtex-tiny 1))
+  (really-small (,tmtex-scriptsize 1))
+  (very-small (,tmtex-scriptsize 1))
+  (smaller (,tmtex-footnotesize 1))
+  (flat-size (,tmtex-footnotesize 1))
+  (normal-size (,tmtex-normalsize 1))
+  (sharp-size (,tmtex-large 1))
+  (larger (,tmtex-Large 1))
+  (very-large (,tmtex-LARGE 1))
+  (really-large (,tmtex-LARGE 1))
+  (really-huge (,tmtex-Huge 1))
+
   ((:or equation equation*) (,tmtex-equation 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   ((:or the-index the-glossary) (,tmtex-dummy -1))
@@ -1201,7 +1244,9 @@
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
-  (menu (,tmtex-menu -1)))
+  (menu (,tmtex-menu -1))
+  ((:or shown show-part) (,tmtex-id 1))
+  ((:or hidden hide-part) (,tmtex-noop 1)))
 
 (drd-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
@@ -1213,7 +1258,7 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->latex x opts)
+(tm-define (texmacs->latex x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))

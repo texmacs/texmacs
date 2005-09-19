@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.5.4>
 
 <style|<tuple|source|std>>
 
@@ -45,7 +45,7 @@
 
   <\active*>
     <\src-comment>
-      Size tags (very-small: script-size, smaller: footnotesize, larger:
+      Size tags (very-small: scriptsize, smaller: footnotesize, larger:
       Large, very-large: LARGE, really-huge: HUGE)
     </src-comment>
   </active*>
@@ -188,24 +188,6 @@
   <assign|underline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide*|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 
   <drd-props|underline|arity|1|accessible|all>
-
-  <\active*>
-    <\src-comment>
-      Tags for dynamic presentations.
-    </src-comment>
-  </active*>
-
-  <assign|fold|<macro|x|y|<with|par-left|<plus|<value|par-left>|1.5fn>|<style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||r]1.5fn|>|(mouse-unfold)|<arg|x>>|<hflush>|<arg|x>>>>>>
-
-  <assign|unfold|<\macro|x|y>
-    <\with|par-left|<plus|<value|par-left>|1.5fn>>
-      <style-with|src-compact|none|<surround|<with|par-first|-1.5fn|<yes-indent>><action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>|<hflush>|<arg|x>>>
-
-      <surround||<right-flush>|<arg|y>>
-    </with>
-  </macro>>
-
-  <assign|switch|<macro|x|y|<surround||<right-flush>|<arg|x>>>>
 
   \;
 </body>

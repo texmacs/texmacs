@@ -10,6 +10,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
+#include "env.hpp"
 #include "Graphics/grid.hpp"
 #include "Graphics/point.hpp"
 #include "Graphics/frame.hpp"
@@ -35,6 +36,7 @@ struct grid_box_rep: public box_rep {
   path find_lip () { return path (-1); }
   path find_rip () { return path (-1); }
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
   int reindex (int i, int item, int n);
 };
 
@@ -83,9 +85,10 @@ grid_box_rep::display (ps_device dev) {
     array<grid_curve> grads= g->get_curves (l1, l2, u*un);
 
     for (i=0; i<N(grads); i++) {
-      curve c= f (grads[i].c);
+      curve c= f (grads[i]->c);
       bs << curve_box (
-	      decorate (ip), c, dev->pixel, dev->get_color (grads[i].col));
+	      decorate (ip), c, dev->pixel, dev->get_color (grads[i]->col),
+	      array<bool> (0), 0, FILL_MODE_NONE, dev->white, array<box> (0));
     }
     first_time= false;
     dev_pixel= dev->pixel;
@@ -96,6 +99,12 @@ grid_box_rep::display (ps_device dev) {
 
 gr_selections
 grid_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  return res;
+}
+
+gr_selections
+grid_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   gr_selections res;
   return res;
 }

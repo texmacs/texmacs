@@ -12,12 +12,34 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmconcat)
-  (:export
-    tmconcat-tokenize-math
-    tmconcat-structure-tabs
-    tmconcat-structure-brackets
-    tmconcat-structure-scripts))
+(texmacs-module (convert tools tmconcat))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constructor for concatenations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmconcat* . l)
+  (:synopsis "Non-correcting constructor of horizontal concatenations.")
+  (cond ((null? l) "")
+	((null? (cdr l)) (car l))
+	(else (cons 'concat l))))
+
+(define (tmconcat-simplify l)
+  (cond ((null? l) l)
+	((func? (car l) 'concat) (tmconcat-simplify (append (cdar l) (cdr l))))
+	((== (car l) "") (tmconcat-simplify (cdr l)))
+	((and (string? (car l)) (nnull? (cdr l)) (string? (cadr l)))
+	 (tmconcat-simplify (cons (string-append (car l) (cadr l)) (cddr l))))
+	(else (cons (car l) (tmconcat-simplify (cdr l))))))
+
+(tm-define (tmconcat . in)
+  (:synopsis "Constructor of horizontal concatenations with corrections.")
+  (let* ((l (tmconcat-simplify in))
+	 (o (length (list-filter l (lambda (x) (func? 'left x)))))
+	 (c (length (list-filter l (lambda (x) (func? 'right x))))))
+    (if (> o c) (set! l (append l (make-list (- o c) '(right ".")))))
+    (if (< o c) (set! l (append l '(right ".") (make-list (- o c)))))
+    (apply tmconcat* l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replacing mathematical string by list of tokens
@@ -122,27 +144,55 @@
 ;; Grouping scripts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmconcat-structure-scripts-sub l)
+  (cond ((null? l) l)
+	((func? (car l) 'rsub)
+	 (cons (list 'rsub! "" (cadar l))
+	       (tmconcat-structure-scripts-sub (cdr l))))
+	((func? (car l) 'rsup)
+	 (cons (list 'rsup! "" (cadar l))
+	       (tmconcat-structure-scripts-sub (cdr l))))
+	((match? l '(:1 (rsub :1) (rsup :1) :*))
+	 (cons (list 'rsubsup! (car l) (cadadr l) (cadr (caddr l)))
+	       (tmconcat-structure-scripts-sub (cdddr l))))
+	((match? l '(:1 (rsup :1) (rsub :1) :*))
+	 (cons (list 'rsubsup! (car l) (cadr (caddr l)) (cadadr l))
+	       (tmconcat-structure-scripts-sub (cdddr l))))
+	((match? l '(:1 (rsub :1) :*))
+	 (cons (list 'rsub! (car l) (cadadr l))
+	       (tmconcat-structure-scripts-sub (cddr l))))
+	((match? l '(:1 (rsup :1) :*))
+	 (cons (list 'rsup! (car l) (cadadr l))
+	       (tmconcat-structure-scripts-sub (cddr l))))
+	((or (func? (car l) 'lsub) (func? (car l) 'lsup))
+	 (let* ((r (tmconcat-structure-scripts-sub (cdr l)))
+		(s (if (== (caar l) 'lsub) 'lsub! 'lsup!)))
+	   (cond ((null? r) (list (list s "" (cadar l))))
+		 ((and (== s 'lsub!) (func? (car r) 'lsup!))
+		  (cons (list 'lsubsup! (cadar r) (cadar l) (caddar r))
+			(cdr r)))
+		 ((and (== s 'lsup!) (func? (car r) 'lsub!))
+		  (cons (list 'lsubsup! (cadar r) (caddar r) (cadar l))
+			(cdr r)))
+		 (else (cons (list s (car r) (cadar l)) (cdr r))))))
+	(else (cons (car l) (tmconcat-structure-scripts-sub (cdr l))))))
+
+(define (tmconcat-simplify-scripts l)
+  (cond ((null? l) l)
+	((func? (car l) 'lprime)
+	 (tmconcat-simplify-scripts (cons (cons 'lsup (cdar l)) (cdr l))))
+	((func? (car l) 'rprime)
+	 (tmconcat-simplify-scripts (cons (cons 'rsup (cdar l)) (cdr l))))
+	((null? (cdr l)) l)
+	((and (pair? (car l)) (pair? (cadr l))
+	      (in? (caar l) '(lsub lsup rsub rsup))
+	      (== (caar l) (caadr l)))
+	 (tmconcat-simplify-scripts
+	  `((,(caar l) (concat ,(cadar l) ,(cadadr l))) ,@(cddr l))))
+	(else (cons (car l) (tmconcat-simplify-scripts (cdr l))))))
+
 (tm-define (tmconcat-structure-scripts l)
   ;; used for instance in MathML generation
   (:type (forall T (-> (list T) (list T))))
   (:synopsis "Group scripts in @l.")
-  (cond ((null? l) l)
-	((match? l '(:1 (rsub :1) (rsup :1) :*))
-	 (cons (list 'rsubsup! (car l) (cadadr l) (cadr (caddr l)))
-	       (tmconcat-structure-scripts (cdddr l))))
-	((match? l '(:1 (rsup :1) (rsub :1) :*))
-	 (cons (list 'rsubsup! (car l) (cadr (caddr l)) (cadadr l))
-	       (tmconcat-structure-scripts (cdddr l))))
-	((match? l '(:1 (rsub :1) :*))
-	 (cons (list 'rsub! (car l) (cadadr l))
-	       (tmconcat-structure-scripts (cddr l))))
-	((match? l '(:1 (rsup :1) :*))
-	 (cons (list 'rsup! (car l) (cadadr l))
-	       (tmconcat-structure-scripts (cddr l))))
-	((func? (car l) 'rsub)
-	 (cons (list 'rsub! "" (cadar l))
-	       (tmconcat-structure-scripts (cdr l))))
-	((func? (car l) 'rsup)
-	 (cons (list 'rsup! "" (cadar l))
-	       (tmconcat-structure-scripts (cdr l))))
-	(else (cons (car l) (tmconcat-structure-scripts (cdr l))))))
+  (tmconcat-structure-scripts-sub (tmconcat-simplify-scripts l)))

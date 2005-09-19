@@ -15,7 +15,7 @@
 #include "tm_buffer.hpp"
 
 /******************************************************************************
-* Keyboard
+* Basic subroutines for keyboard handling
 ******************************************************************************/
 
 int
@@ -60,8 +60,13 @@ edit_interface_rep::in_spell_mode () {
   return input_mode == INPUT_SPELL;
 }
 
+bool
+edit_interface_rep::kbd_get_command (string which, string& help, command& c) {
+  return sv->kbd_get_command (which, help, c);
+}
+
 /******************************************************************************
-* Keyboard
+* Main keyboard routines
 ******************************************************************************/
 
 bool
@@ -108,6 +113,7 @@ simplify_key_press (string key) {
 
 void
 edit_interface_rep::key_press (string key) {
+  set_message ("", "");
   if (input_mode != INPUT_NORMAL)
     key= simplify_key_press (key);
   switch (input_mode) {
@@ -167,13 +173,7 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
 ******************************************************************************/
 
 void
-edit_interface_rep::show_keymaps () {
-  fatal_error ("no longer supported", "edit_interface_rep::show_keymaps");
-}
-
-void
 edit_interface_rep::handle_keypress (keypress_event ev) {
-  call ("lazy-in-mode-force");
   buf->mark_undo_block ();
   key_press (ev->key);
   notify_change (THE_DECORATIONS);

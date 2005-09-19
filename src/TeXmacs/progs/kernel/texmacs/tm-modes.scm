@@ -15,27 +15,7 @@
 (texmacs-module (kernel texmacs tm-modes)
   (:use
     (kernel drd drd-rules) (kernel drd drd-query) (kernel drd drd-data)
-    (kernel texmacs tm-plugins) (kernel texmacs tm-preferences))
-  (:export
-    texmacs-mode ;; for texmacs-modes macro
-    texmacs-modes
-    texmacs-in-mode? texmacs-submode?
-    lazy-in-mode-do ;; for lazy-in-mode macro
-    lazy-in-mode lazy-in-mode-force
-    ;; general texmacs modes
-    always? in-source? in-text? in-math? in-prog? in-math-not-hybrid?
-    in-table? in-io? in-session? not-in-session? in-math-in-session?
-    in-math-not-in-session? in-plugin-with-converters?
-    ;; language related modes
-    in-cyrillic?
-    in-czech? in-danish? in-dutch? in-english? in-finnish? in-french?
-    in-german? in-hungarian? in-italian? in-polish?
-    in-portugese? in-romanian? in-russian? in-slovene?
-    in-spanish? in-swedish? in-ukrainian?
-    ;; keyboard related modes
-    like-emacs? like-windows? like-old? like-old-text? like-old-math?
-    in-cyrillic-cp1251? in-cyrillic-jcuken? in-cyrillic-koi8?
-    in-cyrillic-translit? in-cyrillic-yawerty?))
+    (kernel texmacs tm-plugins) (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining new modes
@@ -47,75 +27,58 @@
 	 (pred-str (string-append mode-root "?")))
     (string->symbol pred-str)))
 
-(define (texmacs-mode item)
+(define-public (texmacs-mode item)
   (with (mode action . deps) item
     (let* ((pred (texmacs-mode-pred mode))
 	   (deps* (map list (map texmacs-mode-pred deps)))
 	   (l (if (== action #t) deps* (cons action deps*)))
 	   (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-	   (defn `(define (,pred) ,test))
+	   (defn `(define-public (,pred) ,test))
 	   (rules (map (lambda (dep) (list dep mode)) deps))
 	   (drd-cmd `(drd-rules ,@rules))
 	   (arch1 `(set-symbol-procedure! ',mode ,pred))
 	   (arch2 `(set-symbol-procedure! ',pred ,pred)))
+      (if (== mode 'always%) (set! defn '(noop)))
       (if (null? deps)
 	  (list 'begin defn arch1 arch2)
 	  (list 'begin defn arch1 arch2 drd-cmd)))))
 
-(define-macro (texmacs-modes . l)
+(define-public-macro (texmacs-modes . l)
   `(begin ,@(map texmacs-mode l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs-in-mode? mode)
+(define-public (texmacs-in-mode? mode)
   (with proc (symbol-procedure mode)
     (if proc (proc)
 	(catch #t (lambda () (eval (list mode))) (lambda err #f)))))
 
-(define (texmacs-mode-mode pred)
-  (let* ((pred-str (symbol->string pred))
-	 (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
-	 (mode-str (string-append pred-root "%")))
-    (string->symbol mode-str)))
+(define-public (texmacs-mode-mode pred)
+  "Get drd predicate name associated to scheme predicate or symbol"
+  (if (procedure? pred)
+      (with name (procedure-name pred)
+	(if name (texmacs-mode-mode name) 'unknown%))
+      (let* ((pred-str (symbol->string pred))
+	     (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))
+	     (mode-str (string-append pred-root "%")))
+	(string->symbol mode-str))))
 
 (define texmacs-submode-table (make-ahash-table))
 
-(define (texmacs-submode? what* of*)
+(define-public (texmacs-submode? what* of*)
+  "Test whether @what* is a sub-mode of @of*"
   (let* ((key (cons what* of*))
 	 (handle (ahash-get-handle texmacs-submode-table key)))
     (if handle (cdr handle)
 	(let* ((what (texmacs-mode-mode what*))
 	       (of (texmacs-mode-mode of*))
-	       (result (or (== of 'always%) (not (null? (query of what))))))
+	       (result (or (== of 'always%)
+			   (== what 'prevail%)
+			   (nnull? (query of what)))))
 	  (ahash-set! texmacs-submode-table key result)
 	  result))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lazy mode dependent actions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define lazy-in-mode-list '())
-
-(define (lazy-in-mode-do module mode*)
-  (with mode (texmacs-mode-mode mode*)
-    (set! lazy-in-mode-list (acons mode module lazy-in-mode-list))))
-
-(define-macro (lazy-in-mode module . modes)
-  (for-each (lambda (mode) (lazy-in-mode-do module mode)) modes)
-  '(noop))
-
-(define (lazy-in-mode-force-do l)
-  (cond ((null? l) l)
-	((texmacs-in-mode? (caar l))
-	 (module-load (cdar l))
-	 (lazy-in-mode-force-do (cdr l)))
-	(else (cons (car l) (lazy-in-mode-force-do (cdr l))))))
-
-(define (lazy-in-mode-force)
-  (set! lazy-in-mode-list
-	(reverse (lazy-in-mode-force-do (reverse lazy-in-mode-list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related
@@ -123,26 +86,32 @@
 
 (texmacs-modes
   (always% #t)
+  (prevail% #t)
   (in-source% (== (get-env "mode") "src"))
   (in-text% (and (== (get-env "mode") "text") (not (in-graphics?))))
   (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
   (in-prog% (and (== (get-env "mode") "prog") (not (in-graphics?))))
-  (in-math-not-hybrid% (not (inside? "hybrid")) in-math%)
-  (in-table% (and (inside? "table") (not (in-graphics?))))
-  (in-io% (and (or (inside? "input") (inside? "output")) (not (in-graphics?))))
-  (in-session% (inside? "session"))
-  (not-in-session% (not (inside? "session")))
+  (in-math-not-hybrid% (not (inside? 'hybrid)) in-math%)
+  (in-table% (and (inside? 'table) (not (in-graphics?))))
+  (in-io% (and (or (inside? 'input) (inside? 'output)) (not (in-graphics?))))
+  (in-session% (inside? 'session))
+  (not-in-session% (not (inside? 'session)))
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
+  (in-std% (style-has? "std-dtd"))
+  (in-std-text% #t in-text% in-std%)
   (in-plugin-with-converters%
-   (plugin-supports-math-input-ref (get-env "prog-language"))))
+   (plugin-supports-math-input-ref (get-env "prog-language")))
+  (with-active-selection% (selection-active-normal?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (in-cyrillic% (in? (get-env "language") '("russian" "ukrainian")) in-text%)
+  (in-cyrillic% (in? (get-env "language")
+		     '("bulgarian" "russian" "ukrainian")) in-text%)
+  (in-bulgarian% (== (get-env "language") "bulgarian") in-text%)
   (in-czech% (== (get-env "language") "czech") in-text%)
   (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
@@ -171,9 +140,6 @@
 (texmacs-modes
   (like-emacs% (== (get-preference "look and feel") "emacs"))
   (like-windows% (== (get-preference "look and feel") "windows"))
-  (like-old% (== (get-preference "look and feel") "old style"))
-  (like-old-text% #t like-old% in-text%)
-  (like-old-math% #t like-old% in-math%)
   (in-cyrillic-cp1251% (cyrillic-input-method? "cp1251") in-cyrillic%)
   (in-cyrillic-jcuken% (cyrillic-input-method? "jcuken") in-cyrillic%)
   (in-cyrillic-koi8% (cyrillic-input-method? "koi8") in-cyrillic%)

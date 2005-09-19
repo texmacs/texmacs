@@ -90,6 +90,7 @@ protected:
   /* other protected subroutines */
   virtual path tree_path (SI x, SI y, SI delta) = 0;
   virtual void apply_changes () = 0;
+  virtual void animate () = 0;
   virtual void correct_concat (path p, int done=0) = 0;
   virtual path search_format (int& row, int& col) = 0;
   virtual void table_bound (path fp, int& i1, int& j1, int& i2, int& j2) = 0;
@@ -107,13 +108,15 @@ public:
   virtual void suspend () = 0;
   virtual void resume () = 0;
   virtual int  get_pixel_size () = 0;
+  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void invalidate (rectangles rs) = 0;
   virtual void notify_change (int changed) = 0;
   virtual bool has_changed (int question) = 0;
-  virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
+  virtual int  idle_time (int event_type= ANY_EVENT) = 0;
+  virtual int  change_time () = 0;
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;
-  virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual int  get_input_mode () = 0;
   virtual void set_input_mode (int mode) = 0;
   virtual void set_input_normal () = 0;
@@ -121,9 +124,9 @@ public:
   virtual bool in_search_mode () = 0;
   virtual bool in_replace_mode () = 0;
   virtual bool in_spell_mode () = 0;
+  virtual bool kbd_get_command (string cmd_s, string& help, command& cmd) = 0;
   virtual void key_press (string key) = 0;
   virtual void emulate_keyboard (string keys, string action= "") = 0;
-  virtual void show_keymaps () = 0;
   virtual bool complete_try () = 0;
   virtual void complete_start (string prefix, array<string> compls) = 0;
   virtual bool complete_keypress (string key) = 0;
@@ -136,16 +139,23 @@ public:
   virtual void mouse_adjust (SI x, SI y) = 0;
   virtual void mouse_scroll (SI x, SI y, bool up) = 0;
   virtual cursor get_cursor () = 0;
-  virtual void set_message (string l, string r= "") = 0;
-  virtual void interactive (scheme_tree args, object cmd) = 0;
+  virtual void set_pointer (string name) = 0;
+  virtual void set_pointer (string curs_name, string mask_name) = 0;
+  virtual void set_message (string l, string r= "", bool temp= false) = 0;
+  virtual void recall_message () = 0;
 
   /* public routines from edit_cursor */
-  virtual path current_position () = 0;
+  virtual path make_cursor_accessible (path p, bool forwards) = 0;
+  virtual void show_cursor_if_hidden () = 0;
   virtual void go_to (SI x, SI y) = 0;
+  virtual void go_left_physical () = 0;
+  virtual void go_right_physical () = 0;
   virtual void go_left () = 0;
   virtual void go_right () = 0;
   virtual void go_up () = 0;
   virtual void go_down () = 0;
+  virtual void go_start_line () = 0;
+  virtual void go_end_line () = 0;
   virtual void go_page_up () = 0;
   virtual void go_page_down () = 0;
   virtual void go_to (path p) = 0;
@@ -156,24 +166,28 @@ public:
   virtual void go_to_here () = 0;
   virtual void go_start () = 0;
   virtual void go_end () = 0;
-  virtual void go_start_of (string what) = 0;
-  virtual void go_end_of (string what) = 0;
+  virtual void go_start_of (tree_label what) = 0;
+  virtual void go_end_of (tree_label what) = 0;
   virtual void go_start_with (string var, string val) = 0;
   virtual void go_end_with (string var, string val) = 0;
-  virtual void go_start_line () = 0;
-  virtual void go_end_line () = 0;
+  virtual void go_start_paragraph () = 0;
+  virtual void go_end_paragraph () = 0;
   virtual void go_to_label (string s) = 0;
   virtual tree get_labels () = 0;
 
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
+  virtual bool   inside_active_graphics () = 0;
   virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
   virtual grid   find_grid () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
+  virtual bool   find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) = 0;
   virtual point  adjust (point p) = 0;
   virtual tree   find_point (point p) = 0;
   virtual tree   graphical_select (double x, double y) = 0;
+  virtual tree   graphical_select (double x1, double y1,
+				   double x2, double y2) = 0;
   virtual tree   get_graphical_object () = 0;
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
@@ -219,16 +233,18 @@ public:
   virtual void remove (path p, int nr) = 0;
   virtual void split (path p) = 0;
   virtual void join (path p) = 0;
-  virtual void ins_unary (path p, tree_label op) = 0;
-  virtual void rem_unary (path p) = 0;
+  virtual void insert_node (path p, tree t) = 0;
+  virtual void remove_node (path p) = 0;
+  virtual void assign_node (path p, tree_label op) = 0;
   virtual void finished (path p) = 0;
   virtual void notify_assign (path p, tree u) = 0;
   virtual void notify_insert (path p, tree u) = 0;
   virtual void notify_remove (path p, int nr) = 0;
   virtual void notify_split (path p) = 0;
   virtual void notify_join (path p) = 0;
-  virtual void notify_ins_unary (path p, tree_label op) = 0;
-  virtual void notify_rem_unary (path p) = 0;
+  virtual void notify_insert_node (path p, tree t) = 0;
+  virtual void notify_remove_node (path p) = 0;
+  virtual void notify_assign_node (path p, tree_label op) = 0;
   virtual void post_notify (path p) = 0;
   virtual void remove_undo_mark () = 0;
   virtual void add_undo_mark () = 0;
@@ -236,17 +252,17 @@ public:
   virtual void forget_undo () = 0;
   virtual void undo () = 0;
   virtual void redo () = 0;
-  virtual void assign_diff (path p, tree u) = 0;
-  virtual int  position_new () = 0;
-  virtual void position_delete (int i) = 0;
-  virtual void position_set (int i, path p) = 0;
-  virtual path position_get (int i) = 0;
+  virtual observer position_new (path p) = 0;
+  virtual void position_delete (observer o) = 0;
+  virtual void position_set (observer o, path p) = 0;
+  virtual path position_get (observer o) = 0;
 
   /* public routines from edit_text */
   virtual void correct (path p) = 0;
   virtual bool insert_return () = 0;
   virtual void remove_return (path p) = 0;
   virtual void insert_tree (tree t, path p_in_t) = 0;
+  virtual void var_insert_tree (tree t, path p_in_t) = 0;
   virtual void insert_tree (tree t) = 0;
   virtual void remove_text (bool forward) = 0;
   virtual void remove_structure (bool forward) = 0;
@@ -264,8 +280,6 @@ public:
   virtual void make_htab (string spc) = 0;
   virtual void make_move (string x, string y) = 0;
   virtual void make_resize (string x1, string y1, string x2, string y2) = 0;
-  virtual void make_insertion (string s) = 0;
-  virtual void position_insertion (string what, bool flag) = 0;
   virtual void make_postscript (string file_name, bool link,
 				string w, string h,
 				string x1, string y1,
@@ -286,10 +300,6 @@ public:
   virtual void make_neg () = 0;
   virtual void make_tree () = 0;
 
-  virtual bool inside_tree () = 0;
-  virtual void branch_insert (bool at_right) = 0;
-  virtual void branch_delete (bool forward) = 0;
-
   /* public routines from edit_table */
   virtual void   make_table (int nr_rows=1, int nr_cols=1) = 0;
   virtual void   make_subtable (int nr_rows=1, int nr_cols=1) = 0;
@@ -297,8 +307,8 @@ public:
   virtual void   table_extract_format () = 0;
   virtual void   table_insert_row (bool forward) = 0;
   virtual void   table_insert_column (bool forward) = 0;
-  virtual void   table_delete_row (bool forward) = 0;
-  virtual void   table_delete_column (bool forward) = 0;
+  virtual void   table_remove_row (bool forward, bool flag= false) = 0;
+  virtual void   table_remove_column (bool forward, bool flag= false) = 0;
   virtual int    table_nr_rows () = 0;
   virtual int    table_nr_columns () = 0;
   virtual int    table_which_row () = 0;
@@ -329,6 +339,7 @@ public:
   virtual void insert_argument (path p, bool forward) = 0;
   virtual void insert_argument (bool forward) = 0;
   virtual void remove_argument (path p, bool forward) = 0;
+  virtual void remove_argument (bool forward) = 0;
   virtual void make_with (string var, string val) = 0;
   virtual void insert_with (path p, string var, tree val) = 0;
   virtual void remove_with (path p, string var) = 0;

@@ -91,8 +91,11 @@ get_position (font fn, string s, SI x) {
   fn->get_xpositions (s, xpos);
   while (i<n) {
     prev_i= i;
-    if (s[i]=='<') while ((i<n) && (s[i]!='>')) i++;
-    i++;
+    if (s[i]=='<') {
+      while ((i<n) && (s[i]!='>')) i++;
+      if (i<n) i++;
+    }
+    else i++;
     int m= (prev_x + xpos[i]) >> 1;
     if (x<m) {
       STACK_DELETE_ARRAY (xpos);

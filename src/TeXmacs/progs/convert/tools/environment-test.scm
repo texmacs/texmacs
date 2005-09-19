@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools environment-test)
-  (:use (convert tools environment))
-  (:export regtest-environment))
+  (:use (convert tools environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic environments
@@ -64,7 +63,7 @@
 ;; Test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (regtest-environment)
+(tm-define (regtest-environment)
   (let ((n (+ (regtest-environment-base))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of environment: ok\n")))

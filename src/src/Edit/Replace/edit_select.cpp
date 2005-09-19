@@ -23,7 +23,7 @@ selection_encode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return cork_to_il2 (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return koi8_to_iso (s);
   else if (lan == "ukrainian")
     return koi8uk_to_iso (s);
@@ -39,7 +39,7 @@ selection_decode (string lan, string s) {
   if ((lan == "czech") || (lan == "hungarian") ||
       (lan == "polish") || (lan == "slovene"))
     return il2_to_cork (s);
-  else if (lan == "russian")
+  else if ((lan == "bulgarian") || (lan == "russian"))
     return iso_to_koi8 (s);
   else if (lan == "ukrainian")
     return iso_to_koi8uk (s);
@@ -62,13 +62,6 @@ void edit_select_rep::get_selection (path& start, path& end) {
   start= copy (start_p); end= copy (end_p); }
 void edit_select_rep::set_selection (path start, path end) {
   start_p= copy (start); end_p= copy (end); }
-
-path
-common (path start, path end) {
-  if (nil (start) || nil (end)) return path ();
-  if (start->item != end->item) return path ();
-  return path (start->item, common (start->next, end->next));
-}
 
 /******************************************************************************
 * Selecting particular things
@@ -157,14 +150,12 @@ edit_select_rep::select_enlarge () {
       if (mode == "text" || mode == "src") {
 	int i1= last_item (start_p), i2= i1;
 	while (i1>0) {
-	  if (s[i1-1] == ' ') break;
-	  if (s[i1-1] == '>') do { i1--; } while ((i1>0) && (s[i1]!='<'));
-	  i1--;
+	  if (s[i1-1] == ' ' || is_punctuation (s[i1-1])) break;
+	  tm_char_backwards (s, i1);
 	}
 	while (i2<N(s)) {
-	  if (s[i2] == ' ') break;
-	  if (s[i2] == '<') do { i2++; } while ((i2<N(s)) && (s[i2]!='>'));
-	  i2++;
+	  if (s[i2] == ' ' || is_punctuation (s[i2])) break;
+	  tm_char_forwards (s, i2);
 	}
 	if (i1<i2) select (p * i1, p * i2);
 	else {
@@ -781,7 +772,7 @@ edit_select_rep::selection_get_cut () {
 
 void
 edit_select_rep::selection_move () {
-  int pos= position_new ();
+  observer pos= position_new (tp);
   tree t= selection_get_cut ();
   go_to (position_get (pos));
   insert_tree (t);

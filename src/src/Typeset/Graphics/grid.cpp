@@ -80,9 +80,10 @@ struct empty_grid_rep: public grid_rep {
 
 point
 empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
-  double x= floor (10.0*p[0] + 0.5);
+/*double x= floor (10.0*p[0] + 0.5);
   double y= floor (10.0*p[1] + 0.5);
-  return point (x / 10.0, y / 10.0);
+  return point (x / 10.0, y / 10.0);*/
+  return p;
 }
 
 grid
@@ -109,9 +110,7 @@ create_line (double x1, double y1, double x2, double y2, string col) {
   a[0]= point (x1, y1);
   a[1]= point (x2, y2);
   array<path> cip(2);
-  grid_curve res;
-  res.col= col;
-  res.c= poly_segment (a, cip);
+  grid_curve res= grid_curve (col, poly_segment (a, cip));
   return res;
 }
 
@@ -202,9 +201,7 @@ create_arc (
   a[1]= point (x2, y2);
   a[2]= point (x3, y3);
   array<path> cip(3);
-  grid_curve res;
-  res.col= col;
-  res.c= arc (a, cip, true);
+  grid_curve res= grid_curve (col, arc (a, cip, true));
   return res;
 }
 
@@ -461,5 +458,5 @@ as_grid (tree t) {
 
 tree
 as_tree (grid g) {
-  (tree) g;
+  return (tree) g;
 }

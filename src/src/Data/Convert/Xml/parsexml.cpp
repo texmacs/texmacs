@@ -13,6 +13,7 @@
 #include "convert.hpp"
 #include "hashset.hpp"
 #include "converter.hpp"
+#include "parse_string.hpp"
 
 /******************************************************************************
 * The xml/html parser aims to parse a superset of the set of valid documents.
@@ -29,30 +30,35 @@
 * closing tags in the case of Html. The last stage does some final
 * white space and entity cleanup.
 *
-* Present limitations: we do not really parse <!DOCTYPE ...> constructs yet
-* Consequently, we perform no entity replacements and it is not yet possible
-* to associate default xml:space attributes to tags.
+* Present limitations: we do not fully parse <!DOCTYPE ...> constructs yet.
+* Entities which are present in the DOCTYPE definition of the document
+* will be expanded. However, external DTD's are not read. Notice also that
+* it is not yet possible to associate default xml:space attributes to tags.
 ******************************************************************************/
 
 struct xml_html_parser {
   bool html;
-  int i, n;
-  string s;
+  parse_string s;
+  hashmap<string,string> entities;
   array<tree> a;
+  int i, n;
   tree stack;
 
   xml_html_parser ();
   inline void skip_space () {
-    while ((i<n) && is_space (s[i])) i++; }
+    while (s && is_space (s[0])) s += 1; }
   inline bool is_name_char (char c) {
     return is_alpha (c) || is_digit (c) ||
       (c == '_') || (c == ':') || (c == '.') || (c == '-') ||
       (((int) ((unsigned char) c)) >= 128); }
 
-  void transcode ();
+  string transcode (string s);
 
   string parse_until (string what);
   string parse_name ();
+  string parse_quoted ();
+  string expand_entity (string s);
+  string expand_entities (string s);
   string parse_entity ();
   tree parse_attribute ();
   tree parse_opening ();
@@ -60,9 +66,16 @@ struct xml_html_parser {
   tree parse_pi ();
   tree parse_comment ();
   tree parse_cdata ();
-  tree parse_doctype ();
   tree parse_misc ();
   void parse ();
+
+  tree parse_system ();
+  tree parse_public ();
+  tree parse_element ();
+  tree parse_attlist ();
+  void parse_entity_decl ();
+  tree parse_notation ();
+  tree parse_doctype ();
 
   // NOTE: these routines should remain there even if they are not used
   bool finalize_preserve_space (string tag);
@@ -74,8 +87,6 @@ struct xml_html_parser {
   bool build_can_close (string tag);
   void build (tree& r);
 
-  string finalize_entities (string t);
-  tree finalize_entities (tree t);
   tree finalize_sxml (tree t);
   tree parse (string s);
 };
@@ -107,7 +118,7 @@ void load_html_entities (hashmap<string, string> table, string fname) {
       }
 }
 
-xml_html_parser::xml_html_parser () {
+xml_html_parser::xml_html_parser (): entities ("") {
   if (N(html_empty_tag_table) == 0) {
     html_empty_tag_table->insert ("basefont");
     html_empty_tag_table->insert ("br");
@@ -188,32 +199,33 @@ xml_html_parser::xml_html_parser () {
 // If no <?xml?> prolog is found, the encoding is assumed to be UTF-8 or
 // ISO-8859-1 if iconv cannot perform an utf8->utf8 conversion.
 
-void
-xml_html_parser::transcode () {
-  i=0; n=N(s);
+string
+xml_html_parser::transcode (string s2) {
+  s= parse_string (s2);
+
   string encoding;
-  if (test (s, i, "<?")) {
-    i+= 2;
+  if (test (s, "<?")) {
+    s += 2;
     string target= parse_name ();
     skip_space ();
     if (target == "xml") {
       // since html==true implies we can accept horribly broken HTML, the
       // presence of an XML prolog is not enough to clear the flag.
       /* html= false; */
-      while (i < n && ! test (s, i, "?>")) {
+      while (s && !test (s, "?>")) {
 	string attname= parse_name ();
 	skip_space ();
-	if (! test (s, i, "=")) break;
-	i++;
+	if (!test (s, "=")) break;
+	s += 1;
 	skip_space ();
 	string val;
-	if (test (s, i, "\"")) {
-	  i++;
+	if (test (s, "\"")) {
+	  s += 1;
 	  val= parse_until ("\"");
 	  skip_space ();	  
 	}
-	else if (test (s, i, "'")) {
-	  i++;
+	else if (test (s, "'")) {
+	  s += 1;
 	  val= parse_until ("'");
 	  skip_space ();
 	}
@@ -224,23 +236,25 @@ xml_html_parser::transcode () {
       }
     }
   }
+
   if (N(encoding) != 0) {
     // cout << "encoding was specified\n" ;
-    string s2= convert (s, encoding, "UTF-8");
-    if (N(s2) == 0)
-      /* conversion from specified charsed failed, do nothing (and pray) */ ;
-    else
-      s= s2;
+    string s3= convert (s2, encoding, "UTF-8");
+    if (N(s3) == 0)
+      /* conversion from specified charset failed, do nothing (and pray) */ ;
+    else return s3;
   }
   else {
     // cout << "guess encoding\n" ;
-    if (check_encoding (s, "UTF-8"))
+    if (check_encoding (s2, "UTF-8"))
       /* input encoding seems to be utf-8, do nothing */ ;
     else {
-      string s2= convert (s, "ISO-8859-1", "UTF-8");
-      if (N(s2) != 0) s=s2;
+      string s3= convert (s2, "ISO-8859-1", "UTF-8");
+      if (N(s3) != 0) return s3;
     }
   }
+
+  return s2;
 }
 
 /******************************************************************************
@@ -249,40 +263,99 @@ xml_html_parser::transcode () {
 
 string
 xml_html_parser::parse_until (string what) {
-  int start= i;
-  while ((i<n) && (!test (s, i, what))) i++;
-  if (test (s, i, what)) {
-    string r= s (start, i);
-    i += N(what);
-    return r;
-  }
-  return "";
+  string r;
+  while (s && !test (s, what)) r << s->read (1);
+  if (test (s, what)) s += N(what);
+  return expand_entities (r);
 }
 
 string
 xml_html_parser::parse_name () {
-  int start= i;
-  while ((i<n) && is_name_char (s[i])) i++;
-  if (html) return locase_all (s (start, i));
-  return s (start, i);
+  string r;
+  while (s && is_name_char (s[0])) r << s->read (1);
+  if (html) return locase_all (r);
+  return expand_entities (r);
+}
+
+string
+xml_html_parser::expand_entity (string s) {
+  if (entities->contains (s)) return entities[s];
+  else if (s[0] == '&') {
+    if (N(s)>1 && s[1] == '#') {
+      int i= 2;
+      bool okay= false;
+      string r= convert_char_entity (s, i, okay);
+      if (okay) return r;
+      return s;
+    }
+    else {
+      string ss= s (1, ss [N(s)-1] == ';' ? N(s)-1 : N(s));
+      if (html_entity->contains (ss)) {
+	// Use HTML entities even for XML.
+	// HTML entity references expand to character references
+	// so they need to be finalized a second time.
+	return expand_entity (html_entity [ss]);
+      }
+    }
+  }
+  return s;
+}
+
+string
+xml_html_parser::expand_entities (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; ) {
+    if (s[i] == '&' || s[i] == '%') {
+      int start= i++;
+      if (i<n && s[i] == '#') {
+	i++;
+	if (i<n && s[i] == 'x' || s[i] == 'X') {
+	  i++;
+	  while (i<n && is_hex_digit (s[i])) i++;
+	}
+	else while (i<n && is_digit (s[i])) i++;
+      }
+      else while (i<n && is_name_char (s[i])) i++;
+      if (i<n && s[i] == ';') i++;
+      r << expand_entity (s (start, i));
+    }
+    else r << s[i++];
+  }
+  if (r == s) return r;
+  return expand_entities (r);
 }
 
 string
 xml_html_parser::parse_entity () {
-  int start= i++;
-  if (i<n) {
-    if (s[i] == '#') {
-      i++;
-      if (i<n && (s[i] == 'x' || s[i] == 'X')) {
-	i++;
-	while (i<n && is_hex_digit (s[i])) i++;
-      }
-      else while (i<n && is_digit (s[i])) i++;
+  string r= s->read (1);
+  if (test (s, "#")) {
+    r << s->read (1);
+    if (test (s, "x") || test (s, "X")) {
+      r << s->read (1);
+      while (s && is_hex_digit (s[0])) r << s->read (1);
     }
-    else while (i<n && is_name_char (s[i])) i++;
-    if (i<n && s[i] == ';') i++;
+    else while (s && is_digit (s[0])) r << s->read (1);
   }
-  return s (start, i);
+  else while (s && is_name_char (s[0])) r << s->read (1);
+  if (test (s, ";")) r << s->read (1);
+  string x= expand_entity (r);
+  if (x == r || r == "&lt;" || r == "&amp;") return x;
+  s->write (x);
+  return "";
+}
+
+string
+xml_html_parser::parse_quoted () {
+  if (test (s, "\42")) {
+    s += 1;
+    return parse_until ("\42");
+  }
+  if (test (s, "'")) {
+    s += 1;
+    return parse_until ("'");
+  }
+  return "";
 }
 
 tree
@@ -290,24 +363,18 @@ xml_html_parser::parse_attribute () {
   string attr= parse_name (), val;
   bool no_val= false;
   skip_space ();
-  if (test (s, i, "=")) i++;
+  if (test (s, "=")) s += 1;
   skip_space ();
-  if (test (s, i, "\42")) {
-    i++;
-    val= parse_until ("\42");
-  }
-  else if (test (s, i, "'")) {
-    i++;
-    val= parse_until ("'");
-  }
+  if (test (s, "\42") || test (s, "'"))
+    val= parse_quoted ();
   else { // for Html
-    int start= i;
-    while (i<n) {
-      if (is_space (s[i]) || (s[i]=='<') || (s[i]=='>')) break;
-      i++;
+    string r;
+    while (s) {
+      if (is_space (s[0]) || (s[0]=='<') || (s[0]=='>')) break;
+      r << s->read (1);
     }
-    val= s (start, i);
-    no_val= (start == i);
+    val   = r;
+    no_val= N(r) == 0;
   }
   if (!no_val) return tuple ("attr", attr, val);
   else if (attr != "") return tuple ("attr", attr);
@@ -316,24 +383,24 @@ xml_html_parser::parse_attribute () {
 
 tree
 xml_html_parser::parse_opening () {
-  i++;
+  s += 1;
   string name= parse_name ();
   tree t= tuple ("begin", name);
   while (true) {
     skip_space ();
-    if ((i==n) || (s[i]=='>') || test (s, i, "/>")) break;
+    if (!s || s[0] == '>' || test (s, "/>")) break;
     tree attr= parse_attribute ();
     if (attr == tuple ("attr")) break;
     t << attr;
   }
-  if (test (s, i, "/>")) { t[0]= "tag"; i+=2; }
-  else if (test (s, i, ">")) i++;
+  if (test (s, "/>")) { t[0]= "tag"; s += 2; }
+  else if (test (s, ">")) s += 1;
   return t;
 }
 
 tree
 xml_html_parser::parse_closing () {
-  i+=2;
+  s += 2;
   string name= parse_name ();
   (void) parse_until (">");
   return tuple ("end", name);
@@ -341,7 +408,7 @@ xml_html_parser::parse_closing () {
 
 tree
 xml_html_parser::parse_pi () {
-  i+=2;
+  s += 2;
   string name= parse_name ();
   skip_space ();
   return tuple ("pi", name, parse_until ("?>"));
@@ -349,63 +416,159 @@ xml_html_parser::parse_pi () {
 
 tree
 xml_html_parser::parse_comment () {
-  i+=4;
+  s += 4;
   return tuple ("comment", parse_until ("-->"));
 }
 
 tree
 xml_html_parser::parse_cdata () {
-  i+=9;
+  s += 9;
   return tuple ("cdata", parse_until ("]]>"));
 }
 
 tree
-xml_html_parser::parse_doctype () {
-  i+=9;
-  // FIXME: doctype may contain '>' in ExternalID and in internal DTD subset
-  skip_space ();
-  return tuple ("doctype", parse_until (">"));
-}
-
-tree
 xml_html_parser::parse_misc () {
-  i+=2;
+  s += 2;
   tree t= tuple ("misc");
   while (true) {
     skip_space ();
-    if (test (s, i, ">")) { i++; break; }
-    int start= i;
-    while (i<n) {
-      char c= s[i];
-      if (is_space (c) || (c == '>')) break;
-      i++;
+    if (test (s, ">")) { s += 1; break; }
+    string r;
+    while (s) {
+      if (is_space (s[0]) || (s[0] == '>')) break;
+      r << s->read (1);
     }
-    t << s (start, i);
+    t << r;
   }
   return t;
 }
 
 void
 xml_html_parser::parse () {
-  int start= i;
-  while (i<n) {
-    // cout << "Parsing " << i << "/" << n << "\n";
-    if (s[i] == '<') {
-      if (i>start) a << tree (s (start, i));
-      if (test (s, i, "</")) a << parse_closing ();
-      else if (test (s, i, "<?")) a << parse_pi ();
-      else if (test (s, i, "<!--")) a << parse_comment ();
-      else if (test (s, i, "<![CDATA[")) a << parse_cdata ();
-      else if (test (s, i, "<!DOCTYPE")) a << parse_doctype ();
-      else if (test (s, i, "<!")) a << parse_misc ();
+  string r;
+  while (s) {
+    if (s[0] == '<') {
+      if (N(r) != 0) { a << tree (r); }
+      if (test (s, "</")) a << parse_closing ();
+      else if (test (s, "<?")) a << parse_pi ();
+      else if (test (s, "<!--")) a << parse_comment ();
+      else if (test (s, "<![CDATA[")) a << parse_cdata ();
+      else if (test (s, "<!DOCTYPE")) a << parse_doctype ();
+      else if (test (s, "<!")) a << parse_misc ();
       else a << parse_opening ();
-      start= i;
+      r= "";
     }
-    else if (s[i] == '&')
-      (void) parse_entity ();
-    else i++;
+    else if (s[0] == '&') r << parse_entity ();
+    else r << s->read (1);
   }
-  if (i>start) a << tree (s (start, i));
+  if (N(r) != 0) a << tree (r);
+}
+
+/******************************************************************************
+* Parsing the document type
+******************************************************************************/
+
+tree
+xml_html_parser::parse_system () {
+  s += 6;
+  tree st= tuple ("system");
+  skip_space ();
+  st << parse_quoted ();
+  return st;
+}
+
+tree
+xml_html_parser::parse_public () {
+  s += 6;
+  tree st= tuple ("public");
+  skip_space ();
+  st << parse_quoted ();
+  skip_space ();
+  st << parse_quoted ();
+  return st;
+}
+
+tree
+xml_html_parser::parse_element () {
+  s += 9;
+  return tuple ("element", parse_until (">"));
+}
+
+tree
+xml_html_parser::parse_attlist () {
+  s += 9;
+  return tuple ("attlist", parse_until (">"));
+}
+
+void
+xml_html_parser::parse_entity_decl () {
+  s += 8;
+  skip_space ();
+  bool parameter= test (s, "%");
+  if (parameter) { s += 1; skip_space (); }
+  string name= parse_name ();
+  if (parameter) name= "%" * name * ";";
+  else name= "&" * name * ";";
+  skip_space ();
+
+  if (test (s, "SYSTEM") || test (s, "PUBLIC")) {
+    // TODO: allow for loading of external entities using wget
+    if (test (s, "SYSTEM")) (void) parse_system ();
+    else (void) parse_public ();
+    skip_space ();
+    if (test (s, "NDATA")) {
+      s += 5;
+      skip_space ();
+      (void) parse_name ();
+    }
+  }
+  else {
+    string val= parse_quoted ();
+    val= expand_entities (val);
+    entities (name) = val;
+    // cout << name << " := " << val << "\n";
+  }
+
+  skip_space ();
+  if (test (s, ">")) s += 1;
+}
+
+tree
+xml_html_parser::parse_notation () {
+  s += 10;
+  return tuple ("notation", parse_until (">"));
+}
+
+tree
+xml_html_parser::parse_doctype () {
+  s += 9;
+  tree dt= tuple ("doctype");
+  skip_space ();
+  dt << parse_name ();
+  skip_space ();
+  if (test (s, "SYSTEM")) dt << parse_system ();
+  else if (test (s, "PUBLIC")) dt << parse_public ();
+  skip_space ();
+
+  if (test (s, "[")) {
+    s += 1;
+    while (s) {
+      skip_space ();
+      if (test (s, "]")) { s += 1; break; }
+      else if (test (s, "<!ELEMENT")) dt << parse_element ();
+      else if (test (s, "<!ATTLIST")) dt << parse_cdata ();
+      else if (test (s, "<!ENTITY")) parse_entity_decl ();
+      else if (test (s, "<!NOTATION")) a << parse_notation ();
+      else if (test (s, "<?")) dt << parse_pi ();
+      else if (test (s, "<!--")) dt << parse_comment ();
+      else if (s[0] == '&' || s[0] == '%') (void) parse_entity ();
+      else s += 1;
+    }
+  }
+
+  skip_space ();
+  if (test (s, ">")) s += 1;
+  return dt;
 }
 
 /******************************************************************************
@@ -546,54 +709,6 @@ xml_html_parser::finalize_space (tree t) {
   }
 }
 
-string
-xml_html_parser::finalize_entities (string s) {
-  string r;
-  int i, n= N(s);
-
-  for (i=0; i<n; /* noop */) {
-    if (s[i] == '&' && i+1<n) {
-      if (s[i+1] == '#') {
-	i += 2;
-	bool okay= false;
-	string rr= convert_char_entity (s, i, okay);
-	if (okay) r << rr;
-	else { r << "&#"; continue; }
-      }
-      else {
-	int start= ++i;
-	while (i<n && is_name_char (s[i])) i++;
-	if (i == start) { r << '&'; continue; }
-	string ss= s(start, i);
-	// cout << "ent-ref:  " << ss << " -- ";
-	if (html_entity->contains (ss)) {
-	  // Use HTML entities even for XML.
-	  // HTML entity references expand to character references
-	  // so they need to be finalized a second time.
-	  r << finalize_entities (html_entity[ss]);
-	}
-	else { r << "&" << ss; continue; }
-	if (i<n && s[i]==';') i++;
-      }
-    }
-    else r << s[i++];
-  }
-  return r;
-}
-
-tree
-xml_html_parser::finalize_entities (tree t) {
-  if (is_atomic (t))
-    return finalize_entities (t->label);
-  else {
-    int i, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= finalize_entities (t[i]);
-    return r;
-  }
-}
-
 static string
 simple_quote (string s) {
   return "\"" * s * "\"";
@@ -621,6 +736,7 @@ xml_html_parser::finalize_sxml (tree t) {
     else if (is_tuple (t[i], "pi"))
       content << tuple ("*PI*", t[i][1]->label, simple_quote (t[i][2]->label));
     else if (is_tuple (t[i], "doctype"))
+      // TODO: convert DTD declarations
       content << tuple ("*DOCTYPE*", simple_quote (t[i][1]->label));
     else if (is_tuple (t[i], "cdata"))
       content << simple_quote (t[i][1]->label);
@@ -636,35 +752,34 @@ xml_html_parser::finalize_sxml (tree t) {
 tree
 xml_html_parser::parse (string s2) {
   // end of line handling
-  s= ""; i= 0; n= N(s2);
+  string s3;
+  i= 0, n= N(s2);
   bool is_cr= false;
   while (i<n) {
     bool prev_is_cr= is_cr;
     is_cr= false;
     char c= s2[i];
     if (c == '\15') {
-      s << '\12';
+      s3 << '\12';
       is_cr= true;
     }
     else if (prev_is_cr && (c == '\12')) /* no-op */;
-    else s << c;
+    else s3 << c;
     i++;
   }
+  s2= s3;
 
-  // cout << "Transcoding " << s << "\n";
-  if (html) transcode ();
+  // cout << "Transcoding " << s2 << "\n";
+  if (html) s2= transcode (s2);
   // cout << HRULE << LF;
-  // cout << "Parsing " << s << "\n";
-  i=0; n=N(s);
+  s= parse_string (s2);
+  //cout << "Parsing " << s << "\n";
   parse ();
   // cout << HRULE << LF;
   // cout << "a= " << a << "\n";
   i= 0; n= N(a); stack= tuple ("<bottom>");
   tree r= tuple ("tag", "<document>");
   build (r);
-  // cout << HRULE << LF;
-  // print_tree (r);
-  if (html) r= finalize_entities (r);
   // cout << HRULE << LF;
   // print_tree (r);
   r= finalize_sxml (r);
