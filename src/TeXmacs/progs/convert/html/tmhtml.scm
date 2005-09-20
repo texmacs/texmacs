@@ -431,6 +431,40 @@
   `("not(" ,@(tmhtml (car l)) ")"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Length conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table tmhtml-length-table
+  ("mm" . 0.1)
+  ("cm" . 1.0)
+  ("in" . 2.54)
+  ("pt" . 3.514598e-2)
+  ("tmpt" . 2.7457797e-5)
+  ("em" . 0.4)
+  ("ex" . 0.2)
+  ("pc" . 0.42175)
+  ("px" . #t)
+  ("par" . #t)
+  ("pag" . #t))
+
+(define (make-exact x)
+  (number->string (inexact->exact x)))
+
+(tm-define (tmlength->htmllength len css?)
+  (and-let* ((tmlen (string->tmlength len))
+	     (dummy? (not (tmlength-null? tmlen)))
+	     (val (tmlength-value tmlen))
+	     (unit (symbol->string (tmlength-unit tmlen)))
+	     (incm (ahash-ref tmhtml-length-table unit)))
+    (cond ((== unit "px") (make-exact val))
+	  ((in? unit '("par" "pag"))
+	   (string-append (make-exact (* 100 val)) "%"))
+	  ((and css? (== unit "tmpt"))
+	   (string-append (make-exact (* 50 val incm)) "px"))
+	  (css? len)
+	  (else (make-exact (* 50 val incm))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local and global environment changes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -441,6 +475,18 @@
 		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
 		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
     (and s `(h:font (@ (size ,s))))))
+
+(define (tmhtml-with-par-left val)
+  (with x (tmlength->htmllength val #t)
+    (if x
+	`(h:div (@ (style ,(string-append "margin-left: " x))))
+	`(h:div))))
+
+(define (tmhtml-with-par-right val)
+  (with x (tmlength->htmllength val #t)
+    (if x
+	`(h:div (@ (style ,(string-append "margin-right: " x))))
+	`(h:div))))
 
 (define (tmhtml-with-one var val arg)
   (if (== var "mode")
@@ -455,13 +501,21 @@
 	    (list (append w (tmhtml arg)))
 	    (tmhtml arg)))))
 
+(define (tmhtml-force-string x)
+  (cond ((func? x 'quote 1) (tmhtml-force-string (cadr x)))
+	((func? x 'tmlen 1)
+	 (string-append (tmhtml-force-string (cadr x)) "tmpt"))
+	((func? x 'tmlen 3)
+	 (string-append (tmhtml-force-string (caddr x)) "tmpt"))
+	(else (force-string x))))
+
 (define (tmhtml-with l)
   (cond ((null? l) '())
 	((null? (cdr l)) (tmhtml (car l)))
 	((null? (cddr l)) '())
 	(else
-	 (let* ((var (force-string (car l)))
-		(val (force-string (cadr l)))
+	 (let* ((var (tmhtml-force-string (car l)))
+		(val (tmhtml-force-string (cadr l)))
 		(next (cddr l)))
 	   (tmhtml-with-one var val `(with ,@next))))))
 
@@ -1040,6 +1094,8 @@
 
 (drd-table tmhtml-with-cmd% ; deprecated
   ("font-size" ,tmhtml-with-font-size)
+  ("par-left" ,tmhtml-with-par-left)
+  ("par-right" ,tmhtml-with-par-right)
   (("color" "black") (h:font (@ (color "black"))))
   (("color" "grey") (h:font (@ (color "grey"))))
   (("color" "white") (h:font (@ (color "white"))))
