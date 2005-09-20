@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tmml tmmltm))
+(texmacs-module (convert tmml tmmltm)
+  (:use (convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Provide the inverse functionality of tmmlout
@@ -81,14 +82,28 @@
 ;; Provide the inverse functionality of tmxml
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define tmmltm-current-version "9.9.9.9")
+
+(define (tmmltm-string s)
+  (if (string<? tmmltm-current-version "1.0.5.8")
+      (old-xml-cdata->tm s)
+      (utf8->cork s)))
+
 (define (tmmltm-file version args)
-  `(!file (document (TeXmacs ,version) ,@(map tmmltm args))))
+  (with old-version tmmltm-current-version
+    (set! tmmltm-current-version version)
+    (with r `(!file (document (TeXmacs ,version) ,@(map tmmltm args)))
+      (set! tmmltm-current-version old-version)
+      r)))
 
 (define (tmmltm-document l)
   (cons 'document (map (lambda (x) (tmmltm (cadr x))) l)))
 
 (define (tmmltm-concat l)
-  (cons 'concat (map tmmltm l)))
+  (with r (tmconcat-simplify (map tmmltm l))
+    (cond ((null? r) "")
+	  ((null? (cdr r)) (car r))
+	  (else (cons 'concat r)))))
 
 (define (tmmltm-with x)
   (with (tag attr arg) (tmmltm-regular (car x) (cdr x))
@@ -136,7 +151,7 @@
 
 (tm-define (tmmltm x)
   ;(display* "[tmmltm] ") (write x) (display* "\n")
-  (cond ((string? x) (xml-cdata->tm x))
+  (cond ((string? x) (tmmltm-string x))
 	((and (func? x '*TOP*) (>= (length x) 3) (func? (caddr x) 'TeXmacs 2))
 	 (tmmltm (caddr x)))
 	((func? x '*TOP*) (tmmltm-concat (cdr x)))
@@ -145,6 +160,8 @@
 	((func? x '!document) (tmmltm-document (cdr x)))
 	((func? x '!concat) (tmmltm-concat (cdr x)))
 	((func? x 'with) (tmmltm-with x))
+	((and (func? x 'tm-sym 1) (string? (cadr x)))
+	 (string-append "<" (cadr x) ">"))
 	(else (tmmltm-regular (car x) (cdr x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

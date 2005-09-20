@@ -186,7 +186,7 @@ scm_to_string (SCM s) {
 #define SCM_ASSERT_SYMBOL(s,arg,rout) \
   SCM_ASSERT (SCM_NFALSEP (scm_symbol_p (s)), s, arg, rout)
 
-static SCM
+SCM
 symbol_to_scm (string s) {
   char* _s= as_charp (s);
   SCM r= scm_symbol2scm (_s);
@@ -194,7 +194,7 @@ symbol_to_scm (string s) {
   return r;
 }
 
-static string
+string
 scm_to_symbol (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2symbol (s, &len_r);

@@ -1062,16 +1062,29 @@ tmg_tm_2xml_name (SCM arg1) {
 }
 
 SCM
+tmg_old_tm_2xml_cdata (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "old-tm->xml-cdata");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= old_tm_to_xml_cdata (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_tm_2xml_cdata (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "tm->xml-cdata");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  string out= tm_to_xml_cdata (in1);
+  object out= tm_to_xml_cdata (in1);
   // SCM_ALLOW_INTS;
 
-  return string_to_scm (out);
+  return object_to_scm (out);
 }
 
 SCM
@@ -1088,13 +1101,13 @@ tmg_xml_name_2tm (SCM arg1) {
 }
 
 SCM
-tmg_xml_cdata_2tm (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "xml-cdata->tm");
+tmg_old_xml_cdata_2tm (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "old-xml-cdata->tm");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  string out= xml_cdata_to_tm (in1);
+  string out= old_xml_cdata_to_tm (in1);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -2572,9 +2585,10 @@ initialize_glue_basic () {
   gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
   gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
   gh_new_procedure ("tm->xml-name", (FN) tmg_tm_2xml_name, 1, 0, 0);
+  gh_new_procedure ("old-tm->xml-cdata", (FN) tmg_old_tm_2xml_cdata, 1, 0, 0);
   gh_new_procedure ("tm->xml-cdata", (FN) tmg_tm_2xml_cdata, 1, 0, 0);
   gh_new_procedure ("xml-name->tm", (FN) tmg_xml_name_2tm, 1, 0, 0);
-  gh_new_procedure ("xml-cdata->tm", (FN) tmg_xml_cdata_2tm, 1, 0, 0);
+  gh_new_procedure ("old-xml-cdata->tm", (FN) tmg_old_xml_cdata_2tm, 1, 0, 0);
   gh_new_procedure ("xml-unspace", (FN) tmg_xml_unspace, 3, 0, 0);
   gh_new_procedure ("parse-texmacs", (FN) tmg_parse_texmacs, 1, 0, 0);
   gh_new_procedure ("serialize-texmacs", (FN) tmg_serialize_texmacs, 1, 0, 0);

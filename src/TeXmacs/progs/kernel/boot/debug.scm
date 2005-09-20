@@ -54,7 +54,7 @@
      (begin ,@args)
      (display* ,message " " (- (texmacs-time) start) "msec\n")))
 
-(define-macro (write-diff t u)
+(define-public (write-diff t u)
   (cond ((== t u) (noop))
 	((or (not (and (pair? t) (pair? u))) (not (= (length t) (length u))))
 	 (display "< ")

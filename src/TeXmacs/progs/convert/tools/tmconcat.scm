@@ -24,7 +24,7 @@
 	((null? (cdr l)) (car l))
 	(else (cons 'concat l))))
 
-(define (tmconcat-simplify l)
+(tm-define (tmconcat-simplify l)
   (cond ((null? l) l)
 	((func? (car l) 'concat) (tmconcat-simplify (append (cdar l) (cdr l))))
 	((== (car l) "") (tmconcat-simplify (cdr l)))

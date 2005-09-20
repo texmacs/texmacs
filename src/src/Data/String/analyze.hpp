@@ -16,6 +16,8 @@
 #include "array.hpp"
 #include "hashset.hpp"
 
+class object;
+
 bool is_alpha (char c);
 bool is_iso_alpha (char c);
 bool is_locase (char c);
@@ -47,8 +49,9 @@ string ispanish_to_spanish (string s);
 string spanish_to_ispanish (string s);
 string igerman_to_german (string s);
 string german_to_igerman (string s);
-string tm_to_xml_cdata (string s);
-string xml_cdata_to_tm (string s);
+string old_tm_to_xml_cdata (string s);
+object tm_to_xml_cdata (string s);
+string old_xml_cdata_to_tm (string s);
 string tm_to_xml_name (string s);
 string xml_name_to_tm (string s);
 string xml_unspace (string s, bool first, bool last);
