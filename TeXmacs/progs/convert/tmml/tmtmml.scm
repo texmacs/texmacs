@@ -13,7 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tmml tmtmml)
-  (:use (convert tmml tmmlout)))
+  (:use (convert tmml tmmlout)
+	(convert tmml tmmltm)
+	))
 
 (define (tmtmml-file x)
   (define (tmtmml-keep? x)
@@ -76,12 +78,6 @@
 	((and (func? x 'quote) (string? (cadr x))) (cadr x))
 	(else (map tmtmml-simplify x))))
 
-(define (tmtmml-consistency-check-1 x)
-  (with y (tmmltm (tmtmml x))
-    (if (== x y)
-	(display "ok\n")
-	(write-diff x y))))
-
 (define (tmtmml-consistency-check nr orig new)
   (display* "Consistency check " nr ": ")
   (if (== orig new)
@@ -95,6 +91,6 @@
       (texmacs->tmml (list '!file x))
       (with simplified (tree->stree (tree-simplify (stree->tree x)))
 	(with xml-tree (tmtmml simplified)
-          ;(tmtmml-consistency-check 1 simplified (tmmltm xml-tree))
-          ;(tmtmml-consistency-check 2 simplified (tmmltm (parse-tmml (serialize-tmml xml-tree))))
+	  ;;(tmtmml-consistency-check 1 simplified (tmmltm xml-tree))
+          ;;(tmtmml-consistency-check 2 simplified (tmmltm (parse-tmml (serialize-tmml xml-tree))))
 	  xml-tree))))

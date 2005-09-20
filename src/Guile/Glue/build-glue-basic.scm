@@ -103,9 +103,10 @@
   (cork->utf8 cork_to_utf8 (string string))
   (utf8->html utf8_to_html (string string))
   (tm->xml-name tm_to_xml_name (string string))
-  (tm->xml-cdata tm_to_xml_cdata (string string))
+  (old-tm->xml-cdata old_tm_to_xml_cdata (string string))
+  (tm->xml-cdata tm_to_xml_cdata (object string))
   (xml-name->tm xml_name_to_tm (string string))
-  (xml-cdata->tm xml_cdata_to_tm (string string))
+  (old-xml-cdata->tm old_xml_cdata_to_tm (string string))
   (xml-unspace xml_unspace (string string bool bool))
 
   ;; further conversion routines for trees and strings

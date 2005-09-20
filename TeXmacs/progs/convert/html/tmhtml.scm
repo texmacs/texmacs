@@ -59,7 +59,7 @@
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
 	   (utf8->html (if (== s encoded)
-			   (tm->xml-cdata s)
+			   (old-tm->xml-cdata s)
 			   encoded))))
 	(else s)))
 

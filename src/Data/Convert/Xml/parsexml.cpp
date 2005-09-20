@@ -288,14 +288,12 @@ xml_html_parser::expand_entity (string s) {
       if (okay) return r;
       return s;
     }
-    else {
-      string ss= s (1, ss [N(s)-1] == ';' ? N(s)-1 : N(s));
-      if (html_entity->contains (ss)) {
-	// Use HTML entities even for XML.
+    else if (html) {
+      string ss= s (1, s [N(s)-1] == ';' ? N(s)-1 : N(s));
+      if (html_entity->contains (ss))
 	// HTML entity references expand to character references
 	// so they need to be finalized a second time.
 	return expand_entity (html_entity [ss]);
-      }
     }
   }
   return s;

@@ -77,6 +77,8 @@ operator != (object obj1, object obj2) {
 
 object null_object () {
   return object (SCM_NULL); }
+object symbol_object (string s) {
+  return object (symbol_to_scm (s)); }
 object cons (object obj1, object obj2) {
   return object (scm_cons (obj1->lookup(), obj2->lookup())); }
 object car (object obj) {
@@ -105,6 +107,7 @@ bool is_list (object obj) { return scm_is_list (obj->lookup()); }
 bool is_bool (object obj) { return scm_is_bool (obj->lookup()); }
 bool is_int (object obj) { return scm_is_int (obj->lookup()); }
 bool is_string (object obj) { return scm_is_string (obj->lookup()); }
+bool is_symbol (object obj) { return scm_is_symbol (obj->lookup()); }
 bool is_tree (object obj) { return scm_is_tree (obj->lookup()); }
 bool is_path (object obj) { return scm_is_path (obj->lookup()); }
 bool is_url (object obj) { return scm_is_url (obj->lookup()); }
@@ -141,6 +144,13 @@ as_string (object obj) {
   SCM s= obj->lookup();
   if (!scm_is_string (s)) return "";
   return scm_to_string (s);
+}
+
+string
+as_symbol (object obj) {
+  SCM s= obj->lookup();
+  if (!scm_is_symbol (s)) return "";
+  return scm_to_symbol (s);
 }
 
 tree

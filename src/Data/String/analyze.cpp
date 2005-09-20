@@ -12,6 +12,8 @@
 
 #include "analyze.hpp"
 #include "merge_sort.hpp"
+#include "converter.hpp"
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Tests for caracters
@@ -428,7 +430,7 @@ xml_name_to_tm (string s) {
 }
 
 string
-tm_to_xml_cdata (string s) {
+old_tm_to_xml_cdata (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
@@ -443,8 +445,40 @@ tm_to_xml_cdata (string s) {
   return r;
 }
 
+object
+tm_to_xml_cdata (string s) {
+  array<object> a;
+  a << symbol_object ("!concat");
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] == '&') r << "&amp;";
+    else if (s[i] == '>') r << "&gt;";
+    else if (s[i] == '\\') r << "\\";
+    else if (s[i] != '<') r << cork_to_utf8 (s (i, i+1));
+    else {
+      int start= i++;
+      while ((i<n) && (s[i]!='>')) i++;
+      string ss= s (start, i+1);
+      string rr= cork_to_utf8 (ss);
+      string qq= utf8_to_cork (rr);
+      if (rr != ss && qq == ss) r << rr;
+      else {
+	if (r != "") a << object (r);
+	a << cons (symbol_object ("tm-sym"),
+		   cons (ss (1, N(ss)-1),
+			 null_object ()));
+	r= "";
+      }
+    }
+  if (r != "") a << object (r);
+  if (N(a) == 1) return object ("");
+  else if (N(a) == 2) return a[1];
+  else return call ("list", a);
+}
+
 string
-xml_cdata_to_tm (string s) {
+old_xml_cdata_to_tm (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
