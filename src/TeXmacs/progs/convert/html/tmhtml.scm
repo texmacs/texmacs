@@ -101,7 +101,8 @@
   (let ((html (string-append
 	       "body { text-align: justify } "
 	       ".title-block { width: 100%; text-align: center } "
-	       ".title-block p { margin: 0px } "))
+	       ".title-block p { margin: 0px } "
+	       ".compact-block p { margin-top: 0px; margin-bottom: 0px } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -350,7 +351,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmhtml-hspace l)
-  '(" "))
+  (with len (tmlength->htmllength (if (list-1? l) (car l) (cadr l)) #t)
+    (if (not len) '()
+	`((spacer (@ (type "block")
+		     (style ,(string-append "width: " len))))))))
 
 (define (tmhtml-vspace l)
   '())
@@ -440,66 +444,93 @@
   ("in" . 2.54)
   ("pt" . 3.514598e-2)
   ("tmpt" . 2.7457797e-5)
+  ("fn" . 0.4)
   ("em" . 0.4)
   ("ex" . 0.2)
   ("pc" . 0.42175)
-  ("px" . #t)
-  ("par" . #t)
-  ("pag" . #t))
+  ("px" . 0.025)
+  ("par" . 16)
+  ("pag" . 12))
 
 (define (make-exact x)
   (number->string (inexact->exact x)))
 
-(tm-define (tmlength->htmllength len css?)
+(define (tmlength->htmllength len css?)
   (and-let* ((tmlen (string->tmlength len))
 	     (dummy? (not (tmlength-null? tmlen)))
 	     (val (tmlength-value tmlen))
 	     (unit (symbol->string (tmlength-unit tmlen)))
-	     (incm (ahash-ref tmhtml-length-table unit)))
+	     (incm (ahash-ref tmhtml-length-table unit))
+	     (cmpx (/ 1 (ahash-ref tmhtml-length-table "px"))))
     (cond ((== unit "px") (make-exact val))
 	  ((in? unit '("par" "pag"))
 	   (string-append (make-exact (* 100 val)) "%"))
 	  ((and css? (== unit "tmpt"))
-	   (string-append (make-exact (* 50 val incm)) "px"))
+	   (string-append (make-exact (* cmpx val incm)) "px"))
+	  ((and css? (== unit "fn"))
+	   (string-append (number->string val) "em"))
 	  (css? len)
-	  (else (make-exact (* 50 val incm))))))
+	  (else (make-exact (* cmpx val incm))))))
+
+(define (tmlength->px len)
+  (and-let* ((tmlen (string->tmlength len))
+	     (dummy? (not (tmlength-null? tmlen)))
+	     (val (tmlength-value tmlen))
+	     (unit (symbol->string (tmlength-unit tmlen)))
+	     (incm (ahash-ref tmhtml-length-table unit))
+	     (cmpx (/ 1 (ahash-ref tmhtml-length-table "px"))))
+    (* cmpx val incm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Local and global environment changes
+;; Local environment changes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-with-font-size val)
+(define (tmhtml-with-mode val arg)
+  (ahash-with tmhtml-env :math (== val "math")
+    (tmhtml arg)))
+
+(define (tmhtml-with-font-size val arg)
   (let* ((x (* (string->number val) 100))
 	 (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
 		  ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
 		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
 		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
-    (and s `(h:font (@ (size ,s))))))
+    (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg))))
 
-(define (tmhtml-with-par-left val)
-  (with x (tmlength->htmllength val #t)
-    (if x
-	`(h:div (@ (style ,(string-append "margin-left: " x))))
-	`(h:div))))
+(define (tmhtml-with-par-left val arg)
+  (with x (tmlength->px val)
+    (if (not x) (tmhtml arg)
+	(with d (- x (ahash-ref tmhtml-env :left-margin))
+	  (with s (string-append "margin-left: " (make-exact d) "px")
+	    (ahash-with tmhtml-env :left-margin x
+	      `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))))
 
-(define (tmhtml-with-par-right val)
+(define (tmhtml-with-par-right val arg)
+  (with x (tmlength->px val)
+    (if (not x) (tmhtml arg)
+	(with d (- x (ahash-ref tmhtml-env :right-margin))
+	  (with s (string-append "margin-right: " (make-exact d) "px")
+	    (ahash-with tmhtml-env :right-margin x
+	      `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))))
+
+(define (tmhtml-with-par-first val arg)
   (with x (tmlength->htmllength val #t)
-    (if x
-	`(h:div (@ (style ,(string-append "margin-right: " x))))
-	`(h:div))))
+    (if (not x) (tmhtml arg)
+	(with s (string-append "text-indent: " x)
+	  `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))
+
+(define (tmhtml-with-par-par-sep val arg)
+  (with x (tmlength->px val)
+    (if (== (inexact->exact x) 0)
+	`((h:div (@ (class "compact-block")) ,@(tmhtml arg)))
+	(tmhtml arg))))
 
 (define (tmhtml-with-one var val arg)
-  (if (== var "mode")
-      ;; FIXME: should go into the DRD modulo some reorganization
-      (ahash-with tmhtml-env :math (== val "math")
-	(tmhtml arg))
-      ;;`((h:class (@ ("style" "font-style: normal")) ,@r))))
-      (let ((w (or (drd-ref tmhtml-with-cmd% (list var val))
-		   (let ((h (drd-ref tmhtml-with-cmd% var)))
-		     (and h (h val))))))
-	(if w
-	    (list (append w (tmhtml arg)))
-	    (tmhtml arg)))))
+  (cond ((drd-ref tmhtml-with-cmd% (list var val)) =>
+	 (lambda (w) (list (append w (tmhtml arg)))))
+	((drd-ref tmhtml-with-cmd% var) =>
+	 (lambda (h) (h val arg)))
+	(else (tmhtml arg))))
 
 (define (tmhtml-force-string x)
   (cond ((func? x 'quote 1) (tmhtml-force-string (cadr x)))
@@ -668,30 +699,16 @@
 ;;; Pictures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; WARNING: Should also test that width and height are not magnifications.
-;; Currently, magnifications make string->tmlength return #f.
-
-(define (tmhtml-dimension-attr s name handlers)
-  (let ((w (and-let* ((tmlen (string->tmlength s))
-		      ((not (tmlength-null? tmlen)))
-		      (proc (assoc (tmlength-unit tmlen) handlers)))
-		     ((second proc) (tmlength-value tmlen)))))
-    (if w `((,name ,w)) '())))
-
-(define (exact-number->string x)
-  (number->string (inexact->exact x)))
-(define (number->percent x)
-  (string-append (exact-number->string (* 100 x)) "%"))
-
 (define (tmhtml-postscript l)
-  (let ((s (first l)) (w (second l)) (h (third l)))
-    (if (nstring? s) '()	; only convert linked images
+  ;; FIXME: Should also test that width and height are not magnifications.
+  ;; Currently, magnifications make tmlength->htmllength return #f.
+  (let* ((s (first l))
+	 (w (tmlength->htmllength (second l) #f))
+	 (h (tmlength->htmllength (third l) #f)))
+    (if (nstring? s) '() ;; only convert linked images
 	`((h:img (@ (src ,(cork->html s))
-		    ,@(tmhtml-dimension-attr
-		       w 'width `((par ,number->percent)
-				  (px ,exact-number->string)))
-		    ,@(tmhtml-dimension-attr
-		       h 'height `((px ,exact-number->string)))))))))
+		    ,@(if w `((width ,w)) '())
+		    ,@(if h `((height ,h)) '())))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Standard markup
@@ -893,7 +910,9 @@
 (tm-define (tmhtml-root x)
   (ahash-with tmhtml-env :math #f
     (ahash-with tmhtml-env :preformatted #f
-      (tmhtml x))))
+      (ahash-with tmhtml-env :left-margin 0
+        (ahash-with tmhtml-env :right-margin 0
+          (tmhtml x))))))
 
 (define (tmhtml x)
   ;; Main conversion function.
@@ -1077,6 +1096,12 @@
 ;;    (person (h:person)))) ; not in HTML4
 
 (drd-table tmhtml-with-cmd%
+  ("mode" ,tmhtml-with-mode)
+  ("font-size" ,tmhtml-with-font-size)
+  ("par-left" ,tmhtml-with-par-left)
+  ("par-right" ,tmhtml-with-par-right)
+  ("par-first" ,tmhtml-with-par-first)
+  ("par-par-sep" ,tmhtml-with-par-par-sep)
   (("font-family" "tt") (h:tt))
   (("font-family" "ss") (h:class (@ (style "font-family: sans-serif"))))
   (("font-series" "bold") (h:b))
@@ -1093,9 +1118,6 @@
    (h:class (@ (style "font-variant: small-caps")))))
 
 (drd-table tmhtml-with-cmd% ; deprecated
-  ("font-size" ,tmhtml-with-font-size)
-  ("par-left" ,tmhtml-with-par-left)
-  ("par-right" ,tmhtml-with-par-right)
   (("color" "black") (h:font (@ (color "black"))))
   (("color" "grey") (h:font (@ (color "grey"))))
   (("color" "white") (h:font (@ (color "white"))))
