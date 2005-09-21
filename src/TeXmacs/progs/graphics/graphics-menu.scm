@@ -196,7 +196,7 @@
   ("Rotate" (graphics-set-mode '(group-edit rotate)))
   ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
   ---
-  ("Properties" (graphics-set-mode '(edit-prop))))
+  ("Properties" (graphics-set-mode '(group-edit props))))
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
@@ -325,17 +325,28 @@
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-align-menu
-  ("Default" (begin (graphics-set-property "gr-text-halign" "left")
-		    (graphics-set-property "gr-text-valign" "bottom")))
+  ("Default" (begin (graphics-set-text-halign "left")
+		    (graphics-set-text-valign "bottom")))
   ---
   (-> "Horizontal"
-      ("Left" (graphics-set-property "gr-text-halign" "left"))
-      ("Center" (graphics-set-property "gr-text-halign" "center"))
-      ("Right" (graphics-set-property "gr-text-halign" "right")))
+      ("Left" (graphics-set-text-halign "left"))
+      ("Center" (graphics-set-text-halign "center"))
+      ("Right" (graphics-set-text-halign "right")))
   (-> "Vertical"
-      ("Bottom" (graphics-set-property "gr-text-valign" "bottom"))
-      ("Center" (graphics-set-property "gr-text-valign" "center"))
-      ("Top" (graphics-set-property "gr-text-valign" "top"))))
+      ("Bottom" (graphics-set-text-valign "bottom"))
+      ("Center" (graphics-set-text-valign "center"))
+      ("Top" (graphics-set-text-valign "top"))))
+
+(menu-bind graphics-enable-change-properties-menu
+  ("Color"  (graphics-toggle-color-enabled))
+  ("Point style" (graphics-toggle-point-style-enabled))
+  ("Line width" (graphics-toggle-line-width-enabled))
+  ("Dash style" (graphics-toggle-dash-style-enabled))
+  ("Dash unit" (graphics-toggle-dash-style-unit-enabled))
+  ("Line arrows" (graphics-toggle-line-arrows-enabled))
+  ("Fill color" (graphics-toggle-fill-color-enabled))
+  ("Text box horizontal alignment" (graphics-toggle-text-halign-enabled))
+  ("Text box vertical alignment" (graphics-toggle-text-valign-enabled)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
@@ -354,7 +365,8 @@
  ;(-> "Fill"
  ;    (-> "Fill mode" ...)
  ;    (-> "Fill color" ...))
-  (-> "Text box alignment" (link graphics-text-align-menu)))
+  (-> "Text box alignment" (link graphics-text-align-menu))
+  (-> "Enable change" (link graphics-enable-change-properties-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for graphics mode
@@ -363,23 +375,11 @@
 (menu-bind graphics-icons
   (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
+  (   (balloon (icon "tm_graphics_redim.xpm") "Redim graphics")
+      (graphics-set-mode '(redim-graphics)))
+  |
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
   ;    (link graphics-mode-menu))
-  (=> (balloon (icon "tm_color.xpm") "Color")
-      (link graphics-color-menu))
-  (=> (balloon (icon "tm_point_style.xpm") "Point style")
-      (link graphics-point-style-menu))
-  (=> (balloon (icon "tm_line_width.xpm") "Line width")
-      (link graphics-line-width-menu))
-  (=> (balloon (icon "tm_line_style.xpm") "Dashes")
-      (link graphics-dash-menu))
-  (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
-      (link graphics-line-arrows-menu))
-  (=> (balloon (icon "tm_color.xpm") "Fill color")
-      (link graphics-fill-color-menu))
-  (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
-      (link graphics-text-align-menu))
-  |
   (   (balloon (icon "tm_point_mode.xpm") "Add points")
       (graphics-set-mode "point"))
   (   (balloon (icon "tm_line_mode.xpm") "Add lines")
@@ -397,6 +397,25 @@
   (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
       (graphics-set-mode "text-at"))
   |
+  (=> (balloon (icon "tm_color.xpm") "Color")
+      (link graphics-color-menu))
+  (=> (balloon (icon "tm_point_style.xpm") "Point style")
+      (link graphics-point-style-menu))
+  (=> (balloon (icon "tm_line_width.xpm") "Line width")
+      (link graphics-line-width-menu))
+  (=> (balloon (icon "tm_line_style.xpm") "Dashes")
+      (link graphics-dash-menu))
+  (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
+      (link graphics-line-arrows-menu))
+  (=> (balloon (icon "tm_color.xpm") "Fill color")
+      (link graphics-fill-color-menu))
+  (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
+      (link graphics-text-align-menu))
+  (=> (balloon (icon "tm_toggle_change_props.xpm") "Enable change property")
+      (link graphics-enable-change-properties-menu))
+  |
+  (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
+      (graphics-set-mode '(group-edit props)))
   (   (balloon (icon "tm_group_move.xpm") "Move objects")
       (graphics-set-mode '(group-edit move)))
   (   (balloon (icon "tm_group_zoom.xpm") "Zoom/unzoom objects")
@@ -405,15 +424,8 @@
       (graphics-set-mode '(group-edit rotate)))
   (   (balloon (icon "tm_group_group.xpm") "Group/ungroup objects")
       (graphics-set-mode '(group-edit group-ungroup)))
-  |
  ;(   (balloon (icon "tm_group_group.xpm") "Group objects")
  ;    (group-selected-objects))
  ;(   (balloon (icon "tm_group_ungroup.xpm") "Ungroup objects")
  ;    (ungroup-current-object))
- ;|
-  (   (balloon (icon "tm_edit_props.xpm") "Change objects properties")
-      (graphics-set-mode '(edit-prop)))
-  |
-  (   (balloon (icon "tm_graphics_redim.xpm") "Redim graphics")
-      (graphics-set-mode '(redim-graphics)))
 )
