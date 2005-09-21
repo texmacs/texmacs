@@ -52,6 +52,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     if (type == "release-left")
       dragging= start_drag= false;
     if (mouse_graphics (type2, x, y, t)) return;
+    if (!over_graphics (x, y))
+      eval ("(graphics-reset-context 'text-cursor)");
   }
 
   if (type == "press-left") mouse_click (x, y);

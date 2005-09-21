@@ -1632,6 +1632,32 @@
 	(if (>= subsel-no (length current-selection))
 	    (set! subsel-no 0)))))
 
+;; Graphics X cursor
+(tm-define graphics-texmacs-pointer 'none)
+(define (set-texmacs-pointer curs)
+  (define (set-pointer name)
+     (if (symbol? name)
+	 (set! name (symbol->string name)))
+     (set! graphics-texmacs-pointer name)
+  )
+  (if (!= graphics-texmacs-pointer curs)
+  (cond ((== curs 'none)
+	 (set-pointer 'none)
+	 (set-mouse-pointer
+	    (tm_xpm "tm_cursor_none.xpm")
+	    (tm_xpm "tm_mask_none.xpm")))
+	((== curs 'text-arrow)
+	 (set-pointer 'none)
+	 (set-predef-mouse-pointer "XC_top_left_arrow"))
+	((== curs 'graphics-cross)
+	 (set-texmacs-pointer 'none)
+	 (set-pointer 'graphics-cross))
+	((== curs 'graphics-cross-arrows)
+	 (set-texmacs-pointer 'none)
+	 (set-pointer 'graphics-cross-arrows))
+	(else
+	   #t))))
+
 ;; Graphics context
 (define-macro (with-graphics-context msg x y path obj no edge . body)
   `(begin
@@ -1680,13 +1706,12 @@
     (if (not (== current-cursor 'text-cursor))
     (begin
        (set! current-cursor 'text-cursor)
-       (set-predef-mouse-pointer "XC_top_left_arrow"))))
+       (set-texmacs-pointer 'text-arrow))))
    ((== cmd 'graphics-cursor)
     (if (not (== current-cursor 'graphics-cursor))
     (begin
        (set! current-cursor 'graphics-cursor)
-       (set-mouse-pointer
-	 (tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm")))))
+       (set-texmacs-pointer 'graphics-cross))))
       ;; TODO: There is a problem now that we use the X cursor
       ;;   during graphics editing : the cursor doesn't aligns
       ;;   on the grid anymore. A good solution to this problem
@@ -1805,10 +1830,7 @@
       (point_left-button x y p obj 1 edge)
       (if (on-graphical-contour? x y obj "1mm")
 	  (begin
-	     (set-mouse-pointer
-		(tm_xpm "tm_graphics_cursor.xpm")
-		(tm_xpm "tm_graphics_mask.xpm")
-	     )
+	     (set-texmacs-pointer 'graphics-cross)
 	     (point_left-button x y p obj 1 edge))
 	  (go-to (car (select-first (s2i x) (s2i y)))))))
 
@@ -1828,12 +1850,8 @@
 (define (text-at_move x y p obj no edge)
   (if (and (not sticky-point)
 	   (on-graphical-contour? x y obj "1mm"))
-      (set-mouse-pointer
-	 (tm_xpm "tm_graphics_cursorM.xpm")
-	 (tm_xpm "tm_graphics_maskM.xpm"))
-      (set-mouse-pointer
-	 (tm_xpm "tm_graphics_cursor.xpm")
-	 (tm_xpm "tm_graphics_mask.xpm"))
+      (set-texmacs-pointer 'graphics-cross-arrows)
+      (set-texmacs-pointer 'graphics-cross)
   )
   (point_move x y p obj 1 edge))
 
@@ -1911,10 +1929,7 @@
 		 move (x y p obj no edge) do-tick
        )
        (begin
-	  (set-mouse-pointer
-	     (tm_xpm "tm_graphics_cursor.xpm")
-	     (tm_xpm "tm_graphics_mask.xpm")
-	  )
+	  (set-texmacs-pointer 'graphics-cross)
 	  (create-graphical-object '(nothing) #f 'points #f)))))
 
 (define (edit_middle-button x y)
@@ -2631,9 +2646,7 @@
 		     (tm_xpm "tm_graphics_mask_redimE.xpm"))
 		 )
 		 (else
-		    (set-mouse-pointer
-		       (tm_xpm "tm_graphics_cursor.xpm")
-		       (tm_xpm "tm_graphics_mask.xpm"))))))))
+		    (set-texmacs-pointer 'graphics-cross)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
@@ -2700,8 +2713,7 @@
       (create-graphical-object '(nothing) #f 'points 'group)
   )
   (if (== old-mode '(redim-graphics))
-      (set-mouse-pointer
-	(tm_xpm "tm_graphics_cursor.xpm") (tm_xpm "tm_graphics_mask.xpm"))))
+      (set-texmacs-pointer 'graphics-cross)))
 
 (define (graphics-finish)
   ;;(display* "Graphics] Finish\n")

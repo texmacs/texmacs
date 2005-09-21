@@ -47,6 +47,22 @@ edit_graphics_rep::inside_active_graphics () {
   return inside_graphics () && get_env_string (PREAMBLE) == "false";
 }
 
+bool
+edit_graphics_rep::over_graphics (SI x, SI y) {
+  frame f= find_frame ();
+  if (!nil (f)) {
+    point lim1, lim2;
+    find_limits (lim1, lim2);
+    point p = adjust (f [point (x, y)]);
+    // cout << type << " at " << p << " [" << lim1 << ", " << lim2 << "]\n";
+    if (N(lim1) == 2)
+      if ((p[0]<lim1[0]) || (p[0]>lim2[0]) || (p[1]<lim1[1]) || (p[1]>lim2[1]))
+	return false;
+    return true;
+  }
+  return false;
+}
+
 tree
 edit_graphics_rep::get_graphics () {
   path p   = path_up (tp);
@@ -249,13 +265,8 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!nil (f)) {
-    point lim1, lim2;
-    find_limits (lim1, lim2);
+    if (!over_graphics (x, y)) return false;
     point p = adjust (f [point (x, y)]);
-    // cout << type << " at " << p << " [" << lim1 << ", " << lim2 << "]\n";
-    if (N(lim1) == 2)
-      if ((p[0]<lim1[0]) || (p[0]>lim2[0]) || (p[1]<lim1[1]) || (p[1]>lim2[1]))
-	return false;
     if (type == "move" || type == "dragging")
       if (dis->check_event (MOTION_EVENT))
 	return true;

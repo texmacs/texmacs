@@ -125,9 +125,34 @@ edit_interface_rep::draw_selection (ps_device dev) {
 void
 edit_interface_rep::draw_graphics (ps_device dev) {
   if (got_focus || full_screen) {
-    if (inside_active_graphics ()) {
+    cursor cu= get_cursor();
+    if (over_graphics(cu->ox, cu->oy) && inside_active_graphics ()) {
       eval ("(graphics-reset-context 'graphics-cursor)");
       draw_graphical_object (dev);
+      string tm_curs= as_string (eval ("graphics-texmacs-pointer"));
+      if (tm_curs != "none")
+	if (tm_curs == "graphics-cross") {
+	  dev->set_line_style (pixel);
+	  dev->set_color (dis->red);
+	  dev->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
+	  dev->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
+        }
+	else
+	if (tm_curs == "graphics-cross-arrows") {
+	  static int s= 6*pixel, a= 2*pixel;
+	  dev->set_line_style (pixel);
+	  dev->set_color (dis->red);
+	  dev->line (cu->ox, cu->oy-s, cu->ox, cu->oy+s);
+	  dev->line (cu->ox-s, cu->oy, cu->ox+s, cu->oy);
+	  dev->line (cu->ox, cu->oy-s,cu->ox-a, cu->oy-s+a);
+	  dev->line (cu->ox, cu->oy-s, cu->ox+a, cu->oy-s+a);
+	  dev->line (cu->ox, cu->oy+s, cu->ox-a, cu->oy+s-a);
+	  dev->line (cu->ox, cu->oy+s, cu->ox+a, cu->oy+s-a);
+	  dev->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy+a);
+	  dev->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy-a);
+	  dev->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy+a);
+	  dev->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy-a);
+        }
     }
     else eval ("(graphics-reset-context 'text-cursor)");
   }
@@ -156,9 +181,9 @@ edit_interface_rep::draw_post (ps_device dev, rectangle r) {
   win->set_shrinking_factor (sfactor);
   dev->set_shrinking_factor (sfactor);
   draw_context (dev, r);
-  draw_cursor (dev);
   draw_selection (dev);
   draw_graphics (dev);
+  draw_cursor (dev); // the text cursor must be drawn over the graphical object
   dev->set_shrinking_factor (1);
   win->set_shrinking_factor (1);
 }
