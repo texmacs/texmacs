@@ -37,14 +37,14 @@ extern charp* environ;
 //#define DATA_END     "[END]"
 //#define DATA_ESCAPE  "[ESCAPE]"
 
-int   pid;            // process identifier of the child
+int   pid;	      // process identifier of the child
 int   tochild[2];     // for data going to the child
 int   fromchild[2];   // for data coming from the child
-int   in;             // file descriptor for data going to the child
-int   out;            // file descriptor for data coming from the child
+int   in;	      // file descriptor for data going to the child
+int   out;	      // file descriptor for data coming from the child
 
 /******************************************************************************
-* A very simple string class
+* A simple but portable string class
 ******************************************************************************/
 
 class string {
@@ -59,8 +59,41 @@ public:
   string (const string& s2):
     l (s2.n+1), s (new char[l]), n (l-1) { strcpy (s, s2.s); }
   ~string () { delete[] s; }
+  string& operator = (const string& s2) {
+    if (this != &s2) {
+      delete[] s;
+      l= s2.n + 1;
+      s= new char[l];
+      n= l - 1;
+    }
+    return *this;
+  }
   inline char& operator [] (int i) { return s[i]; }
 };
+
+inline bool
+operator == (const string& s1, char* s2) {
+  return strcmp (s1.s, s2) == 0;
+}
+
+inline bool
+ends (const string& s1, char* s2) {
+  int n= strlen (s2);
+  return s1.n >= n && strcmp (s1.s + s1.n - n, s2) == 0;
+}
+
+inline void
+shorten (string& s, int n) {
+  if (s.n >= n) {
+    s.n -= n;
+    s.s[s.n]= '\0';
+  }
+}
+
+inline ostream&
+operator << (ostream& out, const string& s) {
+  return out << s.s;
+}
 
 string
 operator * (const string& s1, const string& s2) {
@@ -88,8 +121,7 @@ operator << (string& s, const string& s2) {
 string&
 operator << (string& s, char c) {
   char s2[2];
-  s2[0]= c;
-  s2[1]= '\0';
+  s2[0]= c; s2[1]= '\0';
   return s << string (s2);
 }
 
@@ -103,6 +135,11 @@ get_line () {
     input << c; 
   }
   return input;
+}
+
+void
+write (int channel, const string& s) {
+  write (channel, s.s, s.n);
 }
 
 /******************************************************************************
@@ -121,24 +158,9 @@ next_input () {
 }
 
 void
-append (charp &s, char c, int& pos, int& max) {
-  if (pos == max) {
-    int i;
-    charp r= s;
-    max <<= 1;
-    s= (charp) malloc (max);
-    for (i=0; i<pos; i++) s[i]=r[i];
-    free (r);
-  }
-  s[pos++]= c;
-}
-
-void
 maple_output () {
   bool show_flag= false;
-  int output_pos= 0;
-  int output_max= 1024;
-  charp output= (charp) malloc (output_max);
+  string output;
   cout << DATA_BEGIN << "verbatim:";
 
   while (true) {
@@ -164,13 +186,7 @@ maple_output () {
 	next_input ();
 	cout << DATA_END << DATA_END;
 	cout.flush ();
-	free (output);
 	return;
-	/*
-	cerr << "TeXmacs maple] read failed\n";
-	wait (NULL);
-	exit (1);
-	*/
       }
       else if (r == 0) {
 	kill (pid, SIGKILL);
@@ -179,34 +195,29 @@ maple_output () {
 	exit (0);
       }
       else for (i=0; i<r; i++) {
-	append (output, outbuf[i], output_pos, output_max);
-	if (output_pos>=5 && strncmp (output+output_pos-5, "error",5) == 0)
+	output << outbuf[i];
+	if (ends (output, "error"))
 	  error_flag= true;
 	if (outbuf[i]=='\n') {
-	  append (output, '\0', output_pos, output_max);
-	  if (strcmp (output, "tmstart\n") == 0)
+	  if (output == "tmstart\n")
 	    show_flag= true;
-	  else if (strcmp (output, "tmend\n") == 0) {
+	  else if (output == "tmend\n") {
 	    next_input ();
 	    cout << DATA_END;
 	    cout.flush ();
-	    free (output);
 	    return;
 	  }
 	  else if (show_flag) {
 	    cout << output;
 	    cout.flush ();
 	  }
-	  output_pos= 0;
+	  output= string ();
 	}
       }
       if (error_flag) {
 	next_input ();
 	cout << DATA_END;
 	cout.flush ();
-	free (output);
-	//char* s= "1;\n2;\n";
-	//write (in, s, strlen (s));
 	return;
       }
     }
@@ -219,15 +230,13 @@ maple_output () {
 
 void
 send (const string& s) {
-  write (in, s.s, s.n);
+  write (in, s);
 }
 
 void
 strip (string& s, char c1, char c2) {
-  while (s.n>0 && (s[s.n-1] == c1 || s[s.n-1] == c2)) {
-    s.s[s.n-1]= '\0';
-    s.n--;
-  }
+  while (s.n>0 && (s[s.n-1] == c1 || s[s.n-1] == c2))
+    shorten (s, 1);
 }
 
 void
