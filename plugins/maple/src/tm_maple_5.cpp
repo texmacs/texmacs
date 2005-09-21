@@ -42,7 +42,6 @@ int   tochild[2];     // for data going to the child
 int   fromchild[2];   // for data coming from the child
 int   in;             // file descriptor for data going to the child
 int   out;            // file descriptor for data coming from the child
-FILE* fin;            // file associated to in
 
 /******************************************************************************
 * A very simple string class
@@ -53,8 +52,8 @@ public:
   int   l; // reserved number of bytes
   char* s; // the string
   int   n; // length
-  string (int len):
-    l (len+1), s (new char[l]), n (0) { s[0]='\0'; }
+  string (int reserve= 7):
+    l (reserve+1), s (new char[l]), n (0) { s[0]='\0'; }
   string (char *s2):
     l (strlen(s2)+1), s (new char[l]), n (l-1) { strcpy (s, s2); }
   string (const string& s2):
@@ -84,6 +83,26 @@ operator << (string& s, const string& s2) {
   strcpy (s.s + s.n, s2.s);
   s.n += s2.n;
   return s;
+}
+
+string&
+operator << (string& s, char c) {
+  char s2[2];
+  s2[0]= c;
+  s2[1]= '\0';
+  return s << string (s2);
+}
+
+string
+get_line () {
+  string input;
+  while (true) {
+    char c;
+    cin.get (c);
+    if (c == '\n') break;
+    input << c; 
+  }
+  return input;
 }
 
 /******************************************************************************
@@ -213,9 +232,7 @@ strip (string& s, char c1, char c2) {
 
 void
 maple_input () {
-  char input_s[10001];
-  cin.getline (input_s, 10000, '\n');
-  string input (input_s);
+  string input= get_line ();
   send ("printf(`tmstart\\n`):\n");
   strip (input, ' ', '\n');
   if (input.n == 0 || input[0] == '?')
@@ -231,7 +248,6 @@ maple_input () {
     send ("if \" <> tmdummy then tmprint(\") fi:\n");
   }
   send ("printf(`tmend\\n`):\n");
-  fflush (fin);
 }
 
 /******************************************************************************
@@ -272,7 +288,6 @@ init_maple () {
   //send (tm_path);
   //send ("/plugins/maple/maple/init-maple.mpl`):\n");
   send ("read (`" * string (tm_path) * "/plugins/maple/maple/init-maple.mpl`):\n");
-  fflush (fin);
   next_input ();
   cout << DATA_END;
   cout.flush ();
@@ -300,7 +315,6 @@ main () {
     close (fromchild [OUT]);
     in= tochild [OUT];
     close (tochild [IN]);
-    fin= fdopen (in, "w");
     signal (SIGINT, maple_interrupt);
     siginterrupt (SIGINT, 1);
     init_maple ();
