@@ -226,7 +226,7 @@ texmacs_input_rep::verbatim_flush (bool force) {
 void
 texmacs_input_rep::scheme_flush (bool force) {
   if (force) {
-    write (scheme_to_tree (buf));
+    write (simplify_correct (scheme_to_tree (buf)));
     buf= "";
   }
 }
