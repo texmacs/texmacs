@@ -4,7 +4,7 @@
 ;; MODULE      : graphics-edit.scm
 ;; DESCRIPTION : editing routines for graphics mode
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
-;;               (C) 2004  Joris van der Hoeven and Henri Lesourd
+;;               (C) 2004, 2005  Joris van der Hoeven and Henri Lesourd
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -33,6 +33,7 @@
 
 (define (get-env-stree var)
   (tree->stree (get-env-tree var)))
+  ; NOTE : (graphics-get-property) should supersede this one
 
 (define (graphics-graphics-path)
   ;; path to innermost graphics tag
@@ -53,8 +54,8 @@
   (if (or (null? path) (null? (cdr path)))
       #f
       (with p (cDr path)
-	 (with o (stree-at p)
-	    (if (and (pair? o) (in? (car o) gr-tags-all))
+	 (with o (path->tree p)
+	    (if (and (tree? o) (in? (tree-label o) gr-tags-all))
 		(begin
 		  ;(display* "gp=" (path->tree (cDr path)) "\n")
 		   p)
@@ -152,6 +153,32 @@
 (tm-define (graphics-remove-property var)
   (with p (graphics-graphics-path)
     (if p (path-remove-with p var))))
+
+(tm-define (graphics-frozen-property? var)
+  (with val (get-env-tree var)
+     (and (tree? val) (== (tree-label val) 'frozen))))
+
+(tm-define (graphics-frozen-property! var b)
+  (if b
+      (if (not (graphics-frozen-property? var))
+	  (graphics-set-property var
+	    `(quote (frozen ,(tree->stree (get-env-tree var))))))
+      (if (graphics-frozen-property? var)
+	  (graphics-set-property var (tree-ref (get-env-tree var) 0)))))
+
+(tm-define (graphics-get-property var)
+  (with val (get-env-tree var)
+     (tree->stree
+	(if (graphics-frozen-property? var)
+	    (tree-ref val 0)
+	    val))))
+
+(tm-define (graphics-change-property var val)
+  (if (tree? val)
+      (set! val (tree->stree val)))
+  (if (graphics-frozen-property? var)
+      (graphics-set-property var `(quote (frozen ,val)))
+      (graphics-set-property var val)))
 
 (define (graphics-cartesian-frame)
   (with frame (tree->stree (get-env-tree "gr-frame"))
@@ -677,15 +704,15 @@
 
 (tm-define (graphics-set-color val)
   (:argument val "Color")
-  (graphics-set-property "gr-color" val))
+  (graphics-change-property "gr-color" val))
 
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
-  (graphics-set-property "gr-point-style" val))
+  (graphics-change-property "gr-point-style" val))
 
 (tm-define (graphics-set-line-width val)
   (:argument val "Line width")
-  (graphics-set-property "gr-line-width" val))
+  (graphics-change-property "gr-line-width" val))
 
 (tm-define (graphics-set-dash-style val)
   (:argument val "Dash style")
@@ -695,16 +722,16 @@
     (if (and (string? val) (not (equal? val "")))
 	(cons 'tuple (map convert-1 (string->list val)))
         'none))
-  (graphics-set-property
+  (graphics-change-property
    "gr-dash-style" (if (== val "default") "default" (convert))))
 
 (tm-define (graphics-set-dash-style-unit val)
   (:argument val "Dash style unit")
-  (graphics-set-property "gr-dash-style-unit" val))
+  (graphics-change-property "gr-dash-style-unit" val))
 
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
-  (graphics-set-property "gr-fill-color" val))
+  (graphics-change-property "gr-fill-color" val))
 
 (define default-line-arrows
   ;; IMPORTANT NOTE: the points of the arrow are specified
@@ -727,27 +754,50 @@
 
 (tm-define (graphics-set-line-arrows arrows)
   (cond ((integer? arrows)
-	 (graphics-set-property
+	 (graphics-change-property
 	   "gr-line-arrows"
 	   (vector-ref default-line-arrows arrows)))
         ((pair? arrows)
-	 (graphics-set-property "gr-line-arrows" arrows))))
+	 (graphics-change-property "gr-line-arrows" arrows))))
+
+(tm-define (graphics-set-text-halign val)
+  (:argument val "Text-at horizontal alignment")
+  (graphics-change-property "gr-text-halign" val))
+
+(tm-define (graphics-set-text-valign val)
+  (:argument val "Text-at vertical alignment")
+  (graphics-change-property "gr-text-valign" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (graphics-enrich-filter l)
+(define (graphics-valid-attribute? attr tag)
+  (cond ((== tag 'point)
+	 (in? attr '("color" "fill-color" "point-style")))
+	((in? tag gr-tags-curves)
+	 (in? attr '("color" "fill-color" "line-width"
+		     "dash-style" "dash-style-unit"
+		     "line-arrows")))
+	((== tag 'gr-group)
+	 (in? attr '("color" "fill-color"
+		     "point-style" "line-width"
+		     "dash-style" "dash-style-unit"
+		     "line-arrows")))
+	(else #f)))
+
+(define (graphics-enrich-filter t l)
   (if (null? l) l
       (let* ((head (car l))
-	     (tail (graphics-enrich-filter (cdr l))))
+	     (tail (graphics-enrich-filter t (cdr l))))
 	(if (or (== (cadr head) "default")
-		(== (cadr head) (get-default-val (car head))))
+		(== (cadr head) (get-default-val (car head)))
+		(not (graphics-valid-attribute? (car head) t)))
 	    tail
 	    (cons* (car head) (cadr head) tail)))))
 
 (define (graphics-enrich-sub t l)
-  (with f (graphics-enrich-filter l)
+  (with f (graphics-enrich-filter (car t) l)
     (if (null? f)
 	t
 	`(with ,@f ,t))))
@@ -755,11 +805,21 @@
 (define (graphics-enrich-bis t color ps lw st stu lp fc)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
-	   (graphics-enrich-sub t `(("color" ,color)
-				    ("fill-color" ,fc)
-				    ("point-style" ,ps))))
+	   (graphics-enrich-sub t
+	    `(("color" ,color)
+	      ("fill-color" ,fc)
+	      ("point-style" ,ps))))
 	  ((in? mode gr-tags-curves)
-	   (graphics-enrich-sub t `(("color" ,color)
+	   (graphics-enrich-sub t
+	    `(("color" ,color)
+	      ("line-width" ,lw)
+	      ("dash-style" ,st) ("dash-style-unit" ,stu)
+	      ("line-arrows" ,lp)
+	      ("fill-color" ,fc))))
+	  ((== mode 'gr-group)
+	   (graphics-enrich-sub t
+	    `(("color" ,color)
+	      ("point-style" ,ps)
 	      ("line-width" ,lw)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
@@ -768,13 +828,13 @@
 	   (graphics-enrich-sub t '())))))
 
 (define (graphics-enrich t)
-  (let* ((color (get-env "gr-color"))
-	 (ps "default")
-	 (lw (get-env "gr-line-width"))
-	 (st (get-env-stree "gr-dash-style"))
-	 (stu (get-env-stree "gr-dash-style-unit"))
-	 (lp (get-env-stree "gr-line-arrows"))
-	 (fc (get-env "gr-fill-color")))
+  (let* ((color (graphics-get-property "gr-color"))
+	 (ps (graphics-get-property "gr-point-style"))
+	 (lw (graphics-get-property "gr-line-width"))
+	 (st (graphics-get-property "gr-dash-style"))
+	 (stu (graphics-get-property "gr-dash-style-unit"))
+	 (lp (graphics-get-property "gr-line-arrows"))
+	 (fc (graphics-get-property "gr-fill-color")))
     (graphics-enrich-bis t color ps lw st stu lp fc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -836,7 +896,7 @@
   (get-env "line-width"))
 
 (define (graphics-active-property-bis var default-val)
-  (with c (get-env var)
+  (with c (graphics-get-property var)
     (if (== c "") default-val c)))
 
 (define (graphics-active-property var)
@@ -1067,8 +1127,8 @@
 						 (cadr p1) (caddr p2)))))
 		   res)))
 
-(define (in-interval? x i1 i2)
-  (and (>= x i1) (<= x i2)))
+(define (in-interval? x i1 i2 supop infop)
+  (and (supop x i1) (infop x i2)))
 
 (define (on-graphical-contour? x y o eps)
   (set! eps (length-decode eps))
@@ -1082,14 +1142,14 @@
 	)
 	(set! x (s2i (cadr p)))
 	(set! y (s2i (caddr p)))
-        (or (and (in-interval? x (- l eps) (+ l eps))
-		 (in-interval? y (- b eps) (+ t eps)))
-	    (and (in-interval? x (- r eps) (+ r eps))
-		 (in-interval? y (- b eps) (+ t eps)))
-	    (and (in-interval? x (- l eps) (+ r eps))
-		 (in-interval? y (- b eps) (+ b eps)))
-	    (and (in-interval? x (- l eps) (+ r eps))
-		 (in-interval? y (- t eps) (+ t eps))))))
+        (or (and (in-interval? x (- l eps) l >= <)
+		 (in-interval? y (- b eps) (+ t eps) >= <=))
+	    (and (in-interval? x r (+ r eps) > <=)
+		 (in-interval? y (- b eps) (+ t eps) >= <=))
+	    (and (in-interval? x (- l eps) (+ r eps) >= <=)
+		 (in-interval? y (- b eps) b >= <))
+	    (and (in-interval? x (- l eps) (+ r eps) >= <=)
+		 (in-interval? y t (+ t eps) > <=)))))
 
 (define (create-graphical-props mode ps0)
   (define (dv var val)
@@ -1105,34 +1165,39 @@
 	(lp #f)
 	(fc #f)
      )
-     (if (== mode 'active)
-     (begin
-	(set! color graphical-color)
-	(set! ps graphical-pstyle)
-	(set! lw graphical-lwidth)
-	(set! st graphical-lstyle)
-	(set! stu graphical-lstyle-unit)
-	(set! lp graphical-larrows)
-	(set! fc graphical-fcolor))
-     )
-     (if (list? mode)
-     (begin
-	(set! color (graphics-path-property mode "color"))
-	(set! ps (graphics-path-property mode "point-style"))
-	(set! lw (graphics-path-property mode "line-width"))
-	(set! st (graphics-path-property mode "dash-style"))
-	(set! stu (graphics-path-property mode "dash-style-unit"))
-	(set! lp (graphics-path-property mode "line-arrows"))
-	(set! fc (graphics-path-property mode "fill-color")))
-     )
-     (if (== mode 'new)
-     (begin
-	(set! color (get-env "gr-color"))
-	(set! lw (get-env "gr-line-width"))
-	(set! st (get-env-stree "gr-dash-style"))
-	(set! stu (get-env-stree "gr-dash-style-unit"))
-	(set! lp (get-env-stree "gr-line-arrows"))
-	(set! fc (get-env "gr-fill-color")))
+     (cond
+	((== mode 'active)
+	 (set! color graphical-color)
+	 (set! ps graphical-pstyle)
+	 (set! lw graphical-lwidth)
+	 (set! st graphical-lstyle)
+	 (set! stu graphical-lstyle-unit)
+	 (set! lp graphical-larrows)
+	 (set! fc graphical-fcolor))
+	((list? mode)
+	 (set! color (graphics-path-property mode "color"))
+	 (set! ps (graphics-path-property mode "point-style"))
+	 (set! lw (graphics-path-property mode "line-width"))
+	 (set! st (graphics-path-property mode "dash-style"))
+	 (set! stu (graphics-path-property mode "dash-style-unit"))
+	 (set! lp (graphics-path-property mode "line-arrows"))
+	 (set! fc (graphics-path-property mode "fill-color")))
+	((== mode 'new)
+	 (set! color (graphics-get-property "gr-color"))
+	 (set! ps (graphics-get-property "gr-point-style"))
+	 (set! lw (graphics-get-property "gr-line-width"))
+	 (set! st (graphics-get-property "gr-dash-style"))
+	 (set! stu (graphics-get-property "gr-dash-style-unit"))
+	 (set! lp (graphics-get-property "gr-line-arrows"))
+	 (set! fc (graphics-get-property "gr-fill-color")))
+	((== mode 'default)
+	 (set! color (get-default-val "gr-color"))
+	 (set! ps (get-default-val "gr-point-style"))
+	 (set! lw (get-default-val "gr-line-width"))
+	 (set! st (get-default-val "gr-dash-style"))
+	 (set! stu (get-default-val "gr-dash-style-unit"))
+	 (set! lp (get-default-val "gr-line-arrows"))
+	 (set! fc (get-default-val "gr-fill-color")))
      )
      (list 'with "point-style"
 		  (if ps0 ps0 (if ps (dv "point-style" ps) "square"))
@@ -1181,7 +1246,8 @@
         (set! on-aobj #f)
 	(if (tree? o)
 	    (with path (reverse (tree-ip o))
-	       (set! props (create-graphical-props path
+	       (set! props (create-graphical-props (if (== mode 'points)
+						       'default path)
 						   (if (== mode 'object)
 						       #f "square")))
 	       (if (equal? path current-path-under-mouse)
@@ -1190,6 +1256,8 @@
 		  (set! curscol default-color-go-points)))
 	       (set! o (tree->stree o)))
 	)
+	(if (and (== (car o) 'gr-group) (!= mode 'object))
+	    (set! props (create-graphical-props 'default #f)))
 	(cond ((== (car o) 'point)
 	       (if (not curscol)
 		   (set! curscol default-color-selected-points))
@@ -1284,12 +1352,15 @@
 				        (if (> ll 2) (list-tail l 2) '())))
 			        (cdr o))))
 	       )
-	       (props (create-graphical-props mode #f))
+	       (props (create-graphical-props 'default #f))
 	   )
+	   (if (and pts (!= pts 'points))
+	       (set! props (create-graphical-props mode #f)))
 	   (set! op (add-selections-colors op default-color-go-points #f))
 	   (graphical-object!
 	      (if (or (eq? no 'group)
-		      (graphics-group-mode? (graphics-mode))
+		      (and (not (eq? no 'no-group))
+			   (graphics-group-mode? (graphics-mode)))
 		  )
 		  (cons 'concat
 			(create-graphical-contours selected-objects pts)
@@ -1875,23 +1946,148 @@
 	(invalidate-graphical-object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Edit properties mode
+;; Edit properties (implemented as a group mode, see below)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Left button
-(define (point_assign-props p obj)
-  (graphics-remove p)
-  (graphics-group-enrich-insert-bis
-     obj (get-env "gr-color")
-     (get-env "gr-point-style")
-     (get-env "gr-line-width")
-     (get-env-stree "gr-dash-style")
-     (get-env-stree "gr-dash-style-unit")
-     (get-env-stree "gr-line-arrows")
-     (get-env "gr-fill-color") #f)
-  (create-graphical-object obj 'new 'points #f))
+;; Functions with check marks for all the properties ("Enable change" menu)
+(define (enabled-var? var)
+  (not (graphics-frozen-property? var)))
 
-(define (text-at_change-halign p obj)
+(tm-define (graphics-color-enabled?)
+  (enabled-var? "gr-color"))
+
+(tm-define (graphics-toggle-color-enabled)
+  (:check-mark "v" graphics-color-enabled?)
+  (graphics-frozen-property! "gr-color"
+			     (graphics-color-enabled?)))
+
+(tm-define (graphics-point-style-enabled?)
+  (enabled-var? "gr-point-style"))
+
+(tm-define (graphics-toggle-point-style-enabled)
+  (:check-mark "v" graphics-point-style-enabled?)
+  (graphics-frozen-property! "gr-point-style"
+			     (graphics-point-style-enabled?)))
+
+(tm-define (graphics-line-width-enabled?)
+  (enabled-var? "gr-line-width"))
+
+(tm-define (graphics-toggle-line-width-enabled)
+  (:check-mark "v" graphics-line-width-enabled?)
+  (graphics-frozen-property! "gr-line-width"
+			     (graphics-line-width-enabled?)))
+
+(tm-define (graphics-dash-style-enabled?)
+  (enabled-var? "gr-dash-style"))
+
+(tm-define (graphics-toggle-dash-style-enabled)
+  (:check-mark "v" graphics-dash-style-enabled?)
+  (graphics-frozen-property! "gr-dash-style"
+			     (graphics-dash-style-enabled?)))
+
+(tm-define (graphics-dash-style-unit-enabled?)
+  (enabled-var? "gr-dash-style-unit"))
+
+(tm-define (graphics-toggle-dash-style-unit-enabled)
+  (:check-mark "v" graphics-dash-style-unit-enabled?)
+  (graphics-frozen-property! "gr-dash-style-unit"
+			     (graphics-dash-style-unit-enabled?)))
+
+(tm-define (graphics-line-arrows-enabled?)
+  (enabled-var? "gr-line-arrows"))
+
+(tm-define (graphics-toggle-line-arrows-enabled)
+  (:check-mark "v" graphics-line-arrows-enabled?)
+  (graphics-frozen-property! "gr-line-arrows"
+			     (graphics-line-arrows-enabled?)))
+
+(tm-define (graphics-fill-color-enabled?)
+  (enabled-var? "gr-fill-color"))
+
+(tm-define (graphics-toggle-fill-color-enabled)
+  (:check-mark "v" graphics-fill-color-enabled?)
+  (graphics-frozen-property! "gr-fill-color"
+			     (graphics-fill-color-enabled?)))
+
+(tm-define (graphics-text-halign-enabled?)
+  (enabled-var? "gr-text-halign"))
+
+(tm-define (graphics-toggle-text-halign-enabled)
+  (:check-mark "v" graphics-text-halign-enabled?)
+  (graphics-frozen-property! "gr-text-halign"
+			     (graphics-text-halign-enabled?)))
+
+(tm-define (graphics-text-valign-enabled?)
+  (enabled-var? "gr-text-valign"))
+
+(tm-define (graphics-toggle-text-valign-enabled)
+  (:check-mark "v" graphics-text-valign-enabled?)
+  (graphics-frozen-property! "gr-text-valign"
+			     (graphics-text-valign-enabled?)))
+
+;; Functions for managing properties
+(define (graphics-assign-props p obj mode)
+  (let* ((color (graphics-path-property p "color"))
+	 (ps (graphics-path-property p "point-style"))
+	 (lw (graphics-path-property p "line-width"))
+	 (st (graphics-path-property p "dash-style"))
+	 (stu (graphics-path-property p "dash-style-unit"))
+	 (lp (graphics-path-property p "line-arrows"))
+	 (fc (graphics-path-property p "fill-color"))
+     )
+     (graphics-remove p)
+     (with res
+	   (graphics-group-enrich-insert-bis obj
+	      (if (graphics-color-enabled?)
+		  (graphics-get-property "gr-color") color)
+	      (if (graphics-point-style-enabled?)
+		  (graphics-get-property "gr-point-style") ps)
+	      (if (graphics-line-width-enabled?)
+		  (graphics-get-property "gr-line-width") lw)
+	      (if (graphics-dash-style-enabled?)
+		  (graphics-get-property "gr-dash-style") st)
+	      (if (graphics-dash-style-unit-enabled?)
+		  (graphics-get-property "gr-dash-style-unit") stu)
+	      (if (graphics-line-arrows-enabled?)
+		  (graphics-get-property "gr-line-arrows") lp)
+	      (if (graphics-fill-color-enabled?)
+		  (graphics-get-property "gr-fill-color") fc) #f)
+	(if mode
+	    (create-graphical-object obj 'new 'points mode))
+	res)))
+
+(define (graphics-copy-props p)
+  (let* ((color (graphics-path-property p "color"))
+	 (ps (graphics-path-property p "point-style"))
+	 (lw (graphics-path-property p "line-width"))
+	 (st (graphics-path-property p "dash-style"))
+	 (stu (graphics-path-property p "dash-style-unit"))
+	 (lp (graphics-path-property p "line-arrows"))
+	 (fc (graphics-path-property p "fill-color"))
+     )
+     (if (!= color "default")
+	 (graphics-change-property "gr-color" color)
+	 (graphics-remove-property "gr-color"))
+     (if (!= ps "default")
+	 (graphics-change-property "gr-point-style" ps)
+	 (graphics-remove-property "gr-point-style"))
+     (if (!= lw "default")
+	 (graphics-change-property "gr-line-width" lw)
+	 (graphics-remove-property "gr-line-width"))
+     (if (!= st "default")
+	 (graphics-change-property "gr-dash-style" st)
+	 (graphics-remove-property "gr-dash-style"))
+     (if (!= stu "default")
+	 (graphics-change-property "gr-dash-style-unit" stu)
+	 (graphics-remove-property "gr-dash-style-unit"))
+     (if (!= lp "default")
+	 (graphics-change-property "gr-line-arrows" lp)
+	 (graphics-remove-property "gr-line-arrows"))
+     (if (!= fc "default")
+	 (graphics-change-property "gr-fill-color" fc)
+	 (graphics-remove-property "gr-fill-color"))))
+
+(define (text-at-change-halign p obj)
   (graphics-remove p)
   (with halign (cadddr obj)
      (set-car! (cdddr obj) (cond ((== halign "left") "center")
@@ -1899,13 +2095,9 @@
 				 ((== halign "right") "left")
 				 (else "left")))
      (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points #f)))
+     (create-graphical-object obj '() 'points 'no-group)))
 
-(define (text-at_assign-props p obj)
-  (text-at_change-halign p obj))
-
-;; Right button
-(define (text-at_change-valign p obj)
+(define (text-at-change-valign p obj)
   (graphics-remove p)
   (with valign (car (cddddr obj))
      (set-car! (cddddr obj) (cond ((== valign "bottom") "base")
@@ -1914,26 +2106,7 @@
 				  ((== valign "top") "bottom")
 				  (else "bottom")))
      (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points #f)))
-
-;; Dispatch
-(define (edit-prop_move x y)
-  (edit_move x y))
-
-(define (edit-prop_left-button x y)
-  (with-graphics-context "assign-props" x y p obj no edge
-     (dispatch (car obj) ((point line cline spline cspline arc carc)
-			  (text-at))
-	       assign-props (p obj) do-tick)))
-
-(define (edit-prop_right-button x y)
-  (with-graphics-context "change-valign" x y p obj no edge
-     (dispatch (car obj) ((text-at))
-	       change-valign (p obj) do-tick)))
-
-(define (edit-prop_tab-key)
- ;(display* "Graphics] Edit-prop(Tab)\n")
-  (edit_tab-key))
+     (create-graphical-object obj '() 'points 'no-group)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode
@@ -1942,7 +2115,10 @@
 ;; Util
 (define (group-list l tag)
   (if (pair? l)
-      (if (and (!= tag 'point)
+      (if (and #f ; FIXME: Just added #f. This (if) should not be
+		  ;   needed anymore. After some time using the soft,
+		  ;   if no strange behaviour is observed, remove it.
+	       (!= tag 'point)
 	       (== (car l) "point-style"))
 	  (group-list (cddr l) tag)
 	  (cons `(,(car l) ,(cadr l)) (group-list (cddr l) tag)))
@@ -2139,6 +2315,7 @@
 
 ;; State transitions
 (define (point_start-operation opn p obj)
+  (set! current-path-under-mouse #f)
   (if sticky-point
       ;;Perform operation
       (begin
@@ -2168,32 +2345,56 @@
 	 (set! graphics-undo-enabled #t)
 	 (graphics-forget-states))
       ;;Start operation
-      (if (and (not multiselecting) (== (cadr (graphics-mode)) 'group-ungroup))
-	  (begin
-	     (if (and (not sticky-point)
-		      (== (length selected-objects) 1)
-		      (== (tree-label (car selected-objects)) 'gr-group))
-		 (ungroup-current-object)
-		 (group-selected-objects))
+      (cond
+	 ((and (not multiselecting) (== (cadr (graphics-mode)) 'group-ungroup))
+	  (if (and p (not sticky-point) (null? selected-objects)
+		   (== (tree-label (path->tree p)) 'gr-group))
+	      (set! selected-objects `(,(path->tree p))))
+	  (if (and (not sticky-point)
+		   (== (length selected-objects) 1)
+		   (== (tree-label (car selected-objects)) 'gr-group))
+	      (ungroup-current-object)
+	      (group-selected-objects))
+	 )
+	 ((and (not multiselecting) (== (cadr (graphics-mode)) 'props))
+	; FIXME: in (with-graphics-context), if we are in group mode,
+	;   obj is := to '(point). Find why it is so, and remove this.
+	  (if (null? selected-objects)
+	      (if p
+	      (begin
+		 (set! obj (stree-at p))
+		 (if (eq? (car obj) 'text-at)
+		     (text-at-change-halign p obj)
+		     (graphics-assign-props p obj 'no-group))))
+	      (with l '()
+		 (foreach (o selected-objects)
+		    (with p (graphics-assign-props
+		       (reverse (tree-ip o))
+		       (tree->stree o) #f)
+		       (set! l (cons (path->tree p) l)))
+		 )
+		 (set! selected-objects (reverse l))
+		 (create-graphical-object '(nothing) #f 'points 'group))
 	  )
-	  (if (and (not multiselecting) (or p (nnull? selected-objects)))
+	  (graphics-group-start)
+	 )
+	 ((and (not multiselecting) (or p (nnull? selected-objects)))
+	  (if (null? selected-objects)
+	      (point_toggle-select #f #f p obj))
+	  (if (store-important-points)
 	  (begin
-	     (if (null? selected-objects)
-	         (point_toggle-select #f #f p obj))
-	     (if (store-important-points)
-	     (begin
-	        (graphics-store-state 'start-operation)
-	        (create-graphical-object obj p 'object #f)
-	        (set! group-first-go (get-graphical-object))
-	        (foreach (o selected-objects)
-	           (graphics-remove (reverse (tree-ip o)))
-	        )
-	        (set! selected-objects '())
-	        (set! sticky-point #t)
-	        (set! graphics-undo-enabled #f)
-	        (graphics-store-state #f)
-	        (set! group-old-x (s2i current-x))
-	        (set! group-old-y (s2i current-y)))))))))
+	     (graphics-store-state 'start-operation)
+	     (create-graphical-object obj p 'object #f)
+	     (set! group-first-go (get-graphical-object))
+	     (foreach (o selected-objects)
+	        (graphics-remove (reverse (tree-ip o)))
+	     )
+	     (set! selected-objects '())
+	     (set! sticky-point #t)
+	     (set! graphics-undo-enabled #f)
+	     (graphics-store-state #f)
+	     (set! group-old-x (s2i current-x))
+	     (set! group-old-y (s2i current-y))))))))
 
 (define (point_toggle-select x y p obj)
   (if multiselecting
@@ -2228,21 +2429,31 @@
 	 (set! selecting-y0 #f)
       )
       (if p
-          (with t (path->tree p)
-	     (if (seek-eq? t selected-objects)
-	         (seek-eq?-remove t selected-objects)
-	         (set! selected-objects (rcons selected-objects t))
-	     )
-             (create-graphical-object obj p 'points #f)
+	  (if (and (null? selected-objects) (eq? (car (stree-at p)) 'text-at)
+		   (== (cadr (graphics-mode)) 'props))
+	; FIXME: in (with-graphics-context), if we are in group mode,
+	;   obj is := to '(point). Find why it is so, and remove this.
+	      (text-at-change-valign p (stree-at p))
+	      (with t (path->tree p)
+		 (if (seek-eq? t selected-objects)
+		     (seek-eq?-remove t selected-objects)
+		     (set! selected-objects (rcons selected-objects t))
+		 )
+		 (create-graphical-object obj p 'points #f))
           )
           (begin
 	     (set! selecting-x0 x)
 	     (set! selecting-y0 y)
 	     (set! multiselecting #t)))))
 
-(define (point_unselect-all)
-  (set! selected-objects '())
-  (create-graphical-object '(nothing) #f 'points 'group))
+(define (point_unselect-all p)
+  (if (nnull? selected-objects)
+  (begin
+     (set! selected-objects '())
+     (create-graphical-object '(nothing) #f 'points 'group))
+  (if (and p (not multiselecting)
+	   (== (cadr (graphics-mode)) 'props))
+      (graphics-copy-props p))))
 
 ;; Dispatch
 (define (group-edit_move x y)
@@ -2295,7 +2506,11 @@
   (with-graphics-context "unselect-all" x y p obj no edge
      (dispatch (car obj) ((point line cline spline cspline arc carc
 			   text-at))
-	       unselect-all () do-tick)))
+	       unselect-all (p) do-tick)))
+
+(define (group-edit_tab-key)
+ ;(display* "Graphics] Group-edit(Tab)\n")
+  (edit_tab-key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redim graphics mode
@@ -2428,7 +2643,6 @@
   ;(display* "Graphics] Insert " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (edit-prop)
 	     (group-edit)
 	     (redim-graphics))
 	    left-button (x y)))
@@ -2437,7 +2651,6 @@
   ;(display* "Graphics] Move " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (edit-prop)
 	     (group-edit)
 	     (redim-graphics))
 	    move (x y)))
@@ -2453,7 +2666,6 @@
   ;(display* "Graphics] Last " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (edit-prop)
 	     (group-edit))
 	    right-button (x y)))
 
@@ -2473,7 +2685,7 @@
   ;(display* "Graphics] Choose\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (edit-prop))
+	     (group-edit))
 	    tab-key ()))
 
 (define (graphics-enter-mode old-mode new-mode)
@@ -2500,8 +2712,6 @@
 		   ((in? submode gr-tags-curves) (noop))
 		   ((== submode 'text-at) (noop))
 		   (else (display* "Uncaptured finish (edit)\n")))))
-	 ((== (car mode) 'edit-prop)
-	   (noop))
 	 ((== (car mode) 'group-edit)
 	   (noop))
 	 ((== (car mode) 'redim-graphics)
