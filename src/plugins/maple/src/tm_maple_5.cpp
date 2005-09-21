@@ -266,7 +266,7 @@ maple_input () {
 void
 maple_interrupt (int sig) {
   kill (pid, sig);
-  cout << DATA_END;// << DATA_END << DATA_END;
+  cout << DATA_END; // << DATA_END << DATA_END;
   signal (sig, maple_interrupt);
   siginterrupt (sig, 1);
 }
@@ -293,10 +293,8 @@ init_maple () {
   send ("tmmaple:=5:\n");
   send ("interface(errorbreak=0,screenheight=9999):\n");
   char* tm_path= getenv ("TEXMACS_PATH");
-  //send ("read (`");
-  //send (tm_path);
-  //send ("/plugins/maple/maple/init-maple.mpl`):\n");
-  send ("read (`" * string (tm_path) * "/plugins/maple/maple/init-maple.mpl`):\n");
+  send ("read (`" * string (tm_path) *
+	"/plugins/maple/maple/init-maple.mpl`):\n");
   next_input ();
   cout << DATA_END;
   cout.flush ();
