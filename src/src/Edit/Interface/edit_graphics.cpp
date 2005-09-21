@@ -16,6 +16,7 @@
 #include "Graphics/curve.hpp"
 #include "Boxes/graphics.hpp"
 #include "Bridge/impl_typesetter.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -136,21 +137,10 @@ edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
 
-#include <stdlib.h>
-static int sel_compare (const void *a, const void *b) {
-  return ( (**(gr_selection**)a)->dist - (**(gr_selection**)b)->dist );
-}
-// TODO: Turn this code into a template that implements sorting an array<T>
-static void sort_graphical_select (gr_selections &sels) {
-  int i, n=N(sels);
-  gr_selection **tab;
-  tab= (gr_selection**)malloc (n*sizeof(gr_selection*));
-  for (i=0; i<n; i++) tab[i]= &sels[i];
-  qsort (tab, n, sizeof (gr_selection*), sel_compare);
-  gr_selections tab2= array<gr_selection> (n);
-  for (i=0; i<n; i++) tab2[i]= *tab[i];
-  sels= tab2;
-}
+struct less_eq_gr_selection {
+  static inline bool leq (gr_selection& a, gr_selection& b) {
+    return a->dist <= b->dist; }
+};
 
 tree
 edit_graphics_rep::graphical_select (double x, double y) { 
@@ -159,7 +149,7 @@ edit_graphics_rep::graphical_select (double x, double y) {
   gr_selections sels;
   point p = f (point (x, y));
   sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10 * get_pixel_size ());
-  sort_graphical_select (sels);
+  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
   int i, n= N(sels);
   array<array<path> > gs (n);
   for (i=0; i<n; i++)
@@ -176,7 +166,7 @@ edit_graphics_rep::graphical_select (
   gr_selections sels;
   point p1 = f (point (x1, y1)), p2= f (point (x2, y2));
   sels= eb->graphical_select ((SI)p1[0], (SI)p1[1], (SI)p2[0], (SI)p2[1]);
-  sort_graphical_select (sels);
+  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
   int i, n= N(sels);
   array<array<path> > gs (n);
   for (i=0; i<n; i++)
