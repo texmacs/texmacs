@@ -29,6 +29,7 @@ public:
 
   bool   inside_graphics ();
   bool   inside_active_graphics ();
+  bool   over_graphics (SI x, SI y);
   tree   get_graphics ();
   frame  find_frame ();
   grid   find_grid ();

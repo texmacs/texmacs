@@ -178,6 +178,7 @@ public:
   /* public routines from edit_graphics */
   virtual bool   inside_graphics () = 0;
   virtual bool   inside_active_graphics () = 0;
+  virtual bool   over_graphics (SI x, SI y) = 0;
   virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
   virtual grid   find_grid () = 0;
