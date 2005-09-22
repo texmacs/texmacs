@@ -19,7 +19,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (tm? x)
-  (or (string? x) (list? x) (tree? x)))
+  (or (string? x) (tree? x)
+      (and (pair? x) (symbol? (car x))
+	   (let tm-all? ((l (cdr x)))
+	     (or (null? l) (and (tm? (car l)) (tm-all? (cdr l))))))))
 
 (define-public (tm-atomic? x)
   (or (string? x)

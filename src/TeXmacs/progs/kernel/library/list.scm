@@ -278,6 +278,13 @@
 	    (car l)
 	    (next (cdr l))))))
 
+(define-public (list-find-index l pred?)
+  "Find first index in @l which matches @pred"
+  (let find ((l l) (i 0))
+    (cond ((null? l) #f)
+	  ((pred? (car l)) i)
+	  (else (find (cdr l) (+ i 1))))))
+
 (define (any1 pred? ls)
   ;; Internal helper.
   (let lp ((ls ls))

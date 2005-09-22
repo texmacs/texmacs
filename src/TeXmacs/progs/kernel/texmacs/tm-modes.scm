@@ -102,7 +102,8 @@
   (in-std-text% #t in-text% in-std%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
-  (with-active-selection% (selection-active-normal?)))
+  (with-active-selection% (selection-active-normal?))
+  (in-scheme% (== (get-env "prog-language") "scheme")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language related

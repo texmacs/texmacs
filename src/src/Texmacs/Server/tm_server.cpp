@@ -537,7 +537,15 @@ tree
 tm_server_rep::evaluate (string name, string session, tree expr) {
   if (name == "scheme") {
     string s= tree_to_verbatim (expr);
-    string r= object_to_string (::eval (s));
+    object x= ::eval (s);
+    if (is_tree (x) && as_bool (call ("session-scheme-trees?")))
+      return as_tree (x);
+    else if (as_bool (call ("session-scheme-math?"))) {
+      object y= call ("cas->stree", x);
+      if (as_bool (call ("tm?", y)))
+	return compound ("math", as_tree (call ("tm->tree", y)));
+    }
+    string r= object_to_string (x);
     if (r == "#<unspecified>") r= "";
     return verbatim_to_tree (r);
   }
