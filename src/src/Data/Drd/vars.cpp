@@ -211,6 +211,8 @@ string GR_DASH_STYLE ("gr-dash-style");
 string GR_DASH_STYLE_UNIT ("gr-dash-style-unit");
 string GR_LINE_ARROWS ("gr-line-arrows");
 string GR_FILL_COLOR ("gr-fill-color");
+string GR_TEXT_HALIGN ("gr-text-halign");
+string GR_TEXT_VALIGN ("gr-text-valign");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");

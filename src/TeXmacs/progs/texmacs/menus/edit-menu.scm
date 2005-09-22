@@ -38,7 +38,9 @@
   ("Undo" (undo))
   ("Redo" (redo))
   ---
-  (when (selection-active-any?)
+  (when (or (selection-active-any?)
+	    (and (in-graphics?)
+		 (graphics-selection-active?)))
 	("Copy" (clipboard-copy "primary"))
 	("Cut" (clipboard-cut "primary")))
   ("Paste" (clipboard-paste "primary"))
