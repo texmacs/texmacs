@@ -46,8 +46,10 @@
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
 
-    <item>Nelson Beebe for his help with manifacturing a more robust
+    <item>Nelson Beebe helped with manifacturing a more robust
     <verbatim|configure.in>.
+
+    <item>Kai Krüger fixed several details for the new Maple interface.
 
     <item>Mickael Floc'hlay and Arnaud Ébalard for their work on searching
     for help.
