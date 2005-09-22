@@ -69,6 +69,14 @@
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 
+(define-public-macro (with-global var val . body)
+  (let ((old (gensym)) (new (gensym)))
+    `(let ((,old ,var))
+       (set! ,var ,val)
+       (let ((,new (begin ,@body)))
+	 (set! ,var ,old)
+	 ,new))))
+
 (define-public-macro (and-with var val . body)
   `(with var val
      (and var (begin ,@body))))

@@ -36,6 +36,26 @@
   (:check-mark "v" session-multiline-input?)
   (set! session-multiline-input (not session-multiline-input)))
 
+(define session-scheme-trees #t)
+
+(tm-define (session-scheme-trees?)
+  session-scheme-trees)
+
+(tm-define (toggle-session-scheme-trees)
+  (:synopsis "Toggle pretty tree output in scheme sessions.")
+  (:check-mark "v" session-scheme-trees?)
+  (set! session-scheme-trees (not session-scheme-trees)))
+
+(define session-scheme-math #f)
+
+(tm-define (session-scheme-math?)
+  session-scheme-math)
+
+(tm-define (toggle-session-scheme-math)
+  (:synopsis "Toggle pretty tree output in scheme sessions.")
+  (:check-mark "v" session-scheme-math?)
+  (set! session-scheme-math (not session-scheme-math)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

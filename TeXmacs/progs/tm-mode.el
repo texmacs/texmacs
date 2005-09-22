@@ -28,7 +28,7 @@
        '(texmacs-module define-macro define-public-macro
          tm-define tm-define-macro tm-property
 	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let\\* case-lambda with
+         texmacs-modes and-let\\* case-lambda with with-global
          ahash-with and-with for repeat
 	 with-innermost with-action with-mutator with-module with-cursor
 	 call/cc with-cc values receive map-in-order
@@ -61,7 +61,7 @@
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
   (dolist (s '(ahash-with))
     (put s 'scheme-indent-function 3))
-  (dolist (s '(with and-with with-innermost receive
+  (dolist (s '(with with-global and-with with-innermost receive
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if define-group

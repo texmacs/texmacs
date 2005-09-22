@@ -34,7 +34,10 @@
 (menu-bind session-input-menu
   (when (in-plugin-with-converters?)
 	("Mathematical input" (toggle-session-math-input)))
-  ("Multiline input" (toggle-session-multiline-input)))
+  ("Multiline input" (toggle-session-multiline-input))
+  (if (in-scheme?)
+      ("Pretty tree output" (toggle-session-scheme-trees))
+      ("Mathematical output" (toggle-session-scheme-math))))
 
 (menu-bind session-insert-menu
   ("Insert text field" (session-insert-text-field))
