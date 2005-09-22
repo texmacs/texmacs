@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.5.8>
 
 <style|tmdoc>
 
@@ -38,9 +38,6 @@
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
-    <item>Josef Weidendorfer for two patches to improve the speed of
-    <TeXmacs>.
-
     <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
 
     <item>Bill Page and David Mentré for the support of the free version of
@@ -48,6 +45,9 @@
 
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
+
+    <item>Nelson Beebe for his help with manifacturing a more robust
+    <verbatim|configure.in>.
 
     <item>Mickael Floc'hlay and Arnaud Ébalard for their work on searching
     for help.
