@@ -131,6 +131,13 @@
        ,(car i))
       ,(cons 'begin b)))
 
+(define (tm-upper-path p tags)
+  (if (in? (tree-label (path->tree p)) tags)
+      p
+      (if (> (length p) 2)
+	  (tm-upper-path (reverse (cdr (reverse p))) tags)
+	  #f)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global geometry of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -895,18 +902,15 @@
 (define (graphics-active-lwidth)
   (get-env "line-width"))
 
-(define (graphics-active-property-bis var default-val)
+(define (graphics-active-property var default-val)
   (with c (graphics-get-property var)
-    (if (== c "") default-val c)))
-
-(define (graphics-active-property var)
-  (graphics-active-property-bis var "default"))
+    (if (== c "default") default-val c)))
 
 (define (search-upwards-from p tag)
   (if (null? p)
      '() 
-      (with o (stree-at p)
-	 (if (func? o tag)
+      (with o (path->tree p)
+	 (if (== (tree-label o) tag)
 	     p
 	     (search-upwards-from (cDr p) tag)))))
 
@@ -926,10 +930,26 @@
       (find (cdr l))))
 
 (define (find-prop-bis l var default)
-  (with val (find-prop l var)
+  (with val ((if (tree? l) tm-find-prop find-prop) l var)
      (if (== val nothing)
 	 default
 	 val)))
+
+(define (tm-find-prop p var)
+  (if (null? p)
+      nothing
+      (let* ((t (if (tree? p) p (path->tree p)))
+	     (n (tree-arity t))
+	 )
+	 (if (> n 2)
+	     (with res nothing
+		(foreach-number (i 0 < (- (/ n 2) 1))
+		   (if (== (tree->stree (tree-ref t (* 2 i))) var)
+		       (set! res (tree->stree (tree-ref t (+ (* 2 i) 1)))))
+		)
+		res
+	     )
+	     nothing))))
 
 (define (get-upwards-property p var)
   (if (null? p)
@@ -937,7 +957,7 @@
       (with q (search-upwards-from p 'with)
 	 (if (null? q)
 	     nothing
-	     (with val (find-prop (stree-at q) var)
+	     (with val (tm-find-prop q var)
 		(if (== val nothing)
 		    (get-upwards-property (cDr q) var)
 		    val))))))
@@ -1050,6 +1070,9 @@
 (define graphical-fcolor "default")
 
 (define (graphical-object fetch)
+; FIXME: Remove this (tree->stree) should give more speed, but I'm not sure
+;   about what is the best way now. Then, directly plug the tree and test
+;   the new version of (find-prop-bis) that works directly on trees.
   (with o (tree->stree (get-graphical-object))
    ;(display* "o=" o "\n")
     (if (and fetch (pair? o))
@@ -1712,14 +1735,9 @@
     (begin
        (set! current-cursor 'graphics-cursor)
        (set-texmacs-pointer 'graphics-cross))))
-      ;; TODO: There is a problem now that we use the X cursor
-      ;;   during graphics editing : the cursor doesn't aligns
-      ;;   on the grid anymore. A good solution to this problem
-      ;;   would be to shut it down as soon as we enter the
-      ;;   sticky mode (all the more because that most of the
-      ;;   time, the cursor is more a hindrance than something
-      ;;   else, e.g., when editing a line).
    ((and (in? cmd '(begin exit)) (or (== cmd 'begin) (not sticky-point)))
+   ; FIXME : when we move the cursor from one <graphics> to another,
+   ;   we are not called, whereas it should be the case.
     (graphics-reset-state)
     (graphics-forget-states)
     (with p (graphics-active-path)
@@ -1740,6 +1758,7 @@
 	     (in? (state-ref graphics-first-state 'graphics-action)
 		 '(start-move start-operation start-redim)))
 	(begin
+	; FIXME : In this begin, the state variables should be raz-ed as well !
 	  (set! graphics-undo-enabled #t)
 	  (unredoable-undo))
 	(begin
@@ -1747,14 +1766,16 @@
 	  (if (and graphics-undo-enabled (not sticky-point))
 	      (with p (graphics-active-path)
 		(if p
-		    (create-graphical-object (graphics-active-object) p 'points #f)
+		    (create-graphical-object
+		       (graphics-active-object) p 'points #f)
 		    (create-graphical-object #f #f #f #f))))
 	  (if (and (not graphics-undo-enabled) sticky-point)
 	      (create-graphical-object #f #f #f #f))
 	  (set! sticky-point #f)
 	  (set! current-point-no #f)
 	  (set! graphics-undo-enabled #t)
-          (set! selected-objects '())
+	  (set! selected-objects '())
+	  (set! multiselecting #f)
 	  (if graphics-first-state
 	      (graphics-back-first))
 	  (graphics-forget-states)
@@ -1845,7 +1866,7 @@
 	  (if edge no `(,edge ,no))))
       (begin
 	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
-	(go-to (rcons p 1)))))
+	(if p (go-to (rcons p 1))))))
 
 (define (text-at_move x y p obj no edge)
   (if (and (not sticky-point)
@@ -1908,8 +1929,8 @@
 (define (text-at_nonsticky-right-button x y mode)
   (graphics-group-enrich-insert
     `(text-at "" (point ,x ,y)
-       ,(graphics-active-property-bis "gr-text-halign" "left")
-       ,(graphics-active-property-bis "gr-text-valign" "bottom"))))
+       ,(graphics-active-property "gr-text-halign" "left")
+       ,(graphics-active-property "gr-text-valign" "bottom"))))
 
 ;; Dispatch
 (define (edit_left-button x y)
@@ -2498,11 +2519,13 @@
 	 (if multiselecting
 	     (begin
 		(graphical-object!
-		  `(with color red
-		      (cline (point ,selecting-x0 ,selecting-y0)
-			     (point ,x ,selecting-y0)
-			     (point ,x ,y)
-			     (point ,selecting-x0 ,y)))))
+		   (append
+		      (create-graphical-props 'default #f)
+		     `((with color red
+			 (cline (point ,selecting-x0 ,selecting-y0)
+			        (point ,x ,selecting-y0)
+			        (point ,x ,y)
+			        (point ,selecting-x0 ,y)))))))
 	     (create-graphical-object obj p 'points #f)))))
 
 (define (group-edit_left-button x y)
@@ -2526,6 +2549,71 @@
 (define (group-edit_tab-key)
  ;(display* "Graphics] Group-edit(Tab)\n")
   (edit_tab-key))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cut & paste actions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-selection-active?)
+  (nnull? selected-objects))
+
+(tm-define (graphics-copy)
+  (if (== (car (graphics-mode)) 'group-edit)
+  (with copied-objects '()
+     (foreach (o selected-objects)
+     (with p (tm-upper-path (tree->path o) '(with))
+        (let* ((t (if p (path->tree p) #f))
+	       (n (if t (tree-arity t) #f))
+	       (o2 (if (and t n (> n 0)) (tree-ref t (- n 1)) #f))
+	   )
+	   (if (or (not p) (and o2 (!= o2 o)))
+	       (set! p (tree->path o)))
+	)
+	(set! copied-objects
+	      (cons (tree->stree (path->tree p)) copied-objects)))
+     )
+     (set! copied-objects (reverse copied-objects))
+     (point_unselect-all #f)
+     (update-buffer)
+     (if (null? copied-objects)
+	 (stree->tree "")
+	 (stree->tree (cons 'graphics copied-objects)))
+  )
+  (stree->tree "")))
+
+(tm-define (graphics-cut)
+  (if (== (car (graphics-mode)) 'group-edit)
+  (let* ((l selected-objects)
+	 (res (graphics-copy))
+     )
+     (foreach (o l)
+        (graphics-remove (reverse (tree-ip o)))
+     )
+     res
+  )
+  (stree->tree "")))
+
+(tm-define (graphics-paste sel)
+  (if (and (== (car (graphics-mode)) 'group-edit)
+	   (tree-compound? sel)
+	   (== (tree-label sel) 'graphics)
+	   (> (tree-arity sel) 0))
+  (with l '()
+     (foreach-number (i 0 < (tree-arity sel))
+     (let* ((t (tree-ref sel i))
+	    (v (if (== (tree-label t) 'with)
+		   (if (> (tree-arity t) 0)
+		       (tree-ref t (- (tree-arity t) 1))
+		       t)
+		   t))
+	)
+	(if (in? (tree-label v) gr-tags-all)
+	    (with p (graphics-group-insert (tree->stree t))
+	       (if p (set! l (cons (path->tree p) l))))))
+     )
+     (set! selected-objects (reverse l))
+     (create-graphical-object '(nothing) #f 'points 'group)
+     (graphics-group-start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redim graphics mode

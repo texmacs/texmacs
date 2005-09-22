@@ -189,6 +189,8 @@ extern string GR_DASH_STYLE;
 extern string GR_DASH_STYLE_UNIT;
 extern string GR_LINE_ARROWS;
 extern string GR_FILL_COLOR;
+extern string GR_TEXT_HALIGN;
+extern string GR_TEXT_VALIGN;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;

@@ -204,6 +204,8 @@ initialize_default_env () {
   env (GR_DASH_STYLE_UNIT) = "default"; // dash style unit for new objects
   env (GR_LINE_ARROWS)   = "default";   // line arrows for new objects
   env (GR_FILL_COLOR)    = "default";   // fill color for new objects
+  env (GR_TEXT_HALIGN)   = "default";   // horiz. align. for new text boxes
+  env (GR_TEXT_VALIGN)   = "default";   // vert. align. for new text boxes
   env (GR_GRID)             = gr_grid;        // grid for graphics
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
