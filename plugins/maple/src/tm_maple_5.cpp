@@ -18,7 +18,11 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <iostream>
-using namespace std;
+using std::istream;
+using std::ostream;
+using std::in;
+using std::cout;
+using std::cerr;
 
 typedef char* charp;
 extern charp* environ;
