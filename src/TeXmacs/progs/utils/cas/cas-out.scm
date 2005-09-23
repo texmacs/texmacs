@@ -321,13 +321,47 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (cas-out x)
-  (cas-out-plus x))
+  (cas-out-formula x))
+
+(define (cas-out-formula x)
+  (cond ((func? x '=> 2)
+	 `(concat ,(cas-out-or (cadr x)) "<Rightarrow>"
+		  ,(cas-out-or (caddr x))))
+	((func? x '<=> 2)
+	 `(concat ,(cas-out-or (cadr x)) "<Leftrightarrow>"
+		  ,(cas-out-or (caddr x))))
+	(else (cas-out-or x))))
+
+(define (cas-out-or x)
+  (cond ((func? x '| 2)
+	 `(concat ,(cas-out-or (cadr x)) "<vee>" ,(cas-out-or (caddr x))))
+	(else (cas-out-and x))))
+
+(define (cas-out-and x)
+  (cond ((func? x '& 2)
+	 `(concat ,(cas-out-and (cadr x)) "<wedge>" ,(cas-out-and (caddr x))))
+	(else (cas-out-compare x))))
+
+(define (cas-out-compare x)
+  (cond ((func? x '= 2)
+	 `(concat ,(cas-out-plus (cadr x)) "=" ,(cas-out-plus (caddr x))))
+	((func? x '!= 2)
+	 `(concat ,(cas-out-plus (cadr x)) "<neq>" ,(cas-out-plus (caddr x))))
+	((func? x '< 2)
+	 `(concat ,(cas-out-plus (cadr x)) "<less>" ,(cas-out-plus (caddr x))))
+	((func? x '> 2)
+	 `(concat ,(cas-out-plus (cadr x)) "<gtr>" ,(cas-out-plus (caddr x))))
+	((func? x '<= 2)
+	 `(concat ,(cas-out-plus (cadr x)) "<leqslant>"
+		  ,(cas-out-plus (caddr x))))
+	((func? x '>= 2)
+	 `(concat ,(cas-out-plus (cadr x)) "<geqslant>"
+		  ,(cas-out-plus (caddr x))))
+	(else (cas-out-plus x))))
 
 (define (cas-out-plus x)
   (cond ((func? x '+ 2)
 	 `(concat ,(cas-out-plus (cadr x)) "+" ,(cas-out-plus (caddr x))))
-	((func? x '- 1)
-	 `(concat "<um>" ,(cas-out-times (cadr x))))
 	((func? x '- 2)
 	 `(concat ,(cas-out-plus (cadr x)) "-" ,(cas-out-times (caddr x))))
 	(else (cas-out-times x))))
@@ -339,25 +373,61 @@
 	 `(frac "1" ,(cas-out (cadr x))))
 	((func? x '/ 2)
 	 `(frac ,(cas-out (cadr x)) ,(cas-out (caddr x))))
-	(else (cas-out-power x))))
+	(else (cas-out-prefix x))))
 
-(define (cas-out-power x)
-  (cond ((and (func? x '^ 2)
-	      (or (func? (caddr x) '/ 1)
-		  (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1))))
-	 (with y (cAr (caddr x))
-	   (if (== y 2)
-	       `(sqrt ,(cas-out (cadr x)))
-	       `(sqrt ,(cas-out (cadr x)) ,(cas-out y)))))
-	((func? x '^ 2)
-	 `(concat ,(cas-out-radical (cadr x)) (rsup ,(cas-out (caddr x)))))
-	(else (cas-out-radical x))))
+(define (cas-out-prefix x)
+  (cond ((func? x '- 1)
+	 `(concat "<um>" ,(cas-out-prefix (cadr x))))
+	((func? x '! 1)
+	 `(concat "<neg>",(cas-out-prefix (cadr x))))
+	(else (cas-out-postfix x))))
 
-(define (cas-out-radical x)
+(define (cas-is-root? x)
+  (and (func? x '^ 2)
+       (or (func? (caddr x) '/ 1)
+	   (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1)))))
+
+(define cas-out-special
+  '(=> <=> & |
+    = != < > <= >=
+    + - * / ^ !
+    %prime factorial _
+    matrix det row tuple list set))
+
+(define (cas-out-postfix x)
+  (cond ((func? x '%prime 1)
+	 `(concat ,(cas-out-postfix (cadr x)) (rprime "'")))
+	((func? x 'factorial 1)
+	 `(concat ,(cas-out-postfix (cadr x)) "!"))
+	((func? x '_ 2)
+	 `(concat ,(cas-out-postfix (cadr x)) (rsub ,(cas-out (caddr x)))))
+	((and (func? x '^ 2) (not (cas-is-root? x)))
+	 `(concat ,(cas-out-postfix (cadr x)) (rsup ,(cas-out (caddr x)))))
+	((list-1? x) `(concat ,(cas-out-postfix (car x)) "()"))
+	((and (pair? x) (nin? (car x) cas-out-special))
+	 ;; FIXME: also check arities
+	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	   `(concat ,(cas-out-postfix (car x)) (left "(") ,@args (right ")"))))
+	(else (cas-out-atom x))))
+
+(define (cas-out-cell x)
+  `(cell ,(cas-out x)))
+
+(define (cas-out-atom x)
   (cond ((null? x) "null")
+	((number? x) (number->string x))
+	((symbol? x)
+	 (with s (symbol->string x)
+	   (if (not (string-starts? s "%")) s
+	       (string-append "<" (substring s 1 (string-length s)) ">"))))
+	((string? x) (string-append "\"" (escape-quotes x) "\""))
 	((func? x 'matrix) `(matrix (table ,@(map cas-out (cdr x)))))
 	((func? x 'det) `(det (table ,@(map cas-out (cdr x)))))
 	((func? x 'row) `(row ,@(map cas-out-cell (cdr x))))
+	((== x '(tuple)) "()")
+	((func? x 'tuple)
+	 (with args (tuple-intersperse (map cas-out (cdr x)) ",")
+	   `(concat (left "(") ,@args (right ")"))))
 	((== x '(list)) "[]")
 	((func? x 'list)
 	 (with args (list-intersperse (map cas-out (cdr x)) ",")
@@ -366,22 +436,11 @@
 	((func? x 'set)
 	 (with args (list-intersperse (map cas-out (cdr x)) ",")
 	   `(concat (left "{") ,@args (right "}"))))
-	((list-1? x) `(concat ,(cas-out-radical (car x)) "()"))
-	((and (pair? x) (nin? (car x) '(+ - * / ^)))
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
-	   `(concat ,(cas-out-radical (car x)) (left "(") ,@args (right ")"))))
-	(else (cas-out-atom x))))
-
-(define (cas-out-cell x)
-  `(cell ,(cas-out x)))
-
-(define (cas-out-atom x)
-  (cond ((number? x) (number->string x))
-	((symbol? x)
-	 (with s (symbol->string x)
-	   (if (not (string-starts? s "%")) s
-	       (string-append "<" (substring s 1 (string-length s)) ">"))))
-	((string? x) (string-append "\"" (escape-quotes x) "\""))
+	((cas-is-root? x)
+	 (with y (cAr (caddr x))
+	   (if (== y 2)
+	       `(sqrt ,(cas-out (cadr x)))
+	       `(sqrt ,(cas-out (cadr x)) ,(cas-out y)))))
 	((nlist? x) x)
 	(else `(concat (left "(") ,(cas-out x) (right ")")))))
 
