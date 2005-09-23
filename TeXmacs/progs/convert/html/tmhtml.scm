@@ -13,9 +13,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html tmhtml)
-  (:use (convert tools tmconcat) (convert mathml tmmath)
-	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
-	(convert tools sxml) (convert tools sxhtml)
+  (:use (convert tools tmconcat)
+	(convert mathml tmmath)
+	(convert tools stm)
+	(convert tools tmlength)
+	(convert tools old-tmtable)
+	(convert tools sxml)
+	(convert tools sxhtml)
 	(convert html htmlout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,6 +283,12 @@
 ;; Horizontal concatenations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (heading? l)
+  (cond ((null? l) #f)
+	((sxhtml-label? (car l)) (heading? (cdr l)))
+	((sxhtml-heading? (car l)) #t)
+	(else #f)))
+
 (define (tmhtml-post-heading l)
   ;; Post-process the converted result of a concat containing a section title.
   ;;
@@ -299,11 +309,26 @@
 				      (cdr labels))
 			rest))))))))
 
-(define (heading? l)
-  (cond ((null? l) #f)
-	((sxhtml-label? (car l)) (heading? (cdr l)))
-	((sxhtml-heading? (car l)) #t)
-	(else #f)))
+(define (tmhtml-post-table l)
+  ;; Post process the converted result of a concat containing a table.
+  ;;
+  ;; If a label is adjacent to the table, use it to set the table id. If there
+  ;; are several labels adjacent to the table, leave all but one label
+  ;; untouched. There is no guarantee on which label is glued.
+  (define (glue-label-to-table x knil)
+    (cond ((null? knil) (list x))
+	  ((and (sxhtml-label? x)
+		(sxhtml-table? (car knil))
+		(not (sxml-attr (car knil) 'id)))
+	   (cons (sxhtml-glue-label (car knil) x)
+		 (cdr knil)))
+	  ((and (sxhtml-table? x)
+		(not (sxml-attr x 'id))
+		(sxhtml-label? (car knil)))
+	   (cons (sxhtml-glue-label x (car knil))
+		 (cdr knil)))
+	  (else (cons x knil))))
+  (list-fold-right glue-label-to-table '() l))
 
 (define (tmhtml-concat l)
   (set! l (tmconcat-structure-tabs l))
@@ -673,27 +698,6 @@
 				     ,@(tmtable-block-borders border)
 				     ,(car x)))))
     (if p (tmhtml-table-make p) '())))
-
-(define (tmhtml-post-table l)
-  ;; Post process the converted result of a concat containing a table.
-  ;;
-  ;; If a label is adjacent to the table, use it to set the table id. If there
-  ;; are several labels adjacent to the table, leave all but one label
-  ;; untouched. There is no guarantee on which label is glued.
-  (define (glue-label-to-table x knil)
-    (cond ((null? knil) (list x))
-	  ((and (sxhtml-label? x)
-		(sxhtml-table? (car knil))
-		(not (sxml-attr (car knil) 'id)))
-	   (cons (sxhtml-glue-label (car knil) x)
-		 (cdr knil)))
-	  ((and (sxhtml-table? x)
-		(not (sxml-attr x 'id))
-		(sxhtml-label? (car knil)))
-	   (cons (sxhtml-glue-label x (car knil))
-		 (cdr knil)))
-	  (else (cons x knil))))
-  (list-fold-right glue-label-to-table '() l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pictures
