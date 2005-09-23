@@ -404,6 +404,8 @@
 	((and (func? x '^ 2) (not (cas-is-root? x)))
 	 `(concat ,(cas-out-postfix (cadr x)) (rsup ,(cas-out (caddr x)))))
 	((list-1? x) `(concat ,(cas-out-postfix (car x)) "()"))
+	((and (pair? x) (keyword? (car x)))
+	 (cons (keyword->symbol (car x)) (map cas-out (cdr x))))
 	((and (pair? x) (nin? (car x) cas-out-special))
 	 ;; FIXME: also check arities
 	 (with args (list-intersperse (map cas-out (cdr x)) ",")
@@ -420,7 +422,7 @@
 	 (with s (symbol->string x)
 	   (if (not (string-starts? s "%")) s
 	       (string-append "<" (substring s 1 (string-length s)) ">"))))
-	((string? x) (string-append "\"" (escape-quotes x) "\""))
+	((string? x) x)
 	((func? x 'matrix) `(matrix (table ,@(map cas-out (cdr x)))))
 	((func? x 'det) `(det (table ,@(map cas-out (cdr x)))))
 	((func? x 'row) `(row ,@(map cas-out-cell (cdr x))))
