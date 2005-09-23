@@ -15,7 +15,7 @@
 (texmacs-module (convert html htmltm)
   (:use
     (convert tools tmlength) (convert tools tmcolor)
-    (convert tools tmtable) (convert tools stm)
+    (convert tools old-tmtable) (convert tools stm)
     (convert tools sxml)  (convert tools sxhtml)
     (convert tools environment)
     (convert tools xmltm) (convert mathml mathtm)))

@@ -13,10 +13,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex)
-  (:use
-    (convert tools tmpre) (convert tools tmtable)
-    (convert rewrite tmtm-eqns) (convert rewrite tmtm-brackets)
-    (convert latex texout)))
+  (:use (convert tools tmpre)
+	(convert tools old-tmtable)
+	(convert rewrite tmtm-eqns)
+	(convert rewrite tmtm-brackets)
+	(convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
