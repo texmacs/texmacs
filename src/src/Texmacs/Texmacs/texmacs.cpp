@@ -37,7 +37,10 @@ TeXmacs_main (int argc, char** argv) {
   bool flag= true;
   string the_default_font;
   for (i=1; i<argc; i++)
-    if (((argv[i][0] == '-') || (argv[i][0] == '+')) && (argv[i][1] != '\0')) {
+    if (argv[i][0] == '\0') argc= i;
+    else if (((argv[i][0] == '-') ||
+	      (argv[i][0] == '+')) && (argv[i][1] != '\0'))
+    {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
