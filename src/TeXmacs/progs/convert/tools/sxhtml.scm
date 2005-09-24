@@ -19,7 +19,9 @@
 ;; TODO: consolidate with htmltm dispatch DRD
 
 ;; Is the node x a HTML element whose name is a given set?
-(tm-define sxhtml-heading? (ntype-names?? '(h:h1 h:h2 h:h3 h:h4 h:h5 h:h6)))
+;; (tm-define sxhtml-heading? (ntype-names?? '(h:h1 h:h2 h:h3 h:h4 h:h5 h:h6)))
+;; NOTE: outcommented in order to keep inline nature of h5 and h6
+(tm-define sxhtml-heading? (ntype-names?? '(h:h1 h:h2 h:h3 h:h4)))
 (tm-define sxhtml-list? (ntype-names?? '(h:ul h:ol h:dl)))
 (tm-define sxhtml-table? (ntype-names?? '(h:table)))
 

@@ -17,6 +17,7 @@
 	(convert mathml tmmath)
 	(convert tools stm)
 	(convert tools tmlength)
+	(convert tools tmtable)
 	(convert tools old-tmtable)
 	(convert tools sxml)
 	(convert tools sxhtml)
@@ -47,13 +48,14 @@
   (utf8->html (cork->utf8 s)))
 
 (define (tmhtml-sub-token s pos)
-  (substring s pos (- (string-length s) 1)))
+  (with ss (substring s pos (- (string-length s) 1))
+    (if (= (string-length ss) 1) ss
+	(tmhtml-math-token (string-append "<" ss ">")))))
 
 (define (tmhtml-math-token s)
   (cond ((= (string-length s) 1)
 	 (cond ((== s "*") " ")
-	       ((== s "+") " + ")
-	       ((== s "-") " - ")
+	       ((in? s '("+" "-" "=")) (string-append " " s " "))
 	       ((char-alphabetic? (string-ref s 0)) `(h:i ,s))
 	       (else s)))
 	((string-starts? s "<b-") `(h:b (h:i ,(tmhtml-sub-token s 3))))
@@ -104,6 +106,10 @@
 (define (tmhtml-css-header)
   (let ((html (string-append
 	       "body { text-align: justify } "
+	       "h5 { display: inline; padding-right: 1em } "
+	       "h6 { display: inline; padding-right: 1em } "
+	       "table { border-collapse: collapse } "
+	       "td { padding: 0.2em; vertical-align: baseline } "
 	       ".title-block { width: 100%; text-align: center } "
 	       ".title-block p { margin: 0px } "
 	       ".compact-block p { margin-top: 0px; margin-bottom: 0px } "))
@@ -243,45 +249,74 @@
 ;; Surrounding block structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-force-document l)
-  (cond ((func? l 'document) l)
-	((func? l 'with)
-	 (let* ((args (cDdr l))
-		(r (cdr (tmhtml-force-document (cAr l)))))
-	   (cond ((null? r) r)
-		 ((null? (cdr r))
-		  `(document (with ,@args ,(car r))))
-		 ((null? (cddr r))
-		  `(document (with ,@args ,(car r))
-			     (with ,@args ,(cAr r))))
-		 (else
-		  `(document (with ,@args ,(car r))
-			     (with ,@args (document ,@(cDdr r)))
-			     (with ,@args ,(cAr r)))))))
-	((func? l 'surround 3)
-	 (let* ((left (cadr l))
-		(right (caddr l))
-		(r (cdr (tmhtml-force-document (cadddr l)))))
-	   (cond ((null? r) r)
-		 ((null? (cdr r))
-		  `(document (concat ,left ,(car r) ,right)))
-		 (else
-		  `(document (concat ,left ,(car r))
-			     ,@(cDdr r)
-			     (concat ,(cAr r) ,right))))))
-	(else `(document ,l))))
+(define document-done '())
+(define concat-done '())
+
+(define (serialize-print x)
+  (set! concat-done (cons x concat-done)))
+
+(define (serialize-paragraph x)
+  (serialize-concat x)
+  (with l (tmconcat-simplify (reverse concat-done))
+    (set! document-done (cons (cons 'concat l) document-done))
+    (set! concat-done '())))
+
+(define (serialize-concat x)
+  (cond ((in? x '("" (document) (concat))) (noop))
+	((func? x 'document)
+	 (for-each serialize-paragraph (cDdr x))
+	 (serialize-concat (cAr x)))
+	((func? x 'concat)
+	 (for-each serialize-concat (cdr x)))
+	((func? x 'surround 3)
+	 (serialize-concat (cadr x))
+	 (serialize-concat (cadddr x))
+	 (serialize-concat (caddr x)))
+	((func? x 'with)
+	 (let* ((r (simplify-document (cAr x)))
+		(w (lambda (y) `(with ,@(cDdr x) ,y))))
+	   (if (not (func? r 'document))
+	       (serialize-print (w r))
+	       (let* ((head (cadr r))
+		      (body `(document ,@(cDr (cddr r))))
+		      (tail (cAr r)))
+		 (serialize-paragraph (w head))
+		 (set! document-done (cons (w body) document-done))
+		 (serialize-concat (w tail))))))
+	(else (serialize-print x))))
+
+(define (simplify-document x)
+  (with-global document-done '()
+    (with-global concat-done '()
+      (serialize-paragraph x)
+      (if (list-1? document-done)
+	  (car document-done)
+	  (cons 'document (reverse document-done))))))
+
+(define (block-document? x)
+  (cond ((func? x 'document) #t)
+	((func? x 'concat) (list-any block-document? (cdr x)))
+	((func? x 'surround 3) (block-document? (cAr x)))
+	((func? x 'with) (block-document? (cAr x)))
+	(else #f)))
 
 (define (tmhtml-surround l)
-  (let* ((r1 (tmhtml-force-document `(surround ,@l)))
-	 (r2 (tree->stree (tree-simplify (stree->tree r1)))))
-    ;(display* "r0= " `(surround ,@l) "\n")
-    ;(display* "r1= " r1 "\n")
-    ;(display* "r2= " r2 "\n")
-    (tmhtml r2)))
+  (let* ((r1 `(surround ,@l))
+	 (r2 (simplify-document r1))
+	 (f? (and (block-document? r1) (not (func? r2 'document))))
+	 (r3 (if f? (list 'document r2) r2)))
+    (tmhtml r3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Horizontal concatenations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-glue-scripts l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+	((and (func? (car l) 'rsub 1) (func? (cadr l) 'rsup 1))
+	 (cons `(rsubsup ,(cadar l) ,(cadadr l))
+	       (tmhtml-glue-scripts (cddr l))))
+	(else (cons (car l) (tmhtml-glue-scripts (cdr l))))))
 
 (define (heading? l)
   (cond ((null? l) #f)
@@ -331,7 +366,9 @@
   (list-fold-right glue-label-to-table '() l))
 
 (define (tmhtml-concat l)
+  (set! l (tmhtml-glue-scripts l))
   (set! l (tmconcat-structure-tabs l))
+  ;; FIXME: tabs which are inside a 'with' are not treated correctly
   (tmhtml-post-simplify-nodes
    (let ((l (tmhtml-list l)))
      (cond ((null? l) '())
@@ -352,7 +389,7 @@
 
 (define (tmhtml-align-right l)
   (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: right"))
+      `((h:div (@ (style "float: right; position: relative; top: -1em"))
 	       ,@(tmhtml-concat l)))))
 
 (define (tmhtml-post-simplify-nodes l)
@@ -433,19 +470,28 @@
 (define (tmhtml-sup l)
   `((h:sup ,@(tmhtml (car l)))))
 
-(define (tmhtml-frac l)
-  (let* ((num (tmhtml (car l)))
-	 (den (tmhtml (cadr l))))
-    `("frac (" ,@num ", " ,@den ")")))
+(define (tmhtml-subsup l)
+  (let* ((sub (tmhtml (car l)))
+	 (sup (tmhtml (cadr l)))
+	 (r1 `(h:tr (h:td ,@sup)))
+	 (r2 `(h:tr (h:td ,@sub)))
+	 (style (string-append "display:inline; vertical-align: -0.6em; "
+			       "padding: 0px; text-align: left")))
+    `((h:sub (h:table (@ (style ,style)) ,r1 ,r2)))))
 
 ;;(define (tmhtml-frac l)
 ;;  (let* ((num (tmhtml (car l)))
-;;	   (den (tmhtml (cadr l)))
-;;	   (n `(h:tr (h:td (@ (align "center")
-;;			      (style "border-bottom: solid 1px")) ,@num)))
-;;	   (d `(h:tr (h:td (@ (align "center")) ,@den)))
-;;	   (in `(h:table (@ (style "position: relative; top: 3ex")) ,n ,d)))
-;;   `((h:table (@ (style "display: inline")) (h:tr (h:td ,in))))))
+;;	 (den (tmhtml (cadr l))))
+;;    `("frac (" ,@num ", " ,@den ")")))
+
+(define (tmhtml-frac l)
+  (let* ((num (tmhtml (car l)))
+	 (den (tmhtml (cadr l)))
+	 (n `(h:tr (h:td (@ (style "border-bottom: solid 1px")) ,@num)))
+	 (d `(h:tr (h:td ,@den)))
+	 (style (string-append "display:inline; vertical-align: -1.2em; "
+			       "padding:0px; text-align: center")))
+    `((h:table (@ (style ,style)) ,n ,d))))
 
 (define (tmhtml-sqrt l)
   (if (= (length l) 1)
@@ -453,11 +499,50 @@
       `("sqrt" (h:sub ,@(tmhtml (cadr l)))
 	" (" ,@(tmhtml (car l)) ")")))
 
+(define (tmhtml-short? l)
+  (and (list-1? l)
+       (or (string? (car l))
+	   (and (func? (car l) 'h:i) (tmhtml-short? (cdar l)))
+	   (and (func? (car l) 'h:b) (tmhtml-short? (cdar l)))
+	   (and (func? (car l) 'h:u) (tmhtml-short? (cdar l))))))
+
 (define (tmhtml-wide l)
-  `("(" ,@(tmhtml (car l)) ")" (h:sup ,@(tmhtml (cadr l)))))
+  (let ((body (tmhtml (car l)))
+	(acc (tmhtml (cadr l)))
+	(style "position: relative; margin-left: -0.4em; top: -0.1em"))
+    (if (tmhtml-short? body)
+	`(,@body (h:sup (@ (style ,style)) ,@acc))
+	`("(" ,@body ")" (h:sup ,@acc)))))
 
 (define (tmhtml-neg l)
   `("not(" ,@(tmhtml (car l)) ")"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Color conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmcolor->htmlcolor x)
+  (with s (tmhtml-force-string x)
+    (cond ((== s "light grey") "#d0d0d0")
+	  ((== s "dark grey") "#707070")
+	  ((== s "dark red") "#800000")
+	  ((== s "dark green") "#008000")
+	  ((== s "dark blue") "#000080")
+	  ((== s "dark yellow") "#808000")
+	  ((== s "dark magenta") "#800080")
+	  ((== s "dark cyan") "#008080")
+	  ((== s "dark orange") "#804000")
+	  ((== s "dark brown") "#401000")
+	  ((== s "broken white") "#ffffdf")
+	  ((== s "pastel red") "#ffdfdf")
+	  ((== s "pastel green") "#dfffdf")
+	  ((== s "pastel blue") "#dfdfff")
+	  ((== s "pastel yellow") "#ffffdf")
+	  ((== s "pastel magenta") "#ffdfff")
+	  ((== s "pastel cyan") "#dfffff")
+	  ((== s "pastel orange") "#ffdfbf")
+	  ((== s "pastel brown") "#dfbfbf")
+	  (else s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Length conversions
@@ -472,17 +557,20 @@
   ("fn" . 0.4)
   ("em" . 0.4)
   ("ex" . 0.2)
+  ("spc" . 0.2)
   ("pc" . 0.42175)
-  ("px" . 0.025)
   ("par" . 16)
-  ("pag" . 12))
+  ("pag" . 12)
+  ("px" . 0.025)
+  ("ln" . 0.025))
 
 (define (make-exact x)
   (number->string (inexact->exact x)))
 
 (define (tmlength->htmllength len css?)
-  (and-let* ((tmlen (string->tmlength len))
-	     (dummy? (not (tmlength-null? tmlen)))
+  (and-let* ((len-str (tmhtml-force-string len))
+	     (tmlen (string->tmlength len-str))
+	     (dummy2? (not (tmlength-null? tmlen)))
 	     (val (tmlength-value tmlen))
 	     (unit (symbol->string (tmlength-unit tmlen)))
 	     (incm (ahash-ref tmhtml-length-table unit))
@@ -494,6 +582,10 @@
 	   (string-append (make-exact (* cmpx val incm)) "px"))
 	  ((and css? (== unit "fn"))
 	   (string-append (number->string val) "em"))
+	  ((and css? (== unit "spc"))
+	   (string-append (number->string (/ val 2)) "em"))
+	  ((and css? (== unit "ln"))
+	   (string-append (number->string val) "px"))
 	  (css? len)
 	  (else (make-exact (* cmpx val incm))))))
 
@@ -513,6 +605,9 @@
 (define (tmhtml-with-mode val arg)
   (ahash-with tmhtml-env :math (== val "math")
     (tmhtml arg)))
+
+(define (tmhtml-with-color val arg)
+  `((h:font (@ (color ,(tmcolor->htmlcolor val))) ,@(tmhtml arg))))
 
 (define (tmhtml-with-font-size val arg)
   (let* ((x (* (string->number val) 100))
@@ -669,35 +764,128 @@
 ;;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-table-cols p)
-  (map (lambda (x)
-	 `(h:col (@ (align ,(cadr (assoc x '(("l" "left")
-					     ("c" "center")
-					     ("r" "right"))))))))
-       (p 'cols 'halign)))
+(define (map* fun l)
+  (list-filter (map fun l) identity))
 
-(define (tmhtml-table-contents p)
-  (define (cell x)
-    `(h:td ,@(tmhtml x)))
-  (define (row l)
-    `(h:tr ,@(map cell l)))
-  (map row (p 'rows 'content)))
+(define (html-css-attrs l)
+  ;; l is a list of either key-value lists (XML) or strings (CSS)
+  ;; we return a list with the corresponding @-style attribute
+  (if (null? l) '()
+      (receive (css html) (list-partition l string?)
+	(if (nnull? css)
+	    (with style (apply string-append (list-intersperse css "; "))
+	      (set! html (cons `(style ,style) html))))
+	`((@ ,@html)))))
 
-(define (tmhtml-table-make p)
-  `((h:table
-     (@ ,@(if (p 'global 'border)
-	      '((border "1")) 
-	      '((style "display: inline"))))
-     ,@(tmhtml-table-cols p)
-     (h:tbody ,@(tmhtml-table-contents p)))))
+(define (length-attr what x . opt)
+  (with len (tmlength->htmllength x #t)
+    (and len (apply string-append (cons* what ": " len opt)))))
 
-(define (tmhtml-table halign border x)
-  ;; assert (= 1 (length x))
-  ;; assert (or (func? (car x) 'tformat) (func? (car x) 'table))
-  (let ((p (tmtable-parser `(tformat ,@(tmtable-cell-halign halign)
-				     ,@(tmtable-block-borders border)
-				     ,(car x)))))
-    (if p (tmhtml-table-make p) '())))
+(define (border-attr what x)
+  (length-attr what x " solid"))
+
+(define (tmhtml-make-cell-attr x)
+  (cond ((== (car x) "cell-width") (length-attr "width" (cadr x)))
+	((== (car x) "cell-height") (length-attr "height" (cadr x)))
+	((== x '("cell-halign" "l")) "text-align: left")
+	((== x '("cell-halign" "c")) "text-align: center")
+	((== x '("cell-halign" "r")) "text-align: right")
+	((== x '("cell-valign" "t")) "vertical-align: top")
+	((== x '("cell-valign" "c")) "vertical-align: center")
+	((== x '("cell-valign" "b")) "vertical-align: bottom")
+	((== x '("cell-valign" "B")) "vertical-align: baseline")
+	((== (car x) "cell-background")
+	 `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
+	((== (car x) "cell-lborder") (border-attr "border-left" (cadr x)))
+	((== (car x) "cell-rborder") (border-attr "border-right" (cadr x)))
+	((== (car x) "cell-tborder") (border-attr "border-top" (cadr x)))
+	((== (car x) "cell-bborder") (border-attr "border-bottom" (cadr x)))
+	((== (car x) "cell-lsep") (length-attr "padding-left" (cadr x)))
+	((== (car x) "cell-rsep") (length-attr "padding-right" (cadr x)))
+	((== (car x) "cell-tsep") (length-attr "padding-top" (cadr x)))
+	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
+	(else #f)))
+
+(define (tmhtml-make-cell c cellf)
+  (ahash-with tmhtml-env :left-margin 0
+    `(h:td ,@(html-css-attrs (map* tmhtml-make-cell-attr cellf))
+	   ,@(tmhtml (cadr c)))))
+
+(define (tmhtml-make-cells-bis l cellf)
+  (if (null? l) l
+      (cons (tmhtml-make-cell (car l) (car cellf))
+	    (tmhtml-make-cells-bis (cdr l) (cdr cellf)))))
+
+(define (tmhtml-width-part attrl)
+  (cond ((null? attrl) 0)
+	((== (caar attrl) "cell-hpart") (string->number (cadar attrl)))
+	(else (tmhtml-width-part (cdr attrl)))))
+
+(define (tmhtml-width-replace attrl sum)
+  (with part (tmhtml-width-part attrl)
+    (if (== part 0) attrl
+	(with l (list-filter attrl (lambda (x) (!= (car x) "cell-width")))
+	  (with w (number->string (/ part sum))
+	    (cons (list "cell-width" (string-append w "par")) l))))))
+
+(define (tmhtml-make-cells l cellf)
+  (let* ((partl (map tmhtml-width-part cellf))
+	 (sum (apply + partl)))
+    (if (!= sum 0) (set! cellf (map (cut tmhtml-width-replace <> sum) cellf)))
+    (tmhtml-make-cells-bis l cellf)))
+
+(define (tmhtml-make-row-attr x)
+  (tmhtml-make-cell-attr x))
+
+(define (tmhtml-make-row r rowf cellf)
+  `(h:tr ,@(html-css-attrs (map* tmhtml-make-row-attr rowf))
+	 ,@(tmhtml-make-cells (cdr r) cellf)))
+
+(define (tmhtml-make-rows l rowf cellf)
+  (if (null? l) l
+      (cons (tmhtml-make-row  (car l) (car rowf) (car cellf))
+	    (tmhtml-make-rows (cdr l) (cdr rowf) (cdr cellf)))))
+
+(define (tmhtml-make-column-attr x)
+  (tmhtml-make-cell-attr x))
+
+(define (tmhtml-make-col colf)
+  `(h:col ,@(html-css-attrs (map* tmhtml-make-column-attr colf))))
+
+(define (tmhtml-make-column-group colf)
+  (if (list-every null? colf) '()
+      `((h:colgroup ,@(map tmhtml-make-col colf)))))
+
+(define (tmhtml-make-table-attr x)
+  (cond ((== (car x) "table-width") (length-attr "width" (cadr x)))
+	((== (car x) "table-height") (length-attr "height" (cadr x)))
+	((== (car x) "table-lborder") (border-attr "border-left" (cadr x)))
+	((== (car x) "table-rborder") (border-attr "border-right" (cadr x)))
+	((== (car x) "table-tborder") (border-attr "border-top" (cadr x)))
+	((== (car x) "table-bborder") (border-attr "border-bottom" (cadr x)))
+	((== (car x) "table-lsep") (length-attr "padding-left" (cadr x)))
+	((== (car x) "table-rsep") (length-attr "padding-right" (cadr x)))
+	((== (car x) "table-tsep") (length-attr "padding-top" (cadr x)))
+	((== (car x) "table-bsep") (length-attr "padding-bottom" (cadr x)))
+	(else #f)))
+
+(define (tmhtml-make-table t tablef colf rowf cellf)
+  (let* ((attrs (map* tmhtml-make-table-attr tablef))
+	 (em (- (* (tmtable-rows t) 0.55)))
+	 (va (string-append "vertical-align: " (number->string em) "em")))
+    (if (not (list-find attrs (cut == <> "width: 100%")))
+	(set! attrs (cons* "display: inline" va attrs)))
+    `(h:table ,@(html-css-attrs attrs)
+	      ,@(tmhtml-make-column-group colf)
+	      (h:tbody ,@(tmhtml-make-rows (cdr t) rowf cellf)))))
+
+(define (tmhtml-table l)
+  (list (tmhtml-make-table (cons 'table l) '() '() '() '())))
+
+(define (tmhtml-tformat l)
+  (with t (tmtable-normalize (cons 'tformat l))
+    (receive (tablef colf rowf cellf) (tmtable-properties* t)
+      (list (tmhtml-make-table (cAr t) tablef colf rowf cellf)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pictures
@@ -802,15 +990,12 @@
 	     (h:tr (h:td ,@(tmhtml (car l)))))))
 
 (define (tmhtml-equation* l)
-  (with first (car l)
-    (if (func? first 'document 1) (set! first (cadr first)))
+  (with first (simplify-document (car l))
     (with x `(with "mode" "math" (with "math-display" "true" ,first))
-      `((h:table (@ (width "100%"))
-		 (h:tr (h:td (@ (align "center")) ,@(tmhtml x))))))))
+      `((h:center ,@(tmhtml x))))))
 
 (define (tmhtml-equation-lab l)
-  (with first (car l)
-    (if (func? first 'document 1) (set! first (cadr first)))
+  (with first (simplify-document (car l))
     (with x `(with "mode" "math" (with "math-display" "true" ,first))
       `((h:table (@ (width "100%"))
 		 (h:tr (h:td (@ (align "center") (width "100%"))
@@ -908,7 +1093,6 @@
 
 (define (tmhtml-implicit-compound l)
   (or (tmhtml-dispatch 'tmhtml-stdmarkup% l)
-      (tmhtml-dispatch 'tmhtml-tables% l)
       '()))
 
 (tm-define (tmhtml-root x)
@@ -987,14 +1171,15 @@
   (lsup tmhtml-sup)
   (rsub tmhtml-sub)
   (rsup tmhtml-sup)
+  (rsubsup tmhtml-subsup)
   (frac tmhtml-frac)
   (sqrt tmhtml-sqrt)
   (wide tmhtml-wide)
   (neg tmhtml-neg)
   ((:or tree old-matrix old-table old-mosaic old-mosaic-item)
    tmhtml-noop)
-  (table (lambda (l) (tmhtml `(tabular (table ,@l)))))
-  (tformat (lambda (l) (tmhtml `(tabular (tformat ,@l)))))
+  (table tmhtml-table)
+  (tformat tmhtml-tformat)
   ((:or twith cwith tmarker row cell sub-table) tmhtml-noop)
 
   (assign tmhtml-noop)
@@ -1048,10 +1233,8 @@
   (section-title (h:h2))
   (subsection-title (h:h3))
   (subsubsection-title (h:h4))
-  ;; paragraph and subparagraph are intented to be used at the start
-  ;; of a paragraph. So they cannot be converted to 'h5' and 'h6
-  (paragraph-title (h:strong (@(class "paragraph"))))
-  (subparagraph-title (h:strong (@(class "subparagraph"))))
+  (paragraph-title (h:h5))
+  (subparagraph-title (h:h6))
   ;; Lists
   ((:or itemize itemize-minus itemize-dot itemize-arrow)
    ,tmhtml-itemize)
@@ -1101,6 +1284,7 @@
 
 (drd-table tmhtml-with-cmd%
   ("mode" ,tmhtml-with-mode)
+  ("color" ,tmhtml-with-color)
   ("font-size" ,tmhtml-with-font-size)
   ("par-left" ,tmhtml-with-par-left)
   ("par-right" ,tmhtml-with-par-right)
@@ -1122,18 +1306,6 @@
    (h:class (@ (style "font-variant: small-caps")))))
 
 (drd-table tmhtml-with-cmd% ; deprecated
-  (("color" "black") (h:font (@ (color "black"))))
-  (("color" "grey") (h:font (@ (color "grey"))))
-  (("color" "white") (h:font (@ (color "white"))))
-  (("color" "red") (h:font (@ (color "red"))))
-  (("color" "blue") (h:font (@ (color "blue"))))
-  (("color" "yellow") (h:font (@ (color "black"))))
-  (("color" "magenta") (h:font (@ (color "magenta"))))
-  (("color" "orange") (h:font (@ (color "orange"))))
-  (("color" "green") (h:font (@ (color "green"))))
-  (("color" "brown") (h:font (@ (color "brown"))))
-  (("color" "dark magenta") (h:font (@ (color "#800080"))))
-  (("color" "dark green") (h:font (@ (color "#008000"))))
   (("par-mode" "left") (h:div (@ (align "left"))))
   (("par-mode" "justify") (h:div (@ (align "justify"))))
   (("par-mode" "center") (h:center)))
@@ -1144,12 +1316,6 @@
   (("par-columns" "3") (h:multicol (@ (cols "3"))))
   (("par-columns" "4") (h:multicol (@ (cols "4"))))
   (("par-columns" "5") (h:multicol (@ (cols "5")))))
-
-(drd-dispatcher tmhtml-tables%
-  (block (cut tmhtml-table "l" #t <>))
-  (block* (cut tmhtml-table "c" #t <>))
-  (tabular (cut tmhtml-table "l" #f <>))
-  (tabular* (cut tmhtml-table "c" #f <>)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
