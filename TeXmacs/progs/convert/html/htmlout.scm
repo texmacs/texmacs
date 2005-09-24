@@ -21,26 +21,36 @@
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group htmlout-lang-big%
-  html head style body p table tr ul ol li dl dt dd blockquote)
+(drd-group htmlout-big%
+  ;; Both the tag and the children are displayed in multi-line format.
+  html head style body table tr ul ol dl)
+
+(drd-group htmlout-big-tag%
+  ;; The tag is displayed in multi-line format.
+  p li dt dd center blockquote)
+
+(drd-rule (htmlout-big-tag% 'x) (htmlout-big% 'x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (htmlout-big? op)
-  (drd-in? op htmlout-lang-big%))
+  (drd-in? op htmlout-big%))
 
-(define (htmlout-indent s plus) (htmlout-indent* s plus #f))
-(define (htmlout-indent-close s plus) (htmlout-indent* s plus #t))
+(define (htmlout-big-tag? op)
+  (drd-in? op htmlout-big-tag%))
 
 (define (htmlout-indent* s plus close?)
   (if (not preformatted?)
-      (cond ((htmlout-big? s)
+      (cond ((htmlout-big-tag? s)
 	     (output-indent plus)
 	     (output-lf))
 	    ((== s 'pre)
 	     (if (not close?) (output-lf-verbatim))))))
+
+(define (htmlout-indent s plus) (htmlout-indent* s plus #f))
+(define (htmlout-indent-close s plus) (htmlout-indent* s plus #t))
 
 (define (htmlout-text . ss)
   (if preformatted?
@@ -90,10 +100,8 @@
 	((null? x) (noop))
 	((or (func? x '!concat) (func? x '*TOP*))
 	 (for-each htmlout (cdr x)))
-	((and (func? x 'p) (> (length x) 2) (not (func? (cadr x) '@)))
-	 (htmlout `(p (!concat ,@(cdr x)))))
-	((and (func? x 'p) (> (length x) 3) (func? (cadr x) '@))
-	 (htmlout `(p ,(cadr x) (!concat ,@(cddr x)))))
+	((and (func? x 'p 1) (pair? (cadr x)) (htmlout-big-tag? (caadr x)))
+	 (htmlout (cadr x)))
   	((func? x '*PI*)
 	 (output-lf-verbatim "<?" (symbol->string (cadr x)) " " (caddr x) "?>")
 	 (output-lf))

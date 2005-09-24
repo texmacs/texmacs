@@ -44,13 +44,14 @@
 
 (tm-define (output-indent plus)
   (output-flush)
-  (set! output-indentation (max 0 (min 40 (+ output-indentation plus)))))
+  (set! output-indentation (+ output-indentation plus)))
 
 (define (output-return)
   (set! output-start-flag #t)
-  (let ((s (make-string output-indentation #\space)))
-    (set! output-accu (cons (string-append "\n" s) output-accu))
-    (set! output-count output-indentation)))
+  (with indent (max 0 (min 40 output-indentation))
+    (let ((s (make-string indent #\space)))
+      (set! output-accu (cons (string-append "\n" s) output-accu))
+      (set! output-count indent))))
 
 (define (output-raw s)
   (if (!= s "")
