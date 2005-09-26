@@ -179,8 +179,8 @@ extern string LINE_CAPS;
 extern string FILL_COLOR;
 extern string FILL_STYLE;
 
+extern string GR_GEOMETRY;
 extern string GR_FRAME;
-extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
 extern string GR_POINT_STYLE;

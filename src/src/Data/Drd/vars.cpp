@@ -201,8 +201,8 @@ string LINE_CAPS ("line-caps");
 string FILL_COLOR ("fill-color");
 string FILL_STYLE ("fill-style");
 
+string GR_GEOMETRY ("gr-geometry");
 string GR_FRAME ("gr-frame");
-string GR_CLIP ("gr-clip");
 string GR_MODE ("gr-mode");
 string GR_COLOR ("gr-color");
 string GR_POINT_STYLE ("gr-point-style");

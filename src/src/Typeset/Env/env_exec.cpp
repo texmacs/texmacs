@@ -329,6 +329,10 @@ edit_env_rep::exec (tree t) {
     return exec_par_length ();
   case PAG_LENGTH:
     return exec_pag_length ();
+  case GW_LENGTH:
+    return exec_gw_length ();
+  case GH_LENGTH:
+    return exec_gh_length ();
   case TMPT_LENGTH:
     return exec_tmpt_length ();
   case PX_LENGTH:

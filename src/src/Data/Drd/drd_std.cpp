@@ -233,6 +233,8 @@ init_std_drd () {
   init (XSPC_LENGTH, "xspc-length", fixed (0));
   init (PAR_LENGTH, "par-length", fixed (0));
   init (PAG_LENGTH, "pag-length", fixed (0));
+  init (GW_LENGTH, "gw-length", fixed (0));
+  init (GH_LENGTH, "gh-length", fixed (0));
   init (TMPT_LENGTH, "tmpt-length", fixed (0));
   init (PX_LENGTH, "px-length", fixed (0));
   init (MSEC_LENGTH, "msec-length", fixed (0));

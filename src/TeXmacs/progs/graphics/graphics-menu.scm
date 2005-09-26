@@ -22,25 +22,36 @@
 ;; FIXME: provide automatic checkmarks for these actions
 
 (menu-bind graphics-geometry-menu
+  (-> "Extents"
+      ("Default" (graphics-remove-property "gr-geometry"))
+      ---
+      ;; FIXME: insert methods for setting width, height and centering
+      ("Width" (interactive graphics-set-width))
+      ("Height" (interactive graphics-set-height))
+      (-> "Alignment"
+	  ("Default" (graphics-set-geo-valign "default"))
+	  ---
+	  ("Top" (graphics-set-geo-valign "top"))
+	  ("Center" (graphics-set-geo-valign "center"))
+	  ("Bottom" (graphics-set-geo-valign "bottom"))))
   (-> "Frame"
       ("Default" (graphics-remove-property "gr-frame"))
       ---
       (group "Cartesian")
       (-> "Unit"
-	  ("cm" (graphics-set-unit "1cm"))
-	  ("inch" (graphics-set-unit "1in"))
+	  ("1 cm" (graphics-set-unit "1cm"))
+	  ("1 inch" (graphics-set-unit "1in"))
 	  ---
 	  ("Other" (interactive graphics-set-unit)))
       (-> "Origin"
-	  ("Base line" (graphics-set-origin "0cm" "0cm"))
-	  ("Fraction height" (graphics-set-origin "0cm" "1yfrac"))
+	  ("Centered" (graphics-set-origin "0.5gw" "0.5gh"))
+	  ("Base line" (graphics-set-origin "0cm" "0.5gh"))
+	  ("Fraction height" (graphics-set-origin
+			       "0cm" (length-add "0.5gh" "1yfrac")))
 	  ---
-	  ("Other" (interactive graphics-set-origin))))
-  (-> "Extents"
-      ("Default" (graphics-remove-property "gr-clip"))
-      ---
-      ;; FIXME: insert methods for setting width, height and centering
-      ("Other" (interactive graphics-set-extents)))
+	  ("Other" (interactive graphics-set-origin)))))
+
+(menu-bind graphics-grids-menu
   (-> "Visual grid"
       ("Default" (graphics-set-visual-grid 'default))
       ---
@@ -186,9 +197,9 @@
   ("Line" (graphics-set-mode "line"))
   ("Polygon" (graphics-set-mode "cline"))
   ("Spline" (graphics-set-mode "spline"))
-  ("C-Spline" (graphics-set-mode "cspline"))
+  ("Closed spline" (graphics-set-mode "cspline"))
   ("Arc" (graphics-set-mode "arc"))
-  ("C-Arc" (graphics-set-mode "carc"))
+  ("Circle" (graphics-set-mode "carc"))
   ("Text box" (graphics-set-mode "text-at"))
   ---
   ("Move" (graphics-set-mode '(group-edit move)))
@@ -200,8 +211,8 @@
 
 (menu-bind graphics-color-menu
   ("Default" (graphics-set-color "default"))
-  ("None" (graphics-set-color "none"))
   ---
+  ("None" (graphics-set-color "none"))
   ("Black" (graphics-set-color "black"))
   ("White" (graphics-set-color "white"))
   ("Grey" (graphics-set-color "grey"))
@@ -270,6 +281,7 @@
 (menu-bind graphics-point-style-menu
   ("Default" (graphics-set-point-style "default"))
   ---
+  ("Disk" (graphics-set-point-style "disk"))
   ("Round" (graphics-set-point-style "round"))
   ("Square" (graphics-set-point-style "square")))
 
@@ -308,8 +320,8 @@
 
 (menu-bind graphics-fill-color-menu
   ("Default" (graphics-set-fill-color "default"))
-  ("None" (graphics-set-fill-color "none"))
   ---
+  ("None" (graphics-set-fill-color "none"))
   ("Black" (graphics-set-fill-color "black"))
   ("White" (graphics-set-fill-color "white"))
   ("Grey" (graphics-set-fill-color "grey"))
@@ -354,6 +366,7 @@
 
 (menu-bind graphics-menu
   (-> "Geometry" (link graphics-geometry-menu))
+  (-> "Grids" (link graphics-grids-menu))
   (-> "Mode" (link graphics-mode-menu))
   (-> "Color" (link graphics-color-menu))
   (-> "Point style" (link graphics-point-style-menu))
@@ -375,8 +388,8 @@
 (menu-bind graphics-icons
   (=> (balloon (icon "tm_cell_size.xpm") "Graphics geometry")
       (link graphics-geometry-menu))
-  (   (balloon (icon "tm_graphics_redim.xpm") "Redim graphics")
-      (graphics-set-mode '(redim-graphics)))
+  (=> (balloon (icon "tm_table.xpm") "Graphics grids")
+      (link graphics-grids-menu))
   |
   ;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
   ;    (link graphics-mode-menu))
@@ -392,7 +405,7 @@
       (graphics-set-mode "cspline"))
   (   (balloon (icon "tm_arc_mode.xpm") "Add arcs")
       (graphics-set-mode "arc"))
-  (   (balloon (icon "tm_carc_mode.xpm") "Add closed arcs")
+  (   (balloon (icon "tm_carc_mode.xpm") "Add circles")
       (graphics-set-mode "carc"))
   (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
       (graphics-set-mode "text-at"))
@@ -407,7 +420,7 @@
       (link graphics-dash-menu))
   (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
       (link graphics-line-arrows-menu))
-  (=> (balloon (icon "tm_color.xpm") "Fill color")
+  (=> (balloon (icon "tm_fill.xpm") "Fill color")
       (link graphics-fill-color-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
       (link graphics-text-align-menu))

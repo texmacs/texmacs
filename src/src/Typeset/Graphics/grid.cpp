@@ -215,7 +215,32 @@ polar_rep::get_curves (point lim1, point lim2, double u) {
   double y2= max (lim1[1], lim2[1]);
   double xo= center[0];
   double yo= center[1];
-  double r,R= (SI) norm (point (x2, y2) - point (x1, y1));
+  point P1, P2;
+  if (x1<=0 && y1<=0 && x2>=0 && y2>=0) {
+    P1= point (0, 0);
+    P2= point (x2, y2) - point (x1, y1);
+  }
+  else {
+    double ox= (x1 + x2) / 2;
+    double oy= (y1 + y2) / 2;
+    if (oy>=0)
+      P1= point (0, y1>=0 ? y1 : 0);
+    else
+      P1= point (0, y2<=0 ? y2 : 0);
+
+    if (ox>=0 && oy>=0)
+      P2= point (x2, y2);
+    else
+    if (ox<=0 && oy>=0)
+      P2= point (x1, y2);
+    else
+    if (ox<=0 && oy<=0)
+      P2= point (x1, y1);
+    else
+    if (ox>=0 && oy<=0)
+      P2= point (x2, y1);
+  }
+  double r, R1= (SI) norm (P1), R2= (SI) norm (P2);
   int i;
   for (i= N(subd)-1; i>=1; i--) {
     SI nsub;
@@ -224,11 +249,12 @@ polar_rep::get_curves (point lim1, point lim2, double u) {
       SI j;
       double s= step/nsub;
       if (s<=u) s= u;
-      for (r=0; r<=R; r+=s)
-        res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
+      for (r=0; r<=R2; r+=s)
+	if (r>=R1)
+	  res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
       for (j=0; j<astep*nsub; j++)
-        res << create_line (xo, yo, xo+R*cos((2*tm_PI*j)/(astep*nsub)),
-                                    yo+R*sin((2*tm_PI*j)/(astep*nsub)),
+        res << create_line (xo, yo, xo+R2*cos((2*tm_PI*j)/(astep*nsub)),
+                                    yo+R2*sin((2*tm_PI*j)/(astep*nsub)),
                                     col[i]);
     }
   }

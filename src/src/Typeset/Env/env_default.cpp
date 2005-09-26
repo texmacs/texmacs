@@ -23,10 +23,8 @@ initialize_default_env () {
   tree tabular_m (MACRO, "x", tree (TFORMAT, tree (ARG, "x")));
   tree the_page (MACRO, compound ("page-nr"));
 
-  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
-  tree gr_clip (TUPLE, "clip",
-		tuple ("0par", "-0.3par"),
-		tuple ("1par", "0.3par"));
+  tree gr_geometry (TUPLE, "geometry", "1par", "0.6par", "center");
+  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5gw", "0.5gh"));
 
   tree gr_grid ("");
   tree gr_edit_grid ("");
@@ -194,8 +192,8 @@ initialize_default_env () {
   env (FILL_COLOR)       = "none";      // fill color
   env (FILL_STYLE)       = "plain";     // fill style
 
+  env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
-  env (GR_CLIP)          = gr_clip;     // clipping of graphics
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_POINT_STYLE)   = "default";   // point style of new objects
