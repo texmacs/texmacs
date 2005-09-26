@@ -104,15 +104,22 @@
 		    (tmhtml-find-title (cdr doc)))))))
 
 (define (tmhtml-css-header)
-  (let ((html (string-append
-	       "body { text-align: justify } "
-	       "h5 { display: inline; padding-right: 1em } "
-	       "h6 { display: inline; padding-right: 1em } "
-	       "table { border-collapse: collapse } "
-	       "td { padding: 0.2em; vertical-align: baseline } "
-	       ".title-block { width: 100%; text-align: center } "
-	       ".title-block p { margin: 0px } "
-	       ".compact-block p { margin-top: 0px; margin-bottom: 0px } "))
+  (let ((html
+	 (string-append
+	  "body { text-align: justify } "
+	  "h5 { display: inline; padding-right: 1em } "
+	  "h6 { display: inline; padding-right: 1em } "
+	  "table { border-collapse: collapse } "
+	  "td { padding: 0.2em; vertical-align: baseline } "
+	  ".subsup { display: inline; vertical-align: -0.2em } "
+	  ".subsup td { padding: 0px; text-align: left} "
+	  ".fraction { display: inline; vertical-align: -0.8em } "
+	  ".fraction td { padding: 0px; text-align: center } "
+	  ".wide { position: relative; margin-left: -0.4em } "
+	  ".accent { position: relative; margin-left: -0.4em; top: -0.1em } "
+	  ".title-block { width: 100%; text-align: center } "
+	  ".title-block p { margin: 0px } "
+	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -474,10 +481,8 @@
   (let* ((sub (tmhtml (car l)))
 	 (sup (tmhtml (cadr l)))
 	 (r1 `(h:tr (h:td ,@sup)))
-	 (r2 `(h:tr (h:td ,@sub)))
-	 (style (string-append "display:inline; vertical-align: -0.6em; "
-			       "padding: 0px; text-align: left")))
-    `((h:sub (h:table (@ (style ,style)) ,r1 ,r2)))))
+	 (r2 `(h:tr (h:td ,@sub))))
+    `((h:sub (h:table (@ (class "subsup")) ,r1 ,r2)))))
 
 ;;(define (tmhtml-frac l)
 ;;  (let* ((num (tmhtml (car l)))
@@ -488,10 +493,8 @@
   (let* ((num (tmhtml (car l)))
 	 (den (tmhtml (cadr l)))
 	 (n `(h:tr (h:td (@ (style "border-bottom: solid 1px")) ,@num)))
-	 (d `(h:tr (h:td ,@den)))
-	 (style (string-append "display:inline; vertical-align: -1.2em; "
-			       "padding:0px; text-align: center")))
-    `((h:table (@ (style ,style)) ,n ,d))))
+	 (d `(h:tr (h:td ,@den))))
+    `((h:table (@ (class "fraction")) ,n ,d))))
 
 (define (tmhtml-sqrt l)
   (if (= (length l) 1)
@@ -507,11 +510,11 @@
 	   (and (func? (car l) 'h:u) (tmhtml-short? (cdar l))))))
 
 (define (tmhtml-wide l)
-  (let ((body (tmhtml (car l)))
-	(acc (tmhtml (cadr l)))
-	(style "position: relative; margin-left: -0.4em; top: -0.1em"))
+  (let* ((body (tmhtml (car l)))
+	 (acc (tmhtml (cadr l)))
+	 (class (if (in? acc '(("^") ("~"))) "accent" "wide")))
     (if (tmhtml-short? body)
-	`(,@body (h:sup (@ (style ,style)) ,@acc))
+	`(,@body (h:sup (@ (class ,class)) ,@acc))
 	`("(" ,@body ")" (h:sup ,@acc)))))
 
 (define (tmhtml-neg l)
