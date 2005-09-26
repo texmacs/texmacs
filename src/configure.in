@@ -426,13 +426,19 @@ case "${host}" in
     CONFIG_BSHARED=""
     CONFIG_BPATH="-Wl,-R,"
     CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   sparc*-*-linux*)
     AC_MSG_RESULT(final adjustments for a Sparc host running GNU/Linux)
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_WORD_LENGTH="8"
+    CONFIG_WORD_LENGTH_INC="7"
     CONFIG_WORD_MASK="0xfffffff8"
+    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
     CONFIG_STD_SETENV=""
   ;;
   *dec*)
