@@ -149,7 +149,11 @@
 
 (define (cas-product<=? x y)
   "Ordering for @x and @y in products"
-  (cond ((or (cas->number x) (cas->number y))
+  (cond ((and (func? x '^ 2) (not (func? y '^ 2)))
+	 (cas-product<=? x `(^ ,y 1)))
+	((and (func? y '^ 2) (not (func? x '^ 2)))
+	 (cas-product<=? `(^ ,x 1) y))
+	((or (cas->number x) (cas->number y))
 	 (cond ((not (cas->number y)) #t)
 	       ((not (cas->number x)) #f)
 	       (else (< (cas->number x) (cas->number y)))))
@@ -157,8 +161,8 @@
 
 (define (cas-sort x)
   "Sort the expression @x"
-  (cond ((func? x '+) (cons '+ (sort (cdr x) cas-sum<=?)))
-	((func? x '*) (cons '* (sort (cdr x) cas-product<=?)))
+  (cond ((func? x '+) (cons '+ (list-sort (cdr x) cas-sum<=?)))
+	((func? x '*) (cons '* (list-sort (cdr x) cas-product<=?)))
 	(else (cas-map cas-sort x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,40 +221,48 @@
 	((func? x '^ 2) (list (cadr x)))
 	(else '())))
 
+(define (list-no-duplicates l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+	((== (car l) (cadr l)) (list-no-duplicates (cdr l)))
+	(else (cons (car l) (list-no-duplicates (cdr l))))))
+
 (define (cas-polynomial-sort x)
   "Recursively sort the expression @x as a polynomial"
   (cond ((func? x '+)
-	 (with vars (reverse (sort (cas-radicals x) cas-product<=?))
-	   (cons '+ (sort (cdr x) (cut cas-term<=? <> <> vars)))))
-	((func? x '*) (cons '* (sort (cdr x) cas-product<=?)))
+	 (set! x (cons '+ (map cas-polynomial-sort (cdr x))))
+	 (with vars (reverse (list-sort (cas-radicals x) cas-product<=?))
+	   (set! vars (list-no-duplicates vars))
+	   (cons '+ (list-sort (cdr x) (cut cas-term<=? <> <> vars)))))
+	((func? x '*)
+	 (set! x (cons '* (map cas-polynomial-sort (cdr x))))
+	 (cons '* (list-sort (cdr x) cas-product<=?)))
 	(else (cas-map cas-polynomial-sort x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplification of constants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (cas-simplify-constants-sub l op)
-  (cond ((null? l) l)
-	((== (car l) 0) (cas-simplify-constants-sub (cdr l) op))
+(define (cas-simplify-constants-sub l op neu)
+  (cond ((null? l) '())
+	((== (car l) neu) (cas-simplify-constants-sub (cdr l) op neu))
+	((== (car l) 0) '()) ;; only occurs for multiplication
 	((null? (cdr l)) l)
 	((and (cas->number (car l)) (cas->number (cadr l)))
 	 (cas-simplify-constants-sub
 	  (cons (op (cas->number (car l)) (cas->number (cadr l)))
-		(cddr l)) op))
-	(else (cons (car l) (cas-simplify-constants-sub (cdr l) op)))))
+		(cddr l)) op neu))
+	(else (cons (car l) (cas-simplify-constants-sub (cdr l) op neu)))))
 
 (define (cas-simplify-constants x)
   "Simplify constants in @x"
-  (cond ((func? x '+)
-	 (with l (cas-simplify-constants-sub (cdr x) +)
-	   (cond ((null? l) 0)
-		 ((null? (cdr l)) (car l))
-		 (else (cons '+ l)))))
-	((func? x '*)
-	 (with l (cas-simplify-constants-sub (cdr x) *)
-	   (cond ((null? l) 1)
-		 ((null? (cdr l)) (car l))
-		 (else (cons '* l)))))
+  (cond ((or (func? x '+) (func? x '*))
+	 (let* ((l (map cas-simplify-constants (cdr x)))
+		(op (if (== (car x) '+) + *))
+		(neu (if (== (car x) '+) 0 1))
+		(r (cas-simplify-constants-sub l op neu)))
+	   (cond ((null? r) neu)
+		 ((null? (cdr r)) (car r))
+		 (else (cons (car x) r)))))
 	((func? x '- 1)
 	 (let* ((y (cas-simplify-constants (cadr x)))
 		(n (cas->number y)))
@@ -392,7 +404,7 @@
     = != < > <= >=
     + - * / ^ !
     %prime factorial _
-    matrix det row tuple list set))
+    matrix det row tuple list set comma))
 
 (define (cas-out-postfix x)
   (cond ((func? x '%prime 1)
@@ -428,7 +440,7 @@
 	((func? x 'row) `(row ,@(map cas-out-cell (cdr x))))
 	((== x '(tuple)) "()")
 	((func? x 'tuple)
-	 (with args (tuple-intersperse (map cas-out (cdr x)) ",")
+	 (with args (list-intersperse (map cas-out (cdr x)) ",")
 	   `(concat (left "(") ,@args (right ")"))))
 	((== x '(list)) "[]")
 	((func? x 'list)
@@ -438,6 +450,10 @@
 	((func? x 'set)
 	 (with args (list-intersperse (map cas-out (cdr x)) ",")
 	   `(concat (left "{") ,@args (right "}"))))
+	((== x '(comma)) "null")
+	((func? x 'comma)
+	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	   `(concat ,@args)))
 	((cas-is-root? x)
 	 (with y (cAr (caddr x))
 	   (if (== y 2)
@@ -477,6 +493,7 @@
 	 (y2 (cas-normal-inverses y1))
 	 (y3 (cas-normal-associative y2 '+))
 	 (y4 (cas-normal-associative y3 '*))
+	 ;;(y5 (cas-sort y4))
 	 (y5 (cas-polynomial-sort y4))
 	 (z1 (cas-simplify-constants y5))
 	 (z2 (cas-arrange-subtractions z1))

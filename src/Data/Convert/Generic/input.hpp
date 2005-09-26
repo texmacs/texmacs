@@ -42,6 +42,7 @@ struct texmacs_input_rep: concrete_struct {
   void latex_flush (bool force= false);
   void html_flush (bool force= false);
   void ps_flush (bool force= false);
+  void math_flush (bool force= false);
   void ispell_flush (bool force= false);
   void channel_flush (bool force= false);
   void command_flush (bool force= false);

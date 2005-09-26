@@ -16,6 +16,7 @@
 #include "tm_link.hpp"
 #include "Generic/input.hpp"
 #include "scheme.hpp"
+#include "vars.hpp"
 
 #define STATUS_NORMAL 0
 #define STATUS_ESCAPE 1
@@ -26,9 +27,10 @@
 #define MODE_LATEX    2
 #define MODE_HTML     3
 #define MODE_PS       4
-#define MODE_CHANNEL  5
-#define MODE_COMMAND  6
-#define MODE_XFORMAT  7
+#define MODE_MATH     5
+#define MODE_CHANNEL  6
+#define MODE_COMMAND  7
+#define MODE_XFORMAT  8
 
 /******************************************************************************
 * Universal data input
@@ -58,6 +60,7 @@ texmacs_input_rep::get_mode (string s) {
   if (s == "scheme") return MODE_SCHEME;
   if (s == "html")  return MODE_HTML;
   if (s == "ps")  return MODE_PS;
+  if (s == "math")  return MODE_MATH;
   if (s == "channel")  return MODE_CHANNEL;
   if (s == "command")  return MODE_COMMAND;
   if (as_bool (call ("format?", s))) return MODE_XFORMAT;
@@ -200,6 +203,9 @@ texmacs_input_rep::flush (bool force) {
   case MODE_PS:
     ps_flush (force);
     break;
+  case MODE_MATH:
+    math_flush (force);
+    break;
   case MODE_CHANNEL:
     channel_flush (force);
     break;
@@ -253,6 +259,17 @@ texmacs_input_rep::ps_flush (bool force) {
     tree t (POSTSCRIPT, tuple (tree (RAW_DATA, copy (buf)), "ps"));
     t << "" << "" << "" << "" << "" << "";
     write (t);
+    buf= "";
+  }
+}
+
+void
+texmacs_input_rep::math_flush (bool force) {
+  if (force) {
+    object obj= call ("string->object", buf);
+    object cvr= call ("cas->stree", obj);
+    tree t= as_tree (call ("tm->tree", cvr));
+    write (tree (WITH, MODE, "math", t));
     buf= "";
   }
 }
