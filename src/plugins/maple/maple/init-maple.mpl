@@ -70,8 +70,6 @@ tmops[`+`] := `+`:
 tmops[`-`] := `-`:
 tmops[`*`] := `*`:
 tmops[`/`] := `/`:
-tmops[`fraction`] := `/`:
-tmops[`Fraction`] := `/`:
 tmops[`^`] := `^`:
 tmops[`list`] := `list`:
 tmops[`set`] := `set`:
@@ -79,6 +77,14 @@ tmops[`set`] := `set`:
 ##############################################################################
 # Version dependent routines
 ##############################################################################
+
+tmis_fraction := proc (x)
+  op (0, x) = `fraction` or op (0, x) = `Fraction`
+end:
+
+tmis_complex := proc (x)
+  op (0, x) = `Complex`
+end:
 
 tmis_number := proc (x)
   type (x, numeric)
@@ -96,16 +102,31 @@ tmis_indexed := proc (x)
   type (x, indexed)
 end:
 
+tmis_matrix := proc (x)
+  type (x, matrix)
+end:
+
+tmis_series := proc (x)
+  type (x, series)
+end:
+
 ##############################################################################
 # Print by case distinction
 ##############################################################################
 
 tmout := proc (x)
-local t, i, n;
+local t, i, j, n;
   t := op (0, x):
   n := nops (x):
 
-  if t = `Complex` then
+  if tmis_fraction (x) then
+    printf (`(/ `):
+    tmout (op (1, x)):
+    printf (` `):
+    tmout (op (2, x)):
+    printf (`)`)
+
+  elif tmis_complex (x) then
     if n = 1 then
       printf (`(* `):
       tmout (op (1, x)):
@@ -134,6 +155,39 @@ local t, i, n;
       tmout (op (i, x))
     od:
     printf (`))`)
+
+  elif tmis_matrix (x) then
+    printf (`(matrix`):
+    for i from 1 to linalg[rowdim] (x) do
+      printf (` (row`):
+      for j from 1 to linalg[coldim] (x) do
+        printf (` `):
+        tmout (x[i,j])
+      od:
+      printf (`)`):
+    od:
+    printf (`)`)
+
+  elif tmis_series (x) then
+    printf (`(+&`):
+    for i from 1 to n/2 do
+      if evalb (op (2*i - 1, x) = O(1)) then
+        printf (` (O (^ `):
+        tmout (op (0, x)):
+        printf (` `):
+        tmout (op (2*i, x)):
+        printf (`))`)
+      else
+        printf (` (* `):
+        tmout (op (2*i - 1, x)):
+        printf (` (^ `):
+        tmout (op (0, x)):
+        printf (` `):
+        tmout (op (2*i, x)):
+        printf (`))`)
+     fi
+    od:
+    printf (`)`)
 
   else
     printf (`(`):
