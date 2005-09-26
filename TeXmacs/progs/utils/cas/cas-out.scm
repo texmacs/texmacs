@@ -372,14 +372,14 @@
 	(else (cas-out-plus x))))
 
 (define (cas-out-plus x)
-  (cond ((func? x '+ 2)
+  (cond ((or (func? x '+ 2) (func? x '+& 2))
 	 `(concat ,(cas-out-plus (cadr x)) "+" ,(cas-out-plus (caddr x))))
 	((func? x '- 2)
 	 `(concat ,(cas-out-plus (cadr x)) "-" ,(cas-out-times (caddr x))))
 	(else (cas-out-times x))))
 
 (define (cas-out-times x)
-  (cond ((func? x '*)
+  (cond ((or (func? x '*) (func? x '*&))
 	 `(concat ,(cas-out-times (cadr x)) "*" ,(cas-out-times (caddr x))))
 	((func? x '/ 1)
 	 `(frac "1" ,(cas-out (cadr x))))
@@ -402,7 +402,7 @@
 (define cas-out-special
   '(=> <=> & |
     = != < > <= >=
-    + - * / ^ !
+    + +& - * *& / ^ !
     %prime factorial _
     matrix det row tuple list set comma))
 
@@ -499,5 +499,7 @@
 	 (z2 (cas-arrange-subtractions z1))
 	 (z3 (cas-make-fractions z2))
 	 (z4 (cas-make-binary z3 '+ '- 0))
-	 (z5 (cas-make-binary z4 '* '/ 1)))
-    (cas-concat-simplify (cas-out z5))))
+	 (z5 (cas-make-binary z4 '+& '- 0))
+	 (z6 (cas-make-binary z5 '* '/ 1))
+	 (z7 (cas-make-binary z6 '*& '/ 1)))
+    (cas-concat-simplify (cas-out z7))))
