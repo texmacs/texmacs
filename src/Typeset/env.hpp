@@ -43,8 +43,8 @@
 #define Env_Paragraph         12
 #define Env_Page              13
 #define Env_Preamble          14
-#define Env_Frame             15
-#define Env_Clipping          16
+#define Env_Geometry          15
+#define Env_Frame             16
 #define Env_Line_Width        17
 #define Env_Grid              18
 #define Env_Grid_Aspect       19
@@ -149,6 +149,9 @@ public:
   SI           lw;
   string       point_style;
   bool         preamble;
+  SI           gw;
+  SI           gh;
+  string       gvalign;
   frame        fr;
   point        clip_lim1;
   point        clip_lim2;
@@ -265,6 +268,8 @@ private:
   tree exec_pag_length ();
   tree exec_tmpt_length ();
   tree exec_px_length ();
+  tree exec_gw_length ();
+  tree exec_gh_length ();
   tree exec_msec_length ();
   tree exec_sec_length ();
   tree exec_min_length ();
@@ -349,8 +354,8 @@ public:
   void   update_color ();
   void   update_mode ();
   void   update_language ();
+  void   update_geometry ();
   void   update_frame ();
-  void   update_clipping ();
   void   update_src_style ();
   void   update_src_special ();
   void   update_src_compact ();

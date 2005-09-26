@@ -53,7 +53,7 @@
 	    ("Small figure" (make 'small-figure))
 	    ("Big figure" (make 'big-figure))
 	    ---))
-  ;("Draw image" (make-graphics))
+  ("Draw image" (make-graphics))
   ("Link image" (choose-file make-link-image "Load image" "image"))
   ("Insert image" (choose-file make-inline-image "Load image" "image"))
   ("Thumbnails" (make-thumbnails))

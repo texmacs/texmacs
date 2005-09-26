@@ -110,7 +110,7 @@ initialize_default_var_type () {
   var_type (FILL_COLOR)        = Env_Fill_Color;
   var_type (LINE_ARROWS)       = Env_Line_Arrows;
   var_type (GR_FRAME)          = Env_Frame;
-  var_type (GR_CLIP)           = Env_Clipping;
+  var_type (GR_GEOMETRY)       = Env_Geometry;
   var_type (GR_GRID)           = Env_Grid;
   var_type (GR_GRID_ASPECT)    = Env_Grid_Aspect;
   var_type (GR_EDIT_GRID)        = Env_Grid;
@@ -309,34 +309,52 @@ edit_env_rep::update_language () {
 }
 
 void
+edit_env_rep::update_geometry () {
+  tree t= env [GR_GEOMETRY];
+  gw= as_length ("1par");
+  gh= as_length ("0.6par");
+  gvalign= as_string ("center");
+  if (is_tuple (t, "geometry", 2) || is_tuple (t, "geometry", 3)) {
+    if (is_length (as_string (t[1]))) gw= as_length (t[1]);
+    if (is_length (as_string (t[2]))) gh= as_length (t[2]);
+    if (is_tuple (t, "geometry", 3))
+      gvalign= as_string (t[3]);
+  }
+  update_frame ();
+}
+
+void
 edit_env_rep::update_frame () {
   tree t= env [GR_FRAME];
+  SI yinc= gvalign == "top"    ? - gh
+	 : gvalign == "bottom" ? 0
+	 : - gh / 2;
   if (is_tuple (t, "scale", 2) && is_func (t[2], TUPLE, 2)) {
     SI magn= as_length (t[1]);
     SI x   = as_length (t[2][0]);
     SI y   = as_length (t[2][1]);
-    fr= scaling (magn, point (x, y));
+    if (gvalign == "top") yinc += as_length ("1ex");
+    fr= scaling (magn, point (x, y + yinc));
   }
   else {
     SI cm   = as_length (string ("1cm"));
     SI par  = as_length (string ("1par"));
     SI yfrac= as_length (string ("1yfrac"));
-    fr= scaling (cm, point (par >> 1, yfrac));
+    fr= scaling (cm, point (par >> 1, yfrac + yinc));
   }
-}
-
-void
-edit_env_rep::update_clipping () {
-  tree t= env [GR_CLIP];
-  if (is_tuple (t, "clip", 2) &&
-      is_func (t[1], TUPLE, 2) &&
-      is_func (t[2], TUPLE, 2)) {
-    clip_lim1= as_point (t[1]);
-    clip_lim2= as_point (t[2]);
+  point p0= fr (as_point (tuple ("0par", "0par")));
+  if (gvalign == "top") {
+    clip_lim1= fr [point (p0[0], p0[1] - gh + as_length ("1ex"))];
+    clip_lim2= fr [point (p0[0] + gw, p0[1] + as_length ("1ex"))];
+  }
+  else
+  if (gvalign == "bottom") {
+    clip_lim1= fr [point (p0[0], p0[1])];
+    clip_lim2= fr [point (p0[0] + gw, p0[1] + gh)];
   }
   else {
-    clip_lim1= as_point (tuple ("0par", "-0.3par"));
-    clip_lim2= as_point (tuple ("1par", "0.3par"));
+    clip_lim1= fr [point (p0[0], p0[1] - gh/2)];
+    clip_lim2= fr [point (p0[0] + gw, p0[1] + gh/2)];
   }
 }
 
@@ -440,8 +458,8 @@ edit_env_rep::update () {
   update_language ();
   update_font ();
 
+  update_geometry ();
   update_frame ();
-  update_clipping ();
   point_style= get_string (POINT_STYLE);
   lw= get_length (LINE_WIDTH);
   update_dash_style ();
@@ -506,11 +524,11 @@ edit_env_rep::update (string s) {
   case Env_Preamble:
     preamble= get_bool (PREAMBLE);
     break;
+  case Env_Geometry:
+    update_geometry ();
+    break;
   case Env_Frame:
     update_frame ();
-    break;
-  case Env_Clipping:
-    update_clipping ();
     break;
   case Env_Point_Style:
     point_style= get_string (POINT_STYLE);

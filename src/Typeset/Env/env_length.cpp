@@ -287,6 +287,11 @@ tree edit_env_rep::exec_tmpt_length () {
 tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
 
+tree edit_env_rep::exec_gw_length () {
+  return tree (TMLEN, as_string (gw)); }
+tree edit_env_rep::exec_gh_length () {
+  return tree (TMLEN, as_string (gh)); }
+
 tree edit_env_rep::exec_msec_length () { return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_sec_length () { return tree (TMLEN, "1000"); }
 tree edit_env_rep::exec_min_length () { return tree (TMLEN, "60000"); }
