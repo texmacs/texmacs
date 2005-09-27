@@ -24,7 +24,11 @@ using std::cerr;
 // instead of include <iostream.h>
 
 #ifdef HAVE_INTPTR_T
+#ifdef OS_SUN
+#include <inttypes.h>
+#else
 #include <stdint.h>
+#endif
 #else
 typedef long intptr_t;
 #endif
