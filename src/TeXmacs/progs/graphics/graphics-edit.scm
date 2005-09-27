@@ -34,8 +34,8 @@
   ("up" (graphics-move-origin "0gw" "-0.1gh"))
   ("C-left" (graphics-change-extents "-0.5cm" "0cm"))
   ("C-right" (graphics-change-extents "+0.5cm" "0cm"))
-  ("C-down" (graphics-change-extents "0cm" "-0.5cm"))
-  ("C-up" (graphics-change-extents "0cm" "+0.5cm"))
+  ("C-down" (graphics-change-extents "0cm" "+0.5cm"))
+  ("C-up" (graphics-change-extents "0cm" "-0.5cm"))
   ("M-down" (graphics-change-geo-valign #f))
   ("M-up" (graphics-change-geo-valign #t)))
 
