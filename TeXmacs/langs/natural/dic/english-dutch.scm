@@ -98,6 +98,7 @@
 ("automatically generated content" "automatisch aangemaakte inhoud")
 ("automatic quotes" "automatische aanhalingstekens")
 ("autosave" "automatisch opslaan")
+("axis" "as")
 ("axiom" "axioma")
 ("b series" "b reeks")
 ("background" "achtergrond")

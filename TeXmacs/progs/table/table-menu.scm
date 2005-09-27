@@ -56,8 +56,9 @@
 
 (menu-bind table-valign-menu
   ("Bottom" (table-set-valign "b"))
+  ("Baseline" (table-set-valign "B"))
   ("Middle" (table-set-valign "c"))
-  ("Fraction bar height" (table-set-valign "f"))
+  ("Axis" (table-set-valign "f"))
   ("Top" (table-set-valign "t")))
 
 (menu-bind table-border-menu
@@ -263,7 +264,7 @@
 	    "Align table at the top (M-t V t)")
    (table-set-valign "t"))
   ((balloon (icon "tm_table_vfrac.xpm")
-	    "Align table at fraction bar height (M-t V f)")
+	    "Align table at axis (M-t V f)")
    (table-set-valign "f"))
   ((balloon (icon "tm_table_bbottom.xpm")
 	    "Align table at the base of bottom row (M-t V B)")

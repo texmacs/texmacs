@@ -98,6 +98,7 @@
 ("automatically generated content" "génération automatique de contenu")
 ("automatic quotes" "guillemets automatiques")
 ("autosave" "sauvegarde automatique")
+("axis" "axe")
 ("axiom" "axiome")
 ("b series" "série B")
 ("background" "arrière-plan")
