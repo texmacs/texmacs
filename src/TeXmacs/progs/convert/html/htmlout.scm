@@ -21,7 +21,7 @@
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-group htmlout-big%
+(drd-group htmlout-big-all%
   ;; Both the tag and the children are displayed in multi-line format.
   html head style body table tr ul ol dl
   ;; and for MathML
@@ -29,19 +29,32 @@
 
 (drd-group htmlout-big-tag%
   ;; The tag is displayed in multi-line format.
-  p li dt dd center blockquote)
+  div p li dt dd center blockquote)
 
-(drd-rule (htmlout-big-tag% 'x) (htmlout-big% 'x))
+(drd-rule (htmlout-big-tag% 'x) (htmlout-big-all% 'x))
+
+(define (htmlout-big-all? op)
+  (drd-in? op htmlout-big-all%))
+
+(define (htmlout-big-tag? op)
+  (drd-in? op htmlout-big-tag%))
+
+(define (htmlout-big? x)
+  (and (pair? x)
+       (or (htmlout-big-all? (car x))
+	   (and (htmlout-big-tag? (car x))
+		(list-any
+		 (lambda (x) (and (pair? x) (htmlout-big-tag? (car x))))
+		 (cdr x))))))
+
+(define (htmlout-p-simplify? x)
+  ;; FIXME: font should not really be in the list here
+  (and (func? x 'p 1) (pair? (cadr x))
+       (in? (caadr x) '(div p li dt dd center blockquote ul ol dl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (htmlout-big? op)
-  (drd-in? op htmlout-big%))
-
-(define (htmlout-big-tag? op)
-  (drd-in? op htmlout-big-tag%))
 
 (define (htmlout-indent* s plus close?)
   (if (not preformatted?)
@@ -77,12 +90,16 @@
   (htmlout-indent-close s -2)
   (htmlout-text "</" (symbol->string s) ">"))
 
-(define (htmlout-args l big?)
+(define (htmlout-args-sub l big?)
   (if (nnull? l)
       (begin
 	(htmlout (car l))
 	(if (and big? (nnull? (cdr l))) (output-lf))
-	(htmlout-args (cdr l) big?))))
+	(htmlout-args-sub (cdr l) big?))))
+
+(define (htmlout-args s l)
+  (with big? (htmlout-big? (cons s l))
+    (htmlout-args-sub l big?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main output routines
@@ -102,7 +119,7 @@
 	((null? x) (noop))
 	((or (func? x '!concat) (func? x '*TOP*))
 	 (for-each htmlout (cdr x)))
-	((and (func? x 'p 1) (pair? (cadr x)) (htmlout-big-tag? (caadr x)))
+	((htmlout-p-simplify? x)
 	 (htmlout (cadr x)))
   	((func? x '*PI*)
 	 (output-lf-verbatim "<?" (symbol->string (cadr x)) " " (caddr x) "?>")
@@ -114,13 +131,13 @@
 	 (htmlout-close (car x)))
 	((not (func? (cadr x) '@))
 	 (htmlout-open (car x))
-	 (htmlout-args (cdr x) (htmlout-big? (car x)))
+	 (htmlout-args (car x) (cdr x))
 	 (htmlout-close (car x)))
 	(else
 	 (htmlout-open-tags (car x) (cdadr x))
 	 (update-preformatted
 	  (cdadr x)
-	  (cut htmlout-args (cddr x) (htmlout-big? (car x))))
+	  (cut htmlout-args (car x) (cddr x)))
 	 (htmlout-close (car x)))))
 
 (define (update-preformatted atts thunk)
