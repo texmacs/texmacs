@@ -14,6 +14,7 @@
 
 (texmacs-module (convert mathml tmmath)
   (:use (convert tools tmconcat)
+	(convert tools tmtable)
 	(convert mathml mathml-drd)))
 
 (define tmmath-env (make-ahash-table))
@@ -141,34 +142,74 @@
   `(m:menclose (@ (notation "updiagonalstrike")) ,(tmmath (car l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Tables
+;;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmmath-cell l)
-  `(m:mtd ,(tmmath (car l))))
+(define (tmmath-make-attrs fun l)
+  (with attrs (list-filter (map fun l) identity)
+    (if (null? attrs) '() `((@ ,@attrs)))))
 
-(define (tmmath-row l)
-  `(m:mtr ,@(map tmmath l)))
+(define (tmmath-make-cell-attr x)
+  (cond ((== x '("cell-halign" "l")) '(columnalign "left"))
+	((== x '("cell-halign" "c")) '(columnalign "center"))
+	((== x '("cell-halign" "r")) '(columnalign "right"))
+	((== x '("cell-valign" "t")) '(rowalign "top"))
+	((== x '("cell-valign" "c")) '(rowalign "center"))
+	((== x '("cell-valign" "b")) '(rowalign "bottom"))
+	((== x '("cell-valign" "B")) '(rowalign "baseline"))
+	((== x '("cell-valign" "f")) '(rowalign "axis"))
+	(else #f)))
+
+(define (tmmath-make-cell c cellf)
+  `(m:mtd ,@(tmmath-make-attrs tmmath-make-cell-attr cellf)
+	  ,(tmmath (cadr c))))
+
+(define (tmmath-make-cells l cellf)
+  (if (null? l) l
+      (cons (tmmath-make-cell (car l) (car cellf))
+	    (tmmath-make-cells (cdr l) (cdr cellf)))))
+
+(define (tmmath-make-row-attr x)
+  (tmmath-make-cell-attr x))
+
+(define (tmmath-make-row r rowf cellf)
+  `(m:mtr ,@(tmmath-make-attrs tmmath-make-row-attr rowf)
+	  ,@(tmmath-make-cells (cdr r) cellf)))
+
+(define (tmmath-make-rows l rowf cellf)
+  (if (null? l) l
+      (cons (tmmath-make-row  (car l) (car rowf) (car cellf))
+	    (tmmath-make-rows (cdr l) (cdr rowf) (cdr cellf)))))
+
+(define (tmmath-make-column-attr l)
+  (cond ((null? l) "left")
+	((== (car l) '("cell-halign" "l")) "left")
+	((== (car l) '("cell-halign" "c")) "center")
+	((== (car l) '("cell-halign" "r")) "right")
+	(else (tmmath-make-column-attr (cdr l)))))
+
+(define (tmmath-make-table-attr x)
+  (cond ((== x '("table-valign" "t")) '(align "top"))
+	((== x '("table-valign" "c")) '(align "center"))
+	((== x '("table-valign" "b")) '(align "bottom"))
+	((== x '("table-valign" "B")) '(align "baseline"))
+	((== x '("table-valign" "f")) '(align "axis"))
+	(else (tmmath-make-cell-attr x))))
+
+(define (tmmath-make-table t tablef colf rowf cellf)
+  (let* ((l1 (list-filter (map tmmath-make-table-attr tablef) identity))
+	 (l2 (map tmmath-make-column-attr (map reverse colf)))
+	 (cs (apply string-append (list-intersperse l2 " ")))
+	 (l3 (cons `(columnalign ,cs) l1)))
+    `(m:mtable (@ ,@l3) ,@(tmmath-make-rows (cdr t) rowf cellf))))
 
 (define (tmmath-table l)
-  `(m:mtable ,@(map tmmath l)))
-
-(define (tmmath-tformat-rcl? l)
-  (and (in? '(cwith "1" "-1" "-1" "-1" "cell-halign" "l") l)
-       (in? '(cwith "1" "-1" "1" "1" "cell-halign" "r") l)))
+  (list (tmmath-make-table (cons 'table l) '() '() '() '())))
 
 (define (tmmath-tformat l)
-  ;; FIXME: dirty hack to recognize at least eqnarrays
-  ;; should be improved later
-  (if (tmmath-tformat-rcl? (cDr l))
-      (with x (cAr l)
-	(while (or (func? x 'document 1) (func? x 'tformat))
-	  (set! x (cAr x)))
-	(if (func? x 'table)
-	    `(m:mtable (@ (columnalign "right center left"))
-		       ,@(map tmmath (cdr x)))
-	    (tmmath x)))
-      (tmmath (cAr l))))
+  (with t (tmtable-normalize (cons 'tformat l))
+    (receive (tablef colf rowf cellf) (tmtable-properties** t)
+      (tmmath-make-table (cAr t) tablef colf rowf cellf))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other constructs
@@ -265,8 +306,8 @@
   ;; Tabular markup
   (tformat tmmath-tformat)
   (table tmmath-table)
-  (row tmmath-row)
-  (cell tmmath-cell)
+  (row tmmath-concat)
+  (cell tmmath-concat)
   (tabular tmmath-first)
   (tabular* tmmath-first)
   (block tmmath-first)

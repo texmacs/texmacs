@@ -263,7 +263,7 @@
 
 (tm-define (tmtable-properties* t)
   (:synopsis "Find table-, column-, row- and cell- properties of @t")
-  ;; NOTE: assumes format of t to be raised upwards
+  ;; variant of tmtable-properties: use only cell properties
   (receive (tablef colf rowf cellf) (tmtable-formats t)
     (receive (t1 t2) (list-partition tablef (lambda (x) (func? x 'twith)))
       (set! tablef t1)
@@ -276,3 +276,19 @@
 		(tmtformat-column-props colf cols)
 		(tmtformat-row-props rowf rows)
 		(tmtformat-cell-props cellf rows cols))))))
+
+(define (tmtformat-halign? prop)
+  (and (func? prop 'cwith 6) (== (sixth prop) "cell-halign")))
+
+(tm-define (tmtable-properties** t)
+  (:synopsis "Find table-, column-, row- and cell- properties of @t")
+  ;; variant of tmtable-properties for TeXmacs -> MathML converter
+  (receive (tablef colf rowf cellf) (tmtable-formats t)
+    (set! colf (append (list-filter tablef tmtformat-halign?) colf))
+    (set! tablef (list-filter tablef (non tmtformat-halign?)))
+    (let* ((rows (tmtable-rows t))
+	   (cols (tmtable-cols t)))
+      (values (tmtformat-table-props tablef)
+	      (tmtformat-column-props colf cols)
+	      (tmtformat-row-props rowf rows)
+	      (tmtformat-cell-props cellf rows cols)))))

@@ -23,7 +23,9 @@
 
 (drd-group htmlout-big%
   ;; Both the tag and the children are displayed in multi-line format.
-  html head style body table tr ul ol dl)
+  html head style body table tr ul ol dl
+  ;; and for MathML
+  mtable mtr)
 
 (drd-group htmlout-big-tag%
   ;; The tag is displayed in multi-line format.
