@@ -45,9 +45,8 @@
 	  ("Other" (interactive graphics-set-unit)))
       (-> "Origin"
 	  ("Centered" (graphics-set-origin "0.5gw" "0.5gh"))
-	  ("Base line" (graphics-set-origin "0cm" "0.5gh"))
-	  ("Fraction height" (graphics-set-origin
-			       "0cm" (length-add "0.5gh" "1yfrac")))
+	  ("Baseline" (graphics-set-origin "0cm" "0.5gh"))
+	  ("Axis" (graphics-set-origin "0cm" (length-add "0.5gh" "1yfrac")))
 	  ---
 	  ("Other" (interactive graphics-set-origin)))))
 
