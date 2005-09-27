@@ -189,13 +189,16 @@
       (tmhtml x)))
 
 (define (tmhtml-document l)
-  (if (not (ahash-ref tmhtml-env :preformatted))
-      (tmhtml-post-paragraphs
-       (map (lambda (x) (cons 'h:p (tmhtml-document-elem x))) l))
-      (tmhtml-post-simplify-nodes
-       (list-concatenate
-	((cut list-intersperse <> '("\n"))
-	 (map tmhtml l))))))
+  (cond ((null? l) '())
+	((null? (cdr l)) (tmhtml (car l)))
+	((ahash-ref tmhtml-env :preformatted)
+	 (tmhtml-post-simplify-nodes
+	  (list-concatenate
+	   ((cut list-intersperse <> '("\n"))
+	    (map tmhtml l)))))
+	(else
+	 (tmhtml-post-paragraphs
+	  (map (lambda (x) (cons 'h:p (tmhtml-document-elem x))) l)))))
 
 (define (tmhtml-paragraph l)
   (let rec ((l l))
