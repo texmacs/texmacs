@@ -119,7 +119,10 @@
 	  ".accent { position: relative; margin-left: -0.4em; top: -0.1em } "
 	  ".title-block { width: 100%; text-align: center } "
 	  ".title-block p { margin: 0px } "
-	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "))
+	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "
+	  ".left-tab { text-align: left } "
+	  ".center-tab { text-align: center } "
+	  ".right-tab { float: right; position: relative; top: -1em } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -190,7 +193,6 @@
 
 (define (tmhtml-document l)
   (cond ((null? l) '())
-	((null? (cdr l)) (tmhtml (car l)))
 	((ahash-ref tmhtml-env :preformatted)
 	 (tmhtml-post-simplify-nodes
 	  (list-concatenate
@@ -310,11 +312,17 @@
 	((func? x 'with) (block-document? (cAr x)))
 	(else #f)))
 
+(define (blockify x)
+  (cond ((func? x 'document) x)
+	((or (func? x 'surround 3) (func? x 'with))
+	 (rcons (cDr x) (blockify (cAr x))))
+	(else `(document ,x))))
+
 (define (tmhtml-surround l)
   (let* ((r1 `(surround ,@l))
 	 (r2 (simplify-document r1))
 	 (f? (and (block-document? r1) (not (func? r2 'document))))
-	 (r3 (if f? (list 'document r2) r2)))
+	 (r3 (if f? (blockify r2) r2)))
     (tmhtml r3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -385,22 +393,25 @@
 	   ((string? (car l)) l)
 	   ((heading? l) (tmhtml-post-heading l))
 	   ((list-any sxhtml-table? l) (tmhtml-post-table l))
+	   ((and (null? (cdr l)) (pair? (car l))
+		 (== (caar l) 'h:div) (== (cadar l) '(@ (class "left-tab"))))
+	    (cddar l))
 	   (else l)))))
 
 (define (tmhtml-align-left l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: left"))
-	       ,@(tmhtml-concat l)))))
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "left-tab")) ,@r)))))
 
 (define (tmhtml-align-middle l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: center"))
-	       ,@(tmhtml-concat l)))))
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "center-tab")) ,@r)))))
 
 (define (tmhtml-align-right l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "float: right; position: relative; top: -1em"))
-	       ,@(tmhtml-concat l)))))
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "right-tab")) ,@r)))))
 
 (define (tmhtml-post-simplify-nodes l)
   ;; Catenate adjacent string nodes and remove empty string nodes
@@ -623,13 +634,18 @@
 		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
     (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg))))
 
+(define (tmhtml-with-block style arg)
+  (with r (tmhtml (blockify arg))
+    (if (in? r '(() ("") ((h:p)) ((h:p "")))) '()
+	`((h:div (@ (style ,style)) ,@r)))))
+
 (define (tmhtml-with-par-left val arg)
   (with x (tmlength->px val)
     (if (not x) (tmhtml arg)
 	(with d (- x (ahash-ref tmhtml-env :left-margin))
 	  (with s (string-append "margin-left: " (make-exact d) "px")
 	    (ahash-with tmhtml-env :left-margin x
-	      `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))))
+	      (tmhtml-with-block s arg)))))))
 
 (define (tmhtml-with-par-right val arg)
   (with x (tmlength->px val)
@@ -637,13 +653,13 @@
 	(with d (- x (ahash-ref tmhtml-env :right-margin))
 	  (with s (string-append "margin-right: " (make-exact d) "px")
 	    (ahash-with tmhtml-env :right-margin x
-	      `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))))
+	      (tmhtml-with-block s arg)))))))
 
 (define (tmhtml-with-par-first val arg)
   (with x (tmlength->htmllength val #t)
     (if (not x) (tmhtml arg)
 	(with s (string-append "text-indent: " x)
-	  `((h:div (@ (style ,s)) ,@(tmhtml arg)))))))
+	  (tmhtml-with-block s arg)))))
 
 (define (tmhtml-with-par-par-sep val arg)
   (with x (tmlength->px val)
