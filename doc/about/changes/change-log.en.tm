@@ -1,13 +1,22 @@
-<TeXmacs|1.0.5.7>
+<TeXmacs|1.0.5.8>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.8>
+  <section|Changes from version 1.0.5 to 1.0.5.9>
 
   <\itemize>
+    <item>Release <with|mode|math|\<alpha\>>-version of graphical mode
+    (1.0.5.9).
+
+    <item>Improved exportation to Html (1.0.5.9).
+
+    <item>Improved table importation to and from Html/MathML (1.0.5.9).
+
+    <item>Further improvements in Maple interface (1.0.5.9).
+
     <item>Added a new interface with Maple (1.0.5.8).
 
     <item>Added converters from and to MathML (1.0.5.8).

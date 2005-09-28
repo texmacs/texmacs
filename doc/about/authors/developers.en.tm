@@ -8,6 +8,9 @@
   <\itemize>
     <item>Dan Martens made the <name|Windows> port.
 
+    <item>Henri Lesourd developed a native mode for drawing technical
+    pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
+
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -15,9 +18,6 @@
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
-
-    <item>Henri Lesourd is working on native technical drawing support in
-    <TeXmacs>. He also fixed a bug in the presentation mode.
 
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
