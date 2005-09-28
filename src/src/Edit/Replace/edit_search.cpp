@@ -13,6 +13,7 @@
 #include "Replace/edit_replace.hpp"
 #include "Interface/edit_interface.hpp"
 #include "drd_std.hpp"
+#include "drd_mode.hpp"
 #include "analyze.hpp"
 
 /******************************************************************************
@@ -358,12 +359,18 @@ edit_replace_rep::next_match (bool forward) {
     }
     search_end= test (search_at, search_what);
     if (search_end != search_at) {
+      go_to (copy (search_end));
+      show_cursor_if_hidden ();
       set_selection (search_at, search_end);
       notify_change (THE_SELECTION);
-      go_to (copy (search_end));
       return;
     }
+    int old= get_access_mode ();
+    if (get_init_string (MODE) == "src" || inside ("show-preamble"))
+      set_access_mode (DRD_ACCESS_SOURCE);
+    else set_access_mode (DRD_ACCESS_HIDDEN);
     step_horizontal (forward);
+    set_access_mode (old);
   }
 }
 
@@ -559,7 +566,7 @@ edit_replace_rep::replace_keypress (string s) {
     step_horizontal (forward);
     replace_next ();
   }
-  else if (s == "a") {
+  else if (s == "a" || s == "!") {
     while (search_at != rp) {
       nr_replaced++;
       go_to (copy (search_end));

@@ -54,6 +54,7 @@ extern string MATH_CONDENSED;
 extern string MATH_VPOS;
 
 extern string PROG_LANGUAGE;
+extern string PROG_SCRIPTS;
 extern string PROG_FONT;
 extern string PROG_FONT_FAMILY;
 extern string PROG_FONT_SERIES;
@@ -171,18 +172,25 @@ extern string CELL_COL_NR;
 extern string POINT_STYLE;
 
 extern string LINE_WIDTH;
-extern string LINE_STYLE;
+extern string DASH_STYLE;
+extern string DASH_STYLE_UNIT;
 extern string LINE_ARROWS;
 extern string LINE_CAPS;
-extern string FILL_MODE;
 extern string FILL_COLOR;
 extern string FILL_STYLE;
 
+extern string GR_GEOMETRY;
 extern string GR_FRAME;
-extern string GR_CLIP;
 extern string GR_MODE;
 extern string GR_COLOR;
+extern string GR_POINT_STYLE;
 extern string GR_LINE_WIDTH;
+extern string GR_DASH_STYLE;
+extern string GR_DASH_STYLE_UNIT;
+extern string GR_LINE_ARROWS;
+extern string GR_FILL_COLOR;
+extern string GR_TEXT_HALIGN;
+extern string GR_TEXT_VALIGN;
 extern string GR_GRID;
 extern string GR_GRID_ASPECT;
 extern string GR_EDIT_GRID;

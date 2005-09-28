@@ -17,8 +17,6 @@
 class typesetter_rep {
 public:
   edit_env&   env;
-  tree&       et;
-  path        ip;
   bridge      br;
   rectangles  change_log;
 
@@ -32,7 +30,7 @@ public:
   bool paper;
 
 public:
-  typesetter_rep (edit_env& env, tree& et, path ip);
+  typesetter_rep (edit_env& env, tree et, path ip);
 
   void insert_stack     (array<page_item> l, stack_border sb);
   void insert_parunit   (tree t, path ip);

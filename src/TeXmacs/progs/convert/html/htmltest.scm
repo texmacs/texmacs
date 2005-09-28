@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html htmltest)
-  (:use (convert html htmlout) (convert tools output))
-  (:export out))
+  (:use (convert html htmlout) (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Html output
@@ -30,7 +29,7 @@
 (define (test-html-document)
   html-expression)
 
-(define (out)
+(tm-define (out)
   (let ((s (serialize-html (test-html-document))))
     ;;(display s)
     ;;(display "\n")

@@ -17,7 +17,9 @@
 #include "analyze.hpp"
 #include "iterator.hpp"
 #include "Ghostscript/ghostscript.hpp"
+#include "Imlib2/imlib2.hpp"
 
+extern bool reverse_colors;
 extern hashmap<tree,string> ps_bbox;
 
 /******************************************************************************
@@ -31,7 +33,6 @@ x_drawable_rep::x_drawable_rep (x_display dis2, int w2, int h2):
   gc          = dis->gc;
   cur_fg      = dis->black;
   cur_bg      = dis->white;
-  event_status= false;
 
   black       = dis->black;
   white       = dis->white;
@@ -55,9 +56,25 @@ x_drawable_rep::~x_drawable_rep () {
   if ((w>0) && (h>0)) XFreePixmap (dis->dpy, (Pixmap) win);
 }
 
-int
-x_drawable_rep::get_type () {
-  return PS_DEVICE_SCREEN;
+bool
+x_drawable_rep::is_x_drawable () {
+  return true;
+}
+
+x_drawable_rep*
+x_drawable_rep::as_x_drawable () {
+  return this;
+}
+
+void
+x_drawable_rep::get_extents (int& w2, int& h2) {
+  w2= w;
+  h2= h;
+}
+
+bool
+x_drawable_rep::interrupted (bool check) {
+  return dis->check_event (check? INTERRUPT_EVENT: INTERRUPTED_EVENT);
 }
 
 /******************************************************************************
@@ -82,7 +99,8 @@ x_drawable_rep::decode (SI& x, SI& y) {
 ******************************************************************************/
 
 void
-x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2) {
+x_drawable_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
+  (void) restore;
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
   Region region= XCreateRegion ();
@@ -140,13 +158,13 @@ x_drawable_rep::set_background (color c) {
 }
 
 void
-x_drawable_rep::set_line_style (SI lw, int type) { (void) type;
+x_drawable_rep::set_line_style (SI lw, int type, bool round) { (void) type;
   if (lw <= pixel)
     XSetLineAttributes (dpy, (GC) gc, 1,
-			LineSolid, CapRound, JoinRound);
+			LineSolid, round?CapRound:CapButt, JoinRound);
   else
     XSetLineAttributes (dpy, (GC) gc, (lw+thicken) / pixel,
-			LineSolid, CapRound, JoinRound);
+			LineSolid, round?CapRound:CapButt, JoinRound);
 }
 
 void
@@ -202,7 +220,15 @@ x_drawable_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
 }
 
 void
-x_drawable_rep::polygon (array<SI> x, array<SI> y) {
+x_drawable_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
+  if ((x1>=x2) || (y1>=y2)) return;
+  decode (x1, y1);
+  decode (x2, y2);
+  XFillArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
+}
+
+void
+x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
   STACK_NEW_ARRAY (pnt, XPoint, n);
@@ -212,7 +238,7 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y) {
     pnt[i].x= xx;
     pnt[i].y= yy;
   }
-  XFillPolygon (dpy, win, gc, pnt, n, Convex, CoordModeOrigin);
+  XFillPolygon (dpy, win, gc, pnt, n, convex?Convex:Complex, CoordModeOrigin);
   STACK_DELETE_ARRAY (pnt);
 }
 
@@ -270,18 +296,19 @@ x_drawable_rep::xpm_initialize (url file_name) {
       def= "lightgrey";
     }
     else bmcs(name)= 1;
+ /* FIXME: to avoid code duplication, replace this code by
+      a call to xpm_colors(), plus the appropriate code to
+      fill bmcs() & set first_name. */
 
     char* _def= as_charp (def);
     XColor exact, closest;
     XLookupColor (dis->dpy, dis->cols, _def, &exact, &closest);
-    if (XAllocColor (dis->dpy, dis->cols, &exact))
+    if (!reverse_colors && XAllocColor (dis->dpy, dis->cols, &exact))
       pmcs(name)= exact.pixel;
-    else if (XAllocColor (dis->dpy, dis->cols, &closest))
+    else if (!reverse_colors && XAllocColor (dis->dpy, dis->cols, &closest))
       pmcs(name)= closest.pixel;
     else {
-      int myc= dis->rgb ((exact.red+128)/256,
-			 (exact.green+128)/256,
-			 (exact.blue+128)/256);
+      int myc= dis->rgb (exact.red/256, exact.green/256, exact.blue/256);
       pmcs(name)= dis->cmap[myc];
     }
     delete[] _def;
@@ -339,21 +366,24 @@ x_drawable_rep::xpm (url file_name, SI x, SI y) {
 * Invocation of ghostscript
 ******************************************************************************/
 
-static int ps_figs_last_gc = 0;
-static int ps_figs_tot_size= 0;
-static int ps_figs_max_size= 10000;
-static hashmap<tree,Pixmap> ps_figs (0);
-static hashmap<tree,int> ps_figs_w (0);
-static hashmap<tree,int> ps_figs_h (0);
-static hashmap<tree,int> ps_figs_time (0);
-static hashmap<tree,int> ps_figs_nr (0);
+static int cache_image_last_gc = 0;
+static int cache_image_tot_size= 0;
+static int cache_image_max_size= 10000;
+static hashmap<tree,Pixmap> cache_image (0);
+static hashmap<tree,int> cache_image_w (0);
+static hashmap<tree,int> cache_image_h (0);
+static hashmap<tree,int> cache_image_time (0);
+static hashmap<tree,int> cache_image_nr (0);
 
 void
-x_drawable_rep::postscript (
-  url image,
-  SI w, SI h, SI x, SI y,
-  int x1, int y1, int x2, int y2)
+x_drawable_rep::image (
+  url u, SI w, SI h, SI x, SI y,
+  double cx1, double cy1, double cx2, double cy2)
 {
+  // Given an image of original size (W, H),
+  // we display the part (cx1 * W, xy1 * H, cx2 * W, cy2 * H)
+  // at position (x, y) in a rectangle of size (w, h)
+
   w= w/pixel; h= h/pixel;
   decode (x, y);
 
@@ -366,36 +396,34 @@ x_drawable_rep::postscript (
     }
     dis->gswindow= new x_window_rep (dummy, dis, "ghostscript", 0, 0);
   }
-  if (ghostscript_bugged ()) {
-    SI max_w= 2 * dis->display_width;
-    SI max_h= 2 * dis->display_height;
-    w= min (w, max_w);
-    h= min (h, max_h);
-  }
 
   Pixmap pm;
-  tree lookup= tuple (image->t);
+  tree lookup= tuple (u->t);
   lookup << as_string (w ) << as_string (h )
-	 << as_string (x1) << as_string (y1)
-	 << as_string (x2) << as_string (y2);
-  if (ps_figs->contains (lookup)) pm= (Pixmap) ps_figs [lookup];
+	 << as_string (cx1) << as_string (cy1)
+	 << as_string (cx2) << as_string (cy2);
+  if (cache_image->contains (lookup)) pm= (Pixmap) cache_image [lookup];
   else {
-    if (DEBUG_VERBOSE)
-      cout << "TeXmacs] Running ghostscript " << image << "\n";
+    // rendering
     Window gs_win= dis->gswindow->win;
     pm= XCreatePixmap (dis->dpy, gs_win, w, h, dis->depth);
-    ghostscript_run (dpy, gs_win, pm, image, w, h, x1, y1, x2, y2);
-    if (N(ps_figs_nr) == 0) ps_figs_last_gc= texmacs_time ();
-    ps_figs      (lookup)= (int) pm;
-    ps_figs_w    (lookup)= w;
-    ps_figs_h    (lookup)= h;
-    ps_figs_time (lookup)= texmacs_time ();
-    ps_figs_nr   (lookup)= ps_figs_nr [lookup] + 1;
-    ps_figs_tot_size += w*h;
-    if (ps_figs_tot_size > ps_figs_max_size) {
-      dis->postscript_auto_gc ();
-      if (ps_figs_tot_size > ps_figs_max_size)
-	ps_figs_max_size= ps_figs_tot_size << 1;
+    if (imlib2_supports (u))
+      imlib2_display (dpy, pm, u, w, h, cx1, cy1, cx2, cy2);
+    else
+      ghostscript_run (dpy, gs_win, pm, u, w, h, cx1, cy1, cx2, cy2);
+
+    // caching
+    if (N(cache_image_nr) == 0) cache_image_last_gc= texmacs_time ();
+    cache_image      (lookup)= (int) pm;
+    cache_image_w    (lookup)= w;
+    cache_image_h    (lookup)= h;
+    cache_image_time (lookup)= texmacs_time ();
+    cache_image_nr   (lookup)= cache_image_nr [lookup] + 1;
+    cache_image_tot_size += w*h;
+    if (cache_image_tot_size > cache_image_max_size) {
+      dis->image_auto_gc ();
+      if (cache_image_tot_size > cache_image_max_size)
+	cache_image_max_size= cache_image_tot_size << 1;
     }
   }
 
@@ -403,100 +431,49 @@ x_drawable_rep::postscript (
 }
 
 void
-x_display_rep::postscript_auto_gc () {
+x_display_rep::image_auto_gc () {
   int time= texmacs_time ();
-  if (time-ps_figs_last_gc <= 300000) return;
-  ps_figs_last_gc= time;
+  if (time-cache_image_last_gc <= 300000) return;
+  cache_image_last_gc= time;
   if (DEBUG_AUTO)
     cout << "TeXmacs] Launching garbage collection for unused pictures\n";
 
-  iterator<tree> it= iterate (ps_figs);
+  iterator<tree> it= iterate (cache_image);
   while (it->busy()) {
     tree lookup= it->next();
-    int diff= time- ps_figs_time [lookup];
-    int fact= ps_figs_nr [lookup];
+    int diff= time- cache_image_time [lookup];
+    int fact= cache_image_nr [lookup];
     fact= fact * fact * fact;
-    if (ps_figs_w [lookup] * ps_figs_h [lookup] < 400) fact= fact * 5;
-    if (ps_figs_w [lookup] * ps_figs_h [lookup] < 6400) fact= fact * 5;
+    if (cache_image_w [lookup] * cache_image_h [lookup] < 400) fact= fact * 5;
+    if (cache_image_w [lookup] * cache_image_h [lookup] < 6400) fact= fact * 5;
     if (diff/fact > 60000) {
-      Pixmap pm= (Pixmap) ps_figs [lookup];
+      Pixmap pm= (Pixmap) cache_image [lookup];
       XFreePixmap (dpy, pm);
-      ps_figs->reset (lookup);
-      ps_figs_w->reset (lookup);
-      ps_figs_h->reset (lookup);
-      ps_figs_time->reset (lookup);
+      cache_image->reset (lookup);
+      cache_image_w->reset (lookup);
+      cache_image_h->reset (lookup);
+      cache_image_time->reset (lookup);
       ps_bbox->reset (lookup[0]);
     }
   }
 }
 
 void
-x_display_rep::postscript_gc (string name) {
+x_display_rep::image_gc (string name) {
   (void) name;
-  ps_figs_last_gc= texmacs_time ();
-  iterator<tree> it= iterate (ps_figs);
+  cache_image_last_gc= texmacs_time ();
+  iterator<tree> it= iterate (cache_image);
   while (it->busy()) {
     tree lookup= it->next();
     if (!is_ramdisc (as_url (lookup[0]))) {
-      Pixmap pm= (Pixmap) ps_figs [lookup];
+      Pixmap pm= (Pixmap) cache_image [lookup];
       XFreePixmap (dpy, pm);
-      ps_figs->reset (lookup);
-      ps_figs_w->reset (lookup);
-      ps_figs_h->reset (lookup);
-      ps_figs_time->reset (lookup);
-      ps_figs_nr->reset (lookup);
+      cache_image->reset (lookup);
+      cache_image_w->reset (lookup);
+      cache_image_h->reset (lookup);
+      cache_image_time->reset (lookup);
+      cache_image_nr->reset (lookup);
       ps_bbox->reset (lookup[0]);
     }
   }
-}
-
-/******************************************************************************
-* Miscellaneous routines
-******************************************************************************/
-
-void
-x_drawable_rep::next_page () {
-}
-
-bool
-x_drawable_rep::check_event (int type) {
-  bool status;
-  XEvent ev;
-  switch (type) {
-  case ANY_EVENT:
-    if (event_status) return true;
-    event_status= (XPending (dpy)>0);
-    break;
-  case INPUT_EVENT:
-    if (event_status) return true;
-    event_status= XCheckMaskEvent (dpy, KeyPressMask|ButtonPressMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case MOTION_EVENT:
-    event_status= XCheckMaskEvent (dpy, PointerMotionMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case DRAG_EVENT:
-    event_status= XCheckMaskEvent (dpy, ButtonMotionMask, &ev);
-    if (event_status) XPutBackEvent (dpy, &ev);
-    break;
-  case MENU_EVENT:
-    status= XCheckMaskEvent (dpy, ButtonMotionMask|ButtonReleaseMask, &ev);
-    if (status) XPutBackEvent (dpy, &ev);
-    return status;
-  case EVENT_STATUS:
-    break;
-  }
-  return event_status;
-}
-
-void
-x_drawable_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
-  if (this != dis->shadow) return;
-  outer_round (x1, y1, x2, y2);
-  decode (x1, y1);
-  decode (x2, y2);
-  dis->shadow_src->encode (x1, y1);
-  dis->shadow_src->encode (x2, y2);
-  dis->shadow_src->shadow_to_window (x1, y1, x2, y2);
 }

@@ -13,59 +13,74 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert html tmhtml)
-  (:use (convert tools tmconcat) (convert mathml tmmath)
-	(convert tools stm) (convert tools tmlength) (convert tools tmtable)
-	(convert tools sxml) (convert tools environment) (convert tools sxhtml)
-	(convert html htmlout))
-  (:export texmacs->html tmhtml-root))
+  (:use (convert tools tmconcat)
+	(convert mathml tmmath)
+	(convert tools stm)
+	(convert tools tmlength)
+	(convert tools tmtable)
+	(convert tools old-tmtable)
+	(convert tools sxml)
+	(convert tools sxhtml)
+	(convert html htmlout)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initialization
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (descend env proc x)
-  ;; Convenience function to call a method directly without using the tmhtml
-  ;; dispatcher. It takes care of updating the xpath environment.
-  (xpath-descend env x (cut proc <> x)))
+(define tmhtml-env (make-ahash-table))
+(define tmhtml-css? #t)
+(define tmhtml-mathml? #f)
 
-;; FIXME: should go into environment
-(define tmhtml-math-mode? #f)
-
-(define (cork->html s)
-  (utf8->html (cork->utf8 s)))
+(tm-define (tmhtml-initialize opts)
+  (set! tmhtml-css?
+	(== (assoc-ref opts "texmacs->html:css") "on"))
+  (set! tmhtml-mathml?
+	(== (assoc-ref opts "texmacs->html:mathml") "on"))
+  (set! tmhtml-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-noop env l) '())
+(define (tmhtml-noop l) '())
+
+(define (cork->html s)
+  (utf8->html (cork->utf8 s)))
 
 (define (tmhtml-sub-token s pos)
-  (substring s pos (- (string-length s) 1)))
+  (with ss (substring s pos (- (string-length s) 1))
+    (if (= (string-length ss) 1) ss
+	(tmhtml-math-token (string-append "<" ss ">")))))
 
 (define (tmhtml-math-token s)
   (cond ((= (string-length s) 1)
 	 (cond ((== s "*") " ")
-	       ((== s "+") " + ")
-	       ((== s "-") " - ")
+	       ((in? s '("+" "-" "=")) (string-append " " s " "))
 	       ((char-alphabetic? (string-ref s 0)) `(h:i ,s))
 	       (else s)))
-	((string-starts? s "<b-") `(h:b (h:i ,(tmhtml-sub-token s 3))))
+	((string-starts? s "<cal-")
+	 `(h:font (@ (face "Zapf Chancery")) ,(tmhtml-sub-token s 5)))
+	((string-starts? s "<b-cal-")
+	 `(h:u (h:font (@ (face "Zapf Chancery")) ,(tmhtml-sub-token s 7))))
+	((string-starts? s "<frak-")
+	 `(h:u ,(tmhtml-sub-token s 6)))
 	((string-starts? s "<bbb-") `(h:u (h:b ,(tmhtml-sub-token s 5))))
-	((string-starts? s "<cal-") `(h:u (h:i ,(tmhtml-sub-token s 5))))
-	((string-starts? s "<frak-") `(h:u ,(tmhtml-sub-token s 6)))
+	((string-starts? s "<b-") `(h:b (h:i ,(tmhtml-sub-token s 3))))
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
 	   (utf8->html (if (== s encoded)
-			   (tm->xml-cdata s)
+			   (old-tm->xml-cdata s)
 			   encoded))))
 	(else s)))
 
 (define (tmhtml-string s)
-  (if tmhtml-math-mode?
+  (if (ahash-ref tmhtml-env :math)
       (tmhtml-post-simplify-nodes
        (map tmhtml-math-token (tmconcat-tokenize-math s)))
       (list (cork->html s))))
 
 (define (tmhtml-text s)
-  (if tmhtml-math-mode?
+  (if (ahash-ref tmhtml-env :math)
       (tmhtml-string s)
       (tmhtml-string (make-ligatures s))))
 
@@ -87,17 +102,35 @@
   (cond ((func? doc 'tmdoc-title 1) (cadr doc))
 	((func? doc 'tmdoc-title* 2) (cadr doc))
 	((func? doc 'tmdoc-title** 3) (caddr doc))
-	((not (pair? doc)) #f)
+	((npair? doc) #f)
 	(else (with title (tmhtml-find-title (car doc))
 		(if title title
 		    (tmhtml-find-title (cdr doc)))))))
 
-(define tmhtml-css-header
-  (string-append "body { text-align: justify } "
-		 ".title-block { width: 100%; text-align: center } "
-		 ".title-block p { margin: 0px } "))
+(define (tmhtml-css-header)
+  (let ((html
+	 (string-append
+	  "body { text-align: justify } "
+	  "h5 { display: inline; padding-right: 1em } "
+	  "h6 { display: inline; padding-right: 1em } "
+	  "table { border-collapse: collapse } "
+	  "td { padding: 0.2em; vertical-align: baseline } "
+	  ".subsup { display: inline; vertical-align: -0.2em } "
+	  ".subsup td { padding: 0px; text-align: left} "
+	  ".fraction { display: inline; vertical-align: -0.8em } "
+	  ".fraction td { padding: 0px; text-align: center } "
+	  ".wide { position: relative; margin-left: -0.4em } "
+	  ".accent { position: relative; margin-left: -0.4em; top: -0.1em } "
+	  ".title-block { width: 100%; text-align: center } "
+	  ".title-block p { margin: 0px } "
+	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "
+	  ".left-tab { text-align: left } "
+	  ".center-tab { text-align: center } "
+	  ".right-tab { float: right; position: relative; top: -1em } "))
+	(mathml "math { font-family: cmr, times, verdana } "))
+    (if tmhtml-mathml? (string-append html mathml) html)))
 
-(define (tmhtml-file env l)
+(define (tmhtml-file l)
   ;; This handler is special:
   ;; Since !file is a special node used only at the top of trees
   ;; it produces a single node, and not a nodeset like other handlers.
@@ -106,8 +139,8 @@
 	 (lang (caddr l))
 	 (tmpath (cadddr l))
 	 (title (tmhtml-find-title doc))
-	 (css `(h:style (@ (type "text/css")) ,tmhtml-css-header))
-	 (body (tmhtml env doc)))
+	 (css `(h:style (@ (type "text/css")) ,(tmhtml-css-header)))
+	 (body (tmhtml doc)))
     (set! title (cond ((not title) "No title")
 		      ((or (in? "tmdoc" styles) (in? "tmweb" styles))
 		       `(concat ,title " (FSF GNU project)"))
@@ -122,7 +155,7 @@
 	  (set! body (tmhtml-tmdoc-post body))))
     `(h:html
       (h:head
-       (h:title ,@(tmhtml env title))
+       (h:title ,@(tmhtml title))
        (h:meta (@ (name "generator")
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
        ,css)
@@ -135,7 +168,12 @@
     '((xmlns "http://www.w3.org/1999/xhtml")
       (xmlns:m "http://www.w3.org/1998/Math/MathML")
       (xmlns:x "http://www.texmacs.org/2002/extensions")))
+  (define doctype-list
+    (let ((html "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
+	  (mathml "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd"))
+      (if tmhtml-mathml? (list html mathml) (list html))))
   `(*TOP* (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
+	  (*DOCTYPE* html PUBLIC ,@doctype-list)
 	  ,((cut sxml-set-attrs <> xmlns-attrs)
 	    (sxml-strip-ns-prefix "h" (sxml-strip-ns-prefix "m" top)))))
 
@@ -148,19 +186,30 @@
 ;; Block structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-document env l)
-  (if (not (environment-ref env preformatted?))
-      (tmhtml-post-paragraphs (map (lambda (x) (cons 'h:p (tmhtml env x)))
-				   l))
-      (tmhtml-post-simplify-nodes
-       (list-concatenate
-	((cut list-intersperse <> '("\n"))
-	 (map (cut tmhtml env <>) l))))))
+(define (tmhtml-document-elem x)
+  ;; NOTE: this should not really be necessary, but it improves
+  ;; the layout of verbatim environments with a missing block structure
+  (if (and (list-2? x)
+	   (or (== (car x) 'verbatim) (== (car x) 'code))
+	   (not (func? (cadr x) 'document)))
+      (tmhtml (list (car x) (list 'document (cadr x))))
+      (tmhtml x)))
 
-(define (tmhtml-paragraph env l)
+(define (tmhtml-document l)
+  (cond ((null? l) '())
+	((ahash-ref tmhtml-env :preformatted)
+	 (tmhtml-post-simplify-nodes
+	  (list-concatenate
+	   ((cut list-intersperse <> '("\n"))
+	    (map tmhtml l)))))
+	(else
+	 (tmhtml-post-paragraphs
+	  (map (lambda (x) (cons 'h:p (tmhtml-document-elem x))) l)))))
+
+(define (tmhtml-paragraph l)
   (let rec ((l l))
     (if (null? l) '()
-	(let ((h (tmhtml env (car l)))
+	(let ((h (tmhtml (car l)))
 	      (r (rec (cdr l))))
 	  (cond ((null? h) r)		; correct when r is null too
 		((null? r) h)
@@ -216,46 +265,86 @@
 ;; Surrounding block structures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-force-document l)
-  (cond ((func? l 'document) l)
-	((func? l 'with)
-	 (let* ((args (cDdr l))
-		(r (cdr (tmhtml-force-document (cAr l)))))
-	   (cond ((null? r) r)
-		 ((null? (cdr r))
-		  `(document (with ,@args ,(car r))))
-		 ((null? (cddr r))
-		  `(document (with ,@args ,(car r))
-			     (with ,@args ,(cAr r))))
-		 (else
-		  `(document (with ,@args ,(car r))
-			     (with ,@args (document ,@(cDdr r)))
-			     (with ,@args ,(cAr r)))))))
-	((func? l 'surround 3)
-	 (let* ((left (cadr l))
-		(right (caddr l))
-		(r (cdr (tmhtml-force-document (cadddr l)))))
-	   (cond ((null? r) r)
-		 ((null? (cdr r))
-		  `(document (concat ,left ,(car r) ,right)))
-		 (else
-		  `(document (concat ,left ,(car r))
-			     ,@(cDdr r)
-			     (concat ,(cAr r) ,right))))))
-	(else `(document ,l))))
+(define document-done '())
+(define concat-done '())
 
-(define (tmhtml-surround env l)
-  ;; WARNING: makes the xpath environment inconsistent
-  (let* ((r1 (tmhtml-force-document `(surround ,@l)))
-	 (r2 (tree->stree (tree-simplify (stree->tree r1)))))
-    ;(display* "r0= " `(surround ,@l) "\n")
-    ;(display* "r1= " r1 "\n")
-    ;(display* "r2= " r2 "\n")
-    (tmhtml env r2)))
+(define (serialize-print x)
+  (set! concat-done (cons x concat-done)))
+
+(define (serialize-paragraph x)
+  (serialize-concat x)
+  (with l (tmconcat-simplify (reverse concat-done))
+    (set! document-done (cons (cons 'concat l) document-done))
+    (set! concat-done '())))
+
+(define (serialize-concat x)
+  (cond ((in? x '("" (document) (concat))) (noop))
+	((func? x 'document)
+	 (for-each serialize-paragraph (cDdr x))
+	 (serialize-concat (cAr x)))
+	((func? x 'concat)
+	 (for-each serialize-concat (cdr x)))
+	((func? x 'surround 3)
+	 (serialize-concat (cadr x))
+	 (serialize-concat (cadddr x))
+	 (serialize-concat (caddr x)))
+	((func? x 'with)
+	 (let* ((r (simplify-document (cAr x)))
+		(w (lambda (y) `(with ,@(cDdr x) ,y))))
+	   (if (not (func? r 'document))
+	       (serialize-print (w r))
+	       (let* ((head (cadr r))
+		      (body `(document ,@(cDr (cddr r))))
+		      (tail (cAr r)))
+		 (serialize-paragraph (w head))
+		 (set! document-done (cons (w body) document-done))
+		 (serialize-concat (w tail))))))
+	(else (serialize-print x))))
+
+(define (simplify-document x)
+  (with-global document-done '()
+    (with-global concat-done '()
+      (serialize-paragraph x)
+      (if (list-1? document-done)
+	  (car document-done)
+	  (cons 'document (reverse document-done))))))
+
+(define (block-document? x)
+  (cond ((func? x 'document) #t)
+	((func? x 'concat) (list-any block-document? (cdr x)))
+	((func? x 'surround 3) (block-document? (cAr x)))
+	((func? x 'with) (block-document? (cAr x)))
+	(else #f)))
+
+(define (blockify x)
+  (cond ((func? x 'document) x)
+	((or (func? x 'surround 3) (func? x 'with))
+	 (rcons (cDr x) (blockify (cAr x))))
+	(else `(document ,x))))
+
+(define (tmhtml-surround l)
+  (let* ((r1 `(surround ,@l))
+	 (r2 (simplify-document r1))
+	 (f? (and (block-document? r1) (not (func? r2 'document))))
+	 (r3 (if f? (blockify r2) r2)))
+    (tmhtml r3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Horizontal concatenations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-glue-scripts l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+	((and (func? (car l) 'rsub 1) (func? (cadr l) 'rsup 1))
+	 (cons `(rsubsup ,(cadar l) ,(cadadr l))
+	       (tmhtml-glue-scripts (cddr l))))
+	(else (cons (car l) (tmhtml-glue-scripts (cdr l))))))
+
+(define (heading? l)
+  (cond ((null? l) #f)
+	((sxhtml-label? (car l)) (heading? (cdr l)))
+	((sxhtml-heading? (car l)) #t)
+	(else #f)))
 
 (define (tmhtml-post-heading l)
   ;; Post-process the converted result of a concat containing a section title.
@@ -276,302 +365,6 @@
 		  (cons (sxml-prepend (sxhtml-glue-label heading (car labels))
 				      (cdr labels))
 			rest))))))))
-
-(define (heading? l)
-  (cond ((null? l) #f)
-	((sxhtml-label? (car l)) (heading? (cdr l)))
-	((sxhtml-heading? (car l)) #t)
-	(else #f)))
-
-(define (tmhtml-concat env l)
-  (set! l (tmconcat-structure-tabs l))
-  (tmhtml-post-simplify-nodes
-   (let ((l (tmhtml-list env l)))
-     (cond ((null? l) '())
-	   ((string? (car l)) l)
-	   ((heading? l) (tmhtml-post-heading l))
-	   ((list-any sxhtml-table? l) (tmhtml-post-table l))
-	   (else l)))))
-
-(define (tmhtml-align-left env l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: left"))
-	       ,@(tmhtml-concat env l)))))
-
-(define (tmhtml-align-middle env l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: center"))
-	       ,@(tmhtml-concat env l)))))
-
-(define (tmhtml-align-right env l)
-  (if (in? l '(() (""))) '()
-      `((h:div (@ (style "text-align: right"))
-	       ,@(tmhtml-concat env l)))))
-
-(define (tmhtml-post-simplify-nodes l)
-  ;; Catenate adjacent string nodes and remove empty string nodes
-  (let rec ((l l))
-    (cond ((null? l) '())
-	  ((and (string? (car l)) (string-null? (car l)))
-	   (rec (cdr l)))
-	  ((null? (cdr l)) l)
-	  ((and (string? (car l)) (string? (cadr l)))
-	   (rec (cons (string-append (car l) (cadr l)) (cddr l))))
-	  (else (cons (car l) (rec (cdr l)))))))
-
-(define (tmhtml-post-simplify-element e)
-  ;; Simplify the nodes of the element content
-  (list (append (sxml-element-head e)
-		(tmhtml-post-simplify-nodes (sxml-content e)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Formatting text
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-hspace env l)
-  '(" "))
-
-(define (tmhtml-vspace env l)
-  '())
-
-(define (tmhtml-move env l)
-  (tmhtml env (car l)))
-
-(define (tmhtml-resize env l)
-  (tmhtml env (car l)))
-
-(define (tmhtml-float env l)
-  (tmhtml env (cAr l)))
-
-(define (tmhtml-repeat env l)
-  (tmhtml env (car l)))
-
-(define (tmhtml-datoms env l)
-  (tmhtml env (cAr l)))
-
-(define (tmhtml-new-line env l)
-  '((h:br)))
-
-(define (tmhtml-next-line env l)
-  '((h:br)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mathematics
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-id env l)
-  (tmhtml env (car l)))
-
-(define (tmhtml-big env l)
-  (cond ((in? (car l) '("sum" "prod" "int" "oint" "amalg"))
-	 (tmhtml env (string-append "<" (car l) ">")))
-	((in? (car l) '("<cap>" "<cup>" "<vee>" "<wedge>"))
-	 (with s (substring (car l) 1 (- (string-length (car l)) 1))
-	   ;; WARNING: makes the xpath environment inconsistent
-	   (tmhtml env (string-append "<big" s ">"))))
-	((== (car l) ".") '())
-	(else (tmhtml env (car l)))))
-
-(define (tmhtml-below env l)
-  `("below (" ,@(tmhtml env (car l)) ", " ,@(tmhtml env (cadr l)) ")"))
-
-(define (tmhtml-above env l)
-  `("above (" ,@(tmhtml env (car l)) ", " ,@(tmhtml env (cadr l)) ")"))
-
-(define (tmhtml-sub env l)
-  `((h:sub ,@(tmhtml env (car l)))))
-
-(define (tmhtml-sup env l)
-  `((h:sup ,@(tmhtml env (car l)))))
-
-(define (tmhtml-frac env l)
-  (let* ((num (tmhtml env (car l)))
-	 (den (tmhtml env (cadr l))))
-    `("frac (" ,@num ", " ,@den ")")))
-
-;;(define (tmhtml-frac env l)
-;;  (let* ((num (tmhtml env (car l)))
-;;	   (den (tmhtml env (cadr l)))
-;;	   (n `(h:tr (h:td (@ (align "center")
-;;			      (style "border-bottom: solid 1px")) ,@num)))
-;;	   (d `(h:tr (h:td (@ (align "center")) ,@den)))
-;;	   (in `(h:table (@ (style "position: relative; top: 3ex")) ,n ,d)))
-;;   `((h:table (@ (style "display: inline")) (h:tr (h:td ,in))))))
-
-(define (tmhtml-sqrt env l)
-  (if (= (length l) 1)
-      `("sqrt (" ,@(tmhtml env (car l)) ")")
-      `("sqrt" (h:sub ,@(tmhtml env (cadr l)))
-	" (" ,@(tmhtml env (car l)) ")")))
-
-(define (tmhtml-wide env l)
-  `("(" ,@(tmhtml env (car l)) ")" (h:sup ,@(tmhtml env (cadr l)))))
-
-(define (tmhtml-neg env l)
-  `("not(" ,@(tmhtml env (car l)) ")"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Local and global environment changes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-with-font-size val)
-  (let* ((x (* (string->number val) 100))
-	 (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
-		  ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
-		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
-		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
-    (and s `(h:font (@ (size ,s))))))
-
-(define (tmhtml-with-one env var val arg)
-  (if (== var "mode")
-      ;; FIXME: should go into the DRD modulo some reorganization
-      (with old-mode? tmhtml-math-mode?
-	(set! tmhtml-math-mode? (== val "math"))
-	(with r (tmhtml env arg)
-	  (set! tmhtml-math-mode? old-mode?)
-	  r)) ;`((h:class (@ ("style" "font-style: normal")) ,@r))))
-      (let ((w (or (drd-ref tmhtml-with-cmd% (list var val))
-		   (let ((h (drd-ref tmhtml-with-cmd% var)))
-		     (and h (h val))))))
-	(if w
-	    (list (append w (tmhtml env arg)))
-	    (tmhtml env arg)))))
-
-(define (tmhtml-with env l)
-  (cond ((null? l) '())
-	((null? (cdr l)) (tmhtml env (car l)))
-	((null? (cddr l)) '())
-	(else
-	 (let* ((var (force-string (car l)))
-		(val (force-string (cadr l)))
-		(next (cddr l)))
-	   ;; WARNING: makes the xpath environment inconsistent
-	   (tmhtml-with-one env var val `(with ,@next))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other macro-related primitives
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-compound env l)
-  ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml-implicit-compound env (cons (string->symbol (car l))
-				      (cdr l))))
-
-(define (tmhtml-mark env l)
-  ;; Explicit expansions are converted and handled as implicit expansions.
-  (tmhtml env (cadr l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Source code
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (blue sym)
-  `(h:font (@ (color "blue")) ,sym))
-
-(define (tmhtml-src-args env l)
-  (if (null? l) l
-      `(,(blue "|")
-	,@(tmhtml env (car l))
-	,@(tmhtml-src-args env (cdr l)))))
-
-(define (tmhtml-inline-tag env l)
-  `(,(blue "&lt;")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-(define (tmhtml-open-tag env l)
-  `(,(blue "&lt;\\")
-    ,@(tmhtml env (car l))
-    ,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-middle-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "|")))
-
-(define (tmhtml-close-tag env l)
-  `(,@(tmhtml-src-args env (cdr l))
-    ,(blue "&gt;")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other primitives
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-label env l)
-  ;; WARNING: bad conversion if ID is not a string.
-  `((h:a (@ (id ,(cork->html (force-string (car l))))))))
-
-;(define (tmhtml-reference l)
-;  (list 'ref (cork->html (force-string (car l)))))
-
-;(define (tmhtml-pageref l)
-;  (list 'pageref (cork->html (force-string (car l)))))
-
-(define (tmhtml-suffix s)
-  ;; Change .html suffix to .tm suffix for local files for correct
-  ;; conversion of entire web-sites. We might create an option
-  ;; in order to disable this suffix change
-  (let* ((sdir (string-rindex s #\/))
-	 (sep (string-rindex s #\#)))
-    (cond ((or (string-starts? s "http:") (string-starts? s "ftp:")) s)
-          ((and sep (or (not sdir) (< sdir sep)))
-	   (string-append (tmhtml-suffix (substring s 0 sep))
-			  (string-drop s sep)))
-	  ((string-ends? s ".tm")
-	   (string-append (string-drop-right s 3) ".html"))
-	  (else s))))
-
-(define (tmhtml-hyperlink env l)
-  ;; WARNING: bad conversion if URI is not a string.
-  ;; TODO: change label at start of content into ID attribute, move other
-  ;; labels out (A elements cannot be nested!).
-  (let* ((body (tmhtml env (first l)))
-	 (to (cork->html (force-string (second l)))))
-    (if (string-starts? to "$")
-	body ;; temporary fix for URLs like $TEXMACS_PATH/...
-	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
-
-(define (tmhtml-specific env l)
-  (if (== (car l) "html") (tmhtml env (cadr l)) '()))
-
-(define (tmhtml-action env l)
-  `((h:u ,@(tmhtml env (car l)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Tables
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmhtml-table-cols p)
-  (map (lambda (x)
-	 `(h:col (@ (align ,(cadr (assoc x '(("l" "left")
-					     ("c" "center")
-					     ("r" "right"))))))))
-       (p 'cols 'halign)))
-
-(define (tmhtml-table-contents env p)
-  (define (cell x)
-    `(h:td ,@(tmhtml env x)))
-  (define (row l)
-    `(h:tr ,@(map cell l)))
-  (map row (p 'rows 'content)))
-
-(define (tmhtml-table-make env p)
-  `((h:table
-     (@ ,@(if (p 'global 'border)
-	      '((border "1")) 
-	      '((style "display: inline"))))
-     ,@(tmhtml-table-cols p)
-     (h:tbody ,@(tmhtml-table-contents env p)))))
-
-(define (tmhtml-table halign border env x)
-  ;; assert (= 1 (length x))
-  ;; assert (or (func? (car x) 'tformat) (func? (car x) 'table))
-  ;; WARNING: xpath environment is not correctly augmented in table content
-  (let ((p (tmtable-parser `(tformat ,@(tmtable-cell-halign halign)
-				     ,@(tmtable-block-borders border)
-				     ,(car x)))))
-    (if p (tmhtml-table-make env p) '())))
 
 (define (tmhtml-post-table l)
   ;; Post process the converted result of a concat containing a table.
@@ -594,46 +387,559 @@
 	  (else (cons x knil))))
   (list-fold-right glue-label-to-table '() l))
 
+(define (tmhtml-concat l)
+  (set! l (tmhtml-glue-scripts l))
+  (set! l (tmconcat-structure-tabs l))
+  ;; FIXME: tabs which are inside a 'with' are not treated correctly
+  (tmhtml-post-simplify-nodes
+   (let ((l (tmhtml-list l)))
+     (cond ((null? l) '())
+	   ((string? (car l)) l)
+	   ((heading? l) (tmhtml-post-heading l))
+	   ((list-any sxhtml-table? l) (tmhtml-post-table l))
+	   ((and (null? (cdr l)) (pair? (car l))
+		 (== (caar l) 'h:div) (== (cadar l) '(@ (class "left-tab"))))
+	    (cddar l))
+	   (else l)))))
+
+(define (tmhtml-align-left l)
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "left-tab")) ,@r)))))
+
+(define (tmhtml-align-middle l)
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "center-tab")) ,@r)))))
+
+(define (tmhtml-align-right l)
+  (with r (tmhtml-concat l)
+    (if (in? r '(() (""))) '()
+	`((h:div (@ (class "right-tab")) ,@r)))))
+
+(define (tmhtml-post-simplify-nodes l)
+  ;; Catenate adjacent string nodes and remove empty string nodes
+  (let rec ((l l))
+    (cond ((null? l) '())
+	  ((and (string? (car l)) (string-null? (car l)))
+	   (rec (cdr l)))
+	  ((null? (cdr l)) l)
+	  ((and (string? (car l)) (string? (cadr l)))
+	   (rec (cons (string-append (car l) (cadr l)) (cddr l))))
+	  (else (cons (car l) (rec (cdr l)))))))
+
+(define (tmhtml-post-simplify-element e)
+  ;; Simplify the nodes of the element content
+  (list (append (sxml-element-head e)
+		(tmhtml-post-simplify-nodes (sxml-content e)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Formatting text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-hspace l)
+  (with len (tmlength->htmllength (if (list-1? l) (car l) (cadr l)) #t)
+    (if (not len) '()
+	`((spacer (@ (type "block")
+		     (style ,(string-append "width: " len))))))))
+
+(define (tmhtml-vspace l)
+  '())
+
+(define (tmhtml-move l)
+  (tmhtml (car l)))
+
+(define (tmhtml-resize l)
+  (tmhtml (car l)))
+
+(define (tmhtml-float l)
+  (tmhtml (cAr l)))
+
+(define (tmhtml-repeat l)
+  (tmhtml (car l)))
+
+(define (tmhtml-datoms l)
+  (tmhtml (cAr l)))
+
+(define (tmhtml-new-line l)
+  '((h:br)))
+
+(define (tmhtml-next-line l)
+  '((h:br)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mathematics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-id l)
+  (tmhtml (car l)))
+
+(define (tmhtml-big l)
+  (cond ((in? (car l) '("sum" "prod" "int" "oint" "amalg"))
+	 (tmhtml (string-append "<" (car l) ">")))
+	((in? (car l) '("<cap>" "<cup>" "<vee>" "<wedge>"))
+	 (with s (substring (car l) 1 (- (string-length (car l)) 1))
+	   (tmhtml (string-append "<big" s ">"))))
+	((== (car l) ".") '())
+	(else (tmhtml (car l)))))
+
+(define (tmhtml-below l)
+  `("below (" ,@(tmhtml (car l)) ", " ,@(tmhtml (cadr l)) ")"))
+
+(define (tmhtml-above l)
+  `("above (" ,@(tmhtml (car l)) ", " ,@(tmhtml (cadr l)) ")"))
+
+(define (tmhtml-sub l)
+  `((h:sub ,@(tmhtml (car l)))))
+
+(define (tmhtml-sup l)
+  `((h:sup ,@(tmhtml (car l)))))
+
+(define (tmhtml-subsup l)
+  (let* ((sub (tmhtml (car l)))
+	 (sup (tmhtml (cadr l)))
+	 (r1 `(h:tr (h:td ,@sup)))
+	 (r2 `(h:tr (h:td ,@sub))))
+    `((h:sub (h:table (@ (class "subsup")) ,r1 ,r2)))))
+
+;;(define (tmhtml-frac l)
+;;  (let* ((num (tmhtml (car l)))
+;;	 (den (tmhtml (cadr l))))
+;;    `("frac (" ,@num ", " ,@den ")")))
+
+(define (tmhtml-frac l)
+  (let* ((num (tmhtml (car l)))
+	 (den (tmhtml (cadr l)))
+	 (n `(h:tr (h:td (@ (style "border-bottom: solid 1px")) ,@num)))
+	 (d `(h:tr (h:td ,@den))))
+    `((h:table (@ (class "fraction")) ,n ,d))))
+
+(define (tmhtml-sqrt l)
+  (if (= (length l) 1)
+      `("sqrt (" ,@(tmhtml (car l)) ")")
+      `("sqrt" (h:sub ,@(tmhtml (cadr l)))
+	" (" ,@(tmhtml (car l)) ")")))
+
+(define (tmhtml-short? l)
+  (and (list-1? l)
+       (or (string? (car l))
+	   (and (func? (car l) 'h:i) (tmhtml-short? (cdar l)))
+	   (and (func? (car l) 'h:b) (tmhtml-short? (cdar l)))
+	   (and (func? (car l) 'h:u) (tmhtml-short? (cdar l)))
+	   (and (func? (car l) 'h:font) (tmhtml-short? (cdar l))))))
+
+(define (tmhtml-wide l)
+  (let* ((body (tmhtml (car l)))
+	 (acc (tmhtml (cadr l)))
+	 (class (if (in? acc '(("^") ("~"))) "accent" "wide")))
+    (if (tmhtml-short? body)
+	`(,@body (h:sup (@ (class ,class)) ,@acc))
+	`("(" ,@body ")" (h:sup ,@acc)))))
+
+(define (tmhtml-neg l)
+  `("not(" ,@(tmhtml (car l)) ")"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Color conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmcolor->htmlcolor x)
+  (with s (tmhtml-force-string x)
+    (cond ((== s "light grey") "#d0d0d0")
+	  ((== s "dark grey") "#707070")
+	  ((== s "dark red") "#800000")
+	  ((== s "dark green") "#008000")
+	  ((== s "dark blue") "#000080")
+	  ((== s "dark yellow") "#808000")
+	  ((== s "dark magenta") "#800080")
+	  ((== s "dark cyan") "#008080")
+	  ((== s "dark orange") "#804000")
+	  ((== s "dark brown") "#401000")
+	  ((== s "broken white") "#ffffdf")
+	  ((== s "pastel red") "#ffdfdf")
+	  ((== s "pastel green") "#dfffdf")
+	  ((== s "pastel blue") "#dfdfff")
+	  ((== s "pastel yellow") "#ffffdf")
+	  ((== s "pastel magenta") "#ffdfff")
+	  ((== s "pastel cyan") "#dfffff")
+	  ((== s "pastel orange") "#ffdfbf")
+	  ((== s "pastel brown") "#dfbfbf")
+	  (else s))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Length conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table tmhtml-length-table
+  ("mm" . 0.1)
+  ("cm" . 1.0)
+  ("in" . 2.54)
+  ("pt" . 3.514598e-2)
+  ("tmpt" . 2.7457797e-5)
+  ("fn" . 0.4)
+  ("em" . 0.4)
+  ("ex" . 0.2)
+  ("spc" . 0.2)
+  ("pc" . 0.42175)
+  ("par" . 16)
+  ("pag" . 12)
+  ("px" . 0.025)
+  ("ln" . 0.025))
+
+(define (make-exact x)
+  (number->string (inexact->exact x)))
+
+(define (tmlength->htmllength len css?)
+  (and-let* ((len-str (tmhtml-force-string len))
+	     (tmlen (string->tmlength len-str))
+	     (dummy2? (not (tmlength-null? tmlen)))
+	     (val (tmlength-value tmlen))
+	     (unit (symbol->string (tmlength-unit tmlen)))
+	     (incm (ahash-ref tmhtml-length-table unit))
+	     (cmpx (/ 1 (ahash-ref tmhtml-length-table "px"))))
+    (cond ((== unit "px") (make-exact val))
+	  ((in? unit '("par" "pag"))
+	   (string-append (make-exact (* 100 val)) "%"))
+	  ((and css? (== unit "tmpt"))
+	   (string-append (make-exact (* cmpx val incm)) "px"))
+	  ((and css? (== unit "fn"))
+	   (string-append (number->string val) "em"))
+	  ((and css? (== unit "spc"))
+	   (string-append (number->string (/ val 2)) "em"))
+	  ((and css? (== unit "ln"))
+	   (string-append (number->string val) "px"))
+	  (css? len)
+	  (else (make-exact (* cmpx val incm))))))
+
+(define (tmlength->px len)
+  (and-let* ((tmlen (string->tmlength len))
+	     (dummy? (not (tmlength-null? tmlen)))
+	     (val (tmlength-value tmlen))
+	     (unit (symbol->string (tmlength-unit tmlen)))
+	     (incm (ahash-ref tmhtml-length-table unit))
+	     (cmpx (/ 1 (ahash-ref tmhtml-length-table "px"))))
+    (* cmpx val incm)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Local environment changes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-with-mode val arg)
+  (ahash-with tmhtml-env :math (== val "math")
+    (tmhtml arg)))
+
+(define (tmhtml-with-color val arg)
+  `((h:font (@ (color ,(tmcolor->htmlcolor val))) ,@(tmhtml arg))))
+
+(define (tmhtml-with-font-size val arg)
+  (let* ((x (* (string->number val) 100))
+	 (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
+		  ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
+		  ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
+		  ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
+    (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg))))
+
+(define (tmhtml-with-block style arg)
+  (with r (tmhtml (blockify arg))
+    (if (in? r '(() ("") ((h:p)) ((h:p "")))) '()
+	`((h:div (@ (style ,style)) ,@r)))))
+
+(define (tmhtml-with-par-left val arg)
+  (with x (tmlength->px val)
+    (if (not x) (tmhtml arg)
+	(with d (- x (ahash-ref tmhtml-env :left-margin))
+	  (with s (string-append "margin-left: " (make-exact d) "px")
+	    (ahash-with tmhtml-env :left-margin x
+	      (tmhtml-with-block s arg)))))))
+
+(define (tmhtml-with-par-right val arg)
+  (with x (tmlength->px val)
+    (if (not x) (tmhtml arg)
+	(with d (- x (ahash-ref tmhtml-env :right-margin))
+	  (with s (string-append "margin-right: " (make-exact d) "px")
+	    (ahash-with tmhtml-env :right-margin x
+	      (tmhtml-with-block s arg)))))))
+
+(define (tmhtml-with-par-first val arg)
+  (with x (tmlength->htmllength val #t)
+    (if (not x) (tmhtml arg)
+	(with s (string-append "text-indent: " x)
+	  (tmhtml-with-block s arg)))))
+
+(define (tmhtml-with-par-par-sep val arg)
+  (with x (tmlength->px val)
+    (if (== (inexact->exact x) 0)
+	`((h:div (@ (class "compact-block")) ,@(tmhtml arg)))
+	(tmhtml arg))))
+
+(define (tmhtml-with-one var val arg)
+  (cond ((drd-ref tmhtml-with-cmd% (list var val)) =>
+	 (lambda (w) (list (append w (tmhtml arg)))))
+	((drd-ref tmhtml-with-cmd% var) =>
+	 (lambda (h) (h val arg)))
+	(else (tmhtml arg))))
+
+(define (tmhtml-force-string x)
+  (cond ((func? x 'quote 1) (tmhtml-force-string (cadr x)))
+	((func? x 'tmlen 1)
+	 (string-append (tmhtml-force-string (cadr x)) "tmpt"))
+	((func? x 'tmlen 3)
+	 (string-append (tmhtml-force-string (caddr x)) "tmpt"))
+	(else (force-string x))))
+
+(define (tmhtml-with l)
+  (cond ((null? l) '())
+	((null? (cdr l)) (tmhtml (car l)))
+	((null? (cddr l)) '())
+	(else
+	 (let* ((var (tmhtml-force-string (car l)))
+		(val (tmhtml-force-string (cadr l)))
+		(next (cddr l)))
+	   (tmhtml-with-one var val `(with ,@next))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other macro-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-compound l)
+  ;; Explicit expansions are converted and handled as implicit expansions.
+  (tmhtml-implicit-compound (cons (string->symbol (car l)) (cdr l))))
+
+(define (tmhtml-mark l)
+  ;; Explicit expansions are converted and handled as implicit expansions.
+  (tmhtml (cadr l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Source code
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (blue sym)
+  `(h:font (@ (color "blue")) ,sym))
+
+(define (tmhtml-src-args l)
+  (if (null? l) l
+      `(,(blue "|")
+	,@(tmhtml (car l))
+	,@(tmhtml-src-args (cdr l)))))
+
+(define (tmhtml-inline-tag l)
+  `(,(blue "&lt;")
+    ,@(tmhtml (car l))
+    ,@(tmhtml-src-args (cdr l))
+    ,(blue "&gt;")))
+
+(define (tmhtml-open-tag l)
+  `(,(blue "&lt;\\")
+    ,@(tmhtml (car l))
+    ,@(tmhtml-src-args (cdr l))
+    ,(blue "|")))
+
+(define (tmhtml-middle-tag l)
+  `(,@(tmhtml-src-args (cdr l))
+    ,(blue "|")))
+
+(define (tmhtml-close-tag l)
+  `(,@(tmhtml-src-args (cdr l))
+    ,(blue "&gt;")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-label l)
+  ;; WARNING: bad conversion if ID is not a string.
+  `((h:a (@ (id ,(cork->html (force-string (car l))))))))
+
+;(define (tmhtml-reference l)
+;  (list 'ref (cork->html (force-string (car l)))))
+
+;(define (tmhtml-pageref l)
+;  (list 'pageref (cork->html (force-string (car l)))))
+
+(define (tmhtml-suffix s)
+  ;; Change .tm suffix to .xhtml suffix for local files for correct
+  ;; conversion of entire web-sites. We might create an option
+  ;; in order to disable this suffix change
+  (let* ((sdir (string-rindex s #\/))
+	 (sep (string-rindex s #\#)))
+    (cond ((or (string-starts? s "http:") (string-starts? s "ftp:")) s)
+          ((and sep (or (not sdir) (< sdir sep)))
+	   (string-append (tmhtml-suffix (substring s 0 sep))
+			  (string-drop s sep)))
+	  ((string-ends? s ".tm")
+	   (string-append (string-drop-right s 3)
+			  (if tmhtml-mathml? ".xhtml" ".html")))
+	  (else s))))
+
+(define (tmhtml-hyperlink l)
+  ;; WARNING: bad conversion if URI is not a string.
+  ;; TODO: change label at start of content into ID attribute, move other
+  ;; labels out (A elements cannot be nested!).
+  (let* ((body (tmhtml (first l)))
+	 (to (cork->html (force-string (second l)))))
+    (if (string-starts? to "$")
+	body ;; temporary fix for URLs like $TEXMACS_PATH/...
+	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
+
+(define (tmhtml-specific l)
+  (if (== (car l) "html") (tmhtml (cadr l)) '()))
+
+(define (tmhtml-action l)
+  `((h:u ,@(tmhtml (car l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (map* fun l)
+  (list-filter (map fun l) identity))
+
+(define (html-css-attrs l)
+  ;; l is a list of either key-value lists (XML) or strings (CSS)
+  ;; we return a list with the corresponding @-style attribute
+  (if (null? l) '()
+      (receive (css html) (list-partition l string?)
+	(if (nnull? css)
+	    (with style (apply string-append (list-intersperse css "; "))
+	      (set! html (cons `(style ,style) html))))
+	`((@ ,@html)))))
+
+(define (length-attr what x . opt)
+  (with len (tmlength->htmllength x #t)
+    (and len (apply string-append (cons* what ": " len opt)))))
+
+(define (border-attr what x)
+  (length-attr what x " solid"))
+
+(define (tmhtml-make-cell-attr x)
+  (cond ((== (car x) "cell-width") (length-attr "width" (cadr x)))
+	((== (car x) "cell-height") (length-attr "height" (cadr x)))
+	((== x '("cell-halign" "l")) "text-align: left")
+	((== x '("cell-halign" "c")) "text-align: center")
+	((== x '("cell-halign" "r")) "text-align: right")
+	((== x '("cell-valign" "t")) "vertical-align: top")
+	((== x '("cell-valign" "c")) "vertical-align: center")
+	((== x '("cell-valign" "b")) "vertical-align: bottom")
+	((== x '("cell-valign" "B")) "vertical-align: baseline")
+	((== (car x) "cell-background")
+	 `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
+	((== (car x) "cell-lborder") (border-attr "border-left" (cadr x)))
+	((== (car x) "cell-rborder") (border-attr "border-right" (cadr x)))
+	((== (car x) "cell-tborder") (border-attr "border-top" (cadr x)))
+	((== (car x) "cell-bborder") (border-attr "border-bottom" (cadr x)))
+	((== (car x) "cell-lsep") (length-attr "padding-left" (cadr x)))
+	((== (car x) "cell-rsep") (length-attr "padding-right" (cadr x)))
+	((== (car x) "cell-tsep") (length-attr "padding-top" (cadr x)))
+	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
+	(else #f)))
+
+(define (tmhtml-make-cell c cellf)
+  (ahash-with tmhtml-env :left-margin 0
+    `(h:td ,@(html-css-attrs (map* tmhtml-make-cell-attr cellf))
+	   ,@(tmhtml (cadr c)))))
+
+(define (tmhtml-make-cells-bis l cellf)
+  (if (null? l) l
+      (cons (tmhtml-make-cell (car l) (car cellf))
+	    (tmhtml-make-cells-bis (cdr l) (cdr cellf)))))
+
+(define (tmhtml-width-part attrl)
+  (cond ((null? attrl) 0)
+	((== (caar attrl) "cell-hpart") (string->number (cadar attrl)))
+	(else (tmhtml-width-part (cdr attrl)))))
+
+(define (tmhtml-width-replace attrl sum)
+  (with part (tmhtml-width-part attrl)
+    (if (== part 0) attrl
+	(with l (list-filter attrl (lambda (x) (!= (car x) "cell-width")))
+	  (with w (number->string (/ part sum))
+	    (cons (list "cell-width" (string-append w "par")) l))))))
+
+(define (tmhtml-make-cells l cellf)
+  (let* ((partl (map tmhtml-width-part cellf))
+	 (sum (apply + partl)))
+    (if (!= sum 0) (set! cellf (map (cut tmhtml-width-replace <> sum) cellf)))
+    (tmhtml-make-cells-bis l cellf)))
+
+(define (tmhtml-make-row-attr x)
+  (tmhtml-make-cell-attr x))
+
+(define (tmhtml-make-row r rowf cellf)
+  `(h:tr ,@(html-css-attrs (map* tmhtml-make-row-attr rowf))
+	 ,@(tmhtml-make-cells (cdr r) cellf)))
+
+(define (tmhtml-make-rows l rowf cellf)
+  (if (null? l) l
+      (cons (tmhtml-make-row  (car l) (car rowf) (car cellf))
+	    (tmhtml-make-rows (cdr l) (cdr rowf) (cdr cellf)))))
+
+(define (tmhtml-make-column-attr x)
+  (tmhtml-make-cell-attr x))
+
+(define (tmhtml-make-col colf)
+  `(h:col ,@(html-css-attrs (map* tmhtml-make-column-attr colf))))
+
+(define (tmhtml-make-column-group colf)
+  (if (list-every null? colf) '()
+      `((h:colgroup ,@(map tmhtml-make-col colf)))))
+
+(define (tmhtml-make-table-attr x)
+  (cond ((== (car x) "table-width") (length-attr "width" (cadr x)))
+	((== (car x) "table-height") (length-attr "height" (cadr x)))
+	((== (car x) "table-lborder") (border-attr "border-left" (cadr x)))
+	((== (car x) "table-rborder") (border-attr "border-right" (cadr x)))
+	((== (car x) "table-tborder") (border-attr "border-top" (cadr x)))
+	((== (car x) "table-bborder") (border-attr "border-bottom" (cadr x)))
+	((== (car x) "table-lsep") (length-attr "padding-left" (cadr x)))
+	((== (car x) "table-rsep") (length-attr "padding-right" (cadr x)))
+	((== (car x) "table-tsep") (length-attr "padding-top" (cadr x)))
+	((== (car x) "table-bsep") (length-attr "padding-bottom" (cadr x)))
+	(else #f)))
+
+(define (tmhtml-make-table t tablef colf rowf cellf)
+  (let* ((attrs (map* tmhtml-make-table-attr tablef))
+	 (em (- (* (tmtable-rows t) 0.55)))
+	 (va (string-append "vertical-align: " (number->string em) "em")))
+    (if (not (list-find attrs (cut == <> "width: 100%")))
+	(set! attrs (cons* "display: inline" va attrs)))
+    `(h:table ,@(html-css-attrs attrs)
+	      ,@(tmhtml-make-column-group colf)
+	      (h:tbody ,@(tmhtml-make-rows (cdr t) rowf cellf)))))
+
+(define (tmhtml-table l)
+  (list (tmhtml-make-table (cons 'table l) '() '() '() '())))
+
+(define (tmhtml-tformat l)
+  (with t (tmtable-normalize (cons 'tformat l))
+    (receive (tablef colf rowf cellf) (tmtable-properties* t)
+      (list (tmhtml-make-table (cAr t) tablef colf rowf cellf)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pictures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; WARNING: Should also test that width and height are not magnifications.
-;; Currently, magnifications make string->tmlength return #f.
-
-(define (tmhtml-dimension-attr s name handlers)
-  (let ((w (and-let* ((tmlen (string->tmlength s))
-		      ((not (tmlength-null? tmlen)))
-		      (proc (assoc (tmlength-unit tmlen) handlers)))
-		     ((second proc) (tmlength-value tmlen)))))
-    (if w `((,name ,w)) '())))
-
-(define (exact-number->string x)
-  (number->string (inexact->exact x)))
-(define (number->percent x)
-  (string-append (exact-number->string (* 100 x)) "%"))
-
-(define (tmhtml-postscript env l)
-  (let ((s (first l)) (w (second l)) (h (third l)))
-    (if (not (string? s)) '()	; only convert linked images
+(define (tmhtml-postscript l)
+  ;; FIXME: Should also test that width and height are not magnifications.
+  ;; Currently, magnifications make tmlength->htmllength return #f.
+  (let* ((s (first l))
+	 (w (tmlength->htmllength (second l) #f))
+	 (h (tmlength->htmllength (third l) #f)))
+    (if (nstring? s) '() ;; only convert linked images
 	`((h:img (@ (src ,(cork->html s))
-		    ,@(tmhtml-dimension-attr
-		       w 'width `((par ,number->percent)
-				  (px ,exact-number->string)))
-		    ,@(tmhtml-dimension-attr
-		       h 'height `((px ,exact-number->string)))))))))
+		    ,@(if w `((width ,w)) '())
+		    ,@(if h `((height ,h)) '())))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Standard markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-list-document env list-doc)
+(define (tmhtml-list-document list-doc)
   ;; Convert a list-document to a list of <h:li> elements.
   ;; WARNING: makes the xpath environment inconsistent
   (define (item->li mark item)
     (cond ((null? item) '(h:li))
-	  ((null? (cdr item)) `(h:li ,@(tmhtml env (car item))))
-	  (else `(h:li ,@(tmhtml env `(document ,@item))))))
+	  ((null? (cdr item)) `(h:li ,@(tmhtml (car item))))
+	  (else `(h:li ,@(tmhtml `(document ,@item))))))
   (if (null? (cdr list-doc)) '((h:li))
       (stm-list-map item->li
 		    (lambda (x) (== x '(item)))
@@ -643,20 +949,20 @@
 ;; ID attribute of the resulting xhtml element. When that is done, remove the
 ;; warning comment from htmltm-handler.
 
-(define (tmhtml-itemize env args)
-  `((h:ul ,@(descend env tmhtml-list-document (car args)))))
+(define (tmhtml-itemize args)
+  `((h:ul ,@(tmhtml-list-document (car args)))))
 
-(define (tmhtml-enumerate env args)
-  `((h:ol ,@(descend env tmhtml-list-document (car args)))))
+(define (tmhtml-enumerate args)
+  `((h:ol ,@(tmhtml-list-document (car args)))))
 
-(define (tmhtml-desc-document env desc-doc)
+(define (tmhtml-desc-document desc-doc)
   ;; WARNING: makes the xpath environment inconsistent
   (define (item->dt-dd mark item)
     (let ((html-item (if (null? (cdr item))
-			 (tmhtml env (car item))
-			 (tmhtml env `(document ,@item)))))
+			 (tmhtml (car item))
+			 (tmhtml `(document ,@item)))))
       (append
-       (if mark (tmhtml env mark) '())
+       (if mark (tmhtml mark) '())
        (cond ((and (null? html-item) mark) '())
 	     ((null? html-item) '((h:dd)))
 	     (else `((h:dd ,@html-item)))))))
@@ -665,14 +971,14 @@
 				  (lambda (x) (func? x 'item* 1))
 				  (cdr desc-doc)))))
 
-(define (tmhtml-description env args)
-  `((h:dl ,@(descend env  tmhtml-desc-document (car args)))))
+(define (tmhtml-description args)
+  `((h:dl ,@(tmhtml-desc-document (car args)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-verbatim env args)
+(define (tmhtml-verbatim args)
   ;; Block-level verbatim environments should only contain inline elements.
   ;;
   ;; @args should be a single element list, we will call this element @body.
@@ -689,13 +995,12 @@
   ;; Inline verbatim has little special significance for display in TeXmacs. In
   ;; LaTeX it is used to escape special characters (and protect multiple inline
   ;; spaces, yuck!), but in TeXmacs there is no such problem.
-  (let ((body (first args)))
-    (cond ((or (stm-block-structure? body)
-	       (stm-document? (xpath-parent env)))
-	   (verbatim-pre
-	    (with-environment env ((preformatted? #t))
-	      (tmhtml env body))))
-	  (else (verbatim-tt (tmhtml env body))))))
+  (with body (first args)
+    (if (stm-block-structure? body)
+	(verbatim-pre
+	 (ahash-with tmhtml-env :preformatted #t
+		     (tmhtml body)))
+	(verbatim-tt (tmhtml body)))))
 
 (define (verbatim-tt content)
   `((h:tt (@ (class "verbatim")) ,@content)))
@@ -707,75 +1012,81 @@
 ;; Additional tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-doc-title-block env l)
+(define (tmhtml-doc-title-block l)
   `((h:table (@ (class "title-block"))
-	     (h:tr (h:td ,@(tmhtml env (car l)))))))
+	     (h:tr (h:td ,@(tmhtml (car l)))))))
 
-(define (tmhtml-equation-lab env l)
-  `((h:table (@ (width "100%"))
-	     (h:tr (h:td (@ (align "center") (width "100%"))
-			 ,@(tmhtml env (car l)))
-		   (h:td (@ (align "right"))
-			 "(" ,@(tmhtml env (cadr l)) ")")))))
+(define (tmhtml-equation* l)
+  (with first (simplify-document (car l))
+    (with x `(with "mode" "math" (with "math-display" "true" ,first))
+      `((h:center ,@(tmhtml x))))))
+
+(define (tmhtml-equation-lab l)
+  (with first (simplify-document (car l))
+    (with x `(with "mode" "math" (with "math-display" "true" ,first))
+      `((h:table (@ (width "100%"))
+		 (h:tr (h:td (@ (align "center") (width "100%"))
+			     ,@(tmhtml x))
+		       (h:td (@ (align "right"))
+			     "(" ,@(tmhtml (cadr l)) ")")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tmdoc tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-make-block env content)
+(define (tmhtml-make-block content)
   (let* ((l '(h:td
 	      (@ (align "left"))
 	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1b.png")))))
 	 (c `(h:td
 	      (@ (align "center") (width "100%"))
-	      ,@(tmhtml env content)))
+	      ,@(tmhtml content)))
 	 (r '(h:td
 	      (@ (align "right"))
 	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2b.png")))))
 	 (row `(h:tr ,l ,c ,r)))
     `(h:table (@ (width "100%") (cellspacing "0") (cellpadding "3")) ,row)))
 
-(define (tmhtml-tmdoc-title env l)
+(define (tmhtml-tmdoc-title l)
   (list `(h:div (@ (class "tmdoc-title-1"))
-		,(descend env tmhtml-make-block (car l)))))
+		,(tmhtml-make-block (car l)))))
 
-(define (tmhtml-tmdoc-title* env l)
+(define (tmhtml-tmdoc-title* l)
   (list `(h:div (@ (class "tmdoc-title-2"))
-		,(descend env tmhtml-make-block (car l)))
-	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml env (cadr l)))))
+		,(tmhtml-make-block (car l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (cadr l)))))
 
-(define (tmhtml-tmdoc-title** env l)
-  (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml env (car l)))
-	`(h:div (@ (class "tmdoc-title-3"))
-		,(descend env tmhtml-make-block (cadr l)))
-	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml env (caddr l)))))
+(define (tmhtml-tmdoc-title** l)
+  (list `(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (car l)))
+	`(h:div (@ (class "tmdoc-title-3")) ,(tmhtml-make-block (cadr l)))
+	`(h:div (@ (class "tmdoc-navbar")) ,@(tmhtml (caddr l)))))
 
-(define (tmhtml-tmdoc-flag env l)
+(define (tmhtml-tmdoc-flag l)
   ;(tmhtml (car l)))
-  (list `(h:div (@ (class "tmdoc-flag")) ,@(tmhtml env (car l)))))
+  (list `(h:div (@ (class "tmdoc-flag")) ,@(tmhtml (car l)))))
 
-(define (tmhtml-tmdoc-copyright* env l)
+(define (tmhtml-tmdoc-copyright* l)
   (if (null? l) l
-      `(", " ,@(tmhtml env (car l)) ,@(tmhtml-tmdoc-copyright* env (cdr l)))))
+      `(", " ,@(tmhtml (car l)) ,@(tmhtml-tmdoc-copyright* (cdr l)))))
 
-(define (tmhtml-tmdoc-copyright env l)
+(define (tmhtml-tmdoc-copyright l)
   (with content
-      `("&copy;" " " ,@(tmhtml env (car l))
-	" " ,@(tmhtml env (cadr l))
-	,@(tmhtml-tmdoc-copyright* env (cddr l)))
+      `("&copy;" " " ,@(tmhtml (car l))
+	" " ,@(tmhtml (cadr l))
+	,@(tmhtml-tmdoc-copyright* (cddr l)))
     (list `(h:div (@ (class "tmdoc-copyright")) ,@content))))
 
-(define (tmhtml-tmdoc-license env l)
-  (list `(h:div (@ (class "tmdoc-license")) ,@(tmhtml env (car l)))))
+(define (tmhtml-tmdoc-license l)
+  (list `(h:div (@ (class "tmdoc-license")) ,@(tmhtml (car l)))))
 
-(define (tmhtml-key env l)
-  `((h:u (h:tt ,@(tmhtml env (car l))))))
+(define (tmhtml-key l)
+  `((h:u (h:tt ,@(tmhtml (car l))))))
 
 (define (tmhtml-tmdoc-bar? y)
   (or (func? y 'h:h1)
       (func? y 'h:h2)
       (and (func? y 'h:div)
-	   (not (null? (cdr y)))
+	   (nnull? (cdr y))
 	   (func? (cadr y) '@ 1)
 	   (== (first (cadadr y)) 'class)
 	   (string-starts? (second (cadadr y)) "tmdoc"))))
@@ -797,44 +1108,38 @@
 ;; Main conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-list env l)
-  (append-map (cut tmhtml env <>) l))
+(define (tmhtml-list l)
+  (append-map tmhtml l))
 
-(define (tmhtml-dispatch htable env l)
+(define (tmhtml-dispatch htable l)
   (let ((x (drd-ref ,htable (car l))))
     (cond ((not x) #f)
-	  ((procedure? x) (x env (cdr l)))
+	  ((procedure? x) (x (cdr l)))
 	  (else (tmhtml-post-simplify-element
-		 (append x (tmhtml-list env (cdr l))))))))
+		 (append x (tmhtml-list (cdr l))))))))
 
-(define (tmhtml-implicit-compound env l)
-  (or (tmhtml-dispatch 'tmhtml-stdmarkup% env l)
-      (tmhtml-dispatch 'tmhtml-tables% env l)
+(define (tmhtml-implicit-compound l)
+  (or (tmhtml-dispatch 'tmhtml-stdmarkup% l)
       '()))
 
-(define (tmhtml-root x)
-  ;; tmhtml ently point
-  ;; Initialize the environment and start tmhtml
-  (initialize-xpath
-   (environment) x
-   (cut with-environment* <> '((preformatted? #f))
-	(cut tmhtml* <> x))))
+(tm-define (tmhtml-root x)
+  (ahash-with tmhtml-env :math #f
+    (ahash-with tmhtml-env :preformatted #f
+      (ahash-with tmhtml-env :left-margin 0
+        (ahash-with tmhtml-env :right-margin 0
+          (tmhtml x))))))
 
-(define (tmhtml env x)
-  (descend env tmhtml* x))
-
-(define (tmhtml* env x)
-   ;; Main conversion function.
+(define (tmhtml x)
+  ;; Main conversion function.
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
-  (cond
-; (tmhtml-math-mode?
-;  `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
-;	    ,(texmacs->mathml env x))))
+  (cond ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
+	 `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
+		   ,(texmacs->mathml x tmhtml-env))))
 	((string? x)
 	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
-	(else (or (tmhtml-dispatch 'tmhtml-primitives% env x)
-		  (tmhtml-implicit-compound env x)))))
+	(else (or (tmhtml-dispatch 'tmhtml-primitives% x)
+		  (tmhtml-implicit-compound x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -893,15 +1198,15 @@
   (lsup tmhtml-sup)
   (rsub tmhtml-sub)
   (rsup tmhtml-sup)
+  (rsubsup tmhtml-subsup)
   (frac tmhtml-frac)
   (sqrt tmhtml-sqrt)
   (wide tmhtml-wide)
   (neg tmhtml-neg)
   ((:or tree old-matrix old-table old-mosaic old-mosaic-item)
    tmhtml-noop)
-  ;; WARNING: table and tformat hacks make the xpath enviroment inconsistent
-  (table (lambda (env l) (tmhtml env `(tabular (table ,@l)))))
-  (tformat (lambda (env l) (tmhtml env `(tabular (tformat ,@l)))))
+  (table tmhtml-table)
+  (tformat tmhtml-tformat)
   ((:or twith cwith tmarker row cell sub-table) tmhtml-noop)
 
   (assign tmhtml-noop)
@@ -955,10 +1260,8 @@
   (section-title (h:h2))
   (subsection-title (h:h3))
   (subsubsection-title (h:h4))
-  ;; paragraph and subparagraph are intented to be used at the start
-  ;; of a paragraph. So they cannot be converted to 'h5' and 'h6
-  (paragraph-title (h:strong (@(class "paragraph"))))
-  (subparagraph-title (h:strong (@(class "subparagraph"))))
+  (paragraph-title (h:h5))
+  (subparagraph-title (h:h6))
   ;; Lists
   ((:or itemize itemize-minus itemize-dot itemize-arrow)
    ,tmhtml-itemize)
@@ -968,7 +1271,7 @@
   ((:or description description-compact description-dash
 	description-align description-long)
    ,tmhtml-description)
-  (item* (h:dt)) ; update xpath environment in description terms
+  (item* (h:dt))
   ;; Phrase elements
   (strong (h:strong))
   (em (h:em))
@@ -990,7 +1293,9 @@
   (LaTeX ,(lambda x '("LaTeX")))
   ;; additional tags
   (doc-title-block ,tmhtml-doc-title-block)
+  (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
+  (equations-base ,tmhtml-equation*)
   ;; tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
@@ -1005,6 +1310,13 @@
 ;;    (person (h:person)))) ; not in HTML4
 
 (drd-table tmhtml-with-cmd%
+  ("mode" ,tmhtml-with-mode)
+  ("color" ,tmhtml-with-color)
+  ("font-size" ,tmhtml-with-font-size)
+  ("par-left" ,tmhtml-with-par-left)
+  ("par-right" ,tmhtml-with-par-right)
+  ("par-first" ,tmhtml-with-par-first)
+  ("par-par-sep" ,tmhtml-with-par-par-sep)
   (("font-family" "tt") (h:tt))
   (("font-family" "ss") (h:class (@ (style "font-family: sans-serif"))))
   (("font-series" "bold") (h:b))
@@ -1021,19 +1333,6 @@
    (h:class (@ (style "font-variant: small-caps")))))
 
 (drd-table tmhtml-with-cmd% ; deprecated
-  ("font-size" ,tmhtml-with-font-size)
-  (("color" "black") (h:font (@ (color "black"))))
-  (("color" "grey") (h:font (@ (color "grey"))))
-  (("color" "white") (h:font (@ (color "white"))))
-  (("color" "red") (h:font (@ (color "red"))))
-  (("color" "blue") (h:font (@ (color "blue"))))
-  (("color" "yellow") (h:font (@ (color "black"))))
-  (("color" "magenta") (h:font (@ (color "magenta"))))
-  (("color" "orange") (h:font (@ (color "orange"))))
-  (("color" "green") (h:font (@ (color "green"))))
-  (("color" "brown") (h:font (@ (color "brown"))))
-  (("color" "dark magenta") (h:font (@ (color "#800080"))))
-  (("color" "dark green") (h:font (@ (color "#008000"))))
   (("par-mode" "left") (h:div (@ (align "left"))))
   (("par-mode" "justify") (h:div (@ (align "justify"))))
   (("par-mode" "center") (h:center)))
@@ -1045,26 +1344,20 @@
   (("par-columns" "4") (h:multicol (@ (cols "4"))))
   (("par-columns" "5") (h:multicol (@ (cols "5")))))
 
-(drd-dispatcher tmhtml-tables%
-  (block (cut tmhtml-table "l" #t <> <>))
-  (block* (cut tmhtml-table "c" #t <> <>))
-  (tabular (cut tmhtml-table "l" #f <> <>))
-  (tabular* (cut tmhtml-table "c" #f <> <>)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs->html x)
+(tm-define (texmacs->html x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style* (tmfile-extract x 'style))
 	     (style (if (list? style*) style* (list style*)))
 	     (lan (tmfile-init x "language"))
 	     (doc (list '!file body style lan (get-texmacs-path))))
-	(texmacs->html doc))
+	(texmacs->html doc opts))
       (begin
-	(set! tmhtml-math-mode? #f)
+	(tmhtml-initialize opts)
 	((if (func? x '!file)
 	     tmhtml-finalize-document
 	     tmhtml-finalize-selection)

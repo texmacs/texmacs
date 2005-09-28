@@ -13,6 +13,7 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 #include "resource.hpp"
+#include "url.hpp"
 
 RESOURCE(dictionary);
 
@@ -27,6 +28,7 @@ class dictionary_rep: public rep<dictionary> {
 public:
   dictionary_rep (string from, string to);
 
+  void   load (url fname);
   void   load (string fname);
   string translate (string s);
 };

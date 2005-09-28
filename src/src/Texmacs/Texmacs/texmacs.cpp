@@ -16,6 +16,8 @@
 #include "timer.hpp"
 
 extern bool   char_clip;
+extern bool   reverse_colors;
+
 extern url    tm_init_file;
 extern url    tm_init_buffer_file;
 extern string my_init_cmds;
@@ -35,7 +37,10 @@ TeXmacs_main (int argc, char** argv) {
   bool flag= true;
   string the_default_font;
   for (i=1; i<argc; i++)
-    if (((argv[i][0] == '-') || (argv[i][0] == '+')) && (argv[i][1] != '\0')) {
+    if (argv[i][0] == '\0') argc= i;
+    else if (((argv[i][0] == '-') ||
+	      (argv[i][0] == '+')) && (argv[i][1] != '\0'))
+    {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
@@ -92,6 +97,8 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-S") || (s == "-setup")) {
 	remove ("$TEXMACS_HOME_PATH/system/settings.scm");
 	remove ("$TEXMACS_HOME_PATH/system/setup.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
+	remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
       }
       else if ((s == "-v") || (s == "-version")) {
 	cout << "\n";
@@ -110,6 +117,8 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+      else if ((s == "-r") || (s == "-reverse"))
+	reverse_colors= true;
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc)
@@ -136,6 +145,7 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -i [file]  Specify scheme initialization file\n";
 	cout << "  -p         Get the TeXmacs path\n";
 	cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
+	cout << "  -r         Reverse video mode\n";
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
@@ -187,11 +197,6 @@ TeXmacs_main (int argc, char** argv) {
   if (sv->no_bufs ()) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
     sv->open_window ();
-#ifndef OS_WIN32
-    if ((my_init_cmds == "") &&
-	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
-      sv->exec_delayed ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)");
-#endif
   }
 
   bench_print ();
@@ -200,8 +205,6 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
-  sv->delayed_autosave();
-  dis->delayed_message (sv->get_meta(), "banner", 100);
   dis->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";

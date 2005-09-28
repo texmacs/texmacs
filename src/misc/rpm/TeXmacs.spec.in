@@ -28,9 +28,11 @@ for computer algebra systems. TeXmacs also supports the Guile/Scheme
 extension language, so that you may customize the interface and
 write your own extensions to the editor.
 
-In the future, TeXmacs is planned to evoluate towards
-a complete scientific office suite, with spreadsheet capacities,
-a technical drawing editor and a presentation mode.
+Converters exist for TeX/LaTeX, Html/MathML and XML. In the future,
+TeXmacs is planned to evolve towards a complete scientific office suite.
+A rudimentary technical drawing editor and presentation mode are
+already included. A spreadsheet and tools for collaborative authoring
+are planned for later.
 
 %prep
 %setup -q -n @tmtgz@-src

@@ -56,6 +56,7 @@ string MATH_CONDENSED ("math-condensed");
 string MATH_VPOS ("math-vpos");
 
 string PROG_LANGUAGE ("prog-language");
+string PROG_SCRIPTS ("prog-scripts");
 string PROG_FONT ("prog-font");
 string PROG_FONT_FAMILY ("prog-font-family");
 string PROG_FONT_SERIES ("prog-font-series");
@@ -193,18 +194,25 @@ string CELL_COL_NR ("cell-col-nr");
 string POINT_STYLE ("point-style");
 
 string LINE_WIDTH ("line-width");
-string LINE_STYLE ("line-style");
+string DASH_STYLE ("dash-style");
+string DASH_STYLE_UNIT ("dash-style-unit");
 string LINE_ARROWS ("line-arrows");
 string LINE_CAPS ("line-caps");
-string FILL_MODE ("fill-mode");
 string FILL_COLOR ("fill-color");
 string FILL_STYLE ("fill-style");
 
+string GR_GEOMETRY ("gr-geometry");
 string GR_FRAME ("gr-frame");
-string GR_CLIP ("gr-clip");
 string GR_MODE ("gr-mode");
 string GR_COLOR ("gr-color");
+string GR_POINT_STYLE ("gr-point-style");
 string GR_LINE_WIDTH ("gr-line-width");
+string GR_DASH_STYLE ("gr-dash-style");
+string GR_DASH_STYLE_UNIT ("gr-dash-style-unit");
+string GR_LINE_ARROWS ("gr-line-arrows");
+string GR_FILL_COLOR ("gr-fill-color");
+string GR_TEXT_HALIGN ("gr-text-halign");
+string GR_TEXT_VALIGN ("gr-text-valign");
 string GR_GRID ("gr-grid");
 string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");

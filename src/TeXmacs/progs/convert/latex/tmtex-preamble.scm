@@ -20,8 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-preamble)
-  (:use (drd latex latex-drd) (convert latex texout))
-  (:export tmtex-preamble-build))
+  (:use (convert latex latex-drd) (convert latex texout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of all extra commands
@@ -354,6 +353,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table tmtex-preamble-language-def%
+  ("bulgarian"
+   "\\usepackage[cp1251]{inputenc}\n\\usepackage[bulgarian]{babel}")
   ("czech" "\\usepackage[czech]{babel}")
   ("danish" "\\usepackage[danish]{babel}")
   ("dutch" "\\usepackage[dutch]{babel}")
@@ -535,7 +536,7 @@
       (set! tmtex-preamble-hichar-flag #t)))
 
 (define (tmtex-preamble-build-sub l)
-  (if (and (list? l) (not (null? l)))
+  (if (and (list? l) (nnull? l))
       (let ((x (car l)))
 	(if (symbol? x) (tmtex-preamble-test-insert x))
 	(if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
@@ -552,7 +553,7 @@
         (else (string-append (force-string (car l)) ","
           (tmtex-preamble-make-package-list (cdr l))))))
 
-(define (tmtex-preamble-build text style lan init)
+(tm-define (tmtex-preamble-build text style lan init)
   (set! tmtex-preamble-dic (tmtex-preamble-table style lan))
   (set! tmtex-preamble-done (make-ahash-table))
   (set! tmtex-preamble-uses (make-ahash-table))
@@ -565,7 +566,7 @@
 	    (string-append (drd-ref tmtex-preamble-language% lan) "\n")))
   (tmtex-preamble-build-sub text)
   (if tmtex-preamble-hichar-flag
-      (let ((extra (if (in? lan '("russian" "ukrainian"))
+      (let ((extra (if (in? lan '("bulgarian" "russian" "ukrainian"))
 		       tmtex-preamble-cyrillic
 		       tmtex-preamble-iso-latin)))
 	(set! tmtex-preamble-result

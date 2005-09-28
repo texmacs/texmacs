@@ -35,13 +35,13 @@ text_language_rep::advance (string s, int& pos) {
   if (s[pos]==' ') {
     pos++;
     // while ((pos<N(s)) && (s[pos]==' ')) pos++;
-    if ((pos == N(s)) || (!is_ponctuation (s[pos])))
+    if ((pos == N(s)) || (!is_punctuation (s[pos])))
       return &tp_space_rep;
     return &tp_blank_rep;
   }
   
-  if (is_ponctuation (s[pos])) {
-    while ((pos<N(s)) && is_ponctuation (s[pos])) pos++;
+  if (is_punctuation (s[pos])) {
+    while ((pos<N(s)) && is_punctuation (s[pos])) pos++;
     if ((pos==N(s)) || (s[pos]!=' ')) return &tp_normal_rep;
     switch (s[pos-1]) {
     case ',': case ':': case ';': case '`': case '\'':
@@ -101,6 +101,7 @@ locale_to_language (string s) {
   if (N(s) > 5) s= s (0, 5);
   if (s == "en_GB") return "british";
   if (N(s) > 2) s= s (0, 2);
+  if (s == "bg") return "bulgarian";
   if (s == "cs") return "czech";
   if (s == "da") return "danish";
   if (s == "nl") return "dutch";
@@ -125,6 +126,7 @@ string
 language_to_locale (string s) {
   if (s == "american") return "en_US";
   if (s == "british") return "en_GB";
+  if (s == "bulgarian") return "bg_BG";
   if (s == "czech") return "cs_CZ";
   if (s == "danish") return "da_DK";
   if (s == "dutch") return "nl_NL";
@@ -201,6 +203,7 @@ text_language (string s) {
   if (language::instances -> contains (s)) return language (s);
   if (s == "american") return new text_language_rep (s, "us");
   if (s == "british") return new text_language_rep (s, "ukenglish");
+  if (s == "bulgarian") return new text_language_rep (s, "bulgarian");
   if (s == "czech") return new text_language_rep (s, "czech");
   if (s == "danish") return new text_language_rep (s, "danish");
   if (s == "dutch") return new text_language_rep (s, "dutch");
