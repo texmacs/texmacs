@@ -20,7 +20,7 @@
 #include <iostream>
 using std::istream;
 using std::ostream;
-using std::in;
+using std::cin;
 using std::cout;
 using std::cerr;
 

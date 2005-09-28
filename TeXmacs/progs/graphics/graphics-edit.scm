@@ -202,10 +202,11 @@
 
 (define (graphics-geometry)
   (with geo (tree->stree (get-env-tree "gr-geometry"))
-    (if (or (match? geo '(tuple "geometry" :2))
-	    (match? geo '(tuple "geometry" :3)))
-	geo
-	'(tuple "geometry" "1par" "0.6par" "center"))))
+    (if (match? geo '(tuple "geometry" :2))
+	(append geo '("center"))
+        (if (match? geo '(tuple "geometry" :3))
+	    geo
+	    '(tuple "geometry" "1par" "0.6par" "center")))))
 
 (tm-define (graphics-set-width w)
   (:argument w "Width of the graphics")
@@ -2676,12 +2677,17 @@
 	(graphics-set-property "gr-frame" newfr)))))
 
 (define (graphics-move-origin dx dy)
+  (define (add l1 l2)
+     (if (pair? l1)
+	`(tmlen ,(i2s (+ (s2i (cadr l1)) (length-decode l2))))
+	 (length-add l1 l2))
+  )
   (let* ((fr (graphics-cartesian-frame))
 	 (x (cadr (cadddr fr)))
 	 (y (caddr (cadddr fr)))
          (newfr `(tuple "scale" ,(caddr fr)
-				 (tuple ,(length-add x dx)
-					,(length-add y dy))))
+				 (tuple ,(add x dx)
+					,(add y dy))))
      )
      (create-graphical-object #f #f #f #f)
      (graphics-set-property "gr-frame" newfr)))
@@ -2716,6 +2722,13 @@
 		  (else "default"))))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Old modes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (redim-graphics_move x y)
+  (graphics-set-mode "point"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2730,7 +2743,8 @@
   ;(display* "Graphics] Move " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (group-edit))
+	     (group-edit)
+	     (redim-graphics))
 	    move (x y)))
 
 (tm-define (graphics-remove-point x y)
