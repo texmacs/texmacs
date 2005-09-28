@@ -409,8 +409,6 @@
   (   (balloon (icon "tm_textat_mode.xpm") "Add text boxes")
       (graphics-set-mode "text-at"))
   |
-  (=> (balloon (icon "tm_color.xpm") "Color")
-      (link graphics-color-menu))
   (=> (balloon (icon "tm_point_style.xpm") "Point style")
       (link graphics-point-style-menu))
   (=> (balloon (icon "tm_line_width.xpm") "Line width")
@@ -419,6 +417,8 @@
       (link graphics-dash-menu))
   (=> (balloon (icon "tm_line_arrows.xpm") "Line arrows")
       (link graphics-line-arrows-menu))
+  (=> (balloon (icon "tm_gr_color.xpm") "Line color")
+      (link graphics-color-menu))
   (=> (balloon (icon "tm_fill.xpm") "Fill color")
       (link graphics-fill-color-menu))
   (=> (balloon (icon "tm_text_align.xpm") "Text box alignment")
