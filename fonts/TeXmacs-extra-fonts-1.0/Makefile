@@ -76,7 +76,7 @@ $(math_tfm): $(TFMDIR)/math/%.tfm:
 	$(RM) $(TFMDIR)/math/$*.600pk
 
 $(tc_tfm): $(TFMDIR)/tc/%.tfm:
-	$(MKTEXTFM) --destdir $(TFMDIR)/math $*
+	$(MKTEXTFM) --destdir $(TFMDIR)/tc $*
 	$(RM) $(TFMDIR)/tc/$*.600pk
 
 tfm: $(ec_tfm) $(la_tfm) $(math_tfm) $(tc_tfm)
