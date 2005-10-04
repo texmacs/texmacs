@@ -1,92 +1,92 @@
-<TeXmacs|1.0.2.6>
+<TeXmacs|1.0.5.9>
 
 <style|tmweb>
 
 <\body>
-  <apply|tmweb-current|Download|Fonts><tmweb-title|Using <TeX> fonts with GNU
-  <TeXmacs>|<apply|tmweb-download-links>>
+  <tmweb-current|Download|Fonts><tmweb-title|Extra fonts for GNU
+  <TeXmacs>|<tmweb-download-links>>
 
   GNU <TeXmacs> has been designed in order to cooperate with the Te<TeX>
-  distribution of <TeX>. This distribution (usually) comes with the programs
-  <with|font family|tt|MakeTeXTFM> and <with|font family|tt|MakeTeXPK> to
-  generate new fonts automatically using MetaFont. Furthermore, it (usually)
-  provides the utility <with|font family|tt|kpsepath>, for finding the
-  different directories where <TeX> fonts have been installed.
+  distribution of <TeX> on <name|Unix> systems and in particular under
+  GNU/<name|Linux>. The Te<TeX> distribution comes with several Type<nbsp>1
+  fonts as well as the <name|Metafont> system to generate additional bitmap
+  fonts.
 
-  When starting <TeXmacs> for the first time, the program examines the way
-  your <TeX> system has been installed. The result of this examination is
-  written the file <with|font family|tt|$TEXMACS_HOME_PATH/system/TEX_PATHS>.
-  By default, <with|font family|tt|$TEXMACS_HOME_PATH> contains <with|font
-  family|tt|~/.TeXmacs>. Whenever you change your <TeX> system, or if you add
-  new fonts, it may be a good idea to remove this file in order to recreate
-  it. In the directory <with|font family|tt|$TEXMACS_HOME_PATH/fonts/error>,
-  you also find a trace of all fonts which <TeXmacs> failed to create. When
-  adding new fonts, you should remove all files in this directory.
+  Unfortunately, the Type 1 fonts shipped with Te<TeX> are not suitable for
+  most European languages. The default version of <TeXmacs> therefore comes
+  with a few additional fonts and falls back on <name|Metafont> for missing
+  fonts. Nevertheless, more additional fonts can be downloaded both as an
+  <hlink|RPM package|#fonts-rpm> or as a <hlink|tarball|#fonts-tarball>.
+  Moreover, in case that you did not install Te<TeX> (or another suitable
+  <TeX> distribution), you may install an even more <hlink|complete set of
+  fonts|#fonts-complete>.
 
-  If the user did not install the Te<TeX> distribution or no <TeX>
-  distribution at all, we provide by default a limited set of compiled fonts
-  in <with|font family|tt|$TEXMACS_PATH/data/tfm> and <with|font
-  family|tt|$TEXMACS_PATH/data/pk>. The user may also specify his own paths
-  <with|font family|tt|TEX_TFM_PATH> and <with|font family|tt|TEX_PK_PATH>
-  for .tfm and .pk files respectively. <TeXmacs> uses the following algorithm
-  to find fonts:
+  <paragraph|RPM with extra fonts><label|fonts-rpm>
 
-  <\itemize>
-    <item>Look whether the font is in one of directories specified by the
-    user paths <with|font family|tt|TEX_TFM_PATH> or <with|font
-    family|tt|TEX_PK_PATH>.
-
-    <item>Look whether the font is installed by default in <with|font
-    family|tt|$TEXMACS_PATH/data/tfm> or <with|font
-    family|tt|$TEXMACS_PATH/data/pk>.
-
-    <item>Look whether the font was already generated in the Te<TeX>
-    distribution (using <with|font family|tt|kpsepath>).
-
-    <item>Automatically generate the font using <with|font
-    family|tt|MakeTeXTFM> and/or <with|font family|tt|MakeTeXPK>.
-  </itemize>
-
-  We also precompiled a larger set of fonts at 600 dpi resolution, which can
-  be added to the set of default fonts from <TeXmacs>. In order to do so,
-  first download <hlink|Extra default fonts (2.9
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/targz/TeXmacs-600dpi-fonts.tar.gz>.
-  Next unpack them in the installation directory using
+  If you installed <TeXmacs> using the RPM, then you may download an
+  <hlink|RPM (5.0 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-1.noarch.rpm>
+  with extra fonts and install it using
 
   <\code>
-    \ \ \ \ gunzip -c TeXmacs-600dpi-fonts.tar.gz \| tar xvf -
+    \ \ \ \ rpm -i TeXmacs-extra-fonts-1.0-1.noarch.rpm
   </code>
 
-  If you installed <TeXmacs> using an rpm package, then you should rather
-  download the <hlink|rpm font package (2.9
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/rpm/TeXmacs-fonts-1.0-1.noarch.rpm>
-  and install it using
+  <paragraph|Tarball with extra fonts><label|fonts-tarball>
+
+  If you installed <TeXmacs> from the static binaries, then you may download
+  a <hlink|tarball (5.8 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
+  with extra fonts. After downloading, you should <verbatim|cd> into the
+  directory which contains the static binaries and check whether you have a
+  subdirectory <verbatim|fonts>. If so, then unpack the fonts using
 
   <\code>
-    \ \ \ \ rpm -i TeXmacs-fonts-1.0-1.noarch.rpm
+    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
   </code>
 
-  If you do not have ftp access, then you might wish to
-  <hlink|download|http://www.texmacs.org/Download/ftp> from the web.
+  The same procedure applies when you installed <TeXmacs> from the source
+  code. In that case, and before compiling the source code, you have to
+  unpack the tarball in the <verbatim|TeXmacs> subdirectory of the directory
+  with the source code. Again, this directory should have a subdirectory
+  <verbatim|fonts>.
 
-  <apply|tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <paragraph|Tarball for systems without <TeX>/<LaTeX>><label|fonts-complete>
+
+  Whenever you don't have a suitable <TeX>/<LaTeX> distribution like Te<TeX>
+  installed on your system, then you may download a <hlink|tarball (10.0
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>
+  with a reasonably complete set of Type 1 fonts for basic use of <TeXmacs>
+  (in fact, these are precisely the fonts which are provided in the native
+  <name|Windows> version of <TeXmacs>). The installation procedure is the
+  same as the <hlink|above one|#fonts-tarball> for the tarball with basic
+  extra fonts, except that the correct unpacking command changes to
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-windows-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  <\remark>
+    If you do not have ftp access, then you might wish to
+    <hlink|download|http://www.texmacs.org/Download/ftp> from the web.
+  </remark>
+
+  <\remark>
+    More exotic fonts may be added by the user in the <verbatim|fonts>
+    subdirectory of <with|font-family|tt|$TEXMACS_HOME_PATH> (which defaults
+    to <verbatim|~/.TeXmacs>). Just add additional <verbatim|tfm> files to
+    the <verbatim|tfm> subdirectory, <verbatim|pfb> files to the
+    <verbatim|pfb> subdirectory and so on. Notice that <TeXmacs> only
+    recognizes a subset of the fonts which come with traditional <TeX>
+    distributions. To find out whether a particular font is supported, check
+    the files in the directory <verbatim|$TEXMACS_PATH/progs/fonts>.
+  </remark>
+
+  <tmdoc-copyright|1999--2005|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>

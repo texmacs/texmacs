@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.1>
+<TeXmacs|1.0.5.9>
 
 <style|tmweb>
 
@@ -36,6 +36,22 @@
     \ \ \ \ pwd
   </code>
 
+  <section|Extra fonts?>
+
+  Optionally, you may download a <hlink|tarball (5.8
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
+  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
+  installation directory using
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  Although <TeXmacs> is able to automatically generate bitmap analogues for
+  these fonts, this process may take some time at a first run. Type 1 fonts
+  are also rendered better by certain <name|Pdf> viewers and they are often
+  preferred by publishers.
+
   <section|Set the environment variables>
 
   Depending on your shell, either type
@@ -58,21 +74,6 @@
   recommend to put these lines in your personal startup script, such as
   <with|font-family|tt|.bash_profile>.
 
-  <section|Extra fonts?>
-
-  Before you run <TeXmacs>, you may optionally <hlink|download (2.9
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/targz/TeXmacs-600dpi-fonts.tar.gz>
-  pregenerated <TeX> fonts and unpack them in the installation directory
-  using
-
-  <\code>
-    \ \ \ \ gunzip -c TeXmacs-600dpi-fonts.tar.gz \| tar xvf -
-  </code>
-
-  Although these fonts may in principle be generated automatically by
-  <TeXmacs>, this process may slow down the editor when you use it for the
-  first time.
-
   <section|Run !>
 
   <\code>
@@ -91,33 +92,6 @@
   please consider <hyper-link|donating|../contribute/donations.en.tm> money
   or services to us. Of course, you may also
   <hyper-link|contribute|../contribute/contribute.en.tm> yourself.
-
-  <appendix|Possible problems>
-
-  <\itemize>
-    <item><with|font-shape|italic|<TeXmacs> runs fine, but certain fonts are
-    not displayed correctly.>
-
-    <with|font-series|bold|Solution:> This problem may have several causes:
-
-    <\itemize>
-      <item>You use a recent version (\<gtr\>= 7.3) of <name|RedHat Linux> or
-      one of its clones. On such systems, the installation of Te<TeX> is
-      bugged and you need to change some permissions in order to allow font
-      generation by Metafont. As root, type
-
-      <\code>
-        \ \ \ \ chmod -R a+rw /var/lib/texmf/*
-      </code>
-
-      <item>You do not use a standard <TeX>/<LaTeX> distribution, such as
-      Te<TeX> (standard distributions come with scripts for generating fonts,
-      such as <with|font-family|tt|mktextfm> or
-      <with|font-family|tt|MakeTeXTFM>). You may either install a more
-      standard <TeX>/La<TeX> distribution, or download some pregenerated
-      fonts as indicated in step 4.
-    </itemize>
-  </itemize>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 
