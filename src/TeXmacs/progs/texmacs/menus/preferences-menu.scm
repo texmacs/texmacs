@@ -40,7 +40,10 @@
 	  "150" "200" "300" "400" "600" "800" "1200"
 	  *)
     (enum ("Font type" "font type")
-	  "EC bitmap" "CM bitmap" "Type 1")))
+	  ("Metafont bitmaps only" "Metafont only")
+	  ("Metafont and available type 1" "Metafont + Type 1")
+	  ("Type 1 with metafont fallback" "Type 1 + Metafont")
+	  ("Type 1 only" "Type 1 only"))))
 
 (tm-define preferences-tree
   `((enum ("Look and feel" "look and feel")

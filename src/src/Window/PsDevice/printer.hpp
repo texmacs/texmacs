@@ -26,7 +26,7 @@ class printer_rep: public ps_device_rep {
   bool     landscape;
   double   paper_w;
   double   paper_h;
-  bool     true_type;
+  bool     type_1;
   string   prologue;
   string   body;
   int      cur_page;

@@ -224,7 +224,7 @@ static bool
 try_dpi (int dpi, int test) {
   cerr << "TeXmacs] Trying to create ecrm10." << test
        << "pk from " << dpi << " dpi\n";
-  make_tex_pk ("ecrm10", test, dpi, "localfont");
+  make_tex_pk ("ecrm10", test, dpi);
   reset_pk_path ();
   if (!is_none (resolve_tex ("ecrm10." * as_string (test) * "pk"))) {
     set_setting ("DPI", as_string (dpi));
@@ -235,7 +235,7 @@ try_dpi (int dpi, int test) {
 
   cerr << "TeXmacs] Trying to create cmr10." << test
        << "pk from " << dpi << " dpi\n";
-  make_tex_pk ("cmr10", test, dpi, "localfont");
+  make_tex_pk ("cmr10", test, dpi);
   reset_pk_path ();
   if (!is_none (resolve_tex ("cmr10." * as_string (test) * "pk"))) {
     set_setting ("DPI", as_string (dpi));
@@ -262,30 +262,21 @@ init_default_tex_settings () {
 * Getting information about installation
 ******************************************************************************/
 
-static int font_type= 1; // 0: EC, 1: CM, 2: TrueType
-
-bool
-support_ec_fonts () {
-  return get_setting ("EC") == "true";
-}
-
-bool
-use_ec_fonts () {
-  //cout << "use_ec_fonts?\n";
-  return font_type == 0;
-}
-
-bool
-use_tt_fonts () {
-  //cout << "use_tt_fonts?\n";
-  return font_type == 2;
-}
+static int font_type= 2;
+// 0: Metafont, 1: Metafont + Type 1, 2: Type 1 + Metafont, 3: Type 1
 
 void
 set_font_type (int type) {
-  //cout << "set_fonts_type " << type << "\n";
-  if ((type == 2) && (!ft_present ())) type= 1;
+  //cout << "set_font_type " << type << "\n";
+  if (get_setting ("MAKETFM") == "false") type= 3;
+  if (!ft_present ()) type= 0;
   font_type= type;
+}
+
+int
+get_font_type () {
+  //cout << "get_font_type -> " << font_type << "\n";
+  return font_type;
 }
 
 /******************************************************************************

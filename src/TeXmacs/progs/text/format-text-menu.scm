@@ -47,7 +47,7 @@
 	      ("Palatino" (make-with "font" "palatino")))
 	  (if (url-exists-in-tex? "rptmr.tfm")
 	      ("Times" (make-with "font" "times"))))
-      (if (support-tt-fonts?)
+      (if (> (get-font-type) 0)
 	  (if (font-exists-in-tt? "luxirr")
 	      (-> "True type"
 		  (if (font-exists-in-tt? "luxirr")

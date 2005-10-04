@@ -41,7 +41,10 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
 
 tt_face
 load_tt_face (string name) {
-  return make (tt_face, name, new tt_face_rep (name));
+  bench_start ("load tt face");
+  tt_face face= make (tt_face, name, new tt_face_rep (name));
+  bench_cumul ("load tt face");
+  return face;
 }
 
 /******************************************************************************

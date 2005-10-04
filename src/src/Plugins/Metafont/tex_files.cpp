@@ -18,7 +18,7 @@
 #include "hashmap.hpp"
 #include "analyze.hpp"
 #include "timer.hpp"
-#include "convert.hpp"
+#include "data_cache.hpp"
 
 static url the_tfm_path= url_none ();
 static url the_pk_path = url_none ();
@@ -74,39 +74,17 @@ resolve_pfb (url name) {
 * Caching results
 ******************************************************************************/
 
-static string tex_cache_file ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
-static bool tex_font_cache_loaded= false;
-static bool tex_needs_cache_save= false;
-static hashmap<string,tree> tex_font_cache ("?");
-
-void
-tex_autosave_cache () {
-  if (tex_needs_cache_save) {
-    tree t (tex_font_cache);
-    (void) save_string (tex_cache_file, tree_to_scheme (t));
-    tex_needs_cache_save= false;
-  }
-}
-
 url
 resolve_tex (url name) {
-  if (!tex_font_cache_loaded) {
-    string cached;
-    if (!load_string (tex_cache_file, cached)) {
-      tree t= scheme_to_tree (cached);
-      tex_font_cache= hashmap<string,tree> ("?", t);
-    }
-    tex_font_cache_loaded= true;
-  }
-
+  cache_load ();
   string s= as_string (name);
-  if (tex_font_cache -> contains (s)) {
-    url u= url_system (tex_font_cache [s]->label);
+  if (is_cached (s)) {
+    url u= url_system (cache_get (s) -> label);
     if (exists (u)) return u;
-    tex_font_cache->reset (s);
-    tex_needs_cache_save= true;
+    cache_reset (s);
   }
 
+  bench_start ("resolve tex");
   url u= url_none ();
   if (ends (s, "mf" )) {
     u= resolve_tfm (name);
@@ -118,10 +96,9 @@ resolve_tex (url name) {
   if (ends (s, "tfm")) u= resolve_tfm (name);
   if (ends (s, "pk" )) u= resolve_pk  (name);
   if (ends (s, "pfb")) u= resolve_pfb (name);
-  if (!is_none (u)) {
-    tex_font_cache (s)= as_string (u);
-    tex_needs_cache_save= true;
-  }
+  bench_cumul ("resolve tex");
+
+  if (!is_none (u)) cache_set (s, as_string (u));
   return u;
 }
 
@@ -143,9 +120,15 @@ make_tex_tfm (string name) {
     system (s);
   }
   if (get_setting ("MAKETFM") == "mktextfm") {
-    s= "mktextfm " * name;
+    url tfm_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
+    s= "mktextfm " *
+      string ("--destdir ") * as_string (tfm_dir) * " " *
+      name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
+    string superfluous= name * ".600pk";
+    if (ends (name, ".tfm")) superfluous= name (0, N(name)-4) * ".600pk";
+    remove (tfm_dir * superfluous);
   }
   if (get_setting ("MAKETFM") == "maketfm"){
     if (name(N(name) - 4, N(name)) == ".tfm")
@@ -158,21 +141,22 @@ make_tex_tfm (string name) {
 }
 
 void
-make_tex_pk (string name, int dpi, int design_dpi, string where) {
+make_tex_pk (string name, int dpi, int design_dpi) {
   string s;
   if (get_setting ("MAKEPK") == "MakeTeXPK") {
     s="MakeTeXPK " * name * " " *
       as_string (dpi) * " " * as_string (design_dpi) * " " *
-      as_string (dpi) * "/" * as_string (design_dpi) * " " * where;
+      as_string (dpi) * "/" * as_string (design_dpi) * " localfont";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
   }
   if (get_setting ("MAKEPK") == "mktexpk") {
+    url pk_dir ("$TEXMACS_HOME_PATH/fonts/pk");
     s="mktexpk " *
       string ("--dpi ") * as_string (dpi) * " " *
       string ("--bdpi ") * as_string (design_dpi) * " " *
-      string ("--mag ") * as_string (dpi)*"/"*as_string (design_dpi) * " " *
-      (where == ""? string (""): string ("--destdir ") * where) * " " *
+      string ("--mag ") * as_string (dpi) *"/"* as_string (design_dpi) * " " *
+      string ("--destdir ") * as_string (pk_dir) * " " *
       name;
     if (DEBUG_VERBOSE) cout << "TeXmacs] Executing " << s << "\n";
     system (s);
@@ -270,96 +254,4 @@ reset_pfb_path () {
     "$TEX_PFB_PATH" |
     (pfb == ""? url_none (): url_system (pfb));
   the_pfb_path= expand (factor (the_pfb_path));
-}
-
-/******************************************************************************
-* Load true type substitute for pk font
-******************************************************************************/
-
-static hashmap<string,string> ec2cm ("?");
-
-static void
-initialize_ec2cm () {
-  if (N(ec2cm) > 0) return;
-  ec2cm ("ecrm")= "cmr";
-  ec2cm ("ecsl")= "cmsl";
-  ec2cm ("ecti")= "cmti";
-  ec2cm ("ecff")= "cmff";
-  ec2cm ("eccc")= "cmcsc";
-  ec2cm ("ecdh")= "cmdunh";
-  ec2cm ("ecui")= "cmu";
-  ec2cm ("ecbx")= "cmbx";
-  ec2cm ("ecbl")= "cmbxsl";
-  ec2cm ("ecbi")= "cmbxti";
-  ec2cm ("ecrb")= "cmbom";
-  ec2cm ("ecxc")= "cmbcsc";
-  ec2cm ("ectt")= "cmtt";
-  ec2cm ("ecst")= "cmsltt";
-  ec2cm ("ectc")= "cmtcsc";
-  ec2cm ("ecvt")= "cmvtt";
-  ec2cm ("ecss")= "cmss";
-  ec2cm ("ecsi")= "cmssi";
-  ec2cm ("eclq")= "cmssq";
-  ec2cm ("ecli")= "cmssqi";
-  ec2cm ("ecsx")= "cmssbx";
-  ec2cm ("ecssdc")= "cmssdc";
-}
-
-void
-ec_to_cm (string& name, unsigned char& c) {
-  if (!starts (name, "ec")) return;
-  if ((c < '\33') || (c == ' ') || (c == '\"') || (c == '<') || (c == '>') ||
-      (c == '|') || (c == '^') || (c == '_') || (c > 'z')) return;
-  initialize_ec2cm ();
-  
-  int pos= 0;
-  while ((pos<N(name)) && (!is_numeric (name[pos]))) pos++;
-  string root  = name (0, pos);
-  string suffix= name (pos, N(name));
-  if (!ec2cm->contains (root)) return;
-
-  name= ec2cm[root] * suffix;
-  if (c<' ') c -= 16;
-}
-
-/******************************************************************************
-* Load true type substitute for pk font
-******************************************************************************/
-
-static bool
-pfb_exists (string name) {
-  return kpsewhich (name * ".pfb") != "";
-}
-
-static string
-find_pfb (string name) {
-  if (pfb_exists (name)) return name;
-
-  int pos= N(name);
-  while ((pos>0) && is_numeric (name[pos-1])) pos--;
-  string root= name (0, pos);
-  string size= name (pos, N(name));
-  if (size == "") return "";
-  int sz= as_int (size);
-
-  if (sz>99) return find_pfb (root * as_string (sz/100));
-  if (sz>17) return find_pfb (root * "17");
-  if (sz>14) return find_pfb (root * "14");
-  if (sz>12) return find_pfb (root * "12");
-  if (sz>10) return find_pfb (root * "10");
-  if (sz< 5) return find_pfb (root * "5");
-  if (sz< 6) return find_pfb (root * "6");
-  if (sz< 7) return find_pfb (root * "7");
-  if (sz< 8) return find_pfb (root * "8");
-  if (sz< 9) return find_pfb (root * "9");
-  if (sz<10) return find_pfb (root * "10");
-  return "";
-}
-
-string
-pk_to_true_type (string& name) {
-  name= find_pfb (name);
-  if (name == "") return "";
-  string loc= kpsewhich (name * ".pfb");
-  return eval_system ("pfbtops " * loc);
 }

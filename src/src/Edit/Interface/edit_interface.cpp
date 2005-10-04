@@ -16,6 +16,7 @@
 #include "server.hpp"
 #include "tm_buffer.hpp"
 #include "Metafont/tex_files.hpp"
+#include "data_cache.hpp"
 
 extern void (*env_next_prog)(void);
 extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
@@ -289,7 +290,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	if (!win->interrupted ()) drd_update ();
-	tex_autosave_cache ();
+	cache_save ();
 	last_update= last_change;
       }
     return;
