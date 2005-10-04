@@ -136,12 +136,9 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting fonts\n")
-(if (use-ec-fonts?)
-    (use-modules (fonts fonts-ec))
-    (use-modules (fonts fonts-cm)))
-(use-modules (fonts fonts-adobe) (fonts fonts-x) (fonts fonts-math)
-	     (fonts fonts-foreign) (fonts fonts-misc))
-(if (support-tt-fonts?) (use-modules (fonts fonts-truetype)))
+(use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
+	     (fonts fonts-math) (fonts fonts-foreign) (fonts fonts-misc))
+(if (> (get-font-type) 0) (use-modules (fonts fonts-truetype)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "------------------------------------------------------\n")

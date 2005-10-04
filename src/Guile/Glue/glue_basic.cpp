@@ -75,39 +75,12 @@ tmg_plugin_list () {
 }
 
 SCM
-tmg_support_ec_fontsP () {
+tmg_get_font_type () {
   // SCM_DEFER_INTS;
-  bool out= support_ec_fonts ();
+  int out= get_font_type ();
   // SCM_ALLOW_INTS;
 
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_support_tt_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= ft_present ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_use_ec_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= use_ec_fonts ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
-}
-
-SCM
-tmg_use_tt_fontsP () {
-  // SCM_DEFER_INTS;
-  bool out= use_tt_fonts ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
+  return int_to_scm (out);
 }
 
 SCM
@@ -2512,10 +2485,7 @@ initialize_glue_basic () {
   gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);
   gh_new_procedure ("get-texmacs-path", (FN) tmg_get_texmacs_path, 0, 0, 0);
   gh_new_procedure ("plugin-list", (FN) tmg_plugin_list, 0, 0, 0);
-  gh_new_procedure ("support-ec-fonts?", (FN) tmg_support_ec_fontsP, 0, 0, 0);
-  gh_new_procedure ("support-tt-fonts?", (FN) tmg_support_tt_fontsP, 0, 0, 0);
-  gh_new_procedure ("use-ec-fonts?", (FN) tmg_use_ec_fontsP, 0, 0, 0);
-  gh_new_procedure ("use-tt-fonts?", (FN) tmg_use_tt_fontsP, 0, 0, 0);
+  gh_new_procedure ("get-font-type", (FN) tmg_get_font_type, 0, 0, 0);
   gh_new_procedure ("set-font-type", (FN) tmg_set_font_type, 1, 0, 0);
   gh_new_procedure ("font-exists-in-tt?", (FN) tmg_font_exists_in_ttP, 1, 0, 0);
   gh_new_procedure ("eval-system", (FN) tmg_eval_system, 1, 0, 0);

@@ -49,7 +49,7 @@ printer_rep::printer_rep (
     defs ("?"), tex_chars ("?"), tex_width ("?"),
     tex_fonts ("?"), tex_font_chars (array<int>(0))    
 {
-  true_type = use_tt_fonts ();
+  type_1    = get_font_type () > 0;
 
   black     = dis->black;
   white     = dis->white;
@@ -319,6 +319,7 @@ static char* hex_string= "0123456789ABCDEF";
 
 void
 printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
+  // cout << "Make char " << (int) c << " of " << name << "\n";
   string char_name (name * "-" * as_string ((int) c));
   if (tex_chars->contains (char_name)) return;
   if (!tex_fonts->contains (name)) {
@@ -364,6 +365,21 @@ printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
   tex_width (char_name)= as_string (d5);
 }
 
+static string
+find_ps_font_name (string name, string s) {
+  int i, n= N(s);
+  for (i=0; i<n; i++) {
+    if (test (s, i, "/FontName /")) {
+      i += 11;
+      int start= i;
+      while (i<n && s[i] != ' ') i++;
+      return s (start, i);
+    }
+    while (i<n && s[i] != '\12' && s[i] != '\15') i++;
+  }
+  return name;
+}
+
 void
 printer_rep::generate_tex_fonts () {
   hashset<string> done;
@@ -385,12 +401,10 @@ printer_rep::generate_tex_fonts () {
       if (suffix (u) == "pfb")
 	ttf= eval_system ("pfbtops", u);
     }
-    else if (true_type && (pos!=-1) && ends (fn_name, "pk"))
-      ttf= pk_to_true_type (root);
 #endif
 
     if (ttf != "") {
-      root= upcase_all (root);
+      string ttf_name= find_ps_font_name (root, ttf);
       if (!done->contains (root)) {
 	prologue << "%%BeginFont: " << root << "\n";
 	prologue << ttf;
@@ -417,7 +431,7 @@ printer_rep::generate_tex_fonts () {
 
       string fdef;
       for (i=N(cum)-1; i>=0; i--) fdef << cum[i];
-      fdef= "/" * name * " " * fdef * " " * mag * " /" * root * " rf";
+      fdef= "/" * name * " " * fdef * " " * mag * " /" * ttf_name * " rf";
       for (i=0, l=0; i<N(fdef); i++, l++)
 	if ((l<70) || (fdef[i]!=' ')) prologue << fdef[i];
 	else { prologue << '\n'; l=-1; }
@@ -517,7 +531,6 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   if (nil (gl)) return;
   string name= fn->res_name;
   unsigned char c= ch;
-  if (true_type) ec_to_cm (name, c);
   make_tex_char (name, c, gl);
   select_tex_font (name);
   move_to (x, y);
