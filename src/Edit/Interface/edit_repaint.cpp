@@ -47,7 +47,6 @@ edit_interface_rep::draw_env (ps_device dev) {
 void
 edit_interface_rep::draw_cursor (ps_device dev) {
   if (got_focus || full_screen) {
-    draw_env (dev);
     cursor cu= get_cursor();
     if (!inside_active_graphics ()) {
       cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
@@ -181,6 +180,7 @@ edit_interface_rep::draw_post (ps_device dev, rectangle r) {
   win->set_shrinking_factor (sfactor);
   dev->set_shrinking_factor (sfactor);
   draw_context (dev, r);
+  draw_env (dev);
   draw_selection (dev);
   draw_graphics (dev);
   draw_cursor (dev); // the text cursor must be drawn over the graphical object
