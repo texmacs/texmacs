@@ -235,7 +235,7 @@ local i;
   printf (`\n`)
 end:
 
-tmprint := tmprint1:
+tmprint := tmprint2:
 
 unprotect (print):
 unprotect (lprint):
