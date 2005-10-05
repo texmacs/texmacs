@@ -329,6 +329,98 @@
 	  (else (cas-map make-binary x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; How to print symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-table cas-symbol-table
+  (":=" . "<assign>")
+  ("+=" . "<plusassign>")
+  ("-=" . "<minusassign>")
+  ("*=" . "<astassign>")
+  ("/=" . "<overassign>")
+  ("|-" . "<vdash>")
+  ("|=" . "<vDash>")
+  ("=>" . "<Rightarrow>")
+  ("<=>" . "<Leftrightarrow>")
+  ("|" . "<vee>")
+  ("&" . "<wedge>")
+  ("!=" . "<neq>")
+  ("<" . "<less>")
+  ("<=" . "<leqslant>")
+  (">" . "<gtr>")
+  (">=" . "<geqslant>")
+  ("+&" . "+")
+  ("*&" . "*"))
+
+(define (cas->tmsymbol x)
+  (with s (symbol->string x)
+    (cond ((string-starts? s "%")
+	   (string-append "<" (substring s 1 (string-length s)) ">"))
+	  ((ahash-ref cas-symbol-table s) => identity)
+	  (else s))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Standard groups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (cas-in-group? x g)
+  (== (math-symbol-group (cas->tmsymbol x)) g))
+
+(define (cas-assign-op? x)
+  (cas-in-group? x "arithmetic-set-symmetric"))
+
+(define (cas-meta-op? x)
+  (cas-in-group? x "logic-meta"))
+
+(define (cas-implies-op? x)
+  (cas-in-group? x "logic-implication"))
+
+(define (cas-equivalent-op? x)
+  (in? x '(<=>)))
+
+(define (cas-or-op? x)
+  (in? x '(|)))
+
+(define (cas-and-op? x)
+  (in? x '(&)))
+
+(define (cas-equal-op? x)
+  (cas-in-group x "logic-relation"))
+
+(define (cas-set-plus-op? x)
+  (cas-in-group? x "arithmetic-set-symmetric"))
+
+(define (cas-set-minus-op? x)
+  (cas-in-group? x "arithmetic-set-minus"))
+
+(define (cas-plus-op? x)
+  (cas-in-group? x "arithmetic-plus"))
+
+(define (cas-minus-op? x)
+  (cas-in-group? x "arithmetic-minus"))
+
+(define (cas-unary-minus-op? x)
+  (cas-in-group? x "arithmetic-unary-minus"))
+
+(define (cas-times-op? x)
+  (cas-in-group? x "arithmetic-times"))
+
+(define (cas-over-op? x)
+  (cas-in-group? x "arithmetic-over"))
+
+(define (cas-power-op? x)
+  (in? x '(^)))
+
+(define (cas-index-op? x)
+  (in? x '(_)))
+
+(define (cas-prefix-op? x)
+  (in? x '(!)))
+
+(define (cas-postfix-op? x)
+  (in? x '(%prime)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -430,10 +522,7 @@
 (define (cas-out-atom x)
   (cond ((null? x) "null")
 	((number? x) (number->string x))
-	((symbol? x)
-	 (with s (symbol->string x)
-	   (if (not (string-starts? s "%")) s
-	       (string-append "<" (substring s 1 (string-length s)) ">"))))
+	((symbol? x) (cas->tmsymbol x))
 	((string? x) x)
 	((func? x 'matrix) `(matrix (table ,@(map cas-out (cdr x)))))
 	((func? x 'det) `(det (table ,@(map cas-out (cdr x)))))

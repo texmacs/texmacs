@@ -21,6 +21,7 @@
 ******************************************************************************/
 
 struct math_language_rep: language_rep {
+  hashmap<string,string>            group;
   hashmap<string,text_property_rep> tpr_class;
   hashmap<string,text_property_rep> tpr_member;
   string class_name;            // current type name
@@ -42,6 +43,7 @@ struct math_language_rep: language_rep {
   text_property advance (string s, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
+  string get_group (string s);
 };
 
 /******************************************************************************
@@ -186,6 +188,7 @@ math_language_rep::get_limits (string s, int& i) {
 
 math_language_rep::math_language_rep (string name, string s):
   language_rep (name, math_enc),
+  group ("symbol"),
   tpr_class (text_property_rep ()),
   tpr_member (text_property_rep ()),
   class_name ("symbol"), class_def (true)
@@ -217,8 +220,10 @@ math_language_rep::math_language_rep (string name, string s):
 	    (class_def || (class_name != "operator-with-limits")))
 	  symbol= "<" * symbol * ">";
 	// cout << "  Member: " << symbol << "\n";
-	if ((!class_def) && (tpr_class->contains (class_name)))
+	if ((!class_def) && (tpr_class->contains (class_name))) {
+	  group (symbol)= class_name;
 	  tpr_member (symbol)= tpr_class [class_name];
+	}
 	else {
 	  cerr << "Attempt to insert " << symbol
 	       << " to class " << class_name << "\n";
@@ -315,6 +320,15 @@ math_language_rep::hyphenate (string s, int after, string& left, string& right)
 }
 
 /******************************************************************************
+* Get the group (class) of a symbol
+******************************************************************************/
+
+string
+math_language_rep::get_group (string s) {
+  return group[s];
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -325,6 +339,12 @@ math_language (string name) {
   if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
   load_string (url ("$TEXMACS_SYNTAX_PATH", fname), s, true);
   return new math_language_rep (name, s);
+}
+
+string
+math_symbol_group (string sym, string lang) {
+  language lan= math_language (lang);
+  return lan->get_group (sym);
 }
 
 string

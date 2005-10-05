@@ -35,6 +35,7 @@
   (bench-print-all bench_print (void))
   (system-wait system_wait (void string string))
   (set-bibtex-command set_bibtex_command (void string))
+  (math-symbol-group math_symbol_group (string string))
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
 
