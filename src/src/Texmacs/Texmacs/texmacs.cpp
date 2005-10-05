@@ -25,7 +25,8 @@ extern string my_init_cmds;
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
 
-extern tree   the_et;
+extern tree the_et;
+extern bool texmacs_started;
 
 /******************************************************************************
 * Real main program for encaptulation of guile
@@ -205,6 +206,7 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
+  texmacs_started= true;
   dis->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";

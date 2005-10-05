@@ -20,6 +20,7 @@
 #include "socket_link.hpp"
 
 server* the_server= NULL;
+bool texmacs_started= false;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
 string my_init_cmds= "";
@@ -62,7 +63,7 @@ texmacs_interpose_handler () {
 void
 texmacs_wait_handler (string message, string arg, int level) {
   (void) level;
-  if (the_server != NULL)
+  if (texmacs_started && the_server != NULL)
     (*the_server)->wait_handler (message, arg);
 }
 
