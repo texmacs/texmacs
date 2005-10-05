@@ -249,7 +249,7 @@
     (minusassign 0 "-\\!\\!=")
     (timesassign 0 "\times\\!\\!=")
     (overassign 0 "/\\!\\!=")
-    (udots 0 "{\\mbox{\\rotatebox[origin=c]{90}{$\\ddots$}}}")
+    (udots 0 "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}")
     (Backepsilon 0 "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
     (mho "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}")
     (Mho 0 "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
