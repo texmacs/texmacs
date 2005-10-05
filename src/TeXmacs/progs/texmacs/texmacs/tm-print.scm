@@ -55,10 +55,10 @@
 
 (define (notify-font-type var val)
   (with type
-      (cond ((in? val '("Metafont only" "Bitmap" "EC bitmap" "CM bitmap")) 0)
-	    ((in? val '("Metafont + Type 1" "EC fonts" "CM fonts")) 1)
-	    ((in? val '("Type 1 + Metafont" "Type 1" "True Type")) 2)
-	    ((in? val '("Type 1 only")) 3)
+      (cond ((== val "Metafont only") 0)
+	    ((== val "Metafont + Type 1") 1)
+	    ((== val "Type 1 + Metafont") 2)
+	    ((== val "Type 1 only") 3)
 	    (else 2))
     (set-font-type type)))
 
