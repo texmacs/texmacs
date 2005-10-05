@@ -204,6 +204,19 @@ tmg_set_bibtex_command (SCM arg1) {
 }
 
 SCM
+tmg_math_symbol_group (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-group");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= math_symbol_group (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_math_symbol_type (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "math-symbol-type");
 
@@ -2496,6 +2509,7 @@ initialize_glue_basic () {
   gh_new_procedure ("bench-print-all", (FN) tmg_bench_print_all, 0, 0, 0);
   gh_new_procedure ("system-wait", (FN) tmg_system_wait, 2, 0, 0);
   gh_new_procedure ("set-bibtex-command", (FN) tmg_set_bibtex_command, 1, 0, 0);
+  gh_new_procedure ("math-symbol-group", (FN) tmg_math_symbol_group, 1, 0, 0);
   gh_new_procedure ("math-symbol-type", (FN) tmg_math_symbol_type, 1, 0, 0);
   gh_new_procedure ("object->command", (FN) tmg_object_2command, 1, 0, 0);
   gh_new_procedure ("tree->stree", (FN) tmg_tree_2stree, 1, 0, 0);
