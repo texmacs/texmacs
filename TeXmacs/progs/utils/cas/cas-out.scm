@@ -17,7 +17,7 @@
   (:use (convert tools tmconcat) (utils cas cas-rewrite)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; How to print symbols
+;; How to print special operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-table cas-symbol-table
@@ -59,52 +59,62 @@
 	  (else s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Standard groups
+;; Standard operators groups
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (cas-in-group? x g)
-  (== (math-symbol-group (cas->tmsymbol x)) g))
+(define (tmsymbol->cas s)
+  (let* ((l1 (ahash-table->list cas-symbol-table))
+	 (l2 (map (lambda (x) (cons (cdr x) (car x))) l1))
+	 (l3 (list-filter l2 (lambda (x) (== (car x) s))))
+	 (l4 (map cdr l3)))
+    (if (string-starts? s "<")
+	(set! s (string-append "%" (substring s 1 (- (string-length s) 1)))))
+    (map string->symbol (if (in? s l4) l4 (cons s l4)))))
 
-(define (cas-assign-op? x)
-  (cas-in-group? x "arithmetic-assign"))
+(define (cas-collect-members . grs)
+  (append-map
+   (lambda (x) (append-map tmsymbol->cas (math-group-members x)))
+   grs))
 
-(define (cas-meta-op? x)
-  (cas-in-group? x "logic-meta"))
+(define-macro (cas-define-test name . grs)
+  (let* ((t (symbol-append name '-table))
+	 (p (symbol-append name '?)))
+    `(begin
+       (define ,t (list->ahash-set (cas-collect-members ,@grs)))
+       (define (,p x) (ahash-ref ,t x)))))
 
-(define (cas-implies-op? x)
-  (cas-in-group? x "logic-implication"))
+(cas-define-test cas-assign-op "arithmetric-assign")
+(cas-define-test cas-meta-op "logic-meta")
+(cas-define-test cas-implies-op "logic-implication")
+(cas-define-test cas-or-op "logic-disjunction")
+(cas-define-test cas-and-op "logic-conjunction")
+(cas-define-test cas-compare-op "logic-relation")
+(cas-define-test cas-plus-op "arithmetic-plus" "arithmetic-set-symmetric")
+(cas-define-test cas-minus-op "arithmetic-minus" "arithmetic-set-minus")
+(cas-define-test cas-unary-minus-op "arithmetic-unary-minus")
+(cas-define-test cas-times-op "arithmetic-times" "arithmetic-invisible-times")
+(cas-define-test cas-over-op "arithmetic-over" "arithmetic-condensed-over")
+(cas-define-test cas-prefix-op "logic-prefix" "arithmetic-prefix")
 
-(define (cas-or-op? x)
-  (cas-in-group? x "logic-disjunction"))
+(define cas-special-op-table
+  (ahash-table-append
+   cas-assign-op-table
+   cas-meta-op-table
+   cas-implies-op-table
+   cas-or-op-table
+   cas-and-op-table
+   cas-compare-op-table
+   cas-plus-op-table
+   cas-minus-op-table
+   cas-unary-minus-op-table
+   cas-times-op-table
+   cas-over-op-table
+   cas-prefix-op-table
+   (list->ahash-set '(%prime factorial ^ _))
+   (list->ahash-set '(matrix det row tuple list set comma))))
 
-(define (cas-and-op? x)
-  (cas-in-group? x "logic-conjunction"))
-
-(define (cas-compare-op? x)
-  (cas-in-group? x "logic-relation"))
-
-(define (cas-plus-op? x)
-  (or (cas-in-group? x "arithmetic-plus")
-      (cas-in-group? x "arithmetic-set-symmetric")))
-
-(define (cas-minus-op? x)
-  (or (cas-in-group? x "arithmetic-minus")
-      (cas-in-group? x "arithmetic-set-minus")))
-
-(define (cas-unary-minus-op? x)
-  (cas-in-group? x "arithmetic-unary-minus"))
-
-(define (cas-times-op? x)
-  (or (cas-in-group? x "arithmetic-times")
-      (cas-in-group? x "arithmetic-invisible-times")))
-
-(define (cas-over-op? x)
-  (or (cas-in-group? x "arithmetic-over")
-      (cas-in-group? x "arithmetic-condensed-over")))
-
-(define (cas-prefix-op? x)
-  (or (cas-in-group? x "logic-prefix")
-      (cas-in-group? x "arithmetic-prefix")))
+(define (cas-special-op? x)
+  (ahash-ref cas-special-op-table x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion routines
@@ -185,21 +195,6 @@
   (and (func? x '^ 2)
        (or (func? (caddr x) '/ 1)
 	   (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1)))))
-
-(define (cas-special-op? x)
-  (or (cas-assign-op? x)
-      (cas-meta-op? x)
-      (cas-implies-op? x)
-      (cas-or-op? x)
-      (cas-and-op? x)
-      (cas-compare-op? x)
-      (cas-plus-op? x)
-      (cas-minus-op? x)
-      (cas-times-op? x)
-      (cas-over-op? x)
-      (cas-prefix-op? x)
-      (in? x '(%prime factorial ^ _))
-      (in? x '(matrix det row tuple list set comma))))
 
 (define (cas-out-postfix x)
   (cond ((func? x '%prime 1)
