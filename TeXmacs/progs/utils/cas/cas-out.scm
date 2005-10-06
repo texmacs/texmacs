@@ -378,7 +378,7 @@
   (== (math-symbol-group (cas->tmsymbol x)) g))
 
 (define (cas-assign-op? x)
-  (cas-in-group? x "arithmetic-set-symmetric"))
+  (cas-in-group? x "arithmetic-assign"))
 
 (define (cas-meta-op? x)
   (cas-in-group? x "logic-meta"))
@@ -428,19 +428,19 @@
 		,(cas->tmsymbol (car x))
 		,(second (caddr x)))))
 
-(define-table cas-inv-table
-  (+ - %pm %mp)
-  (+& - %pm %mp)
-  (%oplus %ominus)
-  (* /)
-  (*& /)
-  (%otimes %oover))
+(define-table cas-related-table
+  (+ + +& - %pm %mp)
+  (+& + +& - %pm %mp)
+  (%oplus %oplus %ominus)
+  (* * *& /)
+  (*& * *& /)
+  (%otimes %otimes %oover))
 
 (define (cas-out-associative x op? this next)
   (define (r y)
     (if (and (pair? y)
-	     (or (== (car y) (car x))
-		 (in? (car y) (ahash-ref cas-inv-table (car x)))))
+	     (with l (ahash-ref cas-related-table (car x))
+	       (if l (in? (car y) l) (== (car y) (car x)))))
 	(this y) (next y)))
   (and (pair? x) (nnull? (cdr x)) (op? (car x))
        (if (list-2? x) (r (cadr x))
@@ -449,7 +449,15 @@
 		    ,(r (cons (car x) (cddr x)))))))
 
 (define (cas-out x)
-  (cas-out-implies x))
+  (cas-out-assign x))
+
+(define (cas-out-assign x)
+  (or (cas-out-infix x cas-assign-op? cas-out-meta cas-out-meta)
+      (cas-out-meta x)))
+
+(define (cas-out-meta x)
+  (or (cas-out-infix x cas-meta-op? cas-out-implies cas-out-implies)
+      (cas-out-implies x)))
 
 (define (cas-out-implies x)
   (or (cas-out-infix x cas-implies-op? cas-out-or cas-out-or)
@@ -491,7 +499,9 @@
 	   (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1)))))
 
 (define (cas-special-op? x)
-  (or (cas-implies-op? x)
+  (or (cas-assign-op? x)
+      (cas-meta-op? x)
+      (cas-implies-op? x)
       (cas-or-op? x)
       (cas-and-op? x)
       (cas-compare-op? x)
