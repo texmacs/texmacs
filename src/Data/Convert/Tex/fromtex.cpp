@@ -554,6 +554,12 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\text", 1) ||
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
+  if (is_tuple (t, "\\Mvariable", 1))
+    return compound ("Mvariable", var_m2e (t, MODE, "text"));
+  if (is_tuple (t, "\\Mfunction", 1))
+    return compound ("Mfunction", var_m2e (t, MODE, "text"));
+  if (is_tuple (t, "\\Muserfunction", 1))
+    return compound ("Muserfunction", var_m2e (t, MODE, "text"));
 
   if (is_tuple (t, "\\<sup>", 1)) {
     if (is_tuple (t[1], "\\prime", 0))
