@@ -15,6 +15,7 @@
 #include "Languages/hyphenate.hpp"
 #include "Languages/impl_language.hpp"
 #include "file.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Mathematical languages
@@ -44,6 +45,7 @@ struct math_language_rep: language_rep {
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_group (string s);
+  array<string> get_members (string s);
 };
 
 /******************************************************************************
@@ -328,6 +330,17 @@ math_language_rep::get_group (string s) {
   return group[s];
 }
 
+array<string>
+math_language_rep::get_members (string g) {
+  array<string> r;
+  iterator<string> it= iterate (group);
+  while (it->busy ()) {
+    string s= it->next ();
+    if (group[s] == g) r << s;
+  }
+  return r;
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
@@ -345,6 +358,12 @@ string
 math_symbol_group (string sym, string lang) {
   language lan= math_language (lang);
   return lan->get_group (sym);
+}
+
+array<string>
+math_group_members (string gr, string lang) {
+  language lan= math_language (lang);
+  return lan->get_members (gr);
 }
 
 string

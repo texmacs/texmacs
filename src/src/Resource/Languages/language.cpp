@@ -67,3 +67,9 @@ language_rep::get_group (string s) {
   (void) s;
   return "default";
 }
+
+array<string>
+language_rep::get_members (string s) {
+  (void) s;
+  return array<string> ();
+}
