@@ -350,13 +350,24 @@
   (">" . "<gtr>")
   (">=" . "<geqslant>")
   ("+&" . "+")
-  ("*&" . "*"))
+  ("@+" . "<oplus>")
+  ("*&" . "*")
+  ("@*" . "<otimes>")
+  ("!" . "<neg>"))
 
 (define (cas->tmsymbol x)
   (with s (symbol->string x)
     (cond ((string-starts? s "%")
 	   (string-append "<" (substring s 1 (string-length s)) ">"))
 	  ((ahash-ref cas-symbol-table s) => identity)
+	  (else s))))
+
+(define (cas->umsymbol x)
+  (with s (cas->tmsymbol x)
+    (cond ((== s "-") "<um>")
+	  ((== s "+") "<upl>")
+	  ((== s "<pm>") "<upm>")
+	  ((== s "<mp>") "<ump>")
 	  (else s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -375,128 +386,122 @@
 (define (cas-implies-op? x)
   (cas-in-group? x "logic-implication"))
 
-(define (cas-equivalent-op? x)
-  (in? x '(<=>)))
-
 (define (cas-or-op? x)
-  (in? x '(|)))
+  (cas-in-group? x "logic-disjunction"))
 
 (define (cas-and-op? x)
-  (in? x '(&)))
+  (cas-in-group? x "logic-conjunction"))
 
-(define (cas-equal-op? x)
-  (cas-in-group x "logic-relation"))
-
-(define (cas-set-plus-op? x)
-  (cas-in-group? x "arithmetic-set-symmetric"))
-
-(define (cas-set-minus-op? x)
-  (cas-in-group? x "arithmetic-set-minus"))
+(define (cas-compare-op? x)
+  (cas-in-group? x "logic-relation"))
 
 (define (cas-plus-op? x)
-  (cas-in-group? x "arithmetic-plus"))
+  (or (cas-in-group? x "arithmetic-plus")
+      (cas-in-group? x "arithmetic-set-symmetric")))
 
 (define (cas-minus-op? x)
-  (cas-in-group? x "arithmetic-minus"))
+  (or (cas-in-group? x "arithmetic-minus")
+      (cas-in-group? x "arithmetic-set-minus")))
 
 (define (cas-unary-minus-op? x)
   (cas-in-group? x "arithmetic-unary-minus"))
 
 (define (cas-times-op? x)
-  (cas-in-group? x "arithmetic-times"))
+  (or (cas-in-group? x "arithmetic-times")
+      (cas-in-group? x "arithmetic-invisible-times")))
 
 (define (cas-over-op? x)
-  (cas-in-group? x "arithmetic-over"))
-
-(define (cas-power-op? x)
-  (in? x '(^)))
-
-(define (cas-index-op? x)
-  (in? x '(_)))
+  (or (cas-in-group? x "arithmetic-over")
+      (cas-in-group? x "arithmetic-condensed-over")))
 
 (define (cas-prefix-op? x)
-  (in? x '(!)))
-
-(define (cas-postfix-op? x)
-  (in? x '(%prime)))
+  (or (cas-in-group? x "logic-prefix")
+      (cas-in-group? x "arithmetic-prefix")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (cas-out x)
-  (cas-out-formula x))
+(define (cas-out-infix x op? first second)
+  (and (list-3? x) (op? (car x))
+       `(concat ,(first (cadr x))
+		,(cas->tmsymbol (car x))
+		,(second (caddr x)))))
 
-(define (cas-out-formula x)
-  (cond ((func? x '=> 2)
-	 `(concat ,(cas-out-or (cadr x)) "<Rightarrow>"
-		  ,(cas-out-or (caddr x))))
-	((func? x '<=> 2)
-	 `(concat ,(cas-out-or (cadr x)) "<Leftrightarrow>"
-		  ,(cas-out-or (caddr x))))
-	(else (cas-out-or x))))
+(define-table cas-inv-table
+  (+ - %pm %mp)
+  (+& - %pm %mp)
+  (%oplus %ominus)
+  (* /)
+  (*& /)
+  (%otimes %oover))
+
+(define (cas-out-associative x op? this next)
+  (define (r y)
+    (if (and (pair? y)
+	     (or (== (car y) (car x))
+		 (in? (car y) (ahash-ref cas-inv-table (car x)))))
+	(this y) (next y)))
+  (and (pair? x) (nnull? (cdr x)) (op? (car x))
+       (if (list-2? x) (r (cadr x))
+	   `(concat ,(r (cadr x))
+		    ,(cas->tmsymbol (car x))
+		    ,(r (cons (car x) (cddr x)))))))
+
+(define (cas-out x)
+  (cas-out-implies x))
+
+(define (cas-out-implies x)
+  (or (cas-out-infix x cas-implies-op? cas-out-or cas-out-or)
+      (cas-out-or x)))
 
 (define (cas-out-or x)
-  (cond ((func? x '| 2)
-	 `(concat ,(cas-out-or (cadr x)) "<vee>" ,(cas-out-or (caddr x))))
-	(else (cas-out-and x))))
+  (or (cas-out-associative x cas-or-op? cas-out-or cas-out-and)
+      (cas-out-and x)))
 
 (define (cas-out-and x)
-  (cond ((func? x '& 2)
-	 `(concat ,(cas-out-and (cadr x)) "<wedge>" ,(cas-out-and (caddr x))))
-	(else (cas-out-compare x))))
+  (or (cas-out-associative x cas-and-op? cas-out-and cas-out-compare)
+      (cas-out-compare x)))
 
 (define (cas-out-compare x)
-  (cond ((func? x '= 2)
-	 `(concat ,(cas-out-plus (cadr x)) "=" ,(cas-out-plus (caddr x))))
-	((func? x '!= 2)
-	 `(concat ,(cas-out-plus (cadr x)) "<neq>" ,(cas-out-plus (caddr x))))
-	((func? x '< 2)
-	 `(concat ,(cas-out-plus (cadr x)) "<less>" ,(cas-out-plus (caddr x))))
-	((func? x '> 2)
-	 `(concat ,(cas-out-plus (cadr x)) "<gtr>" ,(cas-out-plus (caddr x))))
-	((func? x '<= 2)
-	 `(concat ,(cas-out-plus (cadr x)) "<leqslant>"
-		  ,(cas-out-plus (caddr x))))
-	((func? x '>= 2)
-	 `(concat ,(cas-out-plus (cadr x)) "<geqslant>"
-		  ,(cas-out-plus (caddr x))))
-	(else (cas-out-plus x))))
+  (or (cas-out-infix x cas-compare-op? cas-out-plus cas-out-plus)
+      (cas-out-plus x)))
 
 (define (cas-out-plus x)
-  (cond ((or (func? x '+ 2) (func? x '+& 2))
-	 `(concat ,(cas-out-plus (cadr x)) "+" ,(cas-out-plus (caddr x))))
-	((func? x '- 2)
-	 `(concat ,(cas-out-plus (cadr x)) "-" ,(cas-out-times (caddr x))))
-	(else (cas-out-times x))))
+  (or (cas-out-associative x cas-plus-op? cas-out-plus cas-out-times)
+      (cas-out-infix x cas-minus-op? cas-out-plus cas-out-times)
+      (cas-out-times x)))
 
 (define (cas-out-times x)
-  (cond ((or (func? x '*) (func? x '*&))
-	 `(concat ,(cas-out-times (cadr x)) "*" ,(cas-out-times (caddr x))))
-	((func? x '/ 1)
-	 `(frac "1" ,(cas-out (cadr x))))
-	((func? x '/ 2)
-	 `(frac ,(cas-out (cadr x)) ,(cas-out (caddr x))))
-	(else (cas-out-prefix x))))
+  (or (and (func? x '/ 1) `(frac "1" ,(cas-out (cadr x))))
+      (and (func? x '/ 2) `(frac ,(cas-out (cadr x)) ,(cas-out (caddr x))))
+      (cas-out-associative x cas-times-op? cas-out-times cas-out-prefix)
+      (cas-out-infix x cas-over-op? cas-out-times cas-out-prefix)
+      (cas-out-prefix x)))
 
 (define (cas-out-prefix x)
-  (cond ((func? x '- 1)
-	 `(concat "<um>" ,(cas-out-prefix (cadr x))))
-	((func? x '! 1)
-	 `(concat "<neg>",(cas-out-prefix (cadr x))))
-	(else (cas-out-postfix x))))
+  (or (and (list-2? x)
+	   (or (cas-minus-op? (car x)) (cas-prefix-op? (car x)))
+	   `(concat ,(cas->umsymbol (car x)) ,(cas-out-prefix (cadr x))))
+      (cas-out-postfix x)))
 
 (define (cas-is-root? x)
   (and (func? x '^ 2)
        (or (func? (caddr x) '/ 1)
 	   (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1)))))
 
-(define cas-out-special
-  '(=> <=> & |
-    = != < > <= >=
-    + +& - * *& / ^ !
-    %prime factorial _
-    matrix det row tuple list set comma))
+(define (cas-special-op? x)
+  (or (cas-implies-op? x)
+      (cas-or-op? x)
+      (cas-and-op? x)
+      (cas-compare-op? x)
+      (cas-plus-op? x)
+      (cas-minus-op? x)
+      (cas-times-op? x)
+      (cas-over-op? x)
+      (cas-prefix-op? x)
+      (in? x '(%prime factorial ^ _))
+      (in? x '(matrix det row tuple list set comma))))
 
 (define (cas-out-postfix x)
   (cond ((func? x '%prime 1)
@@ -510,7 +515,7 @@
 	((list-1? x) `(concat ,(cas-out-postfix (car x)) "()"))
 	((and (pair? x) (keyword? (car x)))
 	 (cons (keyword->symbol (car x)) (map cas-out (cdr x))))
-	((and (pair? x) (nin? (car x) cas-out-special))
+	((and (pair? x) (not (cas-special-op? (car x))))
 	 ;; FIXME: also check arities
 	 (with args (list-intersperse (map cas-out (cdr x)) ",")
 	   `(concat ,(cas-out-postfix (car x)) (left "(") ,@args (right ")"))))
