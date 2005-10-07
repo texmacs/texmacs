@@ -211,7 +211,8 @@ is_graphical (tree t) {
     is_func (t, _POINT) ||
     is_func (t, LINE) || is_func (t, CLINE) ||
     is_func (t, ARC) || is_func (t, CARC) ||
-    is_func (t, SPLINE) || is_func (t, CSPLINE);
+    is_func (t, SPLINE) || is_func (t, CSPLINE) ||
+    is_func (t, TEXT_AT);
 }
 
 void
