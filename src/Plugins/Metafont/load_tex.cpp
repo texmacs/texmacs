@@ -17,6 +17,7 @@
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_face.hpp"
 #include "timer.hpp"
+#include "data_cache.hpp"
 
 #ifdef OS_WIN32
 #include <x11/xlib.h>
@@ -63,6 +64,8 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
   }
   // cout << "Tfm " << family << osize << " -> " << family << size << "\n";
   tfm= load_tfm (u, family, osize);
+  if (size != osize)
+    cache_set ("tfm:" * family * as_string (osize), as_string (size));
   if (size == 0) {
     size= tfm->size;
     if (DEBUG_STD) cout << "TeXmacs] Design size = " << size << "\n";
@@ -121,6 +124,10 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
 
 bool
 load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
+  string var= "tfm:" * family * as_string (size);
+  if (is_cached (var))
+    if (try_tfm (family, as_int (cache_get (var)->label), size, tfm, false))
+      return true;
   if (get_font_type () >= 2 && get_setting ("MAKETFM") != "false")
     if (load_tex_tfm (family, size ,dsize, tfm, false))
       return true;
@@ -271,11 +278,11 @@ load_tex (string family, int size, int dpi, int dsize,
   if (DEBUG_VERBOSE) {
     cout << "TeXmacs] font " << family << size
          << " at " << dpi << " dpi not found\n";
-    cout << "TeXmacs] loading cmr" << size
+    cout << "TeXmacs] loading ecrm" << size
 	 << " at " << dpi << " dpi instead\n";
   }
-  if (load_tex_tfm ("cmr", size, 10, tfm) &&
-      load_tex_pk ("cmr", size, dpi, 10, tfm, pk))
+  if (load_tex_tfm ("ecrm", size, 10, tfm) &&
+      load_tex_pk ("ecrm", size, dpi, 10, tfm, pk))
     {
       bench_cumul ("load tex font");
       return;
@@ -286,8 +293,8 @@ load_tex (string family, int size, int dpi, int dsize,
     cerr << "\n\nCould not open font " << name << "\nLoading default" << LF;
     cout << "Could not load font...\nLoading default" << LF;
     XNoTexWarn();
-    if (load_tex_tfm ("cmr", 10, 10, tfm) &&
-	load_tex_pk ("cmr", 10, 600, 10, tfm, pk))
+    if (load_tex_tfm ("ecrm", 10, 10, tfm) &&
+	load_tex_pk ("ecrm", 10, 600, 10, tfm, pk))
       {
 	bench_cumul ("load tex font");
 	return;
