@@ -22,8 +22,10 @@ static hashmap<string,tree> cache_data ("?");
 
 void
 cache_set (string s, tree t) {
-  cache_data (s)= t;
-  cache_changed= true;
+  if (cache_data[s] != t) {
+    cache_data (s)= t;
+    cache_changed= true;
+  }
 }
 
 void
