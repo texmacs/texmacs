@@ -678,88 +678,82 @@ tm_char_backwards (string s, int& pos) {
 }
 
 /******************************************************************************
-* Handling escape characters
+* Quoting
 ******************************************************************************/
 
 string
-slash (string s) {
+sh_quote (string s) {
+#ifdef OS_WIN32
+  return raw_quote (s);
+#else
   int i, n= N(s);
   string r;
+  r << '"';
   for (i=0; i<n; i++)
     switch (s[i]) {
-    case '(':
-    case ')':
-    case ' ': 
-    case '\'':
-      if ((n<2) || (s[0]!='\042') || (s[n-1]!='\042')) r << "\\";
-      r << s[i];
-      break;
+    case '$':
+    case '`':
+    case '\"':
     case '\\':
       r << '\\' << s[i];
-      break;
-    case '\042':
-      if (((i==0) && (s[n-1]=='\042')) ||
-	  ((i==(n-1)) && (s[0]=='\042')))
-	r << s[i];
-      else r << "\\" << s[i];
-      break;
-    case ((char) 0):
-      r << "\\0";
-      break;
-    case '\t':
-      r << "\\t";
-      break;
-    case '\n':
-      r << "\\n";
       break;
     default:
       r << s[i];
     }
+  r << '"';
   return r;
+#endif
 }
 
 string
-unslash (string s) {
+scm_quote (string s) {
+  // R5RS compliant external string representation.
   int i, n= N(s);
   string r;
+  r << '"';
   for (i=0; i<n; i++)
-    if ((s[i]=='\\') && ((i+1)<n))
-      switch (s[++i]) {
-      case '0': r << ((char) 0); break;
-      case 'n': r << '\n'; break;
-      case 't': r << '\t'; break;
-      default: r << s[i];
-      }
-    else r << s[i];
+    switch (s[i]) {
+    case '\"':
+    case '\\':
+      r << '\\' << s[i];
+      break;
+    default:
+      r << s[i];
+    }
+  r << '"';
   return r;
 }
 
 string
-quote (string s) {
-  return "\"" * slash (s) * "\"";
-}
-
-string
-unquote (string s) {
-  if ((N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042'))
-    return unslash (s (1, N(s)-1));
-  else return s;
-  /*
-  if (N(s)<2) return "";
-  return s(1,N(s)-1);
-  */
-}
-
-string
-escape_quotes (string s) {
-  int i, n= N(s);
-  string r;
-  for (i=0; i<n; i++) {
-    if ((s[i] == '\\') || (s[i] == '\"')) r << '\\';
-    r << s[i];
+scm_unquote (string s) {
+  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"')) {
+    int i, n= N(s);
+    string r;
+    for (i=1; i<n-1; i++)
+      if (s[i] == '\\' && (s[i+1] == '\"' || s[i+1] == '\\')) r << s[++i];
+      else r << s[i];
+    return r;
   }
-  return r;
+  else return s;
 }
+
+string
+raw_quote (string s) {
+  // Mark the label of a STRING tree as representing a string and not a symbol.
+  return "\"" * s * "\"";
+}
+ 
+string
+raw_unquote (string s) {
+  // Get the string value of a STRING tree label representing a string.
+  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"'))
+    return s (1, N(s)-1);
+  else return s;
+}
+
+/******************************************************************************
+* Handling escape characters
+******************************************************************************/
 
 string
 escape_generic (string s) {

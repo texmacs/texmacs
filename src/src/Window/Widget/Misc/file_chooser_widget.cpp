@@ -62,7 +62,7 @@ file_chooser_command_rep::apply () {
     {
       string s;
       fch_wid[0]["file"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", unquote (s));
+      fch_wid << set_string ("return", scm_unquote (s));
       break;
     }
   case CHANGE_DIR:
@@ -71,7 +71,7 @@ file_chooser_command_rep::apply () {
       fch_wid[0]["directory"]["input"] << get_string ("input", dir);
       if (dir == "#f") fch_wid << set_string ("return", "#f");
       else {
-	dir= unquote (dir);
+	dir= scm_unquote (dir);
 	fch_wid << set_string ("directory", dir);
       }
       break;
@@ -86,14 +86,14 @@ file_chooser_command_rep::apply () {
     {
       string s;
       fch_wid[0]["file"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", unquote (s));
+      fch_wid << set_string ("return", scm_unquote (s));
       break;
     }
   case BUTTON_DIR_OK:
     {
       string s;
       fch_wid[0]["directory"]["input"] << get_string ("input", s);
-      fch_wid << set_string ("return", unquote (s));
+      fch_wid << set_string ("return", scm_unquote (s));
       break;
     }
   case BUTTON_CANCEL:
@@ -103,7 +103,7 @@ file_chooser_command_rep::apply () {
     {
       string sxs;
       fch_wid[0]["suffixes"]["input"] << get_string ("input", sxs);
-      fch_wid << set_string ("suffixes", unquote (sxs));
+      fch_wid << set_string ("suffixes", scm_unquote (sxs));
       break;
     }
   default:
@@ -118,7 +118,7 @@ file_chooser_command_rep::apply () {
       widget inp= fch_wid[0]["image"]["parameters"][which]["input"];
       inp << get_string ("input", s);
       if (s == "#f") fch_wid << set_string ("return", "#f");
-      else inp << set_string ("input", unquote (s));
+      else inp << set_string ("input", scm_unquote (s));
       break;
     }
   }
@@ -594,7 +594,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     if (type == "image") {
       string dir, name= ev->s;
       a[0]["directory"]["input"] << get_string ("input", dir);
-      if (name != "") name= as_string (url_system (unquote (dir), name));
+      if (name != "") name= as_string (url_system (scm_unquote (dir), name));
       a[0]["image"]["image"] << set_string ("name", name);
       array<string> ps_suffix;
       ps_suffix << ".ps" << ".eps";
@@ -629,7 +629,7 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     // surely the following can be done better:
     suffix->resize(0);
     int i=0, any=0;
-    string s= unquote (ev->s);
+    string s= scm_unquote (ev->s);
     a[0]["suffixes"]["input"] << set_string ("input", s);
     while (i<N(s)) {
       while (s[i]==' ') ++i;
@@ -645,8 +645,8 @@ file_chooser_widget_rep::handle_set_string (set_string_event ev) {
     // Force a refresh:
     string dir;
     a[0]["directory"]["input"] << get_string ("input", dir);
-    a[0]["list"]["directories"] << set_string ("directory", unquote (dir));
-    a[0]["list"]["files"] << set_string ("directory", unquote (dir));
+    a[0]["list"]["directories"] << set_string ("directory", scm_unquote (dir));
+    a[0]["list"]["files"] << set_string ("directory", scm_unquote (dir));
   }
   else attribute_widget_rep::handle_set_string (ev);
 }
@@ -659,14 +659,14 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
     if (type == "directory") {
       a[0]["directory"]["input"] << get_string ("input", name);
       if (name == "#f") { ev->s= "#f"; return; }
-      url u= url_system (unquote (dir));
-      ev->s= "(url-system " * quote (as_string (u)) * ")";
+      url u= url_system (scm_unquote (dir));
+      ev->s= "(url-system " * scm_quote (as_string (u)) * ")";
     }
     else {
       a[0]["file"]["input"] << get_string ("input", name);
       if (name == "#f") { ev->s= "#f"; return; }
-      url u= url_system (unquote (dir)) * url_system (unquote (name));
-      ev->s= "(url-system " * quote (as_string (u)) * ")";
+      url u= url_system (scm_unquote (dir)) * url_system (scm_unquote (name));
+      ev->s= "(url-system " * scm_quote (as_string (u)) * ")";
     }
     if (type == "image") {
       string hsize, vsize, cx1, cy1, cx2, cy2;

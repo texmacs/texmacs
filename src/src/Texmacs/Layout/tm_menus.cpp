@@ -25,16 +25,6 @@ tm_layout_rep::~tm_layout_rep () {}
 * Subroutines
 ******************************************************************************/
 
-static inline bool
-is_quoted (tree t) {
-  return is_atomic (t) && is_quoted (as_string (t));
-}
-
-static inline string
-unquote (tree t) {
-  return unquote (as_string (t));
-}
-
 widget
 make_menu_widget (object menu) {
   widget w= as_widget (call ("make-menu-widget", menu, true));

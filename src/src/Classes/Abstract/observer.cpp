@@ -51,7 +51,7 @@ stretched_print (tree t, bool ips, int indent) {
   int i;
   for (i=0; i<indent; i++) cout << "  ";
   if (is_atomic (t)) {
-    cout << quote (t->label);
+    cout << raw_quote (t->label);
     if (ips) cout << " -- " << obtain_ip (t);
     cout << "\n";
   }

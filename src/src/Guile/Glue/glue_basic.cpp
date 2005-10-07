@@ -849,32 +849,6 @@ tmg_string_replace (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_string_slash (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-slash");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= slash (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_string_unslash (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-unslash");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= unslash (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
 tmg_string_locase_alphaP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-locase-alpha?");
 
@@ -964,19 +938,6 @@ tmg_string_minus (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   string out= string_minus (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_escape_quotes (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-quotes");
-
-  string in1= scm_to_string (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= escape_quotes (in1);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -2567,8 +2528,6 @@ initialize_glue_basic () {
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
   gh_new_procedure ("string-replace", (FN) tmg_string_replace, 3, 0, 0);
-  gh_new_procedure ("string-slash", (FN) tmg_string_slash, 1, 0, 0);
-  gh_new_procedure ("string-unslash", (FN) tmg_string_unslash, 1, 0, 0);
   gh_new_procedure ("string-locase-alpha?", (FN) tmg_string_locase_alphaP, 1, 0, 0);
   gh_new_procedure ("upcase-first", (FN) tmg_upcase_first, 1, 0, 0);
   gh_new_procedure ("locase-first", (FN) tmg_locase_first, 1, 0, 0);
@@ -2576,7 +2535,6 @@ initialize_glue_basic () {
   gh_new_procedure ("locase-all", (FN) tmg_locase_all, 1, 0, 0);
   gh_new_procedure ("string-union", (FN) tmg_string_union, 2, 0, 0);
   gh_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
-  gh_new_procedure ("escape-quotes", (FN) tmg_escape_quotes, 1, 0, 0);
   gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
   gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);

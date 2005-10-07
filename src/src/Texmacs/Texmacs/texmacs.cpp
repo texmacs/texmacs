@@ -124,9 +124,9 @@ TeXmacs_main (int argc, char** argv) {
 	i+=2;
 	if (i<argc)
 	  my_init_cmds= my_init_cmds * " " *
-	    "(texmacs-load-buffer " * quote (argv[i-1]) *
+	    "(texmacs-load-buffer " * scm_quote (argv[i-1]) *
 	    " \"generic\" 0 #f) " *
-	    "(export-buffer " * quote (argv[i]) * ")";
+	    "(export-buffer " * scm_quote (argv[i]) * ")";
       }
       else if ((s == "-x") || (s == "-execute")) {
 	i++;

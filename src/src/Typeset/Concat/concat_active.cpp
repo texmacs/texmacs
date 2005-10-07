@@ -152,7 +152,7 @@ concater_rep::typeset_reference (tree t, path ip, int type) {
   string s= "(go-to-label \"" * key * "\")";
   if (is_func (value, TUPLE, 3)) {
     url name= url_system (value[2]->label);
-    string r= quote (as_string (relative (env->base_file_name, name)));
+    string r= scm_quote (as_string (relative (env->base_file_name, name)));
     s= "(begin (load-browse-buffer (url-system " * r * ")) " * s * ")";
   }
   if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
@@ -197,7 +197,7 @@ concater_rep::typeset_hyperlink (tree t, path ip) {
   if (href_file == "") s= "(go-to-label \"" * href_label * "\")";
   else {
     r= as_string (relative (env->base_file_name, url_unix (href_file)));
-    s= "(load-browse-buffer (url-system " * quote (r) * "))";
+    s= "(load-browse-buffer (url-system " * scm_quote (r) * "))";
     if (href_label != "")
       s= "(begin " * s * " (go-to-label \"" * href_label * "\"))";
   }

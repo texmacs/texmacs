@@ -193,10 +193,10 @@ tm_scheme_rep::choose_file (object fun, string title, string type) {
 static string
 get_prompt (scheme_tree p, int i) {
   if (is_atomic (p[i]) && is_quoted (p[i]->label))
-    return unquote (p[i]->label);
+    return scm_unquote (p[i]->label);
   else if (is_tuple (p[i]) && N(p[i])>0 &&
 	   is_atomic (p[i][0]) && is_quoted (p[i][0]->label))
-    return unquote (p[i][0]->label);
+    return scm_unquote (p[i][0]->label);
   return "Input:";
 }
 
@@ -204,7 +204,7 @@ static string
 get_type (scheme_tree p, int i) {
   if (is_tuple (p[i]) && N(p[i])>1 &&
       is_atomic (p[i][1]) && is_quoted (p[i][1]->label))
-    return unquote (p[i][1]->label);
+    return scm_unquote (p[i][1]->label);
   return "string";
 }
 
@@ -215,7 +215,7 @@ get_proposals (scheme_tree p, int i) {
     int j, n= N(p[i]);
     for (j=2; j<n; j++)
       if (is_atomic (p[i][j]) && is_quoted (p[i][j]->label))
-	a << unquote (p[i][j]->label);
+	a << scm_unquote (p[i][j]->label);
   }
   return a;
 }

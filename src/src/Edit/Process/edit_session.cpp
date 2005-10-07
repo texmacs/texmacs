@@ -628,7 +628,7 @@ edit_process_rep::session_complete_try () {
   s= s (0, pos) * s (pos + N(cursor_symbol), N(s));
   // cout << s << ", " << pos << LF;
 
-  string cmd= "(complete \"" *escape_quotes (s) *"\" " *as_string (pos)* ")";
+  string cmd= "(complete " * scm_quote (s) * " " * as_string (pos) * ")";
   tree r= connection_cmd (lan, ses, cmd);
 
   if (!is_tuple (r)) return false;
@@ -638,7 +638,7 @@ edit_process_rep::session_complete_try () {
   for (i=0; i<n; i++)
     if (is_atomic (r[i])) {
       string l= r[i]->label;
-      if (is_quoted (l)) l= unquote (l);
+      if (is_quoted (l)) l= scm_unquote (l);
       if (prefix == "") prefix= l;
       else compls << l;
     }

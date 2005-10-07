@@ -334,7 +334,7 @@ get_setting (string var, string def) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      return unquote (as_string (texmacs_settings[i][1]));
+      return scm_unquote (as_string (texmacs_settings[i][1]));
     }
   return def;
 }
@@ -344,10 +344,10 @@ set_setting (string var, string val) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      texmacs_settings[i][1]= quote (val);
+      texmacs_settings[i][1]= scm_quote (val);
       return;
     }
-  texmacs_settings << tuple (var, quote (val));
+  texmacs_settings << tuple (var, scm_quote (val));
 }
 
 /******************************************************************************

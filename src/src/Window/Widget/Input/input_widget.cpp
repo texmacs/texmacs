@@ -317,7 +317,7 @@ input_widget_rep::handle_set_string (set_string_event ev) {
 void
 input_widget_rep::handle_get_string (get_string_event ev) {
   if (ev->which == "input") {
-    if (ok) ev->s= quote (s);
+    if (ok) ev->s= scm_quote (s);
     else ev->s= "#f";
   }
   else attribute_widget_rep::handle_get_string (ev);

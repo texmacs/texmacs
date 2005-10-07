@@ -305,7 +305,7 @@
       (insert-go-to `(inactive (specific ,s "")) '(0 1 0))))
 
 (tm-define (make-include u)
-  (insert `(include ,(string-slash (url->string u)))))
+  (insert `(include ,(url->string u))))
 
 (tm-define (make-inline-image l)
   (apply make-postscript (cons* (url->string (car l)) #f (cdr l))))

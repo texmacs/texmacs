@@ -340,8 +340,8 @@ hashtree_from_dictionary (
         //cout << N(pairs[i]) << "\n" << as_string(pairs[i]) << "\n";
         reverse ? key_string = t[i][1]->label : key_string = t[i][0]->label;
         reverse ? val_string = t[i][0]->label : val_string = t[i][1]->label;
-        if (is_quoted(key_string)) key_string = unquote(key_string);
-        if (is_quoted(val_string)) val_string = unquote(val_string);
+        if (is_quoted (key_string)) key_string = scm_unquote (key_string);
+        if (is_quoted (val_string)) val_string = scm_unquote (val_string);
         //cout << "key: " << key_string << " val: " << val_string << "\n";
         if (key_escape == BIT2BIT)
           key_string = convert_escapes (key_string, false);
