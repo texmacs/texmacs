@@ -110,7 +110,7 @@ edit_replace_rep::search_upwards_in_set (tree t) {
     for (i=0; i<n; i++) {
       if (is_atomic (t[i])) {
 	string s= t[i]->label;
-	if (is_quoted (s)) s= unquote (s);
+	if (is_quoted (s)) s= raw_unquote (s);
 	if (std_contains (s)) {
 	  tree_label l= as_tree_label (s);
 	  if (is_func (st, l)) return p;

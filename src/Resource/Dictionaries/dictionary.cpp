@@ -42,8 +42,8 @@ dictionary_rep::load (url u) {
     if (is_func (t[i], TUPLE, 2) &&
 	is_atomic (t[i][0]) && is_atomic (t[i][1]))
       {
-	string l= t[i][0]->label; if (is_quoted (l)) l= unquote (l);
-	string r= t[i][1]->label; if (is_quoted (r)) r= unquote (r);
+	string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
+	string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
 	table (l)= r;
       }
 }

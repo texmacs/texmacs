@@ -51,8 +51,8 @@ compound_encoding_rep::compound_encoding_rep (string name, tree def):
       if (is_func (t[i], TUPLE, 2) &&
 	  is_atomic (t[i][0]) && is_atomic (t[i][1]))
 	{
-	  string l= unquote (t[i][0]->label);
-	  string r= unquote (t[i][1]->label);
+	  string l= scm_unquote (t[i][0]->label);
+	  string r= scm_unquote (t[i][1]->label);
 	  if ((l == r) && (N(l) == 1))
 	    fast_map[(unsigned char) l[0]]= nr;
 	  else {
