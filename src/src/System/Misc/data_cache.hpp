@@ -14,12 +14,19 @@
 #define DATA_CACHE_H
 #include "tree.hpp"
 
-void cache_set (string key, tree im);
-void cache_reset (string key);
-bool is_cached (string key);
-tree cache_get (string key);
+void cache_set (string buffer, tree key, tree im);
+void cache_reset (string buffer, tree key);
+bool is_cached (string buffer, tree key);
+tree cache_get (string buffer, tree key);
 
-void cache_save ();
-void cache_load ();
+bool do_cache_dir (string name);
+bool do_cache_stat_fail (string name);
+bool do_cache_stat (string name);
+bool do_cache_file (string name);
+
+void cache_save (string buffer);
+void cache_load (string buffer);
+void cache_memorize ();
+void cache_initialize ();
 
 #endif // defined DATA_CACHE_H

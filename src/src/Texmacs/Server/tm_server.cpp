@@ -263,7 +263,7 @@ void
 tm_server_rep::style_clear_cache () {
   style_cache=
     hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
 
   int i, j, n= N(bufs);
   for (i=0; i<n; i++) {

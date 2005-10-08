@@ -125,5 +125,7 @@ init_upgrade () {
   init_upgrade_doc (install_version);
 
   remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
+  remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+  remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
 }
