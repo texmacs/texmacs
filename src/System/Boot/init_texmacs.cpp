@@ -293,26 +293,6 @@ init_deprecated () {
       if (dir != "") set_env ("M2HOME", dir);
     }
 
-  // Check for Maxima
-  if (get_env ("TM_MAXIMA_HOME") == "") {
-    if (exists_in_path ("maxima")) {
-      string where= concretize (resolve_in_path ("maxima"));
-      string s    = var_eval_system ("grep 'MAXIMA_DIRECTORY=' " * where);
-      string dir  = s (search_forwards ("=", s) + 1, N(s));
-      if ((dir == "") &&
-	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
-	dir= "/usr/share/maxima/5.9.0";
-      if ((dir == "") && use_locate) {
-	string where= var_eval_system ("locate maxima_toc.html");
-	if (ends (where, "/doc/html/maxima_toc.html"))
-	  dir= where (0, N(where)- 25);
-	if (ends (where, "/info/maxima_toc.html"))
-	  dir= where (0, N(where)- 21);
-      }
-      if (dir != "") set_env ("TM_MAXIMA_HOME", dir);
-    }
-  }
-
   // Check for Reduce
   if (get_env ("reduce") == "")
     if (exists_in_path ("reduce")) {
