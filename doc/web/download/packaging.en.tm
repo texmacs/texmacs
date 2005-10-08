@@ -28,12 +28,15 @@
     whenever you turn of the computer. Potential users will then spend a lot
     of time on font generation...
 
+    <item>Notice that the dependency on Te<TeX> can be removed if you create
+    a dependency on the package with extra Type 1 fonts.
+
     <item>Please send us an email if you maintain a <TeXmacs> package for
     some distribution, so that we can maintain a list with distributions
     which support <TeXmacs>.
   </itemize>
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|2005|Joris van der Hoeven>
 
   <tmweb-license>
 </body>

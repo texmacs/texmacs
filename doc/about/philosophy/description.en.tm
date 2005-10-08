@@ -1,28 +1,30 @@
-<TeXmacs|1.0.5.8>
+<TeXmacs|1.0.5.9>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|A short description of GNU <TeXmacs>>
 
-  GNU <TeXmacs> is a free scientific text editor, which was both inspired by
-  <TeX> and GNU <name|Emacs>. The editor allows you to write structured
-  documents via a wysiwyg (what-you-see-is-what-you-get) and user friendly
-  interface. New styles may be created by the user. The program implements
-  high-quality typesetting algorithms and <TeX> fonts, which help you to
-  produce professionally looking documents.
+  GNU <TeXmacs> is a free wysiwyw (what you see is what you want) editing
+  platform with special features for scientists. The software aims to provide
+  a unified and user friendly framework for editing structured documents with
+  different types of content (text, graphics, mathematics, interactive
+  content, <abbr|etc.>). The rendering engine uses high-quality typesetting
+  algorithms so as to produce professionally looking documents, which can
+  either be printed out or presented from a laptop.
 
-  The high typesetting quality still goes through for automatically generated
-  formulas, which makes <TeXmacs> suitable as an interface for computer
-  algebra systems. <TeXmacs> also supports the <name|Guile>/<name|Scheme>
-  extension language, so that you may customize the interface and write your
-  own extensions to the editor.
+  The software includes a text editor with support for mathematical formulas,
+  a small technical picture editor and a tool for making presentations from a
+  laptop. Moreover, <TeXmacs> can be used as an interface for many external
+  systems for computer algebra, numerical analysis, statistics,<nbsp>etc. New
+  presentation styles can be written by the user and new features can be
+  added to the editor using the <name|Scheme> extension language. A native
+  spreadsheet and tools for collaborative authoring are planned for later.
 
-  Converters exist for <TeX>/<LaTeX>, <name|Html>/<name|MathML> and
-  <name|Xml>. In the future, <TeXmacs> is planned to evolve towards a
-  complete scientific office suite. A rudimentary technical drawing editor
-  and presentation mode are already included. A spreadsheet and tools for
-  collaborative authoring are planned for later.
+  <TeXmacs> runs on all major unix platforms and Windows. Documents can be
+  saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and printed as
+  <name|Postscript> or <name|Pdf> files. Converters exist for <TeX>/<LaTeX>
+  and <name|Html>/<name|Mathml>.
 
   GNU <TeXmacs> is hosted by the <hlink|Centre de Ressources Informatiques de
   Haute Savoie|http://www.cri74.org>, Archamps, France.
