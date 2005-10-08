@@ -16,6 +16,7 @@
 #include "hashmap.hpp"
 #include "timer.hpp"
 #include "merge_sort.hpp"
+#include "data_cache.hpp"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -41,8 +42,16 @@ load_string (url u, string& s, bool fatal) {
   if (!is_rooted_name (r)) r= resolve (r);
   bool err= !is_rooted_name (r);
   if (!err) {
-    bench_start ("load file");
     string name= concretize (r);
+
+    // File contents in cache?
+    if (is_cached ("file_cache", name)) {
+      s= cache_get ("file_cache", name) -> label;
+      return false;
+    }
+    // End caching
+
+    bench_start ("load file");
     char* _name= as_charp (name);
 #ifdef OS_WIN32
     FILE* fin= _fopen (_name, "rb");
@@ -67,37 +76,17 @@ load_string (url u, string& s, bool fatal) {
     }
     delete[] _name;
     bench_cumul ("load file");
-  }
-  if (err && fatal)
-    fatal_error (as_string (u) * " not readable", "load_string");
-  return err;
-}
 
-/*
-#include <fstream>
-bool
-load_string (url u, string& s, bool fatal) {
-  string name= concretize (u);
-  char* _name= as_charp (name);
-  bool err= !is_rooted_name (u);
-  if (!err) {
-    cout << "opening " << name << "\n";
-    ifstream fin (_name);
-    cout << "opened\n";
-    if (!fin) err= true;
-    if (!err) {
-      char c;
-      while (fin.get (c)) s << c;
-      if (!fin.eof ()) err= true;
-    }
+    // Cache file contents
+    if (!err && N(s) <= 10000)
+      if (do_cache_file (name))
+	cache_set ("file_cache", name, s);
+    // End caching
   }
-  cout << "read " << s << "\n";
   if (err && fatal)
     fatal_error (as_string (u) * " not readable", "load_string");
-  delete[] _name;
   return err;
 }
-*/
 
 bool
 save_string (url u, string s, bool fatal) {
@@ -134,9 +123,20 @@ save_string (url u, string s, bool fatal) {
 static bool
 get_attributes (url name, struct stat* buf, bool link_flag=false) {
   // cout << "Stat " << name << LF;
+  string name_s= concretize (name);
+
+  // Stat result in cache?
+  if (is_cached ("stat_cache.scm", name_s)) {
+    string r= cache_get ("stat_cache.scm", name_s) -> label;
+    if (r == "#f") return true;
+    buf->st_mode= ((unsigned int) as_int (r));
+    return false;
+  }
+  // End caching
+
   bench_start ("stat");
   bool flag;
-  char* temp= as_charp (concretize (name));
+  char* temp= as_charp (name_s);
 #ifdef OS_WIN32
   flag= _stat (temp, buf);
 #else
@@ -147,6 +147,18 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   delete[] temp;
   bench_cumul ("stat");
+
+  // Cache stat results
+  if (flag) {
+    if (do_cache_stat_fail (name_s))
+      cache_set ("stat_cache.scm", name_s, "#f");
+  }
+  else {
+    if (do_cache_stat (name_s))
+      cache_set ("stat_cache.scm", name_s, as_string ((int) buf->st_mode));
+  }
+  // End caching
+
   return flag;
 }
 
@@ -223,13 +235,33 @@ url_temp (string suffix) {
 * Reading directories
 ******************************************************************************/
 
+static array<string>
+cache_dir_get (string dir) {
+  tree t= cache_get ("dir_cache.scm", dir);
+  array<string> a (N(t));
+  for (int i=0; i<N(t); i++) a[i]= t[i]->label;
+  return a;
+}
+
+static void
+cache_dir_set (string dir, array<string> a) {
+  tree t (TUPLE, N(a));
+  for (int i=0; i<N(a); i++) t[i]= a[i];
+  cache_set ("dir_cache.scm", dir, t);
+}
+
 array<string>
 read_directory (url u, bool& error_flag) {
   // cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
+
+  // Directory contents in cache?
+  if (is_cached ("dir_cache.scm", name))
+    return cache_dir_get (name);
   bench_start ("read directory");
+  // End caching
 
   DIR* dp;
   char* temp= as_charp (name);
@@ -248,7 +280,12 @@ read_directory (url u, bool& error_flag) {
   (void) closedir (dp);
   merge_sort (dir);
 
+  // Caching of directory contents
   bench_cumul ("read directory");
+  if (do_cache_dir (name))
+    cache_dir_set (name, dir);
+  // End caching
+
   return dir;
 }
 

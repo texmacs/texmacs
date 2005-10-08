@@ -76,12 +76,11 @@ resolve_pfb (url name) {
 
 url
 resolve_tex (url name) {
-  cache_load ();
   string s= as_string (name);
-  if (is_cached (s)) {
-    url u= url_system (cache_get (s) -> label);
+  if (is_cached ("font_cache.scm", s)) {
+    url u= url_system (cache_get ("font_cache.scm", s) -> label);
     if (exists (u)) return u;
-    cache_reset (s);
+    cache_reset ("font_cache.scm", s);
   }
 
   bench_start ("resolve tex");
@@ -98,7 +97,7 @@ resolve_tex (url name) {
   if (ends (s, "pfb")) u= resolve_pfb (name);
   bench_cumul ("resolve tex");
 
-  if (!is_none (u)) cache_set (s, as_string (u));
+  if (!is_none (u)) cache_set ("font_cache.scm", s, as_string (u));
   return u;
 }
 

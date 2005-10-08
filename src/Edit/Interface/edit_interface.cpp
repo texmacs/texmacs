@@ -291,7 +291,7 @@ edit_interface_rep::apply_changes () {
 	SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
 	set_footer ();
 	if (!win->interrupted ()) drd_update ();
-	cache_save ();
+	cache_memorize ();
 	last_update= last_change;
       }
     return;

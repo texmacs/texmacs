@@ -105,7 +105,7 @@
   (let ((l (map-in-order transform options)))
     (if (guile-b?)
 	(set! l (cons `(module-use! (current-module) ,texmacs-user) l)))
-    ;;(display "loading ") (display name) (display "\n")
+    ;;(display "loading* ") (display name) (display "\n")
     `(begin
        (define-module ,name)
        ,@l)))

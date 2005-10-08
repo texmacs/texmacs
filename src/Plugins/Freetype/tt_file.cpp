@@ -91,12 +91,11 @@ tt_find_name_sub (string name, int size) {
 
 string
 tt_find_name (string name, int size) {
-  cache_load ();
   string s= "tt:" * name * as_string (size);
-  if (is_cached (s)) {
-    string r= cache_get (s) -> label;
+  if (is_cached ("font_cache.scm", s)) {
+    string r= cache_get ("font_cache.scm", s) -> label;
     if (tt_font_exists (r)) return r;
-    cache_reset (s);
+    cache_reset ("font_cache.scm", s);
   }
 
   bench_start ("tt find name");
@@ -104,6 +103,6 @@ tt_find_name (string name, int size) {
   // cout << name << size << " -> " << r << "\n";
   bench_cumul ("tt find name");
 
-  if (r != "") cache_set (s, r);
+  if (r != "") cache_set ("font_cache.scm", s, r);
   return r;
 }

@@ -65,7 +65,8 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
   // cout << "Tfm " << family << osize << " -> " << family << size << "\n";
   tfm= load_tfm (u, family, osize);
   if (size != osize)
-    cache_set ("tfm:" * family * as_string (osize), as_string (size));
+    cache_set ("font_cache.scm",
+	       "tfm:" * family * as_string (osize), as_string (size));
   if (size == 0) {
     size= tfm->size;
     if (DEBUG_STD) cout << "TeXmacs] Design size = " << size << "\n";
@@ -125,8 +126,9 @@ load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
 bool
 load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
   string var= "tfm:" * family * as_string (size);
-  if (is_cached (var))
-    if (try_tfm (family, as_int (cache_get (var)->label), size, tfm, false))
+  if (is_cached ("font_cache.scm", var))
+    if (try_tfm (family, as_int (cache_get ("font_cache.scm", var)->label),
+		 size, tfm, false))
       return true;
   if (get_font_type () >= 2 && get_setting ("MAKETFM") != "false")
     if (load_tex_tfm (family, size ,dsize, tfm, false))

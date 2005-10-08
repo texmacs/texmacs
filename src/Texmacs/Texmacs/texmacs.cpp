@@ -14,6 +14,7 @@
 #include "file.hpp"
 #include "server.hpp"
 #include "timer.hpp"
+#include "data_cache.hpp"
 
 extern bool   char_clip;
 extern bool   reverse_colors;
@@ -223,6 +224,7 @@ main (int argc, char** argv) {
   // cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
+  cache_initialize ();
   bench_start ("initialize texmacs");
   init_texmacs ();
   bench_cumul ("initialize texmacs");
