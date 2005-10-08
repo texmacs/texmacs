@@ -18,7 +18,7 @@
 ;; Output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (display* . l)
+(define-public (display* . l)
   "Display all objects in @l."
   (for-each display l))
 
