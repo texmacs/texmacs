@@ -200,8 +200,10 @@ init_heuristic_tex_paths () {
     cerr << "with the paths where the tfm resp. pk file\n";
     cerr << "can be found on your system and restart TeXmacs\n";
     cerr << HRULE;
-    fatal_error ("TeXmacs initialization failed",
-		 "init_heuristic_tex_paths", "tex_init.cpp");
+    cerr << "WARNING: fonts may not be displayed correctly\n";
+    cerr << "Either install a TeX system or make sure that\n";
+    cerr << "you installed the TeXmacs-extra-fonts package\n";
+    cerr << HRULE;
   }
 
   // Done
