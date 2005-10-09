@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Improved scheme interface (1.0.5.1--1.0.5.6)>
+  <tmdoc-title|Improved scheme interface (1.0.5.1 -- 1.0.5.6)>
 
   The <name|Scheme> interface has been further improved and stabilized. For
   those users who customized the behaviour of <TeXmacs> using a personal

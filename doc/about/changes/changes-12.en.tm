@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Improved scheme interface (1.0.5.6--1.0.5.7)>
+  <tmdoc-title|New multi-part document mechanism (1.0.5.6 -- 1.0.5.7)>
 
   Previous versions of <TeXmacs> provided the ``project'' mechanism for
   dealing with large documents like books. In the new version, any large
