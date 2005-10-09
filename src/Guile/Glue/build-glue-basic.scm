@@ -169,6 +169,7 @@
   (system-append append (void url url))
   (system-remove remove (void url))
   (system-mkdir mkdir (void url))
+  (system-search-score search_score (int url array_string))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))
