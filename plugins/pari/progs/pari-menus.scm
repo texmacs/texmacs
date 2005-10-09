@@ -14,7 +14,8 @@
 
 (texmacs-module (pari-menus)
   (:use (utils plugins plugin-cmd)
-	(doc help-funcs)))
+	(doc help-funcs)
+	(dynamic scripts-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Several subroutines for the evaluation of Pari expressions
