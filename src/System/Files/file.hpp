@@ -29,7 +29,7 @@ url  url_temp (string suffix= "");
 array<string> read_directory (url name, bool& error_flag);
 
 inline string sys_concretize (url u1) {
-  return sh_quote (concretize (u1)); }
+  return escape_sh (concretize (u1)); }
 
 inline void system (string which, url u1) {
   system (which * " " * sys_concretize (u1)); }
