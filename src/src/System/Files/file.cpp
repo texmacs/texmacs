@@ -215,6 +215,8 @@ bool
 is_newer (url which, url than) {
   struct stat which_stat;
   struct stat than_stat;
+  if (is_cached ("stat_cache.scm", concretize (which))) return false;
+  if (is_cached ("stat_cache.scm", concretize (than))) return false;
   if (get_attributes (which, &which_stat, true)) return false;
   if (get_attributes (than , &than_stat , true)) return false;
   return which_stat.st_mtime > than_stat.st_mtime;
