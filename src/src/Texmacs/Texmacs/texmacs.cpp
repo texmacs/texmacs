@@ -96,12 +96,6 @@ TeXmacs_main (int argc, char** argv) {
 	i++;
 	if (i<argc) tm_init_file= url_system (argv[i]);
       }
-      else if ((s == "-S") || (s == "-setup")) {
-	remove ("$TEXMACS_HOME_PATH/system/settings.scm");
-	remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-	remove ("$TEXMACS_HOME_PATH/fonts/font-index.scm");
-	remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
-      }
       else if ((s == "-v") || (s == "-version")) {
 	cout << "\n";
 	cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
@@ -135,6 +129,10 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
+      else if ((s == "-S") || (s == "-setup") ||
+	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
+	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
+	       (s == "-delete-doc-cache"));
       else {
 	cout << "\n";
 	cout << "Options for TeXmacs:\n\n";
@@ -219,11 +217,46 @@ TeXmacs_main (int argc, char** argv) {
 * Main program
 ******************************************************************************/
 
+void
+immediate_options (int argc, char** argv) {
+  if (get_env ("TEXMACS_HOME_PATH") == "")
+    set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
+  if (get_env ("TEXMACS_HOME_PATH") == "") return;
+  for (int i=1; i<argc; i++) {
+    string s= argv[i];
+    if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
+    if ((s == "-S") || (s == "-setup")) {
+      remove ("$TEXMACS_HOME_PATH/system/settings.scm");
+      remove ("$TEXMACS_HOME_PATH/system/setup.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+      remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
+    }
+    else if (s == "-delete-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+    else if (s == "-delete-style-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
+    else if (s == "-delete-font-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache/font_cache.scm");
+    else if (s == "-delete-doc-cache") {
+      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+    }
+    else if (s == "-delete-file-cache") {
+      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+    }
+  }
+}
+
 int
 main (int argc, char** argv) {
   // cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
+  immediate_options (argc, argv);
   cache_initialize ();
   bench_start ("initialize texmacs");
   init_texmacs ();

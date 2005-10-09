@@ -682,30 +682,6 @@ tm_char_backwards (string s, int& pos) {
 ******************************************************************************/
 
 string
-sh_quote (string s) {
-#ifdef OS_WIN32
-  return raw_quote (s);
-#else
-  int i, n= N(s);
-  string r;
-  r << '"';
-  for (i=0; i<n; i++)
-    switch (s[i]) {
-    case '$':
-    case '`':
-    case '\"':
-    case '\\':
-      r << '\\' << s[i];
-      break;
-    default:
-      r << s[i];
-    }
-  r << '"';
-  return r;
-#endif
-}
-
-string
 scm_quote (string s) {
   // R5RS compliant external string representation.
   int i, n= N(s);
@@ -754,6 +730,29 @@ raw_unquote (string s) {
 /******************************************************************************
 * Handling escape characters
 ******************************************************************************/
+
+string
+escape_sh (string s) {
+#ifdef OS_WIN32
+  return raw_quote (s);
+#else
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '$':
+    case '`':
+    case '\"':
+    case '\\':
+    case ' ':
+      r << '\\' << s[i];
+      break;
+    default:
+      r << s[i];
+    }
+  return r;
+#endif
+}
 
 string
 escape_generic (string s) {

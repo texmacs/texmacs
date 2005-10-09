@@ -51,6 +51,30 @@ Display all communicated data between TeXmacs and extern systems.
 \fB\-\-debug-all\fR
 Turn all debugging flags on.
 .TP
+\fB\-\-delete-cache\fR
+This option deletes all files in the TeXmacs cache. TeXmacs uses
+several caches for speeding up font, file, directory and style file loading.
+However, these optimizations may be incorrect when the user manually
+changes files in the TeXmacs distribution or when new fonts are added.
+This is rarely the case for normal users, but sometimes necessary
+for TeXmacs developers.
+.TP
+\fB\-\-delete-doc-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated help file loading.
+.TP
+\fB\-\-delete-file-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated file loading.
+.TP
+\fB\-\-delete-font-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated font loading.
+.TP
+\fB\-\-delete-style-cache\fR
+This option is similar to --delete-cache, but only deletes
+the cache for accelerated style file loading.
+.TP
 \fB\-fn [font]\fR, \fB\-\-font [font]\fR
 Sets the default TeX fonts for menus and so to [font].
 The [font] is of the form [name], [name][size] or [name][size]@[dpi].
