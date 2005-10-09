@@ -57,23 +57,29 @@ cache_get (string buffer, tree key) {
 ******************************************************************************/
 
 static string texmacs_path;
+static string texmacs_doc_path;
 static string texmacs_home_path;
 
 bool
 do_cache_dir (string name) {
-  return starts (name, texmacs_path);
+  return
+    starts (name, texmacs_path) ||
+    starts (name, texmacs_doc_path);
 }
 
 bool
 do_cache_stat (string name) {
   return
     starts (name, texmacs_path) ||
-    starts (name, texmacs_home_path * "/fonts");
+    starts (name, texmacs_home_path * "/fonts") ||
+    starts (name, texmacs_doc_path);
 }
 
 bool
 do_cache_stat_fail (string name) {
-  return starts (name, texmacs_path);
+  return
+    starts (name, texmacs_path) ||
+    starts (name, texmacs_doc_path);
 }
 
 bool
@@ -81,6 +87,11 @@ do_cache_file (string name) {
   return
     starts (name, texmacs_path) ||
     starts (name, texmacs_home_path * "/fonts");
+}
+
+bool
+do_cache_doc (string name) {
+  return starts (name, texmacs_doc_path);
 }
 
 /******************************************************************************
@@ -93,7 +104,7 @@ cache_save (string buffer) {
     string cache_file= texmacs_home_path * "/system/cache/" * buffer;
     string cached;
     iterator<tree> it= iterate (cache_data);
-    if (buffer == "file_cache") {
+    if (buffer == "file_cache" || buffer == "doc_cache") {
       while (it->busy ()) {
 	tree ckey= it->next ();
 	if (ckey[0] == buffer) {
@@ -125,7 +136,7 @@ cache_load (string buffer) {
     string cache_file= texmacs_home_path * "/system/cache/" * buffer;
     string cached;
     if (!load_string (cache_file, cached)) {
-      if (buffer == "file_cache") {
+      if (buffer == "file_cache" || buffer == "doc_cache") {
 	int i=0, n= N(cached);
 	while (i<n) {
 	  int start= i;
@@ -156,6 +167,7 @@ cache_load (string buffer) {
 void
 cache_memorize () {
   cache_save ("file_cache");
+  cache_save ("doc_cache");
   cache_save ("dir_cache.scm");
   cache_save ("stat_cache.scm");
   cache_save ("font_cache.scm");
@@ -167,6 +179,9 @@ cache_initialize () {
   if (get_env ("TEXMACS_HOME_PATH") == "")
     texmacs_home_path= concretize ("$HOME/.TeXmacs");
   else texmacs_home_path= concretize ("$TEXMACS_HOME_PATH");
+  if (get_env ("TEXMACS_DOC_PATH") == "")
+    texmacs_doc_path= concretize ("$TEXMACS_PATH/doc");
+  else texmacs_doc_path= concretize ("$TEXMACS_DOC_PATH");
   cache_load ("file_cache");
   cache_load ("dir_cache.scm");
   cache_load ("stat_cache.scm");
