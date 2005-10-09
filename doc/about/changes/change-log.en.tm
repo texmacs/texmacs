@@ -1,13 +1,25 @@
-<TeXmacs|1.0.5.8>
+<TeXmacs|1.0.5.9>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.9>
+  <section|Changes from version 1.0.5 to 1.0.5.10>
 
   <\itemize>
+    <item>Faster and more portable help searching (1.0.5.10).
+
+    <item>Added a plug-in for Mathematica (1.0.5.10).
+
+    <item>Use Type 1 EC fonts by default (1.0.5.10).
+
+    <item>Distribution of several font packages with Type 1 EC fonts
+    (1.0.5.10).
+
+    <item>More reliable quoting routines and related bug corrections
+    (1.0.5.10).
+
     <item>Release <with|mode|math|\<alpha\>>-version of graphical mode
     (1.0.5.9).
 
