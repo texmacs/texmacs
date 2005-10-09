@@ -21,10 +21,10 @@
   added to the editor using the <name|Scheme> extension language. A native
   spreadsheet and tools for collaborative authoring are planned for later.
 
-  <TeXmacs> runs on all major unix platforms and Windows. Documents can be
-  saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and printed as
-  <name|Postscript> or <name|Pdf> files. Converters exist for <TeX>/<LaTeX>
-  and <name|Html>/<name|Mathml>.
+  <TeXmacs> runs on all major <name|Unix> platforms and <name|Windows>.
+  Documents can be saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and
+  printed as <name|Postscript> or <name|Pdf> files. Converters exist for
+  <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
 
   GNU <TeXmacs> is hosted by the <hlink|Centre de Ressources Informatiques de
   Haute Savoie|http://www.cri74.org>, Archamps, France.
