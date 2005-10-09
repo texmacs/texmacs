@@ -290,6 +290,83 @@ read_directory (url u, bool& error_flag) {
 }
 
 /******************************************************************************
+* Searching text in the documentation
+******************************************************************************/
+
+static array<int>
+search (string what, string in) {
+  int i= 0, n= N(what);
+  array<int> matches;
+  if (n == 0) return matches;
+  while (true) {
+    int pos= search_forwards (what, i, in);
+    if (pos == -1) return matches;
+    matches << pos;
+    i= pos+1;
+  }
+}
+
+static bool
+precedes (string in, int pos, string what) {
+  return pos >= N(what) && in (pos-N(what), pos) == what;
+}
+
+static int
+compute_score (string what, string in, int pos, string suf) {
+  int score= 1;
+  if (pos > 0 && !is_iso_alpha (in [pos-1]))
+    if (pos + N(what) + 1 < N(in) && !is_iso_alpha (in [pos+N(what)]))
+      score *= 10;
+  if (suf == "tm") {
+    if (precedes (in, pos, "<")) score= 0;
+    else if (precedes (in, pos, "<\\")) score= 0;
+    else if (precedes (in, pos, "<|")) score= 0;
+    else if (precedes (in, pos, "</")) score= 0;
+    else if (precedes (in, pos, "compound|")) score= 0;
+    else if (precedes (in, pos, "<name|")) score *= 10;
+    else if (precedes (in, pos, "<tmstyle|")) score *= 10;
+    else if (precedes (in, pos, "<tmdtd|")) score *= 10;
+    else if (precedes (in, pos, "<explain-macro|")) score *= 10;
+    else if (precedes (in, pos, "<var-val|")) score *= 10;
+  }
+  else if (suf == "scm") {
+    if (precedes (in, pos, "define ")) score *= 10;
+    else if (precedes (in, pos, "define-public ")) score *= 10;
+    else if (precedes (in, pos, "define (")) score *= 10;
+    else if (precedes (in, pos, "define-public (")) score *= 10;
+    else if (precedes (in, pos, "define-macro ")) score *= 10;
+    else if (precedes (in, pos, "define-public-macro ")) score *= 10;
+    else if (precedes (in, pos, "define-macro (")) score *= 10;
+    else if (precedes (in, pos, "define-public-macro (")) score *= 10;
+  }
+  return score;
+}
+
+static int
+compute_score (string what, string in, array<int> pos, string suf) {
+  int score= 0, i= 0, n= N(pos);
+  for (i=0; i<n; i++)
+    score += compute_score (what, in, pos[i], suf);
+  return score;
+}
+
+int
+search_score (url u, array<string> a) {
+  string in, suf= suffix (u);
+  if (load_string (u, in, false)) return 0;
+  in= locase_all (in);
+  int i, score= 1, n= N(a);
+  for (i=0; i<n; i++) {
+    string what= locase_all (a[i]);
+    array<int> pos= search (what, in);
+    score *= compute_score (what, in, pos, suf);
+    if (score == 0) return 0;
+    if (score > 1000000) score= 1000000;
+  }
+  return score;
+}
+
+/******************************************************************************
 * Miscellaneous
 ******************************************************************************/
 

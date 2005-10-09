@@ -1002,8 +1002,10 @@ parse (string s, int& pos, SI*& a, int len) {
 int
 search_forwards (string s, int pos, string in) {
   int k= N(s), n= N(in);
+  if (k == 0) return pos;
+  char c= s[0];
   while (pos+k <= n) {
-    if (test (in, pos, s)) return pos;
+    if (in[pos] == c && test (in, pos, s)) return pos;
     pos++;
   }
   return -1;

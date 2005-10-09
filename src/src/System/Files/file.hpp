@@ -55,5 +55,6 @@ inline void mkdir (url dir) { system ("mkdir -p", dir); }
 #endif
 
 void ps2pdf (url u1, url u2);
+int search_score (url u, array<string> a);
 
 #endif // defined FILE_H
