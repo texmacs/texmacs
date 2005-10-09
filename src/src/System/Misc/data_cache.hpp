@@ -23,6 +23,7 @@ bool do_cache_dir (string name);
 bool do_cache_stat_fail (string name);
 bool do_cache_stat (string name);
 bool do_cache_file (string name);
+bool do_cache_doc (string name);
 
 void cache_save (string buffer);
 void cache_load (string buffer);

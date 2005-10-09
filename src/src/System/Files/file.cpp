@@ -45,8 +45,12 @@ load_string (url u, string& s, bool fatal) {
     string name= concretize (r);
 
     // File contents in cache?
-    if (is_cached ("file_cache", name)) {
-      s= cache_get ("file_cache", name) -> label;
+    bool file_flag= do_cache_file (name);
+    bool doc_flag= do_cache_doc (name);
+    string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
+    if (doc_flag) cache_load ("doc_cache");
+    if (is_cached (cache_type, name)) {
+      s= cache_get (cache_type, name) -> label;
       return false;
     }
     // End caching
@@ -79,8 +83,8 @@ load_string (url u, string& s, bool fatal) {
 
     // Cache file contents
     if (!err && N(s) <= 10000)
-      if (do_cache_file (name))
-	cache_set ("file_cache", name, s);
+      if (file_flag || doc_flag)
+	cache_set (cache_type, name, s);
     // End caching
   }
   if (err && fatal)
