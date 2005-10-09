@@ -1,0 +1,48 @@
+#!/bin/sh
+
+error() {
+    #echo -e "\002latex:\\red $1\005"
+    echo -e "$1"
+    exit 1
+}
+
+if [ ! -x "$TEXMACS_HOME_PATH/bin/tm_mathematica.bin" ]
+then
+    MATH=`type -p math`
+    if [ $? -ne 0 ]
+    then error "Mathematica seems not to be installed"
+    fi
+    MATH=`realpath $MATH`
+    if [ $? -ne 0 ]
+    then
+        MATH=`realpath.py $MATH`
+        if [ $? -ne 0 ]
+        then error "realpath seems not to be installed"
+        fi
+    fi
+    MATH=`echo "$MATH" | sed -e 's=Executables/math$=AddOns/MathLink/DeveloperKit='`
+    PLATFORM=`(cd $MATH; echo *)`
+    NUM_PLATFORMS=`echo "$PLATFORM" | wc -w`
+    if [ "$NUM_PLATFORMS" -eq 1 ]
+    then MATH="$MATH/$PLATFORM"
+    else
+        if [ -n "$MATHLINK_PLATFORM" ]
+        then
+            if [ -d "$MATH/$MATHLINK_PLATFORM" ]
+            then MATH="$MATH/$MATHLINK_PLATFORM"
+            else error "MATHLINK_PLATFORM must be one of\n$PLATFORM"
+            fi
+        else error "MathLink is installed in $MATH for the following platforms:\n\
+$PLATFORM\n\nPlease, set the environment variable MATHLINK_PLATFORM \
+to one of them and try again."
+        fi
+    fi
+    export MATHLINK_PATH="$MATH/CompilerAdditions"
+    echo "$MATHLINK_PATH" > /tmp/foo
+    (cd "$TEXMACS_PATH/plugins/mathematica"; make -f Makefile.lazy)
+fi
+
+if [ -x $TEXMACS_HOME_PATH/bin/tm_mathematica.bin ]
+then exec $TEXMACS_HOME_PATH/bin/tm_mathematica.bin
+else error "Error in Mathematica plugin installation"
+fi
