@@ -331,8 +331,10 @@ scheme_tree_to_scm (scheme_tree t) {
     if (s == "#t") return SCM_BOOL_T;
     if (s == "#f") return SCM_BOOL_F;
     if (is_int (s)) return int_to_scm (as_int (s));
-    if ((N(s)>=2) && (s[0]=='\42') && (s[N(s)-1]=='\42'))
-      return string_to_scm (s (1, N(s)-1));
+    if (is_quoted (s))
+      return string_to_scm (scm_unquote (s));
+    //if ((N(s)>=2) && (s[0]=='\42') && (s[N(s)-1]=='\42'))
+    //return string_to_scm (s (1, N(s)-1));
     return symbol_to_scm (s);
   }
   else {
@@ -355,7 +357,8 @@ scm_to_scheme_tree (SCM p) {
     return t;
   }
   if (gh_symbol_p (p)) return scm_to_symbol (p);
-  if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
+  if (scm_is_string (p)) return scm_quote (scm_to_string (p));
+  //if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
   if (SCM_INUMP (p)) return as_string (scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
   if (scm_is_tree (p)) return tree_to_scheme_tree (scm_to_tree (p));
