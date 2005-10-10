@@ -133,6 +133,14 @@ operator - (path p, path q) {
   else if (nil (p) || (p->item != q->item))
     fatal_error ("Path did not start with required path", "path::operator -");
   else return p->next - q-> next;
+  return path (); // NOT REACHED
+}
+
+path
+common (path start, path end) {
+  if (nil (start) || nil (end)) return path ();
+  if (start->item != end->item) return path ();
+  return path (start->item, common (start->next, end->next));
 }
 
 /******************************************************************************

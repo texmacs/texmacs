@@ -1,0 +1,10 @@
+
+###############################################################################
+# MODULE     : Lazy make file for the mathematica plugin
+# BY         : Andrey Grozin
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+
+$(TEXMACS_HOME_PATH)/bin/tm_mathematica.bin: src/tm_mathematica.c
+	gcc -o $(TEXMACS_HOME_PATH)/bin/tm_mathematica.bin src/tm_mathematica.c -I $(MATHLINK_PATH) -L $(MATHLINK_PATH) -lML

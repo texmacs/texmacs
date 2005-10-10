@@ -16,6 +16,7 @@
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
+#include "drd_mode.hpp"
 
 extern int script_status;
 
@@ -52,6 +53,7 @@ edit_env_rep::rewrite (tree t) {
 	expr= cons (object (r[i]), expr);
       string fun= as_string (exec (t[0]));
       expr= cons (string_to_object (fun), expr);
+      (void) eval ("(lazy-markup-modules-force)");
       if (script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
@@ -327,10 +329,22 @@ edit_env_rep::exec (tree t) {
     return exec_par_length ();
   case PAG_LENGTH:
     return exec_pag_length ();
+  case GW_LENGTH:
+    return exec_gw_length ();
+  case GH_LENGTH:
+    return exec_gh_length ();
   case TMPT_LENGTH:
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case MSEC_LENGTH:
+    return exec_msec_length ();
+  case SEC_LENGTH:
+    return exec_sec_length ();
+  case MIN_LENGTH:
+    return exec_min_length ();
+  case H_LENGTH:
+    return exec_h_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:
@@ -509,18 +523,17 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_no_border (l, true);
 	drd->freeze_no_border (l);
       }
-      if (prop == "accessible") {
-	if (val == "none") {
+      if (prop == "unaccessible" || prop == "hidden" || prop == "accessible") {
+	int prop_code= ACCESSIBLE_NEVER;
+	if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
+	if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
+	if (val == "none") prop_code= ACCESSIBLE_NEVER;
+	if (is_int (val))
+	  drd->set_accessible (l, as_int (val), prop_code);
+	else if (val == "none" || val == "all") {
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, false);
-	    drd->freeze_accessible (l, i);
-	  }
-	}
-	if (val == "all") {
-	  int i, n= drd->get_nr_indices (l);
-	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, true);
+	    drd->set_accessible (l, i, prop_code);
 	    drd->freeze_accessible (l, i);
 	  }
 	}
@@ -842,7 +855,9 @@ edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
   if (n==0) return tree (ERROR, "bad times/over");
   tree prod= exec (t[0]);
-  if (is_anylen (prod)) prod= as_tmlen (prod);
+  if (is_double (prod));
+  else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else return tree (ERROR, "bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
     else return tree (ERROR, "bad times/over");
@@ -1199,7 +1214,7 @@ edit_env_rep::exec_point (tree t) {
 
 tree
 edit_env_rep::exec_box_info (tree t) {
-  tree t1= exec (t[0]);
+  tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
     return tree (ERROR, "bad box info");

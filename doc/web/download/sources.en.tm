@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.5.10>
 
 <style|tmweb>
 
@@ -26,7 +26,7 @@
 
   <section|Download and unpack the source code>
 
-  Download the <hlink|latest version (2.5
+  Download the <hlink|latest version (3.6
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
   of the source code, or the <hlink|latest stable version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>,
@@ -40,7 +40,24 @@
   <with|font-family|tt|<merge|<TeXmacs-version-release|tgz>|-src>>, which is
   the 'installation directory'. If you do not have ftp access, then you might
   wish to <hlink|download|http://www.texmacs.org/Download/ftp/targz> from the
-  web.
+  web. You may wish to download some <hlink|additional
+  fonts|fonts.en.tm#fonts-tarball> before building.
+
+  <section|Extra fonts?>
+
+  Before compiling, you may optionally download a <hlink|tarball (5.8
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
+  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
+  <verbatim|TeXmacs> subdirectory of the installation directory using
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  Although <TeXmacs> is able to automatically generate bitmap analogues for
+  these fonts, this process may take some time at a first run. Type 1 fonts
+  are also rendered better by certain <name|Pdf> viewers and they are often
+  preferred by publishers.
 
   <section|Compile, install and run>
 
@@ -76,6 +93,10 @@
     \ \ \ \ setenv PATH /usr/local/bin:$PATH
   </code>
 
+  If you are interested by packaging <TeXmacs> for some <name|Linux> or
+  <name|Unix> distribution, then please take a look at our
+  <hlink|suggestions|packaging.en.tm>.
+
   <section|Be cool...>
 
   Please <hyper-link|let us know|../contact/contact.en.tm> if you like or
@@ -83,7 +104,7 @@
   the number of permanent users and for what applications you are interested
   in <TeXmacs>. Furthermore, we are glad to receive your suggestions and
   problems, no matter how silly they may seem to you. You may also
-  <hyper-link|suscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
+  <hyper-link|subscribe|../home/ml.en.tm> to the <verbatim|texmacs-users> or
   <verbatim|texmacs-info> mailing lists. If you really like the program, then
   please consider <hyper-link|donating|../contribute/donations.en.tm> money
   or services to us. Of course, you may also
@@ -133,15 +154,15 @@
 
     <\itemize>
       <item>You don't use a standard version of the GNU C++ compiler. We use
-      gcc-2.95.3 on a GNU/<name|Linux> system on a PC; the versions 2.95.2
-      and 1.1.* should also work, but the optimizer may be bugged in other
-      versions.
+      gcc-2.95.3 on a GNU/<name|Linux> system on a PC. More recent versions
+      (3.3.*, 3.4.*, 4.*, etc.) of <verbatim|g++> should work as well. Some
+      versions don't support optimization, in which case you should configure
+      using the <verbatim|--disable-optimize> option.
 
       <item>You are compiling <TeXmacs> on a not yet supported system. Please
       take a look at <with|font-family|tt|configure.in> in order to see
-      whether your system is supported. If not, please check that the macros
-      <with|font-family|tt|WORD_LENGTH>, <with|font-family|tt|WORD_LENGTH_INC>
-      and <with|font-family|tt|WORD_MASK> are OK for your system.
+      whether your system is supported. If not, try to add a new entry for
+      your system.
     </itemize>
 
     <item><with|font-shape|italic|You use <name|Cygwin> and you do not manage
@@ -161,29 +182,6 @@
 
     <with|font-series|bold|Solution:> modify some of the compilation options
     in configure.in.
-
-    <item><with|font-shape|italic|<TeXmacs> runs fine, but certain fonts are
-    not displayed correctly.>
-
-    <with|font-series|bold|Solution:> This problem may have several causes:
-
-    <\itemize>
-      <item>You use a recent version (\<gtr\>= 7.3) of <name|RedHat Linux> or
-      one of its clones. On such systems, the installation of Te<TeX> is
-      bugged and you need to change some permissions in order to allow font
-      generation by Metafont. As root, type
-
-      <\code>
-        chmod -R a+rw /var/lib/texmf/*
-      </code>
-
-      <item>You do not use a standard <TeX>/<LaTeX> distribution, such as
-      Te<TeX> (standard distributions come with scripts for generating fonts,
-      such as <with|font-family|tt|mktextfm> or
-      <with|font-family|tt|MakeTeXTFM>). You may either install a more
-      standard <TeX>/<LaTeX> distribution, or download some
-      <hyper-link|pregenerated fonts|fonts.en.tm>.
-    </itemize>
 
     <item>If you encounter other problems, or if our fixes don't work, then
     please <hyper-link|contact us|../contact/contact.en.tm>.

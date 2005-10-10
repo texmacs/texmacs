@@ -50,7 +50,13 @@ Class logic-implication-lim
 	Spacing=	Default, Default
 	Limits=		Always
 
-Class logic-infix
+Class logic-disjunction
+	Type=		Associative Infix
+	Precedence=	30
+	Penalty=	10
+	Spacing=	Default, Default
+
+Class logic-conjunction
 	Type=		Associative Infix
 	Precedence=	30
 	Penalty=	10
@@ -131,9 +137,9 @@ Class arithmetic-plus
 	Penalty=	30
 	Spacing=	Default, Default
 
-Class arithmetic-unary-minus
+Class arithmetic-prefix
 	Type=		Prefix
-	Precedence=	100
+	Precedence=	115
 	Penalty=	Invalid
 	Spacing=	None, None
 
@@ -237,9 +243,11 @@ Members logic-implication-lim
 	Leftarrowlim Rightarrowlim Leftrightarrowlim
 	Longleftarrowlim Longrightarrowlim Longleftrightarrowlim
 
-Members logic-infix
-	vee wedge
-	curlyvee curlywedge
+Members logic-disjunction
+	vee curlyvee
+
+Members logic-conjunction
+	wedge curlywedge
 
 Members logic-prefix
 	neg
@@ -360,9 +368,6 @@ Members arithmetic-plus
 	+ amalg oplus
 	boxplus dotplus dotamalg dotoplus
 
-Members arithmetic-unary-minus
-	um upl upm ump
-
 Members arithmetic-minus
 	- pm mp ominus
 	boxminus
@@ -380,6 +385,9 @@ Members arithmetic-over
 
 Members arithmetic-condensed-over
 	/
+
+Members arithmetic-prefix
+	um upl upm ump
 
 Members arithmetic-power
 	^

@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmpre)
-  (:export tmpre-produce))
+(texmacs-module (convert tools tmpre))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -66,7 +65,7 @@
 
 (define (tmpre-empty? x)
   (cond ((== x "") #t)
-	((not (list? x)) #f)
+	((nlist? x) #f)
 	((func? x 'label 1) #t)
 	((func? x 'concat) (list-and (map-in-order tmpre-empty? (cdr x))))
 	(else #f)))
@@ -78,7 +77,7 @@
       (tmpre-document l)))
 
 (define (tmpre l)
-  (cond ((not (list? l)) l)
+  (cond ((nlist? l) l)
 	((and (= (length l) 2)
 	      (drd-in? (car l) tmpre-theorem-env%)
 	      (func? (cadr l) 'document)
@@ -90,5 +89,5 @@
 	((func? l 'document) (cons 'document (tmpre-document (cdr l))))
 	(else (cons (car l) (map-in-order tmpre (cdr l))))))
 
-(define (tmpre-produce l)
+(tm-define (tmpre-produce l)
   (tmpre l))

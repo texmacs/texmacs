@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.1>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -14,13 +14,13 @@
   settings are ignored).
 
   You may export to <acronym|PDF> using <menu|File|Export|Pdf>. Notice that
-  you should set <menu|Edit|Preferences|Printer|Font type|True Type> if you
-  want the produced Postscript or <acronym|PDF> file to use <name|True Type>
-  fonts.<index|pdf> However, only the CM fonts admit <name|True Type>
-  versions. These CM fonts are of a slightly inferior quality to the EC
-  fonts, mainly for accented characters. Consequently, you might prefer to
-  use the EC fonts as long as you do not need a PDF file which looks nice in
-  <name|Acrobat Reader>.
+  you should set <menu|Edit|Preferences|Printer|Font type|Type 1> if you want
+  the produced Postscript or <acronym|PDF> file to use <name|Type 1>
+  fonts.<index|pdf> However, only the CM fonts admit <name|Type 1> versions.
+  These CM fonts are of a slightly inferior quality to the EC fonts, mainly
+  for accented characters. Consequently, you might prefer to use the EC fonts
+  as long as you do not need a PDF file which looks nice in <name|Acrobat
+  Reader>.
 
   When adequately configuring <TeXmacs>, the editor is guaranteed to be
   <em|wysiwyg>: the result after printing out is exactly what you see on your
@@ -45,65 +45,6 @@
 
 <\initial>
   <\collection>
-    <associate|page-even|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-left|25mm>
-    <associate|sfactor|4>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|page-right|30mm>
-    <associate|par-width|150mm>
-    <associate|page-odd|30mm>
-    <associate|page-bot|30mm>
     <associate|language|english>
-    <associate|page-reduce-top|15mm>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|idx-10|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|<uninit>|?>>
-    <associate|idx-5|<tuple|<uninit>|?>>
-    <associate|idx-6|<tuple|<uninit>|?>>
-    <associate|idx-7|<tuple|<uninit>|?>>
-    <associate|idx-8|<tuple|<uninit>|?>>
-    <associate|idx-9|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Print>|<with|font-family|<quote|ss>|Print
-      all>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Edit>|<with|font-family|<quote|ss>|Preferences>|<with|font-family|<quote|ss>|Printer>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Print>|<with|font-family|<quote|ss>|Print
-      all to file>>|<pageref|idx-3>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Export>|<with|font-family|<quote|ss>|Postscript>>|<pageref|idx-4>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Export>|<with|font-family|<quote|ss>|Pdf>>|<pageref|idx-5>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Edit>|<with|font-family|<quote|ss>|Preferences>|<with|font-family|<quote|ss>|Printer>|<with|font-family|<quote|ss>|Font
-      type>|<with|font-family|<quote|ss>|True type>>|<pageref|idx-6>>
-
-      <tuple|<tuple|pdf>|<pageref|idx-7>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Page>|<with|font-family|<quote|ss>|Type>|<with|font-family|<quote|ss>|Paper>>|<pageref|idx-8>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Page>|<with|font-family|<quote|ss>|Screen
-      layout>|<with|font-family|<quote|ss>|Margins as on
-      paper>>|<pageref|idx-9>>
-
-      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Font>|<with|font-family|<quote|ss>|Dpi>>|<pageref|idx-10>>
-    </associate>
-  </collection>
-</auxiliary>

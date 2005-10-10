@@ -39,13 +39,12 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     if (type == "press-left")
       start_drag= true;
 
-    if (start_drag && (type == "move")) {
+    if (start_drag && type == "move") {
       type2= "start-drag";
       start_drag= false;
       dragging= true;
     }
-    else
-    if (dragging && (type == "move"))
+    else if (dragging && (type == "move"))
       type2= "dragging"; 
     if (dragging && (type == "release-left"))
       type2= "end-drag";
@@ -53,11 +52,13 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     if (type == "release-left")
       dragging= start_drag= false;
     if (mouse_graphics (type2, x, y, t)) return;
+    if (!over_graphics (x, y))
+      eval ("(graphics-reset-context 'text-cursor)");
   }
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
-    if (attached () && win->check_event (DRAG_EVENT)) return;
+    if (attached () && dis->check_event (DRAG_EVENT)) return;
     mouse_drag (x, y);
   }
   if (type == "release-left") {
@@ -227,6 +228,18 @@ edit_interface_rep::get_cursor () {
     }
   }
   return copy (the_cursor ());
+}
+
+void
+edit_interface_rep::set_pointer (string name) {
+  sv->get_display()->set_pointer(name);
+}
+
+void
+edit_interface_rep::set_pointer (
+  string curs_name, string mask_name)
+{
+  sv->get_display()->set_pointer(curs_name, mask_name);
 }
 
 /******************************************************************************

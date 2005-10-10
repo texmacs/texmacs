@@ -20,6 +20,7 @@
 #include "socket_link.hpp"
 
 server* the_server= NULL;
+bool texmacs_started= false;
 url tm_init_file= url_none ();
 url my_init_file= url_none ();
 string my_init_cmds= "";
@@ -62,7 +63,7 @@ texmacs_interpose_handler () {
 void
 texmacs_wait_handler (string message, string arg, int level) {
   (void) level;
-  if (the_server != NULL)
+  if (texmacs_started && the_server != NULL)
     (*the_server)->wait_handler (message, arg);
 }
 
@@ -84,7 +85,7 @@ server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
 tm_server_rep::tm_server_rep (display dis2):
-  dis (dis2), vw (NULL), banner_nr (-1),
+  dis (dis2), vw (NULL),
   full_screen (false), full_screen_edit (false), def_sfactor (5),
   style_cache (hashmap<string,tree> (UNINIT)),
   style_drd (tree (COLLECTION))
@@ -104,33 +105,14 @@ tm_server_rep::tm_server_rep (display dis2):
   if (exists (my_init_file)) exec_file (my_init_file);
   bench_cumul ("initialize scheme");
   if (my_init_cmds != "") {
-    my_init_cmds= "(begin" * my_init_cmds * ")";
-    exec_delayed (my_init_cmds);
+    my_init_cmds= "(dialogue" * my_init_cmds * ")";
+    exec_delayed (scheme_cmd (my_init_cmds));
   }
-  style_update_menu ();
 #ifdef OS_GNU_LINUX
   return; // in order to avoid segmentation faults
 #elif defined OS_POWERPC_GNU_LINUX
   return; // in order to avoid segmentation faults
 #endif
-}
-
-void
-tm_server_rep::advance_banner () {
-  banner_nr++;
-  if (get_editor()->et != tree (DOCUMENT, "")) banner_nr=5;
-  if (banner_nr < 4) {
-    static string banner[4]= {
-      "Welcome to GNU TeXmacs",
-      "GNU TeXmacs falls under the GNU general public license",
-      "GNU TeXmacs comes without any form of legal warranty",
-      "More information about GNU TeXmacs can be found in the Help->About menu"
-    };
-    set_message (banner[banner_nr], "GNU TeXmacs " TEXMACS_VERSION);
-    dis->delayed_message (get_meta(), "banner", 2500);
-  }
-
-  else if (banner_nr == 4) set_message ("", "");
 }
 
 tm_server_rep::~tm_server_rep () {}
@@ -240,16 +222,25 @@ compute_style_menu (url u, int kind) {
   return "";
 }
 
-void
-tm_server_rep::style_update_menu () {
+object
+tm_server_rep::get_style_menu () {
   url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
-  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string sty= compute_style_menu (sty_u, 0);
+  return eval ("(menu-dynamic " * sty * ")");
+}
+
+object
+tm_server_rep::get_add_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
   string pck= compute_style_menu (pck_u, 1);
-  string rem= compute_style_menu (pck_u, 2);
-  (void) eval ("(menu-bind style-menu " * sty * ")");
-  (void) eval ("(menu-bind add-package-menu " * pck * ")");
-  (void) eval ("(menu-bind remove-package-menu " * rem * ")");
+  return eval ("(menu-dynamic " * pck * ")");
+}
+
+object
+tm_server_rep::get_remove_package_menu () {
+  url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
+  string pck= compute_style_menu (pck_u, 2);
+  return eval ("(menu-dynamic " * pck * ")");
 }
 
 /******************************************************************************
@@ -272,7 +263,7 @@ void
 tm_server_rep::style_clear_cache () {
   style_cache=
     hashmap<tree,hashmap<string,tree> > (hashmap<string,tree> (UNINIT));
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
 
   int i, j, n= N(bufs);
   for (i=0; i<n; i++) {
@@ -280,8 +271,6 @@ tm_server_rep::style_clear_cache () {
     for (j=0; j<N(buf->vws); j++)
       ((tm_view) (buf->vws[j]))->ed->init_style ();
   }
-
-  style_update_menu ();
 }
 
 void
@@ -363,13 +352,15 @@ tm_server_rep::set_right_footer (string s) {
 }
 
 void
-tm_server_rep::set_message (string left, string right) {
-  get_editor()->set_message (left, right);
+tm_server_rep::set_message (string left, string right, bool temp) {
+  if ((vw == NULL) || (vw->win == NULL)) return;
+  get_editor()->set_message (left, right, temp);
 }
 
 void
-tm_server_rep::interactive (string name, string& s, command call_back) {
-  get_meta()->interactive (name, s, call_back);
+tm_server_rep::recall_message () {
+  if ((vw == NULL) || (vw->win == NULL)) return;
+  get_editor()->recall_message ();
 }
 
 void
@@ -422,6 +413,10 @@ tm_server_rep::interpose_handler () {
     for (j=0; j<N(buf->vws); j++) {
       tm_view vw= (tm_view) buf->vws[j];
       if (vw->win != NULL) vw->ed->apply_changes ();
+    }
+    for (j=0; j<N(buf->vws); j++) {
+      tm_view vw= (tm_view) buf->vws[j];
+      if (vw->win != NULL) vw->ed->animate ();
     }
   }
 }
@@ -483,8 +478,8 @@ tm_server_rep::get_default_shrinking_factor () {
 }
 
 void
-tm_server_rep::postscript_gc (string which) {
-  dis->postscript_gc (which);
+tm_server_rep::image_gc (string which) {
+  dis->image_gc (which);
   int i,j;
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= (tm_buffer) bufs[i];
@@ -531,6 +526,7 @@ tm_server_rep::is_yes (string s) {
 void
 tm_server_rep::quit () {
   close_all_pipes ();
+  call ("quit-TeXmacs-scheme");
   exit (0);
 }
 
@@ -542,7 +538,15 @@ tree
 tm_server_rep::evaluate (string name, string session, tree expr) {
   if (name == "scheme") {
     string s= tree_to_verbatim (expr);
-    string r= object_to_string (::eval (s));
+    object x= ::eval (s);
+    if (is_tree (x) && as_bool (call ("session-scheme-trees?")))
+      return as_tree (x);
+    else if (as_bool (call ("session-scheme-math?"))) {
+      object y= call ("cas->stree", x);
+      if (as_bool (call ("tm?", y)))
+	return compound ("math", as_tree (call ("tm->tree", y)));
+    }
+    string r= object_to_string (x);
     if (r == "#<unspecified>") r= "";
     return verbatim_to_tree (r);
   }

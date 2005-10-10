@@ -19,10 +19,10 @@
 ******************************************************************************/
 
 void
-tree_to_verbatim (string& buf, tree t, bool pritty) {
+tree_to_verbatim (string& buf, tree t, bool pretty) {
   if (is_atomic (t)) {
     string s= tm_decode (t->label);
-    if (pritty) {
+    if (pretty) {
       int i, i0=0, j, n=N(s), l, k=N(buf);
       for (l=0; l<k; l++)
 	if (buf[k-1-l] == '\n') break;
@@ -45,19 +45,24 @@ tree_to_verbatim (string& buf, tree t, bool pritty) {
     for (i=0; i<n; i++)
       if (std_drd->is_accessible_child (t, i)) {
 	if (is_document (t) && (i>0)) {
+#ifdef OS_WIN32
 	  buf << "\n";
-	  if (pritty) buf << "\n";
+	  if (pretty) buf << "\n";
+#else
+	  buf << "\r\n";
+	  if (pretty) buf << "\r\n";
+#endif
 	}
-	tree_to_verbatim (buf, t[i], pritty);
+	tree_to_verbatim (buf, t[i], pretty);
       }
   }
 }
 
 string
-tree_to_verbatim (tree t, bool pritty) {
+tree_to_verbatim (tree t, bool pretty) {
   if (!is_snippet (t)) t= extract (t, "body");
   string buf;
-  tree_to_verbatim (buf, t, pritty);
+  tree_to_verbatim (buf, t, pretty);
   return buf;
 }
 
@@ -70,14 +75,17 @@ un_special (string s) {
   int i, j;
   string r;
   for (i=0, j=0; i<N(s); i++, j++)
-    if (s[i]=='\t') {
+    if (s[i] == '\t') {
       do {
 	r << " "; j++;
       } while ((j&7) != 0);
       j--;
     }
-    else if ((s[i]=='\b') && (N(r)>0) && (r[N(r)-1]!='\n'))
+    else if ((s[i] == '\b') && (N(r)>0) && (r[N(r)-1]!='\n'))
       r->resize (N(r)-1);
+#ifdef OS_WIN32
+    else if (s[i] == '\r');
+#endif
     else r << s[i];
   return r;
 }

@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tools tmlength-regtest)
-  (:use (convert tools tmlength))
-  (:export regtest-tmlength))
+  (:use (convert tools tmlength)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Regtest routines for tmlength
@@ -32,7 +31,7 @@
     (test "negative length" "-1in" '(-1 in))
     (test "negative^2 length" "--2fns" '(2 fns))))
 
-(define (regtest-tmlength)
+(tm-define (regtest-tmlength)
   (let ((n (+ (regtest-string->tmlength))))
     (display* "Total: " (number->string n) "tests.\n")
     (display "Test suite of tmlength: ok\n")))
