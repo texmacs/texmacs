@@ -20,7 +20,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-preamble)
-  (:use (convert latex latex-drd) (convert latex texout)))
+  (:use (convert latex latex-drd)
+	(convert latex texout)
+	(convert latex latex-extend-drd)))	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of all extra commands
@@ -373,72 +375,6 @@
   ("ukrainian"
    "\\usepackage[cp1251]{inputenc}\n\\usepackage[ukrainian]{babel}"))
 
-(define tmtex-preamble-iso-latin
-  "\\catcode`\\à=\\active \\defà{\\`a} \\catcode`\\À=\\active \\defÀ{\\`A}
-\\catcode`\\á=\\active \\defá{\\'a} \\catcode`\\Á=\\active \\defÁ{\\'A}
-\\catcode`\\ä=\\active \\defä{\\\"a} \\catcode`\\Ä=\\active \\defÄ{\\\"A}
-\\catcode`\\â=\\active \\defâ{\\^a} \\catcode`\\Â=\\active \\defÂ{\\^A}
-\\catcode`\\å=\\active \\defå{{\\aa}} \\catcode`\\Å=\\active \\defÅ{{\\AA}}
-\\catcode`\\ç=\\active \\defç{\\c{c}} \\catcode`\\Ç=\\active \\defÇ{\\c{C}}
-\\catcode`\\è=\\active \\defè{\\`e} \\catcode`\\È=\\active \\defÈ{\\`E}
-\\catcode`\\é=\\active \\defé{\\'e} \\catcode`\\É=\\active \\defÉ{\\'E}
-\\catcode`\\ë=\\active \\defë{\\\"e} \\catcode`\\Ë=\\active \\defË{\\\"E}
-\\catcode`\\ê=\\active \\defê{\\^e} \\catcode`\\Ê=\\active \\defÊ{\\^E}
-\\catcode`\\ì=\\active \\defì{\\`{\\i}} \\catcode`\\Ì=\\active \\defÌ{\\`{\\I}}
-\\catcode`\\í=\\active \\defí{\\'{\\i}} \\catcode`\\Í=\\active \\defÍ{\\'{\\I}}
-\\catcode`\\ï=\\active \\defï{\\\"{\\i}} \\catcode`\\Ï=\\active \\defÏ{\\\"{\\I}}
-\\catcode`\\î=\\active \\defî{\\^{\\i}} \\catcode`\\Î=\\active \\defÎ{\\^{\\I}}
-\\catcode`\\ò=\\active \\defò{\\`o} \\catcode`\\Ò=\\active \\defÒ{\\`O}
-\\catcode`\\ó=\\active \\defó{\\'o} \\catcode`\\Ó=\\active \\defÓ{\\'O}
-\\catcode`\\ö=\\active \\defö{\\\"o} \\catcode`\\Ö=\\active \\defÖ{\\\"O}
-\\catcode`\\ô=\\active \\defô{\\^o} \\catcode`\\Ô=\\active \\defÔ{\\^O}
-\\catcode`\\ù=\\active \\defù{\\`u} \\catcode`\\Ù=\\active \\defÙ{\\`U}
-\\catcode`\\ú=\\active \\defú{\\'u} \\catcode`\\Ú=\\active \\defÚ{\\'U}
-\\catcode`\\ü=\\active \\defü{\\\"u} \\catcode`\\Ü=\\active \\defÜ{\\\"U}
-\\catcode`\\û=\\active \\defû{\\^u} \\catcode`\\Û=\\active \\defÛ{\\^U}
-\\catcode`\\ý=\\active \\defý{\\'y} \\catcode`\\Ý=\\active \\defÝ{\\'Y}
-\\catcode`\\ÿ=\\active \\defÿ{\\\"y} \\catcode`\\˜=\\active \\def˜{\\\"Y}
-\\catcode`\\½=\\active \\def½{!`}
-\\catcode`\\¾=\\active \\def¾{?`}
-\\catcode`\\ß=\\active \\defß{{\\ss}}
-")
-
-(define tmtex-preamble-cyrillic
-  "\\catcode`\\À=\\active \\defÀ{\\CYRA} \\catcode`\\à=\\active \\defà{\\cyra}
-\\catcode`\\Á=\\active \\defÁ{\\CYRB} \\catcode`\\á=\\active \\defá{\\cyrb}
-\\catcode`\\Â=\\active \\defÂ{\\CYRV} \\catcode`\\â=\\active \\defâ{\\cyrv}
-\\catcode`\\Ã=\\active \\defÃ{\\CYRG} \\catcode`\\ã=\\active \\defã{\\cyrg}
-\\catcode`\\Ä=\\active \\defÄ{\\CYRD} \\catcode`\\ä=\\active \\defä{\\cyrd}
-\\catcode`\\Å=\\active \\defÅ{\\CYRE} \\catcode`\\å=\\active \\defå{\\cyre}
-\\catcode`\\Æ=\\active \\defÆ{\\CYRZH} \\catcode`\\æ=\\active \\defæ{\\cyrzh}
-\\catcode`\\Ç=\\active \\defÇ{\\CYRZ} \\catcode`\\ç=\\active \\defç{\\cyrz}
-\\catcode`\\È=\\active \\defÈ{\\CYRI} \\catcode`\\è=\\active \\defè{\\cyri}
-\\catcode`\\É=\\active \\defÉ{\\CYRISHRT} \\catcode`\\é=\\active \\defé{\\cyrishrt}
-\\catcode`\\Ê=\\active \\defÊ{\\CYRK} \\catcode`\\ê=\\active \\defê{\\cyrk}
-\\catcode`\\Ë=\\active \\defË{\\CYRL} \\catcode`\\ë=\\active \\defë{\\cyrl}
-\\catcode`\\Ì=\\active \\defÌ{\\CYRM} \\catcode`\\ì=\\active \\defì{\\cyrm}
-\\catcode`\\Í=\\active \\defÍ{\\CYRN} \\catcode`\\í=\\active \\defí{\\cyrn}
-\\catcode`\\Î=\\active \\defÎ{\\CYRO} \\catcode`\\î=\\active \\defî{\\cyro}
-\\catcode`\\Ï=\\active \\defÏ{\\CYRP} \\catcode`\\ï=\\active \\defï{\\cyrp}
-\\catcode`\\Ð=\\active \\defÐ{\\CYRR} \\catcode`\\ð=\\active \\defð{\\cyrr}
-\\catcode`\\Ñ=\\active \\defÑ{\\CYRS} \\catcode`\\ñ=\\active \\defñ{\\cyrs}
-\\catcode`\\Ò=\\active \\defÒ{\\CYRT} \\catcode`\\ò=\\active \\defò{\\cyrt}
-\\catcode`\\Ó=\\active \\defÓ{\\CYRU} \\catcode`\\ó=\\active \\defó{\\cyru}
-\\catcode`\\Ô=\\active \\defÔ{\\CYRF} \\catcode`\\ô=\\active \\defô{\\cyrf}
-\\catcode`\\Õ=\\active \\defÕ{\\CYRH} \\catcode`\\õ=\\active \\defõ{\\cyrh}
-\\catcode`\\Ö=\\active \\defÖ{\\CYRC} \\catcode`\\ö=\\active \\defö{\\cyrc}
-\\catcode`\\×=\\active \\def×{\\CYRCH} \\catcode`\\÷=\\active \\def÷{\\cyrch}
-\\catcode`\\Ø=\\active \\defØ{\\CYRSH} \\catcode`\\ø=\\active \\defø{\\cyrsh}
-\\catcode`\\Ù=\\active \\defÙ{\\CYRSHCH} \\catcode`\\ù=\\active \\defù{\\cyrshch}
-\\catcode`\\Ú=\\active \\defÚ{\\CYRHRDSN} \\catcode`\\ú=\\active \\defú{\\cyrhrdsn}
-\\catcode`\\Û=\\active \\defÛ{\\CYRERY} \\catcode`\\û=\\active \\defû{\\cyrery}
-\\catcode`\\Ü=\\active \\defÜ{\\CYRSFTSN} \\catcode`\\ü=\\active \\defü{\\cyrsftsn}
-\\catcode`\\Ý=\\active \\defÝ{\\CYREREV} \\catcode`\\ý=\\active \\defý{\\cyrerev}
-\\catcode`\\Þ=\\active \\defÞ{\\CYRYU} \\catcode`\\þ=\\active \\defþ{\\cyryu}
-\\catcode`\\ß=\\active \\defß{\\CYRYA} \\catcode`\\ÿ=\\active \\defÿ{\\cyrya}
-\\catcode`\\œ=\\active \\defœ{\\CYRYO} \\catcode`\\¼=\\active \\def¼{\\cyryo}
-")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -561,16 +497,12 @@
   (set! tmtex-preamble-result "")
   (set! tmtex-preamble-hichar-flag #f)
   (tmtex-preamble-page-type init)
-  (if (drd-ref tmtex-preamble-language% lan)
+  (if (drd-ref tmtex-preamble-language-def% lan)
       (set! tmtex-preamble-result
-	    (string-append (drd-ref tmtex-preamble-language% lan) "\n")))
+	    (string-append (drd-ref tmtex-preamble-language-def% lan) "\n")))
   (tmtex-preamble-build-sub text)
-  (if tmtex-preamble-hichar-flag
-      (let ((extra (if (in? lan '("bulgarian" "russian" "ukrainian"))
-		       tmtex-preamble-cyrillic
-		       tmtex-preamble-iso-latin)))
-	(set! tmtex-preamble-result
-	      (string-append extra tmtex-preamble-result))))
+  (set! tmtex-preamble-result
+	(string-append (latex-catcode-defs text) tmtex-preamble-result))
   (values
     (tmtex-preamble-make-package-list 
       (sort

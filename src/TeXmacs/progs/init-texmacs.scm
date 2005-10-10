@@ -14,6 +14,9 @@
 
 (define boot-start (texmacs-time))
 
+;; TODO: scheme file caching using (set! primitive-load ...) and
+;; (set! %search-load-path)
+
 ;(display "Booting TeXmacs kernel functionality\n")
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm"))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)

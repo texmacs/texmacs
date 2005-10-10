@@ -1,0 +1,177 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : latex-extend-drd.scm
+;; DESCRIPTION : TeXmacs extensions to LaTeX
+;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; This software falls under the GNU general public license and comes WITHOUT
+;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+;; If you don't have this file, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (convert latex latex-extend-drd))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Catcodes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(drd-table iso-latin-catcodes%
+  ("à" "\\`a")
+  ("À" "\\`A")
+  ("á" "\\'a")
+  ("Á" "\\'A")
+  ("ä" "\\\"a")
+  ("Ä" "\\\"A")
+  ("â" "\\^a")
+  ("Â" "\\^A")
+  ("å" "{\\aa}")
+  ("Å" "{\\AA}")
+  ("ç" "\\c{c}")
+  ("Ç" "\\c{C}")
+  ("è" "\\`e")
+  ("È" "\\`E")
+  ("é" "\\'e")
+  ("É" "\\'E")
+  ("ë" "\\\"e")
+  ("Ë" "\\\"E")
+  ("ê" "\\^e")
+  ("Ê" "\\^E")
+  ("ì" "\\`{\\i}")
+  ("Ì" "\\`{\\I}")
+  ("í" "\\'{\\i}")
+  ("Í" "\\'{\\I}")
+  ("ï" "\\\"{\\i}")
+  ("Ï" "\\\"{\\I}")
+  ("î" "\\^{\\i}")
+  ("Î" "\\^{\\I}")
+  ("ò" "\\`o")
+  ("Ò" "\\`O")
+  ("ó" "\\'o")
+  ("Ó" "\\'O")
+  ("ö" "\\\"o")
+  ("Ö" "\\\"O")
+  ("ô" "\\^o")
+  ("Ô" "\\^O")
+  ("ù" "\\`u")
+  ("Ù" "\\`U")
+  ("ú" "\\'u")
+  ("Ú" "\\'U")
+  ("ü" "\\\"u")
+  ("Ü" "\\\"U")
+  ("û" "\\^u")
+  ("Û" "\\^U")
+  ("ý" "\\'y")
+  ("Ý" "\\'Y")
+  ("ÿ" "\\\"y")
+  ("˜" "\\\"Y")
+  ("½" "!`")
+  ("¾" "?`")
+  ("ß" "{\\ss}"))
+
+(drd-table cyrillic-catcodes%
+  ("À" "\\CYRA")
+  ("à" "\\cyra")
+  ("Á" "\\CYRB")
+  ("á" "\\cyrb")
+  ("Â" "\\CYRV")
+  ("â" "\\cyrv")
+  ("Ã" "\\CYRG")
+  ("ã" "\\cyrg")
+  ("Ä" "\\CYRD")
+  ("ä" "\\cyrd")
+  ("Å" "\\CYRE")
+  ("å" "\\cyre")
+  ("Æ" "\\CYRZH")
+  ("æ" "\\cyrzh")
+  ("Ç" "\\CYRZ")
+  ("ç" "\\cyrz")
+  ("È" "\\CYRI")
+  ("è" "\\cyri")
+  ("É" "\\CYRISHRT")
+  ("é" "\\cyrishrt")
+  ("Ê" "\\CYRK")
+  ("ê" "\\cyrk")
+  ("Ë" "\\CYRL")
+  ("ë" "\\cyrl")
+  ("Ì" "\\CYRM")
+  ("ì" "\\cyrm")
+  ("Í" "\\CYRN")
+  ("í" "\\cyrn")
+  ("Î" "\\CYRO")
+  ("î" "\\cyro")
+  ("Ï" "\\CYRP")
+  ("ï" "\\cyrp")
+  ("Ð" "\\CYRR")
+  ("ð" "\\cyrr")
+  ("Ñ" "\\CYRS")
+  ("ñ" "\\cyrs")
+  ("Ò" "\\CYRT")
+  ("ò" "\\cyrt")
+  ("Ó" "\\CYRU")
+  ("ó" "\\cyru")
+  ("Ô" "\\CYRF")
+  ("ô" "\\cyrf")
+  ("Õ" "\\CYRH")
+  ("õ" "\\cyrh")
+  ("Ö" "\\CYRC")
+  ("ö" "\\cyrc")
+  ("×" "\\CYRCH")
+  ("÷" "\\cyrch")
+  ("Ø" "\\CYRSH")
+  ("ø" "\\cyrsh")
+  ("Ù" "\\CYRSHCH")
+  ("ù" "\\cyrshch")
+  ("Ú" "\\CYRHRDSN")
+  ("ú" "\\cyrhrdsn")
+  ("Û" "\\CYRERY")
+  ("û" "\\cyrery")
+  ("Ü" "\\CYRSFTSN")
+  ("ü" "\\cyrsftsn")
+  ("Ý" "\\CYREREV")
+  ("ý" "\\cyrerev")
+  ("Þ" "\\CYRYU")
+  ("þ" "\\cyryu")
+  ("ß" "\\CYRYA")
+  ("ÿ" "\\cyrya")
+  ("œ" "\\CYRYO")
+  ("¼" "\\cyryo"))
+
+(define latex-cyrillic-catcode? #f)
+
+(tm-define (latex-set-catcode-language lan)
+  (set! latex-cyrillic-catcode?
+	(in? lan '("bulgarian" "russian" "ukrainian"))))
+
+(tm-define (latex-catcode c)
+  (with s (list->string (list c))
+    (or (if latex-cyrillic-catcode?
+	    (drd-ref cyrillic-catcodes% s)
+	    (drd-ref iso-latin-catcodes% s))
+	s)))
+
+(define latex-catcode-table (make-ahash-table))
+
+(define (latex-catcode-defs-char c)
+  (let* ((s (list->string (list c)))
+	 (r (latex-catcode c)))
+    (if (!= r s) (ahash-set! latex-catcode-table s r))))
+
+(define (latex-catcode-defs-sub doc)
+  (cond ((string? doc) (for-each latex-catcode-defs-char (string->list doc)))
+	((list? doc) (for-each latex-catcode-defs-sub doc))))
+
+(define (latex-catcode-def key im)
+  (string-append "\\catcode`\\" key "=\\active \\def" key "{" im "}\n"))
+
+(tm-define (latex-catcode-defs doc)
+  (set! latex-catcode-table (make-ahash-table))
+  (latex-catcode-defs-sub doc)
+  (let* ((l1 (ahash-table->list latex-catcode-table))
+	 (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
+	 (l3 (map (lambda (x) (latex-catcode-def (car x) (cdr x))) l2)))
+    (apply string-append l3)))

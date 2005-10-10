@@ -156,7 +156,9 @@
 	    (toggle ("Keep unrecognized styles and packages"
 		     "texmacs->latex:faithful-style"))
 	    (toggle ("Export bibliographies as links"
-		     "texmacs->latex:indirect-bib"))))
+		     "texmacs->latex:indirect-bib"))
+	    (toggle ("Use catcodes"
+		     "texmacs->latex:use-catcodes"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
 	  ("Prompt on scripts" "prompt on scripts")
