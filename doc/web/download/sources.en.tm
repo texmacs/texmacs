@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.5.10>
 
 <style|tmweb>
 
@@ -26,7 +26,7 @@
 
   <section|Download and unpack the source code>
 
-  Download the <hlink|latest version (2.5
+  Download the <hlink|latest version (3.6
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
   of the source code, or the <hlink|latest stable version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>,
