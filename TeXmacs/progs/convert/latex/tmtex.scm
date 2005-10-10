@@ -17,7 +17,8 @@
 	(convert tools old-tmtable)
 	(convert rewrite tmtm-eqns)
 	(convert rewrite tmtm-brackets)
-	(convert latex texout)))
+	(convert latex texout)
+	(convert latex latex-extend-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
@@ -27,6 +28,7 @@
 (define tmtex-appendices? #f)
 (define tmtex-faithful-style? #f)
 (define tmtex-indirect-bib? #f)
+(define tmtex-use-catcodes? #t)
 
 (tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
@@ -34,6 +36,8 @@
 	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
   (set! tmtex-indirect-bib?
 	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
+  (set! tmtex-use-catcodes?
+	(== (assoc-ref opts "texmacs->latex:use-catcodes") "on"))
   (set! tmtex-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -232,6 +236,7 @@
 	      ((== c #\26) (tmtex-text-sub "---" l))
 	      ((== c #\337) (tmtex-text-sub "SS" l))
 	      ((== c #\377) (tmtex-text-sub "ß" l))
+	      ((not tmtex-use-catcodes?) (tmtex-text-sub (latex-catcode c) l))
 	      (else (cons c (tmtex-text-list (cdr l))))))))
 
 (define (tmtex-math-operator l)
@@ -304,8 +309,8 @@
 (define (tmtex-string s)
   (let* ((l (string->list s))
 	 (t (if (tmtex-math-mode?)
-            (tmtex-math-list l)
-            (tmtex-text-list l)))
+		(tmtex-math-list l)
+		(tmtex-text-list l)))
 	 (r (tmtex-string-produce t)))
     (tex-concat r)))
 
@@ -1267,6 +1272,7 @@
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
+	(latex-set-catcode-language lan)
 	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
