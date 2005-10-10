@@ -1,9 +1,9 @@
 
 ###############################################################################
 # MODULE     : Make file for the mathematica plugin
-# BY         : Joris van der Hoeven
-# COPYRIGHT  : This software falls under the GNU general public license;
-#              see the file 'LICENSE', which is provided with this package.
+# COPYRIGHT : (C) 2005 Joris van der Hoeven
+# LICENCE   : This software falls under the GNU general public license;
+#             see the file 'LICENSE', which is provided with this package.
 ###############################################################################
 
 CC = gcc
