@@ -12,16 +12,16 @@ then
     if [ $? -ne 0 ]
     then error "Mathematica seems not to be installed"
     fi
-    MATH=`realpath $MATH`
+    MATH=`realpath "$MATH"`
     if [ $? -ne 0 ]
     then
-        MATH=`realpath.py $MATH`
+        MATH=`realpath.py "$MATH"`
         if [ $? -ne 0 ]
         then error "realpath seems not to be installed"
         fi
     fi
     MATH=`echo "$MATH" | sed -e 's=Executables/math$=AddOns/MathLink/DeveloperKit='`
-    PLATFORM=`(cd $MATH; echo *)`
+    PLATFORM=`(cd "$MATH"; echo *)`
     NUM_PLATFORMS=`echo "$PLATFORM" | wc -w`
     if [ "$NUM_PLATFORMS" -eq 1 ]
     then MATH="$MATH/$PLATFORM"
@@ -38,7 +38,6 @@ to one of them and try again."
         fi
     fi
     export MATHLINK_PATH="$MATH/CompilerAdditions"
-    echo "$MATHLINK_PATH" > /tmp/foo
     (cd "$TEXMACS_PATH/plugins/mathematica"; make -f Makefile.lazy)
 fi
 
