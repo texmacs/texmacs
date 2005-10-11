@@ -29,6 +29,7 @@
 (define tmtex-faithful-style? #f)
 (define tmtex-indirect-bib? #f)
 (define tmtex-use-catcodes? #t)
+(define tmtex-use-macros? #f)
 
 (tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
@@ -38,6 +39,8 @@
 	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-use-catcodes?
 	(== (assoc-ref opts "texmacs->latex:use-catcodes") "on"))
+  (set! tmtex-use-macros?
+	(== (assoc-ref opts "texmacs->latex:use-macros") "on"))
   (set! tmtex-env (make-ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1272,9 +1275,12 @@
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
-	(latex-set-catcode-language lan)
+	(latex-set-language lan)
 	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
 	(tmtex-initialize opts)
-	(tmtex (tmpre-produce x3)))))
+	(with r (tmtex (tmpre-produce x3))
+	  (if (not tmtex-use-macros?)
+	      (set! r (latex-expand-macros r)))
+	  r))))
