@@ -126,176 +126,10 @@
     (problem ,(newexercise "problem" "Problem"))
     (proof ,(newproof "proof" "Proof"))
     (proof* ,(newproof* "proof*"))
+
     (tmfloat ,(newtmfloat))
-    (dueto 1 "\\textup{\\textbf{(#1) }}")
-
-    ;; TeXmacs structural markup
-    (TeXmacs 0 "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
-    (madebyTeXmacs 0
-     ,(string-append
-       "\\footnote{"
-       (translate "This text has been produced using" "english" lan)
-       " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
-       (translate "see" "english" lan)
-       " {\\tt http://www.texmacs.org}).}"))
-    (withTeXmacstext 0
-     ,(string-append
-       (translate "This text has been produced using" "english" lan)
-       " GNU T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}} ("
-       (translate "see" "english" lan)
-       " {\\tt http://www.texmacs.org})"))
-    (tmhlink 2 "{\\color{blue} #1}")
-    (tmaction 2 "{\\color{blue} #1}")
-    (tmmathbf 1 "\\ensuremath{\\boldsymbol{#1}}")
-    (tmop 1 "\\ensuremath{\\operatorname{#1}}")
-    (tmbsl 0 "\\ensuremath{\\backslash}")
-    (tmstrong 1 "\\textbf{#1}")
-    (tmem 1 "{\\em #1\\/}")
-    (tmtt 1 "\\texttt{#1}")
-    (tmname 1 "\\textsc{#1}")
-    (tmsamp 1 "\\textsf{#1}")
-    (tmabbr 1 "#1")
-    (tmdfn 1 "\\textbf{#1}")
-    (tmkbd 1 "\\texttt{#1}")
-    (tmvar 1 "\\texttt{#1}")
-    (tmacronym 1 "\\textsc{#1}")
-    (tmperson 1 "\\textsc{#1}")
-    (tmdummy 0 "$\\mbox{}$")
-    (tmscript 1 "\\text{\\scriptsize $#1$}")
     (tmparmod ,(par-mods))
-    (color ,(color))
-
-    ;; other extra markup
-    (scheme 0 "{\\sc Scheme}")
-    (tmdef 1 "#1")
-    (tmref 3 "#1")
-    (tmat 0 "\\symbol{\"40}")
-    (tmunsc 0 "\\_")
-    (emdash 0 "---")
-    (pari 0 "{\\sc Pari}")
-    (op 1 "#1")
-    (email 1 "{{\\em Email}: {\\tt #1}}")
-    (homepage 1 "{{\\em Web}: {\\tt #1}}")
-    (keywords 1
-      ,(string-append
-	"{{\\bf "
-	(translate "Keywords: " "english" lan)
-	"}#1}"))
-    (AMSclass 1
-      ,(string-append
-	"{{\\bf "
-	(translate "A.M.S. subject classification: " "english" lan)
-	"}#1}"))
-    (subindex 2 "\\index{#1!#2}")
-    (subsubindex 3 "\\index{#1!#2!#3}")
-    (subsubsubindex 4 "\\index{#1!#2!#3!#4}")
-
-    ;; arrows with limits
-    (leftarrowlim 0 "\\mathop{\\leftarrow}\\limits")
-    (rightarrowlim 0 "\\mathop{\\rightarrow}\\limits")
-    (leftrightarrowlim 0 "\\mathop{\\leftrightarrow}\\limits")
-    (mapstolim 0 "\\mathop{\\mapsto}\\limits")
-    (longleftarrowlim 0 "\\mathop{\\longleftarrow}\\limits")
-    (longrightarrowlim 0 "\\mathop{\\longrightarrow}\\limits")
-    (longleftrightarrowlim 0 "\\mathop{\\longleftrightarrow}\\limits")
-    (longmapstolim 0 "\\mathop{\\longmapsto}\\limits")
-    (equallim 0 "\\mathop{=}\\limits")
-    (longequallim 0 "\\mathop{\\longequal}\\limits")
-    (Leftarrowlim 0 "\\mathop{\\leftarrow}\\limits")
-    (Rightarrowlim 0 "\\mathop{\\rightarrow}\\limits")
-    (Leftrightarrowlim 0 "\\mathop{\\leftrightarrow}\\limits")
-    (Longleftarrowlim 0 "\\mathop{\\longleftarrow}\\limits")
-    (Longrightarrowlim 0 "\\mathop{\\longrightarrow}\\limits")
-    (Longleftrightarrowlim 0 "\\mathop{\\longleftrightarrow}\\limits")
-   
-    ;; asymptotic relations by Joris
-    (nasymp 0 "\\not\\asymp")
-    (asympasymp 0 "\\asymp\\!\\!\\!-")
-    (nasympasymp 0 "\\not\\asymp\\!\\!\\!-")
-    (simsim 0 "\\approx\\!\\!\\!-")
-    (nsimsim 0 "\\not\\approx\\!\\!\\!-")
-    (npreccurlyeq 0 "\\not\\preccurlyeq")
-    (precprec 0 "\\prec\\!\\!\\!\\prec")
-    (precpreceq 0 "\\preceq\\!\\!\\!\\preceq")
-    (precprecprec 0 "\\prec\\!\\!\\!\\prec\\!\\!\\!\\prec")
-    (precprecpreceq 0 "\\preceq\\!\\!\\!\\preceq\\!\\!\\!\\preceq")
-    (succsucc 0 "\\succ\\!\\!\\!\\succ")
-    (succsucceq 0 "\\succeq\\!\\!\\!\\succeq")
-    (succsuccsucc 0 "\\succ\\!\\!\\!\\succ\\!\\!\\!\\succ")
-    (succsuccsucceq 0 "\\succeq\\!\\!\\!\\succeq\\!\\!\\!\\succeq")
-
-    ;; other extra symbols
-    (bigintwl 0 "\\int")
-    (bigointwl 0 "\\oint")
-    (bignone 0 "")
-    (asterisk 0 "*")
-    (nonesep 0 "")
-    (nin 0 "\\not\\in")
-    (nequiv 0 "\\not\\equiv")
-    (dotamalg 0 "\\mathaccent95{\\amalg}")
-    (dottimes 0 "\\mathaccent95{\\times}")
-    (dotoplus 0 "\\mathaccent95{\\oplus}")
-    (dototimes 0 "\\mathaccent95{\\otimes}")
-    (longequal 0 "{=\\!\\!=}")
-    (longhookrightarrow 0 "{\\lhook\\joinrel\\relbar\\joinrel\\rightarrow}")
-    (longhookleftarrow 0 "{\\leftarrow\\joinrel\\relbar\\joinrel\\rhook}")
-    (triangleup 0 "\\triangle")
-    (precdot 0 "{\\prec\\hspace{-0.6em}\\cdot}\\;\\,")
-    (preceqdot 0 "{\\preccurlyeq\\hspace{-0.6em}\\cdot}\\;\\,")
-    (Iota 0 "\\mathrm{I}")
-    (Tau 0 "\\mathrm{T}")
-    (join 0 "\\Join")
-    (um 0 "-")
-    (assign 0 ":=")
-    (plusassign 0 "+\\!\\!=")
-    (minusassign 0 "-\\!\\!=")
-    (timesassign 0 "\times\\!\\!=")
-    (overassign 0 "/\\!\\!=")
-    (udots 0 "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}")
-    (Backepsilon 0 "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
-    (mho "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}")
-    (Mho 0 "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
-    (mathd 0 "\\mathrm{d}")
-    (mathe 0 "\\mathrm{e}")
-    (mathi 0 "\\mathrm{i}")
-    (mathpi 0 "\\pi")
-    (Alpha 0 "\\mathrm{A}")
-    (Beta 0 "\\mathrm{B}")
-    (Epsilon 0 "\\mathrm{E}")
-    (Eta 0 "\\mathrm{H}")
-    (Iota 0 "\\mathrm{I}")
-    (Kappa 0 "\\mathrm{K}")
-    (Mu 0 "\\mathrm{M}")
-    (Nu 0 "\\mathrm{N}")
-    (Omicron 0 "\\mathrm{O}")
-    (Chi 0 "\\mathrm{X}")
-    (Rho 0 "\\mathrm{P}")
-    (Tau 0 "\\mathrm{T}")
-    (Zeta 0 "\\mathrm{Z}")
-    (lleq 0 "\\leq\\negmedspace\\negmedspace\\leq")
-    (llleq 0 "\\leq\\negmedspace\\negmedspace\\leq\\negmedspace\\negmedspace\\leq")
-    (ggeq 0 "\\geq\\negmedspace\\negmedspace\\geq")
-    (gggeq 0 "\\geq\\negmedspace\\negmedspace\\geq\\negmedspace\\negmedspace\\geq")
-
-    ;; deprecated
-    (key 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}#1}")
-    (skey 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}shift-#1}")
-    (ckey 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}ctrl-#1}")
-    (akey 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}alt-#1}")
-    (mkey 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}meta-#1}")
-    (hkey 1 "\\fbox{\\rule[-2pt]{0pt}{9pt}hyper-#1}")
-    (eqnumber 0 ,(string-append "\\hfill(\\theequation"
-				"\\addtocounter{equation}{-1}"
-				"\\refstepcounter{equation}"
-				"\\addtocounter{equation}{1})"))
-    (leqnumber 0 ,(string-append "(\\theequation"
-				 "\\addtocounter{equation}{-1}"
-				 "\\refstepcounter{equation}"
-				 "\\addtocounter{equation}{1})\\hfill"))
-    (reqnumber 0 ,(string-append "\\hfill(\\theequation"
-				 "\\addtocounter{equation}{-1}"
-				 "\\refstepcounter{equation}"
-				 "\\addtocounter{equation}{1})"))))
+    (color ,(color))))
 
 (define (tmtex-preamble-def style lan)
   (define (tmsection s inside)
@@ -501,6 +335,8 @@
       (set! tmtex-preamble-result
 	    (string-append (drd-ref tmtex-preamble-language-def% lan) "\n")))
   (tmtex-preamble-build-sub text)
+  (set! tmtex-preamble-result
+	(string-append tmtex-preamble-result (latex-macro-defs text)))
   (set! tmtex-preamble-result
 	(string-append (latex-catcode-defs text) tmtex-preamble-result))
   (values

@@ -64,4 +64,5 @@
   (:function-with-options texmacs->latex)
   (:option "texmacs->latex:faithful-style" "off")
   (:option "texmacs->latex:indirect-bib" "off")
-  (:option "texmacs->latex:use-catcodes" "on"))
+  (:option "texmacs->latex:use-catcodes" "on")
+  (:option "texmacs->latex:use-macros" "on"))

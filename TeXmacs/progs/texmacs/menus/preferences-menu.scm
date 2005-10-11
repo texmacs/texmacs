@@ -147,18 +147,18 @@
 	(enum ("Shrinking factor" "shrinking factor")
 	      "1" "2" "3" "4" "5" "7" "10" *))
     (-> "Converters"
-	(-> "Html"
-	    (group "TeXmacs -> Html")
+	(-> "TeXmacs -> Html"
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
 	    (toggle ("Use MathML" "texmacs->html:mathml")))
-	(-> "LaTeX"
-	    (group "TeXmacs -> LaTeX")
+	(-> "TeXmacs -> LaTeX"
 	    (toggle ("Keep unrecognized styles and packages"
 		     "texmacs->latex:faithful-style"))
 	    (toggle ("Export bibliographies as links"
 		     "texmacs->latex:indirect-bib"))
 	    (toggle ("Use catcodes"
-		     "texmacs->latex:use-catcodes"))))
+		     "texmacs->latex:use-catcodes"))
+	    (toggle ("Use TeXmacs macros"
+		     "texmacs->latex:use-macros"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
 	  ("Prompt on scripts" "prompt on scripts")
