@@ -40,20 +40,6 @@
   (define (newenumerate s item)
     (string-append "\\newenvironment{" s "}"
 		   "{\\begin{enumerate}[" item "]}{\\end{enumerate}}"))
-  (define (newtheorem s text)
-    (string-append "\\newtheorem{" s "}{" (translate text "english" lan) "}"))
-  (define (newremark s text)
-    (string-append "\\newtheorem{var" s "}{"
-		   (translate text "english" lan) "}\n"
-		   "\\newenvironment{" s "}{\\begin{var" s
-		   "}\\em}{\\em\\end{var" s "}}"))
-  (define (newexercise s text)
-    (string-append "\\newcounter{" s "nr}\n"
-		   "\\setcounter{" s "nr}{0}\n"
-		   "\\newenvironment{" s "}{\\medskip\n\n"
-		   "  \\refstepcounter{" s "nr}\\small\n"
-		   "  {\\bf\\noindent " (translate text "english" lan)
-		   "~\\arabic{" s "nr}\\ }}{\\normalsize}"))
   (define (newproof s text)
     (string-append "\\newenvironment{" s "}{\n"
 		   "  \\noindent\\textbf{"
@@ -63,23 +49,6 @@
     (string-append "\\newenvironment{" s "}[1]{\n"
 		   "  \\noindent\\textbf{#1\\ }}{\\hspace*{\\fill}\n"
 		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
-  (define (newtmfloat)
-    (string-append
-      "\\newcommand{\\tmfloatcontents}{}\n"
-      "\\newlength{\\tmfloatwidth}\n"
-      "\\newcommand{\\tmfloat}[5]{\n"
-      "  \\renewcommand{\\tmfloatcontents}{#4}\n"
-      "  \\setlength{\\tmfloatwidth}{\\widthof{\\tmfloatcontents}+1in}\n"
-      "  \\ifthenelse{\\equal{#2}{small}}\n"
-      "    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
-      "      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
-      "    {\\setlength{\\tmfloatwidth}{\\linewidth}}"
-      "  \\begin{minipage}[#1]{\\tmfloatwidth}\n"
-      "    \\begin{center}\n"
-      "      \\tmfloatcontents\n"
-      "      \\captionof{#3}{#5}\n"
-      "    \\end{center}\n"
-      "  \\end{minipage}}"))
   (define (par-mods)
     (string-append
       "\\newenvironment{tmparmod}[3]{%\n"
@@ -93,12 +62,6 @@
       " \\setlength{\\parsep}{\\parskip}%\n"
       " }%\n"
       "\\item[]}{\\end{list}}\n"))
-  (define (color)
-    (string-append
-      "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
-      "\\definecolor{orange}{rgb}{1.0,0.5,0.5}\n"
-      "\\definecolor{brown}{rgb}{0.5,0.25,0.0}\n"
-      "\\definecolor{pink}{rgb}{1.0,0.5,0.5}"))
   `(;; itemize and enumerate environments
     (itemizeminus ,(newitemize "itemizeminus" "$-$"))
     (itemizedot ,(newitemize "itemizedot" "$\\bullet$"))
@@ -109,27 +72,10 @@
     (enumeratealpha ,(newenumerate "enumeratealpha" "a{\\textup{)}}"))
     (enumeratealphacap ,(newenumerate "enumeratealphacap" "A."))
 
-    ;; theorems
-    (theorem ,(newtheorem "theorem" "Theorem"))
-    (proposition ,(newtheorem "proposition" "Proposition"))
-    (lemma ,(newtheorem "lemma" "Lemma"))
-    (corollary ,(newtheorem "corollary" "Corollary"))
-    (axiom ,(newtheorem "axiom" "Axiom"))
-    (definition ,(newtheorem "definition" "Definition"))
-    (notation ,(newtheorem "notation" "Notation"))
-    (remark ,(newremark "remark" "Remark"))
-    (note ,(newremark "note" "Note"))
-    (example ,(newremark "example" "Example"))
-    (convention ,(newremark "convention" "Convention"))
-    (warning ,(newremark "warning" "Warning"))
-    (exercise ,(newexercise "exercise" "Exercise"))
-    (problem ,(newexercise "problem" "Problem"))
     (proof ,(newproof "proof" "Proof"))
     (proof* ,(newproof* "proof*"))
-
-    (tmfloat ,(newtmfloat))
     (tmparmod ,(par-mods))
-    (color ,(color))))
+    ))
 
 (define (tmtex-preamble-def style lan)
   (define (tmsection s inside)

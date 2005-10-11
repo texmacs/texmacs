@@ -183,7 +183,7 @@
     (apply string-append l3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra symbols defined by TeXmacs
+;; Extra TeXmacs symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table latex-texmacs-symbol%
@@ -279,7 +279,7 @@
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Macro expansion and definitions
+;; Extra TeXmacs macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table latex-texmacs-nullary%
@@ -346,6 +346,131 @@
   ((latex-texmacs-arity% 'x 4) (latex-texmacs-tetrary% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra TeXmacs environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(drd-table latex-texmacs-environment%
+  (proof*
+   (!concat* "\\noindent"
+	     (textbf (!concat* 1 "\\ "))
+	     ---
+	     "\\hspace*{\\fill}\\begin{math}\\Box\\end{math}\\medskip"))
+  (proof*
+   (!concat* "\\noindent"
+	     (textbf (!concat* (!translate "Proof") "\\ "))
+	     ---
+	     "\\hspace*{\\fill}\\begin{math}\\Box\\end{math}\\medskip"))
+  (tmparmod
+   (!concat* "\\begin{list}{}{%\n"
+	     "\\setlength{\\topsep}{0pt}%\n"
+	     "\\setlength{\\leftmargin}{" 1 "}%\n"
+	     "\\setlength{\\rightmargin}{" 2 "}%\n"
+	     "\\setlength{\\parindent}{" 3 "}%\n"
+	     "\\setlength{\\listparindent}{\\parindent}%\n"
+	     "\\setlength{\\itemindent}{\\parindent}%\n"
+	     "\\setlength{\\parsep}{\\parskip}%\n"
+	     "}%\n"
+	     "\\item[]"
+	     ---
+	     "\\end{list}")))
+
+(drd-table latex-texmacs-env-arity%
+  (proof 0)
+  (proof* 1)
+  (tmparmod 3))
+
+(define-macro (latex-texmacs-itemize env lab)
+  `(begin
+     (drd-table latex-texmacs-environment%
+       (,env
+	(!concat* "\\begin{itemize}"
+		  "\\renewcommand{\\labelitemi}{" ,lab "}"
+		  "\\renewcommand{\\labelitemii}{" ,lab "}"
+		  "\\renewcommand{\\labelitemiii}{" ,lab "}"
+		  "\\renewcommand{\\labelitemiv}{" ,lab "}"
+		  ---
+		  "\\end{itemize}")))
+     (drd-table latex-texmacs-env-arity% (,env 0))))
+
+(define-macro (latex-texmacs-enumerate env lab)
+  `(begin
+     (drd-table latex-texmacs-environment%
+       (,env
+	(!concat* "\\begin{enumerate}[" ,lab "]"
+		  ---
+		  "\\end{itemize}")))
+     (drd-table latex-texmacs-env-arity% (,env 0))))
+
+(latex-texmacs-itemize 'itemizeminus "$-$")
+(latex-texmacs-itemize 'itemizedot "$\\bullet$")
+(latex-texmacs-itemize 'itemizearrow "$\\rightarrow$")
+(latex-texmacs-enumerate 'enumeratenumeric "1.")
+(latex-texmacs-enumerate 'enumerateroman "i.")
+(latex-texmacs-enumerate 'enumerateromancap "I.")
+(latex-texmacs-enumerate 'enumeratealpha "a{\\textup{)}}")
+(latex-texmacs-enumerate 'enumeratealphacap "A.")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra preamble definitions which are needed to export certain macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(drd-table latex-texmacs-preamble%
+  (color
+   (!concat*
+    "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
+    "\\definecolor{orange}{rgb}{1.0,0.5,0.5}\n"
+    "\\definecolor{brown}{rgb}{0.5,0.25,0.0}\n"
+    "\\definecolor{pink}{rgb}{1.0,0.5,0.5}\n"))
+  (tmfloat
+   (!concat*
+    "\\newcommand{\\tmfloatcontents}{}\n"
+    "\\newlength{\\tmfloatwidth}\n"
+    "\\newcommand{\\tmfloat}[5]{\n"
+    "  \\renewcommand{\\tmfloatcontents}{#4}\n"
+    "  \\setlength{\\tmfloatwidth}{\\widthof{\\tmfloatcontents}+1in}\n"
+    "  \\ifthenelse{\\equal{#2}{small}}\n"
+    "    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
+    "      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
+    "    {\\setlength{\\tmfloatwidth}{\\linewidth}}"
+    "  \\begin{minipage}[#1]{\\tmfloatwidth}\n"
+    "    \\begin{center}\n"
+    "      \\tmfloatcontents\n"
+    "      \\captionof{#3}{#5}\n"
+    "    \\end{center}\n"
+    "  \\end{minipage}}")))
+
+(define-macro (latex-texmacs-theorem prim name)
+  `(drd-table latex-texmacs-env-preamble%
+     (,prim (!concat* "\\newtheorem{" ,prim "}{" (!translate ,name) "}\n"))))
+
+(define-macro (latex-texmacs-remark prim name)
+  `(drd-table latex-texmacs-env-preamble%
+     (,prim (!concat* "{" (!recurse (theorembodyfont "\\rmfamily"))
+		      "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+
+(define-macro (latex-texmacs-exercise prim name)
+  `(drd-table latex-texmacs-env-preamble%
+     (,prim (!concat* "{" (!recurse (theorembodyfont "\\rmfamily\\small"))
+		      "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+
+(latex-texmacs-theorem "theorem" "Theorem")
+(latex-texmacs-theorem "proposition" "Proposition")
+(latex-texmacs-theorem "lemma" "Lemma")
+(latex-texmacs-theorem "corollary" "Corollary")
+(latex-texmacs-theorem "lemma" "Lemma")
+(latex-texmacs-theorem "axiom" "Axiom")
+(latex-texmacs-theorem "lemma" "Lemma")
+(latex-texmacs-theorem "definition" "Definition")
+(latex-texmacs-theorem "notation" "Notation")
+(latex-texmacs-remark "remark" "Remark")
+(latex-texmacs-remark "note" "Note")
+(latex-texmacs-remark "example" "Example")
+(latex-texmacs-remark "convention" "Convention")
+(latex-texmacs-remark "warning" "Warning")
+(latex-texmacs-exercise "exercise" "Exercise")
+(latex-texmacs-exercise "problem" "Problem")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -387,6 +512,7 @@
 	    (cons head tail)))))
 
 (define latex-macro-table (make-ahash-table))
+(define latex-preamble "")
 
 (define (latex-macro-defs-sub t)
   (when (pair? t)
@@ -395,7 +521,13 @@
 	   (arity (drd-ref latex-texmacs-arity% (car t))))
       (when (and body (== (length t) (+ arity 1)))
 	(ahash-set! latex-macro-table (car t) (list arity body))
-	(latex-macro-defs-sub body)))))
+	(latex-macro-defs-sub body)))
+    (with body (or (drd-ref latex-texmacs-preamble% (car t))
+		   (and (func? (car t) '!begin 1)
+			(drd-ref latex-texmacs-env-preamble% (cadar t))))
+      (when body
+	(with s (serialize-latex (latex-expand-def body))
+	  (set! latex-preamble (string-append latex-preamble s)))))))
 
 (define (latex-expand-def t)
   (cond ((number? t) (string-append "#" (number->string t)))
@@ -406,7 +538,6 @@
 
 (define (latex-macro-def l)
   (with (name arity body) l
-    (display* name ", " arity ", " body "\n")
     (set! body (serialize-latex (latex-expand-def body)))
     (set! body (string-replace body "\n" " "))
     (string-append "\\newcommand{\\" (symbol->string name) "}"
@@ -419,8 +550,9 @@
 
 (tm-define (latex-macro-defs t)
   (set! latex-macro-table (make-ahash-table))
+  (set! latex-preamble "")
   (latex-macro-defs-sub t)
   (let* ((l1 (ahash-table->list latex-macro-table))
 	 (l2 (list-sort l1 (lambda (x y) (symbol<=? (car x) (car y)))))
 	 (l3 (map latex-macro-def l2)))
-    (apply string-append l3)))
+    (apply string-append (cons latex-preamble l3))))
