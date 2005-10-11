@@ -326,6 +326,14 @@
   (mathfrak "amssymb")
   (mathbb "amssymb")
   
+  ;;(theorembodyfont "theorem")
+  (remark "theorem")
+  (note "theorem")
+  (example "theorem")
+  (convention "theorem")
+  (warning "theorem")
+  (exercise "theorem")
+  (problem "theorem")
   (proof "amssymb")
   (proof* "amssymb")
 
