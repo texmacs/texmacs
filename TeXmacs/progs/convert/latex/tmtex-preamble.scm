@@ -28,55 +28,6 @@
 ;; Definition of all extra commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-preamble-def-sub style lan)
-  (define (newitemize s item)
-    (string-append "\\newenvironment{" s "}\n"
-		   "  {\\begin{itemize}"
-		   "\\renewcommand{\\labelitemi}{" item "}"
-		   "\\renewcommand{\\labelitemii}{" item "}"
-		   "\\renewcommand{\\labelitemiii}{" item "}"
-		   "\\renewcommand{\\labelitemiv}{" item "}"
-		   "}{\\end{itemize}}"))
-  (define (newenumerate s item)
-    (string-append "\\newenvironment{" s "}"
-		   "{\\begin{enumerate}[" item "]}{\\end{enumerate}}"))
-  (define (newproof s text)
-    (string-append "\\newenvironment{" s "}{\n"
-		   "  \\noindent\\textbf{"
-		   (translate text "english" lan) "}\\ }{\\hspace*{\\fill}\n"
-		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
-  (define (newproof* s)
-    (string-append "\\newenvironment{" s "}[1]{\n"
-		   "  \\noindent\\textbf{#1\\ }}{\\hspace*{\\fill}\n"
-		   "  \\begin{math}\\Box\\end{math}\\medskip}"))
-  (define (par-mods)
-    (string-append
-      "\\newenvironment{tmparmod}[3]{%\n"
-      " \\begin{list}{}{%\n"
-      " \\setlength{\\topsep}{0pt}%\n"
-      " \\setlength{\\leftmargin}{#1}%\n"
-      " \\setlength{\\rightmargin}{#2}%\n"
-      " \\setlength{\\parindent}{#3}%\n"
-      " \\setlength{\\listparindent}{\\parindent}%\n"
-      " \\setlength{\\itemindent}{\\parindent}%\n"
-      " \\setlength{\\parsep}{\\parskip}%\n"
-      " }%\n"
-      "\\item[]}{\\end{list}}\n"))
-  `(;; itemize and enumerate environments
-    (itemizeminus ,(newitemize "itemizeminus" "$-$"))
-    (itemizedot ,(newitemize "itemizedot" "$\\bullet$"))
-    (itemizearrow ,(newitemize "itemizearrow" "$\\rightarrow$"))
-    (enumeratenumeric ,(newenumerate "enumeratenumeric" "1."))
-    (enumerateroman ,(newenumerate "enumerateroman" "i."))
-    (enumerateromancap ,(newenumerate "enumerateromancap" "I."))
-    (enumeratealpha ,(newenumerate "enumeratealpha" "a{\\textup{)}}"))
-    (enumeratealphacap ,(newenumerate "enumeratealphacap" "A."))
-
-    (proof ,(newproof "proof" "Proof"))
-    (proof* ,(newproof* "proof*"))
-    (tmparmod ,(par-mods))
-    ))
-
 (define (tmtex-preamble-def style lan)
   (define (tmsection s inside)
     (string-append "\\newcommand{\\" s "}[1]{"
@@ -87,7 +38,7 @@
     (string-append "\\newcommand{\\" s "}[1]{\\smallskip\n\n"
 		   "\\noindent\\textbf{" inside "} }"))
 
-  (let ((l (tmtex-preamble-def-sub style lan)))
+  (let ((l '()))
     (define tex-preamble-letter-article-extra
       `((chapter ,(tmsection "chapter"
 			     "\\begin{center}\\huge #1\\end{center}"))))
@@ -259,6 +210,8 @@
 	    (tmtex-preamble-test-insert (string->symbol (cadr x))))
 	(if (and (in? x '(!sub !sup)) (texout-contains-table? (cadr l)))
 	    (tmtex-preamble-test-insert 'tmscript))
+	(if (match? x '(!begin "enumerate" (!option :1)))
+	    (ahash-set! tmtex-preamble-uses "enumerate" #t))
 	(for-each tmtex-preamble-build-sub (cdr l)))
       (if (string? l)
 	  (for-each tmtex-preamble-test-hichar (string->list l)))))
