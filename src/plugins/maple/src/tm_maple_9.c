@@ -139,7 +139,7 @@ main (int argc, char *argv[]) {
     return( 1 );
   }
 
-  r= EvalMapleStatement (kv, "tmmaple:=9;");
+  r= EvalMapleStatement (kv, "tmmaple:=9:");
   char* tm_path= getenv ("TEXMACS_PATH");
   char init[1000];
   strcpy (init, "read (`");
