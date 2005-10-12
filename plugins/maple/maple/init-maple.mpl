@@ -94,7 +94,7 @@ tmis_atomic := proc (x)
   if tmmaple < 9 then
     type (x, string) or type (x, numeric)
   else
-    type (x, atomic)
+    type (x, string) or type (x, numeric) or type (x, symbol)
   fi
 end:
 
@@ -130,20 +130,13 @@ local t, i, j, n;
     if n = 1 then
       printf (`(* `):
       tmout (op (1, x)):
-      printf (` %mathi)`)
+      printf (` %%mathi)`)
     else
       printf (`(+ `):
       tmout (op (1, x)):
       printf (` (* `):
       tmout (op (2, x)):
-      printf (`))`)
-    fi
-
-  elif tmis_atomic (x) then
-    if tmis_atomic (tmvars[x]) then
-      printf (`%s`, tmvars[x])
-    else
-      printf (`%a`, x)
+      printf (` %%mathi))`)
     fi
 
   elif tmis_indexed (x) then
@@ -188,6 +181,13 @@ local t, i, j, n;
      fi
     od:
     printf (`)`)
+
+  elif tmis_atomic (x) then
+    if tmis_atomic (tmvars[x]) then
+      printf (`%s`, tmvars[x])
+    else
+      printf (`%a`, x)
+    fi
 
   else
     printf (`(`):

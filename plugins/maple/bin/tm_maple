@@ -1,7 +1,14 @@
 #!/bin/sh
 
-TEXMACS_MAPLE_BIN="`which maple`"
-TEXMACS_MAPLE_DIR=`which maple | sed -e 's%/bin/maple$%%'`
+TEXMACS_MAPLE_BIN=`which maple`
+TEXMACS_MAPLE_BIN=`realpath "$TEXMACS_MAPLE_BIN"`
+if [ $? -ne 0 ]
+  then TEXMACS_MAPLE_BIN=`realpath.py "$TEXMACS_MAPLE_BIN"`
+fi
+if [ $? -ne 0 ]
+  then error "realpath seems not to be installed"
+fi
+TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
 export TEXMACS_MAPLE_BIN
 export TEXMACS_MAPLE_DIR
 
