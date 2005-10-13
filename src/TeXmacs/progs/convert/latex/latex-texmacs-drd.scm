@@ -125,9 +125,9 @@
   (TeXmacs "T\\kern-.1667em\\lower.5ex\\hbox{E}\\kern-.125emX\\kern-.1em\\lower.5ex\\hbox{\\textsc{m\\kern-.05ema\\kern-.125emc\\kern-.05ems}}")
   (madebyTeXmacs (footnote (!recurse (withTeXmacstext))))
   (withTeXmacstext
-   (!literal (!translate "This document has been produced using") " "
-	     (!recurse (TeXmacs)) " (" (!translate "see") " "
-	     (texttt "http://www.texmacs.org") ")"))
+   (!append (!translate "This document has been produced using") " "
+	    (!recurse (TeXmacs)) " (" (!translate "see") " "
+	    (texttt "http://www.texmacs.org") ")"))
   (scheme "{\\sc Scheme}")
   (pari "{\\sc Pari}"))
 
@@ -147,7 +147,7 @@
   (tmperson (textsc 1))
   (tmscript (text (scriptsize (!math 1))))
   (tmdef 1)
-  (dueto (textup (textbf (!literal "(" 1 ") "))))
+  (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
   (email (!group (textit (!translate "Email:")) " " (texttt 1)))
   (homepage (!group (textit (!translate "Web:")) " "(texttt 1)))
@@ -158,14 +158,14 @@
 (drd-table latex-texmacs-binary%
   (tmhlink (!group "\\color{blue} " 1))
   (tmaction (!group "\\color{blue} " 1))
-  (subindex (index (!literal 1 "!" 2))))
+  (subindex (index (!append 1 "!" 2))))
 
 (drd-table latex-texmacs-ternary%
-  (subsubindex (index (!literal 1 "!" 2 "!" 3)))
+  (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1))
 
 (drd-table latex-texmacs-tetrary%
-  (subsubindex (index (!literal 1 "!" 2 "!" 3 "!" 4))))
+  (subsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
 (drd-rules
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-nullary% 'x 'body))
@@ -185,23 +185,23 @@
 
 (drd-table latex-texmacs-environment%
   ("proof"
-   (!literal (noindent) (textbf (!literal (!translate "Proof") "\\ "))
-	     ---
-	     (hspace* (fill)) (!math (Box)) (medskip)))
+   (!append (noindent) (textbf (!append (!translate "Proof") "\\ "))
+	    ---
+	    (hspace* (fill)) (!math (Box)) (medskip)))
   ("proof*"
-   (!literal (noindent) (textbf (!literal 1 "\\ "))
-	     ---
-	     (hspace* (fill)) (!math (Box)) (medskip)))
+   (!append (noindent) (textbf (!append 1 "\\ "))
+	    ---
+	    (hspace* (fill)) (!math (Box)) (medskip)))
   ("tmparmod"
-   ((!begin "list" "" (!literal "\\setlength{\\topsep}{0pt}"
-				"\\setlength{\\leftmargin}{" 1 "}"
-				"\\setlength{\\rightmargin}{" 2 "}"
-				"\\setlength{\\parindent}{" 3 "}"
-				"\\setlength{\\listparindent}{\\parindent}"
-				"\\setlength{\\itemindent}{\\parindent}"
-				"\\setlength{\\parsep}{\\parskip}"))
-    (!literal "\\item[]"
-	      ---))))
+   ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
+			       "\\setlength{\\leftmargin}{" 1 "}"
+			       "\\setlength{\\rightmargin}{" 2 "}"
+			       "\\setlength{\\parindent}{" 3 "}"
+			       "\\setlength{\\listparindent}{\\parindent}"
+			       "\\setlength{\\itemindent}{\\parindent}"
+			       "\\setlength{\\parsep}{\\parskip}"))
+    (!append "\\item[]"
+	     ---))))
 
 (drd-table latex-texmacs-env-arity%
   ("proof" 0)
@@ -213,12 +213,12 @@
      (drd-table latex-texmacs-environment%
        (,env
 	((!begin "itemize")
-	 (!literal "\\renewcommand{\\labelitemi}{" ,lab "}"
-		   "\\renewcommand{\\labelitemii}{" ,lab "}"
-		   "\\renewcommand{\\labelitemiii}{" ,lab "}"
-		   "\\renewcommand{\\labelitemiv}{" ,lab "}"
-		   ---
-		   "\\end{itemize}"))))
+	 (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
+		  "\\renewcommand{\\labelitemii}{" ,lab "}"
+		  "\\renewcommand{\\labelitemiii}{" ,lab "}"
+		  "\\renewcommand{\\labelitemiv}{" ,lab "}"
+		  ---
+		  "\\end{itemize}"))))
      (drd-table latex-texmacs-env-arity%
        (,env 0))))
 
@@ -244,13 +244,13 @@
 
 (drd-table latex-texmacs-preamble%
   (color
-   (!literal
+   (!append
     "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
     "\\definecolor{orange}{rgb}{1.0,0.5,0.5}\n"
     "\\definecolor{brown}{rgb}{0.5,0.25,0.0}\n"
     "\\definecolor{pink}{rgb}{1.0,0.5,0.5}\n"))
   (tmfloat
-   (!literal
+   (!append
     "\\newcommand{\\tmfloatcontents}{}\n"
     "\\newlength{\\tmfloatwidth}\n"
     "\\newcommand{\\tmfloat}[5]{\n"
@@ -269,17 +269,17 @@
 
 (define-macro (latex-texmacs-theorem prim name)
   `(drd-table latex-texmacs-env-preamble%
-     (,prim (!literal "\\newtheorem{" ,prim "}{" (!translate ,name) "}\n"))))
+     (,prim (!append "\\newtheorem{" ,prim "}{" (!translate ,name) "}\n"))))
 
 (define-macro (latex-texmacs-remark prim name)
   `(drd-table latex-texmacs-env-preamble%
-     (,prim (!literal "{" (!recurse (theorembodyfont "\\rmfamily"))
-		      "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+     (,prim (!append "{" (!recurse (theorembodyfont "\\rmfamily"))
+		     "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
 
 (define-macro (latex-texmacs-exercise prim name)
   `(drd-table latex-texmacs-env-preamble%
-     (,prim (!literal "{" (!recurse (theorembodyfont "\\rmfamily\\small"))
-		      "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+     (,prim (!append "{" (!recurse (theorembodyfont "\\rmfamily\\small"))
+		     "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
 
 (latex-texmacs-theorem "theorem" "Theorem")
 (latex-texmacs-theorem "proposition" "Proposition")
@@ -307,19 +307,19 @@
 
 (define-macro (latex-texmacs-section name inside . conds)
   `(drd-table latex-texmacs-unary%
-     (,name (!literal (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
+     (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
 (define-macro (latex-texmacs-paragraph name inside . conds)
   `(drd-table latex-texmacs-unary%
-     (,name (!literal (smallskip) "\n\n" (noindent) (textbf ,inside))
+     (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
-(latex-texmacs-section chapter (!literal "\\huge " 1) article-style%)
-(latex-texmacs-section chapter (!literal "\\huge " 1) letter-style%)
-(latex-texmacs-section section (!literal "\\LARGE " 1) letter-style%)
-(latex-texmacs-section subsection (!literal "\\Large " 1) letter-style%)
-(latex-texmacs-section subsubsection (!literal "\\large " 1) letter-style%)
+(latex-texmacs-section chapter (!append "\\huge " 1) article-style%)
+(latex-texmacs-section chapter (!append "\\huge " 1) letter-style%)
+(latex-texmacs-section section (!append "\\LARGE " 1) letter-style%)
+(latex-texmacs-section subsection (!append "\\Large " 1) letter-style%)
+(latex-texmacs-section subsubsection (!append "\\large " 1) letter-style%)
 (latex-texmacs-paragraph paragraph 1 letter-style%)
 (latex-texmacs-paragraph subparagraph 1 letter-style%)
 
@@ -329,17 +329,17 @@
 
 (drd-table latex-texmacs-nullary%
   (labeleqnum "\\addtocounter{equation}{-1}\\refstepcounter{equation}\\addtocounter{equation}{1})")
-  (eqnumber (!literal "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
-  (leqnumber (!literal "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
-  (reqnumber (!literal "\\hfill(\\theequation" (!recurse (labeleqnum)) ")")))
+  (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
+  (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
+  (reqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")")))
 
 (drd-table latex-texmacs-unary%
-  (key (!literal "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
-  (skey (!recurse (key (!literal "shift-" 1))))
-  (ckey (!recurse (key (!literal "ctrl-" 1))))
-  (akey (!recurse (key (!literal "alt-" 1))))
-  (mkey (!recurse (key (!literal "meta-" 1))))
-  (hkey (!recurse (key (!literal "hyper-" 1)))))
+  (key (!append "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
+  (skey (!recurse (key (!append "shift-" 1))))
+  (ckey (!recurse (key (!append "ctrl-" 1))))
+  (akey (!recurse (key (!append "alt-" 1))))
+  (mkey (!recurse (key (!append "meta-" 1))))
+  (hkey (!recurse (key (!append "hyper-" 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language specific preambles

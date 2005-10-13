@@ -239,7 +239,6 @@
 	      ((== c #\26) (tmtex-text-sub "---" l))
 	      ((== c #\337) (tmtex-text-sub "SS" l))
 	      ((== c #\377) (tmtex-text-sub "ß" l))
-	      ((not tmtex-use-catcodes?) (tmtex-text-sub (latex-catcode c) l))
 	      (else (cons c (tmtex-text-list (cdr l))))))))
 
 (define (tmtex-math-operator l)
@@ -1290,4 +1289,6 @@
 	(with r (tmtex (tmpre-produce x3))
 	  (if (not tmtex-use-macros?)
 	      (set! r (latex-expand-macros r)))
+	  (if (not tmtex-use-catcodes?)
+	      (set! r (latex-expand-catcodes r)))
 	  r))))
