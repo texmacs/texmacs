@@ -16,8 +16,10 @@
 
 (texmacs-module (convert latex latex-tools)
   (:use (convert latex latex-drd)
-	(convert latex latex-texmacs-drd)
 	(convert latex texout)))
+
+(tm-define tmtex-use-catcodes? #t)
+(tm-define tmtex-use-macros? #f)
 
 (define latex-language "english")
 (define latex-cyrillic-catcode? #f)
@@ -60,6 +62,9 @@
 	   (apply string-append (map latex-replace-catcode l))))
 	((pair? t) (cons (car t) (map latex-expand-catcodes (cdr t))))
 	(else t)))
+
+(define (latex-expand-catcodes* t)
+  (if tmtex-use-catcodes? t (latex-expand-catcodes t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute catcode definitions
@@ -264,8 +269,9 @@
 
 (tm-define (latex-preamble text style lan init)
   (:synopsis "Compute preamble for @text")
-  (let* ((Page         (latex-preamble-page-type init))
-	 (Macro        (latex-macro-defs text))
+  (let* ((Expand       latex-expand-catcodes*)
+	 (Page         (Expand (latex-preamble-page-type init)))
+	 (Macro        (Expand (latex-macro-defs text)))
 	 (Text         (list '!tuple Page Macro text))
 	 (pre-language (latex-preamble-language lan))
 	 (pre-page     (latex-serialize-preamble Page))

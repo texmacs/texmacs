@@ -28,8 +28,6 @@
 (define tmtex-appendices? #f)
 (define tmtex-faithful-style? #f)
 (define tmtex-indirect-bib? #f)
-(define tmtex-use-catcodes? #t)
-(define tmtex-use-macros? #f)
 
 (tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
