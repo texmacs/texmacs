@@ -110,13 +110,17 @@
 
 (drd-rules
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-symbol% 'x 'body))
-  ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x 'body)))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x 'body))
+  ;;;
+  ((latex-texmacs-tag% 'x) (latex-texmacs-macro% 'x 'body))
+  ((latex-arity% 'x 'arity) (latex-texmacs-arity% 'x 'arity))
+  ((latex-symbol% 'x) (latex-texmacs-symbol% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-nullary%
+(drd-table latex-texmacs-0%
   (tmunsc "\\_")
   (emdash "---")
   (tmat "\\symbol{\"40}")
@@ -131,7 +135,7 @@
   (scheme "{\\sc Scheme}")
   (pari "{\\sc Pari}"))
 
-(drd-table latex-texmacs-unary%
+(drd-table latex-texmacs-1%
   (tmmathbf (ensuremath (boldsymbol 1)))
   (tmop (ensuremath (operatorname 1)))
   (tmstrong (textbf 1))
@@ -155,29 +159,35 @@
   (AMSclass (!group (textbf (!translate "A.M.S. subject classification:"))
 		    " " 1)))
 
-(drd-table latex-texmacs-binary%
+(drd-table latex-texmacs-2%
   (tmhlink (!group "\\color{blue} " 1))
   (tmaction (!group "\\color{blue} " 1))
   (subindex (index (!append 1 "!" 2))))
 
-(drd-table latex-texmacs-ternary%
+(drd-table latex-texmacs-3%
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1))
 
-(drd-table latex-texmacs-tetrary%
+(drd-table latex-texmacs-4%
   (subsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
 (drd-rules
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-nullary% 'x 'body))
-  ((latex-texmacs-arity% 'x 0) (latex-texmacs-nullary% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-unary% 'x 'body))
-  ((latex-texmacs-arity% 'x 1) (latex-texmacs-unary% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-binary% 'x 'body))
-  ((latex-texmacs-arity% 'x 2) (latex-texmacs-binary% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-ternary% 'x 'body))
-  ((latex-texmacs-arity% 'x 3) (latex-texmacs-ternary% 'x 'body))
-  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-tetrary% 'x 'body))
-  ((latex-texmacs-arity% 'x 4) (latex-texmacs-tetrary% 'x 'body)))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-0% 'x 'body))
+  ((latex-texmacs-arity% 'x 0) (latex-texmacs-0% 'x 'body))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-1% 'x 'body))
+  ((latex-texmacs-arity% 'x 1) (latex-texmacs-1% 'x 'body))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-2% 'x 'body))
+  ((latex-texmacs-arity% 'x 2) (latex-texmacs-2% 'x 'body))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-3% 'x 'body))
+  ((latex-texmacs-arity% 'x 3) (latex-texmacs-3% 'x 'body))
+  ((latex-texmacs-macro% 'x 'body) (latex-texmacs-4% 'x 'body))
+  ((latex-texmacs-arity% 'x 4) (latex-texmacs-4% 'x 'body))
+  ;;;
+  ((latex-texmacs% 'x) (latex-texmacs-0% 'x 'body))
+  ((latex-texmacs% 'x) (latex-texmacs-1% 'x 'body))
+  ((latex-texmacs% 'x) (latex-texmacs-2% 'x 'body))
+  ((latex-texmacs% 'x) (latex-texmacs-3% 'x 'body))
+  ((latex-texmacs% 'x) (latex-texmacs-4% 'x 'body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs environments
@@ -208,26 +218,37 @@
   ("proof*" 1)
   ("tmparmod" 3))
 
+(drd-group latex-texmacs-tag% begin-proof begin-proof* begin-tmparmod)
+(drd-group latex-environment-0% begin-proof)
+(drd-group latex-environment-1% begin-proof*)
+(drd-group latex-environment-3% begin-tmparmod)
+
 (define-macro (latex-texmacs-itemize env lab)
-  `(begin
-     (drd-table latex-texmacs-environment%
-       (,env
-	((!begin "itemize")
-	 (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
-		  "\\renewcommand{\\labelitemii}{" ,lab "}"
-		  "\\renewcommand{\\labelitemiii}{" ,lab "}"
-		  "\\renewcommand{\\labelitemiv}{" ,lab "}"
-		  ---
-		  "\\end{itemize}"))))
-     (drd-table latex-texmacs-env-arity%
-       (,env 0))))
+  (with env-sym (string->symbol (string-append "begin-" env))
+    `(begin
+       (drd-table latex-texmacs-environment%
+	 (,env
+	  ((!begin "itemize")
+	   (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
+		    "\\renewcommand{\\labelitemii}{" ,lab "}"
+		    "\\renewcommand{\\labelitemiii}{" ,lab "}"
+		    "\\renewcommand{\\labelitemiv}{" ,lab "}"
+		    ---
+		    "\\end{itemize}"))))
+       (drd-table latex-texmacs-env-arity% (,env 0))
+       ;;;
+       (drd-group latex-texmacs-tag% ,env-sym)
+       (drd-group latex-list% ,env-sym))))
 
 (define-macro (latex-texmacs-enumerate env lab)
-  `(begin
-     (drd-table latex-texmacs-environment%
-       (,env ((!begin "enumerate" (!option ,lab)) ---)))
-     (drd-table latex-texmacs-env-arity%
-       (,env 0))))
+  (with env-sym (string->symbol (string-append "begin-" env))
+    `(begin
+       (drd-table latex-texmacs-environment%
+	 (,env ((!begin "enumerate" (!option ,lab)) ---)))
+       (drd-table latex-texmacs-env-arity% (,env 0))
+       ;;;
+       (drd-group latex-texmacs-tag% ,env-sym)
+       (drd-group latex-list% ,env-sym))))
 
 (latex-texmacs-itemize "itemizeminus" "$-$")
 (latex-texmacs-itemize "itemizedot" "$\\bullet$")
@@ -267,19 +288,26 @@
     "    \\end{center}\n"
     "  \\end{minipage}}")))
 
+(define-macro (latex-texmacs-thmenv prim name before after)
+  (with env-sym (string->symbol (string-append "begin-" prim))
+    `(begin
+       (drd-table latex-texmacs-env-preamble%
+	 (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
+			 ,@after "\n")))
+       ;;;
+       (drd-group latex-texmacs-tag% ,env-sym)
+       (drd-group latex-environment-0% ,env-sym))))
+
 (define-macro (latex-texmacs-theorem prim name)
-  `(drd-table latex-texmacs-env-preamble%
-     (,prim (!append "\\newtheorem{" ,prim "}{" (!translate ,name) "}\n"))))
+  `(latex-texmacs-thmenv ,prim ,name () ()))
 
 (define-macro (latex-texmacs-remark prim name)
-  `(drd-table latex-texmacs-env-preamble%
-     (,prim (!append "{" (!recurse (theorembodyfont "\\rmfamily"))
-		     "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+  `(latex-texmacs-thmenv
+    ,prim ,name ("{" (!recurse (theorembodyfont "\\rmfamily"))) ("}")))
 
 (define-macro (latex-texmacs-exercise prim name)
-  `(drd-table latex-texmacs-env-preamble%
-     (,prim (!append "{" (!recurse (theorembodyfont "\\rmfamily\\small"))
-		     "\\newtheorem{" ,prim "}{" (!translate ,name) "}}\n"))))
+  `(latex-texmacs-thmenv
+    ,prim ,name ("{" (!recurse (theorembodyfont "\\rmfamily\\small"))) ("}")))
 
 (latex-texmacs-theorem "theorem" "Theorem")
 (latex-texmacs-theorem "proposition" "Proposition")
@@ -299,19 +327,19 @@
 (latex-texmacs-exercise "problem" "Problem")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Style-dependent macros
+;; Style-dependent extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-nullary%
+(drd-table latex-texmacs-0%
   (appendix "" letter-style%))
 
 (define-macro (latex-texmacs-section name inside . conds)
-  `(drd-table latex-texmacs-unary%
+  `(drd-table latex-texmacs-1%
      (,name (!append (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
 (define-macro (latex-texmacs-paragraph name inside . conds)
-  `(drd-table latex-texmacs-unary%
+  `(drd-table latex-texmacs-1%
      (,name (!append (smallskip) "\n\n" (noindent) (textbf ,inside))
 	    ,@conds)))
 
@@ -324,16 +352,16 @@
 (latex-texmacs-paragraph subparagraph 1 letter-style%)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Deprecated macros
+;; Deprecated extra macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table latex-texmacs-nullary%
+(drd-table latex-texmacs-0%
   (labeleqnum "\\addtocounter{equation}{-1}\\refstepcounter{equation}\\addtocounter{equation}{1})")
   (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
   (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
   (reqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")")))
 
-(drd-table latex-texmacs-unary%
+(drd-table latex-texmacs-1%
   (key (!append "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
   (skey (!recurse (key (!append "shift-" 1))))
   (ckey (!recurse (key (!append "ctrl-" 1))))

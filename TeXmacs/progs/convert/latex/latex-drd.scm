@@ -14,7 +14,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex latex-drd)
-  (:use (convert latex latex-symbol-drd)))
+  (:use (convert latex latex-symbol-drd)
+	(convert latex latex-texmacs-drd)))
 
 (drd-rules
   ((latex-tag% 'x) (latex-arity% 'x 'y)))
@@ -103,19 +104,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-group latex-environment-0%
-  begin-document begin-abstract begin-definition
-  begin-theorem begin-proposition begin-lemma begin-corollary
-  begin-proof begin-definition begin-notation begin-axiom
-  begin-remark begin-warning begin-note
-  begin-example begin-exercise begin-verbatim
-  begin-matrix begin-pmatrix begin-center
-  begin-picture begin-hide-preamble)
+  begin-document begin-abstract begin-verbatim
+  begin-matrix begin-pmatrix begin-center begin-picture)
 
 (drd-group latex-environment-0*%
   begin-figure begin-table)
 
 (drd-group latex-environment-1%
-  begin-proof* begin-tabbing begin-thebibliography)
+  begin-tabbing begin-thebibliography)
 
 (drd-group latex-environment-1*%
   begin-array begin-tabular)
@@ -125,6 +121,10 @@
   ((latex-arity% 'x 0) (latex-environment-0% 'x))
   ((latex-environment% 'x) (latex-environment-1% 'x))
   ((latex-arity% 'x 1) (latex-environment-1% 'x))
+  ((latex-environment% 'x) (latex-environment-2% 'x))
+  ((latex-arity% 'x 2) (latex-environment-2% 'x))
+  ((latex-environment% 'x) (latex-environment-3% 'x))
+  ((latex-arity% 'x 3) (latex-environment-3% 'x))
   ((latex-environment-0% 'x) (latex-environment-0*% 'x))
   ((latex-optional-arg% 'x) (latex-environment-0*% 'x))
   ((latex-environment-1% 'x) (latex-environment-1*% 'x))
@@ -165,10 +165,7 @@
   inf ker lg lim liminf limsup ln log max min Pr sec sin sinh sup tan tanh)
 
 (drd-group latex-list%
-  begin-itemize begin-itemizeminus begin-itemizedot begin-itemizearrow
-  begin-enumerate begin-enumeratenumeric begin-enumerateroman
-  begin-enumerateromancap begin-enumeratealpha begin-enumeratealphacap
-  begin-description)
+  begin-itemize begin-enumerate begin-description)
 
 (drd-group latex-math-environment-0%
   begin-formula begin-equation*
@@ -184,28 +181,6 @@
   ((latex-environment-0% 'x) (latex-list% 'x))
   ((latex-math-environment% 'x) (latex-math-environment-0% 'x))
   ((latex-environment-0% 'x) (latex-math-environment-0% 'x)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TeXmacs extensions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(drd-group latex-texmacs-0%
-  TeXmacs tmbsl tmdummy)
-
-(drd-group latex-texmacs-1%
-  tmmathbf tmop tmstrong tmem tmtt tmname
-  tmsamp tmabbr tmdfn tmkbd tmvar tmacronym tmperson tmscript)
-
-(drd-group latex-texmacs-2%
-  tmhlink tmaction)
-
-(drd-rules
-  ((latex-texmacs% 'x) (latex-texmacs-0% 'x))
-  ((latex-arity% 'x 0) (latex-texmacs-0% 'x))
-  ((latex-texmacs% 'x) (latex-texmacs-1% 'x))
-  ((latex-arity% 'x 1) (latex-texmacs-1% 'x))
-  ((latex-texmacs% 'x) (latex-texmacs-2% 'x))
-  ((latex-arity% 'x 2) (latex-texmacs-2% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols
@@ -271,18 +246,8 @@
   ;; Binary operations (latexsym or amssymb required)
   lhd rhd unlhd unrhd
 
-  ;; Miscellaneous symbols (amssymb or latexsym required)
+  ;; Miscellaneous symbols (amssymb or graphicx required)
   Diamond mho)
-
-(drd-group latex-texmacs-symbol%
-  ;; TeXmacs specific symbols
-  mathd mathe mathi mathpi
-  nin udots um assign plusassign minusassign
-  trianglelefteqslant trianglerighteqslant
-  leftarrowlim rightarrowlim leftrightarrowlim mapstolim
-  equallim Leftarrowlim Rightarrowlim Leftrightarrowlim
-  longleftarrowlim longrightarrowlim leftrightarrowlim longmapstolim
-  longequallim Longleftarrowlim Longrightarrowlim Longleftrightarrowlim)
 
 (drd-group latex-big-symbol%
   sum int bigintwl oint bigointwl prod coprod
@@ -296,8 +261,7 @@
   ((latex-arity% 'x 0) (latex-big-symbol% 'x))
   ((latex-symbol% 'x) (latex-ams-symbol% 'x))
   ((latex-symbol% 'x) (latex-wasy-symbol% 'x))
-  ((latex-symbol% 'x) (latex-stmary-symbol% 'x))
-  ((latex-symbol% 'x) (latex-texmacs-symbol% 'x)))
+  ((latex-symbol% 'x) (latex-stmary-symbol% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Using packages
