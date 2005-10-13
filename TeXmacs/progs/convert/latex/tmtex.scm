@@ -18,7 +18,7 @@
 	(convert rewrite tmtm-eqns)
 	(convert rewrite tmtm-brackets)
 	(convert latex texout)
-	(convert latex latex-texmacs-drd)))
+	(convert latex latex-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
