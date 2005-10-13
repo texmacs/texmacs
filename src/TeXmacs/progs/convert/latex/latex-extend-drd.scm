@@ -147,11 +147,17 @@
 
 (define latex-language "english")
 (define latex-cyrillic-catcode? #f)
+(define latex-style "generic")
+(define latex-style-hyp 'generic-style%)
 
 (tm-define (latex-set-language lan)
   (set! latex-language lan)
   (set! latex-cyrillic-catcode?
 	(in? lan '("bulgarian" "russian" "ukrainian"))))
+
+(tm-define (latex-set-style sty)
+  (set! latex-style sty)
+  (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
 
 (tm-define (latex-catcode c)
   (with s (list->string (list c))
@@ -465,6 +471,31 @@
 (latex-texmacs-exercise "problem" "Problem")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style-dependent macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(drd-table latex-texmacs-nullary%
+  (appendix "" letter-style%))
+
+(define-macro (latex-texmacs-section name inside . conds)
+  `(drd-table latex-texmacs-unary%
+     (,name (!literal (medskip) (bigskip) "\n\n" (noindent) (textbf ,inside))
+	    ,@conds)))
+
+(define-macro (latex-texmacs-paragraph name inside . conds)
+  `(drd-table latex-texmacs-unary%
+     (,name (!literal (smallskip) "\n\n" (noindent) (textbf ,inside))
+	    ,@conds)))
+
+(latex-texmacs-section chapter (!literal "\\huge " 1) article-style%)
+(latex-texmacs-section chapter (!literal "\\huge " 1) letter-style%)
+(latex-texmacs-section section (!literal "\\LARGE " 1) letter-style%)
+(latex-texmacs-section subsection (!literal "\\Large " 1) letter-style%)
+(latex-texmacs-section subsubsection (!literal "\\large " 1) letter-style%)
+(latex-texmacs-paragraph paragraph 1 letter-style%)
+(latex-texmacs-paragraph subparagraph 1 letter-style%)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -500,8 +531,8 @@
   (if (npair? t) t
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
-	     (body  (drd-ref latex-texmacs-macro% head))
-	     (arity (drd-ref latex-texmacs-arity% head))
+	     (body  (drd-ref latex-texmacs-macro% head latex-style-hyp))
+	     (arity (drd-ref latex-texmacs-arity% head latex-style-hyp))
 	     (env   (and (func? head '!begin)
 			 (drd-ref latex-texmacs-environment% (cadr head))))
 	     (envar (and (func? head '!begin)
@@ -523,8 +554,8 @@
 (define (latex-macro-defs-sub t)
   (when (pair? t)
     (for-each latex-macro-defs-sub (cdr t))
-    (let* ((body  (drd-ref latex-texmacs-macro% (car t)))
-	   (arity (drd-ref latex-texmacs-arity% (car t))))
+    (let* ((body  (drd-ref latex-texmacs-macro% (car t) latex-style-hyp))
+	   (arity (drd-ref latex-texmacs-arity% (car t) latex-style-hyp)))
       (when (and body (== (length t) (+ arity 1)))
 	(ahash-set! latex-macro-table (car t) (list arity body))
 	(latex-macro-defs-sub body)))
@@ -553,7 +584,9 @@
 (define (latex-macro-def l)
   (with (name arity body) l
     (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (string-replace body "\n\n" "*/!!/*"))
     (set! body (string-replace body "\n" " "))
+    (set! body (string-replace body "*/!!/*" "\n\n"))
     (string-append "\\newcommand{\\" (symbol->string name) "}"
 		   (if (= arity 0) ""
 		       (string-append "[" (number->string arity) "]"))
@@ -562,11 +595,13 @@
 (define (latex-env-def l)
   (with (name arity body) l
     (set! body (serialize-latex (latex-expand-def body)))
+    (set! body (string-replace body "\n\n" "*/!!/*"))
     (set! body (string-replace body "\n  " " "))
     (set! body (string-replace body "\n" " "))
     (set! body (string-replace body "   #-#-# " "}{"))
     (set! body (string-replace body "#-#-# " "}{"))
     (set! body (string-replace body "#-#-#" "}{"))
+    (set! body (string-replace body "*/!!/*" "\n\n"))
     (string-append "\\newenvironment{" name "}"
 		   (if (= arity 0) ""
 		       (string-append "[" (number->string arity) "]"))

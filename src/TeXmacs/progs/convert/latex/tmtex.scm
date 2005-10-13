@@ -359,7 +359,7 @@
 
 (define (tmtex-file l)
   (let* ((doc (car l))
-	 (styles (cdadr l))
+	 (styles (cadr l))
 	 (lang (caddr l))
 	 (init (cadddr l))
 	 (doc-preamble (tmtex-filter-preamble doc))
@@ -1267,15 +1267,22 @@
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmtex-get-style sty)
+  (cond ((string? sty) (set! sty (list sty)))
+	((func? sty 'tuple) (set! sty (cdr sty)))
+	((null? sty) (set! sty '("letter"))))
+  (if (== (car sty) "generic") (set! sty (cons "letter" (cdr sty))))
+  sty)
+
 (tm-define (texmacs->latex x opts)
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
-	     (style* (tmfile-extract x 'style))
-	     (style (if (list? style*) style* (list style*)))
+	     (style (tmtex-get-style (tmfile-extract x 'style)))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-language lan)
+	(latex-set-style (car style))
 	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
