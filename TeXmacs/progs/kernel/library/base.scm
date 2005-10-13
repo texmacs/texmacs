@@ -152,6 +152,9 @@
 ;; Some string-like functions on symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (symbol<=? x y)
+  (string<=? (symbol->string x) (symbol->string y)))
+
 (define-public (symbol-starts? s1 s2)
   (string-starts? (symbol->string s1) (symbol->string s2)))
 
