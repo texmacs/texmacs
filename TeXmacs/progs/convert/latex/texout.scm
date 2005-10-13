@@ -28,7 +28,7 @@
 
 (define (texout-file l)
   (let* ((doc-body (car l))
-	 (styles (if (null? (cadr l)) '("letter") (cadr l)))
+	 (styles (cadr l))
 	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))

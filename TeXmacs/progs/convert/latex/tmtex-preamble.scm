@@ -25,63 +25,6 @@
 	(convert latex latex-extend-drd)))	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Definition of all extra commands
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtex-preamble-def style lan)
-  (define (tmsection s inside)
-    (string-append "\\newcommand{\\" s "}[1]{"
-		   "\\medskip\\bigskip\n\n"
-		   "\\noindent\\textbf{" inside "}\\vspace{-3ex}\n\n"
-		   "\\noindent}"))
-  (define (tmparagraph s inside)
-    (string-append "\\newcommand{\\" s "}[1]{\\smallskip\n\n"
-		   "\\noindent\\textbf{" inside "} }"))
-
-  (let ((l '()))
-    (define tex-preamble-letter-article-extra
-      `((chapter ,(tmsection "chapter"
-			     "\\begin{center}\\huge #1\\end{center}"))))
-    (define tex-preamble-letter-extra
-      `((appendix "\\newcommand{\\appendix}{}")
-	(section ,(tmsection "section" "\\LARGE #1"))
-	(subsection ,(tmsection "subsection" "\\Large #1"))
-	(subsubsection ,(tmsection "subsubsection" "\\large #1"))
-	(paragraph ,(tmparagraph "paragraph" "#1"))
-	(subparagraph ,(tmparagraph "subparagraph" "#1"))))
-
-    (if (in? style '("letter" "article"))
-	(set! l (append tex-preamble-letter-article-extra l)))
-    (if (== style "letter")
-	(set! l (append tex-preamble-letter-extra l)))
-    l))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Computation of the dictionary
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtex-preamble-rewrite l)
-  (if (= (length l) 3)
-      (let ((s (car l)) (n (cadr l)) (r (caddr l)))
-	(list s (string-append "\\newcommand{\\" (symbol->string s) "}"
-			       (if (= n 0) ""
-				   (string-append "[" (number->string n) "]"))
-			       "{" r "}")))
-      l))
-
-(define (tmtex-preamble-table style lan)
-  (let* ((l (tmtex-preamble-def style lan))
-	 (r (map-in-order tmtex-preamble-rewrite l))
-	 (t (make-ahash-table)))
-    (fill-dictionary t r)
-    t))
-
-(define (tmtex-preamble-show-all style lan)
-  (let* ((l (tmtex-preamble-def style lan))
-	 (r (map-in-order tmtex-preamble-rewrite l)))
-    (for-each (lambda (l) (display* (cadr l) "\n")) r)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language specific stuff
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -174,22 +117,11 @@
 ;; Building the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define tmtex-preamble-dic (make-ahash-table))
-(define tmtex-preamble-done (make-ahash-table))
 (define tmtex-preamble-uses (make-ahash-table))
 (define tmtex-preamble-init "")
 (define tmtex-preamble-result "")
-(define tmtex-preamble-hichar-flag #f)
 
 (define (tmtex-preamble-test-insert s)
-  (if (and (ahash-ref tmtex-preamble-dic s)
-	   (not (ahash-ref tmtex-preamble-done s)))
-      (begin
-	(ahash-set! tmtex-preamble-done s #t)
-	(set! tmtex-preamble-result
-	      (string-append tmtex-preamble-result
-			     (ahash-ref tmtex-preamble-dic s)
-			     "\n"))))
   (with packlist (drd-ref-list latex-needs% s)
     (if packlist
 	(for-each 
@@ -197,10 +129,6 @@
 	    (if (not (ahash-ref tmtex-preamble-uses pack))
 		(ahash-set! tmtex-preamble-uses pack #t)))
           packlist))))
-
-(define (tmtex-preamble-test-hichar c)
-  (if (>= (char->integer c) 128)
-      (set! tmtex-preamble-hichar-flag #t)))
 
 (define (tmtex-preamble-build-sub l)
   (if (and (list? l) (nnull? l))
@@ -212,9 +140,7 @@
 	    (tmtex-preamble-test-insert 'tmscript))
 	(if (match? x '(!begin "enumerate" (!option :1)))
 	    (ahash-set! tmtex-preamble-uses "enumerate" #t))
-	(for-each tmtex-preamble-build-sub (cdr l)))
-      (if (string? l)
-	  (for-each tmtex-preamble-test-hichar (string->list l)))))
+	(for-each tmtex-preamble-build-sub (cdr l)))))
 
 (define (tmtex-preamble-make-package-list l)
   (cond ((null? l) "")
@@ -223,12 +149,9 @@
           (tmtex-preamble-make-package-list (cdr l))))))
 
 (tm-define (tmtex-preamble-build text style lan init)
-  (set! tmtex-preamble-dic (tmtex-preamble-table style lan))
-  (set! tmtex-preamble-done (make-ahash-table))
   (set! tmtex-preamble-uses (make-ahash-table))
   (set! tmtex-preamble-init "")
   (set! tmtex-preamble-result "")
-  (set! tmtex-preamble-hichar-flag #f)
   (tmtex-preamble-page-type init)
   (if (drd-ref tmtex-preamble-language-def% lan)
       (set! tmtex-preamble-result

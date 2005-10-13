@@ -137,10 +137,12 @@
   `(drd-rules ,@(drd-table-rules name l)))
 
 (define-public-macro (drd-ref name key . conds)
-  `(drd-apply (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
+  ;;`(drd-apply (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
+  `(drd-apply (list ,(list 'quasiquote name) ,key) ,@conds))
 
 (define-public-macro (drd-ref-list name key . conds)
-  `(drd-apply-list (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
+  ;;`(drd-apply-list (list ,(list 'quasiquote name) ,key) ,@(quote-all conds)))
+  `(drd-apply-list (list ,(list 'quasiquote name) ,key) ,@conds))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of dispatchers
