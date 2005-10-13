@@ -39,10 +39,9 @@
 
     (receive
 	(tm-uses tm-init tm-preamble)
-	(tmtex-preamble-build doc-misc style lan init)
+	(latex-preamble doc-misc style lan init)
       (output-verbatim "\\documentclass{" style "}\n")
-      (if (!= tm-uses "")
-	  (output-verbatim "\\usepackage{" tm-uses "}\n"))
+      (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
 
       (if (!= tm-init "")

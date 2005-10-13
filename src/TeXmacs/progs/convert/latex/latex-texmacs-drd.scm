@@ -345,7 +345,7 @@
 ;; Language specific preambles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table tmtex-preamble-language-def%
+(drd-table latex-preamble-language-def%
   ("bulgarian"
    "\\usepackage[cp1251]{inputenc}\n\\usepackage[bulgarian]{babel}")
   ("czech" "\\usepackage[czech]{babel}")
@@ -495,7 +495,7 @@
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(drd-table tmpre-paper-type%
+(drd-table latex-paper-type%
   ("a0" "a0paper")
   ("a1" "a1paper")
   ("a2" "a2paper")

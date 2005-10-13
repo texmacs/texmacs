@@ -24,16 +24,18 @@
 (define latex-style "generic")
 (define latex-style-hyp 'generic-style%)
 
+(define latex-catcode-table (make-ahash-table))
+
 (define latex-macro-table (make-ahash-table))
 (define latex-env-table (make-ahash-table))
 (define latex-preamble "")
 
-(define tmtex-preamble-uses (make-ahash-table))
-(define tmtex-preamble-init "")
-(define tmtex-preamble-result "")
+(define latex-uses-table (make-ahash-table))
+(define latex-preamble-init "")
+(define latex-preamble-result "")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Catcode substitutions and definitions
+;; Setting global parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (latex-set-language lan)
@@ -45,6 +47,10 @@
   (set! latex-style sty)
   (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Catcode expansion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (latex-catcode c)
   (with s (list->string (list c))
     (or (if latex-cyrillic-catcode?
@@ -52,7 +58,9 @@
 	    (drd-ref iso-latin-catcodes% s))
 	s)))
 
-(define latex-catcode-table (make-ahash-table))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Compute catcode definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-catcode-defs-char c)
   (let* ((s (list->string (list c)))
@@ -67,6 +75,7 @@
   (string-append "\\catcode`\\" key "=\\active \\def" key "{" im "}\n"))
 
 (tm-define (latex-catcode-defs doc)
+  (:synopsis "Return necessary catcode definitions for @doc")
   (set! latex-catcode-table (make-ahash-table))
   (latex-catcode-defs-sub doc)
   (let* ((l1 (ahash-table->list latex-catcode-table))
@@ -89,6 +98,7 @@
 	(else t)))
 
 (tm-define (latex-expand-macros t)
+  (:synopsis "Expand all TeXmacs macros occurring in @t")
   (if (npair? t) t
       (let* ((head  (car t))
 	     (tail  (map latex-expand-macros (cdr t)))
@@ -105,7 +115,7 @@
 	      (else (cons head tail))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Macro definitions
+;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-macro-defs-sub t)
@@ -164,10 +174,8 @@
 		       (string-append "[" (number->string arity) "]"))
 		   "{" body "}\n")))
 
-(define (symbol<=? x y)
-  (string<=? (symbol->string x) (symbol->string y)))
-
 (tm-define (latex-macro-defs t)
+  (:synopsis "Return necessary macro and environment definitions for @doc")
   (set! latex-macro-table (make-ahash-table))
   (set! latex-preamble "")
   (latex-macro-defs-sub t)
@@ -180,72 +188,75 @@
     (apply string-append (append (list latex-preamble) l3 e3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Compute usepackage command for a document
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (latex-command-uses s)
+  (with packlist (drd-ref-list latex-needs% s)
+    (when packlist
+      (for-each (cut ahash-set! latex-uses-table <> #t) packlist))))
+
+(define (latex-use-which-package l)
+  (when (and (list? l) (nnull? l))
+    (let ((x (car l)))
+      (if (symbol? x) (latex-command-uses x))
+      (if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
+	  (latex-command-uses (string->symbol (cadr x))))
+      (if (and (in? x '(!sub !sup)) (texout-contains-table? (cadr l)))
+	  (latex-command-uses 'tmscript))
+      (if (match? x '(!begin "enumerate" (!option :1)))
+	  (ahash-set! latex-uses-table "enumerate" #t))
+      (for-each latex-use-which-package (cdr l)))))
+
+(define (latex-use-package-compare l r)
+  (let* ((tl (drd-ref latex-package-priority% l))
+	 (tr (drd-ref latex-package-priority% r))
+	 (vl (if tl tl 999999))
+	 (vr (if tr tr 999999)))
+    (< vl vr)))
+
+(tm-define (latex-use-package-command doc)
+  (:synopsis "Return the usepackage command for @doc")
+  (set! latex-uses-table (make-ahash-table))
+  (latex-use-which-package doc)
+  (let* ((l1 (map car (ahash-table->list latex-uses-table)))
+	 (l2 (sort l1 latex-use-package-compare))
+	 (l3 (map force-string l2))
+	 (l4 (list-intersperse l3 ","))
+	 (s  (apply string-append l4)))
+    (if (== s "") "" (string-append "\\usepackage{" s "}\n"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-preamble-page-type init)
+(define (latex-preamble-language lan)
+  (if (drd-ref latex-preamble-language-def% lan)
+      (string-append (drd-ref latex-preamble-language-def% lan) "\n")
+      ""))
+
+(define (latex-preamble-page-type init)
   (let* ((page-type (ahash-ref init "page-type"))
-	 (page-size (drd-ref tmpre-paper-type% page-type)))
+	 (page-size (drd-ref latex-paper-type% page-type)))
     (if page-size
 	(begin
-	  (ahash-set! tmtex-preamble-uses "geometry" #t)
-	  (set! tmtex-preamble-init
-		(string-append tmtex-preamble-init
-			       "\\geometry{" page-size "}\n"))))))
+	  (ahash-set! latex-uses-table "geometry" #t)
+	  ;;;;;;;;;;;;;;; FIXME: has no effect
+	  (string-append "\\geometry{" page-size "}\n"))
+	"")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-preamble-test-insert s)
-  (with packlist (drd-ref-list latex-needs% s)
-    (if packlist
-	(for-each 
-	  (lambda (pack)
-	    (if (not (ahash-ref tmtex-preamble-uses pack))
-		(ahash-set! tmtex-preamble-uses pack #t)))
-          packlist))))
-
-(define (tmtex-preamble-build-sub l)
-  (if (and (list? l) (nnull? l))
-      (let ((x (car l)))
-	(if (symbol? x) (tmtex-preamble-test-insert x))
-	(if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
-	    (tmtex-preamble-test-insert (string->symbol (cadr x))))
-	(if (and (in? x '(!sub !sup)) (texout-contains-table? (cadr l)))
-	    (tmtex-preamble-test-insert 'tmscript))
-	(if (match? x '(!begin "enumerate" (!option :1)))
-	    (ahash-set! tmtex-preamble-uses "enumerate" #t))
-	(for-each tmtex-preamble-build-sub (cdr l)))))
-
-(define (tmtex-preamble-make-package-list l)
-  (cond ((null? l) "")
-        ((null? (cdr l)) (force-string (car l)))
-        (else (string-append (force-string (car l)) ","
-          (tmtex-preamble-make-package-list (cdr l))))))
-
-(tm-define (tmtex-preamble-build text style lan init)
-  (set! tmtex-preamble-uses (make-ahash-table))
-  (set! tmtex-preamble-init "")
-  (set! tmtex-preamble-result "")
-  (tmtex-preamble-page-type init)
-  (if (drd-ref tmtex-preamble-language-def% lan)
-      (set! tmtex-preamble-result
-	    (string-append (drd-ref tmtex-preamble-language-def% lan) "\n")))
-  (tmtex-preamble-build-sub text)
-  (set! tmtex-preamble-result
-	(string-append tmtex-preamble-result (latex-macro-defs text)))
-  (set! tmtex-preamble-result
-	(string-append (latex-catcode-defs text) tmtex-preamble-result))
-  (values
-    (tmtex-preamble-make-package-list 
-      (sort
-	(map car (ahash-table->list tmtex-preamble-uses))
-	(lambda (l r)
-	  (let* ((tl (drd-ref latex-package-priority% l))
-		 (tr (drd-ref latex-package-priority% r))
-		 (vl (if tl tl 999999))
-		 (vr (if tr tr 999999)))
-		(< vl vr)))))
-    tmtex-preamble-init
-    tmtex-preamble-result))
+(tm-define (latex-preamble text style lan init)
+  (:synopsis "Compute preamble for @text with given @style, @lan and @init")
+  (let* ((pre-language (latex-preamble-language lan))
+	 (pre-page     (latex-preamble-page-type init))
+	 (pre-macro    (latex-macro-defs text))
+	 (pre-catcode  (latex-catcode-defs text))
+	 (pre-uses     (latex-use-package-command text)))
+    (values
+      (string-append pre-uses)
+      (string-append pre-page)
+      (string-append pre-language pre-catcode pre-macro))))
