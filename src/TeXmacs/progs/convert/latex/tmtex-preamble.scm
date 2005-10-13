@@ -22,7 +22,7 @@
 (texmacs-module (convert latex tmtex-preamble)
   (:use (convert latex latex-drd)
 	(convert latex texout)
-	(convert latex latex-extend-drd)))	
+	(convert latex latex-texmacs-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language specific stuff
