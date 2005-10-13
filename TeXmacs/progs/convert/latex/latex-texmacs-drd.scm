@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : latex-extend-drd.scm
+;; MODULE      : latex-texmacs-drd.scm
 ;; DESCRIPTION : TeXmacs extensions to LaTeX
 ;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
@@ -14,7 +14,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert latex latex-extend-drd))
+(texmacs-module (convert latex latex-texmacs-drd))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode tables
