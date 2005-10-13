@@ -272,7 +272,7 @@
   lhd rhd unlhd unrhd
 
   ;; Miscellaneous symbols (amssymb or latexsym required)
-  Box Diamond mho)
+  Diamond mho)
 
 (drd-group latex-texmacs-symbol%
   ;; TeXmacs specific symbols
@@ -304,20 +304,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table latex-package-priority%
-  ("amsmath" 0)
-  ("amssymb" 10)
-  ("graphicx" 20)
-  ("wasysym" 30)
-  ("stmaryd" 40)
-  ("enumerate" 50)
-  ("epsfig" 60)
-  ("mathrsfs" 70)
-  ("bbm" 80)
-  ("dsfont" 90)
-  ("euscript" 100)
-  ("multicol" 110))
+  ("geometry" 0)
+  ("amsmath" 10)
+  ("amssymb" 20)
+  ("graphicx" 30)
+  ("wasysym" 40)
+  ("stmaryd" 50)
+  ("enumerate" 60)
+  ("epsfig" 70)
+  ("mathrsfs" 80)
+  ("bbm" 90)
+  ("dsfont" 100)
+  ("euscript" 110)
+  ("multicol" 120))
 
 (drd-table latex-needs%
+  (geometry "geometry")
+  (epsfig "epsfig")
+
   (mathscr "mathrsfs")
   (EuScript "euscript")
   (mathbbm "bbm")
@@ -325,20 +329,9 @@
   (mathds "dsfont")
   (mathfrak "amssymb")
   (mathbb "amssymb")
-  
-  ;;(theorembodyfont "theorem")
-  (remark "theorem")
-  (note "theorem")
-  (example "theorem")
-  (convention "theorem")
-  (warning "theorem")
-  (exercise "theorem")
-  (problem "theorem")
-  (proof "amssymb")
-  (proof* "amssymb")
+  (theorembodyfont "theorem")
 
-  (epsfig "epsfig")
-
+  (Diamond "amssymb")
   (text "amsmath")
   (dddot "amsmath")
   (ddddot "amsmath")
@@ -350,13 +343,6 @@
   (llleq "amsmath")
   (ggeq "amsmath")
   (gggeq "amsmath")
-
-  (enumeratealpha "enumerate")
-  (enumeratealphacap "enumerate")
-  (enumeratenumeric "enumerate")
-  (enumerateroman "enumerate")
-  (enumerateromancap "enumerate")
-
   (Backepsilon "graphicx")
   (Mho "graphicx")
   (mho "graphicx")

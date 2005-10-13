@@ -24,15 +24,11 @@
 (define latex-style "generic")
 (define latex-style-hyp 'generic-style%)
 
+(define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
-
 (define latex-macro-table (make-ahash-table))
 (define latex-env-table (make-ahash-table))
-(define latex-preamble "")
-
-(define latex-uses-table (make-ahash-table))
-(define latex-preamble-init "")
-(define latex-preamble-result "")
+(define latex-preamble-misc '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Setting global parameters
@@ -51,12 +47,19 @@
 ;; Catcode expansion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (latex-catcode c)
-  (with s (list->string (list c))
-    (or (if latex-cyrillic-catcode?
-	    (drd-ref cyrillic-catcodes% s)
-	    (drd-ref iso-latin-catcodes% s))
-	s)))
+(define (latex-replace-catcode s)
+  (or (if latex-cyrillic-catcode?
+	  (drd-ref cyrillic-catcodes% s)
+	  (drd-ref iso-latin-catcodes% s))
+      s))
+
+(tm-define (latex-expand-catcodes t)
+  (:synopsis "Expand all catcodes in @t")
+  (cond ((string? t)
+	 (with l (map string (string->list t))
+	   (apply string-append (map latex-replace-catcode l))))
+	((pair? t) (cons (car t) (map latex-expand-catcodes (cdr t))))
+	(else t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute catcode definitions
@@ -64,7 +67,7 @@
 
 (define (latex-catcode-defs-char c)
   (let* ((s (list->string (list c)))
-	 (r (latex-catcode c)))
+	 (r (latex-replace-catcode s)))
     (if (!= r s) (ahash-set! latex-catcode-table s r))))
 
 (define (latex-catcode-defs-sub doc)
@@ -118,28 +121,6 @@
 ;; Compute macro and environment definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (latex-macro-defs-sub t)
-  (when (pair? t)
-    (for-each latex-macro-defs-sub (cdr t))
-    (let* ((body  (drd-ref latex-texmacs-macro% (car t) latex-style-hyp))
-	   (arity (drd-ref latex-texmacs-arity% (car t) latex-style-hyp)))
-      (when (and body (== (length t) (+ arity 1)))
-	(ahash-set! latex-macro-table (car t) (list arity body))
-	(latex-macro-defs-sub body)))
-    (let* ((body  (and (func? (car t) '!begin)
-		       (drd-ref latex-texmacs-environment% (cadar t))))
-	   (arity (and (func? (car t) '!begin)
-		       (drd-ref latex-texmacs-env-arity% (cadar t)))))
-      (when (and body (== (length (cddar t)) arity))
-	(ahash-set! latex-env-table (cadar t) (list arity body))
-	(latex-macro-defs-sub body)))
-    (with body (or (drd-ref latex-texmacs-preamble% (car t))
-		   (and (func? (car t) '!begin)
-			(drd-ref latex-texmacs-env-preamble% (cadar t))))
-      (when body
-	(with s (serialize-latex (latex-expand-def body))
-	  (set! latex-preamble (string-append latex-preamble s)))))))
-
 (define (latex-expand-def t)
   (cond ((== t '---) "#-#-#")
 	((number? t) (string-append "#" (number->string t)))
@@ -148,44 +129,81 @@
 	((list? t) (map latex-expand-def t))
 	(else t)))
 
-(define (latex-macro-def l)
-  (with (name arity body) l
-    (set! body (serialize-latex (latex-expand-def body)))
-    (set! body (string-replace body "\n\n" "*/!!/*"))
-    (set! body (string-replace body "\n" " "))
-    (set! body (string-replace body "*/!!/*" "\n\n"))
-    (string-append "\\newcommand{\\" (symbol->string name) "}"
-		   (if (= arity 0) ""
-		       (string-append "[" (number->string arity) "]"))
-		   "{" body "}\n")))
-
-(define (latex-env-def l)
-  (with (name arity body) l
-    (set! body (serialize-latex (latex-expand-def body)))
-    (set! body (string-replace body "\n\n" "*/!!/*"))
-    (set! body (string-replace body "\n  " " "))
-    (set! body (string-replace body "\n" " "))
-    (set! body (string-replace body "   #-#-# " "}{"))
-    (set! body (string-replace body "#-#-# " "}{"))
-    (set! body (string-replace body "#-#-#" "}{"))
-    (set! body (string-replace body "*/!!/*" "\n\n"))
-    (string-append "\\newenvironment{" name "}"
-		   (if (= arity 0) ""
-		       (string-append "[" (number->string arity) "]"))
-		   "{" body "}\n")))
+(define (latex-macro-defs-sub t)
+  (when (pair? t)
+    (for-each latex-macro-defs-sub (cdr t))
+    (let* ((body  (drd-ref latex-texmacs-macro% (car t) latex-style-hyp))
+	   (arity (drd-ref latex-texmacs-arity% (car t) latex-style-hyp)))
+      (when (and body (== (length t) (+ arity 1)))
+	(ahash-set! latex-macro-table (car t)
+		    (list arity (latex-expand-def body)))
+	(latex-macro-defs-sub body)))
+    (let* ((body  (and (func? (car t) '!begin)
+		       (drd-ref latex-texmacs-environment% (cadar t))))
+	   (arity (and (func? (car t) '!begin)
+		       (drd-ref latex-texmacs-env-arity% (cadar t)))))
+      (when (and body (== (length (cddar t)) arity))
+	(ahash-set! latex-env-table (cadar t)
+		    (list arity (latex-expand-def body)))
+	(latex-macro-defs-sub body)))
+    (with body (or (drd-ref latex-texmacs-preamble% (car t))
+		   (and (func? (car t) '!begin)
+			(drd-ref latex-texmacs-env-preamble% (cadar t))))
+      (when body
+	(set! latex-preamble-misc
+	      (cons (latex-expand-def body) latex-preamble-misc))))))
 
 (tm-define (latex-macro-defs t)
   (:synopsis "Return necessary macro and environment definitions for @doc")
   (set! latex-macro-table (make-ahash-table))
-  (set! latex-preamble "")
+  (set! latex-env-table (make-ahash-table))
+  (set! latex-preamble-misc '())
   (latex-macro-defs-sub t)
-  (let* ((l1 (ahash-table->list latex-macro-table))
-	 (l2 (list-sort l1 (lambda (x y) (symbol<=? (car x) (car y)))))
-	 (l3 (map latex-macro-def l2))
+  (let* ((d1 (reverse latex-preamble-misc))
+	 (c1 (ahash-table->list latex-macro-table))
+	 (c2 (list-sort c1 (lambda (x y) (symbol<=? (car x) (car y)))))
+	 (c3 (map (cut cons '!newcommand <>) c2))
 	 (e1 (ahash-table->list latex-env-table))
 	 (e2 (list-sort e1 (lambda (x y) (string<=? (car x) (car y)))))
-	 (e3 (map latex-env-def e2)))
-    (apply string-append (append (list latex-preamble) l3 e3))))
+	 (e3 (map (cut cons '!newenvironment <>) e2)))
+    (cons '!append (append d1 c3 e3))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Serialization of TeXmacs preambles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (latex-macro-def name arity body)
+  (set! body (serialize-latex (latex-expand-def body)))
+  (set! body (string-replace body "\n\n" "*/!!/*"))
+  (set! body (string-replace body "\n" " "))
+  (set! body (string-replace body "*/!!/*" "\n\n"))
+  (string-append "\\newcommand{\\" (symbol->string name) "}"
+		 (if (= arity 0) ""
+		     (string-append "[" (number->string arity) "]"))
+		 "{" body "}\n"))
+
+(define (latex-env-def name arity body)
+  (set! body (serialize-latex (latex-expand-def body)))
+  (set! body (string-replace body "\n\n" "*/!!/*"))
+  (set! body (string-replace body "\n  " " "))
+  (set! body (string-replace body "\n" " "))
+  (set! body (string-replace body "   #-#-# " "}{"))
+  (set! body (string-replace body "#-#-# " "}{"))
+  (set! body (string-replace body "#-#-#" "}{"))
+  (set! body (string-replace body "*/!!/*" "\n\n"))
+  (string-append "\\newenvironment{" name "}"
+		 (if (= arity 0) ""
+		     (string-append "[" (number->string arity) "]"))
+		 "{" body "}\n"))
+
+(tm-define (latex-serialize-preamble t)
+  (:synopsis "Serialize a LaTeX preamble @t")
+  (cond ((string? t) t)
+	((func? t '!append)
+	 (apply string-append (map latex-serialize-preamble (cdr t))))
+	((func? t '!newcommand 3) (apply latex-macro-def (cdr t)))
+	((func? t '!newenvironment 3) (apply latex-env-def (cdr t)))
+	(else (serialize-latex t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compute usepackage command for a document
@@ -238,24 +256,22 @@
 (define (latex-preamble-page-type init)
   (let* ((page-type (ahash-ref init "page-type"))
 	 (page-size (drd-ref latex-paper-type% page-type)))
-    (if page-size
-	(begin
-	  (ahash-set! latex-uses-table "geometry" #t)
-	  ;;;;;;;;;;;;;;; FIXME: has no effect
-	  (string-append "\\geometry{" page-size "}\n"))
-	"")))
+    (if page-size `(!append (geometry ,page-size) "\n") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (latex-preamble text style lan init)
-  (:synopsis "Compute preamble for @text with given @style, @lan and @init")
-  (let* ((pre-language (latex-preamble-language lan))
-	 (pre-page     (latex-preamble-page-type init))
-	 (pre-macro    (latex-macro-defs text))
-	 (pre-catcode  (latex-catcode-defs text))
-	 (pre-uses     (latex-use-package-command text)))
+  (:synopsis "Compute preamble for @text")
+  (let* ((Page         (latex-preamble-page-type init))
+	 (Macro        (latex-macro-defs text))
+	 (Text         (list '!tuple Page Macro text))
+	 (pre-language (latex-preamble-language lan))
+	 (pre-page     (latex-serialize-preamble Page))
+	 (pre-macro    (latex-serialize-preamble Macro))
+	 (pre-catcode  (latex-catcode-defs Text))
+	 (pre-uses     (latex-use-package-command Text)))
     (values
       (string-append pre-uses)
       (string-append pre-page)
