@@ -416,10 +416,19 @@
 	    (cons head tail)
 	    (cons* head " " tail)))))
 
+(define (tmtex-rewrite-no-break l)
+  (cond ((null? l) l)
+	((and (string? (car l)) (string-ends? (car l) " ")
+	      (nnull? (cdr l)) (== (cadr l) '(no-break)))
+	 (let* ((s (substring (car l) 0 (- (string-length (car l)) 1)))
+		(r (tmtex-rewrite-no-break (cddr l))))
+	   (if (== s "") (cons '(!nbsp) r) (cons* s '(!nbsp) r))))
+	(else (cons (car l) (tmtex-rewrite-no-break (cdr l))))))
+
 (define (tmtex-concat l)
   (if (tmtex-math-mode?)
       (tex-concat (tmtex-math-concat-spaces (tmtex-list l)))
-      (tex-concat (tmtex-list l))))
+      (tex-concat (tmtex-list (tmtex-rewrite-no-break l)))))
 
 (define (tmtex-no-first-indentation l) (tex-apply 'noindent))
 (define (tmtex-line-break l) (tex-apply 'linebreak))
@@ -427,6 +436,7 @@
 (define (tmtex-new-page l) (tex-apply 'newpage))
 (define (tmtex-new-line l) (tex-apply '!newline))
 (define (tmtex-next-line l) (list '!nextline))
+(define (tmtex-no-break l) (list 'nobreak))
 
 (define (tmtex-decode-length s)
   ;; FIXME: should be completed
@@ -1141,7 +1151,7 @@
   (new-line tmtex-new-line)
   (line-sep tmtex-noop)
   (next-line tmtex-next-line)
-  (no_break tmtex-noop)
+  (no-break tmtex-no-break)
   (no-indent tmtex-no-first-indentation)
   (yes-indent tmtex-noop)
   (no-indent* tmtex-noop)
@@ -1224,7 +1234,7 @@
 	convention quote-env quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
-  ((:or center indent body) (,tmtex-std-env 1))
+  ((:or center indent) (,tmtex-std-env 1))
   ((:or description itemize itemize-minus itemize-dot itemize-arrow
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)
