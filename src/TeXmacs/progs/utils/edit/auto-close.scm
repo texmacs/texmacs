@@ -39,7 +39,9 @@
   (let* ((p (cursor-path))
 	 (t (tree->stree (path->tree (cDr p)))))
     (if (string? t)
-	(not (or (== t "") (string-ends? t " ")))
+	(and (!= t "")
+	     (!= (cAr p) 0)
+	     (nin? (string-ref t (- (cAr p) 1)) '(#\space #\( #\[ #\{)))
 	(> (cAr p) 0))))
 
 (define (open-quotes lan)
