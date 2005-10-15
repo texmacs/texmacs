@@ -65,10 +65,12 @@ public:
   double   get_init_double (string var_name);
   language get_env_language ();
 
-  tree     exec (tree t, hashmap<string,tree> env);
+  tree     exec (tree t, hashmap<string,tree> env, bool expand_refs= true);
   tree     exec_texmacs (tree t, path p);
   tree     exec_html (tree t, path p);
   tree     exec_html (tree t);
+  tree     exec_latex (tree t, path p);
+  tree     exec_latex (tree t);
   tree     texmacs_exec (tree t);
 
   void     init_env (string var, tree by);
