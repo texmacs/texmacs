@@ -30,7 +30,7 @@
 (define latex-catcode-table (make-ahash-table))
 (define latex-macro-table (make-ahash-table))
 (define latex-env-table (make-ahash-table))
-(define latex-preamble-misc '())
+(define latex-preamble-table (make-ahash-table))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Setting global parameters
@@ -155,23 +155,31 @@
 		   (and (func? (car t) '!begin)
 			(drd-ref latex-texmacs-env-preamble% (cadar t))))
       (when body
-	(set! latex-preamble-misc
-	      (cons (latex-expand-def body) latex-preamble-misc))))))
+	(ahash-set! latex-preamble-table (car t) body)))))
+
+(define (latex<=? x y)
+  (if (symbol? x) (set! x (symbol->string x)))
+  (if (symbol? y) (set! y (symbol->string y)))
+  (if (func? x '!begin) (set! x (cadr x)))
+  (if (func? y '!begin) (set! y (cadr y)))
+  (string<=? x y))
 
 (tm-define (latex-macro-defs t)
   (:synopsis "Return necessary macro and environment definitions for @doc")
   (set! latex-macro-table (make-ahash-table))
   (set! latex-env-table (make-ahash-table))
-  (set! latex-preamble-misc '())
+  (set! latex-preamble-table (make-ahash-table))
   (latex-macro-defs-sub t)
-  (let* ((d1 (reverse latex-preamble-misc))
-	 (c1 (ahash-table->list latex-macro-table))
-	 (c2 (list-sort c1 (lambda (x y) (symbol<=? (car x) (car y)))))
+  (let* ((c1 (ahash-table->list latex-macro-table))
+	 (c2 (list-sort c1 (lambda (x y) (latex<=? (car x) (car y)))))
 	 (c3 (map (cut cons '!newcommand <>) c2))
 	 (e1 (ahash-table->list latex-env-table))
-	 (e2 (list-sort e1 (lambda (x y) (string<=? (car x) (car y)))))
-	 (e3 (map (cut cons '!newenvironment <>) e2)))
-    (cons '!append (append d1 c3 e3))))
+	 (e2 (list-sort e1 (lambda (x y) (latex<=? (car x) (car y)))))
+	 (e3 (map (cut cons '!newenvironment <>) e2))
+	 (p1 (ahash-table->list latex-preamble-table))
+	 (p2 (list-sort p1 (lambda (x y) (latex<=? (car x) (car y)))))
+	 (p3 (map cdr (map latex-expand-def p2))))
+    (cons '!append (append c3 e3 p3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Serialization of TeXmacs preambles

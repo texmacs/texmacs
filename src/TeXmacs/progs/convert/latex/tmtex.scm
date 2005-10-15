@@ -330,7 +330,8 @@
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
-	((in? x '("acmconf" "amsart" "jsc" "svjour")) x)
+	((in? x '("acmconf" "amsart" "svjour" "elsart")) x)
+	((in? x '("jsc")) "elsart")
 	(tmtex-faithful-style? x)
 	(else #f)))
 
@@ -341,12 +342,10 @@
 	(if next (cons next tail) tail))))
 
 (define (tmtex-filter-preamble l)
-  (define (append-lists l)
-    (if (null? l) l (append (car l) (append-lists (cdr l)))))
   (cond ((or (nlist? l) (null? l)) '())
 	((== (car l) 'assign) (list l))
 	((== (car l) 'hide-preamble) (cdadr l))
-	(else (append-lists (map tmtex-filter-preamble (cdr l))))))
+	(else (append-map tmtex-filter-preamble (cdr l)))))
 
 (define (tmtex-filter-body l)
   (cond ((or (nlist? l) (null? l)) l)
@@ -406,7 +405,7 @@
 (define (tmtex-script? x)
   (or (func? x '!sub)
       (func? x '!sup)
-      (and (string? x) (!= x "") (in? (string-ref x 0) '(#\' #\,)))
+      (and (string? x) (!= x "") (in? (string-ref x 0) '(#\' #\, #\) #\])))
       (and (func? x '!concat) (tmtex-script? (cadr x)))))
 
 (define (tmtex-math-concat-spaces l)
@@ -778,7 +777,9 @@
 	(else (tmtex-args-sub x args))))
 
 (define (tmtex-assign l)
-  (let ((var (tmtex-var-name (car l))) (val (cadr l)))
+  (let ((var (tmtex-var-name (car l)))
+	(val (cadr l)))
+    (while (func? val 'quote 1) (set! val (cadr val)))
     (if (!= var "")
 	(begin
 	  (tmtex-env-assign var val)
@@ -801,6 +802,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-quote l)
+  (tmtex (car l)))
 
 (define (tmtex-label l)
   (list 'label (force-string (car l))))
@@ -898,6 +902,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-std-env s l)
+  (if (== s "quote-env") (set! s "quote"))
   (list (list '!begin s) (tmtex (car l))))
 
 (define (tmtex-appendix s l)
@@ -1071,6 +1076,9 @@
 (define (tmtex-menu s l)
   (tex-concat (cons (tmtex-menu-one (car l)) (tmtex-menu-list (cdr l)))))
 
+(define ((tmtex-rename into) s l)
+  (tmtex-apply into (tmtex-list l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1078,6 +1086,7 @@
 (define (tmtex-apply key args)
   (let ((n (length args))
 	(r (drd-ref tmtex-methods% key)))
+    (if (== key 'quote) (set! r tmtex-quote))
     (if r (r args)
 	(let ((p (drd-ref tmtex-tmstyle% key)))
 	  (if (and p (or (= (cadr p) -1) (= (cadr p) n)))
@@ -1179,7 +1188,9 @@
   ((:or macro func env eval) tmtex-noop)
   (value tmtex-compound)
   (arg tmtex-noop)
-  ((:or backup quote delay hold release) tmtex-noop)
+  (backup tmtex-noop)
+  (quote tmtex-quote)
+  ((:or delay hold release) tmtex-noop)
   ((:or or xor and not plus minus times over div mod merge length range
 	number date translate is-tuple look-up equal unequal less lesseq
 	greater greatereq if case while extern authorize)
@@ -1210,7 +1221,7 @@
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise warning
-	convention quote quotation verse)
+	convention quote-env quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   ((:or center indent body) (,tmtex-std-env 1))
@@ -1252,13 +1263,56 @@
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1))
   ((:or shown show-part) (,tmtex-id 1))
-  ((:or hidden hide-part) (,tmtex-noop 1)))
+  ((:or hidden hide-part) (,tmtex-noop 1))
+  (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
+  (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0)))
 
 (drd-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
   aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
   ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
   AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Expansion of all macros which are not recognized by LaTeX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define tmtex-user-defs-table (make-ahash-table))
+
+(define (collect-user-defs-sub t)
+  (cond ((npair? t) (noop))
+	((and (func? t 'assign 2) (string? (cadr t)))
+	 (ahash-set! tmtex-user-defs-table (string->symbol (cadr t)) #t))
+	(else (for-each collect-user-defs-sub (cdr t)))))
+
+(define (collect-user-defs t)
+  (set! tmtex-user-defs-table (make-ahash-table))
+  (collect-user-defs-sub t)
+  (ahash-set->list tmtex-user-defs-table))
+
+(define (as-string sym)
+  (with s (symbol->string sym)
+    (if (string-starts? s "begin-")
+	(substring s 6 (string-length s))
+	s)))
+
+(define (drd-first-list name)
+  (let* ((l1 (query (cons name '('first 'second))))
+	 (l2 (map (cut assoc-ref <> 'first) l1)))
+    (map as-string l2)))
+
+(define (tmtex-env-macro name)
+  `(associate ,name (xmacro "x" (eval-args "x"))))
+
+(tm-define (tmtex-env-patch t)
+  (let* ((l1 (drd-first-list 'tmtex-methods%))
+	 (l2 (drd-first-list 'tmtex-tmstyle%))
+	 (l3 (map as-string (drd-apply-list '(latex-tag%))))
+	 (l4 (map as-string (drd-apply-list '(latex-symbol%))))
+	 (l5 (list-difference l3 l4))
+	 (l6 (map as-string (collect-user-defs (tree->stree t))))
+	 (l7 (list-difference (list-union l2 (list-union l5 l6)) l1)))
+    `(collection ,@(map tmtex-env-macro l7))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

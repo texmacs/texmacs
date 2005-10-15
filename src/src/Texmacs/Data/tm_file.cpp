@@ -153,6 +153,8 @@ tm_data_rep::make_document (tm_view vw, string fm) {
   tree body= subtree (the_et, vw->buf->rp);
   if (fm == "html")
     body= vw->ed->exec_html (body);
+  if (fm == "latex")
+    body= vw->ed->exec_latex (body);
 
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);

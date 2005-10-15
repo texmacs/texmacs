@@ -349,6 +349,9 @@
 ;; Set operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (ahash-set->list s)
+  (map car (ahash-table->list s)))
+
 (define-public (list->ahash-set l)
   (list->ahash-table (map (lambda (x) (cons x #t)) l)))
 

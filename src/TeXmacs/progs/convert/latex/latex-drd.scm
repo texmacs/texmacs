@@ -273,7 +273,7 @@
   ("amssymb" 20)
   ("graphicx" 30)
   ("wasysym" 40)
-  ("stmaryd" 50)
+  ("stmaryrd" 50)
   ("enumerate" 60)
   ("epsfig" 70)
   ("mathrsfs" 80)

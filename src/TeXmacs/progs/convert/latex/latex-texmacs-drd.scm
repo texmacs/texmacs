@@ -286,7 +286,7 @@
     "      \\tmfloatcontents\n"
     "      \\captionof{#3}{#5}\n"
     "    \\end{center}\n"
-    "  \\end{minipage}}")))
+    "  \\end{minipage}}\n")))
 
 (define-macro (latex-texmacs-thmenv prim name before after)
   (with env-sym (string->symbol (string-append "begin-" prim))

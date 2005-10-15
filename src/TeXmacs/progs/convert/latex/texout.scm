@@ -29,7 +29,7 @@
 
 (define (texout-file l)
   (let* ((doc-body (car l))
-	 (styles (cadr l))
+	 (styles (if (null? (cadr l)) (list "letter") (cadr l)))
 	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))
@@ -119,7 +119,8 @@
   (and (list? l) (nnull? l) (func? (car l) '!begin)))
 
 (define (texout-want-space x1 x2) ;; spacing rules
-  (and (not (or (== x2 ",")
+  (and (not (or (in? x1 '("(" "["))
+		(in? x2 '("," ")" "]"))
 		(== x1 " ") (== x2 " ")
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)

@@ -153,6 +153,8 @@
 	(-> "TeXmacs -> LaTeX"
 	    (toggle ("Keep unrecognized styles and packages"
 		     "texmacs->latex:faithful-style"))
+	    (toggle ("Keep unrecognized macros"
+		     "texmacs->latex:faithful-macros"))
 	    (toggle ("Export bibliographies as links"
 		     "texmacs->latex:indirect-bib"))
 	    (toggle ("Use catcodes"

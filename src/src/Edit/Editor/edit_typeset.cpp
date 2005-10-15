@@ -282,12 +282,13 @@ expand_references (tree t, hashmap<string,tree> h) {
 }
 
 tree
-edit_typeset_rep::exec (tree t, hashmap<string,tree> H) {
+edit_typeset_rep::exec (tree t, hashmap<string,tree> H, bool expand_refs) {
   hashmap<string,tree> H2;
   env->read_env (H2);
   env->write_env (H);
   t= env->exec (t);
-  t= expand_references (t, buf->ref);
+  if (expand_refs)
+    t= expand_references (t, buf->ref);
   t= simplify_execed (t);
   t= simplify_correct (t);
   env->write_env (H2);
@@ -314,6 +315,24 @@ edit_typeset_rep::exec_html (tree t, path p) {
 tree
 edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t, path p) {
+  string pref= "texmacs->latex:faithful-macros";
+  if (as_string (call ("get-preference", pref)) == "on") return t;
+  if (p == (rp * 0)) typeset_preamble ();
+  typeset_exec_until (p);
+  hashmap<string,tree> H= copy (cur[p]);
+  tree patch= as_tree (call ("stree->tree", call ("tmtex-env-patch", t)));
+  hashmap<string,tree> P (UNINIT, patch);
+  H->join (P);
+  return exec (t, H, false);
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t) {
+  return exec_latex (t, rp * 0);
 }
 
 tree
