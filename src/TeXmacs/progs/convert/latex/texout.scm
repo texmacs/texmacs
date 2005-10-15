@@ -119,8 +119,8 @@
   (and (list? l) (nnull? l) (func? (car l) '!begin)))
 
 (define (texout-want-space x1 x2) ;; spacing rules
-  (and (not (or (in? x1 '("(" "["))
-		(in? x2 '("," ")" "]"))
+  (and (not (or (in? x1 '("(" "[" (nobreak)))
+		(in? x2 '("," ")" "]" (nobreak)))
 		(== x1 " ") (== x2 " ")
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
@@ -137,13 +137,12 @@
 	   (and (nlist? x1) (nlist? x2)))))
 
 (define (texout-concat l)
-  (if (nnull? l)
-      (begin
-	(texout (car l))
-	(if (nnull? (cdr l))
-	    (texout-concat (if (texout-want-space (car l) (cadr l))
-			       (cons " " (cdr l))
-			       (cdr l)))))))
+  (when (nnull? l)
+    (texout (car l))
+    (if (nnull? (cdr l))
+	(texout-concat (if (texout-want-space (car l) (cadr l))
+			   (cons " " (cdr l))
+			   (cdr l))))))
 
 (define (texout-newline)
   (output-lf)
