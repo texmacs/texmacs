@@ -374,7 +374,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-noop l) "")
+(define (tmtex-default s l) (cons (string->symbol s) (tmtex-list l)))
 (define (tmtex-id l) (tmtex (car l)))
+(define (tmtex-second l) (tmtex (cadr l)))
 (define (tmtex-hide-part l) "")
 (define (tmtex-show-part l) (tmtex (cadr l)))
 
@@ -994,11 +996,13 @@
   (tex-apply 'tableofcontents))
 
 (define (tmtex-bib-sub doc)
+  (display* "doc= " doc "\n")
   (cond ((nlist? doc) doc)
 	((match? doc '(concat (bibitem* :1) (label :string?) :*))
 	 (let* ((l (cadr (caddr doc)))
 		(s (if (string-starts? l "bib-") (string-drop l 4) l)))
 	   (cons* 'concat (list 'bibitem* (cadadr doc) s) (cdddr doc))))
+	((func? doc 'bib-list 2) (tmtex-bib-sub (cAr doc)))
 	(else (map tmtex-bib-sub doc))))
 
 (define (tmtex-bib-max l)
@@ -1227,6 +1231,10 @@
 
 (drd-table tmtex-tmstyle%
   (doc-data (,tmtex-doc-data -1))
+  ((:or doc-title doc-author-data doc-date doc-note
+	doc-keywords doc-AMS-class) (,tmtex-default -1))
+  ((:or author-name author-address author-note
+	author-email author-homepage) (,tmtex-default -1))
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
@@ -1258,6 +1266,7 @@
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
   (thebibliography (,tmtex-thebibliography 2))
+  (bib-list (,tmtex-second 2))
   (bibitem* (,tmtex-bibitem* -1))
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
