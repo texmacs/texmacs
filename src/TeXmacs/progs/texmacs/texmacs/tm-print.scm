@@ -53,7 +53,14 @@
 (define (notify-printer-dpi var val)
   (set-printer-dpi val))
 
+(define notify-font-type-flag #f)
 (define (notify-font-type var val)
+  (when notify-font-type-flag
+    (with font-cache "$TEXMACS_HOME_PATH/system/cache/font_cache.scm"
+      (system-remove (string->url font-cache)))
+    (set-message "Restart in order to let new font type take effect"
+		 "font type"))
+  (set! notify-font-type-flag #t)
   (with type
       (cond ((== val "Metafont only") 0)
 	    ((== val "Metafont + Type 1") 1)
