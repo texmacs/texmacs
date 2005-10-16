@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.5.10>
 
 <style|tmweb>
 
@@ -51,6 +51,11 @@
 
     \ \ \ \ cvs co plugins
   </verbatim>
+
+  Notice that the CVS version of <TeXmacs> does <em|not> contain any of the
+  Type 1 fonts which are necessary to run the program. In the case when you
+  use this version, it is therefore necessary to install the <hlink|complete
+  extra fonts package|fonts.en.tm#complete> in <verbatim|~/.TeXmacs>.
 
   <vspace*|1fn><paragraph|Committing changes by CVS><label|commit>
 

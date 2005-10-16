@@ -26,11 +26,12 @@
 
   <section|Download and unpack the source code>
 
-  Download the <hlink|latest version (3.6
+  Download the <hlink|latest version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
   of the source code, or the <hlink|latest stable version (2.5
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>,
-  cd into the directory where you wish to compile <TeXmacs> and type
+  <verbatim|cd> into the directory where you wish to compile <TeXmacs> and
+  type
 
   <\code>
     \ \ \ \ tar -zxvf <merge|<TeXmacs-version-release|tgz>|-src.tar.gz>
@@ -48,7 +49,7 @@
   Before compiling, you may optionally download a <hlink|tarball (5.8
   Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
   with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
-  <verbatim|TeXmacs> subdirectory of the installation directory using
+  directory <verbatim|~/.TeXmacs> using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -

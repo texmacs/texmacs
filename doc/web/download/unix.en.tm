@@ -8,7 +8,7 @@
 
   <section|Download the package>
 
-  Download the <hlink|most recent (5.3 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-static-gnu-linux.tar.gz>>>
+  Download the <hlink|most recent (4.1 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-static-gnu-linux.tar.gz>>>
   or <hlink|last stable (4.1 Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-static-gnu-linux.tar.gz>>>
   static binary distribution of GNU <TeXmacs> for PC's under
   GNU/<name|Linux>. If you have another operating system, then you should
@@ -41,7 +41,7 @@
   Optionally, you may download a <hlink|tarball (5.8
   Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
   with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
-  installation directory using
+  directory <verbatim|~/.TeXmacs> using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.5.10>
 
 <style|tmweb>
 
@@ -35,9 +35,8 @@
 
   If you installed <TeXmacs> from the static binaries, then you may download
   a <hlink|tarball (5.8 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
-  with extra fonts. After downloading, you should <verbatim|cd> into the
-  directory which contains the static binaries and check whether you have a
-  subdirectory <verbatim|fonts>. If so, then unpack the fonts using
+  with extra fonts. After downloading, <verbatim|cd> into the directory
+  <verbatim|~/.TeXmacs> and unpack the fonts using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
@@ -56,9 +55,8 @@
   Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>
   with a reasonably complete set of Type 1 fonts for basic use of <TeXmacs>
   (in fact, these are precisely the fonts which are provided in the native
-  <name|Windows> version of <TeXmacs>). The installation procedure is the
-  same as the <hlink|above one|#fonts-tarball> for the tarball with basic
-  extra fonts, except that the correct unpacking command changes to
+  <name|Windows> version of <TeXmacs>). After downloading, <verbatim|cd> into
+  the directory <verbatim|~/.TeXmacs> and unpack the fonts using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-windows-fonts-1.0-noarch.tar.gz \| tar xvf -
@@ -70,9 +68,8 @@
   </remark>
 
   <\remark>
-    More exotic fonts may be added by the user in the <verbatim|fonts>
-    subdirectory of <with|font-family|tt|$TEXMACS_HOME_PATH> (which defaults
-    to <verbatim|~/.TeXmacs>). Just add additional <verbatim|tfm> files to
+    More exotic fonts may be added by the user in the directory of
+    <verbatim|~/.TeXmacs/fonts>). Just add additional <verbatim|tfm> files to
     the <verbatim|tfm> subdirectory, <verbatim|pfb> files to the
     <verbatim|pfb> subdirectory and so on. Notice that <TeXmacs> only
     recognizes a subset of the fonts which come with traditional <TeX>
