@@ -319,8 +319,8 @@ edit_typeset_rep::exec_html (tree t) {
 
 tree
 edit_typeset_rep::exec_latex (tree t, path p) {
-  string pref= "texmacs->latex:faithful-macros";
-  if (as_string (call ("get-preference", pref)) == "on") return t;
+  string pref= "texmacs->latex:expand-macros";
+  if (as_string (call ("get-preference", pref)) != "on") return t;
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);

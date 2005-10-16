@@ -26,13 +26,13 @@
 
 (define tmtex-env (make-ahash-table))
 (define tmtex-appendices? #f)
-(define tmtex-faithful-style? #f)
+(define tmtex-replace-style? #t)
 (define tmtex-indirect-bib? #f)
 
 (tm-define (tmtex-initialize opts)
   (set! tmtex-appendices? #f)
-  (set! tmtex-faithful-style?
-	(== (assoc-ref opts "texmacs->latex:faithful-style") "on"))
+  (set! tmtex-replace-style?
+	(== (assoc-ref opts "texmacs->latex:replace-style") "on"))
   (set! tmtex-indirect-bib?
 	(== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-use-catcodes?
@@ -332,7 +332,7 @@
 	((in? x '("tmbook" "tmmanual")) "book")
 	((in? x '("acmconf" "amsart" "svjour" "elsart")) x)
 	((in? x '("jsc")) "elsart")
-	(tmtex-faithful-style? x)
+	((not tmtex-replace-style?) x)
 	(else #f)))
 
 (define (tmtex-filter-styles l)
@@ -360,6 +360,8 @@
 	 (init (cadddr l))
 	 (doc-preamble (tmtex-filter-preamble doc))
 	 (doc-body (tmtex-filter-body doc)))
+    (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
+	(set! doc-preamble '()))
     (if (null? styles) (tmtex doc)
 	(begin
 	  (list '!file
@@ -996,7 +998,6 @@
   (tex-apply 'tableofcontents))
 
 (define (tmtex-bib-sub doc)
-  (display* "doc= " doc "\n")
   (cond ((nlist? doc) doc)
 	((match? doc '(concat (bibitem* :1) (label :string?) :*))
 	 (let* ((l (cadr (caddr doc)))
@@ -1305,9 +1306,11 @@
 	(else (for-each collect-user-defs-sub (cdr t)))))
 
 (define (collect-user-defs t)
-  (set! tmtex-user-defs-table (make-ahash-table))
-  (collect-user-defs-sub t)
-  (ahash-set->list tmtex-user-defs-table))
+  (if (== (get-preference "texmacs->latex:expand-user-macros") "on") '()
+      (begin
+	(set! tmtex-user-defs-table (make-ahash-table))
+	(collect-user-defs-sub t)
+	(ahash-set->list tmtex-user-defs-table))))
 
 (define (as-string sym)
   (with s (symbol->string sym)

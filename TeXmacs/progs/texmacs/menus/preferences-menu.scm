@@ -151,15 +151,17 @@
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
 	    (toggle ("Use MathML" "texmacs->html:mathml")))
 	(-> "TeXmacs -> LaTeX"
-	    (toggle ("Keep unrecognized styles and packages"
-		     "texmacs->latex:faithful-style"))
-	    (toggle ("Keep unrecognized macros"
-		     "texmacs->latex:faithful-macros"))
+	    (toggle ("Replace unrecognized styles"
+		     "texmacs->latex:replace-style"))
+	    (toggle ("Expand unrecognized macros"
+		     "texmacs->latex:expand-macros"))
+	    (toggle ("Expand user-defined macros"
+		     "texmacs->latex:expand-user-macros"))
 	    (toggle ("Export bibliographies as links"
 		     "texmacs->latex:indirect-bib"))
-	    (toggle ("Use catcodes"
+	    (toggle ("Use catcode definitions in preamble"
 		     "texmacs->latex:use-catcodes"))
-	    (toggle ("Use TeXmacs macros"
+	    (toggle ("Use extra macros in preambles"
 		     "texmacs->latex:use-macros"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")

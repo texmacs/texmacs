@@ -31,6 +31,7 @@
   noindent newline linebreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix nolimits
+  maketitle
 
   ;; temporarily
   hline
@@ -52,7 +53,8 @@
   #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
-  includegraphics)
+  includegraphics
+  title author thanks)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
