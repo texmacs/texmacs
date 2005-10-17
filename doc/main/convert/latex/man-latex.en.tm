@@ -12,7 +12,7 @@
 
     <branch|Conversion from <LaTeX> to <TeXmacs>|man-latex2tm.en.tm>
 
-    <branch|Limitations of the current converters|man-problems.en.tm>
+    <branch|Limitations of the current <LaTeX> converters|man-problems.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2005|Joris van der Hoeven>
