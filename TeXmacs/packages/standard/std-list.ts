@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.5.10>
 
 <style|source>
 
@@ -60,7 +60,7 @@
   <assign|compact-strong-dash-item|<macro|x|<compact-item|<item-strong|<arg|x>>
   <emdash> >>>
 
-  <assign|long-compact-strong-dot-item|<macro|x|<item-long|<compact-strong-dot-item|<arg|x>>>>>
+  <assign|long-compact-strong-dot-item|<macro|x|<item-long|<move|<item-strong|<arg|x>.>|-1.5fn|0fn>>>>
 
   <\active*>
     <\src-comment>
