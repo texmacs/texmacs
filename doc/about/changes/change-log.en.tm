@@ -1,13 +1,16 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.5.10>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.10>
+  <section|Changes from version 1.0.5 to 1.0.5.11>
 
   <\itemize>
+    <item>More options for the <TeXmacs> to <LaTeX> converter and updated
+    documentation (1.0.5.11).
+
     <item>Faster and more portable help searching (1.0.5.10).
 
     <item>Added a plug-in for Mathematica (1.0.5.10).

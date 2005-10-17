@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.9>
+<TeXmacs|1.0.5.10>
 
 <style|tmdoc>
 
@@ -31,17 +31,6 @@
     automatically, like the menus or some names of keys. Also, we recommend
     to run the <TeXmacs> spell checker on each translated document; this also
     requires the prior selection of the right document language.
-  </warning>
-
-  <\warning>
-    In recent versions of <TeXmacs>, documentation files are ``cached'', so
-    to improve the performance of help searching. However, this may prevent
-    <TeXmacs> from recognizing newly added documentation. When writing
-    documentation, you should always start <TeXmacs> using
-
-    <verbatim| \ \ \ texmacs --delete-doc-cache>
-
-    so as to remove all old files in the cache.
   </warning>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
