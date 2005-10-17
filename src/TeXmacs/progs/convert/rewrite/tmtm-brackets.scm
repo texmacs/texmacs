@@ -12,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert rewrite tmtm-brackets)
-  (:export tmtm-match-brackets))
+(texmacs-module (convert rewrite tmtm-brackets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket matching
@@ -44,15 +43,15 @@
     (append (make-list (cadr result) '(left ".")) (car result))))
 
 (define (tmtm-match-brackets-bis l)
-  (cond ((not (pair? l)) l)
+  (cond ((npair? l) l)
 	((== (car l) 'concat)
 	 (let ((complete (tmtm-match-brackets-concat (cdr l))))
 	   (cons 'concat (map tmtm-match-brackets-bis complete))))
 	(else (cons (car l) (map tmtm-match-brackets (cdr l))))))
 
-(define (tmtm-match-brackets l)
+(tm-define (tmtm-match-brackets l)
   "Add missing brackets to TeXmacs stree @l."
-  (cond ((not (pair? l)) l)
+  (cond ((npair? l) l)
 	((func? l 'left 1) `(concat ,l (right ".")))
 	((func? l 'right 1) `(concat (left ".") ,l))
 	(else (tmtm-match-brackets-bis l))))

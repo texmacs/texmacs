@@ -14,11 +14,7 @@
 #define DISPLAY_H
 #include "tree.hpp"
 #include "bitmap_font.hpp"
-
-#ifndef _TIME_T
-#define _TIME_T
-typedef long time_t;
-#endif
+#include "timer.hpp"
 
 struct font;
 class widget;
@@ -27,6 +23,13 @@ typedef window_rep* window;
 class display_rep;
 typedef display_rep* display;
 typedef int color;
+
+#define INTERRUPT_EVENT   0
+#define INTERRUPTED_EVENT 1
+#define ANY_EVENT         2
+#define DRAG_EVENT        3
+#define MOTION_EVENT      4
+#define MENU_EVENT        5
 
 class display_rep {
 public:
@@ -75,9 +78,11 @@ public:
 
   /* miscellaneous */
   virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
-  virtual void   postscript_gc (string name= "*") = 0;
-  virtual void   set_pointer (string pixmap_name= "") = 0;
+  virtual void   image_gc (string name= "*") = 0;
+  virtual void   set_pointer (string name) = 0;
+  virtual void   set_pointer (string curs_name, string mask_name) = 0;
   virtual void   set_wait_indicator (string message, string arg) = 0;
+  virtual bool   check_event (int type) = 0;
 };
 
 display open_display (int argc=0, char** argv=NULL);

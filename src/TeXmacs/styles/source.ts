@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.5.6>
 
 <style|source>
 
@@ -34,6 +34,8 @@
   </active*>
 
   <assign|preamble|true>
+
+  <assign|mode|src>
 
   <assign|par-first|0fn>
 

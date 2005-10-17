@@ -341,8 +341,8 @@ spline_rep::S (
   else if (u<U[i+1]) return p1[i](u);
   else if (u<U[i+2]) return p2[i](u);
   else if (u<U[i+3]) return p3[i](u);
-  else
-    fatal_error ("We should **never** go here");
+  else fatal_error ("We should **never** go here");
+  return 0.0; // NOT REACHED
 }
 
 point
@@ -569,23 +569,24 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   u[0]= 0;
   u[1]= e3;
   u[2]= e2;
-  if (close) e2= 1;
+  if (close) e2= 1.0;
 }
 
 point
 arc_rep::evaluate (double t) {
-  return center + r1*cos(2*tm_PI*(e1+t))*i
-                + r2*sin(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return center + r1*cos(2*tm_PI*t)*i
+                + r2*sin(2*tm_PI*t)*j;
 }
 
 void
 arc_rep::rectify_cumul (array<point>& cum, double eps) {
   double t, step;
   step= sqrt (2*eps / max (r1, r2) ) / tm_PI;
-  for (t=step; t<=e2; t+=step)
+  for (t=step; t<=1.0; t+=step)
     cum << evaluate (t);
-  if (t-step != e2)
-    cum << evaluate (e2);
+  if (t-step != 1.0)
+    cum << evaluate (1.0);
 }
 
 double
@@ -596,8 +597,9 @@ arc_rep::bound (double t, double eps) {
 point
 arc_rep::grad (double t, bool& error) {
   error= false;
-  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*i
-         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return -2*tm_PI*r1*sin(2*tm_PI*t)*i
+         +2*tm_PI*r2*cos(2*tm_PI*t)*j;
 }
 
 double
@@ -724,17 +726,11 @@ struct transformed_curve_rep: public curve_rep {
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
-  point grad (double t, bool& error) {
-    // FIXME: Is this correct ?
-    if (f->linear)
-      return f (c->grad (t, error));
-    else fatal_error ("Not yet implemented",
-		      "transformed_curve_rep::grad");
-  }
+  point grad (double t, bool& error);
   double curvature (double t1, double t2) {
     fatal_error ("Not yet implemented",
 	         "transformed_curve_rep::curvature");
-    return 0.0;
+    return 0.0; // NOT REACHED
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -750,6 +746,15 @@ transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
   }
   else fatal_error ("Not yet implemented",
 		    "transformed_curve_rep::rectify_cumul");
+}
+
+point
+transformed_curve_rep::grad (double t, bool& error) {
+  bool error2;
+  point w2= c->grad (t, error2);
+  point w1= f->jacobian (c(t), w2, error);
+  error |= error2;
+  return w1;
 }
 
 int

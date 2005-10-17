@@ -1,0 +1,23 @@
+/* XPM */
+static char * tm_fill_xpm[] = {
+"16 16 4 1",
+" 	s None	c None",
+".	c red",
+"X	c blue",
+"o	c green",
+"                ",
+"   .            ",
+"    ..          ",
+"    ....        ",
+"     .....      ",
+"     .......    ",
+"      ........  ",
+" XXXooo........ ",
+" XXooooo......  ",
+" Xooooooo....   ",
+" Xooooooo....   ",
+" Xooooooo...X   ",
+" XXoooooXX.XX   ",
+" XXXoooXXXXXX   ",
+" XXXXXXXXXXXX   ",
+"                "};

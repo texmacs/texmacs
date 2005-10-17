@@ -13,6 +13,8 @@
 #include "Tex/convert_tex.hpp"
 #include "scheme.hpp"
 #include "vars.hpp"
+#include "tree_correct.hpp"
+#include "url.hpp"
 
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
@@ -26,13 +28,18 @@ filter_preamble (tree t) {
   int i, n=N(t);
   bool in_preamble= true;
   tree r (CONCAT);
-  array<tree> preamble;
+  tree preamble (CONCAT);
+  tree title_info (CONCAT);
 
   for (i=0; i<n; i++) {
     tree u= t[i];
     if (in_preamble) {
       if (u == tuple ("\\begin-document")) {
-	r << u << preamble;
+	r << u;
+	if (N(preamble) > 0)
+	  r << tuple ("\\begin-hide-preamble") << A(preamble)
+	    << tuple ("\\end-hide-preamble");
+	r << A(title_info);
 	in_preamble= false;
       }
       else if (is_tuple (u, "\\documentclass") ||
@@ -40,10 +47,11 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentstyle") ||
 	       is_tuple (u, "\\documentstyle*"))
 	r << u;
-      else if (is_tuple (u, "\\def") || is_tuple (u, "\\def*") ||
-	       is_tuple (u, "\\title") || is_tuple (u, "\\author") ||
+      else if (is_tuple (u, "\\def") || is_tuple (u, "\\def*"))
+	preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\title") || is_tuple (u, "\\author") ||
 	       is_tuple (u, "\\address"))
-	preamble << u;
+	title_info << u;
     }
     else r << u;
   }
@@ -548,6 +556,12 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\text", 1) ||
       is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
     return var_m2e (t, MODE, "text");
+  if (is_tuple (t, "\\Mvariable", 1))
+    return compound ("Mvariable", var_m2e (t, MODE, "text"));
+  if (is_tuple (t, "\\Mfunction", 1))
+    return compound ("Mfunction", var_m2e (t, MODE, "text"));
+  if (is_tuple (t, "\\Muserfunction", 1))
+    return compound ("Muserfunction", var_m2e (t, MODE, "text"));
 
   if (is_tuple (t, "\\<sup>", 1)) {
     if (is_tuple (t[1], "\\prime", 0))
@@ -608,6 +622,8 @@ latex_command_to_tree (tree t) {
       return g;
     }
   }
+  if (is_tuple (t, "\\noalign", 1))
+    return ""; // FIXME: for larger space in maple matrices
 
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
@@ -931,6 +947,18 @@ finalize_layout (tree t) {
 	continue;
       }
 
+      /*
+      if (is_func (v, BEGIN) && (v[0] == "hide-preamble")) {
+	r << tree (BEGIN, "hide-preamble");
+	continue;
+      }
+
+      if (is_func (v, END) && (v[0] == "hide-preamble")) {
+	r << tree (END, "hide-preamble");
+	continue;
+      }
+      */
+
       if (is_func (v, BEGIN, 1) && admissible_env (v)) {
 	if (v == tree (BEGIN, "verbatim")) {
 	  r << v; i++;
@@ -1230,9 +1258,13 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt8= " << t8 << "\n\n";
   tree t9= finalize_textm (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
-  tree t10= simplify_correct (t9);
+  tree t10= drd_correct (std_drd, t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
+  tree t11= simplify_correct (t10);
+  // cout << "\n\nt11= " << t11 << "\n\n";
+  if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
+    style= "generic";
   if (is_document)
-    return tree (DOCUMENT, compound ("body", t10), compound ("style", style));
+    return tree (DOCUMENT, compound ("body", t11), compound ("style", style));
   else return t10;
 }

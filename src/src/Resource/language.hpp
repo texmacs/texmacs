@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : language.hpp
 * DESCRIPTION: language specific features, which include
-*              - ponctuation rules
+*              - punctuation rules
 *              - hyphenation
 *              - (future) dictionary and grammar rumes for spell-checker
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
@@ -93,6 +93,8 @@ struct language_rep: rep<language> {
   virtual text_property advance (string s, int& pos) = 0;
   virtual array<int> get_hyphens (string s) = 0;
   virtual void hyphenate (string s, int after, string& l, string& r) = 0;
+  virtual string get_group (string s);
+  virtual array<string> get_members (string s);
 };
 
 inline language_rep::language_rep (string s, encoding enc2):
@@ -107,6 +109,8 @@ string language_to_locale (string s);
 string get_locale_language ();
 string get_date (string lan, string fm);
 
+string math_symbol_group (string s, string lan= "texmath");
+array<string> math_group_members (string s, string lan= "texmath");
 string math_symbol_type (string s, string lan= "texmath");
 
 #endif // defined LANGUAGE_H

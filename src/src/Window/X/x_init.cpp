@@ -19,10 +19,15 @@
 #define	XK_ISO_Left_Tab 0xFE20
 #endif
 
+bool reverse_colors= false;
+
 static int CSCALES= 4;
 static int CFACTOR= 5;
 static int GREYS  = 16;
 static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
+
+static x_display_rep* cur_x_display= NULL;
+static display cur_display= NULL;
 
 /******************************************************************************
 * Set up colors
@@ -30,6 +35,25 @@ static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
 
 int
 x_display_rep::alloc_color (int r, int g, int b) {
+  if (reverse_colors) {
+    int m= min (r, min (g, b));
+    int M= max (r, max (g, b));
+    int t= (r + g + b) / 3;
+    int tt= 65535 - t;
+    double mu= 1.0;
+    tt= 6 * tt / 7;
+    if (M != m) {
+      double lambda1= max (((double) (t - m)) / t,
+			   ((double) (M - t)) / (65535 - t));
+      double lambda2= max (((double) (t - m)) / tt,
+			   ((double) (M - t)) / (65535 - tt));
+      mu= lambda1 / lambda2;
+    }
+    r= (int) (tt + mu * (r - t) + 0.5);
+    g= (int) (tt + mu * (g - t) + 0.5);
+    b= (int) (tt + mu * (b - t) + 0.5);
+  }
+
   XColor col;
   col.red  = r;
   col.green= g;
@@ -709,24 +733,25 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
   if ((dpy= XOpenDisplay (NULL)) == NULL)
     fatal_error ("I failed to connect to Xserver",
 		 "x_display_rep::x_display_rep");
+  // XSynchronize (dpy, true);
 
   XGCValues values;
 
-  scr           = DefaultScreen (dpy);
-  root          = RootWindow (dpy, scr);
-  gc            = XCreateGC (dpy, root, 0, &values);
-  pixmap_gc     = XCreateGC (dpy, root, 0, &values);
-  depth         = DefaultDepth (dpy, scr);
-  display_width = DisplayWidth  (dpy, scr);
-  display_height= DisplayHeight (dpy, scr);
-  cols          = DefaultColormap (dpy, DefaultScreen (dpy));
-  state         = 0;
-  shadow        = NULL;
-  shadow_src    = NULL;
-  gswindow      = NULL;
-  argc          = argc2;
-  argv          = argv2;
-  balloon_win   = NULL;
+  scr                = DefaultScreen (dpy);
+  root               = RootWindow (dpy, scr);
+  gc                 = XCreateGC (dpy, root, 0, &values);
+  pixmap_gc          = XCreateGC (dpy, root, 0, &values);
+  depth              = DefaultDepth (dpy, scr);
+  display_width      = DisplayWidth  (dpy, scr);
+  display_height     = DisplayHeight (dpy, scr);
+  cols               = DefaultColormap (dpy, DefaultScreen (dpy));
+  state              = 0;
+  gswindow           = NULL;
+  argc               = argc2;
+  argv               = argv2;
+  balloon_win        = NULL;
+  interrupted        = false;
+  interrupt_time     = texmacs_time ();
 
   XSetGraphicsExposures (dpy, gc, true);
 
@@ -744,11 +769,10 @@ x_display_rep::~x_display_rep () {
   XCloseDisplay (dpy);
 }
 
-static display cur_display= NULL;
-
 display
 open_display (int argc2, char** argv2) {
-  cur_display= new x_display_rep (argc2, argv2);
+  cur_x_display= new x_display_rep (argc2, argv2);
+  cur_display  = (display) cur_x_display;
   return cur_display;
 }
 
@@ -757,6 +781,11 @@ current_display () {
   if (cur_display == NULL)
     fatal_error ("No display has been opened yet", "current_display");
   return cur_display;
+}
+
+void
+flush_display () {
+  XFlush (cur_x_display->dpy);
 }
 
 void

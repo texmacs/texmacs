@@ -57,3 +57,19 @@ bool
 operator != (text_property_rep tpr1, text_property_rep tpr2) {
   return !(tpr1 == tpr2);
 }
+
+/******************************************************************************
+* Default group of a string
+******************************************************************************/
+
+string
+language_rep::get_group (string s) {
+  (void) s;
+  return "default";
+}
+
+array<string>
+language_rep::get_members (string s) {
+  (void) s;
+  return array<string> ();
+}

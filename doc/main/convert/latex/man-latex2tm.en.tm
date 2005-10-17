@@ -1,70 +1,58 @@
-<TeXmacs|1.0.0.8>
+<TeXmacs|1.0.5.10>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Conversion from <LaTeX> to <TeXmacs>>
+  <tmdoc-title|Conversion from <LaTeX> to <TeXmacs>>
 
-  The current aim of the conversion program from <apply|LaTeX> to
-  <apply|TeXmacs>, is to <with|font shape|italic|help> you in translating old
-  documents into <apply|TeXmacs>. <with|font shape|italic|Grosso modo>,
-  conversions from <apply|LaTeX> to <apply|TeXmacs> are more problematic than
-  conversions the other way around. Nevertheless, as long as you restrict
-  yourself to using the most common <apply|LaTeX> commands, you should be
-  able to convert your old documents reasonably well. For example, all
-  <apply|TeXmacs> help files have been written in <apply|LaTeX> in order to
-  validate the <apply|LaTeX> to <apply|TeXmacs> conversion program.
+  In order to import a <LaTeX> document into <TeXmacs>, you may use
+  <menu|File|Import|Latex>. Don't forget to save the file under a new name
+  with the <verbatim|.tm> extension, if you want to edit it.
 
-  You may convert a <apply|LaTeX> document <verbatim|name.tex> into
-  <apply|TeXmacs> using <subsubmenu|File|import|latex> and save it under
-  <verbatim|name.tm>. If your <apply|LaTeX> document was written sufficiently
-  well, then the converted result should be more or less acceptable, apart
-  from certain unrecognized commands, which appear in red. A good solution
-  would be to write your own style file for converted documents, based on the
-  original style, and in which the unrecognized commands are defined.
+  As explained in the introduction, the conversion of <LaTeX> documents into
+  <TeXmacs> is more problematic than conversions the other way around. As
+  long as you restrict yourself to using the most common <LaTeX> commands,
+  the conversion process should not give rise to any major difficulties.
+  However, as soon as your documents contain ``weird macro definitions'',
+  then the converter may get confused. We also notice that <TeXmacs> is
+  currently unable to convert <LaTeX> style files and no plans exist to
+  enhance the converter in this direction.
 
-  However, in certain less fortunate cases, the converted document will look
-  like a great mess. This usually stems from the fact that <apply|TeX> and
-  <apply|LaTeX> allow users to modify the parser dynamically, for instance
-  using the <verbatim|\\catcode> command. In this case, the conversion
-  program may get confused, by making erroneous assumptions on the mode or
-  the environment. As a result, text may be converted as mathematics,
-  mathematics as verbatim, and so on. Nevertheless, the commands in your
-  source file <verbatim|name.tex> which confused the conversion program are
-  usually easily localized by comparing the <apply|LaTeX> source with its
-  <apply|TeXmacs> conversion. Modulo some hacking of the source, you should
-  be able to remove the litigious code, so that the document converts
-  reasonably well.
+  There are two major reasons for <LaTeX> documents to get imported in an
+  inappropriate way, and which can easily be corrected by the user. First of
+  all, the parser may get confused because of some exotic syntactic
+  construct. This typically happens in presence of catcodes or uncommon
+  styles of macro definitions. Sometimes, the parser may also be mistaken
+  about the current mode, in which case text gets parsed as a mathematical
+  formula or <em|vice cersa>. In both cases, the imported document usually
+  becomes ``weird'' at a certain point. In order to solve the problem, we
+  suggest you to identify the corresponding point in the <LaTeX> source file
+  and to make an appropriate change which avoids the parser of getting
+  confused.
 
-  In the future, we also plan to extend the conversion program with a style
-  file converter and some additional features which facilitate the
-  translation of user defined commands, which are defined in another document
-  than the one you want to convert.
+  A second common error is that certain <LaTeX> macros are not recognized by
+  the converter, in which case they will appear in red. This typically
+  happens if you use one of the hundreds additional <LaTeX> packages or if
+  you defined some additional macros in another document. In the case when
+  the troublesome macro occurs only a few times, then we suggest you to
+  manually expand the macro in the <LaTeX> source file before importation.
+  Otherwise, you may try to put the definitions of the missing macros in the
+  preamble of the <LaTeX> document. Alternatively, you may create a small
+  style package with <TeXmacs> counterparts for the macros which were not
+  recognized.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2005|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>

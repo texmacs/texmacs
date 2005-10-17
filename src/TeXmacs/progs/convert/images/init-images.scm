@@ -71,8 +71,21 @@
   (:name "Jpeg")
   (:suffix "jpg" "jpeg"))
 
+(converter jpeg-file postscript-file
+  (:shell "convert" from to))
+
+(converter jpeg-file postscript-file
+  (:shell "jpeg2ps" from ">" to))
+
 (converter jpeg-file pnm-file
   (:shell "djpeg" "-pnm" from ">" to))
+
+(define-format tif
+  (:name "Tif")
+  (:suffix "tif"))
+
+(converter tif-file postscript-file
+  (:shell "tiff2ps" from ">" to))
 
 (define-format ppm
   (:name "Ppm")
