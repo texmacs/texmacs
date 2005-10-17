@@ -11,6 +11,9 @@
     <item>More options for the <TeXmacs> to <LaTeX> converter and updated
     documentation (1.0.5.11).
 
+    <item>Several bug corrections and minor improvements in
+    <LaTeX> to <TeXmacs> converter (1.0.5.11).
+
     <item>Faster and more portable help searching (1.0.5.10).
 
     <item>Added a plug-in for Mathematica (1.0.5.10).
