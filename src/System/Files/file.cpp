@@ -114,6 +114,15 @@ save_string (url u, string s, bool fatal) {
       fclose (fout);
     }
     delete[] _name;
+
+    // Cache file contents
+    bool file_flag= do_cache_file (name);
+    bool doc_flag= do_cache_doc (name);
+    string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
+    if (!err && N(s) <= 10000)
+      if (file_flag || doc_flag)
+	cache_set (cache_type, name, s);
+    // End caching
   }
   if (err && fatal)
     fatal_error (as_string (u) * " not writeable", "save_string");
