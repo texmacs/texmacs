@@ -13,6 +13,7 @@
 #include "Tex/convert_tex.hpp"
 #include "scheme.hpp"
 #include "vars.hpp"
+#include "tree_correct.hpp"
 
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
@@ -1256,9 +1257,11 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt8= " << t8 << "\n\n";
   tree t9= finalize_textm (t8);
   // cout << "\n\nt9= " << t9 << "\n\n";
-  tree t10= simplify_correct (t9);
+  tree t10= drd_correct (std_drd, t9);
   // cout << "\n\nt10= " << t10 << "\n\n";
+  tree t11= simplify_correct (t10);
+  // cout << "\n\nt11= " << t11 << "\n\n";
   if (is_document)
-    return tree (DOCUMENT, compound ("body", t10), compound ("style", style));
+    return tree (DOCUMENT, compound ("body", t11), compound ("style", style));
   else return t10;
 }
