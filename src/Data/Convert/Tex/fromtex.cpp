@@ -14,6 +14,7 @@
 #include "scheme.hpp"
 #include "vars.hpp"
 #include "tree_correct.hpp"
+#include "url.hpp"
 
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
@@ -1261,6 +1262,8 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= simplify_correct (t10);
   // cout << "\n\nt11= " << t11 << "\n\n";
+  if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
+    style= "generic";
   if (is_document)
     return tree (DOCUMENT, compound ("body", t11), compound ("style", style));
   else return t10;
