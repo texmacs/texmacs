@@ -161,7 +161,7 @@
 		     "texmacs->latex:indirect-bib"))
 	    (toggle ("Use catcode definitions in preamble"
 		     "texmacs->latex:use-catcodes"))
-	    (toggle ("Use extra macros in preambles"
+	    (toggle ("Allow for macro definitions in preambles"
 		     "texmacs->latex:use-macros"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
