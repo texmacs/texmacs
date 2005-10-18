@@ -85,7 +85,8 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	 (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$')) {
     switch (s[i]) {
     case '~':
-      t << tuple ("\\nbsp");
+      if (command_type ["!mode"] == "math") t << tuple ("\\sim");
+      else t << tuple ("\\nbsp");
       i++;
       break;
     case ' ':
@@ -382,7 +383,7 @@ latex_parser::parse_symbol (string s, int& i) {
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   /*
-  cout << cmd << " [" << command_type [cmd] << ", "
+  cout << cmd << " [" << latex_type (cmd) << ", "
        << command_type ["!mode"] << "]" << LF;
   */
   if (cmd == "\\newcommand") cmd= "\\def";
@@ -392,11 +393,10 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\end-split") cmd= "\\end-eqsplit";
   if (cmd == "\\begin-split*") cmd= "\\begin-eqsplit*";
   if (cmd == "\\end-split*") cmd= "\\end-eqsplit*";
-  if ((!command_type->contains (cmd)) &&
-      (latex_type [cmd] == "undefined"))
+  if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);
 
-  if (latex_type [cmd] == "math-environment") {
+  if (latex_type (cmd) == "math-environment") {
     if (cmd (0, 6) == "\\begin") command_type ("!mode") = "math";
     else command_type ("!mode") = "text";
   }
@@ -407,16 +407,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (mbox_flag) command_type ("!mode") = "text";
 
   int  n     = N(s);
-  int  arity =
-    (latex_type [cmd]=="undefined")? command_arity (cmd): latex_arity [cmd];
+  int  arity = latex_arity (cmd);
   bool option= (arity<0);
   if (option) arity= -1-arity;
 
   /************************ retrieve arguments *******************************/
   tree t (TUPLE, copy (cmd)); // parsed arguments
   tree u (TUPLE, copy (cmd)); // unparsed arguments
-  while ((i<n) && ((arity>0) || option)) {
-    int j=i;
+  while (i<n && arity>0) {
+    int j= i;
     while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
     if (option && (s[j]=='[')) {
@@ -498,11 +497,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
 
   /***************** environment changes for user commands  ******************/
-  if (command_type[cmd] == "user") {
+  if (latex_type (cmd) == "user") {
     int pos= 0;
-    (void) parse (sharp_to_arg (command_def[cmd], u), pos, "", true);
-    // t= parse (sharp_to_arg (command_def[cmd], u), pos, "", true);
-    // variant if you want to replace macros by their definitions
+    string body= command_def[cmd];
+    if (count_occurrences ("\\begin", body) ==
+	count_occurrences ("\\end", body))
+      (void) parse (sharp_to_arg (body, u), pos, "", true);
+    else t= parse (sharp_to_arg (body, u), pos, "", true);
+    // replaces macros by their definitions in the case when
+    // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
   if (mbox_flag) command_type ("!mode") = "math";

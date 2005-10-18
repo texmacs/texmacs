@@ -74,7 +74,7 @@ tree
 latex_symbol_to_tree (string s) {
   if (s == "") return "";
   if (s[0] == '\\') {
-    if (latex_type[s] == "command") {
+    if (latex_type (s) == "command") {
       if (s == "\\ ") return " ";
       if (s == "\\-") return "";
       if (s == "\\/") return "";
@@ -118,13 +118,14 @@ latex_symbol_to_tree (string s) {
       if (s == "\\Vert") return "<||>";
       if (s == "\\notin") return "<nin>";
       if (s == "\\addots") return "<udots>";
+      if (s == "\\dots") return "<ldots>";
     }
 
-    if (latex_type[s] == "texmacs") {
+    if (latex_type (s) == "texmacs") {
       if (s == "\\tmdummy")  return "";
     }
 
-    if ((latex_type[s] == "modifier") && (latex_arity[s] == 0)) {
+    if ((latex_type (s) == "modifier") && (latex_arity (s) == 0)) {
       s= s(1,N(s));
       if (s == "rmfamily") return tree (SET, FONT_FAMILY, "rm");
       if (s == "ttfamily") return tree (SET, FONT_FAMILY, "tt");
@@ -191,12 +192,12 @@ latex_symbol_to_tree (string s) {
       cerr << "The symbol was " << s << "\n";
       fatal_error ("unexpected situation", "latex_symbol_to_tree");
     }
-    if (latex_type[s] == "operator")
+    if (latex_type (s) == "operator")
       return s(1,N(s));
-    if (latex_type[s] == "control") return s(1,N(s));
+    if (latex_type (s) == "control") return s(1,N(s));
     if ((s == "\\ldots") && (command_type ("!mode") != "math")) return "...";
-    if (latex_type[s] == "symbol")  return "<" * s(1,N(s)) * ">";
-    if (latex_type[s] == "big-symbol") {
+    if (latex_type (s) == "symbol")  return "<" * s(1,N(s)) * ">";
+    if (latex_type (s) == "big-symbol") {
       if (s == "\\bignone") return tree (BIG, ".");
       else if (s(0,4)=="\\big") return tree (BIG, s(4,N(s)));
       else return tree (BIG, s(1,N(s)));
@@ -272,7 +273,7 @@ latex_concat_to_tree (tree t, bool& new_flag) {
   for (i=0; i<n; i++) {
     if (is_tuple (t[i]) && (N(t[i])==1)) {
       string s= t[i][0]->label;
-      if (latex_type[s] == "math-environment") {
+      if (latex_type (s) == "math-environment") {
 	if (s(0,4)=="\\end") command_type ("!mode") = "text";
 	else command_type ("!mode") = "math";
       }
@@ -286,20 +287,20 @@ latex_concat_to_tree (tree t, bool& new_flag) {
 
     bool operator_flag=
       is_tuple (t[i]) && (N(t[i])==1) &&
-      (latex_type[t[i][0]->label]=="operator");
+      (latex_type (t[i][0]->label) == "operator");
     bool cc_flag= is_concat (t[i]);
     tree u= (cc_flag? latex_concat_to_tree (t[i], new_flag): l2e (t[i]));
     if (is_atomic (u)) {
       if (u == " ") {
 	if (command_type ["!mode"] == "math") {
 	  if ((i==0) || (!is_tuple (t[i-1])) || (N(t[i-1])!=1) ||
-	      (latex_type[t[i-1][0]->label] != "operator"))
+	      (latex_type (t[i-1][0]->label) != "operator"))
 	    continue;
 	}
 	else {
 	  if ((t[i] != tree (TUPLE, "\\ ")) && (i>0) && (is_tuple (t[i-1]))) {
 	    string s= t[i-1][0]->label;
-	    if ((s[0]=='\\') && (latex_type[s]=="command") &&
+	    if ((s[0] == '\\') && (latex_type (s) == "command") &&
 		(s!="\\end-math") && (s!="\\end-displaymath"))
 	      if ((arity(t[i-1])==1) || (s=="\\label"))
 		continue;
@@ -879,9 +880,9 @@ space_eater (tree t) {
 static bool
 admissible_env (tree t) {
   string s= t[0]->label;
-  if (latex_type["\\begin-" * s] == "list") return true;
-  if (latex_type["\\begin-" * s] == "environment") return true;
-  if (latex_type["\\begin-" * s] == "math-environment") return true;
+  if (latex_type ("\\begin-" * s) == "list") return true;
+  if (latex_type ("\\begin-" * s) == "environment") return true;
+  if (latex_type ("\\begin-" * s) == "math-environment") return true;
   return false;
 }
 
@@ -990,7 +991,7 @@ finalize_layout (tree t) {
 	insert_return (r);
 	r << tree (BEGIN, translate_list (v[0]->label));
 	spc_flag = true;
-	item_flag= (latex_type ["\\begin-" * v[0]->label] == "list");
+	item_flag= (latex_type ("\\begin-" * v[0]->label) == "list");
 	continue;
       }
 

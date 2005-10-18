@@ -1029,6 +1029,19 @@ search_backwards (string s, string in) {
   return search_backwards (s, N(in)-N(s), in);
 }
 
+int
+count_occurrences (string s, string in) {
+  int count= 0;
+  int i=0, next, n= N(s);
+  while (i<n) {
+    next= search_forwards (s, i, in);
+    if (next == -1) break;
+    count++;
+    i= next+1;
+  }
+  return count;
+}
+
 string
 replace (string s, string what, string by) {
   int i, n= N(s);
