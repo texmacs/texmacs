@@ -346,7 +346,7 @@ edit_text_rep::make_move (string x, string y) {
 
 void
 edit_text_rep::make_resize (string x1, string y1, string x2, string y2) {
-  tree t (RESIZE, 6);
+  tree t (RESIZE, 5);
   t[0]= "";
   t[1]= x1; t[2]= y1;
   t[3]= x2; t[4]= y2;

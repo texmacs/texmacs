@@ -107,6 +107,7 @@ int    search_forwards (string s, string in);
 int    search_forwards (string s, int pos, string in);
 int    search_backwards (string s, string in);
 int    search_backwards (string s, int pos, string in);
+int    count_occurrences (string s, string in);
 string replace (string s, string what, string by);
 bool   match_wildcard (string s, string w);
 

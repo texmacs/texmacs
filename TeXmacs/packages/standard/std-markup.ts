@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.4>
+<TeXmacs|1.0.5.11>
 
 <style|<tuple|source|std>>
 
@@ -179,7 +179,23 @@
     </src-comment>
   </active*>
 
+  <assign|hresize|<macro|x|left|right|<resize|<arg|x>|<arg|left>||<arg|right>|>>>
+
+  <assign|vresize|<macro|x|bottom|top|<resize|<arg|x>||<arg|bottom>||<arg|top>>>>
+
+  <assign|smash|<macro|x|<vresize|<arg|x>|0ex|1ex>>>
+
+  <assign|smash-top|<macro|x|<vresize|<arg|x>||1ex>>>
+
+  <assign|smash-bottom|<macro|x|<vresize|<arg|x>|0ex|>>>
+
   <assign|phantom|<macro|x|<if*|false|<arg|x>>>>
+
+  <assign|hphantom|<macro|x|<vresize|<phantom|<arg|x>>|0ex|1ex>>>
+
+  <assign|vphantom|<macro|x|<hresize|<phantom|<arg|x>>|0em|0em>>>
+
+  \;
 
   <assign|overline|<macro|x|<eval|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<wide|<arg|x>|\<wide-bar\>>>>|<arg|x>>>>>>>
 

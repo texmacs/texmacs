@@ -30,7 +30,7 @@
   quad qquad par smallskip medskip bigskip
   noindent newline linebreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
-  newblock bgroup egroup protect cr date hfill appendix nolimits
+  newblock bgroup egroup protect cr date hfill appendix nolimits dots
   maketitle
 
   ;; temporarily
@@ -54,7 +54,8 @@
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   includegraphics
-  title author thanks)
+  title author thanks
+  phantom hphantom vphantom smash)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
