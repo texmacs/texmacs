@@ -282,6 +282,5 @@
 	(else (texout-apply (car x) (cdr x)))))
 
 (tm-define (serialize-latex x)
-  (display* "x= " x "\n")
   (texout x)
   (output-produce))
