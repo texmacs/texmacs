@@ -26,6 +26,21 @@ tmg_texmacs_version_release (SCM arg1) {
 }
 
 SCM
+tmg_version_beforeP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "version-before?");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "version-before?");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= version_inf (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_os_win32P () {
   // SCM_DEFER_INTS;
   bool out= os_win32 ();
@@ -2482,6 +2497,7 @@ tmg_object_2make_widget (SCM arg1) {
 void
 initialize_glue_basic () {
   gh_new_procedure ("texmacs-version-release", (FN) tmg_texmacs_version_release, 1, 0, 0);
+  gh_new_procedure ("version-before?", (FN) tmg_version_beforeP, 2, 0, 0);
   gh_new_procedure ("os-win32?", (FN) tmg_os_win32P, 0, 0, 0);
   gh_new_procedure ("win32-display", (FN) tmg_win32_display, 1, 0, 0);
   gh_new_procedure ("scheme-dialect", (FN) tmg_scheme_dialect, 0, 0, 0);

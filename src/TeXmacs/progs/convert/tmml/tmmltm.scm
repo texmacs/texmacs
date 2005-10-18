@@ -85,7 +85,7 @@
 (define tmmltm-current-version "9.9.9.9")
 
 (define (tmmltm-string s)
-  (if (string<? tmmltm-current-version "1.0.5.8")
+  (if (version-before? tmmltm-current-version "1.0.5.8")
       (old-xml-cdata->tm s)
       (utf8->cork s)))
 
