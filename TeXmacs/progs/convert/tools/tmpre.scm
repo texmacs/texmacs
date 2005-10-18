@@ -45,7 +45,9 @@
   (or (func? l 'assign 2)
       (and (list? l)
 	   (= (length l) 2)
-	   (drd-in? (car l) tmpre-inline-env%))))
+	   (drd-in? (car l) tmpre-inline-env%)
+	   (pair? (cadr l))
+	   (in? (caadr l) '(document tformat table)))))
 
 (define (tmpre-para x l)
   (cond ((func? (car l) 'para)
