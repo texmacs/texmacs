@@ -19,6 +19,7 @@
   "initialize_glue_basic"
 
   (texmacs-version-release texmacs_version (string string))
+  (version-before? version_inf (bool string string))
   (os-win32? os_win32 (bool))
   (win32-display win32_display (void string))
   (scheme-dialect scheme_dialect (string))

@@ -95,6 +95,11 @@
 	       (if (func? (cadr l) 'tm-par) (output-lf))))
 	 (tmmlout-args (cdr l) big? preserve?))))
 
+(define (tmmlout-remove-duplicates l)
+  (if (null? l) l
+      (with r (tmmlout-remove-duplicates (cdr l))
+	(if (in? (caar l) (map car r)) r (cons (car l) r)))))
+
 (define (tmmlout-tag tag attrs args)
   ;(display-err* "[tmmlout-tag] " tag ", " attrs ", " args "\n")
   (let* ((big? (tmmlout-big? (cons tag args)))
@@ -102,6 +107,7 @@
     (if preserve? (set! attrs `((xml:space "preserve") ,@attrs)))
     (output-text "<")
     (output-text (symbol->string tag))
+    (set! attrs (tmmlout-remove-duplicates attrs))
     (for-each tmmlout-attr attrs)
     (if (null? args) (output-text "/"))
     (output-text ">")
