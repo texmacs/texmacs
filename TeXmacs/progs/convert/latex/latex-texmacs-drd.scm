@@ -169,7 +169,7 @@
   (tmref 1))
 
 (drd-table latex-texmacs-4%
-  (subsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
+  (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
 (drd-rules
   ((latex-texmacs-macro% 'x 'body) (latex-texmacs-0% 'x 'body))
@@ -280,7 +280,7 @@
     "  \\ifthenelse{\\equal{#2}{small}}\n"
     "    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
     "      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
-    "    {\\setlength{\\tmfloatwidth}{\\linewidth}}"
+    "    {\\setlength{\\tmfloatwidth}{\\linewidth}}\n"
     "  \\begin{minipage}[#1]{\\tmfloatwidth}\n"
     "    \\begin{center}\n"
     "      \\tmfloatcontents\n"
