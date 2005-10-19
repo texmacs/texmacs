@@ -847,7 +847,8 @@
   (list 'pageref (force-string (car l))))
 
 (define (tmtex-specific l)
-  (if (== (car l) "latex") (tmtex (cadr l)) ""))
+  (cond ((== (car l) "latex") (tmtex (cadr l)))
+	((== (car l) "image") (tmtex-eps (cadr l)))))
 
 (define (tmtex-hyperlink l)
   (tmtex-function 'tmhlink l))

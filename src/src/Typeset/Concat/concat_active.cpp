@@ -105,7 +105,7 @@ public:
 void
 concater_rep::typeset_specific (tree t, path ip) {
   string which= env->exec_string (t[0]);
-  if (which == "texmacs") {
+  if (which == "texmacs" || which == "image") {
     marker (descend (ip, 0));
     typeset (t[1], descend (ip, 1));
     marker (descend (ip, 1));
