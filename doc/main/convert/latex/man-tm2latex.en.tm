@@ -123,7 +123,9 @@
   </enumerate>
 
   In a similar fashion, you may insert <LaTeX>-specific line breaks, page
-  breaks, vertical space, style parameter modifications, etc.
+  breaks, vertical space, style parameter modifications, etc. You may also
+  force arbitrary content to be exported as an image using
+  <menu|Insert|Specific|Image>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

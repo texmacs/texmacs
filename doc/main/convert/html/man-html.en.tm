@@ -24,7 +24,8 @@
   when formulas are not exported as images, notice that all graphics drawn
   using <TeXmacs> are exported in this way. In particular, the exportation of
   a <TeXmacs> file with pictures may give rise to the creation of additional
-  image files.
+  image files. You may also force arbitrary content to be exported as an
+  image using <menu|Insert|Specific|Image>.
 
   <TeXmacs> also provides a facility for the creation of entire websites. For
   this, you just have to regroup the files for your website into a single
