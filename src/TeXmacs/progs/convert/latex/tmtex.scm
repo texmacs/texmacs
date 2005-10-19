@@ -157,10 +157,13 @@
 (define (tex-concat-similar l)
   (if (or (null? l) (null? (cdr l))) l
       (let ((r (tex-concat-similar (cdr l))))
-	    (if (and (func? (car l) '!sup) (func? (car r) '!sup))
-		(cons (list '!sup (tex-concat (list (cadar l) (cadar r))))
-		      (cdr r))
-		(cons (car l) r)))))
+	(cond ((and (func? (car l) '!sub) (func? (car r) '!sub))
+	       (cons (list '!sub (tex-concat (list (cadar l) (cadar r))))
+		     (cdr r)))
+	      ((and (func? (car l) '!sup) (func? (car r) '!sup))
+	       (cons (list '!sup (tex-concat (list (cadar l) (cadar r))))
+		     (cdr r)))
+	      (else (cons (car l) r))))))
 
 (define (tex-concat-list l)
   (cond ((null? l) l)
