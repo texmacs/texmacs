@@ -218,7 +218,11 @@
 	 (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
 	((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
 	(else (let ((ss (list (string->symbol s))))
-		(if group? (list '!group ss) ss)))))
+		(cond ((not (drd-in? (car ss) latex-symbol%))
+		       (display* "TeXmacs] non converted symbol: " s "\n")
+		       "")
+		      (group? (list '!group ss))
+		      (else ss))))))
 
 (define (tmtex-token l routine group?)
   (receive (p1 p2) (list-break (cdr l) (lambda (x) (== x #\>)))
@@ -356,9 +360,14 @@
 	     (tail (tmtex-filter-styles (cdr l))))
 	(if next (cons next tail) tail))))
 
+(define (macro-definition? x)
+  (and (func? x 'assign 2)
+       (string? (cadr x))
+       (func? (caddr x) 'macro)))
+
 (define (tmtex-filter-preamble l)
   (cond ((or (nlist? l) (null? l)) '())
-	((== (car l) 'assign) (list l))
+	((macro-definition? l) (list l))
 	((== (car l) 'hide-preamble) (cdadr l))
 	(else (append-map tmtex-filter-preamble (cdr l)))))
 
@@ -447,6 +456,9 @@
       (tex-concat (tmtex-math-concat-spaces (tmtex-list l)))
       (tex-concat (tmtex-list (tmtex-rewrite-no-break l)))))
 
+(define (tmtex-group l)
+  (tmtex-function '!group l))
+
 (define (tmtex-no-first-indentation l) (tex-apply 'noindent))
 (define (tmtex-line-break l) (tex-apply 'linebreak))
 (define (tmtex-page-break l) (tex-apply 'pagebreak))
@@ -516,9 +528,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmtex-group l)
-  (tmtex-function '!group l))
 
 (define (tmtex-large-decode s)
   (cond ((nstring? s) ".")
@@ -653,6 +662,9 @@
   (let* ((root (list '!begin "bundle" (tmtex (car l))))
 	 (children (map (lambda (x) (list 'chunk (tmtex x))) (cdr l))))
     (list root (tex-concat children))))
+
+(define (tmtex-tree-eps l)
+  (tmtex-eps (cons 'tree l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
@@ -864,6 +876,7 @@
     (values name-url name-string)))
 
 (define (tmtex-eps x)
+  (if (tmtex-math-mode?) (set! x `(with "mode" "math" ,x)))
   (receive (name-url name-string) (tmtex-eps-names)
     (print-snippet name-url x)
     (list 'epsfig (string-append "file=" name-string))))
@@ -1184,25 +1197,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-dispatcher tmtex-methods%
+  ((:or unknown uninit error raw-data) tmtex-noop)
   (document tmtex-document)
   (para tmtex-para)
   (surround tmtex-surround)
   (concat tmtex-concat)
-  (format tmtex-noop)
+  (group tmtex-group)
+  (hidden tmtex-noop)
   (hspace tmtex-hspace)
   (vspace* tmtex-noop)
   (vspace tmtex-vspace)
   (space tmtex-space)
   (htab tmtex-htab)
-  (split tmtex-noop)
   (move tmtex-noop)
   (resize tmtex-noop)
+  (repeat tmtex-noop)
   (float tmtex-float)
-  ((:or repeat datoms dlines dpages dbox) tmtex-noop)
+  ((:or datoms dlines dpages dbox) tmtex-noop)
+
   (with-limits tmtex-noop)
   (line-break tmtex-line-break)
   (new-line tmtex-new-line)
-  (line-sep tmtex-noop)
   (next-line tmtex-next-line)
   (no-break tmtex-no-break)
   (no-indent tmtex-no-first-indentation)
@@ -1217,7 +1232,7 @@
   (new-page tmtex-new-page)
   (new-dpage* tmtex-noop)
   (new-dpage tmtex-noop)
-  (group tmtex-group)
+
   (left tmtex-left)
   (mid tmtex-mid)
   (right tmtex-right)
@@ -1236,29 +1251,47 @@
   (neg tmtex-neg)
   (wide* tmtex-wide-star)
   ;;(tree tmtex-tree)
-  (tree tmtex-noop)
-  ((:or old-matrix old-table old-mosaic old-mosaic-item) tmtex-noop)
+  (tree tmtex-tree-eps)
+
   (tformat tmtex-tformat)
   ((:or twith cwith tmarker) tmtex-noop)
   (table tmtex-table)
   ((:or row cell subtable) tmtex-noop)
+
   (assign tmtex-assign)
   (with tmtex-with)
-  ((:or set reset) tmtex-noop)
-  (compound tmtex-compound)
-  ((:or begin end) tmtex-noop)
-  (include tmtex-noop)
-  ((:or xmacro macro func env eval) tmtex-noop)
+  (provides tmtex-noop)
   (value tmtex-compound)
-  (arg tmtex-noop)
-  (backup tmtex-noop)
+  (quote-value tmtex-noop)
+  ((:or quote-value drd-props arg quote-arg) tmtex-noop)
+  (compound tmtex-compound)
+  ((:or xmacro get-label get-arity map-args eval-args mark eval) tmtex-noop)
   (quote tmtex-quote)
-  ((:or delay hold release) tmtex-noop)
-  ((:or or xor and not plus minus times over div mod merge length range
-	number date translate is-tuple look-up equal unequal less lesseq
-	greater greatereq if case while extern authorize)
-   tmtex-noop)
-  ((:or inactive symbol latex hybrid tuple collection associate) tmtex-noop)
+  ((:or quasi quasiquote) tmtex-noop)
+  ;; unquote missing
+  ((:or unquote* copy
+	if if* case while for-each
+	extern include use-package) tmtex-noop)
+
+  ((:or or xor and not plus minus times over div mod
+	merge length range number date translate change-case find-file
+	is-tuple look-up
+	equal unequal less lesseq greater greatereq) tmtex-noop)
+
+  ((:or cm-length mm-length in-length pt-length
+	bp-length dd-length pc-length cc-length
+	fs-length fbs-length em-length
+	ln-length sep-length yfrac-length ex-length
+	fn-length fns-length bls-length
+	spc-length xspc-length par-length pag-length
+	gm-length gh-length) tmtex-noop)
+
+  ((:or style-with style-with* style-only style-only*
+	active active* inactive inactive*
+	rewrite-inactive inline-tag open-tag middle-tag close-tag
+	symbol latex hybrid) tmtex-noop)
+
+  ((:or tuple attr tmlen collection associate backup) tmtex-noop)
   (label tmtex-label)
   (reference tmtex-reference)
   (pageref tmtex-pageref)
@@ -1266,13 +1299,23 @@
   (specific tmtex-specific)
   (hlink tmtex-hyperlink)
   (action tmtex-action)
-  ((:or tag meaning) tmtex-noop)
-  ((:or switch fold exclusive progressive superposed) tmtex-noop)
+  ((:or tag meaning flag) tmtex-noop)
+
+  ((:or anim-compose anim-repeat anim-constant
+	anim-translate anim-progressive video sound) tmtex-noop)
+
   (graphics tmtex-graphics)
-  ((:or point line arc bezier) tmtex-noop)
+  (superpose tmtex-noop)
+  ((:or gr-group gr-linear-transform
+	text-at cline arc carc spline spine* cspline fill) tmtex-noop)
   (postscript tmtex-postscript)
+  ((:or box-info frame-direct frame-inverse) tmtex-noop)
+
+  ((:or format line-sep split delay hold release
+	old-matrix old-table old-mosaic old-mosaic-item
+	set reset expand expand* hide-expand
+	apply begin end func env) tmtex-noop)
   
-  (hidden tmtex-noop)
   (shown tmtex-id)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
@@ -1350,7 +1393,7 @@
 
 (define (collect-user-defs-sub t)
   (cond ((npair? t) (noop))
-	((and (func? t 'assign 2) (string? (cadr t)))
+	((macro-definition? t)
 	 (ahash-set! tmtex-user-defs-table (string->symbol (cadr t)) #t))
 	(else (for-each collect-user-defs-sub (cdr t)))))
 

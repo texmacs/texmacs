@@ -60,7 +60,13 @@
   upharpoonleft upharpoonright upuparrows
   urcorner vartriangleleft vartriangleright
   Vdash vDash veebar
-  Vvdash yen)
+  Vvdash yen
+
+  nless ngtr
+  nprec nsucc npreceq nsucceq
+  nleqslant ngeqslant
+  varsubsetneq varsupsetneq
+  varnothing)
 
 (drd-group latex-wasy-symbol%
   agemO APLbox APLcomment
