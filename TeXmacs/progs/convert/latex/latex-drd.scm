@@ -50,7 +50,7 @@
   dot ddot dddot ddddot
   label ref pageref index hspace hspace* vspace vspace*
   mbox hbox text not
-  #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle
+  #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
   includegraphics

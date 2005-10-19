@@ -150,7 +150,7 @@
 	(-> "TeXmacs -> Html"
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
 	    (toggle ("Use MathML" "texmacs->html:mathml"))
-	    (toggle ("Export mathematics as images" "texmacs->html:images")))
+	    (toggle ("Export formulas as images" "texmacs->html:images")))
 	(-> "TeXmacs -> LaTeX"
 	    (toggle ("Replace unrecognized styles"
 		     "texmacs->latex:replace-style"))
@@ -162,7 +162,7 @@
 		     "texmacs->latex:indirect-bib"))
 	    (toggle ("Use catcode definitions in preamble"
 		     "texmacs->latex:use-catcodes"))
-	    (toggle ("Allow for macro definitions in preambles"
+	    (toggle ("Allow for macro definitions in preamble"
 		     "texmacs->latex:use-macros"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")

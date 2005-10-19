@@ -375,13 +375,11 @@
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
 	(set! doc-preamble '()))
     (if (null? styles) (tmtex doc)
-	(begin
-	  (list '!file
-		(tmtex doc-body)
-		(tmtex-filter-styles styles)
-		lang
-		init
-		(map-in-order tmtex doc-preamble))))))
+	(let* ((body* (tmtex doc-body))
+	       (styles* (tmtex-filter-styles styles))
+	       (preamble* (ahash-with tmtex-env :preamble #t
+			    (map-in-order tmtex doc-preamble))))
+	  (list '!file body* styles* lang init preamble*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
@@ -391,8 +389,8 @@
 (define (tmtex-default s l) (cons (string->symbol s) (tmtex-list l)))
 (define (tmtex-id l) (tmtex (car l)))
 (define (tmtex-second l) (tmtex (cadr l)))
-(define (tmtex-hide-part l) "")
-(define (tmtex-show-part l) (tmtex (cadr l)))
+(define (tmtex-hide-part s l) "")
+(define (tmtex-show-part s l) (tmtex (cadr l)))
 
 (define (tmtex-document l)
   (cons '!document (tmtex-list l)))
@@ -735,6 +733,9 @@
       (let ((old (tmtex-env-get-previous "mode")))
 	(cond ((and (== val "text") (!= old "text"))
 	       (list 'text arg))
+	      ((and (== val "math") (!= old "math")
+		    (ahash-ref tmtex-env :preamble))
+	       (list 'ensuremath arg))
 	      ((and (== val "math") (!= old "math"))
 	       (list '!math arg))
 	      (else arg)))
@@ -1031,6 +1032,9 @@
     (tmtex-env-reset "mode")
     r))
 
+(define (tmtex-math s l)
+  (tmtex `(with "mode" "math" ,(car l))))
+
 (define (tmtex-dummy s l)
   "")
 
@@ -1240,7 +1244,7 @@
   (compound tmtex-compound)
   ((:or begin end) tmtex-noop)
   (include tmtex-noop)
-  ((:or macro func env eval) tmtex-noop)
+  ((:or xmacro macro func env eval) tmtex-noop)
   (value tmtex-compound)
   (arg tmtex-noop)
   (backup tmtex-noop)
@@ -1266,12 +1270,13 @@
   
   (hidden tmtex-noop)
   (shown tmtex-id)
-  (hide-part tmtex-hide-part)
-  (show-part tmtex-show-part)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
 
 (drd-table tmtex-tmstyle%
+  ((:or hide-preamble show-preamble) (,tmtex-default -1))
+  (hide-part (,tmtex-hide-part -1))
+  (show-part (,tmtex-show-part -1))
   (doc-data (,tmtex-doc-data -1))
   ((:or doc-title doc-author-data doc-date doc-note
 	doc-keywords doc-AMS-class) (,tmtex-default -1))
@@ -1304,6 +1309,7 @@
 
   ((:or equation equation*) (,tmtex-equation 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
+  (math (,tmtex-math 1))
   ((:or the-index the-glossary) (,tmtex-dummy -1))
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
@@ -1323,8 +1329,6 @@
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1))
-  ((:or shown show-part) (,tmtex-id 1))
-  ((:or hidden hide-part) (,tmtex-noop 1))
   (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
   (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0)))
 
