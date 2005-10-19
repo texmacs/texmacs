@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmdoc>
 
@@ -12,6 +12,14 @@
   the result of the conversion. Please consult your<nbsp><LaTeX>
   documentation for how to do this; one solution which usually works is to
   put the style file in the same directory as your file.
+
+  Notice that the exportation of a <TeXmacs> document with images may cause
+  the creation of additional image files. If your destination file is called
+  <verbatim|name.tex>, these files are named <verbatim|name-1.eps>,
+  <group|<verbatim|name-2.eps>>, <abbr|etc.> and they are stored in the same
+  directory. In particular, all pictures drawn with the editor, and all
+  images which are not already in <name|Postscript> format, will be converted
+  to encapsulated <name|Postscript> files.
 
   In order to ensure that the generated <LaTeX> document compiles, style
   files and packages or macros with no <LaTeX> equivalents are either ignored
@@ -64,14 +72,14 @@
     using <name|Bib<TeX>>. In this case, you need to enable the <menu|Export
     bibliographies as links> option.
 
-    <item*|<menu|Use catcode definitions in preambles>>By default, accented
+    <item*|<menu|Use catcode definitions in preamble>>By default, accented
     characters like ``é'' are exported to <LaTeX> as <verbatim|\\'e>. In
     order to increase readability and especially in case that you want to
     edit the resulting <LaTeX> file, you may wish to keep the accented
     characters ``as is''. This can be achieved by allowing <TeXmacs> to put
     additional catcode definitions into your preamble.
 
-    <item*|<menu|Allow for macro definitions in preambles>>Certain <TeXmacs>
+    <item*|<menu|Allow for macro definitions in preamble>>Certain <TeXmacs>
     macros like <markup|strong> have no direct <LaTeX> analogues. For a
     certain number of frequently used macros, <TeXmacs> automatically
     generates macro definitions in the preamble of the <LaTeX> target file.

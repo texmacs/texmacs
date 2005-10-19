@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmdoc>
 
@@ -15,6 +15,16 @@
   <menu|Edit|Preferences|Converters|TeXmacs-\<gtr\>Html|Use MathML>, all
   formulas will be exported as <name|MathML>. Notice that this requires you
   to save the generated documents using the <verbatim|.xhtml> extension.
+
+  Similarly, the user may force <TeXmacs> to export all mathematical formulas
+  as images using <menu|Edit|Preferences|Converters|TeXmacs-\<gtr\>Html|Export
+  formulas as images>. If your destination file is called
+  <verbatim|name.html>, then the images are stored in the same directory in
+  files <verbatim|name-1.png>, <group|<verbatim|name-2.png>> and so on. Even
+  when formulas are not exported as images, notice that all graphics drawn
+  using <TeXmacs> are exported in this way. In particular, the exportation of
+  a <TeXmacs> file with pictures may give rise to the creation of additional
+  image files.
 
   <TeXmacs> also provides a facility for the creation of entire websites. For
   this, you just have to regroup the files for your website into a single
