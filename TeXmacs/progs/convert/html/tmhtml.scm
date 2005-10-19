@@ -801,7 +801,8 @@
 	`((h:a (@ (href ,(tmhtml-suffix to))) ,@body)))))
 
 (define (tmhtml-specific l)
-  (if (== (car l) "html") (tmhtml (cadr l)) '()))
+  (cond ((== (car l) "html") (tmhtml (cadr l)))
+	((== (car l) "image") (tmhtml-png (cadr l)))))
 
 (define (tmhtml-action l)
   `((h:u ,@(tmhtml (car l)))))
