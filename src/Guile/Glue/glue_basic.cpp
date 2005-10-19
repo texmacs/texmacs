@@ -1919,6 +1919,38 @@ tmg_system_search_score (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_system_1 (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "system-1");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "system-1");
+
+  string in1= scm_to_string (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  system (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_system_2 (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "system-2");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "system-2");
+  SCM_ASSERT_URL (arg3, SCM_ARG3, "system-2");
+
+  string in1= scm_to_string (arg1);
+  url in2= scm_to_url (arg2);
+  url in3= scm_to_url (arg3);
+
+  // SCM_DEFER_INTS;
+  system (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_connection_declaredP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "connection-declared?");
 
@@ -2638,6 +2670,8 @@ initialize_glue_basic () {
   gh_new_procedure ("system-remove", (FN) tmg_system_remove, 1, 0, 0);
   gh_new_procedure ("system-mkdir", (FN) tmg_system_mkdir, 1, 0, 0);
   gh_new_procedure ("system-search-score", (FN) tmg_system_search_score, 2, 0, 0);
+  gh_new_procedure ("system-1", (FN) tmg_system_1, 2, 0, 0);
+  gh_new_procedure ("system-2", (FN) tmg_system_2, 3, 0, 0);
   gh_new_procedure ("connection-declared?", (FN) tmg_connection_declaredP, 1, 0, 0);
   gh_new_procedure ("connection-status", (FN) tmg_connection_status, 2, 0, 0);
   gh_new_procedure ("connection-start", (FN) tmg_connection_start, 3, 0, 0);

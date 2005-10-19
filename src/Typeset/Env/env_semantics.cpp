@@ -73,8 +73,8 @@ initialize_default_var_type () {
   var_type (PAGE_TYPE)         = Env_Fixed;
   var_type (PAGE_BREAKING)     = Env_Fixed;
   var_type (PAGE_FLEXIBILITY)  = Env_Fixed;
-  var_type (PAGE_WIDTH)        = Env_Fixed;
-  var_type (PAGE_HEIGHT)       = Env_Fixed;
+  var_type (PAGE_WIDTH)        = Env_Page_Extents;
+  var_type (PAGE_HEIGHT)       = Env_Page_Extents;
   var_type (PAGE_WIDTH_MARGIN) = Env_Page;
   var_type (PAGE_SCREEN_MARGIN)= Env_Page;
   var_type (PAGE_NR)           = Env_Page;
@@ -98,12 +98,12 @@ initialize_default_var_type () {
   var_type (PAGE_THIS_HEADER)  = Env_Page;
   var_type (PAGE_THIS_FOOTER)  = Env_Page;
   var_type (PAGE_FNOTE_SEP)    = Env_Page;
-  var_type (POINT_STYLE)       = Env_Point_Style;
   var_type (PAGE_FNOTE_BARLEN) = Env_Page;
   var_type (PAGE_FLOAT_SEP)    = Env_Page;
   var_type (PAGE_MNOTE_SEP)    = Env_Page;
   var_type (PAGE_MNOTE_WIDTH)  = Env_Page;
 
+  var_type (POINT_STYLE)       = Env_Point_Style;
   var_type (LINE_WIDTH)        = Env_Line_Width;
   var_type (DASH_STYLE)        = Env_Dash_Style;
   var_type (DASH_STYLE_UNIT)   = Env_Dash_Style_Unit;
@@ -520,6 +520,9 @@ edit_env_rep::update (string s) {
   case Env_Paragraph:
     break;
   case Env_Page:
+    break;
+  case Env_Page_Extents:
+    update_page_pars ();
     break;
   case Env_Preamble:
     preamble= get_bool (PREAMBLE);

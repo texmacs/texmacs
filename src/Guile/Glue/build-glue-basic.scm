@@ -171,6 +171,8 @@
   (system-remove remove (void url))
   (system-mkdir mkdir (void url))
   (system-search-score search_score (int url array_string))
+  (system-1 system (void string url))
+  (system-2 system (void string url url))
 
   ;; connections to extern systems
   (connection-declared? connection_declared (bool string))
