@@ -2629,6 +2629,21 @@ tmg_print_pages (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_print_snippet (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "print-snippet");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "print-snippet");
+
+  url in1= scm_to_url (arg1);
+  content in2= scm_to_content (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->print_snippet (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_export_postscript (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "export-postscript");
 
@@ -3048,6 +3063,7 @@ initialize_glue_editor () {
   gh_new_procedure ("print-pages-to-file", (FN) tmg_print_pages_to_file, 3, 0, 0);
   gh_new_procedure ("print", (FN) tmg_print, 0, 0, 0);
   gh_new_procedure ("print-pages", (FN) tmg_print_pages, 2, 0, 0);
+  gh_new_procedure ("print-snippet", (FN) tmg_print_snippet, 2, 0, 0);
   gh_new_procedure ("export-postscript", (FN) tmg_export_postscript, 1, 0, 0);
   gh_new_procedure ("export-pages-postscript", (FN) tmg_export_pages_postscript, 3, 0, 0);
   gh_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);

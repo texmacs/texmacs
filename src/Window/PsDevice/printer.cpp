@@ -70,8 +70,6 @@ printer_rep::printer_rep (
   load_string ("$TEXMACS_PATH/misc/convert/special.pro", special_pro, true);
   load_string ("$TEXMACS_PATH/misc/convert/color.pro", color_pro, true);
   load_string ("$TEXMACS_PATH/misc/convert/texps.pro", texps_pro, true);
-  set_clipping (0, (int) (-(dpi*PIXEL*paper_h)/2.54),
-		(int) ((dpi*PIXEL*paper_w)/2.54), 0);
   
   prologue   << "%!PS-Adobe-2.0\n"
 	     << "%%Creator: TeXmacs-" TEXMACS_VERSION "\n"
@@ -160,6 +158,9 @@ printer_rep::next_page () {
        << as_string (cur_page) << "\n"
        << as_string (cur_page) << " "
        << as_string (cur_page-1) << " bop\n";
+
+  set_clipping (0, (int) (-(dpi*PIXEL*paper_h)/2.54),
+		(int) ((dpi*PIXEL*paper_w)/2.54), 0);
 
   fg  = -1;
   bg  = -1;

@@ -248,6 +248,7 @@ public:
   friend struct page_box_rep; // temporary friends for accessing x0 and y0
   friend struct lazy_paragraph_rep;
   friend class  phrase_box_rep;
+  friend void make_eps (url dest, ::display dis, box b, int dpi= 600);
 };
 ABSTRACT_NULL_CODE(box);
 

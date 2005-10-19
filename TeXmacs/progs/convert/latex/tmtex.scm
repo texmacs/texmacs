@@ -25,11 +25,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmtex-env (make-ahash-table))
+(define tmtex-serial 0)
+(define tmtex-image-root-url (string->url "image"))
+(define tmtex-image-root-string "image")
 (define tmtex-appendices? #f)
 (define tmtex-replace-style? #t)
 (define tmtex-indirect-bib? #f)
 
 (tm-define (tmtex-initialize opts)
+  (set! tmtex-env (make-ahash-table))
+  (set! tmtex-serial 0)
+  (if (== (url-suffix current-save-target) "tex")
+      (set! tmtex-image-root-url (url-unglue current-save-target 4))
+      (set! tmtex-image-root-url (string->url "image")))
+  (if (== (url-suffix current-save-target) "tex")
+      (set! tmtex-image-root-string
+	    (url->string (url-tail tmtex-image-root-url)))
+      (set! tmtex-image-root-string "image"))
   (set! tmtex-appendices? #f)
   (set! tmtex-replace-style?
 	(== (assoc-ref opts "texmacs->latex:replace-style") "on"))
@@ -38,8 +50,7 @@
   (set! tmtex-use-catcodes?
 	(== (assoc-ref opts "texmacs->latex:use-catcodes") "on"))
   (set! tmtex-use-macros?
-	(== (assoc-ref opts "texmacs->latex:use-macros") "on"))
-  (set! tmtex-env (make-ahash-table)))
+	(== (assoc-ref opts "texmacs->latex:use-macros") "on")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
@@ -741,15 +752,17 @@
 	      (else arg)))))
 
 (define (tmtex-with l)
-  (if (null? l) ""
-      (if (null? (cdr l)) (tmtex (car l))
-	  (let ((var (force-string (car l)))
-		(val (force-string (cadr l)))
-		(next (cddr l)))
-	    (tmtex-env-set var val)
-	    (let ((r (tmtex-with-one var val (tmtex-with next))))
-	      (tmtex-env-reset var)
-	      r)))))
+  (cond ((null? l) "")
+	((null? (cdr l)) (tmtex (car l)))
+	((func? (cAr l) 'graphics)
+	 (tmtex-eps (lambda (name) (print-snippet name (cons 'with l)))))
+	(else (let ((var (force-string (car l)))
+		    (val (force-string (cadr l)))
+		    (next (cddr l)))
+		(tmtex-env-set var val)
+		(let ((r (tmtex-with-one var val (tmtex-with next))))
+		  (tmtex-env-reset var)
+		  r)))))
 
 (define (tmtex-var-name-sub l)
   (if (null? l) l
@@ -838,8 +851,31 @@
 (define (tmtex-action l)
   (tmtex-function 'tmaction l))
 
+(define (tmtex-eps fun)
+  (set! tmtex-serial (+ tmtex-serial 1))
+  (let* ((postfix (string-append "-" (number->string tmtex-serial) ".eps"))
+	 (name-url (url-glue tmtex-image-root-url postfix))
+	 (name-string (string-append tmtex-image-root-string postfix)))
+    (fun name-url)
+    (list 'epsfig (string-append "file=" name-string))))
+
+(define (tmtex-graphics l)
+  (tmtex-eps (lambda (name) (print-snippet name (cons 'graphics l)))))
+
+(define (tmtex-as-eps name)
+  (set! name (force-string name))
+  (if (or (string-ends? name ".ps") (string-ends? name ".eps"))
+      (list 'epsfig (string-append "file=" name))
+      (with u (url-relative current-save-target (string->url name))
+	(if (not (url-exists? u))
+	    (list 'epsfig (string-append "file=" name))
+	    (let* ((suffix (url-suffix u))
+		   (fm (string-append (format-from-suffix suffix) "-file")))
+	      (tmtex-eps (lambda (dest)
+			   (convert-to-file u fm "postscript-file" dest))))))))
+
 (define (tmtex-postscript l)
-  (let* ((fig (list 'epsfig (string-append "file=" (force-string (car l)))))
+  (let* ((fig (tmtex-as-eps (car l)))
 	 (hor (if (== (cadr l) "") "!" (tmtex-decode-length (cadr l))))
 	 (ver (if (== (caddr l) "") "!" (tmtex-decode-length (caddr l)))))
     (if (or (string-starts? hor "*") (string-starts? hor "/")) (set! hor "!"))
@@ -1220,7 +1256,8 @@
   (action tmtex-action)
   ((:or tag meaning) tmtex-noop)
   ((:or switch fold exclusive progressive superposed) tmtex-noop)
-  ((:or graphics point line arc bezier) tmtex-noop)
+  (graphics tmtex-graphics)
+  ((:or point line arc bezier) tmtex-noop)
   (postscript tmtex-postscript)
   
   (hidden tmtex-noop)

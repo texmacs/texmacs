@@ -231,6 +231,14 @@ edit_main_rep::export_ps (url name, string first, string last) {
   print (name, true, as_int (first), as_int (last));
 }
 
+void
+edit_main_rep::print_snippet (url name, tree t) {
+  typeset_prepare ();
+  int dpi= as_int (printing_dpi);
+  box b= typeset_as_box (env, t, path ());
+  make_eps (name, dis, b, dpi);
+}
+
 /******************************************************************************
 * Evaluation of expressions
 ******************************************************************************/
