@@ -149,7 +149,8 @@
     (-> "Converters"
 	(-> "TeXmacs -> Html"
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
-	    (toggle ("Use MathML" "texmacs->html:mathml")))
+	    (toggle ("Use MathML" "texmacs->html:mathml"))
+	    (toggle ("Export mathematics as images" "texmacs->html:images")))
 	(-> "TeXmacs -> LaTeX"
 	    (toggle ("Replace unrecognized styles"
 		     "texmacs->latex:replace-style"))

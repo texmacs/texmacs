@@ -2637,10 +2637,10 @@ tmg_print_snippet (SCM arg1, SCM arg2) {
   content in2= scm_to_content (arg2);
 
   // SCM_DEFER_INTS;
-  get_server()->get_editor()->print_snippet (in1, in2);
+  array_int out= get_server()->get_editor()->print_snippet (in1, in2);
   // SCM_ALLOW_INTS;
 
-  return SCM_UNSPECIFIED;
+  return array_int_to_scm (out);
 }
 
 SCM

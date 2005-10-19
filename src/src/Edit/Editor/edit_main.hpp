@@ -67,7 +67,7 @@ public:
   void print_to_file (url ps_name, string first="1", string last="1000000");
   void print_buffer (string first="1", string last="1000000");
   void export_ps (url ps_name, string first="1", string last="1000000");
-  void print_snippet (url u, tree t);
+  array<int> print_snippet (url u, tree t);
 
   void footer_eval (string s);
   tree the_line ();

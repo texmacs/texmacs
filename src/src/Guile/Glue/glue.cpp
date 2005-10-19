@@ -755,9 +755,37 @@ url url_ref (url u, int i) { return u[i]; }
 * Several array types
 ******************************************************************************/
 
+typedef array<int> array_int;
 typedef array<string> array_string;
 typedef array<tree> array_tree;
 typedef array<widget> array_widget;
+
+static bool
+scm_is_array_int (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return SCM_INUMP (SCM_CAR (p)) && scm_is_array_int (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_ARRAY_INT(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_int (p), p, arg, rout)
+
+/* static */ SCM
+array_int_to_scm (array<int> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (int_to_scm (a[i]), p);
+  return p;
+}
+
+/* static */ array<int>
+scm_to_array_int (SCM p) {
+  array<int> a;
+  while (!scm_is_null (p)) {
+    a << scm_to_int (SCM_CAR (p));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
 
 static bool
 scm_is_array_string (SCM p) {

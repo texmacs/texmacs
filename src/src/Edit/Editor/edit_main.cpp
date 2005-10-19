@@ -231,12 +231,25 @@ edit_main_rep::export_ps (url name, string first, string last) {
   print (name, true, as_int (first), as_int (last));
 }
 
-void
+array<int>
 edit_main_rep::print_snippet (url name, tree t) {
+  bool ps= suffix (name) == "ps" || suffix (name) == "eps";
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
+  if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
   box b= typeset_as_box (env, t, path ());
-  make_eps (name, dis, b, dpi);
+  if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
+    if (ps) make_eps (name, dis, b, dpi);
+    else {
+      url temp= url_temp ("eps");
+      make_eps (temp, dis, b, dpi);
+      system ("convert", temp, name);
+      ::remove (temp);
+    }
+  }
+  array<int> a;
+  a << b->x3 << b->y3 << b->x4 << b->y4;
+  return a;
 }
 
 /******************************************************************************

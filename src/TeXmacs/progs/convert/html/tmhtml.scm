@@ -30,13 +30,31 @@
 (define tmhtml-env (make-ahash-table))
 (define tmhtml-css? #t)
 (define tmhtml-mathml? #f)
+(define tmhtml-images? #f)
+(define tmhtml-serial 0)
+(define tmhtml-image-cache (make-ahash-table))
+(define tmhtml-image-root-url (string->url "image"))
+(define tmhtml-image-root-string "image")
 
 (tm-define (tmhtml-initialize opts)
+  (set! tmhtml-env (make-ahash-table))
   (set! tmhtml-css?
 	(== (assoc-ref opts "texmacs->html:css") "on"))
   (set! tmhtml-mathml?
 	(== (assoc-ref opts "texmacs->html:mathml") "on"))
-  (set! tmhtml-env (make-ahash-table)))
+  (set! tmhtml-images?
+	(== (assoc-ref opts "texmacs->html:images") "on"))
+  (set! tmhtml-image-cache (make-ahash-table))
+  (let* ((suffix (url-suffix current-save-target))
+	 (n (+ (string-length suffix) 1)))
+    (if (in? suffix '("html" "xhtml"))
+	(begin
+	  (set! tmhtml-image-root-url (url-unglue current-save-target n))
+	  (set! tmhtml-image-root-string
+		(url->string (url-tail tmhtml-image-root-url))))
+	(begin
+	  (set! tmhtml-image-root-url (string->url "image"))
+	  (set! tmhtml-image-root-string "image")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Empty handler and strings
@@ -691,6 +709,7 @@
   (cond ((null? l) '())
 	((null? (cdr l)) (tmhtml (car l)))
 	((null? (cddr l)) '())
+	((func? (cAr l) 'graphics) (tmhtml-png (cons 'with l)))
 	(else
 	 (let* ((var (tmhtml-force-string (car l)))
 		(val (tmhtml-force-string (cadr l)))
@@ -918,14 +937,46 @@
 ;;; Pictures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmhtml-png-names)
+  (set! tmhtml-serial (+ tmhtml-serial 1))
+  (let* ((postfix (string-append "-" (number->string tmhtml-serial) ".png"))
+	 (name-url (url-glue tmhtml-image-root-url postfix))
+	 (name-string (string-append tmhtml-image-root-string postfix)))
+    (values name-url name-string)))
+
+(define (tmhtml-png x)
+  (with cached (ahash-ref tmhtml-image-cache x)
+    (if (not cached)
+	(receive (name-url name-string) (tmhtml-png-names)
+	  (let* ((extents (print-snippet name-url x))
+		 (pixels (inexact->exact (/ (second extents) 2100)))
+		 (valign (number->string pixels))
+		 (style (string-append "vertical-align: " valign "px")))
+	    ;;(display* x " -> " extents "\n")
+	    (set! cached `((h:img (@ (src ,name-string) (style ,style)))))
+	    (ahash-set! tmhtml-image-cache x cached)))
+	cached)))
+
+(define (tmhtml-graphics l)
+  (tmhtml-png (cons 'graphics l)))
+
+(define (tmhtml-postscript-name name)
+  (with u (url-relative current-save-target (string->url name))
+    (if (and (or (string-ends? name ".ps") (string-ends? name ".eps"))
+	     (url-exists? u))
+	(receive (name-url name-string) (tmhtml-png-names)
+	  (system-2 "convert" u name-url)
+	  name-string)
+	name)))
+
 (define (tmhtml-postscript l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
-  (let* ((s (first l))
+  (let* ((s (tmhtml-postscript-name (first l)))
 	 (w (tmlength->htmllength (second l) #f))
 	 (h (tmlength->htmllength (third l) #f)))
     (if (nstring? s) '() ;; only convert linked images
-	`((h:img (@ (src ,(cork->html s))
+	`((h:img (@ (src ,s)
 		    ,@(if w `((width ,w)) '())
 		    ,@(if h `((height ,h)) '())))))))
 
@@ -1136,6 +1187,8 @@
   (cond ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
 	 `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
 		   ,(texmacs->mathml x tmhtml-env))))
+	((and tmhtml-images? (ahash-ref tmhtml-env :math))
+	 (tmhtml-png `(with "mode" "math" ,x)))
 	((string? x)
 	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
 	(else (or (tmhtml-dispatch 'tmhtml-primitives% x)
@@ -1245,7 +1298,8 @@
   (action tmhtml-action)
   ((:or tag meaning) tmhtml-noop)
   ((:or switch fold exclusive progressive superposed) tmhtml-noop)
-  ((:or graphics point line arc bezier) tmhtml-noop)
+  (graphics tmhtml-graphics)
+  ((:or point line arc bezier) tmhtml-noop)
   (postscript tmhtml-postscript)
 
   (!file tmhtml-file))

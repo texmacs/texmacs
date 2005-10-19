@@ -42,21 +42,22 @@
 #define Env_Color             11
 #define Env_Paragraph         12
 #define Env_Page              13
-#define Env_Preamble          14
-#define Env_Geometry          15
-#define Env_Frame             16
-#define Env_Line_Width        17
-#define Env_Grid              18
-#define Env_Grid_Aspect       19
-#define Env_Src_Style         20
-#define Env_Src_Special       21
-#define Env_Src_Compact       22
-#define Env_Src_Close         23
-#define Env_Point_Style       24
-#define Env_Dash_Style        25
-#define Env_Dash_Style_Unit   26
-#define Env_Fill_Color        27
-#define Env_Line_Arrows       28
+#define Env_Page_Extents      14
+#define Env_Preamble          15
+#define Env_Geometry          16
+#define Env_Frame             17
+#define Env_Line_Width        18
+#define Env_Grid              19
+#define Env_Grid_Aspect       20
+#define Env_Src_Style         21
+#define Env_Src_Special       22
+#define Env_Src_Compact       23
+#define Env_Src_Close         24
+#define Env_Point_Style       25
+#define Env_Dash_Style        26
+#define Env_Dash_Style_Unit   27
+#define Env_Fill_Color        28
+#define Env_Line_Arrows       29
 
 /******************************************************************************
 * For style file editing
