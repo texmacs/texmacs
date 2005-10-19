@@ -14,6 +14,8 @@
 #include "formatter.hpp"
 #include "Graphics/point.hpp"
 #include "timer.hpp"
+#include "PsDevice/printer.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -701,4 +703,24 @@ attach_dip (tree ref, path dip) {
     r->obs= list_observer (ip_observer (dip), r->obs);
     return r;
   }
+}
+
+/******************************************************************************
+* Convert to postscript
+******************************************************************************/
+
+void
+make_eps (url name, display dis, box b, int dpi) {
+  double inch= ((double) dpi * PIXEL);
+  double cm  = inch / 2.54;
+  SI w= b->x4 - b->x3;
+  SI h= b->y4 - b->y3;
+  b->x0= -b->x3;
+  b->y0= -b->y4;
+  ps_device dev= printer (dis, name, dpi, 1, "user", false, w/cm, h/cm);
+  dev->set_color (dis->black);
+  dev->set_background (dis->white);
+  rectangles rs;
+  b->redraw (dev, path (0), rs);
+  delete dev;
 }

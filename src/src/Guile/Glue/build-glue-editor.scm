@@ -278,6 +278,7 @@
   (print-pages-to-file print_to_file (void url string string))
   (print print_buffer (void))
   (print-pages print_buffer (void string string))
+  (print-snippet print_snippet (void url content))
   (export-postscript export_ps (void url))
   (export-pages-postscript export_ps (void url string string))
   (footer-eval footer_eval (void string))

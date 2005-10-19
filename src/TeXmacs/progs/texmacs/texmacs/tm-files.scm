@@ -19,6 +19,8 @@
 ;; Saving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define current-save-target (url-none))
+
 (define (secure-save-buffer file fm)
   (dialogue
     (if (or (not (url-exists? file))
@@ -27,6 +29,7 @@
 	(texmacs-save-buffer file fm))))
 
 (tm-define (save-buffer . l)
+  (if (and (pair? l) (url? (car l))) (set! current-save-target (car l)))
   (cond ((= (length l) 0)
 	 (if (no-name?)
 	     (interactive save-buffer)
