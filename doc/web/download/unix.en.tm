@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmweb>
 
@@ -36,22 +36,6 @@
     \ \ \ \ pwd
   </code>
 
-  <section|Extra fonts?>
-
-  Optionally, you may download a <hlink|tarball (5.8
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
-  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
-  directory <verbatim|~/.TeXmacs> using
-
-  <\code>
-    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
-  </code>
-
-  Although <TeXmacs> is able to automatically generate bitmap analogues for
-  these fonts, this process may take some time at a first run. Type 1 fonts
-  are also rendered better by certain <name|Pdf> viewers and they are often
-  preferred by publishers.
-
   <section|Set the environment variables>
 
   Depending on your shell, either type
@@ -79,6 +63,30 @@
   <\code>
     \ \ \ \ texmacs &
   </code>
+
+  <section|Extra fonts?>
+
+  Optionally, you may download a <hlink|tarball (5.8
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
+  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
+  directory <verbatim|~/.TeXmacs> (which you should create if it does not
+  already exist) using
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  If you already used <TeXmacs> before unpacking, then rerun the program once
+  as follows:
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
+  </code>
+
+  Although <TeXmacs> is able to automatically generate bitmap analogues for
+  the extra fonts, this process may take some time at a first run. Type 1
+  fonts are also rendered better by certain <name|Pdf> viewers and they are
+  often preferred by publishers.
 
   <section|Be cool...>
 

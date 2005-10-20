@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmweb>
 
@@ -58,10 +58,17 @@
     \ \ \ \ rpm -i TeXmacs-extra-fonts-1.0-1.noarch.rpm
   </code>
 
+  If you already used <TeXmacs> before unpacking, then rerun the program once
+  as follows:
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
+  </code>
+
   Although <TeXmacs> is able to automatically generate bitmap analogues for
-  these fonts, this process may take some time at a first run. Type 1 fonts
-  are also rendered better by certain <name|Pdf> viewers and they are often
-  preferred by publishers.
+  the extra fonts, this process may take some time at a first run. Type 1
+  fonts are also rendered better by certain <name|Pdf> viewers and they are
+  often preferred by publishers.
 
   <section|Be cool...>
 

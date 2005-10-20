@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmweb>
 
@@ -31,15 +31,28 @@
     \ \ \ \ rpm -i TeXmacs-extra-fonts-1.0-1.noarch.rpm
   </code>
 
+  After the installation of new fonts, always rerun <TeXmacs> once using
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
+  </code>
+
   <paragraph|Tarball with extra fonts><label|fonts-tarball>
 
   If you installed <TeXmacs> from the static binaries, then you may download
   a <hlink|tarball (5.8 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
   with extra fonts. After downloading, <verbatim|cd> into the directory
-  <verbatim|~/.TeXmacs> and unpack the fonts using
+  <verbatim|~/.TeXmacs> (which you have to create if it does not already
+  exist) and unpack the fonts using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  After the installation of new fonts, always rerun <TeXmacs> once using
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
   </code>
 
   The same procedure applies when you installed <TeXmacs> from the source
@@ -56,10 +69,17 @@
   with a reasonably complete set of Type 1 fonts for basic use of <TeXmacs>
   (in fact, these are precisely the fonts which are provided in the native
   <name|Windows> version of <TeXmacs>). After downloading, <verbatim|cd> into
-  the directory <verbatim|~/.TeXmacs> and unpack the fonts using
+  the directory <verbatim|~/.TeXmacs> (which you have to create if it does
+  not already exist) and unpack the fonts using
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-windows-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  After the installation of new fonts, always rerun <TeXmacs> once using
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
   </code>
 
   <\remark>

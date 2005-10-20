@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmweb>
 
@@ -41,24 +41,7 @@
   <with|font-family|tt|<merge|<TeXmacs-version-release|tgz>|-src>>, which is
   the 'installation directory'. If you do not have ftp access, then you might
   wish to <hlink|download|http://www.texmacs.org/Download/ftp/targz> from the
-  web. You may wish to download some <hlink|additional
-  fonts|fonts.en.tm#fonts-tarball> before building.
-
-  <section|Extra fonts?>
-
-  Before compiling, you may optionally download a <hlink|tarball (5.8
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
-  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
-  directory <verbatim|~/.TeXmacs> using
-
-  <\code>
-    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
-  </code>
-
-  Although <TeXmacs> is able to automatically generate bitmap analogues for
-  these fonts, this process may take some time at a first run. Type 1 fonts
-  are also rendered better by certain <name|Pdf> viewers and they are often
-  preferred by publishers.
+  web.
 
   <section|Compile, install and run>
 
@@ -97,6 +80,30 @@
   If you are interested by packaging <TeXmacs> for some <name|Linux> or
   <name|Unix> distribution, then please take a look at our
   <hlink|suggestions|packaging.en.tm>.
+
+  <section|Extra fonts?>
+
+  You may optionally download a <hlink|tarball (5.8
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-extra-fonts-1.0-noarch.tar.gz>
+  with extra Type<nbsp>1 fonts. These fonts should be unpacked in the
+  directory <verbatim|~/.TeXmacs> (which you should create if it does not
+  already exist) using
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
+  </code>
+
+  If you already used <TeXmacs> before unpacking, then rerun the program once
+  as follows:
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
+  </code>
+
+  Although <TeXmacs> is able to automatically generate bitmap analogues for
+  the extra fonts, this process may take some time at a first run. Type 1
+  fonts are also rendered better by certain <name|Pdf> viewers and they are
+  often preferred by publishers.
 
   <section|Be cool...>
 
