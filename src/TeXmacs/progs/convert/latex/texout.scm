@@ -95,7 +95,7 @@
       (begin
 	(if (func? (car l) '!row)
 	    (begin
-	      (texout-row (cdar l))
+	      (texout-row* (cdar l))
 	      (if (nnull? (cdr l))
 		  (begin
 		    (output-text "\\\\")
@@ -111,6 +111,16 @@
 	(texout (car l))
 	(if (nnull? (cdr l)) (output-text " & "))
 	(texout-row (cdr l)))))
+
+(define (texout-row* l)
+  ;; Dirty hack to avoid [ strings at start of a row
+  ;; because of confusion with optional argument of \\
+  (if (and (pair? l) (string? (car l)) (string-starts? (car l) "["))
+      (set! l `((!concat (!group "") ,(car l)) ,@(cdr l))))
+  (if (and (pair? l) (func? (car l) '!concat)
+	   (string? (cadar l)) (string-starts? (cadar l) "["))
+      (set! l `((!concat (!group "") ,@(cdar l)) ,@(cdr l))))
+  (texout-row l))
 
 (define (tex-symbol? l)
   (and (list? l) (= 1 (length l))))
@@ -187,6 +197,8 @@
 (define (texout-math x)
   (cond ((texout-empty? x) (noop))
 	((texout-double-math? x) (texout x))
+	((match? x '((!begin "center") :1))
+	 (texout `((!begin "equation") ,(cadr x))))
 	((and (output-test-end? "$") (not (output-test-end? "\\$")))
 	 (output-remove 1)
 	 (output-text " ")
