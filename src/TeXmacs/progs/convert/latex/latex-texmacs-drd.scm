@@ -136,6 +136,15 @@
   (pari "{\\sc Pari}"))
 
 (drd-table latex-texmacs-1%
+  (tmtextrm (!group (rmfamily) (!group 1)))
+  (tmtextsf (!group (sffamily) (!group 1)))
+  (tmtexttt (!group (ttfamily) (!group 1)))
+  (tmtextmd (!group (mdseries) (!group 1)))
+  (tmtextbf (!group (bfseries) (!group 1)))
+  (tmtextup (!group (upshape) (!group 1)))
+  (tmtextsl (!group (slshape) (!group 1)))
+  (tmtextit (!group (itshape) (!group 1)))
+  (tmtextsc (!group (scshape) (!group 1)))
   (tmmathbf (ensuremath (boldsymbol 1)))
   (tmop (ensuremath (operatorname 1)))
   (tmstrong (textbf 1))
