@@ -880,7 +880,8 @@
 
 (define (tmtex-specific l)
   (cond ((== (car l) "latex") (tmtex (cadr l)))
-	((== (car l) "image") (tmtex-eps (cadr l)))))
+	((== (car l) "image") (tmtex-eps (cadr l)))
+	(else "")))
 
 (define (tmtex-hyperlink l)
   (tmtex-function 'tmhlink l))
