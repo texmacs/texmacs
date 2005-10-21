@@ -802,7 +802,8 @@
 
 (define (tmhtml-specific l)
   (cond ((== (car l) "html") (tmhtml (cadr l)))
-	((== (car l) "image") (tmhtml-png (cadr l)))))
+	((== (car l) "image") (tmhtml-png (cadr l)))
+	(else '())))
 
 (define (tmhtml-action l)
   `((h:u ,@(tmhtml (car l)))))
@@ -973,10 +974,11 @@
 (define (tmhtml-postscript l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
-  (let* ((s (tmhtml-postscript-name (first l)))
-	 (w (tmlength->htmllength (second l) #f))
-	 (h (tmlength->htmllength (third l) #f)))
-    (if (nstring? s) '() ;; only convert linked images
+  (if (nstring? (first l))
+      (tmhtml-png (cons 'postscript l))
+      (let* ((s (tmhtml-postscript-name (cork->html (first l))))
+	     (w (tmlength->htmllength (second l) #f))
+	     (h (tmlength->htmllength (third l) #f)))
 	`((h:img (@ (src ,s)
 		    ,@(if w `((width ,w)) '())
 		    ,@(if h `((height ,h)) '())))))))
