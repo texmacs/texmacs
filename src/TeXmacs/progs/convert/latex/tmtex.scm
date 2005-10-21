@@ -747,6 +747,7 @@
       (drd-ref tex-assign-cmd% (list var val))))
 
 (define (tmlength->texlength len)
+  ;; TODO: rewrite (quote x) -> x and (tmlen ...) -> ...pt
   (with tmlen (string->tmlength (force-string len))
     (if (tmlength-null? tmlen) "0pt"
 	(let* ((val (tmlength-value tmlen))
