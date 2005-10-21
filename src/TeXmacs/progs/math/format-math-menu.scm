@@ -66,9 +66,9 @@
 	  ("Sans serif" (make-with "math-font-family" "ms"))
 	  ---
 	  (-> "Text font"
-	      ("Roman" (make-with "math-font-family" "rm"))
-	      ("Typewriter" (make-with "math-font-family" "tt"))
-	      ("Sans serif" (make-with "math-font-family" "ss"))
+	      ("Roman" (make-with "math-font-family" "trm"))
+	      ("Typewriter" (make-with "math-font-family" "ttt"))
+	      ("Sans serif" (make-with "math-font-family" "tss"))
 	      ("Bold" (make-with "math-font-family" "bf"))
 	      ("Right" (make-with "math-font-family" "up"))
 	      ("Slanted" (make-with "math-font-family" "sl"))
