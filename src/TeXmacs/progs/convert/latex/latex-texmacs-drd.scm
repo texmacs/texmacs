@@ -242,8 +242,7 @@
 		    "\\renewcommand{\\labelitemii}{" ,lab "}"
 		    "\\renewcommand{\\labelitemiii}{" ,lab "}"
 		    "\\renewcommand{\\labelitemiv}{" ,lab "}"
-		    ---
-		    "\\end{itemize}"))))
+		    ---))))
        (drd-table latex-texmacs-env-arity% (,env 0))
        ;;;
        (drd-group latex-texmacs-tag% ,env-sym)

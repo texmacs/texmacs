@@ -498,8 +498,15 @@
 (define (tmtex-space l)
   (tmtex-hspace (list (car l))))
 
-(define (tmtex-float-make size type position x caption)
-  (list 'tmfloat position size type (tmtex x) (tmtex caption)))
+(define (tmtex-float-make size type position x capt)
+  (let* ((body (tmtex x))
+	 (caption (tmtex capt))
+	 (body* `(!paragraph ,body (caption ,caption))))
+    (cond ((and (== size "big") (== type "figure"))
+	   `((!begin "figure" (!option ,position)) ,body*))
+	  ((and (== size "big") (== type "table"))
+	   `((!begin "table" (!option ,position)) ,body*))
+	  (else (list 'tmfloat position size type body caption)))))
 
 (define (tmtex-float-table? x)
   (or (func? x 'small-table 2) (func? x 'big-table 2)))
@@ -887,7 +894,7 @@
   (tmtex-function 'tmhlink l))
 
 (define (tmtex-action l)
-  (tmtex-function 'tmaction l))
+  (list 'tmaction (tmtex (car l)) (tmtex (cadr l))))
 
 (define (tmtex-eps-names)
   (set! tmtex-serial (+ tmtex-serial 1))
