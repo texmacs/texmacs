@@ -19,3 +19,7 @@ if [ "$1" = "Cmucl" ]; then
 	exec lisp -init $TEXMACS_LISP_PATH/cmucl/cmucl-init.lisp
 fi
 
+if [ "$1" = "Scl" ]; then
+	echo -ne "\002verbatim:"
+	exec scl -init file://localhost/$TEXMACS_LISP_PATH/scl/scl-init.lisp
+fi

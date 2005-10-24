@@ -19,7 +19,8 @@
 (define (lisp-versions)
   (let ((version-list
 	 (append (if (url-exists-in-path? "clisp") '("Clisp") '())
-		 (if (url-exists-in-path? "lisp") '("Cmucl") '()))))
+		 (if (url-exists-in-path? "lisp") '("Cmucl") '())
+		 (if (url-exists-in-path? "scl") '("Scl") '()))))
     (if (nnull? version-list)
       (let* ((default (car version-list))
 	     (rest (cdr version-list))
@@ -36,7 +37,8 @@
 
 (plugin-configure lisp
   (:require (or (url-exists-in-path? "clisp")
-		(url-exists-in-path? "lisp")))
+		(url-exists-in-path? "lisp")
+		(url-exists-in-path? "scl")))
   (:initialize (lisp-initialize))
   ,@(lisp-versions)
   (:session "Lisp"))
