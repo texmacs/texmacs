@@ -37,7 +37,8 @@
   ("C-down" (graphics-change-extents "0cm" "+0.5cm"))
   ("C-up" (graphics-change-extents "0cm" "-0.5cm"))
   ("M-down" (graphics-change-geo-valign #f))
-  ("M-up" (graphics-change-geo-valign #t)))
+  ("M-up" (graphics-change-geo-valign #t))
+  ("backspace" (noop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Frequently used subroutines
@@ -1857,7 +1858,8 @@
 	`(begin
 	    (events-clocktick)
 	    (event-exists! ,obj ',func)))
-     (if (tm-upper-path (cDr (cursor-path)) '(text-at) '(graphics))
+     (if (and (not sticky-point)
+	      (tm-upper-path (cDr (cursor-path)) '(text-at) '(graphics)))
          (when-inside-text-at ',func . ,vars)
 	,(append (cons
 	    'cond
@@ -2742,7 +2744,9 @@
 (define (when-inside-text-at func x y)
   (define (uncaptured)
      (if (!= func 'move)
-	 (graphics-group-start))
+     (begin
+        (graphics-group-start)
+        (graphics-move-point x y)))
   )
  ;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
   (with res (with-graphics-context

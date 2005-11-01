@@ -145,8 +145,8 @@ edit_interface_rep::key_press (string key) {
   string rew= sv->kbd_post_rewrite (key);
   if (N(rew)==1) {
     int i ((unsigned char) rew[0]);
-    if (((i>=32) && (i<=127)) ||
-	((i>=128) && (i <=255))) insert_tree (rew);
+    if ((((i>=32) && (i<=127)) || ((i>=128) && (i <=255)))
+     && !inside_active_graphics ()) insert_tree (rew);
     sh_s  = string ("");
     sh_len= 0;
   }
