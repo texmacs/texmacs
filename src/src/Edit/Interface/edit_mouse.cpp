@@ -32,7 +32,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     this << emit_mouse_grab (false);
   }
 
-  if (inside_graphics ()) {
+  if (inside_graphics (false)) {
     string type2= type;
     if (type == "enter")
       dragging= start_drag= false;

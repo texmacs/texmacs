@@ -176,8 +176,8 @@ public:
   virtual tree get_labels () = 0;
 
   /* public routines from edit_graphics */
-  virtual bool   inside_graphics () = 0;
-  virtual bool   inside_active_graphics () = 0;
+  virtual bool   inside_graphics (bool b=true) = 0;
+  virtual bool   inside_active_graphics (bool b=true) = 0;
   virtual bool   over_graphics (SI x, SI y) = 0;
   virtual tree   get_graphics () = 0;
   virtual frame  find_frame () = 0;
