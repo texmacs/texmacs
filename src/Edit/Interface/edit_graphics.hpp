@@ -27,8 +27,8 @@ public:
   edit_graphics_rep ();
   ~edit_graphics_rep ();
 
-  bool   inside_graphics ();
-  bool   inside_active_graphics ();
+  bool   inside_graphics (bool b=true);
+  bool   inside_active_graphics (bool b=true);
   bool   over_graphics (SI x, SI y);
   tree   get_graphics ();
   frame  find_frame ();

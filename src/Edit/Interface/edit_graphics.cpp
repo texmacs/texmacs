@@ -30,13 +30,13 @@ edit_graphics_rep::~edit_graphics_rep () {}
 ******************************************************************************/
 
 bool
-edit_graphics_rep::inside_graphics () {
+edit_graphics_rep::inside_graphics (bool b) {
   path p   = path_up (tp);
   bool flag= false;
   tree st  = et;
   while (!nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
-    if (is_func (st, TEXT_AT )) flag= false;
+    if (b && is_func (st, TEXT_AT )) flag= false;
     st= st[p->item];
     p = p->next;
   }
@@ -44,8 +44,8 @@ edit_graphics_rep::inside_graphics () {
 }
 
 bool
-edit_graphics_rep::inside_active_graphics () {
-  return inside_graphics () && get_env_string (PREAMBLE) == "false";
+edit_graphics_rep::inside_active_graphics (bool b) {
+  return inside_graphics (b) && get_env_string (PREAMBLE) == "false";
 }
 
 bool

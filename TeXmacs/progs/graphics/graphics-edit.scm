@@ -146,12 +146,14 @@
        ,(car i))
       ,(cons 'begin b)))
 
-(define (tm-upper-path p tags)
+(define (tm-upper-path p tags nottags)
   (if (in? (tree-label (path->tree p)) tags)
       p
-      (if (> (length p) 2)
-	  (tm-upper-path (reverse (cdr (reverse p))) tags)
-	  #f)))
+      (if (in? (tree-label (path->tree p)) nottags)
+	  #f
+	  (if (> (length p) 2)
+	      (tm-upper-path (reverse (cdr (reverse p))) tags nottags)
+	      #f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global geometry of graphics
@@ -903,7 +905,7 @@
 		(set! p2 (append p (list n (- (length t) 2) 1)))
 		(if (and go-into (func? t 'text-at))
 		    (set! p2 (append p (list n 0 0)))
-		    (set! p2 (append p (list n 1))))
+		    (set! p2 (append p (list n))))
 	    )
 	    (go-to p2)
             (graphics-path p2)
@@ -923,7 +925,7 @@
 (define (graphics-group-start)
   (graphics-finish)
   (with p (graphics-group-path)
-    (if p (go-to (rcons p 1)))))
+    (if p (go-to (rcons p 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the active tag
@@ -1728,7 +1730,7 @@
 
 ;; Graphics context
 (define-macro (with-graphics-context msg x y path obj no edge . body)
-  `(begin
+  `(with res #t
      (set! current-x x)
      (set! current-y y)
      (set! current-path-under-mouse #f)
@@ -1742,9 +1744,12 @@
 		         (,edge current-edge-sel?)
 		         (,path (cDr (cursor-path))))
 		       ,(cons 'begin body))
-	          (if (not (and (string? ,msg) (== (substring ,msg 0 1) ";")))
-		      (display* "Uncaptured gc(sticky) " ,msg " " o ", "
-						         ,x ", " ,y "\n"))))
+		  (begin
+		     (set! res #f)
+		     (if (not (and (string? ,msg)
+				   (== (substring ,msg 0 1) ";")))
+			 (display* "Uncaptured gc(sticky) "
+			    ,msg " " o ", " ,x ", " ,y "\n")))))
 	    (let* (( sel (select-choose (s2i ,x) (s2i ,y)))
 		   ( pxy (if sel (car sel) '()))
 		   (,path (graphics-path pxy))
@@ -1754,12 +1759,17 @@
               (set! current-path-under-mouse ,path)
 	      (if ,obj
 	          ,(cons 'begin body)
-	          (if (and (string? ,msg) (== (substring ,msg 0 1) ";"))
+	          (if (and (string? ,msg)
+			   (== (substring ,msg 0 1) ";"))
 		      (if (== (substring ,msg 0 2) ";:")
 			 ,(cons 'begin body)
-			  #t)
-		      (display* "Uncaptured gc(!sticky) " ,msg " " ,obj ", "
-						          ,x ", " ,y "\n"))))))))
+			  (set! res #f))
+		      (begin
+			 (set! res #f)
+			 (display* "Uncaptured gc(!sticky) "
+				   ,msg " " ,obj ", " ,x ", " ,y "\n"))))))
+     )
+     res))
 
 (define current-cursor #f)
 (define TM_PATH (var-eval-system "echo $TEXMACS_PATH"))
@@ -1847,10 +1857,12 @@
 	`(begin
 	    (events-clocktick)
 	    (event-exists! ,obj ',func)))
-    ,(append (cons
-	     'cond
-	     (map cond-case vals))
-	    `((else (display* "Uncaptured " ',func " " ,obj "\n"))))))
+     (if (tm-upper-path (cDr (cursor-path)) '(text-at) '(graphics))
+         (when-inside-text-at ',func . ,vars)
+	,(append (cons
+	    'cond
+	    (map cond-case vals))
+	   `((else (display* "Uncaptured " ',func " " ,obj "\n")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Edit mode
@@ -1911,7 +1923,9 @@
 	  (if edge no `(,edge ,no))))
       (begin
 	(create-graphical-object obj p 'points (if edge no `(,edge ,no)))
-	(if p (go-to (rcons p 1))))))
+	(if p
+	    (with p2 (tm-upper-path p '(text-at) '(graphics))
+	       (if (not p2) (go-to (rcons p 0))))))))
 
 (define (text-at_move x y p obj no edge)
   (if (and (not sticky-point)
@@ -2606,7 +2620,7 @@
   (if (== (car (graphics-mode)) 'group-edit)
   (with copied-objects '()
      (foreach (o selected-objects)
-     (with p (tm-upper-path (tree->path o) '(with))
+     (with p (tm-upper-path (tree->path o) '(with) '())
         (let* ((t (if p (path->tree p) #f))
 	       (n (if t (tree-arity t) #f))
 	       (o2 (if (and t n (> n 0)) (tree-ref t (- n 1)) #f))
@@ -2721,6 +2735,26 @@
 		  ((== a "bottom") "top")
 		  (else "default"))))))
   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Events when the cursor is inside a text-at
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (when-inside-text-at func x y)
+  (define (uncaptured)
+     (if (!= func 'move)
+	 (graphics-group-start))
+  )
+ ;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
+  (with res (with-graphics-context
+	       ";insert" x y p obj no edge
+		(if (and (pair? obj) (eq? (car obj) 'text-at))
+		    (cond
+		      ((== func 'left-button)
+		       (text-at_left-button x y p "" no edge)))
+		    (uncaptured))
+	    )
+            (if (not res) (uncaptured))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Old modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
