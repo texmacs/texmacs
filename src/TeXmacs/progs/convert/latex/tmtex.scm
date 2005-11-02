@@ -1382,9 +1382,10 @@
   (really-large (,tmtex-LARGE 1))
   (really-huge (,tmtex-Huge 1))
 
+  (math (,tmtex-math 1))
   ((:or equation equation*) (,tmtex-equation 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
-  (math (,tmtex-math 1))
+  (eq-number (,tmtex-default -1))
   ((:or the-index the-glossary) (,tmtex-dummy -1))
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
