@@ -49,8 +49,8 @@ protected:
 protected:
   time_t        last_click;    // last click on left mouse button
   SI            last_x, last_y;
-  bool          start_drag;
-  bool          dragging;
+  bool          start_drag, start_right_drag;
+  bool          dragging, right_dragging;
   SI            start_x, start_y;
   SI            end_x, end_y;
   bool          made_selection;
