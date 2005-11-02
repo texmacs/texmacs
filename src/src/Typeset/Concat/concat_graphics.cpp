@@ -88,8 +88,8 @@ void
 concater_rep::typeset_text_at (tree t, path ip) {
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
   point  p     = env->fr (env->as_point (env->exec (t[1])));
-  string halign= as_string (env->exec (t[2]));
-  string valign= as_string (env->exec (t[3]));
+  string halign= env->textat_halign;
+  string valign= env->textat_valign;
 
   SI x= (SI) p[0], y= (SI) p[1];
   if (halign == "left") x -= b->x1;

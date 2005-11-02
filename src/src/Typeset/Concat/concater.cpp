@@ -715,6 +715,22 @@ typeset_as_box (edit_env env, tree t, path ip) {
 tree
 box_info (edit_env env, tree t, string what) {
   box b= typeset_as_concat (env, attach_here (t, decorate ()));
+  int i, n=0;
+  for (i=0; i<N(b); i++)
+    if (b[i]!="") n++;
+  if (n) {
+    array<box> bx(n);
+    n=0;
+    for (i=0; i<N(b); i++) if (b[i]!="") {
+      array<box> bx2(1);
+      array<SI> spc2(1);
+      bx2[0]= b[i];
+      spc2[0]=0;
+      bx[n]= concat_box (path (0), bx2, spc2);
+      n++;
+    }
+    b= composite_box (path (0), bx);
+  }
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {

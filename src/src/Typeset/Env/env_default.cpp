@@ -191,6 +191,8 @@ initialize_default_env () {
   env (LINE_CAPS)        = "normal";    // junctions in multilines
   env (FILL_COLOR)       = "none";      // fill color
   env (FILL_STYLE)       = "plain";     // fill style
+  env (TEXTAT_HALIGN)    = "left";      // horizontal text-at alignment
+  env (TEXTAT_VALIGN)    = "bottom";    // vertical text-at alignment
 
   env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
@@ -202,8 +204,8 @@ initialize_default_env () {
   env (GR_DASH_STYLE_UNIT) = "default"; // dash style unit for new objects
   env (GR_LINE_ARROWS)   = "default";   // line arrows for new objects
   env (GR_FILL_COLOR)    = "default";   // fill color for new objects
-  env (GR_TEXT_HALIGN)   = "default";   // horiz. align. for new text boxes
-  env (GR_TEXT_VALIGN)   = "default";   // vert. align. for new text boxes
+  env (GR_TEXTAT_HALIGN) = "default";   // horiz. alignment for new text-ats
+  env (GR_TEXTAT_VALIGN) = "default";   // vert. alignment for new text-ats
   env (GR_GRID)             = gr_grid;        // grid for graphics
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
