@@ -2337,6 +2337,58 @@ tmg_session_go_right () {
 }
 
 SCM
+tmg_inside_go_up (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside-go-up");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->session_go_up (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_inside_go_down (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside-go-down");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->session_go_down (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_inside_go_left (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside-go-left");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->session_go_left (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_inside_go_right (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "inside-go-right");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->session_go_right (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_session_go_page_up () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->session_go_page_up ();
@@ -3035,6 +3087,10 @@ initialize_glue_editor () {
   gh_new_procedure ("session-go-down", (FN) tmg_session_go_down, 0, 0, 0);
   gh_new_procedure ("session-go-left", (FN) tmg_session_go_left, 0, 0, 0);
   gh_new_procedure ("session-go-right", (FN) tmg_session_go_right, 0, 0, 0);
+  gh_new_procedure ("inside-go-up", (FN) tmg_inside_go_up, 1, 0, 0);
+  gh_new_procedure ("inside-go-down", (FN) tmg_inside_go_down, 1, 0, 0);
+  gh_new_procedure ("inside-go-left", (FN) tmg_inside_go_left, 1, 0, 0);
+  gh_new_procedure ("inside-go-right", (FN) tmg_inside_go_right, 1, 0, 0);
   gh_new_procedure ("session-go-page-up", (FN) tmg_session_go_page_up, 0, 0, 0);
   gh_new_procedure ("session-go-page-down", (FN) tmg_session_go_page_down, 0, 0, 0);
   gh_new_procedure ("session-remove", (FN) tmg_session_remove, 1, 0, 0);

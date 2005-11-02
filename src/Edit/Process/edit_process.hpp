@@ -50,10 +50,10 @@ public:
 
   void session_var_go_up ();
   void session_var_go_down ();
-  void session_go_left ();
-  void session_go_right ();
-  void session_go_up ();
-  void session_go_down ();
+  void session_go_left (string tag);
+  void session_go_right (string tag);
+  void session_go_up (string tag);
+  void session_go_down (string tag);
   void session_go_page_up ();
   void session_go_page_down ();
   void session_remove (bool forward);
