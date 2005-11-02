@@ -49,9 +49,11 @@
   (:inside text-at)
   (inside-go-down "text-at"))
 
+(define (in-active-graphics?)
+  (and (in-graphics?) (== (get-env "preamble") "false")))
+
 (kbd-map
-  (:mode (lambda () (and (in-graphics?)
-			 (== (get-env "preamble") "false"))))
+  (:mode in-active-graphics?)
   ("+" (graphics-zoom (/ 1.0 0.75)))
   ("-" (graphics-zoom 0.75))
   ("left" (graphics-move-origin "+0.1gw" "0gh"))
@@ -772,13 +774,12 @@
 (tm-define (graphics-set-mode val)
   (graphics-group-start)
   (with old-mode (graphics-mode)
+     (graphics-enter-mode old-mode val)
      (graphics-set-property "gr-mode"
 	(cond ((or (symbol? val) (string? val))
 	       (list 'tuple 'edit val))
 	      ((pair? val)
-	       (cons 'tuple val)))
-     )
-     (graphics-enter-mode old-mode val)))
+	       (cons 'tuple val))))))
 
 (define (graphics-group-mode? mode)
   (and (pair? mode) (eq? (car mode) 'group-edit)))
@@ -1404,8 +1405,13 @@
   )
   res)
 
+(define draw-nonsticky-curp #t)
 (define (create-graphical-object o mode pts no)
   (define edge #t)
+  (define (curp lp)
+     (if draw-nonsticky-curp
+        lp '())
+  )
   (if (pair? no)
       (begin
 	 (set! edge (car no))
@@ -1428,23 +1434,37 @@
 				        (with h (list-head (cdr o) no)
 					  (if (and edge
 						(in? (car o)
-						    '(cline cspline))
+						    '(cline cspline carc))
 					        (== (+ no 1) (length (cdr o))))
-					    (cons `(with "point-style" "disk"
+					    (cons `(with "point-style"
+							 ,(if sticky-point
+							      "square" "disk")
 					      ,(car h)) (cdr h))
 					    h))
 				        (cons
 					  (list 'with "point-style" "disk"
 					    (cons 'concat
 					      (if (< ll 2)
-						  (list-head l 1)
+						  (if sticky-point
+						     '()
+						      (if edge
+							  (list-head l 1)
+							  (curp (list-head l 1))))
  						  (if edge
-						      (list-head l 2)
+						      (with l2 (list-head l 2)
+						      (if sticky-point
+							 `(,(list* 'with
+							       "point-style"
+							       "square"
+							      `((concat .
+								  ,(cdr l2)))))
+							  l2))
 						      (cons
 							`(with "point-style"
 							       "square"
 							      ,(list-ref l 1))
-							 (list-head l 1)))))
+							 (curp (list-head l 1))
+							 ))))
 					  ) '())
 				        (if (> ll 2) (list-tail l 2) '())))
 			        (cdr o))))
@@ -1927,10 +1947,11 @@
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
 	(set! graphics-undo-enabled #f)
-	(if edge
+	(if (and edge (not (and (in? (car obj) '(arc carc))
+				(> (length obj) 3))))
 	  (point_sticky-right-button x y p
-	    (cadr (graphical-object #t)) no edge)
-	  (graphics-store-state #f)))))
+	    (cadr (graphical-object #t)) no edge))
+	  (graphics-store-state #f))))
 
 (define (text-at_left-button x y p obj no edge)
   (if sticky-point
@@ -1996,9 +2017,16 @@
   (if (not (and (in? (car obj) '(arc carc)) (> (length obj) 3)))
       (with l (list-tail (cdr obj) no)
 	(graphics-store-state #f)
-	(set-cdr! l (cons `(point ,x ,y) (cdr l)))
-	(create-graphical-object obj 'active 'object-and-points (+ no 1))
-	(set! current-point-no (+ no 1))
+	(if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
+	    (begin
+	      (set-cdr! l (cons (car l) (cdr l)))
+	      (set-car! l `(point ,x ,y))
+	      (create-graphical-object obj 'active 'object-and-points no)
+	      (set! current-point-no no))
+	    (begin
+	      (set-cdr! l (cons `(point ,x ,y) (cdr l)))
+	      (create-graphical-object obj 'active 'object-and-points (+ no 1))
+	      (set! current-point-no (+ no 1))))
 	(set! current-edge-sel? #t)
 	(set! sticky-point #t))))
 
@@ -2882,7 +2910,9 @@
   (if (and (not (graphics-group-mode? old-mode))
            (graphics-group-mode? new-mode)
       )
-      (create-graphical-object '(nothing) #f 'points 'group)))
+      (begin
+	 (if sticky-point (undo))
+	 (create-graphical-object '(nothing) #f 'points 'group))))
 
 (define (graphics-finish)
   ;;(display* "Graphics] Finish\n")
