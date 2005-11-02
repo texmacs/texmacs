@@ -574,7 +574,7 @@ static char Cork_unaccented[128]= {
   'D', 'N', 'O', 'O', 'O', 'O', 'O', ' ',
   ' ', 'U', 'U', 'U', 'U', 'Y', ' ', ' ',
   'a', 'a', 'a', 'a', 'a', 'a', ' ', 'c',
-  'e', 'e', 'e', 'e', 16 , 16 , 16 , 16 ,
+  'e', 'e', 'e', 'e', 25 , 25 , 25 , 25 ,
   'd', 'n', 'o', 'o', 'o', 'o', 'o', ' ',
   ' ', 'u', 'u', 'u', 'u', 'y', ' ', ' '
 };
@@ -608,8 +608,8 @@ accented_to_Cork (tree t) {
 
   string s= t[0]->label;
   if ((N(s)==2) && (s[0]=='\\') && (n==2) &&
-      is_atomic (t[1]) && (N(t[1]->label)<=2)) {
-    string v= t[1]->label;
+      is_atomic (r[1]) && (N(r[1]->label)<=2)) {
+    string v= r[1]->label;
     if (N(v)==0) {
       if (s[1] == '`' ) {
 	string ret_s (1);
@@ -629,13 +629,14 @@ accented_to_Cork (tree t) {
     }
     else {
       char c1= v[0], c2= s[1];
-      if (v=="\\i") c1= (char) 16;
+      if (v == "\\i") c1= (char) 25;
       if ((N(v)==1) || (v=="\\i"))
 	for (i=0; i<127; i++)
 	  if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
 	    return tree (string ((char) (i+128)));
     }
   }
+  if (r == tuple ("\\i")) return "\\i";
   return r;
 }
 

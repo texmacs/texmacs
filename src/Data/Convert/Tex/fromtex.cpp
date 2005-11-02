@@ -78,8 +78,8 @@ latex_symbol_to_tree (string s) {
       if (s == "\\ ") return " ";
       if (s == "\\-") return "";
       if (s == "\\/") return "";
-      if (s == "\\i") return "\020";
-      if (s == "\\j") return "\021";
+      if (s == "\\i") return "\031";
+      if (s == "\\j") return "\032";
       if (s == "\\oe") return "\367";
       if (s == "\\ae") return "\346";
       if (s == "\\ss") return "\377";
@@ -441,6 +441,12 @@ latex_index_to_tree (string s) {
 }
 
 tree
+latex_accent (tree t, string acc) {
+  return tree (WITH, MODE, "math",
+	       tree (WIDE, tree (WITH, MODE, "text", l2e (t)), acc));
+}
+
+tree
 latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\def", 2)) {
     string var= string_arg (t[1]);
@@ -488,6 +494,15 @@ latex_command_to_tree (tree t) {
 
   if (textm_appendices && is_tuple (t, "\\chapter", 1))
     return tree (APPLY, "appendix", l2e (t[1]));
+
+  if (is_tuple (t, "\\^", 1)) return latex_accent (t[1], "^");
+  if (is_tuple (t, "\\~", 1)) return latex_accent (t[1], "~");
+  if (is_tuple (t, "\\`", 1)) return latex_accent (t[1], "<grave>");
+  if (is_tuple (t, "\\'", 1)) return latex_accent (t[1], "<acute>");
+  if (is_tuple (t, "\\\"", 1)) return latex_accent (t[1], "<ddot>");
+  if (is_tuple (t, "\\.", 1)) return latex_accent (t[1], "<dot>");
+  if (is_tuple (t, "\\u", 1)) return latex_accent (t[1], "<breve>");
+  if (is_tuple (t, "\\v", 1)) return latex_accent (t[1], "<check>");
 
   if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
   if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
