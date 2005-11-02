@@ -23,6 +23,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   last_x= x; last_y= y;
   buf->mark_undo_block ();
 
+  if (type == "leave")
+    set_pointer ("XC_top_left_arrow");
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
   if ((popup_win != NULL) && (type != "leave")) {
