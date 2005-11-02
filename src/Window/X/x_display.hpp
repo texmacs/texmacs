@@ -27,6 +27,7 @@ typedef x_window_rep* x_window;
 #define XK_CYRILLIC
 
 #include <X11/Xlib.h>
+#include <X11/X.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/Xatom.h>
@@ -142,6 +143,7 @@ public:
   void initialize_keyboard_pointer ();
   string look_up_key (XKeyEvent* ev);
   string look_up_mouse (XButtonEvent* ev);
+  unsigned int get_kbd_modifiers ();
   unsigned int get_button_mask (XButtonEvent* ev);
 
   /******************************** Fonts ************************************/

@@ -1522,6 +1522,15 @@ tmg_complete_tryP () {
 }
 
 SCM
+tmg_get_keyboard_modifiers () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_editor()->get_kbd_modifiers ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_go_to (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "go-to");
 
@@ -3010,6 +3019,7 @@ initialize_glue_editor () {
   gh_new_procedure ("emulate-keyboard", (FN) tmg_emulate_keyboard, 1, 0, 0);
   gh_new_procedure ("emulate-keyboard-message", (FN) tmg_emulate_keyboard_message, 2, 0, 0);
   gh_new_procedure ("complete-try?", (FN) tmg_complete_tryP, 0, 0, 0);
+  gh_new_procedure ("get-keyboard-modifiers", (FN) tmg_get_keyboard_modifiers, 0, 0, 0);
   gh_new_procedure ("go-to", (FN) tmg_go_to, 1, 0, 0);
   gh_new_procedure ("go-left", (FN) tmg_go_left, 0, 0, 0);
   gh_new_procedure ("go-right", (FN) tmg_go_right, 0, 0, 0);
