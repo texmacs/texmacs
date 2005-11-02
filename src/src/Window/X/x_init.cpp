@@ -193,6 +193,7 @@ x_display_rep::initialize_colors () {
 * Get xmodmap
 ******************************************************************************/
 
+static XModifierKeymap* xmodmap;
 static int        mod_n;
 static KeyCode*   mod_k;
 static array<int> mod_shift;
@@ -208,7 +209,7 @@ x_display_rep::insert_keysym (array<int>& a, int i, int j) {
 void
 x_display_rep::get_xmodmap () {
   int i;
-  XModifierKeymap* xmodmap= XGetModifierMapping (dpy);
+  xmodmap= XGetModifierMapping (dpy);
   mod_n= xmodmap->max_keypermod;
   mod_k= xmodmap->modifiermap;
   for (i=0; i<mod_n; i++) {

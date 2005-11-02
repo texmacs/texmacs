@@ -17,8 +17,17 @@
   (:use (utils library tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Overloaded keyboard actions
+;; Keyboard handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ShiftMask   1)
+(define LockMask    2)
+(define ControlMask 4)
+(define Mod1Mask    8)
+(define Mod2Mask   16)
+(define Mod3Mask   32)
+(define Mod4Mask   64)
+(define Mod5Mask  128)
 
 (tm-define (kbd-tab)
   (:mode in-graphics?)
@@ -1968,7 +1977,8 @@
 	(graphics-move-point x y))
       ;;Remove
       (begin
-	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj)))
+	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj))
+                (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f #f)
@@ -2426,6 +2436,15 @@
     (set! graphics-undo-enabled #t)
     (graphics-forget-states))))
 
+;; Removing
+(tm-define (remove-selected-objects)
+  (foreach (o selected-objects)
+     (graphics-remove (reverse (tree-ip o)))
+  )
+  (set! selected-objects '())
+  (create-graphical-object #f #f #f #f)
+  (graphics-group-start))
+
 ;; State transitions
 (define (point_start-operation opn p obj)
   (set! current-path-under-mouse #f)
@@ -2619,9 +2638,13 @@
 
 (define (group-edit_middle-button x y)
   (with-graphics-context "unselect-all" x y p obj no edge
-     (dispatch (car obj) ((point line cline spline cspline arc carc
-			   text-at))
-	       unselect-all (p) do-tick)))
+     (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
+         (if (null? selected-objects)
+	     (point_middle-button x y p obj no)
+	     (remove-selected-objects))
+	 (dispatch (car obj) ((point line cline spline cspline arc carc
+			       text-at))
+		   unselect-all (p) do-tick))))
 
 (define (group-edit_tab-key)
  ;(display* "Graphics] Group-edit(Tab)\n")

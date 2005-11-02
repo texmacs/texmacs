@@ -51,8 +51,8 @@ public:
 
   /* language support */
   string  out_lan;
-  virtual void   load_dictionary (string name, string from, string to) = 0;
-  virtual void   set_output_language (string lan) = 0;
+  virtual void load_dictionary (string name, string from, string to) = 0;
+  virtual void set_output_language (string lan) = 0;
   virtual string get_output_language () = 0;
   virtual string translate (string lan, string from, string to) = 0;
 
@@ -63,26 +63,27 @@ public:
 				 font_metric& fnm, font_glyphs& fng) = 0;
 
   /* pointer and keyboard */
-  virtual void   grab_pointer (widget wid) = 0;
-  virtual void   ungrab_pointer () = 0;
-  virtual bool   has_grab_pointer (widget w) = 0;
-  virtual void   grab_keyboard (widget wid) = 0;
-  virtual void   ungrab_keyboard () = 0;
+  virtual void grab_pointer (widget wid) = 0;
+  virtual void ungrab_pointer () = 0;
+  virtual bool has_grab_pointer (widget w) = 0;
+  virtual void grab_keyboard (widget wid) = 0;
+  virtual void ungrab_keyboard () = 0;
+  virtual unsigned int get_kbd_modifiers () = 0;
 
   /* interclient communication */
-  virtual tree   get_selection (widget wid, string k) = 0;
-  virtual bool   set_selection (widget wid, string k, tree t, string s="") = 0;
-  virtual void   clear_selection (string key) = 0;
-  virtual void   delayed_message (widget wid, string mess, time_t delay) = 0;
-  virtual int    remove_all_delayed_messages (widget wid, string s) = 0;
+  virtual tree get_selection (widget wid, string k) = 0;
+  virtual bool set_selection (widget wid, string k, tree t, string s="") = 0;
+  virtual void clear_selection (string key) = 0;
+  virtual void delayed_message (widget wid, string mess, time_t delay) = 0;
+  virtual int  remove_all_delayed_messages (widget wid, string s) = 0;
 
   /* miscellaneous */
-  virtual void   set_help_balloon (widget wid, SI x, SI y) = 0;
-  virtual void   image_gc (string name= "*") = 0;
-  virtual void   set_pointer (string name) = 0;
-  virtual void   set_pointer (string curs_name, string mask_name) = 0;
-  virtual void   set_wait_indicator (string message, string arg) = 0;
-  virtual bool   check_event (int type) = 0;
+  virtual void set_help_balloon (widget wid, SI x, SI y) = 0;
+  virtual void image_gc (string name= "*") = 0;
+  virtual void set_pointer (string name) = 0;
+  virtual void set_pointer (string curs_name, string mask_name) = 0;
+  virtual void set_wait_indicator (string message, string arg) = 0;
+  virtual bool check_event (int type) = 0;
 };
 
 display open_display (int argc=0, char** argv=NULL);
