@@ -55,14 +55,31 @@
 	((tree-is? (path->tree p) lab) #t)
 	(else (label-in-range? lab (cDr p) until))))
 
-(tm-define (go-to-remain-inside fun lab)
+(define (check-pattern p l)
+  (with t (path->tree (list-drop-right p (length l)))
+    (cond ((null? l) #t)
+	  ((and (symbol? (car l)) (== (tm-car t) (car l)))
+	   (check-pattern p (cdr l)))
+	  ((and (number? (car l))
+		(== (car l) (list-ref p (- (length p) (length l) 1))))
+	   (check-pattern p (cdr l)))
+	  (else #f))))
+
+(define (innermost-pattern p l)
+  (cond ((<= (length p) (length l)) #f)
+	((check-pattern p l) (cDr p))
+	(else (innermost-pattern (cDr p) l))))
+
+(tm-define (go-to-remain-inside fun . l)
   (with p (cursor-path)
     (fun)
     (let* ((q (cursor-path))
-	   (r (list-head q (list-common-left p q))))
-      (if (or (tree-is? (path->tree (cDr q)) lab)
-	      (label-in-range? lab (cDr q) (cDr r)))
-	  (go-to p)))))
+	   (pp (innermost-pattern (cDr p) l))
+	   (qq (innermost-pattern (cDr q) l)))
+      (if (== pp qq) #f
+	  (begin
+	    (go-to p)
+	    #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for cursor movement

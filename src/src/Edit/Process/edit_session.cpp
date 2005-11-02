@@ -360,37 +360,13 @@ edit_process_rep::session_var_go_down () {
 }
 
 void
-edit_process_rep::session_go_left (string tag) {
-  path p= search_upwards (tag);
-  if (nil (p)) return;
-  int i= tp[N(p)];
-  path old_tp= tp;
-  go_left ();
-  p= search_upwards (tag);
-  if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
-  select_from_cursor_if_active ();
-}
-
-void
-edit_process_rep::session_go_right (string tag) {
-  path p= search_upwards (tag);
-  if (nil (p)) return;
-  int i= tp[N(p)];
-  path old_tp= tp;
-  go_right ();
-  p= search_upwards (tag);
-  if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
-  select_from_cursor_if_active ();
-}
-
-void
-edit_process_rep::session_go_up (string tag) {
-  path p= search_upwards (tag);
+edit_process_rep::session_go_up () {
+  path p= search_upwards ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_up ();
-  p= search_upwards (tag);
+  p= search_upwards ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) {
     go_to (old_tp);
     session_var_go_up ();
@@ -399,13 +375,13 @@ edit_process_rep::session_go_up (string tag) {
 }
 
 void
-edit_process_rep::session_go_down (string tag) {
-  path p= search_upwards (tag);
+edit_process_rep::session_go_down () {
+  path p= search_upwards ("input");
   if (nil (p)) return;
   int i= tp[N(p)];
   path old_tp= tp;
   go_down ();
-  p= search_upwards (tag);
+  p= search_upwards ("input");
   if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) {
     go_to (old_tp);
     session_var_go_down ();
