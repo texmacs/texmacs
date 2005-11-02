@@ -474,8 +474,10 @@ void
 printer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
   outer_round (x1, y1, x2, y2);
   ps_device_rep::set_clipping (x1, y1, x2, y2);
-  if (restore)
+  if (restore) {
     print (PS_CLIP_POP);
+    cfn= "";
+  }
   else {
     print (PS_CLIP_PUSH);
     print (x1, y1);
