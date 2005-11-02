@@ -922,7 +922,7 @@
 		(set! p2 (append p (list n (- (length t) 2) 1)))
 		(if (and go-into (func? t 'text-at))
 		    (set! p2 (append p (list n 0 0)))
-		    (set! p2 (append p (list n))))
+		    (set! p2 (append p (list n 0))))
 	    )
 	    (go-to p2)
             (graphics-path p2)
@@ -2826,6 +2826,20 @@
 (tm-define (graphics-end-drag x y)
   ;(display* "Graphics] End-drag " x ", " y "\n")
   (graphics-insert-point x y))
+
+(tm-define (graphics-start-right-drag x y)
+  ;(display* "Graphics] Start-right-drag " x ", " y "\n")
+  (graphics-last-point x y))
+
+(tm-define (graphics-right-dragging x y)
+  ;(display* "Graphics] right-dragging " x ", " y "\n")
+  (graphics-move-point x y))
+
+(tm-define (graphics-end-right-drag x y)
+  ;(display* "Graphics] End-right-drag " x ", " y "\n")
+; FIXME : test due to timing problems in detecting the drag
+  (if (not sticky-point)
+      (graphics-last-point x y)))
 
 (tm-define (graphics-choose-point)
   ;(display* "Graphics] Choose\n")
