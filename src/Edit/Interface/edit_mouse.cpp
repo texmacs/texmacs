@@ -111,8 +111,8 @@ edit_interface_rep::mouse_click (SI x, SI y) {
   if (eb->action ("click" , x, y, 0) != "") return;
   start_x   = x;
   start_y   = y;
-  start_drag= start_right_drag= true;
-  dragging  = right_dragging= true;
+  start_drag= dragging= true;
+  start_right_drag= right_dragging= false;
   this << emit_mouse_grab (true);
 }
 
@@ -185,7 +185,8 @@ edit_interface_rep::mouse_select (SI x, SI y) {
   }
   if (!b && inside_graphics ())
     eval ("(graphics-reset-context 'begin)");
-  if (b && (!inside_graphics () || g != get_graphics ())) {
+  tree g2= get_graphics ();
+  if (b && (!inside_graphics () || obtain_ip (g) != obtain_ip (g2))) {
     invalidate_graphical_object ();
     eval ("(graphics-reset-context 'exit)");
   }
