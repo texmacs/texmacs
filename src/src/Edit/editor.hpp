@@ -376,10 +376,10 @@ public:
   virtual void interrupt_connection () = 0;
   virtual void stop_connection () = 0;
 
-  virtual void session_go_up () = 0;
-  virtual void session_go_down () = 0;
-  virtual void session_go_left () = 0;
-  virtual void session_go_right () = 0;
+  virtual void session_go_up (string tag="input") = 0;
+  virtual void session_go_down (string tag="input") = 0;
+  virtual void session_go_left (string tag="input") = 0;
+  virtual void session_go_right (string tag="input") = 0;
   virtual void session_go_page_up () = 0;
   virtual void session_go_page_down () = 0;
   virtual void session_remove (bool forward) = 0;

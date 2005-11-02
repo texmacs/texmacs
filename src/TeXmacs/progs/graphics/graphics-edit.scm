@@ -24,6 +24,22 @@
   (:mode in-graphics?)
   (graphics-choose-point))
 
+(tm-define (kbd-left)
+  (:inside text-at)
+  (inside-go-left "text-at"))
+
+(tm-define (kbd-right)
+  (:inside text-at)
+  (inside-go-right "text-at"))
+
+(tm-define (kbd-up)
+  (:inside text-at)
+  (inside-go-up "text-at"))
+
+(tm-define (kbd-down)
+  (:inside text-at)
+  (inside-go-down "text-at"))
+
 (kbd-map
   (:mode in-graphics?)
   ("+" (graphics-zoom (/ 1.0 0.75)))
