@@ -50,7 +50,8 @@
   (inside-go-down "text-at"))
 
 (kbd-map
-  (:mode in-graphics?)
+  (:mode (lambda () (and (in-graphics?)
+			 (== (get-env "preamble") "false"))))
   ("+" (graphics-zoom (/ 1.0 0.75)))
   ("-" (graphics-zoom 0.75))
   ("left" (graphics-move-origin "+0.1gw" "0gh"))
@@ -1921,6 +1922,7 @@
 	(graphics-store-state 'start-move)
 	(create-graphical-object obj p 'object-and-points #f)
 	(graphics-remove p)
+	(graphics-group-start)
 	(set! sticky-point #t)
 	(set! current-point-no no)
 	(set! current-edge-sel? #t)
