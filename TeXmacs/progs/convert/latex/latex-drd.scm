@@ -343,18 +343,12 @@
 	(begin
 	  (set! s (string-append "begin-" (substring s 4 (string-length s))))
 	  (set! arity 0)))
-    (if (string-ends? s "*")
-	(begin
-	  (if (!= s "*")
-	      (set! s (substring s 0 (- (string-length s) 1))))
-	  (if (not arity)
-	      (set! arity (drd-ref latex-arity% (string->symbol s))))))
     (values (string->symbol s) arity)))
 
 (tm-define (latex-arity tag)
   "Get the arity of a LaTeX @tag"
   (receive (s arity) (latex-resolve tag)
-    (if arity arity 0)))
+    (or arity 0)))
 
 (tm-define (latex-type tag)
   "Get the type of a LaTeX @tag"

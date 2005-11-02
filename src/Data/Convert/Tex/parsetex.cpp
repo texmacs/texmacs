@@ -335,7 +335,7 @@ latex_parser::parse_backslash (string s, int& i) {
   /************************* normal commands *********************************/
   int start= i-1;
   while ((i<n) && is_alpha (s[i])) i++;
-  if ((i<n) && (s[i]=='*')) i++;
+  if ((i<n) && (s[i]=='*') && latex_type (s (start, i+1)) != "undefined") i++;
   string r= s (start, i);
   if ((r == "\\begin") || (r == "\\end")) {
     while ((i<n) && is_space (s[i])) i++;
@@ -414,7 +414,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   /************************ retrieve arguments *******************************/
   tree t (TUPLE, copy (cmd)); // parsed arguments
   tree u (TUPLE, copy (cmd)); // unparsed arguments
-  while (i<n && arity>0) {
+  while (i<n && arity>=0 && (arity>0 || option)) {
     int j= i;
     while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
