@@ -60,13 +60,17 @@
 ;; Keyboard editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (input-context? t)
+  (and (== (tree-label t) 'input)
+       (== (tree-down-index t) 1)))
+
 (tm-define (kbd-left)
-  (:inside input)
-  (session-go-left))
+  (:context input-context?)
+  (go-to-remain-inside go-left 'input 1))
 
 (tm-define (kbd-right)
-  (:inside input)
-  (session-go-right))
+  (:context input-context?)
+  (go-to-remain-inside go-right 'input 1))
 
 (tm-define (kbd-up)
   (:inside input)
@@ -110,11 +114,11 @@
 
 (tm-define (traverse-left)
   (:inside input)
-  (go-to-remain-inside go-to-previous-word 'input))
+  (go-to-remain-inside go-to-previous-word 'input 1))
 
 (tm-define (traverse-right)
   (:inside input)
-  (go-to-remain-inside go-to-next-word 'input))
+  (go-to-remain-inside go-to-next-word 'input 1))
 
 (tm-define (traverse-up)
   (:inside input)

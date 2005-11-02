@@ -14,7 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (graphics graphics-edit)
-  (:use (utils library tree)))
+  (:use (utils library cursor) (utils library tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling
@@ -35,19 +35,19 @@
 
 (tm-define (kbd-left)
   (:inside text-at)
-  (inside-go-left "text-at"))
+  (go-to-remain-inside go-left 'text-at))
 
 (tm-define (kbd-right)
   (:inside text-at)
-  (inside-go-right "text-at"))
+  (go-to-remain-inside go-right 'text-at))
 
 (tm-define (kbd-up)
   (:inside text-at)
-  (inside-go-up "text-at"))
+  (go-to-remain-inside go-up 'text-at))
 
 (tm-define (kbd-down)
   (:inside text-at)
-  (inside-go-down "text-at"))
+  (go-to-remain-inside go-down 'text-at))
 
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
