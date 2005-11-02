@@ -294,7 +294,7 @@ init_std_drd () {
   init (SUPERPOSE, "superpose", repeat (1, 1));
   init (GR_GROUP, "gr-group", repeat (1, 1));
   init (GR_LINEAR_TRANSFORM, "gr-linear-transform", fixed (2));
-  init (TEXT_AT, "text-at", fixed (1, 3, BIFORM) -> accessible (0));
+  init (TEXT_AT, "text-at", fixed (1, 1, BIFORM) -> accessible (0));
   init (_POINT, "point", repeat (1, 1));
   init (LINE, "line", repeat (2, 1));
   init (CLINE, "cline", repeat (3, 1));

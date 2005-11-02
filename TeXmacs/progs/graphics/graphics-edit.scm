@@ -842,13 +842,13 @@
         ((pair? arrows)
 	 (graphics-change-property "gr-line-arrows" arrows))))
 
-(tm-define (graphics-set-text-halign val)
+(tm-define (graphics-set-textat-halign val)
   (:argument val "Text-at horizontal alignment")
-  (graphics-change-property "gr-text-halign" val))
+  (graphics-change-property "gr-text-at-halign" val))
 
-(tm-define (graphics-set-text-valign val)
+(tm-define (graphics-set-textat-valign val)
   (:argument val "Text-at vertical alignment")
-  (graphics-change-property "gr-text-valign" val))
+  (graphics-change-property "gr-text-at-valign" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
@@ -861,11 +861,14 @@
 	 (in? attr '("color" "fill-color" "line-width"
 		     "dash-style" "dash-style-unit"
 		     "line-arrows")))
+	((== tag 'text-at)
+	 (in? attr '("text-at-halign" "text-at-valign")))
 	((== tag 'gr-group)
 	 (in? attr '("color" "fill-color"
 		     "point-style" "line-width"
 		     "dash-style" "dash-style-unit"
-		     "line-arrows")))
+		     "line-arrows"
+		     "text-at-halign" "text-at-valign")))
 	(else #f)))
 
 (define (graphics-enrich-filter t l)
@@ -884,7 +887,7 @@
 	t
 	`(with ,@f ,t))))
 
-(define (graphics-enrich-bis t color ps lw st stu lp fc)
+(define (graphics-enrich-bis t color ps lw st stu lp fc ha va)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t
@@ -898,6 +901,10 @@
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
 	      ("fill-color" ,fc))))
+	  ((== mode 'text-at)
+	   (graphics-enrich-sub t
+	    `(("text-at-halign" ,ha)
+	      ("text-at-valign" ,va))))
 	  ((== mode 'gr-group)
 	   (graphics-enrich-sub t
 	    `(("color" ,color)
@@ -905,7 +912,9 @@
 	      ("line-width" ,lw)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
-	      ("fill-color" ,fc))))
+	      ("fill-color" ,fc)
+	      ("text-at-halign" ,ha)
+	      ("text-at-valign" ,va))))
 	  (else
 	   (graphics-enrich-sub t '())))))
 
@@ -916,8 +925,10 @@
 	 (st (graphics-get-property "gr-dash-style"))
 	 (stu (graphics-get-property "gr-dash-style-unit"))
 	 (lp (graphics-get-property "gr-line-arrows"))
-	 (fc (graphics-get-property "gr-fill-color")))
-    (graphics-enrich-bis t color ps lw st stu lp fc)))
+	 (fc (graphics-get-property "gr-fill-color"))
+	 (ha (graphics-get-property "gr-text-at-halign"))
+	 (va (graphics-get-property "gr-text-at-valign")))
+    (graphics-enrich-bis t color ps lw st stu lp fc ha va)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -930,7 +941,9 @@
     (if p (with n (- (length (stree-at p)) 1)
 	    (path-insert (rcons p n) (list 'tuple t))
 	    (if (func? t 'with)
-		(set! p2 (append p (list n (- (length t) 2) 1)))
+		(if (and go-into (func? (cAr t) 'text-at))
+		    (set! p2 (append p (list n (- (length t) 2) 0 0)))
+		    (set! p2 (append p (list n (- (length t) 2) 1))))
 		(if (and go-into (func? t 'text-at))
 		    (set! p2 (append p (list n 0 0)))
 		    (set! p2 (append p (list n 0))))
@@ -946,9 +959,10 @@
 (define (graphics-group-enrich-insert t)
   (graphics-group-insert (graphics-enrich t)))
 
-(define (graphics-group-enrich-insert-bis t color ps lw st stu lp fc go-into)
+(define (graphics-group-enrich-insert-bis
+	 t color ps lw st stu lp fc ha va go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t color ps lw st stu lp fc) go-into))
+    (graphics-enrich-bis t color ps lw st stu lp fc ha va) go-into))
 
 (define (graphics-group-start)
   (graphics-finish)
@@ -1143,6 +1157,8 @@
 (define graphical-lstyle-unit "default")
 (define graphical-larrows "default")
 (define graphical-fcolor "default")
+(define graphical-textat-halign "default")
+(define graphical-textat-valign "default")
 
 (define (graphical-object fetch)
 ; FIXME: Remove this (tree->stree) should give more speed, but I'm not sure
@@ -1159,16 +1175,20 @@
 	  (set! graphical-lstyle-unit
 		(find-prop-bis o "dash-style-unit" "default"))
           (set! graphical-larrows (find-prop-bis o "line-arrows" "default"))
-	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))))
+	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))
+	  (set! graphical-textat-halign
+		(find-prop-bis o "text-at-halign" "default"))
+	  (set! graphical-textat-valign
+		(find-prop-bis o "text-at-valign" "default"))))
     (if (pair? o)
 	(if (== (cdr o) '()) o (cAr o))
 	'(concat))))
-	    
+
 (define (graphical-object! obj)
  ;(display* "graphical object=" obj "\n")
   (set-graphical-object (stree->tree obj)))
 
-(define (create-graphical-contour o halign valign len)
+(define (create-graphical-contour o ha0 va0 halign valign len)
   (define (create-haligns l b r t)
      (with x (cond ((== halign "left") l)
 		   ((== halign "center") (i2s (/ (+ (s2i l) (s2i r)) 2)))
@@ -1187,19 +1207,24 @@
   )
   (define (get-textat-vbase b0)
      (if (and (eq? (car o) 'text-at)
-	      (equal? (car (cddddr o)) "base"))
+	      (equal? va0 "base"))
 	 (begin
-	    (set-car! (cddddr o) "bottom")
+	    (set! o `(with "text-at-halign" ,ha0
+			   "text-at-valign" "bottom" ,o))
 	    (let* ((info0 (cdr (box-info o "lbLB")))
 		   (b (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
 		  )
-		  (set-car! (cddddr o) "base")
+		  (set! o (list-ref o 5))
 		  b)
 	 )
 	 b0)
   )
-  (let* ((info0 (cdr (box-info o "lbLB")))
-	 (info1 (cdr (box-info o "rtRT")))
+  (let* ((o1 (if (in? (car o) '(text-at gr-group))
+		`(with "text-at-halign" ,ha0
+		       "text-at-valign" ,va0 ,o)
+		 o))
+	 (info0 (cdr (box-info o1 "lbLB")))
+	 (info1 (cdr (box-info o1 "rtRT")))
 	 (l (i2s (min (s2i (car  info0)) (s2i (caddr  info0)))))
 	 (b0 (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
 	 (r (i2s (max (s2i (car  info1)) (s2i (caddr  info1)))))
@@ -1230,8 +1255,14 @@
 
 (define (on-graphical-contour? x y o eps)
   (set! eps (length-decode eps))
-  (let* ((info0 (cdr (box-info o "lbLB")))
-	 (info1 (cdr (box-info o "rtRT")))
+  (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
+	 (va (get-graphical-prop 'basic "text-at-valign"))
+	 (o1 (if (and (pair? o) (eq? (car o) 'text-at))
+		`(with "text-at-halign" ,ha
+		       "text-at-valign" ,va ,o)
+		 o))
+	 (info0 (cdr (box-info o1 "lbLB")))
+	 (info1 (cdr (box-info o1 "rtRT")))
 	 (l (min (s2i (car  info0)) (s2i (caddr  info0))))
 	 (b (min (s2i (cadr info0)) (s2i (cadddr info0))))
 	 (r (max (s2i (car  info1)) (s2i (caddr  info1))))
@@ -1249,12 +1280,48 @@
 	    (and (in-interval? x (- l eps) (+ r eps) >= <=)
 		 (in-interval? y t (+ t eps) > <=)))))
 
+(define (dv var val)
+  (if (== val "default")
+      (get-default-val var)
+      val)
+)
+(define (get-graphical-prop mode prop)
+  (with res
+     (if (== mode 'basic)
+	 (if sticky-point
+	     (get-graphical-prop 'active prop)
+	     (get-graphical-prop current-path-under-mouse prop))
+	 (cond
+	    ((== mode 'active)
+	     (cond
+	        ((== prop "color")
+		 graphical-color)
+		((== prop "point-style")
+		 graphical-pstyle)
+		((== prop "line-width")
+		 graphical-lwidth)
+		((== prop "dash-style")
+		 graphical-lstyle)
+		((== prop "dash-style-unit")
+		 graphical-lstyle-unit)
+		((== prop "line-arrows")
+		 graphical-larrows)
+		((== prop "fill-color")
+		 graphical-fcolor)
+		((== prop "text-at-halign")
+		 graphical-textat-halign)
+		((== prop "text-at-valign")
+		 graphical-textat-valign)))
+	    ((list? mode)
+	     (graphics-path-property mode prop))
+	    ((== mode 'new)
+	     (graphics-get-property (string-append "gr-" prop)))
+	    ((== mode 'default)
+	     (get-default-val (string-append "gr-" prop))))
+     )
+     (dv prop res)))
+
 (define (create-graphical-props mode ps0)
-  (define (dv var val)
-     (if (== val "default")
-	 (get-default-val var)
-	 val)
-  )
   (let ((color #f)
 	(ps #f)
 	(lw #f)
@@ -1262,6 +1329,8 @@
 	(stu #f)
 	(lp #f)
 	(fc #f)
+	(ha #f)
+	(va #f)
      )
      (cond
 	((== mode 'active)
@@ -1271,7 +1340,9 @@
 	 (set! st graphical-lstyle)
 	 (set! stu graphical-lstyle-unit)
 	 (set! lp graphical-larrows)
-	 (set! fc graphical-fcolor))
+	 (set! fc graphical-fcolor)
+	 (set! ha graphical-textat-halign)
+	 (set! va graphical-textat-valign))
 	((list? mode)
 	 (set! color (graphics-path-property mode "color"))
 	 (set! ps (graphics-path-property mode "point-style"))
@@ -1279,7 +1350,9 @@
 	 (set! st (graphics-path-property mode "dash-style"))
 	 (set! stu (graphics-path-property mode "dash-style-unit"))
 	 (set! lp (graphics-path-property mode "line-arrows"))
-	 (set! fc (graphics-path-property mode "fill-color")))
+	 (set! fc (graphics-path-property mode "fill-color"))
+	 (set! ha (graphics-path-property mode "text-at-halign"))
+	 (set! va (graphics-path-property mode "text-at-valign")))
 	((== mode 'new)
 	 (set! color (graphics-get-property "gr-color"))
 	 (set! ps (graphics-get-property "gr-point-style"))
@@ -1287,7 +1360,9 @@
 	 (set! st (graphics-get-property "gr-dash-style"))
 	 (set! stu (graphics-get-property "gr-dash-style-unit"))
 	 (set! lp (graphics-get-property "gr-line-arrows"))
-	 (set! fc (graphics-get-property "gr-fill-color")))
+	 (set! fc (graphics-get-property "gr-fill-color"))
+	 (set! ha (graphics-get-property "gr-text-at-halign"))
+	 (set! va (graphics-get-property "gr-text-at-valign")))
 	((== mode 'default)
 	 (set! color (get-default-val "gr-color"))
 	 (set! ps (get-default-val "gr-point-style"))
@@ -1295,7 +1370,9 @@
 	 (set! st (get-default-val "gr-dash-style"))
 	 (set! stu (get-default-val "gr-dash-style-unit"))
 	 (set! lp (get-default-val "gr-line-arrows"))
-	 (set! fc (get-default-val "gr-fill-color")))
+	 (set! fc (get-default-val "gr-fill-color"))
+	 (set! ha (get-default-val "gr-text-at-halign"))
+	 (set! va (get-default-val "gr-text-at-valign")))
      )
      (list 'with "point-style"
 		  (if ps0 ps0 (if ps (dv "point-style" ps) "square"))
@@ -1304,7 +1381,9 @@
 		 "dash-style" (dv "dash-style" st)
 		 "dash-style-unit" (dv "dash-style-unit" stu)
 		 "line-arrows" (dv "line-arrows" lp)
-		 "fill-color" (dv "fill-color" fc))))
+		 "fill-color" (dv "fill-color" fc)
+		 "text-at-halign" (dv "text-at-halign" ha)
+		 "text-at-valign" (dv "text-at-valign" va))))
 
 (define (add-selections-colors op color fill-color)
   (if (not color) (set! color "none"))
@@ -1317,7 +1396,7 @@
 ;; FIXME: This routine is hardwired to draw the current
 ;;   selection & the points of the object under cursor.
 ;;   Generalize it, and reuse it to clean the code around.
-(define (create-graphical-contours l mode)
+(define (create-graphical-contours l mode0 mode)
   (define on-aobj #f)
   (define aobj-selected #f)
   (define (asc col fcol op)
@@ -1339,6 +1418,7 @@
      (if (not (and (tree? o) (< (cAr (tree-ip o)) 0)))
      (let* ((props #f)
 	    (t #f)
+	    (path0 #f)
 	)
         (set! curscol #f)
         (set! on-aobj #f)
@@ -1352,6 +1432,7 @@
 	       (begin
 		  (set! on-aobj #t)
 		  (set! curscol default-color-go-points)))
+	       (set! path0 path)
 	       (set! o (tree->stree o)))
 	)
 	(if (and (== (car o) 'gr-group) (!= mode 'object))
@@ -1366,10 +1447,11 @@
 	      ((== (car o) 'text-at)
 	       (if (not curscol)
 		   (set! curscol default-color-selected-points))
-	       (set! t (let* ((a (cdddr o))
+	       (set! t (let* ((ha (get-graphical-prop path0 "text-at-halign"))
+			      (va (get-graphical-prop path0 "text-at-valign"))
 			      (gc (asc curscol #f
 				    (create-graphical-contour
-				      o (car a) (cadr a) 0.1)))
+				      o ha va ha va 0.1)))
 			  )
 			  (if (== mode 'object-and-points)
 			      (cons o gc)
@@ -1381,8 +1463,13 @@
 	       (if (not curscol)
 		   (set! curscol default-color-selected-points))
 	       (set! t (with gc (asc curscol #f
-				  (create-graphical-contour
-				     o "center" "center" 0.1))
+				  (let* ((ha (get-graphical-prop
+						path0 "text-at-halign"))
+					 (va (get-graphical-prop
+						path0 "text-at-valign"))
+				     )
+				     (create-graphical-contour
+				        o ha va "center" "center" 0.1)))
 			  (if (== mode 'object-and-points)
 			      (cons o gc)
 			      (if (== mode 'object)
@@ -1421,11 +1508,17 @@
 		       (cons o '())
 		      )
 		      ((== (car o) 'text-at)
-		       (with a (cdddr o)
-			  (create-graphical-contour o (car a) (cadr a) 0.1))
+		       (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
+			      (va (get-graphical-prop 'basic "text-at-valign"))
+			  )
+			  (create-graphical-contour o ha va ha va 0.1))
 		      )
 		      ((== (car o) 'gr-group)
-		       (create-graphical-contour o "center" "center" 0.1)
+		       (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
+			      (va (get-graphical-prop 'basic "text-at-valign"))
+			  )
+			  (create-graphical-contour
+			     o ha va "center" "center" 0.1))
 		      )
 		      (else (if (integer? no)
 			        (let* ((l (list-tail (cdr o) no))
@@ -1480,7 +1573,7 @@
 			   (graphics-group-mode? (graphics-mode)))
 		  )
 		  (cons 'concat
-			(create-graphical-contours selected-objects pts)
+			(create-graphical-contours selected-objects mode pts)
 		  )
 		  (append
 		     props
@@ -1864,6 +1957,7 @@
 	  (set! graphics-undo-enabled #t)
 	  (unredoable-undo))
 	(begin
+	  (set! selected-objects '())
 	  (invalidate-graphical-object)
 	  (if (and graphics-undo-enabled (not sticky-point))
 	      (with p (graphics-active-path)
@@ -1876,7 +1970,6 @@
 	  (set! sticky-point #f)
 	  (set! current-point-no #f)
 	  (set! graphics-undo-enabled #t)
-	  (set! selected-objects '())
 	  (set! multiselecting #f)
 	  (if graphics-first-state
 	      (graphics-back-first))
@@ -1929,7 +2022,9 @@
 	 graphical-lstyle
 	 graphical-lstyle-unit
 	 graphical-larrows
-	 graphical-fcolor #f)
+	 graphical-fcolor
+	 graphical-textat-halign
+	 graphical-textat-valign #f)
 	(if (== (state-ref graphics-first-state 'graphics-action)
 		'start-move)
 	    (remove-undo-mark))
@@ -2045,9 +2140,7 @@
 
 (define (text-at_nonsticky-right-button x y mode)
   (graphics-group-enrich-insert
-    `(text-at "" (point ,x ,y)
-       ,(graphics-active-property "gr-text-halign" "left")
-       ,(graphics-active-property "gr-text-valign" "bottom"))))
+    `(text-at "" (point ,x ,y))))
 
 ;; Dispatch
 (define (edit_left-button x y)
@@ -2162,21 +2255,21 @@
   (graphics-frozen-property! "gr-fill-color"
 			     (graphics-fill-color-enabled?)))
 
-(tm-define (graphics-text-halign-enabled?)
-  (enabled-var? "gr-text-halign"))
+(tm-define (graphics-textat-halign-enabled?)
+  (enabled-var? "gr-text-at-halign"))
 
-(tm-define (graphics-toggle-text-halign-enabled)
-  (:check-mark "v" graphics-text-halign-enabled?)
-  (graphics-frozen-property! "gr-text-halign"
-			     (graphics-text-halign-enabled?)))
+(tm-define (graphics-toggle-textat-halign-enabled)
+  (:check-mark "v" graphics-textat-halign-enabled?)
+  (graphics-frozen-property! "gr-text-at-halign"
+			     (graphics-textat-halign-enabled?)))
 
-(tm-define (graphics-text-valign-enabled?)
-  (enabled-var? "gr-text-valign"))
+(tm-define (graphics-textat-valign-enabled?)
+  (enabled-var? "gr-text-at-valign"))
 
-(tm-define (graphics-toggle-text-valign-enabled)
-  (:check-mark "v" graphics-text-valign-enabled?)
-  (graphics-frozen-property! "gr-text-valign"
-			     (graphics-text-valign-enabled?)))
+(tm-define (graphics-toggle-textat-valign-enabled)
+  (:check-mark "v" graphics-textat-valign-enabled?)
+  (graphics-frozen-property! "gr-text-at-valign"
+			     (graphics-textat-valign-enabled?)))
 
 ;; Functions for managing properties
 (define (graphics-assign-props p obj mode)
@@ -2187,6 +2280,8 @@
 	 (stu (graphics-path-property p "dash-style-unit"))
 	 (lp (graphics-path-property p "line-arrows"))
 	 (fc (graphics-path-property p "fill-color"))
+	 (ha (graphics-path-property p "text-at-halign"))
+	 (va (graphics-path-property p "text-at-valign"))
      )
      (graphics-remove p)
      (with res
@@ -2204,7 +2299,11 @@
 	      (if (graphics-line-arrows-enabled?)
 		  (graphics-get-property "gr-line-arrows") lp)
 	      (if (graphics-fill-color-enabled?)
-		  (graphics-get-property "gr-fill-color") fc) #f)
+		  (graphics-get-property "gr-fill-color") fc)
+	      (if (graphics-textat-halign-enabled?)
+		  (graphics-get-property "gr-text-at-halign") ha)
+	      (if (graphics-textat-valign-enabled?)
+		  (graphics-get-property "gr-text-at-valign") va) #f)
 	(if mode
 	    (create-graphical-object obj 'new 'points mode))
 	res)))
@@ -2217,6 +2316,8 @@
 	 (stu (graphics-path-property p "dash-style-unit"))
 	 (lp (graphics-path-property p "line-arrows"))
 	 (fc (graphics-path-property p "fill-color"))
+	 (ha (graphics-path-property p "text-at-halign"))
+	 (va (graphics-path-property p "text-at-valign"))
      )
      (if (!= color "default")
 	 (graphics-change-property "gr-color" color)
@@ -2238,28 +2339,44 @@
 	 (graphics-remove-property "gr-line-arrows"))
      (if (!= fc "default")
 	 (graphics-change-property "gr-fill-color" fc)
-	 (graphics-remove-property "gr-fill-color"))))
+	 (graphics-remove-property "gr-fill-color"))
+     (if (!= ha "default")
+	 (graphics-change-property "gr-text-at-halign" ha)
+	 (graphics-remove-property "gr-text-at-halign"))
+     (if (!= va "default")
+	 (graphics-change-property "gr-text-at-valign" va)
+	 (graphics-remove-property "gr-text-at-valign"))))
 
 (define (text-at-change-halign p obj)
-  (graphics-remove p)
-  (with halign (cadddr obj)
-     (set-car! (cdddr obj) (cond ((== halign "left") "center")
-				 ((== halign "center") "right")
-				 ((== halign "right") "left")
-				 (else "left")))
-     (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points 'no-group)))
+  (let* ((halign (get-graphical-prop p "text-at-halign"))
+	 (valign (get-graphical-prop p "text-at-valign"))
+	 (halign2 (cond ((== halign "left") "center")
+			((== halign "center") "right")
+			((== halign "right") "left")
+			(else "left")))
+     )
+     (graphics-remove p)
+     (set! current-path-under-mouse
+	(graphics-group-enrich-insert-bis
+	   obj #f #f #f #f #f #f #f halign2 valign #f))
+     (create-graphical-object obj '() 'points 'no-group)
+     (graphics-group-start)))
 
 (define (text-at-change-valign p obj)
-  (graphics-remove p)
-  (with valign (car (cddddr obj))
-     (set-car! (cddddr obj) (cond ((== valign "bottom") "base")
-				  ((== valign "base") "center")
-				  ((== valign "center") "top")
-				  ((== valign "top") "bottom")
-				  (else "bottom")))
-     (graphics-group-insert-bis obj #f)
-     (create-graphical-object obj '() 'points 'no-group)))
+  (let* ((halign (get-graphical-prop p "text-at-halign"))
+	 (valign (get-graphical-prop p "text-at-valign"))
+	 (valign2 (cond ((== valign "bottom") "base")
+			((== valign "base") "center")
+			((== valign "center") "top")
+			((== valign "top") "bottom")
+			(else "bottom")))
+     )
+     (graphics-remove p)
+     (set! current-path-under-mouse
+	(graphics-group-enrich-insert-bis
+	   obj #f #f #f #f #f #f #f halign valign2 #f))
+     (create-graphical-object obj '() 'points 'no-group)
+     (graphics-group-start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode

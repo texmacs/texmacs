@@ -2443,20 +2443,27 @@ upgrade_switch (tree t) {
 * Upgrade graphics
 ******************************************************************************/
 
-static int find_attr_pos (tree t, string name) {
+static int
+find_attr_pos (tree t, string name) {
   int i, n= N(t);
   for (i=0; i<n; i+=2)
-    if (t[i] == name && i%2==0 && i+1<n) return i;
+    if (t[i] == name && i%2 == 0 && i+1<n) return i;
   return -1;
 }
-static bool find_attr (tree t, string name) {
+
+static bool
+find_attr (tree t, string name) {
   return find_attr_pos (t, name) != -1;
 }
-static tree get_attr (tree t, string name, tree ifnotfound) {
+
+static tree
+get_attr (tree t, string name, tree ifnotfound) {
   int i= find_attr_pos (t, name);
   return i == -1 ? ifnotfound : t[i+1];
 }
-static tree add_attr (tree t, string name, tree value) {
+
+static tree
+add_attr (tree t, string name, tree value) {
   int i, n= N(t);
   tree r (t, n+2);
   for (i=0; i<n-1; i++)
@@ -2466,7 +2473,9 @@ static tree add_attr (tree t, string name, tree value) {
   r[n+1]= t[n-1];
   return r;
 }
-static tree set_attr (tree t, string name, tree value) {
+
+static tree
+set_attr (tree t, string name, tree value) {
   int i= find_attr_pos (t, name);
   if (i != -1)
     t[i+1]= value;
@@ -2474,7 +2483,9 @@ static tree set_attr (tree t, string name, tree value) {
     t= add_attr (t, name, value);
   return t;
 }
-static tree remove_attr (tree t, string name) {
+
+static tree
+remove_attr (tree t, string name) {
   int i= find_attr_pos (t, name);
   if (i == -1)
     return t;
@@ -2513,14 +2524,17 @@ upgrade_fill (tree t) {
   return r;
 }
 
-static void length_split (string &num, string &unit, string l) {
+static void
+length_split (string &num, string &unit, string l) {
   int i, n= N(l), nu= 0;
   i= n-1;
   while (i>=0 && is_alpha (l[i])) i--, nu++;
   num= l (0, n-nu);
   unit= l (n-nu, n);
 }
-static string length_minus (string l) {
+
+static string
+length_minus (string l) {
   if (l[0] == '+') l[0]= '-';
   else
   if (l[0] == '-') l[0]= '+';
@@ -2528,12 +2542,17 @@ static string length_minus (string l) {
     l= "-" * l;
   return l;
 }
-static string length_abs (string l) {
+
+static string
+length_abs (string l) {
   if (l[0] == '-') l[0]= '+';
   return l;
 }
+
 static int length_add_error;
-static string length_add (string l1, string l2) {
+
+static string
+length_add (string l1, string l2) {
   length_add_error= 0;
   string n1, u1, n2, u2;
   length_split (n1, u1, l1);
@@ -2566,8 +2585,8 @@ tree
 upgrade_graphics (tree t) {
   int i;
   if (is_atomic (t)) return t;
-  if (is_compound (t, "with")
-   && (find_attr (t, "gr-frame") || find_attr (t, "gr-clip"))) {
+  if (is_compound (t, "with") &&
+      (find_attr (t, "gr-frame") || find_attr (t, "gr-clip"))) {
     tree fr= get_attr (t, "gr-frame",
 			  tuple ("scale", "1cm",
 				 tree (TUPLE, "0.5par", "0cm")));
@@ -2597,6 +2616,23 @@ upgrade_graphics (tree t) {
   tree r (t, n);
   for (i=0; i<n; i++)
     r[i]= upgrade_graphics (t[i]);
+  return r;
+}
+
+tree
+upgrade_textat (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_compound (t, "text-at") && N(t) == 4) {
+    tree t0= t;
+    t= tree (WITH, tree (TEXT_AT, t[0], t[1]));
+    t= set_attr (t, "text-at-halign", t0[2]);
+    t= set_attr (t, "text-at-valign", t0[3]);
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_textat (t[i]);
   return r;
 }
 
@@ -2701,5 +2737,7 @@ upgrade (tree t, string version) {
     t= upgrade_fill (t);
   if (version_inf_eq (version, "1.0.5.8"))
     t= upgrade_graphics (t);
+  if (version_inf_eq (version, "1.0.5.11"))
+    t= upgrade_textat (t);
   return t;
 }

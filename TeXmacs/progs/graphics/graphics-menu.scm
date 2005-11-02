@@ -336,17 +336,18 @@
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-align-menu
-  ("Default" (begin (graphics-set-text-halign "left")
-		    (graphics-set-text-valign "bottom")))
+  ("Default" (begin (graphics-set-textat-halign "left")
+		    (graphics-set-textat-valign "bottom")))
   ---
   (-> "Horizontal"
-      ("Left" (graphics-set-text-halign "left"))
-      ("Center" (graphics-set-text-halign "center"))
-      ("Right" (graphics-set-text-halign "right")))
+      ("Left" (graphics-set-textat-halign "left"))
+      ("Center" (graphics-set-textat-halign "center"))
+      ("Right" (graphics-set-textat-halign "right")))
   (-> "Vertical"
-      ("Bottom" (graphics-set-text-valign "bottom"))
-      ("Center" (graphics-set-text-valign "center"))
-      ("Top" (graphics-set-text-valign "top"))))
+      ("Bottom" (graphics-set-textat-valign "bottom"))
+      ("Base" (graphics-set-textat-valign "base"))
+      ("Center" (graphics-set-textat-valign "center"))
+      ("Top" (graphics-set-textat-valign "top"))))
 
 (menu-bind graphics-enable-change-properties-menu
   ("Color"  (graphics-toggle-color-enabled))
@@ -356,8 +357,8 @@
   ("Dash unit" (graphics-toggle-dash-style-unit-enabled))
   ("Line arrows" (graphics-toggle-line-arrows-enabled))
   ("Fill color" (graphics-toggle-fill-color-enabled))
-  ("Text box horizontal alignment" (graphics-toggle-text-halign-enabled))
-  ("Text box vertical alignment" (graphics-toggle-text-valign-enabled)))
+  ("Text box horizontal alignment" (graphics-toggle-textat-halign-enabled))
+  ("Text box vertical alignment" (graphics-toggle-textat-valign-enabled)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
