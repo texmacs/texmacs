@@ -1,18 +1,25 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.0.5.11>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.11>
+  <section|Changes from version 1.0.5 to 1.0.5.12>
 
   <\itemize>
+    <item>Several improvements in <LaTeX> converters (1.0.5.12).
+
+    <item>User preference for <name|Html> converter to export formulas as
+    images (1.0.5.12).
+
+    <item>Several minor improvements in the graphics mode (1.0.5.12).
+
     <item>More options for the <TeXmacs> to <LaTeX> converter and updated
     documentation (1.0.5.11).
 
-    <item>Several bug corrections and minor improvements in
-    <LaTeX> to <TeXmacs> converter (1.0.5.11).
+    <item>Several bug corrections and minor improvements in <LaTeX> to
+    <TeXmacs> converter (1.0.5.11).
 
     <item>Faster and more portable help searching (1.0.5.10).
 
