@@ -133,5 +133,7 @@ init_upgrade () {
   remove ("$TEXMACS_HOME_PATH/system/setup.scm");
   remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
   remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+  remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
   remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
+  remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
 }
