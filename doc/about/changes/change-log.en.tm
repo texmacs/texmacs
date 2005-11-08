@@ -1,13 +1,18 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.5.12>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.5 to 1.0.5.12>
+  <section|Changes from version 1.0.5 to 1.0.6>
 
   <\itemize>
+    <item>Improved plug-in for <name|Reduce> (1.0.6).
+
+    <item>Added <name|Pnambic> plug-in among the examples for debugging
+    plug-ins (1.0.6).
+
     <item>Several improvements in <LaTeX> converters (1.0.5.12).
 
     <item>User preference for <name|Html> converter to export formulas as
