@@ -134,7 +134,7 @@
     [02]verbatim:The end[05]
   </shell-fragment>
 
-  and press <key|C-b>.
+  and press <key|C-d>.
 
   This is a great way to experiment with the <TeXmacs> communication protocal
   and to see how <TeXmacs> reacts when it gets some bytes from a plugin.
