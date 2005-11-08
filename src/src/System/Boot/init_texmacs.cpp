@@ -292,16 +292,6 @@ init_deprecated () {
       string dir  = s (search_forwards ("=", s) + 1, N(s));
       if (dir != "") set_env ("M2HOME", dir);
     }
-
-  // Check for Reduce
-  if (get_env ("reduce") == "")
-    if (exists_in_path ("reduce")) {
-      string where= concretize (resolve_in_path ("reduce"));
-      string grep = "grep 'setenv reduce ' " * where;
-      string sed  = "sed 's/setenv reduce //'";
-      string dir  = var_eval_system (grep * " | " * sed);
-      if (dir != "") set_env ("reduce", dir);
-    }
 #endif
 }
 
