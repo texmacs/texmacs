@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # if there is an argument, find maxima_toc.html
 
 find_old_help()

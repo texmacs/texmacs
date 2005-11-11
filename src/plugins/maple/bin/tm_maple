@@ -15,7 +15,7 @@ TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
 export TEXMACS_MAPLE_BIN
 export TEXMACS_MAPLE_DIR
 
-if [ -e "$TEXMACS_MAPLE_DIR/extern" ]
+if [ -d "$TEXMACS_MAPLE_DIR/extern" ]
 then
     if [ -f "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]
     then
@@ -24,7 +24,7 @@ then
         cd $TEXMACS_PATH/plugins/maple; make -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
     fi
     exec "${HOME}/.TeXmacs/bin/tm_maple_9.sh"
-elif [ -e "$TEXMACS_MAPLE_DIR/mwshelp" ]
+elif [ -f "$TEXMACS_MAPLE_DIR/mwshelp" ]
 then
     exec "${TEXMACS_PATH}/plugins/maple/bin/tm_maple_5"
 fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export TEXMACS_LISP_PATH=$TEXMACS_PATH/plugins/lisp
 cd $TEXMACS_LISP_PATH

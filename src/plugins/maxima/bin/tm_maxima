@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
 export TEXMACS_MAXIMA_PATH
 
