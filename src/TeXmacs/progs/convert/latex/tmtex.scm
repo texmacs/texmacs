@@ -601,11 +601,22 @@
 (define (tmtex-lsup l)
   (tmtex (list 'concat (list 'text "") (list 'rsup (car l)))))
 
+(define (tmtex-contains-table? x)
+  (cond ((nlist? x) #f)
+	((and (>= (length x) 2) (== (car x) '!table)) #t)
+	(else (list-or (map-in-order tmtex-contains-table? (cdr x))))))
+
+(define (tmtex-script which script)
+  (with r (tmtex script)
+    (if (tmtex-contains-table? r)
+	(list which (list 'tmscript r))
+	(list which r))))
+
 (define (tmtex-rsub l)
-  (tmtex-function '!sub l))
+  (tmtex-script '!sub (car l)))
 
 (define (tmtex-rsup l)
-  (tmtex-function '!sup l))
+  (tmtex-script '!sup (car l)))
 
 (define (tmtex-frac l)
   (tmtex-function 'frac l))

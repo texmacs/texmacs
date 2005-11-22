@@ -233,8 +233,6 @@
       (if (symbol? x) (latex-command-uses x))
       (if (and (list? x) (>= (length l) 2) (== (car x) '!begin))
 	  (latex-command-uses (string->symbol (cadr x))))
-      (if (and (in? x '(!sub !sup)) (texout-contains-table? (cadr l)))
-	  (latex-command-uses 'tmscript))
       (if (match? x '(!begin "enumerate" (!option :1)))
 	  (ahash-set! latex-uses-table "enumerate" #t))
       (for-each latex-use-which-package (cdr l)))))
