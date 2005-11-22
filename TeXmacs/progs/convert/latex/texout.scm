@@ -251,19 +251,10 @@
   (output-lf)
   (output-text "\\end{" what "}"))
 
-(tm-define (texout-contains-table? x)
-  (cond ((nlist? x) #f)
-	((and (>= (length x) 2) (== (car x) '!table)) #t)
-	(else (list-or (map-in-order texout-contains-table? (cdr x))))))
-
 (define (texout-script where l)
   (output-text where)
   (let ((x (car l)))
     (cond ((and (string? x) (= (string-length x) 1)) (output-text x))
-	  ((texout-contains-table? x)
-	   (output-text "{\\tmscript{")
-	   (texout x)
-	   (output-text "}}"))
 	  (else (texout-args l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
