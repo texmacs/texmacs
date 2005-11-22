@@ -61,7 +61,6 @@
 
   ;; extra literal symbols
   (Backepsilon "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
-  (mho "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}")
   (Mho "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
   (mathd "\\mathrm{d}")
   (mathe "\\mathrm{e}")
@@ -272,6 +271,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table latex-texmacs-preamble%
+  (mho
+   (!append
+    "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
   (color
    (!append
     "\\definecolor{grey}{rgb}{0.75,0.75,0.75}\n"
