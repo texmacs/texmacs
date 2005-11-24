@@ -45,6 +45,9 @@
   (set! latex-style sty)
   (set! latex-style-hyp (string->symbol (string-append sty "-style%"))))
 
+(tm-define (latex-book-style?)
+  (in? latex-style '("book")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode expansion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
