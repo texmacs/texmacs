@@ -67,11 +67,6 @@
   (det ((left|) "c" (right|) #f))
   (choice ((left\{) "l" (right.) #f)))
 
-(drd-group tex-mathops%
-  arccos arcsin arctan cos cosh cot coth csc deg det dim exp gcd
-  hom inf ker lg lim liminf limsup ln log max min Pr sec sin
-  sinh sup tan tanh)
-
 (drd-table tex-with-cmd%
   (("font-family" "rm") tmtextrm)
   (("font-family" "ss") tmtextsf)
@@ -223,7 +218,7 @@
 		       (display* "TeXmacs] non converted symbol: " s "\n")
 		       "")
 		      (group? (list '!group ss))
-		      (else ss))))))
+		      (else (list '!symbol ss)))))))
 
 (define (tmtex-token l routine group?)
   (receive (p1 p2) (list-break (cdr l) (lambda (x) (== x #\>)))
@@ -241,10 +236,17 @@
 (define (tmtex-break-char? c)
   (string-index "+ -:=,?;()[]{}<>/" c))
 
+(define (tmtex-text-list-space l)
+  (cond ((null? l) l)
+	((== (car l) #\space)
+	 (cons (list (string->symbol " ")) (tmtex-text-list-space (cdr l))))
+	(else (tmtex-text-list l))))
+
 (define (tmtex-text-list l)
   (if (null? l) l
       (let ((c (car l)))
 	(cond ((== c #\<) (tmtex-token l tmtex-text-list #t))
+	      ((== c #\space) (cons c (tmtex-text-list-space (cdr l))))
 	      ((tmtex-special-char? c)
 	       (cons (list (string->symbol (char->string c)))
 		     (tmtex-text-list (cdr l))))
@@ -263,8 +265,8 @@
   (receive (p q) (list-break l (lambda (c) (not (char-alphabetic? c))))
     (let* ((op (list->string p))
 	   (tail (tmtex-math-list q)))
-      (if (drd-in? (string->symbol op) tex-mathops%)
-	  (cons (tex-apply (string->symbol op)) tail)
+      (if (drd-in? (string->symbol op) latex-operator%)
+	  (cons (list '!symbol (tex-apply (string->symbol op))) tail)
 	  (cons (tex-apply 'tmop op) tail)))))
 
 (define (tmtex-math-list l)
@@ -286,19 +288,6 @@
 		    (char-alphabetic? (cadr l)))
 	       (tmtex-math-operator l))
 	      (else (cons c (tmtex-math-list (cdr l))))))))
-
-(define (tmtex-no-math-space c1 c2)
-  (or (== c2 #\,)
-      (and (== c1 c2) (in? c1 '(#\( #\) #\[ #\])))
-      (and (char? c1) (char? c2)
-	   (char-numeric? c1) (char-numeric? c2))))
-
-(define (tmtex-math-spaces l)
-  (if (or (null? l) (null? (cdr l))) l
-      (let ((tail (tmtex-math-spaces (cdr l))))
-	(if (tmtex-no-math-space (car l) (cadr l))
-	    (cons (car l) tail)
-	    (cons* (car l) #\space tail)))))
 
 (define (tmtex-verb-list l)
   (if (null? l) l
@@ -1066,7 +1055,8 @@
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
       (list '!verbatim (tmtex-tt (car l)))
-      (list '!verb (tmtex-tt (car l)))))
+      (list 'tmtexttt (tmtex (car l)))))
+;;(list '!verb (tmtex-tt (car l)))))
 
 (define (tmtex-list-env s l)
   (let* ((r (string-replace s "-" ""))
