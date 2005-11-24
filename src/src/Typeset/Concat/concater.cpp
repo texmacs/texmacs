@@ -190,6 +190,9 @@ concater_rep::typeset (tree t, path ip) {
   case HIDDEN:
     (void) env->exec (t);
     break;
+  case FROZEN:
+    typeset (attach_middle (t[0], ip));
+    break;
   case HSPACE:
     t= env->exec (t);
     typeset_hspace (t, ip);
