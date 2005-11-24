@@ -1031,11 +1031,11 @@
   (list (list '!begin s) (tmtex (car l))))
 
 (define (tmtex-appendix s l)
-  (if tmtex-appendices?
-      (list 'chapter (tmtex (car l)))
+  (with app (list (if (latex-book-style?) 'chapter 'section) (tmtex (car l)))
+    (if tmtex-appendices? app
       (begin
 	(set! tmtex-appendices? #t)
-	(list '!concat '(appendix) (list 'chapter (tmtex (car l)))))))
+	(list '!concat '(appendix) app)))))
 
 (define (tmtex-tt-document l)
   (cond ((null? l) "")
@@ -1498,11 +1498,12 @@
   (if (tmfile? x)
       (let* ((body (tmfile-extract x 'body))
 	     (style (tmtex-get-style (tmfile-extract x 'style)))
+	     (main-style (or (tmtex-transform-style (car style)) "letter"))
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-language lan)
-	(latex-set-style (car style))
+	(latex-set-style main-style)
 	(texmacs->latex doc opts))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
