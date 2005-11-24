@@ -22,6 +22,7 @@ struct superpose_box_rep: public concrete_composite_box_rep {
     concrete_composite_box_rep (ip, bs, bfl) {}
   operator tree ();
   int reindex (int i, int item, int n);
+  int superpose_box_rep::find_child (SI x, SI y, SI delta, bool force);
 };
 
 superpose_box_rep::operator tree () {
@@ -35,6 +36,24 @@ superpose_box_rep::operator tree () {
 int
 superpose_box_rep::reindex (int i, int item, int n) {
   return i;
+}
+
+int
+superpose_box_rep::find_child (SI x, SI y, SI delta, bool force) {
+  // FIXME: this is really a dirty hack. The problem is that the usual
+  // composite_box::find_child thinks that frozen children are accessible.
+  // Currently, there is no safe way to enforce unaccessability at
+  // the physical box level.
+  if (outside (x, delta, x1, x2) && (is_accessible (ip) || force)) return -1;
+  int i, n= subnr(), d= MAX_SI, m= -1;
+  for (i=0; i<n; i++) {
+    if (distance (i, x, y, delta)< d)
+      if (is_accessible (bs[i]->ip) || force) {
+	d= distance (i, x, y, delta);
+	m= i;
+      }
+  }
+  return m;
 }
 
 /******************************************************************************

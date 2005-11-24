@@ -70,6 +70,7 @@ init_std_drd () {
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
+  init (FROZEN, "frozen", fixed (1) -> no_border ());
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
@@ -291,7 +292,7 @@ init_std_drd () {
   init (SOUND, "sound", fixed (1));
 
   init (GRAPHICS, "graphics", repeat (1, 1) -> accessible (0));
-  init (SUPERPOSE, "superpose", repeat (1, 1));
+  init (SUPERPOSE, "superpose", repeat (1, 1) -> accessible (0));
   init (GR_GROUP, "gr-group", repeat (1, 1));
   init (GR_LINEAR_TRANSFORM, "gr-linear-transform", fixed (2));
   init (TEXT_AT, "text-at", fixed (1, 1, BIFORM) -> accessible (0));
