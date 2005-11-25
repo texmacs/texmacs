@@ -29,8 +29,6 @@
       ("Width" (interactive graphics-set-width))
       ("Height" (interactive graphics-set-height))
       (-> "Alignment"
-	  ("Default" (graphics-set-geo-valign "default"))
-	  ---
 	  ("Top" (graphics-set-geo-valign "top"))
 	  ("Center" (graphics-set-geo-valign "center"))
 	  ("Bottom" (graphics-set-geo-valign "bottom"))))
@@ -51,14 +49,14 @@
 	  ("Other" (interactive graphics-set-origin)))))
 
 (menu-bind graphics-grids-menu
+  ("Default" (graphics-reset-grids))
+  ---
   (-> "Visual grid"
-      ("Default" (graphics-set-visual-grid 'default))
-      ---
       (-> "Type"
-	  ("No grid" (graphics-set-visual-grid 'empty))
+	  ("No grid"     (graphics-set-visual-grid 'empty))
 	  ---
-	  ("Cartesian" (graphics-set-visual-grid 'cartesian))
-	      ("Polar" (graphics-set-visual-grid 'polar))
+	  ("Cartesian"   (graphics-set-visual-grid 'cartesian))
+	  ("Polar"       (graphics-set-visual-grid 'polar))
 	  ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
       (when (!= (graphics-get-grid-type #t) 'empty)
         (-> "Center"
@@ -336,14 +334,18 @@
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-align-menu
-  ("Default" (begin (graphics-set-textat-halign "left")
-		    (graphics-set-textat-valign "bottom")))
+  ("Default" (begin (graphics-set-textat-halign "default")
+		    (graphics-set-textat-valign "default")))
   ---
   (-> "Horizontal"
+      ("Default" (graphics-set-textat-halign "default"))
+      ---
       ("Left" (graphics-set-textat-halign "left"))
       ("Center" (graphics-set-textat-halign "center"))
       ("Right" (graphics-set-textat-halign "right")))
   (-> "Vertical"
+      ("Default" (graphics-set-textat-valign "default"))
+      ---
       ("Bottom" (graphics-set-textat-valign "bottom"))
       ("Base" (graphics-set-textat-valign "base"))
       ("Center" (graphics-set-textat-valign "center"))
