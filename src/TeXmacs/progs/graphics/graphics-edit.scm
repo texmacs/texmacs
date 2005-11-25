@@ -66,7 +66,9 @@
   ("C-up" (graphics-change-extents "0cm" "-0.5cm"))
   ("M-down" (graphics-change-geo-valign #f))
   ("M-up" (graphics-change-geo-valign #t))
-  ("backspace" (noop)))
+  ("backspace" (noop))
+  ("C-g" (graphics-toggle-grid #f))
+  ("C-G" (graphics-toggle-grid #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Frequently used subroutines
@@ -219,6 +221,7 @@
 
 (tm-define (graphics-get-property var)
   (with val (get-env-tree var)
+            ;; FIXME: (get-env-tree) is synchro-unsafe (see below).
      (tree->stree
 	(if (graphics-frozen-property? var)
 	    (tree-ref val 0)
@@ -255,8 +258,15 @@
       )
       (graphics-set-property "gr-geometry" new-geo)))
 
+(define (geo-valign-has-value? val)
+  (let* ((geo (graphics-geometry))
+	 (align (car (cddddr geo)))
+      )
+      (== val align)))
+
 (tm-define (graphics-set-geo-valign a)
   (:argument a "Alignment of the graphics")
+  (:check-mark "*" geo-valign-has-value?)
   (let* ((geo (graphics-geometry))
 	 (new-geo `(tuple "geometry" ,(caddr geo) ,(cadddr geo) ,a))
       )
@@ -277,15 +287,34 @@
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
 
+(define (graphics-unit-has-value? val)
+  (let* ((fr (graphics-cartesian-frame))
+	 (unit (caddr fr))
+     )
+     (== val unit)))
+
 (tm-define (graphics-set-unit u)
   (:argument u "Graphical unit")
+  (:check-mark "*" graphics-unit-has-value?)
   (with frame (graphics-cartesian-frame)
     (with new-frame `(tuple "scale" ,u ,(cAr frame))
       (graphics-set-property "gr-frame" new-frame))))
 
+(define (graphics-origin-has-value? x y)
+  (let* ((fr (graphics-cartesian-frame))
+	 (orig (cAr fr))
+     )
+     (if (pair? x)
+	 (set! x (length-add (cadr x) (caddr x))))
+     (if (pair? y)
+	 (set! y (length-add (cadr y) (caddr y))))
+   ; FIXME: The 2 (if)s above lack perfection...
+     (== `(tuple ,x ,y) orig)))
+
 (tm-define (graphics-set-origin x y)
   (:argument x "Origin's x-coordinate")
   (:argument y "Origin's y-coordinate")
+  (:check-mark "*" graphics-origin-has-value?)
   (with frame (graphics-cartesian-frame)
     (with new-frame (append (cDr frame) `((tuple ,x ,y)))
       (graphics-set-property "gr-frame" new-frame))))
@@ -316,7 +345,6 @@
 (define graphics-current-base #f)
 
 (define egrid-as-vgrid? #t)
-(define graphics-current-aspect #f)
 
 ;; Fetching/Setting a grid
 (define default-polar-astep 24)
@@ -389,76 +417,100 @@
   (graphics-fetch-grid-vars #f visual?)
   (string->symbol graphics-current-type))
 
+(define (get-actual-grid-type visual?)
+  (with grid (tree->stree (get-env-tree (if visual? "gr-grid" "gr-edit-grid")))
+     (if (and (pair? grid) (> (length grid) 1))
+	 (cadr grid)
+	 #f)))
+
 (define (graphics-set-grid visual?)
-  (let* ((type   (string->symbol graphics-current-type))
-	 (center graphics-current-center)
-	 (step   graphics-current-step)
-	 (astep  graphics-current-astep)
-	 (base   graphics-current-base)
-	 (prop   (if visual? "gr-grid" "gr-edit-grid"))
+  (let* ((type     (string->symbol graphics-current-type))
+	 (center   graphics-current-center)
+	 (step     graphics-current-step)
+	 (astep    graphics-current-astep)
+	 (base     graphics-current-base)
+	 (prop     (if visual? "gr-grid" "gr-edit-grid"))
+	 (prop-old (if visual? "gr-grid-old" "gr-edit-grid-old"))
+	 (the-grid #f)
     )
     (cond ((== type 'empty)
-	   (graphics-set-property prop
-	      `(tuple "empty"))
+	   (set! the-grid
+		`(tuple "empty"))
 	  )
 	  ((== type 'cartesian)
-	   (graphics-set-property prop
-	      `(tuple "cartesian" ,center ,step))
+	   (set! the-grid
+		`(tuple "cartesian" ,center ,step))
 	  )
 	  ((== type 'polar)
-	   (graphics-set-property prop
-	      `(tuple "polar" ,center ,step ,astep))
+	   (set! the-grid
+		`(tuple "polar" ,center ,step ,astep))
 	  )
 	  ((== type 'logarithmic)
-	   (graphics-set-property prop
-	      `(tuple "logarithmic" ,center ,step ,base)))
+	   (set! the-grid
+		`(tuple "logarithmic" ,center ,step ,base)))
     )
+    (if the-grid
+    (begin
+       (with grid-old (tree->stree (get-env-tree prop-old))
+	  (if (and (== (get-actual-grid-type visual?) "empty")
+		   (> (length grid-old) 1)
+		   (== (cadr the-grid) (cadr grid-old)))
+	      (graphics-set-property prop grid-old)
+	      (begin
+		 (graphics-set-property prop the-grid)
+		 (if (!= type 'empty)
+		     (graphics-set-property prop-old the-grid)))))))
     (if visual? (update-edit-grid 'grid-change))))
+
+(define (grids-defaulted?)
+  (with p (cDr (cursor-path))
+     (and (== (get-upwards-property p "gr-grid") nothing)
+	  (== (get-upwards-property p "gr-grid-old") nothing)
+	  (== (get-upwards-property p "gr-edit-grid") nothing)
+	  (== (get-upwards-property p "gr-edit-grid-old") nothing)
+	  (== (get-upwards-property p "gr-edit-grid-aspect") nothing)
+	  (== (get-upwards-property p "gr-grid-aspect") nothing)
+	  (== (get-upwards-property p "gr-grid-aspect-props") nothing))))
+
+(tm-define (graphics-reset-grids)
+  (:check-mark "*" grids-defaulted?)
+  (graphics-remove-property "gr-grid")
+  (graphics-remove-property "gr-grid-old")
+  (if (grid-as-visual-grid?)
+  (begin
+     (graphics-remove-property "gr-edit-grid")
+     (graphics-remove-property "gr-edit-grid-old")
+     (graphics-remove-property "gr-edit-grid-aspect")
+     (graphics-remove-property "gr-grid-aspect")
+     (graphics-remove-property "gr-grid-aspect-props"))))
 
 (define (visual-type-has-value? type)
   (graphics-fetch-grid-vars #f #t)
   (set! type (cadr type))
-  (if (== type 'default)
-      (set! type 'empty))
   (== type (string->symbol graphics-current-type)))
 
 (tm-define (graphics-set-visual-grid type)
   (:check-mark "*" visual-type-has-value?)
-  (cond ((== type 'default)
-	 (graphics-remove-property "gr-grid")
-	 (if egrid-as-vgrid?
-	 (begin
-	    (graphics-remove-property "gr-edit-grid")
-	    (graphics-remove-property "gr-grid-aspect")
-	    (graphics-remove-property "gr-grid-aspect-props")))
-	)
-	(else
-	  (graphics-fetch-grid-vars type #t)
-       ;; FIXME: Remove this bloat with o1, o2, new-polar?, etc. when
-       ;;   an appropriate means of synchronization will be available
-       ;;   for (path-assign), etc.
-	  (let* ((o1 graphics-current-center)
-		 (o2 graphics-current-step)
-		 (new-polar? #f)
-	     )
-	     (if (and (== type 'polar)
-		      (!= type (string->symbol graphics-current-type))
-		 )
-		 (begin
-		    (set! new-polar? #t)
-		    (graphics-set-grid-aspect
-		      'detailed (i2s default-polar-nsubd) #t)
-		    (set! graphics-current-center o1)
-		    (set! graphics-current-step o2)
-		    (set! graphics-current-astep (i2s default-polar-astep))))
-	     (set! graphics-current-type (symbol->string type))
-	     (graphics-set-grid #t)
-	     (if new-polar? (begin
-		 (set! graphics-current-type (symbol->string type))
-		 (set! graphics-current-center o1)
-		 (set! graphics-current-step o2)
-		 (set! graphics-current-astep (i2s default-polar-astep))
-		 (update-edit-grid 'grid-change-aspect)))))))
+  (graphics-fetch-grid-vars type #t)
+  (with new-polar? #f
+     (if (and (== type 'polar)
+	      (!= type (string->symbol graphics-current-type))
+	 )
+	 (let* ((aspect (graphics-grid-aspect #t))
+		(nsubds (aspect-ref aspect 3))
+	    )
+	    (if nsubds
+		(set! nsubds (cadr nsubds)))
+	    (set! new-polar? #t)
+	    (graphics-set-grid-aspect 'detailed nsubds #t)
+	    (set! graphics-current-astep (i2s default-polar-astep))))
+     (set! graphics-current-type (symbol->string type))
+     (graphics-set-grid #t)
+     (graphics-fetch-grid-vars type #t)
+     (if new-polar? (begin
+	 (set! graphics-current-type (symbol->string type))
+	 (set! graphics-current-astep (i2s default-polar-astep))
+	 (update-edit-grid 'grid-change)))))
 
 (define (edit-type-has-value? type)
   (graphics-fetch-grid-vars #f #f)
@@ -471,14 +523,8 @@
   (:check-mark "*" edit-type-has-value?)
   (cond ((or (== type 'default)
 	     (== type 'grid-change)
-	     (== type 'grid-aspect-change)
-	     (== type 'grid-change-aspect)
 	 )
-	 (let* ((aspect (if (or (== type 'grid-aspect-change)
-				(== type 'grid-change-aspect)
-			    )
-			    graphics-current-aspect
-			    (graphics-grid-aspect-props)))
+	 (let* ((aspect (graphics-grid-aspect-props))
 		(nsubds0 (cadr (list-ref aspect (- (length aspect) 1))))
 		(nsubds (if (number? nsubds0)
 			    nsubds0
@@ -488,20 +534,7 @@
 	    )
 	    (if (or (== nsubds #f) (not (grid-aspect-show-subunits?)))
 		(set! nsubds 1))
-	 ;; FIXME: The difference between 'default', 'grid-change'
-	 ;;   and 'grid-aspect-change' is because currently, the
-	 ;;   updates with (path-assign), etc., are asynchronous.
-	 ;;   When the grid has been (path-assign)-ed in (graphics-set-grid),
-	 ;;   the (graphics-fetch-grid-vars) below fetches the not
-	 ;;   yet updated version of the grid, and this is wrong.
-	 ;;   On the other hand, when (graphics-set-edit-grid) is
-	 ;;   called directly from the menu, the instruction below
-	 ;;   is mandatory.
-	 ;; TODO: As soon as a better control of the update synchro
-	 ;;   is available, clean this code.
-	    (if (or (== type 'default)
-		    (== type 'grid-aspect-change)
-		)
+	    (if (== type 'default)
 		(graphics-fetch-grid-vars 'cartesian #t))
 	    (if (!= graphics-current-type "logarithmic")
 	    (begin
@@ -509,7 +542,7 @@
 	    (graphics-set-grid #f))
 	)
 	(else
-	  (graphics-set-property "gr-as-visual-grid" "off")
+	  (grid-as-visual-grid! #f)
 	  (graphics-fetch-grid-vars type #f)
 	  (set! graphics-current-type (symbol->string type))
 	  (graphics-set-grid #f))))
@@ -521,7 +554,7 @@
 ;; Setting grid properties
 (tm-define (graphics-set-grid-center x y visual?)
   (if (not visual?)
-      (graphics-set-property "gr-as-visual-grid" "off"))
+      (grid-as-visual-grid! #f))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-center `(point ,x ,y))
   (graphics-set-grid visual?))
@@ -533,7 +566,7 @@
 (tm-define (graphics-set-grid-step val visual?)
   (:check-mark "*" grid-step-has-value?)
   (if (not visual?)
-      (graphics-set-property "gr-as-visual-grid" "off"))
+      (grid-as-visual-grid! #f))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-step val)
   (graphics-set-grid visual?))
@@ -545,7 +578,7 @@
 (tm-define (graphics-set-grid-astep val visual?)
   (:check-mark "*" grid-astep-has-value?)
   (if (not visual?)
-      (graphics-set-property "gr-as-visual-grid" "off"))
+      (grid-as-visual-grid! #f))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-astep val)
   (graphics-set-grid visual?))
@@ -557,7 +590,7 @@
 (tm-define (graphics-set-grid-base val visual?)
   (:check-mark "*" grid-base-has-value?)
   (if (not visual?)
-      (graphics-set-property "gr-as-visual-grid" "off"))
+      (grid-as-visual-grid! #f))
   (graphics-fetch-grid-vars #f visual?)
   (set! graphics-current-base val)
   (graphics-set-grid visual?))
@@ -592,9 +625,8 @@
   (:argument c2 "Color(subds)")
   (with aspect `(tuple (tuple "axes" ,c0) (tuple "1" ,c1) (tuple ,s2 ,c2))
     (graphics-set-property "gr-grid-aspect" aspect)
-    (graphics-set-property "gr-grid-aspect-props" aspect)
-    (set! graphics-current-aspect aspect))
-  (update-edit-grid 'grid-aspect-change))
+    (graphics-set-property "gr-grid-aspect-props" aspect))
+  (update-edit-grid 'default))
 
 (define (cmp-aspect-items x y)
   (if (== (cadr x) "axes") #t
@@ -605,7 +637,15 @@
 
 (define (graphics-grid-aspect-props)
   (define res #f)
-  (with aspect (tree->stree (get-env-tree "gr-grid-aspect-props"))
+  (with aspect
+      ;;(tree->stree (get-env-tree "gr-grid-aspect-props"))
+	(get-upwards-property
+	   (cDr (cursor-path)) "gr-grid-aspect-props")
+      ;;FIXME: The synchro still doesn't work with (get-env-tree),
+      ;;  so we proceed differently. Take this into account everywhere
+      ;;  else (depends on if (get-env-tree) is gonna be fixed or not.
+      ;;  If not, then we should avoid using it, and rely on the way
+      ;;  above (if it doesn't raises other problems...)).
     (if (match? aspect '(tuple (tuple :2) (tuple :2) :*))
 	(set! res aspect)
 	(begin
@@ -665,8 +705,7 @@
 	       (graphics-set-property "gr-grid-aspect" aspect)
 	       (graphics-set-property "gr-grid-aspect-props" aspect))
 	)
-	(set! graphics-current-aspect aspect)
-	(update-edit-grid 'grid-aspect-change)
+	(update-edit-grid 'default)
       )
       (with aspect
 	    `(tuple (tuple "axes" "none") (tuple "1" "none")
@@ -678,7 +717,7 @@
 			      3))))
 	(graphics-set-property "gr-edit-grid-aspect" aspect)
 	(if (!= type 'update)
-	    (graphics-set-property "gr-as-visual-grid" "off")))))
+	    (grid-as-visual-grid! #f)))))
 
 (tm-define (graphics-interactive-set-grid-nsubds visual?)
   (:interactive #t)
@@ -737,11 +776,13 @@
 (tm-define (grid-as-visual-grid?)
   (!= (tree->stree (get-env-tree "gr-as-visual-grid")) "off"))
 
+(define (grid-as-visual-grid! b)
+  (set! egrid-as-vgrid? b)
+  (graphics-set-property "gr-as-visual-grid" (if b "on" "off")))
+
 (tm-define (grid-toggle-as-visual-grid)
   (:check-mark "v" grid-as-visual-grid?)
-  (set! egrid-as-vgrid? (not (grid-as-visual-grid?)))
-  (graphics-set-property "gr-as-visual-grid"
-			 (if egrid-as-vgrid? "on" "off"))
+  (grid-as-visual-grid! (not (grid-as-visual-grid?)))
   (update-edit-grid 'default))
 
 (define (grid-aspect-show-subunits?)
@@ -760,6 +801,24 @@
       (graphics-set-grid-aspect 'units-only #f #t)
       (graphics-set-grid-aspect 'detailed #f #t)))
 
+;; Toggling grids
+(tm-define (graphics-toggle-grid visual?)
+  (let* ((prop (if visual? "gr-grid" "gr-edit-grid"))
+	 (prop-old (if visual? "gr-grid-old" "gr-edit-grid-old"))
+	 (p (cDr (cursor-path)))
+	 (gr (get-upwards-property p prop))
+	 (gr-old (get-upwards-property p prop-old))
+     )
+     (if (!= gr-old nothing)
+	 (if (or (== gr nothing)
+		 (== (cadr gr) "empty"))
+	     (graphics-set-property prop gr-old)
+	     (graphics-set-property prop '(tuple "empty")))
+	 (if (!= gr nothing)
+	 (begin
+	    (graphics-set-property prop '(tuple "empty"))
+	    (graphics-set-property prop-old gr))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Graphics edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -771,7 +830,21 @@
 	   ((pair? m)
 	    (map string->symbol (cdr m))))))
 
+(define (graphics-mode-has-value? mode)
+  (if (string? mode)
+      (set! mode `(edit ,(string->symbol mode))))
+  (if (and (pair? mode) (eq? (car mode) 'quote))
+      (set! mode (cadr mode)))
+; FIXME: The parameters of a call inside
+;   a menu are non evaluated, thus when
+;   we write (foo '(a b)) in a menu, we
+;   receive (quote (a b)) as a parameter.
+;   This is why we had to add the crap (if)
+;   above...
+  (== mode (graphics-mode)))
+
 (tm-define (graphics-set-mode val)
+  (:check-mark "*" graphics-mode-has-value?)
   (graphics-group-start)
   (with old-mode (graphics-mode)
      (graphics-enter-mode old-mode val)
@@ -784,35 +857,66 @@
 (define (graphics-group-mode? mode)
   (and (pair? mode) (eq? (car mode) 'group-edit)))
 
+(define (color-has-value? color)
+  (== color (graphics-get-property "gr-color")))
+
 (tm-define (graphics-set-color val)
   (:argument val "Color")
+  (:check-mark "*" color-has-value?)
   (graphics-change-property "gr-color" val))
+
+(define (point-style-has-value? val)
+  (== val (graphics-get-property "gr-point-style")))
 
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
+  (:check-mark "*" point-style-has-value?)
   (graphics-change-property "gr-point-style" val))
+
+(define (line-width-has-value? val)
+  (== val (graphics-get-property "gr-line-width")))
 
 (tm-define (graphics-set-line-width val)
   (:argument val "Line width")
+  (:check-mark "*" line-width-has-value?)
   (graphics-change-property "gr-line-width" val))
+
+(define (convert-dash-style val)
+  (define (convert-1 ch)
+    (if (or (eq? ch #\0) (eq? ch #\space)) "0" "1"))
+  (if (and (string? val) (not (equal? val "")))
+      (cons 'tuple (map convert-1 (string->list val)))
+      'none))
+
+(define (dash-style-has-value? val)
+  (with sty (graphics-get-property "gr-dash-style")
+    (if (string? sty)
+	(== val sty)
+	(== (convert-dash-style val) sty))))
 
 (tm-define (graphics-set-dash-style val)
   (:argument val "Dash style")
-  (define (convert)
-    (define (convert-1 ch)
-      (if (or (eq? ch #\0) (eq? ch #\space)) "0" "1"))
-    (if (and (string? val) (not (equal? val "")))
-	(cons 'tuple (map convert-1 (string->list val)))
-        'none))
+  (:check-mark "*" dash-style-has-value?)
   (graphics-change-property
-   "gr-dash-style" (if (== val "default") "default" (convert))))
+   "gr-dash-style"
+   (if (== val "default")
+       "default"
+       (convert-dash-style val))))
+
+(define (dash-style-unit-has-value? val)
+  (== val (graphics-get-property "gr-dash-style-unit")))
 
 (tm-define (graphics-set-dash-style-unit val)
   (:argument val "Dash style unit")
+  (:check-mark "*" dash-style-unit-has-value?)
   (graphics-change-property "gr-dash-style-unit" val))
+
+(define (fill-color-has-value? color)
+  (== color (graphics-get-property "gr-fill-color")))
 
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
+  (:check-mark "*" fill-color-has-value?)
   (graphics-change-property "gr-fill-color" val))
 
 (define default-line-arrows
@@ -834,7 +938,20 @@
 	(line (tuple "-10ln" "6ln") (tuple "0ln" "0ln")
 	      (tuple "-10ln" "-6ln"))))))
 
+(define (line-arrows-has-value? arrows)
+  (with gr-arrows (graphics-get-property "gr-line-arrows")
+     (if (== gr-arrows "default")
+	 (set! gr-arrows "none")) ; FIXME: Not sure it's so nice...
+     (if (pair? gr-arrows)
+       ; FIXME: Shitty workaround around the <quote|none> bug...
+	 (set-car! (cddadr gr-arrows) "none"))
+     (if (number? arrows)
+	 (== (vector-ref default-line-arrows arrows) gr-arrows)
+	 (== arrows gr-arrows))))
+
 (tm-define (graphics-set-line-arrows arrows)
+  (:argument val "Arrows")
+  (:check-mark "*" line-arrows-has-value?)
   (cond ((integer? arrows)
 	 (graphics-change-property
 	   "gr-line-arrows"
@@ -842,12 +959,20 @@
         ((pair? arrows)
 	 (graphics-change-property "gr-line-arrows" arrows))))
 
+(define (text-at-halign-has-value? val)
+  (== val (graphics-get-property "gr-text-at-halign")))
+
 (tm-define (graphics-set-textat-halign val)
   (:argument val "Text-at horizontal alignment")
+  (:check-mark "*" text-at-halign-has-value?)
   (graphics-change-property "gr-text-at-halign" val))
+
+(define (text-at-valign-has-value? val)
+  (== val (graphics-get-property "gr-text-at-valign")))
 
 (tm-define (graphics-set-textat-valign val)
   (:argument val "Text-at vertical alignment")
+  (:check-mark "*" text-at-valign-has-value?)
   (graphics-change-property "gr-text-at-valign" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

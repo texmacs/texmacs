@@ -192,7 +192,7 @@ initialize_default_env () {
   env (FILL_COLOR)       = "none";      // fill color
   env (FILL_STYLE)       = "plain";     // fill style
   env (TEXTAT_HALIGN)    = "left";      // horizontal text-at alignment
-  env (TEXTAT_VALIGN)    = "bottom";    // vertical text-at alignment
+  env (TEXTAT_VALIGN)    = "base";      // vertical text-at alignment
 
   env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
