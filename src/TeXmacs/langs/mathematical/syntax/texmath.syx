@@ -258,7 +258,7 @@ Members logic-relation
 	ge geq succ succeq gg ggeq supset supseteq
 	sqsupset sqsupseteq ni equiv nequiv
 	sim simeq asymp approx cong subsetsim supsetsim
-	doteq propto perp
+	doteq propto varpropto perp
 	bowtie Join smile frown signchange
 	mid parallel shortmid shortparallel
 	nmid nparallel nshortmid nshortparallel
@@ -293,7 +293,6 @@ Members logic-relation
 	trianglelefteqslant trianglerighteqslant
 	blacktriangleleft blacktriangleright
 	ntriangleleft ntriangleright
-	ntriangleqleft ntriangleqright
 	ntrianglelefteq ntrianglerighteq
 	ntrianglelefteqslant ntrianglerighteqslant
 
@@ -474,6 +473,6 @@ Members symbol
 	smallfrown smallsmile sphericalangle
 	square therefore thorn triangledown
 	triangleq ulcorner urcorner varkappa
-	varnothing varpropto vartriangle veebar yen
+	varnothing vartriangle veebar yen
 
 	comma
