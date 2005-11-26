@@ -158,6 +158,12 @@ edit_typeset_rep::typeset_invalidate_env () {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
+  if (has_changed (THE_TREE + THE_ENVIRONMENT))
+    if (p != correct_cursor (et, rp * 0)) {
+      if (DEBUG_STD)
+	cout << "TeXmacs] Warning: resynchronizing for path " << p << "\n";
+      apply_changes ();
+    }
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
