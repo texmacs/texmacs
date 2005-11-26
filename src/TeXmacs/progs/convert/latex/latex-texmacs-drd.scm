@@ -88,6 +88,8 @@
   (nonesep "")
   (nin "\\not\\in")
   (nni "\\not\\ni")
+  (notin "\\not\\in")
+  (notni "\\not\\ni")
   (nequiv "\\not\\equiv")
   (dotamalg "\\mathaccent95{\\amalg}")
   (dottimes "\\mathaccent95{\\times}")
