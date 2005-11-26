@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.6>
+<TeXmacs|1.0.5.12>
 
 <style|<tuple|source|std>>
 
@@ -33,17 +33,21 @@
     </surround>>>
   </macro>>
 
+  <assign|default-padded-normal|<value|padded-normal>>
+
   <assign|folded-padded-normal|<macro|a|b|body|<\surround|<vspace*|<arg|a>>|<htab|0fn|first><vspace|<arg|b>>>
-    <\with|padded-normal|<value|old-padded-normal>>
+    <\with|padded-normal|<value|default-padded-normal>>
       <arg|body>
     </with>
   </surround>>>
 
-  <assign|render-folded-env|<macro|button|body|<style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<yes-indent><arg|button>>|<right-flush>>
-    <\with|old-padded-normal|<value|padded-normal>|padded-normal|<value|fold-padded-normal>>
-      <arg|body>
-    </with>
-  </surround>>>>
+  <assign|render-folded-env|<\macro|button|body>
+    <\surround|<with|par-first|-1.5fn|<yes-indent><arg|button>>|<right-flush>>
+      <\with|default-padded-normal|<value|padded-normal>|padded-normal|<value|folded-padded-normal>>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
 
   <assign|render-folded-grouped|<\macro|button|body>
     <with|old-color|<value|color>|color|blue|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|1|2|2|cell-valign|c>|<cwith|1|1|2|2|cell-rsep|0fn>|<cwith|1|1|2|2|cell-vcorrect|n>|<cwith|1|1|2|2|cell-bsep|0.2fn>|<cwith|1|1|2|2|cell-tsep|0.2fn>|<cwith|1|-1|1|-1|cell-hmode|min>|<table|<row|<cell|<subtable|<tformat|<twith|table-valign|T>|<cwith|3|3|1|-1|cell-vpart|1>|<cwith|2|2|2|2|cell-background|pastel
