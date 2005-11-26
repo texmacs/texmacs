@@ -88,9 +88,8 @@
 ("<bigcirc>"		"#25EF") ; variant of <varbigcirc> (slightly oval)
 ("<varangle>"		"#2222") ; variant of <sphericalangle>
 ("<Bbbk>"		"#1D55C") ; variant of <bb-k>
-
-;; typo in the name of the symbol... should be <nshortmid>
-("<nshormid>"		"#2224") ; variant of <nmid>
+("<triangle>"	        "#25B3") ; variant of <bigtriangleup>
+("<nshortmid>"		"#2224") ; variant of <nmid>
 
 ;;; Big delimiters
 

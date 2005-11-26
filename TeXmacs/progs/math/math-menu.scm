@@ -593,7 +593,7 @@
   (symbol "<infty>")
   (symbol "<box>")
   (symbol "<diamond>")
-  (symbol "<triangle>")
+  (symbol "<vartriangle>")
   (symbol "<clubsuit>")
   (symbol "<diamondsuit>")
   (symbol "<heartsuit>")

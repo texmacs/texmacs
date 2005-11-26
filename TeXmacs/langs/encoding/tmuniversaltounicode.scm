@@ -583,9 +583,8 @@
 ; FIXME: rename circledast to varoast
 ("<varoast>"		"#229B") ; FIXME: rename varoast to oast
 ; circled equals	"#229C"
-; FIXME: rename circledminus to varodash
 ; FIXME: define symbol odash with correct circle line width
-("<circledminus>"	"#229D") ; FIXME: use odash instead
+("<circleddash>"	"#229D") ; FIXME: use odash instead
 ("<boxplus>"		"#229E")
 ("<boxminus>"		"#229F")
 ("<boxtimes>"		"#22A0")
@@ -684,8 +683,8 @@
 ("<succnsim>"		"#22E9")
 ("<ntriangleleft>"	"#22EA")
 ("<ntriangleright>"	"#22EB")
-("<ntriangleqleft>"	"#22EC")
-("<ntriangleqright>"	"#22ED")
+("<ntrianglelefteq>"	"#22EC")
+("<ntrianglerighteq>"	"#22ED")
 ("<vdots>"		"#22EE")
 ("<cdots>"		"#22EF")
 ("<udots>"		"#22F0")
@@ -858,30 +857,30 @@
 ; black parallelogram			"#25B0"
 ; white parallelogram			"#25B1"
 ; black up-pointing triangle		"#25B2"
-("<bigtriangleup>"	"#25B3")
-("<blacktriangleup>"			"#25B4")
-("<triangle>"				"#25B5")
+("<bigtriangleup>"	                "#25B3")
+("<blacktriangle>"			"#25B4")
+("<vartriangle>"			"#25B5")
 ; black right-pointing triangle		"#25B6"
 ; white right-pointing triangle		"#25B7"
 ("<blacktriangleright>"			"#25B8")
-("<triangleright>"	"#25B9")
+("<triangleright>"	                "#25B9")
 ; black right-pointing pointer		"#25BA"
 ; white right-pointing pointer		"#25BB"
 ; black down-pointing triangle		"#25BC"
-("<bigtriangledown>"	"#25BD")
+("<bigtriangledown>"	                "#25BD")
 ("<blacktriangledown>"			"#25BE")
 ("<triangledown>"			"#25BF")
 ; black left-pointing triangle		"#25C0"
 ; white left-pointing triangle		"#25C1"
 ("<blacktriangleleft>"			"#25C2")
-("<triangleleft>"	"#25C3")
+("<triangleleft>"	                "#25C3")
 ; black left-pointing pointer		"#25C4"
 ; white left-pointing pointer		"#25C5"
 ; black diamond				"#25C6"
 ("<wasyDiamond>"			"#25C7")
 ; white diamond containing black small diamond	"#25C8"
 ; fisheye				"#25C9"
-("<lozenge>"		"#25CA")
+("<lozenge>"		                "#25CA")
 ("<Circle>"				"#25CB")
 ; dotted circle				"#25CC"
 ; circle with vertical fill		"#25CD"
@@ -939,7 +938,7 @@
 ; umbrella		"#2602"
 ; snowman		"#2603"
 ; comet			"#2604"
-("<blackstar>"		"#2605")
+("<bigstar>"		"#2605")
 ; white star		"#2606"
 ; lightning		"#2607"
 ; thunderstorm		"#2608"
