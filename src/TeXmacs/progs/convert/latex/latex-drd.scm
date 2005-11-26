@@ -313,6 +313,7 @@
   (Backepsilon "graphicx")
   (Mho "graphicx")
   (mho "graphicx")
+  (upequal "graphicx")
 
   (tmfloat "ifthen")
   (tmfloat "capt-of")
