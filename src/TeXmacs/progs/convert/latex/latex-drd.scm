@@ -204,6 +204,7 @@
   cap cup uplus sqcap sqcup vee wedge setminus wr
   diamond triangleleft triangleright
   oplus ominus otimes oslash odot bigcirc amalg
+  rtimes ltimes nmid notin
 
   ;; Relations
   leq le geq ge equiv models prec
