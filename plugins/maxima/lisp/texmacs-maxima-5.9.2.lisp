@@ -9,6 +9,8 @@
 (setf *maxima-prolog* "verbatim:")
 (setf *maxima-epilog* "latex:\\red The end\\black")
 #-gcl(setf *debug-io* (make-two-way-stream *standard-input* *standard-output*))
+#+(or cmu sbcl scl)
+(setf *terminal-io* (make-two-way-stream *standard-input* *standard-output*))
 
 ;; Small changes to mactex.lisp for interfacing with TeXmacs
 ;; Andrey Grozin, 2001-2005
@@ -16,6 +18,32 @@
 (defun main-prompt ()
   (format () "~A(~A~D) ~A" *prompt-prefix* 
     (tex-stripdollar $inchar) $linenum *prompt-suffix*))
+
+(defun retrieve (msg flag &aux (print? nil))
+  (declare (special msg flag print?))
+  (or (eq flag 'noprint) (setq print? t))
+  (cond ((not print?) 
+	 (setq print? t)
+	 (princ *prompt-prefix*)
+	 (princ *prompt-suffix*))
+	((null msg)
+	 (princ *prompt-prefix*)
+	 (princ *prompt-suffix*))
+	((atom msg) 
+	 (format t "~a~a~a" *prompt-prefix* msg *prompt-suffix*) 
+	 (mterpri))
+	((eq flag t)
+	 (princ *prompt-prefix*) 
+	 (mapc #'princ (cdr msg)) 
+	 (princ *prompt-suffix*)
+	 (mterpri))
+	(t 
+	 (princ *prompt-prefix*)
+	 (displa msg) 
+	 (princ *prompt-suffix*)
+	 (mterpri)))
+  (let ((res (mread-noprompt *query-io* nil)))
+       (princ *general-display-prefix*) res))
 
 (declare-top
 	 (special lop rop ccol $gcprint $inchar)
