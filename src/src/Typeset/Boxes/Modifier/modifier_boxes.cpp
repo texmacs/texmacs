@@ -265,6 +265,31 @@ shorter_box_rep::get_leaf_offset (string search) {
 }
 
 /******************************************************************************
+* Frozen boxes
+******************************************************************************/
+
+class frozen_box_rep: public modifier_box_rep {
+public:
+  frozen_box_rep (path ip, box b);
+  operator tree () { return tree (TUPLE, "frozen", subbox(0)); }
+  path find_lip ();
+  path find_rip ();
+};
+
+frozen_box_rep::frozen_box_rep (path ip, box b2):
+  modifier_box_rep (ip, b2) {}
+
+path
+frozen_box_rep::find_lip () {
+  return box_rep::find_lip ();
+}
+
+path
+frozen_box_rep::find_rip () {
+  return box_rep::find_rip ();
+}
+
+/******************************************************************************
 * macro expansions
 ******************************************************************************/
 
@@ -351,6 +376,11 @@ symbol_box (path ip, box b, int n) {
 box
 shorter_box (path ip, box b, int len) {
   return new shorter_box_rep (ip, b, len);
+}
+
+box
+frozen_box (path ip, box b) {
+  return new frozen_box_rep (ip, b);
 }
 
 box
