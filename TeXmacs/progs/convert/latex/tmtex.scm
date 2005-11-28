@@ -1216,7 +1216,7 @@
 (define (tmtex-apply key args)
   (let ((n (length args))
 	(r (drd-ref tmtex-methods% key)))
-    (if (== key 'quote) (set! r tmtex-quote))
+    (if (in? key '(quote quasiquote unquote)) (set! r tmtex-noop))
     (if r (r args)
 	(let ((p (drd-ref tmtex-tmstyle% key)))
 	  (if (and p (or (= (cadr p) -1) (= (cadr p) n)))
@@ -1320,8 +1320,9 @@
   ((:or quote-value drd-props arg quote-arg) tmtex-noop)
   (compound tmtex-compound)
   ((:or xmacro get-label get-arity map-args eval-args mark eval) tmtex-noop)
-  (quote tmtex-quote)
-  ((:or quasi quasiquote) tmtex-noop)
+  ;; quote missing
+  (quasi tmtex-noop)
+  ;; quasiquote missing
   ;; unquote missing
   ((:or unquote* copy
 	if if* case while for-each
