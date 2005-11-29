@@ -263,6 +263,27 @@ load_tex_pk (string family, int size, int dpi, int dsize,
 * Loading tfm and pk files
 ******************************************************************************/
 
+static void
+rubber_status (glyph& gl, int st) {
+  gl -> status |= st;
+  gl -> yoff    = 0;
+}
+
+static void
+rubber_fix (tex_font_metric tfm, font_glyphs& pk) {
+  // This routine is used so as to correct the anti-aliasing of
+  // rubber TeX characters (in the vertical direction).
+  register int c;
+  for (c=tfm->bc; c<=tfm->ec; c++) {
+    if (tfm->tag (c)==3) {
+      if (tfm->bot(c)!=0) rubber_status (pk->get (tfm->bot (c)), 1);
+      if (tfm->top(c)!=0) rubber_status (pk->get (tfm->top (c)), 2);
+      if (tfm->mid(c)!=0) rubber_status (pk->get (tfm->mid (c)), 3);
+      if (tfm->rep(c)!=0) rubber_status (pk->get (tfm->rep (c)), 3);
+    }
+  }
+}
+
 void
 load_tex (string family, int size, int dpi, int dsize,
 	  tex_font_metric& tfm, font_glyphs& pk)
@@ -275,6 +296,7 @@ load_tex (string family, int size, int dpi, int dsize,
       load_tex_pk (family, size, dpi, dsize, tfm, pk))
     {
       bench_cumul ("load tex font");
+      rubber_fix (tfm, pk);
       return;
     }
   if (DEBUG_VERBOSE) {
