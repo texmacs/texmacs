@@ -108,6 +108,13 @@ glyph
 hor_extend (glyph gl, int pos, int by) {
   int i, j;
   int ww= gl->width, hh= gl->height;
+  bool ok= false;
+  while (!ok) { // hack for corrupted pfb translations
+    for (j=0; j<hh; j++)
+      ok= ok || (gl->get_x (pos, j) != 0);
+    if (!ok) pos += (pos < (ww>>1)? 1: -1);
+    if (pos >= (ww>>2) && pos < (3*ww>>2)) break;
+  }
   glyph bmr (ww+ by, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<(ww+by); i++)
