@@ -24,6 +24,18 @@ static hashmap<string,string> tt_fonts ("no");
 static url
 tt_locate (string name) {
   if (ends (name, ".pfb")) {
+    /*
+    if (starts (name, "rpag")) name= "uag" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpbk")) name= "ubk" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpcr")) name= "ucr" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rphv")) name= "uhv" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpnc")) name= "unc" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rppl")) name= "upl" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpsy")) name= "usy" * name (4, N (name));
+    if (starts (name, "rptm")) name= "utm" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpzc")) name= "uzc" * name (4, N (name) - 4) * "8a.pfb";
+    if (starts (name, "rpzd")) name= "uzd" * name (4, N (name));
+    */
     url u= resolve_tex (name);
     //cout << "tt_locate: " << name << " -> " << u << "\n";
     if (!is_none (u)) return u;
