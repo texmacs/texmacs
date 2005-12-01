@@ -313,6 +313,7 @@
   ("<leqslant>" "<less>=")
   ("<geqslant>" "<gtr>=")
   ("<neq>" "!=")
+  ("<longequal>" "==")
   ("<neg>" "not ")
   ("<wedge>" " and ")
   ("<vee>" " or ")
