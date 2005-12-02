@@ -1112,7 +1112,8 @@ edit_env_rep::exec_lookup (tree t) {
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
   if (!(is_compound (t1) && is_int (t2))) return tree (ERROR, "bad look up");
-  int i= max (0, min (N(t1)-1, as_int (t2)));
+  int i= as_int (t2);
+  if (i<0 || i>=N(t1)) return tree (ERROR, "index out of range in look up");
   return t1[i];
 }
 
