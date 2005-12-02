@@ -400,7 +400,7 @@ curve_box_rep::display (ps_device dev) {
       SI li=0, o=0;
       i=0;
       int no;
-      point prec;
+      point prec= a[0];
       for (no=0; no<N(styled_n); no++) {
         point seg= a[i+1]-a[i];
         while (fnull (norm(seg),1e-6) && i+2<N(a)) {
@@ -411,7 +411,7 @@ curve_box_rep::display (ps_device dev) {
           break;
         SI lno= styled_n[no]*style_unit,
            len= li+(SI)norm(seg);
-        while (lno>len) {
+        while (i+2<N(a) && lno>len) {
           li= len;
           if (no%2!=0) {
          // 1st subsegment of a dash
@@ -432,14 +432,16 @@ curve_box_rep::display (ps_device dev) {
         output in GhostView uses square line ends, so we do the same.
         SI inc= ((no%2==0?1:-1) * width)/2;
         point b= a[i] + (o+inc)*(seg/norm(seg)); */
-        point b= a[i] + o*(seg/norm(seg));
-        if (no%2==0)
-          prec= b;
-        else
-       // Last subsegment of a dash
-          dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
-       // TODO: Use XDrawLines() and the join style to draw correctly
-       //   the subsegments ; implement this for Postscript as well.
+        if (i<N(a)) {
+          point b= a[i] + o*(seg/norm(seg));
+          if (no%2==0)
+            prec= b;
+          else
+         // Last subsegment of a dash
+            dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
+         // TODO: Use XDrawLines() and the join style to draw correctly
+         //   the subsegments ; implement this for Postscript as well.
+        }
       }
     }
   }
