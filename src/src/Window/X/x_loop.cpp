@@ -25,7 +25,38 @@
 #endif
 
 extern hashmap<Window,pointer> Window_to_window;
-int nr_windows=0;
+int  nr_windows= 0;
+
+static int  kbd_count= 0;
+static bool request_partial_redraw= false;
+
+/******************************************************************************
+* Hack for getting the remote time
+******************************************************************************/
+
+static bool time_initialized= false;
+static long time_difference = 0;
+
+static void
+synchronize_time (Time t) {
+  if (time_initialized && time_difference == 0) return;
+  long d= texmacs_time () - ((time_t) t);
+  if (time_initialized) {
+    if (d < time_difference)
+      time_difference= d;
+  }
+  else {
+    time_initialized= true;
+    time_difference = d;
+  }
+  if (-1000 <= time_difference && time_difference <= 1000)
+    time_difference= 0;
+}
+
+static time_t
+remote_time (Time t) {
+  return ((time_t) t) + time_difference;
+}
 
 /******************************************************************************
 * Look up keys and mouse
@@ -243,14 +274,18 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
     unmap_balloon ();
     set_button_state (ev->xmotion.state);
     win->mouse_event ("move", ev->xmotion.x, ev->xmotion.y, ev->xmotion.time);
-
     break;
   case KeyPress:
     unmap_balloon ();
     {
       string key= look_up_key (&ev->xkey);
-      // cout << "Press " << key << " at " << ev->xkey.time
-      // << " (" << texmacs_time() << ")\n";
+      //cout << "Press " << key << " at " << (time_t) ev->xkey.time
+      //<< " (" << texmacs_time() << ")\n";
+      kbd_count++;
+      synchronize_time (ev->xkey.time);
+      if (texmacs_time () - remote_time (ev->xkey.time) < 100 ||
+	  (kbd_count & 15) == 0)
+	request_partial_redraw= true;
       if (N(key)>0) win->key_event (key);
       break;
     }
@@ -306,23 +341,31 @@ void set_interpose_handler (void (*r) (void)) { the_interpose_handler= r; }
 
 void
 x_display_rep::event_loop () {
-  bool wait= true;
-  int count= 0;
-  int delay= MIN_DELAY;
+  bool wait  = true;
+  int count  = 0;
+  int delay  = MIN_DELAY;
 
   while (nr_windows>0) {
+    request_partial_redraw= false;
+
     // Get events
+    XEvent report;
     if (XPending (dpy) > 0) {
-      XEvent report;
       XNextEvent (dpy, &report);
-      // cout << "Event: " << event_name[report.type] << "\n";
+      //if (string (event_name[report.type]) != "No expose")
+      //cout << "Event: " << event_name[report.type] << "\n";
       x_window win= (x_window) Window_to_window[report.xany.window];
       if (win!=NULL) process_event (win, &report);
       count= 0;
       delay= MIN_DELAY;
       wait = false;
-      continue;
     }
+
+    // Don't typeset when resizing window
+    if (XPending (dpy) > 0)
+      if (report.type == ConfigureNotify ||
+	  report.type == Expose ||
+	  report.type == NoExpose) continue;
 
     // Wait for events on all channels and interpose
     if (wait) {
@@ -338,15 +381,24 @@ x_display_rep::event_loop () {
 
     // Popup help balloons
     if (!nil (balloon_wid))
-      if (texmacs_time () >= (balloon_time+666))
+      if (texmacs_time () - balloon_time >= 666)
 	if (balloon_win == NULL)
 	  map_balloon ();
 
     // Redraw invalid windows
-    iterator<Window> it= iterate (Window_to_window);
-    while (it->busy()) {
-      x_window win= (x_window) Window_to_window[it->next()];
-      win->repaint_invalid_regions();
+    if (XPending (dpy) == 0 || request_partial_redraw) {
+      interrupted= false;
+      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
+      iterator<Window> it= iterate (Window_to_window);
+      while (it->busy()) { // first the window which has the focus
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (win->has_focus) win->repaint_invalid_regions();
+      }
+      it= iterate (Window_to_window);
+      while (it->busy()) { // and then the other windows
+	x_window win= (x_window) Window_to_window[it->next()];
+	if (!win->has_focus) win->repaint_invalid_regions();
+      }
     }
 
     // Handle alarm messages

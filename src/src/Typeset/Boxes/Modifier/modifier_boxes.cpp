@@ -139,6 +139,23 @@ modifier_box_rep::graphical_select (SI x, SI y, SI dist) {
   return b->graphical_select (x- sx(0), y- sy(0), dist);
 }
 
+gr_selections
+modifier_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+  return b->graphical_select (x1- sx(0), y1- sy(0), x2- sx(0), y2- sy(0));
+}
+
+/******************************************************************************
+* Animations
+******************************************************************************/
+
+int modifier_box_rep::anim_length () { return b->anim_length (); }
+bool modifier_box_rep::anim_started () { return b->anim_started (); }
+bool modifier_box_rep::anim_finished () { return b->anim_finished (); }
+void modifier_box_rep::anim_finish_now () { b->anim_finish_now (); }
+void modifier_box_rep::anim_start_at (time_t at) { b->anim_start_at (at); }
+void modifier_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
+  b->anim_get_invalid (f, at, rs); }
+
 /******************************************************************************
 * Symbol boxes
 ******************************************************************************/
@@ -248,6 +265,31 @@ shorter_box_rep::get_leaf_offset (string search) {
 }
 
 /******************************************************************************
+* Frozen boxes
+******************************************************************************/
+
+class frozen_box_rep: public modifier_box_rep {
+public:
+  frozen_box_rep (path ip, box b);
+  operator tree () { return tree (TUPLE, "frozen", subbox(0)); }
+  path find_lip ();
+  path find_rip ();
+};
+
+frozen_box_rep::frozen_box_rep (path ip, box b2):
+  modifier_box_rep (ip, b2) {}
+
+path
+frozen_box_rep::find_lip () {
+  return box_rep::find_lip ();
+}
+
+path
+frozen_box_rep::find_rip () {
+  return box_rep::find_rip ();
+}
+
+/******************************************************************************
 * macro expansions
 ******************************************************************************/
 
@@ -334,6 +376,11 @@ symbol_box (path ip, box b, int n) {
 box
 shorter_box (path ip, box b, int len) {
   return new shorter_box_rep (ip, b, len);
+}
+
+box
+frozen_box (path ip, box b) {
+  return new frozen_box_rep (ip, b);
 }
 
 box

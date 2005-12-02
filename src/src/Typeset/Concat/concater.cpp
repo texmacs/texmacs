@@ -86,16 +86,22 @@ concater_rep::flag_ok (string s, path ip, color col) {
   string info_flag= env->get_string (INFO_FLAG);
   if (info_flag == "short") {
     box infob= info_box (dip, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, infob, PS_DEVICE_SCREEN, env->fn);
+    box specb= specific_box (ip, infob, false, env->fn);
     print (STD_ITEM, specb);
   }
-  if (info_flag == "detailed") {
+  if (info_flag == "detailed" || info_flag == "paper") {
     int sz= script (env->fn_size, env->index_level+2);
     font gfn (tex_font (env->dis, "ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, env->fn->wline, col, light);
-    box specb= specific_box (ip, flagb, PS_DEVICE_SCREEN, env->fn);
-    print (STD_ITEM, specb);
+    if (info_flag == "detailed") {
+      box specb= specific_box (ip, flagb, false, env->fn);
+      print (STD_ITEM, specb);
+    }
+    else {
+      box b= resize_box (ip, flagb, 0, 0, 0, env->fn->yx);
+      print (STD_ITEM, b);
+    }
   }
 }
 
@@ -140,6 +146,7 @@ concater_rep::with_limits (int status) {
 void
 concater_rep::typeset (tree t, path ip) {
   // cout << "Typeset " << t << ", " << ip << ", " << obtain_ip (t) << "\n";
+
   /*
   if (obtain_ip (t) != ip)
     cout << "TeXmacs] Wrong ip: " << t << "\n"
@@ -179,6 +186,12 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case GROUP:
     typeset_group (t, ip);
+    break;
+  case HIDDEN:
+    (void) env->exec (t);
+    break;
+  case FROZEN:
+    typeset (attach_middle (t[0], ip));
     break;
   case HSPACE:
     t= env->exec (t);
@@ -493,6 +506,8 @@ concater_rep::typeset (tree t, path ip) {
   case XSPC_LENGTH:
   case PAR_LENGTH:
   case PAG_LENGTH:
+  case GW_LENGTH:
+  case GH_LENGTH:
   case TMPT_LENGTH:
   case PX_LENGTH:
     typeset_executable (t, ip);
@@ -557,11 +572,39 @@ concater_rep::typeset (tree t, path ip) {
     typeset_flag (t, ip);
     break;
 
+  case ANIM_COMPOSE:
+    typeset_anim_compose (t, ip);
+    break;
+  case ANIM_REPEAT:
+    typeset_anim_repeat (t, ip);
+    break;
+  case ANIM_CONSTANT:
+    typeset_anim_constant (t, ip);
+    break;
+  case ANIM_TRANSLATE:
+    typeset_anim_translate (t, ip);
+    break;
+  case ANIM_PROGRESSIVE:
+    typeset_anim_progressive (t, ip);
+    break;
+  case VIDEO:
+    typeset_video (t, ip);
+    break;
+  case SOUND:
+    typeset_sound (t, ip);
+    break;
+
   case GRAPHICS:
     typeset_graphics (t, ip);
     break;
   case SUPERPOSE:
     typeset_superpose (t, ip);
+    break;
+  case GR_GROUP:
+    typeset_gr_group (t, ip);
+    break;
+  case GR_LINEAR_TRANSFORM:
+    typeset_gr_linear_transform (t, ip);
     break;
   case TEXT_AT:
     typeset_text_at (t, ip);
@@ -653,9 +696,51 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   return b;
 }
 
+box
+typeset_as_box (edit_env env, tree t, path ip) {
+  box b= typeset_as_concat (env, t, ip);
+
+  SI ox= 0;
+  int i, n=N(b);
+  for (i=0; i<n; i++)
+    if (b[i]->w() != 0)
+      ox= b[i]->x1;
+
+  array<box> bs (1);
+  array<SI>  xs (1);
+  array<SI>  ys (1);
+  bs[0]= b;
+  xs[0]= ox;
+  ys[0]= 0;
+  return composite_box (ip, bs, xs, ys);
+}
+
 tree
 box_info (edit_env env, tree t, string what) {
   box b= typeset_as_concat (env, attach_here (t, decorate ()));
+  /* FIXME: very dirty hack ; necessary because
+     typeset_as_concat () doesn't always returns
+     a box with correct values of x1, y1, x2, y2,
+     etc. In particular, this happens when we try
+     to compute box_info (<with|...>).
+   */
+  int i, n=0;
+  for (i=0; i<N(b); i++)
+    if (b[i]!="") n++;
+  if (n) {
+    array<box> bx(n);
+    n=0;
+    for (i=0; i<N(b); i++) if (b[i]!="") {
+      array<box> bx2(1);
+      array<SI> spc2(1);
+      bx2[0]= b[i];
+      spc2[0]=0;
+      bx[n]= concat_box (path (0), bx2, spc2);
+      n++;
+    }
+    b= composite_box (path (0), bx);
+  }
+  // end very dirty hack
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {

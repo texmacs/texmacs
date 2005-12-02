@@ -27,14 +27,18 @@ public:
   edit_graphics_rep ();
   ~edit_graphics_rep ();
 
-  bool   inside_graphics ();
+  bool   inside_graphics (bool b);
+  bool   inside_active_graphics (bool b);
+  bool   over_graphics (SI x, SI y);
   tree   get_graphics ();
   frame  find_frame ();
   grid   find_grid ();
   void   find_limits (point& lim1, point& lim2);
+  bool   find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2);
   point  adjust (point p);
   tree   find_point (point p);
   tree   graphical_select (double x, double y);
+  tree   graphical_select (double x1, double y1, double x2, double y2);
   tree   get_graphical_object ();
   void   set_graphical_object (tree t);
   void   invalidate_graphical_object ();

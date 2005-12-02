@@ -158,6 +158,12 @@ edit_typeset_rep::typeset_invalidate_env () {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
+  if (has_changed (THE_TREE + THE_ENVIRONMENT))
+    if (p != correct_cursor (et, rp * 0)) {
+      if (DEBUG_STD)
+	cout << "TeXmacs] Warning: resynchronizing for path " << p << "\n";
+      // apply_changes ();
+    }
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
@@ -282,12 +288,13 @@ expand_references (tree t, hashmap<string,tree> h) {
 }
 
 tree
-edit_typeset_rep::exec (tree t, hashmap<string,tree> H) {
+edit_typeset_rep::exec (tree t, hashmap<string,tree> H, bool expand_refs) {
   hashmap<string,tree> H2;
   env->read_env (H2);
   env->write_env (H);
   t= env->exec (t);
-  t= expand_references (t, buf->ref);
+  if (expand_refs)
+    t= expand_references (t, buf->ref);
   t= simplify_execed (t);
   t= simplify_correct (t);
   env->write_env (H2);
@@ -314,6 +321,31 @@ edit_typeset_rep::exec_html (tree t, path p) {
 tree
 edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t, path p) {
+  string pref= "texmacs->latex:expand-macros";
+  if (as_string (call ("get-preference", pref)) != "on") return t;
+  if (p == (rp * 0)) typeset_preamble ();
+  typeset_exec_until (p);
+  hashmap<string,tree> H= copy (cur[p]);
+  tree patch= as_tree (call ("stree->tree", call ("tmtex-env-patch", t)));
+  hashmap<string,tree> P (UNINIT, patch);
+  H->join (P);
+  if (is_document (t) && is_compound (t[0], "hide-preamble")) {
+    tree r= copy (t);
+    r[0]= "";
+    r= exec (r, H, false);
+    r[0]= exec (t[0], H, false);
+    return r;
+  }
+  else return exec (t, H, false);
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t) {
+  return exec_latex (t, rp * 0);
 }
 
 tree

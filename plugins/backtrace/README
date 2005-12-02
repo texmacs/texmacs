@@ -1,0 +1,12 @@
+Plugin: backtrace
+Summary: enable display of backtraces on scheme errors
+Release: 1.0
+TeXmacs: 1.0.2
+Author: David Allouche
+License: Public domain
+
+TeXmacs supports GUILE facilities for displaying backtraces when an exception
+is not handled. However this feature is not enable by default.
+
+This plugin enable the scheme backtrace facility and will cause texmacs to
+provide helpful debugging information when an error occurs in scheme code.

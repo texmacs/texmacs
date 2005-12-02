@@ -42,7 +42,7 @@ struct latex_parser {
   latex_parser () {}
   void latex_error (string s, int i, string message);
 
-  tree parse           (string s, int& i, char stop= '\0', bool change= false);
+  tree parse           (string s, int& i, string stop= "", bool change= false);
   tree parse_backslash (string s, int& i);
   tree parse_symbol    (string s, int& i);
   tree parse_command   (string s, int& i, string which);
@@ -69,7 +69,7 @@ latex_parser::latex_error (string s, int i, string message) {
 ******************************************************************************/
 
 tree
-latex_parser::parse (string s, int& i, char stop, bool change) {
+latex_parser::parse (string s, int& i, string stop, bool change) {
   bool no_error= true;
   int n= N(s);
   tree t (CONCAT);
@@ -79,15 +79,20 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
   command_def  ->extend ();
 
   while ((i<n) && is_space (s[i])) i++;
-  while ((i<n) && (s[i]!=stop) && no_error) {
+  while ((i<n) && no_error &&
+	 (s[i] != '\0' || N (stop) != 0) &&
+	 (N(stop) != 1 || s[i] != stop[0]) &&
+	 (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$')) {
     switch (s[i]) {
     case '~':
-      t << tuple ("\\nbsp");
+      if (command_type ["!mode"] == "math") t << tuple ("\\sim");
+      else t << tuple ("\\nbsp");
       i++;
       break;
     case ' ':
     case '\t':
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t'))) i++;
+    case '\r':
+      while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\r'))) i++;
       if ((i<n) && (s[i]!='\n')) t << " ";
       break;
     case '\n': {
@@ -110,7 +115,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
 	while ((i<n) && (s[i]!='\n')) i++;
 	if (i<n) i++;
 	int ln=0;
-	while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+	while ((i<n) && is_space (s[i]))
 	  if (s[i++]=='\n') ln++;
 	if (ln > 0) {
 	  if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
@@ -206,34 +211,36 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
       break;
     case '{': {
       i++;
-      t << parse (s, i, '}');
+      t << parse (s, i, "}");
       if ((i<n) && (s[i]=='}')) i++;
 
       int ln=0;
-      if ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) break;
-      while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n')))
+      if ((i<n) && (!is_space (s[i]))) break;
+      while ((i<n) && is_space (s[i]))
 	if (s[i++]=='\n') ln++;
       if (ln >= 2) t << "\n"; else t << tree (TUPLE, "\\ ");
       break;
     }
     case '$': {
-      bool flag= false;
       i++;
       if ((i<n) & (s[i]=='$')) {
 	i++;
-	flag=true;
 	t << tree (TUPLE, "\\begin-displaymath");
-      }
-      else t << tree (TUPLE, "\\begin-math");
-      command_type ("!mode")= "math";
-      t << parse (s, i, '$');
-      command_type ("!mode")= "text";
-      if ((i<n) && (s[i]=='$')) i++;
-      if (flag) {
+	command_type ("!mode")= "math";
+	t << parse (s, i, "$$");
+	command_type ("!mode")= "text";
+	if ((i<n) && (s[i]=='$')) i++;
 	if ((i<n) && (s[i]=='$')) i++;
 	t << tree (TUPLE, "\\end-displaymath");
       }
-      else t << tree (TUPLE, "\\end-math");
+      else {
+	t << tree (TUPLE, "\\begin-math");
+	command_type ("!mode")= "math";
+	t << parse (s, i, "$");
+	command_type ("!mode")= "text";
+	if ((i<n) && (s[i]=='$')) i++;
+	t << tree (TUPLE, "\\end-math");
+      }
       break;
     }
     default:
@@ -244,7 +251,7 @@ latex_parser::parse (string s, int& i, char stop, bool change) {
 	int end= i;
 	if ((i >= start+3) && (command_type ["!mode"] == "math")) {
 	  while ((i<n) && (is_iso_alpha (s[i]) ||
-			   is_ponctuation (s[i]) ||
+			   is_punctuation (s[i]) ||
 			   is_space (s[i])))
 	    i++;
 	  if (i >= start+20) {
@@ -328,10 +335,10 @@ latex_parser::parse_backslash (string s, int& i) {
   /************************* normal commands *********************************/
   int start= i-1;
   while ((i<n) && is_alpha (s[i])) i++;
-  if ((i<n) && (s[i]=='*')) i++;
+  if ((i<n) && (s[i]=='*') && latex_type (s (start, i+1)) != "undefined") i++;
   string r= s (start, i);
   if ((r == "\\begin") || (r == "\\end")) {
-    while ((i<n) && ((s[i]==' ') || (s[i]=='\t') || (s[i]=='\n'))) i++;
+    while ((i<n) && is_space (s[i])) i++;
     if ((i==n) || (s[i]!='{')) {
       latex_error (s, i, "begin or end which environment ?");
       return "";
@@ -376,7 +383,7 @@ latex_parser::parse_symbol (string s, int& i) {
 tree
 latex_parser::parse_command (string s, int& i, string cmd) {
   /*
-  cout << cmd << " [" << command_type [cmd] << ", "
+  cout << cmd << " [" << latex_type (cmd) << ", "
        << command_type ["!mode"] << "]" << LF;
   */
   if (cmd == "\\newcommand") cmd= "\\def";
@@ -386,11 +393,10 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (cmd == "\\end-split") cmd= "\\end-eqsplit";
   if (cmd == "\\begin-split*") cmd= "\\begin-eqsplit*";
   if (cmd == "\\end-split*") cmd= "\\end-eqsplit*";
-  if ((!command_type->contains (cmd)) &&
-      (latex_type [cmd] == "undefined"))
+  if (latex_type (cmd) == "undefined")
     return parse_unknown (s, i, cmd);
 
-  if (latex_type [cmd] == "math-environment") {
+  if (latex_type (cmd) == "math-environment") {
     if (cmd (0, 6) == "\\begin") command_type ("!mode") = "math";
     else command_type ("!mode") = "text";
   }
@@ -401,22 +407,21 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   if (mbox_flag) command_type ("!mode") = "text";
 
   int  n     = N(s);
-  int  arity =
-    (latex_type [cmd]=="undefined")? command_arity (cmd): latex_arity [cmd];
+  int  arity = latex_arity (cmd);
   bool option= (arity<0);
   if (option) arity= -1-arity;
 
   /************************ retrieve arguments *******************************/
   tree t (TUPLE, copy (cmd)); // parsed arguments
   tree u (TUPLE, copy (cmd)); // unparsed arguments
-  while ((i<n) && ((arity>0) || option)) {
-    int j=i;
-    while ((j<n) && ((s[j]==' ') || (s[j]=='\t') || (s[j]=='\n'))) j++;
+  while (i<n && arity>=0 && (arity>0 || option)) {
+    int j= i;
+    while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
     if (option && (s[j]=='[')) {
       j++;
       i=j;
-      t << parse (s, i, ']');
+      t << parse (s, i, "]");
       u << s (j, i);
       if ((i<n) && (s[i]==']')) i++;
       t[0]->label= t[0]->label * "*";
@@ -429,7 +434,7 @@ latex_parser::parse_command (string s, int& i, string cmd) {
 	while ((i<n) && (s[i]!='}')) i++;
 	t << s (j, i);
       }
-      else t << parse (s, i, '}');
+      else t << parse (s, i, "}");
       u << s (j, i);
       if ((i<n) && (s[i]=='}')) i++;
       arity--;
@@ -492,11 +497,15 @@ latex_parser::parse_command (string s, int& i, string cmd) {
   }
 
   /***************** environment changes for user commands  ******************/
-  if (command_type[cmd] == "user") {
+  if (latex_type (cmd) == "user") {
     int pos= 0;
-    (void) parse (sharp_to_arg (command_def[cmd], u), pos, '\0', true);
-    // t= parse (sharp_to_arg (command_def[cmd], u), pos, '\0', true);
-    // variant if you want to replace macros by their definitions
+    string body= command_def[cmd];
+    if (count_occurrences ("\\begin", body) ==
+	count_occurrences ("\\end", body))
+      (void) parse (sharp_to_arg (body, u), pos, "", true);
+    else t= parse (sharp_to_arg (body, u), pos, "", true);
+    // replaces macros by their definitions in the case when
+    // the user defined shorthands for \\begin{env} and \\end{env}
   }
 
   if (mbox_flag) command_type ("!mode") = "math";
@@ -511,12 +520,12 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
   tree t (TUPLE, copy (cmd));
   while (i<n) {
     int j=i;
-    while ((j<n) && ((s[j]==' ') || (s[j]=='\t') || (s[j]=='\n'))) j++;
+    while ((j<n) && is_space (s[j])) j++;
     if (j==n) break;
     if (option && (s[j]=='[')) {
       j++;
       i=j;
-      t << parse (s, i, ']');
+      t << parse (s, i, "]");
       if ((i<n) && (s[i]==']')) i++;
       t[0]->label= t[0]->label * "*";
       option= false;
@@ -524,7 +533,7 @@ latex_parser::parse_unknown (string s, int& i, string cmd) {
     else if (s[j]=='{') {
       j++;
       i=j;
-      t << parse (s, i, '}');
+      t << parse (s, i, "}");
       if ((i<n) && (s[i]=='}')) i++;
     }
     else break;
@@ -565,7 +574,7 @@ static char Cork_unaccented[128]= {
   'D', 'N', 'O', 'O', 'O', 'O', 'O', ' ',
   ' ', 'U', 'U', 'U', 'U', 'Y', ' ', ' ',
   'a', 'a', 'a', 'a', 'a', 'a', ' ', 'c',
-  'e', 'e', 'e', 'e', 16 , 16 , 16 , 16 ,
+  'e', 'e', 'e', 'e', 25 , 25 , 25 , 25 ,
   'd', 'n', 'o', 'o', 'o', 'o', 'o', ' ',
   ' ', 'u', 'u', 'u', 'u', 'y', ' ', ' '
 };
@@ -599,8 +608,8 @@ accented_to_Cork (tree t) {
 
   string s= t[0]->label;
   if ((N(s)==2) && (s[0]=='\\') && (n==2) &&
-      is_atomic (t[1]) && (N(t[1]->label)<=2)) {
-    string v= t[1]->label;
+      is_atomic (r[1]) && (N(r[1]->label)<=2)) {
+    string v= r[1]->label;
     if (N(v)==0) {
       if (s[1] == '`' ) {
 	string ret_s (1);
@@ -620,13 +629,14 @@ accented_to_Cork (tree t) {
     }
     else {
       char c1= v[0], c2= s[1];
-      if (v=="\\i") c1= (char) 16;
+      if (v == "\\i") c1= (char) 25;
       if ((N(v)==1) || (v=="\\i"))
 	for (i=0; i<127; i++)
 	  if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
 	    return tree (string ((char) (i+128)));
     }
   }
+  if (r == tuple ("\\i")) return "\\i";
   return r;
 }
 
@@ -646,7 +656,7 @@ latex_parser::parse (string s) {
   int i, start=0, n= N(s);
   for (i=0; i<n; i++)
     if (s[i]=='\n') {
-      while ((i<n) && ((s[i]=='\12') || (s[i]=='\15') || (s[i]==' '))) i++;
+      while ((i<n) && is_space (s[i])) i++;
       if (test (s, i, "\\begin{document}") ||
 	  test (s, i, "\\begin{abstract}") ||
 	  test (s, i, "\\chapter") ||
@@ -673,7 +683,7 @@ latex_parser::parse (string s) {
       int start= j;
       command_type ("!mode") = "text";
       command_type ("!em") = "false";
-      tree u= parse (a[i], j, '\0', true);
+      tree u= parse (a[i], j, "", true);
       if ((N(t)>0) && (t[N(t)-1]!='\n') && (start==0)) t << "\n";
       if (is_concat (u)) t << A(u);
       else t << u;

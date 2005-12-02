@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.5.8>
 
 <style|tmdoc>
 
@@ -8,6 +8,9 @@
   <\itemize>
     <item>Dan Martens made the <name|Windows> port.
 
+    <item>Henri Lesourd developed a native mode for drawing technical
+    pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
+
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
@@ -15,9 +18,6 @@
     <item>David Allouche replaced the gencc preprocessor by the more standard
     C++ template system. He also made many other patches, bug reports and he
     did a lot of the administration of TeXmacs.
-
-    <item>Henri Lesourd is working on native technical drawing support in
-    <TeXmacs>. He also fixed a bug in the presentation mode.
 
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
@@ -38,9 +38,6 @@
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
-    <item>Josef Weidendorfer for two patches to improve the speed of
-    <TeXmacs>.
-
     <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
 
     <item>Bill Page and David Mentré for the support of the free version of
@@ -48,6 +45,11 @@
 
     <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
     CD for <TeXmacs>.
+
+    <item>Nelson Beebe helped with manifacturing a more robust
+    <verbatim|configure.in>.
+
+    <item>Kai Krüger fixed several details for the new Maple interface.
 
     <item>Mickael Floc'hlay and Arnaud Ébalard for their work on searching
     for help.

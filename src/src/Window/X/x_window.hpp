@@ -34,8 +34,7 @@ class x_window_rep: public x_drawable_rep, public window_rep {
   rectangles   clipping;
   int          win_x, win_y;
   int          win_w, win_h;
-  bool         off_initialized;
-  int          off_x, off_y;
+  bool         win_flag;
 
   widget_rep*  kbd_focus;
   bool         has_focus;
@@ -51,8 +50,9 @@ public:
 
   x_window_rep (widget w, x_display dis, char* name);
   x_window_rep (widget w, x_display dis, char* name, SI x, SI y);
-  x_window_rep (widget wdgt, x_display dis, char* name, SI w, SI h, SI x, SI y);  ~x_window_rep ();
-  int get_type ();
+  x_window_rep (widget wid, x_display dis, char* name, SI w, SI h, SI x, SI y);
+  ~x_window_rep ();
+  void get_extents (int& w, int& h);
 
   void compute_size (SI& w1, SI& h1, SI& w2, SI& h2, SI& w3, SI& h3);
   void set_hints (SI min_w, SI min_h, SI max_w, SI max_h);
@@ -86,8 +86,6 @@ public:
   void clip (SI x1, SI y1, SI x2, SI y2);
   void unclip ();
   void translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy);
-  ps_device window_to_shadow (SI x1, SI y1, SI x2, SI y2);
-  void shadow_to_window (SI x1, SI y1, SI x2, SI y2);
 
   /****************************** friends ************************************/
 

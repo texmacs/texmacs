@@ -45,26 +45,69 @@ void
 concater_rep::typeset_superpose (tree t, path ip) {
   int i, n= N(t);
   array<box> bs (n);
+  for (i=0; i<n; i++) {
+    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+    if (is_func (t[i], FROZEN))
+      // FIXME: this dirty hack is necessary, because typeset_as_concat
+      // would put an accessible concat_box around bs[i] otherwise
+      bs[i]= frozen_box (decorate_middle (descend (ip, i)), bs[i]);
+  }
+  print (STD_ITEM, superpose_box (ip, bs));
+}
+
+void
+concater_rep::typeset_gr_group (tree t, path ip) {
+  int i, n= N(t);
+  array<box> bs (n);
   for (i=0; i<n; i++)
     bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
-  print (STD_ITEM, superpose_box (ip, bs));
+
+  int j, n2= 0;
+  for (i=0; i<n; i++)
+    for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") n2++;
+  if (n2) {
+    array<box> bs2 (n2);
+    n2= 0;
+    for (i=0; i<n; i++) {
+      for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") {
+        bs2[n2]= bs[i][j];
+	n2++;
+      }
+    }
+    bs= bs2;
+  }
+  print (STD_ITEM, graphics_group_box (ip, bs));
+}
+
+void
+concater_rep::typeset_gr_linear_transform (tree t, path ip) {
+  if (!is_tuple (t[1]))
+    typeset_dynamic (tree (ERROR, "bad linear transform"), ip);
+
+  frame f= affine_2D (as_matrix (t[1]));
+  box   b= typeset_as_concat (env, t[0], descend (ip, 0));
+  print (STD_ITEM, b->transform (env->fr * (f * invert (env->fr))));
 }
 
 void
 concater_rep::typeset_text_at (tree t, path ip) {
   box    b     = typeset_as_concat (env, t[0], descend (ip, 0));
   point  p     = env->fr (env->as_point (env->exec (t[1])));
-  string halign= as_string (env->exec (t[2]));
-  string valign= as_string (env->exec (t[3]));
+  string halign= env->textat_halign;
+  string valign= env->textat_valign;
 
-  SI x= (SI) p[0], y= (SI) p[1];
-  if (halign == "left") x -= b->x1;
-  else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
-  else if (halign == "right") x -= b->x2;
-  if (valign == "bottom") y -= b->y1;
-  else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
-  else if (valign == "top") y -= b->y2;
-  print (STD_ITEM, move_box (ip, b, x, y));
+  if (N(p) == 0)
+    typeset_dynamic (tree (ERROR, "bad text-at"), ip);
+  else {
+    SI x= (SI) p[0], y= (SI) p[1];
+    if (halign == "left") x -= b->x1;
+    else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
+    else if (halign == "right") x -= b->x2;
+    if (valign == "bottom") y -= b->y1;
+    else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
+    else if (valign == "top") y -= b->y2;
+    print (STD_ITEM, move_box (ip, b, x, y));
+  }
 }
 
 void
@@ -73,10 +116,13 @@ concater_rep::typeset_point (tree t, path ip) {
   tree u (TUPLE, N(t));
   for (i=0; i<n; i++)
     u[i]= env->exec (t[i]);
-  if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
+  if (N(u) < 2)
+    typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
     point p= env->fr (env->as_point (u));
-    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col, env->point_style));
+    print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
+				env->fill_mode, env->fill_color,
+				env->point_style));
   }
 }
 
@@ -101,7 +147,10 @@ concater_rep::typeset_line (tree t, path ip, bool close) {
       cip << cip[0];
     }
     curve c= env->fr (poly_segment (a, cip));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
+    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
+				env->dash_style, env->dash_style_unit,
+				env->fill_mode, env->fill_color,
+				env->line_arrows));
   }
 }
 
@@ -123,7 +172,10 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
     typeset_line (t, ip, close);
   else {
     curve c= env->fr (arc (a, cip, close));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
+    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
+				env->dash_style, env->dash_style_unit,
+				env->fill_mode, env->fill_color,
+				env->line_arrows));
   }
 }
 
@@ -145,7 +197,10 @@ concater_rep::typeset_spline (tree t, path ip, bool close) {
     }
     curve c= env->fr (
       N(a)>=3 ? spline (a, cip, close) : poly_segment (a, cip));
-    print (STD_ITEM, curve_box (ip, c, env->lw, env->col));
+    print (STD_ITEM, curve_box (ip, c, env->lw, env->col,
+				env->dash_style, env->dash_style_unit,
+				env->fill_mode, env->fill_color,
+				env->line_arrows));
   }
 }
 

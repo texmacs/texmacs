@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.3>
+<TeXmacs|1.0.5.10>
 
 <style|tmweb>
 
@@ -36,11 +36,10 @@
   </description>
 
   We recommend a <hyper-link|reasonably fast|requirements.en.tm> computer for
-  running <TeXmacs>. We also require <hyper-link|<TeX>/<LaTeX>|requirements.en.tm#TeX>
-  to be installed on your system. For most modern <name|Unix> systems this is
-  the case. From the efficiency point of view it may sometimes be useful to
-  install some <hyper-link|pregenerated fonts|fonts.en.tm>, even though <TeX>
-  is able to generate them automatically.
+  running <TeXmacs>. On <name|Unix> systems, it is recommended to have a
+  standard <hyper-link|<TeX>/<LaTeX>|requirements.en.tm#TeX> installed on
+  your system, which is usually the case. If not, then you will need to
+  install some <hyper-link|extra fonts|fonts.en.tm>.
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 

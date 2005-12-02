@@ -1,56 +1,57 @@
-<TeXmacs|1.0.0.5>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Cut and paste>
+  <tmdoc-title|Cut and paste>
 
   You can select text and formulas by maintaining the left mouse button. In
-  order to delete the selected region, use <submenu|Edit|cut>. In order to
-  copy the selected region, first click on <submenu|Edit|copy>. Next, paste
-  it as many times as you want to the location of your cursor, using
-  <submenu|Edit|paste>. Alternatively, you may copy a selected region using
-  the middle mouse button.
+  order to delete the selected region, use <menu|Edit|Cut>. In order to copy
+  the selected region, first click on <menu|Edit|Copy>. Next, paste it as
+  many times as you want to the location of your cursor, using
+  <menu|Edit|Paste>. Alternatively, you may copy a selected region using the
+  middle mouse button.
 
   It is also possible to the change text properties of a selected region. For
   instance, in order to transform some black text in red, you select it using
-  the left mouse button and click on <subsubmenu|Text|color|red>. Similarly,
-  if you select a formula and you click on
-  <subsubmenu|Insert|mathematics|fraction>, then the formula becomes the
-  numerator of some fraction.
+  the left mouse button and click on <menu|Text|Color|Red>. Similarly, if you
+  select a formula and you click on <menu|Insert|Mathematics|Fraction>, then
+  the formula becomes the numerator of some fraction.
 
   When using the copy and paste mechanism to communicate with other
-  applications, text is copied and pasted using the <apply|TeXmacs> data
-  format. You may specify other import and export formats using
-  <submenu|Edit|import> resp. <submenu|Edit|export>. By default, copying and
-  pasting uses the primary text buffer. Using <submenu|Edit|copy to> and
-  <submenu|Edit|paste from>, you may specify as many other buffers as you
-  like.
+  applications, text is copied and pasted using the <TeXmacs> data format.
+  You may specify other import and export formats using <menu|Edit|Import>
+  resp. <menu|Edit|Export>. By default, copying and pasting uses the primary
+  text buffer. Using <menu|Edit|Copy to> and <menu|Edit|Paste from>, you may
+  specify as many other buffers as you like.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  There are two ways to make selections using the keyboard. When using the
+  cursor keys <key|<key-left>>, <key|<key-right>>, <abbr|etc.> while holding
+  down the <key|<key-shift>> button, you may select text while moving around
+  the cursor. Alternatively, you may press <key|C-<key-space>> once to fix a
+  starting position. When moving around using the cursor keys, the text
+  between the starting position and the current position keeps being
+  selected. The selection gets cleared when pressing <key|C-g>.
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  Notice that the <key|C-<key-space>> shortcut also allows you to make
+  <em|structured selections>. You may select the current word you are in by
+  pressing<nbsp><key|C-<key-space>> twice. Each additional time you press
+  <key|C-<key-space>> results in the selection of the smallest structure
+  which englobes the current selection. Ultimately, when the entire document
+  gets selected, pressing <key|C-<key-space>> once more clears the selection.
+
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
