@@ -96,14 +96,18 @@ concater_rep::typeset_text_at (tree t, path ip) {
   string halign= env->textat_halign;
   string valign= env->textat_valign;
 
-  SI x= (SI) p[0], y= (SI) p[1];
-  if (halign == "left") x -= b->x1;
-  else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
-  else if (halign == "right") x -= b->x2;
-  if (valign == "bottom") y -= b->y1;
-  else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
-  else if (valign == "top") y -= b->y2;
-  print (STD_ITEM, move_box (ip, b, x, y));
+  if (N(p) == 0)
+    typeset_dynamic (tree (ERROR, "bad text-at"), ip);
+  else {
+    SI x= (SI) p[0], y= (SI) p[1];
+    if (halign == "left") x -= b->x1;
+    else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
+    else if (halign == "right") x -= b->x2;
+    if (valign == "bottom") y -= b->y1;
+    else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
+    else if (valign == "top") y -= b->y2;
+    print (STD_ITEM, move_box (ip, b, x, y));
+  }
 }
 
 void
@@ -112,7 +116,8 @@ concater_rep::typeset_point (tree t, path ip) {
   tree u (TUPLE, N(t));
   for (i=0; i<n; i++)
     u[i]= env->exec (t[i]);
-  if (N(u) < 2) typeset_dynamic (tree (ERROR, "bad point", t), ip);
+  if (N(u) < 2)
+    typeset_dynamic (tree (ERROR, "bad point", t), ip);
   else {
     point p= env->fr (env->as_point (u));
     print (STD_ITEM, point_box (ip, p, 20*PIXEL, env->col,
