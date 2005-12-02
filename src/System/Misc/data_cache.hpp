@@ -28,6 +28,7 @@ bool do_cache_doc (string name);
 void cache_save (string buffer);
 void cache_load (string buffer);
 void cache_memorize ();
+void cache_refresh ();
 void cache_initialize ();
 
 #endif // defined DATA_CACHE_H
