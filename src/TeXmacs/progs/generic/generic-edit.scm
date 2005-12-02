@@ -313,6 +313,12 @@
 (tm-define (make-link-image l)
   (apply make-postscript (cons* (url->string (car l)) #t (cdr l))))
 
+(tm-define (make-graphics-over-selection)
+  (if (selection-active-any?)
+  (with selection (selection-tree)
+    (clipboard-cut "graphics background")
+    (insert-go-to `(with-background ,selection (graphics)) '(1 1)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

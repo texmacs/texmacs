@@ -718,7 +718,12 @@ typeset_as_box (edit_env env, tree t, path ip) {
 tree
 box_info (edit_env env, tree t, string what) {
   box b= typeset_as_concat (env, attach_here (t, decorate ()));
-  // FIXME: very dirty hack
+  /* FIXME: very dirty hack ; necessary because
+     typeset_as_concat () doesn't always returns
+     a box with correct values of x1, y1, x2, y2,
+     etc. In particular, this happens when we try
+     to compute box_info (<with|...>).
+   */
   int i, n=0;
   for (i=0; i<N(b); i++)
     if (b[i]!="") n++;
