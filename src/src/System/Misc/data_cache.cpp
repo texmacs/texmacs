@@ -174,6 +174,17 @@ cache_memorize () {
 }
 
 void
+cache_refresh () {
+  cache_data   = hashmap<tree,tree> ("?");
+  cache_loaded = hashset<string> ();
+  cache_changed= hashset<string> ();
+  cache_load ("file_cache");
+  cache_load ("dir_cache.scm");
+  cache_load ("stat_cache.scm");
+  cache_load ("font_cache.scm");
+}
+
+void
 cache_initialize () {
   texmacs_path= concretize ("$TEXMACS_PATH");
   if (get_env ("TEXMACS_HOME_PATH") == "")
@@ -182,8 +193,5 @@ cache_initialize () {
   if (get_env ("TEXMACS_DOC_PATH") == "")
     texmacs_doc_path= concretize ("$TEXMACS_PATH/doc");
   else texmacs_doc_path= concretize ("$TEXMACS_DOC_PATH");
-  cache_load ("file_cache");
-  cache_load ("dir_cache.scm");
-  cache_load ("stat_cache.scm");
-  cache_load ("font_cache.scm");
+  cache_refresh ();
 }

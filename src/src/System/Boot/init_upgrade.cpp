@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "path.hpp"
 #include "sys_utils.hpp"
+#include "data_cache.hpp"
 
 /******************************************************************************
 * Old style settings files
@@ -136,4 +137,5 @@ init_upgrade () {
   remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
   remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
   remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+  cache_refresh ();
 }
