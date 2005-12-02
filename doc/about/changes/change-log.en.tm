@@ -10,8 +10,14 @@
   <\itemize>
     <item>Improved plug-in for <name|Reduce> (1.0.6).
 
+    <item>Fixes for new version of <name|Maxima> (1.0.6).
+
     <item>Added <name|Pnambic> plug-in among the examples for debugging
     plug-ins (1.0.6).
+
+    <item>Corrected problems with rubber fonts (1.0.6).
+
+    <item>Further fixes for exporting symbols to LaTeX (1.0.6).
 
     <item>Several improvements in <LaTeX> converters (1.0.5.12).
 
