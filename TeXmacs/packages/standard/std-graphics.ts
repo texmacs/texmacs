@@ -27,13 +27,13 @@
     </src-comment>
   </active*>
 
-  <assign|gr-geom|<macro|dims|cm-1|<tuple|geometry|<merge|<times|<look-up|<arg|dims>|2>|<arg|cm-1>>|cm>|<merge|<times|<look-up|<arg|dims>|3>|<arg|cm-1>>|cm>>>>
+  <assign|gr-geom|<macro|dims|cm-1|<style-with|src-compact|none|<tuple|geometry|<merge|<times|<look-up|<arg|dims>|2>|<arg|cm-1>>|cm>|<merge|<times|<look-up|<arg|dims>|3>|<arg|cm-1>>|cm>>>>>
 
   <assign|gr-tbl|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0pt>|<cwith|1|1|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-bsep|0pt>|<cwith|1|1|1|1|cell-tsep|0pt>|<cwith|1|1|1|1|cell-lborder|0pt>|<cwith|1|1|1|1|cell-rborder|0pt>|<cwith|1|1|1|1|cell-bborder|0pt>|<cwith|1|1|1|1|cell-tborder|0pt>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|with-background|<macro|bg|fg|<with|dims|<box-info|<arg|bg>|lbrt>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<superpose|<frozen|<gr-tbl|<arg|bg>>>|<gr-tbl|<arg|fg>>>>>>>
+  <assign|with-background|<macro|bg|fg|<with|dims|<box-info|<arg|bg>|lbrt>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<frozen|<gr-tbl|<arg|bg>>>|<gr-tbl|<arg|fg>>>>>>>>
 
-  <drd-props|with-backgroundsss|arity|2|accessible|all>
+  \;
 </body>
 
 <\initial>
