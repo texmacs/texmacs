@@ -591,6 +591,8 @@ edit_env_rep::exec_arg (tree t) {
   return r;
 }
 
+static bool quote_substitute= false;
+
 tree
 edit_env_rep::exec_quote_arg (tree t) {
   tree r= t[0];
@@ -608,6 +610,13 @@ edit_env_rep::exec_quote_arg (tree t) {
       if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
       r= r[nr];
     }
+  }
+  if (quote_substitute && !is_func (r, ARG)) {
+    int i, n= N(r);
+    tree s (r, n);
+    for (i=0; i<n; i++)
+      s[i]= tree (ARG, A(t)) * tree (ARG, as_string (i));
+    return s;
   }
   return r;
 }
@@ -1362,9 +1371,13 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     f= read (fname);
   }
 
-  if ((p->item < d) || (p->item >= N(f)) ||
-      is_compound (f[p->item-d])) return;
-  string var= f[p->item-d]->label;
+  string var;
+  if (L(f) == XMACRO) var= f[0]->label;
+  else {
+    if ((p->item < d) || (p->item >= N(f)) ||
+	is_compound (f[p->item-d])) return;
+    var= f[p->item-d]->label;
+  }
 
   if (is_applicable (f)) {
     int i, n=N(f)-1, m=N(t)-d;
@@ -1455,8 +1468,12 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case MARK:
     return exec_until_mark (t, p, var, level);
   case EVAL:
+    return exec_until (exec (t), p, var, level);
   case QUOTE:
+    (void) exec (t);
+    return false;
   case QUASI:
+    return exec_until_quasi (t, p, var, level);
   case QUASIQUOTE:
   case UNQUOTE:
   case VAR_UNQUOTE:
@@ -1709,6 +1726,15 @@ edit_env_rep::exec_until_mark (tree t, path p, string var, int level) {
   }
   if (border) return exec_until (t[0], p, var, level);
   else return exec_until (t[1], p, var, level);
+}
+
+bool
+edit_env_rep::exec_until_quasi (tree t, path p, string var, int level) {
+  bool old= quote_substitute;
+  quote_substitute= true;
+  tree u= exec_quasiquoted (t[0]);
+  quote_substitute= old;
+  return exec_until (u, p, var, level);
 }
 
 bool
