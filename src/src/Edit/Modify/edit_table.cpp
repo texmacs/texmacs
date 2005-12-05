@@ -887,7 +887,7 @@ table_undecorate (tree st, int row, int col) {
   for (k=0; k<n-1; k++)
     if ((as_int (st[k][0]) == (row+1)) && (as_int (st[k][2]) == (col+1)))
       if (is_func (st[k], CWITH, 6) && (st[k][4] == CELL_DECORATION)) {
-	int dec_row, dec_col;
+	int dec_row= 0, dec_col= 0;
 	tree T= copy (st[k][5]);
 	search_decoration (T, dec_row, dec_col);
 	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
