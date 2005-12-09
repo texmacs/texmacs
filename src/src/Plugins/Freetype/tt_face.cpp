@@ -55,7 +55,7 @@ static metric error_metric;
 
 tt_font_metric_rep::tt_font_metric_rep (
   string name, string family, int size2, int dpi2):
-  font_metric_rep (name), size (size2), dpi (dpi2)
+  font_metric_rep (name), size (size2), dpi (dpi2), fnm (NULL)
 {
   face= load_tt_face (family);
   bad_font_metric= face->bad_face ||
@@ -66,24 +66,19 @@ tt_font_metric_rep::tt_font_metric_rep (
   error_metric->x2= error_metric->y2= 0;
   error_metric->x3= error_metric->y3= 0;
   error_metric->x4= error_metric->y4= 0;
-
-  int i;
-  fnm = new metric [256];
-  done= new bool   [256];
-  for (i=0; i<256; i++) done[i]= false;
 }
 
 metric&
 tt_font_metric_rep::get (int i) {
-  if ((i<0) || (i>255)) return error_metric;
-  if (!done[i]) {
+  if (!fnm->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
       return error_metric;
     FT_GlyphSlot slot= face->ft_face->glyph;
     if (ft_render_glyph (slot, ft_render_mode_mono)) return error_metric;
-    metric& M= fnm[i];
+    metric_struct* M= new metric_struct;
+    fnm(i)= (pointer) M;
     int w= slot->bitmap.width;
     int h= slot->bitmap.rows;
     SI ww= w * PIXEL;
@@ -99,9 +94,8 @@ tt_font_metric_rep::get (int i) {
     M->y3= dy - hh;
     M->x4= dx + ww;
     M->y4= dy;
-    done[i]= true;
   }
-  return fnm [i];
+  return *((metric*) ((void*) fnm [i]));
 }
 
 font_metric
@@ -119,23 +113,17 @@ static glyph error_glyph;
 
 tt_font_glyphs_rep::tt_font_glyphs_rep (
   string name, string family, int size2, int dpi2):
-  font_glyphs_rep (name), size (size2), dpi (dpi2)
+  font_glyphs_rep (name), size (size2), dpi (dpi2), fng (glyph ())
 {
   face= load_tt_face (family);
   bad_font_glyphs= face->bad_face ||
     ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
   if (bad_font_glyphs) return;
-
-  int i;
-  fng = new glyph [256];
-  done= new bool  [256];
-  for (i=0; i<256; i++) done[i]= false;
 }
 
 glyph&
 tt_font_glyphs_rep::get (int i) {
-  if ((i<0) || (i>255)) return error_glyph;
-  if (!done[i]) {
+  if (!fng->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
@@ -162,10 +150,9 @@ tt_font_glyphs_rep::get (int i) {
     //cout << "Glyph " << i << " of " << res_name << "\n";
     //cout << G << "\n";
     if (G->width * G->height == 0) G= error_glyph;
-    fng[i] = G;
-    done[i]= true;
+    fng(i)= G;
   }
-  return fng [i];
+  return fng(i);
 }
 
 font_glyphs

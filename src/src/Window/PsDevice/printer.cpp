@@ -534,6 +534,10 @@ printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   if (nil (gl)) return;
   string name= fn->res_name;
   unsigned char c= ch;
+  if (ch >= 256) {
+    name= name * "-" * as_string (ch / 256);
+    c= (unsigned char) (ch & 255);
+  }
   make_tex_char (name, c, gl);
   select_tex_font (name);
   move_to (x, y);
