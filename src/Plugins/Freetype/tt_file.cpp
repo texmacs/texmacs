@@ -49,6 +49,7 @@ tt_locate (string name) {
 	  return url (s (start, i));
 	start= i+1;
       }
+    return resolve (url ("$TEXMACS_HOME_PATH/fonts/truetype", name));
   }
   return url_none ();
 }
@@ -66,7 +67,7 @@ tt_font_find (string name) {
 
 bool
 tt_font_exists (string name) {
-  // cout << "tt_font_exists? " << name << "\n";
+  //cout << "tt_font_exists? " << name << "\n";
   if (tt_fonts->contains (name)) return tt_fonts[name] == "yes";
   bool yes= !is_none (tt_font_find (name));
   tt_fonts (name)= yes? string ("yes"): string ("no");

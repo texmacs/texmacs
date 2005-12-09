@@ -122,6 +122,8 @@
 	  ("Cyrillic" (make-with "font" "cyrillic"))
 	  (if (url-exists-in-tex? "dvng10.mf")
 	      ("Devangari" (make-with "font" "devangari")))
+	  (if (font-exists-in-tt? "fireflysung")
+	      ("Fireflysung" (make-with "font" "fireflysung")))
 	  (if (url-exists-in-tex? "mxed.mf")
 	      (-> "Georgian"
 		  ("Mxedruli" (make-with "font" "mxedruli"))

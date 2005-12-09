@@ -73,6 +73,9 @@ find_font_bis (display dis, tree t) {
   if (is_tuple (t, "truetype", 3))
     return tt_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 
+  if (is_tuple (t, "unicode", 3))
+    return unicode_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
+
   if (is_tuple (t, "x", 3))
     return x_font (dis, as_string (t[1]), as_int (t[2]), as_int (t[3]));
 

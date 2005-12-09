@@ -59,4 +59,6 @@
     ((ms-verdana rm bold italic $s $d) (truetype verdanaz $s $d))
     ((ms-verdana rm bold $a $s $d) (truetype verdanab $s $d))
     ((ms-verdana rm $a italic $s $d) (truetype verdanai $s $d))
-    ((ms-verdana rm $a $b $s $d) (truetype verdana $s $d))))
+    ((ms-verdana rm $a $b $s $d) (truetype verdana $s $d))
+
+    ((fireflysung $v $a $b $s $d) (unicode fireflysung $s $d))))
