@@ -168,20 +168,41 @@ convert_from_cork (string input, string to) {
 
 string
 utf8_to_cork (string input) {
-  converter conv = load_converter ("UTF-8","Cork");
-  return apply (conv,input);  
+  converter conv= load_converter ("UTF-8", "Cork");
+  int start, i, n= N(input);
+  string output;
+  for (i=0; i<n; ) {
+    start= i;
+    unsigned int code= decode_from_utf8 (input, i);
+    string s= input (start, i);
+    string r= apply (conv, s);
+    if (r == s && code >= 256)
+      r= "<#" * as_hexadecimal (code) * ">";
+    output << r;
+  }
+  return output;
 }
 
 string
 cork_to_utf8 (string input) {
-  converter conv = load_converter ("Cork","UTF-8");
-  return apply (conv,input);
+  converter conv= load_converter ("Cork", "UTF-8");
+  int start= 0, i, n= N(input);
+  string r;
+  for (i=0; i<n; i++)
+    if (input[i] == '<' && i+1<n && input[i+1] == '#') {
+      r << apply (conv, input (start, i));
+      start= i= i+2;
+      while (i<n && input[i] != '>') i++;
+      r << encode_as_utf8 (from_hexadecimal (input (start, i)));
+      start= i+1;
+    }
+  return r * apply (conv, input (start, n));
 }
 
 string
 utf8_to_html (string input) {
   converter conv = load_converter ("UTF-8", "HTML");
-  string s = apply (conv,input);
+  string s = apply (conv, input);
   return utf8_to_hex_entities(s);
 }
 
@@ -508,8 +529,68 @@ encode_as_utf8 (unsigned int code) {
   else return "";
 }
 
+unsigned int
+decode_from_utf8 (string s, int& i) {
+  unsigned char c = s[i];
+  if ((0x80 & c) == 0) {
+    // 0x0ddddddd
+    i++;
+    return (unsigned int) c;
+  }
+  unsigned int code;
+  int trail;
+  if ((0xE0 & c) == 0xC0) {
+    // 0x110ddddd 0x10dddddd
+    trail = 1;
+    code = c & 0x1F;
+  }
+  else if ((0xF0 & c) == 0xE0) {
+    // 0x1110dddd 0x10dddddd 0x10dddddd
+    trail = 2;
+    code = c & 0x0F;
+  }
+  else if ((0xF8 & c) == 0xF0) {
+    // 0x11110dddd 0x10dddddd 0x10dddddd 0x10dddddd
+    trail = 3;
+    code = c & 0x07;
+  }
+  else {
+    // failsafe
+    //cout << "failsafe: " << c << " (" << (unsigned int)(c) << ")\n";
+    i++;
+    return (unsigned int) c;
+  }
+  for (/*noop*/; trail > 0; trail--) {
+    // Garbage in, garbage out. Do not resync when input is bad.
+    i++;
+    c = s[i];
+    code = (code << 6) | (c & 0x3F);
+  }
+  i++;
+  return code;
+}
+
 string
 utf8_to_hex_entities (string s) {
+  string result;
+  int i, n= N(s);
+  for (i=0; i<n; ) {
+    unsigned char c = s[i];
+    if ((0x80 & c) == 0 || ((0xF8 & c) == 0xF8)) {
+      result << c;
+      i++;
+    }
+    else {
+      unsigned int code= decode_from_utf8 (s, i);
+      string hex= as_hexadecimal (code);
+      while (N(hex) < 4) hex = "0" * hex;
+      //cout << "entity: " << hex << " (" << code << ")\n";
+      result << "&#x" << hex << ";";
+    }
+  }
+  return result;
+
+  /*
   string result;
   const int n = N(s);
   int i;
@@ -544,7 +625,7 @@ utf8_to_hex_entities (string s) {
       result << c;
       continue;
     }
-    for (/*noop*/; trail > 0; trail--) {
+    for (; trail > 0; trail--) {
       // Garbage in, garbage out. Do not resync when input is bad.
       i++;
       c = s[i];
@@ -556,4 +637,5 @@ utf8_to_hex_entities (string s) {
     result << "&#x" << hex << ";";
   }
   return result;
+  */
 }
