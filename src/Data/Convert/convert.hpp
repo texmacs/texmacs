@@ -50,7 +50,7 @@ tree   scheme_to_tree (string s);
 tree   scheme_document_to_tree (string s);
 
 /*** Verbatim ***/
-string tree_to_verbatim (tree t, bool pritty= false);
+string tree_to_verbatim (tree t, bool pritty= false, string enc= "default");
 tree   verbatim_to_tree (string s);
 tree   verbatim_document_to_tree (string s);
 

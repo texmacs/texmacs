@@ -217,7 +217,8 @@ public:
   virtual double   get_env_double (string var_name) = 0;
   virtual double   get_init_double (string var_name) = 0;
   virtual language get_env_language () = 0;
-  virtual tree     exec_texmacs (tree t, path p= 0) = 0;
+  virtual tree     exec_texmacs (tree t, path p) = 0;
+  virtual tree     exec_texmacs (tree t) = 0;
   virtual tree     exec_html (tree t, path p) = 0;
   virtual tree     exec_html (tree t) = 0;
   virtual tree     exec_latex (tree t, path p) = 0;

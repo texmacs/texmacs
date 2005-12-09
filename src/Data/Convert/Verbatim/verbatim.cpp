@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "convert.hpp"
+#include "converter.hpp"
 #include "vars.hpp"
 #include "drd_std.hpp"
 
@@ -18,52 +19,67 @@
 * Verbatim input
 ******************************************************************************/
 
-void
-tree_to_verbatim (string& buf, tree t, bool pretty) {
+static void
+tree_to_verbatim (string& buf, tree t, bool pretty, string enc) {
   if (is_atomic (t)) {
-    string s= tm_decode (t->label);
-    if (pretty) {
-      int i, i0=0, j, n=N(s), l, k=N(buf);
-      for (l=0; l<k; l++)
-	if (buf[k-1-l] == '\n') break;
-      for (i=0; i<n; i++)
-	if (s[i] == ' ') {
-	  for (j=i+1; j<n; j++)
-	    if (s[j] == ' ') break;
-	  if (l+j-i0 > 78) {
-	    buf << '\n';
-	    l=0; i0=i+1;
-	  }
-	  else buf << s[i];
-	}
-	else buf << s[i];
-    }
-    else buf << s;
+    string s;
+    if (enc == "utf-8") s= cork_to_utf8 (t->label);
+    else s= tm_decode (t->label);
+    buf << s;
+  }
+  else if (is_func (t, SURROUND, 3)) {
+    tree_to_verbatim (buf, t[0], pretty, enc);
+    tree_to_verbatim (buf, t[2], pretty, enc);
+    tree_to_verbatim (buf, t[1], pretty, enc);
   }
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (std_drd->is_accessible_child (t, i)) {
 	if (is_document (t) && (i>0)) {
-#ifdef OS_WIN32
 	  buf << "\n";
 	  if (pretty) buf << "\n";
-#else
-	  buf << "\r\n";
-	  if (pretty) buf << "\r\n";
-#endif
 	}
-	tree_to_verbatim (buf, t[i], pretty);
+	tree_to_verbatim (buf, t[i], pretty, enc);
       }
   }
 }
 
 string
-tree_to_verbatim (tree t, bool pretty) {
+unix_to_dos (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == '\n') r << "\r\n";
+    else r << s[i];
+  return r;
+}
+
+string
+tree_to_verbatim (tree t, bool pretty, string enc) {
   if (!is_snippet (t)) t= extract (t, "body");
   string buf;
-  tree_to_verbatim (buf, t, pretty);
+  tree_to_verbatim (buf, t, pretty, enc);
+  if (pretty) {
+    int i= 0, n= N(buf);
+    while (i<n) {
+      int start= i;
+      while (i<n && buf[i]!='\n') i++;
+      while (i-start > 78) {
+	int mid= start+78;
+	while (mid>start && buf[mid] != ' ') mid--;
+	if (mid<=start) while (mid<i && buf[mid] != ' ') mid++;
+	if (mid<i) { buf[mid]= '\n'; start= mid+1; }
+	else break;
+      }
+      if (i<n) i++;
+    }
+  }
+#ifdef OS_WIN32
+  return unix_to_dos (buf);
+#else
   return buf;
+#endif
 }
 
 /******************************************************************************

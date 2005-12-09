@@ -129,6 +129,7 @@
 (lazy-format (convert html init-html) html)
 (lazy-format (convert images init-images)
 	     postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
+(lazy-define (convert rewrite init-rewrite) texmacs->verbatim)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex textm) textm-finalize)

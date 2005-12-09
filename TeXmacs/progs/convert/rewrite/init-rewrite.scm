@@ -91,3 +91,14 @@
 
 (converter texmacs-tree verbatim-snippet
   (:function texmacs->verbatim))
+
+(tm-define (texmacs->verbatim x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
+	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "iso-8859-1")))
+    (cpp-texmacs->verbatim x wrap? enc)))
+
+(converter texmacs-tree verbatim-document
+  (:function-with-options texmacs->verbatim)
+  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:encoding" "utf-8"))
