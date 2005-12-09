@@ -1387,7 +1387,7 @@
   (abstract (,tmtex-std-env 1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
-	notation conjecture remark note example exercise warning
+	notation conjecture remark note example exercise problem warning
 	convention quote-env quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
