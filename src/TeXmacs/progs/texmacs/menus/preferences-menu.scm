@@ -163,7 +163,13 @@
 	    (toggle ("Use catcode definitions in preamble"
 		     "texmacs->latex:use-catcodes"))
 	    (toggle ("Allow for macro definitions in preamble"
-		     "texmacs->latex:use-macros"))))
+		     "texmacs->latex:use-macros")))
+	(-> "TeXmacs -> Verbatim"
+	    (toggle ("Wrap lines"
+		     "texmacs->verbatim:wrap"))
+	    (enum ("Encoding" "texmacs->verbatim:encoding")
+		  ("Iso-8859-1" "iso-8859-1")
+		  ("Utf-8" "utf-8"))))
     (enum ("Security" "security")
 	  ("Accept no scripts" "accept no scripts")
 	  ("Prompt on scripts" "prompt on scripts")

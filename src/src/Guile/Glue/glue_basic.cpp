@@ -1197,13 +1197,17 @@ tmg_scheme_snippet_2texmacs (SCM arg1) {
 }
 
 SCM
-tmg_texmacs_2verbatim (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "texmacs->verbatim");
+tmg_cpp_texmacs_2verbatim (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "cpp-texmacs->verbatim");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "cpp-texmacs->verbatim");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "cpp-texmacs->verbatim");
 
   tree in1= scm_to_tree (arg1);
+  bool in2= scm_to_bool (arg2);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  string out= tree_to_verbatim (in1);
+  string out= tree_to_verbatim (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return string_to_scm (out);
@@ -2616,7 +2620,7 @@ initialize_glue_basic () {
   gh_new_procedure ("texmacs->scheme", (FN) tmg_texmacs_2scheme, 1, 0, 0);
   gh_new_procedure ("scheme->texmacs", (FN) tmg_scheme_2texmacs, 1, 0, 0);
   gh_new_procedure ("scheme-snippet->texmacs", (FN) tmg_scheme_snippet_2texmacs, 1, 0, 0);
-  gh_new_procedure ("texmacs->verbatim", (FN) tmg_texmacs_2verbatim, 1, 0, 0);
+  gh_new_procedure ("cpp-texmacs->verbatim", (FN) tmg_cpp_texmacs_2verbatim, 3, 0, 0);
   gh_new_procedure ("verbatim-snippet->texmacs", (FN) tmg_verbatim_snippet_2texmacs, 1, 0, 0);
   gh_new_procedure ("verbatim->texmacs", (FN) tmg_verbatim_2texmacs, 1, 0, 0);
   gh_new_procedure ("parse-latex", (FN) tmg_parse_latex, 1, 0, 0);

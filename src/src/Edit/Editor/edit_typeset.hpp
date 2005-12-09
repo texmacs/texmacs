@@ -67,6 +67,7 @@ public:
 
   tree     exec (tree t, hashmap<string,tree> env, bool expand_refs= true);
   tree     exec_texmacs (tree t, path p);
+  tree     exec_texmacs (tree t);
   tree     exec_html (tree t, path p);
   tree     exec_html (tree t);
   tree     exec_latex (tree t, path p);

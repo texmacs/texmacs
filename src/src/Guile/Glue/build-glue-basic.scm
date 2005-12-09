@@ -114,7 +114,7 @@
   (texmacs->scheme tree_to_scheme (string tree))
   (scheme->texmacs scheme_document_to_tree (tree string))
   (scheme-snippet->texmacs scheme_to_tree (tree string))
-  (texmacs->verbatim tree_to_verbatim (string tree))
+  (cpp-texmacs->verbatim tree_to_verbatim (string tree bool string))
   (verbatim-snippet->texmacs verbatim_to_tree (tree string))
   (verbatim->texmacs verbatim_document_to_tree (tree string))
   (parse-latex parse_latex (tree string))

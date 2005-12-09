@@ -308,6 +308,11 @@ edit_typeset_rep::exec_texmacs (tree t, path p) {
 }
 
 tree
+edit_typeset_rep::exec_texmacs (tree t) {
+  return exec_texmacs (t, rp * 0);
+}
+
+tree
 edit_typeset_rep::exec_html (tree t, path p) {
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
