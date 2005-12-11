@@ -204,9 +204,27 @@
 	((== x var) 1)
 	(else 0)))
 
+(define (cas-coefficient x)
+  (cond ((number? x) x)
+	((and (func? x '*) (pair? (cdr x)) (number? (cadr x))) (cadr x))
+	(else 1)))
+
+(define (cas-monomial x)
+  (cond ((number? x) 1)
+	((and (func? x '*) (pair? (cdr x)) (number? (cadr x)))
+	 (cond ((null? (cddr x)) 1)
+	       ((null? (cdddr x)) (caddr x))
+	       (else (cons '* (cddr x)))))
+	(else x)))
+
 (tm-define (cas-term<=? x y vars)
   "Order @x and @y accordings degrees in variables in the list @vars"
-  (if (null? vars) (cas-sum<=? x y)
+  (if (null? vars)
+      (let* ((mx (cas-monomial x))
+	     (my (cas-monomial y))
+	     (cx (cas-coefficient x))
+	     (cy (cas-coefficient y)))
+	(if (== mx my) (<= cx cy) (cas-sum<=? mx my)))
       (let* ((dx (cas-degree x (car vars)))
 	     (dy (cas-degree y (car vars))))
 	(if (== dx dy)
@@ -244,7 +262,7 @@
 (define (cas-simplify-constants-sub l op neu)
   (cond ((null? l) '())
 	((== (car l) neu) (cas-simplify-constants-sub (cdr l) op neu))
-	((== (car l) 0) '()) ;; only occurs for multiplication
+	((== (car l) 0) '(0)) ;; only occurs for multiplication
 	((null? (cdr l)) l)
 	((and (cas->number (car l)) (cas->number (cadr l)))
 	 (cas-simplify-constants-sub
