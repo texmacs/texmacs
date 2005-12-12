@@ -1214,26 +1214,34 @@ tmg_cpp_texmacs_2verbatim (SCM arg1, SCM arg2, SCM arg3) {
 }
 
 SCM
-tmg_verbatim_snippet_2texmacs (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "verbatim-snippet->texmacs");
+tmg_cpp_verbatim_snippet_2texmacs (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-verbatim-snippet->texmacs");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "cpp-verbatim-snippet->texmacs");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "cpp-verbatim-snippet->texmacs");
 
   string in1= scm_to_string (arg1);
+  bool in2= scm_to_bool (arg2);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= verbatim_to_tree (in1);
+  tree out= verbatim_to_tree (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
 }
 
 SCM
-tmg_verbatim_2texmacs (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "verbatim->texmacs");
+tmg_cpp_verbatim_2texmacs (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "cpp-verbatim->texmacs");
+  SCM_ASSERT_BOOL (arg2, SCM_ARG2, "cpp-verbatim->texmacs");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "cpp-verbatim->texmacs");
 
   string in1= scm_to_string (arg1);
+  bool in2= scm_to_bool (arg2);
+  string in3= scm_to_string (arg3);
 
   // SCM_DEFER_INTS;
-  tree out= verbatim_document_to_tree (in1);
+  tree out= verbatim_document_to_tree (in1, in2, in3);
   // SCM_ALLOW_INTS;
 
   return tree_to_scm (out);
@@ -2621,8 +2629,8 @@ initialize_glue_basic () {
   gh_new_procedure ("scheme->texmacs", (FN) tmg_scheme_2texmacs, 1, 0, 0);
   gh_new_procedure ("scheme-snippet->texmacs", (FN) tmg_scheme_snippet_2texmacs, 1, 0, 0);
   gh_new_procedure ("cpp-texmacs->verbatim", (FN) tmg_cpp_texmacs_2verbatim, 3, 0, 0);
-  gh_new_procedure ("verbatim-snippet->texmacs", (FN) tmg_verbatim_snippet_2texmacs, 1, 0, 0);
-  gh_new_procedure ("verbatim->texmacs", (FN) tmg_verbatim_2texmacs, 1, 0, 0);
+  gh_new_procedure ("cpp-verbatim-snippet->texmacs", (FN) tmg_cpp_verbatim_snippet_2texmacs, 3, 0, 0);
+  gh_new_procedure ("cpp-verbatim->texmacs", (FN) tmg_cpp_verbatim_2texmacs, 3, 0, 0);
   gh_new_procedure ("parse-latex", (FN) tmg_parse_latex, 1, 0, 0);
   gh_new_procedure ("parse-latex-document", (FN) tmg_parse_latex_document, 1, 0, 0);
   gh_new_procedure ("latex->texmacs", (FN) tmg_latex_2texmacs, 1, 0, 0);
