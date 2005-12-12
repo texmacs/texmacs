@@ -560,9 +560,9 @@ decode_from_utf8 (string s, int& i) {
     i++;
     return (unsigned int) c;
   }
-  for (/*noop*/; trail > 0; trail--) {
-    // Garbage in, garbage out. Do not resync when input is bad.
+  for (; trail > 0; trail--) {
     i++;
+    if (i >= N(s)) i= N(s)-1;
     c = s[i];
     code = (code << 6) | (c & 0x3F);
   }

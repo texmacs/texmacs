@@ -76,29 +76,44 @@
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-format verbatim
-  (:name "Verbatim")
-  (:suffix "txt"))
-
-(converter verbatim-document texmacs-tree
-  (:function verbatim->texmacs))
-
-(converter texmacs-tree verbatim-document
-  (:function texmacs->verbatim))
-
-(converter verbatim-snippet texmacs-tree
-  (:function verbatim-snippet->texmacs))
-
-(converter texmacs-tree verbatim-snippet
-  (:function texmacs->verbatim))
-
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
 	 (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "iso-8859-1")))
     (cpp-texmacs->verbatim x wrap? enc)))
 
+(tm-define (verbatim->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+    (cpp-verbatim->texmacs x wrap? enc)))
+
+(tm-define (verbatim-snippet->texmacs x . opts)
+  (if (list-1? opts) (set! opts (car opts)))
+  (let* ((wrap? (== (assoc-ref opts "verbatim->texmacs:wrap") "on"))
+	 (enc (or (assoc-ref opts "verbatim->texmacs:encoding") "iso-8859-1")))
+    (cpp-verbatim-snippet->texmacs x wrap? enc)))
+
+(define-format verbatim
+  (:name "Verbatim")
+  (:suffix "txt"))
+
+(converter verbatim-document texmacs-tree
+  (:function-with-options verbatim->texmacs)
+  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:encoding" "utf-8"))
+
+(converter verbatim-snippet texmacs-tree
+  (:function-with-options verbatim-snippet->texmacs)
+  (:option "verbatim->texmacs:wrap" "off")
+  (:option "verbatim->texmacs:encoding" "utf-8"))
+
 (converter texmacs-tree verbatim-document
+  (:function-with-options texmacs->verbatim)
+  (:option "texmacs->verbatim:wrap" "off")
+  (:option "texmacs->verbatim:encoding" "utf-8"))
+
+(converter texmacs-tree verbatim-snippet
   (:function-with-options texmacs->verbatim)
   (:option "texmacs->verbatim:wrap" "off")
   (:option "texmacs->verbatim:encoding" "utf-8"))

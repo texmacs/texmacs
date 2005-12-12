@@ -20,7 +20,7 @@
 ******************************************************************************/
 
 static void
-tree_to_verbatim (string& buf, tree t, bool pretty, string enc) {
+tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
   if (is_atomic (t)) {
     string s;
     if (enc == "utf-8") s= cork_to_utf8 (t->label);
@@ -28,9 +28,9 @@ tree_to_verbatim (string& buf, tree t, bool pretty, string enc) {
     buf << s;
   }
   else if (is_func (t, SURROUND, 3)) {
-    tree_to_verbatim (buf, t[0], pretty, enc);
-    tree_to_verbatim (buf, t[2], pretty, enc);
-    tree_to_verbatim (buf, t[1], pretty, enc);
+    tree_to_verbatim (buf, t[0], wrap, enc);
+    tree_to_verbatim (buf, t[2], wrap, enc);
+    tree_to_verbatim (buf, t[1], wrap, enc);
   }
   else {
     int i, n= N(t);
@@ -38,9 +38,9 @@ tree_to_verbatim (string& buf, tree t, bool pretty, string enc) {
       if (std_drd->is_accessible_child (t, i)) {
 	if (is_document (t) && (i>0)) {
 	  buf << "\n";
-	  if (pretty) buf << "\n";
+	  if (wrap) buf << "\n";
 	}
-	tree_to_verbatim (buf, t[i], pretty, enc);
+	tree_to_verbatim (buf, t[i], wrap, enc);
       }
   }
 }
@@ -56,11 +56,11 @@ unix_to_dos (string s) {
 }
 
 string
-tree_to_verbatim (tree t, bool pretty, string enc) {
+tree_to_verbatim (tree t, bool wrap, string enc) {
   if (!is_snippet (t)) t= extract (t, "body");
   string buf;
-  tree_to_verbatim (buf, t, pretty, enc);
-  if (pretty) {
+  tree_to_verbatim (buf, t, wrap, enc);
+  if (wrap) {
     int i= 0, n= N(buf);
     while (i<n) {
       int start= i;
@@ -99,33 +99,79 @@ un_special (string s) {
     }
     else if ((s[i] == '\b') && (N(r)>0) && (r[N(r)-1]!='\n'))
       r->resize (N(r)-1);
-#ifdef OS_WIN32
-    else if (s[i] == '\r');
-#endif
     else r << s[i];
   return r;
 }
 
+static string
+encode (string s, string enc) {
+  if (enc == "utf-8") return utf8_to_cork (s);
+  else return tm_encode (s);
+}
+
 tree
-verbatim_to_tree (string s) {
+verbatim_to_tree (string s, string enc) {
   int i, j;
   for (i=0; i<N(s); i++)
     if (s[i]=='\n') {
       tree t (DOCUMENT);
       for (i=0, j=0; i<N(s); i++)
 	if (s[i]=='\n') {
-	  t << tm_encode (un_special (s (j, i)));
+	  t << encode (un_special (s (j, i)), enc);
 	  j= i+1;
 	}
-      t << tm_encode (un_special (s (j, i)));
+      t << encode (un_special (s (j, i)), enc);
       return t;
     }
-  return tm_encode (un_special (s));
+  return encode (un_special (s), enc);
+}
+
+string
+dos_to_unix (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == '\r' && i+1<n && s[i+1] == '\n') { r << "\n"; i++; }
+    else r << s[i];
+  return r;
+}
+
+string
+mac_to_unix (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == '\r') r << "\n";
+    else r << s[i];
+  return r;
 }
 
 tree
-verbatim_document_to_tree (string s) {
-  tree t    = verbatim_to_tree (s);
+verbatim_to_tree (string s, bool wrap, string enc) {
+  s= mac_to_unix (dos_to_unix (s));
+  if (wrap) {
+    string r;
+    int i, n= N(s);
+    for (i=0; i<n; ) {
+      if (s[i] == '\n' || s[i] == ' ' || s[i] == '\t') {
+	int lf= 0;
+	while (i<n && (s[i] == '\n' || s[i] == ' ' || s[i] == '\t')) {
+	  if (s[i] == '\n') lf++;
+	  i++;
+	}
+	if (lf <= 1) r << " ";
+	else r << "\n";
+      }
+      else r << s[i++];
+    }
+    s= r;
+  }
+  return verbatim_to_tree (s, enc);
+}
+
+tree
+verbatim_document_to_tree (string s, bool wrap, string enc) {
+  tree t    = verbatim_to_tree (s, wrap, enc);
   tree init = tree (COLLECTION,
 		    tree (ASSOCIATE, LANGUAGE, "verbatim"),
 		    tree (ASSOCIATE, FONT_FAMILY, "tt"),
