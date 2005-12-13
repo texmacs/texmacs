@@ -121,8 +121,16 @@ oriental_language_rep::advance (string s, int& pos) {
     return &tp_blank_rep;
   }
 
-  while (pos<N(s) && s[pos] != ' ')
+  int begin= pos;
+  while (pos<N(s) && s[pos] != ' ') {
+    int start= pos;
     tm_char_forwards (s, pos);
+    string c= s (start, pos);
+    if (starts (c, "<#300") && N(c) == 7) {
+      if (start > begin) pos= start;
+      break;
+    }
+  }
   return &tp_normal_rep;
 }
 
