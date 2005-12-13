@@ -118,6 +118,11 @@ simplify_key_press (string key) {
 
 void
 edit_interface_rep::key_press (string key) {
+  if (contains_unicode_char (key)) {
+    if (input_mode == INPUT_NORMAL) insert_tree (key);
+    return;
+  }
+
   set_message ("", "");
   if (input_mode != INPUT_NORMAL)
     key= simplify_key_press (key);

@@ -135,11 +135,75 @@ x_window_rep::initialize () {
   if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
 
+  /*
+  unsigned long ic_mask= 0;
+  ic_ok= false;
+  if (dis->im_ok && dis->im_spot) {
+    XVaNestedList preedit_attr;
+    XPoint spot;
+    spot.x  =       0;
+    spot.y  =       dis->im_sz;
+    preedit_attr = XVaCreateNestedList (NULL,
+					XNSpotLocation, &spot,
+					XNFontSet, dis->im_fs,
+					NULL);
+    XVaNestedList status_attr;
+    XRectangle s_rect;
+    s_rect.x =      0;
+    s_rect.y =      400;
+    s_rect.width =  600;
+    s_rect.height = dis->im_sz;
+    status_attr = XVaCreateNestedList (NULL,
+				       XNArea, &s_rect,
+				       XNFontSet, dis->im_fs,
+				       NULL);
+    
+    ic= XCreateIC (dis->im,
+		   XNInputStyle, XIMPreeditPosition | XIMStatusArea,
+		   XNClientWindow, win,
+		   XNPreeditAttributes, preedit_attr,
+		   XNStatusAttributes, status_attr,
+		   NULL);
+
+    XFree (preedit_attr);
+    XFree (status_attr);
+  }
+  else if (dis->im_ok) {
+    ic= XCreateIC (dis->im,
+		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+		   XNClientWindow, win,
+		   NULL);
+  }
+  if (dis->im_ok) {
+    if (ic == NULL)
+      cout << "TeXmacs] Warning: couldn't create input context\n";
+    else {
+      ic_ok= true;
+      XGetICValues (ic, XNFilterEvents, &ic_mask, NULL);
+    }
+  }
+  */
+
+  unsigned long ic_mask= 0;
+  if (dis->im_ok) {
+    ic= XCreateIC (dis->im,
+		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+		   XNClientWindow, win,
+		   NULL);
+    if (ic == NULL)
+      cout << "TeXmacs] Warning: couldn't create input context\n";
+    else {
+      ic_ok= true;
+      XGetICValues (ic, XNFilterEvents, &ic_mask, NULL);
+    }
+  }
+
   XSelectInput (dpy, win,
 		ExposureMask | StructureNotifyMask |
 		SubstructureNotifyMask | FocusChangeMask |
 		PointerMotionMask | EnterWindowMask | LeaveWindowMask |
-		ButtonPressMask | ButtonReleaseMask | KeyPressMask);
+		ButtonPressMask | ButtonReleaseMask |
+		KeyPressMask | ic_mask);
 
   Atom wm_protocols     = XInternAtom(dpy, "WM_PROTOCOLS", 1);
   Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", 1);
@@ -181,6 +245,7 @@ x_window_rep::~x_window_rep () {
   XEvent report;
   while (XCheckWindowEvent (dpy, win, 0xffffffff, &report));
 
+  if (ic_ok) XDestroyIC (ic);
   Window_to_window->reset (win);
   nr_windows--;
   XDestroyWindow (dpy, win);
@@ -333,12 +398,14 @@ x_window_rep::key_event (string key) {
 
 void
 x_window_rep::focus_in_event () {
+  if (ic_ok) XSetICFocus (ic);
   has_focus= true;
   kbd_focus << emit_keyboard_focus (true);
 }
 
 void
 x_window_rep::focus_out_event () {
+  if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
   kbd_focus << emit_keyboard_focus (false);
 }
@@ -365,6 +432,8 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
 
 void
 x_window_rep::repaint_invalid_regions () {
+  //if (!nil (invalid_regions)) cout << invalid_regions << "\n";
+  //else { cout << "."; cout.flush (); }
   rectangles new_regions;
   if (!nil (invalid_regions)) {
     rectangle lub= least_upper_bound (invalid_regions);

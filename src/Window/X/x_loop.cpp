@@ -13,6 +13,7 @@
 #include "X/x_display.hpp"
 #include "X/x_window.hpp"
 #include "iterator.hpp"
+#include "converter.hpp"
 
 #ifdef OS_WIN32
 #include <sys/time.h>
@@ -67,41 +68,31 @@ x_display_rep::look_up_key (XKeyEvent* ev) {
   KeySym key= 0;
   //cout << ev->state << ", " << ev->keycode << LF;
 
-  /*
-  // decode non standard keys
-  if (ev->state >= 256) {
-    if ((ev->state&3)==0) key= XLookupKeysym (ev, 2);
-    else {
-      key= XLookupKeysym (ev, 3);
-      if (key==0) key= XLookupKeysym (ev, 2);
-    }
-  }
+  if (im_ok) {
+    x_window win= (x_window) Window_to_window[ev->window];
+    char str[256];
+    Status status;
+    int count = Xutf8LookupString (win->ic, (XKeyPressedEvent*) ev,
+				   str, 256, &key, &status);
+    string r (str, count);
+    r= utf8_to_cork (r);
+    if (contains_unicode_char (r)) return r;
 
-  // decode standard keys
-  if (key == 0) {
-    if ((ev->state&3)==0) key= XLookupKeysym (ev, 0);
-    else {
-      key= XLookupKeysym (ev, 1);
-      if (key==0) key= XLookupKeysym (ev, 0);
+    /*
+    if (im_spot) {
+      XVaNestedList preedit_attr;
+      XPoint spot;
+      spot.x = 0;
+      spot.y = im_sz;
+      preedit_attr= XVaCreateNestedList (NULL,
+					 XNSpotLocation, &spot,
+					 NULL);
+      XSetICValues (win->ic, XNPreeditAttributes, preedit_attr, NULL);
+      XFree (preedit_attr);
     }
+    */
   }
-
-  // special treatment for num-lock
-  string s= ((ev->state&3)? upper_key [key]: lower_key [key]);
-  if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) {
-    if (ev->state&16) {
-      if ((ev->state&3)==0) key= XLookupKeysym (ev, 1);
-      else {
-	key= XLookupKeysym (ev, 0);
-	if (key==0) key= XLookupKeysym (ev, 1);
-      }
-      s= ((ev->state&3)? upper_key [key]: lower_key [key]);
-    }
-    if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
-  }
-  */
-
-  XLookupString (ev, NULL, 0, &key, NULL);
+  else XLookupString (ev, NULL, 0, &key, NULL);
   string s= ((ev->state&3)? upper_key [key]: lower_key [key]);
   if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
 
@@ -192,8 +183,8 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
       XExposeEvent& ee= ev->xexpose;
       /*
       cout << "Expose: " << ee.x << "," << ee.y << ","
-	   << ee.x+ee.width << "," << ee.y+ee.height << "\n";
-	   */
+           << ee.x+ee.width << "," << ee.y+ee.height << "\n";
+      */
       win->invalidate_event (ee.x, ee.y, ee.x+ee.width, ee.y+ee.height);
       break;
     }
@@ -286,6 +277,8 @@ x_display_rep::process_event (x_window win, XEvent* ev) {
       if (texmacs_time () - remote_time (ev->xkey.time) < 100 ||
 	  (kbd_count & 15) == 0)
 	request_partial_redraw= true;
+      //cout << "key   : " << key << "\n";
+      //cout << "redraw: " << request_partial_redraw << "\n";
       if (N(key)>0) win->key_event (key);
       break;
     }
@@ -352,6 +345,7 @@ x_display_rep::event_loop () {
     XEvent report;
     if (XPending (dpy) > 0) {
       XNextEvent (dpy, &report);
+      if (XFilterEvent (&report, (Window) NULL) == True) continue;
       //if (string (event_name[report.type]) != "No expose")
       //cout << "Event: " << event_name[report.type] << "\n";
       x_window win= (x_window) Window_to_window[report.xany.window];
