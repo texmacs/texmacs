@@ -96,6 +96,7 @@
   (string-minus string_minus (string string string))
   (escape-generic escape_generic (string string))
   (escape-verbatim escape_verbatim (string string))
+  (string-convert convert (string string string string))
   (utf8->cork utf8_to_cork (string string))
   (cork->utf8 cork_to_utf8 (string string))
   (utf8->html utf8_to_html (string string))

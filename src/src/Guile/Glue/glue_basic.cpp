@@ -985,6 +985,23 @@ tmg_escape_verbatim (SCM arg1) {
 }
 
 SCM
+tmg_string_convert (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-convert");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-convert");
+  SCM_ASSERT_STRING (arg3, SCM_ARG3, "string-convert");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+  string in3= scm_to_string (arg3);
+
+  // SCM_DEFER_INTS;
+  string out= convert (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_utf8_2cork (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "utf8->cork");
 
@@ -2612,6 +2629,7 @@ initialize_glue_basic () {
   gh_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
   gh_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   gh_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
+  gh_new_procedure ("string-convert", (FN) tmg_string_convert, 3, 0, 0);
   gh_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
   gh_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
   gh_new_procedure ("utf8->html", (FN) tmg_utf8_2html, 1, 0, 0);
