@@ -117,7 +117,7 @@ oriental_language_rep::advance (string s, int& pos) {
   if (s[pos]==' ') {
     pos++;
     if ((pos == N(s)) || (!is_punctuation (s[pos])))
-      return &tp_dspace_rep;
+      return &tp_space_rep;
     return &tp_blank_rep;
   }
 
