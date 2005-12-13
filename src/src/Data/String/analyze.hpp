@@ -69,6 +69,7 @@ int    from_hexadecimal (string s);
 
 string tm_encode (string s);
 string tm_decode (string s);
+string tm_var_encode (string s);
 string tm_correct (string s);
 void   tm_char_forwards (string s, int& pos);
 void   tm_char_backwards (string s, int& pos);

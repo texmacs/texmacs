@@ -221,8 +221,10 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   if (key == "return") { ok= true; call_back (); }
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) { ok= false; call_back (); }
-  else if ((key == "left") || (key == "C-b")) { if (pos>0) pos--; }
-  else if ((key == "right") || (key == "C-f")) { if (pos<N(s)) pos++; }
+  else if ((key == "left") || (key == "C-b")) {
+    if (pos>0) tm_char_backwards (s, pos); }
+  else if ((key == "right") || (key == "C-f")) {
+    if (pos<N(s)) tm_char_forwards (s, pos); }
   else if ((key == "home") || (key == "C-a")) pos=0;
   else if ((key == "end") || (key == "C-e")) pos=N(s);
   else if ((key == "up") || (key == "C-p")) {
@@ -241,13 +243,17 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
   else if (key == "C-k") s= s (0, pos);
   else if ((key == "C-d") || (key == "delete")) {
-    if ((pos<N(s)) && (N(s)>0))
-      s= s (0, pos) * s (pos+1, N(s));
+    if ((pos<N(s)) && (N(s)>0)) {
+      int end= pos;
+      tm_char_forwards (s, end);
+      s= s (0, pos) * s (end, N(s));
+    }
   }
   else if (key == "backspace" || key == "S-backspace") {
     if (pos>0) {
-      pos--;
-      s= s (0, pos) * s (pos+1, N(s));
+      int end= pos;
+      tm_char_backwards (s, pos);
+      s= s (0, pos) * s (end, N(s));
     }
   }
   else if (key == "C-backspace") {
@@ -255,9 +261,12 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     pos= 0;
   }
   else {
-    if (N(key)!=1) return;
-    int i (key[0]);
-    if ((i>=0) && (i<32)) return;
+    if (starts (key, "<#"));
+    else {
+      if (N(key)!=1) return;
+      int i (key[0]);
+      if ((i>=0) && (i<32)) return;
+    }
     s= s (0, pos) * key * s(pos, N(s));
     pos += N(key);
   }
@@ -271,14 +280,17 @@ input_widget_rep::handle_mouse (mouse_event ev) {
   font   fn  = dis->default_font ();
 
   if (type == "press-left") {
-    metric ex;
-    SI old= 0;
-    for (pos=1; pos<=N(s); pos++) {
-      fn->var_get_extents (s (0, pos), ex);
-      if (((old+ ex->x2+ dw- ex->x1) >> 1) > (x*SHRINK+ scroll)) break;
-      old= ex->x2+ dw- ex->x1;
+    if (N(s)>0) {
+      metric ex;
+      SI old= 0;
+      pos=0; tm_char_forwards (s, pos);
+      for (; pos<=N(s); tm_char_forwards (s, pos)) {
+	fn->var_get_extents (s (0, pos), ex);
+	if (((old+ ex->x2+ dw- ex->x1) >> 1) > (x*SHRINK+ scroll)) break;
+	old= ex->x2+ dw- ex->x1;
+      }
+      tm_char_backwards (s, pos);
     }
-    pos--;
     win->set_keyboard_focus (this);
     this << emit_invalidate_all ();
   }

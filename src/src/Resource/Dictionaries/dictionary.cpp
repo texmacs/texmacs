@@ -74,9 +74,8 @@ string
 dictionary_rep::translate (string s) {
   int i, n=N(s);
   if (n==0) return s;
-  for (i=0; i<n; i++)
-    if (is_iso_alpha (s[i]) || (s[i]=='|') || (s[i]==' ') ||
-	((i>0) && (s[i]=='#'))) break;
+  for (i=0; i<n; tm_char_forwards (s, i))
+    if (is_iso_alpha (s[i]) || (s[i]==' ') || ((i>0) && (s[i]=='#'))) break;
   if (i==n) {
     if (s[0]=='#') return " " * translate (s (1,n));
     if (s[n-1]=='#') return translate (s (0,n-1)) * " ";
@@ -86,34 +85,19 @@ dictionary_rep::translate (string s) {
     return s;
   }
   if (i>0) return translate (s (0, i)) * translate (s (i, n));
-  for (i=0; i<n; i++)
-    if ((!is_iso_alpha (s[i])) && (s[i]!='|') && (s[i]!=' ')) break;
+  for (i=0; i<n; tm_char_forwards (s, i))
+    if ((!is_iso_alpha (s[i])) && (s[i]!=' ')) break;
   if (i<n) return translate (s (0, i)) * translate (s (i, n));
-  for (i=0; i<n; i++) if (s[i]!=' ') break;
+  for (i=0; i<n; tm_char_forwards (s, i)) if (s[i]!=' ') break;
   if (i==n) return s;
   if (i>0) return s (0, i) * translate (s (i, n));
   for (i=n-1; i>=0; i--) if (s[i]!=' ') break;
   if (i<n-1) return translate (s (0, i+1)) * s (i+1, n);
 
-  for (i=n-1; i>=0; i--)
-    if (s[i]=='|') break;
-  string radical= s (0, i<0? i+1: i);
-  string word   = s (i+1, n);
-
-  if (N(word)==0) return "";
-  bool flag= is_upcase (word[0]);
-  string source= locase_first (word);
-  if (N(radical)>0) source= locase_all (radical) * "|" * source;
-
-  if (!table->contains (source)) {
-    if (N(radical)>0) {
-      for (i=0; i<n; i++)
-	if (s[i]=='|') break;
-      return translate (s (i+1, n));
-    }
-    return word;
-  }
-
+  if (N(s)==0) return "";
+  bool flag= is_upcase (s[0]);
+  string source= locase_first (s);
+  if (!table->contains (source)) return s;
   string dest= table [source];
   if (flag) dest= upcase_first (dest);
   return dest;
