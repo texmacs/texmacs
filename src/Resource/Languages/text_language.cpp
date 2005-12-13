@@ -16,6 +16,10 @@
 #include "Languages/impl_language.hpp"
 #include "sys_utils.hpp"
 
+/******************************************************************************
+* Western text languages
+******************************************************************************/
+
 struct text_language_rep: language_rep {
   hashmap<string,string> H;
 
@@ -93,6 +97,56 @@ text_language_rep::hyphenate (
 }
 
 /******************************************************************************
+* Oriental languages
+******************************************************************************/
+
+struct oriental_language_rep: language_rep {
+  oriental_language_rep (string lan_name);
+  text_property advance (string s, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+};
+
+oriental_language_rep::oriental_language_rep (string lan_name):
+  language_rep (lan_name) {}
+
+text_property
+oriental_language_rep::advance (string s, int& pos) {
+  if (pos == N(s)) return &tp_normal_rep;
+
+  if (s[pos]==' ') {
+    pos++;
+    if ((pos == N(s)) || (!is_punctuation (s[pos])))
+      return &tp_dspace_rep;
+    return &tp_blank_rep;
+  }
+
+  while (pos<N(s) && s[pos] != ' ')
+    tm_char_forwards (s, pos);
+  return &tp_normal_rep;
+}
+
+array<int>
+oriental_language_rep::get_hyphens (string s) {
+  int i, n= N(s);
+  array<int> T (n-1);
+  for (i=0; i<n-1; i++)
+    T[i]= HYPH_INVALID;
+  for (i=0, tm_char_forwards (s, i); i<n; tm_char_forwards (s, i))
+    if (s[i] == '<')
+      T[i-1]= 0;
+  return T;
+}
+
+void
+oriental_language_rep::hyphenate (
+  string s, int after, string& left, string& right)
+{
+  left = s (0, after+1);
+  right= s (after+1, N(s));
+}
+
+/******************************************************************************
 * Miscellaneous language related routines
 ******************************************************************************/
 
@@ -100,8 +154,10 @@ string
 locale_to_language (string s) {
   if (N(s) > 5) s= s (0, 5);
   if (s == "en_GB") return "british";
+  if (s == "zh_TW") return "taiwanese";
   if (N(s) > 2) s= s (0, 2);
   if (s == "bg") return "bulgarian";
+  if (s == "zh") return "chinese";
   if (s == "cs") return "czech";
   if (s == "da") return "danish";
   if (s == "nl") return "dutch";
@@ -111,6 +167,8 @@ locale_to_language (string s) {
   if (s == "de") return "german";
   if (s == "hu") return "hungarian";
   if (s == "it") return "italian";
+  if (s == "ja") return "japanese";
+  if (s == "ko") return "korean";
   if (s == "pl") return "polish";
   if (s == "pt") return "portuguese";
   if (s == "ro") return "romanian";
@@ -127,6 +185,7 @@ language_to_locale (string s) {
   if (s == "american") return "en_US";
   if (s == "british") return "en_GB";
   if (s == "bulgarian") return "bg_BG";
+  if (s == "chinese") return "zh_CN";
   if (s == "czech") return "cs_CZ";
   if (s == "danish") return "da_DK";
   if (s == "dutch") return "nl_NL";
@@ -136,6 +195,8 @@ language_to_locale (string s) {
   if (s == "german") return "de_DE";
   if (s == "hungarian") return "hu_HU";
   if (s == "italian") return "it_IT";
+  if (s == "japanese") return "ja_JP";
+  if (s == "korean") return "ko_KR";
   if (s == "polish") return "pl_PL";
   if (s == "portuguese") return "pt_PT";
   if (s == "romanian") return "ro_RO";
@@ -143,6 +204,7 @@ language_to_locale (string s) {
   if (s == "slovene") return "sl_SI";
   if (s == "spanish") return "es_ES";
   if (s == "swedish") return "sv_SV";
+  if (s == "taiwanese") return "zh_TW";
   if (s == "ukrainian") return "uk_UA";
   return "en_US";
 }
@@ -204,6 +266,7 @@ text_language (string s) {
   if (s == "american") return new text_language_rep (s, "us");
   if (s == "british") return new text_language_rep (s, "ukenglish");
   if (s == "bulgarian") return new text_language_rep (s, "bulgarian");
+  if (s == "chinese") return new oriental_language_rep (s);
   if (s == "czech") return new text_language_rep (s, "czech");
   if (s == "danish") return new text_language_rep (s, "danish");
   if (s == "dutch") return new text_language_rep (s, "dutch");
@@ -213,6 +276,8 @@ text_language (string s) {
   if (s == "german") return new text_language_rep (s, "german");
   if (s == "hungarian") return new text_language_rep (s, "hungarian");
   if (s == "italian") return new text_language_rep (s, "italian");
+  if (s == "japanese") return new oriental_language_rep (s);
+  if (s == "korean") return new oriental_language_rep (s);
   if (s == "polish") return new text_language_rep (s, "polish");
   if (s == "portuguese") return new text_language_rep (s, "portuguese");
   if (s == "romanian") return new text_language_rep (s, "romanian");
@@ -220,6 +285,7 @@ text_language (string s) {
   if (s == "slovene") return new text_language_rep (s, "slovene");
   if (s == "spanish") return new text_language_rep (s, "spanish");
   if (s == "swedish") return new text_language_rep (s, "swedish");
+  if (s == "taiwanese") return new oriental_language_rep (s);
   if (s == "ukrainian") return new text_language_rep (s, "ukrainian");
   if (s == "verbatim") return new verb_language_rep ();
   cerr << "\nThe language was " << s << "\n";

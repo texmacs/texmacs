@@ -68,6 +68,7 @@
 	  ("German" "german")
 	  ("Hungarian" "hungarian")
 	  ("Italian" "italian")
+	  ("Japanese" "japanese")
 	  ("Polish" "polish")
 	  ("Portuguese" "portuguese")
 	  ("Romanian" "romanian")

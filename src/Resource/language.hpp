@@ -28,18 +28,20 @@ RESOURCE(language);
 #define TP_NORMAL     0
 #define TP_HYPH       1
 #define TP_SPACE      2
-#define TP_BLANK      3
-#define TP_PERIOD     4
-#define TP_OPERATOR   5
-#define TP_SHORTOP    6
-#define TP_OTHER      7
+#define TP_DSPACE     3
+#define TP_BLANK      4
+#define TP_PERIOD     5
+#define TP_OPERATOR   6
+#define TP_SHORTOP    7
+#define TP_OTHER      8
 
 #define SPC_NONE      0
 #define SPC_SPACE     1
-#define SPC_PERIOD    2
-#define SPC_TINY      3
-#define SPC_OPERATOR  4
-#define SPC_BIGOP     5
+#define SPC_DSPACE    2
+#define SPC_PERIOD    3
+#define SPC_TINY      4
+#define SPC_OPERATOR  5
+#define SPC_BIGOP     6
 
 #define HYPH_STD      10000
 #define HYPH_PANIC    1000000

@@ -74,6 +74,10 @@
    (begin
      (init-language "italian")
      (set-output-language "italian")))
+  ("Japanese"
+   (begin
+     (init-language "japanese")
+     (set-output-language "japanese")))
   ("Polish"
    (begin
      (init-language "polish")
@@ -297,6 +301,7 @@
       ("German" (init-language "german"))
       ("Hungarian" (init-language "hungarian"))
       ("Italian" (init-language "italian"))
+      ("Japanese" (init-language "japanese"))
       ("Polish" (init-language "polish"))
       ("Portuguese" (init-language "portuguese"))
       ("Romanian" (init-language "romanian"))
