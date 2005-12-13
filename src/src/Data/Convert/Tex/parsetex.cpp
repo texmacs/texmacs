@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "Tex/convert_tex.hpp"
+#include "converter.hpp"
 
 /******************************************************************************
 * The latex_parser structure
@@ -39,7 +40,8 @@
 ******************************************************************************/
 
 struct latex_parser {
-  latex_parser () {}
+  bool unicode;
+  latex_parser (bool unicode2): unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
   tree parse           (string s, int& i, string stop= "", bool change= false);
@@ -244,7 +246,11 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     }
     default:
-      if (is_iso_alpha (s[i])) {
+      if (unicode && ((unsigned char) s[i]) >= 128) {
+	unsigned int code= decode_from_utf8 (s, i);
+	t << tree (TUPLE, "\\#" * as_hexadecimal (code));
+      }
+      else if (!unicode && is_iso_alpha (s[i])) {
 	// If we encounter too much text in math mode, then return
 	int start= i;
 	while ((i<n) && is_iso_alpha (s[i])) i++;
@@ -697,10 +703,26 @@ latex_parser::parse (string s) {
   return t;
 }
 
+static bool
+japanese_tex (string& s) {
+  if (search_forwards (s, "documentclass{jarticle}")) {
+    replace (s, "documentclass{jarticle}", "documentclass{article}");
+    s= convert (s, "ISO-2022-JP", "UTF-8");
+    return true;
+  }
+  if (search_forwards (s, "documentclass{jbook}")) {
+    replace (s, "documentclass{jbook}", "documentclass{book}");
+    s= convert (s, "ISO-2022-JP", "UTF-8");
+    return true;
+  }
+  return false;
+}
+
 tree
 parse_latex (string s) {
   s= dos_to_better (s);
-  latex_parser ltx;
+  bool unicode= japanese_tex (s);
+  latex_parser ltx (unicode);
   return accented_to_Cork (ltx.parse (s));
 }
 
