@@ -646,6 +646,24 @@ tm_decode (string s) {
 }
 
 string
+tm_var_encode (string s) {
+  register int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++) {
+    if (s[i]=='<') {
+      if (i+1 < n && s[i+1] == '#') {
+	while (i<n && s[i] != '>') r << s[i++];
+	if (i<n) r << s[i];
+      }
+      else r << "<less>";
+    }
+    else if (s[i]=='>') r << "<gtr>";
+    else r << s[i];
+  }
+  return r;
+}
+
+string
 tm_correct (string s) {
   register int i;
   string r;
