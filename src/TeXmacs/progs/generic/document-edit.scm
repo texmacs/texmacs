@@ -89,7 +89,7 @@
     (init-env "language" lan)
     (if (and cyr-after (not cyr-before)) (init-env "font" "cyrillic"))
     (if (and orient-after (not orient-before))
-	(init-env "font" "fireflysung"))))
+	(init-env "font" (if (== lan "japanese") "ipa" "fireflysung")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main page layout

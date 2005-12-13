@@ -12,6 +12,7 @@
 
 #include "X/x_window.hpp"
 #include "X/x_font.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Displaying characters
@@ -151,10 +152,10 @@ x_display_rep::default_font_sub (bool tt) {
 	 (out_lan == "ukrainian")) &&
 	((ff == "cm") || (ff == "ec"))) {
       fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
-    if (((out_lan == "chinese") || (out_lan == "japanese") ||
-	 (out_lan == "korean")) &&
-	((ff == "cm") || (ff == "ec")))
+    if (out_lan == "chinese" || out_lan == "korean")
       return unicode_font (this, "fireflysung", sz, dpi);
+    if (out_lan == "japanese")
+      return unicode_font (this, "ipagui", sz, dpi);
     if (ff == "ec")
       return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
     if (ff == "la")
