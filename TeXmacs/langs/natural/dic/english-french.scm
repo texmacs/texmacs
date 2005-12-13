@@ -818,7 +818,7 @@
 ("modify table border" "bordure du tableau")
 ("modify table padding" "espacement autour du tableau")
 ("mongolian" "mongol")
-("more information about GNU TeXmacs can be found in the help" "pour plus de renseignements sur GNU TeXmacs, veuillez consulter le menu aide")
+("more information about GNU TeXmacs can be found in the Help" "pour plus de renseignements sur GNU TeXmacs, veuillez consulter le menu Aide")
 ("mosaic" "mosaïque")
 ("move down" "aller vers le bas")
 ("move object" "déplacer objet")

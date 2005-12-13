@@ -816,7 +816,7 @@
 ("modify table border" "rand tabel veranderen")
 ("modify table padding" "ruimte om tabel veranderen")
 ("mongolian" "mongools")
-("more information about GNU TeXmacs can be found in the help" "meer informatie over GNU TeXmacs kunt U vinden in het help")
+("more information about GNU TeXmacs can be found in the Help" "meer informatie over GNU TeXmacs kunt U vinden in het Help")
 ("mosaic" "mozaïek")
 ("move down" "ga naar beneden")
 ("move object" "verplaats object")
