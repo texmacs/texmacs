@@ -808,7 +808,7 @@
 ("modify table border" "")
 ("modify table padding" "")
 ("mongolian" "")
-("more information about GNU TeXmacs can be found in the help" "")
+("more information about GNU TeXmacs can be found in the Help" "")
 ("mosaic" "")
 ("move down" "")
 ("move object" "")
