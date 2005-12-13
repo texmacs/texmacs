@@ -251,6 +251,7 @@
   ("German" (make-with "language" "german"))
   ("Hungarian" (make-with "language" "hungarian"))
   ("Italian" (make-with "language" "italian"))
+  ("Japanese" (make-with "language" "japanese"))
   ("Polish" (make-with "language" "polish"))
   ("Portuguese" (make-with "language" "portuguese"))
   ("Romanian" (make-with "language" "romanian"))

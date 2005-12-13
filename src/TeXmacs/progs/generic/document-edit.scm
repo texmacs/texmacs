@@ -78,12 +78,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (init-language lan)
-  (let ((before (in? (tree->stree (get-init-tree "language"))
-		     '("bulgarian" "russian" "ukrainian")))
-	(after (in? lan '("bulgarian" "russian" "ukrainian"))))
-    (if (and before (not after)) (init-default "font"))
+  (let ((cyr-before (in? (tree->stree (get-init-tree "language"))
+			 '("bulgarian" "russian" "ukrainian")))
+	(cyr-after (in? lan '("bulgarian" "russian" "ukrainian")))
+	(orient-before (in? (tree->stree (get-init-tree "language"))
+			'("chinese" "japanese" "korean" "taiwanese")))
+	(orient-after (in? lan '("chinese" "japanese" "korean" "taiwanese"))))
+    (if (and cyr-before (not cyr-after)) (init-default "font"))
+    (if (and orient-before (not orient-after)) (init-default "font"))
     (init-env "language" lan)
-    (if (and after (not before)) (init-env "font" "cyrillic"))))
+    (if (and cyr-after (not cyr-before)) (init-env "font" "cyrillic"))
+    (if (and orient-after (not orient-before))
+	(init-env "font" "fireflysung"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main page layout

@@ -112,7 +112,10 @@
 (texmacs-modes
   (in-cyrillic% (in? (get-env "language")
 		     '("bulgarian" "russian" "ukrainian")) in-text%)
-  (in-bulgarian% (== (get-env "language") "bulgarian") in-text%)
+  (in-oriental% (in? (get-env "language")
+		     '("chinese" "japanese" "korean" "taiwanese")) in-text%)
+  (in-bulgarian% (== (get-env "language") "bulgarian") in-cyrillic%)
+  (in-chinese% (== (get-env "language") "chinese") in-oriental%)
   (in-czech% (== (get-env "language") "czech") in-text%)
   (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
@@ -122,6 +125,8 @@
   (in-german% (== (get-env "language") "german") in-text%)
   (in-hungarian% (== (get-env "language") "hungarian") in-text%)
   (in-italian% (== (get-env "language") "italian") in-text%)
+  (in-japanese% (== (get-env "language") "japanese") in-oriental%)
+  (in-korean% (== (get-env "language") "korean") in-oriental%)
   (in-polish% (== (get-env "language") "polish") in-text%)
   (in-portugese% (== (get-env "language") "portugese") in-text%)
   (in-romanian% (== (get-env "language") "romanian") in-text%)
@@ -129,6 +134,7 @@
   (in-slovene% (== (get-env "language") "slovene") in-text%)
   (in-spanish% (== (get-env "language") "spanish") in-text%)
   (in-swedish% (== (get-env "language") "swedish") in-text%)
+  (in-taiwanese% (== (get-env "language") "taiwanese") in-oriental%)
   (in-ukrainian% (== (get-env "language") "ukrainian") in-cyrillic%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

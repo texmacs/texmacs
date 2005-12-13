@@ -32,6 +32,9 @@ concater_rep::typeset_substring (string s, path ip, int pos) {
   case SPC_SPACE: \
     print (spc); \
     break; \
+  case SPC_DSPACE: \
+    print (space (spc->min << 1, spc->def << 1, spc->max << 1)); \
+    break; \
   case SPC_PERIOD: \
     print (spc+ extra); \
     break; \
