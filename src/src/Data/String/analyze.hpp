@@ -55,6 +55,7 @@ string old_xml_cdata_to_tm (string s);
 string tm_to_xml_name (string s);
 string xml_name_to_tm (string s);
 string xml_unspace (string s, bool first, bool last);
+bool   contains_unicode_char (string s);
 
 string roman_nr (int nr);
 string Roman_nr (int nr);

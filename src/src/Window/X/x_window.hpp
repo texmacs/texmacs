@@ -22,27 +22,29 @@
 ******************************************************************************/
 
 class x_window_rep: public x_drawable_rep, public window_rep {
-  widget       w;
-  x_display    dis;
-  char*        name;
-  string       the_name;
+  widget        w;
+  x_display     dis;
+  char*         name;
+  string        the_name;
 
-  Display*     dpy;
-  Window       win;
-  GC           gc;
-  rectangles   invalid_regions;
-  rectangles   clipping;
-  int          win_x, win_y;
-  int          win_w, win_h;
-  bool         win_flag;
+  Display*      dpy;
+  Window        win;
+  GC            gc;
+  rectangles    invalid_regions;
+  rectangles    clipping;
+  int           win_x, win_y;
+  int           win_w, win_h;
+  bool          win_flag;
 
-  widget_rep*  kbd_focus;
-  bool         has_focus;
+  bool          ic_ok;
+  XIC           ic;
+  widget_rep*   kbd_focus;
+  bool          has_focus;
 
-  bool         full_screen_flag;
-  Window       save_win;
-  int          save_x, save_y;
-  int          save_w, save_h;
+  bool          full_screen_flag;
+  Window        save_win;
+  int           save_x, save_y;
+  int           save_w, save_h;
 
 public:
 

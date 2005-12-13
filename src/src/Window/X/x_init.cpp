@@ -190,6 +190,91 @@ x_display_rep::initialize_colors () {
 }
 
 /******************************************************************************
+* Set up input method
+******************************************************************************/
+
+/*
+static XIMStyle
+getPossibleInputStyle (XIM im) {
+  static XIMStyle preedit[] = { XIMPreeditPosition, XIMPreeditNothing, NULL };
+  static XIMStyle status[] = { XIMStatusArea, XIMStatusNothing, NULL };
+  XIMStyles *myIMStyles;
+  int i, j, k;
+
+  XGetIMValues (im, XNQueryInputStyle, &myIMStyles, NULL);
+
+  i= 0;
+  while (preedit[i] != NULL) {
+    j= 0;
+    while (status[j] != NULL) {
+      for (k=0; k < myIMStyles->count_styles; k++) {
+        if ((preedit[i] & myIMStyles->supported_styles[k]) &&
+            (status[j] & myIMStyles->supported_styles[k]))
+          return myIMStyles->supported_styles[k];
+      }
+      j++;
+    }
+    i++;
+  }
+
+  return NULL;
+}
+
+void
+x_display_rep::initialize_input_method () {
+  im_ok= im_spot= false;
+  if (setlocale (LC_CTYPE, "") == NULL)
+    cerr << "TeXmacs] Warning: locale could not be set\n";
+  else {
+    if (!XSetLocaleModifiers (""))
+      cerr << "TeXmacs] Warning: could not set locale modifiers\n";
+    if (XSupportsLocale () == False)
+      cerr << "TeXmacs] Warning: locale is not supported\n";
+    else if ((im = XOpenIM (dpy, NULL, NULL, NULL)) == NULL)
+      cout << "TeXmacs] Warning: could not open input method\n";
+    else {
+      XIMStyle myIMStyle= getPossibleInputStyle (im);
+      if (myIMStyle == NULL)
+	cerr << "TeXmacs] Warning: input style not supported by your server\n";
+      else if ((myIMStyle & XIMPreeditPosition) &&
+	       (myIMStyle & XIMStatusArea))
+	{
+	  char **missing_list;
+	  int    missing_count;
+	  char  *def_string;
+	  im_sz= 14;
+	  im_fs= XCreateFontSet (dpy,
+				 "-*-*-*-R-Normal--14-130-75-75-*-*",
+				 &missing_list,
+				 &missing_count,
+				 &def_string);
+	  im_ok= im_spot= true;
+	}
+      else if ((myIMStyle & XIMPreeditNothing) &&
+	       (myIMStyle & XIMStatusNothing))
+	im_ok= true;
+    }
+  }
+}
+*/
+
+void
+x_display_rep::initialize_input_method () {
+  im_ok= false;
+  if (setlocale (LC_CTYPE, "") == NULL)
+    cerr << "TeXmacs] Warning: locale could not be set\n";
+  else {
+    if (!XSetLocaleModifiers (""))
+      cerr << "TeXmacs] Warning: could not set locale modifiers\n";
+    if (XSupportsLocale () == False)
+      cerr << "TeXmacs] Warning: locale is not supported\n";
+    else if ((im = XOpenIM (dpy, NULL, NULL, NULL)) == NULL)
+      cout << "TeXmacs] Warning: could not open input method\n";
+    else im_ok= true;
+  }
+}
+
+/******************************************************************************
 * Get xmodmap
 ******************************************************************************/
 
@@ -758,12 +843,14 @@ x_display_rep::x_display_rep (int argc2, char** argv2):
 
   //get_xmodmap ();
   initialize_colors ();
+  initialize_input_method ();
   initialize_keyboard_pointer ();
   out_lan= get_locale_language ();
   (void) default_font ();
 }
 
 x_display_rep::~x_display_rep () {
+  if (im_ok) XCloseIM (im);
   clear_selection ("primary");
   XFreeGC (dpy, gc);
   delete[] cmap;

@@ -96,6 +96,11 @@ public:
   int             depth;
   Colormap        cols;
   color*          cmap;
+  bool            im_ok;
+  XIM             im;
+  //bool            im_spot;
+  //int             im_sz;
+  //XFontSet        im_fs;
   list<widget>    grab_ptr;
   list<widget>    grab_kbd;
   unsigned int    state;
@@ -136,6 +141,7 @@ public:
   void  get_rgb (color col, int& r, int& g, int& b);
 
   /****************************** Keyboard ***********************************/
+  void initialize_input_method ();
   void insert_keysym (array<int>& a, int i, int j);
   void get_xmodmap ();
   void map (int key, string s);

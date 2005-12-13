@@ -509,6 +509,16 @@ xml_unspace (string s, bool first, bool last) {
   return r;
 }
 
+bool
+contains_unicode_char (string s) {
+  int i= 0, n= N(s);
+  while (i+1<n) {
+    if (s[i] == '<' && s[i+1] == '#') return true;
+    tm_char_forwards (s, i);
+  }
+  return false;
+}
+
 /******************************************************************************
 * Roman and alpha numbers
 ******************************************************************************/
