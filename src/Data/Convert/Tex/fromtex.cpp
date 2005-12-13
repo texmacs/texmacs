@@ -18,6 +18,7 @@
 
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
+static bool textm_japanese= false;
 
 /******************************************************************************
 * Preprocess preamble
@@ -208,6 +209,10 @@ latex_symbol_to_tree (string s) {
     if ((N(s) > 5) && (s(0,5) == "\\end-"))
       return tree (END, s(5,N(s)));
 
+    if (starts (s, "\\#") && s != "\\#") {
+      textm_japanese= true;
+      return "<" * s (1, N(s)) * ">";
+    }
     return tree (APPLY, s(1,N(s)));
   }
   if ((N(s) == 2) && (s[0] == '#') && (s[1] >= '0') && (s[1] <= '9'))
@@ -1266,6 +1271,7 @@ latex_to_tree (tree t1) {
   bool is_document= is_compound (t1, "!file", 1);
   if (is_document) t1= t1[0];
   textm_appendices= false;
+  textm_japanese  = false;
   command_type ("!em") = "false";
   // cout << "\n\nt1= " << t1 << "\n\n";
   tree t2= is_document? filter_preamble (t1): t1;
@@ -1291,7 +1297,17 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt11= " << t11 << "\n\n";
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
-  if (is_document)
+  if (is_document && textm_japanese) {
+    cout << "Japanese...\n";
+    tree init = tree (COLLECTION,
+		      tree (ASSOCIATE, LANGUAGE, "japanese"),
+		      tree (ASSOCIATE, FONT, "ipa"));
+    return tree (DOCUMENT,
+		 compound ("style", style),
+		 compound ("initial", init),
+		 compound ("body", t11));
+  }
+  else if (is_document)
     return tree (DOCUMENT, compound ("body", t11), compound ("style", style));
   else return t10;
 }
