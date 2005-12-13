@@ -40,6 +40,10 @@
     (receive
 	(tm-uses tm-init tm-preamble)
 	(latex-preamble doc-misc style lan init)
+      (if (and (== lan "japanese") (== style "article"))
+	  (set! style "jarticle"))
+      (if (and (== lan "japanese") (== style "book"))
+	  (set! style "jbook"))
       (output-verbatim "\\documentclass{" style "}\n")
       (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
@@ -253,6 +257,7 @@
 
 (define (texout x)
   (cond ((string? x) (output-text x))
+	((== (car x) '!widechar) (output-text (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!document) (texout-document (cdr x)))
 	((== (car x) '!paragraph) (texout-paragraph (cdr x)))

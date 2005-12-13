@@ -153,16 +153,16 @@ convert (string input, string from, string to) {
 string 
 convert_to_cork (string input, string from) {
   string str;
-  if (from!="UTF-8")
-    str = convert_using_iconv (input,from,"UTF-8");
+  if (from != "UTF-8")
+    str = convert_using_iconv (input, from, "UTF-8");
   return utf8_to_cork (str);
 }
 
 string 
 convert_from_cork (string input, string to) {
   string str = cork_to_utf8 (input);
-  if (to!=string("UTF-8"))
-    str = convert_using_iconv (str,"UTF-8",to);
+  if (to != "UTF-8")
+    str = convert_using_iconv (str, "UTF-8", to);
   return str;
 }
 
