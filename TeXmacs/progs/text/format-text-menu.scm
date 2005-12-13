@@ -124,6 +124,10 @@
 	      ("Devangari" (make-with "font" "devangari")))
 	  (if (font-exists-in-tt? "fireflysung")
 	      ("Fireflysung" (make-with "font" "fireflysung")))
+	  (if (font-exists-in-tt? "ipam")
+	      ("Ipa" (make-with "font" "ipa")))
+	  (if (font-exists-in-tt? "kochi-mincho")
+	      ("Kochi" (make-with "font" "kochi")))
 	  (if (url-exists-in-tex? "mxed.mf")
 	      (-> "Georgian"
 		  ("Mxedruli" (make-with "font" "mxedruli"))
