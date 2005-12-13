@@ -13,6 +13,7 @@
 #include "dictionary.hpp"
 #include "file.hpp"
 #include "convert.hpp"
+#include "converter.hpp"
 
 RESOURCE_CODE(dictionary);
 
@@ -44,6 +45,7 @@ dictionary_rep::load (url u) {
       {
 	string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
 	string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
+	if (to == "japanese") r= utf8_to_cork (r);
 	table (l)= r;
       }
 }
@@ -100,5 +102,6 @@ dictionary_rep::translate (string s) {
   if (!table->contains (source)) return s;
   string dest= table [source];
   if (flag) dest= upcase_first (dest);
+  if (N(dest)==0) return s;
   return dest;
 }
