@@ -15,7 +15,12 @@
 (texmacs-module (fonts fonts-ec))
 
 (set-font-rules
-  '(((roman rm medium right $s $d) (ec ecrm $s $d))
+  '(((modern $v $a $b $s $d)
+     (compound (ec (roman $v $a $b $s $d))
+	       (cmmi (tex cmmi $s $d))
+	       (any (ipa $v $a $b $s $d))))
+
+    ((roman rm medium right $s $d) (ec ecrm $s $d))
     ((roman rm medium slanted $s $d) (ec ecsl $s $d))
     ((roman rm medium italic $s $d) (ec ecti $s $d))
     ((roman rm medium left-slanted $s $d) (ec ecff $s $d))
