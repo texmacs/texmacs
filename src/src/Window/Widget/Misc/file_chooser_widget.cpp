@@ -475,7 +475,11 @@ file_chooser_widget_rep::file_chooser_widget_rep (
   cw3[5]= button_widget ("Ok", BUTTON_OK);
   cw3[6]= glue_widget (false, false, sep);
   cw3[7]= button_widget ("Cancel", BUTTON_CANCEL);
+#ifdef OS_DARWIN
+  cw3[8]= glue_widget (false, false, sep + 14*PIXEL);
+#else
   cw3[8]= glue_widget (false, false, sep);
+#endif
 #endif
 
   int cwn= 11;

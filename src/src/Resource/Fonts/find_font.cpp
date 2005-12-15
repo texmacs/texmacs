@@ -136,37 +136,6 @@ find_font_bis (display dis, tree t) {
     return error_font (fn);
   }
 
-  if (is_tuple (t, "numeric", 1)) {
-    font fn= find_font (dis, t[1]);
-    if (nil (fn)) return fn;
-    return subfont (fn, num_enc ());
-  }
-
-  if (is_tuple (t, "capital", 1)) {
-    font fn= find_font (dis, t[1]);
-    if (nil (fn)) return fn;
-    return subfont (fn, capital_enc ());
-  }
-
-  if (is_tuple (t, "alpha", 1)) {
-    font fn= find_font (dis, t[1]);
-    if (nil (fn)) return fn;
-    return subfont (fn, alpha_enc ());
-  }
-
-  if (is_tuple (t, "alpha-numeric", 1)) {
-    font fn= find_font (dis, t[1]);
-    if (nil (fn)) return fn;
-    return subfont (fn, alpha_num_enc ());
-  }
-
-  if (is_tuple (t, "join", 2)) {
-    font fn1= find_font (dis, t[1]);
-    font fn2= find_font (dis, t[2]);
-    if (nil (fn1) || nil (fn2)) return fn1;
-    return join (fn1, fn2);
-  }
-
   if (is_tuple (t, "math", 4) && is_tuple (t[1]) && is_tuple (t[2])) {
     font fn= find_font (dis, t[3]);
     if (nil (fn)) return fn;

@@ -102,7 +102,11 @@ inputs_list_widget_rep::inputs_list_widget_rep (
   buttons_w[2]= glue_widget (false, false, 5*PIXEL);
   buttons_w[3]= command_button (text_widget ("Ok", false, "english"),
 				inputs_list_command (this, n-1, n), true);
+#ifdef OS_DARWIN
+  buttons_w[4]= glue_widget (false, false, 19*PIXEL);
+#else
   buttons_w[4]= glue_widget (false, false, 5*PIXEL);
+#endif
 
   array<widget> main_w (5);
   array<string> main_n (5);

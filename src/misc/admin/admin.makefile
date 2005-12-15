@@ -16,11 +16,11 @@ mandir = /usr/local/man
 tmdir = TeXmacs
 tmtgz = TeXmacs-1.0.6
 tmrpm = TeXmacs-1.0.6-1
-tmorig = /home/vdhoeven/texmacs/src
-tmsrc = /home/vdhoeven/texmacs/src/TeXmacs
+tmorig = /Users/vanderhoeven/texmacs/src
+tmsrc = /Users/vanderhoeven/texmacs/src/TeXmacs
 tmbin = /usr/local/libexec/TeXmacs
 tmdata = /usr/local/share/TeXmacs
-so = so
+so = dylib
 os = gnu-linux
 
 MKDIR = mkdir -p

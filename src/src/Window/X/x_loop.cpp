@@ -77,20 +77,6 @@ x_display_rep::look_up_key (XKeyEvent* ev) {
     string r (str, count);
     r= utf8_to_cork (r);
     if (contains_unicode_char (r)) return r;
-
-    /*
-    if (im_spot) {
-      XVaNestedList preedit_attr;
-      XPoint spot;
-      spot.x = 0;
-      spot.y = im_sz;
-      preedit_attr= XVaCreateNestedList (NULL,
-					 XNSpotLocation, &spot,
-					 NULL);
-      XSetICValues (win->ic, XNPreeditAttributes, preedit_attr, NULL);
-      XFree (preedit_attr);
-    }
-    */
   }
   else XLookupString (ev, NULL, 0, &key, NULL);
   string s= ((ev->state&3)? upper_key [key]: lower_key [key]);

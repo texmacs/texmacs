@@ -12,6 +12,7 @@
 
 #include "edit_text.hpp"
 #include "tree_traverse.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Getting the point where to delete
@@ -133,9 +134,7 @@ edit_text_rep::remove_text (bool forward) {
   if (forward && is_atomic (t) && (last != rix)) {
     language lan= get_env_language ();
     int end= last;
-    if (lan->enc->token_forward (t->label, end))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::remove_text");
+    tm_char_forwards (t->label, end);
     remove (p * last, end-last);
     correct (path_up (p));
     return;
@@ -144,9 +143,7 @@ edit_text_rep::remove_text (bool forward) {
   if ((!forward) && is_atomic (t) && (last != 0)) {
     language lan= get_env_language ();
     int start= last;
-    if (lan->enc->token_backward (t->label, start))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::remove_text");
+    tm_char_backwards (t->label, start);
     remove (p * start, last-start);
     correct (path_up (p));
     return;

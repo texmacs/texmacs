@@ -17,7 +17,7 @@
 #define LANGUAGE_H
 #include "space.hpp"
 #include "array.hpp"
-#include "encoding.hpp"
+#include "resource.hpp"
 
 RESOURCE(language);
 
@@ -88,10 +88,8 @@ typedef text_property_rep* text_property;
 ******************************************************************************/
 
 struct language_rep: rep<language> {
-  string   lan_name;  // name of the language
-  encoding enc;       // the underlying encoding of the language
-
-  inline language_rep (string s, encoding enc= math_enc);
+  string lan_name;  // name of the language
+  inline language_rep (string s);
   virtual text_property advance (string s, int& pos) = 0;
   virtual array<int> get_hyphens (string s) = 0;
   virtual void hyphenate (string s, int after, string& l, string& r) = 0;
@@ -99,8 +97,8 @@ struct language_rep: rep<language> {
   virtual array<string> get_members (string s);
 };
 
-inline language_rep::language_rep (string s, encoding enc2):
-  rep<language> (s), enc(enc2) {}
+inline language_rep::language_rep (string s):
+  rep<language> (s) {}
 
 language text_language (string s);
 language math_language (string s);

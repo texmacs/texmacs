@@ -102,9 +102,7 @@ edit_interface_rep::compute_text_footer (tree st) {
   language lan= get_env_language ();
   int end  = last_item (tp);
   int start= end;
-  if (lan->enc->token_backward (st->label, start))
-    fatal_error ("bad cursor position in string",
-		 "edit_interface_rep::set_footer");
+  tm_char_backwards (st->label, start);
   r= st->label (start, end);
   if (r == "") r= "start";
   if (r == " ") r= "space";
