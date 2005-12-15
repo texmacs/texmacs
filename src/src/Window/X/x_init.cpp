@@ -14,6 +14,7 @@
 #include "language.hpp"
 #include "font.hpp"
 #include "analyze.hpp"
+#include <locale.h>
 
 #ifndef XK_ISO_Left_Tab
 #define	XK_ISO_Left_Tab 0xFE20
