@@ -135,55 +135,6 @@ x_window_rep::initialize () {
   if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
 
-  /*
-  unsigned long ic_mask= 0;
-  ic_ok= false;
-  if (dis->im_ok && dis->im_spot) {
-    XVaNestedList preedit_attr;
-    XPoint spot;
-    spot.x  =       0;
-    spot.y  =       dis->im_sz;
-    preedit_attr = XVaCreateNestedList (NULL,
-					XNSpotLocation, &spot,
-					XNFontSet, dis->im_fs,
-					NULL);
-    XVaNestedList status_attr;
-    XRectangle s_rect;
-    s_rect.x =      0;
-    s_rect.y =      400;
-    s_rect.width =  600;
-    s_rect.height = dis->im_sz;
-    status_attr = XVaCreateNestedList (NULL,
-				       XNArea, &s_rect,
-				       XNFontSet, dis->im_fs,
-				       NULL);
-    
-    ic= XCreateIC (dis->im,
-		   XNInputStyle, XIMPreeditPosition | XIMStatusArea,
-		   XNClientWindow, win,
-		   XNPreeditAttributes, preedit_attr,
-		   XNStatusAttributes, status_attr,
-		   NULL);
-
-    XFree (preedit_attr);
-    XFree (status_attr);
-  }
-  else if (dis->im_ok) {
-    ic= XCreateIC (dis->im,
-		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-		   XNClientWindow, win,
-		   NULL);
-  }
-  if (dis->im_ok) {
-    if (ic == NULL)
-      cout << "TeXmacs] Warning: couldn't create input context\n";
-    else {
-      ic_ok= true;
-      XGetICValues (ic, XNFilterEvents, &ic_mask, NULL);
-    }
-  }
-  */
-
   unsigned long ic_mask= 0;
   if (dis->im_ok) {
     ic= XCreateIC (dis->im,

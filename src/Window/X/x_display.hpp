@@ -98,9 +98,6 @@ public:
   color*          cmap;
   bool            im_ok;
   XIM             im;
-  //bool            im_spot;
-  //int             im_sz;
-  //XFontSet        im_fs;
   list<widget>    grab_ptr;
   list<widget>    grab_kbd;
   unsigned int    state;

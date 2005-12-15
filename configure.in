@@ -407,6 +407,7 @@ case "${host}" in
   ;;
   powerpc-*-darwin*)
     echo "$ac_t""final adjustments for a PowerPC/Darwin host" 1>&6
+    CONFIG_OS="DARWIN"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BPATH=""

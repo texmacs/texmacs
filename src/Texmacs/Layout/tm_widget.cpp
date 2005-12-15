@@ -87,6 +87,10 @@ make_footer (server_rep* sv) {
   F_name[1]= "middle";
   F_name[2]= "right";
   widget ftr= horizontal_array (F, F_name, 1);
+#ifdef OS_DARWIN
+  F << glue_widget (false, false, 14*PIXEL, 0);
+  F_name << "margin";
+#endif
 
   array<widget> I (2);
   array<string> I_name (2);

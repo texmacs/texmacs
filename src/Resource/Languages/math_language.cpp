@@ -189,7 +189,7 @@ math_language_rep::get_limits (string s, int& i) {
 }
 
 math_language_rep::math_language_rep (string name, string s):
-  language_rep (name, math_enc),
+  language_rep (name),
   group ("symbol"),
   tpr_class (text_property_rep ()),
   tpr_member (text_property_rep ()),
