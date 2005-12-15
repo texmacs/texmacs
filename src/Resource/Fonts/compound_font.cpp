@@ -27,7 +27,7 @@ struct charmap_rep: rep<charmap> {
   hashmap<string,int>    slow_map;
   hashmap<string,string> slow_subst;
   charmap_rep (string name):
-    rep<charmap> (name), slow_map (-1), slow_subst ("?")
+    rep<charmap> (name), slow_map (-1), slow_subst ("")
   {
     for (int i=0; i<256; i++) fast_map[i]= -1;
   }
@@ -100,6 +100,10 @@ struct ec_charmap_rep: public charmap_rep {
     if (N(s) == 1 || s == "<less>" || s == "<gtr>") return 0;
     else return -1;
   }
+  string replace (string s) {
+    if (N(s) == 1 || s == "<less>" || s == "<gtr>") return s;
+    else return "";
+  }
 };
 
 charmap
@@ -110,30 +114,14 @@ ec_charmap () {
 }
 
 struct explicit_charmap_rep: public charmap_rep {
-  hashmap<string,string> slow_subst;
+  translator trl;
   explicit_charmap_rep (string name):
-    charmap_rep (name), slow_subst ("?")
-  {
-    string s, fname= name * ".scm";
-    if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
-    if (load_string (url ("$TEXMACS_PATH/fonts/enc", fname), s)) return;
-    tree t= block_to_scheme_tree (s);
-    if (!is_tuple (t)) return;
-    
-    int i, n= N(t);
-    for (i=0; i<n; i++)
-      if (is_func (t[i], TUPLE, 2) &&
-	  is_atomic (t[i][0]) && is_atomic (t[i][1]))
-	{
-	  string l= scm_unquote (t[i][0]->label);
-	  string r= scm_unquote (t[i][1]->label);
-	  //cout << l << " -> " << r << "\n";
-	  slow_map   (l)= 0;
-	  slow_subst (l)= r;
-	}
+    charmap_rep (name), trl (load_translator (name)) {}
+  int which (string s) { return trl->dict->contains (s)? 0: -1; }
+  string replace (string s) {
+    if (trl->dict->contains (s)) return string ((char) trl->dict[s]);
+    else return "";
   }
-  int which (string s) { return slow_map[s]; }
-  string replace (string s) { return slow_subst[s]; }
 };
 
 charmap
@@ -192,12 +180,11 @@ struct join_charmap_rep: public charmap_rep {
     return -1;
   }  
   string replace (string s) {
-    int i, sum= 0;
+    int i;
     for (i=0; i<jn; i++) {
-      int p= ja[i] -> arity ();
       string r= ja[i] -> replace (s);
+      //cout << i << "\t" << s << " -> " << r << "\n";
       if (N(r) != 0) return r;
-      sum += p;
     }
     return "";
   }  
@@ -262,8 +249,15 @@ compound_font_rep::compound_font_rep (
 void
 compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
   cm->advance (s, pos, r, ch);
-  if (ch>0 && nil (fn[ch]))
-    fn[ch]= find_font (fn[0]->dis, def[ch][1]);
+  if (ch>0 && nil (fn[ch])) {
+    tree t= def[ch][1];
+    if (is_tuple (t, "virtual", 3))
+      fn[ch]= virtual_font (this, as_string(t[1]), as_int(t[2]), as_int(t[3]));
+    else fn[ch]= find_font (dis, t);
+    if (nil (fn[ch]))
+      fatal_error ("Font not found", "compound_font_rep::advance");
+    //fn[ch]->copy_math_pars (fn[0]);
+  }
 }
 
 /******************************************************************************
