@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : compound_font.cpp
 * DESCRIPTION: fonts which are agglomerated from several other fonts.
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 2005  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -17,30 +17,104 @@
 #include "file.hpp"
 
 /******************************************************************************
-* The compound encoding structure
+* The charmap structure for finding the physical font
 ******************************************************************************/
 
-RESOURCE(compound_encoding);
+RESOURCE(charmap);
 
-struct compound_encoding_rep: rep<compound_encoding> {
+struct charmap_rep: rep<charmap> {
   int                    fast_map[256];
-  hashmap<string,int>    char_map;
-  hashmap<string,string> char_subst;
-  compound_encoding_rep (string name, tree def);
+  hashmap<string,int>    slow_map;
+  hashmap<string,string> slow_subst;
+  charmap_rep (string name):
+    rep<charmap> (name), slow_map (-1), slow_subst ("?")
+  {
+    for (int i=0; i<256; i++) fast_map[i]= -1;
+  }
+  virtual int arity () { return 1; }
+  virtual charmap child (int i) {
+    if (i != 0) fatal_error ("bad child", "charmap_rep::child");
+    return this; }
+  virtual int which (string s) { return 0; }
+  virtual string replace (string s) { return s; }
+
+  inline int fast_lookup (int c) {
+    register int& r= fast_map[c];
+    if (r < 0) r= which (string ((char) c));
+    //cout << "lookup " << c << " in " << res_name << " -> " << r << "\n";
+    return r;
+  }
+  inline int slow_lookup (string s) {
+    register int& r= slow_map (s);
+    if (r<0) r= which (s);
+    //cout << "lookup " << s << " in " << res_name << " -> " << r << "\n";
+    return r;
+  }
+  inline string slow_replace (string s) {
+    register string& r= slow_subst (s);
+    if (N(r) == 0) r= replace (s);
+    //cout << "lookup " << s << " in " << res_name << " -> " << r << "\n";
+    return r;
+  }
+  void advance (string s, int& pos, string& r, int& ch) {
+    int n= N(s), start= pos;
+    if (s[pos] != '<') {
+      ch= fast_lookup ((unsigned int) s[pos++]);
+      while (pos<n && s[pos] != '<' &&
+	     fast_lookup ((unsigned int) s[pos]) == ch) pos++;
+      if (pos == n || s[pos] != '<') {
+	r= s (start, pos);
+	return;
+      }
+    }
+    else {
+      int start= pos;
+      tm_char_forwards (s, pos);
+      ch= slow_lookup (s (start, pos));
+      r = slow_replace (s (start, pos));
+    }
+    while (pos<n) {
+      int start= pos;
+      tm_char_forwards (s, pos);
+      if (slow_lookup (s (start, pos)) != ch) {
+	pos= start;
+	break;
+      }
+      else r << slow_replace (s (start, pos));
+    }
+  }
 };
 
-RESOURCE_CODE(compound_encoding);
+RESOURCE_CODE(charmap);
 
-compound_encoding_rep::compound_encoding_rep (string name, tree def):
-  rep<compound_encoding> (name), char_map (-1), char_subst ("x")
-{
-  int i;
-  for (i=0; i<256; i++)
-    fast_map[i]= -1;
+charmap
+any_charmap () {
+  if (charmap::instances -> contains ("any"))
+    return charmap ("any");
+  return make (charmap, "any", new charmap_rep ("any"));
+}
 
-  int nr, tot= N (def);
-  for (nr=tot-1; nr>=0; nr--) {
-    string s, fname= as_string (def[nr]) * ".scm";
+struct ec_charmap_rep: public charmap_rep {
+  ec_charmap_rep (): charmap_rep ("ec") {}
+  int which (string s) {
+    if (N(s) == 1 || s == "<less>" || s == "<gtr>") return 0;
+    else return -1;
+  }
+};
+
+charmap
+ec_charmap () {
+  if (charmap::instances -> contains ("ec"))
+    return charmap ("ec");
+  return make (charmap, "ec", new ec_charmap_rep ());
+}
+
+struct explicit_charmap_rep: public charmap_rep {
+  hashmap<string,string> slow_subst;
+  explicit_charmap_rep (string name):
+    charmap_rep (name), slow_subst ("?")
+  {
+    string s, fname= name * ".scm";
     if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << fname << "\n";
     if (load_string (url ("$TEXMACS_PATH/fonts/enc", fname), s)) return;
     tree t= block_to_scheme_tree (s);
@@ -53,15 +127,106 @@ compound_encoding_rep::compound_encoding_rep (string name, tree def):
 	{
 	  string l= scm_unquote (t[i][0]->label);
 	  string r= scm_unquote (t[i][1]->label);
-	  if ((l == r) && (N(l) == 1))
-	    fast_map[(unsigned char) l[0]]= nr;
-	  else {
-	    char_map   (l)= nr;
-	    char_subst (l)= r;
-	  }
+	  //cout << l << " -> " << r << "\n";
+	  slow_map   (l)= 0;
+	  slow_subst (l)= r;
 	}
   }
+  int which (string s) { return slow_map[s]; }
+  string replace (string s) { return slow_subst[s]; }
+};
+
+charmap
+explicit_charmap (string name) {
+  if (charmap::instances -> contains (name))
+    return charmap (name);
+  return make (charmap, name, new explicit_charmap_rep (name));
 }
+ 
+string
+join_name (charmap* a, int n) {
+  string acc= copy (a[0]->res_name);
+  for (int i=1; i<n; i++)
+    acc << ":" << a[i]->res_name;
+  return acc;
+}
+
+struct join_charmap_rep: public charmap_rep {
+  charmap* ja;
+  int      jn;
+  join_charmap_rep (charmap* a, int n):
+    charmap_rep (join_name (a, n)), ja (a), jn (n)
+  {
+    int i, ch, nch= arity ();
+    for (i=0; i<256; i++)
+      for (ch=0; ch < nch; ch++)
+	if (child (ch) -> fast_map[i] != -1) {
+	  fast_map[i]= ch;
+	  break;
+	}
+  }
+  int arity () {
+    int i, sum= 0;
+    for (i=0; i<jn; i++)
+      sum += ja[i] -> arity ();
+    return sum;
+  }
+  charmap child (int ch) {
+    int i, sum= 0;
+    for (i=0; i<jn; i++) {
+      int p= ja[i] -> arity ();
+      if (ch >= sum && ch < sum+p) return ja[i] -> child (i-sum);
+      sum += p;
+    }
+    fatal_error ("bad child", "join_charmap_rep::child");
+    return this;
+  }
+  int which (string s) {
+    int i, sum= 0;
+    for (i=0; i<jn; i++) {
+      int p= ja[i] -> arity ();
+      int w= ja[i] -> which (s);
+      if (w >= 0) return sum+w;
+      sum += p;
+    }
+    return -1;
+  }  
+  string replace (string s) {
+    int i, sum= 0;
+    for (i=0; i<jn; i++) {
+      int p= ja[i] -> arity ();
+      string r= ja[i] -> replace (s);
+      if (N(r) != 0) return r;
+      sum += p;
+    }
+    return "";
+  }  
+};
+
+charmap
+join_charmap (charmap* a, int n) {
+  string name= join_name (a, n);
+  if (charmap::instances -> contains (name))
+    return charmap (name);
+  return make (charmap, name, new join_charmap_rep (a, n));
+}
+
+charmap
+load_charmap (tree def) {
+  int i, n= N (def);
+  charmap* a= new charmap [n];
+  for (i=0; i<n; i++) {
+    //cout << i << "\t" << def[i] << "\n";
+    if (def[i] == "any") a[i]= any_charmap ();
+    else if (def[i] == "ec") a[i]= ec_charmap ();
+    else a[i]= explicit_charmap (as_string (def[i]));
+  }
+  return join_charmap (a, n);
+}
+
+/******************************************************************************
+* The compound font class
+******************************************************************************/
 
 static tree
 map_car (tree t) {
@@ -72,29 +237,16 @@ map_car (tree t) {
   return r;
 }
 
-compound_encoding
-load_compound_encoding (tree def) {
-  string name= tree_to_scheme (def);
-  if (compound_encoding::instances -> contains (name))
-    return compound_encoding (name);
-  return make (compound_encoding, name,
-	       new compound_encoding_rep (name, def));
-}
-
-/******************************************************************************
-* The compound font class
-******************************************************************************/
-
 struct compound_font_rep: font_rep {
-  scheme_tree       def;
-  array<font>       fn;
-  compound_encoding enc;
+  scheme_tree  def;
+  array<font>  fn;
+  charmap      cm;
 
   compound_font_rep (string name, scheme_tree def, array<font> fn);
-  void advance (string s, int& i, string& r, int& nr);
-  void get_extents (string s, metric& ex);
-  void draw (ps_device dev, string s, SI x, SI y);
-  glyph get_glyph (string s);
+  void   advance (string s, int& pos, string& r, int& ch);
+  void   get_extents (string s, metric& ex);
+  void   draw (ps_device dev, string s, SI x, SI y);
+  glyph  get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
@@ -104,45 +256,14 @@ struct compound_font_rep: font_rep {
 compound_font_rep::compound_font_rep (
   string name, scheme_tree def2, array<font> fn2):
     font_rep (fn2[0]->dis, name, fn2[0]),
-    def (def2), fn (fn2), enc (load_compound_encoding (map_car (def)))
+    def (def2), fn (fn2), cm (load_charmap (map_car (def)))
 {}
 
 void
-compound_font_rep::advance (string s, int& i, string& r, int& nr) {
-  // advance as much as possible while remaining in same subfont
-  // return the corresponding transcoded substring in r and
-  // the index of the subfont in nr. The string r is assumed to
-  // be initialized with s if i=0 for speeding things up when r==s at exit.
-  // The fast_map tells which 1-byte characters are mapped to themselves.
-
-  int n= N(s);
-  nr= enc->fast_map[(unsigned char) s[i]];
-  if (nr >= 0) {
-    int start= i++;
-    while ((i<n) && (enc->fast_map[(unsigned char) s[i]] == nr)) i++;
-    if ((start>0) || (i<n)) r= s (start, i);
-  }
-  else {
-    int start= i;
-    skip_symbol (s, i);
-    string ss= s (start, i);
-    nr= enc->char_map [ss];
-    r = copy (enc->char_subst (ss));
-    while (i < n) {
-      if (enc->fast_map[(unsigned char) s[i]] >= 0) break;
-      start= i;
-      skip_symbol (s, i);
-      ss= s (start, i);
-      int nr2= enc->char_map [ss];
-      if (nr2 != nr) {
-	i= start;
-	break;
-      }
-      r << enc->char_subst (ss);
-    }
-  }
-  if ((nr>0) && (nil (fn[nr])))
-    fn[nr]= find_font (fn[0]->dis, def[nr][1]);
+compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
+  cm->advance (s, pos, r, ch);
+  if (ch>0 && nil (fn[ch]))
+    fn[ch]= find_font (fn[0]->dis, def[ch][1]);
 }
 
 /******************************************************************************
