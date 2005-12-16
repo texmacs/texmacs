@@ -32,7 +32,9 @@
 	    ("Keyboard modifiers"
 	     (load-help-article "main/config/man-config-kbd-modkeys"))
 	    ("Users of Cyrillic languages"
-	     (load-help-article "main/config/man-russian"))))
+	     (load-help-article "main/config/man-russian"))
+	    ("Users of oriental languages"
+	     (load-help-article "main/config/man-oriental"))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
 	(-> "Manual"
 	    ("Browse" (load-help-buffer "main/man-manual"))
