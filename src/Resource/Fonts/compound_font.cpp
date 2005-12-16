@@ -62,10 +62,8 @@ struct charmap_rep: rep<charmap> {
       ch= fast_lookup ((unsigned char) s[pos++]);
       while (pos<n && s[pos] != '<' &&
 	     fast_lookup ((unsigned char) s[pos]) == ch) pos++;
-      if (pos == n || s[pos] != '<') {
-	r= s (start, pos);
-	return;
-      }
+      r= s (start, pos);
+      if (pos == n || s[pos] != '<') return;
     }
     else {
       int start= pos;
@@ -111,6 +109,47 @@ ec_charmap () {
   if (charmap::instances -> contains ("ec"))
     return charmap ("ec");
   return make (charmap, "ec", new ec_charmap_rep ());
+}
+
+static inline bool
+between (int what, int begin, int end) {
+  return what >= begin && what <= end;
+}
+
+struct range_charmap_rep: public charmap_rep {
+  int start, end;
+  range_charmap_rep (int start2, int end2):
+    charmap_rep (as_hexadecimal (start2) * "--" * as_hexadecimal (end2)),
+    start (start2), end (end2) {}
+  int which (string s) {
+    if (N(s) >= 3 && s[0] == '<' && s[1] == '#' && s[N(s)-1] == '>' &&
+	between (from_hexadecimal (s (2, N(s)-1)), start, end))
+      return 0;
+    else return -1;
+  }
+  string replace (string s) {
+    if (N(s) >= 3 && s[0] == '<' && s[1] == '#' && s[N(s)-1] == '>' &&
+	between (from_hexadecimal (s (2, N(s)-1)), start, end))
+      return s;
+    else return "";
+  }
+};
+
+charmap
+range_charmap (int start, int end) {
+  string name= as_hexadecimal (start) * "--" * as_hexadecimal (end);
+  if (charmap::instances -> contains (name)) return charmap (name);
+  return make (charmap, name, new range_charmap_rep (start, end));
+}
+
+charmap
+la_charmap () {
+  return range_charmap (0x400, 0x4ff);
+}
+
+charmap
+oriental_charmap () {
+  return range_charmap (0x3000, 0xfaff);
 }
 
 struct explicit_charmap_rep: public charmap_rep {
@@ -206,6 +245,8 @@ load_charmap (tree def) {
     //cout << i << "\t" << def[i] << "\n";
     if (def[i] == "any") a[i]= any_charmap ();
     else if (def[i] == "ec") a[i]= ec_charmap ();
+    else if (def[i] == "la") a[i]= la_charmap ();
+    else if (def[i] == "oriental") a[i]= oriental_charmap ();
     else a[i]= explicit_charmap (as_string (def[i]));
   }
   return join_charmap (a, n);
