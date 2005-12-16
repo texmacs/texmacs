@@ -147,8 +147,6 @@ x_display_rep::default_font_sub (bool tt) {
   if (j<n) j++;
   int dpi= (j<n? as_int (s (j, n)): 300);
   if (N(fam) >= 2) {
-    tree modern_fn= tuple ("modern", "rm", "medium", "right");
-    modern_fn << as_string (sz) << as_string (dpi);
     string ff= fam (0, 2);
     if (((out_lan == "bulgarian") || (out_lan == "russian") ||
 	 (out_lan == "ukrainian")) &&
@@ -156,9 +154,11 @@ x_display_rep::default_font_sub (bool tt) {
       fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
     if (out_lan == "chinese" || out_lan == "korean")
       return unicode_font (this, "fireflysung", sz, dpi);
-    if (out_lan == "japanese")
+    if (out_lan == "japanese") {
+      tree modern_fn= tuple ("modern", "rm", "medium", "right");
+      modern_fn << as_string (sz) << as_string (dpi);
       return find_font (this, modern_fn);
-    //return unicode_font (this, "ipagui", sz, dpi);
+    }
     if (ff == "ec")
       return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
     if (ff == "la")
