@@ -21,7 +21,7 @@
 
 (menu-bind text-font-menu
   (-> "Name"
-      ("Modern" (make-with "font" "modern"))
+      ;;("Modern" (make-with "font" "modern"))
       ("Roman" (make-with "font" "roman"))
       (if (url-exists-in-tex? "pnr10.mf")
 	  ("Pandora" (make-with "font" "pandora")))
