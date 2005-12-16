@@ -69,7 +69,7 @@ load_virtual (string name) {
 
   string s, r;
   name= name * ".vfn";
-  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << name << "\n";
+  if (DEBUG_STD) cout << "TeXmacs] Loading " << name << "\n";
   url u ("$TEXMACS_HOME_PATH/fonts/virtual:$TEXMACS_PATH/fonts/virtual", name);
   load_string (u, s, true);
   tree t= string_to_scheme_tree (s);
@@ -97,14 +97,14 @@ translator
 load_translator (string name) {
   if (translator::instances -> contains (name))
     return translator (name);
-  translator trl= new translator_rep (name);
 
   string s, r;
-  name= name * ".enc";
-  if (DEBUG_VERBOSE) cout << "TeXmacs] Loading " << name << "\n";
-  url u ("$TEXMACS_HOME_PATH/fonts/enc:$TEXMACS_PATH/fonts/enc", name);
-  load_string (u, s, true);
-  
+  string file_name= name * ".enc";
+  if (DEBUG_STD) cout << "TeXmacs] Loading " << file_name << "\n";
+  url u ("$TEXMACS_HOME_PATH/fonts/enc:$TEXMACS_PATH/fonts/enc", file_name);
+  if (load_string (u, s)) return load_virtual (name);
+
+  translator trl= new translator_rep (name);
   int i, j, num=0;
   for (i=0; i<N(s); i++)
     switch (s[i]) {
@@ -133,11 +133,6 @@ load_translator (string name) {
       i++; j=i;
       while ((i<N(s)) && (s[i]!=']')) i++;
       trl << load_translator (s (j, i));
-      break;
-    case '{':
-      i++; j=i;
-      while ((i<N(s)) && (s[i]!='}')) i++;
-      trl << load_virtual (s (j, i));
       break;
     default:
       num= 0;
