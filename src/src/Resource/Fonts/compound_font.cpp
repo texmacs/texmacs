@@ -46,7 +46,7 @@ struct charmap_rep: rep<charmap> {
   }
   inline int slow_lookup (string s) {
     register int& r= slow_map (s);
-    if (r<0) r= which (s);
+    if (r < 0) r= which (s);
     //cout << "lookup " << s << " in " << res_name << " -> " << r << "\n";
     return r;
   }
@@ -59,9 +59,9 @@ struct charmap_rep: rep<charmap> {
   void advance (string s, int& pos, string& r, int& ch) {
     int n= N(s), start= pos;
     if (s[pos] != '<') {
-      ch= fast_lookup ((unsigned int) s[pos++]);
+      ch= fast_lookup ((unsigned char) s[pos++]);
       while (pos<n && s[pos] != '<' &&
-	     fast_lookup ((unsigned int) s[pos]) == ch) pos++;
+	     fast_lookup ((unsigned char) s[pos]) == ch) pos++;
       if (pos == n || s[pos] != '<') {
 	r= s (start, pos);
 	return;
@@ -249,6 +249,7 @@ compound_font_rep::compound_font_rep (
 void
 compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
   cm->advance (s, pos, r, ch);
+  //cout << "(r,ch)= (" << r << "," << ch << ")\n";
   if (ch>0 && nil (fn[ch])) {
     tree t= def[ch][1];
     if (is_tuple (t, "virtual", 3))
