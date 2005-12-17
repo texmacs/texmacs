@@ -715,6 +715,62 @@ typeset_as_box (edit_env env, tree t, path ip) {
   return composite_box (ip, bs, xs, ys);
 }
 
+/*
+box
+typeset_as_atomic (edit_env env, tree t, path ip) {
+  if (is_func (t, WITH)) {
+    int i, n= N(t), k= (n-1)>>1; // is k=0 allowed ?
+    if ((n&1) != 1) return empty_box (ip);
+
+    STACK_NEW_ARRAY(vars,string,k);
+    STACK_NEW_ARRAY(oldv,tree,k);
+    STACK_NEW_ARRAY(newv,tree,k);
+    for (i=0; i<k; i++) {
+      tree var_t= env->exec (t[i<<1]);
+      if (is_atomic (var_t)) {
+	string var= var_t->label;
+	vars[i]= var;
+	oldv[i]= env->read (var);
+	newv[i]= env->exec (t[(i<<1)+1]);
+      }
+      else {
+	STACK_DELETE_ARRAY(vars);
+	STACK_DELETE_ARRAY(oldv);
+	STACK_DELETE_ARRAY(newv);
+	return empty_box (ip);
+      }
+    }
+
+    // for (i=0; i<k; i++) env->monitored_write_update (vars[i], newv[i]);
+    for (i=0; i<k; i++) env->write_update (vars[i], newv[i]);
+    box b= typeset_as_atomic (env, t[n-1], descend (ip, n-1));
+    for (i=k-1; i>=0; i--) env->write_update (vars[i], oldv[i]);
+    STACK_DELETE_ARRAY(vars);
+    STACK_DELETE_ARRAY(oldv);
+    STACK_DELETE_ARRAY(newv);
+    return b;
+  }
+  else {
+    array<line_item> a= typeset_concat (env, t, ip);
+    if (N(a) == 1) return a[0]->b;
+
+    int i, n=N(a);
+    if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
+    array<box> items (n);
+    array<SI>  spc (n);
+    if (n>0) {
+      spc[0]=0;
+      for (i=0; i<n-1; i++) {
+	items[i]  = a[i]->b;
+	spc  [i+1]= a[i]->spc->def;
+      }
+      items[i]= a[i]->b;
+    }
+    return concat_box (ip, items, spc);
+  }
+}
+*/
+
 tree
 box_info (edit_env env, tree t, string what) {
   box b= typeset_as_concat (env, attach_here (t, decorate ()));
@@ -723,7 +779,7 @@ box_info (edit_env env, tree t, string what) {
      a box with correct values of x1, y1, x2, y2,
      etc. In particular, this happens when we try
      to compute box_info (<with|...>).
-   */
+  */
   int i, n=0;
   for (i=0; i<N(b); i++)
     if (b[i]!="") n++;
@@ -741,6 +797,10 @@ box_info (edit_env env, tree t, string what) {
     b= composite_box (path (0), bx);
   }
   // end very dirty hack
+
+  // Is this a good alternative solution?
+  // box b= typeset_as_atomic (env, attach_here (t, decorate ()));
+
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
     switch (what[i]) {
