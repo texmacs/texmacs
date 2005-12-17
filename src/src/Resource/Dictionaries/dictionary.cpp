@@ -90,13 +90,12 @@ dictionary_rep::translate (string s) {
   for (i=0; i<n; tm_char_forwards (s, i))
     if ((!is_iso_alpha (s[i])) && (s[i]!=' ')) break;
   if (i<n) return translate (s (0, i)) * translate (s (i, n));
-  for (i=0; i<n; tm_char_forwards (s, i)) if (s[i]!=' ') break;
+  for (i=0; i<n && s[i]==' '; i++);
   if (i==n) return s;
   if (i>0) return s (0, i) * translate (s (i, n));
-  for (i=n-1; i>=0; i--) if (s[i]!=' ') break;
-  if (i<n-1) return translate (s (0, i+1)) * s (i+1, n);
+  for (i=n; i>0 && s[i-1]==' '; i--);
+  if (i<n) return translate (s (0, i)) * s (i, n);
 
-  if (N(s)==0) return "";
   bool flag= is_upcase (s[0]);
   string source= locase_first (s);
   if (!table->contains (source)) return s;
