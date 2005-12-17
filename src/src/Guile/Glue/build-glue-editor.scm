@@ -198,6 +198,7 @@
   (selection-set-end selection_set_end (void))
   (selection-get-start selection_get_start (path))
   (selection-get-end selection_get_end (path))
+  (selection-path selection_get_path (path))
   (selection-set-start-path selection_set_start (void path))
   (selection-set-end-path selection_set_end (void path))
   (clipboard-copy selection_copy (void string))

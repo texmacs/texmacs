@@ -52,6 +52,14 @@
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
 
+(define (graphics-kbd-remove forward?)
+  (if (and (with-active-selection?)
+	   (with-cursor (rcons (selection-path) 0)
+	     (not (in-graphics?))))
+      (begin
+	(go-to (rcons (selection-path) 0))
+	(clipboard-cut "primary"))))
+
 (kbd-map
   (:mode in-active-graphics?)
   ("+" (graphics-zoom (/ 1.0 0.75)))
@@ -66,7 +74,8 @@
   ("C-up" (graphics-change-extents "0cm" "-0.5cm"))
   ("M-down" (graphics-change-geo-valign #f))
   ("M-up" (graphics-change-geo-valign #t))
-  ("backspace" (noop))
+  ("backspace" (graphics-kbd-remove #f))
+  ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
   ("C-G" (graphics-toggle-grid #t)))
 

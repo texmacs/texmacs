@@ -1869,6 +1869,15 @@ tmg_selection_get_end () {
 }
 
 SCM
+tmg_selection_path () {
+  // SCM_DEFER_INTS;
+  path out= get_server()->get_editor()->selection_get_path ();
+  // SCM_ALLOW_INTS;
+
+  return path_to_scm (out);
+}
+
+SCM
 tmg_selection_set_start_path (SCM arg1) {
   SCM_ASSERT_PATH (arg1, SCM_ARG1, "selection-set-start-path");
 
@@ -2984,6 +2993,7 @@ initialize_glue_editor () {
   gh_new_procedure ("selection-set-end", (FN) tmg_selection_set_end, 0, 0, 0);
   gh_new_procedure ("selection-get-start", (FN) tmg_selection_get_start, 0, 0, 0);
   gh_new_procedure ("selection-get-end", (FN) tmg_selection_get_end, 0, 0, 0);
+  gh_new_procedure ("selection-path", (FN) tmg_selection_path, 0, 0, 0);
   gh_new_procedure ("selection-set-start-path", (FN) tmg_selection_set_start_path, 1, 0, 0);
   gh_new_procedure ("selection-set-end-path", (FN) tmg_selection_set_end_path, 1, 0, 0);
   gh_new_procedure ("clipboard-copy", (FN) tmg_clipboard_copy, 1, 0, 0);

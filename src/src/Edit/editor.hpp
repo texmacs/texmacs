@@ -425,6 +425,7 @@ public:
   virtual void selection_get (path& start, path& end) = 0;
   virtual path selection_get_start () = 0;
   virtual path selection_get_end () = 0;
+  virtual path selection_get_path () = 0;
   virtual void selection_set (string key, tree t, bool persistant= false) = 0;
   virtual void selection_set (tree t) = 0;
   virtual void selection_set_start (path p= path()) = 0;

@@ -507,6 +507,13 @@ edit_select_rep::selection_get () {
   }
 }
 
+path
+edit_select_rep::selection_get_path () {
+  path start, end;
+  selection_get (start, end);
+  return common (start, end);
+}
+
 /******************************************************************************
 * Copy and paste
 ******************************************************************************/
