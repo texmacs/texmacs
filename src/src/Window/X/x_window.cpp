@@ -136,6 +136,7 @@ x_window_rep::initialize () {
   set_hints (min_w, min_h, max_w, max_h);
 
   unsigned long ic_mask= 0;
+  ic_ok= false;
   if (dis->im_ok) {
     ic= XCreateIC (dis->im,
 		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
