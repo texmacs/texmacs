@@ -273,7 +273,10 @@ polar_rep::find_closest_point (point p, point pmin, point pmax) {
     ssubd= (double)subd[i];
     if (ssubd==0) continue;
     n= nearest (norm(p)*(ssubd/step));
-    a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
+    if (fnull (norm (p), 1.0e-6))
+      a= 0.0;
+    else
+      a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
     n= n*(step/ssubd);
     a= a/(astep*ssubd);
     if (i!=1) {
