@@ -49,6 +49,16 @@
   (:inside text-at)
   (go-to-remain-inside go-down 'text-at))
 
+(tm-define (kbd-start-line)
+  (:inside text-at)
+  (with move (lambda () (go-to-remain-inside go-left 'text-at))
+    (go-to-repeat move)))
+
+(tm-define (kbd-end-line)
+  (:inside text-at)
+  (with move (lambda () (go-to-remain-inside go-right 'text-at))
+    (go-to-repeat move)))
+
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
 

@@ -36,6 +36,7 @@ box  typeset            (typesetter ttt, SI& x1, SI& y1, SI& x2, SI& y2);
 
 box        typeset_as_concat (edit_env env, tree t, path ip);
 box        typeset_as_box (edit_env env, tree t, path ip);
+box        typeset_as_atomic (edit_env env, tree t, path ip);
 box        typeset_as_stack (edit_env env, tree t, path ip);
 box        typeset_as_table (edit_env env, tree t, path ip);
 array<box> typeset_as_var_table (edit_env env, tree t, path ip);

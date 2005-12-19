@@ -33,7 +33,7 @@ concater_rep::typeset_graphics (tree t, path ip) {
   bs[0]= grid_box (ip, gr, env->fr, env->as_length ("2ln"),
 		   env->clip_lim1, env->clip_lim2);
   for (i=0; i<n; i++)
-    bs[i+1]= typeset_as_concat (env, t[i], descend (ip, i));
+    bs[i+1]= typeset_as_atomic (env, t[i], descend (ip, i));
   // if (n == 0) bs << empty_box (decorate_right (ip));
   gr= as_grid (env->read (GR_EDIT_GRID));
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
@@ -60,22 +60,8 @@ concater_rep::typeset_gr_group (tree t, path ip) {
   int i, n= N(t);
   array<box> bs (n);
   for (i=0; i<n; i++)
-    bs[i]= typeset_as_concat (env, t[i], descend (ip, i));
+    bs[i]= typeset_as_atomic (env, t[i], descend (ip, i));
 
-  int j, n2= 0;
-  for (i=0; i<n; i++)
-    for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") n2++;
-  if (n2) {
-    array<box> bs2 (n2);
-    n2= 0;
-    for (i=0; i<n; i++) {
-      for (j=0; j<N(bs[i]); j++) if (bs[i][j]!="") {
-        bs2[n2]= bs[i][j];
-	n2++;
-      }
-    }
-    bs= bs2;
-  }
   print (STD_ITEM, graphics_group_box (ip, bs));
 }
 
@@ -86,6 +72,9 @@ concater_rep::typeset_gr_linear_transform (tree t, path ip) {
 
   frame f= affine_2D (as_matrix (t[1]));
   box   b= typeset_as_concat (env, t[0], descend (ip, 0));
+        /* The call should be performed with 'typeset_as_atomic()',
+	   but we should re-test transform() under these circumstances.
+         */
   print (STD_ITEM, b->transform (env->fr * (f * invert (env->fr))));
 }
 
@@ -106,7 +95,7 @@ concater_rep::typeset_text_at (tree t, path ip) {
     if (valign == "bottom") y -= b->y1;
     else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
     else if (valign == "top") y -= b->y2;
-    print (STD_ITEM, move_box (ip, b, x, y));
+    print (STD_ITEM, textat_box (ip, b, x, y));
   }
 }
 

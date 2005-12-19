@@ -715,7 +715,6 @@ typeset_as_box (edit_env env, tree t, path ip) {
   return composite_box (ip, bs, xs, ys);
 }
 
-/*
 box
 typeset_as_atomic (edit_env env, tree t, path ip) {
   if (is_func (t, WITH)) {
@@ -769,37 +768,10 @@ typeset_as_atomic (edit_env env, tree t, path ip) {
     return concat_box (ip, items, spc);
   }
 }
-*/
 
 tree
 box_info (edit_env env, tree t, string what) {
-  box b= typeset_as_concat (env, attach_here (t, decorate ()));
-  /* FIXME: very dirty hack ; necessary because
-     typeset_as_concat () doesn't always returns
-     a box with correct values of x1, y1, x2, y2,
-     etc. In particular, this happens when we try
-     to compute box_info (<with|...>).
-  */
-  int i, n=0;
-  for (i=0; i<N(b); i++)
-    if (b[i]!="") n++;
-  if (n) {
-    array<box> bx(n);
-    n=0;
-    for (i=0; i<N(b); i++) if (b[i]!="") {
-      array<box> bx2(1);
-      array<SI> spc2(1);
-      bx2[0]= b[i];
-      spc2[0]=0;
-      bx[n]= concat_box (path (0), bx2, spc2);
-      n++;
-    }
-    b= composite_box (path (0), bx);
-  }
-  // end very dirty hack
-
-  // Is this a good alternative solution?
-  // box b= typeset_as_atomic (env, attach_here (t, decorate ()));
+  box b= typeset_as_atomic (env, attach_here (t, decorate ()));
 
   tree r= tuple();
   for (int i=0; i<N(what); i++) {
