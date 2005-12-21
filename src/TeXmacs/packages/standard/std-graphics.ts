@@ -31,7 +31,9 @@
 
   <assign|gr-tbl|<macro|x|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0pt>|<cwith|1|1|1|1|cell-rsep|0pt>|<cwith|1|1|1|1|cell-bsep|0pt>|<cwith|1|1|1|1|cell-tsep|0pt>|<cwith|1|1|1|1|cell-lborder|0pt>|<cwith|1|1|1|1|cell-rborder|0pt>|<cwith|1|1|1|1|cell-bborder|0pt>|<cwith|1|1|1|1|cell-tborder|0pt>|<table|<row|<cell|<arg|x>>>>>>>>
 
-  <assign|with-background|<macro|bg|fg|<with|dims|<box-info|<gr-tbl|<arg|bg>>|wh>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<frozen|<gr-tbl|<arg|bg>>>|<gr-tbl|<arg|fg>>>>>>>>
+  <assign|draw-over|<macro|bg|fg|<with|dims|<box-info|<gr-tbl|<arg|bg>>|wh>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<frozen|<gr-tbl|<arg|bg>>>|<gr-tbl|<arg|fg>>>>>>>>
+
+  <assign|draw-under|<macro|bg|fg|<with|dims|<box-info|<gr-tbl|<arg|bg>>|wh>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<gr-tbl|<arg|bg>>|<frozen|<gr-tbl|<arg|fg>>>>>>>>>
 
   \;
 </body>
