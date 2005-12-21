@@ -317,7 +317,7 @@
   (if (selection-active-any?)
   (with selection (selection-tree)
     (clipboard-cut "graphics background")
-    (insert-go-to `(with-background ,selection (graphics)) '(1 1)))))
+    (insert-go-to `(draw-over ,selection (graphics)) '(1 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility
