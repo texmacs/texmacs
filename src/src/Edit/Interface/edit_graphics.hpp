@@ -17,7 +17,8 @@
 
 class edit_graphics_rep: virtual public editor_rep {
 private:
-  box go_box; // The graphical object typesetted as a box
+  box go_box;       // The graphical object typesetted as a box
+  gr_selections gs; // last graphical_select (x, y)
 
 protected:
   point cur_pos;
@@ -31,7 +32,7 @@ public:
   bool   inside_active_graphics (bool b);
   bool   over_graphics (SI x, SI y);
   tree   get_graphics ();
-  frame  find_frame ();
+  frame  find_frame (bool last= false);
   grid   find_grid ();
   void   find_limits (point& lim1, point& lim2);
   bool   find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2);

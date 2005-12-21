@@ -16,7 +16,6 @@
 #include "Graphics/curve.hpp"
 #include "Boxes/graphics.hpp"
 #include "Bridge/impl_typesetter.hpp"
-#include "merge_sort.hpp"
 
 /******************************************************************************
 * Constructors and destructors
@@ -78,10 +77,10 @@ edit_graphics_rep::get_graphics () {
 }
 
 frame
-edit_graphics_rep::find_frame () {
+edit_graphics_rep::find_frame (bool last) {
   bool bp_found;
   path bp= eb->find_box_path (tp, bp_found);
-  if (bp_found) return eb->find_frame (path_up (bp));
+  if (bp_found) return eb->find_frame (path_up (bp), last);
   else return frame ();
 }
 
@@ -128,19 +127,29 @@ edit_graphics_rep::adjust (point p) {
   grid g= find_grid ();
   if (nil (g))
     return p;
-  else
-    return g->find_closest_point (p, pmin, pmax);
+  else {
+    point res= g->find_closest_point (p, pmin, pmax);
+    gr_selections sels= gs;
+    frame f2= find_frame (true);
+    if (!nil (f2)) {
+      point fp= f2 (p);
+      res= f2 (res);
+      int i, n= N(sels);
+      for (i=0; i<n; i++) {
+	point sp= sels[i]->p;
+	if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
+	  res= sels[i]->p;
+      }
+      res= f2[res];
+    }
+    return res;
+  }
 }
 
 tree
 edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
-
-struct less_eq_gr_selection {
-  static inline bool leq (gr_selection& a, gr_selection& b) {
-    return a->dist <= b->dist; }
-};
 
 tree
 edit_graphics_rep::graphical_select (double x, double y) { 
@@ -149,12 +158,8 @@ edit_graphics_rep::graphical_select (double x, double y) {
   gr_selections sels;
   point p = f (point (x, y));
   sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10 * get_pixel_size ());
-  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
-  int i, n= N(sels);
-  array<array<path> > gs (n);
-  for (i=0; i<n; i++)
-    gs[i]= sels[i]->cp;
-  return (tree) gs;
+  gs= sels;
+  return as_tree (sels);
 }
 
 tree
@@ -166,12 +171,7 @@ edit_graphics_rep::graphical_select (
   gr_selections sels;
   point p1 = f (point (x1, y1)), p2= f (point (x2, y2));
   sels= eb->graphical_select ((SI)p1[0], (SI)p1[1], (SI)p2[0], (SI)p2[1]);
-  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
-  int i, n= N(sels);
-  array<array<path> > gs (n);
-  for (i=0; i<n; i++)
-    gs[i]= sels[i]->cp;
-  return (tree) gs;
+  return as_tree (sels);
 }
 
 tree
@@ -256,10 +256,12 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, time_t t) {
   frame f= find_frame ();
   if (!nil (f)) {
     if (!over_graphics (x, y)) return false;
-    point p = adjust (f [point (x, y)]);
     if (type == "move" || type == "dragging")
       if (dis->check_event (MOTION_EVENT))
 	return true;
+    point p = f [point (x, y)];
+    graphical_select (p[0], p[1]); // init the caching for adjust().
+    p = adjust (p);
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();
