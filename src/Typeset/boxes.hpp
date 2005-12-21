@@ -84,6 +84,7 @@ ostream& operator << (ostream& out, selection sel);
 
 struct gr_selection_rep: concrete_struct {
   array<path> cp;
+  point p;
   SI dist;
 };
 
@@ -96,6 +97,7 @@ CONCRETE_CODE(gr_selection);
 ostream& operator << (ostream& out, gr_selection sel);
 
 typedef array<gr_selection> gr_selections;
+tree as_tree (gr_selections sels);
 
 /******************************************************************************
 * The box class
@@ -210,7 +212,7 @@ public:
   virtual grid      get_grid ();
   virtual void      get_limits (point& lim1, point& lim2);
 
-  frame     find_frame (path bp);
+  frame     find_frame (path bp, bool last= false);
   grid      find_grid (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
 

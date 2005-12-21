@@ -16,6 +16,7 @@
 #include "timer.hpp"
 #include "PsDevice/printer.hpp"
 #include "file.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Default settings for virtual routines
@@ -208,7 +209,7 @@ box_rep::get_limits (point& lim1, point& lim2) {
 }
 
 frame
-box_rep::find_frame (path bp) {
+box_rep::find_frame (path bp, bool last) {
   SI    x= 0;
   SI    y= 0;
   box   b= this;
@@ -219,7 +220,11 @@ box_rep::find_frame (path bp) {
     b  = b->subbox (bp->item);
     bp = bp->next;
     frame g= b->get_frame ();
-    if (!nil (g)) f= scaling (1.0, point (x, y)) * g;
+    if (!nil (g))
+      if (last)
+	f= g;
+      else
+	f= scaling (1.0, point (x, y)) * g;
   }
   return f;
 }
@@ -551,6 +556,20 @@ gr_selection::gr_selection (array<path> cp, SI dist):
 ostream&
 operator << (ostream& out, gr_selection sel) {
   return out << "gr_selection (" << sel->dist << ", " << sel->cp << ")";
+}
+
+struct less_eq_gr_selection {
+  static inline bool leq (gr_selection& a, gr_selection& b) {
+    return a->dist <= b->dist; }
+};
+
+tree as_tree (gr_selections sels) {
+  merge_sort_leq <gr_selection, less_eq_gr_selection> (sels);
+  int i, n= N(sels);
+  array<array<path> > res (n);
+  for (i=0; i<n; i++)
+    res[i]= sels[i]->cp;
+  return (tree) res;
 }
 
 /******************************************************************************

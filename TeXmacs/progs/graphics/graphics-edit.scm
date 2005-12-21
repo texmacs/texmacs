@@ -82,8 +82,16 @@
   ("C-right" (graphics-change-extents "+0.5cm" "0cm"))
   ("C-down" (graphics-change-extents "0cm" "+0.5cm"))
   ("C-up" (graphics-change-extents "0cm" "-0.5cm"))
-  ("M-down" (graphics-change-geo-valign #f))
-  ("M-up" (graphics-change-geo-valign #t))
+  ("M-left"  (if (current-is-textat?)
+		 (text-at-change-halign current-path-under-mouse #f)))
+  ("M-right" (if (current-is-textat?)
+		 (text-at-change-halign current-path-under-mouse #t)))
+  ("M-down"  (if (current-is-textat?)
+		 (text-at-change-valign current-path-under-mouse #f)
+		 (graphics-change-geo-valign #f)))
+  ("M-up"    (if (current-is-textat?)
+                 (text-at-change-valign current-path-under-mouse #t)
+                 (graphics-change-geo-valign #t)))
   ("backspace" (graphics-kbd-remove #f))
   ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
@@ -2063,6 +2071,8 @@
 (tm-define (graphics-reset-context cmd)
   ;; cmd in { begin, exit, undo }
   ;; (display* "Graphics] Reset-context " cmd "\n")
+  (if (in? cmd '(begin exit))
+      (set! current-path-under-mouse #f))
   (cond
    ((== cmd 'text-cursor)
     (if (not (== current-cursor 'text-cursor))
@@ -2491,13 +2501,23 @@
 	 (graphics-change-property "gr-text-at-valign" va)
 	 (graphics-remove-property "gr-text-at-valign"))))
 
-(define (text-at-change-halign p obj)
-  (let* ((halign (get-graphical-prop p "text-at-halign"))
+(define (current-is-textat?)
+  (and current-path-under-mouse
+       (== (tree-label (path->tree current-path-under-mouse)) 'text-at)))
+
+(define (text-at-change-halign p dirn)
+  (let* ((obj (stree-at p))
+	 (halign (get-graphical-prop p "text-at-halign"))
 	 (valign (get-graphical-prop p "text-at-valign"))
-	 (halign2 (cond ((== halign "left") "center")
-			((== halign "center") "right")
-			((== halign "right") "left")
-			(else "left")))
+	 (halign2 (if dirn
+		      (cond ((== halign "left") "right")
+			    ((== halign "center") "left")
+			    ((== halign "right") "center")
+			    (else "left"))
+		      (cond ((== halign "left") "center")
+			    ((== halign "center") "right")
+			    ((== halign "right") "left")
+			    (else "left"))))
      )
      (graphics-remove p)
      (set! current-path-under-mouse
@@ -2506,14 +2526,21 @@
      (create-graphical-object obj '() 'points 'no-group)
      (graphics-group-start)))
 
-(define (text-at-change-valign p obj)
-  (let* ((halign (get-graphical-prop p "text-at-halign"))
+(define (text-at-change-valign p dirn)
+  (let* ((obj (stree-at p))
+	 (halign (get-graphical-prop p "text-at-halign"))
 	 (valign (get-graphical-prop p "text-at-valign"))
-	 (valign2 (cond ((== valign "bottom") "base")
-			((== valign "base") "center")
-			((== valign "center") "top")
-			((== valign "top") "bottom")
-			(else "bottom")))
+	 (valign2 (if dirn
+		      (cond ((== valign "bottom") "top")
+			    ((== valign "base") "bottom")
+			    ((== valign "center") "base")
+			    ((== valign "top") "center")
+			    (else "base"))
+		      (cond ((== valign "bottom") "base")
+			    ((== valign "base") "center")
+			    ((== valign "center") "top")
+			    ((== valign "top") "bottom")
+			    (else "base"))))
      )
      (graphics-remove p)
      (set! current-path-under-mouse
@@ -2786,9 +2813,14 @@
 	      (if p
 	      (begin
 		 (set! obj (stree-at p))
-		 (if (eq? (car obj) 'text-at)
-		     (text-at-change-halign p obj)
-		     (graphics-assign-props p obj 'no-group))))
+		 (set! current-path-under-mouse
+		       (graphics-assign-props p obj 'no-group))
+		     ; FIXME: In order for (create-graphical-object)
+		     ;   to work appropriately in the current case,
+		     ;   we need to manually update the value of
+		     ;   current-path-under-mouse. At some point,
+		     ;   clean this.
+		 (create-graphical-object obj '() 'points 'no-group)))
 	      (with l '()
 		 (foreach (o selected-objects)
 		    (with p (graphics-assign-props
@@ -2852,18 +2884,14 @@
 	 (set! selecting-y0 #f)
       )
       (if p
-	  (if (and (null? selected-objects) (eq? (car (stree-at p)) 'text-at)
-		   (== (cadr (graphics-mode)) 'props))
 	; FIXME: in (with-graphics-context), if we are in group mode,
 	;   obj is := to '(point). Find why it is so, and remove this.
-	      (text-at-change-valign p (stree-at p))
-	      (with t (path->tree p)
-		 (if (seek-eq? t selected-objects)
-		     (seek-eq?-remove t selected-objects)
-		     (set! selected-objects (rcons selected-objects t))
-		 )
-		 (create-graphical-object obj p 'points #f))
-          )
+	  (with t (path->tree p)
+	     (if (seek-eq? t selected-objects)
+		 (seek-eq?-remove t selected-objects)
+		 (set! selected-objects (rcons selected-objects t))
+	     )
+	     (create-graphical-object obj p 'points #f))
           (begin
 	     (set! selecting-x0 x)
 	     (set! selecting-y0 y)

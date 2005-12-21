@@ -121,6 +121,7 @@ graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
     gs->dist= graphical_distance (x, y);
+  //gs->p= point (x, y); // The cursor moves freely inside the box
     gs->cp << reverse (path (0, ip));
     res << gs;
   }
@@ -159,6 +160,7 @@ struct point_box_rep: public box_rep {
     path ip, point p, SI radius, color col,
     int fill, color fill_col, string style);
   SI graphical_distance (SI x, SI y) { return (SI)norm (p - point (x, y)); }
+  gr_selections graphical_select (SI x, SI y, SI dist);
   void display (ps_device dev);
   operator tree () { return "point"; }
 };
@@ -173,6 +175,19 @@ point_box_rep::point_box_rep (
   y1= y3= ((SI) p[1]) - r;
   x2= x4= ((SI) p[0]) + r;
   y2= y4= ((SI) p[1]) + r;
+}
+
+gr_selections
+point_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->p= p;
+    gs->cp << reverse (path (0, ip));
+    res << gs;
+  }
+  return res;
 }
 
 void
@@ -336,6 +351,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
       if (n <= dist) {
         gr_selection gs;
         gs->dist= n;
+        gs->p= pts[i];
         gs->cp << reverse (paths[i]);
         res << gs;
       }
@@ -353,6 +369,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
         if (n <= dist) {
           gr_selection gs;
           gs->dist= n;
+          gs->p= p2;
           gs->cp << reverse (paths[i]);
           gs->cp << reverse (paths[(i+1)%np]);
           res << gs;

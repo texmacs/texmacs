@@ -336,6 +336,7 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
   if (graphical_distance (x, y) <= dist) {
     gr_selection gs;
     gs->dist= graphical_distance (x, y);
+    gs->p= point (x, y);
     gs->cp << box_rep::find_tree_path (x, y, dist);
     res << gs;
   }
