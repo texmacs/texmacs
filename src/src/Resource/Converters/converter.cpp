@@ -219,6 +219,8 @@ public:
 };
 
 class iconv_converter {
+  string from;
+  string to;
   iconv_t cd;
   bool show_errors;
   bool successful;
@@ -230,8 +232,8 @@ public:
   friend string apply (iconv_converter &conv, string input);
 };
 
-iconv_converter::iconv_converter (string from, string to, bool errors):
-  show_errors (errors), successful (false)
+iconv_converter::iconv_converter (string from2, string to2, bool errors):
+  from (from2), to (to2), show_errors (errors), successful (false)
 {
   auto_array<char> from_cp = as_charp (from);
   auto_array<char> to_cp = as_charp (to);
@@ -274,8 +276,10 @@ string apply (iconv_converter &conv, string input) {
     size_t r = iconv_adaptor(iconv, conv.cd,
 			     &in_cursor, &in_left, &out_cursor, &out_left);
     if(r == (size_t)-1 && errno != E2BIG) {
-      if (conv.show_errors)
+      if (conv.show_errors) {
+	cerr << "\nConverting from " << conv.from << " to " << conv.to << "\n";
 	system_error ("String conversion using iconv failed!");
+      }
       conv.successful= false;
       return "";
     }
