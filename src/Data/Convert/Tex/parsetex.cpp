@@ -705,12 +705,12 @@ latex_parser::parse (string s) {
 
 static bool
 japanese_tex (string& s) {
-  if (search_forwards (s, "documentclass{jarticle}")) {
+  if (search_forwards (s, "documentclass{jarticle}") != -1) {
     replace (s, "documentclass{jarticle}", "documentclass{article}");
     s= convert (s, "ISO-2022-JP", "UTF-8");
     return true;
   }
-  if (search_forwards (s, "documentclass{jbook}")) {
+  if (search_forwards (s, "documentclass{jbook}") != -1) {
     replace (s, "documentclass{jbook}", "documentclass{book}");
     s= convert (s, "ISO-2022-JP", "UTF-8");
     return true;
