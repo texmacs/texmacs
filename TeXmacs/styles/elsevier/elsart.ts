@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.6>
 
 <style|source>
 
@@ -266,6 +266,12 @@
       </surround>
     </with>
   </surround>>>
+
+  <active*|<\src-comment>
+    Bibliography.
+  </src-comment>>
+
+  <assign|natexlab|<macro|x|<arg|x>>>
 
   \;
 </body>
