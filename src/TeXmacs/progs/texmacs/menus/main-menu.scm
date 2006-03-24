@@ -46,7 +46,7 @@
   (link texmacs-extra-menu)
   (if (not (in-graphics?)) (=> "Format" (link format-menu)))
   (=> "Document" (link document-menu))
-  (if (and (not project-attached?)
+  (if (and (not (project-attached?))
 	   (== (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (=> "Part" (link document-part-menu)))
   (if (project-attached?) (=> "Project" (link project-menu)))
