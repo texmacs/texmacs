@@ -234,7 +234,7 @@
   (apply convert (cons* what from to (acons 'dest dest options))))
 
 (define-public (image->postscript name)
-  (let* ((suffix (url-suffix name))
+  (let* ((suffix (locase-all (url-suffix name)))
 	 (fm (string-append (format-from-suffix suffix) "-file"))
 	 (s (convert name fm "postscript-document")))
     (if (string? s) s "")))
@@ -429,7 +429,7 @@
 
 (define-public (format-from-suffix suffix)
   (lazy-format-force)
-  (with fm (ahash-ref format-mime suffix)
+  (with fm (ahash-ref format-mime (locase-all suffix))
     (if fm fm "generic")))
 
 (define-public (format-determine body suffix)
@@ -437,7 +437,7 @@
   (with p (list-find (ahash-table->list format-recognize)
 		     (lambda (p) ((cdr p) body)))
     (if p (car p)
-	(with fm (ahash-ref format-mime suffix)
+	(with fm (ahash-ref format-mime (locase-all suffix))
 	  (cond ((not fm) "verbatim")
 		((ahash-ref format-must-recognize fm) "verbatim")
 		(else fm))))))
