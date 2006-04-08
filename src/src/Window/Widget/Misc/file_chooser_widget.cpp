@@ -176,7 +176,7 @@ static bool
 has_suffix (string name, array<string> suffix) {
   int i;
   for (i=0; i<N(suffix); i++)
-    if (ends (name, suffix[i])) return true;
+    if (ends (locase_all (name), suffix[i])) return true;
   return false;
 }
 

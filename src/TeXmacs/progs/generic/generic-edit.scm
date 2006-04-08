@@ -323,10 +323,14 @@
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (url-or-list l)
+  (cond ((null? l) (url-none))
+	((null? (cdr l)) (car l))
+	(else (url-or (car l) (url-or-list (cdr l))))))
+
 (define (thumbnail-suffixes)
-  (url-or (url-wildcard "*.gif")
-	  (url-or (url-wildcard "*.jpg")
-		  (url-wildcard "*.jpeg"))))
+  (url-or-list (map url-wildcard
+		    '("*.gif" "*.jpg" "*.jpeg" "*.JPG" "*.JPEG"))))
 
 (define (url->list u)
   (cond ((url-none? u) '())
