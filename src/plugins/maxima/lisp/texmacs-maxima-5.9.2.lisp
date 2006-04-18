@@ -61,7 +61,7 @@
 		;; the change in base-line makes parens unnecessary
 		(if nc
 		    (tex (cadr x) '("^ {-\\langle ")(cons "\\rangle }" r) 'mparen 'mparen)
-		    (tex (cadr x) '("^ {- ")(cons " }" r) 'mparen 'mparen))
+		    (tex (cadr x) '("^ {- ")(cons " }" r) 'mminus 'mparen))
 		(if nc
 		    (tex x (list "^{\\langle ")(cons "\\rangle}" r) 'mparen 'mparen)
 		    (if (and (integerp x) (< x 10))
