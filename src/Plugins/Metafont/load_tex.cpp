@@ -24,10 +24,10 @@
 #endif
 
 static int
-mag (int dpi, int size, int dsize) {
+mag (double dpi, double size, double dsize) {
   if ((size>=100) && (dsize<100)) dsize *= 100;
   if ((dsize>=100) && (size<100))  size *= 100;
-  return (size*((unsigned long int) dpi))/dsize;
+  return (int) (((size * dpi) / dsize) + 0.5);
 }
 
 /******************************************************************************

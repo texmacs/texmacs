@@ -98,6 +98,7 @@ resolve_tex (url name) {
   bench_cumul ("resolve tex");
 
   if (!is_none (u)) cache_set ("font_cache.scm", s, as_string (u));
+  //cout << "Resolve " << name << " -> " << u << "\n";
   return u;
 }
 

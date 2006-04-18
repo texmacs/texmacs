@@ -394,13 +394,17 @@ printer_rep::generate_tex_fonts () {
     string name = tex_fonts [fn_name], ttf;
     int    pos  = search_forwards (".", fn_name);
     string root = (pos==-1? fn_name: fn_name (0, pos));
-#ifndef OS_WIN32 // we need pfbtops
+#ifndef OS_WIN32 // we need pfbtopfa
     if ((pos!=-1) && ends (fn_name, "tt")) {
       int pos2= search_backwards (":", fn_name);
       root= fn_name (0, pos2);
       url u= tt_font_find (root);
-      if (suffix (u) == "pfb")
-	ttf= eval_system ("pfbtops", u);
+      if (suffix (u) == "pfb") {
+	url v= url_temp (".pfa");
+	system ("pfb2pfa", u, v);
+	(void) load_string (v, ttf);
+	remove (v);
+      }
     }
 #endif
 
