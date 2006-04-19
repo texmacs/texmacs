@@ -1,9 +1,15 @@
-<TeXmacs|1.0.5.12>
+<TeXmacs|1.0.6>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.0.6 to 1.0.6.1>
+
+  <\itemize>
+    <item>Upgraded <name|Maxima> interface for <name|Maxima> 5.9.3.
+  </itemize>
 
   <section|Changes from version 1.0.5 to 1.0.6>
 
