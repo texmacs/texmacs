@@ -102,6 +102,8 @@
   (triangleup "\\triangle")
   (precdot "{\\prec\\hspace{-0.6em}\\cdot}\\;\\,")
   (preceqdot "{\\preccurlyeq\\hspace{-0.6em}\\cdot}\\;\\,")
+  (llangle "{\\langle\\!\\langle}")
+  (rrangle "{\\rangle\\!\\rangle}")
   (join "\\Join")
   (um "-")
   (upl "+")
