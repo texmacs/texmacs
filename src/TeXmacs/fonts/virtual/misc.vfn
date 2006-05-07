@@ -73,7 +73,7 @@
   (simsim (enlarge (join (0 0 -) (0 0.25 sim) (0 -0.25 sim)) 0 0 -0.25 -0.25))
   (asympasymp
     (enlarge
-      (join (0 0 -) (0 0.25 smile) (0 -0.25 frown)) 0 0 -0.25 -0.25))
+      (join (0 0 -) (0 0.25 smallsmile) (0 -0.25 smallfrown)) 0 0 -0.25 -0.25))
   (ncong (add cong /))
   (nsimsim (add simsim /))
   (nasympasymp (add asympasymp /))
