@@ -247,6 +247,11 @@
    (begin
      (make-with "language" "bulgarian")
      (make-with "font" "cyrillic")))
+  (when (supports-chinese?)
+    ("Chinese"
+     (begin
+       (make-with "language" "chinese")
+       (make-with "font" "fireflysung"))))
   ("Czech" (make-with "language" "czech"))
   ("Danish" (make-with "language" "danish"))
   ("Dutch" (make-with "language" "dutch"))
@@ -256,7 +261,10 @@
   ("German" (make-with "language" "german"))
   ("Hungarian" (make-with "language" "hungarian"))
   ("Italian" (make-with "language" "italian"))
-  ("Japanese" (make-with "language" "japanese"))
+  (when (supports-japanese?)
+    ("Japanese" (make-with "language" "japanese")))
+  (when (supports-korean?)
+    ("Korean" (make-with "language" "korean")))
   ("Polish" (make-with "language" "polish"))
   ("Portuguese" (make-with "language" "portuguese"))
   ("Romanian" (make-with "language" "romanian"))
@@ -267,6 +275,11 @@
   ("Slovene" (make-with "language" "slovene"))
   ("Spanish" (make-with "language" "spanish"))
   ("Swedish" (make-with "language" "swedish"))
+  (when (supports-chinese?)
+    ("Taiwanese"
+     (begin
+       (make-with "language" "taiwanese")
+       (make-with "font" "fireflysung"))))
   ("Ukrainian"
    (begin
      (make-with "language" "ukrainian")

@@ -1300,7 +1300,6 @@ latex_to_tree (tree t1) {
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
   if (is_document && textm_japanese) {
-    cout << "Japanese...\n";
     tree init = tree (COLLECTION,
 		      tree (ASSOCIATE, LANGUAGE, "japanese"),
 		      tree (ASSOCIATE, FONT, "ipa"));
