@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.6>
 
 <style|tmweb>
 
@@ -20,6 +20,10 @@
   Moreover, in case that you did not install Te<TeX> (or another suitable
   <TeX> distribution), you may install an even more <hlink|complete set of
   fonts|#fonts-complete>.
+
+  Also, <TeXmacs> 1.0.6.1 and later comes with support for Chinese, Japanese
+  and Korean to <TeXmacs>. This requires the installation of additional
+  <hlink|CJK fonts|#fonts-cjk>.
 
   <paragraph|RPM with extra fonts><label|fonts-rpm>
 
@@ -64,8 +68,8 @@
   <paragraph|Tarball for systems without <TeX>/<LaTeX>><label|fonts-complete>
 
   Whenever you don't have a suitable <TeX>/<LaTeX> distribution like Te<TeX>
-  installed on your system, then you may download a <hlink|tarball (10.0
-  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>
+  installed on your system, then you may download a <inactive|<hlink|tarball
+  (10.0 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>>
   with a reasonably complete set of Type 1 fonts for basic use of <TeXmacs>
   (in fact, these are precisely the fonts which are provided in the native
   <name|Windows> version of <TeXmacs>). After downloading, <verbatim|cd> into
@@ -82,9 +86,40 @@
     \ \ \ \ texmacs --delete-font-cache &
   </code>
 
+  <paragraph|Fonts for Chinese, Japanese and Korean><label|fonts-cjk>
+
+  From version 1.0.6.1 on, <TeXmacs> comes with support for Chinese, Japanese
+  and Korean. However, the standard distributions do not include the
+  necessary fonts, which can be downloaded separately:
+
+  <\itemize>
+    <item>Tarball with <hlink|Chinese fonts (6.8
+    Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-chinese-fonts.tar.gz>.
+
+    <item>Tarball with <hlink|Japanese fonts (9.1
+    Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-japanese-fonts.tar.gz>.
+
+    <item>Tarball with <hlink|Korean fonts (10.5
+    Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-korean-fonts.tar.gz>.
+  </itemize>
+
+  After downloading, <verbatim|cd> into the directory <verbatim|~/.TeXmacs>
+  (which you have to create if it does not already exist) and unpack the
+  fonts using
+
+  <\code>
+    \ \ \ \ gunzip -c TeXmacs-<em|language>-fonts.tar.gz \| tar xvf -
+  </code>
+
+  After the installation of new fonts, always rerun <TeXmacs> once using
+
+  <\code>
+    \ \ \ \ texmacs --delete-font-cache &
+  </code>
+
   <\remark>
     If you do not have ftp access, then you might wish to
-    <hlink|download|http://www.texmacs.org/Download/ftp> from the web.
+    <hlink|download|http://www.texmacs.org/Download/ftp/fonts> from the web.
   </remark>
 
   <\remark>

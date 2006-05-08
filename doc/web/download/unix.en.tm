@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.6>
 
 <style|tmweb>
 
@@ -87,6 +87,10 @@
   the extra fonts, this process may take some time at a first run. Type 1
   fonts are also rendered better by certain <name|Pdf> viewers and they are
   often preferred by publishers.
+
+  Chinese, Japanese and Korean users also need to separately download extra
+  <hlink|CJK fonts|fonts.en.tm#fonts-cjk>, whenever these languages do not
+  show up in the language menus.
 
   <section|Be cool...>
 

@@ -8,7 +8,9 @@
   <section|Changes from version 1.0.6 to 1.0.6.1>
 
   <\itemize>
-    <item>Upgraded <name|Maxima> interface for <name|Maxima> 5.9.3.
+    <item>Basic CJK support for <TeXmacs>. (1.0.6.1)
+
+    <item>Upgraded <name|Maxima> interface for <name|Maxima> 5.9.3. (1.0.6.1)
   </itemize>
 
   <section|Changes from version 1.0.5 to 1.0.6>
