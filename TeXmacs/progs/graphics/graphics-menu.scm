@@ -239,7 +239,8 @@
   ("Brown" (graphics-set-grid-color 'axes "brown"))
   ("Pink" (graphics-set-grid-color 'axes "pink"))
   ---
-  ("Other" (interactive (lambda (x) (graphics-set-grid-color 0 x)) "Color")))
+  ("Other" (interactive
+	       (lambda (x) (graphics-set-grid-color 'axes x)) "Color")))
 
 (menu-bind grid-color-units-menu
   ("Default" (graphics-set-grid-color 'units "default"))
@@ -256,7 +257,8 @@
   ("Brown" (graphics-set-grid-color 'units "brown"))
   ("Pink" (graphics-set-grid-color 'units "pink"))
   ---
-  ("Other" (interactive (lambda (x) (graphics-set-grid-color 1 x)) "Color")))
+  ("Other" (interactive
+	       (lambda (x) (graphics-set-grid-color 'units x)) "Color")))
 
 (menu-bind grid-color-subunits-menu
   ("Default" (graphics-set-grid-color 'subunits "default"))
@@ -273,7 +275,8 @@
   ("Brown" (graphics-set-grid-color 'subunits "brown"))
   ("Pink" (graphics-set-grid-color 'subunits "pink"))
   ---
-  ("Other" (interactive (lambda (x) (graphics-set-grid-color 2 x)) "Color")))
+  ("Other" (interactive
+	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
 
 (menu-bind graphics-point-style-menu
   ("Default" (graphics-set-point-style "default"))

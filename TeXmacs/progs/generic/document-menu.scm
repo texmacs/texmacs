@@ -38,6 +38,11 @@
    (begin
      (init-language "bulgarian")
      (set-output-language "bulgarian")))
+  (when (supports-chinese?)
+    ("Chinese"
+     (begin
+       (init-language "chinese")
+       (set-output-language "chinese"))))
   ("Czech"
    (begin
      (init-language "czech")
@@ -74,10 +79,16 @@
    (begin
      (init-language "italian")
      (set-output-language "italian")))
-  ("Japanese"
-   (begin
-     (init-language "japanese")
-     (set-output-language "japanese")))
+  (when (supports-japanese?)
+    ("Japanese"
+     (begin
+       (init-language "japanese")
+       (set-output-language "japanese"))))
+  (when (supports-korean?)
+    ("Korean"
+     (begin
+       (init-language "korean")
+       (set-output-language "korean"))))
   ("Polish"
    (begin
      (init-language "polish")
@@ -106,6 +117,11 @@
    (begin
      (init-language "swedish")
      (set-output-language "swedish")))
+  (when (supports-chinese?)
+    ("Taiwanese"
+     (begin
+       (init-language "taiwanese")
+       (set-output-language "taiwanese"))))
   ("Ukrainian"
    (begin
      (init-language "ukrainian")
@@ -292,6 +308,8 @@
       ---
       ("British" (init-language "british"))
       ("Bulgarian" (init-language "bulgarian"))
+      (when (supports-chinese?)
+	("Chinese" (init-language "chinese")))
       ("Czech" (init-language "czech"))
       ("Danish" (init-language "danish"))
       ("Dutch" (init-language "dutch"))
@@ -301,7 +319,10 @@
       ("German" (init-language "german"))
       ("Hungarian" (init-language "hungarian"))
       ("Italian" (init-language "italian"))
-      ("Japanese" (init-language "japanese"))
+      (when (supports-japanese?)
+	("Japanese" (init-language "japanese")))
+      (when (supports-korean?)
+	("Korean" (init-language "korean")))
       ("Polish" (init-language "polish"))
       ("Portuguese" (init-language "portuguese"))
       ("Romanian" (init-language "romanian"))
@@ -309,6 +330,8 @@
       ("Slovene" (init-language "slovene"))
       ("Spanish" (init-language "spanish"))
       ("Swedish" (init-language "swedish"))
+      (when (supports-chinese?)
+	("Taiwanese" (init-language "taiwanese")))
       ("Ukrainian" (init-language "ukrainian")))
   (-> "Scripts"
       ("Default" (init-default "prog-scripts"))

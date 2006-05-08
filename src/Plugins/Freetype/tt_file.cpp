@@ -22,6 +22,12 @@
 static hashmap<string,string> tt_fonts ("no");
 
 static url
+search_sub_dirs (url root) {
+  url dirs= complete (root * url_wildcard (), "dr");
+  return expand (dirs);
+}
+
+static url
 tt_locate (string name) {
   if (ends (name, ".pfb")) {
     /*
@@ -49,7 +55,8 @@ tt_locate (string name) {
 	  return url (s (start, i));
 	start= i+1;
       }
-    return resolve (url ("$TEXMACS_HOME_PATH/fonts/truetype", name));
+    url tt_path= search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype");
+    return resolve (tt_path * name);
   }
   return url_none ();
 }

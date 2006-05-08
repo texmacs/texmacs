@@ -112,6 +112,11 @@ la_charmap () {
 }
 
 charmap
+hangul_charmap () {
+  return range_charmap (0xac00, 0xd7a3);
+}
+
+charmap
 oriental_charmap () {
   return range_charmap (0x3000, 0xfaff);
 }
@@ -201,6 +206,7 @@ load_charmap (tree def) {
     //cout << i << "\t" << def[i] << "\n";
     if (def[i] == "any") a[i]= any_charmap ();
     else if (def[i] == "ec") a[i]= ec_charmap ();
+    else if (def[i] == "hangul") a[i]= hangul_charmap ();
     else if (def[i] == "la") a[i]= la_charmap ();
     else if (def[i] == "oriental") a[i]= oriental_charmap ();
     else a[i]= explicit_charmap (as_string (def[i]));

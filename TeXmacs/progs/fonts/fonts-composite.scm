@@ -36,5 +36,6 @@
 	       (long (virtual long $s $d))
 	       (negate (virtual negate $s $d))
 	       (misc (virtual misc $s $d))
+	       (hangul (unbatang $v $a proportional $s $d))
 	       (oriental (ipa $v $a proportional $s $d))
 	       (any (roman $v $a $b $s $d))))))
