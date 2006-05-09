@@ -29,6 +29,60 @@
   ---
   ("Other style" (interactive init-style)))
 
+(menu-bind document-view-menu
+  ("Edit source tree" (toggle-preamble))
+  (-> "Informative flags"
+      ("Default" (init-default "info-flag"))
+      ---
+      ("None" (init-env "info-flag" "none"))
+      ("Short" (init-env "info-flag" "short"))
+      ("Detailed" (init-env "info-flag" "detailed"))
+      ("Also on paper" (init-env "info-flag" "paper")))
+  (-> "Page layout"
+      ("Default" (init-default "page-screen-margin" "page-show-hf"
+			       "page-screen-left" "page-screen-right"
+			       "page-screen-top" "page-screen-bot"))
+      ---
+      ("Show header and footer" (toggle-visible-header-and-footer))
+      ("Margins as on paper" (toggle-page-screen-margin))
+      ---
+      (when (test-env? "page-screen-margin" "true")
+	("Left margin" (init-interactive-env "page-screen-left"))
+	("Right margin" (init-interactive-env "page-screen-right"))
+	("Top margin" (init-interactive-env "page-screen-top"))
+	("Bottom margin" (init-interactive-env "page-screen-bot"))))
+  ---
+  (group "Source tags")
+  (-> "Style"
+      ("Default" (init-default "src-style"))
+      ---
+      ("Angular" (init-env "src-style" "angular"))
+      ("Scheme" (init-env "src-style" "scheme"))
+      ("Functional" (init-env "src-style" "functional"))
+      ("Latex" (init-env "src-style" "latex")))
+  (-> "Special"
+      ("Default" (init-default "src-special"))
+      ---
+      ("None" (init-env "src-special" "raw"))
+      ("Formatting" (init-env "src-special" "format"))
+      ("Normal" (init-env "src-special" "normal"))
+      ("Maximal" (init-env "src-special" "maximal")))
+  (-> "Compactification"
+      ("Default" (init-default "src-compact"))
+      ---
+      ("Minimal" (init-env "src-compact" "none"))
+      ("Only inline tags" (init-env "src-compact" "inline"))
+      ("Normal" (init-env "src-compact" "normal"))
+      ("Inline arguments" (init-env "src-compact" "inline args"))
+      ("Maximal" (init-env "src-compact" "all")))
+  (-> "Closing style"
+      ("Default" (init-default "src-close"))
+      ---
+      ("Repeat" (init-env "src-close" "repeat"))
+      ("Stretched" (init-env "src-close" "long"))
+      ("Compact" (init-env "src-close" "compact"))
+      ("Minimal" (init-env "src-close" "minimal"))))
+
 (menu-bind global-language-menu
   ("British"
    (begin
@@ -133,69 +187,18 @@
 
 (menu-bind document-menu
   (-> "Style" (link document-style-menu))
-  (-> "Add package"
-      (link add-package-menu)
-      ---
-      ("Other" (interactive init-add-package)))
-  (-> "Remove package"
-      (link remove-package-menu)
-      ---
-      ("Other" (interactive init-remove-package)))
-  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
-      (-> "Part" (link document-part-menu)))
-  (-> "View"
-      ("Edit source tree" (toggle-preamble))
-      (-> "Informative flags"
-	  ("Default" (init-default "info-flag"))
+  (if (detailed-menus?)
+      (-> "Add package"
+	  (link add-package-menu)
 	  ---
-	  ("None" (init-env "info-flag" "none"))
-	  ("Short" (init-env "info-flag" "short"))
-	  ("Detailed" (init-env "info-flag" "detailed"))
-	  ("Also on paper" (init-env "info-flag" "paper")))
-      (-> "Page layout"
-	  ("Default" (init-default "page-screen-margin" "page-show-hf"
-				   "page-screen-left" "page-screen-right"
-				   "page-screen-top" "page-screen-bot"))
+	  ("Other" (interactive init-add-package)))
+      (-> "Remove package"
+	  (link remove-package-menu)
 	  ---
-	  ("Show header and footer" (toggle-visible-header-and-footer))
-	  ("Margins as on paper" (toggle-page-screen-margin))
-	  ---
-	  (when (test-env? "page-screen-margin" "true")
-		("Left margin" (init-interactive-env "page-screen-left"))
-		("Right margin" (init-interactive-env "page-screen-right"))
-		("Top margin" (init-interactive-env "page-screen-top"))
-		("Bottom margin" (init-interactive-env "page-screen-bot"))))
-      ---
-      (group "Source tags")
-      (-> "Style"
-	  ("Default" (init-default "src-style"))
-	  ---
-	  ("Angular" (init-env "src-style" "angular"))
-	  ("Scheme" (init-env "src-style" "scheme"))
-	  ("Functional" (init-env "src-style" "functional"))
-	  ("Latex" (init-env "src-style" "latex")))
-      (-> "Special"
-	  ("Default" (init-default "src-special"))
-	  ---
-	  ("None" (init-env "src-special" "raw"))
-	  ("Formatting" (init-env "src-special" "format"))
-	  ("Normal" (init-env "src-special" "normal"))
-	  ("Maximal" (init-env "src-special" "maximal")))
-      (-> "Compactification"
-	  ("Default" (init-default "src-compact"))
-	  ---
-	  ("Minimal" (init-env "src-compact" "none"))
-	  ("Only inline tags" (init-env "src-compact" "inline"))
-	  ("Normal" (init-env "src-compact" "normal"))
-	  ("Inline arguments" (init-env "src-compact" "inline args"))
-	  ("Maximal" (init-env "src-compact" "all")))
-      (-> "Closing style"
-	  ("Default" (init-default "src-close"))
-	  ---
-	  ("Repeat" (init-env "src-close" "repeat"))
-	  ("Stretched" (init-env "src-close" "long"))
-	  ("Compact" (init-env "src-close" "compact"))
-	  ("Minimal" (init-env "src-close" "minimal"))))
+	  ("Other" (interactive init-remove-package)))
+      (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
+	  (-> "Part" (link document-part-menu)))
+      (-> "View" (link document-view-menu)))
   ---
   (-> "Font"
       (-> "Text font"
@@ -303,40 +306,45 @@
 	  ("Broken white" (init-env "bg-color" "broken white"))
 	  ---
 	  ("Other" (init-interactive-env "bg-color"))))
-  (-> "Language"
-      ("Default" (init-default "language"))
-      ---
-      ("British" (init-language "british"))
-      ("Bulgarian" (init-language "bulgarian"))
-      (when (supports-chinese?)
-	("Chinese" (init-language "chinese")))
-      ("Czech" (init-language "czech"))
-      ("Danish" (init-language "danish"))
-      ("Dutch" (init-language "dutch"))
-      ("English" (init-language "english"))
-      ("Finnish" (init-language "finnish"))
-      ("French" (init-language "french"))
-      ("German" (init-language "german"))
-      ("Hungarian" (init-language "hungarian"))
-      ("Italian" (init-language "italian"))
-      (when (supports-japanese?)
-	("Japanese" (init-language "japanese")))
-      (when (supports-korean?)
-	("Korean" (init-language "korean")))
-      ("Polish" (init-language "polish"))
-      ("Portuguese" (init-language "portuguese"))
-      ("Romanian" (init-language "romanian"))
-      ("Russian" (init-language "russian"))
-      ("Slovene" (init-language "slovene"))
-      ("Spanish" (init-language "spanish"))
-      ("Swedish" (init-language "swedish"))
-      (when (supports-chinese?)
-	("Taiwanese" (init-language "taiwanese")))
-      ("Ukrainian" (init-language "ukrainian")))
+  (if (detailed-menus?)
+      (-> "Language"
+	  ("Default" (init-default "language"))
+	  ---
+	  ("British" (init-language "british"))
+	  ("Bulgarian" (init-language "bulgarian"))
+	  (when (supports-chinese?)
+	    ("Chinese" (init-language "chinese")))
+	  ("Czech" (init-language "czech"))
+	  ("Danish" (init-language "danish"))
+	  ("Dutch" (init-language "dutch"))
+	  ("English" (init-language "english"))
+	  ("Finnish" (init-language "finnish"))
+	  ("French" (init-language "french"))
+	  ("German" (init-language "german"))
+	  ("Hungarian" (init-language "hungarian"))
+	  ("Italian" (init-language "italian"))
+	  (when (supports-japanese?)
+	    ("Japanese" (init-language "japanese")))
+	  (when (supports-korean?)
+	    ("Korean" (init-language "korean")))
+	  ("Polish" (init-language "polish"))
+	  ("Portuguese" (init-language "portuguese"))
+	  ("Romanian" (init-language "romanian"))
+	  ("Russian" (init-language "russian"))
+	  ("Slovene" (init-language "slovene"))
+	  ("Spanish" (init-language "spanish"))
+	  ("Swedish" (init-language "swedish"))
+	  (when (supports-chinese?)
+	    ("Taiwanese" (init-language "taiwanese")))
+	  ("Ukrainian" (init-language "ukrainian"))))
   (-> "Scripts"
       ("Default" (init-default "prog-scripts"))
       ---
       (link supported-scripts-menu))
+  (-> "Scripts"
+      ("Default" (init-default "prog-scripts"))
+      ---
+      (link scripts-preferences-menu))
   (-> "Paragraph"
       (-> "Style"
 	  ("Default" (init-default "par-mode"))
@@ -475,27 +483,28 @@
 		("Paragraph width" (init-interactive-env "par-width"))
 		("Odd page shift" (init-interactive-env "page-odd-shift"))
 		("Even page shift" (init-interactive-env "page-even-shift"))))
-      ---
-      (group "Breaking")
-      (-> "Algorithm"
-	  ("Default" (init-default "page-breaking"))
+      (if (detailed-menus?)
 	  ---
-	  ("Sloppy" (init-env "page-breaking" "sloppy"))
-	  ("Medium" (init-env "page-breaking" "medium"))
-	  ("Professional" (init-env "page-breaking" "optimal")))
-      (-> "Limits"
-	  ("Allowed reduction" (init-interactive-env "page-shrink"))
-	  ("Allowed extension" (init-interactive-env "page-extend")))
-      (-> "Flexibility"
-	  ("Default" (init-default "page-flexibility"))
-	  ---
-	  ("0" (init-env "page-flexibility" "0.0"))
-	  ("1/4" (init-env "page-flexibility" "0.25"))
-	  ("1/2" (init-env "page-flexibility" "0.5"))
-	  ("3/4" (init-env "page-flexibility" "0.75"))
-	  ("1" (init-env "page-flexibility" "1.0"))
-	  ---
-	  ("Other" (init-interactive-env "page-flexibility"))))
+	  (group "Breaking")
+	  (-> "Algorithm"
+	      ("Default" (init-default "page-breaking"))
+	      ---
+	      ("Sloppy" (init-env "page-breaking" "sloppy"))
+	      ("Medium" (init-env "page-breaking" "medium"))
+	      ("Professional" (init-env "page-breaking" "optimal")))
+	  (-> "Limits"
+	      ("Allowed reduction" (init-interactive-env "page-shrink"))
+	      ("Allowed extension" (init-interactive-env "page-extend")))
+	  (-> "Flexibility"
+	      ("Default" (init-default "page-flexibility"))
+	      ---
+	      ("0" (init-env "page-flexibility" "0.0"))
+	      ("1/4" (init-env "page-flexibility" "0.25"))
+	      ("1/2" (init-env "page-flexibility" "0.5"))
+	      ("3/4" (init-env "page-flexibility" "0.75"))
+	      ("1" (init-env "page-flexibility" "1.0"))
+	      ---
+	      ("Other" (init-interactive-env "page-flexibility")))))
   ---
   (-> "Update"
       ("All" (generate-all-aux) (update-buffer))

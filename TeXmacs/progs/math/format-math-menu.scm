@@ -116,10 +116,13 @@
 (menu-bind math-format-menu
   (group "Font")
   (link math-font-menu)
+  (if (simple-menus?)
+      (-> "Color" (link color-menu)))
   ---
   (group "Content")
-  (-> "Color" (link color-menu))
-  (-> "Scripts" (link local-supported-scripts-menu))
+  (if (detailed-menus?)
+      (-> "Color" (link color-menu))
+      (-> "Scripts" (link local-supported-scripts-menu)))
   (link math-special-format-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -56,6 +56,18 @@
     (enum ("Interactive questions" "interactive questions")
 	  ("On the footer" "footer")
 	  ("In popup windows" "popup"))
+    (enum ("Details in menus" "detailed menus")
+	  ("Simplified menus" "simple")
+	  ("Detailed menus" "detailed"))
+    (-> "View"
+	(toggle ("Header" "header"))
+	(toggle ("Main icon bar" "main icon bar"))
+	(toggle ("Context dependent icons" "context dependent icons"))
+	(toggle ("User provided icons" "user provided icons"))
+	(toggle ("Status bar" "status bar"))
+	(enum ("Shrinking factor" "shrinking factor")
+	      "1" "2" "3" "4" "5" "7" "10" *))
+    ---
     (enum ("Language" "language")
 	  ("British" "british")
 	  ("Bulgarian" "bulgarian")
@@ -77,6 +89,10 @@
 	  ("Spanish" "spanish")
 	  ("Swedish" "swedish")
 	  ("Ukrainian" "ukrainian"))
+    (-> "Scripts"
+	("None" (set-preference "scripting language" "none"))
+	---
+	(link scripts-preferences-menu))
     (-> "Keyboard"
 	(enum ("A modifier" "A")
 	      ("Default" "default")
@@ -139,14 +155,10 @@
 	(toggle ("Automatically close brackets"
 		 "automatically close brackets")))
     (-> "Printer" . ,page-setup-tree)
-    (-> "View"
-	(toggle ("Header" "header"))
-	(toggle ("Main icon bar" "main icon bar"))
-	(toggle ("Context dependent icons" "context dependent icons"))
-	(toggle ("User provided icons" "user provided icons"))
-	(toggle ("Status bar" "status bar"))
-	(enum ("Shrinking factor" "shrinking factor")
-	      "1" "2" "3" "4" "5" "7" "10" *))
+    (enum ("Security" "security")
+	  ("Accept no scripts" "accept no scripts")
+	  ("Prompt on scripts" "prompt on scripts")
+	  ("Accept all scripts" "accept all scripts"))
     (-> "Converters"
 	(-> "TeXmacs -> Html"
 ;	    (toggle ("Use CSS" "texmacs->html:css"))
@@ -177,10 +189,7 @@
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8"))))
-    (enum ("Security" "security")
-	  ("Accept no scripts" "accept no scripts")
-	  ("Prompt on scripts" "prompt on scripts")
-	  ("Accept all scripts" "accept all scripts"))
+    ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")
 	  ("30 s" "30")

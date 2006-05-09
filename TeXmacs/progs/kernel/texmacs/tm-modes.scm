@@ -160,6 +160,8 @@
 (texmacs-modes
   (like-emacs% (== (get-preference "look and feel") "emacs"))
   (like-windows% (== (get-preference "look and feel") "windows"))
+  (simple-menus% (== (get-preference "detailed menus") "simple"))
+  (detailed-menus% (== (get-preference "detailed menus") "detailed"))
   (in-cyrillic-cp1251% (cyrillic-input-method? "cp1251") in-cyrillic%)
   (in-cyrillic-jcuken% (cyrillic-input-method? "jcuken") in-cyrillic%)
   (in-cyrillic-koi8% (cyrillic-input-method? "koi8") in-cyrillic%)

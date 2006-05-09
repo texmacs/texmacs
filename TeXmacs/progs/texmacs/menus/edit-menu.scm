@@ -44,13 +44,15 @@
 	("Copy" (clipboard-copy "primary"))
 	("Cut" (clipboard-cut "primary")))
   ("Paste" (clipboard-paste "primary"))
-  ("Clear" (clipboard-clear "primary"))
+  (if (detailed-menus?)
+      ("Clear" (clipboard-clear "primary")))
   ---
   ("Search" ... (search-start #t))
   ("Replace" (interactive replace-start-forward))
   ("Spell" ... (spell-start))
-  ---
-  (when (selection-active-any?)
+  (if (detailed-menus?)
+      ---
+      (when (selection-active-any?)
 	(-> "Copy to"
 	    (promise (extern-clipboard-menu-promise "copy-export"))
 	    ---
@@ -71,16 +73,16 @@
 	    ("Replace" (clipboard-cut "replace"))
 	    ---
 	    ("Other" (interactive clipboard-cut))))
-  (-> "Paste from"
-      (promise (extern-clipboard-menu-promise "paste-import"))
-      ---
-      ("Primary" (clipboard-paste "primary"))
-      ("Secondary" (clipboard-paste "secondary"))
-      ("Ternary" (clipboard-paste "ternary"))
-      ("Search" (clipboard-paste "search"))
-      ("Replace" (clipboard-paste "replace"))
-      ---
-      ("Other" (interactive clipboard-paste)))
+      (-> "Paste from"
+	  (promise (extern-clipboard-menu-promise "paste-import"))
+	  ---
+	  ("Primary" (clipboard-paste "primary"))
+	  ("Secondary" (clipboard-paste "secondary"))
+	  ("Ternary" (clipboard-paste "ternary"))
+	  ("Search" (clipboard-paste "search"))
+	  ("Replace" (clipboard-paste "replace"))
+	  ---
+	  ("Other" (interactive clipboard-paste))))
   ---
   (-> "Preferences"
       (link preferences-menu)))
