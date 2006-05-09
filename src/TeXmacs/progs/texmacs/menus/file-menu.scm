@@ -66,20 +66,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind new-file-menu
-  ("New buffer" (new-buffer))
+  ("New document" (new-buffer))
   ("Open new window" (open-window))
   ("Clone window" (clone-window)))
 
 (menu-bind load-menu
-  ("Load buffer" (choose-file load-buffer "Load file" ""))
-  ("Revert buffer" (revert-buffer))
+  ("Load" (choose-file load-buffer "Load file" ""))
+  ("Revert" (revert-buffer))
   ("Load in new window" (choose-file load-in-new-window "Load file" ""))
   ---
   (promise (import-menu-promise #t)))
 
 (menu-bind save-menu
-  ("Save buffer" (save-buffer))
-  ("Save buffer as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
+  ("Save" (save-buffer))
+  ("Save as" (choose-file save-buffer "Save TeXmacs file" "texmacs"))
   ---
   (promise (export-menu-promise #t))
   ---
@@ -98,7 +98,7 @@
    (interactive choose-file-and-print-page-selection)))
 
 (menu-bind close-menu
-  ("Close buffer" (safely-kill-buffer))
+  ("Close document" (safely-kill-buffer))
   ("Close window" (safely-kill-window))
   ("Close TeXmacs" (safely-quit-TeXmacs)))
 
@@ -125,7 +125,7 @@
       ("PostScript"
        (choose-file print-to-file "Save postscript file" "postscript")))
   ---
-  ("Close buffer" (safely-kill-buffer))
+  ("Close document" (safely-kill-buffer))
   ("Close TeXmacs" (safely-quit-TeXmacs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
