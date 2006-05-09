@@ -21,9 +21,10 @@
 
 (menu-bind help-menu
   (when (url-exists-in-help? "about/welcome/welcome.en.tm")
-	("Welcome" (load-help-buffer "about/welcome/welcome")))
-  ---
-  (when (url-exists-in-help? "main/config/man-configuration.en.tm")
+	("Welcome" (load-help-buffer "about/welcome/welcome"))
+	---)
+  (if (detailed-menus?)
+      (when (url-exists-in-help? "main/config/man-configuration.en.tm")
 	(-> "Configuration"
 	    ("Browse" (load-help-buffer "main/config/man-configuration"))
 	    ---
@@ -34,7 +35,7 @@
 	    ("Users of Cyrillic languages"
 	     (load-help-article "main/config/man-russian"))
 	    ("Users of oriental languages"
-	     (load-help-article "main/config/man-oriental"))))
+	     (load-help-article "main/config/man-oriental")))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
 	(-> "Manual"
 	    ("Browse" (load-help-buffer "main/man-manual"))
@@ -77,14 +78,15 @@
 	     (load-help-article "main/styles/styles"))
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
-  (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
+  (if (detailed-menus?)
+      (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
 	(-> "Tutorial"
 	    ("Browse" (load-help-buffer "tutorial/tut-tutorial"))
 	    ---
 	    ("First contact"
 	     (load-help-article "tutorial/start/tut-start"))
 	    ("Typing a simple text"
-	     (load-help-article "tutorial/start/tut-simple-text"))))
+	     (load-help-article "tutorial/start/tut-simple-text")))))
 ; (when (url-exists-in-help? "devel/style/style.en.tm")
 ;	(-> "Styles"
 ;	    ("Browse" (load-help-buffer "devel/style/style"))
@@ -120,8 +122,9 @@
 	    ---
 	    ("Original welcome message"
 	     (load-help-article "about/welcome/first"))))
-  ---
-  (when (url-exists-in-help? "about/contribute/contribute.en.tm")
+  (if (detailed-menus?)
+      ---
+      (when (url-exists-in-help? "about/contribute/contribute.en.tm")
 	(-> "Help us"
 	    ("Browse" (load-help-buffer "about/contribute/contribute"))
 	    ---
@@ -142,7 +145,7 @@
 	     (load-help-article "about/contribute/interfaces/interfaces"))
 	    ("Become a TeXmacs developer"
 	     (load-help-article "about/contribute/develop/develop"))))
-  (when (url-exists-in-help? "about/projects/projects.en.tm")
+      (when (url-exists-in-help? "about/projects/projects.en.tm")
 	(-> "Projects"
 	    ("Browse" (load-help-buffer "about/projects/projects"))
 	    ---
@@ -164,7 +167,7 @@
 ;	     (load-help-article "devel/format/env-vars"))
 ;	    ("Planned changes"
 ;	     (load-help-article "devel/format/planned-changes"))))
-  (when (url-exists-in-help? "devel/interface/interface.en.tm")
+      (when (url-exists-in-help? "devel/interface/interface.en.tm")
 	(-> "Interfacing"
 	    ("Browse" (load-help-buffer "devel/interface/interface"))
 	    ---
@@ -192,7 +195,7 @@
 	     (load-help-article "devel/interface/interface-misc"))
 	    ("Plans for the future"
 	     (load-help-article "devel/interface/interface-plans"))))
-  (when (url-exists-in-help? "devel/source/source.en.tm")
+      (when (url-exists-in-help? "devel/source/source.en.tm")
 	(-> "Source code"
 	    ("Browse" (load-help-buffer "devel/source/source"))
 	    ---
@@ -210,7 +213,7 @@
 	     (load-help-article "devel/source/maths"))
 	    ("The boxes produced by the typesetter"
 	     (load-help-article "devel/source/boxes"))))
-  (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
+      (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
 	(-> "Scheme extensions"
 	    ("Browse" (load-help-buffer "devel/scheme/scheme"))
 	    ---
@@ -219,24 +222,26 @@
 	    ("TeXmacs extensions to scheme and utilities"
 	     (load-help-article "devel/scheme/utils/scheme-utils"))
 	    ("Programming routines for editing documents"
-	     (load-help-article "devel/scheme/edit/scheme-edit"))))
+	     (load-help-article "devel/scheme/edit/scheme-edit")))))
   ---
   (-> "Search"
       ("Documentation" (interactive docgrep-in-doc))
-      ("Source code" (interactive docgrep-in-src))
+      (if (detailed-menus?)
+	  ("Source code" (interactive docgrep-in-src)))
       ("My documents" (interactive docgrep-in-texts)))
-  (-> "Full manuals"
-      (when (url-exists-in-help? "main/man-user-manual.en.tm")
+  (if (detailed-menus?)
+      (-> "Full manuals"
+	  (when (url-exists-in-help? "main/man-user-manual.en.tm")
 	    ("User manual" (load-help-book "main/man-user-manual")))
-      (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
+	  (when (url-exists-in-help? "tutorial/tut-tutorial.en.tm")
 	    ("Tutorial" (load-help-book "tutorial/tut-tutorial")))
-      (when (url-exists-in-help? "devel/source/source.en.tm")
+	  (when (url-exists-in-help? "devel/source/source.en.tm")
 	    ("Developers guide" (load-help-book "devel/source/source")))
-      ---
-      (when (style-has? "tmdoc-style")
+	  ---
+	  (when (style-has? "tmdoc-style")
 	    ("Compile article" (tmdoc-expand-this 'tmdoc-title))
 	    ("Compile book" (tmdoc-expand-this 'title))))
-  (when (url-exists-in-path? "wget")
+      (when (url-exists-in-path? "wget")
 	(-> "Online help"
 	    ("Browse web" (load-help-online "index.en.tm"))
-	    ("Update from web" (update-help-online)))))
+	    ("Update from web" (update-help-online))))))

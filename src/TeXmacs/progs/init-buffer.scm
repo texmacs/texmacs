@@ -12,12 +12,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(if (no-name?)
-    (begin
-      (use-modules (generic document-edit) (texmacs texmacs tm-print))
-      (init-style "generic")
-      (with lan (get-preference "language")
-	(if (!= lan "english") (init-language lan)))
-      (with psz (get-printer-paper-type)
-	(if (!= psz "a4") (init-page-type psz)))
-      (pretend-save-buffer)))
+(when (no-name?)
+  (use-modules (generic document-edit) (texmacs texmacs tm-print))
+  (init-style "generic")
+  (with lan (get-preference "language")
+    (if (!= lan "english") (init-language lan)))
+  (with psz (get-printer-paper-type)
+    (if (!= psz "a4") (init-page-type psz)))
+  (when (!= (get-preference "scripting language") "none")
+    (lazy-plugin-force)
+    (init-env "prog-scripts" (get-preference "scripting language")))
+  (pretend-save-buffer))

@@ -24,9 +24,13 @@
   ("Reference" (make 'reference))
   ("Page reference" (make 'pageref))
   ---
-  ("Include" (choose-file make-include "Include file" ""))
+  (if (detailed-menus?)
+      ("Include" (choose-file make-include "Include file" "")))
   ("Hyperlink" (make 'hlink))
-  ("Action" (make 'action))
+  (if (detailed-menus?)
+      ("Action" (make 'action)))
+  (if (simple-menus?)
+      ("Footnote" (make 'footnote)))
   (if (style-has? "std-dtd")
       ---
       (-> "Citation"
@@ -109,11 +113,12 @@
   (-> "Table" (link insert-table-menu))
   (-> "Image" (link insert-image-menu))
   (-> "Link" (link insert-link-menu))
-  (if (style-has? "std-fold-dtd")
-      (-> "Fold" (link insert-fold-menu)))
-  (-> "Animation" (link insert-animation-menu))
+  (if (detailed-menus?)
+      (if (style-has? "std-fold-dtd")
+	  (-> "Fold" (link insert-fold-menu)))
+      (-> "Animation" (link insert-animation-menu)))
   (-> "Mathematics" (link insert-math-menu))
-  (if (style-has? "program-dtd")
+  (if (and (style-has? "program-dtd") (detailed-menus?))
       (-> "Session" (link insert-session-menu)))
   ---
   (-> "Space"
@@ -156,7 +161,7 @@
       ---
       ("Disable indentation after" (make 'no-indent*))
       ("Enable indentation after" (make 'yes-indent*)))
-  (if (style-has? "env-float-dtd")
+  (if (and (style-has? "env-float-dtd") (detailed-menus?))
       (-> "Page insertion"
 	  (when (not (inside? 'float))
 		(link insert-page-insertion-menu))
@@ -179,27 +184,28 @@
   (-> "Page numbering"
       ("Renumber this page" (make 'set-page-number))
       ("Page number text" (make 'set-page-number-macro)))
-  ---
-  (-> "Specific"
-      ("TeXmacs" (make-specific "texmacs"))
-      ("LaTeX" (make-specific "latex"))
-      ("HTML" (make-specific "html"))
-      ("Screen" (make-specific "screen"))
-      ("Printer" (make-specific "printer"))
-      ("Image" (make-specific "image")))
-  (if (not (in-source?))
-      (-> "Macro" (link source-transformational-menu))
-      (-> "Executable" (link source-executable-menu)))
-  (-> "Special"
-      ("Group" (make-group))
-      ("Superpose" (make 'superpose))
-      ("Move object" (interactive make-move))
-      ("Resize object" (interactive make-resize))
-      ("Repeat object" (make 'repeat))
-;;    ---
-      ("Decorate atoms" (make-arity 'datoms 2))
-;;    ("decorate lines" (make-arity 'dlines 2))
-;;    ("decorate pages" (make-arity 'dpages 2))
-;;    ---
-;;    ("page insertion" (make 'float))
-      ))
+  (if (detailed-menus?)
+      ---
+      (-> "Specific"
+	  ("TeXmacs" (make-specific "texmacs"))
+	  ("LaTeX" (make-specific "latex"))
+	  ("HTML" (make-specific "html"))
+	  ("Screen" (make-specific "screen"))
+	  ("Printer" (make-specific "printer"))
+	  ("Image" (make-specific "image")))
+      (if (not (in-source?))
+	  (-> "Macro" (link source-transformational-menu))
+	  (-> "Executable" (link source-executable-menu)))
+      (-> "Special"
+	  ("Group" (make-group))
+	  ("Superpose" (make 'superpose))
+	  ("Move object" (interactive make-move))
+	  ("Resize object" (interactive make-resize))
+	  ("Repeat object" (make 'repeat))
+;;        ---
+	  ("Decorate atoms" (make-arity 'datoms 2))
+;;        ("decorate lines" (make-arity 'dlines 2))
+;;        ("decorate pages" (make-arity 'dpages 2))
+;;        ---
+;;        ("page insertion" (make 'float))
+	  )))

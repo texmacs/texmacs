@@ -319,11 +319,13 @@
 (menu-bind text-format-menu
   (group "Font")
   (link text-font-menu)
-  ---
-  (group "Content")
+  (if (detailed-menus?)
+      ---
+      (group "Content"))
   (-> "Color" (link color-menu))
-  (-> "Language" (link text-language-menu))
-  (-> "Scripts" (link local-supported-scripts-menu))
+  (if (detailed-menus?)
+      (-> "Language" (link text-language-menu))
+      (-> "Scripts" (link local-supported-scripts-menu)))
   ---
   (group "Paragraph")
   (link paragraph-menu))

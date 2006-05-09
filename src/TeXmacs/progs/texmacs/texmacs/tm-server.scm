@@ -36,6 +36,12 @@
   (cond ((or (== val "bulgarian") (== val "russian") (== val "ukrainian"))
 	 (notify-preference "cyrillic input method"))))
 
+(define (notify-scripting-language var val)
+  (if (has-view?)
+      (if (== val "none")
+	  (init-default "prog-scripts")
+	  (init-env "prog-scripts" val))))
+
 (define (notify-security var val)
   (cond ((== val "accept no scripts") (set-script-status 0))
 	((== val "prompt on scripts") (set-script-status 1))
@@ -47,8 +53,10 @@
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" (get-default-look-and-feel) notify-look-and-feel)
+  ("detailed menus" "detailed" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
+  ("scripting language" "none" notify-scripting-language)
   ("security" "prompt on scripts" notify-security)
   ("bibtex command" "bibtex" notify-bibtex-command))
 
