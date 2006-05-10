@@ -366,6 +366,10 @@
 (define-public (list-union l1 l2)
   (append l1 (list-difference l2 l1)))
 
+(define-public (list-permutation? l1 l2)
+  (and (null? (list-difference l1 l2))
+       (null? (list-difference l2 l1))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

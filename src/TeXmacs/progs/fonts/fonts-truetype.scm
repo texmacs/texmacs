@@ -62,11 +62,11 @@
     ((ms-verdana rm $a $b $s $d) (truetype verdana $s $d))
 
     ((fireflysung $v $a $b $s $d) (unicode fireflysung $s $d))
+    ((ipa ss $a $b $s $d) (unicode ipagui $s $d))
     ((ipa $v bold proportional $s $d) (unicode ipagp $s $d))
     ((ipa $v bold $b $s $d) (unicode ipag $s $d))
     ((ipa $v $a proportional $s $d) (unicode ipamp $s $d))
     ((ipa $v $a $b $s $d) (unicode ipam $s $d))
-    ;;((ipa $v $a $b $s $d) (unicode ipagui $s $d))
     ((kochi $v bold $b $s $d) (unicode kochi-gothic $s $d))
     ((kochi $v $a $b $s $d) (unicode kochi-mincho $s $d))
     ((unbatang ss bold $b $s $d) (unicode UnDotumBold $s $d))
