@@ -37,6 +37,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/type1/ec
 mkdir -p $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/type1/la
 mkdir -p $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/type1/math
 mkdir -p $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/type1/tc
+cp TeXmacs/fonts/*LICENSE $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts
 cp TeXmacs/fonts/tfm/ec/* $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/tfm/ec
 cp TeXmacs/fonts/tfm/la/* $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/tfm/la
 cp TeXmacs/fonts/tfm/math/* $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/tfm/math
@@ -48,6 +49,7 @@ cp TeXmacs/fonts/type1/tc/* $RPM_BUILD_ROOT/usr/share/TeXmacs/fonts/type1/tc
 
 %files
 %defattr(-,root,root)
+/usr/share/TeXmacs/fonts/*LICENSE
 /usr/share/TeXmacs/fonts/tfm/ec/*.tfm
 /usr/share/TeXmacs/fonts/tfm/la/*.tfm
 /usr/share/TeXmacs/fonts/tfm/math/*.tfm
