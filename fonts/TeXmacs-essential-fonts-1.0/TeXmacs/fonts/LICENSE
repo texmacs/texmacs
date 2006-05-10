@@ -3,5 +3,5 @@ LaTeX fonts using the 'autotrace' program. All fonts fall under the LaTeX
 Project Public License (see the file LATEX_LICENSE).
 
 The original fonts can be downloaded from CTAN (http://www.ctan.org).
-Except for the extension, all file names are the same. For instance,
+Except for the file extensions, all file names are the same. For instance,
 the file ecrm12.pfb was generated from ecrm12.mf.
