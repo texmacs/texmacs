@@ -152,15 +152,17 @@ x_display_rep::default_font_sub (bool tt) {
 	 (out_lan == "ukrainian")) &&
 	((ff == "cm") || (ff == "ec"))) {
       fam= "la" * fam (2, N(fam)); ff= "la"; if (sz<100) sz *= 100; }
-    if (out_lan == "japanese") {
-      tree modern_fn= tuple ("modern", "rm", "medium", "right");
+    if (out_lan == "japanese" || out_lan == "korean") {
+      tree modern_fn= tuple ("modern", "ss", "medium", "right");
       modern_fn << as_string (sz) << as_string (dpi);
       return find_font (this, modern_fn);
     }
     if (out_lan == "chinese" || out_lan == "taiwanese")
       return unicode_font (this, "fireflysung", sz, dpi);
-    if (out_lan == "korean")
-      return unicode_font (this, "UnDotum", sz, dpi);
+    //if (out_lan == "japanese")
+    //return unicode_font (this, "ipagui", sz, dpi);
+    //if (out_lan == "korean")
+    //return unicode_font (this, "UnDotum", sz, dpi);
     if (ff == "ec")
       return tex_ec_font (this, tt? ff * "tt": fam, sz, dpi);
     if (ff == "la")
