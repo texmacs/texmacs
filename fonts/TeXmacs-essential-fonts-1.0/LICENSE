@@ -1,0 +1,6 @@
+This package consists of scripts for generating extra Type 1 fonts for
+use inside GNU TeXmacs, as well as the generated fonts in case of binary
+distributions. All scripts fall under the GNU General Public License
+(see the file GNU_LICENSE in this directory). The fonts themselves fall
+under the LaTeX Project Public License (see TeXmacs/fonts/LICENSE for
+more information).
