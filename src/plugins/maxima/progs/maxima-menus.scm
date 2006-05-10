@@ -54,7 +54,7 @@
       ("Simplify" (maxima-apply "fullratsimp"))
       ("Factor" (maxima-apply "factor"))
       ("Expand" (maxima-apply "expand"))
-      ("Expand w.r.t." (maxima-apply "expandwrt" 2)))
+      ("Expand#w.r.t." (maxima-apply "expandwrt" 2)))
   (-> "Arithmetic"
       ("Factor" (maxima-apply "factor"))
       ("Gcd" (maxima-apply "gcd"))
@@ -66,16 +66,16 @@
       ---
       ("Contract logarithms" (maxima-apply "logcontract"))
       ("Expand logarithms" (maxima-apply "logexpand")))
-  (-> "Trigonometric"
-      ("Sine" (maxima-apply "sin"))
+  (-> "Trigonometry"
       ("Cosine" (maxima-apply "cos"))
+      ("Sine" (maxima-apply "sin"))
       ("Tangent" (maxima-apply "tan"))
-      ("Arc sine" (maxima-apply "asin"))
       ("Arc cosine" (maxima-apply "acos"))
+      ("Arc sine" (maxima-apply "asin"))
       ("Arc tangent" (maxima-apply "atan"))
       ---
       ("Reduce trigonometric functions" (maxima-apply "trigreduce"))
-      ("Reduce trigonometric functions w.r.t." (maxima-apply "trigreduce" 2))
+      ("Reduce trigonometric functions#w.r.t." (maxima-apply "trigreduce" 2))
       ("Expand trigonometric functions" (maxima-apply "trigexpand")))
   (-> "Special functions"
       ("Airy" (maxima-apply "Airy"))
@@ -85,7 +85,7 @@
   (-> "Calculus"
       ("Differentiate" (maxima-apply "diff" 2))
       ("Integrate" (maxima-apply "integrate" 2)))
-  (-> "Matrices"
+  (-> "Linear algebra"
       ("Determinant" (maxima-apply "determinant"))
       ("Echelon" (maxima-apply "echelon"))
       ("Eigenvalues" (maxima-apply "eigenvalues"))

@@ -78,10 +78,24 @@
 			    (list prompt))))
       (texmacs-error "dialogue-ask" "Not in dialogue")))
 
+(define (yes)
+  (with lan (get-output-language)
+    (cond ((== lan "french") "oui")
+	  ((in? lan '("dutch" "german")) "ja")
+	  ((in? lan '("italian" "spanish")) "si")
+	  (else "yes"))))
+
+(define (no)
+  (with lan (get-output-language)
+    (cond ((== lan "french") "non")
+	  ((== lan "dutch") "nee")
+	  ((== lan "german") "nein")
+	  (else "no"))))
+
 (define-public (dialogue-confirm? prompt default)
   (if default
-      (yes? (dialogue-ask (list prompt "question" "yes" "no")))
-      (yes? (dialogue-ask (list prompt "question" "no" "yes")))))
+      (yes? (dialogue-ask (list prompt "question" (yes) (no))))
+      (yes? (dialogue-ask (list prompt "question" (no) (yes))))))
 
 (define-public (dialogue-url prompt type)
   (if dialogue-break

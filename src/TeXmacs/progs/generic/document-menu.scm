@@ -341,10 +341,6 @@
       ("Default" (init-default "prog-scripts"))
       ---
       (link supported-scripts-menu))
-  (-> "Scripts"
-      ("Default" (init-default "prog-scripts"))
-      ---
-      (link scripts-preferences-menu))
   (-> "Paragraph"
       (-> "Style"
 	  ("Default" (init-default "par-mode"))
