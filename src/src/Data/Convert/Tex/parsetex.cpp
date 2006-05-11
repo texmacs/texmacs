@@ -720,6 +720,11 @@ japanese_tex (string& s) {
 
 static bool
 korean_tex (string& s) {
+  if (search_forwards ("\\usepackage{hangul}", s) != -1) {
+    s= replace (s, "\\usepackage{dhucs}", "");
+    s= convert (s, "EUC-KR", "UTF-8");
+    return true;
+  }
   if (search_forwards ("\\usepackage{dhucs}", s) != -1) {
     s= replace (s, "\\usepackage{dhucs}", "");
     return true;
