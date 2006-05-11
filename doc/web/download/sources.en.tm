@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.1>
 
 <style|tmweb>
 
@@ -26,9 +26,9 @@
 
   <section|Download and unpack the source code>
 
-  Download the <hlink|latest version (2.5
+  Download the <hlink|latest version (3.8
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|tgz>|-src.tar.gz>>>
-  of the source code, or the <hlink|latest stable version (2.5
+  of the source code, or the <hlink|latest stable version (3.8
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stgz>|-src.tar.gz>>>,
   <verbatim|cd> into the directory where you wish to compile <TeXmacs> and
   type
