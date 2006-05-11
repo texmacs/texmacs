@@ -45,6 +45,8 @@
       (if (and (== lan "japanese") (== style "book"))
 	  (set! style "jbook"))
       (output-verbatim "\\documentclass{" style "}\n")
+      (if (== lan "korean")
+	  (output-verbatim "\\usepackage{dhucs}\n"))
       (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
       (output-verbatim tm-init)
