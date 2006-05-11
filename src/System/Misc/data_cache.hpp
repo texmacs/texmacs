@@ -12,12 +12,14 @@
 
 #ifndef DATA_CACHE_H
 #define DATA_CACHE_H
-#include "tree.hpp"
+#include "url.hpp"
 
 void cache_set (string buffer, tree key, tree im);
 void cache_reset (string buffer, tree key);
 bool is_cached (string buffer, tree key);
 tree cache_get (string buffer, tree key);
+bool is_up_to_date (url dir, bool reset= false);
+bool is_recursively_up_to_date (url dir);
 
 bool do_cache_dir (string name);
 bool do_cache_stat_fail (string name);
