@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.8>
+<TeXmacs|1.0.6>
 
 <style|tmdoc>
 
@@ -21,6 +21,9 @@
 
     <item>Andreas Seidl has been helping with documentation, a Cygwin package
     and several other things.
+
+    <item>Nobuki Takayama invited me to Japan in order to add CJK support to
+    <TeXmacs>. He also provided a lot of help with this task.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
