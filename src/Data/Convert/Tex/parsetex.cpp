@@ -705,14 +705,23 @@ latex_parser::parse (string s) {
 
 static bool
 japanese_tex (string& s) {
-  if (search_forwards (s, "documentclass{jarticle}") != -1) {
-    replace (s, "documentclass{jarticle}", "documentclass{article}");
+  if (search_forwards ("\\documentclass{jarticle}", s) != -1) {
+    s= replace (s, "\\documentclass{jarticle}", "\\documentclass{article}");
     s= convert (s, "ISO-2022-JP", "UTF-8");
     return true;
   }
-  if (search_forwards (s, "documentclass{jbook}") != -1) {
-    replace (s, "documentclass{jbook}", "documentclass{book}");
+  if (search_forwards ("\\documentclass{jbook}", s) != -1) {
+    s= replace (s, "\\documentclass{jbook}", "\\documentclass{book}");
     s= convert (s, "ISO-2022-JP", "UTF-8");
+    return true;
+  }
+  return false;
+}
+
+static bool
+korean_tex (string& s) {
+  if (search_forwards ("\\usepackage{dhucs}", s) != -1) {
+    s= replace (s, "\\usepackage{dhucs}", "");
     return true;
   }
   return false;
@@ -721,9 +730,14 @@ japanese_tex (string& s) {
 tree
 parse_latex (string s) {
   s= dos_to_better (s);
-  bool unicode= japanese_tex (s);
+  string lan= "";
+  if (japanese_tex (s)) lan= "japanese";
+  else if (korean_tex (s)) lan= "korean";
+  bool unicode= (lan == "japanese" || lan == "korean");
   latex_parser ltx (unicode);
-  return accented_to_Cork (ltx.parse (s));
+  tree r= accented_to_Cork (ltx.parse (s));
+  if (lan == "") return r;
+  return compound ("!language", r, lan);
 }
 
 tree

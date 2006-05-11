@@ -31,7 +31,7 @@
   noindent newline linebreak nolinebreak
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix nolimits dots
-  maketitle
+  maketitle tableofcontents
 
   ;; temporarily
   hline
