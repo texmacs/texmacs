@@ -71,5 +71,5 @@
     ((kochi $v $a $b $s $d) (unicode kochi-mincho $s $d))
     ((unbatang ss bold $b $s $d) (unicode UnDotumBold $s $d))
     ((unbatang ss $a $b $s $d) (unicode UnDotum $s $d))
-    ((unbatang $v $a bold $b $s $d) (unicode UnBatangBold $s $d))
+    ((unbatang $v bold $b $s $d) (unicode UnBatangBold $s $d))
     ((unbatang $v $a $b $s $d) (unicode UnBatang $s $d))))
