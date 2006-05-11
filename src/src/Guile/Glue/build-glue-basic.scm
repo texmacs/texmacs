@@ -163,6 +163,7 @@
   (url-directory? is_directory (bool url))
   (url-link? is_symbolic_link (bool url))
   (url-newer? is_newer (bool url url))
+  (url-last-modified last_modified (int url))
   (url-temp url_temp (url))
   (string-save string_save (void string url))
   (string-load string_load (string url))

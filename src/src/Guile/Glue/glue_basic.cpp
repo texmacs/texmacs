@@ -1825,6 +1825,19 @@ tmg_url_newerP (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_url_last_modified (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "url-last-modified");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  int out= last_modified (in1);
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_url_temp () {
   // SCM_DEFER_INTS;
   url out= url_temp ();
@@ -2691,6 +2704,7 @@ initialize_glue_basic () {
   gh_new_procedure ("url-directory?", (FN) tmg_url_directoryP, 1, 0, 0);
   gh_new_procedure ("url-link?", (FN) tmg_url_linkP, 1, 0, 0);
   gh_new_procedure ("url-newer?", (FN) tmg_url_newerP, 2, 0, 0);
+  gh_new_procedure ("url-last-modified", (FN) tmg_url_last_modified, 1, 0, 0);
   gh_new_procedure ("url-temp", (FN) tmg_url_temp, 0, 0, 0);
   gh_new_procedure ("string-save", (FN) tmg_string_save, 2, 0, 0);
   gh_new_procedure ("string-load", (FN) tmg_string_load, 1, 0, 0);

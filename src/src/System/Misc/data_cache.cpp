@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "data_cache.hpp"
-#include "url.hpp"
 #include "file.hpp"
 #include "convert.hpp"
 #include "iterator.hpp"
@@ -23,6 +22,7 @@
 static hashmap<tree,tree> cache_data ("?");
 static hashset<string> cache_loaded;
 static hashset<string> cache_changed;
+static hashmap<string,bool> cache_valid (false);
 
 void
 cache_set (string buffer, tree key, tree t) {
@@ -50,6 +50,39 @@ tree
 cache_get (string buffer, tree key) {
   tree ckey= tuple (buffer, key);
   return cache_data [ckey];
+}
+
+bool
+is_up_to_date (url dir, bool reset) {
+  string name_dir= concretize (dir);
+  if (reset) cache_valid->reset (name_dir);
+  if (cache_valid->contains (name_dir)) return cache_valid [name_dir];
+  int l= last_modified (dir, false);
+  if (is_cached ("validate_cache.scm", name_dir)) {
+    int r= as_int (cache_get ("validate_cache.scm", name_dir) -> label);
+    if (l == r) {
+      cache_valid (name_dir)= true;
+      return true;
+    }
+    //cout << name_dir << " no longer up to date " << r << " -> " << l << "\n";
+  }
+  //else cout << name_dir << " not up to date " << l << "\n";
+  cache_set ("validate_cache.scm", name_dir, as_string (l));
+  cache_valid (name_dir)= false;
+  return false;
+}
+
+bool
+is_recursively_up_to_date (url dir) {
+  if (!is_up_to_date (dir)) return false;
+  bool error_flag;
+  array<string> a= read_directory (dir, error_flag);
+  for (int i=0; i<N(a); i++)
+    if (url (a[i]) != url_here () && url (a[i]) != url_parent ())
+      if (is_directory (dir * a[i]))
+	if (!is_recursively_up_to_date (dir * a[i]))
+	  return false;
+  return true;
 }
 
 /******************************************************************************
@@ -171,6 +204,7 @@ cache_memorize () {
   cache_save ("dir_cache.scm");
   cache_save ("stat_cache.scm");
   cache_save ("font_cache.scm");
+  cache_save ("validate_cache.scm");
 }
 
 void
@@ -182,6 +216,7 @@ cache_refresh () {
   cache_load ("dir_cache.scm");
   cache_load ("stat_cache.scm");
   cache_load ("font_cache.scm");
+  cache_load ("validate_cache.scm");
 }
 
 void
@@ -194,4 +229,9 @@ cache_initialize () {
     texmacs_doc_path= concretize ("$TEXMACS_PATH/doc");
   else texmacs_doc_path= concretize ("$TEXMACS_DOC_PATH");
   cache_refresh ();
+  if (is_recursively_up_to_date (url (texmacs_path) * "fonts/type1") &&
+      is_recursively_up_to_date (url (texmacs_path) * "fonts/truetype") &&
+      is_recursively_up_to_date (url (texmacs_home_path) * "fonts/type1") &&
+      is_recursively_up_to_date (url (texmacs_home_path) * "fonts/truetype"));
+  else remove (url (texmacs_home_path) * "fonts/error" * url_wildcard ("*"));
 }

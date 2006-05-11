@@ -49,7 +49,7 @@ load_string (url u, string& s, bool fatal) {
     bool doc_flag= do_cache_doc (name);
     string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
     if (doc_flag) cache_load ("doc_cache");
-    if (is_cached (cache_type, name)) {
+    if (is_cached (cache_type, name) && is_up_to_date (url_parent (r))) {
       s= cache_get (cache_type, name) -> label;
       return false;
     }
@@ -122,6 +122,7 @@ save_string (url u, string s, bool fatal) {
     if (!err && N(s) <= 10000)
       if (file_flag || doc_flag)
 	cache_set (cache_type, name, s);
+    (bool) is_up_to_date (url_parent (r), true);
     // End caching
   }
   if (err && fatal)
@@ -134,17 +135,22 @@ save_string (url u, string s, bool fatal) {
 ******************************************************************************/
 
 static bool
-get_attributes (url name, struct stat* buf, bool link_flag=false) {
+get_attributes (url name, struct stat* buf,
+		bool link_flag=false, bool cache_flag= true)
+{
   // cout << "Stat " << name << LF;
   string name_s= concretize (name);
 
   // Stat result in cache?
-  if (is_cached ("stat_cache.scm", name_s)) {
-    string r= cache_get ("stat_cache.scm", name_s) -> label;
-    if (r == "#f") return true;
-    buf->st_mode= ((unsigned int) as_int (r));
-    return false;
-  }
+  if (cache_flag &&
+      is_cached ("stat_cache.scm", name_s) &&
+      is_up_to_date (url_parent (name)))
+    {
+      string r= cache_get ("stat_cache.scm", name_s) -> label;
+      if (r == "#f") return true;
+      buf->st_mode= ((unsigned int) as_int (r));
+      return false;
+    }
   // End caching
 
   bench_start ("stat");
@@ -162,13 +168,15 @@ get_attributes (url name, struct stat* buf, bool link_flag=false) {
   bench_cumul ("stat");
 
   // Cache stat results
-  if (flag) {
-    if (do_cache_stat_fail (name_s))
-      cache_set ("stat_cache.scm", name_s, "#f");
-  }
-  else {
-    if (do_cache_stat (name_s))
-      cache_set ("stat_cache.scm", name_s, as_string ((int) buf->st_mode));
+  if (cache_flag) {
+    if (flag) {
+      if (do_cache_stat_fail (name_s))
+	cache_set ("stat_cache.scm", name_s, "#f");
+    }
+    else {
+      if (do_cache_stat (name_s))
+	cache_set ("stat_cache.scm", name_s, as_string ((int) buf->st_mode));
+    }
   }
   // End caching
 
@@ -220,12 +228,21 @@ bool is_regular (url name) { return is_of_type (name, "f"); }
 bool is_directory (url name) { return is_of_type (name, "d"); }
 bool is_symbolic_link (url name) { return is_of_type (name, "l"); }
 
+int
+last_modified (url u, bool cache_flag) {
+  struct stat u_stat;
+  if (get_attributes (u, &u_stat, true, cache_flag)) return 0;
+  return u_stat.st_mtime;
+}
+
 bool
 is_newer (url which, url than) {
   struct stat which_stat;
   struct stat than_stat;
+  // FIXME: why was this? 
   if (is_cached ("stat_cache.scm", concretize (which))) return false;
   if (is_cached ("stat_cache.scm", concretize (than))) return false;
+  // end FIXME
   if (get_attributes (which, &which_stat, true)) return false;
   if (get_attributes (than , &than_stat , true)) return false;
   return which_stat.st_mtime > than_stat.st_mtime;
@@ -273,7 +290,7 @@ read_directory (url u, bool& error_flag) {
   string name= concretize (u);
 
   // Directory contents in cache?
-  if (is_cached ("dir_cache.scm", name))
+  if (is_cached ("dir_cache.scm", name) && is_up_to_date (u))
     return cache_dir_get (name);
   bench_start ("read directory");
   // End caching
