@@ -18,7 +18,7 @@
 
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
-static bool textm_japanese= false;
+static bool textm_unicode   = false;
 
 /******************************************************************************
 * Preprocess preamble
@@ -120,6 +120,8 @@ latex_symbol_to_tree (string s) {
       if (s == "\\notin") return "<nin>";
       if (s == "\\addots") return "<udots>";
       if (s == "\\dots") return "<ldots>";
+      if (s == "\\tableofcontents")
+	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
     }
 
     if (latex_type (s) == "texmacs") {
@@ -210,7 +212,7 @@ latex_symbol_to_tree (string s) {
       return tree (END, s(5,N(s)));
 
     if (starts (s, "\\#") && s != "\\#") {
-      textm_japanese= true;
+      textm_unicode= true;
       return "<" * s (1, N(s)) * ">";
     }
     return tree (APPLY, s(1,N(s)));
@@ -1269,11 +1271,15 @@ finalize_textm (tree t) {
 
 tree
 latex_to_tree (tree t1) {
-  string style;
+  string style, lan= "";
   bool is_document= is_compound (t1, "!file", 1);
   if (is_document) t1= t1[0];
+  if (is_compound (t1, "!language", 2)) {
+    lan= t1[1]->label;
+    t1 = t1[0];
+  }
   textm_appendices= false;
-  textm_japanese  = false;
+  textm_unicode   = false;
   command_type ("!em") = "false";
   // cout << "\n\nt1= " << t1 << "\n\n";
   tree t2= is_document? filter_preamble (t1): t1;
@@ -1297,18 +1303,32 @@ latex_to_tree (tree t1) {
   // cout << "\n\nt10= " << t10 << "\n\n";
   tree t11= simplify_correct (t10);
   // cout << "\n\nt11= " << t11 << "\n\n";
+
   if (!exists (url ("$TEXMACS_STYLE_PATH", style * ".ts")))
     style= "generic";
-  if (is_document && textm_japanese) {
-    tree init = tree (COLLECTION,
-		      tree (ASSOCIATE, LANGUAGE, "japanese"),
-		      tree (ASSOCIATE, FONT, "ipa"));
-    return tree (DOCUMENT,
-		 compound ("style", style),
-		 compound ("initial", init),
-		 compound ("body", t11));
+  tree initial (COLLECTION), mods (WITH);
+  if (textm_unicode) {
+    string name= "modern";
+    if (lan == "chinese") name= "fireflysung";
+    //if (lan == "japanese") name= "ipa";
+    //if (lan == "korean") name= "unbatang";
+    if (lan == "taiwanese") name= "fireflysung";
+    initial << tree (ASSOCIATE, FONT, name);
+    mods << tree (FONT) << tree (name);
   }
-  else if (is_document)
-    return tree (DOCUMENT, compound ("body", t11), compound ("style", style));
-  else return t10;
+  if (lan != "") {
+    initial << tree (ASSOCIATE, LANGUAGE, lan);
+    mods << tree (LANGUAGE) << tree (lan);
+  }
+  if (is_document) {
+    tree the_body   = compound ("body", t11);
+    tree the_style  = compound ("style", style);
+    tree the_initial= compound ("initial", initial);
+    if (N (initial) == 0) return tree (DOCUMENT, the_style, the_body);
+    else return tree (DOCUMENT, the_style, the_body, the_initial);
+  }
+  else {
+    if (N (mods) == 0) { mods << t10; return mods; }
+    return t10;
+  }
 }
