@@ -10,6 +10,8 @@
   <\itemize>
     <item>Basic CJK support for <TeXmacs>. (1.0.6.1)
 
+    <item>Mechanism for cache invalidation. (1.0.6.1)
+
     <item>Upgraded <name|Maxima> interface for <name|Maxima> 5.9.3. (1.0.6.1)
   </itemize>
 

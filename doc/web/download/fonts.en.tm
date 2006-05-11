@@ -35,12 +35,6 @@
     \ \ \ \ rpm -i TeXmacs-extra-fonts-1.0-1.noarch.rpm
   </code>
 
-  After the installation of new fonts, always rerun <TeXmacs> once using
-
-  <\code>
-    \ \ \ \ texmacs --delete-font-cache &
-  </code>
-
   <paragraph|Tarball with extra fonts><label|fonts-tarball>
 
   If you installed <TeXmacs> from the static binaries, then you may download
@@ -53,12 +47,6 @@
     \ \ \ \ gunzip -c TeXmacs-extra-fonts-1.0-noarch.tar.gz \| tar xvf -
   </code>
 
-  After the installation of new fonts, always rerun <TeXmacs> once using
-
-  <\code>
-    \ \ \ \ texmacs --delete-font-cache &
-  </code>
-
   The same procedure applies when you installed <TeXmacs> from the source
   code. In that case, and before compiling the source code, you have to
   unpack the tarball in the <verbatim|TeXmacs> subdirectory of the directory
@@ -68,8 +56,8 @@
   <paragraph|Tarball for systems without <TeX>/<LaTeX>><label|fonts-complete>
 
   Whenever you don't have a suitable <TeX>/<LaTeX> distribution like Te<TeX>
-  installed on your system, then you may download a <inactive|<hlink|tarball
-  (10.0 Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>>
+  installed on your system, then you may download a <hlink|tarball (10.0
+  Mb)|ftp://ftp.texmacs.org/pub/TeXmacs/fonts/TeXmacs-windows-fonts-1.0-noarch.tar.gz>
   with a reasonably complete set of Type 1 fonts for basic use of <TeXmacs>
   (in fact, these are precisely the fonts which are provided in the native
   <name|Windows> version of <TeXmacs>). After downloading, <verbatim|cd> into
@@ -78,12 +66,6 @@
 
   <\code>
     \ \ \ \ gunzip -c TeXmacs-windows-fonts-1.0-noarch.tar.gz \| tar xvf -
-  </code>
-
-  After the installation of new fonts, always rerun <TeXmacs> once using
-
-  <\code>
-    \ \ \ \ texmacs --delete-font-cache &
   </code>
 
   <paragraph|Fonts for Chinese, Japanese and Korean><label|fonts-cjk>
@@ -111,12 +93,6 @@
     \ \ \ \ gunzip -c TeXmacs-<em|language>-fonts.tar.gz \| tar xvf -
   </code>
 
-  After the installation of new fonts, always rerun <TeXmacs> once using
-
-  <\code>
-    \ \ \ \ texmacs --delete-font-cache &
-  </code>
-
   <\remark>
     If you do not have ftp access, then you might wish to
     <hlink|download|http://www.texmacs.org/Download/ftp/fonts> from the web.
@@ -130,6 +106,19 @@
     recognizes a subset of the fonts which come with traditional <TeX>
     distributions. To find out whether a particular font is supported, check
     the files in the directory <verbatim|$TEXMACS_PATH/progs/fonts>.
+  </remark>
+
+  <\remark>
+    Sometimes, it may happen that manually installed fonts are not
+    immediately recognized. In that case, you may try to launch <TeXmacs>
+    once using the command
+
+    <\code>
+      \ \ \ \ texmacs --delete-font-cache &
+    </code>
+
+    This should not be necessary for the installation of the officially
+    supported extra fonts at their standard locations.
   </remark>
 
   <tmdoc-copyright|1999--2005|Joris van der Hoeven>

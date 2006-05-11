@@ -58,13 +58,6 @@
     \ \ \ \ rpm -i TeXmacs-extra-fonts-1.0-1.noarch.rpm
   </code>
 
-  If you already used <TeXmacs> before unpacking, then rerun the program once
-  as follows:
-
-  <\code>
-    \ \ \ \ texmacs --delete-font-cache &
-  </code>
-
   Although <TeXmacs> is able to automatically generate bitmap analogues for
   the extra fonts, this process may take some time at a first run. Type 1
   fonts are also rendered better by certain <name|Pdf> viewers and they are
@@ -72,7 +65,7 @@
 
   Chinese, Japanese and Korean users also need to separately download extra
   <hlink|CJK fonts|fonts.en.tm#fonts-cjk>, whenever these languages do not
-  show up in the language menus.
+  correctly show up in the language menus.
 
   <section|Be cool...>
 
