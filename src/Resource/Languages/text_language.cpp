@@ -249,8 +249,10 @@ get_date (string lan, string fm) {
       fm= "%B %d, %Y";
     else if (lan == "german")
       fm= "%d. %B %Y";
+    else if (lan == "chinese" || lan == "japanese" ||
+	     lan == "korean" || lan == "taiwanese")
+      fm= "%Y %B %d";
     else fm= "%d %B %Y";
-
   }
   lan= language_to_locale (lan);
   string old= get_env ("LANG");

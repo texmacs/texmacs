@@ -71,6 +71,7 @@
     (enum ("Language" "language")
 	  ("British" "british")
 	  ("Bulgarian" "bulgarian")
+	  ("Chinese" "chinese")
 	  ("Czech" "czech")
 	  ("Dutch" "dutch")
 	  ("Danish" "danish")
@@ -81,6 +82,7 @@
 	  ("Hungarian" "hungarian")
 	  ("Italian" "italian")
 	  ("Japanese" "japanese")
+	  ("Korean" "korean")
 	  ("Polish" "polish")
 	  ("Portuguese" "portuguese")
 	  ("Romanian" "romanian")
@@ -88,6 +90,7 @@
 	  ("Slovene" "slovene")
 	  ("Spanish" "spanish")
 	  ("Swedish" "swedish")
+	  ("Taiwanese" "taiwanese")
 	  ("Ukrainian" "ukrainian"))
     (-> "Scripts"
 	("None" (set-preference "scripting language" "none"))
