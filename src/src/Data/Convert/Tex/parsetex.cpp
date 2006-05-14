@@ -721,12 +721,16 @@ japanese_tex (string& s) {
 static bool
 korean_tex (string& s) {
   if (search_forwards ("\\usepackage{hangul}", s) != -1) {
-    s= replace (s, "\\usepackage{dhucs}", "");
+    s= replace (s, "\\usepackage{hangul}", "");
     s= convert (s, "EUC-KR", "UTF-8");
     return true;
   }
   if (search_forwards ("\\usepackage{dhucs}", s) != -1) {
     s= replace (s, "\\usepackage{dhucs}", "");
+    return true;
+  }
+  if (search_forwards ("\\usepackage{memhangul-ucs}", s) != -1) {
+    s= replace (s, "\\usepackage{memhangul-ucs}", "");
     return true;
   }
   return false;
