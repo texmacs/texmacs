@@ -251,7 +251,14 @@ get_date (string lan, string fm) {
       fm= "%d. %B %Y";
     else if (lan == "chinese" || lan == "japanese" ||
 	     lan == "korean" || lan == "taiwanese")
-      fm= "%Y %B %d";
+      {
+	string y= simplify_date (var_eval_system ("date +\"%Y\""));
+	string m= simplify_date (var_eval_system ("date +\"%m\""));
+	string d= simplify_date (var_eval_system ("date +\"%d\""));
+	if (lan == "korean")
+	  return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
+	return y * " " * m * " " * d;
+      }
     else fm= "%d %B %Y";
   }
   lan= language_to_locale (lan);
