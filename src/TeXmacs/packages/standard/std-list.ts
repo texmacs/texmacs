@@ -60,7 +60,7 @@
   <assign|compact-strong-dash-item|<macro|x|<compact-item|<item-strong|<arg|x>>
   <emdash> >>>
 
-  <assign|long-compact-strong-dot-item|<macro|x|<item-long|<move|<item-strong|<arg|x>.>|-1.5fn|0fn>>>>
+  <assign|long-compact-strong-dot-item|<macro|x|<item-long|<no-indent><move|<item-strong|<arg|x>.>|-1.5fn|0fn>>>>
 
   <\active*>
     <\src-comment>
