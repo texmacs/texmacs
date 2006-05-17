@@ -35,6 +35,7 @@
 (define tmtex-oriental? #f)
 (define tmtex-japanese? #f)
 (define tmtex-korean? #f)
+(define tmtex-taiwanese? #f)
 
 (tm-define (tmtex-initialize opts)
   (set! tmtex-env (make-ahash-table))
@@ -226,6 +227,12 @@
 	       (tmtex-korean?
 		(let* ((qs (string-append "<" s ">"))
 		       (cv (string-convert qs "Cork" "UTF-8")))
+		  (list '!widechar (string->symbol cv))))
+	       (tmtex-taiwanese?
+		(let* ((qs (string-append "<" s ">"))
+		       (cv (string-convert qs "Cork" "cp950"))
+		       (ex (list->string (list #\33 #\50 #\102))))
+		  (set! cv (string-append cv ex))
 		  (list '!widechar (string->symbol cv))))))
 	(else (let ((ss (list (string->symbol s))))
 		(cond ((not (drd-in? (car ss) latex-symbol%))
@@ -1521,10 +1528,13 @@
 	(latex-set-style main-style)
 	(set! tmtex-japanese? (== lan "japanese"))
 	(set! tmtex-korean? (== lan "korean"))
-	(set! tmtex-oriental? (or tmtex-japanese? tmtex-korean?))
+	(set! tmtex-korean? (== lan "taiwanese"))
+	(set! tmtex-oriental?
+	      (or tmtex-japanese? tmtex-korean? tmtex-taiwanese?))
 	(with result (texmacs->latex doc opts)
 	  (set! tmtex-japanese? #f)
 	  (set! tmtex-korean? #f)
+	  (set! tmtex-taiwanese? #f)
 	  (set! tmtex-oriental? #f)
 	  result))
       (let* ((x2 (tmtm-eqnumber->nonumber x))

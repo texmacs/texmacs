@@ -742,13 +742,24 @@ korean_tex (string& s) {
   return false;
 }
 
+static bool
+taiwanese_tex (string& s) {
+  if (search_forwards ("\\usepackage{CJK}", s) != -1) {
+    s= replace (s, "\\usepackage{CJK}", "");
+    s= convert (s, "cp950", "UTF-8");
+    return true;
+  }
+  return false;
+}
+
 tree
 parse_latex (string s) {
   s= dos_to_better (s);
   string lan= "";
   if (japanese_tex (s)) lan= "japanese";
   else if (korean_tex (s)) lan= "korean";
-  bool unicode= (lan == "japanese" || lan == "korean");
+  else if (taiwanese_tex (s)) lan= "taiwanese";
+  bool unicode= (lan == "japanese" || lan == "korean" || lan == "taiwanese");
   latex_parser ltx (unicode);
   tree r= accented_to_Cork (ltx.parse (s));
   if (lan == "") return r;

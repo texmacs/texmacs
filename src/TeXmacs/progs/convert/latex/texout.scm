@@ -47,6 +47,8 @@
       (output-verbatim "\\documentclass{" style "}\n")
       (if (== lan "korean")
 	  (output-verbatim "\\usepackage{dhucs}\n"))
+      (if (== lan "taiwanese")
+	  (output-verbatim "\\usepackage{CJK}\n"))
       (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
       (output-verbatim tm-init)
