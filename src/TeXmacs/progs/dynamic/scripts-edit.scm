@@ -152,12 +152,6 @@
 ;; Plots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tm-ref t . l)
-  ;; FIXME: this routine should go into the standard library
-  (and (tm? t)
-       (with r (select t l)
-	 (and (nnull? r) (car r)))))
-
 (tm-define (script-plot-command lan t)
   (cond ((== (car t) 'plot-curve)
 	 `(concat "set samples 1000 ~ "

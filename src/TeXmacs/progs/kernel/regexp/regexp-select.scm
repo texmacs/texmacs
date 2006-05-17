@@ -124,6 +124,24 @@
 	(select-list (path->tree (list-head q (1+ (length p)))) pat bl)
 	'())))
 
+(define (navigate-first p pat bl)
+  (if p
+      (let* ((t (path->tree p))
+	     (a (tree-arity t)))
+	(if (> a 0)
+	    (select-list (tree-ref t 0) pat bl)
+	    '()))
+      '()))
+
+(define (navigate-last p pat bl)
+  (if p
+      (let* ((t (path->tree p))
+	     (a (tree-arity t)))
+	(if (> a 0)
+	    (select-list (tree-ref t (- a 1)) pat bl)
+	    '()))
+      '()))
+
 (define (navigate-next p pat bl)
   (if (and p (nnull? p))
       (let* ((t (path->tree (cDr p)))
@@ -158,6 +176,8 @@
 (define navigate-table (make-ahash-table))
 (ahash-set! navigate-table :up navigate-up)
 (ahash-set! navigate-table :down navigate-down)
+(ahash-set! navigate-table :first navigate-first)
+(ahash-set! navigate-table :last navigate-last)
 (ahash-set! navigate-table :next navigate-next)
 (ahash-set! navigate-table :previous navigate-previous)
 
@@ -232,3 +252,8 @@
     (if (= (length args) 2)
 	(apply tm-select args)
 	(apply guile-select args))))
+
+(define-public (tm-ref t . l)
+  (and (tm? t)
+       (with r (select t l)
+	 (and (nnull? r) (car r)))))
