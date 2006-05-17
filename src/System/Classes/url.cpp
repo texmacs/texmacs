@@ -172,6 +172,12 @@ url_ftp (string name) {
   return url_root ("ftp") * u;
 }
 
+static url
+url_tmfs (string name) {
+  url u= url_get_name (name);
+  return url_root ("tmfs") * u;
+}
+
 /******************************************************************************
 * Generic url constructor
 ******************************************************************************/
@@ -218,6 +224,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "file://")) return url_file (name (7, N (name)));
   if (starts (name, "http://")) return url_http (name (7, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
+  if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
   if (heuristic_is_http (name)) return url_http (name);
@@ -365,6 +372,14 @@ is_rooted_web (url u) {
     is_root_web (u) ||
     (is_concat (u) && is_rooted_web (u[1])) ||
     (is_or (u) && is_rooted_web (u[1]) && is_rooted_web (u[2]));
+}
+
+bool
+is_rooted_tmfs (url u) {
+  return
+    is_root_tmfs (u) ||
+    (is_concat (u) && is_rooted_tmfs (u[1])) ||
+    (is_or (u) && is_rooted_tmfs (u[1]) && is_rooted_tmfs (u[2]));
 }
 
 bool
@@ -685,10 +700,11 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return reroot (u, "default");
       return url_none ();
     }
-    if (is_rooted_web (comp)) {
+    if (is_rooted_web (comp) || is_rooted_tmfs (comp)) {
       if (filter == "") return u;
       // cout << "  try " << comp << "\n";
-      url from_web= get_from_web (comp);
+      url from_web=
+	is_rooted_web (comp)? get_from_web (comp): get_from_server (comp);
       // cout << "  --> " << from_web << "\n";
       if (is_none (from_web)) return from_web;
       if (is_of_type (from_web, filter)) return u;
@@ -825,6 +841,7 @@ concretize (url u) {
     return as_string (reroot (u, "default"));
 #endif
   if (is_rooted_web (u)) return concretize (get_from_web (u));
+  if (is_rooted_tmfs (u)) return concretize (get_from_server (u));
   if (is_ramdisc (u)) return concretize (get_from_ramdisc (u));
   if (is_here (u)) return as_string (url_pwd ());
   if (is_parent (u)) return as_string (url_pwd () * url_parent ());

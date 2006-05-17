@@ -15,6 +15,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
+#include "Scheme/object.hpp"
 
 #ifdef OS_WIN32
 #include <urlget.h>
@@ -64,21 +65,21 @@ url
 get_from_web (url name) {
   if (!is_rooted_web (name)) return url_none ();
   url res= get_cache (name);
-  if (!is_none (res)) return (res);
+  if (!is_none (res)) return res;
 
 #ifdef OS_WIN32
   char *urlPath;
   char *tempFilePath;
-  string urlString = as_string(name);
+  string urlString = as_string (name);
   url tmp = url_temp();
 	
-  if(starts(urlString, "www."))
+  if (starts (urlString, "www."))
     urlString = "http://" * urlString;
-  else if(starts(urlString, "ftp."))
+  else if (starts (urlString, "ftp."))
     urlString = "ftp://" * urlString;
-  else if(starts(urlString, "ftp://"))
+  else if (starts (urlString, "ftp://"))
     urlPath = NULL;
-  else if(starts(urlString, "http://"))
+  else if (starts (urlString, "http://"))
     urlPath = NULL;
   else
     urlString = "http://" * urlString;
@@ -110,6 +111,40 @@ get_from_web (url name) {
   else return set_cache (name, tmp);
 #endif
 }
+
+/******************************************************************************
+* Files from a hyperlink file system
+******************************************************************************/
+
+url
+get_from_server (url u) {
+  if (!is_rooted_tmfs (u)) return url_none ();
+  url res= get_cache (u);
+  if (!is_none (res)) return res;
+
+  string name= as_string (u);
+  if (ends (name, "~")) return url_none ();
+  if (starts (name, "tmfs://")) name= name (7, N(name));
+  string r= as_string (call ("remote-get", object (as_int (name))));
+  if (r == "") return url_none ();
+  url tmp= url_temp ();
+  (void) save_string (tmp, r, true);
+
+  return set_cache (u, tmp);
+}
+
+bool
+save_to_server (url u, string s) {
+  if (!is_rooted_tmfs (u)) return true;
+  string name= as_string (u);
+  if (starts (name, "tmfs://")) name= name (7, N(name));
+  (void) call ("remote-put", object (as_int (name)), object (s));
+  return false;
+}
+
+/******************************************************************************
+* Ramdisc
+******************************************************************************/
 
 url
 get_from_ramdisc (url u) {

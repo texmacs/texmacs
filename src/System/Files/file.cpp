@@ -17,6 +17,7 @@
 #include "timer.hpp"
 #include "merge_sort.hpp"
 #include "data_cache.hpp"
+#include "web_files.hpp"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -94,6 +95,13 @@ load_string (url u, string& s, bool fatal) {
 
 bool
 save_string (url u, string s, bool fatal) {
+  if (is_rooted_tmfs (u)) {
+    bool err= save_to_server (u, s);
+    if (err && fatal)
+      fatal_error (as_string (u) * " not writeable", "save_string");
+    return err;
+  }
+
   // cout << "Save " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r, "");
@@ -125,6 +133,7 @@ save_string (url u, string s, bool fatal) {
     (bool) is_up_to_date (url_parent (r), true);
     // End caching
   }
+
   if (err && fatal)
     fatal_error (as_string (u) * " not writeable", "save_string");
   return err;
