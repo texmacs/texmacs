@@ -51,6 +51,10 @@
    (:name "Svg")
    (:suffix "svg"))
 
+(converter svg-file postscript-file
+  (:require (url-exists-in-path? "inkscape"))
+  (:shell "inkscape" "-z" "-f" from "-P" to))
+
 (converter svg-file png-file
    (:require (url-exists-in-path? "rsvg"))
    (:shell "rsvg" "-f png" from to))
