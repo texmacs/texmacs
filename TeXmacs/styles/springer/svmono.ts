@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.0.6.1>
 
 <style|source>
 
@@ -442,19 +442,23 @@
 
   \;
 
+  <assign|toc-sv|<macro|l|w|left|right|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hpart|1>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|2|2|cell-valign|b>|<cwith|1|1|2|2|cell-halign|r>|<cwith|1|1|2|2|cell-width|1.8em>|<cwith|1|-1|1|-1|cell-lsep|0cm>|<cwith|1|-1|1|-1|cell-rsep|0cm>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<\cell>
+    <with|par-left|<arg|l>|par-first|<minus|<arg|w>>|<yes-indent><arg|left><toc-dots>>
+  </cell>|<cell|<arg|right>>>>>>>>
+
   <assign|toc-strong-1|<macro|left|right|<quasiquote|<surround|<vspace*|2em>|<vspace|5pt>|<wide-bothlined|1ln|1ln|3sep|3sep|<with|font-series|bold|math-font-series|bold|<style-with|src-compact|none|<unquote|<arg|left>>>>>>>>>
 
-  <assign|toc-strong-2|<macro|left|right|<style-with|src-compact|none|<vspace*|1em><with|font-series|bold|math-font-series|bold|<arg|left>><toc-dots><no-break><arg|right>>>>
+  <assign|toc-strong-2|<macro|left|right|<style-with|src-compact|none|<vspace*|1em><style-with|src-compact|none|<toc-sv|<value|section-toc-indent>|<value|chapter-toc-width>|<with|font-series|bold|math-font-series|bold|<arg|left>>|<arg|right>>>>>>
 
-  <assign|toc-1|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subsection-toc-indent>|par-first|<minus|<value|section-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+  <assign|toc-1|<macro|left|right|<toc-sv|<value|subsection-toc-indent>|<value|section-toc-width>|<arg|left>|<arg|right>>>>
 
-  <assign|toc-2|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subsubsection-toc-indent>|par-first|<minus|<value|subsection-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+  <assign|toc-2|<macro|left|right|<toc-sv|<value|subsubsection-toc-indent>|<value|subsection-toc-width>|<arg|left>|<arg|right>>>>
 
-  <assign|toc-3|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|paragraph-toc-indent>|par-first|<minus|<value|subsubsection-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+  <assign|toc-3|<macro|left|right|<toc-sv|<value|paragraph-toc-indent>|<value|subsubsection-toc-width>|<arg|left>|<arg|right>>>>
 
-  <assign|toc-4|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subparagraph-toc-indent>|par-first|<minus|<value|paragraph-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+  <assign|toc-4|<macro|left|right|<toc-sv|<value|subparagraph-toc-indent>|<value|paragraph-toc-width>|<arg|left>|<arg|right>>>>
 
-  <assign|toc-5|<macro|left|right|<style-with|src-compact|none|<with|par-left|<value|subsubparagraph-toc-indent>|par-first|<minus|<value|subparagraph-toc-width>>|<arg|left><toc-dots><no-break><arg|right>>>>>
+  <assign|toc-5|<macro|left|right|<style-with|src-compact|none|<toc-sv|<value|subsubparagraph-toc-indent>|<value|subparagraph-toc-width>|<arg|left>|<arg|right>>>>>
 
   <\active*>
     <\src-comment>
