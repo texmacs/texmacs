@@ -78,8 +78,8 @@
 	 ,new))))
 
 (define-public-macro (and-with var val . body)
-  `(with var val
-     (and var (begin ,@body))))
+  `(with ,var ,val
+     (and ,var (begin ,@body))))
 
 (define-public (.. start end)
   (if (< start end)

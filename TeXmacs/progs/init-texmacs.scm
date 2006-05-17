@@ -37,6 +37,7 @@
 
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
+(lazy-define (utils remote client) remote-get remote-put)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting main TeXmacs functionality\n")
@@ -111,6 +112,7 @@
 	   session-menu session-icons session-help-icons help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
+(lazy-menu (dynamic chat-menu) chat-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")

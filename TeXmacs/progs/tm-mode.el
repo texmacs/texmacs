@@ -26,7 +26,7 @@
      (concat "\\<\\("
       (mapconcat 'symbol-name
        '(texmacs-module define-macro define-public-macro
-         tm-define tm-define-macro tm-property
+         tm-define tm-define-macro tm-property request-handler
 	 define-table define-preferences define-secure-symbols
          texmacs-modes and-let\\* case-lambda with with-global
          ahash-with and-with for repeat
@@ -47,7 +47,7 @@
      (concat "(\\("
       (mapconcat 'symbol-name
        '(texmacs-module define-macro define-public-macro define-table
-	 tm-define tm-define-macro tm-property define-group
+	 tm-define tm-define-macro tm-property request-handler define-group
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
@@ -66,7 +66,7 @@
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
-	       tm-define tm-define-macro tm-property
+	       tm-define tm-define-macro tm-property request-handler
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
