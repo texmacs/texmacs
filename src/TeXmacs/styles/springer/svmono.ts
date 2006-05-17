@@ -443,7 +443,9 @@
   \;
 
   <assign|toc-sv|<macro|l|w|left|right|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hpart|1>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|2|2|cell-valign|b>|<cwith|1|1|2|2|cell-halign|r>|<cwith|1|1|2|2|cell-width|1.8em>|<cwith|1|-1|1|-1|cell-lsep|0cm>|<cwith|1|-1|1|-1|cell-rsep|0cm>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<\cell>
-    <with|par-left|<arg|l>|par-first|<minus|<arg|w>>|<yes-indent><arg|left><toc-dots>>
+    <\with|par-left|<arg|l>|par-first|<minus|<arg|w>>|par-mode|left>
+      <yes-indent><arg|left><toc-dots>
+    </with>
   </cell>|<cell|<arg|right>>>>>>>>
 
   <assign|toc-strong-1|<macro|left|right|<quasiquote|<surround|<vspace*|2em>|<vspace|5pt>|<wide-bothlined|1ln|1ln|3sep|3sep|<with|font-series|bold|math-font-series|bold|<style-with|src-compact|none|<unquote|<arg|left>>>>>>>>>
@@ -519,6 +521,19 @@
   <assign|index-5|<macro|left|right|<margin-first-other|2.8em|2.8em|<arg|left><index-sep><arg|right>>>>
 
   <assign|index-5*|<macro|left|<margin-first-other|2.8em|2.8em|<arg|left><no-page-break>>>>
+
+  \;
+
+  <assign|glossary-sv|<macro|left|right|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hpart|1>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|2|2|cell-valign|b>|<cwith|1|1|2|2|cell-halign|r>|<cwith|1|1|2|2|cell-width|1.8em>|<cwith|1|-1|1|-1|cell-lsep|0cm>|<cwith|1|-1|1|-1|cell-rsep|0cm>|<cwith|1|1|1|1|cell-halign|r>|<table|<row|<\cell>
+    <surround||<glossary-dots>|<with|par-mode|left|<arg|left>>>
+  </cell>|<cell|<arg|right>>>>>>>>
+
+  <assign|glossary-1|<macro|left|right|<glossary-sv|<arg|left>|<arg|right>>>>
+
+  <assign|glossary-2|<\macro|entry|explain|right>
+    <glossary-sv|<margin-first-other|0fn|10fn|<style-with|src-compact|none|<resize|<arg|entry>
+    |||r]10fn|><arg|explain>>>|<arg|right>>
+  </macro>>
 
   \;
 
