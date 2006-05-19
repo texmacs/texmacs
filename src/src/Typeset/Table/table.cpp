@@ -13,6 +13,7 @@
 #include "Table/table.hpp"
 #include "Boxes/construct.hpp"
 #include "Format/format.hpp"
+#include "analyze.hpp"
 
 lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 
@@ -814,11 +815,9 @@ EXTEND_NULL_CODE(lazy,lazy_table);
 format
 lazy_table_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
-    /* The following is still bugged */
     SI tmw, tlw, trw;
     T->compute_width (tmw, tlw, trw);
-    //SI tmw= 1;
-    return make_format_width (tmw);
+    return make_format_width (max (tmw, 1));
   }
   return lazy_rep::query (request, fm);
 }
@@ -829,9 +828,9 @@ lazy_table_rep::produce (lazy_type request, format fm) {
   if (request == LAZY_VSTREAM) {
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
-      if (T->var[TABLE_WIDTH] == "1par")
-	// FIXME: rather evaluate (with "par-width" fs->width ...)
-	T->width= fs->width;
+      string s= as_string (T->var[TABLE_WIDTH]);
+      if (ends (s, "par"))
+	T->width= max ((SI) (as_double (s (0, N(s)-3)) * fs->width), 1);
     }
     T->position_columns ();
     T->finish_horizontal ();
