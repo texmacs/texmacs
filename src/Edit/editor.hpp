@@ -326,13 +326,12 @@ public:
   virtual void   table_format_center () = 0;
   virtual void   table_row_decoration (bool forward) = 0;
   virtual void   table_column_decoration (bool forward) = 0;
+  virtual void   table_correct_block_content () = 0;
   virtual void   set_cell_mode (string mode) = 0;
   virtual string get_cell_mode () = 0;
   virtual void   cell_set_format (string var, string val) = 0;
   virtual string cell_get_format (string var) = 0;
   virtual void   cell_del_format (string var= "") = 0;
-  virtual void   cell_multi_paragraph (bool flag) = 0;
-  virtual bool   cell_is_multi_paragraph () = 0;
   virtual void   table_test () = 0;
 
   /* public routines from edit_dynamic */

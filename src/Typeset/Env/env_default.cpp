@@ -177,6 +177,7 @@ initialize_default_env () {
   env (CELL_TBORDER)     = "0ln";       // top cell border width
   env (CELL_VCORRECT)    = "a";         // vertical limits correction
   env (CELL_HYPHEN)      = "n";         // horizontal hyphenation
+  env (CELL_BLOCK)       = "auto";      // cell contains block content?
   env (CELL_ROW_SPAN)    = "1";         // row span of cell
   env (CELL_COL_SPAN)    = "1";         // column span of cell
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
