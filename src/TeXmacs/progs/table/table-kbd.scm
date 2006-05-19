@@ -113,5 +113,4 @@
   ("table b right" (table-column-decoration #t))
   ("table b up" (table-row-decoration #f))
   ("table b down" (table-row-decoration #t))
-  ("table s" (interactive cell-set-span))
-  ("table return" (cell-toggle-multi-paragraph)))
+  ("table s" (interactive cell-set-span)))
