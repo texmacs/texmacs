@@ -187,7 +187,6 @@
 (menu-bind cell-special-menu
   ("Set span" (interactive cell-set-span))
   ("Subtable" (make-subtable))
-  ;;("Multi-paragraph" (cell-toggle-multi-paragraph))
   ---
   (-> "Text height correction"
       ("Off" (cell-set-vcorrect "n"))
@@ -201,6 +200,10 @@
       ("Top" (cell-set-hyphen "t"))
       ("Center" (cell-set-hyphen "c"))
       ("Bottom" (cell-set-hyphen "b")))
+  (-> "Block content"
+      ("Never" (cell-set-block "no"))
+      ("If hyphenated" (cell-set-block "auto"))
+      ("Always" (cell-set-block "yes")))
   (-> "Distribute unused space"
       ("Horizontal part" (cell-interactive-set "cell-hpart"))
       ("Vertical part" (cell-interactive-set "cell-vpart")))

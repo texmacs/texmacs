@@ -166,6 +166,7 @@ extern string CELL_ROW_SPAN;
 extern string CELL_COL_SPAN;
 extern string CELL_VCORRECT;
 extern string CELL_HYPHEN;
+extern string CELL_BLOCK;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 

@@ -105,14 +105,12 @@ public:
   void   table_format_center ();
   void   table_row_decoration (bool forward);
   void   table_column_decoration (bool forward);
-  void   table_correct_mp ();
+  void   table_correct_block_content ();
   void   set_cell_mode (string mode);
   string get_cell_mode ();
   void   cell_set_format (string var, string val);
   string cell_get_format (string var);
   void   cell_del_format (string var);
-  void   cell_multi_paragraph (bool flag);
-  bool   cell_is_multi_paragraph ();
 
   void   table_test ();
 };

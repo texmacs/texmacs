@@ -1378,6 +1378,15 @@ tmg_table_format_center () {
 }
 
 SCM
+tmg_table_correct_block_content () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->table_correct_block_content ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_set_cell_mode (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-cell-mode");
 
@@ -1438,28 +1447,6 @@ tmg_cell_del_format (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_cell_multi_paragraph (SCM arg1) {
-  SCM_ASSERT_BOOL (arg1, SCM_ARG1, "cell-multi-paragraph");
-
-  bool in1= scm_to_bool (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->cell_multi_paragraph (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_cell_multi_paragraphP () {
-  // SCM_DEFER_INTS;
-  bool out= get_server()->get_editor()->cell_is_multi_paragraph ();
-  // SCM_ALLOW_INTS;
-
-  return bool_to_scm (out);
 }
 
 SCM
@@ -2946,13 +2933,12 @@ initialize_glue_editor () {
   gh_new_procedure ("table-row-decoration", (FN) tmg_table_row_decoration, 1, 0, 0);
   gh_new_procedure ("table-column-decoration", (FN) tmg_table_column_decoration, 1, 0, 0);
   gh_new_procedure ("table-format-center", (FN) tmg_table_format_center, 0, 0, 0);
+  gh_new_procedure ("table-correct-block-content", (FN) tmg_table_correct_block_content, 0, 0, 0);
   gh_new_procedure ("set-cell-mode", (FN) tmg_set_cell_mode, 1, 0, 0);
   gh_new_procedure ("get-cell-mode", (FN) tmg_get_cell_mode, 0, 0, 0);
   gh_new_procedure ("cell-set-format", (FN) tmg_cell_set_format, 2, 0, 0);
   gh_new_procedure ("cell-get-format", (FN) tmg_cell_get_format, 1, 0, 0);
   gh_new_procedure ("cell-del-format", (FN) tmg_cell_del_format, 1, 0, 0);
-  gh_new_procedure ("cell-multi-paragraph", (FN) tmg_cell_multi_paragraph, 1, 0, 0);
-  gh_new_procedure ("cell-multi-paragraph?", (FN) tmg_cell_multi_paragraphP, 0, 0, 0);
   gh_new_procedure ("table-test", (FN) tmg_table_test, 0, 0, 0);
   gh_new_procedure ("key-press", (FN) tmg_key_press, 1, 0, 0);
   gh_new_procedure ("emulate-keyboard", (FN) tmg_emulate_keyboard, 1, 0, 0);

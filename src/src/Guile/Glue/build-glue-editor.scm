@@ -145,13 +145,12 @@
   (table-row-decoration table_row_decoration (void bool))
   (table-column-decoration table_column_decoration (void bool))
   (table-format-center table_format_center (void))
+  (table-correct-block-content table_correct_block_content (void))
   (set-cell-mode set_cell_mode (void string))
   (get-cell-mode get_cell_mode (string))
   (cell-set-format cell_set_format (void string string))
   (cell-get-format cell_get_format (string string))
   (cell-del-format cell_del_format (void string))
-  (cell-multi-paragraph cell_multi_paragraph (void bool))
-  (cell-multi-paragraph? cell_is_multi_paragraph (bool))
   (table-test table_test (void))
 
   ;; keyboard handling

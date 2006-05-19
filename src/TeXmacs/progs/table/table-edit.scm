@@ -36,9 +36,6 @@
   (let ((x (inside-which '(table document))))
     (cond ((== x 'document)
 	   (insert-return))
-	  ((!= (cell-get-hyphen) "n")
-	   (cell-multi-paragraph #t)
-	   (insert-return))
 	  (else
 	   (table-insert-row #t)
 	   (table-go-to (table-which-row) 1)))))
@@ -438,10 +435,12 @@
   (:check-mark "o" cell-test-hyphen?)
   (cell-set-format "cell-hyphen" s))
 
-(tm-define (cell-toggle-multi-paragraph)
-  (:synopsis "Toggle multiparagraph property of cell.")
-  (:check-mark "v" cell-multi-paragraph?)
-  (cell-multi-paragraph (not (cell-multi-paragraph?))))
+(define (cell-get-block) (cell-get-format "cell-block"))
+(define (cell-test-block? s) (string=? (cell-get-block) s))
+(tm-define (cell-set-block s)
+  (:synopsis "Does the cell contain block content?")
+  (:check-mark "o" cell-test-block?)
+  (cell-set-format "cell-block" s))
 
 (tm-define (cell-halign-left)
   (let* ((var "cell-halign")

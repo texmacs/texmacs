@@ -182,6 +182,7 @@ string CELL_BBORDER ("cell-bborder");
 string CELL_TBORDER ("cell-tborder");
 string CELL_VCORRECT ("cell-vcorrect");
 string CELL_HYPHEN ("cell-hyphen");
+string CELL_BLOCK ("cell-block");
 string CELL_ROW_SPAN ("cell-row-span");
 string CELL_COL_SPAN ("cell-col-span");
 string CELL_ROW_NR ("cell-row-nr");
