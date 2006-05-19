@@ -14,6 +14,12 @@
 
 (texmacs-module (convert tools sxml))
 
+(define (as-string s)
+  (cond ((symbol? s) (symbol->string s))
+	((number? s) (number->string s))
+	((string? s) s)
+	(else "")))
+
 ;; Fundamental acessors
 (tm-define sxml-name car)
 (define sxml-attr-list! cdadr)
@@ -120,7 +126,7 @@
   (sxml-name->ncname (sxml-name obj)))
 
 (tm-define (sxml-name->ncname sxml-name)
-  (let* ((name (symbol->string sxml-name))
+  (let* ((name (as-string sxml-name))
 	 (len (string-length name)))
     (cond
       ((sxml-find-name-separator len)
@@ -131,7 +137,7 @@
 (tm-define (sxml-name->ns-id sxml-name)
   ;; Returns namespace-id part of given name, or #f if it's LocalName
   ;; (copied from sxml-tools)
-  (let* ((name (symbol->string sxml-name)))
+  (let* ((name (as-string sxml-name)))
     (cond
       ((sxml-find-name-separator (string-length name))
        => (lambda (pos)
@@ -139,7 +145,7 @@
       (else #f))))
 
 (tm-define (sxml-split-name sxml-name)
-  (let* ((name (symbol->string sxml-name))
+  (let* ((name (as-string sxml-name))
 	 (len (string-length name)))
     (cond
       ((sxml-find-name-separator len)
@@ -182,7 +188,7 @@
 
 (tm-define (sxml-control-node? x)
   (and (nstring? x)
-       (let ((name (symbol->string (sxml-name x))))
+       (let ((name (as-string (sxml-name x))))
 	 (and (string-starts? name "*")
 	      (string-ends? name "*")))))
 

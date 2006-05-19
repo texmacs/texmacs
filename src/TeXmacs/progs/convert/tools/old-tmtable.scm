@@ -243,9 +243,15 @@
 	       formats))
        ,(tmtable-cells->stm t)))))
 
+(define (make-block-cell x)
+  ;; NOTE: since TeXmacs 1.0.6.2, hyphenated => block structure
+  (if (func? x 'document)
+      `(cell ,x)
+      `(cell (document ,x))))
+
 (define (tmtable-cells->stm t)
   (cons 'table
-	(map (lambda (r) (cons 'row (map (cut list 'cell <>) r)))
+	(map (lambda (r) (cons 'row (map make-block-cell r)))
 	     (tmtable-cells t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

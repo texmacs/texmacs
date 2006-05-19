@@ -249,7 +249,8 @@
 	   ;; This can only happen with some very vicious incorrect HTML.
 	   (cons (list j (max rspan (second (car rowspans))))
 		 (next (cdr rowspans) (1+ j) (1- cspan))))
-	  (else (cons (car rowspans) (next (cdr rowspans)))))))
+	  (else (cons (car rowspans)
+		      (next (cdr rowspans) (1+ j) (1- cspan)))))))
 
 (define (next-rowspans rowspans)
   (reverse! (list-fold (lambda (kar kdr)

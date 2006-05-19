@@ -106,10 +106,10 @@
 (define (table-width env a)
   ;; TODO: extend the typesetter to support hyphenated cells balancing
   (let ((len (htmltm-dimension a 'width)))
-    (list (tmformat-frame "table-width"
-			  (if (tmlength-null? len)
-			      (tmlength 1 'par)
-			      len)))))
+    (if (tmlength-null? len)
+	(list (tmformat-frame "table-width" (tmlength 1 'par))
+	      (tmformat-frame "table-hmode" "min"))
+	(list (tmformat-frame "table-width" len)))))
 
 (define (table-background env a)
   (or (and-let* ((html-color (shtml-attr-non-null a 'background))

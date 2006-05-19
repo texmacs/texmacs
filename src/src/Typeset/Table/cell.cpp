@@ -300,15 +300,6 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
 }
 
 void
-cell_rep::fit_horizontally () {
-  SI  w= width- lsep- lborder- rsep- rborder;
-  int v= hyphen == "t"? 1: (hyphen == "c"? 0: -1);
-  SI  d= ((vcorrect == "b") || (vcorrect == "a"))? -env->fn->y1: 0;
-  SI  h= ((vcorrect == "t") || (vcorrect == "a"))?  env->fn->y2: 0;
-  b= (box) lz->produce (LAZY_BOX, make_format_cell (w, v, d, h));
-}
-
-void
 cell_rep::position_horizontally (SI offset, SI mw, SI lw, SI rw) {
   x1= offset;
   x2= offset + mw;
@@ -346,6 +337,15 @@ cell_rep::position_vertically (SI offset, SI mh, SI bh, SI th) {
 /******************************************************************************
 * Producing the final cell box
 ******************************************************************************/
+
+void
+cell_rep::finish_horizontal () {
+  SI  w= width- lsep- lborder- rsep- rborder;
+  int v= hyphen == "t"? 1: (hyphen == "c"? 0: -1);
+  SI  d= ((vcorrect == "b") || (vcorrect == "a"))? -env->fn->y1: 0;
+  SI  h= ((vcorrect == "t") || (vcorrect == "a"))?  env->fn->y2: 0;
+  b= (box) lz->produce (LAZY_BOX, make_format_cell (w, v, d, h));
+}
 
 void
 cell_rep::finish () {
