@@ -127,7 +127,7 @@ table_rep::format_table (tree fm) {
   }
   else {
     width= 0;
-    hmode= "";
+    hmode= "auto";
   }
   if (var->contains (TABLE_HEIGHT)) {
     height= env->as_length (env->exec (var[TABLE_HEIGHT]));
@@ -137,7 +137,7 @@ table_rep::format_table (tree fm) {
   }
   else {
     height= 0;
-    vmode = "";
+    vmode = "auto";
   }
   if (var->contains (TABLE_LSEP))
     lsep= env->as_length (env->exec (var[TABLE_LSEP]));
@@ -348,24 +348,36 @@ sum (double* a, int n) {
 }
 
 static void
-blow_up (SI* w, SI* W, SI room, double* part, int n) {
+blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
+	 SI room, double* part, int n)
+{
   int i;
   double total= sum (part, n);
-  if (total <= 0) {
+  if (total <= 0)
     for (i=0; i<n; i++) part[i]= 1;
-    total= n;
-  }
+  int nr_ext= 0;
+  for (i=0; i<n; i++)
+    if (w[i] != W[i] && part[i] > 0)
+      nr_ext++;
+  if (nr_ext != 0)
+    for (i=0; i<n; i++)
+      if (w[i] == W[i])
+	part[i]= 0;
+  total= sum (part, n);
+
   STACK_NEW_ARRAY (Part, double, n);
   for (i=0; i<n; i++) Part[i]= part[i];
 
   SI old_room= room;
   while (true) {
     for (i=0; i<n; i++)
-      if (W[i] > w[i]) {
+      if (part[i] > 0) {
 	SI extra= (SI) ((part[i]/total) * old_room);
 	if (w[i]+extra >= W[i]) {
 	  room    -= (W[i]-w[i]);
 	  w[i]     = W[i];
+	  l[i]     = L[i];
+	  r[i]     = R[i];
 	  part[i]  = 0;
 	}
       }
@@ -383,8 +395,19 @@ blow_up (SI* w, SI* W, SI room, double* part, int n) {
     total= sum (part, n);
   }
   for (i=0; i<n; i++) {
-    SI extra= (SI) ((part[i]/total) * room);
+    SI extra = (SI) ((part[i]/total) * room);
     w[i] += extra;
+    if (L[i] + R[i] >= w[i]) {
+      SI s= l[i] + r[i];
+      SI S= L[i] + R[i];
+      double lambda= ((double) (w[i] - s)) / ((double) (S - s));
+      l[i] += (SI) (lambda * (L[i] - l[i]));
+      r[i]  = w[i] - l[i];
+    }
+    else {
+      l[i]= L[i];
+      r[i]= R[i];
+    }
   }
   STACK_DELETE_ARRAY (Part);
 }
@@ -410,9 +433,11 @@ table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span==1)) {
+      if ((!nil (C)) && (C->col_span == 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
+	//cout << i << ", " << j << ": "
+	//<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
 	mw[j]= max (mw[j], cmw);
 	lw[j]= max (lw[j], clw);
 	rw[j]= max (rw[j], crw);
@@ -423,7 +448,7 @@ table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span!=1)) {
+      if ((!nil (C)) && (C->col_span != 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
 	SI tot= sum (mw+j, C->col_span);
@@ -446,12 +471,19 @@ table_rep::compute_horizontal_parts (double* part) {
 
 void
 table_rep::position_columns () {
+  //cout << "-------------------------------------\n";
+  //cout << "Position columns " << (width >> 8) << "\n";
   STACK_NEW_ARRAY (mw, SI, nr_cols);
   STACK_NEW_ARRAY (lw, SI, nr_cols);
   STACK_NEW_ARRAY (rw, SI, nr_cols);
-  compute_widths (mw, lw, rw, false);
-  if (width != 0) {
-    SI hextra= max (width- sum (mw, nr_cols), 0);
+  compute_widths (mw, lw, rw, hmode == "auto");
+  //for (int i=0; i<nr_cols; i++)
+  //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+  //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
+  if (hmode != "auto") {
+    SI min_width= sum (mw, nr_cols);
+    SI hextra= width - min_width;
+    //cout << "Extra horizontal " << (hextra >> 8) << "\n";
     if (hextra > 0) {
       STACK_NEW_ARRAY (part, double, nr_cols);
       STACK_NEW_ARRAY (Mw, SI, nr_cols);
@@ -459,7 +491,18 @@ table_rep::position_columns () {
       STACK_NEW_ARRAY (Rw, SI, nr_cols);
       compute_horizontal_parts (part);
       compute_widths (Mw, Lw, Rw, true);
-      blow_up (mw, Mw, hextra, part, nr_cols);
+      SI max_width= sum (Mw, nr_cols);
+      SI computed_width= width;
+      if (hmode == "min") computed_width= min (width, max_width);
+      if (hmode == "max") computed_width= max (width, min_width);
+      hextra= max (computed_width - min_width, 0);
+      //for (int i=0; i<nr_cols; i++)
+      //cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
+      //<< (Lw[i]>>8) << ", " << (Rw[i]>>8) << "\n";
+      blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
+      //for (int i=0; i<nr_cols; i++)
+      //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+      //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mw);
       STACK_DELETE_ARRAY (Lw);
@@ -478,6 +521,7 @@ table_rep::position_columns () {
 	}
 	if (!nil (C->T)) {
 	  C->T->width= mw[j]- C->lborder- C->rborder;
+	  C->T->hmode= "exact";
 	  C->T->position_columns ();
 	}
       }
@@ -489,10 +533,15 @@ table_rep::position_columns () {
   else if (halign == "r") xoff= -sum (mw, nr_cols);
   else if (halign == "L") xoff= -lw[0];
   else if (halign == "C")
-    xoff= -(sum (mw, nr_cols>>1)+ sum (mw, (nr_cols-1)>>1)+
-	    lw[nr_cols>>1]+ lw[(nr_cols-1)>>1]) >> 1;
-  else if (halign == "R") xoff= -sum (mw, nr_cols-1)- lw[nr_cols-1];
-  else xoff= -sum (mw, j0)- lw[j0];
+    xoff= -(sum (mw, nr_cols>>1) + sum (mw, (nr_cols-1)>>1)+
+	    lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
+  else if (halign == "R") xoff= -sum (mw, nr_cols - 1) - lw[nr_cols - 1];
+  else if (halign == "O") {
+    if (col_origin < 0) col_origin += nr_cols;
+    col_origin= max (min (col_origin, nr_cols - 1), 0);
+    xoff= -sum (mw, col_origin) - lw[col_origin];
+  }
+  else xoff= -sum (mw, j0) - lw[j0];
 
   x1= xoff- lborder- lsep;
   for (j=0; j<nr_cols; j++) {
@@ -573,17 +622,30 @@ table_rep::position_rows () {
   STACK_NEW_ARRAY (th, SI, nr_rows);
 
   compute_heights (mh, bh, th);
-  if (height != 0) {
-    SI vextra= max (height- sum (mh, nr_rows), 0);
+  if (vmode != "auto") {
+    SI min_height= sum (mh, nr_rows);
+    SI vextra= height - min_height;
     if (vextra > 0) {
       int i;
       STACK_NEW_ARRAY (part, double, nr_rows);
       STACK_NEW_ARRAY (Mh, SI, nr_rows);
+      STACK_NEW_ARRAY (Bh, SI, nr_rows);
+      STACK_NEW_ARRAY (Th, SI, nr_rows);
       compute_vertical_parts (part);
-      for (i=0; i<nr_rows; i++) Mh[i]= mh[i];
-      blow_up (mh, Mh, vextra, part, nr_rows);
+      for (i=0; i<nr_rows; i++) {
+	Mh[i]= mh[i];
+	Bh[i]= bh[i];
+	Th[i]= th[i];	
+      }
+      SI computed_height= height;
+      if (vmode == "min") computed_height= min (height, min_height);
+      if (vmode == "max") computed_height= max (height, min_height);
+      vextra= max (computed_height - min_height, 0);
+      blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows);
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mh);
+      STACK_DELETE_ARRAY (Bh);
+      STACK_DELETE_ARRAY (Th);
     }
   }
 
@@ -593,6 +655,7 @@ table_rep::position_rows () {
       cell C= T[i][j];
       if ((!nil (C)) && (!nil (C->T))) {
 	C->T->height= mh[j]- C->bborder- C->tborder;
+	C->T->vmode = "exact";
 	C->T->position_rows ();
       }
     }
@@ -605,10 +668,15 @@ table_rep::position_rows () {
   else if (valign == "b") yoff= sum (mh, nr_rows);
   else if (valign == "T") yoff= th[0];
   else if (valign == "C")
-    yoff= (sum (mh, nr_rows>>1)+ sum (mh, (nr_rows-1)>>1)+
-	   th[nr_rows>>1]+ th[(nr_rows-1)>>1]) >> 1;
-  else if (valign == "B") yoff= sum (mh, nr_rows-1)+ th[nr_rows-1];
-  else yoff= sum (mh, i0)+ th[i0];
+    yoff= (sum (mh, nr_rows>>1) + sum (mh, (nr_rows-1)>>1) +
+	   th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
+  else if (valign == "B") yoff= sum (mh, nr_rows - 1) + th[nr_rows - 1];
+  else if (valign == "O") {
+    if (row_origin < 0) row_origin += nr_rows;
+    row_origin= max (min (row_origin, nr_rows - 1), 0);
+    yoff= sum (mh, row_origin) + th[row_origin];
+  }
+  else yoff= sum (mh, i0) + th[i0];
 
   y2= yoff+ tborder+ tsep;
   for (i=0; i<nr_rows; i++) {
@@ -749,6 +817,7 @@ lazy_table_rep::produce (lazy_type request, format fm) {
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
       if (T->var[TABLE_WIDTH] == "1par")
+	// FIXME: rather evaluate (with "par-width" fs->width ...)
 	T->width= fs->width;
     }
     T->merge_borders ();

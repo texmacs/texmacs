@@ -109,6 +109,12 @@ edit_text_rep::remove_text (bool forward) {
 	    }
 	    else go_to_border (path_up (p), !forward);
 	  }
+	else if (is_func (u, TABLE) || is_func (u, SUBTABLE) ||
+		 is_func (u, CELL) || is_func (u, ROW) ||
+		 is_func (u, TFORMAT)) {
+	  if (t == tree (DOCUMENT, ""))
+	    back_in_table (u, p, forward);
+	} 
       }
       return;
     }

@@ -135,8 +135,8 @@ initialize_default_env () {
 
   env (TABLE_WIDTH)      = "";          // width of table
   env (TABLE_HEIGHT)     = "";          // height of table
-  env (TABLE_HMODE)      = "";          // width determination mode
-  env (TABLE_VMODE)      = "";          // height determination mode
+  env (TABLE_HMODE)      = "auto";      // width determination mode
+  env (TABLE_VMODE)      = "auto";      // height determination mode
   env (TABLE_HALIGN)     = "l";         // horizontal alignment
   env (TABLE_VALIGN)     = "f";         // vertical alignment (fraction height)
   env (TABLE_ROW_ORIGIN) = "0";         // row origin
@@ -163,8 +163,8 @@ initialize_default_env () {
   env (CELL_HEIGHT)      = "";          // height of cell
   env (CELL_HPART)       = "";          // take part of unused horizontal space
   env (CELL_VPART)       = "";          // take part of unused vertical space
-  env (CELL_HMODE)       = "exact";     // width determination mode
-  env (CELL_VMODE)       = "exact";     // height determination mode
+  env (CELL_HMODE)       = "auto";      // width determination mode
+  env (CELL_VMODE)       = "auto";      // height determination mode
   env (CELL_HALIGN)      = "l";         // horizontal alignment
   env (CELL_VALIGN)      = "B";         // vertical alignment
   env (CELL_LSEP)        = "0fn";       // left cell padding
