@@ -16,6 +16,7 @@
 #include "vars.hpp"
 #include "drd_std.hpp"
 #include <stdio.h>
+#include "Scheme/object.hpp"
 
 /******************************************************************************
 * Retrieve older operator hashmap
@@ -2371,7 +2372,7 @@ upgrade_doc_info (tree t) {
 }
 
 /******************************************************************************
-* Temporary for Marie-Francoise
+* Upgrade bibliographies
 ******************************************************************************/
 
 tree
@@ -2390,6 +2391,249 @@ upgrade_bibliography (tree t) {
     }
     return r;
   }
+}
+
+/******************************************************************************
+* Upgrade switches
+******************************************************************************/
+
+tree
+upgrade_switch (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_switch (t[i]);
+    if (is_compound (r, "switch", 2)) {
+      int i, n= N(r[1]);
+      tree u (make_tree_label ("switch"), n);
+      for (i=0; i<n; i++)
+	if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
+	else u[i]= compound ("hidden", r[1][i]);
+      return u;
+    }
+    if (is_compound (r, "fold", 2))
+      return compound ("folded", r[0], r[1]);
+    if (is_compound (r, "unfold", 2))
+      return compound ("unfolded", r[0], r[1]);
+    if (is_compound (r, "fold-bpr", 2) ||
+	is_compound (r, "fold-text", 2) ||
+	is_compound (r, "fold-proof", 2) ||
+	is_compound (r, "fold-exercise", 2))
+      return compound ("summarized", r[0], r[1]);
+    if (is_compound (r, "unfold-bpr", 2) ||
+	is_compound (r, "unfold-text", 2) ||
+	is_compound (r, "unfold-proof", 2) ||
+	is_compound (r, "unfold-exercise", 2))
+      return compound ("detailed", r[0], r[1]);
+    if (is_compound (r, "fold-algorithm", 2))
+      return compound ("summarized-algorithm", r[0], r[1]);
+    if (is_compound (r, "unfold-algorithm", 2))
+      return compound ("detailed-algorithm", r[0], r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "fold-algorithm")
+      return tree (ASSIGN, "summarized-algorithm", r[1]);
+    if (is_func (r, ASSIGN, 2) && r[0] == "unfold-algorithm")
+      return tree (ASSIGN, "detailed-algorithm", r[1]);
+    return r;
+  }
+}
+
+/******************************************************************************
+* Upgrade graphics
+******************************************************************************/
+
+static int
+find_attr_pos (tree t, string name) {
+  int i, n= N(t);
+  for (i=0; i<n; i+=2)
+    if (t[i] == name && i%2 == 0 && i+1<n) return i;
+  return -1;
+}
+
+static bool
+find_attr (tree t, string name) {
+  return find_attr_pos (t, name) != -1;
+}
+
+static tree
+get_attr (tree t, string name, tree ifnotfound) {
+  int i= find_attr_pos (t, name);
+  return i == -1 ? ifnotfound : t[i+1];
+}
+
+static tree
+add_attr (tree t, string name, tree value) {
+  int i, n= N(t);
+  tree r (t, n+2);
+  for (i=0; i<n-1; i++)
+    r[i]= t[i];
+  r[n-1]= name;
+  r[n]= value;
+  r[n+1]= t[n-1];
+  return r;
+}
+
+static tree
+set_attr (tree t, string name, tree value) {
+  int i= find_attr_pos (t, name);
+  if (i != -1)
+    t[i+1]= value;
+  else
+    t= add_attr (t, name, value);
+  return t;
+}
+
+static tree
+remove_attr (tree t, string name) {
+  int i= find_attr_pos (t, name);
+  if (i == -1)
+    return t;
+  else {
+    int j, n= N(t);
+    tree r (t, n-2);
+    for (j=0; j<i; j++)
+      r[j]= t[j];
+    for (j=i+2; j<n; j++)
+      r[j-2]= t[j];
+    return r;
+  }
+}
+
+tree
+upgrade_fill (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_compound (t, "with")) {
+    if ((i= find_attr_pos (t, "gr-mode")) != -1
+     && is_tuple (t[i+1],"edit-prop"))
+      t[i+1]= tuple ("group-edit","props");
+
+    tree fm= get_attr (t, "fill-mode", tree ("none"));
+    t= remove_attr (t, "fill-mode");
+    t= remove_attr (t, "gr-fill-mode");
+    if (fm == "none")
+      t= remove_attr (t, "fill-color");
+    if (fm == "inside")
+      t= set_attr (t, "color", tree ("none"));
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_fill (t[i]);
+  return r;
+}
+
+static void
+length_split (string &num, string &unit, string l) {
+  int i, n= N(l), nu= 0;
+  i= n-1;
+  while (i>=0 && is_alpha (l[i])) i--, nu++;
+  num= l (0, n-nu);
+  unit= l (n-nu, n);
+}
+
+static string
+length_minus (string l) {
+  if (l[0] == '+') l[0]= '-';
+  else
+  if (l[0] == '-') l[0]= '+';
+  else
+    l= "-" * l;
+  return l;
+}
+
+static string
+length_abs (string l) {
+  if (l[0] == '-') l[0]= '+';
+  return l;
+}
+
+static int length_add_error;
+
+static string
+length_add (string l1, string l2) {
+  length_add_error= 0;
+  string n1, u1, n2, u2;
+  length_split (n1, u1, l1);
+  length_split (n2, u2, l2);
+  double i1= as_double (n1);
+  double i2= as_double (n2);
+  if (i1 == 0.0) {
+    i1= i2;
+    i2= 0.0;
+    string u= u1;
+    u1= u2;
+    u2= u;
+  }
+  if (u1 == "par" && (u2 == "par" || i2 == 0.0))
+    return as_string (i1 + i2) * "par";
+  else
+  if ((u1 == "cm" || u1 == "mm")
+   && (u2 == "cm" || u2 == "mm" || i2 == 0.0)) {
+    if (u1 == "cm" && u2 == "mm") i2 /= 10;
+    if (u1 == "mm" && u2 == "cm") i2 *= 10;
+    return as_string (i1 + i2) * u1;
+  }
+  else {
+    length_add_error= 1;
+    return "0cm";
+  }
+}
+
+tree
+upgrade_graphics (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_compound (t, "with") &&
+      (find_attr (t, "gr-frame") || find_attr (t, "gr-clip"))) {
+    tree fr= get_attr (t, "gr-frame",
+			  tuple ("scale", "1cm",
+				 tree (TUPLE, "0.5par", "0cm")));
+    tree clip= get_attr (t, "gr-clip",
+			    tuple ("clip",
+				   tuple ("0par", "-0.3par"),
+				   tuple ("1par", "0.3par")));
+    t= remove_attr (t, "gr-clip");
+
+    string ox= as_string (fr[2][0]), oy= as_string (fr[2][1]);
+    string cg= as_string (clip[1][0]), cb= as_string (clip[1][1]);
+    string cd= as_string (clip[2][0]), ch= as_string (clip[2][1]);
+    string w= length_add (cd, length_minus (cg));
+    string h= length_add (ch, length_minus (cb));
+
+    fr[2][0]= tree (length_add (length_abs (cg) , ox));
+    if (length_add_error)
+      fr[2][0]= tree (PLUS, length_abs (cg) , ox);
+    fr[2][1]= tree (length_add (length_abs (cb) , oy));
+    if (length_add_error)
+      fr[2][1]= tree (PLUS, length_abs (cb) , oy);
+    tree geom= tuple ("geometry", tree (w), tree (h));
+    t= add_attr (t, "gr-geometry", geom);
+    t= set_attr (t, "gr-frame", fr);
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_graphics (t[i]);
+  return r;
+}
+
+tree
+upgrade_textat (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_compound (t, "text-at") && N(t) == 4) {
+    tree t0= t;
+    t= tree (WITH, tree (TEXT_AT, t[0], t[1]));
+    t= set_attr (t, "text-at-halign", t0[2]);
+    t= set_attr (t, "text-at-valign", t0[3]);
+  }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_textat (t[i]);
+  return r;
 }
 
 /******************************************************************************
@@ -2487,5 +2731,13 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.0.4.6"))
     t= upgrade_bibliography (t);
+  if (version_inf_eq (version, "1.0.5.4"))
+    t= upgrade_switch (t);
+  if (version_inf_eq (version, "1.0.5.7"))
+    t= upgrade_fill (t);
+  if (version_inf_eq (version, "1.0.5.8"))
+    t= upgrade_graphics (t);
+  if (version_inf_eq (version, "1.0.5.11"))
+    t= upgrade_textat (t);
   return t;
 }

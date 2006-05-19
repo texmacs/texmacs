@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ -z "$TEXMACS_SERVER_PATH" ] ; then
+  TEXMACS_SERVER_PATH="/home/vdhoeven/cvs/server/progs"
+fi
+
+if [ -z "$GUILE_LOAD_PATH" ] ; then
+  GUILE_LOAD_PATH="$TEXMACS_SERVER_PATH"
+else
+  GUILE_LOAD_PATH="$TEXMACS_SERVER_PATH:$GUILE_LOAD_PATH"
+fi
+
+export GUILE_LOAD_PATH
+
+exec guile -c "(use-modules (server client))"

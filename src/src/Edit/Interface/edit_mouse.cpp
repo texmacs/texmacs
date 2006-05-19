@@ -23,6 +23,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   last_x= x; last_y= y;
   buf->mark_undo_block ();
 
+  if (type == "leave")
+    set_pointer ("XC_top_left_arrow");
   if ((type != "move") && (type != "enter") && (type != "leave"))
     set_input_normal ();
   if ((popup_win != NULL) && (type != "leave")) {
@@ -32,36 +34,53 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
     this << emit_mouse_grab (false);
   }
 
-  if (inside_graphics ()) {
+  if (inside_graphics (false)) {
     string type2= type;
-    if (type == "enter")
+    if (type == "enter") {
       dragging= start_drag= false;
+      right_dragging= start_right_drag= false;
+    }
     if (type == "press-left")
       start_drag= true;
+    if (type == "press-right")
+      start_right_drag= true;
 
-    if (start_drag && (type == "move")) {
+    if (start_drag && type == "move") {
       type2= "start-drag";
       start_drag= false;
       dragging= true;
     }
-    else
-    if (dragging && (type == "move"))
+    else if (dragging && (type == "move"))
       type2= "dragging"; 
     if (dragging && (type == "release-left"))
       type2= "end-drag";
 
+    if (start_right_drag && type == "move") {
+      type2= "start-right-drag";
+      start_right_drag= false;
+      right_dragging= true;
+    }
+    else if (right_dragging && (type == "move"))
+      type2= "right-dragging"; 
+    if (right_dragging && (type == "release-right"))
+      type2= "end-right-drag";
+
     if (type == "release-left")
       dragging= start_drag= false;
+    if (type == "release-right")
+      right_dragging= start_right_drag= false;
     if (mouse_graphics (type2, x, y, t)) return;
+    if (!over_graphics (x, y))
+      eval ("(graphics-reset-context 'text-cursor)");
   }
 
   if (type == "press-left") mouse_click (x, y);
   if (dragging && (type == "move")) {
-    if (attached () && win->check_event (DRAG_EVENT)) return;
+    if (attached () && dis->check_event (DRAG_EVENT)) return;
     mouse_drag (x, y);
   }
-  if (type == "release-left") {
-    dragging= false;
+  if (type == "release-left" || type == "release-right") {
+    dragging= right_dragging= false;
     this << emit_mouse_grab (false);
     if ((t >= last_click) && ((t - last_click) <= 250)) {
       last_click= t;
@@ -94,8 +113,8 @@ edit_interface_rep::mouse_click (SI x, SI y) {
   if (eb->action ("click" , x, y, 0) != "") return;
   start_x   = x;
   start_y   = y;
-  start_drag= true;
-  dragging  = true;
+  start_drag= dragging= true;
+  start_right_drag= right_dragging= false;
   this << emit_mouse_grab (true);
 }
 
@@ -136,6 +155,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 
 void
 edit_interface_rep::mouse_drag (SI x, SI y) {
+  if (inside_graphics ()) return;
   if (eb->action ("drag" , x, y, 0) != "") return;
   end_x  = x;
   end_y  = y;
@@ -149,7 +169,7 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
   }
   set_selection (p1, p2);
   if ((p1 == p2) && start_drag) return;
-  start_drag= false;
+  start_drag= start_right_drag= false;
   notify_change (THE_SELECTION);
 }
 
@@ -157,14 +177,18 @@ void
 edit_interface_rep::mouse_select (SI x, SI y) {
   if (eb->action ("select" , x, y, 0) != "") return;
   tree g;
+  bool b0= inside_graphics (false);
   bool b= inside_graphics ();
   if (b) g= get_graphics ();
   go_to (x, y);
-  if ((!b && inside_graphics ()) || (b && !inside_graphics ()))
+  if ((!b0 && inside_graphics (false)) || (b0 && !inside_graphics (false))) {
     dragging= start_drag= false;
+    right_dragging= start_right_drag= false;
+  }
   if (!b && inside_graphics ())
     eval ("(graphics-reset-context 'begin)");
-  if (b && (!inside_graphics () || g != get_graphics ())) {
+  tree g2= get_graphics ();
+  if (b && (!inside_graphics () || obtain_ip (g) != obtain_ip (g2))) {
     invalidate_graphical_object ();
     eval ("(graphics-reset-context 'exit)");
   }
@@ -227,6 +251,18 @@ edit_interface_rep::get_cursor () {
     }
   }
   return copy (the_cursor ());
+}
+
+void
+edit_interface_rep::set_pointer (string name) {
+  sv->get_display()->set_pointer(name);
+}
+
+void
+edit_interface_rep::set_pointer (
+  string curs_name, string mask_name)
+{
+  sv->get_display()->set_pointer(curs_name, mask_name);
 }
 
 /******************************************************************************

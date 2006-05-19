@@ -11,6 +11,8 @@
 ******************************************************************************/
 
 #include "edit_text.hpp"
+#include "tree_traverse.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Getting the point where to delete
@@ -61,6 +63,14 @@ edit_text_rep::get_deletion_point (
 * Normal deletions
 ******************************************************************************/
 
+static bool
+is_multi_paragraph_or_sectional (tree t) {
+  if (is_atomic (t)) return false;
+  if (is_multi_paragraph (t)) return true;
+  eval ("(use-modules (utils library tree) (text std-text-drd))");
+  return as_bool (call ("tree-in?", t, call ("section-tag-list")));
+}
+
 void
 edit_text_rep::remove_text (bool forward) {
   path p;
@@ -83,14 +93,8 @@ edit_text_rep::remove_text (bool forward) {
 	      for (i=0; i<n; i++)
 		empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
 	      if (!empty) {
-		if (forward) {
-		  if (last_item (p) == n-1) go_to (end (et, path_up (p)));
-		  else go_to (start (et, path_inc (p)));
-		}
-		else {
-		  if (last_item (p) == 0) go_to (start (et, path_up (p)));
-		  else go_to (end (et, path_dec (p)));
-		}
+		if (forward) go_to (next_valid (et, tp));
+		else go_to (previous_valid (et, tp));
 		return;
 	      }
 	    }
@@ -111,8 +115,8 @@ edit_text_rep::remove_text (bool forward) {
     else {
       int l1= forward? last: last-1;
       int l2= forward? last+1: last;
-      if (is_multi_paragraph (subtree (et, p * l1)) ||
-	  is_multi_paragraph (subtree (et, p * l2)))
+      if (is_multi_paragraph_or_sectional (subtree (et, p * l1)) ||
+	  is_multi_paragraph_or_sectional (subtree (et, p * l2)))
 	{
 	  if (subtree (et, p * l1) == "") remove (p * l1, 1);
 	  else {
@@ -130,9 +134,7 @@ edit_text_rep::remove_text (bool forward) {
   if (forward && is_atomic (t) && (last != rix)) {
     language lan= get_env_language ();
     int end= last;
-    if (lan->enc->token_forward (t->label, end))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::remove_text");
+    tm_char_forwards (t->label, end);
     remove (p * last, end-last);
     correct (path_up (p));
     return;
@@ -141,9 +143,7 @@ edit_text_rep::remove_text (bool forward) {
   if ((!forward) && is_atomic (t) && (last != 0)) {
     language lan= get_env_language ();
     int start= last;
-    if (lan->enc->token_backward (t->label, start))
-      fatal_error ("bad cursor position in string",
-		   "edit_text_rep::remove_text");
+    tm_char_backwards (t->label, start);
     remove (p * start, last-start);
     correct (path_up (p));
     return;
@@ -323,7 +323,7 @@ edit_text_rep::remove_structure_upwards () {
   remove (p * 0, last);
 
   do {
-    rem_unary (p);
+    remove_node (p * 0);
     last= last_item (p);
     p= path_up (p);
     st= subtree (et, p);
@@ -336,7 +336,7 @@ edit_text_rep::remove_structure_upwards () {
     tree right= st[last] (very_last+1, N(st[last]));
     remove (p * path (last, very_last+1), N(st[last])- (very_last+1));
     remove (p * path (last, 0), very_last);
-    rem_unary (p * last);
+    remove_node (p * path (last, 0));
     insert (p * (last+1), right);
     insert (p * last, left);
   }

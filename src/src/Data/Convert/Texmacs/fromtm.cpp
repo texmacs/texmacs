@@ -119,11 +119,14 @@ tm_reader::read_next () {
 	pos= old_pos;
 	return "<";
       }
-      old_pos= pos;
+      pos= old_pos;
+      return "<";
+      /*
       string d= read_char ();
       if ((d == "\\") || (d == "|") || (d == "/")) return "<" * c * d;
       pos= old_pos;
       return "<" * c;
+      */
     }
   case '|':
   case '>':

@@ -169,7 +169,7 @@ socket_link_rep::listen (int msecs) {
   int wait_until= texmacs_time () + msecs;
   while (outbuf == "") {
     listen_to_sockets (); // FIXME: should listen more specifically
-    if (texmacs_time () > wait_until) break;
+    if (texmacs_time () - wait_until > 0) break;
   }
 }
 

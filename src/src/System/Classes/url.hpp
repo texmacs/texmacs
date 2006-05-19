@@ -72,6 +72,8 @@ url operator * (url u1, char* name);
 url operator * (url u1, string name);
 url operator | (url u1, url u2);      // disjunction of urls like in file paths
 
+inline url url_parent (url u) { return u * url_parent (); }
+
 /******************************************************************************
 * predicates
 ******************************************************************************/

@@ -11,44 +11,8 @@
 ******************************************************************************/
 
 #include "edit_interface.hpp"
-#include "merge_sort.hpp"
 #include "hashset.hpp"
 #include "analyze.hpp"
-
-/******************************************************************************
-* Closing completions
-******************************************************************************/
-
-static array<string>
-as_completions (hashset<string> h) {
-  tree t= (tree) h;
-  int i, n= N(t);
-  array<string> a (n);
-  for (i=0; i<n; i++) a[i]= t[i]->label;
-  merge_sort (a);
-  return a;
-}
-
-static void
-close_completions (hashset<string>& h) {
-  array<string> a= as_completions (h);
-  int i, j, n= N(a);
-  for (i=1; i<n; i++) {
-    for (j=0; j < min (N(a[i-1]), N(a[i])); j++)
-      if (a[i-1][j] != a[i][j]) break;
-    if (j < min (N(a[i-1]), N(a[i])))
-      h->insert (a[i](0,j));
-  }
-}
-
-static array<string>
-close_completions (array<string> a) {
-  int i;
-  hashset<string> h;
-  for (i=0; i<N(a); i++) h->insert (a[i]);
-  close_completions (h);
-  return as_completions (h);
-}
 
 /******************************************************************************
 * Finding completions in text

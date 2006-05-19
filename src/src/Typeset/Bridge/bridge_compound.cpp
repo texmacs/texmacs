@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "bridge.hpp"
+#include "drd_std.hpp"
 
 tree insert_at (tree, path, tree);
 tree remove_at (tree, path, int);
@@ -215,14 +216,18 @@ bridge_compound_rep::my_typeset (int desired_status) {
 	  i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);
-    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    if (!the_drd->is_child_enforcing (st))
+      ttt->insert_marker (st, ip);
     body->typeset (desired_status);
     env->macro_arg= env->macro_arg->next;
     env->macro_src= env->macro_src->next;
   }
   else {
     initialize (f, d, f);
-    /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    ///*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    if (!the_drd->is_child_enforcing (st))
+      ttt->insert_marker (st, ip);
     body->typeset (desired_status);
   }
 }

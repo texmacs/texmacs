@@ -57,24 +57,24 @@ tm_data_rep::new_menu_name (url u) {
   }
 }
 
-void
-tm_data_rep::update_menu () {
+object
+tm_data_rep::get_buffer_menu () {
   int i;
-  string s ("(menu-bind buffer-menu ");
+  string s ("(menu-dynamic ");
   for (i=0; i<N(bufs); i++) {
     if (i>0) s << " ";
-    s << "(\"" << bufs[i]->abbr << "\" ";
-    s << "(switch-to-buffer \"" * as_string (bufs[i]->name) * "\"))";
+    s << "(\"" << bufs[i]->abbr;
+    if (bufs[i]->needs_to_be_saved ()) s << " *"; 
+    s << "\" (switch-to-buffer \"" * as_string (bufs[i]->name) * "\"))";
   }
   s << ")";
-  (void) eval (s);
+  return eval (s);
 }
 
 void
 tm_data_rep::menu_insert_buffer (tm_buffer buf) {
   // bufs << ((pointer) buf); // causes compilation error
   bufs << buf; // WARNING: that one compile, what was the use of the cast?
-  update_menu ();
 }
 
 void
@@ -86,7 +86,6 @@ tm_data_rep::menu_delete_buffer (tm_buffer buf) {
 
   for (i=nr; i<(n-1); i++) bufs[i]= bufs[i+1];
   bufs->resize (n-1);
-  update_menu();
 }
 
 void
@@ -98,7 +97,6 @@ tm_data_rep::menu_focus_buffer (tm_buffer buf) {
 
   for (i=nr; i>=1; i--) bufs[i]= bufs[i-1];
   bufs[0]= buf;
-  update_menu ();
 }
 
 /******************************************************************************
@@ -185,7 +183,6 @@ tm_data_rep::set_abbr_buffer (string abbr) {
   tm_buffer buf= get_buffer ();
   if (buf->abbr == abbr) return;
   buf->abbr= abbr;
-  update_menu ();
   for (i=0; i<N(buf->vws); i++) {
     tm_view vw2= buf->vws[i];
     if (vw2->win != NULL)
@@ -388,7 +385,6 @@ tm_data_rep::switch_to_buffer (int nr) {
   attach_view (win, new_vw);
   set_view (new_vw);
   menu_focus_buffer (buf);
-  project_update_menu ();
   tm_widget meta= new_vw->win->wid;
   meta->set_shrinking_factor (meta->get_shrinking_factor ());
   // cout << "Switched to buffer " << nr << "\n";
@@ -422,7 +418,6 @@ tm_data_rep::switch_to_active_buffer (url name) {
         tm_view vw= buf->vws[i];
         set_view (vw);
         menu_focus_buffer (buf);
-        project_update_menu ();
         return;
       }
   }
@@ -580,7 +575,6 @@ tm_data_rep::project_attach (string prj_name) {
   else {
     url full_name= head (buf->name) * prj_name;
     buf->prj= load_passive_buffer (full_name);
-    project_update_menu ();
   }
 }
 
@@ -590,11 +584,11 @@ tm_data_rep::project_attached () {
   return buf->project != "";
 }
 
-void
-tm_data_rep::project_update_menu () {
+object
+tm_data_rep::get_project_buffer_menu () {
   tm_buffer buf= get_buffer ();
-  if (buf->prj == NULL) return;
-  string s ("(menu-bind project-buffer-menu ");
+  if (buf->prj == NULL) return eval ("(menu-dynamic)");
+  string s ("(menu-dynamic ");
   s << "(\"" << buf->prj->abbr << "\" ";
   s << "(switch-to-buffer \"" * as_string (buf->prj->name) * "\"))";
 
@@ -610,7 +604,7 @@ tm_data_rep::project_update_menu () {
     }
 
   s << ")";
-  (void) eval (s);
+  return eval (s);
 }
 
 /******************************************************************************

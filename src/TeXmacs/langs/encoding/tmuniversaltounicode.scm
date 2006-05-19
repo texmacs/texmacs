@@ -583,9 +583,8 @@
 ; FIXME: rename circledast to varoast
 ("<varoast>"		"#229B") ; FIXME: rename varoast to oast
 ; circled equals	"#229C"
-; FIXME: rename circledminus to varodash
 ; FIXME: define symbol odash with correct circle line width
-("<circledminus>"	"#229D") ; FIXME: use odash instead
+("<circleddash>"	"#229D") ; FIXME: use odash instead
 ("<boxplus>"		"#229E")
 ("<boxminus>"		"#229F")
 ("<boxtimes>"		"#22A0")
@@ -684,8 +683,8 @@
 ("<succnsim>"		"#22E9")
 ("<ntriangleleft>"	"#22EA")
 ("<ntriangleright>"	"#22EB")
-("<ntriangleqleft>"	"#22EC")
-("<ntriangleqright>"	"#22ED")
+("<ntrianglelefteq>"	"#22EC")
+("<ntrianglerighteq>"	"#22ED")
 ("<vdots>"		"#22EE")
 ("<cdots>"		"#22EF")
 ("<udots>"		"#22F0")
@@ -858,30 +857,30 @@
 ; black parallelogram			"#25B0"
 ; white parallelogram			"#25B1"
 ; black up-pointing triangle		"#25B2"
-("<bigtriangleup>"	"#25B3")
-("<blacktriangleup>"			"#25B4")
-("<triangle>"				"#25B5")
+("<bigtriangleup>"	                "#25B3")
+("<blacktriangle>"			"#25B4")
+("<vartriangle>"			"#25B5")
 ; black right-pointing triangle		"#25B6"
 ; white right-pointing triangle		"#25B7"
 ("<blacktriangleright>"			"#25B8")
-("<triangleright>"	"#25B9")
+("<triangleright>"	                "#25B9")
 ; black right-pointing pointer		"#25BA"
 ; white right-pointing pointer		"#25BB"
 ; black down-pointing triangle		"#25BC"
-("<bigtriangledown>"	"#25BD")
+("<bigtriangledown>"	                "#25BD")
 ("<blacktriangledown>"			"#25BE")
 ("<triangledown>"			"#25BF")
 ; black left-pointing triangle		"#25C0"
 ; white left-pointing triangle		"#25C1"
 ("<blacktriangleleft>"			"#25C2")
-("<triangleleft>"	"#25C3")
+("<triangleleft>"	                "#25C3")
 ; black left-pointing pointer		"#25C4"
 ; white left-pointing pointer		"#25C5"
 ; black diamond				"#25C6"
 ("<wasyDiamond>"			"#25C7")
 ; white diamond containing black small diamond	"#25C8"
 ; fisheye				"#25C9"
-("<lozenge>"		"#25CA")
+("<lozenge>"		                "#25CA")
 ("<Circle>"				"#25CB")
 ; dotted circle				"#25CC"
 ; circle with vertical fill		"#25CD"
@@ -939,7 +938,7 @@
 ; umbrella		"#2602"
 ; snowman		"#2603"
 ; comet			"#2604"
-("<blackstar>"		"#2605")
+("<bigstar>"		"#2605")
 ; white star		"#2606"
 ; lightning		"#2607"
 ; thunderstorm		"#2608"
@@ -1158,7 +1157,7 @@
 ("<beta>"	"#03B2")
 ("<gamma>"	"#03B3")
 ("<delta>"	"#03B4")
-("<epsilon>"	"#03B5")
+("<varepsilon>"	"#03B5")
 ("<zeta>"	"#03B6")
 ("<eta>"	"#03B7")
 ("<theta>"	"#03B8")
@@ -1181,14 +1180,14 @@
 ("<omega>"	"#03C9")
 
 ;; Variant letterforms
-("<vartheta>"	"#03D1")
-("<phi>"	"#03D5")
-("<varpi>"	"#03D6")
-("<digamma>"	"#03DD")
-("<varkappa>"	"#03F0")
-("<varrho>"	"#03F1")
-("<varepsilon>"	"#03F5")
-("<backepsilon>" "#03F6")
+("<vartheta>"	  "#03D1")
+("<phi>"	  "#03D5")
+("<varpi>"	  "#03D6")
+("<digamma>"	  "#03DD")
+("<varkappa>"	  "#03F0")
+("<varrho>"	  "#03F1")
+("<epsilon>"	  "#03F5")
+("<backepsilon>"  "#03F6")
 
 ;;; Halfwidth and Fullwidth Forms		FF00--FFEF
 
@@ -1498,34 +1497,34 @@
 ("<b-Omega>"	"#1D6C0")
 
 ;; Bold Greek lowercase symbols
-("<b-alpha>"	"#1D6C2")
-("<b-beta>"	"#1D6C3")
-("<b-gamma>"	"#1D6C4")
-("<b-delta>"	"#1D6C5")
-("<b-epsilon>"	"#1D6C6")
-("<b-zeta>"	"#1D6C7")
-("<b-eta>"	"#1D6C8")
-("<b-theta>"	"#1D6C9")
-("<b-iota>"	"#1D6CA")
-("<b-kappa>"	"#1D6CB")
-("<b-lambda>"	"#1D6CC")
-("<b-mu>"	"#1D6CD")
-("<b-nu>"	"#1D6CE")
-("<b-xi>"	"#1D6CF")
-("<b-omicron>"	"#1D6D0")
-("<b-pi>"	"#1D6D1")
-("<b-rho>"	"#1D6D2")
-("<b-varsigma>"	"#1D6D3")
-("<b-sigma>"	"#1D6D4")
-("<b-tau>"	"#1D6D5")
-("<b-upsilon>"	"#1D6D6")
-("<b-varphi>"	"#1D6D7")
-("<b-chi>"	"#1D6D8")
-("<b-psi>"	"#1D6D9")
-("<b-omega>"	"#1D6DA")
+("<b-alpha>"	  "#1D6C2")
+("<b-beta>"	  "#1D6C3")
+("<b-gamma>"	  "#1D6C4")
+("<b-delta>"	  "#1D6C5")
+("<b-varepsilon>" "#1D6C6")
+("<b-zeta>"	  "#1D6C7")
+("<b-eta>"	  "#1D6C8")
+("<b-theta>"	  "#1D6C9")
+("<b-iota>"	  "#1D6CA")
+("<b-kappa>"	  "#1D6CB")
+("<b-lambda>"	  "#1D6CC")
+("<b-mu>"	  "#1D6CD")
+("<b-nu>"	  "#1D6CE")
+("<b-xi>"	  "#1D6CF")
+("<b-omicron>"	  "#1D6D0")
+("<b-pi>"	  "#1D6D1")
+("<b-rho>"	  "#1D6D2")
+("<b-varsigma>"	  "#1D6D3")
+("<b-sigma>"	  "#1D6D4")
+("<b-tau>"	  "#1D6D5")
+("<b-upsilon>"	  "#1D6D6")
+("<b-varphi>"	  "#1D6D7")
+("<b-chi>"	  "#1D6D8")
+("<b-psi>"	  "#1D6D9")
+("<b-omega>"	  "#1D6DA")
 
 ;; Additional bold Greek symbols
-("<b-varepsilon>" "#1D6DC")
+("<b-epsilon>"  "#1D6DC")
 ("<b-vartheta>"	"#1D6DD")
 ("<b-varkappa>"	"#1D6DE")
 ("<b-phi>"	"#1D6DF")

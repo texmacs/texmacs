@@ -13,6 +13,8 @@
 #include "edit_cursor.hpp"
 #include "iterator.hpp"
 #include "tm_buffer.hpp"
+#include "tree_traverse.hpp"
+#include "drd_mode.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -30,13 +32,39 @@ cursor& edit_cursor_rep::the_ghost_cursor () { return mv; }
 
 #define DELTA (1<<23)
 
+static bool searching_forwards;
+
+path
+edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
+  path start_p= p;
+  bool inverse= false;
+  if (get_init_string (MODE) == "src")
+    set_access_mode (DRD_ACCESS_SOURCE);
+  else set_access_mode (DRD_ACCESS_NORMAL);
+  while (!is_accessible_cursor (et, p) && !in_source ()) {
+    path pp;
+    if (forwards ^ inverse)
+      pp= rp * next_valid (subtree (et, rp), p - rp);
+    else
+      pp= rp * previous_valid (subtree (et, rp), p - rp);
+    if (pp == p) {
+      if (inverse) break;
+      else { p= start_p; inverse= true; }
+    }
+    else p= pp;
+  }
+  return p;
+}
+
 path
 edit_cursor_rep::tree_path (SI x, SI y, SI delta) {
-  return correct_cursor (et, eb->find_tree_path (x, y, delta));
+  path p= correct_cursor (et, eb->find_tree_path (x, y, delta));
+  return make_cursor_accessible (p, searching_forwards);
 }
 
 bool
 edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
+  searching_forwards= dx == 1 || dy == -1;
   int i,d;
   path ref_p= tree_path (x0, y0, d0);
   if (ref_p != tp) {
@@ -131,7 +159,7 @@ edit_cursor_rep::go_to (SI x, SI y) {
 }
 
 void
-edit_cursor_rep::go_left () {
+edit_cursor_rep::go_left_physical () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   adjust_ghost_cursor (VERTICAL);
   cursor_move (-1, 0);
@@ -140,7 +168,7 @@ edit_cursor_rep::go_left () {
 }
 
 void
-edit_cursor_rep::go_right () {
+edit_cursor_rep::go_right_physical () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   adjust_ghost_cursor (VERTICAL);
   cursor_move (1, 0);
@@ -183,12 +211,118 @@ edit_cursor_rep::go_page_down () {
 }
 
 /******************************************************************************
+* Adapt physical horizontal cursor movement to line breaking
+******************************************************************************/
+
+void
+edit_cursor_rep::go_left () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path old_tp= copy (tp);
+  go_left_physical ();
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
+  path p= previous_valid (et, old_tp);
+  if (rp < p) go_to (p);
+  select_from_cursor_if_active ();
+}
+
+void
+edit_cursor_rep::go_right () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  path old_tp= copy (tp);
+  go_right_physical ();
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
+  path p= next_valid (et, old_tp);
+  if (rp < p) go_to (p);
+  select_from_cursor_if_active ();
+}
+
+void
+edit_cursor_rep::go_start_line () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  while (true) {
+    cursor old_cu= copy (cu);
+    cursor old_mv= copy (mv);
+    path   old_tp= copy (tp);
+    go_left_physical ();
+    if (tp == old_tp || !more_inside (et, tp, old_tp, DOCUMENT)) {
+      notify_cursor_moved (HORIZONTAL);
+      cu= old_cu;
+      mv= old_mv;
+      tp= old_tp;
+      select_from_cursor_if_active ();
+      return;
+    }
+  }
+}
+
+void
+edit_cursor_rep::go_end_line () {
+  if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  while (true) {
+    cursor old_cu= copy (cu);
+    cursor old_mv= copy (mv);
+    path   old_tp= copy (tp);
+    go_right_physical ();
+    if (tp == old_tp || !more_inside (et, tp, old_tp, DOCUMENT)) {
+      notify_cursor_moved (HORIZONTAL);
+      cu= old_cu;
+      mv= old_mv;
+      tp= old_tp;
+      select_from_cursor_if_active ();
+      return;
+    }
+  }
+}
+
+/******************************************************************************
 * Logical cursor changes
 ******************************************************************************/
 
-path
-edit_cursor_rep::current_position () {
-  return tp;
+void
+edit_cursor_rep::adjust_cursor () {
+  cursor mv= copy (cu);
+  SI dx= PIXEL << 8, ddelta= 0;
+  path p= tree_path (mv->ox, mv->oy, mv->delta);
+  if (p != tp) {
+    // cout << "Cursors don't match\n";
+    while (dx != 0 || ddelta != 0) {
+      // cout << "  " << tp << ", " << p << "\n";
+      p= tree_path (mv->ox, mv->oy, mv->delta);
+      int eps= (path_inf (p, tp)? 1: -1);
+      if (p == tp) eps= (mv->ox < cu->ox? 1: -1);
+      if (p == tp && mv->ox == cu->ox) eps= (mv->delta < cu->delta? 1: -1);
+      if (dx > 0) {
+	if (p != tp ||
+	    tree_path (mv->ox + eps * dx, mv->oy, mv->delta) == tp)
+	  mv->ox += eps * dx;
+	dx >>= 1;
+	if (dx == 0) ddelta= DELTA;
+      }
+      else if (ddelta > 0) {
+	if (p != tp ||
+	    tree_path (mv->ox, mv->oy, mv->delta + eps * ddelta) == tp)
+	  mv->delta += eps * ddelta;
+	ddelta >>= 1;
+      }
+    }
+  }
+  if (p == tp) cu= mv;
+}
+
+void
+edit_cursor_rep::go_to_here () {
+  cu= eb->find_check_cursor (tp);
+  if (!cu->valid) {
+    tp= super_correct (et, tp);
+    cu= eb->find_check_cursor (tp);
+  }
+  if (!cu->valid) {
+    tp= make_cursor_accessible (tp, false);
+    cu= eb->find_check_cursor (tp);
+  }
+  if (cu->valid) adjust_cursor ();
+  if (mv_status == DIRECT) mv= copy (cu);
+  notify_change (THE_CURSOR);
 }
 
 void
@@ -197,6 +331,7 @@ edit_cursor_rep::go_to (path p) {
   mv_status= DIRECT;
   if (!has_changed (THE_TREE+THE_ENVIRONMENT)) {
     cu= eb->find_check_cursor (tp);
+    if (cu->valid) adjust_cursor ();
     mv= copy (cu);
   }
   notify_change (THE_CURSOR);
@@ -225,17 +360,6 @@ edit_cursor_rep::go_to_border (path p, bool at_start) {
 }
 
 void
-edit_cursor_rep::go_to_here () {
-  cu= eb->find_check_cursor (tp);
-  if (!cu->valid) {
-    tp= super_correct (et, tp);
-    cu= eb->find_check_cursor (tp);
-  }
-  if (mv_status == DIRECT) mv= copy (cu);
-  notify_change (THE_CURSOR);
-}
-
-void
 edit_cursor_rep::go_start () {
   go_to (correct_cursor (et, rp * 0));
   select_from_cursor_if_active ();
@@ -248,27 +372,27 @@ edit_cursor_rep::go_end () {
 }
 
 void
-edit_cursor_rep::go_start_line () {
+edit_cursor_rep::go_start_paragraph () {
   path p= search_parent_upwards (DOCUMENT);
   go_to (start (et, p));
   select_from_cursor_if_active ();
 }
 
 void
-edit_cursor_rep::go_end_line () {
+edit_cursor_rep::go_end_paragraph () {
   path p= search_parent_upwards (DOCUMENT);
   go_to (end (et, p));
   select_from_cursor_if_active ();
 }
 
 void
-edit_cursor_rep::go_start_of (string what) {
+edit_cursor_rep::go_start_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (start (et, p));
 }
 
 void
-edit_cursor_rep::go_end_of (string what) {
+edit_cursor_rep::go_end_of (tree_label what) {
   path p= search_upwards (what);
   if (!nil (p)) go_to (end (et, p));
 }
@@ -320,6 +444,14 @@ search_tree_in (tree t, tree what) {
 }
 
 void
+edit_cursor_rep::show_cursor_if_hidden () {
+  if (!is_accessible_cursor (et, tp) && !in_source ()) {
+    eval ("(use-modules (utils edit variants))");
+    eval ("(cursor-show-hidden)");
+  }
+}
+
+void
 edit_cursor_rep::go_to_label (string s) {
   path p= search_tree_in (et, tree (LABEL, s));
   if (!nil (p)) go_to (p);
@@ -327,4 +459,5 @@ edit_cursor_rep::go_to_label (string s) {
     p= eb->find_tag (s);
     if (!nil (p)) go_to (p);
   }
+  show_cursor_if_hidden ();
 }

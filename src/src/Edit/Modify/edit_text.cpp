@@ -35,7 +35,7 @@ edit_text_rep::correct_concat (path p, int done) {
 
   int i, n= N(t);
   if (n == 0) { assign (p, string ("")); return; }
-  if (n == 1) { rem_unary (p); return; }
+  if (n == 1) { remove_node (p * 0); return; }
   for (i=done; i<n; i++) {
     if (t[i] == "") {
       remove (p * i, 1);
@@ -48,15 +48,15 @@ edit_text_rep::correct_concat (path p, int done) {
       return;
     }
     if (is_concat (t[i])) {
-      ins_unary (p, CONCAT);
+      insert_node (p * 0, CONCAT);
       split (p * path (0, i));
       split (p * path (1, 1));
-      rem_unary (p * 1);
+      remove_node (p * path (1, 0));
       if (subtree (et, p * 0) == tree (CONCAT)) remove (p * 0, 1);
       else join (p * 0);
       if (subtree (et, p * 1) == tree (CONCAT)) remove (p * 1, 1);
       else join (p * 0);
-      rem_unary (p);
+      remove_node (p * 0);
       correct_concat (p, i);
       return;
     }
@@ -67,10 +67,10 @@ edit_text_rep::correct_concat (path p, int done) {
 	  split (p * (i+1));
 	  correct_concat (path_inc (p));
 	}
-	if (i==0) rem_unary (p);
+	if (i==0) remove_node (p * 0);
 	else {
 	  split (p * i);
-	  rem_unary (path_inc (p));
+	  remove_node (path_inc (p) * 0);
 	  correct_concat (p);
 	}
 	return;
@@ -118,12 +118,13 @@ edit_text_rep::accepts_return (path p) {
 
 bool
 edit_text_rep::insert_return () {
-  if (accepts_return (path_up (tp))) ins_unary (path_up (tp), CONCAT);
+  if (accepts_return (path_up (tp)))
+    insert_node (path_up (tp) * 0, CONCAT);
   path p= path_up (tp, 2);
   if (!is_concat (subtree (et, p))) return true;
   if (!accepts_return (p)) return true;
   if (!is_document (subtree (et, path_up (p)))) {
-    ins_unary (p, DOCUMENT);
+    insert_node (p * 0, DOCUMENT);
     p= path_up (tp, 2);
   }
 
@@ -143,9 +144,9 @@ edit_text_rep::remove_return (path p) {
     fatal_error ("Parent not a document", "edit_text_rep::glue_concat");
 
   if (!is_concat (subtree (et, p)))
-    ins_unary (p, CONCAT);
+    insert_node (p * 0, CONCAT);
   if (!is_concat (subtree (et, path_inc (p))))
-    ins_unary (path_inc (p), CONCAT);
+    insert_node (path_inc (p) * 0, CONCAT);
   join (p);
   correct_concat (p);
 }
@@ -161,7 +162,8 @@ edit_text_rep::prepare_for_insert () {
   tree st= subtree (et, p);
 
   if ((!is_document (st)) && is_multi_paragraph (st)) {
-    if (!is_document (subtree (et, path_up (p)))) ins_unary (p, DOCUMENT);
+    if (!is_document (subtree (et, path_up (p))))
+      insert_node (p * 0, DOCUMENT);
     else {
       if (l == 0) {
 	insert (p, tree (DOCUMENT, ""));
@@ -182,7 +184,7 @@ edit_text_rep::prepare_for_insert () {
     return path_inc (p);
   }
   
-  ins_unary (p, CONCAT);
+  insert_node (p * 0, CONCAT);
   if (is_atomic (st) && (l!=0) && (l!=N(st->label))) {
     split (p * path (0, l));
     return p * 1;
@@ -227,6 +229,16 @@ void
 edit_text_rep::insert_tree (tree t) {
   t= copy (simplify_correct (t));
   insert_tree (t, end (t));
+}
+
+void
+edit_text_rep::var_insert_tree (tree t, path p_in_t) {
+  if (selection_active_any ()) {
+    selection_cut ("primary");
+    insert_tree (t, p_in_t);
+    selection_paste ("primary");
+  }
+  else insert_tree (t, p_in_t);
 }
 
 /******************************************************************************
@@ -334,35 +346,11 @@ edit_text_rep::make_move (string x, string y) {
 
 void
 edit_text_rep::make_resize (string x1, string y1, string x2, string y2) {
-  tree t (RESIZE, 6);
+  tree t (RESIZE, 5);
   t[0]= "";
   t[1]= x1; t[2]= y1;
   t[3]= x2; t[4]= y2;
   insert_tree (t, path (0, 0));
-}
-
-void
-edit_text_rep::make_insertion (string s) {
-  tree t (_FLOAT, s, "", tree (DOCUMENT, ""));
-  if (s == "float") t[1]= "tbh";
-  insert_tree (t, path (2, 0, 0));
-}
-
-void
-edit_text_rep::position_insertion (string what, bool flag) {
-  path p= search_upwards (_FLOAT);
-  if ((N(what) == 1) && (!nil (p))) {
-    tree st= subtree (et, p);
-    string arg= as_string (st[1]);
-    int i, n= N(arg);
-    for (i=0; i<n; i++)
-      if (arg[i] == what[0]) {
-	arg= arg (0, i) * arg (i+1, n);
-	break;
-      }
-    if (flag) arg= arg * what;
-    assign (p * 1, arg);
-  }
 }
 
 void

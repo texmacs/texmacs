@@ -16,6 +16,7 @@
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
+#include "drd_mode.hpp"
 
 extern int script_status;
 
@@ -52,6 +53,7 @@ edit_env_rep::rewrite (tree t) {
 	expr= cons (object (r[i]), expr);
       string fun= as_string (exec (t[0]));
       expr= cons (string_to_object (fun), expr);
+      (void) eval ("(lazy-markup-modules-force)");
       if (script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
@@ -327,10 +329,22 @@ edit_env_rep::exec (tree t) {
     return exec_par_length ();
   case PAG_LENGTH:
     return exec_pag_length ();
+  case GW_LENGTH:
+    return exec_gw_length ();
+  case GH_LENGTH:
+    return exec_gh_length ();
   case TMPT_LENGTH:
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case MSEC_LENGTH:
+    return exec_msec_length ();
+  case SEC_LENGTH:
+    return exec_sec_length ();
+  case MIN_LENGTH:
+    return exec_min_length ();
+  case H_LENGTH:
+    return exec_h_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:
@@ -509,18 +523,17 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_no_border (l, true);
 	drd->freeze_no_border (l);
       }
-      if (prop == "accessible") {
-	if (val == "none") {
+      if (prop == "unaccessible" || prop == "hidden" || prop == "accessible") {
+	int prop_code= ACCESSIBLE_NEVER;
+	if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
+	if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
+	if (val == "none") prop_code= ACCESSIBLE_NEVER;
+	if (is_int (val))
+	  drd->set_accessible (l, as_int (val), prop_code);
+	else if (val == "none" || val == "all") {
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, false);
-	    drd->freeze_accessible (l, i);
-	  }
-	}
-	if (val == "all") {
-	  int i, n= drd->get_nr_indices (l);
-	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, true);
+	    drd->set_accessible (l, i, prop_code);
 	    drd->freeze_accessible (l, i);
 	  }
 	}
@@ -578,6 +591,8 @@ edit_env_rep::exec_arg (tree t) {
   return r;
 }
 
+static bool quote_substitute= false;
+
 tree
 edit_env_rep::exec_quote_arg (tree t) {
   tree r= t[0];
@@ -595,6 +610,13 @@ edit_env_rep::exec_quote_arg (tree t) {
       if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
       r= r[nr];
     }
+  }
+  if (quote_substitute && !is_func (r, ARG)) {
+    int i, n= N(r);
+    tree s (r, n);
+    for (i=0; i<n; i++)
+      s[i]= tree (ARG, A(t)) * tree (ARG, as_string (i));
+    return s;
   }
   return r;
 }
@@ -842,7 +864,9 @@ edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
   if (n==0) return tree (ERROR, "bad times/over");
   tree prod= exec (t[0]);
-  if (is_anylen (prod)) prod= as_tmlen (prod);
+  if (is_double (prod));
+  else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else return tree (ERROR, "bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
     else return tree (ERROR, "bad times/over");
@@ -1033,7 +1057,7 @@ edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
     else if (nc == "UPCASE") { up= true; }
     else if (nc == "locase") { lo= true; }
 
-    for (i=0; i<n; lan->enc->token_forward (s, i))
+    for (i=0; i<n; tm_char_forwards (s, i))
       if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
 	if (up && is_locase (s[i])) r->label[i]= upcase (s[i]);
 	if (lo && is_upcase (s[i])) r->label[i]= locase (s[i]);
@@ -1097,7 +1121,8 @@ edit_env_rep::exec_lookup (tree t) {
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
   if (!(is_compound (t1) && is_int (t2))) return tree (ERROR, "bad look up");
-  int i= max (0, min (N(t1)-1, as_int (t2)));
+  int i= as_int (t2);
+  if (i<0 || i>=N(t1)) return tree (ERROR, "index out of range in look up");
   return t1[i];
 }
 
@@ -1199,7 +1224,7 @@ edit_env_rep::exec_point (tree t) {
 
 tree
 edit_env_rep::exec_box_info (tree t) {
-  tree t1= exec (t[0]);
+  tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
     return tree (ERROR, "bad box info");
@@ -1346,9 +1371,13 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     f= read (fname);
   }
 
-  if ((p->item < d) || (p->item >= N(f)) ||
-      is_compound (f[p->item-d])) return;
-  string var= f[p->item-d]->label;
+  string var;
+  if (L(f) == XMACRO) var= f[0]->label;
+  else {
+    if ((p->item < d) || (p->item >= N(f)) ||
+	is_compound (f[p->item-d])) return;
+    var= f[p->item-d]->label;
+  }
 
   if (is_applicable (f)) {
     int i, n=N(f)-1, m=N(t)-d;
@@ -1439,8 +1468,12 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case MARK:
     return exec_until_mark (t, p, var, level);
   case EVAL:
+    return exec_until (exec (t), p, var, level);
   case QUOTE:
+    (void) exec (t);
+    return false;
   case QUASI:
+    return exec_until_quasi (t, p, var, level);
   case QUASIQUOTE:
   case UNQUOTE:
   case VAR_UNQUOTE:
@@ -1693,6 +1726,15 @@ edit_env_rep::exec_until_mark (tree t, path p, string var, int level) {
   }
   if (border) return exec_until (t[0], p, var, level);
   else return exec_until (t[1], p, var, level);
+}
+
+bool
+edit_env_rep::exec_until_quasi (tree t, path p, string var, int level) {
+  bool old= quote_substitute;
+  quote_substitute= true;
+  tree u= exec_quasiquoted (t[0]);
+  quote_substitute= old;
+  return exec_until (u, p, var, level);
 }
 
 bool

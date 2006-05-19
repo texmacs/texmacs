@@ -105,6 +105,7 @@ make_dir (url which) {
 static void
 init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH");
+  make_dir ("$TEXMACS_HOME_PATH/bin");
   make_dir ("$TEXMACS_HOME_PATH/doc");
   make_dir ("$TEXMACS_HOME_PATH/doc/about");
   make_dir ("$TEXMACS_HOME_PATH/doc/about/changes");
@@ -113,6 +114,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/fonts/error");
   make_dir ("$TEXMACS_HOME_PATH/fonts/pk");
   make_dir ("$TEXMACS_HOME_PATH/fonts/tfm");
+  make_dir ("$TEXMACS_HOME_PATH/fonts/truetype");
   make_dir ("$TEXMACS_HOME_PATH/fonts/type1");
   make_dir ("$TEXMACS_HOME_PATH/fonts/virtual");
   make_dir ("$TEXMACS_HOME_PATH/langs");
@@ -222,18 +224,31 @@ init_env_vars () {
   url style_path=
     get_env_path ("TEXMACS_STYLE_PATH",
 		  expand (complete (all_root * url_wildcard (), "dr")));
+  url text_root=
+    get_env_path ("TEXMACS_TEXT_ROOT",
+		  "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
+		  plugin_path ("texts"));
+  url text_path=
+    get_env_path ("TEXMACS_TEXT_PATH",
+		  expand (complete (text_root * url_wildcard (), "dr")));
 
   // Get other data paths
-  (void) get_env_path ("TEXMACS_FILE_PATH",
-		       "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
-		       style_path);
-  (void) get_env_path ("TEXMACS_DOC_PATH", "$TEXMACS_HOME_PATH/doc");
+  (void) get_env_path ("TEXMACS_FILE_PATH",text_path | style_path);
+  (void) set_env_path ("TEXMACS_DOC_PATH",
+		       get_env_path ("TEXMACS_DOC_PATH") |
+		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |
+		       plugin_path ("doc"));
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
   (void) get_env_path ("TEXMACS_PIXMAPS_PATH",
 		       "$TEXMACS_HOME_PATH/misc/pixmaps" |
-		       url ("$TEXMACS_PATH/misc/pixmaps"));
+		       url ("$TEXMACS_PATH/misc/pixmaps") |
+		       plugin_path ("misc/pixmaps"));
+  (void) get_env_path ("TEXMACS_DIC_PATH",
+		       "$TEXMACS_HOME_PATH/langs/natural/dic" |
+		       url ("$TEXMACS_PATH/langs/natural/dic") |
+		       plugin_path ("langs/natural/dic"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else
@@ -278,36 +293,6 @@ init_deprecated () {
       string dir  = s (search_forwards ("=", s) + 1, N(s));
       if (dir != "") set_env ("M2HOME", dir);
     }
-
-  // Check for Maxima
-  if (get_env ("TM_MAXIMA_HOME") == "") {
-    if (exists_in_path ("maxima")) {
-      string where= concretize (resolve_in_path ("maxima"));
-      string s    = var_eval_system ("grep 'MAXIMA_DIRECTORY=' " * where);
-      string dir  = s (search_forwards ("=", s) + 1, N(s));
-      if ((dir == "") &&
-	  exists ("/usr/share/maxima/5.9.0/doc/html/maxima_toc.html"))
-	dir= "/usr/share/maxima/5.9.0";
-      if ((dir == "") && use_locate) {
-	string where= var_eval_system ("locate maxima_toc.html");
-	if (ends (where, "/doc/html/maxima_toc.html"))
-	  dir= where (0, N(where)- 25);
-	if (ends (where, "/info/maxima_toc.html"))
-	  dir= where (0, N(where)- 21);
-      }
-      if (dir != "") set_env ("TM_MAXIMA_HOME", dir);
-    }
-  }
-
-  // Check for Reduce
-  if (get_env ("reduce") == "")
-    if (exists_in_path ("reduce")) {
-      string where= concretize (resolve_in_path ("reduce"));
-      string grep = "grep 'setenv reduce ' " * where;
-      string sed  = "sed 's/setenv reduce //'";
-      string dir  = var_eval_system (grep * " | " * sed);
-      if (dir != "") set_env ("reduce", dir);
-    }
 #endif
 }
 
@@ -320,7 +305,7 @@ get_setting (string var, string def) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      return unquote (as_string (texmacs_settings[i][1]));
+      return scm_unquote (as_string (texmacs_settings[i][1]));
     }
   return def;
 }
@@ -330,10 +315,10 @@ set_setting (string var, string val) {
   int i, n= N (texmacs_settings);
   for (i=0; i<n; i++)
     if (is_tuple (texmacs_settings[i], var, 1)) {
-      texmacs_settings[i][1]= quote (val);
+      texmacs_settings[i][1]= scm_quote (val);
       return;
     }
-  texmacs_settings << tuple (var, quote (val));
+  texmacs_settings << tuple (var, scm_quote (val));
 }
 
 /******************************************************************************

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.6>
+<TeXmacs|1.0.5.3>
 
 <style|tmdoc>
 
@@ -14,10 +14,10 @@
   przypadku ustawienia drukarki s¡ ignorowane).
 
   Mo»na eksportowa¢ do formatu <acronym|PDF> u»ywaj¡c <menu|File|Export|Pdf>.
-  Nale»y ustawi¢ <menu|Edit|Preferences|Printer|Font type|True Type> je±li
+  Nale»y ustawi¢ <menu|Edit|Preferences|Printer|Font type|Type 1> je±li
   stworzone pliki Postscript czy <acronym|PDF> maja korzysta¢ z czcionki
-  <name|True Type>.<index|pdf> Jednak tylko czcionka CM dopuszcza wersj¦
-  <name|True Type>. Czcionki CM s¡ odrobin¦ gorszej jako±ci ni» czcionki EC,
+  <name|Type 1>.<index|pdf> Jednak tylko czcionka CM dopuszcza wersj¦
+  <name|Type 1>. Czcionki CM s¡ odrobin¦ gorszej jako±ci ni» czcionki EC,
   gªównie przy znakach z ogonkami/akcentami. Zatem, mo»na preferowa¢ u»ywanie
   czcionek EC tak dªugo jak nie potrzeba pliku <acronym|PDF> który wygl¡da
   ªadnie w <name|Acrobat Reader>.
@@ -45,18 +45,6 @@
 <\initial>
   <\collection>
     <associate|language|polish>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
     <associate|page-medium|paper>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
   </collection>
 </initial>

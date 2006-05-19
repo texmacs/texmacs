@@ -44,8 +44,6 @@ initialize_guile () {
     "    (lambda (port) (write obj port))))\n"
     "\n"
     "(define (texmacs-version) \"" TEXMACS_VERSION "\")\n"
-    "(define buffer-menu '())\n"
-    "(define project-buffer-menu '())\n"
     "(define object-stack '(()))";
 
   scm_c_eval_string (init_prg);
