@@ -172,11 +172,19 @@ table_rep::format_table (tree fm) {
   if (var->contains (TABLE_HYPHEN))
     hyphen= as_string (env->exec (var[TABLE_HYPHEN]));
   else hyphen= "n";
-  if (var->contains (TABLE_ROW_ORIGIN))
+  if (var->contains (TABLE_ROW_ORIGIN)) {
     row_origin= as_int (env->exec (var[TABLE_ROW_ORIGIN]));
+    if (row_origin < 0) row_origin += nr_rows;
+    else row_origin--;
+    row_origin= max (min (row_origin, nr_rows - 1), 0);
+  }
   else row_origin= 0;
-  if (var->contains (TABLE_COL_ORIGIN))
+  if (var->contains (TABLE_COL_ORIGIN)) {
     col_origin= as_int (env->exec (var[TABLE_COL_ORIGIN]));
+    if (col_origin < 0) col_origin += nr_cols;
+    else col_origin--;
+    col_origin= max (min (col_origin, nr_cols - 1), 0);
+  }
   else col_origin= 0;
 }
 
@@ -417,14 +425,6 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
 ******************************************************************************/
 
 void
-table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
-  position_columns ();
-  tmw= x2 - x1;
-  tlw= -x1;
-  trw= x2;
-}
-
-void
 table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
   int i, j;
   for (j=0; j<nr_cols; j++)
@@ -515,15 +515,13 @@ table_rep::position_columns () {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!nil (C)) {
-	if (C->hyphen != "n") {
-	  C->width= mw[j];
-	  C->fit_horizontally ();
-	}
 	if (!nil (C->T)) {
 	  C->T->width= mw[j]- C->lborder- C->rborder;
 	  C->T->hmode= "exact";
 	  C->T->position_columns ();
 	}
+	else if (C->hyphen != "n")
+	  C->width= mw[j];
       }
     }
 
@@ -536,11 +534,7 @@ table_rep::position_columns () {
     xoff= -(sum (mw, nr_cols>>1) + sum (mw, (nr_cols-1)>>1)+
 	    lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
   else if (halign == "R") xoff= -sum (mw, nr_cols - 1) - lw[nr_cols - 1];
-  else if (halign == "O") {
-    if (col_origin < 0) col_origin += nr_cols;
-    col_origin= max (min (col_origin, nr_cols - 1), 0);
-    xoff= -sum (mw, col_origin) - lw[col_origin];
-  }
+  else if (halign == "O") xoff= -sum (mw, col_origin) - lw[col_origin];
   else xoff= -sum (mw, j0) - lw[j0];
 
   x1= xoff- lborder- lsep;
@@ -560,17 +554,17 @@ table_rep::position_columns () {
   STACK_DELETE_ARRAY (rw);
 }
 
+void
+table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
+  position_columns ();
+  tmw= x2 - x1;
+  tlw= -x1;
+  trw= x2;
+}
+
 /******************************************************************************
 * Vertical positioning
 ******************************************************************************/
-
-void
-table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
-  position_rows ();
-  tmh= y2 - y1;
-  tbh= -y1;
-  tth= y2;
-}
 
 void
 table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
@@ -671,11 +665,7 @@ table_rep::position_rows () {
     yoff= (sum (mh, nr_rows>>1) + sum (mh, (nr_rows-1)>>1) +
 	   th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
   else if (valign == "B") yoff= sum (mh, nr_rows - 1) + th[nr_rows - 1];
-  else if (valign == "O") {
-    if (row_origin < 0) row_origin += nr_rows;
-    row_origin= max (min (row_origin, nr_rows - 1), 0);
-    yoff= sum (mh, row_origin) + th[row_origin];
-  }
+  else if (valign == "O") yoff= sum (mh, row_origin) + th[row_origin];
   else yoff= sum (mh, i0) + th[i0];
 
   y2= yoff+ tborder+ tsep;
@@ -697,9 +687,32 @@ table_rep::position_rows () {
   STACK_DELETE_ARRAY (th);
 }
 
+void
+table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
+  position_rows ();
+  tmh= y2 - y1;
+  tbh= -y1;
+  tth= y2;
+}
+
 /******************************************************************************
 * Generate table
 ******************************************************************************/
+
+void
+table_rep::finish_horizontal () {
+  int i, j;
+  for (j=0; j<nr_cols; j++)
+    for (i=0; i<nr_rows; i++) {
+      cell C= T[i][j];
+      if (!nil (C)) {
+	if (!nil (C->T))
+	  C->T->finish_horizontal ();
+	else if (C->hyphen != "n")
+	  C->finish_horizontal ();
+      }
+    }
+}
 
 void
 table_rep::finish () {
@@ -801,10 +814,10 @@ EXTEND_NULL_CODE(lazy,lazy_table);
 format
 lazy_table_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
-    /* The following is still bugged
+    /* The following is still bugged */
     SI tmw, tlw, trw;
-    T->compute_width (tmw, tlw, trw); */
-    SI tmw= 1;
+    T->compute_width (tmw, tlw, trw);
+    //SI tmw= 1;
     return make_format_width (tmw);
   }
   return lazy_rep::query (request, fm);
@@ -820,8 +833,8 @@ lazy_table_rep::produce (lazy_type request, format fm) {
 	// FIXME: rather evaluate (with "par-width" fs->width ...)
 	T->width= fs->width;
     }
-    T->merge_borders ();
     T->position_columns ();
+    T->finish_horizontal ();
     T->position_rows ();
     array<box> bs= T->var_finish ();
     lazy tmp= make_lazy_paragraph (T->env, bs, ip);
@@ -836,6 +849,7 @@ make_lazy_table (edit_env env, tree t, path ip) {
   T->typeset (t, ip);
   T->handle_decorations ();
   T->handle_span ();
+  T->merge_borders (); // FIXME: introduce merge_border variables
   return lazy_table (T, ip);
 }
 
@@ -851,6 +865,7 @@ typeset_as_table (edit_env env, tree t, path ip) {
   T->handle_span ();
   T->merge_borders ();
   T->position_columns ();
+  T->finish_horizontal ();
   T->position_rows ();
   T->finish ();
   return T->b;
@@ -864,6 +879,7 @@ typeset_as_var_table (edit_env env, tree t, path ip) {
   T->handle_span ();
   T->merge_borders ();
   T->position_columns ();
+  T->finish_horizontal ();
   T->position_rows ();
   return T->var_finish ();
 }

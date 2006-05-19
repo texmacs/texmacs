@@ -79,6 +79,7 @@ public:
   void compute_heights (SI* mh, SI* bh, SI* th);
   void compute_vertical_parts (double* parts);
   void position_rows ();
+  void finish_horizontal ();
   void finish ();
   array<box> var_finish ();
 
@@ -142,9 +143,9 @@ public:
   void format_item (tree with);
   void compute_width (SI& mw, SI& lw, SI& rw, bool large);
   void compute_height (SI& mh, SI& bh, SI& th);
-  void fit_horizontally ();
   void position_horizontally (SI offset, SI mw, SI lw, SI rw);
   void position_vertically (SI offset, SI mh, SI bh, SI th);
+  void finish_horizontal ();
   void finish ();
 };
 
