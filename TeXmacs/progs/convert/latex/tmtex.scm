@@ -1528,7 +1528,7 @@
 	(latex-set-style main-style)
 	(set! tmtex-japanese? (== lan "japanese"))
 	(set! tmtex-korean? (== lan "korean"))
-	(set! tmtex-korean? (== lan "taiwanese"))
+	(set! tmtex-taiwanese? (== lan "taiwanese"))
 	(set! tmtex-oriental?
 	      (or tmtex-japanese? tmtex-korean? tmtex-taiwanese?))
 	(with result (texmacs->latex doc opts)
