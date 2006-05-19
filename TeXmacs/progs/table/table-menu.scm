@@ -219,7 +219,9 @@
       ("Row above" (table-insert-row #f))
       ("Row below" (table-insert-row #t))
       ("Column to the left" (table-insert-column #f))
-      ("Column to the right" (table-insert-column #t)))
+      ("Column to the right" (table-insert-column #t))
+      ("Blank row" (interactive table-insert-blank-row))
+      ("Blank column" (interactive table-insert-blank-column)))
   (-> "Remove"
       ("This row" (table-remove-row #f))
       ("This column" (table-remove-column #f)))
@@ -434,10 +436,10 @@
       (link table-height-menu))
   (=> (balloon (icon "tm_table_border.xpm") "Change the border of the table")
       (group "Border")
-      (link table-width-menu)
+      (link table-border-menu)
       ---
       (group "Padding")
-      (link table-height-menu))
+      (link table-padding-menu))
   (=> (balloon (icon "tm_table_pos.xpm") "Position the table")
       (tile 4 (link table-hpos-icons))
       ---

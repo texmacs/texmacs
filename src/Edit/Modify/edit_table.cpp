@@ -1311,25 +1311,22 @@ edit_table_rep::get_cell_mode () {
 
 void
 edit_table_rep::cell_set_format (string var, string val) {
-  if (val == "") cell_del_format (var);
+  if (selection_active_table ()) {
+    int row1, col1, row2, col2;
+    path fp= selection_get_subtable (row1, col1, row2, col2);
+    table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
+  }
   else {
-    if (selection_active_table ()) {
-      int row1, col1, row2, col2;
-      path fp= selection_get_subtable (row1, col1, row2, col2);
-      table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
-    }
-    else {
-      int row, col;
-      path fp= search_format (row, col); row++; col++;
-      if (nil (fp)) return;
-      if (cell_mode=="row")
-	table_set_format (fp, row, 1, row, -1, var, val);
-      else if (cell_mode=="column")
-	table_set_format (fp, 1, col, -1, col, var, val);
-      else if (cell_mode=="table")
-	table_set_format (fp, 1, 1, -1, -1, var, val);
-      else table_set_format (fp, row, col, row, col, var, val);
-    }
+    int row, col;
+    path fp= search_format (row, col); row++; col++;
+    if (nil (fp)) return;
+    if (cell_mode=="row")
+      table_set_format (fp, row, 1, row, -1, var, val);
+    else if (cell_mode=="column")
+      table_set_format (fp, 1, col, -1, col, var, val);
+    else if (cell_mode=="table")
+      table_set_format (fp, 1, 1, -1, -1, var, val);
+    else table_set_format (fp, row, col, row, col, var, val);
   }
   table_correct_block_content ();
 }

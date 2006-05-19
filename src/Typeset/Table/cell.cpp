@@ -355,8 +355,8 @@ cell_rep::finish () {
   }
 
   color fc= env->col;
-  bool  tr= (bg == "");
-  color bc= (tr? env->dis->white: env->dis->get_color (bg));
+  bool   tr= (bg == "");
+  color  bc= env->dis->get_color (tr? env->get_string (BG_COLOR): bg);
 
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
 	       lborder, rborder, bborder, tborder, fc, bc, tr);
