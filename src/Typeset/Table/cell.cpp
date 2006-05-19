@@ -138,7 +138,7 @@ cell_rep::format_cell (tree fm) {
   }
   else {
     width= 0;
-    hmode= "";
+    hmode= "auto";
   }
   if (var->contains (CELL_HEIGHT)) {
     height= env->as_length (env->exec (var[CELL_HEIGHT]));
@@ -148,7 +148,7 @@ cell_rep::format_cell (tree fm) {
   }
   else {
     height= 0;
-    vmode = "";
+    vmode = "auto";
   }
   if (var->contains (CELL_HPART))
     hpart= as_double (env->exec (var[CELL_HPART]));
@@ -212,56 +212,65 @@ cell_rep::format_item (tree with) {
 
 void
 cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
+  char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
+  bool lr_flag= (align_c >= 'A' && align_c <= 'Z');
   if (!nil (T)) {
+    if (N (T->halign) > 0) align_c= T->halign[0];
+    else align_c= '\0';
+    lr_flag= (align_c >= 'A' && align_c <= 'Z');
     T->compute_width (mw, lw, rw);
-    if ((T->halign == "L") || (T->halign == "C") ||
-	(T->halign == "R") || (T->halign == "O"))
-      {
-	lw += lborder;
-	rw += rborder;
-      }
+    if (lr_flag) {
+      lw += lborder;
+      rw += rborder;
+    }
     else lw= rw= 0;
     mw += lborder + rborder;
   }
-  else if ((!nil (lz)) && (large || (hmode == "min"))) {
-    // FIXME: the negociation of the right width should be more elaborate
+  else if (!nil (lz) && large) {
     lw= rw= 0;
     format fm= lz->query (LAZY_BOX, make_query_vstream_width (0, 0));
     format_width fw= (format_width) fm;
     mw= fw->width + lsep + rsep + lborder + rborder;
+    if (lr_flag) {
+      lw= lsep + lborder;
+      rw= fw->width + rsep + rborder;
+    }
   }
   else {
     lw= rw= mw= 0;
-    if ((halign == "L") || (halign == "C") || (halign == "R")) {
-      lw= -b->x1+ lsep + lborder;
-      rw=  b->x2+ rsep + rborder;
-      mw=  lw + rw;
-    }
-    else if ((halign == ".") || (halign == ",")) {
-      SI offset= b->get_leaf_offset (halign);
-      lw= offset+ lsep+ lborder;
-      rw= b->w()- offset+ rsep+ rborder;
-      mw= lw + rw;
+    if (lr_flag) {
+      if (N (halign) == 1) {
+	lw= -b->x1+ lsep + lborder;
+	rw=  b->x2+ rsep + rborder;
+	mw=  lw + rw;
+      }
+      else {
+	SI offset= b->get_leaf_offset (halign (1, N (halign)));
+	lw= offset+ lsep+ lborder;
+	rw= b->w()- offset+ rsep+ rborder;
+	mw= lw + rw;
+      }
     }
     else mw= b->w() + lsep + rsep + lborder + rborder;
   }
 
-  if (hmode == "exact") { // "BUG": handle L, C, R differently
-    SI d= (mw - width) >> 1;
-    lw -= d; rw -= d; mw= width;
-  }
+  if (hmode == "exact") mw= width;
   else if (hmode == "max") mw= max (width, mw);
-  else if (hmode == "min") { // "BUG": handle L, C, R differently
-    SI d= (mw - min (width, mw)) >> 1;
-    lw -= d; rw -= d; mw= min (width, mw);
+  else if (hmode == "min") mw= min (width, mw);
+  if (mw < lw + rw) {
+    SI d= lw + rw - mw;
+    if (align_c == 'L' || align_c == 'O') rw -= d;
+    else if (align_c == 'C') { lw -= (d >> 1); rw -= ((d+1) >> 1); }
+    else lw -= d;
   }
 }
 
 void
 cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
+  char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
   if (nil (T)) {
     bh= th= mh= 0;
-    if ((valign == "B") || (valign == "C") || (valign == "T")) {
+    if (align_c >= 'A' && align_c <= 'Z') {
       bh= -b->y1+ bsep + bborder;
       th=  b->y2+ tsep + tborder;
       mh=  bh + th;
@@ -269,25 +278,24 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
     else mh= b->h() + bsep + tsep + bborder + tborder;
   }
   else {
+    if (N (T->valign) != 0) align_c= T->valign[0];
     T->compute_height (mh, bh, th);
-    if ((T->valign == "B") || (T->valign == "C") ||
-	(T->valign == "T") || (T->valign == "O"))
-      {
-	bh += bborder;
-	th += tborder;
-      }
+    if (align_c >= 'A' && align_c <= 'Z') {
+      bh += bborder;
+      th += tborder;
+    }
     else bh= th= 0;
     mh += bborder + tborder;
   }
 
-  if (vmode == "exact") { // "BUG": handle B, C, T differently
-    SI d= (mh - height) >> 1;
-    bh -= d; th -= d; mh= height;
-  }
+  if (vmode == "exact") mh= height;
   else if (vmode == "max") mh= max (height, mh);
-  else if (vmode == "min") { // "BUG": handle B, C, T differently
-    SI d= (mh - min (height, mh)) >> 1;
-    bh -= d; th -= d; mh= min (height, mh);
+  else if (vmode == "min") mh= min (height, mh);
+  if (mh < bh + th) {
+    SI d= bh + th - mh;
+    if (align_c == 'B' || align_c == 'O') th -= d;
+    else if (align_c == 'C') { bh -= (d >> 1); th -= ((d+1) >> 1); }
+    else bh -= d;
   }
 }
 
@@ -303,35 +311,36 @@ cell_rep::fit_horizontally () {
 void
 cell_rep::position_horizontally (SI offset, SI mw, SI lw, SI rw) {
   x1= offset;
-  x2= offset+ mw;
+  x2= offset + mw;
   if (nil (T)) {
-    if (halign == "l") xoff= -b->x1 + (lsep + lborder);
-    else if (halign == "c") xoff= (mw- b->x1- b->x2) >> 1;
-    else if (halign == "r") xoff= mw- b->x2- (rsep + rborder);
-    else if (halign == "L") xoff= lw;
-    else if (halign == "C") xoff= (mw+ lw- rw) >> 1;
-    else if (halign == "R") xoff= mw- rw;
-    else if (halign == ".") xoff= lw- b->get_leaf_offset (halign);
-    else if (halign == ",") xoff= lw- b->get_leaf_offset (halign);
+    char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
+    if (align_c == 'l') xoff= -b->x1 + (lsep + lborder);
+    else if (align_c == 'c') xoff= (mw - b->x1 - b->x2) >> 1;
+    else if (align_c == 'r') xoff= mw - b->x2 - (rsep + rborder);
+    else if (align_c == 'L') xoff= lw;
+    else if (align_c == 'C') xoff= (mw + lw - rw) >> 1;
+    else if (align_c == 'R') xoff= mw - rw;
     else xoff= lw;
+    if (N(halign) > 1) xoff -= b->get_leaf_offset (halign (1, N (halign)));
   }
-  else xoff= -T->x1+ lborder;
+  else xoff= -T->x1 + lborder;
 }
 
 void
 cell_rep::position_vertically (SI offset, SI mh, SI bh, SI th) {
-  y1= offset- mh;
+  y1= offset - mh;
   y2= offset;
   if (nil (T)) {
-    if (valign == "b") yoff= -b->y1+ (bsep + bborder);
-    else if (valign == "c") yoff= (mh- b->y1- b->y2) >> 1;
-    else if (valign == "t") yoff= mh- b->y2- (tsep + tborder);
-    else if (valign == "B") yoff= bh;
-    else if (valign == "C") yoff= (mh+ bh- th) >> 1;
-    else if (valign == "T") yoff= mh- th;
+    char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
+    if (align_c == 'b') yoff= -b->y1 + (bsep + bborder);
+    else if (align_c == 'c') yoff= (mh - b->y1 - b->y2) >> 1;
+    else if (align_c == 't') yoff= mh - b->y2 - (tsep + tborder);
+    else if (align_c == 'B') yoff= bh;
+    else if (align_c == 'C') yoff= (mh + bh - th) >> 1;
+    else if (align_c == 'T') yoff= mh - th;
     else yoff= bh;
   }
-  else yoff= -T->y1+ bborder;
+  else yoff= -T->y1 + bborder;
 }
 
 /******************************************************************************

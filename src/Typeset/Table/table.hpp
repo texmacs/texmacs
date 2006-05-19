@@ -28,8 +28,8 @@ protected:
 public:
   edit_env env;               // the environment
   int      status;            // 0: table, 1: decoration, 2: subtable
-  int      i0;                // origin row (decorations only)
-  int      j0;                // origin column (decorations only)
+  int      i0;                // origin row
+  int      j0;                // origin column
   path     ip;                // the corresponding source location
   box      b;                 // the resulting box
   SI       x1;                // left limit of box    (for subtables)
@@ -41,8 +41,8 @@ public:
   int      nr_rows;           // the number of rows
   int      nr_cols;           // the number of columns
 
-  SI       width;             // the width of the cell
-  SI       height;            // the height of the cell
+  SI       width;             // the (suggested) width of the table
+  SI       height;            // the (suggested) height of the table
   SI       lsep;              // left padding around table
   SI       rsep;              // right padding around table
   SI       bsep;              // bottom padding around table

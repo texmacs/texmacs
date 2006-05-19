@@ -105,6 +105,7 @@ public:
   void   table_format_center ();
   void   table_row_decoration (bool forward);
   void   table_column_decoration (bool forward);
+  void   table_correct_mp ();
   void   set_cell_mode (string mode);
   string get_cell_mode ();
   void   cell_set_format (string var, string val);

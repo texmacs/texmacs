@@ -2637,6 +2637,28 @@ upgrade_textat (tree t) {
 }
 
 /******************************************************************************
+* Upgrade cell alignment
+******************************************************************************/
+
+tree
+upgrade_cell_alignment (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  if (is_func (t, CWITH) && (N(t) >= 2))
+    if (t[N(t)-2] == CELL_HALIGN)
+      if (t[N(t)-1] == "." || t[N(t)-1] == ",") {
+	tree r= copy (t);
+	r[N(t)-1]= "L" * t[N(t)-1]->label;
+	return r;
+      }
+  int n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= upgrade_cell_alignment (t[i]);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2739,5 +2761,7 @@ upgrade (tree t, string version) {
     t= upgrade_graphics (t);
   if (version_inf_eq (version, "1.0.5.11"))
     t= upgrade_textat (t);
+  if (version_inf_eq (version, "1.0.6.1"))
+    t= upgrade_cell_alignment (t);
   return t;
 }

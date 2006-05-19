@@ -28,6 +28,11 @@ empty_cell () {
   return "";
 }
 
+static bool
+is_empty_cell (tree t) {
+  return t == "" || t == tree (DOCUMENT, "");
+}
+
 static tree
 empty_row (int nr_cols) {
   int i;
@@ -662,7 +667,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   bool flag=true;
   for (j=0; j<nr_cols; j++) {
     path q= search_cell (p, row, j);
-    flag= flag && (subtree (et, q) == empty_cell ());
+    flag= flag && is_empty_cell (subtree (et, q));
   }
   if (flag) {
     int i1, j1, i2, j2;
@@ -677,7 +682,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   flag= true;
   for (i=0; i<nr_rows; i++) {
     path q= search_cell (p, i, col);
-    flag= flag && (subtree (et, q) == empty_cell ());
+    flag= flag && is_empty_cell (subtree (et, q));
   }
   if (flag) {
     int i1, j1, i2, j2;
@@ -693,7 +698,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       path q= search_cell (p, i, j);
-      flag= flag && (subtree (et, q) == empty_cell ());
+      flag= flag && is_empty_cell (subtree (et, q));
     }
   if (flag) {
     destroy_table ();
@@ -1026,6 +1031,7 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
     }
   }
 
+  table_correct_mp ();
   set_message ("E-down: new row, E-right: new column", "table");
 }
 
@@ -1041,6 +1047,7 @@ edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   p= path (0, p);
   assign (cp * 0, T);
   go_to (cp * path (0, p));
+  table_correct_mp ();
   set_message ("E-down: new row, E-right: new column", "table");
 }
 
@@ -1098,6 +1105,7 @@ edit_table_rep::table_insert_row (bool forward) {
   if (nr_rows+1 > i2) return;
   table_insert (fp, row + (forward? 1: 0), col, 1, 0);
   table_go_to (fp, row + (forward? 1: 0), col);
+  table_correct_mp ();
 }
 
 void
@@ -1111,6 +1119,7 @@ edit_table_rep::table_insert_column (bool forward) {
   if (nr_cols+1 > j2) return;
   table_insert (fp, row, col + (forward? 1: 0), 0, 1);
   table_go_to (fp, row, col + (forward? 1: 0));
+  table_correct_mp ();
 }
 
 void
@@ -1135,6 +1144,7 @@ edit_table_rep::table_remove_row (bool forward, bool flag) {
     if (row < nr_rows-1 && forward) table_go_to (fp, row, col, forward);
     else if (forward || row < 0) table_go_to_border (fp, !forward);
   }
+  table_correct_mp ();
 }
 
 void
@@ -1159,6 +1169,7 @@ edit_table_rep::table_remove_column (bool forward, bool flag) {
     if (col < nr_cols-1 && forward) table_go_to (fp, row, col, forward);
     else if (forward || col < 0) table_go_to_border (fp, !forward);
   }
+  table_correct_mp ();
 }
 
 int
@@ -1267,6 +1278,28 @@ edit_table_rep::table_column_decoration (bool forward) {
 }
 
 void
+edit_table_rep::table_correct_mp () {
+  // NOTE: from TeXmacs 1.0.6.2 on,
+  // hyphenated cells should always be multi-paragraph
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return;
+  table_get_extents (fp, nr_rows, nr_cols);
+  int row, col;
+  for (row= 0; row < nr_rows; row++)
+    for (col= 0; col < nr_cols; col++) {
+      path cp= search_cell (fp, row, col);
+      tree st= subtree (et, cp);
+      tree hyph=
+	table_get_format (fp, row+1, col+1, row+1, col+1, CELL_HYPHEN);
+      if (hyph == "n" && is_document (st) && N(st) == 1)
+	remove_node (cp * 0);
+      else if (is_atomic (hyph) && hyph != "n" && !is_document (st))
+	insert_node (cp * 0, DOCUMENT);
+    }
+}
+
+void
 edit_table_rep::set_cell_mode (string mode) {
   cell_mode= mode;
 }
@@ -1298,6 +1331,7 @@ edit_table_rep::cell_set_format (string var, string val) {
       else table_set_format (fp, row, col, row, col, var, val);
     }
   }
+  table_correct_mp ();
 }
 
 string
@@ -1330,6 +1364,7 @@ edit_table_rep::cell_del_format (string var) {
     else if (cell_mode=="table") table_del_format (fp, 1, 1, -1, -1, var);
     else table_del_format (fp, row, col, row, col, var);
   }
+  table_correct_mp ();
 }
 
 void
