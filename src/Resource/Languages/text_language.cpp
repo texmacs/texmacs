@@ -256,7 +256,7 @@ get_date (string lan, string fm) {
 	string m= simplify_date (var_eval_system ("date +\"%m\""));
 	string d= simplify_date (var_eval_system ("date +\"%d\""));
 	if (lan == "japanese")
-	  return y * "<#5e74> " * m * "<#6708> " * d * "<#65e5>";
+	  return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
 	if (lan == "korean")
 	  return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
 	return y * "," * m * "," * d;
