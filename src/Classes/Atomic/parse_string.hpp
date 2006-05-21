@@ -48,4 +48,6 @@ class parse_string {
 };
 CONCRETE_CODE(parse_string);
 
+bool test (parse_string s, string what);
+
 #endif // defined PARSE_STRING_H

@@ -326,7 +326,7 @@ tag_box_rep::find_tag (string search) {
 struct textat_box_rep: public move_box_rep {
   textat_box_rep (path ip, box b, SI x, SI y):
     move_box_rep (ip, b, x, y, false, false) {}
-  gr_selections textat_box_rep::graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x, SI y, SI dist);
   operator tree () { return tree (TUPLE, "textat", (tree) bs[0]); }
 };
 

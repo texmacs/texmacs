@@ -279,6 +279,7 @@ inline int N (box b) { return b.rep->subnr(); }
 ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
+void make_eps (url dest, display dis, box b, int dpi);
 
 extern bool   refresh_needed;
 extern time_t refresh_next;

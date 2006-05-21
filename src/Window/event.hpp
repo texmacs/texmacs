@@ -49,6 +49,9 @@ struct event {
 };
 ABSTRACT_CODE(event);
 
+inline ostream& operator << (ostream& out, event ev) {
+  return out << ((tree) ev); }
+
 /******************************************************************************
 * User interface
 ******************************************************************************/

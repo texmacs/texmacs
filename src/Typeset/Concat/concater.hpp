@@ -171,5 +171,7 @@ public:
 };
 
 typedef concater_rep* concater;
+array<line_item> typeset_concat (edit_env env, tree t, path ip);
+array<line_item> typeset_marker (edit_env env, path ip);
 
 #endif // defined CONCATER_H
