@@ -102,4 +102,9 @@ public:
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 };
 
+void abs_round (SI& l);
+void abs_round (SI& x, SI& y);
+void abs_inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
+void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
+    
 #endif // defined PS_DEVICE_H

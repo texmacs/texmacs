@@ -37,13 +37,14 @@ public:
   url (string dir, string name);
   inline bool operator == (url u) { return rep->t == u->t; }
   inline bool operator != (url u) { return rep->t != u->t; }
-  inline url  operator [] (int i) { return url (rep->t[i]); }
-  inline friend url as_url (tree t) { return url (t); }
+  inline url operator [] (int i) { return url (rep->t[i]); }
+  friend url as_url (tree t);
 };
 CONCRETE_CODE(url);
 
 ostream& operator << (ostream& out, url u);
 string as_string (url u, int type= URL_SYSTEM);
+inline url as_url(tree t) { return url(t); }
 
 /******************************************************************************
 * url constructors

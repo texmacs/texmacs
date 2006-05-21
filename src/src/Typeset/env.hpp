@@ -431,6 +431,7 @@ class edit_env {
 };
 CONCRETE_NULL_CODE(edit_env);
 
+ostream& operator << (ostream& out, edit_env env);
 tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp
