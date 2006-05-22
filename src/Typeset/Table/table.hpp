@@ -40,6 +40,9 @@ public:
   cell**   T;                 // the cells of the table
   int      nr_rows;           // the number of rows
   int      nr_cols;           // the number of columns
+  SI*      mw;                // widths of columns
+  SI*      lw;                // left widths of columns
+  SI*      rw;                // right widths of columns
 
   SI       width;             // the (suggested) width of the table
   SI       height;            // the (suggested) height of the table
@@ -71,8 +74,8 @@ public:
   void handle_decorations ();
   void handle_span ();
   void merge_borders ();
-  void compute_width (SI& mw, SI& lw, SI& rw);
-  void compute_widths (SI* mw, SI* lw, SI* rw, bool large);
+  void compute_width (SI& tmw, SI& tlw, SI& trw);
+  void compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large);
   void compute_horizontal_parts (double* parts);
   void position_columns ();
   void compute_height (SI& mh, SI& bh, SI& th);
