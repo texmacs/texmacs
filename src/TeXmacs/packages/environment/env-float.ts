@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.6>
+<TeXmacs|1.0.6.1>
 
 <style|source>
 
