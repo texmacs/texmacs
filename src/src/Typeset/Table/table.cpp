@@ -23,7 +23,8 @@ lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 
 table_rep::table_rep (edit_env env2, int status2, int i0b, int j0b):
   var (""), env (env2), status (status2), i0 (i0b), j0 (j0b),
-  T (NULL), nr_rows (0), width (0), height (0) {}
+  T (NULL), nr_rows (0), mw (NULL), lw (NULL), rw (NULL),
+  width (0), height (0) {}
 
 table_rep::~table_rep () {
   if (T != NULL) {
@@ -31,6 +32,9 @@ table_rep::~table_rep () {
     for (i=0; i<nr_rows; i++) delete[] T[i];
     delete[] T;
   }
+  if (mw != NULL) delete[] mw;
+  if (lw != NULL) delete[] lw;
+  if (rw != NULL) delete[] rw;
 }
 
 void
@@ -90,6 +94,9 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
   for (i=0; i<nr_rows; i++)
     typeset_row (i, subformat[i], t[i], descend (ip, i));
   STACK_DELETE_ARRAY (subformat);
+  mw= new SI[nr_cols];
+  lw= new SI[nr_cols];
+  rw= new SI[nr_cols];
 }
 
 void
@@ -426,10 +433,10 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
 ******************************************************************************/
 
 void
-table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
+table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
   int i, j;
   for (j=0; j<nr_cols; j++)
-    mw[j]= lw[j]= rw[j]= 0;
+    Mw[j]= Lw[j]= Rw[j]= 0;
 
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
@@ -439,10 +446,10 @@ table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
 	C->compute_width (cmw, clw, crw, large);
 	//cout << i << ", " << j << ": "
 	//<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
-	mw[j]= max (mw[j], cmw);
-	lw[j]= max (lw[j], clw);
-	rw[j]= max (rw[j], crw);
-	mw[j]= max (mw[j], lw[j] + rw[j]);
+	Mw[j]= max (Mw[j], cmw);
+	Lw[j]= max (Lw[j], clw);
+	Rw[j]= max (Rw[j], crw);
+	Mw[j]= max (Mw[j], Lw[j] + Rw[j]);
       }
     }
 
@@ -452,8 +459,8 @@ table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
       if ((!nil (C)) && (C->col_span != 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
-	SI tot= sum (mw+j, C->col_span);
-	if (cmw > tot) mw[j] += cmw - tot;
+	SI tot= sum (Mw+j, C->col_span);
+	if (cmw > tot) Mw[j] += cmw - tot;
       }
     }
 }
@@ -474,9 +481,6 @@ void
 table_rep::position_columns () {
   //cout << "-------------------------------------\n";
   //cout << "Position columns " << (width >> 8) << "\n";
-  STACK_NEW_ARRAY (mw, SI, nr_cols);
-  STACK_NEW_ARRAY (lw, SI, nr_cols);
-  STACK_NEW_ARRAY (rw, SI, nr_cols);
   compute_widths (mw, lw, rw, hmode == "auto");
   //for (int i=0; i<nr_cols; i++)
   //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
@@ -539,20 +543,8 @@ table_rep::position_columns () {
   else xoff= -sum (mw, j0) - lw[j0];
 
   x1= xoff- lborder- lsep;
-  for (j=0; j<nr_cols; j++) {
-    for (i=0; i<nr_rows; i++) {
-      cell C= T[i][j];
-      if (!nil (C)) {
-	SI tot= sum (mw+j, C->col_span);
-	C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
-      }
-    }
-    xoff += mw[j];
-  }
+  for (j=0; j<nr_cols; j++) xoff += mw[j];
   x2= xoff+ rborder+ rsep;
-  STACK_DELETE_ARRAY (mw);
-  STACK_DELETE_ARRAY (lw);
-  STACK_DELETE_ARRAY (rw);
 }
 
 void
@@ -703,7 +695,8 @@ table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
 void
 table_rep::finish_horizontal () {
   int i, j;
-  for (j=0; j<nr_cols; j++)
+  SI xoff= x1 + lborder + lsep;
+  for (j=0; j<nr_cols; j++) {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!nil (C)) {
@@ -711,8 +704,12 @@ table_rep::finish_horizontal () {
 	  C->T->finish_horizontal ();
 	else if (C->hyphen != "n")
 	  C->finish_horizontal ();
+	SI tot= sum (mw+j, C->col_span);
+	C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
       }
     }
+    xoff += mw[j];
+  }
 }
 
 void
