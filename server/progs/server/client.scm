@@ -20,8 +20,8 @@
   (define s (new-socket "localhost" 6561))
   (socket-request s msg))
 
-(display* (send-msg `(connect ,(getpid))) "\n")
-(display* (send-msg `(print ,(getpid) 1 2 3)) "\n")
+(display* (send-msg `(ping) "\n"))
+(display* (send-msg `(print ,(list (getpid) 1 2 3))) "\n")
 (do ((i 0)) ((>= i 10000000) 0) (set! i (+ i 1)))
-(display* (send-msg `(print ,(getpid) 4 5 6)) "\n")
+(display* (send-msg `(print ,(list (getpid) 4 5 6))) "\n")
 ;;(display* (send-msg '(shutdown)) "\n")

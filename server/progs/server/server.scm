@@ -15,22 +15,21 @@
 (define-module (server server))
 (use-modules (ice-9 rdelim)
 	     (tools base) (tools abbrevs) (tools ahash-table)
-	     (server socket) (server request)
+	     (tools file) (tools crypt)
+	     (server socket) (server request) (server atoms)
 	     (tmfs locus) (tmfs link) (chat chat))
 
 (define server-finished? #f)
 
-(request-handler (connect . l)
-  ;;(display* "connect " l "\n")
+(request-handler (ping)
   #t)
 
-(request-handler (shutdown . l)
-  ;;(display* "shut down " l "\n")
+(request-handler (shutdown)
   (set! server-finished? #t)
   #t)
 
-(request-handler (print . l)
-  (display* "Received message " l "\n")
+(request-handler (print msg)
+  (display* "Received message " msg "\n")
   #t)
 
 (define-public (server-request sock)
@@ -41,6 +40,11 @@
 
 (define-public (server-start port)
   (let ((srv (new-socket "" port)))
+    (ignore-errors 'system-error
+      (mkdir (server-dir)))
+    (ignore-errors 'system-error
+      (mkdir (string-append (server-dir) "/system")))
+    (atom-initialize)
     (display* "Started TeXmacs server at port " port "\n")
     (do ((server-serial 0))
 	(server-finished? (noop))
@@ -51,3 +55,16 @@
       (set! server-serial (+ server-serial 1)))))
 
 (server-start 6561)
+
+;(let* ((key (rsa-generate))
+;       (msg "Hallo allemaal")
+;       (pub (rsa-private->public key))
+;       (enc (rsa-encode msg pub))
+;       (dec (rsa-decode enc key)))
+;  (display* "private = " key "\n")
+;  (display* "public  = " pub "\n")
+;  (display* "original= " msg "\n")
+;  (display* "encoded = " (string->base64 enc) "\n")
+;  (display* "1: " (string->base64 "hallo") "\n")
+;  (display* "2: " (base64->string (string->base64 "hallo")) "\n")
+;  (display* "decoded = " dec "\n"))
