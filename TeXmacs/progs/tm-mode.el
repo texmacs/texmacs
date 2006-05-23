@@ -30,7 +30,8 @@
 	 define-table define-preferences define-secure-symbols
          texmacs-modes and-let\\* case-lambda with with-global
          ahash-with and-with for repeat
-	 with-innermost with-action with-mutator with-module with-cursor
+	 with-innermost with-action with-mutator
+	 with-module with-cursor with-server
 	 call/cc with-cc values receive map-in-order
          drd-group drd-table drd-dispatcher
          define-grammar drd-rule drd-rules assume menu-bind
@@ -70,7 +71,7 @@
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
-	       with-action with-module with-cursor
+	       with-action with-module with-cursor with-server
 	       interactive dialogue-user))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
