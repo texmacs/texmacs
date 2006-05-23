@@ -18,17 +18,17 @@
 ;; Further utilities for files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public-macro (with-temp-file name s . body)
-  `(with ,name (url-temp)
+(tm-define-macro (with-temp-file name s . body)
+  `(with ,name (url-concretize (url-temp))
      (string-save ,s ,name)
      (with r (begin ,@body)
        (system-remove ,name)
        r)))
 
-(define-public (system* . args)
+(tm-define (system* . args)
   (system (apply string-append args)))
 
-(define-public (eval-system* . args)
+(tm-define (eval-system* . args)
   (eval-system (apply string-append args)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,7 +50,7 @@
 	 (append (base64 (+ (* (car l) 65536) (* (cadr l) 256) (caddr l)) 4)
 		 (list->base64 (cdddr l))))))
 
-(define-public (string->base64 s)
+(tm-define (string->base64 s)
   (let* ((l1 (string->list s))
 	 (l2 (map char->integer l1))
 	 (r1 (list->base64 l2))
@@ -76,7 +76,7 @@
 			     (* (caddr l) 64) (cadddr l)) 3)
 		 (base64->list (cddddr l))))))
 
-(define-public (base64->string s)
+(tm-define (base64->string s)
   (let* ((l1 (string->list s))
 	 (l2 (map char->integer l1))
 	 (l3 (map (lambda (i) (- i 48)) l2))
@@ -88,20 +88,20 @@
 ;; Crypting with RSA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (rsa-generate)
+(tm-define (rsa-generate)
   (eval-system* "openssl genrsa 2048 2> /dev/null"))
 
-(define-public (rsa-private->public private-key)
+(tm-define (rsa-private->public private-key)
   (with-temp-file key private-key
     (eval-system* "openssl rsa -in " key " -pubout 2> /dev/null")))
 
-(define-public (rsa-encode what public-key)
+(tm-define (rsa-encode what public-key)
   (with-temp-file msg what
     (with-temp-file key public-key
       (eval-system* "openssl rsautl -in " msg
 		    " -pubin -inkey " key " -encrypt"))))
 
-(define-public (rsa-decode what private-key)
+(tm-define (rsa-decode what private-key)
   (with-temp-file msg what
     (with-temp-file key private-key
       (eval-system* "openssl rsautl -in " msg
@@ -111,15 +111,15 @@
 ;; Crypting with DES3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (secret-generate)
+(tm-define (secret-generate)
   (eval-system* "openssl rand -base64 32"))
 
-(define-public (secret-encode what secret-key)
+(tm-define (secret-encode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
       (eval-system* "openssl des3 -salt -in " msg " -pass file:" key))))
 
-(define-public (secret-decode what secret-key)
+(tm-define (secret-decode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
       (eval-system* "openssl des3 -salt -d -in " msg " -pass file:" key))))
@@ -128,11 +128,11 @@
 ;; Prevent third persons to pretend being one of the communicants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (add-verification msg)
+(tm-define (add-verification msg)
   (string-append "tm:" msg))
 
-(define (remove-verification msg)
+(tm-define (remove-verification msg)
   (and (string? msg)
        (>= (string-length msg) 3)
        (== (substring msg 0 3) "tm:")
-       (substring msg (string-length msg))))
+       (substring msg 3 (string-length msg))))

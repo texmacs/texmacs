@@ -40,6 +40,7 @@
 	 (ahash-set! atom-table (cons name type) info)
 	 (display* "atom-list= " atom-list "\n")
 	 (save-object atom-file atom-list)
+	 (chmod atom-file #o600)
 	 #t)))
 
 (define-public (atom-info name type)
@@ -52,6 +53,7 @@
       (set! atom-list (assoc-set! atom-list (cons name type) l))
       (ahash-set! atom-table (cons name type) l)
       (save-object atom-file atom-list)
+      (chmod atom-file #o600)
       #t)))
 
 (define-public (atom-get-property name type var)
@@ -59,11 +61,11 @@
     (assoc-ref l var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Todo: maintain list of available servers
+;; TODO: maintain list of other servers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(request-handler (new-server name info)
-;;  (new-atom name 'server info))
+;; (request-handler (new-server name info)
+;;   (new-atom name 'server info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Maintain list of users

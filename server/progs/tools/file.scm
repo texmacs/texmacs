@@ -34,6 +34,9 @@
 	 (home (passwd:dir info)))
     (string-append home "/.texmacsd")))
 
+(define-public (system-dir)
+  (string-append (server-dir) "/system"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving and loading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

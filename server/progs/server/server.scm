@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : server.scm
 ;; DESCRIPTION : the TeXmacs server
-;; COPYRIGHT   : (C) 2006  Henri Lesourd and Joris van der Hoeven
+;; COPYRIGHT   : (C) 2006  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -21,31 +21,29 @@
 
 (define server-finished? #f)
 
-(request-handler (ping)
-  #t)
-
 (request-handler (shutdown)
   (set! server-finished? #t)
   #t)
 
-(request-handler (print msg)
-  (display* "Received message " msg "\n")
+(request-handler (print-message message)
+  (display* "Message: " message "\n")
   #t)
 
 (define-public (server-request sock)
   (let* ((s (socket-read sock))
-	 (r (handle-request sock s)))
+	 (r (handle-unsecure-request s)))
     (socket-write sock r)
     (cons s r)))
 
 (define-public (server-start port)
   (let ((srv (new-socket "" port)))
-    (ignore-errors 'system-error
-      (mkdir (server-dir)))
-    (ignore-errors 'system-error
-      (mkdir (string-append (server-dir) "/system")))
+    (ignore-errors 'system-error (mkdir (server-dir)))
+    (ignore-errors 'system-error (mkdir (system-dir)))
+    (chmod (server-dir) #o700)
+    (chmod (system-dir) #o700)
+    (server-initialize)
     (atom-initialize)
-    (display* "Started TeXmacs server at port " port "\n")
+    (display* "Started TeXmacs daemon at port " port "\n")
     (do ((server-serial 0))
 	(server-finished? (noop))
       (let* ((s (socket-accept srv))
@@ -60,11 +58,16 @@
 ;       (msg "Hallo allemaal")
 ;       (pub (rsa-private->public key))
 ;       (enc (rsa-encode msg pub))
-;       (dec (rsa-decode enc key)))
+;       (dec (rsa-decode enc key))
+;       (Key (secret-generate))
+;       (Enc (secret-encode msg Key))
+;       (Dec (secret-decode Enc Key)))
 ;  (display* "private = " key "\n")
 ;  (display* "public  = " pub "\n")
-;  (display* "original= " msg "\n")
-;  (display* "encoded = " (string->base64 enc) "\n")
 ;  (display* "1: " (string->base64 "hallo") "\n")
 ;  (display* "2: " (base64->string (string->base64 "hallo")) "\n")
-;  (display* "decoded = " dec "\n"))
+;  (display* "original= " msg "\n")
+;  (display* "encoded = " (string->base64 enc) "\n")
+;  (display* "decoded = " dec "\n")
+;  (display* "Encoded = " (string->base64 Enc) "\n")
+;  (display* "Decoded = " Dec "\n"))

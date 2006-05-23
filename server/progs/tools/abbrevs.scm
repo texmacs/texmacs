@@ -51,12 +51,12 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (number->string x))))
 
-(define-public (save-object file value)
-  (write value (open-file (url-materialize file "") OPEN_WRITE))
-  (flush-all-ports))
+(define-public (object->string obj)
+  (call-with-output-string
+    (lambda (port) (write obj port))))
 
-(define-public (load-object file)
-  (read (open-file (url-materialize file "r") OPEN_READ)))
+(define-public (string->object s)
+  (call-with-input-string s read))
 
 (define-public (display* . l)
   (for-each display l))
@@ -102,3 +102,58 @@
 (define-public-macro (repeat n . body)
   (let ((x (gensym)))
     `(for (,x 0 ,n) ,@body)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SECTION : and-let* special form
+;;
+;; COPYRIGHT : 2001, Free Software Foundation, Inc.
+;; The copyright of the reference implementation of SRFI-2 by Oleg Kiselyov was
+;; assigned to the Free Software Foundation in Feb. 2001. The following
+;; implementation also includes incidental changes by Dale Jordan.
+;; Modified by David Allouche to use syntax-error procedure.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (scm-error* type caller message . opt)
+  (apply scm-error type caller message opt))
+
+(define (syntax-error where message . args)
+  (scm-error* 'syntax-error where message args #f))
+
+(define-public-macro (and-let* claws . body)
+  (let* ((new-vars '())
+	 (result (cons 'and '()))
+	 (growth-point result))
+
+    (define (andjoin! clause)
+      (let ((prev-point growth-point)
+	    (clause-cell (cons clause '())))
+        (set-cdr! growth-point clause-cell)
+        (set! growth-point clause-cell)))
+
+    (if (not (list? claws))
+	(syntax-error "and-let*" "Bindings are not a list: ~A" claws))
+    (for-each
+     (lambda (claw)
+       (cond
+	((symbol? claw)                         ; BOUND-VARIABLE form
+	 (andjoin! claw))
+	((and (pair? claw) (null? (cdr claw)))  ; (EXPRESSION) form
+	 (andjoin! (car claw)))
+	((and (pair? claw) (symbol? (car claw)) ; (VARIABLE EXPRESSION) form
+	      (pair? (cdr claw)) (null? (cddr claw)))
+	 (let* ((var (car claw))
+		(var-cell (cons var '())))
+	   (if (memq var new-vars)
+	       (syntax-error "and-let*"
+			     "Duplicate variable in bindings: ~A" var))
+	   (set! new-vars (cons var new-vars))
+	   (set-cdr! growth-point `((let (,claw) (and . ,var-cell))))
+	   (set! growth-point var-cell)))
+	(else
+	 (syntax-error "and-let*" "Ill-formed binding: ~A" claw))))
+     claws)
+    (if (not (null? body))
+	(if (null? (cdr body))
+	    (andjoin! (car body))
+	    (andjoin! `(begin ,@body))))
+    result))

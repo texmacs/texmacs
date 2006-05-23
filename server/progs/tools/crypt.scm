@@ -112,11 +112,11 @@
 ;; Prevent third persons to pretend being one of the communicants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (add-verification msg)
+(define-public (add-verification msg)
   (string-append "tm:" msg))
 
-(define (remove-verification msg)
+(define-public (remove-verification msg)
   (and (string? msg)
        (>= (string-length msg) 3)
        (== (substring msg 0 3) "tm:")
-       (substring msg (string-length msg))))
+       (substring msg 3 (string-length msg))))

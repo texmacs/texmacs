@@ -13,15 +13,61 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server client))
-(use-modules (tools base) (tools abbrevs) (tools ahash-table)
+(use-modules (tools base) (tools abbrevs) (tools ahash-table) (tools crypt)
 	     (server socket))
 
-(define-public (send-msg msg)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commands from the client
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define connection-info #f)
+
+(define-public (server-request msg)
   (define s (new-socket "localhost" 6561))
+  ;;(display* "Send message " msg "\n")
   (socket-request s msg))
 
-(display* (send-msg `(ping) "\n"))
-(display* (send-msg `(print ,(list (getpid) 1 2 3))) "\n")
-(do ((i 0)) ((>= i 10000000) 0) (set! i (+ i 1)))
-(display* (send-msg `(print ,(list (getpid) 4 5 6))) "\n")
-;;(display* (send-msg '(shutdown)) "\n")
+(define-public (request-connect)
+  (and-let* ((private-key (rsa-generate))
+	     (public-key (rsa-private->public private-key))
+	     ;; build data base for remembering previous connections
+	     ;; and increasing trust from the server side
+	     ;; may also avoid need to log in
+	     (remote-key (base64->string (server-request `(get-public-key))))
+	     ;; check with trusted database
+	     ;; can also ask for some previously stored secret info
+	     (challenge (secret-generate))
+	     (enc-chal (rsa-encode challenge remote-key))
+	     (public-key-64 (string->base64 public-key))
+	     (enc-chal-64 (string->base64 enc-chal))
+	     (msg `(connect ,public-key-64 ,enc-chal-64))
+	     (r (server-request msg))
+	     (decoded (rsa-decode (base64->string r) private-key))
+	     (returned (remove-verification decoded))
+	     (obj (string->object returned))
+	     (final (and (== (car obj) challenge) (cdr obj))))
+    (set! connection-info final)
+    #t))
+
+(define-public (secure-request cmd)
+  (when connection-info
+    (with (id key) connection-info
+      (and-let* ((message (object->string cmd))
+		 (tagged (add-verification message))
+		 (encoded (secret-encode tagged key))
+		 (transmit (string->base64 encoded))
+		 (reply-64 (server-request `(secure ,id ,transmit)))
+		 (reply (base64->string reply-64))
+		 (decoded (secret-decode reply key))
+		 (untagged (remove-verification decoded))
+		 (final (string->object untagged)))
+	final))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Example session
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(display* "ping= " (server-request `(ping)) "\n")
+(display* "key = " (base64->string (server-request `(get-public-key))) "\n")
+(request-connect)
+(secure-request `(print-message "Hello world!"))
