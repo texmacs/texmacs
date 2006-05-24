@@ -744,8 +744,23 @@ korean_tex (string& s) {
 
 static bool
 taiwanese_tex (string& s) {
+  if (search_forwards ("\\usepackage{CJKvert,type1cm}", s) != -1)
+    s= replace (s, "\\usepackage{CJKvert,type1cm}", "");
+  if (search_forwards ("\\begin{CJK}{Bg5}{aming}", s) != -1)
+    s= replace (s, "\\begin{CJK}{Bg5}{aming}", "");
+  if (search_forwards ("\\begin{CJK}{Bg5}{kai}", s) != -1)
+    s= replace (s, "\\begin{CJK}{Bg5}{kai}", "");
+  if (search_forwards ("\\CJKcaption{Bg5}", s) != -1)
+    s= replace (s, "\\CJKcaption{Bg5}", "");
+  if (search_forwards ("\\CJKindent", s) != -1)
+    s= replace (s, "\\CJKindent", "");
   if (search_forwards ("\\usepackage{CJK}", s) != -1) {
     s= replace (s, "\\usepackage{CJK}", "");
+    s= convert (s, "cp950", "UTF-8");
+    return true;
+  }
+  if (search_forwards ("\\usepackage{CJK*}", s) != -1) {
+    s= replace (s, "\\usepackage{CJK*}", "");
     s= convert (s, "cp950", "UTF-8");
     return true;
   }

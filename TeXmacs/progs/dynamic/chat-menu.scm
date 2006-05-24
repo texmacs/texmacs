@@ -15,9 +15,36 @@
 (texmacs-module (dynamic chat-menu)
   (:use (dynamic chat-edit)))
 
+(define (chat-administrated-menu-entry name)
+  (list name (lambda () (chat-connect name))))
+
+(tm-define (chat-administrated-menu)
+  (with l (chat-list-administrated-rooms)
+    (if (not l) (menu-dynamic)
+	(with sorted-l (list-sort l string<=?)
+	  (menu-dynamic
+	    ---
+	    ,@(map chat-administrated-menu-entry sorted-l))))))
+
+(define (chat-connect-menu-entry name)
+  (list name (lambda () (chat-connect name))))
+
+(tm-define (chat-connect-menu)
+  (with l (chat-list-rooms)
+    (if (not l) (menu-dynamic)
+	(with sorted-l (list-sort l string<=?)
+	  (menu-dynamic
+	    ,@(map chat-connect-menu-entry sorted-l)
+	    ---)))))
+
 (menu-bind chat-menu
   (if (not (chat-session))
-      ("Connect" (interactive chat-connect)))
+      (-> "Connect"
+	  ("Create chatroom" (interactive chatroom-create))
+	  (link chat-administrated-menu)
+	  ---
+	  (link chat-connect-menu)
+	  ("Other" (interactive chat-connect))))
   (if (chat-session)
       (when (not (chat-connected?))
 	("Catch up" (chat-catch-up))))

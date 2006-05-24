@@ -59,18 +59,39 @@
     `(chat-output ,user ,(stree->tree contents))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Chatroom administration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (chat-server . opt-rooms)
+  (or (get-server) (default-server)))
+
+(tm-define (chat-list-administrated-rooms)
+  (with-server (chat-server)
+    (with l (remote-request '(chat-list-administrated-rooms))
+      (and l (nnull? l) l))))
+
+(tm-define (chatroom-create room)
+  (:synopsis "Create a chat room.")
+  (:argument room "Chat room")
+  (when (chat-connect room)
+    (with-server (chat-server room)
+      (remote-request `(new-chatroom ,room)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for chatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (chat-server room)
-  (or (get-server) (default-server)))
+(tm-define (chat-list-rooms)
+  (with-server (chat-server)
+    (with l (remote-request '(chat-list-rooms))
+      (and l (nnull? l) l))))
 
-(tm-define (chat-connect user room)
+(tm-define (chat-connect room)
   (:synopsis "Connect to a chat room.")
   (:argument room "Chat room")
-  (:argument user "User name")
-  (when (and (not (chat-session))
-	     (not (ahash-ref chat-connected (cons user room))))
+  (and-let* ((user (remote-user))
+	     (can-insert (not (chat-session)))
+	     (not-busy (not (ahash-ref chat-connected (cons user room)))))
     (with-server (chat-server room)
       (and-let* ((new (remote-request `(chat-connect ,room ,user)))
 		 (cmd (string-append
@@ -80,7 +101,8 @@
 	(init-add-package "chat")
 	(ahash-set! chat-connected (cons room user) #t)
 	(insert-go-to `(mutator (chat-session ,room (document ,@out ,in)) ,cmd)
-		      (list 0 1 (length new) 1 0 0))))))
+		      (list 0 1 (length new) 1 0 0))
+	#t))))
 
 (tm-define (chat-catch-up)
   (:synopsis "Catch up with the discussion.")
@@ -91,6 +113,8 @@
     (with-server (chat-server room)
       (remote-request `(chat-connect ,room ,user))
       (ahash-set! chat-connected (cons room user) #t)
+      (tree-set (tree-ref session 1)
+		`(document (chat-input ,user (document ""))))
       (tree-go-to session 1 :last 1 :end))))
 
 (tm-define (chat-hang-up)
@@ -134,9 +158,8 @@
 (tm-define (mutate-chat room user)
   (:secure #t)
   (when (ahash-ref chat-connected (cons room user))
-    ;;(display* "Synchronize " room ", " user "\n")
     (with-server (chat-server room)
       (with new (remote-request `(chat-synchronize ,room ,user))
-	(if (nnull? new)
+	(if (and new (nnull? new))
 	    (with-mutator t
 	      (for-each (lambda (x) (chat-update (tree-ref t 1) x)) new)))))))
