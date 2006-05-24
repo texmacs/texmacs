@@ -13,11 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server server))
+(read-enable 'positions)
+(debug-enable 'debug)
 (use-modules (ice-9 rdelim)
 	     (tools base) (tools abbrevs) (tools ahash-table)
 	     (tools file) (tools crypt)
 	     (server socket) (server request) (server atoms)
 	     (tmfs locus) (tmfs link) (chat chat))
+
 
 (define server-finished? #f)
 

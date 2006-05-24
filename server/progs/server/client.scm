@@ -13,8 +13,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server client))
+(read-enable 'positions)
+(debug-enable 'debug)
 (use-modules (tools base) (tools abbrevs) (tools ahash-table) (tools crypt)
 	     (server socket))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commands from the client

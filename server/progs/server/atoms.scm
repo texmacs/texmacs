@@ -14,7 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server atoms))
-(use-modules (tools base) (tools abbrevs) (tools ahash-table)
+(use-modules (tools base) (tools abbrevs) (tools ahash-table) (tools list)
 	     (tools file) (tools crypt)
 	     (server request))
 
@@ -41,6 +41,9 @@
 	 (save-object atom-file atom-list)
 	 (chmod atom-file #o600)
 	 #t)))
+
+(define-public (atom-list-of-type type)
+  (map caar (list-filter atom-list (lambda (x) (== (cdar x) type)))))
 
 (define-public (atom-info name type)
   (ahash-ref atom-table (cons name type)))
@@ -90,7 +93,7 @@
 
 (request-handler (user-logout)
   (and-let* ((id current-connection-id))
-    (ahash-reset! connection-user id)
+    (ahash-remove! connection-user id)
     #t))
 
 (request-handler (user-set-property var val)
@@ -100,6 +103,3 @@
 (request-handler (user-get-property var)
   (and (current-user) (!= var "password")
        (atom-get-property (current-user) 'user var)))
-
-;;(request-handler (new-chatroom name info)
-;;  (new-atom name 'chatroom info))

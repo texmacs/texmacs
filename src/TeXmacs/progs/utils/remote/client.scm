@@ -175,10 +175,12 @@
   (:argument user "User name")
   (:argument passwd "Password")
   (with-server (account-server)
-    (and-let* ((encoded-passwd (secret-hash passwd))
-	       (ok (remote-request `(user-login ,user ,encoded-passwd))))
-      (set! current-logged (get-server))
-      (set! current-user user))))
+    (with encoded-passwd (secret-hash passwd)
+      (if (remote-request `(user-login ,user ,encoded-passwd))
+	  (begin
+	    (set! current-logged (get-server))
+	    (set! current-user user))
+	  (set-message "Wrong password" "Remote login")))))
 
 (tm-define (remote-logout)
   (with-server (account-server)
