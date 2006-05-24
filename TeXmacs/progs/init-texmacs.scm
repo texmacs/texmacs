@@ -38,6 +38,7 @@
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils remote client) remote-get remote-put)
+(lazy-menu (utils remote remote-menu) remote-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting main TeXmacs functionality\n")
