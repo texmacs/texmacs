@@ -77,7 +77,6 @@
 (define secure-connection (make-ahash-table))
 
 (tm-define (remote-connect)
-  (display* "Connect to " (get-server) "\n")
   (and-let* ((private-key (rsa-generate))
 	     (public-key (rsa-private->public private-key))
 	     ;; build data base for remembering previous connections
@@ -96,6 +95,7 @@
 	     (returned (remove-verification decoded))
 	     (obj (string->object returned))
 	     (final (and (== (car obj) challenge) (cdr obj))))
+    (display* "TeXmacs] connected to " (get-server) "\n")
     (ahash-set! secure-connection (get-server) final)
     #t))
 
@@ -163,16 +163,34 @@
   current-logged)
 
 (tm-define (remote-new-account user passwd)
+  (:synopsis "Create a new user account on the remote server")
+  (:argument user "User name")
+  (:argument passwd "Password")
   (with-server (account-server)
-    (with encoded-passwd (secret-encode passwd passwd)
-      (remote-request server `(new-user ,user ,encoded-passwd)))))
+    (with encoded-passwd (secret-hash passwd)
+      (remote-request `(new-user ,user ,encoded-passwd)))))
 
 (tm-define (remote-login user passwd)
+  (:synopsis "Login on the remote server")
+  (:argument user "User name")
+  (:argument passwd "Password")
   (with-server (account-server)
-    (and-let* ((encoded-passwd (secret-encode passwd passwd))
+    (and-let* ((encoded-passwd (secret-hash passwd))
 	       (ok (remote-request `(user-login ,user ,encoded-passwd))))
       (set! current-logged (get-server))
       (set! current-user user))))
+
+(tm-define (remote-logout)
+  (with-server (account-server)
+    (when (remote-request `(user-logout))
+      (set! current-logged #f)
+      (set! current-user #f))))
+
+(tm-define (remote-logged?)
+  (not (not current-user)))
+
+(tm-define (remote-user)
+  current-user)
 
 (tm-define (remote-set-user-property var val)
   (with-server (logged-server)
@@ -180,7 +198,14 @@
 
 (tm-define (remote-get-user-property var)
   (with-server (logged-server)
-    (remote-request `(user-get-property ,val))))
+    (remote-request `(user-get-property ,var))))
+
+(tm-define (remote-interactive-set-user-property var)
+  (:interactive #t)
+  (let* ((old-val* (remote-get-user-property var))
+	 (old-val (if (string? old-val*) old-val* "")))
+    (interactive (lambda (val) (remote-set-user-property var val))
+      (list var "string" old-val))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving and loading documents

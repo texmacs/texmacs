@@ -63,9 +63,7 @@
   (-> "Project"
       (link project-manage-menu))
   (-> "Remote"
-      ;;(-> "Login" (link login-menu))
-      ;;(-> "Account" (link account-menu))
-      (-> "Chat" (link chat-menu)))
+      (link remote-menu))
   (if (nnull? (test-menu))
       ---
       (link test-menu)))
