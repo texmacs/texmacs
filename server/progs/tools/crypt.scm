@@ -108,6 +108,10 @@
     (with-temp-file key secret-key
       (eval-system* "openssl des3 -salt -d -in " msg " -pass file:" key))))
 
+(define-public (secret-hash password)
+  (with-temp-file pass password
+    (eval-system* "openssl passwd -1 -salt blauwbil " password)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prevent third persons to pretend being one of the communicants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -14,7 +14,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server atoms))
-(use-modules (tools base) (tools abbrevs) (tools ahash-table) (tools file)
+(use-modules (tools base) (tools abbrevs) (tools ahash-table)
+	     (tools file) (tools crypt)
 	     (server request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,12 +34,10 @@
 	    atom-list))
 
 (define-public (new-atom name type info)
-  (display* "New atom: " name ", " type ", " info "\n")
   (and (not (ahash-ref atom-table (cons name type)))
        (begin
 	 (set! atom-list (assoc-set! atom-list (cons name type) info))
 	 (ahash-set! atom-table (cons name type) info)
-	 (display* "atom-list= " atom-list "\n")
 	 (save-object atom-file atom-list)
 	 (chmod atom-file #o600)
 	 #t)))
@@ -71,17 +70,36 @@
 ;; Maintain list of users
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(request-handler (new-user name info)
-  (new-atom name 'user info))
+(define connection-user (make-ahash-table))
 
-(request-handler (user-info name)
-  (atom-info name 'user))
+(define-public (current-user)
+  (ahash-ref connection-user current-connection-id))
 
-(request-handler (user-set-property name var val)
-  (atom-set-property name 'user var val))
+(request-handler (new-user name passwd)
+  (with encoded-passwd passwd
+    (new-atom name 'user '())
+    (atom-set-property name 'user "password" encoded-passwd)))
 
-(request-handler (user-get-property name var)
-  (atom-get-property name 'user var))
+(request-handler (user-login name passwd)
+  (and-let* ((encoded-passwd passwd)
+	     (stored-passwd (atom-get-property name 'user "password"))
+	     (ok (== encoded-passwd stored-passwd))
+	     (id current-connection-id))
+    (ahash-set! connection-user id name)
+    #t))
+
+(request-handler (user-logout)
+  (and-let* ((id current-connection-id))
+    (ahash-reset! connection-user id)
+    #t))
+
+(request-handler (user-set-property var val)
+  (and (current-user)
+       (atom-set-property (current-user) 'user var val)))
+
+(request-handler (user-get-property var)
+  (and (current-user) (!= var "password")
+       (atom-get-property (current-user) 'user var)))
 
 ;;(request-handler (new-chatroom name info)
 ;;  (new-atom name 'chatroom info))
