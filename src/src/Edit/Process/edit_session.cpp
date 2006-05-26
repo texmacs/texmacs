@@ -66,7 +66,14 @@ edit_process_rep::process_mutators () {
   new_mutators= false;
   mutators_updated= true;
   mutator_time= texmacs_time ();
+  bool changec= has_changed (THE_CURSOR);
+  bool change1= has_changed (THE_TREE);
   nr_mutators= mutate (subtree (et, rp), reverse (rp));
+  bool change2= has_changed (THE_TREE);
+  if (change1 != change2 && !changec) {
+    notify_change (THE_MUTATORS);
+    cout << "Change\n";
+  }
   if (!mutators_updated) {
     // cout << "Mutation occurred\n";
     next_mutate= texmacs_time () + MUTATE_FAST_INTERACTION;
