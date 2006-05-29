@@ -13,6 +13,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include "point.hpp"
+#include "matrix.hpp"
 
 class frame_rep: public abstract_struct {
 public:
@@ -26,6 +27,10 @@ public:
   virtual point inverse_transform (point p) = 0;
   // a point p in frame f corresponds to f(p) = f->direct_transform(p)
   // in the parent frame of f
+
+  virtual point jacobian (point p, point v, bool &error) = 0;
+  virtual point jacobian_of_inverse (point p, point v, bool &error) = 0;
+  // the Jacobian matrix at p applied to v
 
   virtual double direct_bound (point p, double eps) = 0;
   virtual double inverse_bound (point p, double eps) = 0;
@@ -52,7 +57,12 @@ class frame {
 };
 ABSTRACT_NULL_CODE(frame);
 
-frame scaling (double magnify, array<double> shift);
+// Transformations
+frame scaling (double magnify, point shift);
+frame rotation_2D (point center, double angle);
+frame affine_2D (matrix m);
+
+// Operations on transformations
 frame operator * (frame f1, frame f2);
 frame invert (frame f);
 

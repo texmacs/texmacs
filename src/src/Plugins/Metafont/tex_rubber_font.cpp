@@ -173,12 +173,14 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
     ex->y1 += ex->y2;
     ex->y2  = 0;
   }
-
-  if ((N(s) >= 9) && (s(0,7) == "<large-")) {
+  else {
     // correction for large delimiters
-    switch (s[7]) {
+    int j;
+    for (j=1; j<N(s); j++) if (s[j]=='-') break;
+    if (j==N(s)) return; else j++;
+    switch (s[j]) {
     case 'r':
-      if ((N(s) >= 13) && (s(8,13) == "angle")) {
+      if ((N(s) >= j+6) && (s(j+1,j+6) == "angle")) {
 	ex->x1= ex->x3- sep;
 	ex->x2= ex->x4+ sep;
 	break;
@@ -287,6 +289,9 @@ void
 tex_dummy_rubber_font_rep::get_extents (string s, metric& ex) {
   string r= s;
   if (s(0,8) == "<large-.") r= "<left-(" * s (8, N(s));
+  if (s(0,7) == "<left-.") r= "<left-(" * s (7, N(s));
+  if (s(0,6) == "<mid-.") r= "<left-(" * s (6, N(s));
+  if (s(0,8) == "<right-.") r= "<left-(" * s (8, N(s));
   if (s(0,6) == "<big-.") r= "<big-sum" * s (6, N(s));
   base_fn->get_extents (r, ex);
   ex->x1= ex->x2= ex->x3= ex->x4= 0;

@@ -1,0 +1,94 @@
+
+#--------------------------------------------------------------------
+#
+# MODULE      : configure.in
+# DESCRIPTION : TeXmacs configuration file for autoconf
+# COPYRIGHT   : (C) 2000  Joris van der Hoeven
+#
+# This software falls under the GNU general public license and comes WITHOUT
+# ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
+# If you don't have this file, write to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+#--------------------------------------------------------------------
+
+AC_INIT
+
+PACKAGE="texmacsd"
+VERSION="0.0"
+RELEASE="1"
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(RELEASE)
+
+#--------------------------------------------------------------------
+# Checks for Guile
+#--------------------------------------------------------------------
+
+GUILE_FLAGS
+AC_MSG_CHECKING(version of guile)
+GUILE_VERSION=`guile --version | grep 'Guile \([[0-9]]\)' | sed 's/Guile \([[0-9]]*\)/\1/'`
+AC_MSG_RESULT($GUILE_VERSION)
+
+#--------------------------------------------------------------------
+# Default paths for installation
+#--------------------------------------------------------------------
+
+if test "$prefix" = ""; then
+  prefix=/usr/local
+fi
+if test "$prefix" = "NONE"; then
+  prefix=/usr/local
+fi
+if test "$exec_prefix" = ""; then
+  exec_prefix=${prefix}
+fi
+if test "$exec_prefix" = "NONE"; then
+  exec_prefix=${prefix}
+fi
+if test "$exec_prefix" = '${prefix}'; then
+  exec_prefix=${prefix}
+fi
+if test "$bindir" = ""; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$bindir" = "NONE"; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$bindir" = '${exec_prefix}/bin'; then
+  bindir=${exec_prefix}/bin
+fi
+if test "$datadir" = ""; then
+  datadir=${prefix}/share
+fi
+if test "$datadir" = "NONE"; then
+  datadir=${prefix}/share
+fi
+if test "$datadir" = '${prefix}/share'; then
+  datadir=${prefix}/share
+fi
+if test "$libexecdir" = ""; then
+  libexecdir=${exec_prefix}/libexec
+fi
+if test "$libexecdir" = "NONE"; then
+  libexecdir=${exec_prefix}/libexec
+fi
+if test "$libexecdir" = '${exec_prefix}/libexec'; then
+  libexecdir=${exec_prefix}/libexec
+fi
+
+curdir="`pwd`"
+tmorig=${curdir}
+tmdir=${PACKAGE}
+tmsrc=${curdir}/${tmdir}
+progdir=${datadir}/texmacsd
+AC_SUBST(tmorig)
+AC_SUBST(tmdir)
+AC_SUBST(tmsrc)
+AC_SUBST(tmdata)
+
+#--------------------------------------------------------------------
+# Done
+#--------------------------------------------------------------------
+
+AC_OUTPUT(Makefile:Makefile.in bin/texmacsd:bin/texmacsd.in bin/tm-client:bin/tm-client.in)

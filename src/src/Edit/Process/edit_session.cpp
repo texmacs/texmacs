@@ -52,6 +52,7 @@ mutate (tree t, path ip) {
 	  (void) eval (s);
 	}
       sum= 1;
+      mutator_path= path ();
     }
   for (i=0; i<N(t); i++)
     sum += mutate (t[i], path (i, ip));
@@ -61,11 +62,18 @@ mutate (tree t, path ip) {
 void
 edit_process_rep::process_mutators () {
   if (mutators_updated && (nr_mutators == 0)) return;
-  if (texmacs_time() < next_mutate) return;
+  if (texmacs_time()-next_mutate < 0) return;
   new_mutators= false;
   mutators_updated= true;
   mutator_time= texmacs_time ();
+  bool changec= has_changed (THE_CURSOR);
+  bool change1= has_changed (THE_TREE);
   nr_mutators= mutate (subtree (et, rp), reverse (rp));
+  bool change2= has_changed (THE_TREE);
+  if (change1 != change2 && !changec) {
+    notify_change (THE_MUTATORS);
+    cout << "Change\n";
+  }
   if (!mutators_updated) {
     // cout << "Mutation occurred\n";
     next_mutate= texmacs_time () + MUTATE_FAST_INTERACTION;
@@ -143,6 +151,7 @@ edit_process_rep::make_session (string lan, string session) {
   }
 
   /* start asynchronous connection */
+  (void) eval ("(use-modules (utils plugins plugin-cmd))");
   string handle= as_string (call ("plugin-async-start", lan, session));
   if (starts (handle, "error:")) {
     path op= search_upwards ("output");
@@ -224,6 +233,7 @@ edit_process_rep::process_input () {
   }
   else if (connection_declared (lan)) {
     start_output ();
+    (void) eval ("(use-modules (utils plugins plugin-cmd))");
     string session= get_env_string (PROG_SESSION);
     string handle= as_string (call ("plugin-async-feed", lan, session, t));
     if (starts (handle, "error:")) {
@@ -357,30 +367,6 @@ edit_process_rep::session_var_go_down () {
 }
 
 void
-edit_process_rep::session_go_left () {
-  path p= search_upwards ("input");
-  if (nil (p)) return;
-  int i= tp[N(p)];
-  path old_tp= tp;
-  go_left ();
-  p= search_upwards ("input");
-  if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
-  select_from_cursor_if_active ();
-}
-
-void
-edit_process_rep::session_go_right () {
-  path p= search_upwards ("input");
-  if (nil (p)) return;
-  int i= tp[N(p)];
-  path old_tp= tp;
-  go_right ();
-  p= search_upwards ("input");
-  if (nil (p) || ((tp[N(p)] != 1) && (tp[N(p)] != i))) go_to (old_tp);
-  select_from_cursor_if_active ();
-}
-
-void
 edit_process_rep::session_go_up () {
   path p= search_upwards ("input");
   if (nil (p)) return;
@@ -498,7 +484,7 @@ edit_process_rep::session_fold_input () {
   skip_backwards (et, p, "textput", 1);
   skip_forwards (et, q, "output", 1);
   tree del= copy (subtree (et, path_up (p)) (last_item (p), last_item (q)));
-  tree ins= compound ("unfold", tree (DOCUMENT, ""), del);
+  tree ins= compound ("unfolded", tree (DOCUMENT, ""), del);
   remove (p, last_item (q) - last_item (p));
   insert (p, tree (DOCUMENT, ins));
   go_to (p * path (0, path (0, 0)));
@@ -614,6 +600,7 @@ edit_process_rep::session_complete_try () {
   tree t= put_cursor (st[1], tail (tp, N(p)+1));
   // cout << t << LF;
 
+  (void) eval ("(use-modules (utils plugins plugin-cmd))");
   string lan= get_env_string (PROG_LANGUAGE);
   string ses= get_env_string (PROG_SESSION);
   string s  = as_string (call ("verbatim-serialize", lan, tree_to_stree (t)));
@@ -624,7 +611,7 @@ edit_process_rep::session_complete_try () {
   s= s (0, pos) * s (pos + N(cursor_symbol), N(s));
   // cout << s << ", " << pos << LF;
 
-  string cmd= "(complete \"" *escape_quotes (s) *"\" " *as_string (pos)* ")";
+  string cmd= "(complete " * scm_quote (s) * " " * as_string (pos) * ")";
   tree r= connection_cmd (lan, ses, cmd);
 
   if (!is_tuple (r)) return false;
@@ -634,7 +621,7 @@ edit_process_rep::session_complete_try () {
   for (i=0; i<n; i++)
     if (is_atomic (r[i])) {
       string l= r[i]->label;
-      if (is_quoted (l)) l= unquote (l);
+      if (is_quoted (l)) l= scm_unquote (l);
       if (prefix == "") prefix= l;
       else compls << l;
     }

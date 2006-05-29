@@ -12,11 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmlength)
-  (:export
-    tmlength tmlength-null? tmlength?
-    tmlength-value tmlength-unit tmlength-value+unit
-    string->tmlength tmlength->string))
+(texmacs-module (convert tools tmlength))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Length components.
@@ -59,6 +55,11 @@
   (or (tmlength-null? x)
       (and (list? x) (= 2 (length x))
 	   (tmlength-value? (first x)) (tmlength-unit? (second x)))))
+
+(tm-define (tmlength-zero? tmlen)
+  (:type (-> tmlength number))
+  (:synopsis "Get the value part of @tmlen.")
+  (or (tmlength-null? tmlen) (= (first tmlen) 0)))
 
 (tm-define (tmlength-value tmlen)
   (:type (-> tmlength number))

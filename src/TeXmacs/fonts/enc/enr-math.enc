@@ -11,9 +11,10 @@
 [math-cal]
 [math-frak]
 [math-bbb]
+[math-upgreek]
 [math-bold-1]
 [math-bold-2]
 [math-bold-cal]
-{long}
-{negate}
-{misc}
+[long]
+[negate]
+[misc]

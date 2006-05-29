@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.2>
+<TeXmacs|1.0.5.9>
 
 <style|tmweb>
 
@@ -24,7 +24,10 @@
     from <hlink|Puki/Wiki Knoppix/Math|http://geom.math.metro-u.ac.jp/wiki/index.php?[[KNOPPIX/Math/English]]>.
   </itemize>
 
-  <tmdoc-copyright|1999--2003|Martin Costabel|Joris van der Hoeven>
+  If you plan to create a new <name|Knoppix> CD with <TeXmacs>, then please
+  read our <hlink|suggestions|packaging.en.tm>.
+
+  <tmdoc-copyright|1999--2005|Joris van der Hoeven>
 
   <tmweb-license>
 </body>

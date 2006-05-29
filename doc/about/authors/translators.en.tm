@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.0.6>
 
 <style|tmdoc>
 
@@ -6,6 +6,8 @@
   <tmdoc-title|Internationalization of <TeXmacs>>
 
   <\description>
+    <item*|Chinese>Chu-Ching Huang.
+
     <item*|Czech>David Rezac.
 
     <item*|Danish>Magnus Marius Rohde.
@@ -24,6 +26,10 @@
     <item*|Italian>Andrea Centomo, Lucia Gecchelin, Xav and Daniele Pighin,
     Gian Luigi Gragnani.
 
+    <item*|Japanese>Nobuki Takayama.
+
+    <item*|Korean>Karnes Kim.
+
     <item*|Polish>Robert Janusz, Emil Nowak, Jan Alboszta.
 
     <item*|Portuguese>Ramiro Brito Willmersdorf, Márcio Laurini, Alexandre
@@ -39,6 +45,8 @@
     Garcia, Offray Vladimir Luna Cárdenas.
 
     <item*|Swedish>Harald Ellmann.
+
+    <item*|Taiwanese>Chu-Ching Huang.
 
     <item*|Ukrainian>Volodymyr Lisivka.
   </description>

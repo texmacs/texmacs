@@ -28,8 +28,8 @@ protected:
 public:
   edit_env env;               // the environment
   int      status;            // 0: table, 1: decoration, 2: subtable
-  int      i0;                // origin row (decorations only)
-  int      j0;                // origin column (decorations only)
+  int      i0;                // origin row
+  int      j0;                // origin column
   path     ip;                // the corresponding source location
   box      b;                 // the resulting box
   SI       x1;                // left limit of box    (for subtables)
@@ -40,9 +40,12 @@ public:
   cell**   T;                 // the cells of the table
   int      nr_rows;           // the number of rows
   int      nr_cols;           // the number of columns
+  SI*      mw;                // widths of columns
+  SI*      lw;                // left widths of columns
+  SI*      rw;                // right widths of columns
 
-  SI       width;             // the width of the cell
-  SI       height;            // the height of the cell
+  SI       width;             // the (suggested) width of the table
+  SI       height;            // the (suggested) height of the table
   SI       lsep;              // left padding around table
   SI       rsep;              // right padding around table
   SI       bsep;              // bottom padding around table
@@ -71,14 +74,15 @@ public:
   void handle_decorations ();
   void handle_span ();
   void merge_borders ();
-  void compute_width (SI& mw, SI& lw, SI& rw);
-  void compute_widths (SI* mw, SI* lw, SI* rw, bool large);
+  void compute_width (SI& tmw, SI& tlw, SI& trw);
+  void compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large);
   void compute_horizontal_parts (double* parts);
   void position_columns ();
   void compute_height (SI& mh, SI& bh, SI& th);
   void compute_heights (SI* mh, SI* bh, SI* th);
   void compute_vertical_parts (double* parts);
   void position_rows ();
+  void finish_horizontal ();
   void finish ();
   array<box> var_finish ();
 
@@ -142,9 +146,9 @@ public:
   void format_item (tree with);
   void compute_width (SI& mw, SI& lw, SI& rw, bool large);
   void compute_height (SI& mh, SI& bh, SI& th);
-  void fit_horizontally ();
   void position_horizontally (SI offset, SI mw, SI lw, SI rw);
   void position_vertically (SI offset, SI mh, SI bh, SI th);
+  void finish_horizontal ();
   void finish ();
 };
 

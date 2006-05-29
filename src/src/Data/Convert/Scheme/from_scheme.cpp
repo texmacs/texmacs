@@ -16,6 +16,26 @@
 #include "path.hpp"
 
 /******************************************************************************
+* Handling escape characters
+******************************************************************************/
+
+string
+unslash (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if ((s[i]=='\\') && ((i+1)<n))
+      switch (s[++i]) {
+      case '0': r << ((char) 0); break;
+      case 'n': r << '\n'; break;
+      case 't': r << '\t'; break;
+      default: r << s[i];
+      }
+    else r << s[i];
+  return r;
+}
+
+/******************************************************************************
 * Converting strings to scheme trees
 ******************************************************************************/
 
@@ -104,7 +124,7 @@ block_to_scheme_tree (string s) {
 
 tree
 scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
-  if (is_atomic (t)) return unquote (t->label);
+  if (is_atomic (t)) return scm_unquote (t->label);
   else if ((N(t) == 0) || is_compound (t[0])) {
     cerr << "\nTeXmacs] The tree was " << t << "\n";
     fatal_error ("bad TeXmacs tree", "scheme_tree_to_tree");
@@ -132,7 +152,7 @@ scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
 
 tree
 scheme_tree_to_tree (scheme_tree t, string version) {
-  version= unquote (version);
+  version= scm_unquote (version);
   tree doc, error (ERROR, "bad format or data");
   if (version_inf (version, "1.0.2.4"))
     doc= scheme_tree_to_tree (t, get_codes (version), false);

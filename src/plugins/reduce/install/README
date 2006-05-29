@@ -1,15 +1,99 @@
-Installation of TeXmacs-REDUCE interface
-----------------------------------------
 
-1. Ensure that the script
+Installation of TMPRINT to use TeXmacs as a REDUCE interface
+============================================================
 
-	reduce
 
-   is in the path.
+This is for PSL Lisp version of REDUCE
 
-2. As root, go to ../bin (from this directory) and run
 
-	./reduce_setup
+1. Ensure your REDUCE distribution is sound
+-------------------------------------------
 
-3. As a normal user, copy reducerc to your ~/.reducerc
-   (or merge it with your ~/.reducerc , if it already exists)
+Linux, see 
+http://www.fmi.uni-passau.de/~seidl/software/reduce_3.8_fix/linux.txt
+
+Windows, see 
+http://www.fmi.uni-passau.de/~seidl/software/reduce_3.8_fix/windows.txt
+
+
+2. Install TMPRINT binary package
+---------------------------------
+
+Assuming you have wget installed, copy and paste in a bash:
+
+cd $HOME
+rm -f tmprint.tgz
+wget http://www.fmi.uni-passau.de/~seidl/public/bin/tmprint.tgz
+tar xzvf tmprint.tgz
+rm -f tmprint.tgz
+
+Otherwise, download tmprint.tgz manually, place it in your $HOME directory,
+and copy and paste in a bash:
+
+cd $HOME
+tar xzvf tmprint.tgz
+rm -f tmprint.tgz
+
+Alternatively, if you are not using Windows or Linux, you have to
+compile tmprint.red yourself and place the binary tmprint.b in the
+$HOME/.reduce/lisp/$LISP/$MACHINE/ directory.
+
+
+3. Ensure REDUCE finds the TMPRINT binary
+-----------------------------------------
+
+Make sure that your $HOME/.reducerc file looks similar to this:
+
+----- begin of .reducerc -----
+lisp <<
+   if not getenv("NOREDUCERC") then <<
+      loaddirectories!* := nconc(
+         {"","$HOME/.reduce/lisp/$LISP/$MACHINE/"},loaddirectories!*);
+      if getenv("TEXMACS_REDUCE_PATH") then load tmprint
+  >>
+>> $
+end$
+
+----- end ------
+
+To test, if REDUCE finds TMPRINT, start REDUCE and enter
+
+on verboseload;
+load tmprint;
+
+You will see something like:
+
+----- begin of screenshot -----
+REDUCE 3.8, 15-Apr-2004, patched to 5-Aug-2004 ...
+
+1: on verboseload;
+
+2: load tmprint;
+*** loading $HOME/.reduce/lisp/$LISP/$MACHINE/tmprint.b
+*** fluid `lispsystem!*' cannot become global
+*** Function `linelength' has been redefined
+*** fluid `lispsystem!*' cannot become global
+*** Function `setpchar' has been redefined
+*** Function `yesp' has been redefined
+*** Function `compute!-prompt!-string' has been redefined
+*** tmprint loaded
+
+channel:promptlatex:\brown Reduce 1: \
+----- end -----
+
+
+4. Test, if TMPRINT is loaded when REDUCE is invoked by TeXmacs
+---------------------------------------------------------------
+
+In a shell, enter:
+
+export TEXMACS_REDUCE_PATH=something
+reduce
+
+Now REDUCE sould start up and the prompt should look like:
+
+channel:promptlatex:\brown Reduce: \
+
+
+-- 
+Andreas Seidl, 2005

@@ -1,5 +1,5 @@
 /* XPM */
-static char * tm_table_size_xpm[] = {
+static char * tm_cell_size_xpm[] = {
 "17 17 6 1",
 " 	c None",
 "=	c #00000000FFFF",

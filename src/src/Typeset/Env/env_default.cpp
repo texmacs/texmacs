@@ -23,10 +23,8 @@ initialize_default_env () {
   tree tabular_m (MACRO, "x", tree (TFORMAT, tree (ARG, "x")));
   tree the_page (MACRO, compound ("page-nr"));
 
-  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5par", "0cm"));
-  tree gr_clip (TUPLE, "clip",
-		tuple ("0par", "-0.3par"),
-		tuple ("1par", "0.3par"));
+  tree gr_geometry (TUPLE, "geometry", "1par", "0.6par", "center");
+  tree gr_frame (TUPLE, "scale", "1cm", tree (TUPLE, "0.5gw", "0.5gh"));
 
   tree gr_grid ("");
   tree gr_edit_grid ("");
@@ -71,6 +69,7 @@ initialize_default_env () {
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
 
   env (PROG_LANGUAGE)    = "scheme";    // the default programming language
+  env (PROG_SCRIPTS)     = "scheme";    // the scripting language
   env (PROG_FONT)        = "roman";     // the font name in prog mode
   env (PROG_FONT_FAMILY) = "tt";        // the font family in prog mode
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
@@ -136,8 +135,8 @@ initialize_default_env () {
 
   env (TABLE_WIDTH)      = "";          // width of table
   env (TABLE_HEIGHT)     = "";          // height of table
-  env (TABLE_HMODE)      = "";          // width determination mode
-  env (TABLE_VMODE)      = "";          // height determination mode
+  env (TABLE_HMODE)      = "auto";      // width determination mode
+  env (TABLE_VMODE)      = "auto";      // height determination mode
   env (TABLE_HALIGN)     = "l";         // horizontal alignment
   env (TABLE_VALIGN)     = "f";         // vertical alignment (fraction height)
   env (TABLE_ROW_ORIGIN) = "0";         // row origin
@@ -164,8 +163,8 @@ initialize_default_env () {
   env (CELL_HEIGHT)      = "";          // height of cell
   env (CELL_HPART)       = "";          // take part of unused horizontal space
   env (CELL_VPART)       = "";          // take part of unused vertical space
-  env (CELL_HMODE)       = "exact";     // width determination mode
-  env (CELL_VMODE)       = "exact";     // height determination mode
+  env (CELL_HMODE)       = "auto";      // width determination mode
+  env (CELL_VMODE)       = "auto";      // height determination mode
   env (CELL_HALIGN)      = "l";         // horizontal alignment
   env (CELL_VALIGN)      = "B";         // vertical alignment
   env (CELL_LSEP)        = "0fn";       // left cell padding
@@ -178,6 +177,7 @@ initialize_default_env () {
   env (CELL_TBORDER)     = "0ln";       // top cell border width
   env (CELL_VCORRECT)    = "a";         // vertical limits correction
   env (CELL_HYPHEN)      = "n";         // horizontal hyphenation
+  env (CELL_BLOCK)       = "auto";      // cell contains block content?
   env (CELL_ROW_SPAN)    = "1";         // row span of cell
   env (CELL_COL_SPAN)    = "1";         // column span of cell
   env (CELL_ROW_NR)      = "1";         // row coordinate of cell
@@ -186,18 +186,27 @@ initialize_default_env () {
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
 
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
-  env (LINE_STYLE)       = "solid";     // line style (dashes, etc.)
+  env (DASH_STYLE)       = "none";      // dash style
+  env (DASH_STYLE_UNIT)  = "5ln";       // dash style unit
   env (LINE_ARROWS)      = "none";      // arrows at end of lines
   env (LINE_CAPS)        = "normal";    // junctions in multilines
-  env (FILL_MODE)        = "both";      // show contour?
-  env (FILL_COLOR)       = "white";     // fill color
+  env (FILL_COLOR)       = "none";      // fill color
   env (FILL_STYLE)       = "plain";     // fill style
+  env (TEXTAT_HALIGN)    = "left";      // horizontal text-at alignment
+  env (TEXTAT_VALIGN)    = "base";      // vertical text-at alignment
 
+  env (GR_GEOMETRY)      = gr_geometry; // geometry of graphics
   env (GR_FRAME)         = gr_frame;    // coordinate frame for graphics
-  env (GR_CLIP)          = gr_clip;     // clipping of graphics
   env (GR_MODE)          = "line";      // graphical mode
   env (GR_COLOR)         = "default";   // color of new objects
+  env (GR_POINT_STYLE)   = "default";   // point style of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
+  env (GR_DASH_STYLE)      = "default"; // dash style for new objects
+  env (GR_DASH_STYLE_UNIT) = "default"; // dash style unit for new objects
+  env (GR_LINE_ARROWS)   = "default";   // line arrows for new objects
+  env (GR_FILL_COLOR)    = "default";   // fill color for new objects
+  env (GR_TEXTAT_HALIGN) = "default";   // horiz. alignment for new text-ats
+  env (GR_TEXTAT_VALIGN) = "default";   // vert. alignment for new text-ats
   env (GR_GRID)             = gr_grid;        // grid for graphics
   env (GR_GRID_ASPECT)      = gr_grid_aspect; // grid aspect
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
@@ -207,6 +216,11 @@ initialize_default_env () {
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
+
+  /* hiding and showing content */
+  env ("shown")= identity_m;
+  env ("ignore")=
+    tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
 
   /* further standard macros */
   env ("error")=

@@ -12,13 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel boot ahash-table)
-  (:export
-    make-ahash-table ahash-ref ahash-get-handle ahash-size
-    ahash-set! ahash-remove!
-    ahash-fold ahash-table->list list->ahash-table
-    define-table-decls ;; for define-table macro
-    define-table))
+(texmacs-module (kernel boot ahash-table))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adaptive hash tables
@@ -26,25 +20,25 @@
 
 (if (vector? (make-hash-table 1))
     (begin ;; old style
-      (define (make-ahash-table)
+      (define-public (make-ahash-table)
 	(cons (make-hash-table 1) 0))
 
-      (define (ahash-ref h key)
+      (define-public (ahash-ref h key)
 	(hash-ref (car h) key))
 
-      (define (ahash-get-handle h key)
+      (define-public (ahash-get-handle h key)
 	(hash-get-handle (car h) key))
 
-      (define (ahash-size h)
+      (define-public (ahash-size h)
 	(cdr h))
 
-      (define (ahash-slots! h new-size)
+      (define-public (ahash-slots! h new-size)
 	(let ((new-h (make-hash-table new-size)))
 	  (hash-fold (lambda (key value dummy) (hash-set! new-h key value))
 		     #f (car h))
 	  (set-car! h new-h)))
 
-      (define (ahash-set! h key value)
+      (define-public (ahash-set! h key value)
 	(if (hash-get-handle (car h) key)
 	    (hash-set! (car h) key value)
 	    (begin
@@ -53,7 +47,7 @@
 	      (set-cdr! h (+ (cdr h) 1))
 	      (hash-set! (car h) key value))))
 
-      (define (ahash-remove! h key)
+      (define-public (ahash-remove! h key)
 	(let ((removed (hash-remove! (car h) key)))
 	  (if removed
 	      (begin
@@ -62,39 +56,81 @@
 		    (ahash-slots! h (quotient (vector-length (car h)) 2)))))
 	  removed))
 
-      (define (ahash-fold folder init h)
+      (define-public (ahash-fold folder init h)
 	(hash-fold folder init (car h)))
 
-      (define (ahash-table->list h)
+      (define-public (ahash-table->list h)
 	(hash-fold acons '() (car h))))
 
     (begin ;; new style
-      (define make-ahash-table make-hash-table)
-      (define ahash-ref hash-ref)
-      (define ahash-get-handle hash-get-handle)
-      (define (ahash-size h)
+      (define-public make-ahash-table make-hash-table)
+      (define-public ahash-ref hash-ref)
+      (define-public ahash-get-handle hash-get-handle)
+      (define-public (ahash-size h)
 	(hash-fold (lambda (key value seed) (+ 1 seed)) 0 h))
-      (define ahash-set! hash-set!)
-      (define ahash-remove! hash-remove!)
-      (define ahash-fold hash-fold)
-      (define (ahash-table->list h)
+      (define-public ahash-set! hash-set!)
+      (define-public ahash-remove! hash-remove!)
+      (define-public ahash-fold hash-fold)
+      (define-public (ahash-table->list h)
 	(hash-fold acons '() h))))
 
-(define (list->ahash-table l)
+(define-public (list->ahash-table l)
   (let ((t (make-ahash-table)))
     (for-each (lambda (x) (ahash-set! t (car x) (cdr x))) l)
     t))
+
+(define-public-macro (ahash-with t var val . body)
+  (let ((old-val (gensym))
+	(ret-val (gensym)))
+    `(with ,old-val (ahash-ref ,t ,var)
+       (ahash-set! ,t ,var ,val)
+       (with ,ret-val (begin ,@body)
+	 (ahash-set! ,t ,var ,old-val)
+	 ,ret-val))))
+
+(define-public (ahash-table-invert t)
+  (let* ((l (ahash-table->list t))
+	 (u (map (lambda (x) (cons (cdr x) (car x))) l)))
+    (list->ahash-table u)))
+
+(define-public (ahash-table-append . tl)
+  (with ls (map ahash-table->list tl)
+    (list->ahash-table (apply append ls))))
+
+(define-public (ahash-table-map fun t)
+  (let* ((l (ahash-table->list t))
+	 (r (map (lambda (x) (cons (car x) (fun (cdr x)))) l)))
+    (list->ahash-table r)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dictionaries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (fill-dictionary-entry d key im)
+  (if (nnull? key)
+      (begin
+	(ahash-set! d (car key) im)
+	(fill-dictionary-entry d (cdr key) im))))
+
+(define-public (fill-dictionary d l)
+  "Fill hash table @d with list of entries @l"
+  ;; Note: depreciated
+  (if (nnull? l)
+      (begin
+	(let* ((r (reverse (car l))))
+	  (fill-dictionary-entry d (cdr r) (car r)))
+	(fill-dictionary d (cdr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple definition of hash tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (define-table-decls h l)
+(define-public (define-table-decls h l)
   (define (insert binding)
     (ahash-set! h (car binding) (cdr binding)))
   (for-each insert l))
 
-(define-macro (define-table name . l)
+(define-public-macro (define-table name . l)
   `(begin
      (define ,name (make-ahash-table))
      (define-table-decls ,name ,(list 'quasiquote l))))

@@ -14,6 +14,7 @@
 #define TT_FACE_H
 #include "bitmap_font.hpp"
 #include "Freetype/free_type.hpp"
+#include "hashmap.hpp"
 
 #ifdef USE_FREETYPE
 
@@ -29,8 +30,9 @@ struct tt_font_metric_rep: font_metric_rep {
   bool bad_metric;
   tt_face face;
   int size, dpi;
-  metric* fnm;
-  bool* done;
+  hashmap<int,pointer> fnm;
+  //metric* fnm;
+  //bool* done;
   tt_font_metric_rep (string name, string family, int size, int dpi);
   metric& get (int char_code);
 };
@@ -39,8 +41,9 @@ struct tt_font_glyphs_rep: font_glyphs_rep {
   bool bad_glyphs;
   tt_face face;
   int size, dpi;
-  glyph* fng;
-  bool* done;
+  hashmap<int,glyph> fng;
+  //glyph* fng;
+  //bool* done;
   tt_font_glyphs_rep (string name, string family, int size, int dpi);
   glyph& get (int char_code);
 };

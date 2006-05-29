@@ -63,6 +63,7 @@ struct change_box_rep: public composite_box_rep {
     return sx1(0) + bs[0]->get_leaf_offset (search); }
 
   gr_selections graphical_select (SI x, SI y, SI dist);
+  gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
 change_box_rep::change_box_rep (path ip, bool fl1, bool fl2):
@@ -81,6 +82,16 @@ change_box_rep::graphical_select (SI x, SI y, SI dist) {
     return composite_box_rep::graphical_select (x, y, dist);
   else
     return bs[0]->graphical_select (x- sx(0), y- sy(0), dist);
+}
+
+gr_selections
+change_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
+//TODO : Check if it is correct
+  if (child_flag)
+    return composite_box_rep::graphical_select (x1, y1, x2, y2);
+  else
+    return bs[0]->graphical_select (x1- sx(0), y1- sy(0),
+				    x2- sx(0), y2- sy(0));
 }
 
 /******************************************************************************
@@ -265,7 +276,8 @@ action_box_rep::action_box_rep (
 tree
 action_box_rep::action (tree t, SI x, SI y, SI delta) {
   if (t == filter) {
-    call ("set-action-path", reverse (vip));
+    call ("action-set-path", reverse (vip));
+    // FIXME: we should also reset the action path
     cmd ();
     return "done";
   }
@@ -306,6 +318,31 @@ tag_box_rep::find_tag (string search) {
     return reverse (descend_decode (ip, 1));
   return path ();
 }
+
+/******************************************************************************
+* textat boxes
+******************************************************************************/
+
+struct textat_box_rep: public move_box_rep {
+  textat_box_rep (path ip, box b, SI x, SI y):
+    move_box_rep (ip, b, x, y, false, false) {}
+  gr_selections graphical_select (SI x, SI y, SI dist);
+  operator tree () { return tree (TUPLE, "textat", (tree) bs[0]); }
+};
+
+gr_selections
+textat_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= dist) {
+    gr_selection gs;
+    gs->dist= graphical_distance (x, y);
+    gs->p= point (x, y);
+    gs->cp << box_rep::find_tree_path (x, y, dist);
+    res << gs;
+  }
+  return res;
+}
+
 
 /******************************************************************************
 * box construction routines
@@ -354,4 +391,9 @@ action_box (path ip, box b, tree filter, command cmd, bool ch) {
 box
 tag_box (path ip, box b, string name) {
   return new tag_box_rep (ip, b, name);
+}
+
+box
+textat_box (path ip, box b, SI x, SI y) {
+  return new textat_box_rep (ip, b, x, y);
 }

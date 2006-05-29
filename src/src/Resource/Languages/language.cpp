@@ -19,6 +19,7 @@ text_property_rep global_tpr;
 text_property_rep tp_normal_rep (TP_NORMAL);
 text_property_rep tp_hyph_rep (TP_HYPH, SPC_NONE, SPC_NONE, 0, 0);
 text_property_rep tp_space_rep (TP_SPACE, SPC_NONE, SPC_SPACE, 0,0);
+text_property_rep tp_dspace_rep (TP_DSPACE, SPC_NONE, SPC_DSPACE, 0,0);
 text_property_rep tp_period_rep (TP_PERIOD, SPC_NONE, SPC_PERIOD, 0, 0);
 text_property_rep tp_blank_rep (
   TP_BLANK, SPC_NONE, SPC_SPACE, 0, HYPH_INVALID);
@@ -56,4 +57,20 @@ operator == (text_property_rep tpr1, text_property_rep tpr2) {
 bool
 operator != (text_property_rep tpr1, text_property_rep tpr2) {
   return !(tpr1 == tpr2);
+}
+
+/******************************************************************************
+* Default group of a string
+******************************************************************************/
+
+string
+language_rep::get_group (string s) {
+  (void) s;
+  return "default";
+}
+
+array<string>
+language_rep::get_members (string s) {
+  (void) s;
+  return array<string> ();
 }

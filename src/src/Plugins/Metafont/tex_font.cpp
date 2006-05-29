@@ -12,12 +12,16 @@
 
 #include "font.hpp"
 #include "Metafont/load_tex.hpp"
+#include "translator.hpp"
+#include "iterator.hpp"
 
 #define TEX_ANY   0
 #define TEX_EC    1
 #define TEX_LA    2
 #define TEX_CM    3
 #define TEX_ADOBE 4
+
+static void special_initialize ();
 
 /******************************************************************************
 * TeX text fonts
@@ -106,11 +110,30 @@ tex_font_rep::tex_font_rep (display dis, string name, int status2,
       yfrac += (size * wfn) / 700;
     }
   }
+
+  special_initialize ();
 }
 
 /******************************************************************************
 * Handle <, > and (in the future?) other special characters
 ******************************************************************************/
+
+static bool special_initialized= false;
+static hashmap<string,string> special_translate ("");
+
+static void
+special_initialize () {
+  if (special_initialized) return;
+  special_translate ("<less>")= "<";
+  special_translate ("<gtr>")= ">";
+  translator trl= load_translator ("larm");
+  iterator<string> it= iterate (trl->dict);
+  while (it->busy ()) {
+    string s= it->next ();
+    special_translate (s)= string ((char) (unsigned char) trl->dict[s]);
+  }
+  special_initialized= true;
+}
 
 void
 tex_font_rep::special_get_extents (string s, metric& ex) {
@@ -126,9 +149,9 @@ tex_font_rep::special_get_extents (string s, metric& ex) {
   metric ey;
   int temp= status;
   status= TEX_ANY;
-  string r= s (i, j);
-  if (r == "<less>") r= "<";
-  else if (r == "<gtr>") r= ">";
+  string r = s (i, j);
+  string rr= special_translate[r];
+  if (N(rr) != 0) r= rr;
   get_extents (r, ey);
   x= ex->x2;
   ex->x1= min (ex->x1, x+ ey->x1); ex->y1= min (ex->y1, ey->y1);
@@ -168,8 +191,8 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos) {
     int temp= status;
     status= TEX_ANY;
     string r= s (i, j);
-    if (r == "<less>") r= "<";
-    else if (r == "<gtr>") r= ">";
+    string rr= special_translate[r];
+    if (N(rr) != 0) r= rr;
     get_extents (r, ey);
     status= temp;
     offset += ey->x2;
@@ -194,9 +217,9 @@ tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
   int temp= status;
   status= TEX_ANY;
   string r= s (i, j);
+  string rr= special_translate[r];
   color c= dev->get_color ();
-  if (r == "<less>") r= "<";
-  else if (r == "<gtr>") r= ">";
+  if (N(rr) != 0) r= rr;
   else dev->set_color (dev->red);
   draw (dev, r, x, y);
   dev->set_color (c);
@@ -209,16 +232,19 @@ tex_font_rep::special_draw (ps_device dev, string s, SI x, SI y) {
 
 SI
 tex_font_rep::special_get_left_correction (string s) {
-  int n=N(s);
-  if ((n>=5) && (s(0,5) == "<gtr>"))
-    return (SI) (slope * conv (tfm->d ((QN) '>')));
+  int i= 0;
+  tm_char_forwards (s, i);
+  string r= special_translate (s (0, i));
+  if (N(r)!=0) return (SI) (slope * conv (tfm->d ((QN) r[0])));
   return (SI) (slope * conv (tfm->d ((QN) '<')));
 }
 
 SI
 tex_font_rep::special_get_right_correction (string s) {
-  int n=N(s);
-  if ((n>=6) && (s(n-6,n) == "<less>")) return conv (tfm->i ((QN) '<'));
+  int n= N(s), i= n;
+  tm_char_backwards (s, i);
+  string r= special_translate (s (i, n));
+  if (N(r)!=0) return conv (tfm->i ((QN) r[0]));
   return conv (tfm->i ((QN) '>'));
 }
 
