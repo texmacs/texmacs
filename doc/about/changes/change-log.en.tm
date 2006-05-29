@@ -1,13 +1,19 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.1>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.1>
+  <section|Changes from version 1.0.6 to 1.0.6.2>
 
   <\itemize>
+    <item>Simplified and improved table editing (1.0.6.2).
+
+    <item>First version of <TeXmacs> server (1.0.6.2).
+
+    <item>Further fixes in CJK support (1.0.6.2).
+
     <item>Basic CJK support for <TeXmacs>. (1.0.6.1)
 
     <item>Mechanism for cache invalidation. (1.0.6.1)
