@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -z "$TEXMACS_SERVER_PATH" ] ; then
-  TEXMACS_SERVER_PATH="@datadir@/texmacsd"
+  TEXMACS_SERVER_PATH="@datadir@/texmacsd/progs"
 fi
 
 if [ -z "$GUILE_LOAD_PATH" ] ; then
