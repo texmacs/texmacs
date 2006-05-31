@@ -22,6 +22,7 @@ protected:
   int              hist_pos;  // position in history
 
   /* Low level buffer menu manipulation */
+  int       find_buffer (path p);
   int       find_buffer (url name);
   string    new_menu_name (url name);
   void      menu_insert_buffer (tm_buffer buf);
@@ -63,6 +64,7 @@ public:
   tm_buffer get_buf (int i);
   void new_buffer ();
   void switch_to_buffer (int nr);
+  bool switch_to_buffer (path p);
   void switch_to_buffer (url name);
   void switch_to_active_buffer (url name);
   void revert_buffer ();

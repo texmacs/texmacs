@@ -743,6 +743,40 @@ korean_tex (string& s) {
 }
 
 static bool
+chinese_tex (string& s) {
+  if (search_forwards ("\\kaishu", s) != -1)
+    s= replace (s, "\\kaishu", "");
+  if (search_forwards ("\\begin{CJK}{GBK}{kai}", s) != -1)
+    s= replace (s, "\\begin{CJK}{GBK}{kai}", "");
+  if (search_forwards ("\\begin{CJK*}{GBK}{kai}", s) != -1)
+    s= replace (s, "\\begin{CJK*}{GBK}{kai}", "");
+  if (search_forwards ("\\end{CJK}", s) != -1)
+    s= replace (s, "\\end{CJK}", "");
+  if (search_forwards ("\\end{CJK*}", s) != -1)
+    s= replace (s, "\\end{CJK*}", "");
+  if (search_forwards ("\\CJKindent", s) != -1)
+    s= replace (s, "\\CJKindent", "");
+  if (search_forwards ("\\CJKcaption{GBk}", s) != -1)
+    s= replace (s, "\\CJKcaption{GBK}", "");
+  if (search_forwards ("\\usepackage{CJK}", s) != -1) {
+    s= replace (s, "\\usepackage{CJK}", "");
+    s= convert (s, "cp936", "UTF-8");
+    return true;
+  }
+  if (search_forwards ("\\documentclass{cctart}", s) != -1) {
+    s= replace (s, "\\documentclass{cctart}", "\\documentclass{article}");
+    s= convert (s, "cp936", "UTF-8");
+    return true;
+  }
+  if (search_forwards ("\\documentclass[CJK]{cctart}", s) != -1) {
+    s= replace (s, "\\documentclass[CJK]{cctart}", "\\documentclass{article}");
+    s= convert (s, "cp936", "UTF-8");
+    return true;
+  }
+  return false;
+}
+
+static bool
 taiwanese_tex (string& s) {
   if (search_forwards ("\\usepackage{CJKvert,type1cm}", s) != -1)
     s= replace (s, "\\usepackage{CJKvert,type1cm}", "");
@@ -750,6 +784,8 @@ taiwanese_tex (string& s) {
     s= replace (s, "\\begin{CJK}{Bg5}{aming}", "");
   if (search_forwards ("\\begin{CJK}{Bg5}{kai}", s) != -1)
     s= replace (s, "\\begin{CJK}{Bg5}{kai}", "");
+  if (search_forwards ("\\end{CJK}", s) != -1)
+    s= replace (s, "\\end{CJK}", "");
   if (search_forwards ("\\CJKcaption{Bg5}", s) != -1)
     s= replace (s, "\\CJKcaption{Bg5}", "");
   if (search_forwards ("\\CJKindent", s) != -1)
@@ -774,7 +810,9 @@ parse_latex (string s) {
   if (japanese_tex (s)) lan= "japanese";
   else if (korean_tex (s)) lan= "korean";
   else if (taiwanese_tex (s)) lan= "taiwanese";
-  bool unicode= (lan == "japanese" || lan == "korean" || lan == "taiwanese");
+  else if (chinese_tex (s)) lan= "chinese";
+  bool unicode= (lan == "chinese" || lan == "japanese" ||
+		 lan == "korean" || lan == "taiwanese");
   latex_parser ltx (unicode);
   tree r= accented_to_Cork (ltx.parse (s));
   if (lan == "") return r;

@@ -62,8 +62,6 @@
       ("Create web site" (tmweb-interactive-build)))
   (-> "Project"
       (link project-manage-menu))
-  (-> "Remote"
-      (link remote-menu))
   (if (nnull? (test-menu))
       ---
       (link test-menu)))

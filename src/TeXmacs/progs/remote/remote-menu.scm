@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils remote remote-menu)
-  (:use (utils remote client)))
+(texmacs-module (remote remote-menu)
+  (:use (remote client)))
 
 (menu-bind login-menu
   ("New account" (interactive remote-new-account))

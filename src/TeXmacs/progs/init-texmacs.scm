@@ -37,8 +37,6 @@
 
 ;(display "Booting utilities\n")
 (lazy-define (utils cas cas-out) cas->stree)
-(lazy-define (utils remote client) remote-get remote-put)
-(lazy-menu (utils remote remote-menu) remote-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting main TeXmacs functionality\n")
@@ -114,7 +112,6 @@
 	   session-menu session-icons session-help-icons help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
-(lazy-menu (dynamic chat-menu) chat-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")
@@ -138,6 +135,18 @@
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex textm) textm-finalize)
 (lazy-define (convert latex tmtex) tmtex-env-patch)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
+;(display "Booting remote facilities\n")
+(lazy-define (remote client) remote-get remote-put)
+(lazy-menu (remote remote-menu) remote-menu)
+(lazy-menu (remote chat-menu) chat-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
+;(display "Booting linking facilities\n")
+(lazy-menu (link link-menu) link-menu)
+(lazy-define (link link-serialize) tree-linked?
+	     tree->linked-tree linked-tree->tree)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")

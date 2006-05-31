@@ -68,6 +68,7 @@ public:
   friend inline bool operator != (tree t, string s);
   friend inline bool operator == (tree t, char* s);
   friend inline bool operator != (tree t, char* s);
+  friend inline bool strong_equal (tree t, tree u);
   friend inline bool is_func (tree t, tree_label l);
   friend inline bool is_func (tree t, tree_label l, int i);
 
@@ -80,6 +81,7 @@ public:
   friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
   friend class tree_position_rep;
+  friend class tree_links_rep;
 };
 
 class tree_rep: concrete_struct {
@@ -192,6 +194,8 @@ inline bool operator == (tree t, char* s) {
   return (t.rep->op == STRING) && (t->label == s); }
 inline bool operator != (tree t, char* s) {
   return (t.rep->op != STRING) || (t->label != s); }
+inline bool strong_equal (tree t, tree u) {
+  return t.rep == u. rep; }
 
 inline bool is_func (tree t, tree_label l) {
   return (t.rep->op==l) && (N(t)!=0); }

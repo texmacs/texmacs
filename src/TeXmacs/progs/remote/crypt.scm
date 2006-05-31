@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils remote crypt))
+(texmacs-module (remote crypt))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further utilities for files
@@ -111,8 +111,9 @@
 ;; Crypting with DES3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (secret-generate)
-  (eval-system* "openssl rand -base64 32"))
+(tm-define (secret-generate . len)
+  (with l (if (null? len) 32 (car len))
+    (eval-system* "openssl rand -base64 " (number->string l))))
 
 (tm-define (secret-encode what secret-key)
   (with-temp-file msg what
@@ -127,6 +128,22 @@
 (tm-define (secret-hash password)
   (with-temp-file pass password
     (eval-system* "openssl passwd -1 -salt blauwbil " password)))
+
+(tm-define (Secret-encode what secret-key)
+  (with-temp-file msg what
+    (with-temp-file key secret-key
+      (eval-system* "openssl aes-256-cbc -nosalt -in " msg
+		    " -pass file:" key))))
+
+(tm-define (Secret-decode what secret-key)
+  (with-temp-file msg what
+    (with-temp-file key secret-key
+      (eval-system* "openssl aes-256-cbc -nosalt -d -in " msg
+		    " -pass file:" key))))
+
+(tm-define (Secret-hash password)
+  (with-temp-file pass password
+    (Secret-encode "TeXmacs worgelt BlauwBilGorgels" password)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prevent third persons to pretend being one of the communicants

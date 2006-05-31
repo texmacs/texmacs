@@ -92,10 +92,6 @@
 	  ("Swedish" "swedish")
 	  ("Taiwanese" "taiwanese")
 	  ("Ukrainian" "ukrainian"))
-    (-> "Scripts"
-	("None" (set-preference "scripting language" "none"))
-	---
-	(link scripts-preferences-menu))
     (-> "Keyboard"
 	(enum ("A modifier" "A")
 	      ("Default" "default")
@@ -192,6 +188,13 @@
 	    (enum ("Encoding" "verbatim->texmacs:encoding")
 		  ("Iso-8859-1" "iso-8859-1")
 		  ("Utf-8" "utf-8"))))
+    (-> "Utilities"
+	(-> "Scripts"
+	    ("None" (set-preference "scripting language" "none"))
+	    ---
+	    (link scripts-preferences-menu))
+	(toggle ("Remote connections" "remote connections"))
+	(toggle ("Linking tool" "linking tool")))
     ---
     (enum ("Autosave" "autosave")
 	  ("5 s" "5")

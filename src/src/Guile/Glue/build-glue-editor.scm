@@ -161,7 +161,7 @@
   (get-keyboard-modifiers get_kbd_modifiers (int))
   
   ;; moving the cursor
-  (go-to go_to (void path))
+  (go-to-path go_to (void path))
   (go-left go_left (void))
   (go-right go_right (void))
   (go-up go_up (void))

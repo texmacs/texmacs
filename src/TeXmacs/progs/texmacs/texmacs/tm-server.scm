@@ -56,9 +56,11 @@
   ("detailed menus" "detailed" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
-  ("scripting language" "none" notify-scripting-language)
   ("security" "prompt on scripts" notify-security)
-  ("bibtex command" "bibtex" notify-bibtex-command))
+  ("bibtex command" "bibtex" notify-bibtex-command)
+  ("scripting language" "none" notify-scripting-language)
+  ("remote connections" "on" noop)
+  ("linking tool" "on" noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines

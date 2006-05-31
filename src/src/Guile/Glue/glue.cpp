@@ -28,6 +28,7 @@
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Bibtex/bibtex.hpp"
+#include "link.hpp"
 #include <string.h>
 #include <libguile.h>
 
@@ -470,6 +471,89 @@ cmp_observer (SCM o1, SCM o2) {
 }
 
 /******************************************************************************
+* Link labels
+******************************************************************************/
+
+#define SCM_ASSERT_LINK_LABEL(p,arg,rout) SCM_ASSERT_SYMBOL(p,arg,rout)
+
+SCM
+link_label_to_scm (link_label l) {
+  string s= as_string (l);
+  return symbol_to_scm (s);
+}
+
+link_label
+scm_to_link_label (SCM p) {
+  string s= scm_to_symbol (p);
+  return as_link_label (s);
+}
+
+/******************************************************************************
+* Links
+******************************************************************************/
+
+static long link_tag;
+
+#define scm_is_link(ln) \
+  (SCM_NIMP (ln) && (((long) SCM_CAR (ln)) == link_tag))
+#define SCM_ASSERT_LINK(ln,arg,rout) \
+  SCM_ASSERT (scm_is_link (ln), ln, arg, rout)
+
+/*static*/ SCM
+link_to_scm (link ln) {
+  //cout << "link->scheme " << ln << "\n";
+  SCM link_smob;
+  SCM_NEWCELL (link_smob);
+  SCM_SETCDR (link_smob, (SCM) ((void*) (new link (ln))));
+  SCM_SETCAR (link_smob, link_tag);
+  return link_smob;
+}
+
+static link
+scm_to_link (SCM link_smob) {
+  //cout << "scheme->link " << *((link*) SCM_CDR (link_smob)) << "\n";
+  return *((link*) SCM_CDR (link_smob));
+}
+
+static SCM
+mark_link (SCM link_smob) {
+  //cout << "mark-link\n";
+  (void) link_smob;
+  return SCM_BOOL_F;
+}
+
+static scm_sizet
+free_link (SCM link_smob) {
+  link *ptr = (link *) SCM_CDR (link_smob);
+  //cout << "free-link " << *ptr << "\n";
+  delete ptr;
+  return 0;
+}
+
+static int
+print_link (SCM link_smob, SCM port, scm_print_state *pstate) {
+  (void) link_smob; (void) pstate;
+  string s= "<link>";
+  scm_display (string_to_scm (s), port);
+  return 1;
+}
+
+static SCM
+cmp_link (SCM ln1, SCM ln2) {
+  return scm_bool2scm (scm_to_link (ln1) == scm_to_link (ln2));
+}
+
+void
+link_append (link ln, tree t) {
+  (void) (ln << t);
+}
+
+tree
+link_ref (link ln, int i) {
+  return ln [i];
+}
+
+/******************************************************************************
 * Displays
 ******************************************************************************/
 
@@ -869,6 +953,33 @@ scm_to_array_widget (SCM p) {
 }
 
 /******************************************************************************
+* List types
+******************************************************************************/
+
+typedef list<link> list_link;
+
+static bool
+scm_is_list_link (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return SCM_INUMP (SCM_CAR (p)) && scm_is_list_link (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_LIST_LINK(p,arg,rout) \
+  SCM_ASSERT (scm_is_list_link (p), p, arg, rout)
+
+/* static */ SCM
+list_link_to_scm (list_link l) {
+  if (nil (l)) return SCM_NULL;
+  return scm_cons (link_to_scm (l->item), list_link_to_scm (l->next));
+}
+
+/* static */ list_link
+scm_to_list_link (SCM p) {
+  if (scm_is_null (p)) return list_link ();
+  return list_link (scm_to_link (SCM_CAR (p)), scm_to_list_link (SCM_CDR (p)));
+}
+
+/******************************************************************************
 * Initialization
 ******************************************************************************/
 
@@ -886,6 +997,11 @@ initialize_glue () {
   scm_set_smob_free (observer_tag, free_observer);
   scm_set_smob_print (observer_tag, print_observer);
   scm_set_smob_equalp (observer_tag, cmp_observer);
+  link_tag= scm_make_smob_type ("link", 0);
+  scm_set_smob_mark (link_tag, mark_link);
+  scm_set_smob_free (link_tag, free_link);
+  scm_set_smob_print (link_tag, print_link);
+  scm_set_smob_equalp (link_tag, cmp_link);
   display_tag= scm_make_smob_type ("display", 0);
   scm_set_smob_mark (display_tag, mark_display);
   scm_set_smob_free (display_tag, free_display);
@@ -928,6 +1044,10 @@ scm_smobfuns observer_smob_funcs = {
   mark_observer, free_observer, print_observer, cmp_observer
 };
 
+scm_smobfuns link_smob_funcs = {
+  mark_link, free_link, print_link, cmp_link
+};
+
 scm_smobfuns display_smob_funcs = {
   mark_display, free_display, print_display, cmp_display
 };
@@ -952,6 +1072,7 @@ void
 initialize_glue () {
   tree_tag= scm_newsmob (&tree_smob_funcs);
   observer_tag= scm_newsmob (&observer_smob_funcs);
+  link_tag= scm_newsmob (&link_smob_funcs);
   display_tag= scm_newsmob (&display_smob_funcs);
   widget_tag= scm_newsmob (&widget_smob_funcs);
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);

@@ -315,3 +315,44 @@ observer_rep::get_child (int which) {
   (void) which;
   return nil_observer;
 }
+
+observer
+observer_rep::get_link_observer () {
+  return nil_observer;
+}
+
+bool
+observer_rep::get_tree (tree& t) {
+  (void) t;
+  return false;
+}
+
+bool
+observer_rep::get_links (list<weak_link>& lns) {
+  (void) lns;
+  return false;
+}
+
+bool
+observer_rep::insert_link (weak_link ln) {
+  (void) ln;
+  return false;
+}
+
+bool
+observer_rep::remove_link (weak_link ln) {
+  (void) ln;
+  return false;
+}
+
+bool
+observer_rep::get_unique_id (string& s) {
+  (void) s;
+  return false;
+}
+
+bool
+observer_rep::set_unique_id (string s) {
+  (void) s;
+  return false;
+}

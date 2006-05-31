@@ -71,6 +71,7 @@ public:
   virtual void set_abbr_buffer (string abbr) = 0;
   virtual void new_buffer () = 0;
   virtual void switch_to_buffer (url name) = 0;
+  virtual bool switch_to_buffer (path p) = 0;
   virtual void switch_to_active_buffer (url name) = 0;
   virtual void revert_buffer () = 0;
   virtual void kill_buffer () = 0;
