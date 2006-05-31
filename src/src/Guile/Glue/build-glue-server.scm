@@ -53,6 +53,7 @@
   (exists-unsaved-buffer? exists_unsaved_buffer (bool))
   (pretend-save-buffer pretend_save_buffer (void))
   (get-name-buffer get_name_buffer (url))
+  (get-name-buffer-path get_name_buffer (url path))
   (set-name-buffer set_name_buffer (void url))
   (set-abbr-buffer set_abbr_buffer (void string))
   (new-buffer new_buffer (void))

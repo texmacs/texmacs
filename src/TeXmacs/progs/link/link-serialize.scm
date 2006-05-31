@@ -65,6 +65,12 @@
 (tm-define (tree-get-unique-ids t)
   (link-list-get-unique-ids (complete-link-list t)))
 
+(tm-define (unique-id->url id)
+  (let* ((t (unique-id->tree id))
+	 (p (tree->path t))
+	 (u (get-name-buffer-path p)))
+    u))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Make links in tree explicit
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,6 +99,21 @@
 	 (encl (map (cut ahash-ref h <>) ids)))
     (cons type encl)))
 
+(define (unique-ids-external l name)
+  (if (null? l) l
+      (let* ((u (unique-id->url (car l)))
+	     (r (unique-ids-external (cdr l) name)))
+	(if (== u name) r (cons (car l) r)))))
+
+(define (external-encode id name h)
+  (let* ((u (unique-id->url id))
+	 (rel (url-delta name u))
+	 (enc (ahash-ref h id)))
+    (list 'associate enc
+	  (if (url-none? rel)
+	      (unique-id->tree id)
+	      `(url ,(url->string rel))))))
+
 (tm-define (tree-linked? t)
   (nnull? (complete-link-list t)))
 
@@ -105,10 +126,14 @@
 	 (enc1 (tree-encode t h))
 	 (enc2 (unique-ids-encode ids 0))
 	 (lns (list-remove-duplicates (map cdr l)))
-	 (enc3 (map (cut link-encode <> h) lns)))
+	 (enc3 (map (cut link-encode <> h) lns))
+	 (name (get-name-buffer-path (tree->path t)))
+	 (ext-ids (unique-ids-external ids name))
+	 (enc4 (map (cut external-encode <> name h) ext-ids)))
     (tm->tree `(hyperlinked ,enc1
 			    (collection ,@enc2)
-			    (collection ,@enc3)))))
+			    (collection ,@enc3)
+			    (collection ,@enc4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construct links from serialized representation
@@ -138,12 +163,24 @@
 	 (ts (map unique-id->tree ids)))
     (link-register (link-construct type ts))))
 
+(define (external-decode asso h)
+  (display* "asso= " asso "\n")
+  (let* ((id (ahash-ref h (cadr asso)))
+	 (t (stree->tree (caddr asso))))
+    (display* "id= " id "\n")
+    (display* "t= " t "\n")
+    (if (not (unique-id-exists? id))
+	(tree-set-unique-id t id))
+    t))
+
 (tm-define (linked-tree->tree t)
   (let* ((enc1 (tree-ref t 0))
 	 (enc2 (tree->stree (tree-ref t 1)))
 	 (enc3 (tree->stree (tree-ref t 2)))
+	 (enc4 (tree->stree (tree-ref t 3)))
 	 (h (make-ahash-table))
 	 (d1 (unique-ids-decode-table h (cdr enc2)))
-	 (u (tree-decode enc1 h)))
+	 (u (tree-decode enc1 h))
+	 (v (map (cut external-decode <> h) (cdr enc4))))
     (for-each (cut link-item-decode <> h) (reverse (cdr enc3)))
     u))

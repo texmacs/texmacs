@@ -121,10 +121,33 @@ tree_links_rep::get_unique_id (string& s) {
   return true;
 }
 
+static void
+substitute (list<weak_link> lns, observer obs1, observer obs2) {
+  while (!nil (lns)) {
+    int i, n= N(lns->item->obs);
+    for (i=0; i<n; i++)
+      if (lns->item->obs[i] == obs1)
+	lns->item->obs[i] == obs2;
+    lns= lns->next;
+  }
+}
+
 bool
 tree_links_rep::set_unique_id (string s) {
   if (id != "") unique_id_decode->reset (id);
-  if (s  != "") unique_id_decode (s)= (pointer) this;
+  if (s != "") {
+    tree_links_rep* old= (tree_links_rep*) unique_id_decode [s];
+    if (old != NULL) {
+      cout << "Merge " << old << " -> " << this << "\n";
+      cout << "  " << tree (old->ptr) << " -> " << tree (ptr) << "\n";
+      substitute (old->lns, observer (old), observer (this));
+      lns= old->lns * lns;
+      old->lns= list<weak_link> ();
+      unique_id_decode (s)= (pointer) this;
+      remove_observer (old->ptr->obs, observer (old));
+    }
+    else unique_id_decode (s)= (pointer) this;
+  }
   id= s;
   return true;
 }
@@ -277,6 +300,11 @@ void
 set_unique_id (tree& ref, string s) {
   observer tl= get_link_observer (ref);
   (void) tl->set_unique_id (s);
+}
+
+bool
+unique_id_exists (string id) {
+  return unique_id_decode -> contains (id);
 }
 
 tree

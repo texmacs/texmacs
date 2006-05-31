@@ -399,6 +399,19 @@ tmg_get_name_buffer () {
 }
 
 SCM
+tmg_get_name_buffer_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "get-name-buffer-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  url out= get_server()->get_name_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return url_to_scm (out);
+}
+
+SCM
 tmg_set_name_buffer (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "set-name-buffer");
 
@@ -1014,6 +1027,7 @@ initialize_glue_server () {
   gh_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);
   gh_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
   gh_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
+  gh_new_procedure ("get-name-buffer-path", (FN) tmg_get_name_buffer_path, 1, 0, 0);
   gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
   gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
   gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
