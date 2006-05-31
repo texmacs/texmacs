@@ -14,6 +14,10 @@
 
 (texmacs-module (kernel boot abbrevs))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Common notations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-public == equal?)
 (define-public (!= x y) (not (equal? x y)))
 
@@ -57,6 +61,10 @@
 (define-public (load-object file)
   (read (open-file (url-materialize file "r") OPEN_READ)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Common programming constructs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-public call/cc call-with-current-continuation)
 (define-public-macro (with-cc cont . body)
   `(call/cc (lambda (,cont) ,@body)))
@@ -98,3 +106,15 @@
 (define-public-macro (repeat n . body)
   (let ((x (gensym)))
     `(for (,x 0 ,n) ,@body)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Small rewritings on top of C++ interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (go-to p)
+  (let* ((r (buffer-path))
+	 (lp (length p))
+	 (lr (length r)))
+    (and (or (and (<= lr lp) (== (sublist p 0 lr) r))
+	     (switch-to-buffer-path p))
+	 (go-to-path p))))

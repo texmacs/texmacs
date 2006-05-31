@@ -434,6 +434,19 @@ tmg_new_buffer () {
 }
 
 SCM
+tmg_switch_to_buffer_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "switch-to-buffer-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= get_server()->switch_to_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_switch_to_buffer (SCM arg1) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "switch-to-buffer");
 
@@ -1004,6 +1017,7 @@ initialize_glue_server () {
   gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
   gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
   gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
+  gh_new_procedure ("switch-to-buffer-path", (FN) tmg_switch_to_buffer_path, 1, 0, 0);
   gh_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
   gh_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);
   gh_new_procedure ("revert-buffer", (FN) tmg_revert_buffer, 0, 0, 0);

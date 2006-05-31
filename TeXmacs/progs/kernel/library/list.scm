@@ -349,6 +349,17 @@
 ;; Set operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (list-remove-duplicates-sub t l)
+  (cond ((null? l) l)
+	((ahash-ref t (car l)) (list-remove-duplicates-sub t (cdr l)))
+	(else
+	 (ahash-set! t (car l) #t)
+	 (cons (car l) (list-remove-duplicates-sub t (cdr l))))))
+
+(define-public (list-remove-duplicates l)
+  (with t (make-ahash-table)
+    (list-remove-duplicates-sub t l)))
+
 (define-public (ahash-set->list s)
   (map car (ahash-table->list s)))
 

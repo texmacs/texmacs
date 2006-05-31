@@ -33,6 +33,7 @@
 (define tmtex-replace-style? #t)
 (define tmtex-indirect-bib? #f)
 (define tmtex-oriental? #f)
+(define tmtex-chinese? #f)
 (define tmtex-japanese? #f)
 (define tmtex-korean? #f)
 (define tmtex-taiwanese? #f)
@@ -228,10 +229,11 @@
 		(let* ((qs (string-append "<" s ">"))
 		       (cv (string-convert qs "Cork" "UTF-8")))
 		  (list '!widechar (string->symbol cv))))
-	       (tmtex-taiwanese?
+	       ((or tmtex-chinese? tmtex-taiwanese?)
 		(let* ((qs (string-append "<" s ">"))
-		       (cv (string-convert qs "Cork" "cp950"))
-		       (ex (list->string (list #\33 #\50 #\102))))
+		       ;;(cv (string-convert qs "Cork" "cp936")) ; Chinese?
+		       ;;(cv (string-convert qs "Cork" "cp950")) ; Taiwanese ?
+		       (cv (string-convert qs "Cork" "UTF-8")))
 		  (set! cv (string-append cv ex))
 		  (list '!widechar (string->symbol cv))))))
 	(else (let ((ss (list (string->symbol s))))
@@ -1526,12 +1528,14 @@
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-language lan)
 	(latex-set-style main-style)
+	(set! tmtex-chinese? (== lan "chinese"))
 	(set! tmtex-japanese? (== lan "japanese"))
 	(set! tmtex-korean? (== lan "korean"))
 	(set! tmtex-taiwanese? (== lan "taiwanese"))
-	(set! tmtex-oriental?
-	      (or tmtex-japanese? tmtex-korean? tmtex-taiwanese?))
+	(set! tmtex-oriental? (or tmtex-chinese? tmtex-japanese?
+				  tmtex-korean? tmtex-taiwanese?))
 	(with result (texmacs->latex doc opts)
+	  (set! tmtex-chinese? #f)
 	  (set! tmtex-japanese? #f)
 	  (set! tmtex-korean? #f)
 	  (set! tmtex-taiwanese? #f)

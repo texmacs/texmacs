@@ -56,6 +56,7 @@
   (set-name-buffer set_name_buffer (void url))
   (set-abbr-buffer set_abbr_buffer (void string))
   (new-buffer new_buffer (void))
+  (switch-to-buffer-path switch_to_buffer (bool path))
   (switch-to-buffer switch_to_buffer (void url))
   (switch-to-active-buffer switch_to_active_buffer (void url))
   (revert-buffer revert_buffer (void))

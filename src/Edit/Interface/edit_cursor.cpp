@@ -327,14 +327,16 @@ edit_cursor_rep::go_to_here () {
 
 void
 edit_cursor_rep::go_to (path p) {
-  tp= p;
-  mv_status= DIRECT;
-  if (!has_changed (THE_TREE+THE_ENVIRONMENT)) {
-    cu= eb->find_check_cursor (tp);
-    if (cu->valid) adjust_cursor ();
-    mv= copy (cu);
+  if (rp <= p) {
+    tp= p;
+    mv_status= DIRECT;
+    if (!has_changed (THE_TREE+THE_ENVIRONMENT)) {
+      cu= eb->find_check_cursor (tp);
+      if (cu->valid) adjust_cursor ();
+      mv= copy (cu);
+    }
+    notify_change (THE_CURSOR);
   }
-  notify_change (THE_CURSOR);
 }
 
 void

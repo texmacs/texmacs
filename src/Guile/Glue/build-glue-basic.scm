@@ -55,10 +55,12 @@
   (tree-child tree_ref (tree tree int))
   (tree-set-child! tree_set (void tree int tree))
   (tree-ip obtain_ip (path tree))
+  (tree-eq? strong_equal (bool tree tree))
   (subtree subtree (tree tree path))
   (tree-range tree_range (tree tree int int))
   (tree-copy copy (tree tree))
   (tree-append tree_append (tree tree tree))
+  (tree-right-index right_index (int tree))
   (tree-label-extension? is_extension (bool tree_label))
   (tree-multi-paragraph? is_multi_paragraph (bool tree))
   (tree-simplify simplify_correct (tree tree))
@@ -81,6 +83,18 @@
   (path-previous-tag previous_tag (path content path scheme_tree))
   (path-next-argument next_argument (path content path))
   (path-previous-argument previous_argument (path content path))
+
+  ;; links
+  (link-construct link (link link_label array_tree))
+  (link-append! link_append (void link tree))
+  (link-arity N (int link))
+  (link-type L (link_label link))
+  (link-components A (array_tree link))
+  (link-ref link_ref (tree link int))
+  (tree->links get_links (list_link tree))
+  (tree-set-unique-id set_unique_id (void tree string))
+  (tree-get-unique-id get_unique_id (string tree))
+  (unique-id->tree unique_id_to_tree (tree string))
 
   ;; routines for strings
   (string-number? is_double (bool string))

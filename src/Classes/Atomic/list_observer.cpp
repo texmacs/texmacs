@@ -50,6 +50,13 @@ public:
   bool get_position (tree& t, int& index);
   bool set_position (tree t, int index);
   observer& get_child (int which);
+  observer get_link_observer ();
+  bool get_tree (tree& t);
+  bool get_links (list<weak_link>& lns);
+  bool insert_link (weak_link ln);
+  bool remove_link (weak_link ln);
+  bool get_unique_id (string& s);
+  bool set_unique_id (string s);
 };
 
 /******************************************************************************
@@ -154,6 +161,57 @@ observer&
 list_observer_rep::get_child (int which) {
   if (which == 0) return o1;
   else return o2;
+}
+
+observer
+list_observer_rep::get_link_observer () {
+  if (!nil (o1)) {
+    observer r1= o1->get_link_observer ();
+    if (!nil (r1)) return r1;
+  }
+  if (!nil (o2)) {
+    observer r2= o2->get_link_observer ();
+    if (!nil (r2)) return r2;
+  }
+  return nil_observer;
+}
+
+bool
+list_observer_rep::get_tree (tree& t) {
+  // NOTE: we might also merge the lists
+  return (!nil (o1) && o1->get_tree (t)) |
+         (!nil (o2) && o2->get_tree (t));
+}
+
+bool
+list_observer_rep::get_links (list<weak_link>& lns) {
+  // NOTE: we might also merge the lists
+  return (!nil (o1) && o1->get_links (lns)) |
+         (!nil (o2) && o2->get_links (lns));
+}
+
+bool
+list_observer_rep::insert_link (weak_link ln) {
+  return (!nil (o1) && o1->insert_link (ln)) |
+         (!nil (o2) && o2->insert_link (ln));
+}
+
+bool
+list_observer_rep::remove_link (weak_link ln) {
+  return (!nil (o1) && o1->remove_link (ln)) |
+         (!nil (o2) && o2->remove_link (ln));
+}
+
+bool
+list_observer_rep::get_unique_id (string& s) {
+  return (!nil (o1) && o1->get_unique_id (s)) |
+         (!nil (o2) && o2->get_unique_id (s));
+}
+
+bool
+list_observer_rep::set_unique_id (string s) {
+  return (!nil (o1) && o1->set_unique_id (s)) |
+         (!nil (o2) && o2->set_unique_id (s));
 }
 
 /******************************************************************************

@@ -12,8 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (dynamic chat-menu)
-  (:use (dynamic chat-edit)))
+(texmacs-module (remote chat-menu)
+  (:use (remote chat-edit)))
 
 (define (chat-administrated-menu-entry name)
   (list name (lambda () (chat-connect name))))

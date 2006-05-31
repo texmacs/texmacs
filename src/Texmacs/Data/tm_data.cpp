@@ -30,6 +30,15 @@ tm_data_rep::~tm_data_rep () {}
 ******************************************************************************/
 
 int
+tm_data_rep::find_buffer (path p) {
+  int i;
+  for (i=0; i<N(bufs); i++)
+    if (bufs[i]->rp <= p)
+      return i;
+  return -1;
+}
+
+int
 tm_data_rep::find_buffer (url name) {
   int i;
   for (i=0; i<N(bufs); i++)
@@ -390,6 +399,13 @@ tm_data_rep::switch_to_buffer (int nr) {
   // cout << "Switched to buffer " << nr << "\n";
 }
 
+bool
+tm_data_rep::switch_to_buffer (path p) {
+  int nr= find_buffer (p);
+  if (nr != -1) switch_to_buffer (nr);
+  return nr != -1;
+}
+
 void
 tm_data_rep::switch_to_buffer (url name) {
   int nr= find_buffer (name);
@@ -632,7 +648,8 @@ delete_document (path rp) {
 
 void
 set_document (path rp, tree t) {
-  assign (subtree (the_et, rp), copy (t));
+  assign (subtree (the_et, rp), t);
+  //assign (subtree (the_et, rp), copy (t));
 }
 
 /******************************************************************************

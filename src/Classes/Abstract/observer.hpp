@@ -15,8 +15,11 @@
 #include "string.hpp"
 enum  tree_label;
 class tree;
+class link_rep;
 class observer;
 template<class T> class list;
+template<class T> class array;
+typedef link_rep* weak_link;
 typedef list<int> path;
 
 /******************************************************************************
@@ -49,6 +52,13 @@ public:
   virtual bool get_position (tree& t, int& index);
   virtual bool set_position (tree t, int index);
   virtual observer& get_child (int which);
+  virtual observer get_link_observer ();
+  virtual bool get_tree (tree& t);
+  virtual bool get_links (list<weak_link>& lns);
+  virtual bool insert_link (weak_link ln);
+  virtual bool remove_link (weak_link ln);
+  virtual bool get_unique_id (string& s);
+  virtual bool set_unique_id (string s);
 };
 
 class observer {
@@ -91,6 +101,14 @@ void detach_ip (tree& ref);
 path obtain_position (observer o);
 void attach_position (tree& ref, observer o);
 void detach_position (tree& ref, observer o);
+
+observer get_link_observer (tree t);
+array<observer> get_link_observers (array<tree> a);
+void insert_link (array<observer> obs, weak_link ln);
+void remove_link (array<observer> obs, weak_link ln);
+void set_unique_id (tree& ref, string id);
+string get_unique_id (tree& ref);
+tree unique_id_to_tree (string id);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 

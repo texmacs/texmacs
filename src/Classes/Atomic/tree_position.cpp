@@ -84,7 +84,8 @@ void reattach_right (tree_position_rep* rep, tree t) {
 void
 tree_position_rep::notify_assign (tree& ref, tree t) {
   // cout << "Notify assign " << ref << ", " << t << "\n";
-  bool left= (is_atomic (ref) && (index <= N(ref->label))) || (index == 0);
+  bool left=
+    (is_atomic (ref) && (index <= (N(ref->label) >> 1))) || (index == 0);
   if (left) reattach_left (this, t);
   else reattach_right (this, t);
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
