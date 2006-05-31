@@ -36,6 +36,7 @@ protected:
   void      set_name_buffer (url name);
   void      set_abbr_buffer (string abbr);
   url       get_name_buffer ();
+  url       get_name_buffer (path p);
 
   /* Low level view manipulation */
   tm_view   new_view (url name);

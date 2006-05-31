@@ -206,6 +206,13 @@ tm_data_rep::get_name_buffer () {
   return buf->name;
 }
 
+url
+tm_data_rep::get_name_buffer (path p) {
+  int nr= find_buffer (p);
+  if (nr == -1) return url_none ();
+  return bufs[nr]->name;
+}
+
 /******************************************************************************
 * Low level view routines
 ******************************************************************************/

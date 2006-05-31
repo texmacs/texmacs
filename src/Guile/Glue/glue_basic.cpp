@@ -953,6 +953,19 @@ tmg_tree_get_unique_id (SCM arg1) {
 }
 
 SCM
+tmg_unique_id_existsP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "unique-id-exists?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= unique_id_exists (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_unique_id_2tree (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "unique-id->tree");
 
@@ -2806,6 +2819,7 @@ initialize_glue_basic () {
   gh_new_procedure ("tree->links", (FN) tmg_tree_2links, 1, 0, 0);
   gh_new_procedure ("tree-set-unique-id", (FN) tmg_tree_set_unique_id, 2, 0, 0);
   gh_new_procedure ("tree-get-unique-id", (FN) tmg_tree_get_unique_id, 1, 0, 0);
+  gh_new_procedure ("unique-id-exists?", (FN) tmg_unique_id_existsP, 1, 0, 0);
   gh_new_procedure ("unique-id->tree", (FN) tmg_unique_id_2tree, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);

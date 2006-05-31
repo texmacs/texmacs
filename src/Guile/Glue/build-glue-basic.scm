@@ -94,6 +94,7 @@
   (tree->links get_links (list_link tree))
   (tree-set-unique-id set_unique_id (void tree string))
   (tree-get-unique-id get_unique_id (string tree))
+  (unique-id-exists? unique_id_exists (bool string))
   (unique-id->tree unique_id_to_tree (tree string))
 
   ;; routines for strings

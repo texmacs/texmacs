@@ -108,6 +108,7 @@ void insert_link (array<observer> obs, weak_link ln);
 void remove_link (array<observer> obs, weak_link ln);
 void set_unique_id (tree& ref, string id);
 string get_unique_id (tree& ref);
+bool unique_id_exists (string id);
 tree unique_id_to_tree (string id);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
