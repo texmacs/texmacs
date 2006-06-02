@@ -655,8 +655,8 @@ delete_document (path rp) {
 
 void
 set_document (path rp, tree t) {
-  assign (subtree (the_et, rp), t);
-  //assign (subtree (the_et, rp), copy (t));
+  //assign (subtree (the_et, rp), t);
+  assign (subtree (the_et, rp), copy (t));
 }
 
 /******************************************************************************

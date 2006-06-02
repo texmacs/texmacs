@@ -188,4 +188,11 @@ reverse (list<T> l) {
   return r;
 }
 
+template<class T> list<T>
+remove (list<T> l, T what) {
+  if (nil (l)) return l;
+  else if (l->item == what) return remove (l->next, what);
+  else return list<T> (l->item, remove (l->next, what));
+}
+
 #endif // defined LIST_CC

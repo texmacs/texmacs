@@ -35,15 +35,16 @@
 class bridge;
 class bridge_rep: public abstract_struct {
 public:
-  typesetter           ttt;     // the underlying typesetter
-  edit_env&            env;     // the environment
-  tree                 st;      // the present subtree
-  path                 ip;      // source location of the paragraph
-  int                  status;  // status among above values
-  hashmap<string,tree> changes; // changes in the environment
+  typesetter           ttt;      // the underlying typesetter
+  edit_env&            env;      // the environment
+  tree                 st;       // the present subtree
+  path                 ip;       // source location of the paragraph
+  int                  status;   // status among above values
+  hashmap<string,tree> changes;  // changes in the environment
 
-  array<page_item>     l;       // the typesetted lines of st
-  stack_border         sb;      // border properties of l
+  array<page_item>     l;        // the typesetted lines of st
+  stack_border         sb;       // border properties of l
+  link_repository      link_env; // loci and links declared inside bridge
 
 public:
   bridge_rep (typesetter ttt, tree st, path ip);

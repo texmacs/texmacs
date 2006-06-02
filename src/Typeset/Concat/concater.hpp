@@ -111,6 +111,7 @@ class concater_rep {
   void typeset_specific (tree t, path ip);
   void typeset_hyperlink (tree t, path ip);
   void typeset_action (tree t, path ip);
+  void typeset_locus (tree t, path ip);
   void typeset_tag (tree t, path ip);
   void typeset_meaning (tree t, path ip);
   void typeset_flag (tree t, path ip);

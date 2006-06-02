@@ -562,6 +562,13 @@ concater_rep::typeset (tree t, path ip) {
   case ACTION:
     typeset_action (t, ip);
     break;
+  case LOCUS:
+    typeset_locus (t, ip);
+    break;
+  case ID:
+  case LINK:
+    typeset_inactive (t, ip);
+    break;
   case TAG:
     typeset_tag (t, ip);
     break;

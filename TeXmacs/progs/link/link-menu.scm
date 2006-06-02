@@ -16,10 +16,11 @@
   (:use (link link-edit)))
 
 (menu-bind link-menu
-  (when (selection-active-any?)
-    ("Set source" (link-add-participant 0))
-    ("Set destination" (link-add-participant 1)))
+  ("New locus" (make-locus))
+  (when (inside? 'locus)
+    ("Set source" (link-insert-locus 0))
+    ("Set destination" (link-insert-locus 1)))
   (when (link-under-construction?)
-    ("Create link" (interactive link-create)))
+    ("Create link" (interactive make-link)))
   (when (link-may-follow?)
     ("Follow link" (link-follow))))

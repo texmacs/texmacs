@@ -231,6 +231,23 @@ concater_rep::typeset_action (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_locus (tree t, path ip) {
+  cout << "Typeset " << t << "\n";
+  int i, last= N(t)-1;
+  if (!nil (env->link_env))
+    for (i=0; i<last; i++) {
+      tree arg= env->exec (t[i]);
+      if (is_compound (arg, "id", 1))
+	env->link_env->insert_locus (as_string (arg[0]), t);
+      if (is_compound (arg, "link"))
+	env->link_env->insert_link (arg);
+    }
+  marker (descend (ip, 0));
+  typeset (t[last], descend (ip, last));
+  marker (descend (ip, 1));  
+}
+
+void
 concater_rep::typeset_tag (tree t, path ip) {
   marker (descend (ip, 0));
   typeset (t[0], descend (ip, 0));

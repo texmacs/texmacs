@@ -85,17 +85,9 @@
   (path-previous-argument previous_argument (path content path))
 
   ;; links
-  (link-construct link (link link_label array_tree))
-  (link-append! link_append (void link tree))
-  (link-arity N (int link))
-  (link-type L (link_label link))
-  (link-components A (array_tree link))
-  (link-ref link_ref (tree link int))
-  (tree->links get_links (list_link tree))
-  (tree-set-unique-id set_unique_id (void tree string))
-  (tree-get-unique-id get_unique_id (string tree))
-  (unique-id-exists? unique_id_exists (bool string))
-  (unique-id->tree unique_id_to_tree (tree string))
+  (tree->ids get_ids (list_string tree))
+  (id->trees get_trees (list_tree string))
+  (id->links get_links (list_tree string))
 
   ;; routines for strings
   (string-number? is_double (bool string))

@@ -828,154 +828,42 @@ tmg_path_previous_argument (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_link_construct (SCM arg1, SCM arg2) {
-  SCM_ASSERT_LINK_LABEL (arg1, SCM_ARG1, "link-construct");
-  SCM_ASSERT_ARRAY_TREE (arg2, SCM_ARG2, "link-construct");
-
-  link_label in1= scm_to_link_label (arg1);
-  array_tree in2= scm_to_array_tree (arg2);
-
-  // SCM_DEFER_INTS;
-  link out= link (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return link_to_scm (out);
-}
-
-SCM
-tmg_link_appendS (SCM arg1, SCM arg2) {
-  SCM_ASSERT_LINK (arg1, SCM_ARG1, "link-append!");
-  SCM_ASSERT_TREE (arg2, SCM_ARG2, "link-append!");
-
-  link in1= scm_to_link (arg1);
-  tree in2= scm_to_tree (arg2);
-
-  // SCM_DEFER_INTS;
-  link_append (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_link_arity (SCM arg1) {
-  SCM_ASSERT_LINK (arg1, SCM_ARG1, "link-arity");
-
-  link in1= scm_to_link (arg1);
-
-  // SCM_DEFER_INTS;
-  int out= N (in1);
-  // SCM_ALLOW_INTS;
-
-  return int_to_scm (out);
-}
-
-SCM
-tmg_link_type (SCM arg1) {
-  SCM_ASSERT_LINK (arg1, SCM_ARG1, "link-type");
-
-  link in1= scm_to_link (arg1);
-
-  // SCM_DEFER_INTS;
-  link_label out= L (in1);
-  // SCM_ALLOW_INTS;
-
-  return link_label_to_scm (out);
-}
-
-SCM
-tmg_link_components (SCM arg1) {
-  SCM_ASSERT_LINK (arg1, SCM_ARG1, "link-components");
-
-  link in1= scm_to_link (arg1);
-
-  // SCM_DEFER_INTS;
-  array_tree out= A (in1);
-  // SCM_ALLOW_INTS;
-
-  return array_tree_to_scm (out);
-}
-
-SCM
-tmg_link_ref (SCM arg1, SCM arg2) {
-  SCM_ASSERT_LINK (arg1, SCM_ARG1, "link-ref");
-  SCM_ASSERT_INT (arg2, SCM_ARG2, "link-ref");
-
-  link in1= scm_to_link (arg1);
-  int in2= scm_to_int (arg2);
-
-  // SCM_DEFER_INTS;
-  tree out= link_ref (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return tree_to_scm (out);
-}
-
-SCM
-tmg_tree_2links (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->links");
+tmg_tree_2ids (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->ids");
 
   tree in1= scm_to_tree (arg1);
 
   // SCM_DEFER_INTS;
-  list_link out= get_links (in1);
+  list_string out= get_ids (in1);
   // SCM_ALLOW_INTS;
 
-  return list_link_to_scm (out);
+  return list_string_to_scm (out);
 }
 
 SCM
-tmg_tree_set_unique_id (SCM arg1, SCM arg2) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-set-unique-id");
-  SCM_ASSERT_STRING (arg2, SCM_ARG2, "tree-set-unique-id");
-
-  tree in1= scm_to_tree (arg1);
-  string in2= scm_to_string (arg2);
-
-  // SCM_DEFER_INTS;
-  set_unique_id (in1, in2);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
-tmg_tree_get_unique_id (SCM arg1) {
-  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree-get-unique-id");
-
-  tree in1= scm_to_tree (arg1);
-
-  // SCM_DEFER_INTS;
-  string out= get_unique_id (in1);
-  // SCM_ALLOW_INTS;
-
-  return string_to_scm (out);
-}
-
-SCM
-tmg_unique_id_existsP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "unique-id-exists?");
+tmg_id_2trees (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id->trees");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  bool out= unique_id_exists (in1);
+  list_tree out= get_trees (in1);
   // SCM_ALLOW_INTS;
 
-  return bool_to_scm (out);
+  return list_tree_to_scm (out);
 }
 
 SCM
-tmg_unique_id_2tree (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "unique-id->tree");
+tmg_id_2links (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id->links");
 
   string in1= scm_to_string (arg1);
 
   // SCM_DEFER_INTS;
-  tree out= unique_id_to_tree (in1);
+  list_tree out= get_links (in1);
   // SCM_ALLOW_INTS;
 
-  return tree_to_scm (out);
+  return list_tree_to_scm (out);
 }
 
 SCM
@@ -2810,17 +2698,9 @@ initialize_glue_basic () {
   gh_new_procedure ("path-previous-tag", (FN) tmg_path_previous_tag, 3, 0, 0);
   gh_new_procedure ("path-next-argument", (FN) tmg_path_next_argument, 2, 0, 0);
   gh_new_procedure ("path-previous-argument", (FN) tmg_path_previous_argument, 2, 0, 0);
-  gh_new_procedure ("link-construct", (FN) tmg_link_construct, 2, 0, 0);
-  gh_new_procedure ("link-append!", (FN) tmg_link_appendS, 2, 0, 0);
-  gh_new_procedure ("link-arity", (FN) tmg_link_arity, 1, 0, 0);
-  gh_new_procedure ("link-type", (FN) tmg_link_type, 1, 0, 0);
-  gh_new_procedure ("link-components", (FN) tmg_link_components, 1, 0, 0);
-  gh_new_procedure ("link-ref", (FN) tmg_link_ref, 2, 0, 0);
-  gh_new_procedure ("tree->links", (FN) tmg_tree_2links, 1, 0, 0);
-  gh_new_procedure ("tree-set-unique-id", (FN) tmg_tree_set_unique_id, 2, 0, 0);
-  gh_new_procedure ("tree-get-unique-id", (FN) tmg_tree_get_unique_id, 1, 0, 0);
-  gh_new_procedure ("unique-id-exists?", (FN) tmg_unique_id_existsP, 1, 0, 0);
-  gh_new_procedure ("unique-id->tree", (FN) tmg_unique_id_2tree, 1, 0, 0);
+  gh_new_procedure ("tree->ids", (FN) tmg_tree_2ids, 1, 0, 0);
+  gh_new_procedure ("id->trees", (FN) tmg_id_2trees, 1, 0, 0);
+  gh_new_procedure ("id->links", (FN) tmg_id_2links, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

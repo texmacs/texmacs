@@ -21,6 +21,7 @@
 #include "boxes.hpp"
 #include "url.hpp"
 #include "Graphics/frame.hpp"
+#include "link.hpp"
 
 #define DECORATION (-1)
 
@@ -135,6 +136,7 @@ public:
   hashmap<string,tree>&        global_aux;
   bool                         complete;    // typeset complete document ?
   bool                         read_only;   // write-protected ?
+  link_repository              link_env;
 
   int          dpi;
   double       inch;

@@ -145,8 +145,6 @@
 
 ;(display "Booting linking facilities\n")
 (lazy-menu (link link-menu) link-menu)
-(lazy-define (link link-serialize) tree-linked?
-	     tree->linked-tree linked-tree->tree)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")
