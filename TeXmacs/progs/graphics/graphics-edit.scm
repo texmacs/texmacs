@@ -15,6 +15,7 @@
 
 (texmacs-module (graphics graphics-edit)
   (:use (utils library cursor) (utils library tree)))
+;; TODO : Remove all the (stree-at), (tree->stree), etc.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling
@@ -78,6 +79,10 @@
   ("right" (graphics-move-origin "-0.1gw" "0gh"))
   ("down" (graphics-move-origin "0gw" "+0.1gh"))
   ("up" (graphics-move-origin "0gw" "-0.1gh"))
+  ("home" (graphics-zmove 'foreground))
+  ("end" (graphics-zmove 'background))
+  ("pageup" (graphics-zmove 'closer))
+  ("pagedown" (graphics-zmove 'farther))
   ("C-left" (graphics-change-extents "-0.5cm" "0cm"))
   ("C-right" (graphics-change-extents "+0.5cm" "0cm"))
   ("C-down" (graphics-change-extents "0cm" "+0.5cm"))
@@ -90,8 +95,8 @@
 		 (text-at-change-valign current-path-under-mouse #f)
 		 (graphics-change-geo-valign #f)))
   ("M-up"    (if (current-is-textat?)
-                 (text-at-change-valign current-path-under-mouse #t)
-                 (graphics-change-geo-valign #t)))
+		 (text-at-change-valign current-path-under-mouse #t)
+		 (graphics-change-geo-valign #t)))
   ("backspace" (graphics-kbd-remove #f))
   ("delete" (graphics-kbd-remove #t))
   ("C-g" (graphics-toggle-grid #f))
@@ -173,20 +178,20 @@
 (define (seek-eq? obj l)
   (define (seek l)
      (if (pair? l)
-         (if (or (and (tree? (car l)) (tree obj)
+	 (if (or (and (tree? (car l)) (tree obj)
 		      (equal? (tree-ip (car l)) (tree-ip obj))
 		 )
 		 (eq? (car l) obj)
-             )
+	     )
 	   ;;FIXME: Should be only (eq? (car l) obj) ; unfortunately,
 	   ;;  (eq?) doesn't work properly on TeXmacs trees, so we
 	   ;;  use this convoluted test instead.
-             #t 
-             (begin
-                (set! seek-eq?-prec l)
-                (seek (cdr l)))
-         )
-         #f)
+	     #t 
+	     (begin
+		(set! seek-eq?-prec l)
+		(seek (cdr l)))
+	 )
+	 #f)
   )
   (set! seek-eq?-prec #f)
   (seek l))
@@ -194,8 +199,8 @@
 (define-macro (seek-eq?-remove obj l)
  `(if (seek-eq? ,obj ,l)
       (if seek-eq?-prec
-          (set-cdr! seek-eq?-prec (cddr seek-eq?-prec))
-          (set! ,l (cdr ,l)))))
+	  (set-cdr! seek-eq?-prec (cddr seek-eq?-prec))
+	  (set! ,l (cdr ,l)))))
 
 (define (list-filter-multiple-elements l)
   (define already '())
@@ -207,19 +212,19 @@
 
 (define-macro (foreach i . b)
   `(for-each (lambda
-                (,(car i))
-                ,(cons 'begin b))
-            ,(cadr i)))
+		(,(car i))
+		,(cons 'begin b))
+	    ,(cadr i)))
 
 (define-macro (foreach-number i . b)
   `(do ((,(car i) ,(cadr i)
-        (,(if (memq (caddr i) '(> >=)) '- '+) ,(car i) 1)))
+	(,(if (memq (caddr i) '(> >=)) '- '+) ,(car i) 1)))
        ((,(if (eq? (caddr i) '>)
-             '<=
-              (if (eq? (caddr i) '<)
-                 '>=
-                  (if (eq? (caddr i) '>=) '< '>)))
-         ,(car i) ,(cadddr i))
+	     '<=
+	      (if (eq? (caddr i) '<)
+		 '>=
+		  (if (eq? (caddr i) '>=) '< '>)))
+	 ,(car i) ,(cadddr i))
        ,(car i))
       ,(cons 'begin b)))
 
@@ -267,7 +272,7 @@
 
 (tm-define (graphics-get-property var)
   (with val (get-env-tree var)
-            ;; FIXME: (get-env-tree) is synchro-unsafe (see below).
+	    ;; FIXME: (get-env-tree) is synchro-unsafe (see below).
      (tree->stree
 	(if (graphics-frozen-property? var)
 	    (tree-ref val 0)
@@ -284,7 +289,7 @@
   (with geo (tree->stree (get-env-tree "gr-geometry"))
     (if (match? geo '(tuple "geometry" :2))
 	(append geo '("center"))
-        (if (match? geo '(tuple "geometry" :3))
+	(if (match? geo '(tuple "geometry" :3))
 	    geo
 	    '(tuple "geometry" "1par" "0.6par" "center")))))
 
@@ -369,7 +374,7 @@
   (define l (reverse (string->list len)))
   (define (traverse l)
      (if (pair? l)
-         (if (char-alphabetic? (car l))
+	 (if (char-alphabetic? (car l))
 	     (traverse (cdr l))
 	     (set-cdr! l '())))
   )
@@ -746,7 +751,7 @@
 		   (set-car! (cdr (list-ref aspect 3))
 			     (cadr (list-ref
 				     (get-default-val "gr-grid-aspect")
-			    	     3)))
+					 3)))
 	       )
 	       (graphics-set-property "gr-grid-aspect" aspect)
 	       (graphics-set-property "gr-grid-aspect-props" aspect))
@@ -1002,7 +1007,7 @@
 	 (graphics-change-property
 	   "gr-line-arrows"
 	   (vector-ref default-line-arrows arrows)))
-        ((pair? arrows)
+	((pair? arrows)
 	 (graphics-change-property "gr-line-arrows" arrows))))
 
 (define (text-at-halign-has-value? val)
@@ -1109,7 +1114,16 @@
   (let* ((p (graphics-group-path))
 	 (p2 #f)
     )
-    (if p (with n (- (length (stree-at p)) 1)
+    (if (null? layer-of-last-removed-object)
+	(set! layer-of-last-removed-object #f))
+    (if p (with n (if layer-of-last-removed-object
+		      (if (pair? layer-of-last-removed-object)
+			  (with val (car layer-of-last-removed-object)
+			     (set! layer-of-last-removed-object
+				   (cdr layer-of-last-removed-object))
+                             val)
+			  layer-of-last-removed-object)
+                      (tree-arity (path->tree p)))
 	    (path-insert (rcons p n) (list 'tuple t))
 	    (if (func? t 'with)
 		(if (and go-into (func? (cAr t) 'text-at))
@@ -1120,7 +1134,7 @@
 		    (set! p2 (append p (list n 0))))
 	    )
 	    (go-to p2)
-            (graphics-path p2)
+	    (graphics-path p2)
 	  )
 	  #f)))
 
@@ -1247,7 +1261,7 @@
 
 (define (graphics-active-insert t)
   (with p (graphics-active-path)
-    (if p (with n (- (length (stree-at p)) 1)
+    (if p (with n (tree-arity (path->tree p))
 	    (path-insert (rcons p n) (list 'tuple t))
 	    (go-to (rcons p 1))))))
 
@@ -1259,8 +1273,15 @@
 	       )))
 	path))
     
-(define (graphics-remove p)
-  (path-remove (graphics-object-root-path p) 1))
+(define (graphics-remove p . parms)
+  (with p0 (graphics-object-root-path p)
+     (set! layer-of-last-removed-object
+	   (if (and (pair? parms) (eq? (car parms) 'memoize-layer))
+	       (if (list? layer-of-last-removed-object)
+		   (cons (cAr p0) layer-of-last-removed-object)
+		   (cAr p0))
+	       #f))
+     (path-remove p0 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for calculating with the graphical object
@@ -1345,7 +1366,7 @@
 	  (set! graphical-lstyle (find-prop-bis o "dash-style" "default"))
 	  (set! graphical-lstyle-unit
 		(find-prop-bis o "dash-style-unit" "default"))
-          (set! graphical-larrows (find-prop-bis o "line-arrows" "default"))
+	  (set! graphical-larrows (find-prop-bis o "line-arrows" "default"))
 	  (set! graphical-fcolor (find-prop-bis o "fill-color" "default"))
 	  (set! graphical-textat-halign
 		(find-prop-bis o "text-at-halign" "default"))
@@ -1400,7 +1421,9 @@
 	 (b0 (i2s (min (s2i (cadr info0)) (s2i (cadddr info0)))))
 	 (r (i2s (max (s2i (car  info1)) (s2i (caddr  info1)))))
 	 (t (i2s (max (s2i (cadr info1)) (s2i (cadddr info1)))))
-         (b (get-textat-vbase b0))
+	 (b (get-textat-vbase b0))
+	 (p00 (frame-inverse `(tuple ,l ,b0)))
+	 (p10 (frame-inverse `(tuple ,r ,b0)))
 	 (p0 (frame-inverse `(tuple ,l ,b)))
 	 (p1 (frame-inverse `(tuple ,r ,b)))
 	 (p2 (frame-inverse `(tuple ,r ,t)))
@@ -1410,12 +1433,11 @@
 	(set-car! p1 'point)
 	(set-car! p2 'point)
 	(set-car! p3 'point)
-	(with res `((line ,p0 ,p1) (line ,p1 ,p2)
-		    (line ,p2 ,p3) (line ,p3 ,p0)
+	(with res `((cline ,p00 ,p10 ,p2 ,p3)
 		   )
 		   (if halign (set! res (append res
-				 (create-haligns (cadr p0) (caddr p0)
-						 (cadr p1) (caddr p2)))))
+				 (create-haligns (cadr p00) (caddr p00)
+						 (cadr p10) (caddr p2)))))
 		   (if valign (set! res (append res
 				 (create-valigns (cadr p0) (caddr p0)
 						 (cadr p1) (caddr p2)))))
@@ -1442,7 +1464,7 @@
 	)
 	(set! x (s2i (cadr p)))
 	(set! y (s2i (caddr p)))
-        (or (and (in-interval? x (- l eps) l >= <)
+	(or (and (in-interval? x (- l eps) l >= <)
 		 (in-interval? y (- b eps) (+ t eps) >= <=))
 	    (and (in-interval? x r (+ r eps) > <=)
 		 (in-interval? y (- b eps) (+ t eps) >= <=))
@@ -1465,7 +1487,7 @@
 	 (cond
 	    ((== mode 'active)
 	     (cond
-	        ((== prop "color")
+		((== prop "color")
 		 graphical-color)
 		((== prop "point-style")
 		 graphical-pstyle)
@@ -1560,7 +1582,7 @@
   (if (not color) (set! color "none"))
   (if (not fill-color) (set! fill-color "none"))
   (list (list 'with "color" color
-                    "point-style" "square"
+		    "point-style" "square"
 		    "fill-color" fill-color
 		    (cons 'concat op))))
 
@@ -1591,8 +1613,8 @@
 	    (t #f)
 	    (path0 #f)
 	)
-        (set! curscol #f)
-        (set! on-aobj #f)
+	(set! curscol #f)
+	(set! on-aobj #f)
 	(if (tree? o)
 	    (with path (reverse (tree-ip o))
 	       (set! props (create-graphical-props (if (== mode 'points)
@@ -1640,7 +1662,7 @@
 						path0 "text-at-valign"))
 				     )
 				     (create-graphical-contour
-				        o ha va "center" "center" 0.1)))
+					o ha va "center" "center" 0.1)))
 			  (if (== mode 'object-and-points)
 			      (cons o gc)
 			      (if (== mode 'object)
@@ -1668,14 +1690,14 @@
   (define edge #t)
   (define (curp lp)
      (if draw-nonsticky-curp
-        lp '())
+	lp '())
   )
   (if (pair? no)
       (begin
 	 (set! edge (car no))
-         (set! no (cadr no))))
+	 (set! no (cadr no))))
   (if o (let* ((op
-	        (cond ((== (car o) 'point)
+		(cond ((== (car o) 'point)
 		       (cons o '())
 		      )
 		      ((== (car o) 'text-at)
@@ -1692,20 +1714,20 @@
 			     o ha va "center" "center" 0.1))
 		      )
 		      (else (if (integer? no)
-			        (let* ((l (list-tail (cdr o) no))
+				(let* ((l (list-tail (cdr o) no))
 				       (ll (length l)))
 				      (append
-				        (with h (list-head (cdr o) no)
+					(with h (list-head (cdr o) no)
 					  (if (and edge
 						(in? (car o)
 						    '(cline cspline carc))
-					        (== (+ no 1) (length (cdr o))))
+						(== (+ no 1) (length (cdr o))))
 					    (cons `(with "point-style"
 							 ,(if sticky-point
 							      "square" "disk")
 					      ,(car h)) (cdr h))
 					    h))
-				        (cons
+					(cons
 					  (list 'with "point-style" "disk"
 					    (cons 'concat
 					      (if (< ll 2)
@@ -1714,7 +1736,7 @@
 						      (if edge
 							  (list-head l 1)
 							  (curp (list-head l 1))))
- 						  (if edge
+						   (if edge
 						      (with l2 (list-head l 2)
 						      (if sticky-point
 							 `(,(list* 'with
@@ -1730,8 +1752,8 @@
 							 (curp (list-head l 1))
 							 ))))
 					  ) '())
-				        (if (> ll 2) (list-tail l 2) '())))
-			        (cdr o))))
+					(if (> ll 2) (list-tail l 2) '())))
+				(cdr o))))
 	       )
 	       (props (create-graphical-props 'default #f))
 	   )
@@ -1811,6 +1833,7 @@
 (define selecting-y0 #f)
 (define multiselecting #f)
 (define current-path-under-mouse #f) ; volatile
+(define layer-of-last-removed-object #f)
 
 (define state-slots
   ''(graphics-action
@@ -1943,7 +1966,9 @@
   (set! selected-objects '())
   (set! selecting-x0 #f)
   (set! selecting-y0 #f)
-  (set! multiselecting #f))
+  (set! multiselecting #f)
+  (set! current-path-under-mouse #f)
+  (set! layer-of-last-removed-object #f))
 
 (define (graphics-forget-states)
   (set! graphics-first-state #f)
@@ -2049,11 +2074,11 @@
 	(if sticky-point
 	    (with o (graphical-object #t)
 	      (if (or gm (and (pair? o) (nnull? (cdr o)))
-	          )
-	          (let* ((,obj (if gm '(point) (cadr o)))
-		         (,no current-point-no)
-		         (,edge current-edge-sel?)
-		         (,path (cDr (cursor-path))))
+		  )
+		  (let* ((,obj (if gm '(point) (cadr o)))
+			 (,no current-point-no)
+			 (,edge current-edge-sel?)
+			 (,path (cDr (cursor-path))))
 		       ,(cons 'begin body))
 		  (begin
 		     (set! res #f)
@@ -2067,10 +2092,10 @@
 		   (,obj (if gm '(point) (graphics-object pxy)))
 		   (,edge (and sel (== (length sel) 2)))
 		   (,no (if sel (cAr (car sel)) #f)))
-              (set! current-path-under-mouse ,path)
+	      (set! current-path-under-mouse ,path)
 	      (if ,obj
-	          ,(cons 'begin body)
-	          (if (and (string? ,msg)
+		  ,(cons 'begin body)
+		  (if (and (string? ,msg)
 			   (== (substring ,msg 0 1) ";"))
 		      (if (== (substring ,msg 0 2) ";:")
 			 ,(cons 'begin body)
@@ -2172,7 +2197,7 @@
 	    (event-exists! ,obj ',func)))
      (if (and (not sticky-point)
 	      (tm-upper-path (cDr (cursor-path)) '(text-at) '(graphics)))
-         (when-inside-text-at ',func . ,vars)
+	 (when-inside-text-at ',func . ,vars)
 	,(append (cons
 	    'cond
 	    (map cond-case vals))
@@ -2209,7 +2234,7 @@
       (begin
 	(graphics-store-state 'start-move)
 	(create-graphical-object obj p 'object-and-points #f)
-	(graphics-remove p)
+	(graphics-remove p 'memoize-layer)
 	(graphics-group-start)
 	(set! sticky-point #t)
 	(set! current-point-no no)
@@ -2269,7 +2294,7 @@
       ;;Remove
       (begin
 	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj))
-                (!= (logand (get-keyboard-modifiers) ShiftMask) 0))
+		(!= (logand (get-keyboard-modifiers) ShiftMask) 0))
 	    (begin
 	      (graphics-remove p)
 	      (create-graphical-object #f #f #f #f)
@@ -2456,7 +2481,7 @@
 	 (ha (graphics-path-property p "text-at-halign"))
 	 (va (graphics-path-property p "text-at-valign"))
      )
-     (graphics-remove p)
+     (graphics-remove p 'memoize-layer)
      (with res
 	   (graphics-group-enrich-insert-bis obj
 	      (if (graphics-color-enabled?)
@@ -2538,7 +2563,7 @@
 			    ((== halign "right") "left")
 			    (else "left"))))
      )
-     (graphics-remove p)
+     (graphics-remove p 'memoize-layer)
      (set! current-path-under-mouse
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f #f #f #f #f halign2 valign #f))
@@ -2561,7 +2586,7 @@
 			    ((== valign "top") "bottom")
 			    (else "base"))))
      )
-     (graphics-remove p)
+     (graphics-remove p 'memoize-layer)
      (set! current-path-under-mouse
 	(graphics-group-enrich-insert-bis
 	   obj #f #f #f #f #f #f #f halign valign2 #f))
@@ -2584,19 +2609,12 @@
 	  (cons `(,(car l) ,(cadr l)) (group-list (cddr l) tag)))
      '()))
 
-(define (restore-selected-objects n)
-  (define gp (graphics-group-path))
-  (if gp
-  (let* ((gt (path->tree gp))
-         (ng (tree-arity gt))
-     )
-     (foreach-number (i 0 < n)
-     (let* ((t (tree-ref gt (+ (- ng n) i)))
-	    (t2 (if (eq? (tree-label t) 'with)
+(define (restore-selected-objects so)
+  (foreach (t so)
+     (set! selected-objects (rcons selected-objects 
+	   (if (eq? (tree-label t) 'with)
 		    (tree-ref t (- (tree-arity t) 1))
-		    t))
-        )
-        (set! selected-objects (rcons selected-objects t2)))))))
+		    t)))))
 
 ;; State
 (define group-old-x #f)
@@ -2645,7 +2663,7 @@
 
 (define (point-norm p)
   (sqrt (+ (* (car p) (car p))
-           (* (cadr p) (cadr p)))))
+	   (* (cadr p) (cadr p)))))
 
 (define (traverse-transform o opn)
   (define (traverse o)
@@ -2667,7 +2685,7 @@
   (lambda (o)
      (if (match? o '(point :2))
 	 (let* ((x (s2i (cadr o)))
-	        (y (s2i (caddr o)))
+		(y (s2i (caddr o)))
 	    )
 	   `(point ,(i2s (+ x0 (* (- x group-bary-x) h)))
 		   ,(i2s (+ y0 (* (- y group-bary-y) h))))
@@ -2677,7 +2695,7 @@
 (define (group-zoom x y)
   (with h (/ (point-norm (sub-point `(,x ,y)
 				    `(,group-bary-x ,group-bary-y)))
-             (point-norm (sub-point `(,group-first-x ,group-first-y)
+	     (point-norm (sub-point `(,group-first-x ,group-first-y)
 				    `(,group-bary-x ,group-bary-y))))
   (lambda (o)
      (traverse-transform o (zoom-point group-bary-x group-bary-y h)))))
@@ -2686,7 +2704,7 @@
   (lambda (o)
      (if (match? o '(point :2))
 	 (let* ((x (- (s2i (cadr o)) group-bary-x))
-	        (y (- (s2i (caddr o)) group-bary-y))
+		(y (- (s2i (caddr o)) group-bary-y))
 	    )
 	   `(point ,(i2s (+ x0 (* x (cos alpha)) (* (- y) (sin alpha))))
 		   ,(i2s (+ y0 (* x (sin alpha)) (* y (cos alpha)))))
@@ -2742,29 +2760,33 @@
     (set! selected-objects '())
     (foreach-number (i 0 < (tree-arity obj))
        (with o (tree-ref obj i)
-          (if (== (tree-label o) 'with)
+	  (if (== (tree-label o) 'with)
 	      (set! o (tree-ref o (- (tree-arity o) 1))))
-          (set! selected-objects (cons o selected-objects)))
+	  (set! selected-objects (cons o selected-objects)))
     )
     (set! selected-objects (reverse selected-objects))
     (create-graphical-object '(nothing) #f 'object 'group)
     (foreach (o so0)
-       (graphics-remove (reverse (tree-ip o)))
+       (graphics-remove (reverse (tree-ip o)) 'memoize-layer)
     )
     (set! selected-objects '())
     (with go (tree->stree (get-graphical-object))
        (if (nnull? (cdr go))
        (with l '()
 	  (foreach (o (cdr go))
-	  (with t (cadr (cAr o))
+	  (let* ((t (cadr (cAr o)))
+                 (layer layer-of-last-removed-object)
+	     )
 	     (set-cdr! (list-tail o (- (length o) 2)) '())
 	     (with p (graphics-group-insert
 			(graphics-enrich-sub
 			   t (group-list (cdr o) (car t))))
+		(set! layer-of-last-removed-object layer)
 		(set! selected-objects
 		      (cons (path->tree p) selected-objects))
 	     )
 	  ))
+	  (set! layer-of-last-removed-object #f)
 	  (set! selected-objects (reverse selected-objects))
 	  (create-graphical-object '(nothing) #f 'points 'group)
 	 ;(create-graphical-object #f #f #f #f)
@@ -2789,20 +2811,20 @@
       ;;Perform operation
       (begin
 	 (let* ((go (tree->stree (get-graphical-object)))
-	        (n 0)
+		(so '())
 	    )
 	    (if (nnull? (cdr go))
 	    (begin
 	       (foreach (o (cdr go))
 	       (with t (cadr (cAr o))
 		  (set-cdr! (list-tail o (- (length o) 2)) '())
-		  (graphics-group-insert
-		     (graphics-enrich-sub
-			t (group-list (cdr o) (car t)))
-		  )
-		  (set! n (+ n 1))
+		  (set! so (cons (path->tree 
+		     (graphics-group-insert
+			(graphics-enrich-sub
+			   t (group-list (cdr o) (car t)))))
+		     so))
 	       ))
-	       (restore-selected-objects n)
+	       (restore-selected-objects (reverse so))
 	      ;(set! selected-objects '())
 	       (create-graphical-object '(nothing) #f 'points 'group)
 	       (graphics-group-start)))
@@ -2860,8 +2882,9 @@
 	     (graphics-store-state 'start-operation)
 	     (create-graphical-object obj p 'object #f)
 	     (set! group-first-go (get-graphical-object))
+	     (set! layer-of-last-removed-object '())
 	     (foreach (o selected-objects)
-	        (graphics-remove (reverse (tree-ip o)))
+		(graphics-remove (reverse (tree-ip o)) 'memoize-layer)
 	     )
 	     (set! selected-objects '())
 	     (set! sticky-point #t)
@@ -2871,6 +2894,7 @@
 	     (set! group-old-y (s2i current-y))))))))
 
 (define (point_toggle-select x y p obj)
+  (if (not sticky-point)
   (if multiselecting
       (let* ((x1 (s2i selecting-x0))
 	     (y1 (s2i selecting-y0))
@@ -2911,10 +2935,10 @@
 		 (set! selected-objects (rcons selected-objects t))
 	     )
 	     (create-graphical-object obj p 'points #f))
-          (begin
+	  (begin
 	     (set! selecting-x0 x)
 	     (set! selecting-y0 y)
-	     (set! multiselecting #t)))))
+	     (set! multiselecting #t))))))
 
 (define (point_unselect-all p)
   (if (nnull? selected-objects)
@@ -2938,12 +2962,12 @@
 			   (group-translate (- x group-old-x)
 					    (- y group-old-y))))
 		     ((== (cadr mode) 'zoom)
-		        (set-graphical-object group-first-go)
+			(set-graphical-object group-first-go)
 			(transform-graphical-object
 			   (group-zoom x y))
 		     )
 		     ((== (cadr mode) 'rotate)
-		        (set-graphical-object group-first-go)
+			(set-graphical-object group-first-go)
 			(transform-graphical-object
 			   (group-rotate x y))
 		     ))
@@ -2957,9 +2981,9 @@
 		      (create-graphical-props 'default #f)
 		     `((with color red
 			 (cline (point ,selecting-x0 ,selecting-y0)
-			        (point ,x ,selecting-y0)
-			        (point ,x ,y)
-			        (point ,selecting-x0 ,y)))))))
+				(point ,x ,selecting-y0)
+				(point ,x ,y)
+				(point ,selecting-x0 ,y)))))))
 	     (create-graphical-object obj p 'points #f)))))
 
 (define (group-edit_left-button x y)
@@ -2977,7 +3001,7 @@
 (define (group-edit_middle-button x y)
   (with-graphics-context "unselect-all" x y p obj no edge
      (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
-         (if (null? selected-objects)
+	 (if (null? selected-objects)
 	     (point_middle-button x y p obj no)
 	     (remove-selected-objects))
 	 (dispatch (car obj) ((point line cline spline cspline arc carc
@@ -3000,7 +3024,7 @@
   (with copied-objects '()
      (foreach (o selected-objects)
      (with p (tm-upper-path (tree->path o) '(with) '())
-        (let* ((t (if p (path->tree p) #f))
+	(let* ((t (if p (path->tree p) #f))
 	       (n (if t (tree-arity t) #f))
 	       (o2 (if (and t n (> n 0)) (tree-ref t (- n 1)) #f))
 	   )
@@ -3025,7 +3049,7 @@
 	 (res (graphics-copy))
      )
      (foreach (o l)
-        (graphics-remove (reverse (tree-ip o)))
+	(graphics-remove (reverse (tree-ip o)))
      )
      res
   )
@@ -3060,13 +3084,13 @@
 (define (graphics-zoom e)
   (let* ((fr (graphics-cartesian-frame))
 	 (u (caddr fr))
-         (newu (length-mult e u))
-         (newud (length-decode newu))
-         (newfr `(tuple "scale" ,newu ,(cAr fr)))
+	 (newu (length-mult e u))
+	 (newud (length-decode newu))
+	 (newfr `(tuple "scale" ,newu ,(cAr fr)))
      )
      (if (and (> newud 100) (< newud 10000000))
      (begin
-        (create-graphical-object #f #f #f #f)
+	(create-graphical-object #f #f #f #f)
 	(graphics-set-property "gr-frame" newfr)))))
 
 (define (graphics-move-origin dx dy)
@@ -3078,7 +3102,7 @@
   (let* ((fr (graphics-cartesian-frame))
 	 (x (cadr (cadddr fr)))
 	 (y (caddr (cadddr fr)))
-         (newfr `(tuple "scale" ,(caddr fr)
+	 (newfr `(tuple "scale" ,(caddr fr)
 				 (tuple ,(add x dx)
 					,(add y dy))))
      )
@@ -3087,10 +3111,10 @@
 
 (define (graphics-change-extents dw dh)
   (let* ((geo (graphics-geometry))
-         (w (caddr geo))
-         (h (cadddr geo))
-         (w2 (length-add w dw))
-         (h2 (length-add h dh))
+	 (w (caddr geo))
+	 (h (cadddr geo))
+	 (w2 (length-add w dw))
+	 (h2 (length-add h dh))
      )
      (if (> (length-decode w2) 0)
 	 (set! w w2))
@@ -3101,7 +3125,7 @@
 
 (define (graphics-change-geo-valign dirn)
   (let* ((geo (graphics-geometry))
-         (a (car (cddddr geo)))
+	 (a (car (cddddr geo)))
      )
      (graphics-set-geo-valign
 	(if dirn
@@ -3122,8 +3146,8 @@
   (define (uncaptured)
      (if (!= func 'move)
      (begin
-        (graphics-group-start)
-        (graphics-move-point x y)))
+	(graphics-group-start)
+	(graphics-move-point x y)))
   )
  ;(display* "Inside text-at=" func "; x=" x "; y=" y "\n")
   (with res (with-graphics-context
@@ -3134,14 +3158,66 @@
 		       (text-at_left-button x y p "" no edge)))
 		    (uncaptured))
 	    )
-            (if (not res) (uncaptured))))
+	    (if (not res) (uncaptured))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Old modes
+;; Dealing with superpositions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (redim-graphics_move x y)
-  (graphics-set-mode "point"))
+(define (graphics-zmove dirn)
+ ;(display* "dirn(graphics-zmove)=" dirn "\n")
+ ;(display* "current-path-under-mouse=" current-path-under-mouse "\n")
+  (if current-path-under-mouse
+  (let* ((p (graphics-object-root-path current-path-under-mouse))
+	 (t (if p (path->tree p) #f))
+	 (t0 (if t (path->tree (cDr p)) #f))
+     )
+    ;(display* "t0=" (get-tag? t0) "\n")
+    ;(display* "t=" t "\n")
+     (cond ((eq? dirn 'background)
+	    (if (> (cAr p) 0)
+	    (let* ((p-1 (rcons (cDr p) 0))
+		   (t-1 (path->tree p-1))
+	       )
+	       (path-remove p 1)
+	       (path-insert p-1 `(tuple ,(tree->stree t)))
+	       (set! current-path-under-mouse p-1)
+	    ))
+	   )
+	   ((eq? dirn 'foreground)
+	    (if (< (+ (cAr p) 1) (tree-arity t0))
+	    (let* ((p+1 (rcons (cDr p) (- (tree-arity t0) 1)))
+		   (t+1 (path->tree p+1))
+	       )
+	       (path-remove p 1)
+	       (path-insert p+1 `(tuple ,(tree->stree t)))
+	       (set! current-path-under-mouse p+1)
+	    ))
+	   )
+	   ((eq? dirn 'farther)
+	    (if (> (cAr p) 0)
+	    (let* ((p-1 (rcons (cDr p) (- (cAr p) 1)))
+		   (t-1 (path->tree p-1))
+	       )
+	       (path-assign p-1 (tree->stree t))
+	       (path-assign p (tree->stree t-1))
+	       (set! current-path-under-mouse p-1)
+	    ))
+	   )
+	   ((eq? dirn 'closer)
+	    (if (< (+ (cAr p) 1) (tree-arity t0))
+	    (let* ((p+1 (rcons (cDr p) (+ (cAr p) 1)))
+		   (t+1 (path->tree p+1))
+	       )
+	       (path-assign p+1 (tree->stree t))
+	       (path-assign p (tree->stree t+1))
+	       (set! current-path-under-mouse p+1)
+	    ))
+	   )
+	   (else #t)
+     )
+     (set! selected-objects '())
+     (graphics-group-start))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Event hooks
@@ -3158,8 +3234,7 @@
   ;(display* "Graphics] Move " x ", " y "\n")
   (dispatch (car (graphics-mode))
 	    ((edit)
-	     (group-edit)
-	     (redim-graphics))
+	     (group-edit))
 	    move (x y)))
 
 (tm-define (graphics-remove-point x y)
@@ -3211,12 +3286,12 @@
 
 (define (graphics-enter-mode old-mode new-mode)
   (if (and (graphics-group-mode? old-mode)
-           (not (graphics-group-mode? new-mode))
+	   (not (graphics-group-mode? new-mode))
       )
       (graphics-reset-state)
   )
   (if (and (not (graphics-group-mode? old-mode))
-           (graphics-group-mode? new-mode)
+	   (graphics-group-mode? new-mode)
       )
       (begin
 	 (if sticky-point (undo))
