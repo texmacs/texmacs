@@ -30,16 +30,7 @@ tm_data_rep::load_tree (url u, string fm) {
     return "error";
   }
   if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
-  tree t= generic_to_tree (s, fm * "-document");
-
-  tree body= extract (t, "body");
-  if (is_func (body, DOCUMENT, 1) && is_compound (body[0], "hyperlinked"))
-    body= body[0];
-  if (is_compound (body, "hyperlinked")) {
-    body= as_tree (call ("linked-tree->tree", object (body)));
-    t= change_doc_attr (t, "body", body);
-  }
-  return t;
+  return generic_to_tree (s, fm * "-document");
 }
 
 void
@@ -166,8 +157,6 @@ tm_data_rep::make_document (tm_view vw, string fm) {
     body= vw->ed->exec_html (body);
   if (fm == "latex")
     body= vw->ed->exec_latex (body);
-  if (fm == "texmacs" && as_bool (call ("tree-linked?", object (body))))
-    body= as_tree (call ("tree->linked-tree", object (body)));
 
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);

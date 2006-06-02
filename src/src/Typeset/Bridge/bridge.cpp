@@ -271,7 +271,11 @@ bridge_rep::typeset (int desired_status) {
     hashmap<string,tree> prev_back (UNINIT);
     ttt->local_start (l, sb);
     env->local_start (prev_back);
+    link_env= link_repository (true);
+    link_repository old_link_env= env->link_env;
+    env->link_env= link_env;
     my_typeset (desired_status);
+    env->link_env= old_link_env;
     env->local_update (ttt->old_patch, changes);
     env->local_end (prev_back);
     ttt->local_end (l, sb);

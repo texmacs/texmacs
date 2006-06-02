@@ -15,11 +15,11 @@
 #include "string.hpp"
 enum  tree_label;
 class tree;
-class link_rep;
+class hard_link_rep;
 class observer;
 template<class T> class list;
 template<class T> class array;
-typedef link_rep* weak_link;
+typedef hard_link_rep* weak_link;
 typedef list<int> path;
 
 /******************************************************************************

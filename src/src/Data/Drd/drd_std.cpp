@@ -276,6 +276,10 @@ init_std_drd () {
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
   init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
+  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
+  init (ID, "id", repeat (1, 1) -> accessible (0));
+  init (LINK, "link", repeat (2, 1) -> accessible (0));
+  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));

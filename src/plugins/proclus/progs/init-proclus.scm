@@ -16,30 +16,30 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-menu (proclus-menu) proclus-menu proclus-links-menu proclus-popup-menu)
+;;(lazy-menu (proclus-menu) proclus-menu proclus-links-menu proclus-popup-menu)
 
-(define (proclus-initialize)
-  (kbd-wildcards pre
-    ("proclus" "emacs:contextual"))
-  (lazy-keyboard (proclus-kbd) in-proclus?)
-  (menu-extend texmacs-extra-menu
-    (if (in-proclus-editable?)
-        (link proclus-menu))
-    (if (in-proclus-links?)
-        (link proclus-links-menu))))
+;;(define (proclus-initialize)
+;;  (kbd-wildcards pre
+;;    ("proclus" "emacs:contextual"))
+;;  (lazy-keyboard (proclus-kbd) in-proclus?)
+;;  (menu-extend texmacs-extra-menu
+;;    (if (in-proclus-editable?)
+;;        (link proclus-menu))
+;;    (if (in-proclus-links?)
+;;        (link proclus-links-menu))))
 
-(plugin-configure proclus
-  (:require #t)
-  (:prioritary (style-has? "proclus-dtd"))
-  (:initialize (proclus-initialize)))
+;;(plugin-configure proclus
+;;  (:require #f)
+;;  (:prioritary (style-has? "proclus-dtd"))
+;;  (:initialize (proclus-initialize)))
 
 ;; Has to be after plugin-configure to redefine the in-proclus? predicate
-(texmacs-modes
-  (in-proclus% (style-has? "proclus-dtd"))
-  (in-proclus-locus% (inside? 'locus) in-proclus%)
-  (in-proclus-editable% (style-has? "proclus-editable-dtd") in-proclus%)
-  (in-proclus-links% (style-has? "proclus-links-dtd") in-proclus%))
+;;(texmacs-modes
+;;  (in-proclus% (style-has? "proclus-dtd"))
+;;  (in-proclus-locus% (inside? 'locus) in-proclus%)
+;;  (in-proclus-editable% (style-has? "proclus-editable-dtd") in-proclus%)
+;;  (in-proclus-links% (style-has? "proclus-links-dtd") in-proclus%))
 
-(menu-bind texmacs-popup-menu
-  (:mode in-proclus?)
-  (link proclus-popup-menu))
+;;(menu-bind texmacs-popup-menu
+;;  (:mode in-proclus?)
+;;  (link proclus-popup-menu))

@@ -30,6 +30,7 @@ template<class T> class list {
   inline list (T item1, T item2, T item3, list<T> next);
   T& operator [] (int i);
   operator tree ();
+  static list<T> init;
 
   friend bool atom LESSGTR (list<T> l);
   friend bool strong_equal LESSGTR (list<T> l1, list<T> l2);
@@ -57,6 +58,7 @@ TMPL inline list<T>::list (T item1, T item2, list<T> next):
 TMPL inline list<T>::list (T item1, T item2, T item3, list<T> next):
   rep (new list_rep<T>(item1, list<T> (item2, item3, next))) {}
 TMPL inline bool atom (list<T> l) { return (!nil (l)) && nil (l->next); }
+TMPL list<T> list<T>::init= list<T> ();
 
 TMPL int      N (list<T> l);
 TMPL list<T>  copy (list<T> l);
@@ -68,6 +70,7 @@ TMPL T        last_item (list<T> l);
 TMPL T&       access_last (list<T>& l);
 TMPL list<T>& suppress_last (list<T>& l);
 TMPL list<T>  reverse (list<T> l);
+TMPL list<T>  remove (list<T> l, T what);
 
 TMPL ostream& operator << (ostream& out, list<T> l);
 TMPL list<T>& operator << (list<T>& l, T item);
