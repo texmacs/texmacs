@@ -65,12 +65,11 @@
   (with p (ahash-ref link-participants nr)
     (when p
       (ahash-remove! link-participants nr)
-      (position-delete p))))
+      (tree-pointer-detach p))))
 
 (tm-define (link-insert-locus nr)
   (with-innermost t 'locus
-    (ahash-set! link-participants nr
-		(position-new-path (rcons (tree->path t) 1)))))
+    (ahash-set! link-participants nr (tree->tree-pointer t))))
 
 (tm-define (link-under-construction?)
   (nnot (ahash-ref link-participants 0)))
@@ -78,7 +77,7 @@
 (define (link-participating-trees nr)
   (with p (ahash-ref link-participants nr)
     (if (not p) '()
-	(with t (path->tree (cDr (position-get p)))
+	(with t (tree-pointer->tree p)
 	  (link-remove-participant nr)
 	  (cons t (link-participating-trees (+ nr 1)))))))
 
