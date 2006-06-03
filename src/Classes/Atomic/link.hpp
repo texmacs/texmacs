@@ -54,7 +54,7 @@ CONCRETE_CODE(soft_link);
 class link_repository_rep: public abstract_struct {
 public:
   list<string> ids;
-  list<pointer> loci;
+  list<observer> loci;
   list<soft_link> links;
   link_repository_rep ();
   ~link_repository_rep ();

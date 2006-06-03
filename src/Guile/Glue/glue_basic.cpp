@@ -867,6 +867,45 @@ tmg_id_2links (SCM arg1) {
 }
 
 SCM
+tmg_tree_2tree_pointer (SCM arg1) {
+  SCM_ASSERT_TREE (arg1, SCM_ARG1, "tree->tree-pointer");
+
+  tree in1= scm_to_tree (arg1);
+
+  // SCM_DEFER_INTS;
+  observer out= tree_pointer_new (in1);
+  // SCM_ALLOW_INTS;
+
+  return observer_to_scm (out);
+}
+
+SCM
+tmg_tree_pointer_detach (SCM arg1) {
+  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "tree-pointer-detach");
+
+  observer in1= scm_to_observer (arg1);
+
+  // SCM_DEFER_INTS;
+  tree_pointer_delete (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_tree_pointer_2tree (SCM arg1) {
+  SCM_ASSERT_OBSERVER (arg1, SCM_ARG1, "tree-pointer->tree");
+
+  observer in1= scm_to_observer (arg1);
+
+  // SCM_DEFER_INTS;
+  tree out= obtain_tree (in1);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_string_numberP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
 
@@ -2701,6 +2740,9 @@ initialize_glue_basic () {
   gh_new_procedure ("tree->ids", (FN) tmg_tree_2ids, 1, 0, 0);
   gh_new_procedure ("id->trees", (FN) tmg_id_2trees, 1, 0, 0);
   gh_new_procedure ("id->links", (FN) tmg_id_2links, 1, 0, 0);
+  gh_new_procedure ("tree->tree-pointer", (FN) tmg_tree_2tree_pointer, 1, 0, 0);
+  gh_new_procedure ("tree-pointer-detach", (FN) tmg_tree_pointer_detach, 1, 0, 0);
+  gh_new_procedure ("tree-pointer->tree", (FN) tmg_tree_pointer_2tree, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);
