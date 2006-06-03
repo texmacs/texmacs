@@ -423,6 +423,27 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Locus
+******************************************************************************/
+
+lazy
+make_lazy_locus (edit_env env, tree t, path ip) {
+  int i, last= N(t)-1;
+  if (!nil (env->link_env))
+    for (i=0; i<last; i++) {
+      tree arg= env->exec (t[i]);
+      if (is_compound (arg, "id", 1))
+	env->link_env->insert_locus (as_string (arg[0]), t);
+      if (is_compound (arg, "link"))
+	env->link_env->insert_link (arg);
+    }
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, t[last], descend (ip, last));
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
 * Main routine
 ******************************************************************************/
 
@@ -491,6 +512,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_auto (env, t, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return make_lazy_rewrite (env, t, ip);
+  case LOCUS:
+    return make_lazy_locus (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);
