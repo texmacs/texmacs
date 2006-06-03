@@ -40,6 +40,7 @@ public:
   void notify_assign_node (tree& ref, tree_label op);
   void notify_detach      (tree& ref, tree closest, bool right);
 
+  list<observer> get_tree_pointers ();
   bool set_tree (tree t);
   bool get_tree (tree& t);
 };
@@ -47,6 +48,11 @@ public:
 /******************************************************************************
 * Specific routines for tree link observers
 ******************************************************************************/
+
+list<observer>
+tree_pointer_rep::get_tree_pointers () {
+  return list<observer> (observer (this));
+}
 
 bool
 tree_pointer_rep::get_tree (tree& t) {
@@ -169,4 +175,17 @@ attach_pointer (tree& ref, observer o) {
 void
 detach_pointer (tree& ref, observer o) {
   remove_observer (ref->obs, o);
+}
+
+observer
+tree_pointer_new (tree ref) {
+  observer obs= tree_pointer (ref);
+  attach_pointer (ref, obs);
+  return obs;
+}
+
+void
+tree_pointer_delete (observer obs) {
+  tree ref= obtain_tree (obs);
+  detach_pointer (ref, obs);
 }

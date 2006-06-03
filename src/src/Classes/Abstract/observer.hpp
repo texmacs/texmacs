@@ -52,13 +52,8 @@ public:
   virtual bool get_position (tree& t, int& index);
   virtual bool set_position (tree t, int index);
   virtual observer& get_child (int which);
-  virtual observer get_link_observer ();
+  virtual list<observer> get_tree_pointers ();
   virtual bool get_tree (tree& t);
-  virtual bool get_links (list<weak_link>& lns);
-  virtual bool insert_link (weak_link ln);
-  virtual bool remove_link (weak_link ln);
-  virtual bool get_unique_id (string& s);
-  virtual bool set_unique_id (string s);
 };
 
 class observer {
@@ -68,6 +63,8 @@ public:
     return o1.rep == o2.rep; }
   inline friend bool operator != (observer o1, observer o2) {
     return o1.rep != o2.rep; }
+  inline friend int hash (observer o1) {
+    return hash ((pointer) o1.rep); }
 };
 ABSTRACT_NULL_CODE(observer);
 
@@ -102,6 +99,8 @@ void detach_ip (tree& ref);
 tree obtain_tree (observer o);
 void attach_pointer (tree& ref, observer o);
 void detach_pointer (tree& ref, observer o);
+observer tree_pointer_new (tree t);
+void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
 void attach_position (tree& ref, observer o);
