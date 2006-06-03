@@ -25,6 +25,7 @@ bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
 bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
+bridge bridge_locus (typesetter, tree, path);
 
 bridge nil_bridge;
 
@@ -101,6 +102,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_auto (ttt, st, ip, var_inactive_m, true);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
+  case LOCUS:
+    return bridge_locus (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);

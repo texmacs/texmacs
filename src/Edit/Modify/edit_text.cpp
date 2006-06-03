@@ -95,7 +95,8 @@ edit_text_rep::pure_line (path p) {
   tree st= subtree (et, path_up (p));
   return
     is_document (st) ||
-    (is_func (st, WITH) && (last_item (p) == (N(st)-1)) && pure_line (p)) ||
+    ((is_func (st, WITH) || is_func (st, LOCUS)) &&
+     (last_item (p) == (N(st)-1)) && pure_line (p)) ||
     (is_extension (st) && (last_item (p) >= 0) && pure_line (p));
 }
 
@@ -111,7 +112,8 @@ edit_text_rep::accepts_return (path p) {
     (is_func (st, MACRO) && (last_item (p) == (N(st)-1))) ||
     (is_func (st, XMACRO, 2) && (last_item (p) == 1)) ||
     ((is_func (st, WITH) || is_mod_active (st) ||
-      is_func (st, STYLE_WITH) || is_func (st, VAR_STYLE_WITH)) &&
+      is_func (st, STYLE_WITH) || is_func (st, VAR_STYLE_WITH) ||
+      is_func (st, LOCUS)) &&
      (last_item (p) == (N(st)-1)) && pure_line (p)) ||
     (is_extension (st) && (last_item (p) >= 0) && pure_line (p));
 }

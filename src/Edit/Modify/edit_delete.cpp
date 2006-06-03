@@ -85,6 +85,7 @@ edit_text_rep::remove_text (bool forward) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) ||
 	    is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
+	    is_func (u, LOCUS) ||
 	    is_extension (u))
 	  {
 	    if (is_extension (u) && (N(u) > 1)) {
@@ -188,6 +189,7 @@ edit_text_rep::remove_text (bool forward) {
     case WITH:
     case STYLE_WITH:
     case VAR_STYLE_WITH:
+    case LOCUS:
       go_to_border (p * (N(t) - 1), forward);
       return;
     case VALUE:
@@ -222,6 +224,7 @@ edit_text_rep::remove_text (bool forward) {
     case WITH:
     case STYLE_WITH:
     case VAR_STYLE_WITH:
+    case LOCUS:
       back_in_with (u, p, forward);
       return;
     default:
