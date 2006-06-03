@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : hard_link.cpp
-* DESCRIPTION: Persistent hard_links between trees
+* MODULE     : link.cpp
+* DESCRIPTION: Linking of trees
 * COPYRIGHT  : (C) 2006  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -10,75 +10,14 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ******************************************************************************/
 
-#ifndef HARD_LINK_H
-#define HARD_LINK_H
+#ifndef LINK_H
+#define LINK_H
 #include "tree.hpp"
 #include "list.hpp"
 #include "hashmap.hpp"
 
 /******************************************************************************
-* Hard_Link types
-******************************************************************************/
-
-enum link_label {};
-
-extern int nr_link_labels;
-extern hashmap<int,string> link_label_to_name;
-extern hashmap<string,int> name_to_link_label;
-
-link_label as_link_label (string s);
-string as_string (link_label lab);
-
-/******************************************************************************
-* The hard_link class
-******************************************************************************/
-
-class hard_link;
-class hard_link_rep: concrete_struct {
-public:
-  link_label      lab;
-  array<observer> obs;
-
-public:
-  inline hard_link_rep (link_label lab2, array<tree> a):
-    lab (lab2), obs (get_link_observers (a)) { insert_link (obs, this); }
-  inline ~hard_link_rep () { remove_link (obs, this); }
-
-  friend class hard_link;
-};
-
-class hard_link {
-public:
-ABSTRACT(hard_link);
-public:
-  inline hard_link (link_label lab, array<tree> a):
-    rep (new hard_link_rep (lab, a)) {}
-  inline friend link_label L (hard_link ln) {
-    return ln.rep->lab; }
-  inline friend int N (hard_link ln) {
-    return N (ln.rep->obs); }
-  inline tree operator [] (int i) {
-    tree t; (void) rep->obs[i]->get_tree (t); return t; }
-  inline friend bool operator == (hard_link ln1, hard_link ln2) {
-    return ln1.rep == ln2.rep; }
-  inline friend bool operator != (hard_link ln1, hard_link ln2) {
-    return ln1.rep != ln2.rep; }
-  inline friend ostream& operator << (ostream& out, hard_link ln) {
-    return out << "hard_link (" << ln.rep << ")"; }
-};
-ABSTRACT_CODE(hard_link);
-
-/******************************************************************************
-* Further routines on hard_links
-******************************************************************************/
-
-array<tree> A (hard_link ln);
-hard_link& operator << (hard_link& ln, tree t);
-hard_link& operator << (hard_link& ln, array<tree> a);
-list<hard_link> get_links (tree t);
-
-/******************************************************************************
-* The hard_link class
+* The soft_link class
 ******************************************************************************/
 
 class soft_link;
@@ -99,12 +38,6 @@ CONCRETE(soft_link);
 public:
   inline soft_link (tree t):
     rep (new soft_link_rep (t)) {}
-  //inline friend link_label L (soft_link ln) {
-  //return ln.rep->lab; }
-  //inline friend int N (soft_link ln) {
-  //return N (ln.rep->obs); }
-  //inline tree operator [] (int i) {
-  //tree t; (void) rep->obs[i]->get_tree (t); return t; }
   inline friend bool operator == (soft_link ln1, soft_link ln2) {
     return ln1.rep == ln2.rep; }
   inline friend bool operator != (soft_link ln1, soft_link ln2) {

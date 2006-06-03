@@ -76,6 +76,7 @@ ostream& operator << (ostream& out, observer o);
 extern observer nil_observer;
 observer ip_observer (path ip);
 observer list_observer (observer o1, observer o2);
+observer tree_pointer (tree t);
 observer tree_position (tree t, int index);
 
 /******************************************************************************
@@ -98,18 +99,13 @@ path obtain_ip (tree& ref);
 void attach_ip (tree& ref, path ip);
 void detach_ip (tree& ref);
 
+tree obtain_tree (observer o);
+void attach_pointer (tree& ref, observer o);
+void detach_pointer (tree& ref, observer o);
+
 path obtain_position (observer o);
 void attach_position (tree& ref, observer o);
 void detach_position (tree& ref, observer o);
-
-observer get_link_observer (tree t);
-array<observer> get_link_observers (array<tree> a);
-void insert_link (array<observer> obs, weak_link ln);
-void remove_link (array<observer> obs, weak_link ln);
-void set_unique_id (tree& ref, string id);
-string get_unique_id (tree& ref);
-bool unique_id_exists (string id);
-tree unique_id_to_tree (string id);
 
 void stretched_print (tree t, bool ips= false, int indent= 0);
 
