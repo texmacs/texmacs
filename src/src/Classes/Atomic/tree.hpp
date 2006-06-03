@@ -81,6 +81,7 @@ public:
   friend tree operator * (tree t1, tree t2);
   friend void print_tree (tree t, int tab=0);
   friend list<tree> as_trees (list<pointer> l);
+  friend class tree_pointer_rep;
   friend class tree_position_rep;
   friend class tree_links_rep;
   friend class link_repository_rep;
