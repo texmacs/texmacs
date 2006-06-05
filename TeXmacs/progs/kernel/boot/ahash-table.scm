@@ -74,6 +74,10 @@
       (define-public (ahash-table->list h)
 	(hash-fold acons '() h))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra routines on adaptive hash tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define-public (list->ahash-table l)
   (let ((t (make-ahash-table)))
     (for-each (lambda (x) (ahash-set! t (car x) (cdr x))) l)
@@ -101,6 +105,9 @@
   (let* ((l (ahash-table->list t))
 	 (r (map (lambda (x) (cons (car x) (fun (cdr x)))) l)))
     (list->ahash-table r)))
+
+(define-public (ahash-ref* h var val)
+  (or (ahash-ref h var) val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dictionaries
