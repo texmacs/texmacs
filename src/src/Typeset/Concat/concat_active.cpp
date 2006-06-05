@@ -232,7 +232,7 @@ concater_rep::typeset_action (tree t, path ip) {
 
 void
 concater_rep::typeset_locus (tree t, path ip) {
-  cout << "Typeset " << t << "\n";
+  // cout << "Typeset " << t << "\n";
   int i, last= N(t)-1;
   if (!nil (env->link_env))
     for (i=0; i<last; i++) {
