@@ -145,6 +145,7 @@
 
 ;(display "Booting linking facilities\n")
 (lazy-menu (link link-menu) link-menu)
+(lazy-define (link link-edit) get-link-locations register-link-locations)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")

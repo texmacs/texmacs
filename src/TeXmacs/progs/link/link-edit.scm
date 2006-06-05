@@ -27,10 +27,11 @@
 	      (list (remainder x 64)))))
 
 (define (aschar x)
-  (with c (integer->char (+ x 48))
-    (cond ((== c #\<) #\{)
-	  ((== c #\>) #\})
-	  (else c))))
+  (cond ((< x 10) (integer->char (+ x 48)))
+	((< x 36) (integer->char (+ x 54)))
+	((< x 62) (integer->char (+ x 60)))
+	((== x 62) #\{)
+	(else #\})))
 
 (define (number->base64 x)
   (list->string (map aschar (base64 x))))
@@ -85,7 +86,8 @@
   (:argument type "Link type")
   (let* ((l (link-participating-trees 0))
 	 (ids (map locus-id l))
-	 (ln (tm->tree `(link ,type ,@ids))))
+	 (Ids (map (lambda (x) `(id ,x)) ids))
+	 (ln (tm->tree `(link ,type ,@Ids))))
     (when (and (nnull? l) (list-and ids))
       (for-each (cut locus-insert-link <> ln) l))))
 
@@ -122,11 +124,15 @@
 ;; Navigation lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (Id->id Id)
+  (cond ((func? Id 'id 1) (Id->id (cadr Id)))
+	(else Id)))
+
 (define (navigate-list-sub type nr source l)
   (if (null? l) l
       (let* ((head (list type nr source (car l)))
 	     (tail (navigate-list-sub type (+ nr 1) source (cdr l))))
-	(if (== source (car l)) tail
+	(if (== source (Id->id (car l))) tail
 	    (cons head tail)))))
 
 (tm-define (link-list->navigate-list l)
@@ -159,18 +165,95 @@
 
 (tm-define (go-to-id id)
   (with l (id->trees id)
-    (when (nnull? l)
-      (tree-go-to (car l) :last :end))))
+    (if (nnull? l)
+	(tree-go-to (car l) :last :end)
+	(and (resolve-id id)
+	     (delayed (:idle 100) (go-to-id id))))))
+
+(tm-define (go-to-Id Id)
+  (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
+	(else (noop))))
 
 (tm-define (link-follow-typed type)
   (:argument type "Link type")
   (:proposals type (navigate-list-types (upward-navigate-list)))
-  (and-with id (navigate-list-find-type (upward-navigate-list) type)
-    (go-to-id id)))
+  (and-with Id (navigate-list-find-type (upward-navigate-list) type)
+    (go-to-Id Id)))
 
 (tm-define (link-follow)
   (let* ((l (link-list->navigate-list (upward-link-list)))
 	 (types (navigate-list-types l)))
     (cond ((null? types) (noop))
-	  ((null? (cdr types)) (go-to-id (cadddr (car l))))
+	  ((null? (cdr types)) (go-to-Id (cadddr (car l))))
 	  (else (interactive link-follow-typed)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building the list of link locators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (id-locations id)
+  (let* ((get-name (lambda (t) (get-name-buffer-path (tree->path t))))
+	 (l1 (id->trees id))
+	 (l2 (map get-name l1))
+	 (l3 (list-filter l2 (lambda (u) (not (url-none? u))))))
+    (map (cut cons id <>) l3)))
+
+(define (Id-locations Id)
+  (if (func? Id 'id 1)
+      (id-locations (cadr Id))
+      '()))
+
+(define (link-item-id-locations ln)
+  (with (id type . lns) ln
+    (append-map Id-locations lns)))
+
+(define (link-list-id-locations l)
+  (append-map link-item-id-locations l))
+
+(define (get-id-locations here t)
+  (let* ((l (complete-link-list t))
+	 (l1 (link-list-id-locations l))
+	 (l2 (list-filter l1 (lambda (x) (!= (cdr x) here))))
+	 (l3 (map (lambda (x) (cons (car x) (url-delta here (cdr x)))) l2)))
+    (list-remove-duplicates l3)))
+
+(define (encode-link-location x)
+  (let* ((id (car x))
+	 (u (cdr x))
+	 (s (url->string u)))
+    `(locator ,id ,s)))
+
+(tm-define (get-link-locations here t)
+  (with l (get-id-locations here t)
+    (tm->tree `(collection ,@(map encode-link-location l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retrieving the list of link locators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define already-loaded-table (make-ahash-table))
+(define link-locator-table (make-ahash-table))
+
+(define (register-link-location here t)
+  (with (dummy id loc) t
+    (with u (url-relative here loc)
+      (ahash-set! link-locator-table id
+		  (list-union (list u)
+			      (ahash-ref* link-locator-table id '()))))))
+
+(define (resolve-id-sub id l)
+  (cond ((null? l) #f)
+	((not (url-exists? (car l))) (resolve-id-sub id (cdr l)))
+	(else
+	 (ahash-set! already-loaded-table (car l) #t)
+	 (texmacs-load-buffer (car l) "generic" 0 #f))))
+
+(define (resolve-id id)
+  (let* ((not-loaded? (lambda (u) (not (ahash-ref already-loaded-table u))))
+	 (l1 (ahash-ref link-locator-table id))
+	 (l2 (list-filter l1 not-loaded?)))
+    (resolve-id-sub id l2)))
+
+(tm-define (register-link-locations here t)
+  (with l (cdr (tree->stree t))
+    (for-each (cut register-link-location here <>) l)))

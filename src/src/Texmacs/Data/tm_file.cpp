@@ -30,7 +30,11 @@ tm_data_rep::load_tree (url u, string fm) {
     return "error";
   }
   if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
-  return generic_to_tree (s, fm * "-document");
+  tree t= generic_to_tree (s, fm * "-document");
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (u), object (links));
+  return t;
 }
 
 void
@@ -160,6 +164,10 @@ tm_data_rep::make_document (tm_view vw, string fm) {
 
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
+  tree links= as_tree (call ("get-link-locations",
+			     object (vw->buf->name),
+			     object (body)));
+
   if (vw->buf->project != "")
     doc << compound ("project", vw->buf->project);
   if (vw->ed->get_style() != tree (TUPLE))
@@ -170,6 +178,8 @@ tm_data_rep::make_document (tm_view vw, string fm) {
     doc << compound ("initial", make_collection (vw->ed->get_init()));
   if (N (vw->ed->get_fin()) != 0)
     doc << compound ("final", make_collection (vw->ed->get_fin()));
+  if (N (links) != 0)
+    doc << compound ("links", links);
   if (vw->ed->get_save_aux()) {
     if (N (vw->buf->ref) != 0)
       doc << compound ("references", make_collection (vw->buf->ref));

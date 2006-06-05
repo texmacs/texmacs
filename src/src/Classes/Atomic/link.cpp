@@ -55,12 +55,19 @@ unregister_link_component (string id, soft_link ln) {
   if (nil (l)) id_occurrences->reset (id);
 }
 
+static string
+as_id (tree t) {
+  if (is_atomic (t)) return t->label;
+  if (is_func (t, ID, 1)) return as_id (t[0]);
+  return "";
+}
+
 void
 register_link (soft_link ln) {
   cout << "Register: " << ln->t << "\n";
   int i, n= N(ln->t);
   for (i=1; i<n; i++)
-    register_link_component (as_string (ln->t[i]), ln);
+    register_link_component (as_id (ln->t[i]), ln);
 }
 
 void
@@ -68,7 +75,7 @@ unregister_link (soft_link ln) {
   cout << "Unregister: " << ln->t << "\n";
   int i, n= N(ln->t);
   for (i=1; i<n; i++)
-    unregister_link_component (as_string (ln->t[i]), ln);
+    unregister_link_component (as_id (ln->t[i]), ln);
 }
 
 /******************************************************************************
