@@ -138,7 +138,7 @@ bridge_locus_rep::my_typeset_will_be_complete () {
 
 void
 bridge_locus_rep::my_typeset (int desired_status) {
-  cout << "Typeset " << st << "\n";
+  // cout << "Typeset " << st << "\n";
   int i;
   if (!nil (env->link_env))
     for (i=0; i<last; i++) {

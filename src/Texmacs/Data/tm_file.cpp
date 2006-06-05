@@ -164,9 +164,9 @@ tm_data_rep::make_document (tm_view vw, string fm) {
 
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
-  tree links= as_tree (call ("get-link-locations",
-			     object (vw->buf->name),
-			     object (body)));
+  object arg1 (vw->buf->name);
+  object arg2 (body);
+  tree links= as_tree (call ("get-link-locations", arg1, arg2));
 
   if (vw->buf->project != "")
     doc << compound ("project", vw->buf->project);

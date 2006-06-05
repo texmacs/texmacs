@@ -22,7 +22,7 @@ hashmap<string,list<soft_link> > id_occurrences;
 
 void
 register_pointer (string id, observer which) {
-  cout << "Register: " << id << " -> " << which << "\n";
+  //cout << "Register: " << id << " -> " << which << "\n";
   list<observer>& l1= id_resolve (id);
   l1= list<observer> (which, l1);
   list<string>& l2= pointer_resolve (which);
@@ -31,7 +31,7 @@ register_pointer (string id, observer which) {
 
 void
 unregister_pointer (string id, observer which) {
-  cout << "Unregister: " << id << " -> " << which << "\n";
+  //cout << "Unregister: " << id << " -> " << which << "\n";
   list<observer>& l1= id_resolve (id);
   l1= remove (l1, which);
   if (nil (l1)) id_resolve->reset (id);
@@ -64,7 +64,7 @@ as_id (tree t) {
 
 void
 register_link (soft_link ln) {
-  cout << "Register: " << ln->t << "\n";
+  //cout << "Register: " << ln->t << "\n";
   int i, n= N(ln->t);
   for (i=1; i<n; i++)
     register_link_component (as_id (ln->t[i]), ln);
@@ -72,7 +72,7 @@ register_link (soft_link ln) {
 
 void
 unregister_link (soft_link ln) {
-  cout << "Unregister: " << ln->t << "\n";
+  //cout << "Unregister: " << ln->t << "\n";
   int i, n= N(ln->t);
   for (i=1; i<n; i++)
     unregister_link_component (as_id (ln->t[i]), ln);
