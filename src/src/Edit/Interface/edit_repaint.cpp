@@ -111,6 +111,14 @@ edit_interface_rep::draw_context (ps_device dev, rectangle r) {
 
 void
 edit_interface_rep::draw_selection (ps_device dev) {
+  if (!nil (locus_rects)) {
+    rectangles rs= locus_rects;
+    while (!nil (rs)) {
+      dev->set_color (dis->rgb (255, 160, 0));
+      dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
+      rs= rs->next;
+    }
+  }
   if (made_selection) {
     rectangles rs= selection_rects;
     while (!nil (rs)) {

@@ -395,6 +395,15 @@ edit_interface_rep::apply_changes () {
     }
   }
 
+  // cout << "Handling locus highlighting\n";
+  if (env_change & THE_LOCUS) {
+    if (locus_new_rects != locus_rects) {
+      invalidate (locus_rects);
+      invalidate (locus_new_rects);
+      locus_rects= locus_new_rects;
+    }
+  }
+
   // cout << "Handling backing store\n";
   if (!nil (stored_rects)) {
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION+THE_EXTENTS))

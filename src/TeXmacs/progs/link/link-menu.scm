@@ -77,4 +77,4 @@
 	  ---
 	  (link navigation-type-menu)))
   (when (link-may-follow?)
-    ("Follow link" (link-follow))))
+    ("Follow link" (link-follow (cursor-tree)))))

@@ -28,6 +28,7 @@
 #define THE_EXTENTS 64
 #define THE_AUTOMATIC_SIZE 128
 #define THE_MUTATORS 256
+#define THE_LOCUS 512
 
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;

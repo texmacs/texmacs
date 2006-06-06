@@ -100,14 +100,10 @@
 	(set! l (list-filter l filter-on-type)))
     l))
 
-(define (upward-link-list-sub t filter?)
+(tm-define (upward-link-list t filter?)
   (with l (exact-link-list t filter?)
     (if (== (buffer-path) (tree->path t)) l
-	(append l (upward-link-list-sub (tree-up t) filter?)))))
-
-(tm-define (upward-link-list filter?)
-  (with t (cursor-tree)
-    (upward-link-list-sub t filter?)))
+	(append l (upward-link-list (tree-up t) filter?)))))
 
 (tm-define (complete-link-list t filter?)
   (with l (exact-link-list t filter?)
@@ -136,8 +132,8 @@
 	     (r (link-list->navigate-list (cdr l))))
 	(list-remove-duplicates (append h r)))))
 
-(tm-define (upward-navigate-list)
-  (link-list->navigate-list (upward-link-list #t)))
+(tm-define (upward-navigate-list t)
+  (link-list->navigate-list (upward-link-list t #t)))
 
 (tm-define (navigate-list-types l)
   (list-remove-duplicates (map car l)))
@@ -151,9 +147,9 @@
 ;; Actual navigation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (link-may-follow?)
-  (:synopsis "Does the current locus contain an active link?")
-  (nnull? (upward-navigate-list)))
+(tm-define (link-may-follow? t)
+  (:synopsis "Does @t contain an active link?")
+  (nnull? (upward-navigate-list t)))
 
 (tm-define (go-to-id id)
   (with l (id->trees id)
@@ -166,17 +162,21 @@
   (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
 	(else (noop))))
 
+(define follow-from #f)
 (tm-define (link-follow-typed type)
-  (:synopsis "Follow the first link with given @type at the current locus.")
+  (:synopsis "Follow the first link with given @type inside @follow-from.")
   (:argument type "Link type")
-  (:proposals type (navigate-list-types (upward-navigate-list)))
-  (and-with Id (navigate-list-find-type (upward-navigate-list) type)
+  (:proposals type (navigate-list-types (upward-navigate-list follow-from)))
+  (and-with Id (navigate-list-find-type (upward-navigate-list follw-from) type)
+    (set! follow-from #f)
     (go-to-Id Id)))
 
-(tm-define (link-follow)
+(tm-define (link-follow t)
   (:synopsis "Follow one of the links at the current locus.")
-  (let* ((l (link-list->navigate-list (upward-link-list #t)))
+  (let* ((l (link-list->navigate-list (upward-link-list t #t)))
 	 (types (navigate-list-types l)))
     (cond ((null? types) (noop))
 	  ((null? (cdr types)) (go-to-Id (cadddr (car l))))
-	  (else (interactive link-follow-typed)))))
+	  (else
+	   (set! follow-from t)
+	   (interactive link-follow-typed)))))
