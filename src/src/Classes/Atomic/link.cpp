@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "link.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Soft links
@@ -19,6 +20,7 @@
 hashmap<string,list<observer> > id_resolve;
 hashmap<observer,list<string> > pointer_resolve;
 hashmap<string,list<soft_link> > id_occurrences;
+hashmap<string,int> type_count (0);
 
 void
 register_pointer (string id, observer which) {
@@ -66,6 +68,8 @@ void
 register_link (soft_link ln) {
   //cout << "Register: " << ln->t << "\n";
   int i, n= N(ln->t);
+  if (is_atomic (ln->t[0]))
+    type_count (ln->t[0]->label) ++;
   for (i=1; i<n; i++)
     register_link_component (as_id (ln->t[i]), ln);
 }
@@ -74,6 +78,11 @@ void
 unregister_link (soft_link ln) {
   //cout << "Unregister: " << ln->t << "\n";
   int i, n= N(ln->t);
+  if (is_atomic (ln->t[0])) {
+    type_count (ln->t[0]->label) --;
+    if (type_count (ln->t[0]->label) == 0)
+      type_count->reset (ln->t[0]->label);
+  }
   for (i=1; i<n; i++)
     unregister_link_component (as_id (ln->t[i]), ln);
 }
@@ -149,4 +158,15 @@ as_tree_list (list<soft_link> l) {
 list<tree>
 get_links (string id) {
   return reverse (as_tree_list (id_occurrences [id]));
+}
+
+list<string>
+all_link_types () {
+  list<string> l;
+  iterator<string> it= iterate (type_count);
+  while (it->busy()) {
+    string s= it->next();
+    l= list<string> (s, l);
+  }
+  return l;
 }

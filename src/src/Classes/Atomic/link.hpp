@@ -77,5 +77,6 @@ ABSTRACT_NULL_CODE(link_repository);
 list<string> get_ids (tree t);
 list<tree> get_trees (string id);
 list<tree> get_links (string id);
+list<string> all_link_types ();
 
 #endif // HARD_LINK_H

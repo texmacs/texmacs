@@ -13,14 +13,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-menu)
-  (:use (link link-edit)))
+  (:use (link link-edit) (link link-navigate)))
+
+(define (link-create-entry name)
+  (list name (lambda () (make-link name))))
+
+(tm-define (link-create-menu)
+  (let* ((l1 (current-link-types))
+	 (l2 (list-remove-duplicates (cons "standard" l1)))
+	 (l3 (list-sort l2 string<=?)))
+    (menu-dynamic
+      ,@(map link-create-entry l3)
+      ---
+      ("Other" (interactive make-link)))))
+
+(define (link-delete-entry name)
+  (list name (lambda () (remove-link name))))
+
+(tm-define (link-delete-menu)
+  (let* ((l1 (locus-link-types #t))
+	 (l2 (list-sort l1 string<=?)))
+    (menu-dynamic
+      ("All" (remove-all-links))
+      ---
+      ,@(map link-delete-entry l2)
+      ---
+      ("Other" (interactive remove-link)))))
 
 (menu-bind link-menu
   ("New locus" (make-locus))
+  ---
+  (-> "Link mode"
+      ("Simple" (set-link-mode "simple"))
+      ("Bidirectional" (set-link-mode "bidirectional"))
+      ("External" (set-link-mode "external")))
   (when (inside? 'locus)
-    ("Set source" (link-insert-locus 0))
-    ("Set destination" (link-insert-locus 1)))
-  (when (link-under-construction?)
-    ("Create link" (interactive make-link)))
+    ("Source" (link-set-locus 0))
+    ("Destination" (link-set-locus 1)))
+  (when (link-completed-loci?)
+    (-> "Create link" (link link-create-menu)))
+  (if (null? (locus-link-types #t))
+      (when #f
+	("Delete link" (noop))))
+  (if (nnull? (locus-link-types #t))
+    (-> "Delete link" (link link-delete-menu)))
+  ---
   (when (link-may-follow?)
     ("Follow link" (link-follow))))
