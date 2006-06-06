@@ -40,6 +40,15 @@
       ---
       ("Other" (interactive remove-link)))))
 
+(define (navigation-type-entry name)
+  (list name (eval `(lambda () (navigation-toggle-type ,name)))))
+
+(tm-define (navigation-type-menu)
+  (let* ((l1 (current-link-types))
+	 (l2 (list-sort l1 string<=?)))
+    (menu-dynamic
+      ,@(map navigation-type-entry l2))))
+
 (menu-bind link-menu
   ("New locus" (make-locus))
   ---
@@ -58,5 +67,14 @@
   (if (nnull? (locus-link-types #t))
     (-> "Delete link" (link link-delete-menu)))
   ---
+  (-> "Navigation options"
+      ("Follow inverse links" (navigation-toggle-bidirectional))
+      ("Follow external links" (navigation-toggle-external)))
+  (-> "Active link types"
+      ("None" (navigation-allow-no-types))
+      ("All" (navigation-allow-all-types))
+      (if (nnull? (current-link-types))
+	  ---
+	  (link navigation-type-menu)))
   (when (link-may-follow?)
     ("Follow link" (link-follow))))

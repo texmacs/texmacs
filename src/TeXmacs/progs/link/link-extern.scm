@@ -88,7 +88,7 @@
   (append-map link-item-id-locations l))
 
 (define (get-id-locations here t)
-  (let* ((l (complete-link-list t))
+  (let* ((l (complete-link-list t #f))
 	 (l1 (link-list-id-locations l))
 	 (l2 (list-filter l1 (lambda (x) (!= (cdr x) here))))
 	 (l3 (map (lambda (x) (cons (car x) (url-delta here (cdr x)))) l2)))
