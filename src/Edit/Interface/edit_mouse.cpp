@@ -13,6 +13,7 @@
 #include "edit_interface.hpp"
 #include "tm_buffer.hpp"
 #include "timer.hpp"
+#include "link.hpp"
 
 /******************************************************************************
 * dispatching
@@ -110,7 +111,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
 
 void
 edit_interface_rep::mouse_click (SI x, SI y) {
-  if (eb->action ("click" , x, y, 0) != "") return;
+  if (eb->action ("click", x, y, 0) != "") return;
   start_x   = x;
   start_y   = y;
   start_drag= dragging= true;
@@ -144,7 +145,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
   }
   // end temporary hack
 
-  if (eb->action ("double-click" , x, y, 0) != "") return true;
+  if (eb->action ("double-click", x, y, 0) != "") return true;
   go_to (x, y);
   path p1, p2;
   get_selection (p1, p2);
@@ -156,7 +157,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 void
 edit_interface_rep::mouse_drag (SI x, SI y) {
   if (inside_graphics ()) return;
-  if (eb->action ("drag" , x, y, 0) != "") return;
+  if (eb->action ("drag", x, y, 0) != "") return;
   end_x  = x;
   end_y  = y;
   selection_visible ();
@@ -198,14 +199,14 @@ edit_interface_rep::mouse_select (SI x, SI y) {
 
 void
 edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
-  if (eb->action ("paste" , x, y, 0) != "") return;
+  if (eb->action ("paste", x, y, 0) != "") return;
   selection_copy ();
   selection_paste ();
 }
 
 void
 edit_interface_rep::mouse_adjust (SI x, SI y) {
-  if (eb->action ("adjust" , x, y, 0) != "") return;
+  if (eb->action ("adjust", x, y, 0) != "") return;
   x /= sfactor; y /= sfactor;
   abs_round (x, y);
   if (popup_win == NULL) {
@@ -274,5 +275,31 @@ edit_interface_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x   = ev->x*sfactor;
   SI     y   = ev->y*sfactor;
+
+  path cp= path_up (tree_path (x, y, 0));
+  path p = cp, lp;
+  list<string> ids;
+  while (rp <= p) {
+    ids << get_ids (subtree (et, p));
+    if (is_func (subtree (et, p), LOCUS)) lp= p;
+    p= path_up (p);
+  }
+
+  locus_new_rects= rectangles ();
+  if (!nil (ids)) {
+    if (type == "move" || type == "enter") {
+      tree st= subtree (et, lp);
+      bool follow= as_bool (call ("link-may-follow?", object (st)));
+      if (follow) {
+	selection sel= eb->find_check_selection (lp * 0, lp * 1);
+	locus_new_rects=
+	  simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
+			       thicken (sel->rs, 0, 2*pixel)));
+      }
+    }
+  }
+  if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
+
+
   mouse_any (type, x, y, ev->t);
 }

@@ -65,6 +65,8 @@ protected:
   SI            vx1, vy1, vx2, vy2;
   rectangles    stored_rects;
   ps_device     stored;
+  rectangles    locus_new_rects;
+  rectangles    locus_rects;
 
 public:
   edit_interface_rep ();
