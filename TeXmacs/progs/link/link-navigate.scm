@@ -162,13 +162,13 @@
   (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
 	(else (noop))))
 
-(define follow-from #f)
+(define link-from #f)
 (tm-define (link-follow-typed type)
-  (:synopsis "Follow the first link with given @type inside @follow-from.")
+  (:synopsis "Follow the first link with given @type inside @link-from.")
   (:argument type "Link type")
-  (:proposals type (navigate-list-types (upward-navigate-list follow-from)))
-  (and-with Id (navigate-list-find-type (upward-navigate-list follw-from) type)
-    (set! follow-from #f)
+  (:proposals type (navigate-list-types (upward-navigate-list link-from)))
+  (and-with Id (navigate-list-find-type (upward-navigate-list link-from) type)
+    (set! link-from #f)
     (go-to-Id Id)))
 
 (tm-define (link-follow t)
@@ -178,5 +178,5 @@
     (cond ((null? types) (noop))
 	  ((null? (cdr types)) (go-to-Id (cadddr (car l))))
 	  (else
-	   (set! follow-from t)
+	   (set! link-from t)
 	   (interactive link-follow-typed)))))
