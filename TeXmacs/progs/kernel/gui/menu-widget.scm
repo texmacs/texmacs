@@ -132,14 +132,20 @@
 	(else (with source (promise-source action)
 		(if source (kbd-find-shortcut source) "")))))
 
+(define (make-menu-entry-check-sub result propose)
+  (cond ((string? result) result)
+	(result propose)
+	(else "")))
+
 (define (make-menu-entry-check opt-check action)
   (if opt-check
-      (if ((cadr opt-check)) (car opt-check) "")
+      (make-menu-entry-check-sub ((cadr opt-check)) (car opt-check))
       (with source (promise-source action)
 	(if (not (and source (pair? source))) ""
 	    (with prop (property (car source) :check-mark)
-	      (if (and prop (apply (cadr prop) (cdr source)))
-		  (car prop) ""))))))
+	      (make-menu-entry-check-sub
+	       (and prop (apply (cadr prop) (cdr source)))
+	       (and prop (car prop))))))))
 
 (define (make-menu-entry-dots label action)
   (with source (promise-source action)

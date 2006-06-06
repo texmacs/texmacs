@@ -37,6 +37,7 @@
   (list->string (map aschar (base64 x))))
 
 (tm-define (create-unique-id)
+  (:synopsis "Create a unique file or locus identifier")
   (set! texmacs-serial-id (+ texmacs-serial-id 1))
   (string-append texmacs-session-id (number->base64 texmacs-serial-id)))
 
@@ -47,6 +48,7 @@
 		  (cons 1 (path-end t '())))))
 
 (tm-define (locus-id t)
+  (:synopsis "Return the unique identifier of the locus @t or #f.")
   (and (tm-func? t 'locus)
        (>= (tm-length t) 2)
        (tm-func? (tm-ref t 0) 'id 1)
@@ -55,6 +57,43 @@
 
 (define (locus-insert-link t ln)
   (tree-insert t (- (tree-arity t) 1) `(locus ,(tree-copy ln))))
+
+(define (locus-remove-link ln)
+  (display* "Remove link " ln " from " (tree-ref ln :up :last) "\n")
+  (tree-remove (tree-up ln) (tree-index ln) 1))
+
+(define (locus-remove-match ln match-with)
+  (if (== ln match-with) (locus-remove-link ln)))
+
+(define (locus-remove-all t ln)
+  (for-each (cut locus-remove-match <> ln)
+	    (reverse (cDr (tree-children t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generalities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define current-link-mode "bidirectional")
+
+(define (in-link-mode? mode)
+  (== current-link-mode mode))
+
+(tm-define (set-link-mode mode)
+  (:synopsis "Set the current linking mode to @mode")
+  (:check-mark "v" in-link-mode?)
+  (set! current-link-mode mode))
+
+(define (decompose-link-type type)
+  (if (string-starts? type " ")
+      (decompose-link-type (substring type 1 (string-length type)))
+      (with pos (string-search-forwards "," 0 type)
+	(if (< pos 0) (list type)
+	    (cons (substring type 0 pos)
+		  (decompose-link-type
+		   (substring type (+ pos 1) (string-length type))))))))
+
+(tm-define (Id->id Id)
+  (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construction of links
@@ -68,273 +107,116 @@
       (ahash-remove! link-participants nr)
       (tree-pointer-detach p))))
 
-(tm-define (link-insert-locus nr)
+(define (link-on-locus? nr)
+  (if (not (inside? 'locus)) ""
+      (with-innermost t 'locus
+	(with tp (ahash-ref link-participants nr)
+	  (cond ((not tp) "")
+		((== t (tree-pointer->tree tp)) "v")
+		(else "o"))))))
+
+(tm-define (link-set-locus nr)
+  (:synopsis "Set locus number @nr of a link.")
+  (:check-mark "auto" link-on-locus?)
   (with-innermost t 'locus
     (ahash-set! link-participants nr (tree->tree-pointer t))))
 
-(tm-define (link-under-construction?)
-  (nnot (ahash-ref link-participants 0)))
+(tm-define (link-completed-loci?)
+  (:synopsis "Did we mark all necessary loci for constructing a link?")
+  (and (ahash-ref link-participants 0)
+       (ahash-ref link-participants 1)
+       (cond ((== current-link-mode "simple") #t)
+	     ((== current-link-mode "bidirectional") #t)
+	     ((== current-link-mode "external") (inside? 'locus))
+	     (else #f))))
 
 (define (link-participating-trees nr)
   (with p (ahash-ref link-participants nr)
     (if (not p) '()
 	(with t (tree-pointer->tree p)
-	  (link-remove-participant nr)
 	  (cons t (link-participating-trees (+ nr 1)))))))
 
-(tm-define (make-link type)
-  (:argument type "Link type")
+(define (link-remove-participants nr)
+  (and-with p (ahash-ref link-participants nr)
+    (with t (tree-pointer->tree p)
+      (link-remove-participant nr)
+      (link-remove-participants (+ nr 1)))))
+
+(define (make-link-sub type)
   (let* ((l (link-participating-trees 0))
 	 (ids (map locus-id l))
 	 (Ids (map (lambda (x) `(id ,x)) ids))
 	 (ln (tm->tree `(link ,type ,@Ids))))
     (when (and (nnull? l) (list-and ids))
-      (for-each (cut locus-insert-link <> ln) l))))
+      (cond ((== current-link-mode "simple")
+	     (with t (tree-pointer->tree (ahash-ref link-participants 0))
+	       (locus-insert-link t ln)))
+	    ((== current-link-mode "bidirectional")
+	     (for-each (cut locus-insert-link <> ln) l))
+	    ((== current-link-mode "external")
+	     (with-innermost t 'locus
+	       (locus-insert-link t ln)))
+	    (else (set-message "Unsupported link mode" "Make link"))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Finding links
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (id->link-list id)
-  (let* ((lns (id->links id))
-	 (sts (map tree->stree lns)))
-    (map (cut cons id <>) (map cdr sts))))
-
-(tm-define (exact-link-list t)
-  (let* ((ids (tree->ids t))
-	 (lns (map id->link-list ids)))
-    (apply append lns)))
-
-(define (upward-link-list-sub t)
-  (with l (exact-link-list t)
-    (if (== (buffer-path) (tree->path t)) l
-	(append l (upward-link-list-sub (tree-up t))))))
-
-(tm-define (upward-link-list)
-  (with t (cursor-tree)
-    (upward-link-list-sub t)))
-
-(tm-define (complete-link-list t)
-  (with l (exact-link-list t)
-    (if (tree-atomic? t) l
-	(with ls (map complete-link-list (tree-children t))
-	  (apply append (cons l ls))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Navigation lists
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (Id->id Id)
-  (cond ((func? Id 'id 1) (Id->id (cadr Id)))
-	(else Id)))
-
-(define (navigate-list-sub type nr source l)
-  (if (null? l) l
-      (let* ((head (list type nr source (car l)))
-	     (tail (navigate-list-sub type (+ nr 1) source (cdr l))))
-	(if (== source (Id->id (car l))) tail
-	    (cons head tail)))))
-
-(tm-define (link-list->navigate-list l)
-  (if (null? l) l
-      (let* ((item (car l))
-	     (source (car item))
-	     (type (cadr item))
-	     (components (cddr item))
-	     (h (navigate-list-sub type 0 source components))
-	     (r (link-list->navigate-list (cdr l))))
-	(list-remove-duplicates (append h r)))))
-
-(tm-define (upward-navigate-list)
-  (link-list->navigate-list (upward-link-list)))
-
-(tm-define (navigate-list-types l)
-  (list-remove-duplicates (map car l)))
-
-(tm-define (navigate-list-find-type l type)
-  (cond ((null? l) #f)
-	((== (caar l) type) (cadddr (car l)))
-	(else (navigate-list-find-type (cdr l) type))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Actual navigation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (link-may-follow?)
-  (nnull? (upward-navigate-list)))
-
-(tm-define (go-to-id id)
-  (with l (id->trees id)
-    (if (nnull? l)
-	(tree-go-to (car l) :last :end)
-	(and (resolve-id id)
-	     (delayed (:idle 100) (go-to-id id))))))
-
-(tm-define (go-to-Id Id)
-  (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
-	(else (noop))))
-
-(tm-define (link-follow-typed type)
+(tm-define (make-link type)
+  (:synopsis "Make a link of type @type.")
   (:argument type "Link type")
-  (:proposals type (navigate-list-types (upward-navigate-list)))
-  (and-with Id (navigate-list-find-type (upward-navigate-list) type)
-    (go-to-Id Id)))
-
-(tm-define (link-follow)
-  (let* ((l (link-list->navigate-list (upward-link-list)))
-	 (types (navigate-list-types l)))
-    (cond ((null? types) (noop))
-	  ((null? (cdr types)) (go-to-Id (cadddr (car l))))
-	  (else (interactive link-follow-typed)))))
+  (when (link-completed-loci?)
+    (for-each make-link-sub (decompose-link-type type))
+    (link-remove-participants 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building the list of link locators
+;; Destruction of links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (id-locations id)
-  (let* ((get-name (lambda (t) (get-name-buffer-path (tree->path t))))
-	 (l1 (id->trees id))
-	 (l2 (map get-name l1))
-	 (l2* (id->locations id))
-	 (l3 (if (null? l2) l2* l2))
-	 (l4 (list-filter l3 (lambda (u) (not (url-none? u))))))
-    (map (cut cons id <>) l4)))
+(define (locus-link-type ln check-mode?)
+  (and (tm-func? ln 'link)
+       (or (not check-mode?)
+	   (cond ((== current-link-mode "simple")
+		  (let* ((id (locus-id (tree-up ln)))
+			 (id2 (Id->id (caddr (tree->stree ln)))))
+		    (== id id2)))
+		 ((== current-link-mode "bidirectional") #t)
+		 ((== current-link-mode "external") #t)
+		 (else #f)))))
 
-(define (Id-locations Id)
-  (if (func? Id 'id 1)
-      (id-locations (cadr Id))
-      '()))
+(tm-define (locus-link-types check-mode?)
+  (:synopsis "Get all link types occurring in the current locus.")
+  (:argument check-mode? "Filter according to the current link mode?")
+  (if (not (inside? 'locus)) '()
+      (with-innermost t 'locus
+	(let* ((l1 (cDr (tree-children t)))
+	       (l2 (list-filter l1 (cut locus-link-type <> check-mode?)))
+	       (l3 (map cadr (map tree->stree l2))))
+	  (list-remove-duplicates l3)))))
 
-(define (link-item-id-locations ln)
-  (with (id type . lns) ln
-    (append-map Id-locations lns)))
+(define (remove-link-sub-sub ln type)
+  (with st (tree->stree ln)
+    (when (and (func? st 'link) (== (cadr st) type))
+      (cond ((== current-link-mode "simple")
+	     (locus-remove-link ln))
+	    ((== current-link-mode "bidirectional")
+	     (let* ((ids (filter-map Id->id (cddr st)))
+		    (ts1 (append-map id->trees ids))
+		    (fun (lambda (t) (not (tree-eq? t (tree-up ln)))))
+		    (ts2 (list-filter ts1 fun)))
+	       (for-each (cut locus-remove-all <> ln) ts2)
+	       (locus-remove-link ln)))
+	    ((== current-link-mode "external")
+	     (locus-remove-link ln))
+	    (else (set-message "Unsupported link mode" "Remove link"))))))
 
-(define (link-list-id-locations l)
-  (append-map link-item-id-locations l))
+(define (remove-link-sub type)
+  (with-innermost t 'locus
+    (for-each (cut remove-link-sub-sub <> type)
+	      (reverse (cDr (tree-children t))))))
 
-(define (get-id-locations here t)
-  (let* ((l (complete-link-list t))
-	 (l1 (link-list-id-locations l))
-	 (l2 (list-filter l1 (lambda (x) (!= (cdr x) here))))
-	 (l3 (map (lambda (x) (cons (car x) (url-delta here (cdr x)))) l2)))
-    (list-remove-duplicates l3)))
+(tm-define (remove-link type)
+  (:synopsis "Remove all links of type @type.")
+  (:argument type "Link type")
+  (:proposals type (locus-link-types #t))
+  (for-each remove-link-sub (decompose-link-type type)))
 
-(define (encode-file-name here x)
-  (let* ((id (car x))
-	 (u (url-relative here (cdr x)))
-	 (s (url->string u)))
-    (list id (list 'id (registry-id s)))))
-
-(define (encode-file-correspondance here id)
-  (with u (url-delta here (car (registry-get id)))
-    (list id (url->string u))))
-
-(tm-define (get-link-locations here t)
-  (with l1 (get-id-locations here t)
-    (if (null? l1) (tm->tree '(collection))
-	(let* ((l2 (map (cut encode-file-name here <>) l1))
-	       (ids (list-remove-duplicates (map cadadr l2)))
-	       (l3 (map (cut encode-file-correspondance here <>) ids)))
-	  (tm->tree `(collection (id ,(registry-id (url->string here)))
-				 ,@(map (cut cons 'target <>) l3)
-				 ,@(map (cut cons 'locator <>) l2)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Retrieving the list of link locators
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define already-loaded-table (make-ahash-table))
-(define link-locator-table (make-ahash-table))
-
-(define (id->locations id)
-  (if (func? id 'id 1) (set! id (cadr id)))
-  (with name (ahash-ref id-to-name-table id)
-    (if name (map string->url name)
-	(with l (ahash-ref* link-locator-table id '())
-	  (append-map id->locations l)))))
-
-(define (resolve-id-sub id l)
-  (cond ((null? l) #f)
-	((not (url-exists? (car l))) (resolve-id-sub id (cdr l)))
-	(else
-	 (ahash-set! already-loaded-table (car l) #t)
-	 (texmacs-load-buffer (car l) "generic" 0 #f))))
-
-(define (resolve-id Id)
-  (let* ((id (Id->id Id))
-	 (not-loaded? (lambda (u) (not (ahash-ref already-loaded-table u))))
-	 (l1 (id->locations id))
-	 (l2 (list-filter l1 not-loaded?)))
-    (resolve-id-sub id l2)))
-
-(define (register-unique-id here t)
-  (with (dummy id) t
-    (registry-add id (url->string here))))
-
-(define (register-target here t)
-  (with (dummy id loc) t
-    (with u (url-relative here loc)
-      (when (url-exists? u)
-	(registry-add id (url->string u))))))
-
-(define (register-locator here t)
-  (with (dummy id id2) t
-    (ahash-set! link-locator-table id
-		(list-union (list id2)
-			    (ahash-ref* link-locator-table id '())))))
-
-(define (register-link-location here t)
-  (cond ((func? t 'id 1) (register-unique-id here t))
-	((func? t 'target 2) (register-target here t))
-	((func? t 'locator 2) (register-locator here t))))
-
-(tm-define (register-link-locations here t)
-  (with l (cdr (tree->stree t))
-    (for-each (cut register-link-location here <>) l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File registry
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define registry-loaded #f)
-(define id-to-name-table (make-ahash-table))
-(define name-to-id-table (make-ahash-table))
-
-(define (load-registry-sub x)
-  (with (id . l) x
-    (for-each (cut ahash-set! name-to-id-table <> id) l)))
-
-(tm-define (load-registry)
-  (with name "$TEXMACS_HOME_PATH/system/registry.scm"
-    (when (and (not registry-loaded) (url-exists? name))
-      (set! registry-loaded #t)
-      (let* ((reg (load-object name))
-	     (d1 (for-each load-registry-sub reg))
-	     (t (list->ahash-table reg)))
-	(set! id-to-name-table t)))))
-
-(tm-define (save-registry)
-  (with name "$TEXMACS_HOME_PATH/system/registry.scm"
-    (save-object name (ahash-table->list id-to-name-table))))
-
-(tm-define (registry-get id)
-  (load-registry)
-  (ahash-ref* id-to-name-table id '()))
-
-(tm-define (registry-id name)
-  (load-registry)
-  (when (not (ahash-ref name-to-id-table name))
-    (registry-set (create-unique-id) (list name)))
-  (ahash-ref name-to-id-table name))
-
-(tm-define (registry-set id names)
-  (load-registry)
-  (when (!= (ahash-ref id-to-name-table id) names)
-    (ahash-set! id-to-name-table id names)
-    (for-each (cut ahash-set! name-to-id-table <> id) names)
-    (save-registry)))
-
-(tm-define (registry-add id name)
-  (load-registry)
-  (with l (and (registry-get id) '())
-    (registry-set id (list-remove-duplicates (cons name l)))))
+(tm-define (remove-all-links)
+  (:synopsis "Remove all links from the current locus.")
+  (for-each remove-link-sub (locus-link-types #t)))

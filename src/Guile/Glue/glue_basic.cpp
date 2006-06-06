@@ -906,6 +906,15 @@ tmg_tree_pointer_2tree (SCM arg1) {
 }
 
 SCM
+tmg_current_link_types () {
+  // SCM_DEFER_INTS;
+  list_string out= all_link_types ();
+  // SCM_ALLOW_INTS;
+
+  return list_string_to_scm (out);
+}
+
+SCM
 tmg_string_numberP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
 
@@ -2743,6 +2752,7 @@ initialize_glue_basic () {
   gh_new_procedure ("tree->tree-pointer", (FN) tmg_tree_2tree_pointer, 1, 0, 0);
   gh_new_procedure ("tree-pointer-detach", (FN) tmg_tree_pointer_detach, 1, 0, 0);
   gh_new_procedure ("tree-pointer->tree", (FN) tmg_tree_pointer_2tree, 1, 0, 0);
+  gh_new_procedure ("current-link-types", (FN) tmg_current_link_types, 0, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

@@ -228,6 +228,10 @@
 	  ((pred? (car l)) (cons (car l) (rec (cdr l))))
 	  (else (rec (cdr l))))))
 
+(define-public (filter-map fun . args)
+  "Composition of @map and @list-filter."
+  (list-filter (apply map (cons fun args)) identity))
+
 (define-public (list-partition l pred?)
   "Partition a @l into two parts according to @pred?."
   (let rec ((l l))

@@ -91,6 +91,7 @@
   (tree->tree-pointer tree_pointer_new (observer tree))
   (tree-pointer-detach tree_pointer_delete (void observer))
   (tree-pointer->tree obtain_tree (tree observer))
+  (current-link-types all_link_types (list_string))
 
   ;; routines for strings
   (string-number? is_double (bool string))
