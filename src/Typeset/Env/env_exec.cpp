@@ -1784,7 +1784,7 @@ edit_env_rep::expand (tree t) {
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
       return tree (ERROR, "argument " * t[0]->label);
-    tree r= macro_arg->item [r->label];
+    tree r= macro_arg->item [t[0]->label];
     list<hashmap<string,tree> > old_var= macro_arg;
     list<hashmap<string,path> > old_src= macro_src;
     if (!nil (macro_arg)) macro_arg= macro_arg->next;
