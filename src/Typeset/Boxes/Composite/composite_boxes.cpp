@@ -122,6 +122,18 @@ composite_box_rep::action (tree t, SI x, SI y, SI delta) {
 }
 
 void
+composite_box_rep::loci (SI x, SI y, SI delta,
+			 list<string>& ids, rectangles& rs)
+{
+  int m= find_child (x, y, delta, true);
+  if (m == -1) box_rep::loci (x, y, delta, ids, rs);
+  else {
+    bs[m]->loci (x- sx(m), y- sy(m), delta + get_delta (x, x1, x2), ids, rs);
+    rs= translate (rs, sx(m), sy(m));
+  }
+}
+
+void
 composite_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
   int i, n= N(bs);
   for (i=0; i<n; i++)

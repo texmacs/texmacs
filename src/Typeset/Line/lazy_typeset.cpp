@@ -428,12 +428,18 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 
 lazy
 make_lazy_locus (edit_env env, tree t, path ip) {
-  extern void build_locus (edit_env env, tree t);
-  build_locus (env, t);
+  extern bool build_locus (edit_env env, tree t, list<string>& ids, string& c);
+  list<string> ids;
+  string col;
+  if (!build_locus (env, t, ids, col))
+    system_warning ("Ignored unaccessible loci");
   int last= N(t)-1;
+  tree old_col= env->read (COLOR);
+  env->write_update (COLOR, col);
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   lazy par= make_lazy (env, t[last], descend (ip, last));
+  env->write_update (COLOR, old_col);
   return lazy_surround (a, b, par, ip);
 }
 

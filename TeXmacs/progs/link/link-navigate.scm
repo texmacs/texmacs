@@ -21,6 +21,7 @@
 
 (define navigation-bidirectional-links? #t)
 (define navigation-external-links? #t)
+(define navigation-link-pages? #t)
 (define navigation-blocked-types (make-ahash-table))
 
 (define (navigation-bidirectional?) navigation-bidirectional-links?)
@@ -34,6 +35,12 @@
   (:synopsis "Toggle whether we may follow links defined in other loci.")
   (:check-mark "v" navigation-external?)
   (toggle! navigation-external-links?))
+
+(define (navigation-build-link-pages?) navigation-link-pages?)
+(tm-define (navigation-toggle-build-link-pages)
+  (:synopsis "Toggle whether we generate link pages.")
+  (:check-mark "v" navigation-build-link-pages?)
+  (toggle! navigation-link-pages?))
 
 (define (navigation-allow-type? type)
   (not (ahash-ref navigation-blocked-types type)))
@@ -70,10 +77,11 @@
 	 (sts (map tree->stree lns)))
     (map (cut cons id <>) (map cdr sts))))
 
+(tm-define (ids->link-list ids)
+  (append-map id->link-list ids))
+
 (define (exact-link-list-global t)
-  (let* ((ids (tree->ids t))
-	 (lns (map id->link-list ids)))
-    (apply append lns)))
+  (ids->link-list (tree->ids t)))
 
 (define (exact-link-list-local t)
   (if (not (tm-func? t 'locus)) '()
@@ -90,15 +98,16 @@
   (with (id type . args) x
     (navigation-allow-type? type)))
 
+(define (filter-link-list l)
+  (if (not (navigation-bidirectional?))
+      (set! l (list-filter l filter-on-bidirectional)))
+  (list-filter l filter-on-type))
+
 (tm-define (exact-link-list t filter?)
   (with l (if (and filter? (not (navigation-external?)))
 	      (exact-link-list-local t)
 	      (exact-link-list-global t))
-    (if (and filter? (not (navigation-bidirectional?)))
-	(set! l (list-filter l filter-on-bidirectional)))
-    (if filter?
-	(set! l (list-filter l filter-on-type)))
-    l))
+    (if filter? (filter-link-list l) l)))
 
 (tm-define (upward-link-list t filter?)
   (with l (exact-link-list t filter?)
@@ -112,44 +121,12 @@
 	  (apply append (cons l ls))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Navigation lists
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (navigate-list-sub type nr source l)
-  (if (null? l) l
-      (let* ((head (list type nr source (car l)))
-	     (tail (navigate-list-sub type (+ nr 1) source (cdr l))))
-	(if (== source (Id->id (car l))) tail
-	    (cons head tail)))))
-
-(tm-define (link-list->navigate-list l)
-  (if (null? l) l
-      (let* ((item (car l))
-	     (source (car item))
-	     (type (cadr item))
-	     (components (cddr item))
-	     (h (navigate-list-sub type 0 source components))
-	     (r (link-list->navigate-list (cdr l))))
-	(list-remove-duplicates (append h r)))))
-
-(tm-define (upward-navigate-list t)
-  (link-list->navigate-list (upward-link-list t #t)))
-
-(tm-define (navigate-list-types l)
-  (list-remove-duplicates (map car l)))
-
-(tm-define (navigate-list-find-type l type)
-  (cond ((null? l) #f)
-	((== (caar l) type) (cadddr (car l)))
-	(else (navigate-list-find-type (cdr l) type))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Actual navigation
+;; Prospect for active links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (link-may-follow? t)
   (:synopsis "Does @t contain an active link?")
-  (nnull? (upward-navigate-list t)))
+  (nnull? (upward-navigation-list t)))
 
 (define (link-active-upwards-sub t active-ids)
   (let* ((ids (tree->ids t))
@@ -159,9 +136,79 @@
 	(append r (link-active-upwards-sub (tree-up t) active-ids)))))
 
 (tm-define (link-active-upwards t)
-  (:synopsis "Return active loci in which @t is contained.")
+  (:synopsis "Return active ancestor trees for the tree @t.")
   (with l (upward-link-list t #t)
     (link-active-upwards-sub t (map car l))))
+
+(tm-define (link-active-ids l)
+  (:synopsis "Return list of identifiers in @l which admit an active link.")
+  (with r (filter-link-list (ids->link-list l))
+    (list-remove-duplicates (map car r))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (navigation-list-sub type nr source l)
+  (if (null? l) l
+      (let* ((head (list type nr source (car l)))
+	     (tail (navigation-list-sub type (+ nr 1) source (cdr l))))
+	(if (== source (Id->id (car l))) tail
+	    (cons head tail)))))
+
+(tm-define (link-list->navigation-list l)
+  (if (null? l) l
+      (let* ((item (car l))
+	     (source (car item))
+	     (type (cadr item))
+	     (components (cddr item))
+	     (h (navigation-list-sub type 0 source components))
+	     (r (link-list->navigation-list (cdr l))))
+	(list-remove-duplicates (append h r)))))
+
+(tm-define (upward-navigation-list t)
+  (link-list->navigation-list (upward-link-list t #t)))
+
+(tm-define (navigation-list-types l)
+  (list-remove-duplicates (map car l)))
+
+(tm-define (navigation-list-find-type l type)
+  (cond ((null? l) #f)
+	((== (caar l) type) (cadddr (car l)))
+	(else (navigation-list-find-type (cdr l) type))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Link pages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (automatic-link back-id)
+  (let* ((item-id (create-unique-id))
+	 (ts (id->trees back-id)))
+    (if (null? ts) "broken"
+	`(locus (id ,item-id)
+		(link "automatic" (id ,item-id) (id ,back-id))
+		,(tree->stree (car ts))))))
+
+(define (navigation-item->document x)
+  (with (type nr source target) x
+    (automatic-link (Id->id target))))
+
+(define (navigation-list->document l)
+  `(document
+    (style "generic")
+    (body (document
+	   (strong "Source")
+	   ,(automatic-link (caddr (car l)))
+	   (strong "Targets")
+	   ,@(map navigation-item->document l)))))
+
+(define (build-navigation-page l)
+  (with doc (navigation-list->document l)
+    (set-help-buffer "Follow links" doc)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Actual navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (go-to-id id)
   (with l (id->trees id)
@@ -174,21 +221,28 @@
   (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
 	(else (noop))))
 
-(define link-from #f)
-(tm-define (link-follow-typed type)
-  (:synopsis "Follow the first link with given @type inside @link-from.")
+(define the-navigation-list '())
+(tm-define (navigation-list-follow-typed type)
+  (:synopsis "Follow the first link with given @type in @the-navigation-list.")
   (:argument type "Link type")
-  (:proposals type (navigate-list-types (upward-navigate-list link-from)))
-  (and-with Id (navigate-list-find-type (upward-navigate-list link-from) type)
-    (set! link-from #f)
+  (:proposals type (navigation-list-types the-navigation-list))
+  (and-with Id (navigation-list-find-type the-navigation-list type)
+    (set! the-navigation-list #f)
     (go-to-Id Id)))
 
-(tm-define (link-follow t)
-  (:synopsis "Follow one of the links at the current locus.")
-  (let* ((l (link-list->navigate-list (upward-link-list t #t)))
-	 (types (navigate-list-types l)))
+(tm-define (navigation-list-follow nl)
+  (:synopsis "Follow one of the links in the navigation list @nl.")
+  (with types (navigation-list-types nl)
     (cond ((null? types) (noop))
-	  ((null? (cdr types)) (go-to-Id (cadddr (car l))))
+	  ((and (navigation-build-link-pages?) (>= (length nl) 2))
+	   (build-navigation-page nl))
+	  ((null? (cdr types)) (go-to-Id (cadddr (car nl))))
 	  (else
-	   (set! link-from t)
-	   (interactive link-follow-typed)))))
+	   (set! the-navigation-list nl)
+	   (interactive navigation-list-follow-typed)))))
+
+(tm-define (link-follow-ids ids)
+  (:synopsis "Follow one of the links for the tree @t.")
+  (navigation-list-follow
+   (link-list->navigation-list
+    (filter-link-list (ids->link-list ids)))))

@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-menu)
-  (:use (link link-edit) (link link-navigate)))
+  (:use (link link-edit) (link link-navigate)
+	(generic document-edit)))
 
 (define (link-create-entry name)
   (list name (lambda () (make-link name))))
@@ -67,9 +68,19 @@
   (if (nnull? (locus-link-types #t))
     (-> "Delete link" (link link-delete-menu)))
   ---
+  (-> "Locus rendering"
+      ("Default" (init-default "locus-color"))
+      ---
+      ("Preserve" (init-env "locus-color" "preserve"))
+      ("Steel blue" (init-env "locus-color" "#404080"))
+      ("Dark blue" (init-env "locus-color" "dark blue"))
+      ("Red" (init-env "locus-color" "red"))
+      ---
+      ("Other" (init-interactive-env "locus-color")))
   (-> "Navigation options"
       ("Follow inverse links" (navigation-toggle-bidirectional))
-      ("Follow external links" (navigation-toggle-external)))
+      ("Follow external links" (navigation-toggle-external))
+      ("Build link pages" (navigation-toggle-build-link-pages)))
   (-> "Active link types"
       ("None" (navigation-allow-no-types))
       ("All" (navigation-allow-all-types))

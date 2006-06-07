@@ -38,6 +38,7 @@ string FONT_BASE_SIZE ("font-base-size");
 string MAGNIFICATION ("magnification");
 string COLOR ("color");
 string BG_COLOR ("bg-color");
+string LOCUS_COLOR ("locus-color");
 string LANGUAGE ("language");
 string ATOM_DECORATIONS ("atom-decorations");
 string LINE_DECORATIONS ("line-decorations");

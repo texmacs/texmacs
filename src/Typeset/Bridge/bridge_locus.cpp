@@ -138,8 +138,14 @@ bridge_locus_rep::my_typeset_will_be_complete () {
 
 void
 bridge_locus_rep::my_typeset (int desired_status) {
-  extern void build_locus (edit_env env, tree t);
-  build_locus (env, st);
+  extern bool build_locus (edit_env env, tree t, list<string>& ids, string& c);
+  list<string> ids;
+  string col;
+  if (!build_locus (env, st, ids, col))
+    system_warning ("Ignored unaccessible loci");
+  tree old_col= env->read (COLOR);
+  env->write_update (COLOR, col);
   ttt->insert_marker (st, ip);
   body->typeset (desired_status);
+  env->write_update (COLOR, old_col);
 }

@@ -36,6 +36,7 @@ extern string FONT_BASE_SIZE;
 extern string MAGNIFICATION;
 extern string COLOR;
 extern string BG_COLOR;
+extern string LOCUS_COLOR;
 extern string LANGUAGE;
 extern string ATOM_DECORATIONS;
 extern string LINE_DECORATIONS;

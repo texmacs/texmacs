@@ -40,12 +40,20 @@ modifier_box_rep::subbox (int i) { (void) i;
 }
 
 void
-modifier_box_rep::display (ps_device dev) { (void) dev; }
-
+modifier_box_rep::display (ps_device dev) {
+  (void) dev;
+}
 
 tree
 modifier_box_rep::action (tree t, SI x, SI y, SI delta) {
   return b->action (t, x, y, delta);
+}
+
+void
+modifier_box_rep::loci (SI x, SI y, SI delta,
+			list<string>& ids, rectangles& rs)
+{
+  return b->loci (x, y, delta, ids, rs);
 }
 
 void

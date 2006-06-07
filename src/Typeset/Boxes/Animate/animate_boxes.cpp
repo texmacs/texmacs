@@ -121,6 +121,7 @@ public:
   void      display (ps_device dev) { (void) dev; }
   operator  tree () { return tree ("composed animation"); }
   tree      action (tree t, SI x, SI y, SI delta);
+  void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
@@ -184,6 +185,13 @@ anim_compose_box_rep::~anim_compose_box_rep () {}
 tree
 anim_compose_box_rep::action (tree t, SI x, SI y, SI delta) {
   return bs[current]->action (t, x, y, delta);
+}
+
+void
+anim_compose_box_rep::loci (SI x, SI y, SI delta,
+			    list<string>& ids, rectangles& rs)
+{
+  bs[current]->loci (x, y, delta, ids, rs);
 }
 
 void

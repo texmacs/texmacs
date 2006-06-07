@@ -670,6 +670,13 @@ box_rep::action (tree t, SI x, SI y, SI delta) {
 }
 
 void
+box_rep::loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs) {
+  (void) x; (void) y; (void) delta;  
+  ids= list<string> ();
+  rs = rectangles ();
+}
+
+void
 box_rep::position_at (SI x, SI y, rectangles& change_log) {
   int i, n= subnr ();
   x += x0; y += y0;

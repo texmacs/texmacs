@@ -49,12 +49,13 @@ struct composite_box_rep: public box_rep {
   virtual gr_selections   graphical_select (SI x, SI y, SI dist);
   virtual gr_selections   graphical_select (SI x1, SI y1, SI x2, SI y2);
 
-  virtual tree   action (tree t, SI x, SI y, SI delta);
-  virtual bool   access_allowed ();
-  virtual void   collect_page_numbers (hashmap<string,tree>& h, tree page);
-  virtual path   find_tag (string name);
+  virtual tree action (tree t, SI x, SI y, SI delta);
+  virtual void loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
+  virtual bool access_allowed ();
+  virtual void collect_page_numbers (hashmap<string,tree>& h, tree page);
+  virtual path find_tag (string name);
 
-  virtual box    transform (frame fr);
+  virtual box  transform (frame fr);
 };
 
 struct concrete_composite_box_rep: public composite_box_rep {

@@ -230,31 +230,52 @@ concater_rep::typeset_action (tree t, path ip) {
   print (STD_ITEM, action_box (ip, b, action, cmd, true, valip));
 }
 
-void
-build_locus (edit_env env, tree t) {
+bool
+build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   // cout << "Typeset " << t << "\n";
-  int i, last= N(t)-1;
+  int last= N(t)-1;
+  tree body= t[last];
+  if (is_func (body, ARG) || is_func (body, QUOTE_ARG))
+    body= env->expand (body);
+  bool accessible= is_accessible (obtain_ip (body));
   if (!nil (env->link_env)) {
-    tree body= t[last];
-    if (is_func (body, ARG) || is_func (body, QUOTE_ARG))
-      body= env->expand (body);
+    int i;
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
-      if (is_compound (arg, "id", 1))
-	env->link_env->insert_locus (as_string (arg[0]), body);
+      if (is_compound (arg, "id", 1)) {
+	if (accessible)
+	  env->link_env->insert_locus (as_string (arg[0]), body);
+	ids= list<string> (as_string (arg[0]), ids);
+      }
       if (is_compound (arg, "link"))
 	env->link_env->insert_link (arg);
     }
   }
+  string current_col= env->get_string (COLOR);
+  string locus_col= env->get_string (LOCUS_COLOR);
+  if (locus_col == "preserve") col= current_col;
+  else col= locus_col;
+  return accessible;
 }
 
 void
 concater_rep::typeset_locus (tree t, path ip) {
-  build_locus (env, t);
   int last= N(t)-1;
-  marker (descend (ip, 0));
-  typeset (t[last], descend (ip, last));
-  marker (descend (ip, 1));  
+  list<string> ids;
+  string col;
+  if (build_locus (env, t, ids, col)) {
+    marker (descend (ip, 0));
+    tree old= env->local_begin (COLOR, col);
+    typeset (t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    marker (descend (ip, 1));
+  }
+  else {
+    tree old= env->local_begin (COLOR, col);
+    box b= typeset_as_concat (env, t[last], descend (ip, last));
+    env->local_end (COLOR, old);
+    print (STD_ITEM, locus_box (ip, b, ids, env->get_int (SFACTOR) * PIXEL));
+  }
 }
 
 void

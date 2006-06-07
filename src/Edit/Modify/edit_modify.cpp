@@ -53,7 +53,7 @@ edit_modify_rep::~edit_modify_rep () {}
       ((tm_view) (other->vws[0]))->ed->cmd;	\
       return;					\
     }						\
-    else cerr << "TeXmacs] dangerous change\n";	\
+    else system_warning ("Dangerous change");	\
   }
 
 void

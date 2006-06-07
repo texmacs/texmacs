@@ -17,6 +17,7 @@
 (drd-table env-var-description%
   ("color" "Foreground colour")
   ("bg-color" "Background colour")
+  ("locus-color" "Colour of loci")
   ("magnification" "Magnification")
   ("font-base-size" "Font size")
 
