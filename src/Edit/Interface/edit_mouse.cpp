@@ -295,7 +295,7 @@ edit_interface_rep::update_active_loci () {
       while (!nil (l)) {
 	tree lt= l->item;
 	path lp= reverse (obtain_ip (lt));
-	selection sel= eb->find_check_selection (lp * 0, lp * right_index(lt));
+	selection sel= eb->find_check_selection (lp * start(lt), lp * end(lt));
 	locus_new_rects <<
 	  simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
 			       thicken (sel->rs, 0, 2*pixel)));

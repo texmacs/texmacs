@@ -428,15 +428,9 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 
 lazy
 make_lazy_locus (edit_env env, tree t, path ip) {
-  int i, last= N(t)-1;
-  if (!nil (env->link_env))
-    for (i=0; i<last; i++) {
-      tree arg= env->exec (t[i]);
-      if (is_compound (arg, "id", 1))
-	env->link_env->insert_locus (as_string (arg[0]), t);
-      if (is_compound (arg, "link"))
-	env->link_env->insert_link (arg);
-    }
+  extern void build_locus (edit_env env, tree t);
+  build_locus (env, t);
+  int last= N(t)-1;
   array<line_item> a= typeset_marker (env, descend (ip, 0));
   array<line_item> b= typeset_marker (env, descend (ip, 1));
   lazy par= make_lazy (env, t[last], descend (ip, last));

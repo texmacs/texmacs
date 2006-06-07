@@ -94,6 +94,13 @@
 (tm-define (Id->id Id)
   (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
 
+(define (tree->locus t)
+  (and-with p (tree-up t)
+    (and (tm-func? p 'locus) p)))
+
+(tm-define (id->loci id)
+  (filter-map tree->locus (id->trees id)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Construction of links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -196,7 +203,7 @@
 	     (locus-remove-link ln))
 	    ((== current-link-mode "bidirectional")
 	     (let* ((ids (filter-map Id->id (cddr st)))
-		    (ts1 (append-map id->trees ids))
+		    (ts1 (append-map id->loci ids))
 		    (fun (lambda (t) (not (tree-eq? t (tree-up ln)))))
 		    (ts2 (list-filter ts1 fun)))
 	       (for-each (cut locus-remove-all <> ln) ts2)
