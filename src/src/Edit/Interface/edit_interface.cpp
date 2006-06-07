@@ -240,8 +240,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
     if (is_func (st, CELL)) { q1= p1; q2= p2; }
     else selection_correct (et, p1, p2, q1, q2);
     selection sel= eb->find_check_selection (q1, q2);
-    rs << simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-			       thicken (sel->rs, 0, 2*pixel)));
+    rs << outline (sel->rs, pixel);
     if (recurse) compute_env_rects (p, rs, recurse);
   }
 }

@@ -875,7 +875,7 @@ scm_to_array_widget (SCM p) {
 
 typedef list<string> list_string;
 
-static bool
+bool
 scm_is_list_string (SCM p) {
   if (scm_is_null (p)) return true;
   else return scm_is_string (SCM_CAR (p)) && scm_is_list_string (SCM_CDR (p));
@@ -884,14 +884,14 @@ scm_is_list_string (SCM p) {
 #define SCM_ASSERT_LIST_STRING(p,arg,rout) \
   SCM_ASSERT (scm_is_list_string (p), p, arg, rout)
 
-/* static */ SCM
+SCM
 list_string_to_scm (list_string l) {
   if (nil (l)) return SCM_NULL;
   return scm_cons (string_to_scm (l->item),
 		   list_string_to_scm (l->next));
 }
 
-/* static */ list_string
+list_string
 scm_to_list_string (SCM p) {
   if (scm_is_null (p)) return list_string ();
   return list_string (scm_to_string (SCM_CAR (p)),

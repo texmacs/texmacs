@@ -27,6 +27,7 @@ public:
   void      display (ps_device dev);  
   operator  tree ();
   tree      action (tree t, SI x, SI y, SI delta);
+  void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 

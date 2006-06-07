@@ -194,6 +194,12 @@ thicken (rectangles l, SI width, SI height) {
 }
 
 rectangles
+outline (rectangles rs, SI pixel) {
+  return simplify (correct (thicken (rs, pixel, 3*pixel) -
+			    thicken (rs, 0, 2*pixel)));
+}
+
+rectangles
 operator * (rectangles l, int d) {
   if (nil (l)) return l;
   return rectangles (l->item*d, l->next*d);

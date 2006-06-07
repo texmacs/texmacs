@@ -67,7 +67,7 @@ protected:
   ps_device     stored;
   rectangles    locus_new_rects;
   rectangles    locus_rects;
-  list<tree>    active_loci;
+  list<string>  active_ids;
 
 public:
   edit_interface_rep ();

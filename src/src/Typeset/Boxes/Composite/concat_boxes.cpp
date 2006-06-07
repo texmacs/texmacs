@@ -52,6 +52,7 @@ struct concat_box_rep: public composite_box_rep {
   selection find_selection (path lbp, path rbp);
 
   tree      action (tree t, SI x, SI y, SI delta);
+  void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   SI        get_leaf_offset (string search);
 
   box       transform (frame fr);
@@ -472,6 +473,20 @@ concat_box_rep::action (tree t, SI x, SI y, SI delta) {
   SI xx= x- sx(m), yy= y- sy(m);
   SI dd= delta_out + get_delta (xx, bs[m]->x1, bs[m]->x2);
   return bs[m]->action (t, xx, yy, dd);
+}
+
+void
+concat_box_rep::loci (SI x, SI y, SI delta,
+		      list<string>& ids, rectangles& rs)
+{
+  int delta_out, m= find_any_child (x, y, delta, delta_out);
+  if (m == -1) box_rep::loci (x, y, delta, ids, rs);
+  else {
+    SI xx= x- sx(m), yy= y- sy(m);
+    SI dd= delta_out + get_delta (xx, bs[m]->x1, bs[m]->x2);
+    bs[m]->loci (xx, yy, dd, ids, rs);
+    rs= translate (rs, sx(m), sy(m));
+  }
 }
 
 SI

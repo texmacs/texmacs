@@ -178,8 +178,8 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y) {
   if (eb->action ("select" , x, y, 0) != "") return;
-  if (!nil (active_loci) && (get_kbd_modifiers () & 1) == 0) {
-    call ("link-follow", object (active_loci->item));
+  if (!nil (active_ids) && (get_kbd_modifiers () & 1) == 0) {
+    call ("link-follow-ids", object (active_ids));
     return;
   }
   tree g;
@@ -280,28 +280,31 @@ edit_interface_rep::update_active_loci () {
   path cp= path_up (tree_path (last_x, last_y, 0));
   tree mt= subtree (et, cp);
   path p = cp;
-  list<string> ids;
+  list<string> ids1, ids2;
+  rectangles rs1, rs2;
+  eb->loci (last_x, last_y, 0, ids1, rs1);
   while (rp <= p) {
-    ids << get_ids (subtree (et, p));
+    ids2 << get_ids (subtree (et, p));
     p= path_up (p);
   }
 
   locus_new_rects= rectangles ();
-  active_loci= list<tree> ();
-  if (!nil (ids) && !has_changed (THE_FOCUS)) {
-    active_loci= as_list_tree (call ("link-active-upwards", object (mt)));
-    if (!nil (active_loci)) {
-      list<tree> l= active_loci;
-      while (!nil (l)) {
-	tree lt= l->item;
-	path lp= reverse (obtain_ip (lt));
-	selection sel= eb->find_check_selection (lp * start(lt), lp * end(lt));
-	locus_new_rects <<
-	  simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-			       thicken (sel->rs, 0, 2*pixel)));
-	l= l->next;
-      }
+  active_ids= list<string> ();
+  if (!nil (ids1 * ids2) && !has_changed (THE_FOCUS)) {
+    list<tree> l= as_list_tree (call ("link-active-upwards", object (mt)));
+    while (!nil (l)) {
+      tree lt= l->item;
+      path lp= reverse (obtain_ip (lt));
+      selection sel= eb->find_check_selection (lp * start(lt), lp * end(lt));
+      rs2 << outline (sel->rs, pixel);
+      l= l->next;
     }
+    ids1= as_list_string (call ("link-active-ids", object (ids1)));
+    ids2= as_list_string (call ("link-active-ids", object (ids2)));
+    if (nil (ids1)) rs1= rectangles ();
+    // FIXME: we should keep track which id corresponds to which rectangle
+    locus_new_rects= rs1 * rs2;
+    active_ids= ids1 * ids2;
   }
   if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
 }

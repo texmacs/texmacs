@@ -285,6 +285,34 @@ action_box_rep::action (tree t, SI x, SI y, SI delta) {
 }
 
 /******************************************************************************
+* locus boxes
+******************************************************************************/
+
+struct locus_box_rep: public change_box_rep {
+  list<string> ids;
+  SI pixel;
+  locus_box_rep (path ip, box b, list<string> ids, SI pixel);
+  operator tree () { return tree (TUPLE, "locus"); }
+  void loci (SI x, SI y, SI delta, list<string>& ids2, rectangles& rs);
+};
+
+locus_box_rep::locus_box_rep (path ip, box b, list<string> ids2, SI pixel2):
+  change_box_rep (ip, true), ids (ids2), pixel (pixel2)
+{
+  insert (b, 0, 0);
+  position ();
+  left_justify ();
+  finalize ();
+}
+
+void
+locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
+  bs[0]->loci (x, y, delta, l, rs);
+  l = l * ids;
+  rs= rs * outline (rectangles (rectangle (x1, y1, x2, y2)), pixel);
+}
+
+/******************************************************************************
 * tag boxes
 ******************************************************************************/
 
@@ -386,6 +414,11 @@ action_box (path ip, box b, tree filter, command cmd, bool ch, path vip) {
 box
 action_box (path ip, box b, tree filter, command cmd, bool ch) {
   return new action_box_rep (ip, b, filter, cmd, ch, decorate ());
+}
+
+box
+locus_box (path ip, box b, list<string> ids, SI pixel) {
+  return new locus_box_rep (ip, b, ids, pixel);
 }
 
 box
