@@ -138,16 +138,8 @@ bridge_locus_rep::my_typeset_will_be_complete () {
 
 void
 bridge_locus_rep::my_typeset (int desired_status) {
-  // cout << "Typeset " << st << "\n";
-  int i;
-  if (!nil (env->link_env))
-    for (i=0; i<last; i++) {
-      tree arg= env->exec (st[i]);
-      if (is_compound (arg, "id", 1))
-	env->link_env->insert_locus (as_string (arg[0]), st);
-      if (is_compound (arg, "link"))
-	env->link_env->insert_link (arg);
-    }
+  extern void build_locus (edit_env env, tree t);
+  build_locus (env, st);
   ttt->insert_marker (st, ip);
   body->typeset (desired_status);
 }

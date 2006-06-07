@@ -364,10 +364,6 @@ edit_typeset_rep::texmacs_exec (tree t) {
 
 void
 edit_typeset_rep::init_style () {
-  bool old_need_save    = buf->need_save;
-  bool old_need_autosave= buf->need_autosave;
-  buf->need_save    = old_need_save;
-  buf->need_autosave= old_need_autosave;
   notify_change (THE_ENVIRONMENT);
 }
 

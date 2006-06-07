@@ -166,7 +166,7 @@
 (tm-define (go-to-id id)
   (with l (id->trees id)
     (if (nnull? l)
-	(tree-go-to (car l) :last :end)
+	(tree-go-to (car l) :end)
 	(and (resolve-id id)
 	     (delayed (:idle 100) (go-to-id id))))))
 
