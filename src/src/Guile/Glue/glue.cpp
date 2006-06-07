@@ -878,7 +878,7 @@ typedef list<string> list_string;
 static bool
 scm_is_list_string (SCM p) {
   if (scm_is_null (p)) return true;
-  else return SCM_INUMP (SCM_CAR (p)) && scm_is_list_string (SCM_CDR (p));
+  else return scm_is_string (SCM_CAR (p)) && scm_is_list_string (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_LIST_STRING(p,arg,rout) \
@@ -900,23 +900,23 @@ scm_to_list_string (SCM p) {
 
 typedef list<tree> list_tree;
 
-static bool
+bool
 scm_is_list_tree (SCM p) {
   if (scm_is_null (p)) return true;
-  else return SCM_INUMP (SCM_CAR (p)) && scm_is_list_tree (SCM_CDR (p));
+  else return scm_is_tree (SCM_CAR (p)) && scm_is_list_tree (SCM_CDR (p));
 }
 
 #define SCM_ASSERT_LIST_TREE(p,arg,rout) \
   SCM_ASSERT (scm_is_list_tree (p), p, arg, rout)
 
-/* static */ SCM
+SCM
 list_tree_to_scm (list_tree l) {
   if (nil (l)) return SCM_NULL;
   return scm_cons (tree_to_scm (l->item),
 		   list_tree_to_scm (l->next));
 }
 
-/* static */ list_tree
+list_tree
 scm_to_list_tree (SCM p) {
   if (scm_is_null (p)) return list_tree ();
   return list_tree (scm_to_tree (SCM_CAR (p)),

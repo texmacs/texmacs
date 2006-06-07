@@ -151,6 +151,18 @@
   (:synopsis "Does @t contain an active link?")
   (nnull? (upward-navigate-list t)))
 
+(define (link-active-upwards-sub t active-ids)
+  (let* ((ids (tree->ids t))
+	 (add? (nnull? (list-intersection ids active-ids)))
+	 (r (if add? (list t) '())))
+    (if (== (buffer-path) (tree->path t)) r
+	(append r (link-active-upwards-sub (tree-up t) active-ids)))))
+
+(tm-define (link-active-upwards t)
+  (:synopsis "Return active loci in which @t is contained.")
+  (with l (upward-link-list t #t)
+    (link-active-upwards-sub t (map car l))))
+
 (tm-define (go-to-id id)
   (with l (id->trees id)
     (if (nnull? l)

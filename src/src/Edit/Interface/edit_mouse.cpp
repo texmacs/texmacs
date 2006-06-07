@@ -23,6 +23,7 @@ void
 edit_interface_rep::mouse_any (string type, SI x, SI y, time_t t) {
   last_x= x; last_y= y;
   buf->mark_undo_block ();
+  update_active_loci ();
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");
@@ -177,6 +178,10 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 void
 edit_interface_rep::mouse_select (SI x, SI y) {
   if (eb->action ("select" , x, y, 0) != "") return;
+  if (!nil (active_loci) && (get_kbd_modifiers () & 1) == 0) {
+    call ("link-follow", object (active_loci->item));
+    return;
+  }
   tree g;
   bool b0= inside_graphics (false);
   bool b= inside_graphics ();
@@ -267,7 +272,42 @@ edit_interface_rep::set_pointer (
 }
 
 /******************************************************************************
-* event handlers
+* Active loci
+******************************************************************************/
+
+void
+edit_interface_rep::update_active_loci () {
+  path cp= path_up (tree_path (last_x, last_y, 0));
+  tree mt= subtree (et, cp);
+  path p = cp;
+  list<string> ids;
+  while (rp <= p) {
+    ids << get_ids (subtree (et, p));
+    p= path_up (p);
+  }
+
+  locus_new_rects= rectangles ();
+  active_loci= list<tree> ();
+  if (!nil (ids) && !has_changed (THE_FOCUS)) {
+    active_loci= as_list_tree (call ("link-active-upwards", object (mt)));
+    if (!nil (active_loci)) {
+      list<tree> l= active_loci;
+      while (!nil (l)) {
+	tree lt= l->item;
+	path lp= reverse (obtain_ip (lt));
+	selection sel= eb->find_check_selection (lp * 0, lp * right_index(lt));
+	locus_new_rects <<
+	  simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
+			       thicken (sel->rs, 0, 2*pixel)));
+	l= l->next;
+      }
+    }
+  }
+  if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
+}
+
+/******************************************************************************
+* Event handlers
 ******************************************************************************/
 
 void
@@ -275,31 +315,5 @@ edit_interface_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x   = ev->x*sfactor;
   SI     y   = ev->y*sfactor;
-
-  path cp= path_up (tree_path (x, y, 0));
-  path p = cp, lp;
-  list<string> ids;
-  while (rp <= p) {
-    ids << get_ids (subtree (et, p));
-    if (is_func (subtree (et, p), LOCUS)) lp= p;
-    p= path_up (p);
-  }
-
-  locus_new_rects= rectangles ();
-  if (!nil (ids)) {
-    if (type == "move" || type == "enter") {
-      tree st= subtree (et, lp);
-      bool follow= as_bool (call ("link-may-follow?", object (st)));
-      if (follow) {
-	selection sel= eb->find_check_selection (lp * 0, lp * 1);
-	locus_new_rects=
-	  simplify (::correct (thicken (sel->rs, pixel, 3*pixel) -
-			       thicken (sel->rs, 0, 2*pixel)));
-      }
-    }
-  }
-  if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
-
-
   mouse_any (type, x, y, ev->t);
 }

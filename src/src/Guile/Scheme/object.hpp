@@ -36,6 +36,7 @@ struct object {
   object (char* s);
   object (string s);
   object (tree t);
+  object (list<tree> l);
   object (path p);
   object (url u);
 };
@@ -73,6 +74,7 @@ string as_string (object obj);
 string as_symbol (object obj);
 tree as_tree (object obj);
 scheme_tree as_scheme_tree (object obj);
+list<tree> as_list_tree (object obj);
 path as_path (object obj);
 url as_url (object obj);
 command as_command (object obj);

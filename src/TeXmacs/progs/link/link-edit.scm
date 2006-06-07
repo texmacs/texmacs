@@ -59,7 +59,6 @@
   (tree-insert t (- (tree-arity t) 1) `(locus ,(tree-copy ln))))
 
 (define (locus-remove-link ln)
-  (display* "Remove link " ln " from " (tree-ref ln :up :last) "\n")
   (tree-remove (tree-up ln) (tree-index ln) 1))
 
 (define (locus-remove-match ln match-with)

@@ -67,6 +67,7 @@ protected:
   ps_device     stored;
   rectangles    locus_new_rects;
   rectangles    locus_rects;
+  list<tree>    active_loci;
 
 public:
   edit_interface_rep ();
@@ -146,6 +147,7 @@ public:
   cursor get_cursor ();
   void set_pointer (string name);
   void set_pointer (string curs_name, string mask_name);
+  void update_active_loci ();
 
   /* the footer */
   string compute_text_footer (tree st);
