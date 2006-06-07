@@ -21,6 +21,7 @@
 void initialize_glue ();
 
 bool scm_is_tree (SCM obj);
+bool scm_is_list_tree (SCM obj);
 bool scm_is_path (SCM obj);
 bool scm_is_url (SCM obj);
 bool scm_is_widget (SCM obj);
@@ -29,6 +30,7 @@ SCM int_to_scm (int i);
 SCM string_to_scm (string s);
 SCM symbol_to_scm (string s);
 SCM tree_to_scm (tree t);
+SCM list_tree_to_scm (list<tree> l);
 SCM path_to_scm (path p);
 SCM url_to_scm (url u);
 SCM scheme_tree_to_scm (scheme_tree t);
@@ -38,6 +40,7 @@ string scm_to_string (SCM obj);
 string scm_to_symbol (SCM obj);
 tree scm_to_tree (SCM obj);
 tree scm_to_content (SCM obj);
+list<tree> scm_to_list_tree (SCM obj);
 path scm_to_path (SCM obj);
 url scm_to_url (SCM obj);
 scheme_tree scm_to_scheme_tree (SCM obj);

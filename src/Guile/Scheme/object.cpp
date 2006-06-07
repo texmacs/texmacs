@@ -122,6 +122,7 @@ object::object (int i): rep (new object_rep (int_to_scm (i))) {}
 object::object (char* s): rep (new object_rep (string_to_scm (string (s)))) {}
 object::object (string s): rep (new object_rep (string_to_scm (s))) {}
 object::object (tree t): rep (new object_rep (tree_to_scm (t))) {}
+object::object (list<tree> l): rep (new object_rep (list_tree_to_scm (l))) {}
 object::object (path p): rep (new object_rep (path_to_scm (p))) {}
 object::object (url u): rep (new object_rep (url_to_scm (u))) {}
 
@@ -164,6 +165,13 @@ scheme_tree
 as_scheme_tree (object obj) {
   SCM t= obj->lookup();
   return scm_to_scheme_tree (t);
+}
+
+list<tree>
+as_list_tree (object obj) {
+  SCM l= obj->lookup();
+  if (!scm_is_list_tree (l)) return list<tree> ();
+  return scm_to_list_tree (l);
 }
 
 path
