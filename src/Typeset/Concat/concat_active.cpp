@@ -234,14 +234,18 @@ void
 build_locus (edit_env env, tree t) {
   // cout << "Typeset " << t << "\n";
   int i, last= N(t)-1;
-  if (!nil (env->link_env))
+  if (!nil (env->link_env)) {
+    tree body= t[last];
+    if (is_func (body, ARG) || is_func (body, QUOTE_ARG))
+      body= env->expand (body);
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
       if (is_compound (arg, "id", 1))
-	env->link_env->insert_locus (as_string (arg[0]), t[last]);
+	env->link_env->insert_locus (as_string (arg[0]), body);
       if (is_compound (arg, "link"))
 	env->link_env->insert_link (arg);
     }
+  }
 }
 
 void

@@ -31,20 +31,34 @@ edit_modify_rep::~edit_modify_rep () {}
 // open buffers. In the future, we might obtain the relevant editors
 // from all possible prefixes of p using a hashtable
 
-#define FOR_ALL_EDITORS_BEGIN(p) \
-  int i, j; \
-  for (i=0; i<sv->nr_bufs(); i++) { \
-    tm_buffer b= sv->get_buf (i); \
-    if (b->rp <= p) \
-      for (j=0; j<N(b->vws); j++) { \
+// FIXME: the undo system is not safe when a change is made inside
+// a buffer which has no editor attached to it
+
+#define FOR_ALL_EDITORS_BEGIN(p)			\
+  int i, j;						\
+  for (i=0; i<sv->nr_bufs(); i++) {			\
+    tm_buffer b= sv->get_buf (i);			\
+    if (b->rp <= p)					\
+      for (j=0; j<N(b->vws); j++) {			\
 	editor& ed= ((tm_view) (b->vws[j]))->ed;
 
-#define FOR_ALL_EDITORS_END \
-      } \
+#define FOR_ALL_EDITORS_END			\
+      }						\
+  }
+
+#define CHECK_OTHER_EDITOR(cmd)			\
+  if (!(rp <= pp)) {				\
+    tm_buffer other= sv->get_buf (pp);		\
+    if (N(other->vws) != 0) {			\
+      ((tm_view) (other->vws[0]))->ed->cmd;	\
+      return;					\
+    }						\
+    else cerr << "TeXmacs] dangerous change\n";	\
   }
 
 void
 edit_modify_rep::assign (path pp, tree u) {
+  CHECK_OTHER_EDITOR (assign (pp, u));
   path p= copy (pp);
   // cout << "Assign " << u << " at " << p << "\n";
   notify_undo ("assign", p, subtree (et, p));
@@ -59,6 +73,7 @@ edit_modify_rep::assign (path pp, tree u) {
 
 void
 edit_modify_rep::insert (path pp, tree u) {
+  CHECK_OTHER_EDITOR (insert (pp, u));
   path p= copy (pp);
   // cout << "Insert " << u << " at " << p << "\n";
   notify_undo ("remove", p, as_string (is_atomic (u)? N(u->label): N(u)));
@@ -73,6 +88,7 @@ edit_modify_rep::insert (path pp, tree u) {
 
 void
 edit_modify_rep::remove (path pp, int nr) {
+  CHECK_OTHER_EDITOR (remove (pp, nr));
   if (nr <= 0) return;
   path p= copy (pp);
   // cout << "Remove " << nr << " at " << p << "\n";
@@ -91,6 +107,7 @@ edit_modify_rep::remove (path pp, int nr) {
 
 void
 edit_modify_rep::split (path pp) {
+  CHECK_OTHER_EDITOR (split (pp));
   path p= copy (pp);
   // cout << "Split at " << p << "\n";
   if (N(p)<2) fatal_error ("path too short in split", "editor::split");
@@ -109,6 +126,7 @@ edit_modify_rep::split (path pp) {
 
 void
 edit_modify_rep::join (path pp) {
+  CHECK_OTHER_EDITOR (join (pp));
   path p= copy (pp);
   // cout << "Join at " << p << "\n";
   if (N(p)<1) fatal_error ("path too short in join", "editor::join");
@@ -130,6 +148,7 @@ edit_modify_rep::join (path pp) {
 
 void
 edit_modify_rep::insert_node (path pp, tree t) {
+  CHECK_OTHER_EDITOR (insert_node (pp, t));
   path p= copy (pp);
   // cout << "Insert node " << t << " at " << p << "\n";
   notify_undo ("remove_node", p, "");
@@ -144,6 +163,7 @@ edit_modify_rep::insert_node (path pp, tree t) {
 
 void
 edit_modify_rep::remove_node (path pp) {
+  CHECK_OTHER_EDITOR (remove_node (pp));
   path p= copy (pp);
   // cout << "Remove node at " << p << "\n";
   int pos= last_item (pp);
@@ -160,6 +180,7 @@ edit_modify_rep::remove_node (path pp) {
 
 void
 edit_modify_rep::assign_node (path pp, tree_label op) {
+  CHECK_OTHER_EDITOR (assign_node (pp, op));
   path p= copy (pp);
   // cout << "Assign node " << get_label (tree (op)) << " at " << p << "\n";
   tree& st= subtree (et, p);
@@ -340,6 +361,15 @@ edit_modify_rep::notify_undo (string op, path p, tree t) {
   cout << "redo depth: " << buf->redo_depth << "\n";
   cout << "last save : " << buf->last_save << "\n";
   */
+}
+
+void
+edit_modify_rep::mark_undo_blocks () {
+  int i;
+  for (i=0; i<sv->nr_bufs(); i++) {
+    tm_buffer b= sv->get_buf (i);
+    b->mark_undo_block ();
+  }
 }
 
 void

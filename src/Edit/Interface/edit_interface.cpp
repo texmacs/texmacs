@@ -460,7 +460,7 @@ edit_interface_rep::full_screen_mode (bool flag) {
 
 void
 edit_interface_rep::before_menu_action () {
-  buf->mark_undo_block ();
+  mark_undo_blocks ();
   set_input_normal ();
 }
 

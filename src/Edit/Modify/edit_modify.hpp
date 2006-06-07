@@ -45,7 +45,8 @@ public:
   void notify_assign_node (path p, tree_label op);
   void post_notify        (path p);
 
-  void notify_undo (string op, path p, tree t);
+  void notify_undo (string op, path p, tree t); 
+  void mark_undo_blocks ();
   void remove_undo_mark ();
   void add_undo_mark ();
   void undo (bool redoable);
