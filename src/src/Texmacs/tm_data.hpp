@@ -63,6 +63,7 @@ public:
   /* Buffer management */
   int  nr_bufs ();
   tm_buffer get_buf (int i);
+  tm_buffer get_buf (path p);
   void new_buffer ();
   void switch_to_buffer (int nr);
   bool switch_to_buffer (path p);

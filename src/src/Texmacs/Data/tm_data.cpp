@@ -378,6 +378,13 @@ tm_data_rep::get_buf (int i) {
   return (tm_buffer) bufs[i];
 }
 
+tm_buffer
+tm_data_rep::get_buf (path p) {
+  int nr= find_buffer (p);
+  if (nr >= 0) return bufs[nr];
+  else return NULL;
+}
+
 void
 tm_data_rep::new_buffer () {
   int i;

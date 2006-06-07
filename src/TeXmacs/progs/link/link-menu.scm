@@ -58,7 +58,7 @@
       ("External" (set-link-mode "external")))
   (when (inside? 'locus)
     ("Source" (link-set-locus 0))
-    ("Destination" (link-set-locus 1)))
+    ("Target" (link-set-locus 1)))
   (when (link-completed-loci?)
     (-> "Create link" (link link-create-menu)))
   (if (null? (locus-link-types #t))
