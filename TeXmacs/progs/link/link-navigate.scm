@@ -169,42 +169,89 @@
 (tm-define (upward-navigation-list t)
   (link-list->navigation-list (upward-link-list t #t)))
 
+(tm-define (navigation-list-filter l type nr)
+  (cond ((null? l) l)
+	((and (or (== type #t) (== (caar l) type))
+	      (or (== nr #t) (== (cadar l) nr)))
+	 (cons (car l) (navigation-list-filter (cdr l) type nr)))
+	(else (navigation-list-filter (cdr l) type nr))))
+
 (tm-define (navigation-list-types l)
   (list-remove-duplicates (map car l)))
 
-(tm-define (navigation-list-find-type l type)
-  (cond ((null? l) #f)
-	((== (caar l) type) (cadddr (car l)))
-	(else (navigation-list-find-type (cdr l) type))))
+(tm-define (navigation-list-xtypes l)
+  (let* ((direct (navigation-list-filter l #t 1))
+	 (inverse (navigation-list-filter l #t 0))
+	 (dtypes (map car direct))
+	 (itypes (map (cut string-append <> "*") (map car inverse))))
+    (list-remove-duplicates (append dtypes itypes))))
+
+(tm-define (navigation-list-first-xtype l xtype)
+  (let* ((inverse? (string-ends? xtype "*"))
+	 (type (if inverse? (string-drop-right xtype 1) xtype))
+	 (fl (navigation-list-filter l type (if inverse? 0 1))))
+    (and (nnull? fl) (cadddr (car fl)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Link pages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (automatic-link back-id)
+(define (resolve-navigation-list l fun)
+  (if (null? l) (fun)
+      (let* ((id (Id->id (cadddr (car l))))
+	     (ok (or (nstring? id) (nnull? (id->trees id)))))
+	(if ok (resolve-navigation-list (cdr l) fun)
+	    (begin
+	      (resolve-id id)
+	      (delayed (:idle 25) (resolve-navigation-list (cdr l) fun)))))))
+
+(define (automatic-link back-id broken-text)
   (let* ((item-id (create-unique-id))
 	 (ts (id->trees back-id)))
-    (if (null? ts) "broken"
+    (if (null? ts) `(with "color" "red" ,broken-text)
 	`(locus (id ,item-id)
 		(link "automatic" (id ,item-id) (id ,back-id))
 		,(tree->stree (car ts))))))
 
 (define (navigation-item->document x)
   (with (type nr source target) x
-    (automatic-link (Id->id target))))
+    (automatic-link (Id->id target) "Broken")))
 
-(define (navigation-list->document l)
-  `(document
-    (style "generic")
-    (body (document
-	   (strong "Source")
-	   ,(automatic-link (caddr (car l)))
-	   (strong "Targets")
-	   ,@(map navigation-item->document l)))))
+(define (navigation-list-by-type->document type l)
+  (cons `(strong ,type)
+	(map navigation-item->document l)))
+
+(define (navigation-list->document style l)
+  (let* ((direct (navigation-list-filter l #t 1))
+	 (inverse (navigation-list-filter l #t 0))
+	 (direct-types (navigation-list-types direct))
+	 (inverse-types (navigation-list-types inverse))
+	 (direct-by-type (map (cut navigation-list-filter direct <> #t)
+			      direct-types))
+	 (inverse-by-type (map (cut navigation-list-filter inverse <> #t)
+			       inverse-types)))
+    `(document
+      (style ,style)
+      (body (document
+	     (strong "Source")
+	     ,(automatic-link (caddr (car l)) "Unaccessible")
+	     ,@(append-map
+		navigation-list-by-type->document
+		(map (cut string-append "Direct " <>) direct-types)
+		direct-by-type)
+	     ,@(append-map
+		navigation-list-by-type->document
+		(map (cut string-append "Inverse " <>) inverse-types)
+		inverse-by-type))))))
+
+(define (build-navigation-page-sub style l)
+  (with doc (navigation-list->document style l)
+    (set-aux-buffer "* Link page *" "* Link page *" doc)))
 
 (define (build-navigation-page l)
-  (with doc (navigation-list->document l)
-    (set-help-buffer "Follow links" doc)))
+  (let* ((style (tree->stree (get-style-tree)))
+	 (fun (lambda () (build-navigation-page-sub style l))))
+    (resolve-navigation-list l fun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual navigation
@@ -215,31 +262,35 @@
     (if (nnull? l)
 	(tree-go-to (car l) :end)
 	(and (resolve-id id)
-	     (delayed (:idle 100) (go-to-id id))))))
+	     (delayed (:idle 25) (go-to-id id))))))
 
 (tm-define (go-to-Id Id)
   (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
 	(else (noop))))
 
 (define the-navigation-list '())
-(tm-define (navigation-list-follow-typed type)
+(tm-define (navigation-list-follow-xtyped xtype)
   (:synopsis "Follow the first link with given @type in @the-navigation-list.")
-  (:argument type "Link type")
-  (:proposals type (navigation-list-types the-navigation-list))
-  (and-with Id (navigation-list-find-type the-navigation-list type)
+  (:argument xtype "Link type")
+  (:proposals xtype (navigation-list-xtypes the-navigation-list))
+  (and-with Id (navigation-list-first-xtype the-navigation-list xtype)
     (set! the-navigation-list #f)
     (go-to-Id Id)))
 
 (tm-define (navigation-list-follow nl)
   (:synopsis "Follow one of the links in the navigation list @nl.")
   (with types (navigation-list-types nl)
-    (cond ((null? types) (noop))
-	  ((and (navigation-build-link-pages?) (>= (length nl) 2))
-	   (build-navigation-page nl))
-	  ((null? (cdr types)) (go-to-Id (cadddr (car nl))))
-	  (else
-	   (set! the-navigation-list nl)
-	   (interactive navigation-list-follow-typed)))))
+    (if (and (>= (length types) 2) (in? "automatic" types))
+	(with auto-nl (navigation-list-filter nl "automatic" #t)
+	  (set! nl (list-difference nl auto-nl))))
+    (with xtypes (navigation-list-xtypes nl)
+      (cond ((null? xtypes) (noop))
+	    ((and (navigation-build-link-pages?) (>= (length nl) 2))
+	     (build-navigation-page nl))
+	    ((null? (cdr xtypes)) (go-to-Id (cadddr (car nl))))
+	    (else
+	     (set! the-navigation-list nl)
+	     (interactive navigation-list-follow-xtyped))))))
 
 (tm-define (link-follow-ids ids)
   (:synopsis "Follow one of the links for the tree @t.")

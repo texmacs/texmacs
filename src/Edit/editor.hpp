@@ -55,8 +55,6 @@ protected:
 
   /* exchanging information with the typesetter */
   virtual typesetter           get_typesetter () = 0;
-  virtual tree                 get_style () = 0;
-  virtual void                 set_style (tree t) = 0;
   virtual hashmap<string,tree> get_init () = 0;
   virtual hashmap<string,tree> get_fin () = 0;
   virtual void                 set_init (hashmap<string,tree> H= tree ("?"))=0;
@@ -226,6 +224,8 @@ public:
   virtual tree     exec_latex (tree t, path p) = 0;
   virtual tree     exec_latex (tree t) = 0;
   virtual tree     texmacs_exec (tree t) = 0;
+  virtual tree     get_style () = 0;
+  virtual void     set_style (tree t) = 0;
   virtual void     init_style () = 0;
   virtual void     init_style (string style) = 0;
   virtual void     init_add_package (string package) = 0;
