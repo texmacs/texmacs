@@ -16,6 +16,36 @@
   (:use (link link-edit) (link link-navigate) (link link-extract)
 	(generic document-edit)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rendering of loci
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (test-locus-rendering? var val)
+  (== (get-locus-rendering var) val))
+(tm-define (change-locus-rendering var val)
+  (:synopsis "Change global locus rendering property @var to @val.")
+  (:check-mark "v" test-locus-rendering?)
+  (set-locus-rendering var val)
+  (update-all-buffers))
+
+(define (test-locus-preserve-on-paper?)
+  (== (get-locus-rendering "locus-on-paper") "preserve"))
+(tm-define (toggle-locus-preserve-on-paper)
+  (:synopsis "Toggle whether loci are colored when rendering on paper.")
+  (:check-mark "v" test-locus-preserve-on-paper?)
+  (with val (if (test-locus-preserve-on-paper?) "change" "preserve")
+    (change-locus-rendering "locus-on-paper" val)))
+
+(tm-define (interactive-change-locus-rendering var)
+  (:interactive #t)
+  (interactive (lambda (val) (change-locus-rendering var val))
+    (list (drd-ref env-var-description% var) "string"
+	  (get-locus-rendering var))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dynamic submenus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (link-create-entry name)
   (list name (lambda () (make-link name))))
 
@@ -50,6 +80,10 @@
     (menu-dynamic
       ,@(map navigation-type-entry l2))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main link menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind link-menu
   ("New locus" (make-locus))
   ---
@@ -69,14 +103,21 @@
     (-> "Delete link" (link link-delete-menu)))
   ---
   (-> "Locus rendering"
-      ("Default" (init-default "locus-color"))
-      ---
-      ("Preserve" (init-env "locus-color" "preserve"))
-      ("Steel blue" (init-env "locus-color" "#404080"))
-      ("Dark blue" (init-env "locus-color" "dark blue"))
-      ("Red" (init-env "locus-color" "red"))
-      ---
-      ("Other" (init-interactive-env "locus-color")))
+      ("Preserve color on paper" (toggle-locus-preserve-on-paper))
+      (-> "Normal loci"
+	  ("Default" (change-locus-rendering "locus-color" "#404080"))
+	  ("Preserve" (change-locus-rendering "locus-color" "preserve"))
+	  ("Dark blue" (change-locus-rendering "locus-color" "dark blue"))
+	  ("Red" (change-locus-rendering "locus-color" "red"))
+	  ---
+	  ("Other" (interactive-change-locus-rendering "locus-color")))
+      (-> "Visited loci"
+	  ("Default" (change-locus-rendering "visited-color" "#702070"))
+	  ("Preserve" (change-locus-rendering "visited-color" "preserve"))
+	  ("Magenta" (change-locus-rendering "visited-color" "magenta"))
+	  ("Red" (change-locus-rendering "visited-color" "red"))
+	  ---
+	  ("Other" (interactive-change-locus-rendering "visited-color"))))
   (-> "Navigation options"
       ("Follow inverse links" (navigation-toggle-bidirectional))
       ("Follow external links" (navigation-toggle-external))

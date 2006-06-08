@@ -147,13 +147,8 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   if (pdf) name= url_temp (".ps");
 
   string medium = env->get_string (PAGE_MEDIUM);
-  if (conform && (medium == "papyrus")) conform= false;
-  if ((!conform) && (medium == "automatic")) {
-    set_message (
-      "Error: you should switch to ``paper'' or ``papyrus'' page type",
-      "print");
-    return;
-  }
+  if (conform && (medium != "paper")) conform= false;
+  // FIXME: better command for conform printing
 
   // Set environment variables for printing
 

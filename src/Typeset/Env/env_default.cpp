@@ -51,7 +51,8 @@ initialize_default_env () {
   env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
   env (COLOR)            = "black";     // the color
   env (BG_COLOR)         = "white";     // the background color
-  env (LOCUS_COLOR)      = "#404080";   // the color of loci
+  env (LOCUS_COLOR)      = "global";    // the color of loci
+  env (VISITED_COLOR)    = "global";    // the color of visited loci
   env (LANGUAGE)         = "english";   // the language
   env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
   env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.

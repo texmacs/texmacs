@@ -915,6 +915,60 @@ tmg_current_link_types () {
 }
 
 SCM
+tmg_get_locus_rendering (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "get-locus-rendering");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= get_locus_rendering (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
+tmg_set_locus_rendering (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-locus-rendering");
+  SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-locus-rendering");
+
+  string in1= scm_to_string (arg1);
+  string in2= scm_to_string (arg2);
+
+  // SCM_DEFER_INTS;
+  set_locus_rendering (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_id_declare_visited (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id-declare-visited");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  declare_visited (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_id_has_been_visitedP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id-has-been-visited?");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= has_been_visited (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_string_numberP (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-number?");
 
@@ -2753,6 +2807,10 @@ initialize_glue_basic () {
   gh_new_procedure ("tree-pointer-detach", (FN) tmg_tree_pointer_detach, 1, 0, 0);
   gh_new_procedure ("tree-pointer->tree", (FN) tmg_tree_pointer_2tree, 1, 0, 0);
   gh_new_procedure ("current-link-types", (FN) tmg_current_link_types, 0, 0, 0);
+  gh_new_procedure ("get-locus-rendering", (FN) tmg_get_locus_rendering, 1, 0, 0);
+  gh_new_procedure ("set-locus-rendering", (FN) tmg_set_locus_rendering, 2, 0, 0);
+  gh_new_procedure ("id-declare-visited", (FN) tmg_id_declare_visited, 1, 0, 0);
+  gh_new_procedure ("id-has-been-visited?", (FN) tmg_id_has_been_visitedP, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

@@ -170,6 +170,8 @@ public:
   virtual int    get_default_shrinking_factor () = 0;
   virtual void   image_gc (string which= "*") = 0;
   virtual void   inclusions_gc (string which= "*") = 0;
+  virtual void   typeset_update (path p) = 0;
+  virtual void   typeset_update_all () = 0;
   virtual string translate (string which, string from, string to) = 0;
   virtual bool   is_yes (string s) = 0;
   virtual void   quit () = 0;

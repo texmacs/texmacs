@@ -86,6 +86,7 @@ public:
   void     typeset_prepare ();
   void     typeset_invalidate_env ();
   void     typeset_exec_until (path p);
+  void     typeset_invalidate (path p);
   void     typeset_invalidate_all ();
   void     typeset (SI& x1, SI& y1, SI& x2, SI& y2);
 

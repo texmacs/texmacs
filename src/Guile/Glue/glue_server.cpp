@@ -906,6 +906,28 @@ tmg_inclusions_gc () {
 }
 
 SCM
+tmg_update_all_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "update-all-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->typeset_update (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_update_all_buffers () {
+  // SCM_DEFER_INTS;
+  get_server()->typeset_update_all ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_set_message (SCM arg1, SCM arg2) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-message");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "set-message");
@@ -1081,6 +1103,8 @@ initialize_glue_server () {
   gh_new_procedure ("get-nr-windows", (FN) tmg_get_nr_windows, 0, 0, 0);
   gh_new_procedure ("image-gc", (FN) tmg_image_gc, 0, 0, 0);
   gh_new_procedure ("inclusions-gc", (FN) tmg_inclusions_gc, 0, 0, 0);
+  gh_new_procedure ("update-all-path", (FN) tmg_update_all_path, 1, 0, 0);
+  gh_new_procedure ("update-all-buffers", (FN) tmg_update_all_buffers, 0, 0, 0);
   gh_new_procedure ("set-message", (FN) tmg_set_message, 2, 0, 0);
   gh_new_procedure ("set-message-temp", (FN) tmg_set_message_temp, 3, 0, 0);
   gh_new_procedure ("recall-message", (FN) tmg_recall_message, 0, 0, 0);

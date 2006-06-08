@@ -232,6 +232,7 @@ public:
   virtual void     init_remove_package (string package) = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
+  virtual void     typeset_invalidate (path p) = 0;
   virtual void     typeset_invalidate_all () = 0;
 
   /* public routines from edit_modify */

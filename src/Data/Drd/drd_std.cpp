@@ -279,7 +279,7 @@ init_std_drd () {
   init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
   init (ID, "id", repeat (1, 1) -> accessible (0));
   init (LINK, "link", repeat (2, 1) -> accessible (0));
-  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
+  init (URL, "url", options (1, 1) -> accessible (0));
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));

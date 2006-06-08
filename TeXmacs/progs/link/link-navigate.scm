@@ -190,7 +190,7 @@
   (let* ((inverse? (string-ends? xtype "*"))
 	 (type (if inverse? (string-drop-right xtype 1) xtype))
 	 (fl (navigation-list-filter l type (if inverse? 0 1))))
-    (and (nnull? fl) (cadddr (car fl)))))
+    (and (nnull? fl) (car fl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Link pages
@@ -275,14 +275,23 @@
   (cond ((func? Id 'id 1) (go-to-id (cadr Id)))
 	(else (noop))))
 
+(define (id-set-visited id)
+  (id-declare-visited id)
+  (with pl (filter-map tree->path (id->trees id))
+    (for-each update-all-path pl)))
+
+(define (navigation-item-follow hit)
+  (id-set-visited (caddr hit))
+  (go-to-Id (cadddr hit)))
+
 (define the-navigation-list '())
 (tm-define (navigation-list-follow-xtyped xtype)
   (:synopsis "Follow the first link with given @type in @the-navigation-list.")
   (:argument xtype "Link type")
   (:proposals xtype (navigation-list-xtypes the-navigation-list))
-  (and-with Id (navigation-list-first-xtype the-navigation-list xtype)
+  (and-with hit (navigation-list-first-xtype the-navigation-list xtype)
     (set! the-navigation-list #f)
-    (go-to-Id Id)))
+    (navigation-item-follow hit)))
 
 (tm-define (navigation-list-follow nl)
   (:synopsis "Follow one of the links in the navigation list @nl.")
@@ -293,8 +302,9 @@
     (with xtypes (navigation-list-xtypes nl)
       (cond ((null? xtypes) (noop))
 	    ((and (navigation-build-link-pages?) (>= (length nl) 2))
+	     (id-set-visited (caddr (car nl)))
 	     (build-navigation-page nl))
-	    ((null? (cdr xtypes)) (go-to-Id (cadddr (car nl))))
+	    ((null? (cdr xtypes)) (navigation-item-follow (car nl)))
 	    (else
 	     (set! the-navigation-list nl)
 	     (interactive navigation-list-follow-xtyped))))))

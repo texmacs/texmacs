@@ -92,6 +92,10 @@
   (tree-pointer-detach tree_pointer_delete (void observer))
   (tree-pointer->tree obtain_tree (tree observer))
   (current-link-types all_link_types (list_string))
+  (get-locus-rendering get_locus_rendering (string string))
+  (set-locus-rendering set_locus_rendering (void string string))
+  (id-declare-visited declare_visited (void string))
+  (id-has-been-visited? has_been_visited (bool string))
 
   ;; routines for strings
   (string-number? is_double (bool string))

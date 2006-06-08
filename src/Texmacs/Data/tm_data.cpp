@@ -188,7 +188,6 @@ tm_data_rep::set_name_buffer (url name) {
 
 string
 tm_data_rep::get_abbr_buffer () {
-  int i;
   tm_buffer buf= get_buffer ();
   return buf->abbr;
 }

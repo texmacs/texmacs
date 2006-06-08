@@ -39,6 +39,7 @@ string MAGNIFICATION ("magnification");
 string COLOR ("color");
 string BG_COLOR ("bg-color");
 string LOCUS_COLOR ("locus-color");
+string VISITED_COLOR ("visited-color");
 string LANGUAGE ("language");
 string ATOM_DECORATIONS ("atom-decorations");
 string LINE_DECORATIONS ("line-decorations");

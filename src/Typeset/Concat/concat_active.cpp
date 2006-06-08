@@ -238,23 +238,32 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   if (is_func (body, ARG) || is_func (body, QUOTE_ARG))
     body= env->expand (body);
   bool accessible= is_accessible (obtain_ip (body));
+  bool visited= false;
   if (!nil (env->link_env)) {
     int i;
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
       if (is_compound (arg, "id", 1)) {
-	if (accessible)
-	  env->link_env->insert_locus (as_string (arg[0]), body);
-	ids= list<string> (as_string (arg[0]), ids);
+	string id= as_string (arg[0]);
+	if (accessible) env->link_env->insert_locus (id, body);
+	ids= list<string> (id, ids);
+	visited= visited || has_been_visited (id);
       }
       if (is_compound (arg, "link"))
 	env->link_env->insert_link (arg);
     }
   }
+
+  bool on_paper= (env->get_string (PAGE_MEDIUM) == "paper");
+  bool preserve= (get_locus_rendering ("locus-on-paper") == "preserve");
+  string var= (visited? VISITED_COLOR: LOCUS_COLOR);
   string current_col= env->get_string (COLOR);
-  string locus_col= env->get_string (LOCUS_COLOR);
-  if (locus_col == "preserve") col= current_col;
+  string locus_col= env->get_string (var);
+  if (on_paper && preserve) col= locus_col;
+  else if (locus_col == "preserve") col= current_col;
+  else if (locus_col == "global") col= get_locus_rendering (var);
   else col= locus_col;
+
   return accessible;
 }
 
