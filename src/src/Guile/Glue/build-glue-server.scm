@@ -101,6 +101,8 @@
   (get-nr-windows get_nr_windows (int))
   (image-gc image_gc (void))
   (inclusions-gc inclusions_gc (void))
+  (update-all-path typeset_update (void path))
+  (update-all-buffers typeset_update_all (void))
   (set-message set_message (void string string))
   (set-message-temp set_message (void string string bool))
   (recall-message recall_message (void))

@@ -12,6 +12,7 @@
 
 #include "link.hpp"
 #include "iterator.hpp"
+#include "vars.hpp"
 
 /******************************************************************************
 * Soft links
@@ -169,4 +170,39 @@ all_link_types () {
     l= list<string> (s, l);
   }
   return l;
+}
+
+/******************************************************************************
+* Locus rendering
+******************************************************************************/
+
+static string current_locus_on_paper= "preserve";
+static string current_locus_color= "#404080";
+static string current_visited_color= "#702070";
+
+void
+set_locus_rendering (string var, string val) {
+  if (var == "locus-on-paper") current_locus_on_paper= val;
+  if (var == LOCUS_COLOR) current_locus_color= val;
+  if (var == VISITED_COLOR) current_visited_color= val;
+}
+
+string
+get_locus_rendering (string var) {
+  if (var == "locus-on-paper") return current_locus_on_paper;
+  if (var == LOCUS_COLOR) return current_locus_color;
+  if (var == VISITED_COLOR) return current_visited_color;
+  return "";
+}
+
+static hashset<string> visited_table;
+
+void
+declare_visited (string id) {
+  visited_table->insert (id);
+}
+
+bool
+has_been_visited (string id) {
+  return visited_table->contains (id);
 }

@@ -2531,6 +2531,19 @@ tmg_clear_local_info () {
 }
 
 SCM
+tmg_update_path (SCM arg1) {
+  SCM_ASSERT_PATH (arg1, SCM_ARG1, "update-path");
+
+  path in1= scm_to_path (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->typeset_invalidate (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_update_buffer () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->typeset_invalidate_all ();
@@ -3051,6 +3064,7 @@ initialize_glue_editor () {
   gh_new_procedure ("clear-buffer", (FN) tmg_clear_buffer, 0, 0, 0);
   gh_new_procedure ("tex-buffer", (FN) tmg_tex_buffer, 0, 0, 0);
   gh_new_procedure ("clear-local-info", (FN) tmg_clear_local_info, 0, 0, 0);
+  gh_new_procedure ("update-path", (FN) tmg_update_path, 1, 0, 0);
   gh_new_procedure ("update-buffer", (FN) tmg_update_buffer, 0, 0, 0);
   gh_new_procedure ("generate-all-aux", (FN) tmg_generate_all_aux, 0, 0, 0);
   gh_new_procedure ("generate-aux", (FN) tmg_generate_aux, 1, 0, 0);

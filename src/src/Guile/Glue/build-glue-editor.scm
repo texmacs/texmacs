@@ -270,6 +270,7 @@
   (clear-buffer clear_buffer (void))
   (tex-buffer tex_buffer (void))
   (clear-local-info clear_local_info (void))
+  (update-path typeset_invalidate (void path))
   (update-buffer typeset_invalidate_all (void))
   (generate-all-aux generate_aux (void))
   (generate-aux generate_aux (void string))

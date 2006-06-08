@@ -79,4 +79,9 @@ list<tree> get_trees (string id);
 list<tree> get_links (string id);
 list<string> all_link_types ();
 
+void set_locus_rendering (string var, string val);
+string get_locus_rendering (string var);
+void declare_visited (string id);
+bool has_been_visited (string id);
+
 #endif // HARD_LINK_H

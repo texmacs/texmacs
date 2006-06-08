@@ -430,6 +430,14 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
 }
 
 void
+edit_typeset_rep::typeset_invalidate (path p) {
+  if (rp <= p) {
+    notify_change (THE_TREE);
+    ::notify_assign (ttt, p-rp, subtree (et, p));
+  }
+}
+
+void
 edit_typeset_rep::typeset_invalidate_all () {
   notify_change (THE_ENVIRONMENT);
   typeset_preamble ();

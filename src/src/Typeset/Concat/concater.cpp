@@ -567,6 +567,7 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case ID:
   case LINK:
+  case URL:
     typeset_inactive (t, ip);
     break;
   case TAG:

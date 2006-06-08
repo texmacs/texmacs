@@ -480,28 +480,34 @@ tm_server_rep::get_default_shrinking_factor () {
 void
 tm_server_rep::image_gc (string which) {
   dis->image_gc (which);
-  int i,j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      vw->ed->typeset_invalidate_all ();
-    }
-  }  
+  typeset_update_all ();
 }
 
 void
 tm_server_rep::inclusions_gc (string which) {
   (void) which;
   reset_inclusions ();
-  int i,j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      vw->ed->typeset_invalidate_all ();
-    }
-  }  
+  typeset_update_all ();
+}
+
+void
+tm_server_rep::typeset_update (path p) {
+  int i, j, n= N(bufs);
+  for (i=0; i<n; i++) {
+    tm_buffer buf= ((tm_buffer) bufs[i]);
+    for (j=0; j<N(buf->vws); j++)
+      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate (p);
+  }
+}
+
+void
+tm_server_rep::typeset_update_all () {
+  int i, j, n= N(bufs);
+  for (i=0; i<n; i++) {
+    tm_buffer buf= ((tm_buffer) bufs[i]);
+    for (j=0; j<N(buf->vws); j++)
+      ((tm_view) (buf->vws[j]))->ed->typeset_invalidate_all ();
+  }
 }
 
 string

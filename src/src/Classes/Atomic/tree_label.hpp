@@ -63,15 +63,15 @@ enum tree_label {
 
   // built-in length units
   CM_LENGTH, MM_LENGTH, IN_LENGTH, PT_LENGTH,
-  BP_LENGTH, DD_LENGTH, PC_LENGTH, CC_LENGTH,      // standard absolute units
+  BP_LENGTH, DD_LENGTH, PC_LENGTH, CC_LENGTH,     // standard absolute units
   FS_LENGTH, FBS_LENGTH, EM_LENGTH,
-  LN_LENGTH, SEP_LENGTH, YFRAC_LENGTH, EX_LENGTH,  // font specific
+  LN_LENGTH, SEP_LENGTH, YFRAC_LENGTH, EX_LENGTH, // font specific
   FN_LENGTH, FNS_LENGTH, BLS_LENGTH,
-  SPC_LENGTH, XSPC_LENGTH,                         // font specific & stretchy
-  PAR_LENGTH, PAG_LENGTH,                          // other
-  GW_LENGTH, GH_LENGTH,                            // width & height of graphics
-  TMPT_LENGTH, PX_LENGTH,                          // miscellaneous
-  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, H_LENGTH,   // durations
+  SPC_LENGTH, XSPC_LENGTH,                        // font specific & stretchy
+  PAR_LENGTH, PAG_LENGTH,                         // other
+  GW_LENGTH, GH_LENGTH,                           // width & height of graphics
+  TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
+  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, H_LENGTH,  // durations
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
@@ -82,7 +82,8 @@ enum tree_label {
   // other tags
   TUPLE, ATTR, TMLEN, COLLECTION, ASSOCIATE, BACKUP,
   LABEL, REFERENCE, PAGEREF, WRITE,
-  SPECIFIC, HLINK, ACTION, LOCUS, ID, LINK,
+  SPECIFIC, HLINK, ACTION,
+  LOCUS, ID, LINK, URL,
   TAG, MEANING, FLAG,
 
   // animations
