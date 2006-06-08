@@ -145,6 +145,7 @@
 
 ;(display "Booting linking facilities\n")
 (lazy-menu (link link-menu) link-menu)
+(lazy-keyboard (link link-kbd) with-linking-tool?)
 (lazy-define (link link-edit) create-unique-id)
 (lazy-define (link link-navigate) link-active-upwards link-active-ids
 	     link-follow-ids)

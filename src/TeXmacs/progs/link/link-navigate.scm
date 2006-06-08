@@ -310,7 +310,13 @@
 	     (interactive navigation-list-follow-xtyped))))))
 
 (tm-define (link-follow-ids ids)
-  (:synopsis "Follow one of the links for the tree @t.")
+  (:synopsis "Follow one of the links for identifiers in @ids.")
   (navigation-list-follow
    (link-list->navigation-list
     (filter-link-list (ids->link-list ids)))))
+
+(tm-define (locus-link-follow)
+  (:synopsis "Follow one of the links in the current locus.")
+  (let* ((ts (link-active-upwards (cursor-tree)))
+	 (ids (append-map tree->ids ts)))
+    (link-follow-ids ids)))
