@@ -70,3 +70,16 @@
 	     (style (tree->stree (get-style-tree)))
 	     (r (filter-map environment->locus l)))
 	(delayed (:pause 25) (build-locus-page-sub name style r #f))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constellation page
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (build-constellation-page)
+  (let* ((name "* Link constellation *")
+	 (style '(tuple "generic"))
+	 (cl (sort (get-constellation) string<=?))
+	 (l (map (lambda (x) `(hlink ,x ,x)) cl))
+	 (body (if (null? l) '("No linked files") l))
+	 (doc `(document (style ,style) (body (document ,@body)))))
+    (set-aux-buffer name name doc)))

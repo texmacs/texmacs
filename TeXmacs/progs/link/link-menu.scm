@@ -88,5 +88,6 @@
 	  ---
 	  (link navigation-type-menu)))
   (-> "Extract"
+      ("Constellation" (build-constellation-page))
       ("Loci" (build-locus-page))
       ("Environment" (interactive build-environment-page))))
