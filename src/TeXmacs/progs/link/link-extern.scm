@@ -62,6 +62,10 @@
   (with l (and (registry-get id) '())
     (registry-set id (list-remove-duplicates (cons name l)))))
 
+(tm-define (get-constellation)
+  (load-registry)
+  (map car (ahash-table->list name-to-id-table)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the list of link locators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

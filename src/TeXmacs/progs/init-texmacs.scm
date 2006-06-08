@@ -148,7 +148,8 @@
 (lazy-define (link link-edit) create-unique-id)
 (lazy-define (link link-navigate) link-active-upwards link-active-ids
 	     link-follow-ids)
-(lazy-define (link link-extern) get-link-locations register-link-locations)
+(lazy-define (link link-extern) get-constellation
+	     get-link-locations register-link-locations)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting plugins\n")
