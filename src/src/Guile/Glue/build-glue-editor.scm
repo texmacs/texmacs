@@ -81,6 +81,7 @@
   (init-style init_style (void string))
   (init-add-package init_add_package (void string))
   (init-remove-package init_remove_package (void string))
+  (get-style-tree get_style (tree))
   (get-env get_env_string (string string))
   (get-env-tree get_env_value (tree string))
   (get-init-tree get_init_value (tree string))

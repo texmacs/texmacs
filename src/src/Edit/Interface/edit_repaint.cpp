@@ -114,7 +114,7 @@ edit_interface_rep::draw_selection (ps_device dev) {
   if (!nil (locus_rects)) {
     rectangles rs= locus_rects;
     while (!nil (rs)) {
-      dev->set_color (dis->rgb (255, 160, 0));
+      dev->set_color (dis->rgb (32, 160, 96));
       dev->fill (rs->item->x1, rs->item->y1, rs->item->x2, rs->item->y2);
       rs= rs->next;
     }

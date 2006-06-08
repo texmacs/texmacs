@@ -675,6 +675,15 @@ tmg_init_remove_package (SCM arg1) {
 }
 
 SCM
+tmg_get_style_tree () {
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->get_style ();
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_get_env (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "get-env");
 
@@ -2878,6 +2887,7 @@ initialize_glue_editor () {
   gh_new_procedure ("init-style", (FN) tmg_init_style, 1, 0, 0);
   gh_new_procedure ("init-add-package", (FN) tmg_init_add_package, 1, 0, 0);
   gh_new_procedure ("init-remove-package", (FN) tmg_init_remove_package, 1, 0, 0);
+  gh_new_procedure ("get-style-tree", (FN) tmg_get_style_tree, 0, 0, 0);
   gh_new_procedure ("get-env", (FN) tmg_get_env, 1, 0, 0);
   gh_new_procedure ("get-env-tree", (FN) tmg_get_env_tree, 1, 0, 0);
   gh_new_procedure ("get-init-tree", (FN) tmg_get_init_tree, 1, 0, 0);
