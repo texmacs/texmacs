@@ -90,4 +90,4 @@
   (-> "Extract"
       ("Constellation" (build-constellation-page))
       ("Loci" (build-locus-page))
-      ("Environment" (interactive build-environment-page))))
+      ("Environments" (interactive build-environment-page))))
