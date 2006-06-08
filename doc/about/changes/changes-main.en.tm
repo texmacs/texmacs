@@ -22,6 +22,8 @@
   your version of <TeXmacs> and the system you are using.
 
   <\traverse>
+    <branch|Linking tool (1.0.6.3)|changes-14.en.tm>
+
     <branch|Type 1 fonts become the default (1.0.5.10)|changes-13.en.tm>
 
     <branch|New multi-part document mechanism (1.0.5.6 --
