@@ -205,21 +205,28 @@
 	      (resolve-id id)
 	      (delayed (:idle 25) (resolve-navigation-list (cdr l) fun)))))))
 
-(define (automatic-link back-id broken-text)
-  (let* ((item-id (create-unique-id))
+(tm-define (automatic-link back-id . opt)
+  (let* ((broken-text (if (null? opt) "Broken" (car opt)))
+	 (item-id (create-unique-id))
 	 (ts (id->trees back-id)))
     (if (null? ts) `(with "color" "red" ,broken-text)
 	`(locus (id ,item-id)
 		(link "automatic" (id ,item-id) (id ,back-id))
 		,(tree->stree (car ts))))))
 
+(tm-define (build-enumeration l)
+  (if (<= (length l) 1) l
+      `((enumerate
+	 (document
+	  ,@(map (lambda (x) `(surround (item) "" ,x)) l))))))
+
 (define (navigation-item->document x)
   (with (type nr source target) x
-    (automatic-link (Id->id target) "Broken")))
+    (automatic-link (Id->id target))))
 
 (define (navigation-list-by-type->document type l)
   (cons `(strong ,type)
-	(map navigation-item->document l)))
+	(build-enumeration (map navigation-item->document l))))
 
 (define (navigation-list->document style l)
   (let* ((direct (navigation-list-filter l #t 1))

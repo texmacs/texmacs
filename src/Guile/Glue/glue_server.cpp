@@ -390,6 +390,19 @@ tmg_pretend_save_buffer () {
 }
 
 SCM
+tmg_set_name_buffer (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-name-buffer");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_name_buffer (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_get_name_buffer () {
   // SCM_DEFER_INTS;
   url out= get_server()->get_name_buffer ();
@@ -412,19 +425,6 @@ tmg_get_name_buffer_path (SCM arg1) {
 }
 
 SCM
-tmg_set_name_buffer (SCM arg1) {
-  SCM_ASSERT_URL (arg1, SCM_ARG1, "set-name-buffer");
-
-  url in1= scm_to_url (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->set_name_buffer (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_set_abbr_buffer (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-abbr-buffer");
 
@@ -435,6 +435,15 @@ tmg_set_abbr_buffer (SCM arg1) {
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_get_abbr_buffer () {
+  // SCM_DEFER_INTS;
+  string out= get_server()->get_abbr_buffer ();
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
 }
 
 SCM
@@ -1026,10 +1035,11 @@ initialize_glue_server () {
   gh_new_procedure ("buffer-unsaved?", (FN) tmg_buffer_unsavedP, 0, 0, 0);
   gh_new_procedure ("exists-unsaved-buffer?", (FN) tmg_exists_unsaved_bufferP, 0, 0, 0);
   gh_new_procedure ("pretend-save-buffer", (FN) tmg_pretend_save_buffer, 0, 0, 0);
+  gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
   gh_new_procedure ("get-name-buffer", (FN) tmg_get_name_buffer, 0, 0, 0);
   gh_new_procedure ("get-name-buffer-path", (FN) tmg_get_name_buffer_path, 1, 0, 0);
-  gh_new_procedure ("set-name-buffer", (FN) tmg_set_name_buffer, 1, 0, 0);
   gh_new_procedure ("set-abbr-buffer", (FN) tmg_set_abbr_buffer, 1, 0, 0);
+  gh_new_procedure ("get-abbr-buffer", (FN) tmg_get_abbr_buffer, 0, 0, 0);
   gh_new_procedure ("new-buffer", (FN) tmg_new_buffer, 0, 0, 0);
   gh_new_procedure ("switch-to-buffer-path", (FN) tmg_switch_to_buffer_path, 1, 0, 0);
   gh_new_procedure ("switch-to-buffer", (FN) tmg_switch_to_buffer, 1, 0, 0);
