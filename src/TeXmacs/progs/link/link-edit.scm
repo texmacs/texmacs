@@ -82,13 +82,13 @@
   (:check-mark "v" in-link-mode?)
   (set! current-link-mode mode))
 
-(define (decompose-link-type type)
+(tm-define (separate-commas type)
   (if (string-starts? type " ")
-      (decompose-link-type (substring type 1 (string-length type)))
+      (separate-commas (substring type 1 (string-length type)))
       (with pos (string-search-forwards "," 0 type)
 	(if (< pos 0) (list type)
 	    (cons (substring type 0 pos)
-		  (decompose-link-type
+		  (separate-commas
 		   (substring type (+ pos 1) (string-length type))))))))
 
 (tm-define (Id->id Id)
@@ -168,7 +168,7 @@
   (:synopsis "Make a link of type @type.")
   (:argument type "Link type")
   (when (link-completed-loci?)
-    (for-each make-link-sub (decompose-link-type type))
+    (for-each make-link-sub (separate-commas type))
     (link-remove-participants 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,7 +221,7 @@
   (:synopsis "Remove all links of type @type.")
   (:argument type "Link type")
   (:proposals type (locus-link-types #t))
-  (for-each remove-link-sub (decompose-link-type type)))
+  (for-each remove-link-sub (separate-commas type)))
 
 (tm-define (remove-all-links)
   (:synopsis "Remove all links from the current locus.")

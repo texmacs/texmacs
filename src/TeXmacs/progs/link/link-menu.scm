@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-menu)
-  (:use (link link-edit) (link link-navigate)
+  (:use (link link-edit) (link link-navigate) (link link-extract)
 	(generic document-edit)))
 
 (define (link-create-entry name)
@@ -86,4 +86,7 @@
       ("All" (navigation-allow-all-types))
       (if (nnull? (current-link-types))
 	  ---
-	  (link navigation-type-menu))))
+	  (link navigation-type-menu)))
+  (-> "Extract"
+      ("Loci" (build-locus-page))
+      ("Environment" (interactive build-environment-page))))

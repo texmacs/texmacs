@@ -186,6 +186,13 @@ tm_data_rep::set_name_buffer (url name) {
   set_abbr_buffer (new_menu_name (name));
 }
 
+string
+tm_data_rep::get_abbr_buffer () {
+  int i;
+  tm_buffer buf= get_buffer ();
+  return buf->abbr;
+}
+
 void
 tm_data_rep::set_abbr_buffer (string abbr) {
   int i;
