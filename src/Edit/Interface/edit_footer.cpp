@@ -252,6 +252,8 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case COMPOUND:
     if (is_atomic (st[0])) return up * as_string (st[0]) * "#";
     else return up * "compound#";
+  case HLINK:
+    return up * "hyperlink(" * as_string (st[1]) * ")#";
   case TUPLE:
     return up * "tuple(" * as_string (l+1) * ")#";
   case ATTR:
@@ -259,8 +261,6 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else return up * "value(" * as_string (l/2+1) * ")#";
   case SPECIFIC:
     return up * "texmacs#";
-  case HLINK:
-    return up * "hyperlink(" * as_string (st[1]) * ")#";
   default:
     return up * drd->get_name (L(st)) * "#";
   }

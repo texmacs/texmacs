@@ -262,24 +262,28 @@ init_std_drd () {
   init (LATEX, "latex", fixed (1));
   init (HYBRID, "hybrid", options (1, 1));
 
+  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
+  init (ID, "id", repeat (1, 1) -> accessible (0));
+  init (HARD_ID, "hard-id", fixed (1));
+  init (PARENT, "parent", fixed (1) -> accessible (0));
+  init (LINK, "link", repeat (2, 1) -> accessible (0));
+  init (URL, "url", options (1, 1) -> accessible (0));
+  init (LINK_DATA, "link-data", repeat (1, 1) -> accessible (0));
+  init (HLINK, "hlink",
+	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
+  init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
+  init (LABEL, "label", fixed (1));
+  init (REFERENCE, "reference", fixed (1));
+  init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
+  init (WRITE, "write", fixed (2));
+
   init (TUPLE, "tuple", repeat (0, 1) -> accessible (0));
   init (ATTR, "attr", repeat (2, 2) -> accessible (0) -> name ("attributes"));
   init (TMLEN, "tmlen", options (1, 2) -> name ("TeXmacs length"));
   init (COLLECTION, "collection", repeat (1, 1));
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
-  init (LABEL, "label", fixed (1));
-  init (REFERENCE, "reference", fixed (1));
-  init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
-  init (WRITE, "write", fixed (2));
   init (SPECIFIC, "specific", fixed (2));
-  init (HLINK, "hlink",
-	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
-  init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
-  init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
-  init (ID, "id", repeat (1, 1) -> accessible (0));
-  init (LINK, "link", repeat (2, 1) -> accessible (0));
-  init (URL, "url", options (1, 1) -> accessible (0));
   init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
   init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));

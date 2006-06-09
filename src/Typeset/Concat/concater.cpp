@@ -533,13 +533,29 @@ concater_rep::typeset (tree t, path ip) {
   case SYMBOL:
   case LATEX:
   case HYBRID:
-  case TUPLE:
-  case ATTR:
-  case TMLEN:
-  case COLLECTION:
-  case ASSOCIATE:
-  case BACKUP:
     typeset_inactive (t, ip);
+    break;
+
+  case LOCUS:
+    typeset_locus (t, ip);
+    break;
+  case ID:
+    typeset_inactive (t, ip);
+    break;
+  case HARD_ID:
+  case PARENT: 
+    // FIXME: to be replaced
+    typeset_inactive (t, ip);
+    break;
+  case LINK:
+  case URL:
+    typeset_inactive (t, ip);
+    break;
+  case HLINK:
+    typeset_hyperlink (t, ip);
+    break;
+  case ACTION:
+    typeset_action (t, ip);
     break;
   case LABEL:
     typeset_label (t, ip);
@@ -553,22 +569,17 @@ concater_rep::typeset (tree t, path ip) {
   case WRITE:
     typeset_write (t, ip);
     break;
+
+  case TUPLE:
+  case ATTR:
+  case TMLEN:
+  case COLLECTION:
+  case ASSOCIATE:
+  case BACKUP:
+    typeset_inactive (t, ip);
+    break;
   case SPECIFIC:
     typeset_specific (t, ip);
-    break;
-  case HLINK:
-    typeset_hyperlink (t, ip);
-    break;
-  case ACTION:
-    typeset_action (t, ip);
-    break;
-  case LOCUS:
-    typeset_locus (t, ip);
-    break;
-  case ID:
-  case LINK:
-  case URL:
-    typeset_inactive (t, ip);
     break;
   case TAG:
     typeset_tag (t, ip);
