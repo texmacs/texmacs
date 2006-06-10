@@ -470,6 +470,12 @@ cmp_observer (SCM o1, SCM o2) {
   return scm_bool2scm (scm_to_observer (o1) == scm_to_observer (o2));
 }
 
+static SCM
+observerP (SCM t) {
+  bool b= scm_is_observer (t);
+  return bool_to_scm (b);
+}
+
 /******************************************************************************
 * Displays
 ******************************************************************************/
@@ -967,6 +973,7 @@ initialize_glue () {
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
   gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  gh_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
   gh_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
@@ -1013,6 +1020,7 @@ initialize_glue () {
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
   gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  gh_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
   gh_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();

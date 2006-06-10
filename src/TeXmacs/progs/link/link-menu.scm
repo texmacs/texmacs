@@ -58,7 +58,7 @@
       ("Other" (interactive make-link)))))
 
 (define (link-delete-entry name)
-  (list name (lambda () (remove-link name))))
+  (list name (lambda () (remove-link-of-types name))))
 
 (tm-define (link-delete-menu)
   (let* ((l1 (locus-link-types #t))
@@ -68,7 +68,7 @@
       ---
       ,@(map link-delete-entry l2)
       ---
-      ("Other" (interactive remove-link)))))
+      ("Other" (interactive remove-link-of-types)))))
 
 (define (navigation-type-entry name)
   (list name (eval `(lambda () (navigation-toggle-type ,name)))))
@@ -93,7 +93,7 @@
   (when (inside? 'locus)
     ("Source" (link-set-locus 0))
     ("Target" (link-set-locus 1)))
-  (when (link-completed-loci?)
+  (when (link-completed?)
     (-> "Create link" (link link-create-menu)))
   (if (null? (locus-link-types #t))
       (when #f

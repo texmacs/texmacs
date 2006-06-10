@@ -59,7 +59,7 @@
 (tm-define (build-environment-page env)
   (:synopsis "Build page with environments of type @env in current buffer.")
   (:argument env "Environment")
-  (let* ((env-l (map string->symbol (separate-commas env)))
+  (let* ((env-l (map string->symbol (string-tokenize-comma env)))
 	 (pred-l (map (lambda (tag) (cut tm-func? <> tag)) env-l))
 	 (l (append-map (cut tree-search (buffer-tree) <>) pred-l)))
     (dialogue

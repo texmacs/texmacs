@@ -148,6 +148,17 @@
 				 c
 				 (- n 1))))))
 
+(define-public (string-tokenize-comma s)
+  "Cut string @s into pieces using comma as a separator and remove whitespace."
+  (if (string-starts? s " ")
+      (string-tokenize-comma (substring s 1 (string-length s)))
+      (with pos (string-search-forwards "," 0 s)
+	(if (< pos 0) (list s)
+	    (cons (substring s 0 pos)
+		  (string-tokenize-comma
+		   (substring s (+ pos 1) (string-length s))))))))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

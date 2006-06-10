@@ -25,7 +25,7 @@
   ("link <" (link-set-locus 0))
   ("link >" (link-set-locus 1))
   ("link l" (interactive make-link))
-  ("link /" (interactive remove-link))
+  ("link /" (interactive remove-link-of-types))
   ("link return" (locus-link-follow))
   ("link c" (build-constellation-page))
   ("link i" (build-locus-page))
