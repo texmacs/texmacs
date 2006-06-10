@@ -308,9 +308,25 @@
 	(and (resolve-id id)
 	     (delayed (:idle 25) (go-to-id id))))))
 
+(define (decompose-url s)
+  (with i (string-index s #\#)
+    (if (not i) (list s "")
+	(list (substring s 0 i) (substring s (+ i 1) (string-length s))))))
+
+(tm-define (go-to-url name-label)
+  (with (name label) (decompose-url name-label)
+    (cond ((== name "") (go-to-label label))
+	  ((== label "")
+	   (with u (url-relative (get-name-buffer) name)
+	     (load-browse-buffer u)))
+	  (else
+	   (with u (url-relative (get-name-buffer) name)
+	     (load-browse-buffer u)
+	     (go-to-label label))))))
+
 (tm-define (go-to-vertex v)
   (cond ((func? v 'id 1) (go-to-id (cadr v)))
-	((func? v 'url 1) (display* "Jumps to urls not yet implemented\n"))
+	((func? v 'url 1) (go-to-url (cadr v)))
 	(else (noop))))
 
 (define (id-set-visited id)
