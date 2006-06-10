@@ -72,6 +72,9 @@
 ;; Finding links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (Id->id Id)
+  (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
+
 (define (id->link-list id)
   (let* ((lns (id->links id))
 	 (sts (map tree->stree lns)))

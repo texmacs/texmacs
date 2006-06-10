@@ -12,64 +12,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (link link-edit))
+(texmacs-module (link link-edit)
+  (:use (link locus-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Loci with unique identifiers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define texmacs-session-id (var-eval-system "openssl rand -base64 6"))
-(define texmacs-serial-id (* 1000000000 (abs (texmacs-time))))
-
-(define (base64 x)
-  (if (== x 0) '()
-      (append (base64 (quotient x 64))
-	      (list (remainder x 64)))))
-
-(define (aschar x)
-  (cond ((< x 10) (integer->char (+ x 48)))
-	((< x 36) (integer->char (+ x 55)))
-	((< x 62) (integer->char (+ x 61)))
-	((== x 62) #\{)
-	(else #\})))
-
-(define (number->base64 x)
-  (list->string (map aschar (base64 x))))
-
-(tm-define (create-unique-id)
-  (:synopsis "Create a unique file or locus identifier")
-  (set! texmacs-serial-id (+ texmacs-serial-id 1))
-  (string-append texmacs-session-id (number->base64 texmacs-serial-id)))
-
-(tm-define (make-locus)
-  (with t (if (selection-active-any?) (selection-tree) "")
-    (if (selection-active-any?) (clipboard-cut "null"))
-    (insert-go-to `(locus (id ,(create-unique-id)) ,t)
-		  (cons 1 (path-end t '())))))
-
-(tm-define (locus-id t)
-  (:synopsis "Return the unique identifier of the locus @t or #f.")
-  (and (tm-func? t 'locus)
-       (>= (tm-length t) 2)
-       (tm-func? (tm-ref t 0) 'id 1)
-       (tree-atomic? (tm-ref t 0 0))
-       (tree->string (tm-ref t 0 0))))
-
-(define (locus-insert-link t ln)
-  (tree-insert t (- (tree-arity t) 1) `(locus ,(tree-copy ln))))
-
-(define (locus-remove-link ln)
-  (tree-remove (tree-up ln) (tree-index ln) 1))
-
-(define (locus-remove-match ln match-with)
-  (if (== ln match-with) (locus-remove-link ln)))
-
-(define (locus-remove-all t ln)
-  (for-each (cut locus-remove-match <> ln)
-	    (reverse (cDr (tree-children t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Generalities
+;; Current link mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define current-link-mode "bidirectional")
@@ -82,44 +29,46 @@
   (:check-mark "v" in-link-mode?)
   (set! current-link-mode mode))
 
-(tm-define (separate-commas type)
-  (if (string-starts? type " ")
-      (separate-commas (substring type 1 (string-length type)))
-      (with pos (string-search-forwards "," 0 type)
-	(if (< pos 0) (list type)
-	    (cons (substring type 0 pos)
-		  (separate-commas
-		   (substring type (+ pos 1) (string-length type))))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for link vertices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (Id->id Id)
-  (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
+(tm-define (link-type ln)
+  (if (tree? ln) (set! ln (tree->stree ln)))
+  (and (func? ln 'link) (cadr ln)))
 
-(define (tree->locus t)
-  (and-with p (tree-up t)
-    (and (tm-func? p 'locus) p)))
+(tm-define (link-vertices ln)
+  (if (tree? ln) (set! ln (tree->stree ln)))
+  (and (func? ln 'link) (cddr ln)))
 
-(tm-define (id->loci id)
-  (filter-map tree->locus (id->trees id)))
+(tm-define (link-source ln)
+  (car (link-vertices ln)))
+
+(tm-define (link-target ln)
+  (cadr (link-vertices ln)))
+
+(tm-define (vertex->id r)
+  (and (func? r 'id 1) (string? (cadr r)) (cadr r)))
+
+(tm-define (vertex->url r)
+  (and (func? r 'url 1) (string? (cadr r)) (cadr r)))
+
+(tm-define (vertex->data r)
+  (and (func? r 'link-data 1) (cadr r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Construction of links
+;; Entering the necessary information for the next link
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define link-participants (make-ahash-table))
 
-(define (link-remove-participant nr)
-  (with p (ahash-ref link-participants nr)
-    (when p
-      (ahash-remove! link-participants nr)
-      (tree-pointer-detach p))))
-
 (define (link-on-locus? nr)
   (if (not (inside? 'locus)) ""
       (with-innermost t 'locus
-	(with tp (ahash-ref link-participants nr)
-	  (cond ((not tp) "")
-		((== t (tree-pointer->tree tp)) "v")
-		(else "o"))))))
+        (with tp (ahash-ref link-participants nr)
+          (cond ((not (observer? tp)) "")
+                ((== t (tree-pointer->tree tp)) "v")
+                (else "o"))))))
 
 (tm-define (link-set-locus nr)
   (:synopsis "Set locus number @nr of a link.")
@@ -127,61 +76,97 @@
   (with-innermost t 'locus
     (ahash-set! link-participants nr (tree->tree-pointer t))))
 
-(tm-define (link-completed-loci?)
-  (:synopsis "Did we mark all necessary loci for constructing a link?")
+(define (link-component-is-url? nr . args)
+  (tm-func? (ahash-ref link-participants nr) 'url))
+
+(tm-define (link-set-url nr name)
+  (:synopsis "Set component @nr of a link to an url @name.")
+  (:check-mark "o" link-component-is-url?)
+  (ahash-set! link-participants nr `(url ,name)))
+
+(define (link-component-is-data? nr . args)
+  (tm-func? (ahash-ref link-participants nr) 'link-data))
+
+(tm-define (link-set-data nr t)
+  (:synopsis "Set component @nr of a link to tree data @t.")
+  (:check-mark "o" link-component-is-data?)
+  (ahash-set! link-participants nr `(url ,name)))
+
+(tm-define (link-completed?)
+  (:synopsis "Did enter all necessary information for constructing a link?")
   (and (ahash-ref link-participants 0)
        (ahash-ref link-participants 1)
        (cond ((== current-link-mode "simple") #t)
-	     ((== current-link-mode "bidirectional") #t)
-	     ((== current-link-mode "external") (inside? 'locus))
-	     (else #f))))
+             ((== current-link-mode "bidirectional") #t)
+             ((== current-link-mode "external") (inside? 'locus))
+             (else #f))))
 
-(define (link-participating-trees nr)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building the next link
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (link-get-trees nr)
   (with p (ahash-ref link-participants nr)
-    (if (not p) '()
-	(with t (tree-pointer->tree p)
-	  (cons t (link-participating-trees (+ nr 1)))))))
+    (cond ((not p) '())
+	  ((observer? p)
+	   (with t (tree-pointer->tree p)
+	     (cons t (link-get-trees (+ nr 1)))))
+	  (else (link-get-trees (+ nr 1))))))
 
-(define (link-remove-participants nr)
+(define (link-vertices nr)
+  (with p (ahash-ref link-participants nr)
+    (cond ((not p) '())
+	  ((observer? p)
+	   (with t (tree-pointer->tree p)
+	     (cons `(id ,(locus-id t)) (link-vertices (+ nr 1)))))
+	  (else (cons p (link-vertices (+ nr 1)))))))
+
+(define (link-remove-participant nr)
+  (with p (ahash-ref link-participants nr)
+    (ahash-remove! link-participants nr)
+    (when (oberver? p)
+      (tree-pointer-detach p))))
+
+(define (link-clean nr)
   (and-with p (ahash-ref link-participants nr)
-    (with t (tree-pointer->tree p)
-      (link-remove-participant nr)
-      (link-remove-participants (+ nr 1)))))
+    (if (observer? p) (tree-pointer-detach p))
+    (link-clean (+ nr 1))))
 
-(define (make-link-sub type)
-  (let* ((l (link-participating-trees 0))
-	 (ids (map locus-id l))
-	 (Ids (map (lambda (x) `(id ,x)) ids))
-	 (ln (tm->tree `(link ,type ,@Ids))))
-    (when (and (nnull? l) (list-and ids))
+(define (link-build type)
+  (let* ((ts (link-get-trees 0))
+         (vs (link-vertices 0))
+         (ln (tm->tree `(link ,type ,@vs))))
+    (when (and (nnull? vs) (list-and (map locus-id ts)))
       (cond ((== current-link-mode "simple")
-	     (with t (tree-pointer->tree (ahash-ref link-participants 0))
-	       (locus-insert-link t ln)))
-	    ((== current-link-mode "bidirectional")
-	     (for-each (cut locus-insert-link <> ln) l))
-	    ((== current-link-mode "external")
-	     (with-innermost t 'locus
-	       (locus-insert-link t ln)))
-	    (else (set-message "Unsupported link mode" "Make link"))))))
+	     (and-let* ((tp (ahash-ref link-participants 0))
+			(d (observer? tp))
+			(t (tree-pointer->tree tp)))
+               (locus-insert-link t ln)))
+            ((== current-link-mode "bidirectional")
+             (for-each (cut locus-insert-link <> ln) ts))
+            ((== current-link-mode "external")
+             (with-innermost t 'locus
+               (locus-insert-link t ln)))
+            (else (set-message "Unsupported link mode" "Make link"))))))
 
 (tm-define (make-link type)
   (:synopsis "Make a link of type @type.")
   (:argument type "Link type")
-  (when (link-completed-loci?)
-    (for-each make-link-sub (separate-commas type))
-    (link-remove-participants 0)))
+  (when (link-completed?)
+    (for-each link-build (string-tokenize-comma type))
+    (link-clean 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Destruction of links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (locus-link-type ln check-mode?)
+(define (locus-consider-link? ln check-mode?)
   (and (tm-func? ln 'link)
        (or (not check-mode?)
 	   (cond ((== current-link-mode "simple")
-		  (let* ((id (locus-id (tree-up ln)))
-			 (id2 (Id->id (caddr (tree->stree ln)))))
-		    (== id id2)))
+		  (and-let* ((id1 (locus-id (tree-up ln)))
+			     (id2 (link-source ln)))
+		    (== id1 id2)))
 		 ((== current-link-mode "bidirectional") #t)
 		 ((== current-link-mode "external") #t)
 		 (else #f)))))
@@ -192,37 +177,37 @@
   (if (not (inside? 'locus)) '()
       (with-innermost t 'locus
 	(let* ((l1 (cDr (tree-children t)))
-	       (l2 (list-filter l1 (cut locus-link-type <> check-mode?)))
+	       (l2 (list-filter l1 (cut locus-consider-link? <> check-mode?)))
 	       (l3 (map cadr (map tree->stree l2))))
 	  (list-remove-duplicates l3)))))
 
-(define (remove-link-sub-sub ln type)
+(define (remove-link ln type)
   (with st (tree->stree ln)
     (when (and (func? st 'link) (== (cadr st) type))
       (cond ((== current-link-mode "simple")
 	     (locus-remove-link ln))
 	    ((== current-link-mode "bidirectional")
-	     (let* ((ids (filter-map Id->id (cddr st)))
+	     (let* ((ids (filter-map vertex->id (cddr st)))
 		    (ts1 (append-map id->loci ids))
 		    (fun (lambda (t) (not (tree-eq? t (tree-up ln)))))
 		    (ts2 (list-filter ts1 fun)))
-	       (for-each (cut locus-remove-all <> ln) ts2)
+	       (for-each (cut locus-remove-all-links <> ln) ts2)
 	       (locus-remove-link ln)))
 	    ((== current-link-mode "external")
 	     (locus-remove-link ln))
 	    (else (set-message "Unsupported link mode" "Remove link"))))))
 
-(define (remove-link-sub type)
+(define (remove-link-of-type type)
   (with-innermost t 'locus
-    (for-each (cut remove-link-sub-sub <> type)
+    (for-each (cut remove-link <> type)
 	      (reverse (cDr (tree-children t))))))
 
-(tm-define (remove-link type)
+(tm-define (remove-link-of-types type)
   (:synopsis "Remove all links of type @type.")
   (:argument type "Link type")
   (:proposals type (locus-link-types #t))
-  (for-each remove-link-sub (separate-commas type)))
+  (for-each remove-link-of-type (string-tokenize-comma type)))
 
 (tm-define (remove-all-links)
   (:synopsis "Remove all links from the current locus.")
-  (for-each remove-link-sub (locus-link-types #t)))
+  (for-each remove-link-of-type (locus-link-types #t)))
