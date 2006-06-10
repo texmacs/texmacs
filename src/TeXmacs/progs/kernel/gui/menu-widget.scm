@@ -141,11 +141,16 @@
   (if opt-check
       (make-menu-entry-check-sub ((cadr opt-check)) (car opt-check))
       (with source (promise-source action)
-	(if (not (and source (pair? source))) ""
-	    (with prop (property (car source) :check-mark)
-	      (make-menu-entry-check-sub
-	       (and prop (apply (cadr prop) (cdr source)))
-	       (and prop (car prop))))))))
+	(cond ((not (and source (pair? source))) "")
+	      ((func? source 'interactive 1)
+	       (with prop (property (cadr source) :check-mark)
+		 (make-menu-entry-check-sub
+		  (and prop ((cadr prop) :interactive))
+		  (and prop (car prop)))))
+	      (else (with prop (property (car source) :check-mark)
+		      (make-menu-entry-check-sub
+		       (and prop (apply (cadr prop) (cdr source)))
+		       (and prop (car prop)))))))))
 
 (define (make-menu-entry-dots label action)
   (with source (promise-source action)

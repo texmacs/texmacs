@@ -76,17 +76,29 @@
   (with-innermost t 'locus
     (ahash-set! link-participants nr (tree->tree-pointer t))))
 
-(define (link-component-is-url? nr . args)
-  (tm-func? (ahash-ref link-participants nr) 'url))
-
+(define (link-component-is-url? . args)
+  (func? (ahash-ref link-participants nr) 'url))
 (tm-define (link-set-url nr name)
   (:synopsis "Set component @nr of a link to an url @name.")
   (:check-mark "o" link-component-is-url?)
   (ahash-set! link-participants nr `(url ,name)))
 
-(define (link-component-is-data? nr . args)
-  (tm-func? (ahash-ref link-participants nr) 'link-data))
+(define (link-source-is-url? . args)
+  (func? (ahash-ref link-participants 0) 'url))
+(tm-define (link-set-source-url url)
+  (:synopsis "Set source of link to an @url.")
+  (:check-mark "o" link-source-is-url?)
+  (ahash-set! link-participants 0 `(url ,url)))
 
+(define (link-target-is-url? . args)
+  (func? (ahash-ref link-participants 1) 'url))
+(tm-define (link-set-target-url url)
+  (:synopsis "Set target of link to an @url.")
+  (:check-mark "o" link-target-is-url?)
+  (ahash-set! link-participants 1 `(url ,url)))
+
+(define (link-component-is-data? nr . args)
+  (func? (ahash-ref link-participants nr) 'link-data))
 (tm-define (link-set-data nr t)
   (:synopsis "Set component @nr of a link to tree data @t.")
   (:check-mark "o" link-component-is-data?)
