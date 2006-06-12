@@ -943,8 +943,8 @@ tmg_set_locus_rendering (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_id_declare_visited (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id-declare-visited");
+tmg_declare_visited (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "declare-visited");
 
   string in1= scm_to_string (arg1);
 
@@ -956,8 +956,8 @@ tmg_id_declare_visited (SCM arg1) {
 }
 
 SCM
-tmg_id_has_been_visitedP (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id-has-been-visited?");
+tmg_has_been_visitedP (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "has-been-visited?");
 
   string in1= scm_to_string (arg1);
 
@@ -2809,8 +2809,8 @@ initialize_glue_basic () {
   gh_new_procedure ("current-link-types", (FN) tmg_current_link_types, 0, 0, 0);
   gh_new_procedure ("get-locus-rendering", (FN) tmg_get_locus_rendering, 1, 0, 0);
   gh_new_procedure ("set-locus-rendering", (FN) tmg_set_locus_rendering, 2, 0, 0);
-  gh_new_procedure ("id-declare-visited", (FN) tmg_id_declare_visited, 1, 0, 0);
-  gh_new_procedure ("id-has-been-visited?", (FN) tmg_id_has_been_visitedP, 1, 0, 0);
+  gh_new_procedure ("declare-visited", (FN) tmg_declare_visited, 1, 0, 0);
+  gh_new_procedure ("has-been-visited?", (FN) tmg_has_been_visitedP, 1, 0, 0);
   gh_new_procedure ("string-number?", (FN) tmg_string_numberP, 1, 0, 0);
   gh_new_procedure ("string-search-forwards", (FN) tmg_string_search_forwards, 3, 0, 0);
   gh_new_procedure ("string-search-backwards", (FN) tmg_string_search_backwards, 3, 0, 0);

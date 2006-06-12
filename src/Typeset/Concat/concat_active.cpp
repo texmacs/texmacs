@@ -240,17 +240,24 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
   if (!nil (env->link_env)) {
-    int i;
+    int i, j;
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
       if (is_compound (arg, "id", 1)) {
 	string id= as_string (arg[0]);
 	if (accessible) env->link_env->insert_locus (id, body);
 	ids= list<string> (id, ids);
-	visited= visited || has_been_visited (id);
+	visited= visited || has_been_visited ("id:" * id);
       }
-      if (is_compound (arg, "link"))
+      if (is_compound (arg, "link")) {
 	env->link_env->insert_link (arg);
+	for (j=1; j<N(arg); j++) {
+	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0]))
+	    visited= visited || has_been_visited ("id:" * arg[j][0]->label);
+	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0]))
+	    visited= visited || has_been_visited ("url:" * arg[j][0]->label);
+	}
+      }
     }
   }
 
