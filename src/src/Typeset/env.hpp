@@ -283,6 +283,8 @@ private:
   tree exec_min_length ();
   tree exec_h_length ();
 
+  tree exec_hard_id (tree t);
+
   tree exec_point (tree t);
   tree exec_box_info (tree t);
   tree exec_frame_direct (tree t);
@@ -320,7 +322,7 @@ public:
   void   exec_until (tree t, path p);
   bool   exec_until (tree t, path p, string var, int level);
   string exec_string (tree t);        /* should be inline */
-  tree   expand (tree t);
+  tree   expand (tree t, bool search_accessible= false);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
 

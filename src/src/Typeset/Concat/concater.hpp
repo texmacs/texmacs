@@ -97,6 +97,7 @@ class concater_rep {
   void typeset_argument (tree t, path ip);
   void typeset_eval_args (tree t, path ip);
   void typeset_mark (tree t, path ip);
+  void typeset_expand_as (tree t, path ip);
   void typeset_dynamic (tree t, path ip);
   void typeset_executable (tree t, path ip);
   void typeset_rewrite (tree t, path ip);
@@ -109,7 +110,6 @@ class concater_rep {
   void typeset_reference (tree t, path ip, int type);
   void typeset_write (tree t, path ip);
   void typeset_specific (tree t, path ip);
-  void typeset_hyperlink (tree t, path ip);
   void typeset_action (tree t, path ip);
   void typeset_locus (tree t, path ip);
   void typeset_tag (tree t, path ip);

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -115,9 +115,7 @@
 
   <assign|simple-link|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
 
-  <assign|hyper-link|<macro|x|y|<hlink|<arg|x>|<arg|y>>>>
-
-  <assign|hyper-link|<macro|x|y|<quasiquote|<style-with|src-compact|none|<datoms|<macro|x|<hlink|<arg|x>|<unquote|<arg|y>>>>|<with|color|blue|<arg|x>>>>>>>
+  <assign|hyper-link*|<macro|x|y|<hlink|<arg|x>|<arg|y>>>>
 
   <assign|concept-link|<macro|x|<with|color|magenta|<arg|x>>>>
 

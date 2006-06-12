@@ -18,8 +18,17 @@
 ;; Unique identifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define texmacs-session-id (var-eval-system "openssl rand -base64 6"))
-(define texmacs-serial-id (* 1000000000 (abs (texmacs-time))))
+(define (base256->number s)
+  (if (== s "") 0
+      (+ (* 256 (base256->number (string-drop-right s 1)))
+	 (char->integer (string-ref s (- (string-length s) 1))))))
+
+(define seed-val (+ (* 4294967296 (abs (texmacs-time)))
+		    (* 65536 (getpid))
+		    (base256->number (cuserid))))
+
+(define texmacs-seed (seed->random-state seed-val))
+(define texmacs-serial-id (random 19342813113834066795298816 texmacs-seed))
 
 (define (base64 x)
   (if (== x 0) '()
@@ -39,7 +48,7 @@
 (tm-define (create-unique-id)
   (:synopsis "Create a unique file or locus identifier")
   (set! texmacs-serial-id (+ texmacs-serial-id 1))
-  (string-append texmacs-session-id (number->base64 texmacs-serial-id)))
+  (string-append "$" (number->base64 texmacs-serial-id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creation of loci

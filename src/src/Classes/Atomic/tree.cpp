@@ -221,6 +221,7 @@ is_multi_paragraph (tree t) {
   case DPAGES:
   case WITH:
   case MARK:
+  case EXPAND_AS:
   case STYLE_WITH:
   case VAR_STYLE_WITH:
   case STYLE_ONLY:

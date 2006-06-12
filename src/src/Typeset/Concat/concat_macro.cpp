@@ -273,6 +273,14 @@ concater_rep::typeset_mark (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_expand_as (tree t, path ip) {
+  // cout << "Mark: " << t << ", " << ip << "\n\n";
+  marker (descend (ip, 0));
+  typeset (t[1], descend (ip, 1));
+  marker (descend (ip, 1));
+}
+
+void
 concater_rep::typeset_executable (tree t, path ip) {
   tree r= env->exec (t);
   typeset_dynamic (r, ip);

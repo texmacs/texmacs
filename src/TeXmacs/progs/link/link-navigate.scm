@@ -330,7 +330,8 @@
 	(else (noop))))
 
 (define (id-set-visited id)
-  (declare-visited (string-append "id:" id))
+  (when (not (string-starts? id "%"))
+    (declare-visited (string-append "id:" id)))
   (with pl (filter-map tree->path (id->trees id))
     (for-each update-all-path pl)))
 

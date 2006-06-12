@@ -23,6 +23,7 @@ bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
+bridge bridge_expand_as (typesetter, tree, path);
 bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
 bridge bridge_locus (typesetter, tree, path);
@@ -84,6 +85,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_argument (ttt, st, ip);
   case MARK:
     return bridge_mark (ttt, st, ip);
+  case EXPAND_AS:
+    return bridge_expand_as (ttt, st, ip);
   case EVAL:
   case QUASI:
     return bridge_eval (ttt, st, ip);
@@ -104,6 +107,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_rewrite (ttt, st, ip);
   case LOCUS:
     return bridge_locus (ttt, st, ip);
+  case HLINK:
+    return bridge_compound (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);
