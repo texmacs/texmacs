@@ -83,13 +83,6 @@
   (:check-mark "o" link-component-is-url?)
   (ahash-set! link-participants nr `(url ,name)))
 
-(define (link-source-is-url? . args)
-  (func? (ahash-ref link-participants 0) 'url))
-(tm-define (link-set-source-url url)
-  (:synopsis "Set source of link to an @url.")
-  (:check-mark "o" link-source-is-url?)
-  (ahash-set! link-participants 0 `(url ,url)))
-
 (define (link-target-is-url? . args)
   (func? (ahash-ref link-participants 1) 'url))
 (tm-define (link-set-target-url url)
@@ -103,6 +96,13 @@
   (:synopsis "Set component @nr of a link to the script @t.")
   (:check-mark "o" link-component-is-script?)
   (ahash-set! link-participants nr `(url ,name)))
+
+(define (link-target-is-script? . args)
+  (func? (ahash-ref link-participants 1) 'script))
+(tm-define (link-set-target-script script)
+  (:synopsis "Set target of link to a @script.")
+  (:check-mark "o" link-target-is-script?)
+  (ahash-set! link-participants 1 `(script ,script)))
 
 (tm-define (link-completed?)
   (:synopsis "Did enter all necessary information for constructing a link?")

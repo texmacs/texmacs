@@ -93,14 +93,18 @@
 ;;  (when (inside? 'locus)
 ;;    ("Source" (link-set-locus 0))
 ;;    ("Target" (link-set-locus 1)))
-  (-> "Source"
-      (when (inside? 'locus)
-	("Locus" (link-set-locus 0)))
-      ("Url" (interactive link-set-source-url)))
+;;  (-> "Source"
+;;      (when (inside? 'locus)
+;;	("Locus" (link-set-locus 0)))
+;;      ("Url" (interactive link-set-source-url))
+;;      ("Script" (interactive link-set-source-script)))
+  (when (inside? 'locus)
+    ("Source" (link-set-locus 0)))
   (-> "Target"
       (when (inside? 'locus)
 	("Locus" (link-set-locus 1)))
-      ("Url" (interactive link-set-target-url)))
+      ("Url" (interactive link-set-target-url))
+      ("Script" (interactive link-set-target-script)))
   (when (link-completed?)
     (-> "Create link" (link link-create-menu)))
   (if (null? (locus-link-types #t))

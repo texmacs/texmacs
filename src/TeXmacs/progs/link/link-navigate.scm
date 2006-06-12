@@ -203,7 +203,8 @@
 	      (or (== nr #t) (== (navigation-pos (car l)) nr))
 	      (or (not jumpable?)
 		  (func? (navigation-target (car l)) 'id 1)
-		  (func? (navigation-target (car l)) 'url 1)))
+		  (func? (navigation-target (car l)) 'url 1)
+		  (func? (navigation-target (car l)) 'script 1)))
 	 (cons (car l) (navigation-list-filter (cdr l) type nr jumpable?)))
 	(else (navigation-list-filter (cdr l) type nr jumpable?))))
 
@@ -327,7 +328,21 @@
 (tm-define (go-to-vertex v)
   (cond ((func? v 'id 1) (go-to-id (cadr v)))
 	((func? v 'url 1) (go-to-url (cadr v)))
+	((func? v 'script 1) (execute-script (cadr v)))
 	(else (noop))))
+
+(tm-define (execute-script s)
+  (let* ((secure-s (string-append "(secure? '" s ")"))
+	 (secure? (eval (string->object secure-s)))
+	 (cmd-s (string-append "(lambda () " s ")"))
+	 (cmd (eval (string->object cmd-s))))
+    (cond ((or secure? (== (get-preference "security") "accept all scripts"))
+	   (exec-delayed cmd))
+	  ((== (get-preference "security") "prompt on scripts")
+	   (dialogue
+	     (if (dialogue-confirm? (string-append "Execute#" s "?") #f)
+		 (exec-delayed cmd))))
+	  (else (set-message "Unsecure script refused" "Evaluate script")))))
 
 (define (id-set-visited id)
   (when (not (string-starts? id "%"))
@@ -336,8 +351,9 @@
     (for-each update-all-path pl)))
 
 (define (navigation-item-follow hit)
-  (id-set-visited (navigation-source hit))
-  (with target (navigation-target hit)
+  (let* ((source (navigation-source hit))
+	 (target (navigation-target hit)))
+    (id-set-visited source)
     (and-with target-id (vertex->id target)
       (id-set-visited target-id))
     (and-with target-url (vertex->url target)

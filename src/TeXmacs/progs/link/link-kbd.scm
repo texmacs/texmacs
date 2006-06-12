@@ -24,6 +24,8 @@
   ("link x" (set-link-mode "external"))
   ("link <" (link-set-locus 0))
   ("link >" (link-set-locus 1))
+  ("link u" (interactive link-set-target-url))
+  ("link s" (interactive link-set-target-script))
   ("link l" (interactive make-link))
   ("link /" (interactive remove-link-of-types))
   ("link return" (locus-link-follow))

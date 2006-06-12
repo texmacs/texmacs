@@ -361,7 +361,10 @@ edit_env_rep::exec (tree t) {
 
   case HARD_ID:
     return exec_hard_id (t[0]);
+  case SCRIPT:
+    return exec_script (t);
   case HLINK:
+  case ACTION:
     return exec_compound (t);
 
   case _POINT:
@@ -1225,6 +1228,12 @@ edit_env_rep::exec_hard_id (tree t) {
 }
 
 tree
+edit_env_rep::exec_script (tree t) {
+  if (N(t) != 1) return tree (ERROR, "bad script");
+  return tree (SCRIPT, exec (t[0]));
+}
+
+tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1307,6 +1316,7 @@ edit_env_rep::exec_until (tree t, path p) {
     exec_until_compound (t, p);
     return;
   case HLINK:
+  case ACTION:
     exec_until_compound (t, p);
     return;
   default:
@@ -1548,6 +1558,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case REWRITE_INACTIVE:
     return exec_until_rewrite (t, p, var, level);
   case HLINK:
+  case ACTION:
     return exec_until_compound (t, p, var, level);
   default:
     if (L(t) < START_EXTENSIONS) {
