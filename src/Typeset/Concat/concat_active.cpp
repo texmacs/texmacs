@@ -179,27 +179,6 @@ concater_rep::typeset_write (tree t, path ip) {
   control ("write", ip);
 }
 
-void
-concater_rep::typeset_action (tree t, path ip) {
-  if (N(t)<2) return;
-  string cmd_s= env->exec_string (t[1]);
-  command cmd (new guile_command_rep (cmd_s));
-  tree old_col= env->local_begin (COLOR, "blue");
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  path valip= decorate ();
-  if ((N(t) >= 3) && (is_func (t[2], ARG)) && !nil (env->macro_arg)) {
-    string var= env->exec_string (t[2][0]);
-    tree   val= env->macro_arg->item [var];
-    if ((var != "") && (!is_func (val, BACKUP))) {
-      path new_valip= env->macro_src->item [var];
-      if (is_accessible (new_valip)) valip= new_valip;
-    }
-  }
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true, valip));
-}
-
 bool
 build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   // cout << "Typeset " << t << "\n";

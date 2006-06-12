@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.1>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -40,8 +40,6 @@
   <assign|page-medium|automatic>
 
   \;
-
-  <assign|verbatim|<macro|body|<style-with|src-compact|none|<surround||<vspace|0.5fn>|<with|font-family|tt|language|verbatim|par-par-sep|0fn|<arg|body>>>>>>
 
   \;
 </body>

@@ -554,10 +554,8 @@ concater_rep::typeset (tree t, path ip) {
     typeset_inactive (t, ip);
     break;
   case HLINK:
-    typeset_compound (t, ip);
-    break;
   case ACTION:
-    typeset_action (t, ip);
+    typeset_compound (t, ip);
     break;
   case LABEL:
     typeset_label (t, ip);

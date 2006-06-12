@@ -108,6 +108,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case LOCUS:
     return bridge_locus (ttt, st, ip);
   case HLINK:
+  case ACTION:
     return bridge_compound (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);

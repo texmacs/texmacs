@@ -284,6 +284,7 @@ private:
   tree exec_h_length ();
 
   tree exec_hard_id (tree t);
+  tree exec_script (tree t);
 
   tree exec_point (tree t);
   tree exec_box_info (tree t);

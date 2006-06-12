@@ -525,6 +525,7 @@ make_lazy (edit_env env, tree t, path ip) {
   case LOCUS:
     return make_lazy_locus (env, t, ip);
   case HLINK:
+  case ACTION:
     return make_lazy_compound (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
