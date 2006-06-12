@@ -180,36 +180,6 @@ concater_rep::typeset_write (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_hyperlink (tree t, path ip) {
-  if (N(t)<2) return;
-  string href      = env->exec_string (t[1]);
-  string href_file = href;
-  string href_label= "";
-  int i, n= N(href);
-  for (i=0; i<n; i++)
-    if (href[i]=='#') {
-      href_file = href (0, i);
-      href_label= href (i+1, n);
-      break;
-    }
-
-  string r, s;
-  if (href_file == "") s= "(go-to-label \"" * href_label * "\")";
-  else {
-    r= as_string (relative (env->base_file_name, url_unix (href_file)));
-    s= "(load-browse-buffer (url-system " * scm_quote (r) * "))";
-    if (href_label != "")
-      s= "(begin " * s * " (go-to-label \"" * href_label * "\"))";
-  }
-  command cmd (new guile_command_rep (s, 2));
-  tree old_col= env->local_begin (COLOR, "blue");
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  env->local_end (COLOR, old_col);
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true));
-}
-
-void
 concater_rep::typeset_action (tree t, path ip) {
   if (N(t)<2) return;
   string cmd_s= env->exec_string (t[1]);
@@ -234,9 +204,7 @@ bool
 build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   // cout << "Typeset " << t << "\n";
   int last= N(t)-1;
-  tree body= t[last];
-  if (is_func (body, ARG) || is_func (body, QUOTE_ARG))
-    body= env->expand (body);
+  tree body= env->expand (t[last], true);
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
   if (!nil (env->link_env)) {

@@ -224,6 +224,13 @@ initialize_default_env () {
   env ("ignore")=
     tree (MACRO, "x", tree (HIDDEN, tree (ARG, "x")));
 
+  /* linking macros */
+  tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
+  tree dest_url (URL, tree (ARG, "y"));
+  tree ln (LINK, "standard", copy (src_id), copy (dest_url));
+  env ("hlink")= tree (MACRO, "x", "y",
+		       tree (LOCUS, copy (src_id), ln, tree (ARG, "x")));
+
   /* further standard macros */
   env ("error")=
     tree (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "error"));

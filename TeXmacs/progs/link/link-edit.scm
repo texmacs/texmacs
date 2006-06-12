@@ -53,8 +53,8 @@
 (tm-define (vertex->url r)
   (and (func? r 'url 1) (string? (cadr r)) (cadr r)))
 
-(tm-define (vertex->data r)
-  (and (func? r 'link-data 1) (cadr r)))
+(tm-define (vertex->script r)
+  (and (func? r 'script 1) (cadr r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering the necessary information for the next link
@@ -97,11 +97,11 @@
   (:check-mark "o" link-target-is-url?)
   (ahash-set! link-participants 1 `(url ,url)))
 
-(define (link-component-is-data? nr . args)
-  (func? (ahash-ref link-participants nr) 'link-data))
-(tm-define (link-set-data nr t)
-  (:synopsis "Set component @nr of a link to tree data @t.")
-  (:check-mark "o" link-component-is-data?)
+(define (link-component-is-script? nr . args)
+  (func? (ahash-ref link-participants nr) 'script))
+(tm-define (link-set-script nr t)
+  (:synopsis "Set component @nr of a link to the script @t.")
+  (:check-mark "o" link-component-is-script?)
   (ahash-set! link-participants nr `(url ,name)))
 
 (tm-define (link-completed?)

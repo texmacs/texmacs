@@ -70,10 +70,8 @@ edit_process_rep::process_mutators () {
   bool change1= has_changed (THE_TREE);
   nr_mutators= mutate (subtree (et, rp), reverse (rp));
   bool change2= has_changed (THE_TREE);
-  if (change1 != change2 && !changec) {
+  if (change1 != change2 && !changec)
     notify_change (THE_MUTATORS);
-    cout << "Change\n";
-  }
   if (!mutators_updated) {
     // cout << "Mutation occurred\n";
     next_mutate= texmacs_time () + MUTATE_FAST_INTERACTION;

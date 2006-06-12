@@ -379,7 +379,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Mark
+* Mark and expand_as
 ******************************************************************************/
 
 lazy
@@ -418,6 +418,14 @@ make_lazy_mark (edit_env env, tree t, path ip) {
       }
     }
 
+  lazy par= make_lazy (env, t[1], descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
+lazy
+make_lazy_expand_as (edit_env env, tree t, path ip) {
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
   lazy par= make_lazy (env, t[1], descend (ip, 1));
   return lazy_surround (a, b, par, ip);
 }
@@ -492,6 +500,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
+  case EXPAND_AS:
+    return make_lazy_expand_as (env, t, ip);
   case EVAL:
   case QUASI:
     return make_lazy_eval (env, t, ip);
@@ -514,6 +524,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_rewrite (env, t, ip);
   case LOCUS:
     return make_lazy_locus (env, t, ip);
+  case HLINK:
+    return make_lazy_compound (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

@@ -359,6 +359,11 @@ edit_env_rep::exec (tree t) {
   case REWRITE_INACTIVE:
     return exec_rewrite (t);
 
+  case HARD_ID:
+    return exec_hard_id (t[0]);
+  case HLINK:
+    return exec_compound (t);
+
   case _POINT:
     return exec_point (t);
   case BOX_INFO:
@@ -1212,6 +1217,14 @@ edit_env_rep::exec_greatereq (tree t) {
 }
 
 tree
+edit_env_rep::exec_hard_id (tree t) {
+  t= expand (t, true);
+  pointer ptr1= (pointer) this;
+  pointer ptr2= (pointer) t.operator -> ();
+  return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+}
+
+tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1291,6 +1304,9 @@ edit_env_rep::exec_until (tree t, path p) {
   case VAR_ACTIVE:
   case INACTIVE:
   case VAR_INACTIVE:
+    exec_until_compound (t, p);
+    return;
+  case HLINK:
     exec_until_compound (t, p);
     return;
   default:
@@ -1531,6 +1547,8 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return exec_until_compound (t, p, var, level);
   case REWRITE_INACTIVE:
     return exec_until_rewrite (t, p, var, level);
+  case HLINK:
+    return exec_until_compound (t, p, var, level);
   default:
     if (L(t) < START_EXTENSIONS) {
       int i, n= N(t);
@@ -1777,7 +1795,7 @@ edit_env_rep::exec_until_while (tree t, path p, string var, int level) {
 ******************************************************************************/
 
 tree
-edit_env_rep::expand (tree t) {
+edit_env_rep::expand (tree t, bool search_accessible) {
   if (is_atomic (t) || nil (macro_arg)) return t;
   else if (is_func (t, ARG) || is_func (t, QUOTE_ARG)) {
     if (is_compound (t[0]))
@@ -1799,16 +1817,24 @@ edit_env_rep::expand (tree t) {
 	r= r[nr];
       }
     }
-    if (is_func (t, ARG)) r= expand (r);
+    if (is_func (t, ARG)) r= expand (r, search_accessible);
     macro_arg= old_var;
     macro_src= old_src;
     return r;
   }
+  else if (is_func (t, EXPAND_AS, 2))
+    return expand (t[0], search_accessible);
   else {
     int i, n= N(t);
     tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= expand (t[i]);
+    for (i=0; i<n; i++) {
+      r[i]= expand (t[i], search_accessible);
+      if (search_accessible &&
+	  is_accessible (obtain_ip (r[i])) &&
+	  drd->is_accessible_child (t, i))
+	return r[i];
+    }
+    if (search_accessible) return t;
     return r;
   }
 }

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.2>
 
 <style|<tuple|source|std>>
 
@@ -32,8 +32,8 @@
 
   <assign|tmweb-suffix|<macro|<style-with|src-compact|none|<case|<equal|<language>|german>|.de.tm|<equal|<language>|french>|.fr.tm|<equal|<language>|italian>|.it.tm|<equal|<language>|portuguese>|.pt.tm|<equal|<language>|spanish>|.es.tm|.en.tm>>>>
 
-  <assign|tmweb-link|<macro|what|to|<style-with|src-compact|none|<hlink|<style-with|src-compact|none|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
-  green|brown>|<translate|<arg|what>|english|<language>>>>|<style-with|src-compact|none|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>>>
+  <assign|tmweb-link|<macro|what|to|<style-with|src-compact|none|<hlink|<style-with|src-compact|none|<expand-as|<arg|what>|<style-with|src-compact|none|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
+  green|brown>|<translate|<arg|what>|english|<language>>>>>>|<style-with|src-compact|none|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>>>
 
   <assign|tmweb-list-extra|<macro|x| \| <arg|x>>>
 

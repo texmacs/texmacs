@@ -64,6 +64,7 @@ string Alpha_nr (int nr);
 string fnsymbol_nr (int nr);
 
 string as_hexadecimal (int i);
+string as_hexadecimal (pointer ptr);
 string as_hexadecimal (int i, int length);
 int    from_hexadecimal (string s);
 

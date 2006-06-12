@@ -110,7 +110,7 @@
     (-> "Delete link" (link link-delete-menu)))
   ---
   (-> "Locus rendering"
-      ("Preserve color on paper" (toggle-locus-preserve-on-paper))
+      ("Disable coloring on paper" (toggle-locus-preserve-on-paper))
       (-> "Normal loci"
 	  ("Default" (change-locus-rendering "locus-color" "#404080"))
 	  ("Preserve" (change-locus-rendering "locus-color" "preserve"))

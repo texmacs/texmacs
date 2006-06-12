@@ -414,6 +414,9 @@ concater_rep::typeset (tree t, path ip) {
   case MARK:
     typeset_mark (t, ip);
     break;
+  case EXPAND_AS:
+    typeset_expand_as (t, ip);
+    break;
   case EVAL:
     typeset_eval (t, ip);
     break;
@@ -543,16 +546,15 @@ concater_rep::typeset (tree t, path ip) {
     typeset_inactive (t, ip);
     break;
   case HARD_ID:
-  case PARENT: 
-    // FIXME: to be replaced
-    typeset_inactive (t, ip);
+    typeset_executable (t, ip);
     break;
   case LINK:
   case URL:
+  case SCRIPT:
     typeset_inactive (t, ip);
     break;
   case HLINK:
-    typeset_hyperlink (t, ip);
+    typeset_compound (t, ip);
     break;
   case ACTION:
     typeset_action (t, ip);

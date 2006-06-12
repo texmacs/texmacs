@@ -38,6 +38,16 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.6.2", version)) return H;
+
+  new_feature (H, "expand-as");
+  new_feature (H, "locus");
+  new_feature (H, "id");
+  new_feature (H, "hard-id");
+  new_feature (H, "link");
+  new_feature (H, "url");
+  new_feature (H, "script");
+
   if (version_inf ("1.0.4.1", version)) return H;
 
   new_feature (H, "copy");
@@ -2659,6 +2669,23 @@ upgrade_cell_alignment (tree t) {
 }
 
 /******************************************************************************
+* Renaming primitives
+******************************************************************************/
+
+tree
+rename_primitive (tree t, string which, string by) {
+  int i;
+  if (is_atomic (t)) return t;
+  int n= N(t);
+  tree r (t, n);
+  if (is_compound (t, which))
+    r= tree (make_tree_label (by), n);
+  for (i=0; i<n; i++)
+    r[i]= rename_primitive (t[i], which, by);
+  return r;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2691,6 +2718,7 @@ upgrade_tex (tree t) {
 
 tree
 upgrade (tree t, string version) {
+  // cout << "Upgrade from " << version << "\n";
   if (version_inf (version, "0.3.1.9")) {
     path p;
     t= upgrade_textual (t, p);
@@ -2763,5 +2791,7 @@ upgrade (tree t, string version) {
     t= upgrade_textat (t);
   if (version_inf_eq (version, "1.0.6.1"))
     t= upgrade_cell_alignment (t);
+  if (version_inf_eq (version, "1.0.6.2"))
+    t= rename_primitive (t, "hyper-link", "hlink");
   return t;
 }
