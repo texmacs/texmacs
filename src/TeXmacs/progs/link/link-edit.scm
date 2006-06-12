@@ -76,7 +76,7 @@
   (with-innermost t 'locus
     (ahash-set! link-participants nr (tree->tree-pointer t))))
 
-(define (link-component-is-url? . args)
+(define (link-component-is-url? nr . args)
   (func? (ahash-ref link-participants nr) 'url))
 (tm-define (link-set-url nr name)
   (:synopsis "Set component @nr of a link to an url @name.")
@@ -140,8 +140,9 @@
       (tree-pointer-detach p))))
 
 (define (link-clean nr)
-  (and-with p (ahash-ref link-participants nr)
-    (if (observer? p) (tree-pointer-detach p))
+  (and-with tp (ahash-ref link-participants nr)
+    (ahash-remove! link-participants nr)
+    (if (observer? tp) (tree-pointer-detach tp))
     (link-clean (+ nr 1))))
 
 (define (link-build type)

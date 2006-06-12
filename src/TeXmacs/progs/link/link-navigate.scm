@@ -330,13 +330,18 @@
 	(else (noop))))
 
 (define (id-set-visited id)
-  (id-declare-visited id)
+  (declare-visited (string-append "id:" id))
   (with pl (filter-map tree->path (id->trees id))
     (for-each update-all-path pl)))
 
 (define (navigation-item-follow hit)
   (id-set-visited (navigation-source hit))
-  (go-to-vertex (navigation-target hit)))
+  (with target (navigation-target hit)
+    (and-with target-id (vertex->id target)
+      (id-set-visited target-id))
+    (and-with target-url (vertex->url target)
+      (declare-visited (string-append "url:" target-url)))
+    (go-to-vertex target)))
 
 (define the-navigation-list '())
 (tm-define (navigation-list-follow-xtyped xtype)

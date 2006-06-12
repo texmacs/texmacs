@@ -79,14 +79,13 @@
 	 (l4 (list-filter l3 (lambda (u) (not (url-none? u))))))
     (map (cut cons id <>) l4)))
 
-(define (Id-locations Id)
-  (if (func? Id 'id 1)
-      (id-locations (cadr Id))
-      '()))
+(define (vertex-locations v)
+  (cond ((func? v 'id 1) (id-locations (cadr v)))
+	(else '())))
 
 (define (link-item-id-locations ln)
   (with (id type . lns) ln
-    (append-map Id-locations lns)))
+    (append-map vertex-locations lns)))
 
 (define (link-list-id-locations l)
   (append-map link-item-id-locations l))
