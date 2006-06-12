@@ -44,7 +44,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (build-locus-page-sub name style l enum?)
-  (let* ((ids (filter-map locus-id l))
+  (let* ((ids (map (cut list 'id <>) (filter-map locus-id l)))
 	 (loci (if (null? ids) '("No loci") (map automatic-link ids)))
 	 (body (if enum? (build-enumeration loci) loci))
 	 (doc `(document (style ,style) (body (document ,@body)))))
