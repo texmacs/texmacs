@@ -268,14 +268,14 @@
   (table-set-format "table-tborder" border))
 
 (define (table-get-halign) (table-get-format "table-halign"))
-(define (table-test-halign? s) (string=? (table-get-halign) s))
+(define (table-test-halign? s) (== (table-get-halign) s))
 (tm-define (table-set-halign s)
   (:synopsis "Set horizontal table alignment.")
   (:check-mark "*" table-test-halign?)
   (table-set-format "table-halign" s))
 
 (define (table-get-valign) (table-get-format "table-valign"))
-(define (table-test-valign? s) (string=? (table-get-valign) s))
+(define (table-test-valign? s) (== (table-get-valign) s))
 (tm-define (table-set-valign s)
   (:synopsis "Set vertical table alignment.")
   (:check-mark "*" table-test-valign?)
@@ -292,7 +292,7 @@
 ;; Commands for cells in tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (test-cell-mode? s) (string=? (get-cell-mode) s))
+(define (test-cell-mode? s) (== (get-cell-mode) s))
 (tm-property (set-cell-mode s)
   (:check-mark "*" test-cell-mode?))
 
@@ -438,21 +438,21 @@
   (cell-set-format-list '("cell-row-span" "cell-col-span") (list rs cs)))
 
 (define (cell-get-halign) (cell-get-format "cell-halign"))
-(define (cell-test-halign? s) (string=? (cell-get-halign) s))
+(define (cell-test-halign? s) (== (cell-get-halign) s))
 (tm-define (cell-set-halign s)
   (:synopsis "Set horizontal cell alignment.")
   (:check-mark "o" cell-test-halign?)
   (cell-set-format "cell-halign" s))
 
 (define (cell-get-valign) (cell-get-format "cell-valign"))
-(define (cell-test-valign? s) (string=? (cell-get-valign) s))
+(define (cell-test-valign? s) (== (cell-get-valign) s))
 (tm-define (cell-set-valign s)
   (:synopsis "Set vertical cell alignment.")
   (:check-mark "o" cell-test-valign?)
   (cell-set-format "cell-valign" s))
 
 (define (cell-get-background) (cell-get-format "cell-background"))
-(define (cell-test-background? s) (string=? (cell-get-background) s))
+(define (cell-test-background? s) (== (cell-get-background) s))
 (tm-define (cell-set-background s)
   (:synopsis "Set background color of cell.")
   (:argument s "Cell color")
@@ -460,21 +460,21 @@
   (cell-set-format "cell-background" s))
 
 (define (cell-get-vcorrect) (cell-get-format "cell-vcorrect"))
-(define (cell-test-vcorrect? s) (string=? (cell-get-vcorrect) s))
+(define (cell-test-vcorrect? s) (== (cell-get-vcorrect) s))
 (tm-define (cell-set-vcorrect s)
   (:synopsis "Set vertical correction mode for cell.")
   (:check-mark "o" cell-test-vcorrect?)
   (cell-set-format "cell-vcorrect" s))
 
 (define (cell-get-hyphen) (cell-get-format "cell-hyphen"))
-(define (cell-test-hyphen? s) (string=? (cell-get-hyphen) s))
+(define (cell-test-hyphen? s) (== (cell-get-hyphen) s))
 (tm-define (cell-set-hyphen s)
   (:synopsis "Set hyphenation mode for cell.")
   (:check-mark "o" cell-test-hyphen?)
   (cell-set-format "cell-hyphen" s))
 
 (define (cell-get-block) (cell-get-format "cell-block"))
-(define (cell-test-block? s) (string=? (cell-get-block) s))
+(define (cell-test-block? s) (== (cell-get-block) s))
 (tm-define (cell-set-block s)
   (:synopsis "Does the cell contain block content?")
   (:check-mark "o" cell-test-block?)

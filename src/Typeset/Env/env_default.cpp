@@ -227,12 +227,12 @@ initialize_default_env () {
   /* linking macros */
   tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
   tree dest_url (URL, tree (ARG, "y"));
-  tree dest_script (SCRIPT, tree (ARG, "y"));
-  tree ln1 (LINK, "standard", copy (src_id), copy (dest_url));
-  tree ln2 (LINK, "standard", copy (src_id), copy (dest_script));
+  tree dest_script (SCRIPT, tree (ARG, "y"), tree (ARG, "z"));
+  tree ln1 (LINK, "hyperlink", copy (src_id), copy (dest_url));
+  tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
   env ("hlink")= tree (MACRO, "x", "y",
 		       tree (LOCUS, copy (src_id), ln1, tree (ARG, "x")));
-  env ("action")= tree (MACRO, "x", "y",
+  env ("action")= tree (MACRO, "x", "y", "z",
 			tree (LOCUS, copy (src_id), ln2, tree (ARG, "x")));
 
   /* further standard macros */

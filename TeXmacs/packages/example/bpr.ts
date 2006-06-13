@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.12>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -358,7 +358,7 @@
   </surround>>>>
 
   <assign|unfold-bpr|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>>|<right-flush>>
+    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>>
         <arg|y>
       </with>
@@ -392,7 +392,7 @@
   </surround>>>>
 
   <assign|detailed-algorithm|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>>|<right-flush>>
+    <style-with|src-compact|none|<\surround|<with|par-first|-3fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>|item|<value|fold-item>>
         <arg|y>
       </with>

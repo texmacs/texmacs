@@ -411,7 +411,7 @@ void
 lazy_paragraph_rep::format_paragraph () {
   width -= right;
 
-  int start= 0, i, j;
+  int start= 0, i, j, k;
   // cout << "Typeset " << a << "\n";
   for (i=0; i<=N(a); i++) {
     // determine the next unit
@@ -427,8 +427,14 @@ lazy_paragraph_rep::format_paragraph () {
     if (no_first) style (PAR_FIRST)= "0cm";
     for (j=start; j<i; j++)
       if (a[j]->type == CONTROL_ITEM)
-	if (is_tuple (a[j]->t, "env_par"))
+	if (is_tuple (a[j]->t, "env_par")) {
+	  if (a[j]->t[1]->label == PAR_FIRST) {
+	    for (k=j-1; k>=start; k--)
+	      if (a[k]->b->w () != 0) break;
+	    if (k >= start) continue;
+	  }
 	  style (a[j]->t[1]->label)= a[j]->t[2];
+	}
     no_first= (style [PAR_NO_FIRST] == "true");
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
