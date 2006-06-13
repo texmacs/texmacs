@@ -146,7 +146,7 @@
   <assign|unfold|<\macro|x|y>
     <arg|x>
 
-    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>|<arg|y>>|<arg|y>>
+    <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<group|\<Leftarrow\>>>>>|(mouse-fold)|<arg|x>>|<arg|y>>
   </macro>>
 
   <assign|solution|<\macro|x>
