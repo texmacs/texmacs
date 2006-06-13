@@ -271,7 +271,7 @@ init_std_drd () {
   init (SCRIPT, "script", options (1, 1) -> accessible (0));
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
-  init (ACTION, "action", repeat (2, 1, DETAILED) -> accessible (0));
+  init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
   init (LABEL, "label", fixed (1));
   init (REFERENCE, "reference", fixed (1));
   init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
