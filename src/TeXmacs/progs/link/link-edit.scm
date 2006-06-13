@@ -33,12 +33,20 @@
 ;; Utility routines for links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (link-flatten-sub t)
+  (if (tm-func? t 'script 2)
+      (list 'script (tree->stree (tree-ref t 0)) (tree-ref t 1))
+      (tree->stree t)))
+
+(tm-define (link-flatten ln)
+  (cons (tm-car ln) (map link-flatten-sub (tm-cdr ln))))
+
 (tm-define (link-type ln)
-  (if (tree? ln) (set! ln (tree->stree ln)))
+  (if (tree? ln) (set! ln (link-flatten ln)))
   (and (func? ln 'link) (cadr ln)))
 
 (tm-define (link-vertices ln)
-  (if (tree? ln) (set! ln (tree->stree ln)))
+  (if (tree? ln) (set! ln (link-flatten ln)))
   (and (func? ln 'link) (cddr ln)))
 
 (tm-define (link-source ln)
@@ -54,7 +62,7 @@
   (and (func? r 'url 1) (string? (cadr r)) (cadr r)))
 
 (tm-define (vertex->script r)
-  (and (func? r 'script 1) (cadr r)))
+  (and (func? r 'script) (cadr r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering the necessary information for the next link
@@ -83,7 +91,7 @@
   (:check-mark "o" link-component-is-url?)
   (ahash-set! link-participants nr `(url ,name)))
 
-(define (link-target-is-url? . args)
+(tm-define (link-target-is-url? . args)
   (func? (ahash-ref link-participants 1) 'url))
 (tm-define (link-set-target-url url)
   (:synopsis "Set target of link to an @url.")
@@ -97,7 +105,7 @@
   (:check-mark "o" link-component-is-script?)
   (ahash-set! link-participants nr `(url ,name)))
 
-(define (link-target-is-script? . args)
+(tm-define (link-target-is-script? . args)
   (func? (ahash-ref link-participants 1) 'script))
 (tm-define (link-set-target-script script)
   (:synopsis "Set target of link to a @script.")
@@ -191,11 +199,11 @@
       (with-innermost t 'locus
 	(let* ((l1 (cDr (tree-children t)))
 	       (l2 (list-filter l1 (cut locus-consider-link? <> check-mode?)))
-	       (l3 (map cadr (map tree->stree l2))))
+	       (l3 (map cadr (map link-flatten l2))))
 	  (list-remove-duplicates l3)))))
 
 (define (remove-link ln type)
-  (with st (tree->stree ln)
+  (with st (link-flatten ln)
     (when (and (func? st 'link) (== (cadr st) type))
       (cond ((== current-link-mode "simple")
 	     (locus-remove-link ln))

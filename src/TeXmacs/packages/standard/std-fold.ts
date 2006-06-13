@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.12>
+<TeXmacs|1.0.6.2>
 
 <style|<tuple|source|std>>
 
@@ -62,6 +62,19 @@
     </cell>>>>>>
   </macro>>
 
+  \;
+
+  <assign|render-folded-grouped|<\macro|button|body>
+    <\with|old-color|<value|color>|color|blue>
+      <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|2|2|cell-hpart|1>|<cwith|1|1|1|1|cell-lsep|0ln>|<cwith|1|1|1|1|cell-rsep|0ln>|<cwith|1|1|1|1|cell-bsep|0ln>|<cwith|1|1|1|1|cell-tsep|0ln>|<cwith|1|1|1|1|cell-width|20ln>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|2|2|cell-hyphen|t>|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|1|-1|cell-background|pastel
+      blue>|<cwith|2|2|2|2|cell-background|>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|-1|cell-tborder|0.5ln>|<cwith|3|3|1|-1|cell-bborder|0.5ln>|<cwith|3|3|2|2|cell-rborder|0.5ln>|<cwith|3|3|2|2|cell-tborder|0.5ln>|<cwith|1|1|2|2|cell-rborder|0.5ln>|<cwith|1|1|2|2|cell-bborder|0.5ln>|<cwith|2|2|1|1|cell-rborder|0.5ln>|<cwith|1|-1|2|2|cell-width|6ln>|<cwith|1|-1|2|2|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-lsep|0ln>|<cwith|1|-1|1|-1|cell-rsep|0ln>|<cwith|1|-1|1|-1|cell-bsep|0ln>|<cwith|1|-1|1|-1|cell-tsep|0ln>|<cwith|2|2|1|1|cell-halign|l>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|2|2|1|-1|cell-vpart|1>|<cwith|1|-1|2|2|cell-hpart|1>|<cwith|1|-1|1|1|cell-width|6ln>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|3|3|1|-1|cell-height|6ln>|<cwith|3|3|1|-1|cell-vmode|exact>|<cwith|1|1|1|-1|cell-height|6ln>|<cwith|1|1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-valign|c>|<table|<row|<cell|<arg|button>>|<cell|<arg|button>>>|<row|<cell|<arg|button>>|<cell|<arg|button>>>|<row|<cell|<arg|button>>|<cell|<arg|button>>>>>>>|<\cell>
+        <\with|color|<value|old-color>>
+          <arg|body>
+        </with>
+      </cell>>>>>
+    </with>
+  </macro>>
+
   <\active*>
     <\src-comment>
       Tags for folding and unfolding.
@@ -93,7 +106,7 @@
   </macro>>
 
   <assign|unfolded-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|x>
 
       <arg|y>
@@ -109,7 +122,7 @@
   </macro>>
 
   <assign|unfolded-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|x>
 
       <arg|y>
@@ -125,7 +138,7 @@
   </macro>>
 
   <assign|unfolded-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
+    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|x>
 
       <arg|y>
@@ -173,7 +186,7 @@
   </macro>>
 
   <assign|detailed-std|<\macro|x|y>
-    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-std|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|y>
     </render-folded-std>
   </macro>>
@@ -185,7 +198,7 @@
   </macro>>
 
   <assign|detailed-env|<\macro|x|y>
-    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>
+    <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|y>
     </render-folded-env>
   </macro>>
@@ -197,7 +210,7 @@
   </macro>>
 
   <assign|detailed-grouped|<\macro|x|y>
-    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>>>
+    <\render-folded-grouped|<action| |(mouse-fold)|<arg|x>|<arg|y>>>
       <arg|y>
     </render-folded-grouped>
   </macro>>

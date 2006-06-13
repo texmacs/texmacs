@@ -97,6 +97,13 @@
 (define-public (action-set-path p)
   (set! the-action-path p))
 
+(define-public (exec-delayed-at cmd t)
+  (let* ((ip (tree-ip t))
+	 (old-path the-action-path)
+	 (new-path (if (or (null? ip) (>= (car ip) 0)) (reverse ip) '(-1))))
+    (action-set-path new-path)
+    (exec-delayed (lambda () (cmd) (action-set-path old-path)))))
+
 (define-public (action-path)
   (and (!= the-action-path '(-1)) the-action-path))
 
@@ -104,8 +111,8 @@
   (and (!= the-action-path '(-1)) (path->tree the-action-path)))
 
 (define-public-macro (with-action t . body)
-  `(with ,t (action-tree)
-     (if ,t (begin ,@body))))
+  `(and-with ,t (action-tree)
+     ,@body))
 
 (define-public (mutator-tree)
   (with p (mutator-path)

@@ -80,7 +80,7 @@
 
 (define (id->link-list id)
   (let* ((lns (id->links id))
-	 (sts (map tree->stree lns)))
+	 (sts (map link-flatten lns)))
     (map (cut cons id <>) (map cdr sts))))
 
 (tm-define (ids->link-list ids)
@@ -93,8 +93,8 @@
 (define (exact-link-list-local t)
   (if (not (tm-func? t 'locus)) '()
       (let* ((id (locus-id t))
-	     (ch (cDdr (tree->stree t)))
-	     (lns (list-filter ch (cut func? <> 'link))))
+	     (lc (list-filter (cdr (tree-children t)) (cut tm-func? <> 'link)))
+	     (lns (map link-flatten lc)))
 	(map (cut cons id <>) (map cdr lns)))))
 
 (define (filter-on-bidirectional x)
@@ -204,7 +204,7 @@
 	      (or (not jumpable?)
 		  (func? (navigation-target (car l)) 'id 1)
 		  (func? (navigation-target (car l)) 'url 1)
-		  (func? (navigation-target (car l)) 'script 1)))
+		  (func? (navigation-target (car l)) 'script)))
 	 (cons (car l) (navigation-list-filter (cdr l) type nr jumpable?)))
 	(else (navigation-list-filter (cdr l) type nr jumpable?))))
 
@@ -243,6 +243,8 @@
 	   (and (nnull? ts) (tree->stree (car ts)))))
 	((func? back 'url 1)
 	 `(verbatim ,(vertex->url back)))
+	((func? back 'script)
+	 `(verbatim ,(vertex->script back)))
 	(else #f)))
 
 (tm-define (automatic-link back . opt)
@@ -325,24 +327,28 @@
 	     (load-browse-buffer u)
 	     (go-to-label label))))))
 
-(tm-define (go-to-vertex v)
-  (cond ((func? v 'id 1) (go-to-id (cadr v)))
-	((func? v 'url 1) (go-to-url (cadr v)))
-	((func? v 'script 1) (execute-script (cadr v)))
-	(else (noop))))
+(define (execute-at cmd opt-location)
+  (if (null? opt-location) (exec-delayed cmd)
+      (exec-delayed-at cmd (car opt-location))))
 
-(tm-define (execute-script s)
+(tm-define (execute-script s . opt-location)
   (let* ((secure-s (string-append "(secure? '" s ")"))
 	 (secure? (eval (string->object secure-s)))
 	 (cmd-s (string-append "(lambda () " s ")"))
 	 (cmd (eval (string->object cmd-s))))
     (cond ((or secure? (== (get-preference "security") "accept all scripts"))
-	   (exec-delayed cmd))
+	   (execute-at cmd opt-location))
 	  ((== (get-preference "security") "prompt on scripts")
 	   (dialogue
 	     (if (dialogue-confirm? (string-append "Execute#" s "?") #f)
-		 (exec-delayed cmd))))
+		 (execute-at cmd opt-location))))
 	  (else (set-message "Unsecure script refused" "Evaluate script")))))
+
+(tm-define (go-to-vertex v)
+  (cond ((func? v 'id 1) (go-to-id (cadr v)))
+	((func? v 'url 1) (go-to-url (cadr v)))
+	((func? v 'script) (apply execute-script (cdr v)))
+	(else (noop))))
 
 (define (id-set-visited id)
   (when (not (string-starts? id "%"))
