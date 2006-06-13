@@ -358,7 +358,7 @@
   </surround>>>>
 
   <assign|unfold-bpr|<\macro|x|y>
-    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>|<arg|y>>>>|<right-flush>>
+    <style-with|src-compact|none|<\surround|<with|par-first|-1.5fn|<style-with|src-compact|none|<yes-indent><action|<resize|<specific|screen|<active*|<with|mode|math|\<bullet\>>>>|||r]1.5fn|>|(mouse-fold)|<arg|x>>>>|<right-flush>>
       <\with|padded-normal|<value|fold-padded-normal>>
         <arg|y>
       </with>

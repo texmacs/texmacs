@@ -212,6 +212,11 @@ bridge_rep::notify_join (path p) {
 ******************************************************************************/
 
 void
+bridge_rep::my_clean_links () {
+  link_env= link_repository (true);
+}
+
+void
 bridge_rep::my_exec_until (path p) {
   env->exec_until (st, p);
 }
@@ -278,7 +283,7 @@ bridge_rep::typeset (int desired_status) {
     // cout << "Typesetting " << st << ", " << desired_status << "\n";
     // cout << "  recomputing\n";
     hashmap<string,tree> prev_back (UNINIT);
-    link_env= link_repository (true);
+    my_clean_links ();
     link_repository old_link_env= env->link_env;
     env->link_env= link_env;
     ttt->local_start (l, sb);

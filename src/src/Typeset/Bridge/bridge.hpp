@@ -58,6 +58,7 @@ public:
   virtual bool notify_macro  (int type, string var, int l, path p, tree u) = 0;
   virtual void notify_change () = 0;
 
+  virtual void my_clean_links ();
   virtual void my_exec_until (path p);
   virtual bool my_typeset_will_be_complete ();
   virtual void my_typeset (int desired_status);
