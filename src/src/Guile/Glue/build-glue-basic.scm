@@ -87,7 +87,7 @@
   ;; links
   (tree->ids get_ids (list_string tree))
   (id->trees get_trees (list_tree string))
-  (id->links get_links (list_tree string))
+  (vertex->links get_links (list_tree content))
   (tree->tree-pointer tree_pointer_new (observer tree))
   (tree-pointer-detach tree_pointer_delete (void observer))
   (tree-pointer->tree obtain_tree (tree observer))

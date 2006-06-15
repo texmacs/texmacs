@@ -2686,6 +2686,25 @@ rename_primitive (tree t, string which, string by) {
 }
 
 /******************************************************************************
+* Upgrade label assignment
+******************************************************************************/
+
+tree
+upgrade_label_assignment (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_func (t, ASSIGN, 2) && t[0] == "the-label")
+    return tree (SET_BINDING, t[1]);
+  else {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_label_assignment (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -2793,5 +2812,7 @@ upgrade (tree t, string version) {
     t= upgrade_cell_alignment (t);
   if (version_inf_eq (version, "1.0.6.2"))
     t= rename_primitive (t, "hyper-link", "hlink");
+  if (version_inf_eq (version, "1.0.6.2"))
+    t= upgrade_label_assignment (t);
   return t;
 }

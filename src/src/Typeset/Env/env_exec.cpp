@@ -366,6 +366,10 @@ edit_env_rep::exec (tree t) {
   case HLINK:
   case ACTION:
     return exec_compound (t);
+  case SET_BINDING:
+    return exec_set_binding (t);
+  case GET_BINDING:
+    return exec_get_binding (t);
 
   case _POINT:
     return exec_point (t);
@@ -1232,6 +1236,55 @@ edit_env_rep::exec_script (tree t) {
   if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad script");
   if (N(t) == 1) return tree (SCRIPT, exec (t[0]));
   else return tree (SCRIPT, exec (t[0]), expand (t[1], true));
+}
+
+tree
+edit_env_rep::exec_set_binding (tree t) {
+  tree keys, value;
+  if (N(t) == 1) {
+    keys= read ("the-tags");
+    if (!is_tuple (keys))
+      return tree (ERROR, "bad set binding");
+    for (int i=0; i<N(keys); i++)
+      if (!is_atomic (keys[i]))
+	return tree (ERROR, "bad set binding");
+    value= exec (t[0]);
+    assign (string ("the-tags"), tree (TUPLE));
+    assign (string ("the-label"), copy (value));
+  }
+  else if (N(t) == 2) {
+    tree key= exec (t[0]);
+    if (!is_atomic (key)) 
+      return tree (ERROR, "bad set binding");
+    keys= tuple (key);
+    value= exec (t[1]);
+  }
+  else return tree (ERROR, "bad set binding");
+
+  for (int i=0; i<N(keys); i++) {
+    string key= keys[i]->label;
+    tree old_value= local_ref[key];
+    if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
+      local_ref (key)= tuple (copy (value), old_value[1]);
+    else local_ref (key)= tuple (copy (value), "?");
+    if (cur_file_name != base_file_name) {
+      url d= delta (base_file_name, cur_file_name);
+      local_ref (key) << as_string (d);
+    }
+  }
+  return keys;
+}
+
+tree
+edit_env_rep::exec_get_binding (tree t) {
+  if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad get binding");
+  string key= exec_string (t[0]);
+  tree value= local_ref->contains (key)? local_ref [key]: global_ref [key];
+  int type= (N(t) == 1? 0: as_int (exec_string (t[1])));
+  if (type != 0 && type != 1) type= 0;
+  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
+  else if (type == 1) value= "?";
+  return value;
 }
 
 tree

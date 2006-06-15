@@ -317,16 +317,16 @@ locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
 ******************************************************************************/
 
 struct tag_box_rep: public change_box_rep {
-  string name;
-  tag_box_rep (path ip, box b, string name);
+  tree keys;
+  tag_box_rep (path ip, box b, tree keys);
   operator tree () { return tree (TUPLE, "tag", bs[0]); }
   tree tag (tree t, SI x, SI y, SI delta);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
   path find_tag (string name);
 };
 
-tag_box_rep::tag_box_rep (path ip, box b, string name2):
-  change_box_rep (ip, false), name (name2)
+tag_box_rep::tag_box_rep (path ip, box b, tree keys2):
+  change_box_rep (ip, false), keys (keys2)
 {
   insert (b, 0, 0);
   position ();
@@ -336,14 +336,16 @@ tag_box_rep::tag_box_rep (path ip, box b, string name2):
 
 void
 tag_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
-  h (name)= page;
+  for (int i=0; i<N(keys); i++)
+    h (keys[i]->label)= page;
   bs[0]->collect_page_numbers (h, page);
 }
 
 path
 tag_box_rep::find_tag (string search) {
-  if (name == search)
-    return reverse (descend_decode (ip, 1));
+  for (int i=0; i<N(keys); i++)
+    if (keys[i]->label == search)
+      return reverse (descend_decode (ip, 1));
   return path ();
 }
 
@@ -370,7 +372,6 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
   }
   return res;
 }
-
 
 /******************************************************************************
 * box construction routines
@@ -422,8 +423,8 @@ locus_box (path ip, box b, list<string> ids, SI pixel) {
 }
 
 box
-tag_box (path ip, box b, string name) {
-  return new tag_box_rep (ip, b, name);
+tag_box (path ip, box b, tree keys) {
+  return new tag_box_rep (ip, b, keys);
 }
 
 box

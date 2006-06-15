@@ -79,7 +79,7 @@
   (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
 
 (define (id->link-list id)
-  (let* ((lns (id->links id))
+  (let* ((lns (vertex->links `(id ,id)))
 	 (sts (map link-flatten lns)))
     (map (cut cons id <>) (map cdr sts))))
 
@@ -350,11 +350,25 @@
 	((func? v 'script) (apply execute-script (cdr v)))
 	(else (noop))))
 
+(define (vertex-linked-ids v)
+  (let* ((ls (map link-flatten (vertex->links v)))
+	 (vs (list-difference (append-map cddr ls) (list v))))
+    (list-remove-duplicates (filter-map vertex->id vs))))
+
+(define (id-update id)
+  (let* ((ts1 (id->trees id))
+	 (ts2 (id->trees (string-append "&" id)))
+	 (pl (filter-map tree->path (append ts1 ts2))))
+    (for-each update-all-path pl)))
+
 (define (id-set-visited id)
   (when (not (string-starts? id "%"))
     (declare-visited (string-append "id:" id)))
-  (with pl (filter-map tree->path (id->trees id))
-    (for-each update-all-path pl)))
+  (for-each id-update (cons id (vertex-linked-ids `(id ,id)))))
+
+(define (url-set-visited url)
+  (declare-visited (string-append "url:" url))
+  (for-each id-update (vertex-linked-ids `(url ,url))))
 
 (define (navigation-item-follow hit)
   (let* ((source (navigation-source hit))
@@ -363,7 +377,7 @@
     (and-with target-id (vertex->id target)
       (id-set-visited target-id))
     (and-with target-url (vertex->url target)
-      (declare-visited (string-append "url:" target-url)))
+      (url-set-visited target-url))
     (go-to-vertex target)))
 
 (define the-navigation-list '())

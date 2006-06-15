@@ -76,7 +76,7 @@ ABSTRACT_NULL_CODE(link_repository);
 
 list<string> get_ids (tree t);
 list<tree> get_trees (string id);
-list<tree> get_links (string id);
+list<tree> get_links (tree v);
 list<string> all_link_types ();
 
 void set_locus_rendering (string var, string val);

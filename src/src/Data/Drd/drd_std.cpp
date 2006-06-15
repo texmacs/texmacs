@@ -272,6 +272,8 @@ init_std_drd () {
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
   init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
+  init (SET_BINDING, "set-binding", options (1, 1));
+  init (GET_BINDING, "get-binding", options (1, 1));
   init (LABEL, "label", fixed (1));
   init (REFERENCE, "reference", fixed (1));
   init (PAGEREF, "pageref", fixed (1) -> name ("page reference"));
@@ -284,8 +286,6 @@ init_std_drd () {
   init (ASSOCIATE, "associate", fixed (2));
   init (BACKUP, "backup", fixed (2));
   init (SPECIFIC, "specific", fixed (2));
-  init (TAG, "tag", fixed (1, 1, BIFORM) -> accessible (0));
-  init (MEANING, "meaning", fixed (1, 1, BIFORM) -> accessible (0));
   init (FLAG, "flag", options (2, 1));
 
   init (ANIM_COMPOSE, "anim-compose", repeat (1, 1));
