@@ -854,10 +854,10 @@ tmg_id_2trees (SCM arg1) {
 }
 
 SCM
-tmg_id_2links (SCM arg1) {
-  SCM_ASSERT_STRING (arg1, SCM_ARG1, "id->links");
+tmg_vertex_2links (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "vertex->links");
 
-  string in1= scm_to_string (arg1);
+  content in1= scm_to_content (arg1);
 
   // SCM_DEFER_INTS;
   list_tree out= get_links (in1);
@@ -2802,7 +2802,7 @@ initialize_glue_basic () {
   gh_new_procedure ("path-previous-argument", (FN) tmg_path_previous_argument, 2, 0, 0);
   gh_new_procedure ("tree->ids", (FN) tmg_tree_2ids, 1, 0, 0);
   gh_new_procedure ("id->trees", (FN) tmg_id_2trees, 1, 0, 0);
-  gh_new_procedure ("id->links", (FN) tmg_id_2links, 1, 0, 0);
+  gh_new_procedure ("vertex->links", (FN) tmg_vertex_2links, 1, 0, 0);
   gh_new_procedure ("tree->tree-pointer", (FN) tmg_tree_2tree_pointer, 1, 0, 0);
   gh_new_procedure ("tree-pointer-detach", (FN) tmg_tree_pointer_detach, 1, 0, 0);
   gh_new_procedure ("tree-pointer->tree", (FN) tmg_tree_pointer_2tree, 1, 0, 0);

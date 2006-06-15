@@ -76,108 +76,8 @@ concater_rep::typeset_case (tree t, path ip) {
 }
 
 /******************************************************************************
-* Typesetting other dynamic markup
+* Typesetting linking primitives
 ******************************************************************************/
-
-class guile_command_rep: public command_rep {
-  string s;
-  int    level;
-public:
-  guile_command_rep (string s2, int level2= 0): s (s2), level (level2) {}
-  void apply () {
-    string lambda;
-    if (as_bool (eval ("(secure? '" * s * ")"))) level= 2;
-    switch (max (script_status, level)) {
-    case 0:
-      eval_delayed("(set-message \"Error: scripts not accepted\" \"script\")");
-      break;
-    case 1:
-      lambda= "(lambda (s) (if (equal? s \"y\") " * s * "))";
-      eval_delayed ("(interactive " * lambda * "\"Accept script (y/n)?\")");
-      break;
-    case 2:
-      eval_delayed (s);
-      break;
-    }
-  }
-};
-
-void
-concater_rep::typeset_specific (tree t, path ip) {
-  string which= env->exec_string (t[0]);
-  if (which == "texmacs" || which == "image") {
-    marker (descend (ip, 0));
-    typeset (t[1], descend (ip, 1));
-    marker (descend (ip, 1));
-    //typeset_dynamic (t[1], descend (ip, 1));
-  }
-  else if ((which == "screen") || (which == "printer")) {
-    bool pr= (which != "screen");
-    box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
-    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
-    marker (descend (ip, 0));
-    print (STD_ITEM, b);
-    marker (descend (ip, 1));
-  }
-  else control ("specific", ip);
-}
-
-void
-concater_rep::typeset_label (tree t, path ip) {
-  string key  = env->exec_string (t[0]);
-  tree   value= copy (env->read ("the-label"));
-  tree   old_value= env->local_ref[key];
-  if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
-    env->local_ref (key)= tuple (copy (value), old_value[1]);
-  else env->local_ref (key)= tuple (copy (value), "?");
-  if (env->cur_file_name != env->base_file_name) {
-    url d= delta (env->base_file_name, env->cur_file_name);
-    env->local_ref (key) << as_string (d);
-  }
-
-  flag (key, ip, env->dis->blue);
-  // replacement for: control ("label", ip);
-  box b= tag_box (ip, empty_box (ip, 0, 0, 0, env->fn->yx), key);
-  a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
-}
-
-void
-concater_rep::typeset_reference (tree t, path ip, int type) {
-  marker (descend (ip, 0));
-  string key= env->exec_string (t[0]);
-  tree value=
-    env->local_ref->contains (key)?
-    env->local_ref [key]: env->global_ref [key];
-
-  string s= "(go-to-label \"" * key * "\")";
-  if (is_func (value, TUPLE, 3)) {
-    url name= url_system (value[2]->label);
-    string r= scm_quote (as_string (relative (env->base_file_name, name)));
-    s= "(begin (load-browse-buffer (url-system " * r * ")) " * s * ")";
-  }
-  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
-  else if (type == 1) value= "?";
-
-  command cmd (new guile_command_rep (s, 2));
-  box b= typeset_as_concat (env, attach_right (value, ip));
-  string action= env->read_only? string ("select"): string ("double-click");
-  print (STD_ITEM, action_box (ip, b, action, cmd, true));
-  marker (descend (ip, 1));  
-}
-
-void
-concater_rep::typeset_write (tree t, path ip) {
-  if (N(t)==2) {
-    string s= env->exec_string (t[0]);
-    tree   r= copy (env->exec (t[1]));
-    if (env->complete) {
-      if (!env->local_aux->contains (s))
-	env->local_aux (s)= tree (DOCUMENT);
-      env->local_aux (s) << r;
-    }
-  }
-  control ("write", ip);
-}
 
 bool
 build_locus (edit_env env, tree t, list<string>& ids, string& col) {
@@ -193,6 +93,11 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
       if (is_compound (arg, "id", 1)) {
 	string id= as_string (arg[0]);
 	if (accessible) env->link_env->insert_locus (id, body);
+	else if (N (obtain_ip (body)) > 1) {
+	  extern tree get_subtree (path p);
+	  path p= path_up (reverse (descend_decode (obtain_ip (body), 1)));
+	  env->link_env->insert_locus ("&" * id, get_subtree (p));
+	}
 	ids= list<string> (id, ids);
 	visited= visited || has_been_visited ("id:" * id);
       }
@@ -242,17 +147,54 @@ concater_rep::typeset_locus (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_tag (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  marker (descend (ip, 1));  
+concater_rep::typeset_set_binding (tree t, path ip) {
+  tree keys= env->exec (t);
+  if (L(keys) == TUPLE) {
+    flag ("set binding", ip, env->dis->blue);
+    if (N(keys) > 0) {
+      box b= tag_box (ip, empty_box (ip, 0, 0, 0, env->fn->yx), keys);
+      a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
+    }
+  }
+  else typeset_dynamic (keys, ip);
 }
 
 void
-concater_rep::typeset_meaning (tree t, path ip) {
-  marker (descend (ip, 0));
-  typeset (t[0], descend (ip, 0));
-  marker (descend (ip, 1));  
+concater_rep::typeset_write (tree t, path ip) {
+  if (N(t)==2) {
+    string s= env->exec_string (t[0]);
+    tree   r= copy (env->exec (t[1]));
+    if (env->complete) {
+      if (!env->local_aux->contains (s))
+	env->local_aux (s)= tree (DOCUMENT);
+      env->local_aux (s) << r;
+    }
+  }
+  control ("write", ip);
+}
+
+/******************************************************************************
+* Typesetting other dynamic markup
+******************************************************************************/
+
+void
+concater_rep::typeset_specific (tree t, path ip) {
+  string which= env->exec_string (t[0]);
+  if (which == "texmacs" || which == "image") {
+    marker (descend (ip, 0));
+    typeset (t[1], descend (ip, 1));
+    marker (descend (ip, 1));
+    //typeset_dynamic (t[1], descend (ip, 1));
+  }
+  else if ((which == "screen") || (which == "printer")) {
+    bool pr= (which != "screen");
+    box  sb= typeset_as_concat (env, attach_middle (t[1], ip));
+    box  b = specific_box (decorate_middle (ip), sb, pr, env->fn);
+    marker (descend (ip, 0));
+    print (STD_ITEM, b);
+    marker (descend (ip, 1));
+  }
+  else control ("specific", ip);
 }
 
 void

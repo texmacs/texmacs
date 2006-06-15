@@ -106,13 +106,10 @@ class concater_rep {
   void typeset_if (tree t, path ip);
   void typeset_var_if (tree t, path ip);
   void typeset_case (tree t, path ip);
-  void typeset_label (tree t, path ip);
-  void typeset_reference (tree t, path ip, int type);
+  void typeset_locus (tree t, path ip);
+  void typeset_set_binding (tree t, path ip);
   void typeset_write (tree t, path ip);
   void typeset_specific (tree t, path ip);
-  void typeset_locus (tree t, path ip);
-  void typeset_tag (tree t, path ip);
-  void typeset_meaning (tree t, path ip);
   void typeset_flag (tree t, path ip);
 
   // animations

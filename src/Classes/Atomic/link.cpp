@@ -14,14 +14,20 @@
 #include "iterator.hpp"
 #include "vars.hpp"
 
+hashmap<string,list<observer> > id_resolve;
+hashmap<observer,list<string> > pointer_resolve;
+hashmap<tree,list<soft_link> > vertex_occurrences;
+hashmap<string,int> type_count (0);
+
+static string current_locus_on_paper= "preserve";
+static string current_locus_color= "#404080";
+static string current_visited_color= "#702070";
+
+static hashset<string> visited_table;
+
 /******************************************************************************
 * Soft links
 ******************************************************************************/
-
-hashmap<string,list<observer> > id_resolve;
-hashmap<observer,list<string> > pointer_resolve;
-hashmap<string,list<soft_link> > id_occurrences;
-hashmap<string,int> type_count (0);
 
 void
 register_pointer (string id, observer which) {
@@ -44,25 +50,16 @@ unregister_pointer (string id, observer which) {
 }
 
 void
-register_link_component (string id, soft_link ln) {
-  if (id == "") return;
-  list<soft_link>& l= id_occurrences (id);
+register_vertex (tree v, soft_link ln) {
+  list<soft_link>& l= vertex_occurrences (v);
   l= list<soft_link> (ln, l);
 }
 
 void
-unregister_link_component (string id, soft_link ln) {
-  if (id == "") return;
-  list<soft_link>& l= id_occurrences (id);
+unregister_vertex (tree v, soft_link ln) {
+  list<soft_link>& l= vertex_occurrences (v);
   l= remove (l, ln);
-  if (nil (l)) id_occurrences->reset (id);
-}
-
-static string
-as_id (tree t) {
-  if (is_atomic (t)) return t->label;
-  if (is_func (t, ID, 1)) return as_id (t[0]);
-  return "";
+  if (nil (l)) vertex_occurrences->reset (v);
 }
 
 void
@@ -72,7 +69,7 @@ register_link (soft_link ln) {
   if (is_atomic (ln->t[0]))
     type_count (ln->t[0]->label) ++;
   for (i=1; i<n; i++)
-    register_link_component (as_id (ln->t[i]), ln);
+    register_vertex (ln->t[i], ln);
 }
 
 void
@@ -85,7 +82,7 @@ unregister_link (soft_link ln) {
       type_count->reset (ln->t[0]->label);
   }
   for (i=1; i<n; i++)
-    unregister_link_component (as_id (ln->t[i]), ln);
+    unregister_vertex (ln->t[i], ln);
 }
 
 /******************************************************************************
@@ -135,6 +132,7 @@ get_ids (list<observer> l) {
 
 list<string>
 get_ids (tree t) {
+  if (nil (t->obs)) return list<string> ();
   list<observer> l= t->obs->get_tree_pointers ();
   return reverse (get_ids (l));
 }
@@ -157,8 +155,8 @@ as_tree_list (list<soft_link> l) {
 }
 
 list<tree>
-get_links (string id) {
-  return reverse (as_tree_list (id_occurrences [id]));
+get_links (tree v) {
+  return reverse (as_tree_list (vertex_occurrences [v]));
 }
 
 list<string>
@@ -176,10 +174,6 @@ all_link_types () {
 * Locus rendering
 ******************************************************************************/
 
-static string current_locus_on_paper= "preserve";
-static string current_locus_color= "#404080";
-static string current_visited_color= "#702070";
-
 void
 set_locus_rendering (string var, string val) {
   if (var == "locus-on-paper") current_locus_on_paper= val;
@@ -194,8 +188,6 @@ get_locus_rendering (string var) {
   if (var == VISITED_COLOR) return current_visited_color;
   return "";
 }
-
-static hashset<string> visited_table;
 
 void
 declare_visited (string id) {

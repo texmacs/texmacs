@@ -557,14 +557,16 @@ concater_rep::typeset (tree t, path ip) {
   case ACTION:
     typeset_compound (t, ip);
     break;
+  case SET_BINDING:
+    typeset_set_binding (t, ip);
+    break;
+  case GET_BINDING:
+    typeset_executable (t, ip);
+    break;
   case LABEL:
-    typeset_label (t, ip);
-    break;
   case REFERENCE:
-    typeset_reference (t, ip, 0);
-    break;
   case PAGEREF:
-    typeset_reference (t, ip, 1);
+    typeset_compound (t, ip);
     break;
   case WRITE:
     typeset_write (t, ip);
@@ -580,12 +582,6 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case SPECIFIC:
     typeset_specific (t, ip);
-    break;
-  case TAG:
-    typeset_tag (t, ip);
-    break;
-  case MEANING:
-    typeset_meaning (t, ip);
     break;
   case FLAG:
     typeset_flag (t, ip);

@@ -226,14 +226,33 @@ initialize_default_env () {
 
   /* linking macros */
   tree src_id (ID, tree (HARD_ID, tree (ARG, "x")));
+  tree var_src_id (ID, tree (ARG, "x"));
   tree dest_url (URL, tree (ARG, "y"));
   tree dest_script (SCRIPT, tree (ARG, "y"), tree (ARG, "z"));
+  tree dest_ref (URL, tree (MERGE, "#", tree (ARG, "x")));
   tree ln1 (LINK, "hyperlink", copy (src_id), copy (dest_url));
   tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
+  tree ln3 (LINK, "hyperlink", copy (src_id), copy (dest_ref));
+  tree labflag (FLAG, tree (ARG, "x"), "blue", "x");
+  tree labtxt (SET_BINDING, tree (ARG, "x"), tree (VALUE, "the-label"));
+  tree merged (MERGE, tree (VALUE, "the-tags"), tuple (tree (ARG, "x")));
+  tree tagflag (FLAG, tree (ARG, "x"), "blue", "x");
+  tree reftxt (GET_BINDING, tree (ARG, "x"));
+  tree preftxt (GET_BINDING, tree (ARG, "x"), "1");
   env ("hlink")= tree (MACRO, "x", "y",
 		       tree (LOCUS, copy (src_id), ln1, tree (ARG, "x")));
   env ("action")= tree (MACRO, "x", "y", "z",
 			tree (LOCUS, copy (src_id), ln2, tree (ARG, "x")));
+  env ("the-label")= "?";
+  env ("the-tags")= tree (TUPLE);
+  env ("label")= tree (MACRO, "x", tree (CONCAT, labflag, labtxt));
+  env ("tag")= tree (MACRO, "x", "y",
+		     tree (WITH, "the-tags", merged,
+			   tree (SURROUND, tagflag, "", tree (ARG, "y"))));
+  env ("reference")= tree (MACRO, "x",
+			   tree (LOCUS, copy (src_id), ln3, reftxt));
+  env ("pageref")= tree (MACRO, "x",
+			 tree (LOCUS, copy (src_id), copy (ln3), preftxt));
 
   /* further standard macros */
   env ("error")=

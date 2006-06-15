@@ -81,6 +81,11 @@ get_server () {
   return *the_server;
 }
 
+tree
+get_subtree (path p) {
+  return get_server()->get_editor()->the_subtree (p);
+}
+
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 

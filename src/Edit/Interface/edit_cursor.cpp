@@ -15,6 +15,7 @@
 #include "tm_buffer.hpp"
 #include "tree_traverse.hpp"
 #include "drd_mode.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Constructor and destructor
@@ -432,13 +433,15 @@ edit_cursor_rep::get_labels () {
 }
 
 static path
-search_tree_in (tree t, tree what) {
+search_label (tree t, string which) {
   if (is_atomic (t)) return path ();
-  else if (t == what) return path (1);
+  else if (t == tree (LABEL, which)) return path (1);
+  else if (is_compound (t, "tag", 2) && t[0] == which)
+    return path (1, start (t[1]));
   else {
     int i, n=N(t);
     for (i=0; i<n; i++) {
-      path q= search_tree_in (t[i], what);
+      path q= search_label (t[i], which);
       if (!nil (q)) return path (i, q);
     }
     return path ();
@@ -455,11 +458,28 @@ edit_cursor_rep::show_cursor_if_hidden () {
 
 void
 edit_cursor_rep::go_to_label (string s) {
-  path p= search_tree_in (et, tree (LABEL, s));
-  if (!nil (p)) go_to (p);
-  else if (!nil (eb)) {
-    p= eb->find_tag (s);
-    if (!nil (p)) go_to (p);
+  path p= search_label (et, s);
+  if (!nil (p)) {
+    go_to (p);
+    show_cursor_if_hidden ();
+    return;
   }
-  show_cursor_if_hidden ();
+  if (!nil (eb)) {
+    p= eb->find_tag (s);
+    if (!nil (p)) {
+      go_to (p);
+      show_cursor_if_hidden ();
+      return;
+    }
+  }
+  tree val= (buf->prj==NULL? buf->ref[s]: buf->prj->ref[s]);
+  if (is_func (val, TUPLE, 3) && is_atomic (val[2])) {
+    url u= relative (buf->name, url (val[2]->label));
+    if (u != buf->name) {
+      string new_buf = scm_quote (as_string (u));
+      string load_buf= "(load-buffer (url-system " * new_buf * "))";
+      string jump_to = "(go-to-label " * scm_quote (s) * ")";
+      eval_delayed ("(begin " * load_buf * " " * jump_to * ")");
+    }
+  }
 }
