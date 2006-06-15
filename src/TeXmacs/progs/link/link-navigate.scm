@@ -70,13 +70,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding links in the form of "link lists". Items in such a list
-;;   (id type vertex-1 ... vertex-n)
-;; where id is the identifier of the locus which triggered the creation of
-;; the list and type, vertex-1, ..., vertex-n contain the link information.
+;;   (id type attrs vertex-1 ... vertex-n)
+;; where id is the identifier of the locus which triggered the creation
+;; of the list and type, attrs, vertex-1, ..., vertex-n contain
+;; the link information.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (Id->id Id)
-  (and (func? Id 'id 1) (string? (cadr Id)) (cadr Id)))
+(tm-define (link-item-id item) (car item))
+(tm-define (link-item-type item) (cadr item))
+(tm-define (link-item-attributes item) (caddr item))
+(tm-define (link-item-vertices item) (cdddr item))
 
 (define (id->link-list id)
   (let* ((lns (vertex->links `(id ,id)))
@@ -97,13 +100,12 @@
 	     (lns (map link-flatten lc)))
 	(map (cut cons id <>) (map cdr lns)))))
 
-(define (filter-on-bidirectional x)
-  (with (id type first . other) x
-    (== id (vertex->id first))))
+(define (filter-on-bidirectional item)
+  (== (link-item-id item)
+      (vertex->id (car link-item-vertices item))))
 
-(define (filter-on-type x)
-  (with (id type . args) x
-    (navigation-allow-type? type)))
+(define (filter-on-type item)
+  (navigation-allow-type? (link-item-type item)))
 
 (define (filter-link-list l)
   (if (not (navigation-bidirectional?))
@@ -154,32 +156,33 @@
 (tm-define (link-active-upwards t)
   (:synopsis "Return active ancestor trees for the tree @t.")
   (with l (upward-link-list t #t)
-    (link-active-upwards-sub t (map car l))))
+    (link-active-upwards-sub t (map link-item-id l))))
 
 (tm-define (link-active-ids l)
   (:synopsis "Return list of identifiers in @l which admit an active link.")
   (with r (filter-link-list (ids->link-list l))
-    (list-remove-duplicates (map car r))))
+    (list-remove-duplicates (map link-item-id r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation lists contain concrete propositions for link traversal.
 ;; One item is of the form
-;;   (type n source-id target-vertex)
-;; where type is the type of the link, source-id the source identifier and
-;; the target vertex target-vertex the n-th vertex of the link.
-;; In particular, for simple links, n=1 for direct traversal and
-;; n=0 for inverse traversal.
+;;   (type attrs n source-id target-vertex)
+;; where type and attrs are the type and the attributes of the link,
+;; source-id the source identifier and the target vertex target-vertex
+;; the n-th vertex of the link. In particular, for simple links,
+;; n=1 for direct traversal and n=0 for inverse traversal.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (navigation-type item) (car item))
-(define (navigation-pos item) (cadr item))
-(define (navigation-source item) (caddr item))
-(define (navigation-target item) (cadddr item))
+(tm-define (navigation-type item) (car item))
+(tm-define (navigation-attributes item) (cadr item))
+(tm-define (navigation-pos item) (caddr item))
+(tm-define (navigation-source item) (cadddr item))
+(tm-define (navigation-target item) (car (cddddr item)))
 
-(define (navigation-list-sub type nr source l)
+(define (navigation-list-sub type attrs nr source l)
   (if (null? l) l
-      (let* ((head (list type nr source (car l)))
-	     (tail (navigation-list-sub type (+ nr 1) source (cdr l))))
+      (let* ((head (list type attrs nr source (car l)))
+	     (tail (navigation-list-sub type attrs (+ nr 1) source (cdr l))))
 	(if (== source (vertex->id (car l))) tail
 	    (cons head tail)))))
 
@@ -187,10 +190,11 @@
   (:synopsis "Transforms the link list @t into a navigation list")
   (if (null? l) l
       (let* ((item (car l))
-	     (source (car item))
-	     (type (cadr item))
-	     (components (cddr item))
-	     (h (navigation-list-sub type 0 source components))
+	     (source (link-item-id item))
+	     (type (link-item-type item))
+	     (attrs (link-item-attributes item))
+	     (vertices (link-item-vertices item))
+	     (h (navigation-list-sub type attrs 0 source vertices))
 	     (r (link-list->navigation-list (cdr l))))
 	(list-remove-duplicates (append h r)))))
 
@@ -209,20 +213,21 @@
 	(else (navigation-list-filter (cdr l) type nr jumpable?))))
 
 (tm-define (navigation-list-types l)
-  (list-remove-duplicates (map car l)))
+  (list-remove-duplicates (map navigation-type l)))
 
 (tm-define (navigation-list-xtypes l)
   (let* ((direct (navigation-list-filter l #t 1 #t))
 	 (inverse (navigation-list-filter l #t 0 #t))
-	 (dtypes (map car direct))
-	 (itypes (map (cut string-append <> "*") (map car inverse))))
+	 (dtypes (map navigation-type direct))
+	 (itypes (map (cut string-append <> "*")
+		      (map navigation-type inverse))))
     (list-remove-duplicates (append dtypes itypes))))
 
 (tm-define (navigation-list-first-xtype l xtype)
   (let* ((inverse? (string-ends? xtype "*"))
 	 (type (if inverse? (string-drop-right xtype 1) xtype))
 	 (fl (navigation-list-filter l type (if inverse? 0 1) #t)))
-    (and (nnull? fl) (car fl))))
+    (and (nnull? fl) (navigation-type fl))))
 
 (define (resolve-navigation-list l fun)
   (if (null? l) (fun)
@@ -403,12 +408,12 @@
   (if (null? opt-location) (exec-delayed cmd)
       (exec-delayed-at cmd (car opt-location))))
 
-(tm-define (execute-script s . opt-location)
+(tm-define (execute-script s secure-origin? . opt-location)
   (let* ((secure-s (string-append "(secure? '" s ")"))
-	 (secure? (eval (string->object secure-s)))
+	 (ok? (or secure-origin? (eval (string->object secure-s))))
 	 (cmd-s (string-append "(lambda () " s ")"))
 	 (cmd (eval (string->object cmd-s))))
-    (cond ((or secure? (== (get-preference "security") "accept all scripts"))
+    (cond ((or ok? (== (get-preference "security") "accept all scripts"))
 	   (execute-at cmd opt-location))
 	  ((== (get-preference "security") "prompt on scripts")
 	   (dialogue
@@ -416,15 +421,17 @@
 		 (execute-at cmd opt-location))))
 	  (else (set-message "Unsecure script refused" "Evaluate script")))))
 
-(tm-define (go-to-vertex v)
+(define (go-to-vertex v attrs)
   (cond ((func? v 'id 1) (go-to-id (cadr v) (cursor-path)))
 	((func? v 'url 1) (go-to-url (cadr v) (cursor-path)))
-	((func? v 'script) (apply execute-script (cdr v)))
+	((func? v 'script)
+	 (with ok? (== (assoc-ref attrs "secure") "true")
+	   (apply execute-script (cons* (cadr v) ok? (cddr v)))))
 	(else (noop))))
 
 (define (vertex-linked-ids v)
-  (let* ((ls (map link-flatten (vertex->links v)))
-	 (vs (list-difference (append-map cddr ls) (list v))))
+  (let* ((lns (vertex->links v))
+	 (vs (list-difference (append-map link-vertices lns) (list v))))
     (list-remove-duplicates (filter-map vertex->id vs))))
 
 (define (id-update id)
@@ -450,7 +457,7 @@
       (id-set-visited target-id))
     (and-with target-url (vertex->url target)
       (url-set-visited target-url))
-    (go-to-vertex target)))
+    (go-to-vertex target (navigation-attributes hit))))
 
 (define the-navigation-list '())
 (tm-define (navigation-list-follow-xtyped xtype)
@@ -470,7 +477,7 @@
     (with xtypes (navigation-list-xtypes nl)
       (cond ((null? xtypes) (noop))
 	    ((and (navigation-build-link-pages?) (>= (length nl) 2))
-	     (id-set-visited (caddr (car nl)))
+	     (id-set-visited (navigation-source (car nl)))
 	     (build-navigation-page nl))
 	    ((null? (cdr xtypes)) (navigation-item-follow (car nl)))
 	    (else

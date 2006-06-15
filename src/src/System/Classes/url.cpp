@@ -597,6 +597,21 @@ expand (url u) {
   return u;
 }
 
+bool
+descends (url u, url base) {
+  if (is_or (base)) return descends (u, base[1]) || descends (u, base[2]);
+  if (is_concat (u) && is_atomic (base))
+    return u[1] == base;
+  if (is_concat (u) && is_concat (base))
+    return u[1] == base[1] && descends (u[2], base[2]);
+  return false;
+}
+
+bool
+is_secure (url u) {
+  return descends (u, expand (url_path ("$TEXMACS_SECURE_PATH")));
+}
+
 /******************************************************************************
 * Url sorting and factorization
 ******************************************************************************/

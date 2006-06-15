@@ -238,6 +238,9 @@ init_env_vars () {
 		       get_env_path ("TEXMACS_DOC_PATH") |
 		       "$TEXMACS_HOME_PATH/doc:$TEXMACS_PATH/doc" |
 		       plugin_path ("doc"));
+  (void) set_env_path ("TEXMACS_SECURE_PATH",
+		       get_env_path ("TEXMACS_SECURE_PATH") |
+		       "$TEXMACS_PATH:$TEXMACS_HOME_PATH");
   (void) get_env_path ("TEXMACS_SYNTAX_PATH",
 		       "$TEXMACS_HOME_PATH/langs/mathematical/syntax" |
 		       url ("$TEXMACS_PATH/langs/mathematical/syntax"));
