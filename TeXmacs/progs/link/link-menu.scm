@@ -112,14 +112,14 @@
       (-> "Normal loci"
 	  ("Default" (change-locus-rendering "locus-color" "#404080"))
 	  ("Preserve" (change-locus-rendering "locus-color" "preserve"))
-	  ("Dark blue" (change-locus-rendering "locus-color" "dark blue"))
+	  ("Blue" (change-locus-rendering "locus-color" "dark blue"))
 	  ("Red" (change-locus-rendering "locus-color" "red"))
 	  ---
 	  ("Other" (interactive-change-locus-rendering "locus-color")))
       (-> "Visited loci"
 	  ("Default" (change-locus-rendering "visited-color" "#702070"))
 	  ("Preserve" (change-locus-rendering "visited-color" "preserve"))
-	  ("Magenta" (change-locus-rendering "visited-color" "magenta"))
+	  ("Magenta" (change-locus-rendering "visited-color" "dark magenta"))
 	  ("Red" (change-locus-rendering "visited-color" "red"))
 	  ---
 	  ("Other" (interactive-change-locus-rendering "visited-color"))))
@@ -136,4 +136,9 @@
   (-> "Extract"
       ("Constellation" (build-constellation-page))
       ("Loci" (build-locus-page))
-      ("Environments" (interactive build-environment-page))))
+      ("Environments" (interactive build-environment-page)))
+  ---
+  (when (cursor-has-history?)
+    ("Go back" (cursor-history-backward)))
+  (when (cursor-has-future?)
+    ("Go forward" (cursor-history-forward))))

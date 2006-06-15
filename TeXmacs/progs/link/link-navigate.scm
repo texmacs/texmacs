@@ -301,22 +301,93 @@
     (resolve-navigation-list l fun)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Position history
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define cursor-history '())
+(define cursor-future '())
+
+(define (cursor-same? l p)
+  (and (nnull? l) (== (position-get (car l)) p)))
+
+(tm-define (cursor-history-add p)
+  (:synopsis "Add current cursor position into the history")
+  (if (cursor-same? cursor-future p)
+      (with pos (car cursor-future)
+	(set! cursor-future (cdr cursor-future))
+	(set! cursor-history (cons pos cursor-history)))
+      (when (not (cursor-same? cursor-history p))
+	(with pos (position-new)
+	  (position-set pos p)
+	  (set! cursor-history (cons pos cursor-history))))))
+
+(define (position-valid? pos)
+  (and-with t (path->tree (cDr (position-get pos)))
+    (not (tm-func? t 'uninit))))
+
+(tm-define (cursor-has-history?)
+  (:synopsis "Does there exist a previous position in history?")
+  (nnull? cursor-history))
+
+(tm-define (cursor-history-backward)
+  (:synopsis "Go to previous position in history")
+  (when (nnull? cursor-history)
+    (with pos (car cursor-history)
+      (set! cursor-history (cdr cursor-history))
+      (if (position-valid? pos)
+	  (begin
+	    (set! cursor-future (cons pos cursor-future))
+	    (if (== (cursor-path) (position-get pos))
+		(cursor-history-backward)
+		(go-to (position-get pos))))
+	  (begin
+	    (position-delete pos)
+	    (cursor-history-backward))))))
+
+(tm-define (cursor-has-future?)
+  (:synopsis "Does there exist a next position in history?")
+  (nnull? cursor-future))
+
+(tm-define (cursor-history-forward)
+  (:synopsis "Go to next position in history")
+  (when (nnull? cursor-future)
+    (with pos (car cursor-future)
+      (set! cursor-future (cdr cursor-future))
+      (if (position-valid? pos)
+	  (begin
+	    (set! cursor-history (cons pos cursor-history))
+	    (if (== (cursor-path) (position-get pos))
+		(cursor-history-forward)
+		(go-to (position-get pos))))
+	  (begin
+	    (position-delete pos)
+	    (cursor-future-backward))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual navigation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (go-to-id id)
+(tm-define (go-to-id id . opt-from)
+  (:synopsis "Jump to the first locus with a given identifier @id.")
+  (:argument opt-from "Optional path for the cursor history")
   (with l (id->trees id)
     (if (nnull? l)
-	(tree-go-to (car l) :end)
+	(begin
+	  (if (nnull? opt-from) (cursor-history-add (car opt-from)))
+	  (tree-go-to (car l) :end)
+	  (if (nnull? opt-from) (cursor-history-add (cursor-path))))
 	(and (resolve-id id)
-	     (delayed (:idle 25) (go-to-id id))))))
+	     (delayed (:idle 25) (apply go-to-id (cons id opt-from)))))))
 
 (define (decompose-url s)
   (with i (string-index s #\#)
     (if (not i) (list s "")
 	(list (substring s 0 i) (substring s (+ i 1) (string-length s))))))
 
-(tm-define (go-to-url name-label)
+(tm-define (go-to-url name-label . opt-from)
+  (:synopsis "Jump to the url @name-label.")
+  (:argument opt-from "Optional path for the cursor history")
+  (if (nnull? opt-from) (cursor-history-add (car opt-from)))
   (with (name label) (decompose-url name-label)
     (cond ((== name "") (go-to-label label))
 	  ((== label "")
@@ -325,7 +396,8 @@
 	  (else
 	   (with u (url-relative (get-name-buffer) name)
 	     (load-browse-buffer u)
-	     (go-to-label label))))))
+	     (go-to-label label)))))
+  (if (nnull? opt-from) (cursor-history-add (cursor-path))))
 
 (define (execute-at cmd opt-location)
   (if (null? opt-location) (exec-delayed cmd)
@@ -345,8 +417,8 @@
 	  (else (set-message "Unsecure script refused" "Evaluate script")))))
 
 (tm-define (go-to-vertex v)
-  (cond ((func? v 'id 1) (go-to-id (cadr v)))
-	((func? v 'url 1) (go-to-url (cadr v)))
+  (cond ((func? v 'id 1) (go-to-id (cadr v) (cursor-path)))
+	((func? v 'url 1) (go-to-url (cadr v) (cursor-path)))
 	((func? v 'script) (apply execute-script (cdr v)))
 	(else (noop))))
 

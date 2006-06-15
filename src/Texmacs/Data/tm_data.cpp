@@ -653,7 +653,7 @@ path
 new_document () {
   int i, n= N(the_et);
   for (i=0; i<n; i++)
-    if (the_et[i] == UNINIT) {
+    if (the_et[i] == UNINIT && nil (the_et[i]->obs)) {
       assign (the_et[i], tree (DOCUMENT, ""));
       return path (i); // obtain_ip (the_et[i]);
     }
