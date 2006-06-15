@@ -1815,6 +1815,34 @@ tmg_url_delta (SCM arg1, SCM arg2) {
 }
 
 SCM
+tmg_url_secureP (SCM arg1) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "url-secure?");
+
+  url in1= scm_to_url (arg1);
+
+  // SCM_DEFER_INTS;
+  bool out= is_secure (in1);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
+tmg_url_descendsP (SCM arg1, SCM arg2) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "url-descends?");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "url-descends?");
+
+  url in1= scm_to_url (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  bool out= descends (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return bool_to_scm (out);
+}
+
+SCM
 tmg_url_complete (SCM arg1, SCM arg2) {
   SCM_ASSERT_URL (arg1, SCM_ARG1, "url-complete");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "url-complete");
@@ -2873,6 +2901,8 @@ initialize_glue_basic () {
   gh_new_procedure ("url-expand", (FN) tmg_url_expand, 1, 0, 0);
   gh_new_procedure ("url-factor", (FN) tmg_url_factor, 1, 0, 0);
   gh_new_procedure ("url-delta", (FN) tmg_url_delta, 2, 0, 0);
+  gh_new_procedure ("url-secure?", (FN) tmg_url_secureP, 1, 0, 0);
+  gh_new_procedure ("url-descends?", (FN) tmg_url_descendsP, 2, 0, 0);
   gh_new_procedure ("url-complete", (FN) tmg_url_complete, 2, 0, 0);
   gh_new_procedure ("url-resolve", (FN) tmg_url_resolve, 2, 0, 0);
   gh_new_procedure ("url-resolve-in-path", (FN) tmg_url_resolve_in_path, 1, 0, 0);

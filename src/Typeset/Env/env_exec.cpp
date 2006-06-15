@@ -54,7 +54,7 @@ edit_env_rep::rewrite (tree t) {
       string fun= as_string (exec (t[0]));
       expr= cons (string_to_object (fun), expr);
       (void) eval ("(lazy-markup-modules-force)");
-      if (script_status < 2) {
+      if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
       }

@@ -33,10 +33,16 @@
 ;; Utility routines for links
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (list->assoc-list l)
+  (if (or (null? l) (null? (cdr l))) '()
+      (cons (cons (car l) (cadr l)) (list->assoc-list (cddr l)))))
+
 (define (link-flatten-sub t)
-  (if (tm-func? t 'script 2)
-      (list 'script (tree->stree (tree-ref t 0)) (tree-ref t 1))
-      (tree->stree t)))
+  (cond ((tm-func? t 'script 2)
+	 (list 'script (tree->stree (tree-ref t 0)) (tree-ref t 1)))
+	((tm-func? t 'attr)
+	 (list->assoc-list (cdr (tree->stree t))))
+	(else (tree->stree t))))
 
 (tm-define (link-flatten ln)
   (cons (tm-car ln) (map link-flatten-sub (tm-cdr ln))))
@@ -45,9 +51,13 @@
   (if (tree? ln) (set! ln (link-flatten ln)))
   (and (func? ln 'link) (cadr ln)))
 
+(tm-define (link-attributes ln)
+  (if (tree? ln) (set! ln (link-flatten ln)))
+  (and (func? ln 'link) (caddr ln)))
+
 (tm-define (link-vertices ln)
   (if (tree? ln) (set! ln (link-flatten ln)))
-  (and (func? ln 'link) (cddr ln)))
+  (and (func? ln 'link) (cdddr ln)))
 
 (tm-define (link-source ln)
   (car (link-vertices ln)))
@@ -199,7 +209,7 @@
       (with-innermost t 'locus
 	(let* ((l1 (cDr (tree-children t)))
 	       (l2 (list-filter l1 (cut locus-consider-link? <> check-mode?)))
-	       (l3 (map cadr (map link-flatten l2))))
+	       (l3 (filter-map link-type l2)))
 	  (list-remove-duplicates l3)))))
 
 (define (remove-link ln type)
@@ -208,7 +218,7 @@
       (cond ((== current-link-mode "simple")
 	     (locus-remove-link ln))
 	    ((== current-link-mode "bidirectional")
-	     (let* ((ids (filter-map vertex->id (cddr st)))
+	     (let* ((ids (filter-map vertex->id (link-vertices st)))
 		    (ts1 (append-map id->loci ids))
 		    (fun (lambda (t) (not (tree-eq? t (tree-up ln)))))
 		    (ts2 (list-filter ts1 fun)))

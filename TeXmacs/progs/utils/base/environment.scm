@@ -18,6 +18,7 @@
   ("color" "Foreground colour")
   ("bg-color" "Background colour")
   ("locus-color" "Colour of loci")
+  ("visited-color" "Colour of visited loci")
   ("magnification" "Magnification")
   ("font-base-size" "Font size")
 

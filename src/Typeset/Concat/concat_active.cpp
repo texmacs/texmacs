@@ -101,9 +101,13 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
 	ids= list<string> (id, ids);
 	visited= visited || has_been_visited ("id:" * id);
       }
-      if (is_compound (arg, "link")) {
+      if (is_compound (arg, "link") && N(arg) >= 2) {
+	if (is_func (arg[1], ATTR)) arg= copy (arg);
+	else arg= arg (0, 1) * tree (LINK, tree (ATTR)) * arg (1, N(arg));
+	arg[1] << tree ("secure")
+	       << (env->secure? tree ("true"): tree ("false"));
 	env->link_env->insert_link (arg);
-	for (j=1; j<N(arg); j++) {
+	for (j=2; j<N(arg); j++) {
 	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0]))
 	    visited= visited || has_been_visited ("id:" * arg[j][0]->label);
 	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0]))

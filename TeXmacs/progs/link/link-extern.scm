@@ -83,9 +83,8 @@
   (cond ((func? v 'id 1) (id-locations (cadr v)))
 	(else '())))
 
-(define (link-item-id-locations ln)
-  (with (id type . lns) ln
-    (append-map vertex-locations lns)))
+(define (link-item-id-locations item)
+  (append-map vertex-locations (link-item-vertices item)))
 
 (define (link-list-id-locations l)
   (append-map link-item-id-locations l))

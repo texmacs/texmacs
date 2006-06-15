@@ -123,6 +123,8 @@ url    reroot (url u, string s);   // reroot using new protocol
 url    expand (url u);             // rewrite a/{b:c} -> a/b:a/c
 url    sort (url u);               // order items in ors
 url    factor (url u);             // inverse of expand; also sorts
+bool   descends (url u, url base); // does u descend from base?
+bool   is_secure (url u);          // is u secure?
 
 /******************************************************************************
 * url resolution
