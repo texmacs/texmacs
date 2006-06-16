@@ -100,6 +100,16 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 * Processing preamble
 ******************************************************************************/
 
+static void
+use_modules (tree t) {
+  if (is_tuple (t))
+    for (int i=0; i<N(t); i++) {
+	string s= as_string (t[i]);
+	if (starts (s, "(")) eval ("(use-modules " * s * ")");
+	else if (s != "") eval ("(plugin-initialize '" * s * ")");
+    }
+}
+
 void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
@@ -108,7 +118,8 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   SERVER (style_get_cache (style, H, t, ok));
   if (ok) {
     env->patch_env (H);
-    ok = drd->set_locals (t);
+    ok= drd->set_locals (t);
+    use_modules (env->read (THE_MODULES));
   }
   if (!ok) {
     if (!is_tuple (style))

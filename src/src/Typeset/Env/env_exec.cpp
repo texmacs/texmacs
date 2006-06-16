@@ -233,6 +233,8 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case USE_PACKAGE:
     return exec_use_package (t);
+  case USE_MODULE:
+    return exec_use_module (t);
 
   case OR:
     return exec_or (t);
@@ -786,6 +788,18 @@ edit_env_rep::exec_use_package (tree t) {
       if (is_compound (doc))
 	exec (filter_style (extract (doc, "body")));
     }
+  }
+  return "";
+}
+
+tree
+edit_env_rep::exec_use_module (tree t) {
+  int i, n= N(t);
+  for (i=0; i<n; i++) {
+    string s= exec_string (t[i]);
+    if (starts (s, "(")) eval ("(use-modules " * s * ")");
+    else if (s != "") eval ("(plugin-initialize '" * s * ")");
+    assign (THE_MODULES, read (THE_MODULES) * tuple (s));
   }
   return "";
 }
@@ -1572,6 +1586,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case INCLUDE:
     return exec_until_rewrite (t, p, var, level);
   case USE_PACKAGE:
+  case USE_MODULE:
   case OR:
   case XOR:
   case AND:

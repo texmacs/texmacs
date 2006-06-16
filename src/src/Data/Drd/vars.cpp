@@ -24,6 +24,9 @@ string MODE ("mode");
 string INFO_FLAG ("info-flag");
 string IDENTITY ("identity");
 string TABULAR ("tabular");
+string THE_LABEL ("the-label");
+string THE_TAGS ("the-tags");
+string THE_MODULES ("the-modules");
 
 /******************************************************************************
 * Text properties for tex, math and prog modes

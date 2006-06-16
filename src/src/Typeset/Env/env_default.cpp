@@ -41,6 +41,9 @@ initialize_default_env () {
   env (INFO_FLAG)        = "short";     // information about labels, etc.
   env (IDENTITY)         = identity_m;  // identity macro
   env (TABULAR)          = tabular_m;   // tabular macro
+  env (THE_LABEL)        = "?";         // value of the next label
+  env (THE_TAGS)         = tree(TUPLE); // current tags
+  env (THE_MODULES)      = tree(TUPLE); // necessary modules and plug-ins
 
   env (FONT)             = "roman";     // the font name in text mode
   env (FONT_FAMILY)      = "rm";        // the font family in text mode
@@ -234,8 +237,8 @@ initialize_default_env () {
   tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
   tree ln3 (LINK, "hyperlink", copy (src_id), copy (dest_ref));
   tree labflag (FLAG, tree (ARG, "x"), "blue", "x");
-  tree labtxt (SET_BINDING, tree (ARG, "x"), tree (VALUE, "the-label"));
-  tree merged (MERGE, tree (VALUE, "the-tags"), tuple (tree (ARG, "x")));
+  tree labtxt (SET_BINDING, tree (ARG, "x"), tree (VALUE, THE_LABEL));
+  tree merged (MERGE, tree (VALUE, THE_TAGS), tuple (tree (ARG, "x")));
   tree tagflag (FLAG, tree (ARG, "x"), "blue", "x");
   tree reftxt (GET_BINDING, tree (ARG, "x"));
   tree preftxt (GET_BINDING, tree (ARG, "x"), "1");
@@ -243,8 +246,6 @@ initialize_default_env () {
 		       tree (LOCUS, copy (src_id), ln1, tree (ARG, "x")));
   env ("action")= tree (MACRO, "x", "y", "z",
 			tree (LOCUS, copy (src_id), ln2, tree (ARG, "x")));
-  env ("the-label")= "?";
-  env ("the-tags")= tree (TUPLE);
   env ("label")= tree (MACRO, "x", tree (CONCAT, labflag, labtxt));
   env ("tag")= tree (MACRO, "x", "y",
 		     tree (WITH, "the-tags", merged,

@@ -26,6 +26,9 @@ extern string MODE;
 extern string INFO_FLAG;
 extern string IDENTITY;
 extern string TABULAR;
+extern string THE_LABEL;
+extern string THE_TAGS;
+extern string THE_MODULES;
 
 extern string FONT;
 extern string FONT_FAMILY;
@@ -173,7 +176,6 @@ extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
 
 extern string POINT_STYLE;
-
 extern string LINE_WIDTH;
 extern string DASH_STYLE;
 extern string DASH_STYLE_UNIT;

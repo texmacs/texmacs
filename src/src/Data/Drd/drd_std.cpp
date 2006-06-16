@@ -185,6 +185,7 @@ init_std_drd () {
   init (EXTERN, "extern", repeat (1, 1)); // func and args
   init (INCLUDE, "include", fixed (1));
   init (USE_PACKAGE, "use-package", repeat (1, 1));
+  init (USE_MODULE, "use-module", repeat (1, 1));
 
   init (OR, "or", repeat (2, 1));
   init (XOR, "xor", fixed (2));
