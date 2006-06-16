@@ -15,6 +15,7 @@
 (define-module (server client))
 (read-enable 'positions)
 (debug-enable 'debug)
+(debug-set! stack 1000000)
 (use-modules (tools base) (tools abbrevs) (tools ahash-table) (tools crypt)
 	     (server socket))
 

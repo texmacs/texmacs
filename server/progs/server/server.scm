@@ -15,6 +15,7 @@
 (define-module (server server))
 (read-enable 'positions)
 (debug-enable 'debug)
+(debug-set! stack 1000000)
 (use-modules (ice-9 rdelim)
 	     (tools base) (tools abbrevs) (tools ahash-table)
 	     (tools file) (tools crypt)

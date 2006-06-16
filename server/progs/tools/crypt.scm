@@ -101,16 +101,18 @@
 (define-public (secret-encode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
-      (eval-system* "openssl des3 -salt -in " msg " -pass file:" key))))
+      (eval-system* "openssl aes-256-cbc -nosalt -in " msg
+		    " -pass file:" key))))
 
 (define-public (secret-decode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
-      (eval-system* "openssl des3 -salt -d -in " msg " -pass file:" key))))
+      (eval-system* "openssl aes-256-cbc -nosalt -d -in " msg
+		    " -pass file:" key))))
 
 (define-public (secret-hash password)
   (with-temp-file pass password
-    (eval-system* "openssl passwd -1 -salt blauwbil " password)))
+    (secret-encode "TeXmacs worgelt BlauwBilGorgels" password)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prevent third persons to pretend being one of the communicants
