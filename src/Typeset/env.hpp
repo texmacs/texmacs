@@ -226,6 +226,7 @@ private:
   bool exec_until_while (tree t, path p, string var, int level);
   tree exec_for_each (tree t);
   tree exec_use_package (tree t);
+  tree exec_use_module (tree t);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);

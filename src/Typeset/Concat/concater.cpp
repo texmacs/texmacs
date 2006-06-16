@@ -452,6 +452,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_include (t, ip);
     break;
   case USE_PACKAGE:
+  case USE_MODULE:
     typeset_executable (t, ip);
     break;
 
