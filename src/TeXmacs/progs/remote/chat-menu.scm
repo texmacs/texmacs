@@ -49,4 +49,5 @@
       (when (not (chat-connected?))
 	("Catch up" (chat-catch-up))))
   (when (chat-connected?)
-    ("Hang up" (interactive chat-hang-up))))
+    ("Hang up" (interactive chat-hang-up)))
+  ("Test" (testje)))
