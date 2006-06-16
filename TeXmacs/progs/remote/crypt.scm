@@ -118,32 +118,18 @@
 (tm-define (secret-encode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
-      (eval-system* "openssl des3 -salt -in " msg " -pass file:" key))))
-
-(tm-define (secret-decode what secret-key)
-  (with-temp-file msg what
-    (with-temp-file key secret-key
-      (eval-system* "openssl des3 -salt -d -in " msg " -pass file:" key))))
-
-(tm-define (secret-hash password)
-  (with-temp-file pass password
-    (eval-system* "openssl passwd -1 -salt blauwbil " password)))
-
-(tm-define (Secret-encode what secret-key)
-  (with-temp-file msg what
-    (with-temp-file key secret-key
       (eval-system* "openssl aes-256-cbc -nosalt -in " msg
 		    " -pass file:" key))))
 
-(tm-define (Secret-decode what secret-key)
+(tm-define (secret-decode what secret-key)
   (with-temp-file msg what
     (with-temp-file key secret-key
       (eval-system* "openssl aes-256-cbc -nosalt -d -in " msg
 		    " -pass file:" key))))
 
-(tm-define (Secret-hash password)
+(tm-define (secret-hash password)
   (with-temp-file pass password
-    (Secret-encode "TeXmacs worgelt BlauwBilGorgels" password)))
+    (secret-encode "TeXmacs worgelt BlauwBilGorgels" password)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prevent third persons to pretend being one of the communicants
