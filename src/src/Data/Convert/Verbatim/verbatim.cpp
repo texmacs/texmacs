@@ -32,6 +32,8 @@ tree_to_verbatim (string& buf, tree t, bool wrap, string enc) {
     tree_to_verbatim (buf, t[2], wrap, enc);
     tree_to_verbatim (buf, t[1], wrap, enc);
   }
+  else if (is_compound (t, "TeXmacs", 0))
+    tree_to_verbatim (buf, "TeXmacs", wrap, enc);
   else {
     int i, n= N(t);
     for (i=0; i<n; i++)

@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link link-navigate)
-  (:use (link link-edit) (link link-extern)))
+  (:use (utils library cursor) (link link-edit) (link link-extern)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation mode
@@ -298,80 +298,12 @@
 
 (define (build-navigation-page-sub style l)
   (with doc (navigation-list->document style l)
-    (set-aux-buffer "* Link page *" "* Link page *" doc)))
+    (set-aux-buffer "Link page" "Link page" doc)))
 
 (define (build-navigation-page l)
   (let* ((style (tree->stree (get-style-tree)))
 	 (fun (lambda () (build-navigation-page-sub style l))))
     (resolve-navigation-list l fun)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Position history
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define cursor-history (make-ahash-table))
-(define cursor-future (make-ahash-table))
-
-(define (history-get) (ahash-ref* cursor-history (window-get-id) '()))
-(define (history-set l) (ahash-set! cursor-history (window-get-id) l))
-(define (future-get) (ahash-ref* cursor-future (window-get-id) '()))
-(define (future-set l) (ahash-set! cursor-future (window-get-id) l))
-
-(define (cursor-same? l p)
-  (and (nnull? l) (== (position-get (car l)) p)))
-
-(tm-define (cursor-history-add p)
-  (:synopsis "Add current cursor position into the history")
-  (if (cursor-same? (future-get) p)
-      (with pos (car (future-get))
-	(future-set (cdr (future-get)))
-	(history-set (cons pos (history-get))))
-      (when (not (cursor-same? (history-get) p))
-	(with pos (position-new)
-	  (position-set pos p)
-	  (history-set (cons pos (history-get)))))))
-
-(define (position-valid? pos)
-  (and-with t (path->tree (cDr (position-get pos)))
-    (not (tm-func? t 'uninit))))
-
-(tm-define (cursor-has-history?)
-  (:synopsis "Does there exist a previous position in history?")
-  (nnull? (history-get)))
-
-(tm-define (cursor-history-backward)
-  (:synopsis "Go to previous position in history")
-  (when (nnull? (history-get))
-    (with pos (car (history-get))
-      (history-set (cdr (history-get)))
-      (if (position-valid? pos)
-	  (begin
-	    (future-set (cons pos (future-get)))
-	    (if (== (cursor-path) (position-get pos))
-		(cursor-history-backward)
-		(go-to (position-get pos))))
-	  (begin
-	    (position-delete pos)
-	    (cursor-history-backward))))))
-
-(tm-define (cursor-has-future?)
-  (:synopsis "Does there exist a next position in history?")
-  (nnull? (future-get)))
-
-(tm-define (cursor-history-forward)
-  (:synopsis "Go to next position in history")
-  (when (nnull? (future-get))
-    (with pos (car (future-get))
-      (future-set (cdr (future-get)))
-      (if (position-valid? pos)
-	  (begin
-	    (history-set (cons pos (history-get)))
-	    (if (== (cursor-path) (position-get pos))
-		(cursor-history-forward)
-		(go-to (position-get pos))))
-	  (begin
-	    (position-delete pos)
-	    (cursor-future-backward))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Actual navigation

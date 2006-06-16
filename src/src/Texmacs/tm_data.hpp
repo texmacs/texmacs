@@ -18,8 +18,6 @@
 class tm_data_rep: virtual public server_rep {
 protected:
   array<tm_buffer> bufs;      // the buffers
-  array<tree>      history;   // history for browsing
-  int              hist_pos;  // position in history
 
   /* Low level buffer menu manipulation */
   int       find_buffer (path p);

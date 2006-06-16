@@ -136,9 +136,4 @@
   (-> "Extract"
       ("Constellation" (build-constellation-page))
       ("Loci" (build-locus-page))
-      ("Environments" (interactive build-environment-page)))
-  ---
-  (when (cursor-has-history?)
-    ("Go back" (cursor-history-backward)))
-  (when (cursor-has-future?)
-    ("Go forward" (cursor-history-forward))))
+      ("Environments" (interactive build-environment-page))))

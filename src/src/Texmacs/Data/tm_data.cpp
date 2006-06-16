@@ -22,7 +22,7 @@ int max_undo_depth= 100; // should actually be part of tm_data_rep
 * Constructor and destructor
 ******************************************************************************/
 
-tm_data_rep::tm_data_rep (): history (0), hist_pos (-1) {}
+tm_data_rep::tm_data_rep () {}
 tm_data_rep::~tm_data_rep () {}
 
 /******************************************************************************
@@ -66,15 +66,35 @@ tm_data_rep::new_menu_name (url u) {
   }
 }
 
+static void
+menu_append_buffer (string& s, tm_buffer buf) {
+  s << " (\"" << buf->abbr;
+  if (buf->needs_to_be_saved ()) s << " *"; 
+  s << "\" (switch-to-buffer \"" * as_string (buf->name) * "\"))";
+}
+
 object
 tm_data_rep::get_buffer_menu () {
-  int i;
-  string s ("(menu-dynamic ");
-  for (i=0; i<N(bufs); i++) {
-    if (i>0) s << " ";
-    s << "(\"" << bufs[i]->abbr;
-    if (bufs[i]->needs_to_be_saved ()) s << " *"; 
-    s << "\" (switch-to-buffer \"" * as_string (bufs[i]->name) * "\"))";
+  int i, count;
+  bool two_types= false;;
+  string s ("(menu-dynamic");
+  for (i=0, count=0; i<N(bufs); i++) {
+    if (is_none (bufs[i]->extra) == is_none (bufs[0]->extra)) {
+      menu_append_buffer (s, bufs[i]);
+      count++;
+    }
+    else two_types= true;
+    if (count == 10) break;
+  }
+  if (two_types) {
+    s << " ---";
+    for (i=0, count=0; i<N(bufs); i++) {
+      if (is_none (bufs[i]->extra) != is_none (bufs[0]->extra)) {
+	menu_append_buffer (s, bufs[i]);
+	count++;
+      }
+      if (count == 10) break;
+    }
   }
   s << ")";
   return eval (s);
@@ -561,7 +581,7 @@ tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
     buf->extra= name;
-    if (aux == "* Help *") {
+    if (starts (aux, "Help - ")) {
       buf->fm= "help";
       buf->read_only= true;
     }
@@ -573,24 +593,33 @@ tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
   }
 }
 
-void
-tm_data_rep::set_help_buffer (url name, tree doc) {
-  set_aux_buffer ("* Help *", name, doc);
-  tree t= tuple (name->t, doc);
-  hist_pos++;
-  if ((hist_pos>=0) && (hist_pos<N(history)) && (history[hist_pos]!=t))
-    history->resize (hist_pos);
-  if (hist_pos == N(history))
-    history << tuple (name->t, doc);
+static string
+get_doc_title (tree t) {
+  if (is_atomic (t)) return "";
+  if (is_compound (t, "doc-title") ||
+      is_compound (t, "tmdoc-title") ||
+      is_compound (t, "tmdoc-title*") ||
+      is_compound (t, "tmweb-title"))
+    return tree_to_verbatim (t[0]);
+  else {
+    for (int i=0; i<N(t); i++) {
+      string r= get_doc_title (t[i]);
+      if (r != "") return r;
+    }
+    return "";
+  }
+}
+
+string
+get_help_title (url name, tree t) {
+  string s= get_doc_title (t);
+  if (s == "") return "Help - " * as_string (tail (name));
+  else return "Help - " * s;
 }
 
 void
-tm_data_rep::browse_help (int delta) {
-  if (hist_pos + delta < 0) return;
-  if (hist_pos + delta >= N(history)) return;
-  hist_pos += delta-1;
-  tree t= history[hist_pos+1];
-  set_help_buffer (as_url (t[0]), t[1]);
+tm_data_rep::set_help_buffer (url name, tree doc) {
+  set_aux_buffer (get_help_title (name, doc), name, doc);
 }
 
 /******************************************************************************

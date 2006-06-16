@@ -14,6 +14,7 @@
 
 (texmacs-module (texmacs menus file-menu)
   (:use
+    (utils library cursor)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)
     (texmacs texmacs tm-print)))
@@ -133,6 +134,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind go-menu
+  (when (cursor-has-history?)
+    ("Back" (cursor-history-backward)))
+  (when (cursor-has-future?)
+    ("Forward" (cursor-history-forward)))
+  ---
   (link buffer-menu)
   (if (nnull? (bookmarks-menu))
       ---

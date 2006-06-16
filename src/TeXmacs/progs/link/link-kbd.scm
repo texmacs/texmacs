@@ -31,6 +31,4 @@
   ("link return" (locus-link-follow))
   ("link c" (build-constellation-page))
   ("link i" (build-locus-page))
-  ("link e" (interactive build-environment-page))
-  ("C-<" (cursor-history-backward))
-  ("C->" (cursor-history-forward)))
+  ("link e" (interactive build-environment-page)))

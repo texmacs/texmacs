@@ -89,7 +89,6 @@ public:
   virtual void revert_buffer (url name, tree doc) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
-  virtual void browse_help (int delta) = 0;
   virtual object get_buffer_menu () = 0;
 
   /* Projects */

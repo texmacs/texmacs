@@ -66,9 +66,11 @@ tm_data_rep::load_buffer (url u, string fm, int where, bool autosave_flag) {
   }
 
   if (fm == "help") {
+    extern string get_help_title (url name, tree t);
     tree doc= load_tree (u, fm);
     if (doc == "error") return;
-    if (where == 1) new_buffer_in_new_window ("* Help *", doc);
+    if (where == 1)
+      new_buffer_in_new_window (get_help_title (u, doc), doc);
     set_help_buffer (u, doc);
     return;
   }
@@ -273,7 +275,7 @@ tm_data_rep::no_name () {
 bool
 tm_data_rep::help_buffer () {
   tm_buffer buf= get_buffer ();
-  return buf->name == "* Help *";
+  return buf->fm == "help";
 }
 
 bool
