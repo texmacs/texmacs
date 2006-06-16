@@ -132,6 +132,15 @@ tmg_set_font_rules (SCM arg1) {
 }
 
 SCM
+tmg_window_get_id () {
+  // SCM_DEFER_INTS;
+  int out= get_server()->get_window_id ();
+  // SCM_ALLOW_INTS;
+
+  return int_to_scm (out);
+}
+
+SCM
 tmg_window_set_property (SCM arg1, SCM arg2) {
   SCM_ASSERT_SCHEME_TREE (arg1, SCM_ARG1, "window-set-property");
   SCM_ASSERT_SCHEME_TREE (arg2, SCM_ARG2, "window-set-property");
@@ -1035,6 +1044,7 @@ initialize_glue_server () {
   gh_new_procedure ("kbd-pre-rewrite", (FN) tmg_kbd_pre_rewrite, 1, 0, 0);
   gh_new_procedure ("kbd-post-rewrite", (FN) tmg_kbd_post_rewrite, 1, 0, 0);
   gh_new_procedure ("set-font-rules", (FN) tmg_set_font_rules, 1, 0, 0);
+  gh_new_procedure ("window-get-id", (FN) tmg_window_get_id, 0, 0, 0);
   gh_new_procedure ("window-set-property", (FN) tmg_window_set_property, 2, 0, 0);
   gh_new_procedure ("window-get-property", (FN) tmg_window_get_property, 1, 0, 0);
   gh_new_procedure ("show-header", (FN) tmg_show_header, 1, 0, 0);

@@ -130,6 +130,7 @@ public:
 	    tree style, hashmap<string,tree>& H, tree& drd, bool& flag) = 0;
 
   /* getting window properties */
+  virtual int  get_window_id () = 0;
   virtual void set_window_property (scheme_tree what, scheme_tree val) = 0;
   virtual void set_bool_window_property (string what, bool val) = 0;
   virtual void set_int_window_property (string what, int val) = 0;

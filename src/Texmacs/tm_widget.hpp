@@ -25,6 +25,7 @@ class tm_widget_rep: public basic_widget_rep {
 public:
   server_rep* sv;
   hashmap<tree,tree> props;
+  bool serial;
 
 protected:
   bool     footer_flag;        // footer visible ?
