@@ -74,7 +74,6 @@
   (set-buffer revert_buffer (void url content))
   (set-aux-buffer set_aux_buffer (void string url content))
   (set-help-buffer set_help_buffer (void url content))
-  (browse-help browse_help (void int))
   (get-buffer-menu get_buffer_menu (object))
 
   (project-attach project_attach (void string))

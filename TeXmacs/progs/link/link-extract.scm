@@ -76,7 +76,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (build-constellation-page)
-  (let* ((name "* Link constellation *")
+  (let* ((name "Link constellation")
 	 (style '(tuple "generic"))
 	 (cl (sort (get-constellation) string<=?))
 	 (l (map (lambda (x) `(hlink ,x ,x)) cl))

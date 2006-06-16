@@ -16,6 +16,7 @@
   (:use
     (utils edit variants)
     (utils edit auto-close)
+    (utils library cursor)
     (generic generic-edit)
     (source source-edit)))
 
@@ -130,6 +131,8 @@
 	    (insert "\\")
 	    (make-hybrid)))
   ("M-\\" (make-hybrid))
+  ("C-<" (cursor-history-backward))
+  ("C->" (cursor-history-forward))
   ("accent:hat" "^")
   ("accent:deadhat" "^")
   ("accent:tilde" "~")

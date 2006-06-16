@@ -636,19 +636,6 @@ tmg_set_help_buffer (SCM arg1, SCM arg2) {
 }
 
 SCM
-tmg_browse_help (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "browse-help");
-
-  int in1= scm_to_int (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->browse_help (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_get_buffer_menu () {
   // SCM_DEFER_INTS;
   object out= get_server()->get_buffer_menu ();
@@ -1088,7 +1075,6 @@ initialize_glue_server () {
   gh_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);
   gh_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   gh_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
-  gh_new_procedure ("browse-help", (FN) tmg_browse_help, 1, 0, 0);
   gh_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);
   gh_new_procedure ("project-attach", (FN) tmg_project_attach, 1, 0, 0);
   gh_new_procedure ("project-detach", (FN) tmg_project_detach, 0, 0, 0);
