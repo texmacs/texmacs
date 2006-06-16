@@ -48,6 +48,12 @@ icon_bar_name (int which) {
 * Properties of the current window
 ******************************************************************************/
 
+int
+tm_layout_rep::get_window_id () {
+  tm_widget meta= get_meta ();
+  return meta->serial;
+}
+
 void
 tm_layout_rep::set_window_property (scheme_tree what, scheme_tree val) {
   tm_widget meta= get_meta ();

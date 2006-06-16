@@ -128,8 +128,10 @@ make_texmacs_widget (server_rep* sv) {
 * Meta editor constructor and destructor
 ******************************************************************************/
 
+static int tm_widget_serial= 0;
+
 tm_widget_rep::tm_widget_rep (server_rep* sv2, display dis):
-  basic_widget_rep (dis, 1), sv (sv2),
+  basic_widget_rep (dis, 1), sv (sv2), serial (tm_widget_serial++),
   footer_flag (true), text_ptr (NULL),
   texmacs_menu (NULL), texmacs_icon_menu (NULL)
 {

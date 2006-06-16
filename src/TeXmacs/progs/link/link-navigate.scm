@@ -309,22 +309,27 @@
 ;; Position history
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define cursor-history '())
-(define cursor-future '())
+(define cursor-history (make-ahash-table))
+(define cursor-future (make-ahash-table))
+
+(define (history-get) (ahash-ref* cursor-history (window-get-id) '()))
+(define (history-set l) (ahash-set! cursor-history (window-get-id) l))
+(define (future-get) (ahash-ref* cursor-future (window-get-id) '()))
+(define (future-set l) (ahash-set! cursor-future (window-get-id) l))
 
 (define (cursor-same? l p)
   (and (nnull? l) (== (position-get (car l)) p)))
 
 (tm-define (cursor-history-add p)
   (:synopsis "Add current cursor position into the history")
-  (if (cursor-same? cursor-future p)
-      (with pos (car cursor-future)
-	(set! cursor-future (cdr cursor-future))
-	(set! cursor-history (cons pos cursor-history)))
-      (when (not (cursor-same? cursor-history p))
+  (if (cursor-same? (future-get) p)
+      (with pos (car (future-get))
+	(future-set (cdr (future-get)))
+	(history-set (cons pos (history-get))))
+      (when (not (cursor-same? (history-get) p))
 	(with pos (position-new)
 	  (position-set pos p)
-	  (set! cursor-history (cons pos cursor-history))))))
+	  (history-set (cons pos (history-get)))))))
 
 (define (position-valid? pos)
   (and-with t (path->tree (cDr (position-get pos)))
@@ -332,16 +337,16 @@
 
 (tm-define (cursor-has-history?)
   (:synopsis "Does there exist a previous position in history?")
-  (nnull? cursor-history))
+  (nnull? (history-get)))
 
 (tm-define (cursor-history-backward)
   (:synopsis "Go to previous position in history")
-  (when (nnull? cursor-history)
-    (with pos (car cursor-history)
-      (set! cursor-history (cdr cursor-history))
+  (when (nnull? (history-get))
+    (with pos (car (history-get))
+      (history-set (cdr (history-get)))
       (if (position-valid? pos)
 	  (begin
-	    (set! cursor-future (cons pos cursor-future))
+	    (future-set (cons pos (future-get)))
 	    (if (== (cursor-path) (position-get pos))
 		(cursor-history-backward)
 		(go-to (position-get pos))))
@@ -351,16 +356,16 @@
 
 (tm-define (cursor-has-future?)
   (:synopsis "Does there exist a next position in history?")
-  (nnull? cursor-future))
+  (nnull? (future-get)))
 
 (tm-define (cursor-history-forward)
   (:synopsis "Go to next position in history")
-  (when (nnull? cursor-future)
-    (with pos (car cursor-future)
-      (set! cursor-future (cdr cursor-future))
+  (when (nnull? (future-get))
+    (with pos (car (future-get))
+      (future-set (cdr (future-get)))
       (if (position-valid? pos)
 	  (begin
-	    (set! cursor-history (cons pos cursor-history))
+	    (history-set (cons pos (history-get)))
 	    (if (== (cursor-path) (position-get pos))
 		(cursor-history-forward)
 		(go-to (position-get pos))))
