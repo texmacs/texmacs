@@ -1,13 +1,18 @@
-<TeXmacs|1.0.6.1>
+<TeXmacs|1.0.6.2>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.2>
+  <section|Changes from version 1.0.6 to 1.0.6.3>
 
   <\itemize>
+    <item>Improved system for hyperlinks and navigation (1.0.6.3).
+
+    <item>Replacement of the <name|Proclus> plug-in by an integrated linking
+    tool (1.0.6.3).
+
     <item>Simplified and improved table editing (1.0.6.2).
 
     <item>First version of <TeXmacs> server (1.0.6.2).
