@@ -221,6 +221,7 @@ is_multi_paragraph (tree t) {
   case DPAGES:
   case WITH:
   case MARK:
+  case EXPAND_AS:
   case STYLE_WITH:
   case VAR_STYLE_WITH:
   case STYLE_ONLY:
@@ -230,6 +231,8 @@ is_multi_paragraph (tree t) {
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;
+  case LOCUS:
+    return is_multi_paragraph (t[N(t)-1]);
   default:
     if (L(t) < START_EXTENSIONS) return false;
     else {

@@ -28,6 +28,11 @@ empty_cell () {
   return "";
 }
 
+static bool
+is_empty_cell (tree t) {
+  return t == "" || t == tree (DOCUMENT, "");
+}
+
 static tree
 empty_row (int nr_cols) {
   int i;
@@ -102,7 +107,7 @@ edit_table_rep::search_format (int& row, int& col) {
   if (nil (p)) return p;
   if (is_func (subtree (et, p), TFORMAT)) return p;
   if (is_func (subtree (et, path_up (p)), TFORMAT)) return path_up (p);
-  ins_unary (p, TFORMAT);
+  insert_node (p * 0, TFORMAT);
   return p;
 }
 
@@ -426,7 +431,7 @@ edit_table_rep::table_get_limits (
 }
 
 void
-edit_table_rep::table_delete (path fp, int row, int col, int delr, int delc) {
+edit_table_rep::table_remove (path fp, int row, int col, int delr, int delc) {
   path p= search_table (fp);
   int nr_rows, nr_cols;
   table_get_extents (p, nr_rows, nr_cols);
@@ -604,6 +609,22 @@ edit_table_rep::table_go_to (path fp, int row, int col, bool at_start) {
 }
 
 void
+edit_table_rep::table_go_to_border (path fp, bool right) {
+  while ((rp < fp) && (is_func (subtree (et, path_up (fp)), TFORMAT)))
+    fp= path_up (fp);
+  if ((rp < fp) &&
+      is_document (subtree (et, path_up (fp))) &&
+      (rp < path_up (fp)) &&
+      is_extension (subtree (et, path_up (fp, 2)), 1))
+    fp= path_up (fp);
+  if ((rp < fp) && is_extension (subtree (et, path_up (fp)), 1))
+    fp= path_up (fp);
+  if ((rp < fp) && is_func (subtree (et, path_up (fp)), SUBTABLE, 1))
+    fp= path_up (fp);
+  go_to_border (fp, right);
+}
+
+void
 edit_table_rep::back_table (path p, bool forward) {
   while (true) {
     tree st= subtree (et, p);
@@ -646,14 +667,14 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   bool flag=true;
   for (j=0; j<nr_cols; j++) {
     path q= search_cell (p, row, j);
-    flag= flag && (subtree (et, q) == empty_cell ());
+    flag= flag && is_empty_cell (subtree (et, q));
   }
   if (flag) {
     int i1, j1, i2, j2;
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_rows-1 >= i1) {
-      table_delete_row (forward);
+      table_remove_row (forward, true);
       return;
     }
   }
@@ -661,14 +682,14 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   flag= true;
   for (i=0; i<nr_rows; i++) {
     path q= search_cell (p, i, col);
-    flag= flag && (subtree (et, q) == empty_cell ());
+    flag= flag && is_empty_cell (subtree (et, q));
   }
   if (flag) {
     int i1, j1, i2, j2;
     path fp= search_format ();
     table_get_limits (fp, i1, j1, i2, j2);
     if (nr_cols-1 >= j1) {
-      table_delete_column (forward);
+      table_remove_column (forward, true);
       return;
     }
   }
@@ -677,7 +698,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       path q= search_cell (p, i, j);
-      flag= flag && (subtree (et, q) == empty_cell ());
+      flag= flag && is_empty_cell (subtree (et, q));
     }
   if (flag) {
     destroy_table ();
@@ -692,18 +713,7 @@ edit_table_rep::back_in_table (tree t, path p, bool forward) {
     if (col>0) { table_go_to (p, row, col-1, false); return; }
     if (row>0) { table_go_to (p, row-1, nr_cols-1, false); return; }
   }
-  while ((rp < p) && (is_func (subtree (et, path_up (p)), TFORMAT)))
-    p= path_up (p);
-  if ((rp < p) &&
-      is_document (subtree (et, path_up (p))) &&
-      (rp < path_up (p)) &&
-      is_extension (subtree (et, path_up (p, 2)), 1))
-    p= path_up (p);
-  if ((rp < p) && is_extension (subtree (et, path_up (p)), 1))
-    p= path_up (p);
-  if ((rp < p) && is_func (subtree (et, path_up (p)), SUBTABLE, 1))
-    p= path_up (p);
-  go_to_border (p, !forward);
+  table_go_to_border (p, !forward);
 }
 
 /******************************************************************************
@@ -882,7 +892,7 @@ table_undecorate (tree st, int row, int col) {
   for (k=0; k<n-1; k++)
     if ((as_int (st[k][0]) == (row+1)) && (as_int (st[k][2]) == (col+1)))
       if (is_func (st[k], CWITH, 6) && (st[k][4] == CELL_DECORATION)) {
-	int dec_row, dec_col;
+	int dec_row= 0, dec_col= 0;
 	tree T= copy (st[k][5]);
 	search_decoration (T, dec_row, dec_col);
 	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
@@ -912,8 +922,8 @@ edit_table_rep::table_hor_decorate (path fp, int col, int cbef, int caft) {
     t2= table_get_subtable (fp, 0, col+1   , nr_rows-1, col+caft, true);
   if (cbef>0)
     t1= table_get_subtable (fp, 0, col-cbef, nr_rows-1, col-1   , true);
-  if (caft>0) table_delete (fp, 0, col+1   , 0, caft);
-  if (cbef>0) table_delete (fp, 0, col-cbef, 0, cbef);
+  if (caft>0) table_remove (fp, 0, col+1   , 0, caft);
+  if (cbef>0) table_remove (fp, 0, col-cbef, 0, cbef);
   col -= cbef;
 
   st= subtree (et, fp);
@@ -955,8 +965,8 @@ edit_table_rep::table_ver_decorate (path fp, int row, int rbef, int raft) {
     t2= table_get_subtable (fp, row+1   , 0, row+raft, nr_cols-1, true);
   if (rbef>0)
     t1= table_get_subtable (fp, row-rbef, 0, row-1   , nr_cols-1, true);
-  if (raft>0) table_delete (fp, row+1   , 0, raft, 0);
-  if (rbef>0) table_delete (fp, row-rbef, 0, rbef, 0);
+  if (raft>0) table_remove (fp, row+1   , 0, raft, 0);
+  if (rbef>0) table_remove (fp, row-rbef, 0, rbef, 0);
   row -= rbef;
 
   st= subtree (et, fp);
@@ -1005,10 +1015,10 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
     path q= fp;
     if (is_extension (subtree (et, path_up (q)), 1)) q= path_up (q);
     tree st= subtree (et, path_up (q));
-    if (is_document (st)) ins_unary (fp, DOCUMENT);
+    if (is_document (st)) insert_node (fp * 0, DOCUMENT);
     else if (is_concat (st) && is_document (subtree (et, path_up (q, 2)))) {
       int n= N(st), l= last_item (q);
-      ins_unary (fp, DOCUMENT);
+      insert_node (fp * 0, DOCUMENT);
       if (l != (n-1)) {
 	split (path_inc (q));
 	correct_concat (path_inc (path_up (q)));
@@ -1021,6 +1031,7 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
     }
   }
 
+  table_correct_block_content ();
   set_message ("E-down: new row, E-right: new column", "table");
 }
 
@@ -1036,6 +1047,7 @@ edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   p= path (0, p);
   assign (cp * 0, T);
   go_to (cp * path (0, p));
+  table_correct_block_content ();
   set_message ("E-down: new row, E-right: new column", "table");
 }
 
@@ -1067,7 +1079,7 @@ edit_table_rep::table_disactivate () {
   if (nil (fp)) return;
   tree st= subtree (et, fp);
   if (!is_func (st, TFORMAT)) return;
-  ins_unary (fp, INACTIVE);
+  insert_node (fp * 0, INACTIVE);
   set_message ("return: reactivate", "deactivate table");
 }
 
@@ -1093,6 +1105,7 @@ edit_table_rep::table_insert_row (bool forward) {
   if (nr_rows+1 > i2) return;
   table_insert (fp, row + (forward? 1: 0), col, 1, 0);
   table_go_to (fp, row + (forward? 1: 0), col);
+  table_correct_block_content ();
 }
 
 void
@@ -1106,44 +1119,57 @@ edit_table_rep::table_insert_column (bool forward) {
   if (nr_cols+1 > j2) return;
   table_insert (fp, row, col + (forward? 1: 0), 0, 1);
   table_go_to (fp, row, col + (forward? 1: 0));
+  table_correct_block_content ();
 }
 
 void
-edit_table_rep::table_delete_row (bool forward) {
+edit_table_rep::table_remove_row (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
-  if (nr_rows-1 < i1) {
-    destroy_table ();
-    return;
+  if (nr_rows-1 < i1) destroy_table ();
+  else if (flag) {
+    table_remove (fp, row, col, 1, 0);
+    int ncol= col;
+    if ((!forward) && (col == 0)) ncol= nr_cols-1;
+    if (forward && (col == nr_cols-1)) ncol= 0;
+    table_go_to (fp, max (0, row + (forward? 0: -1)), ncol, forward);
   }
-  table_delete (fp, row, col, 1, 0);
-  int ncol= col;
-  if ((!forward) && (col == 0)) ncol= nr_cols-1;
-  if (forward && (col == nr_cols-1)) ncol= 0;
-  table_go_to (fp, max (0, row + (forward? 0: -1)), ncol, forward);
+  else {
+    if (!forward) row--;
+    if (row >= 0) table_remove (fp, row, col, 1, 0);
+    if (row < nr_rows-1 && forward) table_go_to (fp, row, col, forward);
+    else if (forward || row < 0) table_go_to_border (fp, !forward);
+  }
+  table_correct_block_content ();
 }
 
 void
-edit_table_rep::table_delete_column (bool forward) {
+edit_table_rep::table_remove_column (bool forward, bool flag) {
   int row, col;
   path fp= search_format (row, col);
   if (nil (fp)) return;
   int nr_rows, nr_cols, i1, j1, i2, j2;
   table_get_extents (fp, nr_rows, nr_cols);
   table_get_limits (fp, i1, j1, i2, j2);
-  if (nr_cols-1 < j1) {
-    destroy_table ();
-    return;
+  if (nr_cols-1 < j1) destroy_table ();
+  else if (flag) {
+    table_remove (fp, row, col, 0, 1);
+    int ncol= max (0, col + (forward? 0: -1));
+    if ((!forward) && (col == 0)) ncol= nr_cols-1;
+    if (forward && (col == nr_cols-1)) ncol= 0;
+    table_go_to (fp, row, ncol, forward);
   }
-  table_delete (fp, row, col, 0, 1);
-  int ncol= max (0, col + (forward? 0: -1));
-  if ((!forward) && (col == 0)) ncol= nr_cols-1;
-  if (forward && (col == nr_cols-1)) ncol= 0;
-  table_go_to (fp, row, ncol, forward);
+  else {
+    if (!forward) col--;
+    if (col >= 0) table_remove (fp, row, col, 0, 1);
+    if (col < nr_cols-1 && forward) table_go_to (fp, row, col, forward);
+    else if (forward || col < 0) table_go_to_border (fp, !forward);
+  }
+  table_correct_block_content ();
 }
 
 int
@@ -1252,6 +1278,28 @@ edit_table_rep::table_column_decoration (bool forward) {
 }
 
 void
+edit_table_rep::table_correct_block_content () {
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (nil (fp)) return;
+  table_get_extents (fp, nr_rows, nr_cols);
+  int row, col;
+  for (row= 0; row < nr_rows; row++)
+    for (col= 0; col < nr_cols; col++) {
+      path cp= search_cell (fp, row, col);
+      tree st= subtree (et, cp);
+      tree t1= table_get_format (fp, row+1, col+1, row+1, col+1, CELL_BLOCK);
+      tree t2= table_get_format (fp, row+1, col+1, row+1, col+1, CELL_HYPHEN);
+      bool f1= (t1 == "no" || (t1 == "auto" && t2 == "n"));
+      bool f2= (t1 == "yes" || (t1 == "auto" && is_atomic (t2) && t2 != "n"));
+      if (f1 && is_document (st) && N(st) == 1)
+	remove_node (cp * 0);
+      else if (f2 && !is_document (st))
+	insert_node (cp * 0, DOCUMENT);
+    }
+}
+
+void
 edit_table_rep::set_cell_mode (string mode) {
   cell_mode= mode;
 }
@@ -1263,26 +1311,24 @@ edit_table_rep::get_cell_mode () {
 
 void
 edit_table_rep::cell_set_format (string var, string val) {
-  if (val == "") cell_del_format (var);
-  else {
-    if (selection_active_table ()) {
-      int row1, col1, row2, col2;
-      path fp= selection_get_subtable (row1, col1, row2, col2);
-      table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
-    }
-    else {
-      int row, col;
-      path fp= search_format (row, col); row++; col++;
-      if (nil (fp)) return;
-      if (cell_mode=="row")
-	table_set_format (fp, row, 1, row, -1, var, val);
-      else if (cell_mode=="column")
-	table_set_format (fp, 1, col, -1, col, var, val);
-      else if (cell_mode=="table")
-	table_set_format (fp, 1, 1, -1, -1, var, val);
-      else table_set_format (fp, row, col, row, col, var, val);
-    }
+  if (selection_active_table ()) {
+    int row1, col1, row2, col2;
+    path fp= selection_get_subtable (row1, col1, row2, col2);
+    table_set_format (fp, row1+1, col1+1, row2+1, col2+1, var, val);
   }
+  else {
+    int row, col;
+    path fp= search_format (row, col); row++; col++;
+    if (nil (fp)) return;
+    if (cell_mode=="row")
+      table_set_format (fp, row, 1, row, -1, var, val);
+    else if (cell_mode=="column")
+      table_set_format (fp, 1, col, -1, col, var, val);
+    else if (cell_mode=="table")
+      table_set_format (fp, 1, 1, -1, -1, var, val);
+    else table_set_format (fp, row, col, row, col, var, val);
+  }
+  table_correct_block_content ();
 }
 
 string
@@ -1315,30 +1361,7 @@ edit_table_rep::cell_del_format (string var) {
     else if (cell_mode=="table") table_del_format (fp, 1, 1, -1, -1, var);
     else table_del_format (fp, row, col, row, col, var);
   }
-}
-
-void
-edit_table_rep::cell_multi_paragraph (bool flag) {
-  int row, col;
-  path fp= search_format (row, col);
-  if (nil (fp)) return;
-  path cp= search_cell (fp, row, col);
-  tree st= subtree (et, cp);
-
-  if (flag && (!is_document (st)))
-    ins_unary (cp, DOCUMENT);
-  else if ((!flag) && is_document (st) && (N(st) == 1))
-    rem_unary (cp);
-}
-
-bool
-edit_table_rep::cell_is_multi_paragraph () {
-  int row, col;
-  path fp= search_format (row, col);
-  if (nil (fp)) return false;
-  path cp= search_cell (fp, row, col);
-  tree st= subtree (et, cp);
-  return is_document (st);
+  table_correct_block_content ();
 }
 
 void

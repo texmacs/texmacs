@@ -37,13 +37,14 @@ public:
   url (string dir, string name);
   inline bool operator == (url u) { return rep->t == u->t; }
   inline bool operator != (url u) { return rep->t != u->t; }
-  inline url  operator [] (int i) { return url (rep->t[i]); }
-  inline friend url as_url (tree t) { return url (t); }
+  inline url operator [] (int i) { return url (rep->t[i]); }
+  friend url as_url (tree t);
 };
 CONCRETE_CODE(url);
 
 ostream& operator << (ostream& out, url u);
 string as_string (url u, int type= URL_SYSTEM);
+inline url as_url(tree t) { return url(t); }
 
 /******************************************************************************
 * url constructors
@@ -72,6 +73,8 @@ url operator * (url u1, char* name);
 url operator * (url u1, string name);
 url operator | (url u1, url u2);      // disjunction of urls like in file paths
 
+inline url url_parent (url u) { return u * url_parent (); }
+
 /******************************************************************************
 * predicates
 ******************************************************************************/
@@ -88,6 +91,7 @@ inline bool is_root (url u, string s) {
   return is_root (u) && (u[1]->t->label == s); }
 inline bool is_root_web (url u) {
   return is_root (u, "http") || is_root (u, "ftp"); }
+inline bool is_root_tmfs (url u) { return is_root (u, "tmfs"); }
 inline bool is_wildcard (url u) { return is_tuple (u->t, "wildcard"); }
 inline bool is_wildcard (url u, int n) {
   return is_tuple (u->t, "wildcard", n); }
@@ -95,6 +99,7 @@ inline bool is_wildcard (url u, int n) {
 bool is_rooted (url u);
 bool is_rooted (url u, string protocol);
 bool is_rooted_web (url u);
+bool is_rooted_tmfs (url u);
 bool is_name (url u);
 bool is_rooted_name (url u);
 bool is_path (url u);
@@ -118,6 +123,8 @@ url    reroot (url u, string s);   // reroot using new protocol
 url    expand (url u);             // rewrite a/{b:c} -> a/b:a/c
 url    sort (url u);               // order items in ors
 url    factor (url u);             // inverse of expand; also sorts
+bool   descends (url u, url base); // does u descend from base?
+bool   is_secure (url u);          // is u secure?
 
 /******************************************************************************
 * url resolution

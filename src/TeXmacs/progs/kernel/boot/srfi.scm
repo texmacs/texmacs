@@ -15,7 +15,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel boot srfi))
-(export and-let* receive case-lambda cut cute)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SECTION : and-let* special form
@@ -35,7 +34,7 @@
 ;; but it does not provide as good an error reporting.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmacro and-let* (claws . body)
+(define-public-macro (and-let* claws . body)
   (let* ((new-vars '())
 	 (result (cons 'and '()))
 	 (growth-point result))
@@ -80,7 +79,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copied from guile-1.6.0.
 
-(define-macro (receive vars vals . body)
+(define-public-macro (receive vars vals . body)
   `(call-with-values (lambda () ,vals)
      (lambda ,vars ,@body)))
 
@@ -90,7 +89,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copied from guile-1.6.0. Author: Martin Grabmueller
 
-(define-macro (case-lambda . clauses)
+(define-public-macro (case-lambda . clauses)
 
   ;; Return the length of the list @var{l}, but allow dotted list.
   (define (alength l)
@@ -162,7 +161,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copied from GLUG repository. Author: Daniel Skarda <0rfelyus@ucw.cz>
 
-(define-macro (cut slot . slots)
+(define-public-macro (cut slot . slots)
   (let loop ((slots	(cons slot slots))
 	     (params	'())
 	     (args	'()))
@@ -183,7 +182,7 @@
             (else
              (loop rest params (cons s args))))))))
 
-(define-macro (cute . slots)
+(define-public-macro (cute . slots)
   (let ((temp
 	 (map (lambda (s) (and (not (memq s '(<> <...>))) (gensym))) slots)))
     `(let ,(delq! #f (map (lambda (t s) (and t (list t s))) temp slots))

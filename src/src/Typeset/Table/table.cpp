@@ -13,6 +13,7 @@
 #include "Table/table.hpp"
 #include "Boxes/construct.hpp"
 #include "Format/format.hpp"
+#include "analyze.hpp"
 
 lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 
@@ -22,7 +23,8 @@ lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 
 table_rep::table_rep (edit_env env2, int status2, int i0b, int j0b):
   var (""), env (env2), status (status2), i0 (i0b), j0 (j0b),
-  T (NULL), nr_rows (0), width (0), height (0) {}
+  T (NULL), nr_rows (0), mw (NULL), lw (NULL), rw (NULL),
+  width (0), height (0) {}
 
 table_rep::~table_rep () {
   if (T != NULL) {
@@ -30,6 +32,9 @@ table_rep::~table_rep () {
     for (i=0; i<nr_rows; i++) delete[] T[i];
     delete[] T;
   }
+  if (mw != NULL) delete[] mw;
+  if (lw != NULL) delete[] lw;
+  if (rw != NULL) delete[] rw;
 }
 
 void
@@ -89,6 +94,9 @@ table_rep::typeset_table (tree fm, tree t, path ip) {
   for (i=0; i<nr_rows; i++)
     typeset_row (i, subformat[i], t[i], descend (ip, i));
   STACK_DELETE_ARRAY (subformat);
+  mw= new SI[nr_cols];
+  lw= new SI[nr_cols];
+  rw= new SI[nr_cols];
 }
 
 void
@@ -127,7 +135,7 @@ table_rep::format_table (tree fm) {
   }
   else {
     width= 0;
-    hmode= "";
+    hmode= "auto";
   }
   if (var->contains (TABLE_HEIGHT)) {
     height= env->as_length (env->exec (var[TABLE_HEIGHT]));
@@ -137,7 +145,7 @@ table_rep::format_table (tree fm) {
   }
   else {
     height= 0;
-    vmode = "";
+    vmode = "auto";
   }
   if (var->contains (TABLE_LSEP))
     lsep= env->as_length (env->exec (var[TABLE_LSEP]));
@@ -172,11 +180,19 @@ table_rep::format_table (tree fm) {
   if (var->contains (TABLE_HYPHEN))
     hyphen= as_string (env->exec (var[TABLE_HYPHEN]));
   else hyphen= "n";
-  if (var->contains (TABLE_ROW_ORIGIN))
+  if (var->contains (TABLE_ROW_ORIGIN)) {
     row_origin= as_int (env->exec (var[TABLE_ROW_ORIGIN]));
+    if (row_origin < 0) row_origin += nr_rows;
+    else row_origin--;
+    row_origin= max (min (row_origin, nr_rows - 1), 0);
+  }
   else row_origin= 0;
-  if (var->contains (TABLE_COL_ORIGIN))
+  if (var->contains (TABLE_COL_ORIGIN)) {
     col_origin= as_int (env->exec (var[TABLE_COL_ORIGIN]));
+    if (col_origin < 0) col_origin += nr_cols;
+    else col_origin--;
+    col_origin= max (min (col_origin, nr_cols - 1), 0);
+  }
   else col_origin= 0;
 }
 
@@ -348,24 +364,36 @@ sum (double* a, int n) {
 }
 
 static void
-blow_up (SI* w, SI* W, SI room, double* part, int n) {
+blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
+	 SI room, double* part, int n)
+{
   int i;
   double total= sum (part, n);
-  if (total <= 0) {
+  if (total <= 0)
     for (i=0; i<n; i++) part[i]= 1;
-    total= n;
-  }
+  int nr_ext= 0;
+  for (i=0; i<n; i++)
+    if (w[i] != W[i] && part[i] > 0)
+      nr_ext++;
+  if (nr_ext != 0)
+    for (i=0; i<n; i++)
+      if (w[i] == W[i])
+	part[i]= 0;
+  total= sum (part, n);
+
   STACK_NEW_ARRAY (Part, double, n);
   for (i=0; i<n; i++) Part[i]= part[i];
 
   SI old_room= room;
   while (true) {
     for (i=0; i<n; i++)
-      if (W[i] > w[i]) {
+      if (part[i] > 0) {
 	SI extra= (SI) ((part[i]/total) * old_room);
 	if (w[i]+extra >= W[i]) {
 	  room    -= (W[i]-w[i]);
 	  w[i]     = W[i];
+	  l[i]     = L[i];
+	  r[i]     = R[i];
 	  part[i]  = 0;
 	}
       }
@@ -383,8 +411,19 @@ blow_up (SI* w, SI* W, SI room, double* part, int n) {
     total= sum (part, n);
   }
   for (i=0; i<n; i++) {
-    SI extra= (SI) ((part[i]/total) * room);
+    SI extra = (SI) ((part[i]/total) * room);
     w[i] += extra;
+    if (L[i] + R[i] >= w[i]) {
+      SI s= l[i] + r[i];
+      SI S= L[i] + R[i];
+      double lambda= ((double) (w[i] - s)) / ((double) (S - s));
+      l[i] += (SI) (lambda * (L[i] - l[i]));
+      r[i]  = w[i] - l[i];
+    }
+    else {
+      l[i]= L[i];
+      r[i]= R[i];
+    }
   }
   STACK_DELETE_ARRAY (Part);
 }
@@ -394,40 +433,34 @@ blow_up (SI* w, SI* W, SI room, double* part, int n) {
 ******************************************************************************/
 
 void
-table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
-  position_columns ();
-  tmw= x2 - x1;
-  tlw= -x1;
-  trw= x2;
-}
-
-void
-table_rep::compute_widths (SI* mw, SI* lw, SI* rw, bool large) {
+table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
   int i, j;
   for (j=0; j<nr_cols; j++)
-    mw[j]= lw[j]= rw[j]= 0;
+    Mw[j]= Lw[j]= Rw[j]= 0;
 
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span==1)) {
+      if ((!nil (C)) && (C->col_span == 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
-	mw[j]= max (mw[j], cmw);
-	lw[j]= max (lw[j], clw);
-	rw[j]= max (rw[j], crw);
-	mw[j]= max (mw[j], lw[j] + rw[j]);
+	//cout << i << ", " << j << ": "
+	//<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
+	Mw[j]= max (Mw[j], cmw);
+	Lw[j]= max (Lw[j], clw);
+	Rw[j]= max (Rw[j], crw);
+	Mw[j]= max (Mw[j], Lw[j] + Rw[j]);
       }
     }
 
   for (j=0; j<nr_cols; j++)
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
-      if ((!nil (C)) && (C->col_span!=1)) {
+      if ((!nil (C)) && (C->col_span != 1)) {
 	SI cmw, clw, crw;
 	C->compute_width (cmw, clw, crw, large);
-	SI tot= sum (mw+j, C->col_span);
-	if (cmw > tot) mw[j] += cmw - tot;
+	SI tot= sum (Mw+j, C->col_span);
+	if (cmw > tot) Mw[j] += cmw - tot;
       }
     }
 }
@@ -446,12 +479,16 @@ table_rep::compute_horizontal_parts (double* part) {
 
 void
 table_rep::position_columns () {
-  STACK_NEW_ARRAY (mw, SI, nr_cols);
-  STACK_NEW_ARRAY (lw, SI, nr_cols);
-  STACK_NEW_ARRAY (rw, SI, nr_cols);
-  compute_widths (mw, lw, rw, false);
-  if (width != 0) {
-    SI hextra= max (width- sum (mw, nr_cols), 0);
+  //cout << "-------------------------------------\n";
+  //cout << "Position columns " << (width >> 8) << "\n";
+  compute_widths (mw, lw, rw, hmode == "auto");
+  //for (int i=0; i<nr_cols; i++)
+  //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+  //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
+  if (hmode != "auto") {
+    SI min_width= sum (mw, nr_cols);
+    SI hextra= width - min_width;
+    //cout << "Extra horizontal " << (hextra >> 8) << "\n";
     if (hextra > 0) {
       STACK_NEW_ARRAY (part, double, nr_cols);
       STACK_NEW_ARRAY (Mw, SI, nr_cols);
@@ -459,7 +496,18 @@ table_rep::position_columns () {
       STACK_NEW_ARRAY (Rw, SI, nr_cols);
       compute_horizontal_parts (part);
       compute_widths (Mw, Lw, Rw, true);
-      blow_up (mw, Mw, hextra, part, nr_cols);
+      SI max_width= sum (Mw, nr_cols);
+      SI computed_width= width;
+      if (hmode == "min") computed_width= min (width, max_width);
+      if (hmode == "max") computed_width= max (width, min_width);
+      hextra= max (computed_width - min_width, 0);
+      //for (int i=0; i<nr_cols; i++)
+      //cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
+      //<< (Lw[i]>>8) << ", " << (Rw[i]>>8) << "\n";
+      blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
+      //for (int i=0; i<nr_cols; i++)
+      //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+      //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mw);
       STACK_DELETE_ARRAY (Lw);
@@ -472,14 +520,13 @@ table_rep::position_columns () {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!nil (C)) {
-	if (C->hyphen != "n") {
-	  C->width= mw[j];
-	  C->fit_horizontally ();
-	}
 	if (!nil (C->T)) {
 	  C->T->width= mw[j]- C->lborder- C->rborder;
+	  C->T->hmode= "exact";
 	  C->T->position_columns ();
 	}
+	else if (C->hyphen != "n")
+	  C->width= mw[j];
       }
     }
 
@@ -489,39 +536,28 @@ table_rep::position_columns () {
   else if (halign == "r") xoff= -sum (mw, nr_cols);
   else if (halign == "L") xoff= -lw[0];
   else if (halign == "C")
-    xoff= -(sum (mw, nr_cols>>1)+ sum (mw, (nr_cols-1)>>1)+
-	    lw[nr_cols>>1]+ lw[(nr_cols-1)>>1]) >> 1;
-  else if (halign == "R") xoff= -sum (mw, nr_cols-1)- lw[nr_cols-1];
-  else xoff= -sum (mw, j0)- lw[j0];
+    xoff= -(sum (mw, nr_cols>>1) + sum (mw, (nr_cols-1)>>1)+
+	    lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
+  else if (halign == "R") xoff= -sum (mw, nr_cols - 1) - lw[nr_cols - 1];
+  else if (halign == "O") xoff= -sum (mw, col_origin) - lw[col_origin];
+  else xoff= -sum (mw, j0) - lw[j0];
 
   x1= xoff- lborder- lsep;
-  for (j=0; j<nr_cols; j++) {
-    for (i=0; i<nr_rows; i++) {
-      cell C= T[i][j];
-      if (!nil (C)) {
-	SI tot= sum (mw+j, C->col_span);
-	C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
-      }
-    }
-    xoff += mw[j];
-  }
+  for (j=0; j<nr_cols; j++) xoff += mw[j];
   x2= xoff+ rborder+ rsep;
-  STACK_DELETE_ARRAY (mw);
-  STACK_DELETE_ARRAY (lw);
-  STACK_DELETE_ARRAY (rw);
+}
+
+void
+table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
+  position_columns ();
+  tmw= x2 - x1;
+  tlw= -x1;
+  trw= x2;
 }
 
 /******************************************************************************
 * Vertical positioning
 ******************************************************************************/
-
-void
-table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
-  position_rows ();
-  tmh= y2 - y1;
-  tbh= -y1;
-  tth= y2;
-}
 
 void
 table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
@@ -573,17 +609,30 @@ table_rep::position_rows () {
   STACK_NEW_ARRAY (th, SI, nr_rows);
 
   compute_heights (mh, bh, th);
-  if (height != 0) {
-    SI vextra= max (height- sum (mh, nr_rows), 0);
+  if (vmode != "auto") {
+    SI min_height= sum (mh, nr_rows);
+    SI vextra= height - min_height;
     if (vextra > 0) {
       int i;
       STACK_NEW_ARRAY (part, double, nr_rows);
       STACK_NEW_ARRAY (Mh, SI, nr_rows);
+      STACK_NEW_ARRAY (Bh, SI, nr_rows);
+      STACK_NEW_ARRAY (Th, SI, nr_rows);
       compute_vertical_parts (part);
-      for (i=0; i<nr_rows; i++) Mh[i]= mh[i];
-      blow_up (mh, Mh, vextra, part, nr_rows);
+      for (i=0; i<nr_rows; i++) {
+	Mh[i]= mh[i];
+	Bh[i]= bh[i];
+	Th[i]= th[i];	
+      }
+      SI computed_height= height;
+      if (vmode == "min") computed_height= min (height, min_height);
+      if (vmode == "max") computed_height= max (height, min_height);
+      vextra= max (computed_height - min_height, 0);
+      blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows);
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mh);
+      STACK_DELETE_ARRAY (Bh);
+      STACK_DELETE_ARRAY (Th);
     }
   }
 
@@ -593,6 +642,7 @@ table_rep::position_rows () {
       cell C= T[i][j];
       if ((!nil (C)) && (!nil (C->T))) {
 	C->T->height= mh[j]- C->bborder- C->tborder;
+	C->T->vmode = "exact";
 	C->T->position_rows ();
       }
     }
@@ -605,10 +655,11 @@ table_rep::position_rows () {
   else if (valign == "b") yoff= sum (mh, nr_rows);
   else if (valign == "T") yoff= th[0];
   else if (valign == "C")
-    yoff= (sum (mh, nr_rows>>1)+ sum (mh, (nr_rows-1)>>1)+
-	   th[nr_rows>>1]+ th[(nr_rows-1)>>1]) >> 1;
-  else if (valign == "B") yoff= sum (mh, nr_rows-1)+ th[nr_rows-1];
-  else yoff= sum (mh, i0)+ th[i0];
+    yoff= (sum (mh, nr_rows>>1) + sum (mh, (nr_rows-1)>>1) +
+	   th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
+  else if (valign == "B") yoff= sum (mh, nr_rows - 1) + th[nr_rows - 1];
+  else if (valign == "O") yoff= sum (mh, row_origin) + th[row_origin];
+  else yoff= sum (mh, i0) + th[i0];
 
   y2= yoff+ tborder+ tsep;
   for (i=0; i<nr_rows; i++) {
@@ -629,9 +680,37 @@ table_rep::position_rows () {
   STACK_DELETE_ARRAY (th);
 }
 
+void
+table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
+  position_rows ();
+  tmh= y2 - y1;
+  tbh= -y1;
+  tth= y2;
+}
+
 /******************************************************************************
 * Generate table
 ******************************************************************************/
+
+void
+table_rep::finish_horizontal () {
+  int i, j;
+  SI xoff= x1 + lborder + lsep;
+  for (j=0; j<nr_cols; j++) {
+    for (i=0; i<nr_rows; i++) {
+      cell C= T[i][j];
+      if (!nil (C)) {
+	if (!nil (C->T))
+	  C->T->finish_horizontal ();
+	else if (C->hyphen != "n")
+	  C->finish_horizontal ();
+	SI tot= sum (mw+j, C->col_span);
+	C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
+      }
+    }
+    xoff += mw[j];
+  }
+}
 
 void
 table_rep::finish () {
@@ -656,7 +735,7 @@ table_rep::finish () {
   SI    y2= tb->y2;
   color fg= env->col;
   b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-	       lborder, rborder, bborder, rborder, fg, fg, true);
+	       lborder, rborder, bborder, tborder, fg, fg, true);
   SI Lsep= lsep+lborder, Rsep= rsep+rborder;
   SI Bsep= bsep+bborder, Tsep= tsep+tborder;
   if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))
@@ -733,11 +812,9 @@ EXTEND_NULL_CODE(lazy,lazy_table);
 format
 lazy_table_rep::query (lazy_type request, format fm) {
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
-    /* The following is still bugged
     SI tmw, tlw, trw;
-    T->compute_width (tmw, tlw, trw); */
-    SI tmw= 1;
-    return make_format_width (tmw);
+    T->compute_width (tmw, tlw, trw);
+    return make_format_width (max (tmw, 1));
   }
   return lazy_rep::query (request, fm);
 }
@@ -748,11 +825,12 @@ lazy_table_rep::produce (lazy_type request, format fm) {
   if (request == LAZY_VSTREAM) {
     if (fm->type == FORMAT_VSTREAM) {
       format_vstream fs= (format_vstream) fm;
-      if (T->var[TABLE_WIDTH] == "1par")
-	T->width= fs->width;
+      string s= as_string (T->var[TABLE_WIDTH]);
+      if (ends (s, "par"))
+	T->width= max ((SI) (as_double (s (0, N(s)-3)) * fs->width), 1);
     }
-    T->merge_borders ();
     T->position_columns ();
+    T->finish_horizontal ();
     T->position_rows ();
     array<box> bs= T->var_finish ();
     lazy tmp= make_lazy_paragraph (T->env, bs, ip);
@@ -767,6 +845,7 @@ make_lazy_table (edit_env env, tree t, path ip) {
   T->typeset (t, ip);
   T->handle_decorations ();
   T->handle_span ();
+  T->merge_borders (); // FIXME: introduce merge_border variables
   return lazy_table (T, ip);
 }
 
@@ -782,6 +861,7 @@ typeset_as_table (edit_env env, tree t, path ip) {
   T->handle_span ();
   T->merge_borders ();
   T->position_columns ();
+  T->finish_horizontal ();
   T->position_rows ();
   T->finish ();
   return T->b;
@@ -795,6 +875,7 @@ typeset_as_var_table (edit_env env, tree t, path ip) {
   T->handle_span ();
   T->merge_borders ();
   T->position_columns ();
+  T->finish_horizontal ();
   T->position_rows ();
   return T->var_finish ();
 }

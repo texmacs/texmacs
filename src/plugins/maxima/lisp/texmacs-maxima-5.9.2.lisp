@@ -1,14 +1,16 @@
-(in-package "MAXIMA")
+(in-package :maxima)
 #+clisp (defvar *old-suppress-check-redefinition* 
 	      custom:*suppress-check-redefinition*)
 #+clisp (setf custom:*suppress-check-redefinition* t)
 (setf *alt-display2d* 'texmacs)
 (setf *prompt-prefix* "channel:promptlatex:\\red ")
 (setf *prompt-suffix* "\\black")
-(setf *general-display-prefix* "verbatim:")
+;(setf *general-display-prefix* "verbatim:")
 (setf *maxima-prolog* "verbatim:")
 (setf *maxima-epilog* "latex:\\red The end\\black")
 #-gcl(setf *debug-io* (make-two-way-stream *standard-input* *standard-output*))
+#+(or cmu sbcl scl)
+(setf *terminal-io* (make-two-way-stream *standard-input* *standard-output*))
 
 ;; Small changes to mactex.lisp for interfacing with TeXmacs
 ;; Andrey Grozin, 2001-2005
@@ -59,7 +61,7 @@
 		;; the change in base-line makes parens unnecessary
 		(if nc
 		    (tex (cadr x) '("^ {-\\langle ")(cons "\\rangle }" r) 'mparen 'mparen)
-		    (tex (cadr x) '("^ {- ")(cons " }" r) 'mparen 'mparen))
+		    (tex (cadr x) '("^ {- ")(cons " }" r) 'mminus 'mparen))
 		(if nc
 		    (tex x (list "^{\\langle ")(cons "\\rangle}" r) 'mparen 'mparen)
 		    (if (and (integerp x) (< x 10))

@@ -151,8 +151,10 @@ concater_rep::typeset_include (tree t, path ip) {
   tree incl= load_inclusion (incl_file);
   url save_name= env->cur_file_name;
   env->cur_file_name= incl_file;
+  env->secure= is_secure (env->cur_file_name);
   typeset_dynamic (incl, ip);
   env->cur_file_name= save_name;
+  env->secure= is_secure (env->cur_file_name);
 }
 
 void
@@ -270,6 +272,14 @@ concater_rep::typeset_mark (tree t, path ip) {
       marker (descend (valip, right_index (value)));
     }
   else typeset (t[1], descend (ip, 1));
+}
+
+void
+concater_rep::typeset_expand_as (tree t, path ip) {
+  // cout << "Mark: " << t << ", " << ip << "\n\n";
+  marker (descend (ip, 0));
+  typeset (t[1], descend (ip, 1));
+  marker (descend (ip, 1));
 }
 
 void

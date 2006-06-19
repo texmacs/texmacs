@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (input-initialize)
-  (import-from (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
   (lazy-input-converter (input-input) input))
 
 (plugin-configure input

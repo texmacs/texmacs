@@ -18,6 +18,7 @@
 
 bool ghostscript_bugged ();
 void ghostscript_run (Display* dpy, Window gs_win, Pixmap pm,
-		      url image, SI w, SI h, int x1, int y1, int x2, int y2);
+		      url image, SI w, SI h,
+		      double cx1, double cy1, double cx2, double cy2);
 
 #endif // GHOSTSCRIPT_H

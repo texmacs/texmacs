@@ -13,8 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex texout)
-  (:use (convert latex tmtex-preamble) (convert tools output))
-  (:export serialize-latex texout-contains-table?))
+  (:use (convert latex latex-tools)
+	(convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting preamble and postamble
@@ -29,7 +29,7 @@
 
 (define (texout-file l)
   (let* ((doc-body (car l))
-	 (styles (if (null? (cadr l)) '("letter") (cadr l)))
+	 (styles (if (null? (cadr l)) (list "letter") (cadr l)))
 	 (style (car styles))
 	 (prelan (caddr l))
 	 (lan (if (== prelan "") "english" prelan))
@@ -39,23 +39,27 @@
 
     (receive
 	(tm-uses tm-init tm-preamble)
-	(tmtex-preamble-build doc-misc style lan init)
+	(latex-preamble doc-misc style lan init)
+      (if (and (== lan "japanese") (== style "article"))
+	  (set! style "jarticle"))
+      (if (and (== lan "japanese") (== style "book"))
+	  (set! style "jbook"))
       (output-verbatim "\\documentclass{" style "}\n")
-      (if (not (== tm-uses ""))
-	  (output-verbatim "\\usepackage{" tm-uses "}\n"))
+      (if (== lan "korean")
+	  (output-verbatim "\\usepackage{dhucs}\n"))
+      (if (in? lan '("chinese" "taiwanese"))
+	  (output-verbatim "\\usepackage{CJK}\n"))
+      (output-verbatim tm-uses)
       (for-each texout-usepackage (cdr styles))
+      (output-verbatim tm-init)
 
-      (if (not (== tm-init ""))
-	  (begin
-	    (output-lf)
-	    (output-verbatim tm-init)))
-      (if (not (== tm-preamble ""))
+      (if (!= tm-preamble "")
 	  (begin
 	    (output-lf)
 	    (output-verbatim "%%%%%%%%%% Start TeXmacs macros\n")
 	    (output-verbatim tm-preamble)
 	    (output-verbatim "%%%%%%%%%% End TeXmacs macros\n")))
-      (if (not (null? doc-preamble))
+      (if (nnull? doc-preamble)
 	  (begin
 	    (output-lf)
 	    (map-in-order (lambda (x) (texout x) (output-lf)) doc-preamble))))
@@ -78,74 +82,75 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (texout-document l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(texout (car l))
-	(if (not (null? (cdr l)))
+	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
 	      (output-lf)))
 	(texout-document (cdr l)))))
 
 (define (texout-paragraph l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(texout (car l))
-	(if (not (null? (cdr l))) (output-lf))
+	(if (nnull? (cdr l)) (output-lf))
 	(texout-paragraph (cdr l)))))
 
 (define (texout-table l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(if (func? (car l) '!row)
 	    (begin
-	      (texout-row (cdar l))
-	      (if (not (null? (cdr l)))
+	      (texout-row* (cdar l))
+	      (if (nnull? (cdr l))
 		  (begin
 		    (output-text "\\\\")
 		    (output-lf))))
 	    (begin
 	      (texout (car l))
-	      (if (not (null? (cdr l))) (output-lf))))
+	      (if (nnull? (cdr l)) (output-lf))))
 	(texout-table (cdr l)))))
 
 (define (texout-row l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(texout (car l))
-	(if (not (null? (cdr l))) (output-text " & "))
+	(if (nnull? (cdr l)) (output-text " & "))
 	(texout-row (cdr l)))))
 
-(define (tex-symbol? l)
-  (and (list? l) (= 1 (length l))))
-
-(define (texout-env? l)
-  (and (list? l) (not (null? l)) (func? (car l) '!begin)))
+(define (texout-row* l)
+  ;; Dirty hack to avoid [ strings at start of a row
+  ;; because of confusion with optional argument of \\
+  (if (and (pair? l) (string? (car l)) (string-starts? (car l) "["))
+      (set! l `((!concat (!group "") ,(car l)) ,@(cdr l))))
+  (if (and (pair? l) (func? (car l) '!concat)
+	   (string? (cadar l)) (string-starts? (cadar l) "["))
+      (set! l `((!concat (!group "") ,@(cdar l)) ,@(cdr l))))
+  (texout-row l))
 
 (define (texout-want-space x1 x2) ;; spacing rules
-  (and (not (or (== x2 ",")
+  (and (not (or (in? x1 '("(" "[" ({) (nobreak)))
+		(in? x2 '("," ")" "]" (}) (nobreak)))
 		(== x1 " ") (== x2 " ")
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
 		(func? x1 '&) (func? x2 '&)
 		(func? x1 '!nbsp) (func? x2 '!nbsp)
-		(and (func? x1 '!math) (func? x2 '!math))
-		(and (texout-env? x1) (list? x2))
-		(and (list? x1) (texout-env? x2))
-		(and (== x1 "'") (not (list? x2)))))
-       (or (func? x1 'tmop) (func? x2 'tmop)
-	   (and (not (list? x1)) (tex-symbol? x2))
-	   (and (not (list? x2)) (tex-symbol? x1))
-	   (and (list? x1) (list? x2))
-	   (and (not (list? x1)) (not (list? x2))))))
+		(and (== x1 "'") (nlist? x2))))
+       (or (in? x1 '("," ";" ":"))
+	   (func? x1 'tmop) (func? x2 'tmop)
+	   (func? x1 '!symbol) (func? x2 '!symbol)
+	   (and (nlist? x1) (nlist? x2)))))
 
 (define (texout-concat l)
-  (if (not (null? l))
-      (begin (texout (car l))
-	     (if (not (null? (cdr l)))
-		 (texout-concat (if (texout-want-space (car l) (cadr l))
-				    (cons " " (cdr l))
-				    (cdr l)))))))
+  (when (nnull? l)
+    (texout (car l))
+    (if (nnull? (cdr l))
+	(texout-concat (if (texout-want-space (car l) (cadr l))
+			   (cons " " (cdr l))
+			   (cdr l))))))
 
 (define (texout-newline)
   (output-lf)
@@ -159,7 +164,13 @@
   (output-text "~"))
 
 (define (texout-verb x)
-  (output-verb "\\verb¤" x "¤"))
+  (cond ((not (string-index x #\|)) (output-verb "\\verb|" x "|"))
+	((not (string-index x #\$)) (output-verb "\\verb$" x "$"))
+	((not (string-index x #\@)) (output-verb "\\verb@" x "@"))
+	((not (string-index x #\!)) (output-verb "\\verb!" x "!"))
+	((not (string-index x #\9)) (output-verb "\\verb9" x "9"))
+	((not (string-index x #\X)) (output-verb "\\verbX" x "X"))
+	(else (output-verb "\\verb¤" x "¤"))))
 
 (define (texout-verbatim x)
   (output-lf-verbatim "\\begin{verbatim}\n" x "\n\\end{verbatim}"))
@@ -184,6 +195,8 @@
 (define (texout-math x)
   (cond ((texout-empty? x) (noop))
 	((texout-double-math? x) (texout x))
+	((match? x '((!begin "center") :1))
+	 (texout `((!begin "equation") ,(cadr x))))
 	((and (output-test-end? "$") (not (output-test-end? "\\$")))
 	 (output-remove 1)
 	 (output-text " ")
@@ -209,7 +222,7 @@
   (output-text "#" x))
 
 (define (texout-args l)
-  (if (not (null? l))
+  (if (nnull? l)
       (begin
 	(if (and (list? (car l)) (== (caar l) '!option))
 	    (begin
@@ -236,19 +249,10 @@
   (output-lf)
   (output-text "\\end{" what "}"))
 
-(define (texout-contains-table? x)
-  (cond ((not (list? x)) #f)
-	((and (>= (length x) 2) (== (car x) '!table)) #t)
-	(else (list-or (map-in-order texout-contains-table? (cdr x))))))
-
 (define (texout-script where l)
   (output-text where)
   (let ((x (car l)))
     (cond ((and (string? x) (= (string-length x) 1)) (output-text x))
-	  ((texout-contains-table? x)
-	   (output-text "{\\tmscript{")
-	   (texout x)
-	   (output-text "}}"))
 	  (else (texout-args l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -257,18 +261,21 @@
 
 (define (texout x)
   (cond ((string? x) (output-text x))
+	((== (car x) '!widechar) (output-text (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!document) (texout-document (cdr x)))
 	((== (car x) '!paragraph) (texout-paragraph (cdr x)))
 	((== (car x) '!table) (texout-table (cdr x)))
 	((== (car x) '!concat) (texout-concat (cdr x)))
+	((== (car x) '!append) (for-each texout (cdr x)))
+	((== (car x) '!symbol) (texout (cadr x)))
 	((== (car x) '!newline) (texout-newline))
 	((== (car x) '!nextline) (texout-nextline))
 	((== (car x) '!nbsp) (texout-nbsp))
 	((== (car x) '!verb) (texout-verb (cadr x)))
 	((== (car x) '!verbatim) (texout-verbatim (cadr x)))
 	((== (car x) '!arg) (texout-arg (cadr x)))
-	((== (car x) '!group) (texout-group (cadr x)))
+	((== (car x) '!group) (texout-group (cons '!append (cdr x))))
 	((== (car x) '!math) (texout-math (cadr x)))
 	((== (car x) '!eqn) (texout-eqn (cadr x)))
 	((== (car x) '!sub) (texout-script "_" (cdr x)))
@@ -277,6 +284,6 @@
 	 (texout-begin (cadar x) (cddar x) (cadr x)))
 	(else (texout-apply (car x) (cdr x)))))
 
-(define (serialize-latex x)
+(tm-define (serialize-latex x)
   (texout x)
   (output-produce))

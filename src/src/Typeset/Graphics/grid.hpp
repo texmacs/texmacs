@@ -16,11 +16,21 @@
 #include "curve.hpp"
 #include "ps_device.hpp"
 
-typedef struct {
+class grid_curve_rep: public concrete_struct {
+public:
   string col;
   curve c;
-}
-grid_curve;
+  inline grid_curve_rep () {}
+  inline grid_curve_rep (string col2, curve c2):
+    col(col2), c(c2) {}
+};
+
+class grid_curve {
+  CONCRETE_NULL(grid_curve);
+  inline grid_curve (string col, curve c):
+    rep (new grid_curve_rep (col, c)) {}
+};
+CONCRETE_NULL_CODE(grid_curve);
 
 class grid_rep: public abstract_struct {
 protected:

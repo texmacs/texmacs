@@ -10,9 +10,9 @@
 [math-frak]
 [math-bbb]
 [math-bold-cal]
-{long}
-{negate}
-{misc}
+[long]
+[negate]
+[misc]
 [rptmr]
 [rpsyr]
 [rpsyro]

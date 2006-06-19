@@ -17,20 +17,17 @@
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_face.hpp"
 #include "timer.hpp"
+#include "data_cache.hpp"
 
 #ifdef OS_WIN32
 #include <x11/xlib.h>
 #endif
 
 static int
-mag (int dpi, int size, int dsize) {
+mag (double dpi, double size, double dsize) {
   if ((size>=100) && (dsize<100)) dsize *= 100;
   if ((dsize>=100) && (size<100))  size *= 100;
-#ifdef OS_WIN32
-  return (size*((unsigned long int) dpi))/dsize;
-#else
-  return (size*((long long int) dpi))/dsize;
-#endif
+  return (int) (((size * dpi) / dsize) + 0.5);
 }
 
 /******************************************************************************
@@ -38,8 +35,9 @@ mag (int dpi, int size, int dsize) {
 ******************************************************************************/
 
 bool
-try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
-  //cout << "Try tfm " << family << size << " (" << osize << ")\n";
+try_tfm (string family, int size, int osize, tex_font_metric& tfm, bool make) {
+  // cout << "Try tfm " << family << size << " (" << osize << ")\n";
+  make= make && get_setting ("MAKETFM") != "false";
   string name_tfm = family * as_string (osize) * ".tfm";
   if (tex_font_metric::instances -> contains (name_tfm)) {
     tfm= tex_font_metric (name_tfm);
@@ -51,7 +49,7 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
   if (is_none (u)) {
     if (exists (url ("$TEXMACS_HOME_PATH/fonts/error", name)))
       return false;
-    if (get_setting ("MAKETFM") != "false") {
+    if (make) {
       system_wait ("Generating font file", name);
       make_tex_tfm (name);
       system_wait ("");
@@ -59,14 +57,16 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
       if (is_none (u)) {
 	reset_tfm_path ();
 	u= resolve_tex (name);
+	save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
       }
     }
-    if (is_none (u)) {
-      save_string (url ("$TEXMACS_HOME_PATH/fonts/error", name), "");
-      return false;
-    }
+    if (is_none (u)) return false;
   }
+  // cout << "Tfm " << family << osize << " -> " << family << size << "\n";
   tfm= load_tfm (u, family, osize);
+  if (size != osize)
+    cache_set ("font_cache.scm",
+	       "tfm:" * family * as_string (osize), as_string (size));
   if (size == 0) {
     size= tfm->size;
     if (DEBUG_STD) cout << "TeXmacs] Design size = " << size << "\n";
@@ -77,30 +77,63 @@ try_tfm (string family, int size, int osize, tex_font_metric& tfm) {
 }
 
 bool
-load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
+load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm,
+	      bool make)
+{
   //cout << "Load TeX tfm " << family << size << " (dsize= " << dsize << ")\n";
-  if (try_tfm (family, size, size, tfm))
+  if (try_tfm (family, size, size, tfm, make))
     return true;
   if (size > 333)
-    return load_tex_tfm (family, (size+50)/100, dsize, tfm);
-  if (get_setting ("MAKETFM") == "false") {
-    if ((size > 14) && try_tfm (family, 17, size, tfm)) return true;
-    if ((size > 12) && try_tfm (family, 12, size, tfm)) return true;
-    if ((size > 10) && try_tfm (family, 10, size, tfm)) return true;
-    if ((size <  5) && try_tfm (family,  5, size, tfm)) return true;
-    if ((size <  6) && try_tfm (family,  6, size, tfm)) return true;
-    if ((size <  7) && try_tfm (family,  7, size, tfm)) return true;
-    if ((size <  8) && try_tfm (family,  8, size, tfm)) return true;
-    if ((size <  9) && try_tfm (family,  9, size, tfm)) return true;
-    if ((size < 10) && try_tfm (family, 10, size, tfm)) return true;
+    return load_tex_tfm (family, (size+50)/100, dsize, tfm, make);
+  if (get_font_type () == 3) {
+    if ((size > 14) && try_tfm (family, 17, size, tfm, make)) return true;
+    if ((size > 12) && try_tfm (family, 12, size, tfm, make)) return true;
+    if ((size > 10) && try_tfm (family, 10, size, tfm, make)) return true;
+    if ((size <  5) && try_tfm (family,  5, size, tfm, make)) return true;
+    if ((size <  6) && try_tfm (family,  6, size, tfm, make)) return true;
+    if ((size <  7) && try_tfm (family,  7, size, tfm, make)) return true;
+    if ((size <  8) && try_tfm (family,  8, size, tfm, make)) return true;
+    if ((size <  9) && try_tfm (family,  9, size, tfm, make)) return true;
+    if ((size <  9) && try_tfm (family,  7, size, tfm, make)) return true;
+    if (try_tfm (family, 10, size, tfm, make)) return true;
+    if ((size > 14) && try_tfm (family, 1700, size, tfm, make)) return true;
+    if ((size > 12) && try_tfm (family, 1200, size, tfm, make)) return true;
+    if ((size < 5) && try_tfm (family, 500, size, tfm, make)) return true;
+    if ((size < 9) && try_tfm (family, 700, size, tfm, make)) return true;
+    if (try_tfm (family, 1000, size, tfm, make)) return true;
+  }
+  if (get_font_type () == 2) {
+    SI delta= (size<10? 1: -1);
+    if (try_tfm (family, size + delta, size, tfm, make)) return true;
+    if (try_tfm (family, size - delta, size, tfm, make)) return true;
+    if (try_tfm (family, size + 2*delta, size, tfm, make)) return true;
+    if (try_tfm (family, size - 2*delta, size, tfm, make)) return true;
+    if (try_tfm (family, 100 * size, size, tfm, make)) return true;
+    if (try_tfm (family, 100 * (size + delta), size, tfm, make)) return true;
+    if (try_tfm (family, 100 * (size - delta), size, tfm, make)) return true;
+    if (try_tfm (family, 100 * (size + 2*delta), size, tfm, make)) return true;
+    if (try_tfm (family, 100 * (size - 2*delta), size, tfm, make)) return true;
   }
   if (dsize != size)
-    if (try_tfm (family, dsize, size, tfm))
+    if (try_tfm (family, dsize, size, tfm, make))
       return true;
   if ((dsize != 10) && (size != 10))
-    if (try_tfm (family, 10, size, tfm))
+    if (try_tfm (family, 10, size, tfm, make))
       return true;
   return false;
+}
+
+bool
+load_tex_tfm (string family, int size, int dsize, tex_font_metric& tfm) {
+  string var= "tfm:" * family * as_string (size);
+  if (is_cached ("font_cache.scm", var))
+    if (try_tfm (family, as_int (cache_get ("font_cache.scm", var)->label),
+		 size, tfm, false))
+      return true;
+  if (get_font_type () >= 2 && get_setting ("MAKETFM") != "false")
+    if (load_tex_tfm (family, size ,dsize, tfm, false))
+      return true;
+  return load_tex_tfm (family, size ,dsize, tfm, true);
 }
 
 /******************************************************************************
@@ -155,9 +188,9 @@ bool
 try_pk (string family, int size, int dpi, int dsize,
 	tex_font_metric& tfm, font_glyphs& pk)
 {
-  //cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
+  // cout << "Try pk " << family << size << " at " << dpi << " dpi\n";
 #ifdef USE_FREETYPE
-  if (use_tt_fonts ()) {
+  if (get_font_type () > 0) {
     // Substitute by True Type font ?
     int tt_size= size<333? size: (size+50)/100;
     int tt_dpi = size<333? dpi : (size * dpi) / (100 * tt_size);
@@ -191,8 +224,7 @@ try_pk (string family, int size, int dpi, int dsize,
       return false;
     if (get_setting ("MAKEPK") != "false") {
       system_wait ("Generating font file", name);
-      make_tex_pk (family * size_name, dpi,
-		   as_int (get_setting ("DPI")), "localfont");
+      make_tex_pk (family * size_name, dpi, as_int (get_setting ("DPI")));
       system_wait ("");
       u= resolve_tex (name);
       if (is_none (u)) {
@@ -205,15 +237,15 @@ try_pk (string family, int size, int dpi, int dsize,
       return false;
     }
   }
-  pk = font_glyphs(new pk_font_glyphs_rep(name_pk, new pk_loader(u, tfm, dpi)));
+  pk = font_glyphs (new pk_font_glyphs_rep (name_pk,
+					    new pk_loader(u, tfm, dpi)));
   return true;
 }
 
 bool
 load_tex_pk (string family, int size, int dpi, int dsize,
 	     tex_font_metric& tfm, font_glyphs& pk) {
-  if (try_pk (family, size, dpi, dsize, tfm, pk))
-    return true;
+  if (try_pk (family, size, dpi, dsize, tfm, pk)) return true;
   if ((dsize != size) && (dsize != 0))
     if (try_pk (family, dsize, mag (dpi, size, dsize), dsize, tfm, pk))
       return true;
@@ -231,6 +263,27 @@ load_tex_pk (string family, int size, int dpi, int dsize,
 * Loading tfm and pk files
 ******************************************************************************/
 
+static void
+rubber_status (glyph& gl, int st) {
+  gl -> status |= st;
+  gl -> yoff    = 0;
+}
+
+static void
+rubber_fix (tex_font_metric tfm, font_glyphs& pk) {
+  // This routine is used so as to correct the anti-aliasing of
+  // rubber TeX characters (in the vertical direction).
+  register int c;
+  for (c=tfm->bc; c<=tfm->ec; c++) {
+    if (tfm->tag (c)==3) {
+      if (tfm->bot(c)!=0) rubber_status (pk->get (tfm->bot (c)), 1);
+      if (tfm->top(c)!=0) rubber_status (pk->get (tfm->top (c)), 2);
+      if (tfm->mid(c)!=0) rubber_status (pk->get (tfm->mid (c)), 3);
+      if (tfm->rep(c)!=0) rubber_status (pk->get (tfm->rep (c)), 3);
+    }
+  }
+}
+
 void
 load_tex (string family, int size, int dpi, int dsize,
 	  tex_font_metric& tfm, font_glyphs& pk)
@@ -243,16 +296,17 @@ load_tex (string family, int size, int dpi, int dsize,
       load_tex_pk (family, size, dpi, dsize, tfm, pk))
     {
       bench_cumul ("load tex font");
+      rubber_fix (tfm, pk);
       return;
     }
   if (DEBUG_VERBOSE) {
     cout << "TeXmacs] font " << family << size
          << " at " << dpi << " dpi not found\n";
-    cout << "TeXmacs] loading cmr" << size
+    cout << "TeXmacs] loading ecrm" << size
 	 << " at " << dpi << " dpi instead\n";
   }
-  if (load_tex_tfm ("cmr", size, 10, tfm) &&
-      load_tex_pk ("cmr", size, dpi, 10, tfm, pk))
+  if (load_tex_tfm ("ecrm", size, 10, tfm) &&
+      load_tex_pk ("ecrm", size, dpi, 10, tfm, pk))
     {
       bench_cumul ("load tex font");
       return;
@@ -263,8 +317,8 @@ load_tex (string family, int size, int dpi, int dsize,
     cerr << "\n\nCould not open font " << name << "\nLoading default" << LF;
     cout << "Could not load font...\nLoading default" << LF;
     XNoTexWarn();
-    if (load_tex_tfm ("cmr", 10, 10, tfm) &&
-	load_tex_pk ("cmr", 10, 600, 10, tfm, pk))
+    if (load_tex_tfm ("ecrm", 10, 10, tfm) &&
+	load_tex_pk ("ecrm", 10, 600, 10, tfm, pk))
       {
 	bench_cumul ("load tex font");
 	return;
