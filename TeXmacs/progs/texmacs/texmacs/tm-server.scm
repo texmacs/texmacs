@@ -59,8 +59,8 @@
   ("security" "prompt on scripts" notify-security)
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
-  ("remote connections" "on" noop)
-  ("linking tool" "on" noop))
+  ("remote connections" "off" noop)
+  ("linking tool" "off" noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines

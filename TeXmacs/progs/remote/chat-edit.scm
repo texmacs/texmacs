@@ -17,11 +17,12 @@
 	(utils library cursor)
 	(remote client)))
 
+(define chat-connected (make-ahash-table))
+(define chat-last-modification (make-ahash-table))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic subroutines for chatting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define chat-connected (make-ahash-table))
 
 (tm-define (chat-session)
   (:synopsis "Get the current chat session tree.")
@@ -100,7 +101,7 @@
 	(ahash-set! chat-connected (cons room user) #t)
 	(insert-go-to `(chat-session ,room (document ,@out ,in))
 		      (list 1 (length new) 1 0 0))
-	(chat-refresh room user (tree-innermost 'chat-session))
+	(chat-refresh-handler room user (tree-innermost 'chat-session))
 	#t))))
 
 (tm-define (chat-catch-up)
@@ -116,7 +117,7 @@
 	(ahash-set! chat-connected (cons room user) #t)
 	(tree-set (tree-ref session 1) `(document ,@out ,in))
 	(tree-go-to session 1 :last 1 :end)
-	(chat-refresh room user (tree-innermost 'chat-session))))))
+	(chat-refresh-handler room user (tree-innermost 'chat-session))))))
 
 (tm-define (chat-hang-up)
   (:synopsis "Quit the chat room.")
@@ -125,7 +126,8 @@
 	     (ok (chat-connected?)))
     (with-server (chat-server room)
       (remote-request `(chat-hang-up ,room ,user))
-      (ahash-remove! chat-connected (cons room user)))))
+      (ahash-remove! chat-connected (cons room user))
+      (ahash-remove! chat-last-modification (cons room user)))))
 
 (tm-define (kbd-return)
   (:inside chat-input)
@@ -135,6 +137,7 @@
 	     (emit (tree->stree (tree-ref input 1)))
 	     (ok (chat-connected?)))
     (with-server (chat-server room)
+      (chat-wake-up room user #f)
       (tree-assign (tree-ref input 1) '(document ""))
       (remote-request `(chat-emit ,room ,user ,emit)))))
 
@@ -147,6 +150,7 @@
 	     (emit (tree->stree (tree-ref field 1)))
 	     (ok (and (chat-connected?) (== user (chat-user)))))
     (with-server (chat-server room)
+      (chat-wake-up room user #f)
       (remote-request `(chat-update ,room ,user ,nr ,emit)))))
 
 (define (chat-update t field)
@@ -156,7 +160,22 @@
       (tree-insert! t (- (tree-arity t) 1) '(document "")))
     (tree-assign (tree-ref t nr) (chat-convert field))))
 
-(tm-define (chat-refresh room user t)
+(define (chat-wake-up room user ring?)
+  (with last (ahash-ref chat-last-modification (cons room user))
+    (when (and ring? last (> (texmacs-time) (+ last 300000)))
+      (delayed
+	(:pause 500)
+	(system-1 "play" "$TEXMACS_PATH/misc/sounds/phone.wav")
+	(delayed
+	  (:pause 2500)
+	  (system-1 "play" "$TEXMACS_PATH/misc/sounds/phone.wav")
+	  (delayed
+	    (:pause 2500)
+	    (system-1 "play" "$TEXMACS_PATH/misc/sounds/phone.wav")))))
+    (ahash-set! chat-last-modification (cons room user) (texmacs-time))))
+
+(tm-define (chat-refresh-handler room user t)
+  (chat-wake-up room user #f)
   (with ptr (tree->tree-pointer t)
     (delayed
       (:pause 1000)
@@ -168,5 +187,6 @@
 	  (if (and new (nnull? new))
 	      (with u (tree-pointer->tree ptr)
 		(when (tm-func? u 'chat-session)
+		  (chat-wake-up room user #t)
 		  (for-each (lambda (x) (chat-update (tree-ref u 1) x))
 			    new)))))))))
