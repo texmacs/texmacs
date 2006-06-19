@@ -43,6 +43,7 @@
 (define-public current-connection-id #f)
 
 (define-public (handle-unsecure-request cmd)
+  ;;(display* "Received: " cmd "\n")
   (cond ((or (npair? cmd) (nlist? cmd)) #f)
 	((== cmd '(ping))
 	 #t)
@@ -84,6 +85,7 @@
 (define-public request-table (make-ahash-table))
 
 (define-public-macro (request-handler head . body)
+  ;;(display* "Connected " head "\n")
   (let* ((s (car head))
 	 (r `(lambda ,(cdr head) ,@body)))
     `(begin
