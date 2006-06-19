@@ -72,6 +72,7 @@ file_completions (url search, url dir) {
 
 class input_widget_rep: public attribute_widget_rep {
   string  s;           // the string being entered
+  string  draw_s;      // the string being displayed
   string  type;        // expected type of string
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
@@ -89,6 +90,7 @@ class input_widget_rep: public attribute_widget_rep {
 public:
   input_widget_rep (display dis, command call_back);
   operator tree ();
+  void update_draw_s ();
 
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -108,13 +110,23 @@ public:
 
 input_widget_rep::input_widget_rep (display dis, command call_back2):
   attribute_widget_rep (dis, south_west),
-  s (""), type ("default"), def (), call_back (call_back2),
+  s (""), draw_s (""), type ("default"), def (), call_back (call_back2),
   ok (true), def_cur (0),
   dw (2*PIXEL), dh (2*PIXEL), pos (N(s)), scroll (0),
   got_focus (false), hilit (false) { dw*=SHRINK; dh*= SHRINK; }
 
 input_widget_rep::operator tree () {
   return tree (TUPLE, "input", s);
+}
+
+void
+input_widget_rep::update_draw_s () {
+  draw_s= s;
+  if (type == "password") {
+    draw_s= copy (s);
+    for (int i=0; i<N(s); i++)
+      draw_s[i]= '*';
+  }
 }
 
 void
@@ -128,11 +140,13 @@ input_widget_rep::handle_get_size (get_size_event ev) {
 
 void
 input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
+  update_draw_s (); 
+
   metric ex;
   font fn= dis->default_font ();
-  fn->var_get_extents (s, ex);
+  fn->var_get_extents (draw_s, ex);
   SI left= ex->x1, bottom= fn->y1, right= ex->x2;
-  fn->var_get_extents (s (0, pos), ex);
+  fn->var_get_extents (draw_s (0, pos), ex);
   SI current= ex->x2- ex->x1;
 
   SI text_width= right-left;
@@ -152,7 +166,7 @@ input_widget_rep::handle_repaint (repaint_event ev) { (void) ev;
   else layout_default (win, 0, 0, w, h);
   win->set_color (dis->black);
   win->set_shrinking_factor (SHRINK);
-  fn ->var_draw (win, s, dw- left, dh- bottom);
+  fn->var_draw (win, draw_s, dw- left, dh- bottom);
   if (got_focus) {
     SI pixel= SHRINK*PIXEL;
     win->set_color (dis->red);
@@ -275,6 +289,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
 
 void
 input_widget_rep::handle_mouse (mouse_event ev) {
+  update_draw_s ();
+
   string type= ev->type;
   SI     x   = ev->x;
   font   fn  = dis->default_font ();
@@ -285,7 +301,7 @@ input_widget_rep::handle_mouse (mouse_event ev) {
       SI old= 0;
       pos=0; tm_char_forwards (s, pos);
       for (; pos<=N(s); tm_char_forwards (s, pos)) {
-	fn->var_get_extents (s (0, pos), ex);
+	fn->var_get_extents (draw_s (0, pos), ex);
 	if (((old+ ex->x2+ dw- ex->x1) >> 1) > (x*SHRINK+ scroll)) break;
 	old= ex->x2+ dw- ex->x1;
       }

@@ -100,6 +100,7 @@
     #t))
 
 (tm-define (remote-request cmd)
+  ;;(display* "Request: " cmd "\n")
   (and-let* ((server (get-server))
 	     (info (ahash-ref secure-connection server)))
     (with (id key) info
@@ -165,7 +166,7 @@
 (tm-define (remote-new-account user passwd)
   (:synopsis "Create a new user account on the remote server")
   (:argument user "User name")
-  (:argument passwd "Password")
+  (:argument passwd "password" "Password")
   (with-server (account-server)
     (with encoded-passwd (secret-hash passwd)
       (remote-request `(new-user ,user ,encoded-passwd)))))
@@ -173,7 +174,7 @@
 (tm-define (remote-login user passwd)
   (:synopsis "Login on the remote server")
   (:argument user "User name")
-  (:argument passwd "Password")
+  (:argument passwd "password" "Password")
   (with-server (account-server)
     (with encoded-passwd (secret-hash passwd)
       (if (remote-request `(user-login ,user ,encoded-passwd))
