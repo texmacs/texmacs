@@ -209,28 +209,3 @@
 	 (old-val (if (string? old-val*) old-val* "")))
     (interactive (lambda (val) (remote-set-user-property var val))
       (list var "string" old-val))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Saving and loading documents
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmfs-server)
-  (or (logged-server) (get-server) (default-server)))
-
-(tm-define (remote-save expr)
-  (with-server (tmfs-server)
-    (remote-request `(locus-new ,expr))))
-
-(tm-define (remote-load nr)
-  (with-server (tmfs-server)
-    (remote-request `(locus-ref ,nr))))
-
-(tm-define (remote-put nr expr)
-  (with-server (tmfs-server)
-    ;;(display* "remote-put " nr ", " expr "\n")
-    (remote-request `(locus-set! ,nr ,expr))))
-
-(tm-define (remote-get nr)
-  ;;(display* "remote-get " nr "\n")
-  (with r (remote-load nr)
-    (if r r "")))

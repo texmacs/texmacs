@@ -205,6 +205,8 @@ edit_env_rep::exec (tree t) {
     return exec_eval_args (t);
   case MARK:
     return tree (MARK, copy (t[0]), exec (t[1]));
+  case EXPAND_AS:
+    return exec (t[1]);
   case EVAL:
     return exec (exec (t[0]));
   case QUOTE:
