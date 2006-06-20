@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (remote remote-menu)
-  (:use (remote client)))
+  (:use (remote tmfs)))
 
 (menu-bind login-menu
   ("New account" (interactive remote-new-account))
