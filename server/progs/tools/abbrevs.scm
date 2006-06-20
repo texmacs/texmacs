@@ -157,3 +157,30 @@
 	    (andjoin! (car body))
 	    (andjoin! `(begin ,@body))))
     result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SECTION : curry which is not curry (SRFI-26)
+;; COPYRIGHT : 2000, Free Software Foundation, Inc.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copied from GLUG repository. Author: Daniel Skarda <0rfelyus@ucw.cz>
+
+(define-public-macro (cut slot . slots)
+  (let loop ((slots	(cons slot slots))
+	     (params	'())
+	     (args	'()))
+    (if (null? slots)
+	`(lambda ,(reverse! params) ,(reverse! args))
+        (let ((s	  (car slots))
+              (rest (cdr slots)))
+          (case s
+            ((<>)
+             (let ((var (gensym)))
+               (loop rest (cons var params) (cons var args))))
+            ((<...>)
+             (if (pair? rest)
+                 (error "<...> not on the end of cut expression"))
+             (let ((var (gensym)))
+               `(lambda ,(append! (reverse! params) var)
+                  (apply ,@(reverse! (cons var args))))))
+            (else
+             (loop rest params (cons s args))))))))

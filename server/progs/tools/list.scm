@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (tools list))
-(use-modules (tools base))
+(use-modules (tools base) (tools abbrevs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constructors
@@ -370,6 +370,14 @@
 (define-public (list-permutation? l1 l2)
   (and (null? (list-difference l1 l2))
        (null? (list-difference l2 l1))))
+
+(define-public (list-remove l what)
+  (cond ((null? l) l)
+	((== (car l) what) (list-remove (cdr l) what))
+	(else (cons (car l) (list-remove (cdr l) what)))))
+
+(define-public (list-add l what)
+  (append (list-remove l what) (list what)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other operations on lists

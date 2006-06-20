@@ -179,7 +179,7 @@
   (with ptr (tree->tree-pointer t)
     (delayed
       (:pause 1000)
-      (:every 1000)
+      (:every 2000)
       (:clean (tree-pointer-detach ptr))
       (:while (ahash-ref chat-connected (cons room user)))
       (with-server (chat-server room)

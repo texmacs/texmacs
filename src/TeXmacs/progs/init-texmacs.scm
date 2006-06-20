@@ -138,7 +138,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-(lazy-define (remote client) remote-get remote-put)
+(lazy-define (remote tmfs) remote-load remote-save)
 (lazy-menu (remote remote-menu) remote-menu)
 (lazy-menu (remote chat-menu) chat-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

@@ -43,6 +43,5 @@
 	     doc-title-block
 	     equation* equation-lab equations-base
 	     tmdoc-title tmdoc-flag tmdoc-license key
-	     tmdoc-title*
-	     tmdoc-title**
-	     hyper-link tmdoc-copyright))))
+	     tmdoc-title* tmdoc-title** tmdoc-copyright
+	     hlink action hyper-link))))

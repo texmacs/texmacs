@@ -46,17 +46,16 @@
   (map caar (list-filter atom-list (lambda (x) (== (cdar x) type)))))
 
 (define-public (atom-info name type)
-  (ahash-ref atom-table (cons name type)))
+  (ahash-ref* atom-table (cons name type) '()))
 
 (define-public (atom-set-property name type var val)
   (with l (atom-info name type)
-    (when l
-      (set! l (assoc-set! l var val))
-      (set! atom-list (assoc-set! atom-list (cons name type) l))
-      (ahash-set! atom-table (cons name type) l)
-      (save-object atom-file atom-list)
-      (chmod atom-file #o600)
-      #t)))
+    (set! l (assoc-set! l var val))
+    (set! atom-list (assoc-set! atom-list (cons name type) l))
+    (ahash-set! atom-table (cons name type) l)
+    (save-object atom-file atom-list)
+    (chmod atom-file #o600)
+    #t))
 
 (define-public (atom-get-property name type var)
   (with l (atom-info name type)
@@ -80,8 +79,8 @@
 
 (request-handler (new-user name passwd)
   (with encoded-passwd passwd
-    (new-atom name 'user '())
-    (atom-set-property name 'user "password" encoded-passwd)))
+    (when (new-atom name 'user '())
+      (atom-set-property name 'user "password" encoded-passwd))))
 
 (request-handler (user-login name passwd)
   (and-let* ((encoded-passwd passwd)

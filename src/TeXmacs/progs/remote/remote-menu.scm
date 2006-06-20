@@ -26,8 +26,30 @@
   ("Nickname" (remote-interactive-set-user-property "Nickname"))
   ("Full name" (remote-interactive-set-user-property "Full name")))
 
+;(menu-bind groups-menu
+;  ("New group" (interactive remote-new-group))
+;  (-> "Permissions"
+;      ("Administration" (remote-interactive-set-group-permissions 'admin))
+;      ("Read" (remote-interactive-set-group-permissions 'read))
+;      ("Write" (remote-interactive-set-group-permissions 'write))
+;      ("Other" (interactive remote-set-group-permissions))))
+
+(menu-bind remote-file-menu
+  ("New file" (remote-new-file))
+  ---
+  (when (remote-buffer?)
+    (-> "Permissions"
+	("Administration" (interactive-remote-set-property "owner"))
+	("Read" (interactive-remote-set-property "readable"))
+	("Write" (interactive-remote-set-property "writable")))
+    (-> "Properties"
+	("Set property" (interactive-remote-set-property-and-value))
+	("Get property" (interactive remote-get-property)))))
+
 (menu-bind remote-menu
   (-> "Login" (link login-menu))
   (when (remote-logged?)
     (-> "Account" (link account-menu))
-    (-> "Chat" (link chat-menu))))
+;    (-> "Groups" (link groups-menu))
+    (-> "Chat" (link chat-menu))
+    (-> "Files" (link remote-file-menu))))

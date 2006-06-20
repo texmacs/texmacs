@@ -158,6 +158,11 @@
 		  (string-tokenize-comma
 		   (substring s (+ pos 1) (string-length s))))))))
 
+(define-public (string-recompose-comma l)
+  "Turn list @l of strings into comma separated string."
+  (cond ((null? l) "")
+	((null? (cdr l)) (car l))
+	(else (string-append (car l) ", " (string-recompose-comma (cdr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
