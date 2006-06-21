@@ -15,5 +15,13 @@ case $1 in
       | maxima_filter;;
   5.9.1) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.1.lisp";;
   5.9.1.1* | 5.9.2* | 5.9.3) exec maxima -u $1 -l $2 -p "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.2.lisp";;
+  cygwin)
+    CYGWIN_ROOT="C:\cygwin"
+    CYGWIN_TEXMACS_HOME=`echo $TEXMACS_HOME_PATH | sed 's|/|\\\\|g'`
+    export CYGWIN_TEXMACS_HOME
+    cp -f "$TEXMACS_MAXIMA_PATH/texmacs-maxima-5.9.2.lisp" \
+          "$CYGWIN_ROOT$CYGWIN_TEXMACS_HOME\system\tmp"
+    exec maxima.bat -p \
+      "$CYGWIN_ROOT$CYGWIN_TEXMACS_HOME\system\tmp\texmacs-maxima-5.9.2.lisp";;
   *) echo -e "\2latex:\\red Unsupported version of maxima: $1\5"
 esac
