@@ -15,30 +15,45 @@
 (texmacs-module (maxima-menus)
   (:use (utils plugins plugin-cmd)
 	(doc help-funcs)
-	(dynamic scripts-edit)))
+	(dynamic scripts-edit)
+	(convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Several subroutines for the evaluation of Maxima expressions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (maxima-output? t)
-  (match? t
-    '(concat (with "mode" "text" "font-family" "tt" "color" "red" :*) :*)))
+(define (maxima-prompt? t)
+  (match? t '(with "mode" "text" "font-family" "tt" "color" "red" :*)))
 
-(define (maxima-var-output? t)
-  (or (maxima-output? t)
-      (match? t '(concat (with "mode" "math" "math-display" "true" :*) :*))))
+(define (maxima-output-simplify t)
+  ;;(display* "Simplify " t "\n")
+  (cond ((and (func? t 'concat) (> (length t) 2) (maxima-prompt? (cadr t)))
+	 (plugin-output-std-simplify "maxima" (cons 'concat (cddr t))))
+	((match? t '(with "mode" "math" "math-display" "true" :1))
+	 `(math ,(maxima-output-simplify (cAr t))))
+	((func? t 'with 1)
+	 (maxima-output-simplify (cAr t)))
+	((func? t 'with)
+	 (append (cDr t) (maxima-output-simplify (cAr t))))
+	((func? t 'concat)
+	 (apply tmconcat (map maxima-output-simplify (cdr t))))
+	(else (plugin-output-std-simplify "maxima" t))))
+
+(define (maxima-contains-prompt? t)
+  (cond ((maxima-prompt? t) #t)
+	((func? t 'concat)
+	 (list-or (map maxima-contains-prompt? (cdr t))))
+	((and (func? t 'with) (nnull? (cdr t)))
+	 (maxima-contains-prompt? (cAr t)))
+	(else #f)))
 
 (tm-define (plugin-output-simplify name t)
   (:require (== name "maxima"))
-  (cond ((func? t 'document)
-	 (with u (list-find (cdr t) maxima-var-output?)
-	   (if u (plugin-output-simplify name u) "")))
-	((maxima-output? t)
-	 (plugin-output-simplify name `(concat ,@(cddr t))))
-	((match? t '(with "mode" "math" "math-display" "true" :1))
-	 `(math ,(plugin-output-simplify name (list-ref t 5))))
-	(else (plugin-output-std-simplify name t))))
+  ;;(display* "Simplify output " t "\n")
+  (if (func? t 'document)
+      (with u (list-find (cdr t) maxima-contains-prompt?)
+	(if u (maxima-output-simplify u) ""))
+      (maxima-output-simplify t)))
 
 (define maxima-apply script-apply)
 

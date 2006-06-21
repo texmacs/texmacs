@@ -18,12 +18,16 @@
 
 (define (maxima-initialize)
   (import-from (utils plugins plugin-convert))
+  (import-from (dynamic session-menu))
   (lazy-input-converter (maxima-input) maxima)
   (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
     (if help-list
-      (cond ((list? help-list) (if (not (null? help-list)) (set! maxima-help (car help-list))))
-            ((string? help-list) (set! maxima-help help-list)))))
-  (menu-extend session-help-icons (link maxima-help-icons))
+	(cond ((pair? help-list)
+	       (set! maxima-help (car help-list)))
+	      ((string? help-list)
+	       (set! maxima-help help-list)))))
+  (menu-extend session-help-icons
+    (link maxima-help-icons))
   (menu-extend texmacs-extra-menu
     (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
 	(=> "Maxima"
@@ -40,18 +44,18 @@
 (define (maxima-versions)
   (let ((version-list (string->object (var-eval-system "maxima_detect"))))
     (if (list? version-list)
-      (let* ((default (car version-list))
-	     (rest (cdr version-list))
-	     (launch-default
-	      (list :launch (string-append "tm_maxima " default)))
-	     (launch-rest
-	      (map
-	       (lambda (version-name)
-		 (list :launch version-name
-		       (string-append "tm_maxima " version-name)))
-	       rest)))
-        (cons launch-default launch-rest))
-      '())))
+	(let* ((default (car version-list))
+	       (rest (cdr version-list))
+	       (launch-default
+		(list :launch (string-append "tm_maxima " default)))
+	       (launch-rest
+		(map
+		 (lambda (version-name)
+		   (list :launch version-name
+			 (string-append "tm_maxima " version-name)))
+		 rest)))
+	  (cons launch-default launch-rest))
+	'())))
 
 (plugin-configure maxima
   (:require (url-exists-in-path? "maxima"))
