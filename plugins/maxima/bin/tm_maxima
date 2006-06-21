@@ -1,6 +1,10 @@
 #!/bin/sh
+
 TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
 export TEXMACS_MAXIMA_PATH
+PATH="/cygdrive/c/Program Files/Maxima-5.9.2/bin:$PATH"
+PATH="/cygdrive/c/Program Files/Maxima-5.9.3/bin:$PATH"
+export PATH
 
 case $1 in
   5.6)
