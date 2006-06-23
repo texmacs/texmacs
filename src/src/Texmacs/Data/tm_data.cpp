@@ -54,6 +54,8 @@ tm_data_rep::new_menu_name (url u) {
     name= as_string (tail (u * url_parent ()));
   if ((name == "") || (name == "."))
     name= as_string (u);
+  if (is_rooted_tmfs (u))
+    name= as_string (call ("tmfs-name", as_string (u)));
 
   int i, j;
   for (j=1; true; j++) {

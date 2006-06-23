@@ -13,6 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (server client))
+(read-set! keywords 'prefix)
 (read-enable 'positions)
 (debug-enable 'debug)
 (debug-set! stack 1000000)

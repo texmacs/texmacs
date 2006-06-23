@@ -93,7 +93,7 @@
        (define-public ,head ,@body))))
 
 (define-public (handle-request cmd)
-  ;;(display* "Request: " cmd "\n")
+  (display* "Request: " cmd "\n")
   (and (pair? cmd)
        (with r (ahash-ref request-table (car cmd))
 	 (and r (apply r (cdr cmd))))))

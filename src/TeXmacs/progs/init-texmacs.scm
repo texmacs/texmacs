@@ -30,7 +30,8 @@
 (inherit-modules (kernel texmacs tm-overload) (kernel texmacs tm-define)
 		 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
 		 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
-		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue))
+		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
+		 (kernel texmacs tm-file-system))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
 		 (kernel gui kbd-define))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
@@ -138,9 +139,15 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-(lazy-define (remote tmfs) remote-load remote-save)
+(lazy-define (remote tmfs-remote) remote-load remote-save
+	     remote-name remote-permission?)
 (lazy-menu (remote remote-menu) remote-menu)
 (lazy-menu (remote chat-menu) chat-menu)
+(lazy-menu (remote tmfs-menu) tmfs-menu)
+(tmfs-handler #t 'load remote-load)
+(tmfs-handler #t 'save remote-save)
+(tmfs-handler #t 'name remote-name)
+(tmfs-handler #t 'permission? remote-permission?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting linking facilities\n")

@@ -715,17 +715,10 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return reroot (u, "default");
       return url_none ();
     }
-    if (is_rooted_web (comp) || is_rooted_tmfs (comp)) {
-      if (filter == "") return u;
-      // cout << "  try " << comp << "\n";
-      url from_web=
-	is_rooted_web (comp)? get_from_web (comp): get_from_server (comp);
-      // cout << "  --> " << from_web << "\n";
-      if (is_none (from_web)) return from_web;
-      if (is_of_type (from_web, filter)) return u;
+    if (is_rooted_web (comp) || is_rooted_tmfs (comp) || is_ramdisc (comp)) {
+      if (is_of_type (comp, filter)) return u;
       return url_none ();
     }
-    if (is_ramdisc (comp)) return comp;
     cerr << LF << "base= " << base << LF;
     if (!is_rooted (comp)) fatal_error ("unrooted url", "complete", "url.cpp");
     else fatal_error ("bad protocol in url", "complete", "url.cpp");
@@ -821,6 +814,11 @@ exists (url u) {
 bool
 exists_in_path (url u) {
   return !is_none (resolve_in_path (u));
+}
+
+bool
+has_permission (url u, string filter) {
+  return !is_none (resolve (u, filter));
 }
 
 static url

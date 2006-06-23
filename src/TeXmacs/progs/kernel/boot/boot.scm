@@ -19,6 +19,8 @@
 
 (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
+(define (guile-c?) (equal? (scheme-dialect) "guile-c"))
+(define (guile-b-c?) (or (guile-b?) (guile-c?)))
 
 ;; Should be defined 
 (define dialogue-break #f)
@@ -68,7 +70,7 @@
       (define import-from use-modules)
       (define re-export export)))
 
-(if (guile-b?)
+(if (guile-b-c?)
     (begin
       (define-macro (import-from . modules)
 	`(process-use-modules
@@ -103,7 +105,7 @@
 	   (display "       ] Please use tm-define instead\n"))
 	  (else '(noop))))
   (let ((l (map-in-order transform options)))
-    (if (guile-b?)
+    (if (guile-b-c?)
 	(set! l (cons `(module-use! (current-module) ,texmacs-user) l)))
     ;;(display "loading ") (display name) (display "\n")
     `(begin
