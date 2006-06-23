@@ -31,16 +31,14 @@
   (with (class name) (tmfs-decompose-name u)
     (cond ((ahash-ref tmfs-handler-table (cons class 'load)) =>
 	   (lambda (handler) (object->string (handler name))))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'load))
-		 (string-append class "?" name))))))
+	  (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
 
 (define-public (tmfs-save u what)
   "Save string @what to url @u on TeXmacs file system."
   (with (class name) (tmfs-decompose-name u)
     (cond ((ahash-ref tmfs-handler-table (cons class 'save)) =>
 	   (lambda (handler) (handler name (string->object what))))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'save))
-		 (string-append class "?" name) what)))))
+	  (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
 
 (define-public (tmfs-name u)
   "Get a nice name for url @u on TeXmacs file system."
@@ -49,8 +47,7 @@
 	   (lambda (handler) (handler name)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
 	   (if (url? u) (url->string u) u))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'name))
-		 (string-append class "?" name))))))
+	  (else ((ahash-ref tmfs-handler-table (cons #t 'name)) u)))))
 
 (define-public (tmfs-permission? u type)
   "Check whether we have the permission of a given @type for the url @u."
@@ -59,8 +56,8 @@
 	   (lambda (handler) (handler name type)))
 	  ((ahash-ref tmfs-handler-table (cons class 'load))
 	   (== type "read"))
-	  (else ((ahash-ref tmfs-handler-table (cons #t 'permission?))
-		 (string-append class "?" name) type)))))
+	  (else
+	   ((ahash-ref tmfs-handler-table (cons #t 'permission?)) u type)))))
 
 (define-public (tmfs-remote? u)
   "Check whether the url @u is handled remotedly."
