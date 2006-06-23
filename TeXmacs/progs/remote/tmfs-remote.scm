@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : tmfs.scm
+;; MODULE      : tmfs-remote.scm
 ;; DESCRIPTION : remote TeXmacs file systems
 ;; COPYRIGHT   : (C) 2006  Joris van der Hoeven
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (remote tmfs)
+(texmacs-module (remote tmfs-remote)
   (:use (remote client)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,49 +22,35 @@
 (define (tmfs-server)
   (or (logged-server) (get-server) (default-server)))
 
-(tm-define (remote-new-file)
+(tm-define (remote-new-file name)
+  (:synopsis "Create a file with a given @name on the remote file server.")
+  (:argument name "File name")
   (with-server (tmfs-server)
-    (with nr (remote-request `(file-new))
-      (when nr
-	(new-buffer)
-	(set-name-buffer
-	  (string-append "tmfs://" (number->string nr) ".scm"))))))
-
-(define (remote-file name)
-  (if (string-starts? name "tmfs://")
-      (set! name (string-drop name 7)))
-  (and (string-ends? name ".scm")
-       (string->number (string-drop-right name 4))))
+    (and-with created (remote-request `(tmfs-new ,name))
+      (new-buffer)
+      (set-name-buffer created)
+      (set-abbr-buffer name))))
 
 (tm-define (remote-load name)
   (with-server (tmfs-server)
-    (and-with file (remote-file name)
-      (remote-request `(file-get ,file)))))
+    (remote-request `(tmfs-load ,name))))
 
 (tm-define (remote-save name what)
   (with-server (tmfs-server)
-    (and-with file (remote-file name)
-      (remote-request `(file-set ,file ,what)))))
+    (when (remote-request `(tmfs-save ,name ,what))
+      (pretend-save-buffer))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Properties
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (remote-property-query . patterns)
+(tm-define (remote-name name)
   (with-server (tmfs-server)
-    (remote-request `(property-query ,@patterns))))
+    (with names (remote-request `(tmfs-get-properties ,name name))
+      (if (or (not names) (null? names))
+	  (string-append "tmfs://" name)
+	  (car names)))))
 
-(tm-define (remote-property-solutions pattern)
+(tm-define (remote-permission? name prop)
   (with-server (tmfs-server)
-    (remote-request `(property-solutions ,pattern))))
-
-(tm-define (remote-property-set property)
-  (with-server (tmfs-server)
-    (remote-request `(property-add ,property))))
-
-(tm-define (remote-property-remove pattern)
-  (with-server (tmfs-server)
-    (remote-request `(property-remove ,pattern))))
+    (and-with type (and (string? prop) (string->symbol prop))
+      (remote-request `(tmfs-permission? ,name ,type)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unique properties of the current document
@@ -73,26 +59,27 @@
 (tm-define (remote-buffer?)
   (with u (get-name-buffer)
     (and (not (url-none? u))
-	 (string-starts? (url->string u) "tmfs://"))))
+	 (string-starts? (url->string u) "tmfs://")
+	 (tmfs-remote? u))))
 
 (tm-define (remote-get-property prop)
   (:synopsis "Get the remote property @prop for the current buffer.")
   (:argument prop "Property")
-  (and-let* ((file (remote-file (url->string (get-name-buffer))))
-	     (type (and (string? prop) (string->symbol prop)))
-	     (sols (remote-property-query `(,type ,file :x)))
-	     (r (map cdar sols)))
-    (and (nnull? r) (string-recompose-comma r))))
+  (with-server (tmfs-server)
+    (and-let* ((name (url->string (get-name-buffer)))
+	       (type (and (string? prop) (string->symbol prop)))
+	       (vals (remote-request `(tmfs-get-properties ,name ,type))))
+      (and (nnull? vals) (string-recompose-comma vals)))))
 
 (tm-define (remote-set-property prop val)
   (:synopsis "Set the remote property @prop for the current buffer to @val.")
   (:argument prop "Property")
   (:argument val "Value")
-  (and-let* ((file (remote-file (url->string (get-name-buffer))))
-	     (type (and (string? prop) (string->symbol prop)))
-	     (vals (string-tokenize-comma val)))
-    (remote-property-remove `(,type ,file :x))
-    (for-each (lambda (v) (remote-property-set `(,type ,file ,v))) vals)))
+  (with-server (tmfs-server)
+    (and-let* ((name (url->string (get-name-buffer)))
+	       (type (and (string? prop) (string->symbol prop)))
+	       (vals (string-tokenize-comma val)))
+      (remote-request `(tmfs-set-properties ,name ,type ,@vals)))))
 
 (tm-define (interactive-remote-set-property prop)
   (:interactive #t)

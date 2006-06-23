@@ -124,8 +124,7 @@ get_from_server (url u) {
 
   string name= as_string (u);
   if (ends (name, "~")) return url_none ();
-  if (starts (name, "tmfs://")) name= name (7, N(name));
-  string r= as_string (call ("remote-load", object (name)));
+  string r= as_string (call ("tmfs-load", object (name)));
   if (r == "") return url_none ();
   url tmp= url_temp ();
   (void) save_string (tmp, r, true);
@@ -137,8 +136,7 @@ bool
 save_to_server (url u, string s) {
   if (!is_rooted_tmfs (u)) return true;
   string name= as_string (u);
-  if (starts (name, "tmfs://")) name= name (7, N(name));
-  (void) call ("remote-save", object (name), object (s));
+  (void) call ("tmfs-save", object (name), object (s));
   return false;
 }
 

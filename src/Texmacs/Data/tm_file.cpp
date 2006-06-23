@@ -22,11 +22,11 @@
 
 tree
 tm_data_rep::load_tree (url u, string fm) {
-  string s, name= as_string (tail (u)), suf= suffix (name);
+  string s, suf= suffix (u);
   string action= "load " * fm * " file";
   u= resolve (u);
   if (is_none (u) || load_string (u, s)) {
-    set_message ("Error: file#" * name * "#not found", action);
+    set_message ("Error: file#" * as_string (u) * "#not found", action);
     return "error";
   }
   if ((fm == "generic") || (fm == "help")) fm= get_format (s, suf);
@@ -206,8 +206,9 @@ tm_data_rep::save_buffer (url u, string fm) {
   }
 
   tm_buffer buf= get_buffer ();
-  if ((buf->read_only && (u == buf->name)) ||
-      ((!is_none (buf->extra)) && (buf->name != "* Aux *"))) {
+  if ((u == buf->name && buf->read_only) ||
+      (u == buf->name && !has_permission (u, "w")) ||
+      (!is_none (buf->extra) && buf->name != "* Aux *")) {
     set_message ("Error: file is read only", action);
     return;
   }

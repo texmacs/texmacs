@@ -253,7 +253,7 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-  // cout << "Bench  ] Started TeXmacs\n";
+  //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
   immediate_options (argc, argv);

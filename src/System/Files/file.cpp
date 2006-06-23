@@ -18,6 +18,7 @@
 #include "merge_sort.hpp"
 #include "data_cache.hpp"
 #include "web_files.hpp"
+#include "Scheme/object.hpp"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -195,11 +196,52 @@ get_attributes (url name, struct stat* buf,
 bool
 is_of_type (url name, string filter) {
   if (filter == "") return true;
+  int i, n= N(filter);
+
+  // Files from the web
+  if (is_rooted_web (name)) {
+    // cout << "  try " << name << "\n";
+    url from_web= get_from_web (name);
+    // cout << "  --> " << from_web << "\n";
+    if (is_none (from_web)) return false;
+    for (i=0; i<n; i++)
+      switch (filter[i]) {
+      case 'd': return false;
+      case 'l': return false;
+      case 'w': return false;
+      case 'x': return false;
+      }
+    return true;
+  }
+
+  // Files from a remote server
+  if (is_rooted_tmfs (name)) {
+    for (i=0; i<n; i++)
+      switch (filter[i]) {
+      case 'd': return false;
+      case 'l': return false;
+      case 'r':
+	if (!as_bool (call ("tmfs-permission?", name, "read")))
+	  return false;
+	break;
+      case 'w':
+	if (!as_bool (call ("tmfs-permission?", name, "write")))
+	  return false;
+	break;
+      case 'x': return false;
+      }
+    return true;
+  }
+
+  // Files from the ramdisk
+  if (is_ramdisc (name))
+    return true;
+
+  // Normal files
 #ifdef OS_WIN32
   if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
-  int i, n= N(filter);
   bool preserve_links= false;
   for (i=0; i<n; i++)
     preserve_links= preserve_links || (filter[i] == 'l');

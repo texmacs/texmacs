@@ -53,7 +53,11 @@ scheme_dialect () {
 #ifdef GUILE_B
   return "guile-b";
 #else
+#ifdef GUILE_C
+  return "guile-c";
+#else
   return "unknown";
+#endif
 #endif
 #endif
 }
@@ -111,10 +115,12 @@ bool_to_scm (bool flag) {
   return scm_bool2scm (flag);
 }
 
-bool
+#ifndef scm_to_bool
+int
 scm_to_bool (SCM flag) {
   return scm_scm2bool (flag);
 }
+#endif
 
 /******************************************************************************
 * Integers
@@ -247,7 +253,7 @@ tree_to_scm (tree t) {
   SCM tree_smob;
   SCM_NEWCELL (tree_smob);
   SCM_SETCDR (tree_smob, (SCM) ((void*) (new tree (t))));
-  SCM_SETCAR (tree_smob, tree_tag);
+  SCM_SETCAR (tree_smob, (SCM) tree_tag);
   return tree_smob;
 }
 
@@ -357,7 +363,7 @@ scm_to_scheme_tree (SCM p) {
     }
     return t;
   }
-  if (gh_symbol_p (p)) return scm_to_symbol (p);
+  if (scm_is_symbol (p)) return scm_to_symbol (p);
   if (scm_is_string (p)) return scm_quote (scm_to_string (p));
   //if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
   if (SCM_INUMP (p)) return as_string (scm_to_int (p));
@@ -378,7 +384,7 @@ tree
 scm_to_content (SCM p) {
   if (scm_is_tree (p)) return scm_to_tree (p);
   if (scm_is_list (p)) {
-    if (scm_is_null (p) || (!gh_symbol_p (SCM_CAR (p)))) return "?";
+    if (scm_is_null (p) || (!scm_is_symbol (SCM_CAR (p)))) return "?";
     tree t (make_tree_label (scm_to_symbol (SCM_CAR (p))));
     p= SCM_CDR (p);
     while (!scm_is_null (p)) {
@@ -387,7 +393,7 @@ scm_to_content (SCM p) {
     }
     return t;
   }
-  if (gh_symbol_p (p)) return scm_to_symbol (p);
+  if (scm_is_symbol (p)) return scm_to_symbol (p);
   if (scm_is_string (p)) return scm_to_string (p);
   if (SCM_INUMP (p)) return as_string (scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
@@ -435,7 +441,7 @@ observer_to_scm (observer o) {
   SCM observer_smob;
   SCM_NEWCELL (observer_smob);
   SCM_SETCDR (observer_smob, (SCM) ((void*) (new observer (o))));
-  SCM_SETCAR (observer_smob, observer_tag);
+  SCM_SETCAR (observer_smob, (SCM) observer_tag);
   return observer_smob;
 }
 
@@ -492,7 +498,7 @@ display_to_scm (display dis) {
   SCM display_smob;
   SCM_NEWCELL (display_smob);
   SCM_SETCDR (display_smob, (SCM) ((void*) (new display (dis))));
-  SCM_SETCAR (display_smob, display_tag);
+  SCM_SETCAR (display_smob, (SCM) display_tag);
   return display_smob;
 }
 
@@ -548,7 +554,7 @@ widget_to_scm (widget wid) {
   SCM widget_smob;
   SCM_NEWCELL (widget_smob);
   SCM_SETCDR (widget_smob, (SCM) ((void*) (new widget (wid))));
-  SCM_SETCAR (widget_smob, widget_tag);
+  SCM_SETCAR (widget_smob, (SCM) widget_tag);
   return widget_smob;
 }
 
@@ -600,7 +606,7 @@ make_widget_to_scm (make_widget mw) {
   SCM make_widget_smob;
   SCM_NEWCELL (make_widget_smob);
   SCM_SETCDR (make_widget_smob, (SCM) ((void*) (new make_widget (mw))));
-  SCM_SETCAR (make_widget_smob, make_widget_tag);
+  SCM_SETCAR (make_widget_smob, (SCM) make_widget_tag);
   return make_widget_smob;
 }
 
@@ -652,7 +658,7 @@ command_to_scm (command cmd) {
   SCM command_smob;
   SCM_NEWCELL (command_smob);
   SCM_SETCDR (command_smob, (SCM) ((void*) (new command (cmd))));
-  SCM_SETCAR (command_smob, command_tag);
+  SCM_SETCAR (command_smob, (SCM) command_tag);
   return command_smob;
 }
 
@@ -708,7 +714,7 @@ url_to_scm (url u) {
   SCM url_smob;
   SCM_NEWCELL (url_smob);
   SCM_SETCDR (url_smob, (SCM) ((void*) (new url (u))));
-  SCM_SETCAR (url_smob, url_tag);
+  SCM_SETCAR (url_smob, (SCM) url_tag);
   return url_smob;
 }
 
@@ -972,9 +978,9 @@ initialize_glue () {
   scm_set_smob_free (url_tag, free_url);
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
-  gh_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
-  gh_new_procedure ("url?", (FN) urlP, 1, 0, 0);
+  scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
+  scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();
@@ -1019,9 +1025,9 @@ initialize_glue () {
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
-  gh_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
-  gh_new_procedure ("url?", (FN) urlP, 1, 0, 0);
+  scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
+  scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();

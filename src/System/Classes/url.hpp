@@ -135,6 +135,7 @@ url  resolve (url u, string filter= "fr");  // find first match only
 url  resolve_in_path (url u);               // find file in path
 bool exists (url u);                        // file exists
 bool exists_in_path (url u);                // file exists in path
+bool has_permission (url u, string filter); // check file permissions
 url  descendance (url u);                   // utility for style&package menus
 string concretize (url u);                  // system name for resolved url
 string materialize (url u, string f= "fr"); // resolve + concretize

@@ -36,7 +36,7 @@ SCM list_tree_to_scm (list<tree> l);
 SCM path_to_scm (path p);
 SCM url_to_scm (url u);
 SCM scheme_tree_to_scm (scheme_tree t);
-bool scm_to_bool (SCM obj);
+int scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
 string scm_to_string (SCM obj);
 string scm_to_symbol (SCM obj);
