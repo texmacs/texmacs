@@ -51,12 +51,11 @@
 
 (define-public (file-set file s)
   (with name (file->name file)
-    (save-string name s)
-    #t))
+    (ignore-errors 'system-error (save-string name s))))
 
 (define-public (file-get file)
   (with name (file->name file)
-    (load-string name)))
+    (ignore-errors 'system-error (load-string name))))
 
 (define-public (file-get-properties file type)
   (with r (property-query `(,type ,file :x))

@@ -43,7 +43,8 @@
 
 (define-public (save-string file s)
   (display s (open-file file OPEN_WRITE))
-  (flush-all-ports))
+  (flush-all-ports)
+  #t)
 
 (define-public (load-string file)
   (with f (open-file file OPEN_READ)

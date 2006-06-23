@@ -50,6 +50,29 @@
     (if i (substring s (+ i 1) (string-length s)) "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generation of information about files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-type-value x)
+  (cons (symbol->string (assoc-ref x :t))
+	(assoc-ref x :v)))
+
+(define (file-property->document x)
+  (string-append (car x) ": " (cdr x)))
+
+(define (file-properties->document file)
+  (with l (property-query `(:t ,file :v))
+    (with r (map get-type-value l)
+      `(document 
+	 (tmdoc-title "File properties")
+	 ,@(map file-property->document r)))))
+
+(define (tmfs-document doc)
+  (object->string `(document (TeXmacs "1.0.6.3")
+			     (style (tuple "tmdoc"))
+			     (body ,doc))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic file manipulation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -62,6 +85,21 @@
       (file-set-properties file 'type suffix)
       (string-append "tmfs://file?" (number->string file) "." suffix))))
 
+(request-handler (tmfs-load name)
+  (cond ((== (name->class name) "file")
+	 (let* ((file (name->file name))
+		(suffix (name->suffix name))
+		(user (current-user)))
+	   (when (file-allow? file user 'read)
+	     (when (== (file-get-properties file 'type) (list suffix))
+	       (file-get file)))))
+	((== (name->class name) "file-info")
+	 (let* ((file (name->file name))
+		(user (current-user)))
+	   (when (file-allow? file user 'read)
+	     (tmfs-document (file-properties->document (name->file name))))))
+	(else #f)))
+
 (request-handler (tmfs-save name s)
   (when (== (name->class name) "file")
     (let* ((file (name->file name))
@@ -73,14 +111,26 @@
 	(file-set-properties file 'type suffix)
 	#t))))
 
-(request-handler (tmfs-load name)
-  (when (== (name->class name) "file")
-    (let* ((file (name->file name))
-	   (suffix (name->suffix name))
-	   (user (current-user)))
-      (when (file-allow? file user 'read)
-	(when (== (file-get-properties file 'type) (list suffix))
-	  (file-get file))))))
+(request-handler (tmfs-name name)
+  (cond ((== (name->class name) "file")
+	 (with names (tmfs-get-properties name 'name)
+	   (and names (nnull? names) (car names))))
+	((== (name->class name) "file-info")
+	 (with name* (string-append "file?" (name-trim-class name))
+	   (and-with s (tmfs-name name*)
+	     (string-append "Information - " s))))
+	(else #f)))
+
+(request-handler (tmfs-permission? name type)
+  (cond ((== (name->class name) "file")
+	 (let* ((file (name->file name))
+		(user (current-user)))
+	   (file-allow? file user type)))
+	((== (name->class name) "file-info")
+	 (with name* (string-append "file?" (name-trim-class name))
+	   (and-with s (tmfs-permission? name* 'read)
+	     (== type 'read))))
+	(else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Property management
@@ -91,12 +141,6 @@
     (let* ((r (property-query `(owner :f ,user) `(:t :f :y)))
 	   (t (map (lambda (l) (assoc-ref l :t)) r)))
       (list-remove-duplicates t))))
-
-(request-handler (tmfs-permission? name type)
-  (when (== (name->class name) "file")
-    (let* ((file (name->file name))
-	   (user (current-user)))
-      (file-allow? file user type))))
 
 (request-handler (tmfs-get-properties name type)
   (when (== (name->class name) "file")
