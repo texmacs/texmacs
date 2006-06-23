@@ -12,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (remote tmfs-menu))
+(texmacs-module (remote tmfs-menu)
+  (:use (remote tmfs-remote)))
 
 (menu-bind remote-file-menu
   ("New file" (interactive remote-new-file))
