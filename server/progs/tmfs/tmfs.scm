@@ -43,7 +43,7 @@
 (define (name->file name)
   (let* ((s (name-trim-class name))
 	 (i (string-index s #\.)))
-    (string->number (if i (substring s 0 i) s))))
+    (if i (substring s 0 i) s)))
 
 (define (name->suffix name)
   (let* ((s (name-trim-class name))
@@ -98,7 +98,8 @@
 (define (dir-type-make-link type val a)
   (let* ((b (alist-copy a))
 	 (c (if (== val "any") (assoc-remove! b type) (assoc-set! b type val)))
-	 (url (string-append "tmfs://dir?" (alist->string c))))
+	 (d (sort c (lambda (x y) (string<=? (car x) (car y)))))
+	 (url (string-append "tmfs://dir?" (alist->string d))))
     `(hlink ,val ,url)))
 
 (define (dir-type->document type a files)
@@ -117,8 +118,7 @@
 	 (suffixes (file-get-properties file 'type))
 	 (suffix (if (null? suffixes) "scm" (car suffixes)))
 	 (class (if (== suffix "scm") "file" "file-info"))
-	 (url (string-append "tmfs://" class "?"
-			     (number->string file) "." suffix))
+	 (url (string-append "tmfs://" class "?" file "." suffix))
 	 (names (file-get-properties file 'name))
 	 (name (if (null? names) "No name" (car names))))
     `(hlink ,name ,url)))
@@ -144,14 +144,16 @@
 ;; Basic file manipulation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(request-handler (tmfs-new name suffix)
-  (and-with user (current-user)
-    (with file (file-new)
-      (file-set-properties file 'owner user)
-      (file-set-properties file 'name name)
-      (file-set-properties file 'date (number->string (current-time)))
-      (file-set-properties file 'type suffix)
-      (string-append "tmfs://file?" (number->string file) "." suffix))))
+(request-handler (tmfs-new system-name user-name)
+  (and-let* ((file (name->file system-name))
+	     (suffix (name->suffix system-name))
+	     (user (current-user))
+	     (ok (null? (file-get-properties file 'owner))))
+    (file-set-properties file 'owner user)
+    (file-set-properties file 'name user-name)
+    (file-set-properties file 'date (number->string (current-time)))
+    (file-set-properties file 'type suffix)
+    (string-append "tmfs://file?" file "." suffix)))
 
 (request-handler (tmfs-load name)
   (cond ((== (name->class name) "file")
@@ -176,10 +178,10 @@
 	   (suffix (name->suffix name))
 	   (user (current-user)))
       (when (file-allow? file user 'write)
-	(file-set file s)
-	(file-set-properties file 'date (number->string (current-time)))
-	(file-set-properties file 'type suffix)
-	#t))))
+	(when (== (file-get-properties file 'type) (list suffix))
+	  (file-set file s)
+	  (file-set-properties file 'date (number->string (current-time)))
+	  #t)))))
 
 (request-handler (tmfs-name name)
   (cond ((== (name->class name) "file")

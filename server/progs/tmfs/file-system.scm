@@ -14,7 +14,7 @@
 
 (define-module (tmfs file-system))
 (use-modules (tools base) (tools abbrevs) (tools ahash-table)
-	     (tools list) (tools file)
+	     (tools list) (tools string) (tools file)
 	     (server request) (server atoms))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,18 +36,16 @@
 ;; File management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (file->name file)
-  (let* ((dir (number->string (remainder file 256)))
-	 (full-dir (string-append (tmfs-files-dir) "/" dir))
-	 (name (number->string file)))
-    (if (not (access? full-dir R_OK)) (mkdir full-dir))
-    (string-append full-dir "/" name)))
+(define (base256->number s)
+  (if (== s "") 0
+      (+ (* 256 (base256->number (string-drop-right s 1)))
+	 (char->integer (string-ref s (- (string-length s) 1))))))
 
-(define-public (file-new)
-  (let* ((old (atom-get-property "admin" 'tmfs "serial"))
-	 (new (if old (+ old 1) 0)))
-    (atom-set-property "admin" 'tmfs "serial" new)
-    new))
+(define (file->name file)
+  (let* ((dir (number->string (remainder (base256->number file) 255)))
+	 (full-dir (string-append (tmfs-files-dir) "/" dir)))
+    (if (not (access? full-dir R_OK)) (mkdir full-dir))
+    (string-append full-dir "/" file)))
 
 (define-public (file-set file s)
   (with name (file->name file)
@@ -71,17 +69,10 @@
 
 (define property-table (make-ahash-table))
 
-(define (string-drop-right s n)
-  (substring s 0 (- (string-length s) n)))
-
-(define (base256->number s)
-  (if (== s "") 0
-      (+ (* 256 (base256->number (string-drop-right s 1)))
-	 (char->integer (string-ref s (- (string-length s) 1))))))
-
 (define (property->name entry)
+  (display* "entry= " entry "\n")
   (with name (if (== (length entry) 2)
-		 (string-append (number->string (car entry)) "-"
+		 (string-append (car entry) "-"
 				(number->string (cadr entry)))
 		 (string-append (symbol->string (car entry)) "-"
 				(cadr entry) "-"
@@ -92,7 +83,7 @@
       (string-append full-dir "/" name))))
 
 (define (property-list-get entry)
-  (if (number? (cadr entry)) (set! entry (cdr entry)))
+  (if (string-starts? (cadr entry) "$") (set! entry (cdr entry)))
   (with l (ahash-ref property-table entry)
     (if l l
 	(with saved-l (if (access? (property->name entry) R_OK)
@@ -102,7 +93,7 @@
 	  saved-l))))
 
 (define (property-list-set entry l)
-  (if (number? (cadr entry)) (set! entry (cdr entry)))
+  (if (string-starts? (cadr entry) "$") (set! entry (cdr entry)))
   ;;(display* "Set " entry " to " l "\n")
   (ahash-set! property-table entry l)
   (save-object (property->name entry) l))
@@ -115,7 +106,7 @@
 
 (define (property-change-sub type l pos prop add?)
   (when (nnull? l)
-    (when (or (number? (car l)) (string? (car l)))
+    (when (string? (car l))
       (property-positional-change type (car l) pos prop add?))
     (property-change-sub type (cdr l) (+ pos 1) prop add?)))
 
@@ -156,7 +147,7 @@
 
 (define (property-dispatcher l pos)
   (cond ((null? l) #f)
-	((or (string? (car l)) (number? (car l))) (list (car l) pos))
+	((string? (car l)) (list (car l) pos))
 	(else (property-dispatcher (cdr l) (+ pos 1)))))
 
 (define (property-match pattern bindings)

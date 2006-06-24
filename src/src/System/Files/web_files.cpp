@@ -57,6 +57,15 @@ set_cache (url name, url tmp) {
   return tmp;
 }
 
+void
+web_cache_invalidate (url name) {
+  for (int i=0; i<MAX_CACHED; i++)
+    if (web_cache[i] == name->t) {
+      web_cache[i]= tree ("");
+      web_cache_resolve->reset (name->t);
+    }
+}
+
 /******************************************************************************
 * Web files
 ******************************************************************************/
