@@ -130,39 +130,61 @@
   (map list->string
        (list-fold-right string-split-lines/kons '(()) (string->list s))))
 
-(define-public (string-tokenize s c)
-  "Cut string @s into pieces using @c as a separator."
-  (with d (string-index s c)
+(define (string-search-separator s sep)
+  (if (char? sep)
+      (string-index s sep)
+      (with pos (string-search-forwards sep 0 s)
+	(and (>= pos 0) pos))))
+
+(define-public (string-tokenize s sep)
+  "Cut string @s into pieces using @sep as a separator."
+  (with d (string-search-separator s sep)
     (if d
 	(cons (substring s 0 d)
-	      (string-tokenize (substring s (+ 1 d) (string-length s)) c))
+	      (string-tokenize (substring s (+ 1 d) (string-length s)) sep))
 	(list s))))
 
-(define-public (string-tokenize-n s c n)
+(define-public (string-tokenize-n s sep n)
   "As @string-tokenize, but only cut first @n pieces"
-  (with d (string-index s c)
+  (with d (string-search-separator s sep)
     (if (or (= n 0) (not d))
 	(list s)
 	(cons (substring s 0 d)
 	      (string-tokenize-n (substring s (+ 1 d) (string-length s))
-				 c
+				 sep
 				 (- n 1))))))
+
+(define-public (string-recompose l sep)
+  "Turn list @l of strings into one string using @sep as separator."
+  (if (char? sep) (set! sep (list->string (list sep))))
+  (cond ((null? l) "")
+	((null? (cdr l)) (car l))
+	(else (string-append (car l) sep (string-recompose (cdr l) sep)))))
 
 (define-public (string-tokenize-comma s)
   "Cut string @s into pieces using comma as a separator and remove whitespace."
-  (if (string-starts? s " ")
-      (string-tokenize-comma (substring s 1 (string-length s)))
-      (with pos (string-search-forwards "," 0 s)
-	(if (< pos 0) (list s)
-	    (cons (substring s 0 pos)
-		  (string-tokenize-comma
-		   (substring s (+ pos 1) (string-length s))))))))
+  (map string-trim-both (string-tokenize s #\,)))
 
 (define-public (string-recompose-comma l)
   "Turn list @l of strings into comma separated string."
-  (cond ((null? l) "")
-	((null? (cdr l)) (car l))
-	(else (string-append (car l) ", " (string-recompose-comma (cdr l))))))
+  (string-recompose l ", "))
+
+(define (property-pair->string p)
+  (string-append (car p) "=" (cdr p)))
+
+(define (string->property-pair s)
+  (with pos (string-index s #\=)
+    (if pos
+	(cons (string-take s pos) (string-drop s (+ pos 1)))
+	(cons s "true"))))
+
+(define-public (string->alist s)
+  "Parse @s of the form \"var1=val1,...,varn=valn\" as an association list."
+  (map string->property-pair (string-tokenize-comma s)))
+
+(define-public (alist->string l)
+  "Pretty print the association list @l as a string."
+  (string-recompose (map property-pair->string l) ","))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
