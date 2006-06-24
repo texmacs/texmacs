@@ -15,8 +15,21 @@
 (texmacs-module (remote tmfs-menu)
   (:use (remote tmfs-remote)))
 
+(define (remote-set-property-menu-entry type)
+  (list type (lambda () (interactive-remote-set-property type))))
+
+(tm-define (remote-set-property-menu)
+  (let* ((l1 (or (remote-get-property-types) '()))
+	 (l2 (list-difference l1 '(owner read write date type)))
+	 (l3 (list-sort (map symbol->string l2) string<=?)))
+    (menu-dynamic
+      ,@(map remote-set-property-menu-entry l3)
+      ---
+      ("Other" (interactive-remote-set-property-and-value)))))
+
 (menu-bind remote-file-menu
   ("New file" (interactive remote-new-file))
+  ("New classifier" (interactive remote-new-classifier))
   ---
   (when (remote-buffer?)
     (-> "Permissions"
@@ -26,6 +39,8 @@
 	 (interactive-remote-set-property "read"))
 	("Write" (check "v" (remote-permission? (get-name-buffer) "write"))
 	 (interactive-remote-set-property "write")))
-    (-> "Properties"
-	("Set property" (interactive-remote-set-property-and-value))
-	("Get property" (interactive remote-get-property)))))
+    (-> "Properties" (link remote-set-property-menu)))
+  (-> "Browse"
+      ("Home directory" (remote-home-directory))
+      (when (remote-buffer?)
+	("File information" (remote-file-information)))))

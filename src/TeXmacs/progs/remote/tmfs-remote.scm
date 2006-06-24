@@ -38,6 +38,18 @@
       (set-name-buffer created)
       (set-abbr-buffer name))))
 
+(tm-define (remote-new-classifier type value)
+  (:synopsis "Create a new handle to classify files")
+  (:argument type "Property type")
+  (:argument value "Classification value")
+  (with-server (tmfs-server)
+    (and-let* ((id (create-unique-id))
+	       (request `(tmfs-classifier ,id ,type value))
+	       (ok (remote-request request)))
+      (new-buffer)
+      (set-name-buffer ok)
+      (set-abbr-buffer (remote-name ok)))))
+
 (tm-define (remote-load u)
   (with-server (tmfs-server)
     (remote-request `(tmfs-load ,(url->name u)))))
@@ -66,6 +78,12 @@
 	 (string-starts? (url->string u) "tmfs://")
 	 (tmfs-remote? u))))
 
+(tm-define (remote-get-property-types)
+  (:synopsis "Get the list of remote property types for the current buffer.")
+  (with-server (tmfs-server)
+    (with name (url->name (get-name-buffer))
+      (remote-request `(tmfs-get-property-types ,name)))))
+
 (tm-define (remote-get-property prop)
   (:synopsis "Get the remote property @prop for the current buffer.")
   (:argument prop "Property")
@@ -82,8 +100,10 @@
   (with-server (tmfs-server)
     (and-let* ((name (url->name (get-name-buffer)))
 	       (type (and (string? prop) (string->symbol prop)))
-	       (vals (string-tokenize-comma val)))
-      (remote-request `(tmfs-set-properties ,name ,type ,@vals)))))
+	       (vals (string-tokenize-comma val))
+	       (ok (remote-request `(tmfs-set-properties ,name ,type ,@vals))))
+      (if (== type 'name) (set-abbr-buffer val))
+      #t)))
 
 (tm-define (interactive-remote-set-property prop)
   (:interactive #t)
@@ -94,3 +114,20 @@
   (:interactive #t)
   (interactive (lambda (prop) (interactive-remote-set-property prop))
     (list "Property" "string")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Browsing facilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remote-home-directory)
+  (and-let* ((user (remote-user))
+	     (name (string-append "tmfs://dir?owner=" user)))
+    (load-buffer name)))
+
+(tm-define (remote-file-information)
+  (and-let* ((remote (remote-buffer?))
+	     (u (get-name-buffer)))
+    (with (class name) (tmfs-decompose-name u)
+      (when (== class "file")
+	(with info (string-append "tmfs://file-info?" name)
+	  (load-buffer info))))))

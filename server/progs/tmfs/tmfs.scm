@@ -59,7 +59,10 @@
 	(assoc-ref x :v)))
 
 (define (file-property->document x)
-  (string-append (car x) ": " (cdr x)))
+  (when (== (car x) "date")
+    (with s (strftime "%c" (localtime (string->number (cdr x))))
+      (set! x (cons (car x) s))))
+  (string-append (car x) " = " (cdr x)))
 
 (define (file-properties->document file)
   (with l (property-query `(:t ,file :v))
@@ -155,6 +158,19 @@
     (file-set-properties file 'type suffix)
     (string-append "tmfs://file?" file "." suffix)))
 
+(request-handler (tmfs-new-classifier name type val)
+  (and-let* ((file (name->file name))
+	     (user (current-user))
+	     (ok (null? (file-get-properties file 'owner))))
+    (file-set-properties file 'owner user)
+    (file-set-properties file 'write)
+    (file-set-properties file 'name user-name)
+    (file-set-properties file 'date (number->string (current-time)))
+    (file-set-properties file 'type "classifier")
+    (file-set-properties file 'classify-type type)
+    (file-set-properties file 'classify-value val)
+    (string-append "tmfs://file-info?" file)))
+
 (request-handler (tmfs-load name)
   (cond ((== (name->class name) "file")
 	 (let* ((file (name->file name))
@@ -205,7 +221,8 @@
 	   (and-with s (tmfs-permission? name* 'read)
 	     (== type 'read))))
 	((== (name->class name) "dir")
-	 (!= (name-trim-class name) ""))
+	 (and (!= (name-trim-class name) "")
+	      (== type 'read)))
 	(else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,6 +234,15 @@
     (let* ((r (property-query `(owner :f ,user) `(:t :f :y)))
 	   (t (map (lambda (l) (assoc-ref l :t)) r)))
       (list-remove-duplicates t))))
+
+(request-handler (tmfs-get-property-types name)
+  (when (== (name->class name) "file")
+    (let* ((file (name->file name))
+	   (user (current-user)))
+      (when (file-allow? file user 'read)
+	(let* ((r (property-query `(:t ,file :v)))
+	       (t (map (lambda (l) (assoc-ref l :t)) r)))
+	  (list-remove-duplicates t))))))
 
 (request-handler (tmfs-get-properties name type)
   (when (== (name->class name) "file")
