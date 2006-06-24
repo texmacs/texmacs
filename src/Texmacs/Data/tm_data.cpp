@@ -13,6 +13,7 @@
 #include "tm_data.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "web_files.hpp"
 
 url tm_init_buffer_file= url_none ();
 url my_init_buffer_file= url_none ();
@@ -485,6 +486,7 @@ tm_data_rep::switch_to_active_buffer (url name) {
 void
 tm_data_rep::revert_buffer () {
   tm_buffer buf= get_buffer ();
+  web_cache_invalidate (buf->name);
   tree doc= load_tree (buf->name, buf->fm);
   if (doc == "error") set_message ("Error: file not found", "revert buffer");
   else revert_buffer (buf->name, doc);
