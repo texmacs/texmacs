@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : base.scm
-;; DESCRIPTION : frequently used Scheme subroutines
-;; COPYRIGHT   : (C) 2002  Joris van der Hoeven
+;; MODULE      : string.scm
+;; DESCRIPTION : extra routines for strings
+;; COPYRIGHT   : (C) 2002  Joris van der Hoeven, David Allouche
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -12,20 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (kernel library base))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Booleans
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (xor-sub l)
-  (cond ((null? l) #f)
-	((car l) (not (xor-sub (cdr l))))
-	(else (xor-sub (cdr l)))))
-
-(define-public (xor . l)
-  "Exclusive or of all elements in @l."
-  (xor-sub l))
+(define-module (tools string))
+(use-modules (tools base) (tools abbrevs) (tools list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Strings
@@ -185,62 +173,3 @@
 (define-public (alist->string l)
   "Pretty print the association list @l as a string."
   (string-recompose (map property-pair->string l) ","))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Some string-like functions on symbols
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (symbol<=? x y)
-  (string<=? (symbol->string x) (symbol->string y)))
-
-(define-public (symbol-starts? s1 s2)
-  (string-starts? (symbol->string s1) (symbol->string s2)))
-
-(define-public (symbol-ends? s1 s2)
-  (string-ends? (symbol->string s1) (symbol->string s2)))
-
-(define-public (symbol-drop-right s n)
-  (string->symbol (string-drop-right (symbol->string s) n)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (compose g f)
-  "Compose the functions @f and @g"
-  (lambda x (g (apply f x))))
-
-(define-public (non pred?)
-  "Return the negation of @pred?."
-  (lambda args (not (apply pred? args))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Objects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (string->object s)
-  "Parse @s and build scheme object"
-  (call-with-input-string s read))
-
-(define-public (func? x f . opts)
-  "Is @x a list with first stree @f? Optionally test the length of @x."
-  (let ((n (length opts)))
-    (cond ((= n 0) (and (list? x) (nnull? x) (== (car x) f)))
-	  ((= n 1)
-	   (let ((nn (car opts)))
-             (and (list? x) (nnull? x)
-                  (== (car x) f) (= (length x) (+ nn 1)))))
-	  (else (error "Too many arguments.")))))
-
-(define-public (tuple? x . opts)
-  "Equivalent to @list? without options or to @func? otherwise"
-  (if (null? opts)
-      (list? x)
-      (apply func? (cons x opts))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Positions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public (position-new . opts)
-  (position-new-path (if (null? opts) (cursor-path) (car opts))))

@@ -13,8 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (tmfs tmfs))
-(use-modules (tools base) (tools abbrevs) (tools ahash-table)
-	     (tools list) (tools file)
+(use-modules (srfi srfi-1)
+	     (tools base) (tools abbrevs) (tools ahash-table)
+	     (tools list) (tools string) (tools file)
 	     (server request) (server atoms)
 	     (tmfs file-system))
 
@@ -73,6 +74,73 @@
 			     (body ,doc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generation of directories
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (file-property-types file)
+  (let* ((sols (property-query `(:t ,file :v)))
+	 (r (map (lambda (l) (assoc-ref l :t)) sols)))
+    (list-remove-duplicates r)))
+
+(define (files-property-types files)
+  (with ts (apply append (map file-property-types files))
+    (list-remove-duplicates ts)))
+
+(define (file-property-values file type)
+  (let* ((sols (property-query `(,type ,file :v)))
+	 (r (map (lambda (l) (assoc-ref l :v)) sols)))
+    (list-remove-duplicates r)))
+
+(define (files-property-values files type)
+  (with ts (apply append (map (cut file-property-values <> type) files))
+    (list-remove-duplicates ts)))
+
+(define (dir-type-make-link type val a)
+  (let* ((b (alist-copy a))
+	 (c (if (== val "any") (assoc-remove! b type) (assoc-set! b type val)))
+	 (url (string-append "tmfs://dir?" (alist->string c))))
+    `(hlink ,val ,url)))
+
+(define (dir-type->document type a files)
+  (let* ((type-s (symbol->string type))
+	 (val (assoc-ref a type-s))
+	 (val-text (if val val "any"))
+	 (alts (if val (list "any") (files-property-values files type)))
+	 (links (map (cut dir-type-make-link type-s <> a) alts)))
+    `(concat ,(symbol->string type)
+	     ,(string-append " = " val-text " (")
+	     ,@(list-intersperse links ", ")
+	     ")")))
+
+(define (dir-entry->document file)
+  (let* ((user (current-user))
+	 (suffixes (file-get-properties file 'type))
+	 (suffix (if (null? suffixes) "scm" (car suffixes)))
+	 (class (if (== suffix "scm") "file" "file-info"))
+	 (url (string-append "tmfs://" class "?"
+			     (number->string file) "." suffix))
+	 (names (file-get-properties file 'name))
+	 (name (if (null? names) "No name" (car names))))
+    `(hlink ,name ,url)))
+
+(define (dir->document props)
+  (let* ((user (current-user))
+	 (a (if (== props "") '() (string->alist props)))
+	 (l (map (lambda (x) `(,(string->symbol (car x)) :f ,(cdr x))) a))
+	 (sols (map cdar (apply property-query l)))
+	 (fs (list-filter sols (cut file-allow? <> user 'read)))
+	 (ts1 (map string->symbol (map car a)))
+	 (ts2 (list-union (files-property-types fs) ts1))
+	 (ts3 (list-difference ts2 '(name date read write)))
+	 (ts4 (sort ts3 symbol<=?)))
+    `(document
+      (tmdoc-title "Directory")
+      (concat (vspace* "0.5em") (strong (large "Properties")))
+      ,@(map (cut dir-type->document <> a fs) ts4)
+      (concat (vspace* "0.5em") (strong (large "Matches")))
+      ,@(map dir-entry->document fs))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic file manipulation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -98,6 +166,8 @@
 		(user (current-user)))
 	   (when (file-allow? file user 'read)
 	     (tmfs-document (file-properties->document (name->file name))))))
+	((== (name->class name) "dir")
+	 (tmfs-document (dir->document (name-trim-class name))))
 	(else #f)))
 
 (request-handler (tmfs-save name s)
@@ -119,6 +189,8 @@
 	 (with name* (string-append "file?" (name-trim-class name))
 	   (and-with s (tmfs-name name*)
 	     (string-append "Information - " s))))
+	((== (name->class name) "dir")
+	 (string-append "Directory - " (name-trim-class name)))
 	(else #f)))
 
 (request-handler (tmfs-permission? name type)
@@ -130,6 +202,8 @@
 	 (with name* (string-append "file?" (name-trim-class name))
 	   (and-with s (tmfs-permission? name* 'read)
 	     (== type 'read))))
+	((== (name->class name) "dir")
+	 (!= (name-trim-class name) ""))
 	(else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

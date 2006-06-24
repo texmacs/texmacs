@@ -61,6 +61,9 @@
 (define-public (display* . l)
   (for-each display l))
 
+(define-public (symbol<=? x y)
+  (string<=? (symbol->string x) (symbol->string y)))
+
 (define-public call/cc call-with-current-continuation)
 (define-public-macro (with-cc cont . body)
   `(call/cc (lambda (,cont) ,@body)))
