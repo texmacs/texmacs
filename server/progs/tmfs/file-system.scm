@@ -33,13 +33,47 @@
 (tmfs-initialize)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File management
+;; Unique identifiers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (base256->number s)
   (if (== s "") 0
       (+ (* 256 (base256->number (string-drop-right s 1)))
 	 (char->integer (string-ref s (- (string-length s) 1))))))
+
+(define (microsecs)
+  (with x (gettimeofday)
+    (+ (* 1000000 (car x)) (cdr x))))
+
+(define seed-val (+ (* 4294967296 (microsecs))
+		    (* 65536 (getpid))
+		    (base256->number (cuserid))))
+
+(define texmacs-seed (seed->random-state seed-val))
+(define texmacs-serial-id (random 19342813113834066795298816 texmacs-seed))
+
+(define (base64 x)
+  (if (== x 0) '()
+      (append (base64 (quotient x 64))
+	      (list (remainder x 64)))))
+
+(define (aschar x)
+  (cond ((< x 10) (integer->char (+ x 48)))
+	((< x 36) (integer->char (+ x 55)))
+	((< x 62) (integer->char (+ x 61)))
+	((== x 62) #\{)
+	(else #\})))
+
+(define (number->base64 x)
+  (list->string (map aschar (base64 x))))
+
+(define-public (create-unique-id)
+  (set! texmacs-serial-id (+ texmacs-serial-id 1))
+  (string-append "$" (number->base64 texmacs-serial-id)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (file->name file)
   (let* ((dir (number->string (remainder (base256->number file) 255)))
@@ -54,6 +88,26 @@
 (define-public (file-get file)
   (with name (file->name file)
     (ignore-errors 'system-error (load-string name))))
+
+(define-public (file-set-last file s)
+  (let* ((id (create-unique-id))
+	 (l (property-query `(revision ,file :r :v)))
+	 (n (+ (length l) 1))
+	 (names (file-get-properties file 'name))
+	 (name (if (null? names) "No name" (car names)))
+	 (rev-name (string-append name " - Revision " (number->string n))))
+    (file-set id s)
+    (property-add `(revision ,file ,id ,n))
+    (property-add `(read ,id ,file))
+    (property-add `(name ,id ,rev-name))))
+
+(define-public (file-get-last file)
+  (let* ((l (property-query `(revision ,file :r :v)))
+	 (n (length l))
+	 (r (property-query `(revision ,file :r ,n))))
+    (if (null? r)
+	(file-get file)
+	(file-get (assoc-ref (car r) :r)))))
 
 (define-public (file-get-properties file type)
   (with r (property-query `(,type ,file :x))

@@ -86,10 +86,6 @@
 ;; Generation of information about files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-type-value x)
-  (cons (symbol->string (assoc-ref x :t))
-	(assoc-ref x :v)))
-
 (define (decode-typed-value val type)
   (cond ((== val "any") val)
 	((== type "date")
@@ -100,17 +96,35 @@
 	       (decode-typed-value (car new-vals) type))))
 	(else val)))
 
+(define (get-type-value x)
+  (cons (symbol->string (assoc-ref x :t))
+	(assoc-ref x :v)))
+
 (define (file-property->document x)
   (string-append (string-upcase-first (car x)) " = "
 		 (decode-typed-value (cdr x) (car x))))
 
+(define (get-revision x)
+  (cons (number->string (assoc-ref x :n))
+	(assoc-ref x :r)))
+
+(define (revision->document x file)
+  `(hlink ,(string-append "Version " (car x))
+	  ,(file->url (cdr x))))
+
 (define (file-properties->document file)
   (let* ((l1 (property-query `(:t ,file :v)))
 	 (l2 (map get-type-value l1))
-	 (l3 (sort l2 (lambda (x y) (string<=? (car x) (car y))))))
+	 (l3 (sort l2 (lambda (x y) (string<=? (car x) (car y)))))
+	 (r1 (property-query `(revision ,file :r :n)))
+	 (r2 (map get-revision r1))
+	 (r3 (sort r2 (lambda (x y) (string<=? (car x) (car y))))))
       `(document 
-	 (tmdoc-title "File properties")
-	 ,@(map file-property->document l3))))
+	 (tmdoc-title "File information")
+	 (concat (vspace* "0.5em") (strong (large "Properties")))
+	 ,@(map file-property->document l3)
+	 (concat (vspace* "0.5em") (strong (large "Revisions")))
+	 ,@(map (cut revision->document <> file) r3))))
 
 (define (tmfs-document doc)
   (object->string `(document (TeXmacs "1.0.6.3")
@@ -196,16 +210,15 @@
 ;; Basic file manipulation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(request-handler (tmfs-new system-name user-name)
-  (and-let* ((file (name->file system-name))
-	     (suffix (name->suffix system-name))
+(request-handler (tmfs-new name suffix)
+  (and-let* ((file (create-unique-id))
 	     (user (current-user))
 	     (ok (null? (file-get-properties file 'owner))))
     (file-set-properties file 'owner user)
-    (file-set-properties file 'name user-name)
+    (file-set-properties file 'name name)
     (file-set-properties file 'type suffix)
     (file-set-properties file 'date (number->string (current-time)))
-    (string-append "tmfs://file/" file "." suffix)))
+    (file->url file)))
 
 (request-handler (tmfs-load name)
   (cond ((== (name->class name) "file")
@@ -213,8 +226,8 @@
 		(suffix (name->suffix name))
 		(user (current-user)))
 	   (when (file-allow? file user 'read)
-	     (when (== (file-get-properties file 'type) (list suffix))
-	       (file-get file)))))
+	     (when (in? (file-get-properties file 'type) `((,suffix) ()))
+	       (file-get-last file)))))
 	((== (name->class name) "file-info")
 	 (let* ((file (name->file name))
 		(user (current-user)))
@@ -231,7 +244,7 @@
 	   (user (current-user)))
       (when (file-allow? file user 'write)
 	(when (== (file-get-properties file 'type) (list suffix))
-	  (file-set file s)
+	  (file-set-last file s)
 	  (file-set-properties file 'date (number->string (current-time)))
 	  #t)))))
 
@@ -251,7 +264,9 @@
   (cond ((== (name->class name) "file")
 	 (let* ((file (name->file name))
 		(user (current-user)))
-	   (file-allow? file user type)))
+	   (with r (file-allow? file user type)
+	     (display* "Permission= " r "\n")
+	     r)))
 	((== (name->class name) "file-info")
 	 (with name* (string-append "file/" (name-trim-class name))
 	   (and-with s (tmfs-permission? name* 'read)
@@ -299,18 +314,18 @@
 ;; Classifiers (for projects)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(request-handler (tmfs-new-classifier name type val)
-  (and-let* ((file (name->file name))
-	     (user-name (string-append (string-upcase-first type) " - " val))
+(request-handler (tmfs-new-classifier type val)
+  (and-let* ((file (create-unique-id))
+	     (name (string-append (string-upcase-first type) " - " val))
 	     (user (current-user))
 	     (ok (null? (file-get-properties file 'owner))))
     (file-set-properties file 'owner user)
-    (file-set-properties file 'name user-name)
+    (file-set-properties file 'name name)
     (file-set-properties file 'type "classifier")
     (file-set-properties file 'classify-type type)
     (file-set-properties file 'classify-value val)
     (file-set-properties file 'date (number->string (current-time)))
-    (string-append "tmfs://file-info/" file)))
+    (file->url file)))
 
 (request-handler (tmfs-classifiers type)
   (and-with user (current-user)
