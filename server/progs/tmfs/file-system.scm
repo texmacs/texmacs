@@ -70,7 +70,6 @@
 (define property-table (make-ahash-table))
 
 (define (property->name entry)
-  (display* "entry= " entry "\n")
   (with name (if (== (length entry) 2)
 		 (string-append (car entry) "-"
 				(number->string (cadr entry)))

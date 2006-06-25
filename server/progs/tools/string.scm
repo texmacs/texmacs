@@ -100,6 +100,17 @@
   "Map @proc on every char of @s."
   (list->string (map proc (string->list s))))
 
+(define-public (string-upcase s)
+  (string-map char-upcase s))
+
+(define-public (string-downcase s)
+  (string-map char-downcase s))
+
+(define-public (string-upcase-first s)
+  (with l (string->list s)
+    (if (null? l) ""
+	(list->string (cons (char-upcase (car l)) (cdr l))))))
+
 (define-public (string-fold kons knil s) 	; srfi-13 (subset))
   "Fundamental string iterator."
   (list-fold kons knil (string->list s)))
@@ -167,9 +178,9 @@
 	(cons s "true"))))
 
 (define-public (string->alist s)
-  "Parse @s of the form \"var1=val1,...,varn=valn\" as an association list."
-  (map string->property-pair (string-tokenize-comma s)))
+  "Parse @s of the form \"var1=val1/.../varn=valn\" as an association list."
+  (map string->property-pair (string-tokenize s #\/)))
 
 (define-public (alist->string l)
   "Pretty print the association list @l as a string."
-  (string-recompose (map property-pair->string l) ","))
+  (string-recompose (map property-pair->string l) #\/))

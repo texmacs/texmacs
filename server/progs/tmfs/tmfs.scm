@@ -23,21 +23,42 @@
 ;; Permissions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (file-allow? file user action)
-  (or (and user (nnull? (property-query `(,action ,file ,user))))
-      (nnull? (property-query `(,action ,file "all")))
-      (and (!= action 'owner) (file-allow? file user 'owner))))
+(define (or-map pred? l)
+  (and (nnull? l)
+       (or (pred? (car l))
+	   (or-map pred? (cdr l)))))
+
+(define (file-allow-via? via file user type)
+  ;;(display* "file-allow-via? " via ", " file ", " user ", " type "\n")
+  (or (and user (== via user))
+      (== via "all")
+      (and (string-starts? via "$")
+	   (file-allow? via user type))
+      (and (string-starts? via "^")
+	   (let* ((new-type (string->symbol (string-drop via 1)))
+		  (vals (file-get-properties file new-type))
+		  (fs (list-filter vals (cut string-starts? <> "$"))))
+	     (or-map (cut file-allow? <> user new-type) fs)))))
+
+(define (file-allow? file user type)
+  ;;(display* "file-allow? " file ", " user ", " type "\n")
+  (with vals (file-get-properties file type)
+    (if (nnull? vals)
+	(or-map (cut file-allow-via? <> file user type) vals)
+	(or (with prjs (file-get-properties file 'project)
+	      (or-map (cut file-allow? <> user type) prjs))
+	    (and (!= type 'owner) (file-allow? file user 'owner))))))	    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File names
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (name->class name)
-  (with i (string-index name #\?)
+  (with i (string-index name #\/)
     (if i (substring name 0 i) "file")))
 
 (define (name-trim-class name)
-  (with i (string-index name #\?)
+  (with i (string-index name #\/)
     (if i (substring name (+ i 1) (string-length name)) name)))
 
 (define (name->file name)
@@ -50,6 +71,17 @@
 	 (i (string-index s #\.)))
     (if i (substring s (+ i 1) (string-length s)) "")))
 
+(define (file->name file)
+  (with names (file-get-properties file 'name)
+    (if (null? names) "No name" (car names))))
+
+(define (file->url file)
+  (let* ((suffixes (file-get-properties file 'type))
+	 (suffix (if (null? suffixes) "scm" (car suffixes)))
+	 (class (if (== suffix "scm") "file" "file-info")))
+    (if (!= suffix "") (set! suffix (string-append "." suffix)))
+    (string-append "tmfs://" class "/" file suffix)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generation of information about files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,18 +90,27 @@
   (cons (symbol->string (assoc-ref x :t))
 	(assoc-ref x :v)))
 
+(define (decode-typed-value val type)
+  (cond ((== val "any") val)
+	((== type "date")
+	 (strftime "%c" (localtime (string->number val))))
+	((string-starts? val "$")
+	 (with new-vals (file-get-properties val 'classify-value)
+	   (if (null? new-vals) val
+	       (decode-typed-value (car new-vals) type))))
+	(else val)))
+
 (define (file-property->document x)
-  (when (== (car x) "date")
-    (with s (strftime "%c" (localtime (string->number (cdr x))))
-      (set! x (cons (car x) s))))
-  (string-append (car x) " = " (cdr x)))
+  (string-append (string-upcase-first (car x)) " = "
+		 (decode-typed-value (cdr x) (car x))))
 
 (define (file-properties->document file)
-  (with l (property-query `(:t ,file :v))
-    (with r (map get-type-value l)
+  (let* ((l1 (property-query `(:t ,file :v)))
+	 (l2 (map get-type-value l1))
+	 (l3 (sort l2 (lambda (x y) (string<=? (car x) (car y))))))
       `(document 
 	 (tmdoc-title "File properties")
-	 ,@(map file-property->document r)))))
+	 ,@(map file-property->document l3))))
 
 (define (tmfs-document doc)
   (object->string `(document (TeXmacs "1.0.6.3")
@@ -79,6 +120,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generation of directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dir-name-rewrite-entry x)
+  (cons (string-upcase-first (car x))
+	(decode-typed-value (cdr x) (car x))))
+
+(define (dir-name dir1)
+  (let* ((l1 (string->alist dir1))
+	 (l2 (map dir-name-rewrite-entry l1))
+	 (dir2 (alist->string l2))
+	 (nice (string-recompose (string-tokenize dir2 #\/) " - ")))
+    (string-append "Directory - " nice)))
 
 (define (file-property-types file)
   (let* ((sols (property-query `(:t ,file :v)))
@@ -102,39 +154,36 @@
   (let* ((b (alist-copy a))
 	 (c (if (== val "any") (assoc-remove! b type) (assoc-set! b type val)))
 	 (d (sort c (lambda (x y) (string<=? (car x) (car y)))))
-	 (url (string-append "tmfs://dir?" (alist->string d))))
-    `(hlink ,val ,url)))
+	 (url (string-append "tmfs://dir/" (alist->string d))))
+    `(hlink ,(decode-typed-value val type) ,url)))
 
 (define (dir-type->document type a files)
   (let* ((type-s (symbol->string type))
 	 (val (assoc-ref a type-s))
-	 (val-text (if val val "any"))
+	 (val-text (if val (decode-typed-value val type-s) "any"))
 	 (alts (if val (list "any") (files-property-values files type)))
 	 (links (map (cut dir-type-make-link type-s <> a) alts)))
-    `(concat ,(symbol->string type)
+    `(concat ,(string-upcase-first (symbol->string type))
 	     ,(string-append " = " val-text " (")
 	     ,@(list-intersperse links ", ")
 	     ")")))
 
 (define (dir-entry->document file)
-  (let* ((user (current-user))
-	 (suffixes (file-get-properties file 'type))
-	 (suffix (if (null? suffixes) "scm" (car suffixes)))
-	 (class (if (== suffix "scm") "file" "file-info"))
-	 (url (string-append "tmfs://" class "?" file "." suffix))
-	 (names (file-get-properties file 'name))
-	 (name (if (null? names) "No name" (car names))))
-    `(hlink ,name ,url)))
+  `(hlink ,(file->name file) ,(file->url file)))
+
+(define (std-property-types)
+  '(name date read write classify-type classify-value))
 
 (define (dir->document props)
   (let* ((user (current-user))
 	 (a (if (== props "") '() (string->alist props)))
 	 (l (map (lambda (x) `(,(string->symbol (car x)) :f ,(cdr x))) a))
 	 (sols (map cdar (apply property-query l)))
-	 (fs (list-filter sols (cut file-allow? <> user 'read)))
+	 (r (list-filter sols (cut file-allow? <> user 'read)))
+	 (fs (sort r (lambda (x y) (string<=? (file->name x) (file->name y)))))
 	 (ts1 (map string->symbol (map car a)))
 	 (ts2 (list-union (files-property-types fs) ts1))
-	 (ts3 (list-difference ts2 '(name date read write)))
+	 (ts3 (list-difference ts2 (std-property-types)))
 	 (ts4 (sort ts3 symbol<=?)))
     `(document
       (tmdoc-title "Directory")
@@ -154,22 +203,9 @@
 	     (ok (null? (file-get-properties file 'owner))))
     (file-set-properties file 'owner user)
     (file-set-properties file 'name user-name)
-    (file-set-properties file 'date (number->string (current-time)))
     (file-set-properties file 'type suffix)
-    (string-append "tmfs://file?" file "." suffix)))
-
-(request-handler (tmfs-new-classifier name type val)
-  (and-let* ((file (name->file name))
-	     (user (current-user))
-	     (ok (null? (file-get-properties file 'owner))))
-    (file-set-properties file 'owner user)
-    (file-set-properties file 'write)
-    (file-set-properties file 'name user-name)
     (file-set-properties file 'date (number->string (current-time)))
-    (file-set-properties file 'type "classifier")
-    (file-set-properties file 'classify-type type)
-    (file-set-properties file 'classify-value val)
-    (string-append "tmfs://file-info?" file)))
+    (string-append "tmfs://file/" file "." suffix)))
 
 (request-handler (tmfs-load name)
   (cond ((== (name->class name) "file")
@@ -201,14 +237,14 @@
 
 (request-handler (tmfs-name name)
   (cond ((== (name->class name) "file")
-	 (with names (tmfs-get-properties name 'name)
-	   (and names (nnull? names) (car names))))
+	 (and-with names (tmfs-get-properties name 'name)
+	   (and (nnull? names) (car names))))
 	((== (name->class name) "file-info")
-	 (with name* (string-append "file?" (name-trim-class name))
+	 (with name* (string-append "file/" (name-trim-class name))
 	   (and-with s (tmfs-name name*)
 	     (string-append "Information - " s))))
 	((== (name->class name) "dir")
-	 (string-append "Directory - " (name-trim-class name)))
+	 (dir-name (name-trim-class name)))
 	(else #f)))
 
 (request-handler (tmfs-permission? name type)
@@ -217,7 +253,7 @@
 		(user (current-user)))
 	   (file-allow? file user type)))
 	((== (name->class name) "file-info")
-	 (with name* (string-append "file?" (name-trim-class name))
+	 (with name* (string-append "file/" (name-trim-class name))
 	   (and-with s (tmfs-permission? name* 'read)
 	     (== type 'read))))
 	((== (name->class name) "dir")
@@ -236,7 +272,7 @@
       (list-remove-duplicates t))))
 
 (request-handler (tmfs-get-property-types name)
-  (when (== (name->class name) "file")
+  (when (in? (name->class name) '("file" "file-info"))
     (let* ((file (name->file name))
 	   (user (current-user)))
       (when (file-allow? file user 'read)
@@ -245,16 +281,42 @@
 	  (list-remove-duplicates t))))))
 
 (request-handler (tmfs-get-properties name type)
-  (when (== (name->class name) "file")
+  (when (in? (name->class name) '("file" "file-info"))
     (let* ((file (name->file name))
 	   (user (current-user)))
       (when (file-allow? file user 'read)
 	(file-get-properties file type)))))
 
 (request-handler (tmfs-set-properties name type . vals)
-  (when (== (name->class name) "file")
+  (when (in? (name->class name) '("file" "file-info"))
     (let* ((file (name->file name))
 	   (user (current-user)))
       (when (file-allow? file user 'owner)
 	(apply file-set-properties (cons* file type vals))
 	#t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Classifiers (for projects)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(request-handler (tmfs-new-classifier name type val)
+  (and-let* ((file (name->file name))
+	     (user-name (string-append (string-upcase-first type) " - " val))
+	     (user (current-user))
+	     (ok (null? (file-get-properties file 'owner))))
+    (file-set-properties file 'owner user)
+    (file-set-properties file 'name user-name)
+    (file-set-properties file 'type "classifier")
+    (file-set-properties file 'classify-type type)
+    (file-set-properties file 'classify-value val)
+    (file-set-properties file 'date (number->string (current-time)))
+    (string-append "tmfs://file-info/" file)))
+
+(request-handler (tmfs-classifiers type)
+  (and-with user (current-user)
+    (let* ((r (property-query `(classify-type :f ,type)
+			      `(type :f "classifier")
+			      `(classify-value :f :v)))
+	   (f (map (lambda (l) (cons (assoc-ref l :v) (assoc-ref l :f))) r))
+	   (c (list-filter f (lambda (x) (file-allow? (cdr x) user 'read)))))
+      (list-remove-duplicates c))))
