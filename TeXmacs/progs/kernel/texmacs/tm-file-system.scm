@@ -22,7 +22,7 @@
 (define-public (tmfs-decompose-name name)
   (if (url? name) (set! name (url->string name)))
   (if (string-starts? name "tmfs://") (set! name (string-drop name 7)))
-  (with i (string-index name #\?)
+  (with i (string-index name #\/)
     (list (if i (substring name 0 i) "file")
 	  (if i (substring name (+ i 1) (string-length name)) name))))
 

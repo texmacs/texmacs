@@ -179,12 +179,12 @@
 	(cons s "true"))))
 
 (define-public (string->alist s)
-  "Parse @s of the form \"var1=val1,...,varn=valn\" as an association list."
-  (map string->property-pair (string-tokenize-comma s)))
+  "Parse @s of the form \"var1=val1/.../varn=valn\" as an association list."
+  (map string->property-pair (string-tokenize s "/")))
 
 (define-public (alist->string l)
   "Pretty print the association list @l as a string."
-  (string-recompose (map property-pair->string l) ","))
+  (string-recompose (map property-pair->string l) "/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols

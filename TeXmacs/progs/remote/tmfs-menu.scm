@@ -15,31 +15,65 @@
 (texmacs-module (remote tmfs-menu)
   (:use (remote tmfs-remote)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu for setting properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (std-property-types)
+  '(owner type date read write classify-type classify-value project))
+
 (define (remote-set-property-menu-entry type)
-  (list type (lambda () (interactive-remote-set-property type))))
+  (list (upcase-first type)
+	(lambda () (interactive-remote-set-property type))))
 
 (tm-define (remote-set-property-menu)
   (let* ((l1 (or (remote-get-property-types) '()))
-	 (l2 (list-difference l1 '(owner read write date type)))
+	 (l2 (list-difference l1 (std-property-types)))
 	 (l3 (list-sort (map symbol->string l2) string<=?)))
     (menu-dynamic
       ,@(map remote-set-property-menu-entry l3)
       ---
       ("Other" (interactive-remote-set-property-and-value)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Menu for setting the current project
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remote-set-project-menu-entry val new-file old-file)
+  (list (list 'check val "v" (lambda () (== new-file old-file)))
+	(lambda () (remote-set-property "project" new-file))))
+
+(tm-define (remote-set-project-menu)
+  (let* ((l1 (or (remote-get-projects) '()))
+	 (l2 (list-sort l1 (lambda (x y) (string<=? (car x) (car y)))))
+	 (prj (remote-get-property "project")))
+    (menu-dynamic
+      ,@(map (lambda (x) (remote-set-project-menu-entry (car x) (cdr x) prj))
+	     l2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main remote file menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind remote-file-menu
   ("New file" (interactive remote-new-file))
-  ("New classifier" (interactive remote-new-classifier))
   ---
   (when (remote-buffer?)
     (-> "Permissions"
-	("Owner" (check "v" (remote-permission? (get-name-buffer) "owner"))
+	("Owner" (check "o" (remote-permission? (get-name-buffer) "owner"))
 	 (interactive-remote-set-property "owner"))
-	("Read" (check "v" (remote-permission? (get-name-buffer) "read"))
+	("Read" (check "o" (remote-permission? (get-name-buffer) "read"))
 	 (interactive-remote-set-property "read"))
-	("Write" (check "v" (remote-permission? (get-name-buffer) "write"))
+	("Write" (check "o" (remote-permission? (get-name-buffer) "write"))
 	 (interactive-remote-set-property "write")))
     (-> "Properties" (link remote-set-property-menu)))
+  (-> "Project"
+      (when (remote-buffer?)
+	("None" (remote-set-property "project" ""))
+	---
+	(link remote-set-project-menu)
+	---)
+      ("Create" (interactive remote-new-project)))
   (-> "Browse"
       ("Home directory" (remote-home-directory))
       (when (remote-buffer?)
