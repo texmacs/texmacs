@@ -105,9 +105,7 @@
   (let* ((l (property-query `(revision ,file :r :v)))
 	 (n (length l))
 	 (r (property-query `(revision ,file :r ,n))))
-    (if (null? r)
-	(file-get file)
-	(file-get (assoc-ref (car r) :r)))))
+    (file-get (if (null? r) file (assoc-ref (car r) :r)))))
 
 (define-public (file-get-properties file type)
   (with r (property-query `(,type ,file :x))
@@ -231,11 +229,11 @@
     (map (cut bindings-substitute pattern <>) sols)))
 
 (define-public (property-add property)
-  (display* "Add property " property "\n")
+  ;;(display* "Add property " property "\n")
   (property-change property #t))
 
 (define-public (property-remove pattern)
-  (display* "Remove property " pattern "\n")
+  ;;(display* "Remove property " pattern "\n")
   (for-each (cut property-change <> #f)
 	    (property-solutions pattern))
   #t)
