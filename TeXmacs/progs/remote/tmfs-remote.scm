@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (remote tmfs-remote)
-  (:use (remote client) (link locus-edit)))
+  (:use (remote client)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving and loading documents
@@ -31,10 +31,7 @@
   (:synopsis "Create a file with a given @name on the remote file server.")
   (:argument name "File name")
   (with-server (tmfs-server)
-    (and-let* ((id (create-unique-id))
-	       (system-name (string-append "file/" id ".scm"))
-	       (request `(tmfs-new ,system-name ,name))
-	       (u (remote-request request)))
+    (and-with u (remote-request `(tmfs-new ,name "scm"))
       (new-buffer)
       (set-name-buffer u)
       (set-abbr-buffer (remote-name u)))))
@@ -119,9 +116,7 @@
   (:synopsis "Create a new projet with a given @name.")
   (:argument name "Project name")
   (with-server (tmfs-server)
-    (and-let* ((id (create-unique-id))
-	       (request `(tmfs-new-classifier ,id "project" ,name))
-	       (u (remote-request request)))
+    (and-with u (remote-request `(tmfs-new-classifier "project" ,name))
       (load-buffer u))))
 
 (tm-define (remote-get-projects)
