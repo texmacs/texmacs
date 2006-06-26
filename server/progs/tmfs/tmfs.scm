@@ -335,3 +335,11 @@
 	   (f (map (lambda (l) (cons (assoc-ref l :v) (assoc-ref l :f))) r))
 	   (c (list-filter f (lambda (x) (file-allow? (cdr x) user 'read)))))
       (list-remove-duplicates c))))
+
+(request-handler (tmfs-project-search-name name search)
+  (and-let* ((file (name->file name))
+	     (prjs (file-get-properties file 'project))
+	     (prj (and (nnull? prjs) (car prjs)))
+	     (r (property-query `(name :f ,search) `(project :f ,prj)))
+	     (f (map (lambda (l) (assoc-ref l :f)) r)))
+    (and (nnull? f) (file->url (car f)))))
