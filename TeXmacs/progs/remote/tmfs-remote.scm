@@ -31,13 +31,15 @@
   (:synopsis "Create a file with a given @name on the remote file server.")
   (:argument name "File name")
   (with-server (tmfs-server)
-    (and-let* ((old-name (url->name (get-name-buffer)))
+    (and-let* ((style (get-style-tree))
+	       (old-name (url->name (get-name-buffer)))
 	       (p (remote-request `(tmfs-get-properties ,old-name project)))
 	       (u (remote-request `(tmfs-new ,name "scm")))
 	       (new-name (url->name u)))
       (new-buffer)
       (set-name-buffer u)
       (set-abbr-buffer (remote-name u))
+      (set-style-tree style)
       (remote-request `(tmfs-set-properties ,new-name project ,@p)))))
 
 (tm-define (remote-load u)
@@ -127,6 +129,15 @@
   (:synopsis "Get the list of projects for the current user.")
   (with-server (tmfs-server)
     (remote-request `(tmfs-classifiers "project"))))
+
+(tm-define (remote-project-load-by-name name)
+  (:synopsis "Go to the file with a given @name in the current project.")
+  (:secure #t)
+  (with-server (tmfs-server)
+    (when (remote-buffer?)
+      (let* ((this (url->name (get-name-buffer)))
+	     (u (remote-request `(tmfs-project-search-name ,this ,name))))
+	(if u (load-buffer u) (remote-new-file name))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Browsing facilities
