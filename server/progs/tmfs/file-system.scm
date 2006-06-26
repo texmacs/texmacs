@@ -69,7 +69,7 @@
 
 (define-public (create-unique-id)
   (set! texmacs-serial-id (+ texmacs-serial-id 1))
-  (string-append "$" (number->base64 texmacs-serial-id)))
+  (string-append "+" (number->base64 texmacs-serial-id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File management
@@ -134,7 +134,7 @@
       (string-append full-dir "/" name))))
 
 (define (property-list-get entry)
-  (if (string-starts? (cadr entry) "$") (set! entry (cdr entry)))
+  (if (string-starts? (cadr entry) "+") (set! entry (cdr entry)))
   (with l (ahash-ref property-table entry)
     (if l l
 	(with saved-l (if (access? (property->name entry) R_OK)
@@ -144,7 +144,7 @@
 	  saved-l))))
 
 (define (property-list-set entry l)
-  (if (string-starts? (cadr entry) "$") (set! entry (cdr entry)))
+  (if (string-starts? (cadr entry) "+") (set! entry (cdr entry)))
   ;;(display* "Set " entry " to " l "\n")
   (ahash-set! property-table entry l)
   (save-object (property->name entry) l))

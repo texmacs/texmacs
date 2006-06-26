@@ -48,7 +48,7 @@
 (tm-define (create-unique-id)
   (:synopsis "Create a unique file or locus identifier")
   (set! texmacs-serial-id (+ texmacs-serial-id 1))
-  (string-append "$" (number->base64 texmacs-serial-id)))
+  (string-append "+" (number->base64 texmacs-serial-id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creation of loci

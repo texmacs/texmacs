@@ -32,12 +32,12 @@
   ;;(display* "file-allow-via? " via ", " file ", " user ", " type "\n")
   (or (and user (== via user))
       (== via "all")
-      (and (string-starts? via "$")
+      (and (string-starts? via "+")
 	   (file-allow? via user type))
       (and (string-starts? via "^")
 	   (let* ((new-type (string->symbol (string-drop via 1)))
 		  (vals (file-get-properties file new-type))
-		  (fs (list-filter vals (cut string-starts? <> "$"))))
+		  (fs (list-filter vals (cut string-starts? <> "+"))))
 	     (or-map (cut file-allow? <> user new-type) fs)))))
 
 (define (file-allow? file user type)
@@ -95,7 +95,7 @@
   (cond ((== val "any") val)
 	((== type "date")
 	 (strftime "%c" (localtime (string->number val))))
-	((string-starts? val "$")
+	((string-starts? val "+")
 	 (with new-vals (file-get-properties val 'classify-value)
 	   (if (null? new-vals) val
 	       (decode-typed-value (car new-vals) type))))
