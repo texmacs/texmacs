@@ -35,54 +35,14 @@
 ;; Conversion to and from base 64
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (base64 x nr)
-  (if (== nr 0) '()
-      (append (base64 (quotient x 64) (- nr 1))
-	      (list (remainder x 64)))))
-
-(define (list->base64 l)
-  (cond ((null? l) l)
-	((null? (cdr l))
-	 (base64 (car l) 2))
-	((null? (cddr l))
-	 (base64 (+ (* (car l) 256) (cadr l)) 3))
-	(else
-	 (append (base64 (+ (* (car l) 65536) (* (cadr l) 256) (caddr l)) 4)
-		 (list->base64 (cdddr l))))))
-
 (tm-define (string->base64 s)
-  (let* ((l1 (string->list s))
-	 (l2 (map char->integer l1))
-	 (r1 (list->base64 l2))
-	 (r2 (map (lambda (i) (+ i 48)) r1))
-	 (r3 (map integer->char r2)))
-    (list->string r3)))
-
-(define (base256 x nr)
-  (if (== nr 0) '()
-      (append (base256 (quotient x 256) (- nr 1))
-	      (list (remainder x 256)))))
-
-(define (base64->list l)
-  (cond ((null? l) l)
-	((null? (cdr l)) ;; should never occur
-	 (base256 (car l) 1))
-	((null? (cddr l))
-	 (base256 (+ (* (car l) 64) (cadr l)) 1))
-	((null? (cdddr l))
-	 (base256 (+ (* (car l) 4096) (* (cadr l) 64) (caddr l)) 2))
-	(else
-	 (append (base256 (+ (* (car l) 262144) (* (cadr l) 4096)
-			     (* (caddr l) 64) (cadddr l)) 3)
-		 (base64->list (cddddr l))))))
+  (with-temp-file message s
+    (string-replace (eval-system* "openssl enc -base64 -in " message)
+		    "\n" "#")))
 
 (tm-define (base64->string s)
-  (let* ((l1 (string->list s))
-	 (l2 (map char->integer l1))
-	 (l3 (map (lambda (i) (- i 48)) l2))
-	 (r1 (base64->list l3))
-	 (r2 (map integer->char r1)))
-    (list->string r2)))
+  (with-temp-file message (string-replace s "#" "\n")
+    (eval-system* "openssl enc -d -base64 -in " message)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Crypting with RSA

@@ -27,20 +27,23 @@
   (if (string-starts? u "tmfs://") (set! u (string-drop u 7)))
   (if (string-index u #\/) u (string-append "file/" u)))
 
+(define (url->projects u)
+  (if (not (remote-buffer? u)) '()
+      (with-server (tmfs-server)
+	(remote-request `(tmfs-get-properties ,(url->name u) project)))))
+
 (tm-define (remote-new-file name)
   (:synopsis "Create a file with a given @name on the remote file server.")
   (:argument name "File name")
   (with-server (tmfs-server)
     (and-let* ((style (get-style-tree))
-	       (old-name (url->name (get-name-buffer)))
-	       (p (remote-request `(tmfs-get-properties ,old-name project)))
-	       (u (remote-request `(tmfs-new ,name "scm")))
-	       (new-name (url->name u)))
+	       (prjs (url->projects (get-name-buffer)))
+	       (u (remote-request `(tmfs-new ,name "scm"))))
       (new-buffer)
       (set-name-buffer u)
       (set-abbr-buffer (remote-name u))
       (set-style-tree style)
-      (remote-request `(tmfs-set-properties ,new-name project ,@p)))))
+      (remote-request `(tmfs-set-properties ,(url->name u) project ,@prjs)))))
 
 (tm-define (remote-load u)
   (with-server (tmfs-server)
@@ -65,8 +68,8 @@
 ;; Unique properties of the current document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (remote-buffer?)
-  (with u (get-name-buffer)
+(tm-define (remote-buffer? . opt-u)
+  (with u (if (null? opt-u) (get-name-buffer) (car opt-u))
     (and (not (url-none? u))
 	 (string-starts? (url->string u) "tmfs://")
 	 (tmfs-remote? u))))
@@ -138,6 +141,49 @@
       (let* ((this (url->name (get-name-buffer)))
 	     (u (remote-request `(tmfs-project-search-name ,this ,name))))
 	(if u (load-buffer u) (remote-new-file name))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File transfer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tm-like? u)
+  (in? (url-suffix u) '("tm" "ts" "tmml")))
+
+(define (load-following-suffix u)
+  (if (tm-like? u)
+      (object->string (tree->stree (texmacs-load-tree u "generic")))
+      (string-load u)))
+
+(tm-define (remote-export local-url remote-name)
+  (:synopsis "Export @local-url to a remote file with name @remote-name.")
+  (with-server (tmfs-server)
+    (and-let* ((prjs (url->projects (get-name-buffer)))
+	       (suffix (if (tm-like? local-url) "scm" (url-suffix local-url)))
+	       (u (remote-request `(tmfs-new ,remote-name ,suffix)))
+	       (v (remote-request `(tmfs-revision ,(url->name u) main)))
+	       (s (load-following-suffix local-url))
+	       (saved (remote-request `(tmfs-save ,(url->name v) ,s))))
+      (remote-request `(tmfs-set-properties ,(url->name v) project ,@prjs))
+      (load-buffer u))))
+
+(tm-define (interactive-remote-export u)
+  (:interactive #t)
+  (interactive (lambda (remote-name) (remote-export u remote-name))
+    (list "Remote file name" "string")))
+
+(tm-define (remote-import remote-url local-url)
+  (:synopsis "Import the current remote buffer to the local file system.")
+  (if (tm-like? local-url)
+      (begin
+	(load-buffer remote-url)
+	(delayed
+	  (:pause 10)
+	  (save-buffer local-url "generic")))
+      (with-server (tmfs-server)
+	(and-let* ((name (url->name remote-url))
+		   (u (remote-request `(tmfs-revision ,name main)))
+		   (s (remote-request `(tmfs-load ,(url->name u)))))
+	  (string-save s local-url)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Browsing facilities

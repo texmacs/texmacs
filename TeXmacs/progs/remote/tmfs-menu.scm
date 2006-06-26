@@ -74,6 +74,16 @@
 	(link remote-set-project-menu)
 	---)
       ("Create" (interactive remote-new-project)))
+  (-> "Transfer"
+      ("Export to remote server"
+       (choose-file interactive-remote-export "Export to remote server" ""))
+      (when (not (remote-buffer?))
+	("Export current file"
+	 (interactive-remote-export (get-name-buffer))))
+      (when (remote-buffer?)
+	("Import current file"
+	 (choose-file (lambda (u) (remote-import (get-name-buffer) u))
+		      "Import from remote server" ""))))
   (-> "Browse"
       ("Home directory" (remote-home-directory))
       (when (remote-buffer?)
