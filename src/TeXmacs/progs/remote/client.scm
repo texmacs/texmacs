@@ -76,6 +76,15 @@
 
 (define secure-connection (make-ahash-table))
 
+(define (var-object->string x)
+  (if (string? x)
+      (string-append "s" x)
+      (string-append "o" (object->string x))))
+
+(define (var-string->object x)
+  (with y (substring x 1 (string-length x))
+    (if (== (string-ref x 0) #\s) y (string->object y))))
+
 (tm-define (remote-connect)
   (and-let* ((private-key (rsa-generate))
 	     (public-key (rsa-private->public private-key))
@@ -93,7 +102,7 @@
 	     (r (server-request msg))
 	     (decoded (rsa-decode (base64->string r) private-key))
 	     (returned (remove-verification decoded))
-	     (obj (string->object returned))
+	     (obj (var-string->object returned))
 	     (final (and (== (car obj) challenge) (cdr obj))))
     (display* "TeXmacs] connected to " (get-server) "\n")
     (ahash-set! secure-connection (get-server) final)
@@ -104,7 +113,7 @@
   (and-let* ((server (get-server))
 	     (info (ahash-ref secure-connection server)))
     (with (id key) info
-      (and-let* ((message (object->string cmd))
+      (and-let* ((message (var-object->string cmd))
 		 (tagged (add-verification message))
 		 (encoded (secret-encode tagged key))
 		 (transmit (string->base64 encoded))
@@ -112,7 +121,7 @@
 		 (reply (base64->string reply-64))
 		 (decoded (secret-decode reply key))
 		 (untagged (remove-verification decoded))
-		 (final (string->object untagged)))
+		 (final (var-string->object untagged)))
 	final))))
 
 ;;(tm-define (remote-hang-up)

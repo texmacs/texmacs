@@ -140,10 +140,10 @@
 
 ;(display "Booting remote facilities\n")
 (lazy-define (remote tmfs-remote) remote-load remote-save
-	     remote-name remote-permission?)
+	     remote-name remote-permission? remote-project-load-by-name)
 (lazy-menu (remote remote-menu) remote-menu)
 (lazy-menu (remote chat-menu) chat-menu)
-(lazy-menu (remote tmfs-menu) tmfs-menu)
+(lazy-menu (remote tmfs-menu) remote-file-menu)
 (tmfs-handler #t 'load remote-load)
 (tmfs-handler #t 'save remote-save)
 (tmfs-handler #t 'name remote-name)

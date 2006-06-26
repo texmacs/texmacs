@@ -13,7 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-module (tools file))
-(use-modules (tools base) (tools abbrevs))
+(use-modules (ice-9 rdelim) (tools base) (tools abbrevs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Error handling
@@ -47,14 +47,7 @@
   #t)
 
 (define-public (load-string file)
-  (with f (open-file file OPEN_READ)
-    (do ((l '())
-	 (c (read-char f) (read-char f)))
-	((eof-object? c)
-	 (begin
-	   (close-port f)
-	   (list->string (reverse l))))
-      (set! l (cons c l)))))
+  (read-delimited "" (open-file file OPEN_READ)))
 
 (define-public (save-object file value)
   (write value (open-file file OPEN_WRITE))

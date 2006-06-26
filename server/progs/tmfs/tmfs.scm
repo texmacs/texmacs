@@ -75,10 +75,15 @@
   (with names (file-get-properties file 'name)
     (if (null? names) "No name" (car names))))
 
-(define (file->url file)
-  (let* ((suffixes (file-get-properties file 'type))
-	 (suffix (if (null? suffixes) "scm" (car suffixes)))
-	 (class (if (== suffix "scm") "file" "file-info")))
+(define (file->suffix file)
+  (with suffixes (file-get-properties file 'type)
+    (if (null? suffixes) "scm" (car suffixes))))
+
+(define (file->url file . mode)
+  (let* ((suffix (file->suffix file))
+	 (faithful? (or (== suffix "scm") (== mode '(main))))
+	 (info? (or (== mode '(info)) (not faithful?)))
+	 (class (if info? "file-info" "file")))
     (if (!= suffix "") (set! suffix (string-append "." suffix)))
     (string-append "tmfs://" class "/" file suffix)))
 
@@ -96,9 +101,18 @@
 	       (decode-typed-value (car new-vals) type))))
 	(else val)))
 
+(define image-suffixes
+  '("ps" "eps" "bmp" "gif" "ico" "tga" "pcx" "wbmp" "wmf" "jpg"
+    "jpeg" "png" "tif" "jbig" "ras" "pnm" "jp2" "jpc" "pgx"
+    "cut" "iff" "lbm" "jng" "koa" "mng" "pbm" "pcd" "pcx"
+    "pgm" "ppm" "psd" "tga" "tiff" "xbm" "xpm"))
+
 (define (get-type-value x)
   (cons (symbol->string (assoc-ref x :t))
 	(assoc-ref x :v)))
+
+(define (make-section name)
+  `(concat (vspace* "0.5em") (strong (large ,name))))
 
 (define (file-property->document x)
   (string-append (string-upcase-first (car x)) " = "
@@ -115,16 +129,21 @@
 (define (file-properties->document file)
   (let* ((l1 (property-query `(:t ,file :v)))
 	 (l2 (map get-type-value l1))
-	 (l3 (sort l2 (lambda (x y) (string<=? (car x) (car y)))))
+	 (l3 (cons (cons "url" (file->url file 'main)) l2))
+	 (l4 (sort l3 (lambda (x y) (string<=? (car x) (car y)))))
 	 (r1 (property-query `(revision ,file :r :n)))
 	 (r2 (map get-revision r1))
 	 (r3 (sort r2 (lambda (x y) (string<=? (car x) (car y))))))
       `(document 
 	 (tmdoc-title "File information")
-	 (concat (vspace* "0.5em") (strong (large "Properties")))
-	 ,@(map file-property->document l3)
-	 (concat (vspace* "0.5em") (strong (large "Revisions")))
-	 ,@(map (cut revision->document <> file) r3))))
+	 ,(make-section "Properties")
+	 ,@(map file-property->document l4)
+	 ,@(if (nin? (file->suffix file) image-suffixes) '()
+	       `(,(make-section "Contents")
+		 (postscript ,(file->url file 'main) "" "" "" "" "" "")))
+	 ,@(if (<= (length r3) 1) '()
+	       `(,(make-section "Revisions")
+		 ,@(map (cut revision->document <> file) r3))))))
 
 (define (tmfs-document doc)
   (object->string `(document (TeXmacs "1.0.6.3")
@@ -201,9 +220,9 @@
 	 (ts4 (sort ts3 symbol<=?)))
     `(document
       (tmdoc-title "Directory")
-      (concat (vspace* "0.5em") (strong (large "Properties")))
+      ,(make-section "Properties")
       ,@(map (cut dir-type->document <> a fs) ts4)
-      (concat (vspace* "0.5em") (strong (large "Matches")))
+      ,(make-section "Matches")
       ,@(map dir-entry->document fs))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -219,6 +238,18 @@
     (file-set-properties file 'type suffix)
     (file-set-properties file 'date (number->string (current-time)))
     (file->url file)))
+
+(request-handler (tmfs-revision name revision)
+  (when (in? (name->class name) '("file" "file-info"))
+    (let* ((file (name->file name))
+	   (user (current-user)))
+      (when (file-allow? file user 'read)
+	(cond ((== revision 'default) (file->url file))
+	      ((== revision 'main) (file->url file 'main))
+	      ((== revision 'info) (file->url file 'info))
+	      (else (let* ((s (property-query `(revision ,file :r ,revision)))
+			   (r (map (lambda (l) (assoc-ref s :r)) s)))
+		      (and (nnull? r) (file->url (car r))))))))))
 
 (request-handler (tmfs-load name)
   (cond ((== (name->class name) "file")
