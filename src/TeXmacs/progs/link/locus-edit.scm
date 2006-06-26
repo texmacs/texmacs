@@ -25,7 +25,7 @@
 
 (define seed-val (+ (* 4294967296 (abs (texmacs-time)))
 		    (* 65536 (getpid))
-		    (base256->number (cuserid))))
+		    (base256->number (if (defined? 'cuserid) (cuserid) 0))))
 
 (define texmacs-seed (seed->random-state seed-val))
 (define texmacs-serial-id (random 19342813113834066795298816 texmacs-seed))
