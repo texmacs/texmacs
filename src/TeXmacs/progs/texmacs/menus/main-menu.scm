@@ -122,8 +122,6 @@
    (spell-start))
   ((balloon (icon "tm_undo.xpm") "Undo last changes#(M-[)") (undo))
   ((balloon (icon "tm_redo.xpm") "Redo undone changes#(M-])") (redo))
-  ;;((balloon (icon "tm_back.xpm") "Browse back") (browse-help -1))
-  ;;((balloon (icon "tm_forward.xpm") "Browse forward") (browse-help 1))
   (if (not (in-graphics?))
       |
       (=> (balloon (icon "tm_table.xpm") "Insert a table")
@@ -143,7 +141,14 @@
       (if (and (style-has? "program-dtd") (detailed-menus?))
 	  (=> (balloon (icon "tm_shell.xpm")
 		       "Start an interactive session")
-	      (link insert-session-menu)))))
+	      (link insert-session-menu))))
+  |
+  ((balloon (icon "tm_back.xpm") "Browse back (C-<)")
+   (cursor-history-backward))
+  ((balloon (icon "tm_reload.xpm") "Reload (C-F2)")
+   (revert-buffer))
+  ((balloon (icon "tm_forward.xpm") "Browse forward (C->)")
+   (cursor-history-forward)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The context dependent icon bar
