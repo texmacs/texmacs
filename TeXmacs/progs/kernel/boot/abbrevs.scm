@@ -34,6 +34,8 @@
 (define-public (nlist-2? x) (not (list-2? x)))
 (define-public (list-3? x) (and (list? x) (= (length x) 3)))
 (define-public (nlist-3? x) (not (list-3? x)))
+(define-public (list-4? x) (and (list? x) (= (length x) 4)))
+(define-public (nlist-4? x) (not (list-4? x)))
 
 (define-public (in? x l) (not (not (member x l))))
 (define-public (nin? x l) (not (member x l)))
@@ -96,9 +98,11 @@
 
 (define-public-macro (for what . body)
   (cond ((list-2? what)
+	;;(for (elt list) body[elt])
 	 `(for-each (lambda (,(car what)) ,@body)
 		    ,(cadr what)))
 	((list-3? what)
+	;;(for (i i0 iN) body[i])
 	 `(for-each (lambda (,(car what)) ,@body)
 		    (.. ,(cadr what) ,(caddr what))))
 	(else '(noop))))
