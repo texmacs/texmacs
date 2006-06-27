@@ -30,7 +30,7 @@
 
 (define (file-allow-via? via file user type)
   ;;(display* "file-allow-via? " via ", " file ", " user ", " type "\n")
-  (or (and user (== via user))
+  (or (and user (in? via (list user "logged")))
       (== via "all")
       (and (string-starts? via "+")
 	   (file-allow? via user type))
@@ -122,9 +122,16 @@
   (cons (number->string (assoc-ref x :n))
 	(assoc-ref x :r)))
 
-(define (revision->document x file)
-  `(hlink ,(string-append "Version " (car x))
-	  ,(file->url (cdr x))))
+(define (revision->document x)
+  (let* ((by-l (file-get-properties (cdr x) 'by))
+	 (by (if (null? by-l) "Unknown" (car by-l)))
+	 (date-l (file-get-properties (cdr x) 'date))
+	 (date (if (null? by-l) "Unknown"
+		   (strftime "%c" (localtime (string->number (car date-l)))))))
+    `(concat
+       (hlink ,(string-append "Revision " (car x))
+	      ,(file->url (cdr x)))
+       ,(string-append " by " by " at " date))))
 
 (define (file-properties->document file)
   (let* ((l1 (property-query `(:t ,file :v)))
@@ -142,8 +149,8 @@
 	       `(,(make-section "Contents")
 		 (postscript ,(file->url file 'main) "" "" "" "" "" "")))
 	 ,@(if (<= (length r3) 1) '()
-	       `(,(make-section "Revisions")
-		 ,@(map (cut revision->document <> file) r3))))))
+	       `(,(make-section "History")
+		 ,@(reverse (map revision->document r3)))))))
 
 (define (tmfs-document doc)
   (object->string `(document (TeXmacs "1.0.6.3")
