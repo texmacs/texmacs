@@ -1,13 +1,18 @@
-<TeXmacs|1.0.6.2>
+<TeXmacs|1.0.6.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.3>
+  <section|Changes from version 1.0.6 to 1.0.6.4>
 
   <\itemize>
+    <item>Addition of a native <TeXmacs> wiki (1.0.6.4).
+
+    <item>Implementation of the first version of a remote <TeXmacs> file
+    system (1.0.6.4).
+
     <item>Improved system for hyperlinks and navigation (1.0.6.3).
 
     <item>Replacement of the <name|Proclus> plug-in by an integrated linking
