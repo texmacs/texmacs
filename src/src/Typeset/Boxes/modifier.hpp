@@ -27,6 +27,7 @@ public:
   void      display (ps_device dev);  
   operator  tree ();
   tree      action (tree t, SI x, SI y, SI delta);
+  void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
@@ -40,6 +41,7 @@ public:
   virtual cursor          find_cursor (path bp);
   virtual selection       find_selection (path lbp, path rbp);
   virtual gr_selections   graphical_select (SI x, SI y, SI dist);
+  virtual gr_selections   graphical_select (SI x1, SI y1, SI x2, SI y2);
 
   double    left_slope ();
   double    right_slope ();
@@ -54,6 +56,13 @@ public:
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+
+  virtual int   anim_length ();
+  virtual bool  anim_started ();
+  virtual bool  anim_finished ();
+  virtual void  anim_start_at (time_t at);
+  virtual void  anim_finish_now ();
+  virtual void  anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
 #endif // defined MODIFIER_H

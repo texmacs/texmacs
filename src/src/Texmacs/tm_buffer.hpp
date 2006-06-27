@@ -31,6 +31,7 @@ public:
   bool need_save;         // (non textual) modification since last save?
   bool need_autosave;     // (non textual) modification since last autosave?
   bool read_only;         // buffer is read only?
+  bool secure;            // is the buffer secure?
   tm_buffer prj;          // buffer which corresponds to the project
 
   tree undo;              // for undoing changes
@@ -52,7 +53,8 @@ public:
   inline tm_buffer_rep (url name2):
     name (name2), abbr (as_string (tail (name))),
     fm ("texmacs"), extra (url_none ()), vws (0),
-    need_save (false), need_autosave (false), read_only (false),
+    need_save (false), need_autosave (false),
+    read_only (false), secure (is_secure (name2)),
     prj (NULL), undo ("nil"), redo ("nil"), exdo ("nil"),
     undo_depth (0), redo_depth (0), last_save (0), last_autosave (0),
     rp (new_document ()), project (""), style ("style"),

@@ -19,6 +19,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
+#include "tree_traverse.hpp"
 #include "tm_layout.hpp"
 #include "Concat/concater.hpp"
 #include "converter.hpp"
@@ -27,6 +28,7 @@
 #include "Freetype/free_type.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Bibtex/bibtex.hpp"
+#include "link.hpp"
 #include <string.h>
 #include <libguile.h>
 
@@ -51,7 +53,11 @@ scheme_dialect () {
 #ifdef GUILE_B
   return "guile-b";
 #else
+#ifdef GUILE_C
+  return "guile-c";
+#else
   return "unknown";
+#endif
 #endif
 #endif
 }
@@ -109,10 +115,12 @@ bool_to_scm (bool flag) {
   return scm_bool2scm (flag);
 }
 
-bool
+#ifndef scm_to_bool
+int
 scm_to_bool (SCM flag) {
   return scm_scm2bool (flag);
 }
+#endif
 
 /******************************************************************************
 * Integers
@@ -185,7 +193,7 @@ scm_to_string (SCM s) {
 #define SCM_ASSERT_SYMBOL(s,arg,rout) \
   SCM_ASSERT (SCM_NFALSEP (scm_symbol_p (s)), s, arg, rout)
 
-static SCM
+SCM
 symbol_to_scm (string s) {
   char* _s= as_charp (s);
   SCM r= scm_symbol2scm (_s);
@@ -193,7 +201,7 @@ symbol_to_scm (string s) {
   return r;
 }
 
-static string
+string
 scm_to_symbol (SCM s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2symbol (s, &len_r);
@@ -245,7 +253,7 @@ tree_to_scm (tree t) {
   SCM tree_smob;
   SCM_NEWCELL (tree_smob);
   SCM_SETCDR (tree_smob, (SCM) ((void*) (new tree (t))));
-  SCM_SETCAR (tree_smob, tree_tag);
+  SCM_SETCAR (tree_smob, (SCM) tree_tag);
   return tree_smob;
 }
 
@@ -330,8 +338,10 @@ scheme_tree_to_scm (scheme_tree t) {
     if (s == "#t") return SCM_BOOL_T;
     if (s == "#f") return SCM_BOOL_F;
     if (is_int (s)) return int_to_scm (as_int (s));
-    if ((N(s)>=2) && (s[0]=='\42') && (s[N(s)-1]=='\42'))
-      return string_to_scm (s (1, N(s)-1));
+    if (is_quoted (s))
+      return string_to_scm (scm_unquote (s));
+    //if ((N(s)>=2) && (s[0]=='\42') && (s[N(s)-1]=='\42'))
+    //return string_to_scm (s (1, N(s)-1));
     return symbol_to_scm (s);
   }
   else {
@@ -353,8 +363,9 @@ scm_to_scheme_tree (SCM p) {
     }
     return t;
   }
-  if (gh_symbol_p (p)) return scm_to_symbol (p);
-  if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
+  if (scm_is_symbol (p)) return scm_to_symbol (p);
+  if (scm_is_string (p)) return scm_quote (scm_to_string (p));
+  //if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
   if (SCM_INUMP (p)) return as_string (scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
   if (scm_is_tree (p)) return tree_to_scheme_tree (scm_to_tree (p));
@@ -373,7 +384,7 @@ tree
 scm_to_content (SCM p) {
   if (scm_is_tree (p)) return scm_to_tree (p);
   if (scm_is_list (p)) {
-    if (scm_is_null (p) || (!gh_symbol_p (SCM_CAR (p)))) return "?";
+    if (scm_is_null (p) || (!scm_is_symbol (SCM_CAR (p)))) return "?";
     tree t (make_tree_label (scm_to_symbol (SCM_CAR (p))));
     p= SCM_CDR (p);
     while (!scm_is_null (p)) {
@@ -382,7 +393,7 @@ scm_to_content (SCM p) {
     }
     return t;
   }
-  if (gh_symbol_p (p)) return scm_to_symbol (p);
+  if (scm_is_symbol (p)) return scm_to_symbol (p);
   if (scm_is_string (p)) return scm_to_string (p);
   if (SCM_INUMP (p)) return as_string (scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
@@ -415,22 +426,79 @@ scm_to_path (SCM p) {
 }
 
 /******************************************************************************
+* Observers
+******************************************************************************/
+
+static long observer_tag;
+
+#define scm_is_observer(o) \
+  (SCM_NIMP (o) && (((long) SCM_CAR (o)) == observer_tag))
+#define SCM_ASSERT_OBSERVER(o,arg,rout) \
+  SCM_ASSERT (scm_is_observer (o), o, arg, rout)
+
+/*static*/ SCM
+observer_to_scm (observer o) {
+  SCM observer_smob;
+  SCM_NEWCELL (observer_smob);
+  SCM_SETCDR (observer_smob, (SCM) ((void*) (new observer (o))));
+  SCM_SETCAR (observer_smob, (SCM) observer_tag);
+  return observer_smob;
+}
+
+static observer
+scm_to_observer (SCM observer_smob) {
+  return *((observer*) SCM_CDR (observer_smob));
+}
+
+static SCM
+mark_observer (SCM observer_smob) {
+  (void) observer_smob;
+  return SCM_BOOL_F;
+}
+
+static scm_sizet
+free_observer (SCM observer_smob) {
+  observer *ptr = (observer *) SCM_CDR (observer_smob);
+  delete ptr;
+  return 0;
+}
+
+static int
+print_observer (SCM observer_smob, SCM port, scm_print_state *pstate) {
+  (void) observer_smob; (void) pstate;
+  string s= "<observer>";
+  scm_display (string_to_scm (s), port);
+  return 1;
+}
+
+static SCM
+cmp_observer (SCM o1, SCM o2) {
+  return scm_bool2scm (scm_to_observer (o1) == scm_to_observer (o2));
+}
+
+static SCM
+observerP (SCM t) {
+  bool b= scm_is_observer (t);
+  return bool_to_scm (b);
+}
+
+/******************************************************************************
 * Displays
 ******************************************************************************/
 
 static long display_tag;
 
-#define scm_is_display(t) \
-  (SCM_NIMP (t) && (((long) SCM_CAR (t)) == display_tag))
-#define SCM_ASSERT_DISPLAY(t,arg,rout) \
-  SCM_ASSERT (scm_is_display (t), t, arg, rout)
+#define scm_is_display(dis) \
+  (SCM_NIMP (dis) && (((long) SCM_CAR (dis)) == display_tag))
+#define SCM_ASSERT_DISPLAY(dis,arg,rout) \
+  SCM_ASSERT (scm_is_display (dis), dis, arg, rout)
 
 /*static*/ SCM
-display_to_scm (display t) {
+display_to_scm (display dis) {
   SCM display_smob;
   SCM_NEWCELL (display_smob);
-  SCM_SETCDR (display_smob, (SCM) ((void*) (new display (t))));
-  SCM_SETCAR (display_smob, display_tag);
+  SCM_SETCDR (display_smob, (SCM) ((void*) (new display (dis))));
+  SCM_SETCAR (display_smob, (SCM) display_tag);
   return display_smob;
 }
 
@@ -461,8 +529,8 @@ print_display (SCM display_smob, SCM port, scm_print_state *pstate) {
 }
 
 static SCM
-cmp_display (SCM t1, SCM t2) {
-  return scm_bool2scm (scm_to_display (t1) == scm_to_display (t2));
+cmp_display (SCM dis1, SCM dis2) {
+  return scm_bool2scm (scm_to_display (dis1) == scm_to_display (dis2));
 }
 
 /******************************************************************************
@@ -471,22 +539,22 @@ cmp_display (SCM t1, SCM t2) {
 
 static long widget_tag;
 
-#define SCM_WIDGETP(t) \
-  (SCM_NIMP (t) && (((long) SCM_CAR (t)) == widget_tag))
-#define SCM_ASSERT_WIDGET(t,arg,rout) \
-  SCM_ASSERT (scm_is_widget (t), t, arg, rout)
+#define SCM_WIDGETP(wid) \
+  (SCM_NIMP (wid) && (((long) SCM_CAR (wid)) == widget_tag))
+#define SCM_ASSERT_WIDGET(wid,arg,rout) \
+  SCM_ASSERT (scm_is_widget (wid), wid, arg, rout)
 
 bool
-scm_is_widget (SCM t) {
-  return SCM_WIDGETP (t);
+scm_is_widget (SCM wid) {
+  return SCM_WIDGETP (wid);
 }
 
 static SCM
-widget_to_scm (widget t) {
+widget_to_scm (widget wid) {
   SCM widget_smob;
   SCM_NEWCELL (widget_smob);
-  SCM_SETCDR (widget_smob, (SCM) ((void*) (new widget (t))));
-  SCM_SETCAR (widget_smob, widget_tag);
+  SCM_SETCDR (widget_smob, (SCM) ((void*) (new widget (wid))));
+  SCM_SETCAR (widget_smob, (SCM) widget_tag);
   return widget_smob;
 }
 
@@ -517,8 +585,8 @@ print_widget (SCM widget_smob, SCM port, scm_print_state *pstate) {
 }
 
 static SCM
-cmp_widget (SCM t1, SCM t2) {
-  return scm_bool2scm (scm_to_widget (t1) == scm_to_widget (t2));
+cmp_widget (SCM wid1, SCM wid2) {
+  return scm_bool2scm (scm_to_widget (wid1) == scm_to_widget (wid2));
 }
 
 /******************************************************************************
@@ -527,18 +595,18 @@ cmp_widget (SCM t1, SCM t2) {
 
 static long make_widget_tag;
 
-#define SCM_ASSERT_MAKE_WIDGET(t,arg,rout) \
-  SCM_ASSERT (scm_is_make_widget (t), t, arg, rout)
+#define SCM_ASSERT_MAKE_WIDGET(mw,arg,rout) \
+  SCM_ASSERT (scm_is_make_widget (mw), mw, arg, rout)
 
-#define scm_is_make_widget(t) \
-  (SCM_NIMP (t) && (((long) SCM_CAR (t)) == make_widget_tag))
+#define scm_is_make_widget(mw) \
+  (SCM_NIMP (mw) && (((long) SCM_CAR (mw)) == make_widget_tag))
 
 static SCM
-make_widget_to_scm (make_widget t) {
+make_widget_to_scm (make_widget mw) {
   SCM make_widget_smob;
   SCM_NEWCELL (make_widget_smob);
-  SCM_SETCDR (make_widget_smob, (SCM) ((void*) (new make_widget (t))));
-  SCM_SETCAR (make_widget_smob, make_widget_tag);
+  SCM_SETCDR (make_widget_smob, (SCM) ((void*) (new make_widget (mw))));
+  SCM_SETCAR (make_widget_smob, (SCM) make_widget_tag);
   return make_widget_smob;
 }
 
@@ -570,8 +638,8 @@ print_make_widget (SCM make_widget_smob, SCM port, scm_print_state *pstate) {
 }
 
 static SCM
-cmp_make_widget (SCM t1, SCM t2) {
-  return scm_bool2scm (scm_to_make_widget (t1) == scm_to_make_widget (t2));
+cmp_make_widget (SCM mw1, SCM mw2) {
+  return scm_bool2scm (scm_to_make_widget (mw1) == scm_to_make_widget (mw2));
 }
 
 /******************************************************************************
@@ -580,17 +648,17 @@ cmp_make_widget (SCM t1, SCM t2) {
 
 static long command_tag;
 
-#define scm_is_command(t) \
-  (SCM_NIMP (t) && (((long) SCM_CAR (t)) == command_tag))
-#define SCM_ASSERT_COMMAND(t,arg,rout) \
-  SCM_ASSERT (scm_is_command (t), t, arg, rout)
+#define scm_is_command(cmd) \
+  (SCM_NIMP (cmd) && (((long) SCM_CAR (cmd)) == command_tag))
+#define SCM_ASSERT_COMMAND(cmd,arg,rout) \
+  SCM_ASSERT (scm_is_command (cmd), cmd, arg, rout)
 
 static SCM
-command_to_scm (command t) {
+command_to_scm (command cmd) {
   SCM command_smob;
   SCM_NEWCELL (command_smob);
-  SCM_SETCDR (command_smob, (SCM) ((void*) (new command (t))));
-  SCM_SETCAR (command_smob, command_tag);
+  SCM_SETCDR (command_smob, (SCM) ((void*) (new command (cmd))));
+  SCM_SETCAR (command_smob, (SCM) command_tag);
   return command_smob;
 }
 
@@ -621,8 +689,8 @@ print_command (SCM command_smob, SCM port, scm_print_state *pstate) {
 }
 
 static SCM
-cmp_command (SCM t1, SCM t2) {
-  return scm_bool2scm (scm_to_command (t1) == scm_to_command (t2));
+cmp_command (SCM cmd1, SCM cmd2) {
+  return scm_bool2scm (scm_to_command (cmd1) == scm_to_command (cmd2));
 }
 
 /******************************************************************************
@@ -646,7 +714,7 @@ url_to_scm (url u) {
   SCM url_smob;
   SCM_NEWCELL (url_smob);
   SCM_SETCDR (url_smob, (SCM) ((void*) (new url (u))));
-  SCM_SETCAR (url_smob, url_tag);
+  SCM_SETCAR (url_smob, (SCM) url_tag);
   return url_smob;
 }
 
@@ -684,6 +752,12 @@ cmp_url (SCM u1, SCM u2) {
   return scm_bool2scm (scm_to_url (u1) == scm_to_url (u2));
 }
 
+static SCM
+urlP (SCM t) {
+  bool b= scm_is_url (t);
+  return bool_to_scm (b);
+}
+
 url url_concat (url u1, url u2) { return u1 * u2; }
 url url_or (url u1, url u2) { return u1 | u2; }
 void string_save (string s, url u) { (void) save_string (u, s); }
@@ -694,9 +768,37 @@ url url_ref (url u, int i) { return u[i]; }
 * Several array types
 ******************************************************************************/
 
+typedef array<int> array_int;
 typedef array<string> array_string;
 typedef array<tree> array_tree;
 typedef array<widget> array_widget;
+
+static bool
+scm_is_array_int (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return SCM_INUMP (SCM_CAR (p)) && scm_is_array_int (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_ARRAY_INT(p,arg,rout) \
+  SCM_ASSERT (scm_is_array_int (p), p, arg, rout)
+
+/* static */ SCM
+array_int_to_scm (array<int> a) {
+  int i, n= N(a);
+  SCM p= SCM_NULL;
+  for (i=n-1; i>=0; i--) p= scm_cons (int_to_scm (a[i]), p);
+  return p;
+}
+
+/* static */ array<int>
+scm_to_array_int (SCM p) {
+  array<int> a;
+  while (!scm_is_null (p)) {
+    a << scm_to_int (SCM_CAR (p));
+    p= SCM_CDR (p);
+  }
+  return a;
+}
 
 static bool
 scm_is_array_string (SCM p) {
@@ -780,6 +882,60 @@ scm_to_array_widget (SCM p) {
 }
 
 /******************************************************************************
+* List types
+******************************************************************************/
+
+typedef list<string> list_string;
+
+bool
+scm_is_list_string (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_string (SCM_CAR (p)) && scm_is_list_string (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_LIST_STRING(p,arg,rout) \
+  SCM_ASSERT (scm_is_list_string (p), p, arg, rout)
+
+SCM
+list_string_to_scm (list_string l) {
+  if (nil (l)) return SCM_NULL;
+  return scm_cons (string_to_scm (l->item),
+		   list_string_to_scm (l->next));
+}
+
+list_string
+scm_to_list_string (SCM p) {
+  if (scm_is_null (p)) return list_string ();
+  return list_string (scm_to_string (SCM_CAR (p)),
+		      scm_to_list_string (SCM_CDR (p)));
+}
+
+typedef list<tree> list_tree;
+
+bool
+scm_is_list_tree (SCM p) {
+  if (scm_is_null (p)) return true;
+  else return scm_is_tree (SCM_CAR (p)) && scm_is_list_tree (SCM_CDR (p));
+}
+
+#define SCM_ASSERT_LIST_TREE(p,arg,rout) \
+  SCM_ASSERT (scm_is_list_tree (p), p, arg, rout)
+
+SCM
+list_tree_to_scm (list_tree l) {
+  if (nil (l)) return SCM_NULL;
+  return scm_cons (tree_to_scm (l->item),
+		   list_tree_to_scm (l->next));
+}
+
+list_tree
+scm_to_list_tree (SCM p) {
+  if (scm_is_null (p)) return list_tree ();
+  return list_tree (scm_to_tree (SCM_CAR (p)),
+		    scm_to_list_tree (SCM_CDR (p)));
+}
+
+/******************************************************************************
 * Initialization
 ******************************************************************************/
 
@@ -792,6 +948,11 @@ initialize_glue () {
   scm_set_smob_free (tree_tag, free_tree);
   scm_set_smob_print (tree_tag, print_tree);
   scm_set_smob_equalp (tree_tag, cmp_tree);
+  observer_tag= scm_make_smob_type ("observer", 0);
+  scm_set_smob_mark (observer_tag, mark_observer);
+  scm_set_smob_free (observer_tag, free_observer);
+  scm_set_smob_print (observer_tag, print_observer);
+  scm_set_smob_equalp (observer_tag, cmp_observer);
   display_tag= scm_make_smob_type ("display", 0);
   scm_set_smob_mark (display_tag, mark_display);
   scm_set_smob_free (display_tag, free_display);
@@ -817,7 +978,9 @@ initialize_glue () {
   scm_set_smob_free (url_tag, free_url);
   scm_set_smob_print (url_tag, print_url);
   scm_set_smob_equalp (url_tag, cmp_url);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
+  scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();
@@ -827,6 +990,10 @@ initialize_glue () {
 
 scm_smobfuns tree_smob_funcs = {
   mark_tree, free_tree, print_tree, cmp_tree
+};
+
+scm_smobfuns observer_smob_funcs = {
+  mark_observer, free_observer, print_observer, cmp_observer
 };
 
 scm_smobfuns display_smob_funcs = {
@@ -852,12 +1019,15 @@ scm_smobfuns url_smob_funcs = {
 void
 initialize_glue () {
   tree_tag= scm_newsmob (&tree_smob_funcs);
+  observer_tag= scm_newsmob (&observer_smob_funcs);
   display_tag= scm_newsmob (&display_smob_funcs);
   widget_tag= scm_newsmob (&widget_smob_funcs);
   make_widget_tag= scm_newsmob (&make_widget_smob_funcs);
   command_tag= scm_newsmob (&command_smob_funcs);
   url_tag= scm_newsmob (&url_smob_funcs);
-  gh_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("tree?", (FN) treeP, 1, 0, 0);
+  scm_new_procedure ("observer?", (FN) observerP, 1, 0, 0);
+  scm_new_procedure ("url?", (FN) urlP, 1, 0, 0);
   initialize_glue_basic ();
   initialize_glue_editor ();
   initialize_glue_server ();

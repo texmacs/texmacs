@@ -1,9 +1,173 @@
-<TeXmacs|1.0.5>
+<TeXmacs|1.0.6.3>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
+
+  <section|Changes from version 1.0.6 to 1.0.6.4>
+
+  <\itemize>
+    <item>Addition of a native <TeXmacs> wiki (1.0.6.4).
+
+    <item>Implementation of the first version of a remote <TeXmacs> file
+    system (1.0.6.4).
+
+    <item>Improved system for hyperlinks and navigation (1.0.6.3).
+
+    <item>Replacement of the <name|Proclus> plug-in by an integrated linking
+    tool (1.0.6.3).
+
+    <item>Simplified and improved table editing (1.0.6.2).
+
+    <item>First version of <TeXmacs> server (1.0.6.2).
+
+    <item>Further fixes in CJK support (1.0.6.2).
+
+    <item>Basic CJK support for <TeXmacs>. (1.0.6.1)
+
+    <item>Mechanism for cache invalidation. (1.0.6.1)
+
+    <item>Upgraded <name|Maxima> interface for <name|Maxima> 5.9.3. (1.0.6.1)
+  </itemize>
+
+  <section|Changes from version 1.0.5 to 1.0.6>
+
+  <\itemize>
+    <item>Improved plug-in for <name|Reduce> (1.0.6).
+
+    <item>Fixes for new version of <name|Maxima> (1.0.6).
+
+    <item>Added <name|Pnambic> plug-in among the examples for debugging
+    plug-ins (1.0.6).
+
+    <item>Corrected problems with rubber fonts (1.0.6).
+
+    <item>Further fixes for exporting symbols to LaTeX (1.0.6).
+
+    <item>Several improvements in <LaTeX> converters (1.0.5.12).
+
+    <item>User preference for <name|Html> converter to export formulas as
+    images (1.0.5.12).
+
+    <item>Several minor improvements in the graphics mode (1.0.5.12).
+
+    <item>More options for the <TeXmacs> to <LaTeX> converter and updated
+    documentation (1.0.5.11).
+
+    <item>Several bug corrections and minor improvements in <LaTeX> to
+    <TeXmacs> converter (1.0.5.11).
+
+    <item>Faster and more portable help searching (1.0.5.10).
+
+    <item>Added a plug-in for Mathematica (1.0.5.10).
+
+    <item>Use Type 1 EC fonts by default (1.0.5.10).
+
+    <item>Distribution of several font packages with Type 1 EC fonts
+    (1.0.5.10).
+
+    <item>More reliable quoting routines and related bug corrections
+    (1.0.5.10).
+
+    <item>Release <with|mode|math|\<alpha\>>-version of graphical mode
+    (1.0.5.9).
+
+    <item>Improved exportation to Html (1.0.5.9).
+
+    <item>Improved table importation to and from Html/MathML (1.0.5.9).
+
+    <item>Further improvements in Maple interface (1.0.5.9).
+
+    <item>Added a new interface with Maple (1.0.5.8).
+
+    <item>Added converters from and to MathML (1.0.5.8).
+
+    <item>XML parser now expands entities which are defined in the document
+    (1.0.5.8).
+
+    <item>Added an option for reverse video mode (1.0.5.8).
+
+    <item>Further improvements for the upcoming graphical mode (1.0.5.8).
+
+    <item>Several minor bugfixes from buglist (1.0.5.7).
+
+    <item>Further improvements in <verbatim|configure.in> and use of
+    <verbatim|autoheader> (1.0.5.7).
+
+    <item>Finished implementation of document parts and preambles (1.0.5.7).
+
+    <item>Improved cursor accessability handling (1.0.5.7).
+
+    <item>Improvements in the double-buffering system (1.0.5.6).
+
+    <item>Implementation of a triple-buffering system for the graphical
+    object (1.0.5.6).
+
+    <item>Improvements in the partial redraw system (1.0.5.6).
+
+    <item>Start the implementation of document parts and preambles (1.0.5.6).
+
+    <item>Simplifications in <verbatim|configure.in> and the main makefile
+    (1.0.5.6).
+
+    <item>Global folding and unfolding according to type of contents
+    (1.0.5.6).
+
+    <item>More and improved folding and switching functionality for
+    presentation mode (1.0.5.5).
+
+    <item>Simple animations (1.0.5.5).
+
+    <item>On-the-fly evaluation of computer algebra scripts (1.0.5.5).
+
+    <item>Improved rendering speed of images based on plug-in for Imlib2
+    (1.0.5.5).
+
+    <item>A simple thumbnail facility (1.0.5.5).
+
+    <item>Documentation of tree API (partial) and structured editing
+    (1.0.5.4).
+
+    <item>Fixed some long standing bugs concerning cursor movement (1.0.5.4).
+
+    <item>Implementation of structured cursor movement (1.0.5.4).
+
+    <item>Enrichment of the Scheme API with routines for tree traversal
+    (1.0.5.4).
+
+    <item>Improved arrows and dashes for upcoming graphical mode(1.0.5.4).
+
+    <item>Reorganized and consolidated tree API (1.0.5.3).
+
+    <item>Started documentation of Scheme API (1.0.5.3).
+
+    <item>User preference for popup instead of footer dialogues (1.0.5.2).
+
+    <item>Default values and types for interactive arguments (1.0.5.2).
+
+    <item>Better dialogue system based on scheme continuations (1.0.5.2).
+
+    <item>Arrows for the upcoming graphical mode (1.0.5.2).
+
+    <item>Support for plug-in provided icons and dictionaries (1.0.5.2).
+
+    <item>Included <name|Proclus> plug-in into the main distribution
+    (1.0.5.2).
+
+    <item>Contextual overloading (1.0.5.1).
+
+    <item>More rational booting and improved speed through higher lazyness
+    (1.0.5.1).
+
+    <item>Simplifications in the module system (1.0.5.1).
+
+    <item>Reorganization of the scheme directory structure by functionality
+    (1.0.5.1).
+
+    <item>Added first versions of dashed lines and filled curves for upcoming
+    graphical mode (1.0.5.1).
+  </itemize>
 
   <section|Changes from version 1.0.4 to 1.0.5>
 

@@ -21,7 +21,6 @@ RESOURCE_CODE(font);
 font_rep::font_rep (display dis2, string s):
   rep<font> (s),
   dis       (dis2),
-  enc       (always_enc),
   spc       (0),
   extra     (0)
 {
@@ -30,7 +29,6 @@ font_rep::font_rep (display dis2, string s):
 font_rep::font_rep (display dis2, string s, font fn):
   rep<font>    (s),
   dis          (dis2),
-  enc          (always_enc),
   size         (fn->size),
   design_size  (fn->design_size),
   display_size (fn->display_size),
@@ -142,91 +140,6 @@ font_rep::get_glyph (string s) {
 }
 
 /******************************************************************************
-* Joining fonts: the global font properties are taken from the first font.
-* If a string needs to be converted to a box, we first try to convert
-* it using the first font, and next using the second one.
-******************************************************************************/
-
-struct join_font_rep: font_rep {
-  font fn1, fn2;
-
-  join_font_rep (string name, font fn1, font fn2);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
-};
-
-join_font_rep::join_font_rep (string name, font fn1b, font fn2b):
-  font_rep (fn1b->dis, name, fn1b), fn1 (fn1b), fn2 (fn2b)
-{
-  enc= join (fn1->enc, fn2->enc);
-}
-
-void
-join_font_rep::get_extents (string s, metric& ex) {
-  if (fn1->enc->valid (s)) fn1->get_extents (s, ex);
-  else fn2->get_extents (s, ex);
-}
-
-void
-join_font_rep::get_xpositions (string s, SI* xpos) {
-  if (fn1->enc->valid (s)) fn1->get_xpositions (s, xpos);
-  else fn2->get_xpositions (s, xpos);
-}
-
-void
-join_font_rep::draw (ps_device dev, string s, SI x, SI y) {
-  if (fn1->enc->valid (s)) fn1->draw (dev, s, x, y);
-  else fn2->draw (dev, s, x, y);
-}
-
-font
-join (font fn1, font fn2) {
-  string name= fn1->res_name * "|" * fn2->res_name;
-  return make (font, name, new join_font_rep (name, fn1, fn2));
-}
-
-/******************************************************************************
-* Restricting fonts: restricting of the fonts underlying encoding,
-* we decrease the number of valid strings which can be printed in the font
-******************************************************************************/
-
-struct subfont_rep: font_rep {
-  font fn;
-  subfont_rep (string name, font fn, encoding enc);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void draw (ps_device dev, string s, SI x, SI y);
-};
-
-subfont_rep::subfont_rep (string name, font fn2, encoding enc2):
-  font_rep (fn2->dis, name, fn2), fn (fn2)
-{
-  enc= enc2;
-}
-
-void
-subfont_rep::get_extents (string s, metric& ex) {
-  fn->get_extents (s, ex);
-}
-
-void
-subfont_rep::get_xpositions (string s, SI* xpos) {
-  fn->get_xpositions (s, xpos);
-}
-
-void
-subfont_rep::draw (ps_device dev, string s, SI x, SI y) {
-  fn->draw (dev, s, x, y);
-}
-
-font
-subfont (font fn, encoding enc) {
-  string name= fn->res_name * ":" * enc->res_name;
-  return make (font, name, new subfont_rep (name, fn, enc));
-}
-
-/******************************************************************************
 * Error font: used to draw unindentified characters
 ******************************************************************************/
 
@@ -239,10 +152,7 @@ struct error_font_rep: font_rep {
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
-  font_rep (fnb->dis, name, fnb), fn (fnb)
-{
-  enc= fn->enc;
-}
+  font_rep (fnb->dis, name, fnb), fn (fnb) {}
 
 void
 error_font_rep::get_extents (string s, metric& ex) {
