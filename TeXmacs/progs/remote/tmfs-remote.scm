@@ -143,7 +143,9 @@
     (when (remote-buffer?)
       (let* ((this (url->name (get-name-buffer)))
 	     (u (remote-request `(tmfs-project-search-name ,this ,name))))
-	(if u (load-buffer u) (remote-new-file name))))))
+	(cursor-history-add (cursor-path))
+	(if u (load-buffer u) (remote-new-file name))
+	(cursor-history-add (cursor-path))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File transfer
