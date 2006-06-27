@@ -39,8 +39,8 @@ find_old_help()
 PATH="/cygdrive/c/Program Files/Maxima-5.9.2/bin:$PATH"
 PATH="/cygdrive/c/Program Files/Maxima-5.9.3/bin:$PATH"
 export PATH
-MAXIMA=`type -p maxima 2>/dev/null`
 
+MAXIMA=`type -p maxima 2>/dev/null`
 if [ $? -eq 0 ]
 then
   if [ -f "/usr/bin/cygwin1.dll" ]
