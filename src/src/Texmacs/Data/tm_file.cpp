@@ -207,7 +207,7 @@ tm_data_rep::save_buffer (url u, string fm) {
 
   tm_buffer buf= get_buffer ();
   if ((u == buf->name && buf->read_only) ||
-      (u == buf->name && !has_permission (u, "w")) ||
+      (u == buf->name && has_permission (u,"r") && !has_permission (u,"w")) ||
       (!is_none (buf->extra) && buf->name != "* Aux *")) {
     set_message ("Error: file is read only", action);
     return;

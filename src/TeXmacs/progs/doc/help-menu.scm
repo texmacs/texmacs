@@ -243,5 +243,7 @@
 	    ("Compile book" (tmdoc-expand-this 'title))))
       (when (url-exists-in-path? "wget")
 	(-> "Online help"
-	    ("Browse web" (load-help-online "index.en.tm"))
-	    ("Update from web" (update-help-online))))))
+	    ("Wiki" (load-buffer "tmfs://file/+R28HzRqmu}tA69.scm"))
+	    ;;("Browse web" (load-help-online "index.en.tm"))
+	    ;;("Update from web" (update-help-online))
+	    ))))

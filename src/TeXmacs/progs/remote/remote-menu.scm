@@ -24,7 +24,9 @@
 
 (menu-bind account-menu
   ("Nickname" (remote-interactive-set-user-property "Nickname"))
-  ("Full name" (remote-interactive-set-user-property "Full name")))
+  ("Full name" (remote-interactive-set-user-property "Full name"))
+  ("Email address" (remote-interactive-set-user-property "Email"))
+  ("Home page" (remote-interactive-set-user-property "Web")))
 
 (menu-bind remote-menu
   (-> "Login" (link login-menu))
