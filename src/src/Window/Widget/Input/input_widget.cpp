@@ -302,10 +302,13 @@ input_widget_rep::handle_mouse (mouse_event ev) {
       pos=0; tm_char_forwards (s, pos);
       for (; pos<=N(s); tm_char_forwards (s, pos)) {
 	fn->var_get_extents (draw_s (0, pos), ex);
-	if (((old+ ex->x2+ dw- ex->x1) >> 1) > (x*SHRINK+ scroll)) break;
+	if (((old+ ex->x2+ dw- ex->x1) >> 1) > (x*SHRINK+ scroll)) {
+	  tm_char_backwards (s, pos);
+	  break;
+	}
 	old= ex->x2+ dw- ex->x1;
+	if (pos >= N(s)) break;
       }
-      tm_char_backwards (s, pos);
     }
     win->set_keyboard_focus (this);
     this << emit_invalidate_all ();
