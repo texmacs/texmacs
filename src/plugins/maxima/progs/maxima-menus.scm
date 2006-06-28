@@ -70,6 +70,9 @@
       ("Factor" (maxima-apply "factor"))
       ("Expand" (maxima-apply "expand"))
       ("Expand#w.r.t." (maxima-apply "expandwrt" 2)))
+  (-> "Solving equations"
+      ("Solve" (maxima-apply "solve"))
+      ("Solve in" (maxima-apply "solve" 2)))
   (-> "Arithmetic"
       ("Factor" (maxima-apply "factor"))
       ("Gcd" (maxima-apply "gcd"))
