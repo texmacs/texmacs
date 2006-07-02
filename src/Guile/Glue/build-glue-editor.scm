@@ -285,6 +285,7 @@
   (export-pages-postscript export_ps (void url string string))
   (footer-eval footer_eval (void string))
   (texmacs-exec texmacs_exec (tree content))
+  (notify-change notify_change (void int))
   (idle-time idle_time (int))
   (change-time change_time (int))
   (menu-before-action before_menu_action (void))
