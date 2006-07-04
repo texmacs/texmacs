@@ -265,6 +265,7 @@ edit_modify_rep::notify_assign_node (path p, tree_label op) {
 
 void
 edit_modify_rep::post_notify (path p) {
+  // cout << "Post notify\n";
   if (!(rp <= p)) return;
   selection_cancel ();
   invalidate_mutators ();

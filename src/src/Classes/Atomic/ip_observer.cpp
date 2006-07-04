@@ -122,6 +122,9 @@ ip_observer_rep::notify_insert_node (tree& ref, int pos) {
 void
 ip_observer_rep::notify_remove_node (tree& ref, int pos) {
   // cout << "Notify remove node " << ref << ", " << pos << "\n";
+  for (int i=0; i<N(ref); i++)
+    if (i != pos)
+      detach_ip (ref[i]);
   if ((!nil (ip)) && (ip->item>=0)) attach_ip (ref[pos], ip);
   else detach_ip (ref[pos]);
   ip= DETACHED; // detach_ip (ref);

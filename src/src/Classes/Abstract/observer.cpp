@@ -265,6 +265,9 @@ remove_node (tree& ref, int pos) {
     ref->obs->notify_remove_node (ref, pos);
     simplify (ref->obs);
   }
+  for (int i=0; i<N(ref); i++)
+    if (i < pos) detach (ref[i], ref[pos], false);
+    else if (i > pos) detach (ref[i], ref[pos], true);
   ref= ref[pos];
   // stretched_print (ref, true, 1);
   // consistency_check ();
