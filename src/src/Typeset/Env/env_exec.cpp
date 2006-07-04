@@ -51,7 +51,7 @@ edit_env_rep::rewrite (tree t) {
       object expr= null_object ();
       for (i=n-1; i>0; i--)
 	expr= cons (object (r[i]), expr);
-      string fun= as_string (exec (t[0]));
+      string fun= exec_string (t[0]);
       expr= cons (string_to_object (fun), expr);
       (void) eval ("(lazy-markup-modules-force)");
       if (!secure && script_status < 2) {
@@ -94,7 +94,7 @@ edit_env_rep::rewrite (tree t) {
     }
   case INCLUDE:
     {
-      url file_name= url_system (as_string (t[0]));
+      url file_name= url_system (exec_string (t[0]));
       return load_inclusion (relative (base_file_name, file_name));
     }
   case REWRITE_INACTIVE:
