@@ -101,19 +101,20 @@ get_from_web (url name) {
     delete [] tempFilePath;
     return url_none();
   }
-	
+
   else return set_cache (name, tmp);
 #else
   string test= var_eval_system ("which wget");
   if (!ends (test, "wget")) return url_none ();
   url tmp= url_temp ();
+  string tmp_s= escape_sh (concretize (tmp));
   string cmd= "wget --header='User-Agent: TeXmacs-" TEXMACS_VERSION "' -q";
-  cmd << " -O " << concretize (tmp) << " " << as_string (name);
+  cmd << " -O " << tmp_s << " " << as_string (name);
   // cout << cmd << "\n";
   system (cmd);
   // cout << "got " << name << " as " << tmp << "\n";
 
-  if (var_eval_system ("cat " * concretize (tmp) * " 2> /dev/null") == "") {
+  if (var_eval_system ("cat " * tmp_s * " 2> /dev/null") == "") {
     remove (tmp);
     return url_none ();
   }

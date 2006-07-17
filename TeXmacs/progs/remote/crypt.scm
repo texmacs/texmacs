@@ -19,10 +19,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define-macro (with-temp-file name s . body)
-  `(with ,name (url-concretize (url-temp))
-     (string-save ,s ,name)
+  `(let* ((tmp-u (url-temp))
+	  (,name (escape-shell (url-concretize tmp-u))))
+     (string-save ,s tmp-u)
      (with r (begin ,@body)
-       (system-remove ,name)
+       (system-remove tmp-u)
        r)))
 
 (tm-define (system* . args)

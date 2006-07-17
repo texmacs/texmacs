@@ -794,7 +794,7 @@ resolve (url u, string filter) {
 url
 resolve_in_path (url u) {
   if (use_which) {
-    string name = as_string (u);
+    string name = escape_sh (as_string (u));
     string which= var_eval_system ("which " * name * " 2> /dev/null");
     if (ends (which, name))
       return which;

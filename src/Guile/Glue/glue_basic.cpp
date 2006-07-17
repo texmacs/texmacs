@@ -1154,6 +1154,19 @@ tmg_escape_verbatim (SCM arg1) {
 }
 
 SCM
+tmg_escape_shell (SCM arg1) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "escape-shell");
+
+  string in1= scm_to_string (arg1);
+
+  // SCM_DEFER_INTS;
+  string out= escape_sh (in1);
+  // SCM_ALLOW_INTS;
+
+  return string_to_scm (out);
+}
+
+SCM
 tmg_string_convert (SCM arg1, SCM arg2, SCM arg3) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "string-convert");
   SCM_ASSERT_STRING (arg2, SCM_ARG2, "string-convert");
@@ -2852,6 +2865,7 @@ initialize_glue_basic () {
   scm_new_procedure ("string-minus", (FN) tmg_string_minus, 2, 0, 0);
   scm_new_procedure ("escape-generic", (FN) tmg_escape_generic, 1, 0, 0);
   scm_new_procedure ("escape-verbatim", (FN) tmg_escape_verbatim, 1, 0, 0);
+  scm_new_procedure ("escape-shell", (FN) tmg_escape_shell, 1, 0, 0);
   scm_new_procedure ("string-convert", (FN) tmg_string_convert, 3, 0, 0);
   scm_new_procedure ("utf8->cork", (FN) tmg_utf8_2cork, 1, 0, 0);
   scm_new_procedure ("cork->utf8", (FN) tmg_cork_2utf8, 1, 0, 0);
