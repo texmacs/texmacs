@@ -2722,19 +2722,6 @@ tmg_texmacs_exec (SCM arg1) {
 }
 
 SCM
-tmg_notify_change (SCM arg1) {
-  SCM_ASSERT_INT (arg1, SCM_ARG1, "notify-change");
-
-  int in1= scm_to_int (arg1);
-
-  // SCM_DEFER_INTS;
-  get_server()->get_editor()->notify_change (in1);
-  // SCM_ALLOW_INTS;
-
-  return SCM_UNSPECIFIED;
-}
-
-SCM
 tmg_idle_time () {
   // SCM_DEFER_INTS;
   int out= get_server()->get_editor()->idle_time ();
@@ -3105,7 +3092,6 @@ initialize_glue_editor () {
   scm_new_procedure ("export-pages-postscript", (FN) tmg_export_pages_postscript, 3, 0, 0);
   scm_new_procedure ("footer-eval", (FN) tmg_footer_eval, 1, 0, 0);
   scm_new_procedure ("texmacs-exec", (FN) tmg_texmacs_exec, 1, 0, 0);
-  scm_new_procedure ("notify-change", (FN) tmg_notify_change, 1, 0, 0);
   scm_new_procedure ("idle-time", (FN) tmg_idle_time, 0, 0, 0);
   scm_new_procedure ("change-time", (FN) tmg_change_time, 0, 0, 0);
   scm_new_procedure ("menu-before-action", (FN) tmg_menu_before_action, 0, 0, 0);

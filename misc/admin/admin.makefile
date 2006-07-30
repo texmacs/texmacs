@@ -6,20 +6,20 @@
 #              see the file 'LICENSE', which is provided with this package.
 ###############################################################################
 
-prefix = /usr/local/
-exec_prefix = /usr/local/
-includedir = /usr/local//include
-libdir = /usr/local//lib
-bindir = /usr/local//bin
-datadir = /usr/local//share
-mandir = /usr/local//man
+prefix = /usr/local
+exec_prefix = /usr/local
+includedir = /usr/local/include
+libdir = /usr/local/lib
+bindir = /usr/local/bin
+datadir = /usr/local/share
+mandir = /usr/local/man
 tmdir = TeXmacs
 tmtgz = TeXmacs-1.0.6.4
 tmrpm = TeXmacs-1.0.6.4-1
-tmorig = /home/Joris/texmacs/src
-tmsrc = /home/Joris/texmacs/src/TeXmacs
-tmbin = /usr/local//libexec/TeXmacs
-tmdata = /usr/local//share/TeXmacs
+tmorig = /home/vdhoeven/cvs/src
+tmsrc = /home/vdhoeven/cvs/src/TeXmacs
+tmbin = /usr/local/libexec/TeXmacs
+tmdata = /usr/local/share/TeXmacs
 so = so
 os = gnu-linux
 

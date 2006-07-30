@@ -352,9 +352,7 @@ edit_interface_rep::apply_changes () {
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
     if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
       if (!inside_active_graphics ())
-	if (((env_change & THE_MUTATORS) == 0) ||
-	    (env_change & (THE_ENVIRONMENT + THE_EXTENTS)))
-	  cursor_visible ();
+	cursor_visible ();
 
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
