@@ -112,8 +112,7 @@
 	    ((and u (== (tree-label u) 'output))
 	     (with (name session channel) (ahash-ref plugin-source handle)
 	       (tree-assign (tree-up t 2) doc)
-	       (start-input name session (tree->path u))
-	       (notify-change 1)))))))
+	       (start-input name session (tree->path u))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; serialization
