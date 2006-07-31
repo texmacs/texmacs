@@ -20,5 +20,5 @@ $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh: $(TEXMACS_MAPLE_DIR)/bin/maple
 	cat $(TEXMACS_MAPLE_DIR)/bin/maple | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/cmaple%$${HOME}/.TeXmacs/bin/tm_maple_9%' | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/maplew%$${HOME}/.TeXmacs/bin/tm_maple_9%' > $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh
 	chmod a+x $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh
 
-$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src/tm_maple_9.c
-	$(CC) $(MAPLELDFLAGS) $(MAPLECPPFLAGS) src/tm_maple_9.c -o $(TEXMACS_HOME_PATH)/bin/tm_maple_9
+$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c
+	$(CC) $(MAPLELDFLAGS) $(MAPLECPPFLAGS) src.9/tm_maple_9.c -o $(TEXMACS_HOME_PATH)/bin/tm_maple_9
