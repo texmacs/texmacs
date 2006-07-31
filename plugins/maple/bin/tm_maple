@@ -26,5 +26,5 @@ then
     exec "${HOME}/.TeXmacs/bin/tm_maple_9.sh"
 elif [ -f "$TEXMACS_MAPLE_DIR/mwshelp" ]
 then
-    exec "${TEXMACS_PATH}/plugins/maple/bin/tm_maple_5"
+    exec tm_maple_5
 fi
