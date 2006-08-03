@@ -168,7 +168,7 @@
 
 (define (session-get-input-string)
   (let* ((t (tree-innermost 'input))
-	 (input (tree->stree (tree-ref t 2)))
+	 (input (tree->stree (tree-ref t :last)))
 	 (s (verbatim-serialize (get-env "prog-language") input)))
     (substring s 0 (- (string-length s) 1))))
 
