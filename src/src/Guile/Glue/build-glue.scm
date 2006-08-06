@@ -189,7 +189,7 @@
   (let ((name (car l))
 	(arg-type (cdaddr l)))
     ;; (output "\n" name ", " arg-type "\n")
-    (output "  gh_new_procedure (\"" name "\", ")
+    (output "  scm_new_procedure (\"" name "\", ")
     (output "(FN) " (translate-name name) ", ")
     (output (length arg-type) ", 0, 0);\n")))
 

@@ -15,6 +15,7 @@
 
 bridge bridge_document (typesetter, tree, path);
 bridge bridge_surround (typesetter, tree, path);
+bridge bridge_hidden (typesetter, tree, path);
 bridge bridge_formatting (typesetter, tree, path, string);
 bridge bridge_with (typesetter, tree, path);
 bridge bridge_rewrite (typesetter, tree, path);
@@ -22,8 +23,10 @@ bridge bridge_argument (typesetter, tree, path);
 bridge bridge_default (typesetter, tree, path);
 bridge bridge_compound (typesetter, tree, path);
 bridge bridge_mark (typesetter, tree, path);
+bridge bridge_expand_as (typesetter, tree, path);
 bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
+bridge bridge_locus (typesetter, tree, path);
 
 bridge nil_bridge;
 
@@ -64,6 +67,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_document (ttt, st, ip);
   case SURROUND:
     return bridge_surround (ttt, st, ip);
+  case HIDDEN:
+    return bridge_hidden (ttt, st, ip);
   case DATOMS:
     return bridge_formatting (ttt, st, ip, ATOM_DECORATIONS);
   case DLINES:
@@ -80,6 +85,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_argument (ttt, st, ip);
   case MARK:
     return bridge_mark (ttt, st, ip);
+  case EXPAND_AS:
+    return bridge_expand_as (ttt, st, ip);
   case EVAL:
   case QUASI:
     return bridge_eval (ttt, st, ip);
@@ -98,6 +105,11 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_auto (ttt, st, ip, var_inactive_m, true);
   case REWRITE_INACTIVE:
     return bridge_rewrite (ttt, st, ip);
+  case LOCUS:
+    return bridge_locus (ttt, st, ip);
+  case HLINK:
+  case ACTION:
+    return bridge_compound (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);
@@ -200,6 +212,11 @@ bridge_rep::notify_join (path p) {
 ******************************************************************************/
 
 void
+bridge_rep::my_clean_links () {
+  link_env= link_repository (true);
+}
+
+void
 bridge_rep::my_exec_until (path p) {
   env->exec_until (st, p);
 }
@@ -256,7 +273,7 @@ bridge_rep::typeset (int desired_status) {
       ip= ip2;
   }
 
-  // cout << "Typesetting " << st << ", " << desired_status << "\n";
+  //cout << "Typesetting " << st << ", " << desired_status << LF << INDENT;
   if ((status==desired_status) && (N(ttt->old_patch)==0)) {
     // cout << "  cached\n";
     env->monitored_patch_env (changes);
@@ -266,12 +283,16 @@ bridge_rep::typeset (int desired_status) {
     // cout << "Typesetting " << st << ", " << desired_status << "\n";
     // cout << "  recomputing\n";
     hashmap<string,tree> prev_back (UNINIT);
+    my_clean_links ();
+    link_repository old_link_env= env->link_env;
+    env->link_env= link_env;
     ttt->local_start (l, sb);
     env->local_start (prev_back);
     my_typeset (desired_status);
     env->local_update (ttt->old_patch, changes);
     env->local_end (prev_back);
     ttt->local_end (l, sb);
+    env->link_env= old_link_env;
     status= desired_status;
     // cout << "  old_patch     = " << ttt->old_patch << "\n";
     // cout << "  changes       = " << changes << "\n";
@@ -280,6 +301,7 @@ bridge_rep::typeset (int desired_status) {
   // cout << "Typesetted " << st << ", " << desired_status << "\n";
 
   // ttt->insert_stack (l, sb);
+  //if (N(l) == 0); else
   if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
   else {
     bool flag= false;
@@ -288,17 +310,18 @@ bridge_rep::typeset (int desired_status) {
       flag= flag || (N (l[i]->fl) != 0) || (l[i]->nr_cols > 1);
     if (flag) ttt->insert_stack (l, sb);
     else {
-      int last=-1;
+      int first=-1, last=-1;
       array<box> bs;
       array<SI>  spc;
       for (i=0; i<n; i++)
-	if (l[i]->type == PAGE_LINE_ITEM) {
+	if (l[i]->type != PAGE_CONTROL_ITEM) {
+	  if (first == -1 && l[i]->type == PAGE_LINE_ITEM) first= N(bs);
 	  bs  << l[i]->b;
 	  spc << l[i]->spc->def;
 	  last= i;
 	}
       box lb= stack_box (path (ip), bs, spc);
-      lb= move_box (path (ip), lb, 0, bs[0]->y2);
+      if (first != -1) lb= move_box (path (ip), lb, 0, bs[first]->y2);
       array<page_item> new_l (1);
       new_l[0]= page_item (lb);
       new_l[0]->spc= l[last]->spc;
@@ -306,6 +329,10 @@ bridge_rep::typeset (int desired_status) {
     }
   }
 
-  // cout << "  l   = " << l << "\n";
-  // cout << "  sb  = " << sb << "\n";
+  //cout << UNINDENT;
+  //cout << "l   = " << l << LF;
+  //cout << "sb  = " << sb << LF;
+  //cout << "l   = " << ttt->l << LF;
+  //cout << "a   = " << ttt->a << LF;
+  //cout << "b   = " << ttt->b << LF;
 }

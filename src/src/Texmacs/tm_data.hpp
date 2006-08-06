@@ -18,13 +18,11 @@
 class tm_data_rep: virtual public server_rep {
 protected:
   array<tm_buffer> bufs;      // the buffers
-  array<tree>      history;   // history for browsing
-  int              hist_pos;  // position in history
 
   /* Low level buffer menu manipulation */
+  int       find_buffer (path p);
   int       find_buffer (url name);
   string    new_menu_name (url name);
-  void      update_menu ();
   void      menu_insert_buffer (tm_buffer buf);
   void      menu_delete_buffer (tm_buffer buf);
   void      menu_focus_buffer (tm_buffer buf);
@@ -34,8 +32,10 @@ protected:
   tm_buffer new_buffer (url name, tree t);
   void      delete_buffer (tm_buffer buf);
   void      set_name_buffer (url name);
-  void      set_abbr_buffer (string abbr);
   url       get_name_buffer ();
+  url       get_name_buffer (path p);
+  void      set_abbr_buffer (string abbr);
+  string    get_abbr_buffer ();
 
   /* Low level view manipulation */
   tm_view   new_view (url name);
@@ -62,8 +62,10 @@ public:
   /* Buffer management */
   int  nr_bufs ();
   tm_buffer get_buf (int i);
+  tm_buffer get_buf (path p);
   void new_buffer ();
   void switch_to_buffer (int nr);
+  bool switch_to_buffer (path p);
   void switch_to_buffer (url name);
   void switch_to_active_buffer (url name);
   void revert_buffer ();
@@ -80,18 +82,18 @@ public:
   void set_aux_buffer (string aux, url name, tree doc);
   void set_help_buffer (url name, tree doc);
   void browse_help (int delta);
+  object get_buffer_menu ();
 
   /* Project management */
   void project_attach (string prj_name);
   bool project_attached ();
-  void project_update_menu ();
+  object get_project_buffer_menu ();
 
   /* File management */
   tree load_tree (url name, string fm);
   void load_buffer (url name, string fm, int where= 0, bool asf= false);
   void save_buffer (url name, string fm);
   void auto_save ();
-  void delayed_autosave ();
   bool buffer_unsaved ();
   bool exists_unsaved_buffer ();
   void pretend_save_buffer ();

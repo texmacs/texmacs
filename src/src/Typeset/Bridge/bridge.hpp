@@ -35,15 +35,16 @@
 class bridge;
 class bridge_rep: public abstract_struct {
 public:
-  typesetter           ttt;     // the underlying typesetter
-  edit_env&            env;     // the environment
-  tree                 st;      // the present subtree
-  path                 ip;      // source location of the paragraph
-  int                  status;  // status among above values
-  hashmap<string,tree> changes; // changes in the environment
+  typesetter           ttt;      // the underlying typesetter
+  edit_env&            env;      // the environment
+  tree                 st;       // the present subtree
+  path                 ip;       // source location of the paragraph
+  int                  status;   // status among above values
+  hashmap<string,tree> changes;  // changes in the environment
 
-  array<page_item>     l;       // the typesetted lines of st
-  stack_border         sb;      // border properties of l
+  array<page_item>     l;        // the typesetted lines of st
+  stack_border         sb;       // border properties of l
+  link_repository      link_env; // loci and links declared inside bridge
 
 public:
   bridge_rep (typesetter ttt, tree st, path ip);
@@ -57,6 +58,7 @@ public:
   virtual bool notify_macro  (int type, string var, int l, path p, tree u) = 0;
   virtual void notify_change () = 0;
 
+  virtual void my_clean_links ();
   virtual void my_exec_until (path p);
   virtual bool my_typeset_will_be_complete ();
   virtual void my_typeset (int desired_status);
@@ -73,6 +75,7 @@ class bridge {
 };
 ABSTRACT_NULL_CODE(bridge);
 
+bridge make_bridge (typesetter ttt, tree t, path p);
 ostream& operator << (ostream& out, bridge br);
 extern bridge nil_bridge;
 tree substitute (tree t, path p, tree u);

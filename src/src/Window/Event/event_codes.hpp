@@ -70,9 +70,9 @@ public:
   event_ptr_base (const event_ptr_base &ev) :
     rep (ev.rep) { rep->ref_count++; }
   event_ptr_base (const event& ev) : rep (ev.rep) { rep->ref_count++; }
-  ~event_ptr_base ()                  { if ((--rep->ref_count)==0) delete rep; }
-  operator event ()                   { return event (rep); }
-  event_rep* operator -> ()           { return rep; }
+  ~event_ptr_base () { if ((--rep->ref_count)==0) delete rep; }
+  operator event () { return event (rep); }
+  event_rep* operator -> () { return rep; }
   event_ptr_base& operator = (const event_ptr_base& ev) {
     ev.rep->ref_count++;
     if ((--rep->ref_count)==0) delete rep;

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.0.6.4>
 
 <style|tmweb>
 
@@ -19,7 +19,7 @@
     (from the abovementioned package) for the latest information.\ 
   </enumerate-numeric>
 
-  <value|hrule>
+  <hrule>
 
   You may use <TeXmacs> on a Windows platform via <name|Cygwin>.
   <name|Cygwin> is a Unix distribution which can be used directly under
@@ -127,37 +127,6 @@
   <section|Finishing touches>
 
   <\itemize>
-    <item>Unless you have a a US keyboard you will nead a keyboard mapping
-    file for your keyboard layout. I found the one I use (swedish/finnish) on
-    the page
-
-    <\verbatim>
-      \ \ \ \ <hlink|<with|font-family|tt|http://www-user.tu-chemnitz.de/~goal/>|http://www-user.tu-chemnitz.de/~goal/>
-    </verbatim>
-
-    The file is a text-file that should be named
-    <with|font-family|tt|.xmodmap>, rename it to that if it's called
-    something else (This won't work in Windows, use the <name|Cygwin> command
-    <with|font-family|tt|mv> instead, like
-
-    <\verbatim>
-      \ \ \ \ mv <em|old_name> .xmodmap
-    </verbatim>
-
-    The file should be placed in your <name|Cygwin> home directory (for me
-    <with|font-family|tt|/usr/home>, i.e.
-    <with|font-family|tt|C:\\cygwin\\usr\\home>).
-
-    A French user downloaded
-
-    <\verbatim>
-      \ \ \ \ <hlink|<with|font-family|tt|http://www-user.tu-chemnitz.de/~goal/xfree/XF86Config-4.bz2>|http://www-user.tu-chemnitz.de/~goal/xfree/XF86Config-4.bz2>
-    </verbatim>
-
-    and he had to set the <with|font-family|tt|XbmModel> to
-    <with|font-family|tt|pc105> and the <with|font-family|tt|XkbLayout> to
-    <with|font-family|tt|fr>.
-
     <item>If you want <TeXmacs> to correctly display images of most of the
     standard formats, then you should install the
     <with|font-family|tt|netpbm> library:

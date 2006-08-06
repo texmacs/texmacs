@@ -32,6 +32,9 @@ concater_rep::typeset_substring (string s, path ip, int pos) {
   case SPC_SPACE: \
     print (spc); \
     break; \
+  case SPC_DSPACE: \
+    print (space (spc->min << 1, spc->def << 1, spc->max << 1)); \
+    break; \
   case SPC_PERIOD: \
     print (spc+ extra); \
     break; \
@@ -234,6 +237,8 @@ concater_rep::typeset_float (tree t, path ip) {
   tree ch= tuple (t1, t2);
   lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
   marker (descend (ip, 0));
+  if (is_accessible (ip) && !env->read_only)
+    flag_ok (as_string (t1), decorate_middle (ip), env->dis->brown);
   print (FLOAT_ITEM, control_box (decorate_middle (ip), lz, env->fn));
   marker (descend (ip, 1));
 }

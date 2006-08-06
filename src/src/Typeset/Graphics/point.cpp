@@ -11,7 +11,6 @@
 ******************************************************************************/
 
 #include "point.hpp"
-#include <math.h>
 #include "math_util.hpp"
 
 point
@@ -59,6 +58,15 @@ operator / (point p, double x) {
   return r;
 }
 
+bool
+operator == (point p1, point p2) {
+  if (N(p1) != N(p2)) return false;
+  int i, n= N(p1);
+  for (i=0; i<n; i++)
+    if (!fnull (p1[i]-p2[i], 1e-6)) return false;
+  return true;
+}
+
 point
 as_point (tree t) {
   if (!is_tuple (t)) return point ();
@@ -87,6 +95,19 @@ operator * (point p1, point p2) {
   for (i=0; i<n; i++)
     r+= p1[i] * p2[i];
   return r;
+}
+
+static point
+mult (double re, double im, point p) {
+  if (N(p)==0) p= point (0.0, 0.0);
+  if (N(p)==1) p= point (p[0], 0.0);
+  return point (re * p[0] - im * p[1],
+		re * p[1] + im * p[0]);
+}
+
+point
+rotate_2D (point p, point o, double angle) {
+  return mult (cos (angle), sin (angle), p - o) + o;
 }
 
 double
@@ -177,7 +198,7 @@ intersect (axis A, axis B) {
     else
       return point (0);
   }
-  point a(2), b(2), b2 (2), u(2), v(2), p(2);
+  point a(2), b(2), u(2), v(2), p(2);
   a[0]= a[1]= 0;
   u[0]= (A.p1 - A.p0) * i;
   u[1]= (A.p1 - A.p0) * j;
@@ -185,10 +206,6 @@ intersect (axis A, axis B) {
   b[1]= (B.p0 - A.p0) * j;
   v[0]= (B.p1 - B.p0) * i;
   v[1]= (B.p1 - B.p0) * j;
-  b2[0]= (B.p1 - A.p0) * i;
-  b2[1]= (B.p1 - A.p0) * j;
-  if (fnull (norm (B.p1 - (b2[0]*i + b2[1]*j)), 1e-6))
-    return point (0);
   if (fnull (norm (u), 1e-6) ||
       fnull (norm (v), 1e-6) ||
       collinear (u, v))

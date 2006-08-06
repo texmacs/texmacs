@@ -1,0 +1,22 @@
+Plugin: french-postfix
+Summary: french postfix input method
+Release: 1.0
+TeXmacs: 1.0.2
+Author: David Allouche
+License: GNU GPL v2.0 or later
+
+TeXmacs provides several built-in shortcuts to type in accented
+characters on keyboards which do not have the appropriate keys. But
+those shortcuts are too clumsy for ordinary use.
+
+This plugin provides several shortcuts in french language context. The
+shortcuts are inspired from emacs "french-postfix" input method and
+make it easy to type french text on a QWERTY keyboard.
+
+A few of the provided shortcuts:
+  [A `]    A grave
+  [e ']    e acute
+  [o e]    oe ligature
+  [o e e]  oe as two letters
+  [c ,]    c cedille
+  [c , ,]  letter c followed by comma

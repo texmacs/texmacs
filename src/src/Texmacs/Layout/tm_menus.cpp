@@ -25,16 +25,6 @@ tm_layout_rep::~tm_layout_rep () {}
 * Subroutines
 ******************************************************************************/
 
-static inline bool
-is_quoted (tree t) {
-  return is_atomic (t) && is_quoted (as_string (t));
-}
-
-static inline string
-unquote (tree t) {
-  return unquote (as_string (t));
-}
-
 widget
 make_menu_widget (object menu) {
   widget w= as_widget (call ("make-menu-widget", menu, true));
@@ -57,6 +47,12 @@ icon_bar_name (int which) {
 /******************************************************************************
 * Properties of the current window
 ******************************************************************************/
+
+int
+tm_layout_rep::get_window_id () {
+  tm_widget meta= get_meta ();
+  return meta->serial;
+}
 
 void
 tm_layout_rep::set_window_property (scheme_tree what, scheme_tree val) {

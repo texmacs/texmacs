@@ -21,6 +21,7 @@
 #include "boxes.hpp"
 #include "url.hpp"
 #include "Graphics/frame.hpp"
+#include "link.hpp"
 
 #define DECORATION (-1)
 
@@ -42,17 +43,24 @@
 #define Env_Color             11
 #define Env_Paragraph         12
 #define Env_Page              13
-#define Env_Preamble          14
-#define Env_Frame             15
-#define Env_Clipping          16
-#define Env_Line_Width        17
-#define Env_Grid              18
-#define Env_Grid_Aspect       19
-#define Env_Src_Style         20
-#define Env_Src_Special       21
-#define Env_Src_Compact       22
-#define Env_Src_Close         23
-#define Env_Point_Style       24
+#define Env_Page_Extents      14
+#define Env_Preamble          15
+#define Env_Geometry          16
+#define Env_Frame             17
+#define Env_Line_Width        18
+#define Env_Grid              19
+#define Env_Grid_Aspect       20
+#define Env_Src_Style         21
+#define Env_Src_Special       22
+#define Env_Src_Compact       23
+#define Env_Src_Close         24
+#define Env_Point_Style       25
+#define Env_Dash_Style        26
+#define Env_Dash_Style_Unit   27
+#define Env_Fill_Color        28
+#define Env_Line_Arrows       29
+#define Env_Textat_Halign     30
+#define Env_Textat_Valign     31
 
 /******************************************************************************
 * For style file editing
@@ -93,9 +101,19 @@
 #define MODIFY_PERMANENT_LONG    4
 
 /******************************************************************************
+* Other enumerated values
+******************************************************************************/
+
+#define FILL_MODE_NOTHING  0
+#define FILL_MODE_NONE     1
+#define FILL_MODE_INSIDE   2
+#define FILL_MODE_BOTH     3
+
+/******************************************************************************
 * The edit environment
 ******************************************************************************/
 
+class edit_env;
 class edit_env_rep: public concrete_struct {
 public:
   display                      dis;
@@ -112,53 +130,65 @@ public:
   hashmap<string,int>&         var_type;
   url                          base_file_name;
   url                          cur_file_name;
+  bool                         secure;
   hashmap<string,tree>&        local_ref;
   hashmap<string,tree>&        global_ref;
   hashmap<string,tree>&        local_aux;
   hashmap<string,tree>&        global_aux;
   bool                         complete;    // typeset complete document ?
   bool                         read_only;   // write-protected ?
+  link_repository              link_env;
 
-  int       dpi;
-  double    inch;
-  double    magn;
-  double    flexibility;
-  int       mode;
-  language  lan;
-  font      fn;
-  int       fn_size;
-  int       index_level;
-  bool      display_style;
-  bool      math_condensed;
-  int       vert_pos;
-  color     col;
-  SI        lw;
-  string    point_style;
-  bool      preamble;
-  frame     fr;
-  point     clip_lim1;
-  point     clip_lim2;
-  int       src_style;
-  int       src_special;
-  int       src_compact;
-  int       src_close;
+  int          dpi;
+  double       inch;
+  double       magn;
+  double       flexibility;
+  int          mode;
+  language     lan;
+  font         fn;
+  int          fn_size;
+  int          index_level;
+  bool         display_style;
+  bool         math_condensed;
+  int          vert_pos;
+  color        col;
+  SI           lw;
+  string       point_style;
+  bool         preamble;
+  SI           gw;
+  SI           gh;
+  string       gvalign;
+  frame        fr;
+  point        clip_lim1;
+  point        clip_lim2;
+  int          src_style;
+  int          src_special;
+  int          src_compact;
+  int          src_close;
+  array<bool>  dash_style;
+  SI           dash_style_unit;
+  int          fill_mode;
+  color        fill_color;
+  array<box>   line_arrows;
+  string       textat_halign;
+  string       textat_valign;
+ 
+  int          inactive_mode;
+  tree         recover_env;
 
-  int       inactive_mode;
-  tree      recover_env;
-
-  string    page_type;
-  bool      page_landscape;
-  bool      page_automatic;
-  int       page_margin_mode;
-  SI        page_width;
-  SI        page_height;
-  SI        page_user_width;
-  SI        page_user_height;
-  SI        page_odd_margin;
-  SI        page_even_margin;
-  SI        page_right_margin;
-  SI        page_top_margin;
-  SI        page_bottom_margin;
+  string       page_type;
+  bool         page_landscape;
+  bool         page_automatic;
+  int          page_margin_mode;
+  SI           page_width;
+  SI           page_height;
+  SI           page_user_width;
+  SI           page_user_height;
+  SI           page_odd_margin;
+  SI           page_even_margin;
+  SI           page_right_margin;
+  SI           page_top_margin;
+  SI           page_bottom_margin;
 
 private:
   tree exec_formatting (tree t, string v);
@@ -185,6 +215,7 @@ private:
   tree exec_get_arity (tree t);
   tree exec_eval_args (tree t);
   bool exec_until_mark (tree t, path p, string var, int level);
+  bool exec_until_quasi (tree t, path p, string var, int level);
   tree exec_quasiquoted (tree t);
   tree exec_copy (tree t);
   tree exec_if (tree t);
@@ -195,6 +226,7 @@ private:
   bool exec_until_while (tree t, path p, string var, int level);
   tree exec_for_each (tree t);
   tree exec_use_package (tree t);
+  tree exec_use_module (tree t);
 
   tree exec_or (tree t);
   tree exec_xor (tree t);
@@ -246,6 +278,17 @@ private:
   tree exec_pag_length ();
   tree exec_tmpt_length ();
   tree exec_px_length ();
+  tree exec_gw_length ();
+  tree exec_gh_length ();
+  tree exec_msec_length ();
+  tree exec_sec_length ();
+  tree exec_min_length ();
+  tree exec_h_length ();
+
+  tree exec_hard_id (tree t);
+  tree exec_script (tree t);
+  tree exec_set_binding (tree t);
+  tree exec_get_binding (tree t);
 
   tree exec_point (tree t);
   tree exec_box_info (tree t);
@@ -284,7 +327,7 @@ public:
   void   exec_until (tree t, path p);
   bool   exec_until (tree t, path p, string var, int level);
   string exec_string (tree t);        /* should be inline */
-  tree   expand (tree t);
+  tree   expand (tree t, bool search_accessible= false);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
 
@@ -326,12 +369,14 @@ public:
   void   update_color ();
   void   update_mode ();
   void   update_language ();
+  void   update_geometry ();
   void   update_frame ();
-  void   update_clipping ();
   void   update_src_style ();
   void   update_src_special ();
   void   update_src_compact ();
   void   update_src_close ();
+  void   update_dash_style ();
+  void   update_line_arrows ();
   void   update ();
   void   update (string env_var);
 
@@ -395,6 +440,7 @@ class edit_env {
 };
 CONCRETE_NULL_CODE(edit_env);
 
+ostream& operator << (ostream& out, edit_env env);
 tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp

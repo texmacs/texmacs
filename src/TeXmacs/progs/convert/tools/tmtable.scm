@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : tmtable.scm
 ;; DESCRIPTION : tools for converting tables from and to other formats
-;; COPYRIGHT   : (C) 2002  David Allouche, Joris van der Hoeven
+;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -12,318 +12,283 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert tools tmtable)
-  (:use (convert tools tmlength) (convert tools tmcolor))
-  (:export
-   ;; Constructor
-   tmtable? tmtable
-   tmtable-nrows tmtable-ncols tmtable-cell
-   ;; Table formats
-   tmformat-frame tmformat-table
-   tmformat-table-but-top tmformat-table-but-bottom
-   tmformat-table-but-left tmformat-table-but-right
-   tmformat-cell
-   ;; Output
-   tmtable->stm
-   ;; Parser
-   tmtable-parser
-   tmtable-block-borders tmtable-cell-halign))
+(texmacs-module (convert tools tmtable))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities
+;; Normalization of table removes spurious document tags and
+;; merges nested tformat tags for the outmost level.
+;; All other routines in this file assume that the table is in normal form.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (list-max l)
-  ;; WARNING: not portable for long lists
-  (apply max l))
+(tm-define (tmtable-normalize t)
+  (:synopsis "Normalization of the table @t")
+  (cond ((func? t 'tformat)
+	 (with u (tmtable-normalize (cAr t))
+	   (if (func? u 'tformat)
+	       (append (cDr t) (cDdr u) (list (cAr u)))
+	       (rcons (cDr t) u))))
+	((func? t 'document 1) (tmtable-normalize (cadr t)))
+	((func? t 'table) t)
+	(else (texmacs-error "tmtable-normalize" "~S is not a table" t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Generic table abstraction
+;; Routines for getting table and row dimensions and
+;; completing missing elements in table rows with empty strings.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Foundation
+(tm-define (tmrow-cols r)
+  (:synopsis "Return the number of columns of the row @r")
+  (cond ((func? r 'tformat) (tmrow-cols (cAr r)))
+	((func? r 'row) (- (length r) 1))
+	(else (texmacs-error "tmrow-cols" "~S is not a row" r))))
 
-(define tmtable-type (make-record-type "tmtable" '(nrows ncols cells formats)))
-(define tmtable-record (record-constructor tmtable-type))
-(define tmtable? (record-predicate tmtable-type))
-(define tmtable-nrows (record-accessor tmtable-type 'nrows))
-(define tmtable-ncols (record-accessor tmtable-type 'ncols))
-(define tmtable-cells (record-accessor tmtable-type 'cells))
-(define tmtable-formats (record-accessor tmtable-type 'formats))
+(tm-define (tmtable-cols t)
+  (:synopsis "Return the number of columns of the table @t")
+  (cond ((func? t 'tformat) (tmtable-cols (cAr t)))
+	((== t '(table)) 0)
+	((func? t 'table) (apply max (map tmrow-cols (cdr t))))
+	(else (texmacs-error "tmtable-cols" "~S is not a table" t))))
 
-(define (tmtable formats cells)
-  ;; Public tmtable constructor
-  (tmtable-record (length cells)
-		  (list-max (map length cells))
-		  cells
-		  formats))
+(tm-define (tmtable-rows t)
+  (:synopsis "Return the number of rows of the table @t")
+  (cond ((func? t 'tformat) (tmtable-rows (cAr t)))
+	((func? t 'table) (- (length t) 1))
+	(else (texmacs-error "tmtable-rows" "~S is not a table" t))))
 
-(define (tmtable-cell t i j)
-  ;; Content of a given cell
-  (list-ref (list-ref (tmtable-cells t) i) j))
+(define (tmrow-complete r n)
+  "Complete the row @r with empty strings to become at least @n columns wide"
+  (cond ((func? r 'tformat) (rcons (cDr r) (tmrow-complete (cAr r) n)))
+	((== r '(row)) (cons 'row (make-list (max n 0) '(cell ""))))
+	((func? r 'row)
+	 (with next (tmrow-complete (cons 'row (cddr r)) (- n 1))
+	   (cons* 'row (cadr r) (cdr next))))
+	(else (texmacs-error "tmrow-complete" "~S is not a row" r))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Table format
-
-(define (tmformat-frame name value)
-  `(twith ,name ,value))
-
-;; NOTE: if this list gets too long, we might define region arithmetic.
-;; This might also be needed for format simplification.
-(define (tmformat-table name value)
-  `(cwith 1 -1 1 -1 ,name ,value))
-(define (tmformat-table-but-top name value)
-  `(cwith 2 -1 1 -1 ,name ,value))
-(define (tmformat-table-but-bottom name value)
-  `(cwith 1 -2 1 -1 ,name ,value))
-(define (tmformat-table-but-left name value)
-  `(cwith 1 -1 2 -1 ,name ,value))
-(define (tmformat-table-but-right name value)
-  `(cwith 1 -1 1 -2 ,name ,value))
-(define (tmformat-cell i j name value)
-  `(cwith ,i ,i ,j ,j ,name ,value))
-
-(define (tmformat-frame? f) (func? f 'twith))
-(define (tmformat-cell? f) (func? f 'cwith))
-(define (tmformat-cell-name f) (sixth f))
-(define (tmformat-cell-value f) (seventh f))
-
-(define (tmtable-format-on-cell? t f i j)
-  (and (tmformat-cell? f)
-       (with (sym I1 I2 J1 J2 var val) f
-	 (let ((i1 (decode-row t I1))
-	       (i2 (decode-row t I2))
-	       (j1 (decode-column t J1))
-	       (j2 (decode-column t J2)))
-	   (and (>= i i1) (<= i i2)
-		(>= j j2) (<= j j2))))))
-
-(define (tmtable-format-on-row? t f i)
-  (and (tmformat-cell? f)
-       (with (sym I1 I2 J1 J2 var val) f
-	 (and (== 1 J1) (== -1 J2)
-	      (let ((i1 (decode-row t I1))
-		    (i2 (decode-row t I2)))
-		(and (>= i i1) (<= i i2)))))))
-
-(define (tmtable-format-on-column? t f j)
-  (and (tmformat-cell? f)
-       (with (sym I1 I2 J1 J2 var val) f
-	 (and (== 1 I1) (== -1 I2)
-	      (let ((j1 (decode-column t J1))
-		    (j2 (decode-column t J2)))
-		(and (>= j j1) (<= j j2)))))))
-
-(define (decode i n) (cond ((< i 0) (+ i n)) ((> i 0) (1- i)) (else 0)))
-(define (decode-row t i) (decode i (tmtable-nrows t)))
-(define (decode-column t j) (decode j (tmtable-ncols t)))
+(tm-define (tmtable-complete t)
+  (:synopsis "Completes missing cells on rows of @t with empty strings")
+  (cond ((func? t 'tformat) (rcons (cDr t) (tmtable-complete (cAr t))))
+	((func? t 'table)
+	 (with cols (apply max (map tmrow-cols (cdr t)))
+	   (cons 'table (map (cut tmrow-complete <> cols) (cdr t)))))
+	(else (texmacs-error "tmtable-complete" "~S is not a table" t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Table format partitioning
-
-(define (tmtable-format-partition-by-column t fs)
-  (map (lambda (j)
-	 (list-filter
-	  fs (cut tmtable-format-on-column? t <> j)))
-       (iota (tmtable-ncols t))))
-
-(define (tmtable-format-partition-by-row t fs)
-  (map (lambda (j)
-	 (list-filter
-	  fs (cut tmtable-format-on-row? t <> j)))
-       (iota (tmtable-nrows t))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TODO: simplification of formats.
-;;   remove ignored formats
-;;   collect formats which apply to whole lines/rows/table
-;;   collect formats which apply to ranges of cells/lines/rows
-;;     (giving precedence to extensible boundaries in case of conflict)
-
-(define (tmtable-simplify t) (noop t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TeXmacs table parsing
+;; Routines for raising tformat tags in a table to the outermost level.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; A TeXmacs table is a TABLE primitive or a TFORMAT containing a number of
-;; properties item and terminated by a TABLE or a TFORMAT.
-;;
-;; The TFORMAT properties apply to arbitrary contiguous ranges of the table.
-;;
-;; The properties defined in inner TFORMAT take precedence, so the TFORMAT must
-;; be read in preorder. In a simple implementation, the TABLE would then be
-;; read last.
+(define (tmcell-format-up c)
+  (cond ((func? c 'tformat) c)
+	((func? c 'cell) `(tformat ,c))
+	(else (texmacs-error "tmcell-format-up" "~S is not a cell" c))))
 
-(define (stm-table-cell-content x)
-  ;; assert (func? x 'cell)
-  (second x))
+(define (tmrow-append r1 r2)
+  `(tformat ,@(cDdr r1) ,@(cDdr r2) (row ,@(cdAr r1) ,@(cdAr r2))))
 
-(define (stm-table-row->list x)
-  ;; assert (func? x 'row)
-  (map stm-table-cell-content (cdr x)))
+(define (tmrow-format-up-sub l nr)
+  (if (null? l) `(tmformat (row))
+      (let* ((cell (tmcell-format-up (car l)))
+	     (snr (number->string nr))
+	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
+	     (head `(tformat ,@(map fun (cDdr cell)) (row ,(cAr cell)))))
+	(tmrow-append head (tmrow-format-up-sub (cdr l) (+ nr 1))))))
 
-(define (stm-table-cells x)
-  ;; @x must be a TFORMAT or TABLE element
-  ;; Return a list of list of cell contents.
-  ;; Each inner list correspond to a table row.
-  (map stm-table-row->list
-       (do ((x x (last x)))
-	   ((func? x 'table) (cdr x)))))
+(define (tmrow-format-up r)
+  "Raise tformat tags in cells and cells of @r to the upmost level"
+  (cond ((func? r 'tformat)
+	 (with s (tmrow-raise-format (cAr r))
+	   (append (cDr r) (cdr s))))
+	((func? r 'row) (tmrow-format-up-sub (cdr r) 1))
+	(else (texmacs-error "tmrow-format-up" "~S is not a row" r))))
 
-(define (stm-table-formats x)
-    (cond ((func? x 'table) '())
-	  ((func? x 'tformat)
-	   (append (map (lambda (f)
-			  (with (sym i1 i2 j1 j2 name value) f
-			    (list sym
-				  (string->number i1)
-				  (string->number i2)
-				  (string->number j1)
-				  (string->number j2)
-				  name
-				  (stm-table-decode-format name value))))
-			(list-filter (cDdr x) (lambda (l) (= (length l) 7))))
-		   (stm-table-formats (cAr x))))
-         (else '())))
+(define (tmtable-append t1 t2)
+  `(tformat ,@(cDdr t1) ,@(cDdr t2) (table ,@(cdAr t1) ,@(cdAr t2))))
 
-(define (stm-table-length-name? name)
-  (in? name
-       '("cell-width" "cell-height"
-	 "cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep"
-	 "cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder"
-	 "table-width" "table-height"
-	 "table-lsep" "table-rsep" "table-bsep" "table-tsep"
-	 "table-lborder" "table-rborder" "table-bborder" "table-tborder")))
+(define (tmtable-format-up-sub l nr)
+  (if (null? l) `(tmformat (table))
+      (let* ((row (tmrow-format-up (car l)))
+	     (snr (number->string nr))
+	     (fun (lambda (x) `(cwith ,snr ,snr ,@(cdr x))))
+	     (head `(tformat ,@(map fun (cDdr row)) (table ,(cAr row)))))
+	(tmtable-append head (tmtable-format-up-sub (cdr l) (+ nr 1))))))
 
-(define (stm-table-number-name? name)
-  (in? name
-       '("cell-row-span" "cell-col-span"
-	 "table-row-origin" "table-col-origin"
-	 "table-min-rows" "table-min-cols"
-	 "table-max-rows" "table-max-cols")))
-
-(define (stm-table-color-name? name)
-  (string=? name "cell-background"))
-
-(define (stm-table-decode-format name value)
-  ((cond ((stm-table-length-name? name)
-	  string->tmlength)
-	 ((stm-table-number-name? name)
-	  string->number)
-	 ((stm-table-color-name? name)
-	  stm->tmcolor)
-	 (else noop))
-   (force-string value)))
-
-(define (stm->tmtable x)
-  (tmtable (reverse (stm-table-formats x))
-	   (stm-table-cells x)))
+(tm-define (tmtable-format-up t)
+  (:synopsis "Raise tformat tags in rows and cells of @t to the upmost level")
+  (cond ((func? t 'tformat)
+	 (with u (tmtable-format-up (cAr t))
+	   (append (cDr t) (cdr u))))
+	((func? t 'table) (tmtable-format-up-sub (cdr t) 1))
+	(else (texmacs-error "tmtable-format-up" "~S is not a table" t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TeXmacs table output
+;; Transform negative indices in table format to positive ones.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (stm-table-encode-format name value)
-  ((cond ((stm-table-length-name? name)
-	  tmlength->string)
-	 ((stm-table-number-name? name)
-	  number->string)
-	 ((stm-table-color-name? name)
-	  tmcolor->stm)
-	 (else noop))
-   value))
+(define (tmindex-get x last)
+  (with n (string->number x)
+    (if (< n 0) (+ last 1 n) n)))
 
-(define (tmtable->stm t)
-  (receive (centered formats)
-      (list-partition (tmtable-formats t)
-		      (cute == <> (tmformat-table "cell-halign" "c")))
-    `(,(if (null? centered) 'tabular 'tabular*)
-      (tformat
-       ,@(reverse!
-	  (map (lambda (f)
-		 (cond ((tmformat-cell? f)
-			(with (sym i1 i2 j1 j2 name value) f
-			  (list sym
-				(number->string i1) (number->string i2)
-				(number->string j1) (number->string j2)
-				name
-				(stm-table-encode-format name value))))
-		       ((tmformat-frame? f)
-			(with (sym name value) f
-			  (list sym name
-				(stm-table-encode-format name value))))))
-	       formats))
-       ,(tmtable-cells->stm t)))))
+(define (tmindex-positive x last)
+  (number->string (tmindex-get x last)))
 
-(define (tmtable-cells->stm t)
-  (cons 'table
-	(map (lambda (r) (cons 'row (map (cut list 'cell <>) r)))
-	     (tmtable-cells t))))
+(define (tmtformat-positive l nrrows nrcols)
+  (cond ((null? l) l)
+	((not (func? l 'cwith 6))
+	 (cons (car l) (tmtformat-positive (cdr l) nrrows nrcols)))
+	(else (with c (car l)
+		(cons (cons* 'cwith
+			     (tmindex-positive (second c) nrrows)
+			     (tmindex-positive (third c) nrrows)
+			     (tmindex-positive (fourth c) nrcols)
+			     (tmindex-positive (fifth c) nrcols)
+			     (cddddr (cdr c)))
+		      (tmtformat-positive (cdr l) nrrows nrcols))))))
+
+(tm-define (tmtable-positive t)
+  (:synopsis "Transform negative indices in table format into positive ones")
+  ;; NOTE: assumes format of t to be raised upwards
+  (cond ((func? t 'tformat)
+	 (let* ((rows (tmtable-rows t))
+		(cols (tmtable-cols t)))
+	   (rcons (tmformat-positive (cDr t) rows cols)
+		  (tmtable-positive (cAr t)))))
+	((func? t 'table) t)
+	(else (texmacs-error "tmtable-positive" "~S is not a table" t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Legacy table parser
+;; Extract table-, column-, row- and cell- properties from general format.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtable-parser x)
-  ;; Internal state
-  (let ((this (stm->tmtable x)))
+(define (tmindex-first? x last)
+  (or (== x "1") (== x (number->string (- last)))))
 
-    ;; Public getters
-    (define (global name)
-      (cond ((eq? name 'border) (any-border?))
-	    ((eq? name 'nrcols) (tmtable-ncols this))))
-    (define (cols name)
-      (cond ((eq? name 'halign) (format-by :column "cell-halign" "l"))
-	    ((eq? name 'tborder) (length-non-zero-by :column "cell-tborder"))
-	    ((eq? name 'bborder) (length-non-zero-by :column "cell-bborder"))
-	    ((eq? name 'lborder) (length-non-zero-by :column "cell-lborder"))
-	    ((eq? name 'rborder) (length-non-zero-by :column "cell-rborder"))))
-    (define (rows name)
-      (cond ((eq? name 'content) (tmtable-cells this))
-	    ((eq? name 'tborder) (length-non-zero-by :row "cell-tborder"))
-	    ((eq? name 'bborder) (length-non-zero-by :row "cell-bborder"))
-      	    ((eq? name 'lborder) (length-non-zero-by :row "cell-lborder"))
-	    ((eq? name 'rborder) (length-non-zero-by :row "cell-rborder"))))
+(define (tmindex-last? x last)
+  (or (== x "-1") (== x (number->string last))))
 
-    ;; Public dispatcher
-    (define (table-parser/dispatch scope . args)
-      (apply (cond ((eq? scope 'global) global)
-		   ((eq? scope 'cols) cols)
-		   ((eq? scope 'rows) rows)) args))
+(define (tmtformat-split l pred?)
+  ;; FIXME: we should also check whether the matching cwith items
+  ;; commute with the preceeding ones in the list l
+  (list-partition l pred?))
 
-    ;; Private
-    (define (any-border?)
-      (list-any noop
-		(append (append-map cols '(tborder bborder lborder rborder))
-			(append-map rows '(tborder bborder lborder rborder)))))
+(define (tmtformat-formats l nrrows nrcols)
+  (define (table-cwith? x)
+    (or (func? x 'twith 2)
+	(and (func? x 'cwith 6)
+	     (tmindex-first? (second x) nrrows)
+	     (tmindex-last? (third x) nrrows)
+	     (tmindex-first? (fourth x) nrcols)
+	     (tmindex-last? (fifth x) nrcols))))
+  (define (column-cwith? x)
+    (and (func? x 'cwith 6)
+	 (tmindex-first? (second x) nrrows)
+	 (tmindex-last? (third x) nrrows)))
+  (define (row-cwith? x)
+    (and (func? x 'cwith 6)
+	 (tmindex-first? (fourth x) nrcols)
+	 (tmindex-last? (fifth x) nrcols)))
+  (receive (table-l table-r) (tmtformat-split l table-cwith?)
+    (receive (column-l column-r) (tmtformat-split table-r column-cwith?)
+      (receive (row-l row-r) (tmtformat-split column-r row-cwith?)
+	(values table-l column-l row-l row-r)))))
 
-    (define (format-by axis name default)
-      (map (lambda (fs) (if (null? fs)
-			    default
-			    (tmformat-cell-value (first fs))))
-	   ((cond ((eq? axis :row) tmtable-format-partition-by-row)
-		  ((eq? axis :column) tmtable-format-partition-by-column))
-	    this
-	    (list-filter (tmtable-formats this)
-			 (lambda (f)
-			   (and (tmformat-cell? f)
-				(== name (tmformat-cell-name f))))))))
+(tm-define (tmtable-formats t)
+  (:synopsis "Find table-, column-, row- and cell- format lists of @t")
+  ;; NOTE: assumes format of t to be raised upwards
+  (cond ((func? t 'tformat)
+	 (let* ((rows (tmtable-rows t))
+		(cols (tmtable-cols t)))
+	   (tmtformat-formats (cDdr t) rows cols)))
+	((func? t 'table) (values '() '() '() '()))
+	(else (texmacs-error "tmtable-formats" "~S is not a table" t))))
 
-    (define (length-non-zero-by axis name)
-      (map (lambda (len) (not (== 0 (tmlength-value len))))
-	   (format-by axis name (tmlength))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extract property lists for tables and individual rows, columns and cells
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ;; evaluate to dispatcher closure
-    table-parser/dispatch))
+(define (tmtformat-table-prop x)
+  (cond ((func? x 'twith 2) (cdr x))
+	((func? x 'cwith 6) (cddddr (cdr x)))
+	(else #f)))
 
-(define (tmtable-block-borders x)
-  (if x '((cwith "1" "-1" "1" "1" "cell-lborder" "1ln")
-	  (cwith "1" "1" "1" "-1" "cell-tborder" "1ln")
-	  (cwith "1" "-1" "1" "-1" "cell-bborder" "1ln")
-	  (cwith "1" "-1" "1" "-1" "cell-rborder" "1ln"))
-      '()))
+(define (tmtformat-table-props l)
+  "Extract table property list from table format list"
+  ;; The table format list is the first result of a call to tmtformat-formats
+  (list-filter (map tmtformat-table-prop l) identity))
 
-(define (tmtable-cell-halign x)
-  `((cwith "1" "-1" "1" "-1" "cell-halign" ,x)))
+(define (tmtformat-prop x start end)
+  (and (func? x 'cwith)
+       (>= (length x) 5)
+       (>= start (tmindex-get (cadr x) end))
+       (<= start (tmindex-get (caddr x) end))
+       (cdddr x)))
+
+(define (tmtformat-props l start end)
+  (list-filter (map (cut tmtformat-prop <> start end) l) identity))
+
+(define (tmtformat-props-list l start end)
+  (if (> start end) '()
+      (cons (tmtformat-props l start end)
+	    (tmtformat-props-list l (+ start 1) end))))
+
+(define (tmtformat-column-props l nr-cols)
+  "Extract list of column property lists from column format list"
+  ;; The column format list is the second result of a call to tmtformat-formats
+  (with r (map (lambda (x) (and (func? x 'cwith 6) (cons 'cwith (cdddr x)))) l)
+    (tmtformat-props-list r 1 nr-cols)))
+
+(define (tmtformat-row-props l nr-rows)
+  "Extract list of row property lists from row format list"
+  ;; The row format list is the third result of a call to tmtformat-formats
+  (map (lambda (l) (map cddr l)) (tmtformat-props-list l 1 nr-rows)))
+
+(define (tmtformat-cell-props-sub l nr-cols)
+  (with r (map (lambda (x) (cons 'cwith x)) l)
+    (tmtformat-props-list r 1 nr-cols)))
+
+(define (tmtformat-cell-props l nr-rows nr-cols)
+  "Extract list of lists of cell property lists from cell format list"
+  ;; The cell format list is the fourth result of a call to tmtformat-formats
+  (map (cut tmtformat-cell-props-sub <> nr-cols)
+       (tmtformat-props-list l 1 nr-rows)))
+
+(tm-define (tmtable-properties t)
+  (:synopsis "Find table-, column-, row- and cell- properties of @t")
+  ;; NOTE: assumes format of t to be raised upwards
+  (receive (tablef colf rowf cellf) (tmtable-formats t)
+    (let* ((rows (tmtable-rows t))
+	   (cols (tmtable-cols t)))
+      (values (tmtformat-table-props tablef)
+	      (tmtformat-column-props colf cols)
+	      (tmtformat-row-props rowf rows)
+	      (tmtformat-cell-props cellf rows cols)))))
+
+(tm-define (tmtable-properties* t)
+  (:synopsis "Find table-, column-, row- and cell- properties of @t")
+  ;; variant of tmtable-properties: use only cell properties
+  (receive (tablef colf rowf cellf) (tmtable-formats t)
+    (receive (t1 t2) (list-partition tablef (lambda (x) (func? x 'twith)))
+      (set! tablef t1)
+      (set! cellf (append t2 colf rowf cellf))
+      (set! colf '())
+      (set! rowf '())
+      (let* ((rows (tmtable-rows t))
+	     (cols (tmtable-cols t)))
+	(values (tmtformat-table-props tablef)
+		(tmtformat-column-props colf cols)
+		(tmtformat-row-props rowf rows)
+		(tmtformat-cell-props cellf rows cols))))))
+
+(define (tmtformat-halign? prop)
+  (and (func? prop 'cwith 6) (== (sixth prop) "cell-halign")))
+
+(tm-define (tmtable-properties** t)
+  (:synopsis "Find table-, column-, row- and cell- properties of @t")
+  ;; variant of tmtable-properties for TeXmacs -> MathML converter
+  (receive (tablef colf rowf cellf) (tmtable-formats t)
+    (set! colf (append (list-filter tablef tmtformat-halign?) colf))
+    (set! tablef (list-filter tablef (non tmtformat-halign?)))
+    (let* ((rows (tmtable-rows t))
+	   (cols (tmtable-cols t)))
+      (values (tmtformat-table-props tablef)
+	      (tmtformat-column-props colf cols)
+	      (tmtformat-row-props rowf rows)
+	      (tmtformat-cell-props cellf rows cols)))))

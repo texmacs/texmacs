@@ -14,6 +14,10 @@
 #define TREE_CURSOR_H
 #include "path.hpp"
 
+bool is_accessible_cursor (tree t, path p);
+void show_hidden_upwards (tree t, path p);
+
+bool valid_cursor (tree t, path p, bool start_flag= false);
 path start (tree t, path p);
 path end (tree t, path p);
 path start (tree t);

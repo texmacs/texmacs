@@ -1,0 +1,59 @@
+
+###############################################################################
+# MODULE     : main make file for the TeXmacs daemon
+# BY         : Joris van der Hoeven
+# COPYRIGHT  : This software falls under the GNU general public license;
+#              see the file 'LICENSE', which is provided with this package.
+###############################################################################
+
+prefix = @prefix@
+bindir = @bindir@
+datadir = @datadir@
+mandir = @mandir@
+
+DESTDIR =
+
+MKDIR = mkdir -p
+RM = rm -f
+CP = cp -r -f
+MV = mv -f
+LN = ln -f
+CHMOD = chmod -f
+
+all:
+	$(CHMOD) 755 bin/texmacsd
+	$(CHMOD) 755 bin/tm-client
+
+install:
+	$(MKDIR) $(DESTDIR)$(datadir)
+	$(MKDIR) $(DESTDIR)$(datadir)/texmacsd
+	$(CP) progs $(DESTDIR)$(datadir)/texmacsd
+	@echo installed scheme programs in $(DESTDIR)$(datadir)/texmacsd
+	$(MKDIR) $(DESTDIR)$(bindir)
+	$(CP) bin/texmacsd $(DESTDIR)$(bindir)
+	@echo installed texmacsd script in $(DESTDIR)$(bindir)
+	@echo ----------------------------------------------------
+	@echo texmacsd has been successfully installed
+
+uninstall:
+	$(RM) -r $(datadir)/texmacsd
+	@echo removed scheme programs from $(datadir)/texmacsd
+	$(RM) $(bindir)/texmacsd
+	@echo removed startup script from $(bindir)
+	@echo ----------------------------------------------------
+	@echo texmacsd has been successfully removed
+
+.PHONY: install uninstall
+
+clean:
+	$(RM) *~
+	$(RM) */*~
+	$(RM) */*/*~
+	$(RM) -r autom*.cache
+
+distclean: clean
+	$(RM) bin/texmacsd
+	$(RM) bin/tm-client
+	$(RM) Makefile
+
+.PHONY: clean distclean

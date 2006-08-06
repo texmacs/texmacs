@@ -80,9 +80,10 @@ struct empty_grid_rep: public grid_rep {
 
 point
 empty_grid_rep::find_closest_point (point p, point pmin, point pmax) {
-  double x= floor (10.0*p[0] + 0.5);
+/*double x= floor (10.0*p[0] + 0.5);
   double y= floor (10.0*p[1] + 0.5);
-  return point (x / 10.0, y / 10.0);
+  return point (x / 10.0, y / 10.0);*/
+  return p;
 }
 
 grid
@@ -109,9 +110,7 @@ create_line (double x1, double y1, double x2, double y2, string col) {
   a[0]= point (x1, y1);
   a[1]= point (x2, y2);
   array<path> cip(2);
-  grid_curve res;
-  res.col= col;
-  res.c= poly_segment (a, cip);
+  grid_curve res= grid_curve (col, poly_segment (a, cip));
   return res;
 }
 
@@ -202,9 +201,7 @@ create_arc (
   a[1]= point (x2, y2);
   a[2]= point (x3, y3);
   array<path> cip(3);
-  grid_curve res;
-  res.col= col;
-  res.c= arc (a, cip, true);
+  grid_curve res= grid_curve (col, arc (a, cip, true));
   return res;
 }
 
@@ -218,7 +215,32 @@ polar_rep::get_curves (point lim1, point lim2, double u) {
   double y2= max (lim1[1], lim2[1]);
   double xo= center[0];
   double yo= center[1];
-  double r,R= (SI) norm (point (x2, y2) - point (x1, y1));
+  point P1, P2;
+  if (x1<=0 && y1<=0 && x2>=0 && y2>=0) {
+    P1= point (0, 0);
+    P2= point (x2, y2) - point (x1, y1);
+  }
+  else {
+    double ox= (x1 + x2) / 2;
+    double oy= (y1 + y2) / 2;
+    if (oy>=0)
+      P1= point (0, y1>=0 ? y1 : 0);
+    else
+      P1= point (0, y2<=0 ? y2 : 0);
+
+    if (ox>=0 && oy>=0)
+      P2= point (x2, y2);
+    else
+    if (ox<=0 && oy>=0)
+      P2= point (x1, y2);
+    else
+    if (ox<=0 && oy<=0)
+      P2= point (x1, y1);
+    else
+    if (ox>=0 && oy<=0)
+      P2= point (x2, y1);
+  }
+  double r, R1= (SI) norm (P1), R2= (SI) norm (P2);
   int i;
   for (i= N(subd)-1; i>=1; i--) {
     SI nsub;
@@ -227,11 +249,12 @@ polar_rep::get_curves (point lim1, point lim2, double u) {
       SI j;
       double s= step/nsub;
       if (s<=u) s= u;
-      for (r=0; r<=R; r+=s)
-        res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
+      for (r=0; r<=R2; r+=s)
+	if (r>=R1)
+	  res << create_arc (xo+r, yo, xo, yo+r, xo-r, yo, col[i]);
       for (j=0; j<astep*nsub; j++)
-        res << create_line (xo, yo, xo+R*cos((2*tm_PI*j)/(astep*nsub)),
-                                    yo+R*sin((2*tm_PI*j)/(astep*nsub)),
+        res << create_line (xo, yo, xo+R2*cos((2*tm_PI*j)/(astep*nsub)),
+                                    yo+R2*sin((2*tm_PI*j)/(astep*nsub)),
                                     col[i]);
     }
   }
@@ -250,7 +273,10 @@ polar_rep::find_closest_point (point p, point pmin, point pmax) {
     ssubd= (double)subd[i];
     if (ssubd==0) continue;
     n= nearest (norm(p)*(ssubd/step));
-    a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
+    if (fnull (norm (p), 1.0e-6))
+      a= 0.0;
+    else
+      a= nearest ((arg(p)/(2*tm_PI))*astep*ssubd);
     n= n*(step/ssubd);
     a= a/(astep*ssubd);
     if (i!=1) {
@@ -461,5 +487,5 @@ as_grid (tree t) {
 
 tree
 as_tree (grid g) {
-  (tree) g;
+  return (tree) g;
 }

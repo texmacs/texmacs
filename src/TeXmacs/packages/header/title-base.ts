@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.1>
+<TeXmacs|1.0.5.6>
 
 <style|<tuple|source|std-pattern>>
 
@@ -45,24 +45,32 @@
   <\active*>
     <\src-comment>
       DRD properties of tags with title and author data.
+
+      FIXME: running title and author should be made ``hidden''.
     </src-comment>
   </active*>
+
+  <drd-props|doc-data|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|doc-title|border|no>
 
   <drd-props|doc-subtitle|border|no>
 
-  <drd-props|doc-author-data|border|no>
+  <drd-props|doc-author-data|arity|<tuple|repeat|1|1>|border|no|accessible|all>
 
   <drd-props|doc-date|border|no>
 
   <drd-props|doc-note|border|no>
 
-  <drd-props|doc-inactive|border|no>
+  <drd-props|doc-inactive|arity|1|border|no|accessible|all>
 
-  <drd-props|doc-keywords|accessible|all>
+  <drd-props|doc-running-title|arity|1|accessible|all>
 
-  <drd-props|doc-AMS-class|accessible|all>
+  <drd-props|doc-running-author|arity|1|accessible|all>
+
+  <drd-props|doc-keywords|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|doc-AMS-class|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|author-name|border|no>
 
