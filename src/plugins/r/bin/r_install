@@ -1,3 +1,3 @@
 #!/bin/sh
-mkdir -p ~/.TeXmacs/plugins/r/r
-R CMD INSTALL -l ~/.TeXmacs/plugins/r/r $TEXMACS_PATH/plugins/r/r/TeXmacs
+mkdir -p $TEXMACS_HOME_PATH/plugins/r/r
+R CMD INSTALL -l $TEXMACS_HOME_PATH/plugins/r/r $TEXMACS_PATH/plugins/r/r/TeXmacs
