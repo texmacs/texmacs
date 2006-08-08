@@ -173,6 +173,19 @@ hash (tree t) {
   else return ((int) L(t)) ^ hash (A(t));
 }
 
+string
+var_as_string (tree t) {
+  if (is_atomic (t)) return t->label;
+  else if (is_concat (t)) {
+    int i, n= N(t);
+    string cumul;
+    for (i=0; i<n; i++)
+      cumul << var_as_string (t[i]);
+    return cumul;
+  }
+  return "";
+}
+
 /******************************************************************************
 * Tree predicates
 ******************************************************************************/
