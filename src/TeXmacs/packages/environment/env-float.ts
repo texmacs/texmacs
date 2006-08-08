@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.1>
+<TeXmacs|1.0.6.5>
 
 <style|source>
 
@@ -58,10 +58,10 @@
   </active*>
 
   <assign|render-footnote|<macro|nr|body|<style-with|src-compact|none|<\float|footnote|>
-    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<arg|nr><footnote-sep><label|<merge|footnote-|<arg|nr>>>|<right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
+    <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|nr>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<value|the-label>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
   </float>>>>
 
-  <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
+  <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><label|<merge|footnr-|<the-footnote>>><rsup|<reference|<merge|footnote-|<the-footnote>>>>>>>
 
   \;
 </body>

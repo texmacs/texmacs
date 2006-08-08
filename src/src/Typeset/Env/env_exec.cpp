@@ -965,8 +965,8 @@ edit_env_rep::exec_merge (tree t) {
   tree acc= exec (t[0]);
   for (i=1; i<n; i++) {
     tree add= exec (t[i]);
-    if (is_atomic (acc) && is_atomic (add))
-      acc= acc->label * add->label;
+    if (is_atomic (acc) && (is_atomic (add) || is_concat (add)))
+      acc= acc->label * var_as_string (add);
     else if (is_tuple (acc) && is_tuple (add))
       acc= acc * add;
     else if (is_func (acc, MACRO) && is_func (add, MACRO) &&
@@ -1268,7 +1268,7 @@ edit_env_rep::exec_set_binding (tree t) {
     assign (string ("the-tags"), tree (TUPLE));
     assign (string ("the-label"), copy (value));
   }
-  else if (N(t) == 2) {
+  else if (N(t) >= 2) {
     tree key= exec (t[0]);
     if (!is_atomic (key)) 
       return tree (ERROR, "bad set binding");

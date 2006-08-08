@@ -273,7 +273,7 @@ init_std_drd () {
   init (HLINK, "hlink",
 	fixed (1, 1, BIFORM) -> accessible (0) -> name ("hyperlink"));
   init (ACTION, "action", options (2, 1, DETAILED) -> accessible (0));
-  init (SET_BINDING, "set-binding", options (1, 1));
+  init (SET_BINDING, "set-binding", options (1, 2));
   init (GET_BINDING, "get-binding", options (1, 1));
   init (LABEL, "label", fixed (1));
   init (REFERENCE, "reference", fixed (1));

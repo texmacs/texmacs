@@ -123,29 +123,6 @@ edit_interface_rep::mouse_click (SI x, SI y) {
 bool
 edit_interface_rep::mouse_extra_click (SI x, SI y) {
   go_to (x, y);
-
-  // temporary hack for clickable footnotes
-  path p= path_up (tp);
-  if (rp < p) {
-    if (is_compound (subtree (et, p), "footnote", 1)) {
-      go_to (start (et, p * 0));
-      return true;
-    }
-    tree st= subtree (et, path_up (p));
-    if (is_concat (st) && ((last_item (p) + 1) < N(st)))
-      if (last_item (tp) == right_index (st [last_item (p)]))
-	if (is_compound (subtree (et, path_inc (p)), "footnote", 1)) {
-	  go_to (start (et, path_inc (p) * 0));
-	  return true;
-	}
-    path q= search_upwards ("footnote");
-    if ((!nil (q)) && (tp == start (et, q * 0))) {
-      go_to (end (et, q));
-      return true;
-    }
-  }
-  // end temporary hack
-
   if (eb->action ("double-click", x, y, 0) != "") return true;
   go_to (x, y);
   path p1, p2;

@@ -156,7 +156,12 @@ concater_rep::typeset_set_binding (tree t, path ip) {
   if (L(keys) == TUPLE) {
     flag ("set binding", ip, env->dis->blue);
     if (N(keys) > 0) {
-      box b= tag_box (ip, empty_box (ip, 0, 0, 0, env->fn->yx), keys);
+      path sip= ip;
+      if (N(t) >= 3 && (!nil (env->macro_src))) {
+	tree body= env->expand (tree (ARG, t[2]), true);
+	sip= obtain_ip (body);
+      }
+      box b= tag_box (sip, empty_box (sip, 0, 0, 0, env->fn->yx), keys);
       a << line_item (CONTROL_ITEM, b, HYPH_INVALID, "label");
     }
   }
