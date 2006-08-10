@@ -115,7 +115,7 @@ bool_to_scm (bool flag) {
   return scm_bool2scm (flag);
 }
 
-#ifndef scm_to_bool
+#ifndef GUILE_C
 int
 scm_to_bool (SCM flag) {
   return scm_scm2bool (flag);
@@ -151,10 +151,12 @@ double_to_scm (double i) {
   return scm_double2scm (i);
 }
 
+#ifndef GUILE_C
 static double
 scm_to_double (SCM i) {
   return scm_scm2double (i);
 }
+#endif
 
 /******************************************************************************
 * Strings
