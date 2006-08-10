@@ -87,7 +87,7 @@ void
 intersection (curve f, curve g, double& t, double& u) {
   // for two dimensional curves only
   double d= norm (f (t) - g (u));
-  while (d != 0) {
+  while (!fnull (d, 1.0e-9)) {
     point  ft = f (t);
     point  gu = g (u);
     point  gf = grad (f, t);
