@@ -77,6 +77,34 @@ curve_rep::find_closest_point (
   return res;
 }
 
+point
+grad (curve f, double t) {
+  bool error= false;
+  return f->grad (t, error);
+}
+
+void
+intersection (curve f, curve g, double& t, double& u) {
+  // for two dimensional curves only
+  double d= norm (f (t) - g (u));
+  while (d != 0) {
+    point  ft = f (t);
+    point  gu = g (u);
+    point  gf = grad (f, t);
+    point  gg = grad (g, u);
+    double det= gf[0] * gg[1] - gf[1] * gg[0];
+    if (fnull (det, 1.0e-12)) return;
+    double l1 = ((gu[0] - ft[0]) * gg[1] - (gu[1] - ft[1]) * gg[0]) / det;
+    double l2 = ((gu[0] - ft[0]) * gf[1] - (gu[1] - ft[1]) * gf[0]) / det;
+    double T  = t + l1;
+    double U  = u + l2;
+    if (T < 0.0 || T > 1.0 || U < 0.0 || U > 1.0) return;
+    double D  = norm (f (T) - g (U));
+    if (D > 0.9 * d) return;
+    t= T; u= U; d= D;
+  }
+}
+
 /******************************************************************************
 * Segments
 ******************************************************************************/
