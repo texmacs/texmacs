@@ -94,10 +94,10 @@ intersection (curve f, curve g, double& t, double& u) {
     point  gg = grad (g, u);
     double det= gf[0] * gg[1] - gf[1] * gg[0];
     if (fnull (det, 1.0e-12)) return;
-    double l1 = ((gu[0] - ft[0]) * gg[1] - (gu[1] - ft[1]) * gg[0]) / det;
-    double l2 = ((gu[0] - ft[0]) * gf[1] - (gu[1] - ft[1]) * gf[0]) / det;
-    double T  = t + l1;
-    double U  = u + l2;
+    double dt = ((gu[0] - ft[0]) * gg[1] - (gu[1] - ft[1]) * gg[0]) / det;
+    double du = ((gu[0] - ft[0]) * gf[1] - (gu[1] - ft[1]) * gf[0]) / det;
+    double T  = t + dt;
+    double U  = u + du;
     if (T < 0.0 || T > 1.0 || U < 0.0 || U > 1.0) return;
     double D  = norm (f (T) - g (U));
     if (D > 0.9 * d) return;
