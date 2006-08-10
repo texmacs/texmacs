@@ -253,6 +253,12 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+#ifdef GUILE_C
+  cout << "Guile 1.8.0 is uncompatible with earlier versions.\n";
+  cout << "Please recompile TeXmacs with an older version of Guile,\n";
+  cout << "since TeXmacs is likely to crash with Guile 1.8.0.\n";
+  cout << "Any help for fixing this problem would be appreciated.\n";
+#endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
