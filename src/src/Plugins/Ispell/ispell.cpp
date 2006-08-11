@@ -53,6 +53,7 @@ ispeller_rep::start () {
 #else
     string cmd= "ispell -a -d " * ispell_dictionary (lan)
       * ispell_extra_args (lan);
+    if (exists_in_path ("aspell")) cmd[0]= 'a';
 #endif
     ln= make_pipe_link (cmd);
   }
