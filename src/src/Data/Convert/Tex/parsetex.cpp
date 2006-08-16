@@ -317,9 +317,32 @@ latex_parser::parse_backslash (string s, int& i) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}");
   }
-  if (((i+6)<n) && (s(i,i+5)=="\\url{")) {
+  if (((i+5)<n) && (s(i,i+4)=="\\url")) {
+    i+=4;
+    while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
+    string ss;
+    if (i<n && s[i] == '{') {
+      i++;
+      int start= i;
+      while ((i<n) && s[i] != '}') i++;
+      ss= s (start, i++);
+    }
+    return tree (TUPLE, "\\url", ss);
+  }
+  if (((i+6)<n) && (s(i,i+5)=="\\href")) {
     i+=5;
-    return parse_verbatim (s, i, "}");
+    while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
+    string ss;
+    if (i<n && s[i] == '{') {
+      i++;
+      int start= i;
+      while ((i<n) && s[i] != '}') i++;
+      ss= s (start, i++);
+    }
+    tree u= "";
+    while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
+    if (i<n && s[i] == '{') { i++; u= parse (s, i, "}"); i++; }
+    return tree (TUPLE, "\\href", ss, u);
   }
 
   /************************ special commands *********************************/

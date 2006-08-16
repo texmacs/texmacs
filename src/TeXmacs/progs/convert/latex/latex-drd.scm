@@ -55,13 +55,15 @@
   arabic displaylines cases underbrace overbrace
   includegraphics
   title author thanks
-  phantom hphantom vphantom smash)
+  phantom hphantom vphantom smash
+  url)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
 
 (drd-group latex-command-2%
-  binom choose sideset stackrel citeauthoryear setcounter equal)
+  binom choose sideset stackrel citeauthoryear setcounter equal
+  href)
 
 (drd-group latex-command-3%
   ifthenelse)
@@ -271,19 +273,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table latex-package-priority%
-  ("geometry" 0)
-  ("amsmath" 10)
-  ("amssymb" 20)
-  ("graphicx" 30)
-  ("wasysym" 40)
-  ("stmaryrd" 50)
-  ("enumerate" 60)
-  ("epsfig" 70)
-  ("mathrsfs" 80)
-  ("bbm" 90)
-  ("dsfont" 100)
-  ("euscript" 110)
-  ("multicol" 120))
+  ("geometry" 10)
+  ("amsmath" 20)
+  ("amssymb" 30)
+  ("graphicx" 40)
+  ("wasysym" 50)
+  ("stmaryrd" 60)
+  ("enumerate" 70)
+  ("epsfig" 80)
+  ("mathrsfs" 90)
+  ("bbm" 100)
+  ("dsfont" 110)
+  ("euscript" 120)
+  ("multicol" 130)
+  ("hyperref" 140))
 
 (drd-table latex-needs%
   (geometry "geometry")
@@ -328,7 +331,10 @@
   (bundle "epic")
   (chunk "epic")
   (bundle "ecltree")
-  (chunk "ecltree"))
+  (chunk "ecltree")
+
+  (url "hyperref")
+  (href "hyperref"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated routines for consulting the database

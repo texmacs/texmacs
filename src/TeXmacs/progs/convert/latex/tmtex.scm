@@ -938,12 +938,6 @@
 	((== (car l) "image") (tmtex-eps (cadr l)))
 	(else "")))
 
-(define (tmtex-hyperlink l)
-  (tmtex-function 'tmhlink l))
-
-(define (tmtex-action l)
-  (list 'tmaction (tmtex (car l)) (tmtex (cadr l))))
-
 (define (tmtex-eps-names)
   (set! tmtex-serial (+ tmtex-serial 1))
   (let* ((postfix (string-append "-" (number->string tmtex-serial) ".eps"))
@@ -1211,6 +1205,15 @@
 (define (tmtex-cite s l)
   (tex-apply (string->symbol s) (tmtex-cite-list l)))
 
+(define (tmtex-hlink s l)
+  (list 'href (tmtex (cadr l)) (tmtex (car l))))
+
+(define (tmtex-slink s l)
+  (tmtex-function 'url l))
+
+(define (tmtex-action s l)
+  (list 'tmaction (tmtex (car l)) (tmtex (cadr l))))
+
 (define (tmtex-choose s l)
   (list 'binom (tmtex (car l)) (tmtex (cadr l))))
 
@@ -1375,8 +1378,6 @@
   (pageref tmtex-pageref)
   (write tmtex-noop)
   (specific tmtex-specific)
-  (hlink tmtex-hyperlink)
-  (action tmtex-action)
   ((:or tag meaning flag) tmtex-noop)
 
   ((:or anim-compose anim-repeat anim-constant
@@ -1451,6 +1452,9 @@
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
   ((:or cite nocite) (,tmtex-cite -1))
+  (hlink (,tmtex-hlink 2))
+  (action (,tmtex-action 2))
+  (slink (,tmtex-slink 1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))

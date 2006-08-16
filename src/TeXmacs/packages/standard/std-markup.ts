@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.11>
+<TeXmacs|1.0.6.5>
 
 <style|<tuple|source|std>>
 
@@ -206,6 +206,8 @@
   <drd-props|underline|arity|1|accessible|all>
 
   \;
+
+  <assign|slink|<macro|x|<hlink|<with|font-family|tt|<arg|x>>|<arg|x>>>>
 </body>
 
 <\initial>
