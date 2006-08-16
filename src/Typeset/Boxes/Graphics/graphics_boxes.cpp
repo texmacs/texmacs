@@ -123,6 +123,7 @@ graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->dist= graphical_distance (x, y);
   //gs->p= point (x, y); // The cursor moves freely inside the box
     gs->cp << reverse (path (0, ip));
+    gs->b= box (this);
     res << gs;
   }
   return res;
@@ -135,6 +136,7 @@ graphics_group_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
     gr_selection gs;
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
+    gs->b= box (this);
     res << gs;
   }
   return res;
@@ -185,6 +187,7 @@ point_box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->dist= graphical_distance (x, y);
     gs->p= p;
     gs->cp << reverse (path (0, ip));
+    gs->b= box (this);
     res << gs;
   }
   return res;
@@ -256,6 +259,8 @@ struct curve_box_rep: public box_rep {
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
+  curve get_curve () { return c; }
+  array<point> curve_intersection (box b, point p0, double eps);
   void display (ps_device dev);
   operator tree () { return "curve"; }
   SI length ();
@@ -353,6 +358,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
         gs->dist= n;
         gs->p= pts[i];
         gs->cp << reverse (paths[i]);
+	gs->b= box (this);
         res << gs;
       }
     }
@@ -372,6 +378,7 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
           gs->p= p2;
           gs->cp << reverse (paths[i]);
           gs->cp << reverse (paths[(i+1)%np]);
+	  gs->b= box (this);
           res << gs;
         }
       }
@@ -387,9 +394,20 @@ curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
     gr_selection gs;
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
+    gs->b= box (this);
     res << gs;
   }
   return res;
+}
+
+array<point>
+curve_box_rep::curve_intersection (box b, point p0, double eps) {
+  // For local intersections only
+  array<point> res;
+  if ((tree)b == "curve")
+    return intersection (c, b->get_curve (), p0, eps);
+  else
+    return res;
 }
 
 void

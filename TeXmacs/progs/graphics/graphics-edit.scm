@@ -46,7 +46,7 @@
 
 ;; TODO : Dans la doc, preciser **exactement** les conditions d'evaluation
 ;;   des differentes fonctions (par exemple (stree->tree #f) == #f,
-;;   mais (stree->tree 1) == <tree 1)>.
+;;   mais (stree->tree 1) == <tree 1>.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard handling

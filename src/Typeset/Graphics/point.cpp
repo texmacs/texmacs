@@ -190,7 +190,7 @@ midperp (point p1, point p2, point p3) {
 }
 
 point
-intersect (axis A, axis B) {
+intersection (axis A, axis B) {
   point i, j;
   if (!orthogonalize (i, j, A.p0, A.p1, B.p0)) {
     if (orthogonalize (i, j, A.p0, A.p1, B.p1))

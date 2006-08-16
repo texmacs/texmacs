@@ -219,7 +219,7 @@
 ;; Subroutines for accessing trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;NOTE: This section is OK.
+;;FIXME: Should use (tm-adjust-path), otherwise, crashes in some cases
 (tm-define (tm-upwards-path p tags nottags)
   (if (in? (tree-label (path->tree p)) tags)
       p
@@ -230,6 +230,7 @@
 	      #f))))
 ;; TODO: Put this one in kernel/library/tree.scm
 
+;;NOTE: This section is OK.
 (tm-define nothing (gensym))
 (tm-define (list-find-prop l var)
   (define (find l)

@@ -17,8 +17,10 @@
 
 class edit_graphics_rep: virtual public editor_rep {
 private:
-  box go_box;       // The graphical object typesetted as a box
-  gr_selections gs; // last graphical_select (x, y)
+  box go_box;           // The graphical object typesetted as a box
+  gr_selections gs;     // Last graphical_select (x, y)
+  array<point> ci, cgi; // Last Curves & Grid/curves intersections (x, y)
+  grid gr0;             // Last grid
 
 protected:
   point cur_pos;
