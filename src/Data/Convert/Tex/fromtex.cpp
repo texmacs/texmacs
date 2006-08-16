@@ -660,6 +660,10 @@ latex_command_to_tree (tree t) {
     return ""; // FIXME: for larger space in maple matrices
   if (is_tuple (t, "\\etalchar", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\natexlab", 1)) return t2e (t[1]);
+  if (is_tuple (t, "\\url", 1))
+    return tree (APPLY, "slink", t2e (t[1]));
+  if (is_tuple (t, "\\href", 2))
+    return tree (APPLY, "hlink", l2e (t[2]), t2e (t[1]));
 
   // Start TeXmacs specific markup
   if (is_tuple (t, "\\tmmathbf", 1))
@@ -1328,7 +1332,7 @@ latex_to_tree (tree t1) {
     else return tree (DOCUMENT, the_style, the_body, the_initial);
   }
   else {
-    if (N (mods) == 0) { mods << t10; return mods; }
+    if (N (mods) > 0) { mods << t10; return mods; }
     return t10;
   }
 }
