@@ -156,8 +156,8 @@ concater_rep::typeset_arc (tree t, path ip, bool close) {
     typeset_dynamic (tree (ERROR, "bad arc"), ip);
   else
   if (n != 3 || linearly_dependent (a[0], a[1], a[2]) ||
-     (N (intersect (midperp (a[0], a[1], a[2]),
-		    midperp (a[1], a[2], a[0]))) == 0))
+     (N (intersection (midperp (a[0], a[1], a[2]),
+		       midperp (a[1], a[2], a[0]))) == 0))
     typeset_line (t, ip, close);
   else {
     curve c= env->fr (arc (a, cip, close));

@@ -46,7 +46,8 @@ public:
   virtual void set_aspect (tree aspect);
 
   virtual operator tree () = 0;
-  virtual array<grid_curve> get_curves (point lim1, point lim2, double u) = 0;
+  virtual array<grid_curve> get_curves (
+    point lim1, point lim2, double u, bool b= false) = 0;
   virtual point find_closest_point (point p, point pmin, point pmax) = 0;
 };
 
@@ -59,7 +60,8 @@ ABSTRACT_NULL_CODE(grid);
 grid empty_grid();
 grid cartesian (array<SI> subd, array<string> col, point o, double step);
 grid polar (array<SI> subd, array<string> col, point o, double step, SI astep);
-grid logarithmic (array<SI> subd, array<string> col, point o, double step, SI base);
+grid logarithmic (array<SI> subd, array<string> col, point o,
+		  double step, SI base);
 
 grid as_grid (tree t);
 tree as_tree (grid g);

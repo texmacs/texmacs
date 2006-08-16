@@ -33,7 +33,17 @@ curve_rep::bound (double t, double eps) {
   //TODO: Improve this, as soon as the curvature ()
   //      for transformed_curves will be implemented
   bool b;
-  return eps / norm (grad (t, b));
+  double delta= eps / norm (grad (t, b));
+  while (delta >= 1.0e-6) {
+    point val1 = evaluate (t);
+    point val2 = evaluate (max (t-delta, 0.0));
+    point val3 = evaluate (min (t+delta, 1.0));
+    if (norm (val2 - val1) <= eps+1.0e-6 &&
+	norm (val3 - val1) <= eps+1.0e-6)
+      return delta;
+    delta /= 2.0;
+  }
+  return delta;
 }
 
 int
@@ -66,13 +76,15 @@ curve_rep::find_closest_point (
   double t;
   double res= -1;
   double n0= tm_infinity;
-  for (t=t1; t<=t2; t+=bound (t, eps)) {
+  for (t=t1; t<=t2;) {
     double n= norm (evaluate(t) - p);
     if (n < n0) {
       n0= n;
       res= t;
       found= true;
     }
+    double delta= (n - eps) / 2;
+    t+=bound (t, max (eps, delta));
   }
   return res;
 }
@@ -83,7 +95,7 @@ grad (curve f, double t) {
   return f->grad (t, error);
 }
 
-void
+bool
 intersection (curve f, curve g, double& t, double& u) {
   // for two dimensional curves only
   double d= norm (f (t) - g (u));
@@ -93,16 +105,33 @@ intersection (curve f, curve g, double& t, double& u) {
     point  gf = grad (f, t);
     point  gg = grad (g, u);
     double det= gf[0] * gg[1] - gf[1] * gg[0];
-    if (fnull (det, 1.0e-12)) return;
+    if (fnull (det, 1.0e-12)) break;
     double dt = ((gu[0] - ft[0]) * gg[1] - (gu[1] - ft[1]) * gg[0]) / det;
     double du = ((gu[0] - ft[0]) * gf[1] - (gu[1] - ft[1]) * gf[0]) / det;
     double T  = t + dt;
     double U  = u + du;
-    if (T < 0.0 || T > 1.0 || U < 0.0 || U > 1.0) return;
+    if (T < 0.0 || T > 1.0 || U < 0.0 || U > 1.0) break;
     double D  = norm (f (T) - g (U));
-    if (D > 0.9 * d) return;
+    if (D > 0.9 * d) break;
     t= T; u= U; d= D;
   }
+  return fnull (d, 1.0e-9);
+}
+
+array<point>
+intersection (curve f, curve g, point p0, double eps) {
+  // For local intersections only
+  array<point> res;
+  if (nil (f) || nil (g)) return res;
+  bool res1, res2;
+  double d1= f->find_closest_point (0.0, 1.0, p0, eps, res1);
+  double d2= g->find_closest_point (0.0, 1.0, p0, eps, res2);
+  if (res1 && res2) {
+    bool found= intersection (f, g, d1, d2);
+    if (found)
+      res << f (d1);
+  }
+  return res;
 }
 
 /******************************************************************************
@@ -181,7 +210,7 @@ struct poly_segment_rep: public curve_rep {
   point grad (double t, bool& error) {
     error= false;
     int i= min ((int) (n*t), n-1);
-    return a[i+1] - a[i];
+    return n * (a[i+1] - a[i]);
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -393,11 +422,12 @@ spline_rep::evaluate (double t,int o) {
   point res;
   int no;
   t=convert(t);
+  double k=U[n+1]-U[2];
   no=interval_no(t);
   if (no<2) res=spline(2,U[2],o);
   else if (no>n) res=spline(n,U[n+1],o);
   else res=spline(no,t,o);
-  return res;
+  return prod(k,o)*res;
 }
 
 point
@@ -557,7 +587,8 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   point o2= (n>1 ? a[1] : point (0,0));
   point o3= (n>2 ? a[2] : point (0,0));
   if (n!=3 || linearly_dependent (o1, o2, o3) ||
-     (N (center= intersect (midperp (o1, o2, o3), midperp (o2, o3, o1))) == 0))
+     (N (center= intersection (midperp (o1, o2, o3),
+			       midperp (o2, o3, o1))) == 0))
   {
     center= i= j= 0*o1;
     r1= r2= 1;
@@ -676,8 +707,8 @@ struct compound_curve_rep: public curve_rep {
   }
   point grad (double t, bool& error) {
     double n= n1+n2;
-    if (t <= n1/n) return c1->grad (t*n/n1, error);
-    else return c2->grad (t*n/n2 - n1, error);
+    if (t <= n1/n) return (n * c1->grad ((t*n)/n1, error)) / n1;
+    else return (n * c2->grad ((t*n)/n2 - n1, error)) / n2;
   }
   double curvature (double t1, double t2) {
     return max (c1->curvature (t1, t2), c2->curvature (t1, t2));

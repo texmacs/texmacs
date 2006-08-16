@@ -121,10 +121,14 @@ edit_graphics_rep::adjust (point p) {
   if (!nil (f)) {
     static const int NB= 10;
     point p2= f (p);
-    pmin= f [point (p2[0]-NB*PIXEL, p2[1]-NB*PIXEL)];
-    pmax= f [point (p2[0]+NB*PIXEL, p2[1]+NB*PIXEL)];
+    pmin= f [point (p2[0]-NB*get_pixel_size (), p2[1]-NB*get_pixel_size ())];
+    pmax= f [point (p2[0]+NB*get_pixel_size (), p2[1]+NB*get_pixel_size ())];
   }
   grid g= find_grid ();
+  if (!nil (g) && !nil (gr0) && g!=gr0) {
+    graphical_select (p[0], p[1]);
+    g= gr0;
+  }
   if (nil (g))
     return p;
   else {
@@ -134,12 +138,26 @@ edit_graphics_rep::adjust (point p) {
     if (!nil (f2)) {
       point fp= f2 (p);
       res= f2 (res);
-      int i, n= N(sels);
-      for (i=0; i<n; i++) {
+      int i;
+      for (i=0; i<N(ci); i++) {
+	point sp= ci[i];
+	if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
+	  res= ci[i];
+      }
+      for (i=0; i<N(cgi); i++) {
+	point sp= cgi[i];
+	if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
+	  res= cgi[i];
+      }
+    /*NOTE: Uncomment this to adjust by means of projecting on the curve
+      int n= N(sels);
+      if (N(ci)==0 && N(cgi)==0) for (i=0; i<n; i++) {
 	point sp= sels[i]->p;
 	if (N(sp)>0 && norm (fp - sp) < norm (fp - res))
 	  res= sels[i]->p;
-      }
+      }*/
+    //TODO: Adjusting by means on freely moving on surface of closed curves
+      ;
       res= f2[res];
     }
     return res;
@@ -159,6 +177,33 @@ edit_graphics_rep::graphical_select (double x, double y) {
   point p = f (point (x, y));
   sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10 * get_pixel_size ());
   gs= sels;
+  ci= array<point> (0);
+  cgi= array<point> (0);
+  gr0= empty_grid ();
+  grid g= find_grid ();
+  frame f2= find_frame (true);
+  if (!nil (g) && !nil (f2)) {
+    gr0= g;
+    point pmin, pmax;
+    static const int NB= 10;
+    pmin= f[point (p[0]-NB*get_pixel_size (), p[1]-NB*get_pixel_size ())];
+    pmax= f[point (p[0]+NB*get_pixel_size (), p[1]+NB*get_pixel_size ())];
+    p = f2 (point (x, y));
+    int i, j, n= N(sels);
+    double eps= get_pixel_size () / 10.0;
+    for (i=0; i<n; i++) {
+      for (j=0; j<n; j++)
+        if (i<j)
+          ci= ci << sels[i]->b->curve_intersection (sels[j]->b, p, eps);
+    }
+    array<grid_curve> gc= g->get_curves (pmin, pmax, 1e-6, true);
+    //FIXME: Too slow
+    for (i=0; i<N(gc); i++) {
+      curve c= f2 (gc[i]->c);
+      for (j=0; j<n; j++)
+        cgi= cgi << intersection (c, sels[j]->b->get_curve (), p, eps);
+    }
+  }
   return as_tree (sels);
 }
 

@@ -79,20 +79,14 @@ bool operator != (selection sel1, selection sel2);
 ostream& operator << (ostream& out, selection sel);
 
 /******************************************************************************
-* The selection class
+* The graphical selection class
 ******************************************************************************/
 
-struct gr_selection_rep: concrete_struct {
-  array<path> cp;
-  point p;
-  SI dist;
-};
-
+struct gr_selection_rep;
 struct gr_selection {
   CONCRETE(gr_selection);
   gr_selection (array<path> cp= array<path> (), SI dist= 0);
 };
-CONCRETE_CODE(gr_selection);
 
 ostream& operator << (ostream& out, gr_selection sel);
 
@@ -220,6 +214,8 @@ public:
   virtual SI             graphical_distance (SI x, SI y);
   virtual gr_selections  graphical_select (SI x, SI y, SI dist);
   virtual gr_selections  graphical_select (SI x1, SI y1, SI x2, SI y2);
+  virtual curve          get_curve ();
+  virtual array<point>   curve_intersection (box b, point p0, double eps);
 
   /************************** retrieving information *************************/
 
@@ -317,5 +313,17 @@ tree attach_dip (tree ref, path ip);
 #define attach_middle(t,ip) \
   attach_dip(t,decorate_middle(ip)),decorate_middle(ip)
 #define attach_right(t,ip) attach_dip(t,decorate_right(ip)),decorate_right(ip)
+
+/******************************************************************************
+* The graphical selection class (continued)
+******************************************************************************/
+
+struct gr_selection_rep: concrete_struct {
+  array<path> cp;
+  point p;
+  SI dist;
+  box b;
+};
+CONCRETE_CODE(gr_selection);
 
 #endif // defined BOXES_H

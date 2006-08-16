@@ -279,6 +279,7 @@ box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->cp << find_tree_path (x, y, dist);
     // FIXME: check whether this is correct: I do not remember whether
     // find_tree_path returns an absolute or a relative path
+    gs->b= box (this);
     res << gs;
   }
   return res;
@@ -293,8 +294,20 @@ box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
     SI dist= (SI)norm (point (x2-x1, y2-y1));
     gs->cp << find_tree_path (x1, y1, dist);
     // FIXME: as above, check whether this is correct or not
+    gs->b= box (this);
     res << gs;
   }
+  return res;
+}
+
+curve
+box_rep::get_curve () {
+  return curve ();
+}
+
+array<point>
+box_rep::curve_intersection (box b, point p0, double eps) {
+  array<point> res;
   return res;
 }
 

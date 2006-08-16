@@ -39,11 +39,11 @@ bool   orthogonalize (point &i, point &j, point p1, point p2, point p3);
 
 typedef struct { point p0, p1; } axis;
 
-point  proj      (axis a, point p);
-double dist      (axis a, point p);
-double seg_dist  (axis a, point p);
-axis   midperp   (point p1, point p2, point p3);
-point  intersect (axis A, axis B);
+point  proj         (axis a, point p);
+double dist         (axis a, point p);
+double seg_dist     (axis a, point p);
+axis   midperp      (point p1, point p2, point p3);
+point  intersection (axis A, axis B);
 
 bool inside_rectangle (point p, point p1, point p2);
 

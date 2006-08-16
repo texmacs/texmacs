@@ -44,6 +44,7 @@ public:
   friend inline int N (polynomials p) { return N(p.a); }
 };
 
+double prod (double x, int n);
 polynomials operator + (polynomials p1, polynomials p2);
 polynomials operator * (double c, polynomials p);
 polynomials operator * (point c, polynomial p);
