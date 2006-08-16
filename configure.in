@@ -401,6 +401,12 @@ case "${host}" in
     AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/BSD host)
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
+  i*86-*-solaris*)
+    AC_MSG_RESULT(final adjustments for an Intel or AMS Solaris host)
+    CONFIG_CXXOPTIMIZE="-O3"
+    CONFIG_BPATH="-Wl,-R,"
+    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+  ;;
   *-*-cygwin)
     AC_MSG_RESULT(final adjustments for cygwin host)
     CONFIG_OS="CYGWIN"
