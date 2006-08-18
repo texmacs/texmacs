@@ -30,6 +30,18 @@ extern tree the_et;
 extern bool texmacs_started;
 
 /******************************************************************************
+* For testing
+******************************************************************************/
+
+#ifdef ENABLE_TESTS
+void
+test_routines () {
+  extern void test_math ();
+  test_math ();
+}
+#endif
+
+/******************************************************************************
 * Real main program for encaptulation of guile
 ******************************************************************************/
 
@@ -267,6 +279,9 @@ main (int argc, char** argv) {
   bench_start ("initialize texmacs");
   init_texmacs ();
   bench_cumul ("initialize texmacs");
+#ifdef ENABLE_TESTS
+  test_routines ();
+#endif
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

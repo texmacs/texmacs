@@ -267,6 +267,13 @@ public:                                    \
   CONCRETE_NULL_TEMPLATE_CODE (PTR,TT,T);                  \
   template<TT T> inline PTR<T>::PTR (PTR##_rep<T>* rep2):  \
     rep(rep2) { INC_COUNT (this->rep); }
+#define ABSTRACT_NULL_TEMPLATE_2(PTR,T1,T2) \
+  CONCRETE_NULL_TEMPLATE_2 (PTR,T1,T2);     \
+  inline PTR (PTR##_rep<T1,T2>*)
+#define ABSTRACT_NULL_TEMPLATE_2_CODE(PTR,TT1,T1,TT2,T2)                    \
+  CONCRETE_NULL_TEMPLATE_2_CODE (PTR,TT1,T1,TT2,T2);                          \
+  template<TT1 T1,TT2 T2> inline PTR<T1,T2>::PTR (PTR##_rep<T1,T2>* rep2):  \
+    rep(rep2) { INC_COUNT (this->rep); }
 // end abstract_null
 
 /******************************************************************************

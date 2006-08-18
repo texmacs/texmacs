@@ -466,6 +466,13 @@ concater_rep::typeset (tree t, path ip) {
   case OVER:
   case DIV:
   case MOD:
+  case MATH_SQRT:
+  case EXP:
+  case LOG:
+  case POW:
+  case COS:
+  case SIN:
+  case TAN:
   case MERGE:
   case LENGTH:
   case RANGE:
