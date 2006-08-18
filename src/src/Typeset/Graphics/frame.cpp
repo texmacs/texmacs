@@ -68,13 +68,9 @@ rotation_2D (point center, double angle) {
 ******************************************************************************/
 
 struct affine_2D_rep: public frame_rep {
-  matrix m, j;
-  affine_2D_rep (matrix m2): m (m2) {
-    j= matrix (2, 2);
-    j[0][0]= m[0][0];
-    j[0][1]= m[0][1];
-    j[1][0]= m[1][0];
-    j[1][1]= m[1][1];
+  matrix<double> m, j;
+  affine_2D_rep (matrix<double> m2): m (m2) {
+    j= copy (m);
     linear= true; }
  // FIXME: Do we use "linear" in such a
  //   weakest sense for affine transforms ?
@@ -83,12 +79,12 @@ struct affine_2D_rep: public frame_rep {
   point direct_transform (point p) {
     point q= point (3), r;
     q[0]= p[0]; q[1]= p[1]; q[2]= 1.0;
-    q= m (q);
+    q= m * q;
     return point (q[0], q[1]); }
   point inverse_transform (point p) {
     fatal_error ("Not yet implemented", "affine_2D_rep::inverse_transform"); }
   point jacobian (point p, point v, bool &error) {
-    (void) p; error= false; return j (v); }
+    (void) p; error= false; return j * v; }
   point jacobian_of_inverse (point p, point v, bool &error) {
     (void) p; (void) v; (void) error;
     fatal_error ("Not yet implemented",
@@ -98,7 +94,7 @@ struct affine_2D_rep: public frame_rep {
 };
 
 frame
-affine_2D (matrix m) {
+affine_2D (matrix<double> m) {
   return new affine_2D_rep (m);
 }
 

@@ -66,4 +66,9 @@ grid logarithmic (array<SI> subd, array<string> col, point o,
 grid as_grid (tree t);
 tree as_tree (grid g);
 
+inline bool operator == (grid g1, grid g2) {
+  return as_tree (g1) == as_tree(g2); }
+inline bool operator != (grid g1, grid g2) {
+  return as_tree (g1) != as_tree(g2); }
+
 #endif // defined GRID_H

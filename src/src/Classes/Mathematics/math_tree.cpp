@@ -140,9 +140,16 @@ math_print (string& s, tree t, int level) {
     s << "-";
     math_print (s, t[0], 3);
   }
+  else if (level <= 4 && is_func (t, RSUB, 2)) {
+    math_print (s, t[0], 4);
+    s << "[";
+    math_print (s, t[1], 0);
+    s << "]";
+  }
   else if (is_func (t, PLUS, 2) || is_func (t, MINUS, 2) ||
 	   is_func (t, TIMES, 2) || is_func (t, OVER, 2) ||
-	   is_func (t, POW, 2) || is_func (t, MINUS, 1))
+	   is_func (t, POW, 2) || is_func (t, MINUS, 1) ||
+	   is_func (t, RSUB, 2))
     {
       s << "(";
       math_print (s, t, 0);

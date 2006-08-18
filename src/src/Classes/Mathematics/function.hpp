@@ -12,13 +12,13 @@
 
 #ifndef FUNCTION_HPP
 #define FUNCTION_HPP
-#include "basic.hpp"
-#include "operators.hpp"
+#include "ball.hpp"
 #define TMPL template<typename F, typename T>
 #define V typename properties<F>::index_type
 #define C typename properties<F>::scalar_type
 
 TMPL class function;
+TMPL bool nil (function<F,T> f);
 
 /******************************************************************************
 * Abstract function class
@@ -30,6 +30,7 @@ public:
   inline function_rep () {}
   inline virtual ~function_rep () {}
   virtual T apply (F x) = 0;
+  virtual ball<T> apply (ball<F> x) = 0;
   virtual function<F,T> derive (V var) = 0;
   virtual tree expression () = 0;
 };
@@ -40,10 +41,13 @@ public:
 ABSTRACT_NULL_TEMPLATE_2(function,F,T);
   inline function (T x);
   inline T operator () (F x);
+  inline ball<T> operator () (ball<F> x);
 };
 ABSTRACT_NULL_TEMPLATE_2_CODE(function,typename,F,typename,T);
 
 TMPL inline T function<F,T>::operator () (F x) {
+  return rep->apply (x); }
+TMPL inline ball<T> function<F,T>::operator () (ball<F> x) {
   return rep->apply (x); }
 TMPL inline function<F,T> derive (function<F,T> f, V var) {
   return f->derive (var); }
@@ -70,11 +74,12 @@ class constant_function_rep: public function_rep<F,T> {
 public:
   inline constant_function_rep (T c2): c (c2) {}
   inline T apply (F x) { return c; }
+  inline ball<T> apply (ball<F> x) { return ball<T> (c, 0); }
   inline function<F,T> derive (V var) { return C(0) * c; }
   inline tree expression () { return as_tree (c); }
 };
 
-TMPL inline function<F,T>::function<F,T> (T c):
+TMPL inline function<F,T>::function (T c):
   rep (new constant_function_rep<F,T> (c)) { rep->ref_count++; }
 
 TMPL
@@ -83,7 +88,11 @@ class coordinate_function_rep: public function_rep<F,T> {
   T c;
 public:
   inline coordinate_function_rep (V var2, T c2): var (var2), c (c2) {}
-  inline T apply (F x) { return properties<T>::access (x, var) * c; }
+  inline T apply (F x) { return properties<F>::access (x, var) * c; }
+  inline ball<T> apply (ball<F> x) {
+    //ball<F> b= properties<ball<F> >::access (x, var);
+    //return b * ball<T> (c, 0); }
+    return properties<ball<F> >::access (x, var) * ball<T> (c, 0); }
   inline function<F,T> derive (V var2) { return var2==var? c: C(0) * c; }
   inline tree expression () {
     return mul (as_tree (c), properties<F>::index_name (var)); }
@@ -103,6 +112,7 @@ class unary_function_rep: public function_rep<F,T> {
 public:
   inline unary_function_rep (function<F,T> f2): f (f2) {}
   inline T apply (F x) { return Op::eval (f (x)); }
+  inline ball<T> apply (ball<F> x) { return Op::eval (f (x)); }
   inline function<F,T> derive (V var) { return Op::diff (f, var); }
   inline tree expression () { return Op::eval (as_tree (f)); }
 };
@@ -118,6 +128,7 @@ public:
   inline binary_function_rep (function<F,T> f2, function<F,T> g2):
     f (f2), g (g2) {}
   inline T apply (F x) { return Op::eval (f (x), g (x)); }
+  inline ball<T> apply (ball<F> x) { return Op::eval (f (x), g (x)); }
   inline function<F,T> derive (V var) { return Op::diff (f, g, var); }
   inline tree expression () { return Op::eval (as_tree (f), as_tree (g)); }
 };
@@ -172,7 +183,7 @@ cos (function<F,T> f) {
 
 TMPL inline function<F,T>
 sin (function<F,T> f) {
-  return unary_function<F,T,sinop> (f); }
+  return unary_function<F,T,sin_op> (f); }
 
 TMPL inline function<F,T>
 tan (function<F,T> f) {

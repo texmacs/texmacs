@@ -70,7 +70,7 @@ concater_rep::typeset_gr_linear_transform (tree t, path ip) {
   if (!is_tuple (t[1]))
     typeset_dynamic (tree (ERROR, "bad linear transform"), ip);
 
-  frame f= affine_2D (as_matrix (t[1]));
+  frame f= affine_2D (as_matrix<double> (t[1]));
   box   b= typeset_as_concat (env, t[0], descend (ip, 0));
         /* The call should be performed with 'typeset_as_atomic()',
 	   but we should re-test transform() under these circumstances.

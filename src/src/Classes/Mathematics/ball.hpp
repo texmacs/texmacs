@@ -15,7 +15,9 @@
 #include "properties.hpp"
 #include "operators.hpp"
 #define TMPL template<typename C>
+#define BINARY_TMPL template<typename C1,typename C2>
 #define R typename properties<C>::norm_type
+#define M typename binary_properties<C1,C2>::product_type
 
 /******************************************************************************
 * The ball class
@@ -27,7 +29,7 @@ public:
   C cen;
   R rad;
 public:
-  inline ball (C c, R r): cen (c), rad (r) {}
+  inline ball (C c=0, R r=0): cen (c), rad (r) {}
 };
 
 TMPL inline C center (const ball<C>& b) { return b.cen; }
@@ -46,6 +48,16 @@ public:
   typedef ball<typename properties<C>::scalar_type> scalar_type;
   typedef typename properties<C>::norm_type norm_type;
   typedef typename properties<C>::index_type index_type;
+  static inline tree index_name (index_type i) {
+    return properties<C>::index_name (i); }
+  static inline scalar_type access (ball<C> b, index_type var) {
+    return scalar_type (properties<C>::access (center (b), var), radius (b)); }
+};
+
+BINARY_TMPL
+class binary_properties<ball<C1>,ball<C2> > {
+public:
+  typedef ball<M > product_type;
 };
 
 /******************************************************************************
@@ -67,12 +79,12 @@ operator - (const ball<C>& b1, const ball<C>& b2) {
   return ball<C> (center (b1) - center (b2), radius (b1) + radius (b2));
 }
 
-TMPL ball<C>
-operator * (const ball<C>& b1, const ball<C>& b2) {
-  return ball<C> (center (b1) * center (b2),
-		  norm (b1) * radius (b2) +
-		  radius (b1) * norm (b2) +
-		  radius (b1) * radius (b2));
+BINARY_TMPL ball<M >
+operator * (const ball<C1>& b1, const ball<C2>& b2) {
+  return ball<M > (center (b1) * center (b2),
+		   norm (center (b1)) * radius (b2) +
+		   radius (b1) * norm (center (b2)) +
+		   radius (b1) * radius (b2));
 }
 
 TMPL ball<C>
@@ -80,8 +92,8 @@ invert (const ball<C>& b) {
   return ball<C> (invert (center (b)), radius (b) / square (lower (b)));
 }
 
-TMPL ball<C>
-operator / (const ball<C>& b1, const ball<C>& b2) {
+BINARY_TMPL ball<M >
+operator / (const ball<C1>& b1, const ball<C2>& b2) {
   return b1 * invert (b2);
 }
 
@@ -116,10 +128,10 @@ cos (const ball<C>& z) {
   else {
     R u1= sin (lower (z));
     R u2= sin (upper (z));
-    if (sign (u1) * sign (u2) != 1)
+    if (u1 * u2 <= 0)
       return ball<C> (cos (center (z)), radius (z));
     return ball<C> (cos (center (z)),
-		    max (abs (u1), abs (u2)) * radius (z));
+		    max (norm (u1), norm (u2)) * radius (z));
   }
 }
 
@@ -130,10 +142,10 @@ sin (const ball<C>& z) {
   else {
     R u1= cos (lower (z));
     R u2= cos (upper (z));
-    if (sign (u1) * sign (u2) != 1)
+    if (u1 * u2 <= 0)
       return ball<C> (sin (center (z)), radius (z));
     return ball<C> (sin (center (z)),
-		    max (abs (u1), abs (u2)) * radius (z));
+		    max (norm (u1), norm (u2)) * radius (z));
   }
 }
 
@@ -152,5 +164,7 @@ norm (const ball<C>& b) {
 }
 
 #undef TMPL
+#undef BINARY_TMPL
 #undef R
+#undef M
 #endif // defined BALL_H

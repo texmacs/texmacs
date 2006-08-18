@@ -60,7 +60,7 @@ ABSTRACT_NULL_CODE(frame);
 // Transformations
 frame scaling (double magnify, point shift);
 frame rotation_2D (point center, double angle);
-frame affine_2D (matrix m);
+frame affine_2D (matrix<double> m);
 
 // Operations on transformations
 frame operator * (frame f1, frame f2);

@@ -30,6 +30,18 @@ tree tan (tree t);
 
 string as_math_string (tree t);
 
+template<typename T> void
+parse (tree t, T& result) {
+  fatal_error ("Unsupported type", "parse<T>", "math_tree.hpp");
+}
+
+inline void
+parse (tree t, double& result) {
+  if (!is_double (t))
+    fatal_error ("Not a double", "parse<double>", "math_tree.hpp");
+  result= as_double (t);
+}
+
 template<typename T> T
 parse_as (tree t) {
   switch (L(t)) {
