@@ -19,9 +19,9 @@
 #define M typename binary_properties<T,U>::product_type
 
 TMPL class matrix;
-TMPL int NR (matrix<T> a);
-TMPL int NC (matrix<T> a);
-TMPL T*  A  (matrix<T> a);
+TMPL int NR (matrix<T> m);
+TMPL int NC (matrix<T> m);
+TMPL T*  A  (matrix<T> m);
 
 /******************************************************************************
 * The matrix class
