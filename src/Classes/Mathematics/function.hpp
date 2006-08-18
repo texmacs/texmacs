@@ -90,8 +90,6 @@ public:
   inline coordinate_function_rep (V var2, T c2): var (var2), c (c2) {}
   inline T apply (F x) { return properties<F>::access (x, var) * c; }
   inline ball<T> apply (ball<F> x) {
-    //ball<F> b= properties<ball<F> >::access (x, var);
-    //return b * ball<T> (c, 0); }
     return properties<ball<F> >::access (x, var) * ball<T> (c, 0); }
   inline function<F,T> derive (V var2) { return var2==var? c: C(0) * c; }
   inline tree expression () {
