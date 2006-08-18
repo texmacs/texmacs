@@ -197,6 +197,13 @@ init_std_drd () {
   init (OVER, "over", repeat (1, 1));
   init (DIV, "div", fixed (2) -> name ("divide"));
   init (MOD, "mod", fixed (2) -> name ("modulo"));
+  init (MATH_SQRT, "math-sqrt", fixed (1));
+  init (EXP, "exp", fixed (1));
+  init (LOG, "log", fixed (1));
+  init (POW, "pow", fixed (2));
+  init (COS, "cos", fixed (1));
+  init (SIN, "sin", fixed (1));
+  init (TAN, "tan", fixed (1));
   init (MERGE, "merge", repeat (2, 1));
   init (LENGTH, "length", fixed (1));
   init (RANGE, "range", fixed (3));

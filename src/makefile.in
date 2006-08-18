@@ -100,7 +100,7 @@ deps += $(texmacs_deps)
 
 incl_flags = $(patsubst %,-I%,$(1))
 
-system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Guile)
+system_incl   := $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Classes/Mathematics Data/Drd Data/String Data/Tree Data/Convert Guile)
 classes_incl  := $(system_incl)
 data_incl     := $(system_incl) $(call incl_flags,Resource)
 resource_incl := $(system_incl) $(call incl_flags,Resource Window)
@@ -115,7 +115,7 @@ texmacs_incl  := $(guile_incl)
 # Dependencies
 ###############################################################################
 
-deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Typeset Edit Texmacs Guile)
+deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files System/Link System/Misc Classes/Abstract Classes/Atomic Classes/Compound Classes/Mathematics Data/Drd Data/String Data/Tree Data/Convert Resource Plugins Window Typeset Edit Texmacs Guile)
 
 deps_flags = $(deps_incl)\
  $(CPPFLAGS) $(CXXIMLIB2) $(CXXFREETYPE) $(CXXICONV) $(CXXGUILE) \

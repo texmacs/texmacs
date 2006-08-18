@@ -256,6 +256,20 @@ edit_env_rep::exec (tree t) {
     return exec_divide (t);
   case MOD:
     return exec_modulo (t);
+  case MATH_SQRT:
+    return exec_math_sqrt (t);
+  case EXP:
+    return exec_exp (t);
+  case LOG:
+    return exec_log (t);
+  case POW:
+    return exec_pow (t);
+  case COS:
+    return exec_cos (t);
+  case SIN:
+    return exec_sin (t);
+  case TAN:
+    return exec_tan (t);
   case MERGE:
     return exec_merge (t);
   case LENGTH:
@@ -956,6 +970,70 @@ edit_env_rep::exec_modulo (tree t) {
     return as_string (as_int (t1->label) % den);
   }
   return tree (ERROR, "bad modulo");
+}
+
+tree
+edit_env_rep::exec_math_sqrt (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad sqrt");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (sqrt (as_double (t1)));
+  return tree (ERROR, "bad sqrt");
+}
+
+tree
+edit_env_rep::exec_exp (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad exp");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (exp (as_double (t1)));
+  return tree (ERROR, "bad exp");
+}
+
+tree
+edit_env_rep::exec_log (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad log");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (log (as_double (t1)));
+  return tree (ERROR, "bad log");
+}
+
+tree
+edit_env_rep::exec_pow (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad pow");
+  tree t1= exec (t[0]);
+  tree t2= exec (t[1]);
+  if (is_double (t1) && is_double (t2))
+    return as_tree (pow (as_double (t1), as_double (t2)));
+  return tree (ERROR, "bad pow");
+}
+
+tree
+edit_env_rep::exec_cos (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad cos");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (cos (as_double (t1)));
+  return tree (ERROR, "bad cos");
+}
+
+tree
+edit_env_rep::exec_sin (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad sin");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (sin (as_double (t1)));
+  return tree (ERROR, "bad sin");
+}
+
+tree
+edit_env_rep::exec_tan (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad tan");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (tan (as_double (t1)));
+  return tree (ERROR, "bad tan");
 }
 
 tree

@@ -6135,6 +6135,13 @@ echo "${ECHO_T}final adjustments for an Intel or AMD GNU/Linux host" >&6
 echo "${ECHO_T}final adjustments for an Intel or AMD GNU/BSD host" >&6
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
   ;;
+  i*86-*-solaris*)
+    echo "$as_me:$LINENO: result: final adjustments for an Intel or AMS Solaris host" >&5
+echo "${ECHO_T}final adjustments for an Intel or AMS Solaris host" >&6
+    CONFIG_CXXOPTIMIZE="-O3"
+    CONFIG_BPATH="-Wl,-R,"
+    CONFIG_BX="$X_LIBS -lXext -lX11 -lsocket"
+  ;;
   *-*-cygwin)
     echo "$as_me:$LINENO: result: final adjustments for cygwin host" >&5
 echo "${ECHO_T}final adjustments for cygwin host" >&6

@@ -236,6 +236,13 @@ private:
   tree exec_times_over (tree t);
   tree exec_divide (tree t);
   tree exec_modulo (tree t);
+  tree exec_math_sqrt (tree t);
+  tree exec_exp (tree t);
+  tree exec_log (tree t);
+  tree exec_pow (tree t);
+  tree exec_cos (tree t);
+  tree exec_sin (tree t);
+  tree exec_tan (tree t);
   tree exec_merge (tree t);
   tree exec_length (tree t);
   tree exec_range (tree t);
