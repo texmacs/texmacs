@@ -15,6 +15,9 @@
 #include "properties.hpp"
 #include "operators.hpp"
 #define TMPL template<typename T>
+#define BINARY_TMPL template<typename T, typename U>
+#define R typename properties<T>::norm_type
+#define M typename binary_properties<T,U>::product_type
 
 TMPL class vector;
 TMPL int N (vector<T> a);
@@ -42,7 +45,7 @@ CONCRETE_TEMPLATE(vector,T);
   inline vector (T *a, int n):
     rep (new vector_rep<T> (a, n)) {}
   inline vector (T c, int n) {
-    T* a= new T[1]; a[0]= c1;
+    T* a= new T[n];
     for (int i=0; i<n; i++) a[i]= c;
     rep= new vector_rep<T> (a, n); }
   inline vector () {
@@ -85,6 +88,28 @@ public:
   typedef T scalar_type;
   typedef typename properties<T>::norm_type norm_type;
   typedef int index_type;
+  static inline tree index_name (index_type i) {
+    return tree (RSUB, "x", as_string (i+1)); }
+  static inline scalar_type access (vector<T> v, index_type var) {
+    return v[var]; }
+};
+
+BINARY_TMPL
+class binary_properties<vector<T>,vector<U> > {
+public:
+  typedef vector<M > product_type;
+};
+
+BINARY_TMPL
+class binary_properties<T,vector<U> > {
+public:
+  typedef vector<M > product_type;
+};
+
+BINARY_TMPL
+class binary_properties<vector<T>,U > {
+public:
+  typedef vector<M > product_type;
 };
 
 /******************************************************************************
@@ -160,7 +185,7 @@ cos (vector<T> v) {
 
 TMPL inline vector<T>
 sin (vector<T> v) {
-  return unary<T,sinop> (v); }
+  return unary<T,sin_op> (v); }
 
 TMPL inline vector<T>
 tan (vector<T> v) {
@@ -170,37 +195,59 @@ tan (vector<T> v) {
 * Casted operations on vectors
 ******************************************************************************/
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator + (T c, vector<T> v) {
   return vector<T> (c, N(v)) + v; }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator + (vector<T> v, T c) {
   return v + vector<T> (c, N(v)); }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator - (T c, vector<T> v) {
   return vector<T> (c, N(v)) - v; }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator - (vector<T> v, T c) {
   return v - vector<T> (c, N(v)); }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator * (T c, vector<T> v) {
   return vector<T> (c, N(v)) * v; }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator * (vector<T> v, T c) {
   return v * vector<T> (c, N(v)); }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator / (T c, vector<T> v) {
   return vector<T> (c, N(v)) / v; }
 
-TMPL vector<T>
+TMPL inline vector<T>
 operator / (vector<T> v, T c) {
   return v / vector<T> (c, N(v)); }
 
+/******************************************************************************
+* Other operations on vectors
+******************************************************************************/
+
+TMPL R
+square_norm (vector<T> v) {
+  R r= 0;
+  int i, n= N(v);
+  T* a= A(v);
+  for (i=0; i<n; i++)
+    r += square_norm (a[i]);
+  return r;
+}
+
+TMPL inline R
+norm (vector<T> v) {
+  return sqrt (square_norm (v));
+}
+
 #undef TMPL
+#undef BINARY_TMPL
+#undef R
+#undef M
 #endif // defined VECTOR_H

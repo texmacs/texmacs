@@ -14,10 +14,6 @@
 #define PROPERTIES_HPP
 #include "math_tree.hpp"
 
-/******************************************************************************
-* Properties provided by mathematical data types
-******************************************************************************/
-
 template<typename T>
 class properties {
 public:
@@ -28,6 +24,12 @@ public:
     (void) i; return "x"; }
   static inline scalar_type access (T x, index_type var) {
     return x; }
+};
+
+template<typename T, typename U>
+class binary_properties {
+public:
+  typedef U product_type;
 };
 
 #endif // PROPERTIES_H

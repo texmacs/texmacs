@@ -33,6 +33,7 @@ extern bool texmacs_started;
 * For testing
 ******************************************************************************/
 
+//#define ENABLE_TESTS
 #ifdef ENABLE_TESTS
 void
 test_routines () {

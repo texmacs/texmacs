@@ -19,11 +19,6 @@
 ******************************************************************************/
 
 template<typename C> inline C
-norm (C x) {
-  return x >= 0? x: -x;
-}
-
-template<typename C> inline C
 invert (C x) {
   return 1/x;
 }
@@ -33,9 +28,28 @@ square (C x) {
   return x*x;
 }
 
+template<typename C> inline C
+norm (C x) {
+  return x >= 0? x: -x;
+}
+
+template<typename C> inline C
+square_norm (C x) {
+  return x*x;
+}
+
 /******************************************************************************
 * Arithmetic operators
 ******************************************************************************/
+
+struct copy_op {
+  template<typename C> static inline C
+  eval (C x) { return x; }
+  static inline tree
+  eval (tree x) { return x; }
+  template<typename C, typename V> static inline C
+  diff (C x, V v) { return derive (x, v); }
+};
 
 struct neg_op {
   template<typename C> static inline C
