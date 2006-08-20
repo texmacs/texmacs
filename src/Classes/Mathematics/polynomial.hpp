@@ -200,7 +200,7 @@ derive (polynomial<T> p) {
   T* r= new T[n-1];
   for (i=1; i<n; i++)
     r[i-1]= T(i) * a[i];
-  return polynomial<T> (r, n);
+  return polynomial<T> (r, n-1);
 }
 
 /******************************************************************************
