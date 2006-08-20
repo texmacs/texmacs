@@ -18,6 +18,7 @@
 #include "polynomial.hpp"
 #include "ball.hpp"
 #include "function.hpp"
+#include "function_extra.hpp"
 
 void
 test_math () {
@@ -76,6 +77,10 @@ test_math () {
     ball<double> b (1.0, 0.1);
     function<double,double> x= coordinate_function<double,double> (0);
     function<double,double> f= pow (x, x);
+    vector<function<double,double> > v (x, exp(x));
+    function<double,double> g= pw_function (v, false);
+    polynomial<double> P (3.0, 2.0, 5.0);
+    function<double,double> p= polynomial_function (P);
     cout << "x\t= " << x << "\n";
     cout << "x+x\t= " << x+x << "\n";
     cout << "exp x\t= " << exp (x) << "\n";
@@ -86,6 +91,18 @@ test_math () {
     cout << "f'(2)\t= " << derive (f, 0) (2) << "\n";
     cout << "b\t= " << b << "\n";
     cout << "f(b)\t= " << f (b) << "\n";
+    cout << "g\t= " << g << "\n";
+    cout << "g(0.2)\t= " << g(0.2) << "\n";
+    cout << "g(0.8)\t= " << g(0.8) << "\n";
+    cout << "g'\t= " << derive (g, 0) << "\n";
+    cout << "g''\t= " << derive (derive (g, 0), 0) << "\n";
+    cout << "g'''\t= " << derive (derive (derive (g, 0), 0), 0) << "\n";
+    cout << "fn v\t= " << vector_function (v) << "\n";
+    cout << "fn v(0)\t= " << vector_function (v) (0.0) << "\n";
+    cout << "p\t= " << p << "\n";
+    cout << "p(1)\t= " << p(1) << "\n";
+    cout << "p(b)\t= " << p(b) << "\n";
+    cout << "p'\t= " << derive (p, 0) << "\n";
     cout << "\n";
   }
 

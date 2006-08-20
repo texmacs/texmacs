@@ -13,6 +13,8 @@
 #ifndef FUNCTION_HPP
 #define FUNCTION_HPP
 #include "ball.hpp"
+#include "vector.hpp"
+#include "polynomial.hpp"
 #define TMPL template<typename F, typename T>
 #define V typename properties<F>::index_type
 #define C typename properties<F>::scalar_type
