@@ -34,6 +34,7 @@
   ("C-F4" (preview-with-ghostview))
   ("M-F4" (interactive print-pages))
   ("M-S-F4" (interactive print-pages-to-file))
+  ("C-F9" (toggle-full-screen-mode))
 
   ("undo" (noop) (undo))
   ("redo" (noop) (redo))
