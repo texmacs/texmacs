@@ -840,7 +840,7 @@
 	((== x '("cell-halign" "c")) "text-align: center")
 	((== x '("cell-halign" "r")) "text-align: right")
 	((== x '("cell-valign" "t")) "vertical-align: top")
-	((== x '("cell-valign" "c")) "vertical-align: center")
+	((== x '("cell-valign" "c")) "vertical-align: middle")
 	((== x '("cell-valign" "b")) "vertical-align: bottom")
 	((== x '("cell-valign" "B")) "vertical-align: baseline")
 	((== (car x) "cell-background")
