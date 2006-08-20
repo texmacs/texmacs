@@ -15,6 +15,7 @@
 #include "math_tree.hpp"
 #include "vector.hpp"
 #include "matrix.hpp"
+#include "polynomial.hpp"
 #include "ball.hpp"
 #include "function.hpp"
 
@@ -44,6 +45,22 @@ test_math () {
     cout << "v\t= " << v << "\n";
     cout << "m*m\t= " << m*m << "\n";
     cout << "m*v\t= " << m*v << "\n";
+    cout << "\n";
+  }
+
+  {
+    polynomial<double> p (1.0, 2.0, 3.0);
+    polynomial<double> q= p*p;
+    cout << "p\t= " << p << "\n";
+    cout << "q\t= " << q << "\n";
+    cout << "p-p\t= " << p-p << "\n";
+    cout << "p*p\t= " << p*p << "\n";
+    cout << "p*p+p\t= " << p*p + p << "\n";
+    cout << "p*p*p\t= " << p*p*p << "\n";
+    cout << "p(3)\t= " << p (3.0) << "\n";
+    cout << "q(3)\t= " << q (3.0, 0) << "\n";
+    cout << "q'(3)\t= " << q (3.0, 1) << "\n";
+    cout << "q''(3)\t= " << q (3.0, 2) << "\n";
     cout << "\n";
   }
 

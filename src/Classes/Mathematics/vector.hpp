@@ -64,24 +64,6 @@ CONCRETE_TEMPLATE(vector,T);
 };
 CONCRETE_TEMPLATE_CODE(vector,typename,T);
 
-TMPL inline int N (vector<T> v) { return v->n; }
-TMPL inline T* A (vector<T> v) { return v->a; }
-
-TMPL tree
-as_tree (vector<T> v) {
-  int i, n= N(v);
-  T* a= A(v);
-  tree t (TUPLE, n);
-  for (i=0; i<n; i++)
-    t[i]= as_tree (a[i]);
-  return t;
-}
-
-TMPL inline ostream&
-operator << (ostream& out, vector<T> v) {
-  return out << as_math_string (as_tree (v));
-}
-
 TMPL
 class properties<vector<T> > {
 public:
@@ -111,6 +93,28 @@ class binary_properties<vector<T>,U > {
 public:
   typedef vector<M > product_type;
 };
+
+/******************************************************************************
+* Basic vector routines
+******************************************************************************/
+
+TMPL inline int N (vector<T> v) { return v->n; }
+TMPL inline T* A (vector<T> v) { return v->a; }
+
+TMPL tree
+as_tree (vector<T> v) {
+  int i, n= N(v);
+  T* a= A(v);
+  tree t (TUPLE, n);
+  for (i=0; i<n; i++)
+    t[i]= as_tree (a[i]);
+  return t;
+}
+
+TMPL inline ostream&
+operator << (ostream& out, vector<T> v) {
+  return out << as_math_string (as_tree (v));
+}
 
 /******************************************************************************
 * Abstract operations on vectors
@@ -245,6 +249,10 @@ TMPL inline R
 norm (vector<T> v) {
   return sqrt (square_norm (v));
 }
+
+TMPL inline vector<T>
+derive (vector<T> v) {
+  return unary<T,derive_op> (v); }
 
 #undef TMPL
 #undef BINARY_TMPL

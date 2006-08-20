@@ -162,4 +162,13 @@ struct tan_op {
   diff (C x, V v) { return derive (x, v) / square (cos (x)); }
 };
 
+/******************************************************************************
+* Other operators
+******************************************************************************/
+
+struct derive_op {
+  template<typename C> static inline C
+  eval (C x) { return derive (x); }
+};
+
 #endif // OPERATORS_H

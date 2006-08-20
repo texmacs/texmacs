@@ -13,7 +13,6 @@
 #ifndef CURVE_H
 #define CURVE_H
 #include "point.hpp"
-#include "polynomial.hpp"
 
 class curve_rep: public abstract_struct {
 public:

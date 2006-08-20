@@ -15,6 +15,7 @@
 #include "frame.hpp"
 #include "equations.hpp"
 #include "math_util.hpp"
+#include "polynomial.hpp"
 
 /******************************************************************************
 * General routines
@@ -240,13 +241,15 @@ poly_segment (array<point> a, array<path> cip) {
 ******************************************************************************/
 
 static const double epsilon=0.01;//0.00005;
+typedef polynomial<double> dpol;
+typedef vector<polynomial<double> > dpols;
 
 struct spline_rep: public curve_rep {
   array<point> a;
   array<path> cip;
   int n;
   array<double> U;
-  array<polynomials> p;
+  array<dpols> p;
   bool close, interpol;
 
   spline_rep (
@@ -261,7 +264,7 @@ struct spline_rep: public curve_rep {
 
   point spline (int i,double u,int o=0);
   inline double S (
-    array<polynomial> p1, array<polynomial> p2, array<polynomial> p3,
+    array<dpol> p1, array<dpol> p2, array<dpol> p3,
     int i, double u);
   point evaluate (double t,int o);
   point evaluate (double t);
@@ -284,11 +287,11 @@ spline_rep::spline_rep (
   array<point> a2, array<path> cip2, bool close2,bool interpol2):
   a(a2), cip(cip2), n(N(a)-1), close(close2), interpol(interpol2)
 {
-  array<polynomial> p1,p2,p3;
-  p1= array<polynomial> (n+3);
-  p2= array<polynomial> (n+3);
-  p3= array<polynomial> (n+3);
-  p = array<polynomials> (n+3);
+  array<dpol> p1,p2,p3;
+  p1= array<dpol> (n+3);
+  p2= array<dpol> (n+3);
+  p3= array<dpol> (n+3);
+  p = array<dpols> (n+3);
   U = array<double> (n+6);
   if (close) {
     int i;
@@ -326,9 +329,16 @@ spline_rep::spline_rep (
     double di21= d(i+2,1);
     double di32= d(i+3,2);
     double di31= d(i+3,1);
-    p1[i]= polynomial(2);
-    p2[i]= polynomial(2);
-    p3[i]= polynomial(2);
+    p1[i]= dpol (square(U[i])/di22/di11,
+		 -2*U[i]/di22/di11,
+		 1/di22/di11);
+    p2[i]= dpol (-U[i+2]*U[i]/di22/di21-U[i+3]*U[i+1]/di32/di21,
+		 (U[i+2]+U[i])/di22/di21+(U[i+3]+U[i+1])/di32/di21,
+		 -1/di22/di21-1/di32/di21);
+    p3[i]= dpol (square(U[i+3])/di32/di31,
+		 -2*U[i+3]/di32/di31,
+		 1/di32/di31);
+    /*
     p1[i][2]= 1/di22/di11;
     p1[i][1]= -2*U[i]/di22/di11;
     p1[i][0]= square(U[i])/di22/di11;
@@ -338,6 +348,7 @@ spline_rep::spline_rep (
     p3[i][2]= 1/di32/di31;
     p3[i][1]= -2*U[i+3]/di32/di31;
     p3[i][0]= square(U[i+3])/di32/di31;
+    */
   }
   if (interpol) {
     array<point> x(n+1), y(n+1);
@@ -390,7 +401,7 @@ spline_rep::spline_rep (
 // Evaluation
 double
 spline_rep::S (
-  array<polynomial> p1, array<polynomial> p2, array<polynomial> p3,
+  array<dpol> p1, array<dpol> p2, array<dpol> p3,
   int i, double u)
 {
   if (i<0 || i>n) return 0;
@@ -403,12 +414,15 @@ spline_rep::S (
 }
 
 point
-spline_rep::spline (int i,double u,int o) {
-  point res;
+spline_rep::spline (int i, double u, int o) {
+  int j, n= N(p[i]);
+  point res (n);
   if (o<0 || o>2) o=0;
-  res=p[i](u,o);
+  for (j=0; j<n; j++)
+    res[j]= p[i][j] (u, o);
   return res;
 }
+
 int
 spline_rep::interval_no (double u) {
   int i;
@@ -417,8 +431,18 @@ spline_rep::interval_no (double u) {
   return -1;
 }
 
+static double
+prod (double x, int n) {
+  double r;
+  if (n<=0) return 1;
+  r=x; n--;
+  while (n--)
+    r*=(x-n);
+  return r;
+}
+
 point
-spline_rep::evaluate (double t,int o) {
+spline_rep::evaluate (double t, int o) {
   point res;
   int no;
   t=convert(t);
@@ -483,9 +507,9 @@ spline_rep::rectify_cumul (array<point>& cum, double eps) {
 // Curvature
 double
 spline_rep::curvature (int i, double t1, double t2) {
-  point a,b;
-  a=coeffs(p[i],2);
-  b=coeffs(p[i],1);
+  point a, b;
+  a= extract (p[i], 2);
+  b= extract (p[i], 1);
   double t,R;
   point pp,ps;
   if (norm(a)==0) return tm_infinity;
