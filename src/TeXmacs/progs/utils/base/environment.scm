@@ -21,6 +21,7 @@
   ("visited-color" "Colour of visited loci")
   ("magnification" "Magnification")
   ("font-base-size" "Font size")
+  ("dpi" "Dots per inch")
 
   ("par-width" "Paragraph width")
   ("par-mode" "Paragraph mode")

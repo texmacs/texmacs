@@ -245,7 +245,7 @@
 	  ("12" (init-env "font-base-size" "12"))
 	  ("14" (init-env "font-base-size" "14"))
 	  ---
-	  ("Other" (init-interactive-env "font-size")))
+	  ("Other" (init-interactive-env "font-base-size")))
       (-> "Dpi"
 	  ("Default" (init-default "dpi"))
 	  ---
@@ -257,7 +257,7 @@
 	  ("800" (init-env "dpi" "800"))
 	  ("1200" (init-env "dpi" "1200"))
 	  ---
-	  ("Other" (init-interactive-dpi "dpi"))))
+	  ("Other" (init-interactive-env "dpi"))))
   (-> "Magnification"
       ("Default" (init-default "magnification"))
       ---
