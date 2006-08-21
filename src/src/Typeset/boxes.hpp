@@ -79,23 +79,19 @@ bool operator != (selection sel1, selection sel2);
 ostream& operator << (ostream& out, selection sel);
 
 /******************************************************************************
-* The selection class
+* The graphical selection class
 ******************************************************************************/
 
-struct gr_selection_rep: concrete_struct {
-  array<path> cp;
-  SI dist;
-};
-
+struct gr_selection_rep;
 struct gr_selection {
   CONCRETE(gr_selection);
   gr_selection (array<path> cp= array<path> (), SI dist= 0);
 };
-CONCRETE_CODE(gr_selection);
 
 ostream& operator << (ostream& out, gr_selection sel);
 
 typedef array<gr_selection> gr_selections;
+tree as_tree (gr_selections sels);
 
 /******************************************************************************
 * The box class
@@ -131,6 +127,7 @@ public:
   inline            box_rep (path ip);
   inline            virtual ~box_rep ();
   void              relocate (path p, bool force= false);
+  virtual box	    transform (frame fr);
   virtual operator  tree () = 0;
   virtual void      pre_display (ps_device& dev);
   virtual void      post_display (ps_device& dev);
@@ -140,6 +137,7 @@ public:
   virtual int       subnr ();
   virtual box       subbox (int i);
   virtual tree      action (tree t, SI x, SI y, SI delta);
+  virtual void      loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
   virtual void      position_at (SI x, SI y, rectangles& change_log);
   virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path      find_tag (string name);
@@ -168,6 +166,8 @@ public:
   inline bool decoration ();
 
   SI distance (int i, SI x, SI y, SI delta);
+  bool in_rectangle (SI x1, SI y1, SI x2, SI y2);
+  bool contains_rectangle (SI x1, SI y1, SI x2, SI y2);
 
   /******************* path conversions and cursor routines ******************/
 
@@ -207,12 +207,15 @@ public:
   virtual grid      get_grid ();
   virtual void      get_limits (point& lim1, point& lim2);
 
-  frame     find_frame (path bp);
+  frame     find_frame (path bp, bool last= false);
   grid      find_grid (path bp);
   void      find_limits (path bp, point& lim1, point& lim2);
 
   virtual SI             graphical_distance (SI x, SI y);
   virtual gr_selections  graphical_select (SI x, SI y, SI dist);
+  virtual gr_selections  graphical_select (SI x1, SI y1, SI x2, SI y2);
+  virtual curve          get_curve ();
+  virtual array<point>   curve_intersection (box b, point p0, double eps);
 
   /************************** retrieving information *************************/
 
@@ -228,11 +231,23 @@ public:
   virtual lazy      get_leaf_lazy ();
   virtual SI        get_leaf_offset (string search);
 
+  /******************************** animations *******************************/
+
+  virtual int    anim_length ();
+  virtual bool   anim_started ();
+  virtual bool   anim_finished ();
+  virtual void   anim_start_at (time_t at);
+  virtual void   anim_finish_now ();
+  virtual time_t anim_next_update ();
+          void   anim_check_invalid (bool& flag, time_t& at, rectangles& rs);
+  virtual void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+
   /********************************* obsolete ********************************/
 
   friend struct page_box_rep; // temporary friends for accessing x0 and y0
   friend struct lazy_paragraph_rep;
   friend class  phrase_box_rep;
+  friend void make_eps (url dest, ::display dis, box b, int dpi= 600);
 };
 ABSTRACT_NULL_CODE(box);
 
@@ -261,6 +276,11 @@ inline int N (box b) { return b.rep->subnr(); }
 ostream& operator << (ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
+void make_eps (url dest, display dis, box b, int dpi);
+
+extern bool   refresh_needed;
+extern time_t refresh_next;
+void          refresh_at (time_t t);
 
 #define DECORATION        (-1)
 #define DECORATION_LEFT   (-2)
@@ -293,5 +313,17 @@ tree attach_dip (tree ref, path ip);
 #define attach_middle(t,ip) \
   attach_dip(t,decorate_middle(ip)),decorate_middle(ip)
 #define attach_right(t,ip) attach_dip(t,decorate_right(ip)),decorate_right(ip)
+
+/******************************************************************************
+* The graphical selection class (continued)
+******************************************************************************/
+
+struct gr_selection_rep: concrete_struct {
+  array<path> cp;
+  point p;
+  SI dist;
+  box b;
+};
+CONCRETE_CODE(gr_selection);
 
 #endif // defined BOXES_H

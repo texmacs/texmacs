@@ -12,48 +12,63 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(lazy-menu (maxima-menus) maxima-menu maxima-help-icons)
+
+(define maxima-help #f)
+
 (define (maxima-initialize)
-  (import-from (texmacs texmacs tm-help) (texmacs plugin plugin-convert))
+  (import-from (utils plugins plugin-convert))
+  (import-from (dynamic session-menu))
   (lazy-input-converter (maxima-input) maxima)
-  (menu-extend texmacs-session-help-icons
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/info/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/info/maxima_toc.html")))
-    (if (and (in-maxima?)
-	     (url-exists? "$TM_MAXIMA_HOME/doc/html/maxima_toc.html"))
-	|
-	((balloon (icon "tm_help.xpm") "Maxima manual")
-	 (load-help-buffer "$TM_MAXIMA_HOME/doc/html/maxima_toc.html")))))
+  (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
+    (if help-list
+	(cond ((pair? help-list)
+	       (set! maxima-help (car help-list)))
+	      ((string? help-list)
+	       (set! maxima-help help-list)))))
+  (menu-extend session-help-icons
+    (link maxima-help-icons))
+  (menu-extend texmacs-extra-menu
+    (if (or (in-maxima?) (and (not-in-session?) (maxima-scripts?)))
+	(=> "Maxima"
+	    (link maxima-menu)))))
 
 (define (maxima-serialize lan t)
-  (import-from (texmacs plugin plugin-cmd))
+  (import-from (utils plugins plugin-cmd))
   (with s (string-drop-right (verbatim-serialize lan t) 1)
     (cond ((== s "") "0;\n")
 	  ((in? (string-ref s (- (string-length s) 1)) '(#\; #\$))
 	   (string-append s "\n"))
 	  (else (string-append s ";\n")))))
 
+(define maxima-detected #f)
+(define (maxima-detect)
+  (when (not maxima-detected)
+    (set! maxima-detected (var-eval-system "maxima_detect"))
+    maxima-detected))
+
 (define (maxima-versions)
-  (let ((version-list (string->object (var-eval-system "maxima_detect"))))
+  ;;(system "maxima_detect")
+  (with version-list (string->object (maxima-detect))
+    ;;(display* "Maxima versions -> " version-list "\n")
     (if (list? version-list)
-      (let* ((default (car version-list))
-	     (rest (cdr version-list))
-	     (launch-default
-	      (list :launch (string-append "tm_maxima " default)))
-	     (launch-rest
-	      (map
-	       (lambda (version-name)
-		 (list :launch version-name
-		       (string-append "tm_maxima " version-name)))
-	       rest)))
-        (cons launch-default launch-rest))
-      '())))
+	(let* ((default (car version-list))
+	       (rest (cdr version-list))
+	       (launch-default
+		(list :launch (string-append "tm_maxima " default)))
+	       (launch-rest
+		(map
+		 (lambda (version-name)
+		   (list :launch version-name
+			 (string-append "tm_maxima " version-name)))
+		 rest)))
+	  (cons launch-default launch-rest))
+	'())))
 
 (plugin-configure maxima
-  (:require (url-exists-in-path? "maxima"))
+  (:require (nnot (maxima-detect)))
   (:initialize (maxima-initialize))
   ,@(maxima-versions)
   (:serializer ,maxima-serialize)
-  (:session "Maxima"))
+  (:session "Maxima")
+  (:scripts "Maxima"))

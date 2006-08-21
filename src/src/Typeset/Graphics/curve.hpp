@@ -13,7 +13,6 @@
 #ifndef CURVE_H
 #define CURVE_H
 #include "point.hpp"
-#include "polynomial.hpp"
 
 class curve_rep: public abstract_struct {
 public:
@@ -50,6 +49,9 @@ public:
 
   virtual double curvature (double t1, double t2) = 0;
   // compute a bound for the second derivative between t1 and t2.
+  /* FIXME: What is computed is *really* a bound for the curvature,
+       not for the norm of the second derivative. Make it precise
+       what it is that is computed exactly. */
   // return a very large number if such a bound does not exist.
 
   // returns the number of control points which belong to the curve.
@@ -76,5 +78,7 @@ curve spline (
 curve arc (array<point> a, array<path> cip, bool close=false);
 curve operator * (curve c1, curve c2);
 curve invert (curve c);
+
+array<point> intersection (curve f, curve g, point p0, double eps);
 
 #endif // defined CURVE_H

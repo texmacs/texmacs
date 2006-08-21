@@ -165,6 +165,9 @@ arg_type (tree t, int i) {
   case ACTION:
     if (i==1) return "tt";
     else return "";
+  case SET_BINDING:
+    if (i==2) return "arg";
+    else return "";
   case FLAG:
     if (i==2) return "arg";
     else return "";

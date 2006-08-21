@@ -28,7 +28,6 @@ class tm_server_rep:
 protected:
   display dis;            // current display
   tm_view vw;             // current editor
-  int banner_nr;          // how far in banner
   bool full_screen;       // full screen mode
   bool full_screen_edit;  // full screen edit mode
   int def_sfactor;        // default shrinking factor
@@ -39,7 +38,6 @@ protected:
 public:
   tm_server_rep (display dis);
   ~tm_server_rep ();
-  void advance_banner ();
 
   /* Get and set objects associated to server */
   server_rep* get_server ();
@@ -55,7 +53,9 @@ public:
   int         get_nr_windows ();
 
   /* Caching style files */
-  void style_update_menu ();
+  object get_style_menu ();
+  object get_add_package_menu ();
+  object get_remove_package_menu ();
   void style_clear_cache ();
   void style_set_cache (tree st, hashmap<string,tree> H, tree t);
   void style_get_cache (tree st, hashmap<string,tree>& H, tree& t, bool& flag);
@@ -67,8 +67,8 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
   void set_left_footer (string s);
   void set_right_footer (string s);
-  void set_message (string left, string right);
-  void interactive (string name, string& s, command call_back);
+  void set_message (string left, string right, bool temp= false);
+  void recall_message ();
   void full_screen_mode (bool on, bool edit);
   bool in_full_screen_mode ();
   bool in_full_screen_edit_mode ();
@@ -84,8 +84,10 @@ public:
   void   set_printer_dpi (string dpi);
   void   set_default_shrinking_factor (int sf);
   int    get_default_shrinking_factor ();
-  void   postscript_gc (string which);
+  void   image_gc (string which);
   void   inclusions_gc (string which);
+  void   typeset_update (path p);
+  void   typeset_update_all ();
   string translate (string which, string from, string to);
   bool   is_yes (string s);
   void   quit ();

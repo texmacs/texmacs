@@ -16,6 +16,7 @@
 #include "scheme.hpp"
 #include "PsDevice/page_type.hpp"
 #include "typesetter.hpp"
+#include "drd_mode.hpp"
 
 extern int script_status;
 
@@ -50,9 +51,10 @@ edit_env_rep::rewrite (tree t) {
       object expr= null_object ();
       for (i=n-1; i>0; i--)
 	expr= cons (object (r[i]), expr);
-      string fun= as_string (exec (t[0]));
+      string fun= exec_string (t[0]);
       expr= cons (string_to_object (fun), expr);
-      if (script_status < 2) {
+      (void) eval ("(lazy-markup-modules-force)");
+      if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
 	  return tree (ERROR, "insecure script");
       }
@@ -92,7 +94,7 @@ edit_env_rep::rewrite (tree t) {
     }
   case INCLUDE:
     {
-      url file_name= url_system (as_string (t[0]));
+      url file_name= url_system (exec_string (t[0]));
       return load_inclusion (relative (base_file_name, file_name));
     }
   case REWRITE_INACTIVE:
@@ -203,6 +205,8 @@ edit_env_rep::exec (tree t) {
     return exec_eval_args (t);
   case MARK:
     return tree (MARK, copy (t[0]), exec (t[1]));
+  case EXPAND_AS:
+    return exec (t[1]);
   case EVAL:
     return exec (exec (t[0]));
   case QUOTE:
@@ -231,6 +235,8 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case USE_PACKAGE:
     return exec_use_package (t);
+  case USE_MODULE:
+    return exec_use_module (t);
 
   case OR:
     return exec_or (t);
@@ -250,6 +256,20 @@ edit_env_rep::exec (tree t) {
     return exec_divide (t);
   case MOD:
     return exec_modulo (t);
+  case MATH_SQRT:
+    return exec_math_sqrt (t);
+  case EXP:
+    return exec_exp (t);
+  case LOG:
+    return exec_log (t);
+  case POW:
+    return exec_pow (t);
+  case COS:
+    return exec_cos (t);
+  case SIN:
+    return exec_sin (t);
+  case TAN:
+    return exec_tan (t);
   case MERGE:
     return exec_merge (t);
   case LENGTH:
@@ -327,10 +347,22 @@ edit_env_rep::exec (tree t) {
     return exec_par_length ();
   case PAG_LENGTH:
     return exec_pag_length ();
+  case GW_LENGTH:
+    return exec_gw_length ();
+  case GH_LENGTH:
+    return exec_gh_length ();
   case TMPT_LENGTH:
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case MSEC_LENGTH:
+    return exec_msec_length ();
+  case SEC_LENGTH:
+    return exec_sec_length ();
+  case MIN_LENGTH:
+    return exec_min_length ();
+  case H_LENGTH:
+    return exec_h_length ();
 
   case STYLE_WITH:
   case VAR_STYLE_WITH:
@@ -344,6 +376,18 @@ edit_env_rep::exec (tree t) {
     return exec_compound (t);
   case REWRITE_INACTIVE:
     return exec_rewrite (t);
+
+  case HARD_ID:
+    return exec_hard_id (t[0]);
+  case SCRIPT:
+    return exec_script (t);
+  case HLINK:
+  case ACTION:
+    return exec_compound (t);
+  case SET_BINDING:
+    return exec_set_binding (t);
+  case GET_BINDING:
+    return exec_get_binding (t);
 
   case _POINT:
     return exec_point (t);
@@ -509,18 +553,17 @@ edit_env_rep::exec_drd_props (tree t) {
 	if (val == "no") drd->set_no_border (l, true);
 	drd->freeze_no_border (l);
       }
-      if (prop == "accessible") {
-	if (val == "none") {
+      if (prop == "unaccessible" || prop == "hidden" || prop == "accessible") {
+	int prop_code= ACCESSIBLE_NEVER;
+	if (prop == "hidden") prop_code= ACCESSIBLE_HIDDEN;
+	if (prop == "accessible") prop_code= ACCESSIBLE_ALWAYS;
+	if (val == "none") prop_code= ACCESSIBLE_NEVER;
+	if (is_int (val))
+	  drd->set_accessible (l, as_int (val), prop_code);
+	else if (val == "none" || val == "all") {
 	  int i, n= drd->get_nr_indices (l);
 	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, false);
-	    drd->freeze_accessible (l, i);
-	  }
-	}
-	if (val == "all") {
-	  int i, n= drd->get_nr_indices (l);
-	  for (i=0; i<n; i++) {
-	    drd->set_accessible (l, i, true);
+	    drd->set_accessible (l, i, prop_code);
 	    drd->freeze_accessible (l, i);
 	  }
 	}
@@ -578,6 +621,8 @@ edit_env_rep::exec_arg (tree t) {
   return r;
 }
 
+static bool quote_substitute= false;
+
 tree
 edit_env_rep::exec_quote_arg (tree t) {
   tree r= t[0];
@@ -595,6 +640,13 @@ edit_env_rep::exec_quote_arg (tree t) {
       if ((!is_compound (r)) || (nr<0) || (nr>=N(r))) break;
       r= r[nr];
     }
+  }
+  if (quote_substitute && !is_func (r, ARG)) {
+    int i, n= N(r);
+    tree s (r, n);
+    for (i=0; i<n; i++)
+      s[i]= tree (ARG, A(t)) * tree (ARG, as_string (i));
+    return s;
   }
   return r;
 }
@@ -757,6 +809,18 @@ edit_env_rep::exec_use_package (tree t) {
 }
 
 tree
+edit_env_rep::exec_use_module (tree t) {
+  int i, n= N(t);
+  for (i=0; i<n; i++) {
+    string s= exec_string (t[i]);
+    if (starts (s, "(")) eval ("(use-modules " * s * ")");
+    else if (s != "") eval ("(plugin-initialize '" * s * ")");
+    assign (THE_MODULES, read (THE_MODULES) * tuple (s));
+  }
+  return "";
+}
+
+tree
 edit_env_rep::exec_or (tree t) {
   if (N(t)<2) return tree (ERROR, "bad or");
   for (int i=0; i<N(t); i++) {
@@ -842,7 +906,9 @@ edit_env_rep::exec_times_over (tree t) {
   int i, n= N(t);
   if (n==0) return tree (ERROR, "bad times/over");
   tree prod= exec (t[0]);
-  if (is_anylen (prod)) prod= as_tmlen (prod);
+  if (is_double (prod));
+  else if (is_anylen (prod)) prod= as_tmlen (prod);
+  else return tree (ERROR, "bad times/over");
   if ((n==1) && is_func (t, OVER)) {
     if (is_double (prod)) return as_string (1 / as_double (prod));
     else return tree (ERROR, "bad times/over");
@@ -907,14 +973,79 @@ edit_env_rep::exec_modulo (tree t) {
 }
 
 tree
+edit_env_rep::exec_math_sqrt (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad sqrt");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (sqrt (as_double (t1)));
+  return tree (ERROR, "bad sqrt");
+}
+
+tree
+edit_env_rep::exec_exp (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad exp");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (exp (as_double (t1)));
+  return tree (ERROR, "bad exp");
+}
+
+tree
+edit_env_rep::exec_log (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad log");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (log (as_double (t1)));
+  return tree (ERROR, "bad log");
+}
+
+tree
+edit_env_rep::exec_pow (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad pow");
+  tree t1= exec (t[0]);
+  tree t2= exec (t[1]);
+  if (is_double (t1) && is_double (t2))
+    return as_tree (pow (as_double (t1), as_double (t2)));
+  return tree (ERROR, "bad pow");
+}
+
+tree
+edit_env_rep::exec_cos (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad cos");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (cos (as_double (t1)));
+  return tree (ERROR, "bad cos");
+}
+
+tree
+edit_env_rep::exec_sin (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad sin");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (sin (as_double (t1)));
+  return tree (ERROR, "bad sin");
+}
+
+tree
+edit_env_rep::exec_tan (tree t) {
+  if (N(t)!=1) return tree (ERROR, "bad tan");
+  tree t1= exec (t[0]);
+  if (is_double (t1))
+    return as_tree (tan (as_double (t1)));
+  return tree (ERROR, "bad tan");
+}
+
+tree
 edit_env_rep::exec_merge (tree t) {
   int i, n= N(t);
   if (n == 0) return "";
   tree acc= exec (t[0]);
+  if (is_concat (acc)) acc= var_as_string (acc);
   for (i=1; i<n; i++) {
     tree add= exec (t[i]);
-    if (is_atomic (acc) && is_atomic (add))
-      acc= acc->label * add->label;
+    if (is_atomic (acc) && (is_atomic (add) || is_concat (add)))
+      acc= acc->label * var_as_string (add);
     else if (is_tuple (acc) && is_tuple (add))
       acc= acc * add;
     else if (is_func (acc, MACRO) && is_func (add, MACRO) &&
@@ -998,8 +1129,7 @@ edit_env_rep::exec_date (tree t) {
     if (is_compound (u)) return tree (ERROR, "bad date");
     lan= u->label;
   }
-  string fm= "%d %B %Y";
-  if (lan == "english") fm= "%B %d, %Y";
+  string fm= "";
   if (N(t) != 0) {
     tree u= exec (t[0]);
     if (is_compound (u)) return tree (ERROR, "bad date");
@@ -1033,7 +1163,7 @@ edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
     else if (nc == "UPCASE") { up= true; }
     else if (nc == "locase") { lo= true; }
 
-    for (i=0; i<n; lan->enc->token_forward (s, i))
+    for (i=0; i<n; tm_char_forwards (s, i))
       if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
 	if (up && is_locase (s[i])) r->label[i]= upcase (s[i]);
 	if (lo && is_upcase (s[i])) r->label[i]= locase (s[i]);
@@ -1097,7 +1227,8 @@ edit_env_rep::exec_lookup (tree t) {
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
   if (!(is_compound (t1) && is_int (t2))) return tree (ERROR, "bad look up");
-  int i= max (0, min (N(t1)-1, as_int (t2)));
+  int i= as_int (t2);
+  if (i<0 || i>=N(t1)) return tree (ERROR, "index out of range in look up");
   return t1[i];
 }
 
@@ -1188,6 +1319,70 @@ edit_env_rep::exec_greatereq (tree t) {
 }
 
 tree
+edit_env_rep::exec_hard_id (tree t) {
+  t= expand (t, true);
+  pointer ptr1= (pointer) this;
+  pointer ptr2= (pointer) t.operator -> ();
+  return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+}
+
+tree
+edit_env_rep::exec_script (tree t) {
+  if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad script");
+  if (N(t) == 1) return tree (SCRIPT, exec (t[0]));
+  else return tree (SCRIPT, exec (t[0]), expand (t[1], true));
+}
+
+tree
+edit_env_rep::exec_set_binding (tree t) {
+  tree keys, value;
+  if (N(t) == 1) {
+    keys= read ("the-tags");
+    if (!is_tuple (keys))
+      return tree (ERROR, "bad set binding");
+    for (int i=0; i<N(keys); i++)
+      if (!is_atomic (keys[i]))
+	return tree (ERROR, "bad set binding");
+    value= exec (t[0]);
+    assign (string ("the-tags"), tree (TUPLE));
+    assign (string ("the-label"), copy (value));
+  }
+  else if (N(t) >= 2) {
+    tree key= exec (t[0]);
+    if (!is_atomic (key)) 
+      return tree (ERROR, "bad set binding");
+    keys= tuple (key);
+    value= exec (t[1]);
+  }
+  else return tree (ERROR, "bad set binding");
+
+  for (int i=0; i<N(keys); i++) {
+    string key= keys[i]->label;
+    tree old_value= local_ref[key];
+    if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
+      local_ref (key)= tuple (copy (value), old_value[1]);
+    else local_ref (key)= tuple (copy (value), "?");
+    if (cur_file_name != base_file_name) {
+      url d= delta (base_file_name, cur_file_name);
+      local_ref (key) << as_string (d);
+    }
+  }
+  return keys;
+}
+
+tree
+edit_env_rep::exec_get_binding (tree t) {
+  if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad get binding");
+  string key= exec_string (t[0]);
+  tree value= local_ref->contains (key)? local_ref [key]: global_ref [key];
+  int type= (N(t) == 1? 0: as_int (exec_string (t[1])));
+  if (type != 0 && type != 1) type= 0;
+  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
+  else if (type == 1) value= "?";
+  return value;
+}
+
+tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
   tree u (TUPLE, n);
@@ -1199,7 +1394,7 @@ edit_env_rep::exec_point (tree t) {
 
 tree
 edit_env_rep::exec_box_info (tree t) {
-  tree t1= exec (t[0]);
+  tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
     return tree (ERROR, "bad box info");
@@ -1267,6 +1462,10 @@ edit_env_rep::exec_until (tree t, path p) {
   case VAR_ACTIVE:
   case INACTIVE:
   case VAR_INACTIVE:
+    exec_until_compound (t, p);
+    return;
+  case HLINK:
+  case ACTION:
     exec_until_compound (t, p);
     return;
   default:
@@ -1346,9 +1545,13 @@ edit_env_rep::exec_until_compound (tree t, path p) {
     f= read (fname);
   }
 
-  if ((p->item < d) || (p->item >= N(f)) ||
-      is_compound (f[p->item-d])) return;
-  string var= f[p->item-d]->label;
+  string var;
+  if (L(f) == XMACRO) var= f[0]->label;
+  else {
+    if ((p->item < d) || (p->item >= N(f)) ||
+	is_compound (f[p->item-d])) return;
+    var= f[p->item-d]->label;
+  }
 
   if (is_applicable (f)) {
     int i, n=N(f)-1, m=N(t)-d;
@@ -1439,8 +1642,12 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case MARK:
     return exec_until_mark (t, p, var, level);
   case EVAL:
+    return exec_until (exec (t), p, var, level);
   case QUOTE:
+    (void) exec (t);
+    return false;
   case QUASI:
+    return exec_until_quasi (t, p, var, level);
   case QUASIQUOTE:
   case UNQUOTE:
   case VAR_UNQUOTE:
@@ -1460,6 +1667,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case INCLUDE:
     return exec_until_rewrite (t, p, var, level);
   case USE_PACKAGE:
+  case USE_MODULE:
   case OR:
   case XOR:
   case AND:
@@ -1499,6 +1707,9 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return exec_until_compound (t, p, var, level);
   case REWRITE_INACTIVE:
     return exec_until_rewrite (t, p, var, level);
+  case HLINK:
+  case ACTION:
+    return exec_until_compound (t, p, var, level);
   default:
     if (L(t) < START_EXTENSIONS) {
       int i, n= N(t);
@@ -1696,6 +1907,15 @@ edit_env_rep::exec_until_mark (tree t, path p, string var, int level) {
 }
 
 bool
+edit_env_rep::exec_until_quasi (tree t, path p, string var, int level) {
+  bool old= quote_substitute;
+  quote_substitute= true;
+  tree u= exec_quasiquoted (t[0]);
+  quote_substitute= old;
+  return exec_until (u, p, var, level);
+}
+
+bool
 edit_env_rep::exec_until_if (tree t, path p, string var, int level) {
   if ((N(t)!=2) && (N(t)!=3)) return false;
   tree tt= exec (t[0]);
@@ -1736,14 +1956,14 @@ edit_env_rep::exec_until_while (tree t, path p, string var, int level) {
 ******************************************************************************/
 
 tree
-edit_env_rep::expand (tree t) {
+edit_env_rep::expand (tree t, bool search_accessible) {
   if (is_atomic (t) || nil (macro_arg)) return t;
   else if (is_func (t, ARG) || is_func (t, QUOTE_ARG)) {
     if (is_compound (t[0]))
       return tree (ERROR, "bad argument application");
     if (!macro_arg->item->contains (t[0]->label))
       return tree (ERROR, "argument " * t[0]->label);
-    tree r= macro_arg->item [r->label];
+    tree r= macro_arg->item [t[0]->label];
     list<hashmap<string,tree> > old_var= macro_arg;
     list<hashmap<string,path> > old_src= macro_src;
     if (!nil (macro_arg)) macro_arg= macro_arg->next;
@@ -1758,16 +1978,24 @@ edit_env_rep::expand (tree t) {
 	r= r[nr];
       }
     }
-    if (is_func (t, ARG)) r= expand (r);
+    if (is_func (t, ARG)) r= expand (r, search_accessible);
     macro_arg= old_var;
     macro_src= old_src;
     return r;
   }
+  else if (is_func (t, EXPAND_AS, 2))
+    return expand (t[0], search_accessible);
   else {
     int i, n= N(t);
     tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= expand (t[i]);
+    for (i=0; i<n; i++) {
+      r[i]= expand (t[i], search_accessible);
+      if (search_accessible &&
+	  is_accessible (obtain_ip (r[i])) &&
+	  drd->is_accessible_child (t, i))
+	return r[i];
+    }
+    if (search_accessible) return t;
     return r;
   }
 }

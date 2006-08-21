@@ -164,6 +164,7 @@ bridge_document_rep::notify_change () {
   status= CORRUPTED;
   if (!nil (acc)) acc->notify_change ();
   if (N(brs)>0) brs[0]->notify_change ();
+  if (N(brs)>1) brs[N(brs)-1]->notify_change ();
 }
 
 /******************************************************************************
@@ -194,11 +195,13 @@ bridge_document_rep::my_typeset_will_be_complete () {
 
 void
 bridge_document_rep::my_typeset (int desired_status) {
+  //cout << INDENT;
   if (nil (acc)) {
     int i, n= N(st);
     array<line_item> a= ttt->a;
     array<line_item> b= ttt->b;
     for (i=0; i<n; i++) {
+      //cout << "Typesetting " << st[i] << LF;
       int wanted= (i==n-1? desired_status & WANTED_MASK: WANTED_PARAGRAPH);
       ttt->a= (i==0  ? a: array<line_item> ());
       ttt->b= (i==n-1? b: array<line_item> ());
@@ -206,4 +209,5 @@ bridge_document_rep::my_typeset (int desired_status) {
     }
   }
   else acc->my_typeset (desired_status);
+  //cout << UNINDENT;
 }

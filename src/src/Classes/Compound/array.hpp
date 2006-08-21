@@ -18,6 +18,7 @@
 class tree;
 template<class T> class array;
 template<class T> int N (array<T> a);
+template<class T> T*  A (array<T> a);
 template<class T> array<T> copy (array<T> x);
 
 template<class T> class array_rep: concrete_struct {
@@ -31,6 +32,7 @@ public:
   void resize (int n);
   friend class array<T>;
   friend int N LESSGTR (array<T> a);
+  friend T*  A LESSGTR (array<T> a);
   friend array<T> copy LESSGTR (array<T> a);
 };
 
@@ -46,6 +48,7 @@ CONCRETE_TEMPLATE_CODE(array,class,T);
 
 #define TMPL template<class T>
 TMPL inline int N (array<T> a) { return a->n; }
+TMPL inline T*  A (array<T> a) { return a->a; }
 TMPL inline array<T> copy (array<T> a) {
   return array<T> (a->a, a->n); }
 TMPL ostream& operator << (ostream& out, array<T> a);

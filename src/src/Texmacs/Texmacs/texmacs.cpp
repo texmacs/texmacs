@@ -14,8 +14,11 @@
 #include "file.hpp"
 #include "server.hpp"
 #include "timer.hpp"
+#include "data_cache.hpp"
 
 extern bool   char_clip;
+extern bool   reverse_colors;
+
 extern url    tm_init_file;
 extern url    tm_init_buffer_file;
 extern string my_init_cmds;
@@ -23,7 +26,21 @@ extern string my_init_cmds;
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
 
-extern tree   the_et;
+extern tree the_et;
+extern bool texmacs_started;
+
+/******************************************************************************
+* For testing
+******************************************************************************/
+
+//#define ENABLE_TESTS
+#ifdef ENABLE_TESTS
+void
+test_routines () {
+  extern void test_math ();
+  test_math ();
+}
+#endif
 
 /******************************************************************************
 * Real main program for encaptulation of guile
@@ -35,7 +52,10 @@ TeXmacs_main (int argc, char** argv) {
   bool flag= true;
   string the_default_font;
   for (i=1; i<argc; i++)
-    if (((argv[i][0] == '-') || (argv[i][0] == '+')) && (argv[i][1] != '\0')) {
+    if (argv[i][0] == '\0') argc= i;
+    else if (((argv[i][0] == '-') ||
+	      (argv[i][0] == '+')) && (argv[i][1] != '\0'))
+    {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
@@ -89,10 +109,6 @@ TeXmacs_main (int argc, char** argv) {
 	i++;
 	if (i<argc) tm_init_file= url_system (argv[i]);
       }
-      else if ((s == "-S") || (s == "-setup")) {
-	remove ("$TEXMACS_HOME_PATH/system/settings.scm");
-	remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-      }
       else if ((s == "-v") || (s == "-version")) {
 	cout << "\n";
 	cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
@@ -110,13 +126,15 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+      else if ((s == "-r") || (s == "-reverse"))
+	reverse_colors= true;
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc)
 	  my_init_cmds= my_init_cmds * " " *
-	    "(texmacs-load-buffer " * quote (argv[i-1]) *
+	    "(texmacs-load-buffer " * scm_quote (argv[i-1]) *
 	    " \"generic\" 0 #f) " *
-	    "(export-buffer " * quote (argv[i]) * ")";
+	    "(export-buffer " * scm_quote (argv[i]) * ")";
       }
       else if ((s == "-x") || (s == "-execute")) {
 	i++;
@@ -124,6 +142,10 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
+      else if ((s == "-S") || (s == "-setup") ||
+	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
+	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
+	       (s == "-delete-doc-cache"));
       else {
 	cout << "\n";
 	cout << "Options for TeXmacs:\n\n";
@@ -136,6 +158,7 @@ TeXmacs_main (int argc, char** argv) {
 	cout << "  -i [file]  Specify scheme initialization file\n";
 	cout << "  -p         Get the TeXmacs path\n";
 	cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
+	cout << "  -r         Reverse video mode\n";
 	cout << "  -s         Suppress information messages\n";
 	cout << "  -S         Rerun TeXmacs setup program before starting\n";
 	cout << "  -v         Display current TeXmacs version\n";
@@ -187,11 +210,6 @@ TeXmacs_main (int argc, char** argv) {
   if (sv->no_bufs ()) {
     if (DEBUG_STD) cout << "TeXmacs] Creating 'no name' buffer...\n";
     sv->open_window ();
-#ifndef OS_WIN32
-    if ((my_init_cmds == "") &&
-	exists ("$TEXMACS_HOME_PATH/system/autosave.tm"))
-      sv->exec_delayed ("(interactive '(\"Recover autosave file (y/n)?\") 'conditional-recover-autosave)");
-#endif
   }
 
   bench_print ();
@@ -200,8 +218,7 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize scheme");
 
   if (DEBUG_STD) cout << "TeXmacs] Starting event loop...\n";
-  sv->delayed_autosave();
-  dis->delayed_message (sv->get_meta(), "banner", 100);
+  texmacs_started= true;
   dis->event_loop ();
 
   if (DEBUG_STD) cout << "TeXmacs] Closing display...\n";
@@ -213,14 +230,59 @@ TeXmacs_main (int argc, char** argv) {
 * Main program
 ******************************************************************************/
 
+void
+immediate_options (int argc, char** argv) {
+  if (get_env ("TEXMACS_HOME_PATH") == "")
+    set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
+  if (get_env ("TEXMACS_HOME_PATH") == "") return;
+  for (int i=1; i<argc; i++) {
+    string s= argv[i];
+    if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
+    if ((s == "-S") || (s == "-setup")) {
+      remove ("$TEXMACS_HOME_PATH/system/settings.scm");
+      remove ("$TEXMACS_HOME_PATH/system/setup.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+      remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
+    }
+    else if (s == "-delete-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+    else if (s == "-delete-style-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
+    else if (s == "-delete-font-cache")
+      remove ("$TEXMACS_HOME_PATH/system/cache/font_cache.scm");
+    else if (s == "-delete-doc-cache") {
+      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+    }
+    else if (s == "-delete-file-cache") {
+      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
+      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
+      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+    }
+  }
+}
+
 int
 main (int argc, char** argv) {
-  // cout << "Bench  ] Started TeXmacs\n";
+#ifdef GUILE_C
+  cout << "Guile 1.8.0 is uncompatible with earlier versions.\n";
+  cout << "Please recompile TeXmacs with an older version of Guile,\n";
+  cout << "since TeXmacs is likely to crash with Guile 1.8.0.\n";
+  cout << "Any help for fixing this problem would be appreciated.\n";
+#endif
+  //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
+  immediate_options (argc, argv);
+  cache_initialize ();
   bench_start ("initialize texmacs");
   init_texmacs ();
   bench_cumul ("initialize texmacs");
+#ifdef ENABLE_TESTS
+  test_routines ();
+#endif
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }
