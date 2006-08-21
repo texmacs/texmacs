@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.4>
+<TeXmacs|1.0.6.6>
 
 <style|tmweb>
 
@@ -34,26 +34,38 @@
   should:
 
   <\enumerate>
-    <item>Download <hlink|CygTeXmacs.exe|ftp://ftp.texmacs.org/pub/TeXmacs/cygwin/CygTeXmacs.exe>
-    (59Mb). If you don't have ftp access, then you may also
-    <hlink|load|http://www.texmacs.org/Download/ftp/cygwin/CygTeXmacs.exe>
+    <item>Download <hlink|CygTeXmacs.zip|ftp://ftp.texmacs.org/pub/TeXmacs/cygwin/CygTeXmacs.zip>
+    (82Mb). If you don't have ftp access, then you may also
+    <hlink|load|http://www.texmacs.org/Download/ftp/cygwin/CygTeXmacs.zip>
     this file from the web.
 
-    <item>Install <TeXmacs> by executing <verbatim|CygTeXmacs.exe> and
-    following the instructions on the screen.
+    <item>Unzip the file in the directory <verbatim|C:\\CygTeXmacs> (or any
+    other directory without whitespace characters).
 
-    <item>You should now be able to launch <TeXmacs> from the launcher in the
-    directory where you decided to install <TeXmacs>.
+    <item>Launch <TeXmacs> by clicking on
+    <verbatim|C:\\CygTeXmacs\\starttexmacs.bat>.
   </enumerate>
 
-  <section|Optional helper programs>
+  <section|Notes>
 
-  Although the <name|Windows> version of <TeXmacs> does not require
-  <TeX>/<LaTeX> to be installed on your system, you might still want to
-  install such a distribution in order to increase the number of available
-  fonts, or in order to compile bibliographies using <name|Bib><TeX>.
-  Therefore, if you have a fast internet connection, then you may want to
-  download and install <hlink|<name|Mik><TeX>|http://www.miktex.org/>.
+  <\itemize>
+    <item>Although the <name|Windows> version of <TeXmacs> does not require
+    <TeX>/<LaTeX> to be installed on your system, you might still want to
+    install such a distribution in order to increase the number of available
+    fonts, or in order to compile bibliographies using <name|Bib><TeX>.
+    Therefore, if you have a fast internet connection, then you may want to
+    download and install <hlink|<name|Mik><TeX>|http://www.miktex.org/>.
+
+    <item>If you installed <name|Mik><TeX> in addition to <TeXmacs>, then
+    missing fonts may be generated automatically. This results in a
+    significant slow-down of <TeXmacs>. Don't panic: the fonts have to be
+    generated only once. Subsequent runs of <TeXmacs> will be fast.
+
+    <item><TeXmacs> can be used in combination with the <name|Windows>
+    version of <hlink|<name|Maxima>|http://maxima.sourceforge.net/>. At the
+    moment, this requires you to install <name|Maxima> at the standard place
+    which is proposed during its installation.
+  </itemize>
 
   <tmdoc-copyright|1999--2003|Joris van der Hoeven>
 

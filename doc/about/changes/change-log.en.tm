@@ -1,13 +1,29 @@
-<TeXmacs|1.0.6.3>
+<TeXmacs|1.0.6.4>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.4>
+  <section|Changes from version 1.0.6 to 1.0.6.6>
 
   <\itemize>
+    <item>Clean mathematical types and routines for graphics (1.0.6.6).
+
+    <item>Detection of intersections in graphical mode (1.0.6.6).
+
+    <item>Corrections in <name|Cyg<TeXmacs>> version (1.0.6.6).
+
+    <item>Several bug fixes (1.0.6.6).
+
+    <item>Simple to install <name|Cyg<TeXmacs>> version of <TeXmacs>
+    (1.0.6.5).
+
+    <item>Correction of some bugs concerning <name|Maple> and
+    <name|Mathematica> (1.0.6.5).
+
+    <item>Addition of a plug-in for <name|Cadabra> (1.0.6.5).
+
     <item>Addition of a native <TeXmacs> wiki (1.0.6.4).
 
     <item>Implementation of the first version of a remote <TeXmacs> file
