@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.2>
+<TeXmacs|1.0.6.6>
 
 <style|<tuple|source|std>>
 
@@ -200,6 +200,10 @@
     </render-folded-grouped>
   </macro>>
 
+  <assign|summarized-tiny|<macro|x|y|<action|<arg|x>|(mouse-unfold)|<arg|x>>>>
+
+  <assign|detailed-tiny|<macro|x|y|<arg|y>>>
+
   <assign|summarized|<value|summarized-env>>
 
   <assign|detailed|<value|detailed-env>>
@@ -212,7 +216,9 @@
 
   <drd-props|summarized-env|arity|2|accessible|0|hidden|1>
 
-  <drd-props|summarizes-grouped|arity|2|accessible|0|hidden|1>
+  <drd-props|summarized-grouped|arity|2|accessible|0|hidden|1>
+
+  <drd-props|summarized-tiny|arity|2|accessible|0|hidden|1>
 
   <drd-props|summarized|arity|2|accessible|0|hidden|1>
 
@@ -223,6 +229,8 @@
   <drd-props|detailed-env|arity|2|accessible|1|hidden|0>
 
   <drd-props|detailed-grouped|arity|2|accessible|1|hidden|0>
+
+  <drd-props|detailed-tiny|arity|2|accessible|1|hidden|0>
 
   <drd-props|detailed|arity|2|accessible|1|hidden|0>
 
@@ -237,6 +245,8 @@
       <unquote*|<quote-arg|switch-args>>
     </quasi>>
   </xmacro>>
+
+  <assign|tiny-block|<xmacro|switch-args|<map-args|identity|concat|switch-args>>>
 
   <assign|slide|<\macro|body>
     <\surround||<right-flush><new-page>>
@@ -256,6 +266,8 @@
 
   <assign|screens|<value|document-block>>
 
+  <assign|tiny-switch|<value|tiny-block>>
+
   <assign|unroll|<value|document-block>>
 
   <assign|expanded|<value|document-block>>
@@ -267,6 +279,8 @@
   <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <drd-props|tiny-switch|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|unroll|arity|<tuple|repeat|1|1>|accessible|all>
 
