@@ -1978,13 +1978,16 @@ edit_env_rep::expand (tree t, bool search_accessible) {
 	r= r[nr];
       }
     }
-    if (is_func (t, ARG)) r= expand (r, search_accessible);
+    if (is_func (t, ARG))
+      r= expand (r, search_accessible);
     macro_arg= old_var;
     macro_src= old_src;
     return r;
   }
   else if (is_func (t, EXPAND_AS, 2))
     return expand (t[0], search_accessible);
+  else if (search_accessible && is_accessible (obtain_ip (t)))
+    return t;
   else {
     int i, n= N(t);
     tree r (t, n);
