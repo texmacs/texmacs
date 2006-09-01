@@ -492,8 +492,8 @@ tex_font_rep::get_extents (string s, metric& ex) {
     break;
   }
 
-  int n=N(s);
-  int m=n+16;
+  int n= N(s);
+  int m= (n+16) << 1;
   STACK_NEW_ARRAY (s_copy, int, n);
   STACK_NEW_ARRAY (buf, int, m);
   STACK_NEW_ARRAY (ker, int, m);
@@ -614,7 +614,7 @@ tex_font_rep::draw (ps_device dev, string s, SI ox, SI y) {
 
   SI  x= ox;
   int n= N(s);
-  int m= n+16;
+  int m= (n+16) << 1;
   STACK_NEW_ARRAY (str, int, n);
   STACK_NEW_ARRAY (buf, int, m);
   STACK_NEW_ARRAY (ker, int, m);
