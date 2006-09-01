@@ -84,6 +84,8 @@
 	      ("Capbas" (make-with "font" "capbas")))
 	  (if (url-exists-in-tex? "cdr10.mf")
 	      ("Duerer" (make-with "font" "duerer")))
+	  (if (url-exists-in-tex? "frcr10.mf")
+	      ("French cursive" (make-with "font" "frc")))
 	  (if (url-exists-in-tex? "hscs10.mf")
 	      ("Hershey" (make-with "font" "hershey")))
 	  (if (url-exists-in-tex? "la14.mf")
