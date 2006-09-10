@@ -97,6 +97,8 @@
   <with|font-family|tt|C:\\tmp>. The name of the file with the distribution
   is of the form <with|font-family|tt|TeXmacs-[source version]-src.tar.gz>,
   where <with|font-family|tt|[source version]> is the corresponding version.
+  If you do not have ftp access, then you might wish to
+  <hlink|download|http://www.texmacs.org/Download/ftp/targz> from the web.
 
   <section|Compile <TeXmacs>>
 
