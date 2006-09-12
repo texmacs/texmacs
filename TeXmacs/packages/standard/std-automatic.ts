@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.0.6.6>
 
 <style|source>
 
@@ -53,6 +53,8 @@
 
   <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-arg|<arg|x>>|<arg|y>>>>
 
+  <assign|cite-raw|<xmacro|x|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>
+
   <assign|nocite-arg|<macro|x|<write|bib|<arg|x>>>>
 
   <assign|nocite|<xmacro|x|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
@@ -66,7 +68,7 @@
 
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|bib-|<arg|text>>>>>>
 
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<arg|text>><assign|the-label|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<arg|text>><set-binding|<arg|text>>>>>
 
   <assign|protect|>
 
