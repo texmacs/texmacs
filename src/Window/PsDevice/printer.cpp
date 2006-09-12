@@ -134,8 +134,11 @@ printer_rep::~printer_rep () {
 	   << "%%BeginSetup\n"
 	   << "%%Feature: *Resolution " << as_string (dpi) << "dpi\n"
 	   << "TeXDict begin\n";
-  if (page_type != "user")
-    prologue << "%%PaperSize: " << page_type << "\n";
+  if (page_type != "user") {
+    prologue << "%%BeginPaperSize: " << page_type << "\n";
+    prologue << page_type << "\n";
+    prologue << "%%EndPaperSize\n";
+  }
   if (landscape)
     prologue << "@landscape\n";
   prologue << "%%EndSetup\n";
