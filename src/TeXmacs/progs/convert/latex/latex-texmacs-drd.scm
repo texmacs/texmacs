@@ -267,6 +267,16 @@
        (drd-group latex-texmacs-tag% ,env-sym)
        (drd-group latex-list% ,env-sym))))
 
+(define-macro (latex-texmacs-description env)
+  (with env-sym (string->symbol (string-append "begin-" env))
+    `(begin
+       (drd-table latex-texmacs-environment%
+	 (,env ((!begin "description") ---)))
+       (drd-table latex-texmacs-env-arity% (,env 0))
+       ;;;
+       (drd-group latex-texmacs-tag% ,env-sym)
+       (drd-group latex-list% ,env-sym))))
+
 (latex-texmacs-itemize "itemizeminus" "$-$")
 (latex-texmacs-itemize "itemizedot" "$\\bullet$")
 (latex-texmacs-itemize "itemizearrow" "$\\rightarrow$")
@@ -275,6 +285,10 @@
 (latex-texmacs-enumerate "enumerateromancap" "I.")
 (latex-texmacs-enumerate "enumeratealpha" "a{\\textup{)}}")
 (latex-texmacs-enumerate "enumeratealphacap" "A.")
+(latex-texmacs-description "descriptioncompact")
+(latex-texmacs-description "descriptionaligned")
+(latex-texmacs-description "descriptiondash")
+(latex-texmacs-description "descriptionlong")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra preamble definitions which are needed to export certain macros

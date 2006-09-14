@@ -1416,7 +1416,9 @@
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
   ((:or center indent) (,tmtex-std-env 1))
-  ((:or description itemize itemize-minus itemize-dot itemize-arrow
+  ((:or description description-compact description-aligned
+	description-dash description-long
+	itemize itemize-minus itemize-dot itemize-arrow
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)
    (,tmtex-list-env 1))
