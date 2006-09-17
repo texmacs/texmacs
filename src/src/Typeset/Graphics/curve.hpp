@@ -59,6 +59,9 @@ public:
   virtual int get_control_points (
             array<double>&abs, array<point>& pts, array<path>& cip);
 
+  virtual array<double> find_closest_points (
+            double t1, double t2, point p, double eps);
+
   virtual double find_closest_point (
             double t1, double t2, point p, double eps, bool& found);
 };

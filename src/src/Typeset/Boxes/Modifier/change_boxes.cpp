@@ -368,7 +368,8 @@ textat_box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->dist= graphical_distance (x, y);
     gs->p= point (x, y);
     gs->cp << box_rep::find_tree_path (x, y, dist);
-    gs->b= box (this);
+    gs->pts << gs->p;
+    gs->c= curve ();
     res << gs;
   }
   return res;

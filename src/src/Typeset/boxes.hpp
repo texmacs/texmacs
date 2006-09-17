@@ -214,8 +214,6 @@ public:
   virtual SI             graphical_distance (SI x, SI y);
   virtual gr_selections  graphical_select (SI x, SI y, SI dist);
   virtual gr_selections  graphical_select (SI x1, SI y1, SI x2, SI y2);
-  virtual curve          get_curve ();
-  virtual array<point>   curve_intersection (box b, point p0, double eps);
 
   /************************** retrieving information *************************/
 
@@ -320,9 +318,10 @@ tree attach_dip (tree ref, path ip);
 
 struct gr_selection_rep: concrete_struct {
   array<path> cp;
+  array<point> pts;
   point p;
   SI dist;
-  box b;
+  curve c;
 };
 CONCRETE_CODE(gr_selection);
 
