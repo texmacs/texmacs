@@ -87,7 +87,7 @@ graphics_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
   int i, n= subnr();
   for (i=0; i<n; i++)
     res << bs[i]->graphical_select (x1- sx(i), y1- sy(i),
-                                    x2- sx(i), y2- sy(i));
+				    x2- sx(i), y2- sy(i));
   return res;
 }
 /*NOTE: It seems that the dimensions of the boxes that inherit from
@@ -123,7 +123,8 @@ graphics_group_box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->dist= graphical_distance (x, y);
   //gs->p= point (x, y); // The cursor moves freely inside the box
     gs->cp << reverse (path (0, ip));
-    gs->b= box (this);
+    gs->pts= array<point> (0);
+    gs->c= curve ();
     res << gs;
   }
   return res;
@@ -136,7 +137,8 @@ graphics_group_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
     gr_selection gs;
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
-    gs->b= box (this);
+    gs->pts= array<point> (0);
+    gs->c= curve ();
     res << gs;
   }
   return res;
@@ -187,7 +189,8 @@ point_box_rep::graphical_select (SI x, SI y, SI dist) {
     gs->dist= graphical_distance (x, y);
     gs->p= p;
     gs->cp << reverse (path (0, ip));
-    gs->b= box (this);
+    gs->pts << p;
+    gs->c= curve ();
     res << gs;
   }
   return res;
@@ -259,8 +262,6 @@ struct curve_box_rep: public box_rep {
   SI graphical_distance (SI x, SI y);
   gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
-  curve get_curve () { return c; }
-  array<point> curve_intersection (box b, point p0, double eps);
   void display (ps_device dev);
   operator tree () { return "curve"; }
   SI length ();
@@ -293,13 +294,13 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
     point tg= c->grad (0.0, error);
     if (!error) {
       frame fr= scaling (1.0, a[0]) *
-	        rotation_2D (point (0.0, 0.0), arg (tg));
+		rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[0]= arrows2[0]->transform (fr);
       if (!nil (arrows[0])) {
-        x1= min (x1, arrows[0]->x1);
-        y1= min (y1, arrows[0]->y1);
-        x2= max (x2, arrows[0]->x2);
-        y2= max (y2, arrows[0]->y2);
+	x1= min (x1, arrows[0]->x1);
+	y1= min (y1, arrows[0]->y1);
+	x2= max (x2, arrows[0]->x2);
+	y2= max (y2, arrows[0]->y2);
       }
     }
   }
@@ -307,13 +308,13 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, SI W, color C,
     point tg= c->grad (1.0, error);
     if (!error) {
       frame fr= scaling (1.0, a[N(a)-1]) *
-	        rotation_2D (point (0.0, 0.0), arg (tg));
+		rotation_2D (point (0.0, 0.0), arg (tg));
       arrows[1]= arrows2[1]->transform (fr);
       if (!nil (arrows[1])) {
-        x1= min (x1, arrows[1]->x1);
-        y1= min (y1, arrows[1]->y1);
-        x2= max (x2, arrows[1]->x2);
-        y2= max (y2, arrows[1]->y2);
+	x1= min (x1, arrows[1]->x1);
+	y1= min (y1, arrows[1]->y1);
+	x2= max (x2, arrows[1]->x2);
+	y2= max (y2, arrows[1]->y2);
       }
     }
   }
@@ -354,12 +355,13 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
     for (i=0; i<N(pts); i++) {
       SI n= (SI)norm (p - pts[i]);
       if (n <= dist) {
-        gr_selection gs;
-        gs->dist= n;
-        gs->p= pts[i];
-        gs->cp << reverse (paths[i]);
-	gs->b= box (this);
-        res << gs;
+	gr_selection gs;
+	gs->dist= n;
+	gs->p= pts[i];
+	gs->cp << reverse (paths[i]);
+	gs->pts << pts[i];
+	gs->c= c;
+	res << gs;
       }
     }
     if (N(res) != 0) return res;
@@ -370,17 +372,19 @@ curve_box_rep::graphical_select (SI x, SI y, SI dist) {
       bool b;
       double t= c->find_closest_point (abs[i], abs[(i+1)%np], p, PIXEL, b);
       if (b) {
-        point p2= c->evaluate (t);
-        SI n= (SI)norm (p - p2);
-        if (n <= dist) {
-          gr_selection gs;
-          gs->dist= n;
-          gs->p= p2;
-          gs->cp << reverse (paths[i]);
-          gs->cp << reverse (paths[(i+1)%np]);
-	  gs->b= box (this);
-          res << gs;
-        }
+	point p2= c->evaluate (t);
+	SI n= (SI)norm (p - p2);
+	if (n <= dist) {
+	  gr_selection gs;
+	  gs->dist= n;
+	  gs->p= p2;
+	  gs->cp << reverse (paths[i]);
+	  gs->cp << reverse (paths[(i+1)%np]);
+	  gs->pts << pts[i];
+	  gs->pts << pts[(i+1)%np];
+	  gs->c= c;
+	  res << gs;
+	}
       }
     }
   }
@@ -394,20 +398,11 @@ curve_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
     gr_selection gs;
     gs->dist= graphical_distance (x1, y1);
     gs->cp << reverse (path (0, ip));
-    gs->b= box (this);
+    gs->pts= array<point> (0);
+    gs->c= c;
     res << gs;
   }
   return res;
-}
-
-array<point>
-curve_box_rep::curve_intersection (box b, point p0, double eps) {
-  // For local intersections only
-  array<point> res;
-  if ((tree)b == "curve")
-    return intersection (c, b->get_curve (), p0, eps);
-  else
-    return res;
 }
 
 void
@@ -429,7 +424,7 @@ curve_box_rep::display (ps_device dev) {
     if (N (style) == 0) {
       n= N(a);
       for (i=0; i<(n-1); i++)
-        dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+	dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
     }
     else {
       SI li=0, o=0;
@@ -437,46 +432,46 @@ curve_box_rep::display (ps_device dev) {
       int no;
       point prec= a[0];
       for (no=0; no<N(styled_n); no++) {
-        point seg= a[i+1]-a[i];
-        while (fnull (norm(seg),1e-6) && i+2<N(a)) {
-          i++;
-          seg= a[i+1]-a[i];
-        }
-        if (fnull (norm(seg),1e-6) && i+2>=N(a))
-          break;
-        SI lno= styled_n[no]*style_unit,
-           len= li+(SI)norm(seg);
-        while (i+2<N(a) && lno>len) {
-          li= len;
-          if (no%2!=0) {
-         // 1st subsegment of a dash
-            dev->line ((SI) prec[0], (SI) prec[1],
-                       (SI) a[i+1][0], (SI) a[i+1][1]);
-  	    prec= a[i+1];
-          }
-          i++;
-          seg= a[i+1]-a[i];
-          len= li+(SI)norm(seg);
-        }
-        o= lno-li;
+	point seg= a[i+1]-a[i];
+	while (fnull (norm(seg),1e-6) && i+2<N(a)) {
+	  i++;
+	  seg= a[i+1]-a[i];
+	}
+	if (fnull (norm(seg),1e-6) && i+2>=N(a))
+	  break;
+	SI lno= styled_n[no]*style_unit,
+	   len= li+(SI)norm(seg);
+	while (i+2<N(a) && lno>len) {
+	  li= len;
+	  if (no%2!=0) {
+	 // 1st subsegment of a dash
+	    dev->line ((SI) prec[0], (SI) prec[1],
+		       (SI) a[i+1][0], (SI) a[i+1][1]);
+	      prec= a[i+1];
+	  }
+	  i++;
+	  seg= a[i+1]-a[i];
+	  len= li+(SI)norm(seg);
+	}
+	o= lno-li;
      /* We could also use this one in order to use lines with
-        round ends. But it doesn't work well when the width
-        of the line becomes bigger than the style unit length.
-        Anyway (although I don't know if there is a way to do
-        lines with round ends in PostScript), our current PostScript
-        output in GhostView uses square line ends, so we do the same.
-        SI inc= ((no%2==0?1:-1) * width)/2;
-        point b= a[i] + (o+inc)*(seg/norm(seg)); */
-        if (i<N(a)) {
-          point b= a[i] + o*(seg/norm(seg));
-          if (no%2==0)
-            prec= b;
-          else
-         // Last subsegment of a dash
-            dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
-         // TODO: Use XDrawLines() and the join style to draw correctly
-         //   the subsegments ; implement this for Postscript as well.
-        }
+	round ends. But it doesn't work well when the width
+	of the line becomes bigger than the style unit length.
+	Anyway (although I don't know if there is a way to do
+	lines with round ends in PostScript), our current PostScript
+	output in GhostView uses square line ends, so we do the same.
+	SI inc= ((no%2==0?1:-1) * width)/2;
+	point b= a[i] + (o+inc)*(seg/norm(seg)); */
+	if (i<N(a)) {
+	  point b= a[i] + o*(seg/norm(seg));
+	  if (no%2==0)
+	    prec= b;
+	  else
+	 // Last subsegment of a dash
+	    dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
+	 // TODO: Use XDrawLines() and the join style to draw correctly
+	 //   the subsegments ; implement this for Postscript as well.
+	}
       }
     }
   }
@@ -549,15 +544,15 @@ curve_box_rep::apply_style () {
     for (j=0; j<(i==n1?n2:n); j++) {
       int frag= style[j]?1:0;
       if (frag!=prevfrag) {
-        if (frag==1) {
-          styled_n[no]= nbu;
-          no++;
-        }
-        else
-        if (frag==0 && prevfrag!=-1) {
-          styled_n[no]= nbu;
-          no++;
-        }
+	if (frag==1) {
+	  styled_n[no]= nbu;
+	  no++;
+	}
+	else
+	if (frag==0 && prevfrag!=-1) {
+	  styled_n[no]= nbu;
+	  no++;
+	}
       }
       prevfrag= frag;
       nbu++;

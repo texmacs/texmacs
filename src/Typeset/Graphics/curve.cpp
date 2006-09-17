@@ -16,6 +16,7 @@
 #include "equations.hpp"
 #include "math_util.hpp"
 #include "polynomial.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * General routines
@@ -57,37 +58,84 @@ curve_rep::get_control_points (
   return 0;
 }
 
+struct curvet {
+  double t, dist;
+};
+
+struct less_eq_curvet {
+  static inline bool leq (curvet& a, curvet &b) {
+    return a.dist <= b.dist; }
+};
+
+static array<curvet>
+curvet_closest_points (
+  curve c, double t1, double t2, point p, double eps)
+{
+  array<curvet> res;
+  if (t1>t2) {
+    array<curvet> r1, r2;
+    r1= curvet_closest_points (c, 0.0, t2, p, eps);
+    r2= curvet_closest_points (c, t1, 1.0, p, eps);
+    res= r1 << r2;
+  }
+  else {
+    double t;
+    double closest= -1;
+    point pclosest;
+    double n0= tm_infinity;
+    bool stored= true;
+    double nprec= n0;
+    bool decreasing= false;
+    for (t=t1; t<=t2;) {
+      point pt= c->evaluate(t);
+      double n= norm (pt - p);
+      if (n < n0) {
+	n0= n;
+	closest= t;
+	pclosest= pt;
+	stored= false;
+      }
+      decreasing= n<nprec;
+      if (!stored && !decreasing) {
+        curvet ct;
+        ct.dist= norm (pclosest - p);
+        ct.t= closest;
+	res << ct;
+	stored= true;
+      }
+      if (stored && decreasing)
+        n0= tm_infinity;
+      double delta= (n - eps) / 2;
+      t+=c->bound (t, max (eps, delta));
+      nprec= n;
+    }
+  }
+  return res;
+}
+
+array<double>
+curve_rep::find_closest_points (
+  double t1, double t2, point p, double eps)
+{
+  array<curvet> res= curvet_closest_points (curve (this), t1, t2, p, eps);
+  merge_sort_leq <curvet, less_eq_curvet> (res);
+  array<double> rest= array<double> (N(res));
+  int i;
+  for (i=0; i<N(res); i++)
+    rest[i]= res[i].t;
+  return rest;
+}
+
 double
 curve_rep::find_closest_point (
   double t1, double t2, point p, double eps, bool& found)
 {
-  if (t1>t2) {
-    double r1, r2;
-    r1= find_closest_point (0.0, t2, p, eps, found);
-    if (!found)
-      return find_closest_point (t1, 1.0, p, eps, found);
-    r2= find_closest_point (t1, 1.0, p, eps, found);
-    if (!found)
-      return r1;
-    double n1= norm (evaluate(r1) - p);
-    double n2= norm (evaluate(r2) - p);
-    return n1<n2 ? r1 : r2;
-  }
-  found= false;
-  double t;
-  double res= -1;
-  double n0= tm_infinity;
-  for (t=t1; t<=t2;) {
-    double n= norm (evaluate(t) - p);
-    if (n < n0) {
-      n0= n;
-      res= t;
-      found= true;
-    }
-    double delta= (n - eps) / 2;
-    t+=bound (t, max (eps, delta));
-  }
-  return res;
+  array<double> res= find_closest_points (t1, t2, p, eps);
+  found= N(res)>0;
+  if (found)
+    return res[0];
+  else
+    return -1;
 }
 
 point
@@ -124,14 +172,25 @@ intersection (curve f, curve g, point p0, double eps) {
   // For local intersections only
   array<point> res;
   if (nil (f) || nil (g)) return res;
-  bool res1, res2;
-  double d1= f->find_closest_point (0.0, 1.0, p0, eps, res1);
-  double d2= g->find_closest_point (0.0, 1.0, p0, eps, res2);
-  if (res1 && res2) {
-    bool found= intersection (f, g, d1, d2);
-    if (found)
-      res << f (d1);
+  bool found= false;
+  double d1, d2;
+  if (f==g) {
+    array<double> pts= f->find_closest_points (0.0, 1.0, p0, eps);
+    if (N(pts)>=2) {
+      d1= pts[0];
+      d2= pts[1];
+      found= intersection (f, f, d1, d2);
+    }
   }
+  else {
+    bool res1, res2;
+    d1= f->find_closest_point (0.0, 1.0, p0, eps, res1);
+    d2= g->find_closest_point (0.0, 1.0, p0, eps, res2);
+    if (res1 && res2)
+      found= intersection (f, g, d1, d2);
+  }
+  if (found)
+    res << f (d1);
   return res;
 }
 

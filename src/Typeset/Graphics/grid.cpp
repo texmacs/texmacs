@@ -64,6 +64,24 @@ grid_rep::set_aspect (tree aspect) {
   }
 }
 
+array<grid_curve>
+grid_rep::get_curves_around (point p, double delta, frame f) {
+  point p2= f (p);
+  point pmin, pmax;
+  pmin= f[point (p2[0]-delta, p2[1]-delta)];
+  pmax= f[point (p2[0]+delta, p2[1]+delta)];
+  return get_curves (pmin, pmax, 1e-6, true);
+}
+
+point
+grid_rep::find_point_around (point p, double delta, frame f) {
+  point p2= f (p);
+  point pmin, pmax;
+  pmin= f[point (p2[0]-delta, p2[1]-delta)];
+  pmax= f[point (p2[0]+delta, p2[1]+delta)];
+  return find_closest_point (p, pmin, pmax);
+}
+
 /******************************************************************************
 * The empty grid
 ******************************************************************************/
@@ -254,7 +272,7 @@ polar_rep::get_curves (point lim1, point lim2, double u, bool b) {
     if (ox>=0 && oy<=0)
       P2= point (x2, y1);
   }
-  double r, R1= (SI) norm (P1), R2= (SI) norm (P2);
+  double r, R1= norm (P1), R2= norm (P2);
   int i;
   for (i= N(subd)-1; i>=1; i--) {
     SI nsub;
