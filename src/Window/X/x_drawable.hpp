@@ -61,6 +61,7 @@ public:
   void  set_background (color c);
   void  set_line_style (SI w, int type=0, bool round=true);
   void  line (SI x1, SI y1, SI x2, SI y2);
+  void  lines (array<SI> x, array<SI> y);
   void  clear (SI x1, SI y1, SI x2, SI y2);
   void  fill (SI x1, SI y1, SI x2, SI y2);
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);

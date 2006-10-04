@@ -421,10 +421,15 @@ curve_box_rep::display (ps_device dev) {
   if (fill == FILL_MODE_NONE || fill == FILL_MODE_BOTH) {
     dev->set_color (col);
     dev->set_line_style (width, 0, false);
+ // TODO: Add options for handling round/nonround joins & line ends
     if (N (style) == 0) {
       n= N(a);
-      for (i=0; i<(n-1); i++)
-	dev->line ((SI) a[i][0], (SI) a[i][1], (SI) a[i+1][0], (SI) a[i+1][1]);
+      array<SI> x (n), y (n);
+      for (i=0; i<n; i++) {
+	x[i]= (SI) a[i][0];
+	y[i]= (SI) a[i][1];
+      }
+      dev->lines (x, y);
     }
     else {
       SI li=0, o=0;
@@ -432,6 +437,7 @@ curve_box_rep::display (ps_device dev) {
       int no;
       point prec= a[0];
       for (no=0; no<N(styled_n); no++) {
+	array<SI> x, y;
 	point seg= a[i+1]-a[i];
 	while (fnull (norm(seg),1e-6) && i+2<N(a)) {
 	  i++;
@@ -444,34 +450,35 @@ curve_box_rep::display (ps_device dev) {
 	while (i+2<N(a) && lno>len) {
 	  li= len;
 	  if (no%2!=0) {
-	 // 1st subsegment of a dash
-	    dev->line ((SI) prec[0], (SI) prec[1],
-		       (SI) a[i+1][0], (SI) a[i+1][1]);
-	      prec= a[i+1];
+         // 1st subsegment of a dash, along with the next ones
+	    x << (SI) prec[0];
+	    y << (SI) prec[1];
+	    prec= a[i+1];
 	  }
 	  i++;
 	  seg= a[i+1]-a[i];
 	  len= li+(SI)norm(seg);
 	}
+	if (N(x)>0 && no%2!=0) {
+	  x << (SI) prec[0];
+	  y << (SI) prec[1];
+	}
 	o= lno-li;
-     /* We could also use this one in order to use lines with
-	round ends. But it doesn't work well when the width
-	of the line becomes bigger than the style unit length.
-	Anyway (although I don't know if there is a way to do
-	lines with round ends in PostScript), our current PostScript
-	output in GhostView uses square line ends, so we do the same.
-	SI inc= ((no%2==0?1:-1) * width)/2;
-	point b= a[i] + (o+inc)*(seg/norm(seg)); */
 	if (i<N(a)) {
 	  point b= a[i] + o*(seg/norm(seg));
 	  if (no%2==0)
 	    prec= b;
-	  else
+	  else {
 	 // Last subsegment of a dash
-	    dev->line ((SI) prec[0], (SI) prec[1], (SI) b[0], (SI) b[1]);
-	 // TODO: Use XDrawLines() and the join style to draw correctly
-	 //   the subsegments ; implement this for Postscript as well.
+	    if (N(x)==0) {
+	      x << (SI) prec[0];
+	      y << (SI) prec[1];
+	    }
+	    x << (SI) b[0];
+	    y << (SI) b[1];
+	  }
 	}
+	dev->lines (x, y);
       }
     }
   }
