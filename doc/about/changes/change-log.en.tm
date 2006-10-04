@@ -1,13 +1,17 @@
-<TeXmacs|1.0.6.4>
+<TeXmacs|1.0.6.6>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.6>
+  <section|Changes from version 1.0.6 to 1.0.6.7>
 
   <\itemize>
+    <item>Several minor improvements in the graphical mode (1.0.6.7).
+
+    <item>Fixes for Maxima 5.10.0 (1.0.6.7).
+
     <item>Clean mathematical types and routines for graphics (1.0.6.6).
 
     <item>Detection of intersections in graphical mode (1.0.6.6).
