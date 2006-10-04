@@ -27,6 +27,7 @@ string PS_LINE ("ln");
 string PS_FILL ("fl");
 string PS_ARC ("ac");
 string PS_FILL_ARC ("fac");
+string PS_STROKE ("st");
 string PS_POL_START ("sp");
 string PS_POL_NEXT ("np");
 string PS_POL_END ("ep");
@@ -109,6 +110,7 @@ printer_rep::printer_rep (
 	  string ("newpath pt1 pt2 r1 r2 a1 a2 ellipse stroke"));
   define (PS_FILL_ARC, string ("/a2 X /a1 X /r2 X /r1 X /pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 r1 r2 a1 a2 ellipse eofill stroke"));
+  define (PS_STROKE, string ("stroke"));
   define (PS_POL_START, string ("/pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 moveto"));
   define (PS_POL_NEXT, string ("/pt2 X /pt1 X\n") *
@@ -567,6 +569,19 @@ printer_rep::line (SI x1, SI y1, SI x2, SI y2) {
   print (x1, y1);
   print (x2, y2);
   print (PS_LINE);
+}
+
+void
+printer_rep::lines (array<SI> x, array<SI> y) {
+  int i, n= N(x);
+  if ((N(y) != n) || (n<1)) return;
+  print (x[0], y[0]);
+  print (PS_POL_START);
+  for (i=1; i<n; i++) {
+    print (x[i], y[i]);
+    print (PS_POL_NEXT);
+  }
+  print (PS_STROKE);
 }
 
 void

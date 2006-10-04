@@ -176,6 +176,21 @@ x_drawable_rep::line (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+x_drawable_rep::lines (array<SI> x, array<SI> y) {
+  int i, n= N(x);
+  if ((N(y) != n) || (n<1)) return;
+  STACK_NEW_ARRAY (pnt, XPoint, n);
+  for (i=0; i<n; i++) {
+    SI xx= x[i], yy= y[i];
+    decode (xx, yy);
+    pnt[i].x= xx;
+    pnt[i].y= yy;
+  }
+  XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
+  STACK_DELETE_ARRAY (pnt);
+}
+
+void
 x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
