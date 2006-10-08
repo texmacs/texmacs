@@ -24,29 +24,38 @@
 ;; Closest point
 ;;NOTE: This subsection is OK.
 (define (graphics-norm p1 p2)
-   (let ((x (- (s2i (cadr p2)) (s2i (cadr p1))))
-	 (y (- (s2i (caddr p2)) (s2i (caddr p1)))))
+  (let ((x (- (s2i (cadr p2)) (s2i (cadr p1))))
+	(y (- (s2i (caddr p2)) (s2i (caddr p1)))))
 	(sqrt (+ (* x x) (* y y)))))
 
+(define infinity (/ 1.0 0.0))
+(define (is-point? p)
+  (and (pair? p) (in? (car p) '(point tuple))))
+  
 (define (graphics-closest-point-pos-bis p l)
-   (if (null? l)
-       '()
-       (let ((n1 (graphics-norm p (car l))))
+  (if (null? l)
+      '()
+       (let ((n1 (if (is-point? (car l))
+				(graphics-norm p (car l))
+				infinity)))
 	    (if (null? (cdr l))
 		l
 		(let* ((p2 (graphics-closest-point-pos-bis p (cdr l)))
-		       (n2 (graphics-norm p (car p2))))
+		       (n2 (if (is-point? (car p2))
+			       (graphics-norm p (car p2))
+			       infinity)))
 		      (if (<= n1 n2) l p2))))))
 
 (define (graphics-closest-point-pos p l)
-   (- (length l) (length (graphics-closest-point-pos-bis p l))))
+  (- (length l) (length (graphics-closest-point-pos-bis p l))))
 
 (define (object-closest-point-pos obj x y)
+ ;(display* "obj(" x ", " y ")=" obj "\n")
   (if (pair? obj)
       (with type (car obj)
 	 (if (== type 'point)
 	     0
-	 (if (in? (car obj) gr-tags-curves)
+	 (if (not (in? (car obj) gr-tags-noncurves))
 	     (graphics-closest-point-pos (list 'point x y) (cdr obj))
 	 0)))
       0))
@@ -498,6 +507,7 @@
 ;; no   == description of the edge  <=> no | (edge no)
 ;;      == flag used in group modes <=> 'group | 'no-group
   (define edge #t)
+ ;(display* "o[create-graphical-object]=")(write o)(newline)
   (if (pair? no)
       (begin
 	 (set! edge (car no))
@@ -733,14 +743,52 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Graphical select
-;;NOTE: This subsection is OK
-(define (filter-graphical-select l)
+;;NOTE: This subsection is OK, except the hack for custom objects ;-(...
+(define (filter-graphical-select l x y)
   (define (filter-path p)
-    (with p2 (map string->number (cdr p))
-      (if (graphics-path p2) p2 #f))
+     (define (cut-after-first-negative p) ;; NOTE: Belongs to the hack
+	(with ref #f
+	   (for@ (x p)
+	      (if (and (not ref) (< (car x) 0))
+		  (set! ref x))
+	   )
+	   (if ref
+	       (set-cdr! ref '()))
+	)
+	p
+     )
+     (with p2 (map string->number (cdr p))
+       (set! p2 (cut-after-first-negative p2)) ;; NOTE: Hack
+       (if (graphics-path p2) p2 #f))
   )
   (define (filter-sel e)
     (with e2 (map filter-path (cdr e))
+   ;; FIXME: Hack to workaround the bad results of (graphical-select) for
+   ;;   custom objects (sends back paths with negative elements).
+      (if (and (>= (length e2) 1)
+	       (pair? (car e2))
+	       (< (cAr (car e2)) 0)
+	  )
+	  (set-car! e2 (rcons (cDr (car e2)) 0)))
+      (if (and (>= (length e2) 2)
+	       (pair? (cadr e2))
+	       (< (cAr (cadr e2)) 0)
+	  )
+	  (set-car! (cdr e2) (rcons (cDr (cadr e2)) 0)))
+      (if (and (>= (length e2) 2)
+	       (== (car e2) (cadr e2))
+	  )
+	  (set-cdr! e2 '()))
+      (if (car e2)
+      (let* ((p (graphics-path (car e2)))
+	     (o (if p (path->tree p) #f))
+	 )
+	 (if (and o (not (in? (tree-label o) gr-tags-all)))
+          ;; Custom markup
+	     (set-car! e2 (rcons p (if x (object-closest-point-pos
+					    (tree->stree o) (i2s x) (i2s y))
+					 0))))))
+   ;; FIXME: End hack
       (if (== (car e2) #f) #f e2))
   )
   (define (remove-filtered-elts l)
@@ -756,18 +804,19 @@
   )
   (with l2 (cons 'tuple (map filter-sel (cdr l)))
     (remove-filtered-elts l2)
+   ;(display* "res2=" (cdr l2) "\n")
     (cdr l2)))
 
 (tm-define (graphics-select x y d)
   (with res (tree->stree (graphical-select x y))
    ;(display* "res=" res "\n")
-    (filter-graphical-select res)))
+    (filter-graphical-select res x y)))
 
 (tm-define (graphics-select-area x1 y1 x2 y2)
   (define l '())
   (with res (tree->stree (graphical-select-area x1 y1 x2 y2))
    ;(display* "res=" res "\n")
-    (set! res (filter-graphical-select res))
+    (set! res (filter-graphical-select res #f #f))
     (foreach (e res)
        (set! l (cons (graphics-path (car e)) l))
     )
@@ -959,4 +1008,8 @@
 	,(append (cons
 	    'cond
 	    (map cond-case vals))
-	   `((else (display* "Uncaptured " ',func " " ,obj "\n")))))))
+	   `(,(if (and (pair? parms) (in? 'handle-other parms))
+		 `(else (,(string->symbol
+			   (string-append
+			    "other_" (symbol->string func))) . ,vars))
+		 `(else (display* "Uncaptured " ',func " " ,obj "\n"))))))))

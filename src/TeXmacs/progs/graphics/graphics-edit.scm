@@ -204,6 +204,9 @@
 	     (point_left-button x y p obj 1 edge))
 	  (go-to (car (select-first (s2i x) (s2i y)))))))
 
+(define (other_left-button x y p obj no edge)
+  (point_left-button x y p obj no edge))
+
 ;; Move
 (define (point_move x y p obj no edge)
   (if sticky-point
@@ -233,6 +236,9 @@
       (begin
 	(create-graphical-object obj p 'points #f))))
 
+(define (other_move x y p obj no edge)
+  (point_move x y p obj no edge))
+
 ;; Middle button
 (define (point_middle-button x y p obj no)
   (if sticky-point
@@ -243,6 +249,7 @@
       ;;Remove
       (begin
 	(if (or (in? (car obj) gr-tags-oneshot) (null? (cdddr obj))
+		(not (in? (car obj) gr-tags-all))
 		(!= (logand (get-keyboard-modifiers) ShiftMask) 0))
 	    (begin
 	      (graphics-remove p)
@@ -253,6 +260,9 @@
 	      (create-graphical-object obj p 'points #f)
 	      (graphics-active-assign obj)))
 	(set! sticky-point #f))))
+
+(define (other_middle-button x y p obj no)
+  (point_middle-button x y p obj no))
 
 ;; Right button (add point)
 (define (point_sticky-right-button x y p obj no edge)
@@ -295,7 +305,7 @@
    "insert" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline arc carc)
 			(text-at))
-	     left-button (x y p obj no edge) do-tick)))
+	     left-button (x y p obj no edge) do-tick handle-other)))
 
 (define (edit_move x y)
   (with-graphics-context
@@ -304,7 +314,7 @@
        (dispatch (car obj) ((point line cline spline cspline arc carc)
 			    (text-at)
 			    (gr-group))
-		 move (x y p obj no edge) do-tick
+		 move (x y p obj no edge) do-tick handle-other
        )
        (begin
 	  (set-texmacs-pointer 'graphics-cross)
@@ -315,7 +325,7 @@
    "remove" x y p obj no edge
    (dispatch (car obj) ((point line cline spline cspline arc carc
 			 text-at gr-group))
-	     middle-button (x y p obj no) do-tick)))
+	     middle-button (x y p obj no) do-tick handle-other)))
 
 (define (edit_right-button x y)
   (if sticky-point
@@ -324,6 +334,7 @@
        (dispatch (car obj) ((point line cline spline cspline arc carc text-at))
 		 sticky-right-button (x y p obj no edge) do-tick))
       (with mode (cadr (graphics-mode))
+	(set! layer-of-last-removed-object #f)
 	(dispatch mode ((point)
 			(line cline spline cspline arc carc)
 			(text-at))

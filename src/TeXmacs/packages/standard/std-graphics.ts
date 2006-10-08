@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.0.6.6>
 
 <style|<tuple|source|std>>
 
@@ -35,7 +35,25 @@
 
   <assign|draw-under|<macro|bg|fg|<with|dims|<box-info|<gr-tbl|<arg|bg>>|wh>|cm-1|<over|<look-up|<cm-length>|0>>|<with|gr-geometry|<gr-geom|<value|dims>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<gr-tbl|<arg|bg>>|<frozen|<gr-tbl|<arg|fg>>>>>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Predefined useful objects.
+    </src-comment>
+  </active*>
+
+  <assign|rectangle|<\macro|p1|p2>
+    <cline|<arg|p1>|<point|<look-up|<arg|p1>|0>|<look-up|<arg|p2>|1>>|<arg|p2>|<point|<look-up|<arg|p2>|0>|<look-up|<arg|p1>|1>>>
+  </macro>>
+
+  <assign|circle|<\macro|p1|p2>
+    <\with|x1|<look-up|<arg|p1>|0>|y1|<look-up|<arg|p1>|1>>
+      <\with|x2|<look-up|<arg|p2>|0>|y2|<look-up|<arg|p2>|1>>
+        <\with|xr|<minus|<value|x2>|<value|x1>>|yr|<minus|<value|y2>|<value|y1>>>
+          <carc|<arg|p2>|<point|<plus|<value|x1>|<minus|<value|xr>>>|<plus|<value|y1>|<minus|<value|yr>>>>|<point|<plus|<value|x1>|<minus|<value|yr>>>|<plus|<value|y1>|<value|xr>>>>
+        </with>
+      </with>
+    </with>
+  </macro>>
 </body>
 
 <\initial>
