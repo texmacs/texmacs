@@ -300,8 +300,9 @@
 			 arc carc
 			 text-at
 			 gr-group))
-(tm-define gr-tags-curves  '(line cline spline cspline arc carc))
-(tm-define gr-tags-oneshot '(point arc carc text-at gr-group))
+(tm-define gr-tags-curves    '(line cline spline cspline arc carc))
+(tm-define gr-tags-noncurves '(point text-at gr-group))
+(tm-define gr-tags-oneshot   '(point arc carc text-at gr-group))
 
 (tm-define (stree-at p)
   (tree->stree (path->tree p)))
@@ -320,10 +321,11 @@
       #f
       (with p (cDr path)
 	 (with o (path->tree p)
-	    (if (and (tree? o) (in? (tree-label o) gr-tags-all))
+	    (if (and (tree? o) ;; (in? (tree-label o) gr-tags-all)
+		     (not (eq? (tree-label o) 'string)))
 		(begin
 		  ;(display* "gp=" (path->tree (cDr path)) "\n")
-		   p)
+		   (if (eq? (tree-label o) 'graphics) #f p))
 		(graphics-path (cDr path)))))))
 
 (tm-define (graphics-active-path)
@@ -398,7 +400,7 @@
 (tm-define (graphics-valid-attribute? attr tag)
   (cond ((== tag 'point)
 	 (in? attr '("color" "fill-color" "point-style")))
-	((in? tag gr-tags-curves)
+	((not (in? tag gr-tags-noncurves))
 	 (in? attr '("color" "fill-color" "line-width"
 		     "dash-style" "dash-style-unit"
 		     "line-arrows")))
@@ -435,7 +437,7 @@
 	    `(("color" ,color)
 	      ("fill-color" ,fc)
 	      ("point-style" ,ps))))
-	  ((in? mode gr-tags-curves)
+	  ((not (in? mode gr-tags-noncurves))
 	   (graphics-enrich-sub t
 	    `(("color" ,color)
 	      ("line-width" ,lw)
