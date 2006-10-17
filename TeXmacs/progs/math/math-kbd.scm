@@ -1068,7 +1068,10 @@
   ("W W" "<bbb-W>")
   ("X X" "<bbb-X>")
   ("Y Y" "<bbb-Y>")
-  ("Z Z" "<bbb-Z>"))
+  ("Z Z" "<bbb-Z>")
+
+  ("R E" "<Re>")
+  ("I M" "<Im>"))
 
 (kbd-map
   (:mode in-math-not-hybrid?)
