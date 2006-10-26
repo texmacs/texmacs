@@ -212,6 +212,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_space (attach_here (t, ip));
     break;
   case HTAB:
+    if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
     print (space (env->as_length (t[0])));
     control (t, ip);
     break;

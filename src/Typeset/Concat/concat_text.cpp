@@ -138,6 +138,7 @@ concater_rep::typeset_concat (tree t, path ip) {
 
 void
 concater_rep::typeset_hspace (tree t, path ip) {
+  if (N(a)==0) print (STD_ITEM, empty_box (ip, 0, 0, 0, env->fn->yx));
   if (N(t)==1) print (env->as_hspace (t[0]));
   else print (space (env->as_length (t[0]),
 		     env->as_length (t[1]),
