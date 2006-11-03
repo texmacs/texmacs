@@ -490,6 +490,10 @@ edit_env_rep::update (string s) {
   case Env_Magnification:
     magn= get_double (MAGNIFICATION);
     update_font ();
+    update_geometry ();
+    update_frame ();
+    lw= get_length (LINE_WIDTH);
+    update_line_arrows ();
     break;
   case Env_Language:
     update_language ();

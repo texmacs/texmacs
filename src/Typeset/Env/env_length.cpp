@@ -173,9 +173,9 @@ edit_env_rep::as_vspace (tree t) {
 
 point
 edit_env_rep::as_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
+  if ((is_tuple (t) || is_point (t)) && ((N(t)==0) || is_double (t[0])))
     return ::as_point (t);
-  if (is_tuple (t)) {
+  if (is_tuple (t) || is_point (t)) {
     int i, n= N(t);
     point p(n);
     for (i=0; i<n; i++)
