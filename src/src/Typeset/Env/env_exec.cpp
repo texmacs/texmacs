@@ -1385,10 +1385,10 @@ edit_env_rep::exec_get_binding (tree t) {
 tree
 edit_env_rep::exec_point (tree t) {
   int i, n= N(t);
-  tree u (TUPLE, n);
+  tree u (_POINT, n);
   for (i=0; i<n; i++)
     u[i]= exec (t[i]);
-  if (is_tuple (u) && ((n==0) || is_double (u[0]))) return u;
+  if (n==0 || is_double (u[0])) return u;
   return as_tree (as_point (u));
 }
 

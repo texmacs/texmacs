@@ -23,6 +23,7 @@ point operator *  (double x, point p );
 point operator /  (point  p, double x);
 bool  operator == (point p1, point p2);
 
+bool is_point (tree t);
 inline point as_point(double x) {
   point p(1); p[0]=x; return p; }
 point as_point (tree t);

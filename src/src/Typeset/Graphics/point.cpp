@@ -67,9 +67,14 @@ operator == (point p1, point p2) {
   return true;
 }
 
+bool
+is_point (tree t) {
+  return L(t)==_POINT;
+}
+
 point
 as_point (tree t) {
-  if (!is_tuple (t)) return point ();
+  if (!is_tuple (t) && !is_point (t)) return point ();
   else {
     int i, n= N(t);
     point p(n);
@@ -82,7 +87,7 @@ as_point (tree t) {
 tree
 as_tree (point p) {
   int i, n= N(p);
-  tree t (TUPLE, n);
+  tree t (_POINT, n);
   for (i=0; i<n; i++)
     t[i]= as_string (p[i]);
   return t;
