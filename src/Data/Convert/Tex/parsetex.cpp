@@ -151,6 +151,7 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
 	for (j=N(t); j>0 && is_regular (t[j-1]); j--);
 	if (is_tuple (arg, "\\over", 1)) {
 	  tree num= t (j, N(t));
+	  if (N(num) == 0) num= "";
 	  t= t (0, j);
 	  t << tree (TUPLE, "\\frac", num, arg[1]);
 	}
