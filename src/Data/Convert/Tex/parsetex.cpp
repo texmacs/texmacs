@@ -70,6 +70,14 @@ latex_parser::latex_error (string s, int i, string message) {
 * Main parsing routine
 ******************************************************************************/
 
+static bool
+is_regular (tree t) {
+  if (!is_tuple (t)) return true;
+  if (N(t) == 0 || !is_atomic (t[0])) return false;
+  string s= t[0]->label;
+  return !starts (s, "\\begin-") && !starts (s, "\\end-");
+}
+
 tree
 latex_parser::parse (string s, int& i, string stop, bool change) {
   bool no_error= true;
@@ -137,13 +145,15 @@ latex_parser::parse (string s, int& i, string stop, bool change) {
       break;
     case '\\':
       if (((i+7)<n) && (s(i,i+5)=="\\over") && (!is_alpha (s (i+5, i+7)))) {
+	int j;
 	i+=5;
 	tree arg= parse_command (s, i, "\\over");
-	while ((N(t)>=1) &&
-	       ((t[N(t)-1] == " ") || (t[N(t)-1] == tree (TUPLE, "\\ "))))
-	  t= t (0, N(t)-1);
-	if (is_tuple (arg, "\\over", 1) && (N(t)>=1))
-	  t[N(t)-1]= tree (TUPLE, "\\frac", t[N(t)-1], arg[1]);
+	for (j=N(t); j>0 && is_regular (t[j-1]); j--);
+	if (is_tuple (arg, "\\over", 1)) {
+	  tree num= t (j, N(t));
+	  t= t (0, j);
+	  t << tree (TUPLE, "\\frac", num, arg[1]);
+	}
       }
       else if (((i+5)<n) && (s(i,i+3)=="\\sp") && (!is_alpha(s[i+3]))) {
 	i+=3;
