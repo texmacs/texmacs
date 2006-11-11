@@ -307,7 +307,7 @@
       (with q (tm-upwards-path p '(with) '())
 	 (if (equal? q (cDr p))
 	     (get-upwards-property p var)
-	     (nothing)))))
+	     nothing))))
 ;; TODO : Put this in utils/library/tree.scm
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
