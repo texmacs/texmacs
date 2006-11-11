@@ -679,7 +679,6 @@ concater_rep::concater_rep (edit_env env2): env (env2) {}
 array<line_item>
 typeset_concat (edit_env env, tree t, path ip) {
   concater ccc= new concater_rep (env);
-  // env->update (); // NOTE: Necessary for a correct update of magnification
   ccc->typeset (t, ip);
   ccc->finish ();
   array<line_item> a= ccc->a;
