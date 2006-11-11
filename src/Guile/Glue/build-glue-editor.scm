@@ -85,6 +85,7 @@
   (set-style-tree set_style (void tree))
   (get-env get_env_string (string string))
   (get-env-tree get_env_value (tree string))
+  (get-env-tree-at get_env_value (tree string path))
   (get-init-tree get_init_value (tree string))
   (context-has? defined_at_cursor (bool string))
   (style-has? defined_at_init (bool string))

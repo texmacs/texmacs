@@ -232,19 +232,31 @@
 
 ;;NOTE: This section is OK.
 (tm-define nothing (gensym))
+(define list-find-prop-cons #f)
 (tm-define (list-find-prop l var)
   (define (find l)
      (if (or (null? l) (null? (cdr l)))
 	 nothing
 	 (if (== (car l) var)
-	     (cadr l)
+	     (begin
+		(set! list-find-prop-cons (cdr l))
+		(cadr l))
 	     (if (null? (cdr l))
 		 nothing
 		 (find (cddr l)))))
   )
+  (set! list-find-prop-cons #f)
   (if (null? l)
       nothing
       (find (cdr l))))
+
+(tm-define (list-find&set-prop l var val)
+  (list-find-prop l var)
+  (if list-find-prop-cons
+      (begin
+	 (set-car! list-find-prop-cons val)
+         l)
+     `(with ,var ,val . ,l)))
 
 (tm-define (tm-find-prop p var)
 ;;(tm-find-prop '<tree <with|a|1|...>> "a")              -> <tree 1>
@@ -288,7 +300,15 @@
 
 (tm-define (get-upwards-property p var)
   (t2o (get-upwards-tree-property p var)))
-;; TODO : Put these two in utils/library/tree.scm
+
+(tm-define (get-upwards-property-1 p var)
+  (if (null? p)
+      nothing
+      (with q (tm-upwards-path p '(with) '())
+	 (if (equal? q (cDr p))
+	     (get-upwards-property p var)
+	     (nothing)))))
+;; TODO : Put this in utils/library/tree.scm
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing the graphics
@@ -392,6 +412,41 @@
   (with p (graphics-graphics-path)
     (if p (path-remove-with p var))))
 
+;; Magnification
+(tm-define (graphics-eval-magnification)
+  (tree->stree (get-env-tree-at
+		  "magnification" (rcons (graphics-graphics-path) 0))))
+
+(tm-define (graphics-eval-magnification-at path)
+  (tree->stree (get-env-tree-at "magnification" path)))
+
+(tm-define (multiply-magnification magn h)
+  (if (string? h)
+      (set! h (s2i h)))
+  (cond ((equal? h 1.0)
+         #t
+        )
+        ((and (pair? magn) (eq? (car magn) 'times))
+         (set! h (* h (s2i (cadr magn))))
+        )
+        ((or (string? magn) (number? magn))
+         (if (string? magn)
+             (set! magn (s2i magn)))
+         (set! h (* h magn))
+        )
+        (else
+           (set! h 1.0))
+  )
+  (if (equal? h 1.0)
+      #f
+     `(times ,(i2s h) (value "magnification"))))
+
+(tm-define (local-magnification amagn)
+  (if (string? amagn)
+      (set! amagn (s2i amagn)))
+ `(times ,(i2s (/ amagn (s2i (graphics-eval-magnification))))
+	  (value "magnification")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enriching graphics with properties like color, line width, etc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -402,14 +457,14 @@
 	 (in? attr '("color" "fill-color" "point-style")))
 	((not (in? tag gr-tags-noncurves))
 	 (in? attr '("color" "fill-color" "line-width"
-		     "dash-style" "dash-style-unit"
+		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows")))
 	((== tag 'text-at)
-	 (in? attr '("text-at-halign" "text-at-valign")))
+	 (in? attr '("magnification" "text-at-halign" "text-at-valign")))
 	((== tag 'gr-group)
 	 (in? attr '("color" "fill-color"
 		     "point-style" "line-width"
-		     "dash-style" "dash-style-unit"
+		     "magnification" "dash-style" "dash-style-unit"
 		     "line-arrows"
 		     "text-at-halign" "text-at-valign")))
 	(else #f)))
@@ -420,6 +475,9 @@
 	     (tail (graphics-enrich-filter t (cdr l))))
 	(if (or (== (cadr head) "default")
 		(== (cadr head) (get-default-val (car head)))
+		(and (== (car head) "magnification")
+		     (or (== (cadr head) "1.0")
+			 (== (cadr head) '(times "1.0" (value "magnification")))))
 		(not (graphics-valid-attribute? (car head) t)))
 	    tail
 	    (cons* (car head) (cadr head) tail)))))
@@ -430,7 +488,7 @@
 	t
 	`(with ,@f ,t))))
 
-(tm-define (graphics-enrich-bis t color ps lw st stu lp fc ha va)
+(tm-define (graphics-enrich-bis t color ps lw mag st stu lp fc ha va)
   (let* ((mode (car t)))
     (cond ((== mode 'point)
 	   (graphics-enrich-sub t
@@ -441,18 +499,21 @@
 	   (graphics-enrich-sub t
 	    `(("color" ,color)
 	      ("line-width" ,lw)
+	      ("magnification" ,mag)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
 	      ("fill-color" ,fc))))
 	  ((== mode 'text-at)
 	   (graphics-enrich-sub t
-	    `(("text-at-halign" ,ha)
+	    `(("magnification" ,mag)
+	      ("text-at-halign" ,ha)
 	      ("text-at-valign" ,va))))
 	  ((== mode 'gr-group)
 	   (graphics-enrich-sub t
 	    `(("color" ,color)
 	      ("point-style" ,ps)
 	      ("line-width" ,lw)
+	      ("magnification" ,mag)
 	      ("dash-style" ,st) ("dash-style-unit" ,stu)
 	      ("line-arrows" ,lp)
 	      ("fill-color" ,fc)
@@ -465,13 +526,14 @@
   (let* ((color (graphics-get-property "gr-color"))
 	 (ps (graphics-get-property "gr-point-style"))
 	 (lw (graphics-get-property "gr-line-width"))
+	 (mag "1.0")
 	 (st (graphics-get-property "gr-dash-style"))
 	 (stu (graphics-get-property "gr-dash-style-unit"))
 	 (lp (graphics-get-property "gr-line-arrows"))
 	 (fc (graphics-get-property "gr-fill-color"))
 	 (ha (graphics-get-property "gr-text-at-halign"))
 	 (va (graphics-get-property "gr-text-at-valign")))
-    (graphics-enrich-bis t color ps lw st stu lp fc ha va)))
+    (graphics-enrich-bis t color ps lw mag st stu lp fc ha va)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for modifying the innermost group of graphics
@@ -481,6 +543,7 @@
 ;;TODO: Look at this when the appropriate stuff for environments
 ;;  will have been implemented.
 (tm-define (graphics-group-insert-bis t go-into)
+ ;(display* "t=" t "\n")
   (let* ((p (graphics-group-path))
 	 (p2 #f)
     )
@@ -515,9 +578,9 @@
   (graphics-group-insert (graphics-enrich t)))
 
 (tm-define (graphics-group-enrich-insert-bis
-	    t color ps lw st stu lp fc ha va go-into)
+	    t color ps lw mag st stu lp fc ha va go-into)
   (graphics-group-insert-bis
-    (graphics-enrich-bis t color ps lw st stu lp fc ha va) go-into))
+    (graphics-enrich-bis t color ps lw mag st stu lp fc ha va) go-into))
 
 (tm-define (graphics-group-start)
   (graphics-finish)
@@ -578,6 +641,13 @@
 
 (tm-define (graphics-path-property p var)
   (graphics-path-property-bis p var "default"))
+
+(tm-define (graphics-path-property-bis-1 p var default-val)
+  (with c (get-upwards-property-1 p var)
+    (if (== c nothing) default-val c)))
+
+(tm-define (graphics-path-property-1 p var)
+  (graphics-path-property-bis-1 p var "default"))
 
 (tm-define (graphics-active-property var default-val)
   (graphics-path-property-bis (graphics-active-path) var default-val))

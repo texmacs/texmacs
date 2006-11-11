@@ -723,6 +723,21 @@ tmg_get_env_tree (SCM arg1) {
 }
 
 SCM
+tmg_get_env_tree_at (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "get-env-tree-at");
+  SCM_ASSERT_PATH (arg2, SCM_ARG2, "get-env-tree-at");
+
+  string in1= scm_to_string (arg1);
+  path in2= scm_to_path (arg2);
+
+  // SCM_DEFER_INTS;
+  tree out= get_server()->get_editor()->get_env_value (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return tree_to_scm (out);
+}
+
+SCM
 tmg_get_init_tree (SCM arg1) {
   SCM_ASSERT_STRING (arg1, SCM_ARG1, "get-init-tree");
 
@@ -2917,6 +2932,7 @@ initialize_glue_editor () {
   scm_new_procedure ("set-style-tree", (FN) tmg_set_style_tree, 1, 0, 0);
   scm_new_procedure ("get-env", (FN) tmg_get_env, 1, 0, 0);
   scm_new_procedure ("get-env-tree", (FN) tmg_get_env_tree, 1, 0, 0);
+  scm_new_procedure ("get-env-tree-at", (FN) tmg_get_env_tree_at, 2, 0, 0);
   scm_new_procedure ("get-init-tree", (FN) tmg_get_init_tree, 1, 0, 0);
   scm_new_procedure ("context-has?", (FN) tmg_context_hasP, 1, 0, 0);
   scm_new_procedure ("style-has?", (FN) tmg_style_hasP, 1, 0, 0);

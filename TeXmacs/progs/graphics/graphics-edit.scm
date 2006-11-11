@@ -166,6 +166,7 @@
 	(graphics-group-enrich-insert-bis
 	 obj graphical-color graphical-pstyle
 	 graphical-lwidth
+	 (local-magnification graphical-magnification)
 	 graphical-lstyle
 	 graphical-lstyle-unit
 	 graphical-larrows
@@ -434,6 +435,7 @@
   (let* ((color (graphics-path-property p "color"))
 	 (ps (graphics-path-property p "point-style"))
 	 (lw (graphics-path-property p "line-width"))
+	 (mag (graphics-path-property-1 p "magnification"))
 	 (st (graphics-path-property p "dash-style"))
 	 (stu (graphics-path-property p "dash-style-unit"))
 	 (lp (graphics-path-property p "line-arrows"))
@@ -450,6 +452,7 @@
 		  (graphics-get-property "gr-point-style") ps)
 	      (if (graphics-line-width-enabled?)
 		  (graphics-get-property "gr-line-width") lw)
+	      mag
 	      (if (graphics-dash-style-enabled?)
 		  (graphics-get-property "gr-dash-style") st)
 	      (if (graphics-dash-style-unit-enabled?)
@@ -511,6 +514,7 @@
 
 (define (text-at-change-halign p dirn)
   (let* ((obj (stree-at p))
+	 (mag (get-graphical-prop p "magnification"))
 	 (halign (get-graphical-prop p "text-at-halign"))
 	 (valign (get-graphical-prop p "text-at-valign"))
 	 (halign2 (if dirn
@@ -526,12 +530,13 @@
      (graphics-remove p 'memoize-layer)
      (set! current-path-under-mouse
 	(graphics-group-enrich-insert-bis
-	   obj #f #f #f #f #f #f #f halign2 valign #f))
+	   obj #f #f #f mag #f #f #f #f halign2 valign #f))
      (create-graphical-object obj '() 'points 'no-group)
      (graphics-group-start)))
 
 (define (text-at-change-valign p dirn)
   (let* ((obj (stree-at p))
+	 (mag (get-graphical-prop p "magnification"))
 	 (halign (get-graphical-prop p "text-at-halign"))
 	 (valign (get-graphical-prop p "text-at-valign"))
 	 (valign2 (if dirn
@@ -549,7 +554,7 @@
      (graphics-remove p 'memoize-layer)
      (set! current-path-under-mouse
 	(graphics-group-enrich-insert-bis
-	   obj #f #f #f #f #f #f #f halign valign2 #f))
+	   obj #f #f #f mag #f #f #f #f halign valign2 #f))
      (create-graphical-object obj '() 'points 'no-group)
      (graphics-group-start)))
 
@@ -566,7 +571,10 @@
 	       (!= tag 'point)
 	       (== (car l) "point-style"))
 	  (group-list (cddr l) tag)
-	  (cons `(,(car l) ,(cadr l)) (group-list (cddr l) tag)))
+	  (with val (if (== (car l) "magnification")
+	                (local-magnification (cadr l))
+			(cadr l))
+	     (cons `(,(car l) ,val) (group-list (cddr l) tag))))
      '()))
 
 (define (restore-selected-objects so)
@@ -658,7 +666,19 @@
 	     (point-norm (sub-point `(,group-first-x ,group-first-y)
 				    `(,group-bary-x ,group-bary-y))))
   (lambda (o)
-     (traverse-transform o (zoom-point group-bary-x group-bary-y h)))))
+     (let* ((res (traverse-transform o (zoom-point group-bary-x group-bary-y h)))
+	    (curmag #f)
+	    (gmag (s2i (graphics-eval-magnification)))
+	)
+	(for@ (c (cdr res))
+	   (set-car! c (if (eq? (caar c) 'with)
+			   (with curmag
+				 (s2i (find-prop
+					 (car c) "magnification" "1.0"))
+			      (list-find&set-prop
+				 (car c) "magnification" (i2s (* curmag gmag h))))
+			  `(with "magnification" ,(i2s (* gmag h)) ,(car c)))))
+	res))))
 
 (define (rotate-point x0 y0 alpha)
   (lambda (o)
@@ -1049,9 +1069,12 @@
 	 (newfr `(tuple "scale" ,newu ,(cAr fr)))
      )
      (if (and (> newud 100) (< newud 10000000))
-     (begin
+     (with magn (multiply-magnification
+		   (graphics-get-property "magnification") e)
 	(create-graphical-object #f #f #f #f)
-	(graphics-set-property "gr-frame" newfr)))))
+	(graphics-set-property "gr-frame" newfr)
+	(if magn
+	    (graphics-set-property "magnification" magn))))))
 
 (define (graphics-move-origin dx dy)
   (define (add l1 l2)
