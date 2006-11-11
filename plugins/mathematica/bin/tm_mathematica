@@ -21,18 +21,18 @@ then
         fi
     fi
     MATH2=`echo "$MATH1" | sed -e 's=Executables/math$=AddOns/MathLink/DeveloperKit='`
-    PLATFORM=`(cd "$MATH"; echo *)`
+    PLATFORM=`(cd "$MATH2"; echo *)`
     NUM_PLATFORMS=`echo "$PLATFORM" | wc -w`
     if [ "$NUM_PLATFORMS" -eq 1 ]
     then MATH3="$MATH2/$PLATFORM"
     else
         if [ -n "$MATHLINK_PLATFORM" ]
         then
-            if [ -d "$MATH/$MATHLINK_PLATFORM" ]
+            if [ -d "$MATH2/$MATHLINK_PLATFORM" ]
             then MATH3="$MATH2/$MATHLINK_PLATFORM"
             else error "MATHLINK_PLATFORM must be one of\n$PLATFORM"
             fi
-        else error "MathLink is installed in $MATH for the following platforms:\n\
+        else error "MathLink is installed in $MATH2 for the following platforms:\n\
 $PLATFORM\n\nPlease, set the environment variable MATHLINK_PLATFORM \
 to one of them and try again."
         fi
