@@ -36,6 +36,10 @@
 (define-public (nlist-3? x) (not (list-3? x)))
 (define-public (list-4? x) (and (list? x) (= (length x) 4)))
 (define-public (nlist-4? x) (not (list-4? x)))
+(define-public (list>0? x) (and (pair? x) (list? x)))
+(define-public (nlist>0? x) (not (list>0? x)))
+(define-public (list>1? x) (and (list? x) (> (length x) 1)))
+(define-public (nlist>1? x) (not (list>1? x)))
 
 (define-public (in? x l) (not (not (member x l))))
 (define-public (nin? x l) (not (member x l)))
