@@ -44,6 +44,7 @@
 
 (lazy-define (convert latex texout) serialize-latex)
 (lazy-define (convert latex tmtex) texmacs->latex)
+(lazy-define (convert latex tmtex-elsevier) init-elsevier)
 
 (converter latex-document latex-tree
   (:function parse-latex-document))
