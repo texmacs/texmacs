@@ -342,10 +342,11 @@
       (with p (cDr path)
 	 (with o (path->tree p)
 	    (if (and (tree? o) ;; (in? (tree-label o) gr-tags-all)
-		     (not (eq? (tree-label o) 'string)))
+		     (not (eq? (tree-label o) 'string))
+		     (tm-upwards-path (cDr p) '(graphics) '(text-at)))
 		(begin
-		  ;(display* "gp=" (path->tree (cDr path)) "\n")
-		   (if (eq? (tree-label o) 'graphics) #f p))
+		  ;;(display* "gp=" (path->tree (cDr path)) "\n")
+		  (if (eq? (tree-label o) 'graphics) #f p))
 		(graphics-path (cDr path)))))))
 
 (tm-define (graphics-active-path)
