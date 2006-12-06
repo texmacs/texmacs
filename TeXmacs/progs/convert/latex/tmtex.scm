@@ -22,9 +22,10 @@
 	(convert latex latex-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Initialization
+;; Global variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define tmtex-style "generic")
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-image-root-url (string->url "image"))
@@ -38,7 +39,34 @@
 (define tmtex-korean? #f)
 (define tmtex-taiwanese? #f)
 
-(tm-define (tmtex-initialize opts)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-modes
+  (elsevier-style% (in? tmtex-style '("elsart"))))
+
+(define (tmtex-set-style style body)
+  (set! tmtex-style style)
+  (if (elsevier-style?) (init-elsevier body)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-set-language lan)
+  (set! tmtex-chinese? (== lan "chinese"))
+  (set! tmtex-japanese? (== lan "japanese"))
+  (set! tmtex-korean? (== lan "korean"))
+  (set! tmtex-taiwanese? (== lan "taiwanese"))
+  (set! tmtex-oriental? (or tmtex-chinese? tmtex-japanese?
+			    tmtex-korean? tmtex-taiwanese?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initialization from options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-initialize opts)
   (set! tmtex-env (make-ahash-table))
   (set! tmtex-serial 0)
   (if (== (url-suffix current-save-target) "tex")
@@ -172,7 +200,8 @@
 	((func? (car l) '!concat) (append (cdar l) (tex-concat-list (cdr l))))
 	(else (cons (car l) (tex-concat-list (cdr l))))))
 
-(define (tex-concat l)
+(tm-define (tex-concat l)
+  (:synopsis "Horizontal concatenation of list of LaTeX expressions")
   (let ((r (tex-concat-similar (tex-concat-list l))))
     (if (null? r) ""
 	(if (null? (cdr r)) (car r)
@@ -184,8 +213,8 @@
 	 (tex-concat-strings (cons (string-append (car l) (cadr l)) (cddr l))))
 	(else (cons (car l) (tex-concat-strings (cdr l))))))
 
-(define (tex-concat* l)
-  "Variant of tex-concat for which adjecent strings are concatenated"
+(tm-define (tex-concat* l)
+  (:synopsis "Variant of tex-concat which concatenates adjacent strings")
   (tex-concat (tex-concat-strings l)))
 
 (define tex-apply
@@ -362,8 +391,8 @@
 	((== x "seminar") "slides")
 	((in? x '("tmarticle" "tmdoc" "mmxdoc")) "article")
 	((in? x '("tmbook" "tmmanual")) "book")
-	;;((in? x '("acmconf" "amsart" "svjour" "elsart")) x)
-	;;((in? x '("jsc")) "elsart")
+	;;((in? x '("acmconf" "amsart" "svjour")) x)
+	((in? x '("elsart" "jsc")) "elsart")
 	((in? x '("acmconf" "amsart")) x)
 	((in? x '("svjour" "elsart" "jsc")) "article")
 	((not tmtex-replace-style?) x)
@@ -994,7 +1023,8 @@
 		      ((null? r) (car l))
 		      (else (append (car l) (list sep) r)))))))
 
-(define (tmtex-select-data expr tag)
+(tm-define (tmtex-select-data expr tag)
+  (:synopsis "Get data matching @tag in @expr with nice separators")
   (let* ((data (select expr (list tag)))
 	 (sep (if (== tag 'author-address) '(!nextline) "; "))
 	 (fun (lambda (x)
@@ -1022,7 +1052,7 @@
     (tex-concat* (tmtex-data-assemble '(!nextline)
 				      (list name* address)))))
 
-(define (tmtex-doc-data s l)
+(tm-define (tmtex-doc-data s l)
   (let* ((tag (cons s l))
 	 (title (tmtex-select-data tag 'doc-title))
 	 (authors (map tmtex-make-author (select tag '(doc-author-data))))
@@ -1038,6 +1068,15 @@
     (tex-concat `((title ,(tex-concat title*))
 		  (author ,(tex-concat author*))
 		  (maketitle)))))
+
+(define (tmtex-doc-data-wrapper s l)
+  (tmtex-doc-data s l))
+
+(tm-define (tmtex-abstract s l)
+  (tmtex-std-env s l))
+
+(define (tmtex-abstract-wrapper s l)
+  (tmtex-abstract s l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style primitives
@@ -1403,12 +1442,12 @@
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))
-  (doc-data (,tmtex-doc-data -1))
+  (doc-data (,tmtex-doc-data-wrapper -1))
   ((:or doc-title doc-author-data doc-date doc-note
 	doc-keywords doc-AMS-class) (,tmtex-default -1))
   ((:or author-name author-address author-note
 	author-email author-homepage) (,tmtex-default -1))
-  (abstract (,tmtex-std-env 1))
+  (abstract (,tmtex-abstract-wrapper 1))
   (appendix (,tmtex-appendix 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
@@ -1532,20 +1571,13 @@
 	     (lan (tmfile-init x "language"))
 	     (init (tmfile-extract x 'initial))
 	     (doc (list '!file body style lan init (get-texmacs-path))))
-	(latex-set-language lan)
 	(latex-set-style main-style)
-	(set! tmtex-chinese? (== lan "chinese"))
-	(set! tmtex-japanese? (== lan "japanese"))
-	(set! tmtex-korean? (== lan "korean"))
-	(set! tmtex-taiwanese? (== lan "taiwanese"))
-	(set! tmtex-oriental? (or tmtex-chinese? tmtex-japanese?
-				  tmtex-korean? tmtex-taiwanese?))
+	(latex-set-language lan)
+	(tmtex-set-style (car style) body)
+	(tmtex-set-language lan)
 	(with result (texmacs->latex doc opts)
-	  (set! tmtex-chinese? #f)
-	  (set! tmtex-japanese? #f)
-	  (set! tmtex-korean? #f)
-	  (set! tmtex-taiwanese? #f)
-	  (set! tmtex-oriental? #f)
+	  (tmtex-set-style "generic" "")
+	  (tmtex-set-language "english")
 	  result))
       (let* ((x2 (tmtm-eqnumber->nonumber x))
 	     (x3 (tmtm-match-brackets x2)))
