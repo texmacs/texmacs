@@ -99,5 +99,6 @@
   (let ((r (tmtex (car l))))
     (tmtex-env-reset "mode")
     (if (== s "equation")
-	(list (list '!begin "elsequation") r)
-	(list (list '!begin "elsequation*") r))))
+	(list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
+	(list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
+	)))

@@ -660,6 +660,7 @@ latex_command_to_tree (tree t) {
     return ""; // FIXME: for larger space in maple matrices
   if (is_tuple (t, "\\etalchar", 1)) return t2e (t[1]);
   if (is_tuple (t, "\\natexlab", 1)) return t2e (t[1]);
+  if (is_tuple (t, "\\penalty", 1)) return "";
   if (is_tuple (t, "\\url", 1))
     return tree (APPLY, "slink", t2e (t[1]));
   if (is_tuple (t, "\\href", 2))

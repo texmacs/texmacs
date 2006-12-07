@@ -67,6 +67,7 @@
   (tree-accessible-child? is_accessible_child (bool tree int))
   (tree-accessible-children accessible_children (array_tree tree))
   (tree-load-inclusion load_inclusion (tree url))
+  (tree-as-string var_as_string (string tree))
 
   ;; paths
   (path-inf? path_inf (bool path path))
