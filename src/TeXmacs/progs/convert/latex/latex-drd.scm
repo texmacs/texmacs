@@ -56,7 +56,8 @@
   includegraphics
   title author thanks
   phantom hphantom vphantom smash
-  url)
+  url
+  penalty)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))

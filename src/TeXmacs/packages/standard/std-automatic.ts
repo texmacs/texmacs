@@ -45,9 +45,11 @@
 
   <assign|render-cite-detail|<macro|x|y|<render-cite|<arg|x>, <arg|y>>>>
 
+  <assign|cite-sep|<macro|, >>
+
   <assign|cite-arg|<macro|x|<write|bib|<arg|x>><reference|<merge|bib-|<arg|x>>>>>
 
-  <assign|cite-arg-extra|<macro|x|, <cite-arg|<arg|x>>>>
+  <assign|cite-arg-extra|<macro|x|<cite-sep><cite-arg|<arg|x>>>>
 
   <assign|cite|<xmacro|x|<render-cite|<cite-arg|<arg|x|0>><map-args|cite-arg-extra|concat|x|1>>>>
 

@@ -183,6 +183,7 @@ var_as_string (tree t) {
       cumul << var_as_string (t[i]);
     return cumul;
   }
+  else if (is_compound (t, "nbsp", 0)) return " ";
   return "";
 }
 

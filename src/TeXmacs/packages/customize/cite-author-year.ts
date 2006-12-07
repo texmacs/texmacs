@@ -1,0 +1,130 @@
+<TeXmacs|1.0.6.6>
+
+<style|source>
+
+<\body>
+  <active*|<\src-title>
+    <src-package|cite-author-year|1.0>
+
+    <\src-purpose>
+      This package contains extended macros for citations and provides a
+      <TeXmacs> counterpart for the natbib package.
+    </src-purpose>
+
+    <src-copyright|2006|Joris van der Hoeven>
+
+    <\src-license>
+      This <TeXmacs> style package falls under the <hlink|GNU general public
+      license|$TEXMACS_PATH/LICENSE> and comes WITHOUT ANY WARRANTY
+      WHATSOEVER. If you do not have a copy of the license, then write to the
+      Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+      02111-1307, USA.
+    </src-license>
+  </src-title>>
+
+  <use-module|(text text-natbib)>
+
+  <\active*>
+    <\src-comment>
+      Helper macros
+    </src-comment>
+  </active*>
+
+  <assign|natbib-author|<macro|text|<extern|natbib-get|<arg|text>|author>>>
+
+  <assign|natbib-year|<macro|text|<extern|natbib-get|<arg|text>|year>>>
+
+  <assign|natbib-author*|<macro|text|<extern|natbib-get|<arg|text>|author*>>>
+
+  \;
+
+  <assign|cite-add|<macro|key|<write|bib|<arg|x>>>>
+
+  <assign|cite-data|<macro|key|<get-binding|<merge|bib-|<arg|key>>>>>
+
+  <assign|cite-link|<macro|key|text|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|key>>>|<link|hyperlink|<id|<hard-id|<arg|key>>>|<url|<merge|#bib-|<arg|key>>>>|<arg|text>>>>>
+
+  <\active*>
+    <\src-comment>
+      Main commands for citations
+    </src-comment>
+  </active*>
+
+  <assign|render-cite|<macro|x|(<arg|x>)>>
+
+  <assign|cite-sep|<macro|; >>
+
+  \;
+
+  <assign|cite-author|<macro|x|<cite-add|<arg|x>><natbib-author|<cite-data|<arg|x>>>>>
+
+  <assign|cite-year|<macro|x|<cite-add|<arg|x>><natbib-year|<cite-data|<arg|x>>>>>
+
+  <assign|cite-author*|<macro|x|<cite-add|<arg|x>><natbib-author*|<cite-data|<arg|x>>>>>
+
+  <assign|cite-author-year|<macro|x|<cite-author|<arg|x>>,
+  <cite-year|<arg|x>>>>
+
+  <assign|cite-author*-year|<macro|x|<cite-author*|<arg|x>>,
+  <cite-year|<arg|x>>>>
+
+  <assign|cite-author-year*|<macro|x|<cite-author|<arg|x>>
+  <render-cite|<cite-year|<arg|x>>>>>
+
+  <assign|cite-author*-year*|<macro|x|<cite-author*|<arg|x>>
+  <render-cite|<cite-year|<arg|x>>>>>
+
+  \;
+
+  <assign|cite-author-link|<macro|x|<cite-link|<arg|x>|<cite-author|<arg|x>>>>>
+
+  <assign|cite-year-link|<macro|x|<cite-link|<arg|x>|<cite-year|<arg|x>>>>>
+
+  <assign|cite-author*-link|<macro|x|<cite-link|<arg|x>|<cite-author*|<arg|x>>>>>
+
+  \;
+
+  <assign|cite-raw-1|<macro|x|<cite-link|<arg|x>|<cite-author-year|<arg|x>>>>>
+
+  <assign|cite-raw+|<macro|x|<cite-sep><cite-raw-1|<arg|x>>>>
+
+  <assign|cite-raw|<xmacro|x|<cite-raw-1|<arg|x|0>><map-args|cite-raw+|concat|x|1>>>
+
+  <assign|cite-raw*-1|<macro|x|<cite-link|<arg|x>|<cite-author*-year|<arg|x>>>>>
+
+  <assign|cite-raw*+|<macro|x|<cite-sep><cite-raw*-1|<arg|x>>>>
+
+  <assign|cite-raw*|<xmacro|x|<cite-raw*-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>
+
+  \;
+
+  <assign|cite-textual-1|<macro|x|<cite-link|<arg|x>|<cite-author-year*|<arg|x>>>>>
+
+  <assign|cite-textual+|<macro|x|<cite-sep><cite-textual-1|<arg|x>>>>
+
+  <assign|cite-textual|<xmacro|x|<cite-textual-1|<arg|x|0>><map-args|cite-textual+|concat|x|1>>>
+
+  <assign|cite-textual*-1|<macro|x|<cite-link|<arg|x>|<cite-author*-year*|<arg|x>>>>>
+
+  <assign|cite-textual*+|<macro|x|<cite-sep><cite-textual*-1|<arg|x>>>>
+
+  <assign|cite-textual*|<xmacro|x|<cite-textual*-1|<arg|x|0>><map-args|cite-textual*+|concat|x|1>>>
+
+  \;
+
+  <assign|cite|<xmacro|x|<render-cite|<cite-raw-1|<arg|x|0>><map-args|cite-raw+|concat|x|1>>>>
+
+  <assign|cite*|<xmacro|x|<render-cite|<cite-raw-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>>
+
+  <assign|cite-parenthesized|<value|cite>>
+
+  <assign|cite-parenthesized*|<value|cite*>>
+
+  \;
+</body>
+
+<\initial>
+  <\collection>
+    <associate|preamble|true>
+  </collection>
+</initial>
