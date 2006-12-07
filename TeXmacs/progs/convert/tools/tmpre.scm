@@ -22,15 +22,20 @@
   verbatim code center indent description itemize itemize-minus
   itemize-dot itemize-arrow enumerate enumerate-numeric
   enumerate-roman enumerate-Roman enumerate-alpha enumerate-Alpha
-  equation equation* eqnarray eqnarray* leqnarray*)
+  equation equation* eqnarray eqnarray* leqnarray leqnarray*
+  elsequation elsequation*)
 
 (drd-group tmpre-sectional%
   part chapter appendix section subsection subsubsection
-  paragraph subparagraph)
+  paragraph subparagraph
+  part* chapter* appendix* section* subsection* subsubsection*
+  paragraph* subparagraph*)
 
 (drd-group tmpre-theorem-env%
   theorem proposition lemma corollary axiom definition notation conjecture
-  remark note example exercise warning convention)
+  remark note example exercise warning convention
+  theorem* proposition* lemma* corollary* axiom* definition* notation*
+  conjecture* remark* note* example* exercise* warning* convention*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing

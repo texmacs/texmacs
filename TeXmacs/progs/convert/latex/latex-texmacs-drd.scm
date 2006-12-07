@@ -229,17 +229,29 @@
 			       "\\setlength{\\itemindent}{\\parindent}"
 			       "\\setlength{\\parsep}{\\parskip}"))
     (!append "\\item[]"
-	     ---))))
+	     ---)))
+  ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
+  ("elsequation*" ((!begin "eqnarray*") (!append --- "&&"))))
 
 (drd-table latex-texmacs-env-arity%
   ("proof" 0)
   ("proof*" 1)
-  ("tmparmod" 3))
+  ("tmparmod" 3)
+  ("elsequation" 0)
+  ("elsequation*" 0))
 
-(drd-group latex-texmacs-tag% begin-proof begin-proof* begin-tmparmod)
-(drd-group latex-environment-0% begin-proof)
-(drd-group latex-environment-1% begin-proof*)
-(drd-group latex-environment-3% begin-tmparmod)
+(drd-group latex-texmacs-tag%
+  begin-proof begin-proof* begin-tmparmod
+  begin-elsequation begin-elsequation*)
+
+(drd-group latex-environment-0%
+  begin-proof begin-elsequation begin-elsequation*)
+
+(drd-group latex-environment-1%
+  begin-proof*)
+
+(drd-group latex-environment-3%
+  begin-tmparmod)
 
 (define-macro (latex-texmacs-itemize env lab)
   (with env-sym (string->symbol (string-append "begin-" env))
