@@ -167,15 +167,15 @@
 (define (tmtex-math-mode?)
   (== (tmtex-env-get "mode") "math"))
 
-(define (tmtex-env-set var val)
+(tm-define (tmtex-env-set var val)
   (ahash-set! tmtex-env var (cons val (tmtex-env-list var))))
 
-(define (tmtex-env-reset var)
+(tm-define (tmtex-env-reset var)
   (let ((val (tmtex-env-list var)))
     (if (nnull? val)
 	(ahash-set! tmtex-env var (cdr val)))))
 
-(define (tmtex-env-assign var val)
+(tm-define (tmtex-env-assign var val)
   (tmtex-env-reset var)
   (tmtex-env-set var val))
 
@@ -1145,13 +1145,16 @@
 (define (tmtex-Huge s l)
   (list 'Huge (tmtex (car l))))
 
-(define (tmtex-equation s l)
+(tm-define (tmtex-equation s l)
   (tmtex-env-set "mode" "math")
   (let ((r (tmtex (car l))))
     (tmtex-env-reset "mode")
     (if (== s "equation")
 	(list (list '!begin s) r)
 	(list '!eqn r))))
+
+(define (tmtex-equation-wrapper s l)
+  (tmtex-equation s l))
 
 (define (tmtex-eqnarray s l)
   (tmtex-env-set "mode" "math")
@@ -1475,7 +1478,7 @@
   (really-huge (,tmtex-Huge 1))
 
   (math (,tmtex-math 1))
-  ((:or equation equation*) (,tmtex-equation 1))
+  ((:or equation equation*) (,tmtex-equation-wrapper 1))
   ((:or eqnarray eqnarray* leqnarray*) (,tmtex-eqnarray 1))
   (eq-number (,tmtex-default -1))
   ((:or the-index the-glossary) (,tmtex-dummy -1))

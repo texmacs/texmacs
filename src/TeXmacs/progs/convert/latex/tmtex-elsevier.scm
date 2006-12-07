@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : tmtex-elsevier.scm
 ;; DESCRIPTION : special conversions for elsevier styles
-;; COPYRIGHT   : (C) 2002  Joris van der Hoeven
+;; COPYRIGHT   : (C) 2006  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -87,3 +87,17 @@
 (tm-define (tmtex-abstract s l)
   (:mode elsevier-style?)
   "")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Elsevier style is very ugly.
+;; Transform equations into eqnarray* for more uniform alignment.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-equation s l)
+  (:mode elsevier-style?)
+  (tmtex-env-set "mode" "math")
+  (let ((r (tmtex (car l))))
+    (tmtex-env-reset "mode")
+    (if (== s "equation")
+	(list (list '!begin "elsequation") r)
+	(list (list '!begin "elsequation*") r))))
