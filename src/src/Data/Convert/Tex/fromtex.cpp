@@ -19,6 +19,7 @@
 tree upgrade_tex (tree t);
 static bool textm_appendices= false;
 static bool textm_unicode   = false;
+static bool textm_natbib    = false;
 
 /******************************************************************************
 * Preprocess preamble
@@ -628,10 +629,36 @@ latex_command_to_tree (tree t) {
     tree   ot= t2e(t[1])->label;
     string s = string_arg (t2e(t[2]));
     tree   ct= latex_cite_to_tree ("cite", s);
+    if (N(ct) == 2) return compound ("cite-detail", ct[1], ot);
     return tree (CONCAT, ct, " (", ot, ")");
   }
   if (is_tuple (t, "\\citedetail", 2))
     return compound ("cite-detail", l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\citet", 1) || is_tuple (t, "\\citep", 1) ||
+      is_tuple (t, "\\citet*", 1) || is_tuple (t, "\\citep*", 1) ||
+      is_tuple (t, "\\citealt", 1) || is_tuple (t, "\\citealp", 1) ||
+      is_tuple (t, "\\citealt*", 1) || is_tuple (t, "\\citealp*", 1))
+    {
+      textm_natbib= true;
+      string star= "";
+      string cite_type= t[0]->label (1, N(t[0]->label));
+      if (ends (cite_type, "*")) {
+	star= "*"; cite_type= cite_type (0, N (cite_type) - 1); }
+      if (cite_type == "citet") cite_type= "cite-textual" * star;
+      if (cite_type == "citep") cite_type= "cite-parenthesized" * star;
+      if (cite_type == "citealt") cite_type= "cite-raw" * star;
+      if (cite_type == "citealp") cite_type= "cite-raw" * star;
+      string s= string_arg (t2e(t[1]));
+      return latex_cite_to_tree (cite_type, s);
+    }
+  if (is_tuple (t, "\\citetext", 1))
+    return compound ("render-cite", l2e (t[1]));
+  if (is_tuple (t, "\\citeauthor", 1)) {
+    textm_natbib= true; return compound ("cite-author-link", t2e (t[1])); }
+  if (is_tuple (t, "\\citeauthor*", 1)) {
+    textm_natbib= true; return compound ("cite-author*-link", t2e (t[1])); }
+  if (is_tuple (t, "\\citeyear", 1)) {
+    textm_natbib= true; return compound ("cite-year-link", t2e (t[1])); }
   if (is_tuple (t, "\\index", 1)) {
     string s= string_arg (t2e (t[1]));
     return latex_index_to_tree (s);
@@ -1285,6 +1312,7 @@ latex_to_tree (tree t1) {
   }
   textm_appendices= false;
   textm_unicode   = false;
+  textm_natbib    = false;
   command_type ("!em") = "false";
   // cout << "\n\nt1= " << t1 << "\n\n";
   tree t2= is_document? filter_preamble (t1): t1;
@@ -1329,6 +1357,8 @@ latex_to_tree (tree t1) {
     tree the_body   = compound ("body", t11);
     tree the_style  = compound ("style", style);
     tree the_initial= compound ("initial", initial);
+    if (textm_natbib)
+      the_style= compound ("style", tuple (style, "cite-author-year"));
     if (N (initial) == 0) return tree (DOCUMENT, the_style, the_body);
     else return tree (DOCUMENT, the_style, the_body, the_initial);
   }

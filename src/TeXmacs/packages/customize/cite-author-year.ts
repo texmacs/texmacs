@@ -38,7 +38,7 @@
 
   \;
 
-  <assign|cite-add|<macro|key|<write|bib|<arg|x>>>>
+  <assign|cite-add|<macro|key|<write|bib|<arg|key>>>>
 
   <assign|cite-data|<macro|key|<get-binding|<merge|bib-|<arg|key>>>>>
 
@@ -119,6 +119,11 @@
   <assign|cite-parenthesized|<value|cite>>
 
   <assign|cite-parenthesized*|<value|cite*>>
+
+  <assign|cite-detail|<macro|x|y|<render-cite-detail|<cite-raw-1|<arg|x>>|<arg|y>>>>
+
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<render-bibitem|<natbib-author*|<arg|text>>,
+  <natbib-year|<arg|text>>><set-binding|<arg|text>>>>>
 
   \;
 </body>
