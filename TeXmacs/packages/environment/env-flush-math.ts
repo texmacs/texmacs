@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.6>
 
 <style|source>
 
@@ -43,7 +43,7 @@
   </with>>>
 
   <assign|equation-lab|<\macro|body|lab>
-    <\surround|<assign|the-label|<arg|lab>>|<htab|5mm><with|mode|text|(<arg|lab>)>>
+    <\surround|<set-binding|<arg|lab>>|<htab|5mm><with|mode|text|(<arg|lab>)>>
       <\equation*>
         <arg|body>
       </equation*>
@@ -69,13 +69,13 @@
   <assign|old-eqnarray*|<value|eqnarray*>>
 
   <assign|eqnarray*|<\macro|body>
-    <old-eqnarray*|<tformat|<cwith|1|-1|1|1|cell-hpart|0>|<cwith|1|-1|1|1|cell-width|0.5par>|<cwith|1|-1|1|1|cell-hmode|min>|<arg|body>>>
+    <old-eqnarray*|<tformat|<cwith|1|-1|1|1|cell-hpart|0>|<cwith|1|-1|1|1|cell-hyphen|n>|<arg|body>>>
   </macro>>
 
   <assign|old-align*|<value|align*>>
 
   <assign|align*|<\macro|body>
-    <old-align*|<tformat|<cwith|1|-1|1|1|cell-hpart|0>|<cwith|1|-1|1|1|cell-width|0.5par>|<cwith|1|-1|1|1|cell-hmode|min>|<arg|body>>>
+    <old-align*|<tformat|<cwith|1|-1|1|1|cell-hpart|0>|<cwith|1|-1|1|1|cell-hyphen|n>|<arg|body>>>
   </macro>>
 
   <assign|old-gather*|<value|gather*>>

@@ -53,11 +53,11 @@
   #{\'}# #{\`}# #{\"}# ^ over ~ = u v H t c d b thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
   arabic displaylines cases underbrace overbrace
-  includegraphics
+  includegraphics url penalty
   title author thanks
   phantom hphantom vphantom smash
-  url
-  penalty)
+  citet citep citet* citep* citealt citealp citealt* citealp*
+  citetext citeauthor citeauthor* citeyear)
 
 (drd-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -335,7 +335,20 @@
   (chunk "ecltree")
 
   (url "hyperref")
-  (href "hyperref"))
+  (href "hyperref")
+
+  (citet "natbib")
+  (citep "natbib")
+  (citet* "natbib")
+  (citep* "natbib")
+  (citealt "natbib")
+  (citealp "natbib")
+  (citealt* "natbib")
+  (citealp* "natbib")
+  (citetext "natbib")
+  (citeauthor "natbib")
+  (citeauthor* "natbib")
+  (citeyear "natbib"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated routines for consulting the database

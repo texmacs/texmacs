@@ -26,6 +26,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define tmtex-style "generic")
+(define tmtex-packages '())
 (define tmtex-env (make-ahash-table))
 (define tmtex-serial 0)
 (define tmtex-image-root-url (string->url "image"))
@@ -44,10 +45,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
-  (elsevier-style% (in? tmtex-style '("elsart"))))
+  (elsevier-style% (in? tmtex-style '("elsart")))
+  (natbib-package% (in? "cite-author-year" tmtex-packages)))
 
 (define (tmtex-set-style style body)
-  (set! tmtex-style style)
+  (set! tmtex-style (car style))
+  (set! tmtex-packages (cdr style))
   (if (elsevier-style?) (init-elsevier body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1238,15 +1241,6 @@
 (define (tmtex-output s l)
   (list '!group (list 'ttfamily (tmtex (car l)))))
 
-(define (tmtex-cite-list l)
-  (cond ((null? l) "")
-	((nstring? (car l)) (tmtex-cite-list (cdr l)))
-	((null? (cdr l)) (car l))
-	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
-
-(define (tmtex-cite s l)
-  (tex-apply (string->symbol s) (tmtex-cite-list l)))
-
 (define (tmtex-hlink s l)
   (list 'href (tmtex (cadr l)) (tmtex (car l))))
 
@@ -1276,6 +1270,64 @@
 
 (define ((tmtex-rename into) s l)
   (tmtex-apply into (tmtex-list l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Citations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-cite-list l)
+  (cond ((null? l) "")
+	((nstring? (car l)) (tmtex-cite-list (cdr l)))
+	((null? (cdr l)) (car l))
+	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
+
+(tm-define (tmtex-cite s l)
+  (tex-apply 'cite (tmtex-cite-list l)))
+
+(tm-define (tmtex-cite s l)
+  (:mode natbib-package?)
+  (tex-apply 'citep (tmtex-cite-list l)))
+
+(define (tmtex-nocite s l)
+  (tex-apply 'nocite (tmtex-cite-list l)))
+
+(tm-define (tmtex-cite-detail s l)
+  (tex-apply 'cite `(!option ,(tmtex (cadr l))) (tmtex (car l))))
+
+(tm-define (tmtex-cite-detail s l)
+  (:mode natbib-package?)
+  (tex-apply 'citetext `(!concat (citealp ,(tmtex (car l))) ", "
+				 ,(tmtex (cadr l)))))
+
+(define (tmtex-cite-raw s l)
+  (tex-apply 'citealp (tmtex-cite-list l)))
+
+(define (tmtex-cite-raw* s l)
+  (tex-apply 'citealp* (tmtex-cite-list l)))
+
+(define (tmtex-cite-textual s l)
+  (tex-apply 'citet (tmtex-cite-list l)))
+
+(define (tmtex-cite-textual* s l)
+  (tex-apply 'citet* (tmtex-cite-list l)))
+
+(define (tmtex-cite-parenthesized s l)
+  (tex-apply 'citep (tmtex-cite-list l)))
+
+(define (tmtex-cite-parenthesized* s l)
+  (tex-apply 'citep* (tmtex-cite-list l)))
+
+(define (tmtex-render-cite s l)
+  (tex-apply 'citetext (tmtex (car l))))
+
+(define (tmtex-cite-author s l)
+  (tex-apply 'citeauthor (tmtex (car l))))
+
+(define (tmtex-cite-author* s l)
+  (tex-apply 'citeauthor* (tmtex (car l))))
+
+(define (tmtex-cite-year s l)
+  (tex-apply 'citeyear (tmtex (car l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main conversion routines
@@ -1495,7 +1547,6 @@
   (session (,tmtex-session 1))
   (input (,tmtex-input 2))
   (output (,tmtex-output 1))
-  ((:or cite nocite) (,tmtex-cite -1))
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action 2))
   (slink (,tmtex-slink 1))
@@ -1504,7 +1555,20 @@
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1))
   (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
-  (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0)))
+  (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0))
+  (cite (,tmtex-cite -1))
+  (nocite (,tmtex-nocite -1))
+  (cite-detail (,tmtex-cite-detail 2))
+  (cite-raw (,tmtex-cite-raw -1))
+  (cite-raw* (,tmtex-cite-raw* -1))
+  (cite-textual (,tmtex-cite-textual -1))
+  (cite-textual* (,tmtex-cite-textual* -1))
+  (cite-parenthesized (,tmtex-cite-parenthesized -1))
+  (cite-parenthesized* (,tmtex-cite-parenthesized* -1))
+  (render-cite (,tmtex-render-cite 1))
+  ((:or cite-author cite-author-link) (,tmtex-cite-author 1))
+  ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
+  ((:or cite-year cite-year-link) (,tmtex-cite-year 1)))
 
 (drd-group tmtex-protected%
   a b c d i j k l o r t u v H L O P S
@@ -1576,10 +1640,10 @@
 	     (doc (list '!file body style lan init (get-texmacs-path))))
 	(latex-set-style main-style)
 	(latex-set-language lan)
-	(tmtex-set-style (car style) body)
+	(tmtex-set-style style body)
 	(tmtex-set-language lan)
 	(with result (texmacs->latex doc opts)
-	  (tmtex-set-style "generic" "")
+	  (tmtex-set-style '("generic") "")
 	  (tmtex-set-language "english")
 	  result))
       (let* ((x2 (tmtm-eqnumber->nonumber x))

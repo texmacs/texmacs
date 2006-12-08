@@ -212,6 +212,7 @@ cell_rep::format_item (tree with) {
 
 void
 cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
+  //cout << "  large= " << large << "\n";
   char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
   bool lr_flag= (align_c >= 'A' && align_c <= 'Z');
   if (!nil (T)) {
@@ -237,6 +238,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     }
   }
   else {
+    //cout << "  b= " << b << "\n";
     lw= rw= mw= 0;
     if (lr_flag) {
       if (N (halign) == 1) {
