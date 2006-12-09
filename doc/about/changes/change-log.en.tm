@@ -8,6 +8,11 @@
   <section|Changes from version 1.0.6 to 1.0.6.7>
 
   <\itemize>
+    <item>Better <LaTeX> export of <verbatim|elsart> style and other fixes in
+    the <LaTeX> converter (1.0.6.7).
+
+    <item>Some improvements in the <verbatim|elsart> style (1.0.6.7).
+
     <item>Several minor improvements in the graphical mode (1.0.6.7).
 
     <item>Fixes for Maxima 5.10.0 (1.0.6.7).
