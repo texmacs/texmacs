@@ -46,6 +46,10 @@ graphics_box_rep::graphics_box_rep (
   y1= (SI) min (flim1[1], flim2[1]);
   x2= (SI) max (flim1[0], flim2[0]);
   y2= (SI) max (flim1[1], flim2[1]);
+  x3= max (x1, x3);
+  y3= max (y1, y3);
+  x4= min (x2, x4);
+  y4= min (y2, y4);
   finalize ();
 }
 
