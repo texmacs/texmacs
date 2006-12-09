@@ -22,7 +22,7 @@
     </src-license>
   </src-title>>
 
-  <use-module|(text text-natbib)>
+  <use-module|(text std-text-natbib)>
 
   <\active*>
     <\src-comment>

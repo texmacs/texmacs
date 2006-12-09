@@ -32,6 +32,7 @@
   pagebreak nopagebreak newpage newdoublepage clearpage cleardoublepage
   newblock bgroup egroup protect cr date hfill appendix nolimits dots
   maketitle tableofcontents TeX LaTeX
+  begingroup endgroup
 
   ;; temporarily
   hline
