@@ -43,10 +43,12 @@
 	      ("Raw" (make 'cite-raw))
 	      ("Textual" (make 'cite-textual))
 	      ("Parenthesized" (make 'cite-parenthesized))
+	      ---
 	      (group "Full author list")
 	      ("Raw" (make 'cite-raw*))
 	      ("Textual" (make 'cite-textual*))
 	      ("Parenthesized" (make 'cite-parenthesized*))
+	      ---
 	      (group "Decomposed")
 	      ("Parenthesis" (make 'render-cite))
 	      ("Abreviated authors" (make 'cite-author-link))
