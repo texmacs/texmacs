@@ -853,6 +853,10 @@
       arg
       (list (list '!begin "tmparmod" x y z) arg)))
 
+(define (tmtex-make-parsep x arg)
+  (set! x (tmlength->texlength x))
+  (list (list '!begin "tmparsep" x) arg))
+
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
       (let ((old (tmtex-env-get-previous "mode")))
@@ -871,6 +875,7 @@
 	      ((== "par-left" var) (tmtex-make-parmod val "0pt" "0pt" arg))
 	      ((== "par-right" var) (tmtex-make-parmod "0pt" val "0pt" arg))
 	      ((== "par-first" var) (tmtex-make-parmod "0pt" "0pt" val arg))
+	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
 	      ((== var "color")
 	      	(list '!group (tex-concat (list (list 'color val) " " arg))))
 	      (else arg)))))
@@ -1117,6 +1122,9 @@
       (list 'tmtexttt (tmtex (car l)))))
 ;;(list '!verb (tmtex-tt (car l)))))
 
+(define (tmtex-indent s l)
+  (list (list '!begin "tmindent") (tmtex (car l))))
+
 (define (tmtex-list-env s l)
   (let* ((r (string-replace s "-" ""))
 	 (t (cond ((== r "enumerateRoman") "enumerateromancap")
@@ -1357,7 +1365,9 @@
 			 (map-in-order tmtex l)))))))
 
 (define (tmtex-compound l)
-  (tmtex-apply (string->symbol (car l)) (cdr l)))
+  (if (string? (car l))
+      (tmtex-apply (string->symbol (car l)) (cdr l))
+      ""))
 
 (define (tmtex-list l)
   (map-in-order tmtex l))
@@ -1509,7 +1519,8 @@
 	convention quote-env quotation verse)
    (,tmtex-std-env 1))
   ((:or verbatim code) (,tmtex-verbatim 1))
-  ((:or center indent) (,tmtex-std-env 1))
+  (center (,tmtex-std-env 1))
+  (indent (,tmtex-indent 1))
   ((:or description description-compact description-aligned
 	description-dash description-long
 	itemize itemize-minus itemize-dot itemize-arrow
@@ -1582,9 +1593,13 @@
 
 (define tmtex-user-defs-table (make-ahash-table))
 
+(define (user-definition? x)
+  (and (func? x 'assign 2)
+       (string? (cadr x))))
+
 (define (collect-user-defs-sub t)
   (cond ((npair? t) (noop))
-	((macro-definition? t)
+	((user-definition? t)
 	 (ahash-set! tmtex-user-defs-table (string->symbol (cadr t)) #t))
 	(else (for-each collect-user-defs-sub (cdr t)))))
 
@@ -1592,7 +1607,7 @@
   (if (== (get-preference "texmacs->latex:expand-user-macros") "on") '()
       (begin
 	(set! tmtex-user-defs-table (make-ahash-table))
-	(collect-user-defs-sub t)
+	(collect-user-defs-sub (cons 'document (tmtex-filter-preamble t)))
 	(ahash-set->list tmtex-user-defs-table))))
 
 (define (as-string sym)
@@ -1629,6 +1644,11 @@
 	((null? sty) (set! sty '("letter"))))
   (if (== (car sty) "generic") (set! sty (cons "letter" (cdr sty))))
   sty)
+
+(define (find? x what)
+  (cond ((== x what) #t)
+	((nlist? x) #f)
+	(else (list-or (map (cut find? <> what) x)))))
 
 (tm-define (texmacs->latex x opts)
   (if (tmfile? x)

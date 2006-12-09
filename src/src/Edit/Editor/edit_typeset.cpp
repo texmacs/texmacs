@@ -339,6 +339,22 @@ edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
 }
 
+static tree
+value_to_compound (tree t, hashmap<string,tree> h) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, VALUE, 1) &&
+	   is_atomic (t[0]) &&
+	   h->contains (t[0]->label))
+    return compound (t[0]->label);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= value_to_compound (t[i], h);
+    return r;
+  }
+}
+
 tree
 edit_typeset_rep::exec_latex (tree t, path p) {
   string pref= "texmacs->latex:expand-macros";
@@ -352,11 +368,11 @@ edit_typeset_rep::exec_latex (tree t, path p) {
   if (is_document (t) && is_compound (t[0], "hide-preamble")) {
     tree r= copy (t);
     r[0]= "";
-    r= exec (r, H, false);
+    r= exec (value_to_compound (r, P), H, false);
     r[0]= exec (t[0], H, false);
     return r;
   }
-  else return exec (t, H, false);
+  else return exec (value_to_compound (t, P), H, false);
 }
 
 tree

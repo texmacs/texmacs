@@ -230,6 +230,12 @@
 			       "\\setlength{\\parsep}{\\parskip}"))
     (!append "\\item[]"
 	     ---)))
+  ("tmparsep"
+   (!append (begingroup) "\\setlength{\\parskip}{" 1 "}"
+	     ---
+	     (endgroup)))
+  ("tmindent"
+   ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
   ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
   ("elsequation*" ((!begin "eqnarray*") (!append --- "&&"))))
 
@@ -237,21 +243,24 @@
   ("proof" 0)
   ("proof*" 1)
   ("tmparmod" 3)
+  ("tmparsep" 1)
+  ("tmindent" 0)
+  ("proof" 0)
   ("elsequation" 0)
   ("elsequation*" 0))
 
 (drd-group latex-texmacs-tag%
-  begin-proof begin-proof* begin-tmparmod
+  begin-proof begin-proof* begin-tmparmod begin-tmparsep begin-tmindent
   begin-elsequation begin-elsequation*)
 
 (drd-group latex-environment-0%
-  begin-proof begin-elsequation begin-elsequation*)
+  begin-proof begin-tmindent begin-elsequation begin-elsequation*)
 
 (drd-group latex-environment-1%
   begin-proof*)
 
 (drd-group latex-environment-3%
-  begin-tmparmod)
+  begin-tmparmod begin-tmparsep)
 
 (define-macro (latex-texmacs-itemize env lab)
   (with env-sym (string->symbol (string-append "begin-" env))
