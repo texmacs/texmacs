@@ -1184,7 +1184,7 @@
 
 (define (tmtex-bib-sub doc)
   (cond ((nlist? doc) doc)
-	((match? doc '(concat (bibitem* :1) (label :string?) :*))
+	((match? doc '(concat (bibitem* :%1) (label :string?) :*))
 	 (let* ((l (cadr (caddr doc)))
 		(s (if (string-starts? l "bib-") (string-drop l 4) l)))
 	   (cons* 'concat (list 'bibitem* (cadadr doc) s) (cdddr doc))))
@@ -1193,7 +1193,7 @@
 
 (define (tmtex-bib-max l)
   (cond ((npair? l) "")
-	((match? l '(bibitem* :string? :1)) (cadr l))
+	((match? l '(bibitem* :string? :%1)) (cadr l))
 	(else (let* ((s1 (tmtex-bib-max (car l)))
 		     (s2 (tmtex-bib-max (cdr l))))
 		(if (< (string-length s1) (string-length s2)) s2 s1)))))

@@ -74,7 +74,7 @@
 
 (define (buffer-hide-preamble)
   (with t (buffer-tree)
-    (when (match? t '(document (show-preamble :1) (ignore (document :*))))
+    (when (match? t '(document (show-preamble :%1) (ignore (document :*))))
       (tree-assign t `(document (hide-preamble ,(tree-ref t 0 0))
 				,@(tree-children (tree-ref t 1 0)))))))
 

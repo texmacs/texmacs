@@ -22,12 +22,13 @@ SCM object_stack;
 * Installation of guile and initialization of guile
 ******************************************************************************/
 
+#ifdef GUILE_C
 static void (*old_call_back) (int, char**)= NULL;
-
 static void
 new_call_back (void *closure, int argc, char** argv) {
   old_call_back (argc, argv);
 }
+#endif
 
 void
 start_guile (int argc, char** argv, void (*call_back) (int, char**)) {

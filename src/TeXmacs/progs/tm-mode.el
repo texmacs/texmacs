@@ -25,7 +25,7 @@
     (cons
      (concat "\\<\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-public-macro
+       '(texmacs-module provide-public define-macro define-public-macro
          tm-define tm-define-macro tm-property request-handler
 	 define-table define-preferences define-secure-symbols
          texmacs-modes and-let\\* case-lambda with with-global
@@ -47,7 +47,8 @@
     (cons
      (concat "(\\("
       (mapconcat 'symbol-name
-       '(texmacs-module define-macro define-public-macro define-table
+       '(texmacs-module provide-public
+	 define-macro define-public-macro define-table
 	 tm-define tm-define-macro tm-property request-handler define-group
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
@@ -65,7 +66,8 @@
   (dolist (s '(with with-global and-with with-innermost receive
 	       with-environment with-environment* converter))
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module and-let* setup-append-if define-group
+  (dolist (s '(texmacs-module provide-public
+	       and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property request-handler
 	       drd-group drd-table drd-dispatcher menu-bind

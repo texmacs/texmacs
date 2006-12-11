@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.0.6.6>
 
 <style|tmdoc>
 
@@ -9,7 +9,7 @@
   scheme API for <TeXmacs>, the <value|scheme> kernel implements several
   other utilities and language extensions. In this section, we will briefly
   sketch some of them on hand of examples. Further details can be found in
-  the chapter about <hyper-link|<TeXmacs> extensions to <value|scheme> and
+  the chapter about <hlink|<TeXmacs> extensions to <value|scheme> and
   utilities|../utils/scheme-utils.en.tm>.
 
   <paragraph|Regular expressions>
@@ -29,7 +29,8 @@
 
   <with|prog-language|scheme|prog-session|default|<\session>
     <\input|scheme] >
-      (select (buffer-tree) '(:* (:match (frac :1 (concat "1+" (sqrt :1))))))
+      (select (buffer-tree) '(:* (:match (frac :%1 (concat "1+" (sqrt
+      :%1))))))
     </input>
   </session>>
 

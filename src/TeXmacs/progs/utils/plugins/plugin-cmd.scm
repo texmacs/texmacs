@@ -183,7 +183,7 @@
 (tm-define (formula-context? t)
   (with u (tree-up t)
     (and u (or (tree-in? u '(math equation equation*))
-	       (match? u '(with "mode" "math" :1))
+	       (match? u '(with "mode" "math" :%1))
 	       (cell-context-inside? u '(eqnarray eqnarray*))))))
 
 (tm-define (in-var-math?)
@@ -205,7 +205,7 @@
 	((and (or (func? t 'document) (func? t 'concat))
 	      (in? (cAr t) '("" " " "  ")))
 	 (plugin-output-simplify name (cDr t)))
-	((match? t '(with "mode" "math" :1))
+	((match? t '(with "mode" "math" :%1))
 	 `(math ,(plugin-output-simplify name (cAr t))))
 	((func? t 'with)
 	 (rcons (cDr t) (plugin-output-simplify name (cAr t))))

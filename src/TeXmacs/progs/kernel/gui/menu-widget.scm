@@ -154,9 +154,9 @@
 	label)))
 
 (define (make-menu-entry-attrs label action opt-key opt-check)
-  (cond ((match? label '(shortcut :1 :string?))
+  (cond ((match? label '(shortcut :%1 :string?))
 	 (make-menu-entry-attrs (cadr label) action (caddr label) opt-check))
-	((match? label '(check :1 :string? :1))
+	((match? label '(check :%1 :string? :%1))
 	 (make-menu-entry-attrs (cadr label) action opt-key (cddr label)))
 	(else (values label action opt-key opt-check))))
 
@@ -255,23 +255,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (make-menu-if p e? bar?)
-  "Make @(if :1 :menu-item-list) menu items."
+  "Make @(if :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
     (if (pred?) (make-menu-items-list items e? bar?) '())))
 
 (define (make-menu-when p e? bar?)
-  "Make @(when :1 :menu-item-list) menu items."
+  "Make @(when :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
     (make-menu-items-list items (and e? (pred?)) bar?)))
 
 (define (make-menu-link p e? bar?)
-  "Make @(link :1) menu items."
+  "Make @(link :%1) menu items."
   (with linked ((eval (cadr p)))
     (if linked (make-menu-items linked e? bar?)
 	(make-menu-error "bad link: " (object->string (cadr p))))))
 
 (define (make-menu-promise p e? bar?)
-  "Make @(promise :1) menu items."
+  "Make @(promise :%1) menu items."
   (with value ((cadr p))
     (if (match? value ':menu-item) (make-menu-items value e? bar?)
 	(make-menu-error "promise did not yield a menu: " value))))
@@ -304,15 +304,15 @@
 (define-table make-menu-items-table
   (group (:string?) ,(lambda (p e? bar?) (list (make-menu-group (cadr p)))))
   (symbol (:string? :*) ,(lambda (p e? bar?) (list (make-menu-symbol p e?))))
-  (link (:1) ,(lambda (p e? bar?) (make-menu-link p e? bar?)))
+  (link (:%1) ,(lambda (p e? bar?) (make-menu-link p e? bar?)))
   (horizontal (:*) ,(lambda (p e? bar?) (list (make-menu-horizontal p e?))))
   (vertical (:*) ,(lambda (p e? bar?) (list (make-menu-vertical p e?))))
   (-> (:menu-label :*) ,(lambda (p e? bar?) (list (make-menu-submenu p e?))))
   (=> (:menu-label :*) ,(lambda (p e? bar?) (list (make-menu-submenu p e?))))
   (tile (:integer? :*) ,(lambda (p e? bar?) (list (make-menu-tile p e?))))
-  (if (:1 :*) ,(lambda (p e? bar?) (make-menu-if p e? bar?)))
-  (when (:1 :*) ,(lambda (p e? bar?) (make-menu-when p e? bar?)))
-  (promise (:1) ,(lambda (p e? bar?) (make-menu-promise p e? bar?))))
+  (if (:%1 :*) ,(lambda (p e? bar?) (make-menu-if p e? bar?)))
+  (when (:%1 :*) ,(lambda (p e? bar?) (make-menu-when p e? bar?)))
+  (promise (:%1) ,(lambda (p e? bar?) (make-menu-promise p e? bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu expansion

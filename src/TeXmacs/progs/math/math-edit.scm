@@ -144,7 +144,7 @@
 		  (insert " "))))))))
 
 (define (with-math-context? t)
-  (match? t '(with "mode" "math" :1)))
+  (match? t '(with "mode" "math" :%1)))
 
 (tm-define (variant-circulate forward?)
   (:context with-math-context?)

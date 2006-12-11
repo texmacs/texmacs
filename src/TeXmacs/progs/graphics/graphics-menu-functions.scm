@@ -29,9 +29,9 @@
 
 (tm-define (graphics-geometry)
   (with geo (tree->stree (get-env-tree "gr-geometry"))
-    (if (match? geo '(tuple "geometry" :2))
+    (if (match? geo '(tuple "geometry" :%2))
 	(append geo '("center"))
-	(if (match? geo '(tuple "geometry" :3))
+	(if (match? geo '(tuple "geometry" :%3))
 	    geo
 	    '(tuple "geometry" "1par" "0.6par" "center")))))
 
@@ -76,7 +76,7 @@
 
 (tm-define (graphics-cartesian-frame)
   (with frame (tree->stree (get-env-tree "gr-frame"))
-    (if (match? frame '(tuple "scale" :2))
+    (if (match? frame '(tuple "scale" :%2))
 	frame
 	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
 
@@ -160,11 +160,11 @@
 	  ((match? grid '(tuple "cartesian"))
 	   (set! graphics-current-type "cartesian")
 	  )
-	  ((match? grid '(tuple "cartesian" :1))
+	  ((match? grid '(tuple "cartesian" :%1))
 	   (set! graphics-current-type "cartesian")
 	   (set! graphics-current-step (list-ref grid 2))
 	  )
-	  ((match? grid '(tuple "cartesian" :2))
+	  ((match? grid '(tuple "cartesian" :%2))
 	   (set! graphics-current-type "cartesian")
 	   (set! graphics-current-center (list-ref grid 2))
 	   (set! graphics-current-step (list-ref grid 3))
@@ -172,16 +172,16 @@
 	  ((match? grid '(tuple "polar"))
 	   (set! graphics-current-type "polar")
 	  )
-	  ((match? grid '(tuple "polar" :1))
+	  ((match? grid '(tuple "polar" :%1))
 	   (set! graphics-current-type "polar")
 	   (set! graphics-current-step (list-ref grid 2))
 	  )
-	  ((match? grid '(tuple "polar" :2))
+	  ((match? grid '(tuple "polar" :%2))
 	   (set! graphics-current-type "polar")
 	   (set! graphics-current-step (list-ref grid 2))
 	   (set! graphics-current-astep (list-ref grid 3))
 	  )
-	  ((match? grid '(tuple "polar" :3))
+	  ((match? grid '(tuple "polar" :%3))
 	   (set! graphics-current-type "polar")
 	   (set! graphics-current-center (list-ref grid 2))
 	   (set! graphics-current-step (list-ref grid 3))
@@ -190,16 +190,16 @@
 	  ((match? grid '(tuple "logarithmic"))
 	   (set! graphics-current-type "logarithmic")
 	  )
-	  ((match? grid '(tuple "logarithmic" :1))
+	  ((match? grid '(tuple "logarithmic" :%1))
 	   (set! graphics-current-type "logarithmic")
 	   (set! graphics-current-step (list-ref grid 2))
 	  )
-	  ((match? grid '(tuple "logarithmic" :2))
+	  ((match? grid '(tuple "logarithmic" :%2))
 	   (set! graphics-current-type "logarithmic")
 	   (set! graphics-current-step (list-ref grid 2))
 	   (set! graphics-current-base (list-ref grid 3))
 	  )
-	  ((match? grid '(tuple "logarithmic" :3))
+	  ((match? grid '(tuple "logarithmic" :%3))
 	   (set! graphics-current-type "logarithmic")
 	   (set! graphics-current-center (list-ref grid 2))
 	   (set! graphics-current-step (list-ref grid 3))
@@ -439,12 +439,12 @@
       ;;  else (depends on if (get-env-tree) is gonna be fixed or not.
       ;;  If not, then we should avoid using it, and rely on the way
       ;;  above (if it doesn't raises other problems...)).
-    (if (match? aspect '(tuple (tuple :2) (tuple :2) :*))
+    (if (match? aspect '(tuple (tuple :%2) (tuple :%2) :*))
 	(set! res aspect)
 	(begin
 	  (set! aspect (graphics-path-property
 			  (graphics-graphics-path) "gr-grid-aspect"))
-	  (if (match? aspect '(tuple (tuple :2) (tuple :2) :*))
+	  (if (match? aspect '(tuple (tuple :%2) (tuple :%2) :*))
 	      (set! res aspect)
 	      (set! res (get-default-val "gr-grid-aspect")))))
   )
@@ -453,7 +453,7 @@
 (define (graphics-grid-aspect visual?)
   (with gr (if visual? "gr-grid-aspect" "gr-edit-grid-aspect")
   (with aspect (tree->stree (get-env-tree gr))
-     (if (not (match? aspect '(tuple (tuple :2) (tuple :2) :*)))
+     (if (not (match? aspect '(tuple (tuple :%2) (tuple :%2) :*)))
 	 (set! res (get-default-val gr)))
      (cons 'tuple (sort (cdr aspect) cmp-aspect-items)))))
 

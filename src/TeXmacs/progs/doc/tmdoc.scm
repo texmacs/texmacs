@@ -45,7 +45,7 @@
 	    (tmdoc-substitute-sub (cdr l) base-name))))
 
 (define (tmdoc-substitute x base-name)
-  (cond ((match? x '(hyper-link :1))
+  (cond ((match? x '(hyper-link :%1))
 	 (list 'hyper-link (cadr x)
 	       (url->string (url-relative base-name (caddr x)))))
 	((list? x) (cons (car x) (tmdoc-substitute-sub (cdr x) base-name)))
@@ -60,11 +60,11 @@
 	   '(document))
 	  ((func? x 'traverse)
 	   (cons 'document (tmdoc-rewrite (cdadr x) base-name level done)))
-	  ((match? x '(branch :2))
+	  ((match? x '(branch :%2))
 	   (tmdoc-branch x base-name (tmdoc-down level) done))
-	  ((match? x '(continue :2))
+	  ((match? x '(continue :%2))
 	   (tmdoc-branch x base-name (list level) done))
-	  ((match? x '(extra-branch :2))
+	  ((match? x '(extra-branch :%2))
 	   (tmdoc-branch x base-name 'appendix done))
 	  ((match? x '(tmdoc-copyright :*))
 	   '(document))
@@ -99,7 +99,7 @@
 (define (tmdoc-search-env-var t which)
   (cond ((nlist? t) #f)
 	((null? t) #f)
-	((match? t '(associate "language" :1)) (caddr t))
+	((match? t '(associate "language" :%1)) (caddr t))
 	(else (let ((val (tmdoc-search-env-var (car t) which)))
 		(if val val (tmdoc-search-env-var (cdr t) which))))))
 
@@ -170,7 +170,7 @@
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((npair? l) l)
-	((match? l '(hyper-link :1)) (cadr l))
+	((match? l '(hyper-link :%1)) (cadr l))
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 

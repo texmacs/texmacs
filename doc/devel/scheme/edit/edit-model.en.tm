@@ -147,7 +147,7 @@
   For instance, if<nbsp><verbatim|x> corresponds to the
   expression<nbsp>(<reference|example-edit-formula>), then
 
-  <verbatim| \ \ \ (select x '(rsub :1))>
+  <verbatim| \ \ \ (select x '(rsub :%1))>
 
   returns a list with the two subscripts <with|mode|math|1> and
   <with|mode|math|n>. In fact, <verbatim|select> may also be used in order to

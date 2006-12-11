@@ -187,15 +187,15 @@
 	(else #f)))
 
 (define (texout-double-math? x)
-  (or (and (match? x '((:or !document !concat) :1))
+  (or (and (match? x '((:or !document !concat) :%1))
 	   (texout-double-math? (cadr x)))
-      (and (match? x '((!begin :1) :1))
+      (and (match? x '((!begin :%1) :%1))
 	   (in? (cadar x) '("eqnarray" "eqnarray*" "leqnarray*")))))
 
 (define (texout-math x)
   (cond ((texout-empty? x) (noop))
 	((texout-double-math? x) (texout x))
-	((match? x '((!begin "center") :1))
+	((match? x '((!begin "center") :%1))
 	 (texout `((!begin "equation") ,(cadr x))))
 	((and (output-test-end? "$") (not (output-test-end? "\\$")))
 	 (output-remove 1)

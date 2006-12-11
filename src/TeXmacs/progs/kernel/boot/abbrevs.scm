@@ -53,12 +53,12 @@
 (define-public (true? . l) #t)
 (define-public (false? . l) #f)
 
-(define-public (identity x) x)
+(provide-public (identity x) x)
 
 (define-public (keyword->number x)
-  (string->number (symbol->string (keyword->symbol x))))
+  (string->number (string-tail (symbol->string (keyword->symbol x)) 1)))
 (define-public (number->keyword x)
-  (symbol->keyword (string->symbol (number->string x))))
+  (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
 (define-public (save-object file value)
   (write value (open-file (url-materialize file "") OPEN_WRITE))
@@ -71,7 +71,8 @@
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public call/cc call-with-current-continuation)
+(provide-public call/cc call-with-current-continuation)
+
 (define-public-macro (with-cc cont . body)
   `(call/cc (lambda (,cont) ,@body)))
 

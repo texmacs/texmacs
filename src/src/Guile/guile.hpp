@@ -21,7 +21,7 @@
 #ifdef GUILE_A
 #define scm_is_bool gh_boolean_p
 #define scm_is_int SCM_INUMP
-#define scm_is_string gh_string_p
+#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
 #define scm_is_symbol gh_symbol_p
 #define scm_is_null gh_null_p
 #define scm_is_pair gh_pair_p
@@ -52,10 +52,14 @@ typedef SCM (*scm_t_catch_body) (void *data);
 typedef SCM (*scm_t_catch_handler) (void *data, SCM tag, SCM throw_args);
 #endif
 
-#if defined GUILE_B || defined GUILE_C
+#ifndef GUILE_A
 #define scm_is_bool(x) SCM_NFALSEP(scm_boolean_p(x))
+#ifdef GUILE_B
 #define scm_is_int SCM_INUMP
-#define scm_is_string(x) SCM_NFALSEP(scm_string_p(x))
+#define scm_is_string(obj) (SCM_NIMP(obj) && SCM_STRINGP(obj))
+#else
+#define scm_is_int scm_is_integer
+#endif
 #ifndef scm_is_symbol
 #define scm_is_symbol(x) SCM_NFALSEP(scm_symbol_p(x))
 #endif

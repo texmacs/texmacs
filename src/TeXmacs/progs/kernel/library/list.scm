@@ -18,7 +18,7 @@
 ;; Constructors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (cons* . l)
+(provide-public (cons* . l)
   "Construct a list from head of several elements and a tail."
   ;; This function is in the kernel since GUILE-1.4.0
   (let ((r (reverse l)))
