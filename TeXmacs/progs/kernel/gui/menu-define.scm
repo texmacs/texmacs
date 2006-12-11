@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ATTENTION: in menu-pre-entry, we also perform some convenience
 ;; rewritings in order to let menus match the grammar below.
-;; The convience rewritings allow the use of ..., (check :string? :1),
+;; The convience rewritings allow the use of ..., (check :string? :%1),
 ;; (shortcut :string?) and multiple actions in menu entries.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -32,23 +32,23 @@
     (balloon :menu-label :string?)))
   (:menu-wide-label (:or
     :menu-label
-    (check :menu-wide-label :string? :1)
+    (check :menu-wide-label :string? :%1)
     (shortcut :menu-wide-label :string?)))
   (:menu-item (:or
     ---
     |
     (group :string?)
-    (:menu-wide-label :1)
+    (:menu-wide-label :%1)
     (symbol :string? :*)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (-> :menu-label :menu-item-list)
     (=> :menu-label :menu-item-list)
     (tile :integer? :menu-item-list)
-    (if :1 :menu-item-list)
-    (when :1 :menu-item-list)
-    (link :1)
-    (promise :1)
+    (if :%1 :menu-item-list)
+    (when :%1 :menu-item-list)
+    (link :%1)
+    (promise :%1)
     (:menu-item-list)))
   (:menu-item-list (:repeat :menu-item)))
 
@@ -97,11 +97,11 @@
       (list (menu-pre-wide-label (car p)) (make-promise (cadr p)))
       (cond ((null? (cdr p)) (menu-format-error "menu-pre-entry" p))
 	    ;; convenience rewritings
-	    ((match? (cdr p) '(... :1 :*))
+	    ((match? (cdr p) '(... :%1 :*))
 	     (menu-pre-entry `(,(menu-label-add-dots (car p)) ,@(cddr p))))
-	    ((match? (cdr p) '(:string? :1 :*))
+	    ((match? (cdr p) '(:string? :%1 :*))
 	     (menu-pre-entry `((shortcut ,(car p) ,(cadr p)) ,@(cddr p))))
-	    ((match? (cdr p) '((check :2) :1 :*))
+	    ((match? (cdr p) '((check :%2) :%1 :*))
 	     (menu-pre-entry `((check ,(car p) ,@(cdadr p)) ,@(cddr p))))
 	    (else (menu-pre-entry `(,(car p) (begin ,@(cdr p))))))))
 
@@ -131,7 +131,7 @@
 (define-table menu-pre-table
   (group (:string?) ,(lambda (p) p))
   (symbol (:string? :*) ,(lambda (p) p))
-  (link (:1) ,(lambda (p) p))
+  (link (:%1) ,(lambda (p) p))
   (horizontal (:*)
     ,(lambda (p) `(horizontal ,@(menu-pre-list (cdr p)))))
   (vertical (:*)
@@ -142,15 +142,15 @@
     ,(lambda (p) `(=> ,(cadr p) ,@(menu-pre-list (cddr p)))))
   (tile (:integer? :*)
     ,(lambda (p) `(tile ,(cadr p) ,@(menu-pre-list (cddr p)))))
-  (if (:1 :*)
+  (if (:%1 :*)
     ,(lambda (p) `(if ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
-  (when (:1 :*)
+  (when (:%1 :*)
     ,(lambda (p) `(when ,(make-promise (cadr p)) ,@(menu-pre-list (cddr p)))))
-  (promise (:1)
+  (promise (:%1)
     ,(lambda (p) `(promise ,(make-promise (cadr p))))))
 
-(ahash-set! menu-pre-table 'unquote `((:1) ,(lambda (p) p)))
-(ahash-set! menu-pre-table 'unquote-splicing `((:1) ,(lambda (p) p)))
+(ahash-set! menu-pre-table 'unquote `((:%1) ,(lambda (p) p)))
+(ahash-set! menu-pre-table 'unquote-splicing `((:%1) ,(lambda (p) p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of menus

@@ -53,7 +53,7 @@
 	    (string->object s)
 	    s))
       (with (op . r) (tree->list pat)
-	(cond ((== op 'pat-any) :1)
+	(cond ((== op 'pat-any) :%1)
 	      ((== op 'pat-any-repeat) :*)
 	      ((== op 'pat-or) (cons :or (map rewrite-select r)))
 	      ((== op 'pat-and) (cons :and (map rewrite-select r)))

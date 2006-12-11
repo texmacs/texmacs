@@ -26,6 +26,7 @@ bool scm_is_list_tree (SCM obj);
 bool scm_is_path (SCM obj);
 bool scm_is_url (SCM obj);
 bool scm_is_widget (SCM obj);
+
 SCM bool_to_scm (bool b);
 SCM int_to_scm (int i);
 SCM string_to_scm (string s);
@@ -36,8 +37,11 @@ SCM list_tree_to_scm (list<tree> l);
 SCM path_to_scm (path p);
 SCM url_to_scm (url u);
 SCM scheme_tree_to_scm (scheme_tree t);
+
+#ifndef GUILE_C
 int scm_to_bool (SCM obj);
 int scm_to_int (SCM obj);
+#endif
 string scm_to_string (SCM obj);
 string scm_to_symbol (SCM obj);
 tree scm_to_tree (SCM obj);

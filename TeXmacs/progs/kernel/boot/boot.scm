@@ -28,8 +28,14 @@
 (define dialogue-error #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Public macros
+;; Provide functions if not defined and public macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (provide-public head . body)
+  (if (or (and (symbol? head) (not (defined? head)))
+	  (and (pair? head) (symbol? (car head)) (not (defined? (car head)))))
+      `(define-public ,head ,@body)
+      '(noop)))
 
 (define-macro (define-public-macro head . body)
   `(define-public ,(car head)

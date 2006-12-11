@@ -25,9 +25,9 @@
     (let* ((mod (lambda (x y) (* y (- (/ x y) (floor (/ x y))))))
 	   (s (string->number (var-eval-system "date +\"%S\"")))
 	   (e (mod s 4)))
-      (if (and (<= e 1) (not (match? t '(strong :1))))
+      (if (and (<= e 1) (not (match? t '(strong :%1))))
 	  (tree-set t `(strong ,t)))
-      (if (and (>= e 2) (match? t '(strong :1)))
+      (if (and (>= e 2) (match? t '(strong :%1)))
 	  (tree-set t (tree-ref t 0))))))
 
 (kbd-map

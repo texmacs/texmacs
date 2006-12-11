@@ -101,7 +101,9 @@
       (let ((fpat (car pat)))
 	(cond ((keyword? fpat)
 	       (let* ((symb (keyword->symbol fpat))
-		      (n (string->number (symbol->string symb))))
+		      (n (string->number
+			  (string-tail
+			   (symbol->string symb) 1))))
 		 (cond ((== fpat :*) (list bl))
 		       (n (if (>= (length l) n)
 			      (match (list-tail l n) (cdr pat) bl)

@@ -597,7 +597,7 @@
   (define so-points '())
   (define (store-points)
     (lambda (o)
-       (if (match? o '(point :2))
+       (if (match? o '(point :%2))
 	   (set! so-points (cons o so-points))
        )
        o)
@@ -641,7 +641,7 @@
 
 (define (translate-point x y)
   (lambda (o)
-     (if (match? o '(point :2))
+     (if (match? o '(point :%2))
 	`(point ,(i2s (+ x (s2i (cadr o)))) ,(i2s (+ y (s2i (caddr o)))))
 	 o)))
 
@@ -651,7 +651,7 @@
 
 (define (zoom-point x0 y0 h)
   (lambda (o)
-     (if (match? o '(point :2))
+     (if (match? o '(point :%2))
 	 (let* ((x (s2i (cadr o)))
 		(y (s2i (caddr o)))
 	    )
@@ -682,7 +682,7 @@
 
 (define (rotate-point x0 y0 alpha)
   (lambda (o)
-     (if (match? o '(point :2))
+     (if (match? o '(point :%2))
 	 (let* ((x (- (s2i (cadr o)) group-bary-x))
 		(y (- (s2i (caddr o)) group-bary-y))
 	    )

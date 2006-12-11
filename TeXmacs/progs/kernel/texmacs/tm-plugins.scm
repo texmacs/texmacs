@@ -229,11 +229,13 @@
 (define (plugin-load-setup)
   (if (url-exists? "$TEXMACS_HOME_PATH/system/setup.scm")
       (set! plugin-old-data-table
-	    (load-object "$TEXMACS_HOME_PATH/system/setup.scm"))))
+	    (list->ahash-table
+	      (load-object "$TEXMACS_HOME_PATH/system/setup.scm")))))
 
 (define (plugin-save-setup)
   (if (!= plugin-old-data-table plugin-data-table)
-      (save-object "$TEXMACS_HOME_PATH/system/setup.scm" plugin-data-table)))
+      (save-object "$TEXMACS_HOME_PATH/system/setup.scm"
+		   (ahash-table->list plugin-data-table))))
 
 (define (plugin-all-initialized?)
   (with l (ahash-table->list plugin-initialize-todo)

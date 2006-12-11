@@ -65,58 +65,58 @@
   "Return @s if @s is a string and the empty string otherwise"
   (if (string? s) s ""))
 
-(define-public (reverse-list->string cs)	; srfi-13
+(provide-public (reverse-list->string cs)	; srfi-13
   "Efficient implementation of (compose list->string reverse)."
   ;; Not yet any more efficient, but this may be fixed in the future.
   (list->string (reverse cs)))
 
-(define-public (string-join	ss . opt)	; srfi-13 (subset)
+(provide-public (string-join	ss . opt)	; srfi-13 (subset)
   "Concatenate elements of @ss inserting separators."
   (if (null? opt) (string-join ss " ")
       (string-concatenate (list-intersperse ss (car opt)))))
 
-(define-public (string-drop-right s n)	; srfi-13
+(provide-public (string-drop-right s n)	; srfi-13
   "Return all but the last @n chars of @s."
   (substring s 0 (- (string-length s) n)))
 
-(define-public string-drop string-tail)	; srfi-13
+(provide-public string-drop string-tail)	; srfi-13
 
-(define-public (string-take s n)		; srfi-13
+(provide-public (string-take s n)		; srfi-13
   "Return the first @n chars of @s."
   (substring s 0 n))
 
-(define-public (string-trim s)		; srfi-13 (subset)
+(provide-public (string-trim s)		; srfi-13 (subset)
   "Remove whitespace at start of @s."
   (list->string (list-drop-while (string->list s) char-whitespace?)))
 
 (define-public (list-drop-right-while l pred)
   (reverse! (list-drop-while (reverse l) pred)))
 
-(define-public (string-trim-right s)	; srfi-13 (subset)
+(provide-public (string-trim-right s)	; srfi-13 (subset)
   "Remove whitespace at end of @s."
   (list->string (list-drop-right-while (string->list s) char-whitespace?)))
 
-(define-public (string-trim-both s)		; srfi-13 (subset)
+(provide-public (string-trim-both s)		; srfi-13 (subset)
   "Remove whitespace at start and end of @s."
   (list->string
    (list-drop-right-while
     (list-drop-while (string->list s) char-whitespace?)
     char-whitespace?)))
 
-(define-public (string-concatenate ss)	; srfi-13
+(provide-public (string-concatenate ss)	; srfi-13
   "Append the elements of @ss toghether."
   ;; WARNING: not portable for long lists
   (apply string-append ss))
 
-(define-public (string-map proc s) 		; srfi-13 (subset)
+(provide-public (string-map proc s) 		; srfi-13 (subset)
   "Map @proc on every char of @s."
   (list->string (map proc (string->list s))))
 
-(define-public (string-fold kons knil s) 	; srfi-13 (subset))
+(provide-public (string-fold kons knil s) 	; srfi-13 (subset))
   "Fundamental string iterator."
   (list-fold kons knil (string->list s)))
 
-(define-public (string-fold-right kons knil s) ; srfi-13 (subset)
+(provide-public (string-fold-right kons knil s) ; srfi-13 (subset)
   "Right to left fundamental string iterator."
   (list-fold-right kons knil (string->list s)))
 
@@ -136,7 +136,7 @@
       (with pos (string-search-forwards sep 0 s)
 	(and (>= pos 0) pos))))
 
-(define-public (string-tokenize s sep)
+(provide-public (string-tokenize s sep)
   "Cut string @s into pieces using @sep as a separator."
   (with d (string-search-separator s sep)
     (if d

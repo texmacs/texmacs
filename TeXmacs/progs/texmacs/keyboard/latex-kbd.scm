@@ -41,8 +41,8 @@
 
   ("cC" "Make Ç" (emulate-keyboard "cedilla C"))
   ("cc" "Make ç" (emulate-keyboard "cedilla c"))
-  ("\'E" "Insert É" (emulate-keyboard "acute E"))
-  ("\'e" "Insert é" (emulate-keyboard "acute e"))
+  ("'E" "Insert É" (emulate-keyboard "acute E"))
+  ("'e" "Insert é" (emulate-keyboard "acute e"))
   ("`A" "Insert À" (emulate-keyboard "grave A"))
   ("`E" "Insert È" (emulate-keyboard "grave E"))
   ("`U" "Insert È" (emulate-keyboard "grave U"))
