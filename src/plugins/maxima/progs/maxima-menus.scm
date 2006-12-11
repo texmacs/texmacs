@@ -29,7 +29,7 @@
   ;;(display* "Simplify " t "\n")
   (cond ((and (func? t 'concat) (> (length t) 2) (maxima-prompt? (cadr t)))
 	 (plugin-output-std-simplify "maxima" (cons 'concat (cddr t))))
-	((match? t '(with "mode" "math" "math-display" "true" :1))
+	((match? t '(with "mode" "math" "math-display" "true" :%1))
 	 `(math ,(maxima-output-simplify (cAr t))))
 	((func? t 'with 1)
 	 (maxima-output-simplify (cAr t)))
