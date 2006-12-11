@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.6>
+<TeXmacs|1.0.6.6>
 
 <style|<tuple|source|std-pattern>>
 
@@ -238,7 +238,10 @@
     </quasi>
   </xmacro>>
 
-  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<doc-data-bis|<unquote*|<quote-arg|data>>><doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
+  <assign|doc-note|<macro|body|>><active*|<src-short-comment|Added as a
+  temporary fix for problem with doc-note>>
+
+  <assign|doc-data-hidden|<xmacro|data|<quasi|<style-with|src-compact|none|<style-with|src-compact|none|<doc-note|<unquote*|<select|<quote-arg|data>|doc-note>>>><doc-data-bis|<unquote*|<quote-arg|data>>><doc-authors-data-bis|<unquote*|<select|<quote-arg|data>|doc-author-data>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-title|0>>>><style-with|src-compact|none|<doc-running-title|<unquote*|<select|<quote-arg|data>|doc-running-title|0>>>><doc-running-author|<style-with|src-compact|none|<author-from-authors|<unquote*|<select|<quote-arg|data>|doc-author-data|author-name|0>>>>><style-with|src-compact|none|<doc-running-author|<unquote*|<select|<quote-arg|data>|doc-running-author|0>>>>>>>>
 
   <assign|doc-data-abstract|<\xmacro|data>
     <\quasi>
