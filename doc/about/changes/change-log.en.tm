@@ -8,6 +8,9 @@
   <section|Changes from version 1.0.6 to 1.0.6.7>
 
   <\itemize>
+    <item>Support for the most recent versions 1.8.0 and 1.8.1 of
+    <name|Guile> (1.0.6.7).
+
     <item>Better <LaTeX> export of <verbatim|elsart> style and other fixes in
     the <LaTeX> converter (1.0.6.7).
 
