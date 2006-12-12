@@ -17,7 +17,9 @@
 
 (menu-bind scripts-eval-menu
   (when (script-evaluable?)
-	("Evaluate" (script-eval)))
+    ("Evaluate" (script-eval)))
+  (if (ahash-ref script-approx-cmd (get-env "prog-scripts"))
+      ("Approximate" (script-approx)))
   ("Evaluation tag" (make 'script-eval))
   ("Evaluation switch" (make-script-input)))
 
