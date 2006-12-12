@@ -19,6 +19,7 @@
 (define (maxima-initialize)
   (import-from (utils plugins plugin-convert))
   (import-from (dynamic session-menu))
+  (import-from (maxima-kbd))
   (lazy-input-converter (maxima-input) maxima)
   (ahash-set! script-approx-cmd "maxima" "float")
   (let ((help-list (string->object (var-eval-system "maxima_detect help"))))

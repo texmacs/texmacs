@@ -20,6 +20,8 @@
   ("A-return" (script-approx))
   ("script *" (make 'script-eval))
   ("script !" (make-script-input))
+  ("script =" (toggle-keep-input))
+  ("script $" (toggle-eval-math))
   ("script l" (insert-go-to '(converter-eval "latex" "") '(1 0)))
   ("script L" (insert-go-to '(converter-input "latex" "" "") '(1 0)))
   ("script h" (insert-go-to '(converter-eval "html" "") '(1 0)))

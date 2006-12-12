@@ -1,4 +1,4 @@
-<TeXmacs|1.0.5.4>
+<TeXmacs|1.0.6.7>
 
 <style|source>
 
@@ -20,6 +20,18 @@
       02111-1307, USA.
     </src-license>
   </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Macros for the option "keep evaluated expressions".
+    </src-comment>
+  </active*>
+
+  <assign|script-equal|<macro|<with|color|dark brown|=>>>
+
+  <assign|script-approx|<macro|<with|color|dark brown|\<approx\>>>>
+
+  <assign|script-assign|<macro|<with|color|dark brown|\<assign\>>>>
 
   <\active*>
     <\src-comment>
