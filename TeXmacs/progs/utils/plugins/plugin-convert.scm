@@ -183,6 +183,9 @@
 		    (plugin-input (caddr args))
 		    (display ","))))))))
 
+(define (plugin-input-script-assign args)
+  (display ":="))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion of matrices
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -305,6 +308,7 @@
   (tformat plugin-input-descend-last)
   (table plugin-input-table)
   (rows plugin-input-rows)
+  (script-assign plugin-input-script-assign)
 
   ("<less>" "<less>")
   ("<gtr>" "<gtr>")
