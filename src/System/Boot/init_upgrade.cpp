@@ -133,11 +133,11 @@ init_upgrade () {
   init_upgrade_scheme ();
   init_upgrade_doc (install_version);
 
-  remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-  remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
-  remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
-  remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
-  remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
-  remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+  remove (url ("$TEXMACS_HOME_PATH/system/setup.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("__*"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/doc_cache"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/file_cache"));
+  remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
   cache_refresh ();
 }
