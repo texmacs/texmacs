@@ -136,7 +136,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");
   system ("chmod -f 700", "$TEXMACS_HOME_PATH/system");
-  remove ("$TEXMACS_HOME_PATH/system/tmp" * url_wildcard ("*"));
+  remove (url ("$TEXMACS_HOME_PATH/system/tmp") * url_wildcard ("*"));
 }
 
 /******************************************************************************

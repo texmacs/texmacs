@@ -239,27 +239,27 @@ immediate_options (int argc, char** argv) {
     string s= argv[i];
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s == "-S") || (s == "-setup")) {
-      remove ("$TEXMACS_HOME_PATH/system/settings.scm");
-      remove ("$TEXMACS_HOME_PATH/system/setup.scm");
-      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
-      remove ("$TEXMACS_HOME_PATH/fonts/error" * url_wildcard ("*"));
+      remove (url ("$TEXMACS_HOME_PATH/system/settings.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/system/setup.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
+      remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));
     }
     else if (s == "-delete-cache")
-      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("*"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
     else if (s == "-delete-style-cache")
-      remove ("$TEXMACS_HOME_PATH/system/cache" * url_wildcard ("__*"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("__*"));
     else if (s == "-delete-font-cache")
-      remove ("$TEXMACS_HOME_PATH/system/cache/font_cache.scm");
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/font_cache.scm"));
     else if (s == "-delete-doc-cache") {
-      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
-      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
-      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/doc_cache"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
     else if (s == "-delete-file-cache") {
-      remove ("$TEXMACS_HOME_PATH/system/cache/doc_cache");
-      remove ("$TEXMACS_HOME_PATH/system/cache/file_cache");
-      remove ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm");
-      remove ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm");
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/doc_cache"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/file_cache"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
+      remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
   }
 }
