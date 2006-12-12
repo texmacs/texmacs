@@ -17,6 +17,7 @@
 
 (kbd-map
   ("C-return" (script-eval))
+  ("A-return" (script-approx))
   ("script *" (make 'script-eval))
   ("script !" (make-script-input))
   ("script l" (insert-go-to '(converter-eval "latex" "") '(1 0)))

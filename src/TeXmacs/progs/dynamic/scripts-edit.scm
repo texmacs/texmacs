@@ -15,7 +15,8 @@
 (texmacs-module (dynamic scripts-edit)
   (:use (utils library tree)
 	(utils library cursor)
-	(utils plugins plugin-cmd)))
+	(utils plugins plugin-cmd)
+	(convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some switches
@@ -23,6 +24,7 @@
 
 (define script-keep-input-flag? #f)
 (define script-eval-math-flag? #t)
+(tm-define script-approx-cmd (make-ahash-table))
 
 (tm-define (script-keep-input?) script-keep-input-flag?)
 (tm-define (toggle-keep-input)
@@ -44,12 +46,35 @@
   (or (selection-active-any?)
       (nnot (tree-innermost formula-context? #t))))
 
-(tm-define (script-modified-evaluate fun1 fun2)
+(define (find-equal s)
+  (and (string? s)
+       (with i (string-search-forwards "=" 0 s)
+	 (if (>= i 0) i
+	     (with j (string-search-forwards "<approx>" 0 s)
+	       (and (>= j 0) j))))))
+
+(define (script-lhs t)
+  (cond ((string? t)
+	 (with i (find-equal t)
+	   (if i (substring t 0 i) t)))
+	((func? t 'concat)
+	 (with i (list-find-index t find-equal)
+	   (if (not i) t
+	       (let* ((lht (sublist t 1 i))
+		      (s (list-ref t i))
+		      (j (find-equal s))
+		      (lhs (substring s 0 j)))
+		 (apply tmconcat* (tmconcat-simplify (rcons lht lhs)))))))
+	(else t)))
+
+(tm-define (script-modified-evaluate fun1 fun2 . opts)
   (let* ((lan (get-env "prog-scripts"))
 	 (session (get-env "prog-session"))
 	 (scripts? (supports-scripts? lan)))
     (cond ((and (selection-active-any?) scripts?)
-	   (let* ((t (fun1 (tree->stree (selection-tree))))
+	   (let* ((sel (tree->stree (selection-tree)))
+		  (lhs (if (script-keep-input?) (script-lhs sel) sel))
+		  (t (fun1 lhs))
 		  (r (plugin-eval lan session t :math-input))
 		  (m1? (in-var-math?))
 		  (m2? (tm-func? r 'math 1)))
@@ -58,28 +83,31 @@
 	     (if (and (not m1?) m2?) (insert-raw-go-to '(math "") '(0 0)))
 	     (if (script-keep-input?)
 		 (begin
-		   (insert "=")
+		   (insert (if (== opts '(approx)) "<approx>" "="))
 		   (with-cursor (cursor-after (go-to-previous))
 		     (fun2)
-		     (clipboard-paste "primary"))))
+		     (insert (if (== opts '(approx)) lhs t)))))
 	     (insert r)))
 	  ((and (tree-innermost formula-context? #t)
 		scripts? script-eval-math-flag?)
 	   (with t (tree-innermost formula-context? #t)
 	     (tree-select t)
-	     (script-modified-evaluate fun1 fun2)))
+	     (apply script-modified-evaluate (cons* fun1 fun2 opts))))
 	  ((selection-active-any?)
 	   (clipboard-cut "primary")
-	   (script-modified-evaluate fun1 fun2)
+	   (apply script-modified-evaluate (cons* fun1 fun2 opts))
 	   (clipboard-paste "primary"))
 	  (else
 	   (if (not-in-session?) (make 'script-eval))
 	   (fun2)))))
 
 (tm-define (script-eval)
-  (script-modified-evaluate
-   (lambda (t) t)
-   noop))
+  (script-modified-evaluate (lambda (t) t) noop))
+
+(tm-define (script-approx)
+  (and-with cmd (ahash-ref script-approx-cmd (get-env "prog-scripts"))
+    (script-modified-evaluate
+     (lambda (t) (list 'concat cmd "(" t ")")) noop 'approx)))
 
 (define (insert-function fun)
   (insert fun)

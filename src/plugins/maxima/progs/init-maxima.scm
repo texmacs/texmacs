@@ -20,6 +20,7 @@
   (import-from (utils plugins plugin-convert))
   (import-from (dynamic session-menu))
   (lazy-input-converter (maxima-input) maxima)
+  (ahash-set! script-approx-cmd "maxima" "float")
   (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
     (if help-list
 	(cond ((pair? help-list)
@@ -72,3 +73,7 @@
   (:serializer ,maxima-serialize)
   (:session "Maxima")
   (:scripts "Maxima"))
+
+(tm-define (script-numeric-evaluation-command)
+  (:mode in-maxima?)
+  "float")

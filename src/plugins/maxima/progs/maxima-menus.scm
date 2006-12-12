@@ -57,6 +57,10 @@
 
 (define maxima-apply script-apply)
 
+(tm-define (script-numeric-evaluation-command)
+  (:mode in-maxima?)
+  "float")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Maxima menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
