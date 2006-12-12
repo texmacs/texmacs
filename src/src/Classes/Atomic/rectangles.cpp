@@ -57,17 +57,29 @@ operator != (rectangle r1, rectangle r2) {
 }
 
 bool
+operator <= (rectangle r1, rectangle r2) {
+  return
+    (r1->x1>=r2->x1) && (r1->x2<=r2->x2) &&
+    (r1->y1>=r2->y1) && (r1->y2<=r2->y2);
+}
+
+bool
 intersect (rectangle r1, rectangle r2) {
   return
     (r1->x1<r2->x2) && (r1->x2>r2->x1) &&
     (r1->y1<r2->y2) && (r1->y2>r2->y1);
 }
 
-bool
-operator <= (rectangle r1, rectangle r2) {
-  return
-    (r1->x1>=r2->x1) && (r1->x2<=r2->x2) &&
-    (r1->y1>=r2->y1) && (r1->y2<=r2->y2);
+rectangle
+translate (rectangle r, SI x, SI y) {
+  return rectangle (r->x1+x, r->y1+y, r->x2+x, r->y2+y);
+}
+
+double
+area (rectangle r) {
+  double w= max (r->x2 - r->x1, 0);
+  double h= max (r->y2 - r->y1, 0);
+  return w*h;
 }
 
 /******************************************************************************
@@ -100,6 +112,11 @@ intersection (rectangle r1, rectangle r2, rectangles& l) {
   if (!intersect (r1, r2)) return;
   rectangle (max (r1->x1, r2->x1), max (r1->y1, r2->y1),
 	     min (r1->x2, r2->x2), min (r1->y2, r2->y2)) >> l;
+}
+
+rectangle
+operator * (rectangle r, int d) {
+  return rectangle (r->x1*d, r->y1*d, r->x2*d, r->y2*d);
 }
 
 rectangle
@@ -177,6 +194,18 @@ thicken (rectangles l, SI width, SI height) {
 }
 
 rectangles
+outline (rectangles rs, SI pixel) {
+  return simplify (correct (thicken (rs, pixel, 3*pixel) -
+			    thicken (rs, 0, 2*pixel)));
+}
+
+rectangles
+operator * (rectangles l, int d) {
+  if (nil (l)) return l;
+  return rectangles (l->item*d, l->next*d);
+}
+
+rectangles
 operator / (rectangles l, int d) {
   if (nil (l)) return l;
   return rectangles (l->item/d, l->next/d);
@@ -199,7 +228,7 @@ simplify (rectangles l) {
 rectangle
 least_upper_bound (rectangles l) {
   if (nil (l)) fatal_error ("no rectangles in list", "least_upper_bound");
-  rectangle r1= l->item;
+  rectangle r1= copy (l->item);
   while (!nil (l->next)) {
     l= l->next;
     rectangle r2= l->item;
@@ -209,4 +238,14 @@ least_upper_bound (rectangles l) {
     r1->y2= max (r1->y2, r2->y2);
   }
   return r1;
+}
+
+double
+area (rectangles r) {
+  double sum= 0.0;
+  while (!nil (r)) {
+    sum += area (r->item);
+    r= r->next;
+  }
+  return sum;
 }

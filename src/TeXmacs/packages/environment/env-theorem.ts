@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.0.6.2>
 
 <style|source>
 
@@ -105,7 +105,7 @@
   >>>>
 
   <assign|render-proof|<\macro|which|body>
-    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
+    <\surround||<htab|0.5fn><active*|<with|mode|math|\<box\>>>>
       <render-remark|<arg|which>|<arg|body>>
     </surround>
   </macro>>

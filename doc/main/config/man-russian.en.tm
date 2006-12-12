@@ -1,56 +1,56 @@
-<TeXmacs|1.0.1.11>
+<TeXmacs|1.0.6>
 
 <style|tmdoc>
 
 <\body>
-  <expand|tmdoc-title|Notes for Russian and Ukranian users>
+  <tmdoc-title|Notes for users of Cyrillic languages>
 
-  In order to type Russian (and similarly for Ukranian) text, you may several
-  options:
+  In order to type Russian (and similarly for other Cyrillic languages) text,
+  you have several options:
 
   <\itemize>
     <item>Select Russian as your default language in
-    <apply|menu|Edit|Preferences|Language|Russian>. If \ <apply|TeXmacs>
-    starts with Russian menus, then this is done automatically if the Russian
-    locale is set.
+    <menu|Edit|Preferences|Language|Russian>. If \ <TeXmacs> starts with
+    Russian menus, then this is done automatically if the Russian locale is
+    set.
 
     <item>Select Russian for an entire document using
-    <apply|menu|Document|Language|Russian>.
+    <menu|Document|Language|Russian>.
 
     <item>Select Russian for a portion of text in another document using
-    <apply|menu|Format|Language|Russian>.
+    <menu|Format|Language|Russian>.
   </itemize>
 
   If your X server uses the xkb extension, and is instructed to switch
   between the Latin and Russian keyboard modes, you need not do anything
   special. Just switch your keyboard to the Russian mode, and go ahead. All
   the software needed for this is included in modern Linux distributions, and
-  the xkb extension is enabled by default in <with|font
-  family|tt|XF86Config>. With the xkb extension, keysyms are 2-byte, and
-  Russian letters are at 0x6??. The keyboard is configured by <with|font
-  family|tt|setxkbmap>. When X starts, it issues this command with the
-  system-wide <with|font family|tt|Xkbmap> file (usually living in <with|font
-  family|tt|/etc/X11/xinit>), if it exists; and then with the user's
-  <with|font family|tt|~/.Xkbmap>, if it exists. A typical <with|font
-  family|tt|~/.Xkbmap> may look like
+  the xkb extension is enabled by default in
+  <with|font-family|tt|XF86Config>. With the xkb extension, keysyms are
+  2-byte, and Russian letters are at 0x6??. The keyboard is configured by
+  <with|font-family|tt|setxkbmap>. When X starts, it issues this command with
+  the system-wide <with|font-family|tt|Xkbmap> file (usually living in
+  <with|font-family|tt|/etc/X11/xinit>), if it exists; and then with the
+  user's <with|font-family|tt|~/.Xkbmap>, if it exists. A typical
+  <with|font-family|tt|~/.Xkbmap> may look like
 
   <verbatim| \ \ \ ru basic grp:shift_toggle>
 
-  This means that the keyboard mode is toggled by
-  <key|<apply|localize|l-shift> <apply|localize|r-shift>>. Other popular
-  choices are <key|<key-control> <key-shift>> or
-  <key|<key-control> <key-alternate>>, see <with|font
-  family|tt|/usr/X11R6/lib/X11/xkb/> for more details. This is the preferred
-  keyboard setup for modern Linux systems, if you plan to use Russian often.
+  This means that the keyboard mode is toggled by <key|<localize|l-shift>
+  <localize|r-shift>>. Other popular choices are <key|<key-control>
+  <key-shift>> or <key|<key-control> <key-alternate>>, see
+  <with|font-family|tt|/usr/X11R6/lib/X11/xkb/> for more details. This is the
+  preferred keyboard setup for modern Linux systems, if you plan to use
+  Russian often.
 
   In older Linux systems, the xkb extension is often disabled. Keysyms are
-  1-byte, and are configured by <with|font family|tt|xmodmap>. When X starts,
-  it issues this command with the system-wide <with|font family|tt|Xmodmap>
-  (usually living in <with|font family|tt|/etc/X11/xinit>), if it exists; and
-  then with the user's <with|font family|tt|~/.Xmodmap>, if it exists. You
+  1-byte, and are configured by <with|font-family|tt|xmodmap>. When X starts,
+  it issues this command with the system-wide <with|font-family|tt|Xmodmap>
+  (usually living in <with|font-family|tt|/etc/X11/xinit>), if it exists; and
+  then with the user's <with|font-family|tt|~/.Xmodmap>, if it exists. You
   can configure the mode toggling key combination, and use a 1-byte Russian
   encoding (such as koi8-r) in the Russian mode. It is easier to download the
-  package <with|font family|tt|xruskb>, and just run
+  package <with|font-family|tt|xruskb>, and just run
 
   <verbatim| \ \ \ xrus jcuken-koi8>
 
@@ -62,36 +62,32 @@
   koi8-r.
 
   It is also possible to use the Windows cp1251 encoding instead of koi8-r,
-  though this is rarely done in UNIX. If you do use <with|font family|tt|xrus
+  though this is rarely done in UNIX. If you do use <with|font-family|tt|xrus
   jcuken-cp1251>, select cp1251 instead of koi8-r.
 
   All the methods described above require some special actions to ``russify''
   the keyboard. This is not difficult, see the Cyrillic-HOWTO or, better, its
   updated version
 
-  <verbatim|http://www.inp.nsk.su/<with|font
-  family|tt|~baldin/Cyrillic-HOWTO-russian/Cyrillic-HOWTO-russian.html>>
+  <verbatim|http://www.inp.nsk.su/<with|font-family|tt|~baldin/Cyrillic-HOWTO-russian/Cyrillic-HOWTO-russian.html>>
 
   Also, all of the above methods globally affect all X applications: text
-  editors (emacs, nedit, kedit...), xterms, <apply|TeXmacs> etc.
+  editors (emacs, nedit, kedit...), xterms, <TeXmacs> etc.
 
   If you need to type Russian only once, or very rarely, a proper keyboard
   setup may be more trouble than it's worth. For the benefit of such
-  occasional users, <apply|TeXmacs> has methods of Russian input which
-  require no preliminary work. Naturally, such methods affect only
-  <apply|TeXmacs>, and no other application.
+  occasional users, <TeXmacs> has methods of Russian input which require no
+  preliminary work. Naturally, such methods affect only <TeXmacs>, and no
+  other application.
 
   The simplest way to type some Russian on the standard US-style keyboard
-  with no software setup is to select <apply|menu|Edit|Preferences|Keyboard|Cyrillic
+  with no software setup is to select <menu|Edit|Preferences|Keyboard|Cyrillic
   input method|translit>. Then, typing a Latin letter will produce ``the most
   similar'' Russian one. In order to get some Russian letters, you have to
   type 2- or 3-letter combinations:<vspace|0.5fn>
 
-  <expand|big-table|<expand|descriptive-table|<tformat|<cwith|2|11|1|1|cell
-  halign|l>|<cwith|2|11|2|2|cell halign|l>|<cwith|2|11|2|2|cell
-  halign|c>|<cwith|2|11|4|4|cell halign|l>|<cwith|2|11|4|4|cell
-  halign|c>|<table|<row|<cell|Shorthand>|<cell|for>|<cell|Shorthand(s)>|<cell|for>>|<row|<cell|<expand|kbd-text|"
-  e>>|<cell|<with|language|russian|font|cyrillic|¼>>|<cell|<expand|kbd-text|"
+  <big-table|<descriptive-table|<tformat|<cwith|2|11|1|1|cell-halign|l>|<cwith|2|11|2|2|cell-halign|l>|<cwith|2|11|2|2|cell-halign|c>|<cwith|2|11|4|4|cell-halign|l>|<cwith|2|11|4|4|cell-halign|c>|<table|<row|<cell|Shorthand>|<cell|for>|<cell|Shorthand(s)>|<cell|for>>|<row|<cell|<kbd-text|"
+  e>>|<cell|<with|language|russian|font|cyrillic|¼>>|<cell|<kbd-text|"
   E>>|<cell|<with|language|russian|font|cyrillic|œ>>>|<row|<cell|<key|y
   o>>|<cell|<with|language|russian|font|cyrillic|¼>>|<cell|<key|Y o> <key|Y
   O>>|<cell|<with|language|russian|font|cyrillic|œ>>>|<row|<cell|<key|z
@@ -117,8 +113,8 @@
   not ``<with|language|russian|font|cyrillic|ø>'', you have to type <key|s /
   h>. Of course, the choice of ``optimal'' mapping of Latin letters to
   Russian ones in not unique. You can investigate the mapping supplied with
-  <apply|TeXmacs> and, if you don't like something, override it in your
-  <with|font family|tt|~/.TeXmacs/progs/my-init-texmacs.scm>.
+  <TeXmacs> and, if you don't like something, override it in your
+  <with|font-family|tt|~/.TeXmacs/progs/my-init-texmacs.scm>.
 
   If you select jcuken instead of translit, you get the ``official'' Russian
   typewriter layout. It is so called because the keys ``qwerty'' produce
@@ -133,75 +129,24 @@
   the yawerty layout, where the keys ``qwerty'' produce
   ``<with|language|russian|font|cyrillic|ÿâåðòû''. Each Latin letter is
   mapped into a ``similar'' Russian one; some additional Russian letters are
-  produced by ><key|<key-shift>>-digits. <apply|TeXmacs> comes
-  with a slightly modified yawerty layout, because it does not redefine the
-  keys <key|$>, <key|¿>, <key|<with|mode|math|\<backslash\>>>, which are
-  important for <apply|TeXmacs>, are not redefined. The corresponding Russian
-  letters are produced by some <key|<key-shift>>-digit
-  combinations instead.
+  produced by ><key|<key-shift>>-digits. <TeXmacs> comes with a slightly
+  modified yawerty layout, because it does not redefine the keys <key|$>,
+  <key|¿>, <key|<with|mode|math|\<backslash\>>>, which are important for
+  <TeXmacs>, are not redefined. The corresponding Russian letters are
+  produced by some <key|<key-shift>>-digit combinations instead.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <\initial>
   <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
     <associate|language|english>
   </collection>
 </initial>
-
-<\references>
-  <\collection>
-    <associate|gly-1|<tuple|1|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|idx-3|<tuple|<uninit>|?>>
-    <associate|idx-4|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|table>
-      <tuple|normal|Typing Cyrillic text on a Roman
-      keyboard.|<pageref|gly-1>>
-    </associate>
-    <\associate|idx>
-      <tuple|<tuple|<with|font family|<quote|ss>|Edit>|<with|font
-      family|<quote|ss>|Preferences>|<with|font
-      family|<quote|ss>|Language>|<with|font
-      family|<quote|ss>|Russian>>|<pageref|idx-1>>
-
-      <tuple|<tuple|<with|font family|<quote|ss>|Document>|<with|font
-      family|<quote|ss>|Language>|<with|font
-      family|<quote|ss>|Russian>>|<pageref|idx-2>>
-
-      <tuple|<tuple|<with|font family|<quote|ss>|Format>|<with|font
-      family|<quote|ss>|Language>|<with|font
-      family|<quote|ss>|Russian>>|<pageref|idx-3>>
-
-      <tuple|<tuple|<with|font family|<quote|ss>|Edit>|<with|font
-      family|<quote|ss>|Preferences>|<with|font
-      family|<quote|ss>|Keyboard>|<with|font family|<quote|ss>|Cyrillic input
-      method>|<with|font family|<quote|ss>|translit>>|<pageref|idx-4>>
-    </associate>
-  </collection>
-</auxiliary>

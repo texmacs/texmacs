@@ -15,6 +15,7 @@
 #define STRING_H
 #include "basic.hpp"
 
+class string;
 class string_rep: concrete_struct {
   int n;
   char* a;

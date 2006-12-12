@@ -13,9 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-print)
-  (:export
-    get-default-paper-size preview-with-ghostview
-    choose-file-and-print-page-selection))
+  (:use (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
@@ -25,7 +23,7 @@
 ;; or else default to "a4"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-default-paper-size)
+(tm-define (get-default-paper-size)
   (or (getenv "PAPERSIZE")
       (let ((papersizefile (or (getenv "PAPERCONF") '"/etc/papersize")))
 	(if
@@ -36,11 +34,6 @@
 	       (close-input-port pps-port)
 	       size)))
 	 "a4"))))
-
-(define (get-default-font-setting)
-  (cond ((support-ec-fonts?) "EC fonts")
-        ((os-win32?) "True Type")
-        (else "CM fonts")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing preferences
@@ -60,14 +53,20 @@
 (define (notify-printer-dpi var val)
   (set-printer-dpi val))
 
+(define notify-font-type-flag #f)
 (define (notify-font-type var val)
+  (when notify-font-type-flag
+    (with font-cache "$TEXMACS_HOME_PATH/system/cache/font_cache.scm"
+      (system-remove (string->url font-cache)))
+    (set-message "Restart in order to let new font type take effect"
+		 "font type"))
+  (set! notify-font-type-flag #t)
   (with type
-      (cond ((== val "EC fonts") 0)
-	    ((== val "CM fonts") 1)
-	    ((== val "Bitmap") (if (support-ec-fonts?) 0 1))
-	    ((== val "True Type") 2)
-	    ((== val "True type") 2)
-	    (else 1))
+      (cond ((== val "Metafont only") 0)
+	    ((== val "Metafont + Type 1") 1)
+	    ((== val "Type 1 + Metafont") 2)
+	    ((== val "Type 1 only") 3)
+	    (else 2))
     (set-font-type type)))
 
 (define-preferences
@@ -75,15 +74,35 @@
   ("printing command" "lpr" notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
   ("printer dpi" "600" notify-printer-dpi)
-  ("font type" (get-default-font-setting) notify-font-type))
+  ("font type" "Type 1 + Metafont" notify-font-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (preview-with-ghostview)
+(define (propose-postscript-name)
+  (with name (propose-name-buffer)
+    (if (string-ends? name ".tm")
+	(string-append (string-drop-right name 3) ".ps")
+	name)))
+
+(tm-property (print-to-file name)
+  (:argument name print-file "File name")
+  (:default  name (propose-postscript-name)))
+
+(tm-property (print-pages first last)
+  (:argument first "First page")
+  (:argument last "Last page"))
+
+(tm-property (print-pages-to-file name first last)
+  (:argument name print-file "File name")
+  (:default  name (propose-postscript-name))
+  (:argument first "First page")
+  (:argument last "Last page"))
+
+(tm-define (preview-with-ghostview)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/preview.ps")
-  (cond ((not (== preview-command "default"))
+  (cond ((!= preview-command "default")
 	 (shell (string-append preview-command
 			       " $TEXMACS_HOME_PATH/system/tmp/preview.ps &")))
         ((os-win32?)
@@ -98,6 +117,8 @@
 	       "Error: ghostview does not seem to be installed on your system"
 	       "preview"))))
 
-(define (choose-file-and-print-page-selection start end)
-  (choose-file "Print page selection to file" "postscript"
-	       `(lambda (name) (print-pages-to-file name ,start ,end))))
+(tm-define (choose-file-and-print-page-selection start end)
+  (:argument start "First page")
+  (:argument end "Last page")
+  (choose-file (lambda (name) (print-pages-to-file name ,start ,end))
+	       "Print page selection to file" "postscript"))

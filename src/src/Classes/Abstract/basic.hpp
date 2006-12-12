@@ -14,6 +14,7 @@
 #define BASIC_H
 #include "tm_configure.hpp"
 #include <stdlib.h>
+#include <math.h>
 
 // g++ >= 3.2 requires
 #include <iostream>
@@ -21,6 +22,16 @@ using std::ostream;
 using std::cout;
 using std::cerr;
 // instead of include <iostream.h>
+
+#ifdef HAVE_INTPTR_T
+#ifdef OS_SUN
+#include <inttypes.h>
+#else
+#include <stdint.h>
+#endif
+#else
+typedef long intptr_t;
+#endif
 
 #ifdef OS_WIN32
 #define LESSGTR
@@ -83,8 +94,9 @@ inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
-inline int hash (pointer ptr) { return (int) ptr; }
+inline int hash (pointer ptr) { return (intptr_t) ptr; }
 inline int copy (int x) { return x; }
+inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 
 enum display_control { INDENT, UNINDENT, HRULE, LF };
 ostream& operator << (ostream& out, display_control ctrl);
@@ -254,6 +266,13 @@ public:                                    \
 #define ABSTRACT_NULL_TEMPLATE_CODE(PTR,TT,T)              \
   CONCRETE_NULL_TEMPLATE_CODE (PTR,TT,T);                  \
   template<TT T> inline PTR<T>::PTR (PTR##_rep<T>* rep2):  \
+    rep(rep2) { INC_COUNT (this->rep); }
+#define ABSTRACT_NULL_TEMPLATE_2(PTR,T1,T2) \
+  CONCRETE_NULL_TEMPLATE_2 (PTR,T1,T2);     \
+  inline PTR (PTR##_rep<T1,T2>*)
+#define ABSTRACT_NULL_TEMPLATE_2_CODE(PTR,TT1,T1,TT2,T2)                    \
+  CONCRETE_NULL_TEMPLATE_2_CODE (PTR,TT1,T1,TT2,T2);                          \
+  template<TT1 T1,TT2 T2> inline PTR<T1,T2>::PTR (PTR##_rep<T1,T2>* rep2):  \
     rep(rep2) { INC_COUNT (this->rep); }
 // end abstract_null
 

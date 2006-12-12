@@ -100,6 +100,16 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 * Processing preamble
 ******************************************************************************/
 
+static void
+use_modules (tree t) {
+  if (is_tuple (t))
+    for (int i=0; i<N(t); i++) {
+	string s= as_string (t[i]);
+	if (starts (s, "(")) eval ("(use-modules " * s * ")");
+	else if (s != "") eval ("(plugin-initialize '" * s * ")");
+    }
+}
+
 void
 edit_typeset_rep::typeset_style_use_cache (tree style) {
   bool ok;
@@ -108,7 +118,8 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   SERVER (style_get_cache (style, H, t, ok));
   if (ok) {
     env->patch_env (H);
-    ok = drd->set_locals (t);
+    ok= drd->set_locals (t);
+    use_modules (env->read (THE_MODULES));
   }
   if (!ok) {
     if (!is_tuple (style))
@@ -158,6 +169,12 @@ edit_typeset_rep::typeset_invalidate_env () {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
+  if (has_changed (THE_TREE + THE_ENVIRONMENT))
+    if (p != correct_cursor (et, rp * 0)) {
+      if (DEBUG_STD)
+	cout << "TeXmacs] Warning: resynchronizing for path " << p << "\n";
+      // apply_changes ();
+    }
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
@@ -282,12 +299,13 @@ expand_references (tree t, hashmap<string,tree> h) {
 }
 
 tree
-edit_typeset_rep::exec (tree t, hashmap<string,tree> H) {
+edit_typeset_rep::exec (tree t, hashmap<string,tree> H, bool expand_refs) {
   hashmap<string,tree> H2;
   env->read_env (H2);
   env->write_env (H);
   t= env->exec (t);
-  t= expand_references (t, buf->ref);
+  if (expand_refs)
+    t= expand_references (t, buf->ref);
   t= simplify_execed (t);
   t= simplify_correct (t);
   env->write_env (H2);
@@ -298,6 +316,11 @@ tree
 edit_typeset_rep::exec_texmacs (tree t, path p) {
   typeset_exec_until (p);
   return exec (t, cur[p]);
+}
+
+tree
+edit_typeset_rep::exec_texmacs (tree t) {
+  return exec_texmacs (t, rp * 0);
 }
 
 tree
@@ -316,6 +339,47 @@ edit_typeset_rep::exec_html (tree t) {
   return exec_html (t, rp * 0);
 }
 
+static tree
+value_to_compound (tree t, hashmap<string,tree> h) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, VALUE, 1) &&
+	   is_atomic (t[0]) &&
+	   h->contains (t[0]->label))
+    return compound (t[0]->label);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= value_to_compound (t[i], h);
+    return r;
+  }
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t, path p) {
+  string pref= "texmacs->latex:expand-macros";
+  if (as_string (call ("get-preference", pref)) != "on") return t;
+  if (p == (rp * 0)) typeset_preamble ();
+  typeset_exec_until (p);
+  hashmap<string,tree> H= copy (cur[p]);
+  tree patch= as_tree (call ("stree->tree", call ("tmtex-env-patch", t)));
+  hashmap<string,tree> P (UNINIT, patch);
+  H->join (P);
+  if (is_document (t) && is_compound (t[0], "hide-preamble")) {
+    tree r= copy (t);
+    r[0]= "";
+    r= exec (value_to_compound (r, P), H, false);
+    r[0]= exec (t[0], H, false);
+    return r;
+  }
+  else return exec (value_to_compound (t, P), H, false);
+}
+
+tree
+edit_typeset_rep::exec_latex (tree t) {
+  return exec_latex (t, rp * 0);
+}
+
 tree
 edit_typeset_rep::texmacs_exec (tree t) {
   return ::texmacs_exec (env, t);
@@ -327,10 +391,6 @@ edit_typeset_rep::texmacs_exec (tree t) {
 
 void
 edit_typeset_rep::init_style () {
-  bool old_need_save    = buf->need_save;
-  bool old_need_autosave= buf->need_autosave;
-  buf->need_save    = old_need_save;
-  buf->need_autosave= old_need_autosave;
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -394,6 +454,14 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   bench_start ("typeset");
   eb= ::typeset (ttt, x1, y1, x2, y2);
   bench_end ("typeset");
+}
+
+void
+edit_typeset_rep::typeset_invalidate (path p) {
+  if (rp <= p) {
+    notify_change (THE_TREE);
+    ::notify_assign (ttt, p-rp, subtree (et, p));
+  }
 }
 
 void

@@ -341,9 +341,11 @@ int main(int arc, char *argv[])
 
   int last_nl = 0 ;
 
-  char *TEXMACS_PATH, *TEXMACS_R, *TEXMACS_SEND ;
+  char *TEXMACS_PATH, *TEXMACS_R, *TEXMACS_SEND, *TEXMACS_LIB ;
   struct termios termi ;
   sigset_t sigmask, orig_sigmask;
+
+  struct stat stat_buf;
 
 #ifdef USE_DEBUG
   if( DEBUG ) {
@@ -356,9 +358,15 @@ int main(int arc, char *argv[])
   RB = init_buffer( 4096 ) ;
   TEMPB = init_buffer( 4096 ) ;
 
-  TEXMACS_PATH = getenv("TEXMACS_PATH") ;
+  TEXMACS_PATH = getenv("TEXMACS_HOME_PATH") ;
   if( TEXMACS_PATH == NULL )
-    TEXMACS_PATH = "/home/dirk/work"; 
+    TEXMACS_PATH = "/home/grozin/.TeXmacs"; 
+
+  /* Lazy installing the TeXmacs package */
+  TEXMACS_LIB = (char *)malloc(4096);
+  snprintf(TEXMACS_LIB,4096,"%s/plugins/r/r",TEXMACS_PATH);
+  if (stat(TEXMACS_LIB,&stat_buf))
+    system("r_install");
 
   TEXMACS_R = getenv("TEXMACS_CMD") ;
   if( TEXMACS_R == NULL )

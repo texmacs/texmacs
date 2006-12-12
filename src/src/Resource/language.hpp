@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : language.hpp
 * DESCRIPTION: language specific features, which include
-*              - ponctuation rules
+*              - punctuation rules
 *              - hyphenation
 *              - (future) dictionary and grammar rumes for spell-checker
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
@@ -17,7 +17,7 @@
 #define LANGUAGE_H
 #include "space.hpp"
 #include "array.hpp"
-#include "encoding.hpp"
+#include "resource.hpp"
 
 RESOURCE(language);
 
@@ -28,18 +28,20 @@ RESOURCE(language);
 #define TP_NORMAL     0
 #define TP_HYPH       1
 #define TP_SPACE      2
-#define TP_BLANK      3
-#define TP_PERIOD     4
-#define TP_OPERATOR   5
-#define TP_SHORTOP    6
-#define TP_OTHER      7
+#define TP_DSPACE     3
+#define TP_BLANK      4
+#define TP_PERIOD     5
+#define TP_OPERATOR   6
+#define TP_SHORTOP    7
+#define TP_OTHER      8
 
 #define SPC_NONE      0
 #define SPC_SPACE     1
-#define SPC_PERIOD    2
-#define SPC_TINY      3
-#define SPC_OPERATOR  4
-#define SPC_BIGOP     5
+#define SPC_DSPACE    2
+#define SPC_PERIOD    3
+#define SPC_TINY      4
+#define SPC_OPERATOR  5
+#define SPC_BIGOP     6
 
 #define HYPH_STD      10000
 #define HYPH_PANIC    1000000
@@ -86,17 +88,17 @@ typedef text_property_rep* text_property;
 ******************************************************************************/
 
 struct language_rep: rep<language> {
-  string   lan_name;  // name of the language
-  encoding enc;       // the underlying encoding of the language
-
-  inline language_rep (string s, encoding enc= math_enc);
+  string lan_name;  // name of the language
+  inline language_rep (string s);
   virtual text_property advance (string s, int& pos) = 0;
   virtual array<int> get_hyphens (string s) = 0;
   virtual void hyphenate (string s, int after, string& l, string& r) = 0;
+  virtual string get_group (string s);
+  virtual array<string> get_members (string s);
 };
 
-inline language_rep::language_rep (string s, encoding enc2):
-  rep<language> (s), enc(enc2) {}
+inline language_rep::language_rep (string s):
+  rep<language> (s) {}
 
 language text_language (string s);
 language math_language (string s);
@@ -107,6 +109,8 @@ string language_to_locale (string s);
 string get_locale_language ();
 string get_date (string lan, string fm);
 
+string math_symbol_group (string s, string lan= "texmath");
+array<string> math_group_members (string s, string lan= "texmath");
 string math_symbol_type (string s, string lan= "texmath");
 
 #endif // defined LANGUAGE_H

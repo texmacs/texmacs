@@ -172,6 +172,12 @@ url_ftp (string name) {
   return url_root ("ftp") * u;
 }
 
+static url
+url_tmfs (string name) {
+  url u= url_get_name (name);
+  return url_root ("tmfs") * u;
+}
+
 /******************************************************************************
 * Generic url constructor
 ******************************************************************************/
@@ -218,6 +224,7 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "file://")) return url_file (name (7, N (name)));
   if (starts (name, "http://")) return url_http (name (7, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
+  if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
   if (heuristic_is_http (name)) return url_http (name);
@@ -368,6 +375,14 @@ is_rooted_web (url u) {
 }
 
 bool
+is_rooted_tmfs (url u) {
+  return
+    is_root_tmfs (u) ||
+    (is_concat (u) && is_rooted_tmfs (u[1])) ||
+    (is_or (u) && is_rooted_tmfs (u[1]) && is_rooted_tmfs (u[2]));
+}
+
+bool
 is_name (url u) {
   if (is_atomic (u)) return true;
   if (!is_concat (u)) return false;
@@ -463,6 +478,7 @@ as_string (url u, int type) {
   if (is_wildcard (u, 0)) return "**";
   if (is_wildcard (u, 1)) return u->t[1]->label;
   fatal_error ("bad url", "as_string", "url.cpp");
+  return ""; // NOT REACHED
 }
 
 ostream&
@@ -514,6 +530,7 @@ glue (url u, string s) {
   cerr << "\nu= " << u << "\n";
   cerr << "s= " << s << "\n";
   fatal_error ("can't glue string to url", "glue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -525,6 +542,7 @@ unglue (url u, int nr) {
   cerr << "\nu= " << u << "\n";
   cerr << "nr= " << nr << "\n";
   fatal_error ("can't unglue from url", "unglue", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -558,6 +576,8 @@ delta_sub (url base, url u) {
 
 url
 delta (url base, url u) {
+  if (is_or (u))
+    return delta (base, u[1]) | delta (base, u[2]);
   url res= delta_sub (base, u);
   if (is_none (res)) return u;
   return res;
@@ -575,6 +595,21 @@ expand (url u) {
   if (is_or (u)) return expand (u[1]) | expand (u[2]);
   if (is_concat (u)) return expand (expand (u[1]), expand (u[2]));
   return u;
+}
+
+bool
+descends (url u, url base) {
+  if (is_or (base)) return descends (u, base[1]) || descends (u, base[2]);
+  if (is_concat (u) && is_atomic (base))
+    return u[1] == base;
+  if (is_concat (u) && is_concat (base))
+    return u[1] == base[1] && descends (u[2], base[2]);
+  return false;
+}
+
+bool
+is_secure (url u) {
+  return descends (u, expand (url_path ("$TEXMACS_SECURE_PATH")));
 }
 
 /******************************************************************************
@@ -680,16 +715,10 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return reroot (u, "default");
       return url_none ();
     }
-    if (is_rooted_web (comp)) {
-      if (filter == "") return u;
-      // cout << "  try " << comp << "\n";
-      url from_web= get_from_web (comp);
-      // cout << "  --> " << from_web << "\n";
-      if (is_none (from_web)) return from_web;
-      if (is_of_type (from_web, filter)) return u;
+    if (is_rooted_web (comp) || is_rooted_tmfs (comp) || is_ramdisc (comp)) {
+      if (is_of_type (comp, filter)) return u;
       return url_none ();
     }
-    if (is_ramdisc (comp)) return comp;
     cerr << LF << "base= " << base << LF;
     if (!is_rooted (comp)) fatal_error ("unrooted url", "complete", "url.cpp");
     else fatal_error ("bad protocol in url", "complete", "url.cpp");
@@ -732,6 +761,7 @@ complete (url base, url u, string filter, bool flag) {
   }
   cout << LF << "url= " << u << LF;
   fatal_error ("bad url", "complete", "url.cpp");
+  return u; // NOT REACHED
 }
 
 url
@@ -764,7 +794,7 @@ resolve (url u, string filter) {
 url
 resolve_in_path (url u) {
   if (use_which) {
-    string name = as_string (u);
+    string name = escape_sh (as_string (u));
     string which= var_eval_system ("which " * name * " 2> /dev/null");
     if (ends (which, name))
       return which;
@@ -784,6 +814,11 @@ exists (url u) {
 bool
 exists_in_path (url u) {
   return !is_none (resolve_in_path (u));
+}
+
+bool
+has_permission (url u, string filter) {
+  return !is_none (resolve (u, filter));
 }
 
 static url
@@ -819,6 +854,7 @@ concretize (url u) {
     return as_string (reroot (u, "default"));
 #endif
   if (is_rooted_web (u)) return concretize (get_from_web (u));
+  if (is_rooted_tmfs (u)) return concretize (get_from_server (u));
   if (is_ramdisc (u)) return concretize (get_from_ramdisc (u));
   if (is_here (u)) return as_string (url_pwd ());
   if (is_parent (u)) return as_string (url_pwd () * url_parent ());

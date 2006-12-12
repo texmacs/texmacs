@@ -1,4 +1,4 @@
-(in-package "MAXIMA")
+(in-package :maxima)
 #+clisp (defvar *old-suppress-check-redefinition* 
 	      custom:*suppress-check-redefinition*)
 #+clisp (setf custom:*suppress-check-redefinition* t)

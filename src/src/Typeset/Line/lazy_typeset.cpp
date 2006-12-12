@@ -138,6 +138,16 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
 }
 
 /******************************************************************************
+* Hidden
+******************************************************************************/
+
+lazy
+make_lazy_hidden (edit_env env, tree t, path ip) {
+  (void) make_lazy (env, t[0], descend (ip, 0));
+  return lazy_document (env, tree (DOCUMENT), ip);
+}
+
+/******************************************************************************
 * Formatting
 ******************************************************************************/
 
@@ -369,7 +379,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
-* Mark
+* Mark and expand_as
 ******************************************************************************/
 
 lazy
@@ -412,6 +422,35 @@ make_lazy_mark (edit_env env, tree t, path ip) {
   return lazy_surround (a, b, par, ip);
 }
 
+lazy
+make_lazy_expand_as (edit_env env, tree t, path ip) {
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, t[1], descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
+/******************************************************************************
+* Locus
+******************************************************************************/
+
+lazy
+make_lazy_locus (edit_env env, tree t, path ip) {
+  extern bool build_locus (edit_env env, tree t, list<string>& ids, string& c);
+  list<string> ids;
+  string col;
+  if (!build_locus (env, t, ids, col))
+    system_warning ("Ignored unaccessible loci");
+  int last= N(t)-1;
+  tree old_col= env->read (COLOR);
+  env->write_update (COLOR, col);
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  lazy par= make_lazy (env, t[last], descend (ip, last));
+  env->write_update (COLOR, old_col);
+  return lazy_surround (a, b, par, ip);
+}
+
 /******************************************************************************
 * Main routine
 ******************************************************************************/
@@ -443,6 +482,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
+    //case HIDDEN:
+    //return make_lazy_hidden (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:
@@ -459,6 +500,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MARK:
     return make_lazy_mark (env, t, ip);
+  case EXPAND_AS:
+    return make_lazy_expand_as (env, t, ip);
   case EVAL:
   case QUASI:
     return make_lazy_eval (env, t, ip);
@@ -479,6 +522,11 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_auto (env, t, ip, var_inactive_m);
   case REWRITE_INACTIVE:
     return make_lazy_rewrite (env, t, ip);
+  case LOCUS:
+    return make_lazy_locus (env, t, ip);
+  case HLINK:
+  case ACTION:
+    return make_lazy_compound (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

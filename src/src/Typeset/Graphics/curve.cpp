@@ -15,6 +15,8 @@
 #include "frame.hpp"
 #include "equations.hpp"
 #include "math_util.hpp"
+#include "polynomial.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * General routines
@@ -33,7 +35,17 @@ curve_rep::bound (double t, double eps) {
   //TODO: Improve this, as soon as the curvature ()
   //      for transformed_curves will be implemented
   bool b;
-  return eps / norm (grad (t, b));
+  double delta= eps / norm (grad (t, b));
+  while (delta >= 1.0e-6) {
+    point val1 = evaluate (t);
+    point val2 = evaluate (max (t-delta, 0.0));
+    point val3 = evaluate (min (t+delta, 1.0));
+    if (norm (val2 - val1) <= eps+1.0e-6 &&
+	norm (val3 - val1) <= eps+1.0e-6)
+      return delta;
+    delta /= 2.0;
+  }
+  return delta;
 }
 
 int
@@ -46,34 +58,139 @@ curve_rep::get_control_points (
   return 0;
 }
 
+struct curvet {
+  double t, dist;
+};
+
+struct less_eq_curvet {
+  static inline bool leq (curvet& a, curvet &b) {
+    return a.dist <= b.dist; }
+};
+
+static array<curvet>
+curvet_closest_points (
+  curve c, double t1, double t2, point p, double eps)
+{
+  array<curvet> res;
+  if (t1>t2) {
+    array<curvet> r1, r2;
+    r1= curvet_closest_points (c, 0.0, t2, p, eps);
+    r2= curvet_closest_points (c, t1, 1.0, p, eps);
+    res= r1 << r2;
+  }
+  else {
+    double t;
+    double closest= -1;
+    point pclosest;
+    double n0= tm_infinity;
+    bool stored= true;
+    double nprec= n0;
+    bool decreasing= false;
+    for (t=t1; t<=t2;) {
+      point pt= c->evaluate(t);
+      double n= norm (pt - p);
+      if (n < n0) {
+	n0= n;
+	closest= t;
+	pclosest= pt;
+	stored= false;
+      }
+      decreasing= n<nprec;
+      if (!stored && !decreasing) {
+        curvet ct;
+        ct.dist= norm (pclosest - p);
+        ct.t= closest;
+	res << ct;
+	stored= true;
+      }
+      if (stored && decreasing)
+        n0= tm_infinity;
+      double delta= (n - eps) / 2;
+      t+=c->bound (t, max (eps, delta));
+      nprec= n;
+    }
+  }
+  return res;
+}
+
+array<double>
+curve_rep::find_closest_points (
+  double t1, double t2, point p, double eps)
+{
+  array<curvet> res= curvet_closest_points (curve (this), t1, t2, p, eps);
+  merge_sort_leq <curvet, less_eq_curvet> (res);
+  array<double> rest= array<double> (N(res));
+  int i;
+  for (i=0; i<N(res); i++)
+    rest[i]= res[i].t;
+  return rest;
+}
+
 double
 curve_rep::find_closest_point (
   double t1, double t2, point p, double eps, bool& found)
 {
-  if (t1>t2) {
-    double r1, r2;
-    r1= find_closest_point (0.0, t2, p, eps, found);
-    if (!found)
-      return find_closest_point (t1, 1.0, p, eps, found);
-    r2= find_closest_point (t1, 1.0, p, eps, found);
-    if (!found)
-      return r1;
-    double n1= norm (evaluate(r1) - p);
-    double n2= norm (evaluate(r2) - p);
-    return n1<n2 ? r1 : r2;
+  array<double> res= find_closest_points (t1, t2, p, eps);
+  found= N(res)>0;
+  if (found)
+    return res[0];
+  else
+    return -1;
+}
+
+point
+grad (curve f, double t) {
+  bool error= false;
+  return f->grad (t, error);
+}
+
+bool
+intersection (curve f, curve g, double& t, double& u) {
+  // for two dimensional curves only
+  double d= norm (f (t) - g (u));
+  while (!fnull (d, 1.0e-9)) {
+    point  ft = f (t);
+    point  gu = g (u);
+    point  gf = grad (f, t);
+    point  gg = grad (g, u);
+    double det= gf[0] * gg[1] - gf[1] * gg[0];
+    if (fnull (det, 1.0e-12)) break;
+    double dt = ((gu[0] - ft[0]) * gg[1] - (gu[1] - ft[1]) * gg[0]) / det;
+    double du = ((gu[0] - ft[0]) * gf[1] - (gu[1] - ft[1]) * gf[0]) / det;
+    double T  = t + dt;
+    double U  = u + du;
+    if (T < 0.0 || T > 1.0 || U < 0.0 || U > 1.0) break;
+    double D  = norm (f (T) - g (U));
+    if (D > 0.9 * d) break;
+    t= T; u= U; d= D;
   }
-  found= false;
-  double t;
-  double res= -1;
-  double n0= tm_infinity;
-  for (t=t1; t<=t2; t+=bound (t, eps)) {
-    double n= norm (evaluate(t) - p);
-    if (n < n0) {
-      n0= n;
-      res= t;
-      found= true;
+  return fnull (d, 1.0e-9);
+}
+
+array<point>
+intersection (curve f, curve g, point p0, double eps) {
+  // For local intersections only
+  array<point> res;
+  if (nil (f) || nil (g)) return res;
+  bool found= false;
+  double d1, d2;
+  if (f==g) {
+    array<double> pts= f->find_closest_points (0.0, 1.0, p0, eps);
+    if (N(pts)>=2) {
+      d1= pts[0];
+      d2= pts[1];
+      found= intersection (f, f, d1, d2);
     }
   }
+  else {
+    bool res1, res2;
+    d1= f->find_closest_point (0.0, 1.0, p0, eps, res1);
+    d2= g->find_closest_point (0.0, 1.0, p0, eps, res2);
+    if (res1 && res2)
+      found= intersection (f, g, d1, d2);
+  }
+  if (found)
+    res << f (d1);
   return res;
 }
 
@@ -153,7 +270,7 @@ struct poly_segment_rep: public curve_rep {
   point grad (double t, bool& error) {
     error= false;
     int i= min ((int) (n*t), n-1);
-    return a[i+1] - a[i];
+    return n * (a[i+1] - a[i]);
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -183,13 +300,15 @@ poly_segment (array<point> a, array<path> cip) {
 ******************************************************************************/
 
 static const double epsilon=0.01;//0.00005;
+typedef polynomial<double> dpol;
+typedef vector<polynomial<double> > dpols;
 
 struct spline_rep: public curve_rep {
   array<point> a;
   array<path> cip;
   int n;
   array<double> U;
-  array<polynomials> p;
+  array<dpols> p;
   bool close, interpol;
 
   spline_rep (
@@ -204,7 +323,7 @@ struct spline_rep: public curve_rep {
 
   point spline (int i,double u,int o=0);
   inline double S (
-    array<polynomial> p1, array<polynomial> p2, array<polynomial> p3,
+    array<dpol> p1, array<dpol> p2, array<dpol> p3,
     int i, double u);
   point evaluate (double t,int o);
   point evaluate (double t);
@@ -227,11 +346,11 @@ spline_rep::spline_rep (
   array<point> a2, array<path> cip2, bool close2,bool interpol2):
   a(a2), cip(cip2), n(N(a)-1), close(close2), interpol(interpol2)
 {
-  array<polynomial> p1,p2,p3;
-  p1= array<polynomial> (n+3);
-  p2= array<polynomial> (n+3);
-  p3= array<polynomial> (n+3);
-  p = array<polynomials> (n+3);
+  array<dpol> p1,p2,p3;
+  p1= array<dpol> (n+3);
+  p2= array<dpol> (n+3);
+  p3= array<dpol> (n+3);
+  p = array<dpols> (n+3);
   U = array<double> (n+6);
   if (close) {
     int i;
@@ -269,9 +388,16 @@ spline_rep::spline_rep (
     double di21= d(i+2,1);
     double di32= d(i+3,2);
     double di31= d(i+3,1);
-    p1[i]= polynomial(2);
-    p2[i]= polynomial(2);
-    p3[i]= polynomial(2);
+    p1[i]= dpol (square(U[i])/di22/di11,
+		 -2*U[i]/di22/di11,
+		 1/di22/di11);
+    p2[i]= dpol (-U[i+2]*U[i]/di22/di21-U[i+3]*U[i+1]/di32/di21,
+		 (U[i+2]+U[i])/di22/di21+(U[i+3]+U[i+1])/di32/di21,
+		 -1/di22/di21-1/di32/di21);
+    p3[i]= dpol (square(U[i+3])/di32/di31,
+		 -2*U[i+3]/di32/di31,
+		 1/di32/di31);
+    /*
     p1[i][2]= 1/di22/di11;
     p1[i][1]= -2*U[i]/di22/di11;
     p1[i][0]= square(U[i])/di22/di11;
@@ -281,6 +407,7 @@ spline_rep::spline_rep (
     p3[i][2]= 1/di32/di31;
     p3[i][1]= -2*U[i+3]/di32/di31;
     p3[i][0]= square(U[i+3])/di32/di31;
+    */
   }
   if (interpol) {
     array<point> x(n+1), y(n+1);
@@ -333,7 +460,7 @@ spline_rep::spline_rep (
 // Evaluation
 double
 spline_rep::S (
-  array<polynomial> p1, array<polynomial> p2, array<polynomial> p3,
+  array<dpol> p1, array<dpol> p2, array<dpol> p3,
   int i, double u)
 {
   if (i<0 || i>n) return 0;
@@ -341,17 +468,20 @@ spline_rep::S (
   else if (u<U[i+1]) return p1[i](u);
   else if (u<U[i+2]) return p2[i](u);
   else if (u<U[i+3]) return p3[i](u);
-  else
-    fatal_error ("We should **never** go here");
+  else fatal_error ("We should **never** go here");
+  return 0.0; // NOT REACHED
 }
 
 point
-spline_rep::spline (int i,double u,int o) {
-  point res;
+spline_rep::spline (int i, double u, int o) {
+  int j, n= N(p[i]);
+  point res (n);
   if (o<0 || o>2) o=0;
-  res=p[i](u,o);
+  for (j=0; j<n; j++)
+    res[j]= p[i][j] (u, o);
   return res;
 }
+
 int
 spline_rep::interval_no (double u) {
   int i;
@@ -360,16 +490,27 @@ spline_rep::interval_no (double u) {
   return -1;
 }
 
+static double
+prod (double x, int n) {
+  double r;
+  if (n<=0) return 1;
+  r=x; n--;
+  while (n--)
+    r*=(x-n);
+  return r;
+}
+
 point
-spline_rep::evaluate (double t,int o) {
+spline_rep::evaluate (double t, int o) {
   point res;
   int no;
   t=convert(t);
+  double k=U[n+1]-U[2];
   no=interval_no(t);
   if (no<2) res=spline(2,U[2],o);
   else if (no>n) res=spline(n,U[n+1],o);
   else res=spline(no,t,o);
-  return res;
+  return prod(k,o)*res;
 }
 
 point
@@ -425,9 +566,9 @@ spline_rep::rectify_cumul (array<point>& cum, double eps) {
 // Curvature
 double
 spline_rep::curvature (int i, double t1, double t2) {
-  point a,b;
-  a=coeffs(p[i],2);
-  b=coeffs(p[i],1);
+  point a, b;
+  a= extract (p[i], 2);
+  b= extract (p[i], 1);
   double t,R;
   point pp,ps;
   if (norm(a)==0) return tm_infinity;
@@ -529,7 +670,8 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   point o2= (n>1 ? a[1] : point (0,0));
   point o3= (n>2 ? a[2] : point (0,0));
   if (n!=3 || linearly_dependent (o1, o2, o3) ||
-     (N (center= intersect (midperp (o1, o2, o3), midperp (o2, o3, o1))) == 0))
+     (N (center= intersection (midperp (o1, o2, o3),
+			       midperp (o2, o3, o1))) == 0))
   {
     center= i= j= 0*o1;
     r1= r2= 1;
@@ -569,23 +711,24 @@ arc_rep::arc_rep (array<point> a2, array<path> cip2, bool close):
   u[0]= 0;
   u[1]= e3;
   u[2]= e2;
-  if (close) e2= 1;
+  if (close) e2= 1.0;
 }
 
 point
 arc_rep::evaluate (double t) {
-  return center + r1*cos(2*tm_PI*(e1+t))*i
-                + r2*sin(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return center + r1*cos(2*tm_PI*t)*i
+                + r2*sin(2*tm_PI*t)*j;
 }
 
 void
 arc_rep::rectify_cumul (array<point>& cum, double eps) {
   double t, step;
   step= sqrt (2*eps / max (r1, r2) ) / tm_PI;
-  for (t=step; t<=e2; t+=step)
+  for (t=step; t<=1.0; t+=step)
     cum << evaluate (t);
-  if (t-step != e2)
-    cum << evaluate (e2);
+  if (t-step != 1.0)
+    cum << evaluate (1.0);
 }
 
 double
@@ -596,8 +739,9 @@ arc_rep::bound (double t, double eps) {
 point
 arc_rep::grad (double t, bool& error) {
   error= false;
-  return -2*tm_PI*r1*sin(2*tm_PI*(e1+t))*i
-         +2*tm_PI*r2*cos(2*tm_PI*(e1+t))*j;
+  t= e1 + t*(e2 - e1);
+  return -2*tm_PI*r1*sin(2*tm_PI*t)*i
+         +2*tm_PI*r2*cos(2*tm_PI*t)*j;
 }
 
 double
@@ -646,8 +790,8 @@ struct compound_curve_rep: public curve_rep {
   }
   point grad (double t, bool& error) {
     double n= n1+n2;
-    if (t <= n1/n) return c1->grad (t*n/n1, error);
-    else return c2->grad (t*n/n2 - n1, error);
+    if (t <= n1/n) return (n * c1->grad ((t*n)/n1, error)) / n1;
+    else return (n * c2->grad ((t*n)/n2 - n1, error)) / n2;
   }
   double curvature (double t1, double t2) {
     return max (c1->curvature (t1, t2), c2->curvature (t1, t2));
@@ -724,17 +868,11 @@ struct transformed_curve_rep: public curve_rep {
   double bound (double t, double eps) {
     return curve_rep::bound (t, eps);
   }
-  point grad (double t, bool& error) {
-    // FIXME: Is this correct ?
-    if (f->linear)
-      return f (c->grad (t, error));
-    else fatal_error ("Not yet implemented",
-		      "transformed_curve_rep::grad");
-  }
+  point grad (double t, bool& error);
   double curvature (double t1, double t2) {
     fatal_error ("Not yet implemented",
 	         "transformed_curve_rep::curvature");
-    return 0.0;
+    return 0.0; // NOT REACHED
   }
   int get_control_points (
     array<double>&abs, array<point>& pts, array<path>& cip);
@@ -750,6 +888,15 @@ transformed_curve_rep::rectify_cumul (array<point>& a, double eps) {
   }
   else fatal_error ("Not yet implemented",
 		    "transformed_curve_rep::rectify_cumul");
+}
+
+point
+transformed_curve_rep::grad (double t, bool& error) {
+  bool error2;
+  point w2= c->grad (t, error2);
+  point w1= f->jacobian (c(t), w2, error);
+  error |= error2;
+  return w1;
 }
 
 int

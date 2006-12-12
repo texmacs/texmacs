@@ -173,9 +173,9 @@ edit_env_rep::as_vspace (tree t) {
 
 point
 edit_env_rep::as_point (tree t) {
-  if (is_tuple (t) && ((N(t)==0) || is_double (t[0])))
+  if ((is_tuple (t) || is_point (t)) && ((N(t)==0) || is_double (t[0])))
     return ::as_point (t);
-  if (is_tuple (t)) {
+  if (is_tuple (t) || is_point (t)) {
     int i, n= N(t);
     point p(n);
     for (i=0; i<n; i++)
@@ -286,3 +286,13 @@ tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (get_int (SFACTOR) * PIXEL)); }
+
+tree edit_env_rep::exec_gw_length () {
+  return tree (TMLEN, as_string (gw)); }
+tree edit_env_rep::exec_gh_length () {
+  return tree (TMLEN, as_string (gh)); }
+
+tree edit_env_rep::exec_msec_length () { return tree (TMLEN, "1"); }
+tree edit_env_rep::exec_sec_length () { return tree (TMLEN, "1000"); }
+tree edit_env_rep::exec_min_length () { return tree (TMLEN, "60000"); }
+tree edit_env_rep::exec_h_length () { return tree (TMLEN, "3600000"); }

@@ -122,6 +122,7 @@ x_window_rep::initialize () {
   if (win_x < 0) win_x= 0;
   if ((win_y+ win_h) > dis->display_height) win_y= dis->display_height- win_h;
   if (win_y < 0) win_y=0;
+  win_flag= false;
   win= XCreateWindow (dpy, dis->root, win_x, win_y, win_w, win_h, 0,
 		      dis->depth, InputOutput, CopyFromParent,
 		      valuemask, &setattr);
@@ -134,11 +135,27 @@ x_window_rep::initialize () {
   if (the_name == "") the_name= name;
   set_hints (min_w, min_h, max_w, max_h);
 
+  unsigned long ic_mask= 0;
+  ic_ok= false;
+  if (dis->im_ok) {
+    ic= XCreateIC (dis->im,
+		   XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+		   XNClientWindow, win,
+		   NULL);
+    if (ic == NULL)
+      cout << "TeXmacs] Warning: couldn't create input context\n";
+    else {
+      ic_ok= true;
+      XGetICValues (ic, XNFilterEvents, &ic_mask, NULL);
+    }
+  }
+
   XSelectInput (dpy, win,
 		ExposureMask | StructureNotifyMask |
 		SubstructureNotifyMask | FocusChangeMask |
 		PointerMotionMask | EnterWindowMask | LeaveWindowMask |
-		ButtonPressMask | ButtonReleaseMask | KeyPressMask);
+		ButtonPressMask | ButtonReleaseMask |
+		KeyPressMask | ic_mask);
 
   Atom wm_protocols     = XInternAtom(dpy, "WM_PROTOCOLS", 1);
   Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", 1);
@@ -180,14 +197,16 @@ x_window_rep::~x_window_rep () {
   XEvent report;
   while (XCheckWindowEvent (dpy, win, 0xffffffff, &report));
 
+  if (ic_ok) XDestroyIC (ic);
   Window_to_window->reset (win);
   nr_windows--;
   XDestroyWindow (dpy, win);
 }
 
-int
-x_window_rep::get_type () {
-  return PS_DEVICE_SCREEN;
+void
+x_window_rep::get_extents (int& w, int& h) {
+  w= win_w;
+  h= win_h;
 }
 
 /******************************************************************************
@@ -304,7 +323,10 @@ x_window_rep::resize_event (int ww, int hh) {
   bool flag= (win_w!=ww) || (win_h!=hh);
   win_w= ww; win_h= hh;
   if (flag) w << emit_resize ();
-  w << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+  if (flag || !win_flag) {
+    w << emit_position (0, 0, win_w*PIXEL, win_h*PIXEL);
+    win_flag= true;
+  }
 }
 
 void
@@ -328,12 +350,14 @@ x_window_rep::key_event (string key) {
 
 void
 x_window_rep::focus_in_event () {
+  if (ic_ok) XSetICFocus (ic);
   has_focus= true;
   kbd_focus << emit_keyboard_focus (true);
 }
 
 void
 x_window_rep::focus_out_event () {
+  if (ic_ok) XUnsetICFocus (ic);
   has_focus= false;
   kbd_focus << emit_keyboard_focus (false);
 }
@@ -360,8 +384,14 @@ x_window_rep::mouse_event (string ev, int x, int y, time_t t) {
 
 void
 x_window_rep::repaint_invalid_regions () {
+  //if (!nil (invalid_regions)) cout << invalid_regions << "\n";
+  //else { cout << "."; cout.flush (); }
   rectangles new_regions;
-  event_status=false;
+  if (!nil (invalid_regions)) {
+    rectangle lub= least_upper_bound (invalid_regions);
+    if (area (lub) < 1.2 * area (invalid_regions))
+      invalid_regions= rectangles (lub);
+  }
   while (!nil (invalid_regions)) {
     set_origin (0, 0);
     rectangle r= copy (invalid_regions->item);
@@ -426,7 +456,8 @@ x_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
   invalid_intern = ::translate (invalid_intern, dx, dy) & region;
   invalid_regions= invalid_extern | invalid_intern;
 
-  XCopyArea (dpy, win, win, gc, x1, y2, x2-x1, y1-y2, X1, Y2);
+  if (x1<x2 && y2<y1)
+    XCopyArea (dpy, win, win, gc, x1, y2, x2-x1, y1-y2, X1, Y2);
 }
 
 void
@@ -440,52 +471,6 @@ x_window_rep::invalidate (SI x1, SI y1, SI x2, SI y2) {
 bool
 x_window_rep::repainted () {
   return nil (invalid_regions);
-}
-
-ps_device
-x_window_rep::window_to_shadow (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  SI scx1= x1+ ox;
-  SI scy1= y1+ oy;
-  SI scx2= x2+ ox;
-  SI scy2= y2+ oy;
-  decode (x1, y1);
-  decode (x2, y2);
-  if ((dis->shadow==NULL) || (x2 > dis->shadow->w) || (y1 > dis->shadow->h)) {
-    SI w= max (x2, dis->display_width);
-    SI h= max (y1, dis->display_height);
-    if (dis->shadow != NULL) delete dis->shadow;
-    dis->shadow= new x_drawable_rep (dis, w, h);
-  } 
-  XCopyArea (dpy, win, dis->shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-
-  dis->shadow->ox = ox;
-  dis->shadow->oy = oy;
-  dis->shadow->cx1= scx1;
-  dis->shadow->cy1= scy1;
-  dis->shadow->cx2= scx2;
-  dis->shadow->cy2= scy2;
-  dis->shadow->event_status= event_status;
-  dis->shadow_src= this;
-
-  return dis->shadow;
-}
-
-void
-x_window_rep::shadow_to_window (SI x1, SI y1, SI x2, SI y2) {
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  decode (x1, y1);
-  decode (x2, y2);
-  XCopyArea (dpy, dis->shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  event_status= event_status || dis->shadow->event_status;
 }
 
 /******************************************************************************

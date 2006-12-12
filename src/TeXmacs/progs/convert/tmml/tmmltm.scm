@@ -13,15 +13,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert tmml tmmltm)
-  (:export parse-tmml tmml->texmacs tmmltm))
+  (:use (convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Provide the inverse functionality of tmmlout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (xmlin-make tag attrs args impl)
-  (if (not (null? attrs)) (set! attrs (list (cons '@ attrs))))
-  (if (and (not (null? args)) (func? (car args) 'tm-attr))
+  (if (nnull? attrs) (set! attrs (list (cons '@ attrs))))
+  (if (and (nnull? args) (func? (car args) 'tm-attr))
       (begin
 	(set! attrs (append attrs (list (car args))))
 	(set! args (cdr args))))
@@ -30,7 +30,7 @@
   `(,tag ,@attrs ,@args))
 
 (define (xmlin-special tag attrs l)
-  (with args (map xmlin (list-filter l (lambda (x) (not (string? x)))))
+  (with args (map xmlin (list-filter l (lambda (x) (nstring? x))))
     (with doc? (list-or (map (lambda (x) (func? x 'tm-par)) args))
       (xmlin-make tag attrs args (if doc? '!document #f)))))
 
@@ -48,15 +48,15 @@
 (define (xmlin-regular tag attrs* args*)
   (let* ((search '(xml:space "preserve"))
 	 (preserve? (in? search attrs*))
-	 (attrs (list-filter attrs* (lambda (x) (not (== x search)))))
+	 (attrs (list-filter attrs* (lambda (x) (!= x search))))
 	 (args (xmlin-unspace-args args* #t preserve?)))
-    (set! args (list-filter args (lambda (x) (not (== x "")))))
+    (set! args (list-filter args (lambda (x) (!= x ""))))
     (if (and (null? args) (in? tag '(tm-arg tm-par))) (set! args '("")))
     (xmlin-make tag attrs args '!concat)))
 
 (define (xmlin x)
   ;(display* "[xmlin] " x "\n")
-  (if (not (pair? x)) x
+  (if (npair? x) x
       (let* ((tag (car x))
 	     (attrs? (and (pair? (cdr x)) (func? (cadr x) '@)))
 	     (attrs (if attrs? (cdadr x) '()))
@@ -82,14 +82,28 @@
 ;; Provide the inverse functionality of tmxml
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define tmmltm-current-version "9.9.9.9")
+
+(define (tmmltm-string s)
+  (if (version-before? tmmltm-current-version "1.0.5.8")
+      (old-xml-cdata->tm s)
+      (utf8->cork s)))
+
 (define (tmmltm-file version args)
-  `(!file (document (TeXmacs ,version) ,@(map tmmltm args))))
+  (with old-version tmmltm-current-version
+    (set! tmmltm-current-version version)
+    (with r `(!file (document (TeXmacs ,version) ,@(map tmmltm args)))
+      (set! tmmltm-current-version old-version)
+      r)))
 
 (define (tmmltm-document l)
   (cons 'document (map (lambda (x) (tmmltm (cadr x))) l)))
 
 (define (tmmltm-concat l)
-  (cons 'concat (map tmmltm l)))
+  (with r (tmconcat-simplify (map tmmltm l))
+    (cond ((null? r) "")
+	  ((null? (cdr r)) (car r))
+	  (else (cons 'concat r)))))
 
 (define (tmmltm-with x)
   (with (tag attr arg) (tmmltm-regular (car x) (cdr x))
@@ -135,9 +149,9 @@
 			     (tmmltm-args (cdr args))))
 	  (else (cons tag (tmmltm-args args))))))
 
-(define (tmmltm x)
+(tm-define (tmmltm x)
   ;(display* "[tmmltm] ") (write x) (display* "\n")
-  (cond ((string? x) (xml-cdata->tm x))
+  (cond ((string? x) (tmmltm-string x))
 	((and (func? x '*TOP*) (>= (length x) 3) (func? (caddr x) 'TeXmacs 2))
 	 (tmmltm (caddr x)))
 	((func? x '*TOP*) (tmmltm-concat (cdr x)))
@@ -146,6 +160,8 @@
 	((func? x '!document) (tmmltm-document (cdr x)))
 	((func? x '!concat) (tmmltm-concat (cdr x)))
 	((func? x 'with) (tmmltm-with x))
+	((and (func? x 'tm-sym 1) (string? (cadr x)))
+	 (string-append "<" (cadr x) ">"))
 	(else (tmmltm-regular (car x) (cdr x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

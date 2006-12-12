@@ -22,19 +22,13 @@ typedef int color;
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
 
-#define ANY_EVENT      0
-#define INPUT_EVENT    1
-#define DRAG_EVENT     2
-#define MOTION_EVENT   3
-#define MENU_EVENT     4
-#define EVENT_STATUS   5
-
-#define PS_DEVICE_SCREEN   0
-#define PS_DEVICE_PRINTER  1
-
 /******************************************************************************
 * The abstract ps_device class
 ******************************************************************************/
+
+class ps_device_rep;
+typedef ps_device_rep* ps_device;
+class x_drawable_rep;
 
 class ps_device_rep {
 public:
@@ -43,10 +37,19 @@ public:
   int sfactor;              // shrinking factor
   int pixel;                // PIXEL*sfactor
   int thicken;              // extra thinkening = (sfactor>>1)*PIXEL
+  ps_device master;         // master device in case of shadow devices
 
+public:
   ps_device_rep ();
   virtual ~ps_device_rep ();
-  virtual int get_type () = 0;
+
+  /* routines for specific devices */
+  virtual bool is_printer ();
+  virtual bool is_x_drawable ();
+  virtual x_drawable_rep* as_x_drawable ();
+  virtual void get_extents (int& w, int& h);
+  virtual void next_page ();
+  virtual bool interrupted (bool check= false);
 
   /* basic routines */
   void set_origin (SI x, SI y);
@@ -60,7 +63,6 @@ public:
   friend void abs_inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
   friend void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
   bool is_visible (SI x1, SI y1, SI x2, SI y2);
-  void triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
 
   /* color */
   color black, white, red, green, blue;
@@ -76,26 +78,34 @@ public:
   virtual void set_color (color c) = 0;
   virtual void set_background (color c) = 0;
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
-  virtual void set_line_style (SI w, int type=0) = 0;
+  virtual void set_line_style (SI w, int type=0, bool round=true) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void lines (array<SI> x, array<SI> y) = 0;
   virtual void clear (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void fill (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) = 0;
-  virtual void polygon (array<SI> x, array<SI> y) = 0;
+  virtual void fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) = 0;
+  virtual void polygon (array<SI> x, array<SI> y, bool convex=true) = 0;
+  virtual void triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
   virtual void xpm (url file_name, SI x, SI y) = 0;
-  virtual void postscript (url image,
-			   SI w, SI h, SI x, SI y,
-			   int x1, int y1, int x2, int y2) = 0;
+  virtual void image (url u, SI w, SI h, SI x, SI y,
+		      double cx1, double cy1, double cx2, double cy2) = 0;
   virtual void get_clipping (SI &x1, SI &y1, SI &x2, SI &y2);
-  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2);
+  virtual void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore= false);
   void extra_clipping (SI x1, SI y1, SI x2, SI y2);
 
-  /* routines for specific devices */
-  virtual void next_page () = 0;
-  virtual bool check_event (int type) = 0;
+  /* shadowing and copying rectangular regions across devices */
+  virtual void fetch (SI x1, SI y1, SI x2, SI y2, ps_device dev, SI x, SI y)=0;
+  virtual void new_shadow (ps_device& dev) = 0;
+  virtual void delete_shadow (ps_device& dev) = 0;
+  virtual void get_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void put_shadow (ps_device dev, SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void apply_shadow (SI x1, SI y1, SI x2, SI y2) = 0;
 };
 
-typedef ps_device_rep* ps_device;
-
+void abs_round (SI& l);
+void abs_round (SI& x, SI& y);
+void abs_inner_round (SI& x1, SI& y1, SI& x2, SI& y2);
+void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
+    
 #endif // defined PS_DEVICE_H

@@ -173,6 +173,20 @@ hash (tree t) {
   else return ((int) L(t)) ^ hash (A(t));
 }
 
+string
+var_as_string (tree t) {
+  if (is_atomic (t)) return t->label;
+  else if (is_concat (t)) {
+    int i, n= N(t);
+    string cumul;
+    for (i=0; i<n; i++)
+      cumul << var_as_string (t[i]);
+    return cumul;
+  }
+  else if (is_compound (t, "nbsp", 0)) return " ";
+  return "";
+}
+
 /******************************************************************************
 * Tree predicates
 ******************************************************************************/
@@ -221,6 +235,7 @@ is_multi_paragraph (tree t) {
   case DPAGES:
   case WITH:
   case MARK:
+  case EXPAND_AS:
   case STYLE_WITH:
   case VAR_STYLE_WITH:
   case STYLE_ONLY:
@@ -230,6 +245,8 @@ is_multi_paragraph (tree t) {
     return is_multi_paragraph (t[N(t)-1]);
   case INCLUDE:
     return true;
+  case LOCUS:
+    return is_multi_paragraph (t[N(t)-1]);
   default:
     if (L(t) < START_EXTENSIONS) return false;
     else {
