@@ -77,14 +77,14 @@
 	      (output-raw s)))
 	(set! output-space-flag #f))))
 
-(define (output-sub s i j)
-  (let ((pos (string-index (make-shared-substring s i j) #\space)))
-    (if pos
+(define (output-sub s i)
+  (with pos (string-search-forwards " " i s)
+    (if (>= pos i)
 	(begin
-	  (output-prepared (substring s i (+ i pos)))
+	  (output-prepared (substring s i pos))
 	  (set! output-space-flag #t)
-	  (output-sub s (+ i pos 1) j))
-	(set! output-tail (substring s i j)))))
+	  (output-sub s (+ pos 1)))
+	(set! output-tail (substring s i (string-length s))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low level interface
@@ -133,4 +133,4 @@
 (tm-define (output-text . ss)
   ;(display-err* "Output text " ss "\n")
   (let ((s (apply string-append (cons output-tail ss))))
-    (output-sub s 0 (string-length s))))
+    (output-sub s 0)))
