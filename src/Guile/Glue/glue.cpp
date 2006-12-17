@@ -376,7 +376,7 @@ scm_to_scheme_tree (SCM p) {
   if (scm_is_symbol (p)) return scm_to_symbol (p);
   if (scm_is_string (p)) return scm_quote (scm_to_string (p));
   //if (scm_is_string (p)) return "\"" * scm_to_string (p) * "\"";
-  if (scm_is_int (p)) return as_string (scm_to_int (p));
+  if (scm_is_int (p)) return as_string ((int) scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
   if (scm_is_tree (p)) return tree_to_scheme_tree (scm_to_tree (p));
   return "?";
@@ -405,7 +405,7 @@ scm_to_content (SCM p) {
   }
   if (scm_is_symbol (p)) return scm_to_symbol (p);
   if (scm_is_string (p)) return scm_to_string (p);
-  if (scm_is_int (p)) return as_string (scm_to_int (p));
+  if (scm_is_int (p)) return as_string ((int) scm_to_int (p));
   if (scm_is_bool (p)) return (scm_to_bool (p)? string ("#t"): string ("#f"));
   return "?";
 }
@@ -432,7 +432,7 @@ path_to_scm (path p) {
 path
 scm_to_path (SCM p) {
   if (scm_is_null (p)) return path ();
-  else return path (scm_to_int (SCM_CAR (p)), scm_to_path (SCM_CDR (p)));
+  else return path ((int) scm_to_int (SCM_CAR (p)), scm_to_path (SCM_CDR (p)));
 }
 
 /******************************************************************************
@@ -794,7 +794,7 @@ array_int_to_scm (array<int> a) {
 scm_to_array_int (SCM p) {
   array<int> a;
   while (!scm_is_null (p)) {
-    a << scm_to_int (SCM_CAR (p));
+    a << ((int) scm_to_int (SCM_CAR (p)));
     p= SCM_CDR (p);
   }
   return a;
