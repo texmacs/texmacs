@@ -474,12 +474,23 @@ edit_cursor_rep::go_to_label (string s) {
   }
   tree val= (buf->prj==NULL? buf->ref[s]: buf->prj->ref[s]);
   if (is_func (val, TUPLE, 3) && is_atomic (val[2])) {
-    url u= relative (buf->name, url (val[2]->label));
-    if (u != buf->name) {
-      string new_buf = scm_quote (as_string (u));
-      string load_buf= "(load-buffer (url-system " * new_buf * "))";
-      string jump_to = "(go-to-label " * scm_quote (s) * ")";
-      eval_delayed ("(begin " * load_buf * " " * jump_to * ")");
+    string extra= val[2]->label;
+    if (starts (extra, "#")) {
+      string part= extra (1, N (extra));
+      int i= search_forwards (".", part);
+      if (i >= 0) part= part (0, i);
+      string show= "(show-hidden-part " * scm_quote (part) * ")";
+      string jump= "(go-to-label " * scm_quote (s) * ")";
+      eval_delayed ("(if " * show * " (delayed " * jump * "))");
+    }
+    else {
+      url u= relative (buf->name, url (extra));
+      if (u != buf->name) {
+	string new_buf = scm_quote (as_string (u));
+	string load_buf= "(load-buffer (url-system " * new_buf * "))";
+	string jump_to = "(go-to-label " * scm_quote (s) * ")";
+	eval_delayed ("(begin " * load_buf * " " * jump_to * ")");
+      }
     }
   }
 }
