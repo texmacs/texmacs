@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.6.7>
 
 <style|<tuple|source|std>>
 
@@ -311,11 +311,11 @@
   </macro>>
 
   <assign|show-part|<\macro|id|active|inactive>
-    <arg|active>
+    <set-part|<arg|id>|<arg|active>>
   </macro>>
 
   <assign|hide-part|<\macro|id|active|inactive>
-    <hidden|<if|<sectional-short-style>|<arg|active>|<arg|inactive>>>
+    <hidden|<set-part|<arg|id>|<if|<sectional-short-style>|<arg|active>|<arg|inactive>>>>
   </macro>>
 
   <drd-props|show-preamble|border|no>

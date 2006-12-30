@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.6.7>
 
 <style|source>
 
@@ -31,7 +31,11 @@
 
   <new-counter|auto>
 
-  <assign|the-auto|<macro|<merge|auto-|<value|auto-nr>>>>
+  <assign|current-part|>
+
+  <assign|set-part|<macro|id|body|<with|current-part|<merge|<value|current-part>|.|<arg|id>>|auto-nr|0|<arg|body>>>>
+
+  <assign|the-auto|<macro|<merge|auto|<value|current-part>|-|<value|auto-nr>>>>
 
   <assign|auto-label|<macro|<inc-auto><label|<the-auto>>>>
 

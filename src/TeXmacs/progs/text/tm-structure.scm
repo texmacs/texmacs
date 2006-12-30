@@ -68,22 +68,35 @@
 ;; Routines for the principal section structure (used for document parts)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (short-style?)
+  (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
+
 (define (principal-section-predicate)
-  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
-      short-principal-section-tag?
-      long-principal-section-tag?))
+  (if (short-style?) short-principal-section-tag? long-principal-section-tag?))
 
 (tm-define (principal-section? t)
   (tm/section-detect? t (principal-section-predicate)))
 
-(define (list->document-part l)
-  (if (tm/section-detect? (car l) (principal-section-predicate))
-      `(show-part "auto" (document ,@l) (document ,(car l)))
-      `(show-part "front matter" (document ,@l) "")))
+(define (list->subpart l nr)
+  (with sec? (tm/section-detect? (car l) short-principal-section-tag?)
+    `(show-part ,(number->string nr)
+		(document ,@l)
+		,(if sec? `(document ,(car l)) ""))))
+
+(define (make-subparts l)
+  (if (short-style?) l
+      (with r (tm/section-split l short-principal-section-tag?)
+	(map list->subpart r (.. 1 (+ 1 (length r)))))))
+
+(define (list->document-part l nr)
+  (with sec? (tm/section-detect? (car l) (principal-section-predicate))
+    `(show-part ,(number->string nr)
+		(document ,(car l) ,@(make-subparts (cdr l)))
+		,(if sec? `(document ,(car l)) ""))))
 
 (tm-define (principal-sections-to-document-parts l)
   (with r (tm/section-split l (principal-section-predicate))
-    (map list->document-part r)))
+    (map list->document-part r (.. 1 (+ 1 (length r))))))
 
 (define (principal-section-title-sub l)
   (cond ((null? l) "no title")

@@ -1359,12 +1359,25 @@ edit_env_rep::exec_set_binding (tree t) {
   for (int i=0; i<N(keys); i++) {
     string key= keys[i]->label;
     tree old_value= local_ref[key];
+    string part= as_string (read ("current-part"));
     if (is_func (old_value, TUPLE) && (N(old_value) >= 2))
       local_ref (key)= tuple (copy (value), old_value[1]);
     else local_ref (key)= tuple (copy (value), "?");
-    if (cur_file_name != base_file_name) {
-      url d= delta (base_file_name, cur_file_name);
-      local_ref (key) << as_string (d);
+    if (cur_file_name != base_file_name || N(part) != 0) {
+      string extra;
+      if (cur_file_name != base_file_name)
+	extra << as_string (delta (base_file_name, cur_file_name));
+      if (N(part) != 0)
+	extra << "#" << part (1, N(part));
+      local_ref (key) << extra;
+    }
+    if (complete && is_tuple (old_value) && N(old_value) >= 1) {
+      string old_s= var_as_string (old_value[0]);
+      string new_s= var_as_string (value);
+      if (new_s != old_s && !starts (key, "auto-")) {
+	if (new_s == "") system_warning ("Redefined", key);
+	else system_warning ("Redefined " * key * " as", new_s);
+      }
     }
   }
   return keys;
@@ -1378,7 +1391,9 @@ edit_env_rep::exec_get_binding (tree t) {
   int type= (N(t) == 1? 0: as_int (exec_string (t[1])));
   if (type != 0 && type != 1) type= 0;
   if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
-  else if (type == 1) value= "?";
+  else if (type == 1) value= tree (UNINIT);
+  if (complete && value == tree (UNINIT))
+    system_warning ("Undefined reference", key);
   return value;
 }
 

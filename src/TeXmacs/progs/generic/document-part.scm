@@ -51,7 +51,7 @@
 ;; In the case of :one and :several, the hide-show-list contains items
 ;;   (show-part id body alt-body)
 ;;   (hide-part id body alt-body)
-;; Here id is an identifier for menus (auto -> determined from section title)
+;; Here id is an identifier for referencing purposes
 ;; The alt-body is evaluated in the background in the case of hidden parts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -78,9 +78,14 @@
       (tree-assign t `(document (hide-preamble ,(tree-ref t 0 0))
 				,@(tree-children (tree-ref t 1 0)))))))
 
-(define (buffer-flatten-part t)
+(define (buffer-flatten-subpart t)
   (if (tree-in? t '(show-part hide-part))
       (tree-children (tree-ref t 1))
+      (list t)))
+
+(define (buffer-flatten-part t)
+  (if (tree-in? t '(show-part hide-part))
+      (append-map buffer-flatten-subpart (tree-children (tree-ref t 1)))
       (list t)))
 
 (define (buffer-flatten-parts)
@@ -140,9 +145,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (document-part-name t)
-  (if (== (tree-ref t 0) (string->tree "auto"))
-      (principal-section-title (tree-ref t 1))
-      (tree->string (tree-ref t 0))))
+  (if (== (tree-ref t 1) (string->tree ""))
+      (string->tree "no title")
+      (principal-section-title (tree-ref t 1))))
 
 (define (document-get-parts t all?)
   (cond ((tree-atomic? t) '())
@@ -237,6 +242,13 @@
       (with id (document-part-name t)
 	(document-select-part (tree-up t) id))
       (tree-assign-node t 'show-part)))
+
+(tm-define (show-hidden-part id)
+  (:synopsis "Make hidden part with identifier @id visible")
+  (with search? (lambda (t) (match? t `(hide-part ,id :#2)))
+    (and-with t (list-find (tree-children (buffer-tree)) search?)
+      (tree-show-hidden t)
+      #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The dynamic document part menu
