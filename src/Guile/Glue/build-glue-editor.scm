@@ -182,6 +182,7 @@
   (go-start-paragraph go_start_paragraph (void))
   (go-end-paragraph go_end_paragraph (void))
   (go-to-label go_to_label (void string))
+  (cursor-show-if-hidden show_cursor_if_hidden (void))
 
   ;; selections
   (select-all select_all (void))

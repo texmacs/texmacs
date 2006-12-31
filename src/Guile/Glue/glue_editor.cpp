@@ -1745,6 +1745,15 @@ tmg_go_to_label (SCM arg1) {
 }
 
 SCM
+tmg_cursor_show_if_hidden () {
+  // SCM_DEFER_INTS;
+  get_server()->get_editor()->show_cursor_if_hidden ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_select_all () {
   // SCM_DEFER_INTS;
   get_server()->get_editor()->select_all ();
@@ -3016,6 +3025,7 @@ initialize_glue_editor () {
   scm_new_procedure ("go-start-paragraph", (FN) tmg_go_start_paragraph, 0, 0, 0);
   scm_new_procedure ("go-end-paragraph", (FN) tmg_go_end_paragraph, 0, 0, 0);
   scm_new_procedure ("go-to-label", (FN) tmg_go_to_label, 1, 0, 0);
+  scm_new_procedure ("cursor-show-if-hidden", (FN) tmg_cursor_show_if_hidden, 0, 0, 0);
   scm_new_procedure ("select-all", (FN) tmg_select_all, 0, 0, 0);
   scm_new_procedure ("select-line", (FN) tmg_select_line, 0, 0, 0);
   scm_new_procedure ("select-from-cursor", (FN) tmg_select_from_cursor, 0, 0, 0);
