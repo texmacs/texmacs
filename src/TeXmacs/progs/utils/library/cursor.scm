@@ -146,7 +146,9 @@
 	    (future-set (cons pos (future-get)))
 	    (if (== (cursor-path) (position-get pos))
 		(cursor-history-backward)
-		(go-to (position-get pos))))
+		(begin
+		  (go-to (position-get pos))
+		  (cursor-show-if-hidden))))
 	  (begin
 	    (position-delete pos)
 	    (cursor-history-backward))))))
@@ -165,7 +167,9 @@
 	    (history-set (cons pos (history-get)))
 	    (if (== (cursor-path) (position-get pos))
 		(cursor-history-forward)
-		(go-to (position-get pos))))
+		(begin
+		  (go-to (position-get pos))
+		  (cursor-show-if-hidden))))
 	  (begin
 	    (position-delete pos)
 	    (cursor-future-backward))))))
