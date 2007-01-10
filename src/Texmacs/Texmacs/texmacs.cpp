@@ -15,6 +15,10 @@
 #include "server.hpp"
 #include "timer.hpp"
 #include "data_cache.hpp"
+#ifdef EXPERIMENTAL
+#include "../../Style/Memorizer/clean_copy.hpp"
+#include "../../Style/Environment/environment.hpp"
+#endif
 
 extern bool   char_clip;
 extern bool   reverse_colors;
@@ -269,6 +273,9 @@ main (int argc, char** argv) {
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
+#ifdef EXPERIMENTAL
+  global_notify_assign (path (), tuple ());
+#endif
   immediate_options (argc, argv);
   cache_initialize ();
   bench_start ("initialize texmacs");
@@ -277,6 +284,9 @@ main (int argc, char** argv) {
 #ifdef ENABLE_TESTS
   test_routines ();
 #endif
+//#ifdef EXPERIMENTAL
+//  test_environments ();
+//#endif
   start_guile (argc, argv, TeXmacs_main);
   return 0;
 }

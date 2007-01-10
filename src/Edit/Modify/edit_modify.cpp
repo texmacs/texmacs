@@ -12,6 +12,9 @@
 
 #include "edit_modify.hpp"
 #include "tm_buffer.hpp"
+#ifdef EXPERIMENTAL
+#include "../../Style/Memorizer/clean_copy.hpp"
+#endif
 
 extern int max_undo_depth;
 
@@ -68,6 +71,9 @@ edit_modify_rep::assign (path pp, tree u) {
   FOR_ALL_EDITORS_END
 
   ::assign (subtree (et, p), u);
+#ifdef EXPERIMENTAL
+  global_notify_assign (p, u);
+#endif
   finished (pp);
 }
 
@@ -83,6 +89,9 @@ edit_modify_rep::insert (path pp, tree u) {
   FOR_ALL_EDITORS_END
 
   ::insert (subtree (et, path_up (p)), last_item (p), u);
+#ifdef EXPERIMENTAL
+  global_notify_insert (p, u);
+#endif
   finished (pp);
 }
 
@@ -102,6 +111,9 @@ edit_modify_rep::remove (path pp, int nr) {
   FOR_ALL_EDITORS_END
 
   ::remove (subtree (et, path_up (p)), last_item (p), nr);
+#ifdef EXPERIMENTAL
+  global_notify_remove (p, nr);
+#endif
   finished (pp);
 }
 
@@ -121,6 +133,9 @@ edit_modify_rep::split (path pp) {
   FOR_ALL_EDITORS_END
 
   ::split (st, l1, l2);
+#ifdef EXPERIMENTAL
+  global_notify_split (p);
+#endif
   finished (pp);
 }
 
@@ -143,6 +158,9 @@ edit_modify_rep::join (path pp) {
   FOR_ALL_EDITORS_END
 
   ::join (st, l1);
+#ifdef EXPERIMENTAL
+  global_notify_join (p);
+#endif
   finished (pp);
 }
 
@@ -158,6 +176,9 @@ edit_modify_rep::insert_node (path pp, tree t) {
   FOR_ALL_EDITORS_END
 
   ::insert_node (subtree (et, path_up (p)), last_item (p), t);
+#ifdef EXPERIMENTAL
+  global_notify_insert_node (p, t);
+#endif
   finished (pp);
 }
 
@@ -175,6 +196,9 @@ edit_modify_rep::remove_node (path pp) {
   FOR_ALL_EDITORS_END
 
   ::remove_node (subtree (et, path_up (p)), pos);
+#ifdef EXPERIMENTAL
+  global_notify_remove_node (p);
+#endif
   finished (pp);
 }
 
@@ -191,6 +215,9 @@ edit_modify_rep::assign_node (path pp, tree_label op) {
   FOR_ALL_EDITORS_END
 
   ::assign_node (subtree (et, p), op);
+#ifdef EXPERIMENTAL
+  global_notify_assign_node (p, op);
+#endif
   finished (pp);
 }
 

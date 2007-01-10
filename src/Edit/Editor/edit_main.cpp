@@ -43,7 +43,9 @@ edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
   tp= correct_cursor (et, rp * 0);
 }
 
-edit_main_rep::~edit_main_rep () {}
+edit_main_rep::~edit_main_rep () {
+  mem= memorizer ();
+}
 
 editor
 new_editor (server_rep* sv, tm_buffer buf) {
