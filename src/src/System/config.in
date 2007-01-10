@@ -6,6 +6,9 @@
 /* Dynamic linking works */
 #undef DYNAMIC_LINKING
 
+/* Enable experimental style rewriting code */
+#undef EXPERIMENTAL
+
 /* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
 

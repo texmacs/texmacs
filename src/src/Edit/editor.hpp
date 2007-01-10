@@ -17,7 +17,11 @@
 #include "server.hpp"
 #include "scheme.hpp"
 #include "drd_info.hpp"
-#define TEXMACS_COPYRIGHT (string("(c) 1999-2003 by Joris van der Hoeven"))
+#ifdef EXPERIMENTAL
+#include "../Style/Environment/environment.hpp"
+#include "../Style/Memorizer/memorizer.hpp"
+#endif
+#define TEXMACS_COPYRIGHT (string("(c) 1999-2006 by Joris van der Hoeven"))
 
 #define THE_CURSOR 1
 #define THE_FOCUS 2
@@ -44,6 +48,10 @@ protected:
   box         eb;   // box translation of tree
   path        rp;   // path to the root of the document in et
   path        tp;   // path of cursor in tree
+#ifdef EXPERIMENTAL
+  environment ste;  // environment for style rewriting
+  memorizer   mem;  // style converted document tree
+#endif
 
   /* exchanging information with the interface */
   virtual SI      get_window_height () = 0;
@@ -203,6 +211,9 @@ public:
   virtual bool     is_length (string s) = 0;
   virtual double   divide_lengths (string l1, string l2) = 0;
   virtual void     drd_update () = 0;
+#ifdef EXPERIMENTAL
+  virtual void     environment_update () = 0;
+#endif
   virtual bool     defined_at_cursor (string var_name) = 0;
   virtual bool     defined_at_init (string var_name) = 0;
   virtual bool     defined_in_init (string var_name) = 0;

@@ -17,6 +17,10 @@
 #include "tm_buffer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "data_cache.hpp"
+#ifdef EXPERIMENTAL
+#include "../../Style/Memorizer/clean_copy.hpp"
+#include "../../Style/Evaluate/evaluate_main.hpp"
+#endif
 
 extern void (*env_next_prog)(void);
 extern void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
@@ -338,6 +342,23 @@ edit_interface_rep::apply_changes () {
     // check_data_integrety ();
     the_ghost_cursor()= eb->find_check_cursor (tp);
   }
+
+#ifdef EXPERIMENTAL
+  if (env_change & THE_ENVIRONMENT)
+    environment_update ();
+  if (env_change & THE_TREE) {
+    //global_trace_subtree (rp);
+    tree raw= global_get_subtree (rp);
+    cout << HRULE;
+    mem= evaluate (ste, raw);
+    tree rew= mem->get_tree ();
+    //cout << HRULE;
+    //print_tree (mem);
+    cout << HRULE;
+    cout << tree_to_texmacs (rew) << LF;
+    //print_tree (rew);
+  }
+#endif
 
   // cout << "Handling extents\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS))

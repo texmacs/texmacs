@@ -51,6 +51,9 @@ public:
   double   divide_lengths (string l1, string l2);
 
   void     drd_update ();
+#ifdef EXPERIMENTAL
+  void     environment_update ();
+#endif
   bool     defined_at_cursor (string var_name);
   bool     defined_at_init (string var_name);
   bool     defined_in_init (string var_name);
