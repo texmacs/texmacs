@@ -94,7 +94,8 @@ inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
-inline int hash (pointer ptr) { return (intptr_t) ptr; }
+inline int hash (pointer ptr) {
+  return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
 inline int copy (int x) { return x; }
 inline SI as_int (double x) { return (SI) floor (x + 0.5); }
 

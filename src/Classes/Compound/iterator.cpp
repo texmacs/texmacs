@@ -18,7 +18,7 @@
 
 template<class T> int
 iterator_rep<T>::remains () {
-  if (busy()) return -1;
+  if (busy ()) return -1;
   else return 0;
 }
 
@@ -37,7 +37,7 @@ operator << (ostream& out, iterator<T> it) {
   out << "[ ";
   while (it->busy ()) {
     if (flag) out << ", ";
-    else flag=true;
+    else flag= true;
     out << it->next ();
   }
   return out << " ]";
@@ -63,17 +63,17 @@ hashset_iterator_rep<T>::hashset_iterator_rep (hashset<T> h2):
 
 template<class T> void
 hashset_iterator_rep<T>::spool () {
-  if (i>=h->n) return;
-  while (nil(l)) {
-    if ((++i)>=h->n) return;
-    l=h->a[i];
+  if (i >= h->n) return;
+  while (nil (l)) {
+    if ((++i) >= h->n) return;
+    l= h->a[i];
   }
 }
 
 template<class T> bool
 hashset_iterator_rep<T>::busy () {
   spool ();
-  return i<h->n;
+  return i < h->n;
 }
 
 template<class T> T
@@ -111,17 +111,17 @@ hashmap_iterator_rep<T,U>::hashmap_iterator_rep (hashmap<T,U> h2):
 
 template<class T, class U> void
 hashmap_iterator_rep<T,U>::spool () {
-  if (i>=h->n) return;
-  while (nil(l)) {
-    if ((++i)>=h->n) return;
-    l=h->a[i];
+  if (i >= h->n) return;
+  while (nil (l)) {
+    if ((++i) >= h->n) return;
+    l= h->a[i];
   }
 }
 
 template<class T, class U> bool
 hashmap_iterator_rep<T,U>::busy () {
   spool ();
-  return i<h->n;
+  return i < h->n;
 }
 
 template<class T, class U> T

@@ -30,10 +30,11 @@ template<class T,class U> bool operator == (hashmap<T,U> h1, hashmap<T,U> h2);
 template<class T,class U> bool operator != (hashmap<T,U> h1, hashmap<T,U> h2);
 
 template<class T, class U> struct hashentry {
+  int code;
   T key;
   U im;
   hashentry<T,U> () { }
-  hashentry<T,U> (T key2, U im2);
+  hashentry<T,U> (int code, T key2, U im2);
   operator tree ();
 };
 
