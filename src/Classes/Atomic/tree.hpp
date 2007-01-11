@@ -226,6 +226,8 @@ template<class T> inline tree as_tree(T x) { return (tree) x; }
 template<> inline tree as_tree(int x) { return as_string (x); }
 template<> inline tree as_tree(double x) { return as_string (x); }
 template<> inline tree as_tree(pointer x) { return "?"; }
+inline tree bool_as_tree (bool f) {
+  return (f? tree ("true"): tree ("false")); }
 
 /******************************************************************************
 * Data

@@ -19,10 +19,13 @@ void primitive (environment& env, hashmap<string,tree> h);
 void assign (environment& env, assoc_environment local);
 void begin_with (environment& env, assoc_environment local);
 void end_with (environment& env);
+
+#ifdef CLASSICAL_MACRO_EXPANSION
 void macro_down (environment& env, assoc_environment local);
 void macro_redown (environment& env, basic_environment local);
 void macro_up (environment& env);
 bool macro_top_level (environment& env);
 basic_environment macro_arguments (environment& env);
+#endif // CLASSICAL_MACRO_EXPANSION
 
 #endif // defined STD_ENVIRONMENT_H

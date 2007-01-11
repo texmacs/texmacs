@@ -22,8 +22,19 @@ tree evaluate_error (string message);
 tree evaluate_error (string message, tree a1);
 tree evaluate_error (string message, array<tree> args);
 memorizer evaluate (environment env, tree t);
-
 tree expand (tree t, bool flag);
+
+/* Tree rewriting */
+#define INACTIVE_INLINE_RECURSE  0
+#define INACTIVE_INLINE_ONCE     1
+#define INACTIVE_INLINE_ERROR    2
+#define INACTIVE_BLOCK_RECURSE   3
+#define INACTIVE_BLOCK_ONCE      4
+#define INACTIVE_BLOCK_ERROR     5
+
+tree rewrite (tree t);
+tree evaluate_rewrite (tree t);
+tree rewrite_inactive (tree t, int inactive_mode);
 
 /* Length arithmetic */
 bool is_length (string s);
@@ -50,7 +61,6 @@ tree evaluate_get_label (tree t);
 tree evaluate_get_arity (tree t);
 
 /* Quoting and evaluation */
-tree evaluate_rewrite (tree t);
 tree evaluate_eval_args (tree t);
 tree evaluate_quasiquote (tree t);
 
@@ -59,6 +69,7 @@ tree evaluate_if (tree t);
 tree evaluate_case (tree t);
 tree evaluate_while (tree t);
 tree evaluate_for_each (tree t);
+tree evaluate_include (tree t);
 tree evaluate_use_package (tree t);
 tree evaluate_use_module (tree t);
 
