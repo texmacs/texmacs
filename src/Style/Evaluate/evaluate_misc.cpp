@@ -111,7 +111,8 @@ evaluate_set_binding (tree t) {
       }
     }
   }
-  return keys;
+
+  return ""; // FIXME: do stuff from concater_rep::typeset_set_binding instead
 }
 
 tree
