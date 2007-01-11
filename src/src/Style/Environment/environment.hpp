@@ -14,6 +14,9 @@
 #define ENVIRONMENT_H
 #include "tree.hpp"
 
+//#define CLASSICAL_MACRO_EXPANSION
+#define ALTERNATIVE_MACRO_EXPANSION
+
 /******************************************************************************
 * Helper functions which should be moved elsewhere
 ******************************************************************************/

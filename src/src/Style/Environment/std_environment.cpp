@@ -252,6 +252,8 @@ end_with (environment& env) {
 * Adding an additional macro level
 ******************************************************************************/
 
+#ifdef CLASSICAL_MACRO_EXPANSION
+
 std_environment
 macro_down_environment (std_environment env, basic_environment local) {
   list_environment args (local, env->args);
@@ -335,9 +337,13 @@ macro_arguments (environment& env) {
   return std->args->env;
 }
 
+#endif // CLASSICAL_MACRO_EXPANSION
+
 /******************************************************************************
 * Remove the uppermost macro level
 ******************************************************************************/
+
+#ifdef CLASSICAL_MACRO_EXPANSION
 
 std_environment
 macro_up_environment (std_environment env) {
@@ -373,6 +379,8 @@ macro_up (environment& env) {
   if (!is_memorized (mem)) mem->compute ();
   env= mem->get_environment ();
 }
+
+#endif // CLASSICAL_MACRO_EXPANSION
 
 /******************************************************************************
 * Testing the code for environments

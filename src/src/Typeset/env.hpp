@@ -94,12 +94,6 @@
 #define INACTIVE_BLOCK_ONCE      4
 #define INACTIVE_BLOCK_ERROR     5
 
-#define MODIFY_NONE              0
-#define MODIFY_COMPACT           1
-#define MODIFY_LONG              2
-#define MODIFY_PERMANENT_COMPACT 3
-#define MODIFY_PERMANENT_LONG    4
-
 /******************************************************************************
 * Other enumerated values
 ******************************************************************************/

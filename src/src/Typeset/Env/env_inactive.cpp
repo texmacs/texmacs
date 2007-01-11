@@ -22,9 +22,9 @@ subvar (tree var, int i) {
 * Test whether a tree (argument) should be rendered in compact format or not.
 ******************************************************************************/
 
-static bool is_long (tree t);
+bool is_long (tree t);
 
-static bool
+bool
 is_long_arg (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);
@@ -90,7 +90,7 @@ is_long_arg (tree t, int i) {
   }
 }
 
-static bool
+bool
 is_long (tree t) {
   if (is_compound (t)) {
     int i, n= N(t);
@@ -105,7 +105,7 @@ is_long (tree t) {
 * For syntactic coloring
 ******************************************************************************/
 
-static string
+string
 arg_type (tree t, int i) {
   // FIXME: should go into the DRD
   int n= N(t);

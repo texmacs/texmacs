@@ -17,6 +17,8 @@
 #include "convert.hpp"
 #include "scheme.hpp"
 
+tree load_inclusion (url u); // implemented in tm_file.cpp
+
 /******************************************************************************
 * Classical control structures
 ******************************************************************************/
@@ -74,6 +76,24 @@ evaluate_for_each (tree t) {
 /******************************************************************************
 * External dependencies
 ******************************************************************************/
+
+tree
+evaluate_include (tree t) {
+  url base_file_name (as_string (std_env["base-file-name"]));
+  url incl_file_name= url_system (as_string (evaluate (t[0])));
+  tree incl= load_inclusion (incl_file_name);
+
+  assoc_environment local (2);
+  local->raw_write (0, string ("cur-file-name"),
+		    as_string (incl_file_name));
+  local->raw_write (1, string ("secure"),
+		    bool_as_tree (is_secure (incl_file_name)));
+
+  begin_with (std_env, local);
+  tree r= evaluate (incl);
+  end_with (std_env);
+  return r;
+}
 
 static tree
 filter_style (tree t) {

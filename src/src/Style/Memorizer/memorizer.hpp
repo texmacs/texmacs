@@ -17,12 +17,15 @@
 class environment;
 
 #define MEMORIZE_EVALUATE      0
-#define MEMORIZE_ASSIGN        1
-#define MEMORIZE_BEGIN_WITH    2
-#define MEMORIZE_END_WITH      3
-#define MEMORIZE_MACRO_DOWN    4
-#define MEMORIZE_MACRO_REDOWN  5
-#define MEMORIZE_MACRO_UP      6
+#define MEMORIZE_REWRITE       1
+#define MEMORIZE_INACTIVE      2
+
+#define MEMORIZE_ASSIGN        10
+#define MEMORIZE_BEGIN_WITH    11
+#define MEMORIZE_END_WITH      12
+#define MEMORIZE_MACRO_DOWN    13
+#define MEMORIZE_MACRO_REDOWN  14
+#define MEMORIZE_MACRO_UP      15
 
 /******************************************************************************
 * Abstract memorizers

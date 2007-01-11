@@ -87,10 +87,12 @@ evaluate_impl (tree t) {
     return copy (t);
   case DRD_PROPS:
     return evaluate_drd_props (t);
+#ifdef CLASSICAL_MACRO_EXPANSION
   case ARG:
     return evaluate_arg (t);
   case QUOTE_ARG:
     return evaluate_quote_arg (t);
+#endif
   case COMPOUND:
     return evaluate_compound (t);
   case XMACRO:
@@ -136,7 +138,7 @@ evaluate_impl (tree t) {
   case EXTERN:
     return evaluate_rewrite (t);
   case INCLUDE:
-    return evaluate_rewrite (t);
+    return evaluate_include (t);
   case USE_PACKAGE:
     return evaluate_use_package (t);
   case USE_MODULE:
@@ -357,8 +359,8 @@ tree
 evaluate (tree t) {
   if (is_atomic (t)) return t;
   cout << "Evaluate "
-    //<< "[" << (t.operator -> ())
-    //<< ", " << (std_env.operator -> ()) << "] "
+       << "[" << (t.operator -> ())
+       << ", " << (std_env.operator -> ()) << "] "
        << t << INDENT << LF;
   memorizer mem= evaluate_memorizer (std_env, t);
   if (is_memorized (mem)) {

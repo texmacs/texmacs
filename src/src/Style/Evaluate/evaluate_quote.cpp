@@ -14,21 +14,12 @@
 #include "std_environment.hpp"
 
 /******************************************************************************
-* Tree rewriting before evaluation
-******************************************************************************/
-
-tree
-evaluate_rewrite (tree t) {
-  (void) t; return "";
-  // FIXME: not yet implemented
-}
-
-/******************************************************************************
 * The eval-args primitive
 ******************************************************************************/
 
 tree
 evaluate_eval_args (tree t) {
+#ifdef CLASSICAL_MACRO_EXPANSION
   if (macro_top_level (std_env) || !is_atomic (t[0]))
     return evaluate_error ("undefined", t[0]);
   basic_environment local= macro_arguments (std_env);
@@ -36,14 +27,23 @@ evaluate_eval_args (tree t) {
   if (!local->contains (key))
     return evaluate_error ("undefined", t[0]);
   tree u= local [key];
+#else
+  tree u= t[0];
+#endif
   if (is_atomic (u)) return evaluate_error ("bad eval-args");
 
+#ifdef CLASSICAL_MACRO_EXPANSION
   macro_up (std_env);
+#endif
+
   int i, n= N(u);
   tree r (u, n);
   for (i=0; i<n; i++)
     r[i]= evaluate (u[i]);
+
+#ifdef CLASSICAL_MACRO_EXPANSION
   macro_redown (std_env, local);
+#endif
 
   return r;
 }
