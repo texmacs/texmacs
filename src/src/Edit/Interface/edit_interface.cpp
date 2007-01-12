@@ -344,6 +344,7 @@ edit_interface_rep::apply_changes () {
   }
 
 #ifdef EXPERIMENTAL
+  /*
   if (env_change & THE_ENVIRONMENT)
     environment_update ();
   if (env_change & THE_TREE) {
@@ -358,6 +359,7 @@ edit_interface_rep::apply_changes () {
     cout << tree_to_texmacs (rew) << LF;
     //print_tree (rew);
   }
+  */
 #endif
 
   // cout << "Handling extents\n";
