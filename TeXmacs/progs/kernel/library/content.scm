@@ -61,7 +61,7 @@
   (if (list? x) x (tree->list x)))
 
 (define-public (tm-car x)
-  (car (if (pair? x) x (tree->list x))))
+  (if (pair? x) (car x) (tree-label x)))
 
 (define-public (tm-cdr x)
   (cdr (if (pair? x) x (tree->list x))))
