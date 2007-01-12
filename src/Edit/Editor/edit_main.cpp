@@ -44,7 +44,9 @@ edit_main_rep::edit_main_rep (server_rep* sv, display dis, tm_buffer buf):
 }
 
 edit_main_rep::~edit_main_rep () {
+#ifdef EXPERIMENTAL
   mem= memorizer ();
+#endif
 }
 
 editor
