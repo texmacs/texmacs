@@ -67,6 +67,7 @@ class assoc_environment {
 };
 ABSTRACT_CODE(assoc_environment);
 
+assoc_environment copy (assoc_environment env);
 int weak_hash (assoc_environment env);
 bool weak_equal (assoc_environment env1, assoc_environment env2);
 
