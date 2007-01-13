@@ -206,12 +206,40 @@ expand (tree t, assoc_environment env) {
   else {
     int i, n= N(t);
     switch (L(t)) {
+    case MACRO:
+      {
+	assoc_environment local= copy (env);
+	for (i=0; i+1<n; i+=2)
+	  if (is_atomic (t[i])) {
+	    int key= make_tree_label (t[i]->label);
+	    local->remove (key);
+	  }
+	bool flag= true;
+	tree r (t, n);
+	for (i=0; i<n; i++) {
+	  r[i]= expand (t[i], i==n-1? local: env);
+	  flag= flag && weak_equal (r[i], t[i]);
+	}
+	if (flag) return t;
+	return r;
+      }
+    case XMACRO:
+      {
+	assoc_environment local= copy (env);
+	if (is_atomic (t[i])) {
+	  int key= make_tree_label (t[0]->label);
+	  local->remove (key);
+	}
+	tree body= expand (t[1], local);
+	if (weak_equal (body, t[1])) return t;
+	return tree (XMACRO, t[0], body);
+      }
     case ARG:
       {
 	tree r= t[0];
 	if (is_compound (r)) return evaluate_error ("bad arg");
 	int key= make_tree_label (r->label);
-	if (!env->contains (key)) return evaluate_error ("undefined", r);
+	if (!env->contains (key)) return t;
 	r= env[key];
 	if (N(t) > 1) {
 	  int i, n= N(t);
