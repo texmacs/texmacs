@@ -59,9 +59,11 @@
 
 (tm-define (build-widget w)
   (:synopsis "Build a lazy widget constructor from a scheme program @w")
-  (if (nlist? w)
-      (List w)
-      (List (Cons (Quote (car w)) (build-widgets (cdr w))))))
+  (cond ((list? w) (List (Cons (Quote (car w)) (build-widgets (cdr w)))))
+	((== w :::) (List (List (Quote 'gui-vspace))))
+	((== w '---) (List (List (Quote 'gui-hrule))))
+	((== w '>>>) (List (List (Quote 'gui-tab))))
+	(else (List w))))
 
 (tm-define (build-widgets ws)
   `(append ,@(map build-widget ws)))
@@ -69,7 +71,7 @@
 (tm-define (build-widget w)
   (:case let)
   (with (cmd bindings . body) w
-    `(let ,bindings
+    `(let* ,bindings
        ,(build-widgets body))))
 
 (tm-define (build-widget w)
@@ -114,13 +116,33 @@
 (define (build-rows ls)
   `(append ,@(map build-row ls)))
 
+(define (get-options-sub l)
+  (if (and (nnull? l) (keyword? (car l)))
+      (with (options . args) (get-options-sub (cdr l))
+	(cons (cons (car l) options) args))
+      (cons '() l)))
+
+(define (get-options l)
+  (get-options-sub (cdr l)))
+
 (tm-define (build-widget w)
   (:case table)
-  (with (cmd . rows) w
-    (List (List (Quote 'gui-normal-table)
-		(List (Quote 'tformat)
-		      (Cons (Quote 'table)
-			    (build-rows rows)))))))
+  (with (options . rows) (get-options w)
+    (with short? (in? :short options)
+      (List (List (Quote (if short? 'gui-normal-bar 'gui-normal-table))
+		  (List (Quote 'tformat)
+			(Cons (Quote 'table)
+			      (build-rows rows))))))))
+
+(tm-define (build-widget w)
+  (:case bar)
+  (with (options . cells) (get-options w)
+    (with short? (in? :short options)
+      (List (List (Quote (if short? 'gui-normal-bar 'gui-normal-table))
+		  (List (Quote 'tformat)
+			(List (Quote 'table)
+			      (Cons (Quote 'row)
+				    (build-cells cells)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining widgets

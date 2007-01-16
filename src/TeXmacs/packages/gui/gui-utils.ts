@@ -25,6 +25,8 @@
 
   <assign|page-medium|automatic>
 
+  <assign|scroll-bars|false>
+
   <assign|font-family|ss>
 
   <assign|par-sep|0.2em>
@@ -74,6 +76,10 @@
   <assign|gui-normal-table|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|1|1|-1|cell-tsep|0px>|<cwith|2|-1|1|-1|cell-tsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
 
   <assign|gui-airy-table|<macro|body|<tformat|<twith|table-valign|C>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-big-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|1|1|1|-1|cell-tsep|0px>|<cwith|2|-1|1|-1|cell-tsep|<value|gui-big-sep>>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
+
+  <assign|gui-dense-bar|<macro|body|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-lsep|0px>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
+
+  <assign|gui-normal-bar|<macro|body|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|1|cell-lsep|0px>|<cwith|1|-1|2|-1|cell-lsep|<value|gui-med-sep>>|<cwith|1|-1|1|-1|cell-rsep|0px>|<cwith|-1|1|1|-1|cell-tsep|0px>|<cwith|1|-1|1|-1|cell-bsep|0px>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -133,9 +139,13 @@
 
   <assign|gui-vspace-sep|<macro|height|<gui-dense-table|<tformat|<cwith|1|-1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-height|<arg|height>>|<table|<row|<cell|>>>>>>>
 
-  <assign|gui-hrule|<gui-hrule-sep|<value|gui-med-sep>|0px|0px|0px|<value|gui-down-color>>>
+  <assign|gui-hrule|<macro|<gui-hrule-sep|<value|gui-med-sep>|0px|0px|0px|<value|gui-down-color>>>>
 
-  <assign|gui-vspace|<gui-vspace-sep|<value|gui-med-sep>>>
+  <assign|gui-vspace|<macro|<gui-vspace-sep|<value|gui-med-sep>>>>
+
+  <assign|gui-tab|<macro|<tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|0px>|<cwith|1|1|1|1|cell-rsep|0px>|<cwith|1|1|1|1|cell-bsep|0px>|<cwith|1|1|1|1|cell-tsep|0px>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<\cell>
+    \;
+  </cell>>>>>>>
 
   <\active*>
     <\src-comment>

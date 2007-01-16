@@ -132,8 +132,6 @@ edit_main_rep::focus_on_this_editor () {
 void
 edit_main_rep::notify_page_change () {
   if (attached ()) this << emit_invalidate_all ();
-  if (get_init_string (PAGE_MEDIUM) == "automatic")
-    notify_change (THE_AUTOMATIC_SIZE);
 }
 
 /******************************************************************************

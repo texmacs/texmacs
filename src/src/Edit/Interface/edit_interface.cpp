@@ -51,9 +51,11 @@ edit_interface_rep::edit_interface_rep ():
   pixel (sfactor*PIXEL), copy_always (),
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
-  oc (0, 0), shadow (NULL), stored (NULL)
+  oc (0, 0), shadow (NULL), stored (NULL),
+  cur_sb (2)
 {
   input_mode= INPUT_NORMAL;
+  dis->get_extents (cur_wx, cur_wy);
 }
 
 edit_interface_rep::~edit_interface_rep () {
@@ -84,6 +86,7 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
   SERVER (menu_icons (1, "(horizontal (link texmacs-context-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-extra-icons))"));
+  cur_sb= 2;
   tp= make_cursor_accessible (tp, true);
   notify_change (THE_FOCUS + THE_EXTENTS + THE_CURSOR);
 }
@@ -114,7 +117,6 @@ edit_interface_rep::set_shrinking_factor (int sf) {
     pixel  = sf*PIXEL;
     init_env (SFACTOR, as_string (sf));
     notify_change (THE_ENVIRONMENT);
-    notify_change (THE_AUTOMATIC_SIZE);
   }
 }
 
@@ -184,12 +186,9 @@ edit_interface_rep::selection_visible () {
   update_visible ();
   if ((vx2 - vx1 <= 80*pixel) || (vy2 - vy1 <= 80*pixel)) return;
 
-  bool scroll_x=
-    (end_x <  vx1 + 20*pixel) ||
-    (end_x >= vx2 - 20*pixel);
-  bool scroll_y=
-    (end_y <  vy1 + 20*pixel) ||
-    (end_y >= vy2 - 20*pixel);
+  SI extra= (cur_sb == 1? 20 * pixel: 0);
+  bool scroll_x= (end_x < vx1 + extra) || (end_x >= vx2 - extra);
+  bool scroll_y= (end_y < vy1 + extra) || (end_y >= vy2 - extra);
   SI new_x= vx1;
   if (scroll_x) new_x= end_x - ((vx2-vx1)>>1);
   SI new_y= vy2;
@@ -306,17 +305,24 @@ edit_interface_rep::apply_changes () {
   update_visible ();
 
   // cout << "Handling automatic resizing\n";
-  if (env_change & THE_AUTOMATIC_SIZE) {
-    if (get_init_string (PAGE_MEDIUM) == "automatic") {
-      if (!attached())
-	fatal_error ("Window not attached",
-		     "edit_interface_rep::apply_changes");
-      SI wx, wy;
-      win->get_size (wx, wy);
-      init_env (PAGE_SCREEN_WIDTH, as_string ((wx-20*PIXEL)*sfactor) * "tmpt");
+  int sb= 1;
+  if (attached () && get_init_string (PAGE_MEDIUM) == "automatic") {
+    SI wx, wy;
+    win->get_size (wx, wy);
+    if (get_init_string (SCROLL_BARS) == "false") sb= 0;
+    if (get_server () -> in_full_screen_mode ()) sb= 0;
+    if (sb) wx -= 20 * PIXEL;
+    if (wx != cur_wx || wy != cur_wy) {
+      cur_wx= wx; cur_wy= wy;
+      init_env (PAGE_SCREEN_WIDTH, as_string (wx*sfactor) * "tmpt");
       init_env (PAGE_SCREEN_HEIGHT, as_string (wy*sfactor) * "tmpt");
       notify_change (THE_ENVIRONMENT);
     }
+  }
+  if (sb != cur_sb) {
+    cur_sb= sb;
+    widget meta= (widget) get_server () -> get_meta ();
+    meta ["canvas"] << set_integer ("scrollbars", sb);
   }
 
   // cout << "Handling selection\n";
@@ -503,8 +509,6 @@ edit_interface_rep::handle_attach_window (attach_window_event ev) {
 
 void
 edit_interface_rep::handle_resize (resize_event ev) { (void) ev;
-  if (get_init_string (PAGE_MEDIUM) == "automatic")
-    notify_change (THE_AUTOMATIC_SIZE);
   notify_change (THE_TREE);
 }
 

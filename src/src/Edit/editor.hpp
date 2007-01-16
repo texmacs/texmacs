@@ -30,8 +30,7 @@
 #define THE_SELECTION 16
 #define THE_DECORATIONS 32
 #define THE_EXTENTS 64
-#define THE_AUTOMATIC_SIZE 128
-#define THE_LOCUS 256
+#define THE_LOCUS 128
 
 class tm_buffer_rep;
 typedef tm_buffer_rep* tm_buffer;
