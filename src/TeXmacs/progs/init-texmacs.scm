@@ -33,7 +33,7 @@
 		 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
 		 (kernel texmacs tm-file-system))
 (inherit-modules (kernel gui menu-define) (kernel gui menu-widget)
-		 (kernel gui kbd-define))
+		 (kernel gui kbd-define) (kernel gui gui-widget))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting utilities\n")
@@ -113,6 +113,7 @@
 	   session-menu session-icons session-help-icons help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu
 	   plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
+(lazy-define (dynamic form-edit) form-ref form-set! form-toggle)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting documentation\n")

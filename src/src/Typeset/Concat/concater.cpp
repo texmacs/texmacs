@@ -188,7 +188,8 @@ concater_rep::typeset (tree t, path ip) {
     typeset_group (t, ip);
     break;
   case HIDDEN:
-    (void) env->exec (t);
+    //(void) env->exec (t);
+    (void) typeset_as_concat (env, t[0], descend (ip, 0));
     break;
   case FROZEN:
     typeset (attach_middle (t[0], ip));
