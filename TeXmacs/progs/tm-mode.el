@@ -42,7 +42,7 @@
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
-	 define-widget action button toggle field table) "\\|")
+	 define-widget action button toggle field table bar) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -75,11 +75,11 @@
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
-	       interactive dialogue-user))
+	       interactive dialogue-user button))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit table
+	       delayed dialogue on-entry on-exit table bar
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))

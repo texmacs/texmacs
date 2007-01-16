@@ -374,12 +374,10 @@ tm_server_rep::full_screen_mode (bool on, bool edit) {
   if (on && !edit) {
     show_header (false);
     show_footer (false);
-    meta ["canvas"] << set_integer ("scrollbars", false);
   }
   else {
     show_header (true);
     show_footer (true);
-    meta ["canvas"] << set_integer ("scrollbars", true);
   }
   meta->win->full_screen (on);
   get_editor()->full_screen_mode (on && !edit);

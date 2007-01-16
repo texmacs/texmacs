@@ -68,6 +68,8 @@ protected:
   rectangles    locus_new_rects;
   rectangles    locus_rects;
   list<string>  active_ids;
+  int           cur_sb;
+  SI            cur_wx, cur_wy;
 
 public:
   edit_interface_rep ();
@@ -77,6 +79,7 @@ public:
   void resume ();
   display get_display ();
   widget  get_widget ();
+  void    get_size (SI& wx, SI& wy);
 
   /* routines for dealing with shrinked coordinates */
   int  get_pixel_size ();

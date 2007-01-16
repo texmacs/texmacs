@@ -39,6 +39,7 @@ initialize_default_env () {
   env (SAVE_AUX)         = "true";      // save auxiliary data on disk ?
   env (MODE)             = "text";      // typesetting mode
   env (INFO_FLAG)        = "short";     // information about labels, etc.
+  env (SCROLL_BARS)      = "true";      // allow scroll bars around canvas?
   env (IDENTITY)         = identity_m;  // identity macro
   env (TABULAR)          = tabular_m;   // tabular macro
   env (THE_LABEL)        = "?";         // value of the next label

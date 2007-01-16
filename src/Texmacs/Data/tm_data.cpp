@@ -264,7 +264,6 @@ tm_data_rep::new_view (url name) {
   ed->notify_page_change ();
   ed->add_init (buf->init);
   ed->notify_change (THE_DECORATIONS);
-  ed->notify_change (THE_AUTOMATIC_SIZE);
   ed->typeset_invalidate_env ();
 
   tm_view temp_vw= get_view (false);
