@@ -41,7 +41,8 @@
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
-	 dialogue delayed on-entry on-exit) "\\|")
+	 dialogue delayed on-entry on-exit
+	 define-widget action button toggle field table) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -79,6 +80,6 @@
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit
+	       delayed dialogue on-entry on-exit table
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
