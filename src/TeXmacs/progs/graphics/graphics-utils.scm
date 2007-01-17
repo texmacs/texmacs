@@ -43,28 +43,12 @@
   ;; TODO: Solve this problem.
 
 ;; Conversions
-(tm-define (int->string s)
-  (number->string s))
-
-(tm-define (string->int s)
-  (exact->inexact (string->number s)))
-  
-(tm-define (object->string o) ;; 1st defined in Scheme/evaluate.cpp
-  (with-output-to-string (lambda () (write o))))
-
-(tm-define (string->object s) ;; defined in library/base.scm
-  (with-input-from-string s (lambda () (read))))
-
 (tm-define (tree->object t)
-  (if (tree? t)
-      (tree->stree t)
-      t))
+  (if (or (symbol? t) (number? t))
+      t
+      (tm->stree t)))
 
-(tm-define (object->tree o)
-  (if (tree? o)
-      o
-      (stree->tree o)))
-;;TODO: Put these functions in library/base.scm
+(tm-define (object->tree o) (tm->tree o))
 
 ;;These abbreviations are very convenient
 ;;to use. A nice naming scheme is :
@@ -79,124 +63,50 @@
 ;;  -> t=tree.
 ;;
 ;;  One can add the missing ones on demand.
-(tm-define i2s int->string)
-(tm-define s2i string->int)
+(tm-define f2s float->string)
+(tm-define s2f string->float)
 (tm-define sy2s symbol->string)
 (tm-define s2sy string->symbol)
 (tm-define o2s object->string)
 (tm-define s2o string->object)
 (tm-define t2o tree->object)
 (tm-define o2t object->tree)
-;;TODO: Put these abbreviations in library/base.scm
 
-(tm-define (string-number== s1 s2)
-  (if (and (string? s1) (string? s2))
-      (let* ((i1 (s2i s1))
-             (i2 (s2i s2)))
-            (if (and i1 i2) (== i1 i2) #f)
-      )     
-      #f))
-;;TODO: Put this in library/base.scm
+;; Lists as bags
+(tm-define seek-eq? memq)
+(tm-define remove-eq? delq1!)
+(use-modules (srfi srfi-1))
+(tm-define delete-duplicates delete-duplicates)
 
-(tm-define (tm-eq? o1 o2)
-  (or (and (tree? o1) (tree? o2)
-           (equal? (tree-ip o1) (tree-ip o2))
-      )
-      (eq? o1 o2)))
-;;TODO: Put this in library/content.scm
+;; Iterators
+(define-public foreach for)
 
-(define (tm-tag tree)
-  (if (pair? tree) 
-      (car tree)
-      (if (compound-tree? tree)
-          (tree-label tree)
-	  (if (tree? tree)
-	      'string
-	      #f))))
+(define-export-macro (foreach-number what . body)
+  (let ((n (length what)))
+    (cond ((== n 3)
+         ;;(foreach-number (i i0 iN) body[i])
+          `(for (,(car what) ,(cadr what) ,(caddr what)) ,@body))
+          ((== n 4)
+         ;;(foreach-number (i i0 [< <= > >=] iN) body[i])
+           (if (in? (caddr what) '(< <=))
+              `(for (,(car what)
+		   ,(cadr what) ,(cadddr what) 1 ,(caddr what)) ,@body)
+              `(for (,(car what)
+		   ,(cadr what) ,(cadddr what) -1 ,(caddr what)) ,@body)))
+          ((== n 5)
+         ;;(foreach-number (i i0 [< <= > >=] iN step) body[i])
+           (if (in? (caddr what) '(< <=))
+              `(for (,(car what)
+		     ,(cadr what) ,(cadddr what)
+		     ,(car (cddddr what)) ,(caddr what)) ,@body)
+              `(for (,(car what)
+		     ,(cadr what) ,(cadddr what)
+		     ,(- 0 (car (cddddr what))) ,(caddr what)) ,@body)))
+          (else '(noop)))))
 
-(define (has-tag? tree tag)
-  (eq? (tm-tag tree) tag))
-;;TODO: Put these two in library/content.scm
-;;FIXME: Improve the inefficient implementation of (tm-car)
-      
-(tm-define (list-find-cons l pred? . opt)
-; Similar to (list-find) ; the parameter opt works like in (seek-eq?)
-  (define res #f)
-  (define prec #f)
-  (for@ (e l)
-     (if (not res)
-	 (if (pred? (car e))
-	     (set! res e)
-	     (set! prec e)))
-  )
-  (if (and (nnull? opt) (pair? (car opt)))
-      (set-car! (car opt) (if res prec #f)))
-  res)
-
-(define-export-macro (list-find&remove l pred)
- `(with prec '(#f)
-     (if (list-find-cons ,l ,pred prec)
-	 (if (car prec)
-	     (begin
-		(set! prec (car prec))
-		(set-cdr! prec (cddr prec)))
-	     (set! ,l (cdr ,l))))))
-;;TODO: Put these two in library/list.scm
-
-(tm-define (seek-eq? obj l . opt)
-; (with prec '(#f) (seek-eq? 2 '(1 2 3) prec)) -> (2 3); prec=((1 2 3))"
-; (with prec '(#f) (seek-eq? 1 '(1 2 3) prec)) -> (1 2 3); prec=(#f)"
-; (with prec '(#f) (seek-eq? "1" '("1" 2 3) prec)) -> #f ; prec=(#f)"
-; This routine works if obj is a tree, as well.
-  (define prec '(#f))
-  (if (and (nnull? opt) (pair? (car opt)))
-      (set! prec (car opt)))
-  (list-find-cons l (lambda (x) (tm-eq? x obj)) prec))
-
-(define-export-macro (seek-eq?-remove obj l)
- `(list-find&remove ,l (lambda (x) (tm-eq? x ,obj))))
-;;TODO: Put these two in library/list.scm
-
-(tm-define (list-filter-multiple-elements l)
-  (define already '())
-  (foreach (e l)
-     (if (not (in? e already))
-	 (set! already (cons e already)))
-  )
-  (reverse already))
-;;TODO: Put this in library/list.scm
-
-(define-export-macro (For what . body)
-  (cond ((list-2? what)
-        ;;(for (elt list) body[elt])
-         `(for-each (lambda (,(car what)) ,@body)
-                    ,(cadr what)))
-        ((list-3? what)
-        ;;(for (i i0 iN) body[i])
-         `(for-each (lambda (,(car what)) ,@body)
-                    (.. ,(cadr what) ,(caddr what))))
-        ((list-4? what)
-        ;;(for (i i0 [< <= > >=] iN) body[i])
-	 `(do ((,(car what) ,(cadr what)
-	       (,(if (memq (caddr what) '(> >=)) '- '+) ,(car what) 1)))
-	      ((,(if (eq? (caddr what) '>)
-		    '<=
-		     (if (eq? (caddr what) '<)
-			'>=
-			 (if (eq? (caddr what) '>=) '< '>)))
-		,(car what) ,(cadddr what))
-	      ,(car what))
-	     ,(cons 'begin body)))
-        (else '(noop))))
-;;TODO: Put this in boot/abbrevs.scm
-
-(define-public foreach For)
-(define-public foreach-number For)
-;;TODO: Put these two in boot/abbrevs.scm
-
-(define-export-macro (for@ i . b)
-;;(for@ (e l) i   body[elt]) -> for each cons e of the list l
-;;(for@ (e l1 l2) body[elt]) -> for each cons e in the cons interval [l1...l2]
+(define-export-macro (foreach-cons i . b)
+;;(foreach-cons (e l) i   body[elt]) -> for each cons e of the list l
+;;(foreach-cons (e l1 l2) body[elt]) -> for each cons e in [l1...l2]
   (if (null? (cddr i))
     `(do ((,(car i) ,(cadr i) (cdr ,(car i)))
          )
@@ -210,13 +120,11 @@
           )
           ,(cadr i)
          )
-        ,(cons 'begin b)
-     )))
-;;TODO: Extend (for@) for recursively traversing tree nodes.
-;;TODO: Put this in boot/abbrevs.scm
+        ,(cons 'begin b))))
+;;TODO: Extend (foreach-cons) for recursively traversing tree nodes.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Subroutines for accessing trees
+;; Subroutines for accessing trees & managing listprops
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;FIXME: Should use (tm-adjust-path), otherwise, crashes in some cases
@@ -375,7 +283,7 @@
   (with val (get-upwards-tree-property (graphics-graphics-path) var)
      (if (eq? val nothing)
 	 (get-default-tree-val var)
-	 (if (has-tag? val 'quote)
+	 (if (eq? (tm-car val) 'quote)
 	     (tree-ref val 0)
 	     val))))
          
@@ -423,16 +331,16 @@
 
 (tm-define (multiply-magnification magn h)
   (if (string? h)
-      (set! h (s2i h)))
+      (set! h (s2f h)))
   (cond ((equal? h 1.0)
          #t
         )
         ((and (pair? magn) (eq? (car magn) 'times))
-         (set! h (* h (s2i (cadr magn))))
+         (set! h (* h (s2f (cadr magn))))
         )
         ((or (string? magn) (number? magn))
          (if (string? magn)
-             (set! magn (s2i magn)))
+             (set! magn (s2f magn)))
          (set! h (* h magn))
         )
         (else
@@ -440,12 +348,12 @@
   )
   (if (equal? h 1.0)
       #f
-     `(times ,(i2s h) (value "magnification"))))
+     `(times ,(f2s h) (value "magnification"))))
 
 (tm-define (local-magnification amagn)
   (if (string? amagn)
-      (set! amagn (s2i amagn)))
- `(times ,(i2s (/ amagn (s2i (graphics-eval-magnification))))
+      (set! amagn (s2f amagn)))
+ `(times ,(f2s (/ amagn (s2f (graphics-eval-magnification))))
 	  (value "magnification")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -611,7 +519,7 @@
 
 (tm-define (graphics-active-type)
   (with t (graphics-active-tree)
-    (if t (tm-tag t) #f)))
+    (if t (tm-car t) #f)))
   ;;NOTE: Currently unused.
   ;;TODO: Test it.
 
@@ -718,8 +626,8 @@
      (let* ((bx1 (box-info t "lbrt"))
 	    (bx2 (box-info t "LBRT"))
 	)
-	(set! bx1 (map s2i (cdr bx1)))
-	(set! bx2 (map s2i (cdr bx2)))
+	(set! bx1 (map s2f (cdr bx1)))
+	(set! bx2 (map s2f (cdr bx2)))
        `(,(min (car bx1) (car bx2))
 	 ,(min (cadr bx1) (cadr bx2))
 	 ,(max (caddr bx1) (caddr bx2))
