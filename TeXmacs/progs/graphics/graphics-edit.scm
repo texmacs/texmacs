@@ -35,7 +35,7 @@
 ;; On en discutera davantage apres un premier passage en revue.
 
 ;; TODO : Remove all the (stree-at), (tree->stree), etc.
-;; TODO : Replace the remaining (tree->stree) by (tree->object) or (t2o)
+;; TODO : Replace the remaining (tree->stree) by (tm->stree) or (t2o)
 ;; TODO : Except in simple cases, remove all the (tree->stree) which
 ;;   slow the code, and operate everywhere and all the time on trees.
 
@@ -203,7 +203,7 @@
 	  (begin
 	     (set-texmacs-pointer 'graphics-cross)
 	     (point_left-button x y p obj 1 edge))
-	  (go-to (car (select-first (s2i x) (s2i y)))))))
+	  (go-to (car (select-first (s2f x) (s2f y)))))))
 
 (define (other_left-button x y p obj no edge)
   (point_left-button x y p obj no edge))
@@ -612,15 +612,15 @@
 	(set! group-bary-x 0)
 	(set! group-bary-y 0)
 	(foreach (p so-points)
-	   (set! group-bary-x (+ group-bary-x (s2i (cadr p))))
-	   (set! group-bary-y (+ group-bary-y (s2i (caddr p))))
+	   (set! group-bary-x (+ group-bary-x (s2f (cadr p))))
+	   (set! group-bary-y (+ group-bary-y (s2f (caddr p))))
 	   (set! n (+ n 1))
 	)
 	(set! group-bary-x (/ group-bary-x n))
 	(set! group-bary-y (/ group-bary-y n))))
   ))
-  (set! group-first-x (s2i current-x))
-  (set! group-first-y (s2i current-y))
+  (set! group-first-x (s2f current-x))
+  (set! group-first-y (s2f current-y))
   (> (point-norm (sub-point `(,group-first-x ,group-first-y)
 			    `(,group-bary-x ,group-bary-y))) 1e-3))
 
@@ -642,7 +642,7 @@
 (define (translate-point x y)
   (lambda (o)
      (if (match? o '(point :%2))
-	`(point ,(i2s (+ x (s2i (cadr o)))) ,(i2s (+ y (s2i (caddr o)))))
+	`(point ,(f2s (+ x (s2f (cadr o)))) ,(f2s (+ y (s2f (caddr o)))))
 	 o)))
 
 (define (group-translate x y)
@@ -652,11 +652,11 @@
 (define (zoom-point x0 y0 h)
   (lambda (o)
      (if (match? o '(point :%2))
-	 (let* ((x (s2i (cadr o)))
-		(y (s2i (caddr o)))
+	 (let* ((x (s2f (cadr o)))
+		(y (s2f (caddr o)))
 	    )
-	   `(point ,(i2s (+ x0 (* (- x group-bary-x) h)))
-		   ,(i2s (+ y0 (* (- y group-bary-y) h))))
+	   `(point ,(f2s (+ x0 (* (- x group-bary-x) h)))
+		   ,(f2s (+ y0 (* (- y group-bary-y) h))))
 	 )
 	 o)))
 
@@ -668,26 +668,26 @@
   (lambda (o)
      (let* ((res (traverse-transform o (zoom-point group-bary-x group-bary-y h)))
 	    (curmag #f)
-	    (gmag (s2i (graphics-eval-magnification)))
+	    (gmag (s2f (graphics-eval-magnification)))
 	)
-	(for@ (c (cdr res))
+	(foreach-cons (c (cdr res))
 	   (set-car! c (if (eq? (caar c) 'with)
 			   (with curmag
-				 (s2i (find-prop
+				 (s2f (find-prop
 					 (car c) "magnification" "1.0"))
 			      (list-find&set-prop
-				 (car c) "magnification" (i2s (* curmag gmag h))))
-			  `(with "magnification" ,(i2s (* gmag h)) ,(car c)))))
+				 (car c) "magnification" (f2s (* curmag gmag h))))
+			  `(with "magnification" ,(f2s (* gmag h)) ,(car c)))))
 	res))))
 
 (define (rotate-point x0 y0 alpha)
   (lambda (o)
      (if (match? o '(point :%2))
-	 (let* ((x (- (s2i (cadr o)) group-bary-x))
-		(y (- (s2i (caddr o)) group-bary-y))
+	 (let* ((x (- (s2f (cadr o)) group-bary-x))
+		(y (- (s2f (caddr o)) group-bary-y))
 	    )
-	   `(point ,(i2s (+ x0 (* x (cos alpha)) (* (- y) (sin alpha))))
-		   ,(i2s (+ y0 (* x (sin alpha)) (* y (cos alpha)))))
+	   `(point ,(f2s (+ x0 (* x (cos alpha)) (* (- y) (sin alpha))))
+		   ,(f2s (+ y0 (* x (sin alpha)) (* y (cos alpha)))))
 	 )
 	 o)))
 
@@ -870,16 +870,16 @@
 	     (set! sticky-point #t)
 	     (set! graphics-undo-enabled #f)
 	     (graphics-store-state #f)
-	     (set! group-old-x (s2i current-x))
-	     (set! group-old-y (s2i current-y))))))))
+	     (set! group-old-x (s2f current-x))
+	     (set! group-old-y (s2f current-y))))))))
 
 (define (point_toggle-select x y p obj)
   (if (not sticky-point)
   (if multiselecting
-      (let* ((x1 (s2i selecting-x0))
-	     (y1 (s2i selecting-y0))
-	     (x2 (s2i x))
-	     (y2 (s2i y))
+      (let* ((x1 (s2f selecting-x0))
+	     (y1 (s2f selecting-y0))
+	     (x2 (s2f x))
+	     (y2 (s2f y))
 	     (tmp 0)
 	     (sel #f)
 	 )
@@ -911,7 +911,7 @@
 	;   obj is := to '(point). Find why it is so, and remove this.
 	  (with t (path->tree p)
 	     (if (seek-eq? t selected-objects)
-		 (seek-eq?-remove t selected-objects)
+		 (remove-eq? t selected-objects)
 		 (set! selected-objects (rcons selected-objects t))
 	     )
 	     (create-graphical-object obj p 'points #f))
@@ -934,8 +934,8 @@
   (with-graphics-context ";move" x y p obj no edge
      (if sticky-point
 	 (begin
-	    (set! x (s2i x))
-	    (set! y (s2i y))
+	    (set! x (s2f x))
+	    (set! y (s2f y))
 	    (with mode (graphics-mode)
 	       (cond ((== (cadr mode) 'move)
 			(transform-graphical-object
@@ -1079,7 +1079,7 @@
 (define (graphics-move-origin dx dy)
   (define (add l1 l2)
      (if (pair? l1)
-	`(tmlen ,(i2s (+ (s2i (cadr l1)) (length-decode l2))))
+	`(tmlen ,(f2s (+ (s2f (cadr l1)) (length-decode l2))))
 	 (length-add l1 l2))
   )
   (let* ((fr (graphics-cartesian-frame))

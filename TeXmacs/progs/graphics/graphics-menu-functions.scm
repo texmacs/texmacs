@@ -149,7 +149,7 @@
 	(if (or visual?
 		(== graphics-current-type "logarithmic")) "1" "0.1"))
   (set! graphics-current-astep
-	(i2s (if visual?
+	(f2s (if visual?
 		 default-polar-astep
 		 (* default-polar-astep default-polar-nsubd))))
   (set! graphics-current-base "10")
@@ -296,13 +296,13 @@
 		(set! nsubds (cadr nsubds)))
 	    (set! new-polar? #t)
 	    (graphics-set-grid-aspect 'detailed nsubds #t)
-	    (set! graphics-current-astep (i2s default-polar-astep))))
+	    (set! graphics-current-astep (f2s default-polar-astep))))
      (set! graphics-current-type (symbol->string type))
      (graphics-set-grid #t)
      (graphics-fetch-grid-vars type #t)
      (if new-polar? (begin
 	 (set! graphics-current-type (symbol->string type))
-	 (set! graphics-current-astep (i2s default-polar-astep))
+	 (set! graphics-current-astep (f2s default-polar-astep))
 	 (update-edit-grid 'grid-change)))))
 
 (define (edit-type-has-value? type)
@@ -354,7 +354,7 @@
 
 (define (grid-step-has-value? val visual?)
   (graphics-fetch-grid-vars #f visual?)
-  (string-number== val graphics-current-step))
+  (string-number=? val graphics-current-step))
 
 (tm-define (graphics-set-grid-step val visual?)
   (:check-mark "*" grid-step-has-value?)
@@ -366,7 +366,7 @@
 
 (define (grid-astep-has-value? val visual?)
   (graphics-fetch-grid-vars #f visual?)
-  (string-number== val graphics-current-astep))
+  (string-number=? val graphics-current-astep))
 
 (tm-define (graphics-set-grid-astep val visual?)
   (:check-mark "*" grid-astep-has-value?)
@@ -424,8 +424,8 @@
 (define (cmp-aspect-items x y)
   (if (== (cadr x) "axes") #t
   (if (== (cadr y) "axes") #f
-  (let* ((xval (s2i (cadr x)))
-	 (yval (s2i (cadr y))))
+  (let* ((xval (s2f (cadr x)))
+	 (yval (s2f (cadr y))))
     (< xval yval)))))
 
 (define (graphics-grid-aspect-props)

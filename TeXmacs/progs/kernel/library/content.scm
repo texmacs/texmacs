@@ -60,6 +60,9 @@
 (define-public (tm->list x)
   (if (list? x) x (tree->list x)))
 
+(define-public (tm->stree t)
+  (tree->stree (tm->tree t)))
+
 (define-public (tm-car x)
   (if (pair? x) (car x) (tree-label x)))
 

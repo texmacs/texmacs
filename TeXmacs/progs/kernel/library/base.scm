@@ -28,6 +28,16 @@
   (xor-sub l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Numbers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (float->string s)
+  (number->string s))
+
+(define-public (string->float s)
+  (exact->inexact (string->number s)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Strings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -185,6 +195,12 @@
 (define-public (alist->string l)
   "Pretty print the association list @l as a string."
   (string-recompose (map property-pair->string l) "/"))
+
+(define-public (string-number=? s1 s2)
+  (and (string? s1) (string? s2)
+       (let* ((i1 (string->float s1))
+	      (i2 (string->float s2)))
+	 (and i1 i2 (== i1 i2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
