@@ -1,13 +1,21 @@
-<TeXmacs|1.0.6.6>
+<TeXmacs|1.0.6.7>
 
 <style|tmdoc>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.0.6 to 1.0.6.7>
+  <section|Changes from version 1.0.6 to 1.0.6.8>
 
   <\itemize>
+    <item>Several improvements for large multi-part documents (1.0.6.8).
+
+    <item>Started the implementation of a new markup-based graphical user
+    interface (1.0.6.8).
+
+    <item>Started the implementation of a separate style-rewriting engine
+    (1.0.6.8).
+
     <item>Support for the most recent versions 1.8.0 and 1.8.1 of
     <name|Guile> (1.0.6.7).
 
