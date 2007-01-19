@@ -846,7 +846,7 @@
     (foreach (e res)
        (set! l (cons (graphics-path (car e)) l))
     )
-    (reverse (delete-duplicates l))))
+    (reverse (list-remove-duplicates l))))
 
 (tm-define (select-first x y)
   (with sel (graphics-select x y 15)

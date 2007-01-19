@@ -75,8 +75,6 @@
 ;; Lists as bags
 (tm-define seek-eq? memq)
 (tm-define remove-eq? delq1!)
-(use-modules (srfi srfi-1))
-(tm-define delete-duplicates delete-duplicates)
 
 ;; Iterators
 (define-public foreach for)
