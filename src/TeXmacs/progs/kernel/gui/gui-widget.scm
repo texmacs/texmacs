@@ -60,7 +60,7 @@
 (tm-define (build-widget w)
   (:synopsis "Build a lazy widget constructor from a scheme program @w")
   (cond ((list? w) (List (Cons (Quote (car w)) (build-widgets (cdr w)))))
-	((== w :::) (List (List (Quote 'gui-vspace))))
+	((== w '-) (List (List (Quote 'gui-vspace))))
 	((== w '---) (List (List (Quote 'gui-hrule))))
 	((== w '>>>) (List (List (Quote 'gui-tab))))
 	(else (List w))))
