@@ -17,6 +17,19 @@
 ;; TODO: scheme file caching using (set! primitive-load ...) and
 ;; (set! %search-load-path)
 
+;; (debug-enable 'backtrace 'debug)
+;; (define load-indent 0)
+;; (define old-primitive-load primitive-load)
+;; (define (new-primitive-load . x)
+;;   (for-each display (make-list load-indent "  "))
+;;   (display "Load ") (apply display x) (display "\n")
+;;   (set! load-indent (+ load-indent 1))
+;;   (apply old-primitive-load x)
+;;   (set! load-indent (- load-indent 1))
+;;   (for-each display (make-list load-indent "  "))
+;;   (display "Done\n"))
+;; (set! primitive-load new-primitive-load)
+
 ;(display "Booting TeXmacs kernel functionality\n")
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm"))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)

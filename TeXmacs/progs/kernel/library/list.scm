@@ -52,43 +52,43 @@
 ;; Selectors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (first l)
+(provide-public (first l)
   "Get first element of @l."
   (car l))
 
-(define-public (second l)
+(provide-public (second l)
   "Get second element of @l."
   (cadr l))
 
-(define-public (third l)
+(provide-public (third l)
   "Get third element of @l."
   (caddr l))
 
-(define-public (fourth l)
+(provide-public (fourth l)
   "Get first element of @l."
   (cadddr l))
 
-(define-public (fifth l)
+(provide-public (fifth l)
   "Get fifth element of @l."
   (car (cddddr l)))
 
-(define-public (sixth l)
+(provide-public (sixth l)
   "Get sixth element of @l."
   (cadr (cddddr l)))
 
-(define-public (seventh l)
+(provide-public (seventh l)
   "Get seventh element of @l."
   (caddr (cddddr l)))
 
-(define-public (eighth l)
+(provide-public (eighth l)
   "Get eighht element of @l."
   (cadddr (cddddr l)))
 
-(define-public (ninth l)
+(provide-public (ninth l)
   "Get ninth element of @l."
   (car (cddddr (cddddr l))))
 
-(define-public (tenth l)
+(provide-public (tenth l)
   "Get tenth element of @l."
   (cadr (cddddr (cddddr l))))
 
@@ -127,7 +127,7 @@
 (define-public last cAr)
 (define-public but-last cDr)
 
-(define-public (car+cdr p)
+(provide-public (car+cdr p)
   "Fundamental pair deconstructor."
   (values (car p) (cdr p)))
 
@@ -188,7 +188,7 @@
 	    (apply kons (append! (map-in-order car lists)
 				 (list (f (map-in-order cdr lists)))))))))
 
-(define-public (pair-fold kons knil clist1 . rest)
+(provide-public (pair-fold kons knil clist1 . rest)
   "Analogous to @fold but applies @kons to pairs of @clist1..."
   (if (null? rest)
       (let f ((knil knil) (list1 clist1))
@@ -212,7 +212,7 @@
 	knil
 	(apply kons (append! lists (list (f (map-in-order cdr lists)))))))))
 
-(define-public (append-map . params)
+(provide-public (append-map . params)
   "Apply @f to all elements of @l and append the resulting lists."
   ;; WARNING: not portable for long lists
   (apply append (apply map-in-order params)))
@@ -228,7 +228,7 @@
 	  ((pred? (car l)) (cons (car l) (rec (cdr l))))
 	  (else (rec (cdr l))))))
 
-(define-public (filter-map fun . args)
+(provide-public (filter-map fun . args)
   "Composition of @map and @list-filter."
   (list-filter (apply map (cons fun args)) identity))
 

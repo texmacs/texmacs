@@ -245,7 +245,7 @@
 
 (tm-define (show-hidden-part id)
   (:synopsis "Make hidden part with identifier @id visible")
-  (with search? (lambda (t) (match? t `(hide-part ,id :#2)))
+  (with search? (lambda (t) (match? t `(hide-part ,id :%2)))
     (and-with t (list-find (tree-children (buffer-tree)) search?)
       (tree-show-hidden t)
       #t)))
