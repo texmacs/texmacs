@@ -130,8 +130,8 @@
   ;;(display* "converter-shell " l ", " from ", " to-format ", " opts "\n")
   (let* ((last? (assoc-ref opts 'last?))
 	 (dest (assoc-ref opts 'dest))
-	 (suf (format-default-suffix to-format))
-	 (suf (if (and suf (!= suf "")) (string-append "." suf) ""))
+	 (dsuf (format-default-suffix to-format))
+	 (suf (if (and dsuf (!= dsuf "")) (string-append "." dsuf) ""))
 	 (to (if (and last? dest) dest (url-glue (url-temp) suf)))
 	 (cmd (converter-shell-cmd l from to)))
     ;;(display* "shell: " cmd "\n")
@@ -411,7 +411,8 @@
     (cond ((== fm "image") "png")
 	  ((or (not l) (null? l))
 	   (if (string-ends? fm "-file")
-	       (format-default-suffix (string-drop-right fm 5))))
+	       (format-default-suffix (string-drop-right fm 5))
+	       ""))
 	  (else (car l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
