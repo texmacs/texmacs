@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.7>
+<TeXmacs|1.0.6.8>
 
 <style|source>
 
@@ -27,11 +27,11 @@
     </src-comment>
   </active*>
 
-  <assign|script-equal|<macro|<with|color|dark brown|=>>>
+  <assign|script-equal|<macro|<with|color|dark blue|=>>>
 
-  <assign|script-approx|<macro|<with|color|dark brown|\<approx\>>>>
+  <assign|script-approx|<macro|<with|color|dark blue|\<approx\>>>>
 
-  <assign|script-assign|<macro|<with|color|dark brown|\<assign\>>>>
+  <assign|script-assign|<macro|<with|color|dark blue|\<assign\>>>>
 
   <\active*>
     <\src-comment>

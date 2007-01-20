@@ -42,7 +42,7 @@
   ("math:under accent:check" (make-wide-under "<check>"))
   ;; end
 
-  ("$" (go-end-with "mode" "math"))
+  ("$" (if (inside? 'math) (go-end-of 'math) (go-end-with "mode" "math")))
   ("math $" (make-with "mode" "text"))
   ("`" (make-lprime "`"))
   ("'" (make-rprime "'"))
