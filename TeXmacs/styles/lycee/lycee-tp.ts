@@ -27,7 +27,7 @@
     </src-title>
   </active*>
 
-  <use-package|exam|tmdoc-keyboard|tmdoc-markup>
+  <use-package|exam|tmdoc-keyboard|tmdoc-markup|alt-colors>
 
   <assign|par-first|0fn>
 
@@ -93,36 +93,6 @@
   <assign|hdots|<macro|<datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.1fn>.<space|0.1fn>>>>>|<htab|5mm>>>>
 
   <assign|fillout|<macro|x|<superpose|<with|color|grey|....................>|<arg|x>>>>
-
-  <\active*>
-    <\src-comment>
-      Mathematics in red.
-    </src-comment>
-  </active*>
-
-  <assign|orig-math|<value|math>>
-
-  <assign|orig-equation*|<value|equation*>>
-
-  <assign|orig-equations-base|<value|equations-base>>
-
-  <assign|math|<macro|x|<with|color|dark red|<orig-math|<arg|x>>>>>
-
-  <assign|equation*|<\macro|x>
-    <\with|color|dark red>
-      <\orig-equation*>
-        <arg|x>
-      </orig-equation*>
-    </with>
-  </macro>>
-
-  <assign|equations-base|<\macro|x>
-    <\with|color|dark red>
-      <\orig-equations-base>
-        <arg|x>
-      </orig-equations-base>
-    </with>
-  </macro>>
 
   \;
 </body>
