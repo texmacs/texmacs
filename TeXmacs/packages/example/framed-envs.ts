@@ -23,6 +23,32 @@
 
   <\active*>
     <\src-comment>
+      Framed sections
+    </src-comment>
+  </active*>
+
+  <assign|unframed-chapter-title|<value|chapter-title>>
+
+  <assign|unframed-section-title|<value|section-title>>
+
+  <assign|unframed-subsection-title|<value|subsection-title>>
+
+  <assign|unframed-subsubsection-title|<value|subsubsection-title>>
+
+  <assign|chapter-title|<macro|x|<unframed-chapter-title|<wide-std-framed-colored|dark
+  grey|pastel red|>>>>
+
+  <assign|section-title|<macro|x|<unframed-section-title|<wide-std-framed-colored|dark
+  grey|pastel red|<arg|x>>>>>
+
+  <assign|subsection-title|<macro|x|<unframed-subsection-title|<wide-std-framed-colored|dark
+  grey|pastel orange|<arg|x>>>>>
+
+  <assign|subsubsection-title|<macro|x|<unframed-subsubsection-title|<wide-std-framed-colored|dark
+  grey|pastel orange|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
       Framed theorems
     </src-comment>
   </active*>
