@@ -37,28 +37,28 @@
     </src-comment>
   </active*>
 
-  <assign|orig-math|<value|math>>
+  <assign|uncolored-math|<value|math>>
 
-  <assign|orig-equation*|<value|equation*>>
+  <assign|uncolored-equation*|<value|equation*>>
 
-  <assign|orig-equations-base|<value|equations-base>>
+  <assign|uncolored-equations-base|<value|equations-base>>
 
   <assign|math|<macro|x|<with|color|<if|<value|is-greyed>|#d0b0b0|dark
-  red>|<orig-math|<arg|x>>>>>
+  red>|<uncolored-math|<arg|x>>>>>
 
   <assign|equation*|<\macro|x>
     <\with|color|<if|<value|is-greyed>|#d0b0b0|dark red>>
-      <\orig-equation*>
+      <\uncolored-equation*>
         <arg|x>
-      </orig-equation*>
+      </uncolored-equation*>
     </with>
   </macro>>
 
   <assign|equations-base|<\macro|x>
     <\with|color|<if|<value|is-greyed>|#d0b0b0|dark red>>
-      <\orig-equations-base>
+      <\uncolored-equations-base>
         <arg|x>
-      </orig-equations-base>
+      </uncolored-equations-base>
     </with>
   </macro>>
 
@@ -68,19 +68,19 @@
     </src-comment>
   </active*>
 
-  <assign|orig-theorem-name|<value|theorem-name>>
+  <assign|uncolored-theorem-name|<value|theorem-name>>
 
-  <assign|orig-exercise-name|<value|exercise-name>>
+  <assign|uncolored-exercise-name|<value|exercise-name>>
 
-  <assign|orig-strong|<value|strong>>
+  <assign|uncolored-strong|<value|strong>>
 
   <assign|theorem-name|<macro|x|<with|color|dark
-  blue|<orig-theorem-name|<arg|x>>>>>
+  blue|<uncolored-theorem-name|<arg|x>>>>>
 
   <assign|exercise-name|<macro|x|<with|color|dark
-  blue|<orig-exercise-name|<arg|x>>>>>
+  blue|<uncolored-exercise-name|<arg|x>>>>>
 
-  <assign|strong|<macro|x|<with|color|dark blue|<orig-strong|<arg|x>>>>>
+  <assign|strong|<macro|x|<with|color|dark blue|<uncolored-strong|<arg|x>>>>>
 
   <\active*>
     <\src-comment>

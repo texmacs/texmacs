@@ -94,6 +94,8 @@
 
   <assign|fillout|<macro|x|<superpose|<with|color|grey|....................>|<arg|x>>>>
 
+  <assign|strong|<value|uncolored-strong>>
+
   \;
 </body>
 

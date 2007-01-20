@@ -81,6 +81,14 @@
     </padded-normal>
   </macro>>
 
+  <\active*>
+    <\src-comment>
+      Other
+    </src-comment>
+  </active*>
+
+  <assign|strong|<value|uncolored-strong>>
+
   \;
 </body>
 
