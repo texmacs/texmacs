@@ -82,6 +82,14 @@
 
   <assign|strong|<macro|x|<with|color|dark blue|<orig-strong|<arg|x>>>>>
 
+  <\active*>
+    <\src-comment>
+      Blinking
+    </src-comment>
+  </active*>
+
+  <assign|blink|<macro|x|<anim-repeat|<anim-compose|<anim-constant|<arg|x>|1sec>|<anim-constant||0.5sec>>>>>
+
   \;
 </body>
 
