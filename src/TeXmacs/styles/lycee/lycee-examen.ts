@@ -27,7 +27,7 @@
     </src-title>
   </active*>
 
-  <use-package|exam|number-long-article>
+  <use-package|exam|number-long-article|alt-colors>
 
   <\active*>
     <\src-comment>
@@ -79,36 +79,6 @@
         <surround|<no-page-break*><with|font-series|bold|<aligned-item|<arg|which>>>|<no-indent*>|<arg|body>>
       </indent-left>
     </padded-normal>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
-      Mathematics in red.
-    </src-comment>
-  </active*>
-
-  <assign|orig-math|<value|math>>
-
-  <assign|orig-equation*|<value|equation*>>
-
-  <assign|orig-equations-base|<value|equations-base>>
-
-  <assign|math|<macro|x|<with|color|dark red|<orig-math|<arg|x>>>>>
-
-  <assign|equation*|<\macro|x>
-    <\with|color|dark red>
-      <\orig-equation*>
-        <arg|x>
-      </orig-equation*>
-    </with>
-  </macro>>
-
-  <assign|equations-base|<\macro|x>
-    <\with|color|dark red>
-      <\orig-equations-base>
-        <arg|x>
-      </orig-equations-base>
-    </with>
   </macro>>
 
   \;
