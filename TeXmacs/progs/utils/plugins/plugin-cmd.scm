@@ -214,20 +214,97 @@
 (tm-define (plugin-output-simplify name t)
   (plugin-output-std-simplify name t))
 
+(define (plugin-preprocess name session t opts)
+  ;;(display* "Preprocess " t "\n")
+  (if (null? opts) t
+      (begin
+	(if (and (== (car opts) :math-input)
+		 (plugin-supports-math-input-ref name))
+	    (set! t (plugin-math-input (list 'tuple name t))))
+	(plugin-preprocess name session t (cdr opts)))))
+
+(define (plugin-postprocess name session r opts)
+  ;;(display* "Postprocess " r "\n")
+  (if (null? opts) r
+      (begin
+	(if (== (car opts) :simplify-output)
+	    (set! r (plugin-output-simplify name r)))
+	(plugin-postprocess name session r (cdr opts)))))
+
 (tm-define (plugin-eval name session t . opts)
-  (cond ((null? opts)
-	 (let* ((u (connection-eval name session t))
-		(v (plugin-output-simplify name (tree->stree u))))
-	   v))
-	((== (car opts) :math-input)
-	 (if (plugin-supports-math-input-ref name)
-	     (set! t (plugin-math-input (list 'tuple name t))))
-	 (apply plugin-eval (cons* name session t (cdr opts))))
-	((== (car opts) :math-correct)
-	 (with r (apply plugin-eval (cons* name session t (cdr opts)))
-	   (if (and (in-var-math?) (tm-func? r 'math 1)) (cadr r) r)))
-	(else
-	 (texmacs-error "plugin-eval" "unrecognized option ~S" (car opts)))))
+  (with u (plugin-preprocess name session t opts)
+    (with r (tree->stree (connection-eval name session u))
+      (plugin-postprocess name session r (cons :simplify-output opts)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Asynchroneous evaluation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define plugin-eval-table (make-ahash-table))
+
+(define (plugin-eval-insert name session t progress return post)
+  (let* ((key (cons name session))
+	 (val (list t progress return post))
+	 (old (ahash-ref plugin-eval-table key))
+	 (new (rcons (or old '()) val)))
+    (if (and (not old) (== (connection-status name session) 0))
+	(set! new (cons (list :restart ignore ignore identity) new)))
+    (ahash-set! plugin-eval-table key new)
+    (if (not old)
+	(plugin-eval-loop name session))))
+
+(define (plugin-eval-loop name session)
+  (let* ((key (cons name session))
+	 (busy? (lambda () (ahash-ref plugin-eval-table key)))
+	 (wait 1)
+	 (output #f))
+    (delayed
+      (:while (busy?))
+      (:pause ((lambda () wait)))
+      (:do (set! wait (min (* 2 wait) 2500)))
+      (let* ((status (connection-status name session))
+	     (old (ahash-ref plugin-eval-table key))
+	     (new (and (nnull? (cdr old)) (cdr old))))
+	;;(display* "Status " name ": " status "\n")
+	(with (input progress return post) (car old)
+	  (cond ((and (== status 0) (== input :restart))
+		 (connection-start name session #f)
+		 (set! wait 1)
+		 (set! output '(document)))
+		((and (== status 2) (not output))
+		 ;;(display* "Write " name " <- " input "\n")
+		 (connection-write name session input)
+		 (set! wait 1)
+		 (set! output '(document)))
+		((and (== status 3) output)
+		 (with r (tm->stree (connection-read name session "output"))
+		   ;;(display* "Read " name " -> " r "\n")
+		   (when (and (func? r 'document) (!= r '(document "")))
+		     (if (== (cAr r) "") (set! r (cDr r)))
+		     (set! wait 1)
+		     (set! output (append output (cdr r)))
+		     (when (== (connection-status name session) 3)
+		       (progress output)))))
+		((and (== status 2) output)
+		 (with result output
+		   (set! wait 1)
+		   (set! output #f)
+		   (ahash-set! plugin-eval-table key new)
+		   (return (post result))))
+		(else
+		 (set! wait 1)
+		 (set! output #f)
+		 (ahash-set! plugin-eval-table key new)
+		 (return '(script-dead)))))))))
+
+(tm-define (plugin-async-eval name session t . opts)
+  (with u (plugin-preprocess name session t opts)
+    (with post (cut plugin-postprocess name session <> opts)
+      (if dialogue-break
+	  (dialogue-user local-continue
+	    (with return (dialogue-machine local-continue)
+	      (plugin-eval-insert name session u ignore return post)))
+	  (texmacs-error "dialogue-ask" "Not in dialogue")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tab completion

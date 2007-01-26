@@ -54,6 +54,7 @@
 (define-public (false? . l) #f)
 
 (provide-public (identity x) x)
+(provide-public (ignore . l) (noop))
 
 (define-public (keyword->number x)
   (string->number (string-tail (symbol->string (keyword->symbol x)) 1)))
