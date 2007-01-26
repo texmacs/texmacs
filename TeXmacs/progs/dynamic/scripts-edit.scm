@@ -39,137 +39,44 @@
   (toggle! script-eval-math-flag?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High-level evaluation and function application via plug-in
+;; Script context functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (script-evaluable?)
   (or (selection-active-any?)
       (nnot (tree-innermost formula-context? #t))))
 
-(define (script-result-context? t)
-  (tm-in? t '(script-result script-approx script-hidden)))
-
-(tm-define (script-modified-evaluate-sub what fun opts)
-  (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session")))
-    ;;(display* "Evaluating " what "\n")
-    (insert-go-to `(script-status "") '(0 0))
-    (fun)
-    (insert what)
-    (let* ((handle (tree-innermost 'script-status))
-	   (t (tree->stree (tree-ref handle 0)))
-	   (declaration? #f))
-      ;;(display* "handle= " handle "\n")
-      ;;(display* "t= " t "\n")
-      (cond ((and (func? what 'concat) (in? '(script-assign) what))
-	     (set! declaration? #t))
-	    ((and (script-keep-input?) (== opts '(:approx)))
-	     (tree-set! handle `(script-approx ,what (script-busy)))
-	     (set! handle (tree-ref handle 1))
-	     (tree-go-to handle :end))
-	    ((script-keep-input?)
-	     (tree-set! handle `(script-result ,t (script-busy)))
-	     (set! handle (tree-ref handle 1))
-	     (tree-go-to handle :end)))
-      (if declaration?
-	  (auto-eval handle lan session t :math-input :declaration)
-	  (auto-eval handle lan session t :math-input :simplify-output)))))
-
-(tm-define (script-modified-evaluate fun . opts)
-  (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session"))
-	 (scripts? (supports-scripts? lan)))
-    (cond ((and (selection-active-any?) scripts?)
-	   (with sel (tree->stree (selection-tree))
-	     (clipboard-cut "primary")
-	     (script-modified-evaluate-sub sel fun opts)))
-	  ((tree-innermost script-result-context?)
-	   (let* ((t (tree-innermost script-result-context?))
-		  (what (tree->stree (tree-ref t 0))))
-	     (clipboard-cut-at (tree->path t))
-	     (script-modified-evaluate-sub what fun opts)))
-	  ((and (tree-innermost formula-context? #t)
-		scripts? script-eval-math-flag?)
-	   (let* ((t (tree-innermost formula-context? #t))
-		  (what (tree->stree t)))
-	     (clipboard-cut-at (tree->path t))
-	     (script-modified-evaluate-sub what fun opts)))
-	  (else
-	   (if (not-in-session?) (make 'script-eval))
-	   (fun)))))
-
-(tm-define (script-eval)
-  (script-modified-evaluate noop))
-
-(define (insert-function fun)
-  (insert fun)
-  (if (in-var-math?)
-      (insert-raw-go-to '(concat (left "(") (right ")")) '(0 1))
-      (insert-raw-go-to "()" '(1))))
-
-(tm-define (script-approx)
-  (and-with cmd (ahash-ref script-approx-cmd (get-env "prog-scripts"))
-    (with fun (lambda () (insert-function cmd))
-      (script-modified-evaluate fun :approx))))
-
-(tm-define (script-apply fun . opts)
-  (with n (if (null? opts) 1 (car opts))
-    ;;(display* "Script apply " fun ", " n "\n")
-    (cond ((= n 1)
-	   (script-modified-evaluate (lambda () (insert-function fun))))
-	  ((selection-active-any?)
-	   (clipboard-cut "primary")
-	   (if (not-in-session?) (make 'script-eval))
-	   (insert-function fun)
-	   (clipboard-paste "primary")
-	   (insert ",")
-	   (repeat (- n 2) (insert-raw-go-to "," '(0))))
-	  ((tree-innermost script-result-context?)
-	   (with t (tree-innermost script-result-context?)
-	     (tree-set! t (tree-ref t 0))
-	     (script-apply fun n)))
-	  ((and (tree-innermost formula-context? #t)
-		(supports-scripts? (get-env "prog-scripts"))
-		script-eval-math-flag?)
-	   ;;(display* "Apply to math\n")
-	   (with t (tree-innermost formula-context? #t)
-	     (tree-select t)
-	     (script-apply fun n)))
-	  (else
-	   (if (not-in-session?) (make 'script-eval))
-	   (insert-function fun)
-	   (repeat (- n 1) (insert-raw-go-to "," '(0)))))))
-
-;; check behaviour inside sessions
-;; script-eval tag and keep evaluated expressions
+(tm-define (script-src-context? t)
+  (tm-in? t '(script-eval script-result script-approx)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; On-the-fly plug-in evaluations
+;; In place asynchroneous plug-in evaluations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (auto-eval t lan session in . opts)
-  (tree-set! t '(script-busy))
-  (with ptr (tree->tree-pointer t)
-    (dialogue
-      (with r (apply plugin-async-eval (cons* lan session in opts))
-	(with u (tree-pointer->tree ptr)
-	  (tree-pointer-detach ptr)
-	  (when (== u t)
-	    (with-cursor (tree->path u :end)
-	      (tree-select t)
-	      (clipboard-cut "dummy")
-	      (if (and (in-var-math?) (tm-func? r 'math 1)) (set! r (cadr r)))
-	      (if (in? :declaration opts)
-		  (insert in)
-		  (insert r)))))))))
+(define (script-eval-at where lan session in . opts)
+  (when (not (supports-scripts? lan))
+    (with s (string-append "Error:#" lan "#is not a scripting language")
+      (set-message s "Evaluate")))
+  (when (supports-scripts? lan)
+    (tree-set! where '(script-busy))
+    (with ptr (tree->tree-pointer where)
+      (dialogue
+	(with r (apply plugin-async-eval (cons* lan session in opts))
+	  (with check (tree-pointer->tree ptr)
+	    (tree-pointer-detach ptr)
+	    (when (== check where)
+	      (with-cursor (tree->path check :end)
+		(tree-select where)
+		(clipboard-cut "dummy")
+		(if (and (in-var-math?) (tm-func? r 'math 1)) (set! r (cadr r)))
+		(if (in? :declaration opts)
+		    (insert in)
+		    (insert r))))))))))
 
 (tm-define (kbd-return)
   (:inside script-eval)
   (with-innermost t 'script-eval
-    (let* ((lan (get-env "prog-scripts"))
-	   (session (get-env "prog-session"))
-	   (in (tree->stree (tree-ref t 0))))
-      (auto-eval t lan session in :math-input :simplify-output))))
+    (script-modified-eval noop)))
 
 (tm-define (make-script-input)
   (let* ((lan (get-env "prog-scripts"))
@@ -182,8 +89,9 @@
   (with-innermost t 'script-input
     (let* ((lan (tree->string (tree-ref t 0)))
 	   (session (tree->string (tree-ref t 1)))
-	   (in (tree->stree (tree-ref t 2))))
-      (auto-eval (tree-ref t 3) lan session in :math-input :simplify-output)
+	   (in (tree->stree (tree-ref t 2)))
+	   (out (tree-ref t 3)))
+      (script-eval-at out lan session in :math-input :simplify-output)
       (tree-assign-node! t 'script-output)
       (tree-go-to t 3 :end))))
 
@@ -192,6 +100,95 @@
   (with-innermost t 'script-output
     (tree-assign-node! t 'script-input)
     (tree-go-to t 2 :end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operate on current selection or formula
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (script-get-input)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session")))
+    (cond ((selection-active-any?)
+	   (with sel (tree->stree (selection-tree))
+	     (clipboard-cut "primary")
+	     sel))
+	  ((tree-innermost script-src-context?)
+	   (let* ((t (tree-innermost script-src-context?))
+		  (input (tree->stree (tree-ref t 0))))
+	     (clipboard-cut-at (tree->path t))
+	     input))
+	  ((and (tree-innermost formula-context? #t) script-eval-math-flag?)
+	   (let* ((t (tree-innermost formula-context? #t))
+		  (input (tree->stree t)))
+	     (clipboard-cut-at (tree->path t))
+	     input))
+	  (else #f))))
+
+(define (script-modified-eval fun . opts)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session"))
+	 (input (script-get-input)))
+    (when input
+      ;;(display* "Evaluating " input "\n")
+      (insert-go-to `(script-status "") '(0 0))
+      (fun)
+      (insert input)
+      (let* ((t (tree-innermost 'script-status))
+	     (cmd (tree->stree (tree-ref t 0)))
+	     (declaration? #f))
+	;;(display* "t= " t "\n")
+	;;(display* "cmd= " cmd "\n")
+	(cond ((and (func? input 'concat) (in? '(script-assign) input))
+	       (set! declaration? #t))
+	      ((and (script-keep-input?) (== opts '(:approx)))
+	       (tree-set! t `(script-approx ,input (script-busy)))
+	       (set! t (tree-ref t 1))
+	       (tree-go-to t :end))
+	      ((script-keep-input?)
+	       (tree-set! t `(script-result ,cmd (script-busy)))
+	       (set! t (tree-ref t 1))
+	       (tree-go-to t :end)))
+	(if declaration?
+	    (script-eval-at t lan session cmd :math-input :declaration)
+	    (script-eval-at t lan session cmd :math-input :simplify-output))))
+    (when (not input)
+      (if (not-in-session?) (make 'script-eval))
+      (fun))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High-level evaluation and function application via plug-in
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (insert-function fun)
+  (insert fun)
+  (if (in-var-math?)
+      (insert-raw-go-to '(concat (left "(") (right ")")) '(0 1))
+      (insert-raw-go-to "()" '(1))))
+
+(tm-define (script-eval)
+  (script-modified-eval noop))
+
+(tm-define (script-approx)
+  (and-with cmd (ahash-ref script-approx-cmd (get-env "prog-scripts"))
+    (with fun (lambda () (insert-function cmd))
+      (script-modified-eval fun :approx))))
+
+(tm-define (script-apply fun . opts)
+  (if (in? opts '(() (1)))
+      (script-modified-eval (lambda () (insert-function fun)))
+      (let* ((n (car opts))
+	     (input (script-get-input)))
+	;;(display* "Script apply " fun ", " n "\n")
+	(when input
+	  (if (not-in-session?) (make 'script-eval))
+	  (insert-function fun)
+	  (insert input)
+	  (insert ",")
+	  (repeat (- n 2) (insert-raw-go-to "," '(0))))
+	(when (not input)
+	  (if (not-in-session?) (make 'script-eval))
+	  (insert-function fun)
+	  (repeat (- n 1) (insert-raw-go-to "," '(0)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plots
@@ -229,7 +226,7 @@
 	   (session "default")
 	   (in (script-plot-command lan (tree->stree t))))
       (tree-set! t `(plot-output ,t ""))
-      (auto-eval (tree-ref t 1) lan session in :math-correct :math-input)
+      (script-eval-at (tree-ref t 1) lan session in :math-correct :math-input)
       (tree-go-to t 1 :end))))
 
 (tm-define (kbd-return)

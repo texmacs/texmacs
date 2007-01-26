@@ -35,6 +35,10 @@
   <assign|script-approx|<macro|in|out|<arg|in><with|color|dark
   blue|\<approx\>><arg|out>>>
 
+  <drd-props|script-result|arity|2|border|no>
+
+  <drd-props|script-approx|arity|2|border|no>
+
   <\active*>
     <\src-comment>
       Macros for status information
