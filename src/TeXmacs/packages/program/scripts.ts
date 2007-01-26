@@ -23,15 +23,34 @@
 
   <\active*>
     <\src-comment>
-      Macros for the option "keep evaluated expressions".
+      Macros for the option "keep evaluated expressions"
     </src-comment>
   </active*>
 
-  <assign|script-equal|<macro|<with|color|dark blue|=>>>
-
-  <assign|script-approx|<macro|<with|color|dark blue|\<approx\>>>>
-
   <assign|script-assign|<macro|<with|color|dark blue|\<assign\>>>>
+
+  <assign|script-result|<macro|in|out|<arg|in><with|color|dark
+  blue|=><arg|out>>>
+
+  <assign|script-approx|<macro|in|out|<arg|in><with|color|dark
+  blue|\<approx\>><arg|out>>>
+
+  <\active*>
+    <\src-comment>
+      Macros for status information
+    </src-comment>
+  </active*>
+
+  <assign|script-status|<macro|x|<with|color|red|<block|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  yellow>|<table|<row|<cell|<arg|x>>>>>>>>>
+
+  <assign|script-busy|<macro|<script-status|<localize|Busy>...>>>
+
+  <assign|script-interrupted|<macro|<script-status|<math|\<lightning\>>
+  <localize|Interrupted>>>>
+
+  <assign|script-dead|<macro|<script-status|<math|\<lightning\>>
+  <localize|Dead>>>>
 
   <\active*>
     <\src-comment>
