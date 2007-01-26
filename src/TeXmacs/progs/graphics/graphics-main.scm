@@ -1,10 +1,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : graphics-menu-functions.scm
-;; DESCRIPTION : routines behind graphics mode menus
+;; MODULE      : graphics-main.scm
+;; DESCRIPTION : routines concerning the graphics as a whole (grid,
+;;                                           [ change extents, etc.)
 ;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
-;;               (C) 2004, 2005, 2006  Joris van der Hoeven and Henri Lesourd
+;;               (C) 2004-2007  Joris van der Hoeven and Henri Lesourd
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
@@ -13,7 +14,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (graphics graphics-menu-functions)
+(texmacs-module (graphics graphics-main)
   (:use (utils library cursor) (utils library tree)
         (graphics graphics-utils)))
 
@@ -22,110 +23,6 @@
 
 ;; REMARK: Otherwise, except for some details described in FIXMEs comments
 ;;   below, this code is clean.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Global geometry of graphics
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (graphics-geometry)
-  (with geo (tree->stree (get-env-tree "gr-geometry"))
-    (if (match? geo '(tuple "geometry" :%2))
-	(append geo '("center"))
-	(if (match? geo '(tuple "geometry" :%3))
-	    geo
-	    '(tuple "geometry" "1par" "0.6par" "center")))))
-
-(tm-define (graphics-set-width w)
-  (:argument w "Width of the graphics")
-  (let* ((geo (graphics-geometry))
-	 (align (if (>= (length geo) 5) (cAr geo) "center"))
-	 (new-geo `(tuple "geometry" ,w ,(cadddr geo) ,align))
-      )
-      (graphics-set-property "gr-geometry" new-geo)))
-
-(tm-define (graphics-set-height h)
-  (:argument h "Height of the graphics")
-  (let* ((geo (graphics-geometry))
-	 (align (if (>= (length geo) 5) (cAr geo) "center"))
-	 (new-geo `(tuple "geometry" ,(caddr geo) ,h ,align))
-      )
-      (graphics-set-property "gr-geometry" new-geo)))
-
-(define (geo-valign-has-value? val)
-  (let* ((geo (graphics-geometry))
-	 (align (car (cddddr geo)))
-      )
-      (== val align)))
-
-(tm-define (graphics-set-geo-valign a)
-  (:argument a "Alignment of the graphics")
-  (:check-mark "*" geo-valign-has-value?)
-  (let* ((geo (graphics-geometry))
-	 (new-geo `(tuple "geometry" ,(caddr geo) ,(cadddr geo) ,a))
-      )
-      (graphics-set-property "gr-geometry" new-geo)))
-
-(tm-define (graphics-set-extents w h)
-  (:argument w "Width of the graphics")
-  (:argument h "Height of the graphics")
-  (let* ((geo (graphics-geometry))
-	 (align (if (>= (length geo) 5) (cAr geo) "center"))
-	 (new-geo `(tuple "geometry" ,w ,h ,align))
-      )
-      (graphics-set-property "gr-geometry" new-geo)))
-
-(tm-define (graphics-cartesian-frame)
-  (with frame (tree->stree (get-env-tree "gr-frame"))
-    (if (match? frame '(tuple "scale" :%2))
-	frame
-	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
-
-(define (graphics-unit-has-value? val)
-  (let* ((fr (graphics-cartesian-frame))
-	 (unit (caddr fr))
-     )
-     (== val unit)))
-
-(tm-define (graphics-set-unit u)
-  (:argument u "Graphical unit")
-  (:check-mark "*" graphics-unit-has-value?)
-  (with frame (graphics-cartesian-frame)
-    (with new-frame `(tuple "scale" ,u ,(cAr frame))
-      (graphics-set-property "gr-frame" new-frame))))
-
-(define (graphics-origin-has-value? x y)
-  (let* ((fr (graphics-cartesian-frame))
-	 (orig (cAr fr))
-     )
-     (if (pair? x)
-	 (set! x (length-add (cadr x) (caddr x))))
-     (if (pair? y)
-	 (set! y (length-add (cadr y) (caddr y))))
-   ; FIXME: The 2 (if)s above lack perfection...
-     (== `(tuple ,x ,y) orig)))
-
-(tm-define (graphics-set-origin x y)
-  (:argument x "Origin's x-coordinate")
-  (:argument y "Origin's y-coordinate")
-  (:check-mark "*" graphics-origin-has-value?)
-  (with frame (graphics-cartesian-frame)
-    (with new-frame (append (cDr frame) `((tuple ,x ,y)))
-      (graphics-set-property "gr-frame" new-frame))))
-
-(tm-define (length-extract-unit len)
-  (define l (reverse (string->list len)))
-  (define (traverse l)
-     (if (pair? l)
-	 (if (char-alphabetic? (car l))
-	     (traverse (cdr l))
-	     (set-cdr! l '())))
-  )
-  (traverse l)
-  (set! l (reverse l))
-  (if (and (pair? l) (not (char-alphabetic? (car l))))
-      (set! l (cdr l))
-  )
-  (list->string l)) ;; TODO: Move this in the utils (?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Grids
@@ -613,9 +510,10 @@
 	    (graphics-set-property prop-old gr))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Graphics edit mode
+;; Graphics edit properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Graphics edit mode
 (tm-define (graphics-mode)
   (with m (tree->stree (get-env-tree "gr-mode"))
      (cond ((string? m)
@@ -650,6 +548,7 @@
 (tm-define (graphics-group-mode? mode)
   (and (pair? mode) (eq? (car mode) 'group-edit)))
 
+;; Graphics current edit properties
 (define (color-has-value? color)
   (== color (graphics-get-property "gr-color")))
 
@@ -767,3 +666,167 @@
   (:argument val "Text-at vertical alignment")
   (:check-mark "*" text-at-valign-has-value?)
   (graphics-change-property "gr-text-at-valign" val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global properties of graphics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-geometry)
+  (with geo (tree->stree (get-env-tree "gr-geometry"))
+    (if (match? geo '(tuple "geometry" :%2))
+	(append geo '("center"))
+	(if (match? geo '(tuple "geometry" :%3))
+	    geo
+	    '(tuple "geometry" "1par" "0.6par" "center")))))
+
+(tm-define (graphics-set-width w)
+  (:argument w "Width of the graphics")
+  (let* ((geo (graphics-geometry))
+	 (align (if (>= (length geo) 5) (cAr geo) "center"))
+	 (new-geo `(tuple "geometry" ,w ,(cadddr geo) ,align))
+      )
+      (graphics-set-property "gr-geometry" new-geo)))
+
+(tm-define (graphics-set-height h)
+  (:argument h "Height of the graphics")
+  (let* ((geo (graphics-geometry))
+	 (align (if (>= (length geo) 5) (cAr geo) "center"))
+	 (new-geo `(tuple "geometry" ,(caddr geo) ,h ,align))
+      )
+      (graphics-set-property "gr-geometry" new-geo)))
+
+(define (geo-valign-has-value? val)
+  (let* ((geo (graphics-geometry))
+	 (align (car (cddddr geo)))
+      )
+      (== val align)))
+
+(tm-define (graphics-set-geo-valign a)
+  (:argument a "Alignment of the graphics")
+  (:check-mark "*" geo-valign-has-value?)
+  (let* ((geo (graphics-geometry))
+	 (new-geo `(tuple "geometry" ,(caddr geo) ,(cadddr geo) ,a))
+      )
+      (graphics-set-property "gr-geometry" new-geo)))
+
+(tm-define (graphics-set-extents w h)
+  (:argument w "Width of the graphics")
+  (:argument h "Height of the graphics")
+  (let* ((geo (graphics-geometry))
+	 (align (if (>= (length geo) 5) (cAr geo) "center"))
+	 (new-geo `(tuple "geometry" ,w ,h ,align))
+      )
+      (graphics-set-property "gr-geometry" new-geo)))
+
+(tm-define (graphics-cartesian-frame)
+  (with frame (tree->stree (get-env-tree "gr-frame"))
+    (if (match? frame '(tuple "scale" :%2))
+	frame
+	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
+
+(define (graphics-unit-has-value? val)
+  (let* ((fr (graphics-cartesian-frame))
+	 (unit (caddr fr))
+     )
+     (== val unit)))
+
+(tm-define (graphics-set-unit u)
+  (:argument u "Graphical unit")
+  (:check-mark "*" graphics-unit-has-value?)
+  (with frame (graphics-cartesian-frame)
+    (with new-frame `(tuple "scale" ,u ,(cAr frame))
+      (graphics-set-property "gr-frame" new-frame))))
+
+(define (graphics-origin-has-value? x y)
+  (let* ((fr (graphics-cartesian-frame))
+	 (orig (cAr fr))
+     )
+     (if (pair? x)
+	 (set! x (length-add (cadr x) (caddr x))))
+     (if (pair? y)
+	 (set! y (length-add (cadr y) (caddr y))))
+   ; FIXME: The 2 (if)s above lack perfection...
+     (== `(tuple ,x ,y) orig)))
+
+(tm-define (graphics-set-origin x y)
+  (:argument x "Origin's x-coordinate")
+  (:argument y "Origin's y-coordinate")
+  (:check-mark "*" graphics-origin-has-value?)
+  (with frame (graphics-cartesian-frame)
+    (with new-frame (append (cDr frame) `((tuple ,x ,y)))
+      (graphics-set-property "gr-frame" new-frame))))
+
+(tm-define (length-extract-unit len)
+  (define l (reverse (string->list len)))
+  (define (traverse l)
+     (if (pair? l)
+	 (if (char-alphabetic? (car l))
+	     (traverse (cdr l))
+	     (set-cdr! l '())))
+  )
+  (traverse l)
+  (set! l (reverse l))
+  (if (and (pair? l) (not (char-alphabetic? (car l))))
+      (set! l (cdr l))
+  )
+  (list->string l)) ;; TODO: Move this in the utils (?)
+
+(tm-define (graphics-zoom e)
+  (let* ((fr (graphics-cartesian-frame))
+         (u (caddr fr))
+         (newu (length-mult e u))
+         (newud (length-decode newu))
+         (newfr `(tuple "scale" ,newu ,(cAr fr)))
+     )            
+     (if (and (> newud 100) (< newud 10000000))
+     (with magn (multiply-magnification
+                   (graphics-get-property "magnification") e)
+        (create-graphical-object #f #f #f #f)
+        (graphics-set-property "gr-frame" newfr)
+        (if magn  
+            (graphics-set-property "magnification" magn))))))
+
+(tm-define (graphics-move-origin dx dy)
+  (define (add l1 l2)
+     (if (pair? l1)
+        `(tmlen ,(f2s (+ (s2f (cadr l1)) (length-decode l2))))
+         (length-add l1 l2))
+  )  
+  (let* ((fr (graphics-cartesian-frame))
+         (x (cadr (cadddr fr)))
+         (y (caddr (cadddr fr)))
+         (newfr `(tuple "scale" ,(caddr fr)
+                                 (tuple ,(add x dx)
+                                        ,(add y dy))))
+     )         
+     (create-graphical-object #f #f #f #f)
+     (graphics-set-property "gr-frame" newfr)))
+
+(tm-define (graphics-change-extents dw dh)
+  (let* ((geo (graphics-geometry))
+         (w (caddr geo))
+         (h (cadddr geo)) 
+         (w2 (length-add w dw))
+         (h2 (length-add h dh))
+     )
+     (if (> (length-decode w2) 0)
+         (set! w w2))
+     (if (> (length-decode h2) 0)
+         (set! h h2))
+     (create-graphical-object #f #f #f #f)
+     (graphics-set-extents w h)))
+
+(tm-define (graphics-change-geo-valign dirn)
+  (let* ((geo (graphics-geometry))
+         (a (car (cddddr geo)))
+     )
+     (graphics-set-geo-valign
+        (if dirn
+            (cond ((== a "top") "bottom")
+                  ((== a "center") "top")
+                  ((== a "bottom") "center")
+                  (else "default"))
+            (cond ((== a "top") "center")
+                  ((== a "center") "bottom")
+                  ((== a "bottom") "top")
+                  (else "default"))))))

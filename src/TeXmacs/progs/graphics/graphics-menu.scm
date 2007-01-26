@@ -25,7 +25,6 @@
   (-> "Extents"
       ("Default" (graphics-remove-property "gr-geometry"))
       ---
-      ;; FIXME: insert methods for setting width, height and centering
       ("Width" (interactive graphics-set-width))
       ("Height" (interactive graphics-set-height))
       (-> "Alignment"
