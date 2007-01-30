@@ -811,6 +811,9 @@ EXTEND_NULL_CODE(lazy,lazy_table);
 
 format
 lazy_table_rep::query (lazy_type request, format fm) {
+  //cout << "Query= " << request << "\n";
+  //cout << "  format= " << fm << "\n";
+  //cout << "  par= " << T->env->as_length ("1par") << "\n";
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     SI tmw, tlw, trw;
     T->compute_width (tmw, tlw, trw);
@@ -821,6 +824,9 @@ lazy_table_rep::query (lazy_type request, format fm) {
 
 lazy
 lazy_table_rep::produce (lazy_type request, format fm) {
+  //cout << "produce= " << request << "\n";
+  //cout << "  format= " << fm << "\n";
+  //cout << "  par= " << T->env->as_length ("1par") << "\n";
   if (request == type) return this;
   if (request == LAZY_VSTREAM) {
     if (fm->type == FORMAT_VSTREAM) {
@@ -833,7 +839,13 @@ lazy_table_rep::produce (lazy_type request, format fm) {
     T->finish_horizontal ();
     T->position_rows ();
     array<box> bs= T->var_finish ();
+    tree old1= T->env->local_begin (PAR_LEFT, "0tmpt");
+    tree old2= T->env->local_begin (PAR_RIGHT, "0tmpt");
+    // FIXME: check whether we should also set the other
+    // paragraph formatting variables, as in cell_rep::typeset
     lazy tmp= make_lazy_paragraph (T->env, bs, ip);
+    T->env->local_end (PAR_RIGHT, old2);
+    T->env->local_end (PAR_LEFT, old1);
     return tmp->produce (request, fm);
   }
   return lazy_rep::produce (request, fm);

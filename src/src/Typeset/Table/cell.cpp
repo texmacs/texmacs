@@ -48,14 +48,17 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     else {
       b= empty_box (iq);
 
+      tree len = env->as_tmlen ("1par");
       tree old1= env->local_begin (PAGE_MEDIUM, "papyrus");
       tree old2= env->local_begin (PAR_LEFT, "0tmpt");
       tree old3= env->local_begin (PAR_RIGHT, "0tmpt");
       tree old4= env->local_begin (PAR_MODE, "justify");
       tree old5= env->local_begin (PAR_NO_FIRST, "true");
-  
+      tree old6= env->local_begin (PAR_WIDTH, len);
+
       lz= make_lazy (env, t, iq);
       
+      env->local_end (PAR_WIDTH, old6);
       env->local_end (PAR_NO_FIRST, old5);
       env->local_end (PAR_MODE, old4);
       env->local_end (PAR_RIGHT, old3);
