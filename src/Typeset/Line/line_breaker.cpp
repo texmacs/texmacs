@@ -62,6 +62,7 @@ struct line_breaker_rep {
   line_breaker_rep (array<line_item> a, int start, int end,
 		    SI line_width, SI first_spc, SI last_spc);
 
+  void empty_line_fix (line_item& first, path& pos, int& cur_nr);
   path next_ragged_break (path pos);
   array<path> compute_ragged_breaks ();
 
@@ -136,6 +137,24 @@ hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
 * Naive line breaking for ragged paragraph types
 ******************************************************************************/
 
+void
+line_breaker_rep::empty_line_fix (line_item& first, path& pos, int& cur_nr) {
+  // Fix for avoiding lines with only empty boxes
+  int i;
+  SI tot_spc= 0;
+  for (i= pos->item; i<end && i<=cur_nr; i++) {
+    line_item cur_item = (i==pos->item? first: a[i]);
+    tot_spc += cur_item->b->w() /*+ cur_item->spc->def*/;
+    if (tot_spc != 0 && i < cur_nr) { i= cur_nr; break; }
+  }
+  cur_nr= i;
+  while (cur_nr<end) {
+    line_item cur_item = (cur_nr==pos->item? first: a[cur_nr]);
+    if (cur_item->b->w() /*+ cur_item->spc->def*/ != 0) break;
+    cur_nr++;
+  }
+}
+
 path
 line_breaker_rep::next_ragged_break (path pos) {
   int       cur_nr  = pos->item;
@@ -160,7 +179,10 @@ line_breaker_rep::next_ragged_break (path pos) {
     if ((++cur_nr)==end) break;
     cur_item = a[cur_nr];
     cur_spc += cur_item->b->w();
-    if (cur_spc > line_width) break;
+    if (cur_spc > line_width) {
+      // cout << "Overfull " << cur_spc << ", " << line_width << "\n";
+      break;
+    }
   }
 
   while (true) {
@@ -188,13 +210,17 @@ line_breaker_rep::next_ragged_break (path pos) {
       do cur_nr++;
       while ((cur_nr<end) && (a[cur_nr]->penalty >= HYPH_INVALID));
       if (cur_nr<end) cur_nr++;
+      //empty_line_fix (first, pos, cur_nr);
       return path (cur_nr);
     }
     cur_item = (cur_nr==pos->item? first: a[cur_nr]);
     cur_spc -= cur_item->spc->def;
     if ((cur_spc <= line_width) &&
-	((cur_item->penalty < HYPH_INVALID) || (cur_nr==end-1)))
-      return path (cur_nr+1);
+	((cur_item->penalty < HYPH_INVALID) || (cur_nr==end-1))) {
+      cur_nr++;
+      //empty_line_fix (first, pos, cur_nr);
+      return path (cur_nr);
+    }
   }
 }
 
