@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic form-edit)
-  (:use (link locus-edit)))
+  (:use (link locus-edit)
+	(utils plugins plugin-cmd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Input and output
@@ -25,7 +26,7 @@
 
 (tm-define (form-set! id new-tree)
   (and-with old-tree (form-ref id)
-    (tree-set! old-tree (tree-copy new-tree))))
+    (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggles
@@ -36,3 +37,31 @@
   (with-action t
     (cond ((== t (tree "false")) (tree-set! t "true"))
 	  ((== t (tree "true")) (tree-set! t "false")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scripts via forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (script-background-eval in . opts)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session")))
+    (when (supports-scripts? lan)
+      (dialogue
+	(with r (apply plugin-async-eval (cons* lan session in opts))
+	  (noop))))))
+
+(tm-define (form->script cas-var id)
+  (with cmd `(concat ,cas-var ":" ,(tree->stree (form-ref id)))
+    ;; FIXME: only works for Maxima for the moment
+    (script-background-eval cmd :math-input :simplify-output)))
+
+(define (script-form-eval id in . opts)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session")))
+    (when (supports-scripts? lan)
+      (dialogue
+	(with r (apply plugin-async-eval (cons* lan session in opts))
+	  (form-set! id r))))))
+
+(tm-define (script->form id cas-expr)
+  (script-form-eval id cas-expr :math-input :simplify-output))

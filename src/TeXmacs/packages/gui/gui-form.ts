@@ -1,4 +1,4 @@
-<TeXmacs|1.0.6.7>
+<TeXmacs|1.0.6.8>
 
 <style|source>
 
@@ -36,6 +36,14 @@
   <assign|form-small-input|<macro|name|val|<gui-small-input|<locus|<form-id|<arg|name>>|<arg|val>>>>>
 
   <assign|form-line-input|<macro|name|val|<gui-line-input|<locus|<form-id|<arg|name>>|<arg|val>>>>>
+
+  <assign|form-big-input|<\macro|name|val>
+    <\gui-big-input>
+      <\locus|<form-id|<arg|name>>>
+        <arg|val>
+      </locus>
+    </gui-big-input>
+  </macro>>
 
   <assign|form-circ-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-circ-button|pastel
   blue|<gui-toggle-checked|<arg|val>>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
