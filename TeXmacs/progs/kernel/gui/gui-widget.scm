@@ -53,6 +53,15 @@
 	    (else (cons 'concat l))))
     ,l))
 
+(define (get-options-sub l)
+  (if (and (nnull? l) (keyword? (car l)))
+      (with (options . args) (get-options-sub (cdr l))
+	(cons (cons (car l) options) args))
+      (cons '() l)))
+
+(define (get-options l)
+  (get-options-sub (cdr l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -97,10 +106,9 @@
 
 (tm-define (build-widget w)
   (:case field)
-  (with (cmd name val) w
-    (List (List (Quote 'form-line-input)
-		name
-		(apply Concat (build-widget val))))))
+  (with (opts name val) (get-options w)
+    (with f (Quote (if (in? :multiline opts) 'form-big-input 'form-line-input))
+      (List (List f name (apply Concat (build-widget val)))))))
 
 (define (build-cell w)
   (List (List (Quote 'cell)
@@ -115,15 +123,6 @@
 
 (define (build-rows ls)
   `(append ,@(map build-row ls)))
-
-(define (get-options-sub l)
-  (if (and (nnull? l) (keyword? (car l)))
-      (with (options . args) (get-options-sub (cdr l))
-	(cons (cons (car l) options) args))
-      (cons '() l)))
-
-(define (get-options l)
-  (get-options-sub (cdr l)))
 
 (tm-define (build-widget w)
   (:case table)
