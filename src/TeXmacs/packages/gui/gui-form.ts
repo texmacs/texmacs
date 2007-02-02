@@ -23,15 +23,63 @@
 
   <use-package|gui-utils>
 
+  <\active*>
+    <\src-comment>
+      Submacros for form identifiers
+    </src-comment>
+  </active*>
+
   <assign|form-prefix|>
 
   <assign|form|<macro|name|body|<style-with|src-compact|none|<with|form-prefix|<merge|<value|form-prefix>|<arg|name>|->|<wide-normal|<arg|body>>>>>>
 
   <assign|form-id|<macro|name|<id|<merge|<value|form-prefix>|<arg|name>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Toggles
+    </src-comment>
+  </active*>
+
+  <assign|form-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+
+  <assign|form-button-toggle|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<arg|val>|<arg|text>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Alternatives
+    </src-comment>
+  </active*>
+
+  <assign|form-alternatives|<macro|name|val|body|<surround|<hidden|<locus|<form-id|<arg|name>>|<arg|val>>>||<with|<merge|form-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
+
+  <assign|form-alternative|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<equal|<arg|val>|<extern|form-ref|<arg|name>>>>|(form-alternative)|<arg|val>>>>>
+
+  <assign|form-button-alternative|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<equal|<arg|val>|<extern|form-ref|<arg|name>>>|<arg|text>>|(form-alternative)|<arg|val>>>>>
+
+  <assign|form-hide|<macro|body|<hidden|<arg|body>>>>
+
+  <assign|form-conditional|<macro|cond|body|<compound|<if|<arg|cond>|identity|form-hide>|<arg|body>>>>
+
+  <assign|form-sheet|<\macro|name|val|body>
+    <\form-conditional|<equal|<arg|val>|<extern|form-ref|<arg|name>>>>
+      <arg|body>
+    </form-conditional>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Buttons
+    </src-comment>
+  </active*>
 
   <assign|form-button|<macro|body|cmd|<gui-small-raise|<action|<arg|body>|<arg|cmd>>>>>
+
+  <\active*>
+    <\src-comment>
+      Input fields
+    </src-comment>
+  </active*>
 
   <assign|form-small-input|<macro|name|val|<gui-small-input|<locus|<form-id|<arg|name>>|<arg|val>>>>>
 
@@ -44,9 +92,6 @@
       </locus>
     </gui-big-input>
   </macro>>
-
-  <assign|form-circ-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-circ-button|pastel
-  blue|<gui-toggle-checked|<arg|val>>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
 
   \;
 </body>

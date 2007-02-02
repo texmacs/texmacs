@@ -14,7 +14,7 @@
 #define TM_BUFFER_H
 #include "server.hpp"
 
-window texmacs_window (widget wid);
+window texmacs_window (widget wid, tree geom);
 
 extern tree the_et;
 path new_document ();
@@ -86,8 +86,8 @@ class tm_window_rep {
 public:
   window    win;
   tm_widget wid;
-  inline tm_window_rep (tm_widget wid2):
-    win (texmacs_window (wid2)), wid (wid2) {}
+  inline tm_window_rep (tm_widget wid2, tree geom):
+    win (texmacs_window (wid2, geom)), wid (wid2) {}
 };
 
 typedef tm_buffer_rep* tm_buffer;

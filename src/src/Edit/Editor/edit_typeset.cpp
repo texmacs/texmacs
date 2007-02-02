@@ -103,7 +103,7 @@ edit_typeset_rep::divide_lengths (string l1, string l2) {
 * Processing preamble
 ******************************************************************************/
 
-static void
+void
 use_modules (tree t) {
   if (is_tuple (t))
     for (int i=0; i<N(t); i++) {
@@ -122,7 +122,6 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
   if (ok) {
     env->patch_env (H);
     ok= drd->set_locals (t);
-    use_modules (env->read (THE_MODULES));
   }
   if (!ok) {
     if (!is_tuple (style))
@@ -134,6 +133,7 @@ edit_typeset_rep::typeset_style_use_cache (tree style) {
     drd->heuristic_init (H);
     SERVER (style_set_cache (style, H, drd->get_locals ()));
   }
+  use_modules (env->read (THE_MODULES));
 }
 
 void

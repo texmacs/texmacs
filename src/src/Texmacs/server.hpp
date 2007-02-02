@@ -78,7 +78,7 @@ public:
   virtual void switch_to_active_buffer (url name) = 0;
   virtual void revert_buffer () = 0;
   virtual void kill_buffer () = 0;
-  virtual void open_window () = 0;
+  virtual void open_window (tree geom= "") = 0;
   virtual void clone_window () = 0;
   virtual void kill_window () = 0;
   virtual void set_max_undo_depth (int i) = 0;

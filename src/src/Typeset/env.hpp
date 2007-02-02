@@ -445,5 +445,6 @@ ostream& operator << (ostream& out, edit_env env);
 tree texmacs_exec (edit_env env, tree cmd);
 void extract_format (tree fm, tree* r, int n);
 tree load_inclusion (url u); // implemented in tm_file.cpp
+tree tree_extents (tree t);
 
 #endif // defined ENV_H

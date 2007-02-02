@@ -52,7 +52,7 @@ edit_interface_rep::edit_interface_rep ():
   last_click (0), last_x (0), last_y (0), dragging (false),
   made_selection (false), table_selection (false),
   oc (0, 0), shadow (NULL), stored (NULL),
-  cur_sb (2)
+  cur_sb (2), cur_wb (2)
 {
   input_mode= INPUT_NORMAL;
   dis->get_extents (cur_wx, cur_wy);
@@ -323,6 +323,22 @@ edit_interface_rep::apply_changes () {
     cur_sb= sb;
     widget meta= (widget) get_server () -> get_meta ();
     meta ["canvas"] << set_integer ("scrollbars", sb);
+  }
+
+  // window decorations (menu bar, icon bars, footer)
+  int wb= 2;
+  if (attached ()) {
+    string val= get_init_string (WINDOW_BARS);
+    if (val == "auto") wb= 2;
+    else if (val == "false") wb= 0;
+    else if (val == "true") wb= 1;
+    if (wb != cur_wb) {
+      cur_wb= wb;
+      if (wb != 2) {
+	get_server () -> show_header (wb);
+	get_server () -> show_footer (wb);
+      }
+    }
   }
 
   // cout << "Handling selection\n";
