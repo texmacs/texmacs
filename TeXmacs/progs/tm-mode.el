@@ -75,7 +75,7 @@
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
-	       interactive dialogue-user button))
+	       interactive dialogue-user action button))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols

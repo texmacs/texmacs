@@ -45,13 +45,13 @@ protected:
   void      detach_view (tm_view vw);
 
   /* Low level window manipulation */
-  tm_window new_window (display dis, bool map_flag= true);
+  tm_window new_window (display dis, bool map_flag= true, tree geom= "");
   bool      delete_view_from_window (tm_window win);
   void      delete_window (tm_window win);
 
   /* Other subroutines */
   void new_buffer_in_this_window (url name, tree t);
-  void new_buffer_in_new_window (url name, tree t);
+  void new_buffer_in_new_window (url name, tree t, tree geom= "");
   tree make_document (tm_view vw, string fm= "texmacs");
   tm_buffer load_passive_buffer (url name);
 
@@ -70,7 +70,7 @@ public:
   void switch_to_active_buffer (url name);
   void revert_buffer ();
   void kill_buffer ();
-  void open_window ();
+  void open_window (tree geom= "");
   void clone_window ();
   void kill_window ();
   void set_max_undo_depth (int i);

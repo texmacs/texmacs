@@ -531,6 +531,19 @@ tmg_open_window () {
 }
 
 SCM
+tmg_open_window_geometry (SCM arg1) {
+  SCM_ASSERT_CONTENT (arg1, SCM_ARG1, "open-window-geometry");
+
+  content in1= scm_to_content (arg1);
+
+  // SCM_DEFER_INTS;
+  get_server()->open_window (in1);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_clone_window () {
   // SCM_DEFER_INTS;
   get_server()->clone_window ();
@@ -1066,6 +1079,7 @@ initialize_glue_server () {
   scm_new_procedure ("revert-buffer", (FN) tmg_revert_buffer, 0, 0, 0);
   scm_new_procedure ("kill-buffer", (FN) tmg_kill_buffer, 0, 0, 0);
   scm_new_procedure ("open-window", (FN) tmg_open_window, 0, 0, 0);
+  scm_new_procedure ("open-window-geometry", (FN) tmg_open_window_geometry, 1, 0, 0);
   scm_new_procedure ("clone-window", (FN) tmg_clone_window, 0, 0, 0);
   scm_new_procedure ("kill-window", (FN) tmg_kill_window, 0, 0, 0);
   scm_new_procedure ("set-maximal-undo-depth", (FN) tmg_set_maximal_undo_depth, 1, 0, 0);

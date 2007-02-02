@@ -68,7 +68,7 @@ protected:
   rectangles    locus_new_rects;
   rectangles    locus_rects;
   list<string>  active_ids;
-  int           cur_sb;
+  int           cur_sb, cur_wb;
   SI            cur_wx, cur_wy;
 
 public:

@@ -141,16 +141,25 @@ void
 line_breaker_rep::empty_line_fix (line_item& first, path& pos, int& cur_nr) {
   // Fix for avoiding lines with only empty boxes
   int i;
-  SI tot_spc= 0;
+  SI tot_spc= 0;  
   for (i= pos->item; i<end && i<=cur_nr; i++) {
     line_item cur_item = (i==pos->item? first: a[i]);
-    tot_spc += cur_item->b->w() /*+ cur_item->spc->def*/;
-    if (tot_spc != 0 && i < cur_nr) { i= cur_nr; break; }
+    tot_spc += cur_item->b->w() + cur_item->spc->def;
+    if (tot_spc != 0) {
+      if (i == cur_nr) {
+	if (cur_item->spc->def != 0) return;
+	i++;
+      }
+      else i= cur_nr;
+      break;
+    }
   }
   cur_nr= i;
   while (cur_nr<end) {
-    line_item cur_item = (cur_nr==pos->item? first: a[cur_nr]);
-    if (cur_item->b->w() /*+ cur_item->spc->def*/ != 0) break;
+    line_item cur_item = (cur_nr-1==pos->item? first: a[cur_nr-1]);
+    if (cur_item->spc->def != 0) break;
+    cur_item= (cur_nr==pos->item? first: a[cur_nr]);
+    if (cur_item->b->w()) break;
     cur_nr++;
   }
 }
@@ -210,7 +219,7 @@ line_breaker_rep::next_ragged_break (path pos) {
       do cur_nr++;
       while ((cur_nr<end) && (a[cur_nr]->penalty >= HYPH_INVALID));
       if (cur_nr<end) cur_nr++;
-      //empty_line_fix (first, pos, cur_nr);
+      empty_line_fix (first, pos, cur_nr);
       return path (cur_nr);
     }
     cur_item = (cur_nr==pos->item? first: a[cur_nr]);
@@ -218,7 +227,7 @@ line_breaker_rep::next_ragged_break (path pos) {
     if ((cur_spc <= line_width) &&
 	((cur_item->penalty < HYPH_INVALID) || (cur_nr==end-1))) {
       cur_nr++;
-      //empty_line_fix (first, pos, cur_nr);
+      empty_line_fix (first, pos, cur_nr);
       return path (cur_nr);
     }
   }
@@ -407,9 +416,17 @@ line_breaker_rep::compute_breaks () {
   if (best [path (end)]->pen == HYPH_INVALID)
     for (i=start; i<end; i++)
       process (path (i));
-  
+
   array<path> ap (0);
   get_breaks (ap, path (end));
+
+  // Finish with fix for disallowing last lines with only empty boxes
+  if (N(ap) <= 2 || !atom (ap[N(ap)-2])) return ap;
+  for (i= ap[N(ap)-2]->item; i<end; i++)
+    if (a[i]->b->w() + a[i]->spc->def != 0)
+      return ap;
+  ap[N(ap)-2]= ap[N(ap)-1];
+  ap->resize (N(ap)-1);
   return ap;
 }
 

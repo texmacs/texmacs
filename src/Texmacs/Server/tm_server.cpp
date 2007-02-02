@@ -40,10 +40,14 @@ int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
 
 window
-texmacs_window (widget wid) {
+texmacs_window (widget wid, tree geom) {
   int W, H;
   int w= geometry_w, h= geometry_h;
   int x= geometry_x, y= geometry_y;
+  if (is_tuple (geom) && N (geom) >= 2) {
+    w= as_int (geom[0]);
+    h= as_int (geom[1]);
+  }
   wid->dis->get_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;

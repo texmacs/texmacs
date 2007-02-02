@@ -340,8 +340,8 @@ tm_data_rep::detach_view (tm_view vw) {
 ******************************************************************************/
 
 tm_window
-tm_data_rep::new_window (display dis, bool map_flag) {
-  tm_window win= new tm_window_rep (new tm_widget_rep (this, dis));
+tm_data_rep::new_window (display dis, bool map_flag, tree geom) {
+  tm_window win= new tm_window_rep (new tm_widget_rep (this, dis), geom);
   if (map_flag) win->win->map ();
   return win;
 }
@@ -386,8 +386,8 @@ tm_data_rep::new_buffer_in_this_window (url name, tree doc) {
 }
 
 void
-tm_data_rep::new_buffer_in_new_window (url name, tree doc) {
-  tm_window win= new_window (get_display ());
+tm_data_rep::new_buffer_in_new_window (url name, tree doc, tree geom) {
+  tm_window win= new_window (get_display (), true, geom);
   tm_buffer buf= new_buffer (name, doc);
   tm_view   vw = get_passive_view (buf);
   attach_view (win, vw);
@@ -521,13 +521,13 @@ tm_data_rep::kill_buffer () {
 }
 
 void
-tm_data_rep::open_window () {
+tm_data_rep::open_window (tree geom) {
   int i;
   for (i=1; true; i++) {
     string name= "no name " * as_string (i);
     if (i==1) name= "no name";
     if (find_buffer (name) != -1) continue;
-    new_buffer_in_new_window (name, tree (DOCUMENT));
+    new_buffer_in_new_window (name, tree (DOCUMENT), geom);
     return;
   }
 }

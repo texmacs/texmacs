@@ -53,6 +53,13 @@
 	    (else (cons 'concat l))))
     ,l))
 
+(define (Document . l)
+  `((lambda (l)
+      (cond ((null? l) "")
+	    ((null? (cdr l)) (car l))
+	    (else (cons 'document l))))
+    ,l))
+
 (define (get-options-sub l)
   (if (and (nnull? l) (keyword? (car l)))
       (with (options . args) (get-options-sub (cdr l))
@@ -83,6 +90,27 @@
     `(let* ,bindings
        ,(build-widgets body))))
 
+(define (build-aspect x)
+  (cond ((== x :red) '("gui-toggle-color" "pastel red"))
+	((== x :green) '("gui-toggle-color" "pastel green"))
+	((== x :blue) '("gui-toggle-color" "pastel blue"))
+	((== x :yellow) '("gui-toggle-color" "pastel yellow"))
+	((== x :orange) '("gui-toggle-color" "pastel orange"))
+	((== x :grey) '("gui-toggle-color" "light grey"))
+	((== x :circle) '("gui-toggle-type" "circle"))
+	((== x :square) '("gui-toggle-type" "square"))
+	((== x :checked) '("gui-marker-type" "checked"))
+	((== x :bullet) '("gui-marker-type" "bullet"))
+	(else '())))
+
+(tm-define (build-widget w)
+  (:case aspect)
+  (with (opts . body) (get-options w)
+    (let* ((bindings (append-map build-aspect opts))
+	   (fun (lambda (x) `(with ,@bindings ,x)))
+	   (builder (build-widgets body)))
+      `(map ,fun ,builder))))
+
 (tm-define (build-widget w)
   (:case action)
   (with (cmd body . cmds) w
@@ -100,15 +128,50 @@
 (tm-define (build-widget w)
   (:case toggle)
   (with (cmd name val) w
-    (List (List (Quote 'form-circ-toggle)
-		name
-		(if val "true" "false")))))
+    (List (List (Quote 'form-toggle) name (if val "true" "false")))))
+
+(tm-define (build-widget w)
+  (:case button-toggle)
+  (with (cmd name val . body) w
+    (List (List (Quote 'form-button-toggle) name (if val "true" "false")
+		(apply Concat (build-widgets body))))))
+
+(tm-define (build-widget w)
+  (:case alternatives)
+  (with (cmd name val . body) w
+    (List (List (Quote 'form-alternatives) name val
+		(apply Document (build-widgets body))))))
+
+(tm-define (build-widget w)
+  (:case alternative)
+  (with (cmd name val) w
+    (List (List (Quote 'form-alternative) name val))))
+
+(tm-define (build-widget w)
+  (:case button-alternative)
+  (with (cmd name val . body) w
+    (List (List (Quote 'form-button-alternative) name val
+		(apply Concat (build-widgets body))))))
+
+(tm-define (build-widget w)
+  (:case header)
+  (with (cmd . body) w
+    (List (List (Quote 'gui-centered-switch)
+		(apply Concat (build-widgets body))))))
+
+(tm-define (build-widget w)
+  (:case sheet)
+  (with (cmd name val . body) w
+    (List (List (Quote 'form-sheet) name val
+		(apply Document (build-widgets body))))))
 
 (tm-define (build-widget w)
   (:case field)
   (with (opts name val) (get-options w)
-    (with f (Quote (if (in? :multiline opts) 'form-big-input 'form-line-input))
-      (List (List f name (apply Concat (build-widget val)))))))
+    (with f (cond ((in? :short opts) 'form-short-input)
+		  ((in? :multiline opts) 'form-big-input)
+		  (else 'form-line-input))
+      (List (List (Quote f) name (apply Concat (build-widget val)))))))
 
 (define (build-cell w)
   (List (List (Quote 'cell)

@@ -65,6 +65,7 @@
   (revert-buffer revert_buffer (void))
   (kill-buffer kill_buffer (void))
   (open-window open_window (void))
+  (open-window-geometry open_window (void content))
   (clone-window clone_window (void))
   (kill-window kill_window (void))
   (set-maximal-undo-depth set_max_undo_depth (void int))
