@@ -146,12 +146,15 @@ tree
 tree_extents (tree doc) {
   edit_env env= get_init_environment (doc);
   tree t= extract (doc, "body");
-  //env->write ("page-type", "a4");
   lazy lz= make_lazy (env, t, path ());
   format vf= make_query_vstream_width (array<line_item>(), array<line_item>());
   format rf= lz->query (LAZY_BOX, vf);
   SI w= ((format_vstream) rf)->width;
   box b= (box) lz->produce (LAZY_BOX, make_format_width (w));
   SI h= b->h ();
-  return tuple (as_tree (w / (5*PIXEL)), as_tree (h / (5*PIXEL)));
+  w += env->get_length (PAGE_SCREEN_LEFT);
+  w += env->get_length (PAGE_SCREEN_RIGHT);
+  h += env->get_length (PAGE_SCREEN_TOP);
+  h += env->get_length (PAGE_SCREEN_BOT);
+  return tuple (as_tree ((w / (5*PIXEL)) + 1), as_tree ((h / (5*PIXEL)) + 1));
 }

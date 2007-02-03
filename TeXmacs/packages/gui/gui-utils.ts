@@ -41,7 +41,7 @@
 
   <assign|page-screen-top|0.5em>
 
-  <assign|page-screen-bottom|0.5em>
+  <assign|page-screen-bot|0.5em>
 
   <\active*>
     <\src-comment>
