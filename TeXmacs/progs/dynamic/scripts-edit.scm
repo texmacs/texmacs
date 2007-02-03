@@ -24,7 +24,6 @@
 
 (define script-keep-input-flag? #f)
 (define script-eval-math-flag? #t)
-(tm-define script-approx-cmd (make-ahash-table))
 
 (tm-define (script-keep-input?) script-keep-input-flag?)
 (tm-define (toggle-keep-input)
@@ -169,7 +168,7 @@
   (script-modified-eval noop))
 
 (tm-define (script-approx)
-  (and-with cmd (ahash-ref script-approx-cmd (get-env "prog-scripts"))
+  (and-with cmd (plugin-approx-command-ref (get-env "prog-scripts"))
     (with fun (lambda () (insert-function cmd))
       (script-modified-eval fun :approx))))
 

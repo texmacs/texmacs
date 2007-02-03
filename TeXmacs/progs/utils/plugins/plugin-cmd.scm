@@ -329,3 +329,15 @@
 
 (tm-define (plugin-supports-input-done? key)
   (ahash-ref plugin-supports-input-done key))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Command for numeric evaluation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define plugin-approx-command (make-ahash-table))
+
+(tm-define (plugin-approx-command-set! key val)
+  (ahash-set! plugin-approx-command key val))
+
+(tm-define (plugin-approx-command-ref key)
+  (ahash-ref plugin-approx-command key))
