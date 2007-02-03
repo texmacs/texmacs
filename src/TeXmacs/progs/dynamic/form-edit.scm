@@ -22,11 +22,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (form-ref id)
+  (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
   (with l (id->trees id)
     (and l (nnull? l) (car l))))
 
 (tm-define (form-set! id new-tree)
+  (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
   (and-with old-tree (form-ref id)
     (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
