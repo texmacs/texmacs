@@ -138,6 +138,8 @@ get_init_environment (tree doc, drd_info& drd) {
   }
   use_modules (env->read (THE_MODULES));
   // FIXME: extract (doc, "init")
+  // env->write (PAGE_TYPE, "a5");
+  env->update ();
   return env;
 }
 
