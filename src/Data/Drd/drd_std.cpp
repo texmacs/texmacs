@@ -70,7 +70,8 @@ init_std_drd () {
   init (CONCAT, "concat", repeat (1, 1) -> no_border () -> accessible (0));
   init (GROUP, "group", fixed (1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> no_border () -> hidden (0));
-  init (FROZEN, "frozen", fixed (1) -> no_border ());
+  init (FREEZE, "freeze", fixed (1) -> no_border ());
+  init (UNFREEZE, "unfreeze", fixed (1) -> accessible (0) -> no_border ());
   init (HSPACE, "hspace", options (1, 2) -> name ("horizontal space"));
   init (VAR_VSPACE, "vspace*",
 	options (1, 2) -> name ("vertical space before"));
