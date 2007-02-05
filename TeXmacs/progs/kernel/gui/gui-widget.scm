@@ -95,6 +95,10 @@
     `(let* ,bindings
        ,(build-widgets body))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Aspect attributes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (build-aspect x)
   (cond ((== x :red) '("gui-toggle-color" "pastel red"))
 	((== x :green) '("gui-toggle-color" "pastel green"))
@@ -115,6 +119,10 @@
 	   (fun (lambda (x) `(with ,@bindings ,x)))
 	   (builder (build-widgets body)))
       `(map ,fun ,builder))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Buttons and button related markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (build-widget w)
   (:case action)
@@ -170,6 +178,10 @@
     (List (List (Quote 'form-sheet) name val
 		(apply Document (build-widgets body))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Textual input
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (build-widget w)
   (:case field)
   (with (opts name val) (get-options w)
@@ -177,6 +189,10 @@
 		  ((in? :multiline opts) 'form-big-input)
 		  (else 'form-line-input))
       (List (List (Quote f) name (apply Concat (build-widget val)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Formatting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (build-cell w)
   (List (List (Quote 'cell)
@@ -219,10 +235,10 @@
   `(let* ((cb-begin (+ widget-call-back-nr 1))
 	  (cb-end (+ widget-call-back-nr 1))
 	  (cb-result #f)
-	  (finish (lambda ()
-		    (widget-delete-call-backs cb-begin cb-end)
-		    (kill-buffer)
-		    (kill-window))))
+	  (dismiss (lambda ()
+		     (widget-delete-call-backs cb-begin cb-end)
+		     (kill-buffer)
+		     (kill-window))))
      (set! cb-result ,(build-widgets body))
      (set! cb-end (+ widget-call-back-nr 1))
      cb-result))
