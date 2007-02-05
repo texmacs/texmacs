@@ -114,9 +114,8 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
 void use_modules (tree t);
 
 edit_env
-get_init_environment (tree doc) {
+get_init_environment (tree doc, drd_info& drd) {
   display  dis= current_display ();
-  drd_info drd= std_drd;
   hashmap<string,tree> h1 (UNINIT), h2 (UNINIT), h3 (UNINIT), h4 (UNINIT);
   edit_env env (dis, drd, "none", h1, h2, h3, h4);
   env->write_default_env ();
@@ -144,7 +143,8 @@ get_init_environment (tree doc) {
 
 tree
 tree_extents (tree doc) {
-  edit_env env= get_init_environment (doc);
+  drd_info drd ("none", std_drd);
+  edit_env env= get_init_environment (doc, drd);
   tree t= extract (doc, "body");
   lazy lz= make_lazy (env, t, path ());
   format vf= make_query_vstream_width (array<line_item>(), array<line_item>());
