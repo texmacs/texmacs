@@ -41,8 +41,10 @@
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
-	 dialogue delayed on-entry on-exit
-	 define-widget action button toggle field table bar) "\\|")
+	 dialogue delayed on-entry on-exit define-widget
+	 action alternative alternatives aspect
+	 bar button button-alternative button-toggle
+	 field header sheet table toggle) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -65,7 +67,8 @@
   (dolist (s '(ahash-with))
     (put s 'scheme-indent-function 3))
   (dolist (s '(with with-global and-with with-innermost receive
-	       with-environment with-environment* converter))
+	       with-environment with-environment* converter
+	       alternatives button-alternative button-toggle sheet))
     (put s 'scheme-indent-function 2))
   (dolist (s '(texmacs-module provide-public
 	       and-let* setup-append-if define-group
@@ -75,11 +78,13 @@
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
-	       interactive dialogue-user action button))
+	       interactive dialogue-user
+	       action button field))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit table bar
+	       delayed dialogue on-entry on-exit
+	       aspect bar header sheet table
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
