@@ -79,12 +79,12 @@
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
 	       interactive dialogue-user
-	       action button field))
+	       action aspect button field))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
 	       delayed dialogue on-entry on-exit
-	       aspect bar header sheet table
+	       bar header sheet table
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))

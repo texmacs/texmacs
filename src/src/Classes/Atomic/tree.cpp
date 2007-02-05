@@ -107,6 +107,19 @@ copy (tree t) {
 }
 
 tree
+freeze (tree t) {
+  if (is_atomic (t)) return copy (t->label);
+  if (is_func (t, UNFREEZE, 1)) return t[0];
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= freeze (t[i]);
+    return r;
+  }
+}
+
+tree
 operator * (tree t1, tree t2) {
   int i;
   if (is_atomic (t1)) t1= tree (L(t2), t1);

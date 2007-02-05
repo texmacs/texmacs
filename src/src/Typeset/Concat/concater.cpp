@@ -191,8 +191,12 @@ concater_rep::typeset (tree t, path ip) {
     //(void) env->exec (t);
     (void) typeset_as_concat (env, t[0], descend (ip, 0));
     break;
-  case FROZEN:
+  case FREEZE:
+    //typeset (freeze (t[0]), decorate_middle (ip));
     typeset (attach_middle (t[0], ip));
+    break;
+  case UNFREEZE:
+    typeset (t[0], descend (ip, 0));
     break;
   case HSPACE:
     t= env->exec (t);

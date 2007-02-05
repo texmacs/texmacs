@@ -38,6 +38,10 @@ get_codes (string version) {
   hashmap<string,int> H (UNKNOWN);
   H->join (STD_CODE);
 
+  if (version_inf ("1.0.6.9", version)) return H;
+
+  rename_feature (H, "frozen", "freeze");
+
   if (version_inf ("1.0.6.2", version)) return H;
 
   new_feature (H, "expand-as");

@@ -73,6 +73,7 @@ public:
   friend inline bool is_func (tree t, tree_label l, int i);
 
   friend tree copy (tree t);
+  friend tree freeze (tree t);
   friend bool operator == (tree t, tree u);
   friend bool operator != (tree t, tree u);
   friend tree& operator << (tree& t, tree t2);
