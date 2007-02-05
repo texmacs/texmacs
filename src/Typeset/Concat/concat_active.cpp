@@ -81,9 +81,10 @@ concater_rep::typeset_case (tree t, path ip) {
 
 bool
 build_locus (edit_env env, tree t, list<string>& ids, string& col) {
-  // cout << "Typeset " << t << "\n";
+  //cout << "Typeset " << t << "\n";
   int last= N(t)-1;
   tree body= env->expand (t[last], true);
+  //cout << "Typeset " << body << "\n";
   bool accessible= is_accessible (obtain_ip (body));
   bool visited= false;
   if (!nil (env->link_env)) {
