@@ -18,7 +18,7 @@
 ;; Call back management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define widget-call-back-nr 0)
+(tm-define widget-call-back-nr 0)
 (define widget-call-back-table (make-ahash-table))
 
 (tm-define (widget-call-back handle)
@@ -32,6 +32,11 @@
   (string-append "(widget-call-back "
 		 (number->string widget-call-back-nr)
 		 ")"))
+
+(tm-define (widget-delete-call-backs start end)
+  (when (< start end)
+    (ahash-set! widget-call-back-table start #f)
+    (widget-delete-call-backs (+ start 1) end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Syntactic sugar
@@ -210,6 +215,18 @@
 ;; Defining widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (define-widget-sub body)
+  `(let* ((cb-begin (+ widget-call-back-nr 1))
+	  (cb-end (+ widget-call-back-nr 1))
+	  (cb-result #f)
+	  (finish (lambda ()
+		    (widget-delete-call-backs cb-begin cb-end)
+		    (kill-buffer)
+		    (kill-window))))
+     (set! cb-result ,(build-widgets body))
+     (set! cb-end (+ widget-call-back-nr 1))
+     cb-result))
+
 (define-public-macro (define-widget proto . body)
   `(tm-define ,proto
-     (tm->tree (cons 'document ,(build-widgets body)))))
+     (tm->tree (cons 'document ,(define-widget-sub body)))))
