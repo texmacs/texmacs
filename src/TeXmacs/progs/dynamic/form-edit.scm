@@ -21,16 +21,39 @@
 ;; Input and output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (form-ref id)
+(tm-define form-prefix "")
+
+(tm-define-macro (form-with prefix . body)
+  (:secure #t)
+  `(let ((new-prefix ,prefix)
+	  (old-prefix form-prefix))
+     (set! form-prefix new-prefix)
+     (let ((result (begin ,@body)))
+       (set! form-prefix old-prefix)
+       result)))
+
+(tm-define-macro (form-delay . body)
+  (:secure #t)
+  `(delayed
+     (:idle 1)
+     ,@body))
+
+(define (form-get-prefix opt-prefix)
+  (cond ((null? opt-prefix) form-prefix)
+	((tree? (car opt-prefix)) (tree->string (car opt-prefix)))
+	(else (car opt-prefix))))
+
+(tm-define (form-ref id . opt-prefix)
   (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
-  (with l (id->trees id)
+  (let* ((prefix (form-get-prefix opt-prefix))
+	 (l (id->trees (string-append prefix id))))
     (and l (nnull? l) (car l))))
 
-(tm-define (form-set! id new-tree)
+(tm-define (form-set! id new-tree . opt-prefix)
   (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
-  (and-with old-tree (form-ref id)
+  (and-with old-tree (apply form-ref (cons id opt-prefix))
     (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,3 +107,53 @@
 
 (tm-define (script->form id cas-expr)
   (script-form-eval id cas-expr :math-input :simplify-output))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stand-alone forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (macrofy-list p i t args)
+  (if (null? t) (values t args)
+      (receive (h next) (macrofy p i (car t) args)
+	(receive (t end) (macrofy-list p (+ i 1) (cdr t) next)
+	  (values (cons h t) end)))))
+
+(define (macrofy p i t args)
+  (cond ((in? (list p i) '((form-toggle 1)
+			   (form-button-toggle 1)
+			   (form-alternatives 1)
+			   (form-small-input 1)
+			   (form-line-input 1)
+			   (form-big-input 1)))
+	 (with v (string-append "v" (number->string (length args)))
+	   (values `(arg ,v) (rcons args (cons v t)))))
+	((nlist? t) (values t args))
+	(else (macrofy-list (car t) -1 t args))))
+
+(define (macrofy-body t)
+  (receive (m args) (macrofy #f #f (tm->stree t) '())
+    (values `(macro ,@(map car args) ,m)
+	    `(form-window ,@(map cdr args)))))
+
+(define (stand-alone body)
+  (let* ((style '(tuple "generic" "gui-form"))
+	 (init '(collection (associate "window-bars" "false"))))
+    `(document (style ,style) (body ,body) (initial ,init))))
+
+(define (stand-alone* body)
+  (receive (def body*) (macrofy-body body)
+    (let* ((style '(tuple "generic" "gui-form"))
+	   (init `(collection (associate "window-bars" "false")
+			      (associate "form-window" ,def))))
+      `(document (style ,style) (body ,body*) (initial ,init)))))
+
+(define form-show-counter 0)
+(tm-define (form-show body)
+  (set! form-show-counter (+ form-show-counter 1))
+  (let* ((doc (stand-alone body))
+	 (doc* (stand-alone* body))
+	 (geom (tree-extents doc))
+	 (num (number->string form-show-counter))
+	 (name (string-append "Form " num)))
+    (open-window-geometry geom)
+    (set-aux-buffer name name doc*)))

@@ -274,7 +274,7 @@ init_std_drd () {
 
   init (LOCUS, "locus", var_repeat (1, 1, BIFORM) -> accessible (1));
   init (ID, "id", repeat (1, 1) -> accessible (0));
-  init (HARD_ID, "hard-id", fixed (1));
+  init (HARD_ID, "hard-id", options (0, 1));
   init (LINK, "link", repeat (2, 1) -> accessible (0));
   init (URL, "url", options (1, 1) -> accessible (0));
   init (SCRIPT, "script", options (1, 1) -> accessible (0));

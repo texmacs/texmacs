@@ -23,6 +23,8 @@
 
   <use-package|gui-utils>
 
+  <drd-props|form-window|arity|<tuple|repeat|1|1>|border|no>
+
   <\active*>
     <\src-comment>
       Submacros for form identifiers
@@ -35,15 +37,23 @@
 
   <assign|form-id|<macro|name|<id|<merge|<value|form-prefix>|<arg|name>>>>>
 
+  <assign|form-value|<macro|name|<extern|form-ref|<arg|name>|<value|form-prefix>>>>
+
+  <assign|form-cmd|<macro|cmd|<merge|(form-delay (form-with
+  "|<value|form-prefix>|" |<arg|cmd>|))>>>
+
   <\active*>
     <\src-comment>
       Toggles
     </src-comment>
   </active*>
 
-  <assign|form-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+  <assign|form-toggle-cmd|<macro|name|val|<form-cmd|<merge|(form-set!
+  "|<arg|name>|" "|<not|<arg|val>>|")>>>>
 
-  <assign|form-button-toggle|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<arg|val>|<arg|text>>|(form-toggle)|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+  <assign|form-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|<form-toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
+
+  <assign|form-button-toggle|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<arg|val>|<arg|text>>|<form-toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
 
   <\active*>
     <\src-comment>
@@ -53,16 +63,18 @@
 
   <assign|form-alternatives|<macro|name|val|body|<surround|<hidden|<locus|<form-id|<arg|name>>|<arg|val>>>||<with|<merge|form-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
 
-  <assign|form-alternative|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<equal|<arg|val>|<extern|form-ref|<arg|name>>>>|(form-alternative)|<arg|val>>>>>
+  <assign|form-alternative|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<equal|<arg|val>|<form-value|<arg|name>>>>|<form-cmd|<merge|(form-set!
+  "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
-  <assign|form-button-alternative|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<equal|<arg|val>|<extern|form-ref|<arg|name>>>|<arg|text>>|(form-alternative)|<arg|val>>>>>
+  <assign|form-button-alternative|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<equal|<arg|val>|<form-value|<arg|name>>>|<arg|text>>|<form-cmd|<merge|(form-set!
+  "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
   <assign|form-hide|<macro|body|<hidden|<arg|body>>>>
 
   <assign|form-conditional|<macro|cond|body|<compound|<if|<arg|cond>|identity|form-hide>|<arg|body>>>>
 
   <assign|form-sheet|<\macro|name|val|body>
-    <\form-conditional|<equal|<arg|val>|<extern|form-ref|<arg|name>>>>
+    <\form-conditional|<equal|<arg|val>|<form-value|<arg|name>>>>
       <arg|body>
     </form-conditional>
   </macro>>
@@ -73,7 +85,9 @@
     </src-comment>
   </active*>
 
-  <assign|form-button|<macro|body|cmd|<gui-small-raise|<action|<arg|body>|<arg|cmd>>>>>
+  <assign|form-action|<macro|body|cmd|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>
+
+  <assign|form-button|<macro|body|cmd|<gui-small-raise|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>

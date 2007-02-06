@@ -378,7 +378,7 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
 
   case HARD_ID:
-    return exec_hard_id (t[0]);
+    return exec_hard_id (t);
   case SCRIPT:
     return exec_script (t);
   case HLINK:
@@ -1320,10 +1320,16 @@ edit_env_rep::exec_greatereq (tree t) {
 
 tree
 edit_env_rep::exec_hard_id (tree t) {
-  t= expand (t, true);
-  pointer ptr1= (pointer) this;
-  pointer ptr2= (pointer) t.operator -> ();
-  return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+  if (N(t) == 0) {
+    pointer ptr= (pointer) this;
+    return "%" * as_hexadecimal (ptr);
+  }
+  else {
+    t= expand (t[0], true);
+    pointer ptr1= (pointer) this;
+    pointer ptr2= (pointer) t.operator -> ();
+    return "%" * as_hexadecimal (ptr1) * "-" * as_hexadecimal (ptr2);
+  }
 }
 
 tree

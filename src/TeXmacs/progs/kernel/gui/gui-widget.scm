@@ -127,7 +127,7 @@
 (tm-define (build-widget w)
   (:case action)
   (with (cmd body . cmds) w
-    (List (List (Quote 'action)
+    (List (List (Quote 'form-action)
 		(apply Concat (build-widget body))
 		`(widget-new-call-back (lambda () ,@cmds))))))
 
@@ -231,18 +231,23 @@
 ;; Defining widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define widget-serial-number 0)
+
 (tm-define (define-widget-sub body)
-  `(let* ((cb-begin (+ widget-call-back-nr 1))
-	  (cb-end (+ widget-call-back-nr 1))
-	  (cb-result #f)
+  `(let* ((aux-num (number->string widget-serial-number))
+	  (aux-serial (string-append "widget-" aux-num))
+	  (aux-begin (+ widget-call-back-nr 1))
+	  (aux-end (+ widget-call-back-nr 1))
+	  (aux-result #f)
 	  (dismiss (lambda ()
-		     (widget-delete-call-backs cb-begin cb-end)
+		     (widget-delete-call-backs aux-begin aux-end)
 		     (kill-buffer)
 		     (kill-window))))
-     (set! cb-result ,(build-widgets body))
-     (set! cb-end (+ widget-call-back-nr 1))
-     cb-result))
+     (set! widget-serial-number (+ widget-serial-number 1))
+     (set! aux-result ,(build-widgets body))
+     (set! aux-end (+ widget-call-back-nr 1))
+     `(form ,aux-serial (document ,@aux-result))))
 
 (define-public-macro (define-widget proto . body)
   `(tm-define ,proto
-     (tm->tree (cons 'document ,(define-widget-sub body)))))
+     (tm->tree ,(define-widget-sub body))))
