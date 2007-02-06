@@ -73,12 +73,14 @@ public:
   void open_window (tree geom= "");
   void clone_window ();
   void kill_window ();
+  void kill_window_and_buffer ();
   void set_max_undo_depth (int i);
   int  get_max_undo_depth ();
   bool no_bufs ();
   bool no_name ();
   bool help_buffer ();
   void revert_buffer (url name, tree doc);
+  void set_aux (string aux, url name);
   void set_aux_buffer (string aux, url name, tree doc);
   void set_help_buffer (url name, tree doc);
   void browse_help (int delta);

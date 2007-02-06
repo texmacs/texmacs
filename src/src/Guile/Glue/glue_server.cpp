@@ -522,6 +522,23 @@ tmg_kill_buffer () {
 }
 
 SCM
+tmg_open_buffer_in_window (SCM arg1, SCM arg2, SCM arg3) {
+  SCM_ASSERT_URL (arg1, SCM_ARG1, "open-buffer-in-window");
+  SCM_ASSERT_CONTENT (arg2, SCM_ARG2, "open-buffer-in-window");
+  SCM_ASSERT_CONTENT (arg3, SCM_ARG3, "open-buffer-in-window");
+
+  url in1= scm_to_url (arg1);
+  content in2= scm_to_content (arg2);
+  content in3= scm_to_content (arg3);
+
+  // SCM_DEFER_INTS;
+  get_server()->new_buffer_in_new_window (in1, in2, in3);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
 tmg_open_window () {
   // SCM_DEFER_INTS;
   get_server()->open_window ();
@@ -556,6 +573,15 @@ SCM
 tmg_kill_window () {
   // SCM_DEFER_INTS;
   get_server()->kill_window ();
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_kill_window_and_buffer () {
+  // SCM_DEFER_INTS;
+  get_server()->kill_window_and_buffer ();
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -611,6 +637,21 @@ tmg_set_buffer (SCM arg1, SCM arg2) {
 
   // SCM_DEFER_INTS;
   get_server()->revert_buffer (in1, in2);
+  // SCM_ALLOW_INTS;
+
+  return SCM_UNSPECIFIED;
+}
+
+SCM
+tmg_set_aux (SCM arg1, SCM arg2) {
+  SCM_ASSERT_STRING (arg1, SCM_ARG1, "set-aux");
+  SCM_ASSERT_URL (arg2, SCM_ARG2, "set-aux");
+
+  string in1= scm_to_string (arg1);
+  url in2= scm_to_url (arg2);
+
+  // SCM_DEFER_INTS;
+  get_server()->set_aux (in1, in2);
   // SCM_ALLOW_INTS;
 
   return SCM_UNSPECIFIED;
@@ -1078,15 +1119,18 @@ initialize_glue_server () {
   scm_new_procedure ("switch-to-active-buffer", (FN) tmg_switch_to_active_buffer, 1, 0, 0);
   scm_new_procedure ("revert-buffer", (FN) tmg_revert_buffer, 0, 0, 0);
   scm_new_procedure ("kill-buffer", (FN) tmg_kill_buffer, 0, 0, 0);
+  scm_new_procedure ("open-buffer-in-window", (FN) tmg_open_buffer_in_window, 3, 0, 0);
   scm_new_procedure ("open-window", (FN) tmg_open_window, 0, 0, 0);
   scm_new_procedure ("open-window-geometry", (FN) tmg_open_window_geometry, 1, 0, 0);
   scm_new_procedure ("clone-window", (FN) tmg_clone_window, 0, 0, 0);
   scm_new_procedure ("kill-window", (FN) tmg_kill_window, 0, 0, 0);
+  scm_new_procedure ("kill-window-and-buffer", (FN) tmg_kill_window_and_buffer, 0, 0, 0);
   scm_new_procedure ("set-maximal-undo-depth", (FN) tmg_set_maximal_undo_depth, 1, 0, 0);
   scm_new_procedure ("get-maximal-undo-depth", (FN) tmg_get_maximal_undo_depth, 0, 0, 0);
   scm_new_procedure ("no-name?", (FN) tmg_no_nameP, 0, 0, 0);
   scm_new_procedure ("help-buffer?", (FN) tmg_help_bufferP, 0, 0, 0);
   scm_new_procedure ("set-buffer", (FN) tmg_set_buffer, 2, 0, 0);
+  scm_new_procedure ("set-aux", (FN) tmg_set_aux, 2, 0, 0);
   scm_new_procedure ("set-aux-buffer", (FN) tmg_set_aux_buffer, 3, 0, 0);
   scm_new_procedure ("set-help-buffer", (FN) tmg_set_help_buffer, 2, 0, 0);
   scm_new_procedure ("get-buffer-menu", (FN) tmg_get_buffer_menu, 0, 0, 0);

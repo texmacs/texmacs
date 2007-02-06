@@ -545,7 +545,7 @@ tm_data_rep::clone_window () {
 void
 tm_data_rep::kill_window () {
   int i, j;
-  tm_window win    = get_window ();
+  tm_window win= get_window ();
   for (i=0; i<N(bufs); i++) {
     tm_buffer buf= bufs[i];
     for (j=0; j<N(buf->vws); j++) {
@@ -559,6 +559,21 @@ tm_data_rep::kill_window () {
     }
   }
   quit ();
+}
+
+void
+tm_data_rep::kill_window_and_buffer () {
+  if (N(bufs) <= 1) quit();
+  int i;
+  bool kill= true;
+  tm_buffer buf= get_buffer();
+  tm_window win= get_window ();
+  for (i=0; i<N(buf->vws); i++) {
+    tm_view old_vw= buf->vws[i];
+    if (old_vw->win != win) kill= false;
+  }
+  kill_window ();
+  if (kill) delete_buffer (buf);
 }
 
 void
@@ -579,11 +594,8 @@ tm_data_rep::no_bufs () {
 }
 
 void
-tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
+tm_data_rep::set_aux (string aux, url name) {
   int i, nr= find_buffer (aux);
-  if (nr == -1) new_buffer (aux, doc);
-  else revert_buffer (aux, doc);
-  nr= find_buffer (aux);
   if (nr != -1) {
     tm_buffer buf= bufs[nr];
     buf->extra= name;
@@ -595,6 +607,17 @@ tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
       tm_view vw= buf->vws[i];
       vw->ed->set_base_name (name);
     }
+  }
+}
+
+void
+tm_data_rep::set_aux_buffer (string aux, url name, tree doc) {
+  int i, nr= find_buffer (aux);
+  if (nr == -1) new_buffer (aux, doc);
+  else revert_buffer (aux, doc);
+  nr= find_buffer (aux);
+  if (nr != -1) {
+    set_aux (aux, name);
     switch_to_buffer (nr);
   }
 }
