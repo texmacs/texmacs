@@ -31,7 +31,8 @@ static hashset<string> visited_table;
 
 void
 register_pointer (string id, observer which) {
-  //cout << "Register: " << id << " -> " << which << "\n";
+  // cout << "Register: " << id << " -> " << which << "\n";
+  // cout << "Register: " << id << " -> " << obtain_tree (which) << "\n";
   list<observer>& l1= id_resolve (id);
   l1= list<observer> (which, l1);
   list<string>& l2= pointer_resolve (which);
@@ -40,7 +41,8 @@ register_pointer (string id, observer which) {
 
 void
 unregister_pointer (string id, observer which) {
-  //cout << "Unregister: " << id << " -> " << which << "\n";
+  // cout << "Unregister: " << id << " -> " << which << "\n";
+  // cout << "Unregister: " << id << " -> " << obtain_tree (which) << "\n";
   list<observer>& l1= id_resolve (id);
   l1= remove (l1, which);
   if (nil (l1)) id_resolve->reset (id);
@@ -64,7 +66,7 @@ unregister_vertex (tree v, soft_link ln) {
 
 void
 register_link (soft_link ln) {
-  //cout << "Register: " << ln->t << "\n";
+  // cout << "Register: " << ln->t << "\n";
   int i, n= N(ln->t);
   if (is_atomic (ln->t[0]))
     type_count (ln->t[0]->label) ++;
@@ -74,7 +76,7 @@ register_link (soft_link ln) {
 
 void
 unregister_link (soft_link ln) {
-  //cout << "Unregister: " << ln->t << "\n";
+  // cout << "Unregister: " << ln->t << "\n";
   int i, n= N(ln->t);
   if (is_atomic (ln->t[0])) {
     type_count (ln->t[0]->label) --;
