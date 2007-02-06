@@ -258,7 +258,7 @@
 	(map upcase-first (map symbol->string (cadr src)))
 	'())))
 
-(define (compute-interactive-args fun)
+(tm-define (compute-interactive-args fun)
   (with args (property fun :arguments)
     (if (not args)
 	(compute-interactive-args-try-hard fun)
@@ -269,7 +269,7 @@
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
 
-(define (build-interactive-args fun l nr)
+(tm-define (build-interactive-args fun l nr)
   (cond ((null? l) l)
 	((string? (car l))
 	 (build-interactive-args
