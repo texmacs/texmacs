@@ -18,7 +18,7 @@
 	(utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Input and output
+;; The form prefix and delayed evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define form-prefix "")
@@ -32,16 +32,29 @@
        (set! form-prefix old-prefix)
        result)))
 
+(define (form-get-prefix opt-prefix)
+  (cond ((null? opt-prefix) form-prefix)
+	((tree? (car opt-prefix)) (tree->string (car opt-prefix)))
+	(else (car opt-prefix))))
+
 (tm-define-macro (form-delay . body)
   (:secure #t)
   `(delayed
      (:idle 1)
      ,@body))
 
-(define (form-get-prefix opt-prefix)
-  (cond ((null? opt-prefix) form-prefix)
-	((tree? (car opt-prefix)) (tree->string (car opt-prefix)))
-	(else (car opt-prefix))))
+(tm-define-macro (form-delayed . body)
+  (with normal? (lambda (x) (or (npair? x) (not (keyword? (car x)))))
+    (receive (mods cmds) (list-break body normal?)
+      `(with form-delayed-prefix form-prefix
+	 (delayed
+	   ,@mods
+	   (form-with form-delayed-prefix
+	     ,@cmds))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Input and output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (form-ref id . opt-prefix)
   (:secure #t)
@@ -55,30 +68,6 @@
   (if (tree? id) (set! id (tree->string id)))
   (and-with old-tree (apply form-ref (cons id opt-prefix))
     (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Toggles
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (form-toggle)
-  (:secure #t)
-  (with-action t
-    (cond ((== t (tree "false")) (tree-set! t "true"))
-	  ((== t (tree "true")) (tree-set! t "false")))))
-
-(define (form-alternative-context? t)
-  (tree-in? t '(form-alternative form-button-alternative)))
-
-(define ((form-matching-alternatives? t) u)
-  (and (tm-func? u 'form-alternatives)
-       (== (tree-ref t 0) (tree-ref u 0))))
-
-(tm-define (form-alternative)
-  (:secure #t)
-  (with-cursor (tree->path (action-tree) :end)
-    (with-innermost t form-alternative-context?
-      (with-innermost u (form-matching-alternatives? t)
-	(tree-assign (tree-ref u 1) (tree-copy (tree-ref t 1)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scripts via forms
@@ -99,11 +88,13 @@
 
 (define (script-form-eval id in . opts)
   (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session")))
+	 (session (get-env "prog-session"))
+	 (prefix form-prefix))
     (when (supports-scripts? lan)
       (dialogue
 	(with r (apply plugin-async-eval (cons* lan session in opts))
-	  (form-set! id r))))))
+	  (form-with prefix
+	    (form-set! id r)))))))
 
 (tm-define (script->form id cas-expr)
   (script-form-eval id cas-expr :math-input :simplify-output))
@@ -137,14 +128,16 @@
 
 (define (stand-alone body)
   (let* ((style '(tuple "generic" "gui-form"))
-	 (init '(collection (associate "window-bars" "false"))))
+	 (init '(collection (associate "window-bars" "false")
+			    (associate "prog-scripts" "maxima"))))
     `(document (style ,style) (body ,body) (initial ,init))))
 
 (define (stand-alone* body)
   (receive (def body*) (macrofy-body body)
     (let* ((style '(tuple "generic" "gui-form"))
 	   (init `(collection (associate "window-bars" "false")
-			      (associate "form-window" ,def))))
+			      (associate "form-window" ,def)
+			      (associate "prog-scripts" "maxima"))))
       `(document (style ,style) (body ,body*) (initial ,init)))))
 
 (define form-show-counter 0)

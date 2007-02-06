@@ -83,7 +83,7 @@
   (cond ((list? w) (List (Cons (Quote (car w)) (build-widgets (cdr w)))))
 	((== w '-) (List (List (Quote 'gui-vspace))))
 	((== w '---) (List (List (Quote 'gui-hrule))))
-	((== w '>>>) (List (List (Quote 'gui-tab))))
+	((== w '>>>) (List (List (Quote 'htab) "1em")))
 	(else (List w))))
 
 (tm-define (build-widgets ws)
@@ -195,8 +195,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (build-cell w)
-  (List (List (Quote 'cell)
-	      (apply Concat (build-widget w)))))
+  (with c (build-widget w)
+    (if (== w '>>>) (set! c (List (List (Quote 'gui-tab)))))
+    (List (List (Quote 'cell) (apply Concat c)))))
 
 (define (build-cells ws)
   `(append ,@(map build-cell ws)))

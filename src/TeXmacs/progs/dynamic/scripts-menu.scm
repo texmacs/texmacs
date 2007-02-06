@@ -13,12 +13,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic scripts-menu)
-  (:use (dynamic scripts-edit)))
+  (:use (dynamic scripts-edit)
+	(utils plugins plugin-cmd)))
 
 (menu-bind scripts-eval-menu
   (when (script-evaluable?)
     ("Evaluate" (script-eval))
-    (if (ahash-ref script-approx-cmd (get-env "prog-scripts"))
+    (if (plugin-approx-command-ref (get-env "prog-scripts"))
 	("Approximate" (script-approx))))
   ("Evaluation tag" (make 'script-eval))
   ("Evaluation switch" (make-script-input)))

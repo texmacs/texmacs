@@ -41,7 +41,8 @@
 	 import-from inherit-modules lazy-menu lazy-keyboard
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
-	 dialogue delayed on-entry on-exit define-widget
+	 dialogue delayed on-entry on-exit
+	 define-widget form-delayed form-with
 	 action alternative alternatives aspect
 	 bar button button-alternative button-toggle
 	 field header sheet table toggle) "\\|")
@@ -78,13 +79,13 @@
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
-	       interactive dialogue-user
+	       interactive dialogue-user form-with
 	       action aspect button field))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit
+	       delayed dialogue on-entry on-exit form-delayed
 	       bar header sheet table
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
