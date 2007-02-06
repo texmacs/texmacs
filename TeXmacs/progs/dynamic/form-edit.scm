@@ -148,5 +148,5 @@
 	 (geom (tree-extents doc))
 	 (num (number->string form-show-counter))
 	 (name (string-append "Form " num)))
-    (open-window-geometry geom)
-    (set-aux-buffer name name doc*)))
+    (open-buffer-in-window name doc* geom)
+    (set-aux name name)))

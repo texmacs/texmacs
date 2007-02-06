@@ -78,15 +78,18 @@ public:
   virtual void switch_to_active_buffer (url name) = 0;
   virtual void revert_buffer () = 0;
   virtual void kill_buffer () = 0;
+  virtual void new_buffer_in_new_window (url name, tree t, tree geom= "") = 0;
   virtual void open_window (tree geom= "") = 0;
   virtual void clone_window () = 0;
   virtual void kill_window () = 0;
+  virtual void kill_window_and_buffer () = 0;
   virtual void set_max_undo_depth (int i) = 0;
   virtual int  get_max_undo_depth () = 0;
   virtual bool no_bufs () = 0;
   virtual bool no_name () = 0;
   virtual bool help_buffer () = 0;
   virtual void revert_buffer (url name, tree doc) = 0;
+  virtual void set_aux (string aux, url name) = 0;
   virtual void set_aux_buffer (string aux, url name, tree doc) = 0;
   virtual void set_help_buffer (url name, tree doc) = 0;
   virtual object get_buffer_menu () = 0;
