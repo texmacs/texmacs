@@ -246,8 +246,27 @@
      (set! widget-serial-number (+ widget-serial-number 1))
      (set! aux-result ,(build-widgets body))
      (set! aux-end (+ widget-call-back-nr 1))
-     `(form ,aux-serial (document ,@aux-result))))
+     (tm->tree `(form ,aux-serial (document ,@aux-result)))))
 
-(define-public-macro (define-widget proto . body)
+(tm-define-macro (define-widget proto . body)
   `(tm-define ,proto
-     (tm->tree ,(define-widget-sub body))))
+     ,(define-widget-sub body)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building widgets for interactive functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (widget-interactive fun . args)
+  (lazy-define-force fun)
+  (if (null? args) (set! args (compute-interactive-args fun)))
+  (let* ((fun-args (build-interactive-args fun args 0))
+	 (prompts (map car fun-args))
+	 (make-input (lambda (x) (if (null? (cddr x)) "" (caddr x))))
+	 (inputs (map make-input fun-args))
+	 (make-row (lambda (prompt input) `(,prompt (field ,prompt ,input))))
+	 (rows (map make-row prompts inputs))
+	 (t (cons 'table rows))
+	 (cancel '(button "Cancel" (dismiss)))
+	 (ok '(button "Ok" (dismiss)))
+	 (b (list 'bar '>>> ok cancel)))
+    (eval (define-widget-sub (list t '- b)))))
