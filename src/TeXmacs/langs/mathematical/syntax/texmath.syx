@@ -28,9 +28,14 @@ Class arithmetic-assign
 	Penalty=	3
 	Spacing=	Default, Default
 
+Class arithmetic-flux
+	Type=		Associative Infix
+	Precedence=	3
+	Spacing=	Default, Default
+
 Class logic-meta
 	Type=		Infix
-	Precedence=	5
+	Precedence=	7
 	Spacing=	Default, Default
 
 Class logic-quantifier
@@ -226,6 +231,9 @@ Class symbol
 Members arithmetic-assign
 	assign plusassign minusassign astassign overassign
 
+Members arithmetic-flux
+	lflux gflux
+
 Members logic-meta
 	models vdash dashv vDash Vdash Vvdash VDash
 	longvdash longdashv longvDash longVdash longVvdash longVDash
@@ -387,6 +395,7 @@ Members arithmetic-condensed-over
 
 Members arithmetic-prefix
 	um upl upm ump
+	card
 
 Members arithmetic-power
 	^
@@ -409,7 +418,7 @@ Members group-ponctuation
 	, ; :
 
 Members group-bar
-	|
+	| ||
 	mid-| mid-||
 
 Members group-close
@@ -423,6 +432,7 @@ Members group-close
 Members group-suspension
 	ldots cdots udots
 	vdots ddots mdots
+	colons
 
 Members group-suspension-lim
 	cdotslim

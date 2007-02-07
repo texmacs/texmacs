@@ -62,8 +62,10 @@
   ;; extra literal symbols
   (Backepsilon "{\\mbox{\\rotatebox[origin=c]{180}{E}}}")
   (Mho "{\\mbox{\\rotatebox[origin=c]{180}{$\\Omega$}}}")
+  (mathcatalan "C")
   (mathd "\\mathrm{d}")
   (mathe "\\mathrm{e}")
+  (matheuler "\\gamma")
   (mathi "\\mathrm{i}")
   (mathpi "\\pi")
   (Alpha "\\mathrm{A}")
@@ -94,6 +96,7 @@
   (dottimes "\\mathaccent95{\\times}")
   (dotoplus "\\mathaccent95{\\oplus}")
   (dototimes "\\mathaccent95{\\otimes}")
+  (into "\\rightarrow")
   (longequal "{=\\!\\!=}")
   (longhookrightarrow "{\\lhook\\joinrel\\relbar\\joinrel\\rightarrow}")
   (longhookleftarrow "{\\leftarrow\\joinrel\\relbar\\joinrel\\rhook}")
@@ -110,11 +113,14 @@
   (upm "\\pm")
   (ump "\\mp")
   (upequal "{\\mbox{\\rotatebox[origin=c]{90}{$=$}}}")
+  (colons "\\,::\\,")
   (assign ":=")
   (plusassign "+\\!\\!=")
   (minusassign "-\\!\\!=")
   (timesassign "\times\\!\\!=")
   (overassign "/\\!\\!=")
+  (lflux "\\ll")
+  (gflux "\\gg")
   (udots "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}"))
 
 (drd-rules

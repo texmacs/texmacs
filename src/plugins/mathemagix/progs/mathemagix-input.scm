@@ -59,4 +59,8 @@
 
 (plugin-input-converters mathemagix
   (rows mathemagix-input-rows)
-  (det mathemagix-input-det))
+  (det mathemagix-input-det)
+  ("<in>" " in ")
+  ("<neg>" "!")
+  ("<wedge>" "/\\")
+  ("<vee>" "\\/"))
