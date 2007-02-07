@@ -315,7 +315,7 @@ Members logic-relation-lim
 	equallim longequallim
 
 Members logic-arrow
-	to into from
+	to into from transtype
 	leftarrow rightarrow leftrightarrow
 	mapsto mapsfrom hookleftarrow hookrightarrow
 	longleftarrow longrightarrow longleftrightarrow
