@@ -214,6 +214,7 @@
 (define-public (learn-interactive-arg fun nr value)
   "Learn interactive @value for @nr-th argument of @fun"
   (if (procedure-name fun) (set! fun (procedure-name fun)))
+  (if (tree? value) (set! value (tree->stree value)))
   (let* ((l1 (ahash-ref interactive-arg-table (list fun nr)))
 	 (l2 (if l1 l1 '()))
 	 (l3 (cons value (list-but l2 (list value)))))
