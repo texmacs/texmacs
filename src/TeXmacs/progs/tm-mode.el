@@ -45,7 +45,7 @@
 	 define-widget form-delayed form-with
 	 action alternative alternatives aspect
 	 bar button button-alternative button-toggle
-	 field header sheet table toggle) "\\|")
+	 field header internal sheet table toggle) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -80,7 +80,7 @@
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
 	       interactive dialogue-user form-with
-	       action aspect button field))
+	       action aspect button field internal))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols

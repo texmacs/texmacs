@@ -85,7 +85,7 @@
     </src-comment>
   </active*>
 
-  <assign|form-action|<macro|body|cmd|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>
+  <assign|form-action|<macro|body|cmd|<group|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
 
   <assign|form-button|<macro|body|cmd|<gui-small-raise|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
 

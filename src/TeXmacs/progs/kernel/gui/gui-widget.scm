@@ -39,6 +39,41 @@
     (widget-delete-call-backs (+ start 1) end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Internal widget fields
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define widget-serial-table (make-ahash-table))
+(define widget-internal-table (make-ahash-table))
+
+(tm-define (widget-internal-new serial id)
+  (ahash-set! widget-serial-table serial id)
+  (ahash-set! widget-internal-table id (make-ahash-table)))
+
+(tm-define (widget-internal-delete serial id)
+  (ahash-remove! widget-serial-table serial)
+  (ahash-remove! widget-internal-table id))
+
+(tm-define (widget-internal-set! id var val)
+  (and-with t (ahash-ref widget-internal-table id)
+    (ahash-set! t var val)))
+
+(tm-define (widget-internal-ref id var)
+  (and-with t (ahash-ref widget-internal-table id)
+    (ahash-ref t var)))
+
+(tm-define (widget-set! var val)
+  (when (context-has? "form-prefix")
+    (and-with serial (string-drop-right (get-env "form-prefix") 1)
+      (and-with id (ahash-ref widget-serial-table serial)
+	(widget-internal-set! id var val)))))
+
+(tm-define (widget-ref var)
+  (when (context-has? "form-prefix")
+    (and-with serial (string-drop-right (get-env "form-prefix") 1)
+      (and-with id (ahash-ref widget-serial-table serial)
+	(widget-internal-ref id var)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Syntactic sugar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -179,8 +214,14 @@
 		(apply Document (build-widgets body))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Textual input
+;; Data fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (build-widget w)
+  (:case internal)
+  `(begin
+     (widget-internal-set! aux-id ,(cadr w) ,(caddr w))
+     '()))
 
 (tm-define (build-widget w)
   (:case field)
@@ -234,39 +275,99 @@
 
 (tm-define widget-serial-number 0)
 
-(tm-define (define-widget-sub body)
-  `(let* ((aux-num (number->string widget-serial-number))
+(tm-define (define-widget-sub id body)
+  `(let* ((aux-id ,id)
+	  (aux-num (number->string widget-serial-number))
 	  (aux-serial (string-append "widget-" aux-num))
 	  (aux-begin (+ widget-call-back-nr 1))
 	  (aux-end (+ widget-call-back-nr 1))
 	  (aux-result #f)
-	  (dismiss (lambda ()
-		     (widget-delete-call-backs aux-begin aux-end)
-		     (kill-window-and-buffer))))
+	  (internal-ref
+	   (lambda (var)
+	     (widget-internal-ref aux-id var)))
+	  (internal-set!
+	   (lambda (var val)
+	     (widget-internal-set! aux-id var val)))
+	  (dismiss
+	   (lambda ()
+	     (widget-delete-call-backs aux-begin aux-end)
+	     (widget-internal-delete aux-serial aux-id)
+	     (kill-window-and-buffer))))
      (set! widget-serial-number (+ widget-serial-number 1))
+     (widget-internal-new aux-serial aux-id)
      (set! aux-result ,(build-widgets body))
      (set! aux-end (+ widget-call-back-nr 1))
      (tm->tree `(form ,aux-serial (document ,@aux-result)))))
 
 (tm-define-macro (define-widget proto . body)
   `(tm-define ,proto
-     ,(define-widget-sub body)))
+     ,(define-widget-sub "default" body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building widgets for interactive functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-fraction num den)
+  (:argument num "content" "Numerator")
+  (:argument den "content" "Denominator")
+  (insert `(frac ,num ,den)))
+
+(define (interactive-vars args nr)
+  (if (null? args) '()
+      (cons (string-append "arg" (number->string nr))
+	    (interactive-vars (cdr args) (+ nr 1)))))
+
+(define (interactive-value var type)
+  (with val `(form-ref ,var)
+    (cond ((== type "string") `(tree->string ,val))
+	  ((== type "password") `(tree->string ,val))
+	  ((== type "content") val)
+	  (else `(tree->string ,val)))))
+
+(define (interactive-field prompt var type val)
+  `(,prompt (field ,var ,val)))
+
+(tm-define (widget-std-fields prompts vars types defaults)
+  (:synopsis "Construct a standard widget for input fields of given types")
+  (let* ((vals (map (lambda (x) (or (and (nnull? x) (car x)) "")) defaults))
+	 (rows (map interactive-field prompts vars types vals)))
+    (cons 'table rows)))
+
+(define (interactive-learn fun nr results)
+  (if (null? results) '()
+      (cons `(learn-interactive-arg ,fun ,nr ,(car results))
+	    (interactive-learn fun (+ nr 1) (cdr results)))))
+
+(tm-define (widget-std-ok fun vars* results)
+  (:synopsis "Construct an Ok button for applying @fun to the form's @results")
+  (with vars (map string->symbol vars*)
+    `(button "Ok"
+       (let* ,(map list vars results)
+	 (dismiss)
+	 ,@(interactive-learn fun 0 vars)
+	 (delayed
+	   (:idle 1)
+	   (,fun ,@vars))))))
+
+(tm-define (widget-std-form fun prompts vars types defaults results)
+  (:synopsis "Standard form for a simple function application")
+  `(,(widget-std-fields prompts vars types defaults)
+    -
+    (bar >>>
+      (button "Cancel" (dismiss))
+      ,(widget-std-ok fun vars results))))
 
 (tm-define (widget-interactive fun . args)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (let* ((fun-args (build-interactive-args fun args 0))
 	 (prompts (map car fun-args))
-	 (make-input (lambda (x) (if (null? (cddr x)) "" (caddr x))))
-	 (inputs (map make-input fun-args))
-	 (make-row (lambda (prompt input) `(,prompt (field ,prompt ,input))))
-	 (rows (map make-row prompts inputs))
-	 (t (cons 'table rows))
-	 (cancel '(button "Cancel" (dismiss)))
-	 (ok '(button "Ok" (dismiss)))
-	 (b (list 'bar '>>> ok cancel)))
-    (eval (define-widget-sub (list t '- b)))))
+	 (vars (interactive-vars prompts 1))
+	 (types (map cadr fun-args))
+	 (defaults (map cddr fun-args))
+	 (results (map interactive-value vars types))
+	 (widget (widget-std-form fun prompts vars types defaults results)))
+    (if (procedure-name fun) (set! fun (procedure-name fun)))
+    (if (symbol? fun) (set! fun (symbol->string fun)))
+    (if (nstring? fun) (set! fun "Enter function arguments"))
+    (eval (define-widget-sub fun widget))))
