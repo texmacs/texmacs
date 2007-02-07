@@ -607,6 +607,7 @@
   (". . var var var var" "<ddots>")
   (". . var var var var var" "<udots>")
   (": :" "<colons>")
+  (": >" "<transtype>")
   (": =" "<assign>")
   ("+ =" "<plusassign>")
   ("- =" "<minusassign>")

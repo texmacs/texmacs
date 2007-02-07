@@ -321,8 +321,6 @@
 
   ("<implies>" "=<gtr>")
   ("<Rightarrow>" "=<gtr>")
-  ("<into>" "-<gtr>")
-  ("<rightarrow>" "-<gtr>")
   ("<equivalent>" "<less>=<gtr>")
   ("<Leftrightarrow>" "<less>=<gtr>")
   ("<neg>" "not ")
@@ -337,6 +335,9 @@
   ("<geqslant>" "<gtr>=")
   ("<ll>" "<less><less>")
   ("<gg>" "<gtr><gtr>")
+  ("<into>" "-<gtr>")
+  ("<rightarrow>" "-<gtr>")
+  ("<transtype>" ":<gtr>")
 
   ("<um>" "-")
   ("<upl>" "+")

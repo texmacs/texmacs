@@ -113,7 +113,6 @@
   (upm "\\pm")
   (ump "\\mp")
   (upequal "{\\mbox{\\rotatebox[origin=c]{90}{$=$}}}")
-  (colons "\\,::\\,")
   (assign ":=")
   (plusassign "+\\!\\!=")
   (minusassign "-\\!\\!=")
@@ -121,6 +120,8 @@
   (overassign "/\\!\\!=")
   (lflux "\\ll")
   (gflux "\\gg")
+  (colons "\\,:\\,")
+  (transtype "\\,:\\!!>")
   (udots "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}"))
 
 (drd-rules

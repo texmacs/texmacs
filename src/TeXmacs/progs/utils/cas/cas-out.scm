@@ -41,6 +41,7 @@
   (">=" . "<geqslant>")
   ("->" . "<into>")
   (":->" . "<mapsto>")
+  (":>" . "<transtype>")
   ("+&" . "+")
   ("@+" . "<oplus>")
   ("*&" . "*")
@@ -118,7 +119,7 @@
     cas-times-op-table
     cas-over-op-table
     cas-prefix-op-table
-    (list->ahash-set '(%prime factorial ^ _))
+    (list->ahash-set '(%prime factorial ^ _ conj choose))
     (list->ahash-set '(matrix det row tuple list set comma))
     (list->ahash-set '(| ||))))
 
@@ -286,6 +287,10 @@
 	   (if (== y 2)
 	       `(sqrt ,(cas-out (cadr x)))
 	       `(sqrt ,(cas-out (cadr x)) ,(cas-out y)))))
+	((func? x 'conj 1)
+	 `(wide ,(cas-out (cadr x)) "<bar>"))
+	((func? x 'choose 2)
+	 `(choose ,(cas-out (cadr x)) ,(cas-out (caddr x))))
 	((nlist? x) x)
 	(else `(concat (left "(") ,@(cas-out-several (list x)) (right ")")))))
 
