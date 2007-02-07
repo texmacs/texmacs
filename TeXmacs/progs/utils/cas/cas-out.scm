@@ -26,17 +26,21 @@
   ("-=" . "<minusassign>")
   ("*=" . "<astassign>")
   ("/=" . "<overassign>")
+  ("<<" . "<lflux>")
+  (">>" . "<gflux>")
   ("|-" . "<vdash>")
   ("|=" . "<vDash>")
   ("=>" . "<Rightarrow>")
   ("<=>" . "<Leftrightarrow>")
-  ("|" . "<vee>")
-  ("&" . "<wedge>")
+  ("\\/" . "<vee>")
+  ("/\\" . "<wedge>")
   ("!=" . "<neq>")
   ("<" . "<less>")
   ("<=" . "<leqslant>")
   (">" . "<gtr>")
   (">=" . "<geqslant>")
+  ("->" . "<into>")
+  (":->" . "<mapsto>")
   ("+&" . "+")
   ("@+" . "<oplus>")
   ("*&" . "*")
@@ -83,12 +87,14 @@
        (define ,t (list->ahash-set (cas-collect-members ,@grs)))
        (define (,p x) (ahash-ref ,t x)))))
 
-(cas-define-test cas-assign-op "arithmetric-assign")
+(cas-define-test cas-assign-op "arithmetic-assign")
+(cas-define-test cas-flux-op "arithmetic-flux")
 (cas-define-test cas-meta-op "logic-meta")
 (cas-define-test cas-implies-op "logic-implication")
 (cas-define-test cas-or-op "logic-disjunction")
 (cas-define-test cas-and-op "logic-conjunction")
 (cas-define-test cas-compare-op "logic-relation")
+(cas-define-test cas-arrow-op "logic-arrow")
 (cas-define-test cas-plus-op "arithmetic-plus" "arithmetic-set-symmetric")
 (cas-define-test cas-minus-op "arithmetic-minus" "arithmetic-set-minus")
 (cas-define-test cas-unary-minus-op "arithmetic-unary-minus")
@@ -98,20 +104,23 @@
 
 (define cas-special-op-table
   (ahash-table-append
-   cas-assign-op-table
-   cas-meta-op-table
-   cas-implies-op-table
-   cas-or-op-table
-   cas-and-op-table
-   cas-compare-op-table
-   cas-plus-op-table
-   cas-minus-op-table
-   cas-unary-minus-op-table
-   cas-times-op-table
-   cas-over-op-table
-   cas-prefix-op-table
-   (list->ahash-set '(%prime factorial ^ _))
-   (list->ahash-set '(matrix det row tuple list set comma))))
+    cas-assign-op-table
+    cas-flux-op-table
+    cas-meta-op-table
+    cas-implies-op-table
+    cas-or-op-table
+    cas-and-op-table
+    cas-compare-op-table
+    cas-arrow-op-table
+    cas-plus-op-table
+    cas-minus-op-table
+    cas-unary-minus-op-table
+    cas-times-op-table
+    cas-over-op-table
+    cas-prefix-op-table
+    (list->ahash-set '(%prime factorial ^ _))
+    (list->ahash-set '(matrix det row tuple list set comma))
+    (list->ahash-set '(| ||))))
 
 (define (cas-special-op? x)
   (ahash-ref cas-special-op-table x))
@@ -150,7 +159,11 @@
   (cas-out-assign x))
 
 (define (cas-out-assign x)
-  (or (cas-out-infix x cas-assign-op? cas-out-meta cas-out-meta)
+  (or (cas-out-infix x cas-assign-op? cas-out-flux cas-out-flux)
+      (cas-out-flux x)))
+
+(define (cas-out-flux x)
+  (or (cas-out-associative x cas-flux-op? cas-out-flux cas-out-meta)
       (cas-out-meta x)))
 
 (define (cas-out-meta x)
@@ -170,7 +183,11 @@
       (cas-out-compare x)))
 
 (define (cas-out-compare x)
-  (or (cas-out-infix x cas-compare-op? cas-out-plus cas-out-plus)
+  (or (cas-out-infix x cas-compare-op? cas-out-arrow cas-out-arrow)
+      (cas-out-arrow x)))
+
+(define (cas-out-arrow x)
+  (or (cas-out-infix x cas-arrow-op? cas-out-plus cas-out-plus)
       (cas-out-plus x)))
 
 (define (cas-out-plus x)
@@ -181,6 +198,12 @@
 (define (cas-out-times x)
   (or (and (func? x '/ 1) `(frac "1" ,(cas-out (cadr x))))
       (and (func? x '/ 2) `(frac ,(cas-out (cadr x)) ,(cas-out (caddr x))))
+      (and (func? x 'div 2)
+	   `(concat ,(cas-out-times (cadr x)) " div "
+		    ,(cas-out-prefix (caddr x))))
+      (and (func? x 'mod 2)
+	   `(concat ,(cas-out-times (cadr x)) " mod "
+		    ,(cas-out-prefix (caddr x))))
       (cas-out-associative x cas-times-op? cas-out-times cas-out-prefix)
       (cas-out-infix x cas-over-op? cas-out-times cas-out-prefix)
       (cas-out-prefix x)))
@@ -196,21 +219,38 @@
        (or (func? (caddr x) '/ 1)
 	   (and (func? (caddr x) '/ 2) (== (cadr (caddr x)) 1)))))
 
+(define (cas-out-decompose-prime x)
+  (if (func? x '%prime 1)
+      (receive (radical prime) (cas-out-decompose-prime (cadr x))
+	(values radical (string-append "'" prime)))
+      (values x "")))
+
 (define (cas-out-postfix x)
   (cond ((func? x '%prime 1)
-	 `(concat ,(cas-out-postfix (cadr x)) (rprime "'")))
+	 (receive (radical prime) (cas-out-decompose-prime x)
+	   `(concat ,(cas-out-postfix radical) (rprime ,prime))))
 	((func? x 'factorial 1)
 	 `(concat ,(cas-out-postfix (cadr x)) "!"))
-	((func? x '_ 2)
-	 `(concat ,(cas-out-postfix (cadr x)) (rsub ,(cas-out (caddr x)))))
-	((and (func? x '^ 2) (not (cas-is-root? x)))
-	 `(concat ,(cas-out-postfix (cadr x)) (rsup ,(cas-out (caddr x)))))
+	((func? x '_)
+	 (with radical (cas-out-postfix (cadr x))
+	   (with args (cas-out-several (cddr x))
+	     `(concat ,radical (rsub ,(apply tmconcat args))))))
+	((and (func? x '^) (not (cas-is-root? x)))
+	 (with radical (cas-out-postfix (cadr x))
+	   (with args (cas-out-several (cddr x))
+	     `(concat ,radical (rsup ,(apply tmconcat args))))))
+	((func? x '%dotaccess 2)
+	 `(concat ,(cas-out-postfix (cadr x)) "." ,(cas-out-atom (caddr x))))
+	((func? x '%sqaccess)
+	 (with radical (cas-out-postfix (cadr x))
+	   (with args (cas-out-several (cddr x))
+	     `(concat ,radical (left "[") ,@args (right "]")))))
 	((list-1? x) `(concat ,(cas-out-postfix (car x)) "()"))
 	((and (pair? x) (keyword? (car x)))
 	 (cons (keyword->symbol (car x)) (map cas-out (cdr x))))
 	((and (pair? x) (not (cas-special-op? (car x))))
 	 ;; FIXME: also check arities
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	 (with args (cas-out-several (cdr x))
 	   `(concat ,(cas-out-postfix (car x)) (left "(") ,@args (right ")"))))
 	(else (cas-out-atom x))))
 
@@ -227,19 +267,19 @@
 	((func? x 'row) `(row ,@(map cas-out-cell (cdr x))))
 	((== x '(tuple)) "()")
 	((func? x 'tuple)
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	 (with args (cas-out-several (cdr x))
 	   `(concat (left "(") ,@args (right ")"))))
 	((== x '(list)) "[]")
 	((func? x 'list)
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	 (with args (cas-out-several (cdr x))
 	   `(concat (left "[") ,@args (right "]"))))
 	((== x '(set)) "{}")
 	((func? x 'set)
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	 (with args (cas-out-several (cdr x))
 	   `(concat (left "{") ,@args (right "}"))))
 	((== x '(comma)) "null")
 	((func? x 'comma)
-	 (with args (list-intersperse (map cas-out (cdr x)) ",")
+	 (with args (cas-out-several (cdr x))
 	   `(concat ,@args)))
 	((cas-is-root? x)
 	 (with y (cAr (caddr x))
@@ -247,7 +287,20 @@
 	       `(sqrt ,(cas-out (cadr x)))
 	       `(sqrt ,(cas-out (cadr x)) ,(cas-out y)))))
 	((nlist? x) x)
-	(else `(concat (left "(") ,(cas-out x) (right ")")))))
+	(else `(concat (left "(") ,@(cas-out-several (list x)) (right ")")))))
+
+(define (cas-out-several l)
+  (cond ((null? l) '())
+	((list-1? l)
+	 (with x (car l)
+	   (cond ((func? x '|)
+		  (cons* (cas-out (cadr x)) '(mid "|")
+			 (cas-out-several (cddr x))))
+		 ((func? x '||)
+		  (cons* (cas-out (cadr x)) '(mid "||")
+			 (cas-out-several (cddr x))))
+		 (else (list (cas-out x))))))
+	(else (cons* (cas-out (car l)) "," (cas-out-several (cdr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Final simplifications on produced TeXmacs tree
