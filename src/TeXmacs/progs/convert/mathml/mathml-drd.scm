@@ -19,7 +19,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (drd-table tm->mathml-constant%
+  ("<mathcatalan>" "C")
   ("<mathe>" "e")
+  ("<matheuler>" "&eulergamma;")
   ("<mathi>" "&ImaginaryI;")
   ("<mathpi>" "&pi;"))
 
