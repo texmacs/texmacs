@@ -190,6 +190,36 @@
 	  (repeat (- n 1) (insert-raw-go-to "," '(0)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scripts via forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (script-background-eval in . opts)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session")))
+    (when (supports-scripts? lan)
+      (dialogue
+	(with r (apply plugin-async-eval (cons* lan session in opts))
+	  (noop))))))
+
+(tm-define (widget->script cas-var id)
+  (with cmd `(concat ,cas-var ":" ,(tree->stree (form-ref id)))
+    ;; FIXME: only works for Maxima for the moment
+    (script-background-eval cmd :math-input :simplify-output)))
+
+(define (script-widget-eval id in . opts)
+  (let* ((lan (get-env "prog-scripts"))
+	 (session (get-env "prog-session"))
+	 (prefix form-prefix))
+    (when (supports-scripts? lan)
+      (dialogue
+	(with r (apply plugin-async-eval (cons* lan session in opts))
+	  (form-with prefix
+	    (form-set! id r)))))))
+
+(tm-define (script->widget id cas-expr)
+  (script-widget-eval id cas-expr :math-input :simplify-output))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
