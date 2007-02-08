@@ -61,213 +61,17 @@
   (and-with t (ahash-ref widget-internal-table id)
     (ahash-ref t var)))
 
-(tm-define (widget-set! var val)
+(tm-define (internal-set! var val)
   (when (context-has? "form-prefix")
     (and-with serial (string-drop-right (get-env "form-prefix") 1)
       (and-with id (ahash-ref widget-serial-table serial)
 	(widget-internal-set! id var val)))))
 
-(tm-define (widget-ref var)
+(tm-define (internal-ref var)
   (when (context-has? "form-prefix")
     (and-with serial (string-drop-right (get-env "form-prefix") 1)
       (and-with id (ahash-ref widget-serial-table serial)
 	(widget-internal-ref id var)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Syntactic sugar
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (Quote x)
-  `(quote ,x))
-
-(define (List . l) 
-  `(list ,@l))
-
-(define (Cons h t) 
-  `(cons ,h ,t))
-
-(define (Concat . l)
-  `((lambda (l)
-      (cond ((null? l) "")
-	    ((null? (cdr l)) (car l))
-	    (else (cons 'concat l))))
-    ,l))
-
-(define (Document . l)
-  `((lambda (l)
-      (cond ((null? l) "")
-	    ((null? (cdr l)) (car l))
-	    (else (cons 'document l))))
-    ,l))
-
-(define (get-options-sub l)
-  (if (and (nnull? l) (keyword? (car l)))
-      (with (options . args) (get-options-sub (cdr l))
-	(cons (cons (car l) options) args))
-      (cons '() l)))
-
-(define (get-options l)
-  (get-options-sub (cdr l)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building widgets
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (build-widget w)
-  (:synopsis "Build a lazy widget constructor from a scheme program @w")
-  (cond ((list? w) (List (Cons (Quote (car w)) (build-widgets (cdr w)))))
-	((== w '-) (List (List (Quote 'gui-vspace))))
-	((== w '---) (List (List (Quote 'gui-hrule))))
-	((== w '>>>) (List (List (Quote 'htab) "1em")))
-	(else (List w))))
-
-(tm-define (build-widgets ws)
-  `(append ,@(map build-widget ws)))
-
-(tm-define (build-widget w)
-  (:case let)
-  (with (cmd bindings . body) w
-    `(let* ,bindings
-       ,(build-widgets body))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Aspect attributes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (build-aspect x)
-  (cond ((== x :red) '("gui-toggle-color" "pastel red"))
-	((== x :green) '("gui-toggle-color" "pastel green"))
-	((== x :blue) '("gui-toggle-color" "pastel blue"))
-	((== x :yellow) '("gui-toggle-color" "pastel yellow"))
-	((== x :orange) '("gui-toggle-color" "pastel orange"))
-	((== x :grey) '("gui-toggle-color" "light grey"))
-	((== x :circle) '("gui-toggle-type" "circle"))
-	((== x :square) '("gui-toggle-type" "square"))
-	((== x :checked) '("gui-marker-type" "checked"))
-	((== x :bullet) '("gui-marker-type" "bullet"))
-	(else '())))
-
-(tm-define (build-widget w)
-  (:case aspect)
-  (with (opts . body) (get-options w)
-    (let* ((bindings (append-map build-aspect opts))
-	   (fun (lambda (x) `(with ,@bindings ,x)))
-	   (builder (build-widgets body)))
-      `(map ,fun ,builder))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Buttons and button related markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (build-widget w)
-  (:case action)
-  (with (cmd body . cmds) w
-    (List (List (Quote 'form-action)
-		(apply Concat (build-widget body))
-		`(widget-new-call-back (lambda () ,@cmds))))))
-
-(tm-define (build-widget w)
-  (:case button)
-  (with (cmd body . cmds) w
-    (List (List (Quote 'form-button)
-		(apply Concat (build-widget body))
-		`(widget-new-call-back (lambda () ,@cmds))))))
-
-(tm-define (build-widget w)
-  (:case toggle)
-  (with (cmd name val) w
-    (List (List (Quote 'form-toggle) name (if val "true" "false")))))
-
-(tm-define (build-widget w)
-  (:case button-toggle)
-  (with (cmd name val . body) w
-    (List (List (Quote 'form-button-toggle) name (if val "true" "false")
-		(apply Concat (build-widgets body))))))
-
-(tm-define (build-widget w)
-  (:case alternatives)
-  (with (cmd name val . body) w
-    (List (List (Quote 'form-alternatives) name val
-		(apply Document (build-widgets body))))))
-
-(tm-define (build-widget w)
-  (:case alternative)
-  (with (cmd name val) w
-    (List (List (Quote 'form-alternative) name val))))
-
-(tm-define (build-widget w)
-  (:case button-alternative)
-  (with (cmd name val . body) w
-    (List (List (Quote 'form-button-alternative) name val
-		(apply Concat (build-widgets body))))))
-
-(tm-define (build-widget w)
-  (:case header)
-  (with (cmd . body) w
-    (List (List (Quote 'gui-centered-switch)
-		(apply Concat (build-widgets body))))))
-
-(tm-define (build-widget w)
-  (:case sheet)
-  (with (cmd name val . body) w
-    (List (List (Quote 'form-sheet) name val
-		(apply Document (build-widgets body))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Data fields
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (build-widget w)
-  (:case internal)
-  `(begin
-     (widget-internal-set! aux-id ,(cadr w) ,(caddr w))
-     '()))
-
-(tm-define (build-widget w)
-  (:case field)
-  (with (opts name val) (get-options w)
-    (with f (cond ((in? :short opts) 'form-short-input)
-		  ((in? :multiline opts) 'form-big-input)
-		  (else 'form-line-input))
-      (List (List (Quote f) name (apply Concat (build-widget val)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Formatting
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (build-cell w)
-  (with c (build-widget w)
-    (if (== w '>>>) (set! c (List (List (Quote 'gui-tab)))))
-    (List (List (Quote 'cell) (apply Concat c)))))
-
-(define (build-cells ws)
-  `(append ,@(map build-cell ws)))
-
-(define (build-row l)
-  (List (Cons (Quote 'row)
-	      (build-cells l))))
-
-(define (build-rows ls)
-  `(append ,@(map build-row ls)))
-
-(tm-define (build-widget w)
-  (:case table)
-  (with (options . rows) (get-options w)
-    (with short? (in? :short options)
-      (List (List (Quote (if short? 'gui-normal-bar 'gui-normal-table))
-		  (List (Quote 'tformat)
-			(Cons (Quote 'table)
-			      (build-rows rows))))))))
-
-(tm-define (build-widget w)
-  (:case bar)
-  (with (options . cells) (get-options w)
-    (with short? (in? :short options)
-      (List (List (Quote (if short? 'gui-normal-bar 'gui-normal-table))
-		  (List (Quote 'tformat)
-			(List (Quote 'table)
-			      (Cons (Quote 'row)
-				    (build-cells cells)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining widgets
@@ -275,7 +79,7 @@
 
 (tm-define widget-serial-number 0)
 
-(tm-define (define-widget-sub id body)
+(tm-define (widget-surround id body)
   `(let* ((aux-id ,id)
 	  (aux-num (number->string widget-serial-number))
 	  (aux-serial (string-append "widget-" aux-num))
@@ -295,79 +99,110 @@
 	     (kill-window-and-buffer))))
      (set! widget-serial-number (+ widget-serial-number 1))
      (widget-internal-new aux-serial aux-id)
-     (set! aux-result ,(build-widgets body))
+     (set! aux-result ,body)
      (set! aux-end (+ widget-call-back-nr 1))
      (tm->tree `(form ,aux-serial (document ,@aux-result)))))
 
-(tm-define-macro (define-widget proto . body)
-  `(tm-define ,proto
-     ,(define-widget-sub "default" body)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building widgets for interactive functions
+;; The form prefix and delayed evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-fraction num den)
-  (:argument num "content" "Numerator")
-  (:argument den "content" "Denominator")
-  (insert `(frac ,num ,den)))
+(tm-define form-prefix "")
 
-(define (interactive-vars args nr)
-  (if (null? args) '()
-      (cons (string-append "arg" (number->string nr))
-	    (interactive-vars (cdr args) (+ nr 1)))))
+(tm-define-macro (form-with prefix . body)
+  (:secure #t)
+  `(let ((new-prefix ,prefix)
+	  (old-prefix form-prefix))
+     (set! form-prefix new-prefix)
+     (let ((result (begin ,@body)))
+       (set! form-prefix old-prefix)
+       result)))
 
-(define (interactive-value var type)
-  (with val `(form-ref ,var)
-    (cond ((== type "string") `(tree->string ,val))
-	  ((== type "password") `(tree->string ,val))
-	  ((== type "content") val)
-	  (else `(tree->string ,val)))))
+(define (form-get-prefix opt-prefix)
+  (cond ((null? opt-prefix) form-prefix)
+	((tree? (car opt-prefix)) (tree->string (car opt-prefix)))
+	(else (car opt-prefix))))
 
-(define (interactive-field prompt var type val)
-  `(,prompt (field ,var ,val)))
+(tm-define-macro (form-delay . body)
+  (:secure #t)
+  `(delayed
+     (:idle 1)
+     ,@body))
 
-(tm-define (widget-std-fields prompts vars types defaults)
-  (:synopsis "Construct a standard widget for input fields of given types")
-  (let* ((vals (map (lambda (x) (or (and (nnull? x) (car x)) "")) defaults))
-	 (rows (map interactive-field prompts vars types vals)))
-    (cons 'table rows)))
-
-(define (interactive-learn fun nr results)
-  (if (null? results) '()
-      (cons `(learn-interactive-arg ,fun ,nr ,(car results))
-	    (interactive-learn fun (+ nr 1) (cdr results)))))
-
-(tm-define (widget-std-ok fun vars* results)
-  (:synopsis "Construct an Ok button for applying @fun to the form's @results")
-  (with vars (map string->symbol vars*)
-    `(button "Ok"
-       (let* ,(map list vars results)
-	 (dismiss)
-	 ,@(interactive-learn fun 0 vars)
+(tm-define-macro (form-delayed . body)
+  (with normal? (lambda (x) (or (npair? x) (not (keyword? (car x)))))
+    (receive (mods cmds) (list-break body normal?)
+      `(with form-delayed-prefix form-prefix
 	 (delayed
-	   (:idle 1)
-	   (,fun ,@vars))))))
+	   ,@mods
+	   (form-with form-delayed-prefix
+	     ,@cmds))))))
 
-(tm-define (widget-std-form fun prompts vars types defaults results)
-  (:synopsis "Standard form for a simple function application")
-  `(,(widget-std-fields prompts vars types defaults)
-    -
-    (bar >>>
-      (button "Cancel" (dismiss))
-      ,(widget-std-ok fun vars results))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Input and output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (widget-interactive fun . args)
-  (lazy-define-force fun)
-  (if (null? args) (set! args (compute-interactive-args fun)))
-  (let* ((fun-args (build-interactive-args fun args 0))
-	 (prompts (map car fun-args))
-	 (vars (interactive-vars prompts 1))
-	 (types (map cadr fun-args))
-	 (defaults (map cddr fun-args))
-	 (results (map interactive-value vars types))
-	 (widget (widget-std-form fun prompts vars types defaults results)))
-    (if (procedure-name fun) (set! fun (procedure-name fun)))
-    (if (symbol? fun) (set! fun (symbol->string fun)))
-    (if (nstring? fun) (set! fun "Enter function arguments"))
-    (eval (define-widget-sub fun widget))))
+(tm-define (form-ref id . opt-prefix)
+  (:secure #t)
+  (if (tree? id) (set! id (tree->string id)))
+  (let* ((prefix (form-get-prefix opt-prefix))
+	 (l (id->trees (string-append prefix id))))
+    (and l (nnull? l) (car l))))
+
+(tm-define (form-set! id new-tree . opt-prefix)
+  (:secure #t)
+  (if (tree? id) (set! id (tree->string id)))
+  (and-with old-tree (apply form-ref (cons id opt-prefix))
+    (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stand-alone forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (macrofy-list p i t args)
+  (if (null? t) (values t args)
+      (receive (h next) (macrofy p i (car t) args)
+	(receive (t end) (macrofy-list p (+ i 1) (cdr t) next)
+	  (values (cons h t) end)))))
+
+(define (macrofy p i t args)
+  (cond ((in? (list p i) '((form-toggle 1)
+			   (form-button-toggle 1)
+			   (form-alternatives 1)
+			   (form-small-input 1)
+			   (form-line-input 1)
+			   (form-big-input 1)))
+	 (with v (string-append "v" (number->string (length args)))
+	   (values `(arg ,v) (rcons args (cons v t)))))
+	((nlist? t) (values t args))
+	(else (macrofy-list (car t) -1 t args))))
+
+(define (macrofy-body t)
+  (receive (m args) (macrofy #f #f (tm->stree t) '())
+    (values `(macro ,@(map car args) ,m)
+	    `(form-window ,@(map cdr args)))))
+
+(define (stand-alone body)
+  (let* ((style '(tuple "generic" "gui-form"))
+	 (init '(collection (associate "window-bars" "false")
+			    (associate "prog-scripts" "maxima"))))
+    `(document (style ,style) (body ,body) (initial ,init))))
+
+(define (stand-alone* body)
+  (receive (def body*) (macrofy-body body)
+    (let* ((style '(tuple "generic" "gui-form"))
+	   (init `(collection (associate "window-bars" "false")
+			      (associate "form-window" ,def)
+			      (associate "prog-scripts" "maxima"))))
+      `(document (style ,style) (body ,body*) (initial ,init)))))
+
+(define form-show-counter 0)
+(tm-define (form-show name body)
+  (set! form-show-counter (+ form-show-counter 1))
+  (let* ((doc (stand-alone body))
+	 (doc* (stand-alone* body))
+	 (geom (tree-extents doc))
+	 (num (number->string form-show-counter))
+	 (serial (string-append "Form " num)))
+    (open-buffer-in-window name doc* geom)
+    (set-aux name serial)))
