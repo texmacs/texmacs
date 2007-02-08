@@ -30,7 +30,7 @@
 	    (interactive-vars (cdr args) (+ nr 1)))))
 
 (define (interactive-value var type)
-  (with val `(form-ref ,var)
+  (with val `(widget-ref ,var)
     (cond ((== type "string") `(tree->string ,val))
 	  ((== type "password") `(tree->string ,val))
 	  ((== type "content") val)
@@ -82,4 +82,4 @@
     (if (procedure-name fun) (set! fun (procedure-name fun)))
     (if (symbol? fun) (set! fun (symbol->string fun)))
     (if (nstring? fun) (set! fun "Enter function arguments"))
-    (eval (widget-surround fun (build-widgets widget)))))
+    (eval (widget-armour fun (build-widgets widget)))))

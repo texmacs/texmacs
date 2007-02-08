@@ -79,7 +79,7 @@
 
 (tm-define widget-serial-number 0)
 
-(tm-define (widget-surround id body)
+(tm-define (widget-armour id body)
   `(let* ((aux-id ,id)
 	  (aux-num (number->string widget-serial-number))
 	  (aux-serial (string-append "widget-" aux-num))
@@ -104,59 +104,59 @@
      (tm->tree `(form ,aux-serial (document ,@aux-result)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The form prefix and delayed evaluation
+;; The widget prefix and delayed evaluation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define form-prefix "")
+(tm-define widget-prefix "")
 
-(tm-define-macro (form-with prefix . body)
+(tm-define-macro (widget-with prefix . body)
   (:secure #t)
   `(let ((new-prefix ,prefix)
-	  (old-prefix form-prefix))
-     (set! form-prefix new-prefix)
+	  (old-prefix widget-prefix))
+     (set! widget-prefix new-prefix)
      (let ((result (begin ,@body)))
-       (set! form-prefix old-prefix)
+       (set! widget-prefix old-prefix)
        result)))
 
-(define (form-get-prefix opt-prefix)
-  (cond ((null? opt-prefix) form-prefix)
+(define (widget-get-prefix opt-prefix)
+  (cond ((null? opt-prefix) widget-prefix)
 	((tree? (car opt-prefix)) (tree->string (car opt-prefix)))
 	(else (car opt-prefix))))
 
-(tm-define-macro (form-delay . body)
+(tm-define-macro (widget-delay . body)
   (:secure #t)
   `(delayed
      (:idle 1)
      ,@body))
 
-(tm-define-macro (form-delayed . body)
+(tm-define-macro (widget-delayed . body)
   (with normal? (lambda (x) (or (npair? x) (not (keyword? (car x)))))
     (receive (mods cmds) (list-break body normal?)
-      `(with form-delayed-prefix form-prefix
+      `(with widget-delayed-prefix widget-prefix
 	 (delayed
 	   ,@mods
-	   (form-with form-delayed-prefix
+	   (widget-with widget-delayed-prefix
 	     ,@cmds))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Input and output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (form-ref id . opt-prefix)
+(tm-define (widget-ref id . opt-prefix)
   (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
-  (let* ((prefix (form-get-prefix opt-prefix))
+  (let* ((prefix (widget-get-prefix opt-prefix))
 	 (l (id->trees (string-append prefix id))))
     (and l (nnull? l) (car l))))
 
-(tm-define (form-set! id new-tree . opt-prefix)
+(tm-define (widget-set! id new-tree . opt-prefix)
   (:secure #t)
   (if (tree? id) (set! id (tree->string id)))
-  (and-with old-tree (apply form-ref (cons id opt-prefix))
+  (and-with old-tree (apply widget-ref (cons id opt-prefix))
     (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Stand-alone forms
+;; Stand-alone widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (macrofy-list p i t args)
@@ -196,13 +196,13 @@
 			      (associate "prog-scripts" "maxima"))))
       `(document (style ,style) (body ,body*) (initial ,init)))))
 
-(define form-show-counter 0)
-(tm-define (form-show name body)
-  (set! form-show-counter (+ form-show-counter 1))
+(define widget-show-counter 0)
+(tm-define (widget-show name body)
+  (set! widget-show-counter (+ widget-show-counter 1))
   (let* ((doc (stand-alone body))
 	 (doc* (stand-alone* body))
 	 (geom (tree-extents doc))
-	 (num (number->string form-show-counter))
-	 (serial (string-append "Form " num)))
+	 (num (number->string widget-show-counter))
+	 (serial (string-append "Widget " num)))
     (open-buffer-in-window name doc* geom)
     (set-aux name serial)))

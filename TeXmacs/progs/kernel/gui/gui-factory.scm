@@ -217,4 +217,4 @@
 
 (tm-define-macro (define-widget proto . body)
   `(tm-define ,proto
-     ,(widget-surround "default" (build-widgets body))))
+     ,(widget-armour "default" (build-widgets body))))

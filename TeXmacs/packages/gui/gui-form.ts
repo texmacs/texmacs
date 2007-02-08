@@ -37,9 +37,9 @@
 
   <assign|form-id|<macro|name|<id|<merge|<value|form-prefix>|<arg|name>>>>>
 
-  <assign|form-value|<macro|name|<extern|form-ref|<arg|name>|<value|form-prefix>>>>
+  <assign|form-value|<macro|name|<extern|widget-ref|<arg|name>|<value|form-prefix>>>>
 
-  <assign|form-cmd|<macro|cmd|<merge|(form-delay (form-with
+  <assign|form-cmd|<macro|cmd|<merge|(widget-delay (widget-with
   "|<value|form-prefix>|" |<arg|cmd>|))>>>
 
   <\active*>
@@ -48,8 +48,8 @@
     </src-comment>
   </active*>
 
-  <assign|form-toggle-cmd|<macro|name|val|<form-cmd|<merge|(form-set!
-  "|<arg|name>|" "|<not|<arg|val>>|")>>>>
+  <assign|form-toggle-cmd|<macro|name|val|<style-with|src-compact|none|<form-cmd|<merge|(widget-set!
+  "|<arg|name>|" "|<not|<arg|val>>|")>>>>>
 
   <assign|form-toggle|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<if|<equal|<arg|name>|>|<arg|val>|<arg|val>>>|<form-toggle-cmd|<arg|name>|<arg|val>>|<arg|val>><hidden|<locus|<form-id|<arg|name>>|<arg|val>>>>>>
 
@@ -63,10 +63,10 @@
 
   <assign|form-alternatives|<macro|name|val|body|<surround|<hidden|<locus|<form-id|<arg|name>>|<arg|val>>>||<with|<merge|form-value-|<arg|name>>|<arg|val>|<arg|body>>>>>
 
-  <assign|form-alternative|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<equal|<arg|val>|<form-value|<arg|name>>>>|<form-cmd|<merge|(form-set!
+  <assign|form-alternative|<macro|name|val|<style-with|src-compact|none|<action|<gui-toggle|<equal|<arg|val>|<form-value|<arg|name>>>>|<form-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
-  <assign|form-button-alternative|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<equal|<arg|val>|<form-value|<arg|name>>>|<arg|text>>|<form-cmd|<merge|(form-set!
+  <assign|form-button-alternative|<macro|name|val|text|<style-with|src-compact|none|<action|<gui-button-toggle|<equal|<arg|val>|<form-value|<arg|name>>>|<arg|text>>|<form-cmd|<merge|(widget-set!
   "|<arg|name>|" "|<arg|val>|")>>|<arg|val>>>>>
 
   <assign|form-hide|<macro|body|<hidden|<arg|body>>>>

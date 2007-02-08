@@ -42,7 +42,7 @@
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
-	 define-widget form-delayed form-with
+	 define-widget widget-delayed widget-with
 	 action alternative alternatives aspect
 	 bar button button-alternative button-toggle
 	 field header internal sheet table toggle) "\\|")
@@ -79,13 +79,13 @@
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
 	       with-action with-module with-cursor with-server
-	       interactive dialogue-user form-with
+	       interactive dialogue-user widget-with
 	       action aspect button field internal))
     (put s 'scheme-indent-function 1))
   (dolist (s '(cond call/cc values define-preferences menu-dynamic
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
-	       delayed dialogue on-entry on-exit form-delayed
+	       delayed dialogue on-entry on-exit widget-delayed
 	       bar header sheet table
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
