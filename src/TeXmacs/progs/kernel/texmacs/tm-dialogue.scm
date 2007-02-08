@@ -211,10 +211,18 @@
 	((in? (car l1) l2) (list-but (cdr l1) l2))
 	(else (cons (car l1) (list-but (cdr l1) l2)))))
 
+(define (as-stree x)
+  (cond ((tree? x) (tree->stree x))
+	((== x #f) "false")
+	((== x #t) "true")
+	(else x)))
+
 (define-public (learn-interactive fun assoc-t)
   "Learn interactive values for @fun"
-  (if (procedure-name fun) (set! fun (procedure-name fun)))
-  (if (string? fun) (string->symbol fun))
+  (if (string? fun) (set! fun (string->symbol fun)))
+  (if (and (procedure? fun) (procedure-name fun))
+      (set! fun (procedure-name fun)))
+  (set! assoc-t (map (lambda (x) (cons (car x) (as-stree (cdr x)))) assoc-t))
   (when (symbol? fun)
     (let* ((l1 (or (ahash-ref interactive-arg-table fun) '()))
 	   (l2 (cons assoc-t (list-but l1 (list assoc-t)))))
@@ -222,8 +230,9 @@
 
 (define-public (learned-interactive fun)
   "Return learned list of interactive values for @fun"
-  (if (procedure-name fun) (set! fun (procedure-name fun)))
-  (if (string? fun) (string->symbol fun))
+  (if (string? fun) (set! fun (string->symbol fun)))
+  (if (and (procedure? fun) (procedure-name fun))
+      (set! fun (procedure-name fun)))
   (or (ahash-ref interactive-arg-table fun) '()))
 
 (define (learned-interactive-arg fun nr)

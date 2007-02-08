@@ -101,7 +101,7 @@
 ;; Buttons and button related markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (bool->string b)
+(tm-define (boolean->string b)
   (if b "true" "false"))
 
 (tm-define (widget-entry name val type)
@@ -109,8 +109,8 @@
     (set! val `(begin
 		 (assoc-set! form-type ,name ,type)
 		 (form-auto ,name ,type))))
-  (when (== type "bool")
-    (set! val `(bool->string ,val)))
+  (when (== type "boolean")
+    (set! val `(boolean->string ,val)))
   val)
 
 (tm-define (build-widget w)
@@ -131,13 +131,13 @@
   (:case toggle)
   (with (cmd name val) w
     (List (List (Quote 'form-toggle) name
-		(widget-entry name val "bool")))))
+		(widget-entry name val "boolean")))))
 
 (tm-define (build-widget w)
   (:case button-toggle)
   (with (cmd name val . body) w
     (List (List (Quote 'form-button-toggle) name
-		(widget-entry name val "bool")
+		(widget-entry name val "boolean")
 		(apply Concat (build-widgets body))))))
 
 (tm-define (build-widget w)

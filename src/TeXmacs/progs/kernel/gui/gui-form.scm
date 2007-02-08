@@ -16,22 +16,52 @@
   (:use (kernel gui gui-factory)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Typed form entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (default-value-of-type type)
+  (cond ((in? type '("string" "password" "file")) "")
+	((== type "boolean") #f)
+	((== type "integer") 0)
+	((== type "floating") 0.0)
+	((== type "content") "")
+	((== type "tree") (tree ""))
+	(else "")))
+
+(tm-define (form->type val type)
+  (cond ((in? type '("string" "password" "file")) (tree->string val))
+	((== type "boolean") (== (tree->string val) "true"))
+	((== type "integer") (string->number (tree->string val)))
+	((== type "floating") (string->number (tree->string val)))
+	((== type "content") (tree->stree val))
+	((== type "tree") val)
+	(else val)))
+
+(tm-define (type->form val type)
+  (cond ((in? type '("string" "password" "file")) (string->tree val))
+	((== type "boolean") (string->tree (if val "true" "false")))
+	((== type "integer") (string->tree (number->string val)))
+	((== type "floating") (string->tree (number->string val)))
+	((== type "content") (stree->tree val))
+	((== type "tree") val)
+	(else val)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remembering previous values of form fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (form-load name vars)
-  '())
+  (learned-interactive name))
 
-(tm-define (form-save name vars)
-  (noop))
+(tm-define (form-save name vars vals)
+  (learn-interactive name (map cons vars vals)))
 
 (tm-define (form-get-proposal var type memo suggest)
   (cond ((and (null? suggest) (nnull? memo) (assoc-ref (car memo) var)) =>
 	 identity)
 	((with l (assoc-ref suggest var) (and l (nnull? l) (car l))) =>
-	 identity)
-	((== type "bool") "#f")
-	(else "")))
+	 (lambda (x) (tree->stree (type->form x type))))
+	(else (tree->stree (type->form (default-value-of-type type) type)))))
 
 (tm-define (build-widget w)
   (:case form)
@@ -49,7 +79,8 @@
 		 (form-get-proposal var type form-memo form-suggest)))
 	      (form-done
 	       (lambda ()
-		 (form-save form-name form-vars))))
+		 (with form-vals (map widget-ref form-vars)
+		   (form-save form-name form-vars form-vals)))))
 	 ,(build-widgets body)))))
 
 (tm-define (build-widget w)
@@ -61,19 +92,31 @@
 
 (tm-define (build-widget w)
   (:case form-previous)
-  (build-widget '(aspect :circle :blue (button "<less>" (noop)))))
+  (build-widget
+   '(aspect :circle :blue
+      (button "<less>" (noop)))))
 
 (tm-define (build-widget w)
   (:case form-next)
-  (build-widget '(aspect :circle :blue (button "<gtr>" (noop)))))
+  (build-widget
+   '(aspect :circle :blue
+      (button "<gtr>" (noop)))))
 
 (tm-define (build-widget w)
   (:case form-cancel)
-  (build-widget '(button "Cancel" (dismiss))))
+  (build-widget
+   '(button "Cancel" (dismiss))))
 
 (tm-define (build-widget w)
   (:case form-done)
-  (build-widget '(button "Ok" (dismiss))))
+  (with (cmd fun) w
+    (build-widget
+     `(button "Ok"
+	(form-done)
+	(let* ((form-vals (map widget-ref form-vars))
+	       (form-types (map cdr form-type)))
+	  (apply ,fun (map form->type form-vals form-types)))
+	(dismiss)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building widgets for interactive functions
@@ -112,14 +155,13 @@
 
 (tm-define (widget-std-ok fun vars* results)
   (:synopsis "Construct an Ok button for applying @fun to the form's @results")
-  (let* ((vars (map string->symbol vars*))
-	 (Vars (map (lambda (x) `(tree->stree ,x)) vars)))
+  (with vars (map string->symbol vars*)
     `(button "Ok"
        (let* ,(map list vars results)
 	 (dismiss)
 	 (learn-interactive ,fun
 	   (map cons ,(cons 'list (numbered-args vars 0))
-		     ,(cons 'list Vars)))
+		     ,(cons 'list vars)))
 	 (delayed
 	   (:idle 1)
 	   (,fun ,@vars))))))
