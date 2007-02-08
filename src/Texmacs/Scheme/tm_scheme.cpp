@@ -78,7 +78,8 @@ public:
 void
 dialogue_command_rep::apply () {
   int i;
-  object cmd= null_object ();
+  object cmd  = null_object ();
+  object learn= null_object ();
   for (i=nr_args-1; i>=0; i--) {
     string s_arg;
     sv->dialogue_inquire (i, s_arg);
@@ -87,9 +88,11 @@ dialogue_command_rep::apply () {
       return;
     }
     object arg= string_to_object (s_arg);
+    learn= cons (cons (object (as_string (i)), arg), learn);
     cmd= cons (arg, cmd);
-    call ("learn-interactive-arg", fun, object (i), arg);
+    //call ("learn-interactive-arg", fun, object (i), arg);
   }
+  call ("learn-interactive", fun, learn);
   cmd= cons (fun, cmd);
   sv->exec_delayed (scheme_cmd ("(dialogue-end)"));
   sv->exec_delayed (scheme_cmd (cmd));
@@ -241,11 +244,13 @@ void
 interactive_command_rep::apply () {
   if ((i>0) && (s[i-1] == "#f")) return;
   if (i == N(p)) {
+    object learn= null_object ();
     array<object> params (N(p));
-    for (i=0; i<N(p); i++) {
+    for (i=N(p)-1; i>=0; i--) {
       params[i]= string_to_object (s[i]);
-      call ("learn-interactive-arg", fun, object (i), params[i]);
+      learn= cons (cons (object (as_string (i)), params[i]), learn);
     }
+    call ("learn-interactive", fun, learn);
     string ret= object_to_string (call (fun, params));
     if (ret != "" && ret != "<unspecified>" && ret != "#<unspecified>")
       sv->set_message (ret, "interactive command");

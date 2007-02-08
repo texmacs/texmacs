@@ -97,6 +97,11 @@
   `(with ,var ,val
      (and ,var (begin ,@body))))
 
+(define-public-macro (with-result result . body)
+  `(let* ((return ,result)
+	  (dummy (begin ,@body)))
+     return))
+
 (define-public (.. start end)
   (if (< start end)
       (cons start (.. (1+ start) end))

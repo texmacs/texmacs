@@ -101,6 +101,18 @@
 ;; Buttons and button related markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (bool->string b)
+  (if b "true" "false"))
+
+(tm-define (widget-entry name val type)
+  (when (== val :auto)
+    (set! val `(begin
+		 (assoc-set! form-type ,name ,type)
+		 (form-auto ,name ,type))))
+  (when (== type "bool")
+    (set! val `(bool->string ,val)))
+  val)
+
 (tm-define (build-widget w)
   (:case action)
   (with (cmd body . cmds) w
@@ -118,18 +130,21 @@
 (tm-define (build-widget w)
   (:case toggle)
   (with (cmd name val) w
-    (List (List (Quote 'form-toggle) name (if val "true" "false")))))
+    (List (List (Quote 'form-toggle) name
+		(widget-entry name val "bool")))))
 
 (tm-define (build-widget w)
   (:case button-toggle)
   (with (cmd name val . body) w
-    (List (List (Quote 'form-button-toggle) name (if val "true" "false")
+    (List (List (Quote 'form-button-toggle) name
+		(widget-entry name val "bool")
 		(apply Concat (build-widgets body))))))
 
 (tm-define (build-widget w)
   (:case alternatives)
   (with (cmd name val . body) w
-    (List (List (Quote 'form-alternatives) name val
+    (List (List (Quote 'form-alternatives) name
+		(widget-entry name val "string")
 		(apply Document (build-widgets body))))))
 
 (tm-define (build-widget w)
@@ -171,7 +186,8 @@
     (with f (cond ((in? :short opts) 'form-short-input)
 		  ((in? :multiline opts) 'form-big-input)
 		  (else 'form-line-input))
-      (List (List (Quote f) name (apply Concat (build-widget val)))))))
+      (List (List (Quote f) name
+		  (widget-entry name val "content"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Formatting

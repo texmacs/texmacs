@@ -211,19 +211,26 @@
 	((in? (car l1) l2) (list-but (cdr l1) l2))
 	(else (cons (car l1) (list-but (cdr l1) l2)))))
 
-(define-public (learn-interactive-arg fun nr value)
-  "Learn interactive @value for @nr-th argument of @fun"
+(define-public (learn-interactive fun assoc-t)
+  "Learn interactive values for @fun"
   (if (procedure-name fun) (set! fun (procedure-name fun)))
-  (if (tree? value) (set! value (tree->stree value)))
-  (let* ((l1 (ahash-ref interactive-arg-table (list fun nr)))
-	 (l2 (if l1 l1 '()))
-	 (l3 (cons value (list-but l2 (list value)))))
-    (ahash-set! interactive-arg-table (list fun nr) l3)))
+  (if (string? fun) (string->symbol fun))
+  (when (symbol? fun)
+    (let* ((l1 (or (ahash-ref interactive-arg-table fun) '()))
+	   (l2 (cons assoc-t (list-but l1 (list assoc-t)))))
+      (ahash-set! interactive-arg-table fun l2))))
+
+(define-public (learned-interactive fun)
+  "Return learned list of interactive values for @fun"
+  (if (procedure-name fun) (set! fun (procedure-name fun)))
+  (if (string? fun) (string->symbol fun))
+  (or (ahash-ref interactive-arg-table fun) '()))
 
 (define (learned-interactive-arg fun nr)
-  (if (procedure-name fun) (set! fun (procedure-name fun)))
-  (with l (ahash-ref interactive-arg-table (list fun nr))
-    (if l l '())))
+  (let* ((l (learned-interactive fun))
+	 (arg (number->string nr))
+	 (extract (lambda (assoc-l) (assoc-ref assoc-l arg))))
+    (map extract l)))
 
 (define (compute-interactive-arg-text fun which)
   (with arg (property fun (list :argument which))
@@ -308,15 +315,40 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (save-learned)
-  (let* ((l1 (ahash-table->list interactive-arg-table))
-	 (pred? (lambda (l) (symbol? (caar l))))
-	 (l2 (list-filter l1 pred?)))
-    (save-object "$TEXMACS_HOME_PATH/system/interactive.scm" l2)))
+  (with l (ahash-table->list interactive-arg-table)
+    (save-object "$TEXMACS_HOME_PATH/system/interactive.scm" l)))
+
+(define (ahash-set-2! t x)
+  (with (key . l) x
+    (with (form arg) key
+      (with a (or (ahash-ref t form) '())
+	(set! a (assoc-set! a arg l))
+	(ahash-set! t form a)))))      
+
+(define (rearrange-old x)
+  (with (form . l) x
+    (let* ((len (apply min (map length l)))
+	   (truncl (map (cut sublist <> 0 len) l))
+	   (sl (sort truncl (lambda (l1 l2) (< (car l1) (car l2)))))
+	   (nl (map (lambda (x) (cons (number->string (car x)) (cdr x))) sl))
+	   (build (lambda args (map cons (map car nl) args)))
+	   (r (apply map (cons build (map cdr nl)))))
+      (cons form r))))
+
+(define (decode-old l)
+  (let* ((t (make-ahash-table))
+	 (setter (cut ahash-set-2! t <>)))
+    (for-each setter l)
+    (let* ((r (ahash-table->list t))
+	   (m (map rearrange-old r)))
+      (list->ahash-table m))))
 
 (define (retrieve-learned)
   (if (url-exists? "$TEXMACS_HOME_PATH/system/interactive.scm")
-      (with l (load-object "$TEXMACS_HOME_PATH/system/interactive.scm")
-	(set! interactive-arg-table (list->ahash-table l)))))
+      (let* ((l (load-object "$TEXMACS_HOME_PATH/system/interactive.scm"))
+	     (old? (and (pair? l) (pair? (car l)) (list-2? (caar l))))
+	     (decode (if old? decode-old list->ahash-table)))
+	(set! interactive-arg-table (decode l)))))
 
 (on-entry (retrieve-learned))
 (on-exit (save-learned))
