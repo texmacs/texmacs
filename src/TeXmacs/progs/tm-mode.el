@@ -28,7 +28,8 @@
        '(texmacs-module provide-public define-macro define-public-macro
          tm-define tm-define-macro tm-property request-handler
 	 define-table define-preferences define-secure-symbols
-         texmacs-modes and-let\\* case-lambda with with-global
+         texmacs-modes and-let\\* case-lambda
+	 with with-global with-result
          ahash-with and-with for repeat
 	 with-innermost with-action with-mutator
 	 with-module with-cursor with-server
@@ -71,7 +72,7 @@
 	       with-environment with-environment* converter
 	       alternatives button-alternative button-toggle sheet))
     (put s 'scheme-indent-function 2))
-  (dolist (s '(texmacs-module provide-public
+  (dolist (s '(texmacs-module provide-public with-result
 	       and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property request-handler
