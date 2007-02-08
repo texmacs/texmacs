@@ -56,32 +56,28 @@
 (tm-define (form-save name vars vals)
   (learn-interactive name (map cons vars vals)))
 
-(tm-define (form-get-proposal var type memo suggest)
-  (cond ((and (null? suggest) (nnull? memo) (assoc-ref (car memo) var)) =>
+(tm-define (form-get-proposal var type nr memo suggest)
+  (if (and (>= nr 0) (null? suggest)) (set! nr -1))
+  (if (and (< nr 0) (> (- nr) (length memo))) (set! nr (- (length memo))))
+  (cond ((and (< nr 0) (assoc-ref (list-ref memo (- -1 nr)) var)) =>
 	 identity)
-	((with l (assoc-ref suggest var) (and l (nnull? l) (car l))) =>
-	 (lambda (x) (tree->stree (type->form x type))))
+	((with l (assoc-ref suggest var)
+	   (and l (>= nr 0) (< nr (length l)) (list-ref l nr))) =>
+	   (lambda (x) (tree->stree (type->form x type))))
 	(else (tree->stree (type->form (default-value-of-type type) type)))))
 
-(tm-define (build-widget w)
-  (:case form)
-  (with (cmd proto . body) w
-    (with (name . vars) proto
-      (with f (lambda (x) (if (string? x) (cons x #f) (cons (car x) (cadr x))))
-	(set! vars (map f vars)))
-      `(let* ((form-name ,name)
-	      (form-vars (map car ',vars))
-	      (form-type ',vars)
-	      (form-suggest '())
-	      (form-memo (form-load form-name form-vars))
-	      (form-auto
-	       (lambda (var type)
-		 (form-get-proposal var type form-memo form-suggest)))
-	      (form-done
-	       (lambda ()
-		 (with form-vals (map widget-ref form-vars)
-		   (form-save form-name form-vars form-vals)))))
-	 ,(build-widgets body)))))
+(tm-define (form-fill-out var type nr memo suggest)
+  (with val (form-get-proposal var type nr memo suggest)
+    (widget-set! var val)))
+
+(tm-define (form-equalize positions)
+  (when (nnull? positions)
+    (with pos (cdar positions)
+      (map (lambda (x) (cons (car x) pos)) positions))))
+
+(tm-define (form-increment positions plus start end)
+  (with inside (lambda (p) (min (max p start) end))
+    (map (lambda (x) (cons (car x) (inside (+ (cdr x) plus)))) positions)))
 
 (tm-define (build-widget w)
   (:case suggestions)
@@ -94,13 +90,50 @@
   (:case form-previous)
   (build-widget
    '(aspect :circle :blue
-      (button "<less>" (noop)))))
+      (button "<less>"
+	(set! form-position (form-equalize form-position))
+	(let* ((start (- (length form-memo)))
+	       (end (apply max (map length (map cdr form-suggest)))))
+	  (set! form-position (form-increment form-position -1 start end)))
+	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+		  form-vars (map cdr form-type) (map cdr form-position))))))
 
 (tm-define (build-widget w)
   (:case form-next)
   (build-widget
    '(aspect :circle :blue
-      (button "<gtr>" (noop)))))
+      (button "<gtr>"
+	(set! form-position (form-equalize form-position))
+	(let* ((start (- (length form-memo)))
+	       (end (apply max (map length (map cdr form-suggest)))))
+	  (set! form-position (form-increment form-position 1 start end)))
+	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+		  form-vars (map cdr form-type) (map cdr form-position))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Forms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (build-widget w)
+  (:case form)
+  (with (cmd proto . body) w
+    (with (name . vars) proto
+      (with f (lambda (x) (if (string? x) (cons x #f) (cons (car x) (cadr x))))
+	(set! vars (map f vars)))
+      `(let* ((form-name ,name)
+	      (form-vars (map car ',vars))
+	      (form-type ',vars)
+	      (form-suggest '())
+	      (form-memo (form-load form-name form-vars))
+	      (form-position (map (cut cons <> 0) form-vars))
+	      (form-auto
+	       (lambda (var type)
+		 (form-get-proposal var type 0 form-memo form-suggest)))
+	      (form-done
+	       (lambda ()
+		 (with form-vals (map widget-ref form-vars)
+		   (form-save form-name form-vars form-vals)))))
+	 ,(build-widgets body)))))
 
 (tm-define (build-widget w)
   (:case form-cancel)
