@@ -155,7 +155,7 @@
 ;; Building widgets for interactive functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-fraction num den)
+(tm-define (make-test num den)
   (:argument num "content" "Numerator")
   (:argument den "content" "Denominator")
   (insert `(frac ,num ,den)))
