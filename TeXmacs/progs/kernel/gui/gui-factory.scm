@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : gui-factory.scm
-;; DESCRIPTION : Different widget construction routines
+;; DESCRIPTION : Factory of content builders
 ;; COPYRIGHT   : (C) 2007  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license and comes WITHOUT
@@ -16,68 +16,68 @@
   (:use (kernel gui gui-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building widgets
+;; Building content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (build-widget w)
-  (:synopsis "Build a lazy widget constructor from a scheme program @w")
-  (cond ((list? w) `(list ,(build-widgets w)))
+(tm-define (build-content w)
+  (:synopsis "Generate a content builder from a scheme program @w")
+  (cond ((list? w) `(list ,(build-content-list w)))
 	((== w '-) `(list '(gui-vspace)))
 	((== w '---) `(list '(gui-hrule)))
 	((== w '>>>) `(list '(htab "1em")))
 	((symbol? w) `(list ',w))
 	(else `(list ,w))))
 
-(tm-define (build-widgets ws)
-  `(append ,@(map build-widget ws)))
+(tm-define (build-content-list ws)
+  `(append ,@(map build-content ws)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Declare new widget builders
+;; Declare new content builders
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (widget-options-sub l)
+(define (build-options-sub l)
   (if (and (nnull? l) (keyword? (car l)))
-      (with (options . args) (widget-options-sub (cdr l))
+      (with (options . args) (build-options-sub (cdr l))
 	(cons (cons (car l) options) args))
       (cons '() l)))
 
-(tm-define (widget-options l)
-  (widget-options-sub (cdr l)))
+(tm-define (build-options l)
+  (build-options-sub (cdr l)))
 
 (tm-define-macro (tm-build proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
-    `(tm-define (build-widget w)
+    `(tm-define (build-content w)
        (:case ,fun)
-       (with ,(cons 'options args) (widget-options w)
+       (with ,(cons 'options args) (build-options w)
 	 ,@body))))
 
 (tm-define-macro (tm-build-macro proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
-    `(tm-define (build-widget w)
+    `(tm-define (build-content w)
        (:case ,fun)
-       (with ,(cons 'options args) (widget-options w)
-	 (build-widget (begin ,@body))))))
+       (with ,(cons 'options args) (build-options w)
+	 (build-content (begin ,@body))))))
 
 (tm-define-macro (tm-build-widget proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
-    `(tm-define (build-widget w)
+    `(tm-define (build-content w)
        (:case ,fun)
-       (with ,(cons 'options args) (widget-options w)
-	 (build-widgets ,(list 'quasiquote body))))))
+       (with ,(cons 'options args) (build-options w)
+	 (build-content-list ,(list 'quasiquote body))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fundamental constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-build (sequence . body)
-  (build-widgets body))
+  (build-content-list body))
 
 (tm-build (let bindings . body)
   `(let* ,bindings
-     ,(build-widgets body)))
+     ,(build-content-list body)))
 
 (tm-build (quote x)
   `(list ',x))
@@ -88,7 +88,7 @@
 	(else (cons 'concat l))))
 
 (tm-build (horizontal . body)
-  `(list (horizontal ,(build-widgets body))))
+  `(list (horizontal ,(build-content-list body))))
 
 (tm-define (vertical l)
   (cond ((null? l) "")
@@ -96,10 +96,10 @@
 	(else (cons 'document l))))
 
 (tm-build (vertical . body)
-  `(list (vertical ,(build-widgets body))))
+  `(list (vertical ,(build-content-list body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Other helper constructs
+;; Fundamental interactive constructs for building widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-build (command . cmds)
@@ -145,7 +145,7 @@
 (tm-build (aspect . body)
   (let* ((bindings (append-map build-aspect options))
 	 (fun (lambda (x) `(with ,@bindings ,x)))
-	 (builder (build-widgets body)))
+	 (builder (build-content-list body)))
     `(map ,fun ,builder)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -207,15 +207,12 @@
 	 (body* (map make-row body)))
     `((quote table) ,@body*)))
 
-(tm-build-macro (table-widget name . rows)
-  `(,name (tformat (table ,@rows))))
-
 (tm-build-macro (raster . rows)
   (let* ((short? (in? :short options))
 	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
-    `(table-widget ,name ,@rows)))
+    `(,name (tformat (table ,@rows)))))
 
 (tm-build-macro (bar . cells)
   (let* ((short? (in? :short options))
 	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
-    `(table-widget ,name (row ,@cells))))
+    `(,name (tformat (table (row ,@cells))))))

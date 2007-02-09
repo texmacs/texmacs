@@ -111,7 +111,7 @@
 		(form-memorize
 		 (lambda ()
 		   (form-save form-name form-vars (form-field-values)))))
-	 ,(build-widgets body)))))
+	 ,(build-content-list body)))))
 
 (tm-build (suggestions var l)
   `(begin
@@ -154,7 +154,7 @@
 	   (apply ,fun args))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building widgets for interactive functions
+;; Building forms for interactive functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-test num den)
