@@ -43,11 +43,11 @@
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
-	 define-widget widget-delayed widget-with
+	 tm-widget tm-widget-macro define-widget widget-delayed widget-with
 	 action alternative alternatives aspect
 	 bar button button-alternative button-toggle
 	 field form form-cancel form-done form-next form-previous
-	 header internal sheet suggestions table toggle) "\\|")
+	 header internal raster sheet suggestions toggle) "\\|")
       "\\)\\>")
      'font-lock-keyword-face)
     (cons
@@ -56,6 +56,7 @@
        '(texmacs-module provide-public
 	 define-macro define-public-macro define-table
 	 tm-define tm-define-macro tm-property request-handler define-group
+	 tm-widget tm-widget-macro
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
@@ -77,6 +78,7 @@
 	       and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property request-handler
+	       tm-widget tm-widget-macro
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
@@ -88,6 +90,6 @@
 	       case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
 	       define-grammar drd-rule drd-rules assume texmacs-modes
 	       delayed dialogue on-entry on-exit widget-delayed
-	       bar header sheet table
+	       bar header raster sheet
 	       :use :inherit))
     (put s 'scheme-indent-function 0)))
