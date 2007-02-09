@@ -194,7 +194,7 @@
       `(document (style ,style) (body ,body*) (initial ,init)))))
 
 (tm-define (widget-popup name w)
-  (let* ((body (tm->tree (eval (widget-armour (build-widget w)))))
+  (let* ((body (tm->tree (eval (widget-armour (build-content w)))))
 	 (doc (stand-alone body))
 	 (doc* (stand-alone* body))
 	 (geom (tree-extents doc)))
