@@ -217,12 +217,20 @@
 	((== x #t) "true")
 	(else x)))
 
+(define-public (procedure-symbol-name fun)
+  (cond ((symbol? fun) fun)
+	((string? fun) (string->symbol fun))
+	((and (procedure? fun) (procedure-name fun)) => identity)
+	(else #f)))
+
+(define-public (procedure-string-name fun)
+  (and-with name (procedure-symbol-name fun)
+    (symbol->string name)))
+
 (define-public (learn-interactive fun assoc-t)
   "Learn interactive values for @fun"
-  (if (string? fun) (set! fun (string->symbol fun)))
-  (if (and (procedure? fun) (procedure-name fun))
-      (set! fun (procedure-name fun)))
   (set! assoc-t (map (lambda (x) (cons (car x) (as-stree (cdr x)))) assoc-t))
+  (set! fun (procedure-symbol-name fun))
   (when (symbol? fun)
     (let* ((l1 (or (ahash-ref interactive-arg-table fun) '()))
 	   (l2 (cons assoc-t (list-but l1 (list assoc-t)))))
@@ -230,9 +238,7 @@
 
 (define-public (learned-interactive fun)
   "Return learned list of interactive values for @fun"
-  (if (string? fun) (set! fun (string->symbol fun)))
-  (if (and (procedure? fun) (procedure-name fun))
-      (set! fun (procedure-name fun)))
+  (set! fun (procedure-symbol-name fun))
   (or (ahash-ref interactive-arg-table fun) '()))
 
 (define (learned-interactive-arg fun nr)
@@ -286,29 +292,29 @@
 	((string-ends? s "?") s)
 	(else (string-append s ":"))))
 
-(tm-define (build-interactive-args fun l nr)
+(tm-define (build-interactive-args fun l nr learned?)
   (cond ((null? l) l)
 	((string? (car l))
 	 (build-interactive-args
-	  fun (cons (list (car l) "string") (cdr l)) nr))
+	  fun (cons (list (car l) "string") (cdr l)) nr learned?))
 	(else
 	 (let* ((name (build-interactive-arg (caar l)))
 		(type (cadar l))
 		(pl (cddar l))
 		(ql pl)
 		;;(ql (if (null? pl) '("") pl))
-		(ll (learned-interactive-arg fun nr))
+		(ll (if learned? (learned-interactive-arg fun nr) '()))
 		(rl (append ql (list-but ll ql)))
 		(props (if (<= (length ql) 1) rl ql)))
 	   (cons (cons name (cons type props))
-		 (build-interactive-args fun (cdr l) (+ nr 1)))))))
+		 (build-interactive-args fun (cdr l) (+ nr 1) learned?))))))
 
 (tm-define (interactive fun . args)
   (:synopsis "Call @fun with interactively specified arguments @args")
   (:interactive #t)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
-  (with fun-args (build-interactive-args fun args 0)
+  (with fun-args (build-interactive-args fun args 0 #t)
     (if dialogue-break
 	(dialogue-user local-continue
 	  (tm-interactive
