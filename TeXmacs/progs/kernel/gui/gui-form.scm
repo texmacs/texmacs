@@ -44,6 +44,7 @@
 	((== type "floating") (string->tree (number->string val)))
 	((== type "content") (stree->tree val))
 	((== type "tree") val)
+	((not (tree? val)) (tree ""))
 	(else val)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -57,7 +58,7 @@
   (learn-interactive name (map cons vars vals)))
 
 (tm-define (form-get-proposal var type nr memo suggest)
-  (if (and (>= nr 0) (null? suggest)) (set! nr -1))
+  (if (null? suggest) (set! nr (- nr 1)))
   (if (and (< nr 0) (> (- nr) (length memo))) (set! nr (- (length memo))))
   (cond ((and (< nr 0) (assoc-ref (list-ref memo (- -1 nr)) var)) =>
 	 identity)
@@ -92,8 +93,9 @@
    '(aspect :circle :blue
       (button "<less>"
 	(set! form-position (form-equalize form-position))
-	(let* ((start (- (length form-memo)))
-	       (end (apply max (map length (map cdr form-suggest)))))
+	(let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	       (lengths (map length (map cdr form-suggest)))
+	       (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
 	  (set! form-position (form-increment form-position -1 start end)))
 	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
 		  form-vars (map cdr form-type) (map cdr form-position))))))
@@ -104,8 +106,9 @@
    '(aspect :circle :blue
       (button "<gtr>"
 	(set! form-position (form-equalize form-position))
-	(let* ((start (- (length form-memo)))
-	       (end (apply max (map length (map cdr form-suggest)))))
+	(let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	       (lengths (map length (map cdr form-suggest)))
+	       (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
 	  (set! form-position (form-increment form-position 1 start end)))
 	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
 		  form-vars (map cdr form-type) (map cdr form-position))))))
@@ -123,17 +126,27 @@
       `(let* ((form-name ,name)
 	      (form-vars (map car ',vars))
 	      (form-type ',vars)
+	      (form-types (map cdr form-type))
 	      (form-suggest '())
 	      (form-memo (form-load form-name form-vars))
-	      (form-position (map (cut cons <> 0) form-vars))
-	      (form-auto
-	       (lambda (var type)
-		 (form-get-proposal var type 0 form-memo form-suggest)))
-	      (form-done
-	       (lambda ()
-		 (with form-vals (map widget-ref form-vars)
-		   (form-save form-name form-vars form-vals)))))
-	 ,(build-widgets body)))))
+	      (form-position (map (cut cons <> 0) form-vars)))
+	 (letrec ((form-auto
+		   (lambda (var type)
+		     (form-get-proposal var type 0 form-memo form-suggest)))
+		  (form-field-values
+		   (lambda ()
+		     (map widget-ref form-vars)))
+		  (form-return-values
+		   (lambda ()
+		     (map form->type (form-field-values) form-types)))
+		  (form-ok?
+		   (lambda ()
+		     (== (form-field-values)
+			 (map type->form (form-return-values) form-types))))
+		  (form-memorize
+		   (lambda ()
+		     (form-save form-name form-vars (form-field-values)))))
+	   ,(build-widgets body))))))
 
 (tm-define (build-widget w)
   (:case form-cancel)
@@ -142,14 +155,16 @@
 
 (tm-define (build-widget w)
   (:case form-done)
-  (with (cmd fun) w
+  (with (cmd body fun) w
     (build-widget
-     `(button "Ok"
-	(form-done)
-	(let* ((form-vals (map widget-ref form-vars))
-	       (form-types (map cdr form-type)))
-	  (apply ,fun (map form->type form-vals form-types)))
-	(dismiss)))))
+     `(button ,body
+	(when (form-ok?)
+	  (with args (form-return-values)
+	    (form-memorize)
+	    (dismiss)
+	    (delayed
+	      (:idle 1)
+	      (apply ,fun ,args))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building widgets for interactive functions
@@ -158,66 +173,47 @@
 (tm-define (make-test num den)
   (:argument num "content" "Numerator")
   (:argument den "content" "Denominator")
+  (:proposals num '("1" "x" "a+b"))
   (insert `(frac ,num ,den)))
 
 (define (interactive-vars args nr)
   (if (null? args) '()
-      (cons (string-append "arg" (number->string nr))
+      (cons (number->string nr)
 	    (interactive-vars (cdr args) (+ nr 1)))))
 
-(define (interactive-value var type)
-  (with val `(widget-ref ,var)
-    (cond ((== type "string") `(tree->string ,val))
-	  ((== type "password") `(tree->string ,val))
-	  ((== type "content") val)
-	  (else `(tree->string ,val)))))
+(define (interactive-proposals var proposals)
+  (and (nnull? proposals)
+       `(suggestions ,var ',proposals)))
 
-(define (interactive-field prompt var type val)
-  `(,prompt (field ,var ',val)))
+(define (interactive-field prompt var type)
+  `(,prompt (field ,var :auto)))
 
-(tm-define (widget-std-fields prompts vars types defaults)
-  (:synopsis "Construct a standard widget for input fields of given types")
-  (let* ((vals (map (lambda (x) (or (and (nnull? x) (car x)) "")) defaults))
-	 (rows (map interactive-field prompts vars types vals)))
+(define (interactive-fields prompts vars types)
+  (with rows (map interactive-field prompts vars types)
     (cons 'table rows)))
 
-(define (numbered-args args nr)
-  (if (null? args) '()
-      (cons (number->string nr)
-	    (numbered-args (cdr args) (+ nr 1)))))
-
-(tm-define (widget-std-ok fun vars* results)
-  (:synopsis "Construct an Ok button for applying @fun to the form's @results")
-  (with vars (map string->symbol vars*)
-    `(button "Ok"
-       (let* ,(map list vars results)
-	 (dismiss)
-	 (learn-interactive ,fun
-	   (map cons ,(cons 'list (numbered-args vars 0))
-		     ,(cons 'list vars)))
-	 (delayed
-	   (:idle 1)
-	   (,fun ,@vars))))))
-
-(tm-define (widget-std-form fun prompts vars types defaults results)
+(tm-define (interactive-form fun prompts vars types defaults)
   (:synopsis "Standard form for a simple function application")
-  `(,(widget-std-fields prompts vars types defaults)
-    -
-    (bar >>>
-      (button "Cancel" (dismiss))
-      ,(widget-std-ok fun vars results))))
+  (with name (or (procedure-string-name fun) "Enter function arguments")
+    `((form (,name ,@(map list vars types))
+	,@(list-filter (map interactive-proposals vars defaults) identity)
+	,(interactive-fields prompts vars types)
+	-
+	(bar
+	  (form-previous)
+	  (form-next)
+	  >>>
+	  (form-cancel)
+	  (form-done "Ok" ,fun))))))
 
 (tm-define (widget-interactive fun . args)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
-  (let* ((fun-args (build-interactive-args fun args 0))
+  (let* ((name (or (procedure-string-name fun) "Enter function arguments"))
+	 (fun-args (build-interactive-args fun args 0 #f))
 	 (prompts (map car fun-args))
-	 (vars (interactive-vars prompts 1))
+	 (vars (interactive-vars prompts 0))
 	 (types (map cadr fun-args))
 	 (defaults (map cddr fun-args))
-	 (results (map interactive-value vars types))
-	 (widget (widget-std-form fun prompts vars types defaults results)))
-    (if (procedure-name fun) (set! fun (procedure-name fun)))
-    (if (symbol? fun) (set! fun (symbol->string fun)))
-    (if (nstring? fun) (set! fun "Enter function arguments"))
-    (eval (widget-armour fun (build-widgets widget)))))
+	 (widget (interactive-form fun prompts vars types defaults)))
+    (eval (widget-armour name (build-widgets widget)))))
