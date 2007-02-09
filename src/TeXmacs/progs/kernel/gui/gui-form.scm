@@ -48,7 +48,7 @@
 	(else val)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Remembering previous values of form fields
+;; Subroutines for remembering previous values of form fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (form-load name vars)
@@ -80,91 +80,78 @@
   (with inside (lambda (p) (min (max p start) end))
     (map (lambda (x) (cons (car x) (inside (+ (cdr x) plus)))) positions)))
 
-(tm-define (build-widget w)
-  (:case suggestions)
-  (with (cmd var l) w
-    `(begin
-       (set! form-suggest (assoc-set! form-suggest ,var ,l))
-       '())))
-
-(tm-define (build-widget w)
-  (:case form-previous)
-  (build-widget
-   '(aspect :circle :blue
-      (button "<less>"
-	(set! form-position (form-equalize form-position))
-	(let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
-	       (lengths (map length (map cdr form-suggest)))
-	       (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
-	  (set! form-position (form-increment form-position -1 start end)))
-	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
-		  form-vars (map cdr form-type) (map cdr form-position))))))
-
-(tm-define (build-widget w)
-  (:case form-next)
-  (build-widget
-   '(aspect :circle :blue
-      (button "<gtr>"
-	(set! form-position (form-equalize form-position))
-	(let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
-	       (lengths (map length (map cdr form-suggest)))
-	       (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
-	  (set! form-position (form-increment form-position 1 start end)))
-	(for-each (cut form-fill-out <> <> <> form-memo form-suggest)
-		  form-vars (map cdr form-type) (map cdr form-position))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (build-widget w)
-  (:case form)
-  (with (cmd proto . body) w
-    (with (name . vars) proto
-      (with f (lambda (x) (if (string? x) (cons x #f) (cons (car x) (cadr x))))
-	(set! vars (map f vars)))
-      `(let* ((form-name ,name)
-	      (form-vars (map car ',vars))
-	      (form-type ',vars)
-	      (form-types (map cdr form-type))
-	      (form-suggest '())
-	      (form-memo (form-load form-name form-vars))
-	      (form-position (map (cut cons <> 0) form-vars)))
-	 (letrec ((form-auto
-		   (lambda (var type)
-		     (form-get-proposal var type 0 form-memo form-suggest)))
-		  (form-field-values
-		   (lambda ()
-		     (map widget-ref form-vars)))
-		  (form-return-values
-		   (lambda ()
-		     (map form->type (form-field-values) form-types)))
-		  (form-ok?
-		   (lambda ()
-		     (== (form-field-values)
-			 (map type->form (form-return-values) form-types))))
-		  (form-memorize
-		   (lambda ()
-		     (form-save form-name form-vars (form-field-values)))))
-	   ,(build-widgets body))))))
+(tm-widget (form proto . body)
+  (with (name . vars) proto
+    (with f (lambda (x) (if (string? x) (cons x #f) (cons (car x) (cadr x))))
+      (set! vars (map f vars)))
+    `(let* ((form-name ,name)
+	    (form-vars (map car ',vars))
+	    (form-type ',vars)
+	    (form-types (map cdr form-type))
+	    (form-suggest '())
+	    (form-memo (form-load form-name form-vars))
+	    (form-position (map (cut cons <> 0) form-vars)))
+       (letrec ((form-auto
+		 (lambda (var type)
+		   (form-get-proposal var type 0 form-memo form-suggest)))
+		(form-field-values
+		 (lambda ()
+		   (map widget-ref form-vars)))
+		(form-return-values
+		 (lambda ()
+		   (map form->type (form-field-values) form-types)))
+		(form-ok?
+		 (lambda ()
+		   (== (form-field-values)
+		       (map type->form (form-return-values) form-types))))
+		(form-memorize
+		 (lambda ()
+		   (form-save form-name form-vars (form-field-values)))))
+	 ,(build-widgets body)))))
 
-(tm-define (build-widget w)
-  (:case form-cancel)
-  (build-widget
-   '(button "Cancel" (dismiss))))
+(tm-widget (suggestions var l)
+  `(begin
+     (set! form-suggest (assoc-set! form-suggest ,var ,l))
+     '()))
 
-(tm-define (build-widget w)
-  (:case form-done)
-  (with (cmd body fun) w
-    (build-widget
-     `(button ,body
-	(when (form-ok?)
-	  (with args (form-return-values)
-	    (form-memorize)
-	    (dismiss)
-	    (delayed
-	      (:idle 1)
-	      (apply ,fun ,args))))))))
+(tm-widget-macro (form-previous)
+  `(aspect :circle :blue
+     (button "<less>"
+       (set! form-position (form-equalize form-position))
+       (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	      (lengths (map length (map cdr form-suggest)))
+	      (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
+	 (set! form-position (form-increment form-position -1 start end)))
+       (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+		 form-vars (map cdr form-type) (map cdr form-position)))))
+
+(tm-widget-macro (form-next)
+  `(aspect :circle :blue
+     (button "<gtr>"
+       (set! form-position (form-equalize form-position))
+       (let* ((start (- (if (null? form-suggest) 1 0) (length form-memo)))
+	      (lengths (map length (map cdr form-suggest)))
+	      (end (if (null? lengths) 0 (max 0 (- (apply max lengths) 1)))))
+	 (set! form-position (form-increment form-position 1 start end)))
+       (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
+		 form-vars (map cdr form-type) (map cdr form-position)))))
+
+(tm-widget-macro (form-cancel)
+  `(button "Cancel" (dismiss)))		 
+
+(tm-widget-macro (form-done body fun)
+  `(button ,body
+     (when (form-ok?)
+       (with args (form-return-values)
+	 (form-memorize)
+	 (dismiss)
+	 (delayed
+	   (:idle 1)
+	   (apply ,fun args))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building widgets for interactive functions
@@ -190,7 +177,7 @@
 
 (define (interactive-fields prompts vars types)
   (with rows (map interactive-field prompts vars types)
-    (cons 'table rows)))
+    (cons 'raster rows)))
 
 (tm-define (interactive-form fun prompts vars types defaults)
   (:synopsis "Standard form for a simple function application")
