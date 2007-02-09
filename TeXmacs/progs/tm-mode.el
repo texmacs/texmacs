@@ -43,7 +43,7 @@
 	 lazy-define lazy-format lazy-input-converter
 	 define-format converter with-aux define-group
 	 dialogue delayed on-entry on-exit
-	 tm-widget tm-widget-macro define-widget widget-delayed widget-with
+	 tm-build tm-build-macro tm-build-widget widget-delayed widget-with
 	 action alternative alternatives aspect
 	 bar button button-alternative button-toggle
 	 field form form-cancel form-done form-next form-previous
@@ -56,7 +56,7 @@
        '(texmacs-module provide-public
 	 define-macro define-public-macro define-table
 	 tm-define tm-define-macro tm-property request-handler define-group
-	 tm-widget tm-widget-macro
+	 tm-build tm-build-macro
 	 menu-bind menu-extend plugin-configure
 	 plugin-input-converters define-format) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
@@ -78,7 +78,7 @@
 	       and-let* setup-append-if define-group
 	       define-macro define-public-macro while for repeat when
 	       tm-define tm-define-macro tm-property request-handler
-	       tm-widget tm-widget-macro
+	       tm-build tm-build-macro
 	       drd-group drd-table drd-dispatcher menu-bind
 	       menu-extend plugin-configure plugin-input-converters
 	       with-cc format with-aux with-mutator
