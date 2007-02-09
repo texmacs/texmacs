@@ -84,7 +84,7 @@
 ;; Forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (form proto . body)
+(tm-build (form proto . body)
   (with (name . vars) proto
     (with f (lambda (x) (if (string? x) (cons x #f) (cons (car x) (cadr x))))
       (set! vars (map f vars)))
@@ -113,12 +113,12 @@
 		   (form-save form-name form-vars (form-field-values)))))
 	 ,(build-widgets body)))))
 
-(tm-widget (suggestions var l)
+(tm-build (suggestions var l)
   `(begin
      (set! form-suggest (assoc-set! form-suggest ,var ,l))
      '()))
 
-(tm-widget-macro (form-previous)
+(tm-build-macro (form-previous)
   `(aspect :circle :blue
      (button "<less>"
        (set! form-position (form-equalize form-position))
@@ -129,7 +129,7 @@
        (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
 		 form-vars (map cdr form-type) (map cdr form-position)))))
 
-(tm-widget-macro (form-next)
+(tm-build-macro (form-next)
   `(aspect :circle :blue
      (button "<gtr>"
        (set! form-position (form-equalize form-position))
@@ -140,10 +140,10 @@
        (for-each (cut form-fill-out <> <> <> form-memo form-suggest)
 		 form-vars (map cdr form-type) (map cdr form-position)))))
 
-(tm-widget-macro (form-cancel)
+(tm-build-macro (form-cancel)
   `(button "Cancel" (dismiss)))		 
 
-(tm-widget-macro (form-done body fun)
+(tm-build-macro (form-done body fun)
   `(button ,body
      (when (form-ok?)
        (with args (form-return-values)
@@ -182,18 +182,18 @@
 (tm-define (interactive-form fun prompts vars types defaults)
   (:synopsis "Standard form for a simple function application")
   (with name (or (procedure-string-name fun) "Enter function arguments")
-    `((form (,name ,@(map list vars types))
-	,@(list-filter (map interactive-proposals vars defaults) identity)
-	,(interactive-fields prompts vars types)
-	-
-	(bar
-	  (form-previous)
-	  (form-next)
-	  >>>
-	  (form-cancel)
-	  (form-done "Ok" ,fun))))))
+    `(form (,name ,@(map list vars types))
+       ,@(list-filter (map interactive-proposals vars defaults) identity)
+       ,(interactive-fields prompts vars types)
+       -
+       (bar
+	 (form-previous)
+	 (form-next)
+	 >>>
+	 (form-cancel)
+	 (form-done "Ok" ,fun)))))
 
-(tm-define (widget-interactive fun . args)
+(tm-define (interactive-popup fun . args)
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (let* ((name (or (procedure-string-name fun) "Enter function arguments"))
@@ -203,4 +203,4 @@
 	 (types (map cadr fun-args))
 	 (defaults (map cddr fun-args))
 	 (widget (interactive-form fun prompts vars types defaults)))
-    (eval (widget-armour name (build-widgets widget)))))
+    (widget-popup name widget)))

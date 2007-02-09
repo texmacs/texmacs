@@ -31,10 +31,6 @@
 (tm-define (build-widgets ws)
   `(append ,@(map build-widget ws)))
 
-(tm-define-macro (define-widget proto . body)
-  `(tm-define ,proto
-     ,(widget-armour "default" (build-widgets body))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declare new widget builders
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,7 +44,7 @@
 (tm-define (widget-options l)
   (widget-options-sub (cdr l)))
 
-(tm-define-macro (tm-widget proto . body)
+(tm-define-macro (tm-build proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-widget w)
@@ -56,7 +52,7 @@
        (with ,(cons 'options args) (widget-options w)
 	 ,@body))))
 
-(tm-define-macro (tm-widget-macro proto . body)
+(tm-define-macro (tm-build-macro proto . body)
   (let* ((fun (car proto))
 	 (args (cdr proto)))
     `(tm-define (build-widget w)
@@ -64,18 +60,26 @@
        (with ,(cons 'options args) (widget-options w)
 	 (build-widget (begin ,@body))))))
 
+(tm-define-macro (tm-build-widget proto . body)
+  (let* ((fun (car proto))
+	 (args (cdr proto)))
+    `(tm-define (build-widget w)
+       (:case ,fun)
+       (with ,(cons 'options args) (widget-options w)
+	 (build-widgets ,(list 'quasiquote body))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fundamental constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (sequence . body)
+(tm-build (sequence . body)
   (build-widgets body))
 
-(tm-widget (let bindings . body)
+(tm-build (let bindings . body)
   `(let* ,bindings
      ,(build-widgets body)))
 
-(tm-widget (quote x)
+(tm-build (quote x)
   `(list ',x))
 
 (tm-define (horizontal l)
@@ -83,7 +87,7 @@
 	((null? (cdr l)) (car l))
 	(else (cons 'concat l))))
 
-(tm-widget (horizontal . body)
+(tm-build (horizontal . body)
   `(list (horizontal ,(build-widgets body))))
 
 (tm-define (vertical l)
@@ -91,17 +95,17 @@
 	((null? (cdr l)) (car l))
 	(else (cons 'document l))))
 
-(tm-widget (vertical . body)
+(tm-build (vertical . body)
   `(list (vertical ,(build-widgets body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other helper constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (command . cmds)
+(tm-build (command . cmds)
   `(list (widget-new-call-back (lambda () ,@cmds))))
 
-(tm-widget (instruct . cmds)
+(tm-build (instruct . cmds)
   `(begin
      ,@cmds
      '()))
@@ -115,11 +119,11 @@
     (set! val `(if ,val "true" "false")))
   val)
 
-(tm-widget (entry name val type)
+(tm-build (entry name val type)
   `(list ,(widget-entry name val type)))
 
-(tm-widget-macro (internal var val)
-  `(instruct (widget-internal-set! aux-id ,var ,val)))
+(tm-build-macro (internal var val)
+  `(instruct (widget-internal-set! aux-handle ,var ,val)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Aspect attributes
@@ -138,7 +142,7 @@
 	((== x :bullet) '("gui-marker-type" "bullet"))
 	(else '())))
 
-(tm-widget (aspect . body)
+(tm-build (aspect . body)
   (let* ((bindings (append-map build-aspect options))
 	 (fun (lambda (x) `(with ,@bindings ,x)))
 	 (builder (build-widgets body)))
@@ -148,38 +152,38 @@
 ;; Buttons, toggles, alternatives and input fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget-macro (action body . cmds)
+(tm-build-macro (action body . cmds)
   `(form-action (horizontal ,body) (command ,@cmds)))
 
-(tm-widget-macro (button body . cmds)
+(tm-build-macro (button body . cmds)
   `(form-button (horizontal ,body) (command ,@cmds)))
 
-(tm-widget-macro (toggle name val)
+(tm-build-macro (toggle name val)
   `(form-toggle ,name (entry ,name ,val "boolean")))
 
-(tm-widget-macro (button-toggle name val . body)
+(tm-build-macro (button-toggle name val . body)
   `(form-button-toggle ,name (entry ,name ,val "boolean")
      (horizontal ,@body)))
 
-(tm-widget-macro (alternatives name val . body)
+(tm-build-macro (alternatives name val . body)
   `(form-alternatives ,name (entry ,name ,val "string")
      (vertical ,@body)))
 
-(tm-widget-macro (alternative name val)
+(tm-build-macro (alternative name val)
   `(form-alternative ,name ,val))
 
-(tm-widget-macro (button-alternative name val . body)
+(tm-build-macro (button-alternative name val . body)
   `(form-button-alternative ,name ,val
      (horizontal ,@body)))
 
-(tm-widget-macro (header . body)
+(tm-build-macro (header . body)
   `(gui-centered-switch (horizontal ,@body)))
 
-(tm-widget-macro (sheet name val . body)
+(tm-build-macro (sheet name val . body)
   `(form-sheet ,name ,val
      (vertical ,@body)))
 
-(tm-widget-macro (field name val)
+(tm-build-macro (field name val)
   (with f (cond ((in? :short options) 'form-short-input)
 		((in? :multiline options) 'form-big-input)
 		(else 'form-line-input))
@@ -189,29 +193,29 @@
 ;; Tabular constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget-macro (cell . body)
+(tm-build-macro (cell . body)
   (cond ((== body '(>>>)) `(gui-tab))
 	(else `((quote cell) (horizontal ,@body)))))
 
-(tm-widget-macro (row . body)
+(tm-build-macro (row . body)
   (let* ((make-cell (lambda (x) (if (func? x 'cell) x `(cell ,x))))
 	 (body* (map make-cell body)))
     `((quote row) ,@body*)))
 
-(tm-widget-macro (table . body)
+(tm-build-macro (table . body)
   (let* ((make-row (lambda (x) (if (func? x 'row) x `(row ,@x))))
 	 (body* (map make-row body)))
     `((quote table) ,@body*)))
 
-(tm-widget-macro (table-widget name . rows)
+(tm-build-macro (table-widget name . rows)
   `(,name (tformat (table ,@rows))))
 
-(tm-widget-macro (raster . rows)
+(tm-build-macro (raster . rows)
   (let* ((short? (in? :short options))
 	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
     `(table-widget ,name ,@rows)))
 
-(tm-widget-macro (bar . cells)
+(tm-build-macro (bar . cells)
   (let* ((short? (in? :short options))
 	 (name (if short? 'gui-normal-bar 'gui-normal-table)))
     `(table-widget ,name (row ,@cells))))

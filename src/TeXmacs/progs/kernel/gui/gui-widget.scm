@@ -42,66 +42,33 @@
 ;; Internal widget fields
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define widget-serial-table (make-ahash-table))
 (define widget-internal-table (make-ahash-table))
 
-(tm-define (widget-internal-new serial id)
-  (ahash-set! widget-serial-table serial id)
-  (ahash-set! widget-internal-table id (make-ahash-table)))
+(tm-define (widget-internal-new handle)
+  (ahash-set! widget-internal-table handle (make-ahash-table)))
 
-(tm-define (widget-internal-delete serial id)
-  (ahash-remove! widget-serial-table serial)
-  (ahash-remove! widget-internal-table id))
+(tm-define (widget-internal-delete handle)
+  (ahash-remove! widget-internal-table handle))
 
-(tm-define (widget-internal-set! id var val)
-  (and-with t (ahash-ref widget-internal-table id)
+(tm-define (widget-internal-set! handle var val)
+  (and-with t (ahash-ref widget-internal-table handle)
     (ahash-set! t var val)))
 
-(tm-define (widget-internal-ref id var)
-  (and-with t (ahash-ref widget-internal-table id)
+(tm-define (widget-internal-ref handle var)
+  (and-with t (ahash-ref widget-internal-table handle)
     (ahash-ref t var)))
 
 (tm-define (internal-set! var val)
   (when (context-has? "form-prefix")
-    (and-with serial (string-drop-right (get-env "form-prefix") 1)
-      (and-with id (ahash-ref widget-serial-table serial)
-	(widget-internal-set! id var val)))))
+    (and-with handle* (get-env "form-prefix")
+      (with handle (if (== handle* "") "" (string-drop-right handle* 1))
+	(widget-internal-set! handle var val)))))
 
 (tm-define (internal-ref var)
   (when (context-has? "form-prefix")
-    (and-with serial (string-drop-right (get-env "form-prefix") 1)
-      (and-with id (ahash-ref widget-serial-table serial)
-	(widget-internal-ref id var)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Defining widgets
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define widget-serial-number 0)
-
-(tm-define (widget-armour id body)
-  `(let* ((aux-id ,id)
-	  (aux-num (number->string widget-serial-number))
-	  (aux-serial (string-append "widget-" aux-num))
-	  (aux-begin (+ widget-call-back-nr 1))
-	  (aux-end (+ widget-call-back-nr 1))
-	  (aux-result #f)
-	  (internal-ref
-	   (lambda (var)
-	     (widget-internal-ref aux-id var)))
-	  (internal-set!
-	   (lambda (var val)
-	     (widget-internal-set! aux-id var val)))
-	  (dismiss
-	   (lambda ()
-	     (widget-delete-call-backs aux-begin aux-end)
-	     (widget-internal-delete aux-serial aux-id)
-	     (kill-window-and-buffer))))
-     (set! widget-serial-number (+ widget-serial-number 1))
-     (widget-internal-new aux-serial aux-id)
-     (set! aux-result ,body)
-     (set! aux-end (+ widget-call-back-nr 1))
-     (tm->tree `(form ,aux-serial (document ,@aux-result)))))
+    (and-with handle* (get-env "form-prefix")
+      (with handle (if (== handle* "") "" (string-drop-right handle* 1))
+	(widget-internal-ref handle var)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The widget prefix and delayed evaluation
@@ -112,7 +79,7 @@
 (tm-define-macro (widget-with prefix . body)
   (:secure #t)
   `(let ((new-prefix ,prefix)
-	  (old-prefix widget-prefix))
+	 (old-prefix widget-prefix))
      (set! widget-prefix new-prefix)
      (let ((result (begin ,@body)))
        (set! widget-prefix old-prefix)
@@ -142,20 +109,50 @@
 ;; Input and output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (widget-ref id . opt-prefix)
+(tm-define (widget-ref handle . opt-prefix)
   (:secure #t)
-  (if (tree? id) (set! id (tree->string id)))
+  (if (tree? handle) (set! handle (tree->string handle)))
   (let* ((prefix (widget-get-prefix opt-prefix))
-	 (l (id->trees (string-append prefix id))))
+	 (l (id->trees (string-append prefix handle))))
     (and l (nnull? l) (car l))))
 
-(tm-define (widget-set! id new-tree . opt-prefix)
+(tm-define (widget-set! handle new-tree . opt-prefix)
   (:secure #t)
-  (if (tree? id) (set! id (tree->string id)))
-  (and-with old-tree (apply widget-ref (cons id opt-prefix))
+  (if (tree? handle) (set! handle (tree->string handle)))
+  (and-with old-tree (apply widget-ref (cons handle opt-prefix))
     (tree-set! old-tree (tree-copy (tm->tree new-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Armouring widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define widget-serial-number 0)
+
+(tm-define (widget-armour body)
+  `(let* ((aux-handle widget-serial-number)
+	  (aux-num (number->string aux-handle))
+	  (aux-serial (string-append "widget-" aux-num))
+	  (aux-begin (+ widget-call-back-nr 1))
+	  (aux-end (+ widget-call-back-nr 1))
+	  (aux-result #f)
+	  (internal-ref
+	   (lambda (var)
+	     (widget-internal-ref aux-handle var)))
+	  (internal-set!
+	   (lambda (var val)
+	     (widget-internal-set! aux-handle var val)))
+	  (dismiss
+	   (lambda ()
+	     (widget-delete-call-backs aux-begin aux-end)
+	     (widget-internal-delete aux-handle)
+	     (kill-window-and-buffer))))
+     (set! widget-serial-number (+ widget-serial-number 1))
+     (widget-internal-new aux-handle)
+     (set! aux-result ,body)
+     (set! aux-end (+ widget-call-back-nr 1))
+     `(form ,aux-serial (document ,@aux-result))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Stand-alone widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -196,13 +193,10 @@
 			      (associate "prog-scripts" "maxima"))))
       `(document (style ,style) (body ,body*) (initial ,init)))))
 
-(define widget-show-counter 0)
-(tm-define (widget-show name body)
-  (set! widget-show-counter (+ widget-show-counter 1))
-  (let* ((doc (stand-alone body))
+(tm-define (widget-popup name w)
+  (let* ((body (tm->tree (eval (widget-armour (build-widget w)))))
+	 (doc (stand-alone body))
 	 (doc* (stand-alone* body))
-	 (geom (tree-extents doc))
-	 (num (number->string widget-show-counter))
-	 (serial (string-append "Widget " num)))
+	 (geom (tree-extents doc)))
     (open-buffer-in-window name doc* geom)
-    (set-aux name serial)))
+    (set-aux name name)))
