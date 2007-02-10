@@ -87,7 +87,7 @@
 
   <assign|form-action|<macro|body|cmd|<group|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
 
-  <assign|form-button|<macro|body|cmd|<gui-small-raise|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
+  <assign|form-button|<macro|body|cmd|<short-raise|<action|<arg|body>|<form-cmd|<arg|cmd>>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -95,16 +95,16 @@
     </src-comment>
   </active*>
 
-  <assign|form-small-input|<macro|name|val|<gui-small-input|<locus|<form-id|<arg|name>>|<arg|val>>>>>
+  <assign|form-small-bright|<macro|name|val|<short-bright|<locus|<form-id|<arg|name>>|<arg|val>>>>>
 
-  <assign|form-line-input|<macro|name|val|<gui-line-input|<locus|<form-id|<arg|name>>|<arg|val>>>>>
+  <assign|form-line-bright|<macro|name|val|<wide-bright|<locus|<form-id|<arg|name>>|<arg|val>>>>>
 
-  <assign|form-big-input|<\macro|name|val>
-    <\gui-big-input>
+  <assign|form-big-bright|<\macro|name|val>
+    <\block-bright>
       <\locus|<form-id|<arg|name>>>
         <arg|val>
       </locus>
-    </gui-big-input>
+    </block-bright>
   </macro>>
 
   \;
